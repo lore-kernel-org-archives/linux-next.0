@@ -1,161 +1,114 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for March 25 (Call trace: RCU|workqueues|block|VFS|ext4
- related?)
-Date: Tue, 29 Mar 2011 06:39:45 +0200
-Message-ID: <AANLkTi=TrwVs-0w9iK9Wbq5RpMomxFw20uEJmTYgsM4_@mail.gmail.com>
-References: <AANLkTikzLm+ArYkG20F41JOgfNygfdhxC0+A4tV4ez-R@mail.gmail.com>
-	<20110327000900.GB2322@linux.vnet.ibm.com>
-	<AANLkTikpq2CiSTk9Br7DdkVt=E1p8OFGa+Ls2BzkkhcO@mail.gmail.com>
-	<20110327032529.GC2322@linux.vnet.ibm.com>
-	<20110327050720.GA31424@linux.vnet.ibm.com>
-	<AANLkTimpbGGcxNJUDMjdg1wijYhvXQ3KySvRYnEsUYsy@mail.gmail.com>
-	<20110327213220.GE2322@linux.vnet.ibm.com>
-	<AANLkTi=ti+PVC8N-3Bt2fzuHHQz6kuMdUPeb3Gudn7EU@mail.gmail.com>
-	<20110328040823.GG2322@linux.vnet.ibm.com>
-	<AANLkTinQiDSXLP1o-HfdedYOMKtnsbBrcOfuqw9sFf2X@mail.gmail.com>
-	<20110328132436.GL2322@linux.vnet.ibm.com>
-Reply-To: sedat.dilek@gmail.com
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for March 25 (Call trace:
+ RCU|workqueues|block|VFS|ext4 related?)
+Date: Mon, 28 Mar 2011 22:48:39 -0700
+Message-ID: <20110329054839.GE2272@linux.vnet.ibm.com>
+References: <AANLkTikpq2CiSTk9Br7DdkVt=E1p8OFGa+Ls2BzkkhcO@mail.gmail.com>
+ <20110327032529.GC2322@linux.vnet.ibm.com>
+ <20110327050720.GA31424@linux.vnet.ibm.com>
+ <AANLkTimpbGGcxNJUDMjdg1wijYhvXQ3KySvRYnEsUYsy@mail.gmail.com>
+ <20110327213220.GE2322@linux.vnet.ibm.com>
+ <AANLkTi=ti+PVC8N-3Bt2fzuHHQz6kuMdUPeb3Gudn7EU@mail.gmail.com>
+ <20110328040823.GG2322@linux.vnet.ibm.com>
+ <AANLkTinQiDSXLP1o-HfdedYOMKtnsbBrcOfuqw9sFf2X@mail.gmail.com>
+ <20110328132436.GL2322@linux.vnet.ibm.com>
+ <AANLkTi=TrwVs-0w9iK9Wbq5RpMomxFw20uEJmTYgsM4_@mail.gmail.com>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=0016e65bb838448272049f97a619
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:41910 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751413Ab1C2Ejr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Mar 2011 00:39:47 -0400
-In-Reply-To: <20110328132436.GL2322@linux.vnet.ibm.com>
+Received: from e34.co.us.ibm.com ([32.97.110.152]:53788 "EHLO
+	e34.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752433Ab1C2Fsq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Mar 2011 01:48:46 -0400
+Content-Disposition: inline
+In-Reply-To: <AANLkTi=TrwVs-0w9iK9Wbq5RpMomxFw20uEJmTYgsM4_@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com
+To: sedat.dilek@gmail.com
 Cc: Josh Triplett <josh@joshtriplett.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, Theodore Ts'o <tytso@mit.edu>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Nick Piggin <npiggin@kernel.dk>
 
---0016e65bb838448272049f97a619
-Content-Type: text/plain; charset=UTF-8
+On Tue, Mar 29, 2011 at 06:39:45AM +0200, Sedat Dilek wrote:
+> [...]
+> >> BTW, today's linux-next (next-20110328) is still freaky, I applied the
+> >> revert-rcu-patches patchset and all is fine.
+> >
+> > I reverted back to the commit preceding the one you pointed out last night
+> > my time, so the upcoming -next should be less freaky.
+> >
+> 
+> Makes sense.
+> Looks like the "old" commits are now in boost.2011.03.25b GIT branch [1]?
 
-[...]
->> BTW, today's linux-next (next-20110328) is still freaky, I applied the
->> revert-rcu-patches patchset and all is fine.
->
-> I reverted back to the commit preceding the one you pointed out last night
-> my time, so the upcoming -next should be less freaky.
->
+Yep.  I keep them always, digital packrat that I am.
 
-Makes sense.
-Looks like the "old" commits are now in boost.2011.03.25b GIT branch [1]?
+I will be posting updates.
 
-I have attached the result from rcu-torture for linux-next (20110329)
-as I wanted to see what is logged (loaded rcutorture module 3x normal,
-1x with verbose=1).
+> I have attached the result from rcu-torture for linux-next (20110329)
+> as I wanted to see what is logged (loaded rcutorture module 3x normal,
+> 1x with verbose=1).
 
-- Sedat -
+Yep, that is expected output.  Now I just need to work out what else
+is messed up.
 
-[1] http://git.us.kernel.org/?p=linux/kernel/git/paulmck/linux-2.6-rcu.git;a=shortlog;h=refs/heads/boost.2011.03.25b
+							Thanx, Paul
 
---0016e65bb838448272049f97a619
-Content-Type: text/plain; charset=US-ASCII; name="msg_rcu-torture_next-20110329.txt"
-Content-Disposition: attachment;
-	filename="msg_rcu-torture_next-20110329.txt"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_gluc33930
+> - Sedat -
+> 
+> [1] http://git.us.kernel.org/?p=linux/kernel/git/paulmck/linux-2.6-rcu.git;a=shortlog;h=refs/heads/boost.2011.03.25b
 
-WyAgNjg4LjYyMzA3OF0gcmN1LXRvcnR1cmU6LS0tIFN0YXJ0IG9mIHRlc3Q6IG5yZWFkZXJzPTIg
-bmZha2V3cml0ZXJzPTQgc3RhdF9pbnRlcnZhbD0wIHZlcmJvc2U9MCB0ZXN0X25vX2lkbGVfaHo9
-MCBzaHVmZmxlX2ludGVydmFsPTMgc3R1dHRlcj01IGlycXJlYWRlcj0xIGZxc19kdXJhdGlvbj0w
-IGZxc19ob2xkb2ZmPTAgZnFzX3N0dXR0ZXI9MyB0ZXN0X2Jvb3N0PTEvMCB0ZXN0X2Jvb3N0X2lu
-dGVydmFsPTcgdGVzdF9ib29zdF9kdXJhdGlvbj00ClsgIDc4OC42NzIxMDhdIHJjdS10b3J0dXJl
-OiBydGM6ICAgKG51bGwpIHZlcjogMTIwMzAgdGZsZTogMCBydGE6IDEyMDMwIHJ0YWY6IDAgcnRm
-OiAxMjAyNSBydG1iZTogMCBydGJrZTogMCBydGJyZTogMCBydGJhZTogMCBydGJhZmU6IDAgcnRi
-ZjogMCBydGI6IDAgbnQ6IDIwMjgxClsgIDc4OC42NzIxMThdIHJjdS10b3J0dXJlOiBSZWFkZXIg
-UGlwZTogIDMwMTk4ODk2IDc4MiAwIDAgMCAwIDAgMCAwIDAgMApbICA3ODguNjcyMTIzXSByY3Ut
-dG9ydHVyZTogUmVhZGVyIEJhdGNoOiAgMzAxOTY2ODAgMjk5OCAwIDAgMCAwIDAgMCAwIDAgMApb
-ICA3ODguNjcyMTI4XSByY3UtdG9ydHVyZTogRnJlZS1CbG9jayBDaXJjdWxhdGlvbjogIDEyMDI5
-IDEyMDI3IDEyMDI1IDEyMDI1IDEyMDI1IDEyMDI1IDEyMDI1IDEyMDI1IDEyMDI1IDEyMDI1IDAK
-WyAgNzg4LjY3MjE1OF0gcmN1LXRvcnR1cmU6LS0tIEVuZCBvZiB0ZXN0OiBTVUNDRVNTOiBucmVh
-ZGVycz0yIG5mYWtld3JpdGVycz00IHN0YXRfaW50ZXJ2YWw9MCB2ZXJib3NlPTAgdGVzdF9ub19p
-ZGxlX2h6PTAgc2h1ZmZsZV9pbnRlcnZhbD0zIHN0dXR0ZXI9NSBpcnFyZWFkZXI9MSBmcXNfZHVy
-YXRpb249MCBmcXNfaG9sZG9mZj0wIGZxc19zdHV0dGVyPTMgdGVzdF9ib29zdD0xLzAgdGVzdF9i
-b29zdF9pbnRlcnZhbD03IHRlc3RfYm9vc3RfZHVyYXRpb249NApbICA5MjMuNzc3MTA4XSByY3Ut
-dG9ydHVyZTotLS0gU3RhcnQgb2YgdGVzdDogbnJlYWRlcnM9MiBuZmFrZXdyaXRlcnM9NCBzdGF0
-X2ludGVydmFsPTAgdmVyYm9zZT0wIHRlc3Rfbm9faWRsZV9oej0wIHNodWZmbGVfaW50ZXJ2YWw9
-MyBzdHV0dGVyPTUgaXJxcmVhZGVyPTEgZnFzX2R1cmF0aW9uPTAgZnFzX2hvbGRvZmY9MCBmcXNf
-c3R1dHRlcj0zIHRlc3RfYm9vc3Q9MS8wIHRlc3RfYm9vc3RfaW50ZXJ2YWw9NyB0ZXN0X2Jvb3N0
-X2R1cmF0aW9uPTQKWyAxMDIzLjgyMDEyMF0gcmN1LXRvcnR1cmU6IHJ0YzogICAobnVsbCkgdmVy
-OiAxMjIwNiB0ZmxlOiAwIHJ0YTogMTIyMDYgcnRhZjogMCBydGY6IDEyMjAzIHJ0bWJlOiAwIHJ0
-YmtlOiAwIHJ0YnJlOiAwIHJ0YmFlOiAwIHJ0YmFmZTogMCBydGJmOiAwIHJ0YjogMCBudDogMjA1
-MDkKWyAxMDIzLjgyMDEzMF0gcmN1LXRvcnR1cmU6IFJlYWRlciBQaXBlOiAgMzEwMjQ2NDMgNzg2
-IDAgMCAwIDAgMCAwIDAgMCAwClsgMTAyMy44MjAxMzVdIHJjdS10b3J0dXJlOiBSZWFkZXIgQmF0
-Y2g6ICAzMTAyMjMwNyAzMTIyIDAgMCAwIDAgMCAwIDAgMCAwClsgMTAyMy44MjAxNDBdIHJjdS10
-b3J0dXJlOiBGcmVlLUJsb2NrIENpcmN1bGF0aW9uOiAgMTIyMDUgMTIyMDMgMTIyMDMgMTIyMDMg
-MTIyMDMgMTIyMDMgMTIyMDMgMTIyMDMgMTIyMDMgMTIyMDMgMApbIDEwMjMuODIwMTcxXSByY3Ut
-dG9ydHVyZTotLS0gRW5kIG9mIHRlc3Q6IFNVQ0NFU1M6IG5yZWFkZXJzPTIgbmZha2V3cml0ZXJz
-PTQgc3RhdF9pbnRlcnZhbD0wIHZlcmJvc2U9MCB0ZXN0X25vX2lkbGVfaHo9MCBzaHVmZmxlX2lu
-dGVydmFsPTMgc3R1dHRlcj01IGlycXJlYWRlcj0xIGZxc19kdXJhdGlvbj0wIGZxc19ob2xkb2Zm
-PTAgZnFzX3N0dXR0ZXI9MyB0ZXN0X2Jvb3N0PTEvMCB0ZXN0X2Jvb3N0X2ludGVydmFsPTcgdGVz
-dF9ib29zdF9kdXJhdGlvbj00ClsgMTI5Mi40NzQ1MzBdIHJjdS10b3J0dXJlOi0tLSBTdGFydCBv
-ZiB0ZXN0OiBucmVhZGVycz0yIG5mYWtld3JpdGVycz00IHN0YXRfaW50ZXJ2YWw9MCB2ZXJib3Nl
-PTAgdGVzdF9ub19pZGxlX2h6PTAgc2h1ZmZsZV9pbnRlcnZhbD0zIHN0dXR0ZXI9NSBpcnFyZWFk
-ZXI9MSBmcXNfZHVyYXRpb249MCBmcXNfaG9sZG9mZj0wIGZxc19zdHV0dGVyPTMgdGVzdF9ib29z
-dD0xLzAgdGVzdF9ib29zdF9pbnRlcnZhbD03IHRlc3RfYm9vc3RfZHVyYXRpb249NApbIDEzOTIu
-NTA0MTkyXSByY3UtdG9ydHVyZTogcnRjOiAgIChudWxsKSB2ZXI6IDEyMjQ4IHRmbGU6IDAgcnRh
-OiAxMjI0OCBydGFmOiAwIHJ0ZjogMTIyNDUgcnRtYmU6IDAgcnRia2U6IDAgcnRicmU6IDAgcnRi
-YWU6IDAgcnRiYWZlOiAwIHJ0YmY6IDAgcnRiOiAwIG50OiAyMTA4NwpbIDEzOTIuNTA0MjAxXSBy
-Y3UtdG9ydHVyZTogUmVhZGVyIFBpcGU6ICAzMTY3NDQyMiA3OTAgMCAwIDAgMCAwIDAgMCAwIDAK
-WyAxMzkyLjUwNDIwN10gcmN1LXRvcnR1cmU6IFJlYWRlciBCYXRjaDogIDMxNjcyMDI2IDMxODYg
-MCAwIDAgMCAwIDAgMCAwIDAKWyAxMzkyLjUwNDIxMl0gcmN1LXRvcnR1cmU6IEZyZWUtQmxvY2sg
-Q2lyY3VsYXRpb246ICAxMjI0NyAxMjI0NiAxMjI0NSAxMjI0NSAxMjI0NSAxMjI0NSAxMjI0NSAx
-MjI0NSAxMjI0NSAxMjI0NSAwClsgMTM5Mi41MDQyNDJdIHJjdS10b3J0dXJlOi0tLSBFbmQgb2Yg
-dGVzdDogU1VDQ0VTUzogbnJlYWRlcnM9MiBuZmFrZXdyaXRlcnM9NCBzdGF0X2ludGVydmFsPTAg
-dmVyYm9zZT0wIHRlc3Rfbm9faWRsZV9oej0wIHNodWZmbGVfaW50ZXJ2YWw9MyBzdHV0dGVyPTUg
-aXJxcmVhZGVyPTEgZnFzX2R1cmF0aW9uPTAgZnFzX2hvbGRvZmY9MCBmcXNfc3R1dHRlcj0zIHRl
-c3RfYm9vc3Q9MS8wIHRlc3RfYm9vc3RfaW50ZXJ2YWw9NyB0ZXN0X2Jvb3N0X2R1cmF0aW9uPTQK
-WyAxNjAxLjA4MjEwMV0gcmN1LXRvcnR1cmU6LS0tIFN0YXJ0IG9mIHRlc3Q6IG5yZWFkZXJzPTIg
-bmZha2V3cml0ZXJzPTQgc3RhdF9pbnRlcnZhbD0wIHZlcmJvc2U9MSB0ZXN0X25vX2lkbGVfaHo9
-MCBzaHVmZmxlX2ludGVydmFsPTMgc3R1dHRlcj01IGlycXJlYWRlcj0xIGZxc19kdXJhdGlvbj0w
-IGZxc19ob2xkb2ZmPTAgZnFzX3N0dXR0ZXI9MyB0ZXN0X2Jvb3N0PTEvMCB0ZXN0X2Jvb3N0X2lu
-dGVydmFsPTcgdGVzdF9ib29zdF9kdXJhdGlvbj00ClsgMTYwMS4wODIxMTRdIHJjdS10b3J0dXJl
-OkNyZWF0aW5nIHJjdV90b3J0dXJlX3dyaXRlciB0YXNrClsgMTYwMS4wODIyMzldIHJjdS10b3J0
-dXJlOkNyZWF0aW5nIHJjdV90b3J0dXJlX2Zha2V3cml0ZXIgdGFzawpbIDE2MDEuMDgyMjYxXSBy
-Y3UtdG9ydHVyZTpyY3VfdG9ydHVyZV93cml0ZXIgdGFzayBzdGFydGVkClsgMTYwMS4wODcyNTdd
-IHJjdS10b3J0dXJlOkNyZWF0aW5nIHJjdV90b3J0dXJlX2Zha2V3cml0ZXIgdGFzawpbIDE2MDEu
-MDg3MzAwXSByY3UtdG9ydHVyZTpyY3VfdG9ydHVyZV9mYWtld3JpdGVyIHRhc2sgc3RhcnRlZApb
-IDE2MDEuMDkwNzAwXSByY3UtdG9ydHVyZTpDcmVhdGluZyByY3VfdG9ydHVyZV9mYWtld3JpdGVy
-IHRhc2sKWyAxNjAxLjA5MDc0Ml0gcmN1LXRvcnR1cmU6cmN1X3RvcnR1cmVfZmFrZXdyaXRlciB0
-YXNrIHN0YXJ0ZWQKWyAxNjAxLjA5MDc1NF0gcmN1LXRvcnR1cmU6Q3JlYXRpbmcgcmN1X3RvcnR1
-cmVfZmFrZXdyaXRlciB0YXNrClsgMTYwMS4wOTA3NzNdIHJjdS10b3J0dXJlOnJjdV90b3J0dXJl
-X2Zha2V3cml0ZXIgdGFzayBzdGFydGVkClsgMTYwMS4wOTA3ODRdIHJjdS10b3J0dXJlOkNyZWF0
-aW5nIHJjdV90b3J0dXJlX3JlYWRlciB0YXNrClsgMTYwMS4wOTA4MDJdIHJjdS10b3J0dXJlOnJj
-dV90b3J0dXJlX2Zha2V3cml0ZXIgdGFzayBzdGFydGVkClsgMTYwMS4wOTA4MTJdIHJjdS10b3J0
-dXJlOkNyZWF0aW5nIHJjdV90b3J0dXJlX3JlYWRlciB0YXNrClsgMTYwMS4wOTA4MzBdIHJjdS10
-b3J0dXJlOnJjdV90b3J0dXJlX3JlYWRlciB0YXNrIHN0YXJ0ZWQKWyAxNjAxLjA5MDg4M10gcmN1
-LXRvcnR1cmU6cmN1X3RvcnR1cmVfcmVhZGVyIHRhc2sgc3RhcnRlZApbIDE2MDEuMDkxMzAzXSBy
-Y3UtdG9ydHVyZTpyY3VfdG9ydHVyZV9zdHV0dGVyIHRhc2sgc3RhcnRlZApbIDE3MDEuMDk5MzIz
-XSByY3UtdG9ydHVyZTpTdG9wcGluZyByY3VfdG9ydHVyZV9zdHV0dGVyIHRhc2sKWyAxNzAxLjA5
-OTM0N10gcmN1LXRvcnR1cmU6cmN1X3RvcnR1cmVfc3R1dHRlciB0YXNrIHN0b3BwaW5nClsgMTcw
-MS4wOTkzOTVdIHJjdS10b3J0dXJlOlN0b3BwaW5nIHJjdV90b3J0dXJlX3dyaXRlciB0YXNrClsg
-MTcwMS4wOTk0MDldIHJjdS10b3J0dXJlOnJjdV90b3J0dXJlX3JlYWRlciB0YXNrIHN0b3BwaW5n
-ClsgMTcwMS4wOTk0MjJdIHJjdS10b3J0dXJlOnJjdV90b3J0dXJlX3JlYWRlciB0YXNrIHN0b3Bw
-aW5nClsgMTcwMS4wOTk0MzddIHJjdS10b3J0dXJlOnJjdV90b3J0dXJlX3dyaXRlciB0YXNrIHN0
-b3BwaW5nClsgMTcwMS4wOTk0NTZdIHJjdS10b3J0dXJlOlN0b3BwaW5nIHJjdV90b3J0dXJlX3Jl
-YWRlciB0YXNrClsgMTcwMS4wOTk0OTddIHJjdS10b3J0dXJlOlN0b3BwaW5nIHJjdV90b3J0dXJl
-X3JlYWRlciB0YXNrClsgMTcwMS4wOTk1MzVdIHJjdS10b3J0dXJlOlN0b3BwaW5nIHJjdV90b3J0
-dXJlX2Zha2V3cml0ZXIgdGFzawpbIDE3MDEuMTAwNzI2XSByY3UtdG9ydHVyZTpyY3VfdG9ydHVy
-ZV9mYWtld3JpdGVyIHRhc2sgc3RvcHBpbmcKWyAxNzAxLjEwNDI5MV0gcmN1LXRvcnR1cmU6cmN1
-X3RvcnR1cmVfZmFrZXdyaXRlciB0YXNrIHN0b3BwaW5nClsgMTcwMS4xMDQzMTVdIHJjdS10b3J0
-dXJlOlN0b3BwaW5nIHJjdV90b3J0dXJlX2Zha2V3cml0ZXIgdGFzawpbIDE3MDEuMTA0MzU5XSBy
-Y3UtdG9ydHVyZTpTdG9wcGluZyByY3VfdG9ydHVyZV9mYWtld3JpdGVyIHRhc2sKWyAxNzAxLjEz
-MTMxOF0gcmN1LXRvcnR1cmU6cmN1X3RvcnR1cmVfZmFrZXdyaXRlciB0YXNrIHN0b3BwaW5nClsg
-MTcwMS4xMzk2MzJdIHJjdS10b3J0dXJlOnJjdV90b3J0dXJlX2Zha2V3cml0ZXIgdGFzayBzdG9w
-cGluZwpbIDE3MDEuMTM5NjY4XSByY3UtdG9ydHVyZTpTdG9wcGluZyByY3VfdG9ydHVyZV9mYWtl
-d3JpdGVyIHRhc2sKWyAxNzAxLjE0NDIxMV0gcmN1LXRvcnR1cmU6IHJ0YzogICAobnVsbCkgdmVy
-OiAxMjE3OSB0ZmxlOiAwIHJ0YTogMTIxNzkgcnRhZjogMCBydGY6IDEyMTc3IHJ0bWJlOiAwIHJ0
-YmtlOiAwIHJ0YnJlOiAwIHJ0YmFlOiAwIHJ0YmFmZTogMCBydGJmOiAwIHJ0YjogMCBudDogMjA5
-NTEKWyAxNzAxLjE0NDIyMF0gcmN1LXRvcnR1cmU6IFJlYWRlciBQaXBlOiAgMzE1NDc3MDEgNzU3
-IDAgMCAwIDAgMCAwIDAgMCAwClsgMTcwMS4xNDQyMjZdIHJjdS10b3J0dXJlOiBSZWFkZXIgQmF0
-Y2g6ICAzMTU0NTM2MyAzMDk1IDAgMCAwIDAgMCAwIDAgMCAwClsgMTcwMS4xNDQyMzFdIHJjdS10
-b3J0dXJlOiBGcmVlLUJsb2NrIENpcmN1bGF0aW9uOiAgMTIxNzggMTIxNzcgMTIxNzcgMTIxNzcg
-MTIxNzcgMTIxNzcgMTIxNzcgMTIxNzcgMTIxNzcgMTIxNzcgMApbIDE3MDEuMTQ0MjU5XSByY3Ut
-dG9ydHVyZTotLS0gRW5kIG9mIHRlc3Q6IFNVQ0NFU1M6IG5yZWFkZXJzPTIgbmZha2V3cml0ZXJz
-PTQgc3RhdF9pbnRlcnZhbD0wIHZlcmJvc2U9MSB0ZXN0X25vX2lkbGVfaHo9MCBzaHVmZmxlX2lu
-dGVydmFsPTMgc3R1dHRlcj01IGlycXJlYWRlcj0xIGZxc19kdXJhdGlvbj0wIGZxc19ob2xkb2Zm
-PTAgZnFzX3N0dXR0ZXI9MyB0ZXN0X2Jvb3N0PTEvMCB0ZXN0X2Jvb3N0X2ludGVydmFsPTcgdGVz
-dF9ib29zdF9kdXJhdGlvbj00Cg==
---0016e65bb838448272049f97a619--
+> [  688.623078] rcu-torture:--- Start of test: nreaders=2 nfakewriters=4 stat_interval=0 verbose=0 test_no_idle_hz=0 shuffle_interval=3 stutter=5 irqreader=1 fqs_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0 test_boost_interval=7 test_boost_duration=4
+> [  788.672108] rcu-torture: rtc:   (null) ver: 12030 tfle: 0 rta: 12030 rtaf: 0 rtf: 12025 rtmbe: 0 rtbke: 0 rtbre: 0 rtbae: 0 rtbafe: 0 rtbf: 0 rtb: 0 nt: 20281
+> [  788.672118] rcu-torture: Reader Pipe:  30198896 782 0 0 0 0 0 0 0 0 0
+> [  788.672123] rcu-torture: Reader Batch:  30196680 2998 0 0 0 0 0 0 0 0 0
+> [  788.672128] rcu-torture: Free-Block Circulation:  12029 12027 12025 12025 12025 12025 12025 12025 12025 12025 0
+> [  788.672158] rcu-torture:--- End of test: SUCCESS: nreaders=2 nfakewriters=4 stat_interval=0 verbose=0 test_no_idle_hz=0 shuffle_interval=3 stutter=5 irqreader=1 fqs_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0 test_boost_interval=7 test_boost_duration=4
+> [  923.777108] rcu-torture:--- Start of test: nreaders=2 nfakewriters=4 stat_interval=0 verbose=0 test_no_idle_hz=0 shuffle_interval=3 stutter=5 irqreader=1 fqs_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0 test_boost_interval=7 test_boost_duration=4
+> [ 1023.820120] rcu-torture: rtc:   (null) ver: 12206 tfle: 0 rta: 12206 rtaf: 0 rtf: 12203 rtmbe: 0 rtbke: 0 rtbre: 0 rtbae: 0 rtbafe: 0 rtbf: 0 rtb: 0 nt: 20509
+> [ 1023.820130] rcu-torture: Reader Pipe:  31024643 786 0 0 0 0 0 0 0 0 0
+> [ 1023.820135] rcu-torture: Reader Batch:  31022307 3122 0 0 0 0 0 0 0 0 0
+> [ 1023.820140] rcu-torture: Free-Block Circulation:  12205 12203 12203 12203 12203 12203 12203 12203 12203 12203 0
+> [ 1023.820171] rcu-torture:--- End of test: SUCCESS: nreaders=2 nfakewriters=4 stat_interval=0 verbose=0 test_no_idle_hz=0 shuffle_interval=3 stutter=5 irqreader=1 fqs_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0 test_boost_interval=7 test_boost_duration=4
+> [ 1292.474530] rcu-torture:--- Start of test: nreaders=2 nfakewriters=4 stat_interval=0 verbose=0 test_no_idle_hz=0 shuffle_interval=3 stutter=5 irqreader=1 fqs_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0 test_boost_interval=7 test_boost_duration=4
+> [ 1392.504192] rcu-torture: rtc:   (null) ver: 12248 tfle: 0 rta: 12248 rtaf: 0 rtf: 12245 rtmbe: 0 rtbke: 0 rtbre: 0 rtbae: 0 rtbafe: 0 rtbf: 0 rtb: 0 nt: 21087
+> [ 1392.504201] rcu-torture: Reader Pipe:  31674422 790 0 0 0 0 0 0 0 0 0
+> [ 1392.504207] rcu-torture: Reader Batch:  31672026 3186 0 0 0 0 0 0 0 0 0
+> [ 1392.504212] rcu-torture: Free-Block Circulation:  12247 12246 12245 12245 12245 12245 12245 12245 12245 12245 0
+> [ 1392.504242] rcu-torture:--- End of test: SUCCESS: nreaders=2 nfakewriters=4 stat_interval=0 verbose=0 test_no_idle_hz=0 shuffle_interval=3 stutter=5 irqreader=1 fqs_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0 test_boost_interval=7 test_boost_duration=4
+> [ 1601.082101] rcu-torture:--- Start of test: nreaders=2 nfakewriters=4 stat_interval=0 verbose=1 test_no_idle_hz=0 shuffle_interval=3 stutter=5 irqreader=1 fqs_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0 test_boost_interval=7 test_boost_duration=4
+> [ 1601.082114] rcu-torture:Creating rcu_torture_writer task
+> [ 1601.082239] rcu-torture:Creating rcu_torture_fakewriter task
+> [ 1601.082261] rcu-torture:rcu_torture_writer task started
+> [ 1601.087257] rcu-torture:Creating rcu_torture_fakewriter task
+> [ 1601.087300] rcu-torture:rcu_torture_fakewriter task started
+> [ 1601.090700] rcu-torture:Creating rcu_torture_fakewriter task
+> [ 1601.090742] rcu-torture:rcu_torture_fakewriter task started
+> [ 1601.090754] rcu-torture:Creating rcu_torture_fakewriter task
+> [ 1601.090773] rcu-torture:rcu_torture_fakewriter task started
+> [ 1601.090784] rcu-torture:Creating rcu_torture_reader task
+> [ 1601.090802] rcu-torture:rcu_torture_fakewriter task started
+> [ 1601.090812] rcu-torture:Creating rcu_torture_reader task
+> [ 1601.090830] rcu-torture:rcu_torture_reader task started
+> [ 1601.090883] rcu-torture:rcu_torture_reader task started
+> [ 1601.091303] rcu-torture:rcu_torture_stutter task started
+> [ 1701.099323] rcu-torture:Stopping rcu_torture_stutter task
+> [ 1701.099347] rcu-torture:rcu_torture_stutter task stopping
+> [ 1701.099395] rcu-torture:Stopping rcu_torture_writer task
+> [ 1701.099409] rcu-torture:rcu_torture_reader task stopping
+> [ 1701.099422] rcu-torture:rcu_torture_reader task stopping
+> [ 1701.099437] rcu-torture:rcu_torture_writer task stopping
+> [ 1701.099456] rcu-torture:Stopping rcu_torture_reader task
+> [ 1701.099497] rcu-torture:Stopping rcu_torture_reader task
+> [ 1701.099535] rcu-torture:Stopping rcu_torture_fakewriter task
+> [ 1701.100726] rcu-torture:rcu_torture_fakewriter task stopping
+> [ 1701.104291] rcu-torture:rcu_torture_fakewriter task stopping
+> [ 1701.104315] rcu-torture:Stopping rcu_torture_fakewriter task
+> [ 1701.104359] rcu-torture:Stopping rcu_torture_fakewriter task
+> [ 1701.131318] rcu-torture:rcu_torture_fakewriter task stopping
+> [ 1701.139632] rcu-torture:rcu_torture_fakewriter task stopping
+> [ 1701.139668] rcu-torture:Stopping rcu_torture_fakewriter task
+> [ 1701.144211] rcu-torture: rtc:   (null) ver: 12179 tfle: 0 rta: 12179 rtaf: 0 rtf: 12177 rtmbe: 0 rtbke: 0 rtbre: 0 rtbae: 0 rtbafe: 0 rtbf: 0 rtb: 0 nt: 20951
+> [ 1701.144220] rcu-torture: Reader Pipe:  31547701 757 0 0 0 0 0 0 0 0 0
+> [ 1701.144226] rcu-torture: Reader Batch:  31545363 3095 0 0 0 0 0 0 0 0 0
+> [ 1701.144231] rcu-torture: Free-Block Circulation:  12178 12177 12177 12177 12177 12177 12177 12177 12177 12177 0
+> [ 1701.144259] rcu-torture:--- End of test: SUCCESS: nreaders=2 nfakewriters=4 stat_interval=0 verbose=1 test_no_idle_hz=0 shuffle_interval=3 stutter=5 irqreader=1 fqs_duration=0 fqs_holdoff=0 fqs_stutter=3 test_boost=1/0 test_boost_interval=7 test_boost_duration=4
