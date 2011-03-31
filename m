@@ -1,49 +1,54 @@
-From: Daniel Hellstrom <daniel@gaisler.com>
-Subject: Re: linux-next: build failure after merge of the final tree (sparc-current
- tree related)
-Date: Thu, 31 Mar 2011 15:46:27 +0200
-Message-ID: <4D9485B3.5060306@gaisler.com>
-References: <20110331130127.1d60ba11.sfr@canb.auug.org.au> <20110330.211044.212408233.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: failed to fetch the blackfin tree
+Date: Fri, 1 Apr 2011 09:14:47 +1100
+Message-ID: <20110401091447.16946750.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__1_Apr_2011_09_14_47_+1100_25wDCh5t9F.yYvQS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail176c2.megamailservers.com ([69.49.111.76]:51575 "EHLO
-	mail176c2.megamailservers.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757995Ab1CaQi1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Mar 2011 12:38:27 -0400
-In-Reply-To: <20110330.211044.212408233.davem@davemloft.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53872 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759386Ab1CaWO4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Mar 2011 18:14:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mike Frysinger <vapier.adi@gmail.com>
+Cc: linux-next@vger.kernel.org
 
-David Miller wrote:
+--Signature=_Fri__1_Apr_2011_09_14_47_+1100_25wDCh5t9F.yYvQS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->From: Stephen Rothwell <sfr@canb.auug.org.au>
->Date: Thu, 31 Mar 2011 13:01:27 +1100
->
->  
->
->>Hi all,
->>
->>After merging the final tree, today's linux-next build (powerpc
->>allyesconfig) failed like this:
->>
->>drivers/tty/serial/apbuart.c: In function 'apbuart_probe':
->>drivers/tty/serial/apbuart.c:568: error: 'struct pdev_archdata' has no member named 'irqs'
->>
->>Caused by commit 10544f128c33 ("sparc32, leon: APBUART driver must use
->>archdata to get IRQ number").
->>
->>I have reverted that commit for today (and commit c897dcf6311e
->>"sparc32,leon: Fixed APBUART frequency detection" that conflicts with the
->>revert).
->>    
->>
->
->Thanks, I'll make apbuart depend upon sparc to fix this.
->  
->
-Thanks all.
+Hi Mike,
+
+Trying to fetch the blackfin tree
+(git://git.kernel.org/pub/scm/linux/kernel/git/vapier/blackfin.git#for-linu=
+s)
+today got this error:
+
+fatal: Couldn't find remote ref refs/heads/for-linus
+
+I will use yesterday's tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__1_Apr_2011_09_14_47_+1100_25wDCh5t9F.yYvQS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNlPzXAAoJEDMEi1NhKgbsoiEH/2Bi1CD3gZg3nrAfujEyhy6a
+83xV3joNoMesZaNsj8oUy75I9ga9dFbbGMEISJbIHtFmP7F/uPj+GvEp8P4d93NO
+YO8zxCWA4r2FQnKex/PiGy1B1KDpIj4l7UBS+ch0nJYofD0uxJLjycjOO4NAzXJa
+2NmA4dn7hur997etBbXuyljFnd+JLWZ4HO64HxwWXmc9+qOQtkH9R4U2nnrxZJdB
+KAwzjEizHf6eNBoMbZBMIgXz3YEvMBOwP8aey2S/b8RR/TR7xKEKpZPz6+y+Zdcg
+0w1MXzsobRu4b8x5z3Cbi/Lc5Zme9eaUmyPJlk/lu7wWiKnSytfdPASVUkFMpjI=
+=99UK
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_Apr_2011_09_14_47_+1100_25wDCh5t9F.yYvQS--
