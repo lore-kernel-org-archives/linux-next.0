@@ -1,34 +1,51 @@
-From: Mike Frysinger <vapier.adi@gmail.com>
-Subject: Re: linux-next: failed to fetch the blackfin tree
-Date: Thu, 31 Mar 2011 19:10:00 -0400
-Message-ID: <AANLkTi=5oOpnL7nsNeYzKiNUia4B1pZtGYSBxAE7KVnV@mail.gmail.com>
-References: <20110401091447.16946750.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the gfs2 tree with Linus' tree
+Date: Fri, 1 Apr 2011 10:55:45 +1100
+Message-ID: <20110401105545.b2873be4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__1_Apr_2011_10_55_45_+1100_sHo0oCUyvPFOTSvF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:47198 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753507Ab1CaXKV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Mar 2011 19:10:21 -0400
-Received: by fxm17 with SMTP id 17so2231810fxm.19
-        for <linux-next@vger.kernel.org>; Thu, 31 Mar 2011 16:10:20 -0700 (PDT)
-In-Reply-To: <20110401091447.16946750.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45727 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751664Ab1CaXzz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Mar 2011 19:55:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Steven Whitehouse <swhiteho@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jaxboe@fusionio.com>
 
-On Thu, Mar 31, 2011 at 18:14, Stephen Rothwell wrote:
-> Trying to fetch the blackfin tree
-> (git://git.kernel.org/pub/scm/linux/kernel/git/vapier/blackfin.git#for-linus)
-> today got this error:
->
-> fatal: Couldn't find remote ref refs/heads/for-linus
+--Signature=_Fri__1_Apr_2011_10_55_45_+1100_sHo0oCUyvPFOTSvF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-erp, sorry about that.  forgot that i had registered this branch with you.
+Hi Steven,
 
-> I will use yesterday's tree.
+Today's linux-next merge of the gfs2 tree got a conflict in fs/gfs2/log.c
+between commit 721a9602e660 ("block: kill off REQ_UNPLUG") from Linus'
+tree and commit 7ef2a4f51303 ("GFS2: Use filemap_fdatawrite() to write
+back the AIL") from the gfs2 tree.
 
-np ... there's nothing in it atm which is why i threw it away.
-everything has been merged.
--mike
+The former removed some of the code modified by the latter, so I did that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__1_Apr_2011_10_55_45_+1100_sHo0oCUyvPFOTSvF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNlRSBAAoJEDMEi1NhKgbsg+IH/jXg1+wEfsJeOuXdKpJUG+vA
+uvhJ/NfieOFDksnwwzuPdVaCaCJEwwf1CV3F+rtVmx97mGKPnp2t7YVFBNELlHVr
+XmFZniVGYY5sJhPcbYMxtfXPA6pP6K36eZV3jkEVILVmFTELliNDLM6YuUFe9FAG
+sC4bd3epGJmp5aDTrhpoXZdgRE5Z7Q2PxOlV8qAdXilqBfzIino41xWPLcbkWq29
+02u5Vhy4w2M8TCMfH4XyQfrOJKTIvcGKtMmYWma8Fm8E8Z0/vwuTCfKVZRJdCIX/
+R9wEtgrfSay6bU/pn+c1ivXRg+fgqT1/0dlxjY/kWx1k+4GyxQrg1JSVbpLiXDk=
+=iS92
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_Apr_2011_10_55_45_+1100_sHo0oCUyvPFOTSvF--
