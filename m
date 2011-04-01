@@ -1,51 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gfs2 tree with Linus' tree
-Date: Fri, 1 Apr 2011 10:55:45 +1100
-Message-ID: <20110401105545.b2873be4.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Fri, 1 Apr 2011 13:00:44 +1100
+Message-ID: <20110401130044.c5aed052.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__1_Apr_2011_10_55_45_+1100_sHo0oCUyvPFOTSvF"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45727 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59890 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751664Ab1CaXzz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Mar 2011 19:55:55 -0400
+	id S1752696Ab1DACAx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Mar 2011 22:00:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Whitehouse <swhiteho@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jaxboe@fusionio.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dirk Brandewie <dirk.brandewie@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Jean Delvare <khali@linux-fr.org>
 
---Signature=_Fri__1_Apr_2011_10_55_45_+1100_sHo0oCUyvPFOTSvF
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Steven,
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Today's linux-next merge of the gfs2 tree got a conflict in fs/gfs2/log.c
-between commit 721a9602e660 ("block: kill off REQ_UNPLUG") from Linus'
-tree and commit 7ef2a4f51303 ("GFS2: Use filemap_fdatawrite() to write
-back the AIL") from the gfs2 tree.
+drivers/i2c/busses/i2c-designware-core.c: In function 'i2c_dw_wait_bus_not_busy':
+drivers/i2c/busses/i2c-designware-core.c:321: error: implicit declaration of function 'mdelay'
 
-The former removed some of the code modified by the latter, so I did that.
---=20
+Caused by commit 800c56383dcb ("i2c-designware: split of i2c-designware.c
+into core and bus specific parts") from the bjdooks-i2c tree and exposed
+by commit ca444564a947 ("x86: Stop including <linux/delay.h> in two asm
+header files").
+
+I have added this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 1 Apr 2011 12:48:53 +1100
+Subject: [PATCH] i2c-designware: mdelay use needs linux/delay.h inclusion
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/i2c/busses/i2c-designware-core.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-designware-core.c b/drivers/i2c/busses/i2c-designware-core.c
+index 299e717..f87e25a 100644
+--- a/drivers/i2c/busses/i2c-designware-core.c
++++ b/drivers/i2c/busses/i2c-designware-core.c
+@@ -25,6 +25,7 @@
+  * ----------------------------------------------------------------------------
+  *
+  */
++#include <linux/delay.h>
+ #include <linux/clk.h>
+ #include <linux/errno.h>
+ #include <linux/err.h>
+-- 
+1.7.4.1
+
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__1_Apr_2011_10_55_45_+1100_sHo0oCUyvPFOTSvF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNlRSBAAoJEDMEi1NhKgbsg+IH/jXg1+wEfsJeOuXdKpJUG+vA
-uvhJ/NfieOFDksnwwzuPdVaCaCJEwwf1CV3F+rtVmx97mGKPnp2t7YVFBNELlHVr
-XmFZniVGYY5sJhPcbYMxtfXPA6pP6K36eZV3jkEVILVmFTELliNDLM6YuUFe9FAG
-sC4bd3epGJmp5aDTrhpoXZdgRE5Z7Q2PxOlV8qAdXilqBfzIino41xWPLcbkWq29
-02u5Vhy4w2M8TCMfH4XyQfrOJKTIvcGKtMmYWma8Fm8E8Z0/vwuTCfKVZRJdCIX/
-R9wEtgrfSay6bU/pn+c1ivXRg+fgqT1/0dlxjY/kWx1k+4GyxQrg1JSVbpLiXDk=
-=iS92
------END PGP SIGNATURE-----
-
---Signature=_Fri__1_Apr_2011_10_55_45_+1100_sHo0oCUyvPFOTSvF--
+http://www.canb.auug.org.au/~sfr/
