@@ -1,48 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the
  staging.current tree
-Date: Wed, 6 Apr 2011 14:41:22 +1000
-Message-ID: <20110406144122.8d67030e.sfr@canb.auug.org.au>
+Date: Tue, 5 Apr 2011 22:12:57 -0700
+Message-ID: <20110406051257.GA9065@kroah.com>
+References: <20110406144122.8d67030e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44677 "EHLO smtps.tip.net.au"
+Received: from kroah.org ([198.145.64.141]:46611 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750738Ab1DFEl3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Apr 2011 00:41:29 -0400
+	id S1750738Ab1DFFNf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Apr 2011 01:13:35 -0400
+Content-Disposition: inline
+In-Reply-To: <20110406144122.8d67030e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olaf Hering <olaf@aepfle.de>, Hank Janssen <hjanssen@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>
 
-Hi Greg,
+On Wed, Apr 06, 2011 at 02:41:22PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/hv/vmbus_drv.c between commit 22356585712d ("staging: hv:
+> use sync_bitops when interacting with the hypervisor") from the
+> staging.current tree and commit 98e087022b61 ("staging: hv: Remove all
+> unneeded DPRINT from hv_vmbus") from the staging tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/hv/vmbus_drv.c between commit 22356585712d ("staging: hv:
-use sync_bitops when interacting with the hypervisor") from the
-staging.current tree and commit 98e087022b61 ("staging: hv: Remove all
-unneeded DPRINT from hv_vmbus") from the staging tree.
+Thanks, yes, that looks correct, I'll resolve the conflict when I send
+the staging-linus tree to Linus in a few days.
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+thanks,
 
-diff --cc drivers/staging/hv/vmbus_drv.c
-index 79089f8,501ab36..0000000
---- a/drivers/staging/hv/vmbus_drv.c
-+++ b/drivers/staging/hv/vmbus_drv.c
-@@@ -254,10 -527,8 +527,8 @@@ static int vmbus_on_isr(void
-  	event = (union hv_synic_event_flags *)page_addr + VMBUS_MESSAGE_SINT;
-  
-  	/* Since we are a child, we only need to check bit 0 */
-- 	if (sync_test_and_clear_bit(0, (unsigned long *) &event->flags32[0])) {
-- 		DPRINT_DBG(VMBUS, "received event %d", event->flags32[0]);
- -	if (test_and_clear_bit(0, (unsigned long *) &event->flags32[0]))
-++	if (sync_test_and_clear_bit(0, (unsigned long *) &event->flags32[0]))
-  		ret |= 0x2;
-- 	}
-  
-  	return ret;
-  }
+greg k-h
