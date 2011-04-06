@@ -1,52 +1,48 @@
-From: "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>
-Subject: Re: linux-next: Tree for April 4 [BROKEN thinkpad_acpi]
-Date: Tue, 05 Apr 2011 09:27:55 -0300
-Message-ID: <1302006475.6449.1437647773@webmail.messagingengine.com>
-References: <BANLkTikr62YPeDnkL3DKA1Nts5aRFxsO6Q@mail.gmail.com><20110404122225.GA15883@srcf.ucam.org><1301921369.1941.29.camel@Joe-Laptop>
- <20110404130036.GB16669@srcf.ucam.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Wed, 6 Apr 2011 14:41:22 +1000
+Message-ID: <20110406144122.8d67030e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3.smtp.messagingengine.com ([66.111.4.27]:53431 "EHLO
-	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752904Ab1DEM14 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Apr 2011 08:27:56 -0400
-In-Reply-To: <20110404130036.GB16669@srcf.ucam.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44677 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750738Ab1DFEl3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Apr 2011 00:41:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg@redhat.com>, Joe Perches <joe@perches.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, sedat.dilek@gmail.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olaf Hering <olaf@aepfle.de>, Hank Janssen <hjanssen@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>
 
-On Mon, 04 Apr 2011 14:00 +0100, "Matthew Garrett" <mjg@redhat.com> wrote:
-> On Mon, Apr 04, 2011 at 05:49:29AM -0700, Joe Perches wrote:
-> 
-> > It's vdbg_printk no_printk verification.
-> > 
-> > #ifdef CONFIG_THINKPAD_ACPI_DEBUG
-> > #define vdbg_printk dbg_printk
-> > static const char *str_supported(int is_supported);
-> > #else
-> > #define vdbg_printk(a_dbg_level, format, arg...)	\
-> > 	no_printk(format, ##arg)
-> > #endif
-> > 
-> > Two ways to handle this.
-> > 
-> > 1: add
-> > static inline const char *str_supported(int is_supported) { return ""; }
-> > to the #else
-> > 
-> > 2: Remove no_printk verification and return it to do {} while (0)
-> > 
-> > Do you have a preference?
-> 
-> I don't. Henrique?
+Hi Greg,
 
-No set preference, either way is fine.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/hv/vmbus_drv.c between commit 22356585712d ("staging: hv:
+use sync_bitops when interacting with the hypervisor") from the
+staging.current tree and commit 98e087022b61 ("staging: hv: Remove all
+unneeded DPRINT from hv_vmbus") from the staging tree.
 
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
-  "One disk to rule them all, One disk to find them. One disk to bring
-  them all and in the darkness grind them. In the Land of Redmond
-  where the shadows lie." -- The Silicon Valley Tarot
-  Henrique Holschuh
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/staging/hv/vmbus_drv.c
+index 79089f8,501ab36..0000000
+--- a/drivers/staging/hv/vmbus_drv.c
++++ b/drivers/staging/hv/vmbus_drv.c
+@@@ -254,10 -527,8 +527,8 @@@ static int vmbus_on_isr(void
+  	event = (union hv_synic_event_flags *)page_addr + VMBUS_MESSAGE_SINT;
+  
+  	/* Since we are a child, we only need to check bit 0 */
+- 	if (sync_test_and_clear_bit(0, (unsigned long *) &event->flags32[0])) {
+- 		DPRINT_DBG(VMBUS, "received event %d", event->flags32[0]);
+ -	if (test_and_clear_bit(0, (unsigned long *) &event->flags32[0]))
+++	if (sync_test_and_clear_bit(0, (unsigned long *) &event->flags32[0]))
+  		ret |= 0x2;
+- 	}
+  
+  	return ret;
+  }
