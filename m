@@ -1,66 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: failed to fetch block tree
-Date: Thu, 7 Apr 2011 10:40:40 +1000
-Message-ID: <20110407104040.daf2a613.sfr@canb.auug.org.au>
-References: <20110407102602.f0ef8b5c.sfr@canb.auug.org.au>
-	<BANLkTinw7=WDF_UWHmDDEomgE6bvA-y2AA@mail.gmail.com>
+Subject: linux-next: build failure after merge of the hid tree
+Date: Thu, 7 Apr 2011 11:06:26 +1000
+Message-ID: <20110407110626.397202fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__7_Apr_2011_10_40_40_+1000_a3z10Ar7hsZ2VDjy"
+ boundary="Signature=_Thu__7_Apr_2011_11_06_26_+1000_IaFTRZp2oWdx7hcK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35991 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44416 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755094Ab1DGAkr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Apr 2011 20:40:47 -0400
-In-Reply-To: <BANLkTinw7=WDF_UWHmDDEomgE6bvA-y2AA@mail.gmail.com>
+	id S1756270Ab1DGBGk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Apr 2011 21:06:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Ott <alan@signal11.us>
 
---Signature=_Thu__7_Apr_2011_10_40_40_+1000_a3z10Ar7hsZ2VDjy
+--Signature=_Thu__7_Apr_2011_11_06_26_+1000_IaFTRZp2oWdx7hcK
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sedat,
+Hi Jiri,
 
-On Thu, 7 Apr 2011 02:37:10 +0200 Sedat Dilek <sedat.dilek@googlemail.com> =
-wrote:
->
-> On Thu, Apr 7, 2011 at 2:26 AM, Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
-> >
-> > Trying to fetch the block tree yesterday and today produced this error:
-> >
-> > git.kernel.dk[0: 95.166.99.235]: errno=3DConnection timed out
-> >
-> > I am using the block tree from next-20110405.
->=20
-> Clone-able here:
-> git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-2.6-block.git
+After merging the hid tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Yes, but that is not the tree Jens has asked me to fetch.
+samples/hidraw/hid-example.c: In function 'main':
+samples/hidraw/hid-example.c:103: warning: implicit declaration of function=
+ 'HIDIOCSFEATURE'
+samples/hidraw/hid-example.c:111: warning: implicit declaration of function=
+ 'HIDIOCGFEATURE'
+tmp/ccK96SHd.o: In function `main':
+hid-example.c:(.text+0x205): undefined reference to `HIDIOCSFEATURE'
+hid-example.c:(.text+0x23e): undefined reference to `HIDIOCGFEATURE'
 
+Caused by commit c54ea4918c2b ("HID: Documentation for hidraw").  I can
+only assume that linux/hidraw.h is being included from /usr/include and
+not the kernel tree being built?
+
+I have used the hid tree from next-20110406 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__7_Apr_2011_10_40_40_+1000_a3z10Ar7hsZ2VDjy
+--Signature=_Thu__7_Apr_2011_11_06_26_+1000_IaFTRZp2oWdx7hcK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNnQgIAAoJEDMEi1NhKgbsy1AH/2EB+iKBlfkppew/KF294ryg
-uLceIjLLfwIpRwNCVSJcPVmCd6/YBS9W/VRVY+Y75oDrfNFP7FNoQoWbNDETX5SP
-9FN0ATJBVUFPvUq/fFYekQF8WVxds7nshukjQdBCM52dm2ykaKlshmAvLGHzUeRI
-1wBSpiOQVi3LVITT5mqGw3FpM0sDdETlYu4isNBqV/vwogYpBD8fZF5G2hkJlLIG
-qHhQ7GZR3SRhDkqoATu01zHw1KOHSdV3CCIDBLtkNp49DY1c6AbJTMxWZ+bNVsAq
-QOLgODhllVooslttrT4wGJYz4wBdcL3qHxZcShUeZh3/rAH8ndGDLpWw8PJGxv0=
-=4H8C
+iQEcBAEBAgAGBQJNnQ4SAAoJEDMEi1NhKgbsuTQH/19GwR+FpBzkeX66xu/5HJrk
+iao8it5PsM8GPh/nMdsMgPuJysRxIZEAIy9zoSLcc70wxLuM9TEV1QRFuGez/Hog
+5113QnqUgy2tX1BMfHt+cXrqr1YwJfLnEDDeIMbC6JVDYtuu+m3amJDyC2CsMlkn
+U09ONzqF6Uu5mOpIeckxKpp1sy93JX3GTOsWZ1dMSqMDH2oL711WoI83ayrZTE4H
+jjYsjgakhkpsFZJz7BzB7nSN66Da5G+Vqeb8LBQqlI7AdQ1PF8wW8Zv+n31zWl7W
+T0bq3L4Ky/r/GjGYhxunZ1tlvC7udMdBd/x7lxub4Wk/wpdUfb7RQ6ELVZUvKX8=
+=au/I
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__7_Apr_2011_10_40_40_+1000_a3z10Ar7hsZ2VDjy--
+--Signature=_Thu__7_Apr_2011_11_06_26_+1000_IaFTRZp2oWdx7hcK--
