@@ -1,52 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Fri, 8 Apr 2011 13:27:47 +1000
-Message-ID: <20110408132747.57085f64.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with Linus' tree
+Date: Fri, 8 Apr 2011 13:45:51 +1000
+Message-ID: <20110408134551.521c6606.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__8_Apr_2011_13_27_47_+1000_bNnpd6VEArhkqytF"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57566 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757375Ab1DHD1x (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Apr 2011 23:27:53 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>
-
---Signature=_Fri__8_Apr_2011_13_27_47_+1000_bNnpd6VEArhkqytF
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Joe Perches <joe@perches.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Mauro,
+Hi all,
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-drivers/media/dvb/frontends/drx397xD.c between commit 25985edcedea ("Fix
-common misspellings") from Linus' tree and commit a8e8541bc7af ("Remove
-the now obsolete drx397xD") from the v4l-dvb tree.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/smsc911x.c between commit 25985edcedea ("Fix common
+misspellings") from Linus' tree and commit dffc6b2432ea ("smsc911x: Use
+pr_fmt, netdev_<level>, and netif_<level>") from the net tree.
 
-The latter removed the file, so I did that.
---=20
+I fixedd it up (see below) anc can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__8_Apr_2011_13_27_47_+1000_bNnpd6VEArhkqytF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNnoCzAAoJEDMEi1NhKgbs7joH/0WZhkjqUZuncHjLqmvN0Yc5
-1AOIVJtiT/nQ/5rrhAgZb31NVTKHPPnXwTmpd0gFUeHcMm/3Z7LV4x2AzlT+Fz/h
-D/ur+qam4ueFCGO771Uq4JkzYzC0e3FM4dMR8R2Zsga/LAjYA1ITr1424FSc2iaH
-WanzoF6iCT33dt/JpuLC61oIZTSJCQZr/Adtxc5+B93/9PP3AWMMXtnDKrdFko0E
-r8LB1lsyY3kuSv7+ZFrEYgJyd89upBLj2FEOFwa2M1f/coc8d9XyK4IP5+jABTHL
-1YBFm/5qPHfrYB6GK5en4Rwpb4C54AFJVPJZj7PAtob4w/8xfJoaYeZR0PaKxcw=
-=tS1C
------END PGP SIGNATURE-----
-
---Signature=_Fri__8_Apr_2011_13_27_47_+1000_bNnpd6VEArhkqytF--
+diff --cc drivers/net/smsc911x.c
+index 4b42ecc,05a882e..0000000
+--- a/drivers/net/smsc911x.c
++++ b/drivers/net/smsc911x.c
+@@@ -1669,7 -1669,7 +1669,7 @@@ static int smsc911x_eeprom_send_cmd(str
+  	}
+  
+  	if (e2cmd & E2P_CMD_EPC_TIMEOUT_) {
+- 		SMSC_TRACE(DRV, "Error occurred during eeprom operation");
+ -		SMSC_TRACE(pdata, drv, "Error occured during eeprom operation");
+++		SMSC_TRACE(pdata, drv, "Error occurred during eeprom operation");
+  		return -EINVAL;
+  	}
+  
