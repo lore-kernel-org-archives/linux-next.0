@@ -1,34 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Thu, 07 Apr 2011 13:48:21 -0700 (PDT)
-Message-ID: <20110407.134821.71129934.davem@davemloft.net>
-References: <20110407113943.2f054e2f.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bjdooks-i2c tree with Linus' tree
+Date: Fri, 8 Apr 2011 13:20:15 +1000
+Message-ID: <20110408132015.ef5da5aa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__8_Apr_2011_13_20_15_+1000_LeOiyEcTewIMrBVv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:59960
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757098Ab1DGUs6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Apr 2011 16:48:58 -0400
-In-Reply-To: <20110407113943.2f054e2f.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49372 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757411Ab1DHDUY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Apr 2011 23:20:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sathya.perla@emulex.com, ajit.khaparde@emulex.com
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dirk Brandewie <dirk.brandewie@gmail.com>, Lucas De Marchi <lucas.demarchi@profusion.mobi>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 7 Apr 2011 11:39:43 +1000
+--Signature=_Fri__8_Apr_2011_13_20_15_+1000_LeOiyEcTewIMrBVv
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/benet/be_main.c between commit 2d5d41546504 ("be2net: Fix a
-> potential crash during shutdown.") from the net-current tree and commit
-> 0f4a68288217 ("be2net: cancel be_worker in be_shutdown() even when i/f is
-> down") from the net tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+Hi Ben,
 
-I'll do a merge to clear this up for you, thanks Stephen.
+Today's linux-next merge of the bjdooks-i2c tree got a conflict in
+drivers/i2c/busses/i2c-intel-mid.c between commit 25985edcedea ("Fix
+common misspellings") from Linus' tree and commit 5c7d3e377ddd
+("i2c-intel-mid.c: Remove i2c-intel-mid.c") from the bjdooks-i2c tree.
+
+The latter removes the file, so I did that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__8_Apr_2011_13_20_15_+1000_LeOiyEcTewIMrBVv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNnn7vAAoJEDMEi1NhKgbs+40H/RyQS52snTK9QO9ybmf3LPDE
+VYYpVjCVnh2ccTC8r8IwwHA/e452liuGA69h/ZuTpfS1BzNqWnlrowCc+qOquHgk
+dAmFi3jhk+kPRLbMAV8UX0iHVbKAoiGNbotPUgWI6dDg4VLOD6aFCFeH5YAHU8ku
+RDD3VAt+Z4Ao20GQEA+weQyUKKL3t4DnWYncx5g0pbfslV2whp+351E1FvIANrSG
++KEhrDjijn3q8yBjmy3YRZ8eAIdr60HB5J3tghk/oNDg/rG3s9Td4pUjT1qX9PPK
+fzz3Yi7XGnGoLjKbN0sIpRxflewy3Efk+dm5gFNxch3Cdh8CkF47PwZiS9Tri+A=
+=8uel
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__8_Apr_2011_13_20_15_+1000_LeOiyEcTewIMrBVv--
