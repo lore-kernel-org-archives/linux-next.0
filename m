@@ -1,53 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound tree with Linus' tree
-Date: Fri, 8 Apr 2011 14:38:25 +1000
-Message-ID: <20110408143825.e15b444a.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Fri, 8 Apr 2011 15:02:14 +1000
+Message-ID: <20110408150214.78bc7871.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__8_Apr_2011_14_38_25_+1000_Umb89KeEKh84u0DW"
+ boundary="Signature=_Fri__8_Apr_2011_15_02_14_+1000_8EwwBI+MywoliMIk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46913 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42033 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751482Ab1DHEid (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 8 Apr 2011 00:38:33 -0400
+	id S1751354Ab1DHFC1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 Apr 2011 01:02:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>, John Stultz <johnstul@us.ibm.com>
 
---Signature=_Fri__8_Apr_2011_14_38_25_+1000_Umb89KeEKh84u0DW
+--Signature=_Fri__8_Apr_2011_15_02_14_+1000_8EwwBI+MywoliMIk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Takashi,
+Hi all,
 
-Today's linux-next merge of the sound tree got a conflict in
-sound/soc/codecs/wm8994.c between commit 25985edcedea ("Fix common
-misspellings") from Linus' tree and commit f701a2e594e6 ("ASoC: Factor
-WM8958 DSP2 handling into separate file") from the sound tree.
+Today's linux-next merge of the tip tree got a conflict in
+arch/ia64/kernel/cyclone.c between commit 25985edcedea ("Fix common
+misspellings") from Linus' tree and commit d60c3041778c ("ia64: convert
+to clocksource_register_hz/khz") from the tip tree.
 
-The latter moved the code changed by the former into another file.  I did
-not bother fixing the spelling errors there.
+The latter removes the line modified by the former, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__8_Apr_2011_14_38_25_+1000_Umb89KeEKh84u0DW
+--Signature=_Fri__8_Apr_2011_15_02_14_+1000_8EwwBI+MywoliMIk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNnpFBAAoJEDMEi1NhKgbsjg0H/iUcJXCS7iZyawhThNGdUo3G
-lqO3oA8PuqhMvZDZ5bZvxeKpiF+YfokXRUy/WU95nZ85tBs+MTLXTYyoIWBln2E0
-yiTMTaAA1gw5cmhP1P/2IdOlYVrqMutxa5zDCIvqH1jgRHWMvRz2Rd6x/Bgo5q/U
-s29Dj+vzpN4Cj5XdTj6hWXiPqYcx+w50GuSwJQ5/V0C58JwwgtKbPA6Gqhfjzkkn
-3BxhxrMUVeAbasGWjRsdPF5Nj1gDEURpiS5kLsb5Wb2XFWVdniUbR6nzmDuxG0+l
-ig1CgGTYvp/d2NHPS5FJVQtcIk7ZERyRQapWdccg0YXWOKLzsX9rCMHaT5zHMYo=
-=sHac
+iQEcBAEBAgAGBQJNnpbWAAoJEDMEi1NhKgbsvR8H/j6RmJl7AWVnZim8j2psi0he
+w4bAMHG7wRagZzNBDpWe0wvIUjkoTIe0Ikfvsc57qQg7rSmVeFTSjU6SeizHcKqo
+JCY0dSMQdYG8S3OquGH5P439umQ2gCSoKqMZGz3o5b6/3pmLz48ctEinLmDmPBK5
+9cJnMtHvzGl9/AzSl/Int+3saxj7HMJMJLV/YytJVujWb+Z4GMI1ERYULja+UNX2
+4mbar3kywpKKGkRPTGV/vMQ4Ql1e1iPq/qczcoIqZ9GT8RSKeMqcV7cSrhEncrA1
+F6QWwVZBVSuQJqPi/u9XR3p533bfOhWSRa81yyvfiqT89F6ny139NwnyGPPLh2c=
+=Yotl
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__8_Apr_2011_14_38_25_+1000_Umb89KeEKh84u0DW--
+--Signature=_Fri__8_Apr_2011_15_02_14_+1000_8EwwBI+MywoliMIk--
