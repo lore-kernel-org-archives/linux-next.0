@@ -1,84 +1,71 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: build failure after merge of the hid tree
-Date: Fri, 8 Apr 2011 16:54:51 -0700 (PDT)
-Message-ID: <alpine.LNX.2.00.1104081645480.6022@pobox.suse.cz>
-References: <20110407110626.397202fb.sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH -next reresend] i2c: designware-pcidrv depends on PCI
+Date: Sat, 9 Apr 2011 13:34:49 +0200
+Message-ID: <BANLkTikX_rG+6Eg4owary1YRGRG8NzyrGQ@mail.gmail.com>
+References: <20110408083215.6b3b0bfe.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:35121 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752440Ab1DHXyx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 8 Apr 2011 19:54:53 -0400
-In-Reply-To: <20110407110626.397202fb.sfr@canb.auug.org.au>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:38306 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752598Ab1DILev convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 9 Apr 2011 07:34:51 -0400
+In-Reply-To: <20110408083215.6b3b0bfe.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Ott <alan@signal11.us>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Baruch Siach <baruch@tkos.co.il>, linux-i2c@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, khali@linux-fr.org, ben-linux@fluff.org
 
-On Thu, 7 Apr 2011, Stephen Rothwell wrote:
+On Fri, Apr 8, 2011 at 17:32, Randy Dunlap <randy.dunlap@oracle.com> wr=
+ote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+>
+> i2c-designware-pcidrv is a PCI driver and should depend on PCI.
+> Fixes these build errors:
+>
+> drivers/i2c/busses/i2c-designware-pcidrv.c:256: error: implicit decla=
+ration of function 'pci_request_region'
+> drivers/i2c/busses/i2c-designware-pcidrv.c:338: error: implicit decla=
+ration of function 'pci_release_region'
+>
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Baruch Siach <baruch@tkos.co.il>
+> ---
+> =C2=A0drivers/i2c/busses/Kconfig | =C2=A0 =C2=A01 +
+> =C2=A01 file changed, 1 insertion(+)
+>
+> Does anybody merge i2c patches???
 
-> Hi Jiri,
-> 
-> After merging the hid tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> samples/hidraw/hid-example.c: In function 'main':
-> samples/hidraw/hid-example.c:103: warning: implicit declaration of function 'HIDIOCSFEATURE'
-> samples/hidraw/hid-example.c:111: warning: implicit declaration of function 'HIDIOCGFEATURE'
-> tmp/ccK96SHd.o: In function `main':
-> hid-example.c:(.text+0x205): undefined reference to `HIDIOCSFEATURE'
-> hid-example.c:(.text+0x23e): undefined reference to `HIDIOCGFEATURE'
-> 
-> Caused by commit c54ea4918c2b ("HID: Documentation for hidraw").  I can
-> only assume that linux/hidraw.h is being included from /usr/include and
-> not the kernel tree being built?
-> 
-> I have used the hid tree from next-20110406 for today.
+Yes please, it's been there since Mar 17, reported several times, and p=
+robably
+masking other build failures.
 
-OK, I have introduced the patch below to the branch now. I am not proud of 
-it, but I don't see other option currently. Will remove it after some 
-time.
+> --- linux-next-20110316.orig/drivers/i2c/busses/Kconfig
+> +++ linux-next-20110316/drivers/i2c/busses/Kconfig
+> @@ -359,6 +359,7 @@ config I2C_DESIGNWARE_PLATFORM
+>
+> =C2=A0config I2C_DESIGNWARE_PCI
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0tristate "Synopsys DesignWare PCI"
+> + =C2=A0 =C2=A0 =C2=A0 depends on PCI
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0help
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0If you say yes to this option, supp=
+ort will be included for the
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Synopsys DesignWare I2C adapter. On=
+ly master mode is supported.
 
+Gr{oetje,eeting}s,
 
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
 
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH] HID: hidraw: fix samples miscompilation
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
 
-On systems where userspace doesn't have new hidraw.h populated to
-/usr/include, the hidraw sample won't compile as it's missing the new
-ioctl defitions.
-
-Introduce temporary ugly workaround to define the ioctls "manually"
-in such cases, just to avoid miscompilation in allmodconfig cases.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
----
- samples/hidraw/hid-example.c |   11 +++++++++++
- 1 files changed, 11 insertions(+), 0 deletions(-)
-
-diff --git a/samples/hidraw/hid-example.c b/samples/hidraw/hid-example.c
-index 40e3d62..816e2dc 100644
---- a/samples/hidraw/hid-example.c
-+++ b/samples/hidraw/hid-example.c
-@@ -14,6 +14,17 @@
- #include <linux/input.h>
- #include <linux/hidraw.h>
- 
-+/*
-+ * Ugly hack to work around failing compilation on systems that don't
-+ * yet populate new version of hidraw.h to userspace.
-+ *
-+ * If you need this, please have your distro update the kernel headers.
-+ */
-+#ifndef HIDIOCSFEATURE
-+#define HIDIOCSFEATURE(len)    _IOC(_IOC_WRITE|_IOC_READ, 'H', 0x06, len)
-+#define HIDIOCGFEATURE(len)    _IOC(_IOC_WRITE|_IOC_READ, 'H', 0x07, len)
-+#endif
-+
- /* Unix */
- #include <sys/ioctl.h>
- #include <sys/types.h>
--- 
-1.7.3.1
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
