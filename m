@@ -1,32 +1,29 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: manual merge of the sound tree with Linus' tree
-Date: Sun, 10 Apr 2011 11:29:16 -0700
-Message-ID: <20110410182916.GB10486@opensource.wolfsonmicro.com>
-References: <20110408143825.e15b444a.sfr@canb.auug.org.au>
- <20110408061630.GB21700@opensource.wolfsonmicro.com>
- <s5hoc4ee88p.wl%tiwai@suse.de>
+From: "GET BACK TO ME IMMEDIATELY" <googleservice@terra.es>
+Subject: GET BACK TO ME IMMEDIATELY
+Date: Sun, 10 Apr 2011 19:25:27 +0000 (UTC)
+Message-ID: <20110410152334.1BFB92A35B2A__34940.2424799793$1302463527$gmane$org@mail.alsa.co.cr>
+Reply-To: <googleservice@terra.es>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+	charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:39143 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753606Ab1DJS3H (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 10 Apr 2011 14:29:07 -0400
-Content-Disposition: inline
-In-Reply-To: <s5hoc4ee88p.wl%tiwai@suse.de>
+Received: from logistix.cr ([201.201.66.140]:14194 "EHLO mail.alsa.co.cr"
+	rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754091Ab1DJTZF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 10 Apr 2011 15:25:05 -0400
+Date: Fri, 29 Apr 2011 05:51:58 +0200
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>
 
-On Sun, Apr 10, 2011 at 12:00:38PM +0200, Takashi Iwai wrote:
+Hello 
 
-> It'd be helpful if you can resolve in your tree.
+I wish to ask for your consent for a partnership project that I would want both of us to execute mutually which is beneficial. However my name is Mr. Rodney Smith. Kindly get back to me to confirm the receipt of this massage so that I will give you full details of the project.
 
-I'll do so whenever the next -rc comes out - I know Linus isn't fond of
-people pulling random untagged commits.
+Send your reply to my private email at rodney_smith@ibibo.com 
 
-> I've been sick and can't work much since days ago.
+I am waiting for your permission.
 
-Oh dear, get well soon :(
+Warm regards
+Mr. Rodney Smith
+Email:smithrodney@ibibo.com
