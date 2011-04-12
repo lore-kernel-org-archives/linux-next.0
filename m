@@ -1,72 +1,42 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next reresend] i2c: designware-pcidrv depends on PCI
-Date: Tue, 12 Apr 2011 08:48:12 -0700
-Message-ID: <4DA4743C.7070408@oracle.com>
-References: <20110408083215.6b3b0bfe.randy.dunlap@oracle.com>	<BANLkTikX_rG+6Eg4owary1YRGRG8NzyrGQ@mail.gmail.com> <20110412114722.0f2e67d6@endymion.delvare>
+Subject: [PATCH -next] mmc quirks: fix truncation warnings
+Date: Tue, 12 Apr 2011 09:17:35 -0700
+Message-ID: <20110412091735.f41a3d44.randy.dunlap@oracle.com>
+References: <20110412151408.b80a3afb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:53195 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757640Ab1DLPsz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Apr 2011 11:48:55 -0400
-In-Reply-To: <20110412114722.0f2e67d6@endymion.delvare>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Ben Dooks <ben-linux@fluff.org>, Baruch Siach <baruch@tkos.co.il>, linux-i2c@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20110412151408.b80a3afb.sfr@canb.auug.org.au>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Ball <cjb@laptop.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 04/12/11 02:47, Jean Delvare wrote:
-> Geert, Randy,
-> 
-> On Sat, 9 Apr 2011 13:34:49 +0200, Geert Uytterhoeven wrote:
->> On Fri, Apr 8, 2011 at 17:32, Randy Dunlap <randy.dunlap@oracle.com> wrote:
->>> From: Randy Dunlap <randy.dunlap@oracle.com>
->>>
->>> i2c-designware-pcidrv is a PCI driver and should depend on PCI.
->>> Fixes these build errors:
->>>
->>> drivers/i2c/busses/i2c-designware-pcidrv.c:256: error: implicit declaration of function 'pci_request_region'
->>> drivers/i2c/busses/i2c-designware-pcidrv.c:338: error: implicit declaration of function 'pci_release_region'
->>>
->>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->>> Cc: Baruch Siach <baruch@tkos.co.il>
->>> ---
->>>  drivers/i2c/busses/Kconfig |    1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> Does anybody merge i2c patches???
->>
->> Yes please, it's been there since Mar 17, reported several times, and probably
->> masking other build failures.
-> 
-> This bug only exists in linux-next, as the code in question wasn't
-> merged in Linus's tree yet. It is drawn into linux-next from Ben
-> Dooks's next-i2c branch:
->   http://git.fluff.org/gitweb?p=bjdooks/linux.git;a=shortlog;h=refs/heads/next-i2c
-> 
-> This is where it has to be fixed, so only Ben can do it. Ben, please?
-> 
-> Meanwhile, it should be possible to apply a hot fix to linux-next
-> directly, Stephen does it pretty often. Stephen, could you please apply
-> this fix temporarily until Ben wakes up and applies it to his tree?
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Thanks, Jean.
+Fix data truncation warnings: .manfid is not unsigned long:
 
->>> --- linux-next-20110316.orig/drivers/i2c/busses/Kconfig
->>> +++ linux-next-20110316/drivers/i2c/busses/Kconfig
->>> @@ -359,6 +359,7 @@ config I2C_DESIGNWARE_PLATFORM
->>>
->>>  config I2C_DESIGNWARE_PCI
->>>        tristate "Synopsys DesignWare PCI"
->>> +       depends on PCI
->>>        help
->>>          If you say yes to this option, support will be included for the
->>>          Synopsys DesignWare I2C adapter. Only master mode is supported.
-> 
+drivers/mmc/core/quirks.c:36: warning: large integer implicitly truncated to unsigned type
+drivers/mmc/core/quirks.c:40: warning: large integer implicitly truncated to unsigned type
+drivers/mmc/core/quirks.c:43: warning: large integer implicitly truncated to unsigned type
+drivers/mmc/core/quirks.c:46: warning: large integer implicitly truncated to unsigned type
 
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc:	Chris Ball <cjb@laptop.org>
+Cc:	linux-mmc@vger.kernel.org
+---
+ include/linux/mmc/card.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--- linux-next-20110412.orig/include/linux/mmc/card.h
++++ linux-next-20110412/include/linux/mmc/card.h
+@@ -180,7 +180,7 @@ struct mmc_fixup {
+ 	int data;
+ };
+ 
+-#define CID_MANFID_ANY (-1ul)
++#define CID_MANFID_ANY (-1u)
+ #define CID_OEMID_ANY ((unsigned short) -1)
+ #define CID_NAME_ANY (NULL)
+ 
