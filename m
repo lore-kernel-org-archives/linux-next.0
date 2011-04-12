@@ -1,75 +1,74 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree (tip
- tree related)
-Date: Mon, 11 Apr 2011 23:25:43 -0700 (PDT)
-Message-ID: <20110411.232543.193698090.davem@davemloft.net>
-References: <20110412140040.3020ef55.sfr@canb.auug.org.au>
-	<20110412062002.GA31050@elte.hu>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: [PATCH -next reresend] i2c: designware-pcidrv depends on PCI
+Date: Tue, 12 Apr 2011 11:47:22 +0200
+Message-ID: <20110412114722.0f2e67d6@endymion.delvare>
+References: <20110408083215.6b3b0bfe.randy.dunlap@oracle.com>
+	<BANLkTikX_rG+6Eg4owary1YRGRG8NzyrGQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:47826
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754504Ab1DLG0U (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Apr 2011 02:26:20 -0400
-In-Reply-To: <20110412062002.GA31050@elte.hu>
+Received: from zone0.gcu-squad.org ([212.85.147.21]:44445 "EHLO
+	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753523Ab1DLJrt convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Apr 2011 05:47:49 -0400
+In-Reply-To: <BANLkTikX_rG+6Eg4owary1YRGRG8NzyrGQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: mingo@elte.hu
-Cc: sfr@canb.auug.org.au, tglx@linutronix.de, hpa@zytor.com, peterz@infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Ben Dooks <ben-linux@fluff.org>
+Cc: Baruch Siach <baruch@tkos.co.il>, linux-i2c@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Ingo Molnar <mingo@elte.hu>
-Date: Tue, 12 Apr 2011 08:20:02 +0200
+Geert, Randy,
 
-> 
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
->> Hi all,
->> 
->> After merging the final tree, today's linux-next build (sparc64 defconfig)
->> failed like this:
->> 
->> kernel/sched.c:7140: error: 'cpu_coregroup_mask' undeclared here (not in a function)
->> 
->> Caused by commit 2c402dc3bb50 ("sched: Unify the sched_domain build
->> functions").  On sparc64, cpu_coregroup_mask is a #define, not a function.
->> 
->> I applied tha patch below (idea stolen from s390) whcih could probably be
->> better.
->> 
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Tue, 12 Apr 2011 13:51:32 +1000
->> Subject: [PATCH] sched: fix sparc64 for sched_domain changes
->> 
->> Fixes this compile error:
->> 
->> kernel/sched.c:7140: error: 'cpu_coregroup_mask' undeclared here (not in a function)
->> 
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> ---
->>  arch/sparc/include/asm/topology_64.h |    6 +++++-
->>  1 files changed, 5 insertions(+), 1 deletions(-)
->> 
->> diff --git a/arch/sparc/include/asm/topology_64.h b/arch/sparc/include/asm/topology_64.h
->> index 1c79f32..16f477d 100644
->> --- a/arch/sparc/include/asm/topology_64.h
->> +++ b/arch/sparc/include/asm/topology_64.h
->> @@ -65,6 +65,10 @@ static inline int pcibus_to_node(struct pci_bus *pbus)
->>  #define smt_capable()				(sparc64_multi_core)
->>  #endif /* CONFIG_SMP */
->>  
->> -#define cpu_coregroup_mask(cpu)			(&cpu_core_map[cpu])
->> +extern cpumask_t cpu_core_map[NR_CPUS];
->> +static inline const struct cpumask *cpu_coregroup_mask(int cpu)
->> +{
->> +        return &cpu_core_map[cpu];
->> +}
-> 
-> Dave, if this change is fine with you i'd like to queue it up in 
-> tip:sched/domains.
+On Sat, 9 Apr 2011 13:34:49 +0200, Geert Uytterhoeven wrote:
+> On Fri, Apr 8, 2011 at 17:32, Randy Dunlap <randy.dunlap@oracle.com> =
+wrote:
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> >
+> > i2c-designware-pcidrv is a PCI driver and should depend on PCI.
+> > Fixes these build errors:
+> >
+> > drivers/i2c/busses/i2c-designware-pcidrv.c:256: error: implicit dec=
+laration of function 'pci_request_region'
+> > drivers/i2c/busses/i2c-designware-pcidrv.c:338: error: implicit dec=
+laration of function 'pci_release_region'
+> >
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > Cc: Baruch Siach <baruch@tkos.co.il>
+> > ---
+> > =A0drivers/i2c/busses/Kconfig | =A0 =A01 +
+> > =A01 file changed, 1 insertion(+)
+> >
+> > Does anybody merge i2c patches???
+>=20
+> Yes please, it's been there since Mar 17, reported several times, and=
+ probably
+> masking other build failures.
 
-Yep, it's fine:
+This bug only exists in linux-next, as the code in question wasn't
+merged in Linus's tree yet. It is drawn into linux-next from Ben
+Dooks's next-i2c branch:
+  http://git.fluff.org/gitweb?p=3Dbjdooks/linux.git;a=3Dshortlog;h=3Dre=
+fs/heads/next-i2c
 
-Acked-by: David S. Miller <davem@davemloft.net>
+This is where it has to be fixed, so only Ben can do it. Ben, please?
+
+Meanwhile, it should be possible to apply a hot fix to linux-next
+directly, Stephen does it pretty often. Stephen, could you please apply
+this fix temporarily until Ben wakes up and applies it to his tree?
+
+> > --- linux-next-20110316.orig/drivers/i2c/busses/Kconfig
+> > +++ linux-next-20110316/drivers/i2c/busses/Kconfig
+> > @@ -359,6 +359,7 @@ config I2C_DESIGNWARE_PLATFORM
+> >
+> > =A0config I2C_DESIGNWARE_PCI
+> > =A0 =A0 =A0 =A0tristate "Synopsys DesignWare PCI"
+> > + =A0 =A0 =A0 depends on PCI
+> > =A0 =A0 =A0 =A0help
+> > =A0 =A0 =A0 =A0 =A0If you say yes to this option, support will be i=
+ncluded for the
+> > =A0 =A0 =A0 =A0 =A0Synopsys DesignWare I2C adapter. Only master mod=
+e is supported.
+
+--=20
+Jean Delvare
