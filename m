@@ -1,57 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 12 Apr 2011 11:59:54 +1000
-Message-ID: <20110412115954.c3ab875a.sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the sound-asoc tree
+Date: Tue, 12 Apr 2011 12:05:13 +1000
+Message-ID: <20110412120513.c07dcbab.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__12_Apr_2011_11_59_54_+1000_MT6sKQVg0ELaFbD0"
+ boundary="Signature=_Tue__12_Apr_2011_12_05_13_+1000_FQE=z2D9QWAZqtzG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33728 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60852 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753756Ab1DLCAH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Apr 2011 22:00:07 -0400
+	id S1754153Ab1DLCFW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Apr 2011 22:05:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Hsiang <cdefgab1288@gmail.com>
 
---Signature=_Tue__12_Apr_2011_11_59_54_+1000_MT6sKQVg0ELaFbD0
+--Signature=_Tue__12_Apr_2011_12_05_13_+1000_FQE=z2D9QWAZqtzG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64 allmodc=
-onfig)
-failed like this:
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-sound/soc/codecs/wm1250-ev1.c:76: error: '__mod_i2c_device_table' aliased t=
-o undefined symbol 'wm1250_ev1__id'
+sound/soc/codecs/max98095.c:607: warning: initialization discards qualifier=
+s from pointer target type
+sound/soc/codecs/max98095.c:610: warning: initialization discards qualifier=
+s from pointer target type
+sound/soc/codecs/max98095.c:616: warning: initialization discards qualifier=
+s from pointer target type
+sound/soc/codecs/max98095.c:624: warning: initialization discards qualifier=
+s from pointer target type
+sound/soc/codecs/max98095.c:633: warning: initialization discards qualifier=
+s from pointer target type
+sound/soc/codecs/max98095.c:636: warning: initialization discards qualifier=
+s from pointer target type
+sound/soc/codecs/max98095.c:642: warning: initialization discards qualifier=
+s from pointer target type
+sound/soc/codecs/max98095.c:645: warning: initialization discards qualifier=
+s from pointer target type
+sound/soc/codecs/max98095.c:648: warning: initialization discards qualifier=
+s from pointer target type
 
-Caused by commit 4bb3f43c6e3f ("ASoC: Add initial WM1250-EV1 Springbank
-audio I/O module driver").
-
-I have used the sound-asoc tree from next-20110411 for today.
+Introduced by commit 82a5a936f6de ("ASoC: Add max98095 CODEC driver").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__12_Apr_2011_11_59_54_+1000_MT6sKQVg0ELaFbD0
+--Signature=_Tue__12_Apr_2011_12_05_13_+1000_FQE=z2D9QWAZqtzG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNo7IaAAoJEDMEi1NhKgbscnEH/ivGX52HsOxbgxYHq3aOERnC
-hwFNEfAlYl5TAAEnWBNZoZkNIdeOtwL769sq7v/65ez26JREdYCQPsY3xEuKCdnY
-N3HOaoIs0iwxeW7RFCF6OU4O7/SX7KGOstVrdkdbyrrPmTLaVVC7gNNHFl5jcrlh
-v+rtBtDPxGmVBS1To3BKRV8Y6FRRuo20YNYGNZFQIkhFi6/sOCTuDjVVIWpgp6Tt
-UgA+OeMFfP2jlpZaSJpl8K+MSluKM+X1OiVRLTHr6VAeYzu3nLcFiSwjQUPNlaxg
-FiesfXMCDCPt0Abc/eOmZr2D4eL73cFTlHey5aduu3yBLB3bDeZ5HBd8xhjsl0U=
-=E7iC
+iQEcBAEBAgAGBQJNo7NZAAoJEDMEi1NhKgbs/soH/RIdrcJUurz/RQJNPbxm1BS3
+LTTNUrK+Hs02apxLgavdzH6JdmL2bbC6gsPJ0WR0iLwIB839BHi6EPT24VajjghV
+6kdnOIay2wB5+ce85jqb4Jy435eqxhYSounF3QfDtyqKP2PJNEGtgrGc/fWXBGzR
+oDT1K3L7HpR/44XMzy+vgWWcP/ZlYGmBIF/SktzKPFcnGFbM8RSh4GloywDh6hML
+QnedN2kqxH4cnkTNK4Tdxtj8ULoVh5w+oCo4avMh0CAHoMRssbWqoF1Q4e1JR3U7
+JBoiKaba4ZusYkIi2Na7/16Md8XtkuKYqidSyzJTxNfJr5o/fed+40AvnixQ4Gw=
+=sRR6
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__12_Apr_2011_11_59_54_+1000_MT6sKQVg0ELaFbD0--
+--Signature=_Tue__12_Apr_2011_12_05_13_+1000_FQE=z2D9QWAZqtzG--
