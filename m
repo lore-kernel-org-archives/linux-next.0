@@ -1,69 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the sound-asoc tree
-Date: Tue, 12 Apr 2011 12:05:13 +1000
-Message-ID: <20110412120513.c07dcbab.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (tip tree
+ related)
+Date: Tue, 12 Apr 2011 14:00:40 +1000
+Message-ID: <20110412140040.3020ef55.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__12_Apr_2011_12_05_13_+1000_FQE=z2D9QWAZqtzG"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60852 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754153Ab1DLCFW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Apr 2011 22:05:22 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Hsiang <cdefgab1288@gmail.com>
-
---Signature=_Tue__12_Apr_2011_12_05_13_+1000_FQE=z2D9QWAZqtzG
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-sound/soc/codecs/max98095.c:607: warning: initialization discards qualifier=
-s from pointer target type
-sound/soc/codecs/max98095.c:610: warning: initialization discards qualifier=
-s from pointer target type
-sound/soc/codecs/max98095.c:616: warning: initialization discards qualifier=
-s from pointer target type
-sound/soc/codecs/max98095.c:624: warning: initialization discards qualifier=
-s from pointer target type
-sound/soc/codecs/max98095.c:633: warning: initialization discards qualifier=
-s from pointer target type
-sound/soc/codecs/max98095.c:636: warning: initialization discards qualifier=
-s from pointer target type
-sound/soc/codecs/max98095.c:642: warning: initialization discards qualifier=
-s from pointer target type
-sound/soc/codecs/max98095.c:645: warning: initialization discards qualifier=
-s from pointer target type
-sound/soc/codecs/max98095.c:648: warning: initialization discards qualifier=
-s from pointer target type
+kernel/sched.c:7140: error: 'cpu_coregroup_mask' undeclared here (not in a function)
 
-Introduced by commit 82a5a936f6de ("ASoC: Add max98095 CODEC driver").
---=20
+Caused by commit 2c402dc3bb50 ("sched: Unify the sched_domain build
+functions").  On sparc64, cpu_coregroup_mask is a #define, not a function.
+
+I applied tha patch below (idea stolen from s390) whcih could probably be
+better.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 12 Apr 2011 13:51:32 +1000
+Subject: [PATCH] sched: fix sparc64 for sched_domain changes
+
+Fixes this compile error:
+
+kernel/sched.c:7140: error: 'cpu_coregroup_mask' undeclared here (not in a function)
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/include/asm/topology_64.h |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
+
+diff --git a/arch/sparc/include/asm/topology_64.h b/arch/sparc/include/asm/topology_64.h
+index 1c79f32..16f477d 100644
+--- a/arch/sparc/include/asm/topology_64.h
++++ b/arch/sparc/include/asm/topology_64.h
+@@ -65,6 +65,10 @@ static inline int pcibus_to_node(struct pci_bus *pbus)
+ #define smt_capable()				(sparc64_multi_core)
+ #endif /* CONFIG_SMP */
+ 
+-#define cpu_coregroup_mask(cpu)			(&cpu_core_map[cpu])
++extern cpumask_t cpu_core_map[NR_CPUS];
++static inline const struct cpumask *cpu_coregroup_mask(int cpu)
++{
++        return &cpu_core_map[cpu];
++}
+ 
+ #endif /* _ASM_SPARC64_TOPOLOGY_H */
+-- 
+1.7.4.1
+
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__12_Apr_2011_12_05_13_+1000_FQE=z2D9QWAZqtzG
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNo7NZAAoJEDMEi1NhKgbs/soH/RIdrcJUurz/RQJNPbxm1BS3
-LTTNUrK+Hs02apxLgavdzH6JdmL2bbC6gsPJ0WR0iLwIB839BHi6EPT24VajjghV
-6kdnOIay2wB5+ce85jqb4Jy435eqxhYSounF3QfDtyqKP2PJNEGtgrGc/fWXBGzR
-oDT1K3L7HpR/44XMzy+vgWWcP/ZlYGmBIF/SktzKPFcnGFbM8RSh4GloywDh6hML
-QnedN2kqxH4cnkTNK4Tdxtj8ULoVh5w+oCo4avMh0CAHoMRssbWqoF1Q4e1JR3U7
-JBoiKaba4ZusYkIi2Na7/16Md8XtkuKYqidSyzJTxNfJr5o/fed+40AvnixQ4Gw=
-=sRR6
------END PGP SIGNATURE-----
-
---Signature=_Tue__12_Apr_2011_12_05_13_+1000_FQE=z2D9QWAZqtzG--
