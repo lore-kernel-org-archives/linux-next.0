@@ -1,42 +1,54 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] mmc quirks: fix truncation warnings
-Date: Tue, 12 Apr 2011 09:17:35 -0700
-Message-ID: <20110412091735.f41a3d44.randy.dunlap@oracle.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH -next] mmc quirks: fix truncation warnings
+Date: Tue, 12 Apr 2011 13:03:23 -0400
+Message-ID: <m339ln1jxg.fsf@pullcord.laptop.org>
 References: <20110412151408.b80a3afb.sfr@canb.auug.org.au>
+	<20110412091735.f41a3d44.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20110412151408.b80a3afb.sfr@canb.auug.org.au>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Ball <cjb@laptop.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110412091735.f41a3d44.randy.dunlap@oracle.com> (Randy Dunlap's
+	message of "Tue, 12 Apr 2011 09:17:35 -0700")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi,
 
-Fix data truncation warnings: .manfid is not unsigned long:
+On Tue, Apr 12 2011, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+>
+> Fix data truncation warnings: .manfid is not unsigned long:
+>
+> drivers/mmc/core/quirks.c:36: warning: large integer implicitly truncated to unsigned type
+> drivers/mmc/core/quirks.c:40: warning: large integer implicitly truncated to unsigned type
+> drivers/mmc/core/quirks.c:43: warning: large integer implicitly truncated to unsigned type
+> drivers/mmc/core/quirks.c:46: warning: large integer implicitly truncated to unsigned type
+>
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc:	Chris Ball <cjb@laptop.org>
+> Cc:	linux-mmc@vger.kernel.org
+> ---
+>  include/linux/mmc/card.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- linux-next-20110412.orig/include/linux/mmc/card.h
+> +++ linux-next-20110412/include/linux/mmc/card.h
+> @@ -180,7 +180,7 @@ struct mmc_fixup {
+>  	int data;
+>  };
+>  
+> -#define CID_MANFID_ANY (-1ul)
+> +#define CID_MANFID_ANY (-1u)
+>  #define CID_OEMID_ANY ((unsigned short) -1)
+>  #define CID_NAME_ANY (NULL)
+>  
+>
 
-drivers/mmc/core/quirks.c:36: warning: large integer implicitly truncated to unsigned type
-drivers/mmc/core/quirks.c:40: warning: large integer implicitly truncated to unsigned type
-drivers/mmc/core/quirks.c:43: warning: large integer implicitly truncated to unsigned type
-drivers/mmc/core/quirks.c:46: warning: large integer implicitly truncated to unsigned type
+Thanks very much, Randy, I've pushed this to mmc-next.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc:	Chris Ball <cjb@laptop.org>
-Cc:	linux-mmc@vger.kernel.org
----
- include/linux/mmc/card.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20110412.orig/include/linux/mmc/card.h
-+++ linux-next-20110412/include/linux/mmc/card.h
-@@ -180,7 +180,7 @@ struct mmc_fixup {
- 	int data;
- };
- 
--#define CID_MANFID_ANY (-1ul)
-+#define CID_MANFID_ANY (-1u)
- #define CID_OEMID_ANY ((unsigned short) -1)
- #define CID_NAME_ANY (NULL)
- 
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
