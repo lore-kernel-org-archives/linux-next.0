@@ -1,35 +1,35 @@
-From: Steven Whitehouse <swhiteho@redhat.com>
-Subject: Re: linux-next: manual merge of the gfs2 tree with Linus' tree
-Date: Wed, 13 Apr 2011 11:14:57 +0100
-Message-ID: <1302689697.2613.6.camel@dolmen>
-References: <20110401105545.b2873be4.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with Linus' tree
+Date: Wed, 13 Apr 2011 12:18:42 -0700
+Message-ID: <20110413191842.GA13359@kroah.com>
+References: <20110408154756.538a59f2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:29341 "EHLO mx1.redhat.com"
+Received: from kroah.org ([198.145.64.141]:51325 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757164Ab1DMKMK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 Apr 2011 06:12:10 -0400
-In-Reply-To: <20110401105545.b2873be4.sfr@canb.auug.org.au>
+	id S1756198Ab1DMTT5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Apr 2011 15:19:57 -0400
+Content-Disposition: inline
+In-Reply-To: <20110408154756.538a59f2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jaxboe@fusionio.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Roland Vossen <rvossen@broadcom.com>
 
-Hi,
-
-On Fri, 2011-04-01 at 10:55 +1100, Stephen Rothwell wrote:
-> Hi Steven,
+On Fri, Apr 08, 2011 at 03:47:56PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Today's linux-next merge of the gfs2 tree got a conflict in fs/gfs2/log.c
-> between commit 721a9602e660 ("block: kill off REQ_UNPLUG") from Linus'
-> tree and commit 7ef2a4f51303 ("GFS2: Use filemap_fdatawrite() to write
-> back the AIL") from the gfs2 tree.
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/brcm80211/README between commit 25985edcedea ("Fix common
+> misspellings") from Linus' tree and commit 4a266c4fc99d ("staging:
+> brcm80211: moved several README items to website") from the staging tree.
 > 
-> The former removed some of the code modified by the latter, so I did that.
+> The latter removed the text that the former fixed up, so I did that.
 
-Sorry for the delay as I was away last week. That was the correct fix
-and I've updated the tree so that it shouldn't be an issue any more,
+Ok, all of the staging-next tree merge issues with Linus's tree should
+now be resolved.  Please let me know if there are any that I missed.
 
-Steve.
+thanks,
+
+greg k-h
