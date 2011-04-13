@@ -1,78 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Tue, 12 Apr 2011 19:28:04 -0700 (PDT)
-Message-ID: <20110412.192804.226786375.davem@davemloft.net>
-References: <20110413120323.36030bcf.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20110413120323.36030bcf.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jpirko@redhat.com
-List-Id: linux-next.vger.kernel.org
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 13 Apr 2011 12:03:23 +1000
+Subject: linux-next: manual merge of the wireless tree with Linus' tree
+Date: Wed, 13 Apr 2011 12:30:14 +1000
+Message-ID: <20110413123014.ddad9450.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__13_Apr_2011_12_30_14_+1000_z3cfp7OiAQDsJDKP"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56545 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751794Ab1DMCa2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Apr 2011 22:30:28 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Wey-Yi Guy <wey-yi.w.guy@intel.com>
 
-> After merging the net tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/infiniband/ulp/iser/iser_initiator.o: In function `vlan_untag':
-> iser_initiator.c:(.opd+0x0): multiple definition of `vlan_untag'
-> drivers/infiniband/ulp/iser/iser_verbs.o:iser_verbs.c:(.opd+0x0): first defined here
-> drivers/infiniband/ulp/iser/iser_initiator.o: In function `.vlan_untag':
-> iser_initiator.c:(.text+0x0): multiple definition of `.vlan_untag'
-> drivers/infiniband/ulp/iser/iser_verbs.o:iser_verbs.c:(.text+0x0): first defined here
-> 
-> and on and on ... (lota and lots :-()
+--Signature=_Wed__13_Apr_2011_12_30_14_+1000_z3cfp7OiAQDsJDKP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Strange, I wonder why this driver isn't enabled in my allmodconfig builds.
-Let's see.
+Hi John,
 
-Oh, this driver depends upon INFINIBAND_ADDR_TRANS which will never be
-enabled if IPV6=m, because of:
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-core.c between commit 25985edcedea ("Fix
+common misspellings") from Linus' tree and commit ee3cd7e04ca0 ("iwlagn:
+cleanup to remove the reference for 3945") from the wireless tree.
 
-config INFINIBAND_ADDR_TRANS
-	bool
-	depends on INET
-	depends on !(INFINIBAND = y && IPV6 = m)
-	default y
+The latter removes the line that the former corrects, so I did that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-come on...
+--Signature=_Wed__13_Apr_2011_12_30_14_+1000_z3cfp7OiAQDsJDKP
+Content-Type: application/pgp-signature
 
-> Probably caused by commit bcc6d4790361 ("net: vlan: make non-hw-accel rx
-> path similar to hw-accel") which added a "non-static" inline version of
-> vlan_untag() to include/linux/if_vlan.h.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-Yeah, this issue is not specific to this driver and actually is just
-a missing "static" in the vlan disabled case.
+iQEcBAEBAgAGBQJNpQq2AAoJEDMEi1NhKgbs1qIH/2eTrvEZGzYmHs9XVSGqqome
+JcHmiQL5WdJJY0EzifLP9opLvRs05KvV6R/SwPxWx7Ehg6fU5THhkBTVy4IH9k35
+lSNdzL7BEmiF+Lv82zM4cy58ULZwCHfpZaSQBI5sNr5Zi4XW6cYfU5uaxZGSuKnw
+iKecWPSx2nIt2hXzbtsUDhFUJknixa4z/g5X2132nVu4w8ETBM2DJMcUSGl8OiOc
+674FZ9hZmHTYfzAl11O+ryrLTKTyrG7bE4X2UcNpw7CRoF2dCztKDSCQmoTRPnEp
+SUBgbpIia1a4syST29ZP496Xe9ltyYrQS+n/icPD8OtuDlL32zx2UtWRyEQZy48=
+=ZFWp
+-----END PGP SIGNATURE-----
 
-I'll add the following fix, thanks Stephen.
-
---------------------
-net: Missing 'inline' in vlan-disabled vlan_untag()
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- include/linux/if_vlan.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/include/linux/if_vlan.h b/include/linux/if_vlan.h
-index 998b299..546d9d3 100644
---- a/include/linux/if_vlan.h
-+++ b/include/linux/if_vlan.h
-@@ -174,7 +174,7 @@ static inline bool vlan_do_receive(struct sk_buff **skb)
- 	return false;
- }
- 
--inline struct sk_buff *vlan_untag(struct sk_buff *skb)
-+static inline struct sk_buff *vlan_untag(struct sk_buff *skb)
- {
- 	return skb;
- }
--- 
-1.7.4.3
-
+--Signature=_Wed__13_Apr_2011_12_30_14_+1000_z3cfp7OiAQDsJDKP--
