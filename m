@@ -1,35 +1,84 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with Linus' tree
-Date: Wed, 13 Apr 2011 12:18:42 -0700
-Message-ID: <20110413191842.GA13359@kroah.com>
-References: <20110408154756.538a59f2.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Thu, 14 Apr 2011 13:14:40 +1000
+Message-ID: <20110414131440.fb8dc3ad.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:51325 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46295 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756198Ab1DMTT5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 Apr 2011 15:19:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20110408154756.538a59f2.sfr@canb.auug.org.au>
+	id S1758639Ab1DNDOr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Apr 2011 23:14:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Roland Vossen <rvossen@broadcom.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Apr 08, 2011 at 03:47:56PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/brcm80211/README between commit 25985edcedea ("Fix common
-> misspellings") from Linus' tree and commit 4a266c4fc99d ("staging:
-> brcm80211: moved several README items to website") from the staging tree.
-> 
-> The latter removed the text that the former fixed up, so I did that.
+Hi all,
 
-Ok, all of the staging-next tree merge issues with Linus's tree should
-now be resolved.  Please let me know if there are any that I missed.
+Today's linux-next merge of the tip tree got a conflict in kernel/sched.c
+between commit 6631e635c65d ("block: don't flush plugged IO on forced
+preemtion scheduling") from Linus' tree and commits 098247b90a9e ("sched:
+Provide p->on_rq") and a3380736e4b3 ("sched: Also serialize ttwu_local()
+with p->pi_lock") from the tip tree.
 
-thanks,
+I fixed them up (hopefully - see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-greg k-h
+diff --cc kernel/sched.c
+index a187c3f,3e99c42..0000000
+--- a/kernel/sched.c
++++ b/kernel/sched.c
+@@@ -4103,30 -4184,31 +4184,31 @@@ need_resched
+  			 * task to maintain concurrency.  If so, wake
+  			 * up the task.
+  			 */
+- 			if (prev->flags & PF_WQ_WORKER) {
+- 				struct task_struct *to_wakeup;
+- 
++ 			if (prev->flags & PF_WQ_WORKER)
+  				to_wakeup = wq_worker_sleeping(prev, cpu);
+- 				if (to_wakeup)
+- 					try_to_wake_up_local(to_wakeup);
+- 			}
+  			deactivate_task(rq, prev, DEQUEUE_SLEEP);
++ 			prev->on_rq = 0;
+ +
+ +			/*
+ +			 * If we are going to sleep and we have plugged IO queued, make
+ +			 * sure to submit it to avoid deadlocks.
+ +			 */
+ +			if (blk_needs_flush_plug(prev)) {
+ +				raw_spin_unlock(&rq->lock);
+ +				blk_flush_plug(prev);
+ +				raw_spin_lock(&rq->lock);
+ +			}
+  		}
+  		switch_count = &prev->nvcsw;
+  	}
+  
++ 	/*
+ -	 * If we are going to sleep and we have plugged IO queued, make
+ -	 * sure to submit it to avoid deadlocks.
+ -	 */
+ -	if (prev->state != TASK_RUNNING && blk_needs_flush_plug(prev)) {
+ -		raw_spin_unlock(&rq->lock);
+ -		blk_flush_plug(prev);
+ -		raw_spin_lock(&rq->lock);
+ -	}
+ -
+ -	/*
++ 	 * All three: try_to_wake_up_local(), pre_schedule() and idle_balance()
++ 	 * can drop rq->lock.
++ 	 */
++ 	if (to_wakeup)
++ 		try_to_wake_up_local(to_wakeup);
+  	pre_schedule(rq, prev);
+- 
+  	if (unlikely(!rq->nr_running))
+  		idle_balance(cpu, rq);
+  
