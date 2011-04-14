@@ -1,84 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Thu, 14 Apr 2011 13:14:40 +1000
-Message-ID: <20110414131440.fb8dc3ad.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the s5p tree
+Date: Thu, 14 Apr 2011 14:15:26 +1000
+Message-ID: <20110414141526.e0d5efa1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46295 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758639Ab1DNDOr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 Apr 2011 23:14:47 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the tip tree got a conflict in kernel/sched.c
-between commit 6631e635c65d ("block: don't flush plugged IO on forced
-preemtion scheduling") from Linus' tree and commits 098247b90a9e ("sched:
-Provide p->on_rq") and a3380736e4b3 ("sched: Also serialize ttwu_local()
-with p->pi_lock") from the tip tree.
+Today's linux-next merge of the usb tree got a conflict in
+arch/arm/mach-exynos4/mach-nuri.c between commit d2a852f78de6 ("ARM:
+EXYNOS4: Add Atmel mXT touchscreen device to the NURI board") from the
+s5p tree and commit 01da92f7f643 ("ARM: EXYNOS4: Add usb ehci device to
+the NURI board") from the usb tree.
 
-I fixed them up (hopefully - see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc kernel/sched.c
-index a187c3f,3e99c42..0000000
---- a/kernel/sched.c
-+++ b/kernel/sched.c
-@@@ -4103,30 -4184,31 +4184,31 @@@ need_resched
-  			 * task to maintain concurrency.  If so, wake
-  			 * up the task.
-  			 */
-- 			if (prev->flags & PF_WQ_WORKER) {
-- 				struct task_struct *to_wakeup;
-- 
-+ 			if (prev->flags & PF_WQ_WORKER)
-  				to_wakeup = wq_worker_sleeping(prev, cpu);
-- 				if (to_wakeup)
-- 					try_to_wake_up_local(to_wakeup);
-- 			}
-  			deactivate_task(rq, prev, DEQUEUE_SLEEP);
-+ 			prev->on_rq = 0;
- +
- +			/*
- +			 * If we are going to sleep and we have plugged IO queued, make
- +			 * sure to submit it to avoid deadlocks.
- +			 */
- +			if (blk_needs_flush_plug(prev)) {
- +				raw_spin_unlock(&rq->lock);
- +				blk_flush_plug(prev);
- +				raw_spin_lock(&rq->lock);
- +			}
-  		}
-  		switch_count = &prev->nvcsw;
-  	}
+diff --cc arch/arm/mach-exynos4/mach-nuri.c
+index d13c5e8,bb5d12f..0000000
+--- a/arch/arm/mach-exynos4/mach-nuri.c
++++ b/arch/arm/mach-exynos4/mach-nuri.c
+@@@ -31,8 -30,8 +31,10 @@@
+  #include <plat/cpu.h>
+  #include <plat/devs.h>
+  #include <plat/sdhci.h>
+ +#include <plat/gpio-cfg.h>
+ +#include <plat/iic.h>
++ #include <plat/ehci.h>
++ #include <plat/clock.h>
   
-+ 	/*
- -	 * If we are going to sleep and we have plugged IO queued, make
- -	 * sure to submit it to avoid deadlocks.
- -	 */
- -	if (prev->state != TASK_RUNNING && blk_needs_flush_plug(prev)) {
- -		raw_spin_unlock(&rq->lock);
- -		blk_flush_plug(prev);
- -		raw_spin_lock(&rq->lock);
- -	}
- -
- -	/*
-+ 	 * All three: try_to_wake_up_local(), pre_schedule() and idle_balance()
-+ 	 * can drop rq->lock.
-+ 	 */
-+ 	if (to_wakeup)
-+ 		try_to_wake_up_local(to_wakeup);
-  	pre_schedule(rq, prev);
-- 
-  	if (unlikely(!rq->nr_running))
-  		idle_balance(cpu, rq);
+  #include <mach/map.h>
   
+@@@ -355,7 -282,7 +367,8 @@@ static struct platform_device *nuri_dev
+  	&s3c_device_hsmmc3,
+  	&s3c_device_wdt,
+  	&s3c_device_timer[0],
+ +	&s3c_device_i2c3,
++ 	&s5p_device_ehci,
+  
+  	/* NURI Devices */
+  	&nuri_gpio_keys,
+@@@ -373,13 -300,13 +386,16 @@@ static void __init nuri_map_io(void
+  static void __init nuri_machine_init(void)
+  {
+  	nuri_sdhci_init();
+ +	nuri_tsp_init();
+  
+  	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
+ +	s3c_i2c3_set_platdata(&i2c3_data);
+ +	i2c_register_board_info(3, i2c3_devs, ARRAY_SIZE(i2c3_devs));
+  	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
+  
++ 	nuri_ehci_init();
++ 	clk_xusbxti.rate = 24000000;
++ 
+  	/* Last */
+  	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
+  }
