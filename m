@@ -1,36 +1,32 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH] Fix build failure when CONFIG_NLS is set to 'm' by
- allmodconfig
-Date: Tue, 19 Apr 2011 08:06:41 +0200
-Message-ID: <20110419060641.GA26624@elte.hu>
-References: <20110223131536.GA16707@fedora14-r610.blr.amer.dell.com>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: linux-next: manual merge of the omap_dss2 tree with the fbdev-current tree
+Date: Tue, 19 Apr 2011 16:01:14 +0900
+Message-ID: <20110419070114.GA7582@linux-sh.org>
+References: <20110419132720.d86b8afd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:45363 "EHLO mx2.mail.elte.hu"
+Received: from linux-sh.org ([111.68.239.195]:60026 "EHLO linux-sh.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751393Ab1DSGHA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Apr 2011 02:07:00 -0400
+	id S1752217Ab1DSHBe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Apr 2011 03:01:34 -0400
 Content-Disposition: inline
-In-Reply-To: <20110223131536.GA16707@fedora14-r610.blr.amer.dell.com>
+In-Reply-To: <20110419132720.d86b8afd.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Narendra_K@Dell.com
-Cc: viro@zeniv.linux.org.uk, jbarnes@virtuousgeek.org, mjg@redhat.com, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Shyam_Iyer@Dell.com, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Jordan_Hargrave@Dell.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Archit Taneja <archit@ti.com>
 
-
-* Narendra_K@Dell.com <Narendra_K@Dell.com> wrote:
-
-> This patch fixes the following build breakage introduced by the patch
-> '[PATCH V3] Export ACPI _DSM provided firmware instance number and string to
-> sysfs'.
+On Tue, Apr 19, 2011 at 01:27:20PM +1000, Stephen Rothwell wrote:
+> Hi Tomi,
 > 
-> drivers/built-in.o: In function `T.647':
-> pci-label.c:(.text+0x28514): undefined reference to `utf16s_to_utf8s'
+> Today's linux-next merge of the omap_dss2 tree got a conflict in
+> drivers/video/omap2/dss/dss_features.c
+> drivers/video/omap2/dss/dss_features.h between commit 0b41136c0d2f
+> ("OMAP: DSS2: DSI: Fix DSI PLL power bug") from the fbdev-current tree
+> and commit 0f7d043bd56b ("OMAP4: DSS2: Register configuration changes for
+> DSI") from the omap_dss2 tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-btw., this build bug still triggers upstream with .39-rc4 - any plans on when 
-this regression will be fixed?
-
-Thanks,
-
-	Ingo
+Hmm, both changes came from the omap_dss2 tree, I wonder what's going on?
