@@ -1,36 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Tue, 19 Apr 2011 00:41:08 -0700 (PDT)
-Message-ID: <20110419.004108.246512359.davem@davemloft.net>
-References: <20110419131618.a474326a.sfr@canb.auug.org.au>
+From: <Narendra_K@Dell.com>
+Subject: RE: [PATCH] Fix build failure when CONFIG_NLS is set to 'm' by
+ allmodconfig
+Date: Tue, 19 Apr 2011 01:43:53 -0700
+Message-ID: <E31FB011129F30488D5861F3839049151DA2EC035A@BLRX7MCDC201.AMER.DELL.COM>
+References: <20110223131536.GA16707@fedora14-r610.blr.amer.dell.com>
+ <20110419060641.GA26624@elte.hu>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:38379
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750795Ab1DSHln (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Apr 2011 03:41:43 -0400
-In-Reply-To: <20110419131618.a474326a.sfr@canb.auug.org.au>
+Received: from ausc60pc101.us.dell.com ([143.166.85.206]:63477 "EHLO
+	ausc60pc101.us.dell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753318Ab1DSIn7 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Apr 2011 04:43:59 -0400
+In-Reply-To: <20110419060641.GA26624@elte.hu>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, yanivr@broadcom.com, shemminger@vyatta.com
+To: mingo@elte.hu
+Cc: viro@zeniv.linux.org.uk, jbarnes@virtuousgeek.org, mjg@redhat.com, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Shyam_Iyer@Dell.com, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Jordan_Hargrave@Dell.com
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 19 Apr 2011 13:16:18 +1000
-
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/bnx2x/bnx2x_ethtool.c between commit 70dda99c41fc ("bnx2x:
-> Fix port identification problem") from the net-current tree and commit
-> 32d3613475d8 ("bnx2x: convert to set_phys_id") from the net tree.
+> -----Original Message-----
+> From: Ingo Molnar [mailto:mingo@elte.hu]
+> Sent: Tuesday, April 19, 2011 11:37 AM
+> To: K, Narendra
+> Cc: viro@zeniv.linux.org.uk; jbarnes@virtuousgeek.org; mjg@redhat.com;
+> sfr@canb.auug.org.au; linux-kernel@vger.kernel.org; linux-
+> next@vger.kernel.org; Iyer, Shyam; Domsch, Matt; Rose, Charles; Hargrave,
+> Jordan
+> Subject: Re: [PATCH] Fix build failure when CONFIG_NLS is set to 'm' by
+> allmodconfig
 > 
-> I fixed it up (maybe - see below) and can carry the fix as necessary.
+> 
+> * Narendra_K@Dell.com <Narendra_K@Dell.com> wrote:
+> 
+> > This patch fixes the following build breakage introduced by the patch
+> > '[PATCH V3] Export ACPI _DSM provided firmware instance number and
+> > string to sysfs'.
+> >
+> > drivers/built-in.o: In function `T.647':
+> > pci-label.c:(.text+0x28514): undefined reference to `utf16s_to_utf8s'
+> 
+> btw., this build bug still triggers upstream with .39-rc4 - any plans on when
+> this regression will be fixed?
 
-Your conflict resolution was pretty much perfect :-)
+Hi,
 
-I've merged net-2.6 into net-next-2.6 to fix this up.
+The commit  8a226e00eeed8db843d4a580013a49ae3559bcd7 in linux-next fixes it (PCI: pci-label: Fix build failure when CONFIG_NLS is set to 'm' by allmodconfig).
+It is not in .39-rc4.
 
-Thanks!
+With regards,
+Narendra K
