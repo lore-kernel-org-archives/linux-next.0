@@ -1,57 +1,37 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging/intel_sst: intelmid needs delay.h
-Date: Tue, 19 Apr 2011 11:26:35 -0700
-Message-ID: <20110419112635.d2ba71f3.randy.dunlap@oracle.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH -next] driver core: syscore exports for modular APM
+Date: Tue, 19 Apr 2011 14:17:41 -0700
+Message-ID: <20110419211741.GA19576@kroah.com>
 References: <20110419150641.644638d5.sfr@canb.auug.org.au>
+ <20110419083546.e8981e49.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:42716 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753701Ab1DSS14 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Apr 2011 14:27:56 -0400
-In-Reply-To: <20110419150641.644638d5.sfr@canb.auug.org.au>
+Received: from kroah.org ([198.145.64.141]:39213 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754599Ab1DSVYy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Apr 2011 17:24:54 -0400
+Content-Disposition: inline
+In-Reply-To: <20110419083546.e8981e49.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh <greg@kroah.com>, driverdevel <devel@driverdev.osuosl.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, Harsha Priya <priya.harsha@intel.com>, KP Jeeja <jeeja.kp@intel.com>, Dharageswari R <dharageswari.r@intel.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Tue, Apr 19, 2011 at 08:35:46AM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> When CONFIG_APM=m, build fails with:
+> 
+> ERROR: "syscore_suspend" [arch/x86/kernel/apm.ko] undefined!
+> ERROR: "syscore_resume" [arch/x86/kernel/apm.ko] undefined!
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-intel_sst drivers need to #include <linux/delay.h> so that
-they build cleanly:
+Acked-by: Greg Kroah-Hartman <gregkh@suse.de>
 
-drivers/staging/intel_sst/intelmid_v1_control.c:188: error: implicit declaration of function 'msleep'
-drivers/staging/intel_sst/intelmid_v2_control.c:172: error: implicit declaration of function 'msleep'
+Rafael, care to send this to Linus?  Or do you want me to?
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Vinod Koul <vinod.koul@intel.com>
-Cc: Harsha Priya <priya.harsha@intel.com>
-Cc: KP Jeeja <jeeja.kp@intel.com>
-Cc: Dharageswari R <dharageswari.r@intel.com>
----
- drivers/staging/intel_sst/intelmid_v1_control.c |    1 +
- drivers/staging/intel_sst/intelmid_v2_control.c |    1 +
- 2 files changed, 2 insertions(+)
+thanks,
 
---- linux-next-20110419.orig/drivers/staging/intel_sst/intelmid_v1_control.c
-+++ linux-next-20110419/drivers/staging/intel_sst/intelmid_v1_control.c
-@@ -28,6 +28,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/pci.h>
-+#include <linux/delay.h>
- #include <linux/file.h>
- #include <asm/mrst.h>
- #include <sound/pcm.h>
---- linux-next-20110419.orig/drivers/staging/intel_sst/intelmid_v2_control.c
-+++ linux-next-20110419/drivers/staging/intel_sst/intelmid_v2_control.c
-@@ -29,6 +29,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/pci.h>
-+#include <linux/delay.h>
- #include <linux/file.h>
- #include "intel_sst.h"
- #include "intelmid_snd_control.h"
+greg k-h
