@@ -1,23 +1,27 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: linux-next: manual merge of the omap_dss2 tree with the fbdev-current tree
-Date: Tue, 19 Apr 2011 16:01:14 +0900
-Message-ID: <20110419070114.GA7582@linux-sh.org>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: linux-next: manual merge of the omap_dss2 tree with the
+ fbdev-current tree
+Date: Tue, 19 Apr 2011 10:03:30 +0300
+Message-ID: <1303196610.2141.14.camel@deskari>
 References: <20110419132720.d86b8afd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from linux-sh.org ([111.68.239.195]:60026 "EHLO linux-sh.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752217Ab1DSHBe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Apr 2011 03:01:34 -0400
-Content-Disposition: inline
+Received: from na3sys009aog107.obsmtp.com ([74.125.149.197]:39557 "EHLO
+	na3sys009aog107.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752217Ab1DSHDg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Apr 2011 03:03:36 -0400
 In-Reply-To: <20110419132720.d86b8afd.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Archit Taneja <archit@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Archit Taneja <archit@ti.com>, Paul Mundt <lethal@linux-sh.org>
 
-On Tue, Apr 19, 2011 at 01:27:20PM +1000, Stephen Rothwell wrote:
+Hi Stephen,
+
+On Tue, 2011-04-19 at 13:27 +1000, Stephen Rothwell wrote:
 > Hi Tomi,
 > 
 > Today's linux-next merge of the omap_dss2 tree got a conflict in
@@ -29,4 +33,8 @@ On Tue, Apr 19, 2011 at 01:27:20PM +1000, Stephen Rothwell wrote:
 > 
 > I fixed it up (see below) and can carry the fix as necessary.
 
-Hmm, both changes came from the omap_dss2 tree, I wonder what's going on?
+This was actually my mistake, sorry. I had wrong commits in my for-next
+branch. I've update it to latest correct stuff, and the problem should
+disappear.
+
+ Tomi
