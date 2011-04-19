@@ -1,40 +1,58 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH -next] driver core: syscore exports for modular APM
-Date: Wed, 20 Apr 2011 00:04:27 +0200
-Message-ID: <201104200004.27331.rjw@sisk.pl>
-References: <20110419150641.644638d5.sfr@canb.auug.org.au> <20110419083546.e8981e49.randy.dunlap@oracle.com> <20110419211741.GA19576@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kbuild tree
+Date: Wed, 20 Apr 2011 08:25:14 +1000
+Message-ID: <20110420082514.a9ec4d68.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__20_Apr_2011_08_25_14_+1000_Bty42tOrsUGVi8wz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:36707 "EHLO ogre.sisk.pl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51576 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753597Ab1DSWEE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Apr 2011 18:04:04 -0400
-In-Reply-To: <20110419211741.GA19576@kroah.com>
+	id S1751399Ab1DSWZa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Apr 2011 18:25:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tuesday, April 19, 2011, Greg KH wrote:
-> On Tue, Apr 19, 2011 at 08:35:46AM -0700, Randy Dunlap wrote:
-> > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > 
-> > When CONFIG_APM=m, build fails with:
-> > 
-> > ERROR: "syscore_suspend" [arch/x86/kernel/apm.ko] undefined!
-> > ERROR: "syscore_resume" [arch/x86/kernel/apm.ko] undefined!
-> > 
-> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Acked-by: Greg Kroah-Hartman <gregkh@suse.de>
-> 
-> Rafael, care to send this to Linus?  Or do you want me to?
+--Signature=_Wed__20_Apr_2011_08_25_14_+1000_Bty42tOrsUGVi8wz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I will.  Or better I'll fold it into the patch, it hasn't been
-sent to Linus yet.
+Hi Michal,
 
-Thanks,
-Rafael
+After merging the kbuild tree, today's linux-next build (s390 allnoconfig)
+failed like this:
+
+/opt/crosstool/gcc-4.3.2-nolibc/bin/s390x-linux-ar: illegal option -- D
+
+Caused by commit 09ff9fecc039 ("kbuild: Use the deterministic mode of ar").
+
+$ /opt/crosstool/gcc-4.3.2-nolibc/bin/s390x-linux-ar --version
+GNU ar (GNU Binutils) 2.19
+
+I presume that this version of ar is now too old to build the kernel?
+Documentation/Changes only mentions Binutils verion 2.12.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__20_Apr_2011_08_25_14_+1000_Bty42tOrsUGVi8wz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNrgvKAAoJEDMEi1NhKgbsmX8H/RIDsoJBV2FXM/xkLZGWOgbe
+/p0Fxunh3nC9ytJ/nohImQTll73NbhG1MVg+nS1BKGuI5tGXkbgn1ZwzhNM0SoPM
+Eu53Wl6GflYZicCMRE/zHTjxBXyf1U9mORXaE/M0/DXKPI6k+sFlwVo8Pb5TWk/X
+EyvcSF+snV+E4UkBbYP+0BcKZOxTh2zZR00fRH29IBOo7VDkft0wLjWFYAEb4d2i
+jpXPK/TmtMlIeHGVyaH7iGX8Ji/7u2jQ2IhI5FWgX7oZKbUEz3+nOoipnfBbLFXV
+IJEGu9dJPVExCIeFZ24JqVQTHMbwvmwp0yxfdkwKlyQnvxTw4nKzG/6mVmyvu0Q=
+=8Yvr
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__20_Apr_2011_08_25_14_+1000_Bty42tOrsUGVi8wz--
