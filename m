@@ -1,22 +1,27 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 Subject: Re: [PATCH -next] driver core: syscore exports for modular APM
-Date: Wed, 20 Apr 2011 22:39:10 +0200
-Message-ID: <201104202239.10921.rjw@sisk.pl>
-References: <20110419150641.644638d5.sfr@canb.auug.org.au> <20110419211741.GA19576@kroah.com> <201104200004.27331.rjw@sisk.pl>
+Date: Wed, 20 Apr 2011 14:06:06 -0700 (PDT)
+Message-ID: <219cfb09-b910-4284-ac96-8c14c116afb4@default>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:39637 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751307Ab1DTUiq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Apr 2011 16:38:46 -0400
-In-Reply-To: <201104200004.27331.rjw@sisk.pl>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:22020 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752925Ab1DTVId convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Apr 2011 17:08:33 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: rjw@sisk.pl
+Cc: sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, greg@kroah.com, linux-next@vger.kernel.org
+
+----- Original Message -----
+From: rjw@sisk.pl
+To: greg@kroah.com, randy.dunlap@oracle.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Sent: Wednesday, April 20, 2011 1:39:18 PM GMT -08:00 US/Canada Pacific
+Subject: Re: [PATCH -next] driver core: syscore exports for modular APM
 
 On Wednesday, April 20, 2011, Rafael J. Wysocki wrote:
 > On Tuesday, April 19, 2011, Greg KH wrote:
@@ -37,7 +42,8 @@ On Wednesday, April 20, 2011, Rafael J. Wysocki wrote:
 > I will.  Or better I'll fold it into the patch, it hasn't been
 > sent to Linus yet.
 
-The problem should be fixed in today's linux-next.  Randy, can you confirm,
-please?
+| The problem should be fixed in today's linux-next.  Randy, can you confirm,
+| please?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Rafael
+Yes, it's fixed there.  Thanks.
