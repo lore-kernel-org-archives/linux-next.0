@@ -1,57 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (battery
- tree related)
-Date: Fri, 22 Apr 2011 08:05:55 +1000
-Message-ID: <20110422080555.c7cd0e0b.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net tree
+ related)
+Date: Fri, 22 Apr 2011 08:10:08 +1000
+Message-ID: <20110422081008.e7ebab59.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__22_Apr_2011_08_05_55_+1000_QSJ_P8FOT2lN9w3V"
+ boundary="Signature=_Fri__22_Apr_2011_08_10_08_+1000_mzJoh0CfRQIyrSfD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41445 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50074 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752428Ab1DUWGD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Apr 2011 18:06:03 -0400
+	id S1752998Ab1DUWKL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Apr 2011 18:10:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <avorontsov@ru.mvista.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?Ik1pY2hhxYIgTWlyb3PFgmF3Ig==?= <mirq-linux@rere.qmqm.pl>
 
---Signature=_Fri__22_Apr_2011_08_05_55_+1000_QSJ_P8FOT2lN9w3V
+--Signature=_Fri__22_Apr_2011_08_10_08_+1000_mzJoh0CfRQIyrSfD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Anton,
+Hi all,
 
-After merging the final tree, today's linux-next build (s390 allyesconfig)
+After merging the final tree, today's linux-next build (powerpc chrp32_defc=
+onfig)
 failed like this:
 
-drivers/built-in.o: In function `max8903_remove':
-drivers/power/max8903_charger.c:355: undefined reference to `free_irq'
-drivers/power/max8903_charger.c:357: undefined reference to `free_irq'
-drivers/power/max8903_charger.c:359: undefined reference to `free_irq'
+drivers/net/mv643xx_eth.c: In function 'port_start':
+drivers/net/mv643xx_eth.c:2250: error: 'dev' undeclared (first use in this =
+function)
 
-Caused by commit b14a9ccc1ddd ("power_supply: Add driver for MAX8903
-charger").  This driver needs some Kconfig dependency.
+Caused by commit aad59c431b77 ("net: mv643xx: convert to hw_features").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__22_Apr_2011_08_05_55_+1000_QSJ_P8FOT2lN9w3V
+--Signature=_Fri__22_Apr_2011_08_10_08_+1000_mzJoh0CfRQIyrSfD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNsKpDAAoJEDMEi1NhKgbs610IAJ63lwrw/uveOChjCo8lBp5v
-qkVu2qmvea51zsKx4iLq9SC5OcKyEjF37nQ9lBttxK6vbebgwVtfl67l7IKef4mz
-AkFQwwlpvFkteFpZbhqJBtxFxz+4lN1fM949dAFTkfi4xbaNZI/ADzNwKeRZQTno
-uGCb3GwSsUEm7C4DRDMqGMjXfV48wqA0PhWDcLnBI+syTIjdgXlqj4dS/egLJ3l9
-njoHBiTA5T1sPatQnlGT+puDC5w918h1ndLCYb91VPb1WxqvZqoOw2ncWocssfDc
-B7wUL8TzKZcFikY8Ao5/V2PImcRpRWOGO6PsqIWZhzx378NiXseAPhk64+sTLDg=
-=5Kp/
+iQEcBAEBAgAGBQJNsKtAAAoJEDMEi1NhKgbsFCUIAJVtutRgtnWi6n8V3d5gcFKY
+DAEX7Ak+0aCEHIa24yhtbOimAK3BoklLGbyo2aZEkNfVi15qlvxeVYa3WnA4vzFh
+ZmDcXVST29DP0b6AKMBQ5N6s7P2srRHSMv2izxnQjBG8u8FfjY44bgF0ih0xU66/
+5wmq4sYc4y3r29XadeLhK/Lbxd5AUfdWPbaj2/KXbCRbN6T8zZb4s0JldV++u9W7
+CxF7OcMFQ8coHayccgOAEen4k1Akm4JPlURDn1I3tKBVwIchtK3W6DwgbA8xCpjt
+5r1PmBZoIqZpcBqortujXG/P5V+DFDiqD+HQ0Z7Kk0amfkfSGwOLYWoWJdnHTDs=
+=xYoE
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__22_Apr_2011_08_05_55_+1000_QSJ_P8FOT2lN9w3V--
+--Signature=_Fri__22_Apr_2011_08_10_08_+1000_mzJoh0CfRQIyrSfD--
