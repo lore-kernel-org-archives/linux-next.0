@@ -1,39 +1,57 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] kvm: fix const value warning on i386
-Date: Thu, 21 Apr 2011 09:09:22 -0700
-Message-ID: <20110421090922.4d9a275b.randy.dunlap@oracle.com>
-References: <20110421132045.5af1b953.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (battery
+ tree related)
+Date: Fri, 22 Apr 2011 08:05:55 +1000
+Message-ID: <20110422080555.c7cd0e0b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__22_Apr_2011_08_05_55_+1000_QSJ_P8FOT2lN9w3V"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:33592 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753462Ab1DUQJg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Apr 2011 12:09:36 -0400
-In-Reply-To: <20110421132045.5af1b953.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41445 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752428Ab1DUWGD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Apr 2011 18:06:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org
+To: Anton Vorontsov <avorontsov@ru.mvista.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Fri__22_Apr_2011_08_05_55_+1000_QSJ_P8FOT2lN9w3V
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-arch/x86/kvm/emulate.c:2598: warning: integer constant is too large for 'long' type
+Hi Anton,
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- arch/x86/kvm/emulate.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+After merging the final tree, today's linux-next build (s390 allyesconfig)
+failed like this:
 
---- linux-next-20110421.orig/arch/x86/kvm/emulate.c
-+++ linux-next-20110421/arch/x86/kvm/emulate.c
-@@ -2595,7 +2595,7 @@ static int check_svme_pa(struct x86_emul
- 	u64 rax = kvm_register_read(ctxt->vcpu, VCPU_REGS_RAX);
- 
- 	/* Valid physical address? */
--	if (rax & 0xffff000000000000)
-+	if (rax & 0xffff000000000000ULL)
- 		return emulate_gp(ctxt, 0);
- 
- 	return check_svme(ctxt);
+drivers/built-in.o: In function `max8903_remove':
+drivers/power/max8903_charger.c:355: undefined reference to `free_irq'
+drivers/power/max8903_charger.c:357: undefined reference to `free_irq'
+drivers/power/max8903_charger.c:359: undefined reference to `free_irq'
+
+Caused by commit b14a9ccc1ddd ("power_supply: Add driver for MAX8903
+charger").  This driver needs some Kconfig dependency.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__22_Apr_2011_08_05_55_+1000_QSJ_P8FOT2lN9w3V
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNsKpDAAoJEDMEi1NhKgbs610IAJ63lwrw/uveOChjCo8lBp5v
+qkVu2qmvea51zsKx4iLq9SC5OcKyEjF37nQ9lBttxK6vbebgwVtfl67l7IKef4mz
+AkFQwwlpvFkteFpZbhqJBtxFxz+4lN1fM949dAFTkfi4xbaNZI/ADzNwKeRZQTno
+uGCb3GwSsUEm7C4DRDMqGMjXfV48wqA0PhWDcLnBI+syTIjdgXlqj4dS/egLJ3l9
+njoHBiTA5T1sPatQnlGT+puDC5w918h1ndLCYb91VPb1WxqvZqoOw2ncWocssfDc
+B7wUL8TzKZcFikY8Ao5/V2PImcRpRWOGO6PsqIWZhzx378NiXseAPhk64+sTLDg=
+=5Kp/
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__22_Apr_2011_08_05_55_+1000_QSJ_P8FOT2lN9w3V--
