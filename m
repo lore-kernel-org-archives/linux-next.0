@@ -1,72 +1,67 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Thu, 21 Apr 2011 15:19:25 -0700 (PDT)
-Message-ID: <20110421.151925.226786245.davem@davemloft.net>
-References: <20110422081008.e7ebab59.sfr@canb.auug.org.au>
+From: Anton Vorontsov <cbouatmailru@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (battery tree related)
+Date: Fri, 22 Apr 2011 03:27:03 +0400
+Message-ID: <20110421232703.GA16294@oksana.dev.rtsoft.ru>
+References: <20110422080555.c7cd0e0b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:49564
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754764Ab1DUWT7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Apr 2011 18:19:59 -0400
-In-Reply-To: <20110422081008.e7ebab59.sfr@canb.auug.org.au>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:55087 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754943Ab1DUX1J (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Apr 2011 19:27:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20110422080555.c7cd0e0b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mirq-linux@rere.qmqm.pl
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 22 Apr 2011 08:10:08 +1000
+Hi Stephen,
 
-> Hi all,
+On Fri, Apr 22, 2011 at 08:05:55AM +1000, Stephen Rothwell wrote:
+> Hi Anton,
 > 
-> After merging the final tree, today's linux-next build (powerpc chrp32_defconfig)
+> After merging the final tree, today's linux-next build (s390 allyesconfig)
 > failed like this:
 > 
-> drivers/net/mv643xx_eth.c: In function 'port_start':
-> drivers/net/mv643xx_eth.c:2250: error: 'dev' undeclared (first use in this function)
-> 
-> Caused by commit aad59c431b77 ("net: mv643xx: convert to hw_features").
+> drivers/built-in.o: In function `max8903_remove':
+> drivers/power/max8903_charger.c:355: undefined reference to `free_irq'
+> drivers/power/max8903_charger.c:357: undefined reference to `free_irq'
+> drivers/power/max8903_charger.c:359: undefined reference to `free_irq'
 
-I just pushed the following fix, thanks!
+I added the following patch to the battery-2.6.git, so this should be
+fixed now. Thanks!
 
---------------------
-mv643xx_eth: Fix build regression.
+commit 6f9efe76cb213e9b0dd89e465efaf9725f4bf492
+Author: Anton Vorontsov <cbouatmailru@gmail.com>
+Date:   Fri Apr 22 03:08:22 2011 +0400
 
->From Stephen Rothwell:
+    max8903_charger: Add GENERIC_HARDIRQS as a dependency (fixes S390 build)
+    
+    S390 is special as it doesn't have IRQ lines, so these errors pop up:
+    
+    drivers/built-in.o: In function 'max8903_remove':
+    drivers/power/max8903_charger.c:355: undefined reference to 'free_irq'
+    drivers/power/max8903_charger.c:357: undefined reference to 'free_irq'
+    drivers/power/max8903_charger.c:359: undefined reference to 'free_irq'
+    
+    This commit fixes the issue by making the driver depend on
+    GENERIC_HARDIRQS feature.
+    
+    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+    Signed-off-by: Anton Vorontsov <cbouatmailru@gmail.com>
 
---------------------
-After merging the final tree, today's linux-next build (powerpc chrp32_defconfig)
-failed like this:
-
-drivers/net/mv643xx_eth.c: In function 'port_start':
-drivers/net/mv643xx_eth.c:2250: error: 'dev' undeclared (first use in this function)
-
-Caused by commit aad59c431b77 ("net: mv643xx: convert to hw_features").
---------------------
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- drivers/net/mv643xx_eth.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/mv643xx_eth.c b/drivers/net/mv643xx_eth.c
-index 29605a3..57c2ac0 100644
---- a/drivers/net/mv643xx_eth.c
-+++ b/drivers/net/mv643xx_eth.c
-@@ -2247,7 +2247,7 @@ static void port_start(struct mv643xx_eth_private *mp)
- 	 * frames to RX queue #0, and include the pseudo-header when
- 	 * calculating receive checksums.
- 	 */
--	mv643xx_eth_set_features(dev, dev->features);
-+	mv643xx_eth_set_features(mp->dev, mp->dev->features);
+diff --git a/drivers/power/Kconfig b/drivers/power/Kconfig
+index 1f50ebc..cc019c9 100644
+--- a/drivers/power/Kconfig
++++ b/drivers/power/Kconfig
+@@ -205,6 +205,7 @@ config CHARGER_ISP1704
  
- 	/*
- 	 * Treat BPDUs as normal multicasts, and disable partition mode.
--- 
-1.7.4.3
+ config CHARGER_MAX8903
+ 	tristate "MAX8903 Battery DC-DC Charger for USB and Adapter Power"
++	depends on GENERIC_HARDIRQS
+ 	help
+ 	  Say Y to enable support for the MAX8903 DC-DC charger and sysfs.
+ 	  The driver supports controlling charger-enable and current-limit
