@@ -1,35 +1,37 @@
-From: Jason Uhlenkott <juhlenko@akamai.com>
-Subject: Re: linux-next: Tree for April 21 (i82975x_edac)
-Date: Mon, 25 Apr 2011 00:00:49 -0700
-Message-ID: <20110425070049.GD2123@juhlenko-desk.sanmateo.corp.akamai.com>
-References: <20110421132045.5af1b953.sfr@canb.auug.org.au> <20110421085124.4a44d048.randy.dunlap@oracle.com> <BANLkTinoi1SeuuPj5SeTzssyBTvTQu6pMA@mail.gmail.com> <4DB2F406.404@oracle.com> <BANLkTikWa7wZYonWLHMqWkBRHfi7tLiyuA@mail.gmail.com> <4ac1d916ddc0ab9e7e94b81bc77880be.squirrel@xenotime.net>
+From: "Nori, Sekhar" <nsekhar@ti.com>
+Subject: Change in DaVinci tree for linux-next
+Date: Mon, 25 Apr 2011 22:51:15 +0530
+Message-ID: <B85A65D85D7EB246BE421B3FB0FBB593024CAE3412@dbde02.ent.ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from prod-mail-xrelay02.akamai.com ([72.246.2.14]:60020 "EHLO
-	prod-mail-xrelay02.akamai.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756179Ab1DYHKB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Apr 2011 03:10:01 -0400
-Content-Disposition: inline
-In-Reply-To: <4ac1d916ddc0ab9e7e94b81bc77880be.squirrel@xenotime.net>
+Received: from comal.ext.ti.com ([198.47.26.152]:47508 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758672Ab1DYRVx convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Apr 2011 13:21:53 -0400
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Arvind R <arvino55@gmail.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Ranganathan Desikan <ravi@jetztechnologies.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "bluesmoke-devel@lists.sourceforge.net" <bluesmoke-devel@lists.sourceforge.net>, "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, Doug Thompson <dougthompson@xmission.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Hilman, Kevin" <khilman@ti.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Sun, Apr 24, 2011 at 21:13:16 -0500, Randy Dunlap wrote:
-> > Added myself to the driver maintainer in the i3000_edac.c file. The
-> > patch-set adds support for i82975x in the i3000 driver, which is
-> > better structured.
-> > TODO:
-> >     1. Change Kconfig file - select I3000 for i82975x support
-> >     2. Delete i82975x_edac.c file
-> >     3. Update MAINTAINERS file
-> 
-> Did the other EDAC-I3000 maintainer respond?
+Hi Stephen,
 
-I'm happy to let Arvind take over this driver; I haven't done any edac
-work in quite a while.
+Can you please change the davinci tree in linux-next from:
 
-Acked-by: Jason Uhlenkott <juhlenko@akamai.com>
+git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-davinci.git davinci-next
+
+to:
+
+git://gitorious.org/linux-davinci/linux-davinci.git davinci-next
+
+Kevin recently added me as the co-maintainer for TI DaVinci support
+and I would be taking over the job of actively collecting the patches
+to be merged from the next merge window onward.
+
+I have made sure the new tree/branch is an exact mirror of Kevin's
+current tree so the switch by itself should not change anything.
+
+Thanks,
+Sekhar
