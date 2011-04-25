@@ -1,100 +1,88 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for April 14 (Call-traces: RCU/ACPI/WQ
- related?)
-Date: Sun, 24 Apr 2011 09:43:31 -0700
-Message-ID: <20110424164331.GN2628@linux.vnet.ibm.com>
-References: <20110422005046.GQ2235@linux.vnet.ibm.com>
- <BANLkTi=W=s876U===LVfp59Nnfui8d-1RQ@mail.gmail.com>
- <20110422150222.GA2300@linux.vnet.ibm.com>
- <BANLkTind84Gf8JA9Fa4QL2GbaF8nMNhDzw@mail.gmail.com>
- <20110423210539.GI2628@linux.vnet.ibm.com>
- <BANLkTimXW2=PYOXkKjnLuH+eN2TjZBqAxw@mail.gmail.com>
- <BANLkTi=ntjm-5D=OD1oFogpNjmJSJiZygQ@mail.gmail.com>
- <BANLkTim9H1k4c7xSZZJ09WXs8WCeCQQJJg@mail.gmail.com>
- <20110424062728.GM2628@linux.vnet.ibm.com>
- <BANLkTinTd10K6Ho6FhuynROT7yDLHNLojw@mail.gmail.com>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: "Randy Dunlap" <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for April 21 (i82975x_edac)
+Date: Sun, 24 Apr 2011 19:13:16 -0700
+Message-ID: <4ac1d916ddc0ab9e7e94b81bc77880be.squirrel@xenotime.net>
+References: <20110421132045.5af1b953.sfr@canb.auug.org.au>
+    <20110421085124.4a44d048.randy.dunlap@oracle.com>
+    <BANLkTinoi1SeuuPj5SeTzssyBTvTQu6pMA@mail.gmail.com>
+    <4DB2F406.404@oracle.com>
+    <BANLkTikWa7wZYonWLHMqWkBRHfi7tLiyuA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e2.ny.us.ibm.com ([32.97.182.142]:51821 "EHLO e2.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757651Ab1DXQng (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 24 Apr 2011 12:43:36 -0400
-Content-Disposition: inline
-In-Reply-To: <BANLkTinTd10K6Ho6FhuynROT7yDLHNLojw@mail.gmail.com>
+Received: from oproxy2-pub.bluehost.com ([67.222.39.60]:39344 "HELO
+	oproxy2-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1758009Ab1DYCNR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 24 Apr 2011 22:13:17 -0400
+In-Reply-To: <BANLkTikWa7wZYonWLHMqWkBRHfi7tLiyuA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, peterz@infradead.org
+To: Arvind R <arvino55@gmail.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Ranganathan Desikan <ravi@jetztechnologies.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, bluesmoke-devel@lists.sourceforge.net, linux-edac@vger.kernel.org, Doug Thompson <dougthompson@xmission.com>, Jason Uhlenkott <juhlenko@akamai.com>
 
-On Sun, Apr 24, 2011 at 11:36:44AM +0200, Sedat Dilek wrote:
-> On Sun, Apr 24, 2011 at 8:27 AM, Paul E. McKenney
-> <paulmck@linux.vnet.ibm.com> wrote:
 
-[ . . . ]
+On Sat, April 23, 2011 11:29 pm, Arvind R wrote:
+> On Sat, Apr 23, 2011 at 9:15 PM, Randy Dunlap <randy.dunlap@oracle.co=
+m>
+> wrote:
+>> On 04/23/11 01:21, Arvind R wrote:
+>>> On Thu, Apr 21, 2011 at 9:21 PM, Randy Dunlap <randy.dunlap@oracle.=
+com>
+>>> wrote:
+>>>> On Thu, 21 Apr 2011 13:20:45 +1000 Stephen Rothwell wrote:
+>>>>
+>>>>> Changes since 20110420:
+>>>>
+>>>>
+>>>> on i386:
+>>>>
+>>>> drivers/edac/i82975x_edac.c:298: warning: integer constant is too
+>>>> large for 'unsigned long' type
+>
+>> I think that the goal should be to get your 4-patch series merged.
+>>
+>>> That would still not fix the wrong error-info reported by the drive=
+r -
+>>> this is
+>>> fixed by the patch-set titled '[RFC PATCH 2.6.37 0/4] i3000_edac :
+>>> merge
+>>> i82975x support' dated 2011-02-14 in the linux-edac archives.
+>>>
+>>> Please advise on getting the patch into main-stream. The I3000 is a
+>>> re-labeled
+>>> i82975x (or vice-versa). Hence the patch-set to merge the drivers. =
+If
+>>> separate
+>>> i82975x driver is needed - I can provide the patch. The reported bu=
+g is
+>>> not
+>>> present in the merge-patched driver.
+>>
+>> Doug, any plans to merge this 4-patch series from Arvind?
+>>
+>> Arvind, was bluesmoke-devel@lists.sourceforge.net copied on this pat=
+ch
+>> series?
+> No - thought that the bluesmoke-list had moved to linux-edac.
+>
 
-> > OK, this looks unrelated, but just in case, could you please try it
-> > again with the following patch? =A0(Not mainlinable, debug only.)
-> >
-> > Also, it does look like you are still seeing a grace-period hang.
-> > Could you please send the output of the script? =A0Same one as last=
- time.
-> >
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0Thanx, Paul
-> >
-> > -------------------------------------------------------------------=
------
-> >
-> > =A0debugobjects.c | =A0 =A08 +++++---
-> > =A01 file changed, 5 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-> > index 9d86e45..10a7c7a 100644
-> > --- a/lib/debugobjects.c
-> > +++ b/lib/debugobjects.c
-> > @@ -289,10 +289,12 @@ static void debug_object_is_on_stack(void *ad=
-dr, int onstack)
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return;
-> >
-> > =A0 =A0 =A0 =A0limit++;
-> > - =A0 =A0 =A0 if (is_on_stack)
-> > + =A0 =A0 =A0 if (is_on_stack) {
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct rcu_head *p =3D (struct rcu_he=
-ad *)addr;
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_WARNING
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"ODEBUG: object is on =
-stack, but not annotated\n");
-> > - =A0 =A0 =A0 else
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"ODEBUG: object is on =
-stack, but not annotated: %p\n",
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0p->func);
-> > + =A0 =A0 =A0 } else
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_WARNING
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "ODEBUG: object is not =
-on stack, but annotated\n");
-> > =A0 =A0 =A0 =A0WARN_ON(1);
-> >
->=20
-> Somehow your attached patch was not applicable.
-> As the changes were a few lines I applied it by myself.
-> Attached are log, dmesg and patches (orig + mine)
+If bluesmoke-devel is obsolete, the MAINTAINERS file
+needs to be updated.
 
-Hmmm...  Does 0xc10231a1 correspond to a function in your build?  If so=
-,
-could you please let me know which one?
+>>
+>> and was the I3000 driver maintainer copied? =A0(added)
+>> I can't tell this from the marc.info archives.
+> Added myself to the driver maintainer in the i3000_edac.c file. The
+> patch-set adds support for i82975x in the i3000 driver, which is
+> better structured.
+> TODO:
+>     1. Change Kconfig file - select I3000 for i82975x support
+>     2. Delete i82975x_edac.c file
+>     3. Update MAINTAINERS file
 
-OK, so according to "ps" the per-CPU kthread is runnable, but it appear=
-s
-to never run.  You only have one CPU, so it cannot be waiting due to
-running on the wrong CPU.  The only other loop is in wait_event(), and
-that code looks good -- besides, if wait_event() was broken, we would
-be seeing breakage everywhere.
+Did the other EDAC-I3000 maintainer respond?
 
-Peter, any thoughts on what I might have done wrong to get the schedule=
-r
-into a state where it was ignoring a runnable realtime task?
-
-							Thanx, Paul
+thanks,
+--=20
+~Randy
