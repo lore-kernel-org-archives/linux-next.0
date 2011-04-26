@@ -1,72 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the i2c tree with the pci tree
-Date: Tue, 26 Apr 2011 12:08:22 +1000
-Message-ID: <20110426120822.944b9ac6.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net tree
+Date: Tue, 26 Apr 2011 13:51:46 +1000
+Message-ID: <20110426135146.c01f8395.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__26_Apr_2011_12_08_22_+1000_cRtLfdJzZh+2epW+"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58417 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932826Ab1DZCI1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Apr 2011 22:08:27 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Heasley <seth.heasley@intel.com>, Jesse Barnes <jbarnes@virtuousgeek.org>
-
---Signature=_Tue__26_Apr_2011_12_08_22_+1000_cRtLfdJzZh+2epW+
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hayeswang <hayeswang@realtek.com>, =?UTF-8?B?IkZyYW7Dp29pcyBSb21pZXUi?= <romieu@fr.zoreil.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jean,
+Hi all,
 
-Today's linux-next merge of the i2c tree got a conflict in
-include/linux/pci_ids.h between commit 1b1937455d18 ("x86/PCI: irq and
-pci_ids patch for Intel Panther Point DeviceIDs") from the pci tree and
-commit 6f19955a79b6 ("i2c-i801: Move device ID definitions to driver")
-from the i2c tree.
+After merging the net tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
---=20
+drivers/net/r8169.c: In function 'rtl8168e_1_hw_phy_config':
+drivers/net/r8169.c:2578: error: too many arguments to function 'rtl_apply_firmware'
+drivers/net/r8169.c:2578: error: void value not ignored as it ought to be
+drivers/net/r8169.c: In function 'rtl8168e_2_hw_phy_config':
+drivers/net/r8169.c:2586: error: too many arguments to function 'rtl_apply_firmware'
+drivers/net/r8169.c:2586: error: void value not ignored as it ought to be
+
+Caused by commit 953a12cc2889 ("r8169: don't request firmware when
+there's no userspace") from the net-current tree interacting with commit
+01dc7fec4025 ("net/r8169: support RTL8168E").
+
+I applied the following fixup patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 26 Apr 2011 13:47:51 +1000
+Subject: [PATCH] r8169: fix for rtl_apply_firmware API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/r8169.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/r8169.c b/drivers/net/r8169.c
+index 3f93fc7..c3e264f 100644
+--- a/drivers/net/r8169.c
++++ b/drivers/net/r8169.c
+@@ -190,7 +190,9 @@ static const struct rtl_firmware_info {
+ 	{ .mac_version = RTL_GIGA_MAC_VER_25, .fw_name = FIRMWARE_8168D_1 },
+ 	{ .mac_version = RTL_GIGA_MAC_VER_26, .fw_name = FIRMWARE_8168D_2 },
+ 	{ .mac_version = RTL_GIGA_MAC_VER_29, .fw_name = FIRMWARE_8105E_1 },
+-	{ .mac_version = RTL_GIGA_MAC_VER_30, .fw_name = FIRMWARE_8105E_1 }
++	{ .mac_version = RTL_GIGA_MAC_VER_30, .fw_name = FIRMWARE_8105E_1 },
++	{ .mac_version = RTL_GIGA_MAC_VER_31, .fw_name = FIRMWARE_8168E_1 },
++	{ .mac_version = RTL_GIGA_MAC_VER_32, .fw_name = FIRMWARE_8168E_2 }
+ };
+ 
+ enum cfg_version {
+@@ -2575,16 +2577,14 @@ static void rtl8168e_hw_phy_config(struct rtl8169_private *tp)
+ 
+ static void rtl8168e_1_hw_phy_config(struct rtl8169_private *tp)
+ {
+-	if (rtl_apply_firmware(tp, FIRMWARE_8168E_1) < 0)
+-		netif_warn(tp, probe, tp->dev, "unable to apply firmware patch\n");
++	rtl_apply_firmware(tp);
+ 
+ 	rtl8168e_hw_phy_config(tp);
+ }
+ 
+ static void rtl8168e_2_hw_phy_config(struct rtl8169_private *tp)
+ {
+-	if (rtl_apply_firmware(tp, FIRMWARE_8168E_2) < 0)
+-		netif_warn(tp, probe, tp->dev, "unable to apply firmware patch\n");
++	rtl_apply_firmware(tp);
+ 
+ 	rtl8168e_hw_phy_config(tp);
+ }
+-- 
+1.7.4.4
+
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc include/linux/pci_ids.h
-index 52f4ed4,8abe8d7..0000000
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@@ -2477,13 -2477,8 +2477,11 @@@
-  #define PCI_DEVICE_ID_INTEL_82840_HB	0x1a21
-  #define PCI_DEVICE_ID_INTEL_82845_HB	0x1a30
-  #define PCI_DEVICE_ID_INTEL_IOAT	0x1a38
-- #define PCI_DEVICE_ID_INTEL_COUGARPOINT_SMBUS	0x1c22
-  #define PCI_DEVICE_ID_INTEL_COUGARPOINT_LPC_MIN	0x1c41
-  #define PCI_DEVICE_ID_INTEL_COUGARPOINT_LPC_MAX	0x1c5f
- +#define PCI_DEVICE_ID_INTEL_PANTHERPOINT_SMBUS	0x1e22
- +#define PCI_DEVICE_ID_INTEL_PANTHERPOINT_LPC_MIN	0x1e40
- +#define PCI_DEVICE_ID_INTEL_PANTHERPOINT_LPC_MAX	0x1e5f
-- #define PCI_DEVICE_ID_INTEL_PATSBURG_SMBUS	0x1d22
-  #define PCI_DEVICE_ID_INTEL_PATSBURG_LPC_0	0x1d40
-  #define PCI_DEVICE_ID_INTEL_PATSBURG_LPC_1	0x1d41
-  #define PCI_DEVICE_ID_INTEL_DH89XXCC_LPC_MIN	0x2310
-
---Signature=_Tue__26_Apr_2011_12_08_22_+1000_cRtLfdJzZh+2epW+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNtikWAAoJEDMEi1NhKgbsNygH/3rjuLJVKbG5SHJdy09ng1TA
-uc7hpSPfz6NI20Bboxwty2Ulhn5i7i2bqURH37swV7DUhS8T3ypCyQpHwYwXYPBy
-sC6YwNBgcFiIgA29Hap+Asf+NKQBisyWmUVf+vNl+d9VJBzl2E83jYTJFsfIunAm
-csZpg7ashsLAv1lecBCgcNfEzT561YkekDh0PzmHujOD/lNabGLpFkutrsISkMKN
-O2brwLt0V8sVjoucfY+Z8cLD9QsjNQk2DTQZ/uOjsWzsgJ7LX4Bsqx4kWFQxYEjp
-rEqxZwP+5Bry7r68FY11KMT7gQs9sJUs04nrOARW1totvFW9hKNO88l49bYFD5o=
-=8NIX
------END PGP SIGNATURE-----
-
---Signature=_Tue__26_Apr_2011_12_08_22_+1000_cRtLfdJzZh+2epW+--
+http://www.canb.auug.org.au/~sfr/
