@@ -1,40 +1,40 @@
-From: "Gustavo F. Padovan" <padovan@profusion.mobi>
-Subject: Re: linux-next: manual merge of the tty tree with the bluetooth tree
-Date: Tue, 26 Apr 2011 15:40:19 -0300
-Message-ID: <20110426184019.GD2242@joana>
-References: <20110426175530.d27179e2.sfr@canb.auug.org.au>
- <20110426125646.GB6272@kroah.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Tue, 26 Apr 2011 12:43:54 -0700 (PDT)
+Message-ID: <20110426.124354.71125507.davem@davemloft.net>
+References: <20110426135146.c01f8395.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:39023 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750826Ab1DZSkF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Apr 2011 14:40:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20110426125646.GB6272@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiejing Zhang <kzjeef@gmail.com>, Felipe Balbi <balbi@ti.com>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110426135146.c01f8395.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hayeswang@realtek.com, romieu@fr.zoreil.com
+List-Id: linux-next.vger.kernel.org
 
-* Greg KH <greg@kroah.com> [2011-04-26 05:56:46 -0700]:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 26 Apr 2011 13:51:46 +1000
 
-> On Tue, Apr 26, 2011 at 05:55:30PM +1000, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next merge of the tty tree got a conflict in
-> > drivers/bluetooth/hci_ldisc.c between commit 78b4a56c28c0 ("Bluetooth:
-> > hci_uart: check the return value of recv()") from the bluetooth tree and
-> > commit b1c43f82c5aa ("tty: make receive_buf() return the amout of bytes
-> > received") from the tty tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary.
+> Hi all,
 > 
-> The fix looks correct to me, thanks for doing this.
+> After merging the net tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/net/r8169.c: In function 'rtl8168e_1_hw_phy_config':
+> drivers/net/r8169.c:2578: error: too many arguments to function 'rtl_apply_firmware'
+> drivers/net/r8169.c:2578: error: void value not ignored as it ought to be
+> drivers/net/r8169.c: In function 'rtl8168e_2_hw_phy_config':
+> drivers/net/r8169.c:2586: error: too many arguments to function 'rtl_apply_firmware'
+> drivers/net/r8169.c:2586: error: void value not ignored as it ought to be
+> 
+> Caused by commit 953a12cc2889 ("r8169: don't request firmware when
+> there's no userspace") from the net-current tree interacting with commit
+> 01dc7fec4025 ("net/r8169: support RTL8168E").
+> 
+> I applied the following fixup patch:
 
-It's ok to me as well, thanks for the fix!
+Stephen, I just merged net-2.6 into net-next-2.6 and added your patch
+to the merge commit to make sure the build is fine.
 
--- 
-Gustavo F. Padovan
-http://profusion.mobi
+Thanks a lot!
