@@ -1,101 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Change in DaVinci tree for linux-next
-Date: Tue, 26 Apr 2011 11:09:39 +1000
-Message-ID: <20110426110939.10138490.sfr@canb.auug.org.au>
-References: <B85A65D85D7EB246BE421B3FB0FBB593024CAE3412@dbde02.ent.ti.com>
+Subject: linux-next: manual merge of the i2c tree with the pci tree
+Date: Tue, 26 Apr 2011 12:08:22 +1000
+Message-ID: <20110426120822.944b9ac6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__26_Apr_2011_11_09_39_+1000_5JQ=KgIOh6jM_oMs"
+ boundary="Signature=_Tue__26_Apr_2011_12_08_22_+1000_cRtLfdJzZh+2epW+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44184 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58417 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756330Ab1DZBJl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Apr 2011 21:09:41 -0400
-In-Reply-To: <B85A65D85D7EB246BE421B3FB0FBB593024CAE3412@dbde02.ent.ti.com>
+	id S932826Ab1DZCI1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Apr 2011 22:08:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nori, Sekhar" <nsekhar@ti.com>
-Cc: "Hilman, Kevin" <khilman@ti.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Heasley <seth.heasley@intel.com>, Jesse Barnes <jbarnes@virtuousgeek.org>
 
---Signature=_Tue__26_Apr_2011_11_09_39_+1000_5JQ=KgIOh6jM_oMs
+--Signature=_Tue__26_Apr_2011_12_08_22_+1000_cRtLfdJzZh+2epW+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sekhar,
+Hi Jean,
 
-On Mon, 25 Apr 2011 22:51:15 +0530 "Nori, Sekhar" <nsekhar@ti.com> wrote:
->
-> Can you please change the davinci tree in linux-next from:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-davinci.git d=
-avinci-next
->=20
-> to:
->=20
-> git://gitorious.org/linux-davinci/linux-davinci.git davinci-next
+Today's linux-next merge of the i2c tree got a conflict in
+include/linux/pci_ids.h between commit 1b1937455d18 ("x86/PCI: irq and
+pci_ids patch for Intel Panther Point DeviceIDs") from the pci tree and
+commit 6f19955a79b6 ("i2c-i801: Move device ID definitions to driver")
+from the i2c tree.
 
-Done.
-
-> Kevin recently added me as the co-maintainer for TI DaVinci support
-> and I would be taking over the job of actively collecting the patches
-> to be merged from the next merge window onward.
-
-I have added you as a second contact for problems with this tree.
-
-> I have made sure the new tree/branch is an exact mirror of Kevin's
-> current tree so the switch by itself should not change anything.
-
-Thanks.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
+diff --cc include/linux/pci_ids.h
+index 52f4ed4,8abe8d7..0000000
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@@ -2477,13 -2477,8 +2477,11 @@@
+  #define PCI_DEVICE_ID_INTEL_82840_HB	0x1a21
+  #define PCI_DEVICE_ID_INTEL_82845_HB	0x1a30
+  #define PCI_DEVICE_ID_INTEL_IOAT	0x1a38
+- #define PCI_DEVICE_ID_INTEL_COUGARPOINT_SMBUS	0x1c22
+  #define PCI_DEVICE_ID_INTEL_COUGARPOINT_LPC_MIN	0x1c41
+  #define PCI_DEVICE_ID_INTEL_COUGARPOINT_LPC_MAX	0x1c5f
+ +#define PCI_DEVICE_ID_INTEL_PANTHERPOINT_SMBUS	0x1e22
+ +#define PCI_DEVICE_ID_INTEL_PANTHERPOINT_LPC_MIN	0x1e40
+ +#define PCI_DEVICE_ID_INTEL_PANTHERPOINT_LPC_MAX	0x1e5f
+- #define PCI_DEVICE_ID_INTEL_PATSBURG_SMBUS	0x1d22
+  #define PCI_DEVICE_ID_INTEL_PATSBURG_LPC_0	0x1d40
+  #define PCI_DEVICE_ID_INTEL_PATSBURG_LPC_1	0x1d41
+  #define PCI_DEVICE_ID_INTEL_DH89XXCC_LPC_MIN	0x2310
 
---Signature=_Tue__26_Apr_2011_11_09_39_+1000_5JQ=KgIOh6jM_oMs
+--Signature=_Tue__26_Apr_2011_12_08_22_+1000_cRtLfdJzZh+2epW+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNthtTAAoJEDMEi1NhKgbso0oH/01XVhqxZzp0fn/NgXGO1y04
-dBpipTKQ1lYykMVUpscy5UYIhUGCAQlKBqPuQ4FQjplKWldyYjx26gnAMz3skQYc
-vrDn5ZpMXWPruv/Ed7pCTwyaCupBXUNteEo9xe2e9RkylmcmzrIFQfcF8nTGs7jn
-GKuoRjiakuQN+5rd9KOn2T0o/DA8EoBuggzoe/8UXvQ4vMmx8et8fRLjjpeGPtws
-RGoQXGcivIKmz8wL9bjz7nRpXxb/5V9zNUvHzSrzWQgYYdbcK+6ZMKAcxPRrDmZA
-FhS3iarc3ra80GZi8dv2+027RmJjrLdXhtY+LfJIXoGHmmxKvETVjGsI75TuS/8=
-=JsPM
+iQEcBAEBAgAGBQJNtikWAAoJEDMEi1NhKgbsNygH/3rjuLJVKbG5SHJdy09ng1TA
+uc7hpSPfz6NI20Bboxwty2Ulhn5i7i2bqURH37swV7DUhS8T3ypCyQpHwYwXYPBy
+sC6YwNBgcFiIgA29Hap+Asf+NKQBisyWmUVf+vNl+d9VJBzl2E83jYTJFsfIunAm
+csZpg7ashsLAv1lecBCgcNfEzT561YkekDh0PzmHujOD/lNabGLpFkutrsISkMKN
+O2brwLt0V8sVjoucfY+Z8cLD9QsjNQk2DTQZ/uOjsWzsgJ7LX4Bsqx4kWFQxYEjp
+rEqxZwP+5Bry7r68FY11KMT7gQs9sJUs04nrOARW1totvFW9hKNO88l49bYFD5o=
+=8NIX
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Apr_2011_11_09_39_+1000_5JQ=KgIOh6jM_oMs--
+--Signature=_Tue__26_Apr_2011_12_08_22_+1000_cRtLfdJzZh+2epW+--
