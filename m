@@ -1,48 +1,53 @@
-From: Dave Jones <davej@redhat.com>
-Subject: Re: linux-next: build warning after merge of the cpufreq tree
-Date: Tue, 26 Apr 2011 21:32:17 -0400
-Message-ID: <20110427013217.GA30804@redhat.com>
-References: <20110427111024.eb26b6f5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the wireless tree
+Date: Wed, 27 Apr 2011 11:43:09 +1000
+Message-ID: <20110427114309.38d87c9d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__27_Apr_2011_11_43_09_+1000_bW2cOJn5yl=27.uQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:51670 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45820 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755066Ab1D0Bc0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Apr 2011 21:32:26 -0400
-Content-Disposition: inline
-In-Reply-To: <20110427111024.eb26b6f5.sfr@canb.auug.org.au>
+	id S1755707Ab1D0BnP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Apr 2011 21:43:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Justin P. Mattock" <justinmattock@gmail.com>, Chaoming_Li <chaoming_li@realsil.com.cn>, Larry Finger <Larry.Finger@lwfinger.net>, "John W. Linville" <linville@tuxdriver.com>
 
-On Wed, Apr 27, 2011 at 11:10:24AM +1000, Stephen Rothwell wrote:
- > Hi Dave,
- > 
- > After merging the cpufreq tree, today's linux-next build (powerpc
- > ppc64_defconfig) produced this warning:
- > 
- > drivers/cpufreq/Kconfig:67:warning: choice value used outside its choice group
- > drivers/cpufreq/Kconfig:75:warning: choice value used outside its choice group
- > drivers/cpufreq/Kconfig:84:warning: choice value used outside its choice group
- > drivers/cpufreq/Kconfig:93:warning: choice value used outside its choice group
- > drivers/cpufreq/Kconfig:105:warning: choice value used outside its choice group
- > 
- > I am not sure what has caused this.  The only change in the cpufreq tree
- > to that file is commit e002ba3328a2 ("[CPUFREQ] Move x86 cpufreq drivers
- > to drivers/cpufreq/") which rearranged a few things but nothing obvious.
+--Signature=_Wed__27_Apr_2011_11_43_09_+1000_bW2cOJn5yl=27.uQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As the commit message suggests, per-arch cpufreq drivers are moving to drivers/cpufreq/
-So far, I've only moved the x86 ones.  As a side-effect of this, the 
-source "drivers/cpufreq/Kconfig" is no longer a per-arch thing, as it now gets
-included from kernel/power/Kconfig.
+Hi Jiri,
 
-I suspect the warnings are happening because on the unconverted archs, drivers/cpufreq/Kconfig
-is now getting included twice.  If you kill the 'source' line in kernel/power/Kconfig,
-does this make things go back to normal ?  (Check that cpufreq still shows up in
-the resulting config afterwards)
+Today's linux-next merge of the trivial tree got a conflict in
+drivers/net/wireless/rtlwifi/pci.c between commit c7cfe38ee0f9 ("rtlwifi:
+Convert pci routines for addition of rtl8192se and rtl8192de") from the
+wireless tree and commit 6eab04a87677 ("treewide: remove extra
+semicolons") from the trivial tree.
 
-If so, I'll make that change after all archs have moved their drivers.
+The former removed the code that the latter fixed.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	Dave
+--Signature=_Wed__27_Apr_2011_11_43_09_+1000_bW2cOJn5yl=27.uQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNt3StAAoJEDMEi1NhKgbsIEIH/0ImiL/K6zc03P+e7PqqZ3Wi
+eI0LHusRqWI8aQl3wqq+w3P0hreKi/mifRrjp5Z7jcogSHiksXxnWtVHNzv7QQcl
+73Z6ixwYEnTq2XBCo4Bnqum4hj+Ut+GvrcZDTkdc0SUC9LNV65elowhVKtIaknWk
+ibePcx4fOFh/Gu5wUuoCqLxN19nyMQ+zbFDiEjwXw5hwD940nJgdnfQJmaYFmYVS
+ruuveR+J9h4rjD4WcL3tnEKhE8Hh3t18UTThZ01vfY4SMoGEhXySaTsifiN7iMX/
+9JtI1H3pfv3kiCA80s4qKgdazedQztHwRAZ1x2wGde/81fZFErV7uAMhA3CBR1E=
+=isI4
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__27_Apr_2011_11_43_09_+1000_bW2cOJn5yl=27.uQ--
