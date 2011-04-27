@@ -1,53 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with Linus' tree
-Date: Wed, 27 Apr 2011 11:00:43 +1000
-Message-ID: <20110427110043.9c61e87e.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the cpufreq tree
+Date: Wed, 27 Apr 2011 11:10:24 +1000
+Message-ID: <20110427111024.eb26b6f5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__27_Apr_2011_11_00_43_+1000_1Yngf4lydMqImYvz"
+ boundary="Signature=_Wed__27_Apr_2011_11_10_24_+1000_CaGiVFLmEu3.v/WU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42006 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46631 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754537Ab1D0BAw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Apr 2011 21:00:52 -0400
+	id S1754378Ab1D0BKa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Apr 2011 21:10:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Chaoming_Li <chaoming_li@realsil.com.cn>
+To: Dave Jones <davej@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__27_Apr_2011_11_00_43_+1000_1Yngf4lydMqImYvz
+--Signature=_Wed__27_Apr_2011_11_10_24_+1000_CaGiVFLmEu3.v/WU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Dave,
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/net/wireless/rtlwifi/pci.c between commit 25985edcedea ("Fix
-common misspellings") from Linus' tree and commit c7cfe38ee0f9 ("rtlwifi:
-Convert pci routines for addition of rtl8192se and rtl8192de") from the
-wireless tree.
+After merging the cpufreq tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-The latter removes the line corrected by the former.
+drivers/cpufreq/Kconfig:67:warning: choice value used outside its choice gr=
+oup
+drivers/cpufreq/Kconfig:75:warning: choice value used outside its choice gr=
+oup
+drivers/cpufreq/Kconfig:84:warning: choice value used outside its choice gr=
+oup
+drivers/cpufreq/Kconfig:93:warning: choice value used outside its choice gr=
+oup
+drivers/cpufreq/Kconfig:105:warning: choice value used outside its choice g=
+roup
+
+I am not sure what has caused this.  The only change in the cpufreq tree
+to that file is commit e002ba3328a2 ("[CPUFREQ] Move x86 cpufreq drivers
+to drivers/cpufreq/") which rearranged a few things but nothing obvious.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__27_Apr_2011_11_00_43_+1000_1Yngf4lydMqImYvz
+--Signature=_Wed__27_Apr_2011_11_10_24_+1000_CaGiVFLmEu3.v/WU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNt2q7AAoJEDMEi1NhKgbsDt4H/2NvaaTdQorGAXrjd3TQbUf4
-CIPtCkr1LPtrHAzdi90rJ8v2fmzBRA2GdNRBY7VDkyCVyUi3ipOpMCAhgbZhutgN
-9OecLHvkAnt2m8lvYOrbX/EyzTLIFpDnjQeX8mbev1yCMmaRAGhTaujLmdYmE56F
-t4qOCIh+JUCIHwX66pZRFF42wDHOvQt1aK/t3WCv9aiibXnIkXwaS7/Ue1LMGKh4
-K2AaoY9DAI8QBj5CunMNz/1kHeO9fRjk2D0bYOFBl3M4gUREJvG59JjLJ9CjPXQ4
-ef7ix13jWFto0c2bjHI9eGNlCQb2YPggxgcbP4wIQuDAXfaRaT84HzPc8V+cm5s=
-=vtA+
+iQEcBAEBAgAGBQJNt20AAAoJEDMEi1NhKgbsGu8H/0rt25gPZLCsfDywEBsjDFmV
+vH4aV/GxyGrQHrZ7w54DArLqZ7K021q8yrQAq/GPYX9IFZVxdbQKdiNTBqRpVWzu
+cYFedKfe3PWysyIdn3LBgKiSnb4SGh5KXcs/gPJNWdrx+X/UGa1ThCjTItpQRhiX
+rordKoFXN49xOXPgGAW4lnlwIC0XpfKTc6NHmF+VfMYBYp3issbQ2XqAXgLD59ag
+F4gOi3CbPQ8nOF99clypRtbtOfxLa/B9zi5aO97QnvFRnOwnGjiDMurAUh6suIxv
+kmzzFNsFEUd9WzV9liCWa21Ou5UX99GT+f/V69kGSDLefgz08a0PXwELvFExQXA=
+=NWYk
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__27_Apr_2011_11_00_43_+1000_1Yngf4lydMqImYvz--
+--Signature=_Wed__27_Apr_2011_11_10_24_+1000_CaGiVFLmEu3.v/WU--
