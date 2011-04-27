@@ -1,72 +1,84 @@
-From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-Subject: Re: linux-next: ibmveth runtime errors
-Date: Wed, 27 Apr 2011 12:36:22 +0200
-Message-ID: <20110427103622.GA22781@rere.qmqm.pl>
-References: <20110427144901.4c3f79b3.sfr@canb.auug.org.au>
+From: Francois Romieu <romieu@fr.zoreil.com>
+Subject: [PATCH net-next] r8169: fix merge conflict fix.
+Date: Wed, 27 Apr 2011 22:36:40 +0200
+Message-ID: <20110427203640.GC19708@electric-eye.fr.zoreil.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rere.qmqm.pl ([89.167.52.164]:36500 "EHLO rere.qmqm.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752809Ab1D0KgY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Apr 2011 06:36:24 -0400
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20110427144901.4c3f79b3.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: ppc-dev <linuxppc-dev@lists.ozlabs.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Santiago Leon <santil@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Realtek linux nic maintainers <nic_swsd@realtek.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 27, 2011 at 02:49:01PM +1000, Stephen Rothwell wrote:
-> For the last couple of days, linux-next booting on a few of our Power
-> partitions (but not all) have produced this error (over and over):
->=20
-> ibmveth 3000000b: eth0: tx: h_send_logical_lan failed with rc=3D-4
->=20
-> Linus' tree seems to boot fine on these partitions.  The only commit
-> directly affecting ibmveth in linux-next is b9367bf3ee6d ("net: ibmve=
-th:
-> convert to hw_features") which first appeared in next-20110421 which =
-is
-> also the first one that failed.
+- use adequate MAC_VER id
+  (see 01dc7fec4025f6bb72b6b98ec88b375346b6dbbb)
+- remove duplicate rtl_firmware_info record
+- remove duplicate functions
 
-Please test the following patch. It's just a blind guess, as this error
-is not descriptive.
-
-Best Regards,
-Micha=B3 Miros=B3aw
-
+Signed-off-by: Francois Romieu <romieu@fr.zoreil.com>
+Cc: Realtek linux nic maintainers <nic_swsd@realtek.com>
 ---
+ drivers/net/r8169.c |   25 +++++--------------------
+ 1 files changed, 5 insertions(+), 20 deletions(-)
 
-net: ibmveth: force reconfiguring checksum settings on startup
-
-Commit b9367bf3ee6d ("net: ibmveth: convert to hw_features") accidental=
-ly
-removed call to ibmveth_set_csum_offload() in ibmveth_probe(). Put the
-call back where it was, but with additional error checking provided
-by ibmveth_set_features().
-
-Signed-off-by: Micha=B3 Miros=B3aw <mirq-linux@rere.qmqm.pl>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
----
- drivers/net/ibmveth.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/net/ibmveth.c b/drivers/net/ibmveth.c
-index 4855f1f..0d1fea2 100644
---- a/drivers/net/ibmveth.c
-+++ b/drivers/net/ibmveth.c
-@@ -1397,6 +1397,8 @@ static int __devinit ibmveth_probe(struct vio_dev=
- *dev,
-=20
- 	netdev_dbg(netdev, "registering netdev...\n");
-=20
-+	ibmveth_set_features(dev, dev->features);
+diff --git a/drivers/net/r8169.c b/drivers/net/r8169.c
+index 025dedd..6364e0b 100644
+--- a/drivers/net/r8169.c
++++ b/drivers/net/r8169.c
+@@ -191,9 +191,8 @@ static const struct rtl_firmware_info {
+ 	{ .mac_version = RTL_GIGA_MAC_VER_26, .fw_name = FIRMWARE_8168D_2 },
+ 	{ .mac_version = RTL_GIGA_MAC_VER_29, .fw_name = FIRMWARE_8105E_1 },
+ 	{ .mac_version = RTL_GIGA_MAC_VER_30, .fw_name = FIRMWARE_8105E_1 },
+-	{ .mac_version = RTL_GIGA_MAC_VER_30, .fw_name = FIRMWARE_8105E_1 },
+-	{ .mac_version = RTL_GIGA_MAC_VER_31, .fw_name = FIRMWARE_8168E_1 },
+-	{ .mac_version = RTL_GIGA_MAC_VER_32, .fw_name = FIRMWARE_8168E_2 }
++	{ .mac_version = RTL_GIGA_MAC_VER_32, .fw_name = FIRMWARE_8168E_1 },
++	{ .mac_version = RTL_GIGA_MAC_VER_33, .fw_name = FIRMWARE_8168E_2 }
+ };
+ 
+ enum cfg_version {
+@@ -2535,6 +2534,8 @@ static void rtl8168e_hw_phy_config(struct rtl8169_private *tp)
+ 		{ 0x1f, 0x0000 }
+ 	};
+ 
++	rtl_apply_firmware(tp);
 +
- 	rc =3D register_netdev(netdev);
-=20
- 	if (rc) {
---=20
-1.7.2.5
+ 	rtl_writephy_batch(tp, phy_reg_init, ARRAY_SIZE(phy_reg_init));
+ 
+ 	/* DCO enable for 10M IDLE Power */
+@@ -2576,20 +2577,6 @@ static void rtl8168e_hw_phy_config(struct rtl8169_private *tp)
+ 	rtl_writephy(tp, 0x0d, 0x0000);
+ }
+ 
+-static void rtl8168e_1_hw_phy_config(struct rtl8169_private *tp)
+-{
+-	rtl_apply_firmware(tp);
+-
+-	rtl8168e_hw_phy_config(tp);
+-}
+-
+-static void rtl8168e_2_hw_phy_config(struct rtl8169_private *tp)
+-{
+-	rtl_apply_firmware(tp);
+-
+-	rtl8168e_hw_phy_config(tp);
+-}
+-
+ static void rtl8102e_hw_phy_config(struct rtl8169_private *tp)
+ {
+ 	static const struct phy_reg phy_reg_init[] = {
+@@ -2705,10 +2692,8 @@ static void rtl_hw_phy_config(struct net_device *dev)
+ 		rtl8105e_hw_phy_config(tp);
+ 		break;
+ 	case RTL_GIGA_MAC_VER_32:
+-		rtl8168e_1_hw_phy_config(tp);
+-		break;
+ 	case RTL_GIGA_MAC_VER_33:
+-		rtl8168e_2_hw_phy_config(tp);
++		rtl8168e_hw_phy_config(tp);
+ 		break;
+ 
+ 	default:
+-- 
+1.7.4.4
