@@ -1,53 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the wireless tree
-Date: Wed, 27 Apr 2011 11:43:09 +1000
-Message-ID: <20110427114309.38d87c9d.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the cpufreq tree
+Date: Wed, 27 Apr 2011 11:54:27 +1000
+Message-ID: <20110427115427.f5a4fac7.sfr@canb.auug.org.au>
+References: <20110427111024.eb26b6f5.sfr@canb.auug.org.au>
+	<20110427013217.GA30804@redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__27_Apr_2011_11_43_09_+1000_bW2cOJn5yl=27.uQ"
+ boundary="Signature=_Wed__27_Apr_2011_11_54_27_+1000_Seg0fGATmifh/1xR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45820 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53144 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755707Ab1D0BnP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Apr 2011 21:43:15 -0400
+	id S1755917Ab1D0Bya (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Apr 2011 21:54:30 -0400
+In-Reply-To: <20110427013217.GA30804@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Justin P. Mattock" <justinmattock@gmail.com>, Chaoming_Li <chaoming_li@realsil.com.cn>, Larry Finger <Larry.Finger@lwfinger.net>, "John W. Linville" <linville@tuxdriver.com>
+To: Dave Jones <davej@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__27_Apr_2011_11_43_09_+1000_bW2cOJn5yl=27.uQ
+--Signature=_Wed__27_Apr_2011_11_54_27_+1000_Seg0fGATmifh/1xR
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Dave,
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/net/wireless/rtlwifi/pci.c between commit c7cfe38ee0f9 ("rtlwifi:
-Convert pci routines for addition of rtl8192se and rtl8192de") from the
-wireless tree and commit 6eab04a87677 ("treewide: remove extra
-semicolons") from the trivial tree.
+On Tue, 26 Apr 2011 21:32:17 -0400 Dave Jones <davej@redhat.com> wrote:
+>
+> As the commit message suggests, per-arch cpufreq drivers are moving to dr=
+ivers/cpufreq/
+> So far, I've only moved the x86 ones.  As a side-effect of this, the=20
+> source "drivers/cpufreq/Kconfig" is no longer a per-arch thing, as it now=
+ gets
+> included from kernel/power/Kconfig.
+>=20
+> I suspect the warnings are happening because on the unconverted archs, dr=
+ivers/cpufreq/Kconfig
+> is now getting included twice.  If you kill the 'source' line in kernel/p=
+ower/Kconfig,
+> does this make things go back to normal ?  (Check that cpufreq still show=
+s up in
+> the resulting config afterwards)
 
-The former removed the code that the latter fixed.
+Removing the source line in kernel/power/Kconfig makes the warnings go
+away and the only change in the generated config file is this:
+
+@@ -465,10 +465,6 @@
+ # CONFIG_PM_RUNTIME is not set
+ CONFIG_PM=3Dy
+ # CONFIG_PM_DEBUG is not set
+-
+-#
+-# CPU Frequency scaling
+-#
+ CONFIG_SECCOMP=3Dy
+ CONFIG_ISA_DMA_API=3Dy
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__27_Apr_2011_11_43_09_+1000_bW2cOJn5yl=27.uQ
+--Signature=_Wed__27_Apr_2011_11_54_27_+1000_Seg0fGATmifh/1xR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNt3StAAoJEDMEi1NhKgbsIEIH/0ImiL/K6zc03P+e7PqqZ3Wi
-eI0LHusRqWI8aQl3wqq+w3P0hreKi/mifRrjp5Z7jcogSHiksXxnWtVHNzv7QQcl
-73Z6ixwYEnTq2XBCo4Bnqum4hj+Ut+GvrcZDTkdc0SUC9LNV65elowhVKtIaknWk
-ibePcx4fOFh/Gu5wUuoCqLxN19nyMQ+zbFDiEjwXw5hwD940nJgdnfQJmaYFmYVS
-ruuveR+J9h4rjD4WcL3tnEKhE8Hh3t18UTThZ01vfY4SMoGEhXySaTsifiN7iMX/
-9JtI1H3pfv3kiCA80s4qKgdazedQztHwRAZ1x2wGde/81fZFErV7uAMhA3CBR1E=
-=isI4
+iQEcBAEBAgAGBQJNt3dUAAoJEDMEi1NhKgbsIaAH/3zSj/ZBH8QMKuJXntW09CoV
+oMZWInTZbeS7ehxoVQKnrjPyfAZGHbbTAydehLnDlAFYu88uuvkm154OytczFots
+ALVeMSovY9eV6vyf69JISd6NQj7CtIElaQ0/NHJidNgmKiWsP+amJygfWSo2WO2r
+aJ/QuItDFJGq4fF6g6e01du2OArwpeVsnuZzMMhaf/pUnl/Q1TTNWI90tE8l8McD
+foScVgy6W2Rjz6yShiBPNvqu+o9R+K099uVy9i3iUg03AyoM3Yi6ZJYTpqQT9gO+
+VwlBfPrMVPPrNk7wqOqQtzQhmcoqfpJdzcQX/Cy3uF1ZskVh1hoZRJg9KDPUI/M=
+=YuAM
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__27_Apr_2011_11_43_09_+1000_bW2cOJn5yl=27.uQ--
+--Signature=_Wed__27_Apr_2011_11_54_27_+1000_Seg0fGATmifh/1xR--
