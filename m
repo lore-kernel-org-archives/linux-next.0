@@ -1,30 +1,38 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: linux-next: Tree for April 26 (kvm)
-Date: Wed, 27 Apr 2011 10:49:15 +0300
-Message-ID: <4DB7CA7B.1000603@redhat.com>
-References: <20110426202605.c66ce0ea.sfr@canb.auug.org.au> <20110426083940.934e0e6f.randy.dunlap@oracle.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with the wireless
+ tree
+Date: Wed, 27 Apr 2011 11:22:23 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1104271121580.12035@pobox.suse.cz>
+References: <20110427114309.38d87c9d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110426083940.934e0e6f.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, kvm@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marcelo Tosatti <mtosatti@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:47320 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755563Ab1D0JW3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Apr 2011 05:22:29 -0400
+In-Reply-To: <20110427114309.38d87c9d.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Justin P. Mattock" <justinmattock@gmail.com>, Chaoming_Li <chaoming_li@realsil.com.cn>, Larry Finger <Larry.Finger@lwfinger.net>, "John W. Linville" <linville@tuxdriver.com>
 
-On 04/26/2011 06:39 PM, Randy Dunlap wrote:
-> On Tue, 26 Apr 2011 20:26:05 +1000 Stephen Rothwell wrote:
->
-> >  Hi all,
-> >
-> >  The kernel.org mirroring is being very slow today.
->
-> on i386:
->
-> ERROR: "__get_user_X" [arch/x86/kvm/kvm.ko] undefined!
+On Wed, 27 Apr 2011, Stephen Rothwell wrote:
 
-Thanks, this has already been noted; we'll fix this shortly.
+> Hi Jiri,
+> 
+> Today's linux-next merge of the trivial tree got a conflict in
+> drivers/net/wireless/rtlwifi/pci.c between commit c7cfe38ee0f9 ("rtlwifi:
+> Convert pci routines for addition of rtl8192se and rtl8192de") from the
+> wireless tree and commit 6eab04a87677 ("treewide: remove extra
+> semicolons") from the trivial tree.
+> 
+> The former removed the code that the latter fixed.
+
+OK, I have reverted that particular hunk.
+
+Thanks for reporting,
 
 -- 
-error compiling committee.c: too many arguments to function
+Jiri Kosina
+SUSE Labs, Novell Inc.
