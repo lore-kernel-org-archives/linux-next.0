@@ -1,60 +1,114 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Thu, 28 Apr 2011 11:53:27 +1000
-Message-ID: <20110428115327.6727e04f.sfr@canb.auug.org.au>
+Subject: Re: linux-next: ibmveth runtime errors
+Date: Thu, 28 Apr 2011 12:11:24 +1000
+Message-ID: <20110428121124.39c036ff.sfr@canb.auug.org.au>
+References: <20110427144901.4c3f79b3.sfr@canb.auug.org.au>
+	<20110427103622.GA22781@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__28_Apr_2011_11_53_27_+1000_tHwCZhghe8nU+InU"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60257 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51201 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750779Ab1D1Bxg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Apr 2011 21:53:36 -0400
+	id S1752168Ab1D1CLb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Apr 2011 22:11:31 -0400
+In-Reply-To: <20110427103622.GA22781@rere.qmqm.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc: ppc-dev <linuxppc-dev@lists.ozlabs.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Santiago Leon <santil@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__28_Apr_2011_11_53_27_+1000_tHwCZhghe8nU+InU
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Micha=C5=82,
 
-Hi all,
+On Wed, 27 Apr 2011 12:36:22 +0200 Micha=C5=82 Miros=C5=82aw <mirq-linu=
+x@rere.qmqm.pl> wrote:
+>
+> Please test the following patch. It's just a blind guess, as this err=
+or
+> is not descriptive.
+>=20
+> Best Regards,
+> Micha=C5=82 Miros=C5=82aw
+>=20
+> ---
+>=20
+> net: ibmveth: force reconfiguring checksum settings on startup
+>=20
+> Commit b9367bf3ee6d ("net: ibmveth: convert to hw_features") accident=
+ally
+> removed call to ibmveth_set_csum_offload() in ibmveth_probe(). Put th=
+e
+> call back where it was, but with additional error checking provided
+> by ibmveth_set_features().
+>=20
+> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>=20
+> ---
+>  drivers/net/ibmveth.c |    2 ++
+>  1 files changed, 2 insertions(+), 0 deletions(-)
+>=20
+> diff --git a/drivers/net/ibmveth.c b/drivers/net/ibmveth.c
+> index 4855f1f..0d1fea2 100644
+> --- a/drivers/net/ibmveth.c
+> +++ b/drivers/net/ibmveth.c
+> @@ -1397,6 +1397,8 @@ static int __devinit ibmveth_probe(struct vio_d=
+ev *dev,
+> =20
+>  	netdev_dbg(netdev, "registering netdev...\n");
+> =20
+> +	ibmveth_set_features(dev, dev->features);
+> +
+>  	rc =3D register_netdev(netdev);
+> =20
+>  	if (rc) {
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+This worked after I changed both "dev"s to "netdev".  And the boot
+succedded.  I will apply this patchg to linux-next today and hopefully
+Dave can apply it to the net tree.  I have added a copy fo the patch I
+used below.
 
-sound/soc/soc-utils.o: In function `cleanup_module':
-(.exit.text+0x0): multiple definition of `cleanup_module'
-sound/soc/soc-core.o:(.exit.text+0x0): first defined here
-sound/soc/soc-utils.o: In function `init_module':
-(.init.text+0x0): multiple definition of `init_module'
-sound/soc/soc-core.o:(.init.text+0x0): first defined here
+=46rom: =3D?UTF-8?q?Micha=3DC5=3D82=3D20Miros=3DC5=3D82aw?=3D <mirq-lin=
+ux@rere.qmqm.pl>
+Date: Thu, 28 Apr 2011 11:59:15 +1000
+Subject: [PATCH] net: ibmveth: force reconfiguring checksum settings on
+ startup
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
 
-Probably caused by commit 848dd8beef44 ("ASoC: Add more natural support
-for no-DMA DAIs")?
+Commit b9367bf3ee6d ("net: ibmveth: convert to hw_features") accidental=
+ly
+removed call to ibmveth_set_csum_offload() in ibmveth_probe(). Put the
+call back where it was, but with additional error checking provided
+by ibmveth_set_features().
 
-I have used the sound-asoc tree from next-20110427 for today.
+Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+[sfr: dev -> netdev]
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/ibmveth.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/ibmveth.c b/drivers/net/ibmveth.c
+index 4855f1f..be3fe71 100644
+--- a/drivers/net/ibmveth.c
++++ b/drivers/net/ibmveth.c
+@@ -1397,6 +1397,8 @@ static int __devinit ibmveth_probe(struct vio_dev=
+ *dev,
+=20
+ 	netdev_dbg(netdev, "registering netdev...\n");
+=20
++	ibmveth_set_features(netdev, netdev->features);
++
+ 	rc =3D register_netdev(netdev);
+=20
+ 	if (rc) {
+--=20
+1.7.4.4
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__28_Apr_2011_11_53_27_+1000_tHwCZhghe8nU+InU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNuMiXAAoJEDMEi1NhKgbsxTAIAIO65ozzCLQLtoCkJNrQK+ED
-2VP/DgZf0P7ab7kQUdw+rAKknvW50GiGrkTNJig4wliy+m8Ks5n8TQ4evwCXuy+P
-V3tnPOFrf6u5bX6laeTSTrcpAND7YZLOxtIHddnN4MEhe1AUaonyBbgkrC2dI1MP
-bQM9oznBMzs3QoaNQW77jhsUMFeXWc66g7ThTi8TrCLEawWRpouiRg1gxM7DAW4e
-WxFFXASk6jY/GMR4De60q2wDWBo7iASiubWx+G68S5IReIwZUBqfKxLI6FcaBioa
-vzBFu0CIZ/m7Pjelx2hjRDobpd5Sr/aDDWCV7fVJlPdv0jTFfpEBZv60+MK3nxs=
-=5bQ/
------END PGP SIGNATURE-----
-
---Signature=_Thu__28_Apr_2011_11_53_27_+1000_tHwCZhghe8nU+InU--
