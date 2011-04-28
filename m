@@ -1,34 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: build failure after merge of the ux500-core tree
-Date: Thu, 28 Apr 2011 08:54:04 +0200
-Message-ID: <BANLkTinJZSh5y3gAa9ZkY1giPwzA7Nni6w@mail.gmail.com>
-References: <20110428105634.7a98c094.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for April 28 (staging/wlan-ng: prism2)
+Date: Thu, 28 Apr 2011 09:29:17 -0700
+Message-ID: <20110428092917.039071a4.randy.dunlap@oracle.com>
+References: <20110428152534.7240a49c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:57332 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752575Ab1D1GyE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Apr 2011 02:54:04 -0400
-In-Reply-To: <20110428105634.7a98c094.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:19358 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752780Ab1D1Q3c (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Apr 2011 12:29:32 -0400
+In-Reply-To: <20110428152534.7240a49c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
 
-2011/4/28 Stephen Rothwell <sfr@canb.auug.org.au>:
+On Thu, 28 Apr 2011 15:25:34 +1000 Stephen Rothwell wrote:
 
-> After merging the ux500-core tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/video/via/via-gpio.c:148: error: 'gpio_config' redeclared as different kind of symbol
-> include/asm-generic/gpio.h:164: note: previous declaration of 'gpio_config' was here
->
-> Caused by commit cf451708d300 ("gpio: add a custom configuration
-> mechanism to gpiolib").
+> Hi all,
 
-Hm! How typical. I will push a patch that renames gpio_config in the
-via driver to via_gpio_config so we don't get this namespace clash.
 
-Yours,
-Linus Walleij
+drivers/staging/wlan-ng/prism2fw.c:1115: warning: the frame size of 4288 bytes is larger than 2048 bytes
+
+Noooooo.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
