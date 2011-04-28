@@ -1,28 +1,31 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: add Docs git tree to linux-next
-Date: Wed, 27 Apr 2011 20:04:24 -0700
-Message-ID: <20110427200424.c1f0858f.rdunlap@xenotime.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with Linus' tree
+Date: Wed, 27 Apr 2011 20:06:01 -0700
+Message-ID: <20110428030601.GA32204@kroah.com>
+References: <20110428125913.9699516d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:49715 "HELO
-	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751372Ab1D1DE1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Apr 2011 23:04:27 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110428125913.9699516d.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Larry Finger <Larry.Finger@lwfinger.net>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On Thu, Apr 28, 2011 at 12:59:13PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/rt2860/common/cmm_data_pci.c
+> drivers/staging/rt2860/common/cmm_data_usb.c between commit e9c549998dc2
+> ("Revert wrong fixes for common misspellings") from Linus' tree and
+> commit fefecc6989b4 ("staging: rt2860sta and rt2870sta: Remove drivers
+> replaced in net/wireless") from the staging tree.
+> 
+> The files modified by the former were removed by the latter, so I did
+> that.
 
-Please add this git tree to linux-next:
+Thanks, that is correct.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/rdunlap/linux-docs/
-branch "docs-move"
-
-thanks,
----
-~Randy
-Yes, I still have a quilt queue also.
+greg k-h
