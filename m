@@ -1,114 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: ibmveth runtime errors
-Date: Thu, 28 Apr 2011 12:11:24 +1000
-Message-ID: <20110428121124.39c036ff.sfr@canb.auug.org.au>
-References: <20110427144901.4c3f79b3.sfr@canb.auug.org.au>
-	<20110427103622.GA22781@rere.qmqm.pl>
+Subject: linux-next: manual merge of the staging tree with Linus' tree
+Date: Thu, 28 Apr 2011 12:59:13 +1000
+Message-ID: <20110428125913.9699516d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__28_Apr_2011_12_59_13_+1000_atd61MPmz4Xd5FBl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51201 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42923 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752168Ab1D1CLb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Apr 2011 22:11:31 -0400
-In-Reply-To: <20110427103622.GA22781@rere.qmqm.pl>
+	id S1752962Ab1D1C7W (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Apr 2011 22:59:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: ppc-dev <linuxppc-dev@lists.ozlabs.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Santiago Leon <santil@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Larry Finger <Larry.Finger@lwfinger.net>
 
-Hi Micha=C5=82,
+--Signature=_Thu__28_Apr_2011_12_59_13_+1000_atd61MPmz4Xd5FBl
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 27 Apr 2011 12:36:22 +0200 Micha=C5=82 Miros=C5=82aw <mirq-linu=
-x@rere.qmqm.pl> wrote:
->
-> Please test the following patch. It's just a blind guess, as this err=
-or
-> is not descriptive.
->=20
-> Best Regards,
-> Micha=C5=82 Miros=C5=82aw
->=20
-> ---
->=20
-> net: ibmveth: force reconfiguring checksum settings on startup
->=20
-> Commit b9367bf3ee6d ("net: ibmveth: convert to hw_features") accident=
-ally
-> removed call to ibmveth_set_csum_offload() in ibmveth_probe(). Put th=
-e
-> call back where it was, but with additional error checking provided
-> by ibmveth_set_features().
->=20
-> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
->=20
-> ---
->  drivers/net/ibmveth.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
->=20
-> diff --git a/drivers/net/ibmveth.c b/drivers/net/ibmveth.c
-> index 4855f1f..0d1fea2 100644
-> --- a/drivers/net/ibmveth.c
-> +++ b/drivers/net/ibmveth.c
-> @@ -1397,6 +1397,8 @@ static int __devinit ibmveth_probe(struct vio_d=
-ev *dev,
-> =20
->  	netdev_dbg(netdev, "registering netdev...\n");
-> =20
-> +	ibmveth_set_features(dev, dev->features);
-> +
->  	rc =3D register_netdev(netdev);
-> =20
->  	if (rc) {
+Hi Greg,
 
-This worked after I changed both "dev"s to "netdev".  And the boot
-succedded.  I will apply this patchg to linux-next today and hopefully
-Dave can apply it to the net tree.  I have added a copy fo the patch I
-used below.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/rt2860/common/cmm_data_pci.c
+drivers/staging/rt2860/common/cmm_data_usb.c between commit e9c549998dc2
+("Revert wrong fixes for common misspellings") from Linus' tree and
+commit fefecc6989b4 ("staging: rt2860sta and rt2870sta: Remove drivers
+replaced in net/wireless") from the staging tree.
 
-=46rom: =3D?UTF-8?q?Micha=3DC5=3D82=3D20Miros=3DC5=3D82aw?=3D <mirq-lin=
-ux@rere.qmqm.pl>
-Date: Thu, 28 Apr 2011 11:59:15 +1000
-Subject: [PATCH] net: ibmveth: force reconfiguring checksum settings on
- startup
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
-
-Commit b9367bf3ee6d ("net: ibmveth: convert to hw_features") accidental=
-ly
-removed call to ibmveth_set_csum_offload() in ibmveth_probe(). Put the
-call back where it was, but with additional error checking provided
-by ibmveth_set_features().
-
-Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-[sfr: dev -> netdev]
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/ibmveth.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/net/ibmveth.c b/drivers/net/ibmveth.c
-index 4855f1f..be3fe71 100644
---- a/drivers/net/ibmveth.c
-+++ b/drivers/net/ibmveth.c
-@@ -1397,6 +1397,8 @@ static int __devinit ibmveth_probe(struct vio_dev=
- *dev,
-=20
- 	netdev_dbg(netdev, "registering netdev...\n");
-=20
-+	ibmveth_set_features(netdev, netdev->features);
-+
- 	rc =3D register_netdev(netdev);
-=20
- 	if (rc) {
---=20
-1.7.4.4
-
+The files modified by the former were removed by the latter, so I did
+that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__28_Apr_2011_12_59_13_+1000_atd61MPmz4Xd5FBl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNuNgBAAoJEDMEi1NhKgbsdvAH/Rne6vc90BSKSlzHvudb4ZU0
+Vd+Z2iKtHmgSf0xeA7x+gBCrG2Xl9xGcLBzAVR0yKFepdWEUDMDjPYiRljfLO/Rx
+LoAxmsVF2JHQ3Cm2F9Oe7EZVCD5ooqq6m8jwonl1IFDa3TRo7iNv4oEj8YHCAebR
+DW+6J977l3WCToTGuf0CKPRnKiu7OZGeusHD2q4/sARSDrLA4IKq5cAbZJUSnvWH
+hWY3d1VKzRQMBn7BVVtEXAUUEorcXvuSCHrLxB5lla1kix/CrCfFgIOc0gA9liba
+J2Xpd8j0TajQsbQrvm89EpfeHh2/H/0hLC1BQSX6I9PYjevnBB++hsUisBu666Y=
+=jwn2
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__28_Apr_2011_12_59_13_+1000_atd61MPmz4Xd5FBl--
