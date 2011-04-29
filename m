@@ -1,32 +1,61 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for April 28 (staging/wlan-ng: prism2)
-Date: Thu, 28 Apr 2011 19:15:36 -0700
-Message-ID: <20110429021536.GB22138@suse.de>
-References: <20110428152534.7240a49c.sfr@canb.auug.org.au>
- <20110428092917.039071a4.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (powercp
+ tree related)
+Date: Fri, 29 Apr 2011 13:04:10 +1000
+Message-ID: <20110429130410.3e6221ad.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__29_Apr_2011_13_04_10_+1000_7lAyL36NJRb7Lhr+"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41116 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758390Ab1D2DEV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Apr 2011 23:04:21 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Fri__29_Apr_2011_13_04_10_+1000_7lAyL36NJRb7Lhr+
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20110428092917.039071a4.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 28, 2011 at 09:29:17AM -0700, Randy Dunlap wrote:
-> On Thu, 28 Apr 2011 15:25:34 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> 
-> 
-> drivers/staging/wlan-ng/prism2fw.c:1115: warning: the frame size of 4288 bytes is larger than 2048 bytes
-> 
-> Noooooo.
+Hi all,
 
-Heh.  What caused this?  I don't remember changing anything here
-recently.
+After merging the final tree, today's linux-next build (powerpc64
+allnoconfig) produced this warning:
 
-thanks,
+WARNING: vmlinux.o(.text+0x907a): Section mismatch in reference from the va=
+riable generic_secondary_common_init to the variable .init.data:boot_cpu_co=
+unt
+The function generic_secondary_common_init() references
+the variable __initdata boot_cpu_count.
+This is often because generic_secondary_common_init lacks a __initdata=20
+annotation or the annotation of boot_cpu_count is wrong.
 
-greg k-h
+Caused by commit 9d07bc841c97 ("powerpc: Properly handshake CPUs going
+out of boot spin loop").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__29_Apr_2011_13_04_10_+1000_7lAyL36NJRb7Lhr+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNuiqqAAoJEDMEi1NhKgbs3IoH/iAr9ico38i0LP9rUhQ1LmNs
+qQvds3iqG7PtOmChVxNnCJz9b08DuJxVnH/ugbV4iVH26+p3kFSsDHdQEqlrb1m9
+OFRbvm4v/CWvTDjQhk1OUX5ynbzmKFYg+32PRHjD1SZMDvpLjyqPKJSl6YJwCdB2
+2GUQipxR7YYrr/n1hXZ8I4Jlcq+LO+MVVXzTvsodo3EwPl6yKB4rNpkrP5C7YwFX
+kPV2idaeQ3wLj8SC2T9ol3zGKPDquLhQ+dlaYkrT6TpXSqbPFeVsOpwN8mkEwPIh
+eIWxbXySGlwvNYiVmXMi7+8PwRWR+GUOODVo+yFzm8SOXuLwtWiBy8z5ywgxyOw=
+=mt0M
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__29_Apr_2011_13_04_10_+1000_7lAyL36NJRb7Lhr+--
