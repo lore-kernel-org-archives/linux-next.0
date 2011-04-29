@@ -1,39 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the suspend tree with the net tree
-Date: Fri, 29 Apr 2011 12:05:41 +1000
-Message-ID: <20110429120541.c27998c2.sfr@canb.auug.org.au>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for April 28 (staging/wlan-ng: prism2)
+Date: Thu, 28 Apr 2011 19:15:36 -0700
+Message-ID: <20110429021536.GB22138@suse.de>
+References: <20110428152534.7240a49c.sfr@canb.auug.org.au>
+ <20110428092917.039071a4.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110428092917.039071a4.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Rafael,
+On Thu, Apr 28, 2011 at 09:29:17AM -0700, Randy Dunlap wrote:
+> On Thu, 28 Apr 2011 15:25:34 +1000 Stephen Rothwell wrote:
+> 
+> > Hi all,
+> 
+> 
+> drivers/staging/wlan-ng/prism2fw.c:1115: warning: the frame size of 4288 bytes is larger than 2048 bytes
+> 
+> Noooooo.
 
-Today's linux-next merge of the suspend tree got a conflict in
-arch/x86/Kconfig between commit 0a14842f5a3c ("net: filter: Just In Time
-compiler for x86-64") from the  tree and commit d9f1ce017fcf ("PM: Remove
-sysdev suspend, resume and shutdown operations") from the suspend tree.
+Heh.  What caused this?  I don't remember changing anything here
+recently.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+thanks,
 
-diff --cc arch/x86/Kconfig
-index 92d07bd,140e254..0000000
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@@ -71,8 -71,6 +71,7 @@@ config X8
-  	select GENERIC_IRQ_SHOW
-  	select IRQ_FORCED_THREADING
-  	select USE_GENERIC_SMP_HELPERS if SMP
-- 	select ARCH_NO_SYSDEV_OPS
- +	select HAVE_BPF_JIT if X86_64
-  
-  config INSTRUCTION_DECODER
-  	def_bool (KPROBES || PERF_EVENTS)
+greg k-h
