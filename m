@@ -1,92 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the cpufreq tree
-Date: Mon, 2 May 2011 15:06:15 +1000
-Message-ID: <20110502150615.f174d0d7.sfr@canb.auug.org.au>
-References: <20110427111024.eb26b6f5.sfr@canb.auug.org.au>
-	<20110427013217.GA30804@redhat.com>
-	<20110427115427.f5a4fac7.sfr@canb.auug.org.au>
-	<20110429201241.GA12256@redhat.com>
+Subject: Re: linux-next: build warning after merge of the kbuild tree
+Date: Mon, 2 May 2011 15:57:12 +1000
+Message-ID: <20110502155712.ab6a64ba.sfr@canb.auug.org.au>
+References: <20110502121817.645d544e.sfr@canb.auug.org.au>
+	<20110502022417.GA11804@redhat.com>
+	<20110502134524.40da4245.sfr@canb.auug.org.au>
+	<20110502142454.a7091ad5.sfr@canb.auug.org.au>
+	<20110502043642.GD11804@redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_May_2011_15_06_15_+1000_+7_bjr4kSBKftA+6"
+ boundary="Signature=_Mon__2_May_2011_15_57_12_+1000_0W8Ph+ngFt8dNdim"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37121 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38484 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750849Ab1EBFGT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 May 2011 01:06:19 -0400
-In-Reply-To: <20110429201241.GA12256@redhat.com>
+	id S1753325Ab1EBF5X (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 May 2011 01:57:23 -0400
+In-Reply-To: <20110502043642.GD11804@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Dave Jones <davej@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Michal Marek <mmarek@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
 
---Signature=_Mon__2_May_2011_15_06_15_+1000_+7_bjr4kSBKftA+6
+--Signature=_Mon__2_May_2011_15_57_12_+1000_0W8Ph+ngFt8dNdim
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Dave,
 
-On Fri, 29 Apr 2011 16:12:42 -0400 Dave Jones <davej@redhat.com> wrote:
+On Mon, 2 May 2011 00:36:43 -0400 Dave Jones <davej@redhat.com> wrote:
 >
-> I've moved this work onto a separate move-drivers branch. Could you track=
- that in next too please?
-> (Apply after fixes & next)
->=20
-> I'm hoping this branch will be fairly short-lived, but it depends how qui=
-ckly
-> other architecture maintainers move their drivers over too.
+> That's interesting. That suggests that something isn't being built with K=
+BUILD_CFLAGS.
+> I did a full defconfig build on x86-64 successfully (allmodconfig is chur=
+ning away).
+> Can you point me at something that doesn't build ?
 
-I have added that new branch starting today.  I called it cpufreq-move.
+I have just done an i386 defconfig build with V=3D1.  Every compilation has
+that flag passed to it, but only one complains:
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+  i386-linux-gcc -Wp,-MD,kernel/.futex.o.d  -nostdinc -isystem /opt/cross/g=
+cc-4.4.5-nolibc/i386-linux/bin/../lib/gcc/i386-linux/4.4.5/include -I/scrat=
+ch/sfr/next/arch/x86/include -Iarch/x86/include/generated -Iinclude  -I/scr=
+atch/sfr/next/include -include include/generated/autoconf.h  -I/scratch/sfr=
+/next/kernel -Ikernel -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-t=
+rigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declara=
+tion -Wno-format-security -fno-delete-null-pointer-checks -Os -m32 -msoft-f=
+loat -mregparm=3D3 -freg-struct-return -mpreferred-stack-boundary=3D2 -marc=
+h=3Di686 -mtune=3Dgeneric -Wa,-mtune=3Dgeneric32 -ffreestanding -DCONFIG_AS=
+_CFI=3D1 -DCONFIG_AS_CFI_SIGNAL_FRAME=3D1 -DCONFIG_AS_CFI_SECTIONS=3D1 -pip=
+e -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-=
+sse2 -mno-3dnow -Wframe-larger-than=3D2048 -fno-stack-protector -Wno-unused=
+-but-set-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -Wdec=
+laration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-=
+stack    -D"KBUILD_STR(s)=3D#s" -D"KBUILD_BASENAME=3DKBUILD_STR(futex)"  -D=
+"KBUILD_MODNAME=3DKBUILD_STR(futex)" -c -o kernel/futex.o /scratch/sfr/next=
+/kernel/futex.c
+/scratch/sfr/next/kernel/futex.c: In function 'fixup_pi_state_owner':
+/scratch/sfr/next/kernel/futex.c:1549: warning: 'curval' may be used uninit=
+ialized in this function
+/scratch/sfr/next/kernel/futex.c: In function 'futex_lock_pi_atomic':
+/scratch/sfr/next/kernel/futex.c:678: warning: 'curval' may be used uniniti=
+alized in this function
+/scratch/sfr/next/kernel/futex.c: In function 'handle_futex_death':
+/scratch/sfr/next/kernel/futex.c:2454: warning: 'nval' may be used uninitia=
+lized in this function
+At top level:
+cc1: warning: unrecognized command line option "-Wno-unused-but-set-variabl=
+e"
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+I removed kernel/futex.o and recompiled to verify.  futex.c doesn't seem
+to be built any differently to anything else.
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Mon__2_May_2011_15_06_15_+1000_+7_bjr4kSBKftA+6
+--Signature=_Mon__2_May_2011_15_57_12_+1000_0W8Ph+ngFt8dNdim
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNvjvHAAoJEDMEi1NhKgbscooH/2lezgHdL/ucbcxg8em8lYUx
-ULRPco52fklpwuVw1h9wiuijVTbhfMyBhOZnTbTuX4EE3R97u6joecl7dpfDkeqE
-UM56oDcxNG+cjuIveD0oE24wpRNWH+JTuJ0vsansFl1mCP0+QEx2Fw1A1CxH98qi
-Y4zLojtn3hyzNFdbfUm+GXBQjFXxSVd0eWT4ch3vg+I+SzIpxwT+TXqal7aNFWdi
-N5drJ2byQQwMCFEv/RjeQLPbaX+wBGIQlBmWRq1l1dBcoZSUWcC9ja6VeEzeM5aD
-yCvzY0W4wp7STgMKqGXbsLd3SjeB07aTr3ycS/nf0pNFgUHgTgOPaXkKgY4eoLE=
-=H6gI
+iQEcBAEBAgAGBQJNvke4AAoJEDMEi1NhKgbsZXUH/3mKFehSW9ZxBAM/1YkbkcW0
+ZWLdAEg1qc3616fGKeGYYAGLiONDpopcqHI8WC4vRz7DNrA/1LyfYHcUlK7DN3gJ
+znyttATrsPzly1s+FzHsPjhJI3CD4+QIh3TLrS/rMNgOgmaPuzPoALBBHLSs0ira
+B+jv14LDRJJms63LkTWyGGdprGGY0JGaXlHJ3zS9PWukcCMcjJNdEakwN4aY5B+c
+gxJr1AjjVPqrta5A9P+RU16cRmP4z9XK0U5JbMXZ0FP/CmosdeHlUXs1xUFbez6R
+DQp5Rv/LPhaS90ivmM6BzF1nGhBwXBJHXcmCjEZ531aUkHCwBBH0Sbc4EeGiwQ8=
+=W6ZN
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__2_May_2011_15_06_15_+1000_+7_bjr4kSBKftA+6--
+--Signature=_Mon__2_May_2011_15_57_12_+1000_0W8Ph+ngFt8dNdim--
