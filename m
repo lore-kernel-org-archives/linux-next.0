@@ -1,96 +1,80 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Michal Marek <mmarek@suse.cz>
 Subject: Re: linux-next: build warning after merge of the kbuild tree
-Date: Mon, 2 May 2011 15:57:12 +1000
-Message-ID: <20110502155712.ab6a64ba.sfr@canb.auug.org.au>
+Date: Mon, 2 May 2011 13:13:37 +0200
+Message-ID: <20110502111337.GA15769@sepie.suse.cz>
 References: <20110502121817.645d544e.sfr@canb.auug.org.au>
-	<20110502022417.GA11804@redhat.com>
-	<20110502134524.40da4245.sfr@canb.auug.org.au>
-	<20110502142454.a7091ad5.sfr@canb.auug.org.au>
-	<20110502043642.GD11804@redhat.com>
+ <20110502022417.GA11804@redhat.com>
+ <20110502134524.40da4245.sfr@canb.auug.org.au>
+ <20110502142454.a7091ad5.sfr@canb.auug.org.au>
+ <20110502145338.7be2fdbc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_May_2011_15_57_12_+1000_0W8Ph+ngFt8dNdim"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38484 "EHLO smtps.tip.net.au"
+Received: from cantor2.suse.de ([195.135.220.15]:39776 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753325Ab1EBF5X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 May 2011 01:57:23 -0400
-In-Reply-To: <20110502043642.GD11804@redhat.com>
+	id S1753360Ab1EBLNj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 May 2011 07:13:39 -0400
+Content-Disposition: inline
+In-Reply-To: <20110502145338.7be2fdbc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Jones <davej@redhat.com>
-Cc: Michal Marek <mmarek@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Jones <davej@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
 
---Signature=_Mon__2_May_2011_15_57_12_+1000_0W8Ph+ngFt8dNdim
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 02, 2011 at 02:53:38PM +1000, Stephen Rothwell wrote:
+> Hi Dave,
+> 
+> hmmm,
+> 
+> On my build machine:
+> $ /opt/cross/gcc-4.4.5-nolibc/x86_64-linux/bin/x86_64-linux-gcc -Wno-unused-but-set-variable -c -xc /dev/null -o /tmp/xx.o; echo $?
+> 0
+> $ /opt/cross/gcc-4.4.5-nolibc/x86_64-linux/bin/x86_64-linux-gcc -Wunused-but-set-variable -c -xc /dev/null -o /tmp/xx.o; echo $?
+> cc1: error: unrecognized command line option "-Wunused-but-set-variable"
+> 1
+> $ gcc -Wno-unused-but-set-variable -c -xc /dev/null -o /tmp/xx.o; echo $?
+> 0
+> $ gcc -Wunused-but-set-variable -c -xc /dev/null -o /tmp/xx.o; echo $?
+> cc1: error: unrecognized command line option "-Wunused-but-set-variable"
+> 1
 
-Hi Dave,
+I reproduced this myself with 4.5.1 and 4.6.0 and was about to file a
+bug at gcc.gnu.org, but I learned that this is a feature :-(, see here:
+http://gcc.gnu.org/PR28322 . It treats invalid -Wno-* options as
+warnings and it only issues them when there is another warning or error
+in the source.
 
-On Mon, 2 May 2011 00:36:43 -0400 Dave Jones <davej@redhat.com> wrote:
->
-> That's interesting. That suggests that something isn't being built with K=
-BUILD_CFLAGS.
-> I did a full defconfig build on x86-64 successfully (allmodconfig is chur=
-ning away).
-> Can you point me at something that doesn't build ?
+I have a patch below, but after learning the above, I'm going to rewrite
+it to some more generic cc-disable-warning fuction, because it can hit
+us anytime again.
 
-I have just done an i386 defconfig build with V=3D1.  Every compilation has
-that flag passed to it, but only one complains:
+Michal
 
-  i386-linux-gcc -Wp,-MD,kernel/.futex.o.d  -nostdinc -isystem /opt/cross/g=
-cc-4.4.5-nolibc/i386-linux/bin/../lib/gcc/i386-linux/4.4.5/include -I/scrat=
-ch/sfr/next/arch/x86/include -Iarch/x86/include/generated -Iinclude  -I/scr=
-atch/sfr/next/include -include include/generated/autoconf.h  -I/scratch/sfr=
-/next/kernel -Ikernel -D__KERNEL__ -Wall -Wundef -Wstrict-prototypes -Wno-t=
-rigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declara=
-tion -Wno-format-security -fno-delete-null-pointer-checks -Os -m32 -msoft-f=
-loat -mregparm=3D3 -freg-struct-return -mpreferred-stack-boundary=3D2 -marc=
-h=3Di686 -mtune=3Dgeneric -Wa,-mtune=3Dgeneric32 -ffreestanding -DCONFIG_AS=
-_CFI=3D1 -DCONFIG_AS_CFI_SIGNAL_FRAME=3D1 -DCONFIG_AS_CFI_SECTIONS=3D1 -pip=
-e -Wno-sign-compare -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -mno-=
-sse2 -mno-3dnow -Wframe-larger-than=3D2048 -fno-stack-protector -Wno-unused=
--but-set-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -Wdec=
-laration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-=
-stack    -D"KBUILD_STR(s)=3D#s" -D"KBUILD_BASENAME=3DKBUILD_STR(futex)"  -D=
-"KBUILD_MODNAME=3DKBUILD_STR(futex)" -c -o kernel/futex.o /scratch/sfr/next=
-/kernel/futex.c
-/scratch/sfr/next/kernel/futex.c: In function 'fixup_pi_state_owner':
-/scratch/sfr/next/kernel/futex.c:1549: warning: 'curval' may be used uninit=
-ialized in this function
-/scratch/sfr/next/kernel/futex.c: In function 'futex_lock_pi_atomic':
-/scratch/sfr/next/kernel/futex.c:678: warning: 'curval' may be used uniniti=
-alized in this function
-/scratch/sfr/next/kernel/futex.c: In function 'handle_futex_death':
-/scratch/sfr/next/kernel/futex.c:2454: warning: 'nval' may be used uninitia=
-lized in this function
-At top level:
-cc1: warning: unrecognized command line option "-Wno-unused-but-set-variabl=
-e"
+Subject: [PATCH] kbuild: Fix passing -Wno-unused-but-set-variable to some gcc versions
 
-I removed kernel/futex.o and recompiled to verify.  futex.c doesn't seem
-to be built any differently to anything else.
+Some versions of gcc will happily accept -Wno-<anything> in the
+cc-option test and complain later when compiling some random file that
+-Wno-unused-but-set-variable is not recognized. Work around this by
+testing if gcc supports the -Wunused-but-set-variable option insteaed.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Michal Marek <mmarek@suse.cz>
 
---Signature=_Mon__2_May_2011_15_57_12_+1000_0W8Ph+ngFt8dNdim
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNvke4AAoJEDMEi1NhKgbsZXUH/3mKFehSW9ZxBAM/1YkbkcW0
-ZWLdAEg1qc3616fGKeGYYAGLiONDpopcqHI8WC4vRz7DNrA/1LyfYHcUlK7DN3gJ
-znyttATrsPzly1s+FzHsPjhJI3CD4+QIh3TLrS/rMNgOgmaPuzPoALBBHLSs0ira
-B+jv14LDRJJms63LkTWyGGdprGGY0JGaXlHJ3zS9PWukcCMcjJNdEakwN4aY5B+c
-gxJr1AjjVPqrta5A9P+RU16cRmP4z9XK0U5JbMXZ0FP/CmosdeHlUXs1xUFbez6R
-DQp5Rv/LPhaS90ivmM6BzF1nGhBwXBJHXcmCjEZ531aUkHCwBBH0Sbc4EeGiwQ8=
-=W6ZN
------END PGP SIGNATURE-----
-
---Signature=_Mon__2_May_2011_15_57_12_+1000_0W8Ph+ngFt8dNdim--
+diff --git a/Makefile b/Makefile
+index 4527dc2..db6b6df 100644
+--- a/Makefile
++++ b/Makefile
+@@ -569,7 +569,12 @@ endif
+ 
+ # This warning generated too much noise in a regular build.
+ # Use make W=1 to enable this warning (see scripts/Makefile.build)
+-KBUILD_CFLAGS += $(call cc-option, -Wno-unused-but-set-variable)
++# We test for support of the -Wunused-but-set-variable option, because
++# some version of gcc will happily accept any -Wno-* switch and complain
++# later during build.
++ifeq ($(call cc-option-yn, -Wunused-but-set-variable), y)
++KBUILD_CFLAGS += -Wno-unused-but-set-variable
++endif
+ 
+ ifdef CONFIG_FRAME_POINTER
+ KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
