@@ -1,43 +1,89 @@
-From: Dave Jones <davej@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build warning after merge of the kbuild tree
-Date: Mon, 2 May 2011 00:36:43 -0400
-Message-ID: <20110502043642.GD11804@redhat.com>
+Date: Mon, 2 May 2011 14:44:14 +1000
+Message-ID: <20110502144414.e0adfc69.sfr@canb.auug.org.au>
 References: <20110502121817.645d544e.sfr@canb.auug.org.au>
- <20110502022417.GA11804@redhat.com>
- <20110502134524.40da4245.sfr@canb.auug.org.au>
- <20110502142454.a7091ad5.sfr@canb.auug.org.au>
+	<20110502022417.GA11804@redhat.com>
+	<20110502134524.40da4245.sfr@canb.auug.org.au>
+	<20110502040216.GC11804@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__2_May_2011_14_44_14_+1000_6ueHkQ6AVjw3icyN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:18941 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44888 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750982Ab1EBEgy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 May 2011 00:36:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20110502142454.a7091ad5.sfr@canb.auug.org.au>
+	id S1751004Ab1EBEoT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 May 2011 00:44:19 -0400
+In-Reply-To: <20110502040216.GC11804@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Jones <davej@redhat.com>
 Cc: Michal Marek <mmarek@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
 
-On Mon, May 02, 2011 at 02:24:54PM +1000, Stephen Rothwell wrote:
- > Hi Dave,
- > 
- > On Mon, 2 May 2011 13:45:24 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
- > >
- > > On Sun, 1 May 2011 22:24:18 -0400 Dave Jones <davej@redhat.com> wrote:
- > > >
- > > > Which version of the patch got merged ? This should be guarded by cc-option checks.
- > > 
- > > It looks right to me (that's why I wrote "though I don't see why") but
- > > empirically we have a problem.
- > 
- > I do not get it for every compile fo a file, just a few times during a
- > whole kernel build.  Some config/arches do not produce any (like sparc32
- > defconfig).
- 
-That's interesting. That suggests that something isn't being built with KBUILD_CFLAGS.
-I did a full defconfig build on x86-64 successfully (allmodconfig is churning away).
-Can you point me at something that doesn't build ?
+--Signature=_Mon__2_May_2011_14_44_14_+1000_6ueHkQ6AVjw3icyN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	Dave
+Hi Dave,
+
+On Mon, 2 May 2011 00:02:16 -0400 Dave Jones <davej@redhat.com> wrote:
+>
+> Subtly different from what I wrote.. the version I wrote did this ..
+>=20
+> +KBUILD_EXTRA_WARNINGS +=3D $(call cc-option, -Wunused-but-set-variable)
+
+Due to other changes in the kbuild tree, I suspect.  However, as you say,
+this part is not relevant to the warning I am getting.
+
+> I just tested with the gcc 4.4.5 on master.kernel.org, with a tip of Linu=
+s'
+> tree with my original diff, and it didn't complain at all.
+
+Also see my other email.  For a i386 defconfig build, I get this warning
+only twice, for a sparc64 defconfig I get 4 and for a sparc32 defconfig,
+none:
+
+At top level:
+cc1: warning: unrecognized command line option "-Wno-unused-but-set-variabl=
+e"
+
+> What does gcc -v say ?
+> gcc version 4.4.5 20101112 (Red Hat 4.4.5-2) (GCC)  seems to be fine.
+
+$ /opt/cross/gcc-4.4.5-nolibc/x86_64-linux/bin/x86_64-linux-gcc -v
+Using built-in specs.
+Target: x86_64-linux
+Configured with: /home/tony/buildall/src/gcc/configure --target=3Dx86_64-li=
+nux --enable-targets=3Dall --prefix=3D/home/tony/buildall/cross.x86_64/gcc-=
+4.4.5-nolibc/x86_64-linux/ --enable-languages=3Dc --with-newlib --without-h=
+eaders --with-system-libunwind --disable-nls --disable-threads --disable-sh=
+ared --disable-libmudflap --disable-libssp --disable-libgomp --disable-deci=
+mal-float --enable-checking=3Drelease --with-mpfr=3D/home/tony/buildall/src=
+/sys-x86_64 --with-gmp=3D/home/tony/buildall/src/sys-x86_64 --disable-boots=
+trap
+Thread model: single
+gcc version 4.4.5 (GCC)=20
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__2_May_2011_14_44_14_+1000_6ueHkQ6AVjw3icyN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNvjaeAAoJEDMEi1NhKgbs1q4IAIG5vW1gmwfjq7w2+rftXlao
+Fyjpu3fS3b0BmH1Wvvvz08E2Ml3iUD5j77r+YGBf+Ejp7vteyGzH4yvgIIA/owUF
+C9fysu2I1sX1PIhipoTsPWYdkLrUmPydLB0VEcatrHiEwpeYZJdW286fLKqQiVDO
+D/mkQmCBUha7jYYjCMXpO4/O3Y7cDMMuKur3hswDkjOR7TbEBB8pEau7iiqe3x9h
+NwseyNV4oBghzClknjnMjwEK0YaLWm2aNWuP4KyzWYOK6jOgRFItzVLyLoQLndi2
+m8T1jz6hsi+lXeZQ9koag45QAVZvUscI9MKrq/otOrfmcAgS5ZPv5DObR67Mylc=
+=1l+7
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__2_May_2011_14_44_14_+1000_6ueHkQ6AVjw3icyN--
