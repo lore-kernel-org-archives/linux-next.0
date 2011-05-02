@@ -1,34 +1,57 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: manual merge of the suspend tree with the net tree
-Date: Fri, 29 Apr 2011 22:36:19 +0200
-Message-ID: <201104292236.19986.rjw@sisk.pl>
-References: <20110429120541.c27998c2.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the kbuild tree
+Date: Mon, 2 May 2011 12:18:17 +1000
+Message-ID: <20110502121817.645d544e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__2_May_2011_12_18_17_+1000_jAiTRfpCYlNAUFkN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:37133 "EHLO ogre.sisk.pl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41961 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932479Ab1D2Ufo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 Apr 2011 16:35:44 -0400
-In-Reply-To: <20110429120541.c27998c2.sfr@canb.auug.org.au>
+	id S1754348Ab1EBCSY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 May 2011 22:18:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jones <davej@redhat.com>, Sam Ravnborg <sam@ravnborg.org>
 
-On Friday, April 29, 2011, Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> Today's linux-next merge of the suspend tree got a conflict in
-> arch/x86/Kconfig between commit 0a14842f5a3c ("net: filter: Just In Time
-> compiler for x86-64") from the  tree and commit d9f1ce017fcf ("PM: Remove
-> sysdev suspend, resume and shutdown operations") from the suspend tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+--Signature=_Mon__2_May_2011_12_18_17_+1000_jAiTRfpCYlNAUFkN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please do, thanks a lot!
+Hi Michal,
 
-Rafael
+After merging the kbuild tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
+
+At top level:
+cc1: warning: unrecognized command line option "-Wno-unused-but-set-variabl=
+e"
+
+Presumably caused by commit af0e5d565d2f ("kbuild: Disable
+-Wunused-but-set-variable for gcc 4.6.0") though I don't see why.  I am
+using gcc version 4.4.5.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__2_May_2011_12_18_17_+1000_jAiTRfpCYlNAUFkN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNvhRpAAoJEDMEi1NhKgbsR84H/2tCqes0QDi/NF8WCSn8PE1N
+Nmt0wGxBTTFHwBCNH6yt+yCGXNUCLJAmfXI7oB3SYjcwlOE1hAqftwU+CmNy6e8W
+ztWOmBkF8R+09jfMnT/kzYHcp5G1Xnlv0ZXt8XjKIOF3TwXnnuc+O0KoQty8TsTW
+lIpggJS1luRSga3XGYJsOTbFx9maejA6Mh5wDDoB0Wr4uzt8iaBwUxl/vZvW6aPw
+RxfjZ66/jO2JziwTOd8j20YFNxA3odl5uA7hTK3v4UJRVRZeCYkLrVr9ubyhlckN
+TkpB3pgxA5zv7ry/3PFOxYPcJHQNE55r9sX7QVXzHR9TqKplIFC2sQU8+tXmkp8=
+=eNkC
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__2_May_2011_12_18_17_+1000_jAiTRfpCYlNAUFkN--
