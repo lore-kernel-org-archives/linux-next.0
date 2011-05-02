@@ -1,39 +1,34 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for May 2 (uml builds fail)
-Date: Mon, 2 May 2011 08:19:48 -0700
-Message-ID: <20110502081948.1ccb9aef.rdunlap@xenotime.net>
-References: <20110502150150.d932642f.sfr@canb.auug.org.au>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: build warning after merge of the kbuild tree
+Date: Mon, 02 May 2011 17:31:08 +0200
+Message-ID: <4DBECE3C.5070008@suse.cz>
+References: <20110502121817.645d544e.sfr@canb.auug.org.au> <20110502022417.GA11804@redhat.com> <20110502134524.40da4245.sfr@canb.auug.org.au> <20110502142454.a7091ad5.sfr@canb.auug.org.au> <20110502145338.7be2fdbc.sfr@canb.auug.org.au>            <20110502111337.GA15769@sepie.suse.cz> <10763.1304349435@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:59700 "HELO
-	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1759115Ab1EBPTv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 May 2011 11:19:51 -0400
-In-Reply-To: <20110502150150.d932642f.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kbuild@vger.kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michal Marek <mmarek@suse.cz>, sam@ravnborg.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <10763.1304349435@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Valdis.Kletnieks@vt.edu
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2 May 2011 15:01:50 +1000 Stephen Rothwell wrote:
+On 2.5.2011 17:17, Valdis.Kletnieks@vt.edu wrote:
+> On Mon, 02 May 2011 13:13:37 +0200, Michal Marek said:
+>
+>> +# We test for support of the -Wunused-but-set-variable option, because
+>> +# some version of gcc will happily accept any -Wno-* switch and complain
+>> +# later during build.
+>> +ifeq ($(call cc-option-yn, -Wunused-but-set-variable), y)
+>> +KBUILD_CFLAGS += -Wno-unused-but-set-variable
+>> +endif
+>
+> Do we need to do this more generically for all the other -Wno-foo
+> options under the various W={123} options?
 
-> Hi all,
-> 
-> Changes since 20110429:
+I only see -Wno-unused-parameter in scripts/Makefile.build and that 
+should be supported by any gcc version. Also please have a look at 
+http://marc.info/?l=linux-kernel&m=130433840412201&w=2, which is an 
+updated version.
 
-
-uml builds on i386 or x86_64 fail with: (I'm using O=outputdir if it matters)
-
-  GEN     /lnx/src/NEXT/linux-next-20110502/UM64/Makefile
-scripts/kconfig/conf --silentoldconfig arch/um/Kconfig.x86
-  GEN     /lnx/src/NEXT/linux-next-20110502/UM64/Makefile
-/lnx/src/NEXT/linux-next-20110502/scripts/Makefile.asm-generic:9: /lnx/src/NEXT/linux-next-20110502/arch/um/include/asm/Kbuild: No such file or directory
-make[2]: *** No rule to make target `/lnx/src/NEXT/linux-next-20110502/arch/um/include/asm/Kbuild'.  Stop.
-
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Michal
