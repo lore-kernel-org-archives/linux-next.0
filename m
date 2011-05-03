@@ -1,43 +1,59 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: [PATCH] kbuild: Fix passing -Wno-* options to gcc 4.4+
-Date: Tue, 03 May 2011 10:52:27 +0200
-Message-ID: <4DBFC24B.7090805@suse.cz>
-References: <20110502111337.GA15769@sepie.suse.cz>	<1304338381-3772-1-git-send-email-mmarek@suse.cz> <20110503104440.700ea26f.sfr@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: manual merge of the 52xx-and-virtex tree with Linus' tree
+Date: Tue, 3 May 2011 07:19:34 -0600
+Message-ID: <BANLkTikOBGCu70NrsFAa42w5M6O+dkHZnw@mail.gmail.com>
+References: <20110503114353.30d1f949.sfr@canb.auug.org.au> <BANLkTik=LX8RQEh1ouhSdFxUH+2oro9J6w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:35127 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751406Ab1ECIwa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 3 May 2011 04:52:30 -0400
-In-Reply-To: <20110503104440.700ea26f.sfr@canb.auug.org.au>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:47767 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751060Ab1ECNTy convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 May 2011 09:19:54 -0400
+In-Reply-To: <BANLkTik=LX8RQEh1ouhSdFxUH+2oro9J6w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: davej@redhat.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sam@ravnborg.org
+Cc: Paul Mundt <lethal@linux-sh.org>, Grant Likely <grant.likely@secretlab.ca>, linux-kernel@vger.kernel.org, Heiko Schocher <hs@denx.de>, linux-next@vger.kernel.org
 
-On 3.5.2011 02:44, Stephen Rothwell wrote:
-> HI Michal,
+On Mon, May 2, 2011 at 11:49 PM, Grant Likely <grant.likely@secretlab.c=
+a> wrote:
 >
-> On Mon,  2 May 2011 14:13:01 +0200 Michal Marek<mmarek@suse.cz>  wrote:
+> On May 2, 2011 7:43 PM, "Stephen Rothwell" <sfr@canb.auug.org.au> wro=
+te:
 >>
->> Starting with 4.4, gcc will happily accept -Wno-<anything>  in the
->> cc-option test and complain later when compiling a file that has some
->> other warning. This rather unexpected behavior is intentional as per
->> http://gcc.gnu.org/PR28322, so work around it by testing for support of
->> the opposite option (without the no-). Introduce a new Makefile function
->> cc-disable-warning that does this and update two uses of cc-option in
->> the toplevel Makefile.
+>> Hi Grant,
 >>
->> Reported-by: Stephen Rothwell<sfr@canb.auug.org.au>
->> Signed-off-by: Michal Marek<mmarek@suse.cz>
+>> Today's linux-next merge of the 52xx-and-virtex tree got a conflict =
+in
+>> drivers/video/sm501fb.c between commit e6a049807105 ("video, sm501: =
+add
+>> edid and commandline support") from Linus' tree and commit b6c19191c=
+13e
+>> ("video/sm501: add edid and commandline support") from the
+>> 52xx-and-virtex tree.
+>>
+>> These are slightly different versions of the same patch. =A0I used t=
+he
+>> version from the 52xx-and-virtex tree (that removed a use of
+>> __devinitdata).
+>>
+>> Also, another between commit 4295f9bf74a8 ("video, sm501: add OF bin=
+ding
+>> to support SM501") from Linus' tree and commit 9d83d245a352
+>> ("video/sm501: add OF binding to support SM501") from the 52xx-and-v=
+irtex
+>> tree.
+>>
+>> Again, different versions of the same patch. =A0The former has a who=
+le hunk
+>> that appears to fix a memory leak. =A0So I used that.
 >
-> This fixed things for me, thanks.
->
-> Tested-by: Stephen Rothwell<sfr@canb.auug.org.au>
+> Okay, I'll probably drop those patches from my tree then... I'll inve=
+stigate
+> tomorrow.
 
-Thanks for spotting the warnings and for testing. I pushed this to 
-kbuild-2.6.git#kbuild.
+Ah, I missed that Paul had picked them up.  Dropping from my tree.
 
-Michal
+g.
