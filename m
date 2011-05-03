@@ -1,39 +1,66 @@
-From: David Miller <davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the net tree with the net-current
  tree
-Date: Mon, 02 May 2011 20:42:38 -0700 (PDT)
-Message-ID: <20110502.204238.193708379.davem@davemloft.net>
+Date: Tue, 3 May 2011 14:21:02 +1000
+Message-ID: <20110503142102.c3b83415.sfr@canb.auug.org.au>
 References: <20110503131548.63dd3568.sfr@canb.auug.org.au>
+	<20110502.204238.193708379.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__3_May_2011_14_21_02_+1000_Fng75GXNOOzjMH5/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:49936
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753338Ab1ECDnL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 May 2011 23:43:11 -0400
-In-Reply-To: <20110503131548.63dd3568.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52310 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750759Ab1ECEVK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 May 2011 00:21:10 -0400
+In-Reply-To: <20110502.204238.193708379.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
+To: David Miller <davem@davemloft.net>
 Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rjw@sisk.pl, joe@perches.com
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 3 May 2011 13:15:48 +1000
+--Signature=_Tue__3_May_2011_14_21_02_+1000_Fng75GXNOOzjMH5/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/tg3.c between commit 6fdbab9d93e0 ("tg3: Fix failure to
-> enable WoL by default when possible") from the net-current tree and
-> commit 63c3a66fe6c8 ("tg3: Convert u32 flag,flg2,flg3 uses to bitmap")
-> from the net tree.
-> 
-> Context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+Hi Dave,
 
-Do you automatically generate these emails? :-)
+On Mon, 02 May 2011 20:42:38 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> Do you automatically generate these emails? :-)
 
-I CC:'d you on an email earlier about this conflict, in an effort to
-let you know I anticipated it and you therefore didn't need to notify
-us this time.
+Partly.
+
+> I CC:'d you on an email earlier about this conflict, in an effort to
+> let you know I anticipated it and you therefore didn't need to notify
+> us this time.
+
+I must have missed that (or missed its implications), sorry.
+/me searches his trash ...
+ah, there it is ... I obviously didn't read it well enough or notice the
+cc.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__3_May_2011_14_21_02_+1000_Fng75GXNOOzjMH5/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNv4KuAAoJEDMEi1NhKgbsEAMH/jr3NI9SHXCakTCzUH2k/7r7
+dT6g7QcOLgHoGuJlwSxtduuj1i6YPZYEFQlSVoJZoGqCyspt0eTOiaEIikHpfEFw
+ZSF6dyI0bCuX1PY1oU8MdKU02ceSXCRx3gvV4QNHBL4TB99t9dax+cj4x/mGkDBK
+j1pSLKL9L0kj2ezfeiGTTQe8tdglegL1cvd4MtgEF7cxOJ1dqYJ88VTQLyGMTBw9
+3E6UzRG6OcwCchr0r1Ypw6yaGUhCRD58PZSyuPFi27yYynQBpkkI0WONhKIWHRuQ
+iW4vVdo+KT14DZfcjI+gOMi9KxlRxyJp2TEqfti5DfnePZ0ccy0BkdMhKWMU38Q=
+=Dq0C
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__3_May_2011_14_21_02_+1000_Fng75GXNOOzjMH5/--
