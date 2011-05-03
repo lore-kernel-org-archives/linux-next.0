@@ -1,61 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the 52xx-and-virtex tree with Linus'
- tree
-Date: Tue, 3 May 2011 11:43:53 +1000
-Message-ID: <20110503114353.30d1f949.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Tue, 3 May 2011 13:15:48 +1000
+Message-ID: <20110503131548.63dd3568.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__3_May_2011_11_43_53_+1000_GmgpIWvEuPb4l4Qm"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Schocher <hs@denx.de>, Paul Mundt <lethal@linux-sh.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Tue__3_May_2011_11_43_53_+1000_GmgpIWvEuPb4l4Qm
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56940 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751254Ab1ECDPx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 May 2011 23:15:53 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Joe Perches <joe@perches.com>
 
-Hi Grant,
+Hi all,
 
-Today's linux-next merge of the 52xx-and-virtex tree got a conflict in
-drivers/video/sm501fb.c between commit e6a049807105 ("video, sm501: add
-edid and commandline support") from Linus' tree and commit b6c19191c13e
-("video/sm501: add edid and commandline support") from the
-52xx-and-virtex tree.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/tg3.c between commit 6fdbab9d93e0 ("tg3: Fix failure to
+enable WoL by default when possible") from the net-current tree and
+commit 63c3a66fe6c8 ("tg3: Convert u32 flag,flg2,flg3 uses to bitmap")
+from the net tree.
 
-These are slightly different versions of the same patch.  I used the
-version from the 52xx-and-virtex tree (that removed a use of
-__devinitdata).
-
-Also, another between commit 4295f9bf74a8 ("video, sm501: add OF binding
-to support SM501") from Linus' tree and commit 9d83d245a352
-("video/sm501: add OF binding to support SM501") from the 52xx-and-virtex
-tree.
-
-Again, different versions of the same patch.  The former has a whole hunk
-that appears to fix a memory leak.  So I used that.
-
-I fixed it up and can carry the fix as necessary.
---=20
+Context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__3_May_2011_11_43_53_+1000_GmgpIWvEuPb4l4Qm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNv13ZAAoJEDMEi1NhKgbswjAH/2F7nRvK8aYz+cgjDwLd/BTw
-I/P2xk3BYLjL39MaX16hDxFUUgR5bHDi5WAY7yAGuYpLF7PUbq79TW+Qj7+sADIv
-fVxppyttW9U8Vr781xZH3pz+kdkucxkwnlJ2vI55uVhhGgJlLquZEhz2PAv62M6i
-9XDzRi7Nd7hFHwhW/IV1bfpgJtPy5p5w57H9nzNldk+rlu0TVQKp6pIzsn+fDClb
-fvvMQO+d8lKnk4iQZtb9NN8mFU1tkDsYBN7vUfLYsl4fL8oj4xR5rz2M1rcT59VS
-GLP9EM92C5KMneCI7nRyGTfbBx+LuSrEMLREtjCqNV3e6JiFTGdHtbyc8HioKVo=
-=xboV
------END PGP SIGNATURE-----
-
---Signature=_Tue__3_May_2011_11_43_53_+1000_GmgpIWvEuPb4l4Qm--
+diff --cc drivers/net/tg3.c
+index 7a5daef,7c7c9a8..0000000
+--- a/drivers/net/tg3.c
++++ b/drivers/net/tg3.c
+@@@ -12325,12 -12745,10 +12745,12 @@@ static void __devinit tg3_get_eeprom_hw
+  		}
+  		val = tr32(VCPU_CFGSHDW);
+  		if (val & VCPU_CFGSHDW_ASPM_DBNC)
+- 			tp->tg3_flags |= TG3_FLAG_ASPM_WORKAROUND;
++ 			tg3_flag_set(tp, ASPM_WORKAROUND);
+  		if ((val & VCPU_CFGSHDW_WOL_ENABLE) &&
+ -		    (val & VCPU_CFGSHDW_WOL_MAGPKT))
+ +		    (val & VCPU_CFGSHDW_WOL_MAGPKT)) {
+- 			tp->tg3_flags |= TG3_FLAG_WOL_ENABLE;
++ 			tg3_flag_set(tp, WOL_ENABLE);
+ +			device_set_wakeup_enable(&tp->pdev->dev, true);
+ +		}
+  		goto done;
+  	}
+  
+@@@ -12460,13 -12878,11 +12880,13 @@@
+  
+  		if (tp->phy_flags & TG3_PHYFLG_ANY_SERDES &&
+  		    !(nic_cfg & NIC_SRAM_DATA_CFG_FIBER_WOL))
+- 			tp->tg3_flags &= ~TG3_FLAG_WOL_CAP;
++ 			tg3_flag_clear(tp, WOL_CAP);
+  
+- 		if ((tp->tg3_flags & TG3_FLAG_WOL_CAP) &&
++ 		if (tg3_flag(tp, WOL_CAP) &&
+ -		    (nic_cfg & NIC_SRAM_DATA_CFG_WOL_ENABLE))
+ +		    (nic_cfg & NIC_SRAM_DATA_CFG_WOL_ENABLE)) {
+- 			tp->tg3_flags |= TG3_FLAG_WOL_ENABLE;
++ 			tg3_flag_set(tp, WOL_ENABLE);
+ +			device_set_wakeup_enable(&tp->pdev->dev, true);
+ +		}
+  
+  		if (cfg2 & (1 << 17))
+  			tp->phy_flags |= TG3_PHYFLG_CAPACITIVE_COUPLING;
