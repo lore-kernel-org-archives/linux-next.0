@@ -1,33 +1,30 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] x86/net: only select BPF_JIT when NET is enabled
-Date: Wed, 04 May 2011 11:06:21 -0700 (PDT)
-Message-ID: <20110504.110621.115946620.davem@davemloft.net>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for May 4 (hyperv / vmbus)
+Date: Wed, 4 May 2011 11:34:01 -0700
+Message-ID: <20110504183401.GB9012@suse.de>
 References: <20110504144759.802483cc.sfr@canb.auug.org.au>
-	<20110504095651.60082594.randy.dunlap@oracle.com>
+ <20110504094908.b8295d22.randy.dunlap@oracle.com>
+ <6E21E5352C11B742B20C142EB499E0481DFD54@TK5EX14MBXC124.redmond.corp.microsoft.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:36440
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755170Ab1EDSGy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 May 2011 14:06:54 -0400
-In-Reply-To: <20110504095651.60082594.randy.dunlap@oracle.com>
+Received: from cantor2.suse.de ([195.135.220.15]:59338 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751051Ab1EDSeX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 May 2011 14:34:23 -0400
+Content-Disposition: inline
+In-Reply-To: <6E21E5352C11B742B20C142EB499E0481DFD54@TK5EX14MBXC124.redmond.corp.microsoft.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: randy.dunlap@oracle.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: KY Srinivasan <kys@microsoft.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, Haiyang Zhang <haiyangz@microsoft.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Wed, 4 May 2011 09:56:51 -0700
+On Wed, May 04, 2011 at 04:56:02PM +0000, KY Srinivasan wrote:
+> > vmbus_drv.c sure looks like it requires (depends on) both ACPI and PCI.
+> > That should be expressed somewhere in its Kconfig file.
+> 
+> Greg,
+> 
+> Do you want me to send you a patch to fix this?
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix kconfig unmet dependency warning: HAVE_BPF_JIT depends on NET, so
-> make the "select" of it depend on NET also.
-> 
-> warning: (X86) selects HAVE_BPF_JIT which has unmet direct dependencies (NET)
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-
-Applied, thanks Randy.
+Yes please.
