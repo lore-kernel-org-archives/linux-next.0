@@ -1,328 +1,103 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for May 4
-Date: Wed, 4 May 2011 14:47:59 +1000
-Message-ID: <20110504144759.802483cc.sfr@canb.auug.org.au>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the rcu tree with the net tree
+Date: Tue, 3 May 2011 23:05:33 -0700
+Message-ID: <20110504060533.GD2294@linux.vnet.ibm.com>
+References: <20110503142419.2b7d5e23.sfr@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__4_May_2011_14_47_59_+1000_jdgFzvR9jF3I3d/G"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54370 "EHLO smtps.tip.net.au"
+Received: from e7.ny.us.ibm.com ([32.97.182.137]:42803 "EHLO e7.ny.us.ibm.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751122Ab1EDEsT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 May 2011 00:48:19 -0400
+	id S1750794Ab1EDQgd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 May 2011 12:36:33 -0400
+Content-Disposition: inline
+In-Reply-To: <20110503142419.2b7d5e23.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
---Signature=_Wed__4_May_2011_14_47_59_+1000_jdgFzvR9jF3I3d/G
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, May 03, 2011 at 02:24:19PM +1000, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> Today's linux-next merge of the rcu tree got a conflict in
+> net/core/filter.c between commit 0a14842f5a3c ("net: filter: Just In Time
+> compiler for x86-64") from the net tree and commit 10cde158c259
+> ("net,rcu: convert call_rcu(sk_filter_release_rcu) to kfree_rcu") from
+> the rcu tree.
+> 
+> The former adds another operation into sk_filter_release_rcu(), so I have
+> effectively reverted the rcu tree change for now (by applying the patch
+> below as a merge fixup).
 
-Hi all,
+Thank you, Stephen!
 
-Changes since 20110503:
+Looks like I need to get my changes forward-ported to the latest -rc...
 
-Dropped tree: xen
+						Thanx, Paul
 
-The 52xx-and-virtex tree lost its conflict.
-
-The i2c tree lost its conflicts.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 188 trees (counting Linus' and 28 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging kbuild-current/rc-fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging 52xx-and-virtex-current/powerpc/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging driver-core.current/driver-core-linus
-Merging tty.current/tty-linus
-Merging usb.current/usb-linus
-Merging staging.current/staging-linus
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging sh-current/sh-fixes-for-linus
-Merging rmobile-current/rmobile-fixes-for-linus
-Merging fbdev-current/fbdev-fixes-for-linus
-Merging devicetree-current/devicetree/merge
-Merging spi-current/spi/merge
-Merging arm/for-next
-Merging at91/at91-next
-Merging davinci/davinci-next
-Merging i.MX/for-next
-Merging linux-spec/for-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging s5p/for-next
-Merging tegra/for-next
-Merging ux500-core/ux500-core
-Merging xilinx/arm-next
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/for-next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/powerpc/next
-Merging galak/next
-Merging s390/features
-Merging sh/sh-latest
-Merging rmobile/rmobile-latest
-Merging sparc/master
-Merging tile/master
-Merging unicore32/unicore32
-Merging xtensa/master
-CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging hfsplus/for-next
-Merging jfs/next
-Merging logfs/master
-CONFLICT (content): Merge conflict in fs/logfs/logfs.h
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging omfs/for-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging vfs-scale/vfs-scale-working
-Merging pci/linux-next
-CONFLICT (content): Merge conflict in include/linux/pci_ids.h
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/tosa.c
-CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-designware-cor=
-e.c
-CONFLICT (delete/modify): drivers/i2c/busses/i2c-intel-mid.c deleted in bjd=
-ooks-i2c/next-i2c and modified in HEAD. Version HEAD of drivers/i2c/busses/=
-i2c-intel-mid.c left in tree.
-CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-pxa.c
-$ git rm -f drivers/i2c/busses/i2c-intel-mid.c
-Applying: i2c-designware: mdelay use needs linux/delay.h inclusion
-Applying: i2c: designware-pcidrv depends on PCI
-Merging quilt/jdelvare-hwmon
-Merging hwmon-staging/hwmon-next
-Merging quilt/kernel-doc
-Merging docs/docs-move
-Merging v4l-dvb/master
-CONFLICT (content): Merge conflict in drivers/media/video/omap3isp/isp.c
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging idle-test/idle-test
-Merging powertools/tools-test
-Merging cpupowerutils/master
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging swiotlb/master
-Merging ibft/master
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-CONFLICT (content): Merge conflict in drivers/net/tg3.c
-Merging wireless/master
-CONFLICT (content): Merge conflict in drivers/net/wireless/libertas/if_cs.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/rtlwifi/pci.c
-CONFLICT (content): Merge conflict in net/bluetooth/l2cap_sock.c
-Merging bluetooth/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging sound-asoc/for-next
-Merging cpufreq/next
-Merging cpufreq-move/move-drivers
-CONFLICT (content): Merge conflict in drivers/cpufreq/cpufreq_stats.c
-Merging quilt/rr
-Merging input/next
-Merging input-mt/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-CONFLICT (content): Merge conflict in drivers/leds/Kconfig
-Merging backlight/for-mm
-Merging mmc/mmc-next
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging fbdev/master
-Merging viafb/viafb-next
-Merging omap_dss2/for-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging selinux/master
-CONFLICT (content): Merge conflict in security/selinux/avc.c
-CONFLICT (content): Merge conflict in security/selinux/hooks.c
-CONFLICT (content): Merge conflict in security/smack/smack_lsm.c
-Merging lblnet/master
-Merging agp/agp-next
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-CONFLICT (delete/modify): arch/arm/mach-u300/gpio.c deleted in HEAD and mod=
-ified in trivial/for-next. Version trivial/for-next of arch/arm/mach-u300/g=
-pio.c left in tree.
-$ git rm -f arch/arm/mach-u300/gpio.c
-Merging audit/for-next
-Merging suspend/linux-next
-CONFLICT (content): Merge conflict in arch/x86/Kconfig
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging i7core_edac/linux_next
-Merging i7300_edac/linux_next
-Merging devicetree/devicetree/next
-Merging spi/spi/next
-Merging tip/auto-latest
-Merging rcu/rcu/next
-CONFLICT (content): Merge conflict in net/core/filter.c
-$ git am -3 ../patches/0001-Revert-net-rcu-convert-call_rcu-sk_filter_relea=
-se_rc.patch
-Applying: Revert "net,rcu: convert call_rcu(sk_filter_release_rcu) to kfree=
-_rcu"
-Merging oprofile/for-next
-Merging ptrace/ptrace
-Merging xen-two/linux-next
-Merging xen-pvhvm/linux-next
-Merging edac-amd/for-next
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/x86/include/asm/percpu.h
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging drivers-x86/linux-next
-CONFLICT (content): Merge conflict in drivers/platform/x86/intel_pmic_gpio.c
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging driver-core/driver-core-next
-Merging tty/tty-next
-CONFLICT (content): Merge conflict in drivers/bluetooth/hci_ldisc.c
-CONFLICT (content): Merge conflict in drivers/tty/serial/Makefile
-Merging usb/usb-next
-CONFLICT (content): Merge conflict in arch/arm/mach-exynos4/mach-nuri.c
-CONFLICT (content): Merge conflict in drivers/usb/host/isp1760-hcd.c
-Merging staging/staging-next
-CONFLICT (delete/modify): drivers/staging/rt2860/common/cmm_data_pci.c dele=
-ted in staging/staging-next and modified in HEAD. Version HEAD of drivers/s=
-taging/rt2860/common/cmm_data_pci.c left in tree.
-CONFLICT (delete/modify): drivers/staging/rt2860/common/cmm_data_usb.c dele=
-ted in staging/staging-next and modified in HEAD. Version HEAD of drivers/s=
-taging/rt2860/common/cmm_data_usb.c left in tree.
-$ git rm -f drivers/staging/rt2860/common/cmm_data_pci.c drivers/staging/rt=
-2860/common/cmm_data_usb.c
-Merging slabh/slabh
-Merging bkl-config/config
-Merging cleancache/linux-next
-Merging scsi-post-merge/merge-base:master
-$ git checkout scsi-post-merge/master
-
---Signature=_Wed__4_May_2011_14_47_59_+1000_jdgFzvR9jF3I3d/G
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNwNp/AAoJEDMEi1NhKgbsEZ4H/A6uk4Uvz9RcwwaqmC3PE45Z
-YH4afWob+LWq8KV2L1+pN18CSXY1ACY5L6HukGPkUiogTcvxlDPV3+PKuPTO2wkm
-Gax/5HusekcQCbBcb/uV9X83konbNTtCAMe+LtFCfrGrcOZkzuirsgywiYfPZiFk
-piscwf+e9BMWsVG3Q7pVHfAeENLcyS5gKQeKoRGEFOcf+7W6PhNImQ1OF55Pn0Ag
-N8Wp/zb72i1KbzZ4XuoC2IPzlLvJb+7PsF9fJFAilMA0OgPnP0sPt+Q4g/CWbHmc
-ZPbVx9Kw+XilUFw4DV35PHGzuiGsAX1e9H0UkX2DNdoLsYl9UJYlszKuSrStVjI=
-=Ybij
------END PGP SIGNATURE-----
-
---Signature=_Wed__4_May_2011_14_47_59_+1000_jdgFzvR9jF3I3d/G--
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 3 May 2011 14:06:50 +1000
+> Subject: [PATCH] Revert "net,rcu: convert call_rcu(sk_filter_release_rcu) to
+>  kfree_rcu"
+> 
+> This reverts commit 10cde158c2591422a2b32a2f560f406b8e69bee6.
+> ---
+>  include/net/sock.h |    4 +++-
+>  net/core/filter.c  |   13 +++++++++++++
+>  2 files changed, 16 insertions(+), 1 deletions(-)
+> 
+> diff --git a/include/net/sock.h b/include/net/sock.h
+> index 1a2f255..f2046e4 100644
+> --- a/include/net/sock.h
+> +++ b/include/net/sock.h
+> @@ -1180,6 +1180,8 @@ extern void sk_common_release(struct sock *sk);
+>  /* Initialise core socket variables */
+>  extern void sock_init_data(struct socket *sock, struct sock *sk);
+> 
+> +extern void sk_filter_release_rcu(struct rcu_head *rcu);
+> +
+>  /**
+>   *	sk_filter_release - release a socket filter
+>   *	@fp: filter to remove
+> @@ -1190,7 +1192,7 @@ extern void sock_init_data(struct socket *sock, struct sock *sk);
+>  static inline void sk_filter_release(struct sk_filter *fp)
+>  {
+>  	if (atomic_dec_and_test(&fp->refcnt))
+> -		kfree_rcu(fp, rcu);
+> +		call_rcu(&fp->rcu, sk_filter_release_rcu);
+>  }
+> 
+>  static inline void sk_filter_uncharge(struct sock *sk, struct sk_filter *fp)
+> diff --git a/net/core/filter.c b/net/core/filter.c
+> index 66d403d..0eb8c44 100644
+> --- a/net/core/filter.c
+> +++ b/net/core/filter.c
+> @@ -572,6 +572,19 @@ int sk_chk_filter(struct sock_filter *filter, int flen)
+>  EXPORT_SYMBOL(sk_chk_filter);
+> 
+>  /**
+> + * 	sk_filter_release_rcu - Release a socket filter by rcu_head
+> + *	@rcu: rcu_head that contains the sk_filter to free
+> + */
+> +void sk_filter_release_rcu(struct rcu_head *rcu)
+> +{
+> +	struct sk_filter *fp = container_of(rcu, struct sk_filter, rcu);
+> +
+> +	bpf_jit_free(fp);
+> +	kfree(fp);
+> +}
+> +EXPORT_SYMBOL(sk_filter_release_rcu);
+> +
+> +/**
+>   *	sk_attach_filter - attach a socket filter
+>   *	@fprog: the filter program
+>   *	@sk: the socket to use
+> -- 
+> 1.7.4.4
+> 
