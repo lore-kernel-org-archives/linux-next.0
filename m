@@ -1,103 +1,64 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the rcu tree with the net tree
-Date: Tue, 3 May 2011 23:05:33 -0700
-Message-ID: <20110504060533.GD2294@linux.vnet.ibm.com>
-References: <20110503142419.2b7d5e23.sfr@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for May 4 (hyperv / vmbus)
+Date: Wed, 4 May 2011 09:49:08 -0700
+Message-ID: <20110504094908.b8295d22.randy.dunlap@oracle.com>
+References: <20110504144759.802483cc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e7.ny.us.ibm.com ([32.97.182.137]:42803 "EHLO e7.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750794Ab1EDQgd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 May 2011 12:36:33 -0400
-Content-Disposition: inline
-In-Reply-To: <20110503142419.2b7d5e23.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:49865 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751380Ab1EDQtY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 May 2011 12:49:24 -0400
+In-Reply-To: <20110504144759.802483cc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Hank Janssen <hjanssen@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>
 
-On Tue, May 03, 2011 at 02:24:19PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> Today's linux-next merge of the rcu tree got a conflict in
-> net/core/filter.c between commit 0a14842f5a3c ("net: filter: Just In Time
-> compiler for x86-64") from the net tree and commit 10cde158c259
-> ("net,rcu: convert call_rcu(sk_filter_release_rcu) to kfree_rcu") from
-> the rcu tree.
-> 
-> The former adds another operation into sk_filter_release_rcu(), so I have
-> effectively reverted the rcu tree change for now (by applying the patch
-> below as a merge fixup).
+On Wed, 4 May 2011 14:47:59 +1000 Stephen Rothwell wrote:
 
-Thank you, Stephen!
+> Hi all,
+> 
+> Changes since 20110503:
 
-Looks like I need to get my changes forward-ported to the latest -rc...
 
-						Thanx, Paul
+when CONFIG_ACPI is not enabled:
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 3 May 2011 14:06:50 +1000
-> Subject: [PATCH] Revert "net,rcu: convert call_rcu(sk_filter_release_rcu) to
->  kfree_rcu"
-> 
-> This reverts commit 10cde158c2591422a2b32a2f560f406b8e69bee6.
-> ---
->  include/net/sock.h |    4 +++-
->  net/core/filter.c  |   13 +++++++++++++
->  2 files changed, 16 insertions(+), 1 deletions(-)
-> 
-> diff --git a/include/net/sock.h b/include/net/sock.h
-> index 1a2f255..f2046e4 100644
-> --- a/include/net/sock.h
-> +++ b/include/net/sock.h
-> @@ -1180,6 +1180,8 @@ extern void sk_common_release(struct sock *sk);
->  /* Initialise core socket variables */
->  extern void sock_init_data(struct socket *sock, struct sock *sk);
-> 
-> +extern void sk_filter_release_rcu(struct rcu_head *rcu);
-> +
->  /**
->   *	sk_filter_release - release a socket filter
->   *	@fp: filter to remove
-> @@ -1190,7 +1192,7 @@ extern void sock_init_data(struct socket *sock, struct sock *sk);
->  static inline void sk_filter_release(struct sk_filter *fp)
->  {
->  	if (atomic_dec_and_test(&fp->refcnt))
-> -		kfree_rcu(fp, rcu);
-> +		call_rcu(&fp->rcu, sk_filter_release_rcu);
->  }
-> 
->  static inline void sk_filter_uncharge(struct sock *sk, struct sk_filter *fp)
-> diff --git a/net/core/filter.c b/net/core/filter.c
-> index 66d403d..0eb8c44 100644
-> --- a/net/core/filter.c
-> +++ b/net/core/filter.c
-> @@ -572,6 +572,19 @@ int sk_chk_filter(struct sock_filter *filter, int flen)
->  EXPORT_SYMBOL(sk_chk_filter);
-> 
->  /**
-> + * 	sk_filter_release_rcu - Release a socket filter by rcu_head
-> + *	@rcu: rcu_head that contains the sk_filter to free
-> + */
-> +void sk_filter_release_rcu(struct rcu_head *rcu)
-> +{
-> +	struct sk_filter *fp = container_of(rcu, struct sk_filter, rcu);
-> +
-> +	bpf_jit_free(fp);
-> +	kfree(fp);
-> +}
-> +EXPORT_SYMBOL(sk_filter_release_rcu);
-> +
-> +/**
->   *	sk_attach_filter - attach a socket filter
->   *	@fprog: the filter program
->   *	@sk: the socket to use
-> -- 
-> 1.7.4.4
-> 
+
+drivers/staging/hv/vmbus_drv.c:736: warning: 'struct acpi_device' declared inside parameter list
+drivers/staging/hv/vmbus_drv.c:736: warning: its scope is only this definition or declaration, which is probably not what you want
+drivers/staging/hv/vmbus_drv.c: In function 'vmbus_acpi_add':
+drivers/staging/hv/vmbus_drv.c:741: error: dereferencing pointer to incomplete type
+drivers/staging/hv/vmbus_drv.c: At top level:
+drivers/staging/hv/vmbus_drv.c:758: error: variable 'vmbus_acpi_driver' has initializer but incomplete type
+drivers/staging/hv/vmbus_drv.c:759: error: unknown field 'name' specified in initializer
+drivers/staging/hv/vmbus_drv.c:759: warning: excess elements in struct initializer
+drivers/staging/hv/vmbus_drv.c:759: warning: (near initialization for 'vmbus_acpi_driver')
+drivers/staging/hv/vmbus_drv.c:760: error: unknown field 'ids' specified in initializer
+drivers/staging/hv/vmbus_drv.c:760: warning: excess elements in struct initializer
+drivers/staging/hv/vmbus_drv.c:760: warning: (near initialization for 'vmbus_acpi_driver')
+drivers/staging/hv/vmbus_drv.c:761: error: unknown field 'ops' specified in initializer
+drivers/staging/hv/vmbus_drv.c:761: error: extra brace group at end of initializer
+drivers/staging/hv/vmbus_drv.c:761: error: (near initialization for 'vmbus_acpi_driver')
+drivers/staging/hv/vmbus_drv.c:763: warning: excess elements in struct initializer
+drivers/staging/hv/vmbus_drv.c:763: warning: (near initialization for 'vmbus_acpi_driver')
+drivers/staging/hv/vmbus_drv.c: In function 'vmbus_acpi_init':
+drivers/staging/hv/vmbus_drv.c:771: error: implicit declaration of function 'acpi_bus_register_driver'
+drivers/staging/hv/vmbus_drv.c: In function 'vmbus_acpi_exit':
+drivers/staging/hv/vmbus_drv.c:780: error: implicit declaration of function 'acpi_bus_unregister_driver'
+make[4]: *** [drivers/staging/hv/vmbus_drv.o] Error 1
+make[3]: *** [drivers/staging/hv] Error 2
+
+
+
+
+
+vmbus_drv.c sure looks like it requires (depends on) both ACPI and PCI.
+That should be expressed somewhere in its Kconfig file.
+
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
