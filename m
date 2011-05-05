@@ -1,56 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the suspend tree
-Date: Thu, 5 May 2011 12:11:17 +1000
-Message-ID: <20110505121117.3b9b3fb3.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (powerpc
+ tree related)
+Date: Thu, 5 May 2011 13:41:42 +1000
+Message-ID: <20110505134142.3a1cb1f9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__5_May_2011_12_11_17_+1000_IlRih7mJ_TL5L/9U"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58112 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37492 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752334Ab1EECL2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 May 2011 22:11:28 -0400
+	id S1752478Ab1EEDlt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 May 2011 23:41:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Valdis Kletnieks <valdis.kletnieks@vt.edu>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Tseng-Hui (Frank) Lin" <thlin@linux.vnet.ibm.com>, Sonny Rao <sonnyrao@linux.vnet.ibm.com>, Anton Blanchard <anton@samba.org>, Michael Ellerman <michael@ozlabs.org>
 
---Signature=_Thu__5_May_2011_12_11_17_+1000_IlRih7mJ_TL5L/9U
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Rafael,
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-After merging the suspend tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+arch/powerpc/mm/mmu_context_hash64.c: In function 'init_new_context':
+arch/powerpc/mm/mmu_context_hash64.c:282: error: 'NO_CONTEXT' undeclared (first use in this function)
 
-ERROR: "usermodehelper_is_disabled" [drivers/base/firmware_class.ko] undefi=
-ned!
+Presumably caused by commit 851d2e2fe8db ("powerpc: Add Initiate
+Coprocessor Store Word (icswx) support") interacting with commit
+5e8e7b404ac9 ("powerpc/mm: Standardise on MMU_NO_CONTEXT").
 
-Caused by commit d5fef1145404 ("PM: Print a warning if firmware is
-requested when tasks are frozen").
-
-I have used the suspend tree from next-20110504 for today.
---=20
+I added the below patch for today.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__5_May_2011_12_11_17_+1000_IlRih7mJ_TL5L/9U
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 5 May 2011 13:32:02 +1000
+Subject: [PATCH] powerpc: fix up mismerge in mmu_context_hash64.c
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+NO_CONTEXT was changed to MMU_NO_CONTEXT.
 
-iQEcBAEBAgAGBQJNwgdFAAoJEDMEi1NhKgbsDfsH/37Xx4XLzJyPNs9zYbH2u8qO
-Wzz5b3REsNxOSWmg4Y9mk55xIggzd3n/klxmQGbpx3RKKI2Ybc6pLnSAYSlFbXNl
-vtsBwwjQPD0O7ZMPywCW3lMnMtD92+u71P4g00BLUqTEO6ubGk5dw5mx+0lHALmv
-cg57FpjyKWcoI9DnNslfREF3AKeLQJc7hZPwWW6ikvkT2iUsayWtrjXLMybOuYWE
-N83znUz0TWXklx4UhPS7FzqWadvLodwZ89YXG00IldYVoNEIrmxXg6JR4KDUOTaW
-MNC9jTlWzwwo2HNkiW8UkeIdCPZbjFYU6Qn1vgMNnerML3huv79LuIExmqOzwUk=
-=gPh0
------END PGP SIGNATURE-----
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/mm/mmu_context_hash64.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
---Signature=_Thu__5_May_2011_12_11_17_+1000_IlRih7mJ_TL5L/9U--
+diff --git a/arch/powerpc/mm/mmu_context_hash64.c b/arch/powerpc/mm/mmu_context_hash64.c
+index c517815..3bafc3d 100644
+--- a/arch/powerpc/mm/mmu_context_hash64.c
++++ b/arch/powerpc/mm/mmu_context_hash64.c
+@@ -279,7 +279,7 @@ int init_new_context(struct task_struct *tsk, struct mm_struct *mm)
+ 	if (!mm->context.cop_lockp) {
+ 		__destroy_context(index);
+ 		subpage_prot_free(mm);
+-		mm->context.id = NO_CONTEXT;
++		mm->context.id = MMU_NO_CONTEXT;
+ 		return -ENOMEM;
+ 	}
+ 	spin_lock_init(mm->context.cop_lockp);
+-- 
+1.7.4.4
