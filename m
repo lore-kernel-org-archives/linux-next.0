@@ -1,47 +1,73 @@
-From: Hank Janssen <hjanssen@microsoft.com>
+From: KY Srinivasan <kys@microsoft.com>
 Subject: RE: linux-next: Tree for May 4 (hyperv / vmbus)
-Date: Thu, 5 May 2011 14:59:56 +0000
-Message-ID: <8AFC7968D54FB448A30D8F38F259C562498A5852@TK5EX14MBXC114.redmond.corp.microsoft.com>
+Date: Thu, 5 May 2011 15:02:10 +0000
+Message-ID: <6E21E5352C11B742B20C142EB499E0481E039F@TK5EX14MBXC124.redmond.corp.microsoft.com>
 References: <20110504144759.802483cc.sfr@canb.auug.org.au>
- <20110504094908.b8295d22.randy.dunlap@oracle.com>
+	<20110504094908.b8295d22.randy.dunlap@oracle.com>
+ <8AFC7968D54FB448A30D8F38F259C562498A5852@TK5EX14MBXC114.redmond.corp.microsoft.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110504094908.b8295d22.randy.dunlap@oracle.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.microsoft.com ([131.107.115.214]:24971 "EHLO
+	smtp.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751763Ab1EEPCL convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 May 2011 11:02:11 -0400
+In-Reply-To: <8AFC7968D54FB448A30D8F38F259C562498A5852@TK5EX14MBXC114.redmond.corp.microsoft.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, "gregkh@suse.de" <gregkh@suse.de>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Hank Janssen <hjanssen@microsoft.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, "gregkh@suse.de" <gr>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
 
 
 > -----Original Message-----
-> From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
-> owner@vger.kernel.org] On Behalf Of Randy Dunlap
-> Sent: Wednesday, May 04, 2011 9:49 AM
-> To: Stephen Rothwell; driverdevel; gregkh@suse.de
-> Cc: linux-next@vger.kernel.org; LKML; Hank Janssen; Haiyang Zhang
-> Subject: Re: linux-next: Tree for May 4 (hyperv / vmbus)
+> From: devel-bounces@linuxdriverproject.org [mailto:devel-
+> bounces@linuxdriverproject.org] On Behalf Of Hank Janssen
+> Sent: Thursday, May 05, 2011 11:00 AM
+> To: Randy Dunlap; Stephen Rothwell; driverdevel; gregkh@suse.de
+> Cc: Haiyang Zhang; linux-next@vger.kernel.org; LKML
+> Subject: RE: linux-next: Tree for May 4 (hyperv / vmbus)
 > 
-> On Wed, 4 May 2011 14:47:59 +1000 Stephen Rothwell wrote:
 > 
-> > Hi all,
+> 
+> > -----Original Message-----
+> > From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
+> > owner@vger.kernel.org] On Behalf Of Randy Dunlap
+> > Sent: Wednesday, May 04, 2011 9:49 AM
+> > To: Stephen Rothwell; driverdevel; gregkh@suse.de
+> > Cc: linux-next@vger.kernel.org; LKML; Hank Janssen; Haiyang Zhang
+> > Subject: Re: linux-next: Tree for May 4 (hyperv / vmbus)
 > >
-> > Changes since 20110503:
+> > On Wed, 4 May 2011 14:47:59 +1000 Stephen Rothwell wrote:
+> >
+> > > Hi all,
+> > >
+> > > Changes since 20110503:
+> >
+> >
+> > when CONFIG_ACPI is not enabled:
+> >
+> >
+> >
+> > vmbus_drv.c sure looks like it requires (depends on) both ACPI and PCI.
+> > That should be expressed somewhere in its Kconfig file.
+> >
 > 
+> Randy,
 > 
-> when CONFIG_ACPI is not enabled:
+> Oops, I will submit a patch today to correct it. Thanks for catching it.
 > 
-> 
-> 
-> vmbus_drv.c sure looks like it requires (depends on) both ACPI and PCI.
-> That should be expressed somewhere in its Kconfig file.
-> 
+> Hank.
 
-Randy,
+Hank,
 
-Oops, I will submit a patch today to correct it. Thanks for catching it.
+This patch was submitted yesterday.
 
-Hank.
+K. Y
+> 
+> _______________________________________________
+> devel mailing list
+> devel@linuxdriverproject.org
+> http://driverdev.linuxdriverproject.org/mailman/listinfo/devel
