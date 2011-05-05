@@ -1,68 +1,32 @@
-From: Hank Janssen <hjanssen@microsoft.com>
-Subject: RE: linux-next: Tree for May 4 (hyperv / vmbus)
-Date: Thu, 5 May 2011 15:08:23 +0000
-Message-ID: <8AFC7968D54FB448A30D8F38F259C562498A58B1@TK5EX14MBXC114.redmond.corp.microsoft.com>
-References: <20110504144759.802483cc.sfr@canb.auug.org.au>
-	<20110504094908.b8295d22.randy.dunlap@oracle.com>
- <8AFC7968D54FB448A30D8F38F259C562498A5852@TK5EX14MBXC114.redmond.corp.microsoft.com>
- <6E21E5352C11B742B20C142EB499E0481E039F@TK5EX14MBXC124.redmond.corp.microsoft.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the suspend tree
+Date: Thu, 5 May 2011 22:02:46 +0200
+Message-ID: <201105052202.46364.rjw@sisk.pl>
+References: <20110505121117.3b9b3fb3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6E21E5352C11B742B20C142EB499E0481E039F@TK5EX14MBXC124.redmond.corp.microsoft.com>
-Content-Language: en-US
+In-Reply-To: <20110505121117.3b9b3fb3.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: KY Srinivasan <kys@microsoft.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, "gregkh@suse.de" <gregkh@suse.de>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Valdis Kletnieks <valdis.kletnieks@vt.edu>
 List-Id: linux-next.vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: KY Srinivasan
-> Sent: Thursday, May 05, 2011 8:02 AM
-> To: Hank Janssen; Randy Dunlap; Stephen Rothwell; driverdevel;
-> gregkh@suse.de
-> Cc: Haiyang Zhang; linux-next@vger.kernel.org; LKML
-> Subject: RE: linux-next: Tree for May 4 (hyperv / vmbus)
-> > > -----Original Message-----
-> > > From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
-> > > owner@vger.kernel.org] On Behalf Of Randy Dunlap
-> > > Sent: Wednesday, May 04, 2011 9:49 AM
-> > > To: Stephen Rothwell; driverdevel; gregkh@suse.de
-> > > Cc: linux-next@vger.kernel.org; LKML; Hank Janssen; Haiyang Zhang
-> > > Subject: Re: linux-next: Tree for May 4 (hyperv / vmbus)
-> > >
-> > > On Wed, 4 May 2011 14:47:59 +1000 Stephen Rothwell wrote:
-> > >
-> > > > Hi all,
-> > > >
-> > > > Changes since 20110503:
-> > >
-> > >
-> > > when CONFIG_ACPI is not enabled:
-> > >
-> > >
-> > >
-> > > vmbus_drv.c sure looks like it requires (depends on) both ACPI and PCI.
-> > > That should be expressed somewhere in its Kconfig file.
-> > >
-> >
-> > Randy,
-> >
-> > Oops, I will submit a patch today to correct it. Thanks for catching it.
-> >
-> > Hank.
+On Thursday, May 05, 2011, Stephen Rothwell wrote:
+> Hi Rafael,
 > 
-> Hank,
+> After merging the suspend tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> This patch was submitted yesterday.
+> ERROR: "usermodehelper_is_disabled" [drivers/base/firmware_class.ko] undefined!
 > 
-> K. Y
+> Caused by commit d5fef1145404 ("PM: Print a warning if firmware is
+> requested when tasks are frozen").
 
-Completely missed it :)
+Hmm.  If that's what I think (a missing EXPORT_SYMBOL), it should be
+fixed now.
 
 Thanks,
-
-Hank.
+Rafael
