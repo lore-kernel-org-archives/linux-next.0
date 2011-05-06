@@ -1,60 +1,47 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for May 6 (wireless)
-Date: Fri, 6 May 2011 08:58:03 -0700
-Message-ID: <20110506085803.c15692bb.randy.dunlap@oracle.com>
-References: <20110506154921.47700781.sfr@canb.auug.org.au>
-	<20110506084031.a1f2e483.randy.dunlap@oracle.com>
-	<BANLkTimqboATe5cO+19Bv5p9dStnwevwng@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [next] net/mac80211/main.c:700: error: 'const struct ieee80211_ops'
+ has no member named 'suspend'
+Date: Fri, 6 May 2011 19:39:24 +0200
+Message-ID: <BANLkTimMwXVHQtHtgukFvYKcWOuo=tv9ig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:47167 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754367Ab1EFP6O convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 May 2011 11:58:14 -0400
-In-Reply-To: <BANLkTimqboATe5cO+19Bv5p9dStnwevwng@mail.gmail.com>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:52502 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753305Ab1EFRj0 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 May 2011 13:39:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Larry Finger <Larry.Finger@lwfinger.net>
+To: Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-wireless@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>
 
-On Fri, 6 May 2011 17:44:44 +0200 Sedat Dilek wrote:
+http://kisskb.ellerman.id.au/kisskb/buildresult/4143029/
 
-> On Fri, May 6, 2011 at 5:40 PM, Randy Dunlap <randy.dunlap@oracle.com=
-> wrote:
-> > On Fri, 6 May 2011 15:49:21 +1000 Stephen Rothwell wrote:
-> >
-> >> Hi all,
-> >>
-> >> Changes since 20110505:
-> >
-> >
-> > when PM is not enabled:
-> >
-> > net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no=
- member named 'suspend'
-> > net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no=
- member named 'resume'
-> >
-> > ---
-> > ~Randy
-> > *** Remember to use Documentation/SubmitChecklist when testing your=
- code ***
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-nex=
-t" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at =A0http://vger.kernel.org/majordomo-info.htm=
-l
-> >
->=20
-> There was a patch sent today, see "[PATCH] mac80211: Fix build error
-> when CONFIG_PM is not defined" from Larry.
+net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no
+member named 'suspend'
+net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no
+member named 'resume'
 
-Thanks.  That works.
+The existence of these two members depends on CONFIG_PM.
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your cod=
-e ***
+=46unny, as both the members and these users were added in the same
+commit eecc48000afe2ca6da22122d553b7cad294e42fc ("mac80211: add basic
+support
+for WoWLAN").
+
+Gr{oetje,eeting}s,
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
