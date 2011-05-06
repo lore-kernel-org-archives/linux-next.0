@@ -1,42 +1,39 @@
-From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [next] net/mac80211/main.c:700: error: 'const struct
- ieee80211_ops' has no member named 'suspend'
-Date: Fri, 6 May 2011 10:50:42 -0700
-Message-ID: <20110506105042.b873a08e.randy.dunlap@oracle.com>
-References: <BANLkTimMwXVHQtHtgukFvYKcWOuo=tv9ig@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the final tree (suspend tree related)
+Date: Fri, 6 May 2011 20:15:42 +0200
+Message-ID: <201105062015.43024.rjw@sisk.pl>
+References: <20110506135345.a885d08a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <BANLkTimMwXVHQtHtgukFvYKcWOuo=tv9ig-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Cc: Johannes Berg <johannes.berg-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ogre.sisk.pl ([217.79.144.158]:56455 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751131Ab1EFSPS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 May 2011 14:15:18 -0400
+In-Reply-To: <20110506135345.a885d08a.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 6 May 2011 19:39:24 +0200 Geert Uytterhoeven wrote:
-
-> http://kisskb.ellerman.id.au/kisskb/buildresult/4143029/
+On Friday, May 06, 2011, Stephen Rothwell wrote:
+> Hi all,
 > 
-> net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no
-> member named 'suspend'
-> net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no
-> member named 'resume'
+> After merging the final tree, today's linux-next build (powerpc
+> allnoconfig) failed like this:
 > 
-> The existence of these two members depends on CONFIG_PM.
+> drivers/built-in.o: In function `_request_firmware':
+> firmware_class.c:(.text+0x385c8): undefined reference to `usermodehelper_is_disabled'
 > 
-> Funny, as both the members and these users were added in the same
-> commit eecc48000afe2ca6da22122d553b7cad294e42fc ("mac80211: add basic
-> support
-> for WoWLAN").
+> Caused by commit 3e61c4dd3e1e ("PM: Print a warning if firmware is
+> requested when tasks are frozen").  usermodehelper_is_disabled is only
+> defined if CONFIG_PM_SLEEP is set.
+> 
+> I have reverted that commit for today.
 
-Patch is here:
-http://marc.info/?l=linux-wireless&m=130463933324134&w=2
+Should be fixed now, sorry for the trouble.
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Rafael
