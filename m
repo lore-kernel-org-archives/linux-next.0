@@ -1,47 +1,42 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [next] net/mac80211/main.c:700: error: 'const struct ieee80211_ops'
- has no member named 'suspend'
-Date: Fri, 6 May 2011 19:39:24 +0200
-Message-ID: <BANLkTimMwXVHQtHtgukFvYKcWOuo=tv9ig@mail.gmail.com>
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [next] net/mac80211/main.c:700: error: 'const struct
+ ieee80211_ops' has no member named 'suspend'
+Date: Fri, 6 May 2011 10:50:42 -0700
+Message-ID: <20110506105042.b873a08e.randy.dunlap@oracle.com>
+References: <BANLkTimMwXVHQtHtgukFvYKcWOuo=tv9ig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:52502 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753305Ab1EFRj0 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 May 2011 13:39:26 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-wireless@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <BANLkTimMwXVHQtHtgukFvYKcWOuo=tv9ig-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Cc: Johannes Berg <johannes.berg-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/4143029/
+On Fri, 6 May 2011 19:39:24 +0200 Geert Uytterhoeven wrote:
 
-net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no
-member named 'suspend'
-net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no
-member named 'resume'
+> http://kisskb.ellerman.id.au/kisskb/buildresult/4143029/
+> 
+> net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no
+> member named 'suspend'
+> net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no
+> member named 'resume'
+> 
+> The existence of these two members depends on CONFIG_PM.
+> 
+> Funny, as both the members and these users were added in the same
+> commit eecc48000afe2ca6da22122d553b7cad294e42fc ("mac80211: add basic
+> support
+> for WoWLAN").
 
-The existence of these two members depends on CONFIG_PM.
+Patch is here:
+http://marc.info/?l=linux-wireless&m=130463933324134&w=2
 
-=46unny, as both the members and these users were added in the same
-commit eecc48000afe2ca6da22122d553b7cad294e42fc ("mac80211: add basic
-support
-for WoWLAN").
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
