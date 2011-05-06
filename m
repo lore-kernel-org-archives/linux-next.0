@@ -1,54 +1,60 @@
-From: Sedat Dilek <sedat.dilek-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 Subject: Re: linux-next: Tree for May 6 (wireless)
-Date: Fri, 6 May 2011 17:44:44 +0200
-Message-ID: <BANLkTimqboATe5cO+19Bv5p9dStnwevwng@mail.gmail.com>
+Date: Fri, 6 May 2011 08:58:03 -0700
+Message-ID: <20110506085803.c15692bb.randy.dunlap@oracle.com>
 References: <20110506154921.47700781.sfr@canb.auug.org.au>
 	<20110506084031.a1f2e483.randy.dunlap@oracle.com>
-Reply-To: sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+	<BANLkTimqboATe5cO+19Bv5p9dStnwevwng@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110506084031.a1f2e483.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Larry Finger <Larry.Finger-tQ5ms3gMjBLk1uMJSBkQmQ@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:47167 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754367Ab1EFP6O convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 May 2011 11:58:14 -0400
+In-Reply-To: <BANLkTimqboATe5cO+19Bv5p9dStnwevwng@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Larry Finger <Larry.Finger@lwfinger.net>
 
-On Fri, May 6, 2011 at 5:40 PM, Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org> =
-wrote:
-> On Fri, 6 May 2011 15:49:21 +1000 Stephen Rothwell wrote:
->
->> Hi all,
->>
->> Changes since 20110505:
->
->
-> when PM is not enabled:
->
-> net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no m=
-ember named 'suspend'
-> net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no m=
-ember named 'resume'
->
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your c=
-ode ***
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next"=
- in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
-ml
->
+On Fri, 6 May 2011 17:44:44 +0200 Sedat Dilek wrote:
 
-There was a patch sent today, see "[PATCH] mac80211: Fix build error
-when CONFIG_PM is not defined" from Larry.
+> On Fri, May 6, 2011 at 5:40 PM, Randy Dunlap <randy.dunlap@oracle.com=
+> wrote:
+> > On Fri, 6 May 2011 15:49:21 +1000 Stephen Rothwell wrote:
+> >
+> >> Hi all,
+> >>
+> >> Changes since 20110505:
+> >
+> >
+> > when PM is not enabled:
+> >
+> > net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no=
+ member named 'suspend'
+> > net/mac80211/main.c:700: error: 'const struct ieee80211_ops' has no=
+ member named 'resume'
+> >
+> > ---
+> > ~Randy
+> > *** Remember to use Documentation/SubmitChecklist when testing your=
+ code ***
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-nex=
+t" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at =A0http://vger.kernel.org/majordomo-info.htm=
+l
+> >
+>=20
+> There was a patch sent today, see "[PATCH] mac80211: Fix build error
+> when CONFIG_PM is not defined" from Larry.
 
-- Sedat -
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireles=
-s" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks.  That works.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your cod=
+e ***
