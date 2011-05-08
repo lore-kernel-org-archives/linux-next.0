@@ -1,36 +1,65 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH -next] soc: fix wm8958-dsp2 printk format warnings
-Date: Sun, 8 May 2011 17:06:05 +0100
-Message-ID: <20110508160604.GB32214@opensource.wolfsonmicro.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] ASoC: fix wm8958-dsp2 printk format warnings
+Date: Sun, 8 May 2011 09:48:24 -0700
+Message-ID: <20110508094824.b6952ae6.randy.dunlap@oracle.com>
 References: <20110505134959.b3761297.sfr@canb.auug.org.au>
- <20110506161310.54b22b9f.randy.dunlap@oracle.com>
- <20110508140101.GB15968@opensource.wolfsonmicro.com>
- <4DC6B8F7.4000302@oracle.com>
+	<20110506161310.54b22b9f.randy.dunlap@oracle.com>
+	<20110508140101.GB15968@opensource.wolfsonmicro.com>
+	<4DC6B8F7.4000302@oracle.com>
+	<20110508160604.GB32214@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:52713 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754327Ab1EHQGA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 8 May 2011 12:06:00 -0400
-Content-Disposition: inline
-In-Reply-To: <4DC6B8F7.4000302@oracle.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:27540 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751567Ab1EHQsn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 8 May 2011 12:48:43 -0400
+In-Reply-To: <20110508160604.GB32214@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sun, May 08, 2011 at 08:38:31AM -0700, Randy Dunlap wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> Do I need to resend the patch?
+Fix printk format warnings in wm8958-dsp2.c:
 
-Please, it'll need to at least go by Liam as well (this was the bit
-about making sure you send patches to maintainers).
+sound/soc/codecs/wm8958-dsp2.c:103: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+sound/soc/codecs/wm8958-dsp2.c:111: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
+sound/soc/codecs/wm8958-dsp2.c:144: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
 
-> What subsystem prefix do you want to see there?  from MAINTAINERS file:
-> SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEMENT (ASoC)
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ sound/soc/codecs/wm8958-dsp2.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-The same as all the other commits in the subsystem - ASoC.  MAINTAINERS
-won't tell you how subsystems format their commit logs, there's a few
-different conventions floating around (eg, [SCSI] is unusual, and some
-subsystems just have the driver name).
+--- linux-next-20110505.orig/sound/soc/codecs/wm8958-dsp2.c
++++ linux-next-20110505/sound/soc/codecs/wm8958-dsp2.c
+@@ -99,7 +99,7 @@ static int wm8958_dsp2_fw(struct snd_soc
+ 	len = fw->size - len;
+ 	while (len) {
+ 		if (len < 12) {
+-			dev_err(codec->dev, "%s short data block of %d\n",
++			dev_err(codec->dev, "%s short data block of %zd\n",
+ 				name, len);
+ 			goto err;
+ 		}
+@@ -107,7 +107,7 @@ static int wm8958_dsp2_fw(struct snd_soc
+ 		memcpy(&data32, data + 4, sizeof(data32));
+ 		block_len = be32_to_cpu(data32);
+ 		if (block_len + 8 > len) {
+-			dev_err(codec->dev, "%d byte block longer than file\n",
++			dev_err(codec->dev, "%zd byte block longer than file\n",
+ 				block_len);
+ 			goto err;
+ 		}
+@@ -141,7 +141,7 @@ static int wm8958_dsp2_fw(struct snd_soc
+ 		case WM_FW_BLOCK_I:
+ 		case WM_FW_BLOCK_A:
+ 		case WM_FW_BLOCK_C:
+-			dev_dbg(codec->dev, "%s: %d bytes of %x@%x\n", name,
++			dev_dbg(codec->dev, "%s: %zd bytes of %x@%x\n", name,
+ 				block_len, (data32 >> 24) & 0xff,
+ 				data32 & 0xffffff);
+ 
