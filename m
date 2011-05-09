@@ -1,65 +1,56 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] ASoC: fix wm8958-dsp2 printk format warnings
-Date: Sun, 8 May 2011 09:48:24 -0700
-Message-ID: <20110508094824.b6952ae6.randy.dunlap@oracle.com>
-References: <20110505134959.b3761297.sfr@canb.auug.org.au>
-	<20110506161310.54b22b9f.randy.dunlap@oracle.com>
-	<20110508140101.GB15968@opensource.wolfsonmicro.com>
-	<4DC6B8F7.4000302@oracle.com>
-	<20110508160604.GB32214@opensource.wolfsonmicro.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the slab tree with Linus' tree
+Date: Mon, 9 May 2011 12:41:58 +1000
+Message-ID: <20110509124158.1c099f24.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:27540 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751567Ab1EHQsn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 8 May 2011 12:48:43 -0400
-In-Reply-To: <20110508160604.GB32214@opensource.wolfsonmicro.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33521 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750818Ab1EICs6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 8 May 2011 22:48:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi all,
 
-Fix printk format warnings in wm8958-dsp2.c:
+Today's linux-next merge of the slab tree got a conflict in mm/slub.c
+between commit 30106b8ce2cc ("slub: Fix the lockless code on 32-bit
+platforms with no 64-bit cmpxchg") from Linus' tree and commit
+1759415e630e ("slub: Remove CONFIG_CMPXCHG_LOCAL ifdeffery") from the
+slab tree.
 
-sound/soc/codecs/wm8958-dsp2.c:103: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
-sound/soc/codecs/wm8958-dsp2.c:111: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
-sound/soc/codecs/wm8958-dsp2.c:144: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
+Just context changes (maybe).  I fixed it up (see below) and can carry
+the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- sound/soc/codecs/wm8958-dsp2.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---- linux-next-20110505.orig/sound/soc/codecs/wm8958-dsp2.c
-+++ linux-next-20110505/sound/soc/codecs/wm8958-dsp2.c
-@@ -99,7 +99,7 @@ static int wm8958_dsp2_fw(struct snd_soc
- 	len = fw->size - len;
- 	while (len) {
- 		if (len < 12) {
--			dev_err(codec->dev, "%s short data block of %d\n",
-+			dev_err(codec->dev, "%s short data block of %zd\n",
- 				name, len);
- 			goto err;
- 		}
-@@ -107,7 +107,7 @@ static int wm8958_dsp2_fw(struct snd_soc
- 		memcpy(&data32, data + 4, sizeof(data32));
- 		block_len = be32_to_cpu(data32);
- 		if (block_len + 8 > len) {
--			dev_err(codec->dev, "%d byte block longer than file\n",
-+			dev_err(codec->dev, "%zd byte block longer than file\n",
- 				block_len);
- 			goto err;
- 		}
-@@ -141,7 +141,7 @@ static int wm8958_dsp2_fw(struct snd_soc
- 		case WM_FW_BLOCK_I:
- 		case WM_FW_BLOCK_A:
- 		case WM_FW_BLOCK_C:
--			dev_dbg(codec->dev, "%s: %d bytes of %x@%x\n", name,
-+			dev_dbg(codec->dev, "%s: %zd bytes of %x@%x\n", name,
- 				block_len, (data32 >> 24) & 0xff,
- 				data32 & 0xffffff);
- 
+diff --cc mm/slub.c
+index 9d2e5e4,461199f..0000000
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@@ -1927,9 -1918,8 +1918,8 @@@ redo
+  		object = __slab_alloc(s, gfpflags, node, addr, c);
+  
+  	else {
+- #ifdef CONFIG_CMPXCHG_LOCAL
+  		/*
+ -		 * The cmpxchg will only match if there was no additonal
+ +		 * The cmpxchg will only match if there was no additional
+  		 * operation and if we are on the right processor.
+  		 *
+  		 * The cmpxchg does the following atomically (without lock semantics!)
+@@@ -2144,8 -2103,7 +2103,7 @@@ redo
+  	if (likely(page == c->page && c->node != NUMA_NO_NODE)) {
+  		set_freepointer(s, object, c->freelist);
+  
+- #ifdef CONFIG_CMPXCHG_LOCAL
+ -		if (unlikely(!this_cpu_cmpxchg_double(
+ +		if (unlikely(!irqsafe_cpu_cmpxchg_double(
+  				s->cpu_slab->freelist, s->cpu_slab->tid,
+  				c->freelist, tid,
+  				object, next_tid(tid)))) {
