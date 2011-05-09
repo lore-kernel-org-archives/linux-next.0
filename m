@@ -1,31 +1,58 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build warning after merge of the net tree
-Date: Sun, 08 May 2011 21:13:41 -0700 (PDT)
-Message-ID: <20110508.211341.226779345.davem@davemloft.net>
-References: <20110509134613.bcf0b017.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110509134613.bcf0b017.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 9 May 2011 13:46:13 +1000
+Subject: linux-next: build failure after merge of the final tree
+ (driver-core tree related)
+Date: Mon, 9 May 2011 14:58:54 +1000
+Message-ID: <20110509145854.9e6d8806.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__9_May_2011_14_58_54_+1000_Y8qoS8lreJdC9EHW"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55853 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751350Ab1EIFYA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 May 2011 01:24:00 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Anton Guda <atu@dmeti.dp.ua>
 
-> Hi all,
-> 
-> After merging the net tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> net/sctp/protocol.c: In function 'sctp_v4_xmit':
-> net/sctp/protocol.c:842: warning: format '%p' expects type 'void *', but argument 5 has type '__be32'
-> net/sctp/protocol.c:842: warning: format '%p' expects type 'void *', but argument 6 has type '__be32'
-> 
-> Caused by commit f1c0a276ea17 ("sctp: Don't use rt->rt_{src,dst} in
-> sctp_v4_xmit()").
+--Signature=_Mon__9_May_2011_14_58_54_+1000_Y8qoS8lreJdC9EHW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll fix this, thanks for the report Stephen.
+Hi all,
+
+After merging the final tree, today's linux-next build (powerpc allnoconfig)
+failed like this:
+
+kernel/sys.c: In function 'kernel_restart_prepare':
+kernel/sys.c:317: error: implicit declaration of function 'usermodehelper_d=
+isable'
+
+Caused by commit b50fa7c8077c ("reboot: disable usermodehelper to prevent
+fs access").  See Rule 1 in Documentation/SubmitChecklist.
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__9_May_2011_14_58_54_+1000_Y8qoS8lreJdC9EHW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNx3SOAAoJEDMEi1NhKgbsb08H+wa+zoNsiEu54T5XV4fkOaP3
+yTZpLc7V1ufJHUNp3FclU4nOeOSJ2q6uaGM7Ih6/LbEmasPon9YQULY5ZG7ZdPmx
+4EEkeu8Bj9eA7Q7KK6fwUf2/afPi0X1khWHZbpPCpd8ridExluERcWAo6AwpJVTA
+VJCqN1WNi8Agf67ncYx4gIp1NGFrrNUN94lfdz8b9ABiPM+YDZZJ9bblrYsrKYyV
+6DUwPISWrZlMsI4mV1u7TWgDyh8G2gzxoZILQoX/dd9RRpgGQTsNghh9q1pWK1Ql
+qSqinZMx1PcRpo7j5l0BO82xlsELLUZd/MKEPRPXOcxTBiiQjyQhj6DfLD7OZVY=
+=DN31
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__9_May_2011_14_58_54_+1000_Y8qoS8lreJdC9EHW--
