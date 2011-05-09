@@ -1,56 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the slab tree with Linus' tree
-Date: Mon, 9 May 2011 12:41:58 +1000
-Message-ID: <20110509124158.1c099f24.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the block tree
+Date: Mon, 9 May 2011 13:49:31 +1000
+Message-ID: <20110509134931.6d822e05.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__9_May_2011_13_49_31_+1000_lO1.8BjXEnbWjItp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33521 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56399 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750818Ab1EICs6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 8 May 2011 22:48:58 -0400
+	id S1755718Ab1EIDte (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 8 May 2011 23:49:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tao Ma <boyu.mt@taobao.com>
 
-Hi all,
+--Signature=_Mon__9_May_2011_13_49_31_+1000_lO1.8BjXEnbWjItp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the slab tree got a conflict in mm/slub.c
-between commit 30106b8ce2cc ("slub: Fix the lockless code on 32-bit
-platforms with no 64-bit cmpxchg") from Linus' tree and commit
-1759415e630e ("slub: Remove CONFIG_CMPXCHG_LOCAL ifdeffery") from the
-slab tree.
+Hi Jens,
 
-Just context changes (maybe).  I fixed it up (see below) and can carry
-the fix as necessary.
--- 
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
+
+fs/partitions/check.c: In function 'part_discard_alignment_show':
+fs/partitions/check.c:263: warning: format '%u' expects type 'unsigned int'=
+, but argument 3 has type 'long long unsigned int'
+
+Introduced by commit  ("block: Remove extra discard_alignment from
+hd_struct")
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc mm/slub.c
-index 9d2e5e4,461199f..0000000
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@@ -1927,9 -1918,8 +1918,8 @@@ redo
-  		object = __slab_alloc(s, gfpflags, node, addr, c);
-  
-  	else {
-- #ifdef CONFIG_CMPXCHG_LOCAL
-  		/*
- -		 * The cmpxchg will only match if there was no additonal
- +		 * The cmpxchg will only match if there was no additional
-  		 * operation and if we are on the right processor.
-  		 *
-  		 * The cmpxchg does the following atomically (without lock semantics!)
-@@@ -2144,8 -2103,7 +2103,7 @@@ redo
-  	if (likely(page == c->page && c->node != NUMA_NO_NODE)) {
-  		set_freepointer(s, object, c->freelist);
-  
-- #ifdef CONFIG_CMPXCHG_LOCAL
- -		if (unlikely(!this_cpu_cmpxchg_double(
- +		if (unlikely(!irqsafe_cpu_cmpxchg_double(
-  				s->cpu_slab->freelist, s->cpu_slab->tid,
-  				c->freelist, tid,
-  				object, next_tid(tid)))) {
+--Signature=_Mon__9_May_2011_13_49_31_+1000_lO1.8BjXEnbWjItp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNx2RLAAoJEDMEi1NhKgbsf64H/3o53SDHXBG+ti6EiWpyfwhw
+28gXCkX77uymw6A1erPovNcmDcVtSZgfySuBjk+2/XgSqm4wcgSJnm3E5tiAj5vp
+Db65jrjUU/pUElZQtOiIHx0JT15X6o+uaGwxVYV3sA6iQT6uegHqCFP1uznPh7jY
+95wkW2eZEhiEdyntMMO1bGXD+u5f+rXxh+bVv1GNSJXXVzge5Rqs9RNgcAqfoNu2
+DAr4FL04Hl1qRUyz0k+R/SzvOwW0GrWf0pAcJhmJzjCLOZO2FQECL7TRYJOupdgv
+Ws1M/xf7v+LDIwoO8+BK9mCv8z2+PZXsCxu83zmRxUOIQ59ax+ivuWOYmyYjOYc=
+=DNMg
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__9_May_2011_13_49_31_+1000_lO1.8BjXEnbWjItp--
