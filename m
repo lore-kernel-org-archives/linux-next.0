@@ -1,35 +1,36 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] fs/partitions: fix printk format warning
-Date: Mon, 9 May 2011 10:38:26 -0700
-Message-ID: <20110509103826.58551948.randy.dunlap@oracle.com>
-References: <20110509152401.cc001ad6.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the final tree (driver-core tree related)
+Date: Tue, 10 May 2011 00:19:52 +0200
+Message-ID: <201105100019.52936.rjw@sisk.pl>
+References: <20110509145854.9e6d8806.sfr@canb.auug.org.au> <BANLkTinzFs0cfGdmkdOE8cgKSHK=5NEjmg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110509152401.cc001ad6.sfr@canb.auug.org.au>
+In-Reply-To: <BANLkTinzFs0cfGdmkdOE8cgKSHK=5NEjmg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
+To: Kay Sievers <kay.sievers@vrfy.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Guda <atu@dmeti.dp.ua>
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Monday, May 09, 2011, Kay Sievers wrote:
+> On Mon, May 9, 2011 at 06:58, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > After merging the final tree, today's linux-next build (powerpc allnoconfig)
+> > failed like this:
+> >
+> > kernel/sys.c: In function 'kernel_restart_prepare':
+> > kernel/sys.c:317: error: implicit declaration of function 'usermodehelper_disable'
+> 
+> Rafael, seems usermodehelper_disable() depends on CONFIG_PM_SLEEP.
+> 
+> Any reason for that conditional? Remove it now?
 
-fs/partitions/check.c:263: warning: format '%u' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'
+Aw, we have two conflicting changes.  Could you prepare a patch on top of:
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- fs/partitions/check.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/rafael/suspend-2.6.git pm-next
 
---- linux-next-20110509.orig/fs/partitions/check.c
-+++ linux-next-20110509/fs/partitions/check.c
-@@ -257,7 +257,7 @@ ssize_t part_discard_alignment_show(stru
- 	struct hd_struct *p = dev_to_part(dev);
- 	struct gendisk *disk = dev_to_disk(dev);
- 
--	return sprintf(buf, "%u\n",
-+	return sprintf(buf, "%llu\n",
- 		       (unsigned long long)queue_limit_discard_alignment(
- 							&disk->queue->limits,
- 							p->start_sect));
+removing that #ifdef?  That needs to be done in kmod.h too.
+
+Thanks,
+Rafael
