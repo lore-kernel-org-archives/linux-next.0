@@ -1,28 +1,32 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build warning after merge of the block tree
-Date: Mon, 09 May 2011 08:34:05 +0200
-Message-ID: <4DC78ADD.6010503@kernel.dk>
-References: <20110509134931.6d822e05.sfr@canb.auug.org.au> <1304920537-3975-1-git-send-email-tm@tao.ma>
+From: Kay Sievers <kay.sievers@vrfy.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (driver-core tree related)
+Date: Mon, 9 May 2011 11:34:35 +0200
+Message-ID: <BANLkTinzFs0cfGdmkdOE8cgKSHK=5NEjmg@mail.gmail.com>
+References: <20110509145854.9e6d8806.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:32878 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752013Ab1EIGeJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 May 2011 02:34:09 -0400
-In-Reply-To: <1304920537-3975-1-git-send-email-tm@tao.ma>
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:49823 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750814Ab1EIJev (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 May 2011 05:34:51 -0400
+In-Reply-To: <20110509145854.9e6d8806.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tao Ma <tm@tao.ma>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Guda <atu@dmeti.dp.ua>
 
-On 2011-05-09 07:55, Tao Ma wrote:
-> Hi Jens,
-> 
-> Sorry for the trouble. Here is the fix.
+On Mon, May 9, 2011 at 06:58, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> After merging the final tree, today's linux-next build (powerpc allnoconfig)
+> failed like this:
+>
+> kernel/sys.c: In function 'kernel_restart_prepare':
+> kernel/sys.c:317: error: implicit declaration of function 'usermodehelper_disable'
 
-Already fixed it up, we don't need a cast at all.
+Rafael, seems usermodehelper_disable() depends on CONFIG_PM_SLEEP.
 
--- 
-Jens Axboe
+Any reason for that conditional? Remove it now?
+
+Thanks,
+Kay
