@@ -1,49 +1,70 @@
-From: Oleg Nesterov <oleg@redhat.com>
-Subject: Re: ptrace pull request for linux-next
-Date: Tue, 10 May 2011 14:24:31 +0200
-Message-ID: <20110510122431.GA12461@redhat.com>
-References: <20110329090248.GJ6736@htj.dyndns.org> <20110330101204.7a5459c3.sfr@canb.auug.org.au>
-Mime-Version: 1.0
+From: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+Subject: Re: linux-next: build failure after merge of the voltage tree
+Date: Tue, 10 May 2011 12:30:36 -0500
+Message-ID: <6B0D58A8-B278-49D6-835F-C38E7517FCD5@slimlogic.co.uk>
+References: <20110510124434.b30a7631.sfr@canb.auug.org.au> <1305016712.3206.2.camel@odin>
+Mime-Version: 1.0 (Apple Message framework v1084)
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:18281 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755980Ab1EJMZm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 May 2011 08:25:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20110330101204.7a5459c3.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1305016712.3206.2.camel@odin>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Graeme Gregory <gg@slimlogic.co.uk>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
 
-On 03/30, Stephen Rothwell wrote:
->
-> Hi Tejun,
->
-> On Tue, 29 Mar 2011 11:02:48 +0200 Tejun Heo <tj@kernel.org> wrote:
-> >
-> > Can you please pull from the following tree into linux-next?
-> >
-> >  git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git ptrace
-> >
-> > The tree hosts ongoing ptrace/group stop improvements.  Oleg is in the
-> > process of getting a korg account and setting up a dedicated tree and
-> > it has been agreed that I maintain a temporary tree to be tested in
-> > linux-next until things are properly setup.  The branch is stable and
-> > will be pulled verbatim into Oleg's tree once it's up and running.
->
-> This will be added from today (I was waiting for -rc1).  I have put you
-> and Oleg as contacts for this tree.
+On May 10, 2011, at 3:38 AM, Liam Girdwood wrote:
 
-Could you please switch from Tejun's tree to
+> On Tue, 2011-05-10 at 12:44 +1000, Stephen Rothwell wrote:
+>> Hi Liam,
+>> 
+>> After merging the voltage tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>> 
+>> ERROR: "tps65910_gpio_init" [drivers/mfd/tps65910.ko] undefined!
+>> ERROR: "tps65910_irq_init" [drivers/mfd/tps65910.ko] undefined!
+>> ERROR: "irq_modify_status" [drivers/mfd/tps65910-irq.ko] undefined!
+>> ERROR: "irq_set_chip_and_handler_name" [drivers/mfd/tps65910-irq.ko] undefined!
+>> ERROR: "handle_edge_irq" [drivers/mfd/tps65910-irq.ko] undefined!
+>> 
+>> I have used the voltage tree from next-20110509 for today.
+> 
+> Jorge, could you send a fix for this today.
+> 
+> Thanks
+> 
+> Liam
+> 
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/oleg/misc.git ptrace
+The following patch should solve this:
 
-?
+From: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+MFD: Fix TPS65910 build
 
-Thanks,
+Support for tps65910 as a module is not available. The driver can
+only be compiled as built-in. OTOH, the regulator driver can still
+be built as module without breaking the compilation.
 
-Oleg.
+Signed-off-by: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+---
+ drivers/mfd/Kconfig |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 65930a7..c78865e 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -672,8 +672,8 @@ config MFD_OMAP_USB_HOST
+ 	  OMAP USB Host drivers.
+ 
+ config MFD_TPS65910
+-	tristate "TPS65910 Power Management chip"
+-	depends on I2C &&  GPIOLIB
++	bool "TPS65910 Power Management chip"
++	depends on I2C && GPIOLIB
+ 	select MFD_CORE
+ 	help
+ 	  if you say yes here you get support for the TPS65910 series of
+-- 
+1.7.1
