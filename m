@@ -1,103 +1,101 @@
-From: Kay Sievers <kay.sievers@vrfy.org>
-Subject: Re: linux-next: build failure after merge of the final tree
- (driver-core tree related)
-Date: Tue, 10 May 2011 01:18:22 +0200
-Message-ID: <1304983104.1351.17.camel@zag>
-References: <20110509145854.9e6d8806.sfr@canb.auug.org.au>
-	 <BANLkTinzFs0cfGdmkdOE8cgKSHK=5NEjmg@mail.gmail.com>
-	 <201105100019.52936.rjw@sisk.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Tue, 10 May 2011 11:49:17 +1000
+Message-ID: <20110510114917.11f8738f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:43569 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755115Ab1EIXSm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 May 2011 19:18:42 -0400
-In-Reply-To: <201105100019.52936.rjw@sisk.pl>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Guda <atu@dmeti.dp.ua>
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Somnath Kotur <somnath.kotur@emulex.com>, Sathya Perla <sathya.perla@emulex.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2011-05-10 at 00:19 +0200, Rafael J. Wysocki wrote:
-> On Monday, May 09, 2011, Kay Sievers wrote:
-> > On Mon, May 9, 2011 at 06:58, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > After merging the final tree, today's linux-next build (powerpc allnoconfig)
-> > > failed like this:
-> > >
-> > > kernel/sys.c: In function 'kernel_restart_prepare':
-> > > kernel/sys.c:317: error: implicit declaration of function 'usermodehelper_disable'
-> > 
-> > Rafael, seems usermodehelper_disable() depends on CONFIG_PM_SLEEP.
-> > 
-> > Any reason for that conditional? Remove it now?
-> 
-> Aw, we have two conflicting changes.  Could you prepare a patch on top of:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/suspend-2.6.git pm-next
-> 
-> removing that #ifdef?  That needs to be done in kmod.h too.
+Hi all,
 
-Like this?
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/benet/be_main.c between commit 6709d9521df0 ("be2net: Fixed
+bugs related to PVID") from the net-current tree and commit 15d721847f56
+("be2net: parse vid and vtm fields of rx-compl only if vlanf bit is set")
+from the net tree.
 
-Thanks,
-Kay
+I fixed it up (I think - see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
-From: Kay Sievers <kay.sievers@vrfy.org>
-Subject: kmod: always provide usermodehelper_disable()
-
-We need to prevent kernel-forked processes during system poweroff.
-Such processes try to access the filesystem whose disks we are
-trying to shutdown at the same time. This causes delays and exceptions
-in the storage drivers.
-
-A follow-up patch will add these calls and need usermodehelper_disable()
-also on systems without suspend support.
-
-Signed-off-by: Kay Sievers <kay.sievers@vrfy.org>
----
-
-diff --git a/include/linux/kmod.h b/include/linux/kmod.h
-index 7f3dbcb..3102318 100644
---- a/include/linux/kmod.h
-+++ b/include/linux/kmod.h
-@@ -111,12 +111,8 @@ call_usermodehelper(char *path, char **argv, char **envp, enum umh_wait wait)
- 
- extern void usermodehelper_init(void);
- 
--#ifdef CONFIG_PM_SLEEP
- extern int usermodehelper_disable(void);
- extern void usermodehelper_enable(void);
- extern bool usermodehelper_is_disabled(void);
--#else
--static inline bool usermodehelper_is_disabled(void) { return false; }
--#endif
- 
- #endif /* __LINUX_KMOD_H__ */
-diff --git a/kernel/kmod.c b/kernel/kmod.c
-index 9ab513b..5ae0ff3 100644
---- a/kernel/kmod.c
-+++ b/kernel/kmod.c
-@@ -245,7 +245,6 @@ static void __call_usermodehelper(struct work_struct *work)
- 	}
- }
- 
--#ifdef CONFIG_PM_SLEEP
- /*
-  * If set, call_usermodehelper_exec() will exit immediately returning -EBUSY
-  * (used for preventing user land processes from being created after the user
-@@ -321,12 +320,6 @@ static void helper_unlock(void)
- 	if (atomic_dec_and_test(&running_helpers))
- 		wake_up(&running_helpers_waitq);
- }
--#else /* CONFIG_PM_SLEEP */
--#define usermodehelper_disabled	0
--
--static inline void helper_lock(void) {}
--static inline void helper_unlock(void) {}
--#endif /* CONFIG_PM_SLEEP */
- 
- /**
-  * call_usermodehelper_setup - prepare to call a usermode helper
+diff --cc drivers/net/benet/be_main.c
+index 9187fb4,7b19931..0000000
+--- a/drivers/net/benet/be_main.c
++++ b/drivers/net/benet/be_main.c
+@@@ -1103,9 -1102,14 +1104,14 @@@ static void be_parse_rx_compl_v1(struc
+  		AMAP_GET_BITS(struct amap_eth_rx_compl_v1, numfrags, compl);
+  	rxcp->pkt_type =
+  		AMAP_GET_BITS(struct amap_eth_rx_compl_v1, cast_enc, compl);
+- 	rxcp->vtm = AMAP_GET_BITS(struct amap_eth_rx_compl_v1, vtm, compl);
+- 	rxcp->vlan_tag = AMAP_GET_BITS(struct amap_eth_rx_compl_v1, vlan_tag,
+- 					compl);
++ 	rxcp->rss_hash =
++ 		AMAP_GET_BITS(struct amap_eth_rx_compl_v1, rsshash, rxcp);
++ 	if (rxcp->vlanf) {
++ 		rxcp->vtm = AMAP_GET_BITS(struct amap_eth_rx_compl_v1, vtm,
++ 				compl);
+ -		rxcp->vid = AMAP_GET_BITS(struct amap_eth_rx_compl_v1, vlan_tag,
+++		rxcp->vlan_tag = AMAP_GET_BITS(struct amap_eth_rx_compl_v1, vlan_tag,
++ 				compl);
++ 	}
+  }
+  
+  static void be_parse_rx_compl_v0(struct be_adapter *adapter,
+@@@ -1130,9 -1134,14 +1136,14 @@@
+  		AMAP_GET_BITS(struct amap_eth_rx_compl_v0, numfrags, compl);
+  	rxcp->pkt_type =
+  		AMAP_GET_BITS(struct amap_eth_rx_compl_v0, cast_enc, compl);
+- 	rxcp->vtm = AMAP_GET_BITS(struct amap_eth_rx_compl_v0, vtm, compl);
+- 	rxcp->vlan_tag = AMAP_GET_BITS(struct amap_eth_rx_compl_v0, vlan_tag,
+- 					compl);
++ 	rxcp->rss_hash =
++ 		AMAP_GET_BITS(struct amap_eth_rx_compl_v0, rsshash, rxcp);
++ 	if (rxcp->vlanf) {
++ 		rxcp->vtm = AMAP_GET_BITS(struct amap_eth_rx_compl_v0, vtm,
++ 				compl);
+ -		rxcp->vid = AMAP_GET_BITS(struct amap_eth_rx_compl_v0, vlan_tag,
+++		rxcp->vlan_tag = AMAP_GET_BITS(struct amap_eth_rx_compl_v0, vlan_tag,
++ 				compl);
++ 	}
+  }
+  
+  static struct be_rx_compl_info *be_rx_compl_get(struct be_rx_obj *rxo)
+@@@ -1154,17 -1163,19 +1165,20 @@@
+  	else
+  		be_parse_rx_compl_v0(adapter, compl, rxcp);
+  
+- 	/* vlanf could be wrongly set in some cards. ignore if vtm is not set */
+- 	if ((adapter->function_mode & 0x400) && !rxcp->vtm)
+- 		rxcp->vlanf = 0;
++ 	if (rxcp->vlanf) {
++ 		/* vlanf could be wrongly set in some cards.
++ 		 * ignore if vtm is not set */
++ 		if ((adapter->function_mode & 0x400) && !rxcp->vtm)
++ 			rxcp->vlanf = 0;
+  
+- 	if (!lancer_chip(adapter))
+- 		rxcp->vlan_tag = swab16(rxcp->vlan_tag);
++ 		if (!lancer_chip(adapter))
+ -			rxcp->vid = swab16(rxcp->vid);
+++			rxcp->vlan_tag = swab16(rxcp->vlan_tag);
+  
+- 	if (((adapter->pvid & VLAN_VID_MASK) ==
+- 		(rxcp->vlan_tag & VLAN_VID_MASK)) &&
+- 		!adapter->vlan_tag[rxcp->vlan_tag])
+- 		rxcp->vlanf = 0;
+ -		if ((adapter->pvid == rxcp->vid) &&
+ -			!adapter->vlan_tag[rxcp->vid])
+++		if (((adapter->pvid & VLAN_VID_MASK) ==
+++			(rxcp->vlan_tag & VLAN_VID_MASK)) &&
+++			!adapter->vlan_tag[rxcp->vlan_tag])
++ 			rxcp->vlanf = 0;
++ 	}
+  
+  	/* As the compl has been parsed, reset it; we wont touch it again */
+  	compl->dw[offsetof(struct amap_eth_rx_compl_v1, valid) / 32] = 0;
