@@ -1,114 +1,81 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the final tree (driver-core tree related)
-Date: Tue, 10 May 2011 21:38:45 +0200
-Message-ID: <201105102138.45867.rjw@sisk.pl>
-References: <20110509145854.9e6d8806.sfr@canb.auug.org.au> <201105100019.52936.rjw@sisk.pl> <1304983104.1351.17.camel@zag>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Subject: Re: linux-next: build failure after merge of the voltage tree
+Date: Tue, 10 May 2011 20:57:37 +0100
+Message-ID: <1305057457.3206.45.camel@odin>
+References: <20110510124434.b30a7631.sfr@canb.auug.org.au>
+	 <1305016712.3206.2.camel@odin>
+	 <6B0D58A8-B278-49D6-835F-C38E7517FCD5@slimlogic.co.uk>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:39718 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750882Ab1EJTiZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 May 2011 15:38:25 -0400
-In-Reply-To: <1304983104.1351.17.camel@zag>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:39783 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752368Ab1EJT5l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 May 2011 15:57:41 -0400
+In-Reply-To: <6B0D58A8-B278-49D6-835F-C38E7517FCD5@slimlogic.co.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kay Sievers <kay.sievers@vrfy.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Guda <atu@dmeti.dp.ua>
+To: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Graeme Gregory <gg@slimlogic.co.uk>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Tuesday, May 10, 2011, Kay Sievers wrote:
-> On Tue, 2011-05-10 at 00:19 +0200, Rafael J. Wysocki wrote:
-> > On Monday, May 09, 2011, Kay Sievers wrote:
-> > > On Mon, May 9, 2011 at 06:58, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > After merging the final tree, today's linux-next build (powerpc allnoconfig)
-> > > > failed like this:
-> > > >
-> > > > kernel/sys.c: In function 'kernel_restart_prepare':
-> > > > kernel/sys.c:317: error: implicit declaration of function 'usermodehelper_disable'
-> > > 
-> > > Rafael, seems usermodehelper_disable() depends on CONFIG_PM_SLEEP.
-> > > 
-> > > Any reason for that conditional? Remove it now?
+On Tue, 2011-05-10 at 12:30 -0500, Jorge Eduardo Candelaria wrote:
+> On May 10, 2011, at 3:38 AM, Liam Girdwood wrote:
+> 
+> > On Tue, 2011-05-10 at 12:44 +1000, Stephen Rothwell wrote:
+> >> Hi Liam,
+> >> 
+> >> After merging the voltage tree, today's linux-next build (x86_64
+> >> allmodconfig) failed like this:
+> >> 
+> >> ERROR: "tps65910_gpio_init" [drivers/mfd/tps65910.ko] undefined!
+> >> ERROR: "tps65910_irq_init" [drivers/mfd/tps65910.ko] undefined!
+> >> ERROR: "irq_modify_status" [drivers/mfd/tps65910-irq.ko] undefined!
+> >> ERROR: "irq_set_chip_and_handler_name" [drivers/mfd/tps65910-irq.ko] undefined!
+> >> ERROR: "handle_edge_irq" [drivers/mfd/tps65910-irq.ko] undefined!
+> >> 
+> >> I have used the voltage tree from next-20110509 for today.
 > > 
-> > Aw, we have two conflicting changes.  Could you prepare a patch on top of:
+> > Jorge, could you send a fix for this today.
 > > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/rafael/suspend-2.6.git pm-next
+> > Thanks
 > > 
-> > removing that #ifdef?  That needs to be done in kmod.h too.
+> > Liam
+> > 
 > 
-> Like this?
-
-Yes, thanks.
-
-I applied it to suspend-2.6/linux-next.
-
-Rafael
-
- 
-> From: Kay Sievers <kay.sievers@vrfy.org>
-> Subject: kmod: always provide usermodehelper_disable()
+> The following patch should solve this:
 > 
-> We need to prevent kernel-forked processes during system poweroff.
-> Such processes try to access the filesystem whose disks we are
-> trying to shutdown at the same time. This causes delays and exceptions
-> in the storage drivers.
+> From: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+> MFD: Fix TPS65910 build
 > 
-> A follow-up patch will add these calls and need usermodehelper_disable()
-> also on systems without suspend support.
+> Support for tps65910 as a module is not available. The driver can
+> only be compiled as built-in. OTOH, the regulator driver can still
+> be built as module without breaking the compilation.
 > 
-> Signed-off-by: Kay Sievers <kay.sievers@vrfy.org>
+> Signed-off-by: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
 > ---
+>  drivers/mfd/Kconfig |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/include/linux/kmod.h b/include/linux/kmod.h
-> index 7f3dbcb..3102318 100644
-> --- a/include/linux/kmod.h
-> +++ b/include/linux/kmod.h
-> @@ -111,12 +111,8 @@ call_usermodehelper(char *path, char **argv, char **envp, enum umh_wait wait)
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 65930a7..c78865e 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -672,8 +672,8 @@ config MFD_OMAP_USB_HOST
+>  	  OMAP USB Host drivers.
 >  
->  extern void usermodehelper_init(void);
->  
-> -#ifdef CONFIG_PM_SLEEP
->  extern int usermodehelper_disable(void);
->  extern void usermodehelper_enable(void);
->  extern bool usermodehelper_is_disabled(void);
-> -#else
-> -static inline bool usermodehelper_is_disabled(void) { return false; }
-> -#endif
->  
->  #endif /* __LINUX_KMOD_H__ */
-> diff --git a/kernel/kmod.c b/kernel/kmod.c
-> index 9ab513b..5ae0ff3 100644
-> --- a/kernel/kmod.c
-> +++ b/kernel/kmod.c
-> @@ -245,7 +245,6 @@ static void __call_usermodehelper(struct work_struct *work)
->  	}
->  }
->  
-> -#ifdef CONFIG_PM_SLEEP
->  /*
->   * If set, call_usermodehelper_exec() will exit immediately returning -EBUSY
->   * (used for preventing user land processes from being created after the user
-> @@ -321,12 +320,6 @@ static void helper_unlock(void)
->  	if (atomic_dec_and_test(&running_helpers))
->  		wake_up(&running_helpers_waitq);
->  }
-> -#else /* CONFIG_PM_SLEEP */
-> -#define usermodehelper_disabled	0
-> -
-> -static inline void helper_lock(void) {}
-> -static inline void helper_unlock(void) {}
-> -#endif /* CONFIG_PM_SLEEP */
->  
->  /**
->   * call_usermodehelper_setup - prepare to call a usermode helper
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
-> 
+>  config MFD_TPS65910
+> -	tristate "TPS65910 Power Management chip"
+> -	depends on I2C &&  GPIOLIB
+> +	bool "TPS65910 Power Management chip"
+> +	depends on I2C && GPIOLIB
+>  	select MFD_CORE
+>  	help
+>  	  if you say yes here you get support for the TPS65910 series of
+
+
+Applied.
+
+Thanks
+
+Liam
