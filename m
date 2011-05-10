@@ -1,34 +1,120 @@
-From: Liam Girdwood <lrg@slimlogic.co.uk>
-Subject: Re: linux-next: build failure after merge of the voltage tree
-Date: Tue, 10 May 2011 09:38:32 +0100
-Message-ID: <1305016712.3206.2.camel@odin>
-References: <20110510124434.b30a7631.sfr@canb.auug.org.au>
+From: <Sathya.Perla@Emulex.Com>
+Subject: RE: linux-next: manual merge of the net tree with the net-current
+ tree
+Date: Tue, 10 May 2011 04:55:36 -0700
+Message-ID: <8473e76e-64b3-46bb-b4c3-7997f87d53ea@exht1.ad.emulex.com>
+References: <20110510114917.11f8738f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110510124434.b30a7631.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Graeme Gregory <gg@slimlogic.co.uk>, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from exht1.emulex.com ([138.239.113.183]:8943 "EHLO
+	exht1.ad.emulex.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754319Ab1EJL4B convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 May 2011 07:56:01 -0400
+In-Reply-To: <20110510114917.11f8738f.sfr@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Somnath.Kotur@Emulex.Com, davem@davemloft.net, netdev@vger.kernel.org
 
-On Tue, 2011-05-10 at 12:44 +1000, Stephen Rothwell wrote:
-> Hi Liam,
-> 
-> After merging the voltage tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> ERROR: "tps65910_gpio_init" [drivers/mfd/tps65910.ko] undefined!
-> ERROR: "tps65910_irq_init" [drivers/mfd/tps65910.ko] undefined!
-> ERROR: "irq_modify_status" [drivers/mfd/tps65910-irq.ko] undefined!
-> ERROR: "irq_set_chip_and_handler_name" [drivers/mfd/tps65910-irq.ko] undefined!
-> ERROR: "handle_edge_irq" [drivers/mfd/tps65910-irq.ko] undefined!
-> 
-> I have used the voltage tree from next-20110509 for today.
+Hi Stephen, your conflict fix below looks fine. Thanks.
 
-Jorge, could you send a fix for this today.
+-Sathya
 
-Thanks
+-----Original Message-----
+From: Stephen Rothwell [mailto:sfr@canb.auug.org.au] 
+Sent: Tuesday, May 10, 2011 7:19 AM
+To: David Miller; netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Kotur, Somnath; Perla, Sathya
+Subject: linux-next: manual merge of the net tree with the net-current tree
 
-Liam
+Hi all,
+
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/benet/be_main.c between commit 6709d9521df0 ("be2net: Fixed
+bugs related to PVID") from the net-current tree and commit 15d721847f56
+("be2net: parse vid and vtm fields of rx-compl only if vlanf bit is set")
+from the net tree.
+
+I fixed it up (I think - see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/benet/be_main.c
+index 9187fb4,7b19931..0000000
+--- a/drivers/net/benet/be_main.c
++++ b/drivers/net/benet/be_main.c
+@@@ -1103,9 -1102,14 +1104,14 @@@ static void be_parse_rx_compl_v1(struc
+  		AMAP_GET_BITS(struct amap_eth_rx_compl_v1, numfrags, compl);
+  	rxcp->pkt_type =
+  		AMAP_GET_BITS(struct amap_eth_rx_compl_v1, cast_enc, compl);
+- 	rxcp->vtm = AMAP_GET_BITS(struct amap_eth_rx_compl_v1, vtm, compl);
+- 	rxcp->vlan_tag = AMAP_GET_BITS(struct amap_eth_rx_compl_v1, vlan_tag,
+- 					compl);
++ 	rxcp->rss_hash =
++ 		AMAP_GET_BITS(struct amap_eth_rx_compl_v1, rsshash, rxcp);
++ 	if (rxcp->vlanf) {
++ 		rxcp->vtm = AMAP_GET_BITS(struct amap_eth_rx_compl_v1, vtm,
++ 				compl);
+ -		rxcp->vid = AMAP_GET_BITS(struct amap_eth_rx_compl_v1, vlan_tag,
+++		rxcp->vlan_tag = AMAP_GET_BITS(struct amap_eth_rx_compl_v1, vlan_tag,
++ 				compl);
++ 	}
+  }
+  
+  static void be_parse_rx_compl_v0(struct be_adapter *adapter,
+@@@ -1130,9 -1134,14 +1136,14 @@@
+  		AMAP_GET_BITS(struct amap_eth_rx_compl_v0, numfrags, compl);
+  	rxcp->pkt_type =
+  		AMAP_GET_BITS(struct amap_eth_rx_compl_v0, cast_enc, compl);
+- 	rxcp->vtm = AMAP_GET_BITS(struct amap_eth_rx_compl_v0, vtm, compl);
+- 	rxcp->vlan_tag = AMAP_GET_BITS(struct amap_eth_rx_compl_v0, vlan_tag,
+- 					compl);
++ 	rxcp->rss_hash =
++ 		AMAP_GET_BITS(struct amap_eth_rx_compl_v0, rsshash, rxcp);
++ 	if (rxcp->vlanf) {
++ 		rxcp->vtm = AMAP_GET_BITS(struct amap_eth_rx_compl_v0, vtm,
++ 				compl);
+ -		rxcp->vid = AMAP_GET_BITS(struct amap_eth_rx_compl_v0, vlan_tag,
+++		rxcp->vlan_tag = AMAP_GET_BITS(struct amap_eth_rx_compl_v0, vlan_tag,
++ 				compl);
++ 	}
+  }
+  
+  static struct be_rx_compl_info *be_rx_compl_get(struct be_rx_obj *rxo)
+@@@ -1154,17 -1163,19 +1165,20 @@@
+  	else
+  		be_parse_rx_compl_v0(adapter, compl, rxcp);
+  
+- 	/* vlanf could be wrongly set in some cards. ignore if vtm is not set */
+- 	if ((adapter->function_mode & 0x400) && !rxcp->vtm)
+- 		rxcp->vlanf = 0;
++ 	if (rxcp->vlanf) {
++ 		/* vlanf could be wrongly set in some cards.
++ 		 * ignore if vtm is not set */
++ 		if ((adapter->function_mode & 0x400) && !rxcp->vtm)
++ 			rxcp->vlanf = 0;
+  
+- 	if (!lancer_chip(adapter))
+- 		rxcp->vlan_tag = swab16(rxcp->vlan_tag);
++ 		if (!lancer_chip(adapter))
+ -			rxcp->vid = swab16(rxcp->vid);
+++			rxcp->vlan_tag = swab16(rxcp->vlan_tag);
+  
+- 	if (((adapter->pvid & VLAN_VID_MASK) ==
+- 		(rxcp->vlan_tag & VLAN_VID_MASK)) &&
+- 		!adapter->vlan_tag[rxcp->vlan_tag])
+- 		rxcp->vlanf = 0;
+ -		if ((adapter->pvid == rxcp->vid) &&
+ -			!adapter->vlan_tag[rxcp->vid])
+++		if (((adapter->pvid & VLAN_VID_MASK) ==
+++			(rxcp->vlan_tag & VLAN_VID_MASK)) &&
+++			!adapter->vlan_tag[rxcp->vlan_tag])
++ 			rxcp->vlanf = 0;
++ 	}
+  
+  	/* As the compl has been parsed, reset it; we wont touch it again */
+  	compl->dw[offsetof(struct amap_eth_rx_compl_v1, valid) / 32] = 0;
