@@ -1,42 +1,54 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: Please include the namespace file-descriptors tree in linux-next
-Date: Tue, 10 May 2011 20:04:17 -0700
-Message-ID: <m1sjsmdjke.fsf@fess.ebiederm.org>
-References: <m1sjsmp44c.fsf@fess.ebiederm.org>
-	<20110511102736.7a9dc881.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the suspend tree with the mips tree
+Date: Wed, 11 May 2011 13:06:51 +1000
+Message-ID: <20110511130651.34e7e90e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-parisc-owner@vger.kernel.org>
-In-Reply-To: <20110511102736.7a9dc881.sfr@canb.auug.org.au> (Stephen
-	Rothwell's message of "Wed, 11 May 2011 10:27:36 +1000")
-Sender: linux-parisc-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, James Bottomley <James.Bottomley@suse.de>, Parisc List <linux-parisc@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__11_May_2011_13_06_51_+1000_tcJhofUSVyk2FTXE"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53433 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753430Ab1EKDGx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 May 2011 23:06:53 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Manuel Lauss <manuel.lauss@googlemail.com>, Ralf Baechle <ralf@linux-mips.org>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Signature=_Wed__11_May_2011_13_06_51_+1000_tcJhofUSVyk2FTXE
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Eric,
->
-> On Tue, 10 May 2011 15:44:51 -0700 ebiederm@xmission.com (Eric W. Biederman) wrote:
->>
->> These changes have just been through review and I expect
->> to send Linus a pull request when the merge window opens.
->> 
->> This tree holds changes that significantly simply the userspace
->> interface to working with namespaces.
->> 
->> I had to pull some of net-next and the parisc tress to be able to
->> avoid conflicts with system call numbers.  Hopefully that is not
->> a problem.
->
-> That should be fine as Dave's tree never rebases and the parisc tree
-> looks pretty stable.  Just keep an eye on those trees, just in case.
+Hi Rafael,
 
-Good point.  I have talked to James and Dave so they know I pulled their
-trees.  My lazy side says I expect you will get a merge conflict with my
-tree in linux-next if someone rebases.  But I will definitely keep my
-eyes out and at the very least double check that all is well before I
-send Linus a pull request.  
+Today's linux-next merge of the suspend tree got a conflict in
+arch/mips/alchemy/common/irq.c between commit 41bbb08bca72 ("MIPS:
+Alchemy: Convert irq.c to syscore_ops") from the mips tree and commit
+4d0fb1376519 ("PM / MIPS: Use struct syscore_ops instead of sysdevs for
+PM (v2)") from the suspend tree.
 
-Eric
+Again, I just used the version from the mips tree.  I may have broken it,
+of course.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__11_May_2011_13_06_51_+1000_tcJhofUSVyk2FTXE
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNyf1LAAoJEDMEi1NhKgbs8mAIAIF4wkH6bgh3F3uSDBXsLmFx
+msupj9rB0tK/b1kQ9dN8XFvDYVLhbqcIlM5/xvaBk0dPxhKsE40M0atFLHUaxJJw
+VDiWs4vDkmPsfNhMB/xWZtzhVK+XSFd59jfIIQdCYtenVO8g+SMNf4NvdRL3gSg6
+0cDWwL1lePiPsk+U+aXJ6FvmVhRFcPe+b4sFn8s6nU1YVQ7io3IQi7XyoxFcupwZ
+VFIbm/eAsSf8NxMNPLaqy6laAUq6A8+A5Qcbig9isYhpDN+h1TSkpCb460wH31AV
+m/fsx3n4npniA6UY2AGsxThZlbwxb7oV7kJ3IP1StBSY7b6MfeWgnW2AzTBvQJc=
+=VjSa
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__11_May_2011_13_06_51_+1000_tcJhofUSVyk2FTXE--
