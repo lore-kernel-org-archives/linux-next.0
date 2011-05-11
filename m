@@ -1,57 +1,65 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of the namespace tree with the m68k tree
-Date: Wed, 11 May 2011 09:36:31 +0200
-Message-ID: <BANLkTi=JRiafXn8SjxM9eKup3hvNHyB3rw@mail.gmail.com>
-References: <20110511140225.2c7e300f.sfr@canb.auug.org.au>
-	<m1liydeuqs.fsf@fess.ebiederm.org>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Subject: Re: [PATCH -next] ASoC: fix wm8958-dsp2 printk format warnings
+Date: Wed, 11 May 2011 15:05:01 +0100
+Message-ID: <1305122701.3277.29.camel@odin>
+References: <20110505134959.b3761297.sfr@canb.auug.org.au>
+	 <20110506161310.54b22b9f.randy.dunlap@oracle.com>
+	 <20110508140101.GB15968@opensource.wolfsonmicro.com>
+	 <4DC6B8F7.4000302@oracle.com>
+	 <20110508160604.GB32214@opensource.wolfsonmicro.com>
+	 <20110508094824.b6952ae6.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <m1liydeuqs.fsf@fess.ebiederm.org>
+In-Reply-To: <20110508094824.b6952ae6.randy.dunlap@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, May 11, 2011 at 06:17, Eric W. Biederman <ebiederm@xmission.com=
-> wrote:
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->> Today's linux-next merge of the namespace tree got a conflict in
->> arch/m68k/kernel/entry_mm.S between commit 55e1af1ab184 ("m68k: Merg=
-e mmu
->> and non-mmu versions of sys_call_table") from the m68k tree and comm=
-it
->> e975ee91dcc1 ("ns: Wire up the setns system call") from the namespac=
-e
->> tree.
->>
->> I just used the m68k version of that file and that should be all tha=
-t is
->> necessary.
->
-> Sounds good. =C2=A0Gert asked me to check in that conflict (probably =
-so
-> bisects will continue to work), and if the commit id is right it look=
-s
-> like the m68k tree is seeing active development on that change right =
-now.
+On Sun, 2011-05-08 at 09:48 -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix printk format warnings in wm8958-dsp2.c:
+> 
+> sound/soc/codecs/wm8958-dsp2.c:103: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+> sound/soc/codecs/wm8958-dsp2.c:111: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
+> sound/soc/codecs/wm8958-dsp2.c:144: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>  sound/soc/codecs/wm8958-dsp2.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> --- linux-next-20110505.orig/sound/soc/codecs/wm8958-dsp2.c
+> +++ linux-next-20110505/sound/soc/codecs/wm8958-dsp2.c
+> @@ -99,7 +99,7 @@ static int wm8958_dsp2_fw(struct snd_soc
+>  	len = fw->size - len;
+>  	while (len) {
+>  		if (len < 12) {
+> -			dev_err(codec->dev, "%s short data block of %d\n",
+> +			dev_err(codec->dev, "%s short data block of %zd\n",
+>  				name, len);
+>  			goto err;
+>  		}
+> @@ -107,7 +107,7 @@ static int wm8958_dsp2_fw(struct snd_soc
+>  		memcpy(&data32, data + 4, sizeof(data32));
+>  		block_len = be32_to_cpu(data32);
+>  		if (block_len + 8 > len) {
+> -			dev_err(codec->dev, "%d byte block longer than file\n",
+> +			dev_err(codec->dev, "%zd byte block longer than file\n",
+>  				block_len);
+>  			goto err;
+>  		}
+> @@ -141,7 +141,7 @@ static int wm8958_dsp2_fw(struct snd_soc
+>  		case WM_FW_BLOCK_I:
+>  		case WM_FW_BLOCK_A:
+>  		case WM_FW_BLOCK_C:
+> -			dev_dbg(codec->dev, "%s: %d bytes of %x@%x\n", name,
+> +			dev_dbg(codec->dev, "%s: %zd bytes of %x@%x\n", name,
+>  				block_len, (data32 >> 24) & 0xff,
+>  				data32 & 0xffffff);
 
-I can add the syscall as soon as sys_setns() hits mainline.
-That's what we usually do with new syscalls.
 
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+Acked-by: Liam Girdwood <lrg@ti.com>
