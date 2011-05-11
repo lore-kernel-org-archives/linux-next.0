@@ -1,37 +1,54 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: manual merge of the namespace tree with the m68k tree
-Date: Tue, 10 May 2011 21:17:31 -0700
-Message-ID: <m1liydeuqs.fsf@fess.ebiederm.org>
-References: <20110511140225.2c7e300f.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the namespace tree with the m68k tree
+Date: Wed, 11 May 2011 14:02:25 +1000
+Message-ID: <20110511140225.2c7e300f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__11_May_2011_14_02_25_+1000_tbRhS_JalEuqWY52"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out02.mta.xmission.com ([166.70.13.232]:54192 "EHLO
-	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754143Ab1EKPj2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 May 2011 11:39:28 -0400
-In-Reply-To: <20110511140225.2c7e300f.sfr@canb.auug.org.au> (Stephen
-	Rothwell's message of "Wed, 11 May 2011 14:02:25 +1000")
+Received: from chilli.pcug.org.au ([203.10.76.44]:58081 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755015Ab1EKPrv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 May 2011 11:47:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Signature=_Wed__11_May_2011_14_02_25_+1000_tbRhS_JalEuqWY52
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Eric,
->
-> Today's linux-next merge of the namespace tree got a conflict in
-> arch/m68k/kernel/entry_mm.S between commit 55e1af1ab184 ("m68k: Merge mmu
-> and non-mmu versions of sys_call_table") from the m68k tree and commit
-> e975ee91dcc1 ("ns: Wire up the setns system call") from the namespace
-> tree.
->
-> I just used the m68k version of that file and that should be all that is
-> necessary.
+Hi Eric,
 
-Sounds good.  Gert asked me to check in that conflict (probably so
-bisects will continue to work), and if the commit id is right it looks
-like the m68k tree is seeing active development on that change right now.
+Today's linux-next merge of the namespace tree got a conflict in
+arch/m68k/kernel/entry_mm.S between commit 55e1af1ab184 ("m68k: Merge mmu
+and non-mmu versions of sys_call_table") from the m68k tree and commit
+e975ee91dcc1 ("ns: Wire up the setns system call") from the namespace
+tree.
 
-Eric
+I just used the m68k version of that file and that should be all that is
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__11_May_2011_14_02_25_+1000_tbRhS_JalEuqWY52
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNygpRAAoJEDMEi1NhKgbsXJcH/3ALR6TK2FpcJgH7Y6Lny/wk
+MRM0uvE7nVe/SRNtBXWzXXNB5oSWBW/Rig9vaFwVRx6eoOX5A82ESEkmz9tHXXrf
+WtLfmSkurHAmcZm+TBBL2Jw3yp+g+kDf5lu/pJFQAXwhTyvnmg6KyviI5xlaKT8n
+Hbis5sz4J8u2CldYN3K4PChRZj2t68LlSaUabGMaFDoAQcbyMX1SHTepBXzRusGu
+bfJJ3xOzjFzrWSkfMZsppMNVmWc2ZE2IWeOHn22vKufYanRvvensPGj+B3ofyILL
+YL0UCZjr9sczoqMyJ8SVCdgaEgZ4HqvYr8vjNmSltjo3JNu9TGlt0RDnEhZ4s6w=
+=erwE
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__11_May_2011_14_02_25_+1000_tbRhS_JalEuqWY52--
