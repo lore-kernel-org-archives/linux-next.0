@@ -1,36 +1,47 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: manual merge of the suspend tree with the mips tree
-Date: Wed, 11 May 2011 21:31:58 +0200
-Message-ID: <201105112131.59135.rjw@sisk.pl>
-References: <20110511130618.581a89a3.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] drm: fix nouveau_acpi build
+Date: Wed, 11 May 2011 15:04:34 -0700
+Message-ID: <20110511150434.b7f5c2f6.randy.dunlap@oracle.com>
+References: <20110511152508.0d5d5aa6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:43395 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754801Ab1EKTbd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 May 2011 15:31:33 -0400
-In-Reply-To: <20110511130618.581a89a3.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:48150 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754154Ab1EKWFD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 May 2011 18:05:03 -0400
+In-Reply-To: <20110511152508.0d5d5aa6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Manuel Lauss <manuel.lauss@googlemail.com>, Ralf Baechle <ralf@linux-mips.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 
-On Wednesday, May 11, 2011, Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> Today's linux-next merge of the suspend tree got a conflict in
-> arch/mips/alchemy/common/dbdma.c between commit 02810a022fd9 ("MIPS:
-> Alchemy: Convert dbdma.c to syscore_ops") from the mips tree and commit
-> 4d0fb1376519 ("PM / MIPS: Use struct syscore_ops instead of sysdevs for
-> PM (v2)") from the suspend tree.
-> 
-> These seem to be trying to do the same thing.  I used the version from
-> the mips tree for now.  Please sort this out ...
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-OK, I will drop the MIPS chanages from my tree.
+Fix build errors when CONFIG_ACPI is enabled but MXM_WMI is not enabled
+by selecting both MXM_WMI and ACPI_WMI (the latter just for kconfig
+dependencies):
 
-Thanks,
-Rafael
+nouveau_acpi.c:(.text+0x2400c8): undefined reference to `mxm_wmi_call_mxmx'
+nouveau_acpi.c:(.text+0x2400cf): undefined reference to `mxm_wmi_call_mxds'
+nouveau_acpi.c:(.text+0x2400fe): undefined reference to `mxm_wmi_call_mxmx'
+nouveau_acpi.c:(.text+0x2402ba): undefined reference to `mxm_wmi_supported
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/gpu/drm/nouveau/Kconfig |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- linux-next-20110511.orig/drivers/gpu/drm/nouveau/Kconfig
++++ linux-next-20110511/drivers/gpu/drm/nouveau/Kconfig
+@@ -11,7 +11,8 @@ config DRM_NOUVEAU
+ 	select FRAMEBUFFER_CONSOLE if !EXPERT
+ 	select FB_BACKLIGHT if DRM_NOUVEAU_BACKLIGHT
+ 	select ACPI_VIDEO if ACPI && X86 && BACKLIGHT_CLASS_DEVICE && VIDEO_OUTPUT_CONTROL && INPUT
+-	select MXM_WMI if ACPI && ACPI_WMI
++	select ACPI_WMI if ACPI
++	select MXM_WMI if ACPI
+ 	help
+ 	  Choose this option for open-source nVidia support.
+ 
