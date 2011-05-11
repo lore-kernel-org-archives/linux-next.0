@@ -1,55 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the suspend tree with the mips tree
-Date: Wed, 11 May 2011 13:06:18 +1000
-Message-ID: <20110511130618.581a89a3.sfr@canb.auug.org.au>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: manual merge of the namespace tree with the m68k tree
+Date: Tue, 10 May 2011 21:17:31 -0700
+Message-ID: <m1liydeuqs.fsf@fess.ebiederm.org>
+References: <20110511140225.2c7e300f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_May_2011_13_06_18_+1000_VCnLaaL5rnJV58Oc"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55676 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753960Ab1EKDN6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 May 2011 23:13:58 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:54192 "EHLO
+	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754143Ab1EKPj2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 May 2011 11:39:28 -0400
+In-Reply-To: <20110511140225.2c7e300f.sfr@canb.auug.org.au> (Stephen
+	Rothwell's message of "Wed, 11 May 2011 14:02:25 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Manuel Lauss <manuel.lauss@googlemail.com>, Ralf Baechle <ralf@linux-mips.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
---Signature=_Wed__11_May_2011_13_06_18_+1000_VCnLaaL5rnJV58Oc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Hi Rafael,
+> Hi Eric,
+>
+> Today's linux-next merge of the namespace tree got a conflict in
+> arch/m68k/kernel/entry_mm.S between commit 55e1af1ab184 ("m68k: Merge mmu
+> and non-mmu versions of sys_call_table") from the m68k tree and commit
+> e975ee91dcc1 ("ns: Wire up the setns system call") from the namespace
+> tree.
+>
+> I just used the m68k version of that file and that should be all that is
+> necessary.
 
-Today's linux-next merge of the suspend tree got a conflict in
-arch/mips/alchemy/common/dbdma.c between commit 02810a022fd9 ("MIPS:
-Alchemy: Convert dbdma.c to syscore_ops") from the mips tree and commit
-4d0fb1376519 ("PM / MIPS: Use struct syscore_ops instead of sysdevs for
-PM (v2)") from the suspend tree.
+Sounds good.  Gert asked me to check in that conflict (probably so
+bisects will continue to work), and if the commit id is right it looks
+like the m68k tree is seeing active development on that change right now.
 
-These seem to be trying to do the same thing.  I used the version from
-the mips tree for now.  Please sort this out ...
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__11_May_2011_13_06_18_+1000_VCnLaaL5rnJV58Oc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNyf0qAAoJEDMEi1NhKgbsV9QH+wYxbnxaUj4WIcxfuWd38KXt
-VxFAByAqGg894nLHksZ088vveOdkQ2Fb2Sfq53M0BtN820fAOSPWrWEJx/bSt+vH
-1e2HMy478rqp3iDTP3V3RjsOE/U/Xkc1RShJfGURSNC+xCjg3y0WWB96wgReCi5g
-ScuU9dZCAcZ6S/ItOkx7xk9x0akfvYVFIWYeRhJ9F+W+wdJ/4K5l/kOi1vDRlEGv
-M5gAdPU2DCoqZOxviCzfJTsbkDV1fgEb2M1JjWt8xFxJ0UiW8bVJgHnIIsuSRhJL
-C/J0Y3Og9NnDUiolgqrMtDFSzy95NshFLzfeRQKVJMhlKhLc/PCaPGmCqIlRhi8=
-=ZtjR
------END PGP SIGNATURE-----
-
---Signature=_Wed__11_May_2011_13_06_18_+1000_VCnLaaL5rnJV58Oc--
+Eric
