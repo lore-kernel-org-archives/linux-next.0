@@ -1,52 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with Linus' tree
-Date: Thu, 12 May 2011 11:42:23 +1000
-Message-ID: <20110512114223.ef04696e.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the drm tree
+Date: Thu, 12 May 2011 12:14:16 +1000
+Message-ID: <20110512121416.bf2f2ea6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_May_2011_11_42_23_+1000_1sUHDI7z=Yvkpnwm"
+ boundary="Signature=_Thu__12_May_2011_12_14_16_+1000_KYXic/DA0IXG/WIo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43592 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59600 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751225Ab1ELBmc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 May 2011 21:42:32 -0400
+	id S1750906Ab1ELCO0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 May 2011 22:14:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Cardona <javier@cozybit.com>, Lucas De Marchi <lucas.demarchi@profusion.mobi>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__12_May_2011_11_42_23_+1000_1sUHDI7z=Yvkpnwm
+--Signature=_Thu__12_May_2011_12_14_16_+1000_KYXic/DA0IXG/WIo
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Dave,
 
-Today's linux-next merge of the wireless tree got a conflict in
-net/mac80211/sta_info.h between commit 25985edcedea ("Fix common
-misspellings") from Linus' tree and commit 9c3990aaec0a ("nl80211: Let
-userspace drive the peer link management states") from the wireless tree.
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-The latter removed the code updated by the former.
+arch/x86/kernel/apic/x2apic_uv_x.c: In function 'uv_system_init':
+arch/x86/kernel/apic/x2apic_uv_x.c:815: warning: passing argument 1 of 'pci=
+_register_set_vga_state' from incompatible pointer type
+include/linux/pci.h:1085: note: expected 'arch_set_vga_state_t' but argumen=
+t is of type 'int (*)(struct pci_dev *, bool,  unsigned int,  bool)'
+
+Introduced by commit 3448a19da479 ("vgaarb: use bridges to control VGA
+routing where possible).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__12_May_2011_11_42_23_+1000_1sUHDI7z=Yvkpnwm
+--Signature=_Thu__12_May_2011_12_14_16_+1000_KYXic/DA0IXG/WIo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNyzr/AAoJEDMEi1NhKgbshgQH/iYXNNYel+cVP6dK+2eSNwwv
-cSXwiupGPt1ki4sjgXI0suZhenCyzh+h71oXcTtWtkvTaTkbveqTHAGSmp/VeiMQ
-3rUb7KqtO4kk6jws9MP2LeTGQA9iKL1WnLH50KfNke3/1rYqySb9fGj+lxOkrSBG
-1Jpi2JNEKBRuu+oW7TjNP349pri3aHCv89YPLerjJmIoNwOagFgNCTtuhLfFsTIE
-MGa9O0J8vZzZ5HjTeVzMu4dLyVSg1LKZ7LlVZer0MkcXFCv6QNf0hHbrxS5tL207
-44ZLIpcDHQ3wUdddfwwaBuFevdR3+XY0ypkDtyEztd/6AKRl8ienFJ9Zt0N332o=
-=WPQf
+iQEcBAEBAgAGBQJNy0J4AAoJEDMEi1NhKgbs4AwH/1ejr+uJM0RBYsGWLvFjYOKc
+z5JsB9zotKcqJzbUPf7c0u3Ptvf0fnwrgmyzTv2qCdYY88VUXDP8tbV3QYhYSnYr
+JlAjZDSx8Ue4kDgby69oYQ1WSMh4a27P0nVL4xUVwnRsQYzOjMAq1jGWCUG7WYUm
+BkGnvswVpXii+ujcU+/YYpHQV8qLYy5v6A8gYFcjvI2Ndvc9u2s2HdGZ+s0DO1Dz
+UaLEBjQOMce5EJc4XkIE9Dys+yF5NFKNVDHnUnUD/0NJhNvI+se5av1s18Ak33jF
+8tGhVFGL/d57YVWA2Key+RayAJjjGvX2aY89SV52+6q8ZNFs4IyOK2bp5dJ53qc=
+=y2ED
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__12_May_2011_11_42_23_+1000_1sUHDI7z=Yvkpnwm--
+--Signature=_Thu__12_May_2011_12_14_16_+1000_KYXic/DA0IXG/WIo--
