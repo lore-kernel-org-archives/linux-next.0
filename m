@@ -1,47 +1,80 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: build failure after merge of the nfs tree
-Date: Thu, 12 May 2011 11:11:21 -0400
-Message-ID: <1305213081.15566.2.camel@lade.trondhjem.org>
-References: <20110512111255.95a765aa.sfr@au.ibm.com>
+From: Javier Cardona <javier@cozybit.com>
+Subject: Re: linux-next: build failure after merge of the final tree (wireless
+ tree related)
+Date: Thu, 12 May 2011 10:22:20 -0700
+Message-ID: <BANLkTiknar_vMtmr659yNCVFz-V0W9XvOQ@mail.gmail.com>
+References: <20110512141019.72ccb7a7.sfr@canb.auug.org.au> <BANLkTik+=yh3eq6Snp9SfC0xn--Deccefw@mail.gmail.com>
+ <20110512145633.69302dd4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out1.uio.no ([129.240.10.57]:60182 "EHLO mail-out1.uio.no"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755474Ab1ELP0A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 May 2011 11:26:00 -0400
-In-Reply-To: <20110512111255.95a765aa.sfr@au.ibm.com>
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:52423 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758108Ab1ELRWl convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 May 2011 13:22:41 -0400
+In-Reply-To: <20110512145633.69302dd4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@au1.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, devel@lists.open80211s.org
 
-On Thu, 2011-05-12 at 11:12 +1000, Stephen Rothwell wrote:
-> Hi Trond,
-> 
-> After merging the nfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/nfs/write.c: In function 'nfs_flush_multi':
-> fs/nfs/write.c:942: error: too many arguments to function 'pnfs_update_layout'
-> fs/nfs/write.c: In function 'nfs_flush_one':
-> fs/nfs/write.c:1016: error: too many arguments to function 'pnfs_update_layout'
-> fs/nfs/read.c: In function 'nfs_pagein_multi':
-> fs/nfs/read.c:291: error: too many arguments to function 'pnfs_update_layout'
-> fs/nfs/read.c: In function 'nfs_pagein_one':
-> fs/nfs/read.c:354: error: too many arguments to function 'pnfs_update_layout'
-> 
-> Cased by commit 4b386a0fe47b ("NFSv4.1: Ensure that layoutget uses the
-> correct gfp modes") which forgot to update the function declaration for
-> the !CONFIG_NFS_V4_1 case.
-> 
-> I have used the nfs tree from next-20110511 for today.
+On Wed, May 11, 2011 at 9:56 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> On Wed, 11 May 2011 21:37:16 -0700 Javier Cardona <javier@cozybit.com=
+> wrote:
+>>
+>> Hi Stephen,
+>>
+>> On Wed, May 11, 2011 at 9:10 PM, Stephen Rothwell <sfr@canb.auug.org=
+=2Eau> wrote:
+>> > Hi John,
+>> >
+>> > After merging the final tree, today's linux-next build (i386 defco=
+nfig)
+>> > failed like this:
+>> >
+>> > net/mac80211/cfg.c: In function 'sta_apply_parameters':
+>> > net/mac80211/cfg.c:746: error: 'struct sta_info' has no member nam=
+ed 'plink_state'
+>>
+>> Sorry, I just saw this. =A0My apologies. =A0The fixup is valid but I=
+'m
+>> trying to understand why it is needed.
+>> ieee80211_vif_is_mesh(&sdata->vif) compiles to 'false' when
+>> CONFIG_MAC80211_MESH is not defined... wouldn't the compiler remove
+>> that dead code? (Obviously it did not...)
+>
+> The compiler will elide that code but only after compiling it, so the
+> code still has to be correct.
 
-Hi Stephen,
+Thanks for the explanation.
 
-Sorry about that. I thought I had found all occurrences and updated
-them. The above issue should now be fixed in the git tree...
+>> Anyway, given that this is necessary, it's probably cleaner to exten=
+d
+>> the #ifdef block to the entire body of the outer if as follows:
+>
+> I think you have the #ifdef one line too low.
 
-Cheers
-  Trond
+My intent was to have the #endif one line above, but either way works.
+ That's the problem of preparing patches on pajamas.
+How can I help at this point?  Would resubmitting the patch help or
+just add noise?
+
+Cheers,
+
+Javier
+
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+>
+
+
+
+--=20
+Javier Cardona
+cozybit Inc.
+http://www.cozybit.com
