@@ -1,80 +1,50 @@
-From: Javier Cardona <javier@cozybit.com>
-Subject: Re: linux-next: build failure after merge of the final tree (wireless
- tree related)
-Date: Thu, 12 May 2011 10:22:20 -0700
-Message-ID: <BANLkTiknar_vMtmr659yNCVFz-V0W9XvOQ@mail.gmail.com>
-References: <20110512141019.72ccb7a7.sfr@canb.auug.org.au> <BANLkTik+=yh3eq6Snp9SfC0xn--Deccefw@mail.gmail.com>
- <20110512145633.69302dd4.sfr@canb.auug.org.au>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: build failure after merge of the final tree (namespace tree related)
+Date: Thu, 12 May 2011 15:27:27 -0700
+Message-ID: <m1zkmrlflc.fsf@fess.ebiederm.org>
+References: <20110512135113.93c1b671.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:52423 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758108Ab1ELRWl convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 May 2011 13:22:41 -0400
-In-Reply-To: <20110512145633.69302dd4.sfr@canb.auug.org.au>
+Received: from out02.mta.xmission.com ([166.70.13.232]:36636 "EHLO
+	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752767Ab1ELW1c (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 May 2011 18:27:32 -0400
+In-Reply-To: <20110512135113.93c1b671.sfr@canb.auug.org.au> (Stephen
+	Rothwell's message of "Thu, 12 May 2011 13:51:13 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, devel@lists.open80211s.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 11, 2011 at 9:56 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> On Wed, 11 May 2011 21:37:16 -0700 Javier Cardona <javier@cozybit.com=
-> wrote:
->>
->> Hi Stephen,
->>
->> On Wed, May 11, 2011 at 9:10 PM, Stephen Rothwell <sfr@canb.auug.org=
-=2Eau> wrote:
->> > Hi John,
->> >
->> > After merging the final tree, today's linux-next build (i386 defco=
-nfig)
->> > failed like this:
->> >
->> > net/mac80211/cfg.c: In function 'sta_apply_parameters':
->> > net/mac80211/cfg.c:746: error: 'struct sta_info' has no member nam=
-ed 'plink_state'
->>
->> Sorry, I just saw this. =A0My apologies. =A0The fixup is valid but I=
-'m
->> trying to understand why it is needed.
->> ieee80211_vif_is_mesh(&sdata->vif) compiles to 'false' when
->> CONFIG_MAC80211_MESH is not defined... wouldn't the compiler remove
->> that dead code? (Obviously it did not...)
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+
+> Hi all,
 >
-> The compiler will elide that code but only after compiling it, so the
-> code still has to be correct.
-
-Thanks for the explanation.
-
->> Anyway, given that this is necessary, it's probably cleaner to exten=
-d
->> the #ifdef block to the entire body of the outer if as follows:
+> After merging the final tree, today's linux-next build (powerpc
+> ppc44x_defconfig) failed like this:
 >
-> I think you have the #ifdef one line too low.
-
-My intent was to have the #endif one line above, but either way works.
- That's the problem of preparing patches on pajamas.
-How can I help at this point?  Would resubmitting the patch help or
-just add noise?
-
-Cheers,
-
-Javier
-
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
-> http://www.canb.auug.org.au/~sfr/
+> net/built-in.o: In function `get_net_ns_by_fd':
+> (.text+0x11976): undefined reference to `netns_operations'
+> net/built-in.o: In function `get_net_ns_by_fd':
+> (.text+0x1197a): undefined reference to `netns_operations'
 >
+> netns_operations is only available if CONFIG_NET_NS is set ...
+>
+> Caused by commit f063052947f7 ("net: Allow setting the network namespace
+> by fd").
+>
+> I applied the patch below for today.
+
+How embarrassing.  I should have caught this one myself.
+
+I have applied your patch.  
 
 
+At some point I need to see what the impact of removing the various
+CONFIG_XXX_NS defines is and get rid of them.  Their original purpose
+was only to let administrators avoid buggy code, but most of the
+namespaces are well beyond where that now and it seems those
+CONFIG_XXX_NS defines are just causing trouble.  But not for 2.6.40.
 
---=20
-Javier Cardona
-cozybit Inc.
-http://www.cozybit.com
+Eric
