@@ -1,124 +1,131 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (namespace
+From: Javier Cardona <javier@cozybit.com>
+Subject: Re: linux-next: build failure after merge of the final tree (wireless
  tree related)
-Date: Thu, 12 May 2011 13:51:13 +1000
-Message-ID: <20110512135113.93c1b671.sfr@canb.auug.org.au>
+Date: Wed, 11 May 2011 21:37:16 -0700
+Message-ID: <BANLkTik+=yh3eq6Snp9SfC0xn--Deccefw@mail.gmail.com>
+References: <20110512141019.72ccb7a7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53147 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751241Ab1ELDvR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 May 2011 23:51:17 -0400
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:64141 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752181Ab1ELEhi convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 May 2011 00:37:38 -0400
+In-Reply-To: <20110512141019.72ccb7a7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+Hi Stephen,
 
-After merging the final tree, today's linux-next build (powerpc
-ppc44x_defconfig) failed like this:
+On Wed, May 11, 2011 at 9:10 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi John,
+>
+> After merging the final tree, today's linux-next build (i386 defconfi=
+g)
+> failed like this:
+>
+> net/mac80211/cfg.c: In function 'sta_apply_parameters':
+> net/mac80211/cfg.c:746: error: 'struct sta_info' has no member named =
+'plink_state'
 
-net/built-in.o: In function `get_net_ns_by_fd':
-(.text+0x11976): undefined reference to `netns_operations'
-net/built-in.o: In function `get_net_ns_by_fd':
-(.text+0x1197a): undefined reference to `netns_operations'
+Sorry, I just saw this.  My apologies.  The fixup is valid but I'm
+trying to understand why it is needed.
+ieee80211_vif_is_mesh(&sdata->vif) compiles to 'false' when
+CONFIG_MAC80211_MESH is not defined... wouldn't the compiler remove
+that dead code? (Obviously it did not...)
 
-netns_operations is only available if CONFIG_NET_NS is set ...
+Anyway, given that this is necessary, it's probably cleaner to extend
+the #ifdef block to the entire body of the outer if as follows:
 
-Caused by commit f063052947f7 ("net: Allow setting the network namespace
-by fd").
+=46rom: Javier Cardona <javier@cozybit.com>
+Date: Wed, 11 May 2011 21:30:17 -0700
+Subject: [PATCH] mac80211: fixup access to conditionally defined struct=
+ member
 
-I applied the patch below for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 12 May 2011 13:41:16 +1000
-Subject: [PATCH] net: fix get_net_ns_by_fd for !CONFIG_NET_NS
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Javier Cardona <javier@cozybit.com>
 ---
- net/core/net_namespace.c |   49 +++++++++++++++++++++++++--------------------
- 1 files changed, 27 insertions(+), 22 deletions(-)
+ net/mac80211/cfg.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-index bddcaff..e630588 100644
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -304,6 +304,28 @@ void __put_net(struct net *net)
- }
- EXPORT_SYMBOL_GPL(__put_net);
- 
-+struct net *get_net_ns_by_fd(int fd)
-+{
-+	struct proc_inode *ei;
-+	struct file *file;
-+	struct net *net;
-+
-+	net = ERR_PTR(-EINVAL);
-+	file = proc_ns_fget(fd);
-+	if (!file)
-+		goto out;
-+
-+	ei = PROC_I(file->f_dentry->d_inode);
-+	if (ei->ns_ops != &netns_operations)
-+		goto out;
-+
-+	net = get_net(ei->ns);
-+out:
-+	if (file)
-+		fput(file);
-+	return net;
-+}
-+
- #else
- struct net *copy_net_ns(unsigned long flags, struct net *old_net)
- {
-@@ -311,6 +333,11 @@ struct net *copy_net_ns(unsigned long flags, struct net *old_net)
- 		return ERR_PTR(-EINVAL);
- 	return old_net;
- }
-+
-+struct net *get_net_ns_by_fd(int fd)
-+{
-+	return ERR_PTR(-EINVAL);
-+}
- #endif
- 
- struct net *get_net_ns_by_pid(pid_t pid)
-@@ -333,28 +360,6 @@ struct net *get_net_ns_by_pid(pid_t pid)
- }
- EXPORT_SYMBOL_GPL(get_net_ns_by_pid);
- 
--struct net *get_net_ns_by_fd(int fd)
--{
--	struct proc_inode *ei;
--	struct file *file;
--	struct net *net;
--
--	net = ERR_PTR(-EINVAL);
--	file = proc_ns_fget(fd);
--	if (!file)
--		goto out;
--
--	ei = PROC_I(file->f_dentry->d_inode);
--	if (ei->ns_ops != &netns_operations)
--		goto out;
--
--	net = get_net(ei->ns);
--out:
--	if (file)
--		fput(file);
--	return net;
--}
--
- static int __init net_ns_init(void)
- {
- 	struct net_generic *ng;
--- 
-1.7.5.1
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index a2ff474..d104c1e 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -738,6 +738,7 @@ static void sta_apply_parameters(struct
+ieee80211_local *local,
+                                                  &sta->sta.ht_cap);
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+        if (ieee80211_vif_is_mesh(&sdata->vif)) {
++#ifdef CONFIG_MAC80211_MESH
+                if (sdata->u.mesh.security & IEEE80211_MESH_SEC_SECURED=
+)
+                        switch (params->plink_state) {
+                        case PLINK_LISTEN:
+@@ -759,6 +760,7 @@ static void sta_apply_parameters(struct
+ieee80211_local *local,
+                                break;
+                        }
+        }
++#endif
+ }
+
+ static int ieee80211_add_station(struct wiphy *wiphy, struct net_devic=
+e *dev,
+--=20
+1.7.2.1
+
+
+> Cause by commit 9c3990aaec0a ("nl80211: Let userspace drive the peer =
+link
+> management states"). =A0plink_state is only available in sta_info if
+> CONFIG_MAC80211_MESH is set.
+>
+> I applied the following patch for today (which my not be correct).
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 12 May 2011 14:06:31 +1000
+> Subject: [PATCH] nl80211: fix for reference to sta_info -> plink_stat=
+e
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+> =A0net/mac80211/cfg.c | =A0 =A02 ++
+> =A01 files changed, 2 insertions(+), 0 deletions(-)
+>
+> diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+> index a2ff474..e090012 100644
+> --- a/net/mac80211/cfg.c
+> +++ b/net/mac80211/cfg.c
+> @@ -743,7 +743,9 @@ static void sta_apply_parameters(struct ieee80211=
+_local *local,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0case PLINK_LISTEN:
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0case PLINK_ESTAB:
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0case PLINK_BLOCKED:
+> +#ifdef CONFIG_MAC80211_MESH
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sta->p=
+link_state =3D params->plink_state;
+> +#endif
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0default:
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0/* =A0=
+nothing =A0*/
+> --
+> 1.7.5.1
+>
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+>
+
+
+
+--=20
+Javier Cardona
+cozybit Inc.
+http://www.cozybit.com
