@@ -1,78 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (wireless tree related)
-Date: Thu, 12 May 2011 14:56:33 +1000
-Message-ID: <20110512145633.69302dd4.sfr@canb.auug.org.au>
-References: <20110512141019.72ccb7a7.sfr@canb.auug.org.au>
-	<BANLkTik+=yh3eq6Snp9SfC0xn--Deccefw@mail.gmail.com>
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: Re: linux-next: build failure after merge of the nfs tree
+Date: Thu, 12 May 2011 11:11:21 -0400
+Message-ID: <1305213081.15566.2.camel@lade.trondhjem.org>
+References: <20110512111255.95a765aa.sfr@au.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_May_2011_14_56_33_+1000_jLBs3dauDdVXxKX5"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39239 "EHLO smtps.tip.net.au"
+Received: from mail-out1.uio.no ([129.240.10.57]:60182 "EHLO mail-out1.uio.no"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752181Ab1ELE4l (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 May 2011 00:56:41 -0400
-In-Reply-To: <BANLkTik+=yh3eq6Snp9SfC0xn--Deccefw@mail.gmail.com>
+	id S1755474Ab1ELP0A (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 May 2011 11:26:00 -0400
+In-Reply-To: <20110512111255.95a765aa.sfr@au.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Javier Cardona <javier@cozybit.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@au1.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__12_May_2011_14_56_33_+1000_jLBs3dauDdVXxKX5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2011-05-12 at 11:12 +1000, Stephen Rothwell wrote:
+> Hi Trond,
+> 
+> After merging the nfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> fs/nfs/write.c: In function 'nfs_flush_multi':
+> fs/nfs/write.c:942: error: too many arguments to function 'pnfs_update_layout'
+> fs/nfs/write.c: In function 'nfs_flush_one':
+> fs/nfs/write.c:1016: error: too many arguments to function 'pnfs_update_layout'
+> fs/nfs/read.c: In function 'nfs_pagein_multi':
+> fs/nfs/read.c:291: error: too many arguments to function 'pnfs_update_layout'
+> fs/nfs/read.c: In function 'nfs_pagein_one':
+> fs/nfs/read.c:354: error: too many arguments to function 'pnfs_update_layout'
+> 
+> Cased by commit 4b386a0fe47b ("NFSv4.1: Ensure that layoutget uses the
+> correct gfp modes") which forgot to update the function declaration for
+> the !CONFIG_NFS_V4_1 case.
+> 
+> I have used the nfs tree from next-20110511 for today.
 
-On Wed, 11 May 2011 21:37:16 -0700 Javier Cardona <javier@cozybit.com> wrot=
-e:
->
-> Hi Stephen,
->=20
-> On Wed, May 11, 2011 at 9:10 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> > Hi John,
-> >
-> > After merging the final tree, today's linux-next build (i386 defconfig)
-> > failed like this:
-> >
-> > net/mac80211/cfg.c: In function 'sta_apply_parameters':
-> > net/mac80211/cfg.c:746: error: 'struct sta_info' has no member named 'p=
-link_state'
->=20
-> Sorry, I just saw this.  My apologies.  The fixup is valid but I'm
-> trying to understand why it is needed.
-> ieee80211_vif_is_mesh(&sdata->vif) compiles to 'false' when
-> CONFIG_MAC80211_MESH is not defined... wouldn't the compiler remove
-> that dead code? (Obviously it did not...)
+Hi Stephen,
 
-The compiler will elide that code but only after compiling it, so the
-code still has to be correct.
+Sorry about that. I thought I had found all occurrences and updated
+them. The above issue should now be fixed in the git tree...
 
-> Anyway, given that this is necessary, it's probably cleaner to extend
-> the #ifdef block to the entire body of the outer if as follows:
-
-I think you have the #ifdef one line too low.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__12_May_2011_14_56_33_+1000_jLBs3dauDdVXxKX5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNy2iBAAoJEDMEi1NhKgbs8hEH/jIIIY9lPk7Z77/hZ3dT6ZeV
-3yL8Hv4j13b1wOxxapdyCITchm5/e37KFaR4WAgeYQ++WPOYaWG+Ai9JMSffEB38
-K9qsZGrl8cSorDyu7idtXRZ1LG0MqsW1mD8JEiGEJ8GIYhFpgxOVO7A5XbDuK/m8
-L3FKCejkwx8VtWm5hiMvOcE73D2DKavmjE9ucz/uMxUrNFjhoGIm53Dkm6kBJaVk
-j+k8q/NiqseTzIFDu/eSA+ThdlZFM5sy29V0G1E1tJC61kcSSZ5Bb4gR3QwtcN9X
-9UjQFCBiI6lBzyhXWchcdpVIxcZbSEj1gQ9sqob4l8mTWBOGxOT3B2wqY3zeSxc=
-=DPpZ
------END PGP SIGNATURE-----
-
---Signature=_Thu__12_May_2011_14_56_33_+1000_jLBs3dauDdVXxKX5--
+Cheers
+  Trond
