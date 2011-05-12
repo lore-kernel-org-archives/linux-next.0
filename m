@@ -1,58 +1,124 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the drm tree
-Date: Thu, 12 May 2011 12:14:16 +1000
-Message-ID: <20110512121416.bf2f2ea6.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (namespace
+ tree related)
+Date: Thu, 12 May 2011 13:51:13 +1000
+Message-ID: <20110512135113.93c1b671.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_May_2011_12_14_16_+1000_KYXic/DA0IXG/WIo"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59600 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53147 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750906Ab1ELCO0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 May 2011 22:14:26 -0400
+	id S1751241Ab1ELDvR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 May 2011 23:51:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__12_May_2011_12_14_16_+1000_KYXic/DA0IXG/WIo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Dave,
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+net/built-in.o: In function `get_net_ns_by_fd':
+(.text+0x11976): undefined reference to `netns_operations'
+net/built-in.o: In function `get_net_ns_by_fd':
+(.text+0x1197a): undefined reference to `netns_operations'
 
-arch/x86/kernel/apic/x2apic_uv_x.c: In function 'uv_system_init':
-arch/x86/kernel/apic/x2apic_uv_x.c:815: warning: passing argument 1 of 'pci=
-_register_set_vga_state' from incompatible pointer type
-include/linux/pci.h:1085: note: expected 'arch_set_vga_state_t' but argumen=
-t is of type 'int (*)(struct pci_dev *, bool,  unsigned int,  bool)'
+netns_operations is only available if CONFIG_NET_NS is set ...
 
-Introduced by commit 3448a19da479 ("vgaarb: use bridges to control VGA
-routing where possible).
+Caused by commit f063052947f7 ("net: Allow setting the network namespace
+by fd").
 
---=20
+I applied the patch below for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 12 May 2011 13:41:16 +1000
+Subject: [PATCH] net: fix get_net_ns_by_fd for !CONFIG_NET_NS
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/core/net_namespace.c |   49 +++++++++++++++++++++++++--------------------
+ 1 files changed, 27 insertions(+), 22 deletions(-)
+
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index bddcaff..e630588 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -304,6 +304,28 @@ void __put_net(struct net *net)
+ }
+ EXPORT_SYMBOL_GPL(__put_net);
+ 
++struct net *get_net_ns_by_fd(int fd)
++{
++	struct proc_inode *ei;
++	struct file *file;
++	struct net *net;
++
++	net = ERR_PTR(-EINVAL);
++	file = proc_ns_fget(fd);
++	if (!file)
++		goto out;
++
++	ei = PROC_I(file->f_dentry->d_inode);
++	if (ei->ns_ops != &netns_operations)
++		goto out;
++
++	net = get_net(ei->ns);
++out:
++	if (file)
++		fput(file);
++	return net;
++}
++
+ #else
+ struct net *copy_net_ns(unsigned long flags, struct net *old_net)
+ {
+@@ -311,6 +333,11 @@ struct net *copy_net_ns(unsigned long flags, struct net *old_net)
+ 		return ERR_PTR(-EINVAL);
+ 	return old_net;
+ }
++
++struct net *get_net_ns_by_fd(int fd)
++{
++	return ERR_PTR(-EINVAL);
++}
+ #endif
+ 
+ struct net *get_net_ns_by_pid(pid_t pid)
+@@ -333,28 +360,6 @@ struct net *get_net_ns_by_pid(pid_t pid)
+ }
+ EXPORT_SYMBOL_GPL(get_net_ns_by_pid);
+ 
+-struct net *get_net_ns_by_fd(int fd)
+-{
+-	struct proc_inode *ei;
+-	struct file *file;
+-	struct net *net;
+-
+-	net = ERR_PTR(-EINVAL);
+-	file = proc_ns_fget(fd);
+-	if (!file)
+-		goto out;
+-
+-	ei = PROC_I(file->f_dentry->d_inode);
+-	if (ei->ns_ops != &netns_operations)
+-		goto out;
+-
+-	net = get_net(ei->ns);
+-out:
+-	if (file)
+-		fput(file);
+-	return net;
+-}
+-
+ static int __init net_ns_init(void)
+ {
+ 	struct net_generic *ng;
+-- 
+1.7.5.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__12_May_2011_12_14_16_+1000_KYXic/DA0IXG/WIo
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNy0J4AAoJEDMEi1NhKgbs4AwH/1ejr+uJM0RBYsGWLvFjYOKc
-z5JsB9zotKcqJzbUPf7c0u3Ptvf0fnwrgmyzTv2qCdYY88VUXDP8tbV3QYhYSnYr
-JlAjZDSx8Ue4kDgby69oYQ1WSMh4a27P0nVL4xUVwnRsQYzOjMAq1jGWCUG7WYUm
-BkGnvswVpXii+ujcU+/YYpHQV8qLYy5v6A8gYFcjvI2Ndvc9u2s2HdGZ+s0DO1Dz
-UaLEBjQOMce5EJc4XkIE9Dys+yF5NFKNVDHnUnUD/0NJhNvI+se5av1s18Ak33jF
-8tGhVFGL/d57YVWA2Key+RayAJjjGvX2aY89SV52+6q8ZNFs4IyOK2bp5dJ53qc=
-=y2ED
------END PGP SIGNATURE-----
-
---Signature=_Thu__12_May_2011_12_14_16_+1000_KYXic/DA0IXG/WIo--
