@@ -1,67 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build warning after merge of the net tree
-Date: Thu, 12 May 2011 23:04:05 -0400 (EDT)
-Message-ID: <20110512.230405.532264333967231887.davem@davemloft.net>
-References: <20110513114139.b1ed88ae.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the  tree
+Date: Fri, 13 May 2011 13:10:44 +1000
+Message-ID: <20110513131044.499e82d0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__13_May_2011_13_10_44_+1000_vEePqgvS0QWd4Eh3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:59921 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750703Ab1EMDEV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 May 2011 23:04:21 -0400
-In-Reply-To: <20110513114139.b1ed88ae.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48933 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750895Ab1EMDK6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 May 2011 23:10:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, John Stultz <john.stultz@linaro.org>, Ralf Baechle <ralf@linux-mips.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 13 May 2011 11:41:39 +1000
+--Signature=_Fri__13_May_2011_13_10_44_+1000_vEePqgvS0QWd4Eh3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> After merging the net tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> net/ipv4/ip_forward.c: In function 'ip_forward':
-> net/ipv4/ip_forward.c:87: warning: 'iph' may be used uninitialized in this function
-> 
-> Introduced by commit def57687e957 ("ipv4: Elide use of rt->rt_dst in
-> ip_forward()").  It may be a false positive, but it is not obvious how
-> iph is assigned before being used.
+Hi all,
 
-My compiler didn't warn, (and I just double checked this) which is
-weird.  Sigh.
+Today's linux-next merge of the tip tree got a conflict in
+arch/mips/kernel/i8253.c between commit 2b9b7cd782a5 ("clocksource:
+convert mips to generic i8253 clocksource") from the arm tree and commit
+75c4fd8c7862 ("mips: convert to clocksource_register_hz/khz") from the
+tip tree.
 
-Thanks, here is the fix I'll push:
+The former seems to supercede the latter, so I used the former.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---------------------
-ipv4: Fix 'iph' use before set.
+--Signature=_Fri__13_May_2011_13_10_44_+1000_vEePqgvS0QWd4Eh3
+Content-Type: application/pgp-signature
 
-I swear none of my compilers warned about this, yet it is so
-obvious.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-> net/ipv4/ip_forward.c: In function 'ip_forward':
-> net/ipv4/ip_forward.c:87: warning: 'iph' may be used uninitialized in this function
+iQEcBAEBAgAGBQJNzKE0AAoJEDMEi1NhKgbsPWYH/RlzCk59DUAB8GFYwzIW4imO
+m9VBnMscNSad9Pwrl7AC2IrWs6Z6Fc0E8hT2KvWNepmOUa/vl2mkWd4AKigkX7l5
+3YrJTjNQCDIWTtr5cQO9c0K6nMJzURrNXTO4IZ9Hh0UnsIUKY9KMgv2cVCxaqHt7
+HuANKCZ+nkd/bOmB1R32Cjjulx4BCs/sfOuodik8VNtGd1Baxiq82ex1bvgQ43b/
+qZE/NRHpJ8NmtBPV14VBBcRhDcP7lT9LxfkEGh08yeTLscraHUS3l2xUElnAYBhj
+qINHkcv7YEJRqouxBAmixiGZD+b1MwfMcRckp/NWDQW7L0+T+VXZgUWX6JOrUQY=
+=mHKg
+-----END PGP SIGNATURE-----
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- net/ipv4/ip_forward.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/net/ipv4/ip_forward.c b/net/ipv4/ip_forward.c
-index fcbc0c8..3b34d1c 100644
---- a/net/ipv4/ip_forward.c
-+++ b/net/ipv4/ip_forward.c
-@@ -84,7 +84,7 @@ int ip_forward(struct sk_buff *skb)
- 
- 	rt = skb_rtable(skb);
- 
--	if (opt->is_strictroute && iph->daddr != rt->rt_gateway)
-+	if (opt->is_strictroute && ip_hdr(skb)->daddr != rt->rt_gateway)
- 		goto sr_failed;
- 
- 	if (unlikely(skb->len > dst_mtu(&rt->dst) && !skb_is_gso(skb) &&
--- 
-1.7.4.4
+--Signature=_Fri__13_May_2011_13_10_44_+1000_vEePqgvS0QWd4Eh3--
