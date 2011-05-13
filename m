@@ -1,53 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the arm tree
-Date: Fri, 13 May 2011 13:14:37 +1000
-Message-ID: <20110513131437.8999e8eb.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with Linus' tree
+Date: Fri, 13 May 2011 14:08:21 +1000
+Message-ID: <20110513140821.bfef61a3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__13_May_2011_13_14_37_+1000_r_HPsC+sfYUBuVw7"
+ boundary="Signature=_Fri__13_May_2011_14_08_21_+1000_TEfptzbUDc_shKjZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36058 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56613 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750911Ab1EMDPN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 May 2011 23:15:13 -0400
+	id S1750875Ab1EMEIc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 May 2011 00:08:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, John Stultz <john.stultz@linaro.org>, Jacob Pan <jacob.jun.pan@intel.com>, Glauber Costa <glommer@redhat.com>, Dimitri Sivanich <sivanich@sgi.com>, Rusty Russell <rusty@rustcorp.com.au>, Jeremy Fitzhardinge <jeremy@xensource.com>, Chris McDermott <lcm@us.ibm.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Max Vozeler <max@hinterhof.net>, matt mooney <mfm@muteddisk.com>
 
---Signature=_Fri__13_May_2011_13_14_37_+1000_r_HPsC+sfYUBuVw7
+--Signature=_Fri__13_May_2011_14_08_21_+1000_TEfptzbUDc_shKjZ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/kernel/i8253.c between commit 3490f584b9ba ("clocksource:
-convert x86 to generic i8253 clocksource") from the arm tree and
-commitb01cc1b0eae0  ("x86: Convert remaining x86 clocksources to
-clocksource_register_hz/khz") from the tip tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/usbip/vhci_sysfs.c between commit d1b2e95ab016 ("staging:
+usbip: vhci: fix oops on subsequent attach") from Linus' tree and commit
+7aaacb43ed97 ("staging: usbip: fix header includes") from the staging
+tree.
 
-The former seems to supercede the latter, so I used the former.
+The latter superceded the former for the conflict in the includes.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__13_May_2011_13_14_37_+1000_r_HPsC+sfYUBuVw7
+--Signature=_Fri__13_May_2011_14_08_21_+1000_TEfptzbUDc_shKjZ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNzKIdAAoJEDMEi1NhKgbsJhoH/3+okqRPxMsLorUCYTFtt5JT
-dQXaq8vjFciVHE9K9rX04n9OsZ8RrYbRYIWL0UUTNBE8Ww+Iioi3Iv4897LhbKIb
-Di4kR7bf6qmHYPiRwxepRCq3H1c887EEOPSyWYeUzLPYda7JnOE8OWPAFUx/nx3j
-WwaHRudKT120BpgshpRtT6u/me/coHRh4Z3QZs2p8TT3wr1/D5bCzGorL/9hfKyv
-Xv3snUzK9DQrxynJJ1ZXNNILbl04I/hR06mWwyd4Qk5QhpvmI0UvswCNbogV2mV1
-U2y2qX/ecGaRUesPQQS+qIh+xbK8HY2oeiYuH6AQbl2b1iIqm07T2G0HHieDvXM=
-=Nsfp
+iQEcBAEBAgAGBQJNzK61AAoJEDMEi1NhKgbsRH4IAIhyn/S7o53YHkpfZVQdJPUJ
+AEaH/OEE3unpto5MAYlIIwIUKKHKQrqFYe7x8dQrLXZL8XWO8AlbK5wqUWwqHbB6
+hDYT6GqZtLPYoFV2uWTIZ1AjjVFnlnXpUEZ0ueHBB8F/WzZi81VQxVDrq4huHqGW
+4WYtkY5djal/xBePP/gtctWXZJnjf8MyLlIU6NyVFlfU0KjuyZZ0bXsDADsoWZ6A
+Lo89poPogVAjXm5ntVyse6ICWFkEgw6Zoxk9K3JZekcWEC1r9xrafzcJsBqI0Ohv
+ctuFG4RdgpvvYwXV+u8Y7f+QDrxzKvqcYBuK1Fd5GslyKWk02iZulEu1z5YV2nQ=
+=OqW1
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__13_May_2011_13_14_37_+1000_r_HPsC+sfYUBuVw7--
+--Signature=_Fri__13_May_2011_14_08_21_+1000_TEfptzbUDc_shKjZ--
