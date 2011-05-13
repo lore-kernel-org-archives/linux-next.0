@@ -1,42 +1,41 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Subject: Re: linux-next: Tree for May 12 (ssb)
-Date: Fri, 13 May 2011 15:31:30 +0200
-Message-ID: <BANLkTin4+TiW=ejBKHMeF3o1K98HpUX8Hg@mail.gmail.com>
-References: <20110512142303.8117a0b6.sfr@canb.auug.org.au>
-	<20110512161914.e16be4d3.randy.dunlap@oracle.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the tip tree with the arm tree
+Date: Fri, 13 May 2011 18:25:09 +0100
+Message-ID: <20110513172509.GC19733@n2100.arm.linux.org.uk>
+References: <20110513131437.8999e8eb.sfr@canb.auug.org.au> <20110513080634.GA13647@elte.hu> <20110513083738.GA19733@n2100.arm.linux.org.uk> <20110513092646.GK13647@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f181.google.com ([209.85.216.181]:51069 "EHLO
-	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933041Ab1EMNbb convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 May 2011 09:31:31 -0400
-In-Reply-To: <20110512161914.e16be4d3.randy.dunlap@oracle.com>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:59903 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932750Ab1EMR0W (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 May 2011 13:26:22 -0400
+Content-Disposition: inline
+In-Reply-To: <20110513092646.GK13647@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michael Buesch <mb@bu3sch.de>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Jacob Pan <jacob.jun.pan@intel.com>, Glauber Costa <glommer@redhat.com>, Dimitri Sivanich <sivanich@sgi.com>, Rusty Russell <rusty@rustcorp.com.au>, Jeremy Fitzhardinge <jeremy@xensource.com>, Chris McDermott <lcm@us.ibm.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-2011/5/13 Randy Dunlap <randy.dunlap@oracle.com>:
-> On Thu, 12 May 2011 14:23:03 +1000 Stephen Rothwell wrote:
->
->> Hi all,
->>
->> Changes since 20110511:
->
->
-> on i386 and x86_64 (many randconfigs fail with these errors):
->
-> drivers/ssb/main.c:1336: error: 'SSB_PCICORE_BCAST_ADDR' undeclared (=
-first use in this function)
-> drivers/ssb/main.c:1337: error: 'SSB_PCICORE_BCAST_DATA' undeclared (=
-first use in this function)
-> drivers/ssb/main.c:1349: error: 'struct ssb_pcicore' has no member na=
-med 'dev'
+On Fri, May 13, 2011 at 11:26:46AM +0200, Ingo Molnar wrote:
+> Also note that there's also some pending changes in the x86 tree modifying
+> arch/x86/kernel/i8253.c:
+> 
+>   b01cc1b0eae0: x86: Convert remaining x86 clocksources to clocksource_register_hz/khz
+> 
+> If you want to do any further change to this file you need to pull in this 
+> change first or need to resolve the conflict in some other way.
 
-Whoops, I'm sorry. I'll check this today late night. I'm quite sure I
-tested it, I don't know what does it happen.
+I have been told by Linus on more than one occasion that Linus wants to
+see exactly these kinds of merge conflicts, as it helps him track what's
+going on.
 
---=20
-Rafa=C5=82
+He's made that point again recently during discussions with the ARM
+community, and he's gone further to explicitly state that he does _not_
+want these kinds of merge conflicts to be hidden from him.
+
+So I really don't see what the issue here is - if Linus is happy _and_
+wants to resolve trivial merge conflicts then there's no problem here.
+It's probably a good thing that Linus does see the conflict so he gets
+to know that at least some ARM folk _are_ looking at common things
+across all architectures.
