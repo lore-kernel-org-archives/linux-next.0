@@ -1,53 +1,67 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the net tree
-Date: Fri, 13 May 2011 11:41:39 +1000
-Message-ID: <20110513114139.b1ed88ae.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build warning after merge of the net tree
+Date: Thu, 12 May 2011 23:04:05 -0400 (EDT)
+Message-ID: <20110512.230405.532264333967231887.davem@davemloft.net>
+References: <20110513114139.b1ed88ae.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__13_May_2011_11_41_39_+1000_KaUW_T__n8NIP7Du"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([198.137.202.13]:59921 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750703Ab1EMDEV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 May 2011 23:04:21 -0400
+In-Reply-To: <20110513114139.b1ed88ae.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__13_May_2011_11_41_39_+1000_KaUW_T__n8NIP7Du
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 13 May 2011 11:41:39 +1000
 
-Hi all,
+> After merging the net tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+> 
+> net/ipv4/ip_forward.c: In function 'ip_forward':
+> net/ipv4/ip_forward.c:87: warning: 'iph' may be used uninitialized in this function
+> 
+> Introduced by commit def57687e957 ("ipv4: Elide use of rt->rt_dst in
+> ip_forward()").  It may be a false positive, but it is not obvious how
+> iph is assigned before being used.
 
-After merging the net tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+My compiler didn't warn, (and I just double checked this) which is
+weird.  Sigh.
 
-net/ipv4/ip_forward.c: In function 'ip_forward':
-net/ipv4/ip_forward.c:87: warning: 'iph' may be used uninitialized in this =
-function
+Thanks, here is the fix I'll push:
 
-Introduced by commit def57687e957 ("ipv4: Elide use of rt->rt_dst in
-ip_forward()").  It may be a false positive, but it is not obvious how
-iph is assigned before being used.
+--------------------
+ipv4: Fix 'iph' use before set.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I swear none of my compilers warned about this, yet it is so
+obvious.
 
---Signature=_Fri__13_May_2011_11_41_39_+1000_KaUW_T__n8NIP7Du
-Content-Type: application/pgp-signature
+> net/ipv4/ip_forward.c: In function 'ip_forward':
+> net/ipv4/ip_forward.c:87: warning: 'iph' may be used uninitialized in this function
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ net/ipv4/ip_forward.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-iQEcBAEBAgAGBQJNzIxTAAoJEDMEi1NhKgbsFuIH/R/yVDbc5cwdROVHSfJHdXM7
-3686qNrdMjOuojJlJeKKCkgi0pt/sEL30W9PlcjyfdgtE/7FWfvnddpTFZ4xrgdR
-Ap1ZwNjvnv40xrqmdCdnEorZm0s/CLPuUyxwhW1hMu29wb+Bto7q7iR580bxs08+
-V2wVlDNyTgqo0nG6oqJVHyqO0CAVfXMIYF/rxtsq1f955P/ZpcYND8CkGGrUkMDw
-EGCYt5BVIn6ShQmv22TkRqB09UZIPo2q6f5xNrmi8uaZ5QyeqwhVDb2kGrs1PSiz
-khB+0pKjUO02HOzI2wP7szRC0vkslHYLhXkCRLPjrfqUGrFtX6xLY86bTAueS3Y=
-=iRcG
------END PGP SIGNATURE-----
-
---Signature=_Fri__13_May_2011_11_41_39_+1000_KaUW_T__n8NIP7Du--
+diff --git a/net/ipv4/ip_forward.c b/net/ipv4/ip_forward.c
+index fcbc0c8..3b34d1c 100644
+--- a/net/ipv4/ip_forward.c
++++ b/net/ipv4/ip_forward.c
+@@ -84,7 +84,7 @@ int ip_forward(struct sk_buff *skb)
+ 
+ 	rt = skb_rtable(skb);
+ 
+-	if (opt->is_strictroute && iph->daddr != rt->rt_gateway)
++	if (opt->is_strictroute && ip_hdr(skb)->daddr != rt->rt_gateway)
+ 		goto sr_failed;
+ 
+ 	if (unlikely(skb->len > dst_mtu(&rt->dst) && !skb_is_gso(skb) &&
+-- 
+1.7.4.4
