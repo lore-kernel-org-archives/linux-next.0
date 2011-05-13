@@ -1,15 +1,15 @@
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Subject: Re: linux-next: manual merge of the tip tree with the arm tree
-Date: Fri, 13 May 2011 18:25:09 +0100
-Message-ID: <20110513172509.GC19733@n2100.arm.linux.org.uk>
+Date: Fri, 13 May 2011 22:36:40 +0100
+Message-ID: <20110513213640.GB30539@n2100.arm.linux.org.uk>
 References: <20110513131437.8999e8eb.sfr@canb.auug.org.au> <20110513080634.GA13647@elte.hu> <20110513083738.GA19733@n2100.arm.linux.org.uk> <20110513092646.GK13647@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:59903 "EHLO
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:36241 "EHLO
 	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932750Ab1EMR0W (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 May 2011 13:26:22 -0400
+	with ESMTP id S1751978Ab1EMVhv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 May 2011 17:37:51 -0400
 Content-Disposition: inline
 In-Reply-To: <20110513092646.GK13647@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
@@ -18,24 +18,16 @@ To: Ingo Molnar <mingo@elte.hu>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Jacob Pan <jacob.jun.pan@intel.com>, Glauber Costa <glommer@redhat.com>, Dimitri Sivanich <sivanich@sgi.com>, Rusty Russell <rusty@rustcorp.com.au>, Jeremy Fitzhardinge <jeremy@xensource.com>, Chris McDermott <lcm@us.ibm.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
 On Fri, May 13, 2011 at 11:26:46AM +0200, Ingo Molnar wrote:
-> Also note that there's also some pending changes in the x86 tree modifying
-> arch/x86/kernel/i8253.c:
-> 
->   b01cc1b0eae0: x86: Convert remaining x86 clocksources to clocksource_register_hz/khz
-> 
-> If you want to do any further change to this file you need to pull in this 
-> change first or need to resolve the conflict in some other way.
+> Had you asked us before committing it one day after it was posted, or had you 
+> *noticed* that those files are not in your tree and are already modified in 
+> linux-next, you'd have gotten a response like:
 
-I have been told by Linus on more than one occasion that Linus wants to
-see exactly these kinds of merge conflicts, as it helps him track what's
-going on.
+Please also don't read anything into the commit date - it merely shows
+when the last update happened.
 
-He's made that point again recently during discussions with the ARM
-community, and he's gone further to explicitly state that he does _not_
-want these kinds of merge conflicts to be hidden from him.
+My workflow for patch series involves keeping them in git right from the
+start.  So actually they've been in git since _before_ they were posted.
+In fact, the emails which I send out for any patch series are always
+generated from the git commits.
 
-So I really don't see what the issue here is - if Linus is happy _and_
-wants to resolve trivial merge conflicts then there's no problem here.
-It's probably a good thing that Linus does see the conflict so he gets
-to know that at least some ARM folk _are_ looking at common things
-across all architectures.
+So, all my patches live in git _first_ before being mailed out.
