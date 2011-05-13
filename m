@@ -1,53 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with Linus' tree
-Date: Fri, 13 May 2011 14:08:21 +1000
-Message-ID: <20110513140821.bfef61a3.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (arm tree
+ related)
+Date: Fri, 13 May 2011 14:52:21 +1000
+Message-ID: <20110513145221.88c3de87.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__13_May_2011_14_08_21_+1000_TEfptzbUDc_shKjZ"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56613 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39453 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750875Ab1EMEIc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 May 2011 00:08:32 -0400
+	id S1750797Ab1EMEw0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 May 2011 00:52:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Max Vozeler <max@hinterhof.net>, matt mooney <mfm@muteddisk.com>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Ralf Baechle <ralf@linux-mips.org>
 
---Signature=_Fri__13_May_2011_14_08_21_+1000_TEfptzbUDc_shKjZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Greg,
+After merging the final tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/usbip/vhci_sysfs.c between commit d1b2e95ab016 ("staging:
-usbip: vhci: fix oops on subsequent attach") from Linus' tree and commit
-7aaacb43ed97 ("staging: usbip: fix header includes") from the staging
-tree.
+arch/x86/kernel/i8253.c: In function 'init_pit_clocksource':
+arch/x86/kernel/i8253.c:133: error: implicit declaration of function 'clocksource_pit_init'
 
-The latter superceded the former for the conflict in the includes.
---=20
+Caused by commit 3490f584b9ba ("clocksource: convert x86 to generic i8253 clocksource").
+
+I took a punt and added the following patch for today (also attempting to
+fix mips as well).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 13 May 2011 14:48:36 +1000
+Subject: [PATCH] clocksource: fix up for generic i8253 conversions
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/mips/kernel/i8253.c |    3 ++-
+ arch/x86/kernel/i8253.c  |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/mips/kernel/i8253.c b/arch/mips/kernel/i8253.c
+index e4660ba..227373e 100644
+--- a/arch/mips/kernel/i8253.c
++++ b/arch/mips/kernel/i8253.c
+@@ -10,6 +10,7 @@
+ #include <linux/smp.h>
+ #include <linux/spinlock.h>
+ #include <linux/irq.h>
++#include <linux/clocksource.h>
+ 
+ #include <asm/delay.h>
+ #include <asm/i8253.h>
+@@ -130,6 +131,6 @@ static int __init init_pit_clocksource(void)
+ 	if (num_possible_cpus() > 1) /* PIT does not scale! */
+ 		return 0;
+ 
+-	return clocksource_pit_init();
++	return clocksource_i8253_init();
+ }
+ arch_initcall(init_pit_clocksource);
+diff --git a/arch/x86/kernel/i8253.c b/arch/x86/kernel/i8253.c
+index a97aefc..21f121a 100644
+--- a/arch/x86/kernel/i8253.c
++++ b/arch/x86/kernel/i8253.c
+@@ -11,6 +11,7 @@
+ #include <linux/delay.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
++#include <linux/clocksource.h>
+ 
+ #include <asm/i8253.h>
+ #include <asm/hpet.h>
+@@ -130,7 +131,7 @@ static int __init init_pit_clocksource(void)
+ 	    pit_ce.mode != CLOCK_EVT_MODE_PERIODIC)
+ 		return 0;
+ 
+-	return clocksource_pit_init();
++	return clocksource_i8253_init();
+ }
+ arch_initcall(init_pit_clocksource);
+ 
+-- 
+1.7.5.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__13_May_2011_14_08_21_+1000_TEfptzbUDc_shKjZ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNzK61AAoJEDMEi1NhKgbsRH4IAIhyn/S7o53YHkpfZVQdJPUJ
-AEaH/OEE3unpto5MAYlIIwIUKKHKQrqFYe7x8dQrLXZL8XWO8AlbK5wqUWwqHbB6
-hDYT6GqZtLPYoFV2uWTIZ1AjjVFnlnXpUEZ0ueHBB8F/WzZi81VQxVDrq4huHqGW
-4WYtkY5djal/xBePP/gtctWXZJnjf8MyLlIU6NyVFlfU0KjuyZZ0bXsDADsoWZ6A
-Lo89poPogVAjXm5ntVyse6ICWFkEgw6Zoxk9K3JZekcWEC1r9xrafzcJsBqI0Ohv
-ctuFG4RdgpvvYwXV+u8Y7f+QDrxzKvqcYBuK1Fd5GslyKWk02iZulEu1z5YV2nQ=
-=OqW1
------END PGP SIGNATURE-----
-
---Signature=_Fri__13_May_2011_14_08_21_+1000_TEfptzbUDc_shKjZ--
