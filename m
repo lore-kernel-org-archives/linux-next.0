@@ -1,18 +1,26 @@
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: linux-next: manual merge of the tip tree with the arm tree
-Date: Fri, 13 May 2011 10:47:40 +0200 (CEST)
-Message-ID: <alpine.LFD.2.02.1105131047200.2866@ionos>
-References: <20110513131437.8999e8eb.sfr@canb.auug.org.au> <20110513080634.GA13647@elte.hu> <20110513083738.GA19733@n2100.arm.linux.org.uk>
+Date: Fri, 13 May 2011 11:26:46 +0200
+Message-ID: <20110513092646.GK13647@elte.hu>
+References: <20110513131437.8999e8eb.sfr@canb.auug.org.au>
+ <20110513080634.GA13647@elte.hu>
+ <20110513083738.GA19733@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:37972 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758032Ab1EMJ1M (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 May 2011 05:27:12 -0400
+Content-Disposition: inline
 In-Reply-To: <20110513083738.GA19733@n2100.arm.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Jacob Pan <jacob.jun.pan@intel.com>, Glauber Costa <glommer@redhat.com>, Dimitri Sivanich <sivanich@sgi.com>, Rusty Russell <rusty@rustcorp.com.au>, Jeremy Fitzhardinge <jeremy@xensource.com>, Chris McDermott <lcm@us.ibm.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-List-Id: linux-next.vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Jacob Pan <jacob.jun.pan@intel.com>, Glauber Costa <glommer@redhat.com>, Dimitri Sivanich <sivanich@sgi.com>, Rusty Russell <rusty@rustcorp.com.au>, Jeremy Fitzhardinge <jeremy@xensource.com>, Chris McDermott <lcm@us.ibm.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-On Fri, 13 May 2011, Russell King - ARM Linux wrote:
+
+* Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
 
 > On Fri, May 13, 2011 at 10:06:34AM +0200, Ingo Molnar wrote:
 > > 
@@ -46,44 +54,30 @@ On Fri, 13 May 2011, Russell King - ARM Linux wrote:
 > >  3 files changed, 4 insertions(+), 78 deletions(-)
 > > 
 > > end up in the ARM tree without an ack from an x86 maintainer??
+> 
+> The "no response" means two things: either that people are busy, [...]
 
-Acked-by-me!
- 
-> The "no response" means two things: either that people are busy, or people
-> don't care about the patch.  There is a patch from David Martin modifying
-> linux/elf.h adding one line to it which has not had any response.  Should
-> we assume the silence means that people are busy?  If we did that, nothing
-> would ever happen.
-> 
-> > I see the commit has an ack from John but that feedback is not visible in the 
-> > lkml thread of this patch nor did John really realize the conflict nor the 
-> 
-> I have no idea why John's ack is not visible, especially as it was sent
-> to lkml _and_ explicitly copied to you.
-> 
-> > build breakage. The patch was still in the to-be-reviewed queue of our patches.
-> > 
-> > Nor was it tested properly. The patch looks sane but your workflow sucks.
-> > Please revert it and use a proper Git workflow to change arch/x86/ details ...
-> 
-> I don't think so.  I created a patch.  I posted it to relevant people.
-> I got an ack.  So I put it into linux-next for further testing rather
-> than having it sitting around here getting zero testing.
-> 
-> That's the _proper_ thing to do.  linux-next found some problems, so
-> let's sort them out - great, that's what linux-next is there for.  Let's
-> sort them out instead of assigning blame.
-> 
-> And hey, it found a problem, and the problem has now been fixed.  Which
-> is great, and that should be visible to linux-next soon.
-> 
-> As for merge conflicts, they happen.  They get sorted.  It's no big deal.
-> Again, that's what linux-next is there to find and allow people to
-> _discuss_ how to resolve them.  It's not about avoiding all conflicts
-> no matter what or blaming people when conflicts happen.
-> 
-> Lastly, I have absolutely no problem about pulling the x86 bits out of
-> this series if they cause a conflict or don't get an ack.  I operate a
-> flexible approach to my git tree for stuff like this which allows stuff
-> to be dropped or updated as necessary.
-> 
+Had you asked us before committing it one day after it was posted, or had you 
+*noticed* that those files are not in your tree and are already modified in 
+linux-next, you'd have gotten a response like:
+
+--------------->
+
+Yes, the change looks good to me as well in principle. Thomas is busy this 
+week, he is on a conference.
+
+Guys if you want to do this outside of the x86 tree please test this series
+thoroughly on x86 as well before pushing it out anywhere permanent or pushing
+it into linux-next.
+
+Also note that there's also some pending changes in the x86 tree modifying
+arch/x86/kernel/i8253.c:
+
+  b01cc1b0eae0: x86: Convert remaining x86 clocksources to clocksource_register_hz/khz
+
+If you want to do any further change to this file you need to pull in this 
+change first or need to resolve the conflict in some other way.
+
+Thanks,
+
+	Ingo
