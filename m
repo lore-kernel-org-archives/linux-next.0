@@ -1,61 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the wireless tree
-Date: Mon, 16 May 2011 12:02:27 +1000
-Message-ID: <20110516120227.27a5a343.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the security-testing tree with Linus'
+ tree
+Date: Mon, 16 May 2011 13:02:09 +1000
+Message-ID: <20110516130209.0477a9e7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__16_May_2011_12_02_27_+1000_Vi8j1h2D6fppQmli"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37176 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51859 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752225Ab1EPCCc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 May 2011 22:02:32 -0400
+	id S1754945Ab1EPDCP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 May 2011 23:02:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>, Anantha Idapalapati <aidapalapati@nvidia.com>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Serge E. Hallyn" <serge.hallyn@canonical.com>, Eric Paris <eparis@redhat.com>
 
---Signature=_Mon__16_May_2011_12_02_27_+1000_Vi8j1h2D6fppQmli
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi James,
 
-Hi John,
+Today's linux-next merge of the security-testing tree got a conflict in
+include/linux/capability.h between commit 47a150edc2ae ("Cache user_ns in
+struct cred") from Linus' tree and commit ffa8e59df047 ("capabilities: do
+not drop CAP_SETPCAP from the initial task") from the security-testing
+tree.
 
-After merging the wireless tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-ERROR: "clk_get" [net/rfkill/rfkill-gpio.ko] undefined!
-ERROR: "clk_enable" [net/rfkill/rfkill-gpio.ko] undefined!
-ERROR: "clk_put" [net/rfkill/rfkill-gpio.ko] undefined!
-ERROR: "clk_disable" [net/rfkill/rfkill-gpio.ko] undefined!
-
-Caused by commit 165d625850e8 ("net: rfkill: add generic gpio rfkill
-driver").
-
-I have used the wireless tree from next-20110513 for today.
-
-P.S. is the Author information for that commit correct?  It has a From:
-line near the bottom of the commit message.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__16_May_2011_12_02_27_+1000_Vi8j1h2D6fppQmli
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN0IWzAAoJEDMEi1NhKgbsMtgIAI3gRFzYJsoTgyb+kw8uO1Xj
-T9NNk454aS76rcZmKgoIpC77cdfNJh4D+gbzIbh7aBbN/G1GNN0VTQzBghxcPtG5
-9rh+exv3OauMlwRXHkpy5o5ELAaANlWoXkXaibJ3dYz7NYyg+GAPP9Qjico2Kg28
-09nddVOzEuH0pjtfwJyHuT+m+QnHd6e4PyCBSuHExLAh1gpl34Lk2iJ8nyaz1E0e
-r71ABK3/l5C1c+fq/TenY43XfZd160EJhd7Mx6rpi4fha/PeB+Ps8NqIb4qztB8i
-Llj3Bc7nUyOPP9CQyM9TZoH94awg129MwYCJawubo/7YCRIum6UriqNMHfYm5gg=
-=Kks2
------END PGP SIGNATURE-----
-
---Signature=_Mon__16_May_2011_12_02_27_+1000_Vi8j1h2D6fppQmli--
+diff --cc include/linux/capability.h
+index d4675af,04fed72..0000000
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@@ -546,8 -541,21 +541,10 @@@ extern bool has_capability_noaudit(stru
+  extern bool capable(int cap);
+  extern bool ns_capable(struct user_namespace *ns, int cap);
+  extern bool task_ns_capable(struct task_struct *t, int cap);
+ +extern bool nsown_capable(int cap);
+  
++ extern const kernel_cap_t __cap_empty_set;
++ 
+ -/**
+ - * nsown_capable - Check superior capability to one's own user_ns
+ - * @cap: The capability in question
+ - *
+ - * Return true if the current task has the given superior capability
+ - * targeted at its own user namespace.
+ - */
+ -static inline bool nsown_capable(int cap)
+ -{
+ -	return ns_capable(current_user_ns(), cap);
+ -}
+ -
+  /* audit system wants to get cap info from files as well */
+  extern int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data *cpu_caps);
+  
