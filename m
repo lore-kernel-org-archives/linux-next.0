@@ -1,21 +1,21 @@
 From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: linux-next: manual merge of the tip tree with the arm tree
-Date: Mon, 16 May 2011 09:21:34 +0200
-Message-ID: <20110516072134.GE24836@elte.hu>
+Date: Mon, 16 May 2011 09:31:44 +0200
+Message-ID: <20110516073144.GF24836@elte.hu>
 References: <20110513131437.8999e8eb.sfr@canb.auug.org.au>
  <20110513080634.GA13647@elte.hu>
  <20110513083738.GA19733@n2100.arm.linux.org.uk>
  <20110513092646.GK13647@elte.hu>
- <20110513172509.GC19733@n2100.arm.linux.org.uk>
+ <20110513213640.GB30539@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:34960 "EHLO mx2.mail.elte.hu"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:51725 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751911Ab1EPHWJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 May 2011 03:22:09 -0400
+	id S1751460Ab1EPHcH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 May 2011 03:32:07 -0400
 Content-Disposition: inline
-In-Reply-To: <20110513172509.GC19733@n2100.arm.linux.org.uk>
+In-Reply-To: <20110513213640.GB30539@n2100.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Russell King - ARM Linux <linux@arm.linux.org.uk>
@@ -25,39 +25,44 @@ Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de
 * Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
 
 > On Fri, May 13, 2011 at 11:26:46AM +0200, Ingo Molnar wrote:
-> > Also note that there's also some pending changes in the x86 tree modifying
-> > arch/x86/kernel/i8253.c:
-> > 
-> >   b01cc1b0eae0: x86: Convert remaining x86 clocksources to clocksource_register_hz/khz
-> > 
-> > If you want to do any further change to this file you need to pull in this 
-> > change first or need to resolve the conflict in some other way.
+> > Had you asked us before committing it one day after it was posted, or had you 
+> > *noticed* that those files are not in your tree and are already modified in 
+> > linux-next, you'd have gotten a response like:
 > 
-> I have been told by Linus on more than one occasion that Linus wants to
-> see exactly these kinds of merge conflicts, as it helps him track what's
-> going on.
+> Please also don't read anything into the commit date - it merely shows
+> when the last update happened.
+>
+> My workflow for patch series involves keeping them in git right from the 
+> start.  So actually they've been in git since _before_ they were posted. In 
+> fact, the emails which I send out for any patch series are always generated 
+> from the git commits.
+> 
+> So, all my patches live in git _first_ before being mailed out.
 
-He has told us on more than one occasion that he wants to see *easy* conflicts, 
-where he can see benign interaction between properly maintained trees.
+It is not a problem at all if you commit it to some non-permanent development 
+branch of your own - we all do it.
 
-Here he would look and would only determine what i have already determined: 
-that the workflow of applying this patch sucked. That is definitely not the 
-kind of conflict Linus wants to see in the merge window ...
+The commit date i pointed out was of the *final* commit, which got into 
+linux-next. That showed a timestamp of just a day after the patch was sent
+out: presumably you rebased it to add John's Acked-by.
 
-You applied the patch without talking to the maintainers who are running the 
-affected tree. You talked to one of the developers which is fine, and i will 
-generally ack it in hindsight if you do a fine job of sorting out the details - 
-but here you touched an under-modification file without even realizing it. So 
-you messed up which fact i will keep pointing out and i will keep asking you to 
-fix your workflow, so that similar mistakes wont happen in the future.
+The step where your workflow failed was to take upon yourself to maintain a 
+file you do not normally maintain *and* messing up doing that:
 
-Really, Russell, you sometimes need to accept blame and you need to admit when 
-you messed up instead of writing countless mails trying to save face and 
-wriggle out of it. I mess up all the time and my hand does not rot away from 
-writing this. Really, write this down: "You are right, I messed this up a bit, 
-lets fix it instead of wasting time on emails."
+ - you did not ask the maintainers who maintain it (which is fine as long as 
+   you do not mess up)
 
-Lets resolve the conflict and move on, okay?
+ - you did not realize that the file you modified is already modified in that
+   tree, almost two months ago (it's not that hard to fetch linux-next once 
+   every week or so)
+
+ - you did not even notify them that you committed something so when the bug
+   happened in linux-next they had no idea what was going on
+
+Had you done any of those steps differently we'd have a better outcome.
+
+It's not a big problem all and we can resolve it, but you need to stop 
+pretending that your workflow was just fine - it sucked here.
 
 Thanks,
 
