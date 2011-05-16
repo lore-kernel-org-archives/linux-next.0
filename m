@@ -1,30 +1,61 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with Linus' tree
-Date: Fri, 13 May 2011 16:12:00 -0700
-Message-ID: <20110513231200.GA27663@kroah.com>
-References: <20110513140821.bfef61a3.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the wireless tree
+Date: Mon, 16 May 2011 12:02:27 +1000
+Message-ID: <20110516120227.27a5a343.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__16_May_2011_12_02_27_+1000_Vi8j1h2D6fppQmli"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37176 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752225Ab1EPCCc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 May 2011 22:02:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>, Anantha Idapalapati <aidapalapati@nvidia.com>
+
+--Signature=_Mon__16_May_2011_12_02_27_+1000_Vi8j1h2D6fppQmli
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20110513140821.bfef61a3.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Max Vozeler <max@hinterhof.net>, matt mooney <mfm@muteddisk.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 13, 2011 at 02:08:21PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/usbip/vhci_sysfs.c between commit d1b2e95ab016 ("staging:
-> usbip: vhci: fix oops on subsequent attach") from Linus' tree and commit
-> 7aaacb43ed97 ("staging: usbip: fix header includes") from the staging
-> tree.
-> 
-> The latter superceded the former for the conflict in the includes.
+Hi John,
 
-Ah, missed that, thanks, I'll merge these together soon and resolve
-them.
+After merging the wireless tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-greg k-h
+ERROR: "clk_get" [net/rfkill/rfkill-gpio.ko] undefined!
+ERROR: "clk_enable" [net/rfkill/rfkill-gpio.ko] undefined!
+ERROR: "clk_put" [net/rfkill/rfkill-gpio.ko] undefined!
+ERROR: "clk_disable" [net/rfkill/rfkill-gpio.ko] undefined!
+
+Caused by commit 165d625850e8 ("net: rfkill: add generic gpio rfkill
+driver").
+
+I have used the wireless tree from next-20110513 for today.
+
+P.S. is the Author information for that commit correct?  It has a From:
+line near the bottom of the commit message.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__16_May_2011_12_02_27_+1000_Vi8j1h2D6fppQmli
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN0IWzAAoJEDMEi1NhKgbsMtgIAI3gRFzYJsoTgyb+kw8uO1Xj
+T9NNk454aS76rcZmKgoIpC77cdfNJh4D+gbzIbh7aBbN/G1GNN0VTQzBghxcPtG5
+9rh+exv3OauMlwRXHkpy5o5ELAaANlWoXkXaibJ3dYz7NYyg+GAPP9Qjico2Kg28
+09nddVOzEuH0pjtfwJyHuT+m+QnHd6e4PyCBSuHExLAh1gpl34Lk2iJ8nyaz1E0e
+r71ABK3/l5C1c+fq/TenY43XfZd160EJhd7Mx6rpi4fha/PeB+Ps8NqIb4qztB8i
+Llj3Bc7nUyOPP9CQyM9TZoH94awg129MwYCJawubo/7YCRIum6UriqNMHfYm5gg=
+=Kks2
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__16_May_2011_12_02_27_+1000_Vi8j1h2D6fppQmli--
