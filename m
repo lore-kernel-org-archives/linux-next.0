@@ -1,46 +1,65 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: build failure after merge of the wireless tree
-Date: Mon, 16 May 2011 14:08:17 -0400
-Message-ID: <20110516180817.GC6551@tuxdriver.com>
-References: <20110516120227.27a5a343.sfr@canb.auug.org.au>
+From: John Stultz <john.stultz@linaro.org>
+Subject: Re: linux-next: manual merge of the tip tree with the arm tree
+Date: Mon, 16 May 2011 11:47:06 -0700
+Message-ID: <1305571626.2915.24.camel@work-vm>
+References: <20110513083738.GA19733@n2100.arm.linux.org.uk>
+	 <20110513092646.GK13647@elte.hu>
+	 <20110513213640.GB30539@n2100.arm.linux.org.uk>
+	 <20110516073144.GF24836@elte.hu>
+	 <20110516074230.GI30539@n2100.arm.linux.org.uk>
+	 <20110516091744.GB12325@elte.hu>
+	 <20110516091927.GK30539@n2100.arm.linux.org.uk>
+	 <20110516094056.GA25039@elte.hu>
+	 <20110516100750.GN30539@n2100.arm.linux.org.uk>
+	 <20110516110652.GC19837@elte.hu>
+	 <20110516113707.GQ30539@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:42942 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751470Ab1EPSQD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 May 2011 14:16:03 -0400
-Content-Disposition: inline
-In-Reply-To: <20110516120227.27a5a343.sfr@canb.auug.org.au>
+Received: from e36.co.us.ibm.com ([32.97.110.154]:51059 "EHLO
+	e36.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751235Ab1EPSr3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 May 2011 14:47:29 -0400
+In-Reply-To: <20110516113707.GQ30539@n2100.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>, Anantha Idapalapati <aidapalapati@nvidia.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>, Glauber Costa <glommer@redhat.com>, Dimitri Sivanich <sivanich@sgi.com>, Rusty Russell <rusty@rustcorp.com.au>, Jeremy Fitzhardinge <jeremy@xensource.com>, Chris McDermott <lcm@us.ibm.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-On Mon, May 16, 2011 at 12:02:27PM +1000, Stephen Rothwell wrote:
-> Hi John,
-> 
-> After merging the wireless tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> ERROR: "clk_get" [net/rfkill/rfkill-gpio.ko] undefined!
-> ERROR: "clk_enable" [net/rfkill/rfkill-gpio.ko] undefined!
-> ERROR: "clk_put" [net/rfkill/rfkill-gpio.ko] undefined!
-> ERROR: "clk_disable" [net/rfkill/rfkill-gpio.ko] undefined!
-> 
-> Caused by commit 165d625850e8 ("net: rfkill: add generic gpio rfkill
-> driver").
-> 
-> I have used the wireless tree from next-20110513 for today.
+On Mon, 2011-05-16 at 12:37 +0100, Russell King - ARM Linux wrote:
+> Obviously I shouldn't have added John's ack, which was sent during Monday
+> nighttime to the commit so quickly, but instead waited a week before doing
+> so.  Had I done that you wouldn't be complaining about "24 hours" or "18
+> hours".
 
-Yeah, I think I'm going to drop this for now until we can sort this out.
+Yea, so its unfair for Russell to be taking all the heat on this one. 
 
-> P.S. is the Author information for that commit correct?  It has a From:
-> line near the bottom of the commit message.
+I acked it, and I should have caught this issue. Part of the reason for
+that is because my base for testing things is usually linus' tree, and
+not tip.
 
-That does look strange.  I'll ask Rhyland to make that more clear.
+Also the clocksource_register_hz/khz patches in tip (which also includes
+Russell's "clocksource name const" patch) have been taking forever to
+get upstream. They are low priority non-critical cleanups at this point,
+so that's ok, but the original pull request for those was in Feb. And
+the slower those sorts of things take to get upstream, the bigger the
+window is for a collision.
 
-John
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+So I'll try to be more proactive about grabbing and queuing such fixes
+against the appropriate tip branch so that we can catch these issues,
+and ideally the related patches properly move through their proper
+maintainer tree.
+
+At the same time, having recently done some similar consolidation work
+in the RTC tree, as well as in the past the various clocksource work,
+splitting up such changes across a number of different maintainers can
+be a painfully slow process. This case isn't so bad because it was only
+three spots, but I can understand if you don't see your patches pulled
+into various maintainer trees quickly, you might use your normal
+upstream route to get them in. Maybe it was a little too quick this
+time, but I'm somewhat sympathetic to it.
+
+
+thanks
+-john
