@@ -1,68 +1,47 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the tip tree with the arm tree
-Date: Tue, 17 May 2011 13:56:14 +0200
-Message-ID: <20110517115614.GG13475@elte.hu>
-References: <20110513092646.GK13647@elte.hu>
- <20110513213640.GB30539@n2100.arm.linux.org.uk>
- <20110516073144.GF24836@elte.hu>
- <20110516074230.GI30539@n2100.arm.linux.org.uk>
- <20110516091744.GB12325@elte.hu>
- <20110516091927.GK30539@n2100.arm.linux.org.uk>
- <20110516094056.GA25039@elte.hu>
- <20110516100750.GN30539@n2100.arm.linux.org.uk>
- <20110516110652.GC19837@elte.hu>
- <20110516113707.GQ30539@n2100.arm.linux.org.uk>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] net: ping: fix build failure
+Date: Tue, 17 May 2011 07:58:16 -0700
+Message-ID: <4DD28D08.1030401@oracle.com>
+References: <20110516151019.be338f1c.sfr@canb.auug.org.au> <20110516123534.5d3a51b9.randy.dunlap@oracle.com> <20110516.153844.1072050131335197211.davem@davemloft.net> <20110517101656.GA28685@albatros>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:56592 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753939Ab1EQL4m (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 May 2011 07:56:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20110516113707.GQ30539@n2100.arm.linux.org.uk>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:40073 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755161Ab1EQO7C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 May 2011 10:59:02 -0400
+In-Reply-To: <20110517101656.GA28685@albatros>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Jacob Pan <jacob.jun.pan@intel.com>, Glauber Costa <glommer@redhat.com>, Dimitri Sivanich <sivanich@sgi.com>, Rusty Russell <rusty@rustcorp.com.au>, Jeremy Fitzhardinge <jeremy@xensource.com>, Chris McDermott <lcm@us.ibm.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Vasiliy Kulikov <segoon@openwall.com>
+Cc: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-* Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-
-> On Mon, May 16, 2011 at 01:06:52PM +0200, Ingo Molnar wrote:
-> > 
-> > * Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-> > 
-> > > On Mon, May 16, 2011 at 11:40:56AM +0200, Ingo Molnar wrote:
-> > > >    maintainers (and not assume lack of ack after 24 hours means acceptance), or 
-> > > 
-> > > Wrong, 72 to 96 hours.  Sunday to Wednesday/Thursday.
-> > 
-> > Not that this is really material (the argument is pretty much the same even had 
-> > you waited 3 days), but you are already wrong about the 'Sunday' part, because 
-> > you posted it to lkml on *Monday* 13:27 GMT:
-> > 
-> >         Message-ID: <20110509132738.GB16919@n2100.arm.linux.org.uk>
-> >         Mon, 9 May 2011 09:27:52 -0400
+On 05/17/11 03:16, Vasiliy Kulikov wrote:
+> On Mon, May 16, 2011 at 15:38 -0400, David Miller wrote:
+>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>> Date: Mon, 16 May 2011 12:35:34 -0700
+>>
+>>> On Mon, 16 May 2011 15:10:19 +1000 Stephen Rothwell wrote:
+>>> when CONFIG_PROC_SYSCTL is not enabled:
+>>>
+>>> ping.c:(.text+0x52af3): undefined reference to `inet_get_ping_group_range_net'
+>>
+>> Vasiliy, please fix this.
 > 
-> Sigh.  So you're only looking at the _second_ posting of them, not the first.
->
-> Here's the message, minus the patch.
-> 
-> | Date: Sun, 8 May 2011 19:24:07 +0100
-> | From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-> | To: Ralf Baechle <ralf@linux-mips.org>, John Stultz <johnstul@us.ibm.com>,
-> |         "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>
-> | Subject: i8253 clocksource consolidation
-> | Message-ID: <20110508182407.GN27807@n2100.arm.linux.org.uk>
-> | 
-> | Ralf, John, Ingo, hpa,
+> I wonder whether there is any way to test such unusual configurations?
+> Only randconfig or are there any (partly-)automated tools for it?
 
-I did not get that mail, at all. It's not in my spam mbox either.
+Hi,
 
-This pretty much explains why you assumed us informed and should explain to you 
-why i was surprised by your way of handling the patch :-)
+I do automated (cron) randconfigs nightly and occasionally I run a script
+that builds a kernel with each one of these options disabled (although
+lately CONFIG_PM is not being disabled, but I'll fix that one day):
 
-Thanks,
+BLOCK HOTPLUG INET INPUT MAGIC_SYSRQ NET PCI PM PROC_FS SMP SYSFS
 
-	Ingo
+Hm, I should add SYSCTL (and/or PROC_SYSCTL) to that list.  It often has issues.
+
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
