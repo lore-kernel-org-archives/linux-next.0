@@ -1,53 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the net-current tree
-Date: Tue, 17 May 2011 12:01:04 +1000
-Message-ID: <20110517120104.35ff4055.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the wireless tree
+Date: Tue, 17 May 2011 13:14:17 +1000
+Message-ID: <20110517131417.731cf095.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_May_2011_12_01_04_+1000_MztEuKnDHFzbTGmn"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57001 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41145 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752624Ab1EQCBM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 May 2011 22:01:12 -0400
+	id S1751576Ab1EQDOZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 May 2011 23:14:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Jarosch <thomas.jarosch@intra2net.com>, =?UTF-8?B?Ik1pY2hhxYIgTWlyb3PFgmF3Ig==?= <mirq-linux@rere.qmqm.pl>
-
---Signature=_Tue__17_May_2011_12_01_04_+1000_MztEuKnDHFzbTGmn
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lai Jiangshan <laijs@cn.fujitsu.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, "David S. Miller" <davem@davemloft.net>, "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes.berg@intel.com>
 
 Hi all,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/vmxnet3/vmxnet3_ethtool.c between commit ebde6f8acba9
-("vmxnet3: Fix inconsistent LRO state after initialization") from the
-net-current tree and commit a0d2730c9571 ("net: vmxnet3: convert to
-hw_features") from the net tree.
+Today's linux-next merge of the tip tree got a conflict in
+net/mac80211/agg-tx.c between commit ec034b208dc8 ("mac80211: fix TX
+a-MPDU locking") from the wireless tree and commit 0744371aeba7
+("net,rcu: convert call_rcu(kfree_tid_tx) to kfree_rcu()") from the tip
+tree.
 
-I fixed it up (by removing the lines added by the net-current patch) and
-can carry the fix as necessary.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__17_May_2011_12_01_04_+1000_MztEuKnDHFzbTGmn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN0dbgAAoJEDMEi1NhKgbsoe4H+weo9kAe4zoDJlGHZ7oRCifA
-Knd1XdB/1KuDcC11tQI6Ooa9nYc5CFAk1hxDE/RorhkED08Ufp2Tcs6cqzDvLNuT
-CTZI0GZy+WDonepZzIfzEyEzeryFdu+oHEDly3wLACdWRrsIk5AW8y3RdwAXOG+F
-6loqlN9WOE47jDULjT/GCHVP5mtro23Ba5y4p53D2XMp83xyjMlHFkuWlqpcjU8F
-h+tWsuGPw3euxUlDXEnkvlySmgy2Wi+BPkt90yfJLxoudyOcidoCSJiU/B7tUEp7
-IloRw2g0rqQSysxjt3vCDFq9JgCbUKlEzMpre+a5dTxcNFoGO0BzfbH12FULr+Y=
-=C393
------END PGP SIGNATURE-----
-
---Signature=_Tue__17_May_2011_12_01_04_+1000_MztEuKnDHFzbTGmn--
+diff --cc net/mac80211/agg-tx.c
+index cd5125f,53defaf..0000000
+--- a/net/mac80211/agg-tx.c
++++ b/net/mac80211/agg-tx.c
+@@@ -136,22 -136,6 +136,14 @@@ void ieee80211_send_bar(struct ieee8021
+  	ieee80211_tx_skb(sdata, skb);
+  }
+  
+ +void ieee80211_assign_tid_tx(struct sta_info *sta, int tid,
+ +			     struct tid_ampdu_tx *tid_tx)
+ +{
+ +	lockdep_assert_held(&sta->ampdu_mlme.mtx);
+ +	lockdep_assert_held(&sta->lock);
+ +	rcu_assign_pointer(sta->ampdu_mlme.tid_tx[tid], tid_tx);
+ +}
+ +
+- static void kfree_tid_tx(struct rcu_head *rcu_head)
+- {
+- 	struct tid_ampdu_tx *tid_tx =
+- 	    container_of(rcu_head, struct tid_ampdu_tx, rcu_head);
+- 
+- 	kfree(tid_tx);
+- }
+- 
+  int ___ieee80211_stop_tx_ba_session(struct sta_info *sta, u16 tid,
+  				    enum ieee80211_back_parties initiator,
+  				    bool tx)
+@@@ -162,19 -146,16 +154,19 @@@
+  
+  	lockdep_assert_held(&sta->ampdu_mlme.mtx);
+  
+ -	if (!tid_tx)
+ -		return -ENOENT;
+ -
+  	spin_lock_bh(&sta->lock);
+  
+ +	tid_tx = rcu_dereference_protected_tid_tx(sta, tid);
+ +	if (!tid_tx) {
+ +		spin_unlock_bh(&sta->lock);
+ +		return -ENOENT;
+ +	}
+ +
+  	if (test_bit(HT_AGG_STATE_WANT_START, &tid_tx->state)) {
+  		/* not even started yet! */
+ -		rcu_assign_pointer(sta->ampdu_mlme.tid_tx[tid], NULL);
+ +		ieee80211_assign_tid_tx(sta, tid, NULL);
+  		spin_unlock_bh(&sta->lock);
+- 		call_rcu(&tid_tx->rcu_head, kfree_tid_tx);
++ 		kfree_rcu(tid_tx, rcu_head);
+  		return 0;
+  	}
+  
