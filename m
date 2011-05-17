@@ -1,31 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for May 16 (net/ipv4/ping)
-Date: Mon, 16 May 2011 15:38:44 -0400 (EDT)
-Message-ID: <20110516.153844.1072050131335197211.davem@davemloft.net>
-References: <20110516151019.be338f1c.sfr@canb.auug.org.au>
-	<20110516123534.5d3a51b9.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Tue, 17 May 2011 12:01:04 +1000
+Message-ID: <20110517120104.35ff4055.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110516123534.5d3a51b9.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: randy.dunlap@oracle.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, segoon@openwall.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__17_May_2011_12_01_04_+1000_MztEuKnDHFzbTGmn"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57001 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752624Ab1EQCBM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 May 2011 22:01:12 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Jarosch <thomas.jarosch@intra2net.com>, =?UTF-8?B?Ik1pY2hhxYIgTWlyb3PFgmF3Ig==?= <mirq-linux@rere.qmqm.pl>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Mon, 16 May 2011 12:35:34 -0700
+--Signature=_Tue__17_May_2011_12_01_04_+1000_MztEuKnDHFzbTGmn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, 16 May 2011 15:10:19 +1000 Stephen Rothwell wrote:
-> 
->> Hi all,
->> 
->> Changes since 20110513:
-> 
-> 
-> when CONFIG_PROC_SYSCTL is not enabled:
-> 
-> ping.c:(.text+0x52af3): undefined reference to `inet_get_ping_group_range_net'
+Hi all,
 
-Vasiliy, please fix this.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/vmxnet3/vmxnet3_ethtool.c between commit ebde6f8acba9
+("vmxnet3: Fix inconsistent LRO state after initialization") from the
+net-current tree and commit a0d2730c9571 ("net: vmxnet3: convert to
+hw_features") from the net tree.
+
+I fixed it up (by removing the lines added by the net-current patch) and
+can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__17_May_2011_12_01_04_+1000_MztEuKnDHFzbTGmn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN0dbgAAoJEDMEi1NhKgbsoe4H+weo9kAe4zoDJlGHZ7oRCifA
+Knd1XdB/1KuDcC11tQI6Ooa9nYc5CFAk1hxDE/RorhkED08Ufp2Tcs6cqzDvLNuT
+CTZI0GZy+WDonepZzIfzEyEzeryFdu+oHEDly3wLACdWRrsIk5AW8y3RdwAXOG+F
+6loqlN9WOE47jDULjT/GCHVP5mtro23Ba5y4p53D2XMp83xyjMlHFkuWlqpcjU8F
+h+tWsuGPw3euxUlDXEnkvlySmgy2Wi+BPkt90yfJLxoudyOcidoCSJiU/B7tUEp7
+IloRw2g0rqQSysxjt3vCDFq9JgCbUKlEzMpre+a5dTxcNFoGO0BzfbH12FULr+Y=
+=C393
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_May_2011_12_01_04_+1000_MztEuKnDHFzbTGmn--
