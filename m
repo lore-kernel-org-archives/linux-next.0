@@ -1,125 +1,114 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: linux-next: Tree for May 16 (net/ipv4/ping)
-Date: Tue, 17 May 2011 11:54:07 +0200
-Message-ID: <1305626047.2850.35.camel@edumazet-laptop>
+From: Vasiliy Kulikov <segoon@openwall.com>
+Subject: [PATCH] net: ping: fix build failure
+Date: Tue, 17 May 2011 14:16:56 +0400
+Message-ID: <20110517101656.GA28685@albatros>
 References: <20110516151019.be338f1c.sfr@canb.auug.org.au>
-	 <20110516123534.5d3a51b9.randy.dunlap@oracle.com>
-	 <20110516.153844.1072050131335197211.davem@davemloft.net>
+ <20110516123534.5d3a51b9.randy.dunlap@oracle.com>
+ <20110516.153844.1072050131335197211.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:58971 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752084Ab1EQKRB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 May 2011 06:17:01 -0400
+Content-Disposition: inline
 In-Reply-To: <20110516.153844.1072050131335197211.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: David Miller <davem@davemloft.net>
-Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, segoon@openwall.com
-List-Id: linux-next.vger.kernel.org
+Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le lundi 16 mai 2011 =C3=A0 15:38 -0400, David Miller a =C3=A9crit :
+On Mon, May 16, 2011 at 15:38 -0400, David Miller wrote:
 > From: Randy Dunlap <randy.dunlap@oracle.com>
 > Date: Mon, 16 May 2011 12:35:34 -0700
->=20
+> 
 > > On Mon, 16 May 2011 15:10:19 +1000 Stephen Rothwell wrote:
-> >=20
-> >> Hi all,
-> >>=20
-> >> Changes since 20110513:
-> >=20
-> >=20
 > > when CONFIG_PROC_SYSCTL is not enabled:
-> >=20
-> > ping.c:(.text+0x52af3): undefined reference to `inet_get_ping_group=
-_range_net'
->=20
+> > 
+> > ping.c:(.text+0x52af3): undefined reference to `inet_get_ping_group_range_net'
+> 
 > Vasiliy, please fix this.
 
-Vasily seems busy, here is a fix for this problem.
+I wonder whether there is any way to test such unusual configurations?
+Only randconfig or are there any (partly-)automated tools for it?
 
-I tested new ping was working even if we could not set the group range
-anymore.
 
-Thanks
+[PATCH] net: ping: fix build failure
 
-[PATCH net-next-2.6] net: ping: fix build error
+If CONFIG_PROC_SYSCTL=n the building process fails:
 
-Randy Dunlap reported following build error if CONFIG_PROC_SYSCTL is no=
-t
-enabled:
+    ping.c:(.text+0x52af3): undefined reference to `inet_get_ping_group_range_net'
 
-ping.c:(.text+0x52af3): undefined reference to
-`inet_get_ping_group_range_net'
-
-Also made inet_get_ping_group_range_table() static
+Moved inet_get_ping_group_range_net() to ping.c.
 
 Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-Signed-off-by: Eric Dumazet <eric.dumazet@gmail.com>
-CC: Vasiliy Kulikov <segoon@openwall.com>
+Signed-off-by: Vasiliy Kulikov <segoon@openwall.com>
 ---
- net/ipv4/inet_connection_sock.c |   14 ++++++++++++++
- net/ipv4/sysctl_net_ipv4.c      |   14 +-------------
- 2 files changed, 15 insertions(+), 13 deletions(-)
+ include/net/ping.h         |    2 --
+ net/ipv4/ping.c            |   13 +++++++++++++
+ net/ipv4/sysctl_net_ipv4.c |   12 ------------
+ 3 files changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection=
-_sock.c
-index 3a2ba56..e5c0729 100644
---- a/net/ipv4/inet_connection_sock.c
-+++ b/net/ipv4/inet_connection_sock.c
-@@ -23,6 +23,7 @@
- #include <net/route.h>
- #include <net/tcp_states.h>
- #include <net/xfrm.h>
-+#include <net/ping.h>
-=20
- #ifdef INET_CSK_DEBUG
- const char inet_csk_timer_bug_msg[] =3D "inet_csk BUG: unknown timer v=
-alue\n";
-@@ -52,6 +53,19 @@ void inet_get_local_port_range(int *low, int *high)
+diff --git a/include/net/ping.h b/include/net/ping.h
+index 23062c3..682b5ae 100644
+--- a/include/net/ping.h
++++ b/include/net/ping.h
+@@ -44,8 +44,6 @@ extern struct proto ping_prot;
+ extern void ping_rcv(struct sk_buff *);
+ extern void ping_err(struct sk_buff *, u32 info);
+ 
+-extern void inet_get_ping_group_range_net(struct net *net, unsigned int *low, unsigned int *high);
+-
+ #ifdef CONFIG_PROC_FS
+ extern int __init ping_proc_init(void);
+ extern void ping_proc_exit(void);
+diff --git a/net/ipv4/ping.c b/net/ipv4/ping.c
+index 7041d09..3635975 100644
+--- a/net/ipv4/ping.c
++++ b/net/ipv4/ping.c
+@@ -188,6 +188,19 @@ exit:
+ 	return sk;
  }
- EXPORT_SYMBOL(inet_get_local_port_range);
-=20
-+void inet_get_ping_group_range_net(struct net *net, gid_t *low, gid_t =
-*high)
+ 
++static void inet_get_ping_group_range_net(struct net *net, gid_t *low, gid_t *high)
 +{
-+	const gid_t *data =3D net->ipv4.sysctl_ping_group_range;
-+	unsigned int seq;
-+
++	gid_t *data = net->ipv4.sysctl_ping_group_range;
++	unsigned seq;
 +	do {
-+		seq =3D read_seqbegin(&sysctl_local_ports.lock);
++		seq = read_seqbegin(&sysctl_local_ports.lock);
 +
-+		*low =3D data[0];
-+		*high =3D data[1];
++		*low = data[0];
++		*high = data[1];
 +	} while (read_seqretry(&sysctl_local_ports.lock, seq));
 +}
 +
- int inet_csk_bind_conflict(const struct sock *sk,
- 			   const struct inet_bind_bucket *tb)
++
+ static int ping_init_sock(struct sock *sk)
  {
+ 	struct net *net = sock_net(sk);
 diff --git a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
-index 28e8273..dc5d2a0 100644
+index 28e8273..57d0752 100644
 --- a/net/ipv4/sysctl_net_ipv4.c
 +++ b/net/ipv4/sysctl_net_ipv4.c
-@@ -73,19 +73,7 @@ static int ipv4_local_port_range(ctl_table *table, i=
-nt write,
+@@ -73,18 +73,6 @@ static int ipv4_local_port_range(ctl_table *table, int write,
  }
-=20
-=20
--void inet_get_ping_group_range_net(struct net *net, gid_t *low, gid_t =
-*high)
+ 
+ 
+-void inet_get_ping_group_range_net(struct net *net, gid_t *low, gid_t *high)
 -{
--	gid_t *data =3D net->ipv4.sysctl_ping_group_range;
+-	gid_t *data = net->ipv4.sysctl_ping_group_range;
 -	unsigned seq;
 -	do {
--		seq =3D read_seqbegin(&sysctl_local_ports.lock);
+-		seq = read_seqbegin(&sysctl_local_ports.lock);
 -
--		*low =3D data[0];
--		*high =3D data[1];
+-		*low = data[0];
+-		*high = data[1];
 -	} while (read_seqretry(&sysctl_local_ports.lock, seq));
 -}
 -
--void inet_get_ping_group_range_table(struct ctl_table *table, gid_t *l=
-ow, gid_t *high)
-+static void inet_get_ping_group_range_table(struct ctl_table *table, g=
-id_t *low, gid_t *high)
+ void inet_get_ping_group_range_table(struct ctl_table *table, gid_t *low, gid_t *high)
  {
- 	gid_t *data =3D table->data;
- 	unsigned seq;
+ 	gid_t *data = table->data;
+-- 
+1.7.0.4
