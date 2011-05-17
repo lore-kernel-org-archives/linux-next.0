@@ -1,58 +1,41 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] crypto: fix aesni build on i386
-Date: Tue, 17 May 2011 11:52:45 -0700
-Message-ID: <20110517115245.5544a0d0.randy.dunlap@oracle.com>
-References: <20110517142749.8927b65b.sfr@canb.auug.org.au>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: manual merge of the xen tree with Linus tree
+Date: Tue, 17 May 2011 12:15:19 -0700
+Message-ID: <4DD2C947.9050501@goop.org>
+References: <20110115120544.98a1f091.sfr@canb.auug.org.au> <20110517211234.472e32f4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:41913 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756467Ab1EQSxK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 May 2011 14:53:10 -0400
-In-Reply-To: <20110517142749.8927b65b.sfr@canb.auug.org.au>
+Received: from claw.goop.org ([74.207.240.146]:48879 "EHLO claw.goop.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756321Ab1EQTPX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 May 2011 15:15:23 -0400
+In-Reply-To: <20110517211234.472e32f4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Herbert Xu <herbert@gondor.hengli.com.au>, davem@davemloft.net, Huang Ying <ying.huang@intel.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On 05/17/2011 04:12 AM, Stephen Rothwell wrote:
+> Hi Jeremy,
+>
+> On Sat, 15 Jan 2011 12:05:44 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Today's linux-next merge of the xen tree got a conflict in
+>> drivers/xen/Kconfig, drivers/xen/gntdev.c and include/xen/gntdev.h
+>> between various commits Linus' tree and various commits from the xen tree.
+>>
+>> As previously discussed, I have dropped the xen tree for today (as it
+>> contains an older version of the changes that were merged into Linus'
+>> tree).
+> Just wondering if the xen tree is ever going to make a reappearance in
+> linux-next?
 
-Fix build error on i386 by moving function prototypes:
+Konrad's tree has the bulk of the xen work in it at the moment.  I'm
+doing to start on a few bits and pieces, but I've not decided if I'll
+put them into linux-next myself or just push them via Konrad.
 
-arch/x86/crypto/aesni-intel_glue.c: In function 'aesni_init':
-arch/x86/crypto/aesni-intel_glue.c:1263: error: implicit declaration of function 'crypto_fpu_init'
-arch/x86/crypto/aesni-intel_glue.c: In function 'aesni_exit':
-arch/x86/crypto/aesni-intel_glue.c:1373: error: implicit declaration of function 'crypto_fpu_exit'
+So, maybe, but maybe not.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- arch/x86/crypto/aesni-intel_glue.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-These function prototypes should preferably be in a header file somewhere.
-
---- linux-next-20110517.orig/arch/x86/crypto/aesni-intel_glue.c
-+++ linux-next-20110517/arch/x86/crypto/aesni-intel_glue.c
-@@ -94,6 +94,10 @@ asmlinkage void aesni_cbc_enc(struct cry
- 			      const u8 *in, unsigned int len, u8 *iv);
- asmlinkage void aesni_cbc_dec(struct crypto_aes_ctx *ctx, u8 *out,
- 			      const u8 *in, unsigned int len, u8 *iv);
-+
-+int crypto_fpu_init(void);
-+void crypto_fpu_exit(void);
-+
- #ifdef CONFIG_X86_64
- asmlinkage void aesni_ctr_enc(struct crypto_aes_ctx *ctx, u8 *out,
- 			      const u8 *in, unsigned int len, u8 *iv);
-@@ -140,9 +144,6 @@ asmlinkage void aesni_gcm_dec(void *ctx,
- 			u8 *hash_subkey, const u8 *aad, unsigned long aad_len,
- 			u8 *auth_tag, unsigned long auth_tag_len);
- 
--int crypto_fpu_init(void);
--void crypto_fpu_exit(void);
--
- static inline struct
- aesni_rfc4106_gcm_ctx *aesni_rfc4106_gcm_ctx_get(struct crypto_aead *tfm)
- {
+Thanks,
+    J
