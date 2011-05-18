@@ -1,88 +1,61 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: build warning after merge of the scsi tree
-Date: Tue, 17 May 2011 19:06:02 -0700
-Message-ID: <1305684362.2856.349.camel@haakon2.linux-iscsi.org>
-References: <20110518114912.dfdf8835.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the wireless tree
+Date: Wed, 18 May 2011 12:56:33 +1000
+Message-ID: <20110518125633.0164cb32.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linux-iscsi.org ([67.23.28.174]:33367 "EHLO
-	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932703Ab1ERCON (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 May 2011 22:14:13 -0400
-In-Reply-To: <20110518114912.dfdf8835.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39835 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755436Ab1ERC4i (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 May 2011 22:56:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kiran Patil <kiran.patil@intel.com>, Joe Eykholt <jeykholt@cisco.com>, Christoph Hellwig <hch@lst.de>, Yi Zou <yi.zou@intel.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jouni Malinen <jouni.malinen@atheros.com>, Sukesh Srikakula <sukeshs@broadcom.com>, Arend van Spriel <arend@broadcom.com>
 
-On Wed, 2011-05-18 at 11:49 +1000, Stephen Rothwell wrote:
-> Hi James,
->=20
-> After merging the scsi tree, today's linux-next build (x86_64 allmodc=
-onfig)
-> produced this warning:
->=20
-> drivers/target/tcm_fc/tfc_io.c: In function 'ft_queue_data_in':
-> drivers/target/tcm_fc/tfc_io.c:209: warning: format '%x' expects type=
- 'unsigned int', but argument 5 has type 'size_t'
->=20
-> Introduced by commit 3699d92a4d7b ("[SCSI] tcm_fc: Adding FC_FC4 prov=
-ider
-> (tcm_fc) for FCoE target (TCM - target core) support").
->=20
+Hi Greg,
 
-Hi Stephen,
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c between commit
+5a083c0aba95 ("cfg80211: Use consistent BSS matching between scan and
+sme") from the wireless tree and commit e494632efcd9 ("staging:
+brcm80211: Fixed bss (re)connect/disconnect issues in brcmfmac driver")
+from the staging tree.
 
-It appears that this warning was fixed in LIO upstream a while back, bu=
-t
-did not make it into this morning scsi-misc merge.  Please apply.
+I fixed it up (see below) anc can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks!
-
---nab
-
-
->From b830de5068d0c3745e83393f81d87f745ef7a4f2 Mon Sep 17 00:00:00 2001
-=46rom: Nicholas Bellinger <nab@linux-iscsi.org>
-Date: Thu, 17 Feb 2011 21:56:16 +0000
-Subject: [PATCH] tcm_fc: Fix conversion spec compile warning in ft_queu=
-e_data_in
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
-Content-Transfer-Encoding: 8bit
-
-This patch fixes the following compile warning in ft_queue_data_in():
-
-drivers/target/tcm_fc/tfc_io.c: In function =E2=80=98ft_queue_data_in=E2=
-=80=99:
-drivers/target/tcm_fc/tfc_io.c:209: warning: format =E2=80=98%x=E2=80=99=
- expects type =E2=80=98unsigned int=E2=80=99, but argument 5 has type =E2=
-=80=98size_t=E2=80=99
-
-Signed-off-by: Nicholas A. Bellinger <nab@linux-iscsi.org>
----
- drivers/target/tcm_fc/tfc_io.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/target/tcm_fc/tfc_io.c b/drivers/target/tcm_fc/tfc=
-_io.c
-index 4c3c0ef..3936bb1 100644
---- a/drivers/target/tcm_fc/tfc_io.c
-+++ b/drivers/target/tcm_fc/tfc_io.c
-@@ -206,7 +206,8 @@ int ft_queue_data_in(struct se_cmd *se_cmd)
-                                                "xid <0x%x>, remaining =
-<0x%x>, "
-                                                "lso_max <0x%x>\n",
-                                                __func__, fp, ep->xid,
--                                               remaining, lport->lso_m=
-ax);
-+                                               (unsigned int)remaining=
-,
-+                                               lport->lso_max);
-                }
-        }
-        return ft_queue_status(se_cmd);
---=20
-1.7.5.1
+diff --cc drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
+index 7aaf99c,e3b409b..0000000
+--- a/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
++++ b/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
+@@@ -2627,17 -2863,20 +2863,19 @@@ wl_bss_roaming_done(struct wl_priv *wl
+  	struct wl_connect_info *conn_info = wl_to_conn(wl);
+  	s32 err = 0;
+  
++ 	WL_TRACE("Enter\n");
++ 
+  	wl_get_assoc_ies(wl);
+- 	memcpy(&wl->bssid, &e->addr, ETH_ALEN);
++ 	wl_update_prof(wl, NULL, &e->addr, WL_PROF_BSSID);
+  	wl_update_bss_info(wl);
+ -
+ -	cfg80211_roamed(ndev,
+ +	cfg80211_roamed(ndev, NULL,
+- 			(u8 *)&wl->bssid,
++ 			(u8 *)wl_read_prof(wl, WL_PROF_BSSID),
+  			conn_info->req_ie, conn_info->req_ie_len,
+  			conn_info->resp_ie, conn_info->resp_ie_len, GFP_KERNEL);
+- 	WL_DBG("Report roaming result\n");
++ 	WL_CONN("Report roaming result\n");
+  
+  	set_bit(WL_STATUS_CONNECTED, &wl->status);
+- 
++ 	WL_TRACE("Exit\n");
+  	return err;
+  }
+  
