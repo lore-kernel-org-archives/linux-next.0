@@ -1,45 +1,44 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Subject: Re: linux-next: manual merge of the xen tree with Linus tree
-Date: Wed, 18 May 2011 07:33:46 -0700
-Message-ID: <4DD3D8CA.90509@goop.org>
-References: <20110115120544.98a1f091.sfr@canb.auug.org.au>	 <20110517211234.472e32f4.sfr@canb.auug.org.au>  <4DD2C947.9050501@goop.org> <1305721938.20907.132.camel@zakaz.uk.xensource.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] regulator: fix 88pm8607.c printk format warning
+Date: Wed, 18 May 2011 10:07:22 -0700
+Message-ID: <20110518100722.76bd6fb6.randy.dunlap@oracle.com>
+References: <20110518145412.f6cba4ef.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from claw.goop.org ([74.207.240.146]:47371 "EHLO claw.goop.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757065Ab1EROds (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 May 2011 10:33:48 -0400
-In-Reply-To: <1305721938.20907.132.camel@zakaz.uk.xensource.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:17648 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932791Ab1ERRHo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 May 2011 13:07:44 -0400
+In-Reply-To: <20110518145412.f6cba4ef.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ian Campbell <ijc@hellion.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Haojian Zhuang <haojian.zhuang@marvell.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On 05/18/2011 05:32 AM, Ian Campbell wrote:
-> On Tue, 2011-05-17 at 12:15 -0700, Jeremy Fitzhardinge wrote:
->> On 05/17/2011 04:12 AM, Stephen Rothwell wrote:
->>> Hi Jeremy,
->>>
->>> On Sat, 15 Jan 2011 12:05:44 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>> Today's linux-next merge of the xen tree got a conflict in
->>>> drivers/xen/Kconfig, drivers/xen/gntdev.c and include/xen/gntdev.h
->>>> between various commits Linus' tree and various commits from the xen tree.
->>>>
->>>> As previously discussed, I have dropped the xen tree for today (as it
->>>> contains an older version of the changes that were merged into Linus'
->>>> tree).
->>> Just wondering if the xen tree is ever going to make a reappearance in
->>> linux-next?
->> Konrad's tree has the bulk of the xen work in it at the moment.  I'm
->> doing to start on a few bits and pieces, but I've not decided if I'll
->> put them into linux-next myself or just push them via Konrad.
->>
->> So, maybe, but maybe not.
-> Perhaps resetting your branch to some commit on Linus tree in the
-> meantime would mean Stephen doesn't have to see it everyday?
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Ah, good point.  I've reset it back to v2.6.38 for now.
+Fix printk format warning (seen on x86_64) and change to unsigned
+output format:
 
-    J
+drivers/regulator/88pm8607.c:417: warning: format '%d' expects type 'int', but argument 3 has type 'resource_size_t'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/regulator/88pm8607.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- linux-next-20110518.orig/drivers/regulator/88pm8607.c
++++ linux-next-20110518/drivers/regulator/88pm8607.c
+@@ -413,8 +413,8 @@ static int __devinit pm8607_regulator_pr
+ 			break;
+ 	}
+ 	if ((i < 0) || (i > PM8607_ID_RG_MAX)) {
+-		dev_err(&pdev->dev, "Failed to find regulator %d\n",
+-			res->start);
++		dev_err(&pdev->dev, "Failed to find regulator %llu\n",
++			(unsigned long long)res->start);
+ 		return -EINVAL;
+ 	}
+ 	info->i2c = (chip->id == CHIP_PM8607) ? chip->client : chip->companion;
