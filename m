@@ -1,61 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the wireless tree
-Date: Wed, 18 May 2011 12:56:33 +1000
-Message-ID: <20110518125633.0164cb32.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the rr tree
+Date: Wed, 18 May 2011 13:41:03 +1000
+Message-ID: <20110518134103.f99c75a4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__18_May_2011_13_41_03_+1000_QOHzmWrpldvEYyQM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39835 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43736 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755436Ab1ERC4i (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 May 2011 22:56:38 -0400
+	id S932807Ab1ERDlL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 May 2011 23:41:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jouni Malinen <jouni.malinen@atheros.com>, Sukesh Srikakula <sukeshs@broadcom.com>, Arend van Spriel <arend@broadcom.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessio Igor Bogani <abogani@kernel.org>
 
-Hi Greg,
+--Signature=_Wed__18_May_2011_13_41_03_+1000_QOHzmWrpldvEYyQM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c between commit
-5a083c0aba95 ("cfg80211: Use consistent BSS matching between scan and
-sme") from the wireless tree and commit e494632efcd9 ("staging:
-brcm80211: Fixed bss (re)connect/disconnect issues in brcmfmac driver")
-from the staging tree.
+Hi Rusty,
 
-I fixed it up (see below) anc can carry the fix as necessary.
--- 
+After merging the rr tree, today's linux-next build produced this warning:
+
+kernel/module.c: In function 'lookup_symbol':
+kernel/module.c:2058: warning: unused variable 'ks'
+
+Introduced by commit 903996de9b35 ("module: Use binary search in lookup_sym=
+bol()").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
-index 7aaf99c,e3b409b..0000000
---- a/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
-+++ b/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
-@@@ -2627,17 -2863,20 +2863,19 @@@ wl_bss_roaming_done(struct wl_priv *wl
-  	struct wl_connect_info *conn_info = wl_to_conn(wl);
-  	s32 err = 0;
-  
-+ 	WL_TRACE("Enter\n");
-+ 
-  	wl_get_assoc_ies(wl);
-- 	memcpy(&wl->bssid, &e->addr, ETH_ALEN);
-+ 	wl_update_prof(wl, NULL, &e->addr, WL_PROF_BSSID);
-  	wl_update_bss_info(wl);
- -
- -	cfg80211_roamed(ndev,
- +	cfg80211_roamed(ndev, NULL,
-- 			(u8 *)&wl->bssid,
-+ 			(u8 *)wl_read_prof(wl, WL_PROF_BSSID),
-  			conn_info->req_ie, conn_info->req_ie_len,
-  			conn_info->resp_ie, conn_info->resp_ie_len, GFP_KERNEL);
-- 	WL_DBG("Report roaming result\n");
-+ 	WL_CONN("Report roaming result\n");
-  
-  	set_bit(WL_STATUS_CONNECTED, &wl->status);
-- 
-+ 	WL_TRACE("Exit\n");
-  	return err;
-  }
-  
+--Signature=_Wed__18_May_2011_13_41_03_+1000_QOHzmWrpldvEYyQM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN0z/PAAoJEDMEi1NhKgbsjVkH/R3T2nYobv0Eu1JFeEoskV5N
+jIZrP3SATsc5ET9DNWrMZFT6iFgCLhtdYBLy8OjwkbexqYipKwP/mbwcU55WJGHR
+8wCabIG3MuBNqNJU2Rkkgbpt3meV+1ZJ6lspOD21XKXBx8l7zEnCOAU1kpIjdV/6
+DS2A3XptNvd6m/w/u8lDf2sH9CJF+UmRiYpv83f13GxS44GCcxCIxvm2TVSc9Tkh
+H3uJJscBZjq14UZj+r/ifuu3KfcF7PHScGQiWobn/z9MWbKV5cbOCzg+g57Z0oMu
+SLPl7+KTDlXdIBGtVVEOySm/fNU6QHPF/ubmGI35lEqKh8qZuF0aMUO3Y4iynWE=
+=MUxW
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__18_May_2011_13_41_03_+1000_QOHzmWrpldvEYyQM--
