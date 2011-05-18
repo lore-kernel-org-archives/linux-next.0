@@ -1,36 +1,88 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH -next] crypto: fix aesni build on i386
-Date: Wed, 18 May 2011 09:03:44 +1000
-Message-ID: <20110517230344.GA27291@gondor.apana.org.au>
-References: <20110517142749.8927b65b.sfr@canb.auug.org.au> <20110517115245.5544a0d0.randy.dunlap@oracle.com>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: linux-next: build warning after merge of the scsi tree
+Date: Tue, 17 May 2011 19:06:02 -0700
+Message-ID: <1305684362.2856.349.camel@haakon2.linux-iscsi.org>
+References: <20110518114912.dfdf8835.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from helcar.apana.org.au ([209.40.204.226]:37373 "EHLO
-	fornost.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932507Ab1EQXEF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 May 2011 19:04:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20110517115245.5544a0d0.randy.dunlap@oracle.com>
+Received: from mail.linux-iscsi.org ([67.23.28.174]:33367 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932703Ab1ERCON (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 May 2011 22:14:13 -0400
+In-Reply-To: <20110518114912.dfdf8835.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, davem@davemloft.net, Huang Ying <ying.huang@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kiran Patil <kiran.patil@intel.com>, Joe Eykholt <jeykholt@cisco.com>, Christoph Hellwig <hch@lst.de>, Yi Zou <yi.zou@intel.com>
 
-On Tue, May 17, 2011 at 11:52:45AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix build error on i386 by moving function prototypes:
-> 
-> arch/x86/crypto/aesni-intel_glue.c: In function 'aesni_init':
-> arch/x86/crypto/aesni-intel_glue.c:1263: error: implicit declaration of function 'crypto_fpu_init'
-> arch/x86/crypto/aesni-intel_glue.c: In function 'aesni_exit':
-> arch/x86/crypto/aesni-intel_glue.c:1373: error: implicit declaration of function 'crypto_fpu_exit'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+On Wed, 2011-05-18 at 11:49 +1000, Stephen Rothwell wrote:
+> Hi James,
+>=20
+> After merging the scsi tree, today's linux-next build (x86_64 allmodc=
+onfig)
+> produced this warning:
+>=20
+> drivers/target/tcm_fc/tfc_io.c: In function 'ft_queue_data_in':
+> drivers/target/tcm_fc/tfc_io.c:209: warning: format '%x' expects type=
+ 'unsigned int', but argument 5 has type 'size_t'
+>=20
+> Introduced by commit 3699d92a4d7b ("[SCSI] tcm_fc: Adding FC_FC4 prov=
+ider
+> (tcm_fc) for FCoE target (TCM - target core) support").
+>=20
 
-Applied.  Thanks Randy!
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Hi Stephen,
+
+It appears that this warning was fixed in LIO upstream a while back, bu=
+t
+did not make it into this morning scsi-misc merge.  Please apply.
+
+Thanks!
+
+--nab
+
+
+>From b830de5068d0c3745e83393f81d87f745ef7a4f2 Mon Sep 17 00:00:00 2001
+=46rom: Nicholas Bellinger <nab@linux-iscsi.org>
+Date: Thu, 17 Feb 2011 21:56:16 +0000
+Subject: [PATCH] tcm_fc: Fix conversion spec compile warning in ft_queu=
+e_data_in
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
+
+This patch fixes the following compile warning in ft_queue_data_in():
+
+drivers/target/tcm_fc/tfc_io.c: In function =E2=80=98ft_queue_data_in=E2=
+=80=99:
+drivers/target/tcm_fc/tfc_io.c:209: warning: format =E2=80=98%x=E2=80=99=
+ expects type =E2=80=98unsigned int=E2=80=99, but argument 5 has type =E2=
+=80=98size_t=E2=80=99
+
+Signed-off-by: Nicholas A. Bellinger <nab@linux-iscsi.org>
+---
+ drivers/target/tcm_fc/tfc_io.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/target/tcm_fc/tfc_io.c b/drivers/target/tcm_fc/tfc=
+_io.c
+index 4c3c0ef..3936bb1 100644
+--- a/drivers/target/tcm_fc/tfc_io.c
++++ b/drivers/target/tcm_fc/tfc_io.c
+@@ -206,7 +206,8 @@ int ft_queue_data_in(struct se_cmd *se_cmd)
+                                                "xid <0x%x>, remaining =
+<0x%x>, "
+                                                "lso_max <0x%x>\n",
+                                                __func__, fp, ep->xid,
+-                                               remaining, lport->lso_m=
+ax);
++                                               (unsigned int)remaining=
+,
++                                               lport->lso_max);
+                }
+        }
+        return ft_queue_status(se_cmd);
+--=20
+1.7.5.1
