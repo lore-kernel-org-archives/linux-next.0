@@ -1,45 +1,41 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the tip tree with the sparc tree
-Date: Thu, 19 May 2011 17:35:06 +0200
-Message-ID: <1305819306.2466.7228.camel@twins>
-References: <20110517131435.aceca54e.sfr@canb.auug.org.au>
-	 <4DD51D37.3010907@gaisler.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging: fix mei build when PM is not enabled
+Date: Thu, 19 May 2011 08:52:34 -0700
+Message-ID: <20110519085234.2784f588.randy.dunlap@oracle.com>
+References: <20110519135941.2fda46ca.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:44392 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752505Ab1ESPfr convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2011 11:35:47 -0400
-In-Reply-To: <4DD51D37.3010907@gaisler.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:39752 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754757Ab1ESPxB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2011 11:53:01 -0400
+In-Reply-To: <20110519135941.2fda46ca.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Hellstrom <daniel@gaisler.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh <greg@kroah.com>, driverdevel <devel@driverdev.osuosl.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, 2011-05-19 at 15:37 +0200, Daniel Hellstrom wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
+Fix mei build when CONFIG_PM is not enabled (i.e., fix typo):
 
-> diff --git a/arch/sparc/kernel/smp_32.c b/arch/sparc/kernel/smp_32.c
-> index 41102c5..d5b3958 100644
-> --- a/arch/sparc/kernel/smp_32.c
-> +++ b/arch/sparc/kernel/smp_32.c
-> @@ -156,11 +156,11 @@ void arch_send_call_function_ipi_mask(const struct 
-> cpumask *mask)
-> 
->  void smp_resched_interrupt(void)
->  {
-> +       irq_enter();
-> +       scheduler_ipi();
->         local_cpu_data().irq_resched_count++;
-> -       /*
-> -        * do nothing, since it all was about calling re-schedule
-> -        * routine called by interrupt return code.
-> -        */
-> +       irq_exit();
-> +       /* re-schedule routine called by interrupt return code. */
->  }
+drivers/staging/mei/main.c:1159: error: 'MEI_PM_OPS' undeclared here (not in a function)
 
-That doesn't look like an IPI, that looks like its calls the function on
-the local cpu, which is completely pointless.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/mei/main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20110519.orig/drivers/staging/mei/main.c
++++ linux-next-20110519/drivers/staging/mei/main.c
+@@ -1145,7 +1145,7 @@ static int mei_pci_resume(struct device 
+ static SIMPLE_DEV_PM_OPS(mei_pm_ops, mei_pci_suspend, mei_pci_resume);
+ #define MEI_PM_OPS	(&mei_pm_ops)
+ #else
+-#define MIE_PM_OPS	NULL
++#define MEI_PM_OPS	NULL
+ #endif /* CONFIG_PM */
+ /*
+  *  PCI driver structure
