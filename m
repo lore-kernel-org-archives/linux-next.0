@@ -1,53 +1,45 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: build failure after merge of the i2c tree
-Date: Thu, 19 May 2011 11:06:22 +0200
-Message-ID: <20110519110622.681205cf@endymion.delvare>
-References: <20110519132704.9785243e.sfr@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: manual merge of the tip tree with the sparc tree
+Date: Thu, 19 May 2011 17:35:06 +0200
+Message-ID: <1305819306.2466.7228.camel@twins>
+References: <20110517131435.aceca54e.sfr@canb.auug.org.au>
+	 <4DD51D37.3010907@gaisler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:24196 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753120Ab1ESJIT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2011 05:08:19 -0400
-In-Reply-To: <20110519132704.9785243e.sfr@canb.auug.org.au>
+Received: from bombadil.infradead.org ([18.85.46.34]:44392 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752505Ab1ESPfr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2011 11:35:47 -0400
+In-Reply-To: <4DD51D37.3010907@gaisler.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Daniel Hellstrom <daniel@gaisler.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On Thu, 19 May 2011 13:27:04 +1000, Stephen Rothwell wrote:
-> Hi Jean,
+On Thu, 2011-05-19 at 15:37 +0200, Daniel Hellstrom wrote:
+
+
+> diff --git a/arch/sparc/kernel/smp_32.c b/arch/sparc/kernel/smp_32.c
+> index 41102c5..d5b3958 100644
+> --- a/arch/sparc/kernel/smp_32.c
+> +++ b/arch/sparc/kernel/smp_32.c
+> @@ -156,11 +156,11 @@ void arch_send_call_function_ipi_mask(const struct 
+> cpumask *mask)
 > 
-> After merging the i2c tree, today's linux-next build (i386 defconfig)
-> failed like this:
-> 
-> drivers/built-in.o: In function `i2c_i801_init':
-> i2c-i801.c:(.init.text+0x88b9): undefined reference to `check_signature'
-> 
-> Probably caused by commit fc02951b3293 ("i2c-i801: Don't depend on other
-> kernel driver config options").  Reverting that commit fixes the problem,
-> so I have done that for today.
+>  void smp_resched_interrupt(void)
+>  {
+> +       irq_enter();
+> +       scheduler_ipi();
+>         local_cpu_data().irq_resched_count++;
+> -       /*
+> -        * do nothing, since it all was about calling re-schedule
+> -        * routine called by interrupt return code.
+> -        */
+> +       irq_exit();
+> +       /* re-schedule routine called by interrupt return code. */
+>  }
 
-Oops, good catch. Fix is:
-
----
- drivers/i2c/busses/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
---- linux-2.6.39-rc7.orig/drivers/i2c/busses/Kconfig	2011-05-19 09:02:42.000000000 +0200
-+++ linux-2.6.39-rc7/drivers/i2c/busses/Kconfig	2011-05-19 11:03:36.000000000 +0200
-@@ -79,6 +79,7 @@ config I2C_AMD8111
- config I2C_I801
- 	tristate "Intel 82801 (ICH/PCH)"
- 	depends on PCI
-+	select CHECK_SIGNATURE if X86 && DMI
- 	help
- 	  If you say yes to this option, support will be included for the Intel
- 	  801 family of mainboard I2C interfaces.  Specifically, the following
-
-I'll fold it in the faulty patch so it should build fine tomorrow.
-
--- 
-Jean Delvare
+That doesn't look like an IPI, that looks like its calls the function on
+the local cpu, which is completely pointless.
