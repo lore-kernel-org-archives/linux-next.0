@@ -1,49 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: merge window reminder
-Date: Thu, 19 May 2011 16:43:23 +1000
-Message-ID: <20110519164323.050cd4af.sfr@canb.auug.org.au>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: linux-next: build failure after merge of the i2c tree
+Date: Thu, 19 May 2011 11:06:22 +0200
+Message-ID: <20110519110622.681205cf@endymion.delvare>
+References: <20110519132704.9785243e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__19_May_2011_16_43_23_+1000_Kij3Aja7EyGE2F9f"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53601 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932304Ab1ESGnb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 May 2011 02:43:31 -0400
+Received: from zone0.gcu-squad.org ([212.85.147.21]:24196 "EHLO
+	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753120Ab1ESJIT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2011 05:08:19 -0400
+In-Reply-To: <20110519132704.9785243e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__19_May_2011_16_43_23_+1000_Kij3Aja7EyGE2F9f
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 19 May 2011 13:27:04 +1000, Stephen Rothwell wrote:
+> Hi Jean,
+> 
+> After merging the i2c tree, today's linux-next build (i386 defconfig)
+> failed like this:
+> 
+> drivers/built-in.o: In function `i2c_i801_init':
+> i2c-i801.c:(.init.text+0x88b9): undefined reference to `check_signature'
+> 
+> Probably caused by commit fc02951b3293 ("i2c-i801: Don't depend on other
+> kernel driver config options").  Reverting that commit fixes the problem,
+> so I have done that for today.
 
-Hi all,
+Oops, good catch. Fix is:
 
-Please remember that I do not want any v2.6.41 related stuff in
-linux-next included trees until after v2.6.40-rc1 has been released.
+---
+ drivers/i2c/busses/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+--- linux-2.6.39-rc7.orig/drivers/i2c/busses/Kconfig	2011-05-19 09:02:42.000000000 +0200
++++ linux-2.6.39-rc7/drivers/i2c/busses/Kconfig	2011-05-19 11:03:36.000000000 +0200
+@@ -79,6 +79,7 @@ config I2C_AMD8111
+ config I2C_I801
+ 	tristate "Intel 82801 (ICH/PCH)"
+ 	depends on PCI
++	select CHECK_SIGNATURE if X86 && DMI
+ 	help
+ 	  If you say yes to this option, support will be included for the Intel
+ 	  801 family of mainboard I2C interfaces.  Specifically, the following
 
---Signature=_Thu__19_May_2011_16_43_23_+1000_Kij3Aja7EyGE2F9f
-Content-Type: application/pgp-signature
+I'll fold it in the faulty patch so it should build fine tomorrow.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN1LwLAAoJEDMEi1NhKgbsKYsH/iEj+InRPTOZ//wf/3xyGGKQ
-4dhHWRvkWU5u7DJw0djsuZC85dtK9QWctezg+2DkfPxnGQ5dlblzSa4cmkqsZmTe
-AT2VdYBcZiSEl0k7uxdVfB4XsItqLTa/Yko+AQYQ/bwHLozqeJysgNCrQAJDqzLZ
-d5JEBeCnqDIXUTJJGePEGih5ciyLPAulRHdnFX2uzw4e6e1YClj7zzhDg4vSsgmN
-rRY6ShamJkd4rAs848CB6NuBqqSy7qi1bx1c0IWX/gSmOoBZToAiuw9TM0QyvPwd
-Jnifiq04mj3sElsdsCaptOU+0nnoVd+XFv6xVkdX+WedDYHl+uh/wEqd5nLH9Ks=
-=Bds1
------END PGP SIGNATURE-----
-
---Signature=_Thu__19_May_2011_16_43_23_+1000_Kij3Aja7EyGE2F9f--
+-- 
+Jean Delvare
