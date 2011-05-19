@@ -1,58 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the xen tree with Linus tree
-Date: Thu, 19 May 2011 07:35:12 +1000
-Message-ID: <20110519073512.6bd503b4.sfr@canb.auug.org.au>
-References: <20110115120544.98a1f091.sfr@canb.auug.org.au>
-	<20110517211234.472e32f4.sfr@canb.auug.org.au>
-	<4DD2C947.9050501@goop.org>
-	<1305721938.20907.132.camel@zakaz.uk.xensource.com>
-	<4DD3D8CA.90509@goop.org>
+Subject: linux-next: manual merge of the s390 tree with Linus' tree
+Date: Thu, 19 May 2011 10:35:39 +1000
+Message-ID: <20110519103539.aa1b5094.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__19_May_2011_07_35_12_+1000_SZhuXQxuwpyNA6nB"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4DD3D8CA.90509@goop.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jeremy Fitzhardinge <jeremy@goop.org>
-Cc: Ian Campbell <ijc@hellion.org.uk>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__19_May_2011_10_35_39_+1000_Qp_9/XQcL7DK8vfb"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46582 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752906Ab1ESAfs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 May 2011 20:35:48 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Jens Axboe <jaxboe@fusionio.com>
 
---Signature=_Thu__19_May_2011_07_35_12_+1000_SZhuXQxuwpyNA6nB
+--Signature=_Thu__19_May_2011_10_35_39_+1000_Qp_9/XQcL7DK8vfb
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jeremy,
+Hi all,
 
-On Wed, 18 May 2011 07:33:46 -0700 Jeremy Fitzhardinge <jeremy@goop.org> wr=
-ote:
->
-> On 05/18/2011 05:32 AM, Ian Campbell wrote:
-> > Perhaps resetting your branch to some commit on Linus tree in the
-> > meantime would mean Stephen doesn't have to see it everyday?
->=20
-> Ah, good point.  I've reset it back to v2.6.38 for now.
+Today's linux-next merge of the s390 tree got a conflict in
+drivers/s390/char/tape_block.c between commit 9fd097b14918 ("block:
+unexport DISK_EVENT_MEDIA_CHANGE for legacy/fringe drivers") from Linus'
+tree and commit 263fa17de50e ("[S390] Remove tape block device driver")
+from the s390 tree.
 
-Thanks for that.
+The latter just removes the file updated by the former.  So I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__19_May_2011_07_35_12_+1000_SZhuXQxuwpyNA6nB
+--Signature=_Thu__19_May_2011_10_35_39_+1000_Qp_9/XQcL7DK8vfb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN1DuQAAoJEDMEi1NhKgbsD90IAJe9V6cnakM2qldbPOrGvqM0
-yF8mTk/by4E8CUrFjTzIoyAVBPWcU9zGo5onbYpel6PqFQU797Tb1UkNPwlvScuG
-NpRVX9Efmlo5hxgJI+2S3lvJmAGe5Fnn50h2dFMGiGSRi3CBJVy6bSSzR9ViHcAQ
-h9nJsRP2Fd3ee8N5GhNP96QUHYXY3VlKQWIjetKTBVh7Ar4phGeTZbYpBh746RjD
-slWjDCji7AHgEcHOeMg4onNo60EFyM8aqs1+bwufLZX1aSq9qArzDGnLejBlZIh+
-/HmDbBp0YLfjp+uWqMtnHCth/pNWojd5wEeCpA1GGI3gaw+EYF6RbAC3xOJVDa4=
-=RorI
+iQEcBAEBAgAGBQJN1GXbAAoJEDMEi1NhKgbsTGYH/0DNRiy+ooM6v1KBsUpgPgu3
+3T0I/rKP3gNTjtPSGjgYnPhAgshy8i5YTDAtxN4eVp6uGLglS5OvxZeQhgcjNySW
+a9k6LvWDfe/MwvFxOwosM09cD+lWmspGOeCBHjcDp3Yz96h4FbOEk9e866csr/2p
+13BeBkngXgg3MV2Hs9p/7QJa9s9o+VFTXGR748YeqL1oJqxFaaSNPGOenA3VZJXo
+FRMetzq2Qrv1KhspOPrTp4T64a1VMzcJSB54Hthwuu45IgGj2zTYxwHSaCAgJdWe
+MpAApMu7yfG9OJO9qBu7uySynOIoXoDChdqrgRSGA0Zlrr5Jra9YasiWR+5a3ME=
+=J0En
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__19_May_2011_07_35_12_+1000_SZhuXQxuwpyNA6nB--
+--Signature=_Thu__19_May_2011_10_35_39_+1000_Qp_9/XQcL7DK8vfb--
