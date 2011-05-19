@@ -1,56 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the i2c tree
-Date: Thu, 19 May 2011 13:27:04 +1000
-Message-ID: <20110519132704.9785243e.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__19_May_2011_13_27_04_+1000_uh6so6E9TY/oR/Sc"
+From: Ben Gardiner <bengardiner@nanometrics.ca>
+Subject: [PATCH] ALSA: sound, core, pcm_lib: fix xrun_log
+Date: Wed, 18 May 2011 23:52:38 -0400
+Message-ID: <1305777158-21361-1-git-send-email-bengardiner@nanometrics.ca>
+References: <20110519111557.f147fc1e.sfr@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41330 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756414Ab1ESD1L (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 May 2011 23:27:11 -0400
+Received: from na3sys009aog104.obsmtp.com ([74.125.149.73]:32799 "EHLO
+	na3sys009aog104.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932317Ab1ESDxA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 May 2011 23:53:00 -0400
+In-Reply-To: <20110519111557.f147fc1e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
 
---Signature=_Thu__19_May_2011_13_27_04_+1000_uh6so6E9TY/oR/Sc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The xrun_log function was augmented with the in_interrupt parameter whereas the
+empty macro definition used when xrun logging is disabled was not.
 
-Hi Jean,
+Add a third parameter to the empty macro definition so as to not cause compiler
+errors when xrun logging (CONFIG_SND_PCM_XRUN_DEBUG) is disabled.
 
-After merging the i2c tree, today's linux-next build (i386 defconfig)
-failed like this:
+Signed-off-by: Ben Gardiner <bengardiner@nanometrics.ca>
 
-drivers/built-in.o: In function `i2c_i801_init':
-i2c-i801.c:(.init.text+0x88b9): undefined reference to `check_signature'
+---
+This fixes the build error caused by ec08b14483de ("ALSA: sound, core, pcm_lib:
+xrun_log: log also in_interrupt") -- which was my patch. Sorry for the breakage.
 
-Probably caused by commit fc02951b3293 ("i2c-i801: Don't depend on other
-kernel driver config options").  Reverting that commit fixes the problem,
-so I have done that for today.
+---
+ sound/core/pcm_lib.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__19_May_2011_13_27_04_+1000_uh6so6E9TY/oR/Sc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN1I4IAAoJEDMEi1NhKgbssl0IAJrk7T8kvcZT6vFVXYH3a05X
-XfvD1X21ic1GHIdUKjTGeu8jrLt4I8wrdxVKdr0kcQqHKYeUc7GASCHRpnJwHaOI
-MIuSAdkEE+vYIzyr86kv+yTaMgjrsGDFJzBFAW25I/q+THbJH5Jgv9iE5UmzwZKe
-M53CdxkLnr9Lb/j/PmXDPuiZU/qwTUuCLwVAM9G0wljejwyh1sqAvnDpLO6Zca9u
-nuvcDeKRQhlNns0oOh/qwPrv/m+eZjtXTWmE02WhFop1m+3xtuMJzJbXBAGDmz92
-YG2SUQQUN1HyKkeELdTeWZ52Kv+zmTs8IRnJxxBGF+m+bgeNZQRRfdnjCoYkGZw=
-=qjTm
------END PGP SIGNATURE-----
-
---Signature=_Thu__19_May_2011_13_27_04_+1000_uh6so6E9TY/oR/Sc--
+diff --git a/sound/core/pcm_lib.c b/sound/core/pcm_lib.c
+index c8c8091..abfeff16 100644
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -266,7 +266,7 @@ static void xrun_log_show(struct snd_pcm_substream *substream)
+ #else /* ! CONFIG_SND_PCM_XRUN_DEBUG */
+ 
+ #define hw_ptr_error(substream, fmt, args...) do { } while (0)
+-#define xrun_log(substream, pos)	do { } while (0)
++#define xrun_log(substream, pos, in_interrupt)	do { } while (0)
+ #define xrun_log_show(substream)	do { } while (0)
+ 
+ #endif
+-- 
+1.7.4.1
