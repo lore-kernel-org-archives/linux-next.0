@@ -1,75 +1,83 @@
-From: Jacek Luczak <difrost.kernel@gmail.com>
-Subject: Re: linux-next: build failure after merge of the tip tree (net tree interaction)
-Date: Fri, 20 May 2011 09:59:20 +0200
-Message-ID: <BANLkTik=bC1beZWx5eLDMmGcOp5UZ29MUQ@mail.gmail.com>
-References: <20110520141417.f49bf364.sfr@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: manual merge of the tip tree with the sparc tree
+Date: Fri, 20 May 2011 10:11:53 +0200
+Message-ID: <1305879113.2466.7231.camel@twins>
+References: <20110517131435.aceca54e.sfr@canb.auug.org.au>
+	 <4DD51D37.3010907@gaisler.com> <1305819306.2466.7228.camel@twins>
+	 <4DD60530.6090900@gaisler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110520141417.f49bf364.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Lai Jiangshan <laijs@cn.fujitsu.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:33966 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932489Ab1ETIM1 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 May 2011 04:12:27 -0400
+In-Reply-To: <4DD60530.6090900@gaisler.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Hellstrom <daniel@gaisler.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-2011/5/20 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi all,
->
-> After merging the tip tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
->
-> net/sctp/bind_addr.c: In function 'sctp_bind_addr_clean':
-> net/sctp/bind_addr.c:148: error: 'sctp_local_addr_free' undeclared (f=
-irst use in this function)
->
-> Caused by commit 1231f0baa547 ("net,rcu: convert call_rcu
-> (sctp_local_addr_free) to kfree_rcu()") interacting with commit
-> c182f90bc1f2 ("SCTP: fix race between sctp_bind_addr_free() and
-> sctp_bind_addr_conflict()") from the net tree.
->
-> I applied the following patch as a merge fix:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 20 May 2011 14:11:11 +1000
-> Subject: [PATCH] net,rcu: convert another call to call_rcu(sctp_local=
-_addr_free)
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
-> =A0net/sctp/bind_addr.c | =A0 =A02 +-
-> =A01 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/net/sctp/bind_addr.c b/net/sctp/bind_addr.c
-> index 6338413..83e3011 100644
-> --- a/net/sctp/bind_addr.c
-> +++ b/net/sctp/bind_addr.c
-> @@ -145,7 +145,7 @@ static void sctp_bind_addr_clean(struct sctp_bind=
-_addr *bp)
-> =A0 =A0 =A0 =A0/* Empty the bind address list. */
-> =A0 =A0 =A0 =A0list_for_each_entry_safe(addr, temp, &bp->address_list=
-, list) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0list_del_rcu(&addr->list);
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 call_rcu(&addr->rcu, sctp_local_addr_fr=
-ee);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 kfree_rcu(addr, rcu);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0SCTP_DBG_OBJCNT_DEC(addr);
-> =A0 =A0 =A0 =A0}
-> =A0}
-> --
-> 1.7.5.1
->
+On Fri, 2011-05-20 at 08:07 +0200, Daniel Hellstrom wrote:
+> Peter Zijlstra wrote:
+> 
+> >On Thu, 2011-05-19 at 15:37 +0200, Daniel Hellstrom wrote:
+> >
+> >
+> >  
+> >
+> >>diff --git a/arch/sparc/kernel/smp_32.c b/arch/sparc/kernel/smp_32.c
+> >>index 41102c5..d5b3958 100644
+> >>--- a/arch/sparc/kernel/smp_32.c
+> >>+++ b/arch/sparc/kernel/smp_32.c
+> >>@@ -156,11 +156,11 @@ void arch_send_call_function_ipi_mask(const struct 
+> >>cpumask *mask)
+> >>
+> >> void smp_resched_interrupt(void)
+> >> {
+> >>+       irq_enter();
+> >>+       scheduler_ipi();
+> >>        local_cpu_data().irq_resched_count++;
+> >>-       /*
+> >>-        * do nothing, since it all was about calling re-schedule
+> >>-        * routine called by interrupt return code.
+> >>-        */
+> >>+       irq_exit();
+> >>+       /* re-schedule routine called by interrupt return code. */
+> >> }
+> >>    
+> >>
+> >
+> >That doesn't look like an IPI, that looks like its calls the function on
+> >the local cpu, which is completely pointless.
+> >  
+> >
+> The above function is one of the IPI interrupt handlers.
+> 
+> The smp_send_reschedule() is called by the generic code, it is 
+> responsible for sending an IRQ to the target CPU, that CPU comes into 
+> smp_resched_interrupt above from the IRQ trap handler. So yes, the 
+> scheduler_ipi() is called on the local CPU, but on the CPU taking the 
+> IPI not the CPU sending the IPI.
 
+Ah, clearly I cannot read well, I actually thought that was
+smp_send_reschedule(). OK, if sparc32 is now actually sending IPIs and
+the above is the handler, then you're completely right, sorry for the
+confusion.
 
-Hi
+Also, since sparc32 now grew this IPI, you can remove:
 
-as this is planned to be backported down to stable/longterm, kfree_rcu
-was not used here. I guess in meantime the callback has been removed
-while introducing kfree_rcu in sctp  module. I have a patch ready to
-send for net-next-2.6 converting to kfree_rcu in sctp, only I've been
-waiting for it jumping to the tree.
-
-This patch is of course valid.
-
--Jacek
++++ b/init/Kconfig
+@@ -827,6 +827,11 @@ config SCHED_AUTOGROUP
+          desktop applications.  Task group autogeneration is currently based
+          upon task session.
+ 
++config SCHED_TTWU_QUEUE
++       bool
++       depends on !SPARC32
++       default y
++
+ config MM_OWNER
+        bool
+ 
