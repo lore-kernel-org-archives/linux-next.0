@@ -1,37 +1,66 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: build failure in Linus' tree
-Date: Thu, 19 May 2011 18:19:30 -0700
-Message-ID: <BANLkTi=f5SxiAz-rJeb_Yh5M9W4OC+aY0g@mail.gmail.com>
-References: <20110520111516.784c0c9c.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the s390 tree
+Date: Fri, 20 May 2011 11:56:51 +1000
+Message-ID: <20110520115651.fc0fc63f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__20_May_2011_11_56_51_+1000_1Sa6lJ_2Q3NpACnh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:35556 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S934603Ab1ETBUV convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 May 2011 21:20:21 -0400
-In-Reply-To: <20110520111516.784c0c9c.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48664 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754646Ab1ETB4y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 May 2011 21:56:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, May 19, 2011 at 6:15 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
->
-> reverting commit e66eed651fd1 ("list: remove prefetching from regular
-> list iterators"). =A0This is, of course, why we like to put stuff int=
-o
-> linux-next before it goes into your tree :-)
+--Signature=_Fri__20_May_2011_11_56_51_+1000_1Sa6lJ_2Q3NpACnh
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ahhah. Another case that magically depended on <linux/list.h> silently
-including half the universe thanks to <linux/prefetch.h> (which in
-turn included all manner of helper headers).
+Hi all,
 
-> I have applied this patch for today:
+After merging the s390 tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Looks good, I'll take it.
+mm/rmap.c:788:54: error: macro "page_test_and_clear_dirty" passed 2 argumen=
+ts, but takes just 1
+mm/rmap.c: In function 'page_mkclean':
+mm/rmap.c:788: error: 'page_test_and_clear_dirty' undeclared (first use in =
+this function)
+mm/rmap.c:788: error: (Each undeclared identifier is reported only once
+mm/rmap.c:788: error: for each function it appears in.)
+mm/rmap.c:983:52: error: macro "page_test_and_clear_dirty" passed 2 argumen=
+ts, but takes just 1
+mm/rmap.c: In function 'page_remove_rmap':
+mm/rmap.c:983: error: 'page_test_and_clear_dirty' undeclared (first use in =
+this function)
 
-                        Linus
+Caused by commit 4cbfc8b9f58c ("[S390] merge page_test_dirty and page_clear=
+_dirty").
+
+I have used the s390 tree from next-20110519 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__20_May_2011_11_56_51_+1000_1Sa6lJ_2Q3NpACnh
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN1cpjAAoJEDMEi1NhKgbsEEEH/2ZQdFhH/gMw0EgtcMz9lH9i
+b060xn0lj+XMau9bJ6+rhaeJ0XsTzglXEd1OhZ9F3KOhQkBh8nFnVGITvwBpoe1H
+OCX4rVhCK61OBS1ksCYf/wmcP87i59vUyU8p7605nIiNwekeiTCiUNUMKFTxW+c3
+RoQgu/XzNku01fx4x6gWvFIqPGQcYcA0HgfmtNe41TTKvnD5uAjncsC0+n68rgAd
++04FMJRlT1NUspIbyD0pCODfihu1elgZZx+J1HRbt5DIGfPCbq7mXjA30xiB/eTg
+NiC0bChRNQkZVJM1dpGQEyShoYuyCrdZ5mSTJCXuy0EYa+V0jbWpNc6HXuYjOxc=
+=ga8t
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__20_May_2011_11_56_51_+1000_1Sa6lJ_2Q3NpACnh--
