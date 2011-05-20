@@ -1,33 +1,63 @@
-From: Steven Rostedt <srostedt@redhat.com>
-Subject: Re: linux-next: manual merge of the tip tree with the kbuild tree
-Date: Thu, 19 May 2011 23:54:26 -0400
-Message-ID: <1305863666.2886.0.camel@fedora>
-References: <20110520133631.d663013a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree (net tree
+ interaction)
+Date: Fri, 20 May 2011 14:14:17 +1000
+Message-ID: <20110520141417.f49bf364.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:24351 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35581 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933275Ab1ETDy4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 May 2011 23:54:56 -0400
-In-Reply-To: <20110520133631.d663013a.sfr@canb.auug.org.au>
+	id S1751397Ab1ETEOU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 May 2011 00:14:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, Michal Marek <mmarek@suse.cz>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jacek Luczak <difrost.kernel@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Lai Jiangshan <laijs@cn.fujitsu.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
-On Fri, 2011-05-20 at 13:36 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in Makefile
-> between commit 28bc20dccadc ("kbuild: implement several W= levels") from
-> the kbuild tree and commit 85356f802225 ("kbuild/recordmcount: Add
-> RECORDMCOUNT_WARN to warn about mcount callers") from the tip tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+Hi all,
 
-Acked-by: Steven Rostedt <rostedt@goodmis.org>
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
--- Steve
+net/sctp/bind_addr.c: In function 'sctp_bind_addr_clean':
+net/sctp/bind_addr.c:148: error: 'sctp_local_addr_free' undeclared (first use in this function)
+
+Caused by commit 1231f0baa547 ("net,rcu: convert call_rcu
+(sctp_local_addr_free) to kfree_rcu()") interacting with commit
+c182f90bc1f2 ("SCTP: fix race between sctp_bind_addr_free() and
+sctp_bind_addr_conflict()") from the net tree.
+
+I applied the following patch as a merge fix:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 20 May 2011 14:11:11 +1000
+Subject: [PATCH] net,rcu: convert another call to call_rcu(sctp_local_addr_free)
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/sctp/bind_addr.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/net/sctp/bind_addr.c b/net/sctp/bind_addr.c
+index 6338413..83e3011 100644
+--- a/net/sctp/bind_addr.c
++++ b/net/sctp/bind_addr.c
+@@ -145,7 +145,7 @@ static void sctp_bind_addr_clean(struct sctp_bind_addr *bp)
+ 	/* Empty the bind address list. */
+ 	list_for_each_entry_safe(addr, temp, &bp->address_list, list) {
+ 		list_del_rcu(&addr->list);
+-		call_rcu(&addr->rcu, sctp_local_addr_free);
++		kfree_rcu(addr, rcu);
+ 		SCTP_DBG_OBJCNT_DEC(addr);
+ 	}
+ }
+-- 
+1.7.5.1
+
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
