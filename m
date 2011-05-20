@@ -1,31 +1,43 @@
-From: Jens Axboe <jaxboe@fusionio.com>
-Subject: Re: linux-next: manual merge of the s390 tree with Linus' tree
-Date: Fri, 20 May 2011 20:43:03 +0200
-Message-ID: <4DD6B637.3060509@fusionio.com>
-References: <20110519103539.aa1b5094.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH 1/2] Fix merge problem between sparc32 IPI patches and
+ schedule_ipi() callback
+Date: Fri, 20 May 2011 16:13:01 -0400 (EDT)
+Message-ID: <20110520.161301.913577691507123777.davem@davemloft.net>
+References: <1305900070-23492-1-git-send-email-daniel@gaisler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110519103539.aa1b5094.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([198.137.202.13]:43315 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935756Ab1ETUPj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 May 2011 16:15:39 -0400
+In-Reply-To: <1305900070-23492-1-git-send-email-daniel@gaisler.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: daniel@gaisler.com
+Cc: sparclinux@vger.kernel.org, sfr@canb.auug.org.au, peterz@infradead.org, tglx@linutronix.de, mingo@elte.hu, hpa@zytor.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2011-05-19 02:35, Stephen Rothwell wrote:
-> Hi all,
+From: Daniel Hellstrom <daniel@gaisler.com>
+Date: Fri, 20 May 2011 16:01:09 +0200
+
+> Fixes a merge conflict in arch/sparc/kernel/smp_32.c between commit
+> d6d048192b1d ("sparc32: implement SMP IPIs using the generic functions")
+> from the sparc tree and commit 184748cc50b2 ("sched: Provide
+> scheduler_ipi() callback in response to smp_send_reschedule()").
 > 
-> Today's linux-next merge of the s390 tree got a conflict in
-> drivers/s390/char/tape_block.c between commit 9fd097b14918 ("block:
-> unexport DISK_EVENT_MEDIA_CHANGE for legacy/fringe drivers") from Linus'
-> tree and commit 263fa17de50e ("[S390] Remove tape block device driver")
-> from the s390 tree.
+> The patch adds a call to scheduler_ipi() from the resched IPI handler in
+> sparc32.
 > 
-> The latter just removes the file updated by the former.  So I did that.
+> Signed-off-by: Daniel Hellstrom <daniel@gaisler.com>
 
-That works, thanks. The other fixup you are carrying should be gone now,
-I had to pull in 2.6.39 final to resolve other conflicts.
+What I did to handle this was merge in enough of the upstream commit
+by Peter such that both of these patches apply, via:
 
--- 
-Jens Axboe
+git merge --no-commit 317f394160e9beb97d19a84c39b7e5eb3d7815a8
+
+then I added patch #1 into the merge commit.
+
+Next, I applied patch #2 afterwards.
+
+So we should be all set when I push this out to Linus, thanks!
