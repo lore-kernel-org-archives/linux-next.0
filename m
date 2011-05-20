@@ -1,75 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the final tree
- (tip/powerpc tree related)
-Date: Fri, 20 May 2011 15:14:31 +1000
-Message-ID: <20110520151431.465d11f4.sfr@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: manual merge of the tip tree with the powerpc tree
+Date: Fri, 20 May 2011 15:38:24 +1000
+Message-ID: <1305869904.7481.145.camel@pasglop>
+References: <20110520141425.dd38cb7d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__20_May_2011_15_14_31_+1000_5U+o0j1aFoqgAidv"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46640 "EHLO smtps.tip.net.au"
+Received: from gate.crashing.org ([63.228.1.57]:53052 "EHLO gate.crashing.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S935215Ab1ETFOg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 May 2011 01:14:36 -0400
+	id S935321Ab1ETFjB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 May 2011 01:39:01 -0400
+In-Reply-To: <20110520141425.dd38cb7d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Milton Miller <miltonm@bga.com>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
---Signature=_Fri__20_May_2011_15_14_31_+1000_5U+o0j1aFoqgAidv
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 2011-05-20 at 14:14 +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in
+> arch/powerpc/kernel/smp.c between commit 23d72bfd8f9f ("powerpc:
+> Consolidate ipi message mux and demux") from the powerpc tree and commit
+> 184748cc50b2 ("sched: Provide scheduler_ipi() callback in response to
+> smp_send_reschedule()") from the tip tree.
+> 
+> The former superceded part of the latter's changes, so I just used the
+> former for that.
 
-Hi all,
+I've done the merge and resolved the conflict properly (it's actually
+non trivial due to some other changes) in the powerpc tree, I'll send a
+pull request to Linus later today.
 
-After merging the final tree, today's linux-next build (powerpc allnoconfig)
-produced these warnings:
-
-kernel/time/clocksource.c: In function '__clocksource_updatefreq_scale':
-kernel/time/clocksource.c:655: warning: comparison of distinct pointer type=
-s lacks a cast
-kernel/time/clocksource.c:655: warning: right shift count >=3D width of type
-kernel/time/clocksource.c:655: warning: passing argument 1 of '__div64_32' =
-from incompatible pointer type
-include/asm-generic/div64.h:35: note: expected 'uint64_t *' but argument is=
- of type 'long unsigned int *'
-kernel/time/clocksource.c:656: warning: comparison of distinct pointer type=
-s lacks a cast
-kernel/time/clocksource.c:656: warning: right shift count >=3D width of type
-kernel/time/clocksource.c:656: warning: passing argument 1 of '__div64_32' =
-from incompatible pointer type
-include/asm-generic/div64.h:35: note: expected 'uint64_t *' but argument is=
- of type 'long unsigned int *'
-kernel/time/clockevents.c: In function 'clockevents_config':
-kernel/time/clockevents.c:211: warning: comparison of distinct pointer type=
-s lacks a cast
-kernel/time/clockevents.c:211: warning: right shift count >=3D width of type
-kernel/time/clockevents.c:211: warning: passing argument 1 of '__div64_32' =
-from incompatible pointer type
-include/asm-generic/div64.h:35: note: expected 'uint64_t *' but argument is=
- of type 'long unsigned int *'
-
-This is a 32 bit build.
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__20_May_2011_15_14_31_+1000_5U+o0j1aFoqgAidv
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN1fi3AAoJEDMEi1NhKgbsP48IAJaR84HEt22QdHsKL+BwcG1t
-+yhK+RrrVIesHQfUZl8UzuLRaBFQxp7FtO8HJ9wK0hPkqi96BAzU3MKFN0E6uI1n
-bGUEnOwLDpwO3491ecoJwoR+pjtyyrJeO/h7ehT4OpY66CcCFBvoPOiA0uNx7Vxy
-5rHGOAl773T6o2KBXai63MbC2aeI6bxaucWLH3rhhX9Iyw5Q0MvSUtUbpYNleINX
-Fs0/dNnojbkVHI/jpzNFyu1+CCQGnvM4C+L5F506PEnxwB1Bz5AOtVWVu6chfIEt
-zsv0+0DJ0BsvklhaSGa+d8zTT8h4ai/yzHKORhE9uIY91h1jZpSKlNUBmaMR8Uw=
-=03S+
------END PGP SIGNATURE-----
-
---Signature=_Fri__20_May_2011_15_14_31_+1000_5U+o0j1aFoqgAidv--
+Ben.
