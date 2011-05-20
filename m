@@ -1,52 +1,47 @@
-From: Daniel Hellstrom <daniel@gaisler.com>
-Subject: [PATCH 2/2] SCHED_TTWU_QUEUE is not longer needed since sparc32 now implements IPI
-Date: Fri, 20 May 2011 16:01:10 +0200
-Message-ID: <1305900070-23492-2-git-send-email-daniel@gaisler.com>
-References: <1305900070-23492-1-git-send-email-daniel@gaisler.com>
-Return-path: <sparclinux-owner@vger.kernel.org>
-In-Reply-To: <1305900070-23492-1-git-send-email-daniel@gaisler.com>
-Sender: sparclinux-owner@vger.kernel.org
-To: davem@davemloft.net
-Cc: sparclinux@vger.kernel.org, sfr@canb.auug.org.au, peterz@infradead.org, tglx@linutronix.de, mingo@elte.hu, hpa@zytor.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Fri, 20 May 2011 08:24:59 -0700
+Message-ID: <BANLkTi=Dn_jvJ8mLY0Bc6C1Ptoqa-kJrCg@mail.gmail.com>
+References: <20110520161210.81bbef3a.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:56855 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S933263Ab1ETP1M (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 May 2011 11:27:12 -0400
+In-Reply-To: <20110520161210.81bbef3a.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>
+Cc: David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org
 
-Signed-off-by: Daniel Hellstrom <daniel@gaisler.com>
-Reported-by: Peter Zijlstra <peterz@infradead.org>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
----
- init/Kconfig   |    5 -----
- kernel/sched.c |    2 +-
- 2 files changed, 1 insertions(+), 6 deletions(-)
+On Thu, May 19, 2011 at 11:12 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the final tree, today's linux-next build (sparc32 defconfig)
+> failed like this:
 
-diff --git a/init/Kconfig b/init/Kconfig
-index df64627..a66b656 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -827,11 +827,6 @@ config SCHED_AUTOGROUP
- 	  desktop applications.  Task group autogeneration is currently based
- 	  upon task session.
- 
--config SCHED_TTWU_QUEUE
--	bool
--	depends on !SPARC32
--	default y
--
- config MM_OWNER
- 	bool
- 
-diff --git a/kernel/sched.c b/kernel/sched.c
-index c62acf4..0516af4 100644
---- a/kernel/sched.c
-+++ b/kernel/sched.c
-@@ -2564,7 +2564,7 @@ static void ttwu_queue(struct task_struct *p, int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
- 
--#if defined(CONFIG_SMP) && defined(CONFIG_SCHED_TTWU_QUEUE)
-+#if defined(CONFIG_SMP)
- 	if (sched_feat(TTWU_QUEUE) && cpu != smp_processor_id()) {
- 		ttwu_queue_remote(p, cpu);
- 		return;
--- 
-1.6.0.3
+Hmm. So I had actually done a "allyesconfig" build on x86, which
+annoys me. Because it means that the extra "let's compile everything
+to make sure I didn't break anything" was just almost totally
+worthless.
 
+What seems to be happening is that the x86 <asm/uaccess.h> include
+ends up getting the <linux/prefetch.h>.
+
+I have *no* idea why x86 does that, but x86 wants prefetch.h *so* much
+that it actually includes it first in <asm/uaccess.h> and then *again*
+in each of the 32/64-bit specific <asm/uaccess_[32,64].h> header
+files.
+
+That seems a bit excessive. I don't think x86 should include
+<linux/prefetch.h> at all, since (a) it doesn't actually use any of
+it, and (b) it ended up hiding this problem from me.
+
+Thomas, Ingo, Peter: would you be willing to just remove that stupid
+header file inclusion and fix up the fallout? Instead of having these
+one-by-one patches that come from Stephen testing out breakage on
+other architectures that x86 simply hid due to its odd include files?
+
+                                         Linus
