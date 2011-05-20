@@ -1,63 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tip tree with the sparc tree
-Date: Fri, 20 May 2011 12:18:02 +1000
-Message-ID: <20110520121802.f0bf0fea.sfr@canb.auug.org.au>
-References: <20110517131435.aceca54e.sfr@canb.auug.org.au>
-	<4DD51D37.3010907@gaisler.com>
+Subject: linux-next: manual merge of the tip tree with the kbuild tree
+Date: Fri, 20 May 2011 13:36:31 +1000
+Message-ID: <20110520133631.d663013a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__20_May_2011_12_18_02_+1000_nAKRV0.ug=jjf0er"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44667 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54948 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756951Ab1ETCSI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 May 2011 22:18:08 -0400
-In-Reply-To: <4DD51D37.3010907@gaisler.com>
+	id S1757251Ab1ETDgg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 May 2011 23:36:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Hellstrom <daniel@gaisler.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, Steven Rostedt <srostedt@redhat.com>, Michal Marek <mmarek@suse.cz>
 
---Signature=_Fri__20_May_2011_12_18_02_+1000_nAKRV0.ug=jjf0er
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Daniel,
+Today's linux-next merge of the tip tree got a conflict in Makefile
+between commit 28bc20dccadc ("kbuild: implement several W= levels") from
+the kbuild tree and commit 85356f802225 ("kbuild/recordmcount: Add
+RECORDMCOUNT_WARN to warn about mcount callers") from the tip tree.
 
-On Thu, 19 May 2011 15:37:59 +0200 Daniel Hellstrom <daniel@gaisler.com> wr=
-ote:
->
-> I looked at linux-next and I think the call to the scheduler_ipi is=20
-> missing in the resched interrupt routine. I believe that the below patch=
-=20
-> should be applied ontop of linux-next. Could you include it in the merge=
-=20
-> or what do you suggest I do?
-
-That patch (if correct) needs to be applied to some tree, linux-next just
-takes what it is given.  That patch is really beyond a merge fix as that
-code exists on neither tree.
-
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__20_May_2011_12_18_02_+1000_nAKRV0.ug=jjf0er
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN1c9aAAoJEDMEi1NhKgbsbckH/0PavaBiWw5MwFtaQVp3ETer
-+i7P0XHCU6kSdciKwtLjjyKMaSh7gtU/AIMu630pw/DLXRE+wgEJNN127PNCAk4/
-yKP+nCbP4BgAsJ0lDscIY3y1kqZH2jST/4445PGmH/oXtGPyDXRqRyVi7n5rabtT
-4Nf7vPO/OAJeOigju+nxrywkYf5sVe9pKXNJEv6RfABkYh1UerzTWXoU9EZoidib
-65HxnXP95jAV3ZuqPWEu2MFHsJtQf+O0GLmoDjQC4dG+re6AqeMgwZ5rPEJ7zkpn
-kzxUj8wI62MVtAwhrVNOo3j+ShJ6aiZkrePu8LKq0Dh/Ft4ldXmxD1mKGSW3ZYE=
-=BwDC
------END PGP SIGNATURE-----
-
---Signature=_Fri__20_May_2011_12_18_02_+1000_nAKRV0.ug=jjf0er--
+diff --cc Makefile
+index 107f7c1,a0344a8..0000000
+--- a/Makefile
++++ b/Makefile
+@@@ -1287,11 -1267,8 +1287,12 @@@ help
+  	@echo  '  make O=dir [targets] Locate all output files in "dir", including .config'
+  	@echo  '  make C=1   [targets] Check all c source with $$CHECK (sparse by default)'
+  	@echo  '  make C=2   [targets] Force check of all c source with $$CHECK'
+ -	@echo  '  make W=1   [targets] Enable extra gcc checks'
+ +	@echo  '  make W=n   [targets] Enable extra gcc checks, n=1,2,3 where'
+ +	@echo  '		1: warnings which may be relevant and do not occur too often'
+ +	@echo  '		2: warnings which occur quite often but may still be relevant'
+ +	@echo  '		3: more obscure warnings, can most likely be ignored'
+ +	@echo  '		Multiple levels can be combined with W=12 or W=123'
++ 	@echo  '  make RECORDMCOUNT_WARN=1 [targets] Warn about ignored mcount sections'
+  	@echo  ''
+  	@echo  'Execute "make" or "make all" to build all targets marked with [*] '
+  	@echo  'For further info see the ./README file'
