@@ -1,83 +1,45 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the tip tree with the sparc tree
-Date: Fri, 20 May 2011 10:11:53 +0200
-Message-ID: <1305879113.2466.7231.camel@twins>
-References: <20110517131435.aceca54e.sfr@canb.auug.org.au>
-	 <4DD51D37.3010907@gaisler.com> <1305819306.2466.7228.camel@twins>
-	 <4DD60530.6090900@gaisler.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: linux-next: build failure after merge of the s390 tree
+Date: Fri, 20 May 2011 11:24:52 +0200
+Message-ID: <20110520112452.13cd62a3@mschwide>
+References: <20110520115651.fc0fc63f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:33966 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932489Ab1ETIM1 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 May 2011 04:12:27 -0400
-In-Reply-To: <4DD60530.6090900@gaisler.com>
+Received: from mtagate1.uk.ibm.com ([194.196.100.161]:60810 "EHLO
+	mtagate1.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935441Ab1ETJY4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 May 2011 05:24:56 -0400
+In-Reply-To: <20110520115651.fc0fc63f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Hellstrom <daniel@gaisler.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 2011-05-20 at 08:07 +0200, Daniel Hellstrom wrote:
-> Peter Zijlstra wrote:
+On Fri, 20 May 2011 11:56:51 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> After merging the s390 tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
-> >On Thu, 2011-05-19 at 15:37 +0200, Daniel Hellstrom wrote:
-> >
-> >
-> >  
-> >
-> >>diff --git a/arch/sparc/kernel/smp_32.c b/arch/sparc/kernel/smp_32.c
-> >>index 41102c5..d5b3958 100644
-> >>--- a/arch/sparc/kernel/smp_32.c
-> >>+++ b/arch/sparc/kernel/smp_32.c
-> >>@@ -156,11 +156,11 @@ void arch_send_call_function_ipi_mask(const struct 
-> >>cpumask *mask)
-> >>
-> >> void smp_resched_interrupt(void)
-> >> {
-> >>+       irq_enter();
-> >>+       scheduler_ipi();
-> >>        local_cpu_data().irq_resched_count++;
-> >>-       /*
-> >>-        * do nothing, since it all was about calling re-schedule
-> >>-        * routine called by interrupt return code.
-> >>-        */
-> >>+       irq_exit();
-> >>+       /* re-schedule routine called by interrupt return code. */
-> >> }
-> >>    
-> >>
-> >
-> >That doesn't look like an IPI, that looks like its calls the function on
-> >the local cpu, which is completely pointless.
-> >  
-> >
-> The above function is one of the IPI interrupt handlers.
+> mm/rmap.c:788:54: error: macro "page_test_and_clear_dirty" passed 2 arguments, but takes just 1
+> mm/rmap.c: In function 'page_mkclean':
+> mm/rmap.c:788: error: 'page_test_and_clear_dirty' undeclared (first use in this function)
+> mm/rmap.c:788: error: (Each undeclared identifier is reported only once
+> mm/rmap.c:788: error: for each function it appears in.)
+> mm/rmap.c:983:52: error: macro "page_test_and_clear_dirty" passed 2 arguments, but takes just 1
+> mm/rmap.c: In function 'page_remove_rmap':
+> mm/rmap.c:983: error: 'page_test_and_clear_dirty' undeclared (first use in this function)
 > 
-> The smp_send_reschedule() is called by the generic code, it is 
-> responsible for sending an IRQ to the target CPU, that CPU comes into 
-> smp_resched_interrupt above from the IRQ trap handler. So yes, the 
-> scheduler_ipi() is called on the local CPU, but on the CPU taking the 
-> IPI not the CPU sending the IPI.
+> Caused by commit 4cbfc8b9f58c ("[S390] merge page_test_dirty and page_clear_dirty").
+> 
+> I have used the s390 tree from next-20110519 for today.
 
-Ah, clearly I cannot read well, I actually thought that was
-smp_send_reschedule(). OK, if sparc32 is now actually sending IPIs and
-the above is the handler, then you're completely right, sorry for the
-confusion.
+Oops, sorry about that. Fixed the patch and updated git390.
 
-Also, since sparc32 now grew this IPI, you can remove:
+-- 
+blue skies,
+   Martin.
 
-+++ b/init/Kconfig
-@@ -827,6 +827,11 @@ config SCHED_AUTOGROUP
-          desktop applications.  Task group autogeneration is currently based
-          upon task session.
- 
-+config SCHED_TTWU_QUEUE
-+       bool
-+       depends on !SPARC32
-+       default y
-+
- config MM_OWNER
-        bool
- 
+"Reality continues to ruin my life." - Calvin.
