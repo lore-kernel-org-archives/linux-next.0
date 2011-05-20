@@ -1,76 +1,166 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the final tree
-Date: Fri, 20 May 2011 16:12:10 +1000
-Message-ID: <20110520161210.81bbef3a.sfr@canb.auug.org.au>
+Date: Fri, 20 May 2011 16:18:16 +1000
+Message-ID: <20110520161816.dda6f1fd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36556 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35303 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752956Ab1ETGMU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 May 2011 02:12:20 -0400
+	id S1751732Ab1ETGS0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 May 2011 02:18:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mel@csn.ul.ie>, linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dipankar Sarma <dipankar@in.ibm.com>
 
 Hi all,
 
 After merging the final tree, today's linux-next build (sparc32 defconfig)
 failed like this:
 
-In file included from include/linux/seqlock.h:29,
-                 from include/linux/time.h:8,
-                 from include/linux/timex.h:56,
-                 from include/linux/sched.h:57,
-                 from arch/sparc/kernel/asm-offsets.c:13:
-include/linux/spinlock.h: In function 'spin_unlock_wait':
-include/linux/spinlock.h:360: error: implicit declaration of function 'cpu_relax'
+mm/page_alloc.c: In function '__free_pages_bootmem':
+mm/page_alloc.c:704: error: implicit declaration of function 'prefetchw'
+fs/dcache.c: In function '__d_lookup_rcu':
+fs/dcache.c:1810: error: implicit declaration of function 'prefetch'
+fs/inode.c: In function 'new_inode':
+fs/inode.c:894: error: implicit declaration of function 'spin_lock_prefetch'
+net/core/skbuff.c: In function '__alloc_skb':
+net/core/skbuff.c:184: error: implicit declaration of function 'prefetchw'
+In file included from net/ipv4/ip_forward.c:32:
+include/net/udp.h: In function 'udp_csum_outgoing':
+include/net/udp.h:141: error: implicit declaration of function 'prefetch'
+In file included from net/ipv6/af_inet6.c:48:
+include/net/udp.h: In function 'udp_csum_outgoing':
+include/net/udp.h:141: error: implicit declaration of function 'prefetch'
+net/unix/af_unix.c: In function 'unix_ioctl':
+net/unix/af_unix.c:2066: error: implicit declaration of function 'prefetch'
+In file included from net/sunrpc/xprtsock.c:44:
+include/net/udp.h: In function 'udp_csum_outgoing':
+include/net/udp.h:141: error: implicit declaration of function 'prefetch'
+kernel/rcutiny.c: In function 'rcu_process_callbacks':
+kernel/rcutiny.c:180: error: implicit declaration of function 'prefetch'
 
-Probably the victim of some include changing ... I think it was due to
-commit e66eed651fd1 ("list: remove prefetching from regular list
+Caused by commit e66eed651fd1 ("list: remove prefetching from regular list
 iterators").
 
-I added the following patch for today (this may not be the best solution):
+I added the following patch for today:
 
+>From 1a101eb2766057372006b1b487d05f40fe899478 Mon Sep 17 00:00:00 2001
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 20 May 2011 15:48:17 +1000
-Subject: [PATCH] spinlock_up.h: include asm/processor.h in for cpu_relax
+Date: Fri, 20 May 2011 16:08:48 +1000
+Subject: [PATCH] include prefetch.h where needed
 
 Commit e66eed651fd1 ("list: remove prefetching from regular list
-iterators") removed the include of prefetch.h from list.h and this was
-a path to including asm/processor.h.  We need to include it excplicitly
-now.
+iterators") removed the include of prefetch.h from list.h.
 
-Fixes this build error on sparc32 (at least):
+fixes these build errors on sparc:
 
-In file included from include/linux/seqlock.h:29,
-                 from include/linux/time.h:8,
-                 from include/linux/timex.h:56,
-                 from include/linux/sched.h:57,
-                 from arch/sparc/kernel/asm-offsets.c:13:
-include/linux/spinlock.h: In function 'spin_unlock_wait':
-include/linux/spinlock.h:360: error: implicit declaration of function 'cpu_relax
+mm/page_alloc.c: In function '__free_pages_bootmem':
+mm/page_alloc.c:704: error: implicit declaration of function 'prefetchw'
+fs/dcache.c: In function '__d_lookup_rcu':
+fs/dcache.c:1810: error: implicit declaration of function 'prefetch'
+fs/inode.c: In function 'new_inode':
+fs/inode.c:894: error: implicit declaration of function 'spin_lock_prefetch'
+net/core/skbuff.c: In function '__alloc_skb':
+net/core/skbuff.c:184: error: implicit declaration of function 'prefetchw'
+In file included from net/ipv4/ip_forward.c:32:
+include/net/udp.h: In function 'udp_csum_outgoing':
+include/net/udp.h:141: error: implicit declaration of function 'prefetch'
+In file included from net/ipv6/af_inet6.c:48:
+include/net/udp.h: In function 'udp_csum_outgoing':
+include/net/udp.h:141: error: implicit declaration of function 'prefetch'
+net/unix/af_unix.c: In function 'unix_ioctl':
+net/unix/af_unix.c:2066: error: implicit declaration of function 'prefetch'
+In file included from net/sunrpc/xprtsock.c:44:
+include/net/udp.h: In function 'udp_csum_outgoing':
+include/net/udp.h:141: error: implicit declaration of function 'prefetch'
+kernel/rcutiny.c: In function 'rcu_process_callbacks':
+kernel/rcutiny.c:180: error: implicit declaration of function 'prefetch'
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- include/linux/spinlock_up.h |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ fs/dcache.c            |    1 +
+ fs/inode.c             |    1 +
+ include/linux/skbuff.h |    1 +
+ kernel/rcutiny.c       |    1 +
+ mm/page_alloc.c        |    1 +
+ net/core/skbuff.c      |    1 +
+ 6 files changed, 6 insertions(+), 0 deletions(-)
 
-diff --git a/include/linux/spinlock_up.h b/include/linux/spinlock_up.h
-index b14f6a9..a26e2fb 100644
---- a/include/linux/spinlock_up.h
-+++ b/include/linux/spinlock_up.h
-@@ -5,6 +5,8 @@
- # error "please don't include this file directly"
- #endif
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 22a0ef4..18b2a1f 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -35,6 +35,7 @@
+ #include <linux/hardirq.h>
+ #include <linux/bit_spinlock.h>
+ #include <linux/rculist_bl.h>
++#include <linux/prefetch.h>
+ #include "internal.h"
  
-+#include <asm/processor.h>	/* for cpu_relax() */
-+
  /*
-  * include/linux/spinlock_up.h - UP-debug version of spinlocks.
-  *
+diff --git a/fs/inode.c b/fs/inode.c
+index 33c963d..c77081f 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -26,6 +26,7 @@
+ #include <linux/posix_acl.h>
+ #include <linux/ima.h>
+ #include <linux/cred.h>
++#include <linux/prefetch.h>
+ #include "internal.h"
+ 
+ /*
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 79aafbb..f963b8f 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -29,6 +29,7 @@
+ #include <linux/rcupdate.h>
+ #include <linux/dmaengine.h>
+ #include <linux/hrtimer.h>
++#include <linux/prefetch.h>
+ 
+ /* Don't change this without changing skb_csum_unnecessary! */
+ #define CHECKSUM_NONE 0
+diff --git a/kernel/rcutiny.c b/kernel/rcutiny.c
+index 421abfd..7bbac7d 100644
+--- a/kernel/rcutiny.c
++++ b/kernel/rcutiny.c
+@@ -35,6 +35,7 @@
+ #include <linux/init.h>
+ #include <linux/time.h>
+ #include <linux/cpu.h>
++#include <linux/prefetch.h>
+ 
+ /* Controls for rcu_kthread() kthread, replacing RCU_SOFTIRQ used previously. */
+ static struct task_struct *rcu_kthread_task;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 44b3d7b..9d5498e 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -54,6 +54,7 @@
+ #include <trace/events/kmem.h>
+ #include <linux/ftrace_event.h>
+ #include <linux/memcontrol.h>
++#include <linux/prefetch.h>
+ 
+ #include <asm/tlbflush.h>
+ #include <asm/div64.h>
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 3e934fe..46cbd28 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -57,6 +57,7 @@
+ #include <linux/init.h>
+ #include <linux/scatterlist.h>
+ #include <linux/errqueue.h>
++#include <linux/prefetch.h>
+ 
+ #include <net/protocol.h>
+ #include <net/dst.h>
 -- 
 1.7.5.1
 
