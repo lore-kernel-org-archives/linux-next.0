@@ -1,55 +1,82 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: Fw: [PATCH -next RESEND/still needed] staging: altera-jtag needs
- delay.h
-Date: Thu, 19 May 2011 13:41:41 -0700
-Message-ID: <4DD58085.80801@oracle.com>
-References: <20110328082305.c6fa41d9.randy.dunlap@oracle.com> <4DD56DDE.6060003@infradead.org> <20110519203916.GA28736@suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Fri, 20 May 2011 11:15:16 +1000
+Message-ID: <20110520111516.784c0c9c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:36005 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933727Ab1ESUmF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2011 16:42:05 -0400
-In-Reply-To: <20110519203916.GA28736@suse.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37980 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933379Ab1ETBPV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 May 2011 21:15:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@suse.de>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Igor M. Liplianin" <liplianin@netup.ru>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/19/11 13:39, Greg KH wrote:
-> On Thu, May 19, 2011 at 04:22:06PM -0300, Mauro Carvalho Chehab wrote:
->> Em 28-03-2011 12:23, Randy Dunlap escreveu:
->>> From: Randy Dunlap <randy.dunlap@oracle.com>
->>>
->>> altera-jtag.c needs to include <linux/delay.h> to fix a build error:
->>>
->>> drivers/staging/altera-stapl/altera-jtag.c:398: error: implicit declaration of function 'udelay'
->>>
->>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->> Acked-by: Mauro Carvalho Chehab <mchehab@redhat.com>
->>
->>> Cc: Igor M. Liplianin <liplianin@netup.ru>
->>> ---
->>>  drivers/staging/altera-stapl/altera-jtag.c |    1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> Somehow I was supposed to know to send this to Mauro instead of to Greg,
->>> but I don't see anything in drivers/staging/altera-stapl/ that says that.
->>
->> Ah, yes, we need to add a readme file there stating about that.
->>
->> Greg, you may add it on your tree, or if you prefer, I can just add here for
->> my next upstream pull.
-> 
-> I see this in my tree already, git commit
-> 92ce52695ccf2b6c4ef7eb02e1bee1bcbf5fde89, what happened to need this
-> again?
+Hi Linus,
 
-I think that Mauro is just replying to old emails (guess he's just
-trying to catch up...).
+With just Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
+failed like this:
+
+In file included from arch/powerpc/mm/fault.c:18:
+include/linux/signal.h:239: error: 'struct task_struct' declared inside parameter list
+include/linux/signal.h:239: error: its scope is only this definition or declaration, which is probably not what you want
+include/linux/signal.h:240: error: 'struct task_struct' declared inside parameter list
+include/linux/signal.h:241: error: 'struct task_struct' declared inside parameter list
+include/linux/signal.h:250: error: 'struct task_struct' declared inside parameter list
+include/linux/signal.h:254: error: 'struct task_struct' declared inside parameter list
+cc1: warnings being treated as errors
+
+and so on ...
+
+reverting commit e66eed651fd1 ("list: remove prefetching from regular
+list iterators").  This is, of course, why we like to put stuff into
+linux-next before it goes into your tree :-)
+
+I have applied this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 20 May 2011 11:11:53 +1000
+Subject: [PATCH] signal.h need a definition of struct task_struct
+
+fixes these build errors on powerpc:
+
+In file included from arch/powerpc/mm/fault.c:18:
+include/linux/signal.h:239: error: 'struct task_struct' declared inside parameter list
+include/linux/signal.h:239: error: its scope is only this definition or declaration, which is probably not what you want
+include/linux/signal.h:240: error: 'struct task_struct' declared inside parameter list
+include/linux/signal.h:241: error: 'struct task_struct' declared inside parameter list
+include/linux/signal.h:250: error: 'struct task_struct' declared inside parameter list
+include/linux/signal.h:254: error: 'struct task_struct' declared inside parameter list
+cc1: warnings being treated as errors
+
+Exposed by commit e66eed651fd1 ("list: remove prefetching from regular
+list iterators").
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/signal.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index fcd2b14..29a68ac 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -7,6 +7,8 @@
+ #ifdef __KERNEL__
+ #include <linux/list.h>
+ 
++struct task_struct;
++
+ /* for sysctl */
+ extern int print_fatal_signals;
+ /*
+-- 
+1.7.5.1
 
 -- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
