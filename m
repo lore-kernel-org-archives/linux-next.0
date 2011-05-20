@@ -1,48 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the kbuild tree
-Date: Fri, 20 May 2011 13:36:31 +1000
-Message-ID: <20110520133631.d663013a.sfr@canb.auug.org.au>
+From: Steven Rostedt <srostedt@redhat.com>
+Subject: Re: linux-next: manual merge of the tip tree with the kbuild tree
+Date: Thu, 19 May 2011 23:54:26 -0400
+Message-ID: <1305863666.2886.0.camel@fedora>
+References: <20110520133631.d663013a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54948 "EHLO smtps.tip.net.au"
+Received: from mx1.redhat.com ([209.132.183.28]:24351 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757251Ab1ETDgg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 May 2011 23:36:36 -0400
+	id S933275Ab1ETDy4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 May 2011 23:54:56 -0400
+In-Reply-To: <20110520133631.d663013a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, Steven Rostedt <srostedt@redhat.com>, Michal Marek <mmarek@suse.cz>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, Michal Marek <mmarek@suse.cz>
 
-Hi all,
+On Fri, 2011-05-20 at 13:36 +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in Makefile
+> between commit 28bc20dccadc ("kbuild: implement several W= levels") from
+> the kbuild tree and commit 85356f802225 ("kbuild/recordmcount: Add
+> RECORDMCOUNT_WARN to warn about mcount callers") from the tip tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-Today's linux-next merge of the tip tree got a conflict in Makefile
-between commit 28bc20dccadc ("kbuild: implement several W= levels") from
-the kbuild tree and commit 85356f802225 ("kbuild/recordmcount: Add
-RECORDMCOUNT_WARN to warn about mcount callers") from the tip tree.
+Acked-by: Steven Rostedt <rostedt@goodmis.org>
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc Makefile
-index 107f7c1,a0344a8..0000000
---- a/Makefile
-+++ b/Makefile
-@@@ -1287,11 -1267,8 +1287,12 @@@ help
-  	@echo  '  make O=dir [targets] Locate all output files in "dir", including .config'
-  	@echo  '  make C=1   [targets] Check all c source with $$CHECK (sparse by default)'
-  	@echo  '  make C=2   [targets] Force check of all c source with $$CHECK'
- -	@echo  '  make W=1   [targets] Enable extra gcc checks'
- +	@echo  '  make W=n   [targets] Enable extra gcc checks, n=1,2,3 where'
- +	@echo  '		1: warnings which may be relevant and do not occur too often'
- +	@echo  '		2: warnings which occur quite often but may still be relevant'
- +	@echo  '		3: more obscure warnings, can most likely be ignored'
- +	@echo  '		Multiple levels can be combined with W=12 or W=123'
-+ 	@echo  '  make RECORDMCOUNT_WARN=1 [targets] Warn about ignored mcount sections'
-  	@echo  ''
-  	@echo  'Execute "make" or "make all" to build all targets marked with [*] '
-  	@echo  'For further info see the ./README file'
+-- Steve
