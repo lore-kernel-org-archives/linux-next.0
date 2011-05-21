@@ -1,43 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH 1/2] Fix merge problem between sparc32 IPI patches and
- schedule_ipi() callback
-Date: Fri, 20 May 2011 16:13:01 -0400 (EDT)
-Message-ID: <20110520.161301.913577691507123777.davem@davemloft.net>
-References: <1305900070-23492-1-git-send-email-daniel@gaisler.com>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Subject: Re: [PATCH -next] regulator: fix 88pm8607.c printk format warning
+Date: Sat, 21 May 2011 12:51:03 +0100
+Message-ID: <1305978663.3317.7.camel@odin>
+References: <20110518145412.f6cba4ef.sfr@canb.auug.org.au>
+	 <20110518100722.76bd6fb6.randy.dunlap@oracle.com>
+	 <20110518194311.GB5077@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:43315 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935756Ab1ETUPj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 May 2011 16:15:39 -0400
-In-Reply-To: <1305900070-23492-1-git-send-email-daniel@gaisler.com>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:33174 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755244Ab1EULvI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 21 May 2011 07:51:08 -0400
+In-Reply-To: <20110518194311.GB5077@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: daniel@gaisler.com
-Cc: sparclinux@vger.kernel.org, sfr@canb.auug.org.au, peterz@infradead.org, tglx@linutronix.de, mingo@elte.hu, hpa@zytor.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Haojian Zhuang <haojian.zhuang@marvell.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-From: Daniel Hellstrom <daniel@gaisler.com>
-Date: Fri, 20 May 2011 16:01:09 +0200
-
-> Fixes a merge conflict in arch/sparc/kernel/smp_32.c between commit
-> d6d048192b1d ("sparc32: implement SMP IPIs using the generic functions")
-> from the sparc tree and commit 184748cc50b2 ("sched: Provide
-> scheduler_ipi() callback in response to smp_send_reschedule()").
+On Wed, 2011-05-18 at 12:43 -0700, Mark Brown wrote:
+> On Wed, May 18, 2011 at 10:07:22AM -0700, Randy Dunlap wrote:
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > Fix printk format warning (seen on x86_64) and change to unsigned
+> > output format:
+> > 
+> > drivers/regulator/88pm8607.c:417: warning: format '%d' expects type 'int', but argument 3 has type 'resource_size_t'
 > 
-> The patch adds a call to scheduler_ipi() from the resched IPI handler in
-> sparc32.
-> 
-> Signed-off-by: Daniel Hellstrom <daniel@gaisler.com>
+> Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
-What I did to handle this was merge in enough of the upstream commit
-by Peter such that both of these patches apply, via:
+Samuel, this doesn't apply against regulator-next. Iirc, the patches
+this is against went via mfd-next ? If, so any chance you could take
+this ?
 
-git merge --no-commit 317f394160e9beb97d19a84c39b7e5eb3d7815a8
+Thanks !
 
-then I added patch #1 into the merge commit.
-
-Next, I applied patch #2 afterwards.
-
-So we should be all set when I push this out to Linus, thanks!
+Liam  
