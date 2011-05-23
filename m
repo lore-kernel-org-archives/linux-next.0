@@ -1,55 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings in Linus' tree
-Date: Mon, 23 May 2011 11:25:29 +1000
-Message-ID: <20110523112529.c2dbc445.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the i.MX tree with the  tree
+Date: Mon, 23 May 2011 11:45:42 +1000
+Message-ID: <20110523114542.9868cba1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__23_May_2011_11_25_29_+1000_vWpmPjks0r5+0H5t"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "H. Peter Anvin" <hpa@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__23_May_2011_11_45_42_+1000_9ptZ=/jHf+.VrwJW"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54536 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754086Ab1EWBpr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 22 May 2011 21:45:47 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Mon__23_May_2011_11_25_29_+1000_vWpmPjks0r5+0H5t
+--Signature=_Mon__23_May_2011_11_45_42_+1000_9ptZ=/jHf+.VrwJW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Sascha,
 
-After merging the origin tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+Today's linux-next merge of the i.MX tree got a conflict in
+arch/arm/mach-imx/Kconfig arch/arm/plat-mxc/Kconfig between the "same"
+commits from the arm tree and the i.MX tree.
 
-arch/x86/kernel/ftrace.c: In function 'ftrace_make_nop':
-arch/x86/kernel/ftrace.c:308: warning: assignment discards qualifiers from =
-pointer target type
-arch/x86/kernel/ftrace.c: In function 'ftrace_make_call':
-arch/x86/kernel/ftrace.c:318: warning: assignment discards qualifiers from =
-pointer target type
-
-Introduced by commit dc326fca2b64 ("x86, cpu: Clean up and unify the NOP
-selection infrastructure").
-
+Please don't rearrange commits when upstreaming them - or if you do, then
+update the source tree as well.  I am assuming that the commits that are
+in the arm tree amount to the same as what has been int the i.MX tree for
+some time.  There are a couple of extra commits in the i.MX tree, so I
+just used the i.MX version of those files.   This may not work.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__23_May_2011_11_25_29_+1000_vWpmPjks0r5+0H5t
+--Signature=_Mon__23_May_2011_11_45_42_+1000_9ptZ=/jHf+.VrwJW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEbBAEBAgAGBQJN2beJAAoJEDMEi1NhKgbsAjAH9iW670Q4h5jQx0sQNd/KTjh5
-gijK3F932F4SvaxFWRrw81lCYCNeOsBGndnqXRgMib6Afr9i9A4fZ4xcbrCa2Bg3
-kOClKDUdjmopQH80tbVM+TBV+sUU/oZEg53FQ2qLh/Up1YIe+dwvR/mT5PTXMmkc
-qLsHQzJQ8BzenW63Ee5a3MWGfCoyBg2QBTqke9jaLgSfEpPDBo1OTQ6tuX/W+/eh
-TXBsURsYReZVRWTLta1vFpQlpRt+FJtJzC9ioS30CcSz46QP7PL6NB8guUYE0193
-a4UynFmZs5KkOYS+5VZqUGBdGxkj1e2MD3kQU6QMkujn0hcfNguS2/iZBWuLiQ==
-=9x5g
+iQEcBAEBAgAGBQJN2bxGAAoJEDMEi1NhKgbswRQH/3cerz52t0EdU/DoG+3SYijl
+KfYYGkGvJysUAsePcQslt0D4UPDKLmsNeIAnj65Niaa6gkpGvbMyOPZHDkD3JFSQ
+My7HQZBXCRC+Q6gQaPgdkP7P9XEvwwCL8Dm1Y9DIykxBBZg3kTkPGsYu+0bxA0He
+/mB/5A7DQ65KFetMIg9xPBbP5Rg+6X0OQODErCQX1EH+WV6u5MrKkUeeB9ouibH6
+83T9GsUbP1vt9mbMCRSV1yR8YZr5aJNs2BB0I+uA8ZhPrfN7HQbBAJCAP42Dfuj/
+8L+xyjyzCCFEqjmZHONMaTX6xHPvcZ4GMz0aaQn8auByLKXDHtGr8noKg1o8AbQ=
+=vGu5
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_May_2011_11_25_29_+1000_vWpmPjks0r5+0H5t--
+--Signature=_Mon__23_May_2011_11_45_42_+1000_9ptZ=/jHf+.VrwJW--
