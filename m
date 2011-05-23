@@ -1,58 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the suspend tree
-Date: Mon, 23 May 2011 15:06:36 +1000
-Message-ID: <20110523150636.ccd83777.sfr@canb.auug.org.au>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Mon, 23 May 2011 08:17:14 +0300
+Message-ID: <1306127834.2630.154.camel@localhost>
+References: <20110523145646.62152db5.sfr@canb.auug.org.au>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__23_May_2011_15_06_36_+1000_kxuSAlpJ1ioUnjhU"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40245 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752339Ab1EWFGk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 May 2011 01:06:40 -0400
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:59242 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751916Ab1EWFVZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 May 2011 01:21:25 -0400
+In-Reply-To: <20110523145646.62152db5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mark gross <markgross@thegnar.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__23_May_2011_15_06_36_+1000_kxuSAlpJ1ioUnjhU
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2011-05-23 at 14:56 +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the final tree, today's linux-next build (powerpc
+> ppc44x_defconfig) failed like this:
 
-Hi Rafael,
+Hi,
 
-After merging the suspend tree, today's linux-next build (i386 defconfig
-among others) produced this warning:
-
-kernel/pm_qos_params.c: In function 'pm_qos_power_write':
-kernel/pm_qos_params.c:420: warning: passing argument 3 of 'kstrtol' from i=
-ncompatible pointer type
-include/linux/kernel.h:210: note: expected 'long int *' but argument is of =
-type 's32 *'
-
-Intreoduced by commit 365daa955e03 ("PM: Correct PM QOS's user mode
-interface to work with ascii input per").
+should be fixed now, thanks and apologies for the breakage.
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__23_May_2011_15_06_36_+1000_kxuSAlpJ1ioUnjhU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN2etcAAoJEDMEi1NhKgbsEu8H/R1wg/xsnVPyfw0hHU3m9oGu
-h1KkEdSlsUwO4Fwl1AemhsfIuSVjbsxDftFPMgK/6TLjrydTVT3zwvdZ/GAIJLGX
-N/I9lzGRCN0mjAc5LHNcHD7vhN27YB6sb5dy2d3SEYPMgZ2+HiIk2f+mBA8akCqy
-NaWpTVKrXtKAzfzI238nkxcSJJLXH6K9oc/eSSnNpWQ5xi/njZDj5U3ljs6kovA0
-PpqXM2zeWZloEC37DakOUHmLG6DrZS9uHqmzduwSSi1mHpe5u8J7Sj6KxJe92r5p
-UeSUf1ipXymzIo6voPFsBN5VWa3CvCxrLXNYl8ww+T5TPw19YKhk6fZEn9io6Lg=
-=ha5Q
------END PGP SIGNATURE-----
-
---Signature=_Mon__23_May_2011_15_06_36_+1000_kxuSAlpJ1ioUnjhU--
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
