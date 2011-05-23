@@ -1,40 +1,62 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for May 23 (sound/soc/codecs)
-Date: Mon, 23 May 2011 13:48:15 -0700
-Message-ID: <20110523134815.fb87933a.randy.dunlap@oracle.com>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: [PATCH -next] target: fix tfc_io.c printk format warning
+Date: Mon, 23 May 2011 13:47:24 -0700
+Message-ID: <1306183644.29724.55.camel@haakon2.linux-iscsi.org>
 References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
+	 <20110523113555.e37bc856.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-next@vger.kernel.org, Harald@alsa-project.org, LKML <linux-kernel@vger.kernel.org>, Welte <laforge@gnufiish.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linux-iscsi.org ([67.23.28.174]:35927 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752824Ab1EWUzn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 May 2011 16:55:43 -0400
+In-Reply-To: <20110523113555.e37bc856.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Patil, Kiran" <kiran.patil@intel.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
 
-On Mon, 23 May 2011 15:45:18 +1000 Stephen Rothwell wrote:
-
-> Hi all,
+On Mon, 2011-05-23 at 11:35 -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Changes since 20110520:
+> Fix printk format warning:
+> 
+> drivers/target/tcm_fc/tfc_io.c:209: warning: format '%x' expects type 'unsigned int', but argument 5 has type 'size_t'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
 
-when CONFIG_GPIOLIB is not enabled
-and CONFIG_GENERIC_GPIO is not enabled:
+Hey Randy,
 
-sound/soc/codecs/ak4641.c:524: error: 'GPIOF_OUT_INIT_LOW' undeclared (first use in this function)
-sound/soc/codecs/wm8915.c:2857: error: 'GPIOF_OUT_INIT_LOW' undeclared (first use in this function)
+Kiran (CC'ed) was going to include this along with a bugfix patch for
+scsi-misc, but it's probably easier to just change this in linux-next
+now..
 
+Signed-off-by: Nicholas A. Bellinger <nab@linux-iscsi.org>
 
+>  drivers/target/tcm_fc/tfc_io.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> and please put an entry in the MAINTAINERS file for drivers/target/
+> 
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+<nod>, sending out that patch shortly.
+
+Thanks,
+
+--nab
+
+> 
+> --- linux-next-20110523.orig/drivers/target/tcm_fc/tfc_io.c
+> +++ linux-next-20110523/drivers/target/tcm_fc/tfc_io.c
+> @@ -203,7 +203,7 @@ int ft_queue_data_in(struct se_cmd *se_c
+>  			/* XXX For now, initiator will retry */
+>  			if (printk_ratelimit())
+>  				printk(KERN_ERR "%s: Failed to send frame %p, "
+> -						"xid <0x%x>, remaining <0x%x>, "
+> +						"xid <0x%x>, remaining <0x%zx>, "
+>  						"lso_max <0x%x>\n",
+>  						__func__, fp, ep->xid,
+>  						remaining, lport->lso_max);
