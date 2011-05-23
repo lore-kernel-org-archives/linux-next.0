@@ -1,58 +1,47 @@
-From: Eduardo Silva <edsiper@gmail.com>
-Subject: Re: linux-next: build warnings in Linus' tree
-Date: Sun, 22 May 2011 22:31:36 -0400
-Message-ID: <BANLkTimq+cFfHYx183v_RvH6hAaOmJZ-Mg@mail.gmail.com>
-References: <20110523112529.c2dbc445.sfr@canb.auug.org.au>
+From: viresh kumar <viresh.kumar@st.com>
+Subject: Re: [PATCH -next] ata: PATA_ARASAN_CF depends on DMADEVICES
+Date: Mon, 23 May 2011 09:05:07 +0530
+Message-ID: <4DD9D5EB.3060807@st.com>
+References: <20110520165507.cba539d5.sfr@canb.auug.org.au> <20110522173227.5ba18817.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-px0-f173.google.com ([209.85.212.173]:37490 "EHLO
-	mail-px0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755856Ab1EWCbh convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 22 May 2011 22:31:37 -0400
-In-Reply-To: <20110523112529.c2dbc445.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "H. Peter Anvin" <hpa@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110522173227.5ba18817.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Jeff Garzik <jgarzik@pobox.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sun, May 22, 2011 at 9:25 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi all,
->
-> After merging the origin tree, today's linux-next build (x86_64
-> allmodconfig) produced these warnings:
->
-> arch/x86/kernel/ftrace.c: In function 'ftrace_make_nop':
-> arch/x86/kernel/ftrace.c:308: warning: assignment discards qualifiers=
- from pointer target type
-> arch/x86/kernel/ftrace.c: In function 'ftrace_make_call':
-> arch/x86/kernel/ftrace.c:318: warning: assignment discards qualifiers=
- from pointer target type
+On 05/23/2011 06:02 AM, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix kconfig unmet dependency warning:
+> 
+> warning: (PATA_ARASAN_CF && VIDEO_TIMBERDALE && SND_SOC_SH4_SIU) selects DMA_ENGINE which has unmet direct dependencies (DMADEVICES)
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Viresh Kumar <viresh.kumar@st.com>
+> ---
+>  drivers/ata/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20110520.orig/drivers/ata/Kconfig
+> +++ linux-next-20110520/drivers/ata/Kconfig
+> @@ -313,6 +313,7 @@ config PATA_AMD
+>  
+>  config PATA_ARASAN_CF
+>  	tristate "ARASAN CompactFlash PATA Controller Support"
+> +	depends on DMADEVICES
+>  	select DMA_ENGINE
 
-discussing ftrace.c warnings on this thread:
+Randy,
 
-   https://lkml.org/lkml/2011/5/22/158
+I think we can also remove this "select DMA_ENGINE" line.
 
-regards,
+Otherwise, it looks fine.
 
+Acked-by: Viresh Kumar <viresh.kumar@st.com>
 
->
-> Introduced by commit dc326fca2b64 ("x86, cpu: Clean up and unify the =
-NOP
-> selection infrastructure").
->
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
-> http://www.canb.auug.org.au/~sfr/
->
-
-
-
---=20
-Eduardo Silva
-http://edsiper.linuxchile.cl
-http://www.monkey-project.com
+-- 
+viresh
