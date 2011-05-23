@@ -1,80 +1,82 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [bloat] Measuring header file bloat effects on kernel build
- performance: a more than 2x slowdown ...
-Date: Mon, 23 May 2011 13:51:38 +0200
-Message-ID: <20110523115138.GA17196@elte.hu>
-References: <20110520161210.81bbef3a.sfr@canb.auug.org.au>
- <BANLkTi=Dn_jvJ8mLY0Bc6C1Ptoqa-kJrCg@mail.gmail.com>
- <20110523090918.GA5474@elte.hu>
- <BANLkTi=Vbr+DRBy6sa7omGpvAb0uGunYMA@mail.gmail.com>
- <20110523105522.GC24674@elte.hu>
- <BANLkTinh8raz_96vgdgzzeeG+1TM=s5eVw@mail.gmail.com>
+From: mark gross <markgross@thegnar.org>
+Subject: Re: linux-next: build warning after merge of the suspend tree
+Date: Mon, 23 May 2011 07:18:46 -0700
+Message-ID: <20110523141846.GA8122@gvim.org>
+References: <20110523150636.ccd83777.sfr@canb.auug.org.au>
+Reply-To: markgross@thegnar.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:45046 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754546Ab1EWLv4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 May 2011 07:51:56 -0400
+Received: from mail-pv0-f174.google.com ([74.125.83.174]:42068 "EHLO
+	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753004Ab1EWOSv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 May 2011 10:18:51 -0400
 Content-Disposition: inline
-In-Reply-To: <BANLkTinh8raz_96vgdgzzeeG+1TM=s5eVw@mail.gmail.com>
+In-Reply-To: <20110523150636.ccd83777.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mark gross <markgross@thegnar.org>
 
-
-* Alexey Dobriyan <adobriyan@gmail.com> wrote:
-
-> On Mon, May 23, 2011 at 1:55 PM, Ingo Molnar <mingo@elte.hu> wrote:
-> >
-> > * Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> >
-> >> On Mon, May 23, 2011 at 12:09 PM, Ingo Molnar <mingo@elte.hu> wrote:
+On Mon, May 23, 2011 at 03:06:36PM +1000, Stephen Rothwell wrote:
+> Hi Rafael,
 > 
-> >> > Anway, what i tried to demonstrate with this mail how much *real* slowdown
-> >> > in the kernel build our current header file bloat is causing. We could
-> >> > literally halve our kernel build times if we fixed this!
-> >>
-> >> News at 11!
-> >
-> > I have not seen *actual hard numbers* measured before, so how exactly is this
-> > news at 11? So i think your condescending reply is neither fair nor justified.
+> After merging the suspend tree, today's linux-next build (i386 defconfig
+> among others) produced this warning:
 > 
-> That's because the final number itself neither important nor interesting.
-
-I disagree rather violently: it's obviously important to know whether it's a 
-marginal 3% or the massive 50%+ i measured ...
-
-It's also important to know whether latest GCC got faster at parsing away 
-~30-40 KLOC of irrelevant crap. (it didn't)
-
-> It's enough to know it's big enough.
+> kernel/pm_qos_params.c: In function 'pm_qos_power_write':
+> kernel/pm_qos_params.c:420: warning: passing argument 3 of 'kstrtol' from incompatible pointer type
+> include/linux/kernel.h:210: note: expected 'long int *' but argument is of type 's32 *'
 > 
-> Even removing "extern" from prototypes has small but noticeable effect, 
-> you're talking about real headers.
-> 
-> Linus dropped few header cleanups of mine, I don't even know when is the 
-> right time to send them now.
+> Intreoduced by commit 365daa955e03 ("PM: Correct PM QOS's user mode
+> interface to work with ascii input per").
 
-I do not think your header cleanups are discouraged by Linus, at all (i think 
-they were always pretty nice and valuable) - i think you misinterpreted the 
-did-not-get-applied events:
+Gah!  I'm sorry about that.
 
-Firstly, i've seen a fair amount of avoidable breakage from your header 
-cleanups, which are really testable with relatively simple means (key configs 
-and randconfig) - so you could either try to improve your testing, or you could 
-try to team up with someone better at testing to produce less buggy patches, or 
-you could push it into linux-next.
+attached is a fix.
 
-But my main guess is that it's mostly just bad timing: if you don't work 
-through maintainer trees (which you don't and sometimes you can't) you don't 
-want to push when there's lots of pending trees (for example right now in the 
-merge window), nor when possibly-broken cleanups are frowned upon (-rc3 or 
-later).
 
--rc1 to -rc2 would be a pretty safe and large window to send such bits IMO.
+--mark
 
-Thanks,
+signed-off-by:markgross <markgross@thegnar.org>
 
-	Ingo
+
+
+>From a8f0587b9ae598be5ca4c3cdda4e0ced6ca9baaf Mon Sep 17 00:00:00 2001
+From: mgross <mgross@cr48>
+Date: Mon, 23 May 2011 07:14:09 -0700
+Subject: [PATCH] clean up a compile time warning in the use of strict_strtol but that was
+ passing an s32 * when it should be passing a long *
+
+---
+ kernel/pm_qos_params.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/pm_qos_params.c b/kernel/pm_qos_params.c
+index d61ecf3..dd37c56 100644
+--- a/kernel/pm_qos_params.c
++++ b/kernel/pm_qos_params.c
+@@ -405,6 +405,7 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
+ 		size_t count, loff_t *f_pos)
+ {
+ 	s32 value;
++	long safe_int;
+ 	int x;
+ 	char ascii_value[11];
+ 	struct pm_qos_request_list *pm_qos_req;
+@@ -417,10 +418,11 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
+ 		ascii_value[count] = 0;
+ 		if (copy_from_user(ascii_value, buf, count))
+ 			return -EFAULT;
+-		if ((x=strict_strtol(ascii_value, 16, &value)) != 0){
+-			pr_debug("%s, 0x%x, 0x%x\n",ascii_value, value, x);
++		if ((x=strict_strtol(ascii_value, 16, &safe_int)) != 0){
++			pr_debug("%s, 0x%lx, 0x%x\n",ascii_value, safe_int, x);
+ 			return -EINVAL;
+ 		}
++		value = (s32) safe_int;
+ 	} else
+ 		return -EINVAL;
+ 
+-- 
+1.7.4.1
