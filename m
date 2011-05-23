@@ -1,39 +1,55 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] media: fix kconfig dependency warning for
- VIDEO_TIMBERDALE
-Date: Sun, 22 May 2011 17:34:12 -0700
-Message-ID: <20110522173412.21948fba.randy.dunlap@oracle.com>
-References: <20110520165507.cba539d5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings in Linus' tree
+Date: Mon, 23 May 2011 11:25:29 +1000
+Message-ID: <20110523112529.c2dbc445.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__23_May_2011_11_25_29_+1000_vWpmPjks0r5+0H5t"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110520165507.cba539d5.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Pelagicore AB <info@pelagicore.com>, mchehab@infradead.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
+To: "H. Peter Anvin" <hpa@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Mon__23_May_2011_11_25_29_+1000_vWpmPjks0r5+0H5t
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix kconfig unmet dependency warning:
+Hi all,
 
-warning: (VIDEO_TIMBERDALE) selects TIMB_DMA which has unmet direct dependencies (DMADEVICES && (MFD_TIMBERDALE || HAS_IOMEM))
+After merging the origin tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Pelagicore AB <info@pelagicore.com>
----
- drivers/media/video/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+arch/x86/kernel/ftrace.c: In function 'ftrace_make_nop':
+arch/x86/kernel/ftrace.c:308: warning: assignment discards qualifiers from =
+pointer target type
+arch/x86/kernel/ftrace.c: In function 'ftrace_make_call':
+arch/x86/kernel/ftrace.c:318: warning: assignment discards qualifiers from =
+pointer target type
 
---- linux-next-20110520.orig/drivers/media/video/Kconfig
-+++ linux-next-20110520/drivers/media/video/Kconfig
-@@ -683,7 +683,7 @@ config VIDEO_HEXIUM_GEMINI
- 
- config VIDEO_TIMBERDALE
- 	tristate "Support for timberdale Video In/LogiWIN"
--	depends on VIDEO_V4L2 && I2C
-+	depends on VIDEO_V4L2 && I2C && DMADEVICES
- 	select DMA_ENGINE
- 	select TIMB_DMA
- 	select VIDEO_ADV7180
+Introduced by commit dc326fca2b64 ("x86, cpu: Clean up and unify the NOP
+selection infrastructure").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__23_May_2011_11_25_29_+1000_vWpmPjks0r5+0H5t
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEbBAEBAgAGBQJN2beJAAoJEDMEi1NhKgbsAjAH9iW670Q4h5jQx0sQNd/KTjh5
+gijK3F932F4SvaxFWRrw81lCYCNeOsBGndnqXRgMib6Afr9i9A4fZ4xcbrCa2Bg3
+kOClKDUdjmopQH80tbVM+TBV+sUU/oZEg53FQ2qLh/Up1YIe+dwvR/mT5PTXMmkc
+qLsHQzJQ8BzenW63Ee5a3MWGfCoyBg2QBTqke9jaLgSfEpPDBo1OTQ6tuX/W+/eh
+TXBsURsYReZVRWTLta1vFpQlpRt+FJtJzC9ioS30CcSz46QP7PL6NB8guUYE0193
+a4UynFmZs5KkOYS+5VZqUGBdGxkj1e2MD3kQU6QMkujn0hcfNguS2/iZBWuLiQ==
+=9x5g
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__23_May_2011_11_25_29_+1000_vWpmPjks0r5+0H5t--
