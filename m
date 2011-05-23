@@ -1,33 +1,48 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for May 23 (hwmon/coretemp.c)
-Date: Mon, 23 May 2011 10:49:58 -0700
-Message-ID: <20110523104958.98ef4d1a.randy.dunlap@oracle.com>
-References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: Re: [PATCH -next] x86: apic_flat_64.c needs module.h
+Date: Mon, 23 May 2011 21:51:39 +0400
+Message-ID: <4DDA9EAB.40304@gmail.com>
+References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au> <20110523104300.dd532a99.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:57619 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755574Ab1EWRvQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 May 2011 13:51:16 -0400
-In-Reply-To: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Rudolf Marek <r.marek@assembler.cz>, lm-sensors@lm-sensors.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110523104300.dd532a99.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Suresh Siddha <suresh.b.siddha@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 23 May 2011 15:45:18 +1000 Stephen Rothwell wrote:
-
-> Hi all,
+On 05/23/2011 09:43 PM, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Changes since 20110520:
+> apic_flat_64.c needs to include module.h to fix these warnings:
+> 
+> arch/x86/kernel/apic/apic_flat_64.c:31: warning: data definition has no type or storage class
+> arch/x86/kernel/apic/apic_flat_64.c:31: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+> arch/x86/kernel/apic/apic_flat_64.c:31: warning: parameter names (without types) in function declaration
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>  arch/x86/kernel/apic/apic_flat_64.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20110523.orig/arch/x86/kernel/apic/apic_flat_64.c
+> +++ linux-next-20110523/arch/x86/kernel/apic/apic_flat_64.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/ctype.h>
+>  #include <linux/init.h>
+>  #include <linux/hardirq.h>
+> +#include <linux/module.h>
+>  #include <asm/smp.h>
+>  #include <asm/apic.h>
+>  #include <asm/ipi.h>
 
-when CONFIG_SMP is not enabled:
+Thanks Randy! For some reason I didn't hit this problem while
+were compiling the kernel and testing it (I usually do not use
+modules though).
 
-drivers/hwmon/coretemp.c:765: error: implicit declaration of function 'cpu_sibling_mask'
+I've CC'ed Ingo and Suresh.
 
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+-- 
+    Cyrill
