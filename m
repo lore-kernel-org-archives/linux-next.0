@@ -1,133 +1,74 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build warning after merge of the suspend tree
-Date: Mon, 23 May 2011 20:57:36 +0200
-Message-ID: <201105232057.36247.rjw@sisk.pl>
-References: <20110523150636.ccd83777.sfr@canb.auug.org.au> <20110523141846.GA8122@gvim.org> <pm-qos-needs-fixing@mdm.bga.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH -next] x86: apic_flat_64.c needs module.h
+Date: Mon, 23 May 2011 21:10:43 +0200
+Message-ID: <20110523191043.GB23629@elte.hu>
+References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
+ <20110523104300.dd532a99.randy.dunlap@oracle.com>
+ <4DDA9EAB.40304@gmail.com>
+ <4DDAA2C0.7080108@gmail.com>
+ <4DDAA384.2000203@oracle.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:49566 "EHLO ogre.sisk.pl"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:42754 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756219Ab1EWS5E (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 May 2011 14:57:04 -0400
-In-Reply-To: <pm-qos-needs-fixing@mdm.bga.com>
+	id S932091Ab1EWTLF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 May 2011 15:11:05 -0400
+Content-Disposition: inline
+In-Reply-To: <4DDAA384.2000203@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Milton Miller <milltonm@bga.com>
-Cc: mgross <markgross@thegnar.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Cyrill Gorcunov <gorcunov@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Suresh Siddha <suresh.b.siddha@intel.com>
 
-On Monday, May 23, 2011, Milton Miller wrote:
-> On Mon, 23 May 2011 about 14:18:46 -0000, mgross wrote:
-> > On Mon, May 23, 2011 at 03:06:36PM +1000, Stephen Rothwell wrote:
-> > > Hi Rafael,
-> > > 
-> > > After merging the suspend tree, today's linux-next build (i386 defconfig
-> > > among others) produced this warning:
-> > > 
-> > > kernel/pm_qos_params.c: In function 'pm_qos_power_write':
-> > > kernel/pm_qos_params.c:420: warning: passing argument 3 of 'kstrtol' from incompatible pointer type
-> > > include/linux/kernel.h:210: note: expected 'long int *' but argument is of type 's32 *'
-> > > 
-> > > Intreoduced by commit 365daa955e03 ("PM: Correct PM QOS's user mode
-> > > interface to work with ascii input per").
+
+* Randy Dunlap <randy.dunlap@oracle.com> wrote:
+
+> >>>  arch/x86/kernel/apic/apic_flat_64.c |    1 +
+> >>>  1 file changed, 1 insertion(+)
+> >>>
+> >>> --- linux-next-20110523.orig/arch/x86/kernel/apic/apic_flat_64.c
+> >>> +++ linux-next-20110523/arch/x86/kernel/apic/apic_flat_64.c
+> >>> @@ -16,6 +16,7 @@
+> >>>  #include <linux/ctype.h>
+> >>>  #include <linux/init.h>
+> >>>  #include <linux/hardirq.h>
+> >>> +#include <linux/module.h>
+> >>>  #include <asm/smp.h>
+> >>>  #include <asm/apic.h>
+> >>>  #include <asm/ipi.h>
+> >>
+> >> Thanks Randy! For some reason I didn't hit this problem while
+> >> were compiling the kernel and testing it (I usually do not use
+> >> modules though).
+> >>
+> >> I've CC'ed Ingo and Suresh.
+> >>
 > > 
-> > Gah!  I'm sorry about that.
-> > 
-> > attached is a fix.
-> > 
-> > 
-> > --mark
-> > 
-> > signed-off-by:markgross <markgross@thegnar.org>
-> > 
+> > Randy, while adding module.h here is correct I fail to see why I didn't
+> > hit this problem before, could you please post your config?
 > 
-> (1) This should be in the patch, not the enclosing letter
-
-That message is for me, actually.  I can fold the fix into the patch.
-
-> (2) Incorrect capitalization
-
-Doesn't matter, I can fix it up.
-
-> (3) Incorrect spacing
-
-Likewise.
-
-> Please read Documentation/SubmittingPatches again.
+> Certainly, it's attached.  It's a randconfig file.
+> I saw this build error on roughly 5 out of 15 randconfig builds.
 > 
-> > 
-> > 
-> > >From a8f0587b9ae598be5ca4c3cdda4e0ced6ca9baaf Mon Sep 17 00:00:00 2001
-> > From: mgross <mgross@cr48>
-> > Date: Mon, 23 May 2011 07:14:09 -0700
-> > Subject: [PATCH] clean up a compile time warning in the use of strict_strtol but that was
-> >  passing an s32 * when it should be passing a long *
-> > 
-> 
-> From should match Signed-off-by:
+> CONFIG_SMP is disabled...
 
-Not necessarily.
+Your config builds just fine here, using latest -tip:
 
-> Please seperate title (subject) and description body
+ tip/master 726281b: Merge branch 'tools/kvm'
 
-Doesn't matter here.
+ Kernel: arch/x86/boot/bzImage is ready  (#2)
 
-> Maybe: pm_qos: strict_strtol takes a long, not s32
-> 
-> strict_strtol takes a pointer to long to store the converted value.
-> introduced in xxxx ("change set title here")
-> 
-> So that the reviewers can quickly see if it needs to be backported
-> to stable etc.
-> 
-> except read below
-> 
-> 
-> > ---
-> > kernel/pm_qos_params.c |    6 ++++--
-> >  1 files changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/pm_qos_params.c b/kernel/pm_qos_params.c
-> > index d61ecf3..dd37c56 100644
-> > --- a/kernel/pm_qos_params.c
-> > +++ b/kernel/pm_qos_params.c
-> > @@ -405,6 +405,7 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
-> >  		size_t count, loff_t *f_pos)
-> >  {
-> >  	s32 value;
-> > +	long safe_int;
-> >  	int x;
-> >  	char ascii_value[11];
-> >  	struct pm_qos_request_list *pm_qos_req;
-> > @@ -417,10 +418,11 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
-> >  		ascii_value[count] = 0;
-> >  		if (copy_from_user(ascii_value, buf, count))
-> >  			return -EFAULT;
-> > -		if ((x=strict_strtol(ascii_value, 16, &value)) != 0){
-> > -			pr_debug("%s, 0x%x, 0x%x\n",ascii_value, value, x);
-> > +		if ((x=strict_strtol(ascii_value, 16, &safe_int)) != 0){
-> 
-> Why are you doing an assignment in the if?  Why not assign first and
-> compare later?
+or using x86/apic directly:
 
-Because that's what the original code does?
+ tip/x86/apic 1a8880a: x86, apic: Make apic drivers static
 
-> > +			pr_debug("%s, 0x%lx, 0x%x\n",ascii_value, safe_int, x);
-> >  			return -EINVAL;
-> 
-> Nit: Some reason not to return -ERANGE if thats what strtol returned?  
-> Folding to -EINVAL is ok but hides information.
-> 
-> >  		}
-> > +		value = (s32) safe_int;
-> 
-> You call strict checking, which includes overflow checking, but
-> only that the value fits in a long.  You then defeat that checking
-> by casting to int.
+ System is 3001 kB
+ CRC 882c2d5c
+ Kernel: arch/x86/boot/bzImage is ready  (#3)
 
-That actually is a good point.
+Has linux-next changed something that triggers this build bug?
 
 Thanks,
-Rafael
+
+	Ingo
