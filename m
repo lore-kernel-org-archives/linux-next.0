@@ -1,137 +1,55 @@
-From: Milton Miller <milltonm@bga.com>
-Subject: Re: linux-next: build warning after merge of the suspend tree
-Date: Mon, 23 May 2011 11:21:17 -0500
-Message-ID: <pm-qos-needs-fixing@mdm.bga.com>
-References: <20110523150636.ccd83777.sfr@canb.auug.org.au>
-	<20110523141846.GA8122@gvim.org>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail4.comsite.net ([205.238.176.238]:10223 "EHLO
-	mail4.comsite.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755314Ab1EWQVY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 May 2011 12:21:24 -0400
-In-Reply-To: <20110523141846.GA8122@gvim.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mark gross <markgross@thegnar.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] ata: PATA_ARASAN_CF depends on DMADEVICES
+Date: Mon, 23 May 2011 09:21:54 -0700
+Message-ID: <4DDA89A2.8010604@oracle.com>
+References: <20110520165507.cba539d5.sfr@canb.auug.org.au> <20110522173227.5ba18817.randy.dunlap@oracle.com> <4DD9D5EB.3060807@st.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <4DD9D5EB.3060807@st.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: viresh kumar <viresh.kumar@st.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Jeff Garzik <jgarzik@pobox.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 23 May 2011 about 14:18:46 -0000, mgross wrote:
-> On Mon, May 23, 2011 at 03:06:36PM +1000, Stephen Rothwell wrote:
-> > Hi Rafael,
-> > 
-> > After merging the suspend tree, today's linux-next build (i386 defconfig
-> > among others) produced this warning:
-> > 
-> > kernel/pm_qos_params.c: In function 'pm_qos_power_write':
-> > kernel/pm_qos_params.c:420: warning: passing argument 3 of 'kstrtol' from incompatible pointer type
-> > include/linux/kernel.h:210: note: expected 'long int *' but argument is of type 's32 *'
-> > 
-> > Intreoduced by commit 365daa955e03 ("PM: Correct PM QOS's user mode
-> > interface to work with ascii input per").
+On 05/22/11 20:35, viresh kumar wrote:
+> On 05/23/2011 06:02 AM, Randy Dunlap wrote:
+>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>>
+>> Fix kconfig unmet dependency warning:
+>>
+>> warning: (PATA_ARASAN_CF && VIDEO_TIMBERDALE && SND_SOC_SH4_SIU) selects DMA_ENGINE which has unmet direct dependencies (DMADEVICES)
+>>
+>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+>> Cc: Viresh Kumar <viresh.kumar@st.com>
+>> ---
+>>  drivers/ata/Kconfig |    1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> --- linux-next-20110520.orig/drivers/ata/Kconfig
+>> +++ linux-next-20110520/drivers/ata/Kconfig
+>> @@ -313,6 +313,7 @@ config PATA_AMD
+>>  
+>>  config PATA_ARASAN_CF
+>>  	tristate "ARASAN CompactFlash PATA Controller Support"
+>> +	depends on DMADEVICES
+>>  	select DMA_ENGINE
 > 
-> Gah!  I'm sorry about that.
+> Randy,
 > 
-> attached is a fix.
-> 
-> 
-> --mark
-> 
-> signed-off-by:markgross <markgross@thegnar.org>
-> 
+> I think we can also remove this "select DMA_ENGINE" line.
 
-(1) This should be in the patch, not the enclosing letter
-(2) Incorrect capitalization
-(3) Incorrect spacing
+In that case, the newly added "depends on" line is not needed either,
+since the "select DMA_ENGINE" is what causes the kconfig warning message.
 
-Please read Documentation/SubmittingPatches again.
 
+> Otherwise, it looks fine.
 > 
-> 
-> >From a8f0587b9ae598be5ca4c3cdda4e0ced6ca9baaf Mon Sep 17 00:00:00 2001
-> From: mgross <mgross@cr48>
-> Date: Mon, 23 May 2011 07:14:09 -0700
-> Subject: [PATCH] clean up a compile time warning in the use of strict_strtol but that was
->  passing an s32 * when it should be passing a long *
+> Acked-by: Viresh Kumar <viresh.kumar@st.com>
 > 
 
->From should match Signed-off-by:
 
-Please seperate title (subject) and description body
-
-Maybe: pm_qos: strict_strtol takes a long, not s32
-
-strict_strtol takes a pointer to long to store the converted value.
-introduced in xxxx ("change set title here")
-
-So that the reviewers can quickly see if it needs to be backported
-to stable etc.
-
-except read below
-
-
-> ---
-> kernel/pm_qos_params.c |    6 ++++--
->  1 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/pm_qos_params.c b/kernel/pm_qos_params.c
-> index d61ecf3..dd37c56 100644
-> --- a/kernel/pm_qos_params.c
-> +++ b/kernel/pm_qos_params.c
-> @@ -405,6 +405,7 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
->  		size_t count, loff_t *f_pos)
->  {
->  	s32 value;
-> +	long safe_int;
->  	int x;
->  	char ascii_value[11];
->  	struct pm_qos_request_list *pm_qos_req;
-> @@ -417,10 +418,11 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
->  		ascii_value[count] = 0;
->  		if (copy_from_user(ascii_value, buf, count))
->  			return -EFAULT;
-> -		if ((x=strict_strtol(ascii_value, 16, &value)) != 0){
-> -			pr_debug("%s, 0x%x, 0x%x\n",ascii_value, value, x);
-> +		if ((x=strict_strtol(ascii_value, 16, &safe_int)) != 0){
-
-Why are you doing an assignment in the if?  Why not assign first and
-compare later?
-
-> +			pr_debug("%s, 0x%lx, 0x%x\n",ascii_value, safe_int, x);
->  			return -EINVAL;
-
-Nit: Some reason not to return -ERANGE if thats what strtol returned?  
-Folding to -EINVAL is ok but hides information.
-
->  		}
-> +		value = (s32) safe_int;
-
-You call strict checking, which includes overflow checking, but
-only that the value fits in a long.  You then defeat that checking
-by casting to int.
-
-It looks like you want strict_strtoint except thats not defined.
-Hoever, the pattern for strict_strto* is kstrto* and kstrtos32 is
-defined ...
-
->  	} else
->  		return -EINVAL;
->  
-
-Oh, and you now may copy 11 characters from userspace into an 11
-character buffer then terminate it by writing the 12th character
-(ascii_value[count == 11]).  Except its an 11 character array.
-
-What is the magic to set the value to a negative number?  Is
-yet another character for the - required?
-
-
-I see the string from userspace wasn't properly terminated before
-either.  In ed77134bfccf5e75b (PM QOS update), merged in v2.6.35-rc1,
-11 bytes were copied from user then passed to ssscanf without null
-termination forced.  It was updated in 0109c2c48d (PM QoS: Correct
-pr_debug() misuse and improve parameter checks), which was merged in
-2.6.36-rc4, to change the the function that walks off the string from
-sscanf to strlen.  That changelog isn't marked for stable (I didn't
-look if it was sent) but it still isn't force terminated.
-
-happy patching,
-milton
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
