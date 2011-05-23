@@ -1,48 +1,56 @@
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-Subject: Re: [PATCH -next] x86: apic_flat_64.c needs module.h
-Date: Mon, 23 May 2011 21:51:39 +0400
-Message-ID: <4DDA9EAB.40304@gmail.com>
-References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au> <20110523104300.dd532a99.randy.dunlap@oracle.com>
+From: Guenter Roeck <guenter.roeck@ericsson.com>
+Subject: Re: linux-next: Tree for May 23 (hwmon/coretemp.c)
+Date: Mon, 23 May 2011 11:03:37 -0700
+Message-ID: <1306173817.2163.354.camel@groeck-laptop>
+References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
+	<20110523104958.98ef4d1a.randy.dunlap@oracle.com>
+Reply-To: guenter.roeck@ericsson.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110523104300.dd532a99.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <lm-sensors-bounces@lm-sensors.org>
+In-Reply-To: <20110523104958.98ef4d1a.randy.dunlap@oracle.com>
+List-Unsubscribe: <http://lists.lm-sensors.org/mailman/options/lm-sensors>,
+	<mailto:lm-sensors-request@lm-sensors.org?subject=unsubscribe>
+List-Archive: <http://lists.lm-sensors.org/pipermail/lm-sensors/>
+List-Post: <mailto:lm-sensors@lm-sensors.org>
+List-Help: <mailto:lm-sensors-request@lm-sensors.org?subject=help>
+List-Subscribe: <http://lists.lm-sensors.org/mailman/listinfo/lm-sensors>,
+	<mailto:lm-sensors-request@lm-sensors.org?subject=subscribe>
+Sender: lm-sensors-bounces@lm-sensors.org
+Errors-To: lm-sensors-bounces@lm-sensors.org
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Suresh Siddha <suresh.b.siddha@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Fenghua Yu <fenghua.yu@intel.com>, LKML <linux-kernel@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 05/23/2011 09:43 PM, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+Sigh. And I was sure I tested that :(. I'll look into it immediately.
+
+Guenter
+
+On Mon, 2011-05-23 at 13:49 -0400, Randy Dunlap wrote:
+> On Mon, 23 May 2011 15:45:18 +1000 Stephen Rothwell wrote:
 > 
-> apic_flat_64.c needs to include module.h to fix these warnings:
+> > Hi all,
+> > 
+> > Changes since 20110520:
 > 
-> arch/x86/kernel/apic/apic_flat_64.c:31: warning: data definition has no type or storage class
-> arch/x86/kernel/apic/apic_flat_64.c:31: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> arch/x86/kernel/apic/apic_flat_64.c:31: warning: parameter names (without types) in function declaration
+> when CONFIG_SMP is not enabled:
 > 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> drivers/hwmon/coretemp.c:765: error: implicit declaration of function 'cpu_sibling_mask'
+> 
+> 
 > ---
->  arch/x86/kernel/apic/apic_flat_64.c |    1 +
->  1 file changed, 1 insertion(+)
+> ~Randy
+> *** Remember to use Documentation/SubmitChecklist when testing your code ***
 > 
-> --- linux-next-20110523.orig/arch/x86/kernel/apic/apic_flat_64.c
-> +++ linux-next-20110523/arch/x86/kernel/apic/apic_flat_64.c
-> @@ -16,6 +16,7 @@
->  #include <linux/ctype.h>
->  #include <linux/init.h>
->  #include <linux/hardirq.h>
-> +#include <linux/module.h>
->  #include <asm/smp.h>
->  #include <asm/apic.h>
->  #include <asm/ipi.h>
+> _______________________________________________
+> lm-sensors mailing list
+> lm-sensors@lm-sensors.org
+> http://lists.lm-sensors.org/mailman/listinfo/lm-sensors
 
-Thanks Randy! For some reason I didn't hit this problem while
-were compiling the kernel and testing it (I usually do not use
-modules though).
 
-I've CC'ed Ingo and Suresh.
 
--- 
-    Cyrill
+_______________________________________________
+lm-sensors mailing list
+lm-sensors@lm-sensors.org
+http://lists.lm-sensors.org/mailman/listinfo/lm-sensors
