@@ -1,47 +1,60 @@
-From: viresh kumar <viresh.kumar@st.com>
-Subject: Re: [PATCH -next] ata: PATA_ARASAN_CF depends on DMADEVICES
-Date: Mon, 23 May 2011 09:05:07 +0530
-Message-ID: <4DD9D5EB.3060807@st.com>
-References: <20110520165507.cba539d5.sfr@canb.auug.org.au> <20110522173227.5ba18817.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Mon, 23 May 2011 14:56:46 +1000
+Message-ID: <20110523145646.62152db5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110522173227.5ba18817.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Jeff Garzik <jgarzik@pobox.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__23_May_2011_14_56_46_+1000_KYNl6v5yCwUy06W6"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55929 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750755Ab1EWE4t (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 May 2011 00:56:49 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/23/2011 06:02 AM, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix kconfig unmet dependency warning:
-> 
-> warning: (PATA_ARASAN_CF && VIDEO_TIMBERDALE && SND_SOC_SH4_SIU) selects DMA_ENGINE which has unmet direct dependencies (DMADEVICES)
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Viresh Kumar <viresh.kumar@st.com>
-> ---
->  drivers/ata/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-next-20110520.orig/drivers/ata/Kconfig
-> +++ linux-next-20110520/drivers/ata/Kconfig
-> @@ -313,6 +313,7 @@ config PATA_AMD
->  
->  config PATA_ARASAN_CF
->  	tristate "ARASAN CompactFlash PATA Controller Support"
-> +	depends on DMADEVICES
->  	select DMA_ENGINE
+--Signature=_Mon__23_May_2011_14_56_46_+1000_KYNl6v5yCwUy06W6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Randy,
+Hi all,
 
-I think we can also remove this "select DMA_ENGINE" line.
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-Otherwise, it looks fine.
+fs/ubifs/super.c: In function 'mount_ubifs':
+fs/ubifs/super.c:1432: error: implicit declaration of function 'dbg_msg'
+fs/ubifs/replay.c: In function 'set_bud_lprops':
+fs/ubifs/replay.c:144: error: implicit declaration of function 'dbg_msg'
+fs/ubifs/commit.c: In function 'ubifs_bg_thread':
+fs/ubifs/commit.c:296: error: implicit declaration of function 'dbg_msg'
 
-Acked-by: Viresh Kumar <viresh.kumar@st.com>
+Caused by commit 327fdae87979 ("UBIFS: switch to dynamic printks").  This
+build does not have CONFIG_UBIFS_FS_DEBUG set.
 
--- 
-viresh
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__23_May_2011_14_56_46_+1000_KYNl6v5yCwUy06W6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN2ekOAAoJEDMEi1NhKgbs4V0H/Rb+ZD/B55P/XLNg7JGonlKV
+ZgNs2IXbY6+u38lQS0xLg57s3twPOKBE9NfbuPZS2FbsnpvmM9vulvzVNIHvJcc9
+8/2WLGziMKPLNPt7PeERtADUTPSxLTlrJxVPGvEne9PaetrvOnuT0rCBrw8G/DWW
+8WbjbnHrWbs5nbPUEniWHSKJp8ssuHXyyF4ddiXaEFeTqBVHU9ZMQi165RsY4EDc
++Y3ybE86Anuac7eB+eUGz1iMYZ0d2AoT9XMp2XnccAaD2quay9rtvzwMbMLTPOG3
+hyCszZURoA6n1Zk2Cr8x57DrhKeXjnabBGaEG9j2d+WzsRroOLw6iQSjd85jcXM=
+=TNQE
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__23_May_2011_14_56_46_+1000_KYNl6v5yCwUy06W6--
