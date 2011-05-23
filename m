@@ -1,58 +1,146 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [bloat] Measuring header file bloat effects on kernel build
- performance: a more than 2x slowdown ...
-Date: Mon, 23 May 2011 19:01:26 +0200
-Message-ID: <20110523170126.GA14407@elte.hu>
-References: <20110520161210.81bbef3a.sfr@canb.auug.org.au>
- <BANLkTi=Dn_jvJ8mLY0Bc6C1Ptoqa-kJrCg@mail.gmail.com>
- <20110523090918.GA5474@elte.hu>
- <BANLkTim_pWfU0=ck8=F1kt_bwjtdGRDgdQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Milton Miller <miltonm@bga.com>
+Subject: Re: linux-next: build warning after merge of the suspend tree
+Date: Mon, 23 May 2011 12:42:18 -0500
+Message-ID: <pm-qos-needs-fixing-2@mdm.bga.com>
+References: <20110523150636.ccd83777.sfr@canb.auug.org.au>
+	<20110523141846.GA8122@gvim.org>
+	<pm-qos-needs-fixing@mdm.bga.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:42955 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932123Ab1EWRBp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 May 2011 13:01:45 -0400
-Content-Disposition: inline
-In-Reply-To: <BANLkTim_pWfU0=ck8=F1kt_bwjtdGRDgdQ@mail.gmail.com>
+Received: from mail4.comsite.net ([205.238.176.238]:47457 "EHLO
+	mail4.comsite.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756223Ab1EWRm3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 May 2011 13:42:29 -0400
+In-Reply-To: <pm-qos-needs-fixing-2@mdm.bga.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
+To: mgross <markgross@thegnar.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>
 
+[ I managed to botch my own email the first time, how embarrassing!
+So I added Randy and updated the paragraph about negative values.
+And then I need a new Message-Id too. ]
 
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Mon, May 23, 2011 at 2:09 AM, Ingo Molnar <mingo@elte.hu> wrote:
-> >
-> > I've attached a totally hacky patch that removes all the big #include's from
-> > kernel/pid.c and includes all structure and API definitions explicitly.
+On Mon, 23 May 2011 about 14:18:46 -0000, mgross wrote:
+> On Mon, May 23, 2011 at 03:06:36PM +1000, Stephen Rothwell wrote:
+> > Hi Rafael,
+> > 
+> > After merging the suspend tree, today's linux-next build (i386 defconfig
+> > among others) produced this warning:
+> > 
+> > kernel/pm_qos_params.c: In function 'pm_qos_power_write':
+> > kernel/pm_qos_params.c:420: warning: passing argument 3 of 'kstrtol' from incompatible pointer type
+> > include/linux/kernel.h:210: note: expected 'long int *' but argument is of type 's32 *'
+> > 
+> > Intreoduced by commit 365daa955e03 ("PM: Correct PM QOS's user mode
+> > interface to work with ascii input per").
 > 
-> Hmm.
+> Gah!  I'm sorry about that.
 > 
-> A less hacky patch might be to split up "sched.h" into multiple
-> smaller things and at least get *part* of the way.
+> attached is a fix.
+> 
+> 
+> --mark
+> 
+> signed-off-by:markgross <markgross@thegnar.org>
 > 
 
-Yeah, absolutely - Peter already raised that a couple of days ago in a sched.h 
-discussion so it's on the radar.
+(1) This should be in the patch, not the enclosing letter
+(2) Incorrect capitalization
+(3) Incorrect spacing
 
-The hacky patch was really just a throw-away attempt to see where we stand - we 
-only had vague impressions about the level of problems we have, now we know 
-some numbers.
+Please read Documentation/SubmittingPatches again.
 
-> A lot of things want "struct task_struct" (and in some cases thread_info, but 
-> that's already split).
 > 
-> Much fewer care about the signal stuff.
 > 
-> And many things probably don't even need the task_struct definition, and 
-> might be perfectly happy with just function calls rather than having intimate 
-> knowledge of the structure layout and an inline function.
+> >From a8f0587b9ae598be5ca4c3cdda4e0ced6ca9baaf Mon Sep 17 00:00:00 2001
+> From: mgross <mgross@cr48>
+> Date: Mon, 23 May 2011 07:14:09 -0700
+> Subject: [PATCH] clean up a compile time warning in the use of strict_strtol but that was
+>  passing an s32 * when it should be passing a long *
+> 
 
-Yeah.
+>From should match Signed-off-by:
 
-Thanks,
+Please seperate title (subject) and description body
 
-	Ingo
+Maybe: pm_qos: strict_strtol takes a long, not s32
+
+strict_strtol takes a pointer to long to store the converted value.
+introduced in xxxx ("change set title here")
+
+So that the reviewers can quickly see if it needs to be backported
+to stable etc.
+
+except read below
+
+
+> ---
+> kernel/pm_qos_params.c |    6 ++++--
+>  1 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/pm_qos_params.c b/kernel/pm_qos_params.c
+> index d61ecf3..dd37c56 100644
+> --- a/kernel/pm_qos_params.c
+> +++ b/kernel/pm_qos_params.c
+> @@ -405,6 +405,7 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
+>  		size_t count, loff_t *f_pos)
+>  {
+>  	s32 value;
+> +	long safe_int;
+>  	int x;
+>  	char ascii_value[11];
+>  	struct pm_qos_request_list *pm_qos_req;
+> @@ -417,10 +418,11 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
+>  		ascii_value[count] = 0;
+>  		if (copy_from_user(ascii_value, buf, count))
+>  			return -EFAULT;
+> -		if ((x=strict_strtol(ascii_value, 16, &value)) != 0){
+> -			pr_debug("%s, 0x%x, 0x%x\n",ascii_value, value, x);
+> +		if ((x=strict_strtol(ascii_value, 16, &safe_int)) != 0){
+
+Why are you doing an assignment in the if?  Why not assign first and
+compare later?
+
+> +			pr_debug("%s, 0x%lx, 0x%x\n",ascii_value, safe_int, x);
+>  			return -EINVAL;
+
+Nit: Some reason not to return -ERANGE if thats what strtol returned?  
+While folding the error to -EINVAL is ok, it hides diagnostic informatio
+from the user.
+
+>  		}
+> +		value = (s32) safe_int;
+
+You call strict checking, which includes overflow checking, but
+only that the value fits in a long.  You then defeat that checking
+by casting to int.
+
+It looks like you want strict_strtoint except thats not defined.
+Hoever, the pattern for strict_strto* is kstrto* and kstrtos32 is
+defined ...
+
+>  	} else
+>  		return -EINVAL;
+>  
+
+Oh, and you now may copy 11 characters from userspace into an 11
+character buffer then terminate it by writing the 12th character
+(ascii_value[count == 11]).  Except its an 11 character array.
+
+The variable is a s32, aparently in native endian if pased in binary
+as 4 bytes.  What is the magic to set the value to a negative number
+through the ascii interface?  Is yet another character for the -
+required?
+
+
+I see the string from userspace wasn't properly terminated before
+either.  In ed77134bfccf5e75b (PM QOS update), merged in v2.6.35-rc1,
+11 bytes were copied from user then passed to ssscanf without null
+termination forced.  It was updated in 0109c2c48d (PM QoS: Correct
+pr_debug() misuse and improve parameter checks), which was merged in
+2.6.36-rc4, to change the the function that walks off the string from
+sscanf to strlen.  That changelog isn't marked for stable (I didn't
+look if it was sent) but it still isn't force terminated.
+
+happy patching,
+milton
