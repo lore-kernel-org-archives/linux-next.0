@@ -1,41 +1,57 @@
-From: Roland Dreier <roland-BHEL68pLQRGGvPXPguhicg@public.gmane.org>
-Subject: Re: linux-next: Tree for May 23 (infiniband + netlink)
-Date: Mon, 23 May 2011 11:05:59 -0700
-Message-ID: <BANLkTindDsbE-Fdr5-Db4Kw6ww+ntk2S2Q@mail.gmail.com>
-References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au> <20110523094205.4a5651d2.randy.dunlap@oracle.com>
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+Subject: Re: [PATCH -next] x86: apic_flat_64.c needs module.h
+Date: Mon, 23 May 2011 22:09:04 +0400
+Message-ID: <4DDAA2C0.7080108@gmail.com>
+References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au> <20110523104300.dd532a99.randy.dunlap@oracle.com> <4DDA9EAB.40304@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110523094205.4a5651d2.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, netdev <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:36788 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932112Ab1EWSJJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 May 2011 14:09:09 -0400
+In-Reply-To: <4DDA9EAB.40304@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Suresh Siddha <suresh.b.siddha@intel.com>
 
-On Mon, May 23, 2011 at 9:42 AM, Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org> wrote:
-> On Mon, 23 May 2011 15:45:18 +1000 Stephen Rothwell wrote:
->
->> Hi all,
+On 05/23/2011 09:51 PM, Cyrill Gorcunov wrote:
+> On 05/23/2011 09:43 PM, Randy Dunlap wrote:
+>> From: Randy Dunlap <randy.dunlap@oracle.com>
 >>
->> Changes since 20110520:
->
-> when CONFIG_NET is not enabled:
->
-> ERROR: "skb_trim" [drivers/infiniband/core/ib_core.ko] undefined!
-> ERROR: "netlink_kernel_create" [drivers/infiniband/core/ib_core.ko] undefined!
-> ERROR: "netlink_kernel_release" [drivers/infiniband/core/ib_core.ko] undefined!
-> ERROR: "netlink_rcv_skb" [drivers/infiniband/core/ib_core.ko] undefined!
-> ERROR: "nla_put" [drivers/infiniband/core/ib_core.ko] undefined!
-> ERROR: "init_net" [drivers/infiniband/core/ib_core.ko] undefined!
-> ERROR: "netlink_dump_start" [drivers/infiniband/core/ib_core.ko] undefined!
-> ERROR: "skb_put" [drivers/infiniband/core/ib_core.ko] undefined!
+>> apic_flat_64.c needs to include module.h to fix these warnings:
+>>
+>> arch/x86/kernel/apic/apic_flat_64.c:31: warning: data definition has no type or storage class
+>> arch/x86/kernel/apic/apic_flat_64.c:31: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+>> arch/x86/kernel/apic/apic_flat_64.c:31: warning: parameter names (without types) in function declaration
+>>
+>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+>> ---
+>>  arch/x86/kernel/apic/apic_flat_64.c |    1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> --- linux-next-20110523.orig/arch/x86/kernel/apic/apic_flat_64.c
+>> +++ linux-next-20110523/arch/x86/kernel/apic/apic_flat_64.c
+>> @@ -16,6 +16,7 @@
+>>  #include <linux/ctype.h>
+>>  #include <linux/init.h>
+>>  #include <linux/hardirq.h>
+>> +#include <linux/module.h>
+>>  #include <asm/smp.h>
+>>  #include <asm/apic.h>
+>>  #include <asm/ipi.h>
+> 
+> Thanks Randy! For some reason I didn't hit this problem while
+> were compiling the kernel and testing it (I usually do not use
+> modules though).
+> 
+> I've CC'ed Ingo and Suresh.
+> 
 
-Guess we have to depend on CONFIG_NET now.
-I'll fix it up.
+Randy, while adding module.h here is correct I fail to see why I didn't
+hit this problem before, could you please post your config?
 
-Thanks,
-  Roland
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+    Cyrill
