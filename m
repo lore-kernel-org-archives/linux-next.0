@@ -1,57 +1,88 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Mon, 23 May 2011 19:51:51 -0700
-Message-ID: <20110524025151.GA26939@kroah.com>
-References: <20110520161816.dda6f1fd.sfr@canb.auug.org.au>
- <BANLkTimjzzqTS1fELmpb0UivqseLsYOfPw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the namespace tree with the sh tree
+Date: Tue, 24 May 2011 12:55:23 +1000
+Message-ID: <20110524125523.3a20bc27.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <BANLkTimjzzqTS1fELmpb0UivqseLsYOfPw@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Mike Frysinger <vapier.adi@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mel@csn.ul.ie>, linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dipankar Sarma <dipankar@in.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59297 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753148Ab1EXCz1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 May 2011 22:55:27 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>
 
-On Mon, May 23, 2011 at 10:06:40PM -0400, Mike Frysinger wrote:
-> On Fri, May 20, 2011 at 02:18, Stephen Rothwell wrote:
-> > Caused by commit e66eed651fd1 ("list: remove prefetching from regular list
-> > iterators").
-> >
-> > I added the following patch for today:
-> 
-> probably should get added to whatever tree that commit is coming from
-> so we dont have bisect hell ?
-> 
-> more failures:
-> drivers/usb/host/isp1362-hcd.c: In function 'isp1362_write_ptd':
-> drivers/usb/host/isp1362-hcd.c:355: error: implicit declaration of
-> function 'prefetch'
-> drivers/usb/host/isp1362-hcd.c: In function 'isp1362_read_ptd':
-> drivers/usb/host/isp1362-hcd.c:377: error: implicit declaration of
-> function 'prefetchw'
-> make[3]: *** [drivers/usb/host/isp1362-hcd.o] Error 1
-> 
-> drivers/usb/musb/musb_core.c: In function 'musb_write_fifo':
-> drivers/usb/musb/musb_core.c:219: error: implicit declaration of
-> function 'prefetch'
-> make[3]: *** [drivers/usb/musb/musb_core.o] Error 1
-> 
-> although it seems like it should be fairly trivial to look at the
-> funcs in linux/prefetch.h, grep the tree, and find a pretty good list
-> of the files that are missing the include
+Hi Eric,
 
-How did this not show up in linux-next?  Where did the patch that caused
-this show up from?
+Today's linux-next merge of the namespace tree got conflicts in
+arch/sh/include/asm/unistd_32.h, arch/sh/include/asm/unistd_64.h,
+arch/sh/kernel/syscalls_32.S and arch/sh/kernel/syscalls_64.S between
+commit c7434dbf29b4 ("sh: wire up sys_sendmmsg") from the sh tree and
+commit e975ee91dcc1 ("ns: Wire up the setns system call") from the
+namespace tree.
 
-totally confused,
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-greg k-h
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+diff --cc arch/sh/include/asm/unistd_32.h
+index bb7d270,26c697c..0000000
+--- a/arch/sh/include/asm/unistd_32.h
++++ b/arch/sh/include/asm/unistd_32.h
+@@@ -373,9 -373,9 +373,10 @@@
+  #define __NR_open_by_handle_at	360
+  #define __NR_clock_adjtime	361
+  #define __NR_syncfs		362
+ -#define __NR_setns              363
+ +#define __NR_sendmmsg		363
+++#define __NR_setns              364
+  
+--#define NR_syscalls 364
+++#define NR_syscalls 365
+  
+  #ifdef __KERNEL__
+  
+diff --cc arch/sh/include/asm/unistd_64.h
+index 46327ce,330668a..0000000
+--- a/arch/sh/include/asm/unistd_64.h
++++ b/arch/sh/include/asm/unistd_64.h
+@@@ -394,11 -394,11 +394,12 @@@
+  #define __NR_open_by_handle_at	371
+  #define __NR_clock_adjtime	372
+  #define __NR_syncfs		373
+ -#define __NR_setns              374
+ +#define __NR_sendmmsg		374
+++#define __NR_setns              375
+  
+  #ifdef __KERNEL__
+  
+--#define NR_syscalls 375
+++#define NR_syscalls 376
+  
+  #define __ARCH_WANT_IPC_PARSE_VERSION
+  #define __ARCH_WANT_OLD_READDIR
+diff --cc arch/sh/kernel/syscalls_32.S
+index 7c486f3,67dcf66..0000000
+--- a/arch/sh/kernel/syscalls_32.S
++++ b/arch/sh/kernel/syscalls_32.S
+@@@ -380,4 -380,4 +380,5 @@@ ENTRY(sys_call_table
+  	.long sys_open_by_handle_at	/* 360 */
+  	.long sys_clock_adjtime
+  	.long sys_syncfs
+ +	.long sys_sendmmsg
++ 	.long sys_setns
+diff --cc arch/sh/kernel/syscalls_64.S
+index ba1a737,dade54e..0000000
+--- a/arch/sh/kernel/syscalls_64.S
++++ b/arch/sh/kernel/syscalls_64.S
+@@@ -400,4 -400,4 +400,5 @@@ sys_call_table
+  	.long sys_open_by_handle_at
+  	.long sys_clock_adjtime
+  	.long sys_syncfs
+ -	.long sys_setns
+ +	.long sys_sendmmsg
+++	.long sys_setns			/* 375 */
