@@ -1,23 +1,25 @@
 From: Artem Bityutskiy <dedekind1@gmail.com>
 Subject: Re: [PATCH -next] mtd: fix physmap.h warnings
-Date: Tue, 24 May 2011 10:41:27 +0300
-Message-ID: <1306222887.2785.54.camel@localhost>
+Date: Tue, 24 May 2011 10:42:23 +0300
+Message-ID: <1306222943.2785.55.camel@localhost>
 References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
 	 <20110523113709.4357b4ba.randy.dunlap@oracle.com>
+	 <1306216431.2785.46.camel@localhost> <1306216683.2785.47.camel@localhost>
+	 <20110524074020.GA9490@flint.arm.linux.org.uk>
 Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:63759 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753969Ab1EXHpq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 May 2011 03:45:46 -0400
-In-Reply-To: <20110523113709.4357b4ba.randy.dunlap@oracle.com>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:46564 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753783Ab1EXHqm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 May 2011 03:46:42 -0400
+In-Reply-To: <20110524074020.GA9490@flint.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-mtd@lists.infradead.org, linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, LKML <linux-kernel@vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-mtd@lists.infradead.org, linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Randy Dunlap <randy.dunlap@oracle.com>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 Subject: [PATCH] mtd: fix physmap.h warnings
