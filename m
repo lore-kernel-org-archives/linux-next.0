@@ -1,54 +1,41 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: Tree for May 23 (sound/soc/codecs)
-Date: Tue, 24 May 2011 02:50:00 +0100
-Message-ID: <20110524014959.GA27710@opensource.wolfsonmicro.com>
-References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au> <20110523134815.fb87933a.randy.dunlap@oracle.com> <20110523224659.GB19533@opensource.wolfsonmicro.com> <20110523155343.2e68c265.randy.dunlap@oracle.com> <20110524000837.GA30515@opensource.wolfsonmicro.com> <4DDB082F.3010107@oracle.com>
+From: Mike Frysinger <vapier.adi@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Mon, 23 May 2011 22:06:40 -0400
+Message-ID: <BANLkTimjzzqTS1fELmpb0UivqseLsYOfPw@mail.gmail.com>
+References: <20110520161816.dda6f1fd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53424 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752835Ab1EXBua (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 May 2011 21:50:30 -0400
-Content-Disposition: inline
-In-Reply-To: <4DDB082F.3010107@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: x86@kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Harald Welte <laforge@gnufiish.org>, Dmitry Artamonow <mad_soft@inbox.ru>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20110520161816.dda6f1fd.sfr@canb.auug.org.au>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mel@csn.ul.ie>, linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dipankar Sarma <dipankar@in.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, May 23, 2011 at 06:21:51PM -0700, Randy Dunlap wrote:
-> On 05/23/11 17:08, Mark Brown wrote:
+On Fri, May 20, 2011 at 02:18, Stephen Rothwell wrote:
+> Caused by commit e66eed651fd1 ("list: remove prefetching from regular list
+> iterators").
+>
+> I added the following patch for today:
 
-> > No, really we should.  The GPIO APIs are stubbed out when not in use for
-> > a very good reason, think about the usability here.  The goal here isn't
-> > to litter the code with ifdefs - if architectures aren't able to keep up
-> > with API changes they should convert to using gpiolib so this stuff
-> > happens automatically (indeed, I can't think of any good reason for an
-> > architecture to not be using gpiolib at this point).
+probably should get added to whatever tree that commit is coming from
+so we dont have bisect hell ?
 
-> No, I would say that there are a lot of drivers in sound/soc/codecs/
-> that are missing some GPIO pieces in the Kconfig file.
+more failures:
+drivers/usb/host/isp1362-hcd.c: In function 'isp1362_write_ptd':
+drivers/usb/host/isp1362-hcd.c:355: error: implicit declaration of
+function 'prefetch'
+drivers/usb/host/isp1362-hcd.c: In function 'isp1362_read_ptd':
+drivers/usb/host/isp1362-hcd.c:377: error: implicit declaration of
+function 'prefetchw'
+make[3]: *** [drivers/usb/host/isp1362-hcd.o] Error 1
 
-Have you actually looked at the code here?  Vanishingly few of the
-drivers need GPIOs at all, they can just optionally use GPIOs if the
-system makes them available.  There is absolutely no dependency on GPIOs
-for them, anything in Kconfig would be entirely unconstructive.
+drivers/usb/musb/musb_core.c: In function 'musb_write_fifo':
+drivers/usb/musb/musb_core.c:219: error: implicit declaration of
+function 'prefetch'
+make[3]: *** [drivers/usb/musb/musb_core.o] Error 1
 
-> >> MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
-
-> > You've clearly not looked at MAINTAINERS for this one.
-
-> It's not listed in the MAINTAINERS file.
-
-MAINTAINERS has a pattern sound/soc/codecs/wm*.
-
-> But maybe you mean scripts/get_maintainer.pl, which I did try.
-> I found that using git log <that source file name> was better info
-> than using scripts/get_maintainer.pl.
-
-get_maintainers is just a script that reads MAINTAINERS and trawls logs
-for it; the reason I mentioned MAINTAINERs was that you were saying you
-didn't use git.  In general you're better off doing things by hand
-rather than using get_maintainers.
+although it seems like it should be fairly trivial to look at the
+funcs in linux/prefetch.h, grep the tree, and find a pretty good list
+of the files that are missing the include
+-mike
