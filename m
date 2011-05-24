@@ -1,70 +1,48 @@
-From: Greg KH <greg@kroah.com>
+From: Mike Frysinger <vapier.adi@gmail.com>
 Subject: Re: linux-next: build failure after merge of the final tree
-Date: Tue, 24 May 2011 05:48:33 -0700
-Message-ID: <20110524124833.GB31776@kroah.com>
-References: <20110520161816.dda6f1fd.sfr@canb.auug.org.au>
- <BANLkTimjzzqTS1fELmpb0UivqseLsYOfPw@mail.gmail.com>
- <20110524025151.GA26939@kroah.com>
- <20110524135930.bb4c5506.sfr@canb.auug.org.au>
+Date: Tue, 24 May 2011 13:10:42 -0400
+Message-ID: <BANLkTi=U8ikZo65AoxGznCopGMTFOUXWhQ@mail.gmail.com>
+References: <20110520161816.dda6f1fd.sfr@canb.auug.org.au> <BANLkTimjzzqTS1fELmpb0UivqseLsYOfPw@mail.gmail.com>
+ <BANLkTine2kobQA8TkmtiuXdKL=07NCo2vA@mail.gmail.com> <BANLkTim-zRShhy49d7yn5WTJYzR6A2DtZQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20110524135930.bb4c5506.sfr@canb.auug.org.au>
+In-Reply-To: <BANLkTim-zRShhy49d7yn5WTJYzR6A2DtZQ@mail.gmail.com>
 Sender: owner-linux-mm@kvack.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Frysinger <vapier.adi@gmail.com>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mel@csn.ul.ie>, linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dipankar Sarma <dipankar@in.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mel@csn.ul.ie>, linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dipankar Sarma <dipankar@in.ibm.com>, "Balbi, Felipe" <balbi@ti.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, May 24, 2011 at 01:59:30PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Mon, 23 May 2011 19:51:51 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > On Mon, May 23, 2011 at 10:06:40PM -0400, Mike Frysinger wrote:
-> > > On Fri, May 20, 2011 at 02:18, Stephen Rothwell wrote:
-> > > > Caused by commit e66eed651fd1 ("list: remove prefetching from regular list
-> > > > iterators").
-> > > >
-> > > > I added the following patch for today:
-> > > 
-> > > probably should get added to whatever tree that commit is coming from
-> > > so we dont have bisect hell ?
-> > > 
-> > > more failures:
-> > > drivers/usb/host/isp1362-hcd.c: In function 'isp1362_write_ptd':
-> > > drivers/usb/host/isp1362-hcd.c:355: error: implicit declaration of
-> > > function 'prefetch'
-> > > drivers/usb/host/isp1362-hcd.c: In function 'isp1362_read_ptd':
-> > > drivers/usb/host/isp1362-hcd.c:377: error: implicit declaration of
-> > > function 'prefetchw'
-> > > make[3]: *** [drivers/usb/host/isp1362-hcd.o] Error 1
-> > > 
-> > > drivers/usb/musb/musb_core.c: In function 'musb_write_fifo':
-> > > drivers/usb/musb/musb_core.c:219: error: implicit declaration of
-> > > function 'prefetch'
-> > > make[3]: *** [drivers/usb/musb/musb_core.o] Error 1
-> > > 
-> > > although it seems like it should be fairly trivial to look at the
-> > > funcs in linux/prefetch.h, grep the tree, and find a pretty good list
-> > > of the files that are missing the include
-> > 
-> > How did this not show up in linux-next?  Where did the patch that caused
-> > this show up from?
-> > 
-> > totally confused,
-> 
-> :-)
-> 
-> sfr said above:
-> > Caused by commit e66eed651fd1 ("list: remove prefetching from regular
-> > list iterators").
-> 
-> The cause was a patch from Linus ...
+On Tue, May 24, 2011 at 00:10, Mike Frysinger wrote:
+> On Tue, May 24, 2011 at 00:01, Linus Torvalds wrote:
+>> On Mon, May 23, 2011 at 7:06 PM, Mike Frysinger wrote:
+>>>
+>>> more failures:
+>>
+>> Is this blackfin or something?
+>
+> let's go with "something" ...
+>
+>> I did an allyesconfig with a special x86 patch that should have caught
+>> everything that didn't have the proper prefetch.h include, but non-x86
+>> drivers would have passed that.
+>
+> the isp1362-hcd failure probably is before your
+> 268bb0ce3e87872cb9290c322b0d35bce230d88f. =C2=A0i think i was reading a l=
+og
+> that is a few days old (ive been traveling and am playing catch up
+> atm). =C2=A0i'll refresh and see what's what still.
+>
+> the common musb code only allows it to be built if the arch glue is
+> available, and there is no x86 glue. =C2=A0so an allyesconfig on x86
+> wouldnt have picked up the failure. =C2=A0it'll bomb though for any targe=
+t
+> which does have the glue.
 
-Ah, ok, that makes more sense, sorry for the noise.
-
-greg k-h
+latest tree seems to only fail for me now on the musb driver.  i can
+send out a patch later today if no one else has gotten to it yet.
+-mike
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
