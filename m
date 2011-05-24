@@ -1,261 +1,34 @@
 From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build warning after merge of the suspend tree
-Date: Tue, 24 May 2011 23:30:09 +0200
-Message-ID: <201105242330.09491.rjw@sisk.pl>
-References: <20110523150636.ccd83777.sfr@canb.auug.org.au> <201105232154.52344.rjw@sisk.pl> <20110524063424.GC18075@gvim.org>
+Subject: Re: linux-next: build failure after merge of the final tree (suspend tree related)
+Date: Tue, 24 May 2011 23:40:20 +0200
+Message-ID: <201105242340.21104.rjw@sisk.pl>
+References: <20110524134216.1033c885.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
-  charset="iso-8859-1"
+  charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110524063424.GC18075@gvim.org>
+In-Reply-To: <20110524134216.1033c885.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: markgross@thegnar.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>, Linux PM mailing list <linux-pm@lists.linux-foundation.org>, Alan Stern <stern@rowland.harvard.edu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tuesday, May 24, 2011, mark gross wrote:
-> On Mon, May 23, 2011 at 09:54:52PM +0200, Rafael J. Wysocki wrote:
-> > On Monday, May 23, 2011, mark gross wrote:
-> > > On Mon, May 23, 2011 at 03:06:36PM +1000, Stephen Rothwell wrote:
-> > > > Hi Rafael,
-> > > > 
-> > > > After merging the suspend tree, today's linux-next build (i386 defconfig
-> > > > among others) produced this warning:
-> > > > 
-> > > > kernel/pm_qos_params.c: In function 'pm_qos_power_write':
-> > > > kernel/pm_qos_params.c:420: warning: passing argument 3 of 'kstrtol' from incompatible pointer type
-> > > > include/linux/kernel.h:210: note: expected 'long int *' but argument is of type 's32 *'
-> > > > 
-> > > > Intreoduced by commit 365daa955e03 ("PM: Correct PM QOS's user mode
-> > > > interface to work with ascii input per").
-> > > 
-> > > Gah!  I'm sorry about that.
-> > > 
-> > > attached is a fix.
-> > > 
-> > > 
-> > > --mark
-> > > 
-> > > signed-off-by:markgross <markgross@thegnar.org>
-> > > 
-> > > 
-> > > 
-> > > From a8f0587b9ae598be5ca4c3cdda4e0ced6ca9baaf Mon Sep 17 00:00:00 2001
-> > > From: mgross <mgross@cr48>
-> > > Date: Mon, 23 May 2011 07:14:09 -0700
-> > > Subject: [PATCH] clean up a compile time warning in the use of strict_strtol but that was
-> > >  passing an s32 * when it should be passing a long *
-> > > 
-> > > ---
-> > >  kernel/pm_qos_params.c |    6 ++++--
-> > >  1 files changed, 4 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/kernel/pm_qos_params.c b/kernel/pm_qos_params.c
-> > > index d61ecf3..dd37c56 100644
-> > > --- a/kernel/pm_qos_params.c
-> > > +++ b/kernel/pm_qos_params.c
-> > > @@ -405,6 +405,7 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
-> > >  		size_t count, loff_t *f_pos)
-> > >  {
-> > >  	s32 value;
-> > > +	long safe_int;
-> > >  	int x;
-> > >  	char ascii_value[11];
-> > >  	struct pm_qos_request_list *pm_qos_req;
-> > > @@ -417,10 +418,11 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
-> > >  		ascii_value[count] = 0;
-> > >  		if (copy_from_user(ascii_value, buf, count))
-> > >  			return -EFAULT;
-> > > -		if ((x=strict_strtol(ascii_value, 16, &value)) != 0){
-> > > -			pr_debug("%s, 0x%x, 0x%x\n",ascii_value, value, x);
-> > > +		if ((x=strict_strtol(ascii_value, 16, &safe_int)) != 0){
-> > > +			pr_debug("%s, 0x%lx, 0x%x\n",ascii_value, safe_int, x);
-> > >  			return -EINVAL;
-> > >  		}
-> > > +		value = (s32) safe_int;
-> > 
-> > Well, this doesn't seem quite right.
-> > 
-> > >  	} else
-> > >  		return -EINVAL;
-> > 
-> > Besides, if count == 11, there we'll write beyond ascii_value[], right?
+On Tuesday, May 24, 2011, Stephen Rothwell wrote:
+> Hi Rafael,
 > 
-> right. That is a bug.
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 > 
-> > 
-> > What about the appended patch instead of your original one?
-> Thank you!
+> kernel/swsusp.c:13:25: error: asm/suspend.h: No such file or directory
+> kernel/power/hibernate.c:28:25: error: asm/suspend.h: No such file or directory
 > 
-> > Rafael
-> > 
-> > 
-> > ---
-> > From: mark gross <markgross@thegnar.org>
-> > Subject: PM: Correct PM QOS's user mode interface to work with ascii input per
-> > 
-> > What is in the kernel docs.  Writing a string to the ABI from user mode
-> > comes in 2 flavors.  One with and one without a '\n' at the end.  This
-> > change accepts both.
-> > 
-> > # echo 0x12345678 > /dev/cpu_dma_latency
-> > 
-> > and
-> > 
-> > # echo -n 0x12345678 > /dev/cpu_dma_latency
-> > 
-> > now both work.
-> > 
-> > [rjw: Fixed up array bounds checking and type casting.]
-> > 
-> > Signed-off-by: mark gross <markgross@thegnar.org>
-> > Acked-by: Simon Horman <horms@verge.net.au>
-> > Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
-> > ---
-> >  kernel/pm_qos_params.c |   25 ++++++++++++++++---------
-> >  1 file changed, 16 insertions(+), 9 deletions(-)
-> > 
-> > Index: linux-2.6/kernel/pm_qos_params.c
-> > ===================================================================
-> > --- linux-2.6.orig/kernel/pm_qos_params.c
-> > +++ linux-2.6/kernel/pm_qos_params.c
-> > @@ -40,6 +40,7 @@
-> >  #include <linux/string.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/init.h>
-> > +#include <linux/kernel.h>
-> >  
-> >  #include <linux/uaccess.h>
-> >  
-> > @@ -404,24 +405,30 @@ static ssize_t pm_qos_power_write(struct
-> >  		size_t count, loff_t *f_pos)
-> >  {
-> >  	s32 value;
-> > -	int x;
-> >  	char ascii_value[11];
-> >  	struct pm_qos_request_list *pm_qos_req;
-> >  
-> >  	if (count == sizeof(s32)) {
-> >  		if (copy_from_user(&value, buf, sizeof(s32)))
-> >  			return -EFAULT;
-> > -	} else if (count == 11) { /* len('0x12345678/0') */
-> > -		if (copy_from_user(ascii_value, buf, 11))
-> > +	} else if (count >= 10) { /* '0x12345678' or '0x12345678\n'*/
-> Did you mean <= 11 here?  I know that Alan Stern wanted to see the ABI
-> adjusted to accept shorter hex string that the full 10 char string.
+> Caused by commit 8f6404f39725 ("PM / Hibernate: Remove
+> arch_prepare_suspend()" which completely removed asm/suspend.h on
+> powerpc, frv and s390.
 > 
-> FWIW I'm ok with doing that.
-> 
-> > +		unsigned long int ulval;
-> > +		int ret;
-> > +
-> > +		count = 10;
-> 
-> I kind of wanted to return an error to the user if they violate the
-> documented format for the hex string.  With this code you get a silent
-> truncation of the lower digits if the string is "0x123456789abcdef"
+> I have reverted that commit for today.
 
-That's correct, but with the previous code there will be a truncation
-is "echo -n 0x123456789".  If we don't want that, we should check if the
-last character is a '\n'.
+Thanks for handling that, it should be fixed now.
 
-> > +		ascii_value[count] = 0;
-> > +		if (copy_from_user(ascii_value, buf, count))
-> >  			return -EFAULT;
-> > -		if (strlen(ascii_value) != 10)
-> > -			return -EINVAL;
-> > -		x = sscanf(ascii_value, "%x", &value);
-> > -		if (x != 1)
-> > +
-> > +		ret = strict_strtoul(ascii_value, 16, &ulval);
-> > +		if (ret){
-> > +			pr_debug("%s, 0x%lx, 0x%x\n", ascii_value, ulval, ret);
-> >  			return -EINVAL;
-> > -		pr_debug("%s, %d, 0x%x\n", ascii_value, x, value);
-> > -	} else
-> > +		}
-> > +		value = (s32)lower_32_bits(ulval);
-> This shouldn't be needed if you are constrained to a hex format of
-> "0x12345678" but this is more readable.  lower_32_bits is a good idea.
-
-OK
-
-Appended is another patch that adds the '\n' check and reworks the code
-a bit (so that it will accept strings like "0x1" too).
-
-Thanks,
 Rafael
-
-
----
-From: Rafael J. Wysocki <rjw@sisk.pl>
-Subject: PM: Fix PM QOS's user mode interface to work with ASCII input
-
-Make pm_qos_power_write() accept values passed to it in the ASCII hex
-format either with or without an ending newline.
-
-Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
----
- kernel/pm_qos_params.c |   33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
-
-Index: linux-2.6/kernel/pm_qos_params.c
-===================================================================
---- linux-2.6.orig/kernel/pm_qos_params.c
-+++ linux-2.6/kernel/pm_qos_params.c
-@@ -40,6 +40,7 @@
- #include <linux/string.h>
- #include <linux/platform_device.h>
- #include <linux/init.h>
-+#include <linux/kernel.h>
- 
- #include <linux/uaccess.h>
- 
-@@ -404,24 +405,36 @@ static ssize_t pm_qos_power_write(struct
- 		size_t count, loff_t *f_pos)
- {
- 	s32 value;
--	int x;
--	char ascii_value[11];
- 	struct pm_qos_request_list *pm_qos_req;
- 
- 	if (count == sizeof(s32)) {
- 		if (copy_from_user(&value, buf, sizeof(s32)))
- 			return -EFAULT;
--	} else if (count == 11) { /* len('0x12345678/0') */
--		if (copy_from_user(ascii_value, buf, 11))
-+	} else if (count <= 11) { /* ASCII perhaps? */
-+		char ascii_value[11];
-+		unsigned long int ulval;
-+		int ret;
-+
-+		if (copy_from_user(ascii_value, buf, count))
- 			return -EFAULT;
--		if (strlen(ascii_value) != 10)
--			return -EINVAL;
--		x = sscanf(ascii_value, "%x", &value);
--		if (x != 1)
-+
-+		if (count > 10) {
-+			if (ascii_value[10] == '\n')
-+				ascii_value[10] = '\0';
-+			else
-+				return -EINVAL;
-+		} else {
-+			ascii_value[count] = '\0';
-+		}
-+		ret = strict_strtoul(ascii_value, 16, &ulval);
-+		if (ret) {
-+			pr_debug("%s, 0x%lx, 0x%x\n", ascii_value, ulval, ret);
- 			return -EINVAL;
--		pr_debug("%s, %d, 0x%x\n", ascii_value, x, value);
--	} else
-+		}
-+		value = (s32)lower_32_bits(ulval);
-+	} else {
- 		return -EINVAL;
-+	}
- 
- 	pm_qos_req = filp->private_data;
- 	pm_qos_update_request(pm_qos_req, value);
