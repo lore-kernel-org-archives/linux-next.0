@@ -1,65 +1,47 @@
-From: Dmitry Artamonow <mad_soft@inbox.ru>
-Subject: Re: [PATCH/RFC] gpio: add GPIOF_ values regardless on
- kconfig settings
-Date: Tue, 24 May 2011 09:23:42 +0400
-Message-ID: <20110524052342.GA24918@rainbow>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: [PATCH -next] mtd: fix physmap.h warnings
+Date: Tue, 24 May 2011 08:53:51 +0300
+Message-ID: <1306216431.2785.46.camel@localhost>
 References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
-	<20110523134815.fb87933a.randy.dunlap@oracle.com>
-	<20110523224659.GB19533@opensource.wolfsonmicro.com>
-	<20110523155343.2e68c265.randy.dunlap@oracle.com>
-	<20110524000837.GA30515@opensource.wolfsonmicro.com>
-	<4DDB082F.3010107@oracle.com>
-	<20110524014959.GA27710@opensource.wolfsonmicro.com>
-	<4DDB3AFF.9030006@oracle.com>
+	 <20110523113709.4357b4ba.randy.dunlap@oracle.com>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <4DDB3AFF.9030006@oracle.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, x86@kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, LKML <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, Harald Welte <laforge@gnufiish.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:49851 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751763Ab1EXF6L (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 May 2011 01:58:11 -0400
+In-Reply-To: <20110523113709.4357b4ba.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-mtd@lists.infradead.org, linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>
 
-On 21:58 Mon 23 May     , Randy Dunlap wrote:
+On Mon, 2011-05-23 at 11:37 -0700, Randy Dunlap wrote:
 > From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Make GPIOF_ defined values available even when GPIOLIB nor GENERIC_GPIO
-> is enabled by moving them to <linux/gpio.h>.
-> 
+>=20
+> Fix build warnings in physmap.h:
+>=20
+> include/linux/mtd/physmap.h:25: warning: 'struct platform_device' dec=
+lared inside parameter list
+> include/linux/mtd/physmap.h:25: warning: its scope is only this defin=
+ition or declaration, which is probably not what you want
+> include/linux/mtd/physmap.h:26: warning: 'struct platform_device' dec=
+lared inside parameter list
+> include/linux/mtd/physmap.h:27: warning: 'struct platform_device' dec=
+lared inside parameter list
+>=20
 > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Looks good.
+Oh, this was missed during review.  This was introduced in
+b7281ca2a4b00044c60c25059f467d05772cdbe3 which is going in via Russel's
+tree, so I guess Russel could pick up your patch.
 
-We probably may also want to move definition of struct gpio into
-include/linux/gpio.h to make things like this work as well:
+CCed relevant people.
 
-static struct gpio some_gpios[] = {
-	{ GPIO_BLAH, GPIOF_IN, "BLAH"},
-	{ GPIO_BLAH2, GPIOF_OUT_INIT_LOW, "BLAH2"},
-};
-
-static int some_init_function(void)
-{
-	/* ... */
-
-	gpio_request_array(some_gpios, ARRAY_SIZE(some_gpios));
-
-	/* ... */
-}
-
-These gpio_request_one() and gpio_request_array() are quite handy, so I
-suppose more and more drivers will use it as we go...
-
--- 
-Best regards,
-Dmitry "MAD" Artamonow
+--=20
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
