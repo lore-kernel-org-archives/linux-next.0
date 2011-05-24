@@ -1,51 +1,41 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] kmsg_dump.h: fix build when CONFIG_PRINTK is disabled
-Date: Tue, 24 May 2011 11:47:05 -0700
-Message-ID: <20110524114705.16e254f1.randy.dunlap@oracle.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: linux-next: Tree for May 24 (ratelimits, CONFIG_PRINTK not
+ enabled)
+Date: Tue, 24 May 2011 11:49:48 -0700
+Message-ID: <1306262988.2298.49.camel@Joe-Laptop>
 References: <20110524140212.a4f19769.sfr@canb.auug.org.au>
+	 <20110524113328.e3d5867b.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:17090 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756197Ab1EXSru (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 May 2011 14:47:50 -0400
-In-Reply-To: <20110524140212.a4f19769.sfr@canb.auug.org.au>
+Received: from mail.perches.com ([173.55.12.10]:1970 "EHLO mail.perches.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752696Ab1EXStu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 May 2011 14:49:50 -0400
+In-Reply-To: <20110524113328.e3d5867b.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, davem@davemloft.net
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Tue, 2011-05-24 at 11:33 -0700, Randy Dunlap wrote:
+> On Tue, 24 May 2011 14:02:12 +1000 Stephen Rothwell wrote:
+> > Hi all,
+> > Changes since 20110523:
+> when CONFIG_PRINTK is not enabled:
+> net/core/filter.c:353: warning: type defaults to 'int' in declaration of 'DEFINE_RATELIMIT_STATE'
+> net/core/filter.c:353: warning: parameter names (without types) in function declaration
+> net/core/filter.c:353: error: invalid storage class for function 'DEFINE_RATELIMIT_STATE'
+> net/core/filter.c:353: error: implicit declaration of function '__ratelimit'
+> net/core/filter.c:353: error: '_rs' undeclared (first use in this function)
 
-Fix <linux/kmsg_dump.h> when CONFIG_PRINTK is not enabled:
+Thanks for the report Randy.
 
-include/linux/kmsg_dump.h:56: error: 'EINVAL' undeclared (first use in this function)
-include/linux/kmsg_dump.h:61: error: 'EINVAL' undeclared (first use in this function)
+I wonder if it's better to new create sections for
+!CONFIG_PRINTK in bug.h.  That might make the image
+a bit smaller when !CONFIG_PRINTK too.
 
-Looks like previous commit:
-commit 595dd3d8bf953254d8d2f30f99c54fe09c470040
-Author: Randy Dunlap <randy.dunlap@oracle.com>
-Date:   Tue Dec 1 10:52:02 2009 -0800
+> Adding <linux/ratelimit.h> to <asm-generic/bug.h> causes other problems:
 
-    kmsg_dump: fix build for CONFIG_PRINTK=n
-
-uses EINVAL without having the needed header file(s),
-but I'm sure that I build tested that patch also.  oh well.
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- include/linux/kmsg_dump.h |    1 +
- 1 file changed, 1 insertion(+)
-
---- linux-next-20110524.orig/include/linux/kmsg_dump.h
-+++ linux-next-20110524/include/linux/kmsg_dump.h
-@@ -12,6 +12,7 @@
- #ifndef _LINUX_KMSG_DUMP_H
- #define _LINUX_KMSG_DUMP_H
- 
-+#include <linux/errno.h>
- #include <linux/list.h>
- 
- enum kmsg_dump_reason {
+Yup, that's not a good solution.
