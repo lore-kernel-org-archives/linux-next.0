@@ -1,77 +1,74 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH/RFC] gpio: add GPIOF_ values regardless on
- kconfig settings
-Date: Tue, 24 May 2011 12:44:57 -0700
-Message-ID: <20110524124457.c6c21bab.randy.dunlap@oracle.com>
-References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
-	<20110523134815.fb87933a.randy.dunlap@oracle.com>
-	<20110523224659.GB19533@opensource.wolfsonmicro.com>
-	<20110523155343.2e68c265.randy.dunlap@oracle.com>
-	<20110524000837.GA30515@opensource.wolfsonmicro.com>
-	<4DDB082F.3010107@oracle.com>
-	<20110524014959.GA27710@opensource.wolfsonmicro.com>
-	<4DDB3AFF.9030006@oracle.com> <20110524052342.GA24918@rainbow>
+From: Joe Perches <joe@perches.com>
+Subject: Re: linux-next: Tree for May 24 (ratelimits, CONFIG_PRINTK not
+ enabled)
+Date: Tue, 24 May 2011 12:49:40 -0700
+Message-ID: <1306266580.2298.55.camel@Joe-Laptop>
+References: <20110524140212.a4f19769.sfr@canb.auug.org.au>
+	 <20110524113328.e3d5867b.randy.dunlap@oracle.com>
+	 <1306262988.2298.49.camel@Joe-Laptop>
+	 <20110524.153222.1953796640575918161.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20110524052342.GA24918@rainbow>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Dmitry Artamonow <mad_soft@inbox.ru>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, x86@kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, LKML <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, Harald@alsa-project.org, Welte <laforge@gnufiish.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110524.153222.1953796640575918161.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 24 May 2011 09:23:42 +0400 Dmitry Artamonow wrote:
+On Tue, 2011-05-24 at 15:32 -0400, David Miller wrote:
+> From: Joe Perches <joe@perches.com>
+> Date: Tue, 24 May 2011 11:49:48 -0700
+> > On Tue, 2011-05-24 at 11:33 -0700, Randy Dunlap wrote:
+> >> Adding <linux/ratelimit.h> to <asm-generic/bug.h> causes other problems:
+> > Yup, that's not a good solution.
+> Please come up with a fix or I'll have to revert, thanks Joe.
 
-> On 21:58 Mon 23 May     , Randy Dunlap wrote:
-> > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > 
-> > Make GPIOF_ defined values available even when GPIOLIB nor GENERIC_GPIO
-> > is enabled by moving them to <linux/gpio.h>.
-> > 
-> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Looks good.
-> 
-> We probably may also want to move definition of struct gpio into
-> include/linux/gpio.h to make things like this work as well:
-> 
-> static struct gpio some_gpios[] = {
-> 	{ GPIO_BLAH, GPIOF_IN, "BLAH"},
-> 	{ GPIO_BLAH2, GPIOF_OUT_INIT_LOW, "BLAH2"},
-> };
-> 
-> static int some_init_function(void)
-> {
-> 	/* ... */
-> 
-> 	gpio_request_array(some_gpios, ARRAY_SIZE(some_gpios));
-> 
-> 	/* ... */
-> }
-> 
-> These gpio_request_one() and gpio_request_array() are quite handy, so I
-> suppose more and more drivers will use it as we go...
+I have some errands to run for awhile.
 
-That could help this one:
+Probably a revert today and another patch set tomorrow
+might be best.
 
-linux-next-20110524/include/linux/mfd/tps65910.h:774: error: field 'gpio' has incomplete type
+This seems to work and doesn't cause any extra state to be
+instantiated when !CONFIG_PRINTK.  What do you think?
 
-and then add some way to handle (e.g.):
+#ifdef CONFIG_PRINTK
 
-	struct tps65910 *tps65910 = container_of(gc, struct tps65910, gpio);
-=>
-linux-next-20110524/drivers/gpio/tps65910-gpio.c:25: warning: type defaults to 'int' in declaration of '__mptr'
+#define WARN_ON_RATELIMIT(condition, state)			\
+	WARN_ON((condition) && __ratelimit(state))
 
+#define __WARN_RATELIMIT(condition, state, format...)		\
+({								\
+	int rtn = 0;						\
+	if (unlikely(__ratelimit(state)))			\
+		rtn = WARN(condition, format);			\
+	rtn;							\
+})
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+#define WARN_RATELIMIT(condition, format...)			\
+({								\
+	static DEFINE_RATELIMIT_STATE(_rs,			\
+				      DEFAULT_RATELIMIT_INTERVAL,	\
+				      DEFAULT_RATELIMIT_BURST);	\
+	__WARN_RATELIMIT(condition, &_rs, format);		\
+})
+
+#else
+
+#define WARN_ON_RATELIMIT(condition, state)			\
+	WARN_ON(condition)
+
+#define __WARN_RATELIMIT(condition, state, format...)		\
+({								\
+	int rtn = WARN(condition, format);			\
+	rtn;							\
+})
+
+#define WARN_RATELIMIT(condition, format...)			\
+({								\
+	int rtn = WARN(condition, format);			\
+	rtn;							\
+})
+
+#endif
