@@ -1,187 +1,80 @@
-From: mark gross <markgross@thegnar.org>
-Subject: Re: linux-next: build warning after merge of the suspend tree
-Date: Mon, 23 May 2011 23:13:00 -0700
-Message-ID: <20110524061300.GB18075@gvim.org>
-References: <20110523150636.ccd83777.sfr@canb.auug.org.au>
- <20110523141846.GA8122@gvim.org>
- <pm-qos-needs-fixing@mdm.bga.com>
- <pm-qos-needs-fixing-2@mdm.bga.com>
-Reply-To: markgross@thegnar.org
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: [PATCH-v5 00/13] iscsi-target: initial .40-rc1 merge
+Date: Mon, 23 May 2011 23:06:56 -0700
+Message-ID: <1306217216.29724.144.camel@haakon2.linux-iscsi.org>
+References: <1305862678-30150-1-git-send-email-nab@linux-iscsi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:42739 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751807Ab1EXGNE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 May 2011 02:13:04 -0400
-Content-Disposition: inline
-In-Reply-To: <pm-qos-needs-fixing-2@mdm.bga.com>
+Received: from mail.linux-iscsi.org ([67.23.28.174]:45524 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752521Ab1EXGPQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 May 2011 02:15:16 -0400
+In-Reply-To: <1305862678-30150-1-git-send-email-nab@linux-iscsi.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Milton Miller <miltonm@bga.com>
-Cc: mgross <markgross@thegnar.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, James Bottomley <James.Bottomley@HansenPartnership.com>, Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Andy Grover <agrover@redhat.com>, Mike Christie <michaelc@cs.wisc.edu>, Boaz Harrosh <bharrosh@panasas.com>, Andrew Morton <akpm@linux-foundation.org>, Martin Svec <martin.svec@zoner.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next <linux-next@vger.kernel.org>
 
-On Mon, May 23, 2011 at 12:42:18PM -0500, Milton Miller wrote:
-> [ I managed to botch my own email the first time, how embarrassing!
-> So I added Randy and updated the paragraph about negative values.
-> And then I need a new Message-Id too. ]
+On Thu, 2011-05-19 at 20:37 -0700, Nicholas A. Bellinger wrote:
+> From: Nicholas Bellinger <nab@linux-iscsi.org>
+> 
+> Hi James,
+> 
+> Here is an updated v5 mergeable + squashable .40-rc1 series of iscsi-target
+> against scsi-misc .39-rc7 target core intrastructure with (round 1) .40
+> target core patches from this evening applied:
+> 
+> [PATCH 0/6] target: .40 bugfixes+changes (round 1)
+> http://marc.info/?l=linux-scsi&m=130586157027016&w=2
+> 
+> The includes the following changes from PATCH-v4:
+> 
+> *) Convert initial iscsi-target merge to use scsi_tcq.h
+> 
+> As before, please merge patch #1 + #2 as seperate libiscsi commits with
+> Mike's signoff.  From there go ahead and squash #3 -> #13 using the commit
+> message of patch #3 for an initial commit of drivers/target/iscsi/
+> 
+> This patch has been made against the latest scsi-misc HEAD:
+> 
+> commit 6ad11eaa8a689a27e0c99905bcf800a37cd432a0
+> Author: Joe Carnuccio <joe.carnuccio@qlogic.com>
+> Date:   Tue May 10 11:30:16 2011 -0700
+> 
+>     [SCSI] qla2xxx: Refactor call to qla2xxx_read_sfp for thermal temperature.
+> 
+> 
+> The complete series for an initial merge including (round 1) .40 changes is
+> available directly here:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/nab/scsi-post-merge-2.6.git for-40-iscsi-target-merge-v3
+> 
+> 
+> At this point there is one outstanding bug + patch being tested by Martin wrt
+> to SessionType=Discovery logout exception handling during an iscsi-target
+> failure/shutdown event.  Please expect an rc-fixes patch to address this
+> specific issue after the initial merge.
+> 
+> Thanks folks!
+> 
+> Signed-off-by: Nicholas A. Bellinger <nab@linux-iscsi.org>
+> 
 
-I any more resends from you and I'll have to diff your emails to see
-what new comments you have come up with.
+Hi James,
 
-FWIW Normally when I submit a patch for quick review this is what
-happens.  I should be more careful.  Please note that I didn't start my
-subject line with a [patch].
+Ping on finally getting iscsi-target merged..?
 
+I have no further changes nor gotten any further review feedback at this
+point for an initial merge for .40-rc1 (or 2.8.0-rc1) , and one
+iscsi-target bugfix is currently in my queue for rc-fixes that has been
+resolved recently with Martin's help.
 
-> 
-> On Mon, 23 May 2011 about 14:18:46 -0000, mgross wrote:
-> > On Mon, May 23, 2011 at 03:06:36PM +1000, Stephen Rothwell wrote:
-> > > Hi Rafael,
-> > > 
-> > > After merging the suspend tree, today's linux-next build (i386 defconfig
-> > > among others) produced this warning:
-> > > 
-> > > kernel/pm_qos_params.c: In function 'pm_qos_power_write':
-> > > kernel/pm_qos_params.c:420: warning: passing argument 3 of 'kstrtol' from incompatible pointer type
-> > > include/linux/kernel.h:210: note: expected 'long int *' but argument is of type 's32 *'
-> > > 
-> > > Intreoduced by commit 365daa955e03 ("PM: Correct PM QOS's user mode
-> > > interface to work with ascii input per").
-> > 
-> > Gah!  I'm sorry about that.
-> > 
-> > attached is a fix.
-> > 
-> > 
-> > --mark
-> > 
-> > signed-off-by:markgross <markgross@thegnar.org>
-> > 
-> 
-> (1) This should be in the patch, not the enclosing letter
-> (2) Incorrect capitalization
-> (3) Incorrect spacing
-> 
-> Please read Documentation/SubmittingPatches again.
+Considering the short term window this time around, can you please have
+a look at getting this merged ASAP so that it can send a few days in
+linux-next..?
 
-Yes I will do that. 
+Thank you,
 
-
-> 
-> > 
-> > 
-> > >From a8f0587b9ae598be5ca4c3cdda4e0ced6ca9baaf Mon Sep 17 00:00:00 2001
-> > From: mgross <mgross@cr48>
-> > Date: Mon, 23 May 2011 07:14:09 -0700
-> > Subject: [PATCH] clean up a compile time warning in the use of strict_strtol but that was
-> >  passing an s32 * when it should be passing a long *
-> > 
-> 
-> From should match Signed-off-by:
-> 
-> Please seperate title (subject) and description body
-> 
-> Maybe: pm_qos: strict_strtol takes a long, not s32
-> 
-> strict_strtol takes a pointer to long to store the converted value.
-> introduced in xxxx ("change set title here")
-> 
-> So that the reviewers can quickly see if it needs to be backported
-> to stable etc.
-> 
-> except read below
-> 
-> 
-> > ---
-> > kernel/pm_qos_params.c |    6 ++++--
-> >  1 files changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/pm_qos_params.c b/kernel/pm_qos_params.c
-> > index d61ecf3..dd37c56 100644
-> > --- a/kernel/pm_qos_params.c
-> > +++ b/kernel/pm_qos_params.c
-> > @@ -405,6 +405,7 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
-> >  		size_t count, loff_t *f_pos)
-> >  {
-> >  	s32 value;
-> > +	long safe_int;
-> >  	int x;
-> >  	char ascii_value[11];
-> >  	struct pm_qos_request_list *pm_qos_req;
-> > @@ -417,10 +418,11 @@ static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
-> >  		ascii_value[count] = 0;
-> >  		if (copy_from_user(ascii_value, buf, count))
-> >  			return -EFAULT;
-> > -		if ((x=strict_strtol(ascii_value, 16, &value)) != 0){
-> > -			pr_debug("%s, 0x%x, 0x%x\n",ascii_value, value, x);
-> > +		if ((x=strict_strtol(ascii_value, 16, &safe_int)) != 0){
-> 
-> Why are you doing an assignment in the if?  Why not assign first and
-> compare later?
-> 
-> > +			pr_debug("%s, 0x%lx, 0x%x\n",ascii_value, safe_int, x);
-> >  			return -EINVAL;
-> 
-> Nit: Some reason not to return -ERANGE if thats what strtol returned?  
-> While folding the error to -EINVAL is ok, it hides diagnostic informatio
-> from the user.
-I think EINVAL matches the documentation for this ABI better that
-ERANGE.
-
-> 
-> >  		}
-> > +		value = (s32) safe_int;
-> 
-> You call strict checking, which includes overflow checking, but
-> only that the value fits in a long.  You then defeat that checking
-> by casting to int.
-
-The documentation for the ABI says that it has to be a hex value of the
-formation 0x12345678 otherwise its not valid.  s32 is big enough for
-that.  I thought about masking for a second and decided this is good
-enough.
-
-
-> It looks like you want strict_strtoint except thats not defined.
-> Hoever, the pattern for strict_strto* is kstrto* and kstrtos32 is
-> defined ...
-
-hmm, I'll look at the strtos32. That is what I would like.
-
-> 
-> >  	} else
-> >  		return -EINVAL;
-> >  
-> 
-> Oh, and you now may copy 11 characters from userspace into an 11
-> character buffer then terminate it by writing the 12th character
-> (ascii_value[count == 11]).  Except its an 11 character array.
-
-yes, if count = 11 then this code is overwriting by one byte :(  I must
-have gotten luckly because 11 is an odd number and the compiler padded
-it from me.  I'll fix that in a future patch. 
-
-> The variable is a s32, aparently in native endian if pased in binary
-> as 4 bytes.  What is the magic to set the value to a negative number
-> through the ascii interface?  Is yet another character for the -
-> required?
-No. The ABI documentation is pretty clear about the text format being
-simple hex 0x12345678 styled.
-
-
---mark
-
-> 
-> 
-> I see the string from userspace wasn't properly terminated before
-> either.  In ed77134bfccf5e75b (PM QOS update), merged in v2.6.35-rc1,
-> 11 bytes were copied from user then passed to ssscanf without null
-> termination forced.  It was updated in 0109c2c48d (PM QoS: Correct
-> pr_debug() misuse and improve parameter checks), which was merged in
-> 2.6.36-rc4, to change the the function that walks off the string from
-> sscanf to strlen.  That changelog isn't marked for stable (I didn't
-> look if it was sent) but it still isn't force terminated.
-> 
-> happy patching,
-> milton
+--nab
