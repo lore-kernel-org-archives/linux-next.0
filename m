@@ -1,62 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the dwmw2-iommu tree with Linus' tree
-Date: Wed, 25 May 2011 13:00:04 +1000
-Message-ID: <20110525130004.150c054f.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (kvm tree
+ related)
+Date: Wed, 25 May 2011 13:28:09 +1000
+Message-ID: <20110525132809.6d85b3c2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__25_May_2011_13_28_09_+1000_AA6nfbQujQQ0vpSt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60756 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33044 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752356Ab1EYDAJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 May 2011 23:00:09 -0400
+	id S1756012Ab1EYD2S (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 May 2011 23:28:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Song, Youquan" <youquan.song@intel.com>, Suresh Siddha <suresh.b.siddha@intel.com>, Ingo Molnar <mingo@elte.hu>
+To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-Hi David,
+--Signature=_Wed__25_May_2011_13_28_09_+1000_AA6nfbQujQQ0vpSt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the dwmw2-iommu tree got a conflict in
-arch/x86/kernel/apic/apic.c between commit 31dce14a3269 ("x86, ioapic:
-Use ioapic_saved_data while enabling intr-remapping") from Linus' tree and
-commit 6a87c5ec6463 ("intel-iommu: enable x2apic opt out") from the
-dwmw2-iommu tree.
+Hi all,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
+
+cc1: warnings being treated as errors
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c: In function '__kvm_set_memor=
+y_region':
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:654: error: cast to pointer f=
+rom integer of different size
+arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:654: error: cast to pointer f=
+rom integer of different size
+
+Caused by commit 95de6ce677d6 ("KVM: add missing void __user * cast to
+access_ok() call").
+
+I have reverted that commit for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/kernel/apic/apic.c
-index b961af8,fb1c36c..0000000
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@@ -1461,16 -1450,24 +1461,17 @@@ int __init enable_IR(void
-  void __init enable_IR_x2apic(void)
-  {
-  	unsigned long flags;
-- 	int ret, x2apic_enabled = 0;
- -	struct IO_APIC_route_entry **ioapic_entries;
-+ 	int ret = 0, x2apic_enabled = 0;
-  	int dmar_table_init_ret;
-  
-  	dmar_table_init_ret = dmar_table_init();
-- 	if (dmar_table_init_ret && !x2apic_supported())
-+ 	if (dmar_table_init_ret && !cpu_has_x2apic)
-  		return;
-  
- -	ioapic_entries = alloc_ioapic_entries();
- -	if (!ioapic_entries) {
- -		pr_err("Allocate ioapic_entries failed\n");
- -		goto out;
- -	}
- -
- -	ret = save_IO_APIC_setup(ioapic_entries);
- +	ret = save_ioapic_entries();
-  	if (ret) {
-  		pr_info("Saving IO-APIC state failed: %d\n", ret);
-+ 		ret = 0;
-  		goto out;
-  	}
-  
+--Signature=_Wed__25_May_2011_13_28_09_+1000_AA6nfbQujQQ0vpSt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN3HdJAAoJEDMEi1NhKgbsyIwH/1GCApV7ESIjedC7pIWTQKI6
+B9tMR8+yNj0jm8XJ64LVU7UrvRIkHEQjobKZ0BF93+zSkiywYzknCiurLAA5jlt5
+R1OPdJJ2aK+LJGc6YNCPpDXMaLeAWFZQ0zkic3FGiB3G3nqhWTO53MKmY507TZQ1
+LuQcx2slhHA6+XDVQhtk2GZ8NZxg/djztfreJEc+5Qje75Th334rBk5k8jWSBdtM
+CCYUNvneyzV0Ns5dHSjfy5RTjZ1r/aoI+w/ZntJNy7ui1S+ZelgFaa1WqSP3+4RL
+B30wnGdy/ns/aw0h4AUo+uxq90G4jAj7UywLtm/l/aoaIdfC/80jdVs7fzLo7RQ=
+=Mj0u
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_May_2011_13_28_09_+1000_AA6nfbQujQQ0vpSt--
