@@ -1,86 +1,46 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Wed, 25 May 2011 12:24:55 +0300
-Message-ID: <20110525092449.GJ14556@legolas.emea.dhcp.ti.com>
-References: <20110520161816.dda6f1fd.sfr@canb.auug.org.au>
- <BANLkTimjzzqTS1fELmpb0UivqseLsYOfPw@mail.gmail.com>
- <BANLkTine2kobQA8TkmtiuXdKL=07NCo2vA@mail.gmail.com>
- <BANLkTim-zRShhy49d7yn5WTJYzR6A2DtZQ@mail.gmail.com>
- <BANLkTi=U8ikZo65AoxGznCopGMTFOUXWhQ@mail.gmail.com>
-Reply-To: balbi@ti.com
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: linux-next: manual merge of the dwmw2-iommu tree with Linus'
+ tree
+Date: Wed, 25 May 2011 11:57:06 +0100 (BST)
+Message-ID: <alpine.LFD.2.02.1105251133001.3164@localhost6.localdomain6>
+References: <20110525130004.150c054f.sfr@canb.auug.org.au> <20110525091636.GC28500@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CxDuMX1Cv2n9FQfo"
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <BANLkTi=U8ikZo65AoxGznCopGMTFOUXWhQ@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Mike Frysinger <vapier.adi@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mel@csn.ul.ie>, linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dipankar Sarma <dipankar@in.ibm.com>, "Balbi, Felipe" <balbi@ti.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:53259 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752353Ab1EYK5U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 May 2011 06:57:20 -0400
+In-Reply-To: <20110525091636.GC28500@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Song, Youquan" <youquan.song@intel.com>, Suresh Siddha <suresh.b.siddha@intel.com>
 
+On Wed, 25 May 2011, Ingo Molnar wrote:
 
---CxDuMX1Cv2n9FQfo
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> That particular change was still under discussion and i'm not at all 
+> sure we want to do it like that. So please repost the latest version.
 
-On Tue, May 24, 2011 at 01:10:42PM -0400, Mike Frysinger wrote:
-> On Tue, May 24, 2011 at 00:10, Mike Frysinger wrote:
-> > On Tue, May 24, 2011 at 00:01, Linus Torvalds wrote:
-> >> On Mon, May 23, 2011 at 7:06 PM, Mike Frysinger wrote:
-> >>>
-> >>> more failures:
-> >>
-> >> Is this blackfin or something?
-> >
-> > let's go with "something" ...
-> >
-> >> I did an allyesconfig with a special x86 patch that should have caught
-> >> everything that didn't have the proper prefetch.h include, but non-x86
-> >> drivers would have passed that.
-> >
-> > the isp1362-hcd failure probably is before your
-> > 268bb0ce3e87872cb9290c322b0d35bce230d88f. =A0i think i was reading a log
-> > that is a few days old (ive been traveling and am playing catch up
-> > atm). =A0i'll refresh and see what's what still.
-> >
-> > the common musb code only allows it to be built if the arch glue is
-> > available, and there is no x86 glue. =A0so an allyesconfig on x86
-> > wouldnt have picked up the failure. =A0it'll bomb though for any target
-> > which does have the glue.
+I had not seen such discussion; I had the impression that having dealt 
+with my feedback about making the thing more visible to the user, Youquan
+considered the patch complete.
 
-anyone with a PCI OPT card to help adding a PCI glue layer for MUSB ?
+I am more than happy to absolve responsibility for this patch altogether 
+and drop it from tree, though. It is *absolutely* the wrong approach, in 
+my opinion. If the BIOS is broken and cannot cope with x2apic, the 
+solution is to line the "engineers" responsible up against the wall and 
+shoot them. And then to implement a "quiesce all SMI" feature that the OS 
+can invoke, and make it mandatory. Presumably that's the underlying 
+problem they were trying to solve?
 
-> latest tree seems to only fail for me now on the musb driver.  i can
-> send out a patch later today if no one else has gotten to it yet.
+The answer certainly isn't to add a flag in the DMAR table to opt out of 
+x2apic use, when afaict the kernel is capable of using x2apic in some 
+cases even when the *is* no DMAR. (Either that, or we have a lot of dead 
+code in that area which *looks* like it copes with x2apic+!dmar).
 
-please do send out, but what was the compile breakage with musb ?
+I'll drop this patch from my tree when I get home and happily wash my 
+hands of it. It's all yours; have fun :)
 
---=20
-balbi
-
---CxDuMX1Cv2n9FQfo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN3MrhAAoJEAv8Txj19kN13eUH/2sPqkGsBmMQwQoKZwX3haUA
-PhugOZGGAlhYCmJgUr4p7AfXyzyol6ZRrnU5sPGu6kM+j9/KRWO5dQFhNHW/Tlg2
-gfm9Gx8ikCCxIFIqfb/J9DB15h5RNlLMkl3iHsTr6z3a+cNyev6Cb+vq8DOflIou
-Kv9yURY9N4xVUFPY45Rv3RXZqQD2+JoWAHaRiJk0FbEVKJ1ABi7Tm+iNxbSjnQon
-LvgQSQP8MCUPUqZxeZPcLKXbkxrh9GdkxlpAIX1QglGDuifiG73mT8MvNovxlKQC
-ReZfQiKXJv5LIrOLvaCs7QjIrIRu8qoQ02GPAs83y8sz5Lj7VOQ43H8ciS2ky8c=
-=aMEA
------END PGP SIGNATURE-----
-
---CxDuMX1Cv2n9FQfo--
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+-- 
+dwmw2
