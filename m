@@ -1,76 +1,40 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the dwmw2-iommu tree with Linus' tree
-Date: Wed, 25 May 2011 13:40:10 +0200
-Message-ID: <20110525114010.GF30983@elte.hu>
-References: <20110525130004.150c054f.sfr@canb.auug.org.au>
- <20110525091636.GC28500@elte.hu>
- <alpine.LFD.2.02.1105251133001.3164@localhost6.localdomain6>
+From: Mike Frysinger <vapier.adi@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Wed, 25 May 2011 08:13:20 -0400
+Message-ID: <BANLkTimd_CmVzJP1yDkuNSS+PSRk=0W_uA@mail.gmail.com>
+References: <20110520161816.dda6f1fd.sfr@canb.auug.org.au> <BANLkTimjzzqTS1fELmpb0UivqseLsYOfPw@mail.gmail.com>
+ <BANLkTine2kobQA8TkmtiuXdKL=07NCo2vA@mail.gmail.com> <BANLkTim-zRShhy49d7yn5WTJYzR6A2DtZQ@mail.gmail.com>
+ <BANLkTi=U8ikZo65AoxGznCopGMTFOUXWhQ@mail.gmail.com> <20110525092449.GJ14556@legolas.emea.dhcp.ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:58055 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753490Ab1EYLkW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 May 2011 07:40:22 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.02.1105251133001.3164@localhost6.localdomain6>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Song, Youquan" <youquan.song@intel.com>, Suresh Siddha <suresh.b.siddha@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20110525092449.GJ14556@legolas.emea.dhcp.ti.com>
+Sender: owner-linux-mm@kvack.org
+To: balbi@ti.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mel@csn.ul.ie>, linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Dipankar Sarma <dipankar@in.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
+On Wed, May 25, 2011 at 05:24, Felipe Balbi wrote:
+> On Tue, May 24, 2011 at 01:10:42PM -0400, Mike Frysinger wrote:
+>> latest tree seems to only fail for me now on the musb driver. =C2=A0i ca=
+n
+>> send out a patch later today if no one else has gotten to it yet.
+>
+> please do send out, but what was the compile breakage with musb ?
 
-* David Woodhouse <dwmw2@infradead.org> wrote:
+i logged it earlier in the thread:
+drivers/usb/musb/musb_core.c: In function 'musb_write_fifo':
+drivers/usb/musb/musb_core.c:219: error: implicit declaration of
+function 'prefetch'
+make[3]: *** [drivers/usb/musb/musb_core.o] Error 1
 
-> On Wed, 25 May 2011, Ingo Molnar wrote:
-> 
-> > That particular change was still under discussion and i'm not at all 
-> > sure we want to do it like that. So please repost the latest version.
-> 
-> I had not seen such discussion; I had the impression that having dealt 
-> with my feedback about making the thing more visible to the user, Youquan
-> considered the patch complete.
+patch sent out now
+-mike
 
-I lurked your discussion with Youquan and expected another iteration 
-posted. I was keeping my gun powder dry for the next round because i 
-saw you reaping the patch to pieces already and there was nothing 
-more to say really :)
-
-> I am more than happy to absolve responsibility for this patch 
-> altogether and drop it from tree, though. It is *absolutely* the 
-> wrong approach, in my opinion. If the BIOS is broken and cannot 
-> cope with x2apic, the solution is to line the "engineers" 
-> responsible up against the wall and shoot them. And then to 
-> implement a "quiesce all SMI" feature that the OS can invoke, and 
-> make it mandatory. Presumably that's the underlying problem they 
-> were trying to solve?
-> 
-> The answer certainly isn't to add a flag in the DMAR table to opt 
-> out of x2apic use, when afaict the kernel is capable of using 
-> x2apic in some cases even when the *is* no DMAR. (Either that, or 
-> we have a lot of dead code in that area which *looks* like it copes 
-> with x2apic+!dmar).
-
-Yeah, that was exactly my main concern as well: why should we allow 
-the BIOS to tell us not to use a CPU feature that the CPU tells us is 
-usable?
-
-We generally do not allow such level of BIOS control. They should fix 
-the BIOS to not generate DMAR tables at all if they want us to 'opt 
-out', or ship a CPU without x2apic (or a CPU microcode version that 
-turns off the x2apic CPUID bit or whatever).
-
-So unless i missed some fine detail of control here, the whole idea 
-of generating DMAR tables (which were always inherently connected to 
-x2apic really) that tell us 'never mind about x2apic!' seems rather 
-counter-productive ...
-
-> I'll drop this patch from my tree when I get home and happily wash 
-> my hands of it. It's all yours; have fun :)
-
-Thanks. Youquan, mind resending the latest and greatest version so we 
-can continue flami^W iterating it? Please also Cc: David.
-
-Thanks,
-
-	Ingo
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
