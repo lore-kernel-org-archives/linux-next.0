@@ -1,50 +1,126 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] regulator: fix 88pm8607.c printk format warning
-Date: Thu, 26 May 2011 10:16:15 -0700
-Message-ID: <20110526101615.61d5ed27.randy.dunlap@oracle.com>
-References: <20110518145412.f6cba4ef.sfr@canb.auug.org.au>
-	<20110518100722.76bd6fb6.randy.dunlap@oracle.com>
-	<20110518194311.GB5077@opensource.wolfsonmicro.com>
-	<1305978663.3317.7.camel@odin>
-	<20110526090522.5d8c684b.randy.dunlap@oracle.com>
-	<20110526170756.GA20068@sortiz-mobl>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for May 26 (RCU stalls)
+Date: Thu, 26 May 2011 10:31:28 -0700
+Message-ID: <20110526173128.GE2386@linux.vnet.ibm.com>
+References: <BANLkTink15DRi6WJT2g07zd6-=MtW2hODw@mail.gmail.com>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:31681 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754794Ab1EZRQj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 May 2011 13:16:39 -0400
-In-Reply-To: <20110526170756.GA20068@sortiz-mobl>
+Received: from e9.ny.us.ibm.com ([32.97.182.139]:57233 "EHLO e9.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757803Ab1EZRbj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 May 2011 13:31:39 -0400
+Content-Disposition: inline
+In-Reply-To: <BANLkTink15DRi6WJT2g07zd6-=MtW2hODw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, Haojian Zhuang <haojian.zhuang@marvell.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: sedat.dilek@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Thu, May 26, 2011 at 05:48:32PM +0200, Sedat Dilek wrote:
+> On Thu, May 26, 2011 at 8:39 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > [The kernel.org mirroring is being slow today]
+> >
+> > Changes since 20110525:
+> >
+> > Linus' tree gained a build failure for which I applied a patch.
+> >
+> > The m68knommu tree lost its conflicts.
+> >
+> > The hwmon-staging lost its conflict.
+> >
+> > The wireless lost its conflict.
+> >
+> > The mmc lost its conflict.
+> >
+> > The dwmw2-iommu tree lost its conflict.
+> >
+> > The kvm tree still had its build failure so I used the version from
+> > next-20110524.
+> >
+> > The namespace lost its conflicts.
+> >
+> > ----------------------------------------------------------------------------
+> >
+> 
+> Hi,
+> 
+> I see these call-traces on x86 UP machine:
+> 
+> [  240.268061] INFO: task rcun0:8 blocked for more than 120 seconds.
+> [  240.268069] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> disables this message.
+> [  240.268072] rcun0           D 00000000     0     8      2 0x00000000
+> [  240.268079]  f6473fb8 00000046 013131b6 00000000 c1461ac0 00000000
+> 00000000 c1461ac0
+> [  240.268089]  00000000 00000000 f645dc70 f645bf60 00000003 f6473f78
+> c102a570 f6473f9c
+> [  240.268097]  c1021476 00000000 f645bf6c 00000001 00000000 00000286
+> f6473f9c c129b35a
+> [  240.268106] Call Trace:
+> [  240.268121]  [<c102a570>] ? default_wake_function+0xb/0xd
+> [  240.268127]  [<c1021476>] ? __wake_up_common+0x33/0x5b
+> [  240.268134]  [<c129b35a>] ? _raw_spin_unlock_irqrestore+0xe/0x10
+> [  240.268140]  [<c10234ed>] ? complete+0x34/0x3e
+> [  240.268147]  [<c1074d23>] ? cpumask_weight+0xc/0xc
+> [  240.268157]  [<c1044c97>] kthread+0x53/0x67
+> [  240.268162]  [<c1044c44>] ? kthread_worker_fn+0x111/0x111
+> [  240.268169]  [<c12a123e>] kernel_thread_helper+0x6/0xd
+> 
+> dmesg and kernel-config are attached.
 
-Fix printk format warning (seen on x86_64) and change to unsigned
-output format:
+Hello, Sedat,
 
-drivers/regulator/88pm8607.c:417: warning: format '%d' expects type 'int', but argument 3 has type 'resource_size_t'
+Does the following patch clear things up?
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- drivers/regulator/88pm8607.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+							Thanx, Paul
 
---- linux-next-20110518.orig/drivers/regulator/88pm8607.c
-+++ linux-next-20110518/drivers/regulator/88pm8607.c
-@@ -413,8 +413,8 @@ static int __devinit pm8607_regulator_pr
- 			break;
- 	}
- 	if ((i < 0) || (i > PM8607_ID_RG_MAX)) {
--		dev_err(&pdev->dev, "Failed to find regulator %d\n",
--			res->start);
-+		dev_err(&pdev->dev, "Failed to find regulator %llu\n",
-+			(unsigned long long)res->start);
- 		return -EINVAL;
- 	}
- 	info->i2c = (chip->id == CHIP_PM8607) ? chip->client : chip->companion;
+------------------------------------------------------------------------
+
+rcu: Start RCU kthreads in TASK_INTERRUPTIBLE state
+
+Upon creation, kthreads are in TASK_UNINTERRUPTIBLE state, which can
+result in softlockup warnings.  Because some of RCU's kthreads can
+legitimately be idle indefinitely, start them in TASK_INTERRUPTIBLE
+state in order to avoid those warnings.
+
+Suggested-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Signed-off-by: Paul E. McKenney <paul.mckenney@linaro.org>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Tested-by: Yinghai Lu <yinghai@kernel.org>
+
+diff --git a/kernel/rcutree.c b/kernel/rcutree.c
+index a1a8bb6..40aab8d 100644
+--- a/kernel/rcutree.c
++++ b/kernel/rcutree.c
+@@ -1647,6 +1647,7 @@ static int __cpuinit rcu_spawn_one_cpu_kthread(int cpu)
+ 	if (IS_ERR(t))
+ 		return PTR_ERR(t);
+ 	kthread_bind(t, cpu);
++	set_task_state(t, TASK_INTERRUPTIBLE);
+ 	per_cpu(rcu_cpu_kthread_cpu, cpu) = cpu;
+ 	WARN_ON_ONCE(per_cpu(rcu_cpu_kthread_task, cpu) != NULL);
+ 	per_cpu(rcu_cpu_kthread_task, cpu) = t;
+@@ -1754,6 +1755,7 @@ static int __cpuinit rcu_spawn_one_node_kthread(struct rcu_state *rsp,
+ 		if (IS_ERR(t))
+ 			return PTR_ERR(t);
+ 		raw_spin_lock_irqsave(&rnp->lock, flags);
++		set_task_state(t, TASK_INTERRUPTIBLE);
+ 		rnp->node_kthread_task = t;
+ 		raw_spin_unlock_irqrestore(&rnp->lock, flags);
+ 		sp.sched_priority = 99;
+diff --git a/kernel/rcutree_plugin.h b/kernel/rcutree_plugin.h
+index 049f278..a767b7d 100644
+--- a/kernel/rcutree_plugin.h
++++ b/kernel/rcutree_plugin.h
+@@ -1295,6 +1295,7 @@ static int __cpuinit rcu_spawn_one_boost_kthread(struct rcu_state *rsp,
+ 	if (IS_ERR(t))
+ 		return PTR_ERR(t);
+ 	raw_spin_lock_irqsave(&rnp->lock, flags);
++	set_task_state(t, TASK_INTERRUPTIBLE);
+ 	rnp->boost_kthread_task = t;
+ 	raw_spin_unlock_irqrestore(&rnp->lock, flags);
+ 	sp.sched_priority = RCU_KTHREAD_PRIO;
