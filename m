@@ -1,43 +1,52 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: linux-next: manual merge of the dwmw2-iommu tree with Linus'
- tree
-Date: Wed, 25 May 2011 21:59:06 +0100
-Message-ID: <1306357154.2029.12.camel@i7.infradead.org>
-References: <20110525130004.150c054f.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: failed to fetch the device-mapper tree
+Date: Thu, 26 May 2011 10:04:07 +1000
+Message-ID: <20110526100407.532d4105.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110525130004.150c054f.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Song, Youquan" <youquan.song@intel.com>, Suresh Siddha <suresh.b.siddha@intel.com>, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__26_May_2011_10_04_07_+1000_n565DlhQr.a.LzQ5"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44766 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753741Ab1EZAER (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 May 2011 20:04:17 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alasdair G Kergon <agk@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2011-05-25 at 13:00 +1000, Stephen Rothwell wrote:
-> Today's linux-next merge of the dwmw2-iommu tree got a conflict in
-> arch/x86/kernel/apic/apic.c between commit 31dce14a3269 ("x86, ioapic:
-> Use ioapic_saved_data while enabling intr-remapping") from Linus' tree and
-> commit 6a87c5ec6463 ("intel-iommu: enable x2apic opt out") from the
-> dwmw2-iommu tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. 
+--Signature=_Thu__26_May_2011_10_04_07_+1000_n565DlhQr.a.LzQ5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Offending patch dropped.
+Hi Alasdair,
 
-The machine hosting git.infradead.org is going down shortly, and will be
-coming up in a new home tomorrow morning Boston time (EDT/GMT-5). Please
-could you use this git repository instead for the iommu tree, for
-"tonight's" linux-next:
-    git://git.kernel.org/pub/scm/linux/kernel/git/dwmw2/iommu-2.6.git
+Fetching the device-mapper tree today filaed like this:
 
-(or ssh://master.kernel.org/pub/scm/linux/kernel/git/dwmw2/iommu-2.6.git
-if it hasn't propagated to the mirrors in time)
+rsync: change_dir "/pub/linux/kernel/people/agk/patches/2.6/editing/" faile=
+d: Permission denied (13)
 
-Thanks.
+I have used the version of the tree I fetched yesterday.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-The mtd tree hasn't changed in the last day, so no need to use a
-separate URL for that; the last pull is fine, right?
+--Signature=_Thu__26_May_2011_10_04_07_+1000_n565DlhQr.a.LzQ5
+Content-Type: application/pgp-signature
 
--- 
-dwmw2
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN3Zj3AAoJEDMEi1NhKgbsAAUH/ilMuBXDdn712dvH2K8RF/VR
+JOGlp/pTabeTQixpmdZjuwhHbPP0y7vF/H/fOXNHjEK9jPXUTSbVr94eahNgfeBK
+F3Ud8OKVjghZC+IYimiLF0/8FKABm026O40gMuplKSLYYHbxSR/rXDpyoOG4ngkL
+mY+aY3sxvYHRb6PIHHS496AVq8ygBz0lzG8t7KhP2LIUrp9cE4qayHi8UnTs9ZCd
+XvQ7Q+UkJvSlGirfHuVcKBlj+wyurb8zwoGjfdydi79c4MURJod8WqEaic+Ch23e
+yGo3GNvdx7xbEOvaS/H0zYiX4tSupht8uly3t95GMIEoBZgVJLQARKIoNwj5BZM=
+=g7zY
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__26_May_2011_10_04_07_+1000_n565DlhQr.a.LzQ5--
