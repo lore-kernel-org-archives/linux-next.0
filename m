@@ -1,51 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning in Linus' tree
-Date: Thu, 26 May 2011 11:00:35 +1000
-Message-ID: <20110526110035.fe9bac87.sfr@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Thu, 26 May 2011 11:12:51 +1000
+Message-ID: <20110526111251.75245cbf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__26_May_2011_11_00_35_+1000_F0xZmw49Usc2XcAN"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Lameter <cl@linux.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Thu__26_May_2011_11_00_35_+1000_F0xZmw49Usc2XcAN
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57446 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752574Ab1EZBM4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 May 2011 21:12:56 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Anatolij Gustschin <agust@denx.de>
 
 Hi all,
 
-With Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
-produced this warning:
+With Linus' tree, today's linux-next build (x86_64 allmodconfig) failed
+like this:
 
-mm/slub.c: In function '__slab_alloc':
-mm/slub.c:1834: warning: label 'unlock_out' defined but not used
+drivers/video/mb862xx/mb862xx-i2c.c: In function 'mb862xx_i2c_wait_event':
+drivers/video/mb862xx/mb862xx-i2c.c:25: error: implicit declaration of function 'udelay'
 
-Introduced by commit a71ae47a2cbf ("slub: Fix double bit unlock in debug
-mode").
+Caused by commit f8a6b1f44833 ("video: mb862xx: add support for
+controller's I2C bus adapter").
 
---=20
+See Rule 1 in Documentation/SubmitChecklist.
+
+I have applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 26 May 2011 11:09:10 +1000
+Subject: [PATCH] video: mb862xx: udelay need linux/delay.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/video/mb862xx/mb862xx-i2c.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/video/mb862xx/mb862xx-i2c.c b/drivers/video/mb862xx/mb862xx-i2c.c
+index cb77d3b..b953099 100644
+--- a/drivers/video/mb862xx/mb862xx-i2c.c
++++ b/drivers/video/mb862xx/mb862xx-i2c.c
+@@ -12,6 +12,7 @@
+ #include <linux/fb.h>
+ #include <linux/i2c.h>
+ #include <linux/io.h>
++#include <linux/delay.h>
+ 
+ #include "mb862xxfb.h"
+ #include "mb862xx_reg.h"
+-- 
+1.7.5.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__26_May_2011_11_00_35_+1000_F0xZmw49Usc2XcAN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN3aYzAAoJEDMEi1NhKgbsqbcH/jX8KntNE6cmrh5xieKLosM1
-JxAnJD691fRtLTmhcrj2EUZa02M2A8nXd2z+tmlqDw4ln/2z+gP8BQs6uqtIApu6
-pr08zDQhpq9f0noG0nCZ5quhI4HC7tQa/IHr36CSEB/xy+MMWFbuGpc3TIVJccS0
-pai0ypSqOPZdCf3WZC27/RBj/NUYDpNIQpLe3/8LcrXCzszDoSe//PancIzHD538
-jwXs6JbArFxdM8846jHzAQOTBc1mqfKN9SCH4aowwS8CrAJdlajyU3LGtgt2H4tu
-LL6Jms+L/SUvKnyLwAaAXw1Y7K2NCmcTucvB2LHHQLjfKSJTEqm1ywyxiozln2M=
-=L4r8
------END PGP SIGNATURE-----
-
---Signature=_Thu__26_May_2011_11_00_35_+1000_F0xZmw49Usc2XcAN--
