@@ -1,54 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the final tree (ext3 tree
- related)
-Date: Fri, 27 May 2011 16:59:06 +1000
-Message-ID: <20110527165906.97310c97.sfr@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [alsa-devel] [PATCH/RFC] gpio: add GPIOF_ values regardless on
+ kconfig settings
+Date: Fri, 27 May 2011 01:45:52 -0600
+Message-ID: <20110527074552.GA907@ponder.secretlab.ca>
+References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
+ <20110523134815.fb87933a.randy.dunlap@oracle.com>
+ <20110523224659.GB19533@opensource.wolfsonmicro.com>
+ <20110523155343.2e68c265.randy.dunlap@oracle.com>
+ <20110524000837.GA30515@opensource.wolfsonmicro.com>
+ <4DDB082F.3010107@oracle.com>
+ <20110524014959.GA27710@opensource.wolfsonmicro.com>
+ <4DDB3AFF.9030006@oracle.com>
+ <20110524075248.GB19734@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__27_May_2011_16_59_06_+1000_=I6/hHar=ZMnpQhY"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48628 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751537Ab1E0G7b (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 May 2011 02:59:31 -0400
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:33496 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752092Ab1E0Hp4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 03:45:56 -0400
+Content-Disposition: inline
+In-Reply-To: <20110524075248.GB19734@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Dmitry Artamonow <mad_soft@inbox.ru>, x86@kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Harald Welte <laforge@gnufiish.org>
 
---Signature=_Fri__27_May_2011_16_59_06_+1000_=I6/hHar=ZMnpQhY
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, May 24, 2011 at 08:52:48AM +0100, Mark Brown wrote:
+> On Mon, May 23, 2011 at 09:58:39PM -0700, Randy Dunlap wrote:
+> 
+> > Below is a patch that makes the 2 reported drivers build when
+> > CONFIG_GPIOLIB is disabled and CONFIG_GENERIC_GPIO is disabled.
+> > What do you think of the patch?
+> 
+> Looks OK for me on a first scan, though probably the best approach is to
+> go through and just enable gpiolib on all the architectures that don't
+> have it already yet - that's the more generally useful approach as it
+> means that if plugin boards for the platform need to use gpiolib they
+> can.  I already did this for Alpha, I guess I'll try to look see what
+> other architectures could use it.
 
-Hi all,
+Looks okay.  Please repost with proper s-o-b so I can pick it up.
 
-After merging the final tree, today's linux-next build (gcc 4.5.2, powerpc
-ppc44x_defconfig) produced this warning:
-
-fs/ext3/inode.c: In function 'ext3_get_blocks_handle':
-fs/ext3/inode.c:976:8: warning: array subscript is below array bounds
-
-Introduced by commit 20024a79a97b ("ext3: Add fixed tracepoints").
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__27_May_2011_16_59_06_+1000_=I6/hHar=ZMnpQhY
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN30u6AAoJEDMEi1NhKgbsu4MIAJ63R3JyriV1vLofHa/PTg4u
-WRIZACPKuA62fIakLatq712zSdPio03OzBSuRiQwuHw3II1CuFBr4GRtj2xJYU0r
-FdIhEJcnuX8jLMyfUbJ6JjIwdrfzX4Tzar3Ie0WXfvbgi9qVHU2kGXnwC7ljKAUC
-JqenSF2D+VNl33tAItSsUzmdObcUcq41zxIKmfZbeTgCuAtlR9ip/Fxrcj6jshMn
-VNMN4nCJXzGXDxC4nn8ySPgOhI1202pjFwLx3gu2TYoYc2j5QdOdWCnz+rtsPtJ/
-GczU6DeLQt03UANtaA98FjOt2wPaTV1T8SscuRMcL9hNLfpqNXKhBnCv3JyxyBU=
-=6DX/
------END PGP SIGNATURE-----
-
---Signature=_Fri__27_May_2011_16_59_06_+1000_=I6/hHar=ZMnpQhY--
+g.
