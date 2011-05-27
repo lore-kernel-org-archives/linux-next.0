@@ -1,63 +1,83 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
-Date: Fri, 27 May 2011 15:11:35 +1000
-Message-ID: <20110527151135.cd6f758a.sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [-next] several files need to include <linux/bitops.h>?
+Date: Fri, 27 May 2011 07:33:49 +0200
+Message-ID: <BANLkTi=3zsM-NUsFy-fe7sdoryTyqr+o7Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__27_May_2011_15_11_35_+1000_1rbmrqj/nD./88tY"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55159 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750776Ab1E0FLo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 May 2011 01:11:44 -0400
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:64275 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751525Ab1E0Fdu convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 01:33:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Frysinger <vapier@gentoo.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
 
---Signature=_Fri__27_May_2011_15_11_35_+1000_1rbmrqj/nD./88tY
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+http://kisskb.ellerman.id.au/kisskb/buildresult/4194288/
 
-Hi all,
+mm/page_alloc.c:3311: error: implicit declaration of function 'ffz'
+make[2]: *** [mm/page_alloc.o] Error 1
+make[1]: *** [mm] Error 2
+block/blk-flush.c:111: error: implicit declaration of function 'ffz'
+make[2]: *** [block/blk-flush.o] Error 1
+make[1]: *** [block] Error 2
+include/linux/inetdevice.h:254: error: implicit declaration of function=
+ 'ffz'
+make[3]: *** [net/ipv4/route.o] Error 1
+kernel/signal.c:182: error: implicit declaration of function 'ffz'
+make[2]: *** [net/ipv4] Error 2
+make[2]: *** [kernel/signal.o] Error 1
+make[1]: *** [kernel] Error 2
+include/linux/inetdevice.h:254: error: implicit declaration of function=
+ 'ffz'
+make[3]: *** [net/core/dev.o] Error 1
+drivers/md/raid0.c:430: error: implicit declaration of function 'ffz'
+make[3]: *** [drivers/md/raid0.o] Error 1
+make[2]: *** [drivers/md] Error 2
+drivers/ide/ide-probe.c:1216: error: implicit declaration of function '=
+ffz'
+make[3]: *** [drivers/ide/ide-probe.o] Error 1
+crypto/lrw.c:125: error: implicit declaration of function 'ffz'
+make[2]: *** [crypto/lrw.o] Error 1
+drivers/input/keyboard/hilkbd.c:243: error: implicit declaration of
+function 'ffz'
+make[2]: *** [net/core] Error 2
+make[1]: *** [net] Error 2
+make[2]: *** [drivers/ide] Error 2
+lib/find_next_bit.c:226: error: implicit declaration of function 'ffz'
+make[2]: *** [lib/find_next_bit.o] Error 1
+make[4]: *** [drivers/input/keyboard/hilkbd.o] Error 1
+make[3]: *** [drivers/input/keyboard] Error 2
+make[1]: *** [crypto] Error 2
+make[2]: *** [drivers/input] Error 2
+make[1]: *** [drivers] Error 2
+make[1]: *** [lib] Error 2
+fs/minix/minix.h:135: error: implicit declaration of function 'ffz'
+fs/minix/minix.h:135: error: implicit declaration of function 'ffz'
+make[3]: *** [fs/minix/itree_v1.o] Error 1
+fs/minix/minix.h:135: error: implicit declaration of function 'ffz'
+make[3]: *** [fs/minix/itree_v2.o] Error 1
+make[3]: *** [fs/minix/bitmap.o] Error 1
+fs/minix/minix.h:135: error: implicit declaration of function 'ffz'
+make[3]: *** [fs/minix/namei.o] Error 1
+make[2]: *** [fs/minix] Error 2
+make[1]: *** [fs] Error 2
+make: *** [sub-make] Error 2
 
-After merging the final tree, today's linux-next build (sparc32 defconfig)
-failed like this:
-
-drivers/misc/kgdbts.c: In function 'check_and_rewind_pc':
-drivers/misc/kgdbts.c:307: error: implicit declaration of function 'instruc=
-tion_pointer_set'
-
-Caused by commit 63ab25ebbc50 ("kgdbts: unify/generalize gdb breakpoint
-adjustment") from Linus' tree.
-
-Lots of architectures do not use asm-generic/ptrace.h where
-instruction_pointer_set() is defined.
-
-I have reverted that commit for today.
-
-This error was detected in our builds of the mmotm tree on May 14
-(see http://kisskb.ellerman.id.au/kisskb/buildresult/4161286/).
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Gr{oetje,eeting}s,
 
---Signature=_Fri__27_May_2011_15_11_35_+1000_1rbmrqj/nD./88tY
-Content-Type: application/pgp-signature
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
 
-iQEcBAEBAgAGBQJN3zKHAAoJEDMEi1NhKgbspboIAIKNL8UlzqWTv1aiFNdOjjyS
-pSzSJgWk1vhEF0VlSup1LgRDWOfVCeEQmkimQriGfOlWGRDRC7KIy3sJM8RH3ZST
-iKwYOPg/CogLHZiU/mwOEf6KjFHSP6SIg0fd4NOqms0yc6nFiqZfblZJRQ3xT+qy
-IuvtYY0IuNn9iOsrF35cW4tRmJUu9xxiGCR0wXflGTjKd/9cLXuRSozaKt3ZP54O
-CdvGqm9nLhu84YX15q9PnxKLbHVs2zhuEg8js5kMVz7vJzS7QY02bSrf0ZinKipG
-j2uQYm99PTKGEEDO5lhYOX7/PolvOfw/0bQcNrlIcX/TIOOiA8tPEhsN/JhuELU=
-=qfJr
------END PGP SIGNATURE-----
-
---Signature=_Fri__27_May_2011_15_11_35_+1000_1rbmrqj/nD./88tY--
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
