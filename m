@@ -1,58 +1,59 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for May 26 (drivers/net/caif)
-Date: Thu, 26 May 2011 14:30:06 -0700
-Message-ID: <20110526143006.2d1ef9f7.randy.dunlap@oracle.com>
+Date: Fri, 27 May 2011 11:01:23 +1000
+Message-ID: <20110527110123.aa7bbf38.sfr@canb.auug.org.au>
 References: <20110526163941.7dfcad1a.sfr@canb.auug.org.au>
 	<20110526120702.fac24de0.randy.dunlap@oracle.com>
-	<BANLkTikik8+f1D4D_Dv_rFK=QQjdce9rwg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <BANLkTikik8+f1D4D_Dv_rFK=QQjdce9rwg@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Sjur =?ISO-8859-1?Q?Br=E6ndeland?= <sjurbren@gmail.com>
-Cc: balbi@ti.com, Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__27_May_2011_11_01_23_+1000_.VEzsBB=fLbj/9kn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110526120702.fac24de0.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sjur Braendeland <sjur.brandeland@stericsson.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 26 May 2011 23:15:34 +0200 Sjur Br=E6ndeland wrote:
+--Signature=_Fri__27_May_2011_11_01_23_+1000_.VEzsBB=fLbj/9kn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Randy,
+Hi Randy,
+
+On Thu, 26 May 2011 12:07:02 -0700 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> drivers/net/caif/caif_serial.c:194: warning: 'return' with no value, in f=
+unction returning non-void
+> drivers/net/caif/caif_serial.c:202: warning: 'return' with no value, in f=
+unction returning non-void
 >=20
-> [Randy]
-> > (not new)
-> >
-> > drivers/net/caif/caif_serial.c:194: warning: 'return' with no value=
-, in function returning non-void
-> > drivers/net/caif/caif_serial.c:202: warning: 'return' with no value=
-, in function returning non-void
-> >
-> >
-> > I'm curious: =A0how do warnings like this get overlooked?
-> > too much noise in the build messages? =A0or it wasn't overlooked, j=
-ust ignored?
->=20
-> The patch introducing this problem is "tty: make receive_buf()
-> return the amout of bytes received" by Felipe Balbi <balbi@ti.com>.
-> It seems that this patch has been posted to linux-serial and not to
-> the netdev list or the gits net-next-2.6 or net-2.6 that I follow.
-> It's probably no excuse, but this problem is news to me.
+> I'm curious:  how do warnings like this get overlooked?
+> too much noise in the build messages?  or it wasn't overlooked, just igno=
+red?
 
-I see.  Thanks for the explanation.
+For me, too much noise :-(  I catch some, but not all.
 
-> Should I post a patch on linux-next anyway for this issue?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-You or Felipe should, but he recently sent this note to the USB
-mailing list:
+--Signature=_Fri__27_May_2011_11_01_23_+1000_.VEzsBB=fLbj/9kn
+Content-Type: application/pgp-signature
 
-"I'll be away until 31st of May on a business travel. Don't expect me t=
-o
-look into patches during that period."
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-so it looks like it would better for you to do it, please.
+iQEcBAEBAgAGBQJN3vfjAAoJEDMEi1NhKgbsTRQH/15X6YP1AFGnVUhRDsXB+TY8
+RhNP/g8DxcRjtilNZnLLZoS3+47KKQ7YVuDTs80T97GVUh/pfiNnqWsOtLHWCtb7
+lA5EgJUaVCm+nRhkyIcVLqhvMRxl+vnQ+bXxxXbI9EsFCv1LuIHWzPykb6qP9hsZ
+zqejUq88Nu4ASsDEn1aTyV2dytL/0P/f9oRvjHDU3jogYcOD9Umw/FKdZ2Cn8BSL
+tuI7/1iBkFeUlRhvSlMTz20VdQJp3N1UpkKjQLsfjkR3xuw8VC5pa1wI0hh/h9Iw
+37qkAf1wR+5EHu8lgA2etLaCz25NLlPKLKMeCRpFmLHi9nCtgMYFsmdjXX0LEUI=
+=BZIt
+-----END PGP SIGNATURE-----
 
-thanks,
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your cod=
-e ***
+--Signature=_Fri__27_May_2011_11_01_23_+1000_.VEzsBB=fLbj/9kn--
