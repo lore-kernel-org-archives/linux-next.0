@@ -1,62 +1,67 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for May 27 (ocfs2)
-Date: Fri, 27 May 2011 11:21:09 -0700
-Message-ID: <20110527112109.78501105.randy.dunlap@oracle.com>
-References: <20110527155231.3a9925c0.sfr@canb.auug.org.au>
-	<20110527093043.0840ac30.randy.dunlap@oracle.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Subject: Re: linux-next: manual merge of the async_tx tree with Linus' tree
+Date: Fri, 27 May 2011 12:08:37 -0700
+Message-ID: <BANLkTikAShzPv_6c6Z8Z9Xdt9TgQbcM-xA@mail.gmail.com>
+References: <20110527133003.8299b429.sfr@canb.auug.org.au>
+	<20110527095336.25007886@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110527093043.0840ac30.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Fasheh <mfasheh@suse.com>, Joel Becker <jlbec@evilplan.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:41642 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751131Ab1E0TIi convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 15:08:38 -0400
+In-Reply-To: <20110527095336.25007886@endymion.delvare>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Havard Skinnemoen <hskinnemoen@gmail.com>, Jiri Kosina <jkosina@suse.cz>, Viresh Kumar <viresh.kumar@st.com>
 
-On Fri, 27 May 2011 09:30:43 -0700 Randy Dunlap wrote:
+On Fri, May 27, 2011 at 12:53 AM, Jean Delvare <khali@linux-fr.org> wro=
+te:
+> Hi Stephen, Dan,
+>
+> On Fri, 27 May 2011 13:30:03 +1000, Stephen Rothwell wrote:
+>> Today's linux-next merge of the async_tx tree got a conflict in
+>> drivers/dma/dw_dmac.c between commit e05503ef1186 ("Haavard Skinnemo=
+en
+>> has left Atmel") from Linus' tree and commit aecb7b64dd9e
+>> ("dmaengine/dw_dmac: Update maintainer-ship") from the async_tx tree=
+=2E
+>>
+>> Just context changes. =A0I fixed it up (see below) and can carry the=
+ fix as
+>> necessary.
+>
+> Dan's patch is just plain wrong. MODULE_AUTHOR is about who wrote the
+> code, not who maintains it. A change of maintainer should lead to an
+> update or addition to file MAINTAINERS.
 
-> On Fri, 27 May 2011 15:52:31 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20110526:
-> 
-> ocfs2 on i386 has build errors:
-> 
-> ERROR: "__udivdi3" [fs/ocfs2/ocfs2.ko] undefined!
-> ERROR: "__umoddi3" [fs/ocfs2/ocfs2.ko] undefined!
-> 
-> or when builtin:
-> 
-> fs/built-in.o: In function `ocfs2_find_victim_alloc_group.clone.0':
-> move_extents.c:(.text+0x1fb01a): undefined reference to `__udivdi3'
-> fs/built-in.o: In function `ocfs2_validate_and_adjust_move_goal':
-> move_extents.c:(.text+0x1fb12e): undefined reference to `__umoddi3'
-> move_extents.c:(.text+0x1fb15a): undefined reference to `__udivdi3'
-> fs/built-in.o: In function `ocfs2_find_victim_alloc_group.clone.0':
-> move_extents.c:(.text+0x1fb01a): undefined reference to `__udivdi3'
-> fs/built-in.o: In function `ocfs2_validate_and_adjust_move_goal':
-> move_extents.c:(.text+0x1fb12e): undefined reference to `__umoddi3'
-> move_extents.c:(.text+0x1fb15a): undefined reference to `__udivdi3'
-> fs/built-in.o: In function `ocfs2_find_victim_alloc_group.clone.0':
-> move_extents.c:(.text+0x1fb01a): undefined reference to `__udivdi3'
-> fs/built-in.o: In function `ocfs2_validate_and_adjust_move_goal':
-> move_extents.c:(.text+0x1fb12e): undefined reference to `__umoddi3'
-> move_extents.c:(.text+0x1fb15a): undefined reference to `__udivdi3'
+The patch in question did also update MAINTAINERS.  Since Viresh has
+done a good amount of work on the driver (top-developer by commits
+since the initial merge) and likely cares about user reports (now that
+he has stepped up to maintain it) is there a reason that he should not
+have his own MODULE_AUTHOR line in the driver as well?
 
-Fixed by just-merged mainline commit:
+The real problem here is the late detection of the merge conflict.  We
+need to submit Vinod's git tree for inclusion in -next.  Given the
+relative patch traffic I think async_tx.git should come after
+slave-dma.git in the merge order, and any reworks I do of the
+non-slave case will be based on Vinod's baseline.  We'll get this in
+shape for the next cycle as I had to rebase things a bit when pulling
+the current slave-dma.git tree.
 
-Gitweb:     http://git.kernel.org/linus/6aea6f5068cb86e89a6ac243c3fc131045b6563a
-Commit:     6aea6f5068cb86e89a6ac243c3fc131045b6563a
-Parent:     dda54e76d7dba0532ebdd72e0b4f492a03f83225
-Author:     Tristan Ye <tristan.ye@oracle.com>
-AuthorDate: Fri May 27 15:19:56 2011 +0800
-Committer:  Tristan Ye <tristan.ye@oracle.com>
-CommitDate: Fri May 27 14:52:53 2011 +0800
+> Thanks Viresh for stepping in, BTW, new maintainers are always welcom=
+e.
+>
+> (As a side note, the relevance of MODULE_AUTHOR given the development
+> and maintenance model the Linux kernel has embraced can certainly be
+> discussed, but that's a different story.)
 
-    Ocfs2/move_extents: Avoid doing division in extent moving.
+We don't seem to have documentation around it, but making a bunch of
+commits and stepping up to be a maintainer seems enough justification
+to have your contact info show up in modinfo...
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--
+Dan
