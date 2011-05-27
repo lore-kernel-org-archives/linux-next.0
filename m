@@ -1,87 +1,84 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging: fix ath6kl build when CFG80211 is not
- enabled
-Date: Fri, 27 May 2011 13:03:21 -0700
-Message-ID: <20110527130321.18a51d63.randy.dunlap@oracle.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH] gpio: add GPIOF_ values regardless on kconfig settings
+Date: Fri, 27 May 2011 14:12:01 -0600
+Message-ID: <20110527201201.GA6645@ponder.secretlab.ca>
+References: <20110523134815.fb87933a.randy.dunlap@oracle.com>
+ <20110523224659.GB19533@opensource.wolfsonmicro.com>
+ <20110523155343.2e68c265.randy.dunlap@oracle.com>
+ <20110524000837.GA30515@opensource.wolfsonmicro.com>
+ <4DDB082F.3010107@oracle.com>
+ <20110524014959.GA27710@opensource.wolfsonmicro.com>
+ <4DDB3AFF.9030006@oracle.com>
+ <20110524075248.GB19734@sirena.org.uk>
+ <20110527074552.GA907@ponder.secretlab.ca>
+ <4DDFE391.2030507@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:55718 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756826Ab1E0UDm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 16:03:42 -0400
+Received: from mail-pv0-f174.google.com ([74.125.83.174]:54545 "EHLO
+	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751277Ab1E0UME (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 16:12:04 -0400
+Content-Disposition: inline
+In-Reply-To: <4DDFE391.2030507@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: driverdevel <devel@driverdev.osuosl.org>, gregkh@suse.de, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
-Cc: "Luis R. Rodriguez" <mcgrof@gmail.com>, Joe Perches <joe@perches.com>, Naveen Singh <nsingh@atheros.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Dmitry Artamonow <mad_soft@inbox.ru>, x86@kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Harald Welte <laforge@gnufiish.org>
 
-This patch is still needed in linux-next:
+On Fri, May 27, 2011 at 10:46:57AM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Make GPIOF_ defined values available even when GPIOLIB nor GENERIC_GPIO
+> is enabled by moving them to <linux/gpio.h>.
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
+Applied, thanks.
 
-Begin forwarded message:
+g.
 
-Date: Tue, 17 May 2011 15:15:19 -0700
-From: Randy Dunlap <randy.dunlap@oracle.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Joe Perches <joe@perches.com>
-Subject: [PATCH -next] staging: fix ath6kl build when CFG80211 is not enabled
-
-
-From: Randy Dunlap <randy.dunlap@oracle.com>
-
-Fix build errors when CONFIG_CFG80211 is not enabled:
-
-drivers/built-in.o: In function `ar6k_cfg80211_deinit':
-(.text+0x189b71): undefined reference to `cfg80211_scan_done'
-drivers/built-in.o: In function `ar6k_cfg80211_deinit':
-(.text+0x189b86): undefined reference to `wiphy_unregister'
-drivers/built-in.o: In function `ar6k_cfg80211_deinit':
-(.text+0x189b8d): undefined reference to `wiphy_free'
-drivers/built-in.o: In function `ar6k_cfg80211_init':
-(.text+0x18add7): undefined reference to `wiphy_new'
-drivers/built-in.o: In function `ar6k_cfg80211_init':
-(.text+0x18ae48): undefined reference to `wiphy_register'
-drivers/built-in.o: In function `ar6k_cfg80211_tkip_micerr_event':
-(.text+0x18ae95): undefined reference to `cfg80211_michael_mic_failure'
-drivers/built-in.o: In function `ar6k_cfg80211_scan_node':
-(.text+0x18afb5): undefined reference to `__ieee80211_get_channel'
-drivers/built-in.o: In function `ar6k_cfg80211_scan_node':
-(.text+0x18afd2): undefined reference to `cfg80211_inform_bss_frame'
-drivers/built-in.o: In function `ar6k_cfg80211_disconnect_event':
-(.text+0x18b046): undefined reference to `cfg80211_ibss_joined'
-drivers/built-in.o: In function `ar6k_cfg80211_disconnect_event':
-(.text+0x18b176): undefined reference to `cfg80211_connect_result'
-drivers/built-in.o: In function `ar6k_cfg80211_disconnect_event':
-(.text+0x18b190): undefined reference to `cfg80211_disconnected'
-drivers/built-in.o: In function `ar6k_cfg80211_connect_event':
-(.text+0x18b291): undefined reference to `cfg80211_get_bss'
-drivers/built-in.o: In function `ar6k_cfg80211_connect_event':
-(.text+0x18b457): undefined reference to `cfg80211_put_bss'
-drivers/built-in.o: In function `ar6k_cfg80211_connect_event':
-(.text+0x18b4fa): undefined reference to `cfg80211_roamed'
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Greg Kroah-Hartman <greg@kroah.com>
-Cc: Luis R. Rodriguez <mcgrof@gmail.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Naveen Singh <nsingh@atheros.com>
----
- drivers/staging/ath6kl/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
---- linux-next-20110517.orig/drivers/staging/ath6kl/Kconfig
-+++ linux-next-20110517/drivers/staging/ath6kl/Kconfig
-@@ -1,6 +1,7 @@
- config ATH6K_LEGACY
- 	tristate "Atheros AR6003 support (non mac80211)"
-         depends on MMC && WLAN
-+	depends on CFG80211
-         select WIRELESS_EXT
-         select WEXT_PRIV
- 	help
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+> ---
+>  include/asm-generic/gpio.h |   10 ----------
+>  include/linux/gpio.h       |   11 +++++++++++
+>  2 files changed, 11 insertions(+), 10 deletions(-)
+> 
+> --- linux-next-20110523.orig/include/asm-generic/gpio.h
+> +++ linux-next-20110523/include/asm-generic/gpio.h
+> @@ -170,16 +170,6 @@ extern int __gpio_cansleep(unsigned gpio
+>  
+>  extern int __gpio_to_irq(unsigned gpio);
+>  
+> -#define GPIOF_DIR_OUT	(0 << 0)
+> -#define GPIOF_DIR_IN	(1 << 0)
+> -
+> -#define GPIOF_INIT_LOW	(0 << 1)
+> -#define GPIOF_INIT_HIGH	(1 << 1)
+> -
+> -#define GPIOF_IN		(GPIOF_DIR_IN)
+> -#define GPIOF_OUT_INIT_LOW	(GPIOF_DIR_OUT | GPIOF_INIT_LOW)
+> -#define GPIOF_OUT_INIT_HIGH	(GPIOF_DIR_OUT | GPIOF_INIT_HIGH)
+> -
+>  /**
+>   * struct gpio - a structure describing a GPIO with configuration
+>   * @gpio:	the GPIO number
+> --- linux-next-20110523.orig/include/linux/gpio.h
+> +++ linux-next-20110523/include/linux/gpio.h
+> @@ -3,6 +3,17 @@
+>  
+>  /* see Documentation/gpio.txt */
+>  
+> +/* make these flag values available regardless of GPIO kconfig options */
+> +#define GPIOF_DIR_OUT	(0 << 0)
+> +#define GPIOF_DIR_IN	(1 << 0)
+> +
+> +#define GPIOF_INIT_LOW	(0 << 1)
+> +#define GPIOF_INIT_HIGH	(1 << 1)
+> +
+> +#define GPIOF_IN		(GPIOF_DIR_IN)
+> +#define GPIOF_OUT_INIT_LOW	(GPIOF_DIR_OUT | GPIOF_INIT_LOW)
+> +#define GPIOF_OUT_INIT_HIGH	(GPIOF_DIR_OUT | GPIOF_INIT_HIGH)
+> +
+>  #ifdef CONFIG_GENERIC_GPIO
+>  #include <asm/gpio.h>
+>  
