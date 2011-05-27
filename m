@@ -1,48 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mtd tree with Linus' tree
-Date: Fri, 27 May 2011 14:00:39 +1000
-Message-ID: <20110527140039.9bce4a2d.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Fri, 27 May 2011 15:11:35 +1000
+Message-ID: <20110527151135.cd6f758a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__27_May_2011_15_11_35_+1000_1rbmrqj/nD./88tY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37846 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55159 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751089Ab1E0EAm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 May 2011 00:00:42 -0400
+	id S1750776Ab1E0FLo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 May 2011 01:11:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jamie Iles <jamie@jamieiles.com>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>, Marc Zyngier <Marc.Zyngier@arm.com>, Russell King <rmk@arm.linux.org.uk>
+To: Mike Frysinger <vapier@gentoo.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi David,
+--Signature=_Fri__27_May_2011_15_11_35_+1000_1rbmrqj/nD./88tY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the mtd tree got a conflict in
-drivers/mtd/maps/physmap.c between commit b7281ca2a4b0 ("ARM: 6904/1:
-MTD: Add integrator-flash feature to physmap") from Linus' tree and
-commit 984e6d8ec5ab ("mtd: physmap: convert to mtd_device_register()")
-from the mtd tree.
+Hi all,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+After merging the final tree, today's linux-next build (sparc32 defconfig)
+failed like this:
 
--- 
+drivers/misc/kgdbts.c: In function 'check_and_rewind_pc':
+drivers/misc/kgdbts.c:307: error: implicit declaration of function 'instruc=
+tion_pointer_set'
+
+Caused by commit 63ab25ebbc50 ("kgdbts: unify/generalize gdb breakpoint
+adjustment") from Linus' tree.
+
+Lots of architectures do not use asm-generic/ptrace.h where
+instruction_pointer_set() is defined.
+
+I have reverted that commit for today.
+
+This error was detected in our builds of the mmotm tree on May 14
+(see http://kisskb.ellerman.id.au/kisskb/buildresult/4161286/).
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/mtd/maps/physmap.c
-index 1a9b94f,d205926..0000000
---- a/drivers/mtd/maps/physmap.c
-+++ b/drivers/mtd/maps/physmap.c
-@@@ -92,10 -65,7 +81,8 @@@ static const char *rom_probe_types[] = 
-  					"qinfo_probe",
-  					"map_rom",
-  					NULL };
-- #ifdef CONFIG_MTD_PARTITIONS
- -static const char *part_probe_types[] = { "cmdlinepart", "RedBoot", NULL };
- +static const char *part_probe_types[] = { "cmdlinepart", "RedBoot", "afs",
- +					  NULL };
-- #endif
-  
-  static int physmap_flash_probe(struct platform_device *dev)
-  {
+--Signature=_Fri__27_May_2011_15_11_35_+1000_1rbmrqj/nD./88tY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN3zKHAAoJEDMEi1NhKgbspboIAIKNL8UlzqWTv1aiFNdOjjyS
+pSzSJgWk1vhEF0VlSup1LgRDWOfVCeEQmkimQriGfOlWGRDRC7KIy3sJM8RH3ZST
+iKwYOPg/CogLHZiU/mwOEf6KjFHSP6SIg0fd4NOqms0yc6nFiqZfblZJRQ3xT+qy
+IuvtYY0IuNn9iOsrF35cW4tRmJUu9xxiGCR0wXflGTjKd/9cLXuRSozaKt3ZP54O
+CdvGqm9nLhu84YX15q9PnxKLbHVs2zhuEg8js5kMVz7vJzS7QY02bSrf0ZinKipG
+j2uQYm99PTKGEEDO5lhYOX7/PolvOfw/0bQcNrlIcX/TIOOiA8tPEhsN/JhuELU=
+=qfJr
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__27_May_2011_15_11_35_+1000_1rbmrqj/nD./88tY--
