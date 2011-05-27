@@ -1,45 +1,40 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [alsa-devel] [PATCH/RFC] gpio: add GPIOF_ values regardless on
- kconfig settings
-Date: Fri, 27 May 2011 01:45:52 -0600
-Message-ID: <20110527074552.GA907@ponder.secretlab.ca>
-References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
- <20110523134815.fb87933a.randy.dunlap@oracle.com>
- <20110523224659.GB19533@opensource.wolfsonmicro.com>
- <20110523155343.2e68c265.randy.dunlap@oracle.com>
- <20110524000837.GA30515@opensource.wolfsonmicro.com>
- <4DDB082F.3010107@oracle.com>
- <20110524014959.GA27710@opensource.wolfsonmicro.com>
- <4DDB3AFF.9030006@oracle.com>
- <20110524075248.GB19734@sirena.org.uk>
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Subject: Re: linux-next: manual merge of the mtd tree with Linus' tree
+Date: Fri, 27 May 2011 10:43:44 +0300
+Message-ID: <1306482224.2785.153.camel@localhost>
+References: <20110527140018.993fe260.sfr@canb.auug.org.au>
+Reply-To: Artem.Bityutskiy@nokia.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:33496 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752092Ab1E0Hp4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 03:45:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20110524075248.GB19734@sirena.org.uk>
+Received: from smtp.nokia.com ([147.243.1.47]:47000 "EHLO mgw-sa01.nokia.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754080Ab1E0Hsw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 May 2011 03:48:52 -0400
+In-Reply-To: <20110527140018.993fe260.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Dmitry Artamonow <mad_soft@inbox.ru>, x86@kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Harald Welte <laforge@gnufiish.org>
+To: ext Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jamie Iles <jamie@jamieiles.com>, Marc Zyngier <marc.zyngier@arm.com>, Russell King <rmk@arm.linux.org.uk>
 
-On Tue, May 24, 2011 at 08:52:48AM +0100, Mark Brown wrote:
-> On Mon, May 23, 2011 at 09:58:39PM -0700, Randy Dunlap wrote:
-> 
-> > Below is a patch that makes the 2 reported drivers build when
-> > CONFIG_GPIOLIB is disabled and CONFIG_GENERIC_GPIO is disabled.
-> > What do you think of the patch?
-> 
-> Looks OK for me on a first scan, though probably the best approach is to
-> go through and just enable gpiolib on all the architectures that don't
-> have it already yet - that's the more generally useful approach as it
-> means that if plugin boards for the platform need to use gpiolib they
-> can.  I already did this for Alpha, I guess I'll try to look see what
-> other architectures could use it.
+On Fri, 2011-05-27 at 14:00 +1000, ext Stephen Rothwell wrote:
+> Hi David,
+>=20
+> Today's linux-next merge of the mtd tree got a conflict in
+> drivers/mtd/maps/integrator-flash.c between commit adf0040096e4 ("ARM=
+:
+> 6906/1: MTD: Remove integrator-flash") from Linus' tree and commit
+> ee0e87b174bb ("mtd: convert remaining users to mtd_device_register()"=
+)
+> from the mtd tree.
+>=20
+> The former removes the file updated by the latter, so I just removed =
+it.
 
-Looks okay.  Please repost with proper s-o-b so I can pick it up.
+Yes, this is right, thanks.
 
-g.
+--=20
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
