@@ -1,36 +1,65 @@
-From: Mike Frysinger <vapier@gentoo.org>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Fri, 27 May 2011 10:47:00 -0400
-Message-ID: <BANLkTi=x=M4wwOxKjDvfiXwu6Ay0SxmkKA@mail.gmail.com>
-References: <20110527151135.cd6f758a.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] caif: Fix compile warning in caif_serial.c
+Date: Fri, 27 May 2011 08:37:23 -0700
+Message-ID: <4DDFC533.2080305@oracle.com>
+References: <20110526143006.2d1ef9f7.randy.dunlap@oracle.com> <1306483755-3588-1-git-send-email-sjur.brandeland@stericsson.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:61802 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750922Ab1E0OrV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 10:47:21 -0400
-In-Reply-To: <20110527151135.cd6f758a.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:21907 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751171Ab1E0Phq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 11:37:46 -0400
+In-Reply-To: <1306483755-3588-1-git-send-email-sjur.brandeland@stericsson.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: =?ISO-8859-1?Q?Sjur_Br=E6ndeland?= <sjur.brandeland@stericsson.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, balbi@ti.com, netdev@vger.kernel.org
 
-On Fri, May 27, 2011 at 01:11, Stephen Rothwell wrote:
-> After merging the final tree, today's linux-next build (sparc32 defconfig)
-> failed like this:
->
-> drivers/misc/kgdbts.c: In function 'check_and_rewind_pc':
-> drivers/misc/kgdbts.c:307: error: implicit declaration of function 'instruction_pointer_set'
->
-> Caused by commit 63ab25ebbc50 ("kgdbts: unify/generalize gdb breakpoint
-> adjustment") from Linus' tree.
->
-> Lots of architectures do not use asm-generic/ptrace.h where
-> instruction_pointer_set() is defined.
+On 05/27/11 01:09, Sjur Br=E6ndeland wrote:
+> Fix the compile warning introduced by the patch:
+> "tty: make receive_buf() return the amout of bytes received"
+>=20
+> Signed-off-by: Sjur Br=E6ndeland <sjur.brandeland@stericsson.com>
+> ---
+> Note: Fixes compile issue in linux-next (no issue in net-2.6).
 
-yes, but lots of arches dont implement kgdb, so it doesnt matter :).
-i thought i got all of them, but i must have missed some, or new
-arches showed up since i wrote the patches.  i'll take a look later
-today and send out a fix.
--mike
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+
+Thanks much, Sjur.
+
+>  drivers/net/caif/caif_serial.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/net/caif/caif_serial.c b/drivers/net/caif/caif_s=
+erial.c
+> index 73c7e03..751ebbd 100644
+> --- a/drivers/net/caif/caif_serial.c
+> +++ b/drivers/net/caif/caif_serial.c
+> @@ -191,7 +191,7 @@ static unsigned int ldisc_receive(struct tty_stru=
+ct *tty,
+>  		dev_info(&ser->dev->dev,
+>  			"Bytes received before initial transmission -"
+>  			"bytes discarded.\n");
+> -		return;
+> +		return count;
+>  	}
+> =20
+>  	BUG_ON(ser->dev =3D=3D NULL);
+> @@ -199,7 +199,7 @@ static unsigned int ldisc_receive(struct tty_stru=
+ct *tty,
+>  	/* Get a suitable caif packet and copy in data. */
+>  	skb =3D netdev_alloc_skb(ser->dev, count+1);
+>  	if (skb =3D=3D NULL)
+> -		return;
+> +		return 0;
+>  	p =3D skb_put(skb, count);
+>  	memcpy(p, data, count);
+> =20
+
+
+--=20
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your cod=
+e ***
