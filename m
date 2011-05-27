@@ -1,52 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi tree
-Date: Fri, 27 May 2011 13:25:11 +1000
-Message-ID: <20110527132511.20174ce1.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the async_tx tree with Linus' tree
+Date: Fri, 27 May 2011 13:30:03 +1000
+Message-ID: <20110527133003.8299b429.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__27_May_2011_13_25_11_+1000_/y.FS1fG6MT7hoQx"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__27_May_2011_13_25_11_+1000_/y.FS1fG6MT7hoQx
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34782 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753627Ab1E0DaI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 May 2011 23:30:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean Delvare <khali@linux-fr.org>, Havard Skinnemoen <hskinnemoen@gmail.com>, Jiri Kosina <jkosina@suse.cz>, Viresh Kumar <viresh.kumar@st.com>
 
-Hi James,
+Hi Dan,
 
-After merging the scsi tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the async_tx tree got a conflict in
+drivers/dma/dw_dmac.c between commit e05503ef1186 ("Haavard Skinnemoen
+has left Atmel") from Linus' tree and commit aecb7b64dd9e
+("dmaengine/dw_dmac: Update maintainer-ship") from the async_tx tree.
 
-ERROR: "blk_put_queue" [drivers/scsi/scsi_mod.ko] undefined!
-ERROR: "blk_get_queue" [drivers/scsi/scsi_mod.ko] undefined!
-
-Caused by commit 069a596c12ca ("[SCSI] Fix oops caused by queue
-refcounting failure").
-
-I have used the scsi tree from next-20110526 for today.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__27_May_2011_13_25_11_+1000_/y.FS1fG6MT7hoQx
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN3xmXAAoJEDMEi1NhKgbsFXkH/RwjqY0d92AU+AA9qKK5ZRYW
-Ww2rHEZswq8UQAF1OzrdVu12oqnW7XHNAEgjspGU4ulwn8I/e0V4SujvFXQAsyHu
-fDF6pdt0fX50dfIPUcEJN0PjD7wg7c4boh+MKukVbuG4r85mUsdNCpfcjji5zpIW
-o6ayNY3lHEzXajHglvrHTJ8aZ0/Q1oJpAjtNaMNInGRMnzmdePcHmGdabIiLd+WM
-k9FzClddPhPrRo/oKDpgsrQ41bz7sZcnKG9iBw82Smrj7aqzPMTIdxKjAN5lfVbs
-POnO1J1p8ZQyasokDXOHe4U3UFcYPnBMAWZEFPgimD1amMqgdGIj7DlLa8ozgm0=
-=xtKe
------END PGP SIGNATURE-----
-
---Signature=_Fri__27_May_2011_13_25_11_+1000_/y.FS1fG6MT7hoQx--
+diff --cc drivers/dma/dw_dmac.c
+index 2a2e2fa,efd836d..0000000
+--- a/drivers/dma/dw_dmac.c
++++ b/drivers/dma/dw_dmac.c
+@@@ -1486,4 -1575,5 +1575,5 @@@ module_exit(dw_exit)
+  
+  MODULE_LICENSE("GPL v2");
+  MODULE_DESCRIPTION("Synopsys DesignWare DMA Controller driver");
+ -MODULE_AUTHOR("Haavard Skinnemoen <haavard.skinnemoen@atmel.com>");
+ +MODULE_AUTHOR("Haavard Skinnemoen (Atmel)");
++ MODULE_AUTHOR("Viresh Kumar <viresh.kumar@st.com>");
