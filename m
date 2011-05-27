@@ -1,52 +1,83 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for May 27 (ocfs2)
-Date: Fri, 27 May 2011 09:30:43 -0700
-Message-ID: <20110527093043.0840ac30.randy.dunlap@oracle.com>
-References: <20110527155231.3a9925c0.sfr@canb.auug.org.au>
+Subject: [PATCH] gpio: add GPIOF_ values regardless on kconfig
+	settings
+Date: Fri, 27 May 2011 10:46:57 -0700
+Message-ID: <4DDFE391.2030507@oracle.com>
+References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
+	<20110523134815.fb87933a.randy.dunlap@oracle.com>
+	<20110523224659.GB19533@opensource.wolfsonmicro.com>
+	<20110523155343.2e68c265.randy.dunlap@oracle.com>
+	<20110524000837.GA30515@opensource.wolfsonmicro.com>
+	<4DDB082F.3010107@oracle.com>
+	<20110524014959.GA27710@opensource.wolfsonmicro.com>
+	<4DDB3AFF.9030006@oracle.com>
+	<20110524075248.GB19734@sirena.org.uk>
+	<20110527074552.GA907@ponder.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:55755 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754424Ab1E0QbJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 12:31:09 -0400
-In-Reply-To: <20110527155231.3a9925c0.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Fasheh <mfasheh@suse.com>, Joel Becker <jlbec@evilplan.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20110527074552.GA907@ponder.secretlab.ca>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, x86@kernel.org, Dmitry Artamonow <mad_soft@inbox.ru>, Mark Brown <broonie@opensource.wolfsonmicro.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Harald Welte <laforge@gnufiish.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 27 May 2011 15:52:31 +1000 Stephen Rothwell wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> Hi all,
-> 
-> Changes since 20110526:
+Make GPIOF_ defined values available even when GPIOLIB nor GENERIC_GPIO
+is enabled by moving them to <linux/gpio.h>.
 
-ocfs2 on i386 has build errors:
-
-ERROR: "__udivdi3" [fs/ocfs2/ocfs2.ko] undefined!
-ERROR: "__umoddi3" [fs/ocfs2/ocfs2.ko] undefined!
-
-or when builtin:
-
-fs/built-in.o: In function `ocfs2_find_victim_alloc_group.clone.0':
-move_extents.c:(.text+0x1fb01a): undefined reference to `__udivdi3'
-fs/built-in.o: In function `ocfs2_validate_and_adjust_move_goal':
-move_extents.c:(.text+0x1fb12e): undefined reference to `__umoddi3'
-move_extents.c:(.text+0x1fb15a): undefined reference to `__udivdi3'
-fs/built-in.o: In function `ocfs2_find_victim_alloc_group.clone.0':
-move_extents.c:(.text+0x1fb01a): undefined reference to `__udivdi3'
-fs/built-in.o: In function `ocfs2_validate_and_adjust_move_goal':
-move_extents.c:(.text+0x1fb12e): undefined reference to `__umoddi3'
-move_extents.c:(.text+0x1fb15a): undefined reference to `__udivdi3'
-fs/built-in.o: In function `ocfs2_find_victim_alloc_group.clone.0':
-move_extents.c:(.text+0x1fb01a): undefined reference to `__udivdi3'
-fs/built-in.o: In function `ocfs2_validate_and_adjust_move_goal':
-move_extents.c:(.text+0x1fb12e): undefined reference to `__umoddi3'
-move_extents.c:(.text+0x1fb15a): undefined reference to `__udivdi3'
-
-
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ include/asm-generic/gpio.h |   10 ----------
+ include/linux/gpio.h       |   11 +++++++++++
+ 2 files changed, 11 insertions(+), 10 deletions(-)
+
+--- linux-next-20110523.orig/include/asm-generic/gpio.h
++++ linux-next-20110523/include/asm-generic/gpio.h
+@@ -170,16 +170,6 @@ extern int __gpio_cansleep(unsigned gpio
+ 
+ extern int __gpio_to_irq(unsigned gpio);
+ 
+-#define GPIOF_DIR_OUT	(0 << 0)
+-#define GPIOF_DIR_IN	(1 << 0)
+-
+-#define GPIOF_INIT_LOW	(0 << 1)
+-#define GPIOF_INIT_HIGH	(1 << 1)
+-
+-#define GPIOF_IN		(GPIOF_DIR_IN)
+-#define GPIOF_OUT_INIT_LOW	(GPIOF_DIR_OUT | GPIOF_INIT_LOW)
+-#define GPIOF_OUT_INIT_HIGH	(GPIOF_DIR_OUT | GPIOF_INIT_HIGH)
+-
+ /**
+  * struct gpio - a structure describing a GPIO with configuration
+  * @gpio:	the GPIO number
+--- linux-next-20110523.orig/include/linux/gpio.h
++++ linux-next-20110523/include/linux/gpio.h
+@@ -3,6 +3,17 @@
+ 
+ /* see Documentation/gpio.txt */
+ 
++/* make these flag values available regardless of GPIO kconfig options */
++#define GPIOF_DIR_OUT	(0 << 0)
++#define GPIOF_DIR_IN	(1 << 0)
++
++#define GPIOF_INIT_LOW	(0 << 1)
++#define GPIOF_INIT_HIGH	(1 << 1)
++
++#define GPIOF_IN		(GPIOF_DIR_IN)
++#define GPIOF_OUT_INIT_LOW	(GPIOF_DIR_OUT | GPIOF_INIT_LOW)
++#define GPIOF_OUT_INIT_HIGH	(GPIOF_DIR_OUT | GPIOF_INIT_HIGH)
++
+ #ifdef CONFIG_GENERIC_GPIO
+ #include <asm/gpio.h>
+ 
