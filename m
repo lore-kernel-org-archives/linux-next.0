@@ -1,85 +1,44 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: manual merge of the async_tx tree with Linus' tree
-Date: Sat, 28 May 2011 10:20:53 +0200
-Message-ID: <20110528102053.58a6d67f@endymion.delvare>
-References: <20110527133003.8299b429.sfr@canb.auug.org.au>
-	<20110527095336.25007886@endymion.delvare>
-	<BANLkTikAShzPv_6c6Z8Z9Xdt9TgQbcM-xA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Mike Frysinger <vapier@gentoo.org>
+Subject: [PATCH] kgdbts: only use new asm-generic/ptrace.h api when needed
+Date: Sat, 28 May 2011 10:04:25 -0400
+Message-ID: <1306591465-9622-1-git-send-email-vapier@gentoo.org>
+References: <20110527151135.cd6f758a.sfr@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:35148 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752357Ab1E1IWd convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 28 May 2011 04:22:33 -0400
-In-Reply-To: <BANLkTikAShzPv_6c6Z8Z9Xdt9TgQbcM-xA@mail.gmail.com>
+Received: from smtp.gentoo.org ([140.211.166.183]:57248 "EHLO smtp.gentoo.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753447Ab1E1N71 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 28 May 2011 09:59:27 -0400
+In-Reply-To: <20110527151135.cd6f758a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Havard Skinnemoen <hskinnemoen@gmail.com>, Jiri Kosina <jkosina@suse.cz>, Viresh Kumar <viresh.kumar@st.com>
+To: kgdb-bugreport@lists.sourceforge.net, Jason Wessel <jason.wessel@windriver.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-Hi Dan,
+The new instruction_pointer_set helper is defined for people who have
+converted to asm-generic/ptrace.h, so don't use it generally unless
+the arch needs it (in which case it has been converted).  This should
+fix building of kgdb tests for arches not yet converted.
 
-On Fri, 27 May 2011 12:08:37 -0700, Dan Williams wrote:
-> On Fri, May 27, 2011 at 12:53 AM, Jean Delvare <khali@linux-fr.org> w=
-rote:
-> > Hi Stephen, Dan,
-> >
-> > On Fri, 27 May 2011 13:30:03 +1000, Stephen Rothwell wrote:
-> >> Today's linux-next merge of the async_tx tree got a conflict in
-> >> drivers/dma/dw_dmac.c between commit e05503ef1186 ("Haavard Skinne=
-moen
-> >> has left Atmel") from Linus' tree and commit aecb7b64dd9e
-> >> ("dmaengine/dw_dmac: Update maintainer-ship") from the async_tx tr=
-ee.
-> >>
-> >> Just context changes. =A0I fixed it up (see below) and can carry t=
-he fix as
-> >> necessary.
-> >
-> > Dan's patch is just plain wrong. MODULE_AUTHOR is about who wrote t=
-he
-> > code, not who maintains it. A change of maintainer should lead to a=
-n
-> > update or addition to file MAINTAINERS.
->=20
-> The patch in question did also update MAINTAINERS.  Since Viresh has
-> done a good amount of work on the driver (top-developer by commits
-> since the initial merge) and likely cares about user reports (now tha=
-t
-> he has stepped up to maintain it) is there a reason that he should no=
-t
-> have his own MODULE_AUTHOR line in the driver as well?
+Signed-off-by: Mike Frysinger <vapier@gentoo.org>
+---
+ drivers/misc/kgdbts.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
 
-Sorry, I guess I shouldn't have commented on a driver I don't know
-anything about. Furthermore, I didn't read the patch carefully, it is
-adding a MODULE_AUTHOR, when I thought it was replacing it (in all
-honestly I didn't even know it was possible to have more than one
-MODULE_AUTHOR statement per driver.)
-
-So really it's alright, just ignore me, and sorry for the noise.
-
-> > (...)
-> > (As a side note, the relevance of MODULE_AUTHOR given the developme=
-nt
-> > and maintenance model the Linux kernel has embraced can certainly b=
-e
-> > discussed, but that's a different story.)
->=20
-> We don't seem to have documentation around it, but making a bunch of
-> commits and stepping up to be a maintainer seems enough justification
-> to have your contact info show up in modinfo...
-
-My point is that the authors of a driver aren't necessarily the right
-persons to contact in case of problem. Given that distribution users
-won't find the MAINTAINERS file (and the files entries there point to
-source files anyway), users don't have a proper way to find the right
-contact. I suspect that driver authors are better located in the source
-code (it is already there most of the time) and we'd rather need a
-MODULE_MAINTAINER() macro, ideally generated automatically from
-MAINTAINERS. But again it is a wider debate, not related with the
-problem at hand.
-
---=20
-Jean Delvare
+diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
+index b0c5631..8cebec5 100644
+--- a/drivers/misc/kgdbts.c
++++ b/drivers/misc/kgdbts.c
+@@ -304,7 +304,10 @@ static int check_and_rewind_pc(char *put_str, char *arg)
+ 		return 1;
+ 	}
+ 	/* Readjust the instruction pointer if needed */
+-	instruction_pointer_set(&kgdbts_regs, ip + offset);
++	ip += offset;
++#ifdef GDB_ADJUSTS_BREAK_OFFSET
++	instruction_pointer_set(&kgdbts_regs, ip);
++#endif
+ 	return 0;
+ }
+ 
+-- 
+1.7.5.rc3
