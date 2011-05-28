@@ -1,84 +1,88 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] gpio: add GPIOF_ values regardless on kconfig settings
-Date: Fri, 27 May 2011 14:12:01 -0600
-Message-ID: <20110527201201.GA6645@ponder.secretlab.ca>
-References: <20110523134815.fb87933a.randy.dunlap@oracle.com>
- <20110523224659.GB19533@opensource.wolfsonmicro.com>
- <20110523155343.2e68c265.randy.dunlap@oracle.com>
- <20110524000837.GA30515@opensource.wolfsonmicro.com>
- <4DDB082F.3010107@oracle.com>
- <20110524014959.GA27710@opensource.wolfsonmicro.com>
- <4DDB3AFF.9030006@oracle.com>
- <20110524075248.GB19734@sirena.org.uk>
- <20110527074552.GA907@ponder.secretlab.ca>
- <4DDFE391.2030507@oracle.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [bloat] Measuring header file bloat effects on kernel build
+ performance: a more than 2x slowdown ...
+Date: Fri, 27 May 2011 20:36:33 -0400
+Message-ID: <BANLkTi=_=wmzWm79RTVzw09VX-Feb6zpwA@mail.gmail.com>
+References: <20110520161210.81bbef3a.sfr@canb.auug.org.au>
+	<BANLkTi=Dn_jvJ8mLY0Bc6C1Ptoqa-kJrCg@mail.gmail.com>
+	<20110523090918.GA5474@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pv0-f174.google.com ([74.125.83.174]:54545 "EHLO
-	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751277Ab1E0UME (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 16:12:04 -0400
-Content-Disposition: inline
-In-Reply-To: <4DDFE391.2030507@oracle.com>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:42721 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757569Ab1E1Age (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 20:36:34 -0400
+In-Reply-To: <20110523090918.GA5474@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Dmitry Artamonow <mad_soft@inbox.ru>, x86@kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Harald Welte <laforge@gnufiish.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, May 27, 2011 at 10:46:57AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Make GPIOF_ defined values available even when GPIOLIB nor GENERIC_GPIO
-> is enabled by moving them to <linux/gpio.h>.
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+On Mon, May 23, 2011 at 5:09 AM, Ingo Molnar <mingo@elte.hu> wrote:
+>
 
-Applied, thanks.
+[...]
 
-g.
+>
+> A surprisingly large chunk are all the module.h details which brings in details
+> like large elf.h definitions - despite pid.c only relying on the module code
+> for the spurious use of EXPORT_SYMBOL primitives. Fixing this would cause no
+> runtime overhead AFAICS.
 
-> ---
->  include/asm-generic/gpio.h |   10 ----------
->  include/linux/gpio.h       |   11 +++++++++++
->  2 files changed, 11 insertions(+), 10 deletions(-)
-> 
-> --- linux-next-20110523.orig/include/asm-generic/gpio.h
-> +++ linux-next-20110523/include/asm-generic/gpio.h
-> @@ -170,16 +170,6 @@ extern int __gpio_cansleep(unsigned gpio
->  
->  extern int __gpio_to_irq(unsigned gpio);
->  
-> -#define GPIOF_DIR_OUT	(0 << 0)
-> -#define GPIOF_DIR_IN	(1 << 0)
-> -
-> -#define GPIOF_INIT_LOW	(0 << 1)
-> -#define GPIOF_INIT_HIGH	(1 << 1)
-> -
-> -#define GPIOF_IN		(GPIOF_DIR_IN)
-> -#define GPIOF_OUT_INIT_LOW	(GPIOF_DIR_OUT | GPIOF_INIT_LOW)
-> -#define GPIOF_OUT_INIT_HIGH	(GPIOF_DIR_OUT | GPIOF_INIT_HIGH)
-> -
->  /**
->   * struct gpio - a structure describing a GPIO with configuration
->   * @gpio:	the GPIO number
-> --- linux-next-20110523.orig/include/linux/gpio.h
-> +++ linux-next-20110523/include/linux/gpio.h
-> @@ -3,6 +3,17 @@
->  
->  /* see Documentation/gpio.txt */
->  
-> +/* make these flag values available regardless of GPIO kconfig options */
-> +#define GPIOF_DIR_OUT	(0 << 0)
-> +#define GPIOF_DIR_IN	(1 << 0)
-> +
-> +#define GPIOF_INIT_LOW	(0 << 1)
-> +#define GPIOF_INIT_HIGH	(1 << 1)
-> +
-> +#define GPIOF_IN		(GPIOF_DIR_IN)
-> +#define GPIOF_OUT_INIT_LOW	(GPIOF_DIR_OUT | GPIOF_INIT_LOW)
-> +#define GPIOF_OUT_INIT_HIGH	(GPIOF_DIR_OUT | GPIOF_INIT_HIGH)
-> +
->  #ifdef CONFIG_GENERIC_GPIO
->  #include <asm/gpio.h>
->  
+I started working on the above since it seemed like it would be an interesting
+puzzle to untangle - that is before I realized how involved it would be.  :)
+
+It is do-able, but not as simple as it 1st might seem.  At the moment, if you
+touch linux/module.h and rebuild, the time is within one or two seconds of
+a fresh build - some 1670 compiles (for a typical x86-64 defconfig).  So
+module.h is pretty much 99% pervasive.  With my tree so far, the same
+touch builds close to 500 less files, is done in ~20% less time, and I've
+still many changes yet to make....
+
+Things that become evident upon attacking this:
+
+1) Separating out the EXPORT_SYMBOL stuff just alone by itself largely
+does nothing, because there are ~35 files in include/* which will directly
+include linux/module.h regardless of whether your file wanted it or not.
+
+2) The biggest culprit is linux/device.h, since it finds its way into almost
+everything it seems.  One has to clean everything else up, and then
+rebase this type of change to last, so the tree remains bisectable.
+
+3) Dealing with #2 reveals that *lots* of drivers/files never even had a line
+for #include <linux/module.h> -- they were happy to have it implicitly
+appear via some unknown include chain and simply ride the wave.
+
+4) It isn't just the presence of module.h that people were implicitly taking
+advantage of -- since module.h itself includes 95% of the known world, I
+found files that were getting stat.h, sched.h, even asm/*.h etc. via the
+implicit presence of module.h
+
+5) The combination of #3 and #4 makes for a lot of commits, as  I'm trying
+to keep them separated along subsystem/maintainer boundaries.
+
+Anyways, I just wanted to mention this was underway, but I don't see it
+being 100% done in the small amount of time left in this merge window.
+
+The current tree is here if anyone wants to poke at it and comment on it
+while I continue to plug away at the task.  x86, x86-64 and powerpc-64
+defconfigs have been tested to build OK.
+
+git://git.kernel.org/pub/scm/linux/kernel/git/paulg/linux-2.6.git
+module.h-split-May27
+
+http://git.kernel.org/?p=linux/kernel/git/paulg/linux-2.6.git;a=shortlog;h=refs/heads/module.h-split-May27
+
+Paul.
+
+>
+> Another big chunk are the RCU definitions and APIs. These too are inlined for
+> performance reasons - and that seems justified.
+>
+> Anway, what i tried to demonstrate with this mail how much *real* slowdown in
+> the kernel build our current header file bloat is causing. We could literally
+> halve our kernel build times if we fixed this!
+>
+> Thanks,
+>
