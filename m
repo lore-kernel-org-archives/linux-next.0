@@ -1,88 +1,85 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [bloat] Measuring header file bloat effects on kernel build
- performance: a more than 2x slowdown ...
-Date: Fri, 27 May 2011 20:36:33 -0400
-Message-ID: <BANLkTi=_=wmzWm79RTVzw09VX-Feb6zpwA@mail.gmail.com>
-References: <20110520161210.81bbef3a.sfr@canb.auug.org.au>
-	<BANLkTi=Dn_jvJ8mLY0Bc6C1Ptoqa-kJrCg@mail.gmail.com>
-	<20110523090918.GA5474@elte.hu>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: linux-next: manual merge of the async_tx tree with Linus' tree
+Date: Sat, 28 May 2011 10:20:53 +0200
+Message-ID: <20110528102053.58a6d67f@endymion.delvare>
+References: <20110527133003.8299b429.sfr@canb.auug.org.au>
+	<20110527095336.25007886@endymion.delvare>
+	<BANLkTikAShzPv_6c6Z8Z9Xdt9TgQbcM-xA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:42721 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757569Ab1E1Age (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2011 20:36:34 -0400
-In-Reply-To: <20110523090918.GA5474@elte.hu>
+Received: from zone0.gcu-squad.org ([212.85.147.21]:35148 "EHLO
+	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752357Ab1E1IWd convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 28 May 2011 04:22:33 -0400
+In-Reply-To: <BANLkTikAShzPv_6c6Z8Z9Xdt9TgQbcM-xA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, David Miller <davem@davemloft.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, Andrew Morton <akpm@linux-foundation.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Havard Skinnemoen <hskinnemoen@gmail.com>, Jiri Kosina <jkosina@suse.cz>, Viresh Kumar <viresh.kumar@st.com>
 
-On Mon, May 23, 2011 at 5:09 AM, Ingo Molnar <mingo@elte.hu> wrote:
->
+Hi Dan,
 
-[...]
+On Fri, 27 May 2011 12:08:37 -0700, Dan Williams wrote:
+> On Fri, May 27, 2011 at 12:53 AM, Jean Delvare <khali@linux-fr.org> w=
+rote:
+> > Hi Stephen, Dan,
+> >
+> > On Fri, 27 May 2011 13:30:03 +1000, Stephen Rothwell wrote:
+> >> Today's linux-next merge of the async_tx tree got a conflict in
+> >> drivers/dma/dw_dmac.c between commit e05503ef1186 ("Haavard Skinne=
+moen
+> >> has left Atmel") from Linus' tree and commit aecb7b64dd9e
+> >> ("dmaengine/dw_dmac: Update maintainer-ship") from the async_tx tr=
+ee.
+> >>
+> >> Just context changes. =A0I fixed it up (see below) and can carry t=
+he fix as
+> >> necessary.
+> >
+> > Dan's patch is just plain wrong. MODULE_AUTHOR is about who wrote t=
+he
+> > code, not who maintains it. A change of maintainer should lead to a=
+n
+> > update or addition to file MAINTAINERS.
+>=20
+> The patch in question did also update MAINTAINERS.  Since Viresh has
+> done a good amount of work on the driver (top-developer by commits
+> since the initial merge) and likely cares about user reports (now tha=
+t
+> he has stepped up to maintain it) is there a reason that he should no=
+t
+> have his own MODULE_AUTHOR line in the driver as well?
 
->
-> A surprisingly large chunk are all the module.h details which brings in details
-> like large elf.h definitions - despite pid.c only relying on the module code
-> for the spurious use of EXPORT_SYMBOL primitives. Fixing this would cause no
-> runtime overhead AFAICS.
+Sorry, I guess I shouldn't have commented on a driver I don't know
+anything about. Furthermore, I didn't read the patch carefully, it is
+adding a MODULE_AUTHOR, when I thought it was replacing it (in all
+honestly I didn't even know it was possible to have more than one
+MODULE_AUTHOR statement per driver.)
 
-I started working on the above since it seemed like it would be an interesting
-puzzle to untangle - that is before I realized how involved it would be.  :)
+So really it's alright, just ignore me, and sorry for the noise.
 
-It is do-able, but not as simple as it 1st might seem.  At the moment, if you
-touch linux/module.h and rebuild, the time is within one or two seconds of
-a fresh build - some 1670 compiles (for a typical x86-64 defconfig).  So
-module.h is pretty much 99% pervasive.  With my tree so far, the same
-touch builds close to 500 less files, is done in ~20% less time, and I've
-still many changes yet to make....
+> > (...)
+> > (As a side note, the relevance of MODULE_AUTHOR given the developme=
+nt
+> > and maintenance model the Linux kernel has embraced can certainly b=
+e
+> > discussed, but that's a different story.)
+>=20
+> We don't seem to have documentation around it, but making a bunch of
+> commits and stepping up to be a maintainer seems enough justification
+> to have your contact info show up in modinfo...
 
-Things that become evident upon attacking this:
+My point is that the authors of a driver aren't necessarily the right
+persons to contact in case of problem. Given that distribution users
+won't find the MAINTAINERS file (and the files entries there point to
+source files anyway), users don't have a proper way to find the right
+contact. I suspect that driver authors are better located in the source
+code (it is already there most of the time) and we'd rather need a
+MODULE_MAINTAINER() macro, ideally generated automatically from
+MAINTAINERS. But again it is a wider debate, not related with the
+problem at hand.
 
-1) Separating out the EXPORT_SYMBOL stuff just alone by itself largely
-does nothing, because there are ~35 files in include/* which will directly
-include linux/module.h regardless of whether your file wanted it or not.
-
-2) The biggest culprit is linux/device.h, since it finds its way into almost
-everything it seems.  One has to clean everything else up, and then
-rebase this type of change to last, so the tree remains bisectable.
-
-3) Dealing with #2 reveals that *lots* of drivers/files never even had a line
-for #include <linux/module.h> -- they were happy to have it implicitly
-appear via some unknown include chain and simply ride the wave.
-
-4) It isn't just the presence of module.h that people were implicitly taking
-advantage of -- since module.h itself includes 95% of the known world, I
-found files that were getting stat.h, sched.h, even asm/*.h etc. via the
-implicit presence of module.h
-
-5) The combination of #3 and #4 makes for a lot of commits, as  I'm trying
-to keep them separated along subsystem/maintainer boundaries.
-
-Anyways, I just wanted to mention this was underway, but I don't see it
-being 100% done in the small amount of time left in this merge window.
-
-The current tree is here if anyone wants to poke at it and comment on it
-while I continue to plug away at the task.  x86, x86-64 and powerpc-64
-defconfigs have been tested to build OK.
-
-git://git.kernel.org/pub/scm/linux/kernel/git/paulg/linux-2.6.git
-module.h-split-May27
-
-http://git.kernel.org/?p=linux/kernel/git/paulg/linux-2.6.git;a=shortlog;h=refs/heads/module.h-split-May27
-
-Paul.
-
->
-> Another big chunk are the RCU definitions and APIs. These too are inlined for
-> performance reasons - and that seems justified.
->
-> Anway, what i tried to demonstrate with this mail how much *real* slowdown in
-> the kernel build our current header file bloat is causing. We could literally
-> halve our kernel build times if we fixed this!
->
-> Thanks,
->
+--=20
+Jean Delvare
