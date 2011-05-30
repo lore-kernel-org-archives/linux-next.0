@@ -1,52 +1,46 @@
-From: Mike Frysinger <vapier@gentoo.org>
-Subject: Re: [Kgdb-bugreport] [PATCH] kgdbts: only use new asm-generic/ptrace.h
- api when needed
-Date: Mon, 30 May 2011 12:28:17 -0400
-Message-ID: <BANLkTind_F4-5sLUO1GVxK_yY_eXz_J0Vg@mail.gmail.com>
-References: <20110527151135.cd6f758a.sfr@canb.auug.org.au> <1306591465-9622-1-git-send-email-vapier@gentoo.org>
- <4DE3688A.4040600@mvista.com>
+From: "Brown, Len" <len.brown@intel.com>
+Subject: RE: linux-next: build warningiIn Linus' tree
+Date: Mon, 30 May 2011 12:11:25 -0700
+Message-ID: <E87738D94A6AD54789B5B8D1BAEB06CC701ED3BA3E@azsmsx503.amr.corp.intel.com>
+References: <20110530114828.8ef6625b.sfr@canb.auug.org.au>
+ <alpine.LFD.2.02.1105292346340.10035@arrandale.kernel.org>
+ <20110530073445.GA27557@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:64018 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753383Ab1E3Q2i convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 May 2011 12:28:38 -0400
-In-Reply-To: <4DE3688A.4040600@mvista.com>
+Received: from mga03.intel.com ([143.182.124.21]:31804 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750783Ab1E3TL1 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 May 2011 15:11:27 -0400
+In-Reply-To: <20110530073445.GA27557@elte.hu>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sergei Shtylyov <sshtylyov@mvista.com>
-Cc: kgdb-bugreport@lists.sourceforge.net, Jason Wessel <jason.wessel@windriver.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>, Len Brown <lenb@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, "stable@kernel.org" <stable@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Mon, May 30, 2011 at 05:51, Sergei Shtylyov wrote:
-> On 28-05-2011 18:04, Mike Frysinger wrote:
->> The new instruction_pointer_set helper is defined for people who hav=
-e
->> converted to asm-generic/ptrace.h, so don't use it generally unless
->> the arch needs it (in which case it has been converted). =C2=A0This =
-should
->> fix building of kgdb tests for arches not yet converted.
->
->> --- a/drivers/misc/kgdbts.c
->> +++ b/drivers/misc/kgdbts.c
->> @@ -304,7 +304,10 @@ static int check_and_rewind_pc(char *put_str, c=
-har
->> *arg)
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return 1;
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0}
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0/* Readjust the instruction pointer if ne=
-eded */
->> - =C2=A0 =C2=A0 =C2=A0 instruction_pointer_set(&kgdbts_regs, ip + of=
-fset);
->> + =C2=A0 =C2=A0 =C2=A0 ip +=3D offset;
->
-> =C2=A0 Since '=C3=ADp' is local, incrementing it is pointless here un=
-less you have
-> GDB_ADJUSTS_BREAK_OFFSET defined. Why not keep instruction_pointer_se=
-t()
-> call as is?
+> Len, i'd *really* prefer it if patches changing arch/x86/ had a
+> longer test time in linux-next than what you are gave it here.
 
-i prefer to have as much outside of ifdefs as possible.  gcc optimizes
-the result away, so it isnt a code size problem.
--mike
+I agree 100%, and I will do better in the future.
+
+This was very difficult timing for a merge window for me.
+
+> these patches were contentious when you last posted
+> them as an RFC to lkml ...
+
+The idle cleanup patches were contentious when I posed them
+because my original proposal deleted a bunch of code right away.
+
+Alan convinced me that the community doesn't move that fast,
+and that we should wallow in the swill for a while longer before
+deleting.  Others volunteered to test the latest upstream kernel
+on APM hardware, giving APM's presence in the upstream kernel a life line.
+So all I did was add the recommended feature-removal's and warnings
+for the stuff which obviously should go.  But if you see some of
+your favorite bits on the chopping block, you have at least
+6 months to make a case for them:-)
+
+thanks,
+-Len
