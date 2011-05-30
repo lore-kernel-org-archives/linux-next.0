@@ -1,57 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning in Linus' tree
-Date: Mon, 30 May 2011 11:43:33 +1000
-Message-ID: <20110530114333.6aa13281.sfr@canb.auug.org.au>
+Subject: linux-next: build warningiIn Linus' tree
+Date: Mon, 30 May 2011 11:48:28 +1000
+Message-ID: <20110530114828.8ef6625b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__30_May_2011_11_43_33_+1000_PCpJtQVSRZ9Xlk63"
+ boundary="Signature=_Mon__30_May_2011_11_48_28_+1000_LEVTr8ISRrs3AJHC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38785 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47676 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751920Ab1E3Bnl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 29 May 2011 21:43:41 -0400
+	id S1752256Ab1E3Bsh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 29 May 2011 21:48:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Patrick McHardy <kaber@trash.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org
+To: Len Brown <len.brown@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, stable@kernel.org
 
---Signature=_Mon__30_May_2011_11_43_33_+1000_PCpJtQVSRZ9Xlk63
+--Signature=_Mon__30_May_2011_11_48_28_+1000_LEVTr8ISRrs3AJHC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-In Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
-produced this warning:
+In Linus' tree, today's linux-next build (x86_84 allmodconfig) produced
+this warning:
 
-net/ipv4/netfilter/nf_nat_standalone.c: In function 'nf_nat_fn':
-net/ipv4/netfilter/nf_nat_standalone.c:119:2: warning: case value '4' not i=
-n enumerated type 'enum ip_conntrack_info'
-net/ipv4/netfilter/ipt_CLUSTERIP.c: In function 'clusterip_tg':
-net/ipv4/netfilter/ipt_CLUSTERIP.c:324:3: warning: case value '4' not in en=
-umerated type 'enum ip_conntrack_info'
+arch/x86/kernel/process.c: In function 'idle_setup':
+arch/x86/kernel/process.c:645:1: warning: unknown escape sequence: '\i'
 
-I am now using gcc v4.5.2.
+Introduced by commit 5d4c47e0195b ("x86 idle: deprecate mwait_idle() and
+"idle=3Dmwait" cmdline param").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__30_May_2011_11_43_33_+1000_PCpJtQVSRZ9Xlk63
+--Signature=_Mon__30_May_2011_11_48_28_+1000_LEVTr8ISRrs3AJHC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN4vZFAAoJEDMEi1NhKgbsZ0gH/0icvXHPifE7pBoUVkdbbZ01
-vMyADneqGZv5HRWXTPR2UfU8MV7ghR2LOj+BWVd5EGLBoYJsaoEEHjpHCj6FGBON
-1WP1yuIoNRyk1xcESbM+e6A6fTMiL9d/LcSAzDS9uC+8GYMz8+ZgGeI+oyvRSe2C
-gUMvPkvAw9XHzrOvttaoeGTmZBfV33AtLq+U78u8S1lSWFOxtCi3sP0Adda8C1G3
-KOdnFIounHezgVNxstArhbd+gSXK1qaoxiSd9n+f8eo20QTTNj5/949uA1Md0AeA
-zmptwSleMfSm9Ka50EclZGaTOYxMS1GYjF6ZQzR2nCCeBn0+bOktBf5m0Wp282Q=
-=6Q41
+iQEcBAEBAgAGBQJN4vdsAAoJEDMEi1NhKgbs2FsIAKDwAjtUo5DItxVo99hZODzP
+Rv3cAhZ2W9UBtYHfOTMvj6qQrHIqv4w8OpXihWZ0jfxCQaV16dUetqHj0mU0Lki+
+5FnZWSwGV9fqN9NZ114ryKP1LYkL37sy0piiD7j79rwF3Gncdu8567aTNycGaY7J
+zQvISdlPMGkUDwuPjGo+vF2NAuorhk0VxRsmshVY9W7jww3Qnjfph2yrMC8t484Q
+dbiwjyodQKmjVAz057N/FdeZLC/zAvW/f79tDgNpS23/TRj8oQqqgJ1dbt0t6DMs
+zkCjIVBqO83kKIsgfL7aNNLr3q3Mmctl9qurVkvaYnUx0WM9z4856TGV7ap713U=
+=G5Sc
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__30_May_2011_11_43_33_+1000_PCpJtQVSRZ9Xlk63--
+--Signature=_Mon__30_May_2011_11_48_28_+1000_LEVTr8ISRrs3AJHC--
