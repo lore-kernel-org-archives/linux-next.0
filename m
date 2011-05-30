@@ -1,52 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warninga in Linus' tree
-Date: Mon, 30 May 2011 11:36:53 +1000
-Message-ID: <20110530113653.5c7084f0.sfr@canb.auug.org.au>
+Subject: linux-next: build warning in Linus' tree
+Date: Mon, 30 May 2011 11:43:33 +1000
+Message-ID: <20110530114333.6aa13281.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__30_May_2011_11_36_53_+1000_o8uk4EXqcJcBbuII"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Mason <chris.mason@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__30_May_2011_11_43_33_+1000_PCpJtQVSRZ9Xlk63"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38785 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751920Ab1E3Bnl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 29 May 2011 21:43:41 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Patrick McHardy <kaber@trash.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netfilter-devel@vger.kernel.org, netfilter@vger.kernel.org
 
---Signature=_Mon__30_May_2011_11_36_53_+1000_o8uk4EXqcJcBbuII
+--Signature=_Mon__30_May_2011_11_43_33_+1000_PCpJtQVSRZ9Xlk63
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the Linus' tree, today's linux-next build (powerpc
-ppc64_defconfig) produced these warnings:
+In Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
+produced this warning:
 
-fs/btrfs/sysfs.c:76:26: warning: 'btrfs_root_attrs' defined but not used
-fs/btrfs/sysfs.c:97:26: warning: 'btrfs_super_attrs' defined but not used
-fs/btrfs/sysfs.c:153:13: warning: 'btrfs_super_release' defined but not used
-fs/btrfs/sysfs.c:160:13: warning: 'btrfs_root_release' defined but not used
+net/ipv4/netfilter/nf_nat_standalone.c: In function 'nf_nat_fn':
+net/ipv4/netfilter/nf_nat_standalone.c:119:2: warning: case value '4' not i=
+n enumerated type 'enum ip_conntrack_info'
+net/ipv4/netfilter/ipt_CLUSTERIP.c: In function 'clusterip_tg':
+net/ipv4/netfilter/ipt_CLUSTERIP.c:324:3: warning: case value '4' not in en=
+umerated type 'enum ip_conntrack_info'
 
-I have started using gcc v4.5.2 (instead of v4.4.4) if that makes a
-difference.
+I am now using gcc v4.5.2.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__30_May_2011_11_36_53_+1000_o8uk4EXqcJcBbuII
+--Signature=_Mon__30_May_2011_11_43_33_+1000_PCpJtQVSRZ9Xlk63
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN4vS1AAoJEDMEi1NhKgbsj4cH/3Yhe1Yj2R3f9JVd+hvJOP+P
-Uddnm7QkcbUOOJfUOZPI2gZJWX0ph3sjNLOkyZk4l3hmxiu/yaSKKE4brC2ZldyE
-1uHUhGz43HsUc6HtOKF1j/K3cG9F3bigvt6zLKlwEY6OWGV6dGIs+RCf8WGt1wbQ
-PUB7mdS3mh5nKHW3fI+H4saNJ71H/enzUhRJ2ZLsWYCqyri1gQZkMcxUpCangoHj
-+0D2MbegjpFq2F9HHsWoHn9Q4DNFKxHPGZBlH2E+QhfGZCnJ48BpzGd7pCDu54nW
-EFhvgf+cRjOVuzDOMNPB+ijifIylzwn6blWAIKwAiWLPgnzNTjK5SmFM9WaSszs=
-=luuw
+iQEcBAEBAgAGBQJN4vZFAAoJEDMEi1NhKgbsZ0gH/0icvXHPifE7pBoUVkdbbZ01
+vMyADneqGZv5HRWXTPR2UfU8MV7ghR2LOj+BWVd5EGLBoYJsaoEEHjpHCj6FGBON
+1WP1yuIoNRyk1xcESbM+e6A6fTMiL9d/LcSAzDS9uC+8GYMz8+ZgGeI+oyvRSe2C
+gUMvPkvAw9XHzrOvttaoeGTmZBfV33AtLq+U78u8S1lSWFOxtCi3sP0Adda8C1G3
+KOdnFIounHezgVNxstArhbd+gSXK1qaoxiSd9n+f8eo20QTTNj5/949uA1Md0AeA
+zmptwSleMfSm9Ka50EclZGaTOYxMS1GYjF6ZQzR2nCCeBn0+bOktBf5m0Wp282Q=
+=6Q41
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__30_May_2011_11_36_53_+1000_o8uk4EXqcJcBbuII--
+--Signature=_Mon__30_May_2011_11_43_33_+1000_PCpJtQVSRZ9Xlk63--
