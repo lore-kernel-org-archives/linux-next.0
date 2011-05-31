@@ -1,39 +1,158 @@
-From: David Sterba <dave@jikos.cz>
-Subject: Re: linux-next: build warninga in Linus' tree
-Date: Tue, 31 May 2011 19:57:09 +0200
-Message-ID: <20110531175709.GC12709@twin.jikos.cz>
-References: <20110530113653.5c7084f0.sfr@canb.auug.org.au>
-Reply-To: dave@jikos.cz
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: Linux 3.0-rc1
+Date: Tue, 31 May 2011 21:27:10 +0200
+Message-ID: <BANLkTimtw8vEqcWD5c-yW8-cfbeZKc5Rww@mail.gmail.com>
+References: <BANLkTinWBwjwKmiQ2zN0ao_KOzGFKE76UQ@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110530113653.5c7084f0.sfr@canb.auug.org.au>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Chris Mason <chris.mason@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:47113 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757587Ab1EaT1L convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 31 May 2011 15:27:11 -0400
+In-Reply-To: <BANLkTinWBwjwKmiQ2zN0ao_KOzGFKE76UQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
 
-Hi,
+Cool, Jens started to setup a new GIT repository with a more
+"general/common" for his block-tree (see below):
 
-On Mon, May 30, 2011 at 11:36:53AM +1000, Stephen Rothwell wrote:
-> After merging the Linus' tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced these warnings:
-> 
-> fs/btrfs/sysfs.c:76:26: warning: 'btrfs_root_attrs' defined but not used
-> fs/btrfs/sysfs.c:97:26: warning: 'btrfs_super_attrs' defined but not used
-> fs/btrfs/sysfs.c:153:13: warning: 'btrfs_super_release' defined but not used
-> fs/btrfs/sysfs.c:160:13: warning: 'btrfs_root_release' defined but not used
-> 
-> I have started using gcc v4.5.2 (instead of v4.4.4) if that makes a
-> difference.
+linux-2.6-block -> linux-block
 
-the warning probably started to show up after one of my cleanup patches,
-removing unused functions (f2a97a9dbd86eb1ef956bdf20e05c507b32beb96).
-The sysfs interface is not being used right now, but there's a unmerged
-patchset which adds the interesting bits like info about available btrfs
-filesystems and devices. I don't know what are the intentions regarding
-sysfs.
+"description	Linux 3.x block layer tree(s)"
 
+Would be nice to see more maintainer following :-).
 
-david
+- Sedat -
+
+[1] http://git.kernel.org/?p=3Dlinux/kernel/git/axboe/linux-block.git;a=
+=3Dsummary
+[2] http://git.kernel.org/?p=3Dlinux/kernel/git/axboe/linux-2.6-block.g=
+it;a=3Dsummary
+
+On Mon, May 30, 2011 at 11:28 AM, Sedat Dilek
+<sedat.dilek@googlemail.com> wrote:
+> [ Please CC me I am not subscribed to LKML ]
+>
+> [QUOTE]
+> h, and as some people already noticed, the numbering means that the
+> tar-balls and patches are now in a new directory:
+>
+> =C2=A0 =C2=A0/pub/linux/kernel/v3.0
+>
+> (under "testing/", since that's what we do with -rc releases).
+> However, I did *not* rename the git tree, because that would just be =
+a
+> huge inconvenience to git users, so it's still in the same old place
+> and yes, that means that my git tree is still called "linux-2.6.git"
+> on kernel.org. But it has the v3.0-rc1 tag in it.
+>
+> I'll probably add a symlink or something, if people really hate being
+> reminded about our long history with the "2.6" numbering. But that
+> won't be until closer to the real release, methinks.
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0Linus
+> [/QUOTE]
+>
+> First of all, congrats to Linux v3.0-rc1!
+>
+> As you have found by yourself this new numbering forces a bit of
+> rethinking some of (y)our (daily) workflows.
+> ( The new location of Linux v3.0-rc1 tarball was my 1st "problem" whe=
+n
+> converting my kernel-buildsystem. )
+>
+> [A] REPOSITORY NAMES
+>
+> BUT...
+> ...your GIT tree is still called "linux-2.6" :-).
+> Lots of other GIT repsoitories still use a prefix "linux-2.6-", like
+> linux-2.6-tip, linux-2.6-rcu, linux-2.6-acpi, or look at net-2.6 or
+> drm-2.6.
+> NOW...
+> ...it would be a good point to rename all repos to a more general/com=
+mon name.
+> Especially, the "linux-2.6-" can go to /dev/nirvana.
+> [1] lists all trees merged into linux-next and can be used as an over=
+view.
+>
+> Here some examples with proposals for change:
+>
+> EXAMPLE #1: Repos containing "linux-2.6-" prefix (IMHO even "linux-"
+> as prefix can be dropped)
+>
+> 1. linux-2.6-tip -> tip
+> 2. linux-2.6-rcu -> rcu
+> 3. linux-2.6-acpi -> acpi
+>
+> EXAMPLE #2: Repos containing "-2.6" as suffix
+>
+> 1. net-2.6 -> net
+> 2. drm-2.6 -> drm
+> 3. wireless-2.6 -> wireless
+> 4. sound-2.6 -> sound
+>
+> [ Gold medal to Ted for his ext4 GIT tree :-). ]
+>
+> EXAMPLE #3: WTF trees not fitting #1 or #2
+>
+> In general: Use the directory-name where your drivers are stored, see
+> also MAINTAINERS file.
+>
+> EXAMPLE #4: Repos using a separate GIT repo with -next suffix (for li=
+nux-next)
+>
+> 1. net-next-2.6 -> net-next
+> 2. wireless-next-2.6 -> wireless-next
+>
+> I know people won't like the idea on 1st look and hate me for no real
+> benefit/new features, but...
+> ...PLEASE...
+> ...don't start renaming to "3.0", in a decade we have the same proble=
+m
+> :-( and thus do it right from the beginning.
+>
+> Thoughts?
+>
+> [B] MY EXPERIENCES WITH v3.0-rc1
+>
+> Here my 1st impressions:
+> I am mostly on linux-next and working with an adopted
+> kernel-buildsystem from Debian kernel team.
+>
+> As a quick workaround, I changed package-name from "linux-2.6" to "li=
+nux-3.0".
+> This also led to a new folder linux-3.0 below $HOME/src.
+>
+> A two digits major version number like 3.0(-rc1) is (currently) not
+> accepted, so the first line of debian/changelog looks like this:
+>
+> linux-3.0 (3.0.0~rc1-1~next20110530.dileks1) UNRELEASED; urgency=3Dlo=
+w
+>
+> So, I used for now 3.0.0~rc1 (Note: Debian uses ~rcX in changelog fil=
+es).
+>
+> IIRC some READMEs, copyright files below debian-dir etc. have to be
+> adopted, too.
+> But as this work is for my personal amusement, I build 1st and enjoy.=
+=2E.
+>
+> $ cat /proc/version
+> Linux version 3.0.0-rc1-next20110530.1-686-small (Debian
+> 3.0.0~rc1-1~next20110530.dileks1) (sedat.dilek@gmail.com) (gcc versio=
+n
+> 4.6.1 20110526 (prerelease) (Debian 4.6.0-10) ) #1 SMP Mon May 30
+> 08:15:10 CEST 2011
+>
+> - Sedat -
+>
+>
+> [1] http://git.us.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.gi=
+t;a=3Dblob;f=3DNext/Trees
+>
