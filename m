@@ -1,39 +1,54 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for May 30 (apm)
-Date: Tue, 31 May 2011 02:00:51 +0200
-Message-ID: <201105310200.51930.rjw@sisk.pl>
-References: <20110530133531.847630f2.sfr@canb.auug.org.au> <20110530091045.40201b95.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the  tree
+Date: Tue, 31 May 2011 10:19:34 +1000
+Message-ID: <20110531101934.2737dc90.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__31_May_2011_10_19_34_+1000_WL+g+E1LTn+h.yyA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:41556 "EHLO ogre.sisk.pl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44639 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750818Ab1EaAAY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 May 2011 20:00:24 -0400
-In-Reply-To: <20110530091045.40201b95.randy.dunlap@oracle.com>
+	id S1750862Ab1EaATr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 May 2011 20:19:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, lenb@kernel.org, x86@kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, Borislav Petkov <bp@alien8.de>
 
-On Monday, May 30, 2011, Randy Dunlap wrote:
-> On Mon, 30 May 2011 13:35:31 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20110527:
-> > 
-> > Linus' tree still has its build failure for which I reverted a commit.
-> 
-> 
-> 2 randconfigs on i386 failed with:
-> ERROR: "pm_idle" [arch/x86/kernel/apm.ko] undefined!
-> ERROR: "default_idle" [arch/x86/kernel/apm.ko] undefined!
+--Signature=_Tue__31_May_2011_10_19_34_+1000_WL+g+E1LTn+h.yyA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That appears to be a fallout of the changes that went in through
-the Len's idle tree.
+Hi all,
 
-Thanks,
-Rafael
+Today's linux-next merge of the tip tree got a conflict in
+arch/x86/kernel/process.c between commit 8a27ef90237f ("x86 idle: fix
+build warning for WARN_ONCE("idle=3Dmwait")") from the idle-test tree and
+commit 598e887d8b01 ("x86 idle: Fix mwait deprecation warning message")
+from the tip tree.
+
+Slightly different patches for the same warning.  I fixed it up (using
+the version from the idle-test tree which is more complete).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__31_May_2011_10_19_34_+1000_WL+g+E1LTn+h.yyA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN5DQWAAoJEDMEi1NhKgbs4XkH/0OH5BmM/aE7TvYwJI9oWddf
+ccd7xAyWqt2tV3u50FoK5QMpa1+LG0Mj2iqXIYzBbwc7rt6y4c6dyphK//DCIdNE
+oLz8oEcftO9tG6D8zKspxJfHVXXYrgjdsluaS8GFXGLP4fHb6wXU1lnaKvZkBpJh
+Lv2AldyiAesN80tf6v1ojs1DrOgbOvmqoPgid/rqTYnyqhwkhZ3KD3PypwuJBDR6
+BrT0T8ctNBp7LWyHGvxCPhK7KhDT9hi+MuJbzb3ej1/RK4CTwPTmrp23ma2RLR63
+ldhurtyjQCswFHDKD1flmz/g26O/CG/YCoeJfLcEDIBmupgjI5I0hEkuegLqFGA=
+=E+2c
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__31_May_2011_10_19_34_+1000_WL+g+E1LTn+h.yyA--
