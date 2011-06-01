@@ -1,44 +1,42 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: [PATCH -next] mtd: fix physmap.h warnings
-Date: Wed, 1 Jun 2011 09:05:13 +0100
-Message-ID: <20110601080513.GA21186@flint.arm.linux.org.uk>
-References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au> <20110523113709.4357b4ba.randy.dunlap@oracle.com> <1306216431.2785.46.camel@localhost> <1306216683.2785.47.camel@localhost> <20110524074020.GA9490@flint.arm.linux.org.uk> <1306222943.2785.55.camel@localhost> <1306914354.4405.49.camel@localhost>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Wed, 1 Jun 2011 09:43:47 -0400
+Message-ID: <20110601134347.GB4081@dumpdata.com>
+References: <20110601110132.5485aba4.sfr@canb.auug.org.au>
+ <4DE5DB95.8010106@kernel.dk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:60008 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933201Ab1FAIFu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jun 2011 04:05:50 -0400
+Received: from rcsinet10.oracle.com ([148.87.113.121]:36787 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753879Ab1FANoS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jun 2011 09:44:18 -0400
 Content-Disposition: inline
-In-Reply-To: <1306914354.4405.49.camel@localhost>
+In-Reply-To: <4DE5DB95.8010106@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mtd@lists.infradead.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Randy Dunlap <randy.dunlap@oracle.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <error27@gmail.com>
 
-On Wed, Jun 01, 2011 at 10:45:54AM +0300, Artem Bityutskiy wrote:
-> On Tue, 2011-05-24 at 10:42 +0300, Artem Bityutskiy wrote:
-> > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > Subject: [PATCH] mtd: fix physmap.h warnings
+On Wed, Jun 01, 2011 at 08:26:29AM +0200, Jens Axboe wrote:
+> On 2011-06-01 03:01, Stephen Rothwell wrote:
+> > Hi Jens,
 > > 
-> > Fix build warnings in physmap.h:
+> > After merging the block tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
 > > 
-> > include/linux/mtd/physmap.h:25: warning: 'struct platform_device' declared inside parameter list
-> > include/linux/mtd/physmap.h:25: warning: its scope is only this definition or declaration, which is probably not what you want
-> > include/linux/mtd/physmap.h:26: warning: 'struct platform_device' declared inside parameter list
-> > include/linux/mtd/physmap.h:27: warning: 'struct platform_device' declared inside parameter list
+> > drivers/block/xen-blkback/blkback.c: In function 'xen_blkif_init':
+> > drivers/block/xen-blkback/blkback.c:812:6: error: 'blkback' undeclared (first use in this function)
 > > 
-> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> > Signed-off-by: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+> > Caused by commit 2a46117c6050 ("xen/blkback: potential null dereference
+> > in error handling").
+> > 
+> > I have used the block tree from next-20110530 for today.
 > 
-> David, it looks like Russel did not merge this patch and people
-                            ^^
-> complain. Could you please merge it?
+> Damn, sorry Stephen. Konrad, I'm rolling my tree back as not to
+> introduce bisection breakage in the tree. JFYI, so rebase yours as well
+> and lets try again.
 
-Bah, it got lost in the depths of my mailboxes and forgotten...
-
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+Done. Sorry about that - I pushed the right tree minutes after I sent the git
+pull email, but it took forever.... anyhow just pushed it and rebased on your for-linux.
+Will send out a seperate email for the git pull.
