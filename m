@@ -1,54 +1,68 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next -resend] kmsg_dump.h: needs errno.h
-Date: Wed, 1 Jun 2011 09:14:03 -0700
-Message-ID: <20110601091403.1e41ef91.randy.dunlap@oracle.com>
-References: <20110601134322.f59f5603.sfr@canb.auug.org.au>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: RE: next phase of tmem into linux-next
+Date: Wed, 1 Jun 2011 09:22:59 -0700 (PDT)
+Message-ID: <dedd3fa5-5dc3-4ce1-9ab4-dc77e23a6d7d@default>
+References: <80f7ab04-7ae6-48cb-b254-e99343147bf0@default
+ 20110601142544.62494a52.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:54632 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:21284 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755666Ab1FAQPG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jun 2011 12:15:06 -0400
-In-Reply-To: <20110601134322.f59f5603.sfr@canb.auug.org.au>
+	with ESMTP id S1756000Ab1FAQXj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jun 2011 12:23:39 -0400
+In-Reply-To: <20110601142544.62494a52.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Woodhouse <David.Woodhouse@intel.com>, akpm <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Simon Kagstrom <simon.kagstrom@netinsight.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Wilk <konrad.wilk@oracle.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+> On Tue, 31 May 2011 17:49:21 -0700 (PDT) Dan Magenheimer
+> <dan.magenheimer@oracle.com> wrote:
+> >
+> > Please re-include the following tree into linux-next.  The
+> > commit series is for frontswap, the complement of cleancache
+> > handling swap pages, which is the next phase in tmem.  It also
+> > includes the shim code to Xen tmem for frontswap.  It applies
+> > cleanly on linux-3.0-rc1, but if there are any problems or
+> > you have any questions, please let me know!
+> >
+> > git://git.kernel.org/pub/scm/linux/kernel/git/djm/tmem.git#linux-next
+> 
+> I don't remove trees from linux-next unless excplictly asked to, so
+> this
+> tree is still included
 
-Fix <linux/kmsg_dump.h> when CONFIG_PRINTK is not enabled:
+Hi Stephen --
 
-include/linux/kmsg_dump.h:56: error: 'EINVAL' undeclared (first use in this function)
-include/linux/kmsg_dump.h:61: error: 'EINVAL' undeclared (first use in this function)
+OK, I see "Already up-to-date" in merge.log.  I'll assume
+that the new frontswap commits will lag a day.  (Thanks,
+Konrad, for helping me find this info and pointing out the
+probable lag.)
 
-Looks like previous commit:
-commit 595dd3d8bf953254d8d2f30f99c54fe09c470040
-Author: Randy Dunlap <randy.dunlap@oracle.com>
-Date:   Tue Dec 1 10:52:02 2009 -0800
+(A thought... perhaps the merge.log generation script should
+do a "date" at the beginning and end, so one knows if one
+has just missed your merge window?)
 
-    kmsg_dump: fix build for CONFIG_PRINTK=n
+> As long as you stick to the rules (posted,
+> reviewed, ready for Linus), anything you add to that tree will be
+> included.
 
-uses EINVAL without having the needed header file(s),
-but I'm sure that I build tested that patch also.  oh well.
+Yep, understood.  Frontswap has been posted on lkml and tested for
+over a year (and for nearly 2-1/2 years if counting earlier
+versions as part of the original tmem postings), but hasn't gotten
+as much attention because it was serialized behind merging of cleancache.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Cc: Simon Kagstrom <simon.kagstrom@netinsight.net>
-Cc: David Woodhouse <David.Woodhouse@intel.com>
----
- include/linux/kmsg_dump.h |    1 +
- 1 file changed, 1 insertion(+)
+> The tree is still called "cleancache" in linux-next.  Should I change
+> that to something more generic?
 
---- linux-next-20110524.orig/include/linux/kmsg_dump.h
-+++ linux-next-20110524/include/linux/kmsg_dump.h
-@@ -12,6 +12,7 @@
- #ifndef _LINUX_KMSG_DUMP_H
- #define _LINUX_KMSG_DUMP_H
- 
-+#include <linux/errno.h>
- #include <linux/list.h>
- 
- enum kmsg_dump_reason {
+Yes please.  A good short name would be "tmem", but if you want
+something longer and more descriptive maybe, "transcendent_memory".
+I expect in the future that this might be the path for, for
+example, tmem-related code that is promoted from drivers/staging.
+E.g., the generic tmem.c code in drivers/staging/zcache could
+probably end up in lib at some point if/when there are multiple users.
+
+Thanks!
+Dan
