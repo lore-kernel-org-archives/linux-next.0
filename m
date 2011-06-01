@@ -1,39 +1,48 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Wed, 01 Jun 2011 08:26:29 +0200
-Message-ID: <4DE5DB95.8010106@kernel.dk>
-References: <20110601110132.5485aba4.sfr@canb.auug.org.au>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: [PATCH -next] mtd: fix physmap.h warnings
+Date: Wed, 01 Jun 2011 10:45:54 +0300
+Message-ID: <1306914354.4405.49.camel@localhost>
+References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
+	 <20110523113709.4357b4ba.randy.dunlap@oracle.com>
+	 <1306216431.2785.46.camel@localhost> <1306216683.2785.47.camel@localhost>
+	 <20110524074020.GA9490@flint.arm.linux.org.uk>
+	 <1306222943.2785.55.camel@localhost>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:34326 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754443Ab1FAG0b (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Jun 2011 02:26:31 -0400
-In-Reply-To: <20110601110132.5485aba4.sfr@canb.auug.org.au>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:34393 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755488Ab1FAHuV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jun 2011 03:50:21 -0400
+In-Reply-To: <1306222943.2785.55.camel@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <error27@gmail.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-mtd@lists.infradead.org, linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Randy Dunlap <randy.dunlap@oracle.com>, Russell King <rmk@arm.linux.org.uk>
 
-On 2011-06-01 03:01, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> After merging the block tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/block/xen-blkback/blkback.c: In function 'xen_blkif_init':
-> drivers/block/xen-blkback/blkback.c:812:6: error: 'blkback' undeclared (first use in this function)
-> 
-> Caused by commit 2a46117c6050 ("xen/blkback: potential null dereference
-> in error handling").
-> 
-> I have used the block tree from next-20110530 for today.
+On Tue, 2011-05-24 at 10:42 +0300, Artem Bityutskiy wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> Subject: [PATCH] mtd: fix physmap.h warnings
+>=20
+> Fix build warnings in physmap.h:
+>=20
+> include/linux/mtd/physmap.h:25: warning: 'struct platform_device' dec=
+lared inside parameter list
+> include/linux/mtd/physmap.h:25: warning: its scope is only this defin=
+ition or declaration, which is probably not what you want
+> include/linux/mtd/physmap.h:26: warning: 'struct platform_device' dec=
+lared inside parameter list
+> include/linux/mtd/physmap.h:27: warning: 'struct platform_device' dec=
+lared inside parameter list
+>=20
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Signed-off-by: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
 
-Damn, sorry Stephen. Konrad, I'm rolling my tree back as not to
-introduce bisection breakage in the tree. JFYI, so rebase yours as well
-and lets try again.
+David, it looks like Russel did not merge this patch and people
+complain. Could you please merge it?
 
--- 
-Jens Axboe
+--=20
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
