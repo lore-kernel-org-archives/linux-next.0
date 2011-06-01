@@ -1,78 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: next phase of tmem into linux-next
-Date: Thu, 2 Jun 2011 09:48:50 +1000
-Message-ID: <20110602094850.92063cbe.sfr@canb.auug.org.au>
-References: <80f7ab04-7ae6-48cb-b254-e99343147bf0@default
- 20110601142544.62494a52.sfr@canb.auug.org.au>
-	<dedd3fa5-5dc3-4ce1-9ab4-dc77e23a6d7d@default>
+Subject: Re: add slave-dma tree to linux-next
+Date: Thu, 2 Jun 2011 09:57:20 +1000
+Message-ID: <20110602095720.ec407b9c.sfr@canb.auug.org.au>
+References: <1306938694.10976.73.camel@vkoul-udesk3>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__2_Jun_2011_09_48_50_+1000_dKCgw.ySLX8rCpjs"
+ boundary="Signature=_Thu__2_Jun_2011_09_57_20_+1000_75_fNemx.3YZvavY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55365 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55258 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754785Ab1FAXs5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Jun 2011 19:48:57 -0400
-In-Reply-To: <dedd3fa5-5dc3-4ce1-9ab4-dc77e23a6d7d@default>
+	id S1758202Ab1FAX5W (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Jun 2011 19:57:22 -0400
+In-Reply-To: <1306938694.10976.73.camel@vkoul-udesk3>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Magenheimer <dan.magenheimer@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Wilk <konrad.wilk@oracle.com>
+To: "Koul, Vinod" <vinod.koul@intel.com>
+Cc: Dan <dan.j.williams@intel.com>, linux-next@vger.kernel.org
 
---Signature=_Thu__2_Jun_2011_09_48_50_+1000_dKCgw.ySLX8rCpjs
+--Signature=_Thu__2_Jun_2011_09_57_20_+1000_75_fNemx.3YZvavY
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
+Hi Vinod,
 
-On Wed, 1 Jun 2011 09:22:59 -0700 (PDT) Dan Magenheimer <dan.magenheimer@or=
-acle.com> wrote:
+On Wed, 01 Jun 2011 20:01:34 +0530 "Koul, Vinod" <vinod.koul@intel.com> wro=
+te:
 >
-> OK, I see "Already up-to-date" in merge.log.  I'll assume
-> that the new frontswap commits will lag a day.  (Thanks,
-> Konrad, for helping me find this info and pointing out the
-> probable lag.)
+> Since I am managing the below mentioned slave-dma tree, it would be
+> great if you could add this to you linux-next.
 >=20
-> (A thought... perhaps the merge.log generation script should
-> do a "date" at the beginning and end, so one knows if one
-> has just missed your merge window?)
+> git://git.infradead.org/users/vkoul/slave-dma.git next
 
-Yeah, well I am out of sync (timezone-wise) with most people, so good
-thought.  Though I actually fetch all the trees before I starte merging
-them, but it will give people some idea.
+I have added your tree from today.
 
-> > The tree is still called "cleancache" in linux-next.  Should I change
-> > that to something more generic?
->=20
-> Yes please.  A good short name would be "tmem", but if you want
-> something longer and more descriptive maybe, "transcendent_memory".
-> I expect in the future that this might be the path for, for
-> example, tmem-related code that is promoted from drivers/staging.
-> E.g., the generic tmem.c code in drivers/staging/zcache could
-> probably end up in lib at some point if/when there are multiple users.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-OK, I have renamed it to tmem (much easier to type :-)).
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---Signature=_Thu__2_Jun_2011_09_48_50_+1000_dKCgw.ySLX8rCpjs
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Thu__2_Jun_2011_09_57_20_+1000_75_fNemx.3YZvavY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN5s/iAAoJEDMEi1NhKgbsjY8H+wVY2PjhDoxfcX1CA/dOgbGm
-DPIjMfV564zKExkABWRagQomR3gUQcOz+xzrsp/nEoVrSDArjsMeb2QURJsioqNr
-D9qz+k0eHHwgVwOq5n0IYfydZSaqnWKoRfpaBAJSQluo4hRQKZFPR/22iO7gLXpA
-dzCkqJfeR0n7crQ320fny2bZYt+yPz52tbC7nhJ++su1gBMkkKuuksYg9ejVhGTK
-UCqCsLfLDqopUbOEOCcUDh8NXLQNeKmm3irU0vQc5bo7c0XH/njb5i2gmoktz0pE
-XJa1Xxzs6x+HogAvOia/FIkon7lWZju6E/YRTfk8XU69UPkliK72yKPFo/my90w=
-=IghV
+iQEcBAEBAgAGBQJN5tHgAAoJEDMEi1NhKgbs8IcH/23Ek8lCo0pWLAHDWd9DZlnx
+jGHHGnnpZI+WuyWSkcryczzSWkz7U0g8TldvcrsnY4MqK5WgOAMLn1XQz9yE/Cw/
+QMX0KAR0R3H8UxJFXCoaXCX7gi6dYjRWmNPQOuroEioIZvzs/caUIgNUNQx8GhmI
+Cqb8CEWSK3YarTf5LBq0pElzaeABXqP7W+T+VOXlwxcx+y/FJu4noEXgZ9y6zFQc
+frwMykw+DdQ5PQyV6h8nsZfRfcuX0xRql9HPfQpVmRBUeCjlJToPa5hWVR5yeGa3
+sIoiwL72HGMQmPG2X4lTS6Djfw48dKxt06/y7ke4gfb5zlhBGbiDMggLa4Cmffc=
+=xznR
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__2_Jun_2011_09_48_50_+1000_dKCgw.ySLX8rCpjs--
+--Signature=_Thu__2_Jun_2011_09_57_20_+1000_75_fNemx.3YZvavY--
