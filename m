@@ -1,54 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mmc tree with Linus' tree
-Date: Wed, 1 Jun 2011 11:13:20 +1000
-Message-ID: <20110601111320.07b07b7f.sfr@canb.auug.org.au>
+Subject: Re: linux-next: clean up time (pass 1)
+Date: Wed, 1 Jun 2011 11:25:47 +1000
+Message-ID: <20110601112547.02cf0904.sfr@canb.auug.org.au>
+References: <20110601110616.861247de.sfr@canb.auug.org.au>
+	<20110601011215.GA16661@mtj.dyndns.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__1_Jun_2011_11_13_20_+1000_J7AGBdET1Xn5F9EW"
+ boundary="Signature=_Wed__1_Jun_2011_11_25_47_+1000_x01V9ohcMteoKG_8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46338 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34954 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933005Ab1FABNc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 May 2011 21:13:32 -0400
+	id S933005Ab1FABZy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 May 2011 21:25:54 -0400
+In-Reply-To: <20110601011215.GA16661@mtj.dyndns.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Anton Vorontsov <cbouatmailru@gmail.com>, Grant Likely <grant.likely@secretlab.ca>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__1_Jun_2011_11_13_20_+1000_J7AGBdET1Xn5F9EW
+--Signature=_Wed__1_Jun_2011_11_25_47_+1000_x01V9ohcMteoKG_8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+Hi Tejun,
 
-Today's linux-next merge of the mmc tree got a conflict in
-drivers/mmc/host/sdhci-of-core.c between commit b1608d69cb80
-("drivercore: revert addition of of_match to struct device") from Linus'
-tree and commit e2d0d7dc5542 ("mmc: sdhci: make sdhci-of device drivers
-self registered") from the mmc tree.
+On Wed, 1 Jun 2011 10:12:15 +0900 Tejun Heo <tj@kernel.org> wrote:
+>
+> On Wed, Jun 01, 2011 at 11:06:16AM +1000, Stephen Rothwell wrote:
+> > slabh
+>=20
+> This definitely is a dead branch.  It was a temporary testing branch
+> preparing for wide-scale update and the whole thing has been in
+> mainline for a very long time now.  Sorry about not updating it
+> earlier.
 
-The latter removes the file, so I did that (I *think* that the change
-from the former is no longer needed, but someone should check).
+Thanks, I will remove it.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__1_Jun_2011_11_13_20_+1000_J7AGBdET1Xn5F9EW
+--Signature=_Wed__1_Jun_2011_11_25_47_+1000_x01V9ohcMteoKG_8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN5ZIwAAoJEDMEi1NhKgbs7UIH/RmjlRj3dKaJaecVeC/9QMM9
-LVWlGwuimZ3jcoEpATkouyQBoeE/c+0IlIsomw6qwZbr+L0zyZ+IBkhcFJVGLisV
-eF5WBdMJPjO8qcTq5DIJdo5Ucsr1xWUe97CSMhkEPtoyGYzpZxnso1WD3wYnumaj
-4wCW6I+l+9xEVId4XIpRjlZE4BevQ6j/F+Hc9PSj8cufm4uXCF38xI+jpCvWbhbB
-xUv2/o98C1/GhXbT+HvEzJd68KhTnZa2nCeDlIJ13nFtvccA/sXJO8pUvqsBJBuh
-x9A9rs001/T43ViQxOWOGLw2bzLdVOYyOOG6QWc888DCAj4u2qIH+VTZeCKKDfA=
-=Z1Lv
+iQEcBAEBAgAGBQJN5ZUbAAoJEDMEi1NhKgbsbFIH/2CaQkNHXaQsItDxqjOTLSEv
+/lM0hdJv0ugOgXDpdx0dvcLAFD0dhI8vwvlgEvyczAXuqCTGnT4PGytyxcDTbr39
+E0wyFm3qikHZWydniixmZ4klooj9SNLI2fPF+9gq/DKKEKkQI+2IoNQBXP67lzCM
+anF6adpfkByrPf4MyDfr11lfPZaWUnNbtNdXPmcgK0+5UFR5LQSkKnZDJ/OZRAdn
+5cFaS97rYr6bvQ7ivY1T/znVaUwktP/4lgQNthV+afPV3Dt+v+LtCDKz0El4JQR1
++VgpXiYfpvaed4UaTRygbMkIlbcgB438xKrZqDeu3lxHCW/HochzV15WqyXmQPE=
+=Oy5N
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__1_Jun_2011_11_13_20_+1000_J7AGBdET1Xn5F9EW--
+--Signature=_Wed__1_Jun_2011_11_25_47_+1000_x01V9ohcMteoKG_8--
