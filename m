@@ -1,158 +1,79 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: Linux 3.0-rc1
-Date: Tue, 31 May 2011 21:27:10 +0200
-Message-ID: <BANLkTimtw8vEqcWD5c-yW8-cfbeZKc5Rww@mail.gmail.com>
-References: <BANLkTinWBwjwKmiQ2zN0ao_KOzGFKE76UQ@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [Kgdb-bugreport] [PATCH] kgdbts: only use new
+ asm-generic/ptrace.h api when needed
+Date: Wed, 1 Jun 2011 10:11:17 +1000
+Message-ID: <20110601101117.6c9792a1.sfr@canb.auug.org.au>
+References: <20110527151135.cd6f758a.sfr@canb.auug.org.au>
+	<1306591465-9622-1-git-send-email-vapier@gentoo.org>
+	<4DE3688A.4040600@mvista.com>
+	<BANLkTind_F4-5sLUO1GVxK_yY_eXz_J0Vg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:47113 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757587Ab1EaT1L convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 31 May 2011 15:27:11 -0400
-In-Reply-To: <BANLkTinWBwjwKmiQ2zN0ao_KOzGFKE76UQ@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46407 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757090Ab1FAALa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 May 2011 20:11:30 -0400
+In-Reply-To: <BANLkTind_F4-5sLUO1GVxK_yY_eXz_J0Vg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
+To: Mike Frysinger <vapier@gentoo.org>, Linus <torvalds@linux-foundation.org>
+Cc: Sergei Shtylyov <sshtylyov@mvista.com>, kgdb-bugreport@lists.sourceforge.net, Jason Wessel <jason.wessel@windriver.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Cool, Jens started to setup a new GIT repository with a more
-"general/common" for his block-tree (see below):
+On Mon, 30 May 2011 12:28:17 -0400 Mike Frysinger <vapier@gentoo.org> wrote:
+>
+> i prefer to have as much outside of ifdefs as possible.  gcc optimizes
+> the result away, so it isnt a code size problem.
 
-linux-2.6-block -> linux-block
+Can we just get a patch sent to Linus, please?   His tree has now been
+broken for powerpc and sparc32 for 5 days :-(
 
-"description	Linux 3.x block layer tree(s)"
+It would have been nice if the original patch had been in linux-next at
+some point (especially given that I have a "kgdb" tree in linux-next).
 
-Would be nice to see more maintainer following :-).
+/me just slightly annoyed.
 
-- Sedat -
+Linus, the fix patch is below (I have applied it to linux-next today):
 
-[1] http://git.kernel.org/?p=3Dlinux/kernel/git/axboe/linux-block.git;a=
-=3Dsummary
-[2] http://git.kernel.org/?p=3Dlinux/kernel/git/axboe/linux-2.6-block.g=
-it;a=3Dsummary
+From:	Mike Frysinger <vapier@gentoo.org>
+To:	kgdb-bugreport@lists.sourceforge.net,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc:	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: [PATCH] kgdbts: only use new asm-generic/ptrace.h api when needed
+Date:	Sat, 28 May 2011 10:04:25 -0400
 
-On Mon, May 30, 2011 at 11:28 AM, Sedat Dilek
-<sedat.dilek@googlemail.com> wrote:
-> [ Please CC me I am not subscribed to LKML ]
->
-> [QUOTE]
-> h, and as some people already noticed, the numbering means that the
-> tar-balls and patches are now in a new directory:
->
-> =C2=A0 =C2=A0/pub/linux/kernel/v3.0
->
-> (under "testing/", since that's what we do with -rc releases).
-> However, I did *not* rename the git tree, because that would just be =
-a
-> huge inconvenience to git users, so it's still in the same old place
-> and yes, that means that my git tree is still called "linux-2.6.git"
-> on kernel.org. But it has the v3.0-rc1 tag in it.
->
-> I'll probably add a symlink or something, if people really hate being
-> reminded about our long history with the "2.6" numbering. But that
-> won't be until closer to the real release, methinks.
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0Linus
-> [/QUOTE]
->
-> First of all, congrats to Linux v3.0-rc1!
->
-> As you have found by yourself this new numbering forces a bit of
-> rethinking some of (y)our (daily) workflows.
-> ( The new location of Linux v3.0-rc1 tarball was my 1st "problem" whe=
-n
-> converting my kernel-buildsystem. )
->
-> [A] REPOSITORY NAMES
->
-> BUT...
-> ...your GIT tree is still called "linux-2.6" :-).
-> Lots of other GIT repsoitories still use a prefix "linux-2.6-", like
-> linux-2.6-tip, linux-2.6-rcu, linux-2.6-acpi, or look at net-2.6 or
-> drm-2.6.
-> NOW...
-> ...it would be a good point to rename all repos to a more general/com=
-mon name.
-> Especially, the "linux-2.6-" can go to /dev/nirvana.
-> [1] lists all trees merged into linux-next and can be used as an over=
-view.
->
-> Here some examples with proposals for change:
->
-> EXAMPLE #1: Repos containing "linux-2.6-" prefix (IMHO even "linux-"
-> as prefix can be dropped)
->
-> 1. linux-2.6-tip -> tip
-> 2. linux-2.6-rcu -> rcu
-> 3. linux-2.6-acpi -> acpi
->
-> EXAMPLE #2: Repos containing "-2.6" as suffix
->
-> 1. net-2.6 -> net
-> 2. drm-2.6 -> drm
-> 3. wireless-2.6 -> wireless
-> 4. sound-2.6 -> sound
->
-> [ Gold medal to Ted for his ext4 GIT tree :-). ]
->
-> EXAMPLE #3: WTF trees not fitting #1 or #2
->
-> In general: Use the directory-name where your drivers are stored, see
-> also MAINTAINERS file.
->
-> EXAMPLE #4: Repos using a separate GIT repo with -next suffix (for li=
-nux-next)
->
-> 1. net-next-2.6 -> net-next
-> 2. wireless-next-2.6 -> wireless-next
->
-> I know people won't like the idea on 1st look and hate me for no real
-> benefit/new features, but...
-> ...PLEASE...
-> ...don't start renaming to "3.0", in a decade we have the same proble=
-m
-> :-( and thus do it right from the beginning.
->
-> Thoughts?
->
-> [B] MY EXPERIENCES WITH v3.0-rc1
->
-> Here my 1st impressions:
-> I am mostly on linux-next and working with an adopted
-> kernel-buildsystem from Debian kernel team.
->
-> As a quick workaround, I changed package-name from "linux-2.6" to "li=
-nux-3.0".
-> This also led to a new folder linux-3.0 below $HOME/src.
->
-> A two digits major version number like 3.0(-rc1) is (currently) not
-> accepted, so the first line of debian/changelog looks like this:
->
-> linux-3.0 (3.0.0~rc1-1~next20110530.dileks1) UNRELEASED; urgency=3Dlo=
-w
->
-> So, I used for now 3.0.0~rc1 (Note: Debian uses ~rcX in changelog fil=
-es).
->
-> IIRC some READMEs, copyright files below debian-dir etc. have to be
-> adopted, too.
-> But as this work is for my personal amusement, I build 1st and enjoy.=
-=2E.
->
-> $ cat /proc/version
-> Linux version 3.0.0-rc1-next20110530.1-686-small (Debian
-> 3.0.0~rc1-1~next20110530.dileks1) (sedat.dilek@gmail.com) (gcc versio=
-n
-> 4.6.1 20110526 (prerelease) (Debian 4.6.0-10) ) #1 SMP Mon May 30
-> 08:15:10 CEST 2011
->
-> - Sedat -
->
->
-> [1] http://git.us.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.gi=
-t;a=3Dblob;f=3DNext/Trees
->
+The new instruction_pointer_set helper is defined for people who have
+converted to asm-generic/ptrace.h, so don't use it generally unless
+the arch needs it (in which case it has been converted).  This should
+fix building of kgdb tests for arches not yet converted.
+
+Signed-off-by: Mike Frysinger <vapier@gentoo.org>
+---
+ drivers/misc/kgdbts.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
+index b0c5631..8cebec5 100644
+--- a/drivers/misc/kgdbts.c
++++ b/drivers/misc/kgdbts.c
+@@ -304,7 +304,10 @@ static int check_and_rewind_pc(char *put_str, char *arg)
+ 		return 1;
+ 	}
+ 	/* Readjust the instruction pointer if needed */
+-	instruction_pointer_set(&kgdbts_regs, ip + offset);
++	ip += offset;
++#ifdef GDB_ADJUSTS_BREAK_OFFSET
++	instruction_pointer_set(&kgdbts_regs, ip);
++#endif
+ 	return 0;
+ }
+ 
+-- 
+1.7.5.rc3
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
