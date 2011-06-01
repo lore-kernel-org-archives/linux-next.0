@@ -1,79 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [Kgdb-bugreport] [PATCH] kgdbts: only use new
- asm-generic/ptrace.h api when needed
-Date: Wed, 1 Jun 2011 10:11:17 +1000
-Message-ID: <20110601101117.6c9792a1.sfr@canb.auug.org.au>
-References: <20110527151135.cd6f758a.sfr@canb.auug.org.au>
-	<1306591465-9622-1-git-send-email-vapier@gentoo.org>
-	<4DE3688A.4040600@mvista.com>
-	<BANLkTind_F4-5sLUO1GVxK_yY_eXz_J0Vg@mail.gmail.com>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: next phase of tmem into linux-next
+Date: Tue, 31 May 2011 17:49:21 -0700 (PDT)
+Message-ID: <80f7ab04-7ae6-48cb-b254-e99343147bf0@default>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46407 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757090Ab1FAALa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 May 2011 20:11:30 -0400
-In-Reply-To: <BANLkTind_F4-5sLUO1GVxK_yY_eXz_J0Vg@mail.gmail.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:32522 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932663Ab1FAAtq convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 31 May 2011 20:49:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Frysinger <vapier@gentoo.org>, Linus <torvalds@linux-foundation.org>
-Cc: Sergei Shtylyov <sshtylyov@mvista.com>, kgdb-bugreport@lists.sourceforge.net, Jason Wessel <jason.wessel@windriver.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Wilk <konrad.wilk@oracle.com>
 
-On Mon, 30 May 2011 12:28:17 -0400 Mike Frysinger <vapier@gentoo.org> wrote:
->
-> i prefer to have as much outside of ifdefs as possible.  gcc optimizes
-> the result away, so it isnt a code size problem.
+Hi Stephen --
 
-Can we just get a patch sent to Linus, please?   His tree has now been
-broken for powerpc and sparc32 for 5 days :-(
+Please re-include the following tree into linux-next.  The
+commit series is for frontswap, the complement of cleancache
+handling swap pages, which is the next phase in tmem.  It also
+includes the shim code to Xen tmem for frontswap.  It applies
+cleanly on linux-3.0-rc1, but if there are any problems or
+you have any questions, please let me know!
 
-It would have been nice if the original patch had been in linux-next at
-some point (especially given that I have a "kgdb" tree in linux-next).
+git://git.kernel.org/pub/scm/linux/kernel/git/djm/tmem.git#linux-next
 
-/me just slightly annoyed.
-
-Linus, the fix patch is below (I have applied it to linux-next today):
-
-From:	Mike Frysinger <vapier@gentoo.org>
-To:	kgdb-bugreport@lists.sourceforge.net,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc:	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Subject: [PATCH] kgdbts: only use new asm-generic/ptrace.h api when needed
-Date:	Sat, 28 May 2011 10:04:25 -0400
-
-The new instruction_pointer_set helper is defined for people who have
-converted to asm-generic/ptrace.h, so don't use it generally unless
-the arch needs it (in which case it has been converted).  This should
-fix building of kgdb tests for arches not yet converted.
-
-Signed-off-by: Mike Frysinger <vapier@gentoo.org>
----
- drivers/misc/kgdbts.c |    5 ++++-
- 1 files changed, 4 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
-index b0c5631..8cebec5 100644
---- a/drivers/misc/kgdbts.c
-+++ b/drivers/misc/kgdbts.c
-@@ -304,7 +304,10 @@ static int check_and_rewind_pc(char *put_str, char *arg)
- 		return 1;
- 	}
- 	/* Readjust the instruction pointer if needed */
--	instruction_pointer_set(&kgdbts_regs, ip + offset);
-+	ip += offset;
-+#ifdef GDB_ADJUSTS_BREAK_OFFSET
-+	instruction_pointer_set(&kgdbts_regs, ip);
-+#endif
- 	return 0;
- }
- 
--- 
-1.7.5.rc3
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Thanks,
+Dan
