@@ -1,27 +1,136 @@
-From: Mike Frysinger <vapier@gentoo.org>
-Subject: Re: [Kgdb-bugreport] [PATCH] kgdbts: only use new asm-generic/ptrace.h
- api when needed
-Date: Tue, 31 May 2011 22:19:02 -0400
-Message-ID: <BANLkTimSJm8Un8dPzCw8Y-J8R5w-Dqm44Q@mail.gmail.com>
-References: <20110527151135.cd6f758a.sfr@canb.auug.org.au> <1306591465-9622-1-git-send-email-vapier@gentoo.org>
- <4DE3688A.4040600@mvista.com> <BANLkTind_F4-5sLUO1GVxK_yY_eXz_J0Vg@mail.gmail.com>
- <20110601101117.6c9792a1.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (mmc tree
+ related)
+Date: Wed, 1 Jun 2011 13:04:31 +1000
+Message-ID: <20110601130431.59f4f0d4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__1_Jun_2011_13_04_31_+1000_fkVSDzs7jWb2MRU_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:63866 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933082Ab1FACTX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 31 May 2011 22:19:23 -0400
-In-Reply-To: <20110601101117.6c9792a1.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33237 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758546Ab1FADEn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 May 2011 23:04:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, Sergei Shtylyov <sshtylyov@mvista.com>, kgdb-bugreport@lists.sourceforge.net, Jason Wessel <jason.wessel@windriver.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Anton Vorontsov <cbouatmailru@gmail.com>, Wolfram Sang <w.sang@pengutronix.de>
 
-On Tue, May 31, 2011 at 20:11, Stephen Rothwell wrote:
-> It would have been nice if the original patch had been in linux-next at
-> some point (especially given that I have a "kgdb" tree in linux-next).
+--Signature=_Wed__1_Jun_2011_13_04_31_+1000_fkVSDzs7jWb2MRU_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-complain to akpm.  the patches sat in his tree for some time with no complaints.
--mike
+Hi all,
+
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_pltfm_register':
+(.opd+0xd8): multiple definition of `sdhci_pltfm_register'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0xd8): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_pltfm_init':
+(.text+0x568): multiple definition of `.sdhci_pltfm_init'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0x568): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_get_of_property':
+(.text+0x34c): multiple definition of `.sdhci_get_of_property'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0x34c): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_be32bs_writel':
+(.text+0x13c): multiple definition of `.sdhci_be32bs_writel'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0x13c): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_pltfm_resume':
+(.opd+0x120): multiple definition of `sdhci_pltfm_resume'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0x120): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_be32bs_readl':
+(.opd+0x0): multiple definition of `sdhci_be32bs_readl'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0x0): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_be32bs_readw':
+(.text+0x64): multiple definition of `.sdhci_be32bs_readw'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0x64): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_pltfm_free':
+(.text+0x8d0): multiple definition of `.sdhci_pltfm_free'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0x8d0): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_pltfm_free':
+(.opd+0xc0): multiple definition of `sdhci_pltfm_free'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0xc0): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_be32bs_readw':
+(.opd+0x18): multiple definition of `sdhci_be32bs_readw'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0x18): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_pltfm_unregister':
+(.text+0xa94): multiple definition of `.sdhci_pltfm_unregister'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0xa94): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_be32bs_readb':
+(.text+0xd0): multiple definition of `.sdhci_be32bs_readb'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0xd0): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_be32bs_writew':
+(.text+0x1a0): multiple definition of `.sdhci_be32bs_writew'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0x1a0): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_be32bs_writel':
+(.opd+0x48): multiple definition of `sdhci_be32bs_writel'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0x48): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_pltfm_unregister':
+(.opd+0xf0): multiple definition of `sdhci_pltfm_unregister'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0xf0): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_be32bs_writew':
+(.opd+0x60): multiple definition of `sdhci_be32bs_writew'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0x60): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_pltfm_resume':
+(.text+0xc70): multiple definition of `.sdhci_pltfm_resume'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0xc70): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_be32bs_writeb':
+(.text+0x2ac): multiple definition of `.sdhci_be32bs_writeb'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0x2ac): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_pltfm_suspend':
+(.text+0xc04): multiple definition of `.sdhci_pltfm_suspend'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0xc04): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_pltfm_register':
+(.text+0x9c0): multiple definition of `.sdhci_pltfm_register'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0x9c0): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `.sdhci_be32bs_readl':
+(.text+0x0): multiple definition of `.sdhci_be32bs_readl'
+drivers/mmc/host/sdhci-of-esdhc.o:(.text+0x0): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_be32bs_writeb':
+(.opd+0x78): multiple definition of `sdhci_be32bs_writeb'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0x78): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_pltfm_suspend':
+(.opd+0x108): multiple definition of `sdhci_pltfm_suspend'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0x108): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_get_of_property':
+(.opd+0x90): multiple definition of `sdhci_get_of_property'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0x90): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_pltfm_init':
+(.opd+0xa8): multiple definition of `sdhci_pltfm_init'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0xa8): first defined here
+drivers/mmc/host/sdhci-of-hlwd.o: In function `sdhci_be32bs_readb':
+(.opd+0x30): multiple definition of `sdhci_be32bs_readb'
+drivers/mmc/host/sdhci-of-esdhc.o:(.opd+0x30): first defined here
+
+Presumably caused by commit e2d0d7dc5542 ("mmc: sdhci: make sdhci-of
+device drivers self registered").
+
+I have reverted the merge of the mmc tree for today.
+
+P.S. Chris, some commits in your tree have no SoB from you despite the
+fact that you committed them.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__1_Jun_2011_13_04_31_+1000_fkVSDzs7jWb2MRU_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN5aw/AAoJEDMEi1NhKgbsJyMH/3e/ova0aZ/6nMvO/kutmlLN
+dawcTWDhunxUmzU90Eg4hmLeKsQeyQMOplYBNaD6gEIYU28umbH+JSrfpv2dJJJM
+dsZXzYsN0R7BSpvfi4OQeSKGtrp38kQH7es3y3UcL8te312RMe6Of5hKjgE9RBpA
+9e5fw0g8KcBjuYqgatkhoTu77C//A9roNiOMSPo/Xg0AYAGb/uhA3kAYQEMA9tk2
+4zmeVIjxv/YVwCJKPDhRDmjuqYBb0WZv4RqHOSDTQNwk5PGveUvy+i7JEualjXAC
+ltFmKQ4x8xpFs9rhhyKmAjWU87H0ZDN/9QCXwF8rH9f5aV/Uvd9dOPGRnbGGyh0=
+=Ht79
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__1_Jun_2011_13_04_31_+1000_fkVSDzs7jWb2MRU_--
