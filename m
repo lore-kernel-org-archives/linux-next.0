@@ -1,53 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tmem tree
-Date: Thu, 2 Jun 2011 12:02:23 +1000
-Message-ID: <20110602120223.4e7b3d81.sfr@canb.auug.org.au>
+From: Phillip Lougher <phillip.lougher@gmail.com>
+Subject: Re: linux-next: clean up time (pass 1)
+Date: Thu, 2 Jun 2011 03:25:36 +0100
+Message-ID: <BANLkTim-MPrnZ9+EaNtCQLsG9aukNhsiUw@mail.gmail.com>
+References: <20110601110616.861247de.sfr@canb.auug.org.au>
+	<BANLkTim6MbS1E=9LyX=rsDr+JNuojPC4GQ@mail.gmail.com>
+	<20110602113826.a41bbd3d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__2_Jun_2011_12_02_23_+1000_6iOKLTY+R3+0yDyT"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37172 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752492Ab1FBCC3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Jun 2011 22:02:29 -0400
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:65360 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759221Ab1FBCZi convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jun 2011 22:25:38 -0400
+In-Reply-To: <20110602113826.a41bbd3d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Magenheimer <dan.magenheimer@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__2_Jun_2011_12_02_23_+1000_6iOKLTY+R3+0yDyT
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 2, 2011 at 2:38 AM, Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> Hi Phillip,
+>
+> On Thu, 2 Jun 2011 02:26:07 +0100 Phillip Lougher <phillip.lougher@gm=
+ail.com> wrote:
+>>
+>> > squashfs
+>>
+>> This is a surprise ... I'm sure I had commits in my squashfs
+>> linux-next tree at the opening of the last but one merge window...
+>>
+>> Linux 2.6.38 released 14 Mar 2011
+>>
+>> $ git log --pretty=3D"%ci %s"
+>> ...
+>> 2011-02-28 18:43:48 +0000 Squashfs: wrap squashfs_mount() definition
+>> 2011-02-28 18:35:44 +0000 Squashfs: xz_wrapper doesn't need to inclu=
+de squashfs_
+>> 2011-02-28 18:35:36 +0000 Squashfs: Update documentation to include =
+compression
+>> 2011-02-28 18:35:28 +0000 Squashfs: Update Kconfig help text to incl=
+ude xz compr
+>> 2011-02-28 18:34:24 +0000 Squashfs: add compression options support =
+to xz decomp
+>> 2011-02-28 18:21:59 +0000 Squashfs: extend decompressor framework to=
+ handle comp
+>> 2011-02-07 16:03:55 -0800 Linux 2.6.38-rc4
+>
+> plus or minus 1 day (and timezone jitter :-)):
+>
+> $ git rev-list --no-merges next/20110314/origin..next/20110314/squash=
+fs | wc -l
+> 0
+> $ git rev-list --no-merges next/20110315/origin..next/20110315/squash=
+fs | wc -l
+> 0
+> $ git rev-list --no-merges next/20110316/origin..next/20110316/squash=
+fs | wc -l
+> 6
+>
 
-Hi Dan,
+Bugger, maybe I forgot to push, though I thought I did  :-)
 
-After merging the tmem tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Phillip
 
-mm/built-in.o: In function `.enable_swap_info':
-swapfile.c:(.text+0x41200): undefined reference to `.frontswap_init'
-
-I have used the tmem (cleancache) tree from next-20110601 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__2_Jun_2011_12_02_23_+1000_6iOKLTY+R3+0yDyT
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN5u8vAAoJEDMEi1NhKgbsx+wH/iSSTdNRpKQUrLYfTGXQ4BT8
-/JL2EuVsFeVbuDKL74z9DuhvzAMtLeh0QS34aVcgoVMlTN4I7TG6XyfrXk/e/B3m
-mzwy/VUm4V42t4HikpDgWbetBtexQK6Hqg+lQH7Jb6lUG2bQMZsIOS7V9zavDGlG
-nei01uc8tSpwwQcaA4h89RMqDSaK4xwVkuWPeUZmVXrDAC5K5hyZRPnXtbENlJW3
-gug77Kb14leldabdvdAryX7Ipw/eqOvS2UY5kPqesfle8h4Tugwgn48c8M6+WZZi
-ohNvIoh2swioepwm3prnbTI4s8M1GxEmw1f4e7ME8R0av3uRioPMgWsq0O3lxsI=
-=CgAk
------END PGP SIGNATURE-----
-
---Signature=_Thu__2_Jun_2011_12_02_23_+1000_6iOKLTY+R3+0yDyT--
+> It doesn't really matter, it was just a quick metric to choose a subs=
+et
+> of trees to look at.
+>
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+>
