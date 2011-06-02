@@ -1,70 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (ux500-core
- tree related)
-Date: Thu, 2 Jun 2011 11:50:45 +1000
-Message-ID: <20110602115045.41815756.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tmem tree
+Date: Thu, 2 Jun 2011 12:02:23 +1000
+Message-ID: <20110602120223.4e7b3d81.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__2_Jun_2011_11_50_45_+1000_V7xFRI/zKnpnRD9J"
+ boundary="Signature=_Thu__2_Jun_2011_12_02_23_+1000_6iOKLTY+R3+0yDyT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33016 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37172 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755090Ab1FBBut (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Jun 2011 21:50:49 -0400
+	id S1752492Ab1FBCC3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Jun 2011 22:02:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rickard Evertsson <rickard.evertsson@stericsson.com>, Daniel Willerud <daniel.willerud@stericsson.com>, Deepak Karda <deepak.karda@stericsson.com>, Bengt Jonsson <bengt.g.jonsson@stericsson.com>
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__2_Jun_2011_11_50_45_+1000_V7xFRI/zKnpnRD9J
+--Signature=_Thu__2_Jun_2011_12_02_23_+1000_6iOKLTY+R3+0yDyT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Dan,
 
-After merging the final tree, next-20110601 build (arm u8500_defconfig)
-failed like this:
+After merging the tmem tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-arch/arm/mach-ux500/clock-db8500.c:21:32: error: linux/gpio/nomadik.h: No s=
-uch file or directory
-arch/arm/mach-ux500/clock-db8500.c: In function 'clkout0_enable':
-arch/arm/mach-ux500/clock-db8500.c:214: error: implicit declaration of func=
-tion 'nmk_config_pin'
-arch/arm/mach-ux500/clock-db8500.c:214: error: implicit declaration of func=
-tion 'PIN_CFG'
-arch/arm/mach-ux500/clock-db8500.c:214: error: 'ALT_A' undeclared (first us=
-e in this function)
-arch/arm/mach-ux500/clock-db8500.c: In function 'clkout0_disable':
-arch/arm/mach-ux500/clock-db8500.c:221: error: 'GPIO' undeclared (first use=
- in this function)
-arch/arm/mach-ux500/clock-db8500.c: In function 'clkout1_enable':
-arch/arm/mach-ux500/clock-db8500.c:239: error: 'ALT_A' undeclared (first us=
-e in this function)
-arch/arm/mach-ux500/clock-db8500.c: In function 'clkout1_disable':
-arch/arm/mach-ux500/clock-db8500.c:246: error: 'GPIO' undeclared (first use=
- in this function)
+mm/built-in.o: In function `.enable_swap_info':
+swapfile.c:(.text+0x41200): undefined reference to `.frontswap_init'
 
-Casued by commit 077f17db54fa ("mach-ux500: split per-SoC clock trees").
+I have used the tmem (cleancache) tree from next-20110601 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__2_Jun_2011_11_50_45_+1000_V7xFRI/zKnpnRD9J
+--Signature=_Thu__2_Jun_2011_12_02_23_+1000_6iOKLTY+R3+0yDyT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN5ux1AAoJEDMEi1NhKgbsdAMH/jjNA6cptahg2mqQRuEd0nVP
-KRAdTcXUL1IPxtIXQgl06y5PgsFLBq/n1QQ5AXwy88Zhp/WKc7Hq/EXzLA18evO/
-xPfBKMZ7We2Ia68nfSsPvHCGbz94q6KHsIrGQwFLf+SxMuzJhqAGR734hpGjSlTr
-27ywtuvX7tjJUQ0XdNAQpClbRaTZJEjEngZwKXLElxd9sLZd8YmTvd+aUp4ZGoeh
-CjB83NnrQByApRD5E7rW5Yvh4jOGRWecS88r/bxh0+gMTwCoMTKe79DimTUs4TYo
-r2arMM+ZW8w25lUtoBv8qGBdHSDITofieT6+ksP95+Wnrfu96fikxgE7RmYMmCs=
-=dzhX
+iQEcBAEBAgAGBQJN5u8vAAoJEDMEi1NhKgbsx+wH/iSSTdNRpKQUrLYfTGXQ4BT8
+/JL2EuVsFeVbuDKL74z9DuhvzAMtLeh0QS34aVcgoVMlTN4I7TG6XyfrXk/e/B3m
+mzwy/VUm4V42t4HikpDgWbetBtexQK6Hqg+lQH7Jb6lUG2bQMZsIOS7V9zavDGlG
+nei01uc8tSpwwQcaA4h89RMqDSaK4xwVkuWPeUZmVXrDAC5K5hyZRPnXtbENlJW3
+gug77Kb14leldabdvdAryX7Ipw/eqOvS2UY5kPqesfle8h4Tugwgn48c8M6+WZZi
+ohNvIoh2swioepwm3prnbTI4s8M1GxEmw1f4e7ME8R0av3uRioPMgWsq0O3lxsI=
+=CgAk
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__2_Jun_2011_11_50_45_+1000_V7xFRI/zKnpnRD9J--
+--Signature=_Thu__2_Jun_2011_12_02_23_+1000_6iOKLTY+R3+0yDyT--
