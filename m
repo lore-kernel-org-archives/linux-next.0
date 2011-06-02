@@ -1,89 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: clean up time (pass 1)
-Date: Thu, 2 Jun 2011 11:38:26 +1000
-Message-ID: <20110602113826.a41bbd3d.sfr@canb.auug.org.au>
-References: <20110601110616.861247de.sfr@canb.auug.org.au>
-	<BANLkTim6MbS1E=9LyX=rsDr+JNuojPC4GQ@mail.gmail.com>
+Subject: linux-next: build failure after merge of the final tree (ux500-core
+ tree related)
+Date: Thu, 2 Jun 2011 11:50:45 +1000
+Message-ID: <20110602115045.41815756.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__2_Jun_2011_11_38_26_+1000_Vm8heZEGpS31nyoN"
+ boundary="Signature=_Thu__2_Jun_2011_11_50_45_+1000_V7xFRI/zKnpnRD9J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49830 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33016 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755410Ab1FBBi3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Jun 2011 21:38:29 -0400
-In-Reply-To: <BANLkTim6MbS1E=9LyX=rsDr+JNuojPC4GQ@mail.gmail.com>
+	id S1755090Ab1FBBut (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Jun 2011 21:50:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Phillip Lougher <phillip.lougher@gmail.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rickard Evertsson <rickard.evertsson@stericsson.com>, Daniel Willerud <daniel.willerud@stericsson.com>, Deepak Karda <deepak.karda@stericsson.com>, Bengt Jonsson <bengt.g.jonsson@stericsson.com>
 
---Signature=_Thu__2_Jun_2011_11_38_26_+1000_Vm8heZEGpS31nyoN
+--Signature=_Thu__2_Jun_2011_11_50_45_+1000_V7xFRI/zKnpnRD9J
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Phillip,
+Hi all,
 
-On Thu, 2 Jun 2011 02:26:07 +0100 Phillip Lougher <phillip.lougher@gmail.co=
-m> wrote:
->
-> > squashfs
->=20
-> This is a surprise ... I'm sure I had commits in my squashfs
-> linux-next tree at the opening of the last but one merge window...
->=20
-> Linux 2.6.38 released 14 Mar 2011
->=20
-> $ git log --pretty=3D"%ci %s"
-> ...
-> 2011-02-28 18:43:48 +0000 Squashfs: wrap squashfs_mount() definition
-> 2011-02-28 18:35:44 +0000 Squashfs: xz_wrapper doesn't need to include sq=
-uashfs_
-> 2011-02-28 18:35:36 +0000 Squashfs: Update documentation to include compr=
-ession
-> 2011-02-28 18:35:28 +0000 Squashfs: Update Kconfig help text to include x=
-z compr
-> 2011-02-28 18:34:24 +0000 Squashfs: add compression options support to xz=
- decomp
-> 2011-02-28 18:21:59 +0000 Squashfs: extend decompressor framework to hand=
-le comp
-> 2011-02-07 16:03:55 -0800 Linux 2.6.38-rc4
+After merging the final tree, next-20110601 build (arm u8500_defconfig)
+failed like this:
 
-plus or minus 1 day (and timezone jitter :-)):
+arch/arm/mach-ux500/clock-db8500.c:21:32: error: linux/gpio/nomadik.h: No s=
+uch file or directory
+arch/arm/mach-ux500/clock-db8500.c: In function 'clkout0_enable':
+arch/arm/mach-ux500/clock-db8500.c:214: error: implicit declaration of func=
+tion 'nmk_config_pin'
+arch/arm/mach-ux500/clock-db8500.c:214: error: implicit declaration of func=
+tion 'PIN_CFG'
+arch/arm/mach-ux500/clock-db8500.c:214: error: 'ALT_A' undeclared (first us=
+e in this function)
+arch/arm/mach-ux500/clock-db8500.c: In function 'clkout0_disable':
+arch/arm/mach-ux500/clock-db8500.c:221: error: 'GPIO' undeclared (first use=
+ in this function)
+arch/arm/mach-ux500/clock-db8500.c: In function 'clkout1_enable':
+arch/arm/mach-ux500/clock-db8500.c:239: error: 'ALT_A' undeclared (first us=
+e in this function)
+arch/arm/mach-ux500/clock-db8500.c: In function 'clkout1_disable':
+arch/arm/mach-ux500/clock-db8500.c:246: error: 'GPIO' undeclared (first use=
+ in this function)
 
-$ git rev-list --no-merges next/20110314/origin..next/20110314/squashfs | w=
-c -l
-0
-$ git rev-list --no-merges next/20110315/origin..next/20110315/squashfs | w=
-c -l
-0
-$ git rev-list --no-merges next/20110316/origin..next/20110316/squashfs | w=
-c -l
-6
-
-It doesn't really matter, it was just a quick metric to choose a subset
-of trees to look at.
-
+Casued by commit 077f17db54fa ("mach-ux500: split per-SoC clock trees").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__2_Jun_2011_11_38_26_+1000_Vm8heZEGpS31nyoN
+--Signature=_Thu__2_Jun_2011_11_50_45_+1000_V7xFRI/zKnpnRD9J
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN5umSAAoJEDMEi1NhKgbsSoEIAIdvf18p4+w59iB97hutZ/S9
-i5YZyOFsTvxet09vFidCxPUj0uuY25pYKBsLkn3oZZ9Zaq3ut2eSOML6aSakxhT6
-WcMNzQSsUDpjXpwU0l04LLVbFrnLEiQVTRYJdmzNnQKT8BIQsyz1vvoyA7mYjkgl
-mb/FC6QLlCkq4yoyzPI9qWxPan9j18tb9Ihsgq9IXJDrXMuRWRSb8Wwzr/I81R3A
-pLro+SHErASftdO9b1TEDJxNL6TiL0Tko5mqFt4nUEN0lh83XFzOwmzogxfYrwOM
-zpzoHLa+GuuKCkXkMSbQGc7/mDz4/Y9z7lC/GQY6ktCKgMeFVveIRfT9chdovfg=
-=Mcpy
+iQEcBAEBAgAGBQJN5ux1AAoJEDMEi1NhKgbsdAMH/jjNA6cptahg2mqQRuEd0nVP
+KRAdTcXUL1IPxtIXQgl06y5PgsFLBq/n1QQ5AXwy88Zhp/WKc7Hq/EXzLA18evO/
+xPfBKMZ7We2Ia68nfSsPvHCGbz94q6KHsIrGQwFLf+SxMuzJhqAGR734hpGjSlTr
+27ywtuvX7tjJUQ0XdNAQpClbRaTZJEjEngZwKXLElxd9sLZd8YmTvd+aUp4ZGoeh
+CjB83NnrQByApRD5E7rW5Yvh4jOGRWecS88r/bxh0+gMTwCoMTKe79DimTUs4TYo
+r2arMM+ZW8w25lUtoBv8qGBdHSDITofieT6+ksP95+Wnrfu96fikxgE7RmYMmCs=
+=dzhX
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__2_Jun_2011_11_38_26_+1000_Vm8heZEGpS31nyoN--
+--Signature=_Thu__2_Jun_2011_11_50_45_+1000_V7xFRI/zKnpnRD9J--
