@@ -1,476 +1,314 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH] mmc: sdhci: change sdhci-pltfm into a module
-Date: Thu, 2 Jun 2011 10:57:50 +0800
-Message-ID: <1306983470-18588-1-git-send-email-shawn.guo@linaro.org>
-References: <20110601130431.59f4f0d4.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for June 2
+Date: Thu, 2 Jun 2011 14:44:29 +1000
+Message-ID: <20110602144429.b8972ea4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20110601130431.59f4f0d4.sfr@canb.auug.org.au>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cbouatmailru@gmail.com, w.sang@pengutronix.de, cjb@laptop.org, grant.likely@secretlab.ca, arnd@arndb.de, sfr@canb.auug.org.au, patches@linaro.org, Shawn Guo <shawn.guo@freescale.com>, Shawn Guo <shawn.guo@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__2_Jun_2011_14_44_29_+1000_WYJIP.vRI+pnnbDL"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39080 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751166Ab1FBEoc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Jun 2011 00:44:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Shawn Guo <shawn.guo@freescale.com>
+--Signature=_Thu__2_Jun_2011_14_44_29_+1000_WYJIP.vRI+pnnbDL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There are a couple of problems left from the sdhci pltfm and OF
-consolidation changes.
+Hi all,
 
-* When building more than one sdhci-pltfm based drivers in the same
-  image, linker will give multiple definition error on the sdhci-pltfm
-  helper functions.  For example right now, building sdhci-of-esdhc
-  and sdhci-of-hlwd together is a valid combination from Kconfig view.
+Changes since 20110601:
 
-* With the current build method, there is error with building the
-  drivers as module, but module installation fails with modprobe.
+New tree: slave-dma
 
-The patch fixes above problems by changing sdhci-pltfm into a module.
-To avoid EXPORT_SYMBOL on so many big endian IO accessors, it moves
-these accessors into sdhci-pltfm.h as the 'static inline' functions.
-As a result, sdhci.h needs to be included in sdhci-pltfm.h, and in
-turn can be removed from individual drivers which already include
-sdhci-pltfm.h.
+Removed tree: slabh (served its purpose)
 
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
----
- drivers/mmc/host/Kconfig           |   37 +++++++++++++----
- drivers/mmc/host/Makefile          |    7 +---
- drivers/mmc/host/sdhci-cns3xxx.c   |    1 -
- drivers/mmc/host/sdhci-dove.c      |    1 -
- drivers/mmc/host/sdhci-esdhc-imx.c |    1 -
- drivers/mmc/host/sdhci-of-esdhc.c  |    1 -
- drivers/mmc/host/sdhci-of-hlwd.c   |    1 -
- drivers/mmc/host/sdhci-pltfm.c     |   82 ++++++++++-------------------------
- drivers/mmc/host/sdhci-pltfm.h     |   67 +++++++++++++++++++++++++----
- drivers/mmc/host/sdhci-tegra.c     |    1 -
- 10 files changed, 112 insertions(+), 87 deletions(-)
+Renamed tree: cleancache -> tmem
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index ee4ac77..74e77c9 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -81,19 +81,32 @@ config MMC_RICOH_MMC
- 
- 	  If unsure, say Y.
- 
--config MMC_SDHCI_OF_ESDHC
--	bool "SDHCI OF support for the Freescale eSDHC controller"
-+config MMC_SDHCI_PLTFM
-+	tristate "SDHCI platform and OF driver helper"
- 	depends on MMC_SDHCI
-+	help
-+	  This selects the common helper functions support for Secure Digital
-+	  Host Controller Interface based platform and OF drivers.
-+
-+	  If you have a controller with this interface, say Y or M here.
-+
-+	  If unsure, say N.
-+
-+config MMC_SDHCI_OF_ESDHC
-+	tristate "SDHCI OF support for the Freescale eSDHC controller"
-+	depends on MMC_SDHCI_PLTFM
- 	depends on PPC_OF
- 	select MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER
- 	help
- 	  This selects the Freescale eSDHC controller support.
- 
-+	  If you have a controller with this interface, say Y or M here.
-+
- 	  If unsure, say N.
- 
- config MMC_SDHCI_OF_HLWD
--	bool "SDHCI OF support for the Nintendo Wii SDHCI controllers"
--	depends on MMC_SDHCI
-+	tristate "SDHCI OF support for the Nintendo Wii SDHCI controllers"
-+	depends on MMC_SDHCI_PLTFM
- 	depends on PPC_OF
- 	select MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER
- 	help
-@@ -101,43 +114,51 @@ config MMC_SDHCI_OF_HLWD
- 	  found in the "Hollywood" chipset of the Nintendo Wii video game
- 	  console.
- 
-+	  If you have a controller with this interface, say Y or M here.
-+
- 	  If unsure, say N.
- 
- config MMC_SDHCI_CNS3XXX
- 	tristate "SDHCI support on the Cavium Networks CNS3xxx SoC"
- 	depends on ARCH_CNS3XXX
--	depends on MMC_SDHCI
-+	depends on MMC_SDHCI_PLTFM
- 	help
- 	  This selects the SDHCI support for CNS3xxx System-on-Chip devices.
- 
-+	  If you have a controller with this interface, say Y or M here.
-+
- 	  If unsure, say N.
- 
- config MMC_SDHCI_ESDHC_IMX
- 	tristate "SDHCI platform support for the Freescale eSDHC i.MX controller"
- 	depends on ARCH_MX25 || ARCH_MX35 || ARCH_MX5
--	depends on MMC_SDHCI
-+	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
- 	help
- 	  This selects the Freescale eSDHC controller support on the platform
- 	  bus, found on platforms like mx35/51.
- 
-+	  If you have a controller with this interface, say Y or M here.
-+
- 	  If unsure, say N.
- 
- config MMC_SDHCI_DOVE
- 	tristate "SDHCI support on Marvell's Dove SoC"
- 	depends on ARCH_DOVE
--	depends on MMC_SDHCI
-+	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
- 	help
- 	  This selects the Secure Digital Host Controller Interface in
- 	  Marvell's Dove SoC.
- 
-+	  If you have a controller with this interface, say Y or M here.
-+
- 	  If unsure, say N.
- 
- config MMC_SDHCI_TEGRA
- 	tristate "SDHCI platform support for the Tegra SD/MMC Controller"
- 	depends on ARCH_TEGRA
--	depends on MMC_SDHCI
-+	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
- 	help
- 	  This selects the Tegra SD/MMC controller. If you have a Tegra
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index cbd89c3..bf479ab 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -44,18 +44,13 @@ obj-$(CONFIG_MMC_JZ4740)	+= jz4740_mmc.o
- obj-$(CONFIG_MMC_VUB300)	+= vub300.o
- obj-$(CONFIG_MMC_USHC)		+= ushc.o
- 
-+obj-$(CONFIG_MMC_SDHCI_PLTFM)		+= sdhci-pltfm.o
- obj-$(CONFIG_MMC_SDHCI_CNS3XXX)		+= sdhci-cns3xxx.o
--sdhci-cns3xxx-objs			:= sdhci-pltfm.o
- obj-$(CONFIG_MMC_SDHCI_ESDHC_IMX)	+= sdhci-esdhc-imx.o
--sdhci-esdhc-imx-objs			:= sdhci-pltfm.o
- obj-$(CONFIG_MMC_SDHCI_DOVE)		+= sdhci-dove.o
--sdhci-dove-objs				:= sdhci-pltfm.o
- obj-$(CONFIG_MMC_SDHCI_TEGRA)		+= sdhci-tegra.o
--sdhci-tegra-objs			:= sdhci-pltfm.o
- obj-$(CONFIG_MMC_SDHCI_OF_ESDHC)	+= sdhci-of-esdhc.o
--sdhci-of-esdhc-objs			:= sdhci-pltfm.o
- obj-$(CONFIG_MMC_SDHCI_OF_HLWD)		+= sdhci-of-hlwd.o
--sdhci-of-hlwd-objs			:= sdhci-pltfm.o
- 
- ifeq ($(CONFIG_CB710_DEBUG),y)
- 	CFLAGS-cb710-mmc	+= -DDEBUG
-diff --git a/drivers/mmc/host/sdhci-cns3xxx.c b/drivers/mmc/host/sdhci-cns3xxx.c
-index 025d1a5..4b920b7 100644
---- a/drivers/mmc/host/sdhci-cns3xxx.c
-+++ b/drivers/mmc/host/sdhci-cns3xxx.c
-@@ -16,7 +16,6 @@
- #include <linux/device.h>
- #include <linux/mmc/host.h>
- #include <mach/cns3xxx.h>
--#include "sdhci.h"
- #include "sdhci-pltfm.h"
- 
- static unsigned int sdhci_cns3xxx_get_max_clk(struct sdhci_host *host)
-diff --git a/drivers/mmc/host/sdhci-dove.c b/drivers/mmc/host/sdhci-dove.c
-index 49aa533..f2d29dc 100644
---- a/drivers/mmc/host/sdhci-dove.c
-+++ b/drivers/mmc/host/sdhci-dove.c
-@@ -22,7 +22,6 @@
- #include <linux/io.h>
- #include <linux/mmc/host.h>
- 
--#include "sdhci.h"
- #include "sdhci-pltfm.h"
- 
- static u16 sdhci_dove_readw(struct sdhci_host *host, int reg)
-diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-index 3105bcf..248b8e5 100644
---- a/drivers/mmc/host/sdhci-esdhc-imx.c
-+++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-@@ -22,7 +22,6 @@
- #include <linux/mmc/sdio.h>
- #include <mach/hardware.h>
- #include <mach/esdhc.h>
--#include "sdhci.h"
- #include "sdhci-pltfm.h"
- #include "sdhci-esdhc.h"
- 
-diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-index fd7c2f5..b365f4f 100644
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -17,7 +17,6 @@
- #include <linux/delay.h>
- #include <linux/mmc/host.h>
- #include "sdhci-pltfm.h"
--#include "sdhci.h"
- #include "sdhci-esdhc.h"
- 
- static u16 esdhc_readw(struct sdhci_host *host, int reg)
-diff --git a/drivers/mmc/host/sdhci-of-hlwd.c b/drivers/mmc/host/sdhci-of-hlwd.c
-index faedfce..735be13 100644
---- a/drivers/mmc/host/sdhci-of-hlwd.c
-+++ b/drivers/mmc/host/sdhci-of-hlwd.c
-@@ -22,7 +22,6 @@
- #include <linux/delay.h>
- #include <linux/mmc/host.h>
- #include "sdhci-pltfm.h"
--#include "sdhci.h"
- 
- /*
-  * Ops and quirks for the Nintendo Wii SDHCI controllers.
-diff --git a/drivers/mmc/host/sdhci-pltfm.c b/drivers/mmc/host/sdhci-pltfm.c
-index 041b0e2..71c0ce1 100644
---- a/drivers/mmc/host/sdhci-pltfm.c
-+++ b/drivers/mmc/host/sdhci-pltfm.c
-@@ -33,69 +33,11 @@
- #ifdef CONFIG_PPC
- #include <asm/machdep.h>
- #endif
--#include "sdhci.h"
- #include "sdhci-pltfm.h"
- 
- static struct sdhci_ops sdhci_pltfm_ops = {
- };
- 
--#ifdef CONFIG_MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER
--/*
-- * These accessors are designed for big endian hosts doing I/O to
-- * little endian controllers incorporating a 32-bit hardware byte swapper.
-- */
--u32 sdhci_be32bs_readl(struct sdhci_host *host, int reg)
--{
--	return in_be32(host->ioaddr + reg);
--}
--
--u16 sdhci_be32bs_readw(struct sdhci_host *host, int reg)
--{
--	return in_be16(host->ioaddr + (reg ^ 0x2));
--}
--
--u8 sdhci_be32bs_readb(struct sdhci_host *host, int reg)
--{
--	return in_8(host->ioaddr + (reg ^ 0x3));
--}
--
--void sdhci_be32bs_writel(struct sdhci_host *host, u32 val, int reg)
--{
--	out_be32(host->ioaddr + reg, val);
--}
--
--void sdhci_be32bs_writew(struct sdhci_host *host, u16 val, int reg)
--{
--	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
--	int base = reg & ~0x3;
--	int shift = (reg & 0x2) * 8;
--
--	switch (reg) {
--	case SDHCI_TRANSFER_MODE:
--		/*
--		 * Postpone this write, we must do it together with a
--		 * command write that is down below.
--		 */
--		pltfm_host->xfer_mode_shadow = val;
--		return;
--	case SDHCI_COMMAND:
--		sdhci_be32bs_writel(host,
--				    val << 16 | pltfm_host->xfer_mode_shadow,
--				    SDHCI_TRANSFER_MODE);
--		return;
--	}
--	clrsetbits_be32(host->ioaddr + base, 0xffff << shift, val << shift);
--}
--
--void sdhci_be32bs_writeb(struct sdhci_host *host, u8 val, int reg)
--{
--	int base = reg & ~0x3;
--	int shift = (reg & 0x3) * 8;
--
--	clrsetbits_be32(host->ioaddr + base , 0xff << shift, val << shift);
--}
--#endif /* CONFIG_MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER */
--
- #ifdef CONFIG_OF
- static bool sdhci_of_wp_inverted(struct device_node *np)
- {
-@@ -136,6 +78,7 @@ void sdhci_get_of_property(struct platform_device *pdev)
- #else
- void sdhci_get_of_property(struct platform_device *pdev) {}
- #endif /* CONFIG_OF */
-+EXPORT_SYMBOL_GPL(sdhci_get_of_property);
- 
- struct sdhci_host *sdhci_pltfm_init(struct platform_device *pdev,
- 				    struct sdhci_pltfm_data *pdata)
-@@ -202,6 +145,7 @@ err:
- 	dev_err(&pdev->dev, "%s failed %d\n", __func__, ret);
- 	return ERR_PTR(ret);
- }
-+EXPORT_SYMBOL_GPL(sdhci_pltfm_init);
- 
- void sdhci_pltfm_free(struct platform_device *pdev)
- {
-@@ -213,6 +157,7 @@ void sdhci_pltfm_free(struct platform_device *pdev)
- 	sdhci_free_host(host);
- 	platform_set_drvdata(pdev, NULL);
- }
-+EXPORT_SYMBOL_GPL(sdhci_pltfm_free);
- 
- int sdhci_pltfm_register(struct platform_device *pdev,
- 			 struct sdhci_pltfm_data *pdata)
-@@ -232,6 +177,7 @@ int sdhci_pltfm_register(struct platform_device *pdev,
- 
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(sdhci_pltfm_register);
- 
- int sdhci_pltfm_unregister(struct platform_device *pdev)
- {
-@@ -243,6 +189,7 @@ int sdhci_pltfm_unregister(struct platform_device *pdev)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(sdhci_pltfm_unregister);
- 
- #ifdef CONFIG_PM
- int sdhci_pltfm_suspend(struct platform_device *dev, pm_message_t state)
-@@ -251,6 +198,7 @@ int sdhci_pltfm_suspend(struct platform_device *dev, pm_message_t state)
- 
- 	return sdhci_suspend_host(host, state);
- }
-+EXPORT_SYMBOL_GPL(sdhci_pltfm_suspend);
- 
- int sdhci_pltfm_resume(struct platform_device *dev)
- {
-@@ -258,4 +206,22 @@ int sdhci_pltfm_resume(struct platform_device *dev)
- 
- 	return sdhci_resume_host(host);
- }
-+EXPORT_SYMBOL_GPL(sdhci_pltfm_resume);
- #endif	/* CONFIG_PM */
-+
-+static int __init sdhci_pltfm_drv_init(void)
-+{
-+	pr_info("sdhci-pltfm: SDHCI platform and OF driver helper\n");
-+
-+	return 0;
-+}
-+module_init(sdhci_pltfm_drv_init);
-+
-+static void __exit sdhci_pltfm_drv_exit(void)
-+{
-+}
-+module_exit(sdhci_pltfm_drv_exit);
-+
-+MODULE_DESCRIPTION("SDHCI platform and OF driver helper");
-+MODULE_AUTHOR("Intel Corporation");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mmc/host/sdhci-pltfm.h b/drivers/mmc/host/sdhci-pltfm.h
-index fd72694..3a9fc3f 100644
---- a/drivers/mmc/host/sdhci-pltfm.h
-+++ b/drivers/mmc/host/sdhci-pltfm.h
-@@ -12,9 +12,8 @@
- #define _DRIVERS_MMC_SDHCI_PLTFM_H
- 
- #include <linux/clk.h>
--#include <linux/types.h>
- #include <linux/platform_device.h>
--#include <linux/mmc/sdhci.h>
-+#include "sdhci.h"
- 
- struct sdhci_pltfm_data {
- 	struct sdhci_ops *ops;
-@@ -31,13 +30,63 @@ struct sdhci_pltfm_host {
- };
- 
- #ifdef CONFIG_MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER
--extern u32 sdhci_be32bs_readl(struct sdhci_host *host, int reg);
--extern u16 sdhci_be32bs_readw(struct sdhci_host *host, int reg);
--extern u8 sdhci_be32bs_readb(struct sdhci_host *host, int reg);
--extern void sdhci_be32bs_writel(struct sdhci_host *host, u32 val, int reg);
--extern void sdhci_be32bs_writew(struct sdhci_host *host, u16 val, int reg);
--extern void sdhci_be32bs_writeb(struct sdhci_host *host, u8 val, int reg);
--#endif
-+/*
-+ * These accessors are designed for big endian hosts doing I/O to
-+ * little endian controllers incorporating a 32-bit hardware byte swapper.
-+ */
-+static inline u32 sdhci_be32bs_readl(struct sdhci_host *host, int reg)
-+{
-+	return in_be32(host->ioaddr + reg);
-+}
-+
-+static inline u16 sdhci_be32bs_readw(struct sdhci_host *host, int reg)
-+{
-+	return in_be16(host->ioaddr + (reg ^ 0x2));
-+}
-+
-+static inline u8 sdhci_be32bs_readb(struct sdhci_host *host, int reg)
-+{
-+	return in_8(host->ioaddr + (reg ^ 0x3));
-+}
-+
-+static inline void sdhci_be32bs_writel(struct sdhci_host *host,
-+				       u32 val, int reg)
-+{
-+	out_be32(host->ioaddr + reg, val);
-+}
-+
-+static inline void sdhci_be32bs_writew(struct sdhci_host *host,
-+				       u16 val, int reg)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	int base = reg & ~0x3;
-+	int shift = (reg & 0x2) * 8;
-+
-+	switch (reg) {
-+	case SDHCI_TRANSFER_MODE:
-+		/*
-+		 * Postpone this write, we must do it together with a
-+		 * command write that is down below.
-+		 */
-+		pltfm_host->xfer_mode_shadow = val;
-+		return;
-+	case SDHCI_COMMAND:
-+		sdhci_be32bs_writel(host,
-+				    val << 16 | pltfm_host->xfer_mode_shadow,
-+				    SDHCI_TRANSFER_MODE);
-+		return;
-+	}
-+	clrsetbits_be32(host->ioaddr + base, 0xffff << shift, val << shift);
-+}
-+
-+static inline void sdhci_be32bs_writeb(struct sdhci_host *host, u8 val, int reg)
-+{
-+	int base = reg & ~0x3;
-+	int shift = (reg & 0x3) * 8;
-+
-+	clrsetbits_be32(host->ioaddr + base , 0xff << shift, val << shift);
-+}
-+#endif /* CONFIG_MMC_SDHCI_BIG_ENDIAN_32BIT_BYTE_SWAPPER */
- 
- extern void sdhci_get_of_property(struct platform_device *pdev);
- 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 1f66aca..18b0bd3 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -24,7 +24,6 @@
- #include <mach/gpio.h>
- #include <mach/sdhci.h>
- 
--#include "sdhci.h"
- #include "sdhci-pltfm.h"
- 
- static u32 tegra_sdhci_readl(struct sdhci_host *host, int reg)
--- 
-1.7.4.1
+My fixes tree is empty again.
 
+Linus' tree lost its build failure.
 
+The block tree lost its build failure.
+
+The mmc tree still has its build failure I used the version from
+next-20110531.
+
+The tmem tree gained a build failure so I used the version from
+next-20110601 (cleancache).
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 191 trees (counting Linus' and 28 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging kbuild-current/rc-fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging 52xx-and-virtex-current/powerpc/merge
+Merging sparc-current/master
+CONFLICT (content): Merge conflict in arch/sparc/include/asm/smp_32.h
+CONFLICT (content): Merge conflict in arch/sparc/kernel/smp_32.c
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging driver-core.current/driver-core-linus
+Merging tty.current/tty-linus
+Merging usb.current/usb-linus
+Merging staging.current/staging-linus
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging sh-current/sh-fixes-for-linus
+Merging rmobile-current/rmobile-fixes-for-linus
+Merging fbdev-current/fbdev-fixes-for-linus
+Merging devicetree-current/devicetree/merge
+Merging spi-current/spi/merge
+Merging arm/for-next
+Merging at91/at91-next
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging linux-spec/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+Merging s5p/for-next
+Merging tegra/for-next
+Merging ux500-core/ux500-core
+Merging xilinx/arm-next
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/for-next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/powerpc/next
+Merging galak/next
+CONFLICT (content): Merge conflict in arch/powerpc/boot/dts/p2020ds.dts
+CONFLICT (content): Merge conflict in arch/powerpc/boot/dts/p2020rdb.dts
+Merging s390/features
+Merging sh/sh-latest
+Merging rmobile/rmobile-latest
+Merging sparc/master
+Merging tile/master
+Merging unicore32/unicore32
+CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
+Merging xtensa/master
+CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/dev
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging hfsplus/for-next
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging omfs/for-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging vfs-scale/vfs-scale-working
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+Merging hwmon-staging/hwmon-next
+Merging quilt/kernel-doc
+Merging docs/docs-move
+Merging v4l-dvb/master
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+CONFLICT (content): Merge conflict in arch/x86/kernel/process.c
+Merging powertools/tools-test
+Merging cpupowerutils/master
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging dlm/next
+Merging swiotlb/master
+Merging ibft/master
+Merging scsi/master
+Merging slave-dma/next
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging bluetooth/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging sound-asoc/for-next
+Merging cpufreq/next
+Merging cpufreq-move/move-drivers
+Merging quilt/rr
+Merging input/next
+Merging input-mt/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+CONFLICT (content): Merge conflict in drivers/leds/Kconfig
+Merging backlight/for-mm
+Merging mmc/mmc-next
+CONFLICT (delete/modify): drivers/mmc/host/sdhci-of-core.c deleted in mmc/m=
+mc-next and modified in HEAD. Version HEAD of drivers/mmc/host/sdhci-of-cor=
+e.c left in tree.
+$ git rm -f drivers/mmc/host/sdhci-of-core.c
+$ git reset --hard HEAD^
+Merging refs/next/20110531/mmc
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging fbdev/master
+Merging viafb/viafb-next
+Merging omap_dss2/for-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging selinux/master
+Merging lblnet/master
+Merging agp/agp-next
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging suspend/linux-next
+Merging apm/for-next
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging i7core_edac/linux_next
+Merging i7300_edac/linux_next
+Merging devicetree/devicetree/next
+Merging spi/spi/next
+Merging gpio/gpio/next
+Merging tip/auto-latest
+Merging rcu/rcu/next
+CONFLICT (content): Merge conflict in kernel/rcutree.c
+Merging kvm/linux-next
+Merging oprofile/for-next
+Merging ptrace/ptrace
+Merging xen/upstream/xen
+Merging xen-two/linux-next
+Merging xen-pvhvm/linux-next
+Merging edac-amd/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+Merging sysctl/master
+Merging namespace/master
+Merging driver-core/driver-core-next
+Merging tty/tty-next
+Merging usb/usb-next
+Merging staging/staging-next
+Merging bkl-config/config
+Merging tmem/linux-next
+$ git reset --hard HEAD^
+Merging refs/next/20110601/cleancache
+Merging arm-dt/devicetree/arm-next
+Merging scsi-post-merge/merge-base:master
+
+--Signature=_Thu__2_Jun_2011_14_44_29_+1000_WYJIP.vRI+pnnbDL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN5xUtAAoJEDMEi1NhKgbssZAH/3trkbR42DN8QW0pHE9Sa6Tm
+j56c33REOn93KZo5I6NkQ6bVA84462yYEujzoFAOIDwafbnexN+uXEfU66O6rcdJ
+S9xPRKtGCMptJztQEXtktJV3F924XDe8jq8qLMZl3InkIoU3228ex/h0Tn+cRAZ4
+UxX8zbkjavuJY9aHeGrgd0Q7Jwez7zNfyPzkrd5FmqtP30g1MUQJ7k8GKMzDw8KG
+ixzQ9Ufh4KF7tMLojrwirVLsutUsr7/vqG8p+59wykGvbs41aiZBrIAw7ZJhxbqP
+SYB8LEiun0Lb5syzZCCfxsa5Q/p7xuPTckLaJsv1rrS8BrfGCyoQQpR2ERkbDPA=
+=e6c0
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__2_Jun_2011_14_44_29_+1000_WYJIP.vRI+pnnbDL--
