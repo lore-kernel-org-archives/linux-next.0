@@ -1,51 +1,50 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: Repository not clone-able via git-protocol VS.
- http(s) is fine
-Date: Fri, 3 Jun 2011 11:49:26 +0200
-Message-ID: <BANLkTim49-HsdyWhHmoM_30iCGRehmQkzQ@mail.gmail.com>
-References: <BANLkTikTDfGYyL3vTK_HmEp_8vCm-dbwcA@mail.gmail.com>
-	<BANLkTimK+ip-pLkL9zR-VtbdNQ6cc7Yt4A@mail.gmail.com>
-	<20110603194602.0d5912d8.sfr@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: David Sterba <dave@jikos.cz>
+Subject: Re: linux-next: build warninga in Linus' tree
+Date: Fri, 3 Jun 2011 13:10:49 +0200
+Message-ID: <20110603111048.GR12709@twin.jikos.cz>
+References: <20110530113653.5c7084f0.sfr@canb.auug.org.au>
+ <20110531175709.GC12709@twin.jikos.cz>
+ <BANLkTi=t5H8sAc_0sHyFt_xJgbeVibO3KQ@mail.gmail.com>
+Reply-To: dave@jikos.cz
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:39016 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750965Ab1FCJt1 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Jun 2011 05:49:27 -0400
-Received: by qwk3 with SMTP id 3so746225qwk.19
-        for <linux-next@vger.kernel.org>; Fri, 03 Jun 2011 02:49:26 -0700 (PDT)
-In-Reply-To: <20110603194602.0d5912d8.sfr@canb.auug.org.au>
+Received: from twin.jikos.cz ([89.185.236.188]:43230 "EHLO twin.jikos.cz"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751179Ab1FCLLK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Jun 2011 07:11:10 -0400
+Content-Disposition: inline
+In-Reply-To: <BANLkTi=t5H8sAc_0sHyFt_xJgbeVibO3KQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, ftpadmin@kernel.org
+To: Mitch Harder <mitch.harder@sabayonlinux.org>
+Cc: dave@jikos.cz, Stephen Rothwell <sfr@canb.auug.org.au>, Chris Mason <chris.mason@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org, kreijack@libero.it
 
-[ Ooops, De-CC <ftpmaster@debian.org> ]
+On Wed, Jun 01, 2011 at 10:16:48AM -0500, Mitch Harder wrote:
+> I've been playing around with resurrecting the basic sysfs
+> capabilities that had been previously incorporated into btrfs.
+> 
+> As it stands right now, it was relatively easy to re-implement sysfs
+> as it was originally.  However, that implementation of sysfs wasn't
+> populated with much information (only total_blocks, blocks_used, and
+> blocksize).
 
-On Fri, Jun 3, 2011 at 11:46 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi,
->
-> On Fri, 3 Jun 2011 11:29:34 +0200 Sedat Dilek <sedat.dilek@googlemail=
-=2Ecom> wrote:
->>
->> FYI:
->> The personal GIT repo of Stephen is git-clone-able:
->>
->> $ git clone git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-=
-next.git
->> Cloning into linux-next...
->> remote: Counting objects: 2633561
->
-> That repository is just a symlink to the linux-next repository. =C2=A0=
-Your
-> problem is probably that there is a problem with the mirrors.
->
+Goffredo Baroncelli (CCed) posted a patch to enhance sysfs interface:
 
-SymLink seen from the filesystem?
-Not sure what's going on... could be a temporary issue.
+https://patchwork.kernel.org/patch/308902/
+(http://www.spinics.net/lists/linux-btrfs/msg06777.html)
 
-- Sedat -
+> I also had to reverse a small portion of code that was in the last
+> clean-up.
+
+Restoring the code should not be a problem, the cleanup was too eager
+and I think a sysfs inteface would be good, not only for debugging
+purposes or tuning.
+
+> If a CONFIG_BTRFS_DEBUG type configuration flag is ever introduced, it
+> would be interesting to resurrect btrfs' sysfs capabilities.
+
+Hearing about CONFIG_BTRFS_DEBUG again, seems worth to add it.
+
+
+david
