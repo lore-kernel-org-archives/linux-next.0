@@ -1,301 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for June 3
-Date: Fri, 3 Jun 2011 16:38:26 +1000
-Message-ID: <20110603163826.55e76ddb.sfr@canb.auug.org.au>
+From: Daniel Hellstrom <daniel@gaisler.com>
+Subject: Re: linux-next: build failure after merge of the final tree (sparc-current
+ tree related)
+Date: Fri, 03 Jun 2011 09:42:39 +0200
+Message-ID: <4DE8906F.5040501@gaisler.com>
+References: <20110603135347.a17e0b85.sfr@canb.auug.org.au> <20110602.222051.270790327969020201.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__3_Jun_2011_16_38_26_+1000_gggMBim1CqN5=J+5"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52460 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751256Ab1FCGib (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Jun 2011 02:38:31 -0400
+Received: from mail168c2.megamailservers.com ([69.49.111.68]:49833 "EHLO
+	mail168c2.megamailservers.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752637Ab1FCHmz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Jun 2011 03:42:55 -0400
+In-Reply-To: <20110602.222051.270790327969020201.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__3_Jun_2011_16_38_26_+1000_gggMBim1CqN5=J+5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+David Miller wrote:
 
-Hi all,
+>From: Stephen Rothwell <sfr@canb.auug.org.au>
+>Date: Fri, 3 Jun 2011 13:53:47 +1000
+>
+>  
+>
+>>Caused by commit cfe3af5dde34 ("sparc32: added CONFIG_PCIC_PCI Kconfig
+>>setting") from the sparc-current tree.
+>>
+>>I have reverted that commit (and the 2 following commits that depend on
+>>it) for today.
+>>    
+>>
+>
+>Oops, that needs a sparc32 depencency.  I'll fix that, thanks!
+>  
+>
+missed that, PCIC_PCI should depend on SPARC32_PCI instead of PCI in the 
+following lines that were added by the patch
 
-Changes since 20110602:
-
-The sparc-current tree lost its conflicts, but gained a build failure for
-which I reverted 3 commits.
-
-The mmc tree lost its build failure.
-
-The tmem tree lost its build failure.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 191 trees (counting Linus' and 28 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging kbuild-current/rc-fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging 52xx-and-virtex-current/powerpc/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging driver-core.current/driver-core-linus
-Merging tty.current/tty-linus
-Merging usb.current/usb-linus
-Merging staging.current/staging-linus
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging sh-current/sh-fixes-for-linus
-Merging rmobile-current/rmobile-fixes-for-linus
-Merging fbdev-current/fbdev-fixes-for-linus
-Merging devicetree-current/devicetree/merge
-Merging spi-current/spi/merge
-Merging arm/for-next
-Merging at91/at91-next
-Merging davinci/davinci-next
-Merging i.MX/for-next
-Merging linux-spec/for-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging s5p/for-next
-Merging tegra/for-next
-Merging ux500-core/ux500-core
-Merging xilinx/arm-next
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/for-next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/powerpc/next
-Merging galak/next
-CONFLICT (content): Merge conflict in arch/powerpc/boot/dts/p2020ds.dts
-CONFLICT (content): Merge conflict in arch/powerpc/boot/dts/p2020rdb.dts
-Merging s390/features
-Merging sh/sh-latest
-Merging rmobile/rmobile-latest
-Merging sparc/master
-Merging tile/master
-Merging unicore32/unicore32
-CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
-Merging xtensa/master
-CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/dev
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging hfsplus/for-next
-Merging jfs/next
-Merging logfs/master
-CONFLICT (content): Merge conflict in fs/logfs/logfs.h
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging omfs/for-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging vfs-scale/vfs-scale-working
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging hwmon-staging/hwmon-next
-Merging quilt/kernel-doc
-Merging docs/docs-move
-Merging v4l-dvb/master
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging idle-test/idle-test
-CONFLICT (content): Merge conflict in arch/x86/kernel/process.c
-Merging powertools/tools-test
-Merging cpupowerutils/master
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging dlm/next
-Merging swiotlb/master
-Merging ibft/master
-Merging scsi/master
-Merging slave-dma/next
-Merging async_tx/next
-Merging net/master
-Merging wireless/master
-Merging bluetooth/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging sound-asoc/for-next
-Merging cpufreq/next
-Merging cpufreq-move/move-drivers
-Merging quilt/rr
-Merging input/next
-Merging input-mt/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-CONFLICT (content): Merge conflict in drivers/leds/Kconfig
-Merging backlight/for-mm
-Merging mmc/mmc-next
-CONFLICT (delete/modify): drivers/mmc/host/sdhci-of-core.c deleted in mmc/m=
-mc-next and modified in HEAD. Version HEAD of drivers/mmc/host/sdhci-of-cor=
-e.c left in tree.
-$ git rm -f drivers/mmc/host/sdhci-of-core.c
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging fbdev/master
-Merging viafb/viafb-next
-Merging omap_dss2/for-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging selinux/master
-Merging lblnet/master
-Merging agp/agp-next
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging suspend/linux-next
-Merging apm/for-next
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging i7core_edac/linux_next
-Merging i7300_edac/linux_next
-Merging devicetree/devicetree/next
-Merging spi/spi/next
-Merging gpio/gpio/next
-Merging tip/auto-latest
-Merging rcu/rcu/next
-CONFLICT (content): Merge conflict in kernel/rcutree.c
-Merging kvm/linux-next
-Merging oprofile/for-next
-Merging ptrace/ptrace
-Merging xen/upstream/xen
-Merging xen-two/linux-next
-Merging xen-pvhvm/linux-next
-Merging edac-amd/for-next
-Merging percpu/for-next
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging drivers-x86/linux-next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging namespace/master
-Merging driver-core/driver-core-next
-Merging tty/tty-next
-Merging usb/usb-next
-Merging staging/staging-next
-Merging bkl-config/config
-Merging tmem/linux-next
-Merging arm-dt/devicetree/arm-next
-Merging scsi-post-merge/merge-base:master
-[master 4c06969] Revert "sparc32,leon: add GRPCI2 PCI Host driver"
-[master 6af367d] Revert "sparc32,leon: added LEON-common low-level PCI rout=
-ines"
-[master cb5a75d] Revert "sparc32: added CONFIG_PCIC_PCI Kconfig setting"
-
---Signature=_Fri__3_Jun_2011_16_38_26_+1000_gggMBim1CqN5=J+5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN6IFiAAoJEDMEi1NhKgbsyOMH/37GKz4+b5ytfiGfUJ7crzbl
-TDLsMWNTw1THEFEJzJyMrF26wfa01fr6fOZpuyYLyO03eEKqWfW5p+Zws9IrCQtZ
-rwH1NJIaZcEuNbiaXQGAqq2pnLPkZpWtQSLW8XecuDEbOzteQjO3rl2ZX/pN6dLT
-vSKFy9vc4Rv7pra7DJ7iBdBl008HDfcy4oOp3nktiTdE3OS+SSsmELzJIXxfGT7g
-QfNt5L81WhorPanJAt7sSMp4HEdTEAY4lFNGYcUG7+r+xrGLhFVM3e768zFw/nP1
-XdP83UcLmKcLU5iN7V/94M+cj3B8kwAJfxG2zJjr2jpx74pSdUEdoPfKzj96SKk=
-=Zs0c
------END PGP SIGNATURE-----
-
---Signature=_Fri__3_Jun_2011_16_38_26_+1000_gggMBim1CqN5=J+5--
++config PCIC_PCI
++	bool
++	depends on PCI && !SPARC_LEON
++	default y
++
