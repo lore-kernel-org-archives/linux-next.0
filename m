@@ -1,54 +1,36 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warninga in Linus' tree
-Date: Fri, 3 Jun 2011 22:16:28 +0900
-Message-ID: <20110603131628.GB7355@kroah.com>
-References: <20110530113653.5c7084f0.sfr@canb.auug.org.au>
- <20110531175709.GC12709@twin.jikos.cz>
- <BANLkTi=t5H8sAc_0sHyFt_xJgbeVibO3KQ@mail.gmail.com>
- <20110603111048.GR12709@twin.jikos.cz>
+From: David Sterba <dave@jikos.cz>
+Subject: Re: linux-next: build warning from Linus' tree
+Date: Fri, 3 Jun 2011 16:17:56 +0200
+Message-ID: <20110603141756.GT12709@twin.jikos.cz>
+References: <20110603111049.d5967bb3.sfr@canb.auug.org.au>
+Reply-To: dave@jikos.cz
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3.smtp.messagingengine.com ([66.111.4.27]:46562 "EHLO
-	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750990Ab1FCNnO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Jun 2011 09:43:14 -0400
+Received: from twin.jikos.cz ([89.185.236.188]:48819 "EHLO twin.jikos.cz"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755374Ab1FCOSj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Jun 2011 10:18:39 -0400
 Content-Disposition: inline
-In-Reply-To: <20110603111048.GR12709@twin.jikos.cz>
+In-Reply-To: <20110603111049.d5967bb3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mitch Harder <mitch.harder@sabayonlinux.org>, dave@jikos.cz, Stephen Rothwell <sfr@canb.auug.org.au>, Chris Mason <chris.mason@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vg
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Chris Mason <chris.mason@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miao Xie <miaox@cn.fujitsu.com>, David Sterba <dave@jikos.cz>, Tsutomu Itoh <t-itoh@jp.fujitsu.com>, Itaru Kitayama <kitayama@cl.bb4u.ne.jp>, Linus <torvalds@linux-foundation.org>
 
-On Fri, Jun 03, 2011 at 01:10:49PM +0200, David Sterba wrote:
-> On Wed, Jun 01, 2011 at 10:16:48AM -0500, Mitch Harder wrote:
-> > I've been playing around with resurrecting the basic sysfs
-> > capabilities that had been previously incorporated into btrfs.
-> > 
-> > As it stands right now, it was relatively easy to re-implement sysfs
-> > as it was originally.  However, that implementation of sysfs wasn't
-> > populated with much information (only total_blocks, blocks_used, and
-> > blocksize).
-> 
-> Goffredo Baroncelli (CCed) posted a patch to enhance sysfs interface:
-> 
-> https://patchwork.kernel.org/patch/308902/
-> (http://www.spinics.net/lists/linux-btrfs/msg06777.html)
-> 
-> > I also had to reverse a small portion of code that was in the last
-> > clean-up.
-> 
-> Restoring the code should not be a problem, the cleanup was too eager
-> and I think a sysfs inteface would be good, not only for debugging
-> purposes or tuning.
-> 
-> > If a CONFIG_BTRFS_DEBUG type configuration flag is ever introduced, it
-> > would be interesting to resurrect btrfs' sysfs capabilities.
-> 
-> Hearing about CONFIG_BTRFS_DEBUG again, seems worth to add it.
+Hi,
 
-For debugging stuff, please use debugfs instead of sysfs, as that is
-what it is there for.
+On Fri, Jun 03, 2011 at 11:10:49AM +1000, Stephen Rothwell wrote:
+> fs/btrfs/delayed-inode.c: In function 'btrfs_batch_insert_items':
+> fs/btrfs/delayed-inode.c:670:6: warning: 'nitems' may be used uninitialized in this function
+> 
+> Introduced by commit 16cdcec736cd ("btrfs: implement delayed inode items
+> operation").  I think this is a real bug.  This variable is not
+> initialised, only incremented and tested.
+
+yes, it's a bug and has been already hit (fix pending):
+
+http://marc.info/?l=linux-btrfs&m=130678270307885&w=4
 
 thanks,
-
-greg k-h
+david
