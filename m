@@ -1,55 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build warning from Linus' tree
-Date: Fri, 3 Jun 2011 11:00:11 +1000
-Message-ID: <20110603110011.77121203.sfr@canb.auug.org.au>
+Date: Fri, 3 Jun 2011 11:10:49 +1000
+Message-ID: <20110603111049.d5967bb3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__3_Jun_2011_11_00_11_+1000_BtTQmfWZpU_HAv6x"
+ boundary="Signature=_Fri__3_Jun_2011_11_10_49_+1000_ReRWSv_.x2C/K2EC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56875 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37242 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753515Ab1FCBAT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Jun 2011 21:00:19 -0400
+	id S1753445Ab1FCBKw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Jun 2011 21:10:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Chris Mason <chris.mason@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miao Xie <miaox@cn.fujitsu.com>, David Sterba <dave@jikos.cz>, Tsutomu Itoh <t-itoh@jp.fujitsu.com>, Itaru Kitayama <kitayama@cl.bb4u.ne.jp>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miao Xie <miaox@cn.fujitsu.com>, David Sterba <dave@jikos.cz>, Tsutomu Itoh <t-itoh@jp.fujitsu.com>, Itaru Kitayama <kitayama@cl.bb4u.ne.jp>, Linus <torvalds@linux-foundation.org>
 
---Signature=_Fri__3_Jun_2011_11_00_11_+1000_BtTQmfWZpU_HAv6x
+--Signature=_Fri__3_Jun_2011_11_10_49_+1000_ReRWSv_.x2C/K2EC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-With Linus' tree, today's linux-next build (powercp ppc64_defconfig)
-produced this warning:
+With Linus' tree, today's linux-next build (x86_64 allmodconfig) produced
+this warning:
 
-fs/btrfs/delayed-inode.c: In function 'btrfs_delayed_update_inode':
-fs/btrfs/delayed-inode.c:1598:6: warning: 'ret' may be used uninitialized i=
-n this function
+fs/btrfs/delayed-inode.c: In function 'btrfs_batch_insert_items':
+fs/btrfs/delayed-inode.c:670:6: warning: 'nitems' may be used uninitialized=
+ in this function
 
 Introduced by commit 16cdcec736cd ("btrfs: implement delayed inode items
-operation").
+operation").  I think this is a real bug.  This variable is not
+initialised, only incremented and tested.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__3_Jun_2011_11_00_11_+1000_BtTQmfWZpU_HAv6x
+P.S. Chris, time to get a tree into linux-next?
+
+--Signature=_Fri__3_Jun_2011_11_10_49_+1000_ReRWSv_.x2C/K2EC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN6DIbAAoJEDMEi1NhKgbsraEH/jvR27nO5ZyKBN/JOE+er9Yk
-pia8ss+gu+alisTt9+Z0+X50czwRrfrsuAZtyB0h4OLVfJk+/+vMGJPVDYyDl/F2
-Ppd9mvYpeocAfyk2nJh1EyYL6GNKI7D5TOcaBd/ta09CI3CC/y1VxDQpvCbPSd0G
-vYpihGkNpGbfVPkR7zCJS7I4Ck6aXj/3gosSWQEGCwNRmZvIJ4+FoHIfB5vOnTnD
-Fn8mIyLenMLx4n+10oSntXLEMzDaxaXH1B8DZgY9FoRzwldFsh44yslh/MbExGiU
-4wGbwUCwQkEa2M/EwNZYS8+XDQGqfgdqZZAU6dJEiU+0lKChUXjYvTHDVYz4hBc=
-=fR8R
+iQEcBAEBAgAGBQJN6DSZAAoJEDMEi1NhKgbsrsgH/3cW7xz/958Ml+01AuL5tJNK
+VLT03P6cw6AczMOYKdSY37BlQ66w+emE0nqk0ZW0KSbognvpUKxwb972QYEx5d3c
+Hfy0Wle334n42UDXFYKjIM0de8ooxMBSp+HT+HrD4q5ZgdMGojFRdIdZ6pH4rZpa
+jzEyTg2H8XH9OI3ygfRq4k3LeCQ6OEKaXxN1Kb5j8HpugM4vlJhAA0OMtWqD17Io
+YXfJZduXzb/iJL9QQiaLDfpq4cnybcnWKx8BSVKItkp1+LblpyaTiAyJTUk3QGt/
+9IWwlgO6tJ53eKNjePl2rmvjgpMjac4oblvWOQFdgbbMcb8Eu3ilgvI5MUTcSDo=
+=Ge9K
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__3_Jun_2011_11_00_11_+1000_BtTQmfWZpU_HAv6x--
+--Signature=_Fri__3_Jun_2011_11_10_49_+1000_ReRWSv_.x2C/K2EC--
