@@ -1,61 +1,43 @@
-From: David Sterba <dave@jikos.cz>
-Subject: [PATCH] btrfs: fix uninitialized variable warning
-Date: Fri, 3 Jun 2011 16:50:14 +0200
-Message-ID: <20110603145014.GU12709@twin.jikos.cz>
-References: <20110603110011.77121203.sfr@canb.auug.org.au>
-Reply-To: dave@jikos.cz
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Chris Mason <chris.mason@oracle.com>
+Subject: Re: [PATCH] btrfs: fix uninitialized variable warning
+Date: Fri, 03 Jun 2011 10:56:18 -0400
+Message-ID: <1307112880-sup-4802@shiny>
+References: <20110603110011.77121203.sfr@canb.auug.org.au> <20110603145014.GU12709@twin.jikos.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from twin.jikos.cz ([89.185.236.188]:49659 "EHLO twin.jikos.cz"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751084Ab1FCOuq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Jun 2011 10:50:46 -0400
-Content-Disposition: inline
-In-Reply-To: <20110603110011.77121203.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:29755 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754251Ab1FCO4z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Jun 2011 10:56:55 -0400
+In-reply-to: <20110603145014.GU12709@twin.jikos.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Chris Mason <chris.mason@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miao Xie <miaox@cn.fujitsu.com>, David Sterba <dave@jikos.cz>, Tsutomu Itoh <t-itoh@jp.fujitsu.com>, Itaru Kitayama <kitayama@cl.bb4u.ne.jp>, linux-btrfs@vger.kernel.org
+To: dave <dave@jikos.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Miao Xie <miaox@cn.fujitsu.com>, Tsutomu Itoh <t-itoh@jp.fujitsu.com>, Itaru Kitayama <kitayama@cl.bb4u.ne.jp>, linux-btrfs <linux-btrfs@vger.kernel.org>
 
-From: David Sterba <dsterba@suse.cz>
+Excerpts from David Sterba's message of 2011-06-03 10:50:14 -0400:
+> From: David Sterba <dsterba@suse.cz>
+> 
+> With Linus' tree, today's linux-next build (powercp ppc64_defconfig)
+> produced this warning:
+> 
+> fs/btrfs/delayed-inode.c: In function 'btrfs_delayed_update_inode':
+> fs/btrfs/delayed-inode.c:1598:6: warning: 'ret' may be used
+> uninitialized in this function
+> 
+> Introduced by commit 16cdcec736cd ("btrfs: implement delayed inode items
+> operation").
+> 
+> This fixes a bug in btrfs_update_inode(): if the returned value from
+> btrfs_delayed_update_inode is a nonzero garbage, inode stat data are not
+> updated and several call paths may hit a BUG_ON or fail with strange
+> code.
 
-With Linus' tree, today's linux-next build (powercp ppc64_defconfig)
-produced this warning:
+Ugh, thanks!  It looks like the gcc uninit stuff isn't as verbose as it
+used to be, but it does catch a bunch of allocated/set but not used
+vars.
 
-fs/btrfs/delayed-inode.c: In function 'btrfs_delayed_update_inode':
-fs/btrfs/delayed-inode.c:1598:6: warning: 'ret' may be used
-uninitialized in this function
+I have a nitems = 0 fix in my tree as well.
 
-Introduced by commit 16cdcec736cd ("btrfs: implement delayed inode items
-operation").
-
-This fixes a bug in btrfs_update_inode(): if the returned value from
-btrfs_delayed_update_inode is a nonzero garbage, inode stat data are not
-updated and several call paths may hit a BUG_ON or fail with strange
-code.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: David Sterba <dsterba@suse.cz>
----
-
-patch pushed to git://repo.or.cz/linux-2.6/btrfs-unstable.git #fixes
-
- fs/btrfs/delayed-inode.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
-index 01e2950..8cb012f 100644
---- a/fs/btrfs/delayed-inode.c
-+++ b/fs/btrfs/delayed-inode.c
-@@ -1595,7 +1595,7 @@ int btrfs_delayed_update_inode(struct btrfs_trans_handle *trans,
- 			       struct btrfs_root *root, struct inode *inode)
- {
- 	struct btrfs_delayed_node *delayed_node;
--	int ret;
-+	int ret = 0;
- 
- 	delayed_node = btrfs_get_or_create_delayed_node(inode);
- 	if (IS_ERR(delayed_node))
--- 
-1.7.5.2.353.g5df3e
+-chris
