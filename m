@@ -1,72 +1,58 @@
-From: Hugo Mills <hugo-lkml@carfax.org.uk>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
 Subject: Re: linux-next: build warninga in Linus' tree
-Date: Fri, 3 Jun 2011 12:38:42 +0100
-Message-ID: <20110603113842.GA10842@carfax.org.uk>
+Date: Fri, 3 Jun 2011 14:25:34 +0200
+Message-ID: <BANLkTim-0xj7Pr2EkZs2JEkyVw_7F9eM=g@mail.gmail.com>
 References: <20110530113653.5c7084f0.sfr@canb.auug.org.au>
- <20110531175709.GC12709@twin.jikos.cz>
- <BANLkTi=t5H8sAc_0sHyFt_xJgbeVibO3KQ@mail.gmail.com>
- <20110603111048.GR12709@twin.jikos.cz>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110603111048.GR12709@twin.jikos.cz>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: Mitch Harder <mitch.harder@sabayonlinux.org>, dave@jikos.cz, Stephen Rothwell <sfr@canb.auug.org.au>, Chris Mason <chris.mason@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vg
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:57751 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752609Ab1FCMZg convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Jun 2011 08:25:36 -0400
+In-Reply-To: <20110530113653.5c7084f0.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Chris Mason <chris.mason@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
 
+On Mon, May 30, 2011 at 3:36 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi all,
+>
+> After merging the Linus' tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced these warnings:
+>
+> fs/btrfs/sysfs.c:76:26: warning: 'btrfs_root_attrs' defined but not u=
+sed
+> fs/btrfs/sysfs.c:97:26: warning: 'btrfs_super_attrs' defined but not =
+used
+> fs/btrfs/sysfs.c:153:13: warning: 'btrfs_super_release' defined but n=
+ot used
+> fs/btrfs/sysfs.c:160:13: warning: 'btrfs_root_release' defined but no=
+t used
+>
+> I have started using gcc v4.5.2 (instead of v4.4.4) if that makes a
+> difference.
 
---lrZ03NoBR/3+SXJZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I see the same warnings with Debian's gcc-4.6 (here: next-20110603),
+plus some more:
 
-On Fri, Jun 03, 2011 at 01:10:49PM +0200, David Sterba wrote:
-> On Wed, Jun 01, 2011 at 10:16:48AM -0500, Mitch Harder wrote:
-> > I've been playing around with resurrecting the basic sysfs
-> > capabilities that had been previously incorporated into btrfs.
-> > 
-> > As it stands right now, it was relatively easy to re-implement sysfs
-> > as it was originally.  However, that implementation of sysfs wasn't
-> > populated with much information (only total_blocks, blocks_used, and
-> > blocksize).
-> 
-> Goffredo Baroncelli (CCed) posted a patch to enhance sysfs interface:
-> 
-> https://patchwork.kernel.org/patch/308902/
-> (http://www.spinics.net/lists/linux-btrfs/msg06777.html)
-> 
-> > I also had to reverse a small portion of code that was in the last
-> > clean-up.
-> 
-> Restoring the code should not be a problem, the cleanup was too eager
-> and I think a sysfs inteface would be good, not only for debugging
-> purposes or tuning.
+fs/btrfs/ioctl.c: In function 'btrfs_ioctl_fs_info.isra.24':
+fs/btrfs/ioctl.c:2080:1: warning: the frame size of 1032 bytes is
+larger than 1024 bytes [-Wframe-larger-than=3D]
 
-   Indeed. There's a few parts of the balance API that would be
-significantly enhanced by being able to put things in sysfs. I could
-drop at least one (if not two) of the three ioctls if I had somewhere
-in sysfs to put the relevant files.
+fs/btrfs/delayed-inode.c: In function 'btrfs_batch_insert_items':
+fs/btrfs/delayed-inode.c:690:9: warning: 'nitems' may be used
+uninitialized in this function [-Wuninitialized]
 
-   Hugo.
+- Sedat -
 
--- 
-=== Hugo Mills: hugo@... carfax.org.uk | darksatanic.net | lug.org.uk ===
-  PGP key: 515C238D from wwwkeys.eu.pgp.net or http://www.carfax.org.uk
-  --- The glass is neither half-full nor half-empty; it is twice as ---  
-                        large as it needs to be.                         
-
---lrZ03NoBR/3+SXJZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iD8DBQFN6MfCIKyzvlFcI40RAnWZAJ9JEk+rsOrWQaDG2hvcERAlCnbwXwCfcscI
-VaTkW2Oo9iLEvkUwgQ13764=
-=GafF
------END PGP SIGNATURE-----
-
---lrZ03NoBR/3+SXJZ--
+> --
+> Cheers,
+> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+>
