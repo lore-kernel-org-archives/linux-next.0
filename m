@@ -1,38 +1,54 @@
-From: Daniel Hellstrom <daniel@gaisler.com>
-Subject: Re: linux-next: build failure after merge of the final tree (sparc-current
- tree related)
-Date: Fri, 03 Jun 2011 14:26:43 +0200
-Message-ID: <4DE8D303.1080706@gaisler.com>
-References: <20110603135347.a17e0b85.sfr@canb.auug.org.au>	<20110602.222051.270790327969020201.davem@davemloft.net>	<4DE8906F.5040501@gaisler.com> <20110603.011455.414200582548238157.davem@davemloft.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build warninga in Linus' tree
+Date: Fri, 3 Jun 2011 22:16:28 +0900
+Message-ID: <20110603131628.GB7355@kroah.com>
+References: <20110530113653.5c7084f0.sfr@canb.auug.org.au>
+ <20110531175709.GC12709@twin.jikos.cz>
+ <BANLkTi=t5H8sAc_0sHyFt_xJgbeVibO3KQ@mail.gmail.com>
+ <20110603111048.GR12709@twin.jikos.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110603.011455.414200582548238157.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out3.smtp.messagingengine.com ([66.111.4.27]:46562 "EHLO
+	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750990Ab1FCNnO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Jun 2011 09:43:14 -0400
+Content-Disposition: inline
+In-Reply-To: <20110603111048.GR12709@twin.jikos.cz>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mitch Harder <mitch.harder@sabayonlinux.org>, dave@jikos.cz, Stephen Rothwell <sfr@canb.auug.org.au>, Chris Mason <chris.mason@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vg
 
-David Miller wrote:
+On Fri, Jun 03, 2011 at 01:10:49PM +0200, David Sterba wrote:
+> On Wed, Jun 01, 2011 at 10:16:48AM -0500, Mitch Harder wrote:
+> > I've been playing around with resurrecting the basic sysfs
+> > capabilities that had been previously incorporated into btrfs.
+> > 
+> > As it stands right now, it was relatively easy to re-implement sysfs
+> > as it was originally.  However, that implementation of sysfs wasn't
+> > populated with much information (only total_blocks, blocks_used, and
+> > blocksize).
+> 
+> Goffredo Baroncelli (CCed) posted a patch to enhance sysfs interface:
+> 
+> https://patchwork.kernel.org/patch/308902/
+> (http://www.spinics.net/lists/linux-btrfs/msg06777.html)
+> 
+> > I also had to reverse a small portion of code that was in the last
+> > clean-up.
+> 
+> Restoring the code should not be a problem, the cleanup was too eager
+> and I think a sysfs inteface would be good, not only for debugging
+> purposes or tuning.
+> 
+> > If a CONFIG_BTRFS_DEBUG type configuration flag is ever introduced, it
+> > would be interesting to resurrect btrfs' sysfs capabilities.
+> 
+> Hearing about CONFIG_BTRFS_DEBUG again, seems worth to add it.
 
->From: Daniel Hellstrom <daniel@gaisler.com>
->Date: Fri, 03 Jun 2011 09:42:39 +0200
->
->  
->
->>missed that, PCIC_PCI should depend on SPARC32_PCI instead of PCI in
->>the following lines that were added by the patch
->>
->>+config PCIC_PCI
->>+	bool
->>+	depends on PCI && !SPARC_LEON
->>+	default y
->>+
->>    
->>
->
->The fixed I pushed out used PCI && SPARC32 && !SPARC_LEON
->  
->
-Ok, the same thing, thanks.
+For debugging stuff, please use debugfs instead of sysfs, as that is
+what it is there for.
+
+thanks,
+
+greg k-h
