@@ -1,64 +1,50 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] gpio: add GPIOF_ values regardless on
-	kconfig settings
-Date: Sun, 05 Jun 2011 20:45:43 -0700
-Message-ID: <4DEC4D67.6010506@oracle.com>
-References: <20110523155343.2e68c265.randy.dunlap@oracle.com>
-	<20110524000837.GA30515@opensource.wolfsonmicro.com>
-	<4DDB082F.3010107@oracle.com>
-	<20110524014959.GA27710@opensource.wolfsonmicro.com>
-	<4DDB3AFF.9030006@oracle.com>
-	<20110524075248.GB19734@sirena.org.uk>
-	<20110527074552.GA907@ponder.secretlab.ca>
-	<4DDFE391.2030507@oracle.com>
-	<20110527201201.GA6645@ponder.secretlab.ca>
-	<BANLkTin-KSVcG2cQfRM3Ys0_g_uJVruDMw@mail.gmail.com>
-	<20110603171837.GA9918@opensource.wolfsonmicro.com>
-	<BANLkTi=oko_C8_46Y8p5O1Qvw1KEn-1PjA@mail.gmail.com>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: l2-mtd-2.6.git to linux-next
+Date: Mon, 06 Jun 2011 10:37:30 +0300
+Message-ID: <1307345850.3135.24.camel@localhost>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <BANLkTi=oko_C8_46Y8p5O1Qvw1KEn-1PjA@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, x86@kernel.org, Dmitry Artamonow <mad_soft@inbox.ru>, Mark Brown <broonie@opensource.wolfsonmicro.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Harald Welte <laforge@gnufiish.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:45288 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755115Ab1FFHlr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jun 2011 03:41:47 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>
 
-On 06/03/11 10:42, Grant Likely wrote:
-> On Fri, Jun 3, 2011 at 11:18 AM, Mark Brown
-> <broonie@opensource.wolfsonmicro.com> wrote:
->> On Fri, Jun 03, 2011 at 11:04:52AM -0600, Grant Likely wrote:
->>
->>> I ended up not pushing this one to Linus.  Turns out it causes other
->>> breakage on other platforms that don't include include/linux/gpio.h.
->>> Since I don't have confidence that I'll be able to find all the
->>> offenders, I'm dropping it.  I recommend making any drivers that are
->>
->> So, this originally came about because I pushed back on adding random
->> dependencies like this for features which are pretty much optional in
->> drivers - their use of GPIOs is totally optional and the dependencies
->> are just too fragile, leading to noise with all the randconfigs.  It
->> seems better to get the architectures to keep up with enhancements to
->> gpiolib (or convert to it) than to have to worry about this in drivers.
-> 
-> Fair enough.  Randy, if you or someone else can check that all GPIOF_
-> users have the required #include <linux/gpio.h>, then I'm okay with
-> this patch.
+Stephen,
 
-OK, I'll look at that.
+as we've discussed, please, include l2-mtd-2.6.git tree to linux-next:
 
-Do you have any examples of builds that failed with this patch?
+git://git.infradead.org/users/dedekind/l2-mtd-2.6.git master
 
-thanks,
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+David, Stephen would like to see your explicit ack.
+
+To make a long story short, currently the MTD subsystem maintenance is =
+a
+team work:
+
+1. David is the maintainer who has the ultimate authority to merge or
+   reject patches, and who holds the biggest MTD experience/knowledge.
+
+2. David is busy with other projects and has no time to routinely
+   review patches and merge them to the mtd-2.6.git tree. And I help hi=
+m
+   with my "level 2" l2-mtd-2.6.git tree.
+
+By including l2-mtd-2.6.git into linux-next we want to solve the
+following problem: because of lack of time dwmw2 does not always merges
+patches to the mtd-2.6.git tree, and often we are in a situation when
+MTD patches are exposed to linux-next for a day or 2, during the merge
+window, and then they are merged.
+
+Thanks!
+
+--=20
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
