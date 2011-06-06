@@ -1,76 +1,56 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Subject: Re: [PATCH] mmc: sdhci: change sdhci-pltfm into a module
-Date: Sun, 5 Jun 2011 08:56:39 +0200
-Message-ID: <20110605065638.GA30268@pengutronix.de>
-References: <20110601130431.59f4f0d4.sfr@canb.auug.org.au>
- <1306983470-18588-1-git-send-email-shawn.guo@linaro.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (vfs tree
+ related)
+Date: Mon, 6 Jun 2011 13:04:17 +1000
+Message-ID: <20110606130417.31af3b67.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__6_Jun_2011_13_04_17_+1000_ggrdNX4mhxVjPx6c"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:48453 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754089Ab1FEG4o (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Jun 2011 02:56:44 -0400
-Content-Disposition: inline
-In-Reply-To: <1306983470-18588-1-git-send-email-shawn.guo@linaro.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51896 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754894Ab1FFDEY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 5 Jun 2011 23:04:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, cbouatmailru@gmail.com, cjb@laptop.org, grant.likely@secretlab.ca, arnd@arndb.de, sfr@canb.auug.org.au, patches@linaro.org, Shawn Guo <shawn.guo@freescale.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josef Bacik <josef@redhat.com>
 
-
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Mon__6_Jun_2011_13_04_17_+1000_ggrdNX4mhxVjPx6c
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 02, 2011 at 10:57:50AM +0800, Shawn Guo wrote:
-> From: Shawn Guo <shawn.guo@freescale.com>
->=20
-> There are a couple of problems left from the sdhci pltfm and OF
-> consolidation changes.
->=20
-> * When building more than one sdhci-pltfm based drivers in the same
->   image, linker will give multiple definition error on the sdhci-pltfm
->   helper functions.  For example right now, building sdhci-of-esdhc
->   and sdhci-of-hlwd together is a valid combination from Kconfig view.
->=20
-> * With the current build method, there is error with building the
->   drivers as module, but module installation fails with modprobe.
->=20
-> The patch fixes above problems by changing sdhci-pltfm into a module.
-> To avoid EXPORT_SYMBOL on so many big endian IO accessors, it moves
-> these accessors into sdhci-pltfm.h as the 'static inline' functions.
-> As a result, sdhci.h needs to be included in sdhci-pltfm.h, and in
-> turn can be removed from individual drivers which already include
-> sdhci-pltfm.h.
->=20
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+Hi all,
 
-I am a bit confused how to review this patch and patch 1/4 from Shawn's
-original series. As Chris does rebase his mmc-next anyway, does it make sen=
-se
-to squash this into the old ones to prevent the broken inbetween state?
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig) produced this warning:
 
-Regards,
+fs/namei.c: In function 'do_lookup':
+fs/namei.c:1223:19: warning: unused variable 'old'
 
-   Wolfram
+Introduced by commit 8667ed80ccef ("fs: add a DCACHE_NEED_LOOKUP flag for
+d_flags").
 
 --=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---ew6BAiZeqk4r7MaW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Signature=_Mon__6_Jun_2011_13_04_17_+1000_ggrdNX4mhxVjPx6c
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iEYEARECAAYFAk3rKKYACgkQD27XaX1/VRvyuwCgxE/tKTg/JuKDrd5G/4ZOlBf6
-EwoAn0FtSGBH97xgcggNI5oQmUUbsa3E
-=tOLJ
+iQEcBAEBAgAGBQJN7EOxAAoJEDMEi1NhKgbsdygIAJbqpnXoE9tbXskdOnPb/R6+
+aEm2MoVyEL9ske377C0HDByGaKX+tR/AzbQL+E/GDSbYvzxichQinh/1mnDBCmeC
+CthWhI2F5KTq1pYn/7rRxxyNp90ofzlNb9bSPB/8KwwPOHt+WKOZmnaSILBrxXoS
+86WKaIRmHOpVn8klgq236w+f+SFDhMhEliBi8WDaMGniSoFoAO+Ig6y2lNL7qUOL
+rSDCDObR2SNzpLarFoVwluoSUFMg+D5mh0h/KfBYGB+55t3U4JUdYIujoVlEToTx
+2lkdU6IXUbcgA3eaRNOt2/2DOmcc0bdi81glHtIP2jI8K1ho2O5BaOj/T93A/KM=
+=iSwx
 -----END PGP SIGNATURE-----
 
---ew6BAiZeqk4r7MaW--
+--Signature=_Mon__6_Jun_2011_13_04_17_+1000_ggrdNX4mhxVjPx6c--
