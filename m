@@ -1,56 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 7 Jun 2011 11:55:05 +1000
-Message-ID: <20110607115505.71c9a330.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@au1.ibm.com>
+Subject: linux-next: build failure after merge of the spi tree
+Date: Tue, 7 Jun 2011 12:53:59 +1000
+Message-ID: <20110607125359.604c2752.sfr@au1.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__7_Jun_2011_11_55_05_+1000_L9jwzeJl3nkGkRTU"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53610 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755877Ab1FGBzR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Jun 2011 21:55:17 -0400
+Received: from e23smtp03.au.ibm.com ([202.81.31.145]:57888 "EHLO
+	e23smtp03.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754406Ab1FGCyE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jun 2011 22:54:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>
 
---Signature=_Tue__7_Jun_2011_11_55_05_+1000_L9jwzeJl3nkGkRTU
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Grant,
 
-Hi all,
+After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+make[3]: *** No rule to make target `drivers/spi/spi-dw-midpci.c', needed by `drivers/spi/spi-dw-midpci.o'.  Stop.
 
-sound/soc/codecs/ad1836.c:130:2: error: 'AD183X_ADC_CTRL1' undeclared here =
-(not in a function)
+Caused by commit f8f82d4e7529 ("spi: reorganize drivers").
 
-Caused by commit f97d0c6d5f94 ("ASoC: AD1836: Add input gain control for
-ADC2").
+I have used the spi tree from next-20110606 for today.
 
-I have used the sound-asoc tree from next-20110606 for today.
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__7_Jun_2011_11_55_05_+1000_L9jwzeJl3nkGkRTU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN7YT5AAoJEDMEi1NhKgbsjjwH/0ozpjnraPKnoNQJAiusmW7Q
-2SMZQOvXZF4xbIbErpslXQ4yhKlsa4ixSTCV8hkpiIv6r90HvPvMnfzKqeKgSfAA
-m0UrDeY/Tc83nzZXiRlnYUAKhQpstjtstwCbuNNlSJkQG1Cchp0T5vUcSBw5jF9h
-dCzKw0g3KOjtml2RlL3HoBpqR3AigHKWzIC881Gdwf4c6BIBNuw1PbclChYanxD9
-wAw2k8aMYDOUvpx1SiiUhwXJp8KwJ1BhBo0pS5zJGF1C6mfNI5yhSktipm5FPeYw
-G60/i2jtjo1GJaLZkU2Wiy8wq4YsHSri1RrQxZooZUm2TKKWYwBSHEUBOqrX3bo=
-=f0Kq
------END PGP SIGNATURE-----
-
---Signature=_Tue__7_Jun_2011_11_55_05_+1000_L9jwzeJl3nkGkRTU--
