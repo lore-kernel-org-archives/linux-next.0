@@ -1,57 +1,34 @@
-From: H Hartley Sweeten <hartleys@visionengravers.com>
-Subject: RE: linux-next: manual merge of the gpio tree with the slave-dma
- tree
-Date: Tue, 7 Jun 2011 11:17:26 -0500
-Message-ID: <ADE657CA350FB648AAC2C43247A983F001F3820B7E0F@AUSP01VMBX24.collaborationhost.net>
-References: <20110607125723.8e591e42.sfr@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: build failure after merge of the spi tree
+Date: Tue, 7 Jun 2011 10:51:40 -0600
+Message-ID: <20110607165140.GA17754@ponder.secretlab.ca>
+References: <20110607125359.604c2752.sfr@au1.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail131.messagelabs.com ([216.82.242.99]:33543 "EHLO
-	mail131.messagelabs.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753222Ab1FGQRb convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jun 2011 12:17:31 -0400
-In-Reply-To: <20110607125723.8e591e42.sfr@canb.auug.org.au>
-Content-Language: en-US
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:64740 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755377Ab1FGQvo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jun 2011 12:51:44 -0400
+Content-Disposition: inline
+In-Reply-To: <20110607125359.604c2752.sfr@au1.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Grant Likely <grant.likely@secretlab.ca>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@iki.fi>, Vinod Koul <vinod.koul@intel.com>
+To: Stephen Rothwell <sfr@au1.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>
 
-On Monday, June 06, 2011 7:57 PM, Stephen Rothwell wrote:
+On Tue, Jun 07, 2011 at 12:53:59PM +1000, Stephen Rothwell wrote:
 > Hi Grant,
 > 
-> Today's linux-next merge of the gpio tree got a conflict in
-> arch/arm/mach-ep93xx/Makefile between commit 8e4a93008db7 ("ep93xx:
-> remove the old M2P DMA code") from the slave-dma tree and commit
-> c6b52c13de44 ("gpio/ep93xx: move driver to drivers/gpio") from the gpio
-> tree.
+> After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
-> I fixed it up (see below) and can carry the fix as necessary.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> make[3]: *** No rule to make target `drivers/spi/spi-dw-midpci.c', needed by `drivers/spi/spi-dw-midpci.o'.  Stop.
 > 
-> diff --cc arch/arm/mach-ep93xx/Makefile
-> index 21e721a,6b7c41d..0000000
-> --- a/arch/arm/mach-ep93xx/Makefile
-> +++ b/arch/arm/mach-ep93xx/Makefile
-> @@@ -1,7 -1,7 +1,7 @@@
->   #
->   # Makefile for the linux kernel.
->   #
-> - obj-y			:= core.o clock.o gpio.o
->  -obj-y			:= core.o clock.o dma-m2p.o
-> ++obj-y			:= core.o clock.o
->   obj-m			:=
->   obj-n			:=
->   obj-			:=
+> Caused by commit f8f82d4e7529 ("spi: reorganize drivers").
+> 
+> I have used the spi tree from next-20110606 for today.
 
-Stephen,
+Oops, missed one change.  Fixed now, thanks.
 
-This is, of course, the correct fix.  If you want it:
-
-Acked-by: H Hartley Sweeten <hsweeten@visionengravers.com>
-
-Thanks!
+g.
