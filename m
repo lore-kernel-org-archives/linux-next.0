@@ -1,115 +1,56 @@
-From: Dan Magenheimer <dan.magenheimer@oracle.com>
-Subject: RE: linux-next: Tree for June 6 (frontswap)
-Date: Mon, 6 Jun 2011 13:23:09 -0700 (PDT)
-Message-ID: <b06ff74d-fc79-4c01-b159-9d352ca1a0f5@default>
-References: <20110606132036.aebd73a4.sfr@canb.auug.org.au
- 20110606130628.e0110e18.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the ibft tree
+Date: Tue, 7 Jun 2011 11:13:11 +1000
+Message-ID: <20110607111311.dad07c01.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__7_Jun_2011_11_13_11_+1000_gB2ZUd3gBf/8tGq+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:42867 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756023Ab1FFUXc convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Jun 2011 16:23:32 -0400
-In-Reply-To: <20110606130628.e0110e18.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:50069 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754948Ab1FGBNb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Jun 2011 21:13:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Connor Hansen <cmdkhh@gmail.com>, Peter Jones <pjones@redhat.com>
 
-Hi Randy --
+--Signature=_Tue__7_Jun_2011_11_13_11_+1000_gB2ZUd3gBf/8tGq+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Indeed you are correct!  Thanks for catching that!
+Hi Konrad,
 
-Dan
+After merging the ibft tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-Thanks... for the memory!
-I really could use more / my throughput's on the floor
-The balloon is flat / my swap disk's fat / I've OOM's in store
-Overcommitted so much
-(with apologies to Bob Hope)
+drivers/firmware/iscsi_ibft_find.c: In function 'find_ibft_region':
+drivers/firmware/iscsi_ibft_find.c:114:2: warning: ISO C90 forbids mixed de=
+clarations and code
 
+Introduced by commit e632a78d3a93 ("iscsi_ibft: iscsi_ibft_find unused
+variable i").
 
-> -----Original Message-----
-> From: Randy Dunlap
-> Sent: Monday, June 06, 2011 2:06 PM
-> To: Stephen Rothwell; Dan Magenheimer
-> Cc: linux-next@vger.kernel.org; LKML
-> Subject: Re: linux-next: Tree for June 6 (frontswap)
-> 
-> On Mon, 6 Jun 2011 13:20:36 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> >
-> > Changes since 20110603:
-> 
-> 
-> Does frontswap need to depend on SWAP?
-> 
-> When SWAP is not enabled:
-> 
-> mm/built-in.o: In function `frontswap_curr_pages':
-> (.text+0x467c1): undefined reference to `swap_lock'
-> mm/built-in.o: In function `frontswap_curr_pages':
-> (.text+0x467ce): undefined reference to `swap_list'
-> mm/built-in.o: In function `frontswap_curr_pages':
-> (.text+0x467e6): undefined reference to `swap_info'
-> mm/built-in.o: In function `frontswap_curr_pages':
-> (.text+0x467fe): undefined reference to `swap_lock'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x4688d): undefined reference to `swap_lock'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x46898): undefined reference to `swap_list'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x468b6): undefined reference to `swap_info'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x4690d): undefined reference to `swap_info'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x469d3): undefined reference to `swap_lock'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x469ec): undefined reference to `try_to_unuse'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x46a1c): undefined reference to `swap_lock'
-> mm/built-in.o: In function `__frontswap_flush_area':
-> (.text+0x46aa4): undefined reference to `swap_info'
-> mm/built-in.o: In function `__frontswap_get_page':
-> (.text+0x46b1f): undefined reference to `swap_info'
-> mm/built-in.o: In function `__frontswap_put_page':
-> (.text+0x46bf8): undefined reference to `swap_info'
-> mm/built-in.o: In function `__frontswap_flush_page':
-> (.text+0x46d86): undefined reference to `swap_info'
-> mm/built-in.o: In function `frontswap_curr_pages':
-> (.text+0x467c1): undefined reference to `swap_lock'
-> mm/built-in.o: In function `frontswap_curr_pages':
-> (.text+0x467ce): undefined reference to `swap_list'
-> mm/built-in.o: In function `frontswap_curr_pages':
-> (.text+0x467e6): undefined reference to `swap_info'
-> mm/built-in.o: In function `frontswap_curr_pages':
-> (.text+0x467fe): undefined reference to `swap_lock'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x4688d): undefined reference to `swap_lock'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x46898): undefined reference to `swap_list'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x468b6): undefined reference to `swap_info'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x4690d): undefined reference to `swap_info'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x469d3): undefined reference to `swap_lock'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x469ec): undefined reference to `try_to_unuse'
-> mm/built-in.o: In function `frontswap_shrink':
-> (.text+0x46a1c): undefined reference to `swap_lock'
-> mm/built-in.o: In function `__frontswap_flush_area':
-> (.text+0x46aa4): undefined reference to `swap_info'
-> mm/built-in.o: In function `__frontswap_get_page':
-> (.text+0x46b1f): undefined reference to `swap_info'
-> mm/built-in.o: In function `__frontswap_put_page':
-> (.text+0x46bf8): undefined reference to `swap_info'
-> mm/built-in.o: In function `__frontswap_flush_page':
-> (.text+0x46d86): undefined reference to `swap_info'
-> 
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__7_Jun_2011_11_13_11_+1000_gB2ZUd3gBf/8tGq+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN7XsnAAoJEDMEi1NhKgbsMsMH/29HRvr2HlCy1c7totj5CZwb
+ube/Ofk8GU6uicb3vTiNvkIhV6+zHLIy0rHJM7jZn3DTiZv7s9tONvsh8qyIMqw+
+CXkEY4oxMNJBy5D46OimCHf7oCx0aN2uMHQ9o/gkdRvzRQ9XvF2CjfNbx8nxMJ5b
+erMFsdUZWXF3Aga/Xy5vJHop+W+Du3NtbNNdNoUo9U6XNio7ZpJD/eo9JZHStdrz
+7dEx7BxXIFRhtnllze28XiWUwKvRN0oRTyOzlp09UVa7mYTT7X5CNvoSr+lM0MpC
+kSYXy5HH43zTJuboU4/pP9vVMAjCOAHS2H9AVFocrNgUG2daKzg6JqFTLUfM5N0=
+=RY7I
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__7_Jun_2011_11_13_11_+1000_gB2ZUd3gBf/8tGq+--
