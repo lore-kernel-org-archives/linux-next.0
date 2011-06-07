@@ -1,23 +1,25 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the gpio tree with the slave-dma tree
-Date: Tue, 7 Jun 2011 08:20:32 -0600
-Message-ID: <20110607142032.GB13072@ponder.secretlab.ca>
+From: H Hartley Sweeten <hartleys@visionengravers.com>
+Subject: RE: linux-next: manual merge of the gpio tree with the slave-dma
+ tree
+Date: Tue, 7 Jun 2011 11:17:26 -0500
+Message-ID: <ADE657CA350FB648AAC2C43247A983F001F3820B7E0F@AUSP01VMBX24.collaborationhost.net>
 References: <20110607125723.8e591e42.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:57948 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755069Ab1FGOUg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jun 2011 10:20:36 -0400
-Content-Disposition: inline
+Received: from mail131.messagelabs.com ([216.82.242.99]:33543 "EHLO
+	mail131.messagelabs.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753222Ab1FGQRb convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jun 2011 12:17:31 -0400
 In-Reply-To: <20110607125723.8e591e42.sfr@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, H Hartley Sweeten <hartleys@visionengravers.com>, Mika Westerberg <mika.westerberg@iki.fi>, Vinod Koul <vinod.koul@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Grant Likely <grant.likely@secretlab.ca>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@iki.fi>, Vinod Koul <vinod.koul@intel.com>
 
-On Tue, Jun 07, 2011 at 12:57:23PM +1000, Stephen Rothwell wrote:
+On Monday, June 06, 2011 7:57 PM, Stephen Rothwell wrote:
 > Hi Grant,
 > 
 > Today's linux-next merge of the gpio tree got a conflict in
@@ -27,11 +29,6 @@ On Tue, Jun 07, 2011 at 12:57:23PM +1000, Stephen Rothwell wrote:
 > tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary.
-
-Okay, thanks Stephen.  Obviously that is the correct fixup.
-
-g.
-
 > -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
@@ -50,3 +47,11 @@ g.
 >   obj-m			:=
 >   obj-n			:=
 >   obj-			:=
+
+Stephen,
+
+This is, of course, the correct fix.  If you want it:
+
+Acked-by: H Hartley Sweeten <hsweeten@visionengravers.com>
+
+Thanks!
