@@ -1,85 +1,43 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: build failure after merge of the staging.current
- tree
-Date: Wed, 08 Jun 2011 13:58:23 -0300
-Message-ID: <4DEFAA2F.1010100@redhat.com>
-References: <20110608114130.444a7f99.sfr@canb.auug.org.au> <20110608161127.GD21645@kroah.com>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: RE: linux-next: Tree for June 6 (frontswap)
+Date: Wed, 8 Jun 2011 10:01:30 -0700 (PDT)
+Message-ID: <d0e92f96-df09-4ac2-ad5e-53cdd92aba94@default>
+References: <20110606132036.aebd73a4.sfr@canb.auug.org.au>
+ <20110606130628.e0110e18.randy.dunlap@oracle.com>
+ <b06ff74d-fc79-4c01-b159-9d352ca1a0f5@default
+ 20110608092844.66352540.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:46704 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751343Ab1FHQ6h (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Jun 2011 12:58:37 -0400
-In-Reply-To: <20110608161127.GD21645@kroah.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:27698 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751343Ab1FHRBy convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jun 2011 13:01:54 -0400
+In-Reply-To: <20110608092844.66352540.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Igor M. Liplianin" <liplianin@netup.ru>, Linux Media Mailing List <linux-media@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Greg,
-
-Em 08-06-2011 13:11, Greg KH escreveu:
-> On Wed, Jun 08, 2011 at 11:41:30AM +1000, Stephen Rothwell wrote:
->> Hi Greg,
->>
->> After merging the staging.current tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> drivers/media/video/cx23885/cx23885-cards.c:28:28: fatal error: staging/altera.h: No such file or directory
->>
->> Caused by commit 85ab9ee946da ("Staging: altera: move .h file to proper
->> place").
->>
->> I have used the staging.current tree from next-20110607 for today.
+> From: Randy Dunlap
+> Sent: Wednesday, June 08, 2011 10:29 AM
+> To: Dan Magenheimer
+> Cc: Stephen Rothwell; linux-next@vger.kernel.org; LKML
+> Subject: Re: linux-next: Tree for June 6 (frontswap)
 > 
-> Ok, sorry about that.
+> On Mon, 6 Jun 2011 13:23:09 -0700 (PDT) Dan Magenheimer wrote:
 > 
-> Mauro, Igor, why would another driver need to reference a .h file of a
-> staging driver?  I'll patch it right now to point to the proper place
-> (down in the staging tree), but it would be good to resolve this
-> "properly" somehow.
+> > > Does frontswap need to depend on SWAP?
+> >
+> > Indeed you are correct!  Thanks for catching that!
 > 
-> Next time, please never include a staging driver that isn't
-> self-contained, and don't create include/staging/ that's not acceptable.
+> Please fix the tree in linux-next so that this build error does not
+> continue.
 
-The altera driver were discussed for about two kernel cycles. When it was
-about to be merged upstrem, two people complained about having a FPGA firmware 
-driver inside the Linux Kernel. However, this driver is essential in order to load
-the firmware for a DVB device. So, to avoid postponing the merge for yet another
-kernel cycle, I've moved the offending part to staging, and asked for those
-two people to provide us a new solution up to the next merge window, otherwise, it
-would be moved it to the proper place.
+Sorry, I thought it was just an observation, didn't know
+it was breaking your build, so didn't know there was a rush.
+I am away from my machines for the rest of the day, but will
+get it fixed and resubmitted first thing tomorrow (US time).
 
-Basically, this driver is used to load the FPGA firmware for the CI module that 
-de-scrambles DVB-C/DVB-T/DVB-S streams, used by some cx23885 devices.
-
-Basically, cx23885 gets the firmware file via request_firmware() and uses the
-altera module to load it. After loaded, the altera-ci driver implements the logic
-to talk with the CI hardware.
-
-There's no Coding Style or any other troubles on this driver that I'm aware,
-except that the altera driver also allows loading FPGA firmwares via LPT port.
-
-The main argue is that there are some userspace tools available to program a
-FPGA hardware, but the problem is that the cx23885 needs to command the firmware
-load, as it needs to occur when the device is booted (or resumed).
-
-There were some discussions about that at LKML:
-	https://lkml.org/lkml/2011/3/7/270
-
->From my side, I think that the driver is doing the right approach. Using a different
-logic will make harder to sync userspace with kernelspace and will require an
-specialized userspace application for just a few device types (just two of the
-30 boards supported by cx23885 currently needs it).
-
-Igor,
-
-Could you please prepare a patch against linux-next moving it to the proper place?
-It is probably better to apply such patch at Greg's tree, as he has two patches
-touching at the altera include files. Also, please get rid of the parallel port
-support, as you don't need it for cx23885.
-
-Thanks,
-Mauro.
+Dan
