@@ -1,34 +1,56 @@
-From: Dave Jones <davej@redhat.com>
-Subject: Re: linux-next: unable to fetch the cpufreq-move tree
-Date: Tue, 7 Jun 2011 21:32:41 -0400
-Message-ID: <20110608013241.GA15828@redhat.com>
-References: <20110608112424.1147e26e.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging.current tree
+Date: Wed, 8 Jun 2011 11:41:30 +1000
+Message-ID: <20110608114130.444a7f99.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__8_Jun_2011_11_41_30_+1000_4S8im8GV3r.0g/IX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:65242 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36874 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932740Ab1FHBct (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Jun 2011 21:32:49 -0400
-Content-Disposition: inline
-In-Reply-To: <20110608112424.1147e26e.sfr@canb.auug.org.au>
+	id S1752198Ab1FHBlj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Jun 2011 21:41:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, "Igor M. Liplianin" <liplianin@netup.ru>
 
-On Wed, Jun 08, 2011 at 11:24:24AM +1000, Stephen Rothwell wrote:
- > Hi Dave,
- > 
- > Fetching the cpufreq-move tree today gave this error:
- > 
- > fatal: Couldn't find remote ref refs/heads/move-drivers
- > 
- > I will use the version of the tree from next-20110608 for today (which
- > was empty, anyway).
+--Signature=_Wed__8_Jun_2011_11_41_30_+1000_4S8im8GV3r.0g/IX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Now that we've done the x86 move and some of the ARM drivers, I think
-I'll just continue to add future moves to the 'next' branch.
-Sorry for forgetting to give you a heads-up.
+Hi Greg,
 
-	Dave
+After merging the staging.current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/media/video/cx23885/cx23885-cards.c:28:28: fatal error: staging/alt=
+era.h: No such file or directory
+
+Caused by commit 85ab9ee946da ("Staging: altera: move .h file to proper
+place").
+
+I have used the staging.current tree from next-20110607 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__8_Jun_2011_11_41_30_+1000_4S8im8GV3r.0g/IX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN7tNKAAoJEDMEi1NhKgbs6scH/jXwMsDJlXdaeMlBNHrOOEML
+PblCfPGPjIAEVfHK0suQmwLFR3iD62mA+pQwZluRpqwrGk1sDqK9ratWbV3BVsq2
+9lxXjKvCrAmQMTXpAl8hSIZZDPWUKYc03xk0BhjvJQgb4d0GAsvZjC8tBLh2PLWf
+/Pj9WaFQUwDmZlPNQjjZORt8xyvJ7uvIgwRi4smv8JVl8dYtDiLoO1YEupSL3fS/
+UCc3RKVOs25XFJM2Ix8ohFMkSS6AWuQ1GDsYDDVjPqrsEfdgv77EBj6nhsE/Na5s
+tiOHcHUYmiKHb6x5zH3p/FS1Cd01DwcXXX0VJEQMsmGIpU/HmURP0D9wMqxgdzA=
+=41NR
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__8_Jun_2011_11_41_30_+1000_4S8im8GV3r.0g/IX--
