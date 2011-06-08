@@ -1,45 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Wed, 08 Jun 2011 00:16:12 -0700 (PDT)
-Message-ID: <20110608.001612.225121497206099693.davem@davemloft.net>
-References: <20110608155411.c3a2aa09.sfr@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: build failure after merge of the hid tree
+Date: Wed, 8 Jun 2011 09:50:20 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1106080949470.22872@pobox.suse.cz>
+References: <20110608130334.58c62a7d.sfr@canb.auug.org.au> <4DEF2412.3040707@stefankriwanek.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:38412 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751839Ab1FHHSV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jun 2011 03:18:21 -0400
-In-Reply-To: <20110608155411.c3a2aa09.sfr@canb.auug.org.au>
+Received: from cantor.suse.de ([195.135.220.2]:53826 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752406Ab1FHHuW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 8 Jun 2011 03:50:22 -0400
+In-Reply-To: <4DEF2412.3040707@stefankriwanek.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, adobriyan@gmail.com
+To: Stefan Kriwanek <mail@stefankriwanek.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 8 Jun 2011 15:54:11 +1000
+On Wed, 8 Jun 2011, Stefan Kriwanek wrote:
 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> Hi Jiri,
 > 
-> drivers/net/ll_temac_main.c: In function 'temac_open':
-> drivers/net/ll_temac_main.c:859:2: error: implicit declaration of function 'request_irq'
-> drivers/net/ll_temac_main.c:870:2: error: implicit declaration of function 'free_irq'
-> drivers/net/ll_temac_main.c: In function 'temac_poll_controller':
-> drivers/net/ll_temac_main.c:903:2: error: implicit declaration of function 'disable_irq'
-> drivers/net/ll_temac_main.c:909:2: error: implicit declaration of function 'enable_irq'
-
-Oh well, I hit all the drivers I could with x86 and sparc64 builds.
-
-> Probably caused by commit a6b7a407865a ("net: remove interrupt.h
-> inclusion from netdevice.h").
+> I can only guess that this has to do with my patch not made by `git 
+> --diff` but simply `diff -up 
+> /dev/null/linux-2.6.39-speedlink/drivers/hid/hid-speedlink.c`
 > 
-> I have added this patch for today:
+> --- /dev/null	2011-05-27 13:53:55.863652998 +0200
+> +++ linux-2.6.39-speedlink/drivers/hid/hid-speedlink.c	2011-05-27 18:00:34.719863577 +0200
 > 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 8 Jun 2011 15:49:33 +1000
-> Subject: [PATCH] net: add needed interrupt.h
+> I am sorry if I caused the disturbance. However, after reading 
+> Documentation/SubmittitingPatches etc. I didn't know of any special 
+> measure to undertake when adding new files - If so, maybe one should 
+> consider updating the documention?.
 
-Applied, thanks Stephen.
+Bah, no need to be sorry, it's my fault. Forgot to do 'git add' after I 
+have resolved the conflict.
+
+Fixed now in my tree and pushed out.
+
+-- 
+Jiri Kosina
+SUSE Labs
