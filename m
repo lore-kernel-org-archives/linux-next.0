@@ -1,45 +1,123 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the staging.current tree
-Date: Wed, 8 Jun 2011 09:11:27 -0700
-Message-ID: <20110608161127.GD21645@kroah.com>
-References: <20110608114130.444a7f99.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for June 6 (frontswap)
+Date: Wed, 8 Jun 2011 09:28:44 -0700
+Message-ID: <20110608092844.66352540.randy.dunlap@oracle.com>
+References: <20110606132036.aebd73a4.sfr@canb.auug.org.au
+ 20110606130628.e0110e18.randy.dunlap@oracle.com>
+	<b06ff74d-fc79-4c01-b159-9d352ca1a0f5@default>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out2.smtp.messagingengine.com ([66.111.4.26]:34441 "EHLO
-	out2.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751313Ab1FHQSb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jun 2011 12:18:31 -0400
-Content-Disposition: inline
-In-Reply-To: <20110608114130.444a7f99.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:33731 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751253Ab1FHQ3A (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jun 2011 12:29:00 -0400
+In-Reply-To: <b06ff74d-fc79-4c01-b159-9d352ca1a0f5@default>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, "Igor M. Liplianin" <liplianin@netup.ru>
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Jun 08, 2011 at 11:41:30AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Mon, 6 Jun 2011 13:23:09 -0700 (PDT) Dan Magenheimer wrote:
+
+> Hi Randy --
 > 
-> After merging the staging.current tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Indeed you are correct!  Thanks for catching that!
 > 
-> drivers/media/video/cx23885/cx23885-cards.c:28:28: fatal error: staging/altera.h: No such file or directory
+
+Please fix the tree in linux-next so that this build error does not
+continue.
+
+
 > 
-> Caused by commit 85ab9ee946da ("Staging: altera: move .h file to proper
-> place").
+> Thanks... for the memory!
+> I really could use more / my throughput's on the floor
+> The balloon is flat / my swap disk's fat / I've OOM's in store
+> Overcommitted so much
+> (with apologies to Bob Hope)
 > 
-> I have used the staging.current tree from next-20110607 for today.
+> 
+> > -----Original Message-----
+> > From: Randy Dunlap
+> > Sent: Monday, June 06, 2011 2:06 PM
+> > To: Stephen Rothwell; Dan Magenheimer
+> > Cc: linux-next@vger.kernel.org; LKML
+> > Subject: Re: linux-next: Tree for June 6 (frontswap)
+> > 
+> > On Mon, 6 Jun 2011 13:20:36 +1000 Stephen Rothwell wrote:
+> > 
+> > > Hi all,
+> > >
+> > > Changes since 20110603:
+> > 
+> > 
+> > Does frontswap need to depend on SWAP?
+> > 
+> > When SWAP is not enabled:
+> > 
+> > mm/built-in.o: In function `frontswap_curr_pages':
+> > (.text+0x467c1): undefined reference to `swap_lock'
+> > mm/built-in.o: In function `frontswap_curr_pages':
+> > (.text+0x467ce): undefined reference to `swap_list'
+> > mm/built-in.o: In function `frontswap_curr_pages':
+> > (.text+0x467e6): undefined reference to `swap_info'
+> > mm/built-in.o: In function `frontswap_curr_pages':
+> > (.text+0x467fe): undefined reference to `swap_lock'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x4688d): undefined reference to `swap_lock'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x46898): undefined reference to `swap_list'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x468b6): undefined reference to `swap_info'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x4690d): undefined reference to `swap_info'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x469d3): undefined reference to `swap_lock'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x469ec): undefined reference to `try_to_unuse'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x46a1c): undefined reference to `swap_lock'
+> > mm/built-in.o: In function `__frontswap_flush_area':
+> > (.text+0x46aa4): undefined reference to `swap_info'
+> > mm/built-in.o: In function `__frontswap_get_page':
+> > (.text+0x46b1f): undefined reference to `swap_info'
+> > mm/built-in.o: In function `__frontswap_put_page':
+> > (.text+0x46bf8): undefined reference to `swap_info'
+> > mm/built-in.o: In function `__frontswap_flush_page':
+> > (.text+0x46d86): undefined reference to `swap_info'
+> > mm/built-in.o: In function `frontswap_curr_pages':
+> > (.text+0x467c1): undefined reference to `swap_lock'
+> > mm/built-in.o: In function `frontswap_curr_pages':
+> > (.text+0x467ce): undefined reference to `swap_list'
+> > mm/built-in.o: In function `frontswap_curr_pages':
+> > (.text+0x467e6): undefined reference to `swap_info'
+> > mm/built-in.o: In function `frontswap_curr_pages':
+> > (.text+0x467fe): undefined reference to `swap_lock'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x4688d): undefined reference to `swap_lock'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x46898): undefined reference to `swap_list'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x468b6): undefined reference to `swap_info'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x4690d): undefined reference to `swap_info'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x469d3): undefined reference to `swap_lock'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x469ec): undefined reference to `try_to_unuse'
+> > mm/built-in.o: In function `frontswap_shrink':
+> > (.text+0x46a1c): undefined reference to `swap_lock'
+> > mm/built-in.o: In function `__frontswap_flush_area':
+> > (.text+0x46aa4): undefined reference to `swap_info'
+> > mm/built-in.o: In function `__frontswap_get_page':
+> > (.text+0x46b1f): undefined reference to `swap_info'
+> > mm/built-in.o: In function `__frontswap_put_page':
+> > (.text+0x46bf8): undefined reference to `swap_info'
+> > mm/built-in.o: In function `__frontswap_flush_page':
+> > (.text+0x46d86): undefined reference to `swap_info'
 
-Ok, sorry about that.
 
-Mauro, Igor, why would another driver need to reference a .h file of a
-staging driver?  I'll patch it right now to point to the proper place
-(down in the staging tree), but it would be good to resolve this
-"properly" somehow.
-
-Next time, please never include a staging driver that isn't
-self-contained, and don't create include/staging/ that's not acceptable.
-
-thanks,
-
-greg k-h
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
