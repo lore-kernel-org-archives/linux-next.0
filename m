@@ -1,43 +1,45 @@
-From: Stefan Kriwanek <mail@stefankriwanek.de>
-Subject: Re: linux-next: build failure after merge of the hid tree
-Date: Wed, 08 Jun 2011 09:26:10 +0200
-Message-ID: <4DEF2412.3040707@stefankriwanek.de>
-References: <20110608130334.58c62a7d.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the staging.current tree
+Date: Wed, 8 Jun 2011 09:11:27 -0700
+Message-ID: <20110608161127.GD21645@kroah.com>
+References: <20110608114130.444a7f99.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wp123.webpack.hosteurope.de ([80.237.132.130]:58703 "EHLO
-	wp123.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754632Ab1FHHu6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jun 2011 03:50:58 -0400
-In-Reply-To: <20110608130334.58c62a7d.sfr@canb.auug.org.au>
+Received: from out2.smtp.messagingengine.com ([66.111.4.26]:34441 "EHLO
+	out2.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751313Ab1FHQSb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jun 2011 12:18:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20110608114130.444a7f99.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jikos@jikos.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, "Igor M. Liplianin" <liplianin@netup.ru>
 
-Hi Jiri,
-
-I can only guess that this has to do with my patch not made by `git --diff` but simply `diff -up /dev/null/linux-2.6.39-speedlink/drivers/hid/hid-speedlink.c`
-
---- /dev/null	2011-05-27 13:53:55.863652998 +0200
-+++ linux-2.6.39-speedlink/drivers/hid/hid-speedlink.c	2011-05-27 18:00:34.719863577 +0200
-
-I am sorry if I caused the disturbance. However, after reading Documentation/SubmittitingPatches etc. I didn't know of any special measure to undertake when adding new files - If so, maybe one should consider updating the documention?.
-
-Regards,
-Stefan
-
-Am 08.06.2011 05:03, schrieb Stephen Rothwell:
-> Hi Jiri,
+On Wed, Jun 08, 2011 at 11:41:30AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> After merging the hid tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+> After merging the staging.current tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> make[3]: *** No rule to make target `drivers/hid/hid-speedlink.c', needed by `drivers/hid/hid-speedlink.o'.  Stop.
+> drivers/media/video/cx23885/cx23885-cards.c:28:28: fatal error: staging/altera.h: No such file or directory
 > 
-> Caused by commit b5eb65d64f91 ("HID: Add driver to fix Speedlink VAD
-> Cezanne support").
+> Caused by commit 85ab9ee946da ("Staging: altera: move .h file to proper
+> place").
 > 
-> I have used the hid tree from next-20110607 for today.
+> I have used the staging.current tree from next-20110607 for today.
+
+Ok, sorry about that.
+
+Mauro, Igor, why would another driver need to reference a .h file of a
+staging driver?  I'll patch it right now to point to the proper place
+(down in the staging tree), but it would be good to resolve this
+"properly" somehow.
+
+Next time, please never include a staging driver that isn't
+self-contained, and don't create include/staging/ that's not acceptable.
+
+thanks,
+
+greg k-h
