@@ -1,31 +1,45 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: quilt series BASE
-Date: Wed, 8 Jun 2011 09:01:20 +0200
-Message-ID: <20110608090120.7baea3fc@endymion.delvare>
-References: <20110608111954.b9e85517.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree (net
+ tree related)
+Date: Wed, 08 Jun 2011 00:16:12 -0700 (PDT)
+Message-ID: <20110608.001612.225121497206099693.davem@davemloft.net>
+References: <20110608155411.c3a2aa09.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:34351 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751839Ab1FHHBb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jun 2011 03:01:31 -0400
-In-Reply-To: <20110608111954.b9e85517.sfr@canb.auug.org.au>
+Received: from shards.monkeyblade.net ([198.137.202.13]:38412 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751839Ab1FHHSV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jun 2011 03:18:21 -0400
+In-Reply-To: <20110608155411.c3a2aa09.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, adobriyan@gmail.com
 
-Hi Stephen,
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 8 Jun 2011 15:54:11 +1000
 
-On Wed, 8 Jun 2011 11:19:54 +1000, Stephen Rothwell wrote:
-> I had to fix the BASE for your quilt series (i2c and jdelvare-hwmon)
-> today from 3.0.0-rc2 to 3.0-rc2.
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/net/ll_temac_main.c: In function 'temac_open':
+> drivers/net/ll_temac_main.c:859:2: error: implicit declaration of function 'request_irq'
+> drivers/net/ll_temac_main.c:870:2: error: implicit declaration of function 'free_irq'
+> drivers/net/ll_temac_main.c: In function 'temac_poll_controller':
+> drivers/net/ll_temac_main.c:903:2: error: implicit declaration of function 'disable_irq'
+> drivers/net/ll_temac_main.c:909:2: error: implicit declaration of function 'enable_irq'
 
-Sorry for the trouble. I extract the version from the Makefile, and
-there it still reads 3.0.0. I've adjusted my uploader script to strip
-the sublevel for 3.x series.
+Oh well, I hit all the drivers I could with x86 and sparc64 builds.
 
--- 
-Jean Delvare
+> Probably caused by commit a6b7a407865a ("net: remove interrupt.h
+> inclusion from netdevice.h").
+> 
+> I have added this patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 8 Jun 2011 15:49:33 +1000
+> Subject: [PATCH] net: add needed interrupt.h
+
+Applied, thanks Stephen.
