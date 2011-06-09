@@ -1,88 +1,39 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for June 8 (docbook/media)
-Date: Thu, 09 Jun 2011 13:32:17 -0700
-Message-ID: <4DF12DD1.7060606@oracle.com>
-References: <20110608161046.4ad95776.sfr@canb.auug.org.au> <20110608125243.e63a07fc.randy.dunlap@oracle.com> <4DF11E15.5030907@infradead.org> <4DF12263.3070900@redhat.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Thu, 9 Jun 2011 13:51:01 -0700
+Message-ID: <20110609205101.GA32526@kroah.com>
+References: <20110609165808.8b36f634.sfr@canb.auug.org.au>
+ <20110609184143.GB2760@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4DF12263.3070900@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out4.smtp.messagingengine.com ([66.111.4.28]:49256 "EHLO
+	out4.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756046Ab1FIUvb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jun 2011 16:51:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20110609184143.GB2760@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roland Vossen <rvossen@broadcom.com>
 
-On 06/09/11 12:43, Mauro Carvalho Chehab wrote:
-> Em 09-06-2011 16:25, Mauro Carvalho Chehab escreveu:
->> Em 08-06-2011 16:52, Randy Dunlap escreveu:
->>> The DocBook/media/Makefile seems to be causing too much noise:
->>>
->>> ls: cannot access linux-next-20110608/Documentation/DocBook/media/*/*.gif: No such file or directory
->>> ls: cannot access linux-next-20110608/Documentation/DocBook/media/*/*.png: No such file or directory
->>>
->>> Maybe the cleanmediadocs target could be made silent?
->>
->> I'll take a look on it. 
->>
->> FYI, The next build will probably be noisier, as it is now pointing to some 
->> documentation gaps at the DVB API. Those gaps should take a longer time to fix, 
->> as we need to discuss upstream about what should be done with those API's,
->> that seems to be abandoned upstream (only one legacy DVB driver uses them).
->> However, I was told that some out-of-tree drivers and some drivers under development
->> are using them.
->>
->> So, I intend to wait until the next merge window before either dropping those 
->> legacy API specs (or moving them to a deprecated section) or to merge those
->> out-of-tree drivers, with the proper documentation updates.
->>
->>> also, where is the mediaindexdocs target defined?
->>
->> Thanks for noticing it. We don't need this target anymore. I'll write a patch
->> removing it.
+On Thu, Jun 09, 2011 at 11:41:43AM -0700, Greg KH wrote:
+> On Thu, Jun 09, 2011 at 04:58:08PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > Today's linux-next merge of the staging tree got a conflict in
+> > drivers/staging/brcm80211/brcmfmac/wl_iw.c between commit e1c78de9a462
+> > ("staging: brcm80211: fix for 'multiple definition of wl_msg_level' build
+> > err") from the staging.current tree and commit 8817f75429a1 ("staging:
+> > brcm80211: removed wl_ (vendor specific acronym)") from the staging tree.
+> > 
+> > I fixed it up (using the latter change) and can carry the fix as
+> > necessary.
 > 
-> This patch should remove the undesired noise.
+> Thanks for the fix, it sounds correct.
 
+This should now be resolved.
 
-Doesn't work for me.  Did you test it?
-
-Even this does not silence the noise for me:
-
-cleanmediadocs:
-	-@rm `find $(MEDIA_OBJ_DIR) -type l` $(GENFILES) $(IMGFILES) >/dev/null 2>&1
-
-
-> 
-> commit 75125b9d44456e0cf2d1fbb72ae33c13415299d1
-> Author: Mauro Carvalho Chehab <mchehab@redhat.com>
-> Date:   Thu Jun 9 16:34:29 2011 -0300
-> 
->     [media] DocBook: Don't be noisy at make cleanmediadocs
->     
->     While here, remove the mediaindexdocs from PHONY.
->     
->     Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
->     Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-> 
-> diff --git a/Documentation/DocBook/media/Makefile b/Documentation/DocBook/media/Makefile
-> index 1e909c2..b7627e1 100644
-> --- a/Documentation/DocBook/media/Makefile
-> +++ b/Documentation/DocBook/media/Makefile
-> @@ -21,10 +21,10 @@ MEDIA_TEMP =  media-entities.tmpl \
->  IMGFILES := $(addprefix $(MEDIA_OBJ_DIR)/media/, $(notdir $(shell ls $(MEDIA_SRC_DIR)/*/*.gif $(MEDIA_SRC_DIR)/*/*.png)))
->  GENFILES := $(addprefix $(MEDIA_OBJ_DIR)/, $(MEDIA_TEMP))
->  
-> -PHONY += cleanmediadocs mediaindexdocs
-> +PHONY += cleanmediadocs
->  
->  cleanmediadocs:
-> -	-@rm `find $(MEDIA_OBJ_DIR) -type l` $(GENFILES) $(IMGFILES)
-> +	-@rm `find $(MEDIA_OBJ_DIR) -type l` $(GENFILES) $(IMGFILES) 2>/dev/null
->  
->  $(obj)/media_api.xml: $(GENFILES) FORCE
->  
-
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+greg k-h
