@@ -1,51 +1,61 @@
-From: Dan Magenheimer <dan.magenheimer@oracle.com>
-Subject: RE: linux-next: Tree for June 6 (frontswap)
-Date: Wed, 8 Jun 2011 17:12:06 -0700 (PDT)
-Message-ID: <080e1123-ea5d-4ea7-8d76-3f748937c020@default>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for June 6 (frontswap)
+Date: Thu, 9 Jun 2011 11:04:35 +1000
+Message-ID: <20110609110435.4ebfdd7e.sfr@canb.auug.org.au>
 References: <20110606132036.aebd73a4.sfr@canb.auug.org.au>
- <20110606130628.e0110e18.randy.dunlap@oracle.com>
- <b06ff74d-fc79-4c01-b159-9d352ca1a0f5@default
+	<20110606130628.e0110e18.randy.dunlap@oracle.com>
+	<b06ff74d-fc79-4c01-b159-9d352ca1a0f5@default
  20110608092844.66352540.randy.dunlap@oracle.com
  d0e92f96-df09-4ac2-ad5e-53cdd92aba94@default>
+	<080e1123-ea5d-4ea7-8d76-3f748937c020@default>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__9_Jun_2011_11_04_35_+1000_xOadfv1ZIvtUP9mZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:54116 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750890Ab1FIAM3 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jun 2011 20:12:29 -0400
-In-Reply-To: <d0e92f96-df09-4ac2-ad5e-53cdd92aba94@default>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59668 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751523Ab1FIBEm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 8 Jun 2011 21:04:42 -0400
+In-Reply-To: <080e1123-ea5d-4ea7-8d76-3f748937c020@default>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Magenheimer <dan.magenheimer@oracle.com>, Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-> From: Dan Magenheimer
-> Sent: Wednesday, June 08, 2011 11:02 AM
-> To: Randy Dunlap
-> Cc: Stephen Rothwell; linux-next@vger.kernel.org; LKML
-> Subject: RE: linux-next: Tree for June 6 (frontswap)
-> 
-> > From: Randy Dunlap
-> > Sent: Wednesday, June 08, 2011 10:29 AM
-> > To: Dan Magenheimer
-> > Cc: Stephen Rothwell; linux-next@vger.kernel.org; LKML
-> > Subject: Re: linux-next: Tree for June 6 (frontswap)
-> >
-> > On Mon, 6 Jun 2011 13:23:09 -0700 (PDT) Dan Magenheimer wrote:
-> >
-> > > > Does frontswap need to depend on SWAP?
-> > >
-> > > Indeed you are correct!  Thanks for catching that!
-> >
-> > Please fix the tree in linux-next so that this build error does not
-> > continue.
-> 
-> Sorry, I thought it was just an observation, didn't know
-> it was breaking your build, so didn't know there was a rush.
-> I am away from my machines for the rest of the day, but will
-> get it fixed and resubmitted first thing tomorrow (US time).
+--Signature=_Thu__9_Jun_2011_11_04_35_+1000_xOadfv1ZIvtUP9mZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Got back early.  Should be fixed now, hope it is in time
-for the next linux-next merge.   And sorry for the noise!
+Hi Dan,
+
+On Wed, 8 Jun 2011 17:12:06 -0700 (PDT) Dan Magenheimer <dan.magenheimer@or=
+acle.com> wrote:
+>
+> Got back early.  Should be fixed now, hope it is in time
+> for the next linux-next merge.   And sorry for the noise!
+
+Yeah, it will be in linux-next today (as long as you didn;t break
+anything :-)).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__9_Jun_2011_11_04_35_+1000_xOadfv1ZIvtUP9mZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN8BwjAAoJEDMEi1NhKgbs1pEIAKI0PpluI1d6XW8MlOvt/IJT
+6dvSiF20KgybGg/73O23Mon4XNs6eNEnOIvspF7l8F52dpUei1eBhuMfz8S/18xC
+0dUQ9IBMeOm0plWO0NPkey63a5N+K5GOb+J4cmO8J3+jGfJShy0pRWvoy0+fs+jD
+R5n1XUtgMRGwZ8EW/DloEtPQyS2GKSDt4DhShi+Yw06V3bVVUR293924RJs2psg3
+TFojHK05j9J8vyw9AL0U1Uh/7NNx1ZdZQ2dvVI0I2XV3YwUMJofC7hkv7mgUgILZ
+9Cjxd0RTcOh+LtHt2vJG4FtkUfGs+x/m25hCTQTJBcinNZAWNxI8GSXpBtiDclU=
+=rTqK
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__9_Jun_2011_11_04_35_+1000_xOadfv1ZIvtUP9mZ--
