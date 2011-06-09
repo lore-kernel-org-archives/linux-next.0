@@ -1,76 +1,76 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: Tree for June 8 (docbook/media)
-Date: Thu, 09 Jun 2011 16:43:31 -0300
-Message-ID: <4DF12263.3070900@redhat.com>
-References: <20110608161046.4ad95776.sfr@canb.auug.org.au> <20110608125243.e63a07fc.randy.dunlap@oracle.com> <4DF11E15.5030907@infradead.org>
+From: "Henry Ptasinski" <henryp@broadcom.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (staging related)
+Date: Thu, 9 Jun 2011 12:52:12 -0700
+Message-ID: <20110609195211.GG10107@broadcom.com>
+References: <20110609172745.dfd3a298.sfr@canb.auug.org.au>
+ <20110609184127.GA2760@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain;
+ charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:21485 "EHLO mx1.redhat.com"
+Received: from mms1.broadcom.com ([216.31.210.17]:4051 "EHLO mms1.broadcom.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754388Ab1FITnk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Jun 2011 15:43:40 -0400
-In-Reply-To: <4DF11E15.5030907@infradead.org>
+	id S1754958Ab1FITwZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Jun 2011 15:52:25 -0400
+In-Reply-To: <20110609184127.GA2760@kroah.com>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Brett Rudley <brudley@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Henry Ptasinski <henryp@broadcom.com>
 
-Em 09-06-2011 16:25, Mauro Carvalho Chehab escreveu:
-> Em 08-06-2011 16:52, Randy Dunlap escreveu:
->> The DocBook/media/Makefile seems to be causing too much noise:
->>
->> ls: cannot access linux-next-20110608/Documentation/DocBook/media/*/*.gif: No such file or directory
->> ls: cannot access linux-next-20110608/Documentation/DocBook/media/*/*.png: No such file or directory
->>
->> Maybe the cleanmediadocs target could be made silent?
+On Thu, Jun 09, 2011 at 11:41:27AM -0700, Greg KH wrote:
+> On Thu, Jun 09, 2011 at 05:27:45PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > After merging the final tree, today's linux-next build (powerpc allyesconfig)
+> > failed like this:
+> > 
+> > drivers/staging/brcm80211/brcmsmac/ampdu.c: In function 'wlc_ampdu_dotxstatus':
+> > drivers/staging/brcm80211/brcmsmac/ampdu.c:840:17: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > drivers/staging/brcm80211/brcmsmac/ampdu.c:840:17: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > drivers/staging/brcm80211/brcmsmac/ampdu.c:848:8: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > drivers/staging/brcm80211/brcmsmac/ampdu.c:848:8: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_bmac_update_slot_timing':
+> > drivers/staging/brcm80211/brcmsmac/bmac.c:186:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
+> > drivers/staging/brcm80211/brcmsmac/bmac.c:186:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
+> > drivers/staging/brcm80211/brcmsmac/bmac.c:190:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
+> > drivers/staging/brcm80211/brcmsmac/bmac.c:190:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
+> > drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_setband_inact':
+> > drivers/staging/brcm80211/brcmsmac/bmac.c:234:2: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > drivers/staging/brcm80211/brcmsmac/bmac.c:234:2: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_dpc':
+> > drivers/staging/brcm80211/brcmsmac/bmac.c:311:6: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > 
+> > (and lots more)
 > 
-> I'll take a look on it. 
+> Fun :(
 > 
-> FYI, The next build will probably be noisier, as it is now pointing to some 
-> documentation gaps at the DVB API. Those gaps should take a longer time to fix, 
-> as we need to discuss upstream about what should be done with those API's,
-> that seems to be abandoned upstream (only one legacy DVB driver uses them).
-> However, I was told that some out-of-tree drivers and some drivers under development
-> are using them.
+> This looks messy.  It's a macro that is trying to be cute by doing:
+> #define R_REG(r) \
+>         ({ \
+>                 __typeof(*(r)) __osl_v; \
+>                 __asm__ __volatile__("sync"); \
+>                 __osl_v = bcmsdh_reg_read(NULL, (unsigned long)(r),\
+>                                           sizeof(*(r))); \
+>                 __asm__ __volatile__("sync"); \
+>                 __osl_v; \
+>         })
 > 
-> So, I intend to wait until the next merge window before either dropping those 
-> legacy API specs (or moving them to a deprecated section) or to merge those
-> out-of-tree drivers, with the proper documentation updates.
-> 
->> also, where is the mediaindexdocs target defined?
-> 
-> Thanks for noticing it. We don't need this target anymore. I'll write a patch
-> removing it.
+> on big-endian, non-mips platforms.  Which I really doubt has ever
+> been tested before.
 
-This patch should remove the undesired noise.
+I think it was used on PPC once upon a time, but likely in a very different
+incarnation.
 
-commit 75125b9d44456e0cf2d1fbb72ae33c13415299d1
-Author: Mauro Carvalho Chehab <mchehab@redhat.com>
-Date:   Thu Jun 9 16:34:29 2011 -0300
+> Roland, Brett, any thoughts?
+> 
+> Should I just disable this module from being build on PPC as it doesn't
+> look like its ever been tested or run on that platform before.
 
-    [media] DocBook: Don't be noisy at make cleanmediadocs
-    
-    While here, remove the mediaindexdocs from PHONY.
-    
-    Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-    Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+Disabling the build on PPC for now sounds ok.  We'll work on cleaning up the
+macros and try to get some more platform test coverage.
 
-diff --git a/Documentation/DocBook/media/Makefile b/Documentation/DocBook/media/Makefile
-index 1e909c2..b7627e1 100644
---- a/Documentation/DocBook/media/Makefile
-+++ b/Documentation/DocBook/media/Makefile
-@@ -21,10 +21,10 @@ MEDIA_TEMP =  media-entities.tmpl \
- IMGFILES := $(addprefix $(MEDIA_OBJ_DIR)/media/, $(notdir $(shell ls $(MEDIA_SRC_DIR)/*/*.gif $(MEDIA_SRC_DIR)/*/*.png)))
- GENFILES := $(addprefix $(MEDIA_OBJ_DIR)/, $(MEDIA_TEMP))
- 
--PHONY += cleanmediadocs mediaindexdocs
-+PHONY += cleanmediadocs
- 
- cleanmediadocs:
--	-@rm `find $(MEDIA_OBJ_DIR) -type l` $(GENFILES) $(IMGFILES)
-+	-@rm `find $(MEDIA_OBJ_DIR) -type l` $(GENFILES) $(IMGFILES) 2>/dev/null
- 
- $(obj)/media_api.xml: $(GENFILES) FORCE
- 
+- Henry
