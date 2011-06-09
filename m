@@ -1,76 +1,78 @@
-From: "Henry Ptasinski" <henryp@broadcom.com>
-Subject: Re: linux-next: build failure after merge of the final tree
- (staging related)
-Date: Thu, 9 Jun 2011 12:52:12 -0700
-Message-ID: <20110609195211.GG10107@broadcom.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ related)
+Date: Thu, 9 Jun 2011 13:19:07 -0700
+Message-ID: <20110609201907.GC12792@kroah.com>
 References: <20110609172745.dfd3a298.sfr@canb.auug.org.au>
  <20110609184127.GA2760@kroah.com>
+ <20110609195211.GG10107@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms1.broadcom.com ([216.31.210.17]:4051 "EHLO mms1.broadcom.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754958Ab1FITwZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Jun 2011 15:52:25 -0400
-In-Reply-To: <20110609184127.GA2760@kroah.com>
+Received: from out4.smtp.messagingengine.com ([66.111.4.28]:54590 "EHLO
+	out4.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755555Ab1FIUTP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jun 2011 16:19:15 -0400
 Content-Disposition: inline
+In-Reply-To: <20110609195211.GG10107@broadcom.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Brett Rudley <brudley@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Henry Ptasinski <henryp@broadcom.com>
+To: Henry Ptasinski <henryp@broadcom.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Brett Rudley <brudley@broadcom.com>, Roland Vossen <rvossen@broadcom.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
 
-On Thu, Jun 09, 2011 at 11:41:27AM -0700, Greg KH wrote:
-> On Thu, Jun 09, 2011 at 05:27:45PM +1000, Stephen Rothwell wrote:
-> > Hi Greg,
+On Thu, Jun 09, 2011 at 12:52:12PM -0700, Henry Ptasinski wrote:
+> On Thu, Jun 09, 2011 at 11:41:27AM -0700, Greg KH wrote:
+> > On Thu, Jun 09, 2011 at 05:27:45PM +1000, Stephen Rothwell wrote:
+> > > Hi Greg,
+> > > 
+> > > After merging the final tree, today's linux-next build (powerpc allyesconfig)
+> > > failed like this:
+> > > 
+> > > drivers/staging/brcm80211/brcmsmac/ampdu.c: In function 'wlc_ampdu_dotxstatus':
+> > > drivers/staging/brcm80211/brcmsmac/ampdu.c:840:17: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > > drivers/staging/brcm80211/brcmsmac/ampdu.c:840:17: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > > drivers/staging/brcm80211/brcmsmac/ampdu.c:848:8: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > > drivers/staging/brcm80211/brcmsmac/ampdu.c:848:8: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > > drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_bmac_update_slot_timing':
+> > > drivers/staging/brcm80211/brcmsmac/bmac.c:186:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
+> > > drivers/staging/brcm80211/brcmsmac/bmac.c:186:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
+> > > drivers/staging/brcm80211/brcmsmac/bmac.c:190:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
+> > > drivers/staging/brcm80211/brcmsmac/bmac.c:190:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
+> > > drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_setband_inact':
+> > > drivers/staging/brcm80211/brcmsmac/bmac.c:234:2: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > > drivers/staging/brcm80211/brcmsmac/bmac.c:234:2: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > > drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_dpc':
+> > > drivers/staging/brcm80211/brcmsmac/bmac.c:311:6: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > > 
+> > > (and lots more)
 > > 
-> > After merging the final tree, today's linux-next build (powerpc allyesconfig)
-> > failed like this:
+> > Fun :(
 > > 
-> > drivers/staging/brcm80211/brcmsmac/ampdu.c: In function 'wlc_ampdu_dotxstatus':
-> > drivers/staging/brcm80211/brcmsmac/ampdu.c:840:17: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
-> > drivers/staging/brcm80211/brcmsmac/ampdu.c:840:17: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
-> > drivers/staging/brcm80211/brcmsmac/ampdu.c:848:8: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
-> > drivers/staging/brcm80211/brcmsmac/ampdu.c:848:8: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
-> > drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_bmac_update_slot_timing':
-> > drivers/staging/brcm80211/brcmsmac/bmac.c:186:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
-> > drivers/staging/brcm80211/brcmsmac/bmac.c:186:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
-> > drivers/staging/brcm80211/brcmsmac/bmac.c:190:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
-> > drivers/staging/brcm80211/brcmsmac/bmac.c:190:3: error: invalid operands to binary ^ (have 'volatile u16 *' and 'int')
-> > drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_setband_inact':
-> > drivers/staging/brcm80211/brcmsmac/bmac.c:234:2: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
-> > drivers/staging/brcm80211/brcmsmac/bmac.c:234:2: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
-> > drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_dpc':
-> > drivers/staging/brcm80211/brcmsmac/bmac.c:311:6: error: invalid operands to binary ^ (have 'volatile u32 *' and 'int')
+> > This looks messy.  It's a macro that is trying to be cute by doing:
+> > #define R_REG(r) \
+> >         ({ \
+> >                 __typeof(*(r)) __osl_v; \
+> >                 __asm__ __volatile__("sync"); \
+> >                 __osl_v = bcmsdh_reg_read(NULL, (unsigned long)(r),\
+> >                                           sizeof(*(r))); \
+> >                 __asm__ __volatile__("sync"); \
+> >                 __osl_v; \
+> >         })
 > > 
-> > (and lots more)
+> > on big-endian, non-mips platforms.  Which I really doubt has ever
+> > been tested before.
 > 
-> Fun :(
+> I think it was used on PPC once upon a time, but likely in a very different
+> incarnation.
 > 
-> This looks messy.  It's a macro that is trying to be cute by doing:
-> #define R_REG(r) \
->         ({ \
->                 __typeof(*(r)) __osl_v; \
->                 __asm__ __volatile__("sync"); \
->                 __osl_v = bcmsdh_reg_read(NULL, (unsigned long)(r),\
->                                           sizeof(*(r))); \
->                 __asm__ __volatile__("sync"); \
->                 __osl_v; \
->         })
+> > Roland, Brett, any thoughts?
+> > 
+> > Should I just disable this module from being build on PPC as it doesn't
+> > look like its ever been tested or run on that platform before.
 > 
-> on big-endian, non-mips platforms.  Which I really doubt has ever
-> been tested before.
+> Disabling the build on PPC for now sounds ok.  We'll work on cleaning up the
+> macros and try to get some more platform test coverage.
 
-I think it was used on PPC once upon a time, but likely in a very different
-incarnation.
+Ok, I've done that now and pushed it to the staging-next tree.
 
-> Roland, Brett, any thoughts?
-> 
-> Should I just disable this module from being build on PPC as it doesn't
-> look like its ever been tested or run on that platform before.
-
-Disabling the build on PPC for now sounds ok.  We'll work on cleaning up the
-macros and try to get some more platform test coverage.
-
-- Henry
+greg k-h
