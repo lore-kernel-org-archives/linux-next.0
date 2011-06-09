@@ -1,54 +1,100 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the
- staging.current tree
-Date: Thu, 9 Jun 2011 16:58:08 +1000
-Message-ID: <20110609165808.8b36f634.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (staging
+ related)
+Date: Thu, 9 Jun 2011 17:27:45 +1000
+Message-ID: <20110609172745.dfd3a298.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__9_Jun_2011_16_58_08_+1000_nb8S27KVHF8LEm4n"
+ boundary="Signature=_Thu__9_Jun_2011_17_27_45_+1000_V0D5c.8UiXL+VFtg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47158 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37542 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754619Ab1FIG6O (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Jun 2011 02:58:14 -0400
+	id S1752954Ab1FIH14 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Jun 2011 03:27:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roland Vossen <rvossen@broadcom.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
---Signature=_Thu__9_Jun_2011_16_58_08_+1000_nb8S27KVHF8LEm4n
+--Signature=_Thu__9_Jun_2011_17_27_45_+1000_V0D5c.8UiXL+VFtg
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/brcm80211/brcmfmac/wl_iw.c between commit e1c78de9a462
-("staging: brcm80211: fix for 'multiple definition of wl_msg_level' build
-err") from the staging.current tree and commit 8817f75429a1 ("staging:
-brcm80211: removed wl_ (vendor specific acronym)") from the staging tree.
+After merging the final tree, today's linux-next build (powerpc allyesconfi=
+g)
+failed like this:
 
-I fixed it up (using the latter change) and can carry the fix as
-necessary.
+drivers/staging/brcm80211/brcmsmac/ampdu.c: In function 'wlc_ampdu_dotxstat=
+us':
+drivers/staging/brcm80211/brcmsmac/ampdu.c:840:17: error: invalid operands =
+to binary ^ (have 'volatile u32 *' and 'int')
+drivers/staging/brcm80211/brcmsmac/ampdu.c:840:17: error: invalid operands =
+to binary ^ (have 'volatile u32 *' and 'int')
+drivers/staging/brcm80211/brcmsmac/ampdu.c:848:8: error: invalid operands t=
+o binary ^ (have 'volatile u32 *' and 'int')
+drivers/staging/brcm80211/brcmsmac/ampdu.c:848:8: error: invalid operands t=
+o binary ^ (have 'volatile u32 *' and 'int')
+drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_bmac_update_slo=
+t_timing':
+drivers/staging/brcm80211/brcmsmac/bmac.c:186:3: error: invalid operands to=
+ binary ^ (have 'volatile u16 *' and 'int')
+drivers/staging/brcm80211/brcmsmac/bmac.c:186:3: error: invalid operands to=
+ binary ^ (have 'volatile u16 *' and 'int')
+drivers/staging/brcm80211/brcmsmac/bmac.c:190:3: error: invalid operands to=
+ binary ^ (have 'volatile u16 *' and 'int')
+drivers/staging/brcm80211/brcmsmac/bmac.c:190:3: error: invalid operands to=
+ binary ^ (have 'volatile u16 *' and 'int')
+drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_setband_inact':
+drivers/staging/brcm80211/brcmsmac/bmac.c:234:2: error: invalid operands to=
+ binary ^ (have 'volatile u32 *' and 'int')
+drivers/staging/brcm80211/brcmsmac/bmac.c:234:2: error: invalid operands to=
+ binary ^ (have 'volatile u32 *' and 'int')
+drivers/staging/brcm80211/brcmsmac/bmac.c: In function 'wlc_dpc':
+drivers/staging/brcm80211/brcmsmac/bmac.c:311:6: error: invalid operands to=
+ binary ^ (have 'volatile u32 *' and 'int')
+
+(and lots more)
+
+Also in several other files in drivers/staging/brcm80211/
+
+Also:
+
+drivers/staging/comedi/drivers.c: In function 'comedi_buf_alloc':
+drivers/staging/comedi/drivers.c:505:37: error: 'PAGE_KERNEL_NOCACHE' undec=
+lared (first use in this function)
+In file included from drivers/staging/comedi/drivers/addi_apci_035.c:7:0:
+drivers/staging/comedi/drivers/addi-data/addi_common.c: In function 'i_ADDI=
+_Attach':
+drivers/staging/comedi/drivers/addi-data/addi_common.c:2765:7: error: impli=
+cit declaration of function 'virt_to_bus'
+
+(Also several other occurrences of that one)
+
+I left this build broken, but these should be fixed if you are going to
+remove STAGING_EXCLUDE_BUILD.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__9_Jun_2011_16_58_08_+1000_nb8S27KVHF8LEm4n
+--Signature=_Thu__9_Jun_2011_17_27_45_+1000_V0D5c.8UiXL+VFtg
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN8G8AAAoJEDMEi1NhKgbsw3oIAJo1Ae3Q6dWJXnXOpFzHzUrI
-O55FlTC5xpBFMVnxRZnIGDeCWN9LdzWntzcIJmK/iUwuvhLOT531KngoOOfFLGDz
-m9/GKY+OEEbDigmqfKyNMe9Y2tRsT5lannIi/MObh1tNO61+e9pGtIqicpn4Ad7r
-ZuPKh+0EkJ1ubslz+OsN8c9t4joq3hCK9yqfcfNKqFhC/XrTX5ubhjJ2HjqgfXgx
-q6QaVT3pyIOyqQF78sQfBvrWYGbk+M9crUkBjF4nCT8E/ZP2g7XFCStft5LiSUQN
-p0SAHlSvscbLUq6iRQ7FrLc44zZnUrf5Ekugadhs5qbNZz3Ldjmvg0svbuj3InE=
-=s27Q
+iQEcBAEBAgAGBQJN8HXxAAoJEDMEi1NhKgbsE2UIAJCKz4USINxHE2d6C7ofvWh1
+nr/TpKczn8NUR9Fe3CI9UEw9TbsnWuO43Gxmr34Xtqev4XaZuWmETTYCFqBqA/Fz
+TUqmdA0ilDTwTjLlKBmBtmgGV8LvoEmv1NgeiZbiKYfI+qepdSIvSEftjSHDcL3Y
+IX4SjeE32hNcP0mGpxJ1deeqLlBq0U/lM6LrMyY9Xr7LLojicjgePWDtzeTAbzkS
+zAvIpuIwVIGOe4IczP2oLFwnB+vtBFefiWJfMbLFjzO7tVGEZ1wcbjixBYi+K2jB
+MjA8ixQ3Fg+guzHsfkvmutDtYX062sqcyoHLkLG8CtVBPrLdaWqNaBrF7iOiV/4=
+=gtUL
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__9_Jun_2011_16_58_08_+1000_nb8S27KVHF8LEm4n--
+--Signature=_Thu__9_Jun_2011_17_27_45_+1000_V0D5c.8UiXL+VFtg--
