@@ -1,45 +1,76 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Thu, 9 Jun 2011 12:29:29 -0700
-Message-ID: <20110609192929.GA12121@kroah.com>
-References: <20110609145657.96fae0d0.sfr@canb.auug.org.au>
- <7CA9E653-DABC-470C-BCA6-905D6EBF9283@kroah.com>
- <20110609153904.e602b317.sfr@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: linux-next: Tree for June 8 (docbook/media)
+Date: Thu, 09 Jun 2011 16:43:31 -0300
+Message-ID: <4DF12263.3070900@redhat.com>
+References: <20110608161046.4ad95776.sfr@canb.auug.org.au> <20110608125243.e63a07fc.randy.dunlap@oracle.com> <4DF11E15.5030907@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4.smtp.messagingengine.com ([66.111.4.28]:34516 "EHLO
-	out4.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754696Ab1FIT3e (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jun 2011 15:29:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20110609153904.e602b317.sfr@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:21485 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754388Ab1FITnk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Jun 2011 15:43:40 -0400
+In-Reply-To: <4DF11E15.5030907@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Jun 09, 2011 at 03:39:04PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+Em 09-06-2011 16:25, Mauro Carvalho Chehab escreveu:
+> Em 08-06-2011 16:52, Randy Dunlap escreveu:
+>> The DocBook/media/Makefile seems to be causing too much noise:
+>>
+>> ls: cannot access linux-next-20110608/Documentation/DocBook/media/*/*.gif: No such file or directory
+>> ls: cannot access linux-next-20110608/Documentation/DocBook/media/*/*.png: No such file or directory
+>>
+>> Maybe the cleanmediadocs target could be made silent?
 > 
-> On Wed, 8 Jun 2011 22:17:55 -0700 Greg K-H <greg@kroah.com> wrote:
-> >
-> > Sorry, this is something that Linus asked for and will be going to him
-> > tomorrow with the rest of the staging-linus branch.
+> I'll take a look on it. 
 > 
-> Yeah, I remember the discussion, just not a conclusion.  At least the
-> x86_64 allmodconfig builds worked before I merged the net tree, so that is
-> something.
+> FYI, The next build will probably be noisier, as it is now pointing to some 
+> documentation gaps at the DVB API. Those gaps should take a longer time to fix, 
+> as we need to discuss upstream about what should be done with those API's,
+> that seems to be abandoned upstream (only one legacy DVB driver uses them).
+> However, I was told that some out-of-tree drivers and some drivers under development
+> are using them.
 > 
-> The powerpc allyesconfig build is going to be interesting :-(
+> So, I intend to wait until the next merge window before either dropping those 
+> legacy API specs (or moving them to a deprecated section) or to merge those
+> out-of-tree drivers, with the proper documentation updates.
 > 
-> You might like to check the build results at
-> http://kisskb.ellerman.id.au/kisskb/branch/9/ sometime tomorrow.  Or
-> point your janitors at it :-)
+>> also, where is the mediaindexdocs target defined?
+> 
+> Thanks for noticing it. We don't need this target anymore. I'll write a patch
+> removing it.
 
-I don't see any failures in the staging tree in the powerpc allyesconfig
-build, so all must be good :)
+This patch should remove the undesired noise.
 
-thanks,
+commit 75125b9d44456e0cf2d1fbb72ae33c13415299d1
+Author: Mauro Carvalho Chehab <mchehab@redhat.com>
+Date:   Thu Jun 9 16:34:29 2011 -0300
 
-greg k-h
+    [media] DocBook: Don't be noisy at make cleanmediadocs
+    
+    While here, remove the mediaindexdocs from PHONY.
+    
+    Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+    Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+diff --git a/Documentation/DocBook/media/Makefile b/Documentation/DocBook/media/Makefile
+index 1e909c2..b7627e1 100644
+--- a/Documentation/DocBook/media/Makefile
++++ b/Documentation/DocBook/media/Makefile
+@@ -21,10 +21,10 @@ MEDIA_TEMP =  media-entities.tmpl \
+ IMGFILES := $(addprefix $(MEDIA_OBJ_DIR)/media/, $(notdir $(shell ls $(MEDIA_SRC_DIR)/*/*.gif $(MEDIA_SRC_DIR)/*/*.png)))
+ GENFILES := $(addprefix $(MEDIA_OBJ_DIR)/, $(MEDIA_TEMP))
+ 
+-PHONY += cleanmediadocs mediaindexdocs
++PHONY += cleanmediadocs
+ 
+ cleanmediadocs:
+-	-@rm `find $(MEDIA_OBJ_DIR) -type l` $(GENFILES) $(IMGFILES)
++	-@rm `find $(MEDIA_OBJ_DIR) -type l` $(GENFILES) $(IMGFILES) 2>/dev/null
+ 
+ $(obj)/media_api.xml: $(GENFILES) FORCE
+ 
