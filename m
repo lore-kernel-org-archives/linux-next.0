@@ -1,63 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Thu, 9 Jun 2011 15:39:04 +1000
-Message-ID: <20110609153904.e602b317.sfr@canb.auug.org.au>
-References: <20110609145657.96fae0d0.sfr@canb.auug.org.au>
-	<7CA9E653-DABC-470C-BCA6-905D6EBF9283@kroah.com>
+Subject: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Thu, 9 Jun 2011 16:58:04 +1000
+Message-ID: <20110609165804.2e96bb77.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__9_Jun_2011_15_39_04_+1000_6kpAXfJ2tYt0zzV1"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58883 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48689 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750895Ab1FIFjM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Jun 2011 01:39:12 -0400
-In-Reply-To: <7CA9E653-DABC-470C-BCA6-905D6EBF9283@kroah.com>
+	id S1752633Ab1FIG6I (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Jun 2011 02:58:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg K-H <greg@kroah.com>
-Cc: David Miller <davem@davemloft.net>, "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>
-
---Signature=_Thu__9_Jun_2011_15_39_04_+1000_6kpAXfJ2tYt0zzV1
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arjan Mels <arjan.mels@gmx.net>, matt mooney <mfm@muteddisk.com>
 
 Hi Greg,
 
-On Wed, 8 Jun 2011 22:17:55 -0700 Greg K-H <greg@kroah.com> wrote:
->
-> Sorry, this is something that Linus asked for and will be going to him
-> tomorrow with the rest of the staging-linus branch.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/usbip/stub_dev.c between commit d3ac07788017 ("staging:
+usbip: bugfix prevent driver unbind") from the staging.current tree and
+commit d012c2a5aca1 ("staging: usbip: stub_dev.c: move stub_driver
+definition and update driver name") from the staging tree.
 
-Yeah, I remember the discussion, just not a conclusion.  At least the
-x86_64 allmodconfig builds worked before I merged the net tree, so that is
-something.
-
-The powerpc allyesconfig build is going to be interesting :-(
-
-You might like to check the build results at
-http://kisskb.ellerman.id.au/kisskb/branch/9/ sometime tomorrow.  Or
-point your janitors at it :-)
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__9_Jun_2011_15_39_04_+1000_6kpAXfJ2tYt0zzV1
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN8Fx4AAoJEDMEi1NhKgbsqtQH/2q4/o65CQRamoGjKezeBIzo
-AvQk+kdnGwpdoquIa1/BS6CzFiNV8xZkiO1DK4JyuRpLo/jOd4YoQJND3PZgH0ls
-S0DviiVrqzh5nZFKf4u1hPayt5nMTpVvBCgpo3XueRRIcHnKpyMFAOEDv2Lm14FZ
-y25u1AovA1AIsSBbQ3KaJprfa2ffVMVlO4JajVvU+78W7831/GrRE0cmZShhfarZ
-aBHPNBO1a4uS6Pg6NMK6UtkiZhuvufZBRu5Pybq2pWYC8ndgcyvkFy4wqbM6JBPw
-ucaEASj/ssiWNlD7vR1C/DH8rSWqq/+u7lhhimOCHRoi88C0iBje+JZOfXSi5Ks=
-=omz4
------END PGP SIGNATURE-----
-
---Signature=_Thu__9_Jun_2011_15_39_04_+1000_6kpAXfJ2tYt0zzV1--
+diff --cc drivers/staging/usbip/stub_dev.c
+index 8cbea42,e26b2ee..0000000
+--- a/drivers/staging/usbip/stub_dev.c
++++ b/drivers/staging/usbip/stub_dev.c
+@@@ -546,19 -524,9 +524,28 @@@ static void stub_disconnect(struct usb_
+  	}
+  }
+  
+ +/* 
+ + * Presence of pre_reset and post_reset prevents the driver from being unbound
+ + * when the device is being reset
+ + */
+ + 
+ +int stub_pre_reset(struct usb_interface *interface)
+ +{
+ +	dev_dbg(&interface->dev, "pre_reset\n");
+ +	return 0;
+ +}
+ +
+ +int stub_post_reset(struct usb_interface *interface)
+ +{
+ +	dev_dbg(&interface->dev, "post_reset\n");
+ +	return 0;
+ +}
+++
++ struct usb_driver stub_driver = {
++ 	.name		= "usbip-host",
++ 	.probe		= stub_probe,
++ 	.disconnect	= stub_disconnect,
++ 	.id_table	= stub_table,
+++	.pre_reset	= stub_pre_reset,
+++	.post_reset	= stub_post_reset,
++ };
