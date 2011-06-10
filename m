@@ -1,48 +1,50 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Fri, 10 Jun 2011 22:28:03 +0200
-Message-ID: <BANLkTi=fn1qxcJGs7Ngag6ph2uMECiyWLg@mail.gmail.com>
-References: <20110609145657.96fae0d0.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ related)
+Date: Fri, 10 Jun 2011 15:34:23 -0700
+Message-ID: <20110610223423.GB15868@kroah.com>
+References: <20110609172745.dfd3a298.sfr@canb.auug.org.au>
+ <20110609184127.GA2760@kroah.com>
+ <20110609192243.GA3980@kroah.com>
+ <20110610160548.529797c7.sfr@canb.auug.org.au>
+ <20110610160938.cd01c408.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:40679 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757900Ab1FJU2G convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Jun 2011 16:28:06 -0400
-In-Reply-To: <20110609145657.96fae0d0.sfr@canb.auug.org.au>
+Received: from out4.smtp.messagingengine.com ([66.111.4.28]:36628 "EHLO
+	out4.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758126Ab1FJWfu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 10 Jun 2011 18:35:50 -0400
+Content-Disposition: inline
+In-Reply-To: <20110610160938.cd01c408.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Alexey Dobriyan <adobriyan@gmail.com>
+Cc: brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On Thu, Jun 9, 2011 at 06:56, Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
-> I assume that this is fallout from commit a6b7a407865a ("net: remove
-> interrupt.h inclusion from netdevice.h").
+On Fri, Jun 10, 2011 at 04:09:38PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Fri, 10 Jun 2011 16:05:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > No, I still get these:
+> > 
+> > In file included from drivers/staging/comedi/drivers/addi_apci_035.c:7:0:
+> > drivers/staging/comedi/drivers/addi-data/addi_common.c: In function 'i_ADDI_Attach':
+> > drivers/staging/comedi/drivers/addi-data/addi_common.c:2765:7: error: implicit declaration of function 'virt_to_bus'
+> > 
+> > virt_to_bus is only defined for 32 bit powerpc (not 64 bit) (and maybe
+> > not at all on some architectures e.g. sparc).
+> > 
+> > From Documentation/DMA-API-HOWTO.txt:
+> > "All drivers should be using these interfaces with no exceptions.  It
+> > is planned to completely remove virt_to_bus() and bus_to_virt() as
+> > they are entirely deprecated.  Some ports already do not provide these
+> > as it is impossible to correctly support them."
+> 
+> Drivers that use virt_to_bus should Kconfig depend on VIRT_TO_BUS.
 
-Ah, that's were the failures on m68k come from:
-http://kisskb.ellerman.id.au/kisskb/buildresult/4222666/
-http://kisskb.ellerman.id.au/kisskb/buildresult/4223000/
+Ah, I missed that, sorry.  I'll go make that change as well.
 
-My first bisection between two successive versions of linux-next failed=
-, but
-the second one between linus and linux-next just finished and points
-to that commit.
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+greg k-h
