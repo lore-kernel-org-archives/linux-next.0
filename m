@@ -1,77 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-lpae tree with the arm tree
-Date: Fri, 10 Jun 2011 10:52:55 +1000
-Message-ID: <20110610105255.3105eef2.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (staging related)
+Date: Fri, 10 Jun 2011 16:05:48 +1000
+Message-ID: <20110610160548.529797c7.sfr@canb.auug.org.au>
+References: <20110609172745.dfd3a298.sfr@canb.auug.org.au>
+	<20110609184127.GA2760@kroah.com>
+	<20110609192243.GA3980@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__10_Jun_2011_16_05_48_+1000_DYUVsR8WAGExXXZ."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47447 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45280 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756060Ab1FJAxC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Jun 2011 20:53:02 -0400
+	id S1751556Ab1FJGGE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 10 Jun 2011 02:06:04 -0400
+In-Reply-To: <20110609192243.GA3980@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Greg KH <greg@kroah.com>
+Cc: brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-Hi Catalin,
+--Signature=_Fri__10_Jun_2011_16_05_48_+1000_DYUVsR8WAGExXXZ.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the arm-lpae tree got a conflict in
-arch/arm/mm/context.c between commit 07989b7ad63a ("Revert "ARM: 6943/1:
-mm: use TTBR1 instead of reserved context ID"") from the arm tree and
-commit 21fa7e3ea279 ("ARM: LPAE: Add context switching support") from the
-arm-lpae tree.
+Hi Greg,
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
--- 
+On Thu, 9 Jun 2011 12:22:43 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> On Thu, Jun 09, 2011 at 11:41:27AM -0700, Greg KH wrote:
+> > > Also in several other files in drivers/staging/brcm80211/
+> > >=20
+> > > Also:
+> > >=20
+> > > drivers/staging/comedi/drivers.c: In function 'comedi_buf_alloc':
+> > > drivers/staging/comedi/drivers.c:505:37: error: 'PAGE_KERNEL_NOCACHE'=
+ undeclared (first use in this function)
+> > > In file included from drivers/staging/comedi/drivers/addi_apci_035.c:=
+7:0:
+> > > drivers/staging/comedi/drivers/addi-data/addi_common.c: In function '=
+i_ADDI_Attach':
+> > > drivers/staging/comedi/drivers/addi-data/addi_common.c:2765:7: error:=
+ implicit declaration of function 'virt_to_bus'
+> > >=20
+> > > (Also several other occurrences of that one)
+> >=20
+> > I'll fix this up, it looks just like a #include that needs to be added.
+>=20
+> I've fixed all of these up, thanks for reporting them.
+
+No, I still get these:
+
+In file included from drivers/staging/comedi/drivers/addi_apci_035.c:7:0:
+drivers/staging/comedi/drivers/addi-data/addi_common.c: In function 'i_ADDI=
+_Attach':
+drivers/staging/comedi/drivers/addi-data/addi_common.c:2765:7: error: impli=
+cit declaration of function 'virt_to_bus'
+
+virt_to_bus is only defined for 32 bit powerpc (not 64 bit) (and maybe
+not at all on some architectures e.g. sparc).
+
+=46rom Documentation/DMA-API-HOWTO.txt:
+"All drivers should be using these interfaces with no exceptions.  It
+is planned to completely remove virt_to_bus() and bus_to_virt() as
+they are entirely deprecated.  Some ports already do not provide these
+as it is impossible to correctly support them."
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mm/context.c
-index b0ee9ba,2dff1cf..0000000
---- a/arch/arm/mm/context.c
-+++ b/arch/arm/mm/context.c
-@@@ -22,11 -22,37 +22,34 @@@ unsigned int cpu_last_asid = ASID_FIRST
-  DEFINE_PER_CPU(struct mm_struct *, current_mm);
-  #endif
-  
-+ #ifdef CONFIG_ARM_LPAE
-+ static void cpu_set_reserved_ttbr0(void)
-+ {
-+ 	unsigned long ttbl = __pa(swapper_pg_dir);
-+ 	unsigned long ttbh = 0;
-+ 
-+ 	/*
-+ 	 * Set TTBR0 to swapper_pg_dir. Note that swapper_pg_dir only contains
-+ 	 * global entries so the ASID value is not relevant.
-+ 	 */
-+ 	asm(
-+ 	"	mcrr	p15, 0, %0, %1, c2		@ set TTBR0\n"
-+ 	:
-+ 	: "r" (ttbl), "r" (ttbh));
-+ }
-+ #else
-+ static void cpu_set_reserved_ttbr0(void)
-+ {
- -	u32 ttb;
- -
- -	/* Copy TTBR1 into TTBR0 */
- -	asm volatile(
- -	"	mrc	p15, 0, %0, c2, c0, 1		@ read TTBR1\n"
- -	"	mcr	p15, 0, %0, c2, c0, 0		@ set TTBR0\n"
- -	: "=r" (ttb));
-++	/* set the reserved ASID before flushing the TLB */
-++	asm("mcr	p15, 0, %0, c13, c0, 1\n" : : "r" (0));
-+ }
-+ #endif
-+ 
-  /*
-   * We fork()ed a process, and we need a new context for the child
- - * to run in.
- + * to run in.  We reserve version 0 for initial tasks so we will
- + * always allocate an ASID. The ASID 0 is reserved for the TTBR
- + * register changing sequence.
-   */
-  void __init_new_context(struct task_struct *tsk, struct mm_struct *mm)
-  {
+--Signature=_Fri__10_Jun_2011_16_05_48_+1000_DYUVsR8WAGExXXZ.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN8bQ8AAoJEDMEi1NhKgbsA1oH/2db3MrLp+uo+NKJji4Rzydk
+c4+0DUIiYbI7rHWVJK98/vfEdEnQbvT/Carl2ep6sJPXWgn0CH/PqlyVrzmH6Atd
+ixQsv6RhEwnYrzlZV4opUZ6CKNXgyYcKXSAFV9F2kXxKgJ2BI1sNUSHQpoH4nAM4
+Zr/OqtCzfVzCTcEctkuZ3Q3jU6nYY/jFaVnwM6nensnhY8ZzXGsmv30xNT8QfMY9
+iGeV7zf+NOzy5gRhPMvVbhxI3ghTVbfDy1OmKjAAM7Z71+pXjumDL9WnamL7ASDc
+VkKC0XiJ2GtwvuRyclDH/oET9mjGEALtDMO369T+sgMZ6/j9kJOzwRFRDW/s2zY=
+=5VPQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__10_Jun_2011_16_05_48_+1000_DYUVsR8WAGExXXZ.--
