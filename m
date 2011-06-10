@@ -1,96 +1,48 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: Tree for June 8 (docbook/media)
-Date: Fri, 10 Jun 2011 09:47:16 -0300
-Message-ID: <4DF21254.6090106@redhat.com>
-References: <20110608161046.4ad95776.sfr@canb.auug.org.au> <20110608125243.e63a07fc.randy.dunlap@oracle.com> <4DF11E15.5030907@infradead.org> <4DF12263.3070900@redhat.com> <4DF12DD1.7060606@oracle.com> <4DF1581E.8050308@redhat.com> <4DF1593A.6080306@oracle.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: linux-next: manual merge of the arm-lpae tree with the arm tree
+Date: Fri, 10 Jun 2011 15:43:27 +0100
+Message-ID: <20110610144326.GC18133@e102109-lin.cambridge.arm.com>
+References: <20110610105255.3105eef2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:6568 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756011Ab1FJMr0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 10 Jun 2011 08:47:26 -0400
-In-Reply-To: <4DF1593A.6080306@oracle.com>
+Received: from service87.mimecast.com ([94.185.240.25]:36357 "HELO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753421Ab1FJOne convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Jun 2011 10:43:34 -0400
+In-Reply-To: <20110610105255.3105eef2.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <rmk@arm.linux.org.uk>
 
-Hi Randy,
+On Fri, Jun 10, 2011 at 01:52:55AM +0100, Stephen Rothwell wrote:
+> Today's linux-next merge of the arm-lpae tree got a conflict in
+> arch/arm/mm/context.c between commit 07989b7ad63a ("Revert "ARM: 6943/1:
+> mm: use TTBR1 instead of reserved context ID"") from the arm tree and
+> commit 21fa7e3ea279 ("ARM: LPAE: Add context switching support") from the
+> arm-lpae tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary.
 
-Em 09-06-2011 20:37, Randy Dunlap escreveu:
->=20
-> Big hint:  I see these errors not during "make htmldocs" but during a=
- kernel code build
-> when CONFIG_BUILD_DOCSRC=3Dy.
->=20
-> Sorry, I should have mentioned this earlier.
+Thanks for this. I replaced the conflicting commit (21fa7e4e ARM: LPAE:
+Add context switching support) with an older version (prior to patch
+6943/1 that Russell reverted). The cpu_set_reserved_ttbr0() is now
+called cpu_set_asid() and does something different.
 
-I couldn't reach any troubles there. Documentation build is stopping ea=
-rlier.
-I'm using the -next tree for 20110610:
+In my for-next branch I also included the patches that Russell pushed
+via his tree to be able to solve the conflicts:
 
-$ make defconfig
-$ make CONFIG_BUILD_DOCSRC=3Dy -j 16 Documentation/
+51b5dba Revert "ARM: 6943/1: mm: use TTBR1 instead of reserved context ID"
+25194f6 Revert "ARM: 6944/1: mm: allow ASID 0 to be allocated to tasks"
 
-Documentation/networking/timestamping/timestamping.c:45:30: error: linu=
-x/net_tstamp.h: No such file or directory
-Documentation/networking/timestamping/timestamping.c: In function =91ma=
-in=92:
-Documentation/networking/timestamping/timestamping.c:331: error: storag=
-e size of =91hwconfig=92 isn=92t known
-Documentation/networking/timestamping/timestamping.c:331: error: storag=
-e size of =91hwconfig_requested=92 isn=92t known
-Documentation/networking/timestamping/timestamping.c:355: error: =91SOF=
-_TIMESTAMPING_TX_HARDWARE=92 undeclared (first use in this function)
-Documentation/networking/timestamping/timestamping.c:355: error: (Each =
-undeclared identifier is reported only once
-Documentation/networking/timestamping/timestamping.c:355: error: for ea=
-ch function it appears in.)
-Documentation/networking/timestamping/timestamping.c:357: error: =91SOF=
-_TIMESTAMPING_TX_SOFTWARE=92 undeclared (first use in this function)
-Documentation/networking/timestamping/timestamping.c:359: error: =91SOF=
-_TIMESTAMPING_RX_HARDWARE=92 undeclared (first use in this function)
-Documentation/networking/timestamping/timestamping.c:361: error: =91SOF=
-_TIMESTAMPING_RX_SOFTWARE=92 undeclared (first use in this function)
-Documentation/networking/timestamping/timestamping.c:363: error: =91SOF=
-_TIMESTAMPING_SOFTWARE=92 undeclared (first use in this function)
-Documentation/accounting/getdelays.c: In function =91main=92:
-Documentation/networking/timestamping/timestamping.c:365: error: =91SOF=
-_TIMESTAMPING_SYS_HARDWARE=92 undeclared (first use in this function)Do=
-cumentation/accounting/getdelays.c:525: error: =91TASKSTATS_TYPE_NULL=92=
- undeclared (first use in this function)
+and I removed from my branch:
 
-Documentation/accounting/getdelays.c:525: error: (Each undeclared ident=
-ifier is reported only once
-Documentation/accounting/getdelays.c:525: error: for each function it a=
-ppears in.)
-Documentation/networking/timestamping/timestamping.c:367: error: =91SOF=
-_TIMESTAMPING_RAW_HARDWARE=92 undeclared (first use in this function)
-Documentation/networking/timestamping/timestamping.c:387: error: =91HWT=
-STAMP_TX_ON=92 undeclared (first use in this function)
-Documentation/networking/timestamping/timestamping.c:387: error: =91HWT=
-STAMP_TX_OFF=92 undeclared (first use in this function)
-Documentation/networking/timestamping/timestamping.c:390: error: =91HWT=
-STAMP_FILTER_PTP_V1_L4_SYNC=92 undeclared (first use in this function)
-Documentation/networking/timestamping/timestamping.c:390: error: =91HWT=
-STAMP_FILTER_NONE=92 undeclared (first use in this function)
-Documentation/networking/timestamping/timestamping.c:331: warning: unus=
-ed variable =91hwconfig_requested=92
-Documentation/networking/timestamping/timestamping.c:331: warning: unus=
-ed variable =91hwconfig=92
-make[2]: *** [Documentation/accounting/getdelays] Error 1
-make[3]: *** [Documentation/networking/timestamping/timestamping] Error=
- 1
-make[1]: *** [Documentation/accounting] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make[2]: *** [Documentation/networking/timestamping] Error 2
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [Documentation/networking] Error 2
-make: *** [Documentation/] Error 2
+b488121 ARM: mm: fix racy ASID rollover broadcast on SMP platforms
 
-Could you please send me your .config?
+Hopefully there shouldn't be further conflicts in tomorrow's -next tree.
 
-Thanks,
-Mauro
+-- 
+Catalin
