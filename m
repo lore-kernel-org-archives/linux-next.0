@@ -1,51 +1,48 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for May 26 (drivers/base/node.c)
-Date: Fri, 10 Jun 2011 12:53:38 -0700
-Message-ID: <4DF27642.1080208@oracle.com>
-References: <20110526163941.7dfcad1a.sfr@canb.auug.org.au> <20110526120121.db0506de.randy.dunlap@oracle.com> <20110610084405.c34a166d.randy.dunlap@oracle.com> <20110610183108.GB10575@kroah.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Fri, 10 Jun 2011 22:28:03 +0200
+Message-ID: <BANLkTi=fn1qxcJGs7Ngag6ph2uMECiyWLg@mail.gmail.com>
+References: <20110609145657.96fae0d0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110610183108.GB10575@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:40679 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757900Ab1FJU2G convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Jun 2011 16:28:06 -0400
+In-Reply-To: <20110609145657.96fae0d0.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Alexey Dobriyan <adobriyan@gmail.com>
 
-On 06/10/11 11:31, Greg KH wrote:
-> On Fri, Jun 10, 2011 at 08:44:05AM -0700, Randy Dunlap wrote:
->> On Thu, 26 May 2011 12:01:21 -0700 Randy Dunlap wrote:
->>
->>> On Thu, 26 May 2011 16:39:41 +1000 Stephen Rothwell wrote:
->>>
->>>> Hi all,
->>>>
->>>> [The kernel.org mirroring is being slow today]
->>>
->>>
->>> when CONFIG_PROC_FS is not enabled:
->>>
->>> drivers/built-in.o: In function `node_read_vmstat':
->>> node.c:(.text+0x56ffa): undefined reference to `vmstat_text'
->>
->> Hi Greg,
->>
->> How do you want this build problem fixed?  (still around in
->> linux-next-20110610)
-> 
-> A patch would be great.
+On Thu, Jun 9, 2011 at 06:56, Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+> I assume that this is fallout from commit a6b7a407865a ("net: remove
+> interrupt.h inclusion from netdevice.h").
 
-Yes, I was looking for general suggestions about such a patch,
-but I'll just submit one and you can comment on it.
+Ah, that's were the failures on m68k come from:
+http://kisskb.ellerman.id.au/kisskb/buildresult/4222666/
+http://kisskb.ellerman.id.au/kisskb/buildresult/4223000/
 
-> But honestly, I really find that CONFIG_PROC_FS disabled to not be a
-> valid configuration anymore.  I don't know anyone who can successfully
-> run a machine in that manner, do you?
+My first bisection between two successive versions of linux-next failed=
+, but
+the second one between linus and linux-next just finished and points
+to that commit.
 
-then why don't you submit a patch to remove that config option?
-We could use fewer config options IMO.
+Gr{oetje,eeting}s,
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
