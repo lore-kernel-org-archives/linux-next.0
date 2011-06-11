@@ -1,50 +1,74 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- related)
-Date: Fri, 10 Jun 2011 15:34:23 -0700
-Message-ID: <20110610223423.GB15868@kroah.com>
-References: <20110609172745.dfd3a298.sfr@canb.auug.org.au>
- <20110609184127.GA2760@kroah.com>
- <20110609192243.GA3980@kroah.com>
- <20110610160548.529797c7.sfr@canb.auug.org.au>
- <20110610160938.cd01c408.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Sat, 11 Jun 2011 14:26:48 +1000
+Message-ID: <20110611142648.bf71b026.sfr@canb.auug.org.au>
+References: <20110609145657.96fae0d0.sfr@canb.auug.org.au>
+	<BANLkTi=fn1qxcJGs7Ngag6ph2uMECiyWLg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__11_Jun_2011_14_26_48_+1000_1qHZEHXaj31N+mfP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4.smtp.messagingengine.com ([66.111.4.28]:36628 "EHLO
-	out4.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1758126Ab1FJWfu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 10 Jun 2011 18:35:50 -0400
-Content-Disposition: inline
-In-Reply-To: <20110610160938.cd01c408.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36190 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751057Ab1FKE1C (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 11 Jun 2011 00:27:02 -0400
+In-Reply-To: <BANLkTi=fn1qxcJGs7Ngag6ph2uMECiyWLg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Alexey Dobriyan <adobriyan@gmail.com>
 
-On Fri, Jun 10, 2011 at 04:09:38PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Fri, 10 Jun 2011 16:05:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > No, I still get these:
-> > 
-> > In file included from drivers/staging/comedi/drivers/addi_apci_035.c:7:0:
-> > drivers/staging/comedi/drivers/addi-data/addi_common.c: In function 'i_ADDI_Attach':
-> > drivers/staging/comedi/drivers/addi-data/addi_common.c:2765:7: error: implicit declaration of function 'virt_to_bus'
-> > 
-> > virt_to_bus is only defined for 32 bit powerpc (not 64 bit) (and maybe
-> > not at all on some architectures e.g. sparc).
-> > 
-> > From Documentation/DMA-API-HOWTO.txt:
-> > "All drivers should be using these interfaces with no exceptions.  It
-> > is planned to completely remove virt_to_bus() and bus_to_virt() as
-> > they are entirely deprecated.  Some ports already do not provide these
-> > as it is impossible to correctly support them."
-> 
-> Drivers that use virt_to_bus should Kconfig depend on VIRT_TO_BUS.
+--Signature=_Sat__11_Jun_2011_14_26_48_+1000_1qHZEHXaj31N+mfP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ah, I missed that, sorry.  I'll go make that change as well.
+Hi Geert,
 
-greg k-h
+On Fri, 10 Jun 2011 22:28:03 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
+> wrote:
+>
+> On Thu, Jun 9, 2011 at 06:56, Stephen Rothwell <sfr@canb.auug.org.au> wro=
+te:
+> > I assume that this is fallout from commit a6b7a407865a ("net: remove
+> > interrupt.h inclusion from netdevice.h").
+>=20
+> Ah, that's were the failures on m68k come from:
+> http://kisskb.ellerman.id.au/kisskb/buildresult/4222666/
+> http://kisskb.ellerman.id.au/kisskb/buildresult/4223000/
+
+Yep.
+
+> My first bisection between two successive versions of linux-next failed, =
+but
+
+Bisecting between successive linux-next versions is bound not to work.
+Bisection really only works between a commit and one of ist ancestors.
+
+> the second one between linus and linux-next just finished and points
+> to that commit.
+
+That is a much better bet.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__11_Jun_2011_14_26_48_+1000_1qHZEHXaj31N+mfP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN8u6IAAoJEDMEi1NhKgbsYj8IAJ34qlOZZKeU8JseUrn9rCjz
+LHJaIeP37ro53ead5jRwOSI3YBJtprBYlupFG/FvBd+R+/xojYFo70P2lZRmS/i2
+FjhsdZtL32KamWS73gmyqy3AeCqw5h1WvTZxE01E6l/xHQ7+6rwpgqO4g77R5nw4
+qRKrwYBuTiZsH/X5+U7Ro1VuwHpMMVarfA/zRkonffTAkZIVn7DrYv6OWucjP1a8
+aAFrUi6eL9ixotT6MzeiPvSaF4VGOVnhpqKILMvDt5y27Y/8ck8RVgatfMAWhShH
+fMfDvhN6/z+DQZ+QBYiz0B2rSzcoaGA+Klomby13vqUp4H3MfIHJ56EQHIEi81Q=
+=SGUd
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__11_Jun_2011_14_26_48_+1000_1qHZEHXaj31N+mfP--
