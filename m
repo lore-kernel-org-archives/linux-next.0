@@ -1,53 +1,28 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Sat, 11 Jun 2011 13:39:50 +0200
-Message-ID: <BANLkTinuDJNRDr9eAiyr4busLr4jiLvC1w@mail.gmail.com>
-References: <20110609145657.96fae0d0.sfr@canb.auug.org.au>
-	<BANLkTi=fn1qxcJGs7Ngag6ph2uMECiyWLg@mail.gmail.com>
-	<20110611142648.bf71b026.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -next] net/m68k: Include <linux/interrupt.h> where
+ needed
+Date: Sat, 11 Jun 2011 14:58:34 -0700 (PDT)
+Message-ID: <20110611.145834.2206118199013627704.davem@davemloft.net>
+References: <1307792335-9926-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110611142648.bf71b026.sfr@canb.auug.org.au>
+In-Reply-To: <1307792335-9926-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Alexey Dobriyan <adobriyan@gmail.com>
+To: geert@linux-m68k.org
+Cc: adobriyan@gmail.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Sat, Jun 11, 2011 at 06:26, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> On Fri, 10 Jun 2011 22:28:03 +0200 Geert Uytterhoeven <geert@linux-m6=
-8k.org> wrote:
->> My first bisection between two successive versions of linux-next fai=
-led, but
->
-> Bisecting between successive linux-next versions is bound not to work=
-=2E
-> Bisection really only works between a commit and one of ist ancestors=
-=2E
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sat, 11 Jun 2011 13:38:55 +0200
 
-Yeah, I should have known that...
+ ...
+> Introduced by commit a6b7a407865a ("net: remove interrupt.h inclusion from
+> netdevice.h").
+> 
+> Include <linux/interrupt.h> in the individual drivers to fix the build.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
->> the second one between linus and linux-next just finished and points
->> to that commit.
->
-> That is a much better bet.
-
-Patch has been sent.
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+Applied, thanks!
