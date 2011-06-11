@@ -1,68 +1,78 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for June 8 (docbook/media)
-Date: Sat, 11 Jun 2011 14:42:45 +1000
-Message-ID: <20110611144245.8b893302.sfr@canb.auug.org.au>
-References: <20110608161046.4ad95776.sfr@canb.auug.org.au>
-	<20110608125243.e63a07fc.randy.dunlap@oracle.com>
-	<4DF11E15.5030907@infradead.org>
-	<4DF12263.3070900@redhat.com>
-	<4DF12DD1.7060606@oracle.com>
-	<4DF1581E.8050308@redhat.com>
-	<4DF1593A.6080306@oracle.com>
-	<4DF21254.6090106@redhat.com>
-	<4DF23271.7070407@oracle.com>
-	<4DF235F0.9080209@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH -next] net/m68k: Include <linux/interrupt.h> where needed
+Date: Sat, 11 Jun 2011 13:38:55 +0200
+Message-ID: <1307792335-9926-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__11_Jun_2011_14_42_45_+1000_fvr6BalpxVt.SzBn"
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <4DF235F0.9080209@redhat.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from jacques.telenet-ops.be ([195.130.132.50]:53708 "EHLO
+	jacques.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754470Ab1FKLi7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 11 Jun 2011 07:38:59 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>, David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
---Signature=_Sat__11_Jun_2011_14_42_45_+1000_fvr6BalpxVt.SzBn
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+arch/m68k/emu/nfeth.c: In function =E2=80=98nfeth_init=E2=80=99:
+arch/m68k/emu/nfeth.c:243: error: implicit declaration of function =E2=80=
+=98request_irq=E2=80=99
+arch/m68k/emu/nfeth.c:243: error: =E2=80=98IRQF_SHARED=E2=80=99 undecla=
+red (first use in this function)
+arch/m68k/emu/nfeth.c:243: error: (Each undeclared identifier is report=
+ed only once
+arch/m68k/emu/nfeth.c:243: error: for each function it appears in.)
+arch/m68k/emu/nfeth.c: In function =E2=80=98nfeth_cleanup=E2=80=99:
+arch/m68k/emu/nfeth.c:266: error: implicit declaration of function =E2=80=
+=98free_irq=E2=80=99
+drivers/net/apne.c: In function =E2=80=98apne_probe=E2=80=99:
+drivers/net/apne.c:189: error: implicit declaration of function =E2=80=98=
+free_irq=E2=80=99
+drivers/net/apne.c: In function =E2=80=98apne_probe1=E2=80=99:
+drivers/net/apne.c:317: error: implicit declaration of function =E2=80=98=
+request_irq=E2=80=99
+drivers/net/apne.c:317: error: =E2=80=98IRQF_SHARED=E2=80=99 undeclared=
+ (first use in this function)
+drivers/net/apne.c:317: error: (Each undeclared identifier is reported =
+only once
+drivers/net/apne.c:317: error: for each function it appears in.)
 
-Hi Mauro,
+Introduced by commit a6b7a407865a ("net: remove interrupt.h inclusion f=
+rom
+netdevice.h").
 
-On Fri, 10 Jun 2011 12:19:12 -0300 Mauro Carvalho Chehab <mchehab@redhat.co=
-m> wrote:
->
-> PS.: A full build against next is broken:
-> $ make -j 27
->   CHK     include/linux/version.h
->   CHK     include/generated/utsrelease.h
->   CALL    scripts/checksyscalls.sh
->   CHK     include/generated/compile.h
->   CC      arch/x86/lib/memmove_64.o
-> gcc: arch/x86/lib/memmove_64.c: No such file or directory
-> gcc: no input files
+Include <linux/interrupt.h> in the individual drivers to fix the build.
 
-Was that a build starting from a clean (object) tree?
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ arch/m68k/emu/nfeth.c |    1 +
+ drivers/net/apne.c    |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
+diff --git a/arch/m68k/emu/nfeth.c b/arch/m68k/emu/nfeth.c
+index 8b6e201..3c55312 100644
+--- a/arch/m68k/emu/nfeth.c
++++ b/arch/m68k/emu/nfeth.c
+@@ -16,6 +16,7 @@
+=20
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
++#include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <asm/natfeat.h>
+ #include <asm/virtconvert.h>
+diff --git a/drivers/net/apne.c b/drivers/net/apne.c
+index 2fe60f1..5477373 100644
+--- a/drivers/net/apne.c
++++ b/drivers/net/apne.c
+@@ -36,6 +36,7 @@
+ #include <linux/delay.h>
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
++#include <linux/interrupt.h>
+ #include <linux/jiffies.h>
+=20
+ #include <asm/system.h>
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__11_Jun_2011_14_42_45_+1000_fvr6BalpxVt.SzBn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN8vJFAAoJEDMEi1NhKgbsPyYH/jHFMMRsP68jJfGuNQA99zCN
-10B/tRGHKw6Rua+cOpIhhvPeNQXFTWgmlcnxE00NrAr5Iao8itj/jKxhxW3rhxvN
-0HvytGBn+tB+eRFxYqQlfSAVpfSiY1kO0GhmukneSHtpzwpY/3zriNN2ravJlpVo
-RD7O3GGDHMQ9UrN2DR6n0Da8wgt6kVPvvGLr0qeVO0zaAnyq10s7oLb9th9GSqYW
-SRS+67TlDu6O9Kh1te3N2MIQ2EYQEnFzVJ+BTUINVHrCfFp16hXo5VkduTYb3pLb
-zfSqR3JyWHXNh7fWYOS/pqFXakQkF9rcrUFZyFG1hl8SgKhjsVpnzhhsRXmkjDI=
-=9PtD
------END PGP SIGNATURE-----
-
---Signature=_Sat__11_Jun_2011_14_42_45_+1000_fvr6BalpxVt.SzBn--
+1.7.0.4
