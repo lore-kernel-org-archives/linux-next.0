@@ -1,28 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] net/m68k: Include <linux/interrupt.h> where
- needed
-Date: Sat, 11 Jun 2011 14:58:34 -0700 (PDT)
-Message-ID: <20110611.145834.2206118199013627704.davem@davemloft.net>
-References: <1307792335-9926-1-git-send-email-geert@linux-m68k.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: No linux-next tree today (20110613)
+Date: Mon, 13 Jun 2011 13:14:02 +1000
+Message-ID: <20110613131402.fb93bb86.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1307792335-9926-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: geert@linux-m68k.org
-Cc: adobriyan@gmail.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__13_Jun_2011_13_14_02_+1000_H4JjQ8IxQv5JIDYB"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51884 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752609Ab1FMDOL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 12 Jun 2011 23:14:11 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sat, 11 Jun 2011 13:38:55 +0200
+--Signature=_Mon__13_Jun_2011_13_14_02_+1000_H4JjQ8IxQv5JIDYB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- ...
-> Introduced by commit a6b7a407865a ("net: remove interrupt.h inclusion from
-> netdevice.h").
-> 
-> Include <linux/interrupt.h> in the individual drivers to fix the build.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Due to our fine Queen Betty having a birthday :-)
 
-Applied, thanks!
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__13_Jun_2011_13_14_02_+1000_H4JjQ8IxQv5JIDYB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN9YB6AAoJEDMEi1NhKgbsQOUIAIHstReBWRYvc6tFnjWtwcgP
+bmp/DFqtFkDYr5ou2XNBEzMZ1H5+tdK9riuoJ4bJE6LE3RG+XtAnZFvFHcWU1Um6
+AskTo5FHgxkCS8av779GGoZlym8yztoxDiT9RNva7RqWu+enn8+n+NcV4b84vX0X
+ZH+nXbRnjukxCcS75Z9Ml04gY+SMQCp1F6ekv392SgwBJqsMSAX6rDkgozuIkOfN
+7dbP0vhKo0mdkZqF0JpIXxpNDO9PgdRXNqG5IZ3zVjsJkUvN0S31sN8hwDYtLGDO
+n/v7EikgxLVSmTBhlF1Fhv2yT/v35UzC7sJA3csaGfIHKyKE8izWOtyNPjqaM10=
+=2rQl
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__13_Jun_2011_13_14_02_+1000_H4JjQ8IxQv5JIDYB--
