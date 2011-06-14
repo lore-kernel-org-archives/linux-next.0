@@ -1,66 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 14 Jun 2011 13:43:07 +1000
-Message-ID: <20110614134307.6f5392db.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the  tree
+Date: Tue, 14 Jun 2011 14:25:42 +1000
+Message-ID: <20110614142542.c65a7540.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Jun_2011_13_43_07_+1000_oYlsO1pJ4LOW93Mv"
+ boundary="Signature=_Tue__14_Jun_2011_14_25_42_+1000_4D1q_xGO3vkVVtc5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37632 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34948 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751452Ab1FNDnS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Jun 2011 23:43:18 -0400
+	id S1750763Ab1FNEZv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Jun 2011 00:25:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Artem Bityutskiy <dedekind1@gmail.com>, Joe Perches <joe@perches.com>
 
---Signature=_Tue__14_Jun_2011_13_43_07_+1000_oYlsO1pJ4LOW93Mv
+--Signature=_Tue__14_Jun_2011_14_25_42_+1000_4D1q_xGO3vkVVtc5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jiri,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the trivial tree got a conflict in
+drivers/mtd/maps/pxa2xx-flash.c between commit 51fb8326bc12 ("mtd:
+pxa2xx-flash.c: use mtd_device_parse_register") from the l2-mtd tree and
+commit 28f65c11f2ff ("treewide: Convert uses of struct resource to
+resource_size(ptr)") from the trivial tree.
 
-sound/soc/soc-dapm.c: In function 'is_connected_output_ep':
-sound/soc/soc-dapm.c:596:11: error: 'struct snd_soc_dapm_path' has no membe=
-r named 'weak'
-sound/soc/soc-dapm.c: In function 'is_connected_input_ep':
-sound/soc/soc-dapm.c:649:11: error: 'struct snd_soc_dapm_path' has no membe=
-r named 'weak'
-sound/soc/soc-dapm.c: In function 'dapm_supply_check_power':
-sound/soc/soc-dapm.c:733:11: error: 'struct snd_soc_dapm_path' has no membe=
-r named 'weak'
-sound/soc/soc-dapm.c: In function 'snd_soc_dapm_weak_route':
-sound/soc/soc-dapm.c:1848:8: error: 'struct snd_soc_dapm_path' has no membe=
-r named 'weak'
-
-Caused by commit bf3a9e137cf1 ("ASoC: Add weak routes for sidetone style pa=
-ths").
-
-I have used the sound-asoc from next-20110610 for today.
+Just context changes.  I did the obvious fixup and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Jun_2011_13_43_07_+1000_oYlsO1pJ4LOW93Mv
+--Signature=_Tue__14_Jun_2011_14_25_42_+1000_4D1q_xGO3vkVVtc5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN9tjLAAoJEDMEi1NhKgbsUJcH/2DOrE2IJlXWJ7FJm/EU+iqz
-uXO64uOr0x1hx4ez2c2kfrJC6RPk3lS+2nS3utpOTWiHTMVyfns7MutHhw2DgVYq
-vo6A3fLOqsMaF+5OqxEGGoWrUFTbL1z0F63jW4maI/d/deduo7DHdW5GnEt3fKzq
-4WDb/1IZZKqD1AXvpT6bFp8yE2B2jq3aoOwib/FYMRX/gduGq1fBqqf9sY5ZQY7u
-Nv+hFtjIGSZybEPzlX4N/FWDbsEiuoC9TAkDPuX/3M3B+5mu6aFqEjm696nQ1MB9
-ef4Mva0HV1QRtBkgeGNcnIT/NxNNZ2DCaYUOhJXS8mdHYiUYq/rZMrZl33+p6Ok=
-=qF6q
+iQEcBAEBAgAGBQJN9uLGAAoJEDMEi1NhKgbsNmAH/0uGcJzLVCh2kljd0nc5NZD7
+cJgpdDLpd5z4CKY7HyDeKzKJiw12pZSwqhdVNhN9qxifWFxI65fkEX8ZGLSJmO/L
+9CmKzZns5Jj8uBzkmpUTQlWIjUTiFUaEyQTwJlivm5YyYHFZSxKcfX/tv+Vm9jWm
+qW5/hYswl/kzm2znD+0Mh1X3jbq3oRRet8GhZiPvlTQoxXrHP0jRzUpu1C+wUZHi
+z15dGF1vylRlDFG00frWERhjjFrQrTwztRU1NucQgKSMdffgj1Hjz50hM47d9fot
++tO451QD3cu/MkJxnlALzf8mVSSbVpJISg1+yIkJ4Rvm+iGfvOcRd330qFinEiY=
+=eJcn
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Jun_2011_13_43_07_+1000_oYlsO1pJ4LOW93Mv--
+--Signature=_Tue__14_Jun_2011_14_25_42_+1000_4D1q_xGO3vkVVtc5--
