@@ -1,46 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: No linux-next tree today (20110613)
-Date: Mon, 13 Jun 2011 13:14:02 +1000
-Message-ID: <20110613131402.fb93bb86.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Tue, 14 Jun 2011 13:43:07 +1000
+Message-ID: <20110614134307.6f5392db.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__13_Jun_2011_13_14_02_+1000_H4JjQ8IxQv5JIDYB"
+ boundary="Signature=_Tue__14_Jun_2011_13_43_07_+1000_oYlsO1pJ4LOW93Mv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51884 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37632 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752609Ab1FMDOL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 12 Jun 2011 23:14:11 -0400
+	id S1751452Ab1FNDnS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Jun 2011 23:43:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__13_Jun_2011_13_14_02_+1000_H4JjQ8IxQv5JIDYB
+--Signature=_Tue__14_Jun_2011_13_43_07_+1000_oYlsO1pJ4LOW93Mv
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Due to our fine Queen Betty having a birthday :-)
+Hi all,
 
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+sound/soc/soc-dapm.c: In function 'is_connected_output_ep':
+sound/soc/soc-dapm.c:596:11: error: 'struct snd_soc_dapm_path' has no membe=
+r named 'weak'
+sound/soc/soc-dapm.c: In function 'is_connected_input_ep':
+sound/soc/soc-dapm.c:649:11: error: 'struct snd_soc_dapm_path' has no membe=
+r named 'weak'
+sound/soc/soc-dapm.c: In function 'dapm_supply_check_power':
+sound/soc/soc-dapm.c:733:11: error: 'struct snd_soc_dapm_path' has no membe=
+r named 'weak'
+sound/soc/soc-dapm.c: In function 'snd_soc_dapm_weak_route':
+sound/soc/soc-dapm.c:1848:8: error: 'struct snd_soc_dapm_path' has no membe=
+r named 'weak'
+
+Caused by commit bf3a9e137cf1 ("ASoC: Add weak routes for sidetone style pa=
+ths").
+
+I have used the sound-asoc from next-20110610 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__13_Jun_2011_13_14_02_+1000_H4JjQ8IxQv5JIDYB
+--Signature=_Tue__14_Jun_2011_13_43_07_+1000_oYlsO1pJ4LOW93Mv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN9YB6AAoJEDMEi1NhKgbsQOUIAIHstReBWRYvc6tFnjWtwcgP
-bmp/DFqtFkDYr5ou2XNBEzMZ1H5+tdK9riuoJ4bJE6LE3RG+XtAnZFvFHcWU1Um6
-AskTo5FHgxkCS8av779GGoZlym8yztoxDiT9RNva7RqWu+enn8+n+NcV4b84vX0X
-ZH+nXbRnjukxCcS75Z9Ml04gY+SMQCp1F6ekv392SgwBJqsMSAX6rDkgozuIkOfN
-7dbP0vhKo0mdkZqF0JpIXxpNDO9PgdRXNqG5IZ3zVjsJkUvN0S31sN8hwDYtLGDO
-n/v7EikgxLVSmTBhlF1Fhv2yT/v35UzC7sJA3csaGfIHKyKE8izWOtyNPjqaM10=
-=2rQl
+iQEcBAEBAgAGBQJN9tjLAAoJEDMEi1NhKgbsUJcH/2DOrE2IJlXWJ7FJm/EU+iqz
+uXO64uOr0x1hx4ez2c2kfrJC6RPk3lS+2nS3utpOTWiHTMVyfns7MutHhw2DgVYq
+vo6A3fLOqsMaF+5OqxEGGoWrUFTbL1z0F63jW4maI/d/deduo7DHdW5GnEt3fKzq
+4WDb/1IZZKqD1AXvpT6bFp8yE2B2jq3aoOwib/FYMRX/gduGq1fBqqf9sY5ZQY7u
+Nv+hFtjIGSZybEPzlX4N/FWDbsEiuoC9TAkDPuX/3M3B+5mu6aFqEjm696nQ1MB9
+ef4Mva0HV1QRtBkgeGNcnIT/NxNNZ2DCaYUOhJXS8mdHYiUYq/rZMrZl33+p6Ok=
+=qF6q
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__13_Jun_2011_13_14_02_+1000_H4JjQ8IxQv5JIDYB--
+--Signature=_Tue__14_Jun_2011_13_43_07_+1000_oYlsO1pJ4LOW93Mv--
