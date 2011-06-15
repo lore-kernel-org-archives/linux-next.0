@@ -1,79 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Wed, 15 Jun 2011 08:56:17 +1000
-Message-ID: <20110615085617.949d418f.sfr@canb.auug.org.au>
-References: <20110609145657.96fae0d0.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] gpio: add GPIOF_ values regardless on
+	kconfig settings
+Date: Tue, 14 Jun 2011 17:03:21 -0700
+Message-ID: <20110614170321.10e1caa7.randy.dunlap@oracle.com>
+References: <4DDB3AFF.9030006@oracle.com>
+	<20110524075248.GB19734@sirena.org.uk>
+	<20110527074552.GA907@ponder.secretlab.ca>
+	<4DDFE391.2030507@oracle.com>
+	<20110527201201.GA6645@ponder.secretlab.ca>
+	<BANLkTin-KSVcG2cQfRM3Ys0_g_uJVruDMw@mail.gmail.com>
+	<20110603171837.GA9918@opensource.wolfsonmicro.com>
+	<BANLkTi=oko_C8_46Y8p5O1Qvw1KEn-1PjA@mail.gmail.com>
+	<4DEC4D67.6010506@oracle.com>
+	<20110614091211.465553de.randy.dunlap@oracle.com>
+	<20110614161357.GB1839@ponder.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__15_Jun_2011_08_56_17_+1000_/1ovAeAwvHKn8Vb9"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47156 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753898Ab1FNW4f (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Jun 2011 18:56:35 -0400
-In-Reply-To: <20110609145657.96fae0d0.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Alexey Dobriyan <adobriyan@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20110614161357.GB1839@ponder.secretlab.ca>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, x86@kernel.org, Dmitry Artamonow <mad_soft@inbox.ru>, Mark Brown <broonie@opensource.wolfsonmicro.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Harald Welte <laforge@gnufiish.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__15_Jun_2011_08_56_17_+1000_/1ovAeAwvHKn8Vb9
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 14 Jun 2011 10:13:57 -0600 Grant Likely wrote:
 
-Hi Dave,
+> On Tue, Jun 14, 2011 at 09:12:11AM -0700, Randy Dunlap wrote:
+> > On Sun, 05 Jun 2011 20:45:43 -0700 Randy Dunlap wrote:
+> > 
+> > > On 06/03/11 10:42, Grant Likely wrote:
+> > > > On Fri, Jun 3, 2011 at 11:18 AM, Mark Brown
+> > > > <broonie@opensource.wolfsonmicro.com> wrote:
+> > > >> On Fri, Jun 03, 2011 at 11:04:52AM -0600, Grant Likely wrote:
+> > > >>
+> > > >>> I ended up not pushing this one to Linus.  Turns out it causes other
+> > > >>> breakage on other platforms that don't include include/linux/gpio.h.
+> > > >>> Since I don't have confidence that I'll be able to find all the
+> > > >>> offenders, I'm dropping it.  I recommend making any drivers that are
+> > > >>
+> > > >> So, this originally came about because I pushed back on adding random
+> > > >> dependencies like this for features which are pretty much optional in
+> > > >> drivers - their use of GPIOs is totally optional and the dependencies
+> > > >> are just too fragile, leading to noise with all the randconfigs.  It
+> > > >> seems better to get the architectures to keep up with enhancements to
+> > > >> gpiolib (or convert to it) than to have to worry about this in drivers.
+> > > > 
+> > > > Fair enough.  Randy, if you or someone else can check that all GPIOF_
+> > > > users have the required #include <linux/gpio.h>, then I'm okay with
+> > > > this patch.
+> > > 
+> > > OK, I'll look at that.
+> > 
+> > Of the 70 files that use GPIOF_ macros:
+> > 
+> > hdr missing in: ./arch/arm/mach-pxa/spitz_pm.c
+> > hdr missing in: ./arch/avr32/mach-at32ap/pio.c
+> > hdr missing in: ./arch/avr32/mach-at32ap/include/mach/portmux.h
+> > hdr missing in: ./arch/avr32/boards/hammerhead/setup.c
+> > hdr missing in: ./arch/avr32/boards/hammerhead/flash.c
+> > hdr missing in: ./arch/avr32/boards/mimc200/setup.c
+> > hdr missing in: ./arch/avr32/boards/atstk1000/setup.c
+> > hdr missing in: ./drivers/pcmcia/pxa2xx_vpac270.c
+> > 
+> > 
+> > > Do you have any examples of builds that failed with this patch?
+> > 
+> > and would you merge patch(es) that add this header file to those source
+> > files?  If not, I'll need to make 3 separate patches for them.
 
-On Thu, 9 Jun 2011 14:56:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the net tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->=20
-> [See summary in patch below.]
->=20
-> [Hmmm, suddenly allmodconfig is building stuff in staging?  Ah ha!
-> Commit fe35a59e16fb ("Staging: remove STAGING_EXCLUDE_BUILD
-> option")  Greg, a bit of warning might have been nice :-( ]
->=20
-> I assume that this is fallout from commit a6b7a407865a ("net: remove
-> interrupt.h inclusion from netdevice.h").
->=20
-> I added the following patch for today:
->=20
-> From 520e46c255afa851b33e5c4a2bcf2112ecccbb6f Mon Sep 17 00:00:00 2001
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 9 Jun 2011 14:19:09 +1000
-> Subject: [PATCH] net/staging: add needed interrupt.h and hardirq.h includ=
-es
+That list of files above is incorrect.  Bad grep pattern.
+Drop all of the avr32 files.  Ending patch is small -- sending it soon.
 
-I am still getting these build errors and applying the patch.  I would
-assume that if you merge Linus' tree (-rc3 will do it) into net-next, you
-will get these failures as well (for an x86_64 allmodconfig build at
-least).
+> Yes I would.  I'm fine with it all being one patch.
 
-I think that this patch would probably apply to just the net-next tree
-anyway.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__15_Jun_2011_08_56_17_+1000_/1ovAeAwvHKn8Vb9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN9+cRAAoJEDMEi1NhKgbsQ3EH/0rhax959/IdekarHqQ+tpPz
-P/56fGNnq+LrpHUR1JbQ57yPs0Hr2cbjcrKUYQSC50Y5bNwAtJ/DdYbdCAME400q
-X1cVKm24c4AY1HlbD5vYxDXbNRinQbjWn+Chqe4RiVG54paQSaQz4zQ/Md5qjjOg
-PbuK8hQCwvSh2+Z8EO9kVHNxQUznFjbxHsAluOEx0xaxMMPE0sKC/hFMINqOiewl
-RsfN4IRqYZXJh+dZUPqlfF8LP2n7yqrUg+z43TwKRi1YvZUf/T0Uy1+J7PDyLa3p
-FshQC+bGCfpjaTd9+eqhIYS6kxJgOF7xO/8J/q5CfXdqVO6zJFQiA/KGmNgYmeI=
-=TSJf
------END PGP SIGNATURE-----
-
---Signature=_Wed__15_Jun_2011_08_56_17_+1000_/1ovAeAwvHKn8Vb9--
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
