@@ -1,58 +1,42 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- related)
-Date: Wed, 15 Jun 2011 08:47:06 -0700
-Message-ID: <20110615154706.GA19707@kroah.com>
-References: <20110609172745.dfd3a298.sfr@canb.auug.org.au>
- <20110609184127.GA2760@kroah.com>
- <20110609192243.GA3980@kroah.com>
- <20110610160548.529797c7.sfr@canb.auug.org.au>
- <BANLkTim5dYNmTMJo-Wa3LYCTi4vxPGMNeQ@mail.gmail.com>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: Build regressions/improvements in v3.0-rc3
+Date: Wed, 15 Jun 2011 17:37:53 +0100
+Message-ID: <20110615163753.GA15155@linux-mips.org>
+References: <1308138281.4112.3.camel@Tux>
+ <20110615222932.05a863fc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from h5.dl5rb.org.uk ([81.2.74.5]:38483 "EHLO duck.linux-mips.net"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751093Ab1FOQic (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Jun 2011 12:38:32 -0400
 Content-Disposition: inline
-In-Reply-To: <BANLkTim5dYNmTMJo-Wa3LYCTi4vxPGMNeQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, sparclinux@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20110615222932.05a863fc.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Wanlong Gao <wanlong.gao@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Michael Ellerman <michael@ellerman.id.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
 
-On Wed, Jun 15, 2011 at 02:05:29PM +0200, Geert Uytterhoeven wrote:
-> On Fri, Jun 10, 2011 at 08:05, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > On Thu, 9 Jun 2011 12:22:43 -0700 Greg KH <greg@kroah.com> wrote:
-> >> On Thu, Jun 09, 2011 at 11:41:27AM -0700, Greg KH wrote:
-> >> > > Also in several other files in drivers/staging/brcm80211/
-> >> > >
-> >> > > Also:
-> >> > >
-> >> > > drivers/staging/comedi/drivers.c: In function 'comedi_buf_alloc':
-> >> > > drivers/staging/comedi/drivers.c:505:37: error: 'PAGE_KERNEL_NOCACHE' undeclared (first use in this function)
-> 
-> I have my doubts
-> 
-> #ifdef PAGE_KERNEL_NOCACHE
->                             vmap(pages, n_pages, VM_MAP, PAGE_KERNEL_NOCACHE);
-> #else
->                             vmap(pages, n_pages, VM_MAP, PAGE_KERNEL);
-> #endif
-> 
-> is the right "fix" for this...
-> 
-> BTW, PAGE_KERNEL_NOCACHE is defined on frv, m32r, mn10300, sh, and x86 only.
-> 
-> Strangely, both sparc and tile have
-> 
-> /*
->  * Some hardware wants to get fixmapped without caching.
->  */
-> #define set_fixmap_nocache(idx, phys) \
->                 __set_fixmap(idx, phys, PAGE_KERNEL_NOCACHE)
-> 
-> in their <asm/fixmap.h>, without having PAGE_KERNEL_NOCACHE...
+On Wed, Jun 15, 2011 at 10:29:32PM +1000, Stephen Rothwell wrote:
 
-So, what should the correct fix here be?
+> On Wed, 15 Jun 2011 19:44:41 +0800 Wanlong Gao <wanlong.gao@gmail.com> wrote:
+> >
+> > <snip>
+> > I see that some mips fixes in ralf's tree but not been pulled. almost
+> > for about one month.
+> 
+> Well, the mips tree in linux-next is
+> git://git.linux-mips.org/pub/scm/upstream-sfr.git#mips-for-linux-next and
+> I fetch it every day.
 
-confused,
+I only have the new bits in linux-next but not the pending for the current
+work-in-progress kernel, that is 3.0.  Those are queued in
 
-greg k-h
+http://git.linux-mips.org/?p=upstream-linus.git;a=summary
+git://git.linux-mips.org/pub/scm/upstream-linus.git
+
+and I've sent two pull requests to Linus so far which went without
+reaction ...
+
+  Ralf
