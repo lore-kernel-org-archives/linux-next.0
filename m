@@ -1,57 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Build regressions/improvements in v3.0-rc3
-Date: Wed, 15 Jun 2011 22:29:32 +1000
-Message-ID: <20110615222932.05a863fc.sfr@canb.auug.org.au>
-References: <1308138281.4112.3.camel@Tux>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__15_Jun_2011_22_29_32_+1000_ZRcosJOo/Tj7C/XG"
+From: Chris Metcalf <cmetcalf@tilera.com>
+Subject: [PATCH] arch/tile: remove useless set_fixmap_nocache() macro
+Date: Wed, 15 Jun 2011 10:35:38 -0400
+Message-ID: <201106151442.p5FEg4ir010298__24102.6470358067$1308149724$gmane$org@farm-0002.internal.tilera.com>
+References: <20110609172745.dfd3a298.sfr@canb.auug.org.au><20110609184127.GA2760@kroah.com><20110609192243.GA3980@kroah.com><20110610160548.529797c7.sfr@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45741 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751028Ab1FOM3o (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Jun 2011 08:29:44 -0400
-In-Reply-To: <1308138281.4112.3.camel@Tux>
+Received: from 206.83.70.73.ptr.us.xo.net ([206.83.70.73]:5281 "EHLO
+	king.tilera.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754735Ab1FOOzN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Jun 2011 10:55:13 -0400
+In-Reply-To: <20110610160548.529797c7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wanlong Gao <wanlong.gao@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Michael Ellerman <michael@ellerman.id.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.co
 
---Signature=_Wed__15_Jun_2011_22_29_32_+1000_ZRcosJOo/Tj7C/XG
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+TILE doesn't support PAGE_KERNEL_NOCACHE so the macro isn't useful;
+it's a copy-and-paste from the first version of this header in 2007.
 
-On Wed, 15 Jun 2011 19:44:41 +0800 Wanlong Gao <wanlong.gao@gmail.com> wrot=
-e:
->
-> <snip>
-> I see that some mips fixes in ralf's tree but not been pulled. almost
-> for about one month.
+Signed-off-by: Chris Metcalf <cmetcalf@tilera.com>
+---
+ arch/tile/include/asm/fixmap.h |    6 ------
+ 1 files changed, 0 insertions(+), 6 deletions(-)
 
-Well, the mips tree in linux-next is
-git://git.linux-mips.org/pub/scm/upstream-sfr.git#mips-for-linux-next and
-I fetch it every day.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__15_Jun_2011_22_29_32_+1000_ZRcosJOo/Tj7C/XG
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN+KWsAAoJEDMEi1NhKgbsGTAH/14CwQWtKSViDwvgCtUDInS1
-rs4EvYTT6/B28U3M5l+BNEDH5aTUVM6rKxZYpS+xDMb5nD6fQq4OW66C/ilAqWfw
-oRMbv1AmikJf2KXyTDTI3oghe6aDfZusWhSPIo+/gHeOCRXTAuiIOLFuASgjD+G7
-8CEKIRFDSLBDXUitjXFOUy7DjcwqSsy66yL/kUaSQa6SZpJPqZ9xytaokhiC8Frw
-Z5Ih4awd1VX3+hAaXcjFLyfIGe6ZymPuRmg1IwBB4QHDLdKUOX+Dgd2s/NZVg2JS
-TsF9Z84xQXu2sGMo1MyK0XAyL9hx++3IB58RSVIyKrXLhe2nj+75y9ogxZNkg9Y=
-=oewP
------END PGP SIGNATURE-----
-
---Signature=_Wed__15_Jun_2011_22_29_32_+1000_ZRcosJOo/Tj7C/XG--
+diff --git a/arch/tile/include/asm/fixmap.h b/arch/tile/include/asm/fixmap.h
+index 51537ff..c66f793 100644
+--- a/arch/tile/include/asm/fixmap.h
++++ b/arch/tile/include/asm/fixmap.h
+@@ -75,12 +75,6 @@ extern void __set_fixmap(enum fixed_addresses idx,
+ 
+ #define set_fixmap(idx, phys) \
+ 		__set_fixmap(idx, phys, PAGE_KERNEL)
+-/*
+- * Some hardware wants to get fixmapped without caching.
+- */
+-#define set_fixmap_nocache(idx, phys) \
+-		__set_fixmap(idx, phys, PAGE_KERNEL_NOCACHE)
+-
+ #define clear_fixmap(idx) \
+ 		__set_fixmap(idx, 0, __pgprot(0))
+ 
+-- 
+1.6.5.2
