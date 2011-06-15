@@ -1,18 +1,74 @@
-From: Wanlong Gao <wanlong.gao@gmail.com>
-Subject: re:Build regressions/improvements in v3.0-rc3
-Date: Wed, 15 Jun 2011 19:44:41 +0800
-Message-ID: <1308138281.4112.3.camel@Tux>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: build failure after merge of the final tree (staging related)
+Date: Wed, 15 Jun 2011 14:05:29 +0200
+Message-ID: <BANLkTim5dYNmTMJo-Wa3LYCTi4vxPGMNeQ@mail.gmail.com>
+References: <20110609172745.dfd3a298.sfr@canb.auug.org.au>
+	<20110609184127.GA2760@kroah.com>
+	<20110609192243.GA3980@kroah.com>
+	<20110610160548.529797c7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Michael Ellerman <michael@ellerman.id.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:50903 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751592Ab1FOMFb convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Jun 2011 08:05:31 -0400
+In-Reply-To: <20110610160548.529797c7.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, sparclinux@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>
 
-<snip>
-I see that some mips fixes in ralf's tree but not been pulled. almost
-for about one month.
+On Fri, Jun 10, 2011 at 08:05, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> On Thu, 9 Jun 2011 12:22:43 -0700 Greg KH <greg@kroah.com> wrote:
+>> On Thu, Jun 09, 2011 at 11:41:27AM -0700, Greg KH wrote:
+>> > > Also in several other files in drivers/staging/brcm80211/
+>> > >
+>> > > Also:
+>> > >
+>> > > drivers/staging/comedi/drivers.c: In function 'comedi_buf_alloc'=
+:
+>> > > drivers/staging/comedi/drivers.c:505:37: error: 'PAGE_KERNEL_NOC=
+ACHE' undeclared (first use in this function)
 
-Thanks
+I have my doubts
+
+#ifdef PAGE_KERNEL_NOCACHE
+                            vmap(pages, n_pages, VM_MAP, PAGE_KERNEL_NO=
+CACHE);
+#else
+                            vmap(pages, n_pages, VM_MAP, PAGE_KERNEL);
+#endif
+
+is the right "fix" for this...
+
+BTW, PAGE_KERNEL_NOCACHE is defined on frv, m32r, mn10300, sh, and x86 =
+only.
+
+Strangely, both sparc and tile have
+
+/*
+ * Some hardware wants to get fixmapped without caching.
+ */
+#define set_fixmap_nocache(idx, phys) \
+                __set_fixmap(idx, phys, PAGE_KERNEL_NOCACHE)
+
+in their <asm/fixmap.h>, without having PAGE_KERNEL_NOCACHE...
+
+Gr{oetje,eeting}s,
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
