@@ -1,35 +1,81 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: build warnings after merge of the nfs tree
-Date: Thu, 16 Jun 2011 13:31:26 -0400
-Message-ID: <1308245489.10167.4.camel@lade.trondhjem.org>
-References: <20110616133847.1ba62bab.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] target: fix tfc_io.c printk format warning
+Date: Thu, 16 Jun 2011 11:35:57 -0700
+Message-ID: <20110616113557.0e0b8abe.randy.dunlap@oracle.com>
+References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
+	<20110523113555.e37bc856.randy.dunlap@oracle.com>
+	<1306183644.29724.55.camel@haakon2.linux-iscsi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out1.uio.no ([129.240.10.57]:50302 "EHLO mail-out1.uio.no"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752045Ab1FPRbb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Jun 2011 13:31:31 -0400
-In-Reply-To: <20110616133847.1ba62bab.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:47572 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752687Ab1FPSgT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Jun 2011 14:36:19 -0400
+In-Reply-To: <1306183644.29724.55.camel@haakon2.linux-iscsi.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Patil, Kiran" <kiran.patil@intel.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
 
-On Thu, 2011-06-16 at 13:38 +1000, Stephen Rothwell wrote: 
-> Hi Trond,
-> 
-> After merging the nfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced these warnings:
-> 
-> fs/nfs/pnfs.h:379:13: warning: 'pnfs_pageio_init_read' defined but not used
-> fs/nfs/pnfs.h:384:13: warning: 'pnfs_pageio_init_write' defined but not used
-> 
-> (lots of times)
-> 
-> Introduced by commit cb679cdd50a8 ("NFS: Cleanup of the nfs_pageio code
-> in preparation for a pnfs bugfix").  "inline" is missing.
-> 
+On Mon, 23 May 2011 13:47:24 -0700 Nicholas A. Bellinger wrote:
 
-Sorry about that. It should be fixed now...
+> On Mon, 2011-05-23 at 11:35 -0700, Randy Dunlap wrote:
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > Fix printk format warning:
+> > 
+> > drivers/target/tcm_fc/tfc_io.c:209: warning: format '%x' expects type 'unsigned int', but argument 5 has type 'size_t'
+> > 
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > ---
+> 
+> Hey Randy,
+> 
+> Kiran (CC'ed) was going to include this along with a bugfix patch for
+> scsi-misc, but it's probably easier to just change this in linux-next
+> now..
+
+Hey Nick,
+
+Is there some way to have this patch merged for linux-next and mainline?
+
+Thanks.
+
+> Signed-off-by: Nicholas A. Bellinger <nab@linux-iscsi.org>
+> 
+> >  drivers/target/tcm_fc/tfc_io.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > and please put an entry in the MAINTAINERS file for drivers/target/
+> > 
+> 
+> <nod>, sending out that patch shortly.
+> 
+> Thanks,
+> 
+> --nab
+> 
+> > 
+> > --- linux-next-20110523.orig/drivers/target/tcm_fc/tfc_io.c
+> > +++ linux-next-20110523/drivers/target/tcm_fc/tfc_io.c
+> > @@ -203,7 +203,7 @@ int ft_queue_data_in(struct se_cmd *se_c
+> >  			/* XXX For now, initiator will retry */
+> >  			if (printk_ratelimit())
+> >  				printk(KERN_ERR "%s: Failed to send frame %p, "
+> > -						"xid <0x%x>, remaining <0x%x>, "
+> > +						"xid <0x%x>, remaining <0x%zx>, "
+> >  						"lso_max <0x%x>\n",
+> >  						__func__, fp, ep->xid,
+> >  						remaining, lport->lso_max);
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
