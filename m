@@ -1,54 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound-asoc tree
-Date: Thu, 16 Jun 2011 12:40:55 +1000
-Message-ID: <20110616124055.520eb947.sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the nfs tree
+Date: Thu, 16 Jun 2011 13:38:47 +1000
+Message-ID: <20110616133847.1ba62bab.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__16_Jun_2011_12_40_55_+1000_VDGwzUN6.yx45y2."
+ boundary="Signature=_Thu__16_Jun_2011_13_38_47_+1000_RyVZymghuOao8jum"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60810 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:32815 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752594Ab1FPClF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Jun 2011 22:41:05 -0400
+	id S1752225Ab1FPDi5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Jun 2011 23:38:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__16_Jun_2011_12_40_55_+1000_VDGwzUN6.yx45y2.
+--Signature=_Thu__16_Jun_2011_13_38_47_+1000_RyVZymghuOao8jum
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Trond,
 
-Today's linux-next merge of the sound-asoc tree failed badly.  It seems
-that it has been rebased on top of next-20110615.   You cannot base a
-tree in linux-next on linux-next itself!
+After merging the nfs tree, today's linux-next build (powerpc
+ppc64_defconfig) produced these warnings:
 
-I have used the version of the sound-asoc tree from next-20110615 for
-today.
+fs/nfs/pnfs.h:379:13: warning: 'pnfs_pageio_init_read' defined but not used
+fs/nfs/pnfs.h:384:13: warning: 'pnfs_pageio_init_write' defined but not used
 
+(lots of times)
+
+Introduced by commit cb679cdd50a8 ("NFS: Cleanup of the nfs_pageio code
+in preparation for a pnfs bugfix").  "inline" is missing.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__16_Jun_2011_12_40_55_+1000_VDGwzUN6.yx45y2.
+--Signature=_Thu__16_Jun_2011_13_38_47_+1000_RyVZymghuOao8jum
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN+W03AAoJEDMEi1NhKgbsuFYH/1q6xNqrgCmEwbdx1gUi9dVa
-kSca289uwdG6OjpRfK7X+GN2vUYoG0rBeTbajmBH0lrfjkx7AdVc0KDVcnupbj8g
-/9IfLPYSTLwYaDj0RBD3WQgJ6oUSFAYdF0MF2XY1PeowVvjoSBlP0ydr1oV87ZjI
-+kLGEnhqo931OwR3kNc1HpYtA8oB3G4pZX1FQIjNW9a9v1PoWEA/nxM6RD06z72F
-NpVx4uOsw7HP7dvB8LtlfUpDXmgXmgTvjUwSk6aizTDlHyrDJFT1eTpIPYWnXCcS
-p+vCEwJRirlnASenoEPZJ0Oc4eut+7XgKnrEkB/Y0y988HdUmzM6Q6b6zPsUqqU=
-=YmQO
+iQEcBAEBAgAGBQJN+XrHAAoJEDMEi1NhKgbsrl0H/0qIi/6NirH2fBOdlCz2hfHc
+uXvvVL69/5MBwRLrLY8Cq8XnaQ6TcJjNnh5J0gs85bKdIAASSE3wFKjxNak9ppLq
+9iIjcrI0F8X4cH/CmtPutj96TCOgqcl+bpnwMtvGYWOAVv02aGgazP1InLob0FFw
+mhe0wwz02hZqOwHpFD2X8CRTGmE1ZsrcFJHLBRRZtSOcaAbhx059cd79jvNYGv/K
+4zWZgXIkRHy3sO7qp+nR5Na1cB0QWsZoPtpI46p0tRa2oGXZ+ahko6guTz5XsMtT
+mW3B28LWpeBIZQEisZwqy8IgwIXlte14+FMMw+EiSKua8OUAJy2aduC9L6KvHwA=
+=dQzD
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__16_Jun_2011_12_40_55_+1000_VDGwzUN6.yx45y2.--
+--Signature=_Thu__16_Jun_2011_13_38_47_+1000_RyVZymghuOao8jum--
