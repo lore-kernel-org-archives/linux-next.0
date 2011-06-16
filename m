@@ -1,81 +1,62 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next] target: fix tfc_io.c printk format warning
-Date: Thu, 16 Jun 2011 11:35:57 -0700
-Message-ID: <20110616113557.0e0b8abe.randy.dunlap@oracle.com>
-References: <20110523154518.5e27cfb0.sfr@canb.auug.org.au>
-	<20110523113555.e37bc856.randy.dunlap@oracle.com>
-	<1306183644.29724.55.camel@haakon2.linux-iscsi.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ related)
+Date: Thu, 16 Jun 2011 12:14:48 -0700
+Message-ID: <20110616191448.GA10255@kroah.com>
+References: <20110609172745.dfd3a298.sfr@canb.auug.org.au>
+ <20110609184127.GA2760@kroah.com>
+ <20110609192243.GA3980@kroah.com>
+ <20110610160548.529797c7.sfr@canb.auug.org.au>
+ <20110610160938.cd01c408.sfr@canb.auug.org.au>
+ <20110610223423.GB15868@kroah.com>
+ <20110615142155.bd538b73.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:47572 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752687Ab1FPSgT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Jun 2011 14:36:19 -0400
-In-Reply-To: <1306183644.29724.55.camel@haakon2.linux-iscsi.org>
+Received: from out4.smtp.messagingengine.com ([66.111.4.28]:52934 "EHLO
+	out4.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756431Ab1FPTPA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Jun 2011 15:15:00 -0400
+Content-Disposition: inline
+In-Reply-To: <20110615142155.bd538b73.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Patil, Kiran" <kiran.patil@intel.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On Mon, 23 May 2011 13:47:24 -0700 Nicholas A. Bellinger wrote:
-
-> On Mon, 2011-05-23 at 11:35 -0700, Randy Dunlap wrote:
-> > From: Randy Dunlap <randy.dunlap@oracle.com>
+On Wed, Jun 15, 2011 at 02:21:55PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Fri, 10 Jun 2011 15:34:23 -0700 Greg KH <greg@kroah.com> wrote:
+> >
+> > On Fri, Jun 10, 2011 at 04:09:38PM +1000, Stephen Rothwell wrote:
+> > > 
+> > > On Fri, 10 Jun 2011 16:05:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > >
+> > > > No, I still get these:
+> > > > 
+> > > > In file included from drivers/staging/comedi/drivers/addi_apci_035.c:7:0:
+> > > > drivers/staging/comedi/drivers/addi-data/addi_common.c: In function 'i_ADDI_Attach':
+> > > > drivers/staging/comedi/drivers/addi-data/addi_common.c:2765:7: error: implicit declaration of function 'virt_to_bus'
+> > > > 
+> > > > virt_to_bus is only defined for 32 bit powerpc (not 64 bit) (and maybe
+> > > > not at all on some architectures e.g. sparc).
+> > > > 
+> > > > From Documentation/DMA-API-HOWTO.txt:
+> > > > "All drivers should be using these interfaces with no exceptions.  It
+> > > > is planned to completely remove virt_to_bus() and bus_to_virt() as
+> > > > they are entirely deprecated.  Some ports already do not provide these
+> > > > as it is impossible to correctly support them."
+> > > 
+> > > Drivers that use virt_to_bus should Kconfig depend on VIRT_TO_BUS.
 > > 
-> > Fix printk format warning:
-> > 
-> > drivers/target/tcm_fc/tfc_io.c:209: warning: format '%x' expects type 'unsigned int', but argument 5 has type 'size_t'
-> > 
-> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> > ---
+> > Ah, I missed that, sorry.  I'll go make that change as well.
 > 
-> Hey Randy,
-> 
-> Kiran (CC'ed) was going to include this along with a bugfix patch for
-> scsi-misc, but it's probably easier to just change this in linux-next
-> now..
+> Ping?
 
-Hey Nick,
+Sorry, been swamped with other work, I'll get to this soon...
 
-Is there some way to have this patch merged for linux-next and mainline?
+With a very relative value of soon.
 
-Thanks.
-
-> Signed-off-by: Nicholas A. Bellinger <nab@linux-iscsi.org>
-> 
-> >  drivers/target/tcm_fc/tfc_io.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > and please put an entry in the MAINTAINERS file for drivers/target/
-> > 
-> 
-> <nod>, sending out that patch shortly.
-> 
-> Thanks,
-> 
-> --nab
-> 
-> > 
-> > --- linux-next-20110523.orig/drivers/target/tcm_fc/tfc_io.c
-> > +++ linux-next-20110523/drivers/target/tcm_fc/tfc_io.c
-> > @@ -203,7 +203,7 @@ int ft_queue_data_in(struct se_cmd *se_c
-> >  			/* XXX For now, initiator will retry */
-> >  			if (printk_ratelimit())
-> >  				printk(KERN_ERR "%s: Failed to send frame %p, "
-> > -						"xid <0x%x>, remaining <0x%x>, "
-> > +						"xid <0x%x>, remaining <0x%zx>, "
-> >  						"lso_max <0x%x>\n",
-> >  						__func__, fp, ep->xid,
-> >  						remaining, lport->lso_max);
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+greg k-h
