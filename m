@@ -1,67 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for June 17
-Date: Fri, 17 Jun 2011 17:29:51 +1000
-Message-ID: <20110617172951.58e53adc.sfr@canb.auug.org.au>
-References: <20110617162440.5c4c39c2.sfr@canb.auug.org.au>
-	<BANLkTinyJ5ZLPw=TfA=fNThQGreYrjxq=g@mail.gmail.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: linux-next: manual merge of the arm-lpae tree with the arm tree
+Date: Fri, 17 Jun 2011 11:17:17 +0100
+Message-ID: <20110617101717.GB9504@e102109-lin.cambridge.arm.com>
+References: <20110617102637.7868bc00.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__17_Jun_2011_17_29_51_+1000_ZSfSneU3VBlph9Jh"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BANLkTinyJ5ZLPw=TfA=fNThQGreYrjxq=g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sedat.dilek@gmail.com
-Cc: Sedat Dilek <sedat.dilek@googlemail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__17_Jun_2011_17_29_51_+1000_ZSfSneU3VBlph9Jh
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([94.185.240.25]:42521 "HELO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752378Ab1FQKR1 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Jun 2011 06:17:27 -0400
+In-Reply-To: <20110617102637.7868bc00.sfr@canb.auug.org.au>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <rmk@arm.linux.org.uk>
 
-Hi Sedat,
+Hi Stephen,
 
-On Fri, 17 Jun 2011 09:18:19 +0200 Sedat Dilek <sedat.dilek@googlemail.com>=
- wrote:
->
-> On Fri, Jun 17, 2011 at 8:24 AM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> >
-> > I managed to delete the merge.log file, sorry (the summary below is
-> > accurate, though).
-> >
->=20
-> Shit happens :-).
-> Can I have the commit-id of Linus-tree (IIRC that's listed in the
-> merge.log file)?
+On Fri, Jun 17, 2011 at 01:26:37AM +0100, Stephen Rothwell wrote:
+> Today's linux-next merge of the arm-lpae tree got a conflict in
+> arch/arm/mm/dma-mapping.c between commit 8f5d638883e0 ("ARM: DMA: steal
+> memory for DMA coherent mappings") from the arm tree and commit
+> 7b550c77c248 ("ARM: LPAE: Use PMD_(SHIFT|SIZE|MASK) instead of PGDIR_*")
+> from the arm-lpae tree.
+> 
+> The former has removed all the references to the PGDIR_* macros from this
+> file, so I used that.
 
-That's listed in Next/SHA1s:
+The fix is correct. I also did a kernel build for Versatile Express and
+there were no errors.
 
-Name		SHA1
-----		----
-origin		8b97b21e0f4f59801d05a5c536417f04ecfb5603
-.
-.
+Thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__17_Jun_2011_17_29_51_+1000_ZSfSneU3VBlph9Jh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJN+wJvAAoJEDMEi1NhKgbs63YH/1VjB7Gy2qwqY3ctQFsN8LnX
-dVWKWNT+tCW6ngdoKF6atD18LenEvv9JjR+NXf/rJFXkpuvXYA7AGw0x4+eRzGdB
-B3/MYLC0/ItuHVh0S4Cz79W47WRVKKB/fHOkVUc+6raFO35LTK+nSE0nlaHaRpVg
-ZqFtWoN1l6VZ7v5hXuApGRjzTrvQ3Mzx66y/nEV9I9okuZ+N+K29/Ikb9SXZTIsT
-v+ab1VRVODLBOMYz91se9JlxpMf+oWEOoQAQWSCowz84ZcHUND3WcLlVUDX2Z83c
-rAhf9WdlcamruudAS+FKFjQngWs3YaNUIgR/WcPIik+5dnbCYUw1faN/yKjaz94=
-=PRbU
------END PGP SIGNATURE-----
-
---Signature=_Fri__17_Jun_2011_17_29_51_+1000_ZSfSneU3VBlph9Jh--
+-- 
+Catalin
