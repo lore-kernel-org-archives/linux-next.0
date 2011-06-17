@@ -1,54 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-lpae tree with the arm tree
-Date: Fri, 17 Jun 2011 10:26:37 +1000
-Message-ID: <20110617102637.7868bc00.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the slave-dma
+ tree
+Date: Fri, 17 Jun 2011 12:54:19 +1000
+Message-ID: <20110617125419.c196ca92.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__17_Jun_2011_10_26_37_+1000_.lXH=Qe.A49iM+YO"
+ boundary="Signature=_Fri__17_Jun_2011_12_54_19_+1000_3=mI8TaB_FoUgqqp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52464 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42860 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753397Ab1FQA0q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Jun 2011 20:26:46 -0400
+	id S1753420Ab1FQCy2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Jun 2011 22:54:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ryan Mallon <rmallon@gmail.com>, Mika Westerberg <mika.westerberg@iki.fi>, Vinod Koul <vinod.koul@intel.com>
 
---Signature=_Fri__17_Jun_2011_10_26_37_+1000_.lXH=Qe.A49iM+YO
+--Signature=_Fri__17_Jun_2011_12_54_19_+1000_3=mI8TaB_FoUgqqp
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Catalin,
+Hi Jiri,
 
-Today's linux-next merge of the arm-lpae tree got a conflict in
-arch/arm/mm/dma-mapping.c between commit 8f5d638883e0 ("ARM: DMA: steal
-memory for DMA coherent mappings") from the arm tree and commit
-7b550c77c248 ("ARM: LPAE: Use PMD_(SHIFT|SIZE|MASK) instead of PGDIR_*")
-from the arm-lpae tree.
+Today's linux-next merge of the trivial tree got a conflict in
+arch/arm/mach-ep93xx/dma-m2p.c between commit 8e4a93008db7 ("ep93xx:
+remove the old M2P DMA code") from the slave-dma tree and commit
+1c5454eed85a ("Change Ryan Mallon's email address across the kernel")
+from the trivial tree.
 
-The former has removed all the references to the PGDIR_* macros from this
-file, so I used that.
+The former removed the file, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__17_Jun_2011_10_26_37_+1000_.lXH=Qe.A49iM+YO
+--Signature=_Fri__17_Jun_2011_12_54_19_+1000_3=mI8TaB_FoUgqqp
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJN+p89AAoJEDMEi1NhKgbsVdMH/0llyONsqPNl0In/sZZKMjr1
-e74x6UkcwaMaFU+GGZBmE6IAmwqM0zYHYgFq+04p72ddNVDRbup2ziQtudiq430+
-5ukPQHekBqMml8ZCc9NbcWi/fYeRtCeBF5inBcQ9iRN+vnqiqsZNwIrDPgsIepon
-U2zhFdqqhTkv8h/rAslGdXH7WhH74NyJkm6YyJvzrQKNk30hhOaMMMpevEaL4GkZ
-61jBkitsztXuxbXpGmj+RryTeV0fPlQmClabvX7+Bnyz97fXbzSwqjF85aFFOO99
-zutdLezPYPWtjGBDJ7V53co1HaND/FtBCHzkLBp5eVGuEXlBrh8B+/VpJ92kpxc=
-=tvSv
+iQEcBAEBAgAGBQJN+sHbAAoJEDMEi1NhKgbstQ4H/2RI+YEgkP7bgfQCULC1X9D1
+AssMiuc20acKk/XjfG+YcXZDUezX5/dlC5LlIz+VkbvFCsxoEIHdGHEpL25GYeod
+17XF4F97FQdFTrjw1DGXoXvjoYTDMZKCVue8QVb504JHblDN+94YaS/7z0yCKWBE
+MBb1cOolq9IGybxSroao99Y6Lw2KfclEsUvFkcsp60aSNGn1mtynBY1jWorz/jSO
+7oilbHR9QHUWUazfswiIAw2WRvW8c5koSyaYDQZHzUuhOuy16uRl35EMpbRpIduK
+4UbBMaSVA9jSaZYbWfU/WTIE65Y+y5H6KEe+fVgW+poHiHvQzQn+h+GpRP5rj/c=
+=EFNh
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__17_Jun_2011_10_26_37_+1000_.lXH=Qe.A49iM+YO--
+--Signature=_Fri__17_Jun_2011_12_54_19_+1000_3=mI8TaB_FoUgqqp--
