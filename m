@@ -1,47 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gpio tree with the trivial tree
-Date: Fri, 17 Jun 2011 13:15:15 +1000
-Message-ID: <20110617131515.f6e6c5a9.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (Linus'
+ tree related)
+Date: Fri, 17 Jun 2011 15:38:09 +1000
+Message-ID: <20110617153809.471769a1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__17_Jun_2011_15_38_09_+1000_LUBYqUY+MpBguNXH"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Andrew Morton <akpm@linux-foundation.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, "David S. Miller" <davem@davemloft.net>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Fri__17_Jun_2011_15_38_09_+1000_LUBYqUY+MpBguNXH
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43119 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755028Ab1FQDPU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Jun 2011 23:15:20 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ryan Mallon <rmallon@gmail.com>, H Hartley Sweeten <hartleys@visionengravers.com>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
+Hi all,
 
-Today's linux-next merge of the gpio tree got a conflict in
-drivers/gpio/gpio-ep93xx.c between commit 1c5454eed85a ("Change Ryan
-Mallon's email address across the kernel") from the trivial tree and
-commit 1e4c88420e0d ("gpio/ep93xx: convert to platform_driver and use
-basic_mmio_gpio library") from the gpio tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+mm/page_cgroup.c: In function 'page_cgroup_init':
+mm/page_cgroup.c:309:13: error: 'pg_data_t' has no member named 'node_end_p=
+fn'
+
+Caused by commit 37573e8c7182 ("memcg: fix init_page_cgroup nid with
+sparsemem").  On powerpc, node_end_pfn() is defined to be (NODE_DATA
+(nid)->node_end_pfn) where NODE_DATA(nid) is (node_data[nid]) and
+node_data is struct pglist_data *node_data[].  As far as I can see,
+struct pglist_data has never had a member called node_end_pfn.
+
+This commit introduces the only use of node_end_pfn() in the generic
+kernel code.  Presumably the powerpc definition needs to be fixed (to
+maybe something like the x86 version).  It looks like the sparc version
+is broken as well.
+
+I have left the powerpc allyesconfig build broken for today (as it is
+also broken by other changes).
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/gpio/gpio-ep93xx.c
-index 1a0f852,3bfd341..0000000
---- a/drivers/gpio/gpio-ep93xx.c
-+++ b/drivers/gpio/gpio-ep93xx.c
-@@@ -1,9 -1,8 +1,8 @@@
-  /*
--  * linux/arch/arm/mach-ep93xx/gpio.c
--  *
-   * Generic EP93xx GPIO handling
-   *
- - * Copyright (c) 2008 Ryan Mallon <ryan@bluewatersys.com>
- + * Copyright (c) 2008 Ryan Mallon
-+  * Copyright (c) 2011 H Hartley Sweeten <hsweeten@visionengravers.com>
-   *
-   * Based on code originally from:
-   *  linux/arch/arm/mach-ep93xx/core.c
+--Signature=_Fri__17_Jun_2011_15_38_09_+1000_LUBYqUY+MpBguNXH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN+uhBAAoJEDMEi1NhKgbscpcH/j4f0JrOUkpqEdXpHXbx/Ojb
+h9UI2DbI28RPfbPG4Rs/z6EhXeuHADwjdIDW7qRSzKcj3c8Gx1cgjxXiTSkjiHjW
+OSywnYjjGWfQNjD3C0qHfRydWrqaKIbOZKGGnC9Bfg681l1PmDVIheVTh+1AfiLv
+sFVKtuTY7PX8ZHa1ynxx4uFSRN8hHLGWi7MsLkqa5nfnz7WsaGCppQSiUEykHh6+
+ZgSrspZ+xBsyhl0+rdRvB19UNqqzeqZu2ziBkXPgqMSdQ5wt/YfxjOHOcRi8ERpS
+q2+yJuPRI9Na4aNRX/PlLdIgn0GHGTDTo7aYY7AwUUXXJmEd72Zl1apg8QS9yN0=
+=UVTC
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__17_Jun_2011_15_38_09_+1000_LUBYqUY+MpBguNXH--
