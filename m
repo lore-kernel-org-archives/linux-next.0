@@ -1,276 +1,332 @@
-From: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-Subject: Re: linux-next: build failure after merge of the final tree (Linus'
- tree related)
-Date: Fri, 17 Jun 2011 14:34:10 +0900
-Message-ID: <20110617143410.a73d5b67.kamezawa.hiroyu@jp.fujitsu.com>
-References: <20110617153809.471769a1.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for June 17
+Date: Fri, 17 Jun 2011 16:24:40 +1000
+Message-ID: <20110617162440.5c4c39c2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__17_Jun_2011_16_24_40_+1000_FzL3_Zp.wseN1trH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fgwmail5.fujitsu.co.jp ([192.51.44.35]:32790 "EHLO
-	fgwmail5.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754787Ab1FQFlf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Jun 2011 01:41:35 -0400
-In-Reply-To: <20110617153809.471769a1.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46424 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751292Ab1FQGYr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Jun 2011 02:24:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, "David S. Miller" <davem@davemloft.net>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 17 Jun 2011 15:38:09 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Fri__17_Jun_2011_16_24_40_+1000_FzL3_Zp.wseN1trH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> mm/page_cgroup.c: In function 'page_cgroup_init':
-> mm/page_cgroup.c:309:13: error: 'pg_data_t' has no member named 'node_end_pfn'
-> 
-> Caused by commit 37573e8c7182 ("memcg: fix init_page_cgroup nid with
-> sparsemem").  On powerpc, node_end_pfn() is defined to be (NODE_DATA
-> (nid)->node_end_pfn) where NODE_DATA(nid) is (node_data[nid]) and
-> node_data is struct pglist_data *node_data[].  As far as I can see,
-> struct pglist_data has never had a member called node_end_pfn.
-> 
-> This commit introduces the only use of node_end_pfn() in the generic
-> kernel code.  Presumably the powerpc definition needs to be fixed (to
-> maybe something like the x86 version).  It looks like the sparc version
-> is broken as well.
-> 
+Hi all,
 
-Sorry, here is a fix I posted today. but no ack yet.
-==
->From 507cc95c5ba2351bff16c5421255d1395a3b555b Mon Sep 17 00:00:00 2001
-From: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-Date: Thu, 16 Jun 2011 17:28:07 +0900
-Subject: [PATCH] Fix node_start/end_pfn() definition for mm/page_cgroup.c
+I managed to delete the merge.log file, sorry (the summary below is
+accurate, though).
 
-commit 21a3c96 uses node_start/end_pfn(nid) for detection start/end
-of nodes. But, it's not defined in linux/mmzone.h but defined in
-/arch/???/include/mmzone.h which is included only under
-CONFIG_NEED_MULTIPLE_NODES=y.
+Changes since 20110616:
 
-Then, we see
-mm/page_cgroup.c: In function 'page_cgroup_init':
-mm/page_cgroup.c:308: error: implicit declaration of function 'node_start_pfn'
-mm/page_cgroup.c:309: error: implicit declaration of function 'node_end_pfn'
+The arm-lpae tree gained a conflict agains the arm tree.
 
-So, fixiing page_cgroup.c is an idea...
+The powerpc allyesconfig (and probably others) is still broken because we
+now build the staging drivers and because of a commit in Linus' tree.
 
-But node_start_pfn()/node_end_pfn() is a very generic macro and
-should be implemented in the same manner for all archs.
-(m32r has different implementation...)
+The net tree still has its build failure for which I applied a patch.
 
-This patch removes definitions of node_start/end_pfn() in each archs
-and defines a unified one in linux/mmzone.h. It's not under
-CONFIG_NEED_MULTIPLE_NODES, now.
+The sound-asoc was fixed.
 
-A result of macro expansion is here (mm/page_cgroup.c)
+The trivial tree gained a conflict against the slave-dma tree.
 
-for !NUMA
- start_pfn = ((&contig_page_data)->node_start_pfn);
-  end_pfn = ({ pg_data_t *__pgdat = (&contig_page_data); __pgdat->node_start_pfn + __pgdat->node_spanned_pages;});
+The gpio tree gained a conflict against the trivial tree.
 
-for NUMA (x86-64)
-  start_pfn = ((node_data[nid])->node_start_pfn);
-  end_pfn = ({ pg_data_t *__pgdat = (node_data[nid]); __pgdat->node_start_pfn + __pgdat->node_spanned_pages;});
+----------------------------------------------------------------------------
 
-Signed-off-by: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
 
-Changelog:
- - fixed to avoid using "nid" twice in node_end_pfn() macro.
----
- arch/alpha/include/asm/mmzone.h   |    1 -
- arch/m32r/include/asm/mmzone.h    |    8 +-------
- arch/parisc/include/asm/mmzone.h  |    7 -------
- arch/powerpc/include/asm/mmzone.h |    7 -------
- arch/sh/include/asm/mmzone.h      |    4 ----
- arch/sparc/include/asm/mmzone.h   |    2 --
- arch/tile/include/asm/mmzone.h    |   11 -----------
- arch/x86/include/asm/mmzone_32.h  |   11 -----------
- arch/x86/include/asm/mmzone_64.h  |    3 ---
- include/linux/mmzone.h            |    7 +++++++
- 10 files changed, 8 insertions(+), 53 deletions(-)
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
 
-diff --git a/arch/alpha/include/asm/mmzone.h b/arch/alpha/include/asm/mmzone.h
-index 8af56ce..445dc42 100644
---- a/arch/alpha/include/asm/mmzone.h
-+++ b/arch/alpha/include/asm/mmzone.h
-@@ -56,7 +56,6 @@ PLAT_NODE_DATA_LOCALNR(unsigned long p, int n)
-  * Given a kernel address, find the home node of the underlying memory.
-  */
- #define kvaddr_to_nid(kaddr)	pa_to_nid(__pa(kaddr))
--#define node_start_pfn(nid)	(NODE_DATA(nid)->node_start_pfn)
- 
- /*
-  * Given a kaddr, LOCAL_BASE_ADDR finds the owning node of the memory
-diff --git a/arch/m32r/include/asm/mmzone.h b/arch/m32r/include/asm/mmzone.h
-index 9f3b5ac..115ced3 100644
---- a/arch/m32r/include/asm/mmzone.h
-+++ b/arch/m32r/include/asm/mmzone.h
-@@ -14,12 +14,6 @@ extern struct pglist_data *node_data[];
- #define NODE_DATA(nid)		(node_data[nid])
- 
- #define node_localnr(pfn, nid)	((pfn) - NODE_DATA(nid)->node_start_pfn)
--#define node_start_pfn(nid)	(NODE_DATA(nid)->node_start_pfn)
--#define node_end_pfn(nid)						\
--({									\
--	pg_data_t *__pgdat = NODE_DATA(nid);				\
--	__pgdat->node_start_pfn + __pgdat->node_spanned_pages - 1;	\
--})
- 
- #define pmd_page(pmd)		(pfn_to_page(pmd_val(pmd) >> PAGE_SHIFT))
- /*
-@@ -44,7 +38,7 @@ static __inline__ int pfn_to_nid(unsigned long pfn)
- 	int node;
- 
- 	for (node = 0 ; node < MAX_NUMNODES ; node++)
--		if (pfn >= node_start_pfn(node) && pfn <= node_end_pfn(node))
-+		if (pfn >= node_start_pfn(node) && pfn < node_end_pfn(node))
- 			break;
- 
- 	return node;
-diff --git a/arch/parisc/include/asm/mmzone.h b/arch/parisc/include/asm/mmzone.h
-index 9608d2c..e67eb9c 100644
---- a/arch/parisc/include/asm/mmzone.h
-+++ b/arch/parisc/include/asm/mmzone.h
-@@ -14,13 +14,6 @@ extern struct node_map_data node_data[];
- 
- #define NODE_DATA(nid)          (&node_data[nid].pg_data)
- 
--#define node_start_pfn(nid)	(NODE_DATA(nid)->node_start_pfn)
--#define node_end_pfn(nid)						\
--({									\
--	pg_data_t *__pgdat = NODE_DATA(nid);				\
--	__pgdat->node_start_pfn + __pgdat->node_spanned_pages;		\
--})
--
- /* We have these possible memory map layouts:
-  * Astro: 0-3.75, 67.75-68, 4-64
-  * zx1: 0-1, 257-260, 4-256
-diff --git a/arch/powerpc/include/asm/mmzone.h b/arch/powerpc/include/asm/mmzone.h
-index fd3fd58..7b58917 100644
---- a/arch/powerpc/include/asm/mmzone.h
-+++ b/arch/powerpc/include/asm/mmzone.h
-@@ -38,13 +38,6 @@ u64 memory_hotplug_max(void);
- #define memory_hotplug_max() memblock_end_of_DRAM()
- #endif
- 
--/*
-- * Following are macros that each numa implmentation must define.
-- */
--
--#define node_start_pfn(nid)	(NODE_DATA(nid)->node_start_pfn)
--#define node_end_pfn(nid)	(NODE_DATA(nid)->node_end_pfn)
--
- #else
- #define memory_hotplug_max() memblock_end_of_DRAM()
- #endif /* CONFIG_NEED_MULTIPLE_NODES */
-diff --git a/arch/sh/include/asm/mmzone.h b/arch/sh/include/asm/mmzone.h
-index 8887baf..15a8496 100644
---- a/arch/sh/include/asm/mmzone.h
-+++ b/arch/sh/include/asm/mmzone.h
-@@ -9,10 +9,6 @@
- extern struct pglist_data *node_data[];
- #define NODE_DATA(nid)		(node_data[nid])
- 
--#define node_start_pfn(nid)	(NODE_DATA(nid)->node_start_pfn)
--#define node_end_pfn(nid)	(NODE_DATA(nid)->node_start_pfn + \
--				 NODE_DATA(nid)->node_spanned_pages)
--
- static inline int pfn_to_nid(unsigned long pfn)
- {
- 	int nid;
-diff --git a/arch/sparc/include/asm/mmzone.h b/arch/sparc/include/asm/mmzone.h
-index e8c6487..99d9b9f 100644
---- a/arch/sparc/include/asm/mmzone.h
-+++ b/arch/sparc/include/asm/mmzone.h
-@@ -8,8 +8,6 @@
- extern struct pglist_data *node_data[];
- 
- #define NODE_DATA(nid)		(node_data[nid])
--#define node_start_pfn(nid)	(NODE_DATA(nid)->node_start_pfn)
--#define node_end_pfn(nid)	(NODE_DATA(nid)->node_end_pfn)
- 
- extern int numa_cpu_lookup_table[];
- extern cpumask_t numa_cpumask_lookup_table[];
-diff --git a/arch/tile/include/asm/mmzone.h b/arch/tile/include/asm/mmzone.h
-index c6344c4..9d3dbce 100644
---- a/arch/tile/include/asm/mmzone.h
-+++ b/arch/tile/include/asm/mmzone.h
-@@ -40,17 +40,6 @@ static inline int pfn_to_nid(unsigned long pfn)
- 	return highbits_to_node[__pfn_to_highbits(pfn)];
- }
- 
--/*
-- * Following are macros that each numa implmentation must define.
-- */
--
--#define node_start_pfn(nid)	(NODE_DATA(nid)->node_start_pfn)
--#define node_end_pfn(nid)						\
--({									\
--	pg_data_t *__pgdat = NODE_DATA(nid);				\
--	__pgdat->node_start_pfn + __pgdat->node_spanned_pages;		\
--})
--
- #define kern_addr_valid(kaddr)	virt_addr_valid((void *)kaddr)
- 
- static inline int pfn_valid(int pfn)
-diff --git a/arch/x86/include/asm/mmzone_32.h b/arch/x86/include/asm/mmzone_32.h
-index 5e83a41..224e8c5 100644
---- a/arch/x86/include/asm/mmzone_32.h
-+++ b/arch/x86/include/asm/mmzone_32.h
-@@ -48,17 +48,6 @@ static inline int pfn_to_nid(unsigned long pfn)
- #endif
- }
- 
--/*
-- * Following are macros that each numa implmentation must define.
-- */
--
--#define node_start_pfn(nid)	(NODE_DATA(nid)->node_start_pfn)
--#define node_end_pfn(nid)						\
--({									\
--	pg_data_t *__pgdat = NODE_DATA(nid);				\
--	__pgdat->node_start_pfn + __pgdat->node_spanned_pages;		\
--})
--
- static inline int pfn_valid(int pfn)
- {
- 	int nid = pfn_to_nid(pfn);
-diff --git a/arch/x86/include/asm/mmzone_64.h b/arch/x86/include/asm/mmzone_64.h
-index b3f88d7..129d9aa 100644
---- a/arch/x86/include/asm/mmzone_64.h
-+++ b/arch/x86/include/asm/mmzone_64.h
-@@ -13,8 +13,5 @@ extern struct pglist_data *node_data[];
- 
- #define NODE_DATA(nid)		(node_data[nid])
- 
--#define node_start_pfn(nid)	(NODE_DATA(nid)->node_start_pfn)
--#define node_end_pfn(nid)       (NODE_DATA(nid)->node_start_pfn +	\
--				 NODE_DATA(nid)->node_spanned_pages)
- #endif
- #endif /* _ASM_X86_MMZONE_64_H */
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index c928dac..9f7c3eb 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -647,6 +647,13 @@ typedef struct pglist_data {
- #endif
- #define nid_page_nr(nid, pagenr) 	pgdat_page_nr(NODE_DATA(nid),(pagenr))
- 
-+#define node_start_pfn(nid)	(NODE_DATA(nid)->node_start_pfn)
-+
-+#define node_end_pfn(nid) ({\
-+	pg_data_t *__pgdat = NODE_DATA(nid);\
-+	__pgdat->node_start_pfn + __pgdat->node_spanned_pages;\
-+})
-+
- #include <linux/memory_hotplug.h>
- 
- extern struct mutex zonelists_mutex;
--- 
-1.7.4.1
+Below is a summary of the state of the merge.
+
+We are up to 194 trees (counting Linus' and 28 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging kbuild-current/rc-fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging 52xx-and-virtex-current/powerpc/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging driver-core.current/driver-core-linus
+Merging tty.current/tty-linus
+Merging usb.current/usb-linus
+Merging staging.current/staging-linus
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging sh-current/sh-fixes-for-linus
+Merging rmobile-current/rmobile-fixes-for-linus
+Merging fbdev-current/fbdev-fixes-for-linus
+Merging devicetree-current/devicetree/merge
+Merging spi-current/spi/merge
+Merging arm/for-next
+Merging arm-lpae/for-next
+CONFLICT (content): Merge conflict in arch/arm/include/asm/pgalloc.h
+CONFLICT (content): Merge conflict in arch/arm/include/asm/pgtable.h
+CONFLICT (content): Merge conflict in arch/arm/include/asm/tlb.h
+CONFLICT (content): Merge conflict in arch/arm/mm/context.c
+CONFLICT (content): Merge conflict in arch/arm/mm/dma-mapping.c
+CONFLICT (content): Merge conflict in arch/arm/mm/proc-v7.S
+Merging at91/at91-next
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging linux-spec/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+Merging s5p/for-next
+Merging tegra/for-next
+Merging ux500-core/ux500-core
+Merging xilinx/arm-next
+CONFLICT (add/add): Merge conflict in arch/arm/kernel/devtree.c
+CONFLICT (content): Merge conflict in arch/arm/mm/init.c
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/for-next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/powerpc/next
+Merging galak/next
+CONFLICT (content): Merge conflict in arch/powerpc/boot/dts/p2020ds.dts
+CONFLICT (content): Merge conflict in arch/powerpc/boot/dts/p2020rdb.dts
+Merging s390/features
+Merging sh/sh-latest
+Merging rmobile/rmobile-latest
+Merging sparc/master
+Merging tile/master
+Merging unicore32/unicore32
+Merging xtensa/master
+CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
+Merging ceph/for-next
+CONFLICT (content): Merge conflict in fs/ceph/export.c
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/dev
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging hfsplus/for-next
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging omfs/for-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging vfs-scale/vfs-scale-working
+Merging pci/linux-next
+Merging of-pci/of-pci
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+Merging hwmon-staging/hwmon-next
+Merging quilt/kernel-doc
+Merging docs/docs-move
+Merging v4l-dvb/master
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+CONFLICT (content): Merge conflict in arch/x86/kernel/process.c
+Merging powertools/tools-test
+Merging cpupowerutils/master
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging dlm/next
+Merging swiotlb/master
+Merging ibft/master
+Merging scsi/master
+Merging slave-dma/next
+Merging async_tx/next
+Merging net/master
+CONFLICT (content): Merge conflict in drivers/net/wireless/iwlwifi/iwl-agn-=
+rxon.c
+CONFLICT (content): Merge conflict in drivers/net/wireless/rtlwifi/pci.c
+Applying: net/staging: add needed interrupt.h and hardirq.h includes
+Merging wireless/master
+CONFLICT (content): Merge conflict in drivers/net/wireless/rtlwifi/pci.c
+Merging bluetooth/master
+Merging mtd/master
+Merging l2-mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging sound-asoc/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging input/next
+Merging input-mt/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+CONFLICT (content): Merge conflict in drivers/leds/Kconfig
+Merging backlight/for-mm
+Merging mmc/mmc-next
+CONFLICT (delete/modify): drivers/mmc/host/sdhci-of-core.c deleted in mmc/m=
+mc-next and modified in HEAD. Version HEAD of drivers/mmc/host/sdhci-of-cor=
+e.c left in tree.
+$ git rm -f drivers/mmc/host/sdhci-of-core.c
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging fbdev/master
+Merging viafb/viafb-next
+Merging omap_dss2/for-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging selinux/master
+Merging lblnet/master
+Merging agp/agp-next
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+CONFLICT (delete/modify): arch/arm/mach-ep93xx/dma-m2p.c deleted in HEAD an=
+d modified in trivial/for-next. Version trivial/for-next of arch/arm/mach-e=
+p93xx/dma-m2p.c left in tree.
+CONFLICT (content): Merge conflict in drivers/mtd/maps/pxa2xx-flash.c
+$ git rm -f arch/arm/mach-ep93xx/dma-m2p.c
+Merging audit/for-next
+Merging suspend/linux-next
+Merging apm/for-next
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging i7core_edac/linux_next
+Merging i7300_edac/linux_next
+Merging devicetree/devicetree/next
+Merging spi/spi/next
+Merging gpio/gpio/next
+CONFLICT (content): Merge conflict in arch/arm/mach-ep93xx/Makefile
+CONFLICT (content): Merge conflict in drivers/gpio/gpio-ep93xx.c
+Merging tip/auto-latest
+Merging rcu/rcu/next
+Merging kvm/linux-next
+Merging oprofile/for-next
+Merging ptrace/ptrace
+Merging xen/upstream/xen
+Merging xen-two/linux-next
+Merging xen-pvhvm/linux-next
+Merging edac-amd/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+Merging sysctl/master
+Merging namespace/master
+Merging driver-core/driver-core-next
+Merging tty/tty-next
+Merging usb/usb-next
+Merging staging/staging-next
+CONFLICT (content): Merge conflict in drivers/staging/brcm80211/brcmfmac/dh=
+d_linux.c
+CONFLICT (content): Merge conflict in drivers/staging/brcm80211/brcmfmac/wl=
+_iw.c
+Merging bkl-config/config
+Merging tmem/linux-next
+Merging writeback/next
+Merging arm-dt/devicetree/arm-next
+Merging scsi-post-merge/merge-base:master
+
+--Signature=_Fri__17_Jun_2011_16_24_40_+1000_FzL3_Zp.wseN1trH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJN+vMoAAoJEDMEi1NhKgbsakUH/07Oejitbzkoq7gka3DtB7Kd
+BrNwJftfyYNVd6KE9zWpEIKNVn7/S9Lb9fpOwM2laejRAr8QthR0xz91w7ArYZvU
+prAtFs/pM0eNsuOHZ7iuXNZPZe8B5hE0kZJ9bc91fItU57ZZ96u5ulRl3hNic2/5
+slTIyAcEvVnREg5HwIKQYDUyQqdz5Iz6UHYv8CGMG/SPKCLRZrkBDvs3bLRfFUwI
+5uf8mDICqSuMfv1IdAi3U0DHmW/wtUgT7M58fX2lK7kx6OgLGgvpYOAOYXds1ee3
+BMWCv+W7m0Bt13O3uu9TCs22iLxOPAFvWSkfOLFQ7qGlKDq57iRS8P8J0c0Pwmg=
+=+uC1
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__17_Jun_2011_16_24_40_+1000_FzL3_Zp.wseN1trH--
