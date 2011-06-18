@@ -1,62 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: Build regressions/improvements in v3.0-rc3
-Date: Sat, 18 Jun 2011 18:30:29 +1000
-Message-ID: <20110618183029.822f4d82.sfr@canb.auug.org.au>
+Date: Sat, 18 Jun 2011 14:19:37 +0200
+Message-ID: <BANLkTinsa=Wh0_+YBzFRnp4M+FGejiANFw@mail.gmail.com>
 References: <alpine.DEB.2.00.1106151111200.18110@ayla.of.borg>
 	<BANLkTikBDVR=S5J-=Kjq1QW3OU64WzHYRg@mail.gmail.com>
+	<20110618183029.822f4d82.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__18_Jun_2011_18_30_29_+1000_fpSBzABPWJTUAyT7"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39178 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753065Ab1FRIaj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 18 Jun 2011 04:30:39 -0400
-In-Reply-To: <BANLkTikBDVR=S5J-=Kjq1QW3OU64WzHYRg@mail.gmail.com>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:59982 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753141Ab1FRMTj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Jun 2011 08:19:39 -0400
+In-Reply-To: <20110618183029.822f4d82.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Michael Ellerman <michael@ellerman.id.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
 
---Signature=_Sat__18_Jun_2011_18_30_29_+1000_fpSBzABPWJTUAyT7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Geert,
-
-On Wed, 15 Jun 2011 11:19:48 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
-> wrote:
+On Sat, Jun 18, 2011 at 10:30, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> On Wed, 15 Jun 2011 11:19:48 +0200 Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+>> Would it be possible to build with `make -k', so it continues in cas=
+e
+>> of an error, and
+>> tries to build as much as possible?
+>> Yes, I know this may increase build time considerably, but in an ide=
+al
+>> world, there
+>> are no compile errors and everything is built anyway ;-)
 >
-> Would it be possible to build with `make -k', so it continues in case
-> of an error, and
-> tries to build as much as possible?
-> Yes, I know this may increase build time considerably, but in an ideal
-> world, there
-> are no compile errors and everything is built anyway ;-)
+> Done (I think - it required very simple changes to a Python script an=
+d I
 
-Done (I think - it required very simple changes to a Python script and I
-only do "monkey see, monkey do" Python programming :-))
+Thanks!
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> only do "monkey see, monkey do" Python programming :-))
 
---Signature=_Sat__18_Jun_2011_18_30_29_+1000_fpSBzABPWJTUAyT7
-Content-Type: application/pgp-signature
+Good to know I'm not the only one ;-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Gr{oetje,eeting}s,
 
-iQEcBAEBAgAGBQJN/GIlAAoJEDMEi1NhKgbsOM4IAKMzG0Wk4Jes83BIZsOTzQj/
-NJjIGuU+Xy7pQoQ7oR2ftUxSnG681Lilad7o2rNMmEMr7AcetGkztqivT5TK1cg+
-whxq7TdvzcquUz+MAAQ1hmtv6wTQAibQUAA9VnWHLMujHwCLQL3XnoOSy8JcxoB1
-jl2OrnVT4l2w2Ka/eUPlms0+O+DNR7DbuY+I9gL8rHZRiQZFGcjRXPzPNcommWa1
-jyLZ2kyIX3AFI2mbL6FlPsfytGelfM1klTB4F8Q6wvawWZNIiLTDs+tugtQofRiK
-ADTL2nLckUZIREErDr0+FTb4+Zz82NOI/S1MkSFVXskEOhq/KAlDGGeHOhknlus=
-=OVLi
------END PGP SIGNATURE-----
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
 
---Signature=_Sat__18_Jun_2011_18_30_29_+1000_fpSBzABPWJTUAyT7--
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
