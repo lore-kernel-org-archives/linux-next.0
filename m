@@ -1,60 +1,45 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: Build regressions/improvements in v3.0-rc3
-Date: Sat, 18 Jun 2011 14:19:37 +0200
-Message-ID: <BANLkTinsa=Wh0_+YBzFRnp4M+FGejiANFw@mail.gmail.com>
-References: <alpine.DEB.2.00.1106151111200.18110@ayla.of.borg>
-	<BANLkTikBDVR=S5J-=Kjq1QW3OU64WzHYRg@mail.gmail.com>
-	<20110618183029.822f4d82.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Mon, 20 Jun 2011 12:56:16 +1000
+Message-ID: <20110620125616.e319c55c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:59982 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753141Ab1FRMTj convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Jun 2011 08:19:39 -0400
-In-Reply-To: <20110618183029.822f4d82.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:50795 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751917Ab1FTC4Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 19 Jun 2011 22:56:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michael Ellerman <michael@ellerman.id.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Schillstrom <hans.schillstrom@ericsson.com>, Simon Horman <horms@verge.net.au>
 
-Hi Stephen,
+Hi all,
 
-On Sat, Jun 18, 2011 at 10:30, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> On Wed, 15 Jun 2011 11:19:48 +0200 Geert Uytterhoeven <geert@linux-m6=
-8k.org> wrote:
->> Would it be possible to build with `make -k', so it continues in cas=
-e
->> of an error, and
->> tries to build as much as possible?
->> Yes, I know this may increase build time considerably, but in an ide=
-al
->> world, there
->> are no compile errors and everything is built anyway ;-)
->
-> Done (I think - it required very simple changes to a Python script an=
-d I
+Today's linux-next merge of the net tree got a conflict in
+net/netfilter/ipvs/ip_vs_core.c between commit 8f4e0a18682d ("IPVS netns
+exit causes crash in conntrack") from the net-current tree and commit
+503cf15a5ecc ("IPVS: rename of netns init and cleanup functions") from
+the net tree.
 
-Thanks!
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> only do "monkey see, monkey do" Python programming :-))
-
-Good to know I'm not the only one ;-)
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+diff --cc net/netfilter/ipvs/ip_vs_core.c
+index 24c28d2,2200bae..0000000
+--- a/net/netfilter/ipvs/ip_vs_core.c
++++ b/net/netfilter/ipvs/ip_vs_core.c
+@@@ -1945,8 -1945,7 +1945,8 @@@ static void __net_exit __ip_vs_dev_clea
+  {
+  	EnterFunction(2);
+  	net_ipvs(net)->enable = 0;	/* Disable packet reception */
+ +	smp_wmb();
+- 	__ip_vs_sync_cleanup(net);
++ 	ip_vs_sync_net_cleanup(net);
+  	LeaveFunction(2);
+  }
+  
