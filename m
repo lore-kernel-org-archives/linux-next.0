@@ -1,33 +1,66 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the rcu tree with the tip tree
-Date: Mon, 20 Jun 2011 08:17:22 -0700
-Message-ID: <20110620151722.GA2933@linux.vnet.ibm.com>
-References: <20110620144705.c9a5513b.sfr@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with the
+ wireless-current tree
+Date: Tue, 21 Jun 2011 11:49:57 +1000
+Message-ID: <20110621114957.59fae11d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e8.ny.us.ibm.com ([32.97.182.138]:48767 "EHLO e8.ny.us.ibm.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51562 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751276Ab1FTPSY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Jun 2011 11:18:24 -0400
-Content-Disposition: inline
-In-Reply-To: <20110620144705.c9a5513b.sfr@canb.auug.org.au>
+	id S932079Ab1FUBuE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Jun 2011 21:50:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo F. Padovan" <padovan@profusion.mobi>, Johan Hedberg <johan.hedberg@intel.com>
 
-On Mon, Jun 20, 2011 at 02:47:05PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> Today's linux-next merge of the rcu tree got conflicts in
-> kernel/rcutree.c and kernel/rcutree_plugin.h between various commits from
-> the tip tree and various commits from the rcu tree.
-> 
-> I can't easily resolve these, so I have dropped the rcu tree for today.
+Hi John,
 
-I will be resolving these shortly, please accept my apologies for the
-hassle.
+Today's linux-next merge of the wireless tree got a conflict in
+net/bluetooth/l2cap_core.c between commit df3c3931ec58 ("Bluetooth: Fix
+accepting connect requests for defer_setup") from the wireless-current
+tree and commit ab07801d2898 ("Bluetooth: create channel timer to replace
+sk_timer") from the wireless tree.
 
-						Thanx, Paul
+Jusr context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc net/bluetooth/l2cap_core.c
+index 56fdd91,dff9d76..0000000
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@@ -4002,24 -4205,15 +4205,24 @@@ static int l2cap_security_cfm(struct hc
+  			}
+  		} else if (sk->sk_state == BT_CONNECT2) {
+  			struct l2cap_conn_rsp rsp;
+ -			__u16 result;
+ +			__u16 res, stat;
+  
+  			if (!status) {
+ -				sk->sk_state = BT_CONFIG;
+ -				result = L2CAP_CR_SUCCESS;
+ +				if (bt_sk(sk)->defer_setup) {
+ +					struct sock *parent = bt_sk(sk)->parent;
+ +					res = L2CAP_CR_PEND;
+ +					stat = L2CAP_CS_AUTHOR_PEND;
+ +					parent->sk_data_ready(parent, 0);
+ +				} else {
+ +					sk->sk_state = BT_CONFIG;
+ +					res = L2CAP_CR_SUCCESS;
+ +					stat = L2CAP_CS_NO_INFO;
+ +				}
+  			} else {
+  				sk->sk_state = BT_DISCONN;
+- 				l2cap_sock_set_timer(sk, HZ / 10);
++ 				l2cap_chan_set_timer(chan, HZ / 10);
+ -				result = L2CAP_CR_SEC_BLOCK;
+ +				res = L2CAP_CR_SEC_BLOCK;
+ +				stat = L2CAP_CS_NO_INFO;
+  			}
+  
+  			rsp.scid   = cpu_to_le16(chan->dcid);
