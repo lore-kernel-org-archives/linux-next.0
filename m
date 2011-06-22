@@ -1,55 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the m68knommu tree with the m68k tree
-Date: Wed, 22 Jun 2011 11:12:56 +1000
-Message-ID: <20110622111256.3857df1e.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the mfd tree
+Date: Wed, 22 Jun 2011 13:51:58 +1000
+Message-ID: <20110622135158.3ec1e6d1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__22_Jun_2011_11_12_56_+1000_PUpRYI5jolSR1UkJ"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49308 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48995 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757545Ab1FVBNI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Jun 2011 21:13:08 -0400
+	id S1757871Ab1FVDwF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Jun 2011 23:52:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Ungerer <gerg@snapgear.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Margarita Olaya <magi@slimlogic.co.uk>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lrg@ti.com>
 
---Signature=_Wed__22_Jun_2011_11_12_56_+1000_PUpRYI5jolSR1UkJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Grant,
 
-Hi Greg,
+Today's linux-next merge of the gpio tree got a conflict in
+drivers/gpio/Makefile between commit d4739bbd20ec ("tps65912: gpio: add
+gpio driver") from the mfd tree and commit c103de240439 ("gpio:
+reorganize drivers") from the gpio tree.
 
-Today's linux-next merge of the m68knommu tree got a conflict in
-arch/m68k/include/asm/bitops_mm.h between commit 17c74432b88e
-("m68k/bitops: Make bitmap data pointer of atomic ops volatile") from the
-m68k tree and commit 2cb0d89e66b1 ("m68k: merge mmu and non-mmu
-bitops.h") from the m68knommu tree.
-
-The latter effectively deletes in the file and in doing the merge,
-removes the funtions that were modified by the former commit.  So I just
-removed the file.
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__22_Jun_2011_11_12_56_+1000_PUpRYI5jolSR1UkJ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOAUGYAAoJEDMEi1NhKgbs5FAH/2yLZz1SckjQDHmnOuOMF4hU
-R084Vd1K6opccXAmQL9SzDa1k6gQ4T4CHO+rydrINRn2XE2QQij7AHeyCXH+VFKb
-mydIXocq50FGTuLgE6VvOrS8ixVryMw5o77ikimFN65vBTJAtSp6ebi5waVNA/gV
-eHj2LHa6ajt/oIgr2CMLgUJ3rgolRVj+3fCQScae64qvzM6kq7fQ3bIMoUTKSYgq
-1ea5DyjdGSWVnQ2BMj/8Ac9xXfcJRGH/UOdBi3vTFm+hF17YojfSRLMRsMh+rRY1
-Ae7NFGOfe35OP5XyHc62g08DYmi0BabEGesFWJLXuqkImztcnQ9bCod879nIBn4=
-=FIYc
------END PGP SIGNATURE-----
-
---Signature=_Wed__22_Jun_2011_11_12_56_+1000_PUpRYI5jolSR1UkJ--
+diff --cc drivers/gpio/Makefile
+index 78aed0e,0fbdd75..0000000
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@@ -14,40 -38,20 +38,21 @@@ obj-$(CONFIG_GPIO_RDC321X)	+= gpio-rdc3
+  obj-$(CONFIG_GPIO_PLAT_SAMSUNG)	+= gpio-plat-samsung.o
+  obj-$(CONFIG_GPIO_S5PC100)	+= gpio-s5pc100.o
+  obj-$(CONFIG_GPIO_S5PV210)	+= gpio-s5pv210.o
+- obj-$(CONFIG_GPIO_LANGWELL)	+= langwell_gpio.o
+- obj-$(CONFIG_GPIO_MAX730X)	+= max730x.o
+- obj-$(CONFIG_GPIO_MAX7300)	+= max7300.o
+- obj-$(CONFIG_GPIO_MAX7301)	+= max7301.o
+- obj-$(CONFIG_GPIO_MAX732X)	+= max732x.o
+- obj-$(CONFIG_GPIO_MC33880)	+= mc33880.o
+- obj-$(CONFIG_GPIO_MCP23S08)	+= mcp23s08.o
+- obj-$(CONFIG_GPIO_74X164)	+= 74x164.o
+- obj-$(CONFIG_ARCH_OMAP)         += gpio-omap.o
+- obj-$(CONFIG_GPIO_PCA953X)	+= pca953x.o
+- obj-$(CONFIG_GPIO_PCF857X)	+= pcf857x.o
+- obj-$(CONFIG_GPIO_PCH)		+= pch_gpio.o
+- obj-$(CONFIG_GPIO_PL061)	+= pl061.o
+- obj-$(CONFIG_GPIO_STMPE)	+= stmpe-gpio.o
+- obj-$(CONFIG_GPIO_TC3589X)	+= tc3589x-gpio.o
+- obj-$(CONFIG_GPIO_TIMBERDALE)	+= timbgpio.o
+- obj-$(CONFIG_GPIO_TWL4030)	+= twl4030-gpio.o
++ 
++ obj-$(CONFIG_GPIO_SCH)		+= gpio-sch.o
++ obj-$(CONFIG_GPIO_STMPE)	+= gpio-stmpe.o
++ obj-$(CONFIG_GPIO_SX150X)	+= gpio-sx150x.o
++ obj-$(CONFIG_GPIO_TC3589X)	+= gpio-tc3589x.o
++ obj-$(CONFIG_ARCH_TEGRA)	+= gpio-tegra.o
++ obj-$(CONFIG_GPIO_TIMBERDALE)	+= gpio-timberdale.o
++ obj-$(CONFIG_GPIO_TPS65910)	+= gpio-tps65910.o
+ +obj-$(CONFIG_GPIO_TPS65912)	+= gpio-tps65912.o
+- obj-$(CONFIG_GPIO_UCB1400)	+= ucb1400_gpio.o
+- obj-$(CONFIG_GPIO_XILINX)	+= xilinx_gpio.o
+- obj-$(CONFIG_GPIO_CS5535)	+= cs5535-gpio.o
+- obj-$(CONFIG_GPIO_BT8XX)	+= bt8xxgpio.o
+- obj-$(CONFIG_GPIO_IT8761E)	+= it8761e_gpio.o
+- obj-$(CONFIG_GPIO_VR41XX)	+= vr41xx_giu.o
+- obj-$(CONFIG_GPIO_WM831X)	+= wm831x-gpio.o
+- obj-$(CONFIG_GPIO_WM8350)	+= wm8350-gpiolib.o
+- obj-$(CONFIG_GPIO_WM8994)	+= wm8994-gpio.o
+- obj-$(CONFIG_GPIO_SCH)		+= sch_gpio.o
++ obj-$(CONFIG_GPIO_TWL4030)	+= gpio-twl4030.o
+  obj-$(CONFIG_MACH_U300)		+= gpio-u300.o
+- obj-$(CONFIG_PLAT_NOMADIK)	+= gpio-nomadik.o
+- obj-$(CONFIG_GPIO_RDC321X)	+= rdc321x-gpio.o
+- obj-$(CONFIG_GPIO_JANZ_TTL)	+= janz-ttl.o
+- obj-$(CONFIG_GPIO_SX150X)	+= sx150x.o
+- obj-$(CONFIG_GPIO_VX855)	+= vx855_gpio.o
+- obj-$(CONFIG_GPIO_ML_IOH)	+= ml_ioh_gpio.o
+- obj-$(CONFIG_AB8500_GPIO)       += ab8500-gpio.o
+- obj-$(CONFIG_GPIO_TPS65910)	+= tps65910-gpio.o
++ obj-$(CONFIG_GPIO_UCB1400)	+= gpio-ucb1400.o
++ obj-$(CONFIG_GPIO_VR41XX)	+= gpio-vr41xx.o
++ obj-$(CONFIG_GPIO_VX855)	+= gpio-vx855.o
++ obj-$(CONFIG_GPIO_WM831X)	+= gpio-wm831x.o
++ obj-$(CONFIG_GPIO_WM8350)	+= gpio-wm8350.o
++ obj-$(CONFIG_GPIO_WM8994)	+= gpio-wm8994.o
++ obj-$(CONFIG_GPIO_XILINX)	+= gpio-xilinx.o
