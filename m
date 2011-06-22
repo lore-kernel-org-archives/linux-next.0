@@ -1,34 +1,55 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the trivial
- and net trees
-Date: Tue, 21 Jun 2011 17:10:09 -0700
-Message-ID: <20110622001009.GA9627@kroah.com>
-References: <20110621151055.0775f17a.sfr@canb.auug.org.au>
- <BANLkTimmy0GJMgho4YK62gru6QXGox6Eqg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the m68knommu tree with the m68k tree
+Date: Wed, 22 Jun 2011 11:12:56 +1000
+Message-ID: <20110622111256.3857df1e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__22_Jun_2011_11_12_56_+1000_PUpRYI5jolSR1UkJ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49308 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757545Ab1FVBNI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Jun 2011 21:13:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg Ungerer <gerg@snapgear.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+
+--Signature=_Wed__22_Jun_2011_11_12_56_+1000_PUpRYI5jolSR1UkJ
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <BANLkTimmy0GJMgho4YK62gru6QXGox6Eqg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vitaliy Ivanov <vitalivanov@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 22, 2011 at 01:40:48AM +0300, Vitaliy Ivanov wrote:
-> Stephen,
-> 
-> On Tue, Jun 21, 2011 at 8:10 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Today's linux-next merge of the staging tree got a conflict in
-> > drivers/staging/brcm80211/brcmfmac/wl_iw.c between commit e44ba033c565
-> > ("treewide: remove duplicate includes") from the trivial tree, commit
-> > 219eb47e6f35 ("net/staging: add needed interrupt.h and hardirq.h
-> > includes") from the net tree and various commits from the staging tree.
-> >
-> > I fixed them up (see below) and can carry the fix as necessary.
-> 
-> This one and all the others look good to me.
+Hi Greg,
 
-Me too, thanks for doing this.
+Today's linux-next merge of the m68knommu tree got a conflict in
+arch/m68k/include/asm/bitops_mm.h between commit 17c74432b88e
+("m68k/bitops: Make bitmap data pointer of atomic ops volatile") from the
+m68k tree and commit 2cb0d89e66b1 ("m68k: merge mmu and non-mmu
+bitops.h") from the m68knommu tree.
 
-greg k-h
+The latter effectively deletes in the file and in doing the merge,
+removes the funtions that were modified by the former commit.  So I just
+removed the file.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__22_Jun_2011_11_12_56_+1000_PUpRYI5jolSR1UkJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOAUGYAAoJEDMEi1NhKgbs5FAH/2yLZz1SckjQDHmnOuOMF4hU
+R084Vd1K6opccXAmQL9SzDa1k6gQ4T4CHO+rydrINRn2XE2QQij7AHeyCXH+VFKb
+mydIXocq50FGTuLgE6VvOrS8ixVryMw5o77ikimFN65vBTJAtSp6ebi5waVNA/gV
+eHj2LHa6ajt/oIgr2CMLgUJ3rgolRVj+3fCQScae64qvzM6kq7fQ3bIMoUTKSYgq
+1ea5DyjdGSWVnQ2BMj/8Ac9xXfcJRGH/UOdBi3vTFm+hF17YojfSRLMRsMh+rRY1
+Ae7NFGOfe35OP5XyHc62g08DYmi0BabEGesFWJLXuqkImztcnQ9bCod879nIBn4=
+=FIYc
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_Jun_2011_11_12_56_+1000_PUpRYI5jolSR1UkJ--
