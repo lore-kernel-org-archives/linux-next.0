@@ -1,45 +1,59 @@
-From: Dan Magenheimer <dan.magenheimer@oracle.com>
-Subject: RE: linux-next: manual merge of the tmem tree with the xen-two tree
-Date: Thu, 23 Jun 2011 09:58:35 -0700 (PDT)
-Message-ID: <6ff0f0d5-534e-4403-80f7-edd228618049@default>
-References: <20110622144611.a900a000.sfr@canb.auug.org.au
- 20110622140642.GD5574@dumpdata.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: build warning after merge of the scsi tree
+Date: Thu, 23 Jun 2011 10:02:39 -0700
+Message-ID: <20110623100239.0e1befbd.randy.dunlap@oracle.com>
+References: <20110518114912.dfdf8835.sfr@canb.auug.org.au>
+	<1305684362.2856.349.camel@haakon2.linux-iscsi.org>
+	<20110518135823.a809f829.sfr@canb.auug.org.au>
+	<BANLkTim7ZPr5xazm3R+DzXufaH03Zzur1Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:64004 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:25042 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759773Ab1FWQ6y convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jun 2011 12:58:54 -0400
-In-Reply-To: <20110622140642.GD5574@dumpdata.com>
+	with ESMTP id S1751486Ab1FWRDF convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jun 2011 13:03:05 -0400
+In-Reply-To: <BANLkTim7ZPr5xazm3R+DzXufaH03Zzur1Q@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Wilk <konrad.wilk@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, James Bottomley <James.Bottomley@hansenpartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kiran Patil <kiran.patil@intel.com>, Joe Eykholt <jeykholt@cisco.com>, Christoph Hellwig <hch@lst.de>, Yi Zou <yi.zou@intel.com>
 
-> From: Konrad Rzeszutek Wilk
-> Subject: Re: linux-next: manual merge of the tmem tree with the xen-two tree
-> 
-> On Wed, Jun 22, 2011 at 02:46:11PM +1000, Stephen Rothwell wrote:
-> > Hi Dan,
+On Thu, 19 May 2011 18:22:59 +0200 Geert Uytterhoeven wrote:
+
+> On Wed, May 18, 2011 at 05:58, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >> --- a/drivers/target/tcm_fc/tfc_io.c
+> >> +++ b/drivers/target/tcm_fc/tfc_io.c
+> >> @@ -206,7 +206,8 @@ int ft_queue_data_in(struct se_cmd *se_cmd)
+> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 "xid <0x%x>, remaining <0x%x>, "
+> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 "lso_max <0x%x>\n",
+> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 __func__, fp, ep->xid,
+> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0 remaining, lport->lso_max);
+> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0 (unsigned int)remaining,
+> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0 lport->lso_max);
 > >
-> > Today's linux-next merge of the tmem tree got a conflict in
-> > drivers/xen/Kconfig drivers/xen/tmem.c between commit afec6e04922d ("xen:
-> > prepare tmem shim to handle frontswap") from the xen-two tree and commit
-> > ac33c46b42ba ("xen: enable frontswap for Xen tmem") from the tmem tree.
-> 
-> Dan, can you please rebase your #linux-next branch on my #linux-next branch
-> so that Stephen's awesome build engine can chug along for this?
-> 
-> Thanks!
-> > I just used the xen-two versions of these files (as they look newer).
-> 
-> OK, we will sort this out.
+> > Given that "remaining" really is a length, surely it makes more sen=
+se to
+>=20
+> Exactly my comments ...
+>=20
+> > print it with %zd than to cast it and print it with %x ...
+>=20
+> ... except that size_t is unsigned, so %zu would be a little bit bett=
+er.
 
-Should hopefully all be fixed now.  (Konrad's version of the commit is
-indeed the newer version so I have removed the older version from the
-tmem tree.)
 
-Thanks,
-Dan
+This still needs to be fixed in linux-next (20110623).
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your cod=
+e ***
