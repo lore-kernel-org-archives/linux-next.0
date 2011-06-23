@@ -1,33 +1,41 @@
 From: Mike Frysinger <vapier.adi@gmail.com>
-Subject: Re: linux-next: Tree for June 23 (net)
-Date: Thu, 23 Jun 2011 14:13:38 -0400
-Message-ID: <BANLkTinTZzjALrTEgofbFEG_pMSQw6uGWg@mail.gmail.com>
-References: <20110623155431.6bfe3b40.sfr@canb.auug.org.au> <20110623091429.2d51b0f0.randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for June 23 (net/can & i/o)
+Date: Thu, 23 Jun 2011 16:38:56 -0400
+Message-ID: <BANLkTi=ZxHDvhCs8Qki2ZrhCbfY6Mjx5+w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110623091429.2d51b0f0.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-iw0-f174.google.com ([209.85.214.174]:56655 "EHLO
+	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933997Ab1FWUjQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jun 2011 16:39:16 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: netdev <netdev@vger.kernel.org>, socketcan-core@lists.berlios.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Jun 23, 2011 at 12:14, Randy Dunlap wrote:
-> On Thu, 23 Jun 2011 15:54:31 +1000 Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20110622:
->>
->> The powerpc allyesconfig (and probably others) is still broken because we
->> now build the staging drivers and because of a commit in the net tree.
->> The breakage in Linus' tree is fixed by one of Andrew's patches above.
->>
->> The net tree gained 2 build failures that I have left (see above).
+On Thu, Jun 23, 2011 at 01:54, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> My fixes tree includes (as an experiment) the early part of
+> mmotm-2011-06-22-13-05.
 >
+> The powerpc allyesconfig (and probably others) is still broken because we
+> now build the staging drivers and because of a commit in the net tree.
+> The breakage in Linus' tree is fixed by one of Andrew's patches above.
 >
-> When CONFIG_INET is not enabled:
+> The m68knommu tree lost its conflicts.
 >
-> net/core/dev.c:2535: error: implicit declaration of function 'ip_is_fragment'
+> The galak tree lost its conflicts.
+>
+> The net tree gained 2 build failures that I have left (see above).
 
-i see this on two Blackfin defconfigs like CM-BF533
+not sure where this is coming from, but some Blackfin boards now fail with:
+
+drivers/net/can/bfin_can.c: In function 'bfin_can_start_xmit':
+drivers/net/can/bfin_can.c:247: error: implicit declaration of function 'writew'
+make[3]: *** [drivers/net/can/bfin_can.o] Error 1
+
+at any rate, the usage of writew() in this driver is wrong, so i sent
+a patch to fix it.  but since nothing in this file nor in my Blackfin
+tree changed, i wonder if whatever common code changed is going to
+break other stuff ...
 -mike
