@@ -1,69 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (staging related)
-Date: Fri, 24 Jun 2011 10:00:05 +1000
-Message-ID: <20110624100005.f9f59ddf.sfr@canb.auug.org.au>
-References: <20110609172745.dfd3a298.sfr@canb.auug.org.au>
-	<20110609184127.GA2760@kroah.com>
-	<20110609192243.GA3980@kroah.com>
-	<20110610160548.529797c7.sfr@canb.auug.org.au>
-	<20110610160938.cd01c408.sfr@canb.auug.org.au>
-	<20110610223423.GB15868@kroah.com>
-	<20110615142155.bd538b73.sfr@canb.auug.org.au>
-	<20110616191448.GA10255@kroah.com>
-	<20110623103503.cd9e7e70.sfr@canb.auug.org.au>
-	<20110623215115.GB10969@kroah.com>
+Subject: Re: linux-next: Tree for June 23 (net/can & i/o)
+Date: Fri, 24 Jun 2011 11:04:09 +1000
+Message-ID: <20110624110409.10a6951c.sfr@canb.auug.org.au>
+References: <BANLkTi=ZxHDvhCs8Qki2ZrhCbfY6Mjx5+w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Jun_2011_10_00_05_+1000_QqSli_p7ukvpyCel"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58728 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759805Ab1FXAAN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Jun 2011 20:00:13 -0400
-In-Reply-To: <20110623215115.GB10969@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+ boundary="Signature=_Fri__24_Jun_2011_11_04_09_+1000_CQvg8Cv/hoqE8r4S"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <BANLkTi=ZxHDvhCs8Qki2ZrhCbfY6Mjx5+w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Frysinger <vapier.adi@gmail.com>
+Cc: netdev <netdev@vger.kernel.org>, socketcan-core@lists.berlios.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__24_Jun_2011_10_00_05_+1000_QqSli_p7ukvpyCel
+--Signature=_Fri__24_Jun_2011_11_04_09_+1000_CQvg8Cv/hoqE8r4S
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Mike,
 
-On Thu, 23 Jun 2011 14:51:15 -0700 Greg KH <greg@kroah.com> wrote:
+On Thu, 23 Jun 2011 16:38:56 -0400 Mike Frysinger <vapier.adi@gmail.com> wr=
+ote:
 >
-> Sorry, I'm away from home, with a very spotty internet connection, on
-> vacation, so it's hard to get this done at the moment.  I'll get to it
-> on the 27th when I return.
+> not sure where this is coming from, but some Blackfin boards now fail wit=
+h:
+>=20
+> drivers/net/can/bfin_can.c: In function 'bfin_can_start_xmit':
+> drivers/net/can/bfin_can.c:247: error: implicit declaration of function '=
+writew'
+> make[3]: *** [drivers/net/can/bfin_can.o] Error 1
 
-I can understand vacation as well :-)
+yeah, caused by the removal of the inclusion of mm.h from netdevice.h
+(most probably).
 
-Thanks.  I will use Ralf's (arch restricting) patch until you come up
-with something better.
+> at any rate, the usage of writew() in this driver is wrong, so i sent
+> a patch to fix it.  but since nothing in this file nor in my Blackfin
+> tree changed, i wonder if whatever common code changed is going to
+> break other stuff ...
 
+It did indeed :-(
+
+ah, well, I guess that is what I am here for :-)
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__24_Jun_2011_10_00_05_+1000_QqSli_p7ukvpyCel
+--Signature=_Fri__24_Jun_2011_11_04_09_+1000_CQvg8Cv/hoqE8r4S
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOA9OFAAoJEDMEi1NhKgbsknkH/0gSZt7xZPUaIRXYO32rencT
-qkGguDIVhlKLGQEN3ahFN0kr3N/ZPi5OmuGhmg2ExtnlDU2sV1x+/VVE9v6fZsrj
-0qTMDYCE+B9CxZw6fgWcNKJu8noDK6LEQ3Txlo/sbjWaxRhYqEyxmrJmTvkCEpDS
-mR3/9UbaDLpVSnKPzRUHqrzJdwjT2H5I/Oo49N2oQLqG4IPB7D8DxPzscCQfIOYY
-EHWb7wGPN/jyETR6EEtWo/HrFBZRzuo6tqNr22XSR3ryq6E2jEtAurnh4GteSWQI
-kuqR2WiQTDGufEfg4gjz7SmsadzWhhdEefomt1AqNVEA1iLWm5b35rFx6inXSc8=
-=MarY
+iQEcBAEBAgAGBQJOA+KJAAoJEDMEi1NhKgbsY1EH/2G+CGsfbArVAbzGOe6mf2G7
+iEIp6p7dF88WMfObMDcs/+lqmk5jhzQ1iCHctoPUBlvKnX7q43dSUFBw/UrmqPbC
+YuhMePBy3x2I6m3hzADP51qDSnmoqwwnXb6Ut6Xu12hUYcpnzSIm2gaVfUA/Mzfk
+VJNBkln1rXU4uhgKWZWQ8gMo0CyZ8Pbk3OCxcaKU5Wi1flUuRjV8n+cAsogL4+zB
+vnWgX1n8D0j4r52q3W1eiA0ggpMBy0EE6ZYK59Kuk8fPjgXChvrdh49O2u2dyzlQ
+xLsL6zERwTcQUb6BrQF94Y07XvLRudMAEtlI0oHiidXapMDSP1NHWizxFiqSQBA=
+=u2GL
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__24_Jun_2011_10_00_05_+1000_QqSli_p7ukvpyCel--
+--Signature=_Fri__24_Jun_2011_11_04_09_+1000_CQvg8Cv/hoqE8r4S--
