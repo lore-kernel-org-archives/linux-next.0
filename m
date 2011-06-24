@@ -1,51 +1,75 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: Build regressions/improvements in v3.0-rc3
-Date: Fri, 24 Jun 2011 16:50:11 +0200
-Message-ID: <BANLkTinixfckRaUmnPWJ2oObJALjv-7p8g@mail.gmail.com>
-References: <alpine.DEB.2.00.1106151111200.18110@ayla.of.borg>
-	<BANLkTikBDVR=S5J-=Kjq1QW3OU64WzHYRg@mail.gmail.com>
-	<20110618183029.822f4d82.sfr@canb.auug.org.au>
-	<20110623212736.74bea79a.sfr@canb.auug.org.au>
-	<BANLkTimoWrwPNNYrLFN-_gyPnvSCEa9ksA@mail.gmail.com>
-	<20110624161029.e8f96175.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for June 23 (net)
+Date: Fri, 24 Jun 2011 08:38:52 -0700
+Message-ID: <4E04AF8C.6050007@oracle.com>
+References: <20110623155431.6bfe3b40.sfr@canb.auug.org.au>	<20110623091429.2d51b0f0.randy.dunlap@oracle.com> <20110623.212120.2043173528294538748.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:38546 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759456Ab1FXOuN convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Jun 2011 10:50:13 -0400
-In-Reply-To: <20110624161029.e8f96175.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michael Ellerman <michael@ellerman.id.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110623.212120.2043173528294538748.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On 06/23/11 21:21, David Miller wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> Date: Thu, 23 Jun 2011 09:14:29 -0700
+> 
+>> On Thu, 23 Jun 2011 15:54:31 +1000 Stephen Rothwell wrote:
+>>
+>>> Hi all,
+>>>
+>>> Changes since 20110622:
+>>>
+>>> The powerpc allyesconfig (and probably others) is still broken because we
+>>> now build the staging drivers and because of a commit in the net tree.
+>>> The breakage in Linus' tree is fixed by one of Andrew's patches above.
+>>>
+>>> The net tree gained 2 build failures that I have left (see above).
+>>
+>>
+>> When CONFIG_INET is not enabled:
+>>
+>> net/core/dev.c:2535: error: implicit declaration of function 'ip_is_fragment'
+> 
+> I'll fix this like so:
 
-On Fri, Jun 24, 2011 at 08:10, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> 3.0-rc4 should be complete in a few hours. =C2=A0Hopefully rc5 will b=
-e faster.
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Completed at 101% 108/107! :-)
-But there are only 107 logs on the page.
+Thanks.
 
-Anyway, the "-k" seems to work: much more problems in the logs. Thanks!
+> diff --git a/include/net/ip.h b/include/net/ip.h
+> index d603cd3..9fa9416 100644
+> --- a/include/net/ip.h
+> +++ b/include/net/ip.h
+> @@ -236,6 +236,11 @@ extern void ipfrag_init(void);
+>  
+>  extern void ip_static_sysctl_init(void);
+>  
+> +static inline bool ip_is_fragment(const struct iphdr *iph)
+> +{
+> +	return (iph->frag_off & htons(IP_MF | IP_OFFSET)) != 0;
+> +}
+> +
+>  #ifdef CONFIG_INET
+>  #include <net/dst.h>
+>  
+> @@ -250,11 +255,6 @@ int ip_decrease_ttl(struct iphdr *iph)
+>  	return --iph->ttl;
+>  }
+>  
+> -static inline bool ip_is_fragment(const struct iphdr *iph)
+> -{
+> -	return (iph->frag_off & htons(IP_MF | IP_OFFSET)) != 0;
+> -}
+> -
+>  static inline
+>  int ip_dont_fragment(struct sock *sk, struct dst_entry *dst)
+>  {
 
-Gr{oetje,eeting}s,
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
