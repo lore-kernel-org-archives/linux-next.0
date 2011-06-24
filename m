@@ -1,66 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for June 23 (net/can & i/o)
-Date: Fri, 24 Jun 2011 11:04:09 +1000
-Message-ID: <20110624110409.10a6951c.sfr@canb.auug.org.au>
-References: <BANLkTi=ZxHDvhCs8Qki2ZrhCbfY6Mjx5+w@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: Tree for June 23 (net)
+Date: Thu, 23 Jun 2011 21:21:20 -0700 (PDT)
+Message-ID: <20110623.212120.2043173528294538748.davem@davemloft.net>
+References: <20110623155431.6bfe3b40.sfr@canb.auug.org.au>
+	<20110623091429.2d51b0f0.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Jun_2011_11_04_09_+1000_CQvg8Cv/hoqE8r4S"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <BANLkTi=ZxHDvhCs8Qki2ZrhCbfY6Mjx5+w@mail.gmail.com>
+In-Reply-To: <20110623091429.2d51b0f0.randy.dunlap@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Frysinger <vapier.adi@gmail.com>
-Cc: netdev <netdev@vger.kernel.org>, socketcan-core@lists.berlios.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: randy.dunlap@oracle.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__24_Jun_2011_11_04_09_+1000_CQvg8Cv/hoqE8r4S
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Date: Thu, 23 Jun 2011 09:14:29 -0700
 
-Hi Mike,
+> On Thu, 23 Jun 2011 15:54:31 +1000 Stephen Rothwell wrote:
+> 
+>> Hi all,
+>> 
+>> Changes since 20110622:
+>> 
+>> The powerpc allyesconfig (and probably others) is still broken because we
+>> now build the staging drivers and because of a commit in the net tree.
+>> The breakage in Linus' tree is fixed by one of Andrew's patches above.
+>> 
+>> The net tree gained 2 build failures that I have left (see above).
+> 
+> 
+> When CONFIG_INET is not enabled:
+> 
+> net/core/dev.c:2535: error: implicit declaration of function 'ip_is_fragment'
 
-On Thu, 23 Jun 2011 16:38:56 -0400 Mike Frysinger <vapier.adi@gmail.com> wr=
-ote:
->
-> not sure where this is coming from, but some Blackfin boards now fail wit=
-h:
->=20
-> drivers/net/can/bfin_can.c: In function 'bfin_can_start_xmit':
-> drivers/net/can/bfin_can.c:247: error: implicit declaration of function '=
-writew'
-> make[3]: *** [drivers/net/can/bfin_can.o] Error 1
+I'll fix this like so:
 
-yeah, caused by the removal of the inclusion of mm.h from netdevice.h
-(most probably).
-
-> at any rate, the usage of writew() in this driver is wrong, so i sent
-> a patch to fix it.  but since nothing in this file nor in my Blackfin
-> tree changed, i wonder if whatever common code changed is going to
-> break other stuff ...
-
-It did indeed :-(
-
-ah, well, I guess that is what I am here for :-)
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__24_Jun_2011_11_04_09_+1000_CQvg8Cv/hoqE8r4S
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOA+KJAAoJEDMEi1NhKgbsY1EH/2G+CGsfbArVAbzGOe6mf2G7
-iEIp6p7dF88WMfObMDcs/+lqmk5jhzQ1iCHctoPUBlvKnX7q43dSUFBw/UrmqPbC
-YuhMePBy3x2I6m3hzADP51qDSnmoqwwnXb6Ut6Xu12hUYcpnzSIm2gaVfUA/Mzfk
-VJNBkln1rXU4uhgKWZWQ8gMo0CyZ8Pbk3OCxcaKU5Wi1flUuRjV8n+cAsogL4+zB
-vnWgX1n8D0j4r52q3W1eiA0ggpMBy0EE6ZYK59Kuk8fPjgXChvrdh49O2u2dyzlQ
-xLsL6zERwTcQUb6BrQF94Y07XvLRudMAEtlI0oHiidXapMDSP1NHWizxFiqSQBA=
-=u2GL
------END PGP SIGNATURE-----
-
---Signature=_Fri__24_Jun_2011_11_04_09_+1000_CQvg8Cv/hoqE8r4S--
+diff --git a/include/net/ip.h b/include/net/ip.h
+index d603cd3..9fa9416 100644
+--- a/include/net/ip.h
++++ b/include/net/ip.h
+@@ -236,6 +236,11 @@ extern void ipfrag_init(void);
+ 
+ extern void ip_static_sysctl_init(void);
+ 
++static inline bool ip_is_fragment(const struct iphdr *iph)
++{
++	return (iph->frag_off & htons(IP_MF | IP_OFFSET)) != 0;
++}
++
+ #ifdef CONFIG_INET
+ #include <net/dst.h>
+ 
+@@ -250,11 +255,6 @@ int ip_decrease_ttl(struct iphdr *iph)
+ 	return --iph->ttl;
+ }
+ 
+-static inline bool ip_is_fragment(const struct iphdr *iph)
+-{
+-	return (iph->frag_off & htons(IP_MF | IP_OFFSET)) != 0;
+-}
+-
+ static inline
+ int ip_dont_fragment(struct sock *sk, struct dst_entry *dst)
+ {
