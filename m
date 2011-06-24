@@ -1,71 +1,67 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: Build regressions/improvements in v3.0-rc3
-Date: Fri, 24 Jun 2011 08:08:06 +0200
-Message-ID: <BANLkTimoWrwPNNYrLFN-_gyPnvSCEa9ksA@mail.gmail.com>
+Date: Fri, 24 Jun 2011 16:10:29 +1000
+Message-ID: <20110624161029.e8f96175.sfr@canb.auug.org.au>
 References: <alpine.DEB.2.00.1106151111200.18110@ayla.of.borg>
 	<BANLkTikBDVR=S5J-=Kjq1QW3OU64WzHYRg@mail.gmail.com>
 	<20110618183029.822f4d82.sfr@canb.auug.org.au>
 	<20110623212736.74bea79a.sfr@canb.auug.org.au>
+	<BANLkTimoWrwPNNYrLFN-_gyPnvSCEa9ksA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:53196 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761258Ab1FXGII convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Jun 2011 02:08:08 -0400
-In-Reply-To: <20110623212736.74bea79a.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__24_Jun_2011_16_10_29_+1000_R+vMMgLengO_G_fu"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <BANLkTimoWrwPNNYrLFN-_gyPnvSCEa9ksA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Michael Ellerman <michael@ellerman.id.au>, Linux Kernel Development <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--Signature=_Fri__24_Jun_2011_16_10_29_+1000_R+vMMgLengO_G_fu
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 23, 2011 at 13:27, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> On Sat, 18 Jun 2011 18:30:29 +1000 Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
->> On Wed, 15 Jun 2011 11:19:48 +0200 Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
->> > Would it be possible to build with `make -k', so it continues in c=
-ase
->> > of an error, and
->> > tries to build as much as possible?
->> > Yes, I know this may increase build time considerably, but in an i=
-deal
->> > world, there
->> > are no compile errors and everything is built anyway ;-)
->>
->> Done (I think - it required very simple changes to a Python script a=
-nd I
->> only do "monkey see, monkey do" Python programming :-))
+Hi Geert,
+
+On Fri, 24 Jun 2011 08:08:06 +0200 Geert Uytterhoeven <geert@linux-m68k.org=
+> wrote:
 >
-> I also made the mistake of fixing things so that the automatic "git
-> bisect for build failures" would work. =C2=A0That was taking much too=
- much
-> time (over 4 hours for one build), so I have turned it off. =C2=A0Hop=
-efully,
-> the builds will now run in a more reasonable time frame.
+> > I also made the mistake of fixing things so that the automatic "git
+> > bisect for build failures" would work. =C2=A0That was taking much too m=
+uch
+> > time (over 4 hours for one build), so I have turned it off. =C2=A0Hopef=
+ully,
+> > the builds will now run in a more reasonable time frame.
+>=20
+> Yeah, I noticed it. There are still no results for 3.0-rc4...
 
-Yeah, I noticed it. There are still no results for 3.0-rc4...
+3.0-rc4 should be complete in a few hours.  Hopefully rc5 will be faster.
 
-Probably you should only bisect for configs that where "green" recently=
-=2E
-And hope people fix reported regressions the-next-day-as-we-speak :-)
+> Probably you should only bisect for configs that where "green" recently.
+> And hope people fix reported regressions the-next-day-as-we-speak :-)
 
-Gr{oetje,eeting}s,
+Well, I will leave that for the author :-)
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+--Signature=_Fri__24_Jun_2011_16_10_29_+1000_R+vMMgLengO_G_fu
+Content-Type: application/pgp-signature
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOBCpVAAoJEDMEi1NhKgbsOWUH/ikMeyBq+a/qipkPPb9xlg4M
+kHePFopNPJrXBsYARsBROeSZRZpt21W7Jor6J1Hjwa/Yt5KVa2v42KDLaAJ6Ixxn
+WxYgcu08rxTkUAZNdJPivMgxHGFUp05gh+0mT5KcZOemRzT/jIBdHDS22cOQfj/r
+fT5S7eBFp3kX6fqYUCgM6/PSQCKszd/rTb3L/pQSIe90BNXs/3Ci4OWacCC+leBR
+jlt9/DOjzYiwOEQ6iIy9fxJdQ6YdE7YmhenVjguan08iK5xBRIA+8jh6G+QZSm0E
+kvm0lMPOov8O9LFQxsNI3ajpRZLznwPVyf4MLQDUDmA2Hpzb/3uX0fGLwwnJ02I=
+=efV9
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__24_Jun_2011_16_10_29_+1000_R+vMMgLengO_G_fu--
