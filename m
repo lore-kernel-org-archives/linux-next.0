@@ -1,78 +1,69 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- related)
-Date: Thu, 23 Jun 2011 14:51:15 -0700
-Message-ID: <20110623215115.GB10969@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (staging related)
+Date: Fri, 24 Jun 2011 10:00:05 +1000
+Message-ID: <20110624100005.f9f59ddf.sfr@canb.auug.org.au>
 References: <20110609172745.dfd3a298.sfr@canb.auug.org.au>
- <20110609184127.GA2760@kroah.com>
- <20110609192243.GA3980@kroah.com>
- <20110610160548.529797c7.sfr@canb.auug.org.au>
- <20110610160938.cd01c408.sfr@canb.auug.org.au>
- <20110610223423.GB15868@kroah.com>
- <20110615142155.bd538b73.sfr@canb.auug.org.au>
- <20110616191448.GA10255@kroah.com>
- <20110623103503.cd9e7e70.sfr@canb.auug.org.au>
+	<20110609184127.GA2760@kroah.com>
+	<20110609192243.GA3980@kroah.com>
+	<20110610160548.529797c7.sfr@canb.auug.org.au>
+	<20110610160938.cd01c408.sfr@canb.auug.org.au>
+	<20110610223423.GB15868@kroah.com>
+	<20110615142155.bd538b73.sfr@canb.auug.org.au>
+	<20110616191448.GA10255@kroah.com>
+	<20110623103503.cd9e7e70.sfr@canb.auug.org.au>
+	<20110623215115.GB10969@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__24_Jun_2011_10_00_05_+1000_QqSli_p7ukvpyCel"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3.smtp.messagingengine.com ([66.111.4.27]:44270 "EHLO
-	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933553Ab1FWVww (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Jun 2011 17:52:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20110623103503.cd9e7e70.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58728 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759805Ab1FXAAN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Jun 2011 20:00:13 -0400
+In-Reply-To: <20110623215115.GB10969@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
 Cc: brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On Thu, Jun 23, 2011 at 10:35:03AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Thu, 16 Jun 2011 12:14:48 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > On Wed, Jun 15, 2011 at 02:21:55PM +1000, Stephen Rothwell wrote:
-> > > 
-> > > On Fri, 10 Jun 2011 15:34:23 -0700 Greg KH <greg@kroah.com> wrote:
-> > > >
-> > > > On Fri, Jun 10, 2011 at 04:09:38PM +1000, Stephen Rothwell wrote:
-> > > > > 
-> > > > > On Fri, 10 Jun 2011 16:05:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > > >
-> > > > > > No, I still get these:
-> > > > > > 
-> > > > > > In file included from drivers/staging/comedi/drivers/addi_apci_035.c:7:0:
-> > > > > > drivers/staging/comedi/drivers/addi-data/addi_common.c: In function 'i_ADDI_Attach':
-> > > > > > drivers/staging/comedi/drivers/addi-data/addi_common.c:2765:7: error: implicit declaration of function 'virt_to_bus'
-> > > > > > 
-> > > > > > virt_to_bus is only defined for 32 bit powerpc (not 64 bit) (and maybe
-> > > > > > not at all on some architectures e.g. sparc).
-> > > > > > 
-> > > > > > From Documentation/DMA-API-HOWTO.txt:
-> > > > > > "All drivers should be using these interfaces with no exceptions.  It
-> > > > > > is planned to completely remove virt_to_bus() and bus_to_virt() as
-> > > > > > they are entirely deprecated.  Some ports already do not provide these
-> > > > > > as it is impossible to correctly support them."
-> > > > > 
-> > > > > Drivers that use virt_to_bus should Kconfig depend on VIRT_TO_BUS.
-> > > > 
-> > > > Ah, I missed that, sorry.  I'll go make that change as well.
-> > > 
-> > > Ping?
-> > 
-> > Sorry, been swamped with other work, I'll get to this soon...
-> 
-> ping?
-> 
-> > With a very relative value of soon.
-> 
-> Yeah, I understand busy ... but this is a simple patch, rigth?
+--Signature=_Fri__24_Jun_2011_10_00_05_+1000_QqSli_p7ukvpyCel
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, I'm away from home, with a very spotty internet connection, on
-vacation, so it's hard to get this done at the moment.  I'll get to it
-on the 27th when I return.
+Hi Greg,
 
-thanks,
+On Thu, 23 Jun 2011 14:51:15 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> Sorry, I'm away from home, with a very spotty internet connection, on
+> vacation, so it's hard to get this done at the moment.  I'll get to it
+> on the 27th when I return.
 
-greg k-h
+I can understand vacation as well :-)
+
+Thanks.  I will use Ralf's (arch restricting) patch until you come up
+with something better.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__24_Jun_2011_10_00_05_+1000_QqSli_p7ukvpyCel
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOA9OFAAoJEDMEi1NhKgbsknkH/0gSZt7xZPUaIRXYO32rencT
+qkGguDIVhlKLGQEN3ahFN0kr3N/ZPi5OmuGhmg2ExtnlDU2sV1x+/VVE9v6fZsrj
+0qTMDYCE+B9CxZw6fgWcNKJu8noDK6LEQ3Txlo/sbjWaxRhYqEyxmrJmTvkCEpDS
+mR3/9UbaDLpVSnKPzRUHqrzJdwjT2H5I/Oo49N2oQLqG4IPB7D8DxPzscCQfIOYY
+EHWb7wGPN/jyETR6EEtWo/HrFBZRzuo6tqNr22XSR3ryq6E2jEtAurnh4GteSWQI
+kuqR2WiQTDGufEfg4gjz7SmsadzWhhdEefomt1AqNVEA1iLWm5b35rFx6inXSc8=
+=MarY
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__24_Jun_2011_10_00_05_+1000_QqSli_p7ukvpyCel--
