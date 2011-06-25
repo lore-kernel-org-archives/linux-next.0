@@ -1,120 +1,63 @@
-From: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-Subject: Re: [PATCH] staging: fix more iio builds when IIO_RING_BUFFER is
- not enabled
-Date: Sat, 25 Jun 2011 12:16:39 +0100
-Message-ID: <4E05C397.9090701@cam.ac.uk>
-References: <20110624155822.cb8cf6eb.sfr@canb.auug.org.au> <20110624092832.36ef2eae.randy.dunlap@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for June 24 (mtd + of)
+Date: Sat, 25 Jun 2011 15:20:09 -0700
+Message-ID: <20110625152009.f264be78.randy.dunlap@oracle.com>
+References: <20110624155822.cb8cf6eb.sfr@canb.auug.org.au>
+	<20110624090456.191f1fda.randy.dunlap@oracle.com>
+	<1308947172.13493.37.camel@koala>
+	<4E04F5D0.9090900@oracle.com>
+	<1308983721.23868.2.camel@koala>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110624092832.36ef2eae.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, gregkh <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1308983721.23868.2.camel@koala>
+Sender: linux-kernel-owner@vger.kernel.org
+To: dedekind1@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Vitaly Wool <vwool@ru.mvista.com>
 List-Id: linux-next.vger.kernel.org
 
-On 06/24/11 17:28, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> 
-> Fix lots more build errors in staging/iio when CONFIG_IIO_RING_BUFFER
-> is not enabled by moving enums and defines outside of the
-> CONFIG_IIO_RING_BUFFER ifdef block.
-> 
-> Examples (one from each driver; there were 116 total errors):
-> 
-> drivers/staging/iio/accel/adis16204_core.c:437: error: 'ADIS16204_SCAN_SUPPLY' undeclared here (not in a function)
-> drivers/staging/iio/accel/adis16209_core.c:410: error: 'ADIS16209_SCAN_SUPPLY' undeclared here (not in a function)
-> drivers/staging/iio/gyro/adis16260_core.c:420: error: 'ADIS16260_SCAN_GYRO' undeclared here (not in a function)
-> drivers/staging/iio/imu/adis16400_core.c:565: error: 'ADIS16400_SCAN_SUPPLY' undeclared here (not in a function)
-Thanks Randy! I should really have taken the time to test the rest of these after
-your first patch.
+On Sat, 25 Jun 2011 09:35:13 +0300 Artem Bityutskiy wrote:
 
-There's one more hiding in there I think, the adis16240.
-I'll fire off a patch for this one with you as reported-by.
+> On Fri, 2011-06-24 at 13:38 -0700, Randy Dunlap wrote:
+> > On 06/24/11 13:26, Artem Bityutskiy wrote:
+> > > On Fri, 2011-06-24 at 09:04 -0700, Randy Dunlap wrote:
+> > >> On Fri, 24 Jun 2011 15:58:22 +1000 Stephen Rothwell wrote:
+> > >>
+> > >>> Hi all,
+> > >>>
+> > >>> Changes since 20110623:
+> > >>>
+> > >>> My fixes tree includes:
+> > >>> 	(as an experiment) the early part of mmotm-2011-06-22-13-05
+> > >>> 	STAGING: Comedi: Build only on arches providing PAGE_KERNEL_NOCACHE
+> > >>
+> > >>
+> > >> When CONFIG_MTD=m, CONFIG_MTD_OF_PARTS=y:
+> > >>
+> > >> drivers/mtd/ofpart.o: In function `init_module':
+> > >> ofpart.c:(.init.text+0x0): multiple definition of `init_module'
+> > >> drivers/mtd/mtdcore.o:(.init.text+0x43): first defined here
+> > > 
+> > > I guess this is some old issue? I do not think ofpart can be compiled-in
+> > > if the mtd core is a module...
+> > 
+> > [adding driver author, Vitaly]
+> > 
+> > No, it's a current issue.
 > 
-> Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Acked-by: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-> Cc: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-> Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> ---
->  drivers/staging/iio/accel/adis16204.h |    2 +-
->  drivers/staging/iio/accel/adis16209.h |    4 ++--
->  drivers/staging/iio/gyro/adis16260.h  |    2 +-
->  drivers/staging/iio/imu/adis16400.h   |    2 +-
->  4 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> --- linux-next-20110624.orig/drivers/staging/iio/accel/adis16204.h
-> +++ linux-next-20110624/drivers/staging/iio/accel/adis16204.h
-> @@ -84,7 +84,6 @@ struct adis16204_state {
->  
->  int adis16204_set_irq(struct iio_dev *indio_dev, bool enable);
->  
-> -#ifdef CONFIG_IIO_RING_BUFFER
->  enum adis16204_scan {
->  	ADIS16204_SCAN_SUPPLY,
->  	ADIS16204_SCAN_ACC_X,
-> @@ -93,6 +92,7 @@ enum adis16204_scan {
->  	ADIS16204_SCAN_TEMP,
->  };
->  
-> +#ifdef CONFIG_IIO_RING_BUFFER
->  void adis16204_remove_trigger(struct iio_dev *indio_dev);
->  int adis16204_probe_trigger(struct iio_dev *indio_dev);
->  
-> --- linux-next-20110624.orig/drivers/staging/iio/accel/adis16209.h
-> +++ linux-next-20110624/drivers/staging/iio/accel/adis16209.h
-> @@ -121,8 +121,6 @@ struct adis16209_state {
->  
->  int adis16209_set_irq(struct iio_dev *indio_dev, bool enable);
->  
-> -#ifdef CONFIG_IIO_RING_BUFFER
-> -
->  #define ADIS16209_SCAN_SUPPLY	0
->  #define ADIS16209_SCAN_ACC_X	1
->  #define ADIS16209_SCAN_ACC_Y	2
-> @@ -132,6 +130,8 @@ int adis16209_set_irq(struct iio_dev *in
->  #define ADIS16209_SCAN_INCLI_Y	6
->  #define ADIS16209_SCAN_ROT	7
->  
-> +#ifdef CONFIG_IIO_RING_BUFFER
-> +
->  void adis16209_remove_trigger(struct iio_dev *indio_dev);
->  int adis16209_probe_trigger(struct iio_dev *indio_dev);
->  
-> --- linux-next-20110624.orig/drivers/staging/iio/gyro/adis16260.h
-> +++ linux-next-20110624/drivers/staging/iio/gyro/adis16260.h
-> @@ -104,7 +104,6 @@ struct adis16260_state {
->  
->  int adis16260_set_irq(struct iio_dev *indio_dev, bool enable);
->  
-> -#ifdef CONFIG_IIO_RING_BUFFER
->  /* At the moment triggers are only used for ring buffer
->   * filling. This may change!
->   */
-> @@ -115,6 +114,7 @@ int adis16260_set_irq(struct iio_dev *in
->  #define ADIS16260_SCAN_TEMP	3
->  #define ADIS16260_SCAN_ANGL	4
->  
-> +#ifdef CONFIG_IIO_RING_BUFFER
->  void adis16260_remove_trigger(struct iio_dev *indio_dev);
->  int adis16260_probe_trigger(struct iio_dev *indio_dev);
->  
-> --- linux-next-20110624.orig/drivers/staging/iio/imu/adis16400.h
-> +++ linux-next-20110624/drivers/staging/iio/imu/adis16400.h
-> @@ -158,7 +158,6 @@ struct adis16400_state {
->  
->  int adis16400_set_irq(struct iio_dev *indio_dev, bool enable);
->  
-> -#ifdef CONFIG_IIO_RING_BUFFER
->  /* At the moment triggers are only used for ring buffer
->   * filling. This may change!
->   */
-> @@ -182,6 +181,7 @@ int adis16400_set_irq(struct iio_dev *in
->  #define ADIS16300_SCAN_INCLI_X	12
->  #define ADIS16300_SCAN_INCLI_Y	13
->  
-> +#ifdef CONFIG_IIO_RING_BUFFER
->  void adis16400_remove_trigger(struct iio_dev *indio_dev);
->  int adis16400_probe_trigger(struct iio_dev *indio_dev);
->  
+> I meant that the subject suggests this is about linux-next, but this
+> problem should be in upstream.
+
+Sorry I misunderstood your comment.
+
+3.0-rc4 does not have this build error when I use the .config file with it...
+however, I think that 3.0-rc4 also does not build ofpart.ko as it should.
+
+Looks to me like changes in drivers/mtd/{Kconfig && Makefile} caused this
+build error.
+
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
