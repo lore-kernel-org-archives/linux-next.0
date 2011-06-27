@@ -1,48 +1,54 @@
-From: "Gustavo F. Padovan" <padovan-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>
-Subject: Re: [PATCH -next] bluetooth: uses crypto interfaces, select CRYPTO
-Date: Mon, 27 Jun 2011 15:13:56 -0300
-Message-ID: <20110627181355.GA5964@joana>
-References: <20110622163651.7ebc407c.sfr@canb.auug.org.au>
- <20110622100811.258091ff.randy.dunlap@oracle.com>
- <20110627110308.dc64e3a7.randy.dunlap@oracle.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ related)
+Date: Mon, 27 Jun 2011 14:45:47 -0700
+Message-ID: <20110627214547.GA10889@kroah.com>
+References: <20110609184127.GA2760@kroah.com>
+ <20110609192243.GA3980@kroah.com>
+ <20110610160548.529797c7.sfr@canb.auug.org.au>
+ <20110610160938.cd01c408.sfr@canb.auug.org.au>
+ <20110610223423.GB15868@kroah.com>
+ <20110615142155.bd538b73.sfr@canb.auug.org.au>
+ <20110616191448.GA10255@kroah.com>
+ <20110623103503.cd9e7e70.sfr@canb.auug.org.au>
+ <20110623215115.GB10969@kroah.com>
+ <20110624100005.f9f59ddf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out3.smtp.messagingengine.com ([66.111.4.27]:47061 "EHLO
+	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754912Ab1F0Vqj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Jun 2011 17:46:39 -0400
 Content-Disposition: inline
-In-Reply-To: <20110627110308.dc64e3a7.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Marcel Holtmann <marcel-kz+m5ild9QBg9hUCZPvPmw@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20110624100005.f9f59ddf.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-* Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org> [2011-06-27 11:03:08 -0700]:
+On Fri, Jun 24, 2011 at 10:00:05AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Thu, 23 Jun 2011 14:51:15 -0700 Greg KH <greg@kroah.com> wrote:
+> >
+> > Sorry, I'm away from home, with a very spotty internet connection, on
+> > vacation, so it's hard to get this done at the moment.  I'll get to it
+> > on the 27th when I return.
+> 
+> I can understand vacation as well :-)
+> 
+> Thanks.  I will use Ralf's (arch restricting) patch until you come up
+> with something better.
 
-> On Wed, 22 Jun 2011 10:08:11 -0700 Randy Dunlap wrote:
-> 
-> > From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> 
-> ping.  still need this patch in linux-next....
-> 
-> 
-> > Recent changes to hci_core.c use crypto interfaces, so select CRYPTO
-> > to make sure that those interfaces are present.
-> > 
-> > Fixes these build errors when CRYPTO is not enabled:
-> > 
-> > net/built-in.o: In function `hci_register_dev':
-> > (.text+0x4cf86): undefined reference to `crypto_alloc_base'
-> > net/built-in.o: In function `hci_unregister_dev':
-> > (.text+0x4f912): undefined reference to `crypto_destroy_tfm'
-> > 
-> > Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  net/bluetooth/Kconfig |    1 +
-> >  1 file changed, 1 insertion(+)
+That's good, but it doesn't fix the root problem here.  I've now fixed
+this up in the staging-linus branch.
 
-Applied. Thanks.
+You shouldn't have any more build breakages in the drivers/staging/*
+tree now as I am pretty sure I've fixed all reported issues.  If not,
+please let me know.
 
-	Gustavo
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+thanks,
+
+greg k-h
