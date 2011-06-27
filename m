@@ -1,83 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Mon, 27 Jun 2011 15:35:22 +1000
-Message-ID: <20110627153522.8884b125.sfr@canb.auug.org.au>
-References: <20110623152535.e9ec4ad2.sfr@canb.auug.org.au>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: [PATCH 1/2] mtd: make ofpart buildable as a separate module
+Date: Mon, 27 Jun 2011 08:49:23 +0300
+Message-ID: <1309153769.23597.15.camel@sauron>
+References: <1309122180-12838-1-git-send-email-dbaryshkov@gmail.com>
+	<1309122180-12838-2-git-send-email-dbaryshkov@gmail.com>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__27_Jun_2011_15_35_22_+1000_PG1115==keTrKek0"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49056 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756447Ab1F0Ff3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jun 2011 01:35:29 -0400
-In-Reply-To: <20110623152535.e9ec4ad2.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+In-Reply-To: <1309122180-12838-2-git-send-email-dbaryshkov@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+	<mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+	<mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: linux-mtd-bounces@lists.infradead.org
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__27_Jun_2011_15_35_22_+1000_PG1115==keTrKek0
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2011-06-27 at 01:02 +0400, Dmitry Eremin-Solenikov wrote:
+> As ofpart now uses a standard mtd partitions parser interface, make it
+> buildable as a separate module. Also provide MODULE_DESCRIPTION and
+> MODULE_AUTHOR for this module.
+> 
+> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 
-Hi all,
+Pushed this one to l2-mtd-2.6.git, thanks!
 
-On Thu, 23 Jun 2011 15:25:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->=20
-> drivers/net/can/sja1000/sja1000_of_platform.c: In function 'sja1000_ofp_r=
-ead_reg':
-> drivers/net/can/sja1000/sja1000_of_platform.c:61:2: error: implicit decla=
-ration of function 'in_8'
-> drivers/net/can/sja1000/sja1000_of_platform.c: In function 'sja1000_ofp_w=
-rite_reg':
-> drivers/net/can/sja1000/sja1000_of_platform.c:67:2: error: implicit decla=
-ration of function 'out_8'
-> drivers/net/can/sja1000/sja1000_of_platform.c: In function 'sja1000_ofp_r=
-emove':
-> drivers/net/can/sja1000/sja1000_of_platform.c:81:2: error: implicit decla=
-ration of function 'iounmap'
-> drivers/net/can/sja1000/sja1000_of_platform.c: In function 'sja1000_ofp_p=
-robe':
-> drivers/net/can/sja1000/sja1000_of_platform.c:113:2: error: implicit decl=
-aration of function 'ioremap_nocache'
-> drivers/net/can/sja1000/sja1000_of_platform.c:113:7: warning: assignment =
-makes pointer from integer without a cast
->=20
-> Since this file has not been changed recently, I suspect that this was
-> caused by commit b7f080cfe223 ("net: remove mm.h inclusion from
-> netdevice.h").
->=20
-> I have left the build broken for now since it is also broken for other
-> reasons.
+-- 
+Best Regards,
+Artem Bityutskiy
 
-I am still getting these, is there a fix pending?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__27_Jun_2011_15_35_22_+1000_PG1115==keTrKek0
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOCBaaAAoJEDMEi1NhKgbsBfcIAKLSIowpnsalVOdo8ytKEw3R
-pok9RIOUUhXc56F26jW6Ac/v6FlHxPMWRAJITk+8o8CSvEZ5ub6dQj+Pi0UTedsP
-eYGTTltE21cQstFzDP6nKf5r4ChZAxb6K+ROMCrHgInDbN+KPW/c3PoELiWOmjmS
-c/wzV/a0twgnFG7UXABFcKoAjaGavbO5uvPfb5stCfQmzt9QRx8qqomCv50qh2XT
-g6ByEIJLdzK6g3GMpA+J7QDnlwfehCfHH9gFEDoP/elRbi2/rDvz4rZH4d03/7ii
-WAT9HKcMHfcvvZ+gw8pUzQgs2Qjk8U2izNl1va7Tspjp45pUNOniDgk4uXQym1U=
-=ZBJV
------END PGP SIGNATURE-----
-
---Signature=_Mon__27_Jun_2011_15_35_22_+1000_PG1115==keTrKek0--
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
