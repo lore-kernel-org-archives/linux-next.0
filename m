@@ -1,15 +1,15 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: [PATCH 1/2] mtd: make ofpart buildable as a separate module
-Date: Mon, 27 Jun 2011 08:49:23 +0300
-Message-ID: <1309153769.23597.15.camel@sauron>
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: Re: [PATCH 2/2] mtd/ofpart: add ofoldpart alias
+Date: Mon, 27 Jun 2011 09:51:24 +0400
+Message-ID: <BANLkTikmCY8UjJWRKTkM_QW2_Bxw4yqPfQ@mail.gmail.com>
 References: <1309122180-12838-1-git-send-email-dbaryshkov@gmail.com>
-	<1309122180-12838-2-git-send-email-dbaryshkov@gmail.com>
-Reply-To: dedekind1@gmail.com
+	<1309122180-12838-3-git-send-email-dbaryshkov@gmail.com>
+	<1309153545.23597.13.camel@sauron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
-In-Reply-To: <1309122180-12838-2-git-send-email-dbaryshkov@gmail.com>
+In-Reply-To: <1309153545.23597.13.camel@sauron>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
 	<mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
@@ -19,23 +19,26 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
 	<mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
 Sender: linux-mtd-bounces@lists.infradead.org
 Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+To: dedekind1@gmail.com
 Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2011-06-27 at 01:02 +0400, Dmitry Eremin-Solenikov wrote:
-> As ofpart now uses a standard mtd partitions parser interface, make it
-> buildable as a separate module. Also provide MODULE_DESCRIPTION and
-> MODULE_AUTHOR for this module.
-> 
-> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+On 6/27/11, Artem Bityutskiy <dedekind1@gmail.com> wrote:
+> On Mon, 2011-06-27 at 01:03 +0400, Dmitry Eremin-Solenikov wrote:
+>> ofpart.ko also provides ofoldpart MTD parser. Add respective
+>> MODULE_ALIAS("ofoldpart"); declaration.
+>>
+>
+> Why we need the alias?
 
-Pushed this one to l2-mtd-2.6.git, thanks!
+Please check the parse_mtd_partitions code. If requested parser
+isn't registered, it tries to load corresponding module. So, this alias
+is necessary in the semi-bogus case when one will have the list
+of parsers containing ofoldpart, but not ofpart partition parser.
 
 -- 
-Best Regards,
-Artem Bityutskiy
-
+With best wishes
+Dmitry
 
 ______________________________________________________
 Linux MTD discussion mailing list
