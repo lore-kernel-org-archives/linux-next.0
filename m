@@ -1,65 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Mon, 27 Jun 2011 15:29:27 +1000
-Message-ID: <20110627152927.943c34dc.sfr@canb.auug.org.au>
-References: <20110623152920.31b28b00.sfr@canb.auug.org.au>
-	<BANLkTin+iCahNVJGKc-_26pb9zEERTc8_A@mail.gmail.com>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: [PATCH 2/2] mtd/ofpart: add ofoldpart alias
+Date: Mon, 27 Jun 2011 08:45:40 +0300
+Message-ID: <1309153545.23597.13.camel@sauron>
+References: <1309122180-12838-1-git-send-email-dbaryshkov@gmail.com>
+	<1309122180-12838-3-git-send-email-dbaryshkov@gmail.com>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__27_Jun_2011_15_29_27_+1000_UkAps0kps8eKCbep"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <BANLkTin+iCahNVJGKc-_26pb9zEERTc8_A@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+In-Reply-To: <1309122180-12838-3-git-send-email-dbaryshkov@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+	<mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+	<mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: linux-mtd-bounces@lists.infradead.org
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__27_Jun_2011_15_29_27_+1000_UkAps0kps8eKCbep
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2011-06-27 at 01:03 +0400, Dmitry Eremin-Solenikov wrote:
+> ofpart.ko also provides ofoldpart MTD parser. Add respective
+> MODULE_ALIAS("ofoldpart"); declaration.
+> 
 
-Hi Alexey,
+Why we need the alias?
 
-On Thu, 23 Jun 2011 16:04:13 +0300 Alexey Dobriyan <adobriyan@gmail.com> wr=
-ote:
->
-> On Thu, Jun 23, 2011 at 8:29 AM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
->=20
-> I build on all powerpc defconfigs, somehow this driver is not pinned
-> by any of them :^)
+-- 
+Best Regards,
+Artem Bityutskiy
 
-Well, yes, but an allmodconfig or allyesconfig build will get the error.
 
->=20
-> > drivers/net/ll_temac_main.c:209:4: error: implicit declaration of funct=
-ion 'dma_unmap_single'
->=20
-
-Is there a fix?
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__27_Jun_2011_15_29_27_+1000_UkAps0kps8eKCbep
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOCBU3AAoJEDMEi1NhKgbs4D0H/j9A38Xj/HL4y6VR6t9KWfoT
-2igqbWDKPBUbWqeNBODUU3afgm3aW9rP7qIXsKXqTAIj9iIRBQD9qjOE13KXls/t
-4FFwvjLIlPpniSGSBLj4UPJoahD+BXrgdhUwQab4Cco2Q+t5gsa2BdjZP84GDIs5
-iwurrrl50jqDI+wwkN0Nd5IsXfbnU/G8CPuLkxKhiE0pHuyPhGd/lx8ufkoOMMn+
-VZ9R5FyqNmKcwaHRwhQObqtuNtoLLkmQNWNS3X6U+Gw76aI/j3OU6RhiF/fRKVNT
-eJWcSWFV4QOOjrC6DELXa1R2auWyVLedE8wHbG5p4zwLGQF0od9fRNYh6INc50I=
-=9sja
------END PGP SIGNATURE-----
-
---Signature=_Mon__27_Jun_2011_15_29_27_+1000_UkAps0kps8eKCbep--
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
