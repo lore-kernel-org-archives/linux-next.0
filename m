@@ -1,49 +1,38 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: [PATCH 2/2] mtd/ofpart: add ofoldpart alias
-Date: Mon, 27 Jun 2011 16:34:46 +0400
-Message-ID: <1309178086-10604-1-git-send-email-dbaryshkov@gmail.com>
-References: <1309154611.23597.18.camel@sauron>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: Re: [PATCH -next] bcma: main.c needs to include <linux/slab.h>
+Date: Mon, 27 Jun 2011 15:59:53 +0200
+Message-ID: <BANLkTikSLx6FKvF518s99Q8eRU_WF+cn9A@mail.gmail.com>
+References: <alpine.DEB.2.00.1106261016100.25900@ayla.of.borg>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
-In-Reply-To: <1309154611.23597.18.camel@sauron>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
-	<mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
-List-Post: <mailto:linux-mtd@lists.infradead.org>
-List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
-	<mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
-Sender: linux-mtd-bounces@lists.infradead.org
-Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
-To: linux-mtd@lists.infradead.org
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, dedekind1@gmail.com, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:52943 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750897Ab1F0N7x convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jun 2011 09:59:53 -0400
+In-Reply-To: <alpine.DEB.2.00.1106261016100.25900@ayla.of.borg>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>
 
-ofpart.ko also provides ofoldpart MTD parser. Add respective
-MODULE_ALIAS("ofoldpart"); declaration.
+2011/6/26 Geert Uytterhoeven <geert@linux-m68k.org>:
+> m68k allmodconfig:
+>
+> drivers/bcma/main.c: In function =E2=80=98bcma_release_core_dev=E2=80=
+=99:
+> drivers/bcma/main.c:68: error: implicit declaration of function =E2=80=
+=98kfree=E2=80=99
 
-Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
----
- drivers/mtd/ofpart.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
+We already include slab.h in:
+host_pci.c
+scan.c
+sprom.c
 
-diff --git a/drivers/mtd/ofpart.c b/drivers/mtd/ofpart.c
-index aa33b8a..77f0640 100644
---- a/drivers/mtd/ofpart.c
-+++ b/drivers/mtd/ofpart.c
-@@ -176,3 +176,6 @@ module_init(ofpart_parser_init);
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("Parser for MTD partitioning information in device tree");
- MODULE_AUTHOR("Vitaly Wool, David Gibson");
-+/* Required so that this module will be picked up ofoldpart
-+ * MTD partition information parser */
-+MODULE_ALIAS("ofoldpart");
--- 
-1.7.5.4
+Maybe we can just include this in bcma.h as a better solution? We
+could drop other includes then.
+Can you submit patch for this?
 
-
-______________________________________________________
-Linux MTD discussion mailing list
-http://lists.infradead.org/mailman/listinfo/linux-mtd/
+--=20
+Rafa=C5=82
