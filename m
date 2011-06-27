@@ -1,39 +1,58 @@
-From: Pavel Roskin <proski@gnu.org>
-Subject: Re: [PATCH -next] bcma: main.c needs to include <linux/slab.h>
-Date: Mon, 27 Jun 2011 13:22:12 -0400
-Message-ID: <4E08BC44.3020105@gnu.org>
-References: <alpine.DEB.2.00.1106261016100.25900@ayla.of.borg>	 <BANLkTikSLx6FKvF518s99Q8eRU_WF+cn9A@mail.gmail.com>	 <BANLkTinGvM79fza-=bFwcbtfFzGHAVKJag@mail.gmail.com>	 <BANLkTikVtWe0jB_jLeP1YZTEKSYA97gdqQ@mail.gmail.com>	 <4E08B4AA.409@broadcom.com> (sfid-20110627_185027_507290_BCE834F5) <1309193844.3911.27.camel@jlt3.sipsolutions.net>
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH -next] bluetooth: uses crypto interfaces, select CRYPTO
+Date: Mon, 27 Jun 2011 11:03:08 -0700
+Message-ID: <20110627110308.dc64e3a7.randy.dunlap@oracle.com>
+References: <20110622163651.7ebc407c.sfr@canb.auug.org.au>
+	<20110622100811.258091ff.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from c60.cesmail.net ([216.154.195.49]:61589 "EHLO c60.cesmail.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752474Ab1F0RWO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jun 2011 13:22:14 -0400
-In-Reply-To: <1309193844.3911.27.camel@jlt3.sipsolutions.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Arend van Spriel <arend@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Alexey Dobriyan <adobriyan@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Linux Kernel Development <linux-kernel@vger.kernel.org>
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110622100811.258091ff.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Marcel Holtmann <marcel-kz+m5ild9QBg9hUCZPvPmw@public.gmane.org>, "Gustavo F. Padovan" <padovan-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On 06/27/2011 12:57 PM, Johannes Berg wrote:
+On Wed, 22 Jun 2011 10:08:11 -0700 Randy Dunlap wrote:
 
-> Yeah, good rule. Consider if you have a.h, b.h and z.c, z.c needs b.h
-> but not a.h, and now b.h includes a.h ("for convenience") -- changing
-> a.h would needlessly recompile z.c. Now, changing slab.h will probably
-> recompile everything anyway, but still...
+> From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 
-In my configuration after touching slab.h and recompilation:
+ping.  still need this patch in linux-next....
 
-$ find -name '*.o' -newer ../linux3/include/linux/slab.h |wc -l
-1508
-$ find -name '*.o' |wc -l
-1928
 
-78% object files were recompiled, 22% were no recompiled.  Careful use 
-of includes does save time.
+> Recent changes to hci_core.c use crypto interfaces, so select CRYPTO
+> to make sure that those interfaces are present.
+> 
+> Fixes these build errors when CRYPTO is not enabled:
+> 
+> net/built-in.o: In function `hci_register_dev':
+> (.text+0x4cf86): undefined reference to `crypto_alloc_base'
+> net/built-in.o: In function `hci_unregister_dev':
+> (.text+0x4f912): undefined reference to `crypto_destroy_tfm'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+> ---
+>  net/bluetooth/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20110622.orig/net/bluetooth/Kconfig
+> +++ linux-next-20110622/net/bluetooth/Kconfig
+> @@ -6,6 +6,7 @@ menuconfig BT
+>  	tristate "Bluetooth subsystem support"
+>  	depends on NET && !S390
+>  	depends on RFKILL || !RFKILL
+> +	select CRYPTO
+>  	help
+>  	  Bluetooth is low-cost, low-power, short-range wireless technology.
+>  	  It was designed as a replacement for cables and other short-range
+> --
 
--- 
-Regards,
-Pavel Roskin
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
