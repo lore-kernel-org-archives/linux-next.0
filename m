@@ -1,59 +1,76 @@
-From: "Gustavo F. Padovan" <padovan@profusion.mobi>
-Subject: Re: linux-next: build failure after merge of the wireless tree
-Date: Tue, 28 Jun 2011 15:11:15 -0300
-Message-ID: <20110628181115.GB23183@joana>
-References: <20110623130317.b3a6085e.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: staging: fix ath6kl build when CFG80211 is not enabled
+Date: Tue, 28 Jun 2011 13:06:56 -0700
+Message-ID: <20110628200656.GA7992@kroah.com>
+References: <20110527130321.18a51d63.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out4.smtp.messagingengine.com ([66.111.4.28]:57526 "EHLO
+	out4.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751118Ab1F1UVY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jun 2011 16:21:24 -0400
 Content-Disposition: inline
-In-Reply-To: <20110623130317.b3a6085e.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anderson Briglia <anderson.briglia@openbossa.org>, Anderson Lizardo <anderson.lizardo@openbossa.org>, Bruna Moreira <bruna.moreira@openbossa.org>, Vinicius Costa Gomes <vinicius.gomes@openbossa.org>, Alexey Dobriyan <adobriyan@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20110527130321.18a51d63.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: driverdevel <devel@driverdev.osuosl.org>, gregkh@suse.de, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@gmail.com>, Joe Perches <joe@perches.com>, Naveen Singh <nsingh@atheros.com>
 
-Hi John,
-
-* Stephen Rothwell <sfr@canb.auug.org.au> [2011-06-23 13:03:17 +1000]:
-
-> Hi John,
+On Fri, May 27, 2011 at 01:03:21PM -0700, Randy Dunlap wrote:
 > 
-> After merging the wireless tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> net/bluetooth/smp.c: In function 'smp_e':
-> net/bluetooth/smp.c:49:21: error: storage size of 'sg' isn't known
-> net/bluetooth/smp.c:67:2: error: implicit declaration of function 'sg_init_one'
-> net/bluetooth/smp.c:49:21: warning: unused variable 'sg'
+> Fix build errors when CONFIG_CFG80211 is not enabled:
 > 
-> Caused by commit d22ef0bc83c5 ("Bluetooth: Add LE SMP Cryptoolbox
-> functions").  Missing include file, presumably.  This batch has been in
-> the bluetooth tree since June 14, so it may have been exposed by the
-> removal of linux/mm.h from netdevice.h ...
+> drivers/built-in.o: In function `ar6k_cfg80211_deinit':
+> (.text+0x189b71): undefined reference to `cfg80211_scan_done'
+> drivers/built-in.o: In function `ar6k_cfg80211_deinit':
+> (.text+0x189b86): undefined reference to `wiphy_unregister'
+> drivers/built-in.o: In function `ar6k_cfg80211_deinit':
+> (.text+0x189b8d): undefined reference to `wiphy_free'
+> drivers/built-in.o: In function `ar6k_cfg80211_init':
+> (.text+0x18add7): undefined reference to `wiphy_new'
+> drivers/built-in.o: In function `ar6k_cfg80211_init':
+> (.text+0x18ae48): undefined reference to `wiphy_register'
+> drivers/built-in.o: In function `ar6k_cfg80211_tkip_micerr_event':
+> (.text+0x18ae95): undefined reference to `cfg80211_michael_mic_failure'
+> drivers/built-in.o: In function `ar6k_cfg80211_scan_node':
+> (.text+0x18afb5): undefined reference to `__ieee80211_get_channel'
+> drivers/built-in.o: In function `ar6k_cfg80211_scan_node':
+> (.text+0x18afd2): undefined reference to `cfg80211_inform_bss_frame'
+> drivers/built-in.o: In function `ar6k_cfg80211_disconnect_event':
+> (.text+0x18b046): undefined reference to `cfg80211_ibss_joined'
+> drivers/built-in.o: In function `ar6k_cfg80211_disconnect_event':
+> (.text+0x18b176): undefined reference to `cfg80211_connect_result'
+> drivers/built-in.o: In function `ar6k_cfg80211_disconnect_event':
+> (.text+0x18b190): undefined reference to `cfg80211_disconnected'
+> drivers/built-in.o: In function `ar6k_cfg80211_connect_event':
+> (.text+0x18b291): undefined reference to `cfg80211_get_bss'
+> drivers/built-in.o: In function `ar6k_cfg80211_connect_event':
+> (.text+0x18b457): undefined reference to `cfg80211_put_bss'
+> drivers/built-in.o: In function `ar6k_cfg80211_connect_event':
+> (.text+0x18b4fa): undefined reference to `cfg80211_roamed'
 > 
-> I have added the following patch as a merge fix up for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 23 Jun 2011 12:58:55 +1000
-> Subject: [PATCH] Bluetooth: include scatterlist.h where needed
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Luis R. Rodriguez <mcgrof@gmail.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Naveen Singh <nsingh@atheros.com>
 > ---
->  net/bluetooth/smp.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+>  drivers/staging/ath6kl/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
-> index 52e9ec2..a36f870 100644
-> --- a/net/bluetooth/smp.c
-> +++ b/net/bluetooth/smp.c
-> @@ -25,6 +25,7 @@
->  #include <net/bluetooth/l2cap.h>
->  #include <net/bluetooth/smp.h>
->  #include <linux/crypto.h>
-> +#include <linux/scatterlist.h>
->  #include <crypto/b128ops.h>
+> --- linux-next-20110517.orig/drivers/staging/ath6kl/Kconfig
+> +++ linux-next-20110517/drivers/staging/ath6kl/Kconfig
+> @@ -1,6 +1,7 @@
+>  config ATH6K_LEGACY
+>  	tristate "Atheros AR6003 support (non mac80211)"
+>          depends on MMC && WLAN
+> +	depends on CFG80211
 
-Thanks for pick this patch to wireless tree ;) 
+Is this still needed in the next linux-next release?
 
-	Gustavo
+confused,
+
+greg k-h
