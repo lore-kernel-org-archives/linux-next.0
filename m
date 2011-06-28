@@ -1,32 +1,59 @@
-From: "Guy, Wey-Yi" <wey-yi.w.guy@intel.com>
-Subject: Re: linux-next: manual merge of the net tree with the
- wireless-current tree
-Date: Tue, 28 Jun 2011 07:57:14 -0700
-Message-ID: <1309273034.13527.0.camel@wwguy-huron>
-References: <20110628140219.1480dc7a.sfr@canb.auug.org.au>
+From: "Gustavo F. Padovan" <padovan@profusion.mobi>
+Subject: Re: linux-next: build failure after merge of the wireless tree
+Date: Tue, 28 Jun 2011 15:11:15 -0300
+Message-ID: <20110628181115.GB23183@joana>
+References: <20110623130317.b3a6085e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110628140219.1480dc7a.sfr@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20110623130317.b3a6085e.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Berg, Johannes" <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>, "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anderson Briglia <anderson.briglia@openbossa.org>, Anderson Lizardo <anderson.lizardo@openbossa.org>, Bruna Moreira <bruna.moreira@openbossa.org>, Vinicius Costa Gomes <vinicius.gomes@openbossa.org>, Alexey Dobriyan <adobriyan@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2011-06-27 at 21:02 -0700, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/wireless/iwlwifi/iwl-tx.c between commits 1107a08a1a3e
-> ("iwlagn: fix cmd queue unmap"), e815407d395e ("iwlagn: map command
-> buffers BIDI") and 2627c002cbed ("iwlagn: use PCI_DMA_* for pci_*
-> operations") from the wireless-current tree and commit 795414db8607
-> ("iwlagn: don't use the PCI wrappers for DMA operation") from the net
-> tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as necessary.
+Hi John,
 
-Looks right to me. Thanks for fixing it.
+* Stephen Rothwell <sfr@canb.auug.org.au> [2011-06-23 13:03:17 +1000]:
 
-Wey
+> Hi John,
+> 
+> After merging the wireless tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> net/bluetooth/smp.c: In function 'smp_e':
+> net/bluetooth/smp.c:49:21: error: storage size of 'sg' isn't known
+> net/bluetooth/smp.c:67:2: error: implicit declaration of function 'sg_init_one'
+> net/bluetooth/smp.c:49:21: warning: unused variable 'sg'
+> 
+> Caused by commit d22ef0bc83c5 ("Bluetooth: Add LE SMP Cryptoolbox
+> functions").  Missing include file, presumably.  This batch has been in
+> the bluetooth tree since June 14, so it may have been exposed by the
+> removal of linux/mm.h from netdevice.h ...
+> 
+> I have added the following patch as a merge fix up for today.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 23 Jun 2011 12:58:55 +1000
+> Subject: [PATCH] Bluetooth: include scatterlist.h where needed
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  net/bluetooth/smp.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
+> index 52e9ec2..a36f870 100644
+> --- a/net/bluetooth/smp.c
+> +++ b/net/bluetooth/smp.c
+> @@ -25,6 +25,7 @@
+>  #include <net/bluetooth/l2cap.h>
+>  #include <net/bluetooth/smp.h>
+>  #include <linux/crypto.h>
+> +#include <linux/scatterlist.h>
+>  #include <crypto/b128ops.h>
+
+Thanks for pick this patch to wireless tree ;) 
+
+	Gustavo
