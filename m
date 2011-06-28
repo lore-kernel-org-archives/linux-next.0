@@ -1,66 +1,38 @@
-From: "Arjan Mels" <arjan.mels@gmx.net>
-Subject: Re: linux-next: manual merge of the staging tree with the staging.current tree
-Date: Tue, 28 Jun 2011 16:07:25 +0200
-Message-ID: <DE6BB9BF2B09415FACB0F74F3CF4CF5C@Main>
-References: <20110609165804.2e96bb77.sfr@canb.auug.org.au> <20110609184206.GC2760@kroah.com> <20110609205111.GB32526@kroah.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Tue, 28 Jun 2011 07:43:48 -0700
+Message-ID: <20110628144348.GA9290@kroah.com>
+References: <20110609165804.2e96bb77.sfr@canb.auug.org.au>
+ <20110609184206.GC2760@kroah.com>
+ <20110609205111.GB32526@kroah.com>
+ <DE6BB9BF2B09415FACB0F74F3CF4CF5C@Main>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	format=flowed;
-	charset="iso-8859-1";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:46800 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757872Ab1F1OHN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jun 2011 10:07:13 -0400
-In-Reply-To: <20110609205111.GB32526@kroah.com>
+Received: from out4.smtp.messagingengine.com ([66.111.4.28]:52208 "EHLO
+	out4.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758322Ab1F1On6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jun 2011 10:43:58 -0400
+Content-Disposition: inline
+In-Reply-To: <DE6BB9BF2B09415FACB0F74F3CF4CF5C@Main>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt mooney <mfm@muteddisk.com>
+To: Arjan Mels <arjan.mels@gmx.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt mooney <mfm@muteddisk.com>
 
-Greg, Stephen,
+On Tue, Jun 28, 2011 at 04:07:25PM +0200, Arjan Mels wrote:
+> Greg, Stephen,
+> 
+> Below mentioned patch does not seem to have made it into the
+> linux-next tree (and other stable branches).
 
-Below mentioned patch does not seem to have made it into the linux-next tree 
-(and other stable branches).
+What do you mean by "other stable branches"?
 
-What do I need to do to correct this?
+> What do I need to do to correct this?
 
-Best Regards,
+I don't understand what you are wanting to correct, please be explicit
+as I am totally confused.
 
-Arjan
-
-> > drivers/staging/usbip/stub_dev.c between commit d3ac07788017 ("staging:
-> > usbip: bugfix prevent driver unbind") from the staging.current tree and
-> > commit d012c2a5aca1 ("staging: usbip: stub_dev.c: move stub_driver
-
-
-
-
------Original Message----- 
-From: Greg KH
-Sent: Thursday, June 09, 2011 22:51
-To: Stephen Rothwell
-Cc: linux-next@vger.kernel.org ; linux-kernel@vger.kernel.org ; Arjan Mels ; 
-matt mooney
-Subject: Re: linux-next: manual merge of the staging tree with the 
-staging.current tree
-
-On Thu, Jun 09, 2011 at 11:42:06AM -0700, Greg KH wrote:
-> On Thu, Jun 09, 2011 at 04:58:04PM +1000, Stephen Rothwell wrote:
-> > Hi Greg,
-> >
-> > Today's linux-next merge of the staging tree got a conflict in
-> > drivers/staging/usbip/stub_dev.c between commit d3ac07788017 ("staging:
-> > usbip: bugfix prevent driver unbind") from the staging.current tree and
-> > commit d012c2a5aca1 ("staging: usbip: stub_dev.c: move stub_driver
-> > definition and update driver name") from the staging tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary.
->
-> Looks correct, thanks for doing this.
-
-This should now be resolved.
-
-greg k-h 
+greg k-h
