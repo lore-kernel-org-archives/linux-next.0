@@ -1,86 +1,48 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: staging: fix ath6kl build when CFG80211 is not enabled
-Date: Tue, 28 Jun 2011 14:21:48 -0700
-Message-ID: <20110628212148.GA27939@suse.de>
-References: <20110527130321.18a51d63.randy.dunlap@oracle.com>
- <20110628200656.GA7992@kroah.com>
- <4E0A3BC8.6000504@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for June 28 ( net/wireless)
+Date: Tue, 28 Jun 2011 15:07:16 -0700
+Message-ID: <20110628150716.cd10cc04.randy.dunlap@oracle.com>
+References: <20110628170927.5a226855.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:44925 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751741Ab1F1V0v (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jun 2011 17:26:51 -0400
-Content-Disposition: inline
-In-Reply-To: <4E0A3BC8.6000504@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Greg KH <greg@kroah.com>, driverdevel <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@gmail.com>, Joe Perches <joe@perches.com>, Naveen Singh <nsingh@atheros.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110628170927.5a226855.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-wireless@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jun 28, 2011 at 01:38:32PM -0700, Randy Dunlap wrote:
-> On 06/28/11 13:06, Greg KH wrote:
-> > On Fri, May 27, 2011 at 01:03:21PM -0700, Randy Dunlap wrote:
-> >>
-> >> From: Randy Dunlap <randy.dunlap@oracle.com>
-> >>
-> >> Fix build errors when CONFIG_CFG80211 is not enabled:
-> >>
-> >> drivers/built-in.o: In function `ar6k_cfg80211_deinit':
-> >> (.text+0x189b71): undefined reference to `cfg80211_scan_done'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_deinit':
-> >> (.text+0x189b86): undefined reference to `wiphy_unregister'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_deinit':
-> >> (.text+0x189b8d): undefined reference to `wiphy_free'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_init':
-> >> (.text+0x18add7): undefined reference to `wiphy_new'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_init':
-> >> (.text+0x18ae48): undefined reference to `wiphy_register'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_tkip_micerr_event':
-> >> (.text+0x18ae95): undefined reference to `cfg80211_michael_mic_failure'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_scan_node':
-> >> (.text+0x18afb5): undefined reference to `__ieee80211_get_channel'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_scan_node':
-> >> (.text+0x18afd2): undefined reference to `cfg80211_inform_bss_frame'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_disconnect_event':
-> >> (.text+0x18b046): undefined reference to `cfg80211_ibss_joined'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_disconnect_event':
-> >> (.text+0x18b176): undefined reference to `cfg80211_connect_result'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_disconnect_event':
-> >> (.text+0x18b190): undefined reference to `cfg80211_disconnected'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_connect_event':
-> >> (.text+0x18b291): undefined reference to `cfg80211_get_bss'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_connect_event':
-> >> (.text+0x18b457): undefined reference to `cfg80211_put_bss'
-> >> drivers/built-in.o: In function `ar6k_cfg80211_connect_event':
-> >> (.text+0x18b4fa): undefined reference to `cfg80211_roamed'
-> >>
-> >> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> >> Cc: Luis R. Rodriguez <mcgrof@gmail.com>
-> >> Cc: Joe Perches <joe@perches.com>
-> >> Cc: Naveen Singh <nsingh@atheros.com>
-> >> ---
-> >>  drivers/staging/ath6kl/Kconfig |    1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> --- linux-next-20110517.orig/drivers/staging/ath6kl/Kconfig
-> >> +++ linux-next-20110517/drivers/staging/ath6kl/Kconfig
-> >> @@ -1,6 +1,7 @@
-> >>  config ATH6K_LEGACY
-> >>  	tristate "Atheros AR6003 support (non mac80211)"
-> >>          depends on MMC && WLAN
-> >> +	depends on CFG80211
-> > 
-> > Is this still needed in the next linux-next release?
-> 
-> It's already there, isn't it?
-> 
-> config ATH6K_LEGACY
-> 	tristate "Atheros AR6003 support (non mac80211)"
->         depends on MMC && WLAN
-> 	depends on CFG80211
->         select WIRELESS_EXT
->         select WEXT_PRIV
+On Tue, 28 Jun 2011 17:09:27 +1000 Stephen Rothwell wrote:
 
-I thought so, hence my confusion :)
+> Hi all,
+> 
+> Changes since 20110627:
+> 
+> The net tree still has its 2 build failures and gained a conflict against
+> the wireless-current tree.
+
+
+  LD      drivers/net/wireless/rtlwifi/built-in.o
+drivers/net/wireless/rtlwifi/rtl8192de/built-in.o: In function `rtl92ce_sw_led_on':
+(.text+0x11fb6): multiple definition of `rtl92ce_sw_led_on'
+drivers/net/wireless/rtlwifi/rtl8192ce/built-in.o:(.text+0xa326): first defined here
+drivers/net/wireless/rtlwifi/rtl8192de/built-in.o:(.bss+0x0): multiple definition of `dm_digtable'
+drivers/net/wireless/rtlwifi/rtl8192c/built-in.o:(.bss+0x0): first defined here
+ld: Warning: size of symbol `dm_digtable' changed from 40 in drivers/net/wireless/rtlwifi/rtl8192c/built-in.o to 48 in drivers/net/wireless/rtlwifi/rtl8192de/built-in.o
+drivers/net/wireless/rtlwifi/rtl8192de/built-in.o: In function `rtl92ce_sw_led_off':
+(.text+0x11cfe): multiple definition of `rtl92ce_sw_led_off'
+drivers/net/wireless/rtlwifi/rtl8192ce/built-in.o:(.text+0xa06e): first defined here
+
+config file excerpt:
+
+CONFIG_RTL8192CE=y
+# CONFIG_RTL8192SE is not set
+CONFIG_RTL8192DE=y
+# CONFIG_RTL8192CU is not set
+CONFIG_RTLWIFI=y
+CONFIG_RTL8192C_COMMON=y
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
