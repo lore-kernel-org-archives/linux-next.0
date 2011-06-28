@@ -1,61 +1,71 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH 2/2] mtd/ofpart: add ofoldpart alias
-Date: Tue, 28 Jun 2011 12:09:50 +0400
-Message-ID: <BANLkTi=8G-aw8ZTJUVYdh7_2u442AonaRg@mail.gmail.com>
-References: <1309154611.23597.18.camel@sauron>
-	<1309178086-10604-1-git-send-email-dbaryshkov@gmail.com>
-	<1309246907.23597.34.camel@sauron>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH -next] bcma: main.c needs to include <linux/slab.h>
+Date: Tue, 28 Jun 2011 11:49:31 +0200
+Message-ID: <BANLkTin4w2QWGNxqbyZyzO+wCmkBH6eUVg@mail.gmail.com>
+References: <alpine.DEB.2.00.1106261016100.25900@ayla.of.borg>
+	<BANLkTin_axWbYNKox+R59VmEq7tggaKvHQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
-In-Reply-To: <1309246907.23597.34.camel@sauron>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
-	<mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
-List-Post: <mailto:linux-mtd@lists.infradead.org>
-List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
-	<mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
-Sender: linux-mtd-bounces@lists.infradead.org
-Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
-To: dedekind1@gmail.com
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-iw0-f174.google.com ([209.85.214.174]:33552 "EHLO
+	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756300Ab1F1Jtc convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jun 2011 05:49:32 -0400
+In-Reply-To: <BANLkTin_axWbYNKox+R59VmEq7tggaKvHQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, Linux Kernel Development <linux-kernel@vger.kernel.org>
 
-On 6/28/11, Artem Bityutskiy <dedekind1@gmail.com> wrote:
-> On Mon, 2011-06-27 at 16:34 +0400, Dmitry Eremin-Solenikov wrote:
->> ofpart.ko also provides ofoldpart MTD parser. Add respective
->> MODULE_ALIAS("ofoldpart"); declaration.
->>
->> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
->> ---
->>  drivers/mtd/ofpart.c |    3 +++
->>  1 files changed, 3 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/mtd/ofpart.c b/drivers/mtd/ofpart.c
->> index aa33b8a..77f0640 100644
->> --- a/drivers/mtd/ofpart.c
->> +++ b/drivers/mtd/ofpart.c
->> @@ -176,3 +176,6 @@ module_init(ofpart_parser_init);
->>  MODULE_LICENSE("GPL");
->>  MODULE_DESCRIPTION("Parser for MTD partitioning information in device
->> tree");
->>  MODULE_AUTHOR("Vitaly Wool, David Gibson");
->> +/* Required so that this module will be picked up ofoldpart
->> + * MTD partition information parser */
->> +MODULE_ALIAS("ofoldpart");
+2011/6/28 Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>:
+> Hopefully last thing ;)
 >
-> Well, the codyng style documents how multi-line comments should look
-> like... And this comment is less readable than your previous
-> explanation... But I've fixed this myself and pushed to my tree, thanks!
+> 2011/6/26 Geert Uytterhoeven <geert@linux-m68k.org>:
+>> m68k allmodconfig:
+>>
+>> drivers/bcma/main.c: In function =E2=80=98bcma_release_core_dev=E2=80=
+=99:
+>> drivers/bcma/main.c:68: error: implicit declaration of function =E2=80=
+=98kfree=E2=80=99
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> --
+>
+>
+> If this is not manual mistake, you may want to fix your script or
+> whatever you use. You typed "--" instead of "---", which resulted in
+> the following commit message:
 
-It seems I've got "All work and no play makes Jack a dull boy" sindrom...
+It's a manual mistake :-)
 
--- 
-With best wishes
-Dmitry
+> m68k allmodconfig:
+>
+> =C2=A0drivers/bcma/main.c: In function =C3=A2=E2=82=AC=CB=9Cbcma_rele=
+ase_core_dev=C3=A2=E2=82=AC=E2=84=A2:
+> =C2=A0drivers/bcma/main.c:68: error: implicit declaration of function=
+ =C3=A2=E2=82=AC=CB=9Ckfree=C3=A2=E2=82=AC=E2=84=A2
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> =C2=A0--
+> =C2=A0http://kisskb.ellerman.id.au/kisskb/buildresult/4243344/
+>
+> =C2=A0drivers/bcma/main.c | =C2=A0 =C2=A01 +
+> =C2=A01 files changed, 1 insertions(+), 0 deletions(-)
+> Signed-off-by: John W. Linville <linville@tuxdriver.com>
 
-______________________________________________________
-Linux MTD discussion mailing list
-http://lists.infradead.org/mailman/listinfo/linux-mtd/
+Gr{oetje,eeting}s,
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
