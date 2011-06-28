@@ -1,112 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the wireless-current
- tree
-Date: Tue, 28 Jun 2011 14:02:19 +1000
-Message-ID: <20110628140219.1480dc7a.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (sound tree
+ related)
+Date: Tue, 28 Jun 2011 16:50:39 +1000
+Message-ID: <20110628165039.7e1fa073.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49205 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755990Ab1F1EC0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jun 2011 00:02:26 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-tx.c between commits 1107a08a1a3e
-("iwlagn: fix cmd queue unmap"), e815407d395e ("iwlagn: map command
-buffers BIDI") and 2627c002cbed ("iwlagn: use PCI_DMA_* for pci_*
-operations") from the wireless-current tree and commit 795414db8607
-("iwlagn: don't use the PCI wrappers for DMA operation") from the net
-tree.
+After merging the final tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
+sound/pci/hda/patch_via.c:185:28: error: field 'loopback' has incomplete type
+sound/pci/hda/patch_via.c:187:22: error: array type has incomplete element type
+sound/pci/hda/patch_via.c: In function 'is_aa_path_mute':
+sound/pci/hda/patch_via.c:891:39: error: dereferencing pointer to incomplete type
+sound/pci/hda/patch_via.c:891:51: error: dereferencing pointer to incomplete type
+sound/pci/hda/patch_via.c:892:11: error: dereferencing pointer to incomplete type
+sound/pci/hda/patch_via.c: In function 'add_loopback_list':
+sound/pci/hda/patch_via.c:2004:29: warning: type defaults to 'int' in type name
+sound/pci/hda/patch_via.c:2004:29: warning: type defaults to 'int' in type name
+sound/pci/hda/patch_via.c:2004:29: error: negative width in bit-field '<anonymous>'
+sound/pci/hda/patch_via.c:2007:6: error: dereferencing pointer to incomplete type
+sound/pci/hda/patch_via.c:2008:6: error: dereferencing pointer to incomplete type
+sound/pci/hda/patch_via.c:2009:6: error: dereferencing pointer to incomplete type
+
+Caused by commit ada509ec00e4 ("ALSA: hda - Simplify analog-low-current
+mode check for VIA codecs") which removed the CONFIG_SND_HDA_POWER_SAVE
+protection of the usage, but not the definition in
+sound/pci/hda/hda_local.h.
+
+I have added the below patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 28 Jun 2011 16:46:09 +1000
+Subject: [PATCH] ALSA: hda - remove SND_HDA_POWER_SAVE protection of struct
+ hda_loopback_check
+
+to fix build problems when it is disabled.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/pci/hda/hda_local.h |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
+
+diff --git a/sound/pci/hda/hda_local.h b/sound/pci/hda/hda_local.h
+index b333bf4..88b277e 100644
+--- a/sound/pci/hda/hda_local.h
++++ b/sound/pci/hda/hda_local.h
+@@ -565,7 +565,6 @@ int snd_hda_get_bool_hint(struct hda_codec *codec, const char *key)
+  * power-management
+  */
+ 
+-#ifdef CONFIG_SND_HDA_POWER_SAVE
+ void snd_hda_schedule_power_save(struct hda_codec *codec);
+ 
+ struct hda_amp_list {
+@@ -582,7 +581,6 @@ struct hda_loopback_check {
+ int snd_hda_check_amp_list_power(struct hda_codec *codec,
+ 				 struct hda_loopback_check *check,
+ 				 hda_nid_t nid);
+-#endif /* CONFIG_SND_HDA_POWER_SAVE */
+ 
+ /*
+  * AMP control callbacks
+-- 
+1.7.5.4
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/net/wireless/iwlwifi/iwl-tx.c
-index 9eee978,fd8aee9..0000000
---- a/drivers/net/wireless/iwlwifi/iwl-tx.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-tx.c
-@@@ -126,9 -126,8 +126,8 @@@ static inline u8 iwl_tfd_get_num_tbs(st
-  }
-  
-  static void iwlagn_unmap_tfd(struct iwl_priv *priv, struct iwl_cmd_meta *meta,
- -			     struct iwl_tfd *tfd)
- +			     struct iwl_tfd *tfd, enum dma_data_direction dma_dir)
-  {
-- 	struct pci_dev *dev = priv->pci_dev;
-  	int i;
-  	int num_tbs;
-  
-@@@ -150,8 -149,8 +149,8 @@@
-  
-  	/* Unmap chunks, if any. */
-  	for (i = 1; i < num_tbs; i++)
-- 		pci_unmap_single(dev, iwl_tfd_tb_get_addr(tfd, i),
-+ 		dma_unmap_single(priv->bus.dev, iwl_tfd_tb_get_addr(tfd, i),
- -				iwl_tfd_tb_get_len(tfd, i), DMA_TO_DEVICE);
- +				iwl_tfd_tb_get_len(tfd, i), dma_dir);
-  }
-  
-  /**
-@@@ -167,8 -166,7 +166,8 @@@ void iwlagn_txq_free_tfd(struct iwl_pri
-  	struct iwl_tfd *tfd_tmp = txq->tfds;
-  	int index = txq->q.read_ptr;
-  
- -	iwlagn_unmap_tfd(priv, &txq->meta[index], &tfd_tmp[index]);
- +	iwlagn_unmap_tfd(priv, &txq->meta[index], &tfd_tmp[index],
-- 			 PCI_DMA_TODEVICE);
-++			 DMA_TO_DEVICE);
-  
-  	/* free SKB */
-  	if (txq->txb) {
-@@@ -311,8 -309,10 +310,8 @@@ void iwl_cmd_queue_unmap(struct iwl_pri
-  		i = get_cmd_index(q, q->read_ptr);
-  
-  		if (txq->meta[i].flags & CMD_MAPPED) {
- -			dma_unmap_single(priv->bus.dev,
- -					 dma_unmap_addr(&txq->meta[i], mapping),
- -					 dma_unmap_len(&txq->meta[i], len),
- +			iwlagn_unmap_tfd(priv, &txq->meta[i], &txq->tfds[i],
-- 					 PCI_DMA_BIDIRECTIONAL);
-+ 					 DMA_BIDIRECTIONAL);
-  			txq->meta[i].flags = 0;
-  		}
-  
-@@@ -693,12 -698,11 +692,12 @@@ int iwl_enqueue_hcmd(struct iwl_priv *p
-  			continue;
-  		if (!(cmd->dataflags[i] & IWL_HCMD_DFL_NOCOPY))
-  			continue;
-- 		phys_addr = pci_map_single(priv->pci_dev, (void *)cmd->data[i],
-- 					   cmd->len[i], PCI_DMA_BIDIRECTIONAL);
-- 		if (pci_dma_mapping_error(priv->pci_dev, phys_addr)) {
-+ 		phys_addr = dma_map_single(priv->bus.dev, (void *)cmd->data[i],
- -					   cmd->len[i], DMA_TO_DEVICE);
-++					   cmd->len[i], DMA_BIDIRECTIONAL);
-+ 		if (dma_mapping_error(priv->bus.dev, phys_addr)) {
-  			iwlagn_unmap_tfd(priv, out_meta,
- -					 &txq->tfds[q->write_ptr]);
- +					 &txq->tfds[q->write_ptr],
-- 					 PCI_DMA_BIDIRECTIONAL);
-++					 DMA_BIDIRECTIONAL);
-  			idx = -ENOMEM;
-  			goto out;
-  		}
-@@@ -802,7 -806,7 +801,7 @@@ void iwl_tx_cmd_complete(struct iwl_pri
-  	cmd = txq->cmd[cmd_index];
-  	meta = &txq->meta[cmd_index];
-  
-- 	iwlagn_unmap_tfd(priv, meta, &txq->tfds[index], PCI_DMA_BIDIRECTIONAL);
- -	iwlagn_unmap_tfd(priv, meta, &txq->tfds[index]);
-++	iwlagn_unmap_tfd(priv, meta, &txq->tfds[index], DMA_BIDIRECTIONAL);
-  
-  	/* Input error checking is done when commands are added to queue. */
-  	if (meta->flags & CMD_WANT_SKB) {
+http://www.canb.auug.org.au/~sfr/
