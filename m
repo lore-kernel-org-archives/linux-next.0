@@ -1,51 +1,66 @@
-From: Stijn Devriendt <highguy@gmail.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 28 Jun 2011 12:55:38 +0200
-Message-ID: <BANLkTim2aZB6a_2wgA=5wLNYh-SaQfupvQ@mail.gmail.com>
-References: <20110627142253.cc35bfbe.sfr@canb.auug.org.au>
+From: "Arjan Mels" <arjan.mels@gmx.net>
+Subject: Re: linux-next: manual merge of the staging tree with the staging.current tree
+Date: Tue, 28 Jun 2011 16:07:25 +0200
+Message-ID: <DE6BB9BF2B09415FACB0F74F3CF4CF5C@Main>
+References: <20110609165804.2e96bb77.sfr@canb.auug.org.au> <20110609184206.GC2760@kroah.com> <20110609205111.GB32526@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110627142253.cc35bfbe.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain;
+	format=flowed;
+	charset="iso-8859-1";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:46800 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757872Ab1F1OHN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jun 2011 10:07:13 -0400
+In-Reply-To: <20110609205111.GB32526@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt mooney <mfm@muteddisk.com>
 
-I've already reported this to Thomas with a patch attached.
+Greg, Stephen,
 
-See https://lkml.org/lkml/2011/6/25/62
+Below mentioned patch does not seem to have made it into the linux-next tree 
+(and other stable branches).
 
-Regards,
-Stijn
+What do I need to do to correct this?
 
-On Mon, Jun 27, 2011 at 6:22 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi all,
+Best Regards,
+
+Arjan
+
+> > drivers/staging/usbip/stub_dev.c between commit d3ac07788017 ("staging:
+> > usbip: bugfix prevent driver unbind") from the staging.current tree and
+> > commit d012c2a5aca1 ("staging: usbip: stub_dev.c: move stub_driver
+
+
+
+
+-----Original Message----- 
+From: Greg KH
+Sent: Thursday, June 09, 2011 22:51
+To: Stephen Rothwell
+Cc: linux-next@vger.kernel.org ; linux-kernel@vger.kernel.org ; Arjan Mels ; 
+matt mooney
+Subject: Re: linux-next: manual merge of the staging tree with the 
+staging.current tree
+
+On Thu, Jun 09, 2011 at 11:42:06AM -0700, Greg KH wrote:
+> On Thu, Jun 09, 2011 at 04:58:04PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> >
+> > Today's linux-next merge of the staging tree got a conflict in
+> > drivers/staging/usbip/stub_dev.c between commit d3ac07788017 ("staging:
+> > usbip: bugfix prevent driver unbind") from the staging.current tree and
+> > commit d012c2a5aca1 ("staging: usbip: stub_dev.c: move stub_driver
+> > definition and update driver name") from the staging tree.
+> >
+> > I fixed it up (see below) and can carry the fix as necessary.
 >
-> After merging the tip tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
->
-> arch/x86/kernel/i8253.c: In function 'setup_pit_timer':
-> arch/x86/kernel/i8253.c:22:2: error: implicit declaration of function=
- 'clockevent_i8253_init'
-> arch/x86/kernel/i8253.c:23:24: error: 'i8253_clockevent' undeclared (=
-first use in this function)
->
-> Caused by commit 2739ce151665 ("x86: Use common i8253 clockevent").
-> clockevent_i8253_init() doesn't appear to be declared in any header f=
-ile
-> even though it is introduced as a global function in commit 9f9119424=
-bbc
-> ("i8253: Create common clockevent implementation"). =A0Similarly for
-> i8253_clockevent.
->
-> I have used the tip tree from next-20110624 for today.
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
-> http://www.canb.auug.org.au/~sfr/
->
+> Looks correct, thanks for doing this.
+
+This should now be resolved.
+
+greg k-h 
