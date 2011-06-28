@@ -1,54 +1,77 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- related)
-Date: Mon, 27 Jun 2011 14:45:47 -0700
-Message-ID: <20110627214547.GA10889@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (staging related)
+Date: Tue, 28 Jun 2011 10:16:04 +1000
+Message-ID: <20110628101604.3c039244.sfr@canb.auug.org.au>
 References: <20110609184127.GA2760@kroah.com>
- <20110609192243.GA3980@kroah.com>
- <20110610160548.529797c7.sfr@canb.auug.org.au>
- <20110610160938.cd01c408.sfr@canb.auug.org.au>
- <20110610223423.GB15868@kroah.com>
- <20110615142155.bd538b73.sfr@canb.auug.org.au>
- <20110616191448.GA10255@kroah.com>
- <20110623103503.cd9e7e70.sfr@canb.auug.org.au>
- <20110623215115.GB10969@kroah.com>
- <20110624100005.f9f59ddf.sfr@canb.auug.org.au>
+	<20110609192243.GA3980@kroah.com>
+	<20110610160548.529797c7.sfr@canb.auug.org.au>
+	<20110610160938.cd01c408.sfr@canb.auug.org.au>
+	<20110610223423.GB15868@kroah.com>
+	<20110615142155.bd538b73.sfr@canb.auug.org.au>
+	<20110616191448.GA10255@kroah.com>
+	<20110623103503.cd9e7e70.sfr@canb.auug.org.au>
+	<20110623215115.GB10969@kroah.com>
+	<20110624100005.f9f59ddf.sfr@canb.auug.org.au>
+	<20110627214547.GA10889@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__28_Jun_2011_10_16_04_+1000_MYzcnS_Rl6pzfNHu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3.smtp.messagingengine.com ([66.111.4.27]:47061 "EHLO
-	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754912Ab1F0Vqj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jun 2011 17:46:39 -0400
-Content-Disposition: inline
-In-Reply-To: <20110624100005.f9f59ddf.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34968 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755404Ab1F1AQR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Jun 2011 20:16:17 -0400
+In-Reply-To: <20110627214547.GA10889@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
 Cc: brudley@broadcom.com, henryp@broadcom.com, rvossen@broadcom.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On Fri, Jun 24, 2011 at 10:00:05AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Thu, 23 Jun 2011 14:51:15 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > Sorry, I'm away from home, with a very spotty internet connection, on
-> > vacation, so it's hard to get this done at the moment.  I'll get to it
-> > on the 27th when I return.
-> 
-> I can understand vacation as well :-)
-> 
-> Thanks.  I will use Ralf's (arch restricting) patch until you come up
-> with something better.
+--Signature=_Tue__28_Jun_2011_10_16_04_+1000_MYzcnS_Rl6pzfNHu
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That's good, but it doesn't fix the root problem here.  I've now fixed
-this up in the staging-linus branch.
+Hi Greg,
 
-You shouldn't have any more build breakages in the drivers/staging/*
-tree now as I am pretty sure I've fixed all reported issues.  If not,
-please let me know.
+On Mon, 27 Jun 2011 14:45:47 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> On Fri, Jun 24, 2011 at 10:00:05AM +1000, Stephen Rothwell wrote:
+> >=20
+> > Thanks.  I will use Ralf's (arch restricting) patch until you come up
+> > with something better.
+>=20
+> That's good, but it doesn't fix the root problem here.  I've now fixed
+> this up in the staging-linus branch.
 
-thanks,
+OK, I have removed my copy of Ralf's patch.
 
-greg k-h
+> You shouldn't have any more build breakages in the drivers/staging/*
+> tree now as I am pretty sure I've fixed all reported issues.  If not,
+> please let me know.
+
+Great, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__28_Jun_2011_10_16_04_+1000_MYzcnS_Rl6pzfNHu
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOCR1EAAoJEDMEi1NhKgbsODYH/iaVEe6tqInPyCEULwoEZTkK
+1ZQpO9+HS+OvKsjprSFumDt7ZFSLBZMPu4Urx+LFqD2ByupU3YhT0y3LmcR2t/UG
+tYaXXJcQtJBkDjpjeNJhWBUGKMkxYoiqOsxaZcu6fFOf5jfYTAAHyJL8XPdmio65
+UwOWgqxKmWnLM92xGSl3W6wp6tGxp9gNao1CPPYZi94l2ag1HB8bhWq44aEwAX5C
+zNUSd4VGnuIkrjmIt2zGKdPU54agwGRkRdhXm+o7Re4fSjpss5mHhfyzJMtnU8o3
+mq84SYfIQGtgFMxiJBsX4+A5IOq3vc2b5eOBVneJrwviO/X12wveeNhJ3G/sElk=
+=9+rO
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__28_Jun_2011_10_16_04_+1000_MYzcnS_Rl6pzfNHu--
