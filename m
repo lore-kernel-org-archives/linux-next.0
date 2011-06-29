@@ -1,48 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Wed, 29 Jun 2011 02:58:21 -0700 (PDT)
-Message-ID: <20110629.025821.232474717396156253.davem@davemloft.net>
-References: <BANLkTin+iCahNVJGKc-_26pb9zEERTc8_A@mail.gmail.com>
-	<20110627152927.943c34dc.sfr@canb.auug.org.au>
-	<20110629160901.2d3cd6da.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Tree for June 29
+Date: Wed, 29 Jun 2011 07:18:06 -0700
+Message-ID: <20110629141806.GB16986@kroah.com>
+References: <20110629162454.e2326fcf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:35240 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751178Ab1F2KA1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Jun 2011 06:00:27 -0400
-In-Reply-To: <20110629160901.2d3cd6da.sfr@canb.auug.org.au>
+Received: from out4.smtp.messagingengine.com ([66.111.4.28]:45115 "EHLO
+	out4.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751363Ab1F2OSS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Jun 2011 10:18:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20110629162454.e2326fcf.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: adobriyan@gmail.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 29 Jun 2011 16:09:01 +1000
-
-> Again, this has taken some time to fix ...
+On Wed, Jun 29, 2011 at 04:24:54PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Dave, I think you have raised my expectations too far ;-)
-
-Sorry.  I try to give the offender time to fix the build failure
-himself, but as you saw this time that didn't work out.
-
-To be honest I'm going to be quite reluctant to apply these kinds of
-header removal patches in the future if this is how responsive the
-patch submitter is going to be to build fallout. :-/
-
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 29 Jun 2011 16:03:18 +1000
-> Subject: [PATCH] net: include dma-mapping.h for dma_map_single etc
+> Changes since 20110628:
 > 
-> fixes thses build errors:
- ...
-> Caused by commit commit b7f080cfe223 ("net: remove mm.h inclusion from
-> netdevice.h").
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> My fixes tree is empty again (the early part of mmotm-2011-06-22-13-05 is
+> mostly now included in Linus' tree and the experiment failed anyway :-))
 
-Applied, thanks!
+Did it fail?  I thought it at least solved the build errors that people
+were seeing in the staging tree in other arches, allowing them to move
+on to other, "real" issues that they had.
+
+Thanks for doing it, I appreciated it at the least.
+
+greg k-h
