@@ -1,38 +1,37 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: linux-next: build failure after merge of the security-testing
- tree
-Date: Wed, 29 Jun 2011 17:36:05 +1000 (EST)
-Message-ID: <alpine.LRH.2.00.1106291735410.5093@tundra.namei.org>
-References: <20110629134800.9ee0d5b7.sfr@canb.auug.org.au> <201106291316.CDF48413.JtQVLOFSFOOFMH@I-love.SAKURA.ne.jp>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree (net
+ tree related)
+Date: Wed, 29 Jun 2011 02:56:17 -0700 (PDT)
+Message-ID: <20110629.025617.399441642697796814.davem@davemloft.net>
+References: <20110623152535.e9ec4ad2.sfr@canb.auug.org.au>
+	<20110627153522.8884b125.sfr@canb.auug.org.au>
+	<20110629160133.372e53ed.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:47233 "EHLO tundra.namei.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751736Ab1F2HgS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Jun 2011 03:36:18 -0400
-In-Reply-To: <201106291316.CDF48413.JtQVLOFSFOOFMH@I-love.SAKURA.ne.jp>
+Received: from shards.monkeyblade.net ([198.137.202.13]:35207 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751842Ab1F2J62 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Jun 2011 05:58:28 -0400
+In-Reply-To: <20110629160133.372e53ed.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, adobriyan@gmail.com
 
-On Wed, 29 Jun 2011, Tetsuo Handa wrote:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 29 Jun 2011 16:01:33 +1000
 
->  From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Wed, 29 Jun 2011 13:07:52 +0900
-> Subject: [PATCH] TOMOYO: Fix build error with CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER=y .
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 29 Jun 2011 15:52:00 +1000
+> Subject: [PATCH] net: include io.h in for iounmap etc
 > 
-> I forgot to add #ifndef in commit 0e4ae0e0 "TOMOYO: Make several options
-> configurable.", resulting
+> fixes these build errors:
+ ...
+> Caused by commit b7f080cfe223 ("net: remove mm.h inclusion from
+> netdevice.h").
 > 
->   security/built-in.o: In function `tomoyo_bprm_set_creds':
->   tomoyo.c:(.text+0x4698e): undefined reference to `tomoyo_load_policy'
-> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
-
--- 
-James Morris
-<jmorris@namei.org>
+Applied.
