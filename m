@@ -1,48 +1,148 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: build failure after merge of the final tree
- (powerpc tree related)
-Date: Thu, 30 Jun 2011 17:09:21 +1000
-Message-ID: <1309417761.14501.206.camel@pasglop>
-References: <20110630163659.374db7f9.sfr@canb.auug.org.au>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: linux-next: manual merge of the security-testing tree with the
+ tree
+Date: Thu, 30 Jun 2011 09:25:59 +0200
+Message-ID: <20110630072559.GA4048@pengutronix.de>
+References: <20110630142910.2fea4257.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:47520 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750888Ab1F3HJi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Jun 2011 03:09:38 -0400
-In-Reply-To: <20110630163659.374db7f9.sfr@canb.auug.org.au>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:36964 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753826Ab1F3H0E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Jun 2011 03:26:04 -0400
+Content-Disposition: inline
+In-Reply-To: <20110630142910.2fea4257.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, git@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On Thu, 2011-06-30 at 16:36 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> drivers/tty/hvc/hvsi.c:701:12: error: conflicting types for 'hvsi_put_chars'
-> arch/powerpc/include/asm/hvsi.h:92:12: note: previous declaration of 'hvsi_put_chars' was here
-> drivers/tty/hvc/hvsi.c:736:12: error: conflicting types for 'hvsi_open'
-> arch/powerpc/include/asm/hvsi.h:86:12: note: previous declaration of 'hvsi_open' was here
-> drivers/tty/hvc/hvsi.c:802:13: error: conflicting types for 'hvsi_close'
-> arch/powerpc/include/asm/hvsi.h:87:13: note: previous declaration of 'hvsi_close' was here
-> drivers/tty/hvc/hvsi.c:1083:19: error: conflicting types for 'hvsi_init'
-> arch/powerpc/include/asm/hvsi.h:81:13: note: previous declaration of 'hvsi_init' was here
-> 
-> Caused by commit 17bdc6c0e979 ("powerpc/pseries: Move hvsi support into a
-> library").
-> 
-> I have reverted that commit for today.
+On Thu, Jun 30, 2011 at 02:29:10PM +1000, Stephen Rothwell wrote:
+> Hi James,
+>=20
+> Today's linux-next merge of the security-testing tree produced a larg=
+e
+> number of conflicts in files not modified by the security-testing tre=
+e.
+> I assume that this is a bug in "git merge" but I cannot complete the
+> merge as such.
+>=20
+> I have used the security-testing tree from next-20110628 for today.
+>=20
+> More information for the git experts:
+>=20
+> The security-testing tree is at
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testin=
+g-2.6.git
+> and I am trying to merge branch "next" into linux-next at commit
+> 9fd8fab5e299a ("Merge remote-tracking branch 'voltage/for-next'").
+>=20
+> I can merge commit 0e4ae0e0dec6 ("TOMOYO: Make several options
+> configurable") from the security testing tree without conflict and al=
+so
+> commit 25e75dff519b ("AppArmor: Fix masking of capabilities in compla=
+in
+> mode").
+>=20
+> I cannot merge commit bcd05ca10420 ("Merge branch 'for-security' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/jj/apparmor-dev into ne=
+xt")
+> which is the child of the above two commits.
+>=20
+> The tree to commit 25e75dff519b only containes two simple commits
+> (modifying 2 files) and is based on v3.0-rc5.  The tree to commit
+> bcd05ca10420 containes several commits and is based on commit
+> 06e86849cf40 ("Merge branch 'pm-fixes' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/suspend-2.6") fr=
+om
+> Linus' tree (between v3.0-rc2 and v3.0-rc2).
+>=20
+> After attempting the merge I get this:
+>=20
+> $ git status
+> # On branch master
+> # Changes to be committed:
+> #
+> #	deleted:    Documentation/ABI/testing/sysfs-class-backlight-driver-=
+adp8870
+> #	modified:   Documentation/accounting/cgroupstats.txt
+> #	modified:   Documentation/cgroups/blkio-controller.txt
+> #	modified:   Documentation/cgroups/cgroups.txt
+> #	modified:   Documentation/cgroups/cpuacct.txt
+> #	modified:   Documentation/cgroups/cpusets.txt
+> 	.
+> 	.	[lots elided]
+> 	.
+> #	modified:   tools/perf/util/PERF-VERSION-GEN
+> #	modified:   tools/perf/util/trace-event-parse.c
+> #
+> # Unmerged paths:
+> #   (use "git add/rm <file>..." as appropriate to mark resolution)
+> #
+> #	both modified:      arch/arm/mach-shmobile/board-ag5evm.c
+> #	both modified:      arch/arm/mm/context.c
+> #	both modified:      arch/arm/mm/proc-v7.S
+> #	both modified:      arch/arm/plat-mxc/devices/platform-imx-dma.c
+> #	both modified:      arch/arm/plat-s5p/include/plat/map-s5p.h
+> #	both modified:      arch/m68k/Kconfig.nommu
+> #	both modified:      block/blk-throttle.c
+> #	both modified:      drivers/gpu/drm/nouveau/nouveau_fence.c
+> #	deleted by them:    drivers/net/usb/kalmia.c
+> #	both modified:      drivers/net/wireless/iwlegacy/iwl-dev.h
+> #	both modified:      drivers/net/wireless/iwlegacy/iwl4965-base.c
+> #	both modified:      drivers/net/wireless/iwlwifi/iwl-agn-rxon.c
+> #	both modified:      drivers/net/wireless/iwlwifi/iwl-agn.c
+> #	both modified:      drivers/net/wireless/rtlwifi/pci.c
+> #	deleted by them:    drivers/video/backlight/adp8870_bl.c
+> #	both modified:      fs/namei.c
+> #	both modified:      fs/nfs/nfs4proc.c
+> #	both modified:      fs/nfs/pnfs.c
+> #	both modified:      fs/proc/base.c
+> #	both modified:      net/bluetooth/rfcomm/sock.c
+> #	both modified:      net/ipv4/ip_output.c
+> #	both modified:      net/netfilter/ipvs/ip_vs_core.c
+> #	both modified:      sound/pci/hda/patch_via.c
+> #	both modified:      sound/soc/codecs/ad1836.h
+> #	both modified:      sound/soc/soc-cache.c
+> #
+>=20
+> None of the "Unmerged paths" are modified in the tree I am merging in=
+=2E
+Hmm, looking at bcd05ca10420 and the difference to its first parent:
 
-Ooops, that seems to be entirely my fault, not sure what happened, I
-might have merged the wrong patch version (I had some problem locally
-with screwing up the git repo where those patches were originally).
+	$ git diff --stat bcd05ca10420^ bcd05ca10420
+	<void>
 
-I'll push a fix tomorrow.
+	$ git describe bcd05ca10420
+	v3.0-rc5-28-gbcd05ca
 
-Cheers,
-Ben.
+	$ git describe bcd05ca10420^
+	v3.0-rc2-221-g0e4ae0e
+
+So commit bcd05ca10420 reverted many commits between v3.0-rc2 and v3.0-=
+rc5.
+
+If I redo what should have been done in bcd05ca10420 and compare with
+bcd05ca10420:
+
+	git checkout bcd05ca10420^
+	git merge bcd05ca10420^2
+	git diff --stat bcd05ca10420
+
+I get the same list of touched files as you above.
+
+Long history short: James probably used -s ours or similar and it's fin=
+e
+not to merge that commit into next :-)
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
