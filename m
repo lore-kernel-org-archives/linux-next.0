@@ -1,53 +1,51 @@
-From: Ondrej Zary <linux@rainbow-software.org>
-Subject: Re: [PATCH] media: fix radio-sf16fmr2 build when SND is not enabled
-Date: Thu, 30 Jun 2011 20:36:49 +0200
-Message-ID: <201106302036.56468.linux@rainbow-software.org>
-References: <20110630165302.12ee1bd0.sfr@canb.auug.org.au> <20110630103104.0a5b8ce6.randy.dunlap@oracle.com>
+From: Junio C Hamano <gitster@pobox.com>
+Subject: Re: linux-next: manual merge of the security-testing tree with the
+ tree
+Date: Thu, 30 Jun 2011 11:52:17 -0700
+Message-ID: <7v4o37qhi6.fsf@alter.siamese.dyndns.org>
+References: <20110630142910.2fea4257.sfr@canb.auug.org.au>
+ <20110630072559.GA4048@pengutronix.de>
+ <20110630193023.6056d48e.sfr@canb.auug.org.au>
+ <20110630121710.GJ11559@pengutronix.de>
+ <BANLkTi=usrsF60Popfu55v3_dXe7Yo0GrA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110630103104.0a5b8ce6.randy.dunlap@oracle.com>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <git-owner@vger.kernel.org>
+In-Reply-To: <BANLkTi=usrsF60Popfu55v3_dXe7Yo0GrA@mail.gmail.com> (Linus
+ Torvalds's message of "Thu, 30 Jun 2011 09:20:35 -0700")
+Sender: git-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, git@vger.kernel.org, Jeff King <peff@peff.net>
 List-Id: linux-next.vger.kernel.org
 
-On Thursday 30 June 2011 19:31:04 Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> When CONFIG_SND is not enabled, radio-sf16fmr2 build fails with:
-> 
-> ERROR: "snd_tea575x_init" [drivers/media/radio/radio-sf16fmr2.ko] undefined!
-> ERROR: "snd_tea575x_exit" [drivers/media/radio/radio-sf16fmr2.ko] undefined!
-> 
-> so make this driver depend on SND.
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-I broke this when converting the driver to use common TEA575x code.
-Thanks for finding and fixing it.
+> It would be lovely if "git show" (and log operations) had some option
+> to do a "expensive merge check" and did actually figure out the common
+> ancestor and at least took that into account.
+>
+> It would be doable to do it at least better than we do now - the
+> common ancestor is not cheap to compute, but it's much cheaper than a
+> full merge, and would at least allow us to flag dangerous merges. Of
+> course, it gets fun when there are multiple common ancestors and
+> renames. It's entirely possible that it's never going to be practical
+> to do anything but "re-do the merge and compare result".
 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Hans Verkuil <hverkuil@xs4all.nl>
-> Cc: Mauro Carvalho Chehab <mchehab@infradead.org>
-> Cc: linux-media@vger.kernel.org
-> ---
->  drivers/media/radio/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-next-20110630.orig/drivers/media/radio/Kconfig
-> +++ linux-next-20110630/drivers/media/radio/Kconfig
-> @@ -201,7 +201,7 @@ config RADIO_SF16FMI
->  
->  config RADIO_SF16FMR2
->  	tristate "SF16FMR2 Radio"
-> -	depends on ISA && VIDEO_V4L2
-> +	depends on ISA && VIDEO_V4L2 && SND
->  	---help---
->  	  Choose Y here if you have one of these FM radio cards.
+I would have to say that it would boil down to "re-do the merge" whichever
+way we implement it, and it is not necessarily a bad thing.  
 
+There are ideas to implement a mode of "git merge" that works entirely
+in-core without touching the working tree (it may have to write temporary
+blobs and possibly trees to the object store, though). It would let sites
+like github to let its users accept a trivial pull request that can merge
+cleanly on site in the browser without necessarily having to have a local
+checkout used for conflict resolution.
 
+If such an "in-core merge" feature is implemented cleanly in a reusable
+way, it would be just the matter of comparing the output from it with the
+actual committed result.
 
--- 
-Ondrej Zary
+Of course, if the committed result was deliberately made by "-s ours",
+comparison between an auto-merge result and the committed result would
+produce a lot of noise, but that is really the point of "expensie merge
+check", so the noise in that scenario is a feature, not a bug.
