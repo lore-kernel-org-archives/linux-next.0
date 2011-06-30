@@ -1,62 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the security-testing tree with the
- tree
-Date: Thu, 30 Jun 2011 15:53:54 +1000
-Message-ID: <20110630155354.bdd620b5.sfr@canb.auug.org.au>
-References: <20110630142910.2fea4257.sfr@canb.auug.org.au>
-	<alpine.LRH.2.00.1106301518430.13767@tundra.namei.org>
+Subject: linux-next: build failure after merge of the final tree (powerpc
+ tree related)
+Date: Thu, 30 Jun 2011 16:36:59 +1000
+Message-ID: <20110630163659.374db7f9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__30_Jun_2011_15_53_54_+1000_.BesutqQ6X+nDHuk"
-Return-path: <git-owner@vger.kernel.org>
-In-Reply-To: <alpine.LRH.2.00.1106301518430.13767@tundra.namei.org>
-Sender: git-owner@vger.kernel.org
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, git@vger.kernel.org, Linus <torvalds@linux-foundation.org>, John Johansen <john.johansen@canonical.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__30_Jun_2011_16_36_59_+1000_cTItxjKQG0jtDPaA"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49433 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750928Ab1F3GhK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Jun 2011 02:37:10 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__30_Jun_2011_15_53_54_+1000_.BesutqQ6X+nDHuk
+--Signature=_Thu__30_Jun_2011_16_36_59_+1000_cTItxjKQG0jtDPaA
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi all,
 
-On Thu, 30 Jun 2011 15:22:33 +1000 (EST) James Morris <jmorris@namei.org> w=
-rote:
->
-> On Thu, 30 Jun 2011, Stephen Rothwell wrote:
->=20
-> > I cannot merge commit bcd05ca10420 ("Merge branch 'for-security' of
-> > git://git.kernel.org/pub/scm/linux/kernel/git/jj/apparmor-dev into next=
-")
-> > which is the child of the above two commits.
->=20
-> Actually, I may have accidentally pulled upstream commits in via the=20
-> above.  I'll rebase my tree to the TOMOYO merge.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-It does pull in v3.0-rc5, but that is already in my tree today, so I
-still don't understand why the merge I did gets so messaed up.
+drivers/tty/hvc/hvsi.c:701:12: error: conflicting types for 'hvsi_put_chars'
+arch/powerpc/include/asm/hvsi.h:92:12: note: previous declaration of 'hvsi_=
+put_chars' was here
+drivers/tty/hvc/hvsi.c:736:12: error: conflicting types for 'hvsi_open'
+arch/powerpc/include/asm/hvsi.h:86:12: note: previous declaration of 'hvsi_=
+open' was here
+drivers/tty/hvc/hvsi.c:802:13: error: conflicting types for 'hvsi_close'
+arch/powerpc/include/asm/hvsi.h:87:13: note: previous declaration of 'hvsi_=
+close' was here
+drivers/tty/hvc/hvsi.c:1083:19: error: conflicting types for 'hvsi_init'
+arch/powerpc/include/asm/hvsi.h:81:13: note: previous declaration of 'hvsi_=
+init' was here
 
+Caused by commit 17bdc6c0e979 ("powerpc/pseries: Move hvsi support into a
+library").
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__30_Jun_2011_15_53_54_+1000_.BesutqQ6X+nDHuk
+--Signature=_Thu__30_Jun_2011_16_36_59_+1000_cTItxjKQG0jtDPaA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJODA9yAAoJEDMEi1NhKgbsdp8IAIFdTkAXEHjo9c3i3IliO2YW
-/gxOik1oUqgIV0osNeMLz9Sx5bDQyoxjiKwHMpZL2kStlcbaW/vwLVQwwNadel1f
-IwQM4KdZ+qm2aKQNgTA0txsLzh9AUwyIRUadhT1vXlQ5PvfsC8FEffEssbfjPYwT
-IuNKwHspVf9bWsvnJiDRxMBGOuO326dkQA20MPyVi3Cnxcep2S5eyI9wVGoGjg35
-qs+oP6VJNGCwxQhJJSyucMOGN71R/nOVbTVvHBG+0PdUXU4phjoo0V7wDXWeZgya
-s2fRfL9sQwVPo4AThw4Aje4aw7F5sCeyAsqr96ab+joh/zTQoIdvsvHccENf1fk=
-=APNQ
+iQEcBAEBAgAGBQJODBmLAAoJEDMEi1NhKgbsjlYIAIGttKm9UOuT6VyjtGz4hCWR
+DI4glgK+BT7RvNXUt8pOcYNJR7YEaGNdCz9E48JUaWioraSy9vY/KWjhQXteTv3R
+vf5LiyTnpIxdK0l/GR1bzo2V2vhoyM5IFDnoesrkR7VJvrkIV/AWkksVGSq3swnx
+vQTAJ+i9dRpMkN/txtFfKZK/+I+ep8LcGU/OZrcjbH0r7Cab1NiWax5BOWzbZIcT
+hUgSaqnwQp7K9rXqwVVE8zUoNxekUAQKi56xLFcTh+lqroeIkQ6W3veWK1h2okHh
+nChwMFrSOYqCyT/X4X7ZhQQu55GpecO7Udf+rcSHu2f3UbsYLVOOEtLj2/Dkk0A=
+=EX7t
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__30_Jun_2011_15_53_54_+1000_.BesutqQ6X+nDHuk--
+--Signature=_Thu__30_Jun_2011_16_36_59_+1000_cTItxjKQG0jtDPaA--
