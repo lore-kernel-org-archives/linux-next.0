@@ -1,54 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the scsi tree
-Date: Thu, 30 Jun 2011 12:33:25 +1000
-Message-ID: <20110630123325.43268067.sfr@canb.auug.org.au>
+From: "Bhanu Prakash Gollapudi" <bprakash@broadcom.com>
+Subject: Re: linux-next: manual merge of the net tree with the scsi tree
+Date: Wed, 29 Jun 2011 21:20:40 -0700
+Message-ID: <4E0BF998.7030800@broadcom.com>
+References: <20110630123325.43268067.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__30_Jun_2011_12_33_25_+1000_ydD8yP/DmDZB5sPm"
+Content-Type: text/plain;
+ charset=iso-8859-1;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48904 "EHLO smtps.tip.net.au"
+Received: from mms2.broadcom.com ([216.31.210.18]:2250 "EHLO mms2.broadcom.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757529Ab1F3Cdj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Jun 2011 22:33:39 -0400
+	id S1750712Ab1F3EUx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Jun 2011 00:20:53 -0400
+In-Reply-To: <20110630123325.43268067.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vlad Zolotarov <vladz@broadcom.com>, Bhanu Prakash Gollapudi <bprakash@broadcom.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vladislav Zolotarov <vladz@broadcom.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, mchan@broadcom.com
 
---Signature=_Thu__30_Jun_2011_12_33_25_+1000_ydD8yP/DmDZB5sPm
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 6/29/2011 7:33 PM, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the net tree got conflicts in
+> drivers/scsi/bnx2fc/bnx2fc.h and drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+> between commit 2382d2364a60 ("[SCSI] bnx2fc: Bumped version to 1.0.2")
+> from the scsi tree and commit 619c5cb6885b ("New 7.0 FW: bnx2x, cnic,
+> bnx2i, bnx2fc") from the net tree.
+>
+> I used the versions from the net tree as those version numbers were newer.
+>
+Stephen, can you please send the conflicts? Most probably you should 
+have seen the conflicts w.r.t version number in bnx2fc.h and date in 
+bnx2fc_fcoe.c.  If that is the case, the versions from net tree are good.
 
-Hi all,
-
-Today's linux-next merge of the net tree got conflicts in
-drivers/scsi/bnx2fc/bnx2fc.h and drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-between commit 2382d2364a60 ("[SCSI] bnx2fc: Bumped version to 1.0.2")
-from the scsi tree and commit 619c5cb6885b ("New 7.0 FW: bnx2x, cnic,
-bnx2i, bnx2fc") from the net tree.
-
-I used the versions from the net tree as those version numbers were newer.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__30_Jun_2011_12_33_25_+1000_ydD8yP/DmDZB5sPm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOC+B1AAoJEDMEi1NhKgbs+UkIAInMaFaTppuuyQxsV45MXXnW
-HpuXdIhRH9hv7mcPgY6u+D7JgbU2IrkhV0y/zdkhhnmr9UcBxv0QkdfclX1MxuTB
-0lXdZ7/oLra7AsdpRcuY2Q0QH0zQSPDjqrXH9oOlmj0B+dLX2drg+Y+lk80fLqTT
-0z7aRXiVgWAEGpQ057fOdIdpA7ZbkT0FItRZ6QuhF9xDFfUjm6AGCpJGfHiofWBA
-MJTnlnYmZeORHf09jYFiZtreO8sOG9Cl2ctczDD4OW5YTvOSEkn4H1PvzyLYUyes
-tSIlGU+uX4pMPnpn9RXXWJC4jv0nLf/diufHUR9btueyzPr1V6bbDwMm/wWRZCk=
-=uIDP
------END PGP SIGNATURE-----
-
---Signature=_Thu__30_Jun_2011_12_33_25_+1000_ydD8yP/DmDZB5sPm--
+Thanks,
+Bhanu
