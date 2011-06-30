@@ -1,48 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the libata tree with the Linus' tree
-Date: Thu, 30 Jun 2011 12:10:06 +1000
-Message-ID: <20110630121006.0c447f1a.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the scsi tree
+Date: Thu, 30 Jun 2011 12:33:25 +1000
+Message-ID: <20110630123325.43268067.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__30_Jun_2011_12_33_25_+1000_ydD8yP/DmDZB5sPm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55165 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48904 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757887Ab1F3CKQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Jun 2011 22:10:16 -0400
+	id S1757529Ab1F3Cdj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Jun 2011 22:33:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeff Garzik <jeff@garzik.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Joe Perches <joe@perches.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vlad Zolotarov <vladz@broadcom.com>, Bhanu Prakash Gollapudi <bprakash@broadcom.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
 
-Hi Jeff,
+--Signature=_Thu__30_Jun_2011_12_33_25_+1000_ydD8yP/DmDZB5sPm
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the libata tree got a conflict in
-drivers/ata/libahci.c between commit 49743170556e ("ahci: change 'masking
-port_map' printk to KERN_WARNING level") from the Linus' tree and commit
-c4d21d680e91 ("ata: Convert dev_printk(KERN_<LEVEL> to dev_<level>(")
-from the libata tree.
+Hi all,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+Today's linux-next merge of the net tree got conflicts in
+drivers/scsi/bnx2fc/bnx2fc.h and drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+between commit 2382d2364a60 ("[SCSI] bnx2fc: Bumped version to 1.0.2")
+from the scsi tree and commit 619c5cb6885b ("New 7.0 FW: bnx2x, cnic,
+bnx2i, bnx2fc") from the net tree.
+
+I used the versions from the net tree as those version numbers were newer.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/ata/libahci.c
-index 41223c7,d8ff9c4..0000000
---- a/drivers/ata/libahci.c
-+++ b/drivers/ata/libahci.c
-@@@ -452,9 -455,9 +455,9 @@@ void ahci_save_initial_config(struct de
-  	}
-  
-  	if (mask_port_map) {
-- 		dev_printk(KERN_WARNING, dev, "masking port_map 0x%x -> 0x%x\n",
-- 			   port_map,
-- 			   port_map & mask_port_map);
- -		dev_err(dev, "masking port_map 0x%x -> 0x%x\n",
-++		dev_warn(dev, "masking port_map 0x%x -> 0x%x\n",
-+ 			port_map,
-+ 			port_map & mask_port_map);
-  		port_map &= mask_port_map;
-  	}
-  
+--Signature=_Thu__30_Jun_2011_12_33_25_+1000_ydD8yP/DmDZB5sPm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOC+B1AAoJEDMEi1NhKgbs+UkIAInMaFaTppuuyQxsV45MXXnW
+HpuXdIhRH9hv7mcPgY6u+D7JgbU2IrkhV0y/zdkhhnmr9UcBxv0QkdfclX1MxuTB
+0lXdZ7/oLra7AsdpRcuY2Q0QH0zQSPDjqrXH9oOlmj0B+dLX2drg+Y+lk80fLqTT
+0z7aRXiVgWAEGpQ057fOdIdpA7ZbkT0FItRZ6QuhF9xDFfUjm6AGCpJGfHiofWBA
+MJTnlnYmZeORHf09jYFiZtreO8sOG9Cl2ctczDD4OW5YTvOSEkn4H1PvzyLYUyes
+tSIlGU+uX4pMPnpn9RXXWJC4jv0nLf/diufHUR9btueyzPr1V6bbDwMm/wWRZCk=
+=uIDP
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__30_Jun_2011_12_33_25_+1000_ydD8yP/DmDZB5sPm--
