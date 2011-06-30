@@ -1,54 +1,47 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the security-testing tree with the tree
-Date: Thu, 30 Jun 2011 09:20:35 -0700
-Message-ID: <BANLkTi=usrsF60Popfu55v3_dXe7Yo0GrA@mail.gmail.com>
-References: <20110630142910.2fea4257.sfr@canb.auug.org.au> <20110630072559.GA4048@pengutronix.de>
- <20110630193023.6056d48e.sfr@canb.auug.org.au> <20110630121710.GJ11559@pengutronix.de>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH] media: fix radio-sf16fmr2 build when SND is not enabled
+Date: Thu, 30 Jun 2011 10:31:04 -0700
+Message-ID: <20110630103104.0a5b8ce6.randy.dunlap@oracle.com>
+References: <20110630165302.12ee1bd0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110630121710.GJ11559@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, git@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:21814 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751979Ab1F3Rbc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Jun 2011 13:31:32 -0400
+In-Reply-To: <20110630165302.12ee1bd0.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@infradead.org>
 
-2011/6/30 Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>:
->
-> A flag would be nice that does what I did: redo the merge and compare
-> bcd05ca10420^{tree} with the result?
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-The problem with that is that it's *way* too expensive an operation to
-do for the normal "git log" kind of operations.
+When CONFIG_SND is not enabled, radio-sf16fmr2 build fails with:
 
-Also, truly re-doing the merge actually requires workspace access
-and/or require new objects to be created, so it would be inappropriate
-anyway: git log/show absolutely has to be a read-only operation,
-anything else would be totally insane.
+ERROR: "snd_tea575x_init" [drivers/media/radio/radio-sf16fmr2.ko] undefined!
+ERROR: "snd_tea575x_exit" [drivers/media/radio/radio-sf16fmr2.ko] undefined!
 
-So there's no way - both for performance and 'fundamental' reasons -
-to make the normal logging code truly re-do the merge and then compare
-the end result of the merge with the end result that is in the tree.
+so make this driver depend on SND.
 
-That said, what the current "git show/log" does is to just compare the
-end points with the merge result, which means that if the end result
-matches either of the end-points, nothing will be shown. That works
-for the common cases, but it absolutely doesn't work if somebody does
-something crazy, and just picks one end-point over another without
-doing a proper merge (ie "-s ours" or just a mis-merge). But the
-reason it's done that way is that it's possible to do without re-doing
-the merge.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-media@vger.kernel.org
+---
+ drivers/media/radio/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It would be lovely if "git show" (and log operations) had some option
-to do a "expensive merge check" and did actually figure out the common
-ancestor and at least took that into account.
-
-It would be doable to do it at least better than we do now - the
-common ancestor is not cheap to compute, but it's much cheaper than a
-full merge, and would at least allow us to flag dangerous merges. Of
-course, it gets fun when there are multiple common ancestors and
-renames. It's entirely possible that it's never going to be practical
-to do anything but "re-do the merge and compare result".
-
-                      Linus
+--- linux-next-20110630.orig/drivers/media/radio/Kconfig
++++ linux-next-20110630/drivers/media/radio/Kconfig
+@@ -201,7 +201,7 @@ config RADIO_SF16FMI
+ 
+ config RADIO_SF16FMR2
+ 	tristate "SF16FMR2 Radio"
+-	depends on ISA && VIDEO_V4L2
++	depends on ISA && VIDEO_V4L2 && SND
+ 	---help---
+ 	  Choose Y here if you have one of these FM radio cards.
+ 
