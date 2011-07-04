@@ -1,38 +1,38 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 4 (media/radio)
-Date: Mon, 4 Jul 2011 13:31:57 -0700
-Message-ID: <20110704133157.7a37d8d9.randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 4 (misc/pti)
+Date: Mon, 4 Jul 2011 13:45:41 -0700
+Message-ID: <20110704134541.9adfd4f1.randy.dunlap@oracle.com>
 References: <20110704170952.1024e89b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet15.oracle.com ([148.87.113.117]:53811 "EHLO
+	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751529Ab1GDUp4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jul 2011 16:45:56 -0400
 In-Reply-To: <20110704170952.1024e89b.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, james_p_freyensee@linux.intel.com
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
 On Mon, 4 Jul 2011 17:09:52 +1000 Stephen Rothwell wrote:
 
 > Hi all,
 > 
 > Changes since 20110701:
-> 
-> The v4l-dvb tree gained a build failure so I used the version from
-> next-20110701.
 
 
-drivers/media/radio/radio-rtrack2.c:31:17: error: invalid suffix "c" on integer constant
-make[4]: [drivers/media/radio/radio-rtrack2.o] Error 1 (ignored)
-drivers/media/radio/radio-aimslab.c:49:17: error: invalid suffix "f" on integer constant
-make[4]: [drivers/media/radio/radio-aimslab.o] Error 1 (ignored)
-drivers/media/radio/radio-gemtek.c:51:18: error: invalid suffix "c" on integer constant
-make[4]: [drivers/media/radio/radio-gemtek.o] Error 1 (ignored)
-drivers/media/radio/radio-zoltrix.c:51:17: error: invalid suffix "c" on integer constant
+when CONFIG_PCI is not enabled:
+
+drivers/misc/pti.c:410: error: implicit declaration of function 'pci_release_region'
+drivers/misc/pti.c:859: error: implicit declaration of function 'pci_request_region'
 
 
-These drivers do not handle hex CONFIG_ values correctly.
+Stubs for these 2 functions could be added to include/linux/pci.h, but it would
+make more sense to me just to make the driver depend on PCI since it seems to rely
+on so many PCI functions.  or are the PCI pieces optional?
 
 ---
 ~Randy
