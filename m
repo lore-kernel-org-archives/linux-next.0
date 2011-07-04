@@ -1,74 +1,53 @@
-From: Cong Wang <amwang@redhat.com>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Mon, 04 Jul 2011 09:30:40 +0800
-Message-ID: <4E1117C0.4020500@redhat.com>
-References: <20110701151931.4c2d78b5.sfr@canb.auug.org.au>	<4E0D5BD4.6080403@redhat.com>	<20110701170843.bd60e326.sfr@canb.auug.org.au>	<4E0D9D16.7020508@redhat.com> <20110701203702.a15ecf19.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 4 Jul 2011 13:04:42 +1000
+Message-ID: <20110704130442.c4125fd9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:3291 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752588Ab1GDBax (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 3 Jul 2011 21:30:53 -0400
-In-Reply-To: <20110701203702.a15ecf19.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__4_Jul_2011_13_04_42_+1000_pCe9Of1zK+pO0WrI"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+List-Id: linux-next.vger.kernel.org
 
-=E4=BA=8E 2011=E5=B9=B407=E6=9C=8801=E6=97=A5 18:37, Stephen Rothwell =E5=
-=86=99=E9=81=93:
-> Hi,
->
-> On Fri, 01 Jul 2011 18:10:30 +0800 Cong Wang<amwang@redhat.com>  wrot=
-e:
->>
->> =E4=BA=8E 2011=E5=B9=B407=E6=9C=8801=E6=97=A5 15:08, Stephen Rothwel=
-l =E5=86=99=E9=81=93:
->>>
->>> On Fri, 01 Jul 2011 13:32:04 +0800 Cong Wang<amwang@redhat.com>   w=
-rote:
->>>>
->>>> =E4=BA=8E 2011=E5=B9=B407=E6=9C=8801=E6=97=A5 13:19, Stephen Rothw=
-ell =E5=86=99=E9=81=93:
->>>>>
->>>>> After merging the akpm tree, today's linux-next build (powerpc
->>>>> ppc64_defconfig) failed like this:
->>>>>
->>>>> arch/powerpc/kernel/rtas.c: In function 'rtas_restart':
->>>>> arch/powerpc/kernel/rtas.c:655:24: error: 'SYS_RESTART' undeclare=
-d (first use in this function)
->>>>> arch/powerpc/kernel/rtas.c: In function 'rtas_power_off':
->>>>> arch/powerpc/kernel/rtas.c:664:24: error: 'SYS_POWER_OFF' undecla=
-red (first use in this function)
->>>>> arch/powerpc/kernel/rtas.c: In function 'rtas_halt':
->>>>> arch/powerpc/kernel/rtas.c:674:24: error: 'SYS_HALT' undeclared (=
-first use in this function)
->>>>>
->>>>> Caused by commit ac050ff2a176 ("It is not necessary to share the =
-same
->>>>> notifier.h").
->>>>
->>>> I think the following patch will fix this.
->>>
->>> Please find all the other files that need that include as well (the=
-re is
->>> at least one more).
->>>
->>
->> Ok, I will do a cross-compilation.
->
-> Well, really any file that references any of those defines should be
-> including linux/reboot.h, now - whether a compilation gets errors or
-> not.  A change in CONFIG options or different platforms/architectures=
- can
-> change what file get implictly included.
->
-> See Rule 1 in Documentation/SubmitChecklist.
+--Signature=_Mon__4_Jul_2011_13_04_42_+1000_pCe9Of1zK+pO0WrI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, I did allyesconfig test on x86. Fortunately there are few
-files that needs to be fixed since they include reboot.h implicitly.
+Hi Mauro,
 
-Thanks.
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+ERROR: "vb2_dma_contig_init_ctx" [drivers/media/video/marvell-ccic/cafe_cci=
+c.ko] undefined!
+ERROR: "vb2_dma_contig_cleanup_ctx" [drivers/media/video/marvell-ccic/cafe_=
+ccic.ko] undefined!
+ERROR: "vb2_dma_contig_memops" [drivers/media/video/marvell-ccic/cafe_ccic.=
+ko] undefined!
+
+I have used the v4l-dvb tree from next-20110701 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__4_Jul_2011_13_04_42_+1000_pCe9Of1zK+pO0WrI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOES3KAAoJEDMEi1NhKgbs1X0H/jlgAM+PwePx5VN6QqlVfJrN
+/i8mud9DnCGpXSTH9bnyw1ZFz+V0yBDGofpZyLggB180zHt0H0N91r7B6Ah1MR43
+44nXY+foD1HhkdXElMybanHnEJEl1n3Ib++yHovOG2VYRozpQfaKyvZl/SIoaYQc
+FxdybYkHwZBJhmJL/ATtT42h/n/C8nHdjvOV5gN2clcmxJ1bwa+4apU0FlxyMaQU
+OGglYpfoLVK3lJs+f0kjoKE1N2FlqLwZX1jpBUNIWExoet/66stgr9QQU/sgLJC4
+EOjdyzId31VKdQ9pOA2Qmv75qnhz1A/3XzIZK0wZVaJcffBzrVLCTYtXgqESK6U=
+=OMqW
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__4_Jul_2011_13_04_42_+1000_pCe9Of1zK+pO0WrI--
