@@ -1,18 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the v4l-dvb tree
-Date: Mon, 4 Jul 2011 13:04:42 +1000
-Message-ID: <20110704130442.c4125fd9.sfr@canb.auug.org.au>
+Date: Mon, 4 Jul 2011 13:08:58 +1000
+Message-ID: <20110704130858.97b7932b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__4_Jul_2011_13_04_42_+1000_pCe9Of1zK+pO0WrI"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Mon__4_Jul_2011_13_08_58_+1000_3z8xA4DuCdOsab=/"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46992 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753456Ab1GDDJG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 3 Jul 2011 23:09:06 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Mauro Carvalho Chehab <mchehab@infradead.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__4_Jul_2011_13_04_42_+1000_pCe9Of1zK+pO0WrI
+--Signature=_Mon__4_Jul_2011_13_08_58_+1000_3z8xA4DuCdOsab=/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -35,19 +39,19 @@ Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__4_Jul_2011_13_04_42_+1000_pCe9Of1zK+pO0WrI
+--Signature=_Mon__4_Jul_2011_13_08_58_+1000_3z8xA4DuCdOsab=/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOES3KAAoJEDMEi1NhKgbs1X0H/jlgAM+PwePx5VN6QqlVfJrN
-/i8mud9DnCGpXSTH9bnyw1ZFz+V0yBDGofpZyLggB180zHt0H0N91r7B6Ah1MR43
-44nXY+foD1HhkdXElMybanHnEJEl1n3Ib++yHovOG2VYRozpQfaKyvZl/SIoaYQc
-FxdybYkHwZBJhmJL/ATtT42h/n/C8nHdjvOV5gN2clcmxJ1bwa+4apU0FlxyMaQU
-OGglYpfoLVK3lJs+f0kjoKE1N2FlqLwZX1jpBUNIWExoet/66stgr9QQU/sgLJC4
-EOjdyzId31VKdQ9pOA2Qmv75qnhz1A/3XzIZK0wZVaJcffBzrVLCTYtXgqESK6U=
-=OMqW
+iQEcBAEBAgAGBQJOES7KAAoJEDMEi1NhKgbs49EH/RJ66FhC3LSKFnph0oslm9w6
+AXk1hCXm3QCQAY6Pe+bGNBgZ84jrTrA8Cg4cbxeVRPmGECLyc7O37csp4QisRRxZ
+idWxJSE4MvBKKvR/XVTyT3xOxfY8BA4OvtQtieBCLr1lvl7bupQjIxjHptGt6oQF
+XyGdIa4dS+sBfTFkmxt2b5jf/9+RJLhBrpu/N/HAKn87YRWoaAMlyjLPOIpg876w
+afF3vijxtmP1kzpswd80nZfNDlmOL2KPRMHq8jpMxbxp/Sb1zVj6AmWwbFHaf3pP
+JpC1F54vEdemsrujKsS2/IElIubOrsjD+3TUKBhF7/pdYR+XrIcOA6cIk4vTZGU=
+=wfq/
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Jul_2011_13_04_42_+1000_pCe9Of1zK+pO0WrI--
+--Signature=_Mon__4_Jul_2011_13_08_58_+1000_3z8xA4DuCdOsab=/--
