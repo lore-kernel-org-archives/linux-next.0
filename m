@@ -1,92 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the  tree
-Date: Tue, 5 Jul 2011 13:59:32 +1000
-Message-ID: <20110705135932.de7f0526.sfr@canb.auug.org.au>
+Subject: Re: linux-next: fixes while rebasing the akpm tree
+Date: Tue, 5 Jul 2011 16:31:21 +1000
+Message-ID: <20110705163121.608aa8ed.sfr@canb.auug.org.au>
+References: <20110704162816.fef0b1cb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__5_Jul_2011_16_31_21_+1000__P2U7Jzj/XosJdZ."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42638 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53274 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753045Ab1GED7i (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Jul 2011 23:59:38 -0400
+	id S1753533Ab1GEGbf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Jul 2011 02:31:35 -0400
+In-Reply-To: <20110704162816.fef0b1cb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, Jonas Bonn <jonas@southpole.se>, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Seth Forshee <seth.forshee@canonical.com>, Christoph Hellwig <hch@lst.de>, Suresh Siddha <suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>
 
-Hi Rusty,
+--Signature=_Tue__5_Jul_2011_16_31_21_+1000__P2U7Jzj/XosJdZ.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/m68k/kernel/module_mm.c arch/m68k/kernel/module_no.c between commit
-4528acce2607 ("m68k: merge the non-mmu and mmu versions of module.c")
-from the m68knommu tree and commit 7b935befe6bc ("modules: make arch's
-use default loader hooks") from the rr tree.
+Hi all,
 
-The former removes these files, so I did that.
+On Mon, 4 Jul 2011 16:28:16 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> While rebasing the akpm tree onto today's linux-next, I discovered the
+> following:
+>=20
+> The patch hfsplus-add-missing-call-to-bio_put.patch appears to be already
+> applied (as commit 50176ddefa4a ("hfsplus: add missing call to bio_put()"
+> from the hfsplus tree).
+>=20
+> The patches
+> x86-mtrr-lock-stop-machine-during-mtrr-rendezvous-sequence.patch,
+> stop_machine-reorganize-stop_cpus-implementation.patch and
+> stop_machine-implement-stop_machine_from_inactive_cpu.patch seem to be
+> already applied (as commits 6d3321e8e2b3 ("x86, mtrr: lock stop machine
+> during MTRR rendezvous sequence"), fd7355ba1e93 ("stop_machine:
+> reorganize stop_cpus() implementation") and f740e6cd0cb5 ("stop_machine:
+> implement stop_machine_from_inactive_cpu()") from the tip tree)
 
-I then added this merge fix up patch (which I can carry as necessary and
-may not be coorrect):
+I have removed all the above patches from the akpm tree today as well as
+x86-mtrr-use-stop_machine-apis-for-doing-mtrr-rendezvous.patch which is
+also in the tip tree.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 5 Jul 2011 13:12:26 +1000
-Subject: [PATCH] modules/m68k: make arch's use default loader hooks
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/m68k/kernel/module.c |   27 ---------------------------
- 1 files changed, 0 insertions(+), 27 deletions(-)
-
-diff --git a/arch/m68k/kernel/module.c b/arch/m68k/kernel/module.c
-index 146d646..34849c4 100644
---- a/arch/m68k/kernel/module.c
-+++ b/arch/m68k/kernel/module.c
-@@ -19,29 +19,6 @@
- 
- #ifdef CONFIG_MODULES
- 
--void *module_alloc(unsigned long size)
--{
--	if (size == 0)
--		return NULL;
--	return vmalloc(size);
--}
--
--
--/* Free memory returned from module_alloc */
--void module_free(struct module *mod, void *module_region)
--{
--	vfree(module_region);
--}
--
--/* We don't need anything special. */
--int module_frob_arch_sections(Elf_Ehdr *hdr,
--			      Elf_Shdr *sechdrs,
--			      char *secstrings,
--			      struct module *mod)
--{
--	return 0;
--}
--
- int apply_relocate(Elf32_Shdr *sechdrs,
- 		   const char *strtab,
- 		   unsigned int symindex,
-@@ -130,10 +107,6 @@ int module_finalize(const Elf_Ehdr *hdr,
- 	return 0;
- }
- 
--void module_arch_cleanup(struct module *mod)
--{
--}
--
- #endif /* CONFIG_MODULES */
- 
- void module_fixup(struct module *mod, struct m68k_fixup_info *start,
--- 
-1.7.5.4
-
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__5_Jul_2011_16_31_21_+1000__P2U7Jzj/XosJdZ.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOEq+5AAoJEDMEi1NhKgbspasH/36zYep8O37/rQzdQMazCNpp
+f83WfpxKJ1DKATcuKQje9NlKbI0WEfZpd/eNb7X5lWeW+9Sti24vvXKhKtMVYfZB
+4+mY0+x/Ux6kxiqldmdQ8XzuUFYflcP3Ct5zAZQYAdXsJM5T6wmEtP+EW+LY+ZuK
+8armJq3YP8VkvpBlHYoLLeb28ocPAZ/0+UHMvR6pmj18w8qsMrRBTs8hnZrbBkZ0
+vrYQqxkiJwzp50ciftbWxPhu6NttCQ/6Kjxku6OnFzMCjc+En8bYPZM0wWy72SVs
+OSPErey09BSNsQdBqfk8pBNw8GlY41N3ET5ENBIVzIoh/8N3UJNdV6Q09f1wo1I=
+=Ywwr
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__5_Jul_2011_16_31_21_+1000__P2U7Jzj/XosJdZ.--
