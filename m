@@ -1,47 +1,58 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] compat_ioctl: fix make headers_check regression
-Date: Wed, 6 Jul 2011 16:11:32 -0700
-Message-ID: <20110706161132.c393b685.akpm@linux-foundation.org>
-References: <20110704134842.7ab89126.sfr@canb.auug.org.au>
-	<20110704100316.GA15894@sig21.net>
-	<20110706225140.GA21510@sig21.net>
+From: Greg Ungerer <gerg@snapgear.com>
+Subject: Re: linux-next: manual merge of the rr tree with the  tree
+Date: Thu, 7 Jul 2011 09:44:51 +1000
+Message-ID: <4E14F373.1020307@snapgear.com>
+References: <20110705135932.de7f0526.sfr@canb.auug.org.au> <1309967847.3393.44.camel@jerome>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:54875 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752025Ab1GFXMJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jul 2011 19:12:09 -0400
-In-Reply-To: <20110706225140.GA21510@sig21.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Johannes Stezenbach <js@sig21.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1309967847.3393.44.camel@jerome>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jonas Bonn <jonas@southpole.se>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 7 Jul 2011 00:51:40 +0200
-Johannes Stezenbach <js@sig21.net> wrote:
+On 07/07/11 01:57, Jonas Bonn wrote:
+>
+> On Tue, 2011-07-05 at 13:59 +1000, Stephen Rothwell wrote:
+>> Hi Rusty,
+>>
+>> Today's linux-next merge of the rr tree got a conflict in
+>> arch/m68k/kernel/module_mm.c arch/m68k/kernel/module_no.c between commit
+>> 4528acce2607 ("m68k: merge the non-mmu and mmu versions of module.c")
+>> from the m68knommu tree and commit 7b935befe6bc ("modules: make arch's
+>> use default loader hooks") from the rr tree.
+>>
+>> The former removes these files, so I did that.
+>>
+>> I then added this merge fix up patch (which I can carry as necessary and
+>> may not be coorrect):
+>>
+>> From: Stephen Rothwell<sfr@canb.auug.org.au>
+>> Date: Tue, 5 Jul 2011 13:12:26 +1000
+>> Subject: [PATCH] modules/m68k: make arch's use default loader hooks
+>>
+>> Signed-off-by: Stephen Rothwell<sfr@canb.auug.org.au>
+>> ---
+>>   arch/m68k/kernel/module.c |   27 ---------------------------
+>>   1 files changed, 0 insertions(+), 27 deletions(-)
+>>
+>
+> That patch looks good to me.
+>
+> Acked-by: Jonas Bonn<jonas@southpole.se>
 
-> On Mon, Jul 04, 2011 at 12:03:16PM +0200, Johannes Stezenbach wrote:
-> > Fix headers_check error introduced by 390192b30057:
-> > 
-> > include/linux/fd.h:6: included file 'linux/compat.h' is not exported
-> > 
-> > Signed-off-by: Johannes Stezenbach <js@sig21.net>
-> > ---
-> > I used the same style as in linux/usbdevice_fs.h, hope
-> > that's OK.
-> 
-> 
-> I just got an "added to -mm tree" mail for the original patch, so I
-> wonder what's with this fix?
+Looks fine to me too:
 
-What does the "original patch" refer to.
+Acked-by: Greg Ungerer <gerg@uclinux.org>
 
-Also, there's no commit 390192b30057.  Commit ID's can change.  This is
-why we ask people to also include the patch title when describing
-patches by SHA ID's
+Thanks
+Greg
 
 
-
-Please let's just start again.  Tell us what is going on here.
+------------------------------------------------------------------------
+Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
+SnapGear Group, McAfee                      PHONE:       +61 7 3435 2888
+8 Gardner Close                             FAX:         +61 7 3217 5323
+Milton, QLD, 4064, Australia                WEB: http://www.SnapGear.com
