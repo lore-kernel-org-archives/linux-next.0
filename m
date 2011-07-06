@@ -1,43 +1,53 @@
-From: Jonathan Cameron <jic23@cam.ac.uk>
-Subject: Build issue with linux next. duplicate member _count in mm_types.h
-Date: Wed, 06 Jul 2011 10:55:44 +0100
-Message-ID: <4E143120.2020501@cam.ac.uk>
+From: Gustavo Padovan <padovan@profusion.mobi>
+Subject: Re: linux-next: manual merge of the net tree with the
+ wireless-current tree
+Date: Wed, 6 Jul 2011 08:07:30 -0300
+Message-ID: <20110706110730.GA5895@joana>
+References: <20110706125329.6e5bdd1a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ppsw-52.csi.cam.ac.uk ([131.111.8.152]:37716 "EHLO
-	ppsw-52.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751345Ab1GFJrh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jul 2011 05:47:37 -0400
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:49781 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752553Ab1GFLH0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jul 2011 07:07:26 -0400
+Content-Disposition: inline
+In-Reply-To: <20110706125329.6e5bdd1a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, Stephen
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Getting:
+* Stephen Rothwell <sfr@canb.auug.org.au> [2011-07-06 12:53:29 +1000]:
 
-  CHK     include/linux/version.h
-  CHK     include/generated/utsrelease.h
-make[1]: `include/generated/mach-types.h' is up to date.
-  CC      arch/arm/kernel/asm-offsets.s
-In file included from include/linux/sched.h:64:0,
-                 from arch/arm/kernel/asm-offsets.c:13:
-include/linux/mm_types.h:74:15: error: duplicate member '_count'
-make[1]: *** [arch/arm/kernel/asm-offsets.s] Error 1
-make: *** [prepare0] Error 2
+> Hi all,
+> 
+> Today's linux-next merge of the net tree got a conflict in
+> net/bluetooth/l2cap_core.c between commit 9fa7e4f76f36 ("Bluetooth: Fix
+> regression with incoming L2CAP connections") from the wireless-current
+> tree and commit 89bc500e41fc ("Bluetooth: Add state tracking to struct
+> l2cap_chan") from the net tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc net/bluetooth/l2cap_core.c
+> index ebff14c,9ec9c8c..0000000
+> --- a/net/bluetooth/l2cap_core.c
+> +++ b/net/bluetooth/l2cap_core.c
+> @@@ -2323,8 -2530,7 +2530,8 @@@ static inline int l2cap_config_req(stru
+>   
+>   	sk = chan->sk;
+>   
+> - 	if ((bt_sk(sk)->defer_setup && sk->sk_state != BT_CONNECT2) ||
+> - 		 (!bt_sk(sk)->defer_setup && sk->sk_state != BT_CONFIG)) {
+>  -	if (chan->state != BT_CONFIG) {
+> ++	if ((bt_sk(sk)->defer_setup && chan->state != BT_CONNECT2) ||
+> ++		 (!bt_sk(sk)->defer_setup && chan->state != BT_CONFIG)) {
 
-Issue looks to have been introduced by 
+Seems I need to merge my own trees. I'll do that. Thanks, Stephen.
+And the fix is right ;)
 
-    mm: Rearrange struct page
-
-fc9bb8c768abe7ae10861c3510e01a95f98d5933
-
-Guessing it's a known issue, but just thought I'd flag it up in case
-it's something very specific about my build.
-
-gcc-2.6 armv7a
-
-Reverting that patch works, but given I don't know the history, I'm
-not proposing doing that in general!
-
-Jonathan
+	Gustavo
