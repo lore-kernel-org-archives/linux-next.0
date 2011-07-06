@@ -1,56 +1,43 @@
-From: Cong Wang <amwang@redhat.com>
-Subject: [Patch] powerpc: fix build errors due to the movement of reboot events
-Date: Wed, 06 Jul 2011 16:59:14 +0800
-Message-ID: <4E1423E2.8090706@redhat.com>
-References: <20110701151931.4c2d78b5.sfr@canb.auug.org.au>	<4E0D5BD4.6080403@redhat.com>	<20110701170843.bd60e326.sfr@canb.auug.org.au>	<4E0D9D16.7020508@redhat.com> <20110701203702.a15ecf19.sfr@canb.auug.org.au>
+From: Jonathan Cameron <jic23@cam.ac.uk>
+Subject: Build issue with linux next. duplicate member _count in mm_types.h
+Date: Wed, 06 Jul 2011 10:55:44 +0100
+Message-ID: <4E143120.2020501@cam.ac.uk>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------080901030600010909000309"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:56190 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753391Ab1GFI72 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Jul 2011 04:59:28 -0400
-In-Reply-To: <20110701203702.a15ecf19.sfr@canb.auug.org.au>
+Received: from ppsw-52.csi.cam.ac.uk ([131.111.8.152]:37716 "EHLO
+	ppsw-52.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751345Ab1GFJrh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jul 2011 05:47:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, Stephen
 
-This is a multi-part message in MIME format.
---------------080901030600010909000309
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Getting:
 
-Hi, Andrew,
+  CHK     include/linux/version.h
+  CHK     include/generated/utsrelease.h
+make[1]: `include/generated/mach-types.h' is up to date.
+  CC      arch/arm/kernel/asm-offsets.s
+In file included from include/linux/sched.h:64:0,
+                 from arch/arm/kernel/asm-offsets.c:13:
+include/linux/mm_types.h:74:15: error: duplicate member '_count'
+make[1]: *** [arch/arm/kernel/asm-offsets.s] Error 1
+make: *** [prepare0] Error 2
 
-Please fold this patch into notifiers-sys-move-reboot-notifiers-into-rebooth.patch.
+Issue looks to have been introduced by 
 
-With this patch applied, make allyesconfig succeeds on ppc64.
+    mm: Rearrange struct page
 
-Signed-off-by: WANG Cong <amwang@redhat.com>
+fc9bb8c768abe7ae10861c3510e01a95f98d5933
 
-Thanks!
+Guessing it's a known issue, but just thought I'd flag it up in case
+it's something very specific about my build.
 
---------------080901030600010909000309
-Content-Type: text/plain;
- name="ppc-build-fix.diff"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="ppc-build-fix.diff"
+gcc-2.6 armv7a
 
-ZGlmZiAtLWdpdCBhL2FyY2gvcG93ZXJwYy9rZXJuZWwvcnRhcy5jIGIvYXJjaC9wb3dlcnBj
-L2tlcm5lbC9ydGFzLmMKaW5kZXggMjcxZmY2My4uMGUwZWE5NCAxMDA2NDQKLS0tIGEvYXJj
-aC9wb3dlcnBjL2tlcm5lbC9ydGFzLmMKKysrIGIvYXJjaC9wb3dlcnBjL2tlcm5lbC9ydGFz
-LmMKQEAgLTI0LDYgKzI0LDcgQEAKICNpbmNsdWRlIDxsaW51eC9jcHVtYXNrLmg+CiAjaW5j
-bHVkZSA8bGludXgvbWVtYmxvY2suaD4KICNpbmNsdWRlIDxsaW51eC9zbGFiLmg+CisjaW5j
-bHVkZSA8bGludXgvcmVib290Lmg+CiAKICNpbmNsdWRlIDxhc20vcHJvbS5oPgogI2luY2x1
-ZGUgPGFzbS9ydGFzLmg+CmRpZmYgLS1naXQgYS9hcmNoL3Bvd2VycGMva2VybmVsL3J0YXNf
-Zmxhc2guYyBiL2FyY2gvcG93ZXJwYy9rZXJuZWwvcnRhc19mbGFzaC5jCmluZGV4IGJmNWY1
-Y2UuLmUwMzdjNzQgMTAwNjQ0Ci0tLSBhL2FyY2gvcG93ZXJwYy9rZXJuZWwvcnRhc19mbGFz
-aC5jCisrKyBiL2FyY2gvcG93ZXJwYy9rZXJuZWwvcnRhc19mbGFzaC5jCkBAIC0xNyw2ICsx
-Nyw3IEBACiAjaW5jbHVkZSA8bGludXgvaW5pdC5oPgogI2luY2x1ZGUgPGxpbnV4L3NsYWIu
-aD4KICNpbmNsdWRlIDxsaW51eC9wcm9jX2ZzLmg+CisjaW5jbHVkZSA8bGludXgvcmVib290
-Lmg+CiAjaW5jbHVkZSA8YXNtL2RlbGF5Lmg+CiAjaW5jbHVkZSA8YXNtL3VhY2Nlc3MuaD4K
-ICNpbmNsdWRlIDxhc20vcnRhcy5oPgo=
---------------080901030600010909000309--
+Reverting that patch works, but given I don't know the history, I'm
+not proposing doing that in general!
+
+Jonathan
