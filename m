@@ -1,40 +1,33 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- tree related)
-Date: Thu, 7 Jul 2011 06:44:21 -0700
-Message-ID: <20110707134421.GE26939@kroah.com>
-References: <20110707162554.c069e5c60e103804a99d27b1@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the staging tree with the net tree
+Date: Thu, 7 Jul 2011 06:43:16 -0700
+Message-ID: <20110707134316.GC26939@kroah.com>
+References: <20110707152857.83d48e1d1c175f811b255952@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out5.smtp.messagingengine.com ([66.111.4.29]:58479 "EHLO
+	out5.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932094Ab1GGNob (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 09:44:31 -0400
 Content-Disposition: inline
-In-Reply-To: <20110707162554.c069e5c60e103804a99d27b1@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20110707152857.83d48e1d1c175f811b255952@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesper Juhl <jj@chaosbits.net>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-On Thu, Jul 07, 2011 at 04:25:54PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Jul 07, 2011 at 03:28:57PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/rtl8187se/ieee80211/ieee80211_softmac.c between commit
+> 219eb47e6f35 ("net/staging: add needed interrupt.h and hardirq.h
+> includes") from the net tree and commit 41134db17a7d ("Remove unneeded
+> version.h includes from drivers/staging/rtl*/") from the staging tree.
 > 
-> In file included from drivers/staging/ft1000/ft1000-pcmcia/ft1000_proc.c:26:0:
-> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h: In function 'ft1000_read_reg':
-> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h:80:2: error: implicit declaration of function 'inw'
-> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h: In function 'ft1000_write_reg':
-> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h:86:2: error: implicit declaration of function 'outw'
-> 
-> Caused by commit 8ac299853b70 ("staging: ft1000-pcmcia: get rid of
-> ft1000_dev.h") which I can;t revert (it is too deeply buried).  I have
-> just left the breakage for today - hopefully it will be fixed before I
-> have to worry about it again. :-)
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Ick, Ondrej, can you look into this and resolve it please?
-
-Do we really have PPC support for PCMCIA these days?
-
-thanks,
+Looks correct, thanks.
 
 greg k-h
