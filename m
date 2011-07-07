@@ -1,81 +1,64 @@
-From: Wan ZongShun <mcuos.com@gmail.com>
-Subject: Re: [PATCH next 2/2] MAINTAINERS: Update PXA2xx/PXA3xx SUPPORT patterns
-Date: Thu, 7 Jul 2011 16:57:08 +0800
-Message-ID: <CAKT61h8O1JjGnNBKYBZC6WGNwS9EDq7T4kqSFHbmNjVMj2OWHQ@mail.gmail.com>
-References: <e9742e1fca57477517fdb6ea110221d6292eed9c.1309997525.git.joe@perches.com>
- <e5bfdcabc4041d24277a2453ecc2690072cfdacf.1309997525.git.joe@perches.com>
+From: Piotr Hosowicz <piotr@hosowicz.com>
+Subject: Today's Linux Next failed to even start building, I must have done
+ something wrong
+Date: Thu, 07 Jul 2011 14:47:20 +0200
+Message-ID: <4E15AAD8.6080005@example.com>
+Reply-To: piotr@hosowicz.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f52.google.com ([209.85.161.52]:55968 "EHLO
-	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754896Ab1GGI5a convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 04:57:30 -0400
-In-Reply-To: <e5bfdcabc4041d24277a2453ecc2690072cfdacf.1309997525.git.joe@perches.com>
+Received: from 14.mo1.mail-out.ovh.net ([178.32.97.215]:57851 "EHLO
+	mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755742Ab1GGNYd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 09:24:33 -0400
+Received: from mail405.ha.ovh.net (b9.ovh.net [213.186.33.59])
+	by mo1.mail-out.ovh.net (Postfix) with SMTP id CEF9D1010F63
+	for <linux-next@vger.kernel.org>; Thu,  7 Jul 2011 14:47:42 +0200 (CEST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joe Perches <joe@perches.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Ferre <nicolas.ferre@atmel.com>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-2011/7/7 Joe Perches <joe@perches.com>:
-> commit ca632f556697 ("spi: reorganize drivers")
-> renamed the files, update the MAINTAINERS patterns.
->
-> cc: Grant Likely <grant.likely@secretlab.ca>
-> cc: Nicolas Ferre <nicolas.ferre@atmel.com>
-> cc: Wan ZongShun <mcuos.com@gmail.com>
-> cc: Eric Miao <eric.y.miao@gmail.com>
-> cc: Russell King <linux@arm.linux.org.uk>
->
-> Signed-off-by: Joe Perches <joe@perches.com>
+Hello,
 
-Acked-by: Wan Zongshun <mcuos.com@gmail.com>
-> ---
-> =C2=A0MAINTAINERS | =C2=A0 =C2=A06 +++---
-> =C2=A01 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0ad8ff0..4e5cc19 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1123,7 +1123,7 @@ F: =C2=A0 =C2=A0 =C2=A0 =C2=A0drivers/watchdog/=
-nuc900_wdt.c
-> =C2=A0F: =C2=A0 =C2=A0 drivers/net/arm/w90p910_ether.c
-> =C2=A0F: =C2=A0 =C2=A0 drivers/mtd/nand/nuc900_nand.c
-> =C2=A0F: =C2=A0 =C2=A0 drivers/rtc/rtc-nuc900.c
-> -F: =C2=A0 =C2=A0 drivers/spi/spi_nuc900.c
-> +F: =C2=A0 =C2=A0 drivers/spi/spi-nuc900.c
-> =C2=A0F: =C2=A0 =C2=A0 drivers/usb/host/ehci-w90x900.c
-> =C2=A0F: =C2=A0 =C2=A0 drivers/video/nuc900fb.c
->
-> @@ -1321,7 +1321,7 @@ F: =C2=A0 =C2=A0 =C2=A0 =C2=A0drivers/net/macb.=
-*
-> =C2=A0ATMEL SPI DRIVER
-> =C2=A0M: =C2=A0 =C2=A0 Nicolas Ferre <nicolas.ferre@atmel.com>
-> =C2=A0S: =C2=A0 =C2=A0 Supported
-> -F: =C2=A0 =C2=A0 drivers/spi/atmel_spi.*
-> +F: =C2=A0 =C2=A0 drivers/spi/spi-atmel.c
->
-> =C2=A0ATMEL USBA UDC DRIVER
-> =C2=A0M: =C2=A0 =C2=A0 Nicolas Ferre <nicolas.ferre@atmel.com>
-> @@ -5142,7 +5142,7 @@ L: =C2=A0 =C2=A0 =C2=A0 =C2=A0linux-arm-kernel@=
-lists.infradead.org (moderated for non-subscribers)
-> =C2=A0S: =C2=A0 =C2=A0 Maintained
-> =C2=A0F: =C2=A0 =C2=A0 arch/arm/mach-pxa/
-> =C2=A0F: =C2=A0 =C2=A0 drivers/pcmcia/pxa2xx*
-> -F: =C2=A0 =C2=A0 drivers/spi/pxa2xx*
-> +F: =C2=A0 =C2=A0 drivers/spi/spi-pxa2xx*
-> =C2=A0F: =C2=A0 =C2=A0 drivers/usb/gadget/pxa2*
-> =C2=A0F: =C2=A0 =C2=A0 include/sound/pxa2xx-lib.h
-> =C2=A0F: =C2=A0 =C2=A0 sound/arm/pxa*
-> --
-> 1.7.6.131.g99019
->
->
+I'm not sure - which base source tree should I take to apply the patch?=
+=20
+I fail for now with building witch Debian make-kpkg with messages:
 
+# ...
+make    ARCH=3Dx86_64 prepare
+make[2]: Wej=C5=9Bcie do katalogu `/usr/src/linux-3.0-rc6-nx-20110707'
+scripts/kconfig/conf --silentoldconfig Kconfig
+make[2]: Opuszczenie katalogu `/usr/src/linux-3.0-rc6-nx-20110707'
+make[2]: Wej=C5=9Bcie do katalogu `/usr/src/linux-3.0-rc6-nx-20110707'
+   CHK     include/linux/version.h
+   UPD     include/linux/version.h
+   CHK     include/generated/utsrelease.h
+   UPD     include/generated/utsrelease.h
+   CC      kernel/bounds.s
+   GEN     include/generated/bounds.h
+   CC      arch/x86/kernel/asm-offsets.s
+In file included from include/linux/sched.h:64:0,
+                  from arch/x86/kernel/asm-offsets.c:9:
+include/linux/mm_types.h:74:15: error: duplicate member =E2=80=98_count=
+=E2=80=99
+make[3]: *** [arch/x86/kernel/asm-offsets.s] B=C5=82=C4=85d 1
+make[2]: *** [prepare0] B=C5=82=C4=85d 2
+make[2]: Opuszczenie katalogu `/usr/src/linux-3.0-rc6-nx-20110707'
+make[1]: *** [debian/stamp/conf/kernel-conf] B=C5=82=C4=85d 2
+make[1]: Opuszczenie katalogu `/usr/src/linux-3.0-rc6-nx-20110707'
+make: *** [debian/stamp/conf/minimal_debian] B=C5=82=C4=85d 2
+=46ailed to create a ./debian directory: Nie ma takiego pliku ani katal=
+ogu=20
+at /usr/bin/make-kpkg line 984.
 
+Please help me.
 
 --=20
-Wan ZongShun.
-www.mcuos.com
+=46amiliada:
+- Zwierze w paski?
+- Biedronka!
+NP: Nemo -
+NB: 3.0.0-rc6
