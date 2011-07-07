@@ -1,52 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: removed a patch from the akpm tree
-Date: Thu, 7 Jul 2011 11:20:06 +1000
-Message-ID: <20110707112006.e97656915b4a9fceaf11a315@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the net tree
+Date: Thu, 7 Jul 2011 15:28:57 +1000
+Message-ID: <20110707152857.83d48e1d1c175f811b255952@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__7_Jul_2011_11_20_06_+1000_f6MY8.Y05HGC5mnA"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44833 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35448 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751857Ab1GGBUS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Jul 2011 21:20:18 -0400
+	id S1750912Ab1GGF3E (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Jul 2011 01:29:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "John W. Linville" <linville@tuxdriver.com>, Larry Finger <Larry.Finger@lwfinger.net>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesper Juhl <jj@chaosbits.net>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
---Signature=_Thu__7_Jul_2011_11_20_06_+1000_f6MY8.Y05HGC5mnA
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi Andrew,
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/rtl8187se/ieee80211/ieee80211_softmac.c between commit
+219eb47e6f35 ("net/staging: add needed interrupt.h and hardirq.h
+includes") from the net tree and commit 41134db17a7d ("Remove unneeded
+version.h includes from drivers/staging/rtl*/") from the staging tree.
 
-I have removed tha patch
-drivers-net-wireless-rtlwifi-rtl8192de-phyc-fix-udelay-usage.patch from
-my copy of the akpm tree today as it turned up in the wireless tree
-yesterday as commit faeef8acb18f
-("drivers/net/wireless/rtlwifi/rtl8192de/phy.c: fix udelay() usage").
-
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__7_Jul_2011_11_20_06_+1000_f6MY8.Y05HGC5mnA
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOFQnGAAoJEDMEi1NhKgbs6SAH/33a6suuDtDtAK8uVAXDfekZ
-EvO4e41Xr8vLGsusre+VWpQepWfI/vkVBJ2EWYF8J4/x3fhmDKwRTxUAGWAzd4RU
-PkpYMEoLdb0/CeCXT34VvY5LvP7x2gLEh3perRsJLPLyVZAx+BIwjJFwR9daKHrG
-24sIVzDIksE6oIIn9DN/TiJ6/rjP6wuJMM/7Zz24zsEt+NUoVC4vkeTksJwkzcab
-mymecfgEYSC4JhF8SItye1BWTl6ZO4NrQCTKh7evF8CKplWU3gTv3qSlqXLyYRJT
-ZgMz+cYinfut4iguEvuFNBkJJA9Q+I0ptyQtU3Ki7RTasi+SugDdEaQUrXEB1sU=
-=iJA4
------END PGP SIGNATURE-----
-
---Signature=_Thu__7_Jul_2011_11_20_06_+1000_f6MY8.Y05HGC5mnA--
+diff --cc drivers/staging/rtl8187se/ieee80211/ieee80211_softmac.c
+index 00ee02f,52a7386..0000000
+--- a/drivers/staging/rtl8187se/ieee80211/ieee80211_softmac.c
++++ b/drivers/staging/rtl8187se/ieee80211/ieee80211_softmac.c
+@@@ -19,8 -19,6 +19,7 @@@
+  #include <linux/random.h>
+  #include <linux/delay.h>
+  #include <linux/slab.h>
+- #include <linux/version.h>
+ +#include <linux/interrupt.h>
+  #include <asm/uaccess.h>
+  
+  #include "dot11d.h"
