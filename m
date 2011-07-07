@@ -1,39 +1,34 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: Build issue with linux next. duplicate member _count in
- mm_types.h
-Date: Thu, 7 Jul 2011 08:42:00 -0500 (CDT)
-Message-ID: <alpine.DEB.2.00.1107070841500.17376@router.home>
-References: <4E143120.2020501@cam.ac.uk> <alpine.DEB.2.00.1107060933460.17202@router.home> <4E15AF1C.7080103@example.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the ux500-core
+ tree
+Date: Thu, 7 Jul 2011 06:42:29 -0700
+Message-ID: <20110707134229.GA26939@kroah.com>
+References: <20110707154223.d7ecda2a6cc84e033bb0b26a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp108.prem.mail.ac4.yahoo.com ([76.13.13.47]:43989 "HELO
-	smtp108.prem.mail.ac4.yahoo.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1755982Ab1GGNmD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 09:42:03 -0400
-In-Reply-To: <4E15AF1C.7080103@example.com>
+Received: from out5.smtp.messagingengine.com ([66.111.4.29]:56357 "EHLO
+	out5.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755170Ab1GGNo2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 09:44:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20110707154223.d7ecda2a6cc84e033bb0b26a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Piotr Hosowicz <piotr@hosowicz.com>
-Cc: Jonathan Cameron <jic23@cam.ac.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Axel Lin <axel.lin@gmail.com>
 
-On Thu, 7 Jul 2011, Piotr Hosowicz wrote:
+On Thu, Jul 07, 2011 at 03:42:23PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in
+> arch/arm/mach-ux500/board-mop500-u8500uib.c between commit 0df7aaf0f276
+> ("mach-ux500: fix build error due to unknown 'regulator_en' field") from
+> the ux500-core tree and commit 857f727674f4 ("staging: ste_rmi4: remove
+> cross-dependent platform data") from the staging tree.
+> 
+> The second supercedes the first, so I used that.
 
-> On 06.07.2011 16:46, Christoph Lameter wrote:
-> > On Wed, 6 Jul 2011, Jonathan Cameron wrote:
-> >
-> > > Getting:
-> > >
-> > >    CHK     include/linux/version.h
-> > >    CHK     include/generated/utsrelease.h
-> > > make[1]: `include/generated/mach-types.h' is up to date.
-> > >    CC      arch/arm/kernel/asm-offsets.s
-> > > In file included from include/linux/sched.h:64:0,
-> > >                   from arch/arm/kernel/asm-offsets.c:13:
-> > > include/linux/mm_types.h:74:15: error: duplicate member '_count'
-> > > make[1]: *** [arch/arm/kernel/asm-offsets.s] Error 1
-> > > make: *** [prepare0] Error 2
->
-> I have the same error on x86_64. I'll try again withj your patch.
+That sounds correct, thanks for doing this.
 
-Could you post a config file?
+greg k-h
