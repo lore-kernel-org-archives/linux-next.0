@@ -1,158 +1,52 @@
-From: Ram Pai <linuxram@us.ibm.com>
-Subject: Re: linux-next: build failure after merge of the pci-current tree
-Date: Thu, 7 Jul 2011 11:19:10 -0700
-Message-ID: <20110707181910.GD3543@ram-ThinkPad-T61>
-References: <20110707105823.43343d2f9446f994f97cfd65@canb.auug.org.au>
- <20110707085205.7524a5a7@jbarnes-desktop>
-Reply-To: Ram Pai <linuxram@us.ibm.com>
+From: Pekka Enberg <penberg@kernel.org>
+Subject: Re: Build issue with linux next. duplicate member _count in
+ mm_types.h
+Date: Thu, 07 Jul 2011 22:07:50 +0300
+Message-ID: <1310065670.21902.62.camel@jaguar>
+References: <4E143120.2020501@cam.ac.uk>
+	 <alpine.DEB.2.00.1107060933460.17202@router.home>
+	 <4E15AF1C.7080103@example.com>
+	 <alpine.DEB.2.00.1107070841500.17376@router.home>
+	 <4E15B945.5060805@example.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e36.co.us.ibm.com ([32.97.110.154]:32943 "EHLO
-	e36.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754241Ab1GGSTm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 14:19:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20110707085205.7524a5a7@jbarnes-desktop>
+Received: from filtteri1.pp.htv.fi ([213.243.153.184]:43612 "EHLO
+	filtteri1.pp.htv.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753143Ab1GGTHw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 15:07:52 -0400
+In-Reply-To: <4E15B945.5060805@example.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ram Pai <linuxram@us.ibm.com>
+To: piotr@hosowicz.com
+Cc: Christoph Lameter <cl@linux.com>, Jonathan Cameron <jic23@cam.ac.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Thu, Jul 07, 2011 at 08:52:05AM -0700, Jesse Barnes wrote:
-> On Thu, 7 Jul 2011 10:58:23 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 2011-07-07 at 15:48 +0200, Piotr Hosowicz wrote:
+> On 07.07.2011 15:42, Christoph Lameter wrote:
+> > On Thu, 7 Jul 2011, Piotr Hosowicz wrote:
+> >
+> >> On 06.07.2011 16:46, Christoph Lameter wrote:
+> >>> On Wed, 6 Jul 2011, Jonathan Cameron wrote:
+> >>>
+> >>>> Getting:
+> >>>>
+> >>>>     CHK     include/linux/version.h
+> >>>>     CHK     include/generated/utsrelease.h
+> >>>> make[1]: `include/generated/mach-types.h' is up to date.
+> >>>>     CC      arch/arm/kernel/asm-offsets.s
+> >>>> In file included from include/linux/sched.h:64:0,
+> >>>>                    from arch/arm/kernel/asm-offsets.c:13:
+> >>>> include/linux/mm_types.h:74:15: error: duplicate member '_count'
+> >>>> make[1]: *** [arch/arm/kernel/asm-offsets.s] Error 1
+> >>>> make: *** [prepare0] Error 2
+> >>
+> >> I have the same error on x86_64. I'll try again withj your patch.
+> >
+> > Could you post a config file?
 > 
-> > Hi Jesse,
-> > 
-> > After merging the pci-current tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> > 
-> > drivers/built-in.o:(.toc1+0xb98): undefined reference to `pci_realloc'
-> > 
-> > Caused by commit 72007d2b4797 ("PCI: conditional resource-reallocation
-> > through kernel parameter pci=realloc").
-> > 
-> > I have used the pci-current tree from next-20110706 for today.
-> 
-> Oops, x86 bits used in common code.  I've pushed a fix that just moves
-> the variable into setup-bus.c rather than x86/pci/common.c.
+> I attach it. Your patch seems to had worked, I finish making the package.
 
-Jesse,
+I'm confused. Does Christoph's patch fix the problem for everyone?
 
-	I have fixed the problem and have a better patch. See if it is acceptable for you.
-
-
-
-> 
-> Ram, did you see the microblaze patch I forwarded you?  It moves some
-> re-alloc control flags into common code; for -next it might be cleaner
-> to use them in a few places.  Any comments?
-
-
-	Yes I have seen that forwarded mail. I will look through it.
-
-
-Here is the patch.
-
-
-commit 213e491e64a6c77f2e52abcb563a592964dd1074
-Author: Ram Pai <linuxram@us.ibm.com>
-Date:   Thu Jun 30 00:45:39 2011 -0700
-
-    PCI: conditional resource-reallocation through kernel parameter pci=realloc
-    
-    Multiple attempts to dynamically reallocate pci resources have unfortunately
-    lead to regressions. Though we continue to fix the regressions and fine tune the
-    dynamic-reallocation behavior, we have not reached a acceptable state yet.
-    
-    This patch provides a interim solution. It disables dynamic-reallocation; by
-    default, with the ability to enable it through pci=realloc kernel command line
-    parameter.
-    
-    Signed-off-by: Ram Pai <linuxram@us.ibm.com>
-
-Documentation/kernel-parameters.txt |    2 ++
-drivers/pci/pci.c                   |    2 ++
-drivers/pci/pci.h                   |    2 ++
-drivers/pci/setup-bus.c             |   15 +++++++++++++++
-
-diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
-index fd248a31..aa47be7 100644
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -2015,6 +2015,8 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
- 				the default.
- 				off: Turn ECRC off
- 				on: Turn ECRC on.
-+		realloc		reallocate PCI resources if allocations done by BIOS
-+				are erroneous.
- 
- 	pcie_aspm=	[PCIE] Forcibly enable or disable PCIe Active State Power
- 			Management.
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 5f10c23..7df8e3c 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3483,6 +3483,8 @@ static int __init pci_setup(char *str)
- 				pci_no_msi();
- 			} else if (!strcmp(str, "noaer")) {
- 				pci_no_aer();
-+			} else if (!strncmp(str, "realloc", 7)) {
-+				pci_realloc();
- 			} else if (!strcmp(str, "nodomains")) {
- 				pci_no_domains();
- 			} else if (!strncmp(str, "cbiosize=", 9)) {
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index ebaf0ed..2b3f60b 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -146,6 +146,8 @@ static inline void pci_no_msi(void) { }
- static inline void pci_msi_init_pci_dev(struct pci_dev *dev) { }
- #endif
- 
-+extern void pci_realloc(void);
-+
- static inline int pci_no_d1d2(struct pci_dev *dev)
- {
- 	unsigned int parent_dstates = 0;
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 68b4fce..f6616cb 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -48,6 +48,13 @@ struct resource_list_x {
- 	(head)->next = NULL;				\
- } while (0)
- 
-+int pci_realloc_enable = 0;
-+#define pci_realloc_enabled() pci_realloc_enable
-+void pci_realloc(void)
-+{
-+	pci_realloc_enable = 1;
-+}
-+
- /**
-  * add_to_list() - add a new resource tracker to the list
-  * @head:	Head of the list
-@@ -1091,6 +1098,7 @@ static int __init pci_get_max_depth(void)
- 	return depth;
- }
- 
-+
- /*
-  * first try will not touch pci bridge res
-  * second  and later try will clear small leaf bridge res
-@@ -1134,6 +1142,13 @@ again:
- 	/* any device complain? */
- 	if (!head.next)
- 		goto enable_and_dump;
-+
-+	/* don't realloc if asked to do so */
-+	if (!pci_realloc_enabled()) {
-+		free_list(resource_list_x, &head);
-+		goto enable_and_dump;
-+	}
-+
- 	failed_type = 0;
- 	for (list = head.next; list;) {
- 		failed_type |= list->flags;
+			Pekka
