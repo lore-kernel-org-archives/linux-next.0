@@ -1,45 +1,75 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 4 (misc/pti)
-Date: Thu, 7 Jul 2011 08:14:41 -0700
-Message-ID: <20110707081441.a4a64e59.randy.dunlap@oracle.com>
-References: <20110704170952.1024e89b.sfr@canb.auug.org.au>
-	<20110704134541.9adfd4f1.randy.dunlap@oracle.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: Tree for July 7 (net/af_packet)
+Date: Thu, 07 Jul 2011 08:18:39 -0700 (PDT)
+Message-ID: <20110707.081839.2119597618388053074.davem@davemloft.net>
+References: <20110707172544.867b980a1196db005b577c14@canb.auug.org.au>
+	<20110707081202.6dddcbce.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet15.oracle.com ([148.87.113.117]:64675 "EHLO
-	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751565Ab1GGPO4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 11:14:56 -0400
-In-Reply-To: <20110704134541.9adfd4f1.randy.dunlap@oracle.com>
+Received: from shards.monkeyblade.net ([198.137.202.13]:45991 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751710Ab1GGPUt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 11:20:49 -0400
+In-Reply-To: <20110707081202.6dddcbce.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, james_p_freyensee@linux.intel.com, linux-next@vger.kernel.org
+To: randy.dunlap@oracle.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 4 Jul 2011 13:45:41 -0700 Randy Dunlap wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Date: Thu, 7 Jul 2011 08:12:02 -0700
 
-> On Mon, 4 Jul 2011 17:09:52 +1000 Stephen Rothwell wrote:
+> On Thu, 7 Jul 2011 17:25:44 +1000 Stephen Rothwell wrote:
 > 
-> > Hi all,
-> > 
-> > Changes since 20110701:
-> 
-> 
-> when CONFIG_PCI is not enabled:
-> 
-> drivers/misc/pti.c:410: error: implicit declaration of function 'pci_release_region'
-> drivers/misc/pti.c:859: error: implicit declaration of function 'pci_request_region'
+>> Hi all,
+>> 
+>> The next linux-next release will (probably) be next-20110718.
+>> 
+>> Changes since 20110706:
 > 
 > 
-> Stubs for these 2 functions could be added to include/linux/pci.h, but it would
-> make more sense to me just to make the driver depend on PCI since it seems to rely
-> on so many PCI functions.  or are the PCI pieces optional?
+> When CONFIG_INET is not enabled:
+> 
+> af_packet.c:(.text+0x3d130): undefined reference to `ip_defrag'
+> or
+> ERROR: "ip_defrag" [net/packet/af_packet.ko] undefined!
 
+Sorry about that, fixed thusly:
 
-ping.  still a problem in linux-next 20110706.
+--------------------
+packet: Fix build with INET disabled.
 
+af_packet.c:(.text+0x3d130): undefined reference to `ip_defrag'
+or
+ERROR: "ip_defrag" [net/packet/af_packet.ko] undefined!
+
+Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ net/packet/af_packet.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index aa4c73a..d2294ad 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -456,6 +456,7 @@ static struct sock *fanout_demux_cpu(struct packet_fanout *f, struct sk_buff *sk
+ 
+ static struct sk_buff *fanout_check_defrag(struct sk_buff *skb)
+ {
++#ifdef CONFIG_INET
+ 	const struct iphdr *iph;
+ 	u32 len;
+ 
+@@ -486,6 +487,7 @@ static struct sk_buff *fanout_check_defrag(struct sk_buff *skb)
+ 			skb->rxhash = 0;
+ 		}
+ 	}
++#endif
+ 	return skb;
+ }
+ 
+-- 
+1.7.6
