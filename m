@@ -1,37 +1,61 @@
-From: Pekka Enberg <penberg@kernel.org>
-Subject: Re: Build issue with linux next. duplicate member _count in
- mm_types.h
-Date: Thu, 07 Jul 2011 22:51:15 +0300
-Message-ID: <1310068275.21902.63.camel@jaguar>
-References: <4E143120.2020501@cam.ac.uk>
-	 <alpine.DEB.2.00.1107060933460.17202@router.home>
-	 <4E15AF1C.7080103@example.com>
-	 <alpine.DEB.2.00.1107070841500.17376@router.home>
-	 <4E15B945.5060805@example.com> <1310065670.21902.62.camel@jaguar>
-	 <alpine.DEB.2.00.1107071413290.24437@router.home>
+From: J Freyensee <james_p_freyensee@linux.intel.com>
+Subject: Re: [PATCH] Add PCI config dependency for PTI.
+Date: Thu, 07 Jul 2011 12:59:11 -0700
+Message-ID: <4E16100F.5030005@linux.intel.com>
+References: <james_p_freyensee@linux.intel.com> <1310066653-26879-1-git-send-email-james_p_freyensee@linux.intel.com> <20110707123154.d6fb4a99.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from filtteri2.pp.htv.fi ([213.243.153.185]:52866 "EHLO
-	filtteri2.pp.htv.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751700Ab1GGTvR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 15:51:17 -0400
-In-Reply-To: <alpine.DEB.2.00.1107071413290.24437@router.home>
+Received: from mga02.intel.com ([134.134.136.20]:60879 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752658Ab1GGT6u (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Jul 2011 15:58:50 -0400
+In-Reply-To: <20110707123154.d6fb4a99.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: piotr@hosowicz.com, Jonathan Cameron <jic23@cam.ac.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, christophe.guerard@intel.com, pranav.k.sanghadia@intel.com
 
-On Thu, 2011-07-07 at 14:14 -0500, Christoph Lameter wrote:
-> On Thu, 7 Jul 2011, Pekka Enberg wrote:
-> 
-> > > I attach it. Your patch seems to had worked, I finish making the package.
-> >
-> > I'm confused. Does Christoph's patch fix the problem for everyone?
-> 
-> Guess so (heard nothing to the contrary) but I still would like to know
-> what caused it. My best guess right now its gccs 4.6s stricter checking.
+On 07/07/2011 12:31 PM, Randy Dunlap wrote:
+> On Thu,  7 Jul 2011 12:24:13 -0700 james_p_freyensee@linux.intel.com wrote:
+>
+>> From: J Freyensee<james_p_freyensee@linux.intel.com>
+>>
+>> Intel-Atom implementation of PTI will not work with PCI
+>> configured off, so the pti driver should not be compiled
+>> in the event someone does not enable PCI in the linux kernel.
+>>
+>> Signed-off-by: J Freyensee<james_p_freyensee@linux.intel.com>
+>> Acked-by: Randy Dunlap<randy.dunlap@oracle.com>
+> now you can say that above. ^^^
+So you want me to stick the 'Acked-by' and 'Reported-by' above the 
+Signed-off-by line?
 
-OK, I applied the patch. Hopefully it will fix build breakage in
-linux-next.
+> Also
+> Reported-by: Randy Dunlap<randy.dunlap@oracle.com>
+>
+> Thanks.
+>
+>> Acked-by: Stephen Rothwell<sfr@canb.auug.org.au>
+>> ---
+>>   drivers/misc/Kconfig |    1 +
+>>   1 files changed, 1 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+>> index 4e349cd..7fd32a6 100644
+>> --- a/drivers/misc/Kconfig
+>> +++ b/drivers/misc/Kconfig
+>> @@ -146,6 +146,7 @@ config PHANTOM
+>>
+>>   config INTEL_MID_PTI
+>>   	tristate "Parallel Trace Interface for MIPI P1149.7 cJTAG standard"
+>> +	depends on PCI
+>>   	default n
+>>   	help
+>>   	  The PTI (Parallel Trace Interface) driver directs
+>> -- 
+>
+> ---
+> ~Randy
+> *** Remember to use Documentation/SubmitChecklist when testing your code ***
