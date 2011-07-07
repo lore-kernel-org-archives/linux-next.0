@@ -1,55 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pci-current tree
-Date: Thu, 7 Jul 2011 10:58:23 +1000
-Message-ID: <20110707105823.43343d2f9446f994f97cfd65@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-lpae tree with the arm tree
+Date: Thu, 7 Jul 2011 11:14:00 +1000
+Message-ID: <20110707111400.be08512d2dbf60be3022ac50@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__7_Jul_2011_10_58_23_+1000_x5Q_X/PhNtxDpwfL"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55438 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33498 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753409Ab1GGA6c (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Jul 2011 20:58:32 -0400
+	id S1753559Ab1GGBOG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Jul 2011 21:14:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ram Pai <linuxram@us.ibm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Thu__7_Jul_2011_10_58_23_+1000_x5Q_X/PhNtxDpwfL
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Catalin,
 
-Hi Jesse,
+Today's linux-next merge of the arm-lpae tree got a conflict in
+arch/arm/include/asm/proc-fns.h between commit eca5dc2a0028 ("ARM:
+6988/1: multi-cpu: remove arguments from CPU proc macros") from the arm
+tree and commit 91bcc1122ff9 ("ARM: LPAE: Page table maintenance for the
+3-level format") from the arm-lpae tree.
 
-After merging the pci-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-drivers/built-in.o:(.toc1+0xb98): undefined reference to `pci_realloc'
-
-Caused by commit 72007d2b4797 ("PCI: conditional resource-reallocation
-through kernel parameter pci=3Drealloc").
-
-I have used the pci-current tree from next-20110706 for today.
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__7_Jul_2011_10_58_23_+1000_x5Q_X/PhNtxDpwfL
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOFQSvAAoJEDMEi1NhKgbsiocH/iPIXqvSwP/vax8uI5OFTXQC
-GEsL+i+OWkuarW6ApsPm9APEMWv48ZxXfPDf3YYsLTc6DAX/G2MHsPF8c+9ZOmwt
-WLhUSkutNkEqKrIgstojTBC0IiM938IuiESv44thL/LbJJA4bRJDmsSWBPD05d3R
-lZNmLIv4hvTKSNXDxj7KO2RuQKXW0C6+5g00+sgRX2It6M1F7g09rIKSJZs+HtOn
-ww0HOEKMTWxS8ivk0PxzoAmeMQg2C9MGijWOvIY5x6NZJECHJ/m/SJ9L94ymWQqc
-sI7hd0Kivxr//+VwvgfQsylSEaeG1T81fabWIy5jUGEC4Zl3wmavfDQzza93JDQ=
-=VSP6
------END PGP SIGNATURE-----
-
---Signature=_Thu__7_Jul_2011_10_58_23_+1000_x5Q_X/PhNtxDpwfL--
+diff --cc arch/arm/include/asm/proc-fns.h
+index 633d1cb,b5db4f4..0000000
+--- a/arch/arm/include/asm/proc-fns.h
++++ b/arch/arm/include/asm/proc-fns.h
+@@@ -79,16 -83,24 +83,20 @@@ extern void cpu_proc_fin(void)
+  extern int cpu_do_idle(void);
+  extern void cpu_dcache_clean_area(void *, int);
+  extern void cpu_do_switch_mm(unsigned long pgd_phys, struct mm_struct *mm);
++ #ifdef CONFIG_ARM_LPAE
++ extern void cpu_set_pte_ext(pte_t *ptep, pte_t pte);
++ #else
+  extern void cpu_set_pte_ext(pte_t *ptep, pte_t pte, unsigned int ext);
++ #endif
+  extern void cpu_reset(unsigned long addr) __attribute__((noreturn));
+  #else
+ -#define cpu_proc_init()			processor._proc_init()
+ -#define cpu_proc_fin()			processor._proc_fin()
+ -#define cpu_reset(addr)			processor.reset(addr)
+ -#define cpu_do_idle()			processor._do_idle()
+ -#define cpu_dcache_clean_area(addr,sz)	processor.dcache_clean_area(addr,sz)
+ -#ifdef CONFIG_ARM_LPAE
+ -#define cpu_set_pte_ext(ptep,pte)	processor.set_pte_ext(ptep,pte)
+ -#else
+ -#define cpu_set_pte_ext(ptep,pte,ext)	processor.set_pte_ext(ptep,pte,ext)
+ -#endif
+ -#define cpu_do_switch_mm(pgd,mm)	processor.switch_mm(pgd,mm)
+ +#define cpu_proc_init			processor._proc_init
+ +#define cpu_proc_fin			processor._proc_fin
+ +#define cpu_reset			processor.reset
+ +#define cpu_do_idle			processor._do_idle
+ +#define cpu_dcache_clean_area		processor.dcache_clean_area
+ +#define cpu_set_pte_ext			processor.set_pte_ext
+ +#define cpu_do_switch_mm		processor.switch_mm
+  #endif
+  
+  extern void cpu_resume(void);
