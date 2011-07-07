@@ -1,36 +1,44 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 7 (net/af_packet)
-Date: Thu, 7 Jul 2011 08:12:02 -0700
-Message-ID: <20110707081202.6dddcbce.randy.dunlap@oracle.com>
-References: <20110707172544.867b980a1196db005b577c14@canb.auug.org.au>
+Subject: Re: linux-next: Tree for July 4 (misc/pti)
+Date: Thu, 7 Jul 2011 08:14:41 -0700
+Message-ID: <20110707081441.a4a64e59.randy.dunlap@oracle.com>
+References: <20110704170952.1024e89b.sfr@canb.auug.org.au>
+	<20110704134541.9adfd4f1.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet15.oracle.com ([141.146.126.227]:38302 "EHLO
-	acsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751565Ab1GGPMR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 11:12:17 -0400
-In-Reply-To: <20110707172544.867b980a1196db005b577c14@canb.auug.org.au>
+Received: from rcsinet15.oracle.com ([148.87.113.117]:64675 "EHLO
+	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751565Ab1GGPO4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 11:14:56 -0400
+In-Reply-To: <20110704134541.9adfd4f1.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: lkml <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, james_p_freyensee@linux.intel.com, linux-next@vger.kernel.org
 
-On Thu, 7 Jul 2011 17:25:44 +1000 Stephen Rothwell wrote:
+On Mon, 4 Jul 2011 13:45:41 -0700 Randy Dunlap wrote:
 
-> Hi all,
+> On Mon, 4 Jul 2011 17:09:52 +1000 Stephen Rothwell wrote:
 > 
-> The next linux-next release will (probably) be next-20110718.
+> > Hi all,
+> > 
+> > Changes since 20110701:
 > 
-> Changes since 20110706:
+> 
+> when CONFIG_PCI is not enabled:
+> 
+> drivers/misc/pti.c:410: error: implicit declaration of function 'pci_release_region'
+> drivers/misc/pti.c:859: error: implicit declaration of function 'pci_request_region'
+> 
+> 
+> Stubs for these 2 functions could be added to include/linux/pci.h, but it would
+> make more sense to me just to make the driver depend on PCI since it seems to rely
+> on so many PCI functions.  or are the PCI pieces optional?
 
 
-When CONFIG_INET is not enabled:
-
-af_packet.c:(.text+0x3d130): undefined reference to `ip_defrag'
-or
-ERROR: "ip_defrag" [net/packet/af_packet.ko] undefined!
+ping.  still a problem in linux-next 20110706.
 
 ---
 ~Randy
