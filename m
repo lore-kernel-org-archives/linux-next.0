@@ -1,38 +1,40 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the net and
- trivial trees
-Date: Thu, 7 Jul 2011 06:43:04 -0700
-Message-ID: <20110707134304.GB26939@kroah.com>
-References: <20110707153840.c70fde0f5881bbe0c82eb6dc@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Thu, 7 Jul 2011 06:44:21 -0700
+Message-ID: <20110707134421.GE26939@kroah.com>
+References: <20110707162554.c069e5c60e103804a99d27b1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out5.smtp.messagingengine.com ([66.111.4.29]:60252 "EHLO
-	out5.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756332Ab1GGNoa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 09:44:30 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20110707153840.c70fde0f5881bbe0c82eb6dc@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20110707162554.c069e5c60e103804a99d27b1@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vitaliy Ivanov <vitalivanov@gmail.com>, Jiri Kosina <jkosina@suse.cz>, Roland Vossen <rvossen@broadcom.com>, Arend van Spriel <arend@broadcom.com>, Franky Lin <frankyl@broadcom.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jul 07, 2011 at 03:38:40PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Thu, Jul 07, 2011 at 04:25:54PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/bcm/headers.h
-> drivers/staging/brcm80211/brcmfmac/dhd_linux.c
-> drivers/staging/brcm80211/brcmfmac/dhd_sdio.c
-> drivers/staging/brcm80211/brcmfmac/wl_cfg80211.h between commits
-> 219eb47e6f35 ("net/staging: add needed interrupt.h and hardirq.h
-> includes") from the net tree and e44ba033c565 ("treewide: remove
-> duplicate includes") from the trivial tree and various commits from the
-> staging tree.
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 > 
-> I fixed thme up (see below) and can carry the fixes as necessary.
+> In file included from drivers/staging/ft1000/ft1000-pcmcia/ft1000_proc.c:26:0:
+> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h: In function 'ft1000_read_reg':
+> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h:80:2: error: implicit declaration of function 'inw'
+> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h: In function 'ft1000_write_reg':
+> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h:86:2: error: implicit declaration of function 'outw'
+> 
+> Caused by commit 8ac299853b70 ("staging: ft1000-pcmcia: get rid of
+> ft1000_dev.h") which I can;t revert (it is too deeply buried).  I have
+> just left the breakage for today - hopefully it will be fixed before I
+> have to worry about it again. :-)
 
-Looks correct, thanks.
+Ick, Ondrej, can you look into this and resolve it please?
+
+Do we really have PPC support for PCMCIA these days?
+
+thanks,
 
 greg k-h
