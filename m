@@ -1,27 +1,43 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: Build issue with linux next. duplicate member _count in
- mm_types.h
-Date: Thu, 7 Jul 2011 14:14:14 -0500 (CDT)
-Message-ID: <alpine.DEB.2.00.1107071413290.24437@router.home>
-References: <4E143120.2020501@cam.ac.uk>  <alpine.DEB.2.00.1107060933460.17202@router.home>  <4E15AF1C.7080103@example.com>  <alpine.DEB.2.00.1107070841500.17376@router.home>  <4E15B945.5060805@example.com> <1310065670.21902.62.camel@jaguar>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: james_p_freyensee@linux.intel.com
+Subject: [PATCH] Add PCI config dependency for PTI.
+Date: Thu,  7 Jul 2011 12:24:13 -0700
+Message-ID: <1310066653-26879-1-git-send-email-james_p_freyensee@linux.intel.com>
+References: <james_p_freyensee@linux.intel.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp101.prem.mail.ac4.yahoo.com ([76.13.13.40]:34679 "HELO
-	smtp101.prem.mail.ac4.yahoo.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1753143Ab1GGTOR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 15:14:17 -0400
-In-Reply-To: <1310065670.21902.62.camel@jaguar>
+Received: from mga02.intel.com ([134.134.136.20]:31238 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751118Ab1GGTXw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Jul 2011 15:23:52 -0400
+In-Reply-To: <james_p_freyensee@linux.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@kernel.org>
-Cc: piotr@hosowicz.com, Jonathan Cameron <jic23@cam.ac.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, randy.dunlap@oracle.com, sfr@canb.auug.org.au, christophe.guerard@intel.com, pranav.k.sanghadia@intel.com
 
-On Thu, 7 Jul 2011, Pekka Enberg wrote:
+From: J Freyensee <james_p_freyensee@linux.intel.com>
 
-> > I attach it. Your patch seems to had worked, I finish making the package.
->
-> I'm confused. Does Christoph's patch fix the problem for everyone?
+Intel-Atom implementation of PTI will not work with PCI
+configured off, so the pti driver should not be compiled
+in the event someone does not enable PCI in the linux kernel.
 
-Guess so (heard nothing to the contrary) but I still would like to know
-what caused it. My best guess right now its gccs 4.6s stricter checking.
+Signed-off-by: J Freyensee <james_p_freyensee@linux.intel.com>
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/misc/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 4e349cd..7fd32a6 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -146,6 +146,7 @@ config PHANTOM
+ 
+ config INTEL_MID_PTI
+ 	tristate "Parallel Trace Interface for MIPI P1149.7 cJTAG standard"
++	depends on PCI
+ 	default n
+ 	help
+ 	  The PTI (Parallel Trace Interface) driver directs
+-- 
+1.7.0.4
