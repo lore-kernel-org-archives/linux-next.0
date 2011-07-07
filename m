@@ -1,72 +1,81 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH next 2/2] MAINTAINERS: Update PXA2xx/PXA3xx SUPPORT patterns
-Date: Thu, 07 Jul 2011 09:07:49 +0200
-Message-ID: <4E155B45.7080408@atmel.com>
-References: <e9742e1fca57477517fdb6ea110221d6292eed9c.1309997525.git.joe@perches.com> <e5bfdcabc4041d24277a2453ecc2690072cfdacf.1309997525.git.joe@perches.com>
+From: Michael Hennerich <michael.hennerich@analog.com>
+Subject: Re: [PATCH next 1/2] MAINTAINERS: Update GPIO sections patterns
+Date: Thu, 7 Jul 2011 09:19:59 +0200
+Message-ID: <4E155E1F.7030609@analog.com>
+References: <e9742e1fca57477517fdb6ea110221d6292eed9c.1309997525.git.joe@perches.com>
+Reply-To: <michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from newsmtp5.atmel.com ([204.2.163.5]:27736 "EHLO
-	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751025Ab1GGHIR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 03:08:17 -0400
-In-Reply-To: <e5bfdcabc4041d24277a2453ecc2690072cfdacf.1309997525.git.joe@perches.com>
+Received: from tx2ehsobe001.messaging.microsoft.com ([65.55.88.11]:43865 "EHLO
+	TX2EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750900Ab1GGHVj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 03:21:39 -0400
+In-Reply-To: <e9742e1fca57477517fdb6ea110221d6292eed9c.1309997525.git.joe@perches.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Joe Perches <joe@perches.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Wan ZongShun <mcuos.com@gmail.com>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Michael Buesch <mb@bu3sch.de>, "device-drivers-devel@blackfin.uclinux.org" <device-drivers-devel@blackfin.uclinux.org>
 
-Le 07/07/2011 02:28, Joe Perches :
-> commit ca632f556697 ("spi: reorganize drivers")
-> renamed the files, update the MAINTAINERS patterns.
-> 
-> cc: Grant Likely <grant.likely@secretlab.ca>
-> cc: Nicolas Ferre <nicolas.ferre@atmel.com>
-
-Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-
-> cc: Wan ZongShun <mcuos.com@gmail.com>
-> cc: Eric Miao <eric.y.miao@gmail.com>
-> cc: Russell King <linux@arm.linux.org.uk>
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+On 07/07/2011 02:28 AM, Joe Perches wrote:
+> commit c103de24043 ("gpio: reorganize drivers")
+> renamed the files, update the patterns.
+>
+> cc: Grant Likely<grant.likely@secretlab.ca>
+> cc: Michael Hennerich<michael.hennerich@analog.com>
+> cc: Michael Buesch<mb@bu3sch.de>
+>
+> Signed-off-by: Joe Perches<joe@perches.com>
+Acked-by: Michael Hennerich <michael.hennerich@analog.com>
 > ---
->  MAINTAINERS |    6 +++---
->  1 files changed, 3 insertions(+), 3 deletions(-)
-> 
+>   MAINTAINERS |    8 ++++----
+>   1 files changed, 4 insertions(+), 4 deletions(-)
+>
 > diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0ad8ff0..4e5cc19 100644
+> index 657fabe..0ad8ff0 100644
 > --- a/MAINTAINERS
 > +++ b/MAINTAINERS
-> @@ -1123,7 +1123,7 @@ F:	drivers/watchdog/nuc900_wdt.c
->  F:	drivers/net/arm/w90p910_ether.c
->  F:	drivers/mtd/nand/nuc900_nand.c
->  F:	drivers/rtc/rtc-nuc900.c
-> -F:	drivers/spi/spi_nuc900.c
-> +F:	drivers/spi/spi-nuc900.c
->  F:	drivers/usb/host/ehci-w90x900.c
->  F:	drivers/video/nuc900fb.c
->  
-> @@ -1321,7 +1321,7 @@ F:	drivers/net/macb.*
->  ATMEL SPI DRIVER
->  M:	Nicolas Ferre <nicolas.ferre@atmel.com>
->  S:	Supported
-> -F:	drivers/spi/atmel_spi.*
-> +F:	drivers/spi/spi-atmel.c
->  
->  ATMEL USBA UDC DRIVER
->  M:	Nicolas Ferre <nicolas.ferre@atmel.com>
-> @@ -5142,7 +5142,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  S:	Maintained
->  F:	arch/arm/mach-pxa/
->  F:	drivers/pcmcia/pxa2xx*
-> -F:	drivers/spi/pxa2xx*
-> +F:	drivers/spi/spi-pxa2xx*
->  F:	drivers/usb/gadget/pxa2*
->  F:	include/sound/pxa2xx-lib.h
->  F:	sound/arm/pxa*
+> @@ -343,7 +343,7 @@ S:	Supported
+>   F:	drivers/mfd/adp5520.c
+>   F:	drivers/video/backlight/adp5520_bl.c
+>   F:	drivers/leds/leds-adp5520.c
+> -F:	drivers/gpio/adp5520-gpio.c
+> +F:	drivers/gpio/gpio-adp5520.c
+>   F:	drivers/input/keyboard/adp5520-keys.c
+>
+>   ADP5588 QWERTY KEYPAD AND IO EXPANDER DRIVER (ADP5588/ADP5587)
+> @@ -352,7 +352,7 @@ L:	device-drivers-devel@blackfin.uclinux.org
+>   W:	http://wiki.analog.com/ADP5588
+>   S:	Supported
+>   F:	drivers/input/keyboard/adp5588-keys.c
+> -F:	drivers/gpio/adp5588-gpio.c
+> +F:	drivers/gpio/gpio-adp5588.c
+>
+>   ADP8860 BACKLIGHT DRIVER (ADP8860/ADP8861/ADP8863)
+>   M:	Michael Hennerich<michael.hennerich@analog.com>
+> @@ -1587,11 +1587,11 @@ S:	Maintained
+>   F:	Documentation/sound/alsa/Bt87x.txt
+>   F:	sound/pci/bt87x.c
+>
+> -BT8XXGPIO DRIVER
+> +BT8XX GPIO DRIVER
+>   M:	Michael Buesch<mb@bu3sch.de>
+>   W:	http://bu3sch.de/btgpio.php
+>   S:	Maintained
+> -F:	drivers/gpio/bt8xxgpio.c
+> +F:	drivers/gpio/gpio-bt8xx.c
+>
+>   BTRFS FILE SYSTEM
+>   M:	Chris Mason<chris.mason@oracle.com>
 
 
 -- 
-Nicolas Ferre
+Greetings,
+Michael
+
+--
+Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
+Sitz der Gesellschaft: Muenchen; Registergericht: Muenchen HRB 40368;
+Geschaeftsfuehrer:Dr.Carsten Suckrow, Thomas Wessel, William A. Martin,
+Margaret Seif
