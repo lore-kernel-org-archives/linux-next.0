@@ -1,91 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the rr tree with the  tree
-Date: Thu, 7 Jul 2011 10:24:32 +1000
-Message-ID: <20110707102432.5a779744e247652be005b592@canb.auug.org.au>
-References: <20110705135932.de7f0526.sfr@canb.auug.org.au>
-	<1309967847.3393.44.camel@jerome>
-	<4E14F373.1020307@snapgear.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__7_Jul_2011_10_24_32_+1000_oaSG6s=1nA_zH1My"
+From: Joe Perches <joe@perches.com>
+Subject: [PATCH next 1/2] MAINTAINERS: Update GPIO sections patterns
+Date: Wed,  6 Jul 2011 17:28:39 -0700
+Message-ID: <e9742e1fca57477517fdb6ea110221d6292eed9c.1309997525.git.joe@perches.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59278 "EHLO smtps.tip.net.au"
+Received: from mail.perches.com ([173.55.12.10]:3633 "EHLO mail.perches.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753882Ab1GGAYo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Jul 2011 20:24:44 -0400
-In-Reply-To: <4E14F373.1020307@snapgear.com>
+	id S1753882Ab1GGA2m (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Jul 2011 20:28:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Ungerer <gerg@snapgear.com>
-Cc: Jonas Bonn <jonas@southpole.se>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Grant Likely <grant.likely@secretlab.ca>, Michael Hennerich <michael.hennerich@analog.com>, Michael Buesch <mb@bu3sch.de>
 
---Signature=_Thu__7_Jul_2011_10_24_32_+1000_oaSG6s=1nA_zH1My
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+commit c103de24043 ("gpio: reorganize drivers")
+renamed the files, update the patterns.
 
-Hi all,
+cc: Grant Likely <grant.likely@secretlab.ca>
+cc: Michael Hennerich <michael.hennerich@analog.com>
+cc: Michael Buesch <mb@bu3sch.de>
 
-On Thu, 7 Jul 2011 09:44:51 +1000 Greg Ungerer <gerg@snapgear.com> wrote:
->
-> On 07/07/11 01:57, Jonas Bonn wrote:
-> >
-> > On Tue, 2011-07-05 at 13:59 +1000, Stephen Rothwell wrote:
-> >>
-> >> Today's linux-next merge of the rr tree got a conflict in
-> >> arch/m68k/kernel/module_mm.c arch/m68k/kernel/module_no.c between comm=
-it
-> >> 4528acce2607 ("m68k: merge the non-mmu and mmu versions of module.c")
-> >> from the m68knommu tree and commit 7b935befe6bc ("modules: make arch's
-> >> use default loader hooks") from the rr tree.
-> >>
-> >> The former removes these files, so I did that.
-> >>
-> >> I then added this merge fix up patch (which I can carry as necessary a=
-nd
-> >> may not be coorrect):
-> >>
-> >> From: Stephen Rothwell<sfr@canb.auug.org.au>
-> >> Date: Tue, 5 Jul 2011 13:12:26 +1000
-> >> Subject: [PATCH] modules/m68k: make arch's use default loader hooks
-> >>
-> >> Signed-off-by: Stephen Rothwell<sfr@canb.auug.org.au>
-> >> ---
-> >>   arch/m68k/kernel/module.c |   27 ---------------------------
-> >>   1 files changed, 0 insertions(+), 27 deletions(-)
-> >>
-> >
-> > That patch looks good to me.
-> >
-> > Acked-by: Jonas Bonn<jonas@southpole.se>
->=20
-> Looks fine to me too:
->=20
-> Acked-by: Greg Ungerer <gerg@uclinux.org>
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ MAINTAINERS |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-OK, so now someone just has to remember to apply it (or tell Linus, or
-fix up the trees) during the merge window.   That person probably won't
-be me (since I will not be online next week (assuming Linus follows
-through and opens the merge window next week).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__7_Jul_2011_10_24_32_+1000_oaSG6s=1nA_zH1My
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOFPzAAAoJEDMEi1NhKgbsk2QH/Rk8iHqypkN4tZNQcVdovfqL
-44f+un/83SfwncOuAOr4cjJylt+2EGpAH/yyf0Bn9u2xFkNqbZTIymtn4PYEwOZM
-mlcAg1/c4mGFhGKVvbKupVzf/0DgvH7uCDYr/09h7c9M2ABKTNyl8+vYbQbeclTt
-cEfgS/w28NtI6GBz5hu0yQh6QCRVKsEPzxzDw9spP3SIFI4PNFggbSFT/r8m9ht8
-vZ5KDFluyMftjbB3jFRDO65E6DsBCBXBlGrIK7coTcAUIOpHHf5vdwSRpGl7qM3R
-4C45C+2Jpmq4LMn/Y4I5/eeURFDHgcqbTTFYnlezn5uVtSPvJMIrM/rx23vdHY4=
-=S1Ec
------END PGP SIGNATURE-----
-
---Signature=_Thu__7_Jul_2011_10_24_32_+1000_oaSG6s=1nA_zH1My--
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 657fabe..0ad8ff0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -343,7 +343,7 @@ S:	Supported
+ F:	drivers/mfd/adp5520.c
+ F:	drivers/video/backlight/adp5520_bl.c
+ F:	drivers/leds/leds-adp5520.c
+-F:	drivers/gpio/adp5520-gpio.c
++F:	drivers/gpio/gpio-adp5520.c
+ F:	drivers/input/keyboard/adp5520-keys.c
+ 
+ ADP5588 QWERTY KEYPAD AND IO EXPANDER DRIVER (ADP5588/ADP5587)
+@@ -352,7 +352,7 @@ L:	device-drivers-devel@blackfin.uclinux.org
+ W:	http://wiki.analog.com/ADP5588
+ S:	Supported
+ F:	drivers/input/keyboard/adp5588-keys.c
+-F:	drivers/gpio/adp5588-gpio.c
++F:	drivers/gpio/gpio-adp5588.c
+ 
+ ADP8860 BACKLIGHT DRIVER (ADP8860/ADP8861/ADP8863)
+ M:	Michael Hennerich <michael.hennerich@analog.com>
+@@ -1587,11 +1587,11 @@ S:	Maintained
+ F:	Documentation/sound/alsa/Bt87x.txt
+ F:	sound/pci/bt87x.c
+ 
+-BT8XXGPIO DRIVER
++BT8XX GPIO DRIVER
+ M:	Michael Buesch <mb@bu3sch.de>
+ W:	http://bu3sch.de/btgpio.php
+ S:	Maintained
+-F:	drivers/gpio/bt8xxgpio.c
++F:	drivers/gpio/gpio-bt8xx.c
+ 
+ BTRFS FILE SYSTEM
+ M:	Chris Mason <chris.mason@oracle.com>
+-- 
+1.7.6.131.g99019
