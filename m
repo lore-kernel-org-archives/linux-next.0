@@ -1,65 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (staging
- tree related)
-Date: Thu, 7 Jul 2011 16:25:54 +1000
-Message-ID: <20110707162554.c069e5c60e103804a99d27b1@canb.auug.org.au>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: [PATCH next 2/2] MAINTAINERS: Update PXA2xx/PXA3xx SUPPORT patterns
+Date: Thu, 07 Jul 2011 09:07:49 +0200
+Message-ID: <4E155B45.7080408@atmel.com>
+References: <e9742e1fca57477517fdb6ea110221d6292eed9c.1309997525.git.joe@perches.com> <e5bfdcabc4041d24277a2453ecc2690072cfdacf.1309997525.git.joe@perches.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__7_Jul_2011_16_25_54_+1000_EREYEaZXySEYjudq"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42434 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752916Ab1GGG0J (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Jul 2011 02:26:09 -0400
+Received: from newsmtp5.atmel.com ([204.2.163.5]:27736 "EHLO
+	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751025Ab1GGHIR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2011 03:08:17 -0400
+In-Reply-To: <e5bfdcabc4041d24277a2453ecc2690072cfdacf.1309997525.git.joe@perches.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>
+To: Joe Perches <joe@perches.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Wan ZongShun <mcuos.com@gmail.com>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>
 
---Signature=_Thu__7_Jul_2011_16_25_54_+1000_EREYEaZXySEYjudq
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Le 07/07/2011 02:28, Joe Perches :
+> commit ca632f556697 ("spi: reorganize drivers")
+> renamed the files, update the MAINTAINERS patterns.
+> 
+> cc: Grant Likely <grant.likely@secretlab.ca>
+> cc: Nicolas Ferre <nicolas.ferre@atmel.com>
 
-Hi all,
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+> cc: Wan ZongShun <mcuos.com@gmail.com>
+> cc: Eric Miao <eric.y.miao@gmail.com>
+> cc: Russell King <linux@arm.linux.org.uk>
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
+> ---
+>  MAINTAINERS |    6 +++---
+>  1 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0ad8ff0..4e5cc19 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1123,7 +1123,7 @@ F:	drivers/watchdog/nuc900_wdt.c
+>  F:	drivers/net/arm/w90p910_ether.c
+>  F:	drivers/mtd/nand/nuc900_nand.c
+>  F:	drivers/rtc/rtc-nuc900.c
+> -F:	drivers/spi/spi_nuc900.c
+> +F:	drivers/spi/spi-nuc900.c
+>  F:	drivers/usb/host/ehci-w90x900.c
+>  F:	drivers/video/nuc900fb.c
+>  
+> @@ -1321,7 +1321,7 @@ F:	drivers/net/macb.*
+>  ATMEL SPI DRIVER
+>  M:	Nicolas Ferre <nicolas.ferre@atmel.com>
+>  S:	Supported
+> -F:	drivers/spi/atmel_spi.*
+> +F:	drivers/spi/spi-atmel.c
+>  
+>  ATMEL USBA UDC DRIVER
+>  M:	Nicolas Ferre <nicolas.ferre@atmel.com>
+> @@ -5142,7 +5142,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  S:	Maintained
+>  F:	arch/arm/mach-pxa/
+>  F:	drivers/pcmcia/pxa2xx*
+> -F:	drivers/spi/pxa2xx*
+> +F:	drivers/spi/spi-pxa2xx*
+>  F:	drivers/usb/gadget/pxa2*
+>  F:	include/sound/pxa2xx-lib.h
+>  F:	sound/arm/pxa*
 
-In file included from drivers/staging/ft1000/ft1000-pcmcia/ft1000_proc.c:26=
-:0:
-drivers/staging/ft1000/ft1000-pcmcia/ft1000.h: In function 'ft1000_read_reg=
-':
-drivers/staging/ft1000/ft1000-pcmcia/ft1000.h:80:2: error: implicit declara=
-tion of function 'inw'
-drivers/staging/ft1000/ft1000-pcmcia/ft1000.h: In function 'ft1000_write_re=
-g':
-drivers/staging/ft1000/ft1000-pcmcia/ft1000.h:86:2: error: implicit declara=
-tion of function 'outw'
 
-Caused by commit 8ac299853b70 ("staging: ft1000-pcmcia: get rid of
-ft1000_dev.h") which I can;t revert (it is too deeply buried).  I have
-just left the breakage for today - hopefully it will be fixed before I
-have to worry about it again. :-)
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__7_Jul_2011_16_25_54_+1000_EREYEaZXySEYjudq
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOFVFyAAoJEDMEi1NhKgbsg14IAKJmoZr3CPikV4kTzI/XEf04
-SSv/uvFMhhQFxWAXR3woMScOyGBiPAoxS86VeOMADLuuAT533bVePT+ay44RvXMh
-OBwYnYnFtDVTKgeKn7ayuI8Slvb9T2XrWGNhDYqDHPAADlLuRe90fgk77LgHAiHo
-hKe5cP0QyHHSWQ3eeO8NVWshXAmw5J8umEoGeVicf9w4tmAHtl53OLxUsL1eCMU7
-MexbMpR86+Goz/0XuCVpNB/MJp6O//r9gDc8E9g3BcLW4CU3MuyWtAEXs/PDoCGk
-OsSVXQEAm41CeoDmdc+WeDJCXknsCCl02gL8wPblxqWl/vpbF/uKJTk37a5Wt0k=
-=hYJ6
------END PGP SIGNATURE-----
-
---Signature=_Thu__7_Jul_2011_16_25_54_+1000_EREYEaZXySEYjudq--
+-- 
+Nicolas Ferre
