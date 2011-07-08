@@ -1,41 +1,52 @@
-From: james_p_freyensee@linux.intel.com
-Subject: [PATCH] PTI implicit declaration fix.
-Date: Fri,  8 Jul 2011 14:34:11 -0700
-Message-ID: <1310160851-26415-1-git-send-email-james_p_freyensee@linux.intel.com>
-References: <james_p_freyensee@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <james_p_freyensee@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, randy.dunlap@oracle.com, sfr@canb.auug.org.au, christophe.guerard@intel.com, pranav.k.sanghadia@intel.com, geert@linux-m68k.org
-List-Id: linux-next.vger.kernel.org
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: build failure after merge of the pci-current tree
+Date: Fri, 8 Jul 2011 15:49:57 -0700
+Message-ID: <20110708154957.253b26b2@jbarnes-desktop>
+References: <20110707105823.43343d2f9446f994f97cfd65@canb.auug.org.au>
+	<20110707085205.7524a5a7@jbarnes-desktop>
+	<20110707181910.GD3543@ram-ThinkPad-T61>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:41658 "HELO
+	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752120Ab1GHWuB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jul 2011 18:50:01 -0400
+In-Reply-To: <20110707181910.GD3543@ram-ThinkPad-T61>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ram Pai <linuxram@us.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: J Freyensee <james_p_freyensee@linux.intel.com>
+On Thu, 7 Jul 2011 11:19:10 -0700
+Ram Pai <linuxram@us.ibm.com> wrote:
 
-In a certain compile configuration, functions like
-'kmalloc' and 'copy_from_user' were coming up as
-implicit errors.  This patch adds slab.h and
-uaccess.h to the driver.
+> On Thu, Jul 07, 2011 at 08:52:05AM -0700, Jesse Barnes wrote:
+> > On Thu, 7 Jul 2011 10:58:23 +1000
+> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > > Hi Jesse,
+> > > 
+> > > After merging the pci-current tree, today's linux-next build (powerpc
+> > > ppc64_defconfig) failed like this:
+> > > 
+> > > drivers/built-in.o:(.toc1+0xb98): undefined reference to `pci_realloc'
+> > > 
+> > > Caused by commit 72007d2b4797 ("PCI: conditional resource-reallocation
+> > > through kernel parameter pci=realloc").
+> > > 
+> > > I have used the pci-current tree from next-20110706 for today.
+> > 
+> > Oops, x86 bits used in common code.  I've pushed a fix that just moves
+> > the variable into setup-bus.c rather than x86/pci/common.c.
+> 
+> Jesse,
+> 
+> 	I have fixed the problem and have a better patch. See if it is acceptable for you.
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: J Freyensee <james_p_freyensee@linux.intel.com>
----
- drivers/misc/pti.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Yes, much better, thanks.  I'll send it to Linus tomorrow if I don't
+hear any complaints.
 
-diff --git a/drivers/misc/pti.c b/drivers/misc/pti.c
-index 8653bd0..4ba4e5f 100644
---- a/drivers/misc/pti.c
-+++ b/drivers/misc/pti.c
-@@ -22,6 +22,8 @@
-  */
- 
- #include <linux/init.h>
-+#include <linux/slab.h>
-+#include <linux/uaccess.h>
- #include <linux/sched.h>
- #include <linux/interrupt.h>
- #include <linux/console.h>
 -- 
-1.7.0.4
+Jesse Barnes, Intel Open Source Technology Center
