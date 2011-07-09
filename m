@@ -1,52 +1,31 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: build failure after merge of the pci-current tree
-Date: Fri, 8 Jul 2011 15:49:57 -0700
-Message-ID: <20110708154957.253b26b2@jbarnes-desktop>
-References: <20110707105823.43343d2f9446f994f97cfd65@canb.auug.org.au>
-	<20110707085205.7524a5a7@jbarnes-desktop>
-	<20110707181910.GD3543@ram-ThinkPad-T61>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: regmap tree for -next
+Date: Sat, 9 Jul 2011 13:53:17 +0900
+Message-ID: <20110709045315.GA13233@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:41658 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752120Ab1GHWuB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jul 2011 18:50:01 -0400
-In-Reply-To: <20110707181910.GD3543@ram-ThinkPad-T61>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:58923 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750790Ab1GIExX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 9 Jul 2011 00:53:23 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ram Pai <linuxram@us.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
 
-On Thu, 7 Jul 2011 11:19:10 -0700
-Ram Pai <linuxram@us.ibm.com> wrote:
+Hi Stephen,
 
-> On Thu, Jul 07, 2011 at 08:52:05AM -0700, Jesse Barnes wrote:
-> > On Thu, 7 Jul 2011 10:58:23 +1000
-> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > > Hi Jesse,
-> > > 
-> > > After merging the pci-current tree, today's linux-next build (powerpc
-> > > ppc64_defconfig) failed like this:
-> > > 
-> > > drivers/built-in.o:(.toc1+0xb98): undefined reference to `pci_realloc'
-> > > 
-> > > Caused by commit 72007d2b4797 ("PCI: conditional resource-reallocation
-> > > through kernel parameter pci=realloc").
-> > > 
-> > > I have used the pci-current tree from next-20110706 for today.
-> > 
-> > Oops, x86 bits used in common code.  I've pushed a fix that just moves
-> > the variable into setup-bus.c rather than x86/pci/common.c.
-> 
-> Jesse,
-> 
-> 	I have fixed the problem and have a better patch. See if it is acceptable for you.
+Please consider including the tree at:
 
-Yes, much better, thanks.  I'll send it to Linus tomorrow if I don't
-hear any complaints.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+in -next, providing Greg is happy with me doing this (the code currently
+sits under drivers/base).  I'm using this tree for development of a
+generic register map API for I2C and SPI type devices, factoring out a
+bunch of widely duplicated code and hopefully also providing a basis for
+further code sharing.
+
+Thanks,
+Mark
