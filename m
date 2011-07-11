@@ -1,66 +1,66 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH -next] usb/gadget: fix net2272 printk formats
-Date: Mon, 11 Jul 2011 09:30:39 +0300
-Message-ID: <20110711063037.GC2680@legolas.emea.dhcp.ti.com>
-References: <20110707172544.867b980a1196db005b577c14@canb.auug.org.au>
- <20110710114147.c4ae629f.randy.dunlap@oracle.com>
-Reply-To: balbi@ti.com
+From: J Freyensee <james_p_freyensee@linux.intel.com>
+Subject: Re: [PATCH] PTI implicit declaration fix.
+Date: Mon, 11 Jul 2011 09:10:53 -0700
+Message-ID: <4E1B208D.1000708@linux.intel.com>
+References: <james_p_freyensee@linux.intel.com> <1310160851-26415-1-git-send-email-james_p_freyensee@linux.intel.com> <CAMuHMdV5OC6ENMK9uOXZBv3Z3MrOMiu0P6az5baM9jdRFwSAvA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+nBD6E3TurpgldQp"
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog109.obsmtp.com ([74.125.149.201]:56532 "EHLO
-	na3sys009aog109.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757158Ab1GKGap (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Jul 2011 02:30:45 -0400
-Content-Disposition: inline
-In-Reply-To: <20110710114147.c4ae629f.randy.dunlap@oracle.com>
+Received: from mga11.intel.com ([192.55.52.93]:7916 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758009Ab1GKQKd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Jul 2011 12:10:33 -0400
+In-Reply-To: <CAMuHMdV5OC6ENMK9uOXZBv3Z3MrOMiu0P6az5baM9jdRFwSAvA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Felipe Balbi <balbi@ti.com>, lud <linux-usb@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, randy.dunlap@oracle.com, sfr@canb.auug.org.au, christophe.guerard@intel.com, pranav.k.sanghadia@intel.com
 
+On 07/09/2011 01:08 AM, Geert Uytterhoeven wrote:
+> On Fri, Jul 8, 2011 at 23:34,<james_p_freyensee@linux.intel.com>  wrote:
+>> From: J Freyensee<james_p_freyensee@linux.intel.com>
+>>
+>> In a certain compile configuration, functions like
+>> 'kmalloc' and 'copy_from_user' were coming up as
+>> implicit errors.  This patch adds slab.h and
+>> uaccess.h to the driver.
+>>
+>> Reported-by: Geert Uytterhoeven<geert@linux-m68k.org>
+>> Acked-by: Geert Uytterhoeven<geert@linux-m68k.org>
+>
+> Please don't add "Acked-by" lines before people have ack'ed your patches.
+>
 
---+nBD6E3TurpgldQp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Okay...so should I re-send this patch out without the Acked-by in it? 
+Or is it okay this time and next time please do this?
 
-On Sun, Jul 10, 2011 at 11:41:47AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
->=20
-> Fix printk formats for dma_addr_t:
->=20
-> drivers/usb/gadget/net2272.c:740: warning: format '%08x' expects type 'un=
-signed int', but argument 6 has type 'dma_addr_t'
-> drivers/usb/gadget/net2272.c:859: warning: format '%08x' expects type 'un=
-signed int', but argument 8 has type 'dma_addr_t'
->=20
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-
-already on Greg's queue:
-
-http://git1.kernel.org/?p=3Dlinux/kernel/git/gregkh/usb-2.6.git;a=3Dcommit;=
-h=3D7b30d19a5736b930c39cd7212ae9409ac0df525d
-
---=20
-balbi
-
---+nBD6E3TurpgldQp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOGpiNAAoJEAv8Txj19kN1J+0IAIg6ExbEPIxWVwzmObJDGNv+
-oaBeM5t7YIWh4hXEzlO+QOeEkMX9Kc92SloWOk1UwcYMZ6AY/w0lvEsfu0/ftuqN
-/mBz/u9hMXqLaCiYhFOzJfR8m2lMJVFRzny3uY+riCy2TkKYMDP/qS4ZoilME1FM
-p2mQBJ9+zn4xB7Oau+RJ9J3JT+6ROI6mfEVSNqQ1h8CaDwKHShRw2OjciKZJQoIH
-Vbs0yrWoZtFR7kKvQveJtWUWRinS2hXNwLpsTNmCM+MpmByBtLW6qJZ5M4yTxXcr
-Baf5JEomny0wa6t8wg2FFNBsuBGHoPjGfnp+JMqiC9P7uBD1SmUCWE+B6kwB7S4=
-=ob5N
------END PGP SIGNATURE-----
-
---+nBD6E3TurpgldQp--
+>> Signed-off-by: J Freyensee<james_p_freyensee@linux.intel.com>
+>> ---
+>>   drivers/misc/pti.c |    2 ++
+>>   1 files changed, 2 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/misc/pti.c b/drivers/misc/pti.c
+>> index 8653bd0..4ba4e5f 100644
+>> --- a/drivers/misc/pti.c
+>> +++ b/drivers/misc/pti.c
+>> @@ -22,6 +22,8 @@
+>>   */
+>>
+>>   #include<linux/init.h>
+>> +#include<linux/slab.h>
+>> +#include<linux/uaccess.h>
+>>   #include<linux/sched.h>
+>>   #include<linux/interrupt.h>
+>>   #include<linux/console.h>
+>
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                  -- Linus Torvalds
