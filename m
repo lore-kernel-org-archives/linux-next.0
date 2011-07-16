@@ -1,49 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rcu tree with the ext4 tree
-Date: Sat, 16 Jul 2011 21:28:38 +1000
-Message-ID: <20110716212838.a84936541c18fb866abcc308@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the of-pci tree
+Date: Sat, 16 Jul 2011 21:15:23 +1000
+Message-ID: <20110716211523.f3932e32f347c29eb4b6254d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__16_Jul_2011_21_28_38_+1000_Ezf=v4TfJhfBDD8W"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Lai Jiangshan <laijs@cn.fujitsu.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, Joerg Roedel <joerg.roedel@amd.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Sat__16_Jul_2011_21_28_38_+1000_Ezf=v4TfJhfBDD8W
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Paul,
+Today's linux-next merge of the tip tree got a conflict in
+include/linux/pci.h between commit 98d9f30c820d ("pci/of: Match PCI
+devices to OF nodes dynamically") from the of-pci tree and commit
+166e9278a3f9 ("x86/ia64: intel-iommu: move to drivers/iommu/") from the
+tip tree.
 
-Today's linux-next merge of the rcu tree got a conflict in
-fs/jbd2/journal.c between commit 4862fd6047ed ("jbd2: remove
-jbd2_dev_to_name() from jbd2 tracepoints") from the ext4 tree and commit
-a5e245951e94 ("jbd2,rcu: Convert call_rcu(free_devcache) to kfree_rcu()")
-from the rcu tree.
-
-The former removes the function modified by the latter, so I did that.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sat__16_Jul_2011_21_28_38_+1000_Ezf=v4TfJhfBDD8W
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOIXXmAAoJEDMEi1NhKgbsU9sH/1gBN/PjFub7Eytbly1qTNLK
-T/ZfedkMfeXhEYoAPDnWByT+aIwgTZ592Ow+L2M+RKafqeesfEg+SRiUMUVCuiEq
-BBSYmzoFOmReON9cRE36FosoGZ4u+NALbbqX2st4H3N4OwR20907ReeFh483Mvt1
-bnnbByu/qGb0y29qgOgiHoK9Fakkn0JyTfB3nG7DazclWcNyDSvconRqtJgyN2aH
-r7j3+grUYSR48xQioOWLEKFJF3HUZsZ8TavtGHp0oEPq4bjQlDEHEGspGosRM69N
-dTsn2xAUo3TC29Es9AwrTmnc2q7zJM8t/yCflWzya4Vk25s7XAdVQuH6rw/JU84=
-=m8M5
------END PGP SIGNATURE-----
-
---Signature=_Sat__16_Jul_2011_21_28_38_+1000_Ezf=v4TfJhfBDD8W--
+diff --cc include/linux/pci.h
+index 2d29218,970bfe0..0000000
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@@ -1589,33 -1589,16 +1589,44 @@@ int pci_vpd_find_tag(const u8 *buf, uns
+  int pci_vpd_find_info_keyword(const u8 *buf, unsigned int off,
+  			      unsigned int len, const char *kw);
+  
+ +/* PCI <-> OF binding helpers */
+ +#ifdef CONFIG_OF
+ +struct device_node;
+ +extern void pci_set_of_node(struct pci_dev *dev);
+ +extern void pci_release_of_node(struct pci_dev *dev);
+ +extern void pci_set_bus_of_node(struct pci_bus *bus);
+ +extern void pci_release_bus_of_node(struct pci_bus *bus);
+ +
+ +/* Arch may override this (weak) */
+ +extern struct device_node * __weak pcibios_get_phb_of_node(struct pci_bus *bus);
+ +
+ +static inline struct device_node *pci_device_to_OF_node(struct pci_dev *pdev)
+ +{
+ +	return pdev ? pdev->dev.of_node : NULL;
+ +}
+ +
+ +static inline struct device_node *pci_bus_to_OF_node(struct pci_bus *bus)
+ +{
+ +	return bus ? bus->dev.of_node : NULL;
+ +}
+ +
+ +#else /* CONFIG_OF */
+ +static inline void pci_set_of_node(struct pci_dev *dev) { }
+ +static inline void pci_release_of_node(struct pci_dev *dev) { }
+ +static inline void pci_set_bus_of_node(struct pci_bus *bus) { }
+ +static inline void pci_release_bus_of_node(struct pci_bus *bus) { }
+ +#endif  /* CONFIG_OF */
+ +
++ /**
++  * pci_find_upstream_pcie_bridge - find upstream PCIe-to-PCI bridge of a device
++  * @pdev: the PCI device
++  *
++  * if the device is PCIE, return NULL
++  * if the device isn't connected to a PCIe bridge (that is its parent is a
++  * legacy PCI bridge and the bridge is directly connected to bus 0), return its
++  * parent
++  */
++ struct pci_dev *pci_find_upstream_pcie_bridge(struct pci_dev *pdev);
++ 
+  #endif /* __KERNEL__ */
+  #endif /* LINUX_PCI_H */
