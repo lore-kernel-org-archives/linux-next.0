@@ -1,35 +1,33 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: Tree for July 16
-Date: Sat, 16 Jul 2011 21:14:09 +0200
-Message-ID: <201107162114.09441.arnd@arndb.de>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for July 16 (tpm)
+Date: Sat, 16 Jul 2011 12:17:34 -0700
+Message-ID: <20110716121734.97b2e291.rdunlap@xenotime.net>
 References: <20110717000815.c83755be9598d34ac8431908@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:59803 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752757Ab1GPTO6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 16 Jul 2011 15:14:58 -0400
+Received: from oproxy9.bluehost.com ([69.89.24.6]:36238 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754277Ab1GPTRi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 16 Jul 2011 15:17:38 -0400
 In-Reply-To: <20110717000815.c83755be9598d34ac8431908@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, tpmdd-devel@lists.sourceforge.net
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>
 
-On Saturday 16 July 2011 16:08:15 Stephen Rothwell wrote:
-> The pci-current tree lost its build failure.
+On Sun, 17 Jul 2011 00:08:15 +1000 Stephen Rothwell wrote:
+
+> Hi all,
 > 
-> The arm-soc tree has complex conflicts against the arm tree so I have
-> dropped it for today.
+> Changes since 20110707:
 
-Sorry about that. I was notified of this before, but didn't get to cleanly
-redo the tree yet. The problem was that I first tried to merge the for-next
-branch of the ARM tree into the arm-soc master branch, but I couldn't find\
-a way to deal with the arm-soc tree getting rebased.
+When CONFIG_PNP is not enabled:
 
-I now plan to start a new arm-soc/for-next branch that will have the same
-contents but also gets rebased. I'll let you know when I get there.
+drivers/char/tpm/tpm_tis.c:845: error: implicit declaration of function 'tpm_tis_reenable_interrupts'
 
-	Arnd
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
