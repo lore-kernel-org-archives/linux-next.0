@@ -1,44 +1,59 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: build failure after merge of the jdelvare-hwmon
- tree
-Date: Sat, 16 Jul 2011 17:33:41 +0200
-Message-ID: <20110716173341.06f95d72@endymion.delvare>
-References: <20110716170601.0ffa821a61bbcd8cf6c3a096@canb.auug.org.au>
+From: Jonas Bonn <jonas@southpole.se>
+Subject: Re: linux-next: manual merge of the rr tree with the openrisc tree
+Date: Sat, 16 Jul 2011 18:01:08 +0200
+Message-ID: <1310832068.14168.5.camel@localhost>
+References: <20110716181723.08d5a7b96cca094dee74f825@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-BftSC4ePodWVm8672H8F"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:42160 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755380Ab1GPPdw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 16 Jul 2011 11:33:52 -0400
-In-Reply-To: <20110716170601.0ffa821a61bbcd8cf6c3a096@canb.auug.org.au>
+Received: from mail.southpole.se ([193.12.106.18]:34232 "EHLO
+	mail.southpole.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751129Ab1GPQBM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 16 Jul 2011 12:01:12 -0400
+In-Reply-To: <20110716181723.08d5a7b96cca094dee74f825@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
 
-On Sat, 16 Jul 2011 17:06:01 +1000, Stephen Rothwell wrote:
-> After merging the jdelvare-hwmon tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/hwmon/max1111.c: In function 'max1111_remove':
-> drivers/hwmon/max1111.c:213:2: error: incompatible type for argument 1 of 'mutex_destroy'
-> include/linux/mutex-debug.h:21:13: note: expected 'struct mutex *' but argument is of type 'struct mutex'
-> 
-> Caused by commit d2fbca2996a8 ("hwmon: (max1111) Fix race condition
-> causing NULL pointer exception").  Missing '&'?
 
-Oh, right, good catch. It went unnoticed so far because mutex_destroy
-resolves to nothing unless CONFIG_DEBUG_MUTEXES=y. I plan to submit a
-patch turning the empty implementation of mutex_destroy to an inline
-function, so that this kind of problem gets caught earlier.
+--=-BftSC4ePodWVm8672H8F
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> I have used the jdelvare-hwmon tree from next-20110707 for today.
+On Sat, 2011-07-16 at 18:17 +1000, Stephen Rothwell wrote:
+> Today's linux-next merge of the rr tree got a conflict in
+> arch/openrisc/kernel/module.c between commit 07319a81a55f ("OpenRISC:
+> Module support") from the openrisc tree and commit 7c71b2f8e35c
+> ("modules: make arch's use default loader hooks") from the rr tree.
+>=20
+> This is an indirect conflict that turns up because
+> arch/openrisc/kernel/module.c is based very closely on a file that is
+> modified by the rr commit.  I have just used the openrisc version of the
+> file, but I assume that much of it could be removed.
 
-Problem is fixed now, thanks.
+The OpenRISC tree should depend on that patch from Rusty's tree and the
+file arch/openrisc/kernel/module.c should be a bit simpler.  I'll push
+out an updated OpenRISC tree this evening that has that fixed and we'll
+see if the conflict doesn't go away.
 
--- 
-Jean Delvare
+That said, I don't quite understand why there's a conflict there at
+all... the OpenRISC tree should have been independent of that patch in
+any case.
+
+/Jonas
+
+--=-BftSC4ePodWVm8672H8F
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEABECAAYFAk4htcIACgkQ70gcjN2673N5ywCfSU3N6+JeSw6U6e1cYMHoaXuC
+lCAAoMx/xr8pEV6OsaWtOTqhopSmJ3qQ
+=X54U
+-----END PGP SIGNATURE-----
+
+--=-BftSC4ePodWVm8672H8F--
