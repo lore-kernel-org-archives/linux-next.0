@@ -1,46 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: arm-soc tree inclusion
-Date: Sat, 16 Jul 2011 14:01:17 +1000
-Message-ID: <20110716140117.084315e1977e88b9bd6949cf@canb.auug.org.au>
-References: <1309641352-18714-1-git-send-email-jonas@southpole.se>
-	<1309967491.3393.41.camel@jerome>
-	<20110707163231.ebc75eef6be02f5490c949d7@canb.auug.org.au>
-	<201107071305.02061.arnd@arndb.de>
+Subject: Re: regmap tree for -next
+Date: Sat, 16 Jul 2011 14:05:08 +1000
+Message-ID: <20110716140508.bb8f01866ddede8dfc05583f@canb.auug.org.au>
+References: <20110709045315.GA13233@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Sat__16_Jul_2011_14_01_17_+1000_NwWoleV.8g23U.i1"
+ boundary="Signature=_Sat__16_Jul_2011_14_05_08_+1000_gHjINl+Xy5D3Xke1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35077 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59621 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750713Ab1GPEBZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 16 Jul 2011 00:01:25 -0400
-In-Reply-To: <201107071305.02061.arnd@arndb.de>
+	id S1750713Ab1GPEFR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 16 Jul 2011 00:05:17 -0400
+In-Reply-To: <20110709045315.GA13233@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jonas Bonn <jonas@southpole.se>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Russell King <rmk@arm.linux.org.uk>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
 
---Signature=_Sat__16_Jul_2011_14_01_17_+1000_NwWoleV.8g23U.i1
+--Signature=_Sat__16_Jul_2011_14_05_08_+1000_gHjINl+Xy5D3Xke1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Arnd,
+Hi Mark,
 
-On Thu, 7 Jul 2011 13:05:01 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+On Sat, 9 Jul 2011 13:53:17 +0900 Mark Brown <broonie@opensource.wolfsonmic=
+ro.com> wrote:
 >
-> Ok, I guess that means you also won't be able to merge the arm-soc tree
-> before the merge window, right?
+> Please consider including the tree at:
 >=20
-> I meant to ask you to include the master branch of
+>    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-n=
+ext
 >=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm/linux-arm-soc.git
->=20
-> but we first had to move it into the right location. Can you add
-> that when you get back?
+> in -next, providing Greg is happy with me doing this (the code currently
+> sits under drivers/base).  I'm using this tree for development of a
+> generic register map API for I2C and SPI type devices, factoring out a
+> bunch of widely duplicated code and hopefully also providing a basis for
+> further code sharing.
 
-I will add this tree in the next linux-next release.
+Given Greg's blessing, I will include this tree in the next linux-next
+release.
 
 Thanks for adding your subsystem tree as a participant of linux-next.  As
 you may know, this is not a judgment of your code.  The purpose of
@@ -76,19 +76,19 @@ project, the testing procedures, the results, the e-mails, etc.  If you
 don't agree to these ground rules, let me know and I'll remove your tree
 from participation in linux-next.
 
---Signature=_Sat__16_Jul_2011_14_01_17_+1000_NwWoleV.8g23U.i1
+--Signature=_Sat__16_Jul_2011_14_05_08_+1000_gHjINl+Xy5D3Xke1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOIQ0NAAoJEDMEi1NhKgbsKvoH/3Df18OUIZG5bOMcMEEpc9KJ
-4jSWaDarHCUtf/CPaYcYpzhoe3w81WeDmGvC06XendxukejK0QXOBRMoXK5g9WkC
-V11YXT4YkWHuFvsRN333dxIhvWei/4Lj5wdoSf0m1MhYpk0QLu4EAyYSCgyYN8CV
-0zxKc2422kiJoqiXN4l2RdJ1gI7625yRMZND0HtWOFCdLXiCsWyyO9aHmllT3Uhs
-J1QDLztLbbMVNil8Yrj2tIiYqMezSic+Alnxk0UTerh8atdeXWVardZGw9OE6bKp
-5/1obv/OQfddW8jBD+wYjNgvfCgYh88bqT2Ot5JgzI6J6oaoGTxwWNxo7mWwWuo=
-=DlmJ
+iQEcBAEBAgAGBQJOIQ30AAoJEDMEi1NhKgbsd0YH/2m0vtgCfQ1WLlerHbzGQR85
+oQCz95RD8XY2ay0vE7pviX+YX13Mbwd+4IrMbeEXcqjroXuGCK7m9kNU1vwEmupx
+795qL5o8HdilNdzURyWY4m82kyJuT+bUPQKRKgeb2q6mDQ944PLBaoRZ1mWjxvhm
+VOIHJ9oiIK3adqMLa/JIS+RWZfq2UKwJ+U7QYMoLzW+pygCMiJoL82bH+P954XoD
+pwmstXTt1ZglqY7OTX9/vjVvT8Pyagbx0aONMhPG+ODv7muf2JdTL+xOUJ/oQ9A/
+1jhHwUEqGAHBdixzzqFP2+5l8uhC2X2z+cbepsl5p3OamWFe/+9Betmkvk1njA0=
+=ZQsW
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__16_Jul_2011_14_01_17_+1000_NwWoleV.8g23U.i1--
+--Signature=_Sat__16_Jul_2011_14_05_08_+1000_gHjINl+Xy5D3Xke1--
