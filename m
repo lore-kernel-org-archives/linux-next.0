@@ -1,18 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the staging tree with the trivial tree
-Date: Sat, 16 Jul 2011 22:53:43 +1000
-Message-ID: <20110716225343.4a0a0472fb944c9ba79f9590@canb.auug.org.au>
+Date: Sat, 16 Jul 2011 22:56:43 +1000
+Message-ID: <20110716225643.426f99dafa7fcebab4cd9be8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Sat__16_Jul_2011_22_53_43_+1000_iyqGDLw7cQPIJN3t"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Sat__16_Jul_2011_22_56_43_+1000_9q/_3xgVD1mz/G/d"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35650 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751163Ab1GPM4u (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 16 Jul 2011 08:56:50 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Jiri Kosina <jkosina@suse.cz>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vitaliy Ivanov <vitalivanov@gmail.com>, Jiri Kosina <jkosina@suse.cz>
 
---Signature=_Sat__16_Jul_2011_22_53_43_+1000_iyqGDLw7cQPIJN3t
+--Signature=_Sat__16_Jul_2011_22_56_43_+1000_9q/_3xgVD1mz/G/d
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -20,30 +24,32 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/generic_serial/ser_a2232.c between commit 28f65c11f2ff
-("treewide: Convert uses of struct resource to resource_size(ptr)") from
-the trivial tree and commit bb2a97e9ccd5 ("Staging: delete generic_serial
-drivers") from the staging tree.
+drivers/staging/westbridge/astoria/arch/arm/plat-omap/include/mach/westbrid=
+ge/westbridge-omap3-pnand-hal/cyashalomap_kernel.h
+drivers/staging/westbridge/astoria/gadget/cyasgadget.h between commit
+e44ba033c565 ("treewide: remove duplicate includes") from the trivial
+tree and commit 78f23926dff9 ("Staging: delete westbridge code") from the
+staging tree.
 
-The latter removes the file, so I did that.
+The latter removes the files, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sat__16_Jul_2011_22_53_43_+1000_iyqGDLw7cQPIJN3t
+--Signature=_Sat__16_Jul_2011_22_56_43_+1000_9q/_3xgVD1mz/G/d
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOIYnXAAoJEDMEi1NhKgbs6AYIAJj5/Z/7QrWpt7qpbNGSkjwv
-b3JGPcuatpca4X+7jfpvEVo2JEs/D960nPJZOdj3RJt/oZBR5yymrIDk5gcSLhFG
-/uiSdl1uTe2qBVwDknRDszg6k6+Y0Q+bO844L8xT0L3HApptWGmNJ02KzNsD8HYq
-wm12bEbLH85t/eyK75yGwge5o2dbydEvYCD5krHvITBX4fV5dHBqhkuYJ+gg28dv
-rSLOxeZrkPRbe+RkfxlCk74pkP0QfneyzII5jIrDavHPko8uRNGUiiksYZ1rxINJ
-QqgiOUl+dw96txCx7AnoxdLqzG8tnn0VCQI1azGNCizTMrZvrRGqV4tBRh1GnDo=
-=ARfK
+iQEcBAEBAgAGBQJOIYqLAAoJEDMEi1NhKgbsiN4H/j2oC60IZCr5wPGjORmwzvMn
+4C3F8LadoOUayPDdcM34eMFffb1smE3Gp7urrUUVuNdzfMFmrtn3bno+Onv0D9Zi
+jkoS5S3ev9Uu+wS3msr4EHYo19ANZDkN2qs1M1TTruok2q1nqaO1aT+Q2TI2kgr6
+e7DNfWO0EzyxJ5UNX9PBfEPRIi1zGWqOgXeNRWjSpqRTjdEDk/orhaQdHHbfNEc+
+m8RM3l1N0rVEiejmf0EJb/hyELG/Zjformb4PGoOpqID/eUWizGBiql8wXWluNAh
+IT0GDKSG6kSWdNW45bQR16+rMxzjMGFcM24LiCmTyw3zFWmvgOXUo3YFYSvCFf4=
+=KdcM
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__16_Jul_2011_22_53_43_+1000_iyqGDLw7cQPIJN3t--
+--Signature=_Sat__16_Jul_2011_22_56_43_+1000_9q/_3xgVD1mz/G/d--
