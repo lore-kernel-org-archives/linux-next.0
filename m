@@ -1,46 +1,64 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] watchdog: hpwdt depends on PCI
-Date: Sat, 16 Jul 2011 12:25:49 -0700
-Message-ID: <20110716122549.2406a0f9.rdunlap@xenotime.net>
+From: "Dmitry Kravkov" <dmitry@broadcom.com>
+Subject: Re: linux-next: Tree for July 16 (net/bnx2x)
+Date: Sat, 16 Jul 2011 23:24:02 +0300
+Message-ID: <1310847842.2826.1.camel@lb-tlvb-dmitry>
 References: <20110717000815.c83755be9598d34ac8431908@canb.auug.org.au>
+ <20110716121427.11760128.rdunlap@xenotime.net>
+Reply-To: dmitry@broadcom.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:51427 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754558Ab1GPTZv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 16 Jul 2011 15:25:51 -0400
-In-Reply-To: <20110717000815.c83755be9598d34ac8431908@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Mingarelli <thomas.mingarelli@hp.com>, akpm <akpm@linux-foundation.org>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20110716121427.11760128.rdunlap@xenotime.net>
+Sender: netdev-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Eilon Greenstein <eilong@broadcom.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Sat, 2011-07-16 at 12:14 -0700, Randy Dunlap wrote:
+> On Sun, 17 Jul 2011 00:08:15 +1000 Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > Changes since 20110707:
+> 
+> When BCM_CNIC is not defined:
+> 
+> drivers/net/bnx2x/bnx2x_cmn.c:1429: error: 'bp' undeclared (first use in this function)
+> 
+> Full kernel config file is attached.
+> 
+> ---
+> ~Randy
+> *** Remember to use Documentation/SubmitChecklist when testing your code ***
+bnx2x: Fix compilation when CNIC is not selected in config
 
-hpwdt is a PCI driver so it should depend on PCI.
-Fixes these build errors:
-
-drivers/watchdog/hpwdt.c:762: error: implicit declaration of function 'pci_iomap'
-drivers/watchdog/hpwdt.c:762: warning: assignment makes pointer from integer without a cast
-drivers/watchdog/hpwdt.c:797: error: implicit declaration of function 'pci_iounmap'
-
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Wim Van Sebroeck <wim@iguana.be>
-Cc: Thomas Mingarelli <thomas.mingarelli@hp.com>
+Reported-by:  Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Dmitry Kravkov <dmitry@broadcom.com>
 ---
- drivers/watchdog/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/bnx2x/bnx2x_cmn.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
---- linux-next-20110716.orig/drivers/watchdog/Kconfig
-+++ linux-next-20110716/drivers/watchdog/Kconfig
-@@ -619,7 +619,7 @@ config IT87_WDT
+diff --git a/drivers/net/bnx2x/bnx2x_cmn.c
+b/drivers/net/bnx2x/bnx2x_cmn.c
+index e5fac62..b05ce93 100644
+--- a/drivers/net/bnx2x/bnx2x_cmn.c
++++ b/drivers/net/bnx2x/bnx2x_cmn.c
+@@ -1403,8 +1403,8 @@ void bnx2x_netif_stop(struct bnx2x *bp, int
+disable_hw)
  
- config HP_WATCHDOG
- 	tristate "HP ProLiant iLO2+ Hardware Watchdog Timer"
--	depends on X86
-+	depends on X86 && PCI
- 	default m
- 	help
- 	  A software monitoring watchdog and NMI sourcing driver. This driver
+ u16 bnx2x_select_queue(struct net_device *dev, struct sk_buff *skb)
+ {
+-#ifdef BCM_CNIC
+ 	struct bnx2x *bp = netdev_priv(dev);
++#ifdef BCM_CNIC
+ 	if (NO_FCOE(bp))
+ 		return skb_tx_hash(dev, skb);
+ 	else {
+-- 
+1.7.2.2
+
+
+
+
