@@ -1,55 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the openrisc tree
-Date: Sat, 16 Jul 2011 18:17:23 +1000
-Message-ID: <20110716181723.08d5a7b96cca094dee74f825@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Sat, 16 Jul 2011 16:44:04 +1000
+Message-ID: <20110716164404.0f791c640332bbad6ab8ea34@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__16_Jul_2011_18_17_23_+1000__p_Y_FqWKDYUvPW6"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
 Received: from chilli.pcug.org.au ([203.10.76.44]:56110 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754182Ab1GPMhE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 16 Jul 2011 08:37:04 -0400
+	id S1754119Ab1GPMhC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 16 Jul 2011 08:37:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonas Bonn <jonas@southpole.se>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Trond Myklebust <Trond.Myklebust@netapp.com>
 
---Signature=_Sat__16_Jul_2011_18_17_23_+1000__p_Y_FqWKDYUvPW6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Al,
 
-Hi Rusty,
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/openrisc/kernel/module.c between commit 07319a81a55f ("OpenRISC:
-Module support") from the openrisc tree and commit 7c71b2f8e35c
-("modules: make arch's use default loader hooks") from the rr tree.
+fs/nfs/read.c: In function 'nfs_do_read':
+fs/nfs/read.c:246:42: error: 'struct nfs_open_context' has no member named 'path'
 
-This is an indirect conflict that turns up because
-arch/openrisc/kernel/module.c is based very closely on a file that is
-modified by the rr commit.  I have just used the openrisc version of the
-file, but I assume that much of it could be removed.
---=20
+Caused by commit 6e4efd568574 ("NFS: Clean up nfs_read_rpcsetup and
+nfs_write_rpcsetup") from the nfs tree interacting with commit
+b98aad31afdc ("nfs_open_context doesn't need struct path either").
+
+I have applied the following merge fixup patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Sat, 16 Jul 2011 16:32:06 +1000
+Subject: [PATCH] vfs/nfs: fixup for nfs_open_context change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/nfs/read.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+index 3170712..2171c04 100644
+--- a/fs/nfs/read.c
++++ b/fs/nfs/read.c
+@@ -243,7 +243,7 @@ static void nfs_read_rpcsetup(struct nfs_page *req, struct nfs_read_data *data,
+ static int nfs_do_read(struct nfs_read_data *data,
+ 		const struct rpc_call_ops *call_ops)
+ {
+-	struct inode *inode = data->args.context->path.dentry->d_inode;
++	struct inode *inode = data->args.context->dentry->d_inode;
+ 
+ 	return nfs_initiate_read(data, NFS_CLIENT(inode), call_ops);
+ }
+-- 
+1.7.5.4
+
+I then got:
+
+fs/nfs/write.c: In function 'nfs_do_write':
+fs/nfs/write.c:892:42: error: 'struct nfs_open_context' has no member named 'path'
+
+So I added the following patch as well:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Sat, 16 Jul 2011 16:39:22 +1000
+Subject: [PATCH] vfs/nfs: another fixup for nfs_open_context change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/nfs/write.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 2d2c773..ebed518 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -889,7 +889,7 @@ static int nfs_do_write(struct nfs_write_data *data,
+ 		const struct rpc_call_ops *call_ops,
+ 		int how)
+ {
+-	struct inode *inode = data->args.context->path.dentry->d_inode;
++	struct inode *inode = data->args.context->dentry->d_inode;
+ 
+ 	return nfs_initiate_write(data, NFS_CLIENT(inode), call_ops, how);
+ }
+-- 
+1.7.5.4
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__16_Jul_2011_18_17_23_+1000__p_Y_FqWKDYUvPW6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOIUkTAAoJEDMEi1NhKgbsl5QH/3DNMTso9yKhkdzGtRbXnbwm
-9rPULedrsy9Ts3bZcQtxLqAYXWGddtENHcIWN+HU9/G2F1uZYDEVdw4j+csJvXNg
-scYuy/85rjZrHft4usvJ1mD/ldJ3SbwPUtOZBsxufTHoBh4Nt7pBcDUPfH8YqQ9u
-C5ejI9a9h6CxvTAuduWx8f3k+o0KUaShobpiMtYjhSjya8jkeOYYvH6qLUofnc5p
-IIhb1BO5IXVp4Mu/gVWvWcodnbqlCOYVdwJXYa2/50jz7qCNc5J6E4w3TOjDZV6A
-+cMXhYxV/8/omrw9ZuAVnDzXpem4fNDI1GxParDFDahlJYBqgoV1TDOLFiNW4DY=
-=UCQ5
------END PGP SIGNATURE-----
-
---Signature=_Sat__16_Jul_2011_18_17_23_+1000__p_Y_FqWKDYUvPW6--
