@@ -1,65 +1,64 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for July 16 (net/bnx2x)
-Date: Sat, 16 Jul 2011 14:01:35 -0700
-Message-ID: <20110716140135.b471aa27.rdunlap@xenotime.net>
+From: Len Brown <lenb@kernel.org>
+Subject: [PATCH] ACPI: APEI build fix
+Date: Sat, 16 Jul 2011 18:16:20 -0400 (EDT)
+Message-ID: <alpine.LFD.2.02.1107161815220.4339@x980>
 References: <20110717000815.c83755be9598d34ac8431908@canb.auug.org.au>
-	<20110716121427.11760128.rdunlap@xenotime.net>
-	<1310847842.2826.1.camel@lb-tlvb-dmitry>
-	<20110716.132643.101780166611692580.davem@davemloft.net>
-	<1310848256.2826.3.camel@lb-tlvb-dmitry>
+ <20110716120304.83d79985.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1310848256.2826.3.camel@lb-tlvb-dmitry>
-Sender: linux-kernel-owner@vger.kernel.org
-To: dmitry@broadcom.com
-Cc: David Miller <davem@davemloft.net>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Eilon Greenstein <eilong@broadcom.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-reply-to: <20110716120304.83d79985.rdunlap@xenotime.net>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Sat, 16 Jul 2011 23:30:56 +0300 Dmitry Kravkov wrote:
+From: Len Brown <len.brown@intel.com>
 
-> On Sat, 2011-07-16 at 13:26 -0700, David Miller wrote:
-> > From: "Dmitry Kravkov" <dmitry@broadcom.com>
-> > Date: Sat, 16 Jul 2011 23:24:02 +0300
-> > 
-> > > @@ -1403,8 +1403,8 @@ void bnx2x_netif_stop(struct bnx2x *bp, int
-> > > disable_hw)
-> > >  
-> > 
-> > Patch corrupted by your email client, this long line was chopped
-> > up into two lines.
-> > 
-> bnx2x: Fix compilation when CNIC is not selected in config
-> 
-> Reported-by:  Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: Dmitry Kravkov <dmitry@broadcom.com>
+as GHES is optional...
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+When # CONFIG_ACPI_APEI_GHES is not set:
 
-Thanks.
+(.init.text+0x4c22): undefined reference to `ghes_disable'
 
-> ---
->  drivers/net/bnx2x/bnx2x_cmn.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/net/bnx2x/bnx2x_cmn.c b/drivers/net/bnx2x/bnx2x_cmn.c
-> index e5fac62..b05ce93 100644
-> --- a/drivers/net/bnx2x/bnx2x_cmn.c
-> +++ b/drivers/net/bnx2x/bnx2x_cmn.c
-> @@ -1403,8 +1403,8 @@ void bnx2x_netif_stop(struct bnx2x *bp, int disable_hw)
->  
->  u16 bnx2x_select_queue(struct net_device *dev, struct sk_buff *skb)
->  {
-> -#ifdef BCM_CNIC
->  	struct bnx2x *bp = netdev_priv(dev);
-> +#ifdef BCM_CNIC
->  	if (NO_FCOE(bp))
->  		return skb_tx_hash(dev, skb);
->  	else {
-> -- 
-
-
+Signed-off-by: Len Brown <len.brown@intel.com>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ drivers/acpi/bus.c  |    2 --
+ include/acpi/apei.h |    4 ++++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+index 43ce3b0..437ddbf 100644
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -544,10 +544,8 @@ static void acpi_bus_osc_support(void)
+ 	capbuf[OSC_SUPPORT_TYPE] |= OSC_SB_PPC_OST_SUPPORT;
+ #endif
+ 
+-#ifdef CONFIG_ACPI_APEI_GHES
+ 	if (!ghes_disable)
+ 		capbuf[OSC_SUPPORT_TYPE] |= OSC_SB_APEI_SUPPORT;
+-#endif
+ 	if (ACPI_FAILURE(acpi_get_handle(NULL, "\\_SB", &handle)))
+ 		return;
+ 	if (ACPI_SUCCESS(acpi_run_osc(handle, &context))) {
+diff --git a/include/acpi/apei.h b/include/acpi/apei.h
+index d40bc55..51a527d 100644
+--- a/include/acpi/apei.h
++++ b/include/acpi/apei.h
+@@ -18,7 +18,11 @@
+ 
+ extern int hest_disable;
+ extern int erst_disable;
++#ifdef CONFIG_ACPI_APEI_GHES
+ extern int ghes_disable;
++#else
++#define ghes_disable 1
++#endif
+ 
+ #ifdef CONFIG_ACPI_APEI
+ void __init acpi_hest_init(void);
+-- 
+1.7.6.178.g55272
+
+
