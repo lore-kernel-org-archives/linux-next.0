@@ -1,49 +1,67 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Sun, 17 Jul 2011 23:44:35 +0200
-Message-ID: <201107172344.35422.arnd@arndb.de>
-References: <20110716150741.a2ed85a4f7addcfccedf16e7@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] tpm: Fix compilation warning when CONFIG_PNP is not
+ defined
+Date: Mon, 18 Jul 2011 09:16:24 +1000
+Message-ID: <20110718091624.bd262188190c5d7a05416b99@canb.auug.org.au>
+References: <1310903758.15064.9.camel@d941e-10>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__18_Jul_2011_09_16_24_+1000_Sfwjr4.RsX0XiBnz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:54028 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752543Ab1GQVpY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Jul 2011 17:45:24 -0400
-In-Reply-To: <20110716150741.a2ed85a4f7addcfccedf16e7@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56870 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755504Ab1GQXQh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Jul 2011 19:16:37 -0400
+In-Reply-To: <1310903758.15064.9.camel@d941e-10>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: rdunlap@xenotime.net, Rajiv Andrade <srajiv@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org
 
-On Saturday 16 July 2011 07:07:41 Stephen Rothwell wrote:
-> Hi Arnd,
-> 
-> Today's linux-next merge of the arm-soc tree got conflicts in lots of
-> files due to commit 7712eeac230b ("arm-soc: remove rmk/for-next merge")
-> from the arm-soc tree (and maybe some others).
-> 
-> Arnd, is there some way that you can rebuild (rebase) your tree without
-> the merge of Russell's tree and the consequent revert of that merge?  It
-> is likely to revert a whole swath of changes from Russell's tree :-(
-> 
-> I have dropped the arm-soc tree for today.
+--Signature=_Mon__18_Jul_2011_09_16_24_+1000_Sfwjr4.RsX0XiBnz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've done a new branch 'for-next' now to replace the 'master' branch, and
-it does not contain the broken merge any more. Please change your list
-of branches accordingly.
+Hi Stefan,
 
-There are three other conflicts that I found when test-merging the arm-soc
-tree with the current linux-next tree. I've already written about the
-omap_dss2 mismerge, which is a huge mess and I've resolved that conflict
-on my end for now. There is a simpler conflict with the gpio tree, which
-I've also resolved in a similar way by adding a dependency here.
+On Sun, 17 Jul 2011 07:55:58 -0400 Stefan Berger <stefanb@linux.vnet.ibm.co=
+m> wrote:
+>
+> The is_itpm() function is only accessed from a block surrounded by
+> #ifdef CONFIG_PNP. Therefore, also surround it with #ifdef CONFIG_PNP
+                ^^^
 
-The third conflict in arch/arm/mach-imx/mach-mx27_3ds.c is much simpler, so
-I assume you will do the obvious hand-merge.
+> --- linux-2.6.orig/drivers/char/tpm/tpm_tis.c
+> +++ linux-2.6/drivers/char/tpm/tpm_tis.c
+> @@ -80,7 +80,7 @@ enum tis_defaults {
+>  static LIST_HEAD(tis_chips);
+>  static DEFINE_SPINLOCK(tis_lock);
+> =20
+> -#ifdef CONFIG_ACPI
+> +#ifdef CONFIG_PNPN
+                 ^^^^
+Is this a typo?
 
-Thanks,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	Arnd
+--Signature=_Mon__18_Jul_2011_09_16_24_+1000_Sfwjr4.RsX0XiBnz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOI21IAAoJEDMEi1NhKgbsC7AIAJCXuCvY0V1QVMs8TUdCJo+P
+zTJXc3Te1F6Dai+0WLF5MTBL0SDMiRh+AYYJxpWIh45Kryi4y2R9roG8JnOyIDQv
+P5U69P+PmepW2ppI1MqyTsA2klu1fKtrsQ1FA9GntG0yw4bEgF/rMUOXT+kvNBt5
+zm+lfVCsMjl33DmuBKedyUb6dtilp7Xe3zODryV45UeQTRMJbxTrXMx6Tl78Q5gj
+HM6NnrjTOrtVgpdoiEcOPR/n6cVcI+MNoumcIVevOrCInMPwfUaaQexRraDAzMVp
+2Tm/m/aw+bnyOgd0k2G7RGM/oZIftJKz94h1zwwRp2QajTRFG+TBphOuO9+q+4A=
+=rX8J
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Jul_2011_09_16_24_+1000_Sfwjr4.RsX0XiBnz--
