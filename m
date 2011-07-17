@@ -1,80 +1,91 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH] ACPI: APEI build fix
-Date: Sat, 16 Jul 2011 16:45:03 -0700
-Message-ID: <20110716164503.0ee2dc3d.rdunlap@xenotime.net>
-References: <20110717000815.c83755be9598d34ac8431908@canb.auug.org.au>
-	<20110716120304.83d79985.rdunlap@xenotime.net>
-	<alpine.LFD.2.02.1107161815220.4339@x980>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: [PATCH] tpm: Move tpm_tis_reenable_interrupts out of CONFIG_PNP
+ block
+Date: Sun, 17 Jul 2011 01:04:24 -0400
+Message-ID: <1310879064.15064.4.camel@d941e-10>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:53724 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754190Ab1GPXpG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 16 Jul 2011 19:45:06 -0400
-In-Reply-To: <alpine.LFD.2.02.1107161815220.4339@x980>
+Received: from e6.ny.us.ibm.com ([32.97.182.146]:43992 "EHLO e6.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750942Ab1GQFE5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Jul 2011 01:04:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: sfr@canb.auug.org.au, Rajiv Andrade <srajiv@linux.vnet.ibm.com>, James Morris <jmorris@namei.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On Sat, 16 Jul 2011 18:16:20 -0400 (EDT) Len Brown wrote:
+This patch moves the tpm_tis_reenable_interrupts function out of the
+CONFIG_PNP-surrounded #define block. This solves a compilation error in
+case CONFIG_PNP is not defined.
 
-> From: Len Brown <len.brown@intel.com>
-> 
-> as GHES is optional...
-> 
-> When # CONFIG_ACPI_APEI_GHES is not set:
-> 
-> (.init.text+0x4c22): undefined reference to `ghes_disable'
-> 
-> Signed-off-by: Len Brown <len.brown@intel.com>
-
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-
-Thanks.
-
-> ---
->  drivers/acpi/bus.c  |    2 --
->  include/acpi/apei.h |    4 ++++
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
-> index 43ce3b0..437ddbf 100644
-> --- a/drivers/acpi/bus.c
-> +++ b/drivers/acpi/bus.c
-> @@ -544,10 +544,8 @@ static void acpi_bus_osc_support(void)
->  	capbuf[OSC_SUPPORT_TYPE] |= OSC_SB_PPC_OST_SUPPORT;
->  #endif
->  
-> -#ifdef CONFIG_ACPI_APEI_GHES
->  	if (!ghes_disable)
->  		capbuf[OSC_SUPPORT_TYPE] |= OSC_SB_APEI_SUPPORT;
-> -#endif
->  	if (ACPI_FAILURE(acpi_get_handle(NULL, "\\_SB", &handle)))
->  		return;
->  	if (ACPI_SUCCESS(acpi_run_osc(handle, &context))) {
-> diff --git a/include/acpi/apei.h b/include/acpi/apei.h
-> index d40bc55..51a527d 100644
-> --- a/include/acpi/apei.h
-> +++ b/include/acpi/apei.h
-> @@ -18,7 +18,11 @@
->  
->  extern int hest_disable;
->  extern int erst_disable;
-> +#ifdef CONFIG_ACPI_APEI_GHES
->  extern int ghes_disable;
-> +#else
-> +#define ghes_disable 1
-> +#endif
->  
->  #ifdef CONFIG_ACPI_APEI
->  void __init acpi_hest_init(void);
-> -- 
-
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ drivers/char/tpm/tpm_tis.c |   45 +++++++++++++++++++++++----------------------
+ 1 file changed, 23 insertions(+), 22 deletions(-)
+
+Index: linux-2.6/drivers/char/tpm/tpm_tis.c
+===================================================================
+--- linux-2.6.orig/drivers/char/tpm/tpm_tis.c
++++ linux-2.6/drivers/char/tpm/tpm_tis.c
+@@ -731,6 +731,29 @@ out_err:
+ 	tpm_remove_hardware(chip->dev);
+ 	return rc;
+ }
++
++static void tpm_tis_reenable_interrupts(struct tpm_chip *chip)
++{
++	u32 intmask;
++
++	/* reenable interrupts that device may have lost or
++	   BIOS/firmware may have disabled */
++	iowrite8(chip->vendor.irq, chip->vendor.iobase +
++		 TPM_INT_VECTOR(chip->vendor.locality));
++
++	intmask =
++	    ioread32(chip->vendor.iobase +
++		     TPM_INT_ENABLE(chip->vendor.locality));
++
++	intmask |= TPM_INTF_CMD_READY_INT
++	    | TPM_INTF_LOCALITY_CHANGE_INT | TPM_INTF_DATA_AVAIL_INT
++	    | TPM_INTF_STS_VALID_INT | TPM_GLOBAL_INT_ENABLE;
++
++	iowrite32(intmask,
++		  chip->vendor.iobase + TPM_INT_ENABLE(chip->vendor.locality));
++}
++
++
+ #ifdef CONFIG_PNP
+ static int __devinit tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
+ 				      const struct pnp_device_id *pnp_id)
+@@ -757,28 +780,6 @@ static int tpm_tis_pnp_suspend(struct pn
+ 	return tpm_pm_suspend(&dev->dev, msg);
+ }
+ 
+-static void tpm_tis_reenable_interrupts(struct tpm_chip *chip)
+-{
+-	u32 intmask;
+-
+-	/* reenable interrupts that device may have lost or
+-	   BIOS/firmware may have disabled */
+-	iowrite8(chip->vendor.irq, chip->vendor.iobase +
+-		 TPM_INT_VECTOR(chip->vendor.locality));
+-
+-	intmask =
+-	    ioread32(chip->vendor.iobase +
+-		     TPM_INT_ENABLE(chip->vendor.locality));
+-
+-	intmask |= TPM_INTF_CMD_READY_INT
+-	    | TPM_INTF_LOCALITY_CHANGE_INT | TPM_INTF_DATA_AVAIL_INT
+-	    | TPM_INTF_STS_VALID_INT | TPM_GLOBAL_INT_ENABLE;
+-
+-	iowrite32(intmask,
+-		  chip->vendor.iobase + TPM_INT_ENABLE(chip->vendor.locality));
+-}
+-
+-
+ static int tpm_tis_pnp_resume(struct pnp_dev *dev)
+ {
+ 	struct tpm_chip *chip = pnp_get_drvdata(dev);
