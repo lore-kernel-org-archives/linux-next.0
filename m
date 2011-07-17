@@ -1,29 +1,68 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the trivial
- tree
-Date: Sun, 17 Jul 2011 11:16:10 +0200
-Message-ID: <20110717091610.GE25824@kroah.com>
-References: <20110716225643.426f99dafa7fcebab4cd9be8@canb.auug.org.au>
+From: Harry Wei <jiaweiwei.xiyou@gmail.com>
+Subject: Re: [PATCH] tpm: Move tpm_tis_reenable_interrupts out of
+ CONFIG_PNP block
+Date: Sun, 17 Jul 2011 19:53:23 +0800
+Message-ID: <20110717115320.GA14595@gmail.com>
+References: <1310879064.15064.4.camel@d941e-10>
+ <20110716223426.f1507465.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=gb2312
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-iw0-f174.google.com ([209.85.214.174]:52346 "EHLO
+	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751490Ab1GQLxn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Jul 2011 07:53:43 -0400
 Content-Disposition: inline
-In-Reply-To: <20110716225643.426f99dafa7fcebab4cd9be8@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vitaliy Ivanov <vitalivanov@gmail.com>, Jiri Kosina <jkosina@suse.cz>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20110716223426.f1507465.rdunlap@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: stefanb@linux.vnet.ibm.com, sfr@canb.auug.org.au, srajiv@linux.vnet.ibm.com, jmorris@namei.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, kongjianjun@gmail.com, harryxiyou@gmail.com
 
-On Sat, Jul 16, 2011 at 10:56:43PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/westbridge/astoria/arch/arm/plat-omap/include/mach/westbridge/westbridge-omap3-pnand-hal/cyashalomap_kernel.h
-> drivers/staging/westbridge/astoria/gadget/cyasgadget.h between commit
-> e44ba033c565 ("treewide: remove duplicate includes") from the trivial
-> tree and commit 78f23926dff9 ("Staging: delete westbridge code") from the
-> staging tree.
-> 
-> The latter removes the files, so I did that.
+On Sat, Jul 16, 2011 at 10:34:26PM -0700, Randy Dunlap wrote:
+> New warning:
+> drivers/char/tpm/tpm_tis.c:97: warning: 'is_itpm' defined but not used
 
-Thanks, that is correct.
+From: Harry Wei <harryxiyou@gmail.com>
+
+This patch can fix above warning.
+
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Harry Wei <harryxiyou@gmail.com>
+---
+ drivers/char/tpm/tpm_tis.c |   20 --------------------
+ 1 files changed, 0 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index dd21df5..5929bb2 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -79,26 +79,6 @@ enum tis_defaults {
+ static LIST_HEAD(tis_chips);
+ static DEFINE_SPINLOCK(tis_lock);
+ 
+-#ifdef CONFIG_ACPI
+-static int is_itpm(struct pnp_dev *dev)
+-{
+-	struct acpi_device *acpi = pnp_acpi_device(dev);
+-	struct acpi_hardware_id *id;
+-
+-	list_for_each_entry(id, &acpi->pnp.ids, list) {
+-		if (!strcmp("INTC0102", id->id))
+-			return 1;
+-	}
+-
+-	return 0;
+-}
+-#else
+-static int is_itpm(struct pnp_dev *dev)
+-{
+-	return 0;
+-}
+-#endif
+-
+ static int check_locality(struct tpm_chip *chip, int l)
+ {
+ 	if ((ioread8(chip->vendor.iobase + TPM_ACCESS(l)) &
+-- 
+1.7.0.4
