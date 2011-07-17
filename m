@@ -1,71 +1,49 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH] tpm: Fix compilation warning when CONFIG_PNP is not
- defined
-Date: Sun, 17 Jul 2011 10:08:07 -0700
-Message-ID: <20110717100807.97637264.rdunlap@xenotime.net>
-References: <1310903758.15064.9.camel@d941e-10>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Sun, 17 Jul 2011 23:44:35 +0200
+Message-ID: <201107172344.35422.arnd@arndb.de>
+References: <20110716150741.a2ed85a4f7addcfccedf16e7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:38038 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754316Ab1GQRIK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Jul 2011 13:08:10 -0400
-In-Reply-To: <1310903758.15064.9.camel@d941e-10>
+Received: from moutng.kundenserver.de ([212.227.126.187]:54028 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752543Ab1GQVpY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Jul 2011 17:45:24 -0400
+In-Reply-To: <20110716150741.a2ed85a4f7addcfccedf16e7@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: Rajiv Andrade <srajiv@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-On Sun, 17 Jul 2011 07:55:58 -0400 Stefan Berger wrote:
-
-> The is_itpm() function is only accessed from a block surrounded by
-> #ifdef CONFIG_PNP. Therefore, also surround it with #ifdef CONFIG_PNP
-> and remove the #else branch causing the warning.
+On Saturday 16 July 2011 07:07:41 Stephen Rothwell wrote:
+> Hi Arnd,
 > 
-> http://lxr.linux.no/#linux+v2.6.39/drivers/char/tpm/tpm_tis.c#L622
+> Today's linux-next merge of the arm-soc tree got conflicts in lots of
+> files due to commit 7712eeac230b ("arm-soc: remove rmk/for-next merge")
+> from the arm-soc tree (and maybe some others).
 > 
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Acked-by:  Randy Dunlap <rdunlap@xenotime.net>
-
-Thanks.
-
+> Arnd, is there some way that you can rebuild (rebase) your tree without
+> the merge of Russell's tree and the consequent revert of that merge?  It
+> is likely to revert a whole swath of changes from Russell's tree :-(
 > 
-> ---
->  drivers/char/tpm/tpm_tis.c |    7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> Index: linux-2.6/drivers/char/tpm/tpm_tis.c
-> ===================================================================
-> --- linux-2.6.orig/drivers/char/tpm/tpm_tis.c
-> +++ linux-2.6/drivers/char/tpm/tpm_tis.c
-> @@ -80,7 +80,7 @@ enum tis_defaults {
->  static LIST_HEAD(tis_chips);
->  static DEFINE_SPINLOCK(tis_lock);
->  
-> -#ifdef CONFIG_ACPI
-> +#ifdef CONFIG_PNPN
->  static int is_itpm(struct pnp_dev *dev)
->  {
->  	struct acpi_device *acpi = pnp_acpi_device(dev);
-> @@ -93,11 +93,6 @@ static int is_itpm(struct pnp_dev *dev)
->  
->  	return 0;
->  }
-> -#else
-> -static int is_itpm(struct pnp_dev *dev)
-> -{
-> -	return 0;
-> -}
->  #endif
->  
->  static int check_locality(struct tpm_chip *chip, int l)
-> 
+> I have dropped the arm-soc tree for today.
 
+I've done a new branch 'for-next' now to replace the 'master' branch, and
+it does not contain the broken merge any more. Please change your list
+of branches accordingly.
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+There are three other conflicts that I found when test-merging the arm-soc
+tree with the current linux-next tree. I've already written about the
+omap_dss2 mismerge, which is a huge mess and I've resolved that conflict
+on my end for now. There is a simpler conflict with the gpio tree, which
+I've also resolved in a similar way by adding a dependency here.
+
+The third conflict in arch/arm/mach-imx/mach-mx27_3ds.c is much simpler, so
+I assume you will do the obvious hand-merge.
+
+Thanks,
+
+	Arnd
