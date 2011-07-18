@@ -1,59 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the final tree
-Date: Mon, 18 Jul 2011 19:30:53 +1000
-Message-ID: <20110718193053.623d28dc4643ab488b6347d5@canb.auug.org.au>
+Date: Mon, 18 Jul 2011 19:35:25 +1000
+Message-ID: <20110718193525.f7ee20f705da1f0ed84955b8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__18_Jul_2011_19_30_53_+1000_HE_.qhnIhBqHI=P1"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__18_Jul_2011_19_35_25_+1000_G893vTy6vEziphYl"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48531 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750758Ab1GRJfi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Jul 2011 05:35:38 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
 
---Signature=_Mon__18_Jul_2011_19_30_53_+1000_HE_.qhnIhBqHI=P1
+--Signature=_Mon__18_Jul_2011_19_35_25_+1000_G893vTy6vEziphYl
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (sparc64 defconfig)
-failed like this:
+After merging the final tree, today's linux-next build (powerpc
+allysconfig) failed like this:
 
-In file included from arch/sparc/include/asm/pgtable.h:4:0,
-                 from include/linux/mm.h:41,
-                 from include/linux/fs.h:395,
-                 from include/linux/compat.h:15,
-                 from arch/sparc/include/asm/siginfo.h:19,
-                 from include/linux/signal.h:5,
-                 from include/linux/sched.h:73,
-                 from arch/sparc/kernel/asm-offsets.c:13:
-arch/sparc/include/asm/pgtable_64.h: In function '__set_pte_at':
-arch/sparc/include/asm/pgtable_64.h:674:6: error: 'init_mm' undeclared (fir=
-st use in this function)
+arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
+arch/powerpc/kernel/exceptions-64s.S:1151: Error: attempt to move .org back=
+wards
+arch/powerpc/kernel/exceptions-64s.S:1160: Error: attempt to move .org back=
+wards
 
-I assume some include file changes.  Anyone have any clues how to find
-this?
+This is probably powerpc or kvm tree related.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__18_Jul_2011_19_30_53_+1000_HE_.qhnIhBqHI=P1
+--Signature=_Mon__18_Jul_2011_19_35_25_+1000_G893vTy6vEziphYl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOI/1NAAoJEDMEi1NhKgbsl+AH/36zoa+KgbLCI8dLAOG+rJdj
-kbn86Bj/uLBrtqMDB6sqU94CpGCfnUJ6OqYOOXlrsi0YNa0PK9kqIDMP7whxGF4o
-jMbNDZlq+KyzDK2G/keFAxoPu5zXATWIDOLGJGoLpm2SMw+H7SsH0KFuLw+zpynR
-x8OhH3boiUPdEL8WyOu231RtbOElpBkAedLIplctSrVVkOi1VdwwTqiLyOoenD8z
-KcgHA4eSLH80Klmp2adLj6z6p1kzL4k2gWqMyiYjjqSnqfFVDTJOxWPADqFcsoO+
-r58T6vs8Ftpy4AyBhbJi5O9ZchRIgQMeAqDmOVXM1Lel8wg8j3W/NuCZ+mzUfW8=
-=Ayfv
+iQEcBAEBAgAGBQJOI/5dAAoJEDMEi1NhKgbsoBQH/jmLT1Ye+7LHoHgv1rBrUVJs
+XrbavM9XnFLkC20ges+0daBMNsZqbXqD3uaxo10vCMtLEO97Rc9nDDaJXIZeZa++
+QF/8bZyXxHG9xlRLLLSZo/7vVUz1Sb0NPHJ1wWu9icN6Xly/k4pel7qrxkA36NMH
+7t8+B7iu2dOswZDJaVSmwCfqVN0QQ5pd8U4CdD6fldtX5hKxCQEebdbQTWYE0A9r
+qGwPOcrJTLeBkdWCugpaBhosU9qF92fnZBYdjHEkQUg5/mYIXgyCLRmLP8JS+gxC
+0u56L9uKbmDrw8FuUlFH7pN2mZLDC/kSW/eFK1E66PyR6Z6JPA5/8rXtsH/eTvY=
+=kIiU
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__18_Jul_2011_19_30_53_+1000_HE_.qhnIhBqHI=P1--
+--Signature=_Mon__18_Jul_2011_19_35_25_+1000_G893vTy6vEziphYl--
