@@ -1,57 +1,51 @@
-From: "Mingarelli, Thomas" <Thomas.Mingarelli@hp.com>
-Subject: RE: [PATCH -next] watchdog: hpwdt depends on PCI
-Date: Mon, 18 Jul 2011 17:40:53 +0100
-Message-ID: <183C1D5A376DE343AA8F94FC2A1EC1497D7ADD1EF0@GVW1091EXB.americas.hpqcorp.net>
-References: <20110717000815.c83755be9598d34ac8431908@canb.auug.org.au>
- <20110716122549.2406a0f9.rdunlap@xenotime.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] asm-generic/iomap.h: add stubs for pci iomap/iounmap
+Date: Mon, 18 Jul 2011 09:55:57 -0700
+Message-ID: <20110718095557.cd70fa01.rdunlap@xenotime.net>
+References: <20110718203501.232bd176e83ff65f056366e6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from g4t0014.houston.hp.com ([15.201.24.17]:2855 "EHLO
-	g4t0014.houston.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752446Ab1GRQmY convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jul 2011 12:42:24 -0400
-In-Reply-To: <20110716122549.2406a0f9.rdunlap@xenotime.net>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Wim Van Sebroeck <wim@iguana.be>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
-
-Ack'd by Tom Mingarelli.
-
------Original Message-----
-From: Randy Dunlap [mailto:rdunlap@xenotime.net] 
-Sent: Saturday, July 16, 2011 2:26 PM
-To: Stephen Rothwell; Wim Van Sebroeck
-Cc: linux-next@vger.kernel.org; LKML; Mingarelli, Thomas; akpm
-Subject: [PATCH -next] watchdog: hpwdt depends on PCI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110718203501.232bd176e83ff65f056366e6@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, davem@davemloft.net, Jonas Bonn <jonas@southpole.se>, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <rdunlap@xenotime.net>
 
-hpwdt is a PCI driver so it should depend on PCI.
-Fixes these build errors:
+When CONFIG_PCI is not enabled, CONFIG_EISA=y, and CONFIG_GENERIC_IOMAP=y,
+drivers/net/3c59x.c build fails due to a recent small change to
+<asm-generic/iomap.h> that surrounds pci_iomap() and pci_iounmap()
+with #ifdef CONFIG_PCI/#endif.  Since that patch to iomap.h looks
+correct, add stubs for pci_iomap() and pci_iounmap() with CONFIG_PCI
+is not enabled to fix the build errors.
 
-drivers/watchdog/hpwdt.c:762: error: implicit declaration of function 'pci_iomap'
-drivers/watchdog/hpwdt.c:762: warning: assignment makes pointer from integer without a cast
-drivers/watchdog/hpwdt.c:797: error: implicit declaration of function 'pci_iounmap'
+drivers/net/3c59x.c:1026: error: implicit declaration of function 'pci_iomap'
+drivers/net/3c59x.c:1038: error: implicit declaration of function 'pci_iounmap'
 
 Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Wim Van Sebroeck <wim@iguana.be>
-Cc: Thomas Mingarelli <thomas.mingarelli@hp.com>
+Cc: Jonas Bonn <jonas@southpole.se>
+Cc: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/watchdog/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/asm-generic/iomap.h |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- linux-next-20110716.orig/drivers/watchdog/Kconfig
-+++ linux-next-20110716/drivers/watchdog/Kconfig
-@@ -619,7 +619,7 @@ config IT87_WDT
+--- linux-next-20110718.orig/include/asm-generic/iomap.h
++++ linux-next-20110718/include/asm-generic/iomap.h
+@@ -71,6 +71,14 @@ extern void ioport_unmap(void __iomem *)
+ struct pci_dev;
+ extern void __iomem *pci_iomap(struct pci_dev *dev, int bar, unsigned long max);
+ extern void pci_iounmap(struct pci_dev *dev, void __iomem *);
++#else
++struct pci_dev;
++static inline void __iomem *pci_iomap(struct pci_dev *dev, int bar, unsigned long max)
++{
++	return NULL;
++}
++static inline void pci_iounmap(struct pci_dev *dev, void __iomem *addr)
++{ }
+ #endif
  
- config HP_WATCHDOG
- 	tristate "HP ProLiant iLO2+ Hardware Watchdog Timer"
--	depends on X86
-+	depends on X86 && PCI
- 	default m
- 	help
- 	  A software monitoring watchdog and NMI sourcing driver. This driver
+ #endif
