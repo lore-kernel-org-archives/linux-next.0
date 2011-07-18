@@ -1,67 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] tpm: Fix compilation warning when CONFIG_PNP is not
- defined
-Date: Mon, 18 Jul 2011 09:16:24 +1000
-Message-ID: <20110718091624.bd262188190c5d7a05416b99@canb.auug.org.au>
-References: <1310903758.15064.9.camel@d941e-10>
+Subject: linux-next: failure importing the jdelvare-hwmon tree
+Date: Mon, 18 Jul 2011 10:46:46 +1000
+Message-ID: <20110718104646.c6b59b75792a1688d079fa28@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__18_Jul_2011_09_16_24_+1000_Sfwjr4.RsX0XiBnz"
+ boundary="Signature=_Mon__18_Jul_2011_10_46_46_+1000_UM5=cHOTamD_DQGD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56870 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52560 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755504Ab1GQXQh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Jul 2011 19:16:37 -0400
-In-Reply-To: <1310903758.15064.9.camel@d941e-10>
+	id S1754979Ab1GRAqz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Jul 2011 20:46:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: rdunlap@xenotime.net, Rajiv Andrade <srajiv@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__18_Jul_2011_09_16_24_+1000_Sfwjr4.RsX0XiBnz
+--Signature=_Mon__18_Jul_2011_10_46_46_+1000_UM5=cHOTamD_DQGD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stefan,
+Hi Jean,
 
-On Sun, 17 Jul 2011 07:55:58 -0400 Stefan Berger <stefanb@linux.vnet.ibm.co=
-m> wrote:
->
-> The is_itpm() function is only accessed from a block surrounded by
-> #ifdef CONFIG_PNP. Therefore, also surround it with #ifdef CONFIG_PNP
-                ^^^
+Importing the jdelvare-hwmon tree failed like this:
 
-> --- linux-2.6.orig/drivers/char/tpm/tpm_tis.c
-> +++ linux-2.6/drivers/char/tpm/tpm_tis.c
-> @@ -80,7 +80,7 @@ enum tis_defaults {
->  static LIST_HEAD(tis_chips);
->  static DEFINE_SPINLOCK(tis_lock);
-> =20
-> -#ifdef CONFIG_ACPI
-> +#ifdef CONFIG_PNPN
-                 ^^^^
-Is this a typo?
+$ git am ../quilt/jdelvare-hwmon/hwmon-max1111-improve-memory-usage.patch
+Applying: hwmon: (max1111) Avoid extra memory allocations
+error: patch failed: drivers/hwmon/max1111.c:224
+error: drivers/hwmon/max1111.c: patch does not apply
+Patch failed at 0001 hwmon: (max1111) Avoid extra memory allocations
 
+I fixed up the patch ('&' needed in call to mutex_destroy).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__18_Jul_2011_09_16_24_+1000_Sfwjr4.RsX0XiBnz
+--Signature=_Mon__18_Jul_2011_10_46_46_+1000_UM5=cHOTamD_DQGD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOI21IAAoJEDMEi1NhKgbsC7AIAJCXuCvY0V1QVMs8TUdCJo+P
-zTJXc3Te1F6Dai+0WLF5MTBL0SDMiRh+AYYJxpWIh45Kryi4y2R9roG8JnOyIDQv
-P5U69P+PmepW2ppI1MqyTsA2klu1fKtrsQ1FA9GntG0yw4bEgF/rMUOXT+kvNBt5
-zm+lfVCsMjl33DmuBKedyUb6dtilp7Xe3zODryV45UeQTRMJbxTrXMx6Tl78Q5gj
-HM6NnrjTOrtVgpdoiEcOPR/n6cVcI+MNoumcIVevOrCInMPwfUaaQexRraDAzMVp
-2Tm/m/aw+bnyOgd0k2G7RGM/oZIftJKz94h1zwwRp2QajTRFG+TBphOuO9+q+4A=
-=rX8J
+iQEcBAEBAgAGBQJOI4J2AAoJEDMEi1NhKgbsiQAIAJLUeKIvfV5hpHxGsr4u2j/Y
+GtQAgRMOjtG+aF0p91SMGYxNUJJHoU6Me3cSyocSbaUbJxQ9bfYt9/wpOwF/FbbF
+H+xF/SRAB3D5vRXpH3/BFvnwQvI5FfbxNLJuKsmDOXngyNpQyK8tI4ICBz8IM7aj
+7MOM1ag7ErV9k66kUCxTmR0uhteKpQNT9sIvgF+7MnitBZRR3+IQgn/hCQiVdrCm
+THkeCENTymqFnIElvnGIfQ2iwldQyA52IsVhSXpV7Z30L0jvY53tI8+agrCa8ZKi
+sjPPHV5YYa4UU1fudtE+q39FsGn//qhJAiuEIEvAbYtYXw48jCfLSA/B7vMI7qg=
+=bCH6
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__18_Jul_2011_09_16_24_+1000_Sfwjr4.RsX0XiBnz--
+--Signature=_Mon__18_Jul_2011_10_46_46_+1000_UM5=cHOTamD_DQGD--
