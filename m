@@ -1,55 +1,39 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Mon, 18 Jul 2011 22:52:57 +0200
-Message-ID: <20110718205257.GA2537@merkur.ravnborg.org>
-References: <20110718193053.623d28dc4643ab488b6347d5@canb.auug.org.au> <20110718.105821.1680531803712429890.davem@davemloft.net>
+From: Per Forlin <per.forlin@linaro.org>
+Subject: Re: linux-next: build failure after merge of the mmc tree
+Date: Tue, 19 Jul 2011 00:29:55 +0200
+Message-ID: <CAJ0pr19qxjtYACzzNZBpxnSGnTOp53Oy0Vxih0Xy-EzQEK4GKw@mail.gmail.com>
+References: <20110716193000.dcf43d072610fbaa873e28d1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110718.105821.1680531803712429890.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:61129 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750903Ab1GRW35 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jul 2011 18:29:57 -0400
+In-Reply-To: <20110716193000.dcf43d072610fbaa873e28d1@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>
 
-On Mon, Jul 18, 2011 at 10:58:21AM -0700, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 18 Jul 2011 19:30:53 +1000
-> 
-> > After merging the final tree, today's linux-next build (sparc64 defconfig)
-> > failed like this:
-> > 
-> > In file included from arch/sparc/include/asm/pgtable.h:4:0,
-> >                  from include/linux/mm.h:41,
-> >                  from include/linux/fs.h:395,
-> >                  from include/linux/compat.h:15,
-> >                  from arch/sparc/include/asm/siginfo.h:19,
-> >                  from include/linux/signal.h:5,
-> >                  from include/linux/sched.h:73,
-> >                  from arch/sparc/kernel/asm-offsets.c:13:
-> > arch/sparc/include/asm/pgtable_64.h: In function '__set_pte_at':
-> > arch/sparc/include/asm/pgtable_64.h:674:6: error: 'init_mm' undeclared (first use in this function)
-> > 
-> > I assume some include file changes.  Anyone have any clues how to find
-> > this?
-> 
-> The great irony is that sparc64 doesn't use anything this file
-> generates (you won't find a single asm-offsets.h include in any
-> sparc64 code).
-Today sparc64 code actually uses AOFF_mm_context from asm-offsets.h.
-The asm-offsets.h file is likely pulled in by some other header file.
+Hi,
 
-> This asm-offset mechanim is, for whatever reason, enabled on every
-> single architecture whether it's needed or not.  Maybe we should
-> rethink that.
-Most archs uses asm-offsets to some extent - trying to make it optional
-would just result in a lot of otherwise pointless ifdefs.
+On 16 July 2011 11:30, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Chris,
+>
+> After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>
+> drivers/mmc/core/core.c:2141:1: error: redefinition of '__inittest'
+> drivers/mmc/core/core.c:125:1: note: previous definition of '__inittest' was here
+> drivers/mmc/core/core.c:2141:1: error: redefinition of 'init_module'
+> drivers/mmc/core/core.c:125:1: note: previous definition of 'init_module' was here
+>
+> Seems to be caused by commit 65cae3d20446 ("mmc: core: add random fault
+> injection").
+This patch makes core.c contain two init_module, obviously an error if
+building allmodconfig. I need to rework this patch and resend it.
+I checked mmc-next just now and it has been removed already (thanks Chris).
 
-With respect to the bug that triggered the mail....
-It looks like another definition stuffed down in sched.h where is does not
-belong. mm_types.h looks like the right place.
-Then arch/sparc/include/asm/pgtable.h should obviously pull in this header.
-But I do not have -next handy to try it out.
-
-	Sam
+Regards,
+Per
