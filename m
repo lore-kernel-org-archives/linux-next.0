@@ -1,44 +1,37 @@
-From: Jonas Bonn <jonas@southpole.se>
-Subject: Re: linux-next: manual merge of the akpm tree with the openrisc
- tree
-Date: Mon, 18 Jul 2011 13:02:55 +0200
-Message-ID: <1310986975.21015.13.camel@needafix>
-References: <20110718185608.97377aa900b014aa010830a2@canb.auug.org.au>
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: Re: [PATCH] tpm: Fix compilation warning when CONFIG_PNP is not defined
+Date: Mon, 18 Jul 2011 08:00:09 -0400
+Message-ID: <4E242049.1030604@linux.vnet.ibm.com>
+References: <1310903758.15064.9.camel@d941e-10> <20110718091624.bd262188190c5d7a05416b99@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.southpole.se ([193.12.106.18]:56624 "EHLO
-	mail.southpole.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756377Ab1GRLC7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jul 2011 07:02:59 -0400
-In-Reply-To: <20110718185608.97377aa900b014aa010830a2@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110718091624.bd262188190c5d7a05416b99@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Cc: rdunlap@xenotime.net, Rajiv Andrade <srajiv@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
+On 07/17/2011 07:16 PM, Stephen Rothwell wrote:
+> Hi Stefan,
+>
+> On Sun, 17 Jul 2011 07:55:58 -0400 Stefan Berger<stefanb@linux.vnet.ibm.com>  wrote:
+>> The is_itpm() function is only accessed from a block surrounded by
+>> #ifdef CONFIG_PNP. Therefore, also surround it with #ifdef CONFIG_PNP
+>                  ^^^
+>
+>> --- linux-2.6.orig/drivers/char/tpm/tpm_tis.c
+>> +++ linux-2.6/drivers/char/tpm/tpm_tis.c
+>> @@ -80,7 +80,7 @@ enum tis_defaults {
+>>   static LIST_HEAD(tis_chips);
+>>   static DEFINE_SPINLOCK(tis_lock);
+>>
+>> -#ifdef CONFIG_ACPI
+>> +#ifdef CONFIG_PNPN
+>                   ^^^^
+> Is this a typo?
+>
+Argh, yes.
 
-On Mon, 2011-07-18 at 18:56 +1000, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> Today's linux-next merge of the scsi-post-merge tree got a conflict in
-> arch/x86/include/asm/delay.h between commit 10f53642f115 ("asm-generic:
-> move archictures to common delay.h") from the openrisc tree and commit
-> "With a non-constant 8-bit argument, a call to udelay() generates a
-> warning:" from the akpm tree.
-> 
-> I just dropped this patch from the akpm tree as the former commit
-> consolidated this code into asm-generic/delay.h (which doesn't solve the
-> problem).
-
-Applying the change from Andrew's patch to asm-generic/delay.h looks
-like the sane thing to do.  I can do that in my tree and then Andrew can
-drop the patch from his tree... does that sound reasonable?
-
-Just so others don't have to go digging for it, the patch in question
-is:
-
-http://userweb.kernel.org/~akpm/mmotm/broken-out/arch-x86-include-asm-delayh-fix-udelay-and-ndelay-for-8-bit-args.patch
-
-/Jonas
+    Stefan
