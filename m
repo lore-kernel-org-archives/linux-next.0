@@ -1,34 +1,54 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: [PATCH] tpm: Fix compilation warning when CONFIG_PNP is not
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: [PATCH v2] tpm: Fix compilation warning when CONFIG_PNP is not
  defined
-Date: Wed, 20 Jul 2011 10:29:38 +1000 (EST)
-Message-ID: <alpine.LRH.2.00.1107201029230.23408@tundra.namei.org>
-References: <1310903758.15064.9.camel@d941e-10> <20110718091624.bd262188190c5d7a05416b99@canb.auug.org.au> <4E242049.1030604@linux.vnet.ibm.com>
+Date: Mon, 18 Jul 2011 09:11:55 -0400
+Message-ID: <1310994715.28315.0.camel@d941e-10>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:41536 "EHLO tundra.namei.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752301Ab1GTA3q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Jul 2011 20:29:46 -0400
-In-Reply-To: <4E242049.1030604@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, rdunlap@xenotime.net, Rajiv Andrade <srajiv@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rdunlap@xenotime.net, Rajiv Andrade <srajiv@linux.vnet.ibm.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 18 Jul 2011, Stefan Berger wrote:
+The is_itpm() function is only accessed from a block surrounded by
+#ifdef CONFIG_PNP. Therefore, also surround it with #ifdef CONFIG_PNP
+and remove the #else branch causing the warning.
 
-> > > -#ifdef CONFIG_ACPI
-> > > +#ifdef CONFIG_PNPN
-> >                   ^^^^
-> > Is this a typo?
-> > 
-> Argh, yes.
+http://lxr.linux.no/#linux+v2.6.39/drivers/char/tpm/tpm_tis.c#L622
 
-Do you have an updated version?
+v2:
+ - fixes a previous typo
 
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 
--- 
-James Morris
-<jmorris@namei.org>
+---
+ drivers/char/tpm/tpm_tis.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+Index: linux-2.6/drivers/char/tpm/tpm_tis.c
+===================================================================
+--- linux-2.6.orig/drivers/char/tpm/tpm_tis.c
++++ linux-2.6/drivers/char/tpm/tpm_tis.c
+@@ -80,7 +80,7 @@ enum tis_defaults {
+ static LIST_HEAD(tis_chips);
+ static DEFINE_SPINLOCK(tis_lock);
+ 
+-#ifdef CONFIG_ACPI
++#ifdef CONFIG_PNP
+ static int is_itpm(struct pnp_dev *dev)
+ {
+ 	struct acpi_device *acpi = pnp_acpi_device(dev);
+@@ -93,11 +93,6 @@ static int is_itpm(struct pnp_dev *dev)
+ 
+ 	return 0;
+ }
+-#else
+-static int is_itpm(struct pnp_dev *dev)
+-{
+-	return 0;
+-}
+ #endif
+ 
+ static int check_locality(struct tpm_chip *chip, int l)
