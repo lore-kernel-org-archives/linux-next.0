@@ -1,39 +1,50 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: linux-next: Tree for July 16 (kvm)
-Date: Mon, 18 Jul 2011 11:20:58 +0300
-Message-ID: <4E23ECEA.90803@redhat.com>
-References: <20110717000815.c83755be9598d34ac8431908@canb.auug.org.au> <20110716115719.feedaeb2.rdunlap@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the vfs tree
+Date: Mon, 18 Jul 2011 18:55:50 +1000
+Message-ID: <20110718185550.566328117558bea28395ca30@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:48167 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44696 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753749Ab1GRIVI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jul 2011 04:21:08 -0400
-In-Reply-To: <20110716115719.feedaeb2.rdunlap@xenotime.net>
+	id S1750758Ab1GRIzz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Jul 2011 04:55:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, kvm@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marcelo Tosatti <mtosatti@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>
 
-On 07/16/2011 09:57 PM, Randy Dunlap wrote:
-> On Sun, 17 Jul 2011 00:08:15 +1000 Stephen Rothwell wrote:
->
-> >  Hi all,
-> >
-> >  Changes since 20110707:
->
->
-> kvmclock.c:(.text+0x2778e): undefined reference to `kvm_disable_steal_time'
->
-> Full kernel config file is attached.
->
+Hi Andrew,
 
-CONFIG_KVM_CLOCK && !CONFIG_KVM_GUEST.
+Today's linux-next merge of the scsi-post-merge tree got a conflict in
+mm/truncate.c between commit ba96a361e21b ("fs: kill i_alloc_sem") from
+the vfs tree and commit "Use consistent variable names in
+truncate_pagecache(), truncate_setsize()" from the akpm tree.
 
-What to do?  Stick a wrmsr_safe() in kvmclock.c?  Move kvm_disable 
-steal_time() inline? what about has_steal_clock?
-
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
-error compiling committee.c: too many arguments to function
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc mm/truncate.c
+index 003c6c6,a87d838..0000000
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@@ -622,11 -625,12 +625,11 @@@ int vmtruncate_range(struct inode *inod
+  		return -ENOSYS;
+  
+  	mutex_lock(&inode->i_mutex);
+ -	down_write(&inode->i_alloc_sem);
+ +	inode_dio_wait(inode);
+- 	unmap_mapping_range(mapping, offset, (end - offset), 1);
+- 	inode->i_op->truncate_range(inode, offset, end);
++ 	unmap_mapping_range(mapping, holebegin, holelen, 1);
++ 	inode->i_op->truncate_range(inode, lstart, lend);
+  	/* unmap again to remove racily COWed private pages */
+- 	unmap_mapping_range(mapping, offset, (end - offset), 1);
++ 	unmap_mapping_range(mapping, holebegin, holelen, 1);
+ -	up_write(&inode->i_alloc_sem);
+  	mutex_unlock(&inode->i_mutex);
+  
+  	return 0;
