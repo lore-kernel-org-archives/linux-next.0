@@ -1,53 +1,57 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: linux-next: Tree for July 18 (mm/truncate.c)
-Date: Mon, 18 Jul 2011 11:21:18 -0400
-Message-ID: <20110718152117.GA8844@infradead.org>
-References: <20110718203501.232bd176e83ff65f056366e6@canb.auug.org.au>
- <20110718081816.2106117e.rdunlap@xenotime.net>
+From: "Mingarelli, Thomas" <Thomas.Mingarelli@hp.com>
+Subject: RE: [PATCH -next] watchdog: hpwdt depends on PCI
+Date: Mon, 18 Jul 2011 17:40:53 +0100
+Message-ID: <183C1D5A376DE343AA8F94FC2A1EC1497D7ADD1EF0@GVW1091EXB.americas.hpqcorp.net>
+References: <20110717000815.c83755be9598d34ac8431908@canb.auug.org.au>
+ <20110716122549.2406a0f9.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20110718081816.2106117e.rdunlap@xenotime.net>
-Sender: owner-linux-mm@kvack.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>, viro@zeniv.linux.org.uk
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from g4t0014.houston.hp.com ([15.201.24.17]:2855 "EHLO
+	g4t0014.houston.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752446Ab1GRQmY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jul 2011 12:42:24 -0400
+In-Reply-To: <20110716122549.2406a0f9.rdunlap@xenotime.net>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Wim Van Sebroeck <wim@iguana.be>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
 
-On Mon, Jul 18, 2011 at 08:18:16AM -0700, Randy Dunlap wrote:
-> On Mon, 18 Jul 2011 20:35:01 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> 
-> mm/truncate.c:612: error: implicit declaration of function 'inode_dio_wait'
-> 
-> mm/truncate.c should be #include-ing <linux/fs.h> for that function's
-> prototype, but that doesn't help when CONFIG_BLOCK is not enabled,
-> which is the case in this build failure.
+Ack'd by Tom Mingarelli.
 
-Oops.  Two choices here:
+-----Original Message-----
+From: Randy Dunlap [mailto:rdunlap@xenotime.net] 
+Sent: Saturday, July 16, 2011 2:26 PM
+To: Stephen Rothwell; Wim Van Sebroeck
+Cc: linux-next@vger.kernel.org; LKML; Mingarelli, Thomas; akpm
+Subject: [PATCH -next] watchdog: hpwdt depends on PCI
 
- a) stub it out for non-blocks.
- b) move it out of directio.c so that it's always provided.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-I'd be fine with either one.  Al, any preferences?
+hpwdt is a PCI driver so it should depend on PCI.
+Fixes these build errors:
 
-> 
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
-> 
-> --
-> To unsubscribe, send a message with 'unsubscribe linux-mm' in
-> the body to majordomo@kvack.org.  For more info on Linux MM,
-> see: http://www.linux-mm.org/ .
-> Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-> Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
----end quoted text---
+drivers/watchdog/hpwdt.c:762: error: implicit declaration of function 'pci_iomap'
+drivers/watchdog/hpwdt.c:762: warning: assignment makes pointer from integer without a cast
+drivers/watchdog/hpwdt.c:797: error: implicit declaration of function 'pci_iounmap'
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Wim Van Sebroeck <wim@iguana.be>
+Cc: Thomas Mingarelli <thomas.mingarelli@hp.com>
+---
+ drivers/watchdog/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20110716.orig/drivers/watchdog/Kconfig
++++ linux-next-20110716/drivers/watchdog/Kconfig
+@@ -619,7 +619,7 @@ config IT87_WDT
+ 
+ config HP_WATCHDOG
+ 	tristate "HP ProLiant iLO2+ Hardware Watchdog Timer"
+-	depends on X86
++	depends on X86 && PCI
+ 	default m
+ 	help
+ 	  A software monitoring watchdog and NMI sourcing driver. This driver
