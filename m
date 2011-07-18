@@ -1,30 +1,54 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: build warning after merge of the vfs tree
-Date: Mon, 18 Jul 2011 06:20:48 +0100
-Message-ID: <20110718052048.GZ11013@ZenIV.linux.org.uk>
-References: <20110718150456.d0eea458aab56fd1488ccc39@canb.auug.org.au>
- <20110718051736.GY11013@ZenIV.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the security-testing tree with the vfs
+ tree
+Date: Mon, 18 Jul 2011 15:39:17 +1000
+Message-ID: <20110718153917.4aa9a18b80c0933cee4e638b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__18_Jul_2011_15_39_17_+1000_Cz0i/5F9Z4m_4+1O"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:57069 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751405Ab1GRFUt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jul 2011 01:20:49 -0400
-Content-Disposition: inline
-In-Reply-To: <20110718051736.GY11013@ZenIV.linux.org.uk>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38482 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751046Ab1GRFj5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Jul 2011 01:39:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josef Bacik <josef@redhat.com>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-On Mon, Jul 18, 2011 at 06:17:37AM +0100, Al Viro wrote:
+--Signature=_Mon__18_Jul_2011_15_39_17_+1000_Cz0i/5F9Z4m_4+1O
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Argh...  There had been several places where ->fsync() change hadn't been
-> done in the original patch; I've patched them up, but forgot to change the
-> prototype in this one ;-/
-> 
-> s/file,/& loff_t start, loff_t end,/ in the obvious place; I'll push the
-> updated variant in a few.
+Hi James,
 
-Fixed and pushed.
+Today's linux-next merge of the security-testing tree got a conflict in
+security/tomoyo/realpath.c between commit 6ef0dd885ce8 ("get rid of
+pointless checks for dentry->sb =3D=3D NULL") from the vfs tree and commit
+5625f2e32663 ("TOMOYO: Change pathname for non-rename()able filesystems")
+from the security-testing tree.
+
+The latter includes the change from the former, so I just used the latter.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__18_Jul_2011_15_39_17_+1000_Cz0i/5F9Z4m_4+1O
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOI8cFAAoJEDMEi1NhKgbsHpYH/A9OxML+oKzFwSm34u5/QuFe
+n6wfa3nXRK1LA4jW55ReaK6mv69tfuhq413Lwtk9FYuAg0P6xPJ4TYgQ7FAxYgOU
+57mv1S55DHW7XuSRvokU6WE3s4oqrn+IFYUlLABpS/a/2N0B0OuH68G8pAjxXX/Y
+uSCQOGXblVgZD+mjvqC7lWKFHdc3d00h83NijM2ZTv4O9BvR2YNbySe8VtsXMXeW
+gpHVYmu4bEeuyTDE3Z5rkz+ug0nobbwR1ip9wo1PKzoY2CFuQW2S8iGetWYwSPdU
+ykBA/wu6RrKhsTu9lbDWDmfllY76niJm2JOIgpH1TTf0PAJkG2/mgt90pE6aOmU=
+=vewd
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Jul_2011_15_39_17_+1000_Cz0i/5F9Z4m_4+1O--
