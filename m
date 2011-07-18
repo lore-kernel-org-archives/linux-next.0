@@ -1,37 +1,105 @@
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: Re: [PATCH] tpm: Fix compilation warning when CONFIG_PNP is not defined
-Date: Mon, 18 Jul 2011 08:00:09 -0400
-Message-ID: <4E242049.1030604@linux.vnet.ibm.com>
-References: <1310903758.15064.9.camel@d941e-10> <20110718091624.bd262188190c5d7a05416b99@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110718091624.bd262188190c5d7a05416b99@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: rdunlap@xenotime.net, Rajiv Andrade <srajiv@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org
+From: Jonas Bonn <jonas@southpole.se>
+Subject: [PATCH 1/1] asm-generic: delay.h fix udelay and ndelay for 8 bit args
+Date: Mon, 18 Jul 2011 16:05:37 +0200
+Message-ID: <1310997937-26771-1-git-send-email-jonas@southpole.se>
+References: <1310986975.21015.13.camel@needafix>
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <1310986975.21015.13.camel@needafix>
+Sender: linux-arch-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-arch@vger.kernel.org, Jonas Bonn <jonas@southpole.se>
 List-Id: linux-next.vger.kernel.org
 
-On 07/17/2011 07:16 PM, Stephen Rothwell wrote:
-> Hi Stefan,
->
-> On Sun, 17 Jul 2011 07:55:58 -0400 Stefan Berger<stefanb@linux.vnet.ibm.com>  wrote:
->> The is_itpm() function is only accessed from a block surrounded by
->> #ifdef CONFIG_PNP. Therefore, also surround it with #ifdef CONFIG_PNP
->                  ^^^
->
->> --- linux-2.6.orig/drivers/char/tpm/tpm_tis.c
->> +++ linux-2.6/drivers/char/tpm/tpm_tis.c
->> @@ -80,7 +80,7 @@ enum tis_defaults {
->>   static LIST_HEAD(tis_chips);
->>   static DEFINE_SPINLOCK(tis_lock);
->>
->> -#ifdef CONFIG_ACPI
->> +#ifdef CONFIG_PNPN
->                   ^^^^
-> Is this a typo?
->
-Argh, yes.
 
-    Stefan
+From: Andrew Morton <akpm@linux-foundation.org>
+
+With a non-constant 8-bit argument, a call to udelay() generates a warning:
+
+drivers/gpu/drm/radeon/atom.c: In function 'atom_op_delay':
+drivers/gpu/drm/radeon/atom.c:654: warning: comparison is always false due to limited range of data type
+
+The code looks like it works OK with an 8-bit arg, and the calling code is
+doing nothing wrong, so udelay() needs fixing.
+
+Fixing it was rather tricky.  Simply typecasting `n' in the comparison with
+20000 didn't change anything.  Hence the divide-by-20000 trick.
+
+Using a do{}while loop didn't work because udelay() is used in ?: statements,
+hence the ({...}) construct.
+
+While I was there I replaced the brain-bending ?:?:?: mess with nice if/else
+code.
+
+Probably other architectures are generating the same warning and can use a
+similar change.
+
+Cc: Ingo Molnar <mingo@elte.hu>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: <linux-arch@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Jonas Bonn <jonas@southpole.se>
+---
+
+Here's a patch that should resolve the merge conflict.  This applies
+Andrew's changes on top of the new asm-generic/delay.h instead of the x86
+arch-specific one.  I've tested this for OpenRISC and the changed macros
+don't cause any problems there.
+
+Let me know if this is OK and I'll throw it into the OpenRISC tree together
+with the other delay.h modifications.
+
+Thanks,
+Jonas
+
+ include/asm-generic/delay.h |   33 +++++++++++++++++++++++++++------
+ 1 files changed, 27 insertions(+), 6 deletions(-)
+
+diff --git a/include/asm-generic/delay.h b/include/asm-generic/delay.h
+index 6511b99..0f79054 100644
+--- a/include/asm-generic/delay.h
++++ b/include/asm-generic/delay.h
+@@ -10,14 +10,35 @@ extern void __ndelay(unsigned long nsecs);
+ extern void __const_udelay(unsigned long xloops);
+ extern void __delay(unsigned long loops);
+ 
++/*
++ * The weird n/20000 thing suppresses a "comparison is always false due to
++ * limited range of data type" warning with non-const 8-bit arguments.
++ */
++
+ /* 0x10c7 is 2**32 / 1000000 (rounded up) */
+-#define udelay(n) (__builtin_constant_p(n) ? \
+-	((n) > 20000 ? __bad_udelay() : __const_udelay((n) * 0x10c7ul)) : \
+-	__udelay(n))
++#define udelay(n)							\
++	({								\
++		if (__builtin_constant_p(n)) {				\
++			if ((n) / 20000 >= 1)				\
++				 __bad_udelay();			\
++			else						\
++				__const_udelay((n) * 0x10c7ul);		\
++		} else {						\
++			__udelay(n);					\
++		}							\
++	})
+ 
+ /* 0x5 is 2**32 / 1000000000 (rounded up) */
+-#define ndelay(n) (__builtin_constant_p(n) ? \
+-	((n) > 20000 ? __bad_ndelay() : __const_udelay((n) * 5ul)) : \
+-	__ndelay(n))
++#define ndelay(n)							\
++	({								\
++		if (__builtin_constant_p(n)) {				\
++			if ((n) / 20000 >= 1)				\
++				__bad_ndelay();				\
++			else						\
++				__const_udelay((n) * 5ul);		\
++		} else {						\
++			__ndelay(n);					\
++		}							\
++	})
+ 
+ #endif /* __ASM_GENERIC_DELAY_H */
+-- 
+1.7.4.1
