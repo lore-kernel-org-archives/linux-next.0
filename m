@@ -1,34 +1,54 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the rcu tree with the ext4 tree
-Date: Mon, 18 Jul 2011 15:39:09 -0700
-Message-ID: <20110718223909.GE2312@linux.vnet.ibm.com>
-References: <20110716212838.a84936541c18fb866abcc308@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no release today
+Date: Tue, 19 Jul 2011 11:17:13 +1000
+Message-ID: <20110719111713.9162909a1545bc4acccb3867@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__19_Jul_2011_11_17_13_+1000_7VgRDf.CbbO11eWL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e6.ny.us.ibm.com ([32.97.182.146]:49390 "EHLO e6.ny.us.ibm.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47686 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750846Ab1GRWjM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jul 2011 18:39:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20110716212838.a84936541c18fb866abcc308@canb.auug.org.au>
+	id S1751029Ab1GSBRW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Jul 2011 21:17:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Lai Jiangshan <laijs@cn.fujitsu.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Sat, Jul 16, 2011 at 09:28:38PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> Today's linux-next merge of the rcu tree got a conflict in
-> fs/jbd2/journal.c between commit 4862fd6047ed ("jbd2: remove
-> jbd2_dev_to_name() from jbd2 tracepoints") from the ext4 tree and commit
-> a5e245951e94 ("jbd2,rcu: Convert call_rcu(free_devcache) to kfree_rcu()")
-> from the rcu tree.
-> 
-> The former removes the function modified by the latter, so I did that.
+--Signature=_Tue__19_Jul_2011_11_17_13_+1000_7VgRDf.CbbO11eWL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I now have removed that patch in -rcu as well.
+Hi all,
 
-							Thanx, Paul
+There will be no linux-next release today as I am feeling to under the
+weather to participate in the battle. :-)  So you all get some extra time
+to fix the mess.
+
+Also, since Linus has been threatening to release 3.0 for over a week
+now, everything for the 3.1 merge window will have been in linux-next for
+at least 2 weeks, right? ;-)
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__19_Jul_2011_11_17_13_+1000_7VgRDf.CbbO11eWL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOJNsZAAoJEDMEi1NhKgbsaQEIAIQRYYf7J5q+8cHp3gVPobpN
+6z+wTCEBBaiUT3LAYy3PHZ8K0euB/Nee1bQ8I/R9e9BqVCU9CJ3TPf50DxfFxovK
+d4Gddy1jZpc0U35hIxQ7Xpo/k0BpcAAubRoKRb0TdECNkUy6ZJi4c8tzjyU3nI3J
+GcWOdKUjHh3ehnOV1KM4STbVk5t4e7FMsjZDcVdjoQYuKLM9VoflrtPiT03J4uN3
+KL6CgX7QI49HYPLmpGwWVejgCAsGLDrEjg95Ae40quUjRPiAA5d4IJDtx8D6rqs7
+TC2zx6SSA5oIz59PU5KUl9g9st2aW1Ior4rvaWK0DREmES43QkMCdmPCk/dlzSw=
+=JsdO
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_Jul_2011_11_17_13_+1000_7VgRDf.CbbO11eWL--
