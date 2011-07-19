@@ -1,39 +1,41 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- tree related)
-Date: Mon, 18 Jul 2011 18:01:04 -0700
-Message-ID: <20110719010104.GA12591@kroah.com>
-References: <20110718193646.33fb3f41db9d84974913657d@canb.auug.org.au>
+From: Jonathan Cameron <jic23@cam.ac.uk>
+Subject: Re: linux-next: manual merge of the rr tree with the  tree
+Date: Tue, 19 Jul 2011 12:27:42 +0100
+Message-ID: <4E256A2E.50607@cam.ac.uk>
+References: <20110705135932.de7f0526.sfr@canb.auug.org.au> <1309967847.3393.44.camel@jerome> <4E14F373.1020307@snapgear.com> <20110707102432.5a779744e247652be005b592@canb.auug.org.au> <87liwakiez.fsf@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4.smtp.messagingengine.com ([66.111.4.28]:45111 "EHLO
-	out4.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750977Ab1GSBnF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jul 2011 21:43:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20110718193646.33fb3f41db9d84974913657d@canb.auug.org.au>
+Received: from ppsw-41.csi.cam.ac.uk ([131.111.8.141]:39610 "EHLO
+	ppsw-41.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751032Ab1GSL1v (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jul 2011 07:27:51 -0400
+In-Reply-To: <87liwakiez.fsf@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg Ungerer <gerg@snapgear.com>, Jonas Bonn <jonas@southpole.se>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Mon, Jul 18, 2011 at 07:36:46PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On 07/07/11 02:07, Rusty Russell wrote:
+> On Thu, 7 Jul 2011 10:24:32 +1000, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Hi all,
+> .... 
+>>> Acked-by: Greg Ungerer <gerg@uclinux.org>
+>>
+>> OK, so now someone just has to remember to apply it (or tell Linus, or
+>> fix up the trees) during the merge window.   That person probably won't
+>> be me (since I will not be online next week (assuming Linus follows
+>> through and opens the merge window next week).
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> allysconfig) failed like this:
+> I'm travelling next week too, so m68k will probably get merged first,
+> and hence I'll roll in this fix myself.
 > 
-> In file included from drivers/staging/ft1000/ft1000-pcmcia/ft1000_proc.c:26:0:
-> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h: In function 'ft1000_read_reg':
-> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h:80:2: error: implicit declaration of function 'inw'
-> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h: In function 'ft1000_write_reg':
-> drivers/staging/ft1000/ft1000-pcmcia/ft1000.h:86:2: error: implicit declaration of function 'outw'
+> Thanks,
+> Rusty.
+Rusty?
 
-PowerPC supports PCMCIA?  Anyway, Ondrej, care to provide a fix for this
-please?
+If not I'm happy to take on adapting this to meet everyone's requirements.
 
-thanks,
 
-greg k-h
+Jonathan
