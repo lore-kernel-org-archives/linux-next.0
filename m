@@ -1,54 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no release today
-Date: Tue, 19 Jul 2011 11:17:13 +1000
-Message-ID: <20110719111713.9162909a1545bc4acccb3867@canb.auug.org.au>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: linux-next: manual merge of the vfs tree with the xfs tree
+Date: Tue, 19 Jul 2011 11:29:23 +1000
+Message-ID: <20110719012923.GI30254@dastard>
+References: <20110718133636.579d9002dbb56cd6408a2a7b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__19_Jul_2011_11_17_13_+1000_7VgRDf.CbbO11eWL"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47686 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751029Ab1GSBRW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jul 2011 21:17:22 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-
---Signature=_Tue__19_Jul_2011_11_17_13_+1000_7VgRDf.CbbO11eWL
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20110718133636.579d9002dbb56cd6408a2a7b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Mon, Jul 18, 2011 at 01:36:36PM +1000, Stephen Rothwell wrote:
+> Hi Al,
+> 
+> Today's linux-next merge of the vfs tree got a conflict in
+> fs/xfs/linux-2.6/xfs_super.c between commit 2bcf6e970f5a ("xfs: start
+> periodic workers later") from the xfs tree and commit d86b98f73104 ("xfs:
+> make use of new shrinker callout for the inode cache") from the vfs tree.
+> 
+> I fixed it up (I think, see below) and can carry the fix as necessary.
 
-There will be no linux-next release today as I am feeling to under the
-weather to participate in the battle. :-)  So you all get some extra time
-to fix the mess.
+Looks OK to me.
 
-Also, since Linus has been threatening to release 3.0 for over a week
-now, everything for the 3.1 merge window will have been in linux-next for
-at least 2 weeks, right? ;-)
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__19_Jul_2011_11_17_13_+1000_7VgRDf.CbbO11eWL
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOJNsZAAoJEDMEi1NhKgbsaQEIAIQRYYf7J5q+8cHp3gVPobpN
-6z+wTCEBBaiUT3LAYy3PHZ8K0euB/Nee1bQ8I/R9e9BqVCU9CJ3TPf50DxfFxovK
-d4Gddy1jZpc0U35hIxQ7Xpo/k0BpcAAubRoKRb0TdECNkUy6ZJi4c8tzjyU3nI3J
-GcWOdKUjHh3ehnOV1KM4STbVk5t4e7FMsjZDcVdjoQYuKLM9VoflrtPiT03J4uN3
-KL6CgX7QI49HYPLmpGwWVejgCAsGLDrEjg95Ae40quUjRPiAA5d4IJDtx8D6rqs7
-TC2zx6SSA5oIz59PU5KUl9g9st2aW1Ior4rvaWK0DREmES43QkMCdmPCk/dlzSw=
-=JsdO
------END PGP SIGNATURE-----
-
---Signature=_Tue__19_Jul_2011_11_17_13_+1000_7VgRDf.CbbO11eWL--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
