@@ -1,109 +1,68 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for July 20 (overlayfs)
-Date: Wed, 20 Jul 2011 21:28:29 +0200
-Message-ID: <CA+icZUXf1_qWF8GdQyCVxzAp-CYgQbH8iod0oBTjhWsSZLi1_g@mail.gmail.com>
-References: <CA+icZUVbeLU+zCAC+8wduizn6h5FUE2qzNr0bg9t3yWNbv_6Ng@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=0016364ee534b64c0a04a8853c19
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+icZUVbeLU+zCAC+8wduizn6h5FUE2qzNr0bg9t3yWNbv_6Ng@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Randy Dunlap <rdunlap@xenotime.net>
+From: David Lamparter <equinox@diac24.net>
+Subject: [PATCH] net: vlan: fix compile breakage from 69ecca8
+Date: Wed, 20 Jul 2011 21:43:53 +0200
+Message-ID: <1311191033-714631-1-git-send-email-equinox@diac24.net>
+References: <0E5EAE44-204C-4F4D-926C-F4D973B0CDB1@qlogic.com>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <0E5EAE44-204C-4F4D-926C-F4D973B0CDB1@qlogic.com>
+Sender: netdev-owner@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, David Lamparter <equinox@diac24.net>, linux-driver@qlogic.com, Anirban Chakraborty <anirban.chakraborty@qlogic.com>, "David S. Miller" <davem@davemloft.net>, Randy Dunlap <rdunlap@xenotime.net>
 List-Id: linux-next.vger.kernel.org
 
---0016364ee534b64c0a04a8853c19
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+well, there was too much wood to see the tree and I messed up the
+configuration dependencies. let's make it work with unset
+CONFIG_VLAN_8021Q and remove the second definition of vlan_find_dev.
 
-On Wed, Jul 20, 2011 at 8:48 PM, Sedat Dilek <sedat.dilek@googlemail.com> w=
-rote:
-> Hi,
->
-> I have here a problem with linux-next (next-20110720) and
-> overlayfs-v10 (not the latest from GIT).
->
-> ### OVERLAYFS
-> # Patches from mszeredi/vfs.git#overlayfs.v10 (up to commit
-> 00b27467b181a27c808cef0d66860eba5f450b24)
-> # "overlay: overlay filesystem documentation"
-> # See also <http://lkml.org/lkml/2011/6/1/456>
-> # "[PATCH 0/7] overlay filesystem: request for inclusion"
-> + overlayfs-v10/overlayfs-v10.patch
->
-> Documentation/filesystems/porting says:
->
-> [mandatory]
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0->permission(), generic_permission() and ->che=
-ck_acl() have lost flags
-> argument; instead of passing IPERM_FLAG_RCU we add MAY_NOT_BLOCK into mas=
-k.
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0generic_permission() has also lost the check_a=
-cl argument; if you want
-> non-NULL to be used for that inode, put it into ->i_op->check_acl.
->
-> I checked with other files below fs/ and changed accordingly.
-> So, I hope the attached patch is OK (untested, uncompiled)?
->
-> What's the status of OverlayFS anyway, will it be merged into v3.1?
->
-> Regards,
-> - Sedat -
->
+Signed-off-by: David Lamparter <equinox@diac24.net>
+Cc: linux-driver@qlogic.com
+Cc: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Randy Dunlap <rdunlap@xenotime.net>
+---
+sorry for the mess-up... compiled with CONFIG_VLAN_8021Q=n,m and y
+this time; don't have qlcnic hw to test.
 
-I checked again and adapted ovl_permission().
+ drivers/net/qlcnic/qlcnic_main.c |    4 +++-
+ include/linux/if_vlan.h          |    5 -----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
 
-[ fs/namei.c ]
-static int acl_permission_check(struct inode *inode, int mask)
+diff --git a/drivers/net/qlcnic/qlcnic_main.c b/drivers/net/qlcnic/qlcnic_main.c
+index 3579229..a2c39e9 100644
+--- a/drivers/net/qlcnic/qlcnic_main.c
++++ b/drivers/net/qlcnic/qlcnic_main.c
+@@ -4198,13 +4198,15 @@ static void
+ qlcnic_restore_indev_addr(struct net_device *netdev, unsigned long event)
+ {
+ 	struct qlcnic_adapter *adapter = netdev_priv(netdev);
+-	struct vlan_group *grp;
++	struct vlan_group *grp = NULL;
+ 	struct net_device *dev;
+ 	u16 vid;
+ 
+ 	qlcnic_config_indev_addr(adapter, netdev, event);
+ 
++#if defined(CONFIG_VLAN_8021Q) || defined(CONFIG_VLAN_8021Q_MODULE)
+ 	grp = rcu_dereference_rtnl(netdev->vlgrp);
++#endif
+ 	if (!grp)
+ 		return;
+ 
+diff --git a/include/linux/if_vlan.h b/include/linux/if_vlan.h
+index bc03e40..dbe41dc 100644
+--- a/include/linux/if_vlan.h
++++ b/include/linux/if_vlan.h
+@@ -135,11 +135,6 @@ vlan_gro_frags(struct napi_struct *napi, struct vlan_group *grp,
+ 	       unsigned int vlan_tci);
+ 
+ #else
+-static inline struct net_device *vlan_find_dev(struct net_device *real_dev,
+-					       u16 vlan_id)
+-{
+-	return NULL;
+-}
+ 
+ static inline struct net_device *vlan_dev_real_dev(const struct net_device *dev)
+ {
+-- 
+1.7.5.3
 
-Here is a v2, which compiles.
-
-- Sedat -
-
---0016364ee534b64c0a04a8853c19
-Content-Type: plain/text; name="fs-overlayfs-inode.c-v2.diff"
-Content-Disposition: attachment; filename="fs-overlayfs-inode.c-v2.diff"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_gqcoogq81
-
-ZGlmZiAtdXByTiBsaW51eC1uZXh0LTIwMTEwNzIwLm9yaWcvZnMvb3ZlcmxheWZzL2lub2RlLmMg
-bGludXgtbmV4dC0yMDExMDcyMC9mcy9vdmVybGF5ZnMvaW5vZGUuYwotLS0gbGludXgtbmV4dC0y
-MDExMDcyMC5vcmlnL2ZzL292ZXJsYXlmcy9pbm9kZS5jCTIwMTEtMDctMjAgMjE6MTU6NDMuNzY4
-OTI3NzM3ICswMjAwCisrKyBsaW51eC1uZXh0LTIwMTEwNzIwL2ZzL292ZXJsYXlmcy9pbm9kZS5j
-CTIwMTEtMDctMjAgMjE6MDM6MzIuMDc4MTI2MzM2ICswMjAwCkBAIC00NSw3ICs0NSw3IEBAIHN0
-YXRpYyBpbnQgb3ZsX2dldGF0dHIoc3RydWN0IHZmc21vdW50ICoKIAlyZXR1cm4gdmZzX2dldGF0
-dHIocmVhbHBhdGgubW50LCByZWFscGF0aC5kZW50cnksIHN0YXQpOwogfQogCi1pbnQgb3ZsX3Bl
-cm1pc3Npb24oc3RydWN0IGlub2RlICppbm9kZSwgaW50IG1hc2ssIHVuc2lnbmVkIGludCBmbGFn
-cykKK2ludCBvdmxfcGVybWlzc2lvbihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBpbnQgbWFzaykKIHsK
-IAlzdHJ1Y3Qgb3ZsX2VudHJ5ICpvZTsKIAlzdHJ1Y3QgZGVudHJ5ICphbGlhcyA9IE5VTEw7CkBA
-IC01Niw3ICs1Niw3IEBAIGludCBvdmxfcGVybWlzc2lvbihzdHJ1Y3QgaW5vZGUgKmlub2RlLAog
-CiAJaWYgKFNfSVNESVIoaW5vZGUtPmlfbW9kZSkpIHsKIAkJb2UgPSBpbm9kZS0+aV9wcml2YXRl
-OwotCX0gZWxzZSBpZiAoZmxhZ3MgJiBJUEVSTV9GTEFHX1JDVSkgeworCX0gZWxzZSBpZiAobWFz
-ayAmIE1BWV9OT1RfQkxPQ0spIHsKIAkJcmV0dXJuIC1FQ0hJTEQ7CiAJfSBlbHNlIHsKIAkJLyoK
-QEAgLTc5LDcgKzc5LDcgQEAgaW50IG92bF9wZXJtaXNzaW9uKHN0cnVjdCBpbm9kZSAqaW5vZGUs
-CiAJLyogQ2FyZWZ1bCBpbiBSQ1Ugd2FsayBtb2RlICovCiAJcmVhbGlub2RlID0gQUNDRVNTX09O
-Q0UocmVhbGRlbnRyeS0+ZF9pbm9kZSk7CiAJaWYgKCFyZWFsaW5vZGUpIHsKLQkJV0FSTl9PTigh
-KGZsYWdzICYgSVBFUk1fRkxBR19SQ1UpKTsKKwkJV0FSTl9PTighKG1hc2sgJiBNQVlfTk9UX0JM
-T0NLKSk7CiAJCWVyciA9IC1FTk9FTlQ7CiAJCWdvdG8gb3V0X2RwdXQ7CiAJfQpAQCAtMTA1LDEw
-ICsxMDUsOSBAQCBpbnQgb3ZsX3Blcm1pc3Npb24oc3RydWN0IGlub2RlICppbm9kZSwKIAl9CiAK
-IAlpZiAocmVhbGlub2RlLT5pX29wLT5wZXJtaXNzaW9uKQotCQllcnIgPSByZWFsaW5vZGUtPmlf
-b3AtPnBlcm1pc3Npb24ocmVhbGlub2RlLCBtYXNrLCBmbGFncyk7CisJCWVyciA9IHJlYWxpbm9k
-ZS0+aV9vcC0+cGVybWlzc2lvbihyZWFsaW5vZGUsIG1hc2spOwogCWVsc2UKLQkJZXJyID0gZ2Vu
-ZXJpY19wZXJtaXNzaW9uKHJlYWxpbm9kZSwgbWFzaywgZmxhZ3MsCi0JCQkJCSByZWFsaW5vZGUt
-Pmlfb3AtPmNoZWNrX2FjbCk7CisJCWVyciA9IGdlbmVyaWNfcGVybWlzc2lvbihyZWFsaW5vZGUs
-IG1hc2spOwogb3V0X2RwdXQ6CiAJZHB1dChhbGlhcyk7CiAJcmV0dXJuIGVycjsKZGlmZiAtdXBy
-TiBsaW51eC1uZXh0LTIwMTEwNzIwLm9yaWcvZnMvb3ZlcmxheWZzL292ZXJsYXlmcy5oIGxpbnV4
-LW5leHQtMjAxMTA3MjAvZnMvb3ZlcmxheWZzL292ZXJsYXlmcy5oCi0tLSBsaW51eC1uZXh0LTIw
-MTEwNzIwLm9yaWcvZnMvb3ZlcmxheWZzL292ZXJsYXlmcy5oCTIwMTEtMDctMjAgMjE6MTU6NDMu
-NzcyOTI3Njg3ICswMjAwCisrKyBsaW51eC1uZXh0LTIwMTEwNzIwL2ZzL292ZXJsYXlmcy9vdmVy
-bGF5ZnMuaAkyMDExLTA3LTIwIDIxOjA0OjIyLjM5MzQ5Mzc4NSArMDIwMApAQCAtNDQsNyArNDQs
-NyBAQCBpbnQgb3ZsX2NoZWNrX2VtcHR5X2FuZF9jbGVhcihzdHJ1Y3QgZGVuCiAKIC8qIGlub2Rl
-LmMgKi8KIGludCBvdmxfc2V0YXR0cihzdHJ1Y3QgZGVudHJ5ICpkZW50cnksIHN0cnVjdCBpYXR0
-ciAqYXR0cik7Ci1pbnQgb3ZsX3Blcm1pc3Npb24oc3RydWN0IGlub2RlICppbm9kZSwgaW50IG1h
-c2ssIHVuc2lnbmVkIGludCBmbGFncyk7CitpbnQgb3ZsX3Blcm1pc3Npb24oc3RydWN0IGlub2Rl
-ICppbm9kZSwgaW50IG1hc2spOwogaW50IG92bF9zZXR4YXR0cihzdHJ1Y3QgZGVudHJ5ICpkZW50
-cnksIGNvbnN0IGNoYXIgKm5hbWUsCiAJCSBjb25zdCB2b2lkICp2YWx1ZSwgc2l6ZV90IHNpemUs
-IGludCBmbGFncyk7CiBzc2l6ZV90IG92bF9nZXR4YXR0cihzdHJ1Y3QgZGVudHJ5ICpkZW50cnks
-IGNvbnN0IGNoYXIgKm5hbWUsCg==
---0016364ee534b64c0a04a8853c19--
