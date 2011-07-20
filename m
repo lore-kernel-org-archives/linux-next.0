@@ -1,56 +1,63 @@
-From: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
-Subject: Re: linux-next: Tree for July 20 (qlcnic)
-Date: Wed, 20 Jul 2011 11:10:18 -0700
-Message-ID: <0E5EAE44-204C-4F4D-926C-F4D973B0CDB1@qlogic.com>
-References: <20110720180041.5774ca335e6697c17374dca5@canb.auug.org.au>
- <20110720091945.39f0a8a5.rdunlap@xenotime.net>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: linux-next: Tree for July 20 (overlayfs)
+Date: Wed, 20 Jul 2011 20:48:00 +0200
+Message-ID: <CA+icZUVbeLU+zCAC+8wduizn6h5FUE2qzNr0bg9t3yWNbv_6Ng@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tx2ehsobe001.messaging.microsoft.com ([65.55.88.11]:5773 "EHLO
-	TX2EHSOBE001.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751671Ab1GTSHB convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2011 14:07:01 -0400
-In-Reply-To: <20110720091945.39f0a8a5.rdunlap@xenotime.net>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux Driver <Linux-Driver@qlogic.com>, David Lamparter <equinox@diac24.net>
+Content-Type: multipart/mixed; boundary=20cf300fb1bff5d84f04a884ab01
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Randy Dunlap <randy.dunlap@oracle.com>
+List-Id: linux-next.vger.kernel.org
 
+--20cf300fb1bff5d84f04a884ab01
+Content-Type: text/plain; charset=UTF-8
 
-On Jul 20, 2011, at 9:19 AM, Randy Dunlap wrote:
+Hi,
 
-> On Wed, 20 Jul 2011 18:00:41 +1000 Stephen Rothwell wrote:
-> 
->> Hi all,
-> 
-> When CONFIG_VLAN_8021Q is not enabled:
-> 
-> drivers/net/qlcnic/qlcnic_main.c:4207: error: 'struct net_device' has no member named 'vlgrp'
+I have here a problem with linux-next (next-20110720) and
+overlayfs-v10 (not the latest from GIT).
 
-This is caused by the following commit:
+### OVERLAYFS
+# Patches from mszeredi/vfs.git#overlayfs.v10 (up to commit
+00b27467b181a27c808cef0d66860eba5f450b24)
+# "overlay: overlay filesystem documentation"
+# See also <http://lkml.org/lkml/2011/6/1/456>
+# "[PATCH 0/7] overlay filesystem: request for inclusion"
++ overlayfs-v10/overlayfs-v10.patch
 
-commit 69ecca86da4890c13a5e29c51b4ac76a1a8a62c9                                                      
-Refs: v3.0-rc7-1265-g69ecca8                                                                         
-Author:     David Lamparter <equinox@diac24.net>                                                     
-AuthorDate: Sun Jul 17 08:53:12 2011 +0000                                                           
-Commit:     David S. Miller <davem@davemloft.net>                                                    
-CommitDate: Sun Jul 17 12:33:22 2011 -0700                                                           
-                                                                                                     
-    net: vlan, qlcnic: make vlan_find_dev private                                                    
-                                                                                                     
-    there is only one user of vlan_find_dev outside of the actual vlan code:                         
-    qlcnic uses it to iterate over some VLANs it knows.                                              
-                                                                                                     
-    let's just make vlan_find_dev private to the VLAN code and have the                              
-    iteration in qlcnic be a bit more direct. (a few rcu dereferences less                           
-    too)                                                                                             
-                                                                                                     
-    Signed-off-by: David Lamparter <equinox@diac24.net>                                              
-    Cc: Patrick McHardy <kaber@trash.net>                                                            
-    Cc: Amit Kumar Salecha <amit.salecha@qlogic.com>                                                 
-    Cc: Anirban Chakraborty <anirban.chakraborty@qlogic.com>                                         
-    Cc: linux-driver@qlogic.com                                                                      
-    Signed-off-by: David S. Miller <davem@davemloft.net>                                             
+Documentation/filesystems/porting says:
+
+[mandatory]
+        ->permission(), generic_permission() and ->check_acl() have lost flags
+argument; instead of passing IPERM_FLAG_RCU we add MAY_NOT_BLOCK into mask.
+        generic_permission() has also lost the check_acl argument; if you want
+non-NULL to be used for that inode, put it into ->i_op->check_acl.
+
+I checked with other files below fs/ and changed accordingly.
+So, I hope the attached patch is OK (untested, uncompiled)?
+
+What's the status of OverlayFS anyway, will it be merged into v3.1?
+
+Regards,
+- Sedat -
+
+--20cf300fb1bff5d84f04a884ab01
+Content-Type: plain/text; name="fs-overlayfs-inode.c.diff"
+Content-Disposition: attachment; filename="fs-overlayfs-inode.c.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_gqcn8amf0
+
+LS0tIGxpbnV4LW5leHQtMjAxMTA3MjAub3JpZy9mcy9vdmVybGF5ZnMvaW5vZGUuYworKysgbGlu
+dXgtbmV4dC0yMDExMDcyMC9mcy9vdmVybGF5ZnMvaW5vZGUuYwpAQCAtNTYsNyArNTYsNyBAQCBp
+bnQgb3ZsX3Blcm1pc3Npb24oc3RydWN0IGlub2RlICppbm9kZSwKIAogCWlmIChTX0lTRElSKGlu
+b2RlLT5pX21vZGUpKSB7CiAJCW9lID0gaW5vZGUtPmlfcHJpdmF0ZTsKLQl9IGVsc2UgaWYgKGZs
+YWdzICYgSVBFUk1fRkxBR19SQ1UpIHsKKwl9IGVsc2UgaWYgKG1hc2sgJiBNQVlfTk9UX0JMT0NL
+KSB7CiAJCXJldHVybiAtRUNISUxEOwogCX0gZWxzZSB7CiAJCS8qCkBAIC03OSw3ICs3OSw3IEBA
+IGludCBvdmxfcGVybWlzc2lvbihzdHJ1Y3QgaW5vZGUgKmlub2RlLAogCS8qIENhcmVmdWwgaW4g
+UkNVIHdhbGsgbW9kZSAqLwogCXJlYWxpbm9kZSA9IEFDQ0VTU19PTkNFKHJlYWxkZW50cnktPmRf
+aW5vZGUpOwogCWlmICghcmVhbGlub2RlKSB7Ci0JCVdBUk5fT04oIShmbGFncyAmIElQRVJNX0ZM
+QUdfUkNVKSk7CisJCVdBUk5fT04oIShtYXNrICYgTUFZX05PVF9CTE9DSykpOwogCQllcnIgPSAt
+RU5PRU5UOwogCQlnb3RvIG91dF9kcHV0OwogCX0K
+--20cf300fb1bff5d84f04a884ab01--
