@@ -1,55 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the of-pci tree with the arm-soc tree
-Date: Wed, 20 Jul 2011 13:01:52 +1000
-Message-ID: <20110720130152.1e2f099c084dbf22e55d2a16@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the scsi tree
+Date: Wed, 20 Jul 2011 14:08:59 +1000
+Message-ID: <20110720140859.b7d44a8c9aa20a43ec50f054@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__20_Jul_2011_13_01_52_+1000_RhkGCb6mPRP2q5.W"
+ boundary="Signature=_Wed__20_Jul_2011_14_08_59_+1000_VxJuSKTbK/Q1ElmT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35803 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60054 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752522Ab1GTDCD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Jul 2011 23:02:03 -0400
+	id S1750747Ab1GTEJJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jul 2011 00:09:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Arnd Bergmann <arnd@arndb.de>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kashyap, Desai" <kashyap.desai@lsi.com>
 
---Signature=_Wed__20_Jul_2011_13_01_52_+1000_RhkGCb6mPRP2q5.W
+--Signature=_Wed__20_Jul_2011_14_08_59_+1000_VxJuSKTbK/Q1ElmT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Benjamin,
+Hi James,
 
-Today's linux-next merge of the of-pci tree got a conflict in
-arch/microblaze/include/asm/pci-bridge.h between commit f4ffd5e5dfda
-("pci: move microblaze and powerpc pci flag functions into asm-generic")
-from the arm-soc tree and commit 72bdee79f89f ("microblaze/pci: Remove
-powermac originated cruft") from the of-pci tree.
+After merging the scsi tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-The former removal removed a superset of what the latter removed, so I
-used the former.
+drivers/scsi/mpt2sas/mpt2sas_scsih.c: In function '_scsih_sas_broadcast_pri=
+mative_event':
+drivers/scsi/mpt2sas/mpt2sas_scsih.c:5591:40: warning: unused variable 'eve=
+nt_data'
 
+Probably introduced by commit f93213de5c28 ("[SCSI] mpt2sas: fix
+broadcast AEN and task management issue").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__20_Jul_2011_13_01_52_+1000_RhkGCb6mPRP2q5.W
+--Signature=_Wed__20_Jul_2011_14_08_59_+1000_VxJuSKTbK/Q1ElmT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOJkUgAAoJEDMEi1NhKgbsDMYIAJWFAEfC8BbFv3A4ktyhDW97
-p6CIqVsIpD/HDhXFBV5GJXj0zJYhUbC4TTfqcfQTO1MFxObkNdcwJwmvvJ9Z51ka
-NZ+SNnoA8U0NfFSFaZs9Pi3KtGokFCHgrFncQKzVsphDNUVYfItN+c0DEvbFbiSm
-hhI7tDjcTncWbxsKvmqVNN9B4xKSeywZ61h6TFqfa+BYDkCg0EY21PHAcjn3wQ7X
-nPMRb/VUGosGiRz5CIXsKbf1CzlwdSXeScP/hen/NYCtFcn1ocF8imjJ2xsWWMDR
-y8imUSTSDVEtMApnpxB7B9CmfbDAQQ8q59CjI7jp5Ll4PaBtvWWYwt2n5ZziSlg=
-=M24m
+iQEcBAEBAgAGBQJOJlTbAAoJEDMEi1NhKgbsFs0H/3wHCw7u7hu2vnnBQ7efxyF1
+yXp7MM5uhf1ugY1/wsuYqp/KSEVyy0gvAQ92U0sBV5XZ9bT1gq0mWTsZRbV5Ngzu
+5DGzQ1nSNi31sdRCI1tvxknCWpvKDN780nXs59O98CObjT2DyM7WOF8OCGzYecmb
+/DKY3cAj1s+qUsJ8MF+2Iq3RGY3Lbayfcxn2IdjcQF9cL/CGr+uz7th+IR6YEMBx
+M2F6P6yH8fqleWQUN/AQsmJ5DIlTwQ7S+mnwVGxqWywxVmwz/qdSxzD8wCRuMmVs
+nTj8zmrtp65nhdaauXra5z3s1V6R8TJK8WNVKFW9p837b4rexnWUtjeaeoYEFvQ=
+=kYFM
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__20_Jul_2011_13_01_52_+1000_RhkGCb6mPRP2q5.W--
+--Signature=_Wed__20_Jul_2011_14_08_59_+1000_VxJuSKTbK/Q1ElmT--
