@@ -1,64 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the s5p tree with the arm tree
-Date: Wed, 20 Jul 2011 18:25:40 +1000
-Message-ID: <20110720182540.c53726975c8a0b3a48d609b1@canb.auug.org.au>
-References: <20110720113558.1fb8c2f8392f52c77becf46a@canb.auug.org.au>
-	<20110720080441.GA28730@flint.arm.linux.org.uk>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the staging tree with the trivial
+ tree
+Date: Wed, 20 Jul 2011 12:01:27 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1107201201020.7300@pobox.suse.cz>
+References: <20110716225343.4a0a0472fb944c9ba79f9590@canb.auug.org.au> <20110717091600.GD25824@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__20_Jul_2011_18_25_40_+1000_VOIUi4ju=zHM0w.S"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38749 "EHLO smtps.tip.net.au"
+Received: from cantor2.suse.de ([195.135.220.15]:44322 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751095Ab1GTIZu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Jul 2011 04:25:50 -0400
-In-Reply-To: <20110720080441.GA28730@flint.arm.linux.org.uk>
+	id S1751244Ab1GTKBa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jul 2011 06:01:30 -0400
+In-Reply-To: <20110717091600.GD25824@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jaecheol Lee <jc.lee@samsung.com>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
 
---Signature=_Wed__20_Jul_2011_18_25_40_+1000_VOIUi4ju=zHM0w.S
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, 17 Jul 2011, Greg KH wrote:
 
-Hi Russell,
+> > Today's linux-next merge of the staging tree got a conflict in
+> > drivers/staging/generic_serial/ser_a2232.c between commit 28f65c11f2ff
+> > ("treewide: Convert uses of struct resource to resource_size(ptr)") from
+> > the trivial tree and commit bb2a97e9ccd5 ("Staging: delete generic_serial
+> > drivers") from the staging tree.
+> > 
+> > The latter removes the file, so I did that.
+> 
+> Thank you, that is the correct fix :)
 
-On Wed, 20 Jul 2011 09:04:41 +0100 Russell King <rmk@arm.linux.org.uk> wrot=
-e:
->
-> On Wed, Jul 20, 2011 at 11:35:58AM +1000, Stephen Rothwell wrote:
-> > BTW, Russell, commit 29cb3cd208dd above changed the return type of
-> > exynos4_cpu_suspend() from void to int but did not add any return
-> > statement ...
->=20
-> That's fine - it ends with a call to panic() which is declared as a
-> function which never returns.  Therefore, exynos4_cpu_suspend() itself
-> never returns.
+I have dropped the conflicting hunks now (and the same for the other 
+trivial/staging conflict).
 
-Ah, yes.  Unfortunately, the s5p tree changes removed the panic.  So, I
-guess the merge needs some other fixup.
+Thanks,
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__20_Jul_2011_18_25_40_+1000_VOIUi4ju=zHM0w.S
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOJpEEAAoJEDMEi1NhKgbsC2cIAJlrAyXuQpx8O7Guu3hX8rfe
-hU2CPH2/0sexYMtQ/6W9MvAt0e/R6tupwTt+fuNil30coXScZouzPCx0zGJ1pN9F
-jNElcH4j69VrWThURZnGuQlanXRFzs8CC9/yc6i81So3xJn04G7VsaJNGzWj+FTj
-z/BlXOI9VMbv9jFD5XrYqfdFM77mrtjw+jEyMdLB5xcWrIUjAthz9XZEj1LmD8EA
-VsDvS9M1L0b5owfM+F2qs2raRWlt6prP4wEW1J5J9tt4X6Ss1GErHVy+MdBwGsTm
-5v9cZCURSOLoqd3dI8OPIfPazM/sIKpi1QriMiZtHMEQjDnwnNyJ7vwvn2XqvjE=
-=2b4A
------END PGP SIGNATURE-----
-
---Signature=_Wed__20_Jul_2011_18_25_40_+1000_VOIUi4ju=zHM0w.S--
+-- 
+Jiri Kosina
+SUSE Labs
