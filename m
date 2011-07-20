@@ -1,41 +1,34 @@
-From: Jonathan Cameron <jic23@cam.ac.uk>
-Subject: Re: linux-next: manual merge of the rr tree with the  tree
-Date: Tue, 19 Jul 2011 12:27:42 +0100
-Message-ID: <4E256A2E.50607@cam.ac.uk>
-References: <20110705135932.de7f0526.sfr@canb.auug.org.au> <1309967847.3393.44.camel@jerome> <4E14F373.1020307@snapgear.com> <20110707102432.5a779744e247652be005b592@canb.auug.org.au> <87liwakiez.fsf@rustcorp.com.au>
+From: James Morris <jmorris@namei.org>
+Subject: Re: [PATCH] tpm: Fix compilation warning when CONFIG_PNP is not
+ defined
+Date: Wed, 20 Jul 2011 10:29:38 +1000 (EST)
+Message-ID: <alpine.LRH.2.00.1107201029230.23408@tundra.namei.org>
+References: <1310903758.15064.9.camel@d941e-10> <20110718091624.bd262188190c5d7a05416b99@canb.auug.org.au> <4E242049.1030604@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ppsw-41.csi.cam.ac.uk ([131.111.8.141]:39610 "EHLO
-	ppsw-41.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751032Ab1GSL1v (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jul 2011 07:27:51 -0400
-In-Reply-To: <87liwakiez.fsf@rustcorp.com.au>
+Received: from tundra.namei.org ([65.99.196.166]:41536 "EHLO tundra.namei.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752301Ab1GTA3q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Jul 2011 20:29:46 -0400
+In-Reply-To: <4E242049.1030604@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg Ungerer <gerg@snapgear.com>, Jonas Bonn <jonas@southpole.se>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, rdunlap@xenotime.net, Rajiv Andrade <srajiv@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On 07/07/11 02:07, Rusty Russell wrote:
-> On Thu, 7 Jul 2011 10:24:32 +1000, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
-> .... 
->>> Acked-by: Greg Ungerer <gerg@uclinux.org>
->>
->> OK, so now someone just has to remember to apply it (or tell Linus, or
->> fix up the trees) during the merge window.   That person probably won't
->> be me (since I will not be online next week (assuming Linus follows
->> through and opens the merge window next week).
-> 
-> I'm travelling next week too, so m68k will probably get merged first,
-> and hence I'll roll in this fix myself.
-> 
-> Thanks,
-> Rusty.
-Rusty?
+On Mon, 18 Jul 2011, Stefan Berger wrote:
 
-If not I'm happy to take on adapting this to meet everyone's requirements.
+> > > -#ifdef CONFIG_ACPI
+> > > +#ifdef CONFIG_PNPN
+> >                   ^^^^
+> > Is this a typo?
+> > 
+> Argh, yes.
+
+Do you have an updated version?
 
 
-Jonathan
+-- 
+James Morris
+<jmorris@namei.org>
