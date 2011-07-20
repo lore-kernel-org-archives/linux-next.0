@@ -1,39 +1,33 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the staging tree with the trivial
- tree
-Date: Wed, 20 Jul 2011 12:01:27 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1107201201020.7300@pobox.suse.cz>
-References: <20110716225343.4a0a0472fb944c9ba79f9590@canb.auug.org.au> <20110717091600.GD25824@kroah.com>
+From: Ben Dooks <ben@trinity.fluff.org>
+Subject: Re: linux-next: manual merge of the s5p tree with the arm-soc tree
+Date: Wed, 20 Jul 2011 11:13:58 +0100
+Message-ID: <20110720101358.GT21138@trinity.fluff.org>
+References: <20110720113536.72c28c19d623c5e7f8604ca2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:44322 "EHLO mx2.suse.de"
+Received: from trinity.fluff.org ([89.16.178.74]:59775 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751244Ab1GTKBa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Jul 2011 06:01:30 -0400
-In-Reply-To: <20110717091600.GD25824@kroah.com>
+	id S1751289Ab1GTKOH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jul 2011 06:14:07 -0400
+Content-Disposition: inline
+In-Reply-To: <20110720113536.72c28c19d623c5e7f8604ca2@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Arnd Bergmann <arnd@arndb.de>
 
-On Sun, 17 Jul 2011, Greg KH wrote:
-
-> > Today's linux-next merge of the staging tree got a conflict in
-> > drivers/staging/generic_serial/ser_a2232.c between commit 28f65c11f2ff
-> > ("treewide: Convert uses of struct resource to resource_size(ptr)") from
-> > the trivial tree and commit bb2a97e9ccd5 ("Staging: delete generic_serial
-> > drivers") from the staging tree.
-> > 
-> > The latter removes the file, so I did that.
+On Wed, Jul 20, 2011 at 11:35:36AM +1000, Stephen Rothwell wrote:
+> Hi Kukjin,
 > 
-> Thank you, that is the correct fix :)
+> Today's linux-next merge of the s5p tree got conflicts in drivers/tty/serial/s3c2400.c and drivers/tty/serial/s3c24a0.c between commits 632b7cf6c056 ("ARM: mach-s3c2400: delete") and af0e060e24ce ("ARM: mach-s3c24a0: delete")from the arm-soc tree and commit 470805f8f958 ("serial: Remove redundant console_initcall from s3c and s5p console drivers") from the s5p tree.
+> 
+> The former removes these files, so I did that.
 
-I have dropped the conflicting hunks now (and the same for the other 
-trivial/staging conflict).
-
-Thanks,
+Yes, there's little chance of these socs ever being added, so nico
+removed all reference to them.
 
 -- 
-Jiri Kosina
-SUSE Labs
+Ben Dooks, ben@fluff.org, http://www.fluff.org/ben/
+
+Large Hadron Colada: A large Pina Colada that makes the universe disappear.
