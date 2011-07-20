@@ -1,24 +1,61 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for July 20
-Date: Wed, 20 Jul 2011 14:02:21 +0100
-Message-ID: <20110720130220.GA2406@sirena.org.uk>
+Date: Wed, 20 Jul 2011 23:48:17 +1000
+Message-ID: <20110720234817.fdc50eadf3ae775e89642689@canb.auug.org.au>
 References: <20110720180041.5774ca335e6697c17374dca5@canb.auug.org.au>
+	<20110720130220.GA2406@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__20_Jul_2011_23_48_17_+1000_yc6NyIy1S2gZZqQz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:36501 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751302Ab1GTNCX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2011 09:02:23 -0400
-Content-Disposition: inline
-In-Reply-To: <20110720180041.5774ca335e6697c17374dca5@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44232 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750994Ab1GTNs2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jul 2011 09:48:28 -0400
+In-Reply-To: <20110720130220.GA2406@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Jul 20, 2011 at 06:00:41PM +1000, Stephen Rothwell wrote:
+--Signature=_Wed__20_Jul_2011_23_48_17_+1000_yc6NyIy1S2gZZqQz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The regmap tree lost its conflict.
+Hi Mark,
 
-What was the conflict, OOI?  I didn't notice anything.
+On Wed, 20 Jul 2011 14:02:21 +0100 Mark Brown <broonie@opensource.wolfsonmi=
+cro.com> wrote:
+>
+> On Wed, Jul 20, 2011 at 06:00:41PM +1000, Stephen Rothwell wrote:
+>=20
+> > The regmap tree lost its conflict.
+>=20
+> What was the conflict, OOI?  I didn't notice anything.
+
+It was just a simple conflict against the spi tree in
+drivers/spi/Makefile that I probably didn't even report.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__20_Jul_2011_23_48_17_+1000_yc6NyIy1S2gZZqQz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOJtyhAAoJEDMEi1NhKgbsym0H/A00FTvY/Lp9Ov6W5kC72yDi
+l708UBbOLDyzbX/h7kw0ts5h58KgSPqtiJaTF9q+Pd4uWqum9GBcuXsOIme98BbB
+o1s1LKXaV2RqjN9emYvDoN9FsgGFJy+rPzi4ER6W5PatglL5aKUd1ifHOf7UNUF8
+TkXKOn02E6tMniQ39sHR0fm+4grRf8UJ+2WocXFDZkqPSt2mZWMHh4gqCNcuW5qi
+vuUPPNmCWZ/gl/m6UR74hIr8SEfWCkU75kD3xKk/DztgPO8QhHB81b9UKsPswJAD
+sRq2ez9LXIQFRiDG5P5gIB5Yz2Uxmtse6t4q7jYFFDnCdigFripUvON64jG/LoQ=
+=+Fkl
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__20_Jul_2011_23_48_17_+1000_yc6NyIy1S2gZZqQz--
