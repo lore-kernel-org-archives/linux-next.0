@@ -1,60 +1,117 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for July 20 (acpi/apei/ghes)
-Date: Thu, 21 Jul 2011 00:06:59 +0200
-Message-ID: <CA+icZUWeYkmrx+UF2Vfitx_6hnzzrGJk-wHC1gdEN0jMBznKtQ@mail.gmail.com>
-References: <20110720180041.5774ca335e6697c17374dca5@canb.auug.org.au>
-	<20110720093633.ca9cf794.rdunlap@xenotime.net>
-	<20110720093829.aae2ec63.rdunlap@xenotime.net>
-Reply-To: sedat.dilek@gmail.com
+From: Noah Watkins <noahwatkins@gmail.com>
+Subject: [PATCH -next 1/2] staging: zram: make global var "devices" use unique name
+Date: Wed, 20 Jul 2011 17:05:57 -0600
+Message-ID: <CAB2gnbU3xNhk-0U_S4r-=4n2ixipmrs+qrRQQxO6Xuae8KRyQg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110720093829.aae2ec63.rdunlap@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-acpi@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:37547 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752716Ab1GTXF6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2011 19:05:58 -0400
+Received: by vws1 with SMTP id 1so528489vws.19
+        for <linux-next@vger.kernel.org>; Wed, 20 Jul 2011 16:05:57 -0700 (PDT)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Nitin Gupta <ngupta@vflare.org>
+Cc: linux-next@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>
 
-On Wed, Jul 20, 2011 at 6:38 PM, Randy Dunlap <rdunlap@xenotime.net> wr=
-ote:
-> On Wed, 20 Jul 2011 09:36:33 -0700 Randy Dunlap wrote:
->
->> On Wed, 20 Jul 2011 18:00:41 +1000 Stephen Rothwell wrote:
->>
->> > Hi all,
->>
->> On i386 (X86_32):
->>
->> drivers/acpi/apei/ghes.c:542: warning: integer overflow in expressio=
-n
->> drivers/acpi/apei/ghes.c:619: warning: integer overflow in expressio=
-n
->>
->> ghes.c:(.text+0x46289): undefined reference to `__udivdi3'
->> =C2=A0 in function ghes_estatus_cache_add().
->
-> That's on:
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0period =3D dur=
-ation / (count + 1);
->
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your c=
-ode ***
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
-ml
->
+The global variable "devices" is too general to be global.
+This patch switches the name to be "zram_devices".
 
-Same here on i386 with CONFIG_ACPI_APEI_GHES=3Dy.
+Signed-off-by: Noah Watkins <noahwatkins@gmail.com>
+---
+ drivers/staging/zram/zram_drv.c   |   16 ++++++++--------
+ drivers/staging/zram/zram_drv.h   |    2 +-
+ drivers/staging/zram/zram_sysfs.c |    2 +-
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-  LD      .tmp_vmlinux1
-drivers/built-in.o: In function `ghes_estatus_cache_add':
-ghes.c:(.text+0x43d91): undefined reference to `__udivdi3'
-make[4]: *** [.tmp_vmlinux1] Error 1
+diff --git a/drivers/staging/zram/zram_drv.c b/drivers/staging/zram/zram_drv.c
+index d70ec1a..11e7e92 100644
+--- a/drivers/staging/zram/zram_drv.c
++++ b/drivers/staging/zram/zram_drv.c
+@@ -37,7 +37,7 @@
 
-- Sedat -
+ /* Globals */
+ static int zram_major;
+-struct zram *devices;
++struct zram *zram_devices;
+
+ /* Module params (documentation at end) */
+ unsigned int num_devices;
+@@ -801,14 +801,14 @@ static int __init zram_init(void)
+
+ 	/* Allocate the device array and initialize each one */
+ 	pr_info("Creating %u devices ...\n", num_devices);
+-	devices = kzalloc(num_devices * sizeof(struct zram), GFP_KERNEL);
+-	if (!devices) {
++	zram_devices = kzalloc(num_devices * sizeof(struct zram), GFP_KERNEL);
++	if (!zram_devices) {
+ 		ret = -ENOMEM;
+ 		goto unregister;
+ 	}
+
+ 	for (dev_id = 0; dev_id < num_devices; dev_id++) {
+-		ret = create_device(&devices[dev_id], dev_id);
++		ret = create_device(&zram_devices[dev_id], dev_id);
+ 		if (ret)
+ 			goto free_devices;
+ 	}
+@@ -817,8 +817,8 @@ static int __init zram_init(void)
+
+ free_devices:
+ 	while (dev_id)
+-		destroy_device(&devices[--dev_id]);
+-	kfree(devices);
++		destroy_device(&zram_devices[--dev_id]);
++	kfree(zram_devices);
+ unregister:
+ 	unregister_blkdev(zram_major, "zram");
+ out:
+@@ -831,7 +831,7 @@ static void __exit zram_exit(void)
+ 	struct zram *zram;
+
+ 	for (i = 0; i < num_devices; i++) {
+-		zram = &devices[i];
++		zram = &zram_devices[i];
+
+ 		destroy_device(zram);
+ 		if (zram->init_done)
+@@ -840,7 +840,7 @@ static void __exit zram_exit(void)
+
+ 	unregister_blkdev(zram_major, "zram");
+
+-	kfree(devices);
++	kfree(zram_devices);
+ 	pr_debug("Cleanup done!\n");
+ }
+
+diff --git a/drivers/staging/zram/zram_drv.h b/drivers/staging/zram/zram_drv.h
+index abe5221..0e4b540 100644
+--- a/drivers/staging/zram/zram_drv.h
++++ b/drivers/staging/zram/zram_drv.h
+@@ -123,7 +123,7 @@ struct zram {
+ 	struct zram_stats stats;
+ };
+
+-extern struct zram *devices;
++extern struct zram *zram_devices;
+ extern unsigned int num_devices;
+ #ifdef CONFIG_SYSFS
+ extern struct attribute_group zram_disk_attr_group;
+diff --git a/drivers/staging/zram/zram_sysfs.c
+b/drivers/staging/zram/zram_sysfs.c
+index a70cc01..0f001e8 100644
+--- a/drivers/staging/zram/zram_sysfs.c
++++ b/drivers/staging/zram/zram_sysfs.c
+@@ -35,7 +35,7 @@ static struct zram *dev_to_zram(struct device *dev)
+ 	struct zram *zram = NULL;
+
+ 	for (i = 0; i < num_devices; i++) {
+-		zram = &devices[i];
++		zram = &zram_devices[i];
+ 		if (disk_to_dev(zram->disk) == dev)
+ 			break;
+ 	}
+-- 
+1.7.5.4
