@@ -1,82 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the s5p tree with the arm tree
-Date: Wed, 20 Jul 2011 11:35:58 +1000
-Message-ID: <20110720113558.1fb8c2f8392f52c77becf46a@canb.auug.org.au>
+Subject: linux-next: manual merge of the of-pci tree with the arm-soc tree
+Date: Wed, 20 Jul 2011 13:01:52 +1000
+Message-ID: <20110720130152.1e2f099c084dbf22e55d2a16@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__20_Jul_2011_13_01_52_+1000_RhkGCb6mPRP2q5.W"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34556 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35803 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752723Ab1GTBgB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Jul 2011 21:36:01 -0400
+	id S1752522Ab1GTDCD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Jul 2011 23:02:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Jaecheol Lee <jc.lee@samsung.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Arnd Bergmann <arnd@arndb.de>
 
-Hi Kukjin,
+--Signature=_Wed__20_Jul_2011_13_01_52_+1000_RhkGCb6mPRP2q5.W
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the s5p tree got a conflict in
-arch/arm/mach-exynos4/pm.c between commits e7089da9567f ("ARM: pm:
-samsung: move cpu_suspend into C code") and 29cb3cd208dd ("ARM: pm: allow
-suspend finisher to return error codes") from the arm tree and commit
-f8ab7d1a953b ("ARM: EXYNOS4: Add save/restore for other ARM registers")
-from the s5p tree.
+Hi Benjamin,
 
-I fixed it up (see below) and can carry the fix as necessary.
+Today's linux-next merge of the of-pci tree got a conflict in
+arch/microblaze/include/asm/pci-bridge.h between commit f4ffd5e5dfda
+("pci: move microblaze and powerpc pci flag functions into asm-generic")
+from the arm-soc tree and commit 72bdee79f89f ("microblaze/pci: Remove
+powermac originated cruft") from the of-pci tree.
 
-BTW, Russell, commit 29cb3cd208dd above changed the return type of
-exynos4_cpu_suspend() from void to int but did not add any return
-statement ...
+The former removal removed a superset of what the latter removed, so I
+used the former.
 
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-exynos4/pm.c
-index 533c28f,45f7fd3..0000000
---- a/arch/arm/mach-exynos4/pm.c
-+++ b/arch/arm/mach-exynos4/pm.c
-@@@ -280,37 -216,11 +216,11 @@@ static struct sleep_save exynos4_l2cc_s
-  	SAVE_ITEM(S5P_VA_L2CC + L2X0_AUX_CTRL),
-  };
-  
-+ /* For Cortex-A9 Diagnostic and Power control register */
-+ static unsigned int save_arm_register[2];
-+ 
- -void exynos4_cpu_suspend(unsigned long arg)
- +static int exynos4_cpu_suspend(unsigned long arg)
-  {
-- 	unsigned long tmp;
-- 	unsigned long mask = 0xFFFFFFFF;
-- 
-- 	/* Setting Central Sequence Register for power down mode */
-- 
-- 	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
-- 	tmp &= ~(S5P_CENTRAL_LOWPWR_CFG);
-- 	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
-- 
-- 	/* Setting Central Sequence option Register */
-- 
-- 	tmp = __raw_readl(S5P_CENTRAL_SEQ_OPTION);
-- 	tmp &= ~(S5P_USE_MASK);
-- 	tmp |= S5P_USE_STANDBY_WFI0;
-- 	__raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
-- 
-- 	/* Clear all interrupt pending to avoid early wakeup */
-- 
-- 	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x280));
-- 	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x284));
-- 	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x288));
-- 
-- 	/* Disable all interrupt */
-- 
-- 	__raw_writel(0x0, (S5P_VA_GIC_CPU + 0x000));
-- 	__raw_writel(0x0, (S5P_VA_GIC_DIST + 0x000));
-- 	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x184));
-- 	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x188));
-- 
-  	outer_flush_all();
-  
-  	/* issue the standby signal into the pm unit. */
+--Signature=_Wed__20_Jul_2011_13_01_52_+1000_RhkGCb6mPRP2q5.W
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOJkUgAAoJEDMEi1NhKgbsDMYIAJWFAEfC8BbFv3A4ktyhDW97
+p6CIqVsIpD/HDhXFBV5GJXj0zJYhUbC4TTfqcfQTO1MFxObkNdcwJwmvvJ9Z51ka
+NZ+SNnoA8U0NfFSFaZs9Pi3KtGokFCHgrFncQKzVsphDNUVYfItN+c0DEvbFbiSm
+hhI7tDjcTncWbxsKvmqVNN9B4xKSeywZ61h6TFqfa+BYDkCg0EY21PHAcjn3wQ7X
+nPMRb/VUGosGiRz5CIXsKbf1CzlwdSXeScP/hen/NYCtFcn1ocF8imjJ2xsWWMDR
+y8imUSTSDVEtMApnpxB7B9CmfbDAQQ8q59CjI7jp5Ll4PaBtvWWYwt2n5ZziSlg=
+=M24m
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__20_Jul_2011_13_01_52_+1000_RhkGCb6mPRP2q5.W--
