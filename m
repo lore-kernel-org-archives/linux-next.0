@@ -1,40 +1,56 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for July 20 (acpi/apei/ghes)
-Date: Wed, 20 Jul 2011 09:38:29 -0700
-Message-ID: <20110720093829.aae2ec63.rdunlap@xenotime.net>
+From: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
+Subject: Re: linux-next: Tree for July 20 (qlcnic)
+Date: Wed, 20 Jul 2011 11:10:18 -0700
+Message-ID: <0E5EAE44-204C-4F4D-926C-F4D973B0CDB1@qlogic.com>
 References: <20110720180041.5774ca335e6697c17374dca5@canb.auug.org.au>
-	<20110720093633.ca9cf794.rdunlap@xenotime.net>
+ <20110720091945.39f0a8a5.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:56470 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751476Ab1GTQic (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2011 12:38:32 -0400
-In-Reply-To: <20110720093633.ca9cf794.rdunlap@xenotime.net>
+Received: from tx2ehsobe001.messaging.microsoft.com ([65.55.88.11]:5773 "EHLO
+	TX2EHSOBE001.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751671Ab1GTSHB convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2011 14:07:01 -0400
+In-Reply-To: <20110720091945.39f0a8a5.rdunlap@xenotime.net>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-acpi@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux Driver <Linux-Driver@qlogic.com>, David Lamparter <equinox@diac24.net>
 
-On Wed, 20 Jul 2011 09:36:33 -0700 Randy Dunlap wrote:
+
+On Jul 20, 2011, at 9:19 AM, Randy Dunlap wrote:
 
 > On Wed, 20 Jul 2011 18:00:41 +1000 Stephen Rothwell wrote:
 > 
-> > Hi all,
+>> Hi all,
 > 
-> On i386 (X86_32):
+> When CONFIG_VLAN_8021Q is not enabled:
 > 
-> drivers/acpi/apei/ghes.c:542: warning: integer overflow in expression
-> drivers/acpi/apei/ghes.c:619: warning: integer overflow in expression
-> 
-> ghes.c:(.text+0x46289): undefined reference to `__udivdi3'
->   in function ghes_estatus_cache_add().
+> drivers/net/qlcnic/qlcnic_main.c:4207: error: 'struct net_device' has no member named 'vlgrp'
 
-That's on:
-		period = duration / (count + 1);
+This is caused by the following commit:
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+commit 69ecca86da4890c13a5e29c51b4ac76a1a8a62c9                                                      
+Refs: v3.0-rc7-1265-g69ecca8                                                                         
+Author:     David Lamparter <equinox@diac24.net>                                                     
+AuthorDate: Sun Jul 17 08:53:12 2011 +0000                                                           
+Commit:     David S. Miller <davem@davemloft.net>                                                    
+CommitDate: Sun Jul 17 12:33:22 2011 -0700                                                           
+                                                                                                     
+    net: vlan, qlcnic: make vlan_find_dev private                                                    
+                                                                                                     
+    there is only one user of vlan_find_dev outside of the actual vlan code:                         
+    qlcnic uses it to iterate over some VLANs it knows.                                              
+                                                                                                     
+    let's just make vlan_find_dev private to the VLAN code and have the                              
+    iteration in qlcnic be a bit more direct. (a few rcu dereferences less                           
+    too)                                                                                             
+                                                                                                     
+    Signed-off-by: David Lamparter <equinox@diac24.net>                                              
+    Cc: Patrick McHardy <kaber@trash.net>                                                            
+    Cc: Amit Kumar Salecha <amit.salecha@qlogic.com>                                                 
+    Cc: Anirban Chakraborty <anirban.chakraborty@qlogic.com>                                         
+    Cc: linux-driver@qlogic.com                                                                      
+    Signed-off-by: David S. Miller <davem@davemloft.net>                                             
