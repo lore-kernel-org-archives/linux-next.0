@@ -1,49 +1,37 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] mm/truncate.c: fix build for CONFIG_BLOCK not enabled
-Date: Thu, 21 Jul 2011 13:55:37 -0700
-Message-ID: <20110721135537.dbfea947.rdunlap@xenotime.net>
-References: <20110718203501.232bd176e83ff65f056366e6@canb.auug.org.au>
-	<20110718081816.2106117e.rdunlap@xenotime.net>
-	<20110718152117.GA8844@infradead.org>
+Subject: Re: linux-next: Tree for July 21 (drivers/md/dm-raid)
+Date: Thu, 21 Jul 2011 14:56:48 -0700
+Message-ID: <20110721145648.2477f8bb.rdunlap@xenotime.net>
+References: <20110721165542.7748c88a1d1e0b228c7fe3fa@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20110718152117.GA8844@infradead.org>
-Sender: owner-linux-mm@kvack.org
-To: Christoph Hellwig <hch@infradead.org>, viro@zeniv.linux.org.uk
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+Return-path: <linux-raid-owner@vger.kernel.org>
+In-Reply-To: <20110721165542.7748c88a1d1e0b228c7fe3fa@canb.auug.org.au>
+Sender: linux-raid-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Thu, 21 Jul 2011 16:55:42 +1000 Stephen Rothwell wrote:
 
-Fix build error when CONFIG_BLOCK is not enabled by providing a stub
-inode_dio_wait() function.
+> Hi all,
 
-mm/truncate.c:612: error: implicit declaration of function 'inode_dio_wait'
+When CONFIG_DM_RAID=m and CONFIG_MD_RAID1 is not enabled:
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+ERROR: "md_raid1_congested" [drivers/md/dm-raid.ko] undefined!
+
+due to:
+
+	if (rs->raid_type->level == 1)
+		return md_raid1_congested(&rs->md, bits);
+
+Should that just be surrounded with this?
+
+#if defined(CONFIG_MD_RAID1) || defined(CONFIG_MD_RAID1_MODULE)
+...
+#endif
+
 ---
- include/linux/fs.h |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- linux-next-20110721.orig/include/linux/fs.h
-+++ linux-next-20110721/include/linux/fs.h
-@@ -2418,6 +2418,10 @@ static inline ssize_t blockdev_direct_IO
- 				    offset, nr_segs, get_block, NULL, NULL,
- 				    DIO_LOCKING | DIO_SKIP_HOLES);
- }
-+#else
-+static inline void inode_dio_wait(struct inode *inode)
-+{
-+}
- #endif
- 
- extern const struct file_operations generic_ro_fops;
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
