@@ -1,40 +1,50 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: Note on Linux 3.0 and the 3.1 merge window
-Date: Thu, 21 Jul 2011 15:05:14 +0200
-Message-ID: <CA+icZUVFuLszu5hBTj29M2L1OqkeNXwEV7YsvyGzo_3JL=VMQw@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Arnaud Lacombe <lacombar@gmail.com>
+Subject: Re: linux-next: Tree for July 20 (lockdep warning)
+Date: Thu, 21 Jul 2011 13:25:52 -0400
+Message-ID: <CACqU3MUPt3rSm5MMd4_AUygF2uPE_w9a+VdgPk8e9ZNfG0Bu+A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:50625 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752646Ab1GUNFQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jul 2011 09:05:16 -0400
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:46762 "EHLO
+	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752460Ab1GURZx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jul 2011 13:25:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-[ Please CC me I am not subscribed to LKML ]
+Hi,
 
->From [1]:
+On Wed, Jul 20, 2011 at 4:00 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+Not sure which tree is involved, but booting a kernel with qemu
+triggers the following warning:
 
-"The observation: with the upcoming version number change, the official
-'git' repository is now (and has been for a week, but people probably
-didn't notice) just
+WARNING: at kernel/lockdep.c:2529 trace_hardirqs_on_caller+0x52/0x79()
+Hardware name: Bochs
+Modules linked in:
+Pid: 1, comm: swapper Not tainted 3.0.0-rc7-next-20110720+ #3
+Call Trace:
+ [<c101bcfd>] warn_slowpath_common+0x65/0x7a
+ [<c103da0d>] ? trace_hardirqs_on_caller+0x52/0x79
+ [<c11df84c>] ? restore_all+0xf/0xf
+ [<c10137a8>] ? vmalloc_sync_all+0x95/0x95
+ [<c101bd21>] warn_slowpath_null+0xf/0x13
+ [<c103da0d>] trace_hardirqs_on_caller+0x52/0x79
+ [<c10be180>] trace_hardirqs_on_thunk+0xc/0x10
+ [<c103efb0>] ? cmpxchg_futex_value_locked+0x3d/0x4f
+ [<c11df84c>] ? restore_all+0xf/0xf
+ [<c10137a8>] ? vmalloc_sync_all+0x95/0x95
+ [<c11e0615>] ? iret_exc+0x345/0x984
+ [<c143b68f>] ? start_kernel+0x28e/0x28e
+ [<c14477d6>] ? futex_init+0x16/0x64
+ [<c143b68f>] ? start_kernel+0x28e/0x28e
+ [<c1001126>] ? do_one_initcall+0x70/0x11a
+ [<c14477c0>] ? lockdep_proc_init+0x67/0x67
+ [<c143b68f>] ? start_kernel+0x28e/0x28e
+ [<c143b6ff>] ? kernel_init+0x70/0xe9
+ [<c11e023a>] ? kernel_thread_helper+0x6/0xd
 
-    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-
-ie the "-2.6" thing is gone. However, the old name continues to work,
-just so that nothing breaks. You don't need to really change anything,
-but I thought I'd just point it out."
-
-Nice to see you switched finally the upstream repository to a more common name.
-What's with all the other repos from sub-maintainers?
-I already made some suggestions in [2].
-
-Regards,
-- Sedat -
-
-[1] http://lkml.org/lkml/2011/7/20/371
-[2] http://lkml.org/lkml/2011/5/30/77
+ - Arnaud
