@@ -1,49 +1,40 @@
-From: Oleg Nesterov <oleg@redhat.com>
-Subject: Re: linux-next: manual merge of the ptrace tree with the s390 tree
-Date: Thu, 21 Jul 2011 16:44:47 +0200
-Message-ID: <20110721144447.GA7580@redhat.com>
-References: <20110720153320.a7f33784158ccb04fafcb5d6@canb.auug.org.au> <20110721080240.GZ3455@htj.dyndns.org>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: Note on Linux 3.0 and the 3.1 merge window
+Date: Thu, 21 Jul 2011 15:05:14 +0200
+Message-ID: <CA+icZUVFuLszu5hBTj29M2L1OqkeNXwEV7YsvyGzo_3JL=VMQw@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:25389 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751297Ab1GUOrS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Jul 2011 10:47:18 -0400
-Content-Disposition: inline
-In-Reply-To: <20110721080240.GZ3455@htj.dyndns.org>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:50625 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752646Ab1GUNFQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jul 2011 09:05:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
-On 07/21, Tejun Heo wrote:
->
->
-> On Wed, Jul 20, 2011 at 03:33:20PM +1000, Stephen Rothwell wrote:
-> > Today's linux-next merge of the ptrace tree got a conflict in
-> > arch/s390/kernel/traps.c between commit 248bed4b0f3c ("[S390] use siginfo
-> > for sigtrap signals") from the s390 tree and commit a288eecce525
-> > ("ptrace: kill trivial tracehooks") from the ptrace tree.
-> >
-> > It looks like the former is a superset of the latter, so I used the
-> > former.
->
-> Yeap, pretty much.  Martin, testing if (current->ptrace) is enough.
-> If PT_PTRACED is not set, no other flag there is allowed to set.
+[ Please CC me I am not subscribed to LKML ]
 
-Agreed,
+>From [1]:
 
-> Also, I think we really should standardize what gets reported in these
-> debug traps instead of letting each arch do its own thing.
+"The observation: with the upcoming version number change, the official
+'git' repository is now (and has been for a week, but people probably
+didn't notice) just
 
-May be we can standardize .si_info within the single arch at least ;)
+    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-I never understood what TRAP_HWBKPT/TRAP_BRKPT actually means, and
-I can be easily wrong. But, afaics, on x86 PTRACE_SINGLESTEP results
-in TRAP_TRACE. Unless the tracee steps over syscall, in this case
-user_single_step_siginfo() sets TRAP_BRKPT. Hmm.
+ie the "-2.6" thing is gone. However, the old name continues to work,
+just so that nothing breaks. You don't need to really change anything,
+but I thought I'd just point it out."
 
-And unless I misread 248bed4b0f3c s390 thinks we need TRAP_HWBKPT.
+Nice to see you switched finally the upstream repository to a more common name.
+What's with all the other repos from sub-maintainers?
+I already made some suggestions in [2].
 
-Oleg.
+Regards,
+- Sedat -
+
+[1] http://lkml.org/lkml/2011/7/20/371
+[2] http://lkml.org/lkml/2011/5/30/77
