@@ -1,72 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (maybe
- vfs tree related)
-Date: Thu, 21 Jul 2011 16:34:40 +1000
-Message-ID: <20110721163440.9b8339c580f39d69ec2ba30f@canb.auug.org.au>
-References: <20110720173232.3c7e46d310e2224e459b0ac1@canb.auug.org.au>
-	<20110720135524.GW11013@ZenIV.linux.org.uk>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: Tree for July 18 (mm/truncate.c)
+Date: Thu, 21 Jul 2011 21:50:42 +0100
+Message-ID: <20110721205042.GC31405@ZenIV.linux.org.uk>
+References: <20110718203501.232bd176e83ff65f056366e6@canb.auug.org.au>
+ <20110718081816.2106117e.rdunlap@xenotime.net>
+ <20110718152117.GA8844@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__21_Jul_2011_16_34_40_+1000_vz.jddfwTqZEIP5y"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55459 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751099Ab1GUGet (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Jul 2011 02:34:49 -0400
-In-Reply-To: <20110720135524.GW11013@ZenIV.linux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>, "David S. Miller" <davem@davemloft.net>
-
---Signature=_Thu__21_Jul_2011_16_34_40_+1000_vz.jddfwTqZEIP5y
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20110718152117.GA8844@infradead.org>
+Sender: owner-linux-mm@kvack.org
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Al,
+On Mon, Jul 18, 2011 at 11:21:18AM -0400, Christoph Hellwig wrote:
+> On Mon, Jul 18, 2011 at 08:18:16AM -0700, Randy Dunlap wrote:
+> > On Mon, 18 Jul 2011 20:35:01 +1000 Stephen Rothwell wrote:
+> > 
+> > > Hi all,
+> > 
+> > mm/truncate.c:612: error: implicit declaration of function 'inode_dio_wait'
+> > 
+> > mm/truncate.c should be #include-ing <linux/fs.h> for that function's
+> > prototype, but that doesn't help when CONFIG_BLOCK is not enabled,
+> > which is the case in this build failure.
+> 
+> Oops.  Two choices here:
+> 
+>  a) stub it out for non-blocks.
+>  b) move it out of directio.c so that it's always provided.
+> 
+> I'd be fine with either one.  Al, any preferences?
 
-On Wed, 20 Jul 2011 14:55:24 +0100 Al Viro <viro@ZenIV.linux.org.uk> wrote:
->
-> On Wed, Jul 20, 2011 at 05:32:32PM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > After merging the final tree, today's linux-next build (sparc defconfig)
-> > failed like this:
->=20
-> > And many more similar.  Again, I assume some include files changed.
-> > Maybe commit 347727d3f51d ("superblock: introduce per-sb cache shrinker
-> > infrastructure") which included linux/mm.h in linux/fs.h ...
-> >=20
-> > I have left this again.
->=20
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 1ce9086..e0569e4 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
+None...
 
-I added this patch to the end of linux-next today and it fixed both the
-sparc and sparc64 build problems.  Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__21_Jul_2011_16_34_40_+1000_vz.jddfwTqZEIP5y
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOJ8iAAAoJEDMEi1NhKgbslIUH/j2lW3x/ada5pF1BgG/Znk9R
-rUeH6uz3yQ7QuVjr5Emc8ZAOqRRA6Gmkwvq05UC0hYI3Rn7HX+BOGKp0zBm1XZaB
-50HH65VBqft790Mg3LH/cKgC+4a+8qFa1ScfcvWgefVDE+GRHSPV+rdQvBkpYFM+
-FF0TNOkbAgROJdaVNdS1kb0Bd5t2zzQdSbGqfERiXxsg+vSECijjBIi9kcECnIJZ
-JQpMslSpBsNceiardm9JCKSZT65oBmlbcIm+ivW7zVsqM6LLoA9U0HX69K9A5HHS
-RrRSfO7CA/dVOrsceExKAq4CfMrwH8HdzhU8vHR0kcdRngqrJqCrGexRZmouIEg=
-=YEjh
------END PGP SIGNATURE-----
-
---Signature=_Thu__21_Jul_2011_16_34_40_+1000_vz.jddfwTqZEIP5y--
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
