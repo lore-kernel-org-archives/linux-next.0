@@ -1,50 +1,35 @@
-From: Arnaud Lacombe <lacombar@gmail.com>
-Subject: Re: linux-next: Tree for July 20 (lockdep warning)
-Date: Thu, 21 Jul 2011 13:25:52 -0400
-Message-ID: <CACqU3MUPt3rSm5MMd4_AUygF2uPE_w9a+VdgPk8e9ZNfG0Bu+A@mail.gmail.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: manual merge of the ptrace tree with the s390 tree
+Date: Thu, 21 Jul 2011 10:02:40 +0200
+Message-ID: <20110721080240.GZ3455@htj.dyndns.org>
+References: <20110720153320.a7f33784158ccb04fafcb5d6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:46762 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752460Ab1GURZx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jul 2011 13:25:53 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110720153320.a7f33784158ccb04fafcb5d6@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+Hello,
 
-On Wed, Jul 20, 2011 at 4:00 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-Not sure which tree is involved, but booting a kernel with qemu
-triggers the following warning:
+On Wed, Jul 20, 2011 at 03:33:20PM +1000, Stephen Rothwell wrote:
+> Today's linux-next merge of the ptrace tree got a conflict in
+> arch/s390/kernel/traps.c between commit 248bed4b0f3c ("[S390] use siginfo
+> for sigtrap signals") from the s390 tree and commit a288eecce525
+> ("ptrace: kill trivial tracehooks") from the ptrace tree.
+> 
+> It looks like the former is a superset of the latter, so I used the
+> former.
 
-WARNING: at kernel/lockdep.c:2529 trace_hardirqs_on_caller+0x52/0x79()
-Hardware name: Bochs
-Modules linked in:
-Pid: 1, comm: swapper Not tainted 3.0.0-rc7-next-20110720+ #3
-Call Trace:
- [<c101bcfd>] warn_slowpath_common+0x65/0x7a
- [<c103da0d>] ? trace_hardirqs_on_caller+0x52/0x79
- [<c11df84c>] ? restore_all+0xf/0xf
- [<c10137a8>] ? vmalloc_sync_all+0x95/0x95
- [<c101bd21>] warn_slowpath_null+0xf/0x13
- [<c103da0d>] trace_hardirqs_on_caller+0x52/0x79
- [<c10be180>] trace_hardirqs_on_thunk+0xc/0x10
- [<c103efb0>] ? cmpxchg_futex_value_locked+0x3d/0x4f
- [<c11df84c>] ? restore_all+0xf/0xf
- [<c10137a8>] ? vmalloc_sync_all+0x95/0x95
- [<c11e0615>] ? iret_exc+0x345/0x984
- [<c143b68f>] ? start_kernel+0x28e/0x28e
- [<c14477d6>] ? futex_init+0x16/0x64
- [<c143b68f>] ? start_kernel+0x28e/0x28e
- [<c1001126>] ? do_one_initcall+0x70/0x11a
- [<c14477c0>] ? lockdep_proc_init+0x67/0x67
- [<c143b68f>] ? start_kernel+0x28e/0x28e
- [<c143b6ff>] ? kernel_init+0x70/0xe9
- [<c11e023a>] ? kernel_thread_helper+0x6/0xd
+Yeap, pretty much.  Martin, testing if (current->ptrace) is enough.
+If PT_PTRACED is not set, no other flag there is allowed to set.
+Also, I think we really should standardize what gets reported in these
+debug traps instead of letting each arch do its own thing.
 
- - Arnaud
+Thanks.
+
+-- 
+tejun
