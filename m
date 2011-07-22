@@ -1,58 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the final tree
-Date: Fri, 22 Jul 2011 16:24:33 +1000
-Message-ID: <20110722162433.a280b3b71cff9c08fe18956f@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build warning after merge of the final tree
+Date: Thu, 21 Jul 2011 23:26:51 -0700 (PDT)
+Message-ID: <20110721.232651.1449248174820939714.davem@davemloft.net>
+References: <20110722162433.a280b3b71cff9c08fe18956f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__22_Jul_2011_16_24_33_+1000_PSJTPNz7XozWM5js"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Evans <matt@ozlabs.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([198.137.202.13]:56663 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751469Ab1GVGaB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Jul 2011 02:30:01 -0400
+In-Reply-To: <20110722162433.a280b3b71cff9c08fe18956f@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt@ozlabs.org
 
---Signature=_Fri__22_Jul_2011_16_24_33_+1000_PSJTPNz7XozWM5js
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 22 Jul 2011 16:24:33 +1000
 
-Hi all,
+> warning: (PPC) selects HAVE_BPF_JIT which has unmet direct dependencies (NET)
+> 
+> Introduced by commit 0ca87f05ba8b ("net: filter: BPF 'JIT' compiler for
+> PPC64").
+> 
+> I suspect that the fix is to move the
+> 
+> config HAVE_BPF_JIT
+>         bool
+> 
+> lines to outside the "if NET" in net/Kconfig.
 
-After merging the final tree, today's linux-next build (powerpc64
-allnoconfig) produced this warning:
+I'm going to fix this the way it's dealt with in the x86_64 case
+for now, thanks for the report:
 
-warning: (PPC) selects HAVE_BPF_JIT which has unmet direct dependencies (NE=
-T)
+--------------------
+net: Fix ppc64 BPF JIT dependencies.
 
-Introduced by commit 0ca87f05ba8b ("net: filter: BPF 'JIT' compiler for
-PPC64").
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ arch/powerpc/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-I suspect that the fix is to move the
-
-config HAVE_BPF_JIT
-        bool
-
-lines to outside the "if NET" in net/Kconfig.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__22_Jul_2011_16_24_33_+1000_PSJTPNz7XozWM5js
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOKRehAAoJEDMEi1NhKgbsDM0H+QGsEdg2DWZidtXQrg6frF8F
-e4TYIiOYZlSME+K4TXVOHZnI4vbA0I75SyLIw6feKaaQ0a/fek7CBV0xYeiobiJT
-3lbJqOBf2BmOvs6b60w6ACZKLEnNH1RK0yVzGXhMZziqcrgyqG+ZOBIh6sHmW3lu
-xy0ACUdTyzN92J9mkUEL/jO2mqoaX3xYiq3avu0iDVA2rvdMHI7tm0PSX49wY2OT
-1MG6Lkd9i51x6ezvVo78sBzN43E1z4L95f2H8kJl0wdcF5MDAAHXbXiCVQPq5VQV
-ZPePKE6cIWYGpa7tcR+BMp3CxuPR19SdSHxxHK2zttY1QI0wu2Z3f5JJcMBDink=
-=TfOi
------END PGP SIGNATURE-----
-
---Signature=_Fri__22_Jul_2011_16_24_33_+1000_PSJTPNz7XozWM5js--
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 39860fc..cdf7a0a 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -134,7 +134,7 @@ config PPC
+ 	select GENERIC_IRQ_SHOW_LEVEL
+ 	select HAVE_RCU_TABLE_FREE if SMP
+ 	select HAVE_SYSCALL_TRACEPOINTS
+-	select HAVE_BPF_JIT if PPC64
++	select HAVE_BPF_JIT if (PPC64 && NET)
+ 
+ config EARLY_PRINTK
+ 	bool
+-- 
+1.7.6
