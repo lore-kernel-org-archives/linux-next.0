@@ -1,33 +1,50 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: Tree for July 22 (xen)
-Date: Fri, 22 Jul 2011 13:48:33 -0400
-Message-ID: <20110722174833.GB7698@dumpdata.com>
-References: <20110722164237.2b3f6cbdedafa9e1d3f70867@canb.auug.org.au>
- <20110722092245.589ec3d7.rdunlap@xenotime.net>
- <20110722173548.GA7698@dumpdata.com>
+From: Jonas Bonn <jonas@southpole.se>
+Subject: Re: [PATCH 1/1] asm-generic: delay.h fix udelay and ndelay for 8
+ bit args
+Date: Fri, 22 Jul 2011 21:04:52 +0200
+Message-ID: <1311361492.2660.13.camel@localhost>
+References: <1310986975.21015.13.camel@needafix>
+	 <1310997937-26771-1-git-send-email-jonas@southpole.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet15.oracle.com ([141.146.126.227]:57166 "EHLO
-	acsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753830Ab1GVRsv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Jul 2011 13:48:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20110722173548.GA7698@dumpdata.com>
+Received: from mail.southpole.se ([193.12.106.18]:42507 "EHLO
+	mail.southpole.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751481Ab1GVTEz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Jul 2011 15:04:55 -0400
+In-Reply-To: <1310997937-26771-1-git-send-email-jonas@southpole.se>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>, dan.magenheimer@oracle.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, xen-devel@lists.xensource.com
+To: sfr@canb.auug.org.au, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
 
-On Fri, Jul 22, 2011 at 01:35:48PM -0400, Konrad Rzeszutek Wilk wrote:
-> On Fri, Jul 22, 2011 at 09:22:45AM -0700, Randy Dunlap wrote:
-> > On Fri, 22 Jul 2011 16:42:37 +1000 Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> 
-> Hey Randy,
-> 
-> This only shows up on xen but not xen-two?
 
-n/m. I can reproduce it. Thanks for spotting it, looks like it is missing
-an #include there.
+On Mon, 2011-07-18 at 16:05 +0200, Jonas Bonn wrote:
+> From: Andrew Morton <akpm@linux-foundation.org>
+> 
+> With a non-constant 8-bit argument, a call to udelay() generates a warning:
+> 
+<snip>
+
+> ---
+> 
+> Here's a patch that should resolve the merge conflict.  This applies
+> Andrew's changes on top of the new asm-generic/delay.h instead of the x86
+> arch-specific one.  I've tested this for OpenRISC and the changed macros
+> don't cause any problems there.
+> 
+> Let me know if this is OK and I'll throw it into the OpenRISC tree together
+> with the other delay.h modifications.
+> 
+
+I haven't gotten any feedback on this... since the change looks
+appropriate to merge with the other changes to asm-generic/delay.h, I'll
+apply this patch there and carry the patch together with the other
+asm-generic/delay.h changes in the 'openrisc' tree.  Andrew can drop the
+patch from his series to avoid the merge conflict.
+
+I hope that works for everybody...
+
+Thanks,
+Jonas
