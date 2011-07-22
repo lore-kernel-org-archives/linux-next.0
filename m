@@ -1,49 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the net tree
-Date: Fri, 22 Jul 2011 15:42:18 +1000
-Message-ID: <20110722154218.addf4f8105e4563cd90a4620@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree
+Date: Fri, 22 Jul 2011 16:24:33 +1000
+Message-ID: <20110722162433.a280b3b71cff9c08fe18956f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__22_Jul_2011_15_42_18_+1000_C2RJN7HFYHRJEVRD"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jpirko@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Mark Einon <mark.einon@gmail.com>
+ boundary="Signature=_Fri__22_Jul_2011_16_24_33_+1000_PSJTPNz7XozWM5js"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Evans <matt@ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__22_Jul_2011_15_42_18_+1000_C2RJN7HFYHRJEVRD
+--Signature=_Fri__22_Jul_2011_16_24_33_+1000_PSJTPNz7XozWM5js
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/et131x/et131x_netdev.c between commit 9d846fec22db
-("staging: et131x: remove unused prototype et131x_vlan_rx_register") from
-the net tree and commit 2e861534ca09 ("staging: et131x: et131x_netdev.c
-checkpatch fixes") from the staging tree.
+After merging the final tree, today's linux-next build (powerpc64
+allnoconfig) produced this warning:
 
-The latter seems to be a superset of the former, so I used the latter.
+warning: (PPC) selects HAVE_BPF_JIT which has unmet direct dependencies (NE=
+T)
+
+Introduced by commit 0ca87f05ba8b ("net: filter: BPF 'JIT' compiler for
+PPC64").
+
+I suspect that the fix is to move the
+
+config HAVE_BPF_JIT
+        bool
+
+lines to outside the "if NET" in net/Kconfig.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__22_Jul_2011_15_42_18_+1000_C2RJN7HFYHRJEVRD
+--Signature=_Fri__22_Jul_2011_16_24_33_+1000_PSJTPNz7XozWM5js
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOKQ26AAoJEDMEi1NhKgbsLZYH/RT/EwYesXzc6yI3c52DMbpS
-JpXj/981k6sx6qqj+tqQbAhbhbjZTuBIG46lmoARFVwiocX5nA77KgGMG05ifpRv
-t9/2ysCdYojljWT9lP/uyDVAPuNM768rkz5YdEr1lXTkGQEHZOAs7slH9pXUwVPh
-HjDywu/FE0QnJNAdnHUs34J8r6fG83VKvJYpf6aEKuwDo23+HvhF7cTiqa2PxRYm
-xO+fJEeCEvuFOu00v1mkMadAIrUQtwAU+p32gJHvil3g4nRN0wEPz5ddMNVtlbQt
-bfoOQ3WuajPEXp5g9bvmCOJJ4jdRxz/EI1goY97W/Bkr4VSCCQtmL1u9gYbHLlQ=
-=qNy3
+iQEcBAEBAgAGBQJOKRehAAoJEDMEi1NhKgbsDM0H+QGsEdg2DWZidtXQrg6frF8F
+e4TYIiOYZlSME+K4TXVOHZnI4vbA0I75SyLIw6feKaaQ0a/fek7CBV0xYeiobiJT
+3lbJqOBf2BmOvs6b60w6ACZKLEnNH1RK0yVzGXhMZziqcrgyqG+ZOBIh6sHmW3lu
+xy0ACUdTyzN92J9mkUEL/jO2mqoaX3xYiq3avu0iDVA2rvdMHI7tm0PSX49wY2OT
+1MG6Lkd9i51x6ezvVo78sBzN43E1z4L95f2H8kJl0wdcF5MDAAHXbXiCVQPq5VQV
+ZPePKE6cIWYGpa7tcR+BMp3CxuPR19SdSHxxHK2zttY1QI0wu2Z3f5JJcMBDink=
+=TfOi
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__22_Jul_2011_15_42_18_+1000_C2RJN7HFYHRJEVRD--
+--Signature=_Fri__22_Jul_2011_16_24_33_+1000_PSJTPNz7XozWM5js--
