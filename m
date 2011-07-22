@@ -1,28 +1,58 @@
-From: Alasdair G Kergon <agk@redhat.com>
-Subject: Re: [dm-devel] linux-next: Tree for July 21 (drivers/md/dm-raid)
-Date: Fri, 22 Jul 2011 02:14:01 +0100
-Message-ID: <20110722011401.GH5632@agk-dp.fab.redhat.com>
-References: <20110721165542.7748c88a1d1e0b228c7fe3fa@canb.auug.org.au> <20110721145648.2477f8bb.rdunlap@xenotime.net> <20110722081040.48abfff1@notabene.brown>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the net tree
+Date: Fri, 22 Jul 2011 14:18:42 +1000
+Message-ID: <20110722141842.963b38d45ebf8cb5d0a25fcf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:65093 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54841 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751343Ab1GVBOV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Jul 2011 21:14:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20110722081040.48abfff1@notabene.brown>
+	id S1750814Ab1GVESu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Jul 2011 00:18:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Jonathan Brassow <jbrassow@redhat.com>, linux-raid@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, dm-devel@redhat.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Carmody <ext-phil.2.carmody@nokia.com>, Francois Romieu <romieu@fr.zoreil.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-On Fri, Jul 22, 2011 at 08:10:40AM +1000, Neil Brown wrote:
-> I suspect the right thing to do is add
->    select MD_RAID1
-> to the 
->    config DM_RAID
- 
-Indeed - done.
+Hi Jiri,
 
-Alasdair
+Today's linux-next merge of the trivial tree got a conflict in
+drivers/net/r8169.c between commit b6ffd97f5bcf ("r8169: move the
+firmware down into the device private data") (and others) from the net
+tree and commit 497888cf69bf ("treewide: fix potentially dangerous
+trailing ';' in
+#defined values/expressions") from the trivial tree.
+
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/r8169.c
+index 40bcb82,6f36306..0000000
+--- a/drivers/net/r8169.c
++++ b/drivers/net/r8169.c
+@@@ -682,19 -666,8 +682,19 @@@ struct rtl8169_private 
+  	struct rtl8169_counters counters;
+  	u32 saved_wolopts;
+  
+ -	const struct firmware *fw;
+ +	struct rtl_fw {
+ +		const struct firmware *fw;
+ +
+ +#define RTL_VER_SIZE		32
+ +
+ +		char version[RTL_VER_SIZE];
+ +
+ +		struct rtl_fw_phy_action {
+ +			__le32 *code;
+ +			size_t size;
+ +		} phy_action;
+ +	} *rtl_fw;
+- #define RTL_FIRMWARE_UNKNOWN	ERR_PTR(-EAGAIN);
++ #define RTL_FIRMWARE_UNKNOWN	ERR_PTR(-EAGAIN)
+  };
+  
+  MODULE_AUTHOR("Realtek and the Linux r8169 crew <netdev@vger.kernel.org>");
