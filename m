@@ -1,68 +1,45 @@
-From: Jonas Bonn <jonas@southpole.se>
-Subject: Re: [PATCH 1/1] asm-generic: delay.h fix udelay and ndelay for 8
- bit args
-Date: Fri, 22 Jul 2011 21:17:05 +0200
-Message-ID: <1311362225.2660.18.camel@localhost>
-References: <1310986975.21015.13.camel@needafix>
-	 <1310997937-26771-1-git-send-email-jonas@southpole.se>
-	 <1311361492.2660.13.camel@localhost>  <4E29CB4A.40508@zytor.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: build failure after merge of the final tree (arm-soc tree related)
+Date: Sat, 23 Jul 2011 14:36:21 +0200
+Message-ID: <201107231436.22389.arnd@arndb.de>
+References: <20110722164204.15f3bfee0c3ab04adb80e611@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.southpole.se ([193.12.106.18]:47918 "EHLO
-	mail.southpole.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754883Ab1GVTRI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Jul 2011 15:17:08 -0400
-In-Reply-To: <4E29CB4A.40508@zytor.com>
+Received: from moutng.kundenserver.de ([212.227.126.187]:53547 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752286Ab1GWMgn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 23 Jul 2011 08:36:43 -0400
+In-Reply-To: <20110722164204.15f3bfee0c3ab04adb80e611@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: sfr@canb.auug.org.au, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, arnd@arndb.de
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-
-On Fri, 2011-07-22 at 12:11 -0700, H. Peter Anvin wrote:
-> On 07/22/2011 12:04 PM, Jonas Bonn wrote:
-> > 
-> > On Mon, 2011-07-18 at 16:05 +0200, Jonas Bonn wrote:
-> >> From: Andrew Morton <akpm@linux-foundation.org>
-> >>
-> >> With a non-constant 8-bit argument, a call to udelay() generates a warning:
-> >>
-> > <snip>
-> > 
-> >> ---
-> >>
-> >> Here's a patch that should resolve the merge conflict.  This applies
-> >> Andrew's changes on top of the new asm-generic/delay.h instead of the x86
-> >> arch-specific one.  I've tested this for OpenRISC and the changed macros
-> >> don't cause any problems there.
-> >>
-> >> Let me know if this is OK and I'll throw it into the OpenRISC tree together
-> >> with the other delay.h modifications.
-> >>
-> > 
-> > I haven't gotten any feedback on this... since the change looks
-> > appropriate to merge with the other changes to asm-generic/delay.h, I'll
-> > apply this patch there and carry the patch together with the other
-> > asm-generic/delay.h changes in the 'openrisc' tree.  Andrew can drop the
-> > patch from his series to avoid the merge conflict.
-> > 
-> > I hope that works for everybody...
-> > 
+On Friday 22 July 2011, Stephen Rothwell wrote:
+> Hi all,
 > 
-> You may want to Cc: Arnd on this, since he's the asm-generic maintainer.
+> After merging the final tree, today's linux-next build (all arm builds)
+> failed like this:
 > 
-> Otherwise, since this is zero work on our part, it obviously works for me.
+> arch/arm/mm/Kconfig:835: syntax error
+> arch/arm/mm/Kconfig:834: invalid option
+> arch/arm/mm/Kconfig:838: unknown option "ARCH_PRIMA2"
 > 
+> Caused by commit 69ca71d177d1 ("Merge branch 'next/soc' of git
+> +ssh://master.kernel.org/pub/scm/linux/kernel/git/arm/linux-arm-soc into
+> for-next-3") from the arm-soc tree.
+> 
+> This commit mismerged the config CACHE_L2X0 entry (forgot the \ on the end
+> of one of the lines).
 
-Good idea!
+Thanks for the notification, the problem was in recreating the for-next
+branch from the individual branches without testing the result. I'll
+be more careful in the future about this.
 
-CC:ing Arnd, too...
+I've uploaded a new for-next branch now, and will send out pull
+requests for the next/* branches next.
 
-Arnd has already reviewed the changes to delay.h.  This is only about
-getting Andrew's fixes out of his tree where they cause a merge conflict
-and into asm-generic/delay.h where they belong.
-
-Thanks,
-Jonas
+	Arnd
