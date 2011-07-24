@@ -1,172 +1,64 @@
-From: Wu Fengguang <fengguang.wu@intel.com>
-Subject: Re: linux-next: manual merge of the writeback tree with the vfs
- tree
-Date: Sat, 23 Jul 2011 22:44:54 +0800
-Message-ID: <20110723144454.GB5946@localhost>
-References: <20110718173409.2885649b65937eb7caecf943@canb.auug.org.au>
+From: Arnaud Lacombe <lacombar@gmail.com>
+Subject: Re: linux-next: Tree for July 22 (arm-davinci Kconfig warnings)
+Date: Sun, 24 Jul 2011 17:34:34 -0400
+Message-ID: <CACqU3MU=HKcFdC_B3x-APeJE_8SMLifmSUG22SrUw2GE-HHaSg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:50839 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752875Ab1GWOo5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 23 Jul 2011 10:44:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20110718173409.2885649b65937eb7caecf943@canb.auug.org.au>
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:58197 "EHLO
+	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752200Ab1GXVef (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 24 Jul 2011 17:34:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, Ben Gardiner <bengardiner@nanometrics.ca>
 
-Hi Stephen,
+Hi,
 
-On Mon, Jul 18, 2011 at 03:34:09PM +0800, Stephen Rothwell wrote:
-> Hi Wu,
-> 
-> Today's linux-next merge of the writeback tree got a conflict in
-> fs/fs-writeback.c between commit dffe5a6c5214 ("superblock: move
-> pin_sb_for_writeback() to fs/super.c") from the vfs tree and commits
-> f758eeabeb96 ("writeback: split inode_wb_list_lock into
-> bdi_writeback.list_lock") and d46db3d58233 ("writeback: make
-> writeback_control.nr_to_write straight") from the writeback tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as necessary.
+The arm-davinci tree has 2 Kconfig warning, but also present in v3.0:
 
-OK, please. Thank you very much!
+arch/arm/mach-davinci/Kconfig:195:warning: config symbol defined without type
+arch/arm/mach-davinci/Kconfig:198:warning: config symbol defined without type
 
-Cheers,
-Fengguang
+This concerns GPIO_PCA953X and KEYBOARD_GPIO_POLLED. In both case,
+symbols are re-defined later on in `drivers/gpio/Kconfig' respectively
+in `arch/arm/mach-davinci/Kconfig' and
+`drivers/input/keyboard/Kconfig'.
 
-> diff --cc fs/fs-writeback.c
-> index b8c507c,6d49439..0000000
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@@ -460,6 -480,63 +480,37 @@@ writeback_single_inode(struct inode *in
->   	return ret;
->   }
->   
->  -/*
->  - * For background writeback the caller does not have the sb pinned
->  - * before calling writeback. So make sure that we do pin it, so it doesn't
->  - * go away while we are writing inodes from it.
->  - */
->  -static bool pin_sb_for_writeback(struct super_block *sb)
->  -{
->  -	spin_lock(&sb_lock);
->  -	if (list_empty(&sb->s_instances)) {
->  -		spin_unlock(&sb_lock);
->  -		return false;
->  -	}
->  -
->  -	sb->s_count++;
->  -	spin_unlock(&sb_lock);
->  -
->  -	if (down_read_trylock(&sb->s_umount)) {
->  -		if (sb->s_root)
->  -			return true;
->  -		up_read(&sb->s_umount);
->  -	}
->  -
->  -	put_super(sb);
->  -	return false;
->  -}
->  -
-> + static long writeback_chunk_size(struct backing_dev_info *bdi,
-> + 				 struct wb_writeback_work *work)
-> + {
-> + 	long pages;
-> + 
-> + 	/*
-> + 	 * WB_SYNC_ALL mode does livelock avoidance by syncing dirty
-> + 	 * inodes/pages in one big loop. Setting wbc.nr_to_write=LONG_MAX
-> + 	 * here avoids calling into writeback_inodes_wb() more than once.
-> + 	 *
-> + 	 * The intended call sequence for WB_SYNC_ALL writeback is:
-> + 	 *
-> + 	 *      wb_writeback()
-> + 	 *          writeback_sb_inodes()       <== called only once
-> + 	 *              write_cache_pages()     <== called once for each inode
-> + 	 *                   (quickly) tag currently dirty pages
-> + 	 *                   (maybe slowly) sync all tagged pages
-> + 	 */
-> + 	if (work->sync_mode == WB_SYNC_ALL || work->tagged_writepages)
-> + 		pages = LONG_MAX;
-> + 	else {
-> + 		pages = min(bdi->avg_write_bandwidth / 2,
-> + 			    global_dirty_limit / DIRTY_SCOPE);
-> + 		pages = min(pages, work->nr_pages);
-> + 		pages = round_down(pages + MIN_WRITEBACK_PAGES,
-> + 				   MIN_WRITEBACK_PAGES);
-> + 	}
-> + 
-> + 	return pages;
-> + }
-> + 
->   /*
->    * Write a portion of b_io inodes which belong to @sb.
->    *
-> @@@ -559,40 -643,41 +617,41 @@@ static long __writeback_inodes_wb(struc
->   		struct inode *inode = wb_inode(wb->b_io.prev);
->   		struct super_block *sb = inode->i_sb;
->   
->  -		if (!pin_sb_for_writeback(sb)) {
->  +		if (!grab_super_passive(sb)) {
-> - 			requeue_io(inode);
-> + 			requeue_io(inode, wb);
->   			continue;
->   		}
-> - 		ret = writeback_sb_inodes(sb, wb, wbc, false);
-> + 		wrote += writeback_sb_inodes(sb, wb, work);
->   		drop_super(sb);
->   
-> - 		if (ret)
-> - 			break;
-> + 		/* refer to the same tests at the end of writeback_sb_inodes */
-> + 		if (wrote) {
-> + 			if (time_is_before_jiffies(start_time + HZ / 10UL))
-> + 				break;
-> + 			if (work->nr_pages <= 0)
-> + 				break;
-> + 		}
->   	}
-> - 	spin_unlock(&inode_wb_list_lock);
->   	/* Leave any unwritten inodes on b_io */
-> + 	return wrote;
->   }
->   
-> - static void __writeback_inodes_sb(struct super_block *sb,
-> - 		struct bdi_writeback *wb, struct writeback_control *wbc)
-> + long writeback_inodes_wb(struct bdi_writeback *wb, long nr_pages)
->   {
-> - 	WARN_ON(!rwsem_is_locked(&sb->s_umount));
-> + 	struct wb_writeback_work work = {
-> + 		.nr_pages	= nr_pages,
-> + 		.sync_mode	= WB_SYNC_NONE,
-> + 		.range_cyclic	= 1,
-> + 	};
->   
-> - 	spin_lock(&inode_wb_list_lock);
-> - 	if (!wbc->for_kupdate || list_empty(&wb->b_io))
-> - 		queue_io(wb, wbc->older_than_this);
-> - 	writeback_sb_inodes(sb, wb, wbc, true);
-> - 	spin_unlock(&inode_wb_list_lock);
-> - }
-> + 	spin_lock(&wb->list_lock);
-> + 	if (list_empty(&wb->b_io))
-> + 		queue_io(wb, NULL);
-> + 	__writeback_inodes_wb(wb, &work);
-> + 	spin_unlock(&wb->list_lock);
->   
-> - /*
-> -  * The maximum number of pages to writeout in a single bdi flush/kupdate
-> -  * operation.  We do this so we don't hold I_SYNC against an inode for
-> -  * enormous amounts of time, which would block a userspace task which has
-> -  * been forced to throttle against that inode.  Also, the code reevaluates
-> -  * the dirty each time it has written this many pages.
-> -  */
-> - #define MAX_WRITEBACK_PAGES     1024
-> + 	return nr_pages - work.nr_pages;
-> + }
->   
->   static inline bool over_bground_thresh(void)
->   {
+Is there any reason not to select those from MACH_DAVINCI_DA850_EVM
+definition, ala:
+
+diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
+index c0deaca..cec22e2 100644
+--- a/arch/arm/mach-davinci/Kconfig
++++ b/arch/arm/mach-davinci/Kconfig
+@@ -163,6 +163,8 @@ config MACH_DAVINCI_DA850_EVM
+        bool "TI DA850/OMAP-L138/AM18x Reference Platform"
+        default ARCH_DAVINCI_DA850
+        depends on ARCH_DAVINCI_DA850
++       select GPIO_PCA953X
++       select KEYBOARD_GPIO_POLLED
+        help
+          Say Y here to select the TI DA850/OMAP-L138/AM18x Evaluation Module.
+
+@@ -192,12 +194,6 @@ config DA850_UI_RMII
+
+ endchoice
+
+-config GPIO_PCA953X
+-       default MACH_DAVINCI_DA850_EVM
+-
+-config KEYBOARD_GPIO_POLLED
+-       default MACH_DAVINCI_DA850_EVM
+-
+ config MACH_TNETV107X
+        bool "TI TNETV107X Reference Platform"
+        default ARCH_DAVINCI_TNETV107X
+
+Thanks,
+ - Arnaud
+
+On Fri, Jul 22, 2011 at 2:42 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+> [...]
