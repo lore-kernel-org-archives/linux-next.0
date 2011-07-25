@@ -1,40 +1,55 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] kvm: fix TASK_DELAY_ACCT kconfig warning
-Date: Mon, 25 Jul 2011 11:01:09 -0700
-Message-ID: <20110725110109.b06fe691.rdunlap@xenotime.net>
-References: <20110725162542.39ea8d8cbd51604523635c1a@canb.auug.org.au>
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Date: Mon, 25 Jul 2011 14:26:15 -0400
+Message-ID: <1311618375.28209.1.camel@lade.trondhjem.org>
+References: <20110716164404.0f791c640332bbad6ab8ea34@canb.auug.org.au>
+	 <20110725132022.9cac27e6aee69728e4de6b97@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:53256 "HELO
-	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751214Ab1GYSBM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jul 2011 14:01:12 -0400
-In-Reply-To: <20110725162542.39ea8d8cbd51604523635c1a@canb.auug.org.au>
+Received: from mx2.netapp.com ([216.240.18.37]:2966 "EHLO mx2.netapp.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751563Ab1GYS0k convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jul 2011 14:26:40 -0400
+In-Reply-To: <20110725132022.9cac27e6aee69728e4de6b97@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org, x86@kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Mon, 2011-07-25 at 13:20 +1000, Stephen Rothwell wrote: 
+> Hi all,
+> 
+> On Sat, 16 Jul 2011 16:44:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the vfs tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> > 
+> > fs/nfs/read.c: In function 'nfs_do_read':
+> > fs/nfs/read.c:246:42: error: 'struct nfs_open_context' has no member named 'path'
+> > 
+> > Caused by commit 6e4efd568574 ("NFS: Clean up nfs_read_rpcsetup and
+> > nfs_write_rpcsetup") from the nfs tree interacting with commit
+> > b98aad31afdc ("nfs_open_context doesn't need struct path either").
+> > 
+> > I have applied the following merge fixup patch:
+> 
+> This patch (repeasted here) is now required after mergeing the nfs tree
+> and Linus' tree:
 
-Fix kconfig dependency warning:
+Thanks Stephen!
 
-warning: (KVM) selects TASK_DELAY_ACCT which has unmet direct dependencies (TASKSTATS)
+I've merged the contents of Linus' current tree into my NFS development
+branch, and applied your patch as part of the merge commit.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
- arch/x86/kvm/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Cheers
+  Trond
 
---- linux-next-20110725.orig/arch/x86/kvm/Kconfig
-+++ linux-next-20110725/arch/x86/kvm/Kconfig
-@@ -31,6 +31,7 @@ config KVM
- 	select KVM_ASYNC_PF
- 	select USER_RETURN_NOTIFIER
- 	select KVM_MMIO
-+	select TASKSTATS
- 	select TASK_DELAY_ACCT
- 	---help---
- 	  Support hosting fully virtualized guest machines using hardware
+-- 
+Trond Myklebust
+Linux NFS client maintainer
+
+NetApp
+Trond.Myklebust@netapp.com
+www.netapp.com
