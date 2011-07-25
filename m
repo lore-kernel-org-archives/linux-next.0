@@ -1,58 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: merge error in arch/arm/mm/Kconfig?
-Date: Mon, 25 Jul 2011 14:37:32 +1000
-Message-ID: <20110725143732.392953cfcb544e74956ea2d4@canb.auug.org.au>
-References: <20110725041720.GA21641@S2100-06.ap.freescale.net>
-	<20110725142348.efb4e0317938c2261498db32@canb.auug.org.au>
-	<20110725044026.GB21641@S2100-06.ap.freescale.net>
+Subject: linux-next: build failure after merge of the staging tree
+Date: Mon, 25 Jul 2011 15:21:44 +1000
+Message-ID: <20110725152144.73286ef2fbca0cfe63f04f43@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__25_Jul_2011_14_37_32_+1000_3OB+sel0u_egqax1"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37325 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60234 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750798Ab1GYEhn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Jul 2011 00:37:43 -0400
-In-Reply-To: <20110725044026.GB21641@S2100-06.ap.freescale.net>
+	id S1750760Ab1GYFV5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Jul 2011 01:21:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shawn Guo <shawn.guo@freescale.com>
-Cc: linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Mon__25_Jul_2011_14_37_32_+1000_3OB+sel0u_egqax1
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi Shawn,
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-On Mon, 25 Jul 2011 12:40:27 +0800 Shawn Guo <shawn.guo@freescale.com> wrot=
-e:
->
-> Sorry for the noise, Stephen.  I should have searched the list before
-> posting.
+ERROR: "__bad_udelay" [drivers/staging/gma500/psb_gfx.ko] undefined!
 
-Thanks OK, I would rather have 2 reports than none.
+Caused by commit 1e585b52fd8e ("gma500: Add the Oaktrail HDMI support")
+interacting with commit a87e553fabe8 ("asm-generic: delay.h fix udelay
+and ndelay for 8 bit args").  I have applied the follwowing patch for
+today:
 
---=20
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 25 Jul 2011 15:18:44 +1000
+Subject: [PATCH] gma500: udelay(20000) it too long again
+
+so replace it with mdelay(20).
+
+Fixes build error:
+
+ERROR: "__bad_udelay" [drivers/staging/gma500/psb_gfx.ko] undefined!
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/gma500/mrst_hdmi.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/gma500/mrst_hdmi.c b/drivers/staging/gma500/mrst_hdmi.c
+index d6a5179..e66607e 100644
+--- a/drivers/staging/gma500/mrst_hdmi.c
++++ b/drivers/staging/gma500/mrst_hdmi.c
+@@ -129,7 +129,7 @@ static void wait_for_vblank(struct drm_device *dev)
+ {
+ 	/* FIXME: Can we do this as a sleep ? */
+ 	/* Wait for 20ms, i.e. one cycle at 50hz. */
+-	udelay(20000);
++	mdelay(20);
+ }
+ 
+ static void scu_busy_loop(void *scu_base)
+-- 
+1.7.5.4
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__25_Jul_2011_14_37_32_+1000_3OB+sel0u_egqax1
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOLPMMAAoJEDMEi1NhKgbsPAIIAKIeNQ6ZfzjFK87D3MepRGzY
-1SLTg/pJ3m5NT65M/upSpqU+jIObTym/eaJv6+YnHo5XnRYljtVqannw5YXhA2lJ
-7T1QuDW64lpVeR+RIeGdlEXMqoLH1o/hlbA4ElebIjOXjv7vv3dUeq1TqeO2EuEq
-Q/neAl4D3ziQ8rA+N1uXXsf6iqzf+/35miVUYRzolKnLb1yZRND1Pw6dp66g/q6y
-kUDjKN5KvCSgj3Y/fvfIKIq1ubJCLa4+YwfMp5UWAk/xml2wp8hJ0f+VDGKOUZ9i
-sqfRM3bvr7Yiu0p7mKi1/2G2uwtlGRRlyXFeNiPE0BTQF+muQry8bkdB1whadEQ=
-=0JEv
------END PGP SIGNATURE-----
-
---Signature=_Mon__25_Jul_2011_14_37_32_+1000_3OB+sel0u_egqax1--
