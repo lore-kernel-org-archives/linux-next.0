@@ -1,38 +1,40 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] watchdog: fix it8712f_wdt build errors
-Date: Mon, 25 Jul 2011 09:19:27 -0700
-Message-ID: <20110725091927.e154fd28.rdunlap@xenotime.net>
+Subject: [PATCH -next] kvm: fix TASK_DELAY_ACCT kconfig warning
+Date: Mon, 25 Jul 2011 11:01:09 -0700
+Message-ID: <20110725110109.b06fe691.rdunlap@xenotime.net>
 References: <20110725162542.39ea8d8cbd51604523635c1a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:53256 "HELO
+	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751214Ab1GYSBM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jul 2011 14:01:12 -0400
 In-Reply-To: <20110725162542.39ea8d8cbd51604523635c1a@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, jorge@dti2.net, Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org, akpm <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org, x86@kernel.org
 
 From: Randy Dunlap <rdunlap@xenotime.net>
 
-Fix build errors by adding missing header file:
+Fix kconfig dependency warning:
 
-drivers/watchdog/it8712f_wdt.c:127: error: implicit declaration of function 'request_muxed_region'
-drivers/watchdog/it8712f_wdt.c:141: error: implicit declaration of function 'release_region'
-drivers/watchdog/it8712f_wdt.c:412: error: implicit declaration of function 'request_region'
+warning: (KVM) selects TASK_DELAY_ACCT which has unmet direct dependencies (TASKSTATS)
 
 Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 ---
- drivers/watchdog/it8712f_wdt.c |    1 +
+ arch/x86/kvm/Kconfig |    1 +
  1 file changed, 1 insertion(+)
 
---- linux-next-20110725.orig/drivers/watchdog/it8712f_wdt.c
-+++ linux-next-20110725/drivers/watchdog/it8712f_wdt.c
-@@ -31,6 +31,7 @@
- #include <linux/spinlock.h>
- #include <linux/uaccess.h>
- #include <linux/io.h>
-+#include <linux/ioport.h>
- 
- #define NAME "it8712f_wdt"
- 
+--- linux-next-20110725.orig/arch/x86/kvm/Kconfig
++++ linux-next-20110725/arch/x86/kvm/Kconfig
+@@ -31,6 +31,7 @@ config KVM
+ 	select KVM_ASYNC_PF
+ 	select USER_RETURN_NOTIFIER
+ 	select KVM_MMIO
++	select TASKSTATS
+ 	select TASK_DELAY_ACCT
+ 	---help---
+ 	  Support hosting fully virtualized guest machines using hardware
