@@ -1,99 +1,38 @@
-From: Ben Gardiner <bengardiner@nanometrics.ca>
-Subject: Re: linux-next: Tree for July 22 (arm-davinci Kconfig warnings)
-Date: Mon, 25 Jul 2011 09:25:58 -0400
-Message-ID: <CAPcSpEJZ47FQ3e84Mrf=U8GYw1W3Nx2DErgeSpvyuexC9fhsgA@mail.gmail.com>
-References: <CACqU3MU=HKcFdC_B3x-APeJE_8SMLifmSUG22SrUw2GE-HHaSg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] watchdog: fix it8712f_wdt build errors
+Date: Mon, 25 Jul 2011 09:19:27 -0700
+Message-ID: <20110725091927.e154fd28.rdunlap@xenotime.net>
+References: <20110725162542.39ea8d8cbd51604523635c1a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog116.obsmtp.com ([74.125.149.240]:53464 "EHLO
-	na3sys009aog116.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751481Ab1GYNZ7 convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Jul 2011 09:25:59 -0400
-In-Reply-To: <CACqU3MU=HKcFdC_B3x-APeJE_8SMLifmSUG22SrUw2GE-HHaSg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arnaud Lacombe <lacombar@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, Sam Ravnborg <sam@ravnborg.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110725162542.39ea8d8cbd51604523635c1a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, jorge@dti2.net, Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org, akpm <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Jul 24, 2011 at 5:34 PM, Arnaud Lacombe <lacombar@gmail.com> wr=
-ote:
-> Hi,
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Hi Arnaud,
+Fix build errors by adding missing header file:
 
-> The arm-davinci tree has 2 Kconfig warning, but also present in v3.0:
->
-> arch/arm/mach-davinci/Kconfig:195:warning: config symbol defined with=
-out type
-> arch/arm/mach-davinci/Kconfig:198:warning: config symbol defined with=
-out type
+drivers/watchdog/it8712f_wdt.c:127: error: implicit declaration of function 'request_muxed_region'
+drivers/watchdog/it8712f_wdt.c:141: error: implicit declaration of function 'release_region'
+drivers/watchdog/it8712f_wdt.c:412: error: implicit declaration of function 'request_region'
 
-I hadn't noticed those warnings, sorry.
-
-> This concerns GPIO_PCA953X and KEYBOARD_GPIO_POLLED. In both case,
-> symbols are re-defined later on in `drivers/gpio/Kconfig' respectivel=
-y
-> in `arch/arm/mach-davinci/Kconfig' and
-> `drivers/input/keyboard/Kconfig'.
->
-> Is there any reason not to select those from MACH_DAVINCI_DA850_EVM
-> definition, ala:
-
-The reason for the GPIO_PCA953X and KEYBOARD_GPIO_POLLED fragments is
-to get the symbols selected by default but allow those who
-re-configure the kernel to select them instead as modules or even
-disable them.
-
-> diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kc=
-onfig
-> index c0deaca..cec22e2 100644
-> --- a/arch/arm/mach-davinci/Kconfig
-> +++ b/arch/arm/mach-davinci/Kconfig
-> @@ -163,6 +163,8 @@ config MACH_DAVINCI_DA850_EVM
-> =A0 =A0 =A0 =A0bool "TI DA850/OMAP-L138/AM18x Reference Platform"
-> =A0 =A0 =A0 =A0default ARCH_DAVINCI_DA850
-> =A0 =A0 =A0 =A0depends on ARCH_DAVINCI_DA850
-> + =A0 =A0 =A0 select GPIO_PCA953X
-> + =A0 =A0 =A0 select KEYBOARD_GPIO_POLLED
-> =A0 =A0 =A0 =A0help
-> =A0 =A0 =A0 =A0 =A0Say Y here to select the TI DA850/OMAP-L138/AM18x =
-Evaluation Module.
->
-> @@ -192,12 +194,6 @@ config DA850_UI_RMII
->
-> =A0endchoice
->
-> -config GPIO_PCA953X
-> - =A0 =A0 =A0 default MACH_DAVINCI_DA850_EVM
-> -
-> -config KEYBOARD_GPIO_POLLED
-> - =A0 =A0 =A0 default MACH_DAVINCI_DA850_EVM
-> -
-> =A0config MACH_TNETV107X
-> =A0 =A0 =A0 =A0bool "TI TNETV107X Reference Platform"
-> =A0 =A0 =A0 =A0default ARCH_DAVINCI_TNETV107X
-
-My understanding of this diff is that both GPIO_PCA953X and
-KEYBOARD_GPIO_POLLED will be selected unconditionally as built-ins for
-any MACH_DAVINCI_DA850_EVM. As opposed to having the symbols default
-to 'y' and potentially be changed to 'm' or 'n' by someone
-reconfiguring.
-
-I took the idea of using these KConfig fragments from Sam Ravnborg
-(added to CC); he suggested the method [1] in a response to a patch by
-Stephen Rothwell (already on CC) which proposed a extension to the
-'select' syntax [2]. If the select syntax extension or other
-equivalent means is ready then arch/arm/mach-davinci can be converted.
-
-Best Regards,
-Ben Gardiner
-
-[1] http://article.gmane.org/gmane.linux.ports.ppc.embedded/37132
-[2] http://article.gmane.org/gmane.linux.ports.ppc.embedded/36839
-
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 ---
-Nanometrics Inc.
-http://www.nanometrics.ca
+ drivers/watchdog/it8712f_wdt.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20110725.orig/drivers/watchdog/it8712f_wdt.c
++++ linux-next-20110725/drivers/watchdog/it8712f_wdt.c
+@@ -31,6 +31,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/uaccess.h>
+ #include <linux/io.h>
++#include <linux/ioport.h>
+ 
+ #define NAME "it8712f_wdt"
+ 
