@@ -1,55 +1,51 @@
-From: Trond Myklebust <Trond.Myklebust@netapp.com>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Mon, 25 Jul 2011 14:26:15 -0400
-Message-ID: <1311618375.28209.1.camel@lade.trondhjem.org>
-References: <20110716164404.0f791c640332bbad6ab8ea34@canb.auug.org.au>
-	 <20110725132022.9cac27e6aee69728e4de6b97@canb.auug.org.au>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: [PATCH -next] watchdog: fix it8712f_wdt build errors
+Date: Mon, 25 Jul 2011 21:02:41 +0200
+Message-ID: <20110725190241.GZ3834@infomag.iguana.be>
+References: <20110725162542.39ea8d8cbd51604523635c1a@canb.auug.org.au> <20110725091927.e154fd28.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.netapp.com ([216.240.18.37]:2966 "EHLO mx2.netapp.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751563Ab1GYS0k convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jul 2011 14:26:40 -0400
-In-Reply-To: <20110725132022.9cac27e6aee69728e4de6b97@canb.auug.org.au>
+Received: from mailrelay003.isp.belgacom.be ([195.238.6.53]:4512 "EHLO
+	mailrelay003.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751666Ab1GYTCo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Jul 2011 15:02:44 -0400
+Content-Disposition: inline
+In-Reply-To: <20110725091927.e154fd28.rdunlap@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, jorge@dti2.net, Wim Van Sebroeck <wim@iguana.be>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org, akpm <akpm@linux-foundation.org>
 
-On Mon, 2011-07-25 at 13:20 +1000, Stephen Rothwell wrote: 
-> Hi all,
+Hi Randy,
+
+> From: Randy Dunlap <rdunlap@xenotime.net>
 > 
-> On Sat, 16 Jul 2011 16:44:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the vfs tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> > 
-> > fs/nfs/read.c: In function 'nfs_do_read':
-> > fs/nfs/read.c:246:42: error: 'struct nfs_open_context' has no member named 'path'
-> > 
-> > Caused by commit 6e4efd568574 ("NFS: Clean up nfs_read_rpcsetup and
-> > nfs_write_rpcsetup") from the nfs tree interacting with commit
-> > b98aad31afdc ("nfs_open_context doesn't need struct path either").
-> > 
-> > I have applied the following merge fixup patch:
+> Fix build errors by adding missing header file:
 > 
-> This patch (repeasted here) is now required after mergeing the nfs tree
-> and Linus' tree:
+> drivers/watchdog/it8712f_wdt.c:127: error: implicit declaration of function 'request_muxed_region'
+> drivers/watchdog/it8712f_wdt.c:141: error: implicit declaration of function 'release_region'
+> drivers/watchdog/it8712f_wdt.c:412: error: implicit declaration of function 'request_region'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> ---
+>  drivers/watchdog/it8712f_wdt.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20110725.orig/drivers/watchdog/it8712f_wdt.c
+> +++ linux-next-20110725/drivers/watchdog/it8712f_wdt.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/io.h>
+> +#include <linux/ioport.h>
+>  
+>  #define NAME "it8712f_wdt"
 
-Thanks Stephen!
+I see what happened: The pci.h removal patch compiled ok and the patch that introduced the muxed_region code also compiled ok (with pci.h still included). However both patches together reveal the issue indeed (pci.h includes ioport.h).
 
-I've merged the contents of Linus' current tree into my NFS development
-branch, and applied your patch as part of the merge commit.
+Sorry about that. I have added your patch for it.
 
-Cheers
-  Trond
-
--- 
-Trond Myklebust
-Linux NFS client maintainer
-
-NetApp
-Trond.Myklebust@netapp.com
-www.netapp.com
+Thanks,
+wim.
