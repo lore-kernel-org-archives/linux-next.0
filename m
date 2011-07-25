@@ -1,64 +1,113 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the staging tree
-Date: Mon, 25 Jul 2011 15:21:44 +1000
-Message-ID: <20110725152144.73286ef2fbca0cfe63f04f43@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+ (device-mapper tree related)
+Date: Mon, 25 Jul 2011 15:58:54 +1000
+Message-ID: <20110725155854.e2a82f7e6864ea117d9131ab@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__25_Jul_2011_15_58_54_+1000_zaz8=7/m8ZIqrq/4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60234 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34185 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750760Ab1GYFV5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Jul 2011 01:21:57 -0400
+	id S1750889Ab1GYF7L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Jul 2011 01:59:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Alasdair G Kergon <agk@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Thornber <thornber@redhat.com>, Mike Snitzer <snitzer@redhat.com>
 
-Hi Greg,
+--Signature=_Mon__25_Jul_2011_15_58_54_+1000_zaz8=7/m8ZIqrq/4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Hi all,
 
-ERROR: "__bad_udelay" [drivers/staging/gma500/psb_gfx.ko] undefined!
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Caused by commit 1e585b52fd8e ("gma500: Add the Oaktrail HDMI support")
-interacting with commit a87e553fabe8 ("asm-generic: delay.h fix udelay
-and ndelay for 8 bit args").  I have applied the follwowing patch for
-today:
+In file included from drivers/md/persistent-data/dm-space-map-disk.c:14:0:
+include/asm-generic/bitops/le.h:52:19: error: conflicting types for 'test_b=
+it_le'
+arch/powerpc/include/asm/bitops.h:284:23: note: previous definition of 'tes=
+t_bit_le' was here
+include/asm-generic/bitops/le.h:57:20: error: redefinition of '__set_bit_le'
+arch/powerpc/include/asm/bitops.h:291:20: note: previous definition of '__s=
+et_bit_le' was here
+include/asm-generic/bitops/le.h:62:20: error: redefinition of '__clear_bit_=
+le'
+arch/powerpc/include/asm/bitops.h:296:20: note: previous definition of '__c=
+lear_bit_le' was here
+include/asm-generic/bitops/le.h:67:19: error: redefinition of 'test_and_set=
+_bit_le'
+arch/powerpc/include/asm/bitops.h:301:19: note: previous definition of 'tes=
+t_and_set_bit_le' was here
+include/asm-generic/bitops/le.h:72:19: error: redefinition of 'test_and_cle=
+ar_bit_le'
+arch/powerpc/include/asm/bitops.h:306:19: note: previous definition of 'tes=
+t_and_clear_bit_le' was here
+include/asm-generic/bitops/le.h:77:19: error: redefinition of '__test_and_s=
+et_bit_le'
+arch/powerpc/include/asm/bitops.h:311:19: note: previous definition of '__t=
+est_and_set_bit_le' was here
+include/asm-generic/bitops/le.h:82:19: error: redefinition of '__test_and_c=
+lear_bit_le'
+arch/powerpc/include/asm/bitops.h:316:19: note: previous definition of '__t=
+est_and_clear_bit_le' was here
+In file included from drivers/md/persistent-data/dm-space-map-metadata.c:13=
+:0:
+include/asm-generic/bitops/le.h:52:19: error: conflicting types for 'test_b=
+it_le'
+arch/powerpc/include/asm/bitops.h:284:23: note: previous definition of 'tes=
+t_bit_le' was here
+include/asm-generic/bitops/le.h:57:20: error: redefinition of '__set_bit_le'
+arch/powerpc/include/asm/bitops.h:291:20: note: previous definition of '__s=
+et_bit_le' was here
+include/asm-generic/bitops/le.h:62:20: error: redefinition of '__clear_bit_=
+le'
+arch/powerpc/include/asm/bitops.h:296:20: note: previous definition of '__c=
+lear_bit_le' was here
+include/asm-generic/bitops/le.h:67:19: error: redefinition of 'test_and_set=
+_bit_le'
+arch/powerpc/include/asm/bitops.h:301:19: note: previous definition of 'tes=
+t_and_set_bit_le' was here
+include/asm-generic/bitops/le.h:72:19: error: redefinition of 'test_and_cle=
+ar_bit_le'
+arch/powerpc/include/asm/bitops.h:306:19: note: previous definition of 'tes=
+t_and_clear_bit_le' was here
+include/asm-generic/bitops/le.h:77:19: error: redefinition of '__test_and_s=
+et_bit_le'
+arch/powerpc/include/asm/bitops.h:311:19: note: previous definition of '__t=
+est_and_set_bit_le' was here
+include/asm-generic/bitops/le.h:82:19: error: redefinition of '__test_and_c=
+lear_bit_le'
+arch/powerpc/include/asm/bitops.h:316:19: note: previous definition of '__t=
+est_and_clear_bit_le' was here
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 25 Jul 2011 15:18:44 +1000
-Subject: [PATCH] gma500: udelay(20000) it too long again
+Casued by commit 3222df7eca25 ("The persistent-data library offers a
+re-usable framework for the storage").
 
-so replace it with mdelay(20).
-
-Fixes build error:
-
-ERROR: "__bad_udelay" [drivers/staging/gma500/psb_gfx.ko] undefined!
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/gma500/mrst_hdmi.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/gma500/mrst_hdmi.c b/drivers/staging/gma500/mrst_hdmi.c
-index d6a5179..e66607e 100644
---- a/drivers/staging/gma500/mrst_hdmi.c
-+++ b/drivers/staging/gma500/mrst_hdmi.c
-@@ -129,7 +129,7 @@ static void wait_for_vblank(struct drm_device *dev)
- {
- 	/* FIXME: Can we do this as a sleep ? */
- 	/* Wait for 20ms, i.e. one cycle at 50hz. */
--	udelay(20000);
-+	mdelay(20);
- }
- 
- static void scu_busy_loop(void *scu_base)
--- 
-1.7.5.4
-
--- 
+I am not quite sure how you should fix this (maybe just include
+linux/bitops.h?) so I have left this build error for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__25_Jul_2011_15_58_54_+1000_zaz8=7/m8ZIqrq/4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOLQYeAAoJEDMEi1NhKgbsz8IH/3N/nBsEUHvE1npEKj7zwEIG
+jgEwZ4gmyTyXumDg1H5M07Z6JjSM35FMyACDHWCqMtxtXkW5l9g2e6IggUrqq3nB
+87tGHn97CK7LGhnTXIMC+SWp4aGIDTbuSYIzsVOz2wpAx6hKyS0WSiAxo6eYqtlW
+b1hewtS4AdnU9yk3DCQtjFPpCWUDf9xAevvFi0W/qbKt9MYZOYjqpKL+HVtPw08w
+DOlyiEb8/RhuEPGK6vLlMD28kpbBywtQI/bHNjRuIomjHmI+qWQaHFAuleekliIk
+6UHBbiCOCsRD6DXFdeIuIoBkFWA3+zO6/lQUkTrLC2zVS9gBpVOV0gd9NEpN6tA=
+=G4x6
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__25_Jul_2011_15_58_54_+1000_zaz8=7/m8ZIqrq/4--
