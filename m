@@ -1,60 +1,128 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the origin tree
-Date: Mon, 25 Jul 2011 11:16:27 +1000
-Message-ID: <20110725111627.0b0d8c8f0b73cff8f6ab85e9@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the rr tree with the  tree
+Date: Mon, 25 Jul 2011 11:43:27 +1000
+Message-ID: <20110725114327.fa9c46a5398677ffa4acbd6f@canb.auug.org.au>
+References: <20110705135932.de7f0526.sfr@canb.auug.org.au>
+	<1309967847.3393.44.camel@jerome>
+	<4E14F373.1020307@snapgear.com>
+	<20110707102432.5a779744e247652be005b592@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:32878 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55745 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752383Ab1GYBQh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 24 Jul 2011 21:16:37 -0400
+	id S1752812Ab1GYBnm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 24 Jul 2011 21:43:42 -0400
+In-Reply-To: <20110707102432.5a779744e247652be005b592@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Jonas Bonn <jonas@southpole.se>, Alan Cox <alan@linux.intel.com>
+To: Greg Ungerer <gerg@snapgear.com>
+Cc: Jonas Bonn <jonas@southpole.se>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, Geert Uytterhoeven <geert@linux-m68k.org>
 
-Hi Linus,
+Hi Greg,
 
-After merging the origin tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Thu, 7 Jul 2011 10:24:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> On Thu, 7 Jul 2011 09:44:51 +1000 Greg Ungerer <gerg@snapgear.com> wrote:
+> >
+> > On 07/07/11 01:57, Jonas Bonn wrote:
+> > >
+> > > On Tue, 2011-07-05 at 13:59 +1000, Stephen Rothwell wrote:
+> > >>
+> > >> Today's linux-next merge of the rr tree got a conflict in
+> > >> arch/m68k/kernel/module_mm.c arch/m68k/kernel/module_no.c between commit
+> > >> 4528acce2607 ("m68k: merge the non-mmu and mmu versions of module.c")
+> > >> from the m68knommu tree and commit 7b935befe6bc ("modules: make arch's
+> > >> use default loader hooks") from the rr tree.
+> > >>
+> > >> The former removes these files, so I did that.
+> > >>
+> > >> I then added this merge fix up patch (which I can carry as necessary and
+> > >> may not be coorrect):
+> > >>
+> > >> From: Stephen Rothwell<sfr@canb.auug.org.au>
+> > >> Date: Tue, 5 Jul 2011 13:12:26 +1000
+> > >> Subject: [PATCH] modules/m68k: make arch's use default loader hooks
+> > >>
+> > >> Signed-off-by: Stephen Rothwell<sfr@canb.auug.org.au>
+> > >> ---
+> > >>   arch/m68k/kernel/module.c |   27 ---------------------------
+> > >>   1 files changed, 0 insertions(+), 27 deletions(-)
+> > >>
+> > >
+> > > That patch looks good to me.
+> > >
+> > > Acked-by: Jonas Bonn<jonas@southpole.se>
+> > 
+> > Looks fine to me too:
+> > 
+> > Acked-by: Greg Ungerer <gerg@uclinux.org>
+> 
+> OK, so now someone just has to remember to apply it (or tell Linus, or
+> fix up the trees) during the merge window.   That person probably won't
+> be me (since I will not be online next week (assuming Linus follows
+> through and opens the merge window next week).
 
-ERROR: "__bad_udelay" [drivers/staging/gma500/psb_gfx.ko] undefined!
+This patch now needs to be applied to the m68knommu tree (after merging
+Linus' tree) as Rusty's changes have gone upstream.
 
-Presumably caused by commit a87e553fabe8 ("asm-generic: delay.h fix
-udelay and ndelay for 8 bit args").
-drivers/staging/gma500/psb_intel_display.c has a udelay
-(20000) which is explicitly disallowed by this patch.
-
-I have added the following patch for today:
+Here is the patch I have applied again for reference:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 25 Jul 2011 11:13:13 +1000
-Subject: [PATCH] gma500: udlay(20000) is too large
-
-So we use mdelay(20) instead.  Fixes this build error:
-
-ERROR: "__bad_udelay" [drivers/staging/gma500/psb_gfx.ko] undefined!
+Date: Tue, 5 Jul 2011 13:12:26 +1000
+Subject: [PATCH] modules/m68k: make arch's use default loader hooks
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/staging/gma500/psb_intel_display.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/m68k/kernel/module.c |   27 ---------------------------
+ 1 files changed, 0 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/staging/gma500/psb_intel_display.c b/drivers/staging/gma500/psb_intel_display.c
-index 4f47d09..09e378d 100644
---- a/drivers/staging/gma500/psb_intel_display.c
-+++ b/drivers/staging/gma500/psb_intel_display.c
-@@ -331,7 +331,7 @@ static bool psb_intel_find_best_PLL(struct drm_crtc *crtc, int target,
- void psb_intel_wait_for_vblank(struct drm_device *dev)
- {
- 	/* Wait for 20ms, i.e. one cycle at 50hz. */
--	udelay(20000);
-+	mdelay(20);
+diff --git a/arch/m68k/kernel/module.c b/arch/m68k/kernel/module.c
+index 146d646..34849c4 100644
+--- a/arch/m68k/kernel/module.c
++++ b/arch/m68k/kernel/module.c
+@@ -19,29 +19,6 @@
+ 
+ #ifdef CONFIG_MODULES
+ 
+-void *module_alloc(unsigned long size)
+-{
+-	if (size == 0)
+-		return NULL;
+-	return vmalloc(size);
+-}
+-
+-
+-/* Free memory returned from module_alloc */
+-void module_free(struct module *mod, void *module_region)
+-{
+-	vfree(module_region);
+-}
+-
+-/* We don't need anything special. */
+-int module_frob_arch_sections(Elf_Ehdr *hdr,
+-			      Elf_Shdr *sechdrs,
+-			      char *secstrings,
+-			      struct module *mod)
+-{
+-	return 0;
+-}
+-
+ int apply_relocate(Elf32_Shdr *sechdrs,
+ 		   const char *strtab,
+ 		   unsigned int symindex,
+@@ -130,10 +107,6 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 	return 0;
  }
  
- int psb_intel_pipe_set_base(struct drm_crtc *crtc,
+-void module_arch_cleanup(struct module *mod)
+-{
+-}
+-
+ #endif /* CONFIG_MODULES */
+ 
+ void module_fixup(struct module *mod, struct m68k_fixup_info *start,
 -- 
 1.7.5.4
 
