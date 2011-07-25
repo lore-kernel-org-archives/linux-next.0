@@ -1,81 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Mon, 25 Jul 2011 13:20:22 +1000
-Message-ID: <20110725132022.9cac27e6aee69728e4de6b97@canb.auug.org.au>
-References: <20110716164404.0f791c640332bbad6ab8ea34@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the iscsi-target tree
+Date: Mon, 25 Jul 2011 13:45:09 +1000
+Message-ID: <20110725134509.3a1c59c07eb7a5608a8712f7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__25_Jul_2011_13_45_09_+1000__9k53olz_UJ=p91p"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48415 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57446 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752582Ab1GYDUd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 24 Jul 2011 23:20:33 -0400
-In-Reply-To: <20110716164404.0f791c640332bbad6ab8ea34@canb.auug.org.au>
+	id S1752497Ab1GYDpZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 24 Jul 2011 23:45:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+--Signature=_Mon__25_Jul_2011_13_45_09_+1000__9k53olz_UJ=p91p
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 16 Jul 2011 16:44:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> After merging the vfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/nfs/read.c: In function 'nfs_do_read':
-> fs/nfs/read.c:246:42: error: 'struct nfs_open_context' has no member named 'path'
-> 
-> Caused by commit 6e4efd568574 ("NFS: Clean up nfs_read_rpcsetup and
-> nfs_write_rpcsetup") from the nfs tree interacting with commit
-> b98aad31afdc ("nfs_open_context doesn't need struct path either").
-> 
-> I have applied the following merge fixup patch:
+Hi Nicholas,
 
-This patch (repeasted here) is now required after mergeing the nfs tree
-and Linus' tree:
+After merging the iscsi-target tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Sat, 16 Jul 2011 16:32:06 +1000
-Subject: [PATCH] vfs/nfs: fixup for nfs_open_context change
+drivers/scsi/bnx2i/bnx2i_iscsi.c: In function 'bnx2i_task_xmit':
+drivers/scsi/bnx2i/bnx2i_iscsi.c:1233:20: error: dereferencing pointer to i=
+ncomplete type
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/nfs/read.c |    2 +-
- fs/nfs/write.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Caused by commit 5dd46e6560d4 ("iscsi: Resolve iscsi_proto.h naming
+conflicts with drivers/target/iscsi").
 
-diff --git a/fs/nfs/read.c b/fs/nfs/read.c
-index 3170712..2171c04 100644
---- a/fs/nfs/read.c
-+++ b/fs/nfs/read.c
-@@ -243,7 +243,7 @@ static void nfs_read_rpcsetup(struct nfs_page *req, struct nfs_read_data *data,
- static int nfs_do_read(struct nfs_read_data *data,
- 		const struct rpc_call_ops *call_ops)
- {
--	struct inode *inode = data->args.context->path.dentry->d_inode;
-+	struct inode *inode = data->args.context->dentry->d_inode;
- 
- 	return nfs_initiate_read(data, NFS_CLIENT(inode), call_ops);
- }
-diff --git a/fs/nfs/write.c b/fs/nfs/write.c
-index 2d2c773..ebed518 100644
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -889,7 +889,7 @@ static int nfs_do_write(struct nfs_write_data *data,
- 		const struct rpc_call_ops *call_ops,
- 		int how)
- {
--	struct inode *inode = data->args.context->path.dentry->d_inode;
-+	struct inode *inode = data->args.context->dentry->d_inode;
- 
- 	return nfs_initiate_write(data, NFS_CLIENT(inode), call_ops, how);
- }
--- 
-1.7.5.4
-
--- 
+I have dropped the iscsi-target tree for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__25_Jul_2011_13_45_09_+1000__9k53olz_UJ=p91p
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOLObFAAoJEDMEi1NhKgbsQwsH+wbb55/1/BYUWHPjzGh+ImdB
+xOq7xkZFm2/oa6rj698QcrfceJ6Lji5O3oOGcXftw5UprVAvhudCHksuLZ7SKyDK
+M2sLAQvQPp+5TlGi5yBshXs28xyFmiKo34uDtnOXwAHDUi4Z9IRI/tp0ieiPtGy4
+jVim9wmiSsYdQg0JHQknt6rFUqJokzK/FgT3PYDQyL3gEo1tOorDF0YfFF9mzkhm
+amoYUx1boi1e1H2kevY95LtrvFx2TNb/0f7qKRxLPKo+87tbQr03bfMXufdxynqf
+osJT7v00pJqhoxdXYXEDkOQIGONs6UdTjRl+8iGrWsp9ql3k8BGimXIQjPyVQ70=
+=bUx2
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__25_Jul_2011_13_45_09_+1000__9k53olz_UJ=p91p--
