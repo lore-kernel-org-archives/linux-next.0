@@ -1,54 +1,181 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the microblaze tree with Linus' tree
-Date: Tue, 26 Jul 2011 11:46:15 +1000
-Message-ID: <20110726114615.534c5501ac3d27d0459087df@canb.auug.org.au>
+From: Wu Fengguang <fengguang.wu@intel.com>
+Subject: Re: linux-next: manual merge of the writeback tree with the vfs
+ tree
+Date: Tue, 26 Jul 2011 12:58:12 +0800
+Message-ID: <20110726045812.GA32517@localhost>
+References: <20110718173409.2885649b65937eb7caecf943@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__26_Jul_2011_11_46_15_+1000_wf9usW4F=Zy1XH.h"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48650 "EHLO smtps.tip.net.au"
+Received: from mga03.intel.com ([143.182.124.21]:54189 "EHLO mga03.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752496Ab1GZBq0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Jul 2011 21:46:26 -0400
+	id S1750750Ab1GZE6Q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jul 2011 00:58:16 -0400
+Content-Disposition: inline
+In-Reply-To: <20110718173409.2885649b65937eb7caecf943@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Simek <michal.simek@petalogix.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>
 
---Signature=_Tue__26_Jul_2011_11_46_15_+1000_wf9usW4F=Zy1XH.h
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Michal,
+What should I do with the 2 conflicts for upstream merge?
 
-Today's linux-next merge of the microblaze tree got a conflict in
-arch/microblaze/pci/pci_32.c between commit 98d9f30c820d ("pci/of: Match
-PCI devices to OF nodes dynamically") from Linus' tree and commit
-c9d761b7c4b6 ("microblaze: PCI fix typo fault in of_node pointer moving
-into pci_bus") from the microblaze tree.
+I noticed that Linus just merged the vfs tree. So the obvious thing I
+could do is to rebase writeback.git to Linus' tree and fix the
+conflicts, and then ask Linus to pull the rebased writeback tree.
 
-The former removed the line fixed up by the latter.  The file was then
-removed in a later commit, so I did that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Or are there better practices?
 
---Signature=_Tue__26_Jul_2011_11_46_15_+1000_wf9usW4F=Zy1XH.h
-Content-Type: application/pgp-signature
+Thanks,
+Fengguang
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOLhxnAAoJEDMEi1NhKgbsb0UH/29oKfW+/ZmhrEl67gBTdMSw
-/R+n2eQ4qo5HsRFjrtyGADorbeIyxMoAcHiP1Q8qgGvPiXPmvhy+wGXZ2smJlsYs
-FaGk11PFQuDFgZMnyoiHJ6sQZ6zoLrt1HRswQecxeEvTpJ8DxLhmVkzYmxZrrK0H
-7orWp6YKrJ7gKrx3jHl9ipuHbmkVupbJeOJSAm52avnfbu6+aCB/Hclc+3umLHIF
-x3N/oPIXkkGNjrnCW4BRvP/yLNJ+C0kRNdliOWdiHg9R63vq9hMHDBR6Pv9qnWZd
-dGGxjiuxVIz7VJX/1ykv52EuEbdz8zEcumqR+chLxcHV4JN5TcE92n1CO8hINzA=
-=+X9J
------END PGP SIGNATURE-----
-
---Signature=_Tue__26_Jul_2011_11_46_15_+1000_wf9usW4F=Zy1XH.h--
+On Mon, Jul 18, 2011 at 03:34:09PM +0800, Stephen Rothwell wrote:
+> Hi Wu,
+> 
+> Today's linux-next merge of the writeback tree got a conflict in
+> fs/fs-writeback.c between commit dffe5a6c5214 ("superblock: move
+> pin_sb_for_writeback() to fs/super.c") from the vfs tree and commits
+> f758eeabeb96 ("writeback: split inode_wb_list_lock into
+> bdi_writeback.list_lock") and d46db3d58233 ("writeback: make
+> writeback_control.nr_to_write straight") from the writeback tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc fs/fs-writeback.c
+> index b8c507c,6d49439..0000000
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@@ -460,6 -480,63 +480,37 @@@ writeback_single_inode(struct inode *in
+>   	return ret;
+>   }
+>   
+>  -/*
+>  - * For background writeback the caller does not have the sb pinned
+>  - * before calling writeback. So make sure that we do pin it, so it doesn't
+>  - * go away while we are writing inodes from it.
+>  - */
+>  -static bool pin_sb_for_writeback(struct super_block *sb)
+>  -{
+>  -	spin_lock(&sb_lock);
+>  -	if (list_empty(&sb->s_instances)) {
+>  -		spin_unlock(&sb_lock);
+>  -		return false;
+>  -	}
+>  -
+>  -	sb->s_count++;
+>  -	spin_unlock(&sb_lock);
+>  -
+>  -	if (down_read_trylock(&sb->s_umount)) {
+>  -		if (sb->s_root)
+>  -			return true;
+>  -		up_read(&sb->s_umount);
+>  -	}
+>  -
+>  -	put_super(sb);
+>  -	return false;
+>  -}
+>  -
+> + static long writeback_chunk_size(struct backing_dev_info *bdi,
+> + 				 struct wb_writeback_work *work)
+> + {
+> + 	long pages;
+> + 
+> + 	/*
+> + 	 * WB_SYNC_ALL mode does livelock avoidance by syncing dirty
+> + 	 * inodes/pages in one big loop. Setting wbc.nr_to_write=LONG_MAX
+> + 	 * here avoids calling into writeback_inodes_wb() more than once.
+> + 	 *
+> + 	 * The intended call sequence for WB_SYNC_ALL writeback is:
+> + 	 *
+> + 	 *      wb_writeback()
+> + 	 *          writeback_sb_inodes()       <== called only once
+> + 	 *              write_cache_pages()     <== called once for each inode
+> + 	 *                   (quickly) tag currently dirty pages
+> + 	 *                   (maybe slowly) sync all tagged pages
+> + 	 */
+> + 	if (work->sync_mode == WB_SYNC_ALL || work->tagged_writepages)
+> + 		pages = LONG_MAX;
+> + 	else {
+> + 		pages = min(bdi->avg_write_bandwidth / 2,
+> + 			    global_dirty_limit / DIRTY_SCOPE);
+> + 		pages = min(pages, work->nr_pages);
+> + 		pages = round_down(pages + MIN_WRITEBACK_PAGES,
+> + 				   MIN_WRITEBACK_PAGES);
+> + 	}
+> + 
+> + 	return pages;
+> + }
+> + 
+>   /*
+>    * Write a portion of b_io inodes which belong to @sb.
+>    *
+> @@@ -559,40 -643,41 +617,41 @@@ static long __writeback_inodes_wb(struc
+>   		struct inode *inode = wb_inode(wb->b_io.prev);
+>   		struct super_block *sb = inode->i_sb;
+>   
+>  -		if (!pin_sb_for_writeback(sb)) {
+>  +		if (!grab_super_passive(sb)) {
+> - 			requeue_io(inode);
+> + 			requeue_io(inode, wb);
+>   			continue;
+>   		}
+> - 		ret = writeback_sb_inodes(sb, wb, wbc, false);
+> + 		wrote += writeback_sb_inodes(sb, wb, work);
+>   		drop_super(sb);
+>   
+> - 		if (ret)
+> - 			break;
+> + 		/* refer to the same tests at the end of writeback_sb_inodes */
+> + 		if (wrote) {
+> + 			if (time_is_before_jiffies(start_time + HZ / 10UL))
+> + 				break;
+> + 			if (work->nr_pages <= 0)
+> + 				break;
+> + 		}
+>   	}
+> - 	spin_unlock(&inode_wb_list_lock);
+>   	/* Leave any unwritten inodes on b_io */
+> + 	return wrote;
+>   }
+>   
+> - static void __writeback_inodes_sb(struct super_block *sb,
+> - 		struct bdi_writeback *wb, struct writeback_control *wbc)
+> + long writeback_inodes_wb(struct bdi_writeback *wb, long nr_pages)
+>   {
+> - 	WARN_ON(!rwsem_is_locked(&sb->s_umount));
+> + 	struct wb_writeback_work work = {
+> + 		.nr_pages	= nr_pages,
+> + 		.sync_mode	= WB_SYNC_NONE,
+> + 		.range_cyclic	= 1,
+> + 	};
+>   
+> - 	spin_lock(&inode_wb_list_lock);
+> - 	if (!wbc->for_kupdate || list_empty(&wb->b_io))
+> - 		queue_io(wb, wbc->older_than_this);
+> - 	writeback_sb_inodes(sb, wb, wbc, true);
+> - 	spin_unlock(&inode_wb_list_lock);
+> - }
+> + 	spin_lock(&wb->list_lock);
+> + 	if (list_empty(&wb->b_io))
+> + 		queue_io(wb, NULL);
+> + 	__writeback_inodes_wb(wb, &work);
+> + 	spin_unlock(&wb->list_lock);
+>   
+> - /*
+> -  * The maximum number of pages to writeout in a single bdi flush/kupdate
+> -  * operation.  We do this so we don't hold I_SYNC against an inode for
+> -  * enormous amounts of time, which would block a userspace task which has
+> -  * been forced to throttle against that inode.  Also, the code reevaluates
+> -  * the dirty each time it has written this many pages.
+> -  */
+> - #define MAX_WRITEBACK_PAGES     1024
+> + 	return nr_pages - work.nr_pages;
+> + }
+>   
+>   static inline bool over_bground_thresh(void)
+>   {
