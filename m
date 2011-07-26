@@ -1,181 +1,68 @@
-From: Wu Fengguang <fengguang.wu@intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the writeback tree with the vfs
  tree
-Date: Tue, 26 Jul 2011 12:58:12 +0800
-Message-ID: <20110726045812.GA32517@localhost>
+Date: Tue, 26 Jul 2011 15:14:51 +1000
+Message-ID: <20110726151451.e3385a5d969fddc210f186f8@canb.auug.org.au>
 References: <20110718173409.2885649b65937eb7caecf943@canb.auug.org.au>
+	<20110726045812.GA32517@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__26_Jul_2011_15_14_51_+1000_u4KYhRIfrCAiQlPL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:54189 "EHLO mga03.intel.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60274 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750750Ab1GZE6Q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Jul 2011 00:58:16 -0400
-Content-Disposition: inline
-In-Reply-To: <20110718173409.2885649b65937eb7caecf943@canb.auug.org.au>
+	id S1751000Ab1GZFPD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jul 2011 01:15:03 -0400
+In-Reply-To: <20110726045812.GA32517@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Wu Fengguang <fengguang.wu@intel.com>
 Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>
 
-Hi Stephen,
+--Signature=_Tue__26_Jul_2011_15_14_51_+1000_u4KYhRIfrCAiQlPL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What should I do with the 2 conflicts for upstream merge?
+Hi,
 
-I noticed that Linus just merged the vfs tree. So the obvious thing I
-could do is to rebase writeback.git to Linus' tree and fix the
-conflicts, and then ask Linus to pull the rebased writeback tree.
+On Tue, 26 Jul 2011 12:58:12 +0800 Wu Fengguang <fengguang.wu@intel.com> wr=
+ote:
+>
+> What should I do with the 2 conflicts for upstream merge?
+>=20
+> I noticed that Linus just merged the vfs tree. So the obvious thing I
+> could do is to rebase writeback.git to Linus' tree and fix the
+> conflicts, and then ask Linus to pull the rebased writeback tree.
+>=20
+> Or are there better practices?
 
-Or are there better practices?
+Normally you just ask Linus to pull your tree and let him know that there
+are some conflicts and also ask him to let you know if he wants you to
+fix them up before merging.  He is a smart fellow, and if I worked it out,
+I am sure he can as well.  :-)
 
-Thanks,
-Fengguang
+Some people pull Linus' tree into theirs and resolve the conflicts, but
+he prefers to do them himself usually.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-On Mon, Jul 18, 2011 at 03:34:09PM +0800, Stephen Rothwell wrote:
-> Hi Wu,
-> 
-> Today's linux-next merge of the writeback tree got a conflict in
-> fs/fs-writeback.c between commit dffe5a6c5214 ("superblock: move
-> pin_sb_for_writeback() to fs/super.c") from the vfs tree and commits
-> f758eeabeb96 ("writeback: split inode_wb_list_lock into
-> bdi_writeback.list_lock") and d46db3d58233 ("writeback: make
-> writeback_control.nr_to_write straight") from the writeback tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as necessary.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc fs/fs-writeback.c
-> index b8c507c,6d49439..0000000
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@@ -460,6 -480,63 +480,37 @@@ writeback_single_inode(struct inode *in
->   	return ret;
->   }
->   
->  -/*
->  - * For background writeback the caller does not have the sb pinned
->  - * before calling writeback. So make sure that we do pin it, so it doesn't
->  - * go away while we are writing inodes from it.
->  - */
->  -static bool pin_sb_for_writeback(struct super_block *sb)
->  -{
->  -	spin_lock(&sb_lock);
->  -	if (list_empty(&sb->s_instances)) {
->  -		spin_unlock(&sb_lock);
->  -		return false;
->  -	}
->  -
->  -	sb->s_count++;
->  -	spin_unlock(&sb_lock);
->  -
->  -	if (down_read_trylock(&sb->s_umount)) {
->  -		if (sb->s_root)
->  -			return true;
->  -		up_read(&sb->s_umount);
->  -	}
->  -
->  -	put_super(sb);
->  -	return false;
->  -}
->  -
-> + static long writeback_chunk_size(struct backing_dev_info *bdi,
-> + 				 struct wb_writeback_work *work)
-> + {
-> + 	long pages;
-> + 
-> + 	/*
-> + 	 * WB_SYNC_ALL mode does livelock avoidance by syncing dirty
-> + 	 * inodes/pages in one big loop. Setting wbc.nr_to_write=LONG_MAX
-> + 	 * here avoids calling into writeback_inodes_wb() more than once.
-> + 	 *
-> + 	 * The intended call sequence for WB_SYNC_ALL writeback is:
-> + 	 *
-> + 	 *      wb_writeback()
-> + 	 *          writeback_sb_inodes()       <== called only once
-> + 	 *              write_cache_pages()     <== called once for each inode
-> + 	 *                   (quickly) tag currently dirty pages
-> + 	 *                   (maybe slowly) sync all tagged pages
-> + 	 */
-> + 	if (work->sync_mode == WB_SYNC_ALL || work->tagged_writepages)
-> + 		pages = LONG_MAX;
-> + 	else {
-> + 		pages = min(bdi->avg_write_bandwidth / 2,
-> + 			    global_dirty_limit / DIRTY_SCOPE);
-> + 		pages = min(pages, work->nr_pages);
-> + 		pages = round_down(pages + MIN_WRITEBACK_PAGES,
-> + 				   MIN_WRITEBACK_PAGES);
-> + 	}
-> + 
-> + 	return pages;
-> + }
-> + 
->   /*
->    * Write a portion of b_io inodes which belong to @sb.
->    *
-> @@@ -559,40 -643,41 +617,41 @@@ static long __writeback_inodes_wb(struc
->   		struct inode *inode = wb_inode(wb->b_io.prev);
->   		struct super_block *sb = inode->i_sb;
->   
->  -		if (!pin_sb_for_writeback(sb)) {
->  +		if (!grab_super_passive(sb)) {
-> - 			requeue_io(inode);
-> + 			requeue_io(inode, wb);
->   			continue;
->   		}
-> - 		ret = writeback_sb_inodes(sb, wb, wbc, false);
-> + 		wrote += writeback_sb_inodes(sb, wb, work);
->   		drop_super(sb);
->   
-> - 		if (ret)
-> - 			break;
-> + 		/* refer to the same tests at the end of writeback_sb_inodes */
-> + 		if (wrote) {
-> + 			if (time_is_before_jiffies(start_time + HZ / 10UL))
-> + 				break;
-> + 			if (work->nr_pages <= 0)
-> + 				break;
-> + 		}
->   	}
-> - 	spin_unlock(&inode_wb_list_lock);
->   	/* Leave any unwritten inodes on b_io */
-> + 	return wrote;
->   }
->   
-> - static void __writeback_inodes_sb(struct super_block *sb,
-> - 		struct bdi_writeback *wb, struct writeback_control *wbc)
-> + long writeback_inodes_wb(struct bdi_writeback *wb, long nr_pages)
->   {
-> - 	WARN_ON(!rwsem_is_locked(&sb->s_umount));
-> + 	struct wb_writeback_work work = {
-> + 		.nr_pages	= nr_pages,
-> + 		.sync_mode	= WB_SYNC_NONE,
-> + 		.range_cyclic	= 1,
-> + 	};
->   
-> - 	spin_lock(&inode_wb_list_lock);
-> - 	if (!wbc->for_kupdate || list_empty(&wb->b_io))
-> - 		queue_io(wb, wbc->older_than_this);
-> - 	writeback_sb_inodes(sb, wb, wbc, true);
-> - 	spin_unlock(&inode_wb_list_lock);
-> - }
-> + 	spin_lock(&wb->list_lock);
-> + 	if (list_empty(&wb->b_io))
-> + 		queue_io(wb, NULL);
-> + 	__writeback_inodes_wb(wb, &work);
-> + 	spin_unlock(&wb->list_lock);
->   
-> - /*
-> -  * The maximum number of pages to writeout in a single bdi flush/kupdate
-> -  * operation.  We do this so we don't hold I_SYNC against an inode for
-> -  * enormous amounts of time, which would block a userspace task which has
-> -  * been forced to throttle against that inode.  Also, the code reevaluates
-> -  * the dirty each time it has written this many pages.
-> -  */
-> - #define MAX_WRITEBACK_PAGES     1024
-> + 	return nr_pages - work.nr_pages;
-> + }
->   
->   static inline bool over_bground_thresh(void)
->   {
+--Signature=_Tue__26_Jul_2011_15_14_51_+1000_u4KYhRIfrCAiQlPL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOLk1LAAoJEDMEi1NhKgbsIaEH/0jr1uBjCJwAWQJVZ5k8A020
+WmeU0hWINNNMTzkC0N8tY0UmOvCRbm6pUiUfqliCeVCBhYp6oCHD/lHjGC53Za+u
+iVWT0POEy/ZePazG7G2cYIivwH69xK8cK78UtVoifcrTVVwNffrowV9uqemyygFJ
+Vu4aguLYyNn1pf79quxK0O388Sr1SIXP3I1varRWB14aPnwf7AmqTVxMccVhktmX
+zZZYKeBDKS3n2ynmvOjgmC521/5eMsiYsaYavQRwLhCRWdVBubCBRyO95Bp8IKKp
+lq+mjt+4rwFEMklIxaxt3cJk2rQuR4iG/9GxKcoe4hKO43DxwjANJTwniHGO3x8=
+=EQ2p
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__26_Jul_2011_15_14_51_+1000_u4KYhRIfrCAiQlPL--
