@@ -1,33 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the slave-dma tree with Linus' tree
-Date: Wed, 27 Jul 2011 12:08:26 +1000
-Message-ID: <20110727120826.ea1227276707790e162dee18@canb.auug.org.au>
+From: "Koul, Vinod" <vinod.koul@intel.com>
+Subject: Re: linux-next: manual merge of the slave-dma tree with Linus' tree
+Date: Wed, 27 Jul 2011 08:42:11 +0530
+Message-ID: <1311736331.1536.45.camel@vkoul-udesk3>
+References: <20110727120826.ea1227276707790e162dee18@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45461 "EHLO smtps.tip.net.au"
+Received: from mga14.intel.com ([143.182.124.37]:23899 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751223Ab1G0CId (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Jul 2011 22:08:33 -0400
+	id S1753108Ab1G0Dyt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jul 2011 23:54:49 -0400
+In-Reply-To: <20110727120826.ea1227276707790e162dee18@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, linus.walleij@linaro.org
 
-Hi Vinod,
+On Wed, 2011-07-27 at 12:08 +1000, Stephen Rothwell wrote:
+> Hi Vinod,
+> 
+> Today's linux-next merge of the slave-dma tree got a conflict in
+> drivers/spi/spi-pl022.c (called drivers/spi/amba-pl022.c in the sleav-dma
+> tree) between commit 083be3f05371 ("spi/pl022: initialize burstsize from
+> FIFO trigger level") from Linus' tree and commit 001b0585ff16 ("Improve
+> slave/cyclic DMA engine documentation") from the slave-dma tree.
+> 
+> I fixed it up (see below) anc acn carry the fix as necessary.
 
-Today's linux-next merge of the slave-dma tree got a conflict in
-drivers/spi/spi-pl022.c (called drivers/spi/amba-pl022.c in the sleav-dma
-tree) between commit 083be3f05371 ("spi/pl022: initialize burstsize from
-FIFO trigger level") from Linus' tree and commit 001b0585ff16 ("Improve
-slave/cyclic DMA engine documentation") from the slave-dma tree.
-
-I fixed it up (see below) anc acn carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+The correct fix would be:
 
 diff --cc drivers/spi/spi-pl022.c
 index eba88c7,99e7880..0000000
@@ -35,13 +36,22 @@ index eba88c7,99e7880..0000000
 +++ b/drivers/spi/spi-pl022.c
 @@@ -910,11 -908,11 +910,9 @@@ static int configure_dma(struct pl022 *
   {
-  	struct dma_slave_config rx_conf = {
-  		.src_addr = SSP_DR(pl022->phybase),
-  	};
-  	struct dma_slave_config tx_conf = {
-  		.dst_addr = SSP_DR(pl022->phybase),
-- 		.direction = DMA_TO_DEVICE,
- -		.dst_maxburst = pl022->vendor->fifodepth >> 1,
-  	};
-  	unsigned int pages;
-  	int ret;
+        struct dma_slave_config rx_conf = {
+                .src_addr = SSP_DR(pl022->phybase),
++		.direction = DMA_TO_DEVICE,
+        };
+        struct dma_slave_config tx_conf = {
+                .dst_addr = SSP_DR(pl022->phybase),
+                .direction = DMA_TO_DEVICE,
+ -              .dst_maxburst = pl022->vendor->fifodepth >> 1,
+        };
+        unsigned int pages;
+        int ret;
+
+For now the direction flags remains to be set and checked is in both
+tree so should not cause conflict.
+I will rebase my tree tonight to 3.0, that should resolve conflict as
+well
+
+-- 
+~Vinod
