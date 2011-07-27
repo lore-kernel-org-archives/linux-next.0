@@ -1,77 +1,67 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] tpm_tis: fix build when ACPI is not enabled
-Date: Wed, 27 Jul 2011 11:42:11 -0700
-Message-ID: <20110727114211.18be47cf.rdunlap@xenotime.net>
-References: <20110727141151.d31e3da6a8d21a255473293c@canb.auug.org.au>
+From: J Freyensee <james_p_freyensee@linux.intel.com>
+Subject: Re: [patch] Re: linux-next: Tree for July 27 (misc/pti)
+Date: Wed, 27 Jul 2011 11:54:20 -0700
+Message-ID: <4E305EDC.3030602@linux.intel.com>
+References: <20110727141151.d31e3da6a8d21a255473293c@canb.auug.org.au> <20110727092740.2228dd94.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:40491 "HELO
-	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754263Ab1G0SmO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jul 2011 14:42:14 -0400
-In-Reply-To: <20110727141151.d31e3da6a8d21a255473293c@canb.auug.org.au>
+Received: from mga11.intel.com ([192.55.52.93]:55736 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751202Ab1G0SyJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Jul 2011 14:54:09 -0400
+In-Reply-To: <20110727092740.2228dd94.rdunlap@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Leendert van Doorn <leendert@watson.ibm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, tpmdd-devel@lists.sourceforge.net
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, torvalds <torvalds@linux-foundation.org>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On 07/27/2011 09:27 AM, Randy Dunlap wrote:
+> On Wed, 27 Jul 2011 14:11:51 +1000 Stephen Rothwell wrote:
+>
+>> Hi all,
+>
+>
+> I am still applying the drivers/misc/ patch below that was posted on July 7.
+> Is there a drivers/misc/ maintainer?  Andrew?
+>
+> Hm, this patch needs to be applied to mainline.
+>
 
-Fix tpm_tis.c build when CONFIG_ACPI is not enabled by providing
-a stub function.  Fixes many build errors/warnings:
+This one too:
 
-drivers/char/tpm/tpm_tis.c:89: error: dereferencing pointer to incomplete type
-drivers/char/tpm/tpm_tis.c:89: warning: type defaults to 'int' in declaration of 'type name'
-drivers/char/tpm/tpm_tis.c:89: error: request for member 'list' in something not a structure or union
-drivers/char/tpm/tpm_tis.c:89: warning: type defaults to 'int' in declaration of '__mptr'
-drivers/char/tpm/tpm_tis.c:89: error: dereferencing pointer to incomplete type
-drivers/char/tpm/tpm_tis.c:89: error: dereferencing pointer to incomplete type
-drivers/char/tpm/tpm_tis.c:89: error: dereferencing pointer to incomplete type
-drivers/char/tpm/tpm_tis.c:89: warning: type defaults to 'int' in declaration of 'type name'
-drivers/char/tpm/tpm_tis.c:89: error: request for member 'list' in something not a structure or union
-drivers/char/tpm/tpm_tis.c:89: warning: type defaults to 'int' in declaration of 'type name'
-drivers/char/tpm/tpm_tis.c:89: error: dereferencing pointer to incomplete type
-drivers/char/tpm/tpm_tis.c:89: error: dereferencing pointer to incomplete type
-drivers/char/tpm/tpm_tis.c:89: error: dereferencing pointer to incomplete type
-drivers/char/tpm/tpm_tis.c:89: warning: type defaults to 'int' in declaration of 'type name'
-drivers/char/tpm/tpm_tis.c:89: error: request for member 'list' in something not a structure or union
-drivers/char/tpm/tpm_tis.c:89: warning: type defaults to 'int' in declaration of '__mptr'
-drivers/char/tpm/tpm_tis.c:89: error: dereferencing pointer to incomplete type
-drivers/char/tpm/tpm_tis.c:89: error: dereferencing pointer to incomplete type
-drivers/char/tpm/tpm_tis.c:89: error: dereferencing pointer to incomplete type
-drivers/char/tpm/tpm_tis.c:89: warning: type defaults to 'int' in declaration of 'type name'
-drivers/char/tpm/tpm_tis.c:89: error: request for member 'list' in something not a structure or union
-drivers/char/tpm/tpm_tis.c:89: warning: type defaults to 'int' in declaration of 'type name'
-drivers/char/tpm/tpm_tis.c:90: error: dereferencing pointer to incomplete type
+http://marc.info/?l=linux-next&m=131016084730837&w=2
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Leendert van Doorn <leendert@watson.ibm.com>
----
- drivers/char/tpm/tpm_tis.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+> ---
+> From: J Freyensee<james_p_freyensee@linux.intel.com>
+>
+> Intel-Atom implementation of PTI will not work with PCI
+> configured off, so the pti driver should not be compiled
+> in the event someone does not enable PCI in the linux kernel.
+>
+> Signed-off-by: J Freyensee<james_p_freyensee@linux.intel.com>
+> Acked-by: Randy Dunlap<randy.dunlap@oracle.com>
+> Acked-by: Stephen Rothwell<sfr@canb.auug.org.au>
+> ---
+>   drivers/misc/Kconfig |    1 +
+>   1 files changed, 1 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index 4e349cd..7fd32a6 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -146,6 +146,7 @@ config PHANTOM
+>
+>   config INTEL_MID_PTI
+>   	tristate "Parallel Trace Interface for MIPI P1149.7 cJTAG standard"
+> +	depends on PCI
+>   	default n
+>   	help
+>   	  The PTI (Parallel Trace Interface) driver directs
 
---- linux-next-20110727.orig/drivers/char/tpm/tpm_tis.c
-+++ linux-next-20110727/drivers/char/tpm/tpm_tis.c
-@@ -80,7 +80,7 @@ enum tis_defaults {
- static LIST_HEAD(tis_chips);
- static DEFINE_SPINLOCK(tis_lock);
- 
--#ifdef CONFIG_PNP
-+#if defined(CONFIG_PNP) && defined(CONFIG_ACPI)
- static int is_itpm(struct pnp_dev *dev)
- {
- 	struct acpi_device *acpi = pnp_acpi_device(dev);
-@@ -93,6 +93,11 @@ static int is_itpm(struct pnp_dev *dev)
- 
- 	return 0;
- }
-+#else
-+static inline int is_itpm(struct pnp_dev *dev)
-+{
-+	return 0;
-+}
- #endif
- 
- static int check_locality(struct tpm_chip *chip, int l)
+
+-- 
+J (James/Jay) Freyensee
+Storage Technology Group
+Intel Corporation
