@@ -1,37 +1,50 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: linux-next: Tree for July 27 (watchdog/hpwdt)
-Date: Wed, 27 Jul 2011 21:39:58 +0200
-Message-ID: <20110727193958.GA4227@infomag.iguana.be>
-References: <20110727141151.d31e3da6a8d21a255473293c@canb.auug.org.au> <20110727094112.89ab9901.rdunlap@xenotime.net>
+From: Mike Waychison <mikew@google.com>
+Subject: Re: [PATCH -next] firmware: fix google/gsmi.c build warning
+Date: Wed, 27 Jul 2011 12:49:59 -0700
+Message-ID: <CAGTjWtBq39vBMWfk0aTZuw_kNQSUch8oUcg14VF5NpOwuuJiew@mail.gmail.com>
+References: <20110727141151.d31e3da6a8d21a255473293c@canb.auug.org.au> <20110727101128.8d63fbab.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailrelay006.isp.belgacom.be ([195.238.6.172]:22822 "EHLO
-	mailrelay006.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753158Ab1G0TkA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Jul 2011 15:40:00 -0400
-Content-Disposition: inline
-In-Reply-To: <20110727094112.89ab9901.rdunlap@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110727101128.8d63fbab.rdunlap@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Mingarelli <thomas.mingarelli@hp.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Randy,
+On Wed, Jul 27, 2011 at 10:11 AM, Randy Dunlap <rdunlap@xenotime.net> w=
+rote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+>
+> Modify function parameter type to match expected type. =A0Fixes a
+> build warning:
+>
+> drivers/firmware/google/gsmi.c:473: warning: initialization from inco=
+mpatible pointer type
+>
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> Cc: Mike Waychison <mikew@google.com>
+> ---
+> =A0drivers/firmware/google/gsmi.c | =A0 =A02 +-
+> =A01 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- linux-next-20110727.orig/drivers/firmware/google/gsmi.c
+> +++ linux-next-20110727/drivers/firmware/google/gsmi.c
+> @@ -420,7 +420,7 @@ static efi_status_t gsmi_get_next_variab
+>
+> =A0static efi_status_t gsmi_set_variable(efi_char16_t *name,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0efi_guid_t *vendor,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 unsigned long attr,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 u32 attr,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0unsigned long data_size,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0void *data)
+> =A0{
+>
 
-> > Just in case anyone needs reminding:  Please do not add anything destined
-> > for v3.2 into linux-next included trees until after v3.1-rc1.
-
-This is still v3.1 stuff. It basically adds an extra SMBIOS lookup (dmi_walk) to see
-if there is a new iLO system.
-
-> When CONFIG_HPWDT_NMI_DECODING is not enabled:
-> 
-> drivers/watchdog/hpwdt.c:833: error: 'allow_kdump' undeclared (first use in this function)
-> drivers/watchdog/hpwdt.c:833: error: 'priority' undeclared (first use in this function)
-
-I fixed the patch. (The last 2 parts of the diff should not have been there...)
-
-Kind regards,
-Wim.
+Looks good.
