@@ -1,67 +1,37 @@
-From: J Freyensee <james_p_freyensee@linux.intel.com>
-Subject: Re: [patch] Re: linux-next: Tree for July 27 (misc/pti)
-Date: Wed, 27 Jul 2011 11:54:20 -0700
-Message-ID: <4E305EDC.3030602@linux.intel.com>
-References: <20110727141151.d31e3da6a8d21a255473293c@canb.auug.org.au> <20110727092740.2228dd94.rdunlap@xenotime.net>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: linux-next: Tree for July 27 (watchdog/hpwdt)
+Date: Wed, 27 Jul 2011 21:39:58 +0200
+Message-ID: <20110727193958.GA4227@infomag.iguana.be>
+References: <20110727141151.d31e3da6a8d21a255473293c@canb.auug.org.au> <20110727094112.89ab9901.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:55736 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751202Ab1G0SyJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Jul 2011 14:54:09 -0400
-In-Reply-To: <20110727092740.2228dd94.rdunlap@xenotime.net>
+Received: from mailrelay006.isp.belgacom.be ([195.238.6.172]:22822 "EHLO
+	mailrelay006.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753158Ab1G0TkA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Jul 2011 15:40:00 -0400
+Content-Disposition: inline
+In-Reply-To: <20110727094112.89ab9901.rdunlap@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Mingarelli <thomas.mingarelli@hp.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org
 
-On 07/27/2011 09:27 AM, Randy Dunlap wrote:
-> On Wed, 27 Jul 2011 14:11:51 +1000 Stephen Rothwell wrote:
->
->> Hi all,
->
->
-> I am still applying the drivers/misc/ patch below that was posted on July 7.
-> Is there a drivers/misc/ maintainer?  Andrew?
->
-> Hm, this patch needs to be applied to mainline.
->
+Hi Randy,
 
-This one too:
+> > Just in case anyone needs reminding:  Please do not add anything destined
+> > for v3.2 into linux-next included trees until after v3.1-rc1.
 
-http://marc.info/?l=linux-next&m=131016084730837&w=2
+This is still v3.1 stuff. It basically adds an extra SMBIOS lookup (dmi_walk) to see
+if there is a new iLO system.
 
-> ---
-> From: J Freyensee<james_p_freyensee@linux.intel.com>
->
-> Intel-Atom implementation of PTI will not work with PCI
-> configured off, so the pti driver should not be compiled
-> in the event someone does not enable PCI in the linux kernel.
->
-> Signed-off-by: J Freyensee<james_p_freyensee@linux.intel.com>
-> Acked-by: Randy Dunlap<randy.dunlap@oracle.com>
-> Acked-by: Stephen Rothwell<sfr@canb.auug.org.au>
-> ---
->   drivers/misc/Kconfig |    1 +
->   1 files changed, 1 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index 4e349cd..7fd32a6 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -146,6 +146,7 @@ config PHANTOM
->
->   config INTEL_MID_PTI
->   	tristate "Parallel Trace Interface for MIPI P1149.7 cJTAG standard"
-> +	depends on PCI
->   	default n
->   	help
->   	  The PTI (Parallel Trace Interface) driver directs
+> When CONFIG_HPWDT_NMI_DECODING is not enabled:
+> 
+> drivers/watchdog/hpwdt.c:833: error: 'allow_kdump' undeclared (first use in this function)
+> drivers/watchdog/hpwdt.c:833: error: 'priority' undeclared (first use in this function)
 
+I fixed the patch. (The last 2 parts of the diff should not have been there...)
 
--- 
-J (James/Jay) Freyensee
-Storage Technology Group
-Intel Corporation
+Kind regards,
+Wim.
