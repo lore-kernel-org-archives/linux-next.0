@@ -1,87 +1,57 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for July 28 (fs/binfmt_misc.ko)
-Date: Thu, 28 Jul 2011 16:05:31 +0200
-Message-ID: <CA+icZUV7R5hqTupiuZZKWcsZ5LOBGmY6xgmMTM7W3ojJo0Sp4w@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: [PATCH -next] target: iscsi_target depends on NET
+Date: Thu, 28 Jul 2011 13:10:13 -0700
+Message-ID: <1311883813.6931.196.camel@haakon2.linux-iscsi.org>
+References: <20110728135707.44ae2d79ecdda9b50d73adc9@canb.auug.org.au>
+	 <20110728094819.22e19fe9.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:38635 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753341Ab1G1OFc convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jul 2011 10:05:32 -0400
+Received: from mail.linux-iscsi.org ([67.23.28.174]:38272 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755797Ab1G1UTe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jul 2011 16:19:34 -0400
+In-Reply-To: <20110728094819.22e19fe9.rdunlap@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, target-devel@vger.kernel.org
 
-On Thu, Jul 28, 2011 at 5:57 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi all,
->
-> Just in case anyone needs reminding: =C2=A0Please do not add anything=
- destined
-> for v3.2 into linux-next included trees until after v3.1-rc1.
->
-> The powerpc allyesconfig build (at least) still fails today.
->
-> Changes since 20110727:
->
-> Linus' tree still has its build failure from the staging tree which I
-> have still left.
->
-> The slave-dma tree lost a conflict.
->
-> The mfd tree lost its conflicts.
->
-> The akpm tree lost its build failure.
->
-> ---------------------------------------------------------------------=
--------
->
+On Thu, 2011-07-28 at 09:48 -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+> 
+> iscsi target code uses lots on network interface functions, so it
+> should depend on NET.  Fixes many build errors when NET is not enabled:
+> 
+> ERROR: "kernel_sendmsg" [drivers/target/iscsi/iscsi_target_mod.ko] undefined!
+> ERROR: "in_aton" [drivers/target/iscsi/iscsi_target_mod.ko] undefined!
+> ERROR: "sock_release" [drivers/target/iscsi/iscsi_target_mod.ko] undefined!
+> ERROR: "kernel_listen" [drivers/target/iscsi/iscsi_target_mod.ko] undefined!
+> ERROR: "kernel_setsockopt" [drivers/target/iscsi/iscsi_target_mod.ko] undefined!
+> ERROR: "kernel_recvmsg" [drivers/target/iscsi/iscsi_target_mod.ko] undefined!
+> ERROR: "kernel_accept" [drivers/target/iscsi/iscsi_target_mod.ko] undefined!
+> ERROR: "sock_create" [drivers/target/iscsi/iscsi_target_mod.ko] undefined!
+> ERROR: "kernel_bind" [drivers/target/iscsi/iscsi_target_mod.ko] undefined!
+> ERROR: "in6_pton" [drivers/target/iscsi/iscsi_target_mod.ko] undefined!
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> ---
+>  drivers/target/iscsi/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20110728.orig/drivers/target/iscsi/Kconfig
+> +++ linux-next-20110728/drivers/target/iscsi/Kconfig
+> @@ -1,5 +1,6 @@
+>  config ISCSI_TARGET
+>  	tristate "Linux-iSCSI.org iSCSI Target Mode Stack"
+> +	depends on NET
+>  	select CRYPTO
+>  	select CRYPTO_CRC32C
+>  	select CRYPTO_CRC32C_INTEL if X86
 
-Hi,
+Committed as d52a10d00 and pushed into target-pending.git/for-next.
 
-just see this build-break on the last mile:
+Thanks Randy!
 
-[...]
-  OBJCOPY arch/x86/boot/compressed/vmlinux.bin
-  HOSTCC  arch/x86/boot/compressed/relocs
-  HOSTCC  arch/x86/boot/compressed/mkpiggy
-/mnt/sdb3/linux-kernel/linux-3.0/debian/build/source_i386_none/arch/x86=
-/boot/compressed/relocs.c:
-In function 'print_absolute_symbols':
-/mnt/sdb3/linux-kernel/linux-3.0/debian/build/source_i386_none/arch/x86=
-/boot/compressed/relocs.c:405:14:
-warning: variable 'sh_symtab' set but not used
-[-Wunused-but-set-variable]
-ERROR: "copy_from_user_overflow" [fs/binfmt_misc.ko] undefined!
-make[5]: *** [__modpost] Error 1
-make[4]: *** [modules] Error 2
-make[4]: *** Waiting for unfinished jobs....
-  RELOCS  arch/x86/boot/compressed/vmlinux.relocs
-  GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
-  MKPIGGY arch/x86/boot/compressed/piggy.S
-  AS      arch/x86/boot/compressed/piggy.o
-  LD      arch/x86/boot/compressed/vmlinux
-  ZOFFSET arch/x86/boot/zoffset.h
-  OBJCOPY arch/x86/boot/vmlinux.bin
-  AS      arch/x86/boot/header.o
-  LD      arch/x86/boot/setup.elf
-  OBJCOPY arch/x86/boot/setup.bin
-  BUILD   arch/x86/boot/bzImage
-Setup is 15596 bytes (padded to 15872 bytes).
-System is 2471 kB
-CRC eb598167
-Kernel: arch/x86/boot/bzImage is ready  (#1)
-make[3]: *** [sub-make] Error 2
-make[2]: *** [all] Error 2
-
-I have these binfmt kernel-config options set:
-
-CONFIG_BINFMT_ELF=3Dy
-# CONFIG_BINFMT_AOUT is not set
-CONFIG_BINFMT_MISC=3Dm
-
-- Sedat -
+--nab
