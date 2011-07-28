@@ -1,83 +1,53 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the slave-dma tree with Linus' tree
-Date: Wed, 27 Jul 2011 14:29:04 -0600
-Message-ID: <CACxGe6vEuggs6Ku6we==zbAh2bJvAARPTZLtAq1eog75rheEJA@mail.gmail.com>
-References: <20110727120826.ea1227276707790e162dee18@canb.auug.org.au>
- <1311736331.1536.45.camel@vkoul-udesk3> <438BB0150E931F4B9CE701519A4463010871EAC8BD@bgsmsx502.gar.corp.intel.com>
- <20110727201904.GA30198@n2100.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: xtensa tree
+Date: Thu, 28 Jul 2011 11:29:53 +1000
+Message-ID: <20110728112953.042bf79af9d7f98230484142@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__28_Jul_2011_11_29_53_+1000_4nn.Ewyv5pbLes/B"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:40841 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753148Ab1G0U3Z convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jul 2011 16:29:25 -0400
-In-Reply-To: <20110727201904.GA30198@n2100.arm.linux.org.uk>
+Received: from chilli.pcug.org.au ([203.10.76.44]:42561 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753453Ab1G1BaC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Jul 2011 21:30:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: "Koul, Vinod" <vinod.koul@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+To: Chris Zankel <chris@zankel.net>
+Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Wed, Jul 27, 2011 at 2:19 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Wed, Jul 27, 2011 at 09:55:44PM +0530, Koul, Vinod wrote:
->> >
->> > On Wed, 2011-07-27 at 12:08 +1000, Stephen Rothwell wrote:
->> > > Hi Vinod,
->> > >
->> > > Today's linux-next merge of the slave-dma tree got a conflict in
->> > > drivers/spi/spi-pl022.c (called drivers/spi/amba-pl022.c in the =
-sleav-dma
->> > > tree) between commit 083be3f05371 ("spi/pl022: initialize bursts=
-ize from
->> > > FIFO trigger level") from Linus' tree and commit 001b0585ff16 ("=
-Improve
->> > > slave/cyclic DMA engine documentation") from the slave-dma tree.
->> > >
->> > > I fixed it up (see below) anc acn carry the fix as necessary.
->> >
->> > The correct fix would be:
->> >
->> > diff --cc drivers/spi/spi-pl022.c
->> > index eba88c7,99e7880..0000000
->> > --- a/drivers/spi/spi-pl022.c
->> > +++ b/drivers/spi/spi-pl022.c
->> > @@@ -910,11 -908,11 +910,9 @@@ static int configure_dma(struct pl0=
-22 *
->> > =A0 {
->> > =A0 =A0 =A0 =A0 struct dma_slave_config rx_conf =3D {
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .src_addr =3D SSP_DR(pl022->phybas=
-e),
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .direction =3D DMA_TO_DEVICE=
-,
->> > =A0 =A0 =A0 =A0 };
->> > =A0 =A0 =A0 =A0 struct dma_slave_config tx_conf =3D {
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .dst_addr =3D SSP_DR(pl022->phybas=
-e),
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .direction =3D DMA_TO_DEVICE,
->> > =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0.dst_maxburst =3D pl022->vendor->f=
-ifodepth >> 1,
->> > =A0 =A0 =A0 =A0 };
->> > =A0 =A0 =A0 =A0 unsigned int pages;
->> > =A0 =A0 =A0 =A0 int ret;
->> >
->> Grant, Russell,
->> Can you please ack this fix before I apply in my tree to resolve thi=
-s conflict
->
-> I don't see why I need to - my documentation patch should only be tou=
-ching
-> Documentation/dmaengine.txt, not drivers/spi/spi-pl022.c. =A0So it re=
-ally
-> should not be causing a conflict in this file.
+--Signature=_Thu__28_Jul_2011_11_29_53_+1000_4nn.Ewyv5pbLes/B
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The commit includes 3 stray hunks not in the original patch.  Sounds
-like it got borked on commit.
+Hi Chris,
 
-g.
+The xentsa tree in linux-next hasn't been updated since 26 May, 2010.  I
+was wondering if it is ever going to be merged into Linus' tree, or can
+the commits there be just thrown away.  The merge is getting harder and
+harder for (from my point of view) no benefit.
 
-
+Also, the last time my xtensa defconfig build worked was 7 Jan 2009 ...
+(http://kisskb.ellerman.id.au/kisskb/target/2029/).
 --=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__28_Jul_2011_11_29_53_+1000_4nn.Ewyv5pbLes/B
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOMLuRAAoJEDMEi1NhKgbsrqEH/AwPyGyw1cwlej0hm2NSXbEc
+UfmWGhBMQj500rSC5Ok/QrgBkgJrm8yuO7aBv3ua3soG+ANWkGjQuLQqdR82yeQu
+t6xgm/wTb0wAb0Cp9+RSmNX/Mo8rQMxT41uO0TAWk7o4loL+K3c0CFRTWExTS0xm
+OJEOPo+WnS3gIM8Uprn1n24x/q4xAibGQIIl2I7fL1XzWYorxzI8PrlciavWsMXU
+aSrjA/dBvxQ5v9XKobiVsPsrlVTlUGimNqqHP5uu1J3NcLiQfHmAHG0+OHwySQmS
+Rh3IRYuV0y7M38rIJ5cIat+yxxmVfCkwUwbyVVX63qQFbAK7MYMhZ2E66NBN3uU=
+=LxiR
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__28_Jul_2011_11_29_53_+1000_4nn.Ewyv5pbLes/B--
