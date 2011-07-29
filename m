@@ -1,43 +1,45 @@
-From: Arnaud Lacombe <lacombar@gmail.com>
-Subject: [PATCH][-next] acpi/acpi_drivers.h: fix warnings when ACPI_DOCK is not enabled
-Date: Fri, 29 Jul 2011 12:34:38 -0400
-Message-ID: <1311957278-12290-1-git-send-email-lacombar@gmail.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:34456 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750789Ab1G2Qeq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jul 2011 12:34:46 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, Arnaud Lacombe <lacombar@gmail.com>, Vasiliy Kulikov <segoon@openwall.com>, Jeff Garzik <jgarzik@redhat.com>, Len Brown <len.brown@intel.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: linux-next: Tree for July 28 ("copy_from_user_overflow" undefined)
+Date: Fri, 29 Jul 2011 10:50:37 -0700
+Message-ID: <4E32F2ED.4020000@codeaurora.org>
+References: <CA+icZUV7R5hqTupiuZZKWcsZ5LOBGmY6xgmMTM7W3ojJo0Sp4w@mail.gmail.com> <20110728160136.771e2c0a.rdunlap@xenotime.net> <CA+icZUXLpThpEem+DPimemYVHqSKb5NAb5h_L-rMPWsD+WJTYg@mail.gmail.com> <20110728220926.6d1a91f4.rdunlap@xenotime.net> <CA+icZUVsJNSDzBvvH810POEydpaZxJZfM8J9bD+93+4d+88D_A@mail.gmail.com> <CA+icZUX=qM+xhJkteXs=F_RJP+k-Tzf3+Cp4ZdeatZ0cgHegBw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+icZUX=qM+xhJkteXs=F_RJP+k-Tzf3+Cp4ZdeatZ0cgHegBw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Chris Metcalf <cmetcalf@tilera.com>, Andrew Morton <akpm@linux-foundation.org>, Arjan van de Ven <arjan@linux.intel.com>, Helge Deller <deller@gmx.de>, Heiko Carstens <heiko.carstens@de.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-/src/linux/linux/drivers/ata/libata-acpi.c: In function 'ata_acpi_associate':
-/src/linux/linux/drivers/ata/libata-acpi.c:266:11: warning: passing argument 2 of 'register_hotplug_dock_device' discards 'const' qualifier from pointer target type [enabled by default]
-/src/linux/linux/include/acpi/acpi_drivers.h:146:19: note: expected 'struct acpi_dock_ops *' but argument is of type 'const struct acpi_dock_ops *'
-/src/linux/linux/drivers/ata/libata-acpi.c:275:11: warning: passing argument 2 of 'register_hotplug_dock_device' discards 'const' qualifier from pointer target type [enabled by default]
-/src/linux/linux/include/acpi/acpi_drivers.h:146:19: note: expected 'struct acpi_dock_ops *' but argument is of type 'const struct acpi_dock_ops *'
+On 07/29/2011 02:45 AM, Sedat Dilek wrote:
+> [ CCing all people from 0416 patch ]
+>
+> OK, here a quick review and looking for suspicious commits:
+[snip]
+> -- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@ -14,6 +14,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+>          proportions.o prio_heap.o ratelimit.o show_mem.o \
+>          is_single_threaded.o plist.o decompress.o find_next_bit.o
+>
+> +lib-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) += usercopy.o
+>  lib-$(CONFIG_MMU) += ioremap.o
+>  lib-$(CONFIG_SMP) += cpumask.o
+>
+> So, I can rebuild next-201107{27,28} with
+> CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS=y and look again if the
+> build-breakage in binfmt_misc is gone.
+>
+> Any comments from x86 folk?
 
-Cc: Vasiliy Kulikov <segoon@openwall.com>
-Cc: Jeff Garzik <jgarzik@redhat.com>
-Cc: Len Brown <len.brown@intel.com>
-Signed-off-by: Arnaud Lacombe <lacombar@gmail.com>
----
- include/acpi/acpi_drivers.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+I already noticed this and sent a fixup patch to Andrew. Looks like he
+never picked it up. The real fix is to change that lib-$(CONFIG... to
+obj-$(CONFIG...
 
-diff --git a/include/acpi/acpi_drivers.h b/include/acpi/acpi_drivers.h
-index e49c36d..bb145e4 100644
---- a/include/acpi/acpi_drivers.h
-+++ b/include/acpi/acpi_drivers.h
-@@ -144,7 +144,7 @@ static inline void unregister_dock_notifier(struct notifier_block *nb)
- {
- }
- static inline int register_hotplug_dock_device(acpi_handle handle,
--					       struct acpi_dock_ops *ops,
-+					       const struct acpi_dock_ops *ops,
- 					       void *context)
- {
- 	return -ENODEV;
+See https://lkml.org/lkml/2011/7/6/6 for the patch.
+
 -- 
-1.7.6.153.g78432
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
