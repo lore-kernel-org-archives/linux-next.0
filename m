@@ -1,77 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Fri, 29 Jul 2011 13:17:35 +1000
-Message-ID: <20110729131735.911ce0d16367933036fa9e6f@canb.auug.org.au>
+Subject: linux-next: manual merge of the l2-mtd tree with the mips tree
+Date: Fri, 29 Jul 2011 13:49:29 +1000
+Message-ID: <20110729134929.8fb95f90043370cb3eb9c892@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__29_Jul_2011_13_49_29_+1000_Nf.gTQ+q2UU=HBi7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40505 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55970 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751878Ab1G2DRn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Jul 2011 23:17:43 -0400
+	id S1753076Ab1G2Dtj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Jul 2011 23:49:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Drokin <green@linuxhacker.ru>, Tony Lindgren <tony@atomide.com>, Linus <torvalds@linux-foundation.org>, Kalle Jokiniemi <kalle.jokiniemi@nokia.com>
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>, Ralf Baechle <ralf@linux-mips.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 
-Hi Mauro,
+--Signature=_Fri__29_Jul_2011_13_49_29_+1000_Nf.gTQ+q2UU=HBi7
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-arch/arm/mach-omap2/board-rx51-peripherals.c between commit 786b01a8c1db
-("cleanup regulator supply definitions in mach-omap2") from Linus' tree
-and commit 75ccf268d504 ("[media] OMAP3: RX-51: define vdds_csib
-regulator supply") from the v4l-dvb tree.
+Hi Artem,
 
-I fixed it up (see below) and can carry the fix as necessary.  I am sure
-Linus' will cope with this merge fixup as well, so you do not need to
-rebase/merge to his current tree before sending a pull request.
--- 
+Today's linux-next merge of the l2-mtd tree got a conflict in
+drivers/mtd/maps/lantiq-flash.c between commit c84c24dc7ed7 ("MIPS:
+Lantiq: Fix MTD registration of NOR device") from the mips tree and
+commit 31963c9999a3 ("mtd: lantiq-flash.c: use
+mtd_device_parse_register") from the l2-mtd tree.
+
+I fixed it up (by using the latter change which supercedes the former).
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-omap2/board-rx51-peripherals.c
-index cc503aa,17e5685..0000000
---- a/arch/arm/mach-omap2/board-rx51-peripherals.c
-+++ b/arch/arm/mach-omap2/board-rx51-peripherals.c
-@@@ -414,17 -358,17 +414,21 @@@ static struct omap2_hsmmc_info mmc[] __
-  	{}	/* Terminator */
-  };
-  
- -static struct regulator_consumer_supply rx51_vmmc1_supply =
- -	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.0");
- +static struct regulator_consumer_supply rx51_vmmc1_supply[] = {
- +	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.0"),
- +};
-  
- -static struct regulator_consumer_supply rx51_vaux2_supply =
- -	REGULATOR_SUPPLY("vdds_csib", "omap3isp");
-++static struct regulator_consumer_supply rx51_vaux2_supply[] = {
-++	REGULATOR_SUPPLY("vdds_csib", "omap3isp"),
-++};
-+ 
- -static struct regulator_consumer_supply rx51_vaux3_supply =
- -	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.1");
- +static struct regulator_consumer_supply rx51_vaux3_supply[] = {
- +	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.1"),
- +};
-  
- -static struct regulator_consumer_supply rx51_vsim_supply =
- -	REGULATOR_SUPPLY("vmmc_aux", "omap_hsmmc.1");
- +static struct regulator_consumer_supply rx51_vsim_supply[] = {
- +	REGULATOR_SUPPLY("vmmc_aux", "omap_hsmmc.1"),
- +};
-  
-  static struct regulator_consumer_supply rx51_vmmc2_supplies[] = {
-  	/* tlv320aic3x analog supplies */
-@@@ -479,6 -427,8 +483,8 @@@ static struct regulator_init_data rx51_
-  		.valid_ops_mask		= REGULATOR_CHANGE_MODE
-  					| REGULATOR_CHANGE_STATUS,
-  	},
- -	.num_consumer_supplies	= 1,
- -	.consumer_supplies	= &rx51_vaux2_supply,
-++	.num_consumer_supplies	= ARRAY_SIZE(rx51_vaux2_supply),
-++	.consumer_supplies	= rx51_vaux2_supply,
-  };
-  
-  /* VAUX3 - adds more power to VIO_18 rail */
+--Signature=_Fri__29_Jul_2011_13_49_29_+1000_Nf.gTQ+q2UU=HBi7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOMi3JAAoJEDMEi1NhKgbsej4IAI05D6+FnEcoJs1tqTRhOMqy
+j3jzzNnJHcGETlWHg9wGb2OnZtTgTfqFuDN+G8YODJIxRSFmBBvKHuQUl/Ua6S1T
+XziTabSEBHqkK7IaeAbR57d6smrVA+TQ4jQcpiYBBH5g1+JWrdwvf3/RZ9ujSKTE
+2T+4GTUweY6m06NoWXdeBEsKSR8qb0dqaYswsSrZFm172iUlwD97dT7oEFCBb5aP
+td8G0pFetnpCmyF7VMmfhWlaW4DIzZiHooKPpxlsv7J4bEwptNgJ9SlyWuA4lOsS
+jwk8f1FVFbMTkby6s1qkGL/QEm4VGYRL1lO5ZkL2Jw+DNyGTS5ps0dkhNCA+yss=
+=CM5V
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__29_Jul_2011_13_49_29_+1000_Nf.gTQ+q2UU=HBi7--
