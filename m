@@ -1,60 +1,210 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: atomic_set_mask duplication
-Date: Fri, 29 Jul 2011 21:19:06 +1000
-Message-ID: <20110729211906.a98b2965d30694df7e12191f@canb.auug.org.au>
-References: <CAMjpGUejy+p2+86DT8-LDMzWYxKKBp=2SQTNZ=7KaFoPMRiJ4A@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for July 28 ("copy_from_user_overflow"
+ undefined)
+Date: Fri, 29 Jul 2011 08:13:19 -0700
+Message-ID: <20110729081319.0083b3ec.rdunlap@xenotime.net>
+References: <CA+icZUV7R5hqTupiuZZKWcsZ5LOBGmY6xgmMTM7W3ojJo0Sp4w@mail.gmail.com>
+	<20110728160136.771e2c0a.rdunlap@xenotime.net>
+	<CA+icZUXLpThpEem+DPimemYVHqSKb5NAb5h_L-rMPWsD+WJTYg@mail.gmail.com>
+	<20110728220926.6d1a91f4.rdunlap@xenotime.net>
+	<CA+icZUVsJNSDzBvvH810POEydpaZxJZfM8J9bD+93+4d+88D_A@mail.gmail.com>
+	<CA+icZUX=qM+xhJkteXs=F_RJP+k-Tzf3+Cp4ZdeatZ0cgHegBw@mail.gmail.com>
+	<CA+icZUUZGfYasCCGKWNbFe5FFs1j15H+rc0jp_oO-uFqLVX=0A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__29_Jul_2011_21_19_06_+1000_ropb2XVGds6nu/gi"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39342 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756304Ab1G2LTU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 Jul 2011 07:19:20 -0400
-In-Reply-To: <CAMjpGUejy+p2+86DT8-LDMzWYxKKBp=2SQTNZ=7KaFoPMRiJ4A@mail.gmail.com>
+Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:59646 "HELO
+	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751212Ab1G2PNY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jul 2011 11:13:24 -0400
+In-Reply-To: <CA+icZUUZGfYasCCGKWNbFe5FFs1j15H+rc0jp_oO-uFqLVX=0A@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Frysinger <vapier.adi@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Chris Metcalf <cmetcalf@tilera.com>, Andrew Morton <akpm@linux-foundation.org>, Arjan van de Ven <arjan@linux.intel.com>, Helge Deller <deller@gmx.de>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
---Signature=_Fri__29_Jul_2011_21_19_06_+1000_ropb2XVGds6nu/gi
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 29 Jul 2011 13:07:16 +0200 Sedat Dilek wrote:
 
-Hi Mike,
-
-On Fri, 29 Jul 2011 00:47:03 -0700 Mike Frysinger <vapier.adi@gmail.com> wr=
-ote:
->
-> seems that my atomic_set_mask() patch for asm-generic/atomic.h has
-> made it into linux-next but duplicated ?  any idea what's going on ?
+> On Fri, Jul 29, 2011 at 11:45 AM, Sedat Dilek
+> <sedat.dilek@googlemail.com> wrote:
+> > On Fri, Jul 29, 2011 at 11:02 AM, Sedat Dilek
+> > <sedat.dilek@googlemail.com> wrote:
+> >> On Fri, Jul 29, 2011 at 7:09 AM, Randy Dunlap <rdunlap@xenotime.ne=
+t> wrote:
+> >>> On Fri, 29 Jul 2011 03:34:26 +0200 Sedat Dilek wrote:
+> >>>
+> >>>> On Fri, Jul 29, 2011 at 1:01 AM, Randy Dunlap <rdunlap@xenotime.=
+net> wrote:
+> >>>> > On Thu, 28 Jul 2011 16:05:31 +0200 Sedat Dilek wrote:
+> >>>> >
+> >>>> >> Hi,
+> >>>> >>
+> >>>> >> just see this build-break on the last mile:
+> >>>> >>
+> >>>> >> [...]
+> >>>> >> =A0 OBJCOPY arch/x86/boot/compressed/vmlinux.bin
+> >>>> >> =A0 HOSTCC =A0arch/x86/boot/compressed/relocs
+> >>>> >> =A0 HOSTCC =A0arch/x86/boot/compressed/mkpiggy
+> >>>> >> /mnt/sdb3/linux-kernel/linux-3.0/debian/build/source_i386_non=
+e/arch/x86/boot/compressed/relocs.c:
+> >>>> >> In function 'print_absolute_symbols':
+> >>>> >> /mnt/sdb3/linux-kernel/linux-3.0/debian/build/source_i386_non=
+e/arch/x86/boot/compressed/relocs.c:405:14:
+> >>>> >> warning: variable 'sh_symtab' set but not used
+> >>>> >> [-Wunused-but-set-variable]
+> >>>> >> ERROR: "copy_from_user_overflow" [fs/binfmt_misc.ko] undefine=
+d!
+> >>>> >> make[5]: *** [__modpost] Error 1
+> >>>> >> make[4]: *** [modules] Error 2
+> >>>> >> make[4]: *** Waiting for unfinished jobs....
+> >>>> >> =A0 RELOCS =A0arch/x86/boot/compressed/vmlinux.relocs
+> >>>> >> =A0 GZIP =A0 =A0arch/x86/boot/compressed/vmlinux.bin.gz
+> >>>> >> =A0 MKPIGGY arch/x86/boot/compressed/piggy.S
+> >>>> >> =A0 AS =A0 =A0 =A0arch/x86/boot/compressed/piggy.o
+> >>>> >> =A0 LD =A0 =A0 =A0arch/x86/boot/compressed/vmlinux
+> >>>> >> =A0 ZOFFSET arch/x86/boot/zoffset.h
+> >>>> >> =A0 OBJCOPY arch/x86/boot/vmlinux.bin
+> >>>> >> =A0 AS =A0 =A0 =A0arch/x86/boot/header.o
+> >>>> >> =A0 LD =A0 =A0 =A0arch/x86/boot/setup.elf
+> >>>> >> =A0 OBJCOPY arch/x86/boot/setup.bin
+> >>>> >> =A0 BUILD =A0 arch/x86/boot/bzImage
+> >>>> >> Setup is 15596 bytes (padded to 15872 bytes).
+> >>>> >> System is 2471 kB
+> >>>> >> CRC eb598167
+> >>>> >> Kernel: arch/x86/boot/bzImage is ready =A0(#1)
+> >>>> >> make[3]: *** [sub-make] Error 2
+> >>>> >> make[2]: *** [all] Error 2
+> >>>> >>
+> >>>> >> I have these binfmt kernel-config options set:
+> >>>> >>
+> >>>> >> CONFIG_BINFMT_ELF=3Dy
+> >>>> >> # CONFIG_BINFMT_AOUT is not set
+> >>>> >> CONFIG_BINFMT_MISC=3Dm
+> >>>> >
+> >>>> > How does someone turn off this error message?
+> >>>> >
+> >>>> > I have:
+> >>>> > # CONFIG_DEBUG_STRICT_USER_COPY_CHECKS is not set
+> >>>> > # CONFIG_STRICT_DEVMEM is not set
+> >>>> >
+> >>>> > and I still cannot get this error to go away (on x86_64).
+> >>>> >
+> >>>> >
+> >>>> > ---
+> >>>> > ~Randy
+> >>>> > *** Remember to use Documentation/SubmitChecklist when testing=
+ your code ***
+> >>>> >
+> >>>>
+> >>>> Can you say with which linux-next version you saw this first?
+> >>>> My last version was next-20110722 (which was OK).
+> >>>
+> >>> It looks like 2011-0727 has lots of these errors in my randconfig=
+ builds,
+> >>> but I can't say that they are all incorrect, so it's not very con=
+clusive.
+> >>>
+> >>> ---
+> >>> ~Randy
+> >>> *** Remember to use Documentation/SubmitChecklist when testing yo=
+ur code ***
+> >>>
+> >>
+> >> I can confirm next-20110726 is fine.
+> >>
+> >> # egrep 'BINFMT|DEBUG_STRICT_USER_COPY_CHECKS|STRICT_DEVMEM'
+> >> /boot/config-3.0.0-next20110726.3-686-small
+> >> CONFIG_BINFMT_ELF=3Dy
+> >> CONFIG_BINFMT_AOUT=3Dm
+> >> CONFIG_BINFMT_MISC=3Dm
+> >> CONFIG_STRICT_DEVMEM=3Dy
+> >> # CONFIG_DEBUG_STRICT_USER_COPY_CHECKS is not set
+> >>
+> >> So, the binfmt_misc culprit was introduced between next-20110726
+> >> (good) and next-20110727 (bad).
+> >> I'll try to look into the diff, but can't promise.
+> >>
+> >> - Sedat -
+> >>
+> >
+> > [ CCing all people from 0416 patch ]
+> >
+> > OK, here a quick review and looking for suspicious commits:
+> >
+> > $ git format-patch next-20110726..next-20110727
+> >
+> > 487 patches in total.
+> >
+> > $ grep copy_from_user_overflow -nr *.patch
+> >
+> > 0389-x86_64-allmodconfig.patch
+> > 0414-Enabling-DEBUG_STRICT_USER_COPY_CHECKS-causes-the-fo.patch
+> > 0415-Strict-user-copy-checks-are-only-really-supported-on.patch
+> > 0416-The-help-text-for-this-config-is-duplicated-across-t.patch
+> >
+> > 0416 has thrown out...
+> >
+> > -void copy_from_user_overflow(void)
+> > -{
+> > - =A0 =A0 =A0 WARN(1, "Buffer overflow detected!\n");
+> > -}
+> > -EXPORT_SYMBOL(copy_from_user_overflow);
+> >
+> > ...and consilidated that in...
+> >
+> > --- /dev/null
+> > +++ b/lib/usercopy.c
+> > @@ -0,0 +1,8 @@
+> > +#include <linux/module.h>
+> > +#include <linux/bug.h>
+> > +
+> > +void copy_from_user_overflow(void)
+> > +{
+> > + =A0 =A0 =A0 WARN(1, "Buffer overflow detected!\n");
+> > +}
+> > +EXPORT_SYMBOL(copy_from_user_overflow);
+> >
+> > ...BUT builds usercopy.o only on
+> > CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS...
+> >
+> > -- a/lib/Makefile
+> > +++ b/lib/Makefile
+> > @@ -14,6 +14,7 @@ lib-y :=3D ctype.o string.o vsprintf.o cmdline.o =
+\
+> > =A0 =A0 =A0 =A0 proportions.o prio_heap.o ratelimit.o show_mem.o \
+> > =A0 =A0 =A0 =A0 is_single_threaded.o plist.o decompress.o find_next=
+_bit.o
+> >
+> > +lib-$(CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS) +=3D usercopy=
+=2Eo
+> > =A0lib-$(CONFIG_MMU) +=3D ioremap.o
+> > =A0lib-$(CONFIG_SMP) +=3D cpumask.o
+> >
+> > So, I can rebuild next-201107{27,28} with
+> > CONFIG_ARCH_HAS_DEBUG_STRICT_USER_COPY_CHECKS=3Dy and look again if=
+ the
+> > build-breakage in binfmt_misc is gone.
+> >
+> > Any comments from x86 folk?
+> >
+> > - Sedat -
+> >
 >=20
-> commit 00b3c28bd753 is correct.  but then we also have 49472be55954
-> which should not exist ...
+> I was able to compile next-20110728 by reverting:
+>=20
+> commit ab3b49d018924085e5d949c1af53fae0da9a8d94
+> "The help text for this config is duplicated across the x86, parisc,
+> and s390 Kconfig.debug files."
+>=20
+> The revert-patch is attached, also my kernel-config.
+>=20
+> Randy, can you test with it for x86_64, please?
+> Thanks in advance.
 
-Right.  The first one is in Linus' tree and the second is the one from
-Andrew's tree and git was fine about reapplying it :-(
+Yes, that works for me.  Thanks for your work on this problem.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__29_Jul_2011_21_19_06_+1000_ropb2XVGds6nu/gi
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOMpcqAAoJEDMEi1NhKgbs9a0IAKA6D93kgTlTI26adL8/xWZu
-wshReUy6a1fCo/mS8zSn/EMdXy8pjF08dE0RmTlvmeuUlS5Vaa+hqahzGX820pGp
-BbUFz6T9Gab4BDZqz+cdjtsKR/vmnIsKTnBoiOR0lC0BrPrVYdTbTbNc6/RyhMh0
-7dgF3ihgE3MBUYXfQvKTvENwqNGn/+VPDMpw7urZHhP4ar8GC2C/9yx5fX1X6GRJ
-wRngxXts9PNh5CDdPtiUp8SH+8lYRVJ3Yc9VGZ2CWjDZ5u1Ykh9cWnh4hTPCxMox
-b4b5BnQctr0ko9nAGXTF9tG0dn2tnV6b83z/5RfPnowlmfyVOI8DopeQW0Jmxew=
-=F5fC
------END PGP SIGNATURE-----
-
---Signature=_Fri__29_Jul_2011_21_19_06_+1000_ropb2XVGds6nu/gi--
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your cod=
+e ***
