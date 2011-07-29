@@ -1,87 +1,61 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for July 28 ("copy_from_user_overflow" undefined)
-Date: Fri, 29 Jul 2011 03:34:26 +0200
-Message-ID: <CA+icZUXLpThpEem+DPimemYVHqSKb5NAb5h_L-rMPWsD+WJTYg@mail.gmail.com>
-References: <CA+icZUV7R5hqTupiuZZKWcsZ5LOBGmY6xgmMTM7W3ojJo0Sp4w@mail.gmail.com>
-	<20110728160136.771e2c0a.rdunlap@xenotime.net>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: xtensa tree
+Date: Fri, 29 Jul 2011 11:41:04 +1000
+Message-ID: <20110729114104.60b82db1e37d816307756648@canb.auug.org.au>
+References: <20110728112953.042bf79af9d7f98230484142@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__29_Jul_2011_11_41_04_+1000_x9aResFcAL0u8tGc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:57760 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755719Ab1G2Be1 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jul 2011 21:34:27 -0400
-In-Reply-To: <20110728160136.771e2c0a.rdunlap@xenotime.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49810 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755228Ab1G2BlM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Jul 2011 21:41:12 -0400
+In-Reply-To: <20110728112953.042bf79af9d7f98230484142@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Chris Zankel <chris@zankel.net>
+Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, Jul 29, 2011 at 1:01 AM, Randy Dunlap <rdunlap@xenotime.net> wr=
-ote:
-> On Thu, 28 Jul 2011 16:05:31 +0200 Sedat Dilek wrote:
->
->> Hi,
->>
->> just see this build-break on the last mile:
->>
->> [...]
->> =C2=A0 OBJCOPY arch/x86/boot/compressed/vmlinux.bin
->> =C2=A0 HOSTCC =C2=A0arch/x86/boot/compressed/relocs
->> =C2=A0 HOSTCC =C2=A0arch/x86/boot/compressed/mkpiggy
->> /mnt/sdb3/linux-kernel/linux-3.0/debian/build/source_i386_none/arch/=
-x86/boot/compressed/relocs.c:
->> In function 'print_absolute_symbols':
->> /mnt/sdb3/linux-kernel/linux-3.0/debian/build/source_i386_none/arch/=
-x86/boot/compressed/relocs.c:405:14:
->> warning: variable 'sh_symtab' set but not used
->> [-Wunused-but-set-variable]
->> ERROR: "copy_from_user_overflow" [fs/binfmt_misc.ko] undefined!
->> make[5]: *** [__modpost] Error 1
->> make[4]: *** [modules] Error 2
->> make[4]: *** Waiting for unfinished jobs....
->> =C2=A0 RELOCS =C2=A0arch/x86/boot/compressed/vmlinux.relocs
->> =C2=A0 GZIP =C2=A0 =C2=A0arch/x86/boot/compressed/vmlinux.bin.gz
->> =C2=A0 MKPIGGY arch/x86/boot/compressed/piggy.S
->> =C2=A0 AS =C2=A0 =C2=A0 =C2=A0arch/x86/boot/compressed/piggy.o
->> =C2=A0 LD =C2=A0 =C2=A0 =C2=A0arch/x86/boot/compressed/vmlinux
->> =C2=A0 ZOFFSET arch/x86/boot/zoffset.h
->> =C2=A0 OBJCOPY arch/x86/boot/vmlinux.bin
->> =C2=A0 AS =C2=A0 =C2=A0 =C2=A0arch/x86/boot/header.o
->> =C2=A0 LD =C2=A0 =C2=A0 =C2=A0arch/x86/boot/setup.elf
->> =C2=A0 OBJCOPY arch/x86/boot/setup.bin
->> =C2=A0 BUILD =C2=A0 arch/x86/boot/bzImage
->> Setup is 15596 bytes (padded to 15872 bytes).
->> System is 2471 kB
->> CRC eb598167
->> Kernel: arch/x86/boot/bzImage is ready =C2=A0(#1)
->> make[3]: *** [sub-make] Error 2
->> make[2]: *** [all] Error 2
->>
->> I have these binfmt kernel-config options set:
->>
->> CONFIG_BINFMT_ELF=3Dy
->> # CONFIG_BINFMT_AOUT is not set
->> CONFIG_BINFMT_MISC=3Dm
->
-> How does someone turn off this error message?
->
-> I have:
-> # CONFIG_DEBUG_STRICT_USER_COPY_CHECKS is not set
-> # CONFIG_STRICT_DEVMEM is not set
->
-> and I still cannot get this error to go away (on x86_64).
->
->
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your c=
-ode ***
->
+--Signature=_Fri__29_Jul_2011_11_41_04_+1000_x9aResFcAL0u8tGc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can you say with which linux-next version you saw this first?
-My last version was next-20110722 (which was OK).
+Hi Chris,
 
-- Sedat -
+On Thu, 28 Jul 2011 11:29:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> The xentsa tree in linux-next hasn't been updated since 26 May, 2010.  I
+> was wondering if it is ever going to be merged into Linus' tree, or can
+> the commits there be just thrown away.  The merge is getting harder and
+> harder for (from my point of view) no benefit.
+
+I noticed that you cleaned up the tree, however you changed it from
+xtensa-next.git to xtensa-next.  I have made that change here as well (I
+hope it was the right thing to do).
+
+Thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__29_Jul_2011_11_41_04_+1000_x9aResFcAL0u8tGc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOMg+xAAoJEDMEi1NhKgbsad0H/jUZzQqnXeoMYA9xzXvCypgR
+XOyRSnHlpF1ca8dJ4gPmz0wOUEh/2lz0Zpwc7BYImH7iZOX2auJUGc6bFt4zkyND
+wlyVIwrJ0jgIwEnxXW5JZmlvaGQPMaIVfsgaR+Axix7Uuv++fV+VMg27WJC/zX12
+GNxujpj3OWdAxrQlOMmxgnGnoMuRv82gp8BnT8MPIiPrpY+bYhNV5rtfNXKt6/ej
+H9lC8SMDy2q79bHyjPi9X+j33mG2dVU096V5mtIix/3e6wCHMbFmrKkjVVaw0OaQ
+ECIRNowjCd4Ls0KJg6Kn513LBvCU32aM9d564kV1ej+affYb77Dj+byPl3udKfU=
+=bRiu
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__29_Jul_2011_11_41_04_+1000_x9aResFcAL0u8tGc--
