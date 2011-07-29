@@ -1,53 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the l2-mtd tree with the mips tree
-Date: Fri, 29 Jul 2011 13:49:29 +1000
-Message-ID: <20110729134929.8fb95f90043370cb3eb9c892@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: manual merge of the v4l-dvb tree with Linus' tree
+Date: Fri, 29 Jul 2011 01:10:06 -0300
+Message-ID: <4E32329E.2010203@infradead.org>
+References: <20110729131735.911ce0d16367933036fa9e6f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__29_Jul_2011_13_49_29_+1000_Nf.gTQ+q2UU=HBi7"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55970 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753076Ab1G2Dtj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Jul 2011 23:49:39 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>, Ralf Baechle <ralf@linux-mips.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110729131735.911ce0d16367933036fa9e6f@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Drokin <green@linuxhacker.ru>, Tony Lindgren <tony@atomide.com>, Linus <torvalds@linux-foundation.org>, Kalle Jokiniemi <kalle.jokiniemi@nokia.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__29_Jul_2011_13_49_29_+1000_Nf.gTQ+q2UU=HBi7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Em 29-07-2011 00:17, Stephen Rothwell escreveu:
+> Hi Mauro,
+> 
+> Today's linux-next merge of the v4l-dvb tree got a conflict in
+> arch/arm/mach-omap2/board-rx51-peripherals.c between commit 786b01a8c1db
+> ("cleanup regulator supply definitions in mach-omap2") from Linus' tree
+> and commit 75ccf268d504 ("[media] OMAP3: RX-51: define vdds_csib
+> regulator supply") from the v4l-dvb tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.  I am sure
+> Linus' will cope with this merge fixup as well, so you do not need to
+> rebase/merge to his current tree before sending a pull request.
 
-Hi Artem,
+Thanks!
 
-Today's linux-next merge of the l2-mtd tree got a conflict in
-drivers/mtd/maps/lantiq-flash.c between commit c84c24dc7ed7 ("MIPS:
-Lantiq: Fix MTD registration of NOR device") from the mips tree and
-commit 31963c9999a3 ("mtd: lantiq-flash.c: use
-mtd_device_parse_register") from the l2-mtd tree.
+Yeah, I prefer to base it at vanilla 3.0, instead of basing into a
+random point of the Linus tree. I should be submitting the patches
+tomorrow to Linus, after giving people some time to do some random
+builds with -next.
 
-I fixed it up (by using the latter change which supercedes the former).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__29_Jul_2011_13_49_29_+1000_Nf.gTQ+q2UU=HBi7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOMi3JAAoJEDMEi1NhKgbsej4IAI05D6+FnEcoJs1tqTRhOMqy
-j3jzzNnJHcGETlWHg9wGb2OnZtTgTfqFuDN+G8YODJIxRSFmBBvKHuQUl/Ua6S1T
-XziTabSEBHqkK7IaeAbR57d6smrVA+TQ4jQcpiYBBH5g1+JWrdwvf3/RZ9ujSKTE
-2T+4GTUweY6m06NoWXdeBEsKSR8qb0dqaYswsSrZFm172iUlwD97dT7oEFCBb5aP
-td8G0pFetnpCmyF7VMmfhWlaW4DIzZiHooKPpxlsv7J4bEwptNgJ9SlyWuA4lOsS
-jwk8f1FVFbMTkby6s1qkGL/QEm4VGYRL1lO5ZkL2Jw+DNyGTS5ps0dkhNCA+yss=
-=CM5V
------END PGP SIGNATURE-----
-
---Signature=_Fri__29_Jul_2011_13_49_29_+1000_Nf.gTQ+q2UU=HBi7--
+Mauro
