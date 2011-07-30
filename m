@@ -1,54 +1,65 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: build failure after merge of the moduleh tree
-Date: Sat, 30 Jul 2011 12:03:04 -0700
-Message-ID: <20110730190303.GC5686@core.coreip.homeip.net>
-References: <20110729151044.49f8bfdeeadb8edaf583f90d@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@gmail.com>
+Subject: Re: [PATCH -next] sfi: sfi_acpi.c needs sysfs.h
+Date: Sat, 30 Jul 2011 15:05:45 -0400
+Message-ID: <CAP=VYLq85O93Wa-_A98y6=CV1k-CwyqVxwXUqNVfhkUd9Oz1Cw@mail.gmail.com>
+References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
+	<20110729180912.82054516.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110729151044.49f8bfdeeadb8edaf583f90d@canb.auug.org.au>
-Sender: linux-input-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <error27@gmail.com>, linux-input@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:61726 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751572Ab1G3TFr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 30 Jul 2011 15:05:47 -0400
+In-Reply-To: <20110729180912.82054516.rdunlap@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, lenb@kernel.org, sfi-devel@simplefirmware.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Jul 29, 2011 at 03:10:44PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> After merging the moduleh tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/input/misc/kxtj9.c:644:1: warning: data definition has no type or storage class
-> drivers/input/misc/kxtj9.c:644:1: warning: type defaults to 'int' in declaration of 'MODULE_DEVICE_TABLE'
-> drivers/input/misc/kxtj9.c:644:1: warning: parameter names (without types) in function declaration
-> drivers/input/misc/kxtj9.c:649:12: error: 'THIS_MODULE' undeclared here (not in a function)
-> drivers/input/misc/kxtj9.c:669:20: error: expected declaration specifiers or '...' before string constant
-> drivers/input/misc/kxtj9.c:669:1: warning: data definition has no type or storage class
-> drivers/input/misc/kxtj9.c:669:1: warning: type defaults to 'int' in declaration of 'MODULE_DESCRIPTION'
-> drivers/input/misc/kxtj9.c:669:20: warning: function declaration isn't a prototype
-> drivers/input/misc/kxtj9.c:670:15: error: expected declaration specifiers or '...' before string constant
-> drivers/input/misc/kxtj9.c:670:1: warning: data definition has no type or storage class
-> drivers/input/misc/kxtj9.c:670:1: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
-> drivers/input/misc/kxtj9.c:670:15: warning: function declaration isn't a prototype
-> drivers/input/misc/kxtj9.c:671:16: error: expected declaration specifiers or '...' before string constant
-> drivers/input/misc/kxtj9.c:671:1: warning: data definition has no type or storage class
-> drivers/input/misc/kxtj9.c:671:1: warning: type defaults to 'int' in declaration of 'MODULE_LICENSE'
-> drivers/input/misc/kxtj9.c:671:16: warning: function declaration isn't a prototype
-> drivers/input/misc/kxtj9.c: In function 'kxtj9_init':
-> drivers/input/misc/kxtj9.c:660:1: warning: control reaches end of non-void function
-> 
-> I have added this patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 29 Jul 2011 15:06:46 +1000
-> Subject: [PATCH] kxtj9: explictly include module.h
-> 
-> since some of its facilities are used.
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+On Fri, Jul 29, 2011 at 9:09 PM, Randy Dunlap <rdunlap@xenotime.net> wr=
+ote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+>
+> sfi_acpi.c needs to include linux/sysfs.h for data types.
 
-Applied, thanks Stephen.
+Applied to module.h-split, thanks.
 
--- 
-Dmitry
+P.
+
+>
+> drivers/sfi/sfi_core.h:66: error: field 'attr' has incomplete type
+> drivers/sfi/sfi_acpi.c:179: warning: 'struct kobject' declared inside=
+ parameter list
+> drivers/sfi/sfi_acpi.c:179: warning: its scope is only this definitio=
+n or declaration, which is probably not what you want
+> drivers/sfi/sfi_acpi.c:182: warning: type defaults to 'int' in declar=
+ation of '__mptr'
+> drivers/sfi/sfi_acpi.c:182: warning: initialization from incompatible=
+ pointer type
+>
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> ---
+> =A0drivers/sfi/sfi_core.h | =A0 =A03 +++
+> =A01 file changed, 3 insertions(+)
+>
+> --- linux-next-20110729.orig/drivers/sfi/sfi_core.h
+> +++ linux-next-20110729/drivers/sfi/sfi_core.h
+> @@ -55,6 +55,9 @@
+> =A0 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMA=
+GE.
+>
+> =A0*/
+> +
+> +#include <linux/sysfs.h>
+> +
+> =A0struct sfi_table_key{
+> =A0 =A0 =A0 =A0char =A0 =A0*sig;
+> =A0 =A0 =A0 =A0char =A0 =A0*oem_id;
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next"=
+ in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
