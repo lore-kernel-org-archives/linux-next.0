@@ -1,65 +1,51 @@
-From: Paul Gortmaker <paul.gortmaker@gmail.com>
-Subject: Re: [PATCH -next] sfi: sfi_acpi.c needs sysfs.h
-Date: Sat, 30 Jul 2011 15:05:45 -0400
-Message-ID: <CAP=VYLq85O93Wa-_A98y6=CV1k-CwyqVxwXUqNVfhkUd9Oz1Cw@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH -next] i2c: i2c-pxa-pci.c needs module.h
+Date: Sat, 30 Jul 2011 15:09:32 -0400
+Message-ID: <CAP=VYLrtumuSM_ncO6sEr7=HciiKcOsB=yN4NZnAxesjSSOgMw@mail.gmail.com>
 References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
-	<20110729180912.82054516.rdunlap@xenotime.net>
+	<20110729211430.6c4830bd.rdunlap@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:61726 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751572Ab1G3TFr convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 30 Jul 2011 15:05:47 -0400
-In-Reply-To: <20110729180912.82054516.rdunlap@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, lenb@kernel.org, sfi-devel@simplefirmware.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110729211430.6c4830bd.rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, akpm <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 29, 2011 at 9:09 PM, Randy Dunlap <rdunlap@xenotime.net> wr=
-ote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
+On Sat, Jul 30, 2011 at 12:14 AM, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org> w=
+rote:
+> From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
 >
-> sfi_acpi.c needs to include linux/sysfs.h for data types.
+> i2c-pxa-pci.c uses interfaces from linux/module.h, so it should
+> include that file. =A0This fixes build errors.
 
 Applied to module.h-split, thanks.
 
 P.
 
 >
-> drivers/sfi/sfi_core.h:66: error: field 'attr' has incomplete type
-> drivers/sfi/sfi_acpi.c:179: warning: 'struct kobject' declared inside=
- parameter list
-> drivers/sfi/sfi_acpi.c:179: warning: its scope is only this definitio=
-n or declaration, which is probably not what you want
-> drivers/sfi/sfi_acpi.c:182: warning: type defaults to 'int' in declar=
-ation of '__mptr'
-> drivers/sfi/sfi_acpi.c:182: warning: initialization from incompatible=
- pointer type
->
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> Signed-off-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
 > ---
-> =A0drivers/sfi/sfi_core.h | =A0 =A03 +++
-> =A01 file changed, 3 insertions(+)
+> =A0drivers/i2c/busses/i2c-pxa-pci.c | =A0 =A01 +
+> =A01 file changed, 1 insertion(+)
 >
-> --- linux-next-20110729.orig/drivers/sfi/sfi_core.h
-> +++ linux-next-20110729/drivers/sfi/sfi_core.h
-> @@ -55,6 +55,9 @@
-> =A0 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMA=
-GE.
->
+> --- linux-next-20110729.orig/drivers/i2c/busses/i2c-pxa-pci.c
+> +++ linux-next-20110729/drivers/i2c/busses/i2c-pxa-pci.c
+> @@ -3,6 +3,7 @@
+> =A0* It does not support slave mode, the register slightly moved. Thi=
+s PCI
+> =A0* device provides three bars, every contains a single I2C controll=
+er.
 > =A0*/
-> +
-> +#include <linux/sysfs.h>
-> +
-> =A0struct sfi_table_key{
-> =A0 =A0 =A0 =A0char =A0 =A0*sig;
-> =A0 =A0 =A0 =A0char =A0 =A0*oem_id;
+> +#include <linux/module.h>
+> =A0#include <linux/pci.h>
+> =A0#include <linux/platform_device.h>
+> =A0#include <linux/i2c/pxa-i2c.h>
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-next"=
  in
-> the body of a message to majordomo@vger.kernel.org
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
 >
