@@ -1,36 +1,39 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] sound: rtctimer.c needs module.h
-Date: Fri, 29 Jul 2011 21:14:12 -0700
-Message-ID: <20110729211412.f064a06c.rdunlap@xenotime.net>
+Subject: [PATCH -next] input: mouse/hgpk.c needs module.h
+Date: Fri, 29 Jul 2011 21:14:41 -0700
+Message-ID: <20110729211441.5de62eca.rdunlap@xenotime.net>
 References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:43125 "HELO
+	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752908Ab1G3EPZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 30 Jul 2011 00:15:25 -0400
 In-Reply-To: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org, akpm <akpm@linux-foundation.org>
 
 From: Randy Dunlap <rdunlap@xenotime.net>
 
-rtctimer.c uses interfaces from linux/module.h, so it should
+hgpk.c uses interfaces from linux/module.h, so it should
 include that file.  This fixes build errors.
 
 Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 ---
- sound/core/rtctimer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/mouse/hgpk.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- linux-next-20110729.orig/sound/core/rtctimer.c
-+++ linux-next-20110729/sound/core/rtctimer.c
-@@ -22,7 +22,7 @@
- 
- #include <linux/init.h>
- #include <linux/interrupt.h>
--#include <linux/moduleparam.h>
+--- linux-next-20110729.orig/drivers/input/mouse/hgpk.c
++++ linux-next-20110729/drivers/input/mouse/hgpk.c
+@@ -32,6 +32,7 @@
+ #define DEBUG
+ #include <linux/slab.h>
+ #include <linux/input.h>
 +#include <linux/module.h>
- #include <linux/log2.h>
- #include <sound/core.h>
- #include <sound/timer.h>
+ #include <linux/serio.h>
+ #include <linux/libps2.h>
+ #include <linux/delay.h>
