@@ -1,39 +1,39 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] x86/platform: geode/alix.c needs module.h
-Date: Fri, 29 Jul 2011 21:14:51 -0700
-Message-ID: <20110729211451.b3dd3bfa.rdunlap@xenotime.net>
+Subject: [PATCH -next] i2c: i2c-pxa-pci.c needs module.h
+Date: Fri, 29 Jul 2011 21:14:30 -0700
+Message-ID: <20110729211430.6c4830bd.rdunlap@xenotime.net>
 References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:39048 "HELO
-	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752998Ab1G3EP1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 30 Jul 2011 00:15:27 -0400
+Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:60226 "HELO
+	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751002Ab1G3EPX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 30 Jul 2011 00:15:23 -0400
 In-Reply-To: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andres Salomon <dilinger@queued.net>, linux-geode@lists.infradead.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org, akpm <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-i2c@vger.kernel.org, akpm <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, khali@linux-fr.org, ben-linux@fluff.org
 
 From: Randy Dunlap <rdunlap@xenotime.net>
 
-geode/alix.c uses interfaces from linux/module.h, so it should
+i2c-pxa-pci.c uses interfaces from linux/module.h, so it should
 include that file.  This fixes build errors.
 
 Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 ---
- arch/x86/platform/geode/alix.c |    1 +
+ drivers/i2c/busses/i2c-pxa-pci.c |    1 +
  1 file changed, 1 insertion(+)
 
---- linux-next-20110729.orig/arch/x86/platform/geode/alix.c
-+++ linux-next-20110729/arch/x86/platform/geode/alix.c
-@@ -19,6 +19,7 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/io.h>
+--- linux-next-20110729.orig/drivers/i2c/busses/i2c-pxa-pci.c
++++ linux-next-20110729/drivers/i2c/busses/i2c-pxa-pci.c
+@@ -3,6 +3,7 @@
+  * It does not support slave mode, the register slightly moved. This PCI
+  * device provides three bars, every contains a single I2C controller.
+  */
 +#include <linux/module.h>
- #include <linux/string.h>
- #include <linux/leds.h>
+ #include <linux/pci.h>
  #include <linux/platform_device.h>
+ #include <linux/i2c/pxa-i2c.h>
