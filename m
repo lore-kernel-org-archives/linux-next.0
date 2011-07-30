@@ -1,40 +1,38 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] regulator: aat2870 needs module.h
-Date: Fri, 29 Jul 2011 12:43:13 -0700
-Message-ID: <20110729124313.2f2bb000.rdunlap@xenotime.net>
+Subject: [PATCH -next] x86: devicetree.h needs export.h
+Date: Fri, 29 Jul 2011 18:04:22 -0700
+Message-ID: <20110729180422.07355fdb.rdunlap@xenotime.net>
 References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:50560 "HELO
+	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752840Ab1G3BE0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jul 2011 21:04:26 -0400
 In-Reply-To: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <rdunlap@xenotime.net>
 
-aat2870-regulator.c needs to include linux/module.h to fix multiple
-build errors.
-
-drivers/regulator/aat2870-regulator.c:145: error: 'THIS_MODULE' undeclared here (not in a function)
-drivers/regulator/aat2870-regulator.c:230: warning: type defaults to 'int' in declaration of 'MODULE_DESCRIPTION'
-drivers/regulator/aat2870-regulator.c:231: warning: type defaults to 'int' in declaration of 'MODULE_LICENSE'
-drivers/regulator/aat2870-regulator.c:232: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
+devicetree.c needs to include linux/export.h to fix build errors.
 
 Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 ---
- drivers/regulator/aat2870-regulator.c |    1 +
+ arch/x86/kernel/devicetree.c |    1 +
  1 file changed, 1 insertion(+)
 
---- linux-next-20110729.orig/drivers/regulator/aat2870-regulator.c
-+++ linux-next-20110729/drivers/regulator/aat2870-regulator.c
-@@ -22,6 +22,7 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/err.h>
-+#include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/delay.h>
- #include <linux/platform_device.h>
+--- linux-next-20110729.orig/arch/x86/kernel/devicetree.c
++++ linux-next-20110729/arch/x86/kernel/devicetree.c
+@@ -2,6 +2,7 @@
+  * Architecture specific OF callbacks.
+  */
+ #include <linux/bootmem.h>
++#include <linux/export.h>
+ #include <linux/io.h>
+ #include <linux/interrupt.h>
+ #include <linux/list.h>
