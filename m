@@ -1,62 +1,40 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
 Subject: Re: linux-next: build failure after merge of the moduleh tree
-Date: Sun, 31 Jul 2011 02:31:29 -0400
-Message-ID: <20110731063128.GE31842@windriver.com>
-References: <20110729152533.73329e8bafd4e839e85f0555@canb.auug.org.au>
- <20110729153707.389b56be0b6d51c31324fe5d@canb.auug.org.au>
+Date: Sun, 31 Jul 2011 02:59:54 -0400
+Message-ID: <20110731065954.GF31842@windriver.com>
+References: <20110729170933.b7bfc24dcf48201928bd5890@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:50787 "EHLO
+Received: from mail.windriver.com ([147.11.1.11]:53877 "EHLO
 	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752544Ab1GaGcF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Jul 2011 02:32:05 -0400
+	with ESMTP id S1751185Ab1GaG77 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Jul 2011 02:59:59 -0400
 Content-Disposition: inline
-In-Reply-To: <20110729153707.389b56be0b6d51c31324fe5d@canb.auug.org.au>
+In-Reply-To: <20110729170933.b7bfc24dcf48201928bd5890@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-[Re: linux-next: build failure after merge of the moduleh tree] On 29/07/2011 (Fri 15:37) Stephen Rothwell wrote:
+[linux-next: build failure after merge of the moduleh tree] On 29/07/2011 (Fri 17:09) Stephen Rothwell wrote:
+
+> Hi Paul,
+> 
+> After merging the moduleh tree, today's linux-next build (sparc defconfig)
+> failed like this:
 
 [...]
 
-> 
-> Forget that, it was not the correct patch.  Instead I have added this
-> patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 29 Jul 2011 15:34:32 +1000
-> Subject: [PATCH] ir-raw: include kmod.h for request_module
+> Again, I have left these unfixed in linux-next today.
 
-Thanks, I just saw the same thing while retesting sparc on the latest
-master content.  Applied to queue.
+Thanks, I've got these sparc32 items all fixed up; I wasn't thinking
+that my allyesconfig would have excluded sparc32.  I've retested with
+the two defconfigs, all[yes,no,mod]config to make sure I didn't miss
+any other module.h cleanup fallout for sparc.
 
 Paul.
 
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/media/rc/ir-raw.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/media/rc/ir-raw.c b/drivers/media/rc/ir-raw.c
-> index 56adca8..1ebaf5b 100644
-> --- a/drivers/media/rc/ir-raw.c
-> +++ b/drivers/media/rc/ir-raw.c
-> @@ -15,6 +15,7 @@
->  #include <linux/kthread.h>
->  #include <linux/mutex.h>
->  #include <linux/export.h>
-> +#include <linux/kmod.h>
->  #include <linux/sched.h>
->  #include <linux/freezer.h>
->  #include "rc-core-priv.h"
-> -- 
-> 1.7.5.4
-> 
-> 
 > -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
