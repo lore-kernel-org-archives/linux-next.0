@@ -1,58 +1,66 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: manual merge of the moduleh tree with the v4l-dvb
- tree
-Date: Sun, 31 Jul 2011 04:11:39 -0400
-Message-ID: <20110731081138.GK31842@windriver.com>
-References: <20110729144700.d58aad0fe07e454ac7c7ece4@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the moduleh tree
+Date: Sun, 31 Jul 2011 04:14:47 -0400
+Message-ID: <20110731081446.GL31842@windriver.com>
+References: <20110729152533.73329e8bafd4e839e85f0555@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:61269 "EHLO
+Received: from mail.windriver.com ([147.11.1.11]:61445 "EHLO
 	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752458Ab1GaIMJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Jul 2011 04:12:09 -0400
+	with ESMTP id S1752458Ab1GaIO6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Jul 2011 04:14:58 -0400
 Content-Disposition: inline
-In-Reply-To: <20110729144700.d58aad0fe07e454ac7c7ece4@canb.auug.org.au>
+In-Reply-To: <20110729152533.73329e8bafd4e839e85f0555@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>, Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
 
-[linux-next: manual merge of the moduleh tree with the v4l-dvb tree] On 29/07/2011 (Fri 14:47) Stephen Rothwell wrote:
+[linux-next: build failure after merge of the moduleh tree] On 29/07/2011 (Fri 15:25) Stephen Rothwell wrote:
 
 > Hi Paul,
 > 
-> Today's linux-next merge of the moduleh tree got a conflict in
-> sound/i2c/other/tea575x-tuner.c between commit 4522e825dbfc ("[media]
-> tea575x: convert to control framework") from the v4l-dvb tree and commit
-> a319a4d494d5 ("sound: Add module.h to the previously silent sound users")
-> from the moduleh tree.
+> After merging the moduleh tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> Just context changes.  I fixed it up (see below) anc can carry the fix as
-> necessary.
+> drivers/media/rc/ir-raw.c: In function 'init_decoders':
+> drivers/media/rc/ir-raw.c:354:2: error: implicit declaration of function 'request_module'
+> 
+> I have added this patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 29 Jul 2011 15:21:27 +1000
+> Subject: [PATCH] ir-raw.c: include modules .h for request_module
 
-Seems 4522e825dbfc is in master now, so I've done the fixup locally
-and you shouldn't see this crop up again.
+Thanks, I've got this change in tree now.
 
-Thanks,
-Paul.
+P.
 
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/media/rc/ir-raw.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/media/rc/ir-raw.c b/drivers/media/rc/ir-raw.c
+> index 56adca8..ba817d2 100644
+> --- a/drivers/media/rc/ir-raw.c
+> +++ b/drivers/media/rc/ir-raw.c
+> @@ -14,7 +14,7 @@
+>  
+>  #include <linux/kthread.h>
+>  #include <linux/mutex.h>
+> -#include <linux/export.h>
+> +#include <linux/module.h>
+>  #include <linux/sched.h>
+>  #include <linux/freezer.h>
+>  #include "rc-core-priv.h"
+> -- 
+> 1.7.5.4
+> 
+> 
 > -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc sound/i2c/other/tea575x-tuner.c
-> index 484a35b,c65c624..0000000
-> --- a/sound/i2c/other/tea575x-tuner.c
-> +++ b/sound/i2c/other/tea575x-tuner.c
-> @@@ -25,8 -25,9 +25,9 @@@
->   #include <linux/init.h>
->   #include <linux/slab.h>
->   #include <linux/version.h>
-> + #include <linux/module.h>
->  -#include <sound/core.h>
->  +#include <media/v4l2-dev.h>
->  +#include <media/v4l2-ioctl.h>
->   #include <sound/tea575x-tuner.h>
->   
->   MODULE_AUTHOR("Jaroslav Kysela <perex@perex.cz>");
+> http://www.canb.auug.org.au/~sfr/
