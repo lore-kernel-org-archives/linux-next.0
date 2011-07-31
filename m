@@ -1,46 +1,103 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
 Subject: Re: linux-next: build failure after merge of the moduleh tree
-Date: Sun, 31 Jul 2011 03:44:55 -0400
-Message-ID: <20110731074454.GI31842@windriver.com>
-References: <20110729170659.91ad989caa407854c5e269a2@canb.auug.org.au>
+Date: Sun, 31 Jul 2011 04:08:22 -0400
+Message-ID: <20110731080822.GJ31842@windriver.com>
+References: <20110729161931.a9c9108c233640f3c2d7b24e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:60666 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752348Ab1GaII1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Jul 2011 04:08:27 -0400
 Content-Disposition: inline
-In-Reply-To: <20110729170659.91ad989caa407854c5e269a2@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20110729161931.a9c9108c233640f3c2d7b24e@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
-[linux-next: build failure after merge of the moduleh tree] On 29/07/2011 (Fri 17:06) Stephen Rothwell wrote:
+[linux-next: build failure after merge of the moduleh tree] On 29/07/2011 (Fri 16:19) Stephen Rothwell wrote:
 
 > Hi Paul,
 > 
 > After merging the moduleh tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> allnoconfig) failed like this:
 > 
-> drivers/mmc/host/sdhci-of-esdhc.c:110:1: warning: type defaults to 'int' in declaration of 'MODULE_DEVICE_TABLE'
-[...]
-> drivers/mmc/host/sdhci-of-hlwd.c:82:1: warning: type defaults to 'int' in declaration of 'MODULE_DEVICE_TABLE'
-[...]
-> drivers/power/max8997_charger.c:205:1: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
-[...]
-> drivers/regulator/aat2870-regulator.c:231:1: warning: type defaults to 'int' in declaration of 'MODULE_LICENSE'
+
 [...]
 
-> I have just left these in fixed for now.  Please let me know if some of
-> them can't be fixed in your tree and I will spin fixes for them in
-> linux-next.
+> 
+> I have added this patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 29 Jul 2011 16:15:26 +1000
+> Subject: [PATCH] powerpc32: include export.h for EXPORT_SYMBOL
 
-The mmc ones I can fix; the power/regulator ones are not in master yet.
-But since they need module.h, the fix can be applied by their respective
-tree owner as well (vs. ones needing export.h -- which presents a minor
-chicken-and-egg problem).
+Thanks, applied alongside the 4xx powerpc exports.
 
-Thanks,
 Paul.
 
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/powerpc/kernel/iomap.c          |    1 +
+>  arch/powerpc/kernel/pci_32.c         |    1 +
+>  arch/powerpc/mm/mmu_context_hash32.c |    1 +
+>  arch/powerpc/mm/tlb_hash32.c         |    1 +
+>  4 files changed, 4 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/iomap.c b/arch/powerpc/kernel/iomap.c
+> index 1577434..2735872 100644
+> --- a/arch/powerpc/kernel/iomap.c
+> +++ b/arch/powerpc/kernel/iomap.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/init.h>
+>  #include <linux/pci.h>
+>  #include <linux/mm.h>
+> +#include <linux/export.h>
+>  #include <asm/io.h>
+>  #include <asm/pci-bridge.h>
+>  
+> diff --git a/arch/powerpc/kernel/pci_32.c b/arch/powerpc/kernel/pci_32.c
+> index bb15451..fdd1a3d 100644
+> --- a/arch/powerpc/kernel/pci_32.c
+> +++ b/arch/powerpc/kernel/pci_32.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/list.h>
+>  #include <linux/of.h>
+>  #include <linux/slab.h>
+> +#include <linux/export.h>
+>  
+>  #include <asm/processor.h>
+>  #include <asm/io.h>
+> diff --git a/arch/powerpc/mm/mmu_context_hash32.c b/arch/powerpc/mm/mmu_context_hash32.c
+> index d0ee554..78fef67 100644
+> --- a/arch/powerpc/mm/mmu_context_hash32.c
+> +++ b/arch/powerpc/mm/mmu_context_hash32.c
+> @@ -24,6 +24,7 @@
+>  
+>  #include <linux/mm.h>
+>  #include <linux/init.h>
+> +#include <linux/export.h>
+>  
+>  #include <asm/mmu_context.h>
+>  #include <asm/tlbflush.h>
+> diff --git a/arch/powerpc/mm/tlb_hash32.c b/arch/powerpc/mm/tlb_hash32.c
+> index 9a445f6..558e30c 100644
+> --- a/arch/powerpc/mm/tlb_hash32.c
+> +++ b/arch/powerpc/mm/tlb_hash32.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/init.h>
+>  #include <linux/highmem.h>
+>  #include <linux/pagemap.h>
+> +#include <linux/export.h>
+>  
+>  #include <asm/tlbflush.h>
+>  #include <asm/tlb.h>
+> -- 
+> 1.7.5.4
+> 
 > -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
