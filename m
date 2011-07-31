@@ -1,55 +1,65 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: build failure after merge of the final tree
- (probably moduleh tree related)
-Date: Sun, 31 Jul 2011 01:22:14 -0400
-Message-ID: <20110731052214.GB31842@windriver.com>
-References: <20110729170142.4cd1979127a0d5d864297db3@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the moduleh tree
+Date: Sun, 31 Jul 2011 01:38:44 -0400
+Message-ID: <20110731053843.GC31842@windriver.com>
+References: <20110729160943.c77bc737188b0cf9dace922a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:45282 "EHLO
+Received: from mail.windriver.com ([147.11.1.11]:46738 "EHLO
 	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751034Ab1GaFWT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Jul 2011 01:22:19 -0400
+	with ESMTP id S1750764Ab1GaFit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Jul 2011 01:38:49 -0400
 Content-Disposition: inline
-In-Reply-To: <20110729170142.4cd1979127a0d5d864297db3@canb.auug.org.au>
+In-Reply-To: <20110729160943.c77bc737188b0cf9dace922a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-[linux-next: build failure after merge of the final tree (probably moduleh tree related)] On 29/07/2011 (Fri 17:01) Stephen Rothwell wrote:
+[linux-next: build warnings after merge of the moduleh tree] On 29/07/2011 (Fri 16:09) Stephen Rothwell wrote:
 
-[...]
-
+> Hi Paul,
 > 
-> I have added the folllowing patch for today:
+> After merging the moduleh tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced these warnings:
 > 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 29 Jul 2011 16:55:11 +1000
-> Subject: [PATCH] dmaengine.h needs bitmap.h
+> drivers/of/of_pci_irq.c:92:1: warning: data definition has no type or storage class
+> drivers/of/of_pci_irq.c:92:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+> drivers/of/of_pci_irq.c:92:1: warning: parameter names (without types) in function declaration
+> 
+> This is an interaction with commit 98d9f30c820d ("pci/of: Match PCI
+> devices to OF nodes dynamically") which split off part of
+> drivers/of/of_pci.c.
 
-Thanks, I've added it to the queue.
+Thanks, I've picked this one up as well.
+
 Paul.
 
 > 
+> I have added this patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 29 Jul 2011 16:05:38 +1000
+> Subject: [PATCH] pci/of: include export.h for EXPORT_SYMBOL_GPL
+> 
 > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  include/linux/dmaengine.h |    1 +
+>  drivers/of/of_pci_irq.c |    1 +
 >  1 files changed, 1 insertions(+), 0 deletions(-)
 > 
-> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-> index 8fbf40e..c90b17f 100644
-> --- a/include/linux/dmaengine.h
-> +++ b/include/linux/dmaengine.h
-> @@ -24,6 +24,7 @@
->  #include <linux/device.h>
->  #include <linux/uio.h>
->  #include <linux/dma-direction.h>
-> +#include <linux/bitmap.h>
+> diff --git a/drivers/of/of_pci_irq.c b/drivers/of/of_pci_irq.c
+> index ac1ec54..9312516 100644
+> --- a/drivers/of/of_pci_irq.c
+> +++ b/drivers/of/of_pci_irq.c
+> @@ -1,6 +1,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/of_pci.h>
+>  #include <linux/of_irq.h>
+> +#include <linux/export.h>
+>  #include <asm/prom.h>
 >  
->  struct scatterlist;
->  
+>  /**
 > -- 
 > 1.7.5.4
 > 
