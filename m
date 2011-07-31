@@ -1,70 +1,61 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
 Subject: Re: linux-next: build failure after merge of the moduleh tree
-Date: Sun, 31 Jul 2011 01:44:42 -0400
-Message-ID: <20110731054442.GD31842@windriver.com>
-References: <20110729145644.ce9b20c535822ede35cd0a0c@canb.auug.org.au>
+Date: Sun, 31 Jul 2011 02:31:29 -0400
+Message-ID: <20110731063128.GE31842@windriver.com>
+References: <20110729152533.73329e8bafd4e839e85f0555@canb.auug.org.au>
+ <20110729153707.389b56be0b6d51c31324fe5d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:47114 "EHLO
+Received: from mail.windriver.com ([147.11.1.11]:50787 "EHLO
 	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750764Ab1GaFor (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Jul 2011 01:44:47 -0400
+	with ESMTP id S1752544Ab1GaGcF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Jul 2011 02:32:05 -0400
 Content-Disposition: inline
-In-Reply-To: <20110729145644.ce9b20c535822ede35cd0a0c@canb.auug.org.au>
+In-Reply-To: <20110729153707.389b56be0b6d51c31324fe5d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
 
-[linux-next: build failure after merge of the moduleh tree] On 29/07/2011 (Fri 14:56) Stephen Rothwell wrote:
+[Re: linux-next: build failure after merge of the moduleh tree] On 29/07/2011 (Fri 15:37) Stephen Rothwell wrote:
 
-> Hi Paul,
+[...]
+
 > 
-> After merging the moduleh tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> arch/powerpc/platforms/cell/spu_syscalls.c: In function 'spufs_calls_get':
-> arch/powerpc/platforms/cell/spu_syscalls.c:42:2: error: implicit declaration of function 'try_module_get'
-> arch/powerpc/platforms/cell/spu_syscalls.c: In function 'spufs_calls_put':
-> arch/powerpc/platforms/cell/spu_syscalls.c:54:2: error: implicit declaration of function 'module_put'
-> 
-> Caused by commit f7f927183dba ("powerpc: various straight conversions
-> from module.h --> export.h").  This file should not be modified.
+> Forget that, it was not the correct patch.  Instead I have added this
+> patch for today:
 > 
 > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 29 Jul 2011 14:53:16 +1000
-> Subject: [PATCH] Partial revert of f7f927183dba
+> Date: Fri, 29 Jul 2011 15:34:32 +1000
+> Subject: [PATCH] ir-raw: include kmod.h for request_module
 
-Thanks, I've dropped the offending hunk from its origin.
+Thanks, I just saw the same thing while retesting sparc on the latest
+master content.  Applied to queue.
 
 Paul.
 
 > 
-> "powerpc: various straight conversions from module.h --> export.h"
-> 
-> This file needs module.h.
-> 
 > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  arch/powerpc/platforms/cell/spu_syscalls.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
+>  drivers/media/rc/ir-raw.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
 > 
-> diff --git a/arch/powerpc/platforms/cell/spu_syscalls.c b/arch/powerpc/platforms/cell/spu_syscalls.c
-> index 60fc5ec..75530d9 100644
-> --- a/arch/powerpc/platforms/cell/spu_syscalls.c
-> +++ b/arch/powerpc/platforms/cell/spu_syscalls.c
-> @@ -22,7 +22,7 @@
->   */
->  #include <linux/file.h>
->  #include <linux/fs.h>
-> -#include <linux/export.h>
-> +#include <linux/module.h>
->  #include <linux/syscalls.h>
->  #include <linux/rcupdate.h>
->  
+> diff --git a/drivers/media/rc/ir-raw.c b/drivers/media/rc/ir-raw.c
+> index 56adca8..1ebaf5b 100644
+> --- a/drivers/media/rc/ir-raw.c
+> +++ b/drivers/media/rc/ir-raw.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/kthread.h>
+>  #include <linux/mutex.h>
+>  #include <linux/export.h>
+> +#include <linux/kmod.h>
+>  #include <linux/sched.h>
+>  #include <linux/freezer.h>
+>  #include "rc-core-priv.h"
 > -- 
 > 1.7.5.4
+> 
 > 
 > -- 
 > Cheers,
