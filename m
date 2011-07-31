@@ -1,104 +1,58 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: build failure after merge of the moduleh tree
-Date: Sun, 31 Jul 2011 04:08:22 -0400
-Message-ID: <20110731080822.GJ31842@windriver.com>
-References: <20110729161931.a9c9108c233640f3c2d7b24e@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the moduleh tree with the v4l-dvb
+ tree
+Date: Sun, 31 Jul 2011 04:11:39 -0400
+Message-ID: <20110731081138.GK31842@windriver.com>
+References: <20110729144700.d58aad0fe07e454ac7c7ece4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:60666 "EHLO
+Received: from mail.windriver.com ([147.11.1.11]:61269 "EHLO
 	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752348Ab1GaII1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Jul 2011 04:08:27 -0400
+	with ESMTP id S1752458Ab1GaIMJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 31 Jul 2011 04:12:09 -0400
 Content-Disposition: inline
-In-Reply-To: <20110729161931.a9c9108c233640f3c2d7b24e@canb.auug.org.au>
+In-Reply-To: <20110729144700.d58aad0fe07e454ac7c7ece4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>, Mauro Carvalho Chehab <mchehab@redhat.com>
 
-[linux-next: build failure after merge of the moduleh tree] On 29/07/2011 (Fri 16:19) Stephen Rothwell wrote:
+[linux-next: manual merge of the moduleh tree with the v4l-dvb tree] On 29/07/2011 (Fri 14:47) Stephen Rothwell wrote:
 
 > Hi Paul,
 > 
-> After merging the moduleh tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
+> Today's linux-next merge of the moduleh tree got a conflict in
+> sound/i2c/other/tea575x-tuner.c between commit 4522e825dbfc ("[media]
+> tea575x: convert to control framework") from the v4l-dvb tree and commit
+> a319a4d494d5 ("sound: Add module.h to the previously silent sound users")
+> from the moduleh tree.
 > 
+> Just context changes.  I fixed it up (see below) anc can carry the fix as
+> necessary.
 
-[...]
+Seems 4522e825dbfc is in master now, so I've done the fixup locally
+and you shouldn't see this crop up again.
 
-> 
-> I have added this patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 29 Jul 2011 16:15:26 +1000
-> Subject: [PATCH] powerpc32: include export.h for EXPORT_SYMBOL
-
-Thanks, applied alongside the 4xx powerpc exports.
-
+Thanks,
 Paul.
 
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/powerpc/kernel/iomap.c          |    1 +
->  arch/powerpc/kernel/pci_32.c         |    1 +
->  arch/powerpc/mm/mmu_context_hash32.c |    1 +
->  arch/powerpc/mm/tlb_hash32.c         |    1 +
->  4 files changed, 4 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/iomap.c b/arch/powerpc/kernel/iomap.c
-> index 1577434..2735872 100644
-> --- a/arch/powerpc/kernel/iomap.c
-> +++ b/arch/powerpc/kernel/iomap.c
-> @@ -6,6 +6,7 @@
->  #include <linux/init.h>
->  #include <linux/pci.h>
->  #include <linux/mm.h>
-> +#include <linux/export.h>
->  #include <asm/io.h>
->  #include <asm/pci-bridge.h>
->  
-> diff --git a/arch/powerpc/kernel/pci_32.c b/arch/powerpc/kernel/pci_32.c
-> index bb15451..fdd1a3d 100644
-> --- a/arch/powerpc/kernel/pci_32.c
-> +++ b/arch/powerpc/kernel/pci_32.c
-> @@ -15,6 +15,7 @@
->  #include <linux/list.h>
->  #include <linux/of.h>
->  #include <linux/slab.h>
-> +#include <linux/export.h>
->  
->  #include <asm/processor.h>
->  #include <asm/io.h>
-> diff --git a/arch/powerpc/mm/mmu_context_hash32.c b/arch/powerpc/mm/mmu_context_hash32.c
-> index d0ee554..78fef67 100644
-> --- a/arch/powerpc/mm/mmu_context_hash32.c
-> +++ b/arch/powerpc/mm/mmu_context_hash32.c
-> @@ -24,6 +24,7 @@
->  
->  #include <linux/mm.h>
->  #include <linux/init.h>
-> +#include <linux/export.h>
->  
->  #include <asm/mmu_context.h>
->  #include <asm/tlbflush.h>
-> diff --git a/arch/powerpc/mm/tlb_hash32.c b/arch/powerpc/mm/tlb_hash32.c
-> index 9a445f6..558e30c 100644
-> --- a/arch/powerpc/mm/tlb_hash32.c
-> +++ b/arch/powerpc/mm/tlb_hash32.c
-> @@ -27,6 +27,7 @@
->  #include <linux/init.h>
->  #include <linux/highmem.h>
->  #include <linux/pagemap.h>
-> +#include <linux/export.h>
->  
->  #include <asm/tlbflush.h>
->  #include <asm/tlb.h>
-> -- 
-> 1.7.5.4
-> 
 > -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+> 
+> diff --cc sound/i2c/other/tea575x-tuner.c
+> index 484a35b,c65c624..0000000
+> --- a/sound/i2c/other/tea575x-tuner.c
+> +++ b/sound/i2c/other/tea575x-tuner.c
+> @@@ -25,8 -25,9 +25,9 @@@
+>   #include <linux/init.h>
+>   #include <linux/slab.h>
+>   #include <linux/version.h>
+> + #include <linux/module.h>
+>  -#include <sound/core.h>
+>  +#include <media/v4l2-dev.h>
+>  +#include <media/v4l2-ioctl.h>
+>   #include <sound/tea575x-tuner.h>
+>   
+>   MODULE_AUTHOR("Jaroslav Kysela <perex@perex.cz>");
