@@ -1,51 +1,62 @@
-From: Paul Gortmaker <paul.gortmaker-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH -next] i2c: i2c-pxa-pci.c needs module.h
-Date: Sat, 30 Jul 2011 15:09:32 -0400
-Message-ID: <CAP=VYLrtumuSM_ncO6sEr7=HciiKcOsB=yN4NZnAxesjSSOgMw@mail.gmail.com>
-References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
-	<20110729211430.6c4830bd.rdunlap@xenotime.net>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: build failure after merge of the moduleh tree
+Date: Sun, 31 Jul 2011 00:45:41 -0400
+Message-ID: <20110731044541.GA31842@windriver.com>
+References: <20110729151035.f8b69d6fa6aadffb7999abfa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110729211430.6c4830bd.rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, akpm <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110729151035.f8b69d6fa6aadffb7999abfa@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>
 List-Id: linux-next.vger.kernel.org
 
-On Sat, Jul 30, 2011 at 12:14 AM, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org> w=
-rote:
-> From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
->
-> i2c-pxa-pci.c uses interfaces from linux/module.h, so it should
-> include that file. =A0This fixes build errors.
+[linux-next: build failure after merge of the moduleh tree] On 29/07/2011 (Fri 15:10) Stephen Rothwell wrote:
 
-Applied to module.h-split, thanks.
+[...]
 
-P.
+> I have added this commit for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 29 Jul 2011 15:03:54 +1000
+> Subject: [PATCH] Partial revert of commit d03b684f1773
 
->
-> Signed-off-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+I've just fixed the original rather than introduce a revert,
+since I'm moving ahead to the latest in order to at least
+catch some of these new drivers that showed up in linux-next.
+
+Thanks,
+Paul.
+
+> 
+> "kernel: Map most files to use export.h instead of module.h"
+> 
+> This file need module.h
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
-> =A0drivers/i2c/busses/i2c-pxa-pci.c | =A0 =A01 +
-> =A01 file changed, 1 insertion(+)
->
-> --- linux-next-20110729.orig/drivers/i2c/busses/i2c-pxa-pci.c
-> +++ linux-next-20110729/drivers/i2c/busses/i2c-pxa-pci.c
-> @@ -3,6 +3,7 @@
-> =A0* It does not support slave mode, the register slightly moved. Thi=
-s PCI
-> =A0* device provides three bars, every contains a single I2C controll=
-er.
-> =A0*/
+>  kernel/jump_label.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+> index d636f85..a8ce450 100644
+> --- a/kernel/jump_label.c
+> +++ b/kernel/jump_label.c
+> @@ -7,7 +7,7 @@
+>   */
+>  #include <linux/memory.h>
+>  #include <linux/uaccess.h>
+> -#include <linux/export.h>
 > +#include <linux/module.h>
-> =A0#include <linux/pci.h>
-> =A0#include <linux/platform_device.h>
-> =A0#include <linux/i2c/pxa-i2c.h>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next"=
- in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+>  #include <linux/list.h>
+>  #include <linux/slab.h>
+>  #include <linux/sort.h>
+> -- 
+> 1.7.5.4
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
