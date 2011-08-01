@@ -1,41 +1,63 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 1 (wireless/rt2x00)
-Date: Mon, 1 Aug 2011 14:52:46 -0700
-Message-ID: <20110801145246.da67280d.rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 1
+Date: Mon, 1 Aug 2011 14:54:22 -0700
+Message-ID: <20110801145422.cccff7aa.rdunlap@xenotime.net>
 References: <20110801144732.7f5204b219f628f2a2a63b0c@canb.auug.org.au>
+	<CA+icZUXq9V6h6kJrjckpeDXQAbQ-skiKLwTjD7Luhz1mTqSM1w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:56837 "HELO
-	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752453Ab1HAVwt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Aug 2011 17:52:49 -0400
-In-Reply-To: <20110801144732.7f5204b219f628f2a2a63b0c@canb.auug.org.au>
+Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:46218 "HELO
+	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752473Ab1HAVyY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Aug 2011 17:54:24 -0400
+In-Reply-To: <CA+icZUXq9V6h6kJrjckpeDXQAbQ-skiKLwTjD7Luhz1mTqSM1w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-wireless@vger.kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ivo van Doorn <IvDoorn@gmail.com>
+To: sedat.dilek@gmail.com
+Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Mon, 1 Aug 2011 14:47:32 +1000 Stephen Rothwell wrote:
+On Mon, 1 Aug 2011 09:01:21 +0200 Sedat Dilek wrote:
 
-> Hi all,
+> On Mon, Aug 1, 2011 at 6:47 AM, Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
+> > Hi all,
+> >
+> > Just in case anyone needs reminding: =A0Please do not add anything =
+destined
+> > for v3.2 into linux-next included trees until after v3.1-rc1.
+> >
+> > The powerpc allyesconfig build (at least) fails today.
+> >
+> > Changes since 20110729:
+> >
+> > Linus' tree still lost its build failure.
+> >
+> > The v4l-dvb tree lost its conflicts.
+> >
+> > The kgdb tree gained a build failure for which I reverted 3 commits=
+=2E
+> >
+> > The moduleh tree gained a conflict against the slabe-dma tree but l=
+ost
+> > its build failures (except for a few remaining merge fixups).
+> >
+> > -------------------------------------------------------------------=
+---------
+> >
+>=20
+> Just FYI: mmotm-tree still misses the fixup-patch from [1].
+>=20
+> - Sedat -
+>=20
+> [1] https://patchwork.kernel.org/patch/1021602/
 
-When CONFIG_RT2X00_LIB_CRYPTO is not enabled:
+Yes, I am applying this patch daily (among others).  :(
 
-drivers/net/wireless/rt2x00/rt2x00queue.c:476: error: too many arguments to function 'rt2x00crypto_create_tx_descriptor'
-
-
-CONFIG_RT2X00=m
-# CONFIG_RT2400PCI is not set
-CONFIG_RT2500PCI=m
-# CONFIG_RT61PCI is not set
-# CONFIG_RT2800PCI is not set
-CONFIG_RT2X00_LIB_PCI=m
-CONFIG_RT2X00_LIB=m
-CONFIG_RT2X00_LIB_LEDS=y
-# CONFIG_RT2X00_DEBUG is not set
+Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
 ---
 ~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+*** Remember to use Documentation/SubmitChecklist when testing your cod=
+e ***
