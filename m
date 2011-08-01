@@ -1,60 +1,43 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: [PATCH -next] regulator: aat2870-regulator.c needs module.h
-Date: Mon, 1 Aug 2011 11:25:18 +0200
-Message-ID: <20110801092518.GA26275@sortiz-mobl>
-References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
- <20110729211309.92e8b744.rdunlap@xenotime.net>
- <20110801001523.GA20641@opensource.wolfsonmicro.com>
- <20110801103304.e77887ff2e60f4f6d5c9f91f@canb.auug.org.au>
- <20110801110507.7ca032b85a285d1f9e755146@canb.auug.org.au>
+From: Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: linux-next: build failure after merge of the final tree (kgdb
+ tree related)
+Date: Mon, 1 Aug 2011 07:42:59 -0500
+Message-ID: <4E369F53.4040903@windriver.com>
+References: <20110801142257.0fe7bcceaa0c61527b9597c3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:40938 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751254Ab1HAJX7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Aug 2011 05:23:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20110801110507.7ca032b85a285d1f9e755146@canb.auug.org.au>
+Received: from mail.windriver.com ([147.11.1.11]:37191 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752666Ab1HAMnM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Aug 2011 08:43:12 -0400
+In-Reply-To: <20110801142257.0fe7bcceaa0c61527b9597c3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Randy Dunlap <rdunlap@xenotime.net>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen, Liam,
+On 07/31/2011 11:22 PM, Stephen Rothwell wrote:
+> Hi Jason,
+>
+> After merging the final tree, today's linux-next build (sparc32_defconfig)
+> failed like this:
+>
+> kernel/debug/gdbstub.c: In function 'gdbstub_state':
+> kernel/debug/gdbstub.c:1098:3: error: 'gdbstub_use_prev_in_buf' undeclared (first use in this function)
+> kernel/debug/gdbstub.c:1098:3: note: each undeclared identifier is reported only once for each function it appears in
+> kernel/debug/gdbstub.c:1099:3: error: 'gdbstub_prev_in_buf_pos' undeclared (first use in this function)
+>
+> Caused by commit faed702e3b31 ("kdb,kgdb: Implement switch and pass
+> buffer from kdb -> gdb").
+>
+> I reverted that commit (and 621ebf205b99 "kdb: Remove all references to
+> DOING_KGDB2" and "kdb,kgdb: Allow arbitrary kgdb magic knock
+> sequences" that depend on it) for today.
+>
+> BTW, that last commit (29e3c61ef33c) doesn't have a SOB line.
 
-On Mon, Aug 01, 2011 at 11:05:07AM +1000, Stephen Rothwell wrote:
-> On Mon, 1 Aug 2011 10:33:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Mon, 1 Aug 2011 01:15:24 +0100 Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
-> > >
-> > > On Fri, Jul 29, 2011 at 09:13:09PM -0700, Randy Dunlap wrote:
-> > > > From: Randy Dunlap <rdunlap@xenotime.net>
-> > > > 
-> > > > aat2870-regulator.c needs to include linux/module.h to fix multiple
-> > > > build errors.
-> > > 
-> > > Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> > > 
-> > > but if the breakage isn't in mainline yet to minimize the breaks
-> > > bisection someone should figure out which tree introduced the change
-> > > with module.h and either get the fix merged along with that.  If neither
-> > > the module.h change nor the driver is in Linus' tree yet I rather
-> > > suspect this should go via MFD as I seem to recall that the driver is
-> > > going in via there.
-> > 
-> > It is indeed.  I have this patch set to apply to my tree today after the
-> > mfd tree.  Hopefully Samuel will put it in his tree for tomorrow (and
-> > before he asks Linus to pull.
-> 
-> Too late :-)
-Sorry about that. I thought I would hear about any breakage after I pushed my
-bits on Friday morning.
-Anyway, Liam, are you going to push this fix through your tree ?
+Thanks for the detailed report.   I fixed this by re-basing kgdb-next against the kgdb-dev branch.  These branches are not supposed to get out of sync.  I'll try and figure out what went wrong. :-)
 
-Cheers,
-Samuel.
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+Jason.
