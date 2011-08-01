@@ -1,66 +1,41 @@
-From: Liam Girdwood <lrg@ti.com>
-Subject: Re: [PATCH -next] regulator: aat2870-regulator.c needs module.h
-Date: Mon, 1 Aug 2011 19:09:46 +0100
-Message-ID: <1312222186.5170.8.camel@CNA0741383>
-References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
-	 <20110729211309.92e8b744.rdunlap@xenotime.net>
-	 <20110801001523.GA20641@opensource.wolfsonmicro.com>
-	 <20110801103304.e77887ff2e60f4f6d5c9f91f@canb.auug.org.au>
-	 <20110801110507.7ca032b85a285d1f9e755146@canb.auug.org.au>
-	 <20110801092518.GA26275@sortiz-mobl>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 1 (wireless/rt2x00)
+Date: Mon, 1 Aug 2011 14:52:46 -0700
+Message-ID: <20110801145246.da67280d.rdunlap@xenotime.net>
+References: <20110801144732.7f5204b219f628f2a2a63b0c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:35018 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750699Ab1HASKd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Aug 2011 14:10:33 -0400
-In-Reply-To: <20110801092518.GA26275@sortiz-mobl>
+Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:56837 "HELO
+	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752453Ab1HAVwt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Aug 2011 17:52:49 -0400
+In-Reply-To: <20110801144732.7f5204b219f628f2a2a63b0c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Randy Dunlap <rdunlap@xenotime.net>, akpm <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-wireless@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ivo van Doorn <IvDoorn@gmail.com>
 
-Hi Samuel,
+On Mon, 1 Aug 2011 14:47:32 +1000 Stephen Rothwell wrote:
 
-On Mon, 2011-08-01 at 11:25 +0200, Samuel Ortiz wrote:
-> Hi Stephen, Liam,
-> 
-> On Mon, Aug 01, 2011 at 11:05:07AM +1000, Stephen Rothwell wrote:
-> > On Mon, 1 Aug 2011 10:33:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > On Mon, 1 Aug 2011 01:15:24 +0100 Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
-> > > >
-> > > > On Fri, Jul 29, 2011 at 09:13:09PM -0700, Randy Dunlap wrote:
-> > > > > From: Randy Dunlap <rdunlap@xenotime.net>
-> > > > > 
-> > > > > aat2870-regulator.c needs to include linux/module.h to fix multiple
-> > > > > build errors.
-> > > > 
-> > > > Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> > > > 
-> > > > but if the breakage isn't in mainline yet to minimize the breaks
-> > > > bisection someone should figure out which tree introduced the change
-> > > > with module.h and either get the fix merged along with that.  If neither
-> > > > the module.h change nor the driver is in Linus' tree yet I rather
-> > > > suspect this should go via MFD as I seem to recall that the driver is
-> > > > going in via there.
-> > > 
-> > > It is indeed.  I have this patch set to apply to my tree today after the
-> > > mfd tree.  Hopefully Samuel will put it in his tree for tomorrow (and
-> > > before he asks Linus to pull.
-> > 
-> > Too late :-)
-> Sorry about that. I thought I would hear about any breakage after I pushed my
-> bits on Friday morning.
-> Anyway, Liam, are you going to push this fix through your tree ?
-> 
+> Hi all,
 
-I can if required, however I've just done my pull request (sorry didn't
-see this in time). I have to do another pull request with misc fixes in
-rc1 time frame so I can add it there if OK. 
+When CONFIG_RT2X00_LIB_CRYPTO is not enabled:
 
-Thanks
+drivers/net/wireless/rt2x00/rt2x00queue.c:476: error: too many arguments to function 'rt2x00crypto_create_tx_descriptor'
 
-Liam
+
+CONFIG_RT2X00=m
+# CONFIG_RT2400PCI is not set
+CONFIG_RT2500PCI=m
+# CONFIG_RT61PCI is not set
+# CONFIG_RT2800PCI is not set
+CONFIG_RT2X00_LIB_PCI=m
+CONFIG_RT2X00_LIB=m
+CONFIG_RT2X00_LIB_LEDS=y
+# CONFIG_RT2X00_DEBUG is not set
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
