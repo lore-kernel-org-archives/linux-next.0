@@ -1,97 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the moduleh tree
-Date: Mon, 1 Aug 2011 10:35:37 +1000
-Message-ID: <20110801103537.a273ddac48fc81a8f28c2f90@canb.auug.org.au>
-References: <20110729152548.17e093cb01d95077a05d4cec@canb.auug.org.au>
-	<20110731082405.GM31842@windriver.com>
+Subject: Re: [PATCH -next] regulator: aat2870-regulator.c needs module.h
+Date: Mon, 1 Aug 2011 11:05:07 +1000
+Message-ID: <20110801110507.7ca032b85a285d1f9e755146@canb.auug.org.au>
+References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
+	<20110729211309.92e8b744.rdunlap@xenotime.net>
+	<20110801001523.GA20641@opensource.wolfsonmicro.com>
+	<20110801103304.e77887ff2e60f4f6d5c9f91f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__1_Aug_2011_10_35_37_+1000_JBJtInSUvgF70A6m"
-Return-path: <linux-raid-owner@vger.kernel.org>
-In-Reply-To: <20110731082405.GM31842@windriver.com>
-Sender: linux-raid-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Brown <neilb@suse.de>, linux-raid@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__1_Aug_2011_11_05_07_+1000_nzFg9X2e_e+xccgn"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49820 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753059Ab1HABFQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 31 Jul 2011 21:05:16 -0400
+In-Reply-To: <20110801103304.e77887ff2e60f4f6d5c9f91f@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Liam Girdwood <lrg@ti.com>, Samuel Ortiz <sameo@linux.intel.com>
 
---Signature=_Mon__1_Aug_2011_10_35_37_+1000_JBJtInSUvgF70A6m
+--Signature=_Mon__1_Aug_2011_11_05_07_+1000_nzFg9X2e_e+xccgn
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, 31 Jul 2011 04:24:05 -0400 Paul Gortmaker <paul.gortmaker@windriver=
-.com> wrote:
+On Mon, 1 Aug 2011 10:33:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> [linux-next: build warnings after merge of the moduleh tree] On 29/07/201=
-1 (Fri 15:25) Stephen Rothwell wrote:
+> On Mon, 1 Aug 2011 01:15:24 +0100 Mark Brown <broonie@opensource.wolfsonm=
+icro.com> wrote:
+> >
+> > On Fri, Jul 29, 2011 at 09:13:09PM -0700, Randy Dunlap wrote:
+> > > From: Randy Dunlap <rdunlap@xenotime.net>
+> > >=20
+> > > aat2870-regulator.c needs to include linux/module.h to fix multiple
+> > > build errors.
+> >=20
+> > Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> >=20
+> > but if the breakage isn't in mainline yet to minimize the breaks
+> > bisection someone should figure out which tree introduced the change
+> > with module.h and either get the fix merged along with that.  If neither
+> > the module.h change nor the driver is in Linus' tree yet I rather
+> > suspect this should go via MFD as I seem to recall that the driver is
+> > going in via there.
 >=20
-> > Hi Paul,
-> >=20
-> > After merging the moduleh tree, today's linux-next build (x86_64
-> > allmodconfig) produced these warnings:
-> >=20
-> > drivers/md/persistent-data/dm-block-manager.c:103:1: warning: type defa=
-ults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> [...]
-> > drivers/md/persistent-data/dm-space-map-disk.c:634:1: warning: type def=
-aults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> [...]
-> > drivers/md/persistent-data/dm-btree.c:146:1: warning: type defaults to =
-'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> [...]
-> > drivers/md/persistent-data/dm-btree-remove.c:569:1: warning: type defau=
-lts to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> >=20
-> > I have added the following patch for today:
-> >=20
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Fri, 29 Jul 2011 15:16:04 +1000
-> > Subject: [PATCH] include export.h to use EXPORT_SYMBOL
-> >=20
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  drivers/md/persistent-data/dm-block-manager.c  |    1 +
-> >  drivers/md/persistent-data/dm-btree-remove.c   |    2 ++
-> >  drivers/md/persistent-data/dm-btree.c          |    1 +
-> >  drivers/md/persistent-data/dm-space-map-disk.c |    1 +
-> >  4 files changed, 5 insertions(+), 0 deletions(-)
->=20
-> This one is a bit more interesting.  The above files (and actually their
-> parent dir) doesn't exist yet in master/HEAD.  So I can't patch them
-> yet.  And the MD maintainers can't patch in export.h usage, since they
-> won't have such a header file.
->=20
-> If you didn't want to temporarily carry it, I can think of two things:
-> I suppose, since the one single commit that creates export.h is totally
-> standalone, and harmless/inert in itself, we could perhaps get it pulled
-> independently if it made life easier for others to align to the right
-> usage?  Or they can just patch in module.h usage and we can downgrade
-> them to export.h usage shortly thereafter.
+> It is indeed.  I have this patch set to apply to my tree today after the
+> mfd tree.  Hopefully Samuel will put it in his tree for tomorrow (and
+> before he asks Linus to pull.
 
-I will carry it for now (as a merge fixup on the moduleh tree.  If the
-export.h split goes to Linus, then Neil can apply it to his tree, or
-Linus can apply it as a merge fixup ehen he merges the latter of the two
-trees (as long as someone remember to tell him).
+Too late :-)
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__1_Aug_2011_10_35_37_+1000_JBJtInSUvgF70A6m
+--Signature=_Mon__1_Aug_2011_11_05_07_+1000_nzFg9X2e_e+xccgn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJONfTZAAoJEDMEi1NhKgbsWrkIAIUOb1KB4E8OERWU6sQyKqed
-5sRUXyDSq5/c5kkyMy5KTXHJ+vUURnZJjQqzuCYm6svP4ecnRWa2Xx3NyPFvQcd3
-fYwv9sL1A0kLUtK7MBMmsMMqHOHe7inEI0AhSjMm4BXFGWfDgWwGFF/uTGFfZjLb
-pVSZFBR9GS5ttuQD4ac+ns8byP6AWJAGWYD/srUCF7+Z+vESkhi8JqDQv6HBK1ZQ
-tKw8AUGKBkeEQIl8J3KgayfO8rhapEUqhYZbAtBjH8zd0Re2hK6VdUPWBumeA8P3
-ZE9invdNm3deCSda6AIxkIq0r0Cd2PKbFHLfELqfm0U3e8WzghYsUZoFBUIIc9w=
-=f/IF
+iQEcBAEBAgAGBQJONfvDAAoJEDMEi1NhKgbs3TwH/j8QfIcXDG649iv2CDb1KqXr
++Y/9KZARhv/BU1NuCs1C0o3lS9piSOhytg0M/Aepfu6HK/zGV2uXM0IJoz8eFNqA
+BWpxxSDyS7xtv+XYhDJ3mU4935Y82+RZXZ9cq13xWVrLBVo+OmBkEqT9fDq9Co4G
+REFo8Kuc9lYUZdl2xPLvliyKT1eArICLW+oHOdHx3FN/kosx/lZbjsVwYW1NP3YH
+uyLN7dIp+0V08O8XHEMjjrLtKlzybn0QdKDCEexJmKpICpw73QfLHTD4ETPtTSrW
+qCvOJ0cKx0i+plCRWcroeRfqDC1hs1zmw1f4SXTkW3g8uk3YUPWxhVVa0zJCMOk=
+=R+rT
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__1_Aug_2011_10_35_37_+1000_JBJtInSUvgF70A6m--
+--Signature=_Mon__1_Aug_2011_11_05_07_+1000_nzFg9X2e_e+xccgn--
