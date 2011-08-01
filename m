@@ -1,38 +1,105 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH -next] regulator: aat2870-regulator.c needs module.h
-Date: Mon, 1 Aug 2011 01:15:24 +0100
-Message-ID: <20110801001523.GA20641@opensource.wolfsonmicro.com>
-References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
- <20110729211309.92e8b744.rdunlap@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the moduleh tree
+Date: Mon, 1 Aug 2011 10:30:27 +1000
+Message-ID: <20110801103027.28dabe088d34567d74072dff@canb.auug.org.au>
+References: <20110729170659.91ad989caa407854c5e269a2@canb.auug.org.au>
+	<20110731074454.GI31842@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:46507 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752756Ab1HAAPa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 31 Jul 2011 20:15:30 -0400
-Content-Disposition: inline
-In-Reply-To: <20110729211309.92e8b744.rdunlap@xenotime.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43076 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752756Ab1HAAag (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 31 Jul 2011 20:30:36 -0400
+In-Reply-To: <20110731074454.GI31842@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Liam Girdwood <lrg@ti.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jin Park <jinyoungp@nvidia.com>, Randy Dunlap <rdunlap@xenotime.net>, Samuel Ortiz <sameo@linux.intel.com>, Linus <torvalds@linux-foundation.org>, Anton Vorontsov <avorontsov@ru.mvista.com>, Donggeun Kim <dg77.kim@samsung.com>
 
-On Fri, Jul 29, 2011 at 09:13:09PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
+Hi Paul,
+
+On Sun, 31 Jul 2011 03:44:55 -0400 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+>
+> [linux-next: build failure after merge of the moduleh tree] On 29/07/2011 (Fri 17:06) Stephen Rothwell wrote:
 > 
-> aat2870-regulator.c needs to include linux/module.h to fix multiple
-> build errors.
+> > After merging the moduleh tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > drivers/power/max8997_charger.c:205:1: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
 
-Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+This driver is upstream today.  Randy wrote a patch for it (which I will
+apply to my fixes tree today):
 
-but if the breakage isn't in mainline yet to minimize the breaks
-bisection someone should figure out which tree introduced the change
-with module.h and either get the fix merged along with that.  If neither
-the module.h change nor the driver is in Linus' tree yet I rather
-suspect this should go via MFD as I seem to recall that the driver is
-going in via there.
+Date: Fri, 29 Jul 2011 21:11:43 -0700
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] power: max8998_charger.c needs module.h
 
-It's not entirely clear to me why this started showing up part way
-through the merge window :/
+power/max8998_charger.c uses interfaces from linux/module.h,
+so it should include that file.  This fixes build errors.
+
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
+ drivers/power/max8998_charger.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20110729.orig/drivers/power/max8998_charger.c
++++ linux-next-20110729/drivers/power/max8998_charger.c
+@@ -20,6 +20,7 @@
+  */
+ 
+ #include <linux/err.h>
++#include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
+ #include <linux/power_supply.h>
+
+
+> [...]
+> > drivers/regulator/aat2870-regulator.c:231:1: warning: type defaults to 'int' in declaration of 'MODULE_LICENSE'
+> [...]
+> 
+> The mmc ones I can fix; the power/regulator ones are not in master yet.
+> But since they need module.h, the fix can be applied by their respective
+> tree owner as well (vs. ones needing export.h -- which presents a minor
+> chicken-and-egg problem).
+
+OK, Randy wrote a fix patch for drivers/regulator/aat2870-regulator.c as
+well (which he cc'd to the wrong people :-().  I have it reproduced below
+and it should be applied to the mfd tree.   I will apply it myself for
+today.
+
+Date: Fri, 29 Jul 2011 12:43:13 -0700
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] regulator: aat2870 needs module.h
+
+aat2870-regulator.c needs to include linux/module.h to fix multiple
+build errors.
+
+drivers/regulator/aat2870-regulator.c:145: error: 'THIS_MODULE' undeclared here (not in a function)
+drivers/regulator/aat2870-regulator.c:230: warning: type defaults to 'int' in declaration of 'MODULE_DESCRIPTION'
+drivers/regulator/aat2870-regulator.c:231: warning: type defaults to 'int' in declaration of 'MODULE_LICENSE'
+drivers/regulator/aat2870-regulator.c:232: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
+
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
+ drivers/regulator/aat2870-regulator.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20110729.orig/drivers/regulator/aat2870-regulator.c
++++ linux-next-20110729/drivers/regulator/aat2870-regulator.c
+@@ -22,6 +22,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/err.h>
++#include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/delay.h>
+ #include <linux/platform_device.h>
+
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
