@@ -1,57 +1,66 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] kvm: uses TASKSTATS, depends on NET
-Date: Tue, 2 Aug 2011 12:54:31 -0700
-Message-ID: <20110802125431.e1902bd1.rdunlap@xenotime.net>
-References: <20110802155727.a3d76babdd2c6fd5d33928c5@canb.auug.org.au>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: Tree for July 20 (acpi/apei/ghes)
+Date: Tue, 02 Aug 2011 18:05:00 -0400 (EDT)
+Message-ID: <alpine.LFD.2.02.1108021803530.25237@x980>
+References: <20110720180041.5774ca335e6697c17374dca5@canb.auug.org.au>
+ <20110720093633.ca9cf794.rdunlap@xenotime.net>
+ <20110720093829.aae2ec63.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:58788 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754854Ab1HBTye (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Aug 2011 15:54:34 -0400
-In-Reply-To: <20110802155727.a3d76babdd2c6fd5d33928c5@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org
+Content-Type: MULTIPART/MIXED; BOUNDARY="8323328-1257865506-1312322700=:25237"
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-reply-to: <20110720093829.aae2ec63.rdunlap@xenotime.net>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: linux-acpi@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Huang Ying <ying.huang@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-CONFIG_TASKSTATS just had a change to use netlink, including
-a change to "depends on NET".  Since "select" does not follow
-dependencies, KVM also needs to depend on NET to prevent build
-errors when CONFIG_NET is not enabled.
+--8323328-1257865506-1312322700=:25237
+Content-Type: TEXT/PLAIN; charset=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
 
-Sample of the reported "undefined reference" build errors:
+From: Len Brown <len.brown@intel.com>
+Subject: [PATCH] APEI GHES: 32-bit buildfix
 
-taskstats.c:(.text+0x8f686): undefined reference to `nla_put'
-taskstats.c:(.text+0x8f721): undefined reference to `nla_reserve'
-taskstats.c:(.text+0x8f8fb): undefined reference to `init_net'
-taskstats.c:(.text+0x8f905): undefined reference to `netlink_unicast'
-taskstats.c:(.text+0x8f934): undefined reference to `kfree_skb'
-taskstats.c:(.text+0x8f9e9): undefined reference to `skb_clone'
-taskstats.c:(.text+0x90060): undefined reference to `__alloc_skb'
-taskstats.c:(.text+0x901e9): undefined reference to `skb_put'
-taskstats.c:(.init.text+0x4665): undefined reference to `genl_register_family'
-taskstats.c:(.init.text+0x4699): undefined reference to `genl_register_ops'
-taskstats.c:(.init.text+0x4710): undefined reference to `genl_unregister_ops'
-taskstats.c:(.init.text+0x471c): undefined reference to `genl_unregister_family'
+drivers/acpi/apei/ghes.c:542: warning: integer overflow in expression
+drivers/acpi/apei/ghes.c:619: warning: integer overflow in expression
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+ghes.c:(.text+0x46289): undefined reference to `__udivdi3'
+  in function ghes_estatus_cache_add().
+
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Len Brown <len.brown@intel.com>
 ---
- arch/x86/kvm/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/acpi/apei/ghes.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
 
---- linux-next-20110802.orig/arch/x86/kvm/Kconfig
-+++ linux-next-20110802/arch/x86/kvm/Kconfig
-@@ -22,6 +22,8 @@ config KVM
- 	depends on HAVE_KVM
- 	# for device assignment:
- 	depends on PCI
-+	# for TASKSTATS/TASK_DELAY_ACCT:
-+	depends on NET
- 	select PREEMPT_NOTIFIERS
- 	select MMU_NOTIFIER
- 	select ANON_INODES
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index e92c47c..0784f99 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -65,7 +65,7 @@
+ 
+ #define GHES_ESTATUS_CACHES_SIZE	4
+ 
+-#define GHES_ESTATUS_IN_CACHE_MAX_NSEC	(10 * NSEC_PER_SEC)
++#define GHES_ESTATUS_IN_CACHE_MAX_NSEC	10000000000ULL
+ /* Prevent too many caches are allocated because of RCU */
+ #define GHES_ESTATUS_CACHE_ALLOCED_MAX	(GHES_ESTATUS_CACHES_SIZE * 3 / 2)
+ 
+@@ -622,7 +622,8 @@ static void ghes_estatus_cache_add(
+ 			break;
+ 		}
+ 		count = atomic_read(&cache->count);
+-		period = duration / (count + 1);
++		period = duration;
++		do_div(period, (count + 1));
+ 		if (period > max_period) {
+ 			max_period = period;
+ 			slot = i;
+-- 
+1.7.6.396.ge0613
+
+
+--8323328-1257865506-1312322700=:25237--
