@@ -1,41 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with Linus' tree
-Date: Tue, 2 Aug 2011 14:52:37 +1000
-Message-ID: <20110802145237.e8b90cff7f6954f6a12d8b3b@canb.auug.org.au>
+From: Jon Mason <mason@myri.com>
+Subject: [PATCH] PCI: export pcie_bus_configure_settings symbol
+Date: Tue, 2 Aug 2011 00:01:18 -0500
+Message-ID: <20110802050117.GA21227@myri.com>
+References: <20110802104838.ac7f46b54e8a3fcc4cdd9448@canb.auug.org.au>
+ <20110802112336.fd2d2b577a2a71892189733b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:59606 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750807Ab1HBFBX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Aug 2011 01:01:23 -0400
+Content-Disposition: inline
+In-Reply-To: <20110802112336.fd2d2b577a2a71892189733b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jordan Hargrave <jordan_hargrave@dell.com>
 
-Hi Paul,
+pcie_bus_configure_settings needs to be exported if the PCI hotplug
+driver is being compiled as a module.
 
-Today's linux-next merge of the moduleh tree got a conflict in
-drivers/video/omap2/dss/rfbi.c between commit 24e6289c029b ("OMAP: DSS2:
-remove extra includes from include/video/omapdss.h") from Linus' tree and
-commit 06e632e042aa ("video: Add export.h for THIS_MODULE/EXPORT_SYMBOL
-to drivers/video") from the moduleh tree.
+Discovered by Stephen Rothwell
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
+Signed-off-by: Jon Mason <mason@myri.com>
+---
+ drivers/pci/probe.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 5becf7c..8473727 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1470,6 +1470,7 @@ void pcie_bus_configure_settings(struct pci_bus *bus, u8 mpss)
+ 	pcie_bus_configure_set(bus->self, &smpss);
+ 	pci_walk_bus(bus, pcie_bus_configure_set, &smpss);
+ }
++EXPORT_SYMBOL_GPL(pcie_bus_configure_settings);
+ 
+ unsigned int __devinit pci_scan_child_bus(struct pci_bus *bus)
+ {
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/video/omap2/dss/rfbi.c
-index 39f4c59,5dbd229..0000000
---- a/drivers/video/omap2/dss/rfbi.c
-+++ b/drivers/video/omap2/dss/rfbi.c
-@@@ -33,8 -33,7 +33,9 @@@
-  #include <linux/hrtimer.h>
-  #include <linux/seq_file.h>
-  #include <linux/semaphore.h>
- +#include <linux/platform_device.h>
- +#include <linux/pm_runtime.h>
-+ #include <linux/export.h>
-  
-  #include <video/omapdss.h>
-  #include "dss.h"
+1.7.6
