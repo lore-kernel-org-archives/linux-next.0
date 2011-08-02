@@ -1,48 +1,65 @@
-From: Jens Axboe <jaxboe@fusionio.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build warning after merge of the moduleh tree
-Date: Tue, 2 Aug 2011 09:26:14 +0200
-Message-ID: <4E37A696.2090007@fusionio.com>
+Date: Tue, 2 Aug 2011 18:35:58 +1000
+Message-ID: <20110802183558.fda9e3b1e9f3b93a70f6e494@canb.auug.org.au>
 References: <20110801132359.1de051cb8a4a2bdfdad7560c@canb.auug.org.au>
+	<4E37A696.2090007@fusionio.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110801132359.1de051cb8a4a2bdfdad7560c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__2_Aug_2011_18_35_58_+1000_CmC0BMshnmKGz0Ye"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43005 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752410Ab1HBIgN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Aug 2011 04:36:13 -0400
+In-Reply-To: <4E37A696.2090007@fusionio.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <jaxboe@fusionio.com>
 Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mike Christie <michaelc@cs.wisc.edu>
-List-Id: linux-next.vger.kernel.org
 
-On 2011-08-01 05:23, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> After merging the moduleh tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> block/bsg-lib.c:75:1: warning: data definition has no type or storage class
-> block/bsg-lib.c:75:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> block/bsg-lib.c:75:1: warning: parameter names (without types) in function declaration
-> block/bsg-lib.c:164:1: warning: data definition has no type or storage class
-> block/bsg-lib.c:164:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> block/bsg-lib.c:164:1: warning: parameter names (without types) in function declaration
-> block/bsg-lib.c:210:1: warning: data definition has no type or storage class
-> block/bsg-lib.c:210:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> block/bsg-lib.c:210:1: warning: parameter names (without types) in function declaration
-> block/bsg-lib.c:244:1: warning: data definition has no type or storage class
-> block/bsg-lib.c:244:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> block/bsg-lib.c:244:1: warning: parameter names (without types) in function declaration
-> block/bsg-lib.c:297:1: warning: data definition has no type or storage class
-> block/bsg-lib.c:297:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-> block/bsg-lib.c:297:1: warning: parameter names (without types) in function declaration
-> 
-> This is an interaction with commit aa387cc89567 ("block: add bsg helper
-> library") from the block tree.  That file should have included module.h
-> but now would need export.h it seems (just uses EXPORTSYMBOL_GPL).
-> 
-> I applied the following as a merge fix patch:
+--Signature=_Tue__2_Aug_2011_18_35_58_+1000_CmC0BMshnmKGz0Ye
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, will you carry this until things are merged? Not easy for me to
-fix up.
+Hi Jens,
 
--- 
-Jens Axboe
+On Tue, 2 Aug 2011 09:26:14 +0200 Jens Axboe <jaxboe@fusionio.com> wrote:
+>
+> Thanks, will you carry this until things are merged? Not easy for me to
+> fix up.
+
+Yes, no problem.  It is possible that the module.h split may not even go
+into v3.1, in which case the fix patch will jst become part of the moduleh
+tree after the block tree is merged.
+
+Though the feedback to the original patch writer is that they should have
+included module.h instead of relying on it being implicitly included.
+
+You could include a patch to add an include of module.h to this file in
+your tree - that way even if the module.h split goes ahead, your tree
+won't get broken.  It could then be changed to the lighter weight
+export.h later.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__2_Aug_2011_18_35_58_+1000_CmC0BMshnmKGz0Ye
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJON7buAAoJEDMEi1NhKgbsCzEIAJjAD+rymdtholhTSXu6/xSn
+3HhTDNuGaXYD33Xg7Ajcz70kb3O0A8Oe95ZdAyc44eKpPtf7k0YQqZ7tgee6gQ3m
+G93Fj5HGmJvYkOW+2jK6ZuNg/JpdH3jCeCKdiRZMkVRmoBw0hFjkWSSWGuBO5gUM
+lVDyjFZpL5hkhmDMCEEoxjCE2TsS08y7m1Uv6vBDcismRSDkrrjSQ2P72ZUzykvd
+GoLX/NvqAZB9O/RO0RZl3dbfXd4fGhV8EdjwQr52KroRGLC6BVinuZJVx+5SWRAj
++g9qL3NUzETa9WM0Gja2L4DIVdT6fDikp2Nk4tOmBpeiF+xJrg9J9Q+2aTOEq/c=
+=7z00
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Aug_2011_18_35_58_+1000_CmC0BMshnmKGz0Ye--
