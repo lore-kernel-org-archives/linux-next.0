@@ -1,56 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pci-current tree
-Date: Tue, 2 Aug 2011 10:48:38 +1000
-Message-ID: <20110802104838.ac7f46b54e8a3fcc4cdd9448@canb.auug.org.au>
+Subject: linux-next: manual merge of the msm tree with Linus' tree
+Date: Tue, 2 Aug 2011 10:59:20 +1000
+Message-ID: <20110802105920.b17b44333263c79316a186c5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__2_Aug_2011_10_48_38_+1000_6lB1GDLhmK=OoAsN"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52686 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56047 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753238Ab1HBAsr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Aug 2011 20:48:47 -0400
+	id S1753521Ab1HBA7Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Aug 2011 20:59:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Mason <mason@myri.com>, Jordan Hargrave <jordan_hargrave@dell.com>
+To: David Brown <davidb@codeaurora.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Ohlstein <johlstei@codeaurora.org>
 
---Signature=_Tue__2_Aug_2011_10_48_38_+1000_6lB1GDLhmK=OoAsN
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-Hi Jesse,
+Today's linux-next merge of the msm tree got a conflict in
+arch/arm/mach-msm/io.c between commit 03db0729b760 ("msm: Remove
+chip-ifdefs for GPIO io mappings") from Linus' tree and commit
+5f0130d53e0e ("msm: dma: use a platform device for msm_dmov") from the
+msm tree.
 
-After merging the pci-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-ERROR: ".pcie_bus_configure_settings" [drivers/pci/hotplug/pci_hotplug.ko] =
-undefined!
-
-Caused by commit b03e7495a862 ("PCI: Set PCI-E Max Payload Size on
-fabric").  Missing EXPORT_SYMBOL?
-
-I have used the pci-current tree from next-20110801 for today.
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__2_Aug_2011_10_48_38_+1000_6lB1GDLhmK=OoAsN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJON0lmAAoJEDMEi1NhKgbsjsUIAJ/AHpzxwYvpghrhFTvTcBz1
-NfuJgG5Y4QcZKspW6802iCbqQtXmA8J1v4T3SOOoCx3A5hAJbNgXEeyta0a/xSsZ
-HopZEqxaKw73kxUhf//SAjKpHPByDLDcv9tLN9COBs+cXEBgxe79X0p++DeF8n1k
-7dP+jI3dz4ZT5ClZ4rZSs3zigO/eSf58jO5lBKKGnEv5ku7WOiM4yExPLiNnmKSU
-YJ4SdGHJS5Jizllz6ET12geiCZqpHtQT8wFXAKsXMWIX+Pnmgd+yVp7hCdtn3UQb
-b1NPRNxgVG3j/nytkM3FuOeVS+dZP83aw+wAxNhL2IrLC5qvU2Ot2uP/sQONvT4=
-=0qtY
------END PGP SIGNATURE-----
-
---Signature=_Tue__2_Aug_2011_10_48_38_+1000_6lB1GDLhmK=OoAsN--
+diff --cc arch/arm/mach-msm/io.c
+index 140ddbb,1c86cda..0000000
+--- a/arch/arm/mach-msm/io.c
++++ b/arch/arm/mach-msm/io.c
+@@@ -42,9 -42,8 +42,8 @@@
+  static struct map_desc msm_io_desc[] __initdata = {
+  	MSM_DEVICE(VIC),
+  	MSM_CHIP_DEVICE(CSR, MSM7X00),
+- 	MSM_DEVICE(DMOV),
+ -	MSM_DEVICE(GPIO1),
+ -	MSM_DEVICE(GPIO2),
+ +	MSM_CHIP_DEVICE(GPIO1, MSM7X00),
+ +	MSM_CHIP_DEVICE(GPIO2, MSM7X00),
+  	MSM_DEVICE(CLK_CTL),
+  #ifdef CONFIG_MSM_DEBUG_UART
+  	MSM_DEVICE(DEBUG_UART),
+@@@ -75,9 -74,8 +74,8 @@@ void __init msm_map_common_io(void
+  static struct map_desc qsd8x50_io_desc[] __initdata = {
+  	MSM_DEVICE(VIC),
+  	MSM_CHIP_DEVICE(CSR, QSD8X50),
+- 	MSM_DEVICE(DMOV),
+ -	MSM_DEVICE(GPIO1),
+ -	MSM_DEVICE(GPIO2),
+ +	MSM_CHIP_DEVICE(GPIO1, QSD8X50),
+ +	MSM_CHIP_DEVICE(GPIO2, QSD8X50),
+  	MSM_DEVICE(CLK_CTL),
+  	MSM_DEVICE(SIRC),
+  	MSM_DEVICE(SCPLL),
+@@@ -134,9 -132,8 +132,8 @@@ void __init msm_map_msm8960_io(void
+  static struct map_desc msm7x30_io_desc[] __initdata = {
+  	MSM_DEVICE(VIC),
+  	MSM_CHIP_DEVICE(CSR, MSM7X30),
+- 	MSM_DEVICE(DMOV),
+ -	MSM_DEVICE(GPIO1),
+ -	MSM_DEVICE(GPIO2),
+ +	MSM_CHIP_DEVICE(GPIO1, MSM7X30),
+ +	MSM_CHIP_DEVICE(GPIO2, MSM7X30),
+  	MSM_DEVICE(CLK_CTL),
+  	MSM_DEVICE(CLK_CTL_SH2),
+  	MSM_DEVICE(AD5),
