@@ -1,45 +1,46 @@
-From: Jens Axboe <jaxboe@fusionio.com>
-Subject: Re: linux-next: build warning after merge of the moduleh tree
-Date: Tue, 2 Aug 2011 10:42:11 +0200
-Message-ID: <4E37B863.4080700@fusionio.com>
-References: <20110801132359.1de051cb8a4a2bdfdad7560c@canb.auug.org.au> <4E37A696.2090007@fusionio.com> <20110802183558.fda9e3b1e9f3b93a70f6e494@canb.auug.org.au>
+From: Helmut Schaa <helmut.schaa@googlemail.com>
+Subject: [PATCH] rt2x00: Fix compilation without CONFIG_RT2X00_LIB_CRYPTO
+Date: Tue, 2 Aug 2011 11:43:14 +0200
+Message-ID: <CAGXE3d9ynyJX2eAr2bfwOc_PdDNEwVHDVsA_Jx1ReBht=eVuYw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.fusionio.com ([66.114.96.30]:35119 "EHLO mx1.fusionio.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752621Ab1HBImO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Aug 2011 04:42:14 -0400
-In-Reply-To: <20110802183558.fda9e3b1e9f3b93a70f6e494@canb.auug.org.au>
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:65282 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750807Ab1HBJnP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Aug 2011 05:43:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mike Christie <michaelc@cs.wisc.edu>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ivo van Doorn <IvDoorn@gmail.com>, Randy Dunlap <rdunlap@xenotime.net>
 
-On 2011-08-02 10:35, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> On Tue, 2 Aug 2011 09:26:14 +0200 Jens Axboe <jaxboe@fusionio.com> wrote:
->>
->> Thanks, will you carry this until things are merged? Not easy for me to
->> fix up.
-> 
-> Yes, no problem.  It is possible that the module.h split may not even go
-> into v3.1, in which case the fix patch will jst become part of the moduleh
-> tree after the block tree is merged.
-> 
-> Though the feedback to the original patch writer is that they should have
-> included module.h instead of relying on it being implicitly included.
+This was introduced by commit
+77b5621bac4a56b83b9081f48d4e7d1accdde400 (rt2x00: Don't use queue entry
+as parameter when creating TX descriptor.)
 
-That would arguably have been a much saner approach.
+Signed-off-by: Helmut Schaa <helmut.schaa@googlemail.com>
+---
+Sending directly to John as I assume this should go through the wireless tree?
 
-> You could include a patch to add an include of module.h to this file in
-> your tree - that way even if the module.h split goes ahead, your tree
-> won't get broken.  It could then be changed to the lighter weight
-> export.h later.
+ drivers/net/wireless/rt2x00/rt2x00lib.h |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-OK, I will add that. Thanks.
+diff --git a/drivers/net/wireless/rt2x00/rt2x00lib.h
+b/drivers/net/wireless/rt2x00/rt2x00lib.h
+index 15cdc7e..4cdf247 100644
+--- a/drivers/net/wireless/rt2x00/rt2x00lib.h
++++ b/drivers/net/wireless/rt2x00/rt2x00lib.h
+@@ -355,7 +355,8 @@ static inline enum cipher
+rt2x00crypto_key_to_cipher(struct ieee80211_key_conf *
+ 	return CIPHER_NONE;
+ }
 
+-static inline void rt2x00crypto_create_tx_descriptor(struct queue_entry *entry,
++static inline void rt2x00crypto_create_tx_descriptor(struct
+rt2x00_dev *rt2x00dev,
++						     struct sk_buff *skb,
+ 						     struct txentry_desc *txdesc)
+ {
+ }
 -- 
-Jens Axboe
+1.7.3.4
