@@ -1,26 +1,56 @@
-From: Alasdair G Kergon <agk@redhat.com>
-Subject: Re: linux-next: build failure after merge of the moduleh tree
-Date: Tue, 2 Aug 2011 11:15:33 +0100
-Message-ID: <20110802101533.GQ10499@agk-dp.fab.redhat.com>
-References: <20110802151306.4fb9904e55fe9b489a3cf29d@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: linux-next: Tree for Aug 1
+Date: Tue, 2 Aug 2011 12:38:01 +0200
+Message-ID: <CA+icZUUDm+o+tikdVgGM3AGhjYdPSXPN+cQkQ8LT_h0+7n9uAQ@mail.gmail.com>
+References: <20110801144732.7f5204b219f628f2a2a63b0c@canb.auug.org.au>
+	<CA+icZUXq9V6h6kJrjckpeDXQAbQ-skiKLwTjD7Luhz1mTqSM1w@mail.gmail.com>
+	<20110801145422.cccff7aa.rdunlap@xenotime.net>
+	<20110802112907.5ca1abdd81758bd3b0bb6321@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:25525 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750998Ab1HBKPi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Aug 2011 06:15:38 -0400
-Content-Disposition: inline
-In-Reply-To: <20110802151306.4fb9904e55fe9b489a3cf29d@canb.auug.org.au>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:57243 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753181Ab1HBKiC convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Aug 2011 06:38:02 -0400
+In-Reply-To: <20110802112907.5ca1abdd81758bd3b0bb6321@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Thornber <thornber@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Alasdair G Kergon <agk@redhat.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Tue, Aug 02, 2011 at 03:13:06PM +1000, Stephen Rothwell wrote:
-> This really is a bug in the original patch as you should explicitly
-> include module.h if you are using the module facilities.
+On Tue, Aug 2, 2011 at 3:29 AM, Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> Hi all,
+>
+> On Mon, 1 Aug 2011 14:54:22 -0700 Randy Dunlap <rdunlap@xenotime.net>=
+ wrote:
+>>
+>> On Mon, 1 Aug 2011 09:01:21 +0200 Sedat Dilek wrote:
+>>
+>> > Just FYI: mmotm-tree still misses the fixup-patch from [1].
+>> >
+>> > [1] https://patchwork.kernel.org/patch/1021602/
+>>
+>> Yes, I am applying this patch daily (among others). =C2=A0:(
+>>
+>> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+>
+> OK, I will apply this patch to linux-next as a merge fixup on top of
+> Andrew's tree.
+>
+> --
+> Cheers,
+> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+>
 
-Fixed, thanks.
+Thanks for taking care, Stephen.
+Just FYI: Andrew will carry the fix as
+"consolidate-config_debug_strict_user_copy_checks-fix.patch" in his
+tree.
 
-Alasdair
+- Sedat -
