@@ -1,66 +1,49 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: linux-next: Tree for July 20 (acpi/apei/ghes)
-Date: Tue, 02 Aug 2011 18:05:00 -0400 (EDT)
-Message-ID: <alpine.LFD.2.02.1108021803530.25237@x980>
-References: <20110720180041.5774ca335e6697c17374dca5@canb.auug.org.au>
- <20110720093633.ca9cf794.rdunlap@xenotime.net>
- <20110720093829.aae2ec63.rdunlap@xenotime.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Tue, 2 Aug 2011 16:17:38 -0700
+Message-ID: <20110802231738.GA2764@kroah.com>
+References: <20110718193646.33fb3f41db9d84974913657d@canb.auug.org.au>
+ <20110719010104.GA12591@kroah.com>
+ <20110728133523.9a080472cad87be3fff982ac@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323328-1257865506-1312322700=:25237"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-reply-to: <20110720093829.aae2ec63.rdunlap@xenotime.net>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-acpi@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Huang Ying <ying.huang@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out2.smtp.messagingengine.com ([66.111.4.26]:47842 "EHLO
+	out2.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752966Ab1HBXRq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Aug 2011 19:17:46 -0400
+Content-Disposition: inline
+In-Reply-To: <20110728133523.9a080472cad87be3fff982ac@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Thu, Jul 28, 2011 at 01:35:23PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Mon, 18 Jul 2011 18:01:04 -0700 Greg KH <greg@kroah.com> wrote:
+> >
+> > On Mon, Jul 18, 2011 at 07:36:46PM +1000, Stephen Rothwell wrote:
+> > > 
+> > > After merging the final tree, today's linux-next build (powerpc
+> > > allysconfig) failed like this:
+> > > 
+> > > In file included from drivers/staging/ft1000/ft1000-pcmcia/ft1000_proc.c:26:0:
+> > > drivers/staging/ft1000/ft1000-pcmcia/ft1000.h: In function 'ft1000_read_reg':
+> > > drivers/staging/ft1000/ft1000-pcmcia/ft1000.h:80:2: error: implicit declaration of function 'inw'
+> > > drivers/staging/ft1000/ft1000-pcmcia/ft1000.h: In function 'ft1000_write_reg':
+> > > drivers/staging/ft1000/ft1000-pcmcia/ft1000.h:86:2: error: implicit declaration of function 'outw'
+> > 
+> > PowerPC supports PCMCIA?  Anyway, Ondrej, care to provide a fix for this
+> > please?
+> 
+> Ping ... this is now in Linus' tree.
 
---8323328-1257865506-1312322700=:25237
-Content-Type: TEXT/PLAIN; charset=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
+Thanks, I now have a fix for it that should show up in the next
+linux-next release and be sent to Linus soon.
 
-From: Len Brown <len.brown@intel.com>
-Subject: [PATCH] APEI GHES: 32-bit buildfix
+thanks,
 
-drivers/acpi/apei/ghes.c:542: warning: integer overflow in expression
-drivers/acpi/apei/ghes.c:619: warning: integer overflow in expression
-
-ghes.c:(.text+0x46289): undefined reference to `__udivdi3'
-  in function ghes_estatus_cache_add().
-
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: Len Brown <len.brown@intel.com>
----
- drivers/acpi/apei/ghes.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index e92c47c..0784f99 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -65,7 +65,7 @@
- 
- #define GHES_ESTATUS_CACHES_SIZE	4
- 
--#define GHES_ESTATUS_IN_CACHE_MAX_NSEC	(10 * NSEC_PER_SEC)
-+#define GHES_ESTATUS_IN_CACHE_MAX_NSEC	10000000000ULL
- /* Prevent too many caches are allocated because of RCU */
- #define GHES_ESTATUS_CACHE_ALLOCED_MAX	(GHES_ESTATUS_CACHES_SIZE * 3 / 2)
- 
-@@ -622,7 +622,8 @@ static void ghes_estatus_cache_add(
- 			break;
- 		}
- 		count = atomic_read(&cache->count);
--		period = duration / (count + 1);
-+		period = duration;
-+		do_div(period, (count + 1));
- 		if (period > max_period) {
- 			max_period = period;
- 			slot = i;
--- 
-1.7.6.396.ge0613
-
-
---8323328-1257865506-1312322700=:25237--
+greg k-h
