@@ -1,65 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Aug 1
-Date: Tue, 2 Aug 2011 11:29:07 +1000
-Message-ID: <20110802112907.5ca1abdd81758bd3b0bb6321@canb.auug.org.au>
-References: <20110801144732.7f5204b219f628f2a2a63b0c@canb.auug.org.au>
-	<CA+icZUXq9V6h6kJrjckpeDXQAbQ-skiKLwTjD7Luhz1mTqSM1w@mail.gmail.com>
-	<20110801145422.cccff7aa.rdunlap@xenotime.net>
+Subject: linux-next: manual merge of the moduleh tree with Linus' tree
+Date: Tue, 2 Aug 2011 14:52:37 +1000
+Message-ID: <20110802145237.e8b90cff7f6954f6a12d8b3b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__2_Aug_2011_11_29_07_+1000_Eyq3xg_OauWMmYH+"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58158 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752527Ab1HBB3P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Aug 2011 21:29:15 -0400
-In-Reply-To: <20110801145422.cccff7aa.rdunlap@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@googlemail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Andrew Morton <akpm@linux-foundation.org>
-
---Signature=_Tue__2_Aug_2011_11_29_07_+1000_Eyq3xg_OauWMmYH+
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Paul,
 
-On Mon, 1 Aug 2011 14:54:22 -0700 Randy Dunlap <rdunlap@xenotime.net> wrote:
->
-> On Mon, 1 Aug 2011 09:01:21 +0200 Sedat Dilek wrote:
->=20
-> > Just FYI: mmotm-tree still misses the fixup-patch from [1].
-> >=20
-> > [1] https://patchwork.kernel.org/patch/1021602/
->=20
-> Yes, I am applying this patch daily (among others).  :(
->=20
-> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+Today's linux-next merge of the moduleh tree got a conflict in
+drivers/video/omap2/dss/rfbi.c between commit 24e6289c029b ("OMAP: DSS2:
+remove extra includes from include/video/omapdss.h") from Linus' tree and
+commit 06e632e042aa ("video: Add export.h for THIS_MODULE/EXPORT_SYMBOL
+to drivers/video") from the moduleh tree.
 
-OK, I will apply this patch to linux-next as a merge fixup on top of
-Andrew's tree.
-
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__2_Aug_2011_11_29_07_+1000_Eyq3xg_OauWMmYH+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJON1LjAAoJEDMEi1NhKgbsrhYIAJGrl6DOkP9h4bis0IYh9DBc
-UZ3A1C/KwKoBoTZEYvuZWn3rn3fbAmmrY/TwkqapDmPgD2Po8DLdeynOQWdYJF7k
-wICpMPhUQj8cJATfSi4arGJHifbarqYg1Q959UmDrqf5UxoqrQI45rp2iRAws3zE
-zEZqJcWN7kAeYR3Y0jT6IT+jRHQi+951DB6SbTprPuaulOMPuyksuhBqb0WV7tmt
-49EWeg3wI2Vzc2jeq3QtBDO+SXNqSGziGcEr4yA8oesdHqe32h4Uk3hadGYLpKE9
-WB4p4GKfHvVm39Iz9TYBe0bwrF63XmEH4sDkvlbaNJRCEDnHjwEom34p1SRVeCY=
-=VsYQ
------END PGP SIGNATURE-----
-
---Signature=_Tue__2_Aug_2011_11_29_07_+1000_Eyq3xg_OauWMmYH+--
+diff --cc drivers/video/omap2/dss/rfbi.c
+index 39f4c59,5dbd229..0000000
+--- a/drivers/video/omap2/dss/rfbi.c
++++ b/drivers/video/omap2/dss/rfbi.c
+@@@ -33,8 -33,7 +33,9 @@@
+  #include <linux/hrtimer.h>
+  #include <linux/seq_file.h>
+  #include <linux/semaphore.h>
+ +#include <linux/platform_device.h>
+ +#include <linux/pm_runtime.h>
++ #include <linux/export.h>
+  
+  #include <video/omapdss.h>
+  #include "dss.h"
