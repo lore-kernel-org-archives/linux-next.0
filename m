@@ -1,61 +1,59 @@
-From: Ivo Van Doorn <ivdoorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] rt2x00: Fix compilation without CONFIG_RT2X00_LIB_CRYPTO
-Date: Tue, 2 Aug 2011 11:48:41 +0200
-Message-ID: <CAOZOX0UhkkCj-n=WG7c7qxqfG4=Y1QScs0FQXS0ZNwBBS=N98A@mail.gmail.com>
-References: <CAGXE3d9ynyJX2eAr2bfwOc_PdDNEwVHDVsA_Jx1ReBht=eVuYw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next lines double on <www.kernel.org>
+Date: Tue, 2 Aug 2011 19:56:51 +1000
+Message-ID: <20110802195651.33d3081a17dbf478bb2c6094@canb.auug.org.au>
+References: <CA+icZUW04NV6SO36rOHGNaCvktByLFk666TPCRcu21LXQsSSag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAGXE3d9ynyJX2eAr2bfwOc_PdDNEwVHDVsA_Jx1ReBht=eVuYw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Helmut Schaa <helmut.schaa-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__2_Aug_2011_19_56_51_+1000_Z5p9Q/wbGrGIVGij"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53586 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751584Ab1HBJ5B (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Aug 2011 05:57:01 -0400
+In-Reply-To: <CA+icZUW04NV6SO36rOHGNaCvktByLFk666TPCRcu21LXQsSSag@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: ftpadmin@kernel.org
+Cc: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@googlemail.com>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
-On Tue, Aug 2, 2011 at 11:43 AM, Helmut Schaa
-<helmut.schaa-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> wrote:
-> This was introduced by commit
-> 77b5621bac4a56b83b9081f48d4e7d1accdde400 (rt2x00: Don't use queue ent=
-ry
-> as parameter when creating TX descriptor.)
->
-> Signed-off-by: Helmut Schaa <helmut.schaa-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+--Signature=_Tue__2_Aug_2011_19_56_51_+1000_Z5p9Q/wbGrGIVGij
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Ivo van Doorn <IvDoorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Hi,
 
-> ---
-> Sending directly to John as I assume this should go through the wirel=
-ess tree?
+On Tue, 2 Aug 2011 11:48:05 +0200 Sedat Dilek <sedat.dilek@googlemail.com> =
+wrote:
 >
-> =A0drivers/net/wireless/rt2x00/rt2x00lib.h | =A0 =A03 ++-
-> =A01 files changed, 2 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/net/wireless/rt2x00/rt2x00lib.h
-> b/drivers/net/wireless/rt2x00/rt2x00lib.h
-> index 15cdc7e..4cdf247 100644
-> --- a/drivers/net/wireless/rt2x00/rt2x00lib.h
-> +++ b/drivers/net/wireless/rt2x00/rt2x00lib.h
-> @@ -355,7 +355,8 @@ static inline enum cipher
-> rt2x00crypto_key_to_cipher(struct ieee80211_key_conf *
-> =A0 =A0 =A0 =A0return CIPHER_NONE;
-> =A0}
->
-> -static inline void rt2x00crypto_create_tx_descriptor(struct queue_en=
-try *entry,
-> +static inline void rt2x00crypto_create_tx_descriptor(struct
-> rt2x00_dev *rt2x00dev,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct sk_buff *skb,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct txentry_desc *txdesc)
-> =A0{
-> =A0}
-> --
-> 1.7.3.4
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireles=
-s" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> if you have these double lines to value highly the work of linux-next,
+> I have nothing against it :-).
+> But I guess it is not intended.
+
+I guess this is because I now have two trees: linux-next and
+linux-next-history.  Sorry about that, but maybe the page generetor needs
+a little more filtering.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__2_Aug_2011_19_56_51_+1000_Z5p9Q/wbGrGIVGij
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJON8njAAoJEDMEi1NhKgbsRokH/3zNmP9A2Z0paNBDm+IX9PBb
+3DEW8IIUXRAhvdobLK3FsdVbnT+3VX2hDS8e1LLW59v6l0uJMC7V/iJrEAuRe3Yw
+GdQiPbS1on/KfXeDyYMOPd+lYr86ng5J1bOPX6a0WBFLzlsqBe5mrzh6DnZuYKr0
+WWt0xPAF9/PHAjeIz4kCHfqWozw4blAq5VC0rJ1VbNXTCZPuc/S+F1xrKUZnOOVA
+TewTwPUqPdTnBTxmT31MJI1tep5uF2/HRWKNCLU7aVstoqDB4AeBD8InDch/O2Uu
+pxpkQSRSDvUR5IjeRM1/e0gbN2aAuWXpvmUvjxp0rNyT9nsI0hOpFH+73fGKZVg=
+=Pyoq
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Aug_2011_19_56_51_+1000_Z5p9Q/wbGrGIVGij--
