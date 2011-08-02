@@ -1,63 +1,56 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 1
-Date: Mon, 1 Aug 2011 14:54:22 -0700
-Message-ID: <20110801145422.cccff7aa.rdunlap@xenotime.net>
-References: <20110801144732.7f5204b219f628f2a2a63b0c@canb.auug.org.au>
-	<CA+icZUXq9V6h6kJrjckpeDXQAbQ-skiKLwTjD7Luhz1mTqSM1w@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci-current tree
+Date: Tue, 2 Aug 2011 10:48:38 +1000
+Message-ID: <20110802104838.ac7f46b54e8a3fcc4cdd9448@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__2_Aug_2011_10_48_38_+1000_6lB1GDLhmK=OoAsN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:46218 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752473Ab1HAVyY convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Aug 2011 17:54:24 -0400
-In-Reply-To: <CA+icZUXq9V6h6kJrjckpeDXQAbQ-skiKLwTjD7Luhz1mTqSM1w@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52686 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753238Ab1HBAsr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Aug 2011 20:48:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Mason <mason@myri.com>, Jordan Hargrave <jordan_hargrave@dell.com>
 
-On Mon, 1 Aug 2011 09:01:21 +0200 Sedat Dilek wrote:
+--Signature=_Tue__2_Aug_2011_10_48_38_+1000_6lB1GDLhmK=OoAsN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, Aug 1, 2011 at 6:47 AM, Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> > Hi all,
-> >
-> > Just in case anyone needs reminding: =A0Please do not add anything =
-destined
-> > for v3.2 into linux-next included trees until after v3.1-rc1.
-> >
-> > The powerpc allyesconfig build (at least) fails today.
-> >
-> > Changes since 20110729:
-> >
-> > Linus' tree still lost its build failure.
-> >
-> > The v4l-dvb tree lost its conflicts.
-> >
-> > The kgdb tree gained a build failure for which I reverted 3 commits=
-=2E
-> >
-> > The moduleh tree gained a conflict against the slabe-dma tree but l=
-ost
-> > its build failures (except for a few remaining merge fixups).
-> >
-> > -------------------------------------------------------------------=
----------
-> >
->=20
-> Just FYI: mmotm-tree still misses the fixup-patch from [1].
->=20
-> - Sedat -
->=20
-> [1] https://patchwork.kernel.org/patch/1021602/
+Hi Jesse,
 
-Yes, I am applying this patch daily (among others).  :(
+After merging the pci-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+ERROR: ".pcie_bus_configure_settings" [drivers/pci/hotplug/pci_hotplug.ko] =
+undefined!
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your cod=
-e ***
+Caused by commit b03e7495a862 ("PCI: Set PCI-E Max Payload Size on
+fabric").  Missing EXPORT_SYMBOL?
+
+I have used the pci-current tree from next-20110801 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__2_Aug_2011_10_48_38_+1000_6lB1GDLhmK=OoAsN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJON0lmAAoJEDMEi1NhKgbsjsUIAJ/AHpzxwYvpghrhFTvTcBz1
+NfuJgG5Y4QcZKspW6802iCbqQtXmA8J1v4T3SOOoCx3A5hAJbNgXEeyta0a/xSsZ
+HopZEqxaKw73kxUhf//SAjKpHPByDLDcv9tLN9COBs+cXEBgxe79X0p++DeF8n1k
+7dP+jI3dz4ZT5ClZ4rZSs3zigO/eSf58jO5lBKKGnEv5ku7WOiM4yExPLiNnmKSU
+YJ4SdGHJS5Jizllz6ET12geiCZqpHtQT8wFXAKsXMWIX+Pnmgd+yVp7hCdtn3UQb
+b1NPRNxgVG3j/nytkM3FuOeVS+dZP83aw+wAxNhL2IrLC5qvU2Ot2uP/sQONvT4=
+=0qtY
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Aug_2011_10_48_38_+1000_6lB1GDLhmK=OoAsN--
