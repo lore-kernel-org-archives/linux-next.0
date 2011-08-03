@@ -1,47 +1,38 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -mmotm] media: video/adp1653.c needs module.h
-Date: Wed, 3 Aug 2011 10:12:26 -0700
-Message-ID: <20110803101226.0d17b23e.rdunlap@xenotime.net>
-References: <201108022357.p72NvsZM022462@imap1.linux-foundation.org>
+Subject: Re: linux-next: Tree for Aug 3 (efivars/pstore)
+Date: Wed, 3 Aug 2011 10:40:30 -0700
+Message-ID: <20110803104030.3c6443ab.rdunlap@xenotime.net>
+References: <20110803151651.687fc6f377e255eccf58301b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <201108022357.p72NvsZM022462@imap1.linux-foundation.org>
-Sender: owner-linux-mm@kvack.org
-To: akpm@linux-foundation.org, linux-media@vger.kernel.org, mchehab@infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:56934 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752077Ab1HCRkd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Aug 2011 13:40:33 -0400
+In-Reply-To: <20110803151651.687fc6f377e255eccf58301b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Wed, 3 Aug 2011 15:16:51 +1000 Stephen Rothwell wrote:
 
-adp1653.c uses interfaces that are provided by <linux/module.h>
-and needs to include that header file to fix build errors.
+> Hi all,
+> 
+> Just in case anyone needs reminding:  Please do not add anything destined
+> for v3.2 into linux-next included trees until after v3.1-rc1.
 
-drivers/media/video/adp1653.c:453: warning: data definition has no type or storage class
-drivers/media/video/adp1653.c:453: warning: parameter names (without types) in function declaration
-drivers/media/video/adp1653.c:474: error: 'THIS_MODULE' undeclared (first use in this function)
-and more.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+What is this warning about?  I don't see the problem.
+
+The warning only happens on i386 AFAIK.  Must be some typedef glitch?
+
+drivers/firmware/efivars.c:602: warning: initialization from incompatible pointer type
+
+
+thanks,
 ---
- drivers/media/video/adp1653.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- mmotm-2011-0802-1619.orig/drivers/media/video/adp1653.c
-+++ mmotm-2011-0802-1619/drivers/media/video/adp1653.c
-@@ -32,6 +32,7 @@
- 
- #include <linux/delay.h>
- #include <linux/i2c.h>
-+#include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/version.h>
- #include <media/adp1653.h>
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
