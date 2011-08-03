@@ -1,43 +1,47 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: mmotm 2011-08-02-16-19 uploaded (fault-inject.h)
-Date: Wed, 3 Aug 2011 09:37:45 -0700
-Message-ID: <20110803093745.0fcb7b76.rdunlap@xenotime.net>
+Subject: [PATCH -mmotm] media: video/adp1653.c needs module.h
+Date: Wed, 3 Aug 2011 10:12:26 -0700
+Message-ID: <20110803101226.0d17b23e.rdunlap@xenotime.net>
 References: <201108022357.p72NvsZM022462@imap1.linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
 In-Reply-To: <201108022357.p72NvsZM022462@imap1.linux-foundation.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org, linux-media@vger.kernel.org, mchehab@infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 02 Aug 2011 16:19:30 -0700 akpm@linux-foundation.org wrote:
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-> The mm-of-the-moment snapshot 2011-08-02-16-19 has been uploaded to
-> 
->    http://userweb.kernel.org/~akpm/mmotm/
-> 
-> and will soon be available at
->    git://zen-kernel.org/kernel/mmotm.git
-> or
->    git://git.cmpxchg.org/linux-mmotm.git
-> 
-> It contains the following patches against 3.0:
+adp1653.c uses interfaces that are provided by <linux/module.h>
+and needs to include that header file to fix build errors.
 
-> fault-injection-add-ability-to-export-fault_attr-in-arbitrary-directory.patch
+drivers/media/video/adp1653.c:453: warning: data definition has no type or storage class
+drivers/media/video/adp1653.c:453: warning: parameter names (without types) in function declaration
+drivers/media/video/adp1653.c:474: error: 'THIS_MODULE' undeclared (first use in this function)
+and more.
 
-Please drop the ';' at the end of the second line below:
-
-+static inline struct dentry *fault_create_debugfs_attr(const char *name,
-+			struct dentry *parent, struct fault_attr *attr);
- {
-+	return ERR_PTR(-ENODEV);
- }
-
-It causes lots of build errors.
-
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ drivers/media/video/adp1653.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- mmotm-2011-0802-1619.orig/drivers/media/video/adp1653.c
++++ mmotm-2011-0802-1619/drivers/media/video/adp1653.c
+@@ -32,6 +32,7 @@
+ 
+ #include <linux/delay.h>
+ #include <linux/i2c.h>
++#include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/version.h>
+ #include <media/adp1653.h>
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
