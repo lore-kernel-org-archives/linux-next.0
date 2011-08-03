@@ -1,51 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with the
- staging.current tree
-Date: Wed, 3 Aug 2011 13:51:50 +1000
-Message-ID: <20110803135150.249e34087e78caa2797d2b60@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the moduleh tree
+Date: Wed, 3 Aug 2011 14:10:13 +1000
+Message-ID: <20110803141013.2ca5285e5b13a837fcf2c763@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54336 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34154 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753658Ab1HCDv4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Aug 2011 23:51:56 -0400
+	id S1751278Ab1HCEKS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Aug 2011 00:10:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Thornber <thornber@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Alasdair G Kergon <agk@redhat.com>
 
 Hi Paul,
 
-Today's linux-next merge of the moduleh tree got a conflict in
-drivers/staging/dt3155v4l/dt3155v4l.c between commit dac95cb8cf40
-("drivers/staging/dt3155v4l/dt3155v4l.c needs slab.h") from the
-staging.current tree and commit 9e1049c45c01 ("staging: Add module.h to
-drivers/staging users") from the moduleh tree.
+After merging the moduleh tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Also note that commit 5c751107250f ("staging: fix implicit use of slab.h
-in dt3155v4l/dt3155v4l.c") from the moduleh tree is a duplicate of the
-above staging.current tree commit (with the include in a slightly
-different spot.
+drivers/md/persistent-data/dm-transaction-manager.c:137:1: warning: data definition has no type or storage class
+drivers/md/persistent-data/dm-transaction-manager.c:137:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/md/persistent-data/dm-transaction-manager.c:137:1: warning: parameter names (without types) in function declaration
+drivers/md/persistent-data/dm-transaction-manager.c:143:1: warning: data definition has no type or storage class
+drivers/md/persistent-data/dm-transaction-manager.c:143:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/md/persistent-data/dm-transaction-manager.c:143:1: warning: parameter names (without types) in function declaration
+drivers/md/persistent-data/dm-transaction-manager.c:158:1: warning: data definition has no type or storage class
+drivers/md/persistent-data/dm-transaction-manager.c:158:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/md/persistent-data/dm-transaction-manager.c:158:1: warning: parameter names (without types) in function declaration
+drivers/md/persistent-data/dm-transaction-manager.c:169:1: warning: data definition has no type or storage class
+drivers/md/persistent-data/dm-transaction-manager.c:169:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/md/persistent-data/dm-transaction-manager.c:169:1: warning: parameter names (without types) in function declaration
+drivers/md/persistent-data/dm-transaction-manager.c:292:1: warning: data definition has no type or storage class
+drivers/md/persistent-data/dm-transaction-manager.c:292:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/md/persistent-data/dm-transaction-manager.c:292:1: warning: parameter names (without types) in function declaration
+drivers/md/persistent-data/dm-transaction-manager.c:303:1: warning: data definition has no type or storage class
+drivers/md/persistent-data/dm-transaction-manager.c:303:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/md/persistent-data/dm-transaction-manager.c:303:1: warning: parameter names (without types) in function declaration
+drivers/md/persistent-data/dm-transaction-manager.c:402:1: warning: data definition has no type or storage class
+drivers/md/persistent-data/dm-transaction-manager.c:402:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/md/persistent-data/dm-transaction-manager.c:402:1: warning: parameter names (without types) in function declaration
+drivers/md/persistent-data/dm-transaction-manager.c:413:1: warning: data definition has no type or storage class
+drivers/md/persistent-data/dm-transaction-manager.c:413:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/md/persistent-data/dm-transaction-manager.c:413:1: warning: parameter names (without types) in function declaration
 
-I fixed it up (see below) anc can carry the fix as necessary.
+Caused by an interaction between the module.h split and commit
+90616764c64f ("The persistent-data library offers a re-usable framework
+for the storage").
+
+I have applied the below patch for today.  This file should really have
+included module.h anyway ...
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 3 Aug 2011 14:06:38 +1000
+Subject: [PATCH] dm: dm-transaction-manager.c needs export.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ .../md/persistent-data/dm-transaction-manager.c    |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/md/persistent-data/dm-transaction-manager.c b/drivers/md/persistent-data/dm-transaction-manager.c
+index 4284921..bf9b61b 100644
+--- a/drivers/md/persistent-data/dm-transaction-manager.c
++++ b/drivers/md/persistent-data/dm-transaction-manager.c
+@@ -10,6 +10,7 @@
+ #include "dm-persistent-data-internal.h"
+ 
+ #include <linux/slab.h>
++#include <linux/export.h>
+ #include <linux/device-mapper.h>
+ 
+ #define DM_MSG_PREFIX "transaction manager"
+-- 
+1.7.5.4
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/staging/dt3155v4l/dt3155v4l.c
-index 05aa41c,024390b..0000000
---- a/drivers/staging/dt3155v4l/dt3155v4l.c
-+++ b/drivers/staging/dt3155v4l/dt3155v4l.c
-@@@ -21,8 -21,9 +21,9 @@@
-  #include <linux/version.h>
-  #include <linux/stringify.h>
-  #include <linux/delay.h>
- -#include <linux/slab.h>
-  #include <linux/kthread.h>
- +#include <linux/slab.h>
-+ #include <linux/module.h>
-  #include <media/v4l2-dev.h>
-  #include <media/v4l2-ioctl.h>
-  #include <media/videobuf2-dma-contig.h>
+http://www.canb.auug.org.au/~sfr/
