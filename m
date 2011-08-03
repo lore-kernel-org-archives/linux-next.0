@@ -1,38 +1,43 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the moduleh tree
-Date: Wed, 3 Aug 2011 07:26:43 -0700
-Message-ID: <20110803142643.GB9756@kroah.com>
-References: <20110803141641.00402b8e49dd68aa58c458ac@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: mmotm 2011-08-02-16-19 uploaded (fault-inject.h)
+Date: Wed, 3 Aug 2011 09:37:45 -0700
+Message-ID: <20110803093745.0fcb7b76.rdunlap@xenotime.net>
+References: <201108022357.p72NvsZM022462@imap1.linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3.smtp.messagingengine.com ([66.111.4.27]:41541 "EHLO
-	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754071Ab1HCO2m (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Aug 2011 10:28:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20110803141641.00402b8e49dd68aa58c458ac@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <201108022357.p72NvsZM022462@imap1.linux-foundation.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Aug 03, 2011 at 02:16:41PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> After merging the moduleh tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/staging/zcache/zcache-main.c:57:16: error: expected declaration specifiers or '...' before string constant
-> drivers/staging/zcache/zcache-main.c:57:1: warning: data definition has no type or storage class
-> drivers/staging/zcache/zcache-main.c:57:1: warning: type defaults to 'int' in declaration of 'MODULE_LICENSE'
-> drivers/staging/zcache/zcache-main.c:57:16: warning: function declaration isn't a prototype
-> 
-> Caused by commit fd6b68bbac9f ("staging: zcache: module is GPL")
-> interacting with the module.h split up.
-> 
-> Greg, this file needs module.h even in upstream.
+On Tue, 02 Aug 2011 16:19:30 -0700 akpm@linux-foundation.org wrote:
 
-Ick, sorry about that, now fixed.
+> The mm-of-the-moment snapshot 2011-08-02-16-19 has been uploaded to
+> 
+>    http://userweb.kernel.org/~akpm/mmotm/
+> 
+> and will soon be available at
+>    git://zen-kernel.org/kernel/mmotm.git
+> or
+>    git://git.cmpxchg.org/linux-mmotm.git
+> 
+> It contains the following patches against 3.0:
 
-greg k-h
+> fault-injection-add-ability-to-export-fault_attr-in-arbitrary-directory.patch
+
+Please drop the ';' at the end of the second line below:
+
++static inline struct dentry *fault_create_debugfs_attr(const char *name,
++			struct dentry *parent, struct fault_attr *attr);
+ {
++	return ERR_PTR(-ENODEV);
+ }
+
+It causes lots of build errors.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
