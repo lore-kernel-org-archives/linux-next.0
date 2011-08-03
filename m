@@ -1,79 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mmc tree with Linus' tree
-Date: Wed, 3 Aug 2011 13:16:03 +1000
-Message-ID: <20110803131603.1fb56fac0c3f82366fbc7b8c@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the
+ staging.current tree
+Date: Wed, 3 Aug 2011 13:51:50 +1000
+Message-ID: <20110803135150.249e34087e78caa2797d2b60@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48972 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54336 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753240Ab1HCDQJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Aug 2011 23:16:09 -0400
+	id S1753658Ab1HCDv4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Aug 2011 23:51:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lin <tony.lin@freescale.com>, Shawn Guo <shawn.guo@linaro.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>
 
-Hi Chris,
+Hi Paul,
 
-Today's linux-next merge of the mmc tree got a conflict in
-drivers/mmc/host/sdhci-esdhc-imx.c between commit 913413c307c9 ("mmc:
-sdhci-esdhc-imx: extend card_detect and write_protect support for mx5")
-from Linus' tree and commit 9259bee02100 ("mmc: esdhc-imx: fix card
-interrupt loss on freescale eSDHC") from the mmc tree.
+Today's linux-next merge of the moduleh tree got a conflict in
+drivers/staging/dt3155v4l/dt3155v4l.c between commit dac95cb8cf40
+("drivers/staging/dt3155v4l/dt3155v4l.c needs slab.h") from the
+staging.current tree and commit 9e1049c45c01 ("staging: Add module.h to
+drivers/staging users") from the moduleh tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
+Also note that commit 5c751107250f ("staging: fix implicit use of slab.h
+in dt3155v4l/dt3155v4l.c") from the moduleh tree is a duplicate of the
+above staging.current tree commit (with the include in a slightly
+different spot.
+
+I fixed it up (see below) anc can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/mmc/host/sdhci-esdhc-imx.c
-index 9ebfb4b,e62d33f..0000000
---- a/drivers/mmc/host/sdhci-esdhc-imx.c
-+++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-@@@ -140,14 -86,35 +141,36 @@@ static void esdhc_writel_le(struct sdhc
-  {
-  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-  	struct pltfm_imx_data *imx_data = pltfm_host->priv;
- +	struct esdhc_platform_data *boarddata = &imx_data->boarddata;
-- 
-- 	if (unlikely((reg == SDHCI_INT_ENABLE || reg == SDHCI_SIGNAL_ENABLE)
-- 			&& (boarddata->cd_type == ESDHC_CD_GPIO)))
-- 		/*
-- 		 * these interrupts won't work with a custom card_detect gpio
-- 		 */
-- 		val &= ~(SDHCI_INT_CARD_REMOVE | SDHCI_INT_CARD_INSERT);
-+ 	u32 data;
-+ 
-+ 	if (unlikely(reg == SDHCI_INT_ENABLE || reg == SDHCI_SIGNAL_ENABLE)) {
- -		if (imx_data->flags & ESDHC_FLAG_GPIO_FOR_CD)
-++		if (boarddata->cd_type == ESDHC_CD_GPIO))
-+ 			/*
-+ 			 * these interrupts won't work with a
-+ 			 * custom card_detect gpio
-+ 			 * (only applied to mx25/35)
-+ 			 */
-+ 			val &= ~(SDHCI_INT_CARD_REMOVE | SDHCI_INT_CARD_INSERT);
-+ 
-+ 		if (val & SDHCI_INT_CARD_INT) {
-+ 			/*
-+ 			 * clear D3CD bit and set D3CD bit to avoid
-+ 			 * missing the card interrupt
-+ 			 * this is a eSDHC controller problem so that
-+ 			 * we need to apply the following workaround
-+ 			 * clear and set D3CD bit will make eSDHC
-+ 			 * re-sample the card interrupt, In case
-+ 			 * a card interrupt was lost, re-sample it by
-+ 			 * the following steps.
-+ 			 */
-+ 			data = readl(host->ioaddr + SDHCI_HOST_CONTROL);
-+ 			data &= ~SDHCI_CTRL_D3CD;
-+ 			writel(data, host->ioaddr + SDHCI_HOST_CONTROL);
-+ 			data |= SDHCI_CTRL_D3CD;
-+ 			writel(data, host->ioaddr + SDHCI_HOST_CONTROL);
-+ 		}
-+ 	}
-  
-  	if (unlikely((imx_data->flags & ESDHC_FLAG_MULTIBLK_NO_INT)
-  				&& (reg == SDHCI_INT_STATUS)
+diff --cc drivers/staging/dt3155v4l/dt3155v4l.c
+index 05aa41c,024390b..0000000
+--- a/drivers/staging/dt3155v4l/dt3155v4l.c
++++ b/drivers/staging/dt3155v4l/dt3155v4l.c
+@@@ -21,8 -21,9 +21,9 @@@
+  #include <linux/version.h>
+  #include <linux/stringify.h>
+  #include <linux/delay.h>
+ -#include <linux/slab.h>
+  #include <linux/kthread.h>
+ +#include <linux/slab.h>
++ #include <linux/module.h>
+  #include <media/v4l2-dev.h>
+  #include <media/v4l2-ioctl.h>
+  #include <media/videobuf2-dma-contig.h>
