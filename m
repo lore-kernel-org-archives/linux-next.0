@@ -1,56 +1,117 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
+From: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
 Subject: Re: linux-next: Tree for Aug 4 (zcache)
-Date: Thu, 4 Aug 2011 14:51:45 -0700
-Message-ID: <20110804145145.4af47989.rdunlap@xenotime.net>
+Date: Thu, 4 Aug 2011 18:54:13 -0300
+Message-ID: <20110804215412.GE2919@nautilus.holoscopio.com>
 References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au>
 	<20110804142437.34e3a1ae.rdunlap@xenotime.net>
 	<20110804214441.GA697@kroah.com>
+	<20110804145145.4af47989.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/mixed; boundary="===============0413142534=="
+Return-path: <devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20110804145145.4af47989.rdunlap@xenotime.net>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
+	<mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel>
+List-Post: <mailto:devel@linuxdriverproject.org>
+List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
+	<mailto:devel-request@linuxdriverproject.org?subject=subscribe>
+Sender: devel-bounces@linuxdriverproject.org
+Errors-To: devel-bounces@linuxdriverproject.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: driverdevel <devel@driverdev.osuosl.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Dan Magenheimer <dan.magenheimer@oracle.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>
+List-Id: linux-next.vger.kernel.org
+
+
+--===============0413142534==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="924gEkU1VlJlwnwX"
+Content-Disposition: inline
+
+
+--924gEkU1VlJlwnwX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Aug 04, 2011 at 02:51:45PM -0700, Randy Dunlap wrote:
+> On Thu, 4 Aug 2011 14:44:41 -0700 Greg KH wrote:
+>=20
+> > On Thu, Aug 04, 2011 at 02:24:37PM -0700, Randy Dunlap wrote:
+> > > On Thu, 4 Aug 2011 14:58:34 +1000 Stephen Rothwell wrote:
+> > >=20
+> > > > Hi all,
+> > > >=20
+> > > > Just in case anyone needs reminding:  Please do not add anything de=
+stined
+> > > > for v3.2 into linux-next included trees until after v3.1-rc1.
+> > >=20
+> > >=20
+> > > on i386:
+> > >=20
+> > > drivers/built-in.o: In function `zcache_pampd_create':
+> > > zcache-main.c:(.text+0x159b8f): undefined reference to `__udivdi3'
+> >=20
+> > Very wierd, what would cause that?
+>=20
+> I don't see what's weird about it.
+>=20
+> Probably one of these divisions:
+>=20
+> 		if (curr_pers_pampd_count >
+> 		    (zv_page_count_policy_percent * totalram_pages) / 100)
+> 			goto out;
+>=20
+> or
+>=20
+> 			zv_mean_zsize =3D xv_get_total_size_bytes(cli->xvpool) /
+> 						curr_pers_pampd_count;
+>=20
+
+The second one. xv_get_total_size_bytes returns u64. I am just
+compile-testing a fix.
+
+>=20
+> ---
+> ~Randy
+> *** Remember to use Documentation/SubmitChecklist when testing your code =
+***
+
+
+--924gEkU1VlJlwnwX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOOxUDAAoJEEWxSg7udFZI34kP/RNVistdtE2QXbHtpV5FXonm
+9Fv+djhhU4qmuk47kLVxZwnwjzgdLBjAdCKANaLtW3telLJ2lctXdyUoIc6YG0ZN
+MXVUX102aas91mnshzy6ObaazNdaCJrbomCwLgEBopXY0I5QCwpGhG9LF+Gf6wGb
+7sGU6DQYFA9XoNWLiGKaHDQxGomhvAssYN4DLWUTXuFNXgta73tHvHFjGiGh7br7
+8wLiHx6+9K1arDSUP/B79JNzNvESZWSyvWqoYwmQ+0kUO2yH7tCjCPwyAjvM+21D
+BYEAhKtF7zkZLHwAlgmpADIiq6A62IueoiY8sbmP4xnsBa1E1I0Lyf/WeMvzZ7cl
+LqiZmyApPKUx3NQZJ7HxWEUUuAQBXynjfMaOhTwUYEtbJVjGsEXLBK77I1325hqH
+Di0AP6qjTxmBD3rhHsdWO9uQzxWSEHbqoFShXA6xyccjQ4PrQaScannIwS5ZThT6
+d83dAwlR7FExzbekQIZnCZ2ZDOXlY+cnqSntRo/kZYAI3b/hBRRlE+X2hHpTZbNe
+b54xKW5hrVFZ8tlmeZRLwRUGe7mrG0it7I03oZP5/pUapvAe+goNWEeORzPbaOK1
+xerqUOWyCBUsffyKsJQZlppOuDGm6nvEdrYkXKu5ivqoEEt7W3J9FT5pBEttw12r
+VY/e4Zifsl7aNyxbHmun
+=sRt6
+-----END PGP SIGNATURE-----
+
+--924gEkU1VlJlwnwX--
+
+--===============0413142534==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:39728 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753999Ab1HDVvr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Aug 2011 17:51:47 -0400
-In-Reply-To: <20110804214441.GA697@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dan Magenheimer <dan.magenheimer@oracle.com>, driverdevel <devel@driverdev.osuosl.org>, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Nitin Gupta <ngupta@vflare.org>
+Content-Disposition: inline
 
-On Thu, 4 Aug 2011 14:44:41 -0700 Greg KH wrote:
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/devel
 
-> On Thu, Aug 04, 2011 at 02:24:37PM -0700, Randy Dunlap wrote:
-> > On Thu, 4 Aug 2011 14:58:34 +1000 Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > Just in case anyone needs reminding:  Please do not add anything destined
-> > > for v3.2 into linux-next included trees until after v3.1-rc1.
-> > 
-> > 
-> > on i386:
-> > 
-> > drivers/built-in.o: In function `zcache_pampd_create':
-> > zcache-main.c:(.text+0x159b8f): undefined reference to `__udivdi3'
-> 
-> Very wierd, what would cause that?
-
-I don't see what's weird about it.
-
-Probably one of these divisions:
-
-		if (curr_pers_pampd_count >
-		    (zv_page_count_policy_percent * totalram_pages) / 100)
-			goto out;
-
-or
-
-			zv_mean_zsize = xv_get_total_size_bytes(cli->xvpool) /
-						curr_pers_pampd_count;
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--===============0413142534==--
