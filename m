@@ -1,43 +1,65 @@
-From: Marcelo Tosatti <mtosatti@redhat.com>
-Subject: Re: [PATCH -next] kvm: uses TASKSTATS, depends on NET
-Date: Wed, 3 Aug 2011 18:02:19 -0300
-Message-ID: <20110803210218.GC31923@amt.cnet>
-References: <20110802155727.a3d76babdd2c6fd5d33928c5@canb.auug.org.au>
- <20110802125431.e1902bd1.rdunlap@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH -mmotm] media: video/adp1653.c needs module.h
+Date: Thu, 4 Aug 2011 10:23:37 +1000
+Message-ID: <20110804102337.7a91f4d91d887ccd0168e4f8@canb.auug.org.au>
+References: <201108022357.p72NvsZM022462@imap1.linux-foundation.org>
+	<20110803101226.0d17b23e.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kvm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110802125431.e1902bd1.rdunlap@xenotime.net>
-Sender: kvm-owner@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__4_Aug_2011_10_23_37_+1000_.lv._/j8Qp6KHUCM"
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20110803101226.0d17b23e.rdunlap@xenotime.net>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Avi Kivity <avi@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org
+Cc: akpm@linux-foundation.org, linux-media@vger.kernel.org, mchehab@infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Aug 02, 2011 at 12:54:31PM -0700, Randy Dunlap wrote:
+--Signature=_Thu__4_Aug_2011_10_23_37_+1000_.lv._/j8Qp6KHUCM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Randy,
+
+On Wed, 3 Aug 2011 10:12:26 -0700 Randy Dunlap <rdunlap@xenotime.net> wrote:
+>
 > From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> CONFIG_TASKSTATS just had a change to use netlink, including
-> a change to "depends on NET".  Since "select" does not follow
-> dependencies, KVM also needs to depend on NET to prevent build
-> errors when CONFIG_NET is not enabled.
-> 
-> Sample of the reported "undefined reference" build errors:
-> 
-> taskstats.c:(.text+0x8f686): undefined reference to `nla_put'
-> taskstats.c:(.text+0x8f721): undefined reference to `nla_reserve'
-> taskstats.c:(.text+0x8f8fb): undefined reference to `init_net'
-> taskstats.c:(.text+0x8f905): undefined reference to `netlink_unicast'
-> taskstats.c:(.text+0x8f934): undefined reference to `kfree_skb'
-> taskstats.c:(.text+0x8f9e9): undefined reference to `skb_clone'
-> taskstats.c:(.text+0x90060): undefined reference to `__alloc_skb'
-> taskstats.c:(.text+0x901e9): undefined reference to `skb_put'
-> taskstats.c:(.init.text+0x4665): undefined reference to `genl_register_family'
-> taskstats.c:(.init.text+0x4699): undefined reference to `genl_register_ops'
-> taskstats.c:(.init.text+0x4710): undefined reference to `genl_unregister_ops'
-> taskstats.c:(.init.text+0x471c): undefined reference to `genl_unregister_family'
-> 
+>=20
+> adp1653.c uses interfaces that are provided by <linux/module.h>
+> and needs to include that header file to fix build errors.
+>=20
+> drivers/media/video/adp1653.c:453: warning: data definition has no type o=
+r storage class
+> drivers/media/video/adp1653.c:453: warning: parameter names (without type=
+s) in function declaration
+> drivers/media/video/adp1653.c:474: error: 'THIS_MODULE' undeclared (first=
+ use in this function)
+> and more.
+>=20
 > Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 
-Applied, thanks.
+That is a bug that is now in Linus' tree and this fix is pending in the
+moduleh tree in linux-next.  So this patch should go to Linus.
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__4_Aug_2011_10_23_37_+1000_.lv._/j8Qp6KHUCM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOOeaJAAoJEDMEi1NhKgbs87UH/30egYvPcRfZQ3gF+enSutHA
+sqn+pfBMKC9inTWgoQG+Fexryg2KHU9XDEMox7sXFtlj16nHdZB6yQ/wNoGusbLc
+FSjUIjIIYdE99Xr2WfXXVSa8qjV77OWvq4/FHxgTtoIE1ZHJxcyHrG31M7sxj1K0
+LPJQrRSM+XDrVnfl5L0Q/Yza3Z5t6Rv+YvpVzAiLL2VI/iXxDfgUc0XX0mfAzRT/
+FDpC68KIoMVKEeSQonKI+bbnLY721kE0A28Fdw4QrTLXq1byXzhmlyA6d33WwiS+
+wmxjeFf/HZoBbNAgGlohRRVwBzXJrXXFs/af0BuCcNbL+b4qkAXsA7gNzHypSYs=
+=PorZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Aug_2011_10_23_37_+1000_.lv._/j8Qp6KHUCM--
