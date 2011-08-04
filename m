@@ -1,117 +1,67 @@
 From: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
-Subject: Re: linux-next: Tree for Aug 4 (zcache)
-Date: Thu, 4 Aug 2011 18:54:13 -0300
-Message-ID: <20110804215412.GE2919@nautilus.holoscopio.com>
-References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au>
-	<20110804142437.34e3a1ae.rdunlap@xenotime.net>
-	<20110804214441.GA697@kroah.com>
-	<20110804145145.4af47989.rdunlap@xenotime.net>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0413142534=="
-Return-path: <devel-bounces@linuxdriverproject.org>
+Subject: [PATCH] zcache: Use div_u64 for 64-bit division
+Date: Thu,  4 Aug 2011 19:00:33 -0300
+Message-ID: <1312495234-20961-1-git-send-email-cascardo@holoscopio.com>
+References: <20110804145145.4af47989.rdunlap@xenotime.net>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from liberdade2.minaslivre.org ([74.50.53.203]:52147 "EHLO
+	liberdade.minaslivre.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755746Ab1HDWAw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Aug 2011 18:00:52 -0400
 In-Reply-To: <20110804145145.4af47989.rdunlap@xenotime.net>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
-	<mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel>
-List-Post: <mailto:devel@linuxdriverproject.org>
-List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
-	<mailto:devel-request@linuxdriverproject.org?subject=subscribe>
-Sender: devel-bounces@linuxdriverproject.org
-Errors-To: devel-bounces@linuxdriverproject.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: driverdevel <devel@driverdev.osuosl.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Dan Magenheimer <dan.magenheimer@oracle.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Dan Magenheimer <dan.magenheimer@oracle.com>, Nitin Gupta <ngupta@vflare.org>, Greg KH <greg@kroah.com>, driverdevel <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>
 
+xv_get_total_size_bytes returns a u64 value and it's used in a division.
+This causes build failures in 32-bit architectures, as reported by Randy
+Dunlap.
 
---===============0413142534==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="924gEkU1VlJlwnwX"
-Content-Disposition: inline
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: Nitin Gupta <ngupta@vflare.org>
+Cc: Greg KH <greg@kroah.com>
+Cc: driverdevel <devel@driverdev.osuosl.org>
+Cc: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+---
+ drivers/staging/zcache/zcache-main.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
 
-
---924gEkU1VlJlwnwX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Aug 04, 2011 at 02:51:45PM -0700, Randy Dunlap wrote:
-> On Thu, 4 Aug 2011 14:44:41 -0700 Greg KH wrote:
->=20
-> > On Thu, Aug 04, 2011 at 02:24:37PM -0700, Randy Dunlap wrote:
-> > > On Thu, 4 Aug 2011 14:58:34 +1000 Stephen Rothwell wrote:
-> > >=20
-> > > > Hi all,
-> > > >=20
-> > > > Just in case anyone needs reminding:  Please do not add anything de=
-stined
-> > > > for v3.2 into linux-next included trees until after v3.1-rc1.
-> > >=20
-> > >=20
-> > > on i386:
-> > >=20
-> > > drivers/built-in.o: In function `zcache_pampd_create':
-> > > zcache-main.c:(.text+0x159b8f): undefined reference to `__udivdi3'
-> >=20
-> > Very wierd, what would cause that?
->=20
-> I don't see what's weird about it.
->=20
-> Probably one of these divisions:
->=20
-> 		if (curr_pers_pampd_count >
-> 		    (zv_page_count_policy_percent * totalram_pages) / 100)
-> 			goto out;
->=20
-> or
->=20
-> 			zv_mean_zsize =3D xv_get_total_size_bytes(cli->xvpool) /
-> 						curr_pers_pampd_count;
->=20
-
-The second one. xv_get_total_size_bytes returns u64. I am just
-compile-testing a fix.
-
->=20
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code =
-***
-
-
---924gEkU1VlJlwnwX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJOOxUDAAoJEEWxSg7udFZI34kP/RNVistdtE2QXbHtpV5FXonm
-9Fv+djhhU4qmuk47kLVxZwnwjzgdLBjAdCKANaLtW3telLJ2lctXdyUoIc6YG0ZN
-MXVUX102aas91mnshzy6ObaazNdaCJrbomCwLgEBopXY0I5QCwpGhG9LF+Gf6wGb
-7sGU6DQYFA9XoNWLiGKaHDQxGomhvAssYN4DLWUTXuFNXgta73tHvHFjGiGh7br7
-8wLiHx6+9K1arDSUP/B79JNzNvESZWSyvWqoYwmQ+0kUO2yH7tCjCPwyAjvM+21D
-BYEAhKtF7zkZLHwAlgmpADIiq6A62IueoiY8sbmP4xnsBa1E1I0Lyf/WeMvzZ7cl
-LqiZmyApPKUx3NQZJ7HxWEUUuAQBXynjfMaOhTwUYEtbJVjGsEXLBK77I1325hqH
-Di0AP6qjTxmBD3rhHsdWO9uQzxWSEHbqoFShXA6xyccjQ4PrQaScannIwS5ZThT6
-d83dAwlR7FExzbekQIZnCZ2ZDOXlY+cnqSntRo/kZYAI3b/hBRRlE+X2hHpTZbNe
-b54xKW5hrVFZ8tlmeZRLwRUGe7mrG0it7I03oZP5/pUapvAe+goNWEeORzPbaOK1
-xerqUOWyCBUsffyKsJQZlppOuDGm6nvEdrYkXKu5ivqoEEt7W3J9FT5pBEttw12r
-VY/e4Zifsl7aNyxbHmun
-=sRt6
------END PGP SIGNATURE-----
-
---924gEkU1VlJlwnwX--
-
---===============0413142534==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/devel
-
---===============0413142534==--
+diff --git a/drivers/staging/zcache/zcache-main.c b/drivers/staging/zcache/zcache-main.c
+index 66469ac..2c41c44 100644
+--- a/drivers/staging/zcache/zcache-main.c
++++ b/drivers/staging/zcache/zcache-main.c
+@@ -28,6 +28,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
+ #include <linux/atomic.h>
++#include <linux/math64.h>
+ #include "tmem.h"
+ 
+ #include "../zram/xvmalloc.h" /* if built in drivers/staging */
+@@ -1162,6 +1163,7 @@ static void *zcache_pampd_create(char *data, size_t size, bool raw, int eph,
+ 	uint16_t client_id = get_client_id_from_client(cli);
+ 	unsigned long zv_mean_zsize;
+ 	unsigned long curr_pers_pampd_count;
++	u64 total_zsize;
+ 
+ 	if (eph) {
+ 		ret = zcache_compress(page, &cdata, &clen);
+@@ -1194,8 +1196,9 @@ static void *zcache_pampd_create(char *data, size_t size, bool raw, int eph,
+ 		}
+ 		/* reject if mean compression is too poor */
+ 		if ((clen > zv_max_mean_zsize) && (curr_pers_pampd_count > 0)) {
+-			zv_mean_zsize = xv_get_total_size_bytes(cli->xvpool) /
+-						curr_pers_pampd_count;
++			total_zsize = xv_get_total_size_bytes(cli->xvpool);
++			zv_mean_zsize = div_u64(total_zsize,
++						curr_pers_pampd_count);
+ 			if (zv_mean_zsize > zv_max_mean_zsize) {
+ 				zcache_mean_compress_poor++;
+ 				goto out;
+-- 
+1.7.5.4
