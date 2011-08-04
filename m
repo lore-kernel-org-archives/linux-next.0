@@ -1,62 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Aug 3 (efivars/pstore)
-Date: Thu, 4 Aug 2011 10:49:27 +1000
-Message-ID: <20110804104927.be96accd4f255d2537d7372a@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] efivars: fix build warning when PSTORE is not enabled
+Date: Wed, 3 Aug 2011 18:15:24 -0700
+Message-ID: <20110803181524.6b7062d1.rdunlap@xenotime.net>
 References: <20110803151651.687fc6f377e255eccf58301b@canb.auug.org.au>
 	<20110803104030.3c6443ab.rdunlap@xenotime.net>
+	<20110804104927.be96accd4f255d2537d7372a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__4_Aug_2011_10_49_27_+1000_G+QZc3kG1ifK01Q6"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35089 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756182Ab1HDAtg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Aug 2011 20:49:36 -0400
-In-Reply-To: <20110803104030.3c6443ab.rdunlap@xenotime.net>
+Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:34394 "HELO
+	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756489Ab1HDBP0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Aug 2011 21:15:26 -0400
+In-Reply-To: <20110804104927.be96accd4f255d2537d7372a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Matthew Garrett <mjg@redhat.com>, Tony Luck <tony.luck@intel.com>
 
---Signature=_Thu__4_Aug_2011_10_49_27_+1000_G+QZc3kG1ifK01Q6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 4 Aug 2011 10:49:27 +1000 Stephen Rothwell wrote:
 
-Hi Randy,
+> Hi Randy,
+> 
+> On Wed, 3 Aug 2011 10:40:30 -0700 Randy Dunlap <rdunlap@xenotime.net> wrote:
+> >
+> > What is this warning about?  I don't see the problem.
+> > 
+> > The warning only happens on i386 AFAIK.  Must be some typedef glitch?
+> > 
+> > drivers/firmware/efivars.c:602: warning: initialization from incompatible pointer type
+> 
+> The second argument to the write method in a pstore_info is supposed to
+> be "unsigned int" but the assigned function has "int" in the
+> !CONFIG_PSTORE version.
 
-On Wed, 3 Aug 2011 10:40:30 -0700 Randy Dunlap <rdunlap@xenotime.net> wrote:
->
-> What is this warning about?  I don't see the problem.
->=20
-> The warning only happens on i386 AFAIK.  Must be some typedef glitch?
->=20
-> drivers/firmware/efivars.c:602: warning: initialization from incompatible=
- pointer type
+Dang, I missed that second version of the write function.  Thanks.
 
-The second argument to the write method in a pstore_info is supposed to
-be "unsigned int" but the assigned function has "int" in the
-!CONFIG_PSTORE version.
+---
+From: Randy Dunlap <rdunlap@xenotime.net>
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Fix efivars.c build warning when CONFIG_PSTORE is not enabled:
 
---Signature=_Thu__4_Aug_2011_10_49_27_+1000_G+QZc3kG1ifK01Q6
-Content-Type: application/pgp-signature
+drivers/firmware/efivars.c:602: warning: initialization from incompatible pointer type
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: matthew.e.tolentino@intel.com
+---
+ drivers/firmware/efivars.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-iQEcBAEBAgAGBQJOOeyXAAoJEDMEi1NhKgbsdMUH/015pHB1inkGgEZy2ymkBd2r
-W4uPpfF1U2+/kzafjhX+dQb0K+4qHrCnhY3nl7LufYNPgVb4BnhSvt2fJU6ZbEgf
-q5ZsarZSXp3yfmtEf9RyhnKDJSXHdtaxZtZ30m4PfW2uHUkSa6AAEVR0bW/oCdng
-W1bWhW6goF5aKjFyipWuuW2kCVokVvVJIQhnr65939GGH+ZJNPz6k1wZpQWz6PuM
-rTp7APHMahBzRmFTlyAYvVzusppjQZkX0be1EmeCDukq4NQbXvBVd7lZ6gjQqOpv
-xfErraKqHBJEJ9UXl1kM910YA4kcYrS5JQxrxhk67Kk/gMrckljPQIpnWMFdbZk=
-=rw0I
------END PGP SIGNATURE-----
-
---Signature=_Thu__4_Aug_2011_10_49_27_+1000_G+QZc3kG1ifK01Q6--
+--- linux-next-20110803.orig/drivers/firmware/efivars.c
++++ linux-next-20110803/drivers/firmware/efivars.c
+@@ -580,8 +580,8 @@ static ssize_t efi_pstore_read(u64 *id, 
+ 	return -1;
+ }
+ 
+-static u64 efi_pstore_write(enum pstore_type_id type, int part, size_t size,
+-			    struct pstore_info *psi)
++static u64 efi_pstore_write(enum pstore_type_id type, unsigned int part,
++			    size_t size, struct pstore_info *psi)
+ {
+ 	return 0;
+ }
