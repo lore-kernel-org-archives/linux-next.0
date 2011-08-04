@@ -1,82 +1,115 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH] zcache: Use div_u64 for 64-bit division
-Date: Thu, 4 Aug 2011 15:17:07 -0700
-Message-ID: <20110804151707.ccb67e28.rdunlap@xenotime.net>
-References: <20110804145145.4af47989.rdunlap@xenotime.net>
-	<1312495234-20961-1-git-send-email-cascardo@holoscopio.com>
+Subject: [PATCH -next] drivers/base/inode.c: let vmstat_text be optional
+Date: Thu, 4 Aug 2011 15:22:11 -0700
+Message-ID: <20110804152211.ea10e3e7.rdunlap@xenotime.net>
+References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:35916 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754959Ab1HDWRO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Aug 2011 18:17:14 -0400
-In-Reply-To: <1312495234-20961-1-git-send-email-cascardo@holoscopio.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
-Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Dan Magenheimer <dan.magenheimer@oracle.com>, Nitin Gupta <ngupta@vflare.org>, Greg KH <greg@kroah.com>, driverdevel <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au>
+Sender: owner-linux-mm@kvack.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Amerigo Wang <amwang@redhat.com>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, akpm <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu,  4 Aug 2011 19:00:33 -0300 Thadeu Lima de Souza Cascardo wrote:
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-> xv_get_total_size_bytes returns a u64 value and it's used in a division.
-> This causes build failures in 32-bit architectures, as reported by Randy
-> Dunlap.
-> 
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Dan Magenheimer <dan.magenheimer@oracle.com>
-> Cc: Nitin Gupta <ngupta@vflare.org>
-> Cc: Greg KH <greg@kroah.com>
-> Cc: driverdevel <devel@driverdev.osuosl.org>
-> Cc: linux-next@vger.kernel.org
-> Cc: LKML <linux-kernel@vger.kernel.org>
+vmstat_text is only available when PROC_FS or SYSFS is enabled.
+This causes build errors in drivers/base/node.c when they are
+both disabled:
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+drivers/built-in.o: In function `node_read_vmstat':
+node.c:(.text+0x10e28f): undefined reference to `vmstat_text'
 
-Thanks.
+Rather than litter drivers/base/node.c with #ifdef/#endif around
+the affected lines of code, add macros for optional sysdev
+attributes so that those lines of code will be ignored, without
+using #ifdef/#endif in the .c file(s).  I.e., the ifdeffery
+is done only in a header file with sysdev_create_file_optional()
+and sysdev_remove_file_optional().
 
-> ---
->  drivers/staging/zcache/zcache-main.c |    7 +++++--
->  1 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/zcache/zcache-main.c b/drivers/staging/zcache/zcache-main.c
-> index 66469ac..2c41c44 100644
-> --- a/drivers/staging/zcache/zcache-main.c
-> +++ b/drivers/staging/zcache/zcache-main.c
-> @@ -28,6 +28,7 @@
->  #include <linux/spinlock.h>
->  #include <linux/types.h>
->  #include <linux/atomic.h>
-> +#include <linux/math64.h>
->  #include "tmem.h"
->  
->  #include "../zram/xvmalloc.h" /* if built in drivers/staging */
-> @@ -1162,6 +1163,7 @@ static void *zcache_pampd_create(char *data, size_t size, bool raw, int eph,
->  	uint16_t client_id = get_client_id_from_client(cli);
->  	unsigned long zv_mean_zsize;
->  	unsigned long curr_pers_pampd_count;
-> +	u64 total_zsize;
->  
->  	if (eph) {
->  		ret = zcache_compress(page, &cdata, &clen);
-> @@ -1194,8 +1196,9 @@ static void *zcache_pampd_create(char *data, size_t size, bool raw, int eph,
->  		}
->  		/* reject if mean compression is too poor */
->  		if ((clen > zv_max_mean_zsize) && (curr_pers_pampd_count > 0)) {
-> -			zv_mean_zsize = xv_get_total_size_bytes(cli->xvpool) /
-> -						curr_pers_pampd_count;
-> +			total_zsize = xv_get_total_size_bytes(cli->xvpool);
-> +			zv_mean_zsize = div_u64(total_zsize,
-> +						curr_pers_pampd_count);
->  			if (zv_mean_zsize > zv_max_mean_zsize) {
->  				zcache_mean_compress_poor++;
->  				goto out;
-> -- 
-
-
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ drivers/base/node.c    |    6 ++++--
+ include/linux/sysdev.h |   14 ++++++++++++++
+ include/linux/vmstat.h |    2 ++
+ 3 files changed, 20 insertions(+), 2 deletions(-)
+
+--- linux-next-20110804.orig/include/linux/vmstat.h
++++ linux-next-20110804/include/linux/vmstat.h
+@@ -258,6 +258,8 @@ static inline void refresh_zone_stat_thr
+ 
+ #endif		/* CONFIG_SMP */
+ 
++#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS)
+ extern const char * const vmstat_text[];
++#endif
+ 
+ #endif /* _LINUX_VMSTAT_H */
+--- linux-next-20110804.orig/drivers/base/node.c
++++ linux-next-20110804/drivers/base/node.c
+@@ -176,6 +176,7 @@ static ssize_t node_read_numastat(struct
+ }
+ static SYSDEV_ATTR(numastat, S_IRUGO, node_read_numastat, NULL);
+ 
++#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS)
+ static ssize_t node_read_vmstat(struct sys_device *dev,
+ 				struct sysdev_attribute *attr, char *buf)
+ {
+@@ -190,6 +191,7 @@ static ssize_t node_read_vmstat(struct s
+ 	return n;
+ }
+ static SYSDEV_ATTR(vmstat, S_IRUGO, node_read_vmstat, NULL);
++#endif
+ 
+ static ssize_t node_read_distance(struct sys_device * dev,
+ 			struct sysdev_attribute *attr, char * buf)
+@@ -274,7 +276,7 @@ int register_node(struct node *node, int
+ 		sysdev_create_file(&node->sysdev, &attr_meminfo);
+ 		sysdev_create_file(&node->sysdev, &attr_numastat);
+ 		sysdev_create_file(&node->sysdev, &attr_distance);
+-		sysdev_create_file(&node->sysdev, &attr_vmstat);
++		sysdev_create_file_optional(&node->sysdev, &attr_vmstat);
+ 
+ 		scan_unevictable_register_node(node);
+ 
+@@ -299,7 +301,7 @@ void unregister_node(struct node *node)
+ 	sysdev_remove_file(&node->sysdev, &attr_meminfo);
+ 	sysdev_remove_file(&node->sysdev, &attr_numastat);
+ 	sysdev_remove_file(&node->sysdev, &attr_distance);
+-	sysdev_remove_file(&node->sysdev, &attr_vmstat);
++	sysdev_remove_file_optional(&node->sysdev, &attr_vmstat);
+ 
+ 	scan_unevictable_unregister_node(node);
+ 	hugetlb_unregister_node(node);		/* no-op, if memoryless node */
+--- linux-next-20110804.orig/include/linux/sysdev.h
++++ linux-next-20110804/include/linux/sysdev.h
+@@ -114,6 +114,20 @@ struct sysdev_attribute { 
+ extern int sysdev_create_file(struct sys_device *, struct sysdev_attribute *);
+ extern void sysdev_remove_file(struct sys_device *, struct sysdev_attribute *);
+ 
++#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS)
++#define sysdev_create_file_optional(sysdev, sysdevattr)	\
++	return sysdev_create_file(sysdev, sysdevattr);
++
++#define sysdev_remove_file_optional(sysdev, sysdevattr)	\
++		sysdev_remove_file(sysdev, sysdevattr);
++#else
++#define sysdev_create_file_optional(sysdev, sysdevattr)	\
++		(0)
++
++#define sysdev_remove_file_optional(sysdev, sysdevattr)	\
++		do {} while (0)
++#endif
++
+ /* Create/remove NULL terminated attribute list */
+ static inline int
+ sysdev_create_files(struct sys_device *d, struct sysdev_attribute **a)
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
