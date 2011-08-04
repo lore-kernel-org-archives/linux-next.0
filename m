@@ -1,115 +1,81 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] drivers/base/inode.c: let vmstat_text be optional
-Date: Thu, 4 Aug 2011 15:22:11 -0700
-Message-ID: <20110804152211.ea10e3e7.rdunlap@xenotime.net>
-References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [Xen-devel] Re: linux-next: Tree for July 25 (xen)
+Date: Thu, 4 Aug 2011 18:30:18 -0400
+Message-ID: <20110804223018.GA4370@dumpdata.com>
+References: <20110725162542.39ea8d8cbd51604523635c1a@canb.auug.org.au>
+ <20110725144629.b752bf14.rdunlap@xenotime.net>
+ <20110804193534.GB12729@elte.hu>
+ <20110804195539.GA11198@dumpdata.com>
+ <20110804131516.c4da6595.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au>
-Sender: owner-linux-mm@kvack.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Amerigo Wang <amwang@redhat.com>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, akpm <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from acsinet15.oracle.com ([141.146.126.227]:22865 "EHLO
+	acsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755190Ab1HDWbM convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Aug 2011 18:31:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20110804131516.c4da6595.rdunlap@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, xen-devel@lists.xensource.com, LKML <linux-kernel@vger.kernel.org>, virtualization@lists.linux-foundation.org, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+> > >  arch/x86/xen/trace.c:44:2: error: array index in initializer not=
+ of integer type
+> > >  arch/x86/xen/trace.c:44:2: error: (near initialization for =E2=80=
+=98xen_hypercall_names=E2=80=99)
+> > >  arch/x86/xen/trace.c:45:1: error: =E2=80=98__HYPERVISOR_arch_4=E2=
+=80=99 undeclared here (not in a function)
+> > >  arch/x86/xen/trace.c:45:2: error: array index in initializer not=
+ of integer type
+> > >  arch/x86/xen/trace.c:45:2: error: (near initialization for =E2=80=
+=98xen_hypercall_names=E2=80=99)
+> >=20
+> > Oh, that I haven't seen. Can you send me the .config for that pleas=
+e.
+>=20
+> You can't be trying very hard then.  I see lots of these (but no,
 
-vmstat_text is only available when PROC_FS or SYSFS is enabled.
-This causes build errors in drivers/base/node.c when they are
-both disabled:
+Hm, It is not obvious to me what is causing that compile failure. Any i=
+deas?
 
-drivers/built-in.o: In function `node_read_vmstat':
-node.c:(.text+0x10e28f): undefined reference to `vmstat_text'
+> I haven't reported them.  One can grow weary of reporting xen bugs.)
+>=20
+>=20
+> > > even after:
+> > >=20
+> > >  b3c4b9825075: xen/tracing: fix compile errors when tracing is di=
+sabled.
+> > >=20
+> > > Btw., that the heck is going on with the commit that introduced t=
+he=20
+> > > build failure:
+> > >=20
+> > >  commit bd9ddc875b6659f9f74dcfd285c472bc58041abd
+> > >  Author:     Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+> > >  AuthorDate: Mon Jun 20 17:52:13 2011 -0700
+> > >  Commit:     Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+> > >  CommitDate: Mon Jul 18 15:43:46 2011 -0700
+> > >=20
+> > > It was apparently rebased shortly before the merge window and sen=
+t to=20
+> >=20
+> > Well, the rebase I get - it was done on top of the merge that intro=
+duced
+> > the new functionality.
+> >=20
+> > > Linus 3 days later, with little to no linux-next testing ...
+> >=20
+> > <Hmm> It did fix the compile problem.. albeit it created another on=
+e.
+> > >=20
+> > > I'm absolutely unhappy about how the Xen tree is being run. It's=20
+> > > using a sloppy, crappy workflow and it is producing crap.
+> >=20
+> > Do you have a manual of how you guys run your workflow?
+>=20
+> I just run 30-50 randconfigs per night (cron job).
 
-Rather than litter drivers/base/node.c with #ifdef/#endif around
-the affected lines of code, add macros for optional sysdev
-attributes so that those lines of code will be ignored, without
-using #ifdef/#endif in the .c file(s).  I.e., the ifdeffery
-is done only in a header file with sysdev_create_file_optional()
-and sysdev_remove_file_optional().
-
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
- drivers/base/node.c    |    6 ++++--
- include/linux/sysdev.h |   14 ++++++++++++++
- include/linux/vmstat.h |    2 ++
- 3 files changed, 20 insertions(+), 2 deletions(-)
-
---- linux-next-20110804.orig/include/linux/vmstat.h
-+++ linux-next-20110804/include/linux/vmstat.h
-@@ -258,6 +258,8 @@ static inline void refresh_zone_stat_thr
- 
- #endif		/* CONFIG_SMP */
- 
-+#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS)
- extern const char * const vmstat_text[];
-+#endif
- 
- #endif /* _LINUX_VMSTAT_H */
---- linux-next-20110804.orig/drivers/base/node.c
-+++ linux-next-20110804/drivers/base/node.c
-@@ -176,6 +176,7 @@ static ssize_t node_read_numastat(struct
- }
- static SYSDEV_ATTR(numastat, S_IRUGO, node_read_numastat, NULL);
- 
-+#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS)
- static ssize_t node_read_vmstat(struct sys_device *dev,
- 				struct sysdev_attribute *attr, char *buf)
- {
-@@ -190,6 +191,7 @@ static ssize_t node_read_vmstat(struct s
- 	return n;
- }
- static SYSDEV_ATTR(vmstat, S_IRUGO, node_read_vmstat, NULL);
-+#endif
- 
- static ssize_t node_read_distance(struct sys_device * dev,
- 			struct sysdev_attribute *attr, char * buf)
-@@ -274,7 +276,7 @@ int register_node(struct node *node, int
- 		sysdev_create_file(&node->sysdev, &attr_meminfo);
- 		sysdev_create_file(&node->sysdev, &attr_numastat);
- 		sysdev_create_file(&node->sysdev, &attr_distance);
--		sysdev_create_file(&node->sysdev, &attr_vmstat);
-+		sysdev_create_file_optional(&node->sysdev, &attr_vmstat);
- 
- 		scan_unevictable_register_node(node);
- 
-@@ -299,7 +301,7 @@ void unregister_node(struct node *node)
- 	sysdev_remove_file(&node->sysdev, &attr_meminfo);
- 	sysdev_remove_file(&node->sysdev, &attr_numastat);
- 	sysdev_remove_file(&node->sysdev, &attr_distance);
--	sysdev_remove_file(&node->sysdev, &attr_vmstat);
-+	sysdev_remove_file_optional(&node->sysdev, &attr_vmstat);
- 
- 	scan_unevictable_unregister_node(node);
- 	hugetlb_unregister_node(node);		/* no-op, if memoryless node */
---- linux-next-20110804.orig/include/linux/sysdev.h
-+++ linux-next-20110804/include/linux/sysdev.h
-@@ -114,6 +114,20 @@ struct sysdev_attribute { 
- extern int sysdev_create_file(struct sys_device *, struct sysdev_attribute *);
- extern void sysdev_remove_file(struct sys_device *, struct sysdev_attribute *);
- 
-+#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS)
-+#define sysdev_create_file_optional(sysdev, sysdevattr)	\
-+	return sysdev_create_file(sysdev, sysdevattr);
-+
-+#define sysdev_remove_file_optional(sysdev, sysdevattr)	\
-+		sysdev_remove_file(sysdev, sysdevattr);
-+#else
-+#define sysdev_create_file_optional(sysdev, sysdevattr)	\
-+		(0)
-+
-+#define sysdev_remove_file_optional(sysdev, sysdevattr)	\
-+		do {} while (0)
-+#endif
-+
- /* Create/remove NULL terminated attribute list */
- static inline int
- sysdev_create_files(struct sys_device *d, struct sysdev_attribute **a)
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Ok, do you have an mailing list where you send the output too?
