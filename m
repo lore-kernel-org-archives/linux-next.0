@@ -1,39 +1,53 @@
-From: Grant Likely <grant.likely@secretlab.ca>
+From: David Miller <davem@davemloft.net>
 Subject: Re: linux-next: build failure after merge of the final tree
  (devicetree tree related)
-Date: Thu, 4 Aug 2011 07:59:56 +0100
-Message-ID: <CACxGe6ss62FFwQOk49dHqEN_35iVTSz0bFg4eH1T_iSeipiJaw@mail.gmail.com>
-References: <20110804142858.f7f2f128e5a038beb20aa87b@canb.auug.org.au> <20110804163629.e866b8f3052b7ac34dc83912@canb.auug.org.au>
+Date: Thu, 04 Aug 2011 00:13:14 -0700 (PDT)
+Message-ID: <20110804.001314.1812549734453730417.davem@davemloft.net>
+References: <20110804142858.f7f2f128e5a038beb20aa87b@canb.auug.org.au>
+	<20110804163629.e866b8f3052b7ac34dc83912@canb.auug.org.au>
+	<CACxGe6ss62FFwQOk49dHqEN_35iVTSz0bFg4eH1T_iSeipiJaw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:64965 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751076Ab1HDHAS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Aug 2011 03:00:18 -0400
-In-Reply-To: <20110804163629.e866b8f3052b7ac34dc83912@canb.auug.org.au>
+Received: from shards.monkeyblade.net ([198.137.202.13]:33069 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752160Ab1HDHP5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Aug 2011 03:15:57 -0400
+In-Reply-To: <CACxGe6ss62FFwQOk49dHqEN_35iVTSz0bFg4eH1T_iSeipiJaw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Linus <torvalds@linux-foundation.org>
+To: grant.likely@secretlab.ca
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, shawn.guo@linaro.org, torvalds@linux-foundation.org
 
-On Thu, Aug 4, 2011 at 7:36 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi All,
->
-> On Thu, 4 Aug 2011 14:28:58 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the final tree, today's linux-next build (sparc64 defconfig)
->> failed like this:
->>
->> drivers/built-in.o: In function `of_alias_scan':
->> (.init.text+0x6074): undefined reference to `early_init_dt_alloc_memory_arch'
->>
->> Caused by commit 750f463a749e ("dt: add of_alias_scan and of_alias_get_id").
->>
->> I have reverted that patch for today.
->
-> And that commit has now gone into Linus' tree :-(
+From: Grant Likely <grant.likely@secretlab.ca>
+Date: Thu, 4 Aug 2011 07:59:56 +0100
 
-Pull my tree now; there is a fix in there.  I'm just emailing it now.
+> Pull my tree now; there is a fix in there.  I'm just emailing it now.
 
-g.
+Ugh, Grant :-/
+
+So now you have APIs for finding information in the in-kernel copy
+of the device tree which are only available for flat DT platforms?
+
+Don't do that, please.
+
+It makes more sense instead to have this alias munger unconditionally
+work on the in-kernel copy after the device tree has been imported,
+and for all ways in which the tree can be imported.
+
+Anything else leads to fragmented interfaces for device driver
+writers.
+
+The bug is that this of_alias_scan() thing doesn't get a pointer to an
+allocator function.  It needs one just like the
+__unflatten_device_tree() function does.
+
+In fact this points out that of_alias_scan() was only placed into one
+of the two FT unflattening sites, it needs to go into both as well as
+places that build the device tree from real OpenFirmware calls.  And
+that makes an even stronger argument for adding an allocator function
+pointer arg to this thing.
+
+I think this change was stillborn when you committed it and you should
+have reviewed it more thoroughly and pushed back.
