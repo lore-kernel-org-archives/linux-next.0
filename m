@@ -1,57 +1,63 @@
-From: Cong Wang <amwang@redhat.com>
-Subject: Re: [PATCH -next] drivers/base/inode.c: let vmstat_text be optional
-Date: Fri, 05 Aug 2011 16:02:58 +0800
-Message-ID: <4E3BA3B2.7090903@redhat.com>
-References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au> <20110804152211.ea10e3e7.rdunlap@xenotime.net> <4E3B57C3.80203@redhat.com> <4E3B82FD.1040500@xenotime.net>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [Xen-devel] Re: linux-next: Tree for July 25 (xen)
+Date: Fri, 5 Aug 2011 10:05:31 +0200
+Message-ID: <20110805080531.GA8052@elte.hu>
+References: <20110725162542.39ea8d8cbd51604523635c1a@canb.auug.org.au>
+ <20110725144629.b752bf14.rdunlap@xenotime.net>
+ <20110804193534.GB12729@elte.hu>
+ <20110804195539.GA11198@dumpdata.com>
+ <20110804131516.c4da6595.rdunlap@xenotime.net>
+ <20110804223259.GB4370@dumpdata.com>
+ <20110804224020.GA21492@dumpdata.com>
+ <4E3B3117.5050308@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <4E3B82FD.1040500@xenotime.net>
-Sender: owner-linux-mm@kvack.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:54786 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754895Ab1HEIHT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Aug 2011 04:07:19 -0400
+Content-Disposition: inline
+In-Reply-To: <4E3B3117.5050308@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, akpm <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, xen-devel@lists.xensource.com, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, virtualization@lists.linux-foundation.org, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds <torvalds@linux-foundation.org>
 
-=E4=BA=8E 2011=E5=B9=B408=E6=9C=8805=E6=97=A5 13:43, Randy Dunlap =E5=86=99=
-=E9=81=93:
-> On 08/04/11 19:38, Cong Wang wrote:
->> =E4=BA=8E 2011=E5=B9=B408=E6=9C=8805=E6=97=A5 06:22, Randy Dunlap =E5=86=
-=99=E9=81=93:
->>> From: Randy Dunlap<rdunlap@xenotime.net>
->>>
->>> vmstat_text is only available when PROC_FS or SYSFS is enabled.
->>> This causes build errors in drivers/base/node.c when they are
->>> both disabled:
->>>
->>> drivers/built-in.o: In function `node_read_vmstat':
->>> node.c:(.text+0x10e28f): undefined reference to `vmstat_text'
->>>
->>> Rather than litter drivers/base/node.c with #ifdef/#endif around
->>> the affected lines of code, add macros for optional sysdev
->>> attributes so that those lines of code will be ignored, without
->>> using #ifdef/#endif in the .c file(s).  I.e., the ifdeffery
->>> is done only in a header file with sysdev_create_file_optional()
->>> and sysdev_remove_file_optional().
->>>
->>
->> This looks ugly for me, because other sysfs files here are not optiona=
-l
->> only due to that they don't rely on vmstat_text.
->>
->> I still think my approach to fix this is better, that is, introducing
->> a new Kconfig for drivers/base/node.c which depends on CONFIG_SYSFS.
->
-> Did you post a patch for that?  I must have missed it.
+* Randy Dunlap <rdunlap@xenotime.net> wrote:
 
-Yes, see https://lkml.org/lkml/2011/7/19/31.
+> On 08/04/11 15:40, Konrad Rzeszutek Wilk wrote:
+> > On Thu, Aug 04, 2011 at 06:32:59PM -0400, Konrad Rzeszutek Wilk wro=
+te:
+> >>>>> These build failures are still triggering upstream:
+> >>>>>
+> >>>>>  arch/x86/xen/trace.c:44:2: error: array index in initializer n=
+ot of integer type
+> >>>>>  arch/x86/xen/trace.c:44:2: error: (near initialization for =E2=
+=80=98xen_hypercall_names=E2=80=99)
+> >>>>>  arch/x86/xen/trace.c:45:1: error: =E2=80=98__HYPERVISOR_arch_4=
+=E2=80=99 undeclared here (not in a function)
+> >>>>>  arch/x86/xen/trace.c:45:2: error: array index in initializer n=
+ot of integer type
+> >>>>>  arch/x86/xen/trace.c:45:2: error: (near initialization for =E2=
+=80=98xen_hypercall_names=E2=80=99)
+> >>>>
+> >>>> Oh, that I haven't seen. Can you send me the .config for that pl=
+ease.
+> >>>
+> >>> You can't be trying very hard then.  I see lots of these (but no,
+> >>
+> >> Ah, I am getting it now. Thanks for reporting it.
+> >=20
+> > This should do the trick:
+>=20
+> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
-I think I need to resend it. :)
+That patch did the trick here too:
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter=
-.ca/
-Don't email: <a href=3Dmailto:"dont@kvack.org"> email@kvack.org </a>
+Acked-by: Ingo Molnar <mingo@elte.hu>
+
+Thanks,
+
+	Ingo
