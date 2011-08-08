@@ -1,101 +1,117 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [Xen-devel] Re: linux-next: Tree for July 25 (xen)
-Date: Mon, 08 Aug 2011 09:01:07 -0400
-Message-ID: <1312808467.18583.223.camel@gandalf.stny.rr.com>
-References: <20110725162542.39ea8d8cbd51604523635c1a@canb.auug.org.au>
-	 <20110725144629.b752bf14.rdunlap@xenotime.net>
-	 <20110804193534.GB12729@elte.hu> <20110804195539.GA11198@dumpdata.com>
-	 <20110804131516.c4da6595.rdunlap@xenotime.net>
-	 <20110804223259.GB4370@dumpdata.com> <20110804224020.GA21492@dumpdata.com>
-	 <4E3B3117.5050308@xenotime.net> <20110805080531.GA8052@elte.hu>
-	 <20110805211423.GA9765@elte.hu> <20110806015815.GA26833@dumpdata.com>
-	 <4E3D8657.7000704@goop.org>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] staging: fix comedi build errors
+Date: Mon, 8 Aug 2011 16:32:12 -0700
+Message-ID: <20110808163212.6fb9c484.rdunlap@xenotime.net>
+References: <20110808145651.56b9c907d21c5c3ced373701@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.124]:40652 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751140Ab1HHNBM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Aug 2011 09:01:12 -0400
-In-Reply-To: <4E3D8657.7000704@goop.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, xen-devel@lists.xensource.com, LKML <linux-kernel@vger.kernel.org>, virtualization@lists.linux-foundation.org, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110808145651.56b9c907d21c5c3ced373701@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, driverdevel <devel@driverdev.osuosl.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, 2011-08-06 at 11:22 -0700, Jeremy Fitzhardinge wrote:
-> On 08/05/2011 06:58 PM, Konrad Rzeszutek Wilk wrote:
-> > On Fri, Aug 05, 2011 at 11:14:23PM +0200, Ingo Molnar wrote:
-> >> * Ingo Molnar <mingo@elte.hu> wrote:
-> >>
-> >>> * Randy Dunlap <rdunlap@xenotime.net> wrote:
-> >>>
-> >>>> On 08/04/11 15:40, Konrad Rzeszutek Wilk wrote:
-> >>>>> On Thu, Aug 04, 2011 at 06:32:59PM -0400, Konrad Rzeszutek Wilk=
- wrote:
-> >>>>>>>>> These build failures are still triggering upstream:
-> >>>>>>>>>
-> >>>>>>>>>  arch/x86/xen/trace.c:44:2: error: array index in initializ=
-er not of integer type
-> >>>>>>>>>  arch/x86/xen/trace.c:44:2: error: (near initialization for=
- =E2=80=98xen_hypercall_names=E2=80=99)
-> >>>>>>>>>  arch/x86/xen/trace.c:45:1: error: =E2=80=98__HYPERVISOR_ar=
-ch_4=E2=80=99 undeclared here (not in a function)
-> >>>>>>>>>  arch/x86/xen/trace.c:45:2: error: array index in initializ=
-er not of integer type
-> >>>>>>>>>  arch/x86/xen/trace.c:45:2: error: (near initialization for=
- =E2=80=98xen_hypercall_names=E2=80=99)
-> >>>>>>>> Oh, that I haven't seen. Can you send me the .config for tha=
-t please.
-> >>>>>>> You can't be trying very hard then.  I see lots of these (but=
- no,
-> >>>>>> Ah, I am getting it now. Thanks for reporting it.
-> >>>>> This should do the trick:
-> >>>> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-> >>> That patch did the trick here too:
-> >>>
-> >>> Acked-by: Ingo Molnar <mingo@elte.hu>
-> >> Except that i'm still seeing the occasional build failure - see th=
-e=20
-> >> error log below. Config attached.
-> > Much appreciate for the report. I believe this fix (which I think h=
-it
-> > linux-next yesterday?) should do that:
-> >
-> > commit 1e9ea2656b656edd3c8de98675bbc0340211b5bd
-> > Author: Jeremy Fitzhardinge <jeremy@goop.org>
-> > Date:   Wed Aug 3 09:43:44 2011 -0700
-> >
-> >      xen/tracing: it looks like we wanted CONFIG_FTRACE
-> >    =20
-> >     Apparently we wanted CONFIG_FTRACE rather the CONFIG_FUNCTION_T=
-RACER.
-> >    =20
-> >     Reported-by: Sander Eikelenboom <linux@eikelenboom.it>
-> >     Tested-by: Sander Eikelenboom <linux@eikelenboom.it>
-> >     Signed-off-by: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.=
-com>
-> >     Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> >
-> > diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
-> > index 45e94ac..3326204 100644
-> > --- a/arch/x86/xen/Makefile
-> > +++ b/arch/x86/xen/Makefile
-> > @@ -15,7 +15,7 @@ obj-y		:=3D enlighten.o setup.o multicalls.o mmu.=
-o irq.o \
-> >  			grant-table.o suspend.o platform-pci-unplug.o \
-> >  			p2m.o
-> > =20
-> > -obj-$(CONFIG_FUNCTION_TRACER) +=3D trace.o
-> > +obj-$(CONFIG_FTRACE) +=3D trace.o
-> > =20
->=20
-> I'm not sure this is correct either.  Maybe it should be
-> CONFIG_TRACEPOINTS?  Steven?
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Actually, I believe the correct answer is:
+Fix build errors when CONFIG_COMEDI_PCI_DRIVERS is not enabled
+and CONFIG_COMEDI_PCI_DRIVERS was used where CONFIG_ISA_DMA_API
+should have been used.
 
-CONFIG_EVENT_TRACING
+drivers/staging/comedi/drivers/ni_labpc.c: In function 'labpc_ai_cmd':
+drivers/staging/comedi/drivers/ni_labpc.c:1351: error: implicit declaration of function 'labpc_suggest_transfer_size'
+drivers/staging/comedi/drivers/ni_labpc.c: At top level:
+drivers/staging/comedi/drivers/ni_labpc.c:1802: error: conflicting types for 'labpc_suggest_transfer_size'
+drivers/staging/comedi/drivers/ni_labpc.c:1351: note: previous implicit declaration of 'labpc_suggest_transfer_size' was here
 
--- Steve
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
+ drivers/staging/comedi/drivers/ni_labpc.c |   20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+
+--- linux-next-20110808.orig/drivers/staging/comedi/drivers/ni_labpc.c
++++ linux-next-20110808/drivers/staging/comedi/drivers/ni_labpc.c
+@@ -241,8 +241,10 @@ static int labpc_eeprom_write_insn(struc
+ 				   struct comedi_insn *insn,
+ 				   unsigned int *data);
+ static void labpc_adc_timing(struct comedi_device *dev, struct comedi_cmd *cmd);
+-#ifdef CONFIG_COMEDI_PCI
++#ifdef CONFIG_ISA_DMA_API
+ static unsigned int labpc_suggest_transfer_size(struct comedi_cmd cmd);
++#endif
++#ifdef CONFIG_COMEDI_PCI_DRIVERS
+ static int labpc_find_device(struct comedi_device *dev, int bus, int slot);
+ #endif
+ static int labpc_dio_mem_callback(int dir, int port, int data,
+@@ -459,7 +461,7 @@ static const struct labpc_board_struct l
+ 	 .ai_scan_up = 0,
+ 	 .memory_mapped_io = 0,
+ 	 },
+-#ifdef CONFIG_COMEDI_PCI
++#ifdef CONFIG_COMEDI_PCI_DRIVERS
+ 	{
+ 	 .name = "pci-1200",
+ 	 .device_id = 0x161,
+@@ -503,14 +505,14 @@ static struct comedi_driver driver_labpc
+ 	.offset = sizeof(struct labpc_board_struct),
+ };
+ 
+-#ifdef CONFIG_COMEDI_PCI
++#ifdef CONFIG_COMEDI_PCI_DRIVERS
+ static DEFINE_PCI_DEVICE_TABLE(labpc_pci_table) = {
+ 	{PCI_DEVICE(PCI_VENDOR_ID_NI, 0x161)},
+ 	{0}
+ };
+ 
+ MODULE_DEVICE_TABLE(pci, labpc_pci_table);
+-#endif /* CONFIG_COMEDI_PCI */
++#endif /* CONFIG_COMEDI_PCI_DRIVERS */
+ 
+ static inline int labpc_counter_load(struct comedi_device *dev,
+ 				     unsigned long base_address,
+@@ -720,7 +722,7 @@ static int labpc_attach(struct comedi_de
+ 	unsigned long iobase = 0;
+ 	unsigned int irq = 0;
+ 	unsigned int dma_chan = 0;
+-#ifdef CONFIG_COMEDI_PCI
++#ifdef CONFIG_COMEDI_PCI_DRIVERS
+ 	int retval;
+ #endif
+ 
+@@ -742,7 +744,7 @@ static int labpc_attach(struct comedi_de
+ #endif
+ 		break;
+ 	case pci_bustype:
+-#ifdef CONFIG_COMEDI_PCI
++#ifdef CONFIG_COMEDI_PCI_DRIVERS
+ 		retval = labpc_find_device(dev, it->options[0], it->options[1]);
+ 		if (retval < 0)
+ 			return retval;
+@@ -772,7 +774,7 @@ static int labpc_attach(struct comedi_de
+ }
+ 
+ /* adapted from ni_pcimio for finding mite based boards (pc-1200) */
+-#ifdef CONFIG_COMEDI_PCI
++#ifdef CONFIG_COMEDI_PCI_DRIVERS
+ static int labpc_find_device(struct comedi_device *dev, int bus, int slot)
+ {
+ 	struct mite_struct *mite;
+@@ -820,7 +822,7 @@ int labpc_common_detach(struct comedi_de
+ 		free_irq(dev->irq, dev);
+ 	if (thisboard->bustype == isa_bustype && dev->iobase)
+ 		release_region(dev->iobase, LABPC_SIZE);
+-#ifdef CONFIG_COMEDI_PCI
++#ifdef CONFIG_COMEDI_PCI_DRIVERS
+ 	if (devpriv->mite)
+ 		mite_unsetup(devpriv->mite);
+ #endif
+@@ -2135,7 +2137,7 @@ static void write_caldac(struct comedi_d
+ 	devpriv->write_byte(devpriv->command5_bits, dev->iobase + COMMAND5_REG);
+ }
+ 
+-#ifdef CONFIG_COMEDI_PCI
++#ifdef CONFIG_COMEDI_PCI_DRIVERS
+ static int __devinit driver_labpc_pci_probe(struct pci_dev *dev,
+ 					    const struct pci_device_id *ent)
+ {
