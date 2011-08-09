@@ -1,55 +1,28 @@
-From: Vinod Koul <vkoul@infradead.org>
-Subject: Re: linux-next: manual merge of the moduleh tree with the
- slave-dma tree
-Date: Tue, 09 Aug 2011 10:11:33 +0530
-Message-ID: <1312864893.1539.48.camel@vkoul-udesk3>
-References: <20110809125623.e25f685fd20c787fcf58fcfc@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build warnings after merge of the regmap tree
+Date: Wed, 10 Aug 2011 00:01:53 +0900
+Message-ID: <20110809150152.GD15861@opensource.wolfsonmicro.com>
+References: <20110809132111.af88776afc00f9e87e1bd6a1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:37042 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750810Ab1HIEmh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Aug 2011 00:42:37 -0400
-In-Reply-To: <20110809125623.e25f685fd20c787fcf58fcfc@canb.auug.org.au>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:36406 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752035Ab1HIPB5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Aug 2011 11:01:57 -0400
+Content-Disposition: inline
+In-Reply-To: <20110809132111.af88776afc00f9e87e1bd6a1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dan <dan.j.williams@intel.com>
-Cc: vinod.koul@intel.com, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2011-08-09 at 12:56 +1000, Stephen Rothwell wrote:
-> 
-> Vinod, that slave-dma tree patch should probably remove the bare "struct
-> scallerlist;" since it now includes scatterlist,h.
-> 
-Yes, makes sense Dan does this look good to you
+On Tue, Aug 09, 2011 at 01:21:11PM +1000, Stephen Rothwell wrote:
 
-From: Vinod Koul <vinod.koul@intel.com>
-Date: Tue, 9 Aug 2011 10:08:10 +0530
-Subject: [PATCH] dmaengine: remove struct scatterlist for header
+> After merging the regmap tree, today's linux-next build (x86_64
+> allmodconfig) produced these warning:
 
-Commit 90b44f8 introduces dmaengine_prep_slave_single API which adds
-scatterlist.h in dmaengine.h, so defining struct scatterlist is not
-required
+Well, if you will go and test with minority architectures with strange
+choices for standard types :)
 
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
----
- include/linux/dmaengine.h |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-index 0d738c9..ace51af 100644
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -26,8 +26,6 @@
- #include <linux/dma-direction.h>
- #include <linux/scatterlist.h>
- 
--struct scatterlist;
--
- /**
-  * typedef dma_cookie_t - an opaque DMA cookie
-  *
--- 
-1.7.0.4
+Should be fixed in -next tomorrow.
