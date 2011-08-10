@@ -1,28 +1,57 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build warnings after merge of the regmap tree
-Date: Wed, 10 Aug 2011 00:01:53 +0900
-Message-ID: <20110809150152.GD15861@opensource.wolfsonmicro.com>
-References: <20110809132111.af88776afc00f9e87e1bd6a1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 10 Aug 2011 10:25:25 +1000
+Message-ID: <20110810102525.484fcdc69b5501ffd4b16928@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__10_Aug_2011_10_25_25_+1000_3krc8R1enFZnBJU="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:36406 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752035Ab1HIPB5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Aug 2011 11:01:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20110809132111.af88776afc00f9e87e1bd6a1@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36542 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752144Ab1HJAZi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Aug 2011 20:25:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Aug 09, 2011 at 01:21:11PM +1000, Stephen Rothwell wrote:
+--Signature=_Wed__10_Aug_2011_10_25_25_+1000_3krc8R1enFZnBJU=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> After merging the regmap tree, today's linux-next build (x86_64
-> allmodconfig) produced these warning:
+Hi all,
 
-Well, if you will go and test with minority architectures with strange
-choices for standard types :)
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Should be fixed in -next tomorrow.
+sound/soc/codecs/wm8750.c:785:1: error: '__mod_spi_device_table' aliased to=
+ undefined symbol 'wm8750_spi_id'
+sound/soc/codecs/wm8750.c:785:1: error: '__mod_spi_device_table' aliased to=
+ undefined symbol 'wm8750_spi_id'
+
+Caused by commit 40045a85df0e ("ASoC: Fix SPI driver binding for WM8987").
+
+I have used the sound-asoc tree from next-20110809 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+
+--Signature=_Wed__10_Aug_2011_10_25_25_+1000_3krc8R1enFZnBJU=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOQc/1AAoJEDMEi1NhKgbsy9kH/0wgEaxtDdE1vZ8cUw5D0epj
+AvqKZZCZ7QkQ0KbQQV5HVEnwP4nmY3Gl5YLZTaH+qsA2QgQbq4yd2eltDMOX4Hod
+PLIbOcG//7wqoJ+L9Q9I+Ga3jaY4keI1wSJMoVrFnVuwdwGv93Cyum3nIjaTRulw
+bX07GAwIasIMIrfEpP/k5KtE+CCkKAl9WMEGxAH2WseS1F0KAUz/0ZIBhcmjXDbU
+bMjdHRVyUd72mDg3tvtk9rFCAbnlO3KYvUzhb/G10qEwxuYt5GGTfE3nTgDCXSom
+rEQ5aKQKZzrSgZQ7ICq7Xb/RzxmD53CTdFwy8S/BIJG/LgpusOjK6zQAo7NcVk0=
+=KPdQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Aug_2011_10_25_25_+1000_3krc8R1enFZnBJU=--
