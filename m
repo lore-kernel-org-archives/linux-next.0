@@ -1,42 +1,63 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the security-testing
- tree
-Date: Tue, 09 Aug 2011 21:48:29 -0400
-Message-ID: <1312940909.2611.10.camel@localhost.localdomain>
-References: <20110810105840.cb0b3ac63c84b51b98029d8c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the moduleh tree
+Date: Wed, 10 Aug 2011 11:49:56 +1000
+Message-ID: <20110810114956.238d66772883636e3040d29f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e5.ny.us.ibm.com ([32.97.182.145]:49189 "EHLO e5.ny.us.ibm.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46080 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750804Ab1HJBsd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Aug 2011 21:48:33 -0400
-In-Reply-To: <20110810105840.cb0b3ac63c84b51b98029d8c@canb.auug.org.au>
+	id S1752671Ab1HJBuH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Aug 2011 21:50:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov <borislav.petkov@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-On Wed, 2011-08-10 at 10:58 +1000, Stephen Rothwell wrote:
-> Hi James,
-> 
-> After merging the security-testing tree, today's linux-next build
-> (powerpc ppc64_defconfig) failed like this:
-> 
-> fs/reiserfs/xattr_security.c: In function 'reiserfs_security_init':
-> fs/reiserfs/xattr_security.c:69:2: error: implicit declaration of function 'security_old_inode_init_security'
-> 
-> Caused by commit 9d8f13ba3f48 ("security: new
-> security_inode_init_security API adds function callback").  Forgotten
-> include?
-> 
-> I have used the security-testing tree from next-20110809 for today.
+Hi Paul,
 
-No, I left out the stub definition in the include.  James, how do you
-want me to correct this and the missing 'inline'?  Should I be updating
-the original patches or submitting them as new patches?
+After merging the moduleh tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-thanks,
+arch/x86/kernel/cpu/amd.c: In function 'bsp_init_amd':
+arch/x86/kernel/cpu/amd.c:437:3: error: 'va_align' undeclared (first use in this function)
+arch/x86/kernel/cpu/amd.c:438:23: error: 'ALIGN_VA_32' undeclared (first use in this function)
+arch/x86/kernel/cpu/amd.c:438:37: error: 'ALIGN_VA_64' undeclared (first use in this function)
 
-Mimi
+Caused by the module.h split up intreacting with commit dfb09f9b7ab0
+("x86, amd: Avoid cache aliasing penalties on AMD family 15h") from the
+tip tree.
+
+I have added the following patch for today (this, or something similar,
+could be applied to the tip tree directly - the export.h include below
+was added by the module.h splitup).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 10 Aug 2011 11:45:44 +1000
+Subject: [PATCH] x86, amd: using va_align requires includeing elf.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/kernel/cpu/amd.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index c17a8c4..a19a209 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -2,6 +2,7 @@
+ #include <linux/bitops.h>
+ #include <linux/export.h>
+ #include <linux/mm.h>
++#include <linux/elf.h>
+ 
+ #include <linux/io.h>
+ #include <asm/processor.h>
+-- 
+1.7.5.4
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
