@@ -1,21 +1,50 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 10 Aug 2011 13:55:58 +0900
-Message-ID: <20110810045556.GB23625@opensource.wolfsonmicro.com>
-References: <20110810102525.484fcdc69b5501ffd4b16928@canb.auug.org.au>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Subject: Re: linux-next: build failure after merge of the final tree (wireless
+ tree related)
+Date: Wed, 10 Aug 2011 09:11:26 +0300
+Message-ID: <4E42210E.70202@qca.qualcomm.com>
+References: <20110810122109.a81b3186e4131aba82a4cae0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110810102525.484fcdc69b5501ffd4b16928@canb.auug.org.au>
+In-Reply-To: <20110810122109.a81b3186e4131aba82a4cae0@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>, Raja Mani <rmani@qca.qualcomm.com>, Vivek Natarajan <nataraja@qca.qualcomm.com>, Suraj Sumangala <surajs@qca.qualcomm.com>, Joe Perches <joe@perches.com>, Jouni Malinen <jouni@qca.qualcomm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Aug 10, 2011 at 10:25:25AM +1000, Stephen Rothwell wrote:
+Hi Stephen,
 
-> After merging the sound-asoc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+On 08/10/2011 05:21 AM, Stephen Rothwell wrote:
+> After merging the final tree, today's linux-next build (powerpc allyesconfig)
+> failed like this:
+> 
+> drivers/net/wireless/ath/ath6kl/built-in.o: In function `htc_start':
+> (.opd+0x600): multiple definition of `htc_start'
+> drivers/net/wireless/ath/ath9k/built-in.o:(.opd+0x3e40): first defined here
+> drivers/net/wireless/ath/ath6kl/built-in.o: In function `.htc_stop':
+> (.text+0x7b40): multiple definition of `.htc_stop'
+> drivers/net/wireless/ath/ath9k/built-in.o:(.text+0x67b34): first defined here
+> drivers/net/wireless/ath/ath6kl/built-in.o: In function `.htc_start':
+> (.text+0x7d18): multiple definition of `.htc_start'
+> drivers/net/wireless/ath/ath9k/built-in.o:(.text+0x67ba0): first defined here
+> drivers/net/wireless/ath/ath6kl/built-in.o: In function `htc_stop':
+> (.opd+0x5e8): multiple definition of `htc_stop'
+> drivers/net/wireless/ath/ath9k/built-in.o:(.opd+0x3e28): first defined here
+> 
+> Probably caused by commit bdcd81707973 ("Add ath6kl cleaned up driver").
+> 
+> I have reverted commit 392e741939dd ("Merge branch 'ath6kl-next' of
+> master.kernel.org:/pub/scm/linux/kernel/git/kvalo/ath6kl") for today.
 
-Should be fixed now.
+Sorry about that! I'll send a fix right away.
+
+> John, this has happened a couple of times before where people have just
+> copied an existing driver that happens to have some badly named global
+> variables.  :-(
+
+I was working on adding ath6kl prefix too all global ath6kl symbols but
+I haven't been able to finish that yet.
+
+Kalle
