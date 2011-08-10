@@ -1,57 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 10 Aug 2011 10:25:25 +1000
-Message-ID: <20110810102525.484fcdc69b5501ffd4b16928@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the security-testing tree
+Date: Wed, 10 Aug 2011 10:58:40 +1000
+Message-ID: <20110810105840.cb0b3ac63c84b51b98029d8c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Aug_2011_10_25_25_+1000_3krc8R1enFZnBJU="
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36542 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56837 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752144Ab1HJAZi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Aug 2011 20:25:38 -0400
+	id S1752954Ab1HJA6p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Aug 2011 20:58:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>
 
---Signature=_Wed__10_Aug_2011_10_25_25_+1000_3krc8R1enFZnBJU=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi James,
 
-Hi all,
+After merging the security-testing tree, today's linux-next build
+(powerpc ppc64_defconfig) failed like this:
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+fs/reiserfs/xattr_security.c: In function 'reiserfs_security_init':
+fs/reiserfs/xattr_security.c:69:2: error: implicit declaration of function 'security_old_inode_init_security'
 
-sound/soc/codecs/wm8750.c:785:1: error: '__mod_spi_device_table' aliased to=
- undefined symbol 'wm8750_spi_id'
-sound/soc/codecs/wm8750.c:785:1: error: '__mod_spi_device_table' aliased to=
- undefined symbol 'wm8750_spi_id'
+Caused by commit 9d8f13ba3f48 ("security: new
+security_inode_init_security API adds function callback").  Forgotten
+include?
 
-Caused by commit 40045a85df0e ("ASoC: Fix SPI driver binding for WM8987").
-
-I have used the sound-asoc tree from next-20110809 for today.
---=20
+I have used the security-testing tree from next-20110809 for today.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-
---Signature=_Wed__10_Aug_2011_10_25_25_+1000_3krc8R1enFZnBJU=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOQc/1AAoJEDMEi1NhKgbsy9kH/0wgEaxtDdE1vZ8cUw5D0epj
-AvqKZZCZ7QkQ0KbQQV5HVEnwP4nmY3Gl5YLZTaH+qsA2QgQbq4yd2eltDMOX4Hod
-PLIbOcG//7wqoJ+L9Q9I+Ga3jaY4keI1wSJMoVrFnVuwdwGv93Cyum3nIjaTRulw
-bX07GAwIasIMIrfEpP/k5KtE+CCkKAl9WMEGxAH2WseS1F0KAUz/0ZIBhcmjXDbU
-bMjdHRVyUd72mDg3tvtk9rFCAbnlO3KYvUzhb/G10qEwxuYt5GGTfE3nTgDCXSom
-rEQ5aKQKZzrSgZQ7ICq7Xb/RzxmD53CTdFwy8S/BIJG/LgpusOjK6zQAo7NcVk0=
-=KPdQ
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Aug_2011_10_25_25_+1000_3krc8R1enFZnBJU=--
