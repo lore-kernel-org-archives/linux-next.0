@@ -1,53 +1,44 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH 2/2] evm: fix evm_inode_init_security return code
-Date: Thu, 11 Aug 2011 00:22:52 -0400
-Message-ID: <1313036572-27122-2-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1313036572-27122-1-git-send-email-zohar@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the pm tree
+Date: Thu, 11 Aug 2011 15:02:52 +1000
+Message-ID: <20110811150252.54c4abf3598edef9bab14bb6@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e39.co.us.ibm.com ([32.97.110.160]:46441 "EHLO
-	e39.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751272Ab1HKEXR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Aug 2011 00:23:17 -0400
-In-Reply-To: <1313036572-27122-1-git-send-email-zohar@linux.vnet.ibm.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47970 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751845Ab1HKFC7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Aug 2011 01:02:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-security-module@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, David Safford <safford@watson.ibm.com>, Mimi Zohar <zohar@us.ibm.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ShuoX Liu <shuox.liu@intel.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-evm_inode_init_security() should return 0, when EVM is not enabled.
-(Returning an error is a remnant of evm_inode_post_init_security.)
+Hi Paul,
 
-Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
----
- include/linux/evm.h               |    2 +-
- security/integrity/evm/evm_main.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Today's linux-next merge of the moduleh tree got a conflict in
+kernel/power/main.c between commit b57b760a97cf ("PM / Suspend: Add
+statistics debugfs file for suspend to RAM") from the pm tree and commit
+6320ae56afdf ("kernel: Fix files explicitly needing EXPORT_SYMBOL
+infrastructure") from the moduleh tree.
 
-diff --git a/include/linux/evm.h b/include/linux/evm.h
-index 62deb65..ea603c9 100644
---- a/include/linux/evm.h
-+++ b/include/linux/evm.h
-@@ -85,7 +85,7 @@ static inline int evm_inode_init_security(struct inode *inode,
- 					  const struct xattr *xattr_array,
- 					  struct xattr *evm)
- {
--	return -EOPNOTSUPP;
-+	return 0;
- }
- 
- #endif /* CONFIG_EVM_H */
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 8fc5b5d..f0127e5 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -324,7 +324,7 @@ int evm_inode_init_security(struct inode *inode,
- 	int rc;
- 
- 	if (!evm_initialized || !evm_protected_xattr(lsm_xattr->name))
--		return -EOPNOTSUPP;
-+		return 0;
- 
- 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
- 	if (!xattr_data)
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
-1.7.3.4
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/power/main.c
+index 2757acb,a811007..0000000
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@@ -12,8 -12,7 +12,9 @@@
+  #include <linux/string.h>
+  #include <linux/resume-trace.h>
+  #include <linux/workqueue.h>
+ +#include <linux/debugfs.h>
+ +#include <linux/seq_file.h>
++ #include <linux/export.h>
+  
+  #include "power.h"
+  
