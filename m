@@ -1,57 +1,107 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH -next] drm: fix kconfig unmet dependency warning
-Date: Wed, 10 Aug 2011 14:25:34 -0700
-Message-ID: <20110810142534.684f1e31.rdunlap@xenotime.net>
-References: <20110810142702.da4f1b9ff86ddbedc3c73a48@canb.auug.org.au>
-	<20110810142401.c0a4a041.rdunlap@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Thu, 11 Aug 2011 11:59:26 +1000
+Message-ID: <20110811115926.655a067c61de5f430ef5e772@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <20110810142401.c0a4a041.rdunlap@xenotime.net>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, dri-devel@lists.freedesktop.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__11_Aug_2011_11_59_26_+1000_FgWW=B0uPxD7im1O"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38076 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752749Ab1HKB7h (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Aug 2011 21:59:37 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov <borislav.petkov@amd.com>, Randy Dunlap <rdunlap@xenotime.net>
 
-On Wed, 10 Aug 2011 14:24:01 -0700 Randy Dunlap wrote:
+--Signature=_Thu__11_Aug_2011_11_59_26_+1000_FgWW=B0uPxD7im1O
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, this applies to mainline, not linux-next.
+Hi Linus,
 
+With Linus' tree, today's linux-next build (x86_64 allmodconfig) failed
+like this:
 
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> Fix kconfig unmet dependency warning.  BACKLIGHT_CLASS_DEVICE depends on
-> BACKLIGHT_LCD_SUPPORT, so select the latter along with the former.
-> 
-> warning: (DRM_RADEON_KMS && DRM_I915 && STUB_POULSBO && FB_BACKLIGHT && PANEL_SHARP_LS037V7DW01 && PANEL_ACX565AKM && USB_APPLEDISPLAY && FB_OLPC_DCON && ASUS_LAPTOP && SONY_LAPTOP && THINKPAD_ACPI && EEEPC_LAPTOP && ACPI_ASUS && ACPI_CMPC && SAMSUNG_Q10) selects BACKLIGHT_CLASS_DEVICE which has unmet direct dependencies (HAS_IOMEM && BACKLIGHT_LCD_SUPPORT)
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> ---
->  drivers/gpu/drm/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- lnx-31-rc1.orig/drivers/gpu/drm/Kconfig
-> +++ lnx-31-rc1/drivers/gpu/drm/Kconfig
-> @@ -96,6 +96,7 @@ config DRM_I915
->  	select FB_CFB_IMAGEBLIT
->  	# i915 depends on ACPI_VIDEO when ACPI is enabled
->  	# but for select to work, need to select ACPI_VIDEO's dependencies, ick
-> +	select BACKLIGHT_LCD_SUPPORT if ACPI
->  	select BACKLIGHT_CLASS_DEVICE if ACPI
->  	select VIDEO_OUTPUT_CONTROL if ACPI
->  	select INPUT if ACPI
-> --
+drivers/edac/i7core_edac.c:259:19: error: field 'edac_mce' has incomplete t=
+ype
+drivers/edac/i7core_edac.c:262:24: error: 'MCE_LOG_LEN' undeclared here (no=
+t in a function)
+drivers/edac/i7core_edac.c: In function 'i7core_mce_output_error':
+drivers/edac/i7core_edac.c:1671:25: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1672:20: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1673:23: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1674:15: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1675:18: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1676:18: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1680:7: error: dereferencing pointer to incomple=
+te type
+drivers/edac/i7core_edac.c:1742:22: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1742:31: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1743:39: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1744:15: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1751:7: error: dereferencing pointer to incomple=
+te type
+drivers/edac/i7core_edac.c: In function 'i7core_check_error':
+drivers/edac/i7core_edac.c:1787:50: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1791:3: error: invalid use of undefined type 'st=
+ruct mce'
+drivers/edac/i7core_edac.c:1793:49: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c: In function 'i7core_mce_check_error':
+drivers/edac/i7core_edac.c:1838:11: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1842:9: error: dereferencing pointer to incomple=
+te type
+drivers/edac/i7core_edac.c:1847:6: error: dereferencing pointer to incomple=
+te type
+drivers/edac/i7core_edac.c:1859:52: error: dereferencing pointer to incompl=
+ete type
+drivers/edac/i7core_edac.c:1864:9: error: dereferencing pointer to incomple=
+te type
+drivers/edac/i7core_edac.c: In function 'i7core_unregister_mci':
+drivers/edac/i7core_edac.c:1910:2: error: implicit declaration of function =
+'edac_mce_unregister'
+drivers/edac/i7core_edac.c: In function 'i7core_register_mci':
+drivers/edac/i7core_edac.c:2008:2: error: implicit declaration of function =
+'edac_mce_register'
 
+Caused by commit af9d220bac41 ("EDAC: Correct Kconfig dependencies").
+Since CONFIG_EDAC_MCE is no longer selected most of the stuff in
+linux/edac_mce.h is not available.  I have reverted that commit for today.
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__11_Aug_2011_11_59_26_+1000_FgWW=B0uPxD7im1O
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOQzd+AAoJEDMEi1NhKgbsEjUH+gJVrV9StjBN4EMUbAmaoAHe
+3BPd6/0j1lad1Rsk2pm0j8vnBlhQiuLkoLFlbt2sDoTUoZSlu5Ctuwr4bDVS30c6
+G4UZsxUn2RrjKOZuHnaiJgIPHMgkwgsOjl81wiacXXTRVBcZXjwZYx7Mj+GMMBVV
+L78j0MNL6vxCEOTz2LUtf97VKMAj/ZZs9zR/+Su1b7bWcgvxaw5z4xvXVzsQhZyX
+haNR1qnenOqaPbw2sbAM+ccM8uKFn11QP3oD3M1Ed/PDlD4gSlT7C9VtuQxIVznc
+9sU2kKDI3jou1jOLqduEL1SkxU/Kb8tosr2TY3J44eJB2mf44zYrtEuxQ4Lj+xs=
+=5vLP
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__11_Aug_2011_11_59_26_+1000_FgWW=B0uPxD7im1O--
