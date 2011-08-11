@@ -1,62 +1,53 @@
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH 1/2] evm: building without EVM enabled fixes
-Date: Thu, 11 Aug 2011 00:22:51 -0400
-Message-ID: <1313036572-27122-1-git-send-email-zohar@linux.vnet.ibm.com>
+Subject: [PATCH 2/2] evm: fix evm_inode_init_security return code
+Date: Thu, 11 Aug 2011 00:22:52 -0400
+Message-ID: <1313036572-27122-2-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1313036572-27122-1-git-send-email-zohar@linux.vnet.ibm.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e2.ny.us.ibm.com ([32.97.182.142]:51787 "EHLO e2.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750769Ab1HKEXG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Aug 2011 00:23:06 -0400
+Received: from e39.co.us.ibm.com ([32.97.110.160]:46441 "EHLO
+	e39.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751272Ab1HKEXR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Aug 2011 00:23:17 -0400
+In-Reply-To: <1313036572-27122-1-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-security-module@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, David Safford <safford@watson.ibm.com>, Mimi Zohar <zohar@us.ibm.com>
 
-- Missing 'inline' on evm_inode_setattr() definition.
-Introduced by commit 817b54aa45db ("evm: add evm_inode_setattr to prevent
-updating an invalid security.evm").
+evm_inode_init_security() should return 0, when EVM is not enabled.
+(Returning an error is a remnant of evm_inode_post_init_security.)
 
-- Missing security_old_inode_init_security() stub function definition.
-Caused by commit 9d8f13ba3f48 ("security: new security_inode_init_security
-API adds function callback").
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
 ---
- include/linux/evm.h      |    2 +-
- include/linux/security.h |    7 +++++++
- 2 files changed, 8 insertions(+), 1 deletions(-)
+ include/linux/evm.h               |    2 +-
+ security/integrity/evm/evm_main.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/evm.h b/include/linux/evm.h
-index db5556d..62deb65 100644
+index 62deb65..ea603c9 100644
 --- a/include/linux/evm.h
 +++ b/include/linux/evm.h
-@@ -45,7 +45,7 @@ static inline enum integrity_status evm_verifyxattr(struct dentry *dentry,
- }
- #endif
- 
--static int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
-+static inline int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+@@ -85,7 +85,7 @@ static inline int evm_inode_init_security(struct inode *inode,
+ 					  const struct xattr *xattr_array,
+ 					  struct xattr *evm)
  {
- 	return 0;
- }
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 1c528b1..f399cf1 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -2048,6 +2048,13 @@ static inline int security_inode_init_security(struct inode *inode,
- 	return -EOPNOTSUPP;
+-	return -EOPNOTSUPP;
++	return 0;
  }
  
-+int security_old_inode_init_security(struct inode *inode, struct inode *dir,
-+				     const struct qstr *qstr, char **name,
-+				     void **value, size_t *len)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- static inline int security_inode_create(struct inode *dir,
- 					 struct dentry *dentry,
- 					 int mode)
+ #endif /* CONFIG_EVM_H */
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 8fc5b5d..f0127e5 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -324,7 +324,7 @@ int evm_inode_init_security(struct inode *inode,
+ 	int rc;
+ 
+ 	if (!evm_initialized || !evm_protected_xattr(lsm_xattr->name))
+-		return -EOPNOTSUPP;
++		return 0;
+ 
+ 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
+ 	if (!xattr_data)
 -- 
 1.7.3.4
