@@ -1,347 +1,478 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (wireless &
- staging trees related)
-Date: Thu, 11 Aug 2011 15:55:29 +1000
-Message-ID: <20110811155529.e5f47afa0504c4ddef58ab37@canb.auug.org.au>
+Subject: linux-next: Tree for Aug 11
+Date: Thu, 11 Aug 2011 16:20:58 +1000
+Message-ID: <20110811162058.42b462bc80e67d7a80ecff93@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__11_Aug_2011_15_55_29_+1000_SSJ48rtBGGjVaYX1"
+ boundary="Signature=_Thu__11_Aug_2011_16_20_58_+1000_suUzfo.EKat+oSHk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53076 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60890 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750799Ab1HKFzj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Aug 2011 01:55:39 -0400
+	id S1750799Ab1HKGVH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Aug 2011 02:21:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kalle Valo <kvalo@qca.qualcomm.com>, Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>, Raja Mani <rmani@qca.qualcomm.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__11_Aug_2011_15_55_29_+1000_SSJ48rtBGGjVaYX1
+--Signature=_Thu__11_Aug_2011_16_20_58_+1000_suUzfo.EKat+oSHk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+The powerpc allyesconfig build still fails today.
 
-drivers/staging/built-in.o: In function `aggr_recv_delba_req_evt':
-(.opd+0x23a60): multiple definition of `aggr_recv_delba_req_evt'
-drivers/net/built-in.o:(.opd+0x79980): first defined here
-drivers/staging/built-in.o: In function `.wlan_node_reclaim':
-(.text+0x303360): multiple definition of `.wlan_node_reclaim'
-drivers/net/built-in.o:(.text+0xdd0618): first defined here
-drivers/staging/built-in.o: In function `aggr_init':
-(.opd+0x23a00): multiple definition of `aggr_init'
-drivers/net/built-in.o:(.opd+0x79968): first defined here
-drivers/staging/built-in.o: In function `.aggr_recv_delba_req_evt':
-(.text+0x302614): multiple definition of `.aggr_recv_delba_req_evt'
-drivers/net/built-in.o:(.text+0xdc8b60): first defined here
-drivers/staging/built-in.o: In function `.wlan_node_table_cleanup':
-(.text+0x303888): multiple definition of `.wlan_node_table_cleanup'
-drivers/net/built-in.o:(.text+0xdd0a6c): first defined here
+Changes since 20110810:
 
-You get the idea. :-(  So, the ath6kl driver now exists in the wireless
-tree and the staging tree.
+Linus' tree gained a build failure for which I reverted a commit.
 
-I applied this patch for today (I have elided the part from "rm -rf
-drivers/staging/ath6kl"):
+The s5p tree lost its conflicts.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 11 Aug 2011 15:49:40 +1000
-Subject: [PATCH] staging: remove the ath6kl driver
+The sound-asoc tree lost its build failure but gained another, so I used
+the version from next-20110809.
 
-since it is now in the main tree
+The mmc tree gained a conflict against Linus' tree.
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/Kconfig                            |    2 -
- drivers/staging/Makefile                           |    1 -
- drivers/staging/ath6kl/Kconfig                     |  158 -
- drivers/staging/ath6kl/Makefile                    |  122 -
- drivers/staging/ath6kl/TODO                        |   25 -
- drivers/staging/ath6kl/bmi/include/bmi_internal.h  |   54 -
- drivers/staging/ath6kl/bmi/src/bmi.c               | 1010 ---
- .../staging/ath6kl/hif/common/hif_sdio_common.h    |   87 -
- .../hif/sdio/linux_sdio/include/hif_internal.h     |  131 -
- .../staging/ath6kl/hif/sdio/linux_sdio/src/hif.c   | 1273 ----
- .../ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c   |  393 --
- drivers/staging/ath6kl/htc2/AR6000/ar6k.c          | 1479 -----
- drivers/staging/ath6kl/htc2/AR6000/ar6k.h          |  401 --
- drivers/staging/ath6kl/htc2/AR6000/ar6k_events.c   |  783 ---
- drivers/staging/ath6kl/htc2/AR6000/ar6k_gmbox.c    |  755 ---
- .../ath6kl/htc2/AR6000/ar6k_gmbox_hciuart.c        | 1284 ----
- drivers/staging/ath6kl/htc2/htc.c                  |  575 --
- drivers/staging/ath6kl/htc2/htc_debug.h            |   38 -
- drivers/staging/ath6kl/htc2/htc_internal.h         |  211 -
- drivers/staging/ath6kl/htc2/htc_recv.c             | 1572 -----
- drivers/staging/ath6kl/htc2/htc_send.c             | 1018 ---
- drivers/staging/ath6kl/htc2/htc_services.c         |  450 --
- drivers/staging/ath6kl/include/a_config.h          |   31 -
- drivers/staging/ath6kl/include/a_debug.h           |  195 -
- drivers/staging/ath6kl/include/a_drv.h             |   32 -
- drivers/staging/ath6kl/include/a_drv_api.h         |  204 -
- drivers/staging/ath6kl/include/a_osapi.h           |   32 -
- drivers/staging/ath6kl/include/aggr_recv_api.h     |  140 -
- drivers/staging/ath6kl/include/ar3kconfig.h        |   65 -
- drivers/staging/ath6kl/include/ar6000_api.h        |   32 -
- drivers/staging/ath6kl/include/ar6000_diag.h       |   48 -
- drivers/staging/ath6kl/include/ar6kap_common.h     |   44 -
- drivers/staging/ath6kl/include/athbtfilter.h       |  135 -
- drivers/staging/ath6kl/include/bmi.h               |  134 -
- .../ath6kl/include/common/AR6002/AR6K_version.h    |   52 -
- .../staging/ath6kl/include/common/AR6002/addrs.h   |   90 -
- .../common/AR6002/hw4.0/hw/apb_athr_wlan_map.h     |   40 -
- .../include/common/AR6002/hw4.0/hw/apb_map.h       |   40 -
- .../include/common/AR6002/hw4.0/hw/mbox_host_reg.h |   24 -
- .../include/common/AR6002/hw4.0/hw/mbox_reg.h      |  552 --
- .../common/AR6002/hw4.0/hw/mbox_wlan_host_reg.h    |  471 --
- .../include/common/AR6002/hw4.0/hw/mbox_wlan_reg.h |  589 --
- .../include/common/AR6002/hw4.0/hw/rtc_reg.h       |  187 -
- .../include/common/AR6002/hw4.0/hw/rtc_wlan_reg.h  |  162 -
- .../include/common/AR6002/hw4.0/hw/uart_reg.h      |   40 -
- drivers/staging/ath6kl/include/common/athdefs.h    |   75 -
- drivers/staging/ath6kl/include/common/bmi_msg.h    |  233 -
- drivers/staging/ath6kl/include/common/cnxmgmt.h    |   36 -
- drivers/staging/ath6kl/include/common/dbglog.h     |  126 -
- drivers/staging/ath6kl/include/common/dbglog_id.h  |  558 --
- drivers/staging/ath6kl/include/common/discovery.h  |   75 -
- .../staging/ath6kl/include/common/epping_test.h    |  111 -
- drivers/staging/ath6kl/include/common/gmboxif.h    |   70 -
- drivers/staging/ath6kl/include/common/gpio_reg.h   |    9 -
- drivers/staging/ath6kl/include/common/htc.h        |  227 -
- .../staging/ath6kl/include/common/htc_services.h   |   52 -
- drivers/staging/ath6kl/include/common/pkt_log.h    |   45 -
- drivers/staging/ath6kl/include/common/roaming.h    |   41 -
- drivers/staging/ath6kl/include/common/targaddrs.h  |  395 --
- drivers/staging/ath6kl/include/common/testcmd.h    |  185 -
- drivers/staging/ath6kl/include/common/tlpm.h       |   38 -
- drivers/staging/ath6kl/include/common/wlan_defs.h  |   79 -
- drivers/staging/ath6kl/include/common/wmi.h        | 3220 ----------
- drivers/staging/ath6kl/include/common/wmix.h       |  271 -
- drivers/staging/ath6kl/include/common_drv.h        |  104 -
- drivers/staging/ath6kl/include/dbglog_api.h        |   52 -
- drivers/staging/ath6kl/include/dl_list.h           |  153 -
- drivers/staging/ath6kl/include/dset_api.h          |   65 -
- drivers/staging/ath6kl/include/hci_transport_api.h |  259 -
- drivers/staging/ath6kl/include/hif.h               |  456 --
- drivers/staging/ath6kl/include/host_version.h      |   52 -
- drivers/staging/ath6kl/include/htc_api.h           |  575 --
- drivers/staging/ath6kl/include/htc_packet.h        |  227 -
- drivers/staging/ath6kl/include/wlan_api.h          |  128 -
- drivers/staging/ath6kl/include/wmi_api.h           |  441 --
- drivers/staging/ath6kl/miscdrv/ar3kconfig.c        |  565 --
- .../staging/ath6kl/miscdrv/ar3kps/ar3kpsconfig.c   |  572 --
- .../staging/ath6kl/miscdrv/ar3kps/ar3kpsconfig.h   |   75 -
- .../staging/ath6kl/miscdrv/ar3kps/ar3kpsparser.c   |  969 ---
- .../staging/ath6kl/miscdrv/ar3kps/ar3kpsparser.h   |  113 -
- drivers/staging/ath6kl/miscdrv/common_drv.c        |  910 ---
- drivers/staging/ath6kl/miscdrv/credit_dist.c       |  417 --
- drivers/staging/ath6kl/miscdrv/miscdrv.h           |   42 -
- drivers/staging/ath6kl/os/linux/ar6000_drv.c       | 6267 ----------------=
----
- drivers/staging/ath6kl/os/linux/ar6000_pm.c        |  626 --
- drivers/staging/ath6kl/os/linux/ar6000_raw_if.c    |  455 --
- drivers/staging/ath6kl/os/linux/cfg80211.c         | 1892 ------
- .../staging/ath6kl/os/linux/export_hci_transport.c |  124 -
- drivers/staging/ath6kl/os/linux/hci_bridge.c       | 1141 ----
- .../staging/ath6kl/os/linux/include/ar6000_drv.h   |  776 ---
- drivers/staging/ath6kl/os/linux/include/ar6k_pal.h |   36 -
- .../ath6kl/os/linux/include/ar6xapi_linux.h        |  190 -
- .../staging/ath6kl/os/linux/include/athdrv_linux.h | 1217 ----
- drivers/staging/ath6kl/os/linux/include/cfg80211.h |   61 -
- .../staging/ath6kl/os/linux/include/config_linux.h |   51 -
- .../staging/ath6kl/os/linux/include/debug_linux.h  |   50 -
- .../ath6kl/os/linux/include/export_hci_transport.h |   76 -
- .../ath6kl/os/linux/include/ieee80211_ioctl.h      |  177 -
- .../staging/ath6kl/os/linux/include/osapi_linux.h  |  339 -
- .../staging/ath6kl/os/linux/include/wlan_config.h  |  108 -
- .../ath6kl/os/linux/include/wmi_filter_linux.h     |  300 -
- drivers/staging/ath6kl/os/linux/netbuf.c           |  231 -
- drivers/staging/ath6kl/reorder/aggr_rx_internal.h  |  117 -
- drivers/staging/ath6kl/reorder/rcv_aggr.c          |  661 --
- drivers/staging/ath6kl/wlan/include/ieee80211.h    |  397 --
- .../staging/ath6kl/wlan/include/ieee80211_node.h   |   93 -
- drivers/staging/ath6kl/wlan/src/wlan_node.c        |  636 --
- drivers/staging/ath6kl/wlan/src/wlan_recv_beacon.c |  199 -
- drivers/staging/ath6kl/wlan/src/wlan_utils.c       |   58 -
- drivers/staging/ath6kl/wmi/wmi.c                   | 6444 ----------------=
-----
- drivers/staging/ath6kl/wmi/wmi_host.h              |  102 -
- 111 files changed, 0 insertions(+), 50006 deletions(-)
- delete mode 100644 drivers/staging/ath6kl/Kconfig
- delete mode 100644 drivers/staging/ath6kl/Makefile
- delete mode 100644 drivers/staging/ath6kl/TODO
- delete mode 100644 drivers/staging/ath6kl/bmi/include/bmi_internal.h
- delete mode 100644 drivers/staging/ath6kl/bmi/src/bmi.c
- delete mode 100644 drivers/staging/ath6kl/hif/common/hif_sdio_common.h
- delete mode 100644 drivers/staging/ath6kl/hif/sdio/linux_sdio/include/hif_=
-internal.h
- delete mode 100644 drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif.c
- delete mode 100644 drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif_scat=
-ter.c
- delete mode 100644 drivers/staging/ath6kl/htc2/AR6000/ar6k.c
- delete mode 100644 drivers/staging/ath6kl/htc2/AR6000/ar6k.h
- delete mode 100644 drivers/staging/ath6kl/htc2/AR6000/ar6k_events.c
- delete mode 100644 drivers/staging/ath6kl/htc2/AR6000/ar6k_gmbox.c
- delete mode 100644 drivers/staging/ath6kl/htc2/AR6000/ar6k_gmbox_hciuart.c
- delete mode 100644 drivers/staging/ath6kl/htc2/htc.c
- delete mode 100644 drivers/staging/ath6kl/htc2/htc_debug.h
- delete mode 100644 drivers/staging/ath6kl/htc2/htc_internal.h
- delete mode 100644 drivers/staging/ath6kl/htc2/htc_recv.c
- delete mode 100644 drivers/staging/ath6kl/htc2/htc_send.c
- delete mode 100644 drivers/staging/ath6kl/htc2/htc_services.c
- delete mode 100644 drivers/staging/ath6kl/include/a_config.h
- delete mode 100644 drivers/staging/ath6kl/include/a_debug.h
- delete mode 100644 drivers/staging/ath6kl/include/a_drv.h
- delete mode 100644 drivers/staging/ath6kl/include/a_drv_api.h
- delete mode 100644 drivers/staging/ath6kl/include/a_osapi.h
- delete mode 100644 drivers/staging/ath6kl/include/aggr_recv_api.h
- delete mode 100644 drivers/staging/ath6kl/include/ar3kconfig.h
- delete mode 100644 drivers/staging/ath6kl/include/ar6000_api.h
- delete mode 100644 drivers/staging/ath6kl/include/ar6000_diag.h
- delete mode 100644 drivers/staging/ath6kl/include/ar6kap_common.h
- delete mode 100644 drivers/staging/ath6kl/include/athbtfilter.h
- delete mode 100644 drivers/staging/ath6kl/include/bmi.h
- delete mode 100644 drivers/staging/ath6kl/include/common/AR6002/AR6K_versi=
-on.h
- delete mode 100644 drivers/staging/ath6kl/include/common/AR6002/addrs.h
- delete mode 100644 drivers/staging/ath6kl/include/common/AR6002/hw4.0/hw/a=
-pb_athr_wlan_map.h
- delete mode 100644 drivers/staging/ath6kl/include/common/AR6002/hw4.0/hw/a=
-pb_map.h
- delete mode 100644 drivers/staging/ath6kl/include/common/AR6002/hw4.0/hw/m=
-box_host_reg.h
- delete mode 100644 drivers/staging/ath6kl/include/common/AR6002/hw4.0/hw/m=
-box_reg.h
- delete mode 100644 drivers/staging/ath6kl/include/common/AR6002/hw4.0/hw/m=
-box_wlan_host_reg.h
- delete mode 100644 drivers/staging/ath6kl/include/common/AR6002/hw4.0/hw/m=
-box_wlan_reg.h
- delete mode 100644 drivers/staging/ath6kl/include/common/AR6002/hw4.0/hw/r=
-tc_reg.h
- delete mode 100644 drivers/staging/ath6kl/include/common/AR6002/hw4.0/hw/r=
-tc_wlan_reg.h
- delete mode 100644 drivers/staging/ath6kl/include/common/AR6002/hw4.0/hw/u=
-art_reg.h
- delete mode 100644 drivers/staging/ath6kl/include/common/athdefs.h
- delete mode 100644 drivers/staging/ath6kl/include/common/bmi_msg.h
- delete mode 100644 drivers/staging/ath6kl/include/common/cnxmgmt.h
- delete mode 100644 drivers/staging/ath6kl/include/common/dbglog.h
- delete mode 100644 drivers/staging/ath6kl/include/common/dbglog_id.h
- delete mode 100644 drivers/staging/ath6kl/include/common/discovery.h
- delete mode 100644 drivers/staging/ath6kl/include/common/epping_test.h
- delete mode 100644 drivers/staging/ath6kl/include/common/gmboxif.h
- delete mode 100644 drivers/staging/ath6kl/include/common/gpio_reg.h
- delete mode 100644 drivers/staging/ath6kl/include/common/htc.h
- delete mode 100644 drivers/staging/ath6kl/include/common/htc_services.h
- delete mode 100644 drivers/staging/ath6kl/include/common/pkt_log.h
- delete mode 100644 drivers/staging/ath6kl/include/common/roaming.h
- delete mode 100644 drivers/staging/ath6kl/include/common/targaddrs.h
- delete mode 100644 drivers/staging/ath6kl/include/common/testcmd.h
- delete mode 100644 drivers/staging/ath6kl/include/common/tlpm.h
- delete mode 100644 drivers/staging/ath6kl/include/common/wlan_defs.h
- delete mode 100644 drivers/staging/ath6kl/include/common/wmi.h
- delete mode 100644 drivers/staging/ath6kl/include/common/wmix.h
- delete mode 100644 drivers/staging/ath6kl/include/common_drv.h
- delete mode 100644 drivers/staging/ath6kl/include/dbglog_api.h
- delete mode 100644 drivers/staging/ath6kl/include/dl_list.h
- delete mode 100644 drivers/staging/ath6kl/include/dset_api.h
- delete mode 100644 drivers/staging/ath6kl/include/hci_transport_api.h
- delete mode 100644 drivers/staging/ath6kl/include/hif.h
- delete mode 100644 drivers/staging/ath6kl/include/host_version.h
- delete mode 100644 drivers/staging/ath6kl/include/htc_api.h
- delete mode 100644 drivers/staging/ath6kl/include/htc_packet.h
- delete mode 100644 drivers/staging/ath6kl/include/wlan_api.h
- delete mode 100644 drivers/staging/ath6kl/include/wmi_api.h
- delete mode 100644 drivers/staging/ath6kl/miscdrv/ar3kconfig.c
- delete mode 100644 drivers/staging/ath6kl/miscdrv/ar3kps/ar3kpsconfig.c
- delete mode 100644 drivers/staging/ath6kl/miscdrv/ar3kps/ar3kpsconfig.h
- delete mode 100644 drivers/staging/ath6kl/miscdrv/ar3kps/ar3kpsparser.c
- delete mode 100644 drivers/staging/ath6kl/miscdrv/ar3kps/ar3kpsparser.h
- delete mode 100644 drivers/staging/ath6kl/miscdrv/common_drv.c
- delete mode 100644 drivers/staging/ath6kl/miscdrv/credit_dist.c
- delete mode 100644 drivers/staging/ath6kl/miscdrv/miscdrv.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/ar6000_drv.c
- delete mode 100644 drivers/staging/ath6kl/os/linux/ar6000_pm.c
- delete mode 100644 drivers/staging/ath6kl/os/linux/ar6000_raw_if.c
- delete mode 100644 drivers/staging/ath6kl/os/linux/cfg80211.c
- delete mode 100644 drivers/staging/ath6kl/os/linux/export_hci_transport.c
- delete mode 100644 drivers/staging/ath6kl/os/linux/hci_bridge.c
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/ar6000_drv.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/ar6k_pal.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/ar6xapi_linux.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/athdrv_linux.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/cfg80211.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/config_linux.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/debug_linux.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/export_hci_tran=
-sport.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/ieee80211_ioctl=
-.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/osapi_linux.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/wlan_config.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/include/wmi_filter_linu=
-x.h
- delete mode 100644 drivers/staging/ath6kl/os/linux/netbuf.c
- delete mode 100644 drivers/staging/ath6kl/reorder/aggr_rx_internal.h
- delete mode 100644 drivers/staging/ath6kl/reorder/rcv_aggr.c
- delete mode 100644 drivers/staging/ath6kl/wlan/include/ieee80211.h
- delete mode 100644 drivers/staging/ath6kl/wlan/include/ieee80211_node.h
- delete mode 100644 drivers/staging/ath6kl/wlan/src/wlan_node.c
- delete mode 100644 drivers/staging/ath6kl/wlan/src/wlan_recv_beacon.c
- delete mode 100644 drivers/staging/ath6kl/wlan/src/wlan_utils.c
- delete mode 100644 drivers/staging/ath6kl/wmi/wmi.c
- delete mode 100644 drivers/staging/ath6kl/wmi/wmi_host.h
+The wireless tree lost its build failure but gained another for which I
+applied a patch.
 
-diff --git a/drivers/staging/Kconfig b/drivers/staging/Kconfig
-index 06c9081..d497a93 100644
---- a/drivers/staging/Kconfig
-+++ b/drivers/staging/Kconfig
-@@ -126,8 +126,6 @@ source "drivers/staging/quickstart/Kconfig"
-=20
- source "drivers/staging/sbe-2t3e3/Kconfig"
-=20
--source "drivers/staging/ath6kl/Kconfig"
--
- source "drivers/staging/keucr/Kconfig"
-=20
- source "drivers/staging/bcm/Kconfig"
-diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-index f3c5e33..fe6c611 100644
---- a/drivers/staging/Makefile
-+++ b/drivers/staging/Makefile
-@@ -54,7 +54,6 @@ obj-$(CONFIG_SOLO6X10)		+=3D solo6x10/
- obj-$(CONFIG_TIDSPBRIDGE)	+=3D tidspbridge/
- obj-$(CONFIG_ACPI_QUICKSTART)	+=3D quickstart/
- obj-$(CONFIG_SBE_2T3E3)		+=3D sbe-2t3e3/
--obj-$(CONFIG_ATH6K_LEGACY)	+=3D ath6kl/
- obj-$(CONFIG_USB_ENESTORAGE)	+=3D keucr/
- obj-$(CONFIG_BCM_WIMAX)		+=3D bcm/
- obj-$(CONFIG_FT1000)		+=3D ft1000/
---=20
-1.7.5.4
+The security-testing tree still has its build failure so I used the
+version from next-20110809.
+
+The moduleh tree gained conflicts against the pm and arm trees but lost a
+fix up patch.
+
+The akpm tree lost another patch that had been merged elsewhere.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 199 trees (counting Linus' and 28 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__11_Aug_2011_15_55_29_+1000_SSJ48rtBGGjVaYX1
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+[master 1484f43] Revert "EDAC: Correct Kconfig dependencies"
+Merging kbuild-current/rc-fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging 52xx-and-virtex-current/powerpc/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging driver-core.current/driver-core-linus
+Merging tty.current/tty-linus
+Merging usb.current/usb-linus
+Merging staging.current/staging-linus
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging sh-current/sh-fixes-for-linus
+Merging rmobile-current/rmobile-fixes-for-linus
+Merging fbdev-current/fbdev-fixes-for-linus
+Merging devicetree-current/devicetree/merge
+Merging spi-current/spi/merge
+Merging arm/for-next
+Merging arm-lpae/for-next
+CONFLICT (content): Merge conflict in arch/arm/include/asm/pgalloc.h
+CONFLICT (content): Merge conflict in arch/arm/include/asm/pgtable.h
+CONFLICT (content): Merge conflict in arch/arm/include/asm/tlb.h
+Merging arm-soc/for-next
+CONFLICT (content): Merge conflict in arch/arm/mach-exynos4/pm.c
+CONFLICT (content): Merge conflict in arch/arm/mach-imx/mm-imx25.c
+CONFLICT (content): Merge conflict in arch/arm/mach-imx/mm-imx31.c
+CONFLICT (content): Merge conflict in arch/arm/mach-imx/mm-imx35.c
+CONFLICT (content): Merge conflict in arch/arm/mach-mx5/mm.c
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/cm-regbits-44xx.h
+Merging at91/at91-next
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging linux-spec/for-next
+Merging msm/for-next
+CONFLICT (content): Merge conflict in arch/arm/mach-msm/io.c
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+Merging s5p/for-next
+Merging tegra/for-next
+Merging ux500-core/ux500-core
+Merging xilinx/arm-next
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging openrisc/for-upstream
+Merging parisc/for-next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/powerpc/next
+Merging galak/next
+Merging s390/features
+Merging sh/sh-latest
+Merging rmobile/rmobile-latest
+Merging sparc/master
+Merging tile/master
+Merging unicore32/unicore32
+Merging xtensa/master
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/dev
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging hfsplus/for-next
+Merging jfs/next
+Merging logfs/master
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging omfs/for-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging vfs-scale/vfs-scale-working
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+Merging hwmon-staging/hwmon-next
+Merging quilt/kernel-doc
+Merging docs/docs-move
+Merging v4l-dvb/master
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+Merging powertools/tools-test
+Merging cpupowerutils/master
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging dlm/next
+Merging swiotlb/master
+Merging ibft/master
+Merging scsi/master
+Merging iscsi-target/for-next
+Merging slave-dma/next
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging bluetooth/master
+Merging mtd/master
+Merging l2-mtd/master
+CONFLICT (content): Merge conflict in drivers/mtd/maps/lantiq-flash.c
+CONFLICT (content): Merge conflict in drivers/mtd/maps/pxa2xx-flash.c
+Merging crypto/master
+Merging sound/for-next
+Merging sound-asoc/for-next
+$ git reset --hard HEAD^
+Merging refs/next/20110809/sound-asoc
+Merging cpufreq/next
+Merging quilt/rr
+Merging input/next
+Merging input-mt/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+CONFLICT (content): Merge conflict in drivers/leds/Kconfig
+Merging backlight/for-mm
+Merging mmc/mmc-next
+CONFLICT (content): Merge conflict in drivers/mmc/host/sdhci-esdhc-imx.c
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging fbdev/master
+Merging viafb/viafb-next
+Merging omap_dss2/for-next
+Merging voltage/for-next
+Merging security-testing/next
+$ git reset --hard HEAD^
+Merging refs/next/20110809/security-testing
+Merging selinux/master
+Merging lblnet/master
+Merging agp/agp-next
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging pm/linux-next
+Merging apm/for-next
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging i7core_edac/linux_next
+Merging i7300_edac/linux_next
+CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/mcheck/mce.c
+Merging devicetree/devicetree/next
+CONFLICT (content): Merge conflict in drivers/of/base.c
+Merging spi/spi/next
+Merging gpio/gpio/next
+Merging tip/auto-latest
+Merging rcu/rcu/next
+Merging kvm/linux-next
+Merging oprofile/for-next
+Merging ptrace/ptrace
+Merging xen/upstream/xen
+Merging xen-two/linux-next
+Merging xen-pvhvm/linux-next
+Merging edac-amd/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+Merging sysctl/master
+Merging namespace/master
+Merging regmap/for-next
+Merging driver-core/driver-core-next
+Merging tty/tty-next
+Merging usb/usb-next
+Merging staging/staging-next
+Merging bkl-config/config
+Merging tmem/linux-next
+Merging writeback/next
+Merging arm-dt/devicetree/arm-next
+Merging scsi-post-merge/merge-base:master
+Merging moduleh/module.h-split
+CONFLICT (content): Merge conflict in arch/arm/common/scoop.c
+CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/amd.c
+CONFLICT (content): Merge conflict in drivers/dma/ste_dma40.c
+CONFLICT (content): Merge conflict in drivers/staging/dt3155v4l/dt3155v4l.c
+CONFLICT (content): Merge conflict in include/linux/dmaengine.h
+CONFLICT (content): Merge conflict in kernel/power/main.c
+Applying: dm: use export.h instead of module.h where possible
+Applying: block: bsg-lib.c needs export.h not module.h
+Applying: power: max8998_charger.c needs module.h
+Applying: power_supply: max8997_charger.c need to include module.h
+$ git checkout akpm
+Applying: Expand root=3DPARTUUID=3DUUID syntax to support selecting a root =
+partition by
+Applying: This patch makes two changes:
+Applying: On thread exit shm_exit_ns() is called, it uses shm_ids(ns).rw_mu=
+tex.  It
+Applying: Because of x86-implement-strict-user-copy-checks-for-x86_64.patch
+Applying: When no floppy is found the module code can be released while a t=
+imer
+Applying: The parameter's origin type is long.  On an i386 architecture, it=
+ can
+Applying: Add support for Aspire 1410 BIOS v1.3314.  Fixes the following er=
+ror:
+Applying: This makes the iris driver use the platform API, so it is properl=
+y exposed
+Applying: On x86_32 casting the unsigned int result of get_random_int() to =
+long may
+Applying: This new driver replaces the old PCEngines Alix 2/3 LED driver wi=
+th a new
+Applying: Cc: Ed Wildgoose <git@wildgooses.com>
+Applying: Replace the bubble sort in sanitize_e820_map() with a call to the=
+ generic
+Applying: The x86 timer interrupt handler is the only handler not traced in=
+ the
+Applying: The current interrupt traces from irq_handler_entry and irq_handl=
+er_exit
+Applying: Don't allow everybody to use a modem.
+Applying: The address limit is already set in flush_old_exec() so this
+Applying: A call to va_copy() should always be followed by a call to va_end=
+() in the
+Applying: Don't dereference em if it's NULL or an error pointer.
+Applying: Some messing with error codes to return 0 on out id's and match
+Applying: fb_set_suspend() must be called with the console semaphore held, =
+which
+Applying: hwmon was using an idr with a NULL pointer, so convert to an
+Applying: A straightforward looking use of idr for a device id.
+Applying: The address limit is already set in flush_old_exec() so this
+Applying: The address limit is already set in flush_old_exec() so this
+Applying: Add new check (assert_init) to make sure objects are initialized =
+and
+Applying: del_timer_sync() calls debug_object_assert_init() to assert that =
+a timer
+Applying: ext4_{set,clear}_bit() is defined as __test_and_{set,clear}_bit_l=
+e() for
+Applying: The dqc_bitmap field of struct ocfs2_local_disk_chunk is 32-bit a=
+ligned,
+Applying: The address limit is already set in flush_old_exec() so those cal=
+ls to
+Applying: When do pci remove/rescan on system that have more iommus, got
+Applying: The current implementation of dmi_name_in_vendors() is an invitat=
+ion to
+Applying: For headers that get exported to userland and make use of u32 sty=
+le
+Applying: Fix sparse warnings of right shift bigger than source value size:
+Applying: We leak in drivers/scsi/aacraid/commctrl.c::aac_send_raw_srb() :
+Applying: Some mangling of errors was necessary to maintain current interfa=
+ce.
+Applying: This does involve additional use of the spin lock in idr.c.  Is t=
+his an
+Applying: Instead of open coding this function use kstrtoul_from_user() dir=
+ectly.
+Applying: brd_make_request() always returns 0, which doesn't make much sens=
+e.
+Applying: The address limit is already set in flush_old_exec() so this assi=
+gnment of
+Applying: The basic idea behind cross memory attach is to allow MPI program=
+s doing
+Applying: - Add x86_64 specific wire up
+Applying: acct_isolated of compaction uses page_lru_base_type which returns=
+ only
+Applying: Change ISOLATE_XXX macro with bitwise isolate_mode_t type.  Norma=
+lly,
+Applying: In async mode, compaction doesn't migrate dirty or writeback page=
+s.  So,
+Applying: In __zone_reclaim case, we don't want to shrink mapped page.  Non=
+etheless,
+Applying: unmap_and_move() is one a big messy function.  Clean it up.
+Applying: radix_tree_tag_get()'s BUG (when it sees a tag after saw_unset_ta=
+g) was
+Applying: per-task block plug can reduce block queue lock contention and in=
+crease
+Applying: The tracing ring-buffer used this function briefly, but not anymo=
+re.
+Applying: After selecting a task to kill, the oom killer iterates all proce=
+sses and
+Applying: Remove PageSwapBacked (!page_is_file_cache) cases from
+Applying: Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Applying: The current implementation of the /dev/hpet driver couples openin=
+g the
+Applying: smp_call_function() only lets all other CPUs execute a specific f=
+unction,
+Applying: auto_demotion_disable is called only for online CPUs.  For hotplu=
+gged
+Applying: Enabling DEBUG_STRICT_USER_COPY_CHECKS causes the following warni=
+ng:
+Applying: Strict user copy checks are only really supported on x86_32 even =
+though
+Applying: The help text for this config is duplicated across the x86, paris=
+c, and
+Applying: s/lib-/obj-/ for usercopy.o
+Applying: After an "unexpected" reboot, I found this Oops in my logs:
+Applying: In the move of the lis3 driver, the hp_accel.c file got dropped f=
+rom the
+Applying: Add axis correction for HP EliteBook 2730p.
+Applying: Add axis correction for HP EliteBook 8540w.
+Applying: Add axis correction for HP ProBook 6555b.
+Applying: Adapt the help text for CONFIG_HP_ACCEL to the move of
+Applying: Signed-off-by: Ilkka Koskinen <ilkka.koskinen@nokia.com>
+Applying: Signed-off-by: Ilkka Koskinen <ilkka.koskinen@nokia.com>
+Applying: Change exported functions to use the device given as parameter
+Applying: Signed-off-by: Ilkka Koskinen <ilkka.koskinen@nokia.com>
+Applying: Add V2 of the LED driver for a single timer channel for the TPU h=
+ardware
+Applying: Add support for slice by 8 to existing crc32 algorithm.  Also mod=
+ify
+Applying: don't include asm/msr.h
+Applying: This is the one use of an ida that doesn't retry on receiving -EA=
+GAIN.
+Applying: One can get this information from minix/inode.c, but adding the
+Applying: Signed-off-by: Igor Mammedov <imammedo@redhat.com>
+Applying: Force this on for -next/mm testing purposes.
+Applying: Add a proc_dointvec_bool() sysctl handler for cases where the inp=
+ut value
+Applying: Use the new proc_do_intvec_bool() handler for various boolean inp=
+uts.
+Applying: Add a proc_dointvec_unsigned() sysctl handler for positive value =
+cases.
+Applying: Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Applying: Use the new proc_do_intvec_unsigned() handler for various unsigne=
+d inputs.
+Applying: A default echo function has been provided so it is no longer an e=
+rror when
+Applying: This client driver allows you to use a GPIO pin as a source for P=
+PS
+Applying: remove unneeded cast of void*
+Applying: Straightforward.  As an aside, the ida_init calls are not needed =
+as far as
+Merging akpm
+Applying: do_mounts: remove __init_data from root_wait
+Applying: staging: remove the ath6kl driver
+
+--Signature=_Thu__11_Aug_2011_16_20_58_+1000_suUzfo.EKat+oSHk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOQ27RAAoJEDMEi1NhKgbsW+EH/1RVgUU02RbNw/tJaSL2CRUj
-BMj3ciMhBZOd0MPGYauPYtqDu2hx6wt1qVSCZAH2fv1gkRjrqkKsQrGz9+lU7v7H
-JecHp+xI4dPIeKiqKRfYnMW5tUpS3MbTQkFKYaxEhCM0YC6wDnegL2PE4/+lUXB3
-KzwWmyKClvRuuNlCtYW+BtkRa3HRX5iZb6gxuhoRSN9URaUzR2Q6zSHUjakaHu8M
-EnDfjNwelrlTSth9WNIYfdS1E6KecpIYuupEjYy1XqPiZOLcBfBgFDugp3BF5gZm
-+DT9QvUUYLl37gDm1Mn7L6rUt8J9NWbvsIqBhRyFyHPIEYwlLFuomFCv69qhoRQ=
-=hWpx
+iQEcBAEBAgAGBQJOQ3TKAAoJEDMEi1NhKgbs1XgH/1ROV+g5aYAwUcb11CguV6tF
+rBWqUvsgC7J7WgADjyUiVP909rCuJbFm+0vicNOIo/3RyZRSEDSDUp9WDc30EKCH
+qLUGFM9rlAfKyuJF1/MXHEL49TGgcY7f66hi68/d8bb/D3kt3E4kLF1eHF5P34gx
+hE/ONf8ge50bpbuxFzqSmtBsLBCbhBjDcjHNtnWqn78JDUY6JZbicPhJ6YBFZD2W
+yAYMIcXWxFNHnqLUhilHc/LQTaXE1dKNF/RZWEc//sKYruHhcdApy6GzdmTobCLW
+gnzGLz1QKahL6wlb/E3aEnUW+L6E3zNsK2HlO3tpDBf0t4NzxFiH6gcqCwIQ6Z4=
+=VGgk
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__11_Aug_2011_15_55_29_+1000_SSJ48rtBGGjVaYX1--
+--Signature=_Thu__11_Aug_2011_16_20_58_+1000_suUzfo.EKat+oSHk--
