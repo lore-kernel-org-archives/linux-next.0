@@ -1,38 +1,42 @@
-From: Kalle Valo <kvalo-A+ZNKFmMK5xy9aJCnZT0Uw@public.gmane.org>
-Subject: Re: linux-next: build failure after merge of the final tree (wireless
- & staging trees related)
-Date: Thu, 11 Aug 2011 18:50:57 +0300
-Message-ID: <4E43FA61.1010301@qca.qualcomm.com>
-References: <20110811155529.e5f47afa0504c4ddef58ab37@canb.auug.org.au> <4E438D56.5020801@qca.qualcomm.com> <20110811141604.GA14763@suse.de>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 11 (suspend_stats build
+	error)
+Date: Thu, 11 Aug 2011 11:59:31 -0700
+Message-ID: <20110811115931.8007900d.rdunlap@xenotime.net>
+References: <20110811162058.42b462bc80e67d7a80ecff93@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110811141604.GA14763-l3A5Bk7waGM@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vasanthakumar Thiagarajan <vthiagar-A+ZNKFmMK5xy9aJCnZT0Uw@public.gmane.org>, Raja Mani <rmani-A+ZNKFmMK5xy9aJCnZT0Uw@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-pm-bounces@lists.linux-foundation.org>
+In-Reply-To: <20110811162058.42b462bc80e67d7a80ecff93@canb.auug.org.au>
+List-Unsubscribe: <https://lists.linux-foundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linux-foundation.org/pipermail/linux-pm>
+List-Post: <mailto:linux-pm@lists.linux-foundation.org>
+List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linux-foundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
+Sender: linux-pm-bounces@lists.linux-foundation.org
+Errors-To: linux-pm-bounces@lists.linux-foundation.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-pm@lists.linux-foundation.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 08/11/2011 05:16 PM, Greg KH wrote:
-> On Thu, Aug 11, 2011 at 11:05:42AM +0300, Kalle Valo wrote:
->
->> Yes, the cleaned up version of ath6kl is now in wireless-next and the
->> staging version can be removed in 3.2. Greg, how do you want to handle
->> removal of the staging version? Should I send a patch to you removing
->> it? Or should I send the patch to John?
-> 
-> Just tell me.  Should I really delete drivers/staging/ath6kl/ for the
-> 3.2 kernel release?  If so, I'll gladly do so in my tree so linux-next
-> will be fine for issues like this in the future.
+On Thu, 11 Aug 2011 16:20:58 +1000 Stephen Rothwell wrote:
 
-Yes, please delete ath6kl from staging for the 3.2 release as the
-cleanup version is now in wireless-next.
+> Hi all,
 
-Thank you everyone and sorry for the mess.
+When CONFIG_PM_SLEEP is not enabled:
 
-Kalle
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+kernel/built-in.o: In function `suspend_stats_show':
+main.c:(.text+0x40a25): undefined reference to `suspend_stats'
+main.c:(.text+0x40a2c): undefined reference to `suspend_stats'
+main.c:(.text+0x40a32): undefined reference to `suspend_stats'
+main.c:(.text+0x40a73): undefined reference to `suspend_stats'
+main.c:(.text+0x40a82): undefined reference to `suspend_stats'
+kernel/built-in.o:main.c:(.text+0x40a91): more undefined references to `suspend_stats' follow
+
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
