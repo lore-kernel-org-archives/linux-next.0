@@ -1,124 +1,58 @@
-From: Borislav Petkov <bp@amd64.org>
-Subject: Re: linux-next: build failure in Linus' tree
-Date: Thu, 11 Aug 2011 08:43:04 +0200
-Message-ID: <20110811064304.GA9994@aftab>
-References: <20110811115926.655a067c61de5f430ef5e772@canb.auug.org.au>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Subject: Re: linux-next: build failure after merge of the final tree (wireless
+ & staging trees related)
+Date: Thu, 11 Aug 2011 11:05:42 +0300
+Message-ID: <4E438D56.5020801@qca.qualcomm.com>
+References: <20110811155529.e5f47afa0504c4ddef58ab37@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s15228384.onlinehome-server.info ([87.106.30.177]:33366 "EHLO
-	mail.x86-64.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752361Ab1HKGnM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Aug 2011 02:43:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20110811115926.655a067c61de5f430ef5e772@canb.auug.org.au>
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:42128 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752025Ab1HKIFu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Aug 2011 04:05:50 -0400
+In-Reply-To: <20110811155529.e5f47afa0504c4ddef58ab37@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>, Dave Jones <davej@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>, Raja Mani <rmani@qca.qualcomm.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-wireless <linux-wireless@vger.kernel.org>
 
-On Wed, Aug 10, 2011 at 09:59:26PM -0400, Stephen Rothwell wrote:
-> Hi Linus,
->=20
-> With Linus' tree, today's linux-next build (x86_64 allmodconfig) fail=
-ed
-> like this:
->=20
-> drivers/edac/i7core_edac.c:259:19: error: field 'edac_mce' has incomp=
-lete type
-> drivers/edac/i7core_edac.c:262:24: error: 'MCE_LOG_LEN' undeclared he=
-re (not in a function)
-> drivers/edac/i7core_edac.c: In function 'i7core_mce_output_error':
-> drivers/edac/i7core_edac.c:1671:25: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1672:20: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1673:23: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1674:15: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1675:18: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1676:18: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1680:7: error: dereferencing pointer to in=
-complete type
-> drivers/edac/i7core_edac.c:1742:22: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1742:31: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1743:39: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1744:15: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1751:7: error: dereferencing pointer to in=
-complete type
-> drivers/edac/i7core_edac.c: In function 'i7core_check_error':
-> drivers/edac/i7core_edac.c:1787:50: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1791:3: error: invalid use of undefined ty=
-pe 'struct mce'
-> drivers/edac/i7core_edac.c:1793:49: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c: In function 'i7core_mce_check_error':
-> drivers/edac/i7core_edac.c:1838:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1842:9: error: dereferencing pointer to in=
-complete type
-> drivers/edac/i7core_edac.c:1847:6: error: dereferencing pointer to in=
-complete type
-> drivers/edac/i7core_edac.c:1859:52: error: dereferencing pointer to i=
-ncomplete type
-> drivers/edac/i7core_edac.c:1864:9: error: dereferencing pointer to in=
-complete type
-> drivers/edac/i7core_edac.c: In function 'i7core_unregister_mci':
-> drivers/edac/i7core_edac.c:1910:2: error: implicit declaration of fun=
-ction 'edac_mce_unregister'
-> drivers/edac/i7core_edac.c: In function 'i7core_register_mci':
-> drivers/edac/i7core_edac.c:2008:2: error: implicit declaration of fun=
-ction 'edac_mce_register'
->=20
-> Caused by commit af9d220bac41 ("EDAC: Correct Kconfig dependencies").
-> Since CONFIG_EDAC_MCE is no longer selected most of the stuff in
-> linux/edac_mce.h is not available.  I have reverted that commit for t=
-oday.
+Hi Stephen,
 
-=A7$%=A7$&&=A7! (please excuse my french).
+On 08/11/2011 08:55 AM, Stephen Rothwell wrote:
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/staging/built-in.o: In function `aggr_recv_delba_req_evt':
+> (.opd+0x23a60): multiple definition of `aggr_recv_delba_req_evt'
+> drivers/net/built-in.o:(.opd+0x79980): first defined here
+> drivers/staging/built-in.o: In function `.wlan_node_reclaim':
+> (.text+0x303360): multiple definition of `.wlan_node_reclaim'
+> drivers/net/built-in.o:(.text+0xdd0618): first defined here
+> drivers/staging/built-in.o: In function `aggr_init':
+> (.opd+0x23a00): multiple definition of `aggr_init'
+> drivers/net/built-in.o:(.opd+0x79968): first defined here
+> drivers/staging/built-in.o: In function `.aggr_recv_delba_req_evt':
+> (.text+0x302614): multiple definition of `.aggr_recv_delba_req_evt'
+> drivers/net/built-in.o:(.text+0xdc8b60): first defined here
+> drivers/staging/built-in.o: In function `.wlan_node_table_cleanup':
+> (.text+0x303888): multiple definition of `.wlan_node_table_cleanup'
+> drivers/net/built-in.o:(.text+0xdd0a6c): first defined here
+> 
+> You get the idea. :-(  So, the ath6kl driver now exists in the wireless
+> tree and the staging tree.
+> 
+> I applied this patch for today (I have elided the part from "rm -rf
+> drivers/staging/ath6kl"):
 
-And I build-tested this patch with randconfigs a whole night and didn't
-see any issues. But I think I see what happens, the above is the result
-of a chain of unfortunate events :-)
+Oh man, sorry about this (again). I did compile both drivers at the same
+time, but only as modules and didn't realise the conflicts also with the
+staging driver.
 
-* Randy mistakenly reported the original randconfig issue against
-3.1-rc1. However, in reality it was against linux-next. It was caused b=
-y
-the fact that i7core_edac now needs to depend on X86_MCE_INTEL (which
-pulls in X86_MCE for the notifier chain).
+Yes, the cleaned up version of ath6kl is now in wireless-next and the
+staging version can be removed in 3.2. Greg, how do you want to handle
+removal of the staging version? Should I send a patch to you removing
+it? Or should I send the patch to John?
 
-* I sent the proper fix which was for Mauro to apply _ontop_ of
-
-git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/edac.git linux_ne=
-xt
-
-where the rest of the i7core_edac changes are. This patch depends on th=
-em.
-
-* I wasn't clear enough with the patch though, and I see Linus has
-applied it already on his tree, which is clearly too early - it has to
-go in in the next merge window together with the rest of the stuff in
-Mauro's branch.
-
-So, I guess we're reverting for now, Linus?
-
-Thanks and sorry for the trouble.
-
---=20
-Regards/Gruss,
-Boris.
-
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-GM: Alberto Bozzo
-Reg: Dornach, Landkreis Muenchen
-HRB Nr. 43632 WEEE Registernr: 129 19551
+Kalle
