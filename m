@@ -1,64 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the security-testing tree
-Date: Fri, 12 Aug 2011 12:47:23 +1000
-Message-ID: <20110812124723.30fe0e364394fdd4900cb2e3@canb.auug.org.au>
+From: Steve French <smfrench@gmail.com>
+Subject: Re: [PATCH] CIFS: remove local xattr definitions
+Date: Thu, 11 Aug 2011 21:49:48 -0500
+Message-ID: <CAH2r5mssB+3vDmNy3mWvGBDYXDu_NYiSZAFOxQXcckr+tHUV4A@mail.gmail.com>
+References: <1313090079-25859-1-git-send-email-zohar@linux.vnet.ibm.com>
+	<CACLa4ptNaOvwFX-2VPBve=PBvnB7X85tzTnTPSLtprbT8vSGgw@mail.gmail.com>
+	<1313092847.3122.13.camel@localhost.localdomain>
+	<CAH2r5muSOM=haAXHg+ys05vgJ30m94g_NQz-Y2AgMDkmV1dbiw@mail.gmail.com>
+	<alpine.LRH.2.00.1108121047540.14215@tundra.namei.org>
+	<20110812114919.2797815cf41cd69048e1d3cf@canb.auug.org.au>
+	<alpine.LRH.2.00.1108121244250.14779@tundra.namei.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__12_Aug_2011_12_47_23_+1000_KOxsrFhiYaQH=Fo+"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:32887 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752890Ab1HLCrl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Aug 2011 22:47:41 -0400
+Received: from mail-qy0-f181.google.com ([209.85.216.181]:44245 "EHLO
+	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752511Ab1HLCtt convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Aug 2011 22:49:49 -0400
+In-Reply-To: <alpine.LRH.2.00.1108121244250.14779@tundra.namei.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Eric Paris <eparis@parisplace.org>, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-cifs@vger.kernel.org, David Safford <safford@watson.ibm.com>, Mimi Zohar <zohar@us.ibm.com>
 
---Signature=_Fri__12_Aug_2011_12_47_23_+1000_KOxsrFhiYaQH=Fo+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If it is easier - I don't mind merging it to cifs now.   Seems
+harmless and low risk.
 
-Hi James,
+On Thu, Aug 11, 2011 at 9:44 PM, James Morris <jmorris@namei.org> wrote=
+:
+> On Fri, 12 Aug 2011, Stephen Rothwell wrote:
+>
+>> Except then that could leave Linus' tree broken during the next merg=
+e
+>> window depending on the order he merges the cifs and security-testin=
+g
+>> trees. =A0Unless that patch is sent to Linus as a fix patch before t=
+he next
+>> merge window, of course.
+>>
+>> I will add this patch as a merge fixup to the merge of the
+>> security-testing tree for today. =A0And will remove my copy when one=
+ of the
+>> trees gets fixed.
+>
+> I'll put it in my tree, then.
+>
+>> James: maybe I should change the name of your tree in -next to just
+>> "security"?
+>
+> Sure.
+>
+>
+> --
+> James Morris
+> <jmorris@namei.org>
+>
 
-After merging the security-testing tree, today's linux-next build
-(powerpc ppc64_defconfig) failed like this:
 
-init/mounts.o: In function `security_old_inode_init_security':
-(.opd+0xf0): multiple definition of `security_old_inode_init_security'
-init/main.o:(.opd+0x108): first defined here
-init/mounts.o: In function `.security_old_inode_init_security':
-(.text+0x50): multiple definition of `.security_old_inode_init_security'
-init/main.o:(.text+0x110): first defined here
 
-etc ... (lots and lots)
-
-Casued by commit e1c9b23adbe8 ("evm: building without EVM enabled fixes").
-
-Please, please, build test this stuff.  This is the same error that that
-patch was supposed to fix but on another function ...
-
-I have used the security-tree tree from next-20110809 again.
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Thanks,
 
---Signature=_Fri__12_Aug_2011_12_47_23_+1000_KOxsrFhiYaQH=Fo+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJORJQ7AAoJEDMEi1NhKgbsaYwH/1VCA00QsdCmuJfdEsuMAC9O
-UqpsrCVd0ePpVIEVIYt3vT02IqgQtWAzIru+7VbOFwR+Gd3EVN9fVUoy89EdIqC3
-33hWpKjylr6HDCZdzKC+hH7o/Y6c/AyU2h85f/SeChxvNxJehy0tUFTIVxDJDMjY
-UcubBgwl0e+8lvvTULB020HKF24K1p4cCbgysb+degJtpFf4TsxgFtRl1MIyCNPn
-332gAuOw91hRNSHqqM/ulcw4akx7t30nEY7OW0HnY4bLBYaHAFkIyE1ykpW5XtEa
-Yg0Pnb8Nb9tSQnQNSZcP1bgQl/h39vYeRh6Plcpnqw7rkjLUeSLQYnfNinBFtBk=
-=eXxv
------END PGP SIGNATURE-----
-
---Signature=_Fri__12_Aug_2011_12_47_23_+1000_KOxsrFhiYaQH=Fo+--
+Steve
