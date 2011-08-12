@@ -1,86 +1,201 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Fri, 12 Aug 2011 10:37:40 +1000
-Message-ID: <20110812103740.3eb586424c1355448e8cedc3@canb.auug.org.au>
-References: <20110811131129.f0d6226079d86e8f4a5ae920@canb.auug.org.au>
-	<20110811035552.GB15906@opensource.wolfsonmicro.com>
+From: James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>
+Subject: Re: [PATCH] CIFS: remove local xattr definitions
+Date: Fri, 12 Aug 2011 10:48:27 +1000 (EST)
+Message-ID: <alpine.LRH.2.00.1108121047540.14215@tundra.namei.org>
+References: <1313090079-25859-1-git-send-email-zohar@linux.vnet.ibm.com> <CACLa4ptNaOvwFX-2VPBve=PBvnB7X85tzTnTPSLtprbT8vSGgw@mail.gmail.com> <1313092847.3122.13.camel@localhost.localdomain>
+ <CAH2r5muSOM=haAXHg+ys05vgJ30m94g_NQz-Y2AgMDkmV1dbiw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__12_Aug_2011_10_37_40_+1000_vn62IbOyUTxzfmqN"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35528 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753932Ab1HLAhw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Aug 2011 20:37:52 -0400
-In-Reply-To: <20110811035552.GB15906@opensource.wolfsonmicro.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: MULTIPART/MIXED; BOUNDARY="1665246916-429493442-1313110107=:14215"
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAH2r5muSOM=haAXHg+ys05vgJ30m94g_NQz-Y2AgMDkmV1dbiw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mimi Zohar <zohar-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Eric Paris <eparis-FjpueFixGhCM4zKIHC2jIg@public.gmane.org>, linux-security-module-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Safford <safford-aZOuKsOsJu3MbYB6QlFGEg@public.gmane.org>, Mimi Zohar <zohar-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__12_Aug_2011_10_37_40_+1000_vn62IbOyUTxzfmqN
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hi Mark,
+--1665246916-429493442-1313110107=:14215
+Content-Type: TEXT/PLAIN; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 
-On Thu, 11 Aug 2011 13:06:23 +0900 Mark Brown <broonie@opensource.wolfsonmi=
-cro.com> wrote:
->
-> On Thu, Aug 11, 2011 at 01:11:29PM +1000, Stephen Rothwell wrote:
->=20
-> > Caused by commit 40045a85df0e ("ASoC: Fix SPI driver binding for WM8987=
-").
->=20
-> No it wasn't, it was there already.  Anyway, should be fixed now.
+On Thu, 11 Aug 2011, Steve French wrote:
 
-Thanks.
+> makes sense - do we want this going through the cifs tree or as part
+> of the xattr change mentioned below.
 
-> Do you have any idea what you're doing to turn on this detection?  It
-> really shouldn't be something that's specific to the x86 build but
-> there's nothing obvious I can see that does it.
+Should be fine to go into the CIFS tree, as long as that is in -next.
 
-My x86_64 allmodconfig build is (effectively) done like this (I am using
-gcc v4.5.2):
 
-echo CONFIG_PROFILE_ALL_BRANCHES=3Dn >../x86_64_allmodconfig.except
-echo CONFIG_DEBUG_INFO=3Dn >>../x86_64_allmodconfig.except
-echo CONFIG_X86_DECODER_SELFTEST=3Dn >>../x86_64_allmodconfig.except
-KCONFIG_ALLCONFIG=3D../x86_64_allmodconfig.except \
-        make O=3D../x86_64_allmodconfig allmodconfig
-make O=3D../x86_64_allmodconfig -j48 -s
+> 
+> On Thu, Aug 11, 2011 at 3:00 PM, Mimi Zohar <zohar-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org> wrote:
+> > On Thu, 2011-08-11 at 15:29 -0400, Eric Paris wrote:
+> >> Not that this patch is wrong, but shouldn't cifs include xattr.h
+> >> directly rather than rely on such an obscure indirect callchain as
+> >> well?
+> >>
+> >> -Eric
+> >
+> > True, updated below.
+> >
+> > thanks,
+> >
+> > Mimi
+> >
+> > ---
+> > Local XATTR_TRUSTED_PREFIX_LEN and XATTR_SECURITY_PREFIX_LEN definitions
+> > redefined ones in 'linux/xattr.h'. This was caused by commit 9d8f13ba3f48
+> > ("security: new security_inode_init_security API adds function callback")
+> > including 'linux/xattr.h' in 'linux/security.h'.
+> >
+> > In file included from include/linux/security.h:39,
+> >                 from include/net/sock.h:54,
+> >                 from fs/cifs/cifspdu.h:25,
+> >                 from fs/cifs/xattr.c:26:
+> >
+> > This patch removes the local definitions.
+> >
+> > Reported-by: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+> > Signed-off-by: Mimi Zohar <zohar-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  fs/cifs/xattr.c |   40 ++++++++++++++++++----------------------
+> >  1 files changed, 18 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/fs/cifs/xattr.c b/fs/cifs/xattr.c
+> > index 2a22fb2..c323088 100644
+> > --- a/fs/cifs/xattr.c
+> > +++ b/fs/cifs/xattr.c
+> > @@ -22,6 +22,7 @@
+> >  #include <linux/fs.h>
+> >  #include <linux/posix_acl_xattr.h>
+> >  #include <linux/slab.h>
+> > +#include <linux/xattr.h>
+> >  #include "cifsfs.h"
+> >  #include "cifspdu.h"
+> >  #include "cifsglob.h"
+> > @@ -31,16 +32,8 @@
+> >  #define MAX_EA_VALUE_SIZE 65535
+> >  #define CIFS_XATTR_DOS_ATTRIB "user.DosAttrib"
+> >  #define CIFS_XATTR_CIFS_ACL "system.cifs_acl"
+> > -#define CIFS_XATTR_USER_PREFIX "user."
+> > -#define CIFS_XATTR_SYSTEM_PREFIX "system."
+> > -#define CIFS_XATTR_OS2_PREFIX "os2."
+> > -#define CIFS_XATTR_SECURITY_PREFIX "security."
+> > -#define CIFS_XATTR_TRUSTED_PREFIX "trusted."
+> > -#define XATTR_TRUSTED_PREFIX_LEN  8
+> > -#define XATTR_SECURITY_PREFIX_LEN 9
+> > -/* BB need to add server (Samba e.g) support for security and trusted prefix */
+> > -
+> >
+> > +/* BB need to add server (Samba e.g) support for security and trusted prefix */
+> >
+> >  int cifs_removexattr(struct dentry *direntry, const char *ea_name)
+> >  {
+> > @@ -76,8 +69,8 @@ int cifs_removexattr(struct dentry *direntry, const char *ea_name)
+> >        }
+> >        if (ea_name == NULL) {
+> >                cFYI(1, "Null xattr names not supported");
+> > -       } else if (strncmp(ea_name, CIFS_XATTR_USER_PREFIX, 5)
+> > -               && (strncmp(ea_name, CIFS_XATTR_OS2_PREFIX, 4))) {
+> > +       } else if (strncmp(ea_name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN)
+> > +               && (strncmp(ea_name, XATTR_OS2_PREFIX, XATTR_OS2_PREFIX_LEN))) {
+> >                cFYI(1,
+> >                     "illegal xattr request %s (only user namespace supported)",
+> >                     ea_name);
+> > @@ -88,7 +81,7 @@ int cifs_removexattr(struct dentry *direntry, const char *ea_name)
+> >                if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_NO_XATTR)
+> >                        goto remove_ea_exit;
+> >
+> > -               ea_name += 5; /* skip past user. prefix */
+> > +               ea_name += XATTR_USER_PREFIX_LEN; /* skip past user. prefix */
+> >                rc = CIFSSMBSetEA(xid, pTcon, full_path, ea_name, NULL,
+> >                        (__u16)0, cifs_sb->local_nls,
+> >                        cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MAP_SPECIAL_CHR);
+> > @@ -149,21 +142,23 @@ int cifs_setxattr(struct dentry *direntry, const char *ea_name,
+> >
+> >        if (ea_name == NULL) {
+> >                cFYI(1, "Null xattr names not supported");
+> > -       } else if (strncmp(ea_name, CIFS_XATTR_USER_PREFIX, 5) == 0) {
+> > +       } else if (strncmp(ea_name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN)
+> > +                  == 0) {
+> >                if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_NO_XATTR)
+> >                        goto set_ea_exit;
+> >                if (strncmp(ea_name, CIFS_XATTR_DOS_ATTRIB, 14) == 0)
+> >                        cFYI(1, "attempt to set cifs inode metadata");
+> >
+> > -               ea_name += 5; /* skip past user. prefix */
+> > +               ea_name += XATTR_USER_PREFIX_LEN; /* skip past user. prefix */
+> >                rc = CIFSSMBSetEA(xid, pTcon, full_path, ea_name, ea_value,
+> >                        (__u16)value_size, cifs_sb->local_nls,
+> >                        cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MAP_SPECIAL_CHR);
+> > -       } else if (strncmp(ea_name, CIFS_XATTR_OS2_PREFIX, 4) == 0) {
+> > +       } else if (strncmp(ea_name, XATTR_OS2_PREFIX, XATTR_OS2_PREFIX_LEN)
+> > +                  == 0) {
+> >                if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_NO_XATTR)
+> >                        goto set_ea_exit;
+> >
+> > -               ea_name += 4; /* skip past os2. prefix */
+> > +               ea_name += XATTR_OS2_PREFIX_LEN; /* skip past os2. prefix */
+> >                rc = CIFSSMBSetEA(xid, pTcon, full_path, ea_name, ea_value,
+> >                        (__u16)value_size, cifs_sb->local_nls,
+> >                        cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MAP_SPECIAL_CHR);
+> > @@ -269,7 +264,8 @@ ssize_t cifs_getxattr(struct dentry *direntry, const char *ea_name,
+> >        /* return alt name if available as pseudo attr */
+> >        if (ea_name == NULL) {
+> >                cFYI(1, "Null xattr names not supported");
+> > -       } else if (strncmp(ea_name, CIFS_XATTR_USER_PREFIX, 5) == 0) {
+> > +       } else if (strncmp(ea_name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN)
+> > +                  == 0) {
+> >                if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_NO_XATTR)
+> >                        goto get_ea_exit;
+> >
+> > @@ -277,15 +273,15 @@ ssize_t cifs_getxattr(struct dentry *direntry, const char *ea_name,
+> >                        cFYI(1, "attempt to query cifs inode metadata");
+> >                        /* revalidate/getattr then populate from inode */
+> >                } /* BB add else when above is implemented */
+> > -               ea_name += 5; /* skip past user. prefix */
+> > +               ea_name += XATTR_USER_PREFIX_LEN; /* skip past user. prefix */
+> >                rc = CIFSSMBQAllEAs(xid, pTcon, full_path, ea_name, ea_value,
+> >                        buf_size, cifs_sb->local_nls,
+> >                        cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MAP_SPECIAL_CHR);
+> > -       } else if (strncmp(ea_name, CIFS_XATTR_OS2_PREFIX, 4) == 0) {
+> > +       } else if (strncmp(ea_name, XATTR_OS2_PREFIX, XATTR_OS2_PREFIX_LEN) == 0) {
+> >                if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_NO_XATTR)
+> >                        goto get_ea_exit;
+> >
+> > -               ea_name += 4; /* skip past os2. prefix */
+> > +               ea_name += XATTR_OS2_PREFIX_LEN; /* skip past os2. prefix */
+> >                rc = CIFSSMBQAllEAs(xid, pTcon, full_path, ea_name, ea_value,
+> >                        buf_size, cifs_sb->local_nls,
+> >                        cifs_sb->mnt_cifs_flags & CIFS_MOUNT_MAP_SPECIAL_CHR);
+> > @@ -339,10 +335,10 @@ ssize_t cifs_getxattr(struct dentry *direntry, const char *ea_name,
+> >                cFYI(1, "Query CIFS ACL not supported yet");
+> >  #endif /* CONFIG_CIFS_ACL */
+> >        } else if (strncmp(ea_name,
+> > -                 CIFS_XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN) == 0) {
+> > +                 XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN) == 0) {
+> >                cFYI(1, "Trusted xattr namespace not supported yet");
+> >        } else if (strncmp(ea_name,
+> > -                 CIFS_XATTR_SECURITY_PREFIX, XATTR_SECURITY_PREFIX_LEN) == 0) {
+> > +                 XATTR_SECURITY_PREFIX, XATTR_SECURITY_PREFIX_LEN) == 0) {
+> >                cFYI(1, "Security xattr namespace not supported yet");
+> >        } else
+> >                cFYI(1,
+> > --
+> > 1.7.3.4
+> >
+> >
+> 
+> 
+> 
+> -- 
+> Thanks,
+> 
+> Steve
+> 
 
-> Out of interest you used to carry reverts for commits when you'd
-> identified them but that seems not to happen any more?
-
-It depends on when I find a problem.  If I find a build problem
-immediately after mergeing a particular tree, I reset linux-next and use
-the previous version of the tree instead.  If I do not find the problem
-until after I have completely merged all the trees, I may revert a
-problem commit, or add a patch (is there is an interaction between two
-trees).  In the latter case I will carry the revert or patch as long as
-needed.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__12_Aug_2011_10_37_40_+1000_vn62IbOyUTxzfmqN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJORHXUAAoJEDMEi1NhKgbscRQH/RRqIXxqox89T/50O+5l2pz8
-cPELYq2QdLJLeAX6EkLN/rBd8xyfyOkuvDfgAyg7u7N75MR3bvlG6yYYMTL3LB5x
-3HAj4xdfras0P88OV75rfcqDzCxlGe6uGBQRbSSffiiAl76qLtLX8jjxfXXWKhLI
-211KZlil7RcmkaBtunrQp74pd4fD/jeMoNPMHJvVS8bIsMJLsUHLiulX8235VP/P
-sFY/lldXGCMz7VpHdgRWYDf6Y34lCYjT4A3eRGNVHjQ/ahqRmq+Touu7zn2OEwew
-FGIn1J964lzvw3ANwFXSvM3dF1TGsl6Z2ZS/Hcq37Cb0+iZWC9fnCJh74DMTI30=
-=i1ut
------END PGP SIGNATURE-----
-
---Signature=_Fri__12_Aug_2011_10_37_40_+1000_vn62IbOyUTxzfmqN--
+-- 
+James Morris
+<jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>
+--1665246916-429493442-1313110107=:14215--
