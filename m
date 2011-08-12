@@ -1,42 +1,80 @@
-From: Mike Frysinger <vapier.adi@gmail.com>
-Subject: Re: linux-next blackfin builds
-Date: Thu, 11 Aug 2011 23:46:27 -0400
-Message-ID: <CAMjpGUdfKH71_s+ANAbU++GJTMtKQFWMT5QBYOYU6hiAaJ_dig@mail.gmail.com>
-References: <CAMjpGUe_zTuXMNNQfnpg3Tueijr=CCXpPG7JOP9tqNNtC2wsrw@mail.gmail.com>
- <20110812131750.73f1257494fd7dad45c96131@canb.auug.org.au>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: [PATCH 1/2] evm: building without EVM enabled fixes
+Date: Fri, 12 Aug 2011 00:08:28 -0400
+Message-ID: <1313122108.3228.22.camel@localhost.localdomain>
+References: <1313036572-27122-1-git-send-email-zohar@linux.vnet.ibm.com>
+	 <20110812125234.bb689ec3cd29f2ac48f3453d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:44077 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751167Ab1HLDqs convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Aug 2011 23:46:48 -0400
-Received: by bke11 with SMTP id 11so1392069bke.19
-        for <linux-next@vger.kernel.org>; Thu, 11 Aug 2011 20:46:47 -0700 (PDT)
-In-Reply-To: <20110812131750.73f1257494fd7dad45c96131@canb.auug.org.au>
+Received: from e9.ny.us.ibm.com ([32.97.182.139]:54058 "EHLO e9.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750726Ab1HLEI7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Aug 2011 00:08:59 -0400
+In-Reply-To: <20110812125234.bb689ec3cd29f2ac48f3453d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org
+Cc: linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>, David Safford <safford@watson.ibm.com>, Mimi Zohar <zohar@us.ibm.com>
 
-On Thu, Aug 11, 2011 at 23:17, Stephen Rothwell wrote:
-> On Thu, 11 Aug 2011 21:50:09 -0400 Mike Frysinger wrote:
->> the linux-next website doesnt seem to cover the build system other
->> than to link to it. =C2=A0all Blackfin defconfigs should be buildabl=
-e, and
->> are in fact being built right now on a nightly basis on ADI systems.
->> is there a way to plug those results into the site ?
->
-> For a long time we didn't have a blackfin cross compiler that worked.=
- =C2=A0We
-> are working on building one and when that is done, I will add the
-> blackfin configs the our build set (and the results will be on the ki=
-sskb
-> site).
+On Fri, 2011-08-12 at 12:52 +1000, Stephen Rothwell wrote:
+> Hi Mimi,
+> 
+> On Thu, 11 Aug 2011 00:22:51 -0400 Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> >
+> > - Missing 'inline' on evm_inode_setattr() definition.
+> > Introduced by commit 817b54aa45db ("evm: add evm_inode_setattr to prevent
+> > updating an invalid security.evm").
+> > 
+> > - Missing security_old_inode_init_security() stub function definition.
+> > Caused by commit 9d8f13ba3f48 ("security: new security_inode_init_security
+> > API adds function callback").
+> > 
+> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
+> > ---
+> >  include/linux/evm.h      |    2 +-
+> >  include/linux/security.h |    7 +++++++
+> >  2 files changed, 8 insertions(+), 1 deletions(-)
+> > 
+> > diff --git a/include/linux/evm.h b/include/linux/evm.h
+> > index db5556d..62deb65 100644
+> > --- a/include/linux/evm.h
+> > +++ b/include/linux/evm.h
+> > @@ -45,7 +45,7 @@ static inline enum integrity_status evm_verifyxattr(struct dentry *dentry,
+> >  }
+> >  #endif
+> >  
+> > -static int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+> > +static inline int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+> >  {
+> >  	return 0;
+> >  }
+> > diff --git a/include/linux/security.h b/include/linux/security.h
+> > index 1c528b1..f399cf1 100644
+> > --- a/include/linux/security.h
+> > +++ b/include/linux/security.h
+> > @@ -2048,6 +2048,13 @@ static inline int security_inode_init_security(struct inode *inode,
+> >  	return -EOPNOTSUPP;
+> >  }
+> >  
+> > +int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+> > +				     const struct qstr *qstr, char **name,
+> > +				     void **value, size_t *len)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +
+> 
+> These stub functions *must* be "staic inline" (see my build report on
+> linux-next) just like the one you fixed above.
+> 
+> Good plan:  if you introduce a function whose existance (or behaviour)
+> depends on a CONFIG option, then build test with and without that CONFIG
+> option set.
 
-what doesnt work ?
+I really did rebuild and test without EVM enabled.  sigh, it would have
+helped to also configure the filesystems which use the stub function.
 
-ADI keep's prebuilt ones on the site:
-https://blackfin.uclinux.org/gf/project/toolchain/frs
--mike
+Mimi
