@@ -1,64 +1,102 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: [PATCH] CIFS: remove local xattr definitions
-Date: Thu, 11 Aug 2011 21:49:48 -0500
-Message-ID: <CAH2r5mssB+3vDmNy3mWvGBDYXDu_NYiSZAFOxQXcckr+tHUV4A@mail.gmail.com>
-References: <1313090079-25859-1-git-send-email-zohar@linux.vnet.ibm.com>
-	<CACLa4ptNaOvwFX-2VPBve=PBvnB7X85tzTnTPSLtprbT8vSGgw@mail.gmail.com>
-	<1313092847.3122.13.camel@localhost.localdomain>
-	<CAH2r5muSOM=haAXHg+ys05vgJ30m94g_NQz-Y2AgMDkmV1dbiw@mail.gmail.com>
-	<alpine.LRH.2.00.1108121047540.14215@tundra.namei.org>
-	<20110812114919.2797815cf41cd69048e1d3cf@canb.auug.org.au>
-	<alpine.LRH.2.00.1108121244250.14779@tundra.namei.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH 1/2] evm: building without EVM enabled fixes
+Date: Fri, 12 Aug 2011 12:52:34 +1000
+Message-ID: <20110812125234.bb689ec3cd29f2ac48f3453d@canb.auug.org.au>
+References: <1313036572-27122-1-git-send-email-zohar@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f181.google.com ([209.85.216.181]:44245 "EHLO
-	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752511Ab1HLCtt convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Aug 2011 22:49:49 -0400
-In-Reply-To: <alpine.LRH.2.00.1108121244250.14779@tundra.namei.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Eric Paris <eparis@parisplace.org>, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-cifs@vger.kernel.org, David Safford <safford@watson.ibm.com>, Mimi Zohar <zohar@us.ibm.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__12_Aug_2011_12_52_34_+1000_q+hJnndx9/fzRG8l"
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <1313036572-27122-1-git-send-email-zohar@linux.vnet.ibm.com>
+Sender: linux-security-module-owner@vger.kernel.org
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>, David Safford <safford@watson.ibm.com>, Mimi Zohar <zohar@us.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-If it is easier - I don't mind merging it to cifs now.   Seems
-harmless and low risk.
+--Signature=_Fri__12_Aug_2011_12_52_34_+1000_q+hJnndx9/fzRG8l
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 11, 2011 at 9:44 PM, James Morris <jmorris@namei.org> wrote=
-:
-> On Fri, 12 Aug 2011, Stephen Rothwell wrote:
->
->> Except then that could leave Linus' tree broken during the next merg=
-e
->> window depending on the order he merges the cifs and security-testin=
-g
->> trees. =A0Unless that patch is sent to Linus as a fix patch before t=
-he next
->> merge window, of course.
->>
->> I will add this patch as a merge fixup to the merge of the
->> security-testing tree for today. =A0And will remove my copy when one=
- of the
->> trees gets fixed.
->
-> I'll put it in my tree, then.
->
->> James: maybe I should change the name of your tree in -next to just
->> "security"?
->
-> Sure.
->
->
-> --
-> James Morris
-> <jmorris@namei.org>
->
+Hi Mimi,
 
+On Thu, 11 Aug 2011 00:22:51 -0400 Mimi Zohar <zohar@linux.vnet.ibm.com> wr=
+ote:
+>
+> - Missing 'inline' on evm_inode_setattr() definition.
+> Introduced by commit 817b54aa45db ("evm: add evm_inode_setattr to prevent
+> updating an invalid security.evm").
+>=20
+> - Missing security_old_inode_init_security() stub function definition.
+> Caused by commit 9d8f13ba3f48 ("security: new security_inode_init_security
+> API adds function callback").
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
+> ---
+>  include/linux/evm.h      |    2 +-
+>  include/linux/security.h |    7 +++++++
+>  2 files changed, 8 insertions(+), 1 deletions(-)
+>=20
+> diff --git a/include/linux/evm.h b/include/linux/evm.h
+> index db5556d..62deb65 100644
+> --- a/include/linux/evm.h
+> +++ b/include/linux/evm.h
+> @@ -45,7 +45,7 @@ static inline enum integrity_status evm_verifyxattr(str=
+uct dentry *dentry,
+>  }
+>  #endif
+> =20
+> -static int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+> +static inline int evm_inode_setattr(struct dentry *dentry, struct iattr =
+*attr)
+>  {
+>  	return 0;
+>  }
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 1c528b1..f399cf1 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -2048,6 +2048,13 @@ static inline int security_inode_init_security(str=
+uct inode *inode,
+>  	return -EOPNOTSUPP;
+>  }
+> =20
+> +int security_old_inode_init_security(struct inode *inode, struct inode *=
+dir,
+> +				     const struct qstr *qstr, char **name,
+> +				     void **value, size_t *len)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
 
+These stub functions *must* be "staic inline" (see my build report on
+linux-next) just like the one you fixed above.
+
+Good plan:  if you introduce a function whose existance (or behaviour)
+depends on a CONFIG option, then build test with and without that CONFIG
+option set.
 
 --=20
-Thanks,
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Steve
+--Signature=_Fri__12_Aug_2011_12_52_34_+1000_q+hJnndx9/fzRG8l
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJORJVyAAoJEDMEi1NhKgbsm/8H/Rmcf++3b1ciVfGhlEQEq/c8
+5044WUSbKh7CK/deGXYAyJ7ctX5TJ4OzVPzF5YxesDYRjJWf24k/T8lva/o9cYi+
+lUkXV2NzbG9L2cC8Pj/RWyY7gpjJ2+R5HZSLJ7EwlJqMWwakJD+G+f4N7FAKMJB3
+DlbB19n4N4O0nkIEG9jJQZ16syfZxS2F8DZ4DtrP2hsUu0BVhCh581Bqr6fMwy/h
+FjVAbpFfYLPY5XxGvhYGnVsMkrZiCiz79A240y2xT9tAfwAKuLUMM57/7QmLVW+a
+N3RtRswNQM8yZOQcSq0MgMVFmxAKed9j/6NOs6IEAmSAmU0/MmarDS1d7SI4Qo8=
+=Zdlw
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__12_Aug_2011_12_52_34_+1000_q+hJnndx9/fzRG8l--
