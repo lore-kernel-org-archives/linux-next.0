@@ -1,63 +1,61 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Thu, 11 Aug 2011 20:05:25 -0700
-Message-ID: <1313118339.2029.1.camel@jtkirshe-mobl>
-References: <20110812120248.a23ecc95e9c1111da3a8ef30@canb.auug.org.au>
-	 <1313116296.2057.30.camel@jtkirshe-mobl>
-	 <20110811.195150.1070520107072994432.davem@davemloft.net>
-Reply-To: jeffrey.t.kirsher@intel.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next blackfin builds
+Date: Fri, 12 Aug 2011 13:17:50 +1000
+Message-ID: <20110812131750.73f1257494fd7dad45c96131@canb.auug.org.au>
+References: <CAMjpGUe_zTuXMNNQfnpg3Tueijr=CCXpPG7JOP9tqNNtC2wsrw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-M2yiEpagJgF9JDRMOBtn"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20110811.195150.1070520107072994432.davem@davemloft.net>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__12_Aug_2011_13_17_50_+1000_Fjs0KAZRZFtN6ioq"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58392 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752639Ab1HLDSB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Aug 2011 23:18:01 -0400
+In-Reply-To: <CAMjpGUe_zTuXMNNQfnpg3Tueijr=CCXpPG7JOP9tqNNtC2wsrw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mike Frysinger <vapier.adi@gmail.com>
+Cc: linux-next@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org
 
-
---=-M2yiEpagJgF9JDRMOBtn
-Content-Type: text/plain; charset="UTF-8"
+--Signature=_Fri__12_Aug_2011_13_17_50_+1000_Fjs0KAZRZFtN6ioq
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2011-08-11 at 19:51 -0700, David Miller wrote:
-> From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-> Date: Thu, 11 Aug 2011 19:31:35 -0700
->=20
-> > I am curious, can you compile the Sun GEM support driver?  and if so,
-> > does the Spider Net driver compile?
->=20
-> I'm pretty sure you cannot reference object targets outside of
-> the current directory and expect it to work.
->=20
-> You can only reference things in the current directory (objects,
-> directories to traverse down into, etc.) as targets
->=20
-> So when there is a common piece of infrastructure shared by
-> two drivers, you're really going to have to cope with them
-> at the same time.
+Hi Mike,
 
-I am working on a patch now to fix this.
+On Thu, 11 Aug 2011 21:50:09 -0400 Mike Frysinger <vapier.adi@gmail.com> wr=
+ote:
+>
+> the linux-next website doesnt seem to cover the build system other
+> than to link to it.  all Blackfin defconfigs should be buildable, and
+> are in fact being built right now on a nightly basis on ADI systems.
+> is there a way to plug those results into the site ?
 
-Stephen - if you could compile test it, I would greatly appreciate.
+For a long time we didn't have a blackfin cross compiler that worked.  We
+are working on building one and when that is done, I will add the
+blackfin configs the our build set (and the results will be on the kisskb
+site).
 
---=-M2yiEpagJgF9JDRMOBtn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__12_Aug_2011_13_17_50_+1000_Fjs0KAZRZFtN6ioq
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAABAgAGBQJORJh1AAoJECTsCADr/EWUdLgH/1cBztEYeR8BHUyHidsWeHH5
-NIcnihy20vrclE9KV4hWPpQ6alOfrYCuNpC9OqpeqGppZSpIsb0xMWrbMIjSu9n3
-jjh0VgZIWQg7n2kdV6s4WtoPxlZv80roeL9lmYSOoP1FIS/18r4GZW05mHFv51uK
-0T4mNFoLohqm5xT4onnzMIiA4uAEOi0eiQiSkQ9SE0angzSLla3J9huXjx6vFZEX
-21vxNk2THiekPl7jwbfQ3OB8qV13zH6gBCH7PvzbBTG5nIxKHs58HJBzG1sR56CM
-e+RJdQa2VmBmqAX26sNV5LjhcXLCHT9KlcQu2Ncjy9Kso2zCIbfEMCbUvMEncrE=
-=7usg
+iQEcBAEBAgAGBQJORJteAAoJEDMEi1NhKgbsGfEH/09esVYyFygz++flWN24HgTk
++Fzo5gIjku9yPFaX4O54GcwKuWVR+MCu6FF7L4LFPjLGRtpWPMS0oArlo3V+LNC1
+qr7R3EOKg+8RKy0jr2h8FnbVXB0Wyt8Bi3K4ESgpHW4H+XeAmjnXz237V3SU6BN2
+KEm92K245Ie+JSTi6ykE9lZpUHDLfWSHKBKVMI3gQRm8ZZbbvP5mHcFkSJfCJfZ4
+15KT0tbR351WS83VfWq34drzFcgH0fINMW24vxao+7PFXQLYJ5PPHSK15Yv0+8q3
+jVDUQLaK/oTkl9bBZHWWai0T2xYDAAZluNkze0IaMLMfUoX08vxdrIqr5fFzHbg=
+=1mJI
 -----END PGP SIGNATURE-----
 
---=-M2yiEpagJgF9JDRMOBtn--
-
+--Signature=_Fri__12_Aug_2011_13_17_50_+1000_Fjs0KAZRZFtN6ioq--
