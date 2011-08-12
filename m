@@ -1,26 +1,86 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: Tree for Aug 11 (sound/soc + regmap)
-Date: Fri, 12 Aug 2011 09:11:59 +0900
-Message-ID: <1313107919.19990.4.camel@finisterre.wolfsonmicro.main>
-References: <20110811162058.42b462bc80e67d7a80ecff93@canb.auug.org.au>
-	 <20110811121459.b235aff5.rdunlap@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Fri, 12 Aug 2011 10:37:40 +1000
+Message-ID: <20110812103740.3eb586424c1355448e8cedc3@canb.auug.org.au>
+References: <20110811131129.f0d6226079d86e8f4a5ae920@canb.auug.org.au>
+	<20110811035552.GB15906@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110811121459.b235aff5.rdunlap@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, alsa-devel@alsa-project.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__12_Aug_2011_10_37_40_+1000_vn62IbOyUTxzfmqN"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35528 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753932Ab1HLAhw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Aug 2011 20:37:52 -0400
+In-Reply-To: <20110811035552.GB15906@opensource.wolfsonmicro.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2011-08-11 at 12:14 -0700, Randy Dunlap wrote:
+--Signature=_Fri__12_Aug_2011_10_37_40_+1000_vn62IbOyUTxzfmqN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Mark,
 
-> When CONFIG_SPI is not enabled (so REGMAP_SPI is not enabled):
-> (on i386 and x86_64)
+On Thu, 11 Aug 2011 13:06:23 +0900 Mark Brown <broonie@opensource.wolfsonmi=
+cro.com> wrote:
+>
+> On Thu, Aug 11, 2011 at 01:11:29PM +1000, Stephen Rothwell wrote:
+>=20
+> > Caused by commit 40045a85df0e ("ASoC: Fix SPI driver binding for WM8987=
+").
+>=20
+> No it wasn't, it was there already.  Anyway, should be fixed now.
 
-> sound/built-in.o: In function `snd_soc_codec_set_cache_io':
-> (.text+0x85635): undefined reference to `regmap_init_spi'
+Thanks.
 
-Fixed before you reported it by Axel.
+> Do you have any idea what you're doing to turn on this detection?  It
+> really shouldn't be something that's specific to the x86 build but
+> there's nothing obvious I can see that does it.
+
+My x86_64 allmodconfig build is (effectively) done like this (I am using
+gcc v4.5.2):
+
+echo CONFIG_PROFILE_ALL_BRANCHES=3Dn >../x86_64_allmodconfig.except
+echo CONFIG_DEBUG_INFO=3Dn >>../x86_64_allmodconfig.except
+echo CONFIG_X86_DECODER_SELFTEST=3Dn >>../x86_64_allmodconfig.except
+KCONFIG_ALLCONFIG=3D../x86_64_allmodconfig.except \
+        make O=3D../x86_64_allmodconfig allmodconfig
+make O=3D../x86_64_allmodconfig -j48 -s
+
+> Out of interest you used to carry reverts for commits when you'd
+> identified them but that seems not to happen any more?
+
+It depends on when I find a problem.  If I find a build problem
+immediately after mergeing a particular tree, I reset linux-next and use
+the previous version of the tree instead.  If I do not find the problem
+until after I have completely merged all the trees, I may revert a
+problem commit, or add a patch (is there is an interaction between two
+trees).  In the latter case I will carry the revert or patch as long as
+needed.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__12_Aug_2011_10_37_40_+1000_vn62IbOyUTxzfmqN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJORHXUAAoJEDMEi1NhKgbscRQH/RRqIXxqox89T/50O+5l2pz8
+cPELYq2QdLJLeAX6EkLN/rBd8xyfyOkuvDfgAyg7u7N75MR3bvlG6yYYMTL3LB5x
+3HAj4xdfras0P88OV75rfcqDzCxlGe6uGBQRbSSffiiAl76qLtLX8jjxfXXWKhLI
+211KZlil7RcmkaBtunrQp74pd4fD/jeMoNPMHJvVS8bIsMJLsUHLiulX8235VP/P
+sFY/lldXGCMz7VpHdgRWYDf6Y34lCYjT4A3eRGNVHjQ/ahqRmq+Touu7zn2OEwew
+FGIn1J964lzvw3ANwFXSvM3dF1TGsl6Z2ZS/Hcq37Cb0+iZWC9fnCJh74DMTI30=
+=i1ut
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__12_Aug_2011_10_37_40_+1000_vn62IbOyUTxzfmqN--
