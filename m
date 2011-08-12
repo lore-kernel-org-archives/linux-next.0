@@ -1,78 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (wireless & staging trees related)
-Date: Fri, 12 Aug 2011 12:12:16 +1000
-Message-ID: <20110812121216.28e6979b44bacb651849640b@canb.auug.org.au>
-References: <20110811155529.e5f47afa0504c4ddef58ab37@canb.auug.org.au>
-	<4E438D56.5020801@qca.qualcomm.com>
-	<20110811141604.GA14763@suse.de>
-	<4E43FA61.1010301@qca.qualcomm.com>
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Thu, 11 Aug 2011 19:31:35 -0700
+Message-ID: <1313116296.2057.30.camel@jtkirshe-mobl>
+References: <20110812120248.a23ecc95e9c1111da3a8ef30@canb.auug.org.au>
+Reply-To: jeffrey.t.kirsher@intel.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__12_Aug_2011_12_12_16_+1000_.tf0OjeicfexTwCo"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35435 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752636Ab1HLCMZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Aug 2011 22:12:25 -0400
-In-Reply-To: <4E43FA61.1010301@qca.qualcomm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@qca.qualcomm.com>
-Cc: Greg KH <gregkh@suse.de>, "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>, Raja Mani <rmani@qca.qualcomm.com>, linux-wireless <linux-wireless@vger.kernel.org>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-L1PAMMkqYFRbGe2Ao24X"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110812120248.a23ecc95e9c1111da3a8ef30@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__12_Aug_2011_12_12_16_+1000_.tf0OjeicfexTwCo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+
+--=-L1PAMMkqYFRbGe2Ao24X
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kalle, Greg,
-
-On Thu, 11 Aug 2011 18:50:57 +0300 Kalle Valo <kvalo@qca.qualcomm.com> wrot=
-e:
->
-> On 08/11/2011 05:16 PM, Greg KH wrote:
-> > On Thu, Aug 11, 2011 at 11:05:42AM +0300, Kalle Valo wrote:
-> >
-> >> Yes, the cleaned up version of ath6kl is now in wireless-next and the
-> >> staging version can be removed in 3.2. Greg, how do you want to handle
-> >> removal of the staging version? Should I send a patch to you removing
-> >> it? Or should I send the patch to John?
-> >=20
-> > Just tell me.  Should I really delete drivers/staging/ath6kl/ for the
-> > 3.2 kernel release?  If so, I'll gladly do so in my tree so linux-next
-> > will be fine for issues like this in the future.
+On Thu, 2011-08-11 at 19:02 -0700, Stephen Rothwell wrote:
+> Hi all,
 >=20
-> Yes, please delete ath6kl from staging for the 3.2 release as the
-> cleanup version is now in wireless-next.
+> After merging the net tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 >=20
-> Thank you everyone and sorry for the mess.
+> Assembler messages:
+> Fatal error: can't create drivers/net/ethernet/sun/.tmp_sungem_phy.o: No =
+such file or directory
+>=20
+> Presumably caused by commit e689cf4a0427 ("cassini/niu/sun*: Move the Sun
+> drivers") theough I don't know why.  I tried throwing away my object
+> directory, but that didn't help.
+>=20
+> Ah, ha!  This looks suspicious (change to drivers/net/Makefile):
+>=20
+> +obj-$(CONFIG_SPIDER_NET) +=3D spidernet.o ethernet/sun/sungem_phy.o
+>=20
+> I have used the net tree from next-20110811 for today.
 
-I think that the removal should be done in the wirelesss tree so that
-Linus' tree is not broken during the next merge window.
+I am curious, can you compile the Sun GEM support driver?  and if so,
+does the Spider Net driver compile?
 
-I have added the removal patch as a merge fixup one the merge of the
-wireless tree for today.
+I know I did not have the PPC hardware to test the compilation of the
+Spider Net driver, but I was basing the Makefile changes on similar
+changes that the Broadcom driver required, which I did compile test.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I want to resolve this before continuing on with the next set of
+patches.
 
---Signature=_Fri__12_Aug_2011_12_12_16_+1000_.tf0OjeicfexTwCo
-Content-Type: application/pgp-signature
+
+
+--=-L1PAMMkqYFRbGe2Ao24X
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJORIwAAAoJEDMEi1NhKgbs2zkIAIVADG9NBi1VOHru1G4RIo0/
-Zt0AN9yRK8DAygx1IV1A7/rFJNEyK5KFvgf0azMcgE8Agksh+BUx+aTEIQmGLNR0
-opa41ZSytP91SsqGmaKhxckSbPujqXbDpYNF69o+g93I54iCIw1QLXyR4fY9bKH/
-1tHAYSJnQB2067gk505llDeD2fR7k0JcoQ64F87/yvAMGyy8bu9mSDUqagMf2gpM
-+UhB4L5ZQn2hTLR75dEgxM5M14QKgOJaOONKl69kDUMdVkzBQIwVco7wWnpwtbl2
-8nsg/VJ/TAm46uapjnn5okF4DotAoyYoPDnPY7zNQf+b6OXB5pt6GZvZicYpqMg=
-=Qoe5
+iQEcBAABAgAGBQJORJCHAAoJECTsCADr/EWUnpkIAILvMD+I8W516JsOSSCxV2WW
+PaST8wJQx0+nqD0TTaOM3n2Gw6hwSbz9wJGXCMv6U+xreJCGv4tr09AvGHOQC/8L
+sJRQ+CJ4NUfsZ5y7gCqbBcsJSDr3MKr0o/L3aETNVaRTJph8/W4xFhiYBPVKRLL9
+81y0TtcHiQNc/53M7Q4vTqGI1Ju/JDotQBjYMPQZk+fUcfYMiHEvn9oD0rSKK2Fz
+E1nQhsIGFbavhNi0eXLnO4FVymQCi6Ggf5r5A8tQGulBR+5/9+I0VthW9nMPYQhz
+QpGo2Eg9T8E/sBQNEWgG8UouHQZfqcxnVnqIjHwKDU+e2nxQRGx5OCXkBlLHkdE=
+=Ml6H
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__12_Aug_2011_12_12_16_+1000_.tf0OjeicfexTwCo--
+--=-L1PAMMkqYFRbGe2Ao24X--
