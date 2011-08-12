@@ -1,71 +1,37 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Thu, 11 Aug 2011 19:31:35 -0700
-Message-ID: <1313116296.2057.30.camel@jtkirshe-mobl>
-References: <20110812120248.a23ecc95e9c1111da3a8ef30@canb.auug.org.au>
-Reply-To: jeffrey.t.kirsher@intel.com
+From: James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>
+Subject: Re: [PATCH] CIFS: remove local xattr definitions
+Date: Fri, 12 Aug 2011 12:44:55 +1000 (EST)
+Message-ID: <alpine.LRH.2.00.1108121244250.14779@tundra.namei.org>
+References: <1313090079-25859-1-git-send-email-zohar@linux.vnet.ibm.com> <CACLa4ptNaOvwFX-2VPBve=PBvnB7X85tzTnTPSLtprbT8vSGgw@mail.gmail.com> <1313092847.3122.13.camel@localhost.localdomain> <CAH2r5muSOM=haAXHg+ys05vgJ30m94g_NQz-Y2AgMDkmV1dbiw@mail.gmail.com>
+ <alpine.LRH.2.00.1108121047540.14215@tundra.namei.org> <20110812114919.2797815cf41cd69048e1d3cf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-L1PAMMkqYFRbGe2Ao24X"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110812120248.a23ecc95e9c1111da3a8ef30@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110812114919.2797815cf41cd69048e1d3cf-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mimi Zohar <zohar-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Eric Paris <eparis-FjpueFixGhCM4zKIHC2jIg@public.gmane.org>, linux-security-module-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Safford <safford-aZOuKsOsJu3MbYB6QlFGEg@public.gmane.org>, Mimi Zohar <zohar-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
+On Fri, 12 Aug 2011, Stephen Rothwell wrote:
 
---=-L1PAMMkqYFRbGe2Ao24X
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> Except then that could leave Linus' tree broken during the next merge
+> window depending on the order he merges the cifs and security-testing
+> trees.  Unless that patch is sent to Linus as a fix patch before the next
+> merge window, of course.
+> 
+> I will add this patch as a merge fixup to the merge of the
+> security-testing tree for today.  And will remove my copy when one of the
+> trees gets fixed.
 
-On Thu, 2011-08-11 at 19:02 -0700, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the net tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->=20
-> Assembler messages:
-> Fatal error: can't create drivers/net/ethernet/sun/.tmp_sungem_phy.o: No =
-such file or directory
->=20
-> Presumably caused by commit e689cf4a0427 ("cassini/niu/sun*: Move the Sun
-> drivers") theough I don't know why.  I tried throwing away my object
-> directory, but that didn't help.
->=20
-> Ah, ha!  This looks suspicious (change to drivers/net/Makefile):
->=20
-> +obj-$(CONFIG_SPIDER_NET) +=3D spidernet.o ethernet/sun/sungem_phy.o
->=20
-> I have used the net tree from next-20110811 for today.
+I'll put it in my tree, then.
 
-I am curious, can you compile the Sun GEM support driver?  and if so,
-does the Spider Net driver compile?
+> James: maybe I should change the name of your tree in -next to just
+> "security"?
 
-I know I did not have the PPC hardware to test the compilation of the
-Spider Net driver, but I was basing the Makefile changes on similar
-changes that the Broadcom driver required, which I did compile test.
-
-I want to resolve this before continuing on with the next set of
-patches.
+Sure.
 
 
-
---=-L1PAMMkqYFRbGe2Ao24X
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAABAgAGBQJORJCHAAoJECTsCADr/EWUnpkIAILvMD+I8W516JsOSSCxV2WW
-PaST8wJQx0+nqD0TTaOM3n2Gw6hwSbz9wJGXCMv6U+xreJCGv4tr09AvGHOQC/8L
-sJRQ+CJ4NUfsZ5y7gCqbBcsJSDr3MKr0o/L3aETNVaRTJph8/W4xFhiYBPVKRLL9
-81y0TtcHiQNc/53M7Q4vTqGI1Ju/JDotQBjYMPQZk+fUcfYMiHEvn9oD0rSKK2Fz
-E1nQhsIGFbavhNi0eXLnO4FVymQCi6Ggf5r5A8tQGulBR+5/9+I0VthW9nMPYQhz
-QpGo2Eg9T8E/sBQNEWgG8UouHQZfqcxnVnqIjHwKDU+e2nxQRGx5OCXkBlLHkdE=
-=Ml6H
------END PGP SIGNATURE-----
-
---=-L1PAMMkqYFRbGe2Ao24X--
+-- 
+James Morris
+<jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>
