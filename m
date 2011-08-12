@@ -1,71 +1,61 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: [PATCH] CIFS: remove local xattr definitions
-Date: Fri, 12 Aug 2011 15:08:11 +1000 (EST)
-Message-ID: <alpine.LRH.2.00.1108121508030.15327@tundra.namei.org>
-References: <1313090079-25859-1-git-send-email-zohar@linux.vnet.ibm.com> <CACLa4ptNaOvwFX-2VPBve=PBvnB7X85tzTnTPSLtprbT8vSGgw@mail.gmail.com> <1313092847.3122.13.camel@localhost.localdomain> <CAH2r5muSOM=haAXHg+ys05vgJ30m94g_NQz-Y2AgMDkmV1dbiw@mail.gmail.com>
- <alpine.LRH.2.00.1108121047540.14215@tundra.namei.org> <20110812114919.2797815cf41cd69048e1d3cf@canb.auug.org.au> <alpine.LRH.2.00.1108121244250.14779@tundra.namei.org> <CAH2r5mssB+3vDmNy3mWvGBDYXDu_NYiSZAFOxQXcckr+tHUV4A@mail.gmail.com>
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Thu, 11 Aug 2011 22:22:54 -0700
+Message-ID: <1313126585.4588.1.camel@jtkirshe-mobl>
+References: <20110812120248.a23ecc95e9c1111da3a8ef30@canb.auug.org.au>
+	 <1313116296.2057.30.camel@jtkirshe-mobl>
+	 <20110811.195150.1070520107072994432.davem@davemloft.net>
+	 <1313118339.2029.1.camel@jtkirshe-mobl>
+	 <20110812143418.4fe084a6926f9f6258b596fd@canb.auug.org.au>
+Reply-To: jeffrey.t.kirsher@intel.com
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="1665246916-1955279335-1313125691=:15327"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:60029 "EHLO tundra.namei.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750735Ab1HLFMV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Aug 2011 01:12:21 -0400
-In-Reply-To: <CAH2r5mssB+3vDmNy3mWvGBDYXDu_NYiSZAFOxQXcckr+tHUV4A@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Eric Paris <eparis@parisplace.org>, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-cifs@vger.kernel.org, David Safford <safford@watson.ibm.com>, Mimi Zohar <zohar@us.ibm.com>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-o4kLr+N5ULNXa1Rc6NZq"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20110812143418.4fe084a6926f9f6258b596fd@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---1665246916-1955279335-1313125691=:15327
-Content-Type: TEXT/PLAIN; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+--=-o4kLr+N5ULNXa1Rc6NZq
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 11 Aug 2011, Steve French wrote:
+On Thu, 2011-08-11 at 21:34 -0700, Stephen Rothwell wrote:
+> Hi Jeff,
+>=20
+> On Thu, 11 Aug 2011 20:05:25 -0700 Jeff Kirsher <jeffrey.t.kirsher@intel.=
+com> wrote:
+> >
+> > I am working on a patch now to fix this.
+> >=20
+> > Stephen - if you could compile test it, I would greatly appreciate.
+>=20
+> Sure, send it over.  With master.kernel.org down, its not like I can
+> releease linux-next anyway :-)
+>=20
 
-> If it is easier - I don't mind merging it to cifs now.   Seems
-> harmless and low risk.
+That explains why I was having issues connecting to
+master.kernel.org. :)  Good to know it was not just me.
 
-I've applied it to my tree.
+--=-o4kLr+N5ULNXa1Rc6NZq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-> 
-> On Thu, Aug 11, 2011 at 9:44 PM, James Morris <jmorris@namei.org> wrote:
-> > On Fri, 12 Aug 2011, Stephen Rothwell wrote:
-> >
-> >> Except then that could leave Linus' tree broken during the next merge
-> >> window depending on the order he merges the cifs and security-testing
-> >> trees.  Unless that patch is sent to Linus as a fix patch before the next
-> >> merge window, of course.
-> >>
-> >> I will add this patch as a merge fixup to the merge of the
-> >> security-testing tree for today.  And will remove my copy when one of the
-> >> trees gets fixed.
-> >
-> > I'll put it in my tree, then.
-> >
-> >> James: maybe I should change the name of your tree in -next to just
-> >> "security"?
-> >
-> > Sure.
-> >
-> >
-> > --
-> > James Morris
-> > <jmorris@namei.org>
-> >
-> 
-> 
-> 
-> -- 
-> Thanks,
-> 
-> Steve
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
--- 
-James Morris
-<jmorris@namei.org>
---1665246916-1955279335-1313125691=:15327--
+iQEcBAABAgAGBQJORLiuAAoJECTsCADr/EWUoSoH/ivDl6UdF9/ZL0K/z5qRaLbj
+PLqsoT96ub1MD3T1V0xRCUpCLPB93RDpRcETxWhoD4/SK/DxRKJGJ9yLHnlh+NiU
+Pc/2CAQ51Tibuy0iwXzINgdcxgvEtttrRVhIkW/RWdhusUeFLbHxi16Buq+jHu6u
+jKWYe/X0laLKNu7RdXsSaOu8xREKJdXUtssLCmErDYTVDiF+3+viE7vr6RrEukH5
+Pl9pqLaXyn2QzJR3zyhlr+1LQDLKNAA8cBG5q53HwiC9nctSGC0VcyFuegr9ZYJo
+ZrSx+SwXuqehdgsUkfJQI/yF1XeMDPOA2aDbDuMUD6S5NUgsD82Aclm+YpoAiY4=
+=AcrO
+-----END PGP SIGNATURE-----
+
+--=-o4kLr+N5ULNXa1Rc6NZq--
+
