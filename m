@@ -1,61 +1,91 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next blackfin builds
-Date: Fri, 12 Aug 2011 13:17:50 +1000
-Message-ID: <20110812131750.73f1257494fd7dad45c96131@canb.auug.org.au>
-References: <CAMjpGUe_zTuXMNNQfnpg3Tueijr=CCXpPG7JOP9tqNNtC2wsrw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__12_Aug_2011_13_17_50_+1000_Fjs0KAZRZFtN6ioq"
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: [net-next] spider_net: fix compile issue introduced by driver move
+Date: Thu, 11 Aug 2011 20:33:20 -0700
+Message-ID: <1313120000-12085-1-git-send-email-jeffrey.t.kirsher@intel.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58392 "EHLO smtps.tip.net.au"
+Received: from mga14.intel.com ([143.182.124.37]:28661 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752639Ab1HLDSB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Aug 2011 23:18:01 -0400
-In-Reply-To: <CAMjpGUe_zTuXMNNQfnpg3Tueijr=CCXpPG7JOP9tqNNtC2wsrw@mail.gmail.com>
+	id S1753781Ab1HLDdY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Aug 2011 23:33:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Frysinger <vapier.adi@gmail.com>
-Cc: linux-next@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org
+To: davem@davemloft.net
+Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, netdev@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__12_Aug_2011_13_17_50_+1000_Fjs0KAZRZFtN6ioq
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Both Spider net driver and Sun GEM driver use the sungem_phy.o object.
+This fix creates a Kconfig object for sungem_phy (like MDIO) so that
+both drivers require the SUNGEM_PHY object.
 
-Hi Mike,
+This has been compile tested for the Sun GEM driver.
 
-On Thu, 11 Aug 2011 21:50:09 -0400 Mike Frysinger <vapier.adi@gmail.com> wr=
-ote:
->
-> the linux-next website doesnt seem to cover the build system other
-> than to link to it.  all Blackfin defconfigs should be buildable, and
-> are in fact being built right now on a nightly basis on ADI systems.
-> is there a way to plug those results into the site ?
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+---
+ drivers/net/Kconfig               |    4 ++++
+ drivers/net/Makefile              |    2 +-
+ drivers/net/ethernet/sun/Kconfig  |    1 +
+ drivers/net/ethernet/sun/Makefile |    3 ++-
+ 4 files changed, 8 insertions(+), 2 deletions(-)
 
-For a long time we didn't have a blackfin cross compiler that worked.  We
-are working on building one and when that is done, I will add the
-blackfin configs the our build set (and the results will be on the kisskb
-site).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__12_Aug_2011_13_17_50_+1000_Fjs0KAZRZFtN6ioq
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJORJteAAoJEDMEi1NhKgbsGfEH/09esVYyFygz++flWN24HgTk
-+Fzo5gIjku9yPFaX4O54GcwKuWVR+MCu6FF7L4LFPjLGRtpWPMS0oArlo3V+LNC1
-qr7R3EOKg+8RKy0jr2h8FnbVXB0Wyt8Bi3K4ESgpHW4H+XeAmjnXz237V3SU6BN2
-KEm92K245Ie+JSTi6ykE9lZpUHDLfWSHKBKVMI3gQRm8ZZbbvP5mHcFkSJfCJfZ4
-15KT0tbR351WS83VfWq34drzFcgH0fINMW24vxao+7PFXQLYJ5PPHSK15Yv0+8q3
-jVDUQLaK/oTkl9bBZHWWai0T2xYDAAZluNkze0IaMLMfUoX08vxdrIqr5fFzHbg=
-=1mJI
------END PGP SIGNATURE-----
-
---Signature=_Fri__12_Aug_2011_13_17_50_+1000_Fjs0KAZRZFtN6ioq--
+diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+index e6be7123..c8779c1 100644
+--- a/drivers/net/Kconfig
++++ b/drivers/net/Kconfig
+@@ -934,6 +934,7 @@ config SPIDER_NET
+ 	tristate "Spider Gigabit Ethernet driver"
+ 	depends on PCI && (PPC_IBM_CELL_BLADE || PPC_CELLEB)
+ 	select FW_LOADER
++	select SUNGEM_PHY
+ 	help
+ 	  This driver supports the Gigabit Ethernet chips present on the
+ 	  Cell Processor-Based Blades from IBM.
+@@ -1083,6 +1084,9 @@ if NETDEV_10000
+ config MDIO
+ 	tristate
+ 
++config SUNGEM_PHY
++	tristate
++
+ endif # NETDEV_10000
+ 
+ source "drivers/net/tokenring/Kconfig"
+diff --git a/drivers/net/Makefile b/drivers/net/Makefile
+index d151075..db888b0 100644
+--- a/drivers/net/Makefile
++++ b/drivers/net/Makefile
+@@ -41,7 +41,7 @@ obj-$(CONFIG_R6040) += r6040.o
+ obj-$(CONFIG_YELLOWFIN) += yellowfin.o
+ obj-$(CONFIG_FEALNX) += fealnx.o
+ spidernet-y += spider_net.o spider_net_ethtool.o
+-obj-$(CONFIG_SPIDER_NET) += spidernet.o ethernet/sun/sungem_phy.o
++obj-$(CONFIG_SPIDER_NET) += spidernet.o
+ obj-$(CONFIG_GELIC_NET) += ps3_gelic.o
+ gelic_wireless-$(CONFIG_GELIC_WIRELESS) += ps3_gelic_wireless.o
+ ps3_gelic-objs += ps3_gelic_net.o $(gelic_wireless-y)
+diff --git a/drivers/net/ethernet/sun/Kconfig b/drivers/net/ethernet/sun/Kconfig
+index 87b17a7..5132fa6 100644
+--- a/drivers/net/ethernet/sun/Kconfig
++++ b/drivers/net/ethernet/sun/Kconfig
+@@ -57,6 +57,7 @@ config SUNGEM
+ 	tristate "Sun GEM support"
+ 	depends on PCI
+ 	select CRC32
++	select SUNGEM_PHY
+ 	---help---
+ 	  Support for the Sun GEM chip, aka Sun GigabitEthernet/P 2.0.  See also
+ 	  <http://www.sun.com/products-n-solutions/hardware/docs/pdf/806-3985-10.pdf>.
+diff --git a/drivers/net/ethernet/sun/Makefile b/drivers/net/ethernet/sun/Makefile
+index 4f25217..6e25dad 100644
+--- a/drivers/net/ethernet/sun/Makefile
++++ b/drivers/net/ethernet/sun/Makefile
+@@ -5,7 +5,8 @@
+ obj-$(CONFIG_HAPPYMEAL) += sunhme.o
+ obj-$(CONFIG_SUNQE) += sunqe.o
+ obj-$(CONFIG_SUNBMAC) += sunbmac.o
+-obj-$(CONFIG_SUNGEM) += sungem.o sungem_phy.o
++obj-$(CONFIG_SUNGEM) += sungem.o
++obj-$(CONFIG_SUNGEM_PHY) += sungem_phy.o
+ obj-$(CONFIG_CASSINI) += cassini.o
+ obj-$(CONFIG_SUNVNET) += sunvnet.o
+ obj-$(CONFIG_NIU) += niu.o
+-- 
+1.7.6
