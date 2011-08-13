@@ -1,73 +1,42 @@
-From: Arnaud Lacombe <lacombar@gmail.com>
-Subject: Re: [PATCH][-next] acpi/acpi_drivers.h: fix warnings when ACPI_DOCK
- is not enabled
-Date: Fri, 12 Aug 2011 20:23:42 -0400
-Message-ID: <CACqU3MWrPZQL476R5uhOWrkjKNpUqHbX0oX7rB_yYbt8mz0kFQ@mail.gmail.com>
-References: <1311957278-12290-1-git-send-email-lacombar@gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: Tree for Aug 12 (benet/be2net)
+Date: Fri, 12 Aug 2011 23:19:09 -0700 (PDT)
+Message-ID: <20110812.231909.939460841377364522.davem@davemloft.net>
+References: <20110812171311.4d7bb640f38838bf7c34df50@canb.auug.org.au>
+	<20110812135618.a209d9af.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:42632 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751817Ab1HMAXn convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Aug 2011 20:23:43 -0400
-In-Reply-To: <1311957278-12290-1-git-send-email-lacombar@gmail.com>
+Received: from shards.monkeyblade.net ([198.137.202.13]:33473 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750792Ab1HMGVY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 13 Aug 2011 02:21:24 -0400
+In-Reply-To: <20110812135618.a209d9af.rdunlap@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, Vasiliy Kulikov <segoon@openwall.com>, Jeff Garzik <jgarzik@redhat.com>, Len Brown <len.brown@intel.com>
+To: rdunlap@xenotime.net
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sathya.perla@emulex.com, subbu.seetharaman@emulex.com, ajit.khaparde@emulex.com
 
-Hi,
+From: Randy Dunlap <rdunlap@xenotime.net>
+Date: Fri, 12 Aug 2011 13:56:18 -0700
 
-On Fri, Jul 29, 2011 at 12:34 PM, Arnaud Lacombe <lacombar@gmail.com> w=
-rote:
-> /src/linux/linux/drivers/ata/libata-acpi.c: In function 'ata_acpi_ass=
-ociate':
-> /src/linux/linux/drivers/ata/libata-acpi.c:266:11: warning: passing a=
-rgument 2 of 'register_hotplug_dock_device' discards 'const' qualifier =
-from pointer target type [enabled by default]
-> /src/linux/linux/include/acpi/acpi_drivers.h:146:19: note: expected '=
-struct acpi_dock_ops *' but argument is of type 'const struct acpi_dock=
-_ops *'
-> /src/linux/linux/drivers/ata/libata-acpi.c:275:11: warning: passing a=
-rgument 2 of 'register_hotplug_dock_device' discards 'const' qualifier =
-from pointer target type [enabled by default]
-> /src/linux/linux/include/acpi/acpi_drivers.h:146:19: note: expected '=
-struct acpi_dock_ops *' but argument is of type 'const struct acpi_dock=
-_ops *'
->
-ping ? next-20110811 is still bad.
+> On Fri, 12 Aug 2011 17:13:11 +1000 Stephen Rothwell wrote:
+> 
+>> Hi all,
+>> 
+>> [The kernel.org mirroring is being very slow today]
+> 
+>   [s.l.o.w.]
+>  
+>> The net tree gained a build failure do I used the version from
+>> next-20110811.
+> 
+> 
+> On i386:
+> 
+> drivers/built-in.o: In function `be_rx_eqd_update':
+> be_main.c:(.text+0x569229): undefined reference to `__udivdi3'
 
- - Arnaud
-
-> Cc: Vasiliy Kulikov <segoon@openwall.com>
-> Cc: Jeff Garzik <jgarzik@redhat.com>
-> Cc: Len Brown <len.brown@intel.com>
-> Signed-off-by: Arnaud Lacombe <lacombar@gmail.com>
-> ---
-> =A0include/acpi/acpi_drivers.h | =A0 =A02 +-
-> =A01 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/include/acpi/acpi_drivers.h b/include/acpi/acpi_drivers.=
-h
-> index e49c36d..bb145e4 100644
-> --- a/include/acpi/acpi_drivers.h
-> +++ b/include/acpi/acpi_drivers.h
-> @@ -144,7 +144,7 @@ static inline void unregister_dock_notifier(struc=
-t notifier_block *nb)
-> =A0{
-> =A0}
-> =A0static inline int register_hotplug_dock_device(acpi_handle handle,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0struct acpi_dock_ops *ops,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0const struct acpi_dock_ops *ops,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 void *context)
-> =A0{
-> =A0 =A0 =A0 =A0return -ENODEV;
-> --
-> 1.7.6.153.g78432
->
->
+This is fixed in the net-next tree already by Eric Dumazet, but
+thanks for reporting. :-)
