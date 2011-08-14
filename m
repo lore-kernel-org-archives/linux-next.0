@@ -1,50 +1,41 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for Aug 12 (benet/be2net)
-Date: Fri, 12 Aug 2011 23:20:12 -0700 (PDT)
-Message-ID: <20110812.232012.2290296405050164118.davem@davemloft.net>
-References: <20110812135618.a209d9af.rdunlap@xenotime.net>
-	<20110812150607.2303e10e@nehalam.ftrdhcpuser.net>
-	<20110812151409.b8af0108.rdunlap@xenotime.net>
+From: Mike Frysinger <vapier.adi@gmail.com>
+Subject: Re: linux-next blackfin builds
+Date: Sun, 14 Aug 2011 13:31:00 -0400
+Message-ID: <CAMjpGUcWaxdn2Zvr9OX3hfOjUswigrOM=VykLMy7=xk+z+qr4A@mail.gmail.com>
+References: <CAMjpGUe_zTuXMNNQfnpg3Tueijr=CCXpPG7JOP9tqNNtC2wsrw@mail.gmail.com>
+ <20110812131750.73f1257494fd7dad45c96131@canb.auug.org.au>
+ <CAMjpGUdfKH71_s+ANAbU++GJTMtKQFWMT5QBYOYU6hiAaJ_dig@mail.gmail.com> <20110812145005.25c6b9881382e2d7a6ccda08@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20110812151409.b8af0108.rdunlap@xenotime.net>
-Sender: netdev-owner@vger.kernel.org
-To: rdunlap@xenotime.net
-Cc: shemminger@vyatta.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sathya.perla@emulex.com, subbu.seetharaman@emulex.com, ajit.khaparde@emulex.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:65388 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753355Ab1HNRbX convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 14 Aug 2011 13:31:23 -0400
+Received: by bke11 with SMTP id 11so2585434bke.19
+        for <linux-next@vger.kernel.org>; Sun, 14 Aug 2011 10:31:22 -0700 (PDT)
+In-Reply-To: <20110812145005.25c6b9881382e2d7a6ccda08@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Fri, 12 Aug 2011 15:14:09 -0700
+On Fri, Aug 12, 2011 at 00:50, Stephen Rothwell wrote:
+> On Thu, 11 Aug 2011 23:46:27 -0400 Mike Frysinger wrote:
+>> ADI keep's prebuilt ones on the site:
+>> https://blackfin.uclinux.org/gf/project/toolchain/frs
+>
+> cross compilers hosted on PowerPC? :-) =C2=A0Are there good build ins=
+tructions
+> somewhere?
 
-> On Fri, 12 Aug 2011 15:06:07 -0700 Stephen Hemminger wrote:
-> 
->> On Fri, 12 Aug 2011 13:56:18 -0700
->> Randy Dunlap <rdunlap@xenotime.net> wrote:
->> 
->> > On Fri, 12 Aug 2011 17:13:11 +1000 Stephen Rothwell wrote:
->> > 
->> > > Hi all,
->> > > 
->> > > [The kernel.org mirroring is being very slow today]
->> > 
->> >   [s.l.o.w.]
->> >  
->> > > The net tree gained a build failure do I used the version from
->> > > next-20110811.
->> > 
->> > 
->> > On i386:
->> > 
->> > drivers/built-in.o: In function `be_rx_eqd_update':
->> > be_main.c:(.text+0x569229): undefined reference to `__udivdi3'
->> > 
->> 
->> Already fixed:
-> 
-> That's really good news.  It appears to be re-b0rked
-> or this patch is not in linux-next yet.
+i was building ones for ppc/ppc64 hosts, but no one was d/lin them, so
+i didnt bother anymore
 
-Stephen Rothwell dropped the net-next tree from -next yesterday due to
-some other unrelated fallout.
+the toolchains posted there are based on sources obtained from the
+blackfin.u.o website.  which is a recent release of the respect
+upstream project with additional patches/fixes added on top.
+http://docs.blackfin.uclinux.org/doku.php?id=3Ddeveloping:blackfin_live=
+_sources
+-mike
