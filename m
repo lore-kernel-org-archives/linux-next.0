@@ -1,57 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings in Linus' tree
-Date: Mon, 15 Aug 2011 11:57:21 +1000
-Message-ID: <20110815115721.56a4a4186e0d39f042755a2c@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the security-testing
+ tree
+Date: Mon, 15 Aug 2011 14:04:57 +1000
+Message-ID: <20110815140457.e26185cd86f51defd5e562a3@canb.auug.org.au>
+References: <20110812124723.30fe0e364394fdd4900cb2e3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__15_Aug_2011_11_57_21_+1000_xtzfdrzPv5K.m/bI"
+ boundary="Signature=_Mon__15_Aug_2011_14_04_57_+1000_GXF1FaSmIrT6gkFt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54115 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46888 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750869Ab1HOB5a (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Aug 2011 21:57:30 -0400
+	id S1750724Ab1HOEFO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Aug 2011 00:05:14 -0400
+In-Reply-To: <20110812124723.30fe0e364394fdd4900cb2e3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Bonesio <bones@secretlab.ca>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>
 
---Signature=_Mon__15_Aug_2011_11_57_21_+1000_xtzfdrzPv5K.m/bI
+--Signature=_Mon__15_Aug_2011_14_04_57_+1000_GXF1FaSmIrT6gkFt
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi James,
 
-After merging the fixes tree, today's linux-next build (powerpc
-ppc64_defconfig) produced these warnings:
+On Fri, 12 Aug 2011 12:47:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the security-testing tree, today's linux-next build
+> (powerpc ppc64_defconfig) failed like this:
+>=20
+> init/mounts.o: In function `security_old_inode_init_security':
+> (.opd+0xf0): multiple definition of `security_old_inode_init_security'
+> init/main.o:(.opd+0x108): first defined here
+> init/mounts.o: In function `.security_old_inode_init_security':
+> (.text+0x50): multiple definition of `.security_old_inode_init_security'
+> init/main.o:(.text+0x110): first defined here
+>=20
+> etc ... (lots and lots)
+>=20
+> Casued by commit e1c9b23adbe8 ("evm: building without EVM enabled fixes").
+>=20
+> Please, please, build test this stuff.  This is the same error that that
+> patch was supposed to fix but on another function ...
+>=20
+> I have used the security-tree tree from next-20110809 again.
 
-scripts/dtc/flattree.c: In function 'flat_read_mem_reserve':
-scripts/dtc/flattree.c:700:14: warning: variable 'p' set but not used [-Wun=
-used-but-set-variable]
-scripts/dtc/dtc.c: In function 'main':
-scripts/dtc/dtc.c:102:17: warning: variable 'check' set but not used [-Wunu=
-sed-but-set-variable]
-
-I am not sure why these have suddenly starting being reported.
+I am still getting this ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__15_Aug_2011_11_57_21_+1000_xtzfdrzPv5K.m/bI
+--Signature=_Mon__15_Aug_2011_14_04_57_+1000_GXF1FaSmIrT6gkFt
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOSH0BAAoJEDMEi1NhKgbsG80H/jWy2crSTQhVIlk0tvNpp7yS
-lZoks22Jj/3weqziLoZ6dHiw9RCDHpq37EWmDiAIK0AblhGaklAn9HH8Qceu3WlF
-bZojFUnjk1Y5D3eZDSsFlBXYeLYOs3RJ/vCBzsMxbdU62NYq2ndAndFGf65FIkpN
-GTCiXPTYDkGIaqMixWgXeM2wLl3r7VcsRNbNuZYt6r+k2uI89XeBkCdd94FP8cmh
-oqpnVQKKHyd/u8V95g49xVOThNG+/Yg2HtORXNoKsOl9qfwAgFlpqv7rC4xx6HFu
-Ou5FFXiSuF5p0c0YXU1Imxm2whDx4UpgKQLN66XHeYnCE6oChjWc5leRKZdVARQ=
-=vC1D
+iQEcBAEBAgAGBQJOSJrpAAoJEDMEi1NhKgbs7VEH/RbUcTnS+fbTwjblR/RCexAK
+c09NVBLOsSs0PLTx9YtX+JWqV9SSHClK9oPQABGF4PxrYSjs67aW0NbTjohosO+D
+XhZI4p0GtooS/zXEnIsSuCwxT4WKpnyAcE11it24zfZHPhqwpTSibYHt4zxEwRIz
+whv/NRaoCqmOK8A8YTpsBZx7huxHbu8vwgegz0F/TpTEqAvqKbhZRISCHm9MZd6N
+6N1Sl6CVixfaiLxpbgi2UNrZTOaKfVVGWnxEyukdhNJE1r2W4rWuPfVR7x0iyATl
+4oMyBGU7ife6woM2jJ53+4nKTVjyZXAVMKc/Ii1clLlftpme9emqmXnjQncpvqw=
+=/UxF
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__15_Aug_2011_11_57_21_+1000_xtzfdrzPv5K.m/bI--
+--Signature=_Mon__15_Aug_2011_14_04_57_+1000_GXF1FaSmIrT6gkFt--
