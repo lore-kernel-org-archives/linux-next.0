@@ -1,41 +1,57 @@
-From: Mike Frysinger <vapier.adi@gmail.com>
-Subject: Re: linux-next blackfin builds
-Date: Sun, 14 Aug 2011 13:31:00 -0400
-Message-ID: <CAMjpGUcWaxdn2Zvr9OX3hfOjUswigrOM=VykLMy7=xk+z+qr4A@mail.gmail.com>
-References: <CAMjpGUe_zTuXMNNQfnpg3Tueijr=CCXpPG7JOP9tqNNtC2wsrw@mail.gmail.com>
- <20110812131750.73f1257494fd7dad45c96131@canb.auug.org.au>
- <CAMjpGUdfKH71_s+ANAbU++GJTMtKQFWMT5QBYOYU6hiAaJ_dig@mail.gmail.com> <20110812145005.25c6b9881382e2d7a6ccda08@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings in Linus' tree
+Date: Mon, 15 Aug 2011 11:57:21 +1000
+Message-ID: <20110815115721.56a4a4186e0d39f042755a2c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__15_Aug_2011_11_57_21_+1000_xtzfdrzPv5K.m/bI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:65388 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753355Ab1HNRbX convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 14 Aug 2011 13:31:23 -0400
-Received: by bke11 with SMTP id 11so2585434bke.19
-        for <linux-next@vger.kernel.org>; Sun, 14 Aug 2011 10:31:22 -0700 (PDT)
-In-Reply-To: <20110812145005.25c6b9881382e2d7a6ccda08@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54115 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750869Ab1HOB5a (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Aug 2011 21:57:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Bonesio <bones@secretlab.ca>
 
-On Fri, Aug 12, 2011 at 00:50, Stephen Rothwell wrote:
-> On Thu, 11 Aug 2011 23:46:27 -0400 Mike Frysinger wrote:
->> ADI keep's prebuilt ones on the site:
->> https://blackfin.uclinux.org/gf/project/toolchain/frs
->
-> cross compilers hosted on PowerPC? :-) =C2=A0Are there good build ins=
-tructions
-> somewhere?
+--Signature=_Mon__15_Aug_2011_11_57_21_+1000_xtzfdrzPv5K.m/bI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-i was building ones for ppc/ppc64 hosts, but no one was d/lin them, so
-i didnt bother anymore
+Hi all,
 
-the toolchains posted there are based on sources obtained from the
-blackfin.u.o website.  which is a recent release of the respect
-upstream project with additional patches/fixes added on top.
-http://docs.blackfin.uclinux.org/doku.php?id=3Ddeveloping:blackfin_live=
-_sources
--mike
+After merging the fixes tree, today's linux-next build (powerpc
+ppc64_defconfig) produced these warnings:
+
+scripts/dtc/flattree.c: In function 'flat_read_mem_reserve':
+scripts/dtc/flattree.c:700:14: warning: variable 'p' set but not used [-Wun=
+used-but-set-variable]
+scripts/dtc/dtc.c: In function 'main':
+scripts/dtc/dtc.c:102:17: warning: variable 'check' set but not used [-Wunu=
+sed-but-set-variable]
+
+I am not sure why these have suddenly starting being reported.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__15_Aug_2011_11_57_21_+1000_xtzfdrzPv5K.m/bI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOSH0BAAoJEDMEi1NhKgbsG80H/jWy2crSTQhVIlk0tvNpp7yS
+lZoks22Jj/3weqziLoZ6dHiw9RCDHpq37EWmDiAIK0AblhGaklAn9HH8Qceu3WlF
+bZojFUnjk1Y5D3eZDSsFlBXYeLYOs3RJ/vCBzsMxbdU62NYq2ndAndFGf65FIkpN
+GTCiXPTYDkGIaqMixWgXeM2wLl3r7VcsRNbNuZYt6r+k2uI89XeBkCdd94FP8cmh
+oqpnVQKKHyd/u8V95g49xVOThNG+/Yg2HtORXNoKsOl9qfwAgFlpqv7rC4xx6HFu
+Ou5FFXiSuF5p0c0YXU1Imxm2whDx4UpgKQLN66XHeYnCE6oChjWc5leRKZdVARQ=
+=vC1D
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__15_Aug_2011_11_57_21_+1000_xtzfdrzPv5K.m/bI--
