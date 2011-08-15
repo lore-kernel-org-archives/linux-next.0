@@ -1,72 +1,44 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the security-testing
- tree
-Date: Mon, 15 Aug 2011 14:04:57 +1000
-Message-ID: <20110815140457.e26185cd86f51defd5e562a3@canb.auug.org.au>
-References: <20110812124723.30fe0e364394fdd4900cb2e3@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 15 Aug 2011 14:52:51 +1000
+Message-ID: <20110815145251.d7c8089b567687d0da59e2dc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__15_Aug_2011_14_04_57_+1000_GXF1FaSmIrT6gkFt"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46888 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54579 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750724Ab1HOEFO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Aug 2011 00:05:14 -0400
-In-Reply-To: <20110812124723.30fe0e364394fdd4900cb2e3@canb.auug.org.au>
+	id S1751634Ab1HOEw5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Aug 2011 00:52:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@mit.edu>, Christopher Yeoh <cyeoh@au1.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>
 
---Signature=_Mon__15_Aug_2011_14_04_57_+1000_GXF1FaSmIrT6gkFt
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Andrew,
 
-Hi James,
+Today's linux-next merge of the akpm tree got a conflict in
+arch/x86/include/asm/unistd_64.h between commit fce8dc06423d ("x86-64:
+Wire up getcpu syscall") from Linus' tree and commit  ("Add x86_64
+specific wire up") from the akpm tree.
 
-On Fri, 12 Aug 2011 12:47:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the security-testing tree, today's linux-next build
-> (powerpc ppc64_defconfig) failed like this:
->=20
-> init/mounts.o: In function `security_old_inode_init_security':
-> (.opd+0xf0): multiple definition of `security_old_inode_init_security'
-> init/main.o:(.opd+0x108): first defined here
-> init/mounts.o: In function `.security_old_inode_init_security':
-> (.text+0x50): multiple definition of `.security_old_inode_init_security'
-> init/main.o:(.text+0x110): first defined here
->=20
-> etc ... (lots and lots)
->=20
-> Casued by commit e1c9b23adbe8 ("evm: building without EVM enabled fixes").
->=20
-> Please, please, build test this stuff.  This is the same error that that
-> patch was supposed to fix but on another function ...
->=20
-> I have used the security-tree tree from next-20110809 again.
-
-I am still getting this ...
---=20
+I have fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__15_Aug_2011_14_04_57_+1000_GXF1FaSmIrT6gkFt
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOSJrpAAoJEDMEi1NhKgbs7VEH/RbUcTnS+fbTwjblR/RCexAK
-c09NVBLOsSs0PLTx9YtX+JWqV9SSHClK9oPQABGF4PxrYSjs67aW0NbTjohosO+D
-XhZI4p0GtooS/zXEnIsSuCwxT4WKpnyAcE11it24zfZHPhqwpTSibYHt4zxEwRIz
-whv/NRaoCqmOK8A8YTpsBZx7huxHbu8vwgegz0F/TpTEqAvqKbhZRISCHm9MZd6N
-6N1Sl6CVixfaiLxpbgi2UNrZTOaKfVVGWnxEyukdhNJE1r2W4rWuPfVR7x0iyATl
-4oMyBGU7ife6woM2jJ53+4nKTVjyZXAVMKc/Ii1clLlftpme9emqmXnjQncpvqw=
-=/UxF
------END PGP SIGNATURE-----
-
---Signature=_Mon__15_Aug_2011_14_04_57_+1000_GXF1FaSmIrT6gkFt--
+diff --git a/arch/x86/include/asm/unistd_64.h b/arch/x86/include/asm/unistd_64.h
+index d92641c..f9fff6a 100644
+--- a/arch/x86/include/asm/unistd_64.h
++++ b/arch/x86/include/asm/unistd_64.h
+@@ -683,6 +683,10 @@ __SYSCALL(__NR_sendmmsg, sys_sendmmsg)
+ __SYSCALL(__NR_setns, sys_setns)
+ #define __NR_getcpu				309
+ __SYSCALL(__NR_getcpu, sys_getcpu)
++#define __NR_process_vm_readv			310
++__SYSCALL(__NR_process_vm_readv, sys_process_vm_readv)
++#define __NR_process_vm_writev			311
++__SYSCALL(__NR_process_vm_writev, sys_process_vm_writev)
+ 
+ #ifndef __NO_STUBS
+ #define __ARCH_WANT_OLD_READDIR
