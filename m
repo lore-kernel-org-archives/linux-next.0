@@ -1,65 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (xfs
- tree related)
-Date: Tue, 16 Aug 2011 01:27:15 +1000
-Message-ID: <20110816012715.42665b49723cc48b1bd97610@canb.auug.org.au>
-References: <20110815161023.6227665ab11f8a35fd649e3a@canb.auug.org.au>
-	<20110815144946.GA8256@infradead.org>
+From: James Morris <jmorris@namei.org>
+Subject: Re: [PATCH] evm: building without EVM enabled fixes cont
+Date: Tue, 16 Aug 2011 09:24:31 +1000 (EST)
+Message-ID: <alpine.LRH.2.00.1108160924171.7242@tundra.namei.org>
+References: <1313413756-4920-1-git-send-email-zohar@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__16_Aug_2011_01_27_15_+1000_3hN6tPnRno/bUedo"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35752 "EHLO smtps.tip.net.au"
+Received: from tundra.namei.org ([65.99.196.166]:32928 "EHLO tundra.namei.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754256Ab1HOP1Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Aug 2011 11:27:25 -0400
-In-Reply-To: <20110815144946.GA8256@infradead.org>
+	id S1752205Ab1HOXYq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Aug 2011 19:24:46 -0400
+In-Reply-To: <1313413756-4920-1-git-send-email-zohar@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <aelder@sgi.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, David Safford <safford@watson.ibm.com>, Mimi Zohar <zohar@us.ibm.com>
 
---Signature=_Tue__16_Aug_2011_01_27_15_+1000_3hN6tPnRno/bUedo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 15 Aug 2011, Mimi Zohar wrote:
 
-Hi Christoph,
+> - Make the previously missing security_old_inode_init_security() stub
+>   function definition static inline.
+> 
+> - The stub security_inode_init_security() function previously returned
+>   -EOPNOTSUPP and relied on the callers to change it to 0.  The stub
+>   security/security_old_inode_init_security() functions now return 0.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
 
-On Mon, 15 Aug 2011 10:49:46 -0400 Christoph Hellwig <hch@infradead.org> wr=
-ote:
->
-> On Mon, Aug 15, 2011 at 04:10:23PM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > After merging the final tree, today's linux-next build (a powerpc server
-> > config) failed like this:
->=20
-> You'll need the patch below.  Can you keep is as a fix-up for now until
-> Alex returns from his vacation?
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
 
-Thanks.  I will add it starting tomorrow and remove it when it turns up
-in the xfs tree.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__16_Aug_2011_01_27_15_+1000_3hN6tPnRno/bUedo
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOSTrTAAoJEDMEi1NhKgbsEpYIAJAYYdVozfSSrHPyzYyoBIwn
-2IGn5HP1cwHiS3Manhc3RsPhjzNnGn8tDM7hM20FYmlAia4lMMgdSEMMRRyeqB1m
-kjnpHQ3DeCtH48fHnFhKeycLUe4wv6K7vpmMH2sQp1V5lfHaOBVr7gge01GeJNZr
-2aqf2irP+zXyGjNX80boj99d6v4lfDwPvQi/NfjnhEeAo5/XlRvf45SzIRvRkzNz
-XqaG2/YlzwGt+wlTjPndlHOQXjvNjlNUkb6wIbM3Z1XQVxe7zJHmsVitll0Psf0p
-gJJLbjP1wszDhVwKyuV20z/1B3xo/hQcM7uL2mQVeukkmIy+wQ0S+SeBmltI3zU=
-=Uwif
------END PGP SIGNATURE-----
-
---Signature=_Tue__16_Aug_2011_01_27_15_+1000_3hN6tPnRno/bUedo--
+-- 
+James Morris
+<jmorris@namei.org>
