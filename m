@@ -1,39 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Tue, 16 Aug 2011 00:17:11 -0700 (PDT)
-Message-ID: <20110816.001711.169179303753669881.davem@davemloft.net>
-References: <20110816152815.911f15937efa2ebf58a2795d@canb.auug.org.au>
-	<20110815.231116.1728582609642497613.davem@davemloft.net>
-	<20110816165744.5c069b0c9f2e329e48ecd7d0@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: linux-next: Tree for Aug 16
+Date: Tue, 16 Aug 2011 14:38:09 +0200
+Message-ID: <CA+icZUXKCvqfwoHma-4dLymWS3yVHuFWrL0=qr4bVCJjTKsWkw@mail.gmail.com>
+References: <20110816160754.7c4124fc60a99bb32051a92b@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:33313 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751088Ab1HPHT1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Aug 2011 03:19:27 -0400
-In-Reply-To: <20110816165744.5c069b0c9f2e329e48ecd7d0@canb.auug.org.au>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:55121 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751236Ab1HPMiK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Aug 2011 08:38:10 -0400
+In-Reply-To: <20110816160754.7c4124fc60a99bb32051a92b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jeffrey.t.kirsher@intel.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 16 Aug 2011 16:57:44 +1000
+On Tue, Aug 16, 2011 at 8:07 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> [The kernel.org mirroring is being very slow today]
+>
 
-> Hi Dave,
-> 
-> On Mon, 15 Aug 2011 23:11:16 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
->>
->> Please test this patch:
->> 
->> --------------------
->> net: Fix sungem_phy sharing.
-> 
-> This fixes my allyesconfig build (and doesn't break any of the others :-)).
-> 
-> Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Of what time-deltas are we talking? >1d?
+I took the linux-next patch from yesterday (next-20110815).
+For actively working on linux-next, this is again a real pain.
+What about mirroring your data from master.k.o to [1] or [2] (like
+some Linux-kernel sub-tree maintainers already use)?
 
-Thanks a lot for testing.
+- Sedat -
+
+[1] http://git.infradead.org/
+[2] http://repo.or.cz/
