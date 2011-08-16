@@ -1,35 +1,39 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build warning after merge of the final tree
-Date: Tue, 16 Aug 2011 15:08:44 +0800
-Message-ID: <20110816070844.GA7339@gondor.apana.org.au>
-References: <20110816152234.26afbea89bfe896d95177ad7@canb.auug.org.au> <20110816060410.GA7013@gondor.apana.org.au> <20110816170311.78935e0cae3d6c3f5955e1c0@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree (net
+ tree related)
+Date: Tue, 16 Aug 2011 00:17:11 -0700 (PDT)
+Message-ID: <20110816.001711.169179303753669881.davem@davemloft.net>
+References: <20110816152815.911f15937efa2ebf58a2795d@canb.auug.org.au>
+	<20110815.231116.1728582609642497613.davem@davemloft.net>
+	<20110816165744.5c069b0c9f2e329e48ecd7d0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from helcar.apana.org.au ([209.40.204.226]:41591 "EHLO
-	fornost.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751198Ab1HPHIt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Aug 2011 03:08:49 -0400
-Content-Disposition: inline
-In-Reply-To: <20110816170311.78935e0cae3d6c3f5955e1c0@canb.auug.org.au>
+Received: from shards.monkeyblade.net ([198.137.202.13]:33313 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751088Ab1HPHT1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Aug 2011 03:19:27 -0400
+In-Reply-To: <20110816165744.5c069b0c9f2e329e48ecd7d0@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mathias Krause <minipli@googlemail.com>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jeffrey.t.kirsher@intel.com
 
-On Tue, Aug 16, 2011 at 05:03:11PM +1000, Stephen Rothwell wrote:
-> Hi Herbert,
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 16 Aug 2011 16:57:44 +1000
+
+> Hi Dave,
 > 
-> On Tue, 16 Aug 2011 14:04:10 +0800 Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> >
-> > Does this patch fix the problem?
+> On Mon, 15 Aug 2011 23:11:16 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
+>>
+>> Please test this patch:
+>> 
+>> --------------------
+>> net: Fix sungem_phy sharing.
 > 
-> Yes, it does.
+> This fixes my allyesconfig build (and doesn't break any of the others :-)).
 > 
 > Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Thanks for checking!
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks a lot for testing.
