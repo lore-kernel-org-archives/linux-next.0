@@ -1,61 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Tue, 16 Aug 2011 15:28:15 +1000
-Message-ID: <20110816152815.911f15937efa2ebf58a2795d@canb.auug.org.au>
-References: <20110815152048.3b8f8484faf1891ef2fce266@canb.auug.org.au>
-	<20110814.225610.2264854100578866902.davem@davemloft.net>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: build warning after merge of the final tree
+Date: Tue, 16 Aug 2011 14:04:10 +0800
+Message-ID: <20110816060410.GA7013@gondor.apana.org.au>
+References: <20110816152234.26afbea89bfe896d95177ad7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__16_Aug_2011_15_28_15_+1000_w/bm/oAUeVlFW6dS"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59169 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751262Ab1HPF2Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Aug 2011 01:28:24 -0400
-In-Reply-To: <20110814.225610.2264854100578866902.davem@davemloft.net>
+Received: from helcar.apana.org.au ([209.40.204.226]:53666 "EHLO
+	fornost.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751485Ab1HPGEO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Aug 2011 02:04:14 -0400
+Content-Disposition: inline
+In-Reply-To: <20110816152234.26afbea89bfe896d95177ad7@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jeffrey.t.kirsher@intel.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mathias Krause <minipli@googlemail.com>
 
---Signature=_Tue__16_Aug_2011_15_28_15_+1000_w/bm/oAUeVlFW6dS
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Aug 16, 2011 at 03:22:34PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) produced this warning:
+> 
+> In file included from security/integrity/ima/../integrity.h:16:0,
+>                  from security/integrity/ima/ima.h:27,
+>                  from security/integrity/ima/ima_policy.c:20:
+> include/crypto/sha.h:86:10: warning: 'struct shash_desc' declared inside parameter list
+> include/crypto/sha.h:86:10: warning: its scope is only this definition or declaration, which is probably not what you want
+> 
+> Introduced by commit 7c390170b493 ("crypto: sha1 - export sha1_update for
+> reuse").  I guess you need to include crypto/hash.h in crypto/sha.h.
 
-Hi Dave,
+Thanks for the report.
 
-On Sun, 14 Aug 2011 22:56:10 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> This should fix the include problem, but I suspect this thing won't
-> link.
+Does this patch fix the problem?
 
-Yep, indeed, today I get:
+commit 4619b6bdb71362d95810f475cc61a6de9d0b1904
+Author: Herbert Xu <herbert@gondor.apana.org.au>
+Date:   Tue Aug 16 14:03:05 2011 +0800
 
-make[5]: *** No rule to make target `drivers/net/ethernet/toshiba/ethernet/=
-sun/sungem_phy.o', needed by `drivers/net/ethernet/toshiba/built-in.o'.
+    crypto: sha - Fix build error due to crypto_sha1_update
+    
+    On Tue, Aug 16, 2011 at 03:22:34PM +1000, Stephen Rothwell wrote:
+    >
+    > After merging the final tree, today's linux-next build (powerpc
+    > allyesconfig) produced this warning:
+    >
+    > In file included from security/integrity/ima/../integrity.h:16:0,
+    >                  from security/integrity/ima/ima.h:27,
+    >                  from security/integrity/ima/ima_policy.c:20:
+    > include/crypto/sha.h:86:10: warning: 'struct shash_desc' declared inside parameter list
+    > include/crypto/sha.h:86:10: warning: its scope is only this definition or declaration, which is probably not what you want
+    >
+    > Introduced by commit 7c390170b493 ("crypto: sha1 - export sha1_update for
+    > reuse").  I guess you need to include crypto/hash.h in crypto/sha.h.
+    
+    This patch fixes this by providing a declaration for struct shash_desc.
+    
+    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
---=20
+diff --git a/include/crypto/sha.h b/include/crypto/sha.h
+index 83e6be5..c6c9c1f 100644
+--- a/include/crypto/sha.h
++++ b/include/crypto/sha.h
+@@ -82,6 +82,8 @@ struct sha512_state {
+ 	u8 buf[SHA512_BLOCK_SIZE];
+ };
+ 
++struct shash_desc;
++
+ extern int crypto_sha1_update(struct shash_desc *desc, const u8 *data,
+ 			      unsigned int len);
+ 
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__16_Aug_2011_15_28_15_+1000_w/bm/oAUeVlFW6dS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOSf/vAAoJEDMEi1NhKgbszLkH/1R8mgQNzW2Gp4+8v3zvbVoK
-NFAxaJJ8AjqOvnWIa1SX3a5KryO7VCGo6UOyjTwsa44RQaKv9LoYWtljFE1rriCx
-Vc6tyMAZWL/oivwB+VaUXHuKfTFwNUtneY5KA5ipGVeSdw8B4EQ0nM/USr5RUv7a
-qnsCgnolrR/BVDAo68AEfOQ/VzW5MmdDP3pXuzce8A+8rRC3EFNMBvqf2Pp1FJin
-HjtSW7dVpeZsvtz9EVJvWeJ6amef8LkffKJSfBRaPSO3WASzegNpGzqmhjGnFf3i
-yTxCKxpNL0bGK5mQAdNicANk9yPyDMffYOxAW+TdvsNU0wxY4qitiAA89DhSE6A=
-=cB3a
------END PGP SIGNATURE-----
-
---Signature=_Tue__16_Aug_2011_15_28_15_+1000_w/bm/oAUeVlFW6dS--
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
