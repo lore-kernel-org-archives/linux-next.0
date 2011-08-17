@@ -1,33 +1,60 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: boot test failure (net tree)
-Date: Tue, 16 Aug 2011 20:05:28 -0700 (PDT)
-Message-ID: <20110816.200528.63647861483543536.davem@davemloft.net>
-References: <20110817105002.efebf85d08460ad99b14be8e@canb.auug.org.au>
-	<20110816.175657.1688139393736610845.davem@davemloft.net>
-	<20110817112110.ec81ef078204bf4a02049a66@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (sound-asoc
+ tree related)
+Date: Wed, 17 Aug 2011 14:21:56 +1000
+Message-ID: <20110817142156.04f20226dbb44becff34b9c2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__17_Aug_2011_14_21_56_+1000_u125dDRq7lGltSVC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:42355 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753239Ab1HQDHb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Aug 2011 23:07:31 -0400
-In-Reply-To: <20110817112110.ec81ef078204bf4a02049a66@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46369 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750831Ab1HQEWJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Aug 2011 00:22:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jeffrey.t.kirsher@intel.com
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 17 Aug 2011 11:21:10 +1000
+--Signature=_Wed__17_Aug_2011_14_21_56_+1000_u125dDRq7lGltSVC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, 16 Aug 2011 17:56:57 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
->>
->> This happens on other occaisions, I see new group guards all
->> the time when I resync my net and net-next trees with Linus.
-> 
-> "All the time"?  really?
+Hi Mark,
 
-I can't think of too many days during the merge window where this
-doesn't happen, quite frankly.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+sound/soc/codecs/wm8994.c: In function 'wm8994_codec_probe':
+sound/soc/codecs/wm8994.c:3144:27: error: 'struct wm8994_priv' has no membe=
+r named 'wm8994'
+sound/soc/codecs/wm8994.c:3146:27: error: 'struct wm8994_priv' has no membe=
+r named 'wm8994'
+
+Caused by commit f0b182b003e2 ("ASoC: Implement WM8994 thermal warning
+and shutdown interrupt support").
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__17_Aug_2011_14_21_56_+1000_u125dDRq7lGltSVC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOS0HkAAoJEDMEi1NhKgbsee4H/2qUme/BcL/FprOny86lCokZ
+V+ceQ9NAmCJ6J6+kBHWldbyFtGbINdY/boqmW+b1WimU5sRW1PL0ImEPgr89/glR
+AHPBdCVUJm4t9Z6D5zisVKVkv6trBCObaIDK5JAVc1nbf/1HGffqK7H4APtOiTSH
+L/uahlxm64azbd8LtJjFAy67HdqUrk+/ubq/Mxw/Ym8dxkI05DaWiLoXNtWljYH0
+8KxkpTYeJmKJQyOzdux2W2D3Ic4mDSZjzaUDncUGr22TvVADOpSyjs2OGWlTos3d
+dDhcLwCVTrSWG6/VIxX2jl1d0kvBJthRxhMCzkgbY1CxJv5znPNMft8hsUFi+PY=
+=HcvT
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__17_Aug_2011_14_21_56_+1000_u125dDRq7lGltSVC--
