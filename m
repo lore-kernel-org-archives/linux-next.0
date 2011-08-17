@@ -1,35 +1,57 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for Aug 16
-Date: Tue, 16 Aug 2011 14:38:09 +0200
-Message-ID: <CA+icZUXKCvqfwoHma-4dLymWS3yVHuFWrL0=qr4bVCJjTKsWkw@mail.gmail.com>
-References: <20110816160754.7c4124fc60a99bb32051a92b@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: boot test failure (net tree)
+Date: Wed, 17 Aug 2011 10:01:46 +1000
+Message-ID: <20110817100146.3b557cf815a5a2ae09bc09a7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__17_Aug_2011_10_01_46_+1000_DqzQb1=P662eBQRn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:55121 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751236Ab1HPMiK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Aug 2011 08:38:10 -0400
-In-Reply-To: <20110816160754.7c4124fc60a99bb32051a92b@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40962 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752838Ab1HQAB6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Aug 2011 20:01:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 
-On Tue, Aug 16, 2011 at 8:07 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> [The kernel.org mirroring is being very slow today]
->
+--Signature=_Wed__17_Aug_2011_10_01_46_+1000_DqzQb1=P662eBQRn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Of what time-deltas are we talking? >1d?
-I took the linux-next patch from yesterday (next-20110815).
-For actively working on linux-next, this is again a real pain.
-What about mirroring your data from master.k.o to [1] or [2] (like
-some Linux-kernel sub-tree maintainers already use)?
+Hi all,
 
-- Sedat -
+I do build and boot tests for various PowerPC servers I have access to.
+Last night's test failed due to the fact that their ethernet drivers are
+not longer being built.  In particular, CONFIG_TIGON3 newly depends on
+CONFIG_NET_VENDOR_BROADCOM which will no be selected when doing a "make
+oldconfig" from a working config.  Similarly for CONFIG_IBM_VETH and (the
+new) CONFIG_VENDOR_IBM.  The original config had both CONFIG_TIGON3 and
+CONFIG_IBM_VETH set (to y and m resp.) and the final config had neither.
 
-[1] http://git.infradead.org/
-[2] http://repo.or.cz/
+These Kconfig changes need to be revised so that "make oldconfig" from a
+working config builds the same set of drivers ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__17_Aug_2011_10_01_46_+1000_DqzQb1=P662eBQRn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOSwTqAAoJEDMEi1NhKgbsYwgH/1JPwPg3Bgu/7suOANAjluWJ
+FO7GCUZnON9YYgSAnorvkRYhbwG2UkiK7XV4du7pjjobI5KO2ZLRqygnSx0dAVKi
+eqlRz5tSL+bfeiBGOX/+jF9oUenXbRjiv1KyO5FUNSRz9YOE9eBEqveRXuh9ypWy
+oDfR7FAVr4fCc+0a3yLQBNyosq17E8i4zI8LhK4xUr9csnHh+ZZlooF2rzTPGRlK
+6KoEA5r0ejxSwyRRvVm2p7of65Q2o5aHpNNOYf8U9qrk/YqKwFdGkWGY2JY8guwQ
+DBCiLKANsid/K0MYhlxDMDsklHuEEkasuHBGdEqB3drTqeZwRR8EugyLoSZpCzQ=
+=u8Vw
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__17_Aug_2011_10_01_46_+1000_DqzQb1=P662eBQRn--
