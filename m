@@ -1,31 +1,49 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: [PATCH] evm: add MAINTAINERS entry
-Date: Thu, 18 Aug 2011 12:59:11 +1000 (EST)
-Message-ID: <alpine.LRH.2.00.1108181259000.23874@tundra.namei.org>
-References: <1313621544-9239-1-git-send-email-zohar@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the  tree
+Date: Thu, 18 Aug 2011 14:14:36 +1000
+Message-ID: <20110818141436.90346525d4d39314c7931357@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:37452 "EHLO tundra.namei.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754851Ab1HRC7X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Aug 2011 22:59:23 -0400
-In-Reply-To: <1313621544-9239-1-git-send-email-zohar@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@xenotime.net>, David Safford <safford@watson.ibm.com>, Mimi Zohar <zohar@us.ibm.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__18_Aug_2011_14_14_36_+1000_Rr0ehqou2Rc6CU2E"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, Linus Torvalds <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 17 Aug 2011, Mimi Zohar wrote:
+--Signature=_Thu__18_Aug_2011_14_14_36_+1000_Rr0ehqou2Rc6CU2E
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Update the MAINTAINERS file with an entry for EVM.
-> 
-> Reported-by: Randy Dunlap <rdunlap@xenotimenet>
-> Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
+Hi all,
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
+Today's linux-next merge of the tip tree got a conflict in
+arch/x86/mm/fault.c between commit cedf03bd9aa5 ("x86: fix mm/fault.c
+build") from Linus' tree and commit fab1167c4698 ("x86, vsyscall: Add
+missing <asm/fixmap.h> to arch/x86/mm/fault.c") from the tip tree.
 
--- 
-James Morris
-<jmorris@namei.org>
+These are both fixing the same problem but differently.  Given the
+comments in the latter, I have used its version.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__18_Aug_2011_14_14_36_+1000_Rr0ehqou2Rc6CU2E
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOTJGsAAoJEDMEi1NhKgbs0OoH/jdgha19mYWuIOwX/h4snZpc
+Qp68/09ITg6tthyyRePGpflMzb4zArJLAoidGq0WH2pG9M7ftNiVOm7KiC/+xgP+
+ZO4eBsf7U6fkH9y5k6wgAmYICMf23hnxEsbsOojIsnQRsI0DrfjwG5WjhlzLRn70
+q5tx6a65E6xl7dV/eLnSw4w2GflGvZLASAlUCk4fHNDPvU5MQdwPhm/+TnNdYhKo
+/aavkIjAlEI+N8yM6SY9b2bYG+zt+4L0o48Qd8KSGFB71EoHmpY9W61w4saQJQU/
+/VSX37GAide0LcTxfJhnmeNN5lhpUtTyEDdtlKQ0ybkCSQrN+UQhW1EosbuQqg8=
+=PCC4
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__18_Aug_2011_14_14_36_+1000_Rr0ehqou2Rc6CU2E--
