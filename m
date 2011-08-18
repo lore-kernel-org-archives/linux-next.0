@@ -1,59 +1,37 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH] evm: add Kconfig TCG_TPM dependency
-Date: Thu, 18 Aug 2011 10:38:17 -0700
-Message-ID: <20110818103817.80b585a0.rdunlap@xenotime.net>
-References: <1313621496-8308-1-git-send-email-zohar@linux.vnet.ibm.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build warning after merge of the moduleh tree
+Date: Thu, 18 Aug 2011 22:57:44 +0200
+Message-ID: <201108182257.44926.rjw@sisk.pl>
+References: <20110818150945.b429ef302fd45a6a309b52d4@canb.auug.org.au> <201108181026.51813.rjw@sisk.pl> <20110818192754.972382bbed8fa3adc6dca9c5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:44328 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751236Ab1HRRiT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Aug 2011 13:38:19 -0400
-In-Reply-To: <1313621496-8308-1-git-send-email-zohar@linux.vnet.ibm.com>
+Received: from ogre.sisk.pl ([217.79.144.158]:50946 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751509Ab1HRU4F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Aug 2011 16:56:05 -0400
+In-Reply-To: <20110818192754.972382bbed8fa3adc6dca9c5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>, Stephen Rothwell <sfr@canb.auug.org.au>, David Safford <safford@watson.ibm.com>, Mimi Zohar <zohar@us.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 17 Aug 2011 18:51:36 -0400 Mimi Zohar wrote:
-
-> Although the EVM encrypted-key should be encrypted/decrypted using a
-> trusted-key, a user-defined key could be used instead. When using a user-
-> defined key, a TCG_TPM dependency should not be required.  Unfortunately,
-> the encrypted-key code needs to be refactored a bit in order to remove
-> this dependency.
+On Thursday, August 18, 2011, Stephen Rothwell wrote:
+> Hi Rafael,
 > 
-> This patch adds the TCG_TPM dependency.
+> On Thu, 18 Aug 2011 10:26:51 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+> >
+> > Do you mean that drivers/base/power/common.c should include module.h
+> > or something else?
 > 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>,
-> 	     Randy Dunlap <rdunlap@xenotimenet>
-> Signed-off-by: Mimi Zohar <zohar@us.ibm.com>
+> Yes, that is exactly what I mean :-)  See Rule 1 in
+> Documentation/SubmitChecklist.  The reason it is different, is because
+> the module.h splitup is cerating export.h for files that just need
+> EXPORT_SYMBOL (like this file).
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+OK, I've modified common.c so that module.h is included.
 
-Thanks.
-
-> ---
->  security/integrity/evm/Kconfig |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/security/integrity/evm/Kconfig b/security/integrity/evm/Kconfig
-> index 444877d..884617d 100644
-> --- a/security/integrity/evm/Kconfig
-> +++ b/security/integrity/evm/Kconfig
-> @@ -1,6 +1,6 @@
->  config EVM
->  	boolean "EVM support"
-> -	depends on SECURITY && KEYS
-> +	depends on SECURITY && KEYS && TCG_TPM
->  	select CRYPTO_HMAC
->  	select CRYPTO_MD5
->  	select CRYPTO_SHA1
-> -- 
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Thanks,
+Rafael
