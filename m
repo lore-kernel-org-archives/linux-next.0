@@ -1,50 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pm tree
-Date: Fri, 19 Aug 2011 23:47:56 +1000
-Message-ID: <20110819234756.ef70fa07dccb6adc17d2f516@canb.auug.org.au>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the wireless tree with the net tree
+Date: Thu, 18 Aug 2011 18:03:35 -0700
+Message-ID: <20110819010334.GC2487@tuxdriver.com>
+References: <20110819105946.a46aa8a997f466d8a2e7f2f3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__19_Aug_2011_23_47_56_+1000_lmIgiYezd/R9tAsI"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__19_Aug_2011_23_47_56_+1000_lmIgiYezd/R9tAsI
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:40641 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751832Ab1HSPAR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Aug 2011 11:00:17 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20110819105946.a46aa8a997f466d8a2e7f2f3@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jpirko@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-Hi Rafael,
+On Fri, Aug 19, 2011 at 10:59:46AM +1000, Stephen Rothwell wrote:
+> Hi John,
+> 
+> Today's linux-next merge of the wireless tree got a conflict in
+> drivers/staging/ath6kl/os/linux/ar6000_drv.c between commit afc4b13df143
+> ("net: remove use of ndo_set_multicast_list in drivers") from the net
+> tree and commit af2bf4b4ee58 ("staging: remove ath6kl") from the wireless
+> tree.
+> 
+> I just removed the file.
 
-After merging the pm tree, today's linux-next build (most of the arm and
-avr32 builds at least) failed like this:
+Cool, thanks.  I imagine that any more "bombing runs" that touch
+ath6kl in staging will be able to resolved in the same fashion.
 
-In file included from drivers/base/power/clock_ops.c:14:
-include/linux/pm_clock.h:15: error: field 'nb' has incomplete type
+Thanks!
 
-You need to include something that defines "struct notifier_block".
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__19_Aug_2011_23_47_56_+1000_lmIgiYezd/R9tAsI
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOTmmMAAoJEDMEi1NhKgbslFgIAIcdmybVNXfAkNS4n91ox+eO
-Psv/OHvPrxBDnU+Dwzg4IHyNQjU0lk8VB+/A80n+rzKLEodnfaYe99Nc1Sk8y502
-IdEqgHKMEIVXoya53cpsNmhzNGwM0CX3luRfnZeYId8M7JGFa6hXR9vCUODCBJM3
-GojxeNiNmu+Wu2jP+jK6LvvlV3Hg2P7Znh+g8n9uigAm9kKC6gQrmP/lnBwGmdue
-/u0a4u6qhn70CjaYzfYW+DwdZ5qagZ4fkU1bsikVn5eUfWDGH3MysyDzYKpkDWsQ
-lj7631OUhGXbDRC+2MKMYiDLXbL3pmV3baVkCKnJdye3Wfa95p60eNCo2aNlQDE=
-=lUik
------END PGP SIGNATURE-----
-
---Signature=_Fri__19_Aug_2011_23_47_56_+1000_lmIgiYezd/R9tAsI--
+John
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
