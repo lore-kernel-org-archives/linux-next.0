@@ -1,34 +1,58 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
-Subject: Re: [PATCH -next] power: max8998_charger.c needs module.h
-Date: Fri, 19 Aug 2011 21:02:22 +0400
-Message-ID: <20110819170222.GM22761@oksana.dev.rtsoft.ru>
-References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
- <20110729211143.0a9d6ed7.rdunlap@xenotime.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: build failure after merge of the final tree (pm
+ tree related)
+Date: Fri, 19 Aug 2011 13:33:45 -0700
+Message-ID: <20110819133345.36349fc9.rdunlap@xenotime.net>
+References: <20110819130328.ee5c4b7191db0ce2c8a02e39@canb.auug.org.au>
+	<CAN5iSWpGKF4qu5yqeDk=nxvq0tVs6+mozAEJ+FLdh=Ryx-hsEA@mail.gmail.com>
+	<20110819233950.e526ac71ca862f45538b8721@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:58235 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755816Ab1HSRC1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Aug 2011 13:02:27 -0400
-Content-Disposition: inline
-In-Reply-To: <20110729211143.0a9d6ed7.rdunlap@xenotime.net>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:49894 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754710Ab1HSUdr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Aug 2011 16:33:47 -0400
+In-Reply-To: <20110819233950.e526ac71ca862f45538b8721@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Pihet-XID, Jean" <j-pihet@ti.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 29, 2011 at 09:11:43PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
+On Fri, 19 Aug 2011 23:39:50 +1000 Stephen Rothwell wrote:
+
+> Hi, 
 > 
-> power/max8998_charger.c uses interfaces from linux/module.h,
-> so it should include that file.  This fixes build errors.
+> On Fri, 19 Aug 2011 10:14:11 +0200 "Pihet-XID, Jean" <j-pihet@ti.com> wrote:
+> >
+> > Well, it is not as easy as it seems. As the patch set describes, I am
+> > build testing for x86 and OMAP. At the moment due to config
+> > dependencies it is _impossible_ to disable PM in the OMAP config.
+> > 
+> > Also I cannot build test every platform out there.
+> > Do you have a procedure for build testing?
 > 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> ---
+> I do not expect developers (or even maintainers) to build for every
+> architecture/platform  - that is partly what linux-next is for (see
+> http://kisskb.ellerman.id.au/linux-next ).  It is good to see you at
+> least thought about the !PM case.  Can't it be turned off in x86?
 
-Applied, thank you!
+Sure it can.  For mainline -rc and 3.x releases, I am trying to build
+an almost-allmodconfig kernel (x86_64 only) with one major option
+disabled.  The $major option that is disabled is one of each of the
+following:
+  BLOCK HOTPLUG INET INPUT MAGIC_SYSRQ NET PCI PM PROC_FS SMP SYSCTL SYSFS
 
--- 
-Anton Vorontsov
-Email: cbouatmailru@gmail.com
+There used to be several build errors for HOTPLUG or MAGIC_SYSRQ disabled,
+but those aren't finding problems lately like they used to.  I could probably
+drop them.
+
+
+> I am a bit sensitive about these sort of build errors as I see it happen
+> way to often that a developer make a typo in the !CONFIG_XXX stubs.
+
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
