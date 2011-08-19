@@ -1,60 +1,34 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH linux-next] mfd: omap-usb-host: add module.h and export.h
- to fix build break
-Date: Fri, 19 Aug 2011 11:48:17 -0400
-Message-ID: <4E4E85C1.9060405@windriver.com>
-References: <1313767445-20033-1-git-send-email-gadiyar@ti.com>
+From: Anton Vorontsov <cbouatmailru@gmail.com>
+Subject: Re: [PATCH -next] power: max8998_charger.c needs module.h
+Date: Fri, 19 Aug 2011 21:02:22 +0400
+Message-ID: <20110819170222.GM22761@oksana.dev.rtsoft.ru>
+References: <20110729173827.716f57ff6e00095a3efc6449@canb.auug.org.au>
+ <20110729211143.0a9d6ed7.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:45562 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754825Ab1HSPsc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Aug 2011 11:48:32 -0400
-In-Reply-To: <1313767445-20033-1-git-send-email-gadiyar@ti.com>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:58235 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755816Ab1HSRC1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Aug 2011 13:02:27 -0400
+Content-Disposition: inline
+In-Reply-To: <20110729211143.0a9d6ed7.rdunlap@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anand Gadiyar <gadiyar@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
 
-On 11-08-19 11:24 AM, Anand Gadiyar wrote:
-> linux-next as of 20110817 fails to build if these two headers
-> are not included. Including module.h is sufficient for now,
-> but add export.h for EXPORT_SYMBOL and THIS_MODULE in advance
-> to avoid a later build break.
-
-Thanks -- We won't need to add both, since module.h will source
-the export.h itself.    And we can't add export.h to mainline just
-yet, since it won't exist there (it is only in linux-next now.)
-
-I'll just add the right one to this file in the existing mtd patch.
-
-Thanks for the report.
-
-Paul.
-
+On Fri, Jul 29, 2011 at 09:11:43PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
 > 
-> Signed-off-by: Anand Gadiyar <gadiyar@ti.com>
-> Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
+> power/max8998_charger.c uses interfaces from linux/module.h,
+> so it should include that file.  This fixes build errors.
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 > ---
-> Noticed this while testing another patch. I see similar
-> changes to other files in drivers/mfd made by Paul recently.
-> 
->  drivers/mfd/omap-usb-host.c |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> Index: linux-2.6/drivers/mfd/omap-usb-host.c
-> ===================================================================
-> --- linux-2.6.orig/drivers/mfd/omap-usb-host.c
-> +++ linux-2.6/drivers/mfd/omap-usb-host.c
-> @@ -20,6 +20,8 @@
->  #include <linux/types.h>
->  #include <linux/slab.h>
->  #include <linux/delay.h>
-> +#include <linux/export.h>
-> +#include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/clk.h>
->  #include <linux/dma-mapping.h>
+
+Applied, thank you!
+
+-- 
+Anton Vorontsov
+Email: cbouatmailru@gmail.com
