@@ -1,91 +1,50 @@
-From: "Pihet-XID, Jean" <j-pihet@ti.com>
-Subject: Re: linux-next: build failure after merge of the final tree (pm tree related)
-Date: Sat, 20 Aug 2011 09:50:30 +0200
-Message-ID: <CAN5iSWpHgngjATg_thpHZOqXz=DW0to4fwykvrc7KROdwDmuhw@mail.gmail.com>
-References: <20110819130328.ee5c4b7191db0ce2c8a02e39@canb.auug.org.au>
-	<CAN5iSWpGKF4qu5yqeDk=nxvq0tVs6+mozAEJ+FLdh=Ryx-hsEA@mail.gmail.com>
-	<201108192358.51522.rjw@sisk.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the mips tree
+Date: Sun, 21 Aug 2011 09:43:02 +1000
+Message-ID: <20110821094302.e46933704cd74ab7728bfc74@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__21_Aug_2011_09_43_02_+1000_fdQIzhQKGSXp6cb0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog110.obsmtp.com ([74.125.149.203]:59272 "EHLO
-	na3sys009aog110.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751231Ab1HTHuc convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 20 Aug 2011 03:50:32 -0400
-In-Reply-To: <201108192358.51522.rjw@sisk.pl>
+Received: from chilli.pcug.org.au ([203.10.76.44]:50238 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754697Ab1HTXnN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 20 Aug 2011 19:43:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Rafael,
+--Signature=_Sun__21_Aug_2011_09_43_02_+1000_fdQIzhQKGSXp6cb0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-2011/8/19 Rafael J. Wysocki <rjw@sisk.pl>:
-> On Friday, August 19, 2011, Pihet-XID, Jean wrote:
->> Hi Stephen, Rafael,
->>
->> On Fri, Aug 19, 2011 at 5:03 AM, Stephen Rothwell <sfr@canb.auug.org=
-=2Eau> wrote:
->> > Hi all,
->> >
->> > After merging the final tree, today's linux-next build (powerpc
->> > allnoconfig) failed like this:
->> >
->> > In file included from include/linux/netdevice.h:34:0,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/linux/icmpv6.h:173,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/linux/ipv6.h:220,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/net/ipv6.h:16,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/linux/sunrpc/clnt.h:2=
-5,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/linux/nfs_fs.h:50,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from init/do_mounts.c:20:
->> > include/linux/pm_qos.h: In function 'dev_pm_qos_add_request':
->> > include/linux/pm_qos.h:123:6: warning: 'return' with no value, in =
-function returning non-void
->> > include/linux/pm_qos.h: In function 'dev_pm_qos_update_request':
->> > include/linux/pm_qos.h:126:6: warning: 'return' with no value, in =
-function returning non-void
->> > include/linux/pm_qos.h: In function 'dev_pm_qos_remove_request':
->> > include/linux/pm_qos.h:128:6: warning: 'return' with no value, in =
-function returning non-void
->> >
->> > Caused by commit b6d5b88750dc ("PM QoS: Implement per-device PM Qo=
-S
->> > constraints").
->> I am really sorry about this. This build failure is indeed due to my
->> patch which has stubs for the !PM case.
->> Here is an updated patch (attached), the only change is in the stubs=
-=2E
->>
->> >
->> > Please, please compile test with CONFIG options that your patch de=
-pends
->> > on switched on and switched off - in this case CONFIG_PM.
->> Well, it is not as easy as it seems. As the patch set describes, I a=
-m
->> build testing for x86 and OMAP. At the moment due to config
->> dependencies it is _impossible_ to disable PM in the OMAP config.
->>
->> Also I cannot build test every platform out there.
->> Do you have a procedure for build testing?
->>
->> >
->> > I have reverted that commit (and the followinf commit 57afcf09649c=
- ("PM
->> > QoS: Add global notification mechanism for device constraints")) f=
-or
->> > today.
->> Can we have the updated version merged in?
->
-> Merged and pushed back.
-Thanks a lot! Sorry for the noise.
+Hi Ralf,
 
-Regards,
-Jean
+The mips tree today seems like a complete mess.  It seem to be some
+historical tree including commits with commit dates going back to 1994
+and v1.1.68!  Please fix it up as it is unusable in its current form.
 
->
-> Thanks,
-> Rafael
->
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sun__21_Aug_2011_09_43_02_+1000_fdQIzhQKGSXp6cb0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOUEaGAAoJEDMEi1NhKgbsYyEH/icVRBiOF3bx81+pw5WuGsod
+jqSOP4SmL/L/wcJruHtn5nhG1l4BUfOVumwpQWk8dCssPnRy/zwWcSYLcN/XsoIF
+0liVSZ3wohAFwk5/oX/Pnp6v/3+U3bKD46O6WwGcFcfLh57e9jtYf4ajRSn55xT5
+hqTi05KgO2KX1Z453UKnh4v1e2welX2Bp/66Ox8pWFlv/9uT5tNJi05oWL1VwVGN
+5f7UsqeO5Ze3uscwmF97nk2LJr/7xIl5XAVOy66oJOuNCfjSpWRLVkorSD4JEDvy
+fqq/iquynBDkzObnoKrstvhYYbHX4/fQ6RPKRnYDPwC7CZeh5LmoDhYURCFnADk=
+=IOQG
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__21_Aug_2011_09_43_02_+1000_fdQIzhQKGSXp6cb0--
