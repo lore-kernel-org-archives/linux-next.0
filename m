@@ -1,65 +1,91 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
+From: "Pihet-XID, Jean" <j-pihet@ti.com>
 Subject: Re: linux-next: build failure after merge of the final tree (pm tree related)
-Date: Fri, 19 Aug 2011 23:58:51 +0200
-Message-ID: <201108192358.51522.rjw@sisk.pl>
-References: <20110819130328.ee5c4b7191db0ce2c8a02e39@canb.auug.org.au> <CAN5iSWpGKF4qu5yqeDk=nxvq0tVs6+mozAEJ+FLdh=Ryx-hsEA@mail.gmail.com>
+Date: Sat, 20 Aug 2011 09:50:30 +0200
+Message-ID: <CAN5iSWpHgngjATg_thpHZOqXz=DW0to4fwykvrc7KROdwDmuhw@mail.gmail.com>
+References: <20110819130328.ee5c4b7191db0ce2c8a02e39@canb.auug.org.au>
+	<CAN5iSWpGKF4qu5yqeDk=nxvq0tVs6+mozAEJ+FLdh=Ryx-hsEA@mail.gmail.com>
+	<201108192358.51522.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAN5iSWpGKF4qu5yqeDk=nxvq0tVs6+mozAEJ+FLdh=Ryx-hsEA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Pihet-XID, Jean" <j-pihet@ti.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from na3sys009aog110.obsmtp.com ([74.125.149.203]:59272 "EHLO
+	na3sys009aog110.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751231Ab1HTHuc convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 20 Aug 2011 03:50:32 -0400
+In-Reply-To: <201108192358.51522.rjw@sisk.pl>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
-On Friday, August 19, 2011, Pihet-XID, Jean wrote:
-> Hi Stephen, Rafael,
-> 
-> On Fri, Aug 19, 2011 at 5:03 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> >
-> > After merging the final tree, today's linux-next build (powerpc
-> > allnoconfig) failed like this:
-> >
-> > In file included from include/linux/netdevice.h:34:0,
-> >                 from include/linux/icmpv6.h:173,
-> >                 from include/linux/ipv6.h:220,
-> >                 from include/net/ipv6.h:16,
-> >                 from include/linux/sunrpc/clnt.h:25,
-> >                 from include/linux/nfs_fs.h:50,
-> >                 from init/do_mounts.c:20:
-> > include/linux/pm_qos.h: In function 'dev_pm_qos_add_request':
-> > include/linux/pm_qos.h:123:6: warning: 'return' with no value, in function returning non-void
-> > include/linux/pm_qos.h: In function 'dev_pm_qos_update_request':
-> > include/linux/pm_qos.h:126:6: warning: 'return' with no value, in function returning non-void
-> > include/linux/pm_qos.h: In function 'dev_pm_qos_remove_request':
-> > include/linux/pm_qos.h:128:6: warning: 'return' with no value, in function returning non-void
-> >
-> > Caused by commit b6d5b88750dc ("PM QoS: Implement per-device PM QoS
-> > constraints").
-> I am really sorry about this. This build failure is indeed due to my
-> patch which has stubs for the !PM case.
-> Here is an updated patch (attached), the only change is in the stubs.
-> 
-> >
-> > Please, please compile test with CONFIG options that your patch depends
-> > on switched on and switched off - in this case CONFIG_PM.
-> Well, it is not as easy as it seems. As the patch set describes, I am
-> build testing for x86 and OMAP. At the moment due to config
-> dependencies it is _impossible_ to disable PM in the OMAP config.
-> 
-> Also I cannot build test every platform out there.
-> Do you have a procedure for build testing?
-> 
-> >
-> > I have reverted that commit (and the followinf commit 57afcf09649c ("PM
-> > QoS: Add global notification mechanism for device constraints")) for
-> > today.
-> Can we have the updated version merged in?
+Rafael,
 
-Merged and pushed back.
+2011/8/19 Rafael J. Wysocki <rjw@sisk.pl>:
+> On Friday, August 19, 2011, Pihet-XID, Jean wrote:
+>> Hi Stephen, Rafael,
+>>
+>> On Fri, Aug 19, 2011 at 5:03 AM, Stephen Rothwell <sfr@canb.auug.org=
+=2Eau> wrote:
+>> > Hi all,
+>> >
+>> > After merging the final tree, today's linux-next build (powerpc
+>> > allnoconfig) failed like this:
+>> >
+>> > In file included from include/linux/netdevice.h:34:0,
+>> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/linux/icmpv6.h:173,
+>> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/linux/ipv6.h:220,
+>> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/net/ipv6.h:16,
+>> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/linux/sunrpc/clnt.h:2=
+5,
+>> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/linux/nfs_fs.h:50,
+>> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from init/do_mounts.c:20:
+>> > include/linux/pm_qos.h: In function 'dev_pm_qos_add_request':
+>> > include/linux/pm_qos.h:123:6: warning: 'return' with no value, in =
+function returning non-void
+>> > include/linux/pm_qos.h: In function 'dev_pm_qos_update_request':
+>> > include/linux/pm_qos.h:126:6: warning: 'return' with no value, in =
+function returning non-void
+>> > include/linux/pm_qos.h: In function 'dev_pm_qos_remove_request':
+>> > include/linux/pm_qos.h:128:6: warning: 'return' with no value, in =
+function returning non-void
+>> >
+>> > Caused by commit b6d5b88750dc ("PM QoS: Implement per-device PM Qo=
+S
+>> > constraints").
+>> I am really sorry about this. This build failure is indeed due to my
+>> patch which has stubs for the !PM case.
+>> Here is an updated patch (attached), the only change is in the stubs=
+=2E
+>>
+>> >
+>> > Please, please compile test with CONFIG options that your patch de=
+pends
+>> > on switched on and switched off - in this case CONFIG_PM.
+>> Well, it is not as easy as it seems. As the patch set describes, I a=
+m
+>> build testing for x86 and OMAP. At the moment due to config
+>> dependencies it is _impossible_ to disable PM in the OMAP config.
+>>
+>> Also I cannot build test every platform out there.
+>> Do you have a procedure for build testing?
+>>
+>> >
+>> > I have reverted that commit (and the followinf commit 57afcf09649c=
+ ("PM
+>> > QoS: Add global notification mechanism for device constraints")) f=
+or
+>> > today.
+>> Can we have the updated version merged in?
+>
+> Merged and pushed back.
+Thanks a lot! Sorry for the noise.
 
-Thanks,
-Rafael
+Regards,
+Jean
+
+>
+> Thanks,
+> Rafael
+>
