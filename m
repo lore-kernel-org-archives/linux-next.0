@@ -1,34 +1,51 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 22 (drivers/power/pda_power.c)
-Date: Mon, 22 Aug 2011 09:10:20 -0700
-Message-ID: <20110822091020.a2f179c6.rdunlap@xenotime.net>
+Subject: [PATCH -next] staging: fix comedi build when COMEDI_PCI is not
+ enabled
+Date: Mon, 22 Aug 2011 11:13:14 -0700
+Message-ID: <20110822111314.bf7a526f.rdunlap@xenotime.net>
 References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:39172 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752376Ab1HVSNR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Aug 2011 14:13:17 -0400
 In-Reply-To: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, lud <linux-usb@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, akpm <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh <greg@kroah.com>, an Abbott <abbotti@mev.co.uk>, ori Hess <fmhess@users.sourceforge.net>
 
-On Mon, 22 Aug 2011 14:53:04 +1000 Stephen Rothwell wrote:
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-> Hi all,
-> 
-> [The kernel.org mirroring is a bit low today]
+Fix build when CONFIG_ISA_DMA_API is enabled but
+CONFIG_COMEDI_PCI[_DRIVERS] is not enabled.
+Fixes these build errors:
 
+drivers/staging/comedi/drivers/ni_labpc.c: In function 'labpc_ai_cmd':
+drivers/staging/comedi/drivers/ni_labpc.c:1351: error: implicit declaration of function 'labpc_suggest_transfer_size'
+drivers/staging/comedi/drivers/ni_labpc.c: At top level:
+drivers/staging/comedi/drivers/ni_labpc.c:1802: error: conflicting types for 'labpc_suggest_transfer_size'
+drivers/staging/comedi/drivers/ni_labpc.c:1351: note: previous implicit declaration of 'labpc_suggest_transfer_size' was here
 
-When CONFIG_USB_OTG_UTILS is not enabled:
-
-drivers/power/pda_power.c: In function 'pda_power_probe':
-drivers/power/pda_power.c:322: error: 'otg_is_usb_online' undeclared (first use in this function)
-drivers/power/pda_power.c:322: error: (Each undeclared identifier is reported only once
-drivers/power/pda_power.c:322: error: for each function it appears in.)
-drivers/power/pda_power.c:325: error: 'otg_is_ac_online' undeclared (first use in this function)
-drivers/power/pda_power.c:371: error: 'otg_handle_notification' undeclared (first use in this function)
-
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ drivers/staging/comedi/drivers/ni_labpc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- linux-next-20110822.orig/drivers/staging/comedi/drivers/ni_labpc.c
++++ linux-next-20110822/drivers/staging/comedi/drivers/ni_labpc.c
+@@ -241,8 +241,10 @@ static int labpc_eeprom_write_insn(struc
+ 				   struct comedi_insn *insn,
+ 				   unsigned int *data);
+ static void labpc_adc_timing(struct comedi_device *dev, struct comedi_cmd *cmd);
+-#ifdef CONFIG_COMEDI_PCI
++#ifdef CONFIG_ISA_DMA_API
+ static unsigned int labpc_suggest_transfer_size(struct comedi_cmd cmd);
++#endif
++#ifdef CONFIG_COMEDI_PCI
+ static int labpc_find_device(struct comedi_device *dev, int bus, int slot);
+ #endif
+ static int labpc_dio_mem_callback(int dir, int port, int data,
