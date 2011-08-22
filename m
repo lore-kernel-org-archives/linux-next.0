@@ -1,43 +1,29 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with the s390 tree
-Date: Mon, 22 Aug 2011 12:37:05 +1000
-Message-ID: <20110822123705.d947c6a2548082168df9c86a@canb.auug.org.au>
+From: Niloofar Fazlollahi <nfazlollahi@gmail.com>
+Subject: linux kernel development
+Date: Sun, 21 Aug 2011 21:51:12 -0700
+Message-ID: <CAK8ka9wP_V7ngtR0jv7T3vNZoTep9c18=AgRSe9efYAyXejUPg@mail.gmail.com>
+References: <CAK8ka9y1VhMzS0X2GSEg4AQzSMPwOkS3HQxBuX4t-Rp-_OwDow@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40638 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751972Ab1HVChL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Aug 2011 22:37:11 -0400
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:62825 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751362Ab1HVEvN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Aug 2011 00:51:13 -0400
+In-Reply-To: <CAK8ka9y1VhMzS0X2GSEg4AQzSMPwOkS3HQxBuX4t-Rp-_OwDow@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-Hi Rafael,
+Hi,
 
-Today's linux-next merge of the pm tree got a conflict in
-arch/s390/include/asm/thread_info.h between commit 5f67c275efe7 ("[S390]
-fix _TIF_SINGLE_STEP definition") from the s390 tree and commit
-c9ff4d7b50c4 ("freezer: remove now unused TIF_FREEZE") from the pm tree.
+I have a generic question and appreciate your kind response.
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+What is the process and requirements for getting the linux kernel community
 
-diff --cc arch/s390/include/asm/thread_info.h
-index f9a9a10,589708a..0000000
---- a/arch/s390/include/asm/thread_info.h
-+++ b/arch/s390/include/asm/thread_info.h
-@@@ -117,8 -116,7 +116,7 @@@ static inline struct thread_info *curre
-  #define _TIF_SIE		(1<<TIF_SIE)
-  #define _TIF_POLLING_NRFLAG	(1<<TIF_POLLING_NRFLAG)
-  #define _TIF_31BIT		(1<<TIF_31BIT)
- -#define _TIF_SINGLE_STEP	(1<<TIF_FREEZE)
- +#define _TIF_SINGLE_STEP	(1<<TIF_SINGLE_STEP)
-- #define _TIF_FREEZE		(1<<TIF_FREEZE)
-  
-  #ifdef CONFIG_64BIT
-  #define is_32bit_task()		(test_thread_flag(TIF_31BIT))
+approval to commit a code into linux kernel (related to networking - TCP).
+
+Regards
+
+Niloofar F
