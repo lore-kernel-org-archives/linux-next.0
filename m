@@ -1,41 +1,62 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] power_supply: fix sysfs format warning
-Date: Mon, 22 Aug 2011 11:30:47 -0700
-Message-ID: <20110822113047.b84e56e2.rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 22 (evm)
+Date: Mon, 22 Aug 2011 12:53:55 -0700
+Message-ID: <20110822125355.bb01d76b.rdunlap@xenotime.net>
 References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:52392 "HELO
-	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752118Ab1HVSau (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Aug 2011 14:30:50 -0400
+Return-path: <linux-kbuild-owner@vger.kernel.org>
 In-Reply-To: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@us.ibm.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Mon, 22 Aug 2011 14:53:04 +1000 Stephen Rothwell wrote:
 
-Fix format warning:
+> Hi all,
+> 
+> [The kernel.org mirroring is a bit low today]
 
-drivers/power/power_supply_sysfs.c:82: warning: format '%d' expects type 'int', but argument 4 has type 'ssize_t'
+(on x86_64:)
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+When CONFIG_EVM=y, CONFIG_CRYPTO_HASH2=m, CONFIG_TRUSTED_KEYS=m,
+CONFIG_ENCRYPTED_KEYS=m, the build fails with:
+
+(.text+0x378aa): undefined reference to `key_type_encrypted'
+evm_crypto.c:(.text+0x37992): undefined reference to `crypto_alloc_shash'
+evm_crypto.c:(.text+0x37a24): undefined reference to `crypto_shash_setkey'
+evm_crypto.c:(.text+0x37ad9): undefined reference to `crypto_shash_update'
+evm_crypto.c:(.text+0x37aeb): undefined reference to `crypto_shash_final'
+(.text+0x37b4b): undefined reference to `crypto_shash_update'
+(.text+0x37c61): undefined reference to `crypto_shash_update'
+(.text+0x37cb9): undefined reference to `crypto_shash_update'
+
+even though EVM (Kconfig) selects ENCRYPTED_KEYS and TRUSTED_KEYS..
+and even after I add "select CRYPTO_HASH2".
+
+Is this because EVM is bool and kconfig is confused about 'select's
+when a bool is selecting tristates?  Shouldn't the tristates become
+'y' instead of 'm' if they are selected by a bool that is 'y'?
+
+
+xconfig shows these symbol values:
+
+Symbol: EVM [=y]
+Type : boolean
+Prompt: EVM support
+Defined at security/integrity/evm/Kconfig:1
+Depends on: SECURITY [=y] && KEYS [=y] && TCG_TPM [=m]
+Location:
+-> Security options
+Selects: CRYPTO_HMAC [=m] && CRYPTO_MD5 [=m] && CRYPTO_SHA1 [=m] && CRYPTO_HASH2 [=m] && ENCRYPTED_KEYS [=m] && TRUSTED_KEYS [=m]
+
+
+Hm, changing TCG_TPM to =y also changes TRUSTED_KEYS and ENCRYPTED_KEYS and
+lots of CRYPTO_ symbols from =m to =y.  There must be some kind of min/max
+symbol checking that is confused?
+
 ---
- drivers/power/power_supply_sysfs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20110822.orig/drivers/power/power_supply_sysfs.c
-+++ linux-next-20110822/drivers/power/power_supply_sysfs.c
-@@ -78,7 +78,7 @@ static ssize_t power_supply_show_propert
- 			dev_dbg(dev, "driver has no data for `%s' property\n",
- 				attr->attr.name);
- 		else if (ret != -ENODEV)
--			dev_err(dev, "driver failed to report `%s' property: %d\n",
-+			dev_err(dev, "driver failed to report `%s' property: %zd\n",
- 				attr->attr.name, ret);
- 		return ret;
- 	}
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
