@@ -1,40 +1,34 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: [PATCH linux-next] mfd: omap-usb-host: add module.h and export.h
- to fix build break
-Date: Mon, 22 Aug 2011 17:06:48 +0200
-Message-ID: <20110822150648.GA4607@sortiz-mobl>
-References: <1313767445-20033-1-git-send-email-gadiyar@ti.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 22 (drivers/power/pda_power.c)
+Date: Mon, 22 Aug 2011 09:10:20 -0700
+Message-ID: <20110822091020.a2f179c6.rdunlap@xenotime.net>
+References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:61699 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750915Ab1HVPEt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Aug 2011 11:04:49 -0400
-Content-Disposition: inline
-In-Reply-To: <1313767445-20033-1-git-send-email-gadiyar@ti.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Anand Gadiyar <gadiyar@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, lud <linux-usb@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Anand,
+On Mon, 22 Aug 2011 14:53:04 +1000 Stephen Rothwell wrote:
 
-On Fri, Aug 19, 2011 at 08:54:05PM +0530, Anand Gadiyar wrote:
-> linux-next as of 20110817 fails to build if these two headers
-> are not included. Including module.h is sufficient for now,
-> but add export.h for EXPORT_SYMBOL and THIS_MODULE in advance
-> to avoid a later build break.
+> Hi all,
 > 
-> Signed-off-by: Anand Gadiyar <gadiyar@ti.com>
-> Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-I applied a similar patch (without the +#include <linux/export.h>) from Ming
-Lei <tom.leiming@gmail.com>.
+> [The kernel.org mirroring is a bit low today]
 
-Cheers,
-Samuel.
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+When CONFIG_USB_OTG_UTILS is not enabled:
+
+drivers/power/pda_power.c: In function 'pda_power_probe':
+drivers/power/pda_power.c:322: error: 'otg_is_usb_online' undeclared (first use in this function)
+drivers/power/pda_power.c:322: error: (Each undeclared identifier is reported only once
+drivers/power/pda_power.c:322: error: for each function it appears in.)
+drivers/power/pda_power.c:325: error: 'otg_is_ac_online' undeclared (first use in this function)
+drivers/power/pda_power.c:371: error: 'otg_handle_notification' undeclared (first use in this function)
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
