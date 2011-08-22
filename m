@@ -1,32 +1,37 @@
-From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
-Subject: Re: linux kernel development
-Date: Mon, 22 Aug 2011 12:53:29 +0800
-Message-ID: <CAM_iQpXPF94wNijv58uw_a8fY3U6LYNg_jHiy-YeBgwprrHPxg@mail.gmail.com>
-References: <CAK8ka9y1VhMzS0X2GSEg4AQzSMPwOkS3HQxBuX4t-Rp-_OwDow@mail.gmail.com>
-	<CAK8ka9wP_V7ngtR0jv7T3vNZoTep9c18=AgRSe9efYAyXejUPg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: manual merge of the pm tree with the s390 tree
+Date: Mon, 22 Aug 2011 08:20:29 +0200
+Message-ID: <201108220820.29739.rjw@sisk.pl>
+References: <20110822123705.d947c6a2548082168df9c86a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8ka9wP_V7ngtR0jv7T3vNZoTep9c18=AgRSe9efYAyXejUPg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Niloofar Fazlollahi <nfazlollahi@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ogre.sisk.pl ([217.79.144.158]:56337 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753313Ab1HVGSo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Aug 2011 02:18:44 -0400
+In-Reply-To: <20110822123705.d947c6a2548082168df9c86a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-On Mon, Aug 22, 2011 at 12:51 PM, Niloofar Fazlollahi
-<nfazlollahi@gmail.com> wrote:
-> Hi,
->
-> I have a generic question and appreciate your kind response.
->
-> What is the process and requirements for getting the linux kernel community
->
-> approval to commit a code into linux kernel (related to networking - TCP).
+On Monday, August 22, 2011, Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> Today's linux-next merge of the pm tree got a conflict in
+> arch/s390/include/asm/thread_info.h between commit 5f67c275efe7 ("[S390]
+> fix _TIF_SINGLE_STEP definition") from the s390 tree and commit
+> c9ff4d7b50c4 ("freezer: remove now unused TIF_FREEZE") from the pm tree.
+> 
+> I fixed it up (see below)
 
+Thanks!
 
-Hello,
+> and can carry the fix as necessary.
 
-Please read the documents in Documentation/development-process/ directory
-of the kernel source code.
+Please do that.
 
-Thanks.
+Rafael
