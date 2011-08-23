@@ -1,43 +1,54 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Tue, 23 Aug 2011 07:32:17 -0700
-Message-ID: <20110823073217.d2794369.rdunlap@xenotime.net>
-References: <20110823154811.527ae4929dd2078e694fe32a@canb.auug.org.au>
+Subject: [PATCH -next] usb: fix dwc3 build when USB_GADGET_DWC3 is not
+ enabled
+Date: Tue, 23 Aug 2011 11:07:02 -0700
+Message-ID: <20110823110702.f5ea377c.rdunlap@xenotime.net>
+References: <20110823160432.d24f8cad00951286bc18461e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:32795 "HELO
-	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754352Ab1HWOcT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Aug 2011 10:32:19 -0400
-In-Reply-To: <20110823154811.527ae4929dd2078e694fe32a@canb.auug.org.au>
+Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:48466 "HELO
+	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754873Ab1HWSHE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Aug 2011 14:07:04 -0400
+In-Reply-To: <20110823160432.d24f8cad00951286bc18461e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, linux-omap@vger.kernel.org
 
-On Tue, 23 Aug 2011 15:48:11 +1000 Stephen Rothwell wrote:
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
-> 
-> kernel/cred.c: In function 'prepare_kernel_cred':
-> kernel/cred.c:657:2: error: 'tgcred' undeclared (first use in this function)
-> 
-> Caused by commit 012146d0728f ("CRED: Fix prepare_kernel_cred() to
-> provide a new thread_group_cred struct").  CONFIG_KEYS is not set in this
-> build ...
-> 
-> Please, please build test with and without CONFIG settings that affect
-> your changes.
-> 
-> I discovered this after releaseing linux-next for today.
+Fix build error when CONFIG_USB_GADGET_DWC3 is not enabled:
 
-This one also causes UML (defconfig) builds to fail today.
+ERROR: "dwc3_send_gadget_ep_cmd" [drivers/usb/dwc3/dwc3.ko] undefined!
 
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ drivers/usb/dwc3/debugfs.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- linux-next-20110823.orig/drivers/usb/dwc3/debugfs.c
++++ linux-next-20110823/drivers/usb/dwc3/debugfs.c
+@@ -437,7 +437,9 @@ static int dwc3_testmode_open(struct ino
+ 	struct dwc3_gadget_ep_cmd_params par0;
+ 	struct dwc3_gadget_ep_cmd_params par1;
+ 	struct dwc3_trb         trb;
++#ifdef CONFIG_USB_GADGET_DWC3
+ 	int ret;
++#endif
+ 	u8 *buf0;
+ 	u8 *buf1;
+ 
+@@ -478,8 +480,10 @@ static int dwc3_testmode_open(struct ino
+ 
+ 	dwc3_send_testmode_cmd(dwc, 1);
+ 
++#ifdef CONFIG_USB_GADGET_DWC3
+ 	ret = dwc3_send_gadget_ep_cmd(dwc, 0, DWC3_DEPCMD_STARTTRANSFER, &par0);
+ 	ret = dwc3_send_gadget_ep_cmd(dwc, 1, DWC3_DEPCMD_STARTTRANSFER, &par1);
++#endif
+ 
+ 	dwc3_send_testmode_cmd(dwc, 0);
+ 	return -EBUSY;
