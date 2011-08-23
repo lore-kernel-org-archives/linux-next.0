@@ -1,69 +1,35 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH -next] drivers/base/inode.c: let vmstat_text be optional
-Date: Tue, 23 Aug 2011 14:39:12 -0700
-Message-ID: <20110823143912.0691d442.akpm@linux-foundation.org>
-References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au>
-	<20110804152211.ea10e3e7.rdunlap@xenotime.net>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: manual merge of the pm tree with the mfd tree
+Date: Wed, 24 Aug 2011 00:16:33 +0200
+Message-ID: <201108240016.33529.rjw@sisk.pl>
+References: <20110823135619.be8b64d2eec7cb78bc0160a8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20110804152211.ea10e3e7.rdunlap@xenotime.net>
-Sender: owner-linux-mm@kvack.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Amerigo Wang <amwang@redhat.com>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ogre.sisk.pl ([217.79.144.158]:32926 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754712Ab1HWWOp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Aug 2011 18:14:45 -0400
+In-Reply-To: <20110823135619.be8b64d2eec7cb78bc0160a8@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-
-> Subject: [PATCH -next] drivers/base/inode.c: let vmstat_text be optional
-
-The patch-against-next thing always disturbs me.  It implies that the
-patch is only needed in linux-next, but often that's wrong.  So I have
-to go off and work out what kernel it really is applicable to.
-
-And that's OK, it keeps me healthy.  But two minds are better than one,
-and if the originator has already worked this out, they should state it
-explicitly, please.
-
-On Thu, 4 Aug 2011 15:22:11 -0700
-Randy Dunlap <rdunlap@xenotime.net> wrote:
-
-> From: Randy Dunlap <rdunlap@xenotime.net>
+On Tuesday, August 23, 2011, Stephen Rothwell wrote:
+> Hi Rafael,
 > 
-> vmstat_text is only available when PROC_FS or SYSFS is enabled.
-> This causes build errors in drivers/base/node.c when they are
-> both disabled:
+> Today's linux-next merge of the pm tree got a conflict in
+> drivers/mfd/twl4030-irq.c between commit 99efe0d4c992 ("mfd: Drop the
+> twl4030-irq kthread") from the mfd tree and commit febab68efa45
+> ("freezer: don't unnecessarily set PF_NOFREEZE explicitly") from the pm
+> tree.
 > 
-> drivers/built-in.o: In function `node_read_vmstat':
-> node.c:(.text+0x10e28f): undefined reference to `vmstat_text'
-> 
-> Rather than litter drivers/base/node.c with #ifdef/#endif around
-> the affected lines of code, add macros for optional sysdev
-> attributes so that those lines of code will be ignored, without
-> using #ifdef/#endif in the .c file(s).  I.e., the ifdeffery
-> is done only in a header file with sysdev_create_file_optional()
-> and sysdev_remove_file_optional().
-> 
-> --- linux-next-20110804.orig/include/linux/vmstat.h
-> +++ linux-next-20110804/include/linux/vmstat.h
-> @@ -258,6 +258,8 @@ static inline void refresh_zone_stat_thr
->  
->  #endif		/* CONFIG_SMP */
->  
-> +#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS)
->  extern const char * const vmstat_text[];
-> +#endif
->
+> The former dropped the code modified by the latter, so I did that.
 
-The ifdef around the declaration isn't needed, really.  If we remove
-it then a build-time error becomes a link-time (or even moddep-time) error,
-which is a bit of a pain.  But it's less painful than having ifdefs
-around squillions of declarations.
+Thanks!
 
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Unfortunately, I don't think we can really fix that other that making
+one tree depend on the other.
