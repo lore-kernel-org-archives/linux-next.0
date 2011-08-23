@@ -1,118 +1,102 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 22 (evm)
-Date: Mon, 22 Aug 2011 17:49:58 -0700
-Message-ID: <20110822174958.73dd96c7.rdunlap@xenotime.net>
-References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
-	<20110822125355.bb01d76b.rdunlap@xenotime.net>
-	<CACqU3MVjg60pTPyNWm+41w144QzPgtHQ4wZPUUV=vok8gGffuQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: boot test failure (net tree)
+Date: Tue, 23 Aug 2011 11:40:11 +1000
+Message-ID: <20110823114011.a059aea0138b75bfa7eed1ce@canb.auug.org.au>
+References: <20110816.171525.639251389938336183.davem@davemloft.net>
+	<20110817105002.efebf85d08460ad99b14be8e@canb.auug.org.au>
+	<20110818152214.661858a61496993aaef2c704@canb.auug.org.au>
+	<20110817.225356.1790362313048139752.davem@davemloft.net>
+	<20110822113032.15087c2e190e2b0c3ee7dfb8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:51813 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754489Ab1HWAuB convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Aug 2011 20:50:01 -0400
-In-Reply-To: <CACqU3MVjg60pTPyNWm+41w144QzPgtHQ4wZPUUV=vok8gGffuQ@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37169 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753535Ab1HWBkR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Aug 2011 21:40:17 -0400
+In-Reply-To: <20110822113032.15087c2e190e2b0c3ee7dfb8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnaud Lacombe <lacombar@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@us.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jeffrey.t.kirsher@intel.com, mikey@neuling.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
 
-On Mon, 22 Aug 2011 20:47:00 -0400 Arnaud Lacombe wrote:
+Hi Dave,
 
-> Hi,
->=20
-> On Mon, Aug 22, 2011 at 3:53 PM, Randy Dunlap <rdunlap@xenotime.net> =
-wrote:
-> > On Mon, 22 Aug 2011 14:53:04 +1000 Stephen Rothwell wrote:
-> >
-> >> Hi all,
-> >>
-> >> [The kernel.org mirroring is a bit low today]
-> >
-> > (on x86_64:)
-> >
-> > When CONFIG_EVM=3Dy, CONFIG_CRYPTO_HASH2=3Dm, CONFIG_TRUSTED_KEYS=3D=
-m,
-> > CONFIG_ENCRYPTED_KEYS=3Dm, the build fails with:
-> >
-> You did not provide the value of CONFIG_TCG_TPM, I'll assume it was
-> 'm'. That said, correct me if I'm wrong, but we currently have:
+On Mon, 22 Aug 2011 11:30:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Here's what I am applying as a merge fixup to the net tree today so that
+> my ppc64_defconfig builds actually build more or less the same set of
+> drivers as before this rearrangement.
 
-Yes, it was 'm'.
+And this today:
 
-> menuconfig TCG_TPM
->         tristate "TPM Hardware Support"
->=20
-> [...]
->=20
-> config EVM
->         boolean "EVM support"
->         depends on SECURITY && KEYS && TCG_TPM
->=20
-> which seems terribly broken to me... How can you have a built-in
-> feature, which depends on another potentially-not-built-in feature ?
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 23 Aug 2011 11:23:40 +1000
+Subject: [PATCH] sparc: update sparc32_defconfig for net device movement
 
-Yup.
-
-> If you change EVM to 'tristate', you will see that you are not allowe=
-d
-> to make it built-in if TCG_TPM is not built-in.
-
-Right.
-
->  - Arnaud
->=20
-> > (.text+0x378aa): undefined reference to `key_type_encrypted'
-> > evm_crypto.c:(.text+0x37992): undefined reference to `crypto_alloc_=
-shash'
-> > evm_crypto.c:(.text+0x37a24): undefined reference to `crypto_shash_=
-setkey'
-> > evm_crypto.c:(.text+0x37ad9): undefined reference to `crypto_shash_=
-update'
-> > evm_crypto.c:(.text+0x37aeb): undefined reference to `crypto_shash_=
-final'
-> > (.text+0x37b4b): undefined reference to `crypto_shash_update'
-> > (.text+0x37c61): undefined reference to `crypto_shash_update'
-> > (.text+0x37cb9): undefined reference to `crypto_shash_update'
-> >
-> > even though EVM (Kconfig) selects ENCRYPTED_KEYS and TRUSTED_KEYS..
-> > and even after I add "select CRYPTO_HASH2".
-> >
-> > Is this because EVM is bool and kconfig is confused about 'select's
-> > when a bool is selecting tristates? =A0Shouldn't the tristates beco=
-me
-> > 'y' instead of 'm' if they are selected by a bool that is 'y'?
-> >
-> >
-> > xconfig shows these symbol values:
-> >
-> > Symbol: EVM [=3Dy]
-> > Type : boolean
-> > Prompt: EVM support
-> > Defined at security/integrity/evm/Kconfig:1
-> > Depends on: SECURITY [=3Dy] && KEYS [=3Dy] && TCG_TPM [=3Dm]
-> > Location:
-> > -> Security options
-> > Selects: CRYPTO_HMAC [=3Dm] && CRYPTO_MD5 [=3Dm] && CRYPTO_SHA1 [=3D=
-m] && CRYPTO_HASH2 [=3Dm] && ENCRYPTED_KEYS [=3Dm] && TRUSTED_KEYS [=3D=
-m]
-> >
-> >
-> > Hm, changing TCG_TPM to =3Dy also changes TRUSTED_KEYS and ENCRYPTE=
-D_KEYS and
-> > lots of CRYPTO_ symbols from =3Dm to =3Dy. =A0There must be some ki=
-nd of min/max
-> > symbol checking that is confused?
-> >
-> there is definitively an underlying min/max, but I would not point
-> finger too fast.
-
-
-Thanks for your help.
-
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your cod=
-e ***
+ arch/sparc/configs/sparc32_defconfig |    9 ++-------
+ 1 files changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/arch/sparc/configs/sparc32_defconfig b/arch/sparc/configs/sparc32_defconfig
+index fb23fd6..9bc241a 100644
+--- a/arch/sparc/configs/sparc32_defconfig
++++ b/arch/sparc/configs/sparc32_defconfig
+@@ -2,9 +2,7 @@ CONFIG_EXPERIMENTAL=y
+ CONFIG_SYSVIPC=y
+ CONFIG_POSIX_MQUEUE=y
+ CONFIG_LOG_BUF_SHIFT=14
+-CONFIG_SYSFS_DEPRECATED_V2=y
+ CONFIG_BLK_DEV_INITRD=y
+-# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+ CONFIG_SLAB=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+@@ -42,9 +40,10 @@ CONFIG_SCSI_QLOGICPTI=m
+ CONFIG_SCSI_SUNESP=y
+ CONFIG_NETDEVICES=y
+ CONFIG_DUMMY=m
+-CONFIG_NET_ETHERNET=y
+ CONFIG_MII=m
++CONFIG_NET_VENDOR_AMD=y
+ CONFIG_SUNLANCE=y
++CONFIG_NET_VENDOR_SUN=y
+ CONFIG_HAPPYMEAL=m
+ CONFIG_SUNBMAC=m
+ CONFIG_SUNQE=m
+@@ -64,26 +63,22 @@ CONFIG_SERIAL_SUNSU=y
+ CONFIG_SERIAL_SUNSU_CONSOLE=y
+ CONFIG_SPI=y
+ CONFIG_SPI_XILINX=m
+-CONFIG_SPI_XILINX_PLTFM=m
+ CONFIG_SUN_OPENPROMIO=m
+ CONFIG_EXT2_FS=y
+ CONFIG_EXT2_FS_XATTR=y
+ CONFIG_EXT2_FS_POSIX_ACL=y
+ CONFIG_EXT2_FS_SECURITY=y
+-CONFIG_AUTOFS_FS=m
+ CONFIG_AUTOFS4_FS=m
+ CONFIG_ISO9660_FS=m
+ CONFIG_PROC_KCORE=y
+ CONFIG_ROMFS_FS=m
+ CONFIG_NFS_FS=y
+ CONFIG_ROOT_NFS=y
+-CONFIG_RPCSEC_GSS_KRB5=m
+ CONFIG_NLS=y
+ # CONFIG_ENABLE_WARN_DEPRECATED is not set
+ CONFIG_DEBUG_KERNEL=y
+ CONFIG_DETECT_HUNG_TASK=y
+ # CONFIG_SCHED_DEBUG is not set
+-# CONFIG_RCU_CPU_STALL_DETECTOR is not set
+ CONFIG_KGDB=y
+ CONFIG_KGDB_TESTS=y
+ CONFIG_CRYPTO_NULL=m
+-- 
+1.7.5.4
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
