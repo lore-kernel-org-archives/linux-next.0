@@ -1,60 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
-Date: Tue, 23 Aug 2011 15:48:11 +1000
-Message-ID: <20110823154811.527ae4929dd2078e694fe32a@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (ptrace
+ tree related)
+Date: Tue, 23 Aug 2011 16:03:09 +1000
+Message-ID: <20110823160309.112ad0f4922be8605b61c8dd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Aug_2011_15_48_11_+1000_Yy+Z5gcIT2QjNiAJ"
+ boundary="Signature=_Tue__23_Aug_2011_16_03_09_+1000_zoBKHHz81cJWFnZT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53270 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39329 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751094Ab1HWFsT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Aug 2011 01:48:19 -0400
+	id S1751094Ab1HWGDU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Aug 2011 02:03:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
+To: Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>, David Miller <davem@davemloft.net>
 
---Signature=_Tue__23_Aug_2011_15_48_11_+1000_Yy+Z5gcIT2QjNiAJ
+--Signature=_Tue__23_Aug_2011_16_03_09_+1000_zoBKHHz81cJWFnZT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-allnoconfig) failed like this:
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-kernel/cred.c: In function 'prepare_kernel_cred':
-kernel/cred.c:657:2: error: 'tgcred' undeclared (first use in this function)
+kernel/signal.c: In function 'block_sigmask':
+kernel/signal.c:2333:26: error: 'SA_NODEFER' undeclared (first use in this =
+function)
 
-Caused by commit 012146d0728f ("CRED: Fix prepare_kernel_cred() to
-provide a new thread_group_cred struct").  CONFIG_KEYS is not set in this
-build ...
+Caused by commit 932e5a25b9cf ("signal: Add block_sigmask() for adding
+sigmask to current->blocked").  Sparc seems to use SA_NOMASK in the
+equivalent bit of code and has no SA_NODEFER definition.
 
-Please, please build test with and without CONFIG settings that affect
-your changes.
-
-I discovered this after releaseing linux-next for today.
+I discovered this after releasing linux-next today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__23_Aug_2011_15_48_11_+1000_Yy+Z5gcIT2QjNiAJ
+--Signature=_Tue__23_Aug_2011_16_03_09_+1000_zoBKHHz81cJWFnZT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOUz8bAAoJEDMEi1NhKgbs1ZsIAJsppXB3gAwcXfgTAno71/vI
-ewpR57k5a2EcDer4/PMmXz4YbEOoaWAwS5ys6W/I717G7DQyAFMEIBJsjtUxOMry
-r+4JX4bpyoT7TKbkvVZ5063eIsQi2Zincw1FyRNpeYtLGRePtZYwfUE0LfBBM79E
-0u+9bIW5WmtZQdxLB7Ej4Y7ctVNvnKQKm+swHx7TD48YHu/8iuLdulnH1513Tu2Z
-iFSl31pT2LUEPzWzh9lndQ8DzVYEf9tH+Ejg8aGbpcqTNaBge7m2QS4SvaEYVKVp
-GM06GRHA5TZzJ+m/HC1MoDUC73jqHbN7iETfJgCvf6dOmwpyXBC/12FcOxY5QaQ=
-=fpa8
+iQEcBAEBAgAGBQJOU0KdAAoJEDMEi1NhKgbsNfYH/3PWyKK7lE8+VJj+rtnrXvmF
+Pgf0GBBRLw+Pov7FI5Bu9NIt940rIUQhe7SIfJeKJcPUYwEvPJWhcrxnthMNkOKc
+PsT0hSLoMHTGsRvbqpNCs6xSzpPzAhlgbvmyj1tE4tus0PosSYiaKoWG3Lw1QSbQ
+hZqTGO9hvPwa7UYtnvL79MXMTccRM+SDeTVryXrM3CHseosndRAZOKRrgwLMdgJp
+1Em5V+qsseY66by+Vex/slJbqNeqg4qTHKyimirPxVQiYo134HkukPBEKBnKog8J
+vM5weMZMqiR2VMUogzUhjJxBnlGTYPgoMWGjLefbXIvkbYQvS02kosUQintbMDY=
+=FnWJ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__23_Aug_2011_15_48_11_+1000_Yy+Z5gcIT2QjNiAJ--
+--Signature=_Tue__23_Aug_2011_16_03_09_+1000_zoBKHHz81cJWFnZT--
