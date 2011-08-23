@@ -1,116 +1,50 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for Aug 22 (evm)
-Date: Mon, 22 Aug 2011 22:09:18 -0400
-Message-ID: <1314065358.3225.44.camel@localhost.localdomain>
-References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
-	 <20110822125355.bb01d76b.rdunlap@xenotime.net>
-	 <CACqU3MVjg60pTPyNWm+41w144QzPgtHQ4wZPUUV=vok8gGffuQ@mail.gmail.com>
-	 <20110822174958.73dd96c7.rdunlap@xenotime.net>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: boot test failure (net tree)
+Date: Mon, 22 Aug 2011 19:13:48 -0700 (PDT)
+Message-ID: <20110822.191348.2099822249437201579.davem@davemloft.net>
+References: <20110822113032.15087c2e190e2b0c3ee7dfb8@canb.auug.org.au>
+	<20110823114011.a059aea0138b75bfa7eed1ce@canb.auug.org.au>
+	<20110823114129.ceb18da164bf7df3c145941b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20110822174958.73dd96c7.rdunlap@xenotime.net>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Arnaud Lacombe <lacombar@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@us.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([198.137.202.13]:45545 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750863Ab1HWCSf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Aug 2011 22:18:35 -0400
+In-Reply-To: <20110823114129.ceb18da164bf7df3c145941b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jeffrey.t.kirsher@intel.com, mikey@neuling.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org, benh@kernel.crashing.org, paulus@samba.org
 
-On Mon, 2011-08-22 at 17:49 -0700, Randy Dunlap wrote:
-> On Mon, 22 Aug 2011 20:47:00 -0400 Arnaud Lacombe wrote:
-> 
-> > Hi,
-> > 
-> > On Mon, Aug 22, 2011 at 3:53 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> > > On Mon, 22 Aug 2011 14:53:04 +1000 Stephen Rothwell wrote:
-> > >
-> > >> Hi all,
-> > >>
-> > >> [The kernel.org mirroring is a bit low today]
-> > >
-> > > (on x86_64:)
-> > >
-> > > When CONFIG_EVM=y, CONFIG_CRYPTO_HASH2=m, CONFIG_TRUSTED_KEYS=m,
-> > > CONFIG_ENCRYPTED_KEYS=m, the build fails with:
-> > >
-> > You did not provide the value of CONFIG_TCG_TPM, I'll assume it was
-> > 'm'. That said, correct me if I'm wrong, but we currently have:
-> 
-> Yes, it was 'm'.
-> 
-> > menuconfig TCG_TPM
-> >         tristate "TPM Hardware Support"
-> > 
-> > [...]
-> > 
-> > config EVM
-> >         boolean "EVM support"
-> >         depends on SECURITY && KEYS && TCG_TPM
-> > 
-> > which seems terribly broken to me... How can you have a built-in
-> > feature, which depends on another potentially-not-built-in feature ?
-> 
-> Yup.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 23 Aug 2011 11:41:29 +1000
 
-Easy, different use cases. The TPM has been around and used for a while,
-not requiring it to be built-in.  EVM, a new use case, requires it to be
-built-in.
-
-> > If you change EVM to 'tristate', you will see that you are not allowed
-> > to make it built-in if TCG_TPM is not built-in.
+> On Tue, 23 Aug 2011 11:40:11 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> On Mon, 22 Aug 2011 11:30:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> >
+>> > Here's what I am applying as a merge fixup to the net tree today so that
+>> > my ppc64_defconfig builds actually build more or less the same set of
+>> > drivers as before this rearrangement.
+>> 
+>> And this today:
 > 
-> Right.
+> And this:
 
-The TPM, crypto, trusted and encrypted keys are tristate.  Like the
-LSMs, EVM is boolean, which when selected using 'make xconfig', converts
-the tristates to built-in.  The tristate/boolean mismatches aren't
-corrected, when .config is edited directly.
+I'm starting to get uncomfortable with this whole situation, and I
+feel more and more that these new kconfig guards are not tenable.
 
-Mimi
+Changing defconfig files might fix the "automated test boot with
+defconfig" case but it won't fix the case of someone trying to
+automate a build and boot using a different, existing, config file.
+It ought to work too, and I do know people really do this.
 
-> >  - Arnaud
-> > 
-> > > (.text+0x378aa): undefined reference to `key_type_encrypted'
-> > > evm_crypto.c:(.text+0x37992): undefined reference to `crypto_alloc_shash'
-> > > evm_crypto.c:(.text+0x37a24): undefined reference to `crypto_shash_setkey'
-> > > evm_crypto.c:(.text+0x37ad9): undefined reference to `crypto_shash_update'
-> > > evm_crypto.c:(.text+0x37aeb): undefined reference to `crypto_shash_final'
-> > > (.text+0x37b4b): undefined reference to `crypto_shash_update'
-> > > (.text+0x37c61): undefined reference to `crypto_shash_update'
-> > > (.text+0x37cb9): undefined reference to `crypto_shash_update'
-> > >
-> > > even though EVM (Kconfig) selects ENCRYPTED_KEYS and TRUSTED_KEYS..
-> > > and even after I add "select CRYPTO_HASH2".
-> > >
-> > > Is this because EVM is bool and kconfig is confused about 'select's
-> > > when a bool is selecting tristates?  Shouldn't the tristates become
-> > > 'y' instead of 'm' if they are selected by a bool that is 'y'?
-> > >
-> > >
-> > > xconfig shows these symbol values:
-> > >
-> > > Symbol: EVM [=y]
-> > > Type : boolean
-> > > Prompt: EVM support
-> > > Defined at security/integrity/evm/Kconfig:1
-> > > Depends on: SECURITY [=y] && KEYS [=y] && TCG_TPM [=m]
-> > > Location:
-> > > -> Security options
-> > > Selects: CRYPTO_HMAC [=m] && CRYPTO_MD5 [=m] && CRYPTO_SHA1 [=m] && CRYPTO_HASH2 [=m] && ENCRYPTED_KEYS [=m] && TRUSTED_KEYS [=m]
-> > >
-> > >
-> > > Hm, changing TCG_TPM to =y also changes TRUSTED_KEYS and ENCRYPTED_KEYS and
-> > > lots of CRYPTO_ symbols from =m to =y.  There must be some kind of min/max
-> > > symbol checking that is confused?
-> > >
-> > there is definitively an underlying min/max, but I would not point
-> > finger too fast.
-> 
-> 
-> Thanks for your help.
-> 
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
+And just the fact that we would have to merge all of these defconfig changes
+through the networking tree is evidence of how it's really not reasonable
+to be doing things this way.
 
-
+Jeff, I think we need to revert the dependencies back to what they were
+before the drivers/net moves.  Could you prepare a patch which does that?
