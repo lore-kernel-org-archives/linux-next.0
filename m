@@ -1,119 +1,116 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: boot test failure (net tree)
-Date: Tue, 23 Aug 2011 11:41:29 +1000
-Message-ID: <20110823114129.ceb18da164bf7df3c145941b@canb.auug.org.au>
-References: <20110816.171525.639251389938336183.davem@davemloft.net>
-	<20110817105002.efebf85d08460ad99b14be8e@canb.auug.org.au>
-	<20110818152214.661858a61496993aaef2c704@canb.auug.org.au>
-	<20110817.225356.1790362313048139752.davem@davemloft.net>
-	<20110822113032.15087c2e190e2b0c3ee7dfb8@canb.auug.org.au>
-	<20110823114011.a059aea0138b75bfa7eed1ce@canb.auug.org.au>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for Aug 22 (evm)
+Date: Mon, 22 Aug 2011 22:09:18 -0400
+Message-ID: <1314065358.3225.44.camel@localhost.localdomain>
+References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
+	 <20110822125355.bb01d76b.rdunlap@xenotime.net>
+	 <CACqU3MVjg60pTPyNWm+41w144QzPgtHQ4wZPUUV=vok8gGffuQ@mail.gmail.com>
+	 <20110822174958.73dd96c7.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47244 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754804Ab1HWBla (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Aug 2011 21:41:30 -0400
-In-Reply-To: <20110823114011.a059aea0138b75bfa7eed1ce@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jeffrey.t.kirsher@intel.com, mikey@neuling.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <20110822174958.73dd96c7.rdunlap@xenotime.net>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Arnaud Lacombe <lacombar@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@us.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
-
-On Tue, 23 Aug 2011 11:40:11 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> On Mon, 22 Aug 2011 11:30:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Here's what I am applying as a merge fixup to the net tree today so that
-> > my ppc64_defconfig builds actually build more or less the same set of
-> > drivers as before this rearrangement.
+On Mon, 2011-08-22 at 17:49 -0700, Randy Dunlap wrote:
+> On Mon, 22 Aug 2011 20:47:00 -0400 Arnaud Lacombe wrote:
 > 
-> And this today:
+> > Hi,
+> > 
+> > On Mon, Aug 22, 2011 at 3:53 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
+> > > On Mon, 22 Aug 2011 14:53:04 +1000 Stephen Rothwell wrote:
+> > >
+> > >> Hi all,
+> > >>
+> > >> [The kernel.org mirroring is a bit low today]
+> > >
+> > > (on x86_64:)
+> > >
+> > > When CONFIG_EVM=y, CONFIG_CRYPTO_HASH2=m, CONFIG_TRUSTED_KEYS=m,
+> > > CONFIG_ENCRYPTED_KEYS=m, the build fails with:
+> > >
+> > You did not provide the value of CONFIG_TCG_TPM, I'll assume it was
+> > 'm'. That said, correct me if I'm wrong, but we currently have:
+> 
+> Yes, it was 'm'.
+> 
+> > menuconfig TCG_TPM
+> >         tristate "TPM Hardware Support"
+> > 
+> > [...]
+> > 
+> > config EVM
+> >         boolean "EVM support"
+> >         depends on SECURITY && KEYS && TCG_TPM
+> > 
+> > which seems terribly broken to me... How can you have a built-in
+> > feature, which depends on another potentially-not-built-in feature ?
+> 
+> Yup.
 
-And this:
+Easy, different use cases. The TPM has been around and used for a while,
+not requiring it to be built-in.  EVM, a new use case, requires it to be
+built-in.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 23 Aug 2011 11:35:18 +1000
-Subject: [PATCH] sparc: update sparc64_defconfig for net device movement
+> > If you change EVM to 'tristate', you will see that you are not allowed
+> > to make it built-in if TCG_TPM is not built-in.
+> 
+> Right.
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/sparc/configs/sparc64_defconfig |   20 +++++++++-----------
- 1 files changed, 9 insertions(+), 11 deletions(-)
+The TPM, crypto, trusted and encrypted keys are tristate.  Like the
+LSMs, EVM is boolean, which when selected using 'make xconfig', converts
+the tristates to built-in.  The tristate/boolean mismatches aren't
+corrected, when .config is edited directly.
 
-diff --git a/arch/sparc/configs/sparc64_defconfig b/arch/sparc/configs/sparc64_defconfig
-index 3c1e858..5732728 100644
---- a/arch/sparc/configs/sparc64_defconfig
-+++ b/arch/sparc/configs/sparc64_defconfig
-@@ -37,8 +37,6 @@ CONFIG_NET_KEY_MIGRATE=y
- CONFIG_INET=y
- CONFIG_IP_MULTICAST=y
- CONFIG_NET_IPIP=m
--CONFIG_NET_IPGRE=m
--CONFIG_NET_IPGRE_BROADCAST=y
- CONFIG_IP_MROUTE=y
- CONFIG_IP_PIMSM_V1=y
- CONFIG_IP_PIMSM_V2=y
-@@ -95,17 +93,19 @@ CONFIG_DM_SNAPSHOT=m
- CONFIG_DM_MIRROR=m
- CONFIG_DM_ZERO=m
- CONFIG_NETDEVICES=y
--CONFIG_NET_ETHERNET=y
- CONFIG_MII=m
-+CONFIG_NET_VENDOR_AMD=y
- CONFIG_SUNLANCE=m
-+CONFIG_NET_VENDOR_BROADCOM=y
-+CONFIG_BNX2=m
-+CONFIG_TIGON3=m
-+CONFIG_NET_VENDOR_INTEL=y
-+CONFIG_E1000=m
-+CONFIG_E1000E=m
-+CONFIG_NET_VENDOR_SUN=y
- CONFIG_HAPPYMEAL=m
- CONFIG_SUNGEM=m
- CONFIG_SUNVNET=m
--CONFIG_NET_PCI=y
--CONFIG_E1000=m
--CONFIG_E1000E=m
--CONFIG_TIGON3=m
--CONFIG_BNX2=m
- CONFIG_NIU=m
- # CONFIG_WLAN is not set
- CONFIG_PPP=m
-@@ -126,13 +126,13 @@ CONFIG_INPUT_SPARCSPKR=y
- # CONFIG_SERIO_SERPORT is not set
- CONFIG_SERIO_PCIPS2=m
- CONFIG_SERIO_RAW=m
-+# CONFIG_LEGACY_PTYS is not set
- # CONFIG_DEVKMEM is not set
- CONFIG_SERIAL_SUNSU=y
- CONFIG_SERIAL_SUNSU_CONSOLE=y
- CONFIG_SERIAL_SUNSAB=y
- CONFIG_SERIAL_SUNSAB_CONSOLE=y
- CONFIG_SERIAL_SUNHV=y
--# CONFIG_LEGACY_PTYS is not set
- CONFIG_FB=y
- CONFIG_FB_TILEBLITTING=y
- CONFIG_FB_SBUS=y
-@@ -206,10 +206,8 @@ CONFIG_PRINTK_TIME=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_DEBUG_KERNEL=y
- CONFIG_LOCKUP_DETECTOR=y
--CONFIG_DETECT_HUNG_TASK=y
- # CONFIG_SCHED_DEBUG is not set
- CONFIG_SCHEDSTATS=y
--# CONFIG_RCU_CPU_STALL_DETECTOR is not set
- CONFIG_SYSCTL_SYSCALL_CHECK=y
- CONFIG_BLK_DEV_IO_TRACE=y
- CONFIG_KEYS=y
--- 
-1.7.5.4
+Mimi
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> >  - Arnaud
+> > 
+> > > (.text+0x378aa): undefined reference to `key_type_encrypted'
+> > > evm_crypto.c:(.text+0x37992): undefined reference to `crypto_alloc_shash'
+> > > evm_crypto.c:(.text+0x37a24): undefined reference to `crypto_shash_setkey'
+> > > evm_crypto.c:(.text+0x37ad9): undefined reference to `crypto_shash_update'
+> > > evm_crypto.c:(.text+0x37aeb): undefined reference to `crypto_shash_final'
+> > > (.text+0x37b4b): undefined reference to `crypto_shash_update'
+> > > (.text+0x37c61): undefined reference to `crypto_shash_update'
+> > > (.text+0x37cb9): undefined reference to `crypto_shash_update'
+> > >
+> > > even though EVM (Kconfig) selects ENCRYPTED_KEYS and TRUSTED_KEYS..
+> > > and even after I add "select CRYPTO_HASH2".
+> > >
+> > > Is this because EVM is bool and kconfig is confused about 'select's
+> > > when a bool is selecting tristates?  Shouldn't the tristates become
+> > > 'y' instead of 'm' if they are selected by a bool that is 'y'?
+> > >
+> > >
+> > > xconfig shows these symbol values:
+> > >
+> > > Symbol: EVM [=y]
+> > > Type : boolean
+> > > Prompt: EVM support
+> > > Defined at security/integrity/evm/Kconfig:1
+> > > Depends on: SECURITY [=y] && KEYS [=y] && TCG_TPM [=m]
+> > > Location:
+> > > -> Security options
+> > > Selects: CRYPTO_HMAC [=m] && CRYPTO_MD5 [=m] && CRYPTO_SHA1 [=m] && CRYPTO_HASH2 [=m] && ENCRYPTED_KEYS [=m] && TRUSTED_KEYS [=m]
+> > >
+> > >
+> > > Hm, changing TCG_TPM to =y also changes TRUSTED_KEYS and ENCRYPTED_KEYS and
+> > > lots of CRYPTO_ symbols from =m to =y.  There must be some kind of min/max
+> > > symbol checking that is confused?
+> > >
+> > there is definitively an underlying min/max, but I would not point
+> > finger too fast.
+> 
+> 
+> Thanks for your help.
+> 
+> ---
+> ~Randy
+> *** Remember to use Documentation/SubmitChecklist when testing your code ***
+
+
