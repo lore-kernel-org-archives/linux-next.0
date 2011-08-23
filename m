@@ -1,43 +1,49 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next v2] usb: fix dwc3 build when USB_GADGET_DWC3 is not
+Subject: Re: [PATCH -next] staging: fix comedi build when COMEDI_PCI is not
  enabled
-Date: Tue, 23 Aug 2011 12:52:47 -0700
-Message-ID: <20110823125247.fbbf9636.rdunlap@xenotime.net>
-References: <20110823160432.d24f8cad00951286bc18461e@canb.auug.org.au>
-	<20110823110702.f5ea377c.rdunlap@xenotime.net>
-	<20110823185235.GA11299@legolas.emea.dhcp.ti.com>
+Date: Tue, 23 Aug 2011 13:03:56 -0700
+Message-ID: <20110823130356.dc54f74c.rdunlap@xenotime.net>
+References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
+	<20110822111314.bf7a526f.rdunlap@xenotime.net>
+	<20110823185805.GA11786@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110823185235.GA11299@legolas.emea.dhcp.ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@ti.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:41871 "HELO
+	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756027Ab1HWUD6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Aug 2011 16:03:58 -0400
+In-Reply-To: <20110823185805.GA11786@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, an Abbott <abbotti@mev.co.uk>, ori Hess <fmhess@users.sourceforge.net>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Tue, 23 Aug 2011 11:58:05 -0700 Greg KH wrote:
 
-Fix build error when CONFIG_USB_GADGET_DWC3 is not enabled:
+> On Mon, Aug 22, 2011 at 11:13:14AM -0700, Randy Dunlap wrote:
+> > From: Randy Dunlap <rdunlap@xenotime.net>
+> > 
+> > Fix build when CONFIG_ISA_DMA_API is enabled but
+> > CONFIG_COMEDI_PCI[_DRIVERS] is not enabled.
+> > Fixes these build errors:
+> > 
+> > drivers/staging/comedi/drivers/ni_labpc.c: In function 'labpc_ai_cmd':
+> > drivers/staging/comedi/drivers/ni_labpc.c:1351: error: implicit declaration of function 'labpc_suggest_transfer_size'
+> > drivers/staging/comedi/drivers/ni_labpc.c: At top level:
+> > drivers/staging/comedi/drivers/ni_labpc.c:1802: error: conflicting types for 'labpc_suggest_transfer_size'
+> > drivers/staging/comedi/drivers/ni_labpc.c:1351: note: previous implicit declaration of 'labpc_suggest_transfer_size' was here
+> > 
+> > Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> > ---
+> >  drivers/staging/comedi/drivers/ni_labpc.c |    4 +++-
+> 
+> I applied your older patch, which causes this one to not apply.  Is it
+> still needed as well?
 
-ERROR: "dwc3_send_gadget_ep_cmd" [drivers/usb/dwc3/dwc3.ko] undefined!
+Nope, the second (more recent) one is not needed.  Thanks.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 ---
- drivers/usb/dwc3/gadget.h |    5 +++++
- 1 file changed, 5 insertions(+)
-
---- linux-next-20110823.orig/drivers/usb/dwc3/gadget.h
-+++ linux-next-20110823/drivers/usb/dwc3/gadget.h
-@@ -202,6 +202,11 @@ void dwc3_gadget_exit(struct dwc3 *dwc);
- #else
- static inline int dwc3_gadget_init(struct dwc3 *dwc) { return 0; }
- static inline void dwc3_gadget_exit(struct dwc3 *dwc) { }
-+static inline int dwc3_send_gadget_ep_cmd(struct dwc3 *dwc, unsigned ep,
-+		unsigned cmd, struct dwc3_gadget_ep_cmd_params *params)
-+{
-+	return 0;
-+}
- #endif
- 
- void dwc3_gadget_giveback(struct dwc3_ep *dep, struct dwc3_request *req,
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
