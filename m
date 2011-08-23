@@ -1,58 +1,51 @@
 From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: Re: linux-next: boot test failure (net tree)
-Date: Tue, 23 Aug 2011 01:29:24 -0700
-Message-ID: <1314088165.2128.221.camel@jtkirshe-mobl>
-References: <20110823114129.ceb18da164bf7df3c145941b@canb.auug.org.au>
-	 <20110822.191348.2099822249437201579.davem@davemloft.net>
-	 <CACqU3MW4BnucRt3gxPrKPDvWEjaVuxRF1VOPWk5hTRfneyANkg@mail.gmail.com>
-	 <20110822.210255.1902105215409964106.davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with the unicore32 tree
+Date: Tue, 23 Aug 2011 02:00:48 -0700
+Message-ID: <1314090049.2128.224.camel@jtkirshe-mobl>
+References: <20110823130210.766d466d689d60536f59340a@canb.auug.org.au>
 Reply-To: jeffrey.t.kirsher@intel.com
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-HpqJtc2ZH35A+XCxB7MA"
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20110822.210255.1902105215409964106.davem@davemloft.net>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: "lacombar@gmail.com" <lacombar@gmail.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mikey@neuling.org" <mikey@neuling.org>, "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "benh@kernel.crashing.org" <benh@kernel.crashing.org>, "paulus@samba.org" <paulus@samba.org>, "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+	boundary="=-W+XDVwSmhfwnh1HElvCB"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:32855 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754917Ab1HWJAz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Aug 2011 05:00:55 -0400
+In-Reply-To: <20110823130210.766d466d689d60536f59340a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Guan Xuetao <gxt@mprc.pku.edu.cn>, Zhang Shu <davidshuzhang@gmail.com>, Chu Xiaowei <chuxiaowei@mprc.pku.edu.cn>, Su Yonggang <tonyhook.su@gmail.com>
 
 
---=-HpqJtc2ZH35A+XCxB7MA
+--=-W+XDVwSmhfwnh1HElvCB
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2011-08-22 at 21:02 -0700, David Miller wrote:
-> From: Arnaud Lacombe <lacombar@gmail.com>
-> Date: Mon, 22 Aug 2011 23:50:02 -0400
+On Mon, 2011-08-22 at 20:02 -0700, Stephen Rothwell wrote:
+> Hi all,
 >=20
-> > Are you implying we need some kind of way to migrate config ?
+> Today's linux-next merge of the net tree got conflicts in
+> drivers/net/Kconfig and drivers/net/Makefile between commit
+> e8787de6fa83
+> ("unicore32: add pkunity-v3 mac/net driver (umal)") from the unicore32
+> tree and the network driver rearrangement from the net tree.
 >=20
-> The issue is that the dependencies for every single ethernet driver
-> have changed.  Some dependencies have been dropped (f.e. NETDEV_10000
-> and some have been added (f.e. ETHERNET, NET_VENDOR_****)
->=20
-> So right now an automated (non-prompted, default to no on all new
-> options) run on an existing config results in all ethernet drivers
-> getting disabled because the new dependencies don't get enabled.
->=20
-> This wouldn't be so bad if it was just one or two drivers, but in
-> this case it's every single ethernet driver which will have and hit
-> this problem.
->=20
+> I just added the new driver from the unicore32 tree commit into each
+> file
+> (see below).
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au=20
 
-Ok, I have patch which will resolve the issue.  It is the last patch in
-the series I am about to send out.  What this patch does is set the
-"new" Kconfig options to Y, so that current defconfig's can build
-driver's that are currently set to build.
+Hmm, well with the latest series of patches I sent out, I am pretty sure
+this patch would not apply.
 
-This will fix the issue, I have confirmed this with the x86_64
-defconfig.  It will be nice that eventually all configs get updated so
-that not all the NET_VENDOR_* tags have to be enabled, but
-understandably this is the best way to ensure that current defconfig's
-will compile all expected drivers.
+Is it best that this patch not be sent to netdev for driver
+inclusion? :)
 
---=-HpqJtc2ZH35A+XCxB7MA
+--=-W+XDVwSmhfwnh1HElvCB
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
@@ -60,14 +53,13 @@ Content-Transfer-Encoding: 7bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAABAgAGBQJOU2TkAAoJECTsCADr/EWUc3UH+wRmblkKCeeVZmfYQ8NrsFRX
-mUuupGthI7v0VDrc7wOvt6lOb44Of1PmDV1CcFikKA+eYOEbSIF+F2jCZ2P05qLc
-KWuOK9ZkcE1xVLvDOmbBUhHX/sOkdNfXfeprqzoYTjnXCnK14XcRkOGfZBGrotQw
-yCpSKJGQRYNGexl8ohgz9GvZUIWwmJmS4tglvRuxQ7BXTA/kiYjWw8n9miqjl+wU
-pHkd7+eFkS5axWTU0CLQGRdUkhhimhNBQ06i/FwCKgFIGlKB979RaMBBgg4wcCEM
-FOUDRdShaJP/zFsC6/QW7/5oLWcB+kfbTIHFgeUuzRACNn37IptNF8pfKblt4yk=
-=e3ED
+iQEcBAABAgAGBQJOU2xAAAoJECTsCADr/EWU74kH/2f94oI8OdRxQM/90ykvE9cZ
+pPUZwBTCL9DvQ04TKNzASk153R6sNTvfa8glf5kp9UemHETP+xtCLwE9YQNX5eWJ
+jqGHtRm2BovqvUV52WiHFfNbrbtqUGoHVpBDp0JcFA7paoC6KXU8EwCatToy4Fel
+lEA0vzRSXUEYpLQyVMt9WiQIMCyTy/ORhNOc8mOMJ3sNUlAng/kx0u0VjSAhgn0W
+aKMbmT8FsDH9/9fyqmZXbHZp4pXydSCbhSxTPbXHr7M1vAJahvQn+7yHLLyuZNbu
+UVSUO6NzqRpLOM62+UsbX7jm1iRVpToMUd86Jqgma0TLbRh26X61JNXp/Ctg9Ec=
+=6Jf6
 -----END PGP SIGNATURE-----
 
---=-HpqJtc2ZH35A+XCxB7MA--
-
+--=-W+XDVwSmhfwnh1HElvCB--
