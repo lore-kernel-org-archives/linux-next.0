@@ -1,65 +1,75 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: Re: linux-next: manual merge of the net tree with the unicore32 tree
-Date: Tue, 23 Aug 2011 02:00:48 -0700
-Message-ID: <1314090049.2128.224.camel@jtkirshe-mobl>
-References: <20110823130210.766d466d689d60536f59340a@canb.auug.org.au>
-Reply-To: jeffrey.t.kirsher@intel.com
+From: Matt Fleming <matt.fleming@intel.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (ptrace tree related)
+Date: Tue, 23 Aug 2011 10:06:26 +0100
+Message-ID: <1314090386.3600.2.camel@mfleming-mobl1.ger.corp.intel.com>
+References: <20110823160309.112ad0f4922be8605b61c8dd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-W+XDVwSmhfwnh1HElvCB"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:32855 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754917Ab1HWJAz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Aug 2011 05:00:55 -0400
-In-Reply-To: <20110823130210.766d466d689d60536f59340a@canb.auug.org.au>
+Received: from mga12.intel.com ([143.182.124.36]:49762 "EHLO
+	azsmga102.ch.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754538Ab1HWJQO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Aug 2011 05:16:14 -0400
+In-Reply-To: <20110823160309.112ad0f4922be8605b61c8dd@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Guan Xuetao <gxt@mprc.pku.edu.cn>, Zhang Shu <davidshuzhang@gmail.com>, Chu Xiaowei <chuxiaowei@mprc.pku.edu.cn>, Su Yonggang <tonyhook.su@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
 
-
---=-W+XDVwSmhfwnh1HElvCB
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 2011-08-22 at 20:02 -0700, Stephen Rothwell wrote:
+On Tue, 2011-08-23 at 16:03 +1000, Stephen Rothwell wrote:
 > Hi all,
->=20
-> Today's linux-next merge of the net tree got conflicts in
-> drivers/net/Kconfig and drivers/net/Makefile between commit
-> e8787de6fa83
-> ("unicore32: add pkunity-v3 mac/net driver (umal)") from the unicore32
-> tree and the network driver rearrangement from the net tree.
->=20
-> I just added the new driver from the unicore32 tree commit into each
-> file
-> (see below).
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au=20
+> 
+> After merging the final tree, today's linux-next build (sparc64 defconfig)
+> failed like this:
+> 
+> kernel/signal.c: In function 'block_sigmask':
+> kernel/signal.c:2333:26: error: 'SA_NODEFER' undeclared (first use in this function)
+> 
+> Caused by commit 932e5a25b9cf ("signal: Add block_sigmask() for adding
+> sigmask to current->blocked").  Sparc seems to use SA_NOMASK in the
+> equivalent bit of code and has no SA_NODEFER definition.
+> 
+> I discovered this after releasing linux-next today.
 
-Hmm, well with the latest series of patches I sent out, I am pretty sure
-this patch would not apply.
+Ouch, my bad. Thanks for the heads up Stephen!
 
-Is it best that this patch not be sent to netdev for driver
-inclusion? :)
+Guys, how about this patch?
 
---=-W+XDVwSmhfwnh1HElvCB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+--------8<--------
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+>From 1358a0ab01b95344cd542e5139bc4865650fbf4e Mon Sep 17 00:00:00 2001
+From: Matt Fleming <matt.fleming@intel.com>
+Date: Tue, 23 Aug 2011 09:54:58 +0100
+Subject: [PATCH] sparc: Make SA_NOMASK a synonym of SA_NODEFER
 
-iQEcBAABAgAGBQJOU2xAAAoJECTsCADr/EWU74kH/2f94oI8OdRxQM/90ykvE9cZ
-pPUZwBTCL9DvQ04TKNzASk153R6sNTvfa8glf5kp9UemHETP+xtCLwE9YQNX5eWJ
-jqGHtRm2BovqvUV52WiHFfNbrbtqUGoHVpBDp0JcFA7paoC6KXU8EwCatToy4Fel
-lEA0vzRSXUEYpLQyVMt9WiQIMCyTy/ORhNOc8mOMJ3sNUlAng/kx0u0VjSAhgn0W
-aKMbmT8FsDH9/9fyqmZXbHZp4pXydSCbhSxTPbXHr7M1vAJahvQn+7yHLLyuZNbu
-UVSUO6NzqRpLOM62+UsbX7jm1iRVpToMUd86Jqgma0TLbRh26X61JNXp/Ctg9Ec=
-=6Jf6
------END PGP SIGNATURE-----
+Unlike other architectures, sparc currently has no SA_NODEFER
+definition but only the older SA_NOMASK. Since SA_NOMASK is the
+historical name for SA_NODEFER, add SA_NODEFER and copy what other
+architectures do by making SA_NOMASK a synonym for SA_NODEFER.
 
---=-W+XDVwSmhfwnh1HElvCB--
+Signed-off-by: Matt Fleming <matt.fleming@intel.com>
+---
+ arch/sparc/include/asm/signal.h |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/arch/sparc/include/asm/signal.h b/arch/sparc/include/asm/signal.h
+index e49b828..aa42fe3 100644
+--- a/arch/sparc/include/asm/signal.h
++++ b/arch/sparc/include/asm/signal.h
+@@ -143,10 +143,11 @@ struct sigstack {
+ #define SA_ONSTACK	_SV_SSTACK
+ #define SA_RESTART	_SV_INTR
+ #define SA_ONESHOT	_SV_RESET
+-#define SA_NOMASK	0x20u
++#define SA_NODEFER	0x20u
+ #define SA_NOCLDWAIT    0x100u
+ #define SA_SIGINFO      0x200u
+ 
++#define SA_NOMASK	SA_NODEFER
+ 
+ #define SIG_BLOCK          0x01	/* for blocking signals */
+ #define SIG_UNBLOCK        0x02	/* for unblocking signals */
+-- 
+1.7.4.4
