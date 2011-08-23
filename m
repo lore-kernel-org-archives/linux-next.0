@@ -1,35 +1,43 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
-Subject: Re: [PATCH -next] power_supply: fix sysfs format warning
-Date: Tue, 23 Aug 2011 17:27:46 +0400
-Message-ID: <20110823132746.GA1352@oksana.dev.rtsoft.ru>
-References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
- <20110822113047.b84e56e2.rdunlap@xenotime.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Tue, 23 Aug 2011 07:32:17 -0700
+Message-ID: <20110823073217.d2794369.rdunlap@xenotime.net>
+References: <20110823154811.527ae4929dd2078e694fe32a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:49862 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752890Ab1HWN1w (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Aug 2011 09:27:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20110822113047.b84e56e2.rdunlap@xenotime.net>
+Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:32795 "HELO
+	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754352Ab1HWOcT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Aug 2011 10:32:19 -0400
+In-Reply-To: <20110823154811.527ae4929dd2078e694fe32a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
 
-On Mon, Aug 22, 2011 at 11:30:47AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> Fix format warning:
-> 
-> drivers/power/power_supply_sysfs.c:82: warning: format '%d' expects type 'int', but argument 4 has type 'ssize_t'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> ---
+On Tue, 23 Aug 2011 15:48:11 +1000 Stephen Rothwell wrote:
 
-Applied, thanks!
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allnoconfig) failed like this:
+> 
+> kernel/cred.c: In function 'prepare_kernel_cred':
+> kernel/cred.c:657:2: error: 'tgcred' undeclared (first use in this function)
+> 
+> Caused by commit 012146d0728f ("CRED: Fix prepare_kernel_cred() to
+> provide a new thread_group_cred struct").  CONFIG_KEYS is not set in this
+> build ...
+> 
+> Please, please build test with and without CONFIG settings that affect
+> your changes.
+> 
+> I discovered this after releaseing linux-next for today.
 
--- 
-Anton Vorontsov
-Email: cbouatmailru@gmail.com
+This one also causes UML (defconfig) builds to fail today.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
