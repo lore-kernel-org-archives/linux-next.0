@@ -1,58 +1,34 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: build warning after merge of the rcu tree
-Date: Wed, 24 Aug 2011 05:27:39 -0700
-Message-ID: <20110824122739.GB2320@linux.vnet.ibm.com>
-References: <20110824142337.78715e4d6f9db2de68d87fe4@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Subject: linux-next tree addition request (fbdev)
+Date: Wed, 24 Aug 2011 13:40:46 +0000
+Message-ID: <4E54FF5E.5050308@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e4.ny.us.ibm.com ([32.97.182.144]:47838 "EHLO e4.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752544Ab1HXM21 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Aug 2011 08:28:27 -0400
-Content-Disposition: inline
-In-Reply-To: <20110824142337.78715e4d6f9db2de68d87fe4@canb.auug.org.au>
+Received: from mailout-de.gmx.net ([213.165.64.22]:36515 "HELO
+	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751050Ab1HXNkv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Aug 2011 09:40:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Paul Mundt <lethal@linux-sh.org>
 
-On Wed, Aug 24, 2011 at 02:23:37PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> After merging the rcu tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> kernel/rtmutex.c: In function '__rt_mutex_slowlock':
-> kernel/rtmutex.c:605:3: warning: suggest parentheses around assignment used as truth value
+Hi Stephen,
 
-There actually already are parentheses around it, and the first pass
-through the loop it is uninitialized at that point.  But hey, that 
-is gcc for you!  Does the patch below cure it?
+can you please add
 
-> Introduced by commit 83841f021d4b ("rcu: Permit rt_mutex_unlock() with
-> irqs disabled").
+    git://github.com/schandinat/linux-2.6.git fbdev-next
 
-If it does, then I will fold into that commit.
+to linux-next. It collects patches for the frame buffer subsystem.
+Can you please add the linux-fbdev@vger.kernel.org mailing list as additional
+contact for warnings/errors/problems?
 
-							Thanx, Paul
+You probably want to drop Paul's fbdev branches as they contain some outdated
+patches that will conflict with the newer versions.
 
-------------------------------------------------------------------------
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Thanks,
 
-diff --git a/kernel/rtmutex.c b/kernel/rtmutex.c
-index 0222e34..2548f44 100644
---- a/kernel/rtmutex.c
-+++ b/kernel/rtmutex.c
-@@ -602,7 +602,8 @@ __rt_mutex_slowlock(struct rt_mutex *lock, int state,
- 
- 		raw_spin_unlock(&lock->wait_lock);
- 
--		if (was_disabled = irqs_disabled())
-+		was_disabled = irqs_disabled();
-+		if (was_disabled)
- 			local_irq_enable();
- 
- 		debug_rt_mutex_print_deadlock(waiter);
+Florian Tobias Schandinat
