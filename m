@@ -1,61 +1,45 @@
-From: Sasha Levin <levinsasha928@gmail.com>
-Subject: Re: linux next: Native Linux KVM tool inclusion request
-Date: Wed, 24 Aug 2011 07:33:11 +0300
-Message-ID: <1314160391.3449.0.camel@lappy>
-References: <1314044960.3668.9.camel@lappy>
-	 <20110824115233.4b515a6ceee8910e9c21fc50@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the fbdev tree
+Date: Wed, 24 Aug 2011 14:41:34 +1000
+Message-ID: <20110824144134.00bd3a688fb39b5d5563ff13@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:63326 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750888Ab1HXEeh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Aug 2011 00:34:37 -0400
-In-Reply-To: <20110824115233.4b515a6ceee8910e9c21fc50@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47123 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751354Ab1HXElk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Aug 2011 00:41:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Avi Kivity <avi@redhat.com>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Pekka Enberg <penberg@kernel.org>, linux-next@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Paul Mundt <lethal@linux-sh.org>
 
-On Wed, 2011-08-24 at 11:52 +1000, Stephen Rothwell wrote:
-> Hi Sasha,
-> 
-> On Mon, 22 Aug 2011 23:29:20 +0300 Sasha Levin <levinsasha928@gmail.com> wrote:
-> >
-> > I would like to ask you to include the Native Linux KVM tool in the
-> > linux-next tree.
-> > 
-> > The branch is named 'master' and is located in:
-> > 
-> > 	git://github.com/penberg/linux-kvm.git
-> 
-> I have included your tree from today and called it "kvmtool". I have you
-> and Pekka currently listed as teh contacts (since it looks like it is his
-> tree on github).  Please consider adding a MAINTAINERS entry for this.
-> 
-> Thanks for adding your subsystem tree as a participant of linux-next.  As
-> you may know, this is not a judgment of your code.  The purpose of
-> linux-next is for integration testing and to lower the impact of
-> conflicts between subsystems in the next merge window. 
-> 
-> You will need to ensure that the patches/commits in your tree/series have
-> been:
->      * submitted under GPL v2 (or later) and include the Contributor's
-> 	Signed-off-by,
->      * posted to the relevant mailing list,
->      * reviewed by you (or another maintainer of your subsystem tree),
->      * successfully unit tested, and 
->      * destined for the current or next Linux merge window.
-> 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
-> 
+Hi Greg,
 
-Thank you for the inclusion.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/xgifb/XGI_main_26.c between commit c42a3d543d2b
+("staging: xgifb: use display information in info not in var for
+panning") from the fbdev tree and commit c39aada6926c ("staging: xgifb:
+eliminate #ifdef XGIFB_PAN") from the staging tree.
 
-We will add a MAINTAINERS file.
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 -- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Sasha.
+diff --cc drivers/staging/xgifb/XGI_main_26.c
+index f8b88ad,4415d4a..0000000
+--- a/drivers/staging/xgifb/XGI_main_26.c
++++ b/drivers/staging/xgifb/XGI_main_26.c
+@@@ -1363,8 -1357,7 +1357,7 @@@ static int XGIfb_do_set_var(struct fb_v
+  	return 0;
+  }
+  
+- #ifdef XGIFB_PAN
+ -static int XGIfb_pan_var(struct fb_var_screeninfo *var)
+ +static int XGIfb_pan_var(struct fb_var_screeninfo *var, struct fb_info *info)
+  {
+  	unsigned int base;
+  
