@@ -1,101 +1,87 @@
-From: Arnaud Lacombe <lacombar@gmail.com>
-Subject: Re: linux-next: Tree for Aug 22 (evm)
-Date: Tue, 23 Aug 2011 22:10:24 -0400
-Message-ID: <CACqU3MWfKji5BcGRmwO_Y4_15oOq7Trw3u6j1g2meFAaG-s9-w@mail.gmail.com>
-References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
-	<20110822125355.bb01d76b.rdunlap@xenotime.net>
-	<CACqU3MVjg60pTPyNWm+41w144QzPgtHQ4wZPUUV=vok8gGffuQ@mail.gmail.com>
-	<20110822174958.73dd96c7.rdunlap@xenotime.net>
-	<1314065358.3225.44.camel@localhost.localdomain>
-	<20110823164035.ca28fdc6.rdunlap@xenotime.net>
+From: Cong Wang <amwang@redhat.com>
+Subject: [Patch] numa: introduce CONFIG_NUMA_SYSFS for drivers/base/node.c
+Date: Wed, 24 Aug 2011 11:34:45 +0800
+Message-ID: <4E547155.8090709@redhat.com>
+References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au>	<20110804152211.ea10e3e7.rdunlap@xenotime.net> <20110823143912.0691d442.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20110823164035.ca28fdc6.rdunlap@xenotime.net>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@us.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org
+Content-Type: multipart/mixed;
+ boundary="------------080905050501060202020708"
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20110823143912.0691d442.akpm@linux-foundation.org>
+Sender: owner-linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
 List-Id: linux-next.vger.kernel.org
 
-Hi,
+This is a multi-part message in MIME format.
+--------------080905050501060202020708
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 23, 2011 at 7:40 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> I think that you are going to need to do something like Arnaud suggested
-> and use "depends on TCG_TPM=y" instead of just "depends on TCG_TPM",
-> unless you can convince someone that this is a kconfig bug.
->
-dammit... I guess there is...
+Hi, Andrew,
 
-If you consider the following Kconfig:
+Do you think my patch below is better?
 
-config MOD
-        bool
-        default y
-        option modules
+Thanks!
 
-config EXPERIMENTAL
-        bool
-        default y
+------------->
 
-menuconfig A
-        tristate "A"
-        depends on EXPERIMENTAL
+--------------080905050501060202020708
+Content-Type: text/plain;
+ name="numa-depends-on-sysfs.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="numa-depends-on-sysfs.diff"
 
-config B
-        bool "B"
+Introduce a new Kconfig CONFIG_NUMA_SYSFS for drivers/base/node.c
+which just provides sysfs interface, so that when we select
+CONFIG_NUMA, we don't have to enable the sysfs interface too.
 
-config B0
-        bool
+This by the way fixes a randconfig build error when NUMA && !SYSFS.
 
-config C
-        tristate "C"
-        depends on B
+Signed-off-by: WANG Cong <amwang@redhat.com>
 
-config C0
-        tristate
+---
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index 99a375a..e382338 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -10,7 +10,7 @@ obj-$(CONFIG_HAS_DMA)	+= dma-mapping.o
+ obj-$(CONFIG_HAVE_GENERIC_DMA_COHERENT) += dma-coherent.o
+ obj-$(CONFIG_ISA)	+= isa.o
+ obj-$(CONFIG_FW_LOADER)	+= firmware_class.o
+-obj-$(CONFIG_NUMA)	+= node.o
++obj-$(CONFIG_NUMA_SYSFS)	+= node.o
+ obj-$(CONFIG_MEMORY_HOTPLUG_SPARSE) += memory.o
+ obj-$(CONFIG_SMP)	+= topology.o
+ ifeq ($(CONFIG_SYSFS),y)
+diff --git a/mm/Kconfig b/mm/Kconfig
+index f2f1ca1..77345e7 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -340,6 +340,16 @@ choice
+ 	  benefit.
+ endchoice
+ 
++config NUMA_SYSFS
++	bool "Enable NUMA sysfs interface for user-space"
++	depends on NUMA
++	depends on SYSFS
++	default y
++	help
++	  This enables NUMA sysfs interface, /sys/devices/system/node/*
++	  files, for user-space tools, like numactl. If you have enabled
++	  NUMA, probably you also need this one.
++
+ #
+ # UP and nommu archs use km based percpu allocator
+ #
 
-config D
-        boolean "D"
-        depends on A && B
-        select C
-        select C0
+--------------080905050501060202020708--
 
-config E
-        tristate "E"
-
-config F
-        tristate "F"
-        select E
-
-B (KEYS) allows to set C (TRUSTED_KEYS). Also, B (KEYS) and A
-(TCG_TPM) allows to set D (EVM), which will select (C). Now,
-menuconfig highlight the problem very well. Proceeding as following
-A=m, B=y, C=m, E=y, F=y, we ends up having:
-
- <M> A  --->
- [*] B
- {M} C
- [*] D
- -*- E
- <*> F
-
-which translate in the following config:
-
-CONFIG_MOD=y
-CONFIG_EXPERIMENTAL=y
-CONFIG_A=m
-CONFIG_B=y
-CONFIG_C=m
-CONFIG_C0=m
-CONFIG_D=y
-CONFIG_E=y
-CONFIG_F=y
-
-I would have expected CONFIG_C and CONFIG_C0 to be 'y', just as 'E'.
-If you remove D's dependency on 'A', everything works as expected. So
-it would seem direct dependency state influence the state of reverse
-dependencies...
-
-Will have a look...
-
- - Arnaud
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
