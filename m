@@ -1,64 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (wireless & staging trees related)
-Date: Wed, 24 Aug 2011 11:06:12 +1000
-Message-ID: <20110824110612.8764b7615a160c2939fd01cf@canb.auug.org.au>
-References: <20110811155529.e5f47afa0504c4ddef58ab37@canb.auug.org.au>
-	<4E438D56.5020801@qca.qualcomm.com>
-	<20110811141604.GA14763@suse.de>
-	<4E43FA61.1010301@qca.qualcomm.com>
-	<20110812121216.28e6979b44bacb651849640b@canb.auug.org.au>
-	<20110812135101.GA2286@tuxdriver.com>
-	<4E453502.4000401@qca.qualcomm.com>
-	<20110823213013.GC3679@kroah.com>
+Subject: Re: linux-next: manual merge of the pm tree with the mfd tree
+Date: Wed, 24 Aug 2011 11:12:01 +1000
+Message-ID: <20110824111201.75aac21e4e4ed697011a093d@canb.auug.org.au>
+References: <20110823135619.be8b64d2eec7cb78bc0160a8@canb.auug.org.au>
+	<201108240016.33529.rjw@sisk.pl>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__24_Aug_2011_11_06_12_+1000_AffRCo2dPx7ILXj3"
+ boundary="Signature=_Wed__24_Aug_2011_11_12_01_+1000_Tb_x8K4oICxzJC9="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53482 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37231 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755215Ab1HXBGT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Aug 2011 21:06:19 -0400
-In-Reply-To: <20110823213013.GC3679@kroah.com>
+	id S1755215Ab1HXBMK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Aug 2011 21:12:10 -0400
+In-Reply-To: <201108240016.33529.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Kalle Valo <kvalo@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>, Greg KH <gregkh@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>, Raja Mani <rmani@qca.qualcomm.com>, linux-wireless <linux-wireless@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Wed__24_Aug_2011_11_06_12_+1000_AffRCo2dPx7ILXj3
+--Signature=_Wed__24_Aug_2011_11_12_01_+1000_Tb_x8K4oICxzJC9=
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Rafael,
 
-On Tue, 23 Aug 2011 14:30:13 -0700 Greg KH <greg@kroah.com> wrote:
+On Wed, 24 Aug 2011 00:16:33 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
 >
-> Note, I also applied this to the staging-next tree to keep people from
-> sending me cleanup patches against the driver.  git will resolve the
-> fact that it was deleted in both branches just fine when we merge with
-> Linus for 3.2.
+> On Tuesday, August 23, 2011, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next merge of the pm tree got a conflict in
+> > drivers/mfd/twl4030-irq.c between commit 99efe0d4c992 ("mfd: Drop the
+> > twl4030-irq kthread") from the mfd tree and commit febab68efa45
+> > ("freezer: don't unnecessarily set PF_NOFREEZE explicitly") from the pm
+> > tree.
+> >=20
+> > The former dropped the code modified by the latter, so I did that.
+>=20
+> Thanks!
+>=20
+> Unfortunately, I don't think we can really fix that other that making
+> one tree depend on the other.
 
-Clearly, I should read ahead in my email before replying :-)
+We can just leave it for Linus to fix up during the next merge window.
+After all, I figured it out.  :-)
+
+("git rerere" takes care of fixing it up for me from now on)
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__24_Aug_2011_11_06_12_+1000_AffRCo2dPx7ILXj3
+--Signature=_Wed__24_Aug_2011_11_12_01_+1000_Tb_x8K4oICxzJC9=
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOVE6EAAoJEDMEi1NhKgbsPXoH/37lHOWnoakUPOef7/EIPPAN
-9M8OlFM8gnVwBesGHgrSlixcgs3Qeg58VMtJz0UubrhXNN9STXbM59x3BDyuV5W5
-VryuGocCaMU3jtQEnvKQGHvPeAkwSUfj3ff7Wm6o51X3O8g3DPQ7AFn3nxPLAjzz
-9kiiya00IIkUrv3OCTJ3RR+Db6BCyjqiIt5f7s8rGSp+acc8ETVgsplu7FCDrPOn
-12eztgoZTKKPJBJKqDvu973c3UMtFXDHe8QR3etUy/EaO920FEAjnY03AdahwxfH
-lxfi8Q3WRf/PYn/7RdWYQ6Cz0Gdy7dlYjKIBDvNXm1ZBA8NeGTDdl/HNARnuk4o=
-=xEyE
+iQEcBAEBAgAGBQJOVE/hAAoJEDMEi1NhKgbs7/UH/2sl1QULs1/woCFttAx7/o9y
+0Rg9Zr8sA5DVxJAgvuGFpFr9NUUWGhjahpKRQWKI5g09JKF/EjcEhAAgf1Y9tFPd
+hFw/4tzTZaBT4XA+AlqJ5GDGUmPY6HrSrPwja/57ACprvNSifWSr0kGDa9DigFki
+r/7es4eK9afXPtoawfRCeUW915ORFEq1uHg+Jpw6vgLPlY5kwaQR+epBAb5kj11d
+nT/AiAIB0j2ywa/VQWQqA9FXxLBTKqnQhKv1kvCJ9vt4AyAAQv1/ZcS6hBtyCbc0
+3AOqu747UBGtRC3khWZ/yJtDFxJk/1WulrGAAxhY5Gzj4qTgY45TbY5CXoUvA38=
+=Q1Q1
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__24_Aug_2011_11_06_12_+1000_AffRCo2dPx7ILXj3--
+--Signature=_Wed__24_Aug_2011_11_12_01_+1000_Tb_x8K4oICxzJC9=--
