@@ -1,64 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the mips tree
-Date: Thu, 25 Aug 2011 09:18:37 +1000
-Message-ID: <20110825091837.ebf61e307d65fb77e29b2ca3@canb.auug.org.au>
-References: <20110821094302.e46933704cd74ab7728bfc74@canb.auug.org.au>
-	<20110822104809.451b0e8d7b231d70d73aa256@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (staging tree related)
+Date: Thu, 25 Aug 2011 09:28:13 +1000
+Message-ID: <20110825092813.ee3d0c285ab9f36b12430050@canb.auug.org.au>
+References: <20110824154741.3cbe03b403b646e2a99d63a2@canb.auug.org.au>
+	<20110824211646.GB9707@kroah.com>
+	<20110825085420.521cc24fddadc7753dc67199@canb.auug.org.au>
+	<20110824225758.GA3454@kroah.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__25_Aug_2011_09_18_37_+1000_72.j1l2L+gc8.lpV"
+ boundary="Signature=_Thu__25_Aug_2011_09_28_13_+1000_SrQRe6cC0aDVXTOk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54765 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46753 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751054Ab1HXXSq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Aug 2011 19:18:46 -0400
-In-Reply-To: <20110822104809.451b0e8d7b231d70d73aa256@canb.auug.org.au>
+	id S1750915Ab1HXX2T (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Aug 2011 19:28:19 -0400
+In-Reply-To: <20110824225758.GA3454@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, edwin_rong <edwin_rong@realsil.com.cn>
 
---Signature=_Thu__25_Aug_2011_09_18_37_+1000_72.j1l2L+gc8.lpV
+--Signature=_Thu__25_Aug_2011_09_28_13_+1000_SrQRe6cC0aDVXTOk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi Greg,
 
-On Mon, 22 Aug 2011 10:48:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Wed, 24 Aug 2011 15:57:58 -0700 Greg KH <greg@kroah.com> wrote:
 >
-> On Sun, 21 Aug 2011 09:43:02 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > The mips tree today seems like a complete mess.  It seem to be some
-> > historical tree including commits with commit dates going back to 1994
-> > and v1.1.68!  Please fix it up as it is unusable in its current form.
->=20
-> Since it hasn't been fixed yet, I have reset the mips tree to be what it
-> was in next-20110819.
+> Fair enough, I've made this fix in my tree, so it should be good now.
 
-Still not fixed :-(
+Great, thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__25_Aug_2011_09_18_37_+1000_72.j1l2L+gc8.lpV
+--Signature=_Thu__25_Aug_2011_09_28_13_+1000_SrQRe6cC0aDVXTOk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOVYbNAAoJEDMEi1NhKgbsNNoH/2ECygV87TvAKybFzvz5BLwp
-eE6V09A2eJ3iqRoCdqbeFA523gUHusgccCY0MB/G3TX1eChgjU5Msc18/MIu9meE
-qlnyknQXrVCsGq3zJgZ00ywdx6AXieVE0Xt6UpJDZlTs3cPG6D+d8q24MLTiOdiq
-TT1t9OyB63FF4ozDdSQpn7lmu93f6Byuo5+hRWJi/NH/VviTi6/9pFvGvJ2NFkYn
-RoEF9UZfb1GGLHzMhbtFrw2fcXB8O6zrk861o428GuKPFntIg4wg5SfXmXg53szS
-Qac4NUf3k/farkBwpBWpFW1bYUIikoqommPVAyOwRaoA7Io4j+scynyKVyQKZXE=
-=oQ0m
+iQEcBAEBAgAGBQJOVYkNAAoJEDMEi1NhKgbs2FAH/RSYUfYFTbrWBzRElVIsJ5Wf
+gIq/JdEHIPsJxF55pYG7PIzmrWEpO8BIhz7O+bd3TNakofS/h+jB7DVVqsIadazF
+nRPM9w9PHa5rE9TCxWGN0dSpkpn+z8RK8UCjTc+wTREjUIZgS3P3QIvLQxYyabFL
+regwCPIT4yX3qYTpMRUazngEr/4C34hC4XAzCXYyId2lf6YTxnXyomGzlen/pS81
+tW65qsLu5JCiOcAtl/wHkl754cazN1b7PTFhxcpklzwYqL9mAcSFL11sz+sB1g2N
+zsq2dyPdTr6ubZT2jgHHGdM45z5QQu2ef1veB3IqVge14+zVEX1Oky55c1zLbM4=
+=vW0I
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__25_Aug_2011_09_18_37_+1000_72.j1l2L+gc8.lpV--
+--Signature=_Thu__25_Aug_2011_09_28_13_+1000_SrQRe6cC0aDVXTOk--
