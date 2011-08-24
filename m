@@ -1,47 +1,27 @@
-From: Oleg Nesterov <oleg@redhat.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-	(ptrace tree related)
-Date: Wed, 24 Aug 2011 17:16:31 +0200
-Message-ID: <20110824151631.GA11827@redhat.com>
-References: <20110823160309.112ad0f4922be8605b61c8dd@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 24 (dynamic_debug)
+Date: Wed, 24 Aug 2011 10:25:51 -0700
+Message-ID: <20110824102551.8fc076b5.rdunlap@xenotime.net>
+References: <20110824160404.ebad6370aee2cad82a990142@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:31764 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750917Ab1HXPTd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Aug 2011 11:19:33 -0400
-Content-Disposition: inline
-In-Reply-To: <20110823160309.112ad0f4922be8605b61c8dd@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>, David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110824160404.ebad6370aee2cad82a990142@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jason Baron <jbaron@redhat.com>, Bart Van Assche <bvanassche@acm.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On Wed, 24 Aug 2011 16:04:04 +1000 Stephen Rothwell wrote:
 
-sorry for delay.
-
-On 08/23, Stephen Rothwell wrote:
 > Hi all,
->
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
->
-> kernel/signal.c: In function 'block_sigmask':
-> kernel/signal.c:2333:26: error: 'SA_NODEFER' undeclared (first use in this function)
->
-> Caused by commit 932e5a25b9cf ("signal: Add block_sigmask() for adding
-> sigmask to current->blocked").
 
-Yes. My bad. I've reset this commit.
+When CONFIG_NET is not enabled (I see this on i386 builds):
 
-> Sparc seems to use SA_NOMASK in the
-> equivalent bit of code and has no SA_NODEFER definition.
+lib/built-in.o: In function `__dynamic_netdev_dbg':
+(.text+0x9fda): undefined reference to `__netdev_printk'
 
-Yes, I'll push the updated patch(es).
-
-
-Thanks!
-
-Oleg.
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
