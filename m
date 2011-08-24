@@ -1,56 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the rcu tree
-Date: Wed, 24 Aug 2011 14:23:37 +1000
-Message-ID: <20110824142337.78715e4d6f9db2de68d87fe4@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Wed, 24 Aug 2011 14:33:54 +1000
+Message-ID: <20110824143354.d32c86b5143631442aca3700@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__24_Aug_2011_14_23_37_+1000_+i=1LTolbe76VHD9"
+ boundary="Signature=_Wed__24_Aug_2011_14_33_54_+1000_tw_Ac6GV0NDB9=8A"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50543 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58821 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750855Ab1HXEXs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Aug 2011 00:23:48 -0400
+	id S1750788Ab1HXEeE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Aug 2011 00:34:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jamie Iles <jamie@jamieiles.com>, Arnd Bergmann <arnd@arndb.de>
 
---Signature=_Wed__24_Aug_2011_14_23_37_+1000_+i=1LTolbe76VHD9
+--Signature=_Wed__24_Aug_2011_14_33_54_+1000_tw_Ac6GV0NDB9=8A
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Greg,
 
-After merging the rcu tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-kernel/rtmutex.c: In function '__rt_mutex_slowlock':
-kernel/rtmutex.c:605:3: warning: suggest parentheses around assignment used=
- as truth value
+drivers/built-in.o: In function `dw8250_handle_irq':
+8250_dw.c:(.text+0xcad9c): undefined reference to `serial8250_handle_irq'
 
-Introduced by commit 83841f021d4b ("rcu: Permit rt_mutex_unlock() with
-irqs disabled").
+CONFIG_SERIAL_8250 is 'm' and CONFIG_SERIAL_8250_DW is 'y' ...
 
+Caused by commit 6b1a98d1c485 ("tty: serial8250: add helpers for the
+DesignWare 8250").
+
+I have used the ttye tree form next-20110823 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__24_Aug_2011_14_23_37_+1000_+i=1LTolbe76VHD9
+--Signature=_Wed__24_Aug_2011_14_33_54_+1000_tw_Ac6GV0NDB9=8A
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOVHzJAAoJEDMEi1NhKgbsfS0H/REFaIarlPk/nXvYYRSFO9CJ
-eJ63MNY38IHeGh4KHz4naiVcwHXqMUhqftXEs2hh2Q1y1A4pTmvQkrDgiqtWY2lU
-LGH34ddXYu1Lp5sbfx67wtnr/hUiCHKlK02DQy6jheQBf8hxq2iRpH3zQvgvcKEq
-7fz82irSp1RGgPZOUqMB+cGiEooMV3yvFS1qcjdmx7zCY7/d9W4GkoJO+EY8hzjY
-E+hXwk+en3CU/y3pRvP48S5oBWASNvkwO7gkrM+NRRDc9HnxifO2hxuBfP7VJcgu
-5Opix1w8eDqS9FMFnuLpwgMqeh0Gc5t4zzilV/xczuay0iAlieEf4v4IbMBaifA=
-=T9n3
+iQEcBAEBAgAGBQJOVH8yAAoJEDMEi1NhKgbsljsH/0DrdGrwLx0VzUbPOm9oqbMs
+tj+Z1hNHYkPaYXEivDWpFYD15lklcI9yLJ6lHoCHRVQymAa82may0YLogrSHtUMK
+W7aw1dh3AiGyhSB2kSCSydFKQCeKP+b6dLUsSYA8FthASWttKejXSnz8iCdziJmW
+NUy7CdFAqgwjOrh/xoDCCcEP21pHJJhmw7/Sh2PHklMzmoApGY+z0UINNCMPcXrW
+nw378wmW727xMuMw36dwzc3IKvOK4ouLjWcfhbdTvydIFNTs40id0vNBjRqjyi2D
+AM7FVNX0Z/5Bc8PrZgNPjg7KeebLbOCnhxKOhH2YbJrdNP47hT8o7B80fKUPp0g=
+=GmUc
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__24_Aug_2011_14_23_37_+1000_+i=1LTolbe76VHD9--
+--Signature=_Wed__24_Aug_2011_14_33_54_+1000_tw_Ac6GV0NDB9=8A--
