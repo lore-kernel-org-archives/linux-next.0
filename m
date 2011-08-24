@@ -1,41 +1,67 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: linux next: Native Linux KVM tool inclusion request
-Date: Wed, 24 Aug 2011 11:31:30 +0300
-Message-ID: <4E54B6E2.2030203@redhat.com>
-References: <1314044960.3668.9.camel@lappy> <20110823003925.GA30253@infradead.org> <CAOJsxLEgm_-N6297kHqSjFLCtX-Vd204S=+4Q=+GW9HYiWj1eg@mail.gmail.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH -next v2] usb: fix dwc3 build when USB_GADGET_DWC3 is not
+ enabled
+Date: Wed, 24 Aug 2011 11:51:14 +0300
+Message-ID: <20110824085113.GC12549@legolas.emea.dhcp.ti.com>
+References: <20110823160432.d24f8cad00951286bc18461e@canb.auug.org.au>
+ <20110823110702.f5ea377c.rdunlap@xenotime.net>
+ <20110823185235.GA11299@legolas.emea.dhcp.ti.com>
+ <20110823125247.fbbf9636.rdunlap@xenotime.net>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4ZLFUWh1odzi/v6L"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:8288 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752104Ab1HXIcO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Aug 2011 04:32:14 -0400
-In-Reply-To: <CAOJsxLEgm_-N6297kHqSjFLCtX-Vd204S=+4Q=+GW9HYiWj1eg@mail.gmail.com>
+Received: from na3sys009aog120.obsmtp.com ([74.125.149.140]:48237 "EHLO
+	na3sys009aog120.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756628Ab1HXIvS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Aug 2011 04:51:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20110823125247.fbbf9636.rdunlap@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Sasha Levin <levinsasha928@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: balbi@ti.com, Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org
 
-On 08/23/2011 08:08 AM, Pekka Enberg wrote:
-> As for changes, we've implemented rootfs over 9p with "kvm run"
-> booting to host filesystem "/bin/sh" by default.
 
-Isn't this dangerous?  Users expect virtualization to land them in 
-sandbox, but here an rm -rf / in the guest will happily junk the host 
-filesystem.
+--4ZLFUWh1odzi/v6L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> It still needs some
-> work and we hope to enable networking too. We also have patches to use
-> overlayfs so that the guest is able to use host filesystem in
-> copy-on-write manner.
->
+Hi,
 
-Still dangerous (but just to the guest), since it's not a true 
-snapshot.  If the host filesystem changes underneath the guest, it will 
-see partial and incoherent updates.  Copy-on-write only works if the 
-host filesystem doesn't change.
+On Tue, Aug 23, 2011 at 12:52:47PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+>=20
+> Fix build error when CONFIG_USB_GADGET_DWC3 is not enabled:
+>=20
+> ERROR: "dwc3_send_gadget_ep_cmd" [drivers/usb/dwc3/dwc3.ko] undefined!
+>=20
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 
--- 
-I have a truly marvellous patch that fixes the bug which this
-signature is too narrow to contain.
+Thanks Randy
+
+Acked-by: Felipe Balbi <balbi@ti.com>
+
+--=20
+balbi
+
+--4ZLFUWh1odzi/v6L
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOVLuBAAoJEAv8Txj19kN1LLAH/0PAiAm4OYhVrSddeA8pGVAl
+2jqb6fCMTHPqfXsYJs5NJc76SL6sOSFNNwzNk6+vowuIb06VsVewVwXA8UPvJr5O
+qs3mLL9b5QoIilbGdsIGDtAWmZAzQtXO/CGsffpc/Zn8q3ecBHVMNlDcwzbQIkYW
+DiEV9zR//ZxeXqY6gW7KX/FGAi45f3RxIXcD242wzudO6k020YOAvqpyBkqCNOnq
+5zLBuvO/RQMMCnaPIcE7VIJNnvEHAN84d5WH5pr2OTrkix5GphRbM3/8rydLdCua
+RCCsBdKzFd7IO3ghO/8MPLw/OXQz4ZNcrwPUp1KilwSuaLkL+mRWVFaQ18Vo0ZM=
+=mAhB
+-----END PGP SIGNATURE-----
+
+--4ZLFUWh1odzi/v6L--
