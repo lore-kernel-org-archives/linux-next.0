@@ -1,133 +1,64 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 22 (evm)
-Date: Tue, 23 Aug 2011 16:40:35 -0700
-Message-ID: <20110823164035.ca28fdc6.rdunlap@xenotime.net>
-References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
-	<20110822125355.bb01d76b.rdunlap@xenotime.net>
-	<CACqU3MVjg60pTPyNWm+41w144QzPgtHQ4wZPUUV=vok8gGffuQ@mail.gmail.com>
-	<20110822174958.73dd96c7.rdunlap@xenotime.net>
-	<1314065358.3225.44.camel@localhost.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (wireless & staging trees related)
+Date: Wed, 24 Aug 2011 11:06:12 +1000
+Message-ID: <20110824110612.8764b7615a160c2939fd01cf@canb.auug.org.au>
+References: <20110811155529.e5f47afa0504c4ddef58ab37@canb.auug.org.au>
+	<4E438D56.5020801@qca.qualcomm.com>
+	<20110811141604.GA14763@suse.de>
+	<4E43FA61.1010301@qca.qualcomm.com>
+	<20110812121216.28e6979b44bacb651849640b@canb.auug.org.au>
+	<20110812135101.GA2286@tuxdriver.com>
+	<4E453502.4000401@qca.qualcomm.com>
+	<20110823213013.GC3679@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__24_Aug_2011_11_06_12_+1000_AffRCo2dPx7ILXj3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:52238 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754637Ab1HWXkh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Aug 2011 19:40:37 -0400
-In-Reply-To: <1314065358.3225.44.camel@localhost.localdomain>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53482 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755215Ab1HXBGT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Aug 2011 21:06:19 -0400
+In-Reply-To: <20110823213013.GC3679@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Arnaud Lacombe <lacombar@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@us.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Kalle Valo <kvalo@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>, Greg KH <gregkh@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>, Raja Mani <rmani@qca.qualcomm.com>, linux-wireless <linux-wireless@vger.kernel.org>
 
-On Mon, 22 Aug 2011 22:09:18 -0400 Mimi Zohar wrote:
+--Signature=_Wed__24_Aug_2011_11_06_12_+1000_AffRCo2dPx7ILXj3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, 2011-08-22 at 17:49 -0700, Randy Dunlap wrote:
-> > On Mon, 22 Aug 2011 20:47:00 -0400 Arnaud Lacombe wrote:
-> > 
-> > > Hi,
-> > > 
-> > > On Mon, Aug 22, 2011 at 3:53 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> > > > On Mon, 22 Aug 2011 14:53:04 +1000 Stephen Rothwell wrote:
-> > > >
-> > > >> Hi all,
-> > > >>
-> > > >> [The kernel.org mirroring is a bit low today]
-> > > >
-> > > > (on x86_64:)
-> > > >
-> > > > When CONFIG_EVM=y, CONFIG_CRYPTO_HASH2=m, CONFIG_TRUSTED_KEYS=m,
-> > > > CONFIG_ENCRYPTED_KEYS=m, the build fails with:
-> > > >
-> > > You did not provide the value of CONFIG_TCG_TPM, I'll assume it was
-> > > 'm'. That said, correct me if I'm wrong, but we currently have:
-> > 
-> > Yes, it was 'm'.
-> > 
-> > > menuconfig TCG_TPM
-> > >         tristate "TPM Hardware Support"
-> > > 
-> > > [...]
-> > > 
-> > > config EVM
-> > >         boolean "EVM support"
-> > >         depends on SECURITY && KEYS && TCG_TPM
-> > > 
-> > > which seems terribly broken to me... How can you have a built-in
-> > > feature, which depends on another potentially-not-built-in feature ?
-> > 
-> > Yup.
-> 
-> Easy, different use cases. The TPM has been around and used for a while,
-> not requiring it to be built-in.  EVM, a new use case, requires it to be
-> built-in.
-> 
-> > > If you change EVM to 'tristate', you will see that you are not allowed
-> > > to make it built-in if TCG_TPM is not built-in.
-> > 
-> > Right.
-> 
-> The TPM, crypto, trusted and encrypted keys are tristate.  Like the
-> LSMs, EVM is boolean, which when selected using 'make xconfig', converts
-> the tristates to built-in.  The tristate/boolean mismatches aren't
-> corrected, when .config is edited directly.
+Hi Greg,
 
+On Tue, 23 Aug 2011 14:30:13 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> Note, I also applied this to the staging-next tree to keep people from
+> sending me cleanup patches against the driver.  git will resolve the
+> fact that it was deleted in both branches just fine when we merge with
+> Linus for 3.2.
 
-> Mimi:
+Clearly, I should read ahead in my email before replying :-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-This isn't a problem about editing .config directly.  I haven't done that
-here.  Also, if 'make xconfig' would convert tristates to built-in, then
-so would 'make oldconfig', which is done automatically if configs have
-changed (or maybe it's 'make silentoldconfig').
+--Signature=_Wed__24_Aug_2011_11_06_12_+1000_AffRCo2dPx7ILXj3
+Content-Type: application/pgp-signature
 
-I think that you are going to need to do something like Arnaud suggested
-and use "depends on TCG_TPM=y" instead of just "depends on TCG_TPM",
-unless you can convince someone that this is a kconfig bug.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
+iQEcBAEBAgAGBQJOVE6EAAoJEDMEi1NhKgbsPXoH/37lHOWnoakUPOef7/EIPPAN
+9M8OlFM8gnVwBesGHgrSlixcgs3Qeg58VMtJz0UubrhXNN9STXbM59x3BDyuV5W5
+VryuGocCaMU3jtQEnvKQGHvPeAkwSUfj3ff7Wm6o51X3O8g3DPQ7AFn3nxPLAjzz
+9kiiya00IIkUrv3OCTJ3RR+Db6BCyjqiIt5f7s8rGSp+acc8ETVgsplu7FCDrPOn
+12eztgoZTKKPJBJKqDvu973c3UMtFXDHe8QR3etUy/EaO920FEAjnY03AdahwxfH
+lxfi8Q3WRf/PYn/7RdWYQ6Cz0Gdy7dlYjKIBDvNXm1ZBA8NeGTDdl/HNARnuk4o=
+=xEyE
+-----END PGP SIGNATURE-----
 
-> > >  - Arnaud
-> > > 
-> > > > (.text+0x378aa): undefined reference to `key_type_encrypted'
-> > > > evm_crypto.c:(.text+0x37992): undefined reference to `crypto_alloc_shash'
-> > > > evm_crypto.c:(.text+0x37a24): undefined reference to `crypto_shash_setkey'
-> > > > evm_crypto.c:(.text+0x37ad9): undefined reference to `crypto_shash_update'
-> > > > evm_crypto.c:(.text+0x37aeb): undefined reference to `crypto_shash_final'
-> > > > (.text+0x37b4b): undefined reference to `crypto_shash_update'
-> > > > (.text+0x37c61): undefined reference to `crypto_shash_update'
-> > > > (.text+0x37cb9): undefined reference to `crypto_shash_update'
-> > > >
-> > > > even though EVM (Kconfig) selects ENCRYPTED_KEYS and TRUSTED_KEYS..
-> > > > and even after I add "select CRYPTO_HASH2".
-> > > >
-> > > > Is this because EVM is bool and kconfig is confused about 'select's
-> > > > when a bool is selecting tristates?  Shouldn't the tristates become
-> > > > 'y' instead of 'm' if they are selected by a bool that is 'y'?
-> > > >
-> > > >
-> > > > xconfig shows these symbol values:
-> > > >
-> > > > Symbol: EVM [=y]
-> > > > Type : boolean
-> > > > Prompt: EVM support
-> > > > Defined at security/integrity/evm/Kconfig:1
-> > > > Depends on: SECURITY [=y] && KEYS [=y] && TCG_TPM [=m]
-> > > > Location:
-> > > > -> Security options
-> > > > Selects: CRYPTO_HMAC [=m] && CRYPTO_MD5 [=m] && CRYPTO_SHA1 [=m] && CRYPTO_HASH2 [=m] && ENCRYPTED_KEYS [=m] && TRUSTED_KEYS [=m]
-> > > >
-> > > >
-> > > > Hm, changing TCG_TPM to =y also changes TRUSTED_KEYS and ENCRYPTED_KEYS and
-> > > > lots of CRYPTO_ symbols from =m to =y.  There must be some kind of min/max
-> > > > symbol checking that is confused?
-> > > >
-> > > there is definitively an underlying min/max, but I would not point
-> > > finger too fast.
-> > 
-> > 
-> > Thanks for your help.
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--Signature=_Wed__24_Aug_2011_11_06_12_+1000_AffRCo2dPx7ILXj3--
