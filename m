@@ -1,91 +1,102 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux next: Native Linux KVM tool inclusion request
-Date: Wed, 24 Aug 2011 11:52:33 +1000
-Message-ID: <20110824115233.4b515a6ceee8910e9c21fc50@canb.auug.org.au>
-References: <1314044960.3668.9.camel@lappy>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for Aug 22 (evm)
+Date: Tue, 23 Aug 2011 22:07:29 -0400
+Message-ID: <1314151649.3247.43.camel@localhost.localdomain>
+References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
+	 <20110822125355.bb01d76b.rdunlap@xenotime.net>
+	 <CACqU3MVjg60pTPyNWm+41w144QzPgtHQ4wZPUUV=vok8gGffuQ@mail.gmail.com>
+	 <20110822174958.73dd96c7.rdunlap@xenotime.net>
+	 <1314065358.3225.44.camel@localhost.localdomain>
+	 <CACqU3MV-MfWxvVebcxiJK8BmxHG8epf=0bpsL7qoska65aVzSw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__24_Aug_2011_11_52_33_+1000_u9E6S=mg5bVeu33K"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60002 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753515Ab1HXBwn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Aug 2011 21:52:43 -0400
-In-Reply-To: <1314044960.3668.9.camel@lappy>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sasha Levin <levinsasha928@gmail.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Avi Kivity <avi@redhat.com>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Pekka Enberg <penberg@kernel.org>, linux-next@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <CACqU3MV-MfWxvVebcxiJK8BmxHG8epf=0bpsL7qoska65aVzSw@mail.gmail.com>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Arnaud Lacombe <lacombar@gmail.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@us.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__24_Aug_2011_11_52_33_+1000_u9E6S=mg5bVeu33K
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2011-08-22 at 22:24 -0400, Arnaud Lacombe wrote:
+> Hi,
+> 
+> On Mon, Aug 22, 2011 at 10:09 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > On Mon, 2011-08-22 at 17:49 -0700, Randy Dunlap wrote:
+> >> On Mon, 22 Aug 2011 20:47:00 -0400 Arnaud Lacombe wrote:
+> >>
+> >> > Hi,
+> >> >
+> >> > On Mon, Aug 22, 2011 at 3:53 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
+> >> > > On Mon, 22 Aug 2011 14:53:04 +1000 Stephen Rothwell wrote:
+> >> > >
+> >> > >> Hi all,
+> >> > >>
+> >> > >> [The kernel.org mirroring is a bit low today]
+> >> > >
+> >> > > (on x86_64:)
+> >> > >
+> >> > > When CONFIG_EVM=y, CONFIG_CRYPTO_HASH2=m, CONFIG_TRUSTED_KEYS=m,
+> >> > > CONFIG_ENCRYPTED_KEYS=m, the build fails with:
+> >> > >
+> >> > You did not provide the value of CONFIG_TCG_TPM, I'll assume it was
+> >> > 'm'. That said, correct me if I'm wrong, but we currently have:
+> >>
+> >> Yes, it was 'm'.
+> >>
+> >> > menuconfig TCG_TPM
+> >> >         tristate "TPM Hardware Support"
+> >> >
+> >> > [...]
+> >> >
+> >> > config EVM
+> >> >         boolean "EVM support"
+> >> >         depends on SECURITY && KEYS && TCG_TPM
+> >> >
+> >> > which seems terribly broken to me... How can you have a built-in
+> >> > feature, which depends on another potentially-not-built-in feature ?
+> >>
+> >> Yup.
+> >
+> > Easy, different use cases. The TPM has been around and used for a while,
+> > not requiring it to be built-in.  EVM, a new use case, requires it to be
+> > built-in.
+> >
+> What behavior is expected when TPM is built as a module ? Would you
+> expect EVM to be accessible ?
+> 
+> >> > If you change EVM to 'tristate', you will see that you are not allowed
+> >> > to make it built-in if TCG_TPM is not built-in.
+> >>
+> >> Right.
+> >
+> > The TPM, crypto, trusted and encrypted keys are tristate.  Like the
+> > LSMs, EVM is boolean, which when selected using 'make xconfig', converts
+> > the tristates to built-in.  The tristate/boolean mismatches aren't
+> > corrected, when .config is edited directly.
+> >
+> well, ... no. 'xconfig' would seem to let you think they have been
+> changed to 'y', but they have not. I have been able to generate a bad
+> configuration (TPM module, EVM built-in) using only {menu,x}config.
+> 
+> btw, I never edit the configuration manually, there is a big fat "DO
+> NOT EDIT" header in the beginning.
+> 
+> Depending on what you expect, one way to fix that is to make EVM
+> depends on TCG_TPM = y, not just TCG_TPM.
+> 
+>  - Arnaud
 
-Hi Sasha,
+Thanks, that seems to work for now.  I'd really like to remove the
+trusted-key and TCG_TPM dependencies from encrypted keys.  Thus removing
+the TCG_TPM dependency from EVM.  But then, trusted keys could be
+enabled differently than encrypted keys.  
 
-On Mon, 22 Aug 2011 23:29:20 +0300 Sasha Levin <levinsasha928@gmail.com> wr=
-ote:
->
-> I would like to ask you to include the Native Linux KVM tool in the
-> linux-next tree.
->=20
-> The branch is named 'master' and is located in:
->=20
-> 	git://github.com/penberg/linux-kvm.git
+Is there a way of allowing 'A' not to be dependent on 'B', but if 'B' is
+defined, force 'B' to be built-in if 'A' is built-in, or as a module if
+'A' is a module?
 
-I have included your tree from today and called it "kvmtool". I have you
-and Pekka currently listed as teh contacts (since it looks like it is his
-tree on github).  Please consider adding a MAINTAINERS entry for this.
+thanks,
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+Mimi
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Wed__24_Aug_2011_11_52_33_+1000_u9E6S=mg5bVeu33K
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOVFlhAAoJEDMEi1NhKgbsQzgH/RPUL1O4Md5lNjtBRg2XBVlZ
-9cS2SalPjXXg1ZhKHAGlyQZNlGedm3v3+6FpytST6mF9D9aaxvv2jyFCg7mVAu7T
-jCtRaQq7PYKPmmYR5DtQhyxp161UFrxU6DXiUKJx28S+eglnoLgU5xuSkjVw9S9u
-5DlYpOGGlXtsfoV/gpq7NRRkWmaYj7vOvQtJjhf2Ojus1tDXbxk8uhARrG6dkZ5F
-3Nndd3KUAgnFXir1e33FkRd1R4bGFswP71qlAdvXJKQrKnIOxijHGrepQzeHQ3+7
-DWoV8Tp7vDCUoNri/2f2UYy5etRy9TG9CUT1zTIGJJaPDxrIUqNkQQTmQYIsliE=
-=X5kn
------END PGP SIGNATURE-----
-
---Signature=_Wed__24_Aug_2011_11_52_33_+1000_u9E6S=mg5bVeu33K--
