@@ -1,58 +1,78 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (staging tree related)
-Date: Thu, 25 Aug 2011 09:28:13 +1000
-Message-ID: <20110825092813.ee3d0c285ab9f36b12430050@canb.auug.org.au>
-References: <20110824154741.3cbe03b403b646e2a99d63a2@canb.auug.org.au>
-	<20110824211646.GB9707@kroah.com>
-	<20110825085420.521cc24fddadc7753dc67199@canb.auug.org.au>
-	<20110824225758.GA3454@kroah.com>
+From: Arnaud Lacombe <lacombar@gmail.com>
+Subject: Re: linux-next: build warning after merge of the rcu tree
+Date: Wed, 24 Aug 2011 20:46:15 -0400
+Message-ID: <CACqU3MVZRjxo-C+z-WRKnMMFfkr35c4FDUpoY6Kbkh1y1J45kQ@mail.gmail.com>
+References: <20110824142337.78715e4d6f9db2de68d87fe4@canb.auug.org.au>
+	<20110824122739.GB2320@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__25_Aug_2011_09_28_13_+1000_SrQRe6cC0aDVXTOk"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46753 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750915Ab1HXX2T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Aug 2011 19:28:19 -0400
-In-Reply-To: <20110824225758.GA3454@kroah.com>
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:41645 "EHLO
+	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751197Ab1HYAqQ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Aug 2011 20:46:16 -0400
+In-Reply-To: <20110824122739.GB2320@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, edwin_rong <edwin_rong@realsil.com.cn>
+To: paulmck@linux.vnet.ibm.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__25_Aug_2011_09_28_13_+1000_SrQRe6cC0aDVXTOk
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Greg,
-
-On Wed, 24 Aug 2011 15:57:58 -0700 Greg KH <greg@kroah.com> wrote:
+On Wed, Aug 24, 2011 at 8:27 AM, Paul E. McKenney
+<paulmck@linux.vnet.ibm.com> wrote:
+> On Wed, Aug 24, 2011 at 02:23:37PM +1000, Stephen Rothwell wrote:
+>> Hi Paul,
+>>
+>> After merging the rcu tree, today's linux-next build (powerpc
+>> ppc64_defconfig) produced this warning:
+>>
+>> kernel/rtmutex.c: In function '__rt_mutex_slowlock':
+>> kernel/rtmutex.c:605:3: warning: suggest parentheses around assignme=
+nt used as truth value
 >
-> Fair enough, I've made this fix in my tree, so it should be good now.
+> There actually already are parentheses around it, and the first pass
+> through the loop it is uninitialized at that point. =A0But hey, that
+> is gcc for you! =A0Does the patch below cure it?
+>
+Yes.
 
-Great, thanks.
+ - Arnaud
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__25_Aug_2011_09_28_13_+1000_SrQRe6cC0aDVXTOk
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOVYkNAAoJEDMEi1NhKgbs2FAH/RSYUfYFTbrWBzRElVIsJ5Wf
-gIq/JdEHIPsJxF55pYG7PIzmrWEpO8BIhz7O+bd3TNakofS/h+jB7DVVqsIadazF
-nRPM9w9PHa5rE9TCxWGN0dSpkpn+z8RK8UCjTc+wTREjUIZgS3P3QIvLQxYyabFL
-regwCPIT4yX3qYTpMRUazngEr/4C34hC4XAzCXYyId2lf6YTxnXyomGzlen/pS81
-tW65qsLu5JCiOcAtl/wHkl754cazN1b7PTFhxcpklzwYqL9mAcSFL11sz+sB1g2N
-zsq2dyPdTr6ubZT2jgHHGdM45z5QQu2ef1veB3IqVge14+zVEX1Oky55c1zLbM4=
-=vW0I
------END PGP SIGNATURE-----
-
---Signature=_Thu__25_Aug_2011_09_28_13_+1000_SrQRe6cC0aDVXTOk--
+>> Introduced by commit 83841f021d4b ("rcu: Permit rt_mutex_unlock() wi=
+th
+>> irqs disabled").
+>
+> If it does, then I will fold into that commit.
+>
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0Thanx, Paul
+>
+> ---------------------------------------------------------------------=
+---
+>
+> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>
+> diff --git a/kernel/rtmutex.c b/kernel/rtmutex.c
+> index 0222e34..2548f44 100644
+> --- a/kernel/rtmutex.c
+> +++ b/kernel/rtmutex.c
+> @@ -602,7 +602,8 @@ __rt_mutex_slowlock(struct rt_mutex *lock, int st=
+ate,
+>
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0raw_spin_unlock(&lock->wait_lock);
+>
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (was_disabled =3D irqs_disabled())
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 was_disabled =3D irqs_disabled();
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (was_disabled)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0local_irq_enable();
+>
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0debug_rt_mutex_print_deadlock(waiter);
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at =A0http://www.tux.org/lkml/
+>
