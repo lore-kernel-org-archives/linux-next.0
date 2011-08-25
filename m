@@ -1,39 +1,54 @@
-From: David Rientjes <rientjes@google.com>
-Subject: Re: [Patch] numa: introduce CONFIG_NUMA_SYSFS for
- drivers/base/node.c
-Date: Thu, 25 Aug 2011 13:57:16 -0700 (PDT)
-Message-ID: <alpine.DEB.2.00.1108251356220.18747@chino.kir.corp.google.com>
-References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au> <20110804152211.ea10e3e7.rdunlap@xenotime.net> <20110823143912.0691d442.akpm@linux-foundation.org> <4E547155.8090709@redhat.com> <20110824191430.8a908e70.rdunlap@xenotime.net>
- <4E55C221.8080100@redhat.com> <20110824205044.7ff45b6c.rdunlap@xenotime.net> <alpine.DEB.2.00.1108242202050.576@chino.kir.corp.google.com> <4E562248.2090102@redhat.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: manual merge of the moduleh tree with the arm tree
+Date: Thu, 25 Aug 2011 18:40:54 -0400
+Message-ID: <4E56CF76.70201@windriver.com>
+References: <20110825151748.8e41e0ded739187a1432cf0b@canb.auug.org.au> <4E56796F.8090703@windriver.com> <20110825163901.GA467@flint.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <4E562248.2090102@redhat.com>
-Sender: owner-linux-mm@kvack.org
-To: Cong Wang <amwang@redhat.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:63237 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755725Ab1HYWlJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Aug 2011 18:41:09 -0400
+In-Reply-To: <20110825163901.GA467@flint.arm.linux.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Medhurst <tixy@yxit.co.uk>
 
-On Thu, 25 Aug 2011, Cong Wang wrote:
-
-> > No, it doesn't work, CONFIG_HUGETLBFS can be enabled with CONFIG_NUMA=y
-> > and CONFIG_SYSFS=n and that uses data structures from drivers/base/node.c
-> > which doesn't get compiled with this patch.
+On 11-08-25 12:39 PM, Russell King wrote:
+> On Thu, Aug 25, 2011 at 12:33:51PM -0400, Paul Gortmaker wrote:
+>> On 11-08-25 01:17 AM, Stephen Rothwell wrote:
+>>> Hi Paul,
+>>>
+>>> Today's linux-next merge of the moduleh tree got a conflict in
+>>> arch/arm/mach-bcmring/mm.c between commit 2d5e975b2194 ("ARM:
+>>> mach-bcmring: Setup consistent dma size at boot time") from the arm tree
+>>> and commit 9bc7d81e271e ("arm: fix implicit use of page.h in
+>>> mach-bcmring/mach-jornada") from the moduleh tree.
+>>
+>> I can't really relocate the page.h inclusion in a trivial way to
+>> make this conflict go away.  But since the implicit header use fixes
+>> for arm are independent and don't actually depend on anything in the
+>> rest of the module.h tree, I can set about to giving these to Russell
+>> for his arm-next branch anytime.  I'll do that shortly.
 > 
-> So, you mean with CONFIG_NUMA=y && CONFIG_SYSFS=n && CONFIG_HUGETLBFS=y
-> we still get compile error?
+> For such a trivial conflict, I don't think we need to do anything.  Linus
+> has said publically that he likes to sort out conflicts as it allows him
+> to have a wider knowledge of what's going on in the kernel tree.
 > 
-> Which data structures are used by hugetlbfs?
-> 
+> So, given that the fixup is soo obvious, I don't think we need to play
+> games redistributing patches - we just need to be aware of the conflict
+> and mention it to Linus when we merge.
 
-node_states[], which is revealed at link time if you tried to compile your 
-patch.  It's obvious that we don't want to add per-node hugetlbfs 
-attributes to sysfs directories if sysfs is disabled, so you need to 
-modify the hugetlbfs code as well.
+OK.  I was entertaining feeding some of the really obvious and simple
+parts of the moduleh branch out to the various maintainers just to
+reduce its overall size, but in the end I guess that just makes work
+for me and them -- vs. a single pull request to Linus for addition to
+v3.2-rc1.   I'll just stay the course and Stephen will have to rerere
+the merge conflict resolution for a while -- something I'm certain
+that he has automated long long ago.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Thanks,
+Paul.
