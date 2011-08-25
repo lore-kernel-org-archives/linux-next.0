@@ -1,44 +1,50 @@
-From: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-Subject: Re: mmotm 2011-08-24-14-08 uploaded
-Date: Thu, 25 Aug 2011 16:13:07 +0900
-Message-ID: <20110825161307.7c921e46.kamezawa.hiroyu@jp.fujitsu.com>
-References: <201108242148.p7OLm1lt009191@imap1.linux-foundation.org>
+From: Cong Wang <amwang@redhat.com>
+Subject: Re: [Patch] numa: introduce CONFIG_NUMA_SYSFS for drivers/base/node.c
+Date: Thu, 25 Aug 2011 18:22:00 +0800
+Message-ID: <4E562248.2090102@redhat.com>
+References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au> <20110804152211.ea10e3e7.rdunlap@xenotime.net> <20110823143912.0691d442.akpm@linux-foundation.org> <4E547155.8090709@redhat.com> <20110824191430.8a908e70.rdunlap@xenotime.net> <4E55C221.8080100@redhat.com> <20110824205044.7ff45b6c.rdunlap@xenotime.net> <alpine.DEB.2.00.1108242202050.576@chino.kir.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <201108242148.p7OLm1lt009191@imap1.linux-foundation.org>
+In-Reply-To: <alpine.DEB.2.00.1108242202050.576@chino.kir.corp.google.com>
 Sender: owner-linux-mm@kvack.org
-To: linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+To: David Rientjes <rientjes@google.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 24 Aug 2011 14:09:05 -0700
-akpm@linux-foundation.org wrote:
+=E4=BA=8E 2011=E5=B9=B408=E6=9C=8825=E6=97=A5 13:04, David Rientjes =E5=86=
+=99=E9=81=93:
+> On Wed, 24 Aug 2011, Randy Dunlap wrote:
+>
+>>> Below is the updated version.
+>>>
+>>> Thanks for testing!
+>>
+>> Yes, that works after changing #ifdef defined(...)
+>> to #if defined(...)
+>>
+>> Acked-by: Randy Dunlap<rdunlap@xenotime.net>
+>>
+>
+> No, it doesn't work, CONFIG_HUGETLBFS can be enabled with CONFIG_NUMA=3D=
+y
+> and CONFIG_SYSFS=3Dn and that uses data structures from drivers/base/no=
+de.c
+> which doesn't get compiled with this patch.
 
-> The mm-of-the-moment snapshot 2011-08-24-14-08 has been uploaded to
-> 
->    http://userweb.kernel.org/~akpm/mmotm/
-> 
-> It contains the following patches against 3.1-rc3:
-> (patches marked "*" will be included in linux-next)
-> 
+So, you mean with CONFIG_NUMA=3Dy && CONFIG_SYSFS=3Dn && CONFIG_HUGETLBFS=
+=3Dy
+we still get compile error?
 
-just reporting.
+Which data structures are used by hugetlbfs?
 
-A compile error from linux-next.patch.
-
-drivers/built-in.o: In function `dwc3_testmode_open':
-/home/kamezawa/Kernel/mmotm-Aug24/drivers/usb/dwc3/debugfs.c:481: undefined reference to `dwc3_send_gadget_ep_cmd'
-/home/kamezawa/Kernel/mmotm-Aug24/drivers/usb/dwc3/debugfs.c:482: undefined reference to `dwc3_send_gadget_ep_cmd'
-make: *** [.tmp_vmlinux1] Error 
-
-Thanks,
--Kame
+Thanks.
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
 the body to majordomo@kvack.org.  For more info on Linux MM,
 see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter=
+.ca/
+Don't email: <a href=3Dmailto:"dont@kvack.org"> email@kvack.org </a>
