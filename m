@@ -1,90 +1,65 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: build warning after merge of the rcu tree
-Date: Wed, 24 Aug 2011 22:04:56 -0700
-Message-ID: <20110825050456.GB2411@linux.vnet.ibm.com>
-References: <20110824142337.78715e4d6f9db2de68d87fe4@canb.auug.org.au>
- <20110824122739.GB2320@linux.vnet.ibm.com>
- <CACqU3MVZRjxo-C+z-WRKnMMFfkr35c4FDUpoY6Kbkh1y1J45kQ@mail.gmail.com>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Thu, 25 Aug 2011 00:15:56 -0500
+Message-ID: <4E55DA8C.10102@lwfinger.net>
+References: <20110825150209.5d159c549777290de4644bcf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e9.ny.us.ibm.com ([32.97.182.139]:47264 "EHLO e9.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751789Ab1HYFE7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 01:04:59 -0400
-Content-Disposition: inline
-In-Reply-To: <CACqU3MVZRjxo-C+z-WRKnMMFfkr35c4FDUpoY6Kbkh1y1J45kQ@mail.gmail.com>
+Received: from mail-yi0-f46.google.com ([209.85.218.46]:60708 "EHLO
+	mail-yi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750858Ab1HYFQA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Aug 2011 01:16:00 -0400
+In-Reply-To: <20110825150209.5d159c549777290de4644bcf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnaud Lacombe <lacombar@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, wlanfae <wlanfae@realtek.com>, Jiri Pirko <jpirko@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-On Wed, Aug 24, 2011 at 08:46:15PM -0400, Arnaud Lacombe wrote:
-> Hi,
->=20
-> On Wed, Aug 24, 2011 at 8:27 AM, Paul E. McKenney
-> <paulmck@linux.vnet.ibm.com> wrote:
-> > On Wed, Aug 24, 2011 at 02:23:37PM +1000, Stephen Rothwell wrote:
-> >> Hi Paul,
-> >>
-> >> After merging the rcu tree, today's linux-next build (powerpc
-> >> ppc64_defconfig) produced this warning:
-> >>
-> >> kernel/rtmutex.c: In function '__rt_mutex_slowlock':
-> >> kernel/rtmutex.c:605:3: warning: suggest parentheses around assign=
-ment used as truth value
-> >
-> > There actually already are parentheses around it, and the first pas=
-s
-> > through the loop it is uninitialized at that point. =A0But hey, tha=
-t
-> > is gcc for you! =A0Does the patch below cure it?
-> >
-> Yes.
+On 08/25/2011 12:02 AM, Stephen Rothwell wrote:
+> Hi Greg,
+>
+> After merging the staging tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/staging/rtl8192e/rtl_core.c:2917:2: error: unknown field 'ndo_set_multicast_list' specified in initializer
+>
+> Caused by commit 94a799425eee ("From: wlanfae<wlanfae@realtek.com>" -
+> really "[PATCH 1/8] rtl8192e: Import new version of driver from realtek"
+> Larry, that patch was badly imported ...) interacting with commit
+> b81693d9149c ("net: remove ndo_set_multicast_list callback") from the net
+> tree.
+>
+> I applied the following patch (which seems to be what was done to the
+> other drivers in the net tree - there is probably more required):
+>
+> From: Stephen Rothwell<sfr@canb.auug.org.au>
+> Date: Thu, 25 Aug 2011 14:57:55 +1000
+> Subject: [PATCH] rtl8192e: update for ndo_set_multicast_list removal.
+>
+> Signed-off-by: Stephen Rothwell<sfr@canb.auug.org.au>
+> ---
+>   drivers/staging/rtl8192e/rtl_core.c |    2 +-
+>   1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/staging/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl_core.c
+> index f8a13d9..b38f626 100644
+> --- a/drivers/staging/rtl8192e/rtl_core.c
+> +++ b/drivers/staging/rtl8192e/rtl_core.c
+> @@ -2914,7 +2914,7 @@ static const struct net_device_ops rtl8192_netdev_ops = {
+>   	.ndo_stop = rtl8192_close,
+>   	.ndo_tx_timeout = rtl8192_tx_timeout,
+>   	.ndo_do_ioctl = rtl8192_ioctl,
+> -	.ndo_set_multicast_list = r8192_set_multicast,
+> +	.ndo_set_rx_mode = r8192_set_multicast,
+>   	.ndo_set_mac_address = r8192_set_mac_adr,
+>   	.ndo_validate_addr = eth_validate_addr,
+>   	.ndo_change_mtu = eth_change_mtu,
 
-Thank you!
+Stephan,
 
-							Thanx, Paul
+Thanks for the notice. It seems that commit b81693d9149c had not made it into my 
+copy of staging. I'll look into the issue.
 
->  - Arnaud
->=20
-> >> Introduced by commit 83841f021d4b ("rcu: Permit rt_mutex_unlock() =
-with
-> >> irqs disabled").
-> >
-> > If it does, then I will fold into that commit.
-> >
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0Thanx, Paul
-> >
-> > -------------------------------------------------------------------=
------
-> >
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> >
-> > diff --git a/kernel/rtmutex.c b/kernel/rtmutex.c
-> > index 0222e34..2548f44 100644
-> > --- a/kernel/rtmutex.c
-> > +++ b/kernel/rtmutex.c
-> > @@ -602,7 +602,8 @@ __rt_mutex_slowlock(struct rt_mutex *lock, int =
-state,
-> >
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0raw_spin_unlock(&lock->wait_lock);
-> >
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (was_disabled =3D irqs_disabled())
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 was_disabled =3D irqs_disabled();
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (was_disabled)
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0local_irq_enable();
-> >
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0debug_rt_mutex_print_deadlock(waiter=
-);
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-ker=
-nel" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at =A0http://vger.kernel.org/majordomo-info.htm=
-l
-> > Please read the FAQ at =A0http://www.tux.org/lkml/
-> >
+Larry
