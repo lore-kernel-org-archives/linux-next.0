@@ -1,115 +1,93 @@
-From: Johannes Weiner <jweiner@redhat.com>
-Subject: Re: mmotm 2011-08-24-14-08 uploaded
-Date: Thu, 25 Aug 2011 17:45:38 +0200
-Message-ID: <20110825154538.GA5860@redhat.com>
-References: <201108242148.p7OLm1lt009191@imap1.linux-foundation.org>
- <20110825135103.GA6431@tiehlicka.suse.cz>
- <20110825140701.GA6838@tiehlicka.suse.cz>
- <20110826010938.5795e43137d58c9f42d44458@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Fri, 26 Aug 2011 01:51:11 +1000
+Message-ID: <20110826015111.49af16f792d5554fd931d230@canb.auug.org.au>
+References: <20110825161843.daf46b6b4023926fcfeec387@canb.auug.org.au>
+	<20110825140820.GA9126@kroah.com>
+	<4E56689D.3080202@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__26_Aug_2011_01_51_11_+1000_JCnHzThTL=VHpIl."
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51685 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751547Ab1HYPvT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 11:51:19 -0400
+In-Reply-To: <4E56689D.3080202@freescale.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Timur Tabi <timur@freescale.com>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+
+--Signature=_Fri__26_Aug_2011_01_51_11_+1000_JCnHzThTL=VHpIl.
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20110826010938.5795e43137d58c9f42d44458@canb.auug.org.au>
-Sender: owner-linux-mm@kvack.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michal Hocko <mhocko@suse.cz>, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 26, 2011 at 01:09:38AM +1000, Stephen Rothwell wrote:
-> Hi,
-> 
-> On Thu, 25 Aug 2011 16:07:01 +0200 Michal Hocko <mhocko@suse.cz> wrote:
-> >
-> > On Thu 25-08-11 15:51:03, Michal Hocko wrote:
-> > > 
-> > > On Wed 24-08-11 14:09:05, Andrew Morton wrote:
-> > > > The mm-of-the-moment snapshot 2011-08-24-14-08 has been uploaded to
-> > > > 
-> > > >    http://userweb.kernel.org/~akpm/mmotm/
-> > > 
-> > > I have just downloaded your tree and cannot quilt it up. I am getting:
-> > > [...]
-> > > patching file tools/power/cpupower/debug/x86_64/centrino-decode.c
-> > > Hunk #1 FAILED at 1.
-> > > File tools/power/cpupower/debug/x86_64/centrino-decode.c is not empty after patch, as expected
-> > > 1 out of 1 hunk FAILED -- rejects in file tools/power/cpupower/debug/x86_64/centrino-decode.c
-> > > patching file tools/power/cpupower/debug/x86_64/powernow-k8-decode.c
-> > > Hunk #1 FAILED at 1.
-> > > File tools/power/cpupower/debug/x86_64/powernow-k8-decode.c is not empty after patch, as expected
-> > > 1 out of 1 hunk FAILED -- rejects in file tools/power/cpupower/debug/x86_64/powernow-k8-decode.c
-> > > [...]
-> > > patching file virt/kvm/iommu.c
-> > > Patch linux-next.patch does not apply (enforce with -f)
-> > > 
-> > > Is this a patch (I am using 2.6.1) issue? The failing hunk looks as
-> > > follows:
-> > > --- a/tools/power/cpupower/debug/x86_64/centrino-decode.c
-> > > +++ /dev/null
-> > > @@ -1 +0,0 @@
-> > > -../i386/centrino-decode.c
-> > > \ No newline at end of file
-> > 
-> > Isn't this just a special form of git (clever) diff to spare some lines
-> > when the file deleted? Or is the patch simply corrupted?
-> > Anyway, my patch doesn't cope with that. Any hint what to do about it?
-> 
-> Those files were symlinks and were removed by a commit in linux-next.
-> diff/patch does not cope with that.
+Hi Timur,
 
-You can probably replace `patch' in your $PATH by a wrapper that uses
-git-apply, which can deal with them.
+On Thu, 25 Aug 2011 10:22:05 -0500 Timur Tabi <timur@freescale.com> wrote:
+>
+> Is there some trick to building allyesconfig on PowerPC?  When I do try t=
+hat, I
+> get all sorts of weird build errors, and it dies long before it gets to my
+> driver.  I get stuff like:
+>=20
+>   LD      arch/powerpc/sysdev/xics/built-in.o
+> WARNING: arch/powerpc/sysdev/xics/built-in.o(.text+0x1310): Section misma=
+tch in
+> reference from the function .icp_native_init() to the function
+> .init.text:.icp_native_init_one_node()
+> The function .icp_native_init() references
+> the function __init .icp_native_init_one_node().
+> This is often because .icp_native_init lacks a __init
+> annotation or the annotation of .icp_native_init_one_node is wrong.
 
-Or you could use git-quiltimport, which uses git-apply, to prepare the
--mmotm base tree in git, on top of which you can continue to work with
-quilt.
+We get lots of those in many builds. :-(  Just a warning.
 
-I do this with a cron-job automatically, you can find the result here:
+> and
+>=20
+>   AS      arch/powerpc/kernel/head_64.o
+> arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
+> arch/powerpc/kernel/exceptions-64s.S:1151: Error: attempt to move .org ba=
+ckwards
+> arch/powerpc/kernel/exceptions-64s.S:1160: Error: attempt to move .org ba=
+ckwards
 
-    http://git.kernel.org/?p=linux/kernel/git/hannes/linux-mmotm.git;a=summary
+There is a patch for that pending with either the kvm guys or the powerpc g=
+uys.
 
-If you want to do it manually, there is sometimes confusing binary
-file patch sections in -mmotm, which in turn git-apply can not deal
-with, so I use the following uncrapdiff.awk filter on the patches
-before import.
+> I guess I don't have the right compiler.
 
----
+Yours seems to be OK.  If you pass -k to make it will get further.  Or
+you could configure it and then just try building your driver rather than
+the whole tree.
 
-# Filter out sections that feature an index line but
-# no real diff part that would start with '--- file'
+> Anyway, I think I know how to fix the break that Stephen is seeing.  I wi=
+ll post
+> a v4 patch in a few minutes.
 
-{
-	if (HEADER ~ /^diff --git /) {
-		if ($0 ~ /^index /) {
-			INDEX=$0
-		} else if ($0 ~ /^diff --git /) {
-			print(HEADER)
-			HEADER=$0
-		} else if (INDEX ~ /^index /) {
-			if ($0 ~ /^--- /) {
-				print(HEADER)
-				print(INDEX)
-				print($0)
-			}
-			HEADER=""
-			INDEX=""
-		} else {
-			HEADER=HEADER "\n" $0
-		}
-	} else if ($0 ~ /^diff --git /) {
-		HEADER=$0
-	} else {
-		print($0)
-	}
-}
+Thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
----
+--Signature=_Fri__26_Aug_2011_01_51_11_+1000_JCnHzThTL=VHpIl.
+Content-Type: application/pgp-signature
 
-HTH
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+iQEcBAEBAgAGBQJOVm9vAAoJEDMEi1NhKgbsN8oIAJxnFVWJ8wb9vu2FpTC285fY
+uWiY34+ZGH2q61fyhBPTg6wiLfWIvBAkQ/HiQJleqfFD7//lLCO30otTm1xigIm+
+d4Mp7+XII/CfZrhhazKgu8YyW+kjwBppTkQiGSOUMlVDSwJxdvq+eVev9blIYf5Y
+WXi/t4tbMzgCkzRSiHqg2J+PWCroXRr/EDV2twdmgLgaTn9lyaGPT63M+2yKrbdv
+5wvMbYb+x2homC2tACt3VNtwnJkp2KVEpkSEul5ueWV7iAtZlIseI4CzJwH1tL7N
+/8EtRQSQ+so/LxaO4SKWNar5xiZ/8hZDMCHZOLTCk4/uySLpXEgLYjJ0CrEM+bY=
+=jifr
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__26_Aug_2011_01_51_11_+1000_JCnHzThTL=VHpIl.--
