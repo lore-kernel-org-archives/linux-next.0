@@ -1,89 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
 Subject: Re: mmotm 2011-08-24-14-08 uploaded
-Date: Fri, 26 Aug 2011 01:09:38 +1000
-Message-ID: <20110826010938.5795e43137d58c9f42d44458@canb.auug.org.au>
+Date: Thu, 25 Aug 2011 08:18:48 -0700
+Message-ID: <20110825081848.f6e8a62d.rdunlap@xenotime.net>
 References: <201108242148.p7OLm1lt009191@imap1.linux-foundation.org>
-	<20110825135103.GA6431@tiehlicka.suse.cz>
-	<20110825140701.GA6838@tiehlicka.suse.cz>
+	<20110825161307.7c921e46.kamezawa.hiroyu@jp.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__26_Aug_2011_01_09_38_+1000_ujMjDg7mnHSDn1op"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20110825140701.GA6838@tiehlicka.suse.cz>
+In-Reply-To: <20110825161307.7c921e46.kamezawa.hiroyu@jp.fujitsu.com>
 Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@suse.cz>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+To: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__26_Aug_2011_01_09_38_+1000_ujMjDg7mnHSDn1op
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 25 Aug 2011 16:13:07 +0900 KAMEZAWA Hiroyuki wrote:
 
-Hi,
+> On Wed, 24 Aug 2011 14:09:05 -0700
+> akpm@linux-foundation.org wrote:
+> 
+> > The mm-of-the-moment snapshot 2011-08-24-14-08 has been uploaded to
+> > 
+> >    http://userweb.kernel.org/~akpm/mmotm/
+> > 
+> > It contains the following patches against 3.1-rc3:
+> > (patches marked "*" will be included in linux-next)
+> > 
+> 
+> just reporting.
+> 
+> A compile error from linux-next.patch.
+> 
+> drivers/built-in.o: In function `dwc3_testmode_open':
+> /home/kamezawa/Kernel/mmotm-Aug24/drivers/usb/dwc3/debugfs.c:481: undefined reference to `dwc3_send_gadget_ep_cmd'
+> /home/kamezawa/Kernel/mmotm-Aug24/drivers/usb/dwc3/debugfs.c:482: undefined reference to `dwc3_send_gadget_ep_cmd'
+> make: *** [.tmp_vmlinux1] Error 
 
-On Thu, 25 Aug 2011 16:07:01 +0200 Michal Hocko <mhocko@suse.cz> wrote:
->
-> On Thu 25-08-11 15:51:03, Michal Hocko wrote:
-> >=20
-> > On Wed 24-08-11 14:09:05, Andrew Morton wrote:
-> > > The mm-of-the-moment snapshot 2011-08-24-14-08 has been uploaded to
-> > >=20
-> > >    http://userweb.kernel.org/~akpm/mmotm/
-> >=20
-> > I have just downloaded your tree and cannot quilt it up. I am getting:
-> > [...]
-> > patching file tools/power/cpupower/debug/x86_64/centrino-decode.c
-> > Hunk #1 FAILED at 1.
-> > File tools/power/cpupower/debug/x86_64/centrino-decode.c is not empty a=
-fter patch, as expected
-> > 1 out of 1 hunk FAILED -- rejects in file tools/power/cpupower/debug/x8=
-6_64/centrino-decode.c
-> > patching file tools/power/cpupower/debug/x86_64/powernow-k8-decode.c
-> > Hunk #1 FAILED at 1.
-> > File tools/power/cpupower/debug/x86_64/powernow-k8-decode.c is not empt=
-y after patch, as expected
-> > 1 out of 1 hunk FAILED -- rejects in file tools/power/cpupower/debug/x8=
-6_64/powernow-k8-decode.c
-> > [...]
-> > patching file virt/kvm/iommu.c
-> > Patch linux-next.patch does not apply (enforce with -f)
-> >=20
-> > Is this a patch (I am using 2.6.1) issue? The failing hunk looks as
-> > follows:
-> > --- a/tools/power/cpupower/debug/x86_64/centrino-decode.c
-> > +++ /dev/null
-> > @@ -1 +0,0 @@
-> > -../i386/centrino-decode.c
-> > \ No newline at end of file
->=20
-> Isn't this just a special form of git (clever) diff to spare some lines
-> when the file deleted? Or is the patch simply corrupted?
-> Anyway, my patch doesn't cope with that. Any hint what to do about it?
+Yes, I've sent GregKH a patch for this against linux-next.
 
-Those files were symlinks and were removed by a commit in linux-next.
-diff/patch does not cope with that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__26_Aug_2011_01_09_38_+1000_ujMjDg7mnHSDn1op
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOVmWyAAoJEDMEi1NhKgbs75AH/A3x9LCzxwTMuras0QnnmMVe
-Q/sLpor2/5ArNwhR4S2+Ohc/36c/6twzE3h4QCO0+2M8BUCAC2pcN9H9/0seb6UX
-qdYYROV10Y8O3yF15iSYQzP+iaky5bcpGUG29rHecb6DkUnKfzl8RKF73kJP0H4p
-wfXR7uljsZYj5M++mKY+ma3LVD/cwBe0Ycpv5aYDYs2dFE+LP2n6p3BYTW7tBWkC
-gEb1k7YR7YCIPraLd8X9T5+jdl3NyUZOs+B+viCwnFms4RCcM9mS1dlxVnUH0+56
-3z+OlrOHLZrq0ohKrpeAjj3acTPxEAPA5GU0fiHBYHUDCYMLavC8n64vOBm0R2Q=
-=g9BK
------END PGP SIGNATURE-----
-
---Signature=_Fri__26_Aug_2011_01_09_38_+1000_ujMjDg7mnHSDn1op--
+thanks,
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
