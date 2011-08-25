@@ -1,51 +1,54 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: mmotm 2011-08-24-14-08 uploaded
-Date: Thu, 25 Aug 2011 08:18:48 -0700
-Message-ID: <20110825081848.f6e8a62d.rdunlap@xenotime.net>
-References: <201108242148.p7OLm1lt009191@imap1.linux-foundation.org>
-	<20110825161307.7c921e46.kamezawa.hiroyu@jp.fujitsu.com>
+From: Timur Tabi <timur@freescale.com>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Thu, 25 Aug 2011 10:22:05 -0500
+Message-ID: <4E56689D.3080202@freescale.com>
+References: <20110825161843.daf46b6b4023926fcfeec387@canb.auug.org.au> <20110825140820.GA9126@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20110825161307.7c921e46.kamezawa.hiroyu@jp.fujitsu.com>
-Sender: owner-linux-mm@kvack.org
-To: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110825140820.GA9126@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 25 Aug 2011 16:13:07 +0900 KAMEZAWA Hiroyuki wrote:
-
-> On Wed, 24 Aug 2011 14:09:05 -0700
-> akpm@linux-foundation.org wrote:
+Greg KH wrote:
+>> > MSR_GS is defined in arch/powerpc/include/asm/reg_booke.h which is
+>> > included by arch/powerpc/include/asm/reg.h but only when defined
+>> > (CONFIG_BOOKE) || defined(CONFIG_40x).
+> Thanks for the report.
 > 
-> > The mm-of-the-moment snapshot 2011-08-24-14-08 has been uploaded to
-> > 
-> >    http://userweb.kernel.org/~akpm/mmotm/
-> > 
-> > It contains the following patches against 3.1-rc3:
-> > (patches marked "*" will be included in linux-next)
-> > 
-> 
-> just reporting.
-> 
-> A compile error from linux-next.patch.
-> 
-> drivers/built-in.o: In function `dwc3_testmode_open':
-> /home/kamezawa/Kernel/mmotm-Aug24/drivers/usb/dwc3/debugfs.c:481: undefined reference to `dwc3_send_gadget_ep_cmd'
-> /home/kamezawa/Kernel/mmotm-Aug24/drivers/usb/dwc3/debugfs.c:482: undefined reference to `dwc3_send_gadget_ep_cmd'
-> make: *** [.tmp_vmlinux1] Error 
+> Timur, care to send a fixup patch for this so this gets resolved?
 
-Yes, I've sent GregKH a patch for this against linux-next.
+Is there some trick to building allyesconfig on PowerPC?  When I do try that, I
+get all sorts of weird build errors, and it dies long before it gets to my
+driver.  I get stuff like:
 
-thanks,
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+  LD      arch/powerpc/sysdev/xics/built-in.o
+WARNING: arch/powerpc/sysdev/xics/built-in.o(.text+0x1310): Section mismatch in
+reference from the function .icp_native_init() to the function
+.init.text:.icp_native_init_one_node()
+The function .icp_native_init() references
+the function __init .icp_native_init_one_node().
+This is often because .icp_native_init lacks a __init
+annotation or the annotation of .icp_native_init_one_node is wrong.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+and
+
+  AS      arch/powerpc/kernel/head_64.o
+arch/powerpc/kernel/exceptions-64s.S: Assembler messages:
+arch/powerpc/kernel/exceptions-64s.S:1151: Error: attempt to move .org backwards
+arch/powerpc/kernel/exceptions-64s.S:1160: Error: attempt to move .org backwards
+make[1]: *** [arch/powerpc/kernel/head_64.o] Error 1
+
+I guess I don't have the right compiler.
+
+Anyway, I think I know how to fix the break that Stephen is seeing.  I will post
+a v4 patch in a few minutes.
+
+
+-- 
+Timur Tabi
+Linux kernel developer at Freescale
