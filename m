@@ -1,64 +1,54 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [Patch] numa: introduce CONFIG_NUMA_SYSFS for
- drivers/base/node.c
-Date: Wed, 24 Aug 2011 20:50:44 -0700
-Message-ID: <20110824205044.7ff45b6c.rdunlap@xenotime.net>
-References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au>
-	<20110804152211.ea10e3e7.rdunlap@xenotime.net>
-	<20110823143912.0691d442.akpm@linux-foundation.org>
-	<4E547155.8090709@redhat.com>
-	<20110824191430.8a908e70.rdunlap@xenotime.net>
-	<4E55C221.8080100@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ptrace tree
+Date: Thu, 25 Aug 2011 14:12:12 +1000
+Message-ID: <20110825141212.4f82835beaad506553e291e8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__25_Aug_2011_14_12_12_+1000_yx2XhPLFQtT1siBY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:38469 "HELO
-	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1750952Ab1HYDuq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Aug 2011 23:50:46 -0400
-In-Reply-To: <4E55C221.8080100@redhat.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47671 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750903Ab1HYEMV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 00:12:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Cong Wang <amwang@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+To: Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>
 
-On Thu, 25 Aug 2011 11:31:45 +0800 Cong Wang wrote:
+--Signature=_Thu__25_Aug_2011_14_12_12_+1000_yx2XhPLFQtT1siBY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> =E4=BA=8E 2011=E5=B9=B408=E6=9C=8825=E6=97=A5 10:14, Randy Dunlap =E5=
-=86=99=E9=81=93:
-> > On Wed, 24 Aug 2011 11:34:45 +0800 Cong Wang wrote:
-> >
-> >> Hi, Andrew,
-> >>
-> >> Do you think my patch below is better?
-> >
-> > Hi,
-> >
-> > This causes build errors for me because node.o is not being built:
-> >
-> > arch/x86/built-in.o: In function `topology_init':
-> > topology.c:(.init.text+0x3668): undefined reference to `register_on=
-e_node'
-> > drivers/built-in.o: In function `unregister_cpu':
-> > (.text+0x7aecc): undefined reference to `unregister_cpu_under_node'
-> > drivers/built-in.o: In function `register_cpu':
-> > (.cpuinit.text+0xc1): undefined reference to `register_cpu_under_no=
-de'
->=20
-> Ah, this is because I missed the part in include/linux/node.h. :)
->=20
-> Below is the updated version.
->=20
-> Thanks for testing!
+Hi all,
 
-Yes, that works after changing #ifdef defined(...)
-to #if defined(...)
+After merging the ptrace tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+ERROR: ".set_current_blocked" [fs/autofs4/autofs4.ko] undefined!
 
+Presumably set_current_blocked() needs to be EXPORTed.
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your cod=
-e ***
+I have used the ptrace tree from next-20110824 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__25_Aug_2011_14_12_12_+1000_yx2XhPLFQtT1siBY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOVcucAAoJEDMEi1NhKgbsXj4IAIbVVS9tFmuWZMaB0SmSbn4b
+5nqqC430w26pvidQ6Ejjcd7BO0ScTIQt0GyMIPhxmjUf1ppkvnqoqD9YN83Kz9Po
+C8R5A2kiIT6ZXbz1tz8Bl3rGGPwJnbcnUyvAJZeS0QsOuMqKqUbnnFP8bCntqAgE
+pw2lXH38+tVPX+7dF0Pu/6LUYeLCK9D4mcb7IslOs+0gAUYn6X5L21bNFL3AXlND
+LcIQ9hyGW6g6sYzY1qx0zDlfpojzpBKqeuNr3GhMxoL2j1pQ3omUNDzLe5leUlTn
+cOrlIyjIvreVLdcsW8YeQxlQuL7GvksT8p+TMqQt8UWW5R6L/KcI+3xfEPSF1sw=
+=BZiE
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__25_Aug_2011_14_12_12_+1000_yx2XhPLFQtT1siBY--
