@@ -1,44 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with the arm tree
-Date: Thu, 25 Aug 2011 15:17:48 +1000
-Message-ID: <20110825151748.8e41e0ded739187a1432cf0b@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the lt-mtd tree
+Date: Thu, 25 Aug 2011 15:23:21 +1000
+Message-ID: <20110825152321.5a961bcebffb656a8daed837@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53066 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35447 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750846Ab1HYFRw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 01:17:52 -0400
+	id S1750903Ab1HYFXX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 01:23:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Medhurst <tixy@yxit.co.uk>, Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, Artem Bityutskiy <dedekind1@gmail.com>
 
 Hi Paul,
 
 Today's linux-next merge of the moduleh tree got a conflict in
-arch/arm/mach-bcmring/mm.c between commit 2d5e975b2194 ("ARM:
-mach-bcmring: Setup consistent dma size at boot time") from the arm tree
-and commit 9bc7d81e271e ("arm: fix implicit use of page.h in
-mach-bcmring/mach-jornada") from the moduleh tree.
+include/linux/mtd/mtd.h between commit 7f338a9bf785 ("mtd: style fixups
+in multi-line comment, indentation") from the l2-mtd tree and commit
+089f5643ba44 ("include: replace linux/module.h with "struct module"
+wherever possible") from the moduleh tree.
 
-Jst context changes I fixed it up (see below) and can carry the fix as
-necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix
+as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-bcmring/mm.c
-index 8616876,293b6d3..0000000
---- a/arch/arm/mach-bcmring/mm.c
-+++ b/arch/arm/mach-bcmring/mm.c
-@@@ -13,7 -13,7 +13,8 @@@
-  *****************************************************************************/
+diff --cc include/linux/mtd/mtd.h
+index ff7bae0,af31170..0000000
+--- a/include/linux/mtd/mtd.h
++++ b/include/linux/mtd/mtd.h
+@@@ -41,11 -40,11 +40,13 @@@
   
-  #include <linux/platform_device.h>
- +#include <linux/dma-mapping.h>
-+ #include <asm/page.h>
-  #include <asm/mach/map.h>
+  #define MTD_FAIL_ADDR_UNKNOWN -1LL
   
-  #include <mach/hardware.h>
++ struct module;
++ 
+ -/* If the erase fails, fail_addr might indicate exactly which block failed.  If
+ -   fail_addr = MTD_FAIL_ADDR_UNKNOWN, the failure was not at the device level or was not
+ -   specific to any particular block. */
+ +/*
+ + * If the erase fails, fail_addr might indicate exactly which block failed. If
+ + * fail_addr = MTD_FAIL_ADDR_UNKNOWN, the failure was not at the device level
+ + * or was not specific to any particular block.
+ + */
+  struct erase_info {
+  	struct mtd_info *mtd;
+  	uint64_t addr;
