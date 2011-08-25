@@ -1,33 +1,43 @@
-From: Timur Tabi <timur@freescale.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tty tree related)
-Date: Thu, 25 Aug 2011 09:28:09 -0500
-Message-ID: <C2030908-5A27-49BD-8E16-F8FEBBD8144D@freescale.com>
-References: <20110825161843.daf46b6b4023926fcfeec387@canb.auug.org.au> <20110825140820.GA9126@kroah.com>
-Mime-Version: 1.0 (iPad Mail 8L1)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+From: Oleg Nesterov <oleg@redhat.com>
+Subject: Re: linux-next: build failure after merge of the ptrace tree
+Date: Thu, 25 Aug 2011 16:37:58 +0200
+Message-ID: <20110825143758.GA2039@redhat.com>
+References: <20110825141212.4f82835beaad506553e291e8@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from va3ehsobe005.messaging.microsoft.com ([216.32.180.31]:23275
-	"EHLO VA3EHSOBE005.bigfish.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751027Ab1HYO1z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 10:27:55 -0400
-In-Reply-To: <20110825140820.GA9126@kroah.com>
+Received: from mx1.redhat.com ([209.132.183.28]:37438 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752553Ab1HYOk6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 10:40:58 -0400
+Content-Disposition: inline
+In-Reply-To: <20110825141212.4f82835beaad506553e291e8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "<linux-next@vger.kernel.org>" <linux-next@vger.kernel.org>, "<linux-kernel@vger.kernel.org>" <linux-kernel@vger.kernel.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>
 
+Hi Stephen,
 
+On 08/25, Stephen Rothwell wrote:
+>
+> Hi all,
+>
+> After merging the ptrace tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> ERROR: ".set_current_blocked" [fs/autofs4/autofs4.ko] undefined!
 
-On Aug 25, 2011, at 9:08 AM, Greg KH <greg@kroah.com> wrote:
+In case you didn't notice, we are doing our best to complicate
+your life :/
 
-> On Thu, Aug 25, 2011 at 04:18:43PM +1000, Stephen Rothwell wrote:
->> 
-> 
-> Thanks for the report.
-> 
-> Timur, care to send a fixup patch for this so this gets resolved?
+Sorry.
 
-Yes, I will do it ASAP, probably within the next two hours.
-> 
+> Presumably set_current_blocked() needs to be EXPORTed.
+
+Yes. I've reset the last 4 commits which touch the code in fs/.
+Will add them back after the patch which exports set_current_blocked.
+
+Thanks a lot!
+
+Oleg.
