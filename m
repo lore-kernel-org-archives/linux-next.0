@@ -1,50 +1,55 @@
-From: Cong Wang <amwang@redhat.com>
-Subject: Re: [Patch] numa: introduce CONFIG_NUMA_SYSFS for drivers/base/node.c
-Date: Thu, 25 Aug 2011 18:22:00 +0800
-Message-ID: <4E562248.2090102@redhat.com>
-References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au> <20110804152211.ea10e3e7.rdunlap@xenotime.net> <20110823143912.0691d442.akpm@linux-foundation.org> <4E547155.8090709@redhat.com> <20110824191430.8a908e70.rdunlap@xenotime.net> <4E55C221.8080100@redhat.com> <20110824205044.7ff45b6c.rdunlap@xenotime.net> <alpine.DEB.2.00.1108242202050.576@chino.kir.corp.google.com>
+From: Michal Hocko <mhocko@suse.cz>
+Subject: Re: mmotm 2011-08-24-14-08 uploaded
+Date: Thu, 25 Aug 2011 15:51:03 +0200
+Message-ID: <20110825135103.GA6431@tiehlicka.suse.cz>
+References: <201108242148.p7OLm1lt009191@imap1.linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <alpine.DEB.2.00.1108242202050.576@chino.kir.corp.google.com>
-Sender: owner-linux-mm@kvack.org
-To: David Rientjes <rientjes@google.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:54838 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751802Ab1HYNvF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 09:51:05 -0400
+Content-Disposition: inline
+In-Reply-To: <201108242148.p7OLm1lt009191@imap1.linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 
-=E4=BA=8E 2011=E5=B9=B408=E6=9C=8825=E6=97=A5 13:04, David Rientjes =E5=86=
-=99=E9=81=93:
-> On Wed, 24 Aug 2011, Randy Dunlap wrote:
->
->>> Below is the updated version.
->>>
->>> Thanks for testing!
->>
->> Yes, that works after changing #ifdef defined(...)
->> to #if defined(...)
->>
->> Acked-by: Randy Dunlap<rdunlap@xenotime.net>
->>
->
-> No, it doesn't work, CONFIG_HUGETLBFS can be enabled with CONFIG_NUMA=3D=
-y
-> and CONFIG_SYSFS=3Dn and that uses data structures from drivers/base/no=
-de.c
-> which doesn't get compiled with this patch.
+Hi Andrew,
 
-So, you mean with CONFIG_NUMA=3Dy && CONFIG_SYSFS=3Dn && CONFIG_HUGETLBFS=
-=3Dy
-we still get compile error?
+On Wed 24-08-11 14:09:05, Andrew Morton wrote:
+> The mm-of-the-moment snapshot 2011-08-24-14-08 has been uploaded to
+> 
+>    http://userweb.kernel.org/~akpm/mmotm/
 
-Which data structures are used by hugetlbfs?
+I have just downloaded your tree and cannot quilt it up. I am getting:
+[...]
+patching file tools/power/cpupower/debug/x86_64/centrino-decode.c
+Hunk #1 FAILED at 1.
+File tools/power/cpupower/debug/x86_64/centrino-decode.c is not empty after patch, as expected
+1 out of 1 hunk FAILED -- rejects in file tools/power/cpupower/debug/x86_64/centrino-decode.c
+patching file tools/power/cpupower/debug/x86_64/powernow-k8-decode.c
+Hunk #1 FAILED at 1.
+File tools/power/cpupower/debug/x86_64/powernow-k8-decode.c is not empty after patch, as expected
+1 out of 1 hunk FAILED -- rejects in file tools/power/cpupower/debug/x86_64/powernow-k8-decode.c
+[...]
+patching file virt/kvm/iommu.c
+Patch linux-next.patch does not apply (enforce with -f)
 
-Thanks.
+Is this a patch (I am using 2.6.1) issue? The failing hunk looks as
+follows:
+--- a/tools/power/cpupower/debug/x86_64/centrino-decode.c
++++ /dev/null
+@@ -1 +0,0 @@
+-../i386/centrino-decode.c
+\ No newline at end of file
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter=
-.ca/
-Don't email: <a href=3Dmailto:"dont@kvack.org"> email@kvack.org </a>
+-- 
+Michal Hocko
+SUSE Labs
+SUSE LINUX s.r.o.
+Lihovarska 1060/12
+190 00 Praha 9    
+Czech Republic
