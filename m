@@ -1,38 +1,36 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] tty/powerpc: fix build break with ehv_bytechan.c on
-	allyesconfig
-Date: Thu, 25 Aug 2011 09:32:34 -0700
-Message-ID: <20110825163234.GA31629@kroah.com>
-References: <1314289245-14946-1-git-send-email-timur@freescale.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: manual merge of the moduleh tree with the arm tree
+Date: Thu, 25 Aug 2011 12:33:51 -0400
+Message-ID: <4E56796F.8090703@windriver.com>
+References: <20110825151748.8e41e0ded739187a1432cf0b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-Content-Disposition: inline
-In-Reply-To: <1314289245-14946-1-git-send-email-timur@freescale.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-To: Timur Tabi <timur@freescale.com>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110825151748.8e41e0ded739187a1432cf0b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Medhurst <tixy@yxit.co.uk>, Russell King <rmk@arm.linux.org.uk>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Aug 25, 2011 at 11:20:45AM -0500, Timur Tabi wrote:
-> The Kconfig for the ePAPR hypervisor byte channel driver has a "depends on PPC",
-> which means it would compile on all PowerPC platforms, even though it's
-> only been tested on Freescale platforms.  Change the Kconfig to depend on
-> FSL_SOC instead.
+On 11-08-25 01:17 AM, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> Today's linux-next merge of the moduleh tree got a conflict in
+> arch/arm/mach-bcmring/mm.c between commit 2d5e975b2194 ("ARM:
+> mach-bcmring: Setup consistent dma size at boot time") from the arm tree
+> and commit 9bc7d81e271e ("arm: fix implicit use of page.h in
+> mach-bcmring/mach-jornada") from the moduleh tree.
 
-tested doesn't mean that it shouldn't still build properly for other
-platforms, right?
+I can't really relocate the page.h inclusion in a trivial way to
+make this conflict go away.  But since the implicit header use fixes
+for arm are independent and don't actually depend on anything in the
+rest of the module.h tree, I can set about to giving these to Russell
+for his arm-next branch anytime.  I'll do that shortly.
 
-What is keeping the driver from building on all PPC, or even all arches
-today?
+Thanks,
+Paul.
 
-greg k-h
+> 
+> Jst context changes I fixed it up (see below) and can carry the fix as
+> necessary.
