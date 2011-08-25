@@ -1,65 +1,46 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: Re: mmotm 2011-08-24-14-08 uploaded
-Date: Thu, 25 Aug 2011 16:07:01 +0200
-Message-ID: <20110825140701.GA6838@tiehlicka.suse.cz>
-References: <201108242148.p7OLm1lt009191@imap1.linux-foundation.org>
- <20110825135103.GA6431@tiehlicka.suse.cz>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Thu, 25 Aug 2011 07:08:20 -0700
+Message-ID: <20110825140820.GA9126@kroah.com>
+References: <20110825161843.daf46b6b4023926fcfeec387@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out3.smtp.messagingengine.com ([66.111.4.27]:38188 "EHLO
+	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750917Ab1HYOYn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 10:24:43 -0400
 Content-Disposition: inline
-In-Reply-To: <20110825135103.GA6431@tiehlicka.suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20110825161843.daf46b6b4023926fcfeec387@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Timur Tabi <timur@freescale.com>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
-On Thu 25-08-11 15:51:03, Michal Hocko wrote:
-> Hi Andrew,
+On Thu, Aug 25, 2011 at 04:18:43PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Wed 24-08-11 14:09:05, Andrew Morton wrote:
-> > The mm-of-the-moment snapshot 2011-08-24-14-08 has been uploaded to
-> > 
-> >    http://userweb.kernel.org/~akpm/mmotm/
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 > 
-> I have just downloaded your tree and cannot quilt it up. I am getting:
-> [...]
-> patching file tools/power/cpupower/debug/x86_64/centrino-decode.c
-> Hunk #1 FAILED at 1.
-> File tools/power/cpupower/debug/x86_64/centrino-decode.c is not empty after patch, as expected
-> 1 out of 1 hunk FAILED -- rejects in file tools/power/cpupower/debug/x86_64/centrino-decode.c
-> patching file tools/power/cpupower/debug/x86_64/powernow-k8-decode.c
-> Hunk #1 FAILED at 1.
-> File tools/power/cpupower/debug/x86_64/powernow-k8-decode.c is not empty after patch, as expected
-> 1 out of 1 hunk FAILED -- rejects in file tools/power/cpupower/debug/x86_64/powernow-k8-decode.c
-> [...]
-> patching file virt/kvm/iommu.c
-> Patch linux-next.patch does not apply (enforce with -f)
+> drivers/tty/ehv_bytechan.c: In function 'udbg_init_ehv_bc':
+> drivers/tty/ehv_bytechan.c:230:18: error: 'MSR_GS' undeclared (first use in this function)
+> drivers/tty/ehv_bytechan.c: In function 'ehv_bc_console_write':
+> drivers/tty/ehv_bytechan.c:289:24: warning: cast from pointer to integer of different size
+> drivers/tty/ehv_bytechan.c: In function 'ehv_bc_console_init':
+> drivers/tty/ehv_bytechan.c:355:24: warning: cast to pointer from integer of different size
 > 
-> Is this a patch (I am using 2.6.1) issue? The failing hunk looks as
-> follows:
-> --- a/tools/power/cpupower/debug/x86_64/centrino-decode.c
-> +++ /dev/null
-> @@ -1 +0,0 @@
-> -../i386/centrino-decode.c
-> \ No newline at end of file
+> Caused by commit dcd83aaff1c8 ("tty/powerpc: introduce the ePAPR embedded
+> hypervisor byte channel driver").
+> 
+> MSR_GS is defined in arch/powerpc/include/asm/reg_booke.h which is
+> included by arch/powerpc/include/asm/reg.h but only when defined
+> (CONFIG_BOOKE) || defined(CONFIG_40x).
 
-Isn't this just a special form of git (clever) diff to spare some lines
-when the file deleted? Or is the patch simply corrupted?
-Anyway, my patch doesn't cope with that. Any hint what to do about it?
+Thanks for the report.
 
-Thanks
--- 
-Michal Hocko
-SUSE Labs
-SUSE LINUX s.r.o.
-Lihovarska 1060/12
-190 00 Praha 9    
-Czech Republic
+Timur, care to send a fixup patch for this so this gets resolved?
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+greg k-h
