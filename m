@@ -1,52 +1,98 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with the lt-mtd tree
-Date: Thu, 25 Aug 2011 15:23:21 +1000
-Message-ID: <20110825152321.5a961bcebffb656a8daed837@canb.auug.org.au>
+From: David Rientjes <rientjes@google.com>
+Subject: [patch] numa: fix NUMA compile error when sysfs and procfs are
+ disabled
+Date: Wed, 24 Aug 2011 22:55:02 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1108242224180.576@chino.kir.corp.google.com>
+References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au> <20110804152211.ea10e3e7.rdunlap@xenotime.net> <20110823143912.0691d442.akpm@linux-foundation.org> <4E547155.8090709@redhat.com> <20110824191430.8a908e70.rdunlap@xenotime.net>
+ <4E55C221.8080100@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35447 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750903Ab1HYFXX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 01:23:23 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>, Artem Bityutskiy <dedekind1@gmail.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <4E55C221.8080100@redhat.com>
+Sender: owner-linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>, Cong Wang <amwang@redhat.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg Kroah-Hartman <gregkh@suse.de>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
+On Thu, 25 Aug 2011, Cong Wang wrote:
 
-Today's linux-next merge of the moduleh tree got a conflict in
-include/linux/mtd/mtd.h between commit 7f338a9bf785 ("mtd: style fixups
-in multi-line comment, indentation") from the l2-mtd tree and commit
-089f5643ba44 ("include: replace linux/module.h with "struct module"
-wherever possible") from the moduleh tree.
+> Ah, this is because I missed the part in include/linux/node.h. :)
+> 
+> Below is the updated version.
+> 
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I've never had a problem building a kernel with CONFIG_NUMA=y and 
+CONFIG_SYSFS=n since most of drivers/base/node.c is just an abstraction 
+that calls into sysfs functions that will be no-ops in such a 
+configuration.
 
-diff --cc include/linux/mtd/mtd.h
-index ff7bae0,af31170..0000000
---- a/include/linux/mtd/mtd.h
-+++ b/include/linux/mtd/mtd.h
-@@@ -41,11 -40,11 +40,13 @@@
-  
-  #define MTD_FAIL_ADDR_UNKNOWN -1LL
-  
-+ struct module;
-+ 
- -/* If the erase fails, fail_addr might indicate exactly which block failed.  If
- -   fail_addr = MTD_FAIL_ADDR_UNKNOWN, the failure was not at the device level or was not
- -   specific to any particular block. */
- +/*
- + * If the erase fails, fail_addr might indicate exactly which block failed. If
- + * fail_addr = MTD_FAIL_ADDR_UNKNOWN, the failure was not at the device level
- + * or was not specific to any particular block.
- + */
-  struct erase_info {
-  	struct mtd_info *mtd;
-  	uint64_t addr;
+The error you cite in a different thread 
+(http://marc.info/?l=linux-mm&m=131098795024186) about an undefined 
+reference to vmstat_text is because you have CONFIG_NUMA enabled and both 
+CONFIG_SYSFS and CONFIG_PROC_FS disabled and we only define vmstat_text 
+for those fs configurations since that's the only way these strings were 
+ever emitted before per-node vmstat.
+
+The correct fix is to define the array for CONFIG_NUMA as well.
+
+
+
+numa: fix NUMA compile error when sysfs and procfs are disabled
+
+The vmstat_text array is only defined for CONFIG_SYSFS or CONFIG_PROC_FS, 
+yet it is referenced for per-node vmstat with CONFIG_NUMA:
+
+	drivers/built-in.o: In function `node_read_vmstat':
+	node.c:(.text+0x1106df): undefined reference to `vmstat_text'
+
+in fa25c503dfa2 (mm: per-node vmstat: show proper vmstats).
+
+Define the array for CONFIG_NUMA as well.
+
+Reported-by: Cong Wang <amwang@redhat.com>
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ include/linux/vmstat.h |    2 ++
+ mm/vmstat.c            |    4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
+--- a/include/linux/vmstat.h
++++ b/include/linux/vmstat.h
+@@ -258,6 +258,8 @@ static inline void refresh_zone_stat_thresholds(void) { }
+ 
+ #endif		/* CONFIG_SMP */
+ 
++#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS) || defined(CONFIG_NUMA)
+ extern const char * const vmstat_text[];
++#endif
+ 
+ #endif /* _LINUX_VMSTAT_H */
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -659,7 +659,7 @@ static void walk_zones_in_node(struct seq_file *m, pg_data_t *pgdat,
+ }
+ #endif
+ 
+-#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS)
++#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS) || defined(CONFIG_NUMA)
+ #ifdef CONFIG_ZONE_DMA
+ #define TEXT_FOR_DMA(xx) xx "_dma",
+ #else
+@@ -788,7 +788,7 @@ const char * const vmstat_text[] = {
+ 
+ #endif /* CONFIG_VM_EVENTS_COUNTERS */
+ };
+-#endif /* CONFIG_PROC_FS || CONFIG_SYSFS */
++#endif /* CONFIG_PROC_FS || CONFIG_SYSFS || CONFIG_NUMA */
+ 
+ 
+ #ifdef CONFIG_PROC_FS
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
