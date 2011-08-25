@@ -1,62 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the staging tree
-Date: Thu, 25 Aug 2011 15:02:09 +1000
-Message-ID: <20110825150209.5d159c549777290de4644bcf@canb.auug.org.au>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: [Patch] numa: introduce CONFIG_NUMA_SYSFS for
+ drivers/base/node.c
+Date: Wed, 24 Aug 2011 22:04:25 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1108242202050.576@chino.kir.corp.google.com>
+References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au> <20110804152211.ea10e3e7.rdunlap@xenotime.net> <20110823143912.0691d442.akpm@linux-foundation.org> <4E547155.8090709@redhat.com> <20110824191430.8a908e70.rdunlap@xenotime.net>
+ <4E55C221.8080100@redhat.com> <20110824205044.7ff45b6c.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37391 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751229Ab1HYFCR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 01:02:17 -0400
+Received: from smtp-out.google.com ([216.239.44.51]:40289 "EHLO
+	smtp-out.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751674Ab1HYFEa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Aug 2011 01:04:30 -0400
+Received: from wpaz1.hot.corp.google.com (wpaz1.hot.corp.google.com [172.24.198.65])
+	by smtp-out.google.com with ESMTP id p7P54TC9000525
+	for <linux-next@vger.kernel.org>; Wed, 24 Aug 2011 22:04:29 -0700
+Received: from pzk32 (pzk32.prod.google.com [10.243.19.160])
+	by wpaz1.hot.corp.google.com with ESMTP id p7P54AiE007266
+	(version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
+	for <linux-next@vger.kernel.org>; Wed, 24 Aug 2011 22:04:28 -0700
+Received: by pzk32 with SMTP id 32so2079477pzk.33
+        for <linux-next@vger.kernel.org>; Wed, 24 Aug 2011 22:04:28 -0700 (PDT)
+In-Reply-To: <20110824205044.7ff45b6c.rdunlap@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, wlanfae <wlanfae@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>, Jiri Pirko <jpirko@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Cong Wang <amwang@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
 
-Hi Greg,
+On Wed, 24 Aug 2011, Randy Dunlap wrote:
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> > Below is the updated version.
+> > 
+> > Thanks for testing!
+> 
+> Yes, that works after changing #ifdef defined(...)
+> to #if defined(...)
+> 
+> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+> 
 
-drivers/staging/rtl8192e/rtl_core.c:2917:2: error: unknown field 'ndo_set_multicast_list' specified in initializer
-
-Caused by commit 94a799425eee ("From: wlanfae <wlanfae@realtek.com>" -
-really "[PATCH 1/8] rtl8192e: Import new version of driver from realtek"
-Larry, that patch was badly imported ...) interacting with commit
-b81693d9149c ("net: remove ndo_set_multicast_list callback") from the net
-tree.
-
-I applied the following patch (which seems to be what was done to the
-other drivers in the net tree - there is probably more required):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 25 Aug 2011 14:57:55 +1000
-Subject: [PATCH] rtl8192e: update for ndo_set_multicast_list removal.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/rtl8192e/rtl_core.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl_core.c
-index f8a13d9..b38f626 100644
---- a/drivers/staging/rtl8192e/rtl_core.c
-+++ b/drivers/staging/rtl8192e/rtl_core.c
-@@ -2914,7 +2914,7 @@ static const struct net_device_ops rtl8192_netdev_ops = {
- 	.ndo_stop = rtl8192_close,
- 	.ndo_tx_timeout = rtl8192_tx_timeout,
- 	.ndo_do_ioctl = rtl8192_ioctl,
--	.ndo_set_multicast_list = r8192_set_multicast,
-+	.ndo_set_rx_mode = r8192_set_multicast,
- 	.ndo_set_mac_address = r8192_set_mac_adr,
- 	.ndo_validate_addr = eth_validate_addr,
- 	.ndo_change_mtu = eth_change_mtu,
--- 
-1.7.5.4
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+No, it doesn't work, CONFIG_HUGETLBFS can be enabled with CONFIG_NUMA=y 
+and CONFIG_SYSFS=n and that uses data structures from drivers/base/node.c 
+which doesn't get compiled with this patch.
