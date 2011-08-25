@@ -1,44 +1,29 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] [v4] tty/powerpc: introduce the ePAPR embedded
- hypervisor byte channel driver
-Date: Thu, 25 Aug 2011 08:50:50 -0700
-Message-ID: <20110825155050.GA10084@kroah.com>
-References: <1314286345-27056-1-git-send-email-timur@freescale.com>
+From: Timur Tabi <timur@freescale.com>
+Subject: Re: [PATCH] [v4] tty/powerpc: introduce the ePAPR embedded hypervisor
+ byte channel driver
+Date: Thu, 25 Aug 2011 11:03:29 -0500
+Message-ID: <4E567251.3020509@freescale.com>
+References: <1314286345-27056-1-git-send-email-timur@freescale.com> <20110825155050.GA10084@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3.smtp.messagingengine.com ([66.111.4.27]:47294 "EHLO
-	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751904Ab1HYQA2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 12:00:28 -0400
-Content-Disposition: inline
-In-Reply-To: <1314286345-27056-1-git-send-email-timur@freescale.com>
+Received: from tx2ehsobe004.messaging.microsoft.com ([65.55.88.14]:6185 "EHLO
+	TX2EHSOBE007.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752360Ab1HYQGV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Aug 2011 12:06:21 -0400
+In-Reply-To: <20110825155050.GA10084@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Timur Tabi <timur@freescale.com>
+To: Greg KH <greg@kroah.com>
 Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
 
-On Thu, Aug 25, 2011 at 10:32:25AM -0500, Timur Tabi wrote:
-> The ePAPR embedded hypervisor specification provides an API for "byte
-> channels", which are serial-like virtual devices for sending and receiving
-> streams of bytes.  This driver provides Linux kernel support for byte
-> channels via three distinct interfaces:
-> 
-> 1) An early-console (udbg) driver.  This provides early console output
-> through a byte channel.  The byte channel handle must be specified in a
-> Kconfig option.
-> 
-> 2) A normal console driver.  Output is sent to the byte channel designated
-> for stdout in the device tree.  The console driver is for handling kernel
-> printk calls.
-> 
-> 3) A tty driver, which is used to handle user-space input and output.  The
-> byte channel used for the console is designated as the default tty.
-> 
-> Signed-off-by: Timur Tabi <timur@freescale.com>
+Greg KH wrote:
+> No, this doesn't work, I need just a fix, as I took your previous patch
+> already.
 
-No, this doesn't work, I need just a fix, as I took your previous patch
-already.
+Sorry, coming right up.
 
-greg k-h
+-- 
+Timur Tabi
+Linux kernel developer at Freescale
