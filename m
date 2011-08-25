@@ -1,45 +1,41 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: linux-next: manual merge of the xen tree with the
-	tip tree
-Date: Thu, 25 Aug 2011 11:26:37 -0700
-Message-ID: <4E5693DD.2010307@zytor.com>
-References: <20110825142450.c84e02d8763cfd1a93411844@canb.auug.org.au>
-	<4E5690C3.2050706@goop.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH] tty/powerpc: fix build break with ehv_bytechan.c on
+ allyesconfig
+Date: Thu, 25 Aug 2011 11:46:55 -0700
+Message-ID: <20110825184655.GB1891@kroah.com>
+References: <1314289245-14946-1-git-send-email-timur@freescale.com>
+ <20110825163234.GA31629@kroah.com>
+ <4E568E19.405@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <xen-devel-bounces@lists.xensource.com>
-In-Reply-To: <4E5690C3.2050706@goop.org>
-List-Unsubscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
-	<mailto:xen-devel-request@lists.xensource.com?subject=unsubscribe>
-List-Post: <mailto:xen-devel@lists.xensource.com>
-List-Help: <mailto:xen-devel-request@lists.xensource.com?subject=help>
-List-Subscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
-	<mailto:xen-devel-request@lists.xensource.com?subject=subscribe>
-Sender: xen-devel-bounces@lists.xensource.com
-Errors-To: xen-devel-bounces@lists.xensource.com
-To: Jeremy Fitzhardinge <jeremy@goop.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Xen Devel <Xen-devel@lists.xensource.com>, Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4E568E19.405@freescale.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Timur Tabi <timur@freescale.com>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
 List-Id: linux-next.vger.kernel.org
 
-On 08/25/2011 11:13 AM, Jeremy Fitzhardinge wrote:
-> On 08/24/2011 09:24 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Today's linux-next merge of the xen tree got a conflict in
->> arch/x86/include/asm/spinlock.h between a series of commits from the tip
->> tree and a smaller series of similar commits from the xen tree.
->>
->> I see that Linus is commenting on these patches at the moment, and its
->> not easy to resolve the conflicts, so I will just use the xen tree from
->> next-20110824 for today.
->>
+On Thu, Aug 25, 2011 at 01:02:01PM -0500, Timur Tabi wrote:
+> Greg KH wrote:
+> > tested doesn't mean that it shouldn't still build properly for other
+> > platforms, right?
 > 
-> Thanks Stephen; the xen tree ones are more current, and I want to make
-> sure I didn't screw up any of the cmpxchg/xadd changes in a wider test env.
+> The problem is the dependency on MSR_GS, which is defined only for Book-E
+> PowerPC chips, not all PowerPC.
 > 
+> So I gave it some more thought, and technically ePAPR extends beyond Book-E, so
+> it's wrong for the driver to depend on anything specific to Book-E.  I've
+> removed the code that breaks:
+> 
+> 	/* Check if we're running as a guest of a hypervisor */
+> 	if (!(mfmsr() & MSR_GS))
+> 		return;
 
-Stephen: the x86/spinlocks branch in the -tip tree is obsolete and
-should be dropped.
+But don't you really want this type of check at runtime?  What happens
+if you load this driver on a machine that is not a guest?  Will things
+break?  Shouldn't you still refuse to load somehow?
 
-	-hpa
+thanks,
+
+greg k-h
