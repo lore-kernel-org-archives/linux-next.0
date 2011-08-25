@@ -1,45 +1,41 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] tty/powerpc: fix build break with ehv_bytechan.c on
- allyesconfig
-Date: Thu, 25 Aug 2011 12:03:30 -0700
-Message-ID: <20110825190330.GA2383@kroah.com>
-References: <1314289245-14946-1-git-send-email-timur@freescale.com>
- <20110825163234.GA31629@kroah.com>
- <4E568E19.405@freescale.com>
- <20110825184655.GB1891@kroah.com>
- <4E5699A8.1070708@freescale.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: mmotm 2011-08-24-14-08 uploaded
+Date: Thu, 25 Aug 2011 12:23:07 -0700
+Message-ID: <20110825122307.face013a.akpm@linux-foundation.org>
+References: <201108242148.p7OLm1lt009191@imap1.linux-foundation.org>
+	<20110825135103.GA6431@tiehlicka.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3.smtp.messagingengine.com ([66.111.4.27]:49450 "EHLO
-	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755273Ab1HYTDx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 15:03:53 -0400
-Content-Disposition: inline
-In-Reply-To: <4E5699A8.1070708@freescale.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Timur Tabi <timur@freescale.com>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20110825135103.GA6431@tiehlicka.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Michal Hocko <mhocko@suse.cz>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Aug 25, 2011 at 01:51:20PM -0500, Timur Tabi wrote:
-> Greg KH wrote:
-> > But don't you really want this type of check at runtime?  What happens
-> > if you load this driver on a machine that is not a guest?  Will things
-> > break?  Shouldn't you still refuse to load somehow?
-> 
-> This is in the udbg code, which falls under the category of, "turn this on only
-> if you know what you're doing."
-> 
-> The udbg code runs very early, before the device tree is available.  There's no
-> way of knowing at this point whether or not we're running under a hypervisor.
-> If you turn on udbg support, then it means that you're trying to do some very
-> specific debugging on a specific platform.
-> 
-> So I'm not removing this code just to fix the build break.  It really should
-> never have been there in the first place.
+On Thu, 25 Aug 2011 15:51:03 +0200
+Michal Hocko <mhocko@suse.cz> wrote:
 
-Ok, thanks for the details, I'll queue up the patch in a bit.
+> On Wed 24-08-11 14:09:05, Andrew Morton wrote:
+> > The mm-of-the-moment snapshot 2011-08-24-14-08 has been uploaded to
+> > 
+> >    http://userweb.kernel.org/~akpm/mmotm/
+> 
+> I have just downloaded your tree and cannot quilt it up.
 
-greg k-h
+Parenthetically, there's not much point in running -mm any more:
+everything which matters is copied into linux-next, so just run the
+following day's -next.
+
+There are a few things in -mm which aren't transferrrred to -next.  Some
+akpm-specific pain reducers, a few patches which don't look like
+they'll ever get into mainline and a great shower of debugging patches
+which I accumulated over the ages.
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
