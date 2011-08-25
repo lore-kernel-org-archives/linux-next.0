@@ -1,44 +1,90 @@
-From: David Rientjes <rientjes@google.com>
-Subject: Re: [Patch] numa: introduce CONFIG_NUMA_SYSFS for
- drivers/base/node.c
-Date: Wed, 24 Aug 2011 22:04:25 -0700 (PDT)
-Message-ID: <alpine.DEB.2.00.1108242202050.576@chino.kir.corp.google.com>
-References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au> <20110804152211.ea10e3e7.rdunlap@xenotime.net> <20110823143912.0691d442.akpm@linux-foundation.org> <4E547155.8090709@redhat.com> <20110824191430.8a908e70.rdunlap@xenotime.net>
- <4E55C221.8080100@redhat.com> <20110824205044.7ff45b6c.rdunlap@xenotime.net>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build warning after merge of the rcu tree
+Date: Wed, 24 Aug 2011 22:04:56 -0700
+Message-ID: <20110825050456.GB2411@linux.vnet.ibm.com>
+References: <20110824142337.78715e4d6f9db2de68d87fe4@canb.auug.org.au>
+ <20110824122739.GB2320@linux.vnet.ibm.com>
+ <CACqU3MVZRjxo-C+z-WRKnMMFfkr35c4FDUpoY6Kbkh1y1J45kQ@mail.gmail.com>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp-out.google.com ([216.239.44.51]:40289 "EHLO
-	smtp-out.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751674Ab1HYFEa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Aug 2011 01:04:30 -0400
-Received: from wpaz1.hot.corp.google.com (wpaz1.hot.corp.google.com [172.24.198.65])
-	by smtp-out.google.com with ESMTP id p7P54TC9000525
-	for <linux-next@vger.kernel.org>; Wed, 24 Aug 2011 22:04:29 -0700
-Received: from pzk32 (pzk32.prod.google.com [10.243.19.160])
-	by wpaz1.hot.corp.google.com with ESMTP id p7P54AiE007266
-	(version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=NOT)
-	for <linux-next@vger.kernel.org>; Wed, 24 Aug 2011 22:04:28 -0700
-Received: by pzk32 with SMTP id 32so2079477pzk.33
-        for <linux-next@vger.kernel.org>; Wed, 24 Aug 2011 22:04:28 -0700 (PDT)
-In-Reply-To: <20110824205044.7ff45b6c.rdunlap@xenotime.net>
+Received: from e9.ny.us.ibm.com ([32.97.182.139]:47264 "EHLO e9.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751789Ab1HYFE7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 01:04:59 -0400
+Content-Disposition: inline
+In-Reply-To: <CACqU3MVZRjxo-C+z-WRKnMMFfkr35c4FDUpoY6Kbkh1y1J45kQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Cong Wang <amwang@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+To: Arnaud Lacombe <lacombar@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 24 Aug 2011, Randy Dunlap wrote:
+On Wed, Aug 24, 2011 at 08:46:15PM -0400, Arnaud Lacombe wrote:
+> Hi,
+>=20
+> On Wed, Aug 24, 2011 at 8:27 AM, Paul E. McKenney
+> <paulmck@linux.vnet.ibm.com> wrote:
+> > On Wed, Aug 24, 2011 at 02:23:37PM +1000, Stephen Rothwell wrote:
+> >> Hi Paul,
+> >>
+> >> After merging the rcu tree, today's linux-next build (powerpc
+> >> ppc64_defconfig) produced this warning:
+> >>
+> >> kernel/rtmutex.c: In function '__rt_mutex_slowlock':
+> >> kernel/rtmutex.c:605:3: warning: suggest parentheses around assign=
+ment used as truth value
+> >
+> > There actually already are parentheses around it, and the first pas=
+s
+> > through the loop it is uninitialized at that point. =A0But hey, tha=
+t
+> > is gcc for you! =A0Does the patch below cure it?
+> >
+> Yes.
 
-> > Below is the updated version.
-> > 
-> > Thanks for testing!
-> 
-> Yes, that works after changing #ifdef defined(...)
-> to #if defined(...)
-> 
-> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-> 
+Thank you!
 
-No, it doesn't work, CONFIG_HUGETLBFS can be enabled with CONFIG_NUMA=y 
-and CONFIG_SYSFS=n and that uses data structures from drivers/base/node.c 
-which doesn't get compiled with this patch.
+							Thanx, Paul
+
+>  - Arnaud
+>=20
+> >> Introduced by commit 83841f021d4b ("rcu: Permit rt_mutex_unlock() =
+with
+> >> irqs disabled").
+> >
+> > If it does, then I will fold into that commit.
+> >
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0Thanx, Paul
+> >
+> > -------------------------------------------------------------------=
+-----
+> >
+> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> >
+> > diff --git a/kernel/rtmutex.c b/kernel/rtmutex.c
+> > index 0222e34..2548f44 100644
+> > --- a/kernel/rtmutex.c
+> > +++ b/kernel/rtmutex.c
+> > @@ -602,7 +602,8 @@ __rt_mutex_slowlock(struct rt_mutex *lock, int =
+state,
+> >
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0raw_spin_unlock(&lock->wait_lock);
+> >
+> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (was_disabled =3D irqs_disabled())
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 was_disabled =3D irqs_disabled();
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (was_disabled)
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0local_irq_enable();
+> >
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0debug_rt_mutex_print_deadlock(waiter=
+);
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-ker=
+nel" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at =A0http://vger.kernel.org/majordomo-info.htm=
+l
+> > Please read the FAQ at =A0http://www.tux.org/lkml/
+> >
