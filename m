@@ -1,38 +1,62 @@
 From: Timur Tabi <timur@freescale.com>
-Subject: Re: [PATCH] tty/powerpc: fix build break with ehv_bytechan.c on allyesconfig
-Date: Thu, 25 Aug 2011 13:02:01 -0500
-Message-ID: <4E568E19.405@freescale.com>
-References: <1314289245-14946-1-git-send-email-timur@freescale.com> <20110825163234.GA31629@kroah.com>
+Subject: [PATCH] [v2] tty/powerpc: fix build break with ehv_bytechan.c on allyesconfig
+Date: Thu, 25 Aug 2011 13:06:57 -0500
+Message-ID: <1314295617-2953-1-git-send-email-timur@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110825163234.GA31629@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ch1ehsobe003.messaging.microsoft.com ([216.32.181.183]:25175
+	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755104Ab1HYSHG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 14:07:06 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: greg@kroah.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
 
-Greg KH wrote:
-> tested doesn't mean that it shouldn't still build properly for other
-> platforms, right?
+The ePAPR hypervisor byte channel driver is supposed to work on all
+ePAPR-compliant embedded PowerPC systems, but it had a reference to the MSR_GS
+bit, which is available only on Book-E systems.
 
-The problem is the dependency on MSR_GS, which is defined only for Book-E
-PowerPC chips, not all PowerPC.
+Also fix a couple integer-to-pointer typecast problems.
 
-So I gave it some more thought, and technically ePAPR extends beyond Book-E, so
-it's wrong for the driver to depend on anything specific to Book-E.  I've
-removed the code that breaks:
+Signed-off-by: Timur Tabi <timur@freescale.com>
+---
+ drivers/tty/ehv_bytechan.c |    8 ++------
+ 1 files changed, 2 insertions(+), 6 deletions(-)
 
-	/* Check if we're running as a guest of a hypervisor */
-	if (!(mfmsr() & MSR_GS))
-		return;
-
-> What is keeping the driver from building on all PPC, or even all arches
-> today?
-
-I've made a few changes, and it builds on all PPC now.  I'll post a new patch.
-
+diff --git a/drivers/tty/ehv_bytechan.c b/drivers/tty/ehv_bytechan.c
+index e67f70b..f733718 100644
+--- a/drivers/tty/ehv_bytechan.c
++++ b/drivers/tty/ehv_bytechan.c
+@@ -226,10 +226,6 @@ void __init udbg_init_ehv_bc(void)
+ 	unsigned int rx_count, tx_count;
+ 	unsigned int ret;
+ 
+-	/* Check if we're running as a guest of a hypervisor */
+-	if (!(mfmsr() & MSR_GS))
+-		return;
+-
+ 	/* Verify the byte channel handle */
+ 	ret = ev_byte_channel_poll(CONFIG_PPC_EARLY_DEBUG_EHV_BC_HANDLE,
+ 				   &rx_count, &tx_count);
+@@ -286,7 +282,7 @@ static int ehv_bc_console_byte_channel_send(unsigned int handle, const char *s,
+ static void ehv_bc_console_write(struct console *co, const char *s,
+ 				 unsigned int count)
+ {
+-	unsigned int handle = (unsigned int)co->data;
++	unsigned int handle = (uintptr_t)co->data;
+ 	char s2[EV_BYTE_CHANNEL_MAX_BYTES];
+ 	unsigned int i, j = 0;
+ 	char c;
+@@ -352,7 +348,7 @@ static int __init ehv_bc_console_init(void)
+ 			   CONFIG_PPC_EARLY_DEBUG_EHV_BC_HANDLE);
+ #endif
+ 
+-	ehv_bc_console.data = (void *)stdout_bc;
++	ehv_bc_console.data = (void *)(uintptr_t)stdout_bc;
+ 
+ 	/* add_preferred_console() must be called before register_console(),
+ 	   otherwise it won't work.  However, we don't want to enumerate all the
 -- 
-Timur Tabi
-Linux kernel developer at Freescale
+1.7.3.4
