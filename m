@@ -1,113 +1,38 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [patch] numa: fix NUMA compile error when sysfs and procfs are
- disabled
-Date: Thu, 25 Aug 2011 10:17:56 -0700
-Message-ID: <20110825101756.fbbcc488.rdunlap@xenotime.net>
-References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au>
-	<20110804152211.ea10e3e7.rdunlap@xenotime.net>
-	<20110823143912.0691d442.akpm@linux-foundation.org>
-	<4E547155.8090709@redhat.com>
-	<20110824191430.8a908e70.rdunlap@xenotime.net>
-	<4E55C221.8080100@redhat.com>
-	<alpine.DEB.2.00.1108242224180.576@chino.kir.corp.google.com>
+From: Timur Tabi <timur@freescale.com>
+Subject: Re: [PATCH] tty/powerpc: fix build break with ehv_bytechan.c on allyesconfig
+Date: Thu, 25 Aug 2011 13:02:01 -0500
+Message-ID: <4E568E19.405@freescale.com>
+References: <1314289245-14946-1-git-send-email-timur@freescale.com> <20110825163234.GA31629@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:54096 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751049Ab1HYRR7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Aug 2011 13:17:59 -0400
-In-Reply-To: <alpine.DEB.2.00.1108242224180.576@chino.kir.corp.google.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Cong Wang <amwang@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg Kroah-Hartman <gregkh@suse.de>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110825163234.GA31629@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 24 Aug 2011 22:55:02 -0700 (PDT) David Rientjes wrote:
+Greg KH wrote:
+> tested doesn't mean that it shouldn't still build properly for other
+> platforms, right?
 
-> On Thu, 25 Aug 2011, Cong Wang wrote:
-> 
-> > Ah, this is because I missed the part in include/linux/node.h. :)
-> > 
-> > Below is the updated version.
-> > 
-> 
-> I've never had a problem building a kernel with CONFIG_NUMA=y and 
-> CONFIG_SYSFS=n since most of drivers/base/node.c is just an abstraction 
-> that calls into sysfs functions that will be no-ops in such a 
-> configuration.
-> 
-> The error you cite in a different thread 
-> (http://marc.info/?l=linux-mm&m=131098795024186) about an undefined 
-> reference to vmstat_text is because you have CONFIG_NUMA enabled and both 
-> CONFIG_SYSFS and CONFIG_PROC_FS disabled and we only define vmstat_text 
-> for those fs configurations since that's the only way these strings were 
-> ever emitted before per-node vmstat.
-> 
-> The correct fix is to define the array for CONFIG_NUMA as well.
-> 
-> 
-> 
-> numa: fix NUMA compile error when sysfs and procfs are disabled
-> 
-> The vmstat_text array is only defined for CONFIG_SYSFS or CONFIG_PROC_FS, 
-> yet it is referenced for per-node vmstat with CONFIG_NUMA:
-> 
-> 	drivers/built-in.o: In function `node_read_vmstat':
-> 	node.c:(.text+0x1106df): undefined reference to `vmstat_text'
-> 
-> in fa25c503dfa2 (mm: per-node vmstat: show proper vmstats).
-> 
-> Define the array for CONFIG_NUMA as well.
-> 
-> Reported-by: Cong Wang <amwang@redhat.com>
-> Signed-off-by: David Rientjes <rientjes@google.com>
+The problem is the dependency on MSR_GS, which is defined only for Book-E
+PowerPC chips, not all PowerPC.
 
-Sure, that also works.
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+So I gave it some more thought, and technically ePAPR extends beyond Book-E, so
+it's wrong for the driver to depend on anything specific to Book-E.  I've
+removed the code that breaks:
 
+	/* Check if we're running as a guest of a hypervisor */
+	if (!(mfmsr() & MSR_GS))
+		return;
 
-> ---
->  include/linux/vmstat.h |    2 ++
->  mm/vmstat.c            |    4 ++--
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-> --- a/include/linux/vmstat.h
-> +++ b/include/linux/vmstat.h
-> @@ -258,6 +258,8 @@ static inline void refresh_zone_stat_thresholds(void) { }
->  
->  #endif		/* CONFIG_SMP */
->  
-> +#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS) || defined(CONFIG_NUMA)
->  extern const char * const vmstat_text[];
-> +#endif
->  
->  #endif /* _LINUX_VMSTAT_H */
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -659,7 +659,7 @@ static void walk_zones_in_node(struct seq_file *m, pg_data_t *pgdat,
->  }
->  #endif
->  
-> -#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS)
-> +#if defined(CONFIG_PROC_FS) || defined(CONFIG_SYSFS) || defined(CONFIG_NUMA)
->  #ifdef CONFIG_ZONE_DMA
->  #define TEXT_FOR_DMA(xx) xx "_dma",
->  #else
-> @@ -788,7 +788,7 @@ const char * const vmstat_text[] = {
->  
->  #endif /* CONFIG_VM_EVENTS_COUNTERS */
->  };
-> -#endif /* CONFIG_PROC_FS || CONFIG_SYSFS */
-> +#endif /* CONFIG_PROC_FS || CONFIG_SYSFS || CONFIG_NUMA */
->  
->  
->  #ifdef CONFIG_PROC_FS
+> What is keeping the driver from building on all PPC, or even all arches
+> today?
 
+I've made a few changes, and it builds on all PPC now.  I'll post a new patch.
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+-- 
+Timur Tabi
+Linux kernel developer at Freescale
