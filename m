@@ -1,62 +1,45 @@
-From: Timur Tabi <timur@freescale.com>
-Subject: [PATCH] [v2] tty/powerpc: fix build break with ehv_bytechan.c on allyesconfig
-Date: Thu, 25 Aug 2011 13:06:57 -0500
-Message-ID: <1314295617-2953-1-git-send-email-timur@freescale.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: build failure after merge of the final tree (akpm
+ and moduleh trees related)
+Date: Thu, 25 Aug 2011 14:10:08 -0400
+Message-ID: <4E569000.302@windriver.com>
+References: <20110825161750.45803be66cba17a6bd3906bc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ch1ehsobe003.messaging.microsoft.com ([216.32.181.183]:25175
-	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755104Ab1HYSHG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 14:07:06 -0400
+Received: from mail.windriver.com ([147.11.1.11]:55076 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755104Ab1HYSKs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Aug 2011 14:10:48 -0400
+In-Reply-To: <20110825161750.45803be66cba17a6bd3906bc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: greg@kroah.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yanmin Zhang <yanmin_zhang@linux.intel.com>
 
-The ePAPR hypervisor byte channel driver is supposed to work on all
-ePAPR-compliant embedded PowerPC systems, but it had a reference to the MSR_GS
-bit, which is available only on Book-E systems.
+On 11-08-25 02:17 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (sparc64 defconfig)
+> failed like this:
+> 
+> kernel/printk.c:536:35: error: expected ')' before string constant
+> kernel/printk.c:1116:35: error: expected ')' before string constant
+> 
+> Caused by commits 8a04dedc045d ("We are enabling some power features on
+> medfield.  To test suspend-2-RAM") and d09d67ec904c (same - the following
+> commit) from the akpm tree interacting with commit a25ffe9fafa1 ("kernel:
+> Map most files to use export.h instead of module.h") from the moduleh
+> tree.  This file now needs module.h, not just export.h since
+> MODULE_PARM_DESC if defined there.
+> 
+> I have applied a merge fixup patch to change export.h back to module.h.
 
-Also fix a couple integer-to-pointer typecast problems.
+Thanks Stephen, I've excluded kernel/printk.c from the conversion to
+export.h today.
 
-Signed-off-by: Timur Tabi <timur@freescale.com>
----
- drivers/tty/ehv_bytechan.c |    8 ++------
- 1 files changed, 2 insertions(+), 6 deletions(-)
+Paul.
 
-diff --git a/drivers/tty/ehv_bytechan.c b/drivers/tty/ehv_bytechan.c
-index e67f70b..f733718 100644
---- a/drivers/tty/ehv_bytechan.c
-+++ b/drivers/tty/ehv_bytechan.c
-@@ -226,10 +226,6 @@ void __init udbg_init_ehv_bc(void)
- 	unsigned int rx_count, tx_count;
- 	unsigned int ret;
- 
--	/* Check if we're running as a guest of a hypervisor */
--	if (!(mfmsr() & MSR_GS))
--		return;
--
- 	/* Verify the byte channel handle */
- 	ret = ev_byte_channel_poll(CONFIG_PPC_EARLY_DEBUG_EHV_BC_HANDLE,
- 				   &rx_count, &tx_count);
-@@ -286,7 +282,7 @@ static int ehv_bc_console_byte_channel_send(unsigned int handle, const char *s,
- static void ehv_bc_console_write(struct console *co, const char *s,
- 				 unsigned int count)
- {
--	unsigned int handle = (unsigned int)co->data;
-+	unsigned int handle = (uintptr_t)co->data;
- 	char s2[EV_BYTE_CHANNEL_MAX_BYTES];
- 	unsigned int i, j = 0;
- 	char c;
-@@ -352,7 +348,7 @@ static int __init ehv_bc_console_init(void)
- 			   CONFIG_PPC_EARLY_DEBUG_EHV_BC_HANDLE);
- #endif
- 
--	ehv_bc_console.data = (void *)stdout_bc;
-+	ehv_bc_console.data = (void *)(uintptr_t)stdout_bc;
- 
- 	/* add_preferred_console() must be called before register_console(),
- 	   otherwise it won't work.  However, we don't want to enumerate all the
--- 
-1.7.3.4
+> 
+> P.S. Andrew, these commits could do with better subject lines :-(
