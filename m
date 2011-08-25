@@ -1,78 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the xen tree with the tip tree
-Date: Fri, 26 Aug 2011 09:06:19 +1000
-Message-ID: <20110826090619.7588d424798f53a6f3621eb2@canb.auug.org.au>
-References: <20110825142450.c84e02d8763cfd1a93411844@canb.auug.org.au>
-	<4E5690C3.2050706@goop.org>
-	<4E5693DD.2010307@zytor.com>
+Subject: Re: linux-next: manual merge of the moduleh tree with the arm tree
+Date: Fri, 26 Aug 2011 09:11:50 +1000
+Message-ID: <20110826091150.58697ca3adc9ba6dfcb357e0@canb.auug.org.au>
+References: <20110825151748.8e41e0ded739187a1432cf0b@canb.auug.org.au>
+	<4E56796F.8090703@windriver.com>
+	<20110825163901.GA467@flint.arm.linux.org.uk>
+	<4E56CF76.70201@windriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__26_Aug_2011_09_06_19_+1000_qvGPnk2ddaEkwfol"
+ boundary="Signature=_Fri__26_Aug_2011_09_11_50_+1000_ZZKR45edPESDTQIk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38162 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34658 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753556Ab1HYXGp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 19:06:45 -0400
-In-Reply-To: <4E5693DD.2010307@zytor.com>
+	id S1752042Ab1HYXL6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 19:11:58 -0400
+In-Reply-To: <4E56CF76.70201@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Medhurst <tixy@yxit.co.uk>
 
---Signature=_Fri__26_Aug_2011_09_06_19_+1000_qvGPnk2ddaEkwfol
+--Signature=_Fri__26_Aug_2011_09_11_50_+1000_ZZKR45edPESDTQIk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Paul,
 
-On Thu, 25 Aug 2011 11:26:37 -0700 "H. Peter Anvin" <hpa@zytor.com> wrote:
+On Thu, 25 Aug 2011 18:40:54 -0400 Paul Gortmaker <paul.gortmaker@windriver=
+.com> wrote:
 >
-> On 08/25/2011 11:13 AM, Jeremy Fitzhardinge wrote:
-> > On 08/24/2011 09:24 PM, Stephen Rothwell wrote:
-> >>
-> >> Today's linux-next merge of the xen tree got a conflict in
-> >> arch/x86/include/asm/spinlock.h between a series of commits from the t=
-ip
-> >> tree and a smaller series of similar commits from the xen tree.
-> >>
-> >> I see that Linus is commenting on these patches at the moment, and its
-> >> not easy to resolve the conflicts, so I will just use the xen tree from
-> >> next-20110824 for today.
-> >>
-> >=20
-> > Thanks Stephen; the xen tree ones are more current, and I want to make
-> > sure I didn't screw up any of the cmpxchg/xadd changes in a wider test =
-env.
-> >=20
->=20
-> Stephen: the x86/spinlocks branch in the -tip tree is obsolete and
-> should be dropped.
+> OK.  I was entertaining feeding some of the really obvious and simple
+> parts of the moduleh branch out to the various maintainers just to
+> reduce its overall size, but in the end I guess that just makes work
+> for me and them -- vs. a single pull request to Linus for addition to
+> v3.2-rc1.   I'll just stay the course and Stephen will have to rerere
+> the merge conflict resolution for a while -- something I'm certain
+> that he has automated long long ago.
 
-That's a bit tricky as I get a rolled up tip tree.  The best I could do
-is revert the commit that merges the x86/spinlocks branch into
-auto-latest ...  I'll do that for today (unless something happens to the
-tip tree in the next hour).
-
+Yeah, that's fine.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__26_Aug_2011_09_06_19_+1000_qvGPnk2ddaEkwfol
+--Signature=_Fri__26_Aug_2011_09_11_50_+1000_ZZKR45edPESDTQIk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOVtVrAAoJEDMEi1NhKgbsFOYH/jnZFur5cWbT1SKZp28CUBUj
-h2Nov7YNwhcDb5sY2VUd0N+lUuJjdwRwStz5PHjYaSMrnoSXHTn+ZsmMb+0mtsbr
-E2ekSsryPJL5q+qPVP9mXfLFMUCATi3j2BJV+ThobEZb2OSe0eg/LIg83CD+E66u
-1DekWbCI34KmBhLvzn5fmYFQYlwB+QFEphkJUrorjszK/LVok1RjUex00BG+U2mX
-2SXIFQOWQkx13ZUoXAw+mi3MBjC+jLjbReb5iECohRhA+v6bBQis+5VC3YItUpcL
-Z/GjVVJ8RuInaqDHNuXSSlLoQAfOiCbQVOMhHSi2ffYQ4eXZXq94Gfuq0E+J+1M=
-=j9m6
+iQEcBAEBAgAGBQJOVta2AAoJEDMEi1NhKgbsVYAH/RRRLMOwFSzwPkqY7KY11buv
+asUwuXcVzotascmDNtj1ZCD6mo6NBDvBMIaxyF7QRy9py95+O0JkadgI6vO8VFko
+lzRCWeuvjIuwaIEUEtbSzSNibyr8WWrj8f3cIcxYQT63qPBAmQk6id512AL1pY3W
+EaC7hEhiM9qtWSAiyXLWkudYSZFdTeXAGQDy6lh3P0qLoYpJQVskB4p1ns8aEEVf
+Z+ziHtKGrREPtVpz4hhg0HWb5/ikrh5XnKWU+kyjHjL9DLrgs9nCmQgVCd7hc5O/
+/N5CTJKK/EEy4hdxV0sjxRXJG2rqgWKkBHH+Cda8v7OCdMSmKCAeKQ2e9V8u+ZU=
+=qkQc
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__26_Aug_2011_09_06_19_+1000_qvGPnk2ddaEkwfol--
+--Signature=_Fri__26_Aug_2011_09_11_50_+1000_ZZKR45edPESDTQIk--
