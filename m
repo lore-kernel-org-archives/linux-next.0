@@ -1,35 +1,33 @@
 From: "Randy Dunlap" <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 25
-Date: Fri, 26 Aug 2011 00:26:48 -0700
-Message-ID: <885a6d6210a7d4c56601380f146e7ba9.squirrel@xenotime.net>
-References: <20110825163515.0ed2cf354f61a3e9c53564b2@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Aug 26 (i7core_edac)
+Date: Fri, 26 Aug 2011 01:07:50 -0700
+Message-ID: <205ae102ed038641e32cf38c48334f9e.squirrel@xenotime.net>
+References: <20110826150000.302334d0b86c17cd9b89b590@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20110825163515.0ed2cf354f61a3e9c53564b2@canb.auug.org.au>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-scsi@vger.kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110826150000.302334d0b86c17cd9b89b590@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
 
-On Wed, August 24, 2011 11:35 pm, Stephen Rothwell wrote:
+On Thu, August 25, 2011 10:00 pm, Stephen Rothwell wrote:
 > Hi all,
 >
 > The powerpc allyesconfig build still fails today.
+>
+> Changes since 20110825:
 
 
-CONFIG_FCOE is not enabled:
+on i386:
 
-drivers/scsi/bnx2fc/bnx2fc_fcoe.c: In function 'bnx2fc_net_config':
-drivers/scsi/bnx2fc/bnx2fc_fcoe.c:765: error: 'NETDEV_FCOE_WWNN'
-undeclared (first use in this function)
-drivers/scsi/bnx2fc/bnx2fc_fcoe.c:771: error: 'NETDEV_FCOE_WWPN'
-undeclared (first use in this function)
+ERROR: "__udivdi3" [drivers/edac/i7core_edac.ko] undefined!
 
+in both get_sdram_scrub_rate()
+and set_sdram_scrub_rate()
 
-Maybe this driver should select FCOE?
-
+-- 
 ~Randy
-
