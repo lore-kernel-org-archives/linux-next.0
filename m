@@ -1,88 +1,74 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
+From: Borislav Petkov <bp@amd64.org>
 Subject: Re: linux-next: Tree for Aug 26 (i7core_edac)
-Date: Fri, 26 Aug 2011 16:16:11 +0200
-Message-ID: <CA+icZUX1zaw7xxka8yP4B0tFt7XgXe=8faw8vBnNWm+6teJVaA@mail.gmail.com>
+Date: Fri, 26 Aug 2011 16:48:55 +0200
+Message-ID: <20110826144855.GA11820@aftab>
 References: <20110826150000.302334d0b86c17cd9b89b590@canb.auug.org.au>
-	<205ae102ed038641e32cf38c48334f9e.squirrel@xenotime.net>
-Reply-To: sedat.dilek@gmail.com
+ <205ae102ed038641e32cf38c48334f9e.squirrel@xenotime.net>
+ <CA+icZUX1zaw7xxka8yP4B0tFt7XgXe=8faw8vBnNWm+6teJVaA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=0016e650584afae71304ab692f55
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f181.google.com ([209.85.216.181]:57878 "EHLO
-	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751392Ab1HZOQM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Aug 2011 10:16:12 -0400
-In-Reply-To: <205ae102ed038641e32cf38c48334f9e.squirrel@xenotime.net>
+Received: from s15228384.onlinehome-server.info ([87.106.30.177]:34634 "EHLO
+	mail.x86-64.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751460Ab1HZOs6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Aug 2011 10:48:58 -0400
+Content-Disposition: inline
+In-Reply-To: <CA+icZUX1zaw7xxka8yP4B0tFt7XgXe=8faw8vBnNWm+6teJVaA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org
+To: "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
 
---0016e650584afae71304ab692f55
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Fri, Aug 26, 2011 at 10:16:11AM -0400, Sedat Dilek wrote:
+> ( UNTESTED, just followed patches like "[PATCH] p54: Use do_div for
+> 64-bit division to fix 32-bit kernels" or "[PATCH v1] carl9170: Use
+> do_div for 64-bit division to fix 32-bit kernels" )
+> 
+> Regards,
+> - Sedat -
 
-On Fri, Aug 26, 2011 at 10:07 AM, Randy Dunlap <rdunlap@xenotime.net> wrote=
-:
->
-> On Thu, August 25, 2011 10:00 pm, Stephen Rothwell wrote:
->> Hi all,
->>
->> The powerpc allyesconfig build still fails today.
->>
->> Changes since 20110825:
->
->
-> on i386:
->
-> ERROR: "__udivdi3" [drivers/edac/i7core_edac.ko] undefined!
->
-> in both get_sdram_scrub_rate()
-> and set_sdram_scrub_rate()
->
-> --
-> ~Randy
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.html
->
+> diff --git a/drivers/edac/i7core_edac.c b/drivers/edac/i7core_edac.c
+> index 7cb68de..4d4f3a5 100644
+> --- a/drivers/edac/i7core_edac.c
+> +++ b/drivers/edac/i7core_edac.c
+> @@ -37,6 +37,7 @@
+>  #include <linux/smp.h>
+>  #include <asm/mce.h>
+>  #include <asm/processor.h>
+> +#include <asm/div64.h>
+>  
+>  #include "edac_core.h"
+>  
+> @@ -2102,7 +2103,8 @@ static int set_sdram_scrub_rate(struct mem_ctl_info *mci, u32 new_bw)
+>  		 * program the corresponding register value.
+>  		 */
+>  		scrub_interval = (unsigned long long)freq_dclk_mhz *
+> -			cache_line_size * 1000000 / new_bw;
+> +			cache_line_size * 1000000);
+> +		do_div(scrub_interval, new_bw);
 
-Hi Randy,
+This has been an issue pretty often lately on lkml. Instead of doing
+64-bit division on 32-bit (which is really slow), you could try to use
+the commutative property of integer multiplication and thus reorder the
+operations so that the division is 32-bit only. Maybe
 
-can you test with the patch attached, please?
+((freq_dclk_mhz * cache_line_size) / new_bw) * 1000000
 
-( UNTESTED, just followed patches like "[PATCH] p54: Use do_div for
-64-bit division to fix 32-bit kernels" or "[PATCH v1] carl9170: Use
-do_div for 64-bit division to fix 32-bit kernels" )
+for example. You have to make sure though that new_bw as divisor can
+never be bigger than the dividend because otherwise you get the 0. One
+question would be what is the interval of freq_dclk_mhz and can (new_bw >> 6)
+be ever bigger than it.
 
-Regards,
-- Sedat -
+And while at it, the cache_line_size is pretty solidly staying 64 Byte
+in the short-term future so no need for a local variable. Also, shifting
+left by 6 should be a faster equivalent than multiplying by 64.
 
---0016e650584afae71304ab692f55
-Content-Type: text/x-patch; charset=US-ASCII; name="i7core_edac.c.diff"
-Content-Disposition: attachment; filename="i7core_edac.c.diff"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_grt8s0yp0
+-- 
+Regards/Gruss,
+Boris.
 
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZWRhYy9pN2NvcmVfZWRhYy5jIGIvZHJpdmVycy9lZGFjL2k3
-Y29yZV9lZGFjLmMKaW5kZXggN2NiNjhkZS4uNGQ0ZjNhNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9l
-ZGFjL2k3Y29yZV9lZGFjLmMKKysrIGIvZHJpdmVycy9lZGFjL2k3Y29yZV9lZGFjLmMKQEAgLTM3
-LDYgKzM3LDcgQEAKICNpbmNsdWRlIDxsaW51eC9zbXAuaD4KICNpbmNsdWRlIDxhc20vbWNlLmg+
-CiAjaW5jbHVkZSA8YXNtL3Byb2Nlc3Nvci5oPgorI2luY2x1ZGUgPGFzbS9kaXY2NC5oPgogCiAj
-aW5jbHVkZSAiZWRhY19jb3JlLmgiCiAKQEAgLTIxMDIsNyArMjEwMyw4IEBAIHN0YXRpYyBpbnQg
-c2V0X3NkcmFtX3NjcnViX3JhdGUoc3RydWN0IG1lbV9jdGxfaW5mbyAqbWNpLCB1MzIgbmV3X2J3
-KQogCQkgKiBwcm9ncmFtIHRoZSBjb3JyZXNwb25kaW5nIHJlZ2lzdGVyIHZhbHVlLgogCQkgKi8K
-IAkJc2NydWJfaW50ZXJ2YWwgPSAodW5zaWduZWQgbG9uZyBsb25nKWZyZXFfZGNsa19taHogKgot
-CQkJY2FjaGVfbGluZV9zaXplICogMTAwMDAwMCAvIG5ld19idzsKKwkJCWNhY2hlX2xpbmVfc2l6
-ZSAqIDEwMDAwMDApOworCQlkb19kaXYoc2NydWJfaW50ZXJ2YWwsIG5ld19idyk7CiAKIAkJaWYg
-KCFzY3J1Yl9pbnRlcnZhbCB8fCBzY3J1Yl9pbnRlcnZhbCA+IFNDUlVCSU5URVJWQUxfTUFTSykK
-IAkJCXJldHVybiAtRUlOVkFMOwpAQCAtMjE1Myw3ICsyMTU1LDggQEAgc3RhdGljIGludCBnZXRf
-c2RyYW1fc2NydWJfcmF0ZShzdHJ1Y3QgbWVtX2N0bF9pbmZvICptY2kpCiAKIAkvKiBDYWxjdWxh
-dGUgc2NydWIgcmF0ZSB2YWx1ZSBpbnRvIGJ5dGUvc2VjIGJhbmR3aWR0aCAqLwogCXNjcnViX3Jh
-dGUgPSAgKHVuc2lnbmVkIGxvbmcgbG9uZylmcmVxX2RjbGtfbWh6ICoKLQkJMTAwMDAwMCAqIGNh
-Y2hlX2xpbmVfc2l6ZSAvIHNjcnVidmFsOworCQkxMDAwMDAwICogY2FjaGVfbGluZV9zaXplKTsK
-Kwlkb19kaXYoc2NydWJfcmF0ZSwgc2NydWJ2YWwpOwogCXJldHVybiAoaW50KXNjcnViX3JhdGU7
-CiB9CiAK
---0016e650584afae71304ab692f55--
+Advanced Micro Devices GmbH
+Einsteinring 24, 85609 Dornach
+GM: Alberto Bozzo
+Reg: Dornach, Landkreis Muenchen
+HRB Nr. 43632 WEEE Registernr: 129 19551
