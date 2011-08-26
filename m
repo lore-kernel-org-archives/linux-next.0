@@ -1,33 +1,66 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: linux-next: manual merge of the xen tree with the tip tree
-Date: Thu, 25 Aug 2011 16:12:33 -0700
-Message-ID: <4E56D6E1.6030405@zytor.com>
-References: <20110825142450.c84e02d8763cfd1a93411844@canb.auug.org.au> <4E5690C3.2050706@goop.org> <4E5693DD.2010307@zytor.com> <20110826090619.7588d424798f53a6f3621eb2@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Fri, 26 Aug 2011 10:39:32 +1000
+Message-ID: <20110826103932.1626f1c5542b660bcd1b24aa@canb.auug.org.au>
+References: <20110825161843.daf46b6b4023926fcfeec387@canb.auug.org.au>
+	<20110825140820.GA9126@kroah.com>
+	<4E56689D.3080202@freescale.com>
+	<20110826015111.49af16f792d5554fd931d230@canb.auug.org.au>
+	<CACqU3MUs_97=MuuKAjr-LeUT7kSRxtzSntwUeKeeH4n8s7SSGg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__26_Aug_2011_10_39_32_+1000_UQfyvCYc3R3Zechk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:54903 "EHLO mail.zytor.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49027 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750898Ab1HYXNT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 19:13:19 -0400
-In-Reply-To: <20110826090619.7588d424798f53a6f3621eb2@canb.auug.org.au>
+	id S1754362Ab1HZAjm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 20:39:42 -0400
+In-Reply-To: <CACqU3MUs_97=MuuKAjr-LeUT7kSRxtzSntwUeKeeH4n8s7SSGg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>
+To: Arnaud Lacombe <lacombar@gmail.com>
+Cc: Timur Tabi <timur@freescale.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
-On 08/25/2011 04:06 PM, Stephen Rothwell wrote:
->>
->> Stephen: the x86/spinlocks branch in the -tip tree is obsolete and
->> should be dropped.
-> 
-> That's a bit tricky as I get a rolled up tip tree.  The best I could do
-> is revert the commit that merges the x86/spinlocks branch into
-> auto-latest ...  I'll do that for today (unless something happens to the
-> tip tree in the next hour).
-> 
+--Signature=_Fri__26_Aug_2011_10_39_32_+1000_UQfyvCYc3R3Zechk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, let me bother Ingo about it.
+Hi Arnaud,
 
-	-hpa
+On Thu, 25 Aug 2011 12:09:20 -0400 Arnaud Lacombe <lacombar@gmail.com> wrot=
+e:
+>
+> If you could provide an exhaustive list of them, I'd be interested. Do
+> you account/reference them in the report you make on each new -next
+> tree ?
+
+I don't refer to them at all :-(
+
+If you are not just referring to powerpc ones, then an x86_64
+allmodconfig is a good place to start, there are several in there.
+
+Otherwise, I will send you the results of some of my builds this evening.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__26_Aug_2011_10_39_32_+1000_UQfyvCYc3R3Zechk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOVutEAAoJEDMEi1NhKgbstWUH/2xvvQhPrYnpIAFED1Sk616Q
+MffZWwjA3EpcxIYBQcyEVkLeymFZG3zcEpPo6dyEoiV1h8c1TCjQkFt2ACFPnbjj
+H49835CYAzc9Yl6M2K8FM5XdkBgVXRbIA4J+Bd+aUddYYewNhju2Etk2leGEnzH/
+KvAXoCgl8sPh1Q93QCeML7EbgFPpuK175d9k7Ckid4ihfoVPazA1kOTsQLVADroH
+NC0pLcs0H69p4RDU4I6kEFNfEHIU1c+YyoVm3hebw7hLWe8UeS6ipTTLGWmg3ARo
+tWxLPHFmKV29gVzvYNwPVNsaYivaDq389qk8Nd6L3Ju5wBxYNgR1O31fircJOoo=
+=qvYM
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__26_Aug_2011_10_39_32_+1000_UQfyvCYc3R3Zechk--
