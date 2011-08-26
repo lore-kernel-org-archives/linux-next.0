@@ -1,118 +1,88 @@
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for Aug 22 (evm)
-Date: Fri, 26 Aug 2011 08:39:02 -0400
-Message-ID: <1314362342.3224.19.camel@localhost.localdomain>
-References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
-	 <20110822125355.bb01d76b.rdunlap@xenotime.net>
-	 <CACqU3MVjg60pTPyNWm+41w144QzPgtHQ4wZPUUV=vok8gGffuQ@mail.gmail.com>
-	 <20110822174958.73dd96c7.rdunlap@xenotime.net>
-	 <1314065358.3225.44.camel@localhost.localdomain>
-	 <20110823164035.ca28fdc6.rdunlap@xenotime.net>
-	 <CACqU3MWfKji5BcGRmwO_Y4_15oOq7Trw3u6j1g2meFAaG-s9-w@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: linux-next: Tree for Aug 26 (i7core_edac)
+Date: Fri, 26 Aug 2011 16:16:11 +0200
+Message-ID: <CA+icZUX1zaw7xxka8yP4B0tFt7XgXe=8faw8vBnNWm+6teJVaA@mail.gmail.com>
+References: <20110826150000.302334d0b86c17cd9b89b590@canb.auug.org.au>
+	<205ae102ed038641e32cf38c48334f9e.squirrel@xenotime.net>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary=0016e650584afae71304ab692f55
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e6.ny.us.ibm.com ([32.97.182.146]:42853 "EHLO e6.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752603Ab1HZMjG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Aug 2011 08:39:06 -0400
-In-Reply-To: <CACqU3MWfKji5BcGRmwO_Y4_15oOq7Trw3u6j1g2meFAaG-s9-w@mail.gmail.com>
+Received: from mail-qy0-f181.google.com ([209.85.216.181]:57878 "EHLO
+	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751392Ab1HZOQM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Aug 2011 10:16:12 -0400
+In-Reply-To: <205ae102ed038641e32cf38c48334f9e.squirrel@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnaud Lacombe <lacombar@gmail.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@us.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org
 
-On Tue, 2011-08-23 at 22:10 -0400, Arnaud Lacombe wrote:
-> Hi,
-> 
-> On Tue, Aug 23, 2011 at 7:40 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> > I think that you are going to need to do something like Arnaud suggested
-> > and use "depends on TCG_TPM=y" instead of just "depends on TCG_TPM",
-> > unless you can convince someone that this is a kconfig bug.
-> >
-> dammit... I guess there is...
-> 
-> If you consider the following Kconfig:
-> 
-> config MOD
->         bool
->         default y
->         option modules
-> 
-> config EXPERIMENTAL
->         bool
->         default y
-> 
-> menuconfig A
->         tristate "A"
->         depends on EXPERIMENTAL
-> 
-> config B
->         bool "B"
-> 
-> config B0
->         bool
-> 
-> config C
->         tristate "C"
->         depends on B
-> 
-> config C0
->         tristate
-> 
-> config D
->         boolean "D"
->         depends on A && B
->         select C
->         select C0
-> 
-> config E
->         tristate "E"
-> 
-> config F
->         tristate "F"
->         select E
-> 
-> B (KEYS) allows to set C (TRUSTED_KEYS). Also, B (KEYS) and A
-> (TCG_TPM) allows to set D (EVM), which will select (C). Now,
-> menuconfig highlight the problem very well. Proceeding as following
-> A=m, B=y, C=m, E=y, F=y, we ends up having:
-> 
->  <M> A  --->
->  [*] B
->  {M} C
->  [*] D
->  -*- E
->  <*> F
-> 
-> which translate in the following config:
-> 
-> CONFIG_MOD=y
-> CONFIG_EXPERIMENTAL=y
-> CONFIG_A=m
-> CONFIG_B=y
-> CONFIG_C=m
-> CONFIG_C0=m
-> CONFIG_D=y
-> CONFIG_E=y
-> CONFIG_F=y
-> 
-> I would have expected CONFIG_C and CONFIG_C0 to be 'y', just as 'E'.
-> If you remove D's dependency on 'A', everything works as expected. So
-> it would seem direct dependency state influence the state of reverse
-> dependencies...
-> 
-> Will have a look...
-> 
->  - Arnaud
+--0016e650584afae71304ab692f55
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for looking into this!  Instead of changing 'TCG_TPM' to
-'TCG_TPM=y', the dependency should be on 'TRUSTED_KEYS=y'.  Then when
-I've refactored ENCRYPTED_KEYS, removing the ENCRYPTED_KEYS dependency
-on TRUSTED_KEYS, the EVM dependency would be '(TRUSTED_KEYS=y ||
-TRUSTED_KEYS=n)'.  Do you want a temporary fix for now?
+On Fri, Aug 26, 2011 at 10:07 AM, Randy Dunlap <rdunlap@xenotime.net> wrote=
+:
+>
+> On Thu, August 25, 2011 10:00 pm, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> The powerpc allyesconfig build still fails today.
+>>
+>> Changes since 20110825:
+>
+>
+> on i386:
+>
+> ERROR: "__udivdi3" [drivers/edac/i7core_edac.ko] undefined!
+>
+> in both get_sdram_scrub_rate()
+> and set_sdram_scrub_rate()
+>
+> --
+> ~Randy
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.html
+>
 
-thanks,
+Hi Randy,
 
-Mimi
+can you test with the patch attached, please?
+
+( UNTESTED, just followed patches like "[PATCH] p54: Use do_div for
+64-bit division to fix 32-bit kernels" or "[PATCH v1] carl9170: Use
+do_div for 64-bit division to fix 32-bit kernels" )
+
+Regards,
+- Sedat -
+
+--0016e650584afae71304ab692f55
+Content-Type: text/x-patch; charset=US-ASCII; name="i7core_edac.c.diff"
+Content-Disposition: attachment; filename="i7core_edac.c.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_grt8s0yp0
+
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZWRhYy9pN2NvcmVfZWRhYy5jIGIvZHJpdmVycy9lZGFjL2k3
+Y29yZV9lZGFjLmMKaW5kZXggN2NiNjhkZS4uNGQ0ZjNhNSAxMDA2NDQKLS0tIGEvZHJpdmVycy9l
+ZGFjL2k3Y29yZV9lZGFjLmMKKysrIGIvZHJpdmVycy9lZGFjL2k3Y29yZV9lZGFjLmMKQEAgLTM3
+LDYgKzM3LDcgQEAKICNpbmNsdWRlIDxsaW51eC9zbXAuaD4KICNpbmNsdWRlIDxhc20vbWNlLmg+
+CiAjaW5jbHVkZSA8YXNtL3Byb2Nlc3Nvci5oPgorI2luY2x1ZGUgPGFzbS9kaXY2NC5oPgogCiAj
+aW5jbHVkZSAiZWRhY19jb3JlLmgiCiAKQEAgLTIxMDIsNyArMjEwMyw4IEBAIHN0YXRpYyBpbnQg
+c2V0X3NkcmFtX3NjcnViX3JhdGUoc3RydWN0IG1lbV9jdGxfaW5mbyAqbWNpLCB1MzIgbmV3X2J3
+KQogCQkgKiBwcm9ncmFtIHRoZSBjb3JyZXNwb25kaW5nIHJlZ2lzdGVyIHZhbHVlLgogCQkgKi8K
+IAkJc2NydWJfaW50ZXJ2YWwgPSAodW5zaWduZWQgbG9uZyBsb25nKWZyZXFfZGNsa19taHogKgot
+CQkJY2FjaGVfbGluZV9zaXplICogMTAwMDAwMCAvIG5ld19idzsKKwkJCWNhY2hlX2xpbmVfc2l6
+ZSAqIDEwMDAwMDApOworCQlkb19kaXYoc2NydWJfaW50ZXJ2YWwsIG5ld19idyk7CiAKIAkJaWYg
+KCFzY3J1Yl9pbnRlcnZhbCB8fCBzY3J1Yl9pbnRlcnZhbCA+IFNDUlVCSU5URVJWQUxfTUFTSykK
+IAkJCXJldHVybiAtRUlOVkFMOwpAQCAtMjE1Myw3ICsyMTU1LDggQEAgc3RhdGljIGludCBnZXRf
+c2RyYW1fc2NydWJfcmF0ZShzdHJ1Y3QgbWVtX2N0bF9pbmZvICptY2kpCiAKIAkvKiBDYWxjdWxh
+dGUgc2NydWIgcmF0ZSB2YWx1ZSBpbnRvIGJ5dGUvc2VjIGJhbmR3aWR0aCAqLwogCXNjcnViX3Jh
+dGUgPSAgKHVuc2lnbmVkIGxvbmcgbG9uZylmcmVxX2RjbGtfbWh6ICoKLQkJMTAwMDAwMCAqIGNh
+Y2hlX2xpbmVfc2l6ZSAvIHNjcnVidmFsOworCQkxMDAwMDAwICogY2FjaGVfbGluZV9zaXplKTsK
+Kwlkb19kaXYoc2NydWJfcmF0ZSwgc2NydWJ2YWwpOwogCXJldHVybiAoaW50KXNjcnViX3JhdGU7
+CiB9CiAK
+--0016e650584afae71304ab692f55--
