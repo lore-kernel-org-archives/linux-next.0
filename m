@@ -1,71 +1,58 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for Aug 26 (i7core_edac)
-Date: Fri, 26 Aug 2011 19:54:18 +0200
-Message-ID: <CA+icZUVC_Sfbc=kqzq-PpDnwLJkSRc1+rraWiopz9nnaxutF1Q@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] staging: fix rts5139 depends & build
+Date: Fri, 26 Aug 2011 11:06:08 -0700
+Message-ID: <20110826110608.5286a8d7.rdunlap@xenotime.net>
 References: <20110826150000.302334d0b86c17cd9b89b590@canb.auug.org.au>
-	<205ae102ed038641e32cf38c48334f9e.squirrel@xenotime.net>
-	<CA+icZUX1zaw7xxka8yP4B0tFt7XgXe=8faw8vBnNWm+6teJVaA@mail.gmail.com>
-	<20110826104031.4c5861e5.rdunlap@xenotime.net>
-Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f181.google.com ([209.85.216.181]:51696 "EHLO
-	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753251Ab1HZRyV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Aug 2011 13:54:21 -0400
-In-Reply-To: <20110826104031.4c5861e5.rdunlap@xenotime.net>
+Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:46540 "HELO
+	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753251Ab1HZSGK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Aug 2011 14:06:10 -0400
+In-Reply-To: <20110826150000.302334d0b86c17cd9b89b590@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Edwin Rong <edwin_rong@realsil.com.cn>, gregkh@suse.de, akpm <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>
 
-On Fri, Aug 26, 2011 at 7:40 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On Fri, 26 Aug 2011 16:16:11 +0200 Sedat Dilek wrote:
->
->> On Fri, Aug 26, 2011 at 10:07 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
->> >
->> > On Thu, August 25, 2011 10:00 pm, Stephen Rothwell wrote:
->> >> Hi all,
->> >>
->> >> The powerpc allyesconfig build still fails today.
->> >>
->> >> Changes since 20110825:
->> >
->> >
->> > on i386:
->> >
->> > ERROR: "__udivdi3" [drivers/edac/i7core_edac.ko] undefined!
->> >
->> > in both get_sdram_scrub_rate()
->> > and set_sdram_scrub_rate()
->> >
->> > --
->>
->> Hi Randy,
->>
->> can you test with the patch attached, please?
->>
->> ( UNTESTED, just followed patches like "[PATCH] p54: Use do_div for
->> 64-bit division to fix 32-bit kernels" or "[PATCH v1] carl9170: Use
->> do_div for 64-bit division to fix 32-bit kernels" )
->
-> Yes, this works after I removed the extra right parens in both cases.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-The closing brackets were a test for you (indeed they are wrong).
+RTS5139 should depend on USB, not USB_SUPPORT, to fix build
+errors.
+USB_SUPPORT can be enabled for gadget-only support
+or when PCI is not enabled.
 
-> (did you test it?)
->
+ERROR: "usb_reset_endpoint" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_kill_urb" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_deregister_dev" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_unlink_urb" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_deregister" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_register_dev" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_free_coherent" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_submit_urb" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_sg_cancel" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_find_interface" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_sg_init" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_register_driver" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_alloc_coherent" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_free_urb" [drivers/staging/rts5139/rts5139.ko] undefined!
+ERROR: "usb_alloc_urb" [drivers/staging/rts5139/rts5139.ko] undefined!
 
-No, even not compile-tested, still struggling with todays linux-next.
-Seems I am not alone [1].
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Edwin Rong <edwin_rong@realsil.com.cn>
+---
+ drivers/staging/rts5139/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Sedat -
-
-[1] http://lkml.org/lkml/2011/8/26/300
-
-> thanks,
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
->
+--- linux-next-20110826.orig/drivers/staging/rts5139/Kconfig
++++ linux-next-20110826/drivers/staging/rts5139/Kconfig
+@@ -1,6 +1,6 @@
+ config RTS5139
+ 	tristate "Realtek RTS5139 USB card reader support"
+-	depends on USB_SUPPORT && SCSI
++	depends on USB && SCSI
+ 	help
+ 	  Say Y here to include driver code to support the Realtek
+ 	  RTS5139 USB card readers.
