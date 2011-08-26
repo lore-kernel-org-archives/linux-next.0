@@ -1,66 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Fri, 26 Aug 2011 10:39:32 +1000
-Message-ID: <20110826103932.1626f1c5542b660bcd1b24aa@canb.auug.org.au>
-References: <20110825161843.daf46b6b4023926fcfeec387@canb.auug.org.au>
-	<20110825140820.GA9126@kroah.com>
-	<4E56689D.3080202@freescale.com>
-	<20110826015111.49af16f792d5554fd931d230@canb.auug.org.au>
-	<CACqU3MUs_97=MuuKAjr-LeUT7kSRxtzSntwUeKeeH4n8s7SSGg@mail.gmail.com>
+Subject: linux-next: manual merge of the slave-dma tree with Linus' tree
+Date: Fri, 26 Aug 2011 11:46:31 +1000
+Message-ID: <20110826114631.cbde20838388094f96053764@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__26_Aug_2011_10_39_32_+1000_UQfyvCYc3R3Zechk"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49027 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37292 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754362Ab1HZAjm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 20:39:42 -0400
-In-Reply-To: <CACqU3MUs_97=MuuKAjr-LeUT7kSRxtzSntwUeKeeH4n8s7SSGg@mail.gmail.com>
+	id S1754411Ab1HZBqg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 21:46:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnaud Lacombe <lacombar@gmail.com>
-Cc: Timur Tabi <timur@freescale.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@st.com>, Russell King <rmk+kernel@arm.linux.org.uk>
 
---Signature=_Fri__26_Aug_2011_10_39_32_+1000_UQfyvCYc3R3Zechk
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Vinod,
 
-Hi Arnaud,
+Today's linux-next merge of the slave-dma tree got a conflict in
+drivers/dma/amba-pl08x.c between commit 4d66164e997e ("dmaengine: PL08x:
+Fix trivial build error") from Linus' tree and commit 0c38d7013913
+("dmaengine/amba-pl08x: Rearrange inclusion of header files in ascending
+order") from the slave-dma tree.
 
-On Thu, 25 Aug 2011 12:09:20 -0400 Arnaud Lacombe <lacombar@gmail.com> wrot=
-e:
->
-> If you could provide an exhaustive list of them, I'd be interested. Do
-> you account/reference them in the report you make on each new -next
-> tree ?
-
-I don't refer to them at all :-(
-
-If you are not just referring to powerpc ones, then an x86_64
-allmodconfig is a good place to start, there are several in there.
-
-Otherwise, I will send you the results of some of my builds this evening.
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__26_Aug_2011_10_39_32_+1000_UQfyvCYc3R3Zechk
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOVutEAAoJEDMEi1NhKgbstWUH/2xvvQhPrYnpIAFED1Sk616Q
-MffZWwjA3EpcxIYBQcyEVkLeymFZG3zcEpPo6dyEoiV1h8c1TCjQkFt2ACFPnbjj
-H49835CYAzc9Yl6M2K8FM5XdkBgVXRbIA4J+Bd+aUddYYewNhju2Etk2leGEnzH/
-KvAXoCgl8sPh1Q93QCeML7EbgFPpuK175d9k7Ckid4ihfoVPazA1kOTsQLVADroH
-NC0pLcs0H69p4RDU4I6kEFNfEHIU1c+YyoVm3hebw7hLWe8UeS6ipTTLGWmg3ARo
-tWxLPHFmKV29gVzvYNwPVNsaYivaDq389qk8Nd6L3Ju5wBxYNgR1O31fircJOoo=
-=qvYM
------END PGP SIGNATURE-----
-
---Signature=_Fri__26_Aug_2011_10_39_32_+1000_UQfyvCYc3R3Zechk--
+diff --cc drivers/dma/amba-pl08x.c
+index be21e3f,849eab8..0000000
+--- a/drivers/dma/amba-pl08x.c
++++ b/drivers/dma/amba-pl08x.c
+@@@ -77,17 -72,16 +72,17 @@@
+  #include <linux/amba/bus.h>
+  #include <linux/amba/pl08x.h>
+  #include <linux/debugfs.h>
++ #include <linux/delay.h>
++ #include <linux/device.h>
++ #include <linux/dmaengine.h>
++ #include <linux/dmapool.h>
+++#include <linux/dma-mapping.h>
++ #include <linux/init.h>
++ #include <linux/interrupt.h>
++ #include <linux/module.h>
++ #include <linux/pm_runtime.h>
+  #include <linux/seq_file.h>
+- 
++ #include <linux/slab.h>
+  #include <asm/hardware/pl080.h>
+  
+  #define DRIVER_NAME	"pl08xdmac"
