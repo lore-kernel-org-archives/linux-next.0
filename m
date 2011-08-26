@@ -1,60 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] [v2] tty/powerpc: fix build break with ehv_bytechan.c
- on allyesconfig
-Date: Fri, 26 Aug 2011 13:33:45 +1000
-Message-ID: <20110826133345.f76a4f6cee53925de9ec2567@canb.auug.org.au>
-References: <1314295617-2953-1-git-send-email-timur@freescale.com>
+Subject: linux-next: manual merge of the staging tree with the net tree
+Date: Fri, 26 Aug 2011 13:47:05 +1000
+Message-ID: <20110826134705.0d5b6767777f0af2f8667731@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__26_Aug_2011_13_33_45_+1000_fmwIfgQUypxploIx"
+ boundary="Signature=_Fri__26_Aug_2011_13_47_05_+1000_sWr=sN7c3s+ffcaa"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55093 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34821 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751243Ab1HZDeB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Aug 2011 23:34:01 -0400
-In-Reply-To: <1314295617-2953-1-git-send-email-timur@freescale.com>
+	id S1751243Ab1HZDrO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Aug 2011 23:47:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Timur Tabi <timur@freescale.com>
-Cc: greg@kroah.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jpirko@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
 
---Signature=_Fri__26_Aug_2011_13_33_45_+1000_fmwIfgQUypxploIx
+--Signature=_Fri__26_Aug_2011_13_47_05_+1000_sWr=sN7c3s+ffcaa
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-On Thu, 25 Aug 2011 13:06:57 -0500 Timur Tabi <timur@freescale.com> wrote:
->
-> The ePAPR hypervisor byte channel driver is supposed to work on all
-> ePAPR-compliant embedded PowerPC systems, but it had a reference to the M=
-SR_GS
-> bit, which is available only on Book-E systems.
->=20
-> Also fix a couple integer-to-pointer typecast problems.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/rtl8192e/r8192E_core.c between commit afc4b13df143 ("net:
+remove use of ndo_set_multicast_list in drivers") from the net tree and
+commit 09505184ec3d ("staging: rtl8192e: Remove files that are not used")
+from the staging tree.
 
-I applied this to linux-next today.
-
+The latter removed the file, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__26_Aug_2011_13_33_45_+1000_fmwIfgQUypxploIx
+--Signature=_Fri__26_Aug_2011_13_47_05_+1000_sWr=sN7c3s+ffcaa
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOVxQZAAoJEDMEi1NhKgbs8vAH/2VYdW0yglicLXlFDMcoAoma
-pJEWnjspPeIEamtuc2OfKwUp79U6YYVNdkgKy6dy4wc//YccSaujLRugvOKtAfpU
-6K6WLBi2ID6mLH/RvOy62fA6dATu1C3Wc2aCCZZkaKQ0XaY18VihuYSMWBkpuDxI
-Hg3ieImG9n2m0NHa7l5Nx3ZpKvTZ5ovWgNfBnaNk0ecW6E/o8Fm5im7ARcvLar7Q
-1/hEQVxP3Op/ojtPkeOWJuWgmlx3wknnUL3zwpG5mIoAyWJVVO5r66ksiDaf/TmI
-lS9CJNj8Yec1yt3yeVG+ENbSQ2p4641pfa6U+efo1F4keTukRzlX7+KNN++NLG4=
-=duXm
+iQEcBAEBAgAGBQJOVxc5AAoJEDMEi1NhKgbsAuwIAKLlOw9PbsFF+yT8i5EkmDGM
+fFuIsUUK24VcHtSL7s4tilFHS+W5I/S+hRM6IGo9PhABpsQUf0e3X6VBB5fO29rL
+p6H+0tLIremxIL5X8U7epBYnGr//1iFkiZzv/QNha+l/zgJ73U8LyLJYX+E2hLuq
++JpSF+W3FINjlXqG13FBbDkaJXUibd4CxqVShgjp0gPb/zuSA/qcWMqlp1h2ht2M
+lH2ukc/MIoc8B/+a1ipMuzFYKyGrOJnnmQXHd+wAc1pKQZyJHNmporwsmy4hasdB
+SrDFU3o9oMi+jFB1apj7l9Ia6sqlgoPsUwgKUytYP9NTm/i7XxiNxErqjnKdwts=
+=XJ47
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__26_Aug_2011_13_33_45_+1000_fmwIfgQUypxploIx--
+--Signature=_Fri__26_Aug_2011_13_47_05_+1000_sWr=sN7c3s+ffcaa--
