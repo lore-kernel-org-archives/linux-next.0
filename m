@@ -1,89 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: iommu-tree for linux-next
-Date: Mon, 29 Aug 2011 02:06:50 +1000
-Message-ID: <20110829020650.777c7a4269b75a665fa9a69f@canb.auug.org.au>
-References: <20110826114937.GE8978@8bytes.org>
+Subject: Re: linux-next tree addition request (fbdev)
+Date: Mon, 29 Aug 2011 02:19:30 +1000
+Message-ID: <20110829021930.0112cf98fbafd7380e09e164@canb.auug.org.au>
+References: <4E54FF5E.5050308@gmx.de>
+	<20110825003353.e930fc7a664dd99c953b555c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Aug_2011_02_06_50_+1000_iNAGp1h=Ybc4ycgq"
+ boundary="Signature=_Mon__29_Aug_2011_02_19_30_+1000_IE=WWgzYn0Exr8eh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60527 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36042 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751291Ab1H1QHF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Aug 2011 12:07:05 -0400
-In-Reply-To: <20110826114937.GE8978@8bytes.org>
+	id S1751035Ab1H1QTn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Aug 2011 12:19:43 -0400
+In-Reply-To: <20110825003353.e930fc7a664dd99c953b555c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, iommu@lists.linux-foundation.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: linux-next@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Paul Mundt <lethal@linux-sh.org>
 
---Signature=_Mon__29_Aug_2011_02_06_50_+1000_iNAGp1h=Ybc4ycgq
+--Signature=_Mon__29_Aug_2011_02_19_30_+1000_IE=WWgzYn0Exr8eh
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Joerg,
+Hi Florian,
 
-On Fri, 26 Aug 2011 13:49:37 +0200 Joerg Roedel <joro@8bytes.org> wrote:
+On Thu, 25 Aug 2011 00:33:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> I would like to ask if you can include the iommu-tree into linux-next
-> for broader testing? The tree can be pulled from
+> On Wed, 24 Aug 2011 13:40:46 +0000 Florian Tobias Schandinat <FlorianScha=
+ndinat@gmx.de> wrote:
+> >
+> > can you please add
+> >=20
+> >     git://github.com/schandinat/linux-2.6.git fbdev-next
+> >=20
+> > to linux-next. It collects patches for the frame buffer subsystem.
+> > Can you please add the linux-fbdev@vger.kernel.org mailing list as addi=
+tional
+> > contact for warnings/errors/problems?
+> >=20
+> > You probably want to drop Paul's fbdev branches as they contain some ou=
+tdated
+> > patches that will conflict with the newer versions.
 >=20
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git next
+> OK, Paul is still listed as the frame buffer subsystem maintainer, so I
+> will need an Ack from him.  When I get that, I will replace his tree with
+> yours.  I assume someone will update the MAINTAINERS file.
 >=20
-> The tree currently contains iommu changes for dma-debug and omap-iommu.
-> It will also contain changes to x86 iommu code in the near future.
+> I also have another tree from Paul (called fbdev-current) that contained
+> fixes for Linus' current release.  I also assume that that tree will be
+> dropped (unless you have a new version of that as well).
 
-I will add this from Monday unless there are objections.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+Ping?  Anyone?
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Mon__29_Aug_2011_02_06_50_+1000_iNAGp1h=Ybc4ycgq
+--Signature=_Mon__29_Aug_2011_02_19_30_+1000_IE=WWgzYn0Exr8eh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOWmeaAAoJEDMEi1NhKgbsYU0IAI0DvYPta9ytvmlKCByWOiwt
-uetDO0JTNY56ZBvWC2+vZ4m8FJiUkChUoCQHzBM3yj6HEIZSpcp7KYFtjeytxhLf
-xCsdBVXJdkvoN3tRYC8NH+3K3Tc674+b+ZXfsypP9Omq+xcnntWKn7sre0Kd2YoC
-gfqyg2pSyfnOu8/rz4k9qw+CVqwoe8P+hIMG5TwHd3faRB+HofqZaYGESpnd+Y7h
-8UgLuuGEVGCuw6Zr2oEw2q5+4+rqYRsePpV4B3FXMj1c+QncV3+RGmNyuVvUHQoK
-exE1SuTBZocIDTXvgK10eN4pLy+zfWofF//nhc4iDBvif+DW5PG7rrTc1Dv/JWc=
-=PIPv
+iQEcBAEBAgAGBQJOWmqSAAoJEDMEi1NhKgbsm3wH/3Gr1mwmr9v02MFM9canOJRW
+3QDvUqTGO4BV+04oDScE3t6GlA2xQhVwy68e58fRX4H+yMLjSMu/eobMIU/FooM4
+amIjc1szHYPMcU5Rtc+7/3Ct2PfhtyeyYHraKbFlSqhQL3Qgc7+Eki3WxPop6QR2
+5I/WU1sLyWNmT7oA4yal9GuVg9CdklHSxktOZvnuTYHudj1sno/imrvj/X1zaMnu
+UAwur18Uoc82/aC1Uutp9QfJ50hSFHtMi4Csk6Jruz00cHPLmHYvddDP+RxjaR8c
+7SCk8byiUfcY8lgxANeoeof2/MenmgRswYHp5cnOl+9fnCCgWCjxDBfi8zNL8TA=
+=hXHm
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Aug_2011_02_06_50_+1000_iNAGp1h=Ybc4ycgq--
+--Signature=_Mon__29_Aug_2011_02_19_30_+1000_IE=WWgzYn0Exr8eh--
