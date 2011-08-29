@@ -1,57 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Aug 29
-Date: Mon, 29 Aug 2011 17:19:46 +1000
-Message-ID: <20110829171946.4aaee92af22c1e1953358a78@canb.auug.org.au>
-References: <20110829161907.19232776e65389dea1caa7e8@canb.auug.org.au>
-	<CA+icZUWHaVCaBwPm0+A9=2hfY8xOjRFM3XJ6_tOqSyKun-MOQA@mail.gmail.com>
+From: Giridhar Malavali <giridhar.malavali@qlogic.com>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Mon, 29 Aug 2011 01:07:16 -0700
+Message-ID: <CA809449.296D8%giridhar.malavali@qlogic.com>
+References: <1314602256.5038.1.camel@dabdike>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Aug_2011_17_19_46_+1000_T0qd5b8d=u+IiS1r"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58021 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751080Ab1H2HT7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Aug 2011 03:19:59 -0400
-In-Reply-To: <CA+icZUWHaVCaBwPm0+A9=2hfY8xOjRFM3XJ6_tOqSyKun-MOQA@mail.gmail.com>
+Received: from tx2ehsobe001.messaging.microsoft.com ([65.55.88.11]:56632 "EHLO
+	TX2EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753076Ab1H2IHV convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Aug 2011 04:07:21 -0400
+In-Reply-To: <1314602256.5038.1.camel@dabdike>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Sedat Dilek <sedat.dilek@googlemail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Chad Dupuis <chad.dupuis@qlogic.com>
 
---Signature=_Mon__29_Aug_2011_17_19_46_+1000_T0qd5b8d=u+IiS1r
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Sedat,
 
-On Mon, 29 Aug 2011 08:52:29 +0200 Sedat Dilek <sedat.dilek@googlemail.com>=
- wrote:
+>>
+
+>On Mon, 2011-08-29 at 12:09 +1000, Stephen Rothwell wrote:
+>> Hi James,
+>> 
+>> After merging the scsi tree, today's linux-next build (powerpc
+>> ppc64_defconfig) failed like this:
+>> 
+>> drivers/scsi/qla2xxx/qla_nx.c: In function 'qla82xx_md_alloc':
+>> drivers/scsi/qla2xxx/qla_nx.c:4815:2: error: implicit declaration of
+>>function 'vmalloc'
+>> drivers/scsi/qla2xxx/qla_nx.c:4815:14: warning: assignment makes
+>>pointer from integer without a cast
+>> drivers/scsi/qla2xxx/qla_nx.c: In function 'qla82xx_md_free':
+>> drivers/scsi/qla2xxx/qla_nx.c:4845:3: error: implicit declaration of
+>>function 'vfree'
+>> 
+>> Caused by commit b60bb5832c00 ("[SCSI] qla2xxx: Add support for ISP82xx
+>> to capture dump (minidump) on failure").  Missing include of
+>> linux/vmalloc.h.  See Rule 1 in Documentation/SubmitChecklist.
+>> 
+>> I have used the scsi tree from next-20110826 for today.
 >
-> Might be time to store next patch in .../v3.x/next/ or a new own
-> http://www.kernel.org/pub/linux/kernel/next/ upload-dir?
+>Thanks for finding the problem.  I updated the commit with a simple fix
+>and re-pushed.
 
-I have already asked for a chnge, but not response :-(
+Thanks James and Stephen for finding and fixing this problem. I will make
+sure that such issues won't happen in future.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+-- Giri
 
---Signature=_Mon__29_Aug_2011_17_19_46_+1000_T0qd5b8d=u+IiS1r
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOWz2SAAoJEDMEi1NhKgbs6zkH/iTlzgE1xr6m3UUSs4r7boNA
-1XzmRfj+mkDx1aL87WTPSlE0O+9grRXT4CNziHojjgztbbWe+umPQPAMmVzvEik2
-fDtoALrSw+23lWXQi0KB4IBkeiw0lwl1lgHR/IloaD9ais3d8Yulr3qW9dViqTlh
-c0/K5A8kuTcjScO1ExzOprq0HqmaDaOxtzQ6U7c9jgs5eG0NAO0Zj7dgZH7OmB+G
-YBHTeh3P4j5T7QYbRlP2Ks/VLEJbn0W+zgAvbbN4++7dzaMsREhzeenvorP2ulEI
-Pkh+61hF0+49Fx7GGjl6xQnWwBgohnX/WVFpjru42dtIQdMDZ3KnMtrcHkP6JME=
-=WWYm
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Aug_2011_17_19_46_+1000_T0qd5b8d=u+IiS1r--
+>
+>James
+>
+>
+>
