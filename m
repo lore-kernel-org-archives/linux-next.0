@@ -1,78 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next tree addition request (fbdev)
-Date: Mon, 29 Aug 2011 02:19:30 +1000
-Message-ID: <20110829021930.0112cf98fbafd7380e09e164@canb.auug.org.au>
-References: <4E54FF5E.5050308@gmx.de>
-	<20110825003353.e930fc7a664dd99c953b555c@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Mon, 29 Aug 2011 10:44:51 +1000
+Message-ID: <20110829104451.1c777e24ff72823d1e399f12@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Aug_2011_02_19_30_+1000_IE=WWgzYn0Exr8eh"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36042 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751035Ab1H1QTn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Aug 2011 12:19:43 -0400
-In-Reply-To: <20110825003353.e930fc7a664dd99c953b555c@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Cc: linux-next@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Paul Mundt <lethal@linux-sh.org>
-
---Signature=_Mon__29_Aug_2011_02_19_30_+1000_IE=WWgzYn0Exr8eh
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>, linuxppc-dev@lists.ozlabs.org, linux-parisc@vger.kernel.org, "J. Bruce Fields" <bfields@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Florian,
+Hi Linus,
 
-On Thu, 25 Aug 2011 00:33:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Wed, 24 Aug 2011 13:40:46 +0000 Florian Tobias Schandinat <FlorianScha=
-ndinat@gmx.de> wrote:
-> >
-> > can you please add
-> >=20
-> >     git://github.com/schandinat/linux-2.6.git fbdev-next
-> >=20
-> > to linux-next. It collects patches for the frame buffer subsystem.
-> > Can you please add the linux-fbdev@vger.kernel.org mailing list as addi=
-tional
-> > contact for warnings/errors/problems?
-> >=20
-> > You probably want to drop Paul's fbdev branches as they contain some ou=
-tdated
-> > patches that will conflict with the newer versions.
->=20
-> OK, Paul is still listed as the frame buffer subsystem maintainer, so I
-> will need an Ack from him.  When I get that, I will replace his tree with
-> yours.  I assume someone will update the MAINTAINERS file.
->=20
-> I also have another tree from Paul (called fbdev-current) that contained
-> fixes for Linus' current release.  I also assume that that tree will be
-> dropped (unless you have a new version of that as well).
+After merging the fixes tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Ping?  Anyone?
+arch/powerpc/kernel/built-in.o: In function `.sys_call_table':
+(.text+0xbd00): undefined reference to `.sys_nfsservctl'
+arch/powerpc/kernel/built-in.o: In function `.sys_call_table':
+(.text+0xbd08): undefined reference to `.compat_sys_nfsservctl'
 
---=20
+Caused by commit f5b940997397 ("All Arch: remove linkage for
+sys_nfsservctl system call") which also missed parisc.
+
+I will apply this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 29 Aug 2011 10:38:57 +1000
+Subject: [PATCH] remove remaining references to nfsservctl
+
+These were missed in commit f5b940997397 "All Arch: remove linkage
+for sys_nfsservctl system call" due to them having no sys_ prefix
+(presumably).
+
+Cc: NeilBrown <neilb@suse.de>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-parisc@vger.kernel.org
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/parisc/kernel/syscall_table.S |    2 +-
+ arch/powerpc/include/asm/systbl.h  |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/parisc/kernel/syscall_table.S b/arch/parisc/kernel/syscall_table.S
+index e66366f..3735abd 100644
+--- a/arch/parisc/kernel/syscall_table.S
++++ b/arch/parisc/kernel/syscall_table.S
+@@ -259,7 +259,7 @@
+ 	ENTRY_SAME(ni_syscall)		/* query_module */
+ 	ENTRY_SAME(poll)
+ 	/* structs contain pointers and an in_addr... */
+-	ENTRY_COMP(nfsservctl)
++	ENTRY_SAME(ni_syscall)		/* was nfsservctl */
+ 	ENTRY_SAME(setresgid)		/* 170 */
+ 	ENTRY_SAME(getresgid)
+ 	ENTRY_SAME(prctl)
+diff --git a/arch/powerpc/include/asm/systbl.h b/arch/powerpc/include/asm/systbl.h
+index f6736b7..fa0d27a 100644
+--- a/arch/powerpc/include/asm/systbl.h
++++ b/arch/powerpc/include/asm/systbl.h
+@@ -171,7 +171,7 @@ SYSCALL_SPU(setresuid)
+ SYSCALL_SPU(getresuid)
+ SYSCALL(ni_syscall)
+ SYSCALL_SPU(poll)
+-COMPAT_SYS(nfsservctl)
++SYSCALL(ni_syscall)
+ SYSCALL_SPU(setresgid)
+ SYSCALL_SPU(getresgid)
+ COMPAT_SYS_SPU(prctl)
+-- 
+1.7.5.4
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__29_Aug_2011_02_19_30_+1000_IE=WWgzYn0Exr8eh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOWmqSAAoJEDMEi1NhKgbsm3wH/3Gr1mwmr9v02MFM9canOJRW
-3QDvUqTGO4BV+04oDScE3t6GlA2xQhVwy68e58fRX4H+yMLjSMu/eobMIU/FooM4
-amIjc1szHYPMcU5Rtc+7/3Ct2PfhtyeyYHraKbFlSqhQL3Qgc7+Eki3WxPop6QR2
-5I/WU1sLyWNmT7oA4yal9GuVg9CdklHSxktOZvnuTYHudj1sno/imrvj/X1zaMnu
-UAwur18Uoc82/aC1Uutp9QfJ50hSFHtMi4Csk6Jruz00cHPLmHYvddDP+RxjaR8c
-7SCk8byiUfcY8lgxANeoeof2/MenmgRswYHp5cnOl+9fnCCgWCjxDBfi8zNL8TA=
-=hXHm
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Aug_2011_02_19_30_+1000_IE=WWgzYn0Exr8eh--
