@@ -1,58 +1,106 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the iommu tree
-Date: Mon, 29 Aug 2011 13:32:37 +1000
-Message-ID: <20110829133237.80467b5d54438ace53b324df@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the arm-soc
+ tree
+Date: Mon, 29 Aug 2011 14:31:50 +1000
+Message-ID: <20110829143150.78ade5470cf62a83ad9b56f1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Aug_2011_13_32_37_+1000_5DGzXAklY+m+923x"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41898 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752316Ab1H2Dcp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Aug 2011 23:32:45 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>
-
---Signature=_Mon__29_Aug_2011_13_32_37_+1000_5DGzXAklY+m+923x
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Joerg,
+Hi Greg,
 
-After merging the iommu tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the driver-core tree got a conflict in
+arch/arm/plat-mxc/devices.c between commit 160a84cfc975 ("ARM: mxc: drop
+now unused function mxc_register_device") from the arm-soc tree and
+commit 0e392412f334 ("ARM: mxc: convert device creation to use
+platform_device_register_full") from the driver-core tree.
 
-drivers/iommu/omap-iommu.c:27:24: fatal error: plat/iommu.h: No such file o=
-r directory
-
-Caused by commit fcf3a6ef4a58 ("omap: iommu/iovmm: move to dedicated
-iommu folder").  Presumably building of this code should be restricted to
-just some platforms only.
-
-I have dropped the iommu tree for today (since I have no older working
-version).
---=20
+Just context changes.  I fixed it up (see below) anc can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__29_Aug_2011_13_32_37_+1000_5DGzXAklY+m+923x
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOWwhVAAoJEDMEi1NhKgbsJ+wIAIcX8Did8JgO6PlQo+/4YshP
-P+W80in6quTM4gnQkIAGGBHylFw+m9PLLW3V9edJQxuCpappqpxgDYOQ+rAI5kzT
-WKFVuoNDhyHUrpumPuzhGeiwPBZFsSzMUgGKOyx50KKMwQo2YeN/eWVVafqROQMh
-Tabdo5vICCAzVSp3IoSHvkMQoP2lizcXQYbdB+Pk8B9+wqZzUDr7wELc+usiOwo1
-MSAkkeYP6oVvvp8vKww1j6muBc/h6nVgFZgQ094UQxHCZxKByEb27VSniHONZepJ
-r0cphZVXX3ilPunp9Y8SPNsDzy/elrnOO10avtm358NF6bSZO+uy4XxCrlG/gWY=
-=ex4L
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Aug_2011_13_32_37_+1000_5DGzXAklY+m+923x--
+diff --cc arch/arm/plat-mxc/devices.c
+index 5aaa8c5,a34b2ae..0000000
+--- a/arch/arm/plat-mxc/devices.c
++++ b/arch/arm/plat-mxc/devices.c
+@@@ -23,59 -23,20 +23,6 @@@
+  #include <linux/platform_device.h>
+  #include <mach/common.h>
+  
+- struct platform_device *__init imx_add_platform_device_dmamask(
+- 		const char *name, int id,
+- 		const struct resource *res, unsigned int num_resources,
+- 		const void *data, size_t size_data, u64 dmamask)
+- {
+- 	int ret = -ENOMEM;
+- 	struct platform_device *pdev;
+- 
+- 	pdev = platform_device_alloc(name, id);
+- 	if (!pdev)
+- 		goto err;
+- 
+- 	if (dmamask) {
+- 		/*
+- 		 * This memory isn't freed when the device is put,
+- 		 * I don't have a nice idea for that though.  Conceptually
+- 		 * dma_mask in struct device should not be a pointer.
+- 		 * See http://thread.gmane.org/gmane.linux.kernel.pci/9081
+- 		 */
+- 		pdev->dev.dma_mask =
+- 			kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+- 		if (!pdev->dev.dma_mask)
+- 			/* ret is still -ENOMEM; */
+- 			goto err;
+- 
+- 		*pdev->dev.dma_mask = dmamask;
+- 		pdev->dev.coherent_dma_mask = dmamask;
+- 	}
+- 
+- 	if (res) {
+- 		ret = platform_device_add_resources(pdev, res, num_resources);
+- 		if (ret)
+- 			goto err;
+- 	}
+- 
+- 	if (data) {
+- 		ret = platform_device_add_data(pdev, data, size_data);
+- 		if (ret)
+- 			goto err;
+- 	}
+- 
+- 	ret = platform_device_add(pdev);
+- 	if (ret) {
+- err:
+- 		if (dmamask)
+- 			kfree(pdev->dev.dma_mask);
+- 		platform_device_put(pdev);
+- 		return ERR_PTR(ret);
+- 	}
+- 
+- 	return pdev;
+- }
+- 
+ -int __init mxc_register_device(struct platform_device *pdev, void *data)
+ -{
+ -	int ret;
+ -
+ -	pdev->dev.platform_data = data;
+ -
+ -	ret = platform_device_register(pdev);
+ -	if (ret)
+ -		pr_debug("Unable to register platform device '%s': %d\n",
+ -			 pdev->name, ret);
+ -
+ -	return ret;
+ -}
+ -
+  struct device mxc_aips_bus = {
+  	.init_name	= "mxc_aips",
+  	.parent		= &platform_bus,
