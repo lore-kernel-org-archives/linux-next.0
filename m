@@ -1,47 +1,58 @@
-From: Cong Wang <amwang@redhat.com>
-Subject: Re: [Patch] numa: introduce CONFIG_NUMA_SYSFS for drivers/base/node.c
-Date: Mon, 29 Aug 2011 10:29:29 +0800
-Message-ID: <4E5AF989.106@redhat.com>
-References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au> <20110804152211.ea10e3e7.rdunlap@xenotime.net> <20110823143912.0691d442.akpm@linux-foundation.org> <4E547155.8090709@redhat.com> <20110824191430.8a908e70.rdunlap@xenotime.net> <4E55C221.8080100@redhat.com> <20110824205044.7ff45b6c.rdunlap@xenotime.net> <alpine.DEB.2.00.1108242202050.576@chino.kir.corp.google.com> <4E562248.2090102@redhat.com> <alpine.DEB.2.00.1108251356220.18747@chino.kir.corp.google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the iommu tree
+Date: Mon, 29 Aug 2011 13:32:37 +1000
+Message-ID: <20110829133237.80467b5d54438ace53b324df@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__29_Aug_2011_13_32_37_+1000_5DGzXAklY+m+923x"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41898 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752316Ab1H2Dcp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Aug 2011 23:32:45 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>
+
+--Signature=_Mon__29_Aug_2011_13_32_37_+1000_5DGzXAklY+m+923x
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <alpine.DEB.2.00.1108251356220.18747@chino.kir.corp.google.com>
-Sender: owner-linux-mm@kvack.org
-To: David Rientjes <rientjes@google.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-List-Id: linux-next.vger.kernel.org
 
-=E4=BA=8E 2011=E5=B9=B408=E6=9C=8826=E6=97=A5 04:57, David Rientjes =E5=86=
-=99=E9=81=93:
-> On Thu, 25 Aug 2011, Cong Wang wrote:
->
->>> No, it doesn't work, CONFIG_HUGETLBFS can be enabled with CONFIG_NUMA=
-=3Dy
->>> and CONFIG_SYSFS=3Dn and that uses data structures from drivers/base/=
-node.c
->>> which doesn't get compiled with this patch.
->>
->> So, you mean with CONFIG_NUMA=3Dy&&  CONFIG_SYSFS=3Dn&&  CONFIG_HUGETL=
-BFS=3Dy
->> we still get compile error?
->>
->> Which data structures are used by hugetlbfs?
->>
->
-> node_states[], which is revealed at link time if you tried to compile y=
-our
-> patch.  It's obvious that we don't want to add per-node hugetlbfs
-> attributes to sysfs directories if sysfs is disabled, so you need to
-> modify the hugetlbfs code as well.
+Hi Joerg,
 
-Makes sense. Thanks!
+After merging the iommu tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter=
-.ca/
-Don't email: <a href=3Dmailto:"dont@kvack.org"> email@kvack.org </a>
+drivers/iommu/omap-iommu.c:27:24: fatal error: plat/iommu.h: No such file o=
+r directory
+
+Caused by commit fcf3a6ef4a58 ("omap: iommu/iovmm: move to dedicated
+iommu folder").  Presumably building of this code should be restricted to
+just some platforms only.
+
+I have dropped the iommu tree for today (since I have no older working
+version).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__29_Aug_2011_13_32_37_+1000_5DGzXAklY+m+923x
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOWwhVAAoJEDMEi1NhKgbsJ+wIAIcX8Did8JgO6PlQo+/4YshP
+P+W80in6quTM4gnQkIAGGBHylFw+m9PLLW3V9edJQxuCpappqpxgDYOQ+rAI5kzT
+WKFVuoNDhyHUrpumPuzhGeiwPBZFsSzMUgGKOyx50KKMwQo2YeN/eWVVafqROQMh
+Tabdo5vICCAzVSp3IoSHvkMQoP2lizcXQYbdB+Pk8B9+wqZzUDr7wELc+usiOwo1
+MSAkkeYP6oVvvp8vKww1j6muBc/h6nVgFZgQ094UQxHCZxKByEb27VSniHONZepJ
+r0cphZVXX3ilPunp9Y8SPNsDzy/elrnOO10avtm358NF6bSZO+uy4XxCrlG/gWY=
+=ex4L
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__29_Aug_2011_13_32_37_+1000_5DGzXAklY+m+923x--
