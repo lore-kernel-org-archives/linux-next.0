@@ -1,53 +1,36 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] net: fix Makefile typos & build errors
-Date: Mon, 29 Aug 2011 11:49:40 -0700
-Message-ID: <20110829114940.4d29febc.rdunlap@xenotime.net>
-References: <20110829161907.19232776e65389dea1caa7e8@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ arm-soc tree
+Date: Mon, 29 Aug 2011 12:33:44 -0700
+Message-ID: <20110829193344.GA13418@kroah.com>
+References: <20110829143150.78ade5470cf62a83ad9b56f1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:55695 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754430Ab1H2Stn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Aug 2011 14:49:43 -0400
-In-Reply-To: <20110829161907.19232776e65389dea1caa7e8@canb.auug.org.au>
+Received: from out2.smtp.messagingengine.com ([66.111.4.26]:58399 "EHLO
+	out2.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754797Ab1H2TeC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Aug 2011 15:34:02 -0400
+Content-Disposition: inline
+In-Reply-To: <20110829143150.78ade5470cf62a83ad9b56f1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, davem@davemloft.net
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?iso-8859-1?Q?=22Uwe_Kleine-K=F6nig=22?= <u.kleine-koenig@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Mon, Aug 29, 2011 at 02:31:50PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in
+> arch/arm/plat-mxc/devices.c between commit 160a84cfc975 ("ARM: mxc: drop
+> now unused function mxc_register_device") from the arm-soc tree and
+> commit 0e392412f334 ("ARM: mxc: convert device creation to use
+> platform_device_register_full") from the driver-core tree.
+> 
+> Just context changes.  I fixed it up (see below) anc can carry the fix as
+> necessary.
 
-Fix many (randconfig) PPP build errors by fixing typos in
-drivers/net/Makefile.
+Thanks, that looks fine.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
- drivers/net/Makefile |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---- linux-next-20110829.orig/drivers/net/Makefile
-+++ linux-next-20110829/drivers/net/Makefile
-@@ -35,7 +35,7 @@ obj-$(CONFIG_HIPPI) += hippi/
- obj-$(CONFIG_HAMRADIO) += hamradio/
- obj-$(CONFIG_IRDA) += irda/
- obj-$(CONFIG_PLIP) += plip/
--onj-$(CONFIG_PPP) += ppp/
-+obj-$(CONFIG_PPP) += ppp/
- obj-$(CONFIG_PPP_ASYNC) += ppp/
- obj-$(CONFIG_PPP_BSDCOMP) += ppp/
- obj-$(CONFIG_PPP_DEFLATE) += ppp/
-@@ -44,10 +44,10 @@ obj-$(CONFIG_PPP_SYNC_TTY) += ppp/
- obj-$(CONFIG_PPPOE) += ppp/
- obj-$(CONFIG_PPPOL2TP) += ppp/
- obj-$(CONFIG_PPTP) += ppp/
--onj-$(CONFIG_SLIP) += slip/
-+obj-$(CONFIG_SLIP) += slip/
- obj-$(CONFIG_SLHC) += slip/
- obj-$(CONFIG_NET_SB1000) += sb1000.o
--onj-$(CONFIG_SLIP) += slip/
-+obj-$(CONFIG_SLIP) += slip/
- obj-$(CONFIG_SUNGEM_PHY) += sungem_phy.o
- obj-$(CONFIG_TR) += tokenring/
- obj-$(CONFIG_WAN) += wan/
+greg k-h
