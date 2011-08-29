@@ -1,36 +1,35 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- arm-soc tree
-Date: Mon, 29 Aug 2011 12:33:44 -0700
-Message-ID: <20110829193344.GA13418@kroah.com>
-References: <20110829143150.78ade5470cf62a83ad9b56f1@canb.auug.org.au>
+From: Matt Fleming <matt.fleming@intel.com>
+Subject: Re: linux-next: build warning after merge of the ptrace tree
+Date: Mon, 29 Aug 2011 21:18:14 +0100
+Message-ID: <1314649094.3649.1.camel@mfleming-mobl1.ger.corp.intel.com>
+References: <20110829152704.e533760bfb83fc7480333b20@canb.auug.org.au>
+	 <20110829182018.GA14729@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out2.smtp.messagingengine.com ([66.111.4.26]:58399 "EHLO
-	out2.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754797Ab1H2TeC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Aug 2011 15:34:02 -0400
-Content-Disposition: inline
-In-Reply-To: <20110829143150.78ade5470cf62a83ad9b56f1@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?iso-8859-1?Q?=22Uwe_Kleine-K=F6nig=22?= <u.kleine-koenig@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110829182018.GA14729@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Aug 29, 2011 at 02:31:50PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Mon, 2011-08-29 at 20:20 +0200, Oleg Nesterov wrote:
+> Hi Stephen,
 > 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> arch/arm/plat-mxc/devices.c between commit 160a84cfc975 ("ARM: mxc: drop
-> now unused function mxc_register_device") from the arm-soc tree and
-> commit 0e392412f334 ("ARM: mxc: convert device creation to use
-> platform_device_register_full") from the driver-core tree.
+> On 08/29, Stephen Rothwell wrote:
+> >
+> > After merging the ptrace tree, today's linux-next build (powerpc
+> > ppc64_defconfig) produced this warning:
+> >
+> > fs/autofs4/waitq.c: In function 'autofs4_wait':
+> > fs/autofs4/waitq.c:462:17: warning: unused variable 'irqflags'
+> >
+> > Introduced by commit 33ee1d9bc213 ("autofs4: Use set_current_blocked()").
 > 
-> Just context changes.  I fixed it up (see below) anc can carry the fix as
-> necessary.
+> Argh. Thanks again.
+> 
+> I've committed the trivial fix.
 
-Thanks, that looks fine.
-
-greg k-h
+Thanks Oleg! Sorry about that, my build was pretty loud and I missed
+this warning in the noise.
