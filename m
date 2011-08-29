@@ -1,51 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the scsi-post-merge tree with the
- akpm tree
-Date: Mon, 29 Aug 2011 15:54:31 +1000
-Message-ID: <20110829155431.5b45eb39b10481731115b3b5@canb.auug.org.au>
-References: <20110829151909.d5a9c3897af3830c70ae2d2a@canb.auug.org.au>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: linux-next tree addition request (fbdev)
+Date: Mon, 29 Aug 2011 15:02:38 +0900
+Message-ID: <20110829060238.GB31809@linux-sh.org>
+References: <4E54FF5E.5050308@gmx.de> <20110825003353.e930fc7a664dd99c953b555c@canb.auug.org.au> <20110829021930.0112cf98fbafd7380e09e164@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Aug_2011_15_54_31_+1000_dKCm8B0_wYef0euX"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57712 "EHLO smtps.tip.net.au"
+Received: from linux-sh.org ([111.68.239.195]:47547 "EHLO linux-sh.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750738Ab1H2Fyc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Aug 2011 01:54:32 -0400
-In-Reply-To: <20110829151909.d5a9c3897af3830c70ae2d2a@canb.auug.org.au>
+	id S1750738Ab1H2GCv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Aug 2011 02:02:51 -0400
+Content-Disposition: inline
+In-Reply-To: <20110829021930.0112cf98fbafd7380e09e164@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergei Trofimovich <slyfox@gentoo.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-next@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
 
---Signature=_Mon__29_Aug_2011_15_54_31_+1000_dKCm8B0_wYef0euX
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Andrew,
-
-This was, of course a conflict between the akpm tree and Linus' tree ...
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__29_Aug_2011_15_54_31_+1000_dKCm8B0_wYef0euX
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOWymXAAoJEDMEi1NhKgbsUXUH/iMM9YgTsCGjYHY7VNFI0fyU
-ddTQHxw0wbAHdiVvEf4wohmlXMPLBFkJTN9IEnJrpqpRdUOs/DLmfOFFn3bO10Ee
-FMPY0o6nEopm4hVYMyABiKZcQPslbCByg2Hw02TSh7/Pkq7x+wBhdQAAow5AQZEa
-ZEo5N6u/oq2QRbfAliyVS1G5cBp1jNBxSKvREtAk95vlQMxf1EEBcJrqCd6ygQJs
-k+uLqxAbTd7AAnry1H7ObuXor9+fiZD0GzRycqiZt3liSBgye3pZfF0W/p+PusAM
-acOxPJ/cvTphdlJLevxBhdeT5iM9omnoS96AqKmEYpeLKp7JI+g7fpMOSlfLo40=
-=2qoO
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Aug_2011_15_54_31_+1000_dKCm8B0_wYef0euX--
+On Mon, Aug 29, 2011 at 02:19:30AM +1000, Stephen Rothwell wrote:
+> Hi Florian,
+> 
+> On Thu, 25 Aug 2011 00:33:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Wed, 24 Aug 2011 13:40:46 +0000 Florian Tobias Schandinat <FlorianSchandinat@gmx.de> wrote:
+> > >
+> > > can you please add
+> > > 
+> > >     git://github.com/schandinat/linux-2.6.git fbdev-next
+> > > 
+> > > to linux-next. It collects patches for the frame buffer subsystem.
+> > > Can you please add the linux-fbdev@vger.kernel.org mailing list as additional
+> > > contact for warnings/errors/problems?
+> > > 
+> > > You probably want to drop Paul's fbdev branches as they contain some outdated
+> > > patches that will conflict with the newer versions.
+> > 
+> > OK, Paul is still listed as the frame buffer subsystem maintainer, so I
+> > will need an Ack from him.  When I get that, I will replace his tree with
+> > yours.  I assume someone will update the MAINTAINERS file.
+> > 
+> > I also have another tree from Paul (called fbdev-current) that contained
+> > fixes for Linus' current release.  I also assume that that tree will be
+> > dropped (unless you have a new version of that as well).
+> 
+> Ping?  Anyone?
+> 
+As long as Florian is taking care of the backlog of the stuff that is
+already sitting in that branch, I have no problems with it being dropped.
+I'm not planning on pushing any updates to it anyways.
