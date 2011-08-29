@@ -1,63 +1,42 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for Aug 29
-Date: Mon, 29 Aug 2011 08:52:29 +0200
-Message-ID: <CA+icZUWHaVCaBwPm0+A9=2hfY8xOjRFM3XJ6_tOqSyKun-MOQA@mail.gmail.com>
-References: <20110829161907.19232776e65389dea1caa7e8@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Mon, 29 Aug 2011 00:17:36 -0700
+Message-ID: <1314602256.5038.1.camel@dabdike>
+References: <20110829120902.f95a92022c2d9170defdc083@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:42558 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750780Ab1H2Gwe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Aug 2011 02:52:34 -0400
-In-Reply-To: <20110829161907.19232776e65389dea1caa7e8@canb.auug.org.au>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:38791 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751458Ab1H2HRi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Aug 2011 03:17:38 -0400
+In-Reply-To: <20110829120902.f95a92022c2d9170defdc083@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Giridhar Malavali <giridhar.malavali@qlogic.com>, Chad Dupuis <chad.dupuis@qlogic.com>
 
-On Mon, Aug 29, 2011 at 8:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> The powerpc allyesconfig build still fails today.
->
-> Changes since 20110826:
->
-> New tree: iommu
->
-> Dropped tree: iommu (build failure)
->
-> Linus' tree gained build failures for which I applied 2 patches.
->
-> The arm-soc tree gained a conflict against the arm tree.
->
-> The scsi tree gained a build failure, so I used the version from
-> next-20110826.
->
-> The net tree lost 2 conflicts.
->
-> The iommu tree gained a build failure so I dropped it.
->
-> I have still reverted the x86/spinlocks branch from the tip tree for
-> today.
->
-> The driver-core tree gained a conflict against the arm-soc tree.
->
-> The tty tree lost its build failure.
->
-> The moduleh tree lost 2 conflicts.
->
-> The akpm tree gained conflicts agains Linus' tree - I dropped several
-> patches that had been merged upstream.
->
-> ----------------------------------------------------------------------------
->
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).
+On Mon, 2011-08-29 at 12:09 +1000, Stephen Rothwell wrote:
+> Hi James,
+> 
+> After merging the scsi tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> drivers/scsi/qla2xxx/qla_nx.c: In function 'qla82xx_md_alloc':
+> drivers/scsi/qla2xxx/qla_nx.c:4815:2: error: implicit declaration of function 'vmalloc'
+> drivers/scsi/qla2xxx/qla_nx.c:4815:14: warning: assignment makes pointer from integer without a cast
+> drivers/scsi/qla2xxx/qla_nx.c: In function 'qla82xx_md_free':
+> drivers/scsi/qla2xxx/qla_nx.c:4845:3: error: implicit declaration of function 'vfree'
+> 
+> Caused by commit b60bb5832c00 ("[SCSI] qla2xxx: Add support for ISP82xx
+> to capture dump (minidump) on failure").  Missing include of
+> linux/vmalloc.h.  See Rule 1 in Documentation/SubmitChecklist.
+> 
+> I have used the scsi tree from next-20110826 for today.
 
-Might be time to store next patch in .../v3.x/next/ or a new own
-http://www.kernel.org/pub/linux/kernel/next/ upload-dir?
+Thanks for finding the problem.  I updated the commit with a simple fix
+and re-pushed.
 
-- Sedat -
+James
