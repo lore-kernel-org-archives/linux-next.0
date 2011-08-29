@@ -1,61 +1,88 @@
-From: "Dmitry Kravkov" <dmitry@broadcom.com>
-Subject: Re: linux-next: Tree for Aug 29 (bnx2x)
-Date: Tue, 30 Aug 2011 00:35:44 +0300
-Message-ID: <1314653744.3085.2.camel@lb-tlvb-dmitry>
-References: <20110829161907.19232776e65389dea1caa7e8@canb.auug.org.au>
- <20110829132800.f7174f2e.rdunlap@xenotime.net>
-Reply-To: dmitry@broadcom.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure in Linus' tree
+Date: Tue, 30 Aug 2011 08:32:18 +1000
+Message-ID: <20110830083218.1819a5d73c3a33e5053e8312@canb.auug.org.au>
+References: <20110829104451.1c777e24ff72823d1e399f12@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms1.broadcom.com ([216.31.210.17]:1542 "EHLO mms1.broadcom.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58298 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753531Ab1H2Vfq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Aug 2011 17:35:46 -0400
-In-Reply-To: <20110829132800.f7174f2e.rdunlap@xenotime.net>
+	id S1754724Ab1H2WcZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Aug 2011 18:32:25 -0400
+In-Reply-To: <20110829104451.1c777e24ff72823d1e399f12@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Eilon Greenstein <eilong@broadcom.com>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>, linuxppc-dev@lists.ozlabs.org, linux-parisc@vger.kernel.org, "J. Bruce Fields" <bfields@redhat.com>
 
-On Mon, 2011-08-29 at 13:28 -0700, Randy Dunlap wrote:
-> On Mon, 29 Aug 2011 16:19:07 +1000 Stephen Rothwell wrote:
+Hi Linus,
+
+On Mon, 29 Aug 2011 10:44:51 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the fixes tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
-> > Hi all,
+> arch/powerpc/kernel/built-in.o: In function `.sys_call_table':
+> (.text+0xbd00): undefined reference to `.sys_nfsservctl'
+> arch/powerpc/kernel/built-in.o: In function `.sys_call_table':
+> (.text+0xbd08): undefined reference to `.compat_sys_nfsservctl'
 > 
-> (on i386 or x86_64)
+> Caused by commit f5b940997397 ("All Arch: remove linkage for
+> sys_nfsservctl system call") which also missed parisc.
 > 
-> drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:10148: error: 'bnx2x_fcoe_get_wwn' undeclared here (not in a function)
-> 
-> 
-> Full randconfig file is attached.
-> 
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
-This should sync #define structures between definition and declaration
+> I will apply this patch for today:
+
+Will you please appply this?  (repeated for ease of inclusion)
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 29 Aug 2011 10:38:57 +1000
+Subject: [PATCH] remove remaining references to nfsservctl
+
+These were missed in commit f5b940997397 "All Arch: remove linkage
+for sys_nfsservctl system call" due to them having no sys_ prefix
+(presumably).
+
+Cc: NeilBrown <neilb@suse.de>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-parisc@vger.kernel.org
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
+ arch/parisc/kernel/syscall_table.S |    2 +-
+ arch/powerpc/include/asm/systbl.h  |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: Dmitry Kravkov <dmitry@broadcom.com>
----
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
-index f290b23..5b1f9b5 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
-@@ -522,7 +522,7 @@ void bnx2x_free_mem_bp(struct bnx2x *bp);
-  */
- int bnx2x_change_mtu(struct net_device *dev, int new_mtu);
- 
--#if defined(BCM_CNIC) && (defined(CONFIG_FCOE) || defined(CONFIG_FCOE_MODULE))
-+#if defined(NETDEV_FCOE_WWNN) && defined(BCM_CNIC)
- /**
-  * bnx2x_fcoe_get_wwn - return the requested WWN value for this port
-  *
+diff --git a/arch/parisc/kernel/syscall_table.S b/arch/parisc/kernel/syscall_table.S
+index e66366f..3735abd 100644
+--- a/arch/parisc/kernel/syscall_table.S
++++ b/arch/parisc/kernel/syscall_table.S
+@@ -259,7 +259,7 @@
+ 	ENTRY_SAME(ni_syscall)		/* query_module */
+ 	ENTRY_SAME(poll)
+ 	/* structs contain pointers and an in_addr... */
+-	ENTRY_COMP(nfsservctl)
++	ENTRY_SAME(ni_syscall)		/* was nfsservctl */
+ 	ENTRY_SAME(setresgid)		/* 170 */
+ 	ENTRY_SAME(getresgid)
+ 	ENTRY_SAME(prctl)
+diff --git a/arch/powerpc/include/asm/systbl.h b/arch/powerpc/include/asm/systbl.h
+index f6736b7..fa0d27a 100644
+--- a/arch/powerpc/include/asm/systbl.h
++++ b/arch/powerpc/include/asm/systbl.h
+@@ -171,7 +171,7 @@ SYSCALL_SPU(setresuid)
+ SYSCALL_SPU(getresuid)
+ SYSCALL(ni_syscall)
+ SYSCALL_SPU(poll)
+-COMPAT_SYS(nfsservctl)
++SYSCALL(ni_syscall)
+ SYSCALL_SPU(setresgid)
+ SYSCALL_SPU(getresgid)
+ COMPAT_SYS_SPU(prctl)
 -- 
-1.7.2.2
+1.7.5.4
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
