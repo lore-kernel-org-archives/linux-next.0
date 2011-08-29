@@ -1,32 +1,56 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree
- (linus' tree related)
-Date: Mon, 29 Aug 2011 12:22:55 -0400 (EDT)
-Message-ID: <20110829.122255.265886922137556485.davem@davemloft.net>
-References: <20110829154704.776d9afeb0da5dacd958f5e9@canb.auug.org.au>
+From: Oleg Nesterov <oleg@redhat.com>
+Subject: Re: linux-next: build warning after merge of the ptrace tree
+Date: Mon, 29 Aug 2011 20:20:18 +0200
+Message-ID: <20110829182018.GA14729@redhat.com>
+References: <20110829152704.e533760bfb83fc7480333b20@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:38157 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754171Ab1H2Q1N (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Aug 2011 12:27:13 -0400
-In-Reply-To: <20110829154704.776d9afeb0da5dacd958f5e9@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: torvalds@linux-foundation.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, neilb@suse.de, bfields@redhat.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110829152704.e533760bfb83fc7480333b20@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 29 Aug 2011 15:47:04 +1000
+Hi Stephen,
 
-> I have applied this patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 29 Aug 2011 15:43:40 +1000
-> Subject: [PATCH] sparc: Remove another reference to nfsservctl
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+On 08/29, Stephen Rothwell wrote:
+>
+> After merging the ptrace tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+>
+> fs/autofs4/waitq.c: In function 'autofs4_wait':
+> fs/autofs4/waitq.c:462:17: warning: unused variable 'irqflags'
+>
+> Introduced by commit 33ee1d9bc213 ("autofs4: Use set_current_blocked()").
 
-Applied, thanks Stephen.
+Argh. Thanks again.
+
+I've committed the trivial fix.
+
+Oleg.
+
+commit 2efd0a8f5a5e981022faaec780ee00c05eeee8aa
+Author: Oleg Nesterov <oleg@redhat.com>
+Date:   Mon Aug 29 20:17:24 2011 +0200
+
+    autofs4_wait: remove the unused irqflags variable
+    
+    irqflags is not used since 33ee1d9bc213, remove it.
+    
+    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+    Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+
+diff --git a/fs/autofs4/waitq.c b/fs/autofs4/waitq.c
+index 58ba49a..09fb503 100644
+--- a/fs/autofs4/waitq.c
++++ b/fs/autofs4/waitq.c
+@@ -459,7 +459,6 @@ int autofs4_wait(struct autofs_sb_info *sbi, struct dentry *dentry,
+ 	if (wq->name.name) {
+ 		/* Block all but "shutdown" signals while waiting */
+ 		sigset_t oldset, blocked;
+-		unsigned long irqflags;
+ 
+ 		oldset = current->blocked;
+ 		siginitsetinv(&blocked, SHUTDOWN_SIGS & ~oldset.sig[0]);
