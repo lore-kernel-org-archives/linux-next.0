@@ -1,35 +1,54 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Mon, 29 Aug 2011 11:17:21 +0200
-Message-ID: <CACRpkdYgiDkgH8V7awhK66HxPAnFHzB3QhKj=VhMPn8UWwk5KQ@mail.gmail.com>
-References: <20110829110435.e7f2a6ae1637a6b13f2c5874@canb.auug.org.au>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: linux-next: build failure after merge of the iommu tree
+Date: Mon, 29 Aug 2011 12:42:12 +0200
+Message-ID: <20110829104212.GA5203@8bytes.org>
+References: <20110829133237.80467b5d54438ace53b324df@canb.auug.org.au> <CAK=WgbbukmB_HBmfdzt9SQhHyQBbjKYb8xPZPB-vq6Pwu9gFQA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:55766 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752372Ab1H2JRW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Aug 2011 05:17:22 -0400
-In-Reply-To: <20110829110435.e7f2a6ae1637a6b13f2c5874@canb.auug.org.au>
+Received: from 8bytes.org ([88.198.83.132]:59692 "EHLO 8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750998Ab1H2KmN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Aug 2011 06:42:13 -0400
+Content-Disposition: inline
+In-Reply-To: <CAK=WgbbukmB_HBmfdzt9SQhHyQBbjKYb8xPZPB-vq6Pwu9gFQA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Russell King <rmk@arm.linux.org.uk>
+To: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Aug 29, 2011 at 3:04 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, Aug 29, 2011 at 08:11:53AM +0300, Ohad Ben-Cohen wrote:
+> Thank you, Stephen, you're completely right of course.
+> 
+> Here is what we're missing (patch also attached):
+> 
+> >From 7a7949ca60bb0d58079b669733f9aa43015ba0f0 Mon Sep 17 00:00:00 2001
+> From: Ohad Ben-Cohen <ohad@wizery.com>
+> Date: Mon, 29 Aug 2011 07:57:44 +0300
+> Subject: [PATCH] iommu: omap: add Kconfig OMAP dependency
+> 
+> Make CONFIG_OMAP_IOMMU depend on CONFIG_ARCH_OMAP so other
+> allmodconfig builds won't fail.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+> ---
+>  drivers/iommu/Kconfig |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index 432463b..d901930 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -110,6 +110,7 @@ config INTR_REMAP
+>  # OMAP IOMMU support
+>  config OMAP_IOMMU
+>  	bool "OMAP IOMMU Support"
+> +	depends on ARCH_OMAP
+>  	select IOMMU_API
+> 
+>  config OMAP_IOVMM
 
-> Hi Arnd,
->
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/mach-u300/Makefile.boot between commit 74b84ad6c1a5 ("ARM:
-> 7022/1: allow to detect conflicting zreladdrs") from the arm tree and
-> commit 732851465445 ("mach-u300: retire odd singlemem variant") from the
-> arm-soc tree.
->
-> I fixed it up (see below) and can carry the fix as necessary.
+Applied to arm/omap and pushed into my next branch, Thanks.
 
-Looks correct, and it's one of the unavoidable things as we clean up
-the ARM tree, thanks a lot Stephen!
-
-Yours,
-Linus Walleij
+	Joerg
