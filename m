@@ -1,63 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi tree
-Date: Mon, 29 Aug 2011 12:09:02 +1000
-Message-ID: <20110829120902.f95a92022c2d9170defdc083@canb.auug.org.au>
+From: Cong Wang <amwang@redhat.com>
+Subject: Re: [Patch] numa: introduce CONFIG_NUMA_SYSFS for drivers/base/node.c
+Date: Mon, 29 Aug 2011 10:29:29 +0800
+Message-ID: <4E5AF989.106@redhat.com>
+References: <20110804145834.3b1d92a9eeb8357deb84bf83@canb.auug.org.au> <20110804152211.ea10e3e7.rdunlap@xenotime.net> <20110823143912.0691d442.akpm@linux-foundation.org> <4E547155.8090709@redhat.com> <20110824191430.8a908e70.rdunlap@xenotime.net> <4E55C221.8080100@redhat.com> <20110824205044.7ff45b6c.rdunlap@xenotime.net> <alpine.DEB.2.00.1108242202050.576@chino.kir.corp.google.com> <4E562248.2090102@redhat.com> <alpine.DEB.2.00.1108251356220.18747@chino.kir.corp.google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Aug_2011_12_09_02_+1000_K_pijKcOfQ0asW99"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46505 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751901Ab1H2CJN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Aug 2011 22:09:13 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Giridhar Malavali <giridhar.malavali@qlogic.com>, Chad Dupuis <chad.dupuis@qlogic.com>
-
---Signature=_Mon__29_Aug_2011_12_09_02_+1000_K_pijKcOfQ0asW99
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <alpine.DEB.2.00.1108251356220.18747@chino.kir.corp.google.com>
+Sender: owner-linux-mm@kvack.org
+To: David Rientjes <rientjes@google.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+List-Id: linux-next.vger.kernel.org
 
-Hi James,
+=E4=BA=8E 2011=E5=B9=B408=E6=9C=8826=E6=97=A5 04:57, David Rientjes =E5=86=
+=99=E9=81=93:
+> On Thu, 25 Aug 2011, Cong Wang wrote:
+>
+>>> No, it doesn't work, CONFIG_HUGETLBFS can be enabled with CONFIG_NUMA=
+=3Dy
+>>> and CONFIG_SYSFS=3Dn and that uses data structures from drivers/base/=
+node.c
+>>> which doesn't get compiled with this patch.
+>>
+>> So, you mean with CONFIG_NUMA=3Dy&&  CONFIG_SYSFS=3Dn&&  CONFIG_HUGETL=
+BFS=3Dy
+>> we still get compile error?
+>>
+>> Which data structures are used by hugetlbfs?
+>>
+>
+> node_states[], which is revealed at link time if you tried to compile y=
+our
+> patch.  It's obvious that we don't want to add per-node hugetlbfs
+> attributes to sysfs directories if sysfs is disabled, so you need to
+> modify the hugetlbfs code as well.
 
-After merging the scsi tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Makes sense. Thanks!
 
-drivers/scsi/qla2xxx/qla_nx.c: In function 'qla82xx_md_alloc':
-drivers/scsi/qla2xxx/qla_nx.c:4815:2: error: implicit declaration of functi=
-on 'vmalloc'
-drivers/scsi/qla2xxx/qla_nx.c:4815:14: warning: assignment makes pointer fr=
-om integer without a cast
-drivers/scsi/qla2xxx/qla_nx.c: In function 'qla82xx_md_free':
-drivers/scsi/qla2xxx/qla_nx.c:4845:3: error: implicit declaration of functi=
-on 'vfree'
-
-Caused by commit b60bb5832c00 ("[SCSI] qla2xxx: Add support for ISP82xx
-to capture dump (minidump) on failure").  Missing include of
-linux/vmalloc.h.  See Rule 1 in Documentation/SubmitChecklist.
-
-I have used the scsi tree from next-20110826 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__29_Aug_2011_12_09_02_+1000_K_pijKcOfQ0asW99
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOWvS+AAoJEDMEi1NhKgbsRnIH/Ru+c6HpieAwS7tb7VtLo9Gq
-OVXTfaIuK3TWH//TTAgWVRWLM7prxDZWeE11EwNDMrD4t6fi4wSLq63ZS6YHOyDD
-LGZHjOYPLcRjrRCq33iCKwsWN8k4FJuwjKziNrsdp4pUyg/fyR2pXReRmHXy4gKh
-4cInG/bv6/DGERkaLewB4ntk+U8yFnXI8AygWj1ChGsSPAiCnCUO0n/1c9NTiGq0
-/me0I6QSlbbhUk9JhTW/KHEbdrNAlfGcdSiiD3OilLVcFuCHmZw92WtSMMOup5PT
-9Qtprcm4FlENTkyJJeQQoxczvL8pSPuIvaspAJm/LLOy1WJ3fUGSXwOkUZPqZPo=
-=QajH
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Aug_2011_12_09_02_+1000_K_pijKcOfQ0asW99--
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter=
+.ca/
+Don't email: <a href=3Dmailto:"dont@kvack.org"> email@kvack.org </a>
