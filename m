@@ -1,53 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the ptrace tree
-Date: Mon, 29 Aug 2011 15:27:04 +1000
-Message-ID: <20110829152704.e533760bfb83fc7480333b20@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (linus'
+ tree related)
+Date: Mon, 29 Aug 2011 15:47:04 +1000
+Message-ID: <20110829154704.776d9afeb0da5dacd958f5e9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Aug_2011_15_27_04_+1000_34HzZs=EiWB68_6f"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47674 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38524 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750873Ab1H2F1K (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Aug 2011 01:27:10 -0400
+	id S1752619Ab1H2FrI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Aug 2011 01:47:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>, "J. Bruce Fields" <bfields@redhat.com>, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Mon__29_Aug_2011_15_27_04_+1000_34HzZs=EiWB68_6f
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-Hi all,
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-After merging the ptrace tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+arch/sparc/kernel/head_64.o: In function `sys_call_table32':
+(.text+0x223f8): undefined reference to `sys32_nfsservctl'
 
-fs/autofs4/waitq.c: In function 'autofs4_wait':
-fs/autofs4/waitq.c:462:17: warning: unused variable 'irqflags'
+Presumably caused by commit f5b940997397 ("All Arch: remove linkage for
+sys_nfsservctl system call") from Linus' tree.
 
-Introduced by commit 33ee1d9bc213 ("autofs4: Use set_current_blocked()").
---=20
+I have applied this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 29 Aug 2011 15:43:40 +1000
+Subject: [PATCH] sparc: Remove another reference to nfsservctl
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/kernel/systbls_64.S |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/sparc/kernel/systbls_64.S b/arch/sparc/kernel/systbls_64.S
+index c9296ab..edbec45 100644
+--- a/arch/sparc/kernel/systbls_64.S
++++ b/arch/sparc/kernel/systbls_64.S
+@@ -68,7 +68,7 @@ sys_call_table32:
+ 	.word compat_sys_fstatfs64, sys_llseek, sys_mlock, sys_munlock, sys32_mlockall
+ /*240*/	.word sys_munlockall, sys32_sched_setparam, sys32_sched_getparam, sys32_sched_setscheduler, sys32_sched_getscheduler
+ 	.word sys_sched_yield, sys32_sched_get_priority_max, sys32_sched_get_priority_min, sys32_sched_rr_get_interval, compat_sys_nanosleep
+-/*250*/	.word sys_mremap, compat_sys_sysctl, sys32_getsid, sys_fdatasync, sys32_nfsservctl
++/*250*/	.word sys_mremap, compat_sys_sysctl, sys32_getsid, sys_fdatasync, sys_nis_syscall
+ 	.word sys32_sync_file_range, compat_sys_clock_settime, compat_sys_clock_gettime, compat_sys_clock_getres, sys32_clock_nanosleep
+ /*260*/	.word compat_sys_sched_getaffinity, compat_sys_sched_setaffinity, sys32_timer_settime, compat_sys_timer_gettime, sys_timer_getoverrun
+ 	.word sys_timer_delete, compat_sys_timer_create, sys_ni_syscall, compat_sys_io_setup, sys_io_destroy
+-- 
+1.7.5.4
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__29_Aug_2011_15_27_04_+1000_34HzZs=EiWB68_6f
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOWyMoAAoJEDMEi1NhKgbsh4sH+wcB09K7v4HWTFqQ6Lh2bOWH
-KuYwJ5qnUl49o7EUwldPL5JqgTSh5oHXSVfigyFF79TQ1l4rr5rKdygw7/ZTE5f0
-qBDtu/lQ3zfL/YnNmUj0gVwgrTRN4l/+NpYDKAvF8DmmUXJL6+8faDyW3Ey5sVPh
-KZnAbGXt+BT8wk61891nefH18lYwhyBeRhPxjuwV+b5lZC+zR+aFginlbd2IWlAN
-/88B2NxXImAllJ4f7oem9mTQJ+Sd+sVs71UrCNjTqPT9T7VSj78NL6idZMPS78kY
-p+XVXCpXZ9afjUOOTdZJht0UoVtPIHzxMG4YpM6HgduOLk/rj85isIfOBVvOsoQ=
-=6ahb
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Aug_2011_15_27_04_+1000_34HzZs=EiWB68_6f--
