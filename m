@@ -1,71 +1,96 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 29 (bnx2x)
-Date: Mon, 29 Aug 2011 15:56:18 -0700
-Message-ID: <20110829155618.01a73cce.rdunlap@xenotime.net>
-References: <20110829161907.19232776e65389dea1caa7e8@canb.auug.org.au>
-	<20110829132800.f7174f2e.rdunlap@xenotime.net>
-	<1314653744.3085.2.camel@lb-tlvb-dmitry>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next tree addition request (fbdev)
+Date: Tue, 30 Aug 2011 09:43:56 +1000
+Message-ID: <20110830094356.25718bea5e25f0d2c48e0af7@canb.auug.org.au>
+References: <4E54FF5E.5050308@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__30_Aug_2011_09_43_56_+1000_tvXr.ONz2jMyupUY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:60038 "HELO
-	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755174Ab1H2W4V (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Aug 2011 18:56:21 -0400
-In-Reply-To: <1314653744.3085.2.camel@lb-tlvb-dmitry>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38729 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755524Ab1H2XoH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Aug 2011 19:44:07 -0400
+In-Reply-To: <4E54FF5E.5050308@gmx.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: dmitry@broadcom.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Eilon Greenstein <eilong@broadcom.com>
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: linux-next@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Paul Mundt <lethal@linux-sh.org>
 
-On Tue, 30 Aug 2011 00:35:44 +0300 Dmitry Kravkov wrote:
+--Signature=_Tue__30_Aug_2011_09_43_56_+1000_tvXr.ONz2jMyupUY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, 2011-08-29 at 13:28 -0700, Randy Dunlap wrote:
-> > On Mon, 29 Aug 2011 16:19:07 +1000 Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> > 
-> > (on i386 or x86_64)
-> > 
-> > drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c:10148: error: 'bnx2x_fcoe_get_wwn' undeclared here (not in a function)
-> > 
-> > 
-> > Full randconfig file is attached.
-> > 
-> > ---
-> > ~Randy
-> > *** Remember to use Documentation/SubmitChecklist when testing your code ***
-> This should sync #define structures between definition and declaration
-> ---
-> 
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: Dmitry Kravkov <dmitry@broadcom.com>
+Hi Florian,
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+On Wed, 24 Aug 2011 13:40:46 +0000 Florian Tobias Schandinat <FlorianSchand=
+inat@gmx.de> wrote:
+>
+> can you please add
+>=20
+>     git://github.com/schandinat/linux-2.6.git fbdev-next
+>=20
+> to linux-next. It collects patches for the frame buffer subsystem.
+> Can you please add the linux-fbdev@vger.kernel.org mailing list as additi=
+onal
+> contact for warnings/errors/problems?
+>=20
+> You probably want to drop Paul's fbdev branches as they contain some outd=
+ated
+> patches that will conflict with the newer versions.
 
-Thanks.
+I have replced Paul;s fbdev tree with yours and dropped his fbdev-current t=
+ree.
 
-> ---
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
-> index f290b23..5b1f9b5 100644
-> --- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
-> +++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
-> @@ -522,7 +522,7 @@ void bnx2x_free_mem_bp(struct bnx2x *bp);
->   */
->  int bnx2x_change_mtu(struct net_device *dev, int new_mtu);
->  
-> -#if defined(BCM_CNIC) && (defined(CONFIG_FCOE) || defined(CONFIG_FCOE_MODULE))
-> +#if defined(NETDEV_FCOE_WWNN) && defined(BCM_CNIC)
->  /**
->   * bnx2x_fcoe_get_wwn - return the requested WWN value for this port
->   *
-> -- 
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Tue__30_Aug_2011_09_43_56_+1000_tvXr.ONz2jMyupUY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOXCQ8AAoJEDMEi1NhKgbsikMH/jTEffmyeGKDcLzpB8+NVqq4
+L3LCzLQzTa35ZPqjqeUjryGVecEaxKOSahbgM4UWO2rwTJTTeGC4nGnlq5HS2rDn
+IBHp/BH70RG4FIkOqvgeUSXjZ9OuPCZwgubvhc9Q0p1+w/sH9vAx3mtTmcEEab92
+qmmCU/O56dGDIA4a8AKvX3N5qmg+zLRr2P1c8SHUH9pUf+THSKfyhcoSIClVs8vy
+TXjdTtcdeMEJyqzIwbrt9E3UanPGEPHTU3tFFQuAaWI6V93yhjMcatiNuzQRhz0W
+zjw3/pJpI/IMYe5UjKAcXN1eNjF/7ZCNjPFfrsMIFArjX9Ntz6pKfIWIiXBRBys=
+=ktAk
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__30_Aug_2011_09_43_56_+1000_tvXr.ONz2jMyupUY--
