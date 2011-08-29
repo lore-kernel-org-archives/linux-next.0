@@ -1,60 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (linus'
- tree related)
-Date: Mon, 29 Aug 2011 15:47:04 +1000
-Message-ID: <20110829154704.776d9afeb0da5dacd958f5e9@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the scsi-post-merge tree with the
+ akpm tree
+Date: Mon, 29 Aug 2011 15:54:31 +1000
+Message-ID: <20110829155431.5b45eb39b10481731115b3b5@canb.auug.org.au>
+References: <20110829151909.d5a9c3897af3830c70ae2d2a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__29_Aug_2011_15_54_31_+1000_dKCm8B0_wYef0euX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38524 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57712 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752619Ab1H2FrI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Aug 2011 01:47:08 -0400
+	id S1750738Ab1H2Fyc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Aug 2011 01:54:32 -0400
+In-Reply-To: <20110829151909.d5a9c3897af3830c70ae2d2a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>, "J. Bruce Fields" <bfields@redhat.com>, "David S. Miller" <davem@davemloft.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergei Trofimovich <slyfox@gentoo.org>
 
-Hi Linus,
+--Signature=_Mon__29_Aug_2011_15_54_31_+1000_dKCm8B0_wYef0euX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-After merging the final tree, today's linux-next build (sparc64 defconfig)
-failed like this:
+Hi Andrew,
 
-arch/sparc/kernel/head_64.o: In function `sys_call_table32':
-(.text+0x223f8): undefined reference to `sys32_nfsservctl'
+This was, of course a conflict between the akpm tree and Linus' tree ...
 
-Presumably caused by commit f5b940997397 ("All Arch: remove linkage for
-sys_nfsservctl system call") from Linus' tree.
-
-I have applied this patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 29 Aug 2011 15:43:40 +1000
-Subject: [PATCH] sparc: Remove another reference to nfsservctl
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/sparc/kernel/systbls_64.S |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/sparc/kernel/systbls_64.S b/arch/sparc/kernel/systbls_64.S
-index c9296ab..edbec45 100644
---- a/arch/sparc/kernel/systbls_64.S
-+++ b/arch/sparc/kernel/systbls_64.S
-@@ -68,7 +68,7 @@ sys_call_table32:
- 	.word compat_sys_fstatfs64, sys_llseek, sys_mlock, sys_munlock, sys32_mlockall
- /*240*/	.word sys_munlockall, sys32_sched_setparam, sys32_sched_getparam, sys32_sched_setscheduler, sys32_sched_getscheduler
- 	.word sys_sched_yield, sys32_sched_get_priority_max, sys32_sched_get_priority_min, sys32_sched_rr_get_interval, compat_sys_nanosleep
--/*250*/	.word sys_mremap, compat_sys_sysctl, sys32_getsid, sys_fdatasync, sys32_nfsservctl
-+/*250*/	.word sys_mremap, compat_sys_sysctl, sys32_getsid, sys_fdatasync, sys_nis_syscall
- 	.word sys32_sync_file_range, compat_sys_clock_settime, compat_sys_clock_gettime, compat_sys_clock_getres, sys32_clock_nanosleep
- /*260*/	.word compat_sys_sched_getaffinity, compat_sys_sched_setaffinity, sys32_timer_settime, compat_sys_timer_gettime, sys_timer_getoverrun
- 	.word sys_timer_delete, compat_sys_timer_create, sys_ni_syscall, compat_sys_io_setup, sys_io_destroy
--- 
-1.7.5.4
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__29_Aug_2011_15_54_31_+1000_dKCm8B0_wYef0euX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOWymXAAoJEDMEi1NhKgbsUXUH/iMM9YgTsCGjYHY7VNFI0fyU
+ddTQHxw0wbAHdiVvEf4wohmlXMPLBFkJTN9IEnJrpqpRdUOs/DLmfOFFn3bO10Ee
+FMPY0o6nEopm4hVYMyABiKZcQPslbCByg2Hw02TSh7/Pkq7x+wBhdQAAow5AQZEa
+ZEo5N6u/oq2QRbfAliyVS1G5cBp1jNBxSKvREtAk95vlQMxf1EEBcJrqCd6ygQJs
+k+uLqxAbTd7AAnry1H7ObuXor9+fiZD0GzRycqiZt3liSBgye3pZfF0W/p+PusAM
+acOxPJ/cvTphdlJLevxBhdeT5iM9omnoS96AqKmEYpeLKp7JI+g7fpMOSlfLo40=
+=2qoO
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__29_Aug_2011_15_54_31_+1000_dKCm8B0_wYef0euX--
