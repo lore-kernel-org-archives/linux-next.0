@@ -1,30 +1,29 @@
-From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
-Subject: Re: linux-next: manual merge of the akpm with Linus' tree
-Date: Tue, 30 Aug 2011 23:24:32 +0800
-Message-ID: <CAM_iQpXmwb3DhwJ3WbojKUWmbmVL3Qxkx8w8oLnOKYC+=hWO4Q@mail.gmail.com>
-References: <20110829152250.d6427f6ecee4dbd59718cc4f@canb.auug.org.au>
+From: David Brown <davidb@codeaurora.org>
+Subject: Removing msm tree from direct linux-next
+Date: Tue, 30 Aug 2011 15:54:33 -0700
+Message-ID: <20110830225433.GA7138@huya.qualcomm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:62092 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755033Ab1H3PYd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Aug 2011 11:24:33 -0400
-In-Reply-To: <20110829152250.d6427f6ecee4dbd59718cc4f@canb.auug.org.au>
+Received: from wolverine02.qualcomm.com ([199.106.114.251]:19738 "EHLO
+	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752618Ab1H3Wyf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Aug 2011 18:54:35 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Aug 29, 2011 at 1:22 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Andrew,
->
-> Today's linux-next merge of the scsi-post-merge tree got a conflict in
-> arch/cris/include/asm/serial.h between commit 02016bc0381c ("cris: add
-> arch/cris/include/asm/serial.h") from Linus' tree and commit f8b20ed71f1b
-> ("Fix the following build errors:") from the akpm tree.
->
-> There former appears to be a later version of the latter, so I dropped
-> the latter.
+Stephen, now that the MSM tree is going through Arnd's ARM SOC tree,
+it doesn't need to be pulled directly into linux-next.  You can remove
+this tree:
 
-Yeah, thanks Stephen!
+msm git://codeaurora.org/quic/kernel/davidb/linux-msm.git#for-next
+
+Thanks,
+David Brown
+
+-- 
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
