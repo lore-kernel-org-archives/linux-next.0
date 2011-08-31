@@ -1,29 +1,40 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: build failure after merge of the rr tree
-Date: Wed, 31 Aug 2011 14:06:27 +0930
-Message-ID: <87zkiq5h9w.fsf@rustcorp.com.au>
-References: <20110830140325.7af8d5d4e88d907aed45780e@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 30 (jbd2 + bug.h)
+Date: Wed, 31 Aug 2011 13:14:29 -0700
+Message-ID: <20110831131429.0513af51.rdunlap@xenotime.net>
+References: <20110830171605.168f29decb0558fa31e59210@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:51646 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753402Ab1HaFsM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 31 Aug 2011 01:48:12 -0400
-In-Reply-To: <20110830140325.7af8d5d4e88d907aed45780e@canb.auug.org.au>
+Received: from oproxy9.bluehost.com ([69.89.24.6]:48297 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754774Ab1HaUOd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 31 Aug 2011 16:14:33 -0400
+In-Reply-To: <20110830171605.168f29decb0558fa31e59210@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wang Sheng-Hui <shhuiw@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-ext4@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
 
-On Tue, 30 Aug 2011 14:03:25 +1000, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Rusty,
-> 
-> After merging the rr tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+On Tue, 30 Aug 2011 17:16:05 +1000 Stephen Rothwell wrote:
 
-Gah, I took a trivial replacement and didn't actually compile-check it
-myself.
+> Hi all,
 
-Fixed with the obvious addition, thanks.
-Rusty.
+[Sorry about the delay.  My build machine is being slow.
+If this is alread fixed, sorry about the noise.]
+
+
+When CONFIG_BUG is not enabled (I see this on x86_64):
+
+fs/jbd2/transaction.c: In function 'jbd2_journal_dirty_metadata':
+fs/jbd2/transaction.c:1176: error: implicit declaration of function '__WARN'
+
+
+asm-generic/bug.h does not provide a version of __WARN() when
+CONFIG_BUG is not enabled...
+
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
