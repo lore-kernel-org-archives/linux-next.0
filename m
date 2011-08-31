@@ -1,39 +1,35 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 30 (jbd2 + bug.h)
-Date: Wed, 31 Aug 2011 13:14:29 -0700
-Message-ID: <20110831131429.0513af51.rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 30 (scsi/qla4xxx)
+Date: Wed, 31 Aug 2011 13:45:15 -0700
+Message-ID: <20110831134515.049f584b.rdunlap@xenotime.net>
 References: <20110830171605.168f29decb0558fa31e59210@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:48297 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754774Ab1HaUOd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 31 Aug 2011 16:14:33 -0400
+Return-path: <linux-scsi-owner@vger.kernel.org>
 In-Reply-To: <20110830171605.168f29decb0558fa31e59210@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-ext4@vger.kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, scsi <linux-scsi@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, iscsi-driver@qlogic.com
+List-Id: linux-next.vger.kernel.org
 
 On Tue, 30 Aug 2011 17:16:05 +1000 Stephen Rothwell wrote:
 
 > Hi all,
 
-[Sorry about the delay.  My build machine is being slow.
-If this is alread fixed, sorry about the noise.]
+[Sorry about the delay.. slow build machine.
+Please ignore if this is already known/fixed.]
 
 
-When CONFIG_BUG is not enabled (I see this on x86_64):
+(on i386)
 
-fs/jbd2/transaction.c: In function 'jbd2_journal_dirty_metadata':
-fs/jbd2/transaction.c:1176: error: implicit declaration of function '__WARN'
+ERROR: "iscsi_boot_create_target" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
+ERROR: "iscsi_boot_create_ethernet" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
+ERROR: "iscsi_boot_create_host_kset" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
+ERROR: "iscsi_boot_create_initiator" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
+ERROR: "iscsi_boot_destroy_kset" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
 
-
-asm-generic/bug.h does not provide a version of __WARN() when
-CONFIG_BUG is not enabled...
-
+when CONFIG_ISCSI_BOOT_SYSFS is not enabled.
 
 ---
 ~Randy
