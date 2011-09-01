@@ -1,41 +1,53 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: Tree for Aug 30 (jbd2 + bug.h)
-Date: Thu, 1 Sep 2011 13:43:21 +0200
-Message-ID: <201109011343.22014.arnd@arndb.de>
-References: <20110830171605.168f29decb0558fa31e59210@canb.auug.org.au> <20110831131429.0513af51.rdunlap@xenotime.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 30 (scsi/qla4xxx)
+Date: Thu, 1 Sep 2011 09:20:14 -0700
+Message-ID: <20110901092014.4be19efa.rdunlap@xenotime.net>
+References: <20110830171605.168f29decb0558fa31e59210@canb.auug.org.au>
+	<20110831134515.049f584b.rdunlap@xenotime.net>
+	<4E5EF3B4.90204@cs.wisc.edu>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <20110831131429.0513af51.rdunlap@xenotime.net>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-ext4@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:44906 "HELO
+	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1757627Ab1IAQUR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Sep 2011 12:20:17 -0400
+In-Reply-To: <4E5EF3B4.90204@cs.wisc.edu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mike Christie <michaelc@cs.wisc.edu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, iscsi-driver@qlogic.com
 
-On Wednesday 31 August 2011, Randy Dunlap wrote:
-> On Tue, 30 Aug 2011 17:16:05 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> 
-> [Sorry about the delay.  My build machine is being slow.
-> If this is alread fixed, sorry about the noise.]
-> 
-> 
-> When CONFIG_BUG is not enabled (I see this on x86_64):
-> 
-> fs/jbd2/transaction.c: In function 'jbd2_journal_dirty_metadata':
-> fs/jbd2/transaction.c:1176: error: implicit declaration of function '__WARN'
-> 
-> 
-> asm-generic/bug.h does not provide a version of __WARN() when
-> CONFIG_BUG is not enabled...
-> 
+On Wed, 31 Aug 2011 21:53:40 -0500 Mike Christie wrote:
 
-Hmm, my feeling is that we shouldn't do that either, and that jbd2 should
-be changed. If we want a function that does what __WARN() does today, we
-should probably make a conscious decision about what we want it to be called
-and not have it start with "__".
+> On 08/31/2011 03:45 PM, Randy Dunlap wrote:
+> > On Tue, 30 Aug 2011 17:16:05 +1000 Stephen Rothwell wrote:
+> > 
+> >> Hi all,
+> > 
+> > [Sorry about the delay.. slow build machine.
+> > Please ignore if this is already known/fixed.]
+> > 
+> > 
+> > (on i386)
+> > 
+> > ERROR: "iscsi_boot_create_target" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
+> > ERROR: "iscsi_boot_create_ethernet" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
+> > ERROR: "iscsi_boot_create_host_kset" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
+> > ERROR: "iscsi_boot_create_initiator" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
+> > ERROR: "iscsi_boot_destroy_kset" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
+> > 
+> > when CONFIG_ISCSI_BOOT_SYSFS is not enabled.
+> > 
+> 
+> 
+> We need the attached patch.
 
-	Arnd
+Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+
+Thanks.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
