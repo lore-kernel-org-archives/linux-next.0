@@ -1,50 +1,136 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no tree for Sept 2
-Date: Fri, 2 Sep 2011 17:46:25 +1000
-Message-ID: <20110902174625.6bceaf4c24bcbde2cb89185e@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Aug 22 (evm)
+Date: Fri, 2 Sep 2011 08:01:34 -0700
+Message-ID: <20110902080134.be3db10d.rdunlap@xenotime.net>
+References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
+	<20110822125355.bb01d76b.rdunlap@xenotime.net>
+	<CACqU3MVjg60pTPyNWm+41w144QzPgtHQ4wZPUUV=vok8gGffuQ@mail.gmail.com>
+	<20110822174958.73dd96c7.rdunlap@xenotime.net>
+	<1314065358.3225.44.camel@localhost.localdomain>
+	<20110823164035.ca28fdc6.rdunlap@xenotime.net>
+	<CACqU3MWfKji5BcGRmwO_Y4_15oOq7Trw3u6j1g2meFAaG-s9-w@mail.gmail.com>
+	<1314362342.3224.19.camel@localhost.localdomain>
+	<20110826100011.9213d872.rdunlap@xenotime.net>
+	<CACqU3MXBjHi9nOfxeQGJVtc7x33KbzK2Mi+_+A+jr+bPwqzY-Q@mail.gmail.com>
+	<CACqU3MWcBJuXA3n=ha_MNteM6MHfEWj8=42nZ_zvorvt6Pbq-w@mail.gmail.com>
+	<1314927625.3058.53.camel@localhost.localdomain>
+	<CACqU3MWf=4Lk1kji3T9V9TZL7p3FzFygTz-ZH3mcb6Y0SSFF0A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__2_Sep_2011_17_46_25_+1000_bCAo.7qyhn3XxMI9"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42228 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757132Ab1IBHqe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Sep 2011 03:46:34 -0400
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:47151 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752548Ab1IBPBi convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Sep 2011 11:01:38 -0400
+In-Reply-To: <CACqU3MWf=4Lk1kji3T9V9TZL7p3FzFygTz-ZH3mcb6Y0SSFF0A@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Arnaud Lacombe <lacombar@gmail.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@us.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org
 
---Signature=_Fri__2_Sep_2011_17_46_25_+1000_bCAo.7qyhn3XxMI9
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 1 Sep 2011 22:21:16 -0400 Arnaud Lacombe wrote:
 
-Hi all,
+> Hi,
+>=20
+> On Thu, Sep 1, 2011 at 9:40 PM, Mimi Zohar <zohar@linux.vnet.ibm.com>=
+ wrote:
+> > On Thu, 2011-09-01 at 20:32 -0400, Arnaud Lacombe wrote:
+> >> Hi,
+> >>
+> >> On Sat, Aug 27, 2011 at 2:06 AM, Arnaud Lacombe <lacombar@gmail.co=
+m> wrote:
+> >> > Hi,
+> >> >
+> >> > On Fri, Aug 26, 2011 at 1:00 PM, Randy Dunlap <rdunlap@xenotime.=
+net> wrote:
+> >> >> On Fri, 26 Aug 2011 08:39:02 -0400 Mimi Zohar wrote:
+> >> >>
+> >> >>> On Tue, 2011-08-23 at 22:10 -0400, Arnaud Lacombe wrote:
+> >> >>> > Hi,
+> >> >>> >
+> >> >>> > On Tue, Aug 23, 2011 at 7:40 PM, Randy Dunlap <rdunlap@xenot=
+ime.net> wrote:
+> >> >>> > > I think that you are going to need to do something like Ar=
+naud suggested
+> >> >>> > > and use "depends on TCG_TPM=3Dy" instead of just "depends =
+on TCG_TPM",
+> >> >>> > > unless you can convince someone that this is a kconfig bug=
+=2E
+> >> >>> > >
+> >> >>> > dammit... I guess there is...
+> >> >>> >
+> >> >>> > If you consider the following Kconfig:
 
-With master.kernel.org down, there is not much change from yesterday and
-I cannot publish the resulting linux-next tree anyway, so there is not
-tree today.
+[snip]
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> >> >>> > I would have expected CONFIG_C and CONFIG_C0 to be 'y', just=
+ as 'E'.
+> >> >>> > If you remove D's dependency on 'A', everything works as exp=
+ected. So
+> >> >>> > it would seem direct dependency state influence the state of=
+ reverse
+> >> >>> > dependencies...
+> >> >>> >
+> >> >>> > Will have a look...
+> >> >>> >
+> >> >>> > =A0- Arnaud
+> >> >>>
+> >> >>> Thanks for looking into this! =A0Instead of changing 'TCG_TPM'=
+ to
+> >> >>> 'TCG_TPM=3Dy', the dependency should be on 'TRUSTED_KEYS=3Dy'.=
+ =A0Then when
+> >> >>> I've refactored ENCRYPTED_KEYS, removing the ENCRYPTED_KEYS de=
+pendency
+> >> >>> on TRUSTED_KEYS, the EVM dependency would be '(TRUSTED_KEYS=3D=
+y ||
+> >> >>> TRUSTED_KEYS=3Dn)'. =A0Do you want a temporary fix for now?
+> >> >>
+> >> >> Yes, linux-next (randconfig) builds are still failing, so we ne=
+ed something
+> >> >> to prevent that.
+> >> >>
+> >> > you may want to try:
+> >> >
+> >> > git://github.com/lacombar/linux-2.6.git master/kconfig/expr-woes
+> >> >
+> >> ping ?
+> >>
+> >> =A0- Arnaud
+> >
+> > I assume you want me to test using expr-woes, but I'm not how. =A0C=
+ould
+> > you help me here a bit.
+> >
+> > (Over the weekend I removed encrypted keys dependency on TCG_TPM.)
+> >
+> Well, at this point, this is not really related to the particular
+> issue, but to kconfig more generally. I guess I'll just post the
+> patches on LKML and see if they triggers non-wanted regression.
 
---Signature=_Fri__2_Sep_2011_17_46_25_+1000_bCAo.7qyhn3XxMI9
-Content-Type: application/pgp-signature
+Yes, please do that.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+> Thanks,
+>  - Arnaud
+>=20
+> > thanks,
+> >
+> > Mimi
+> >
+> >> > only the last commit is relevant to the problem, but depend on o=
+ne
+> >> > another to get <assert.h>. The rest aims at tidying the expr stu=
+ff.
+> >> > I'm looking for regression it may have introduced.
+> >> >
+> >> > Thanks,
+> >> > =A0- Arnaud
+> >> >
+> >> > ps: I'll most likely be AFK until sunday evening (to be conserva=
+tive).
 
-iQEcBAEBAgAGBQJOYInRAAoJEDMEi1NhKgbsc4AH/0ujWeOm3eByZH7ycbHFjtq9
-1CNB4kbYvxT6YDhncohVI4VOuFUN4s1eXZh8RVV7TucN5T2M7p8rV706ILeAYd2P
-U9ouG6uTG/I0QP/84XAqnOF3qJt+hdn71C9j2eUmHBLGUbpEgwAfRS6SYjLF3bP2
-+x7OlrjFtZvKetx9Id8At9yT0+1pku4MjgQs+17y19O5jY2T/tHivKergzKMuP++
-sCFCTHoxb5wWwjaorCLMFIBNNTpNYIS0VkV7gUa4cnXwSebWZoR3dfgo2Ncg/sf1
-B9iCGlaED29/KQtW4ufEMeKouOPkfDNdUFEIDS5flZMScUyUh7x6xDPk/+MG5+A=
-=2luP
------END PGP SIGNATURE-----
 
---Signature=_Fri__2_Sep_2011_17_46_25_+1000_bCAo.7qyhn3XxMI9--
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your cod=
+e ***
