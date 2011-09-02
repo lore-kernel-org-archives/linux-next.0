@@ -1,136 +1,90 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Aug 22 (evm)
-Date: Fri, 2 Sep 2011 08:01:34 -0700
-Message-ID: <20110902080134.be3db10d.rdunlap@xenotime.net>
-References: <20110822145304.980529cb921e5f1321c622da@canb.auug.org.au>
-	<20110822125355.bb01d76b.rdunlap@xenotime.net>
-	<CACqU3MVjg60pTPyNWm+41w144QzPgtHQ4wZPUUV=vok8gGffuQ@mail.gmail.com>
-	<20110822174958.73dd96c7.rdunlap@xenotime.net>
-	<1314065358.3225.44.camel@localhost.localdomain>
-	<20110823164035.ca28fdc6.rdunlap@xenotime.net>
-	<CACqU3MWfKji5BcGRmwO_Y4_15oOq7Trw3u6j1g2meFAaG-s9-w@mail.gmail.com>
-	<1314362342.3224.19.camel@localhost.localdomain>
-	<20110826100011.9213d872.rdunlap@xenotime.net>
-	<CACqU3MXBjHi9nOfxeQGJVtc7x33KbzK2Mi+_+A+jr+bPwqzY-Q@mail.gmail.com>
-	<CACqU3MWcBJuXA3n=ha_MNteM6MHfEWj8=42nZ_zvorvt6Pbq-w@mail.gmail.com>
-	<1314927625.3058.53.camel@localhost.localdomain>
-	<CACqU3MWf=4Lk1kji3T9V9TZL7p3FzFygTz-ZH3mcb6Y0SSFF0A@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: build failure after merge of the moduleh tree
+Date: Fri, 2 Sep 2011 20:32:09 +0200
+Message-ID: <CAMuHMdWGtsNN3_26PZYOGQjDid4rXRxxssQVDCDsNSim_FJwdg@mail.gmail.com>
+References: <20110823150854.2f6da7f66247c3d31b07e072@canb.auug.org.au>
+	<20110823095938.GJ1341@legolas.emea.dhcp.ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:47151 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752548Ab1IBPBi convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Sep 2011 11:01:38 -0400
-In-Reply-To: <CACqU3MWf=4Lk1kji3T9V9TZL7p3FzFygTz-ZH3mcb6Y0SSFF0A@mail.gmail.com>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:34770 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754161Ab1IBScK convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Sep 2011 14:32:10 -0400
+In-Reply-To: <20110823095938.GJ1341@legolas.emea.dhcp.ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnaud Lacombe <lacombar@gmail.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mimi Zohar <zohar@us.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org
+To: balbi@ti.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
 
-On Thu, 1 Sep 2011 22:21:16 -0400 Arnaud Lacombe wrote:
+On Tue, Aug 23, 2011 at 11:59, Felipe Balbi <balbi@ti.com> wrote:
+> On Tue, Aug 23, 2011 at 03:08:54PM +1000, Stephen Rothwell wrote:
+>> After merging the moduleh tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> drivers/usb/dwc3/dwc3-pci.c: In function 'dwc3_pci_init':
+>> drivers/usb/dwc3/dwc3-pci.c:211:9: error: 'THIS_MODULE' undeclared (=
+first use in this function)
+>>
+>> Caused by the interaction of the module.h split up with commit
+>> 72246da40f37 ("usb: Introduce DesignWare USB3 DRD Driver") from the =
+usb
+>> tree.
+>>
+>> I have applied this patch for today (Greg, this should be applied to=
+ your
+>> tree):
+>>
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Tue, 23 Aug 2011 15:05:25 +1000
+>> Subject: [PATCH] usb: include module.h in the DesignWare USB3 DRD dr=
+iver
+>>
+>> Fixes this build error:
+>>
+>> drivers/usb/dwc3/dwc3-pci.c: In function 'dwc3_pci_init':
+>> drivers/usb/dwc3/dwc3-pci.c:211:9: error: 'THIS_MODULE' undeclared (=
+first use in this function)
+>>
+>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>> ---
+>> =C2=A0drivers/usb/dwc3/dwc3-pci.c | =C2=A0 =C2=A01 +
+>> =C2=A01 files changed, 1 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci=
+=2Ec
+>> index 2578595..e3b77d2 100644
+>> --- a/drivers/usb/dwc3/dwc3-pci.c
+>> +++ b/drivers/usb/dwc3/dwc3-pci.c
+>> @@ -38,6 +38,7 @@
+>> =C2=A0 */
+>>
+>> =C2=A0#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>
+> that was my fault, I didn't know about Paul's commit. Please Greg, ap=
+ply
+> this to your tree:
+>
+> Acked-by: Felipe Balbi <balbi@ti.com>
 
-> Hi,
->=20
-> On Thu, Sep 1, 2011 at 9:40 PM, Mimi Zohar <zohar@linux.vnet.ibm.com>=
- wrote:
-> > On Thu, 2011-09-01 at 20:32 -0400, Arnaud Lacombe wrote:
-> >> Hi,
-> >>
-> >> On Sat, Aug 27, 2011 at 2:06 AM, Arnaud Lacombe <lacombar@gmail.co=
-m> wrote:
-> >> > Hi,
-> >> >
-> >> > On Fri, Aug 26, 2011 at 1:00 PM, Randy Dunlap <rdunlap@xenotime.=
-net> wrote:
-> >> >> On Fri, 26 Aug 2011 08:39:02 -0400 Mimi Zohar wrote:
-> >> >>
-> >> >>> On Tue, 2011-08-23 at 22:10 -0400, Arnaud Lacombe wrote:
-> >> >>> > Hi,
-> >> >>> >
-> >> >>> > On Tue, Aug 23, 2011 at 7:40 PM, Randy Dunlap <rdunlap@xenot=
-ime.net> wrote:
-> >> >>> > > I think that you are going to need to do something like Ar=
-naud suggested
-> >> >>> > > and use "depends on TCG_TPM=3Dy" instead of just "depends =
-on TCG_TPM",
-> >> >>> > > unless you can convince someone that this is a kconfig bug=
-=2E
-> >> >>> > >
-> >> >>> > dammit... I guess there is...
-> >> >>> >
-> >> >>> > If you consider the following Kconfig:
+The include should also be added to drivers/usb/dwc3/core.c and
+drivers/usb/dwc3/dwc3-omap.c,
+cfr. http://kisskb.ellerman.id.au/kisskb/buildresult/4491952/
 
-[snip]
+Gr{oetje,eeting}s,
 
-> >> >>> > I would have expected CONFIG_C and CONFIG_C0 to be 'y', just=
- as 'E'.
-> >> >>> > If you remove D's dependency on 'A', everything works as exp=
-ected. So
-> >> >>> > it would seem direct dependency state influence the state of=
- reverse
-> >> >>> > dependencies...
-> >> >>> >
-> >> >>> > Will have a look...
-> >> >>> >
-> >> >>> > =A0- Arnaud
-> >> >>>
-> >> >>> Thanks for looking into this! =A0Instead of changing 'TCG_TPM'=
- to
-> >> >>> 'TCG_TPM=3Dy', the dependency should be on 'TRUSTED_KEYS=3Dy'.=
- =A0Then when
-> >> >>> I've refactored ENCRYPTED_KEYS, removing the ENCRYPTED_KEYS de=
-pendency
-> >> >>> on TRUSTED_KEYS, the EVM dependency would be '(TRUSTED_KEYS=3D=
-y ||
-> >> >>> TRUSTED_KEYS=3Dn)'. =A0Do you want a temporary fix for now?
-> >> >>
-> >> >> Yes, linux-next (randconfig) builds are still failing, so we ne=
-ed something
-> >> >> to prevent that.
-> >> >>
-> >> > you may want to try:
-> >> >
-> >> > git://github.com/lacombar/linux-2.6.git master/kconfig/expr-woes
-> >> >
-> >> ping ?
-> >>
-> >> =A0- Arnaud
-> >
-> > I assume you want me to test using expr-woes, but I'm not how. =A0C=
-ould
-> > you help me here a bit.
-> >
-> > (Over the weekend I removed encrypted keys dependency on TCG_TPM.)
-> >
-> Well, at this point, this is not really related to the particular
-> issue, but to kconfig more generally. I guess I'll just post the
-> patches on LKML and see if they triggers non-wanted regression.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
 
-Yes, please do that.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
 
-> Thanks,
->  - Arnaud
->=20
-> > thanks,
-> >
-> > Mimi
-> >
-> >> > only the last commit is relevant to the problem, but depend on o=
-ne
-> >> > another to get <assert.h>. The rest aims at tidying the expr stu=
-ff.
-> >> > I'm looking for regression it may have introduced.
-> >> >
-> >> > Thanks,
-> >> > =A0- Arnaud
-> >> >
-> >> > ps: I'll most likely be AFK until sunday evening (to be conserva=
-tive).
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your cod=
-e ***
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
