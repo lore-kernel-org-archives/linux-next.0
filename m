@@ -1,86 +1,65 @@
-From: Arnaud Lacombe <lacombar@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: no tree for Sept 6
-Date: Tue, 6 Sep 2011 14:30:54 -0400
-Message-ID: <CACqU3MW3w10LsZvyY4RNQ1-0TgrW39PaGeVnj78bk+p6c=1uFQ@mail.gmail.com>
+Date: Wed, 7 Sep 2011 17:16:24 +1000
+Message-ID: <20110907171624.19b6acabb6f819ecb0e66826@canb.auug.org.au>
 References: <20110906164049.4dd3961cb82800b8d7cc8741@canb.auug.org.au>
 	<CACqU3MXcZ72eYNd=duPYdR_gOe-ejnHoLSMqK_ZU3y=MR2-0+A@mail.gmail.com>
-	<CA+5PVA7CETUa0i3U20ifz5YjXAywTGD2NEQt1GcJz1OwY_DtEg@mail.gmail.com>
-	<CACqU3MXQw4+QyBmCPcO8ZmYu0T6N+DStXBoa=JUv+ej6cWMTnw@mail.gmail.com>
-	<CA+5PVA7Oj9BNTA93m8-rj4a7Ze_N7m3mG0-+GLG1zUSG+ekqJQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__7_Sep_2011_17_16_24_+1000_uWafU./mqQ1qQ5r2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yi0-f46.google.com ([209.85.218.46]:42260 "EHLO
-	mail-yi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753729Ab1IFSaz convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2011 14:30:55 -0400
-In-Reply-To: <CA+5PVA7Oj9BNTA93m8-rj4a7Ze_N7m3mG0-+GLG1zUSG+ekqJQ@mail.gmail.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:56861 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754310Ab1IGPGV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Sep 2011 11:06:21 -0400
+In-Reply-To: <CACqU3MXcZ72eYNd=duPYdR_gOe-ejnHoLSMqK_ZU3y=MR2-0+A@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Josh Boyer <jwboyer@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Arnaud Lacombe <lacombar@gmail.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi,
+--Signature=_Wed__7_Sep_2011_17_16_24_+1000_uWafU./mqQ1qQ5r2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 6, 2011 at 2:18 PM, Josh Boyer <jwboyer@gmail.com> wrote:
-> On Tue, Sep 6, 2011 at 1:29 PM, Arnaud Lacombe <lacombar@gmail.com> w=
+Hi Arnaud,
+
+On Tue, 6 Sep 2011 13:17:21 -0400 Arnaud Lacombe <lacombar@gmail.com> wrote:
+>
+> On Tue, Sep 6, 2011 at 2:40 AM, Stephen Rothwell <sfr@canb.auug.org.au> w=
 rote:
->> Hi,
->>
->> On Tue, Sep 6, 2011 at 1:23 PM, Josh Boyer <jwboyer@gmail.com> wrote=
-:
->>> On Tue, Sep 6, 2011 at 1:17 PM, Arnaud Lacombe <lacombar@gmail.com>=
- wrote:
->>>> Hi,
->>>>
->>>> On Tue, Sep 6, 2011 at 2:40 AM, Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
->>>>> Hi all,
->>>>>
->>>>> With master.kernel.org down, there is not much change from yester=
-day and
->>>>> I cannot publish the resulting linux-next tree anyway, so there i=
-s no
->>>>> tree today.
->>>>>
->>>> What about github ? gitorious ?
->>>>
->>>> If you fork linus' tree on github, you should still be within the =
-disk
->>>> usage limit. My linux-2.6-next.git bare tree mirror is about 303MB=
-=2E
->>>
->>> Well... that would be helpful if all of the trees that linux-next
->>> pulls from are hosted somewhere other than kernel.org as well. =A0A=
- lot
->>> of them are not, which means you would get an incomplete linux-next
->>> tree at best. =A0Probably better to just wait.
->>>
->> That's just insane...
->
-> It's insane for people to host their git trees for kernel work on ker=
-nel.org?
->
-Yes. It is looking for trouble by creating a wonderful single point of
-failure. Which happened to have failed.
+> >
+> > With master.kernel.org down, there is not much change from yesterday and
+> > I cannot publish the resulting linux-next tree anyway, so there is no
+> > tree today.
+> >
+> What about github ? gitorious ?
 
-If I were to be really paranoid, I would no longer trust any code on
-git.kernel.org unless all the current repository were to be destroyed,
-and re-uploaded by their owner.
+I am restricted by my employer as to where I can publish the linux-next
+tree.
 
- - Arnaud
+Besides, I am having a nice restful time :-)
 
->> git is distributed, but still used centrally. Kernel development
->> should just not be impacted by such issues.
->
-> No... git is still used in a distributed fashion. =A0It's just that m=
-ost
-> maintainers host the public trees that people pull from on kernel.org=
-=2E
-> =A0Some have pushed public trees to github or elsewhere, but not all =
-of
-> them.
->
-> josh
->
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__7_Sep_2011_17_16_24_+1000_uWafU./mqQ1qQ5r2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOZxpIAAoJEDMEi1NhKgbsn30H/3/H8jHzJccMq1S21puGKZTd
+2KAq9mTI+Qbb7OwCckPnX6HPXgahZXYyIoCp3xJCpP+X3h5NriVW2QGCyCCPgj3C
+RXHyLThNpWZwy+GPHvXWacTFm31ljzLyCAYT/aYy+pcyZ7FFqmymL5qKA7BnQAqm
+bVqyh/sJL0flaBgOts4vaxxfIGlhEh0fgQTordHI1hw/c6euzPEAI9D+UmEbOgYo
+188bc7jM9nZxZyKxDDFmnDJQAggRj4pgMxWmlAy3fAZwOMDjg7FlqpdDR1j0sQbI
+fsy/PU+9VqReBARa7E+bl4ffxMl11R4dS/8f9M537NKflIVtC4oP/I5uHwMALgs=
+=F/2G
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__7_Sep_2011_17_16_24_+1000_uWafU./mqQ1qQ5r2--
