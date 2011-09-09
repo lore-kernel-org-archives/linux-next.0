@@ -1,57 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the l2-mtd tree with the at91 tree
-Date: Fri, 9 Sep 2011 20:27:44 +1000
-Message-ID: <20110909202744.48dea6e29c1902afe367cc64@canb.auug.org.au>
-References: <20110909132920.3696fbb6c1b90cded9727d30@canb.auug.org.au>
-	<1315550734.7905.14.camel@sauron>
-	<20110909164539.bae897109d3de0e67f0db69a@canb.auug.org.au>
-	<4E69E21F.5070701@atmel.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: at91 next tree
+Date: Fri, 09 Sep 2011 14:14:19 +0200
+Message-ID: <4E6A031B.6020804@atmel.com>
+References: <20110422155122.GB23775@game.jcrosoft.org> <20110423095558.99ee7136.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__9_Sep_2011_20_27_44_+1000_+znZOHhrYtT.kgDg"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4E69E21F.5070701@atmel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: dedekind1@gmail.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Nico Erfurth <ne@erfurth.eu>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from newsmtp5.atmel.com ([204.2.163.5]:14888 "EHLO
+	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933308Ab1IIMOg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Sep 2011 08:14:36 -0400
+In-Reply-To: <20110423095558.99ee7136.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Andrew Victor <linux@maxim.org.za>, Russell King <rmk@arm.linux.org.uk>, Patrice VILCHEZ <patrice.vilchez@atmel.com>, "'linux-arm-kernel@lists.infradead.org'" <linux-arm-kernel@lists.infradead.org>
 
---Signature=_Fri__9_Sep_2011_20_27_44_+1000_+znZOHhrYtT.kgDg
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen,
 
-Hi Nicolas,
+Le 23/04/2011 01:55, Stephen Rothwell :
+> Hi,
+> 
+> On Fri, 22 Apr 2011 17:51:22 +0200 Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com> wrote:
+>>
+>> 	I'd like to known how we could get the at91 at91-next branch pull
+>> 	in the next tree automaticaly?
+> 
+> You request it :-)
+> 
+>> 	git://github.com/at91linux/linux-2.6-at91.git at91-next
+> 
+> I have added that tree to linux-next.
 
-On Fri, 09 Sep 2011 11:53:35 +0200 Nicolas Ferre <nicolas.ferre@atmel.com> =
-wrote:
->
-> So, as I am not so used to this kind of situation, I wonder if I need
-> to included those two patches from Russell's and Artem's git trees in
-> our at91-next one or if I only carry on with current patch series
-> until Linus merges all this himself?
+Can you please move our at91-next branch that is included currently in
+linux-next to the "2.6-less" github tree?
 
-Just carry on, the conflicts will be fixed up When Linus merges your tree.
+git://github.com/at91linux/linux-at91.git
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+(I hope that the merge conflicts that you have just resolved will not
+suffer from this move: but as commits are the same, I am pretty sure
+that it will be transparent).
 
---Signature=_Fri__9_Sep_2011_20_27_44_+1000_+znZOHhrYtT.kgDg
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOaeogAAoJEDMEi1NhKgbsVagIAJlbxJqUQnjUgvGM6CkYYzrc
-SqTNblGZWdwmFmwgmDc5dVGadxcMb6uLBOU7OWgEbymGEMUoMWZ5nYgmig0J1Pct
-c4E+qRrHd5QPGxMJCRgbzYS7QoHcJ/qc/XOMGwK3iFFewzf1YaVTshvwejzLX2Tu
-R6Wsk/vNFCM0J6YQMdtVb0wdbIpQ90Er+HILFmVf0bo4B7m5lzSL1Z1UQhsqOyQF
-hsiv3hM8LzxD4Bv/iWsbp5PGQJ1tNOzGpeBrhmSPwHboxdQE3hdpsfQAJGSZkB7u
-H4B8gkRnstjNIzpeCuqEcrAgnWQJL2JqCZUHQlRx3ImyMDn0NZ44125nsq+qZPQ=
-=s+vV
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Sep_2011_20_27_44_+1000_+znZOHhrYtT.kgDg--
+Thanks for your help, best regards,
+-- 
+Nicolas Ferre
