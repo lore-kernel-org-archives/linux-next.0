@@ -1,53 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the at91 tree with the arm tree
-Date: Fri, 9 Sep 2011 11:20:42 +1000
-Message-ID: <20110909112042.0949282e1e38b8c68bb00b9b@canb.auug.org.au>
+Subject: linux-next: manual merge of the i.MX tree with the arm-soc tree
+Date: Fri, 9 Sep 2011 11:40:16 +1000
+Message-ID: <20110909114016.4a2a35295d3c84e37663289e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__9_Sep_2011_11_20_42_+1000_S6=upm1JFxNRWJ9n"
+ boundary="Signature=_Fri__9_Sep_2011_11_40_16_+1000_3/Y31xayE2YNSKlq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:42634 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:38537 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757289Ab1IIBUz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Sep 2011 21:20:55 -0400
+	with ESMTP id S1758231Ab1IIBkZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Sep 2011 21:40:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>
 
---Signature=_Fri__9_Sep_2011_11_20_42_+1000_S6=upm1JFxNRWJ9n
+--Signature=_Fri__9_Sep_2011_11_40_16_+1000_3/Y31xayE2YNSKlq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Sascha,
 
-Today's linux-next merge of the at91 tree got a conflict in
-arch/arm/mach-at91/board-usb-a9260.c between commit 2f8163baada3 ("ARM:
-gpio: convert includes of mach/gpio.h and asm/gpio.h to linux/gpio.h")
-from the arm tree and commit 6939fd49787e ("at91: merge board USB-A9260
-and USB-A9263 together") from the at91 tree.
+Today's linux-next merge of the i.MX tree got a conflict in
+arch/arm/mach-imx/Makefile between commit 91dc67d94810 ("Merge branch
+'next/devel' of
+git+ssh://master.kernel.org/pub/scm/linux/kernel/git/arm/linux-arm-soc
+into for-next") from the arm-soc tree and commit ea754946551b ("Merge
+branch 'imx-features' and 'imx-cleanup' into master") from the i.MX tree.
 
-The latter removes the file modified by the former, so I did thet.
+The conflict looks like this:
+
+diff --cc arch/arm/mach-imx/Makefile
+index f87cc55,d22096a..0000000
+--- a/arch/arm/mach-imx/Makefile
++++ b/arch/arm/mach-imx/Makefile
+@@@ -3,7 -3,7 +3,11 @@@ obj-$(CONFIG_IMX_HAVE_DMA_V1) +=3D dma-v1
+  obj-$(CONFIG_SOC_IMX1) +=3D clock-imx1.o mm-imx1.o
+  obj-$(CONFIG_SOC_IMX21) +=3D clock-imx21.o mm-imx21.o
+ =20
+++<<<<<<< HEAD
+ +obj-$(CONFIG_SOC_MX25) +=3D clock-imx25.o mm-imx25.o ehci-imx25.o cpu-imx=
+25.o
+++=3D=3D=3D=3D=3D=3D=3D
++ obj-$(CONFIG_SOC_IMX25) +=3D clock-imx25.o mm-imx25.o ehci-imx25.o cpu-im=
+x25.o
+++>>>>>>> i.MX/for-next
+ =20
+  obj-$(CONFIG_SOC_IMX27) +=3D cpu-imx27.o pm-imx27.o
+  obj-$(CONFIG_SOC_IMX27) +=3D clock-imx27.o mm-imx27.o ehci-imx27.o
+
+Given that there are no other references to SOC_MX25 in the resulting
+tree, I used the latter version.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__9_Sep_2011_11_20_42_+1000_S6=upm1JFxNRWJ9n
+--Signature=_Fri__9_Sep_2011_11_40_16_+1000_3/Y31xayE2YNSKlq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOaWnqAAoJEDMEi1NhKgbsf0MIAJ3aPqkEj1DZHogeWaMlJCMX
-o77DKSf6+Y67ztx7VocYXJBQKeJzcNlgVnnOwO1Pbw0ujkmYWKQzpGh904pGPcJz
-rPG1VpvxJRMksqS+gO3nM8omtWsBS9F12bBDfYsynxSMoWDjOK17qUjhGe7QiSAE
-WZ6GE3Mbg65Wpgh2j/rK46yaJZqX0oslTdlXocjLpVlMTgF+4dRIco/SuTmV4ed0
-7aIK9t4OUkCPbA2rIhFd2KueiKs48KOrLP8jm/SJ2wKRDQgJw7iiRV8PvTpKX8J2
-uC2lg7M714BfPPraIOk+mOrDr6M+QVRIZVF5i0y1LjJJRNjwEmtqW+OAU4B09CU=
-=3U28
+iQEcBAEBAgAGBQJOaW6AAAoJEDMEi1NhKgbsVu0H/itXpNP15faXPnTOeRMgAjRH
+KHrS0uX5AtXwp9nuw2GuHkuf8By4He4we8x+kLrVMgsqR8iOOh77lVLfild0ITsN
+WyzzWgQcd+Q6dZjDP0NRnxg3mzi7xrk7ML5v8Z4t1wWPPUgKLbUozdWieHVruMh2
+3142Z/d1W6pe3PXtAP2wdUDAZ15YIAyE5+zsY93XilwKoJ9sBnw2ZG6HGn0M8zBk
+yq1kT96GmtcDpVoznsxY5tF3jwM4c5s2PSkdlYK6GcbCcDb8miZKENyvS7yb8l9P
+OTGcBmGHdVMBYFIXFrhmjKx0boCzW+o6ClynVW4kBULOUexSCbXt3jNZ3APIgv8=
+=2rCf
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__9_Sep_2011_11_20_42_+1000_S6=upm1JFxNRWJ9n--
+--Signature=_Fri__9_Sep_2011_11_40_16_+1000_3/Y31xayE2YNSKlq--
