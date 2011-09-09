@@ -1,57 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
 Subject: Re: linux-next: manual merge of the l2-mtd tree with the at91 tree
-Date: Fri, 9 Sep 2011 16:45:39 +1000
-Message-ID: <20110909164539.bae897109d3de0e67f0db69a@canb.auug.org.au>
-References: <20110909132920.3696fbb6c1b90cded9727d30@canb.auug.org.au>
-	<1315550734.7905.14.camel@sauron>
+Date: Fri, 09 Sep 2011 11:53:35 +0200
+Message-ID: <4E69E21F.5070701@atmel.com>
+References: <20110909132920.3696fbb6c1b90cded9727d30@canb.auug.org.au> <1315550734.7905.14.camel@sauron> <20110909164539.bae897109d3de0e67f0db69a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__9_Sep_2011_16_45_39_+1000_uVxBOIFzIxVPP9Lh"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:57848 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753695Ab1IIGqB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Sep 2011 02:46:01 -0400
-In-Reply-To: <1315550734.7905.14.camel@sauron>
+Received: from newsmtp5.atmel.com ([204.2.163.5]:12899 "EHLO
+	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933080Ab1IIJyY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Sep 2011 05:54:24 -0400
+In-Reply-To: <20110909164539.bae897109d3de0e67f0db69a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: dedekind1@gmail.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Nico Erfurth <ne@erfurth.eu>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: dedekind1@gmail.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Nico Erfurth <ne@erfurth.eu>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
 
---Signature=_Fri__9_Sep_2011_16_45_39_+1000_uVxBOIFzIxVPP9Lh
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Le 09/09/2011 08:45, Stephen Rothwell :
+> Hi Artem,
+> 
+> On Fri, 09 Sep 2011 09:45:28 +0300 Artem Bityutskiy
+> <dedekind1@gmail.com> wrote:
+>> 
+>> OK, thanks, I guess you'll carry this modification so far, we'll
+>> need to take care of the conflict when merging.
+> 
+> Yep, no worries.
 
-Hi Artem,
+Stephen,
 
-On Fri, 09 Sep 2011 09:45:28 +0300 Artem Bityutskiy <dedekind1@gmail.com> w=
-rote:
->
-> OK, thanks, I guess you'll carry this modification so far, we'll need to
-> take care of the conflict when merging.
+I have seen the two manual merges that you made concerning our
+at91-next tree. This is when we realize how linux-next is a great tool ;-)
 
-Yep, no worries.
+So, as I am not so used to this kind of situation, I wonder if I need
+to included those two patches from Russell's and Artem's git trees in
+our at91-next one or if I only carry on with current patch series
+until Linus merges all this himself?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__9_Sep_2011_16_45_39_+1000_uVxBOIFzIxVPP9Lh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOabYTAAoJEDMEi1NhKgbswdIH/24lau92ady72wzxP9epgDPB
-UKghbf8+vVPYkxBeERn9NuRg+Ez6iNjgrPSRjfrKkz24cj6VSfpYeOoBY4usU21C
-XOVlWqun22eT/33TKxtk7T9q/d8auiT0M6aiIndML8TNSy9TIt/btPdiJtMN3mKf
-desUYOItMFewWWIeZh0HMPqUlpke3QmTzlTvXXntU6wPqDRVRVgEdJezhVPSAosp
-bDkkGzBJ8pFCWG/ni1pLq8783XmcILnPtLB+LSQrInMpJMcTXqAQ8xJ17YzdxX5c
-SfQUqwZfDmkKjHnJiAVGKjiyXwus146OBwi8ZY6D1of+0L14Po6WgiQjh90G1J4=
-=Sn3K
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Sep_2011_16_45_39_+1000_uVxBOIFzIxVPP9Lh--
+Best regards,
+-- 
+Nicolas Ferre
