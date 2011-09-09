@@ -1,84 +1,53 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: no tree for Sept 6
-Date: Wed, 07 Sep 2011 11:08:53 -0300
-Message-ID: <4E677AF5.7050903@infradead.org>
-References: <20110906164049.4dd3961cb82800b8d7cc8741@canb.auug.org.au> <CACqU3MXcZ72eYNd=duPYdR_gOe-ejnHoLSMqK_ZU3y=MR2-0+A@mail.gmail.com> <CA+5PVA7CETUa0i3U20ifz5YjXAywTGD2NEQt1GcJz1OwY_DtEg@mail.gmail.com> <CACqU3MXQw4+QyBmCPcO8ZmYu0T6N+DStXBoa=JUv+ej6cWMTnw@mail.gmail.com> <CA+5PVA7Oj9BNTA93m8-rj4a7Ze_N7m3mG0-+GLG1zUSG+ekqJQ@mail.gmail.com> <CACqU3MW3w10LsZvyY4RNQ1-0TgrW39PaGeVnj78bk+p6c=1uFQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the at91 tree with the arm tree
+Date: Fri, 9 Sep 2011 11:20:42 +1000
+Message-ID: <20110909112042.0949282e1e38b8c68bb00b9b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACqU3MW3w10LsZvyY4RNQ1-0TgrW39PaGeVnj78bk+p6c=1uFQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnaud Lacombe <lacombar@gmail.com>
-Cc: Josh Boyer <jwboyer@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__9_Sep_2011_11_20_42_+1000_S6=upm1JFxNRWJ9n"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:42634 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757289Ab1IIBUz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Sep 2011 21:20:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-Em 06-09-2011 15:30, Arnaud Lacombe escreveu:
-> Hi,
-> 
-> On Tue, Sep 6, 2011 at 2:18 PM, Josh Boyer <jwboyer@gmail.com> wrote:
->> On Tue, Sep 6, 2011 at 1:29 PM, Arnaud Lacombe <lacombar@gmail.com> wrote:
->>> Hi,
->>>
->>> On Tue, Sep 6, 2011 at 1:23 PM, Josh Boyer <jwboyer@gmail.com> wrote:
->>>> On Tue, Sep 6, 2011 at 1:17 PM, Arnaud Lacombe <lacombar@gmail.com> wrote:
->>>>> Hi,
->>>>>
->>>>> On Tue, Sep 6, 2011 at 2:40 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>>>> Hi all,
->>>>>>
->>>>>> With master.kernel.org down, there is not much change from yesterday and
->>>>>> I cannot publish the resulting linux-next tree anyway, so there is no
->>>>>> tree today.
->>>>>>
->>>>> What about github ? gitorious ?
->>>>>
->>>>> If you fork linus' tree on github, you should still be within the disk
->>>>> usage limit. My linux-2.6-next.git bare tree mirror is about 303MB.
->>>>
->>>> Well... that would be helpful if all of the trees that linux-next
->>>> pulls from are hosted somewhere other than kernel.org as well.  A lot
->>>> of them are not, which means you would get an incomplete linux-next
->>>> tree at best.  Probably better to just wait.
->>>>
->>> That's just insane...
->>
->> It's insane for people to host their git trees for kernel work on kernel.org?
->>
-> Yes. It is looking for trouble by creating a wonderful single point of
-> failure. Which happened to have failed.
+--Signature=_Fri__9_Sep_2011_11_20_42_+1000_S6=upm1JFxNRWJ9n
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It seems that we need a backup plan. In my case, I could put the tree
-for -next at infradead or at linuxtv, but that means to re-configure
-everything at Stephen's side.
+Hi all,
 
-Does anyone have an ETA for hera to come back to live? If they're
-planning to recover it into one or two days, then it is probably better
-to wait. Otherwise, I think it would be wiser to move the repo to
-some other place while they're preparing a new infrastructure.
+Today's linux-next merge of the at91 tree got a conflict in
+arch/arm/mach-at91/board-usb-a9260.c between commit 2f8163baada3 ("ARM:
+gpio: convert includes of mach/gpio.h and asm/gpio.h to linux/gpio.h")
+from the arm tree and commit 6939fd49787e ("at91: merge board USB-A9260
+and USB-A9263 together") from the at91 tree.
 
-> If I were to be really paranoid, I would no longer trust any code on
-> git.kernel.org unless all the current repository were to be destroyed,
-> and re-uploaded by their owner.
+The latter removes the file modified by the former, so I did thet.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-In any case, I'll just do a push -f after hera return, and do a 
-git repack -A -d on my repository there, to remove any bad object
-that might be inserted by someone's else.
+--Signature=_Fri__9_Sep_2011_11_20_42_+1000_S6=upm1JFxNRWJ9n
+Content-Type: application/pgp-signature
 
-> 
->  - Arnaud
-> 
->>> git is distributed, but still used centrally. Kernel development
->>> should just not be impacted by such issues.
->>
->> No... git is still used in a distributed fashion.  It's just that most
->> maintainers host the public trees that people pull from on kernel.org.
->>  Some have pushed public trees to github or elsewhere, but not all of
->> them.
->>
->> josh
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOaWnqAAoJEDMEi1NhKgbsf0MIAJ3aPqkEj1DZHogeWaMlJCMX
+o77DKSf6+Y67ztx7VocYXJBQKeJzcNlgVnnOwO1Pbw0ujkmYWKQzpGh904pGPcJz
+rPG1VpvxJRMksqS+gO3nM8omtWsBS9F12bBDfYsynxSMoWDjOK17qUjhGe7QiSAE
+WZ6GE3Mbg65Wpgh2j/rK46yaJZqX0oslTdlXocjLpVlMTgF+4dRIco/SuTmV4ed0
+7aIK9t4OUkCPbA2rIhFd2KueiKs48KOrLP8jm/SJ2wKRDQgJw7iiRV8PvTpKX8J2
+uC2lg7M714BfPPraIOk+mOrDr6M+QVRIZVF5i0y1LjJJRNjwEmtqW+OAU4B09CU=
+=3U28
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__9_Sep_2011_11_20_42_+1000_S6=upm1JFxNRWJ9n--
