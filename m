@@ -1,66 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: at91 next tree
-Date: Sun, 11 Sep 2011 14:10:13 +1000
-Message-ID: <20110911141013.2c1cde82fd6ccf79b115eb92@canb.auug.org.au>
-References: <20110422155122.GB23775@game.jcrosoft.org>
-	<20110423095558.99ee7136.sfr@canb.auug.org.au>
-	<4E6A031B.6020804@atmel.com>
+Subject: Re: linux-next: no tree for Sept 6
+Date: Sun, 11 Sep 2011 14:19:58 +1000
+Message-ID: <20110911141958.8e404c8b943af1c73886cee5@canb.auug.org.au>
+References: <20110906164049.4dd3961cb82800b8d7cc8741@canb.auug.org.au>
+	<CACqU3MXcZ72eYNd=duPYdR_gOe-ejnHoLSMqK_ZU3y=MR2-0+A@mail.gmail.com>
+	<CA+5PVA7CETUa0i3U20ifz5YjXAywTGD2NEQt1GcJz1OwY_DtEg@mail.gmail.com>
+	<CACqU3MXQw4+QyBmCPcO8ZmYu0T6N+DStXBoa=JUv+ej6cWMTnw@mail.gmail.com>
+	<CA+5PVA7Oj9BNTA93m8-rj4a7Ze_N7m3mG0-+GLG1zUSG+ekqJQ@mail.gmail.com>
+	<CACqU3MW3w10LsZvyY4RNQ1-0TgrW39PaGeVnj78bk+p6c=1uFQ@mail.gmail.com>
+	<4E677AF5.7050903@infradead.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Sun__11_Sep_2011_14_10_13_+1000_BhYz59ciCF.g7upE"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43332 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750775Ab1IKEKZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Sep 2011 00:10:25 -0400
-In-Reply-To: <4E6A031B.6020804@atmel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: linux-next@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Andrew Victor <linux@maxim.org.za>, Russell King <rmk@arm.linux.org.uk>, Patrice VILCHEZ <patrice.vilchez@atmel.com>, "'linux-arm-kernel@lists.infradead.org'" <linux-arm-kernel@lists.infradead.org>
+ boundary="Signature=_Sun__11_Sep_2011_14_19_58_+1000_.fBVBrAUl_029=xM"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4E677AF5.7050903@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Arnaud Lacombe <lacombar@gmail.com>, Josh Boyer <jwboyer@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Sun__11_Sep_2011_14_10_13_+1000_BhYz59ciCF.g7upE
+--Signature=_Sun__11_Sep_2011_14_19_58_+1000_.fBVBrAUl_029=xM
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Nicolas,
+Hi Mauro,
 
-On Fri, 09 Sep 2011 14:14:19 +0200 Nicolas Ferre <nicolas.ferre@atmel.com> =
-wrote:
+On Wed, 07 Sep 2011 11:08:53 -0300 Mauro Carvalho Chehab <mchehab@infradead=
+.org> wrote:
 >
-> Can you please move our at91-next branch that is included currently in
-> linux-next to the "2.6-less" github tree?
->=20
-> git://github.com/at91linux/linux-at91.git
+> It seems that we need a backup plan. In my case, I could put the tree
+> for -next at infradead or at linuxtv, but that means to re-configure
+> everything at Stephen's side.
 
-Done.
-
-> (I hope that the merge conflicts that you have just resolved will not
-> suffer from this move: but as commits are the same, I am pretty sure
-> that it will be transparent).
-
-It will be fine.
+That is not a big issue at all.  If you wish to move your tree, just let
+me know (preferably in a public manner to raise my confidence in its
+provenance - I am a bit more paranoid, now :-)).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sun__11_Sep_2011_14_10_13_+1000_BhYz59ciCF.g7upE
+--Signature=_Sun__11_Sep_2011_14_19_58_+1000_.fBVBrAUl_029=xM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJObDSlAAoJEDMEi1NhKgbsulkIAIp6dUkclpHsFDSHAhX1em/p
-2krPvk0gZeS/+BJJtHqFsuXlSVtMaCWg156BG5SPhNKS6+V2dptUMlNAN2jw939T
-JjaXif8YWNg3tjw3yS8IaAYhCy36Yh4zG9hbcC/74c9w8CtlMkvyK/4tuHho3j5N
-LF93Y9hd3g+xyT/lt9xC1IV81Cnu7gmXskqOILzdG55LMv3KW0I/I3VPB3JhJ3dA
-C7p5EWU2zbM/llvEWrPcxsLYZplM1t6NsQiCXiH1KbKpHZ200KaiKqbVkQmP3rd5
-JrAe225BIaex8NhX8/VJtHw4cIAT2gZPvuq5i7u1/4/DRc1dmiexn5+awpqfcqc=
-=CZ9N
+iQEcBAEBAgAGBQJObDbuAAoJEDMEi1NhKgbsk9IH/iWLcLqbBB27Pi/m9A5VAtmz
+iKcZ9DEHyZGSilXEpRBXQ4O6RQhn5MRdMEmrW4/O1K8S343FEyIjpgLK09IbFaYy
+9InxXVmiPuo4Q4owo8RNoMOzET8lFTSjmkhrrbkEv9n6dPhqoNCzRHPags1ojo8z
+2XLp8xcGBUc8Th7IZHfNF9k2NYSzHvvci6MahVyV8i0oGYqBPRxUwp00omkzb/fo
+RDcoyEN22qEbIR9PjingZxRtjNYm+8e2d2Tvk8b7i4UWM2YgrlPgwTyeRwA7x6sA
+v+jM0ZXiUYXJIFfhLxlO7W0S3jbiyfiyUaSUQbUBROyhau0zZLY006msyl5ILBA=
+=yNx9
 -----END PGP SIGNATURE-----
 
---Signature=_Sun__11_Sep_2011_14_10_13_+1000_BhYz59ciCF.g7upE--
+--Signature=_Sun__11_Sep_2011_14_19_58_+1000_.fBVBrAUl_029=xM--
