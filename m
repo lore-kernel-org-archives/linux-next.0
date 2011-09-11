@@ -1,52 +1,64 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for Sept 9
-Date: Fri, 9 Sep 2011 17:00:32 +0200
-Message-ID: <CAMuHMdXLQbt4CzvfxcOz1BXLW+a2xfhOa1gZt4bkCZpzNgjQvA@mail.gmail.com>
-References: <20110909163825.f56274af231038ee31a735f6@canb.auug.org.au>
-	<CAF1ivSZ6WdcNGMEDVZ0V+3PzZGb6cGYCVvdzzZGjB_RAeLAomg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the i.MX tree with the arm-soc tree
+Date: Sun, 11 Sep 2011 13:34:10 +1000
+Message-ID: <20110911133410.a1de21cd74e0af9c9ee51549@canb.auug.org.au>
+References: <20110909114436.5afc4ef772143d90ce75c7c5@canb.auug.org.au>
+	<20110909064058.GF28816@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__11_Sep_2011_13_34_10_+1000_R.Z_.YrfgRb8x59g"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:39397 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756680Ab1IIPAd convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Sep 2011 11:00:33 -0400
-In-Reply-To: <CAF1ivSZ6WdcNGMEDVZ0V+3PzZGb6cGYCVvdzzZGjB_RAeLAomg@mail.gmail.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:58867 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752009Ab1IKDeV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 10 Sep 2011 23:34:21 -0400
+In-Reply-To: <20110909064058.GF28816@pengutronix.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lin Ming <mlin@ss.pku.edu.cn>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>, Arnd Bergmann <arnd@arndb.de>, "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>
 
-On Fri, Sep 9, 2011 at 16:27, Lin Ming <mlin@ss.pku.edu.cn> wrote:
-> On Fri, Sep 9, 2011 at 2:38 PM, Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
->> With master.kernel.org down, there is not much change from September=
- 1
->> and the actual release will be delayed until master returns. =C2=A0I=
- will
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->> still do the overnight builds, though.
->>
+--Signature=_Sun__11_Sep_2011_13_34_10_+1000_R.Z_.YrfgRb8x59g
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Uwe,
+
+On Fri, 9 Sep 2011 08:40:58 +0200 Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pe=
+ngutronix.de> wrote:
 >
-> Hi, Stephen
->
-> git.kernel.org is still down, then where can I pull -next tree?
+> Do you prefer that conflicts like these are resolved before you get
+> them?
+> (I.e. I could have done
+>=20
+> 	git merge -s ours $somecommitfromthearmsoctree
+>=20
+> but I wasn't sure that this is a good idea and so decided to wait until
+> you write a mail about the conflict.)
 
-Nowhere, cfr. above.
+No, these small conflicts are not a problem, so just leave them to me and
+Arnd or Linus.
 
-Gr{oetje,eeting}s,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+--Signature=_Sun__11_Sep_2011_13_34_10_+1000_R.Z_.YrfgRb8x59g
+Content-Type: application/pgp-signature
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+iQEcBAEBAgAGBQJObCwyAAoJEDMEi1NhKgbs48IH/1HJJLmpEYpPfRBXCfZrXdDV
+WPJhwZrZ2CkslZqZx9qYaQmEP2YRZV2bjNOq9ECFsZEVUBs47QKlp8fqjb8PLh2L
+dugzpYyOvwZv6tjCdmpo98iudsD97wal8jXpkag+ZtFjUxsK2Y6ezhFA3htdpV8c
+/7YogBiBk8RTyngUizXwogOHo2Lh0biHE3+WGYiTxV6sjrOe8AWaGQfC0r9UwkYe
+ZJjhkr6xEAjaZ0gf9RLzBT46lDe16bnVh3yjhEXAO3QONo9Ma+D6Ih+gJbQiUzGt
+P88z6WhzwHFMGlg43/yn+jZhzLFkH/p/EnqlWMJIYomsBLvUB6Ea+qF2A/AhV/o=
+=lcRg
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__11_Sep_2011_13_34_10_+1000_R.Z_.YrfgRb8x59g--
