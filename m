@@ -1,80 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-lpae tree with the arm tree
-Date: Mon, 12 Sep 2011 11:15:33 +1000
-Message-ID: <20110912111533.c263b24de84a824a813c8056@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Mon, 12 Sep 2011 12:05:01 +1000
+Message-ID: <20110912120501.764336af05069fa23a371b5e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:52540 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751862Ab1ILBPi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Sep 2011 21:15:38 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Brown <davidb@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, Russell King <rmk@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-Hi Catalin,
+Hi Arnd,
 
-Today's linux-next merge of the arm-lpae tree got a conflict in
-arch/arm/kernel/sleep.S between commit 805f72ef00a4 ("ARM: pm:
-preallocate a page table for suspend/resume") (and later ones) from the
-arm tree and commit 787dad4a57fb ("ARM: LPAE: add ISBs around MMU
-enabling code") from the arm-lpae tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-msm/board-msm8x60.c between commit 9e775ad19f52 ("ARM:
+7012/1: Set proper TEXT_OFFSET for newer MSMs") from the arm tree and
+commit 56e2d8a68803 ("ARM: msm: Add devicetree support for msm8660-surf")
+from the arm-soc tree.
 
-I attempted to fix it up (see below) and can carry the fix as necessary.
-
-There are also other conflicts due to the same changes existaing in each
-of these trees as different commits.  Maybe some rebase or cleanup of the
-arm-lpae tree is required.
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/kernel/sleep.S
-index 020e99c,ecece65..0000000
---- a/arch/arm/kernel/sleep.S
-+++ b/arch/arm/kernel/sleep.S
-@@@ -52,17 -67,35 +52,19 @@@ ENDPROC(cpu_suspend_abort
+diff --cc arch/arm/mach-msm/board-msm8x60.c
+index 9221f54,10fa8f6..0000000
+--- a/arch/arm/mach-msm/board-msm8x60.c
++++ b/arch/arm/mach-msm/board-msm8x60.c
+@@@ -20,7 -14,10 +14,11 @@@
+  #include <linux/platform_device.h>
+  #include <linux/io.h>
+  #include <linux/irq.h>
+ +#include <linux/memblock.h>
++ #include <linux/irqdomain.h>
++ #include <linux/of.h>
++ #include <linux/of_address.h>
++ #include <linux/of_platform.h>
   
-  /*
-   * r0 = control register value
- - * r1 = v:p offset (preserved by cpu_do_resume)
- - * r2 = phys page table base
- - * r3 = L1 section flags
-   */
- +	.align	5
-  ENTRY(cpu_resume_mmu)
- -	adr	r4, cpu_resume_turn_mmu_on
- -	mov	r4, r4, lsr #20
- -	orr	r3, r3, r4, lsl #20
- -	ldr	r5, [r2, r4, lsl #2]	@ save old mapping
- -	str	r3, [r2, r4, lsl #2]	@ setup 1:1 mapping for mmu code
- -	sub	r2, r2, r1
-  	ldr	r3, =cpu_resume_after_mmu
- -	bic	r1, r0, #CR_C		@ ensure D-cache is disabled
- -	b	cpu_resume_turn_mmu_on
- -ENDPROC(cpu_resume_mmu)
- -	.ltorg
- -	.align	5
- -cpu_resume_turn_mmu_on:
-+ 	instr_sync
- -	mcr	p15, 0, r1, c1, c0, 0	@ turn on MMU, I-cache, etc
- -	mrc	p15, 0, r1, c0, c0, 0	@ read id reg
- +	mcr	p15, 0, r0, c1, c0, 0	@ turn on MMU, I-cache, etc
- +	mrc	p15, 0, r0, c0, c0, 0	@ read id reg
-+ 	instr_sync
- -	mov	r1, r1
- -	mov	r1, r1
- +	mov	r0, r0
- +	mov	r0, r0
-  	mov	pc, r3			@ jump to virtual address
- -ENDPROC(cpu_resume_turn_mmu_on)
- +ENDPROC(cpu_resume_mmu)
-  cpu_resume_after_mmu:
- -	str	r5, [r2, r4, lsl #2]	@ restore old mapping
- -	mcr	p15, 0, r0, c1, c0, 0	@ turn on D-cache
-  	bl	cpu_init		@ restore the und/abt/irq banked regs
-  	mov	r0, #0			@ return zero on success
-  	ldmfd	sp!, {r4 - r11, pc}
+  #include <asm/mach-types.h>
+  #include <asm/mach/arch.h>
+@@@ -81,9 -62,42 +79,44 @@@ static void __init msm8x60_init(void
+  {
+  }
+  
++ #ifdef CONFIG_OF
++ static struct of_dev_auxdata msm_auxdata_lookup[] __initdata = {
++ 	{}
++ };
++ 
++ static struct of_device_id msm_dt_gic_match[] __initdata = {
++ 	{ .compatible = "qcom,msm-8660-qgic", },
++ 	{}
++ };
++ 
++ static void __init msm8x60_dt_init(void)
++ {
++ 	struct device_node *node;
++ 
++ 	node = of_find_matching_node_by_address(NULL, msm_dt_gic_match,
++ 			MSM8X60_QGIC_DIST_PHYS);
++ 	if (node)
++ 		irq_domain_add_simple(node, GIC_SPI_START);
++ 
++ 	if (of_machine_is_compatible("qcom,msm8660-surf")) {
++ 		printk(KERN_INFO "Init surf UART registers\n");
++ 		msm8x60_init_uart12dm();
++ 	}
++ 
++ 	of_platform_populate(NULL, of_default_bus_match_table,
++ 			msm_auxdata_lookup, NULL);
++ }
++ 
++ static const char *msm8x60_fluid_match[] __initdata = {
++ 	"qcom,msm8660-fluid",
++ 	"qcom,msm8660-surf",
++ 	NULL
++ };
++ #endif /* CONFIG_OF */
++ 
+  MACHINE_START(MSM8X60_RUMI3, "QCT MSM8X60 RUMI3")
+ +	.fixup = msm8x60_fixup,
+ +	.reserve = msm8x60_reserve,
+  	.map_io = msm8x60_map_io,
+  	.init_irq = msm8x60_init_irq,
+  	.init_machine = msm8x60_init,
