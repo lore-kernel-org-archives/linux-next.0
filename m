@@ -1,71 +1,80 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: build failure after merge of the final tree (tty tree related)
-Date: Sun, 11 Sep 2011 11:05:40 +0200
-Message-ID: <CAMuHMdWvN_VumsvTxam6hb-NQ0N=any8kiLoiWZ2unBLuZMy4g@mail.gmail.com>
-References: <20110825161843.daf46b6b4023926fcfeec387@canb.auug.org.au>
-	<20110825140820.GA9126@kroah.com>
-	<4E56689D.3080202@freescale.com>
-	<20110826015111.49af16f792d5554fd931d230@canb.auug.org.au>
-	<CACqU3MUs_97=MuuKAjr-LeUT7kSRxtzSntwUeKeeH4n8s7SSGg@mail.gmail.com>
-	<20110826103932.1626f1c5542b660bcd1b24aa@canb.auug.org.au>
-	<CACqU3MVbKJw5VVqnz+gfLDnQEDu9Lv4xV+7RvdD4ZbetGu79WQ@mail.gmail.com>
-	<20110911142334.8df995a097763cd10f780f00@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-lpae tree with the arm tree
+Date: Mon, 12 Sep 2011 11:15:33 +1000
+Message-ID: <20110912111533.c263b24de84a824a813c8056@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw0-f42.google.com ([74.125.83.42]:43212 "EHLO
-	mail-gw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752961Ab1IKJFl convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Sep 2011 05:05:41 -0400
-In-Reply-To: <20110911142334.8df995a097763cd10f780f00@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:52540 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751862Ab1ILBPi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Sep 2011 21:15:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnaud Lacombe <lacombar@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
 
-Hi Arnaud,
+Hi Catalin,
 
-On Sun, Sep 11, 2011 at 06:23, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> On Fri, 26 Aug 2011 11:47:40 -0400 Arnaud Lacombe <lacombar@gmail.com=
-> wrote:
->> Couldn't all the error log be public, rotated over a 7 iteration
->> period ? That would be fair to everyone.
->
-> See http://kisskb.ellerman.id.au/linux-next (as stated in all my rele=
-ase
-> emails).
+Today's linux-next merge of the arm-lpae tree got a conflict in
+arch/arm/kernel/sleep.S between commit 805f72ef00a4 ("ARM: pm:
+preallocate a page table for suspend/resume") (and later ones) from the
+arm tree and commit 787dad4a57fb ("ARM: LPAE: add ISBs around MMU
+enabling code") from the arm-lpae tree.
 
-And if you want to analyze the results, you can use the scripts I use
-to create the
-regression/improvement reports for tagged Linux releases.
-While it would be nice to have the same for linux-next releases, I
-unfortunately don't
-have the time for that, as there's still some manual work involved.
+I attempted to fix it up (see below) and can carry the fix as necessary.
 
-http://www.spinics.net/lists/linux-next/msg11040.html
+There are also other conflicts due to the same changes existaing in each
+of these trees as different commits.  Maybe some rebase or cleanup of the
+arm-lpae tree is required.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-You can get the scripts referenced in my email above from any kernel.or=
-g mirror,
-e.g. ftp://ftp.belnet.be/mirrors/ftp.kernel.org/pub/linux/kernel/people=
-/geert/linux-log/.
-They may not be the latest version, though, have to check/fix when
-master.kernel.org
-is back.
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+diff --cc arch/arm/kernel/sleep.S
+index 020e99c,ecece65..0000000
+--- a/arch/arm/kernel/sleep.S
++++ b/arch/arm/kernel/sleep.S
+@@@ -52,17 -67,35 +52,19 @@@ ENDPROC(cpu_suspend_abort
+  
+  /*
+   * r0 = control register value
+ - * r1 = v:p offset (preserved by cpu_do_resume)
+ - * r2 = phys page table base
+ - * r3 = L1 section flags
+   */
+ +	.align	5
+  ENTRY(cpu_resume_mmu)
+ -	adr	r4, cpu_resume_turn_mmu_on
+ -	mov	r4, r4, lsr #20
+ -	orr	r3, r3, r4, lsl #20
+ -	ldr	r5, [r2, r4, lsl #2]	@ save old mapping
+ -	str	r3, [r2, r4, lsl #2]	@ setup 1:1 mapping for mmu code
+ -	sub	r2, r2, r1
+  	ldr	r3, =cpu_resume_after_mmu
+ -	bic	r1, r0, #CR_C		@ ensure D-cache is disabled
+ -	b	cpu_resume_turn_mmu_on
+ -ENDPROC(cpu_resume_mmu)
+ -	.ltorg
+ -	.align	5
+ -cpu_resume_turn_mmu_on:
++ 	instr_sync
+ -	mcr	p15, 0, r1, c1, c0, 0	@ turn on MMU, I-cache, etc
+ -	mrc	p15, 0, r1, c0, c0, 0	@ read id reg
+ +	mcr	p15, 0, r0, c1, c0, 0	@ turn on MMU, I-cache, etc
+ +	mrc	p15, 0, r0, c0, c0, 0	@ read id reg
++ 	instr_sync
+ -	mov	r1, r1
+ -	mov	r1, r1
+ +	mov	r0, r0
+ +	mov	r0, r0
+  	mov	pc, r3			@ jump to virtual address
+ -ENDPROC(cpu_resume_turn_mmu_on)
+ +ENDPROC(cpu_resume_mmu)
+  cpu_resume_after_mmu:
+ -	str	r5, [r2, r4, lsl #2]	@ restore old mapping
+ -	mcr	p15, 0, r0, c1, c0, 0	@ turn on D-cache
+  	bl	cpu_init		@ restore the und/abt/irq banked regs
+  	mov	r0, #0			@ return zero on success
+  	ldmfd	sp!, {r4 - r11, pc}
