@@ -1,49 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Mon, 12 Sep 2011 12:05:18 +1000
-Message-ID: <20110912120518.617c67e4abb1a1e92b5c327d@canb.auug.org.au>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Sun, 11 Sep 2011 19:18:53 -0700
+Message-ID: <4E6D6C0D.60100@codeaurora.org>
+References: <20110912120501.764336af05069fa23a371b5e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__12_Sep_2011_12_05_18_+1000_61Tt=A7TC6D5o+4B"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110912120501.764336af05069fa23a371b5e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Nico Erfurth <ne@erfurth.eu>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Brown <davidb@codeaurora.org>, Russell King <rmk@arm.linux.org.uk>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__12_Sep_2011_12_05_18_+1000_61Tt=A7TC6D5o+4B
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/11/11 19:05, Stephen Rothwell wrote:
+> Hi Arnd,
+>
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/mach-msm/board-msm8x60.c between commit 9e775ad19f52 ("ARM:
+> 7012/1: Set proper TEXT_OFFSET for newer MSMs") from the arm tree and
+> commit 56e2d8a68803 ("ARM: msm: Add devicetree support for msm8660-surf")
+> from the arm-soc tree.
+>
+> Just overlapping additions.  I fixed it up (see below) and can carry the
+> fix as necessary.
 
-Hi Arnd,
+The device tree machine description also needs to have the .fixup and
+.reserve callbacks added to it so that the device tree machines boot
+properly. Perhaps the soc tree needs to pull in Russell's tree at some
+point to resolve this subtle logical conflict or when the trees are
+merged together someone will need to do an evil merge and add the
+callbacks in the merge commit.
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-at91/board-usb-a9260.c between commit 2f8163baada3 ("ARM:
-gpio: convert includes of mach/gpio.h and asm/gpio.h to linux/gpio.h")
-from the arm tree and commit 6939fd49787e ("at91: merge board USB-A9260
-and USB-A9263 together") from the arm-soc tree.
-
-The latter removes this file, so I did that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__12_Sep_2011_12_05_18_+1000_61Tt=A7TC6D5o+4B
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJObWjeAAoJEDMEi1NhKgbsTwYH/Rg2qIi9/m0vqGQLvQVNkqpj
-T8SwL4Kte1ZXshJFpfCFFcHDJr6CWhvYu7jEWjxh65QmcUay808fY/e26R9exBuB
-go3KDSiKkPVU3QFmUVgbPwfn3yzzrTk5SWVl9xjRUmJAk618qMTqu/OtxFtCcsVQ
-41NGJdtQ52K+iJi3ovWgL7rTzVOTQ70q9lHAAyD5rwuvaCS0ES6xO1YEgzEIFedQ
-aiunUyQLx/AFtBgmdJqzl9rLFB8qr+ddDj8bF6dNk2LDT6XBbe2VJ7OUEIrdqjTZ
-g+lTzKYQeCCzdo9NHY3mnjPIROfYgP6bmF1wvZLuPmjccKuocRILmCR7xNCUqkU=
-=OuT3
------END PGP SIGNATURE-----
-
---Signature=_Mon__12_Sep_2011_12_05_18_+1000_61Tt=A7TC6D5o+4B--
+-- 
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
