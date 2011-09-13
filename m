@@ -1,38 +1,41 @@
-From: "Brown, Len" <len.brown@intel.com>
-Subject: ACPI git tree re-locates to github.com
-Date: Mon, 12 Sep 2011 20:03:52 -0700
-Message-ID: <E87738D94A6AD54789B5B8D1BAEB06CC829B3E4886@azsmsx503.amr.corp.intel.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: Temporary -rcu tree location
+Date: Mon, 12 Sep 2011 21:06:47 -0700
+Message-ID: <20110913040647.GC2313@linux.vnet.ibm.com>
+References: <20110913000107.GA15945@linux.vnet.ibm.com>
+ <alpine.LRH.2.00.1109130210090.19238@twin.jikos.cz>
+ <20110913002419.GN2362@linux.vnet.ibm.com>
+ <alpine.LNX.2.00.1109130242440.13109@pobox.suse.cz>
+ <20110913013400.GB2313@linux.vnet.ibm.com>
+ <20110913120716.1b893c483ee91d6b7f12a5b4@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:45943 "EHLO mga14.intel.com"
+Received: from e7.ny.us.ibm.com ([32.97.182.137]:39937 "EHLO e7.ny.us.ibm.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753070Ab1IMDDy convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Sep 2011 23:03:54 -0400
-Content-Language: en-US
+	id S1750715Ab1IMEG7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Sep 2011 00:06:59 -0400
+Content-Disposition: inline
+In-Reply-To: <20110913120716.1b893c483ee91d6b7f12a5b4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jiri Kosina <jkosina@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Effective immediately...
+On Tue, Sep 13, 2011 at 12:07:16PM +1000, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> On Mon, 12 Sep 2011 18:34:00 -0700 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> >
+> > > there doesn't seem to be 'rcu/next' branch, right?
+> > 
+> > No, there is not.  So the idea is to push "rcu/next" the first time,
+> > then ":rcu/next" thereafter?
+> 
+> Can't you just do a (forced) push over and over again without removing
+> the branch each time?
 
-https://github.com/lenb/linux.git acpi
+I will give it a try on the next update.  ;-)
 
-replaces
-
-git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux-acpi-2.6.git test
-
-This is where I will consolidate ACPI-related patches for linux-next,
-and upstream.
-
-Note that I reserve the right to re-base this branch from time to time
-as needed to revise or remove patches before they are pulled upstream.
-
-Currently there are only a couple of patches on this branch,
-and I'll use them as a test case to make sure the workflow is okay.
-
-thanks,
--Len Brown
-Intel Open Source Technology Center
+							Thanx, Paul
