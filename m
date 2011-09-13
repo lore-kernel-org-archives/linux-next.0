@@ -1,60 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Tue, 13 Sep 2011 11:55:33 +1000
-Message-ID: <20110913115533.403d4fe6d961ccc8ba9b58b7@canb.auug.org.au>
-References: <20110912120501.764336af05069fa23a371b5e@canb.auug.org.au>
-	<4E6D6C0D.60100@codeaurora.org>
+Subject: Re: Temporary -rcu tree location
+Date: Tue, 13 Sep 2011 12:07:16 +1000
+Message-ID: <20110913120716.1b893c483ee91d6b7f12a5b4@canb.auug.org.au>
+References: <20110913000107.GA15945@linux.vnet.ibm.com>
+	<alpine.LRH.2.00.1109130210090.19238@twin.jikos.cz>
+	<20110913002419.GN2362@linux.vnet.ibm.com>
+	<alpine.LNX.2.00.1109130242440.13109@pobox.suse.cz>
+	<20110913013400.GB2313@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__13_Sep_2011_12_07_16_+1000_WNpWN_ZmRZq5vp5W"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4E6D6C0D.60100@codeaurora.org>
+In-Reply-To: <20110913013400.GB2313@linux.vnet.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Brown <davidb@codeaurora.org>, Russell King <rmk@arm.linux.org.uk>
+To: paulmck@linux.vnet.ibm.com
+Cc: Jiri Kosina <jkosina@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--Signature=_Tue__13_Sep_2011_12_07_16_+1000_WNpWN_ZmRZq5vp5W
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 11 Sep 2011 19:18:53 -0700 Stephen Boyd <sboyd@codeaurora.org> wrote:
+Hi Paul,
+
+On Mon, 12 Sep 2011 18:34:00 -0700 "Paul E. McKenney" <paulmck@linux.vnet.i=
+bm.com> wrote:
 >
-> The device tree machine description also needs to have the .fixup and
-> .reserve callbacks added to it so that the device tree machines boot
-> properly. Perhaps the soc tree needs to pull in Russell's tree at some
-> point to resolve this subtle logical conflict or when the trees are
-> merged together someone will need to do an evil merge and add the
-> callbacks in the merge commit.
+> > there doesn't seem to be 'rcu/next' branch, right?
+>=20
+> No, there is not.  So the idea is to push "rcu/next" the first time,
+> then ":rcu/next" thereafter?
 
-Ah, right.  I have added this merge fixup for today and can carry it as
-necessary.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 13 Sep 2011 11:51:48 +1000
-Subject: [PATCH] arm-soc: merge fixup for fixup/reserve being added to
- MACHINE descriptions
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/mach-msm/board-msm8x60.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-msm/board-msm8x60.c b/arch/arm/mach-msm/board-msm8x60.c
-index 328df27..4ad2afb 100644
---- a/arch/arm/mach-msm/board-msm8x60.c
-+++ b/arch/arm/mach-msm/board-msm8x60.c
-@@ -153,6 +153,8 @@ MACHINE_END
- #ifdef CONFIG_OF
- /* TODO: General device tree support for all MSM. */
- DT_MACHINE_START(MSM_DT, "Qualcomm MSM (Flattened Device Tree)")
-+	.fixup = msm8x60_fixup,
-+	.reserve = msm8x60_reserve,
- 	.map_io = msm8x60_map_io,
- 	.init_irq = msm8x60_init_irq,
- 	.init_machine = msm8x60_dt_init,
--- 
-1.7.5.4
-
--- 
+Can't you just do a (forced) push over and over again without removing
+the branch each time?
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__13_Sep_2011_12_07_16_+1000_WNpWN_ZmRZq5vp5W
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJObrrUAAoJEDMEi1NhKgbs/e8H/A/Kf9vXJZhpiG9yDcfjvKl2
+YQ7fg5d4gW368Ab3DLrH9R7QocHfnUwU3oTIiwrOHHnrfdzoYMNlnUKN26Mh5nza
+3WMx5sVUbAL60+p+BJdmFKZAmHASvcjJD+dopXjjI/tyn1ZQ9IVNqHl/9WGtPPGP
+kAK+ykGrw6MQKDfI2d/3Ztlao0WVt/Puug8NNd5aVwfomwWY3VBru5ml4MnkG+R5
+KgEQMO9RytDtnmC9N/DVZmIythxVZrxLIKCsf3r6hyUsupRkoSYWmyoqRBJ62OGM
+zCR8SwUwUdhpO3GIVRCU1M4ZaMFX55votfSi6vmW5VFuoferGDkop5l2tWWZMh4=
+=lGqs
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__13_Sep_2011_12_07_16_+1000_WNpWN_ZmRZq5vp5W--
