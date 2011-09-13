@@ -1,55 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the openrisc tree with Linus' tree
-Date: Tue, 13 Sep 2011 12:11:25 +1000
-Message-ID: <20110913121125.57aff757d1cfe59a117ee3f6@canb.auug.org.au>
+From: "Brown, Len" <len.brown@intel.com>
+Subject: ACPI git tree re-locates to github.com
+Date: Mon, 12 Sep 2011 20:03:52 -0700
+Message-ID: <E87738D94A6AD54789B5B8D1BAEB06CC829B3E4886@azsmsx503.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__13_Sep_2011_12_11_25_+1000_WG8ZaGTbomJriE8h"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:48453 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751693Ab1IMCLe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Sep 2011 22:11:34 -0400
+Received: from mga14.intel.com ([143.182.124.37]:45943 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753070Ab1IMDDy convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Sep 2011 23:03:54 -0400
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jonas Bonn <jonas@southpole.se>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
---Signature=_Tue__13_Sep_2011_12_11_25_+1000_WG8ZaGTbomJriE8h
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Effective immediately...
 
-Hi Jonas,
+https://github.com/lenb/linux.git acpi
 
-Today's linux-next merge of the openrisc tree got a conflict in
-arch/openrisc/kernel/signal.c between commit d7cb66670905 ("openrisc:
-don't use pt_regs in struct sigcontext") from Linus' tree and commit
-ddf54eaa745b ("openrisc: don't use pt_regs in struct sigcontext") from
-the openrisc tree.
+replaces
 
-Two slightly differentl versions of the same change.  I used the version
-in Linus' tree.
+git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux-acpi-2.6.git test
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+This is where I will consolidate ACPI-related patches for linux-next,
+and upstream.
 
---Signature=_Tue__13_Sep_2011_12_11_25_+1000_WG8ZaGTbomJriE8h
-Content-Type: application/pgp-signature
+Note that I reserve the right to re-base this branch from time to time
+as needed to revise or remove patches before they are pulled upstream.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Currently there are only a couple of patches on this branch,
+and I'll use them as a test case to make sure the workflow is okay.
 
-iQEcBAEBAgAGBQJObrvNAAoJEDMEi1NhKgbsMRUH/jnbn5LjN69b1q14w5KSzDU7
-vkAuAJ0QvU76bXUTT9hHouQlSvxk0slcmNBh/2O7uBG0JweaIkfpkPufgWRM8M5p
-GWHtUo1wTrv18B44p1NNnLf/kMsP7uc/UURCfYgqS0hiXL303NU5zRNRAT7jOyuE
-mUSZpcN9Cd21NhYKywfj7jsYyfexA/O4ZY29QOL8F2I2BmujEblbe2khvYfLp4+9
-euFcc73ggLAS9T1Q0WEGxw+u5cnKFwFhZvcYB00HCVBhdXoB2XRMTrsBq6hyZWaE
-Xsawk982aSBNJx2zkEk/xfO+CWb1KpSdsdWm6qI2iYxQkNwnGzN6JQEv4grBRjs=
-=bW/r
------END PGP SIGNATURE-----
-
---Signature=_Tue__13_Sep_2011_12_11_25_+1000_WG8ZaGTbomJriE8h--
+thanks,
+-Len Brown
+Intel Open Source Technology Center
