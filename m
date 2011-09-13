@@ -1,52 +1,52 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: Temporary -rcu tree location
-Date: Tue, 13 Sep 2011 09:06:45 -0700
-Message-ID: <20110913160645.GA6258@linux.vnet.ibm.com>
-References: <20110913000107.GA15945@linux.vnet.ibm.com>
- <alpine.LRH.2.00.1109130210090.19238@twin.jikos.cz>
- <20110913002419.GN2362@linux.vnet.ibm.com>
- <alpine.LNX.2.00.1109130242440.13109@pobox.suse.cz>
- <20110913013400.GB2313@linux.vnet.ibm.com>
- <20110913120716.1b893c483ee91d6b7f12a5b4@canb.auug.org.au>
- <20110913040647.GC2313@linux.vnet.ibm.com>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: manual merge of the xen tree with the tip tree
+Date: Tue, 13 Sep 2011 13:53:39 -0700
+Message-ID: <4E6FC2D3.2060408@goop.org>
+References: <20110825142450.c84e02d8763cfd1a93411844@canb.auug.org.au> <4E5690C3.2050706@goop.org> <4E5693DD.2010307@zytor.com> <20110826090619.7588d424798f53a6f3621eb2@canb.auug.org.au> <4E56D6E1.6030405@zytor.com> <20110826125441.709aa423cdf072ce085fb91c@canb.auug.org.au> <20110913211154.fe53ca8c1d608def77a69022@canb.auug.org.au> <alpine.LFD.2.02.1109131706410.2723@ionos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e1.ny.us.ibm.com ([32.97.182.141]:55545 "EHLO e1.ny.us.ibm.com"
+Received: from claw.goop.org ([74.207.240.146]:35632 "EHLO claw.goop.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755297Ab1IMQYl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Sep 2011 12:24:41 -0400
-Received: from /spool/local
-	by us.ibm.com with XMail ESMTP
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Tue, 13 Sep 2011 12:24:32 -0400
-Content-Disposition: inline
-In-Reply-To: <20110913040647.GC2313@linux.vnet.ibm.com>
+	id S932567Ab1IMUxs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Sep 2011 16:53:48 -0400
+In-Reply-To: <alpine.LFD.2.02.1109131706410.2723@ionos>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jkosina@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "H. Peter Anvin" <hpa@zytor.com>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>
 
-On Mon, Sep 12, 2011 at 09:06:47PM -0700, Paul E. McKenney wrote:
-> On Tue, Sep 13, 2011 at 12:07:16PM +1000, Stephen Rothwell wrote:
-> > Hi Paul,
-> > 
-> > On Mon, 12 Sep 2011 18:34:00 -0700 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> > >
-> > > > there doesn't seem to be 'rcu/next' branch, right?
-> > > 
-> > > No, there is not.  So the idea is to push "rcu/next" the first time,
-> > > then ":rcu/next" thereafter?
-> > 
-> > Can't you just do a (forced) push over and over again without removing
-> > the branch each time?
-> 
-> I will give it a try on the next update.  ;-)
+On 09/13/2011 08:07 AM, Thomas Gleixner wrote:
+> On Tue, 13 Sep 2011, Stephen Rothwell wrote:
+>> Hi,
+>>
+>> On Fri, 26 Aug 2011 12:54:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> On Thu, 25 Aug 2011 16:12:33 -0700 "H. Peter Anvin" <hpa@zytor.com> wrote:
+>>>> On 08/25/2011 04:06 PM, Stephen Rothwell wrote:
+>>>>>> Stephen: the x86/spinlocks branch in the -tip tree is obsolete and
+>>>>>> should be dropped.
+>>>>> That's a bit tricky as I get a rolled up tip tree.  The best I could do
+>>>>> is revert the commit that merges the x86/spinlocks branch into
+>>>>> auto-latest ...  I'll do that for today (unless something happens to the
+>>>>> tip tree in the next hour).
+>>>>>
+>>>> OK, let me bother Ingo about it.
+>>> For today, I have done "git revert -m 1 6f8fa39c81f1" after merging the
+>>> tip tree.
+>> I am still doing this in each linux-next, and it doesn't appear to have
+>> been fixed up the the tree on tesla.tglx.de, yet, I think.
+> We'll take it out. 
 
-OK, I pushed a small update to one of the commits, this time to branch
-rcu/next, again at https://github.com/paulmckrcu/linux.
+Actually, the tip x86/spinlocks was the most up-to-date version of those
+patches (since hpa had rebased them to a more recent version of mainline).
 
-I guess that the acid test is the next time I update.  ;-)
+But never mind.  Stephen, could you use
 
-								Thanx, Paul
+    git://github.com/jsgf/linux-xen.git upstream/xen
+
+for linux-next instead of the kernel.org xen.git, and I've re-added the
+up-to-date spinlock changes there.
+
+Thanks,
+    J
