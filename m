@@ -1,48 +1,60 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: Temporary -rcu tree location
-Date: Mon, 12 Sep 2011 18:34:00 -0700
-Message-ID: <20110913013400.GB2313@linux.vnet.ibm.com>
-References: <20110913000107.GA15945@linux.vnet.ibm.com>
- <alpine.LRH.2.00.1109130210090.19238@twin.jikos.cz>
- <20110913002419.GN2362@linux.vnet.ibm.com>
- <alpine.LNX.2.00.1109130242440.13109@pobox.suse.cz>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Tue, 13 Sep 2011 11:55:33 +1000
+Message-ID: <20110913115533.403d4fe6d961ccc8ba9b58b7@canb.auug.org.au>
+References: <20110912120501.764336af05069fa23a371b5e@canb.auug.org.au>
+	<4E6D6C0D.60100@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e4.ny.us.ibm.com ([32.97.182.144]:47543 "EHLO e4.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753706Ab1IMBeF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Sep 2011 21:34:05 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.LNX.2.00.1109130242440.13109@pobox.suse.cz>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4E6D6C0D.60100@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Brown <davidb@codeaurora.org>, Russell King <rmk@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 13, 2011 at 02:43:55AM +0200, Jiri Kosina wrote:
-> On Mon, 12 Sep 2011, Paul E. McKenney wrote:
-> 
-> > Here is what happens when I try that:
-> > 
-> > 	git push github :rcu/next
-> > 	Username: 
-> > 	Password: 
-> > 	error: unable to push to unqualified destination: rcu/next
-> > 	The destination refspec neither matches an existing ref on the remote nor
-> > 	begins with refs/, and we are unable to guess a prefix based on the source ref.
-> > 	error: failed to push some refs to 'https://github.com/paulmckrcu/linux'
-> > 
-> > So what am I missing here?
-> 
-> Looking at 
-> 
-> 	https://github.com/paulmckrcu/linux/branches
-> 
-> there doesn't seem to be 'rcu/next' branch, right?
+Hi Stephen,
 
-No, there is not.  So the idea is to push "rcu/next" the first time,
-then ":rcu/next" thereafter?
+On Sun, 11 Sep 2011 19:18:53 -0700 Stephen Boyd <sboyd@codeaurora.org> wrote:
+>
+> The device tree machine description also needs to have the .fixup and
+> .reserve callbacks added to it so that the device tree machines boot
+> properly. Perhaps the soc tree needs to pull in Russell's tree at some
+> point to resolve this subtle logical conflict or when the trees are
+> merged together someone will need to do an evil merge and add the
+> callbacks in the merge commit.
 
-							Thanx, Paul
+Ah, right.  I have added this merge fixup for today and can carry it as
+necessary.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 13 Sep 2011 11:51:48 +1000
+Subject: [PATCH] arm-soc: merge fixup for fixup/reserve being added to
+ MACHINE descriptions
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/mach-msm/board-msm8x60.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-msm/board-msm8x60.c b/arch/arm/mach-msm/board-msm8x60.c
+index 328df27..4ad2afb 100644
+--- a/arch/arm/mach-msm/board-msm8x60.c
++++ b/arch/arm/mach-msm/board-msm8x60.c
+@@ -153,6 +153,8 @@ MACHINE_END
+ #ifdef CONFIG_OF
+ /* TODO: General device tree support for all MSM. */
+ DT_MACHINE_START(MSM_DT, "Qualcomm MSM (Flattened Device Tree)")
++	.fixup = msm8x60_fixup,
++	.reserve = msm8x60_reserve,
+ 	.map_io = msm8x60_map_io,
+ 	.init_irq = msm8x60_init_irq,
+ 	.init_machine = msm8x60_dt_init,
+-- 
+1.7.5.4
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
