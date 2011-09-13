@@ -1,52 +1,50 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 Subject: Re: linux-next: manual merge of the xen tree with the tip tree
-Date: Tue, 13 Sep 2011 13:53:39 -0700
-Message-ID: <4E6FC2D3.2060408@goop.org>
-References: <20110825142450.c84e02d8763cfd1a93411844@canb.auug.org.au> <4E5690C3.2050706@goop.org> <4E5693DD.2010307@zytor.com> <20110826090619.7588d424798f53a6f3621eb2@canb.auug.org.au> <4E56D6E1.6030405@zytor.com> <20110826125441.709aa423cdf072ce085fb91c@canb.auug.org.au> <20110913211154.fe53ca8c1d608def77a69022@canb.auug.org.au> <alpine.LFD.2.02.1109131706410.2723@ionos>
+Date: Tue, 13 Sep 2011 22:56:07 +0200 (CEST)
+Message-ID: <alpine.LFD.2.02.1109132254470.2723@ionos>
+References: <20110825142450.c84e02d8763cfd1a93411844@canb.auug.org.au> <4E5690C3.2050706@goop.org> <4E5693DD.2010307@zytor.com> <20110826090619.7588d424798f53a6f3621eb2@canb.auug.org.au> <4E56D6E1.6030405@zytor.com> <20110826125441.709aa423cdf072ce085fb91c@canb.auug.org.au>
+ <20110913211154.fe53ca8c1d608def77a69022@canb.auug.org.au> <alpine.LFD.2.02.1109131706410.2723@ionos> <4E6FC2D3.2060408@goop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from claw.goop.org ([74.207.240.146]:35632 "EHLO claw.goop.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932567Ab1IMUxs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Sep 2011 16:53:48 -0400
-In-Reply-To: <alpine.LFD.2.02.1109131706410.2723@ionos>
+Received: from www.linutronix.de ([62.245.132.108]:38898 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932556Ab1IMU4P (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Sep 2011 16:56:15 -0400
+In-Reply-To: <4E6FC2D3.2060408@goop.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
+To: Jeremy Fitzhardinge <jeremy@goop.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "H. Peter Anvin" <hpa@zytor.com>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>
 
-On 09/13/2011 08:07 AM, Thomas Gleixner wrote:
-> On Tue, 13 Sep 2011, Stephen Rothwell wrote:
->> Hi,
->>
->> On Fri, 26 Aug 2011 12:54:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> On Thu, 25 Aug 2011 16:12:33 -0700 "H. Peter Anvin" <hpa@zytor.com> wrote:
->>>> On 08/25/2011 04:06 PM, Stephen Rothwell wrote:
->>>>>> Stephen: the x86/spinlocks branch in the -tip tree is obsolete and
->>>>>> should be dropped.
->>>>> That's a bit tricky as I get a rolled up tip tree.  The best I could do
->>>>> is revert the commit that merges the x86/spinlocks branch into
->>>>> auto-latest ...  I'll do that for today (unless something happens to the
->>>>> tip tree in the next hour).
->>>>>
->>>> OK, let me bother Ingo about it.
->>> For today, I have done "git revert -m 1 6f8fa39c81f1" after merging the
->>> tip tree.
->> I am still doing this in each linux-next, and it doesn't appear to have
->> been fixed up the the tree on tesla.tglx.de, yet, I think.
-> We'll take it out. 
+On Tue, 13 Sep 2011, Jeremy Fitzhardinge wrote:
 
-Actually, the tip x86/spinlocks was the most up-to-date version of those
-patches (since hpa had rebased them to a more recent version of mainline).
+> On 09/13/2011 08:07 AM, Thomas Gleixner wrote:
+> > On Tue, 13 Sep 2011, Stephen Rothwell wrote:
+> >> Hi,
+> >>
+> >> On Fri, 26 Aug 2011 12:54:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >>> On Thu, 25 Aug 2011 16:12:33 -0700 "H. Peter Anvin" <hpa@zytor.com> wrote:
+> >>>> On 08/25/2011 04:06 PM, Stephen Rothwell wrote:
+> >>>>>> Stephen: the x86/spinlocks branch in the -tip tree is obsolete and
+> >>>>>> should be dropped.
+> >>>>> That's a bit tricky as I get a rolled up tip tree.  The best I could do
+> >>>>> is revert the commit that merges the x86/spinlocks branch into
+> >>>>> auto-latest ...  I'll do that for today (unless something happens to the
+> >>>>> tip tree in the next hour).
+> >>>>>
+> >>>> OK, let me bother Ingo about it.
+> >>> For today, I have done "git revert -m 1 6f8fa39c81f1" after merging the
+> >>> tip tree.
+> >> I am still doing this in each linux-next, and it doesn't appear to have
+> >> been fixed up the the tree on tesla.tglx.de, yet, I think.
+> > We'll take it out. 
+> 
+> Actually, the tip x86/spinlocks was the most up-to-date version of those
+> patches (since hpa had rebased them to a more recent version of mainline).
 
-But never mind.  Stephen, could you use
-
-    git://github.com/jsgf/linux-xen.git upstream/xen
-
-for linux-next instead of the kernel.org xen.git, and I've re-added the
-up-to-date spinlock changes there.
-
+Mooo. You tell that after we did a nasty rebase from hell :(
+ 
 Thanks,
-    J
+
+	tglx
