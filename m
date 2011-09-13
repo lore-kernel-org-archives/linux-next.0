@@ -1,60 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: ACPI git tree re-locates to github.com
-Date: Tue, 13 Sep 2011 17:16:44 +1000
-Message-ID: <20110913171644.a16b1be72ed6163d4a303488@canb.auug.org.au>
-References: <E87738D94A6AD54789B5B8D1BAEB06CC829B3E4886@azsmsx503.amr.corp.intel.com>
+Subject: Re: linux-next: manual merge of the xen tree with the tip tree
+Date: Tue, 13 Sep 2011 21:11:54 +1000
+Message-ID: <20110913211154.fe53ca8c1d608def77a69022@canb.auug.org.au>
+References: <20110825142450.c84e02d8763cfd1a93411844@canb.auug.org.au>
+	<4E5690C3.2050706@goop.org>
+	<4E5693DD.2010307@zytor.com>
+	<20110826090619.7588d424798f53a6f3621eb2@canb.auug.org.au>
+	<4E56D6E1.6030405@zytor.com>
+	<20110826125441.709aa423cdf072ce085fb91c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__13_Sep_2011_17_16_44_+1000_Ewzw98P2=EWEghR4"
+ boundary="Signature=_Tue__13_Sep_2011_21_11_54_+1000_SXNVjjU1Z9dcqLFp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:53133 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:46699 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752613Ab1IMHQw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Sep 2011 03:16:52 -0400
-In-Reply-To: <E87738D94A6AD54789B5B8D1BAEB06CC829B3E4886@azsmsx503.amr.corp.intel.com>
+	with ESMTP id S1752390Ab1IMLMF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Sep 2011 07:12:05 -0400
+In-Reply-To: <20110826125441.709aa423cdf072ce085fb91c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Brown, Len" <len.brown@intel.com>
-Cc: "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Tue__13_Sep_2011_17_16_44_+1000_Ewzw98P2=EWEghR4
+--Signature=_Tue__13_Sep_2011_21_11_54_+1000_SXNVjjU1Z9dcqLFp
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Len,
+Hi,
 
-On Mon, 12 Sep 2011 20:03:52 -0700 "Brown, Len" <len.brown@intel.com> wrote:
+On Fri, 26 Aug 2011 12:54:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> Effective immediately...
+> On Thu, 25 Aug 2011 16:12:33 -0700 "H. Peter Anvin" <hpa@zytor.com> wrote:
+> >
+> > On 08/25/2011 04:06 PM, Stephen Rothwell wrote:
+> > >>
+> > >> Stephen: the x86/spinlocks branch in the -tip tree is obsolete and
+> > >> should be dropped.
+> > >=20
+> > > That's a bit tricky as I get a rolled up tip tree.  The best I could =
+do
+> > > is revert the commit that merges the x86/spinlocks branch into
+> > > auto-latest ...  I'll do that for today (unless something happens to =
+the
+> > > tip tree in the next hour).
+> > >=20
+> >=20
+> > OK, let me bother Ingo about it.
 >=20
-> https://github.com/lenb/linux.git acpi
->=20
-> replaces
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux-acpi-2.6.git test
+> For today, I have done "git revert -m 1 6f8fa39c81f1" after merging the
+> tip tree.
 
-I will switch starting tomorrow.
+I am still doing this in each linux-next, and it doesn't appear to have
+been fixed up the the tree on tesla.tglx.de, yet, I think.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__13_Sep_2011_17_16_44_+1000_Ewzw98P2=EWEghR4
+--Signature=_Tue__13_Sep_2011_21_11_54_+1000_SXNVjjU1Z9dcqLFp
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJObwNcAAoJEDMEi1NhKgbslIUH/iNQS6E5fZ7qVZArk1Ulogbx
-VxeKZj+BJtzSP9dsW4OB7DkVY7hDPrnhRxESkmhoowluxC0dbKuCreQXQ6JllhUI
-iCTQyL0B2ns7zbCuWbetl1j8kwWMdWTLGskyBsmJyDdcs0InH8sNtUtDqe1+tQZR
-7dvwILoA4D3sKe+tQrxFhSaU0nxzOx/zaBczgzB+uThaa03HhrX3zKEKbf6I+Pyh
-SLZszt1YN9tHcsIG/mdUIy+jrs9ITyWuQtszPbPpflWhHZRrxl/fgx25LR6W+6Nu
-QYuOxsUI6tgwKAmR0NEe6qo/erNqSkr6TK8ijhuS6Bi699Fo9xUPLKdiUBnuu0Q=
-=qwwC
+iQEcBAEBAgAGBQJObzp6AAoJEDMEi1NhKgbsM0sH/j3HijOarIxiI5SiFbEOXd0w
+/ca84Jd+zy69PVuwMUgna3Q6p31bgt28+URzvcdslvX7Ev9gJHyZsW+bLnAvlyci
+BAB1+XVFiYDoRTirUTQ7GGpIqSQ2XQkj0lFXnjr284mpi6Xy0a6JQXtCUVcu58GR
+Z/M4PgiCf5wdFLKDT/jrJ48B5XDR/nSfff8RX0CZKPXctqt4VmP5XrBVjBXGYwom
+db8XWffLGDfBpC3NaSmSBioLcZguI1BJO6/ONhveVUIpy1m52SDtz2e1si7KvmFt
+zxnHL+xVOyr/gsXmRODwXp+TqGM7MbB9PoDTEcZRp6Wd3q2ww4YmqIYtM4dYMq8=
+=V0pR
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Sep_2011_17_16_44_+1000_Ewzw98P2=EWEghR4--
+--Signature=_Tue__13_Sep_2011_21_11_54_+1000_SXNVjjU1Z9dcqLFp--
