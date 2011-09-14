@@ -1,48 +1,45 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with the
- wireless-current tree
-Date: Wed, 14 Sep 2011 13:05:42 +1000
-Message-ID: <20110914130542.7a5af71c56a545bff8996690@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the s390 tree
+Date: Wed, 14 Sep 2011 15:25:01 +1000
+Message-ID: <20110914152501.90490a58e3601e47a7d53c60@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:41930 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:46854 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754035Ab1INDFq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Sep 2011 23:05:46 -0400
+	with ESMTP id S1750984Ab1INFZG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Sep 2011 01:25:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Oberparleiter <peter.oberparleiter@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-Hi John,
+Hi Paul,
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-trans-tx-pcie.c between commit
-282cdb325aea ("iwlagn: fix command queue timeout") from the
-wireless-current tree and commit 6d8f6eeb3506 ("iwlagn: transport layer
-should receive iwl_trans") from the wireless tree.
+Today's linux-next merge of the moduleh tree got a conflict in
+drivers/s390/char/vmur.c between commit 003184781fea ("[S390] s390: fix
+mismatch in summation of I/O IRQ statistics") from the s390 tree and
+commit e7a6a4ef9ffe ("s390: add missing module.h/export.h includes") from
+the moduleh tree.
 
-Just context changes.  I fixed ti up (see below) and can carry the fix as
-necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.  (Or this part of the moduleh commit could be added to the
+s390 tree.)
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/iwlwifi/iwl-trans-tx-pcie.c
-index 222d410,ea6a0bc..0000000
---- a/drivers/net/wireless/iwlwifi/iwl-trans-tx-pcie.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-trans-tx-pcie.c
-@@@ -771,9 -921,8 +921,10 @@@ void iwl_tx_cmd_complete(struct iwl_pri
-  	cmd = txq->cmd[cmd_index];
-  	meta = &txq->meta[cmd_index];
+diff --cc drivers/s390/char/vmur.c
+index d291a54,c9782ff..0000000
+--- a/drivers/s390/char/vmur.c
++++ b/drivers/s390/char/vmur.c
+@@@ -11,6 -11,8 +11,7 @@@
+  #define KMSG_COMPONENT "vmur"
+  #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
   
- +	txq->time_stamp = jiffies;
- +
-- 	iwlagn_unmap_tfd(priv, meta, &txq->tfds[index], DMA_BIDIRECTIONAL);
-+ 	iwlagn_unmap_tfd(trans, meta, &txq->tfds[index],
-+ 			 DMA_BIDIRECTIONAL);
+ -#include <linux/kernel_stat.h>
++ #include <linux/module.h>
+  #include <linux/cdev.h>
+  #include <linux/slab.h>
   
-  	/* Input error checking is done when commands are added to queue. */
-  	if (meta->flags & CMD_WANT_SKB) {
