@@ -1,42 +1,58 @@
-From: Shan Hai <haishan.bai@gmail.com>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Wed, 14 Sep 2011 17:43:30 +0800
-Message-ID: <4E707742.7050809@gmail.com>
-References: <20110914163455.fcc47a7aba8604c690988473@canb.auug.org.au> <alpine.LFD.2.02.1109141137260.2723@ionos>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Temporary relocation of sound git tree
+Date: Wed, 14 Sep 2011 23:56:47 +1000
+Message-ID: <20110914235647.88604c1d82e5588fc5f9a039@canb.auug.org.au>
+References: <s5hy5xrtwq9.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__14_Sep_2011_23_56_47_+1000_+UCUscXkUcw7XJZZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f180.google.com ([74.125.82.180]:59699 "EHLO
-	mail-wy0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755747Ab1INJtv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Sep 2011 05:49:51 -0400
-In-Reply-To: <alpine.LFD.2.02.1109141137260.2723@ionos>
+Received: from calzone.tip.net.au ([203.10.76.15]:44378 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751534Ab1INN5C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Sep 2011 09:57:02 -0400
+In-Reply-To: <s5hy5xrtwq9.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yong Zhang <yong.zhang0@gmail.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/14/2011 05:37 PM, Thomas Gleixner wrote:
-> On Wed, 14 Sep 2011, Stephen Rothwell wrote:
+--Signature=_Wed__14_Sep_2011_23_56_47_+1000_+UCUscXkUcw7XJZZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Takashi,
+
+On Wed, 14 Sep 2011 09:21:49 +0200 Takashi Iwai <tiwai@suse.de> wrote:
 >
->> Hi all,
->>
->> After merging the tip tree, today's linux-next build (powerpc allnoconfig)
->> produced this warning:
->>
->> lib/atomic64.c: In function 'lock_addr':
->> lib/atomic64.c:42:2: warning: return from incompatible pointer type
->>
->> Introduced by commit f59ca05871a0 ("locking, lib/atomic64: Annotate
->> atomic64_lock::lock as raw").  This function (which is declared to return
->> "spinlock_t *") is now returning "raw_spinlock_t *".
-> My bad, it seems I picked the wrong version of the patch.
+> the sound git tree for -next is temporarily relocated at
+> 	git://github.com/tiwai/sound.git for-next
+>=20
+> Please pull from this for linux-next until kernel.org gets recovered.
 
-Hi Thomas,
+I will switch to this from tomorrow.  I will also fetch the sound-current
+tree from the for-linus branch.
 
-Please pick the V4 patch, the last one which I have sent to you,
-I am sorry for the subject line it indicates V3 :(
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks
-Shan Hai
+--Signature=_Wed__14_Sep_2011_23_56_47_+1000_+UCUscXkUcw7XJZZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOcLKfAAoJEDMEi1NhKgbsMZcH/2UhBtzeSU4PT1T2YqJGIsW2
+3ALJS+rcx7fJW89nwdvd/xdnHX7fs/hHRq4/lRNidz8dEWOg1iBol9V2mpAxhD+O
+m4F84BLIzkXZ7knUC69osA1sVQyNalgPWNo0kuOd3e4ikgFvnqzKVUKL0/SZUrZo
+qGNFuRSKI2VZiGYuzdSKMEKoe99uZA7zJwlH1mcWsy9bss6rXLo4xVBfmzHqCZAL
+DOWu0QsGATKbRJq1gdSI2dg7NS7geEQw1zgRpRpyoT/QWpWVwdXh9Cx9MV8DrlfB
++me5pzMfPNElnO2xZF6I9XSNiccsVfqxd48fo4YPbkI3h1r81UNweeKaPqJO570=
+=KZD3
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__14_Sep_2011_23_56_47_+1000_+UCUscXkUcw7XJZZ--
