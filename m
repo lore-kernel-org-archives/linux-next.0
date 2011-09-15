@@ -1,49 +1,36 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Temporary location for some of the SCSI trees
-Date: Thu, 15 Sep 2011 10:37:33 -0500
-Message-ID: <1316101053.2983.42.camel@dabdike.hansenpartnership.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: import of the kernel-doc tree failed
+Date: Thu, 15 Sep 2011 09:10:25 -0700
+Message-ID: <4E722371.2060908@xenotime.net>
+References: <20110915111301.a4227f9ca0d1f448d54050ae@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34504 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933872Ab1IOPhf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Sep 2011 11:37:35 -0400
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:41899 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S934081Ab1IOQK1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Sep 2011 12:10:27 -0400
+In-Reply-To: <20110915111301.a4227f9ca0d1f448d54050ae@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-I've relocated the scsi-rc-fixes and scsi-misc trees on to my own
-infrastructure while master.kernel.org is down.  The locations are:
+On 09/14/11 18:13, Stephen Rothwell wrote:
+> Hi Randy,
+> 
+> Importing the kernel-doc tree today produced this error:
+> 
+> $ git am ../quilt/kernel-doc/docum-leds-class-fix-typo.patch
+> Patch format detection failed.
+> 
+> I just had to replace the tab in the From: line with a space.
 
-git://bedivere.hansenpartnership.com/git/scsi-rc-fixes-2.6.git
-git://bedivere.hansenpartnership.com/git/scsi-misc-2.6.git
+I fixed my version of the patch.
 
-Since we're not currently using the scsi-postmerge tree, I haven't yet
-done a replacement for it.
+Thanks.
 
-The current tree tops are
-
-scsi-misc:
-
-  linus      ba8f318 m68k: fix __page_to_pfn for a const struct page argument
-  master     ebd1f64 [SCSI] scsi_dh_alua: Decrease retry interval
-  merge-base 7ca3c80 [SCSI] qla2xxx: Update version number to 8.03.07.07-k.
-
-scsi-fixes:
-
-  linus  003f6c9 lib/sha1.c: quiet sparse noise about symbol not declared
-  master 610602f [SCSI] bnx2i: Fixed the endian on TTT for NOP out transmission
-
-Could you add these to linux-next, please (until master comes back at least)?
-
-For SCSI people, I still don't have any machinery for notifications or
-an ftp site for the combined patch sets and change logs yet.  When I get
-that sorted out, I'll begin adding commits again.
-
-Thanks,
-
-James
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
