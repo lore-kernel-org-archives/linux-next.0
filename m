@@ -1,42 +1,33 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Subject: Re: linux-next: build failure after merge of the xen tree
-Date: Thu, 15 Sep 2011 02:10:46 -0700
-Message-ID: <4E71C116.4080400@goop.org>
-References: <20110915152723.b3bdd6a5478c810245fabca1@canb.auug.org.au>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: linux-next: manual merge of the xfs tree with Linus' tree
+Date: Thu, 15 Sep 2011 07:05:27 -0400
+Message-ID: <20110915110527.GA5955@infradead.org>
+References: <20110915123031.104554f51c7642451fc31434@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from claw.goop.org ([74.207.240.146]:38890 "EHLO claw.goop.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755480Ab1IOJKr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Sep 2011 05:10:47 -0400
-In-Reply-To: <20110915152723.b3bdd6a5478c810245fabca1@canb.auug.org.au>
+Received: from 173-166-109-252-newengland.hfc.comcastbusiness.net ([173.166.109.252]:35383
+	"EHLO bombadil.infradead.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S933075Ab1IOLFg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Sep 2011 07:05:36 -0400
+Content-Disposition: inline
+In-Reply-To: <20110915123031.104554f51c7642451fc31434@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
 
-On 09/14/2011 10:27 PM, Stephen Rothwell wrote:
+On Thu, Sep 15, 2011 at 12:30:31PM +1000, Stephen Rothwell wrote:
 > Hi all,
->
-> After merging the xen tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->
-> arch/x86/xen/time.c: In function 'xen_set_wallclock':
-> arch/x86/xen/time.c:204:25: error: storage size of 'op' isn't known
-> arch/x86/xen/time.c:211:11: error: 'XENPF_settime' undeclared (first
-use in this function)
-> arch/x86/xen/time.c:211:11: note: each undeclared identifier is
-reported only once for each function it appears in
-> arch/x86/xen/time.c:216:2: error: implicit declaration of function
-'HYPERVISOR_dom0_op'
-> arch/x86/xen/time.c:204:25: warning: unused variable 'op'
->
-> Caused by commit 7b11a83f592a ("xen/dom0: set wallclock time in Xen").
->
-> I have used teh xen tree from next-20110914 for today.
+> 
+> Today's linux-next merge of the xfs tree got a conflict in
+> fs/xfs/xfs_aops.c between commit 2d2422aebc03 ("xfs: fix a use after free
+> in xfs_end_io_direct_write") from Linus' tree and commit a826361aa4af
+> ("xfs: defer AIO/DIO completions") from the xfs tree.
+> 
+> The latter moves this code to another function (better solution?), so I
+> used the latter version.
 
-Thanks, I'll drop that for now.
-
-    J
+Yes, the mainline version is a quick fix for the use after free, the
+linux-next version fixes this by changing the broader scope.
