@@ -1,61 +1,84 @@
-From: Mike Christie <michaelc@cs.wisc.edu>
-Subject: Re: [PATCH] scsi: qla4xxx needs libiscsi.o
-Date: Thu, 15 Sep 2011 16:41:41 -0500
-Message-ID: <4E727115.8060603@cs.wisc.edu>
-References: <20110831150137.acb3b3805bd599ac57ce96c8@canb.auug.org.au> <20110831150200.54bec12e.rdunlap@xenotime.net>
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (security tree related)
+Date: Thu, 15 Sep 2011 18:03:51 -0400
+Message-ID: <1316124231.3345.29.camel@localhost.localdomain>
+References: <20110915170715.a380a5be954efc5891386ee3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20110831150200.54bec12e.rdunlap@xenotime.net>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, scsi <linux-scsi@vger.kernel.org>, iscsi-driver@qlogic.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, jejbscsi <jbottomley@parallels.com>, akpm <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e7.ny.us.ibm.com ([32.97.182.137]:55492 "EHLO e7.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S934111Ab1IOWDy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Sep 2011 18:03:54 -0400
+In-Reply-To: <20110915170715.a380a5be954efc5891386ee3@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/31/2011 05:02 PM, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
+On Thu, 2011-09-15 at 17:07 +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> qla4xxx driver needs to be linked with libiscsi.o to fix
-> build errors.  This happens when no other drivers that use
-> libiscsi.o are enabled.
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 > 
-> Found in linux-next but applies to mainline also.
+> security/keys/encrypted-keys/masterkey_trusted.c: In function 'request_trusted_key':
+> security/keys/encrypted-keys/masterkey_trusted.c:35:2: error: implicit declaration of function 'IS_ERR'
 > 
-> ERROR: "iscsi_conn_stop" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_conn_get_addr_param" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_session_teardown" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_host_alloc" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_conn_start" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_conn_send_pdu" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_session_get_param" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_conn_get_param" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_set_param" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_session_failure" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_complete_pdu" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_session_setup" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_conn_bind" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_conn_setup" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
-> ERROR: "iscsi_itt_to_task" [drivers/scsi/qla4xxx/qla4xxx.ko] undefined!
+> Caused by commit 982e617a313b ("encrypted-keys: remove trusted-keys
+> dependency").  Forgot to include linux/err.h.  See Rule 1 in
+> Documentation/SubmitChecklist.
 > 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> I have applied the following patch for today.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 15 Sep 2011 17:03:09 +1000
+> Subject: [PATCH] encrypted-keys: IS_ERR need include/err.h
+> 
+> Fixes this build error:
+> 
+> security/keys/encrypted-keys/masterkey_trusted.c: In function 'request_trusted_key':
+> security/keys/encrypted-keys/masterkey_trusted.c:35:2: error: implicit declaration of function 'IS_ERR'
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  drivers/scsi/Makefile |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  security/keys/encrypted-keys/masterkey_trusted.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
 > 
-> --- linux-next-20110831.orig/drivers/scsi/Makefile
-> +++ linux-next-20110831/drivers/scsi/Makefile
-> @@ -88,7 +88,7 @@ obj-$(CONFIG_SCSI_QLOGIC_FAS)	+= qlogicf
->  obj-$(CONFIG_PCMCIA_QLOGIC)	+= qlogicfas408.o
->  obj-$(CONFIG_SCSI_QLOGIC_1280)	+= qla1280.o 
->  obj-$(CONFIG_SCSI_QLA_FC)	+= qla2xxx/
-> -obj-$(CONFIG_SCSI_QLA_ISCSI)	+= qla4xxx/
-> +obj-$(CONFIG_SCSI_QLA_ISCSI)	+= libiscsi.o qla4xxx/
->  obj-$(CONFIG_SCSI_LPFC)		+= lpfc/
->  obj-$(CONFIG_SCSI_BFA_FC)	+= bfa/
->  obj-$(CONFIG_SCSI_PAS16)	+= pas16.o
+> diff --git a/security/keys/encrypted-keys/masterkey_trusted.c b/security/keys/encrypted-keys/masterkey_trusted.c
+> index a5da512..df87272 100644
+> --- a/security/keys/encrypted-keys/masterkey_trusted.c
+> +++ b/security/keys/encrypted-keys/masterkey_trusted.c
+> @@ -16,6 +16,7 @@
+> 
+>  #include <linux/uaccess.h>
+>  #include <linux/module.h>
+> +#include <linux/err.h>
+>  #include <keys/trusted-type.h>
+> 
+>  /*
+> -- 
+> 1.7.5.4
 
+Thanks Stephen.  James, assuming that the patch needs to be made
+available from the security tree, it's available from:
 
-Sorry. Mixed this patch up with the other one sent that day. Looks ok.
+The following changes since commit 8de6ac7f58a22fdab399fbe97763e465ea49c735:
 
-Reviewed-by: Mike Christie <michaelc@cs.wisc.edu>
+  Merge branch 'next-evm' of git://github.com/mzohar/linux-evm into next (2011-09-15 09:53:38 +1000)
+
+are available in the git repository at:
+
+  git://github.com/mzohar/linux-evm.git next-for-james
+
+Stephen Rothwell (1):
+      encrypted-keys: IS_ERR need include/err.h
+
+ security/keys/encrypted-keys/masterkey_trusted.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+thanks,
+
+Mimi
