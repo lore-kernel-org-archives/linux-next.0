@@ -1,70 +1,42 @@
-From: Helmut Schaa <helmut.schaa@googlemail.com>
-Subject: Re: linux-next: manual merge of the wireless tree with Linus' tree
-Date: Thu, 15 Sep 2011 09:17:07 +0200
-Message-ID: <CAGXE3d_eBtgwdxcvzVTmxCJvNbNoTQ5YM9jRi7-6+8NW=hRVog@mail.gmail.com>
-References: <20110915131453.7ce8c4e9d6d1bcd7f8ade995@canb.auug.org.au>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: build failure after merge of the xen tree
+Date: Thu, 15 Sep 2011 02:10:46 -0700
+Message-ID: <4E71C116.4080400@goop.org>
+References: <20110915152723.b3bdd6a5478c810245fabca1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw0-f42.google.com ([74.125.83.42]:52404 "EHLO
-	mail-gw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754316Ab1IOHRH convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Sep 2011 03:17:07 -0400
-In-Reply-To: <20110915131453.7ce8c4e9d6d1bcd7f8ade995@canb.auug.org.au>
+Received: from claw.goop.org ([74.207.240.146]:38890 "EHLO claw.goop.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755480Ab1IOJKr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Sep 2011 05:10:47 -0400
+In-Reply-To: <20110915152723.b3bdd6a5478c810245fabca1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 15, 2011 at 5:14 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Today's linux-next merge of the wireless tree got a conflict in
-> drivers/net/wireless/rt2x00/rt2800usb.c between commit 674db1344443
-> ("rt2x00: fix crash in rt2800usb_get_txwi") from Linus' tree and comm=
-it
-> 31937c423ed3 ("rt2x00: Minor optimizazion in txdone path") from the
-> wireless tree.
+On 09/14/2011 10:27 PM, Stephen Rothwell wrote:
+> Hi all,
 >
-> I fixed it up (see below) anc can carry the fix as necessary.
+> After merging the xen tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>
+> arch/x86/xen/time.c: In function 'xen_set_wallclock':
+> arch/x86/xen/time.c:204:25: error: storage size of 'op' isn't known
+> arch/x86/xen/time.c:211:11: error: 'XENPF_settime' undeclared (first
+use in this function)
+> arch/x86/xen/time.c:211:11: note: each undeclared identifier is
+reported only once for each function it appears in
+> arch/x86/xen/time.c:216:2: error: implicit declaration of function
+'HYPERVISOR_dom0_op'
+> arch/x86/xen/time.c:204:25: warning: unused variable 'op'
+>
+> Caused by commit 7b11a83f592a ("xen/dom0: set wallclock time in Xen").
+>
+> I have used teh xen tree from next-20110914 for today.
 
-=46ix looks good to me.
+Thanks, I'll drop that for now.
 
-Thanks,
-Helmut
-
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
->
-> diff --cc drivers/net/wireless/rt2x00/rt2800usb.c
-> index dbf501c,4b907a5..0000000
-> --- a/drivers/net/wireless/rt2x00/rt2800usb.c
-> +++ b/drivers/net/wireless/rt2x00/rt2800usb.c
-> @@@ -538,11 -529,13 +538,12 @@@ static void rt2800usb_txdone(struct r=
-t2
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0entry =3D rt2x00queue_=
-get_entry(queue, Q_INDEX_DONE);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (rt2800usb_txdone_e=
-ntry_check(entry, reg))
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
-> =A0+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0entry =3D NULL;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
->
-> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0if (!entry || rt2x00queue_empty(queue=
-))
-> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
-> =A0-
-> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0rt2800_txdone_entry(entry, reg,
-> =A0+ =A0 =A0 =A0 =A0 =A0 =A0 =A0if (entry)
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 rt2800_txdone_entry(ent=
-ry, reg);
-> ++ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0rt2800_txdone_entry(ent=
-ry, reg,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- rt2800usb_get_txwi(entry));
-> =A0 =A0 =A0 =A0}
-> =A0}
->
->
+    J
