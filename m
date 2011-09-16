@@ -1,59 +1,123 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Temporary location for some of the SCSI trees
-Date: Fri, 16 Sep 2011 10:57:20 +1000
-Message-ID: <20110916105720.3d852aa5419255f6d7a20fe2@canb.auug.org.au>
-References: <1316101053.2983.42.camel@dabdike.hansenpartnership.com>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Fri, 16 Sep 2011 13:55:23 +1000
+Message-ID: <20110916135523.01ec57f699192230272e99e3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__16_Sep_2011_10_57_20_+1000_JPNNZ4YEY/0rDegH"
+ boundary="Signature=_Fri__16_Sep_2011_13_55_23_+1000_+GhZUq.W250F8fv7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:46234 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:54765 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750868Ab1IPA51 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Sep 2011 20:57:27 -0400
-In-Reply-To: <1316101053.2983.42.camel@dabdike.hansenpartnership.com>
+	with ESMTP id S1751780Ab1IPDze (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Sep 2011 23:55:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
 
---Signature=_Fri__16_Sep_2011_10_57_20_+1000_JPNNZ4YEY/0rDegH
+--Signature=_Fri__16_Sep_2011_13_55_23_+1000_+GhZUq.W250F8fv7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi Samuel,
 
-On Thu, 15 Sep 2011 10:37:33 -0500 James Bottomley <James.Bottomley@HansenP=
-artnership.com> wrote:
->
-> I've relocated the scsi-rc-fixes and scsi-misc trees on to my own
-> infrastructure while master.kernel.org is down.  The locations are:
->=20
-> git://bedivere.hansenpartnership.com/git/scsi-rc-fixes-2.6.git
-> git://bedivere.hansenpartnership.com/git/scsi-misc-2.6.git
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-OK, I will swicth to these trees from today.
+drivers/leds/leds-mc13783.c: In function 'mc13783_leds_prepare':
+drivers/leds/leds-mc13783.c:193:11: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:196:11: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:203:14: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:206:11: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:213:14: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:216:11: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:223:14: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:226:11: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:233:14: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:236:11: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:244:11: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:246:11: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:248:11: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:250:11: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:253:15: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:255:15: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c: In function 'mc13783_led_probe':
+drivers/leds/leds-mc13783.c:278:11: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:278:34: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:279:54: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:283:36: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:295:23: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:297:19: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:299:14: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:299:47: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:300:50: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:305:31: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:307:13: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:312:27: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:313:31: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:314:42: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:317:24: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c:329:43: error: dereferencing pointer to incompl=
+ete type
+drivers/leds/leds-mc13783.c: In function 'mc13783_led_remove':
+drivers/leds/leds-mc13783.c:359:23: error: dereferencing pointer to incompl=
+ete type
+
+Presumably caused by commit 747c98a3660d ("leds: Convert mc13783 driver
+to mc13xxx MFD").
+
+I have used the mfd tree from next-20110915 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__16_Sep_2011_10_57_20_+1000_JPNNZ4YEY/0rDegH
+--Signature=_Fri__16_Sep_2011_13_55_23_+1000_+GhZUq.W250F8fv7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOcp7wAAoJEDMEi1NhKgbsYiwH/3EzoCvC9TWohZK6sCA0q3eB
-zLqFeas7bxpP95YLryokYTsXfivBQJoSWhjmBWre0YPQp8jU8Z+Bpy/pYEI/MJSU
-TW1lPIxgnyvXdZ3kLiaAOUmhcMuhT456nOQdJHmKVUCPkHY5KTRTTaIbv5eo1Dfx
-K9pARHvmEjiz3NOs2IBllci56vWDf/2t5HXBS9w5fKxzQb4ooDjTfnoTAIwalgnR
-oK5iTdHe/3XucqsCPKTp/lFIqq8YnbvS3u1AyiuWacMy37i+JjZLmV3vQQILlr15
-IM2TCAUHNx1PYHwFcsriN6a/NnS1wwl6zyFdw6tdXKgYz1nG2DTZPYoSgkjZv1A=
-=zUm/
+iQEcBAEBAgAGBQJOcsirAAoJEDMEi1NhKgbs+bwH/04tKgwKXzdQpk3jMjF9D0gg
+EACSTHlnDkpcAK+qcjevlASbB5mhM5GyvIMwNOBcb8HY4dQH+3TrX4UfTuCQA9xN
+DH3eycw3TINGfhej+/5cbNEJNORKEBkJcILCq0n6toBBzcPtXHQFdrjiZxBc0BEO
+UqH/tjb9GKeeOKPuRShBZQrIXSd5MLWUs0vYjNQYRiPNNI37SFOBJTHRIGf3Lqqw
+9j5y9BaJDvDKd7b5z15KtGscxFgOQW3NjdSZCkYJvQWCU0jQQ9zxfIUUBInO0EFH
+iosJUYW5S0MNwBFPyrmTXwfFBCHELVBbL+Fy9Ei7FaWdysBJn9I/M1xl8EChzX0=
+=1VzZ
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__16_Sep_2011_10_57_20_+1000_JPNNZ4YEY/0rDegH--
+--Signature=_Fri__16_Sep_2011_13_55_23_+1000_+GhZUq.W250F8fv7--
