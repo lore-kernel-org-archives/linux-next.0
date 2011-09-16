@@ -1,116 +1,58 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Fri, 16 Sep 2011 09:16:38 +0200
-Message-ID: <20110916071638.GJ11297@pengutronix.de>
+Date: Fri, 16 Sep 2011 18:39:48 +1000
+Message-ID: <20110916183948.592834d36dfa9871b994fb74@canb.auug.org.au>
 References: <20110916135523.01ec57f699192230272e99e3@canb.auug.org.au>
+	<20110916071638.GJ11297@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:41520 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753154Ab1IPHQm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Sep 2011 03:16:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20110916135523.01ec57f699192230272e99e3@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__16_Sep_2011_18_39_48_+1000_Vx=.WIOgQHqAPexp"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110916071638.GJ11297@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
 Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>
+List-Id: linux-next.vger.kernel.org
 
-Hello Stephen,
+--Signature=_Fri__16_Sep_2011_18_39_48_+1000_Vx=.WIOgQHqAPexp
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 16, 2011 at 01:55:23PM +1000, Stephen Rothwell wrote:
-> After merging the mfd tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
->=20
-> drivers/leds/leds-mc13783.c: In function 'mc13783_leds_prepare':
-> drivers/leds/leds-mc13783.c:193:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:196:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:203:14: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:206:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:213:14: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:216:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:223:14: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:226:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:233:14: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:236:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:244:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:246:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:248:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:250:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:253:15: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:255:15: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c: In function 'mc13783_led_probe':
-> drivers/leds/leds-mc13783.c:278:11: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:278:34: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:279:54: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:283:36: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:295:23: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:297:19: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:299:14: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:299:47: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:300:50: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:305:31: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:307:13: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:312:27: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:313:31: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:314:42: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:317:24: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c:329:43: error: dereferencing pointer to i=
-ncomplete type
-> drivers/leds/leds-mc13783.c: In function 'mc13783_led_remove':
-> drivers/leds/leds-mc13783.c:359:23: error: dereferencing pointer to i=
-ncomplete type
->=20
-> Presumably caused by commit 747c98a3660d ("leds: Convert mc13783 driv=
-er
-> to mc13xxx MFD").
->=20
-> I have used the mfd tree from next-20110915 for today.
-I'd look into the issue, but I don't have 747c98a3660d and I don't know
-where to get it from. IMHO it would be great if you could push your nex=
-t
-tree somewhere.
+Hi Uwe,
 
-Best regards
-Uwe
+On Fri, 16 Sep 2011 09:16:38 +0200 Uwe Kleine-K=C3=B6nig <u.kleine-koenig@p=
+engutronix.de> wrote:
+>
+> > Presumably caused by commit 747c98a3660d ("leds: Convert mc13783 driver
+> > to mc13xxx MFD").
+> >=20
+> > I have used the mfd tree from next-20110915 for today.
+> I'd look into the issue, but I don't have 747c98a3660d and I don't know
+> where to get it from. IMHO it would be great if you could push your next
+> tree somewhere.
 
+Well, you can get it from the mfd tree (branch for-next of
+git://git.infradead.org/users/sameo/mfd-2.6.git).
 --=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__16_Sep_2011_18_39_48_+1000_Vx=.WIOgQHqAPexp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOcwtUAAoJEDMEi1NhKgbsM8MH/2w+jXcIUNvoHrlmIT8yFKMS
+i+2Y8uMs+zYf/QxO4bGH/Nt60i51xNVabugpxstulYDaNJ9qdaq8sXBdX0IwAuSx
+ZvJFDfwSTMddtmgJ9jW2OS6J6+tXciV32FWQDXXG7Wkgv4iTov4NJwSBEZWeWfDC
+rOGlEp0MaG7qYiRW9ipYDPLN4tHM7at742gKsJ0y85HyE5O4iFnBubVMzTWMpFhr
+6fRF6hfJEh7HSjBbv6eoWxvXdV4GpI1m+4trLHY/X2qL3tRJdZIt5n4oaqrATD45
+h4hhPKCwnYP8gYqd7Hbi7G+NRwNQ+LI3j3DhO9SsEz2Rp/Hr8yqWgezLTZrZg7I=
+=X63i
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__16_Sep_2011_18_39_48_+1000_Vx=.WIOgQHqAPexp--
