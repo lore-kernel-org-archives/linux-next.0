@@ -1,43 +1,59 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: linux-next: build failure after merge of the final tree (security
- tree related)
-Date: Fri, 16 Sep 2011 10:51:06 +1000 (EST)
-Message-ID: <alpine.LRH.2.00.1109161050430.31572@tundra.namei.org>
-References: <20110915170715.a380a5be954efc5891386ee3@canb.auug.org.au> <1316124231.3345.29.camel@localhost.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Temporary location for some of the SCSI trees
+Date: Fri, 16 Sep 2011 10:57:20 +1000
+Message-ID: <20110916105720.3d852aa5419255f6d7a20fe2@canb.auug.org.au>
+References: <1316101053.2983.42.camel@dabdike.hansenpartnership.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__16_Sep_2011_10_57_20_+1000_JPNNZ4YEY/0rDegH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:34451 "EHLO tundra.namei.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750957Ab1IPAvO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Sep 2011 20:51:14 -0400
-In-Reply-To: <1316124231.3345.29.camel@localhost.localdomain>
+Received: from calzone.tip.net.au ([203.10.76.15]:46234 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750868Ab1IPA51 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Sep 2011 20:57:27 -0400
+In-Reply-To: <1316101053.2983.42.camel@dabdike.hansenpartnership.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 
-On Thu, 15 Sep 2011, Mimi Zohar wrote:
+--Signature=_Fri__16_Sep_2011_10_57_20_+1000_JPNNZ4YEY/0rDegH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Thanks Stephen.  James, assuming that the patch needs to be made
-> available from the security tree, it's available from:
-> 
-> The following changes since commit 8de6ac7f58a22fdab399fbe97763e465ea49c735:
-> 
->   Merge branch 'next-evm' of git://github.com/mzohar/linux-evm into next (2011-09-15 09:53:38 +1000)
-> 
-> are available in the git repository at:
-> 
->   git://github.com/mzohar/linux-evm.git next-for-james
-> 
-> Stephen Rothwell (1):
->       encrypted-keys: IS_ERR need include/err.h
-> 
->  security/keys/encrypted-keys/masterkey_trusted.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+Hi James,
 
-Pulled, thanks.
+On Thu, 15 Sep 2011 10:37:33 -0500 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> I've relocated the scsi-rc-fixes and scsi-misc trees on to my own
+> infrastructure while master.kernel.org is down.  The locations are:
+>=20
+> git://bedivere.hansenpartnership.com/git/scsi-rc-fixes-2.6.git
+> git://bedivere.hansenpartnership.com/git/scsi-misc-2.6.git
 
--- 
-James Morris
-<jmorris@namei.org>
+OK, I will swicth to these trees from today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__16_Sep_2011_10_57_20_+1000_JPNNZ4YEY/0rDegH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOcp7wAAoJEDMEi1NhKgbsYiwH/3EzoCvC9TWohZK6sCA0q3eB
+zLqFeas7bxpP95YLryokYTsXfivBQJoSWhjmBWre0YPQp8jU8Z+Bpy/pYEI/MJSU
+TW1lPIxgnyvXdZ3kLiaAOUmhcMuhT456nOQdJHmKVUCPkHY5KTRTTaIbv5eo1Dfx
+K9pARHvmEjiz3NOs2IBllci56vWDf/2t5HXBS9w5fKxzQb4ooDjTfnoTAIwalgnR
+oK5iTdHe/3XucqsCPKTp/lFIqq8YnbvS3u1AyiuWacMy37i+JjZLmV3vQQILlr15
+IM2TCAUHNx1PYHwFcsriN6a/NnS1wwl6zyFdw6tdXKgYz1nG2DTZPYoSgkjZv1A=
+=zUm/
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__16_Sep_2011_10_57_20_+1000_JPNNZ4YEY/0rDegH--
