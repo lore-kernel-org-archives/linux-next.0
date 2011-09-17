@@ -1,181 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Sat, 17 Sep 2011 21:18:47 +1000
-Message-ID: <20110917211847.d6e0e401b06707eacccdf1c3@canb.auug.org.au>
+From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Subject: git tree URL for IEEE 1394 (FireWire) kernel subsystem
+Date: Sat, 17 Sep 2011 19:47:57 +0200
+Message-ID: <20110917194757.2f561324@stein>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__17_Sep_2011_21_18_47_+1000_/sc5siKLc5uUrSw8"
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/yvNUBuTSe.W+h=Mip48AavS"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:54966 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751260Ab1IQLS6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Sep 2011 07:18:58 -0400
+Received: from einhorn.in-berlin.de ([192.109.42.8]:44668 "EHLO
+	einhorn.in-berlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752277Ab1IQRs3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Sep 2011 13:48:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Bradshaw <sbradshaw@micron.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
---Signature=_Sat__17_Sep_2011_21_18_47_+1000_/sc5siKLc5uUrSw8
+--Sig_/yvNUBuTSe.W+h=Mip48AavS
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Stephen,
 
-After merging the block tree, today's linux-next build (i386 allmodconfig)
-failed like this:
+please switch the ieee1394/for-next pull URL to
 
-drivers/block/mtip32xx/mtip32xx.c:95: error: expected specifier-qualifier-l=
-ist before 'compat_ulong_t'
-drivers/block/mtip32xx/mtip32xx.c: In function 'exec_drive_taskfile':
-drivers/block/mtip32xx/mtip32xx.c:1631: warning: cast from pointer to integ=
-er of different size
-drivers/block/mtip32xx/mtip32xx.c:1632: warning: cast from pointer to integ=
-er of different size
-drivers/block/mtip32xx/mtip32xx.c:1633: warning: cast from pointer to integ=
-er of different size
-drivers/block/mtip32xx/mtip32xx.c:1658: error: 'compat_long_t' undeclared (=
-first use in this function)
-drivers/block/mtip32xx/mtip32xx.c:1658: error: (Each undeclared identifier =
-is reported only once
-drivers/block/mtip32xx/mtip32xx.c:1658: error: for each function it appears=
- in.)
-drivers/block/mtip32xx/mtip32xx.c:1663: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1663: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1663: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1663: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1663: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1663: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1663: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1663: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1668: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1668: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1668: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1668: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1668: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1668: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1668: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1668: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1708: warning: cast from pointer to integ=
-er of different size
-drivers/block/mtip32xx/mtip32xx.c:1729: warning: cast from pointer to integ=
-er of different size
-drivers/block/mtip32xx/mtip32xx.c:1871: warning: cast from pointer to integ=
-er of different size
-drivers/block/mtip32xx/mtip32xx.c:1872: warning: cast from pointer to integ=
-er of different size
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1922: warning: type defaults to 'int' in =
-declaration of '__pu_val'
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1922: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1922: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1922: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1922: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1922: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1922: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'out_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: warning: type defaults to 'int' in =
-declaration of '__pu_val'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
-drivers/block/mtip32xx/mtip32xx.c:1927: warning: type defaults to 'int' in =
-declaration of 'type name'
-drivers/block/mtip32xx/mtip32xx.c:1927: error: 'struct mtip_compat_ide_task=
-_request_s' has no member named 'in_size'
+    git://git.user.in-berlin.de/s5r6/linux1394.git for-next
 
-Caused by commit 49fdf3a7c4cf ("block: Add driver for Micron RealSSD pcie
-flash cards").  Sorry I didn't spot it earlier ...
+until kernel.org springs back into action.  Thanks.
+Current contents relative to mainline:
 
-This driver assumes CONFIG_COMPAT is set.
+Ming Lei (1):
+      firewire: ohci: add no MSI quirk for O2Micro controller
+
+Stefan Richter (3):
+      firewire: sbp2: remove obsolete reference counting
+      firewire: sbp2: move some code to more sensible places
+      firewire: sbp2: fold two functions into one
+
+Stephan Gatzka (2):
+      firewire: ohci: Move code from the bus reset tasklet into a workqueue
+      firewire: ohci: Add support for TSB41BA3D phy
+
+ drivers/firewire/ohci.c |  206 ++++++++++++++++++++++++++++++++++++--
+ drivers/firewire/sbp2.c |  256 +++++++++++++++++++++----------------------=
+----
+ 2 files changed, 308 insertions(+), 154 deletions(-)
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Stefan Richter
+-=3D=3D=3D=3D=3D-=3D=3D-=3D=3D =3D--=3D =3D---=3D
+http://arcgraph.de/sr/
 
---Signature=_Sat__17_Sep_2011_21_18_47_+1000_/sc5siKLc5uUrSw8
-Content-Type: application/pgp-signature
+--Sig_/yvNUBuTSe.W+h=Mip48AavS
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Version: GnuPG v2.0.17 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOdIIXAAoJEDMEi1NhKgbsBnEIAJbNym2DIe3Kntwll3kF8nzr
-nTIZ8+PoComMbcb7NdkALVyvVWtSF3HEMPVEjzEH7MKUE90CGkVfxbeYXsHjpt3O
-NCjSdT7xUzl7Jzetu3wj8CtwLWWkI7V+vGwXmNrSzOnbdzlXhucPuNzEIWtprnIJ
-FxnxKU7nr5g0PrNDBWN10/bGgtfQs/LmwxuRQs4YBCLNMdB0ka3rQu+zyafJw3U/
-Lkquybx6QRCeIEK84+ZrRSxPbsnG4gynWZ1WalmQyrt0O/ObCDidO8O9dtkuiNRh
-gK8MndkilRKs82XsrQ5joluB18N81P00YzGqi6GPb0o1aR5+sv+zEdOWuAgbEFM=
-=qS3/
+iEYEARECAAYFAk503VIACgkQLjmasfpVluyKegCffd6ThUIH1UmKw7n2kRFmH9NJ
+9zoAmgLQYXIVZYUruu5v5K9jwdAGa8nw
+=qB2S
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__17_Sep_2011_21_18_47_+1000_/sc5siKLc5uUrSw8--
+--Sig_/yvNUBuTSe.W+h=Mip48AavS--
