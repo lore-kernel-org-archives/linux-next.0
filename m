@@ -1,64 +1,51 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Subject: git tree URL for IEEE 1394 (FireWire) kernel subsystem
-Date: Sat, 17 Sep 2011 19:47:57 +0200
-Message-ID: <20110917194757.2f561324@stein>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: temporary github repository
+Date: Sun, 18 Sep 2011 21:25:35 +1000
+Message-ID: <20110918212535.a1038aa5f0caad9d83e351b2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/yvNUBuTSe.W+h=Mip48AavS"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__18_Sep_2011_21_25_35_+1000_x=rJqpO=a5VG9HE/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from einhorn.in-berlin.de ([192.109.42.8]:44668 "EHLO
-	einhorn.in-berlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752277Ab1IQRs3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Sep 2011 13:48:29 -0400
+Received: from calzone.tip.net.au ([203.10.76.15]:58276 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751643Ab1IRLZp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Sep 2011 07:25:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Sig_/yvNUBuTSe.W+h=Mip48AavS
+--Signature=_Sun__18_Sep_2011_21_25_35_+1000_x=rJqpO=a5VG9HE/
 Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Stephen,
+Hi all,
 
-please switch the ieee1394/for-next pull URL to
+Since kernel.org has not returned yet, I have created a temporary
+repository on github that will contain linux-next until the kernel.org
+servers return. You can access it at
+git://github.com/sfrothwell/linux-next.git
 
-    git://git.user.in-berlin.de/s5r6/linux1394.git for-next
-
-until kernel.org springs back into action.  Thanks.
-Current contents relative to mainline:
-
-Ming Lei (1):
-      firewire: ohci: add no MSI quirk for O2Micro controller
-
-Stefan Richter (3):
-      firewire: sbp2: remove obsolete reference counting
-      firewire: sbp2: move some code to more sensible places
-      firewire: sbp2: fold two functions into one
-
-Stephan Gatzka (2):
-      firewire: ohci: Move code from the bus reset tasklet into a workqueue
-      firewire: ohci: Add support for TSB41BA3D phy
-
- drivers/firewire/ohci.c |  206 ++++++++++++++++++++++++++++++++++++--
- drivers/firewire/sbp2.c |  256 +++++++++++++++++++++----------------------=
-----
- 2 files changed, 308 insertions(+), 154 deletions(-)
 --=20
-Stefan Richter
--=3D=3D=3D=3D=3D-=3D=3D-=3D=3D =3D--=3D =3D---=3D
-http://arcgraph.de/sr/
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Sig_/yvNUBuTSe.W+h=Mip48AavS
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+--Signature=_Sun__18_Sep_2011_21_25_35_+1000_x=rJqpO=a5VG9HE/
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.17 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iEYEARECAAYFAk503VIACgkQLjmasfpVluyKegCffd6ThUIH1UmKw7n2kRFmH9NJ
-9zoAmgLQYXIVZYUruu5v5K9jwdAGa8nw
-=qB2S
+iQEcBAEBAgAGBQJOddUvAAoJEDMEi1NhKgbs/2YH/23l4i4hqwCkCV03yR/whcKc
+kK4RxxM9VotabY/6L4Rbwe4581+qHJ7FDHTATUiAQWAK+tM0yeODlYOCYnp/X8is
+LDrJyqALYQ/Iwfy/Ai0UE5EeEKNxGDAKkDvtjzrbDvZ4ePSJVLCJvb8AyriN1y0r
+UoDwHXn67eTv/ih+9EczaITVCIWIVrA4NdOeZYcbbDGUipYhjsmJHD5S1G4BEZnM
+yZycHOibuRdFrkNniPCxfSE7VM/+MuSLOLx7swpzVMdWRmNAIuee5vRohaGWXWEo
+rKKIKM+iftjI+WJiTlPru9Y+21KfqEGcCBqHjAERV0KZcKKl06Ta6Ya6IioZ5nk=
+=1EgU
 -----END PGP SIGNATURE-----
 
---Sig_/yvNUBuTSe.W+h=Mip48AavS--
+--Signature=_Sun__18_Sep_2011_21_25_35_+1000_x=rJqpO=a5VG9HE/--
