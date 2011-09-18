@@ -1,39 +1,38 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Sun, 18 Sep 2011 19:15:15 +0200
-Message-ID: <20110918171515.GN32263@sortiz-mobl>
-References: <20110916135523.01ec57f699192230272e99e3@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: temporary github repository
+Date: Sun, 18 Sep 2011 19:53:22 +0200
+Message-ID: <201109181953.22763.rjw@sisk.pl>
+References: <20110918212535.a1038aa5f0caad9d83e351b2@canb.auug.org.au> <201109181518.35788.rjw@sisk.pl> <20110918233220.91733671ed4fd0ccbc7552f6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:36307 "EHLO mga14.intel.com"
+Received: from ogre.sisk.pl ([217.79.144.158]:40594 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755576Ab1IRRMd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 18 Sep 2011 13:12:33 -0400
-Content-Disposition: inline
-In-Reply-To: <20110916135523.01ec57f699192230272e99e3@canb.auug.org.au>
+	id S1755272Ab1IRRvO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 18 Sep 2011 13:51:14 -0400
+In-Reply-To: <20110918233220.91733671ed4fd0ccbc7552f6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>
 
-Hi Stephen,
-
-On Fri, Sep 16, 2011 at 01:55:23PM +1000, Stephen Rothwell wrote:
-> Hi Samuel,
+On Sunday, September 18, 2011, Stephen Rothwell wrote:
+> Hi Rafael,
 > 
-> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+> On Sun, 18 Sep 2011 15:18:35 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+> >
+> > OK, so the temporary location of the linux-pm tree's linux-next branch is at:
+> > 
+> > git://github.com/rjwysocki/linux-pm.git linux-next
 > 
-> drivers/leds/leds-mc13783.c: In function 'mc13783_leds_prepare':
-> drivers/leds/leds-mc13783.c:193:11: error: dereferencing pointer to incomplete type
->
+> I will switch to this from Monday, thanks.
+> 
+> Just checking that you intentionally dropped a merge of the pm-freezer
+> branch?
 
-This should be fixed now, thanks for the report.
+I did, since the original branch is unavailable along with git.kernel.org.
 
-Cheers,
-Samuel.
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+Thanks,
+Rafael
