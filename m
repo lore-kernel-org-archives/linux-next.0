@@ -1,69 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with Linus' tree
-Date: Mon, 19 Sep 2011 14:51:03 +1000
-Message-ID: <20110919145103.6c3e73edf51599eaa703294a@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with Linus' tree
+Date: Mon, 19 Sep 2011 15:14:34 +1000
+Message-ID: <20110919151434.e710fc8eb95675a2c6a278cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__19_Sep_2011_15_14_34_+1000_1/j1V+AgmZ/NpxIt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:33705 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:35151 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750736Ab1ISEvF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2011 00:51:05 -0400
+	with ESMTP id S1750865Ab1ISFOo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2011 01:14:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yaniv Rosner <yanivr@broadcom.com>, Eilon Greenstein <eilong@broadcom.com>, Joe Perches <joe@perches.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Luciano Coelho <coelho@ti.com>
 
-Hi all,
+--Signature=_Mon__19_Sep_2011_15_14_34_+1000_1/j1V+AgmZ/NpxIt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c between commit
-c482e6c06461 ("bnx2x: Fix ETS bandwidth") from Linus' tree and commit
-94f05b0f60de ("bnx2x: Coalesce pr_cont uses and fix DP typos") from the
-net tree.
+Hi John,
 
-The former removes the code cleaned up by the latter, so I used the
-former (see below).
--- 
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/wl12xx/main.c between commit 7a5e4877c14d ("wl12xx:
+add max_sched_scan_ssids value to the hw description") from Linus' tree
+and commit f952079a19c6 ("wl12xx: add support for multiple SSIDs in
+sched_scan") from the wireless tree.
+
+I used the version from the wireless tree.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-index ba15bdc,8e9b87b..0000000
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-@@@ -852,20 -852,26 +852,20 @@@ static int bnx2x_ets_e3b0_get_total_bw
-  	/* Calculate total BW requested */
-  	for (cos_idx = 0; cos_idx < ets_params->num_of_cos; cos_idx++) {
-  		if (bnx2x_cos_state_bw == ets_params->cos[cos_idx].state) {
- -
- -			if (0 == ets_params->cos[cos_idx].params.bw_params.bw) {
- -				DP(NETIF_MSG_LINK,
- -				   "bnx2x_ets_E3B0_config BW was set to 0\n");
- -			return -EINVAL;
- +			*total_bw +=
- +				ets_params->cos[cos_idx].params.bw_params.bw;
-  		}
- -		*total_bw +=
- -		    ets_params->cos[cos_idx].params.bw_params.bw;
- -	    }
-  	}
-  
- -	/*Check taotl BW is valid */
- +	/* Check total BW is valid */
-  	if ((100 != *total_bw) || (0 == *total_bw)) {
-  		if (0 == *total_bw) {
-- 			DP(NETIF_MSG_LINK, "bnx2x_ets_E3B0_config toatl BW"
-- 					   "shouldn't be 0\n");
-+ 			DP(NETIF_MSG_LINK,
-+ 			   "bnx2x_ets_E3B0_config toatl BW shouldn't be 0\n");
-  			return -EINVAL;
-  		}
-- 		DP(NETIF_MSG_LINK, "bnx2x_ets_E3B0_config toatl BW should be"
-- 				   "100\n");
-+ 		DP(NETIF_MSG_LINK,
-+ 		   "bnx2x_ets_E3B0_config toatl BW should be 100\n");
-  		/**
-  		*   We can handle a case whre the BW isn't 100 this can happen
-  		*   if the TC are joined.
+--Signature=_Mon__19_Sep_2011_15_14_34_+1000_1/j1V+AgmZ/NpxIt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOds+6AAoJEDMEi1NhKgbseQQH/2yQ96a1tBKntxo3indJVbfQ
+CK7iwim+jb1YUcchGfPNQsX3WFsW738pjXiUzKx03thbpgs9xf2mdMNs9VD7eyTY
+Yo6Eg9gL1pkBqPB3JQHrI5WphMJfDON+ZqiAZRRCsqWEgpj/DdrQ+bYquUuFajdI
+HJDb/ITRjEyX1HLDl3otzR4pcucx/ewzncoEj346lHqe+fZBwLzFLM56ZE8J8EHD
+EfolZOfUTOecMYXYNwLvnefaV0Pux0CkZF5wvw9JHyIRF2LtAA8k9w6H2Nmf/miQ
+o7uaQjUekQ8hxW1giNpXe9sN+hK1nJMP2+cLE+vcA6ifD7m6v9/uOopoMaTg/t4=
+=MIfS
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__19_Sep_2011_15_14_34_+1000_1/j1V+AgmZ/NpxIt--
