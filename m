@@ -1,46 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the fbdev tree with the mips tree
-Date: Mon, 19 Sep 2011 16:22:51 +1000
-Message-ID: <20110919162251.aa920a691f34b76d36acd61b@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the kernel-doc
+ tree
+Date: Mon, 19 Sep 2011 16:39:46 +1000
+Message-ID: <20110919163946.9165592b447bf5b578146f83@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__19_Sep_2011_16_39_46_+1000_+H9DPu6XkZ52IM+g"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Manuel Lauss <manuel.lauss@googlemail.com>, Ralf Baechle <ralf@linux-mips.org>, Paul Mundt <lethal@linux-sh.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amos Kong <kongjianjun@gmail.com>, Randy Dunlap <rdunlap@xenotime.net>, Paul Bolle <pebolle@tiscali.nl>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+--Signature=_Mon__19_Sep_2011_16_39_46_+1000_+H9DPu6XkZ52IM+g
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the fbdev tree got a conflict in
-drivers/video/Kconfig between commit 9d7dec27ace1 ("MIPS: Alchemy: remove
-all CONFIG_SOC_AU1??? defines") from the mips tree and commit
-4ee584615102 ("au1200fb: switch to FB_SYS helpers") from the fbdev tree.
+Hi Jiri,
 
-Just context changes. I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+Today's linux-next merge of the trivial tree got a conflict in
+Documentation/PCI/pci.txt between commit b814f0357fbe
+("Documentation/PCI/pci.txt: fix a reference doc name") from the
+kernel-doc tree and commit c460578a674f ("Documentation: fix broken
+references") from the trivial tree.
+
+It looks like the former supercedes the latter, so I used that.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/video/Kconfig
-index 55a7df4,8165c55..0000000
---- a/drivers/video/Kconfig
-+++ b/drivers/video/Kconfig
-@@@ -1755,10 -1764,11 +1764,11 @@@ config FB_AU110
-  
-  config FB_AU1200
-  	bool "Au1200 LCD Driver"
- -	depends on (FB = y) && MIPS && SOC_AU1200
- +	depends on (FB = y) && MIPS_ALCHEMY
-- 	select FB_CFB_FILLRECT
-- 	select FB_CFB_COPYAREA
-- 	select FB_CFB_IMAGEBLIT
-+ 	select FB_SYS_FILLRECT
-+ 	select FB_SYS_COPYAREA
-+ 	select FB_SYS_IMAGEBLIT
-+ 	select FB_SYS_FOPS
-  	help
-  	  This is the framebuffer driver for the AMD Au1200 SOC.  It can drive
-  	  various panels and CRTs by passing in kernel cmd line option
+--Signature=_Mon__19_Sep_2011_16_39_46_+1000_+H9DPu6XkZ52IM+g
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOduOyAAoJEDMEi1NhKgbsbyMH/0iCWlJSP0Xm5ISJr7sFhbOv
+uagqQeT1QgvURCRXmEezDn/wrYX0rDF9NXXdDnDo/Gx2TD+CGRd0ogpwR0KQ9Uqf
+3/YQBZAFoWVmojo81bEUlkG4GEzD51hiHctzLjvV0n00S5YuPSMU06cyAf6HkErI
+RwYqCtG8VfNVGFOdOKSeWn1rcuLR3dimXUa+H9+lOK1s+KwcCKvDRZ+CAH2xTvyk
+x7O4heFLWp3tkUsZtxP9jQ25kFEXepAOyuXhgdE0WktnHIMN03OXx2ZFMvVIlSsY
+VByodsu2XpHxtdDDUKAxY/y+eXYEsb6qO+1UVgXA+QSsW3nFLiECZqgJgGvjCLg=
+=N59e
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__19_Sep_2011_16_39_46_+1000_+H9DPu6XkZ52IM+g--
