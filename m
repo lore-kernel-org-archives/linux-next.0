@@ -1,56 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
- (origin/net-current tree related)
-Date: Mon, 19 Sep 2011 18:35:49 +1000
-Message-ID: <20110919183549.765331241abb61e22418c69a@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (input tree
+ related)
+Date: Mon, 19 Sep 2011 18:46:21 +1000
+Message-ID: <20110919184621.ac27f3d519e397a82efc6d4a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__19_Sep_2011_18_35_49_+1000_2QaP+yoH_MpDWJdP"
+ boundary="Signature=_Mon__19_Sep_2011_18_46_21_+1000_reM3ssjy13IlOo1j"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43729 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:46295 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752834Ab1ISIf6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2011 04:35:58 -0400
+	with ESMTP id S1753264Ab1ISIq1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2011 04:46:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>
 
---Signature=_Mon__19_Sep_2011_18_35_49_+1000_2QaP+yoH_MpDWJdP
+--Signature=_Mon__19_Sep_2011_18_46_21_+1000_reM3ssjy13IlOo1j
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-ppc44x_defconfig) failed like this:
+After merging the final tree, today's linux-next build (powerpc allyesconfi=
+g)
+failed like this:
 
-net/built-in.o: In function `tcp_v4_conn_request':
-(.text+0x5b700): undefined reference to `cookie_v4_init_sequence'
+drivers/input/keyboard/gpio_keys.c: In function 'gpio_keys_get_devtree_pdat=
+a':
+drivers/input/keyboard/gpio_keys.c:500:3: warning: passing argument 3 of 'o=
+f_property_read_u32' from incompatible pointer type
+include/linux/of.h:268:19: note: expected 'u32 *' but argument is of type '=
+const u32 **'
+drivers/input/keyboard/gpio_keys.c:504:19: warning: assignment makes intege=
+r from pointer without a cast
+drivers/input/keyboard/gpio_keys.c:508:3: warning: passing argument 3 of 'o=
+f_property_read_u32' from incompatible pointer type
+include/linux/of.h:268:19: note: expected 'u32 *' but argument is of type '=
+const u32 **'
+drivers/input/keyboard/gpio_keys.c:509:20: warning: assignment makes intege=
+r from pointer without a cast
+drivers/input/keyboard/gpio_keys.c:515:3: warning: passing argument 3 of 'o=
+f_property_read_u32' from incompatible pointer type
+include/linux/of.h:268:19: note: expected 'u32 *' but argument is of type '=
+const u32 **'
+drivers/input/keyboard/gpio_keys.c:516:33: warning: assignment makes intege=
+r from pointer without a cast
+drivers/input/keyboard/gpio_keys.c:502:4: error: label 'out_fail' used but =
+not defined
+drivers/input/keyboard/gpio_keys.c: At top level:
+drivers/input/keyboard/gpio_keys.c:523:7: error: expected '=3D', ',', ';', =
+'asm' or '__attribute__' before '->' token
+drivers/input/keyboard/gpio_keys.c:525:2: error: expected identifier or '('=
+ before 'return'
+drivers/input/keyboard/gpio_keys.c:527:9: error: expected '=3D', ',', ';', =
+'asm' or '__attribute__' before ':' token
+drivers/input/keyboard/gpio_keys.c:529:2: error: expected identifier or '('=
+ before 'return'
+drivers/input/keyboard/gpio_keys.c:530:1: error: expected identifier or '('=
+ before '}' token
+drivers/input/keyboard/gpio_keys.c: In function 'gpio_keys_get_devtree_pdat=
+a':
+drivers/input/keyboard/gpio_keys.c:521:2: warning: control reaches end of n=
+on-void function
 
-This error has already been noted elsewhere and a fix queued, so I have
-merged a newer version of the net-current tree that contains the fix for
-today.
+Caused by commit d6ba97c9806b ("Input: gpio_keys - use
+of_property_read_u32()").  Mostly by a brace mismatch.
+
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-
---Signature=_Mon__19_Sep_2011_18_35_49_+1000_2QaP+yoH_MpDWJdP
+--Signature=_Mon__19_Sep_2011_18_46_21_+1000_reM3ssjy13IlOo1j
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOdv7lAAoJEDMEi1NhKgbs3uMH/jiyx+cofZaeUngnozLvDZ5R
-MURSeHqgCsEsl6s2GTqd1xlcm2FVvXCdG3jJkrKTGoMc7fiEqEEc19sD3fLsEl33
-aU0MHhhHbGDjNhdprevx3Xh2Hm8LPapFvNd6M7MmmJZzrYYQ9LFtgWAx/OKJy6QN
-NWLnJJeEoe0kHa3rwC7t6hvqv2cG/rXeE9J49mFGBAXRbn5K5MzL7BO/gJRPJbdB
-YBDcn0Pfonn7jtqFFktMyO5D+n7xzSURoY7SF46klZFcPnn8qwguHUnTRKRj19cE
-iC6XNtS/2F9d5fEuWDD4q9QkdXB/e3fSMzjyCmV9i6LzzNxpqnqXHQo2emLFO98=
-=0ugA
+iQEcBAEBAgAGBQJOdwFdAAoJEDMEi1NhKgbs5OkH/2mz7MZ9Qc5YDhi7t8Nv75+C
+dCYB7euymgI8yN7izVd1JZvnzWvBEzDbGqtiOCMaVYWp/2suU7xZ+9C7woZgVo+a
+9hPjgorMhWefrypE+wq4yzSkHGt1596UHDgSolmZ+SlHmjI4hoe8y7CCQhY+4H73
+y7sFvh8bZJtIslx4gZiu/Yxo99wukt/mRE03s7HJpRQuPAnnV/n+BwEL/NfNhJAJ
+6/P0WLia/5MmkJnw2DZUAkvYz//sLJLqjMW6MRDazQyyB/935yFzlVbh3KxR3CoY
+daPlXHEbqwj2gAXxfOMcsjT501mSK7m6NQaipwHxuAHAAKc4WupzEVD50T5QR9Q=
+=Uf68
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Sep_2011_18_35_49_+1000_2QaP+yoH_MpDWJdP--
+--Signature=_Mon__19_Sep_2011_18_46_21_+1000_reM3ssjy13IlOo1j--
