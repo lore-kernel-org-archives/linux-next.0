@@ -1,38 +1,49 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: temporary github repository
-Date: Sun, 18 Sep 2011 19:53:22 +0200
-Message-ID: <201109181953.22763.rjw@sisk.pl>
-References: <20110918212535.a1038aa5f0caad9d83e351b2@canb.auug.org.au> <201109181518.35788.rjw@sisk.pl> <20110918233220.91733671ed4fd0ccbc7552f6@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with Linus' tree
+Date: Mon, 19 Sep 2011 14:41:20 +1000
+Message-ID: <20110919144120.ed99af0f84549069a4a18ad2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:40594 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755272Ab1IRRvO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 18 Sep 2011 13:51:14 -0400
-In-Reply-To: <20110918233220.91733671ed4fd0ccbc7552f6@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__19_Sep_2011_14_41_20_+1000_AXD.K9FXgxVI11UG"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Toshiharu Okada <toshiharu-linux@dsn.okisemi.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On Sunday, September 18, 2011, Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> On Sun, 18 Sep 2011 15:18:35 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
-> >
-> > OK, so the temporary location of the linux-pm tree's linux-next branch is at:
-> > 
-> > git://github.com/rjwysocki/linux-pm.git linux-next
-> 
-> I will switch to this from Monday, thanks.
-> 
-> Just checking that you intentionally dropped a merge of the pm-freezer
-> branch?
+--Signature=_Mon__19_Sep_2011_14_41_20_+1000_AXD.K9FXgxVI11UG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I did, since the original branch is unavailable along with git.kernel.org.
+Hi all,
 
-Thanks,
-Rafael
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/Kconfig between commit 7756332f5b64 ("pch_gbe: support ML7831
+IOH") from Linus' tree and the driver rearrangement patches from the net
+tree.
+
+The changes in the commit from Linus' tree don;t affect fucntionality, so
+I just used the net tree version.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__19_Sep_2011_14_41_20_+1000_AXD.K9FXgxVI11UG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOdsfwAAoJEDMEi1NhKgbsi1EH/3H+TjAqBIbWD2Zb+YxtXkhW
+7rEsVm4/vf1DhLJaCM7bLjpZQL0YKc1fOaHoVo3KHosesHi5uD8HnrvuaKI8x9Og
+iJAjOV2r9vFpTSCYMxzOj71Zx3SBR6up192q748D2gZL+yJc/PEOwefxB8f7zl7F
+vsGzdYGPM8OKNpXIIMelp3RpRwv90Pg7G/PmEFEITv0bUha3NV4A0LKRZYqGNClx
+X6qmdW0xycOFqf2RpWVfnBbzPIEVpIC5jiiMd/Dy5gLSUhEYBM8O7M9bM93QNRAD
+xAdtW6tVo9avAtrJD4MGLCc88ItLLstKQ1lYAJZu3fhffnqacXXXU/cPhSG4ESg=
+=eEn4
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__19_Sep_2011_14_41_20_+1000_AXD.K9FXgxVI11UG--
