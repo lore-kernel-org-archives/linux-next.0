@@ -1,96 +1,42 @@
-From: "Dmitry Kravkov" <dmitry@broadcom.com>
-Subject: Re: linux-next: manual merge of the net tree with Linus' tree
-Date: Mon, 19 Sep 2011 19:04:38 +0300
-Message-ID: <1316448278.12042.3.camel@lb-tlvb-dmitry>
-References: <20110919145103.6c3e73edf51599eaa703294a@canb.auug.org.au>
- <1316415318.26848.4.camel@lb-tlvb-dmitry>
- <1316447682.6276.5.camel@Joe-Laptop>
-Reply-To: dmitry@broadcom.com
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Sept 19 (i7core_edac)
+Date: Mon, 19 Sep 2011 14:20:53 -0700
+Message-ID: <4E77B235.30403@xenotime.net>
+References: <20110919190117.f5d02ff24b9ab7dc17035d75@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1316447682.6276.5.camel@Joe-Laptop>
+In-Reply-To: <20110919190117.f5d02ff24b9ab7dc17035d75@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yaniv Rosner <yaniv.rosner@broadcom.com>, Eilon Greenstein <eilong@broadcom.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sedat Dilek <sedat.dilek@googlemail.com>, linux-edac@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2011-09-19 at 08:54 -0700, Joe Perches wrote:
-> On Mon, 2011-09-19 at 09:55 +0300, Dmitry Kravkov wrote:
-> > On Sun, 2011-09-18 at 21:51 -0700, Stephen Rothwell wrote:
-> > > Today's linux-next merge of the net tree got a conflict in
-> > > drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c between commit
-> > > c482e6c06461 ("bnx2x: Fix ETS bandwidth") from Linus' tree and commit
-> > > 94f05b0f60de ("bnx2x: Coalesce pr_cont uses and fix DP typos") from the
-> > > net tree.
-> []
-> > Can you use this one instead?
-> > Contains spell fixes and some formatting.
+On 09/19/2011 02:01 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Multiple line format strings lines are bad style and error prone.
-> You introduce broken spacing after string coalescing.
+> The linux-next tree is now available from
+> git://github.com/sfrothwell/linux-next.git as a temporary measure while
+> the kernel.org servers are unavailable.
 > 
+> The powerpc allyesconfig build still fails today.
+> 
+> Changes since 20110916:
 
-Contains spell fixes and some formatting
+i7core_edac.c build still fails on i386:
 
-v2: fix broken spacing
+ERROR: "__udivdi3" [drivers/edac/i7core_edac.ko] undefined!
 
-Signed-off-by: Dmitry Kravkov <dmitry@broadcom.com>
----
-Joe, Thanks for noticing that
----
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c |   30 ++++++++--------------
- 1 files changed, 11 insertions(+), 19 deletions(-)
+[Untested/buggy ;] Fix was posted by Sedat Dilek here:
+http://marc.info/?l=linux-next&m=131436817426589&w=2
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-index 8e9b87b..5a9444a 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-@@ -850,32 +850,24 @@ static int bnx2x_ets_e3b0_get_total_bw(
- 
- 	*total_bw = 0 ;
- 	/* Calculate total BW requested */
--	for (cos_idx = 0; cos_idx < ets_params->num_of_cos; cos_idx++) {
--		if (bnx2x_cos_state_bw == ets_params->cos[cos_idx].state) {
-+	for (cos_idx = 0; cos_idx < ets_params->num_of_cos; cos_idx++)
-+		if (bnx2x_cos_state_bw == ets_params->cos[cos_idx].state)
-+			*total_bw +=
-+				ets_params->cos[cos_idx].params.bw_params.bw;
- 
--			if (0 == ets_params->cos[cos_idx].params.bw_params.bw) {
--				DP(NETIF_MSG_LINK,
--				   "bnx2x_ets_E3B0_config BW was set to 0\n");
--			return -EINVAL;
--		}
--		*total_bw +=
--		    ets_params->cos[cos_idx].params.bw_params.bw;
--	    }
--	}
--
--	/*Check taotl BW is valid */
-+	/* Check total BW is valid */
- 	if ((100 != *total_bw) || (0 == *total_bw)) {
- 		if (0 == *total_bw) {
- 			DP(NETIF_MSG_LINK,
--			   "bnx2x_ets_E3B0_config toatl BW shouldn't be 0\n");
-+			  "bnx2x_ets_E3B0_config total BW shouldn't be 0\n");
- 			return -EINVAL;
- 		}
- 		DP(NETIF_MSG_LINK,
--		   "bnx2x_ets_E3B0_config toatl BW should be 100\n");
--		/**
--		*   We can handle a case whre the BW isn't 100 this can happen
--		*   if the TC are joined.
--		*/
-+		   "bnx2x_ets_E3B0_config total BW should be 100\n");
-+		/*
-+		 * We can handle a case where the BW isn't 100 this can happen
-+		 * if the TC are joined.
-+		 */
- 	}
- 	return 0;
- }
+on Aug. 26.  Just remove the last ')' in 2 places:
+
++			cache_line_size * 1000000);
+and
++		1000000 * cache_line_size);
+
 -- 
-1.7.2.2
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
