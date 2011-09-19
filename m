@@ -1,33 +1,46 @@
-From: Luciano Coelho <coelho@ti.com>
-Subject: Re: linux-next: manual merge of the wireless tree with Linus' tree
-Date: Mon, 19 Sep 2011 08:28:42 +0300
-Message-ID: <1316410122.2157.22.camel@cumari>
-References: <20110919151434.e710fc8eb95675a2c6a278cd@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound tree with the mips tree
+Date: Mon, 19 Sep 2011 15:29:21 +1000
+Message-ID: <20110919152921.56ed0465d1060b50f4c1cf6a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110919151434.e710fc8eb95675a2c6a278cd@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:47226 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750928Ab1ISF3Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2011 01:29:24 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Manuel Lauss <manuel.lauss@googlemail.com>, Ralf Baechle <ralf@linux-mips.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Hi Stephen
+Hi Takashi,
 
-On Mon, 2011-09-19 at 15:14 +1000, Stephen Rothwell wrote: 
-> Today's linux-next merge of the wireless tree got a conflict in
-> drivers/net/wireless/wl12xx/main.c between commit 7a5e4877c14d ("wl12xx:
-> add max_sched_scan_ssids value to the hw description") from Linus' tree
-> and commit f952079a19c6 ("wl12xx: add support for multiple SSIDs in
-> sched_scan") from the wireless tree.
-> 
-> I used the version from the wireless tree.
+Today's linux-next merge of the sound tree got a conflict in
+sound/mips/Kconfig between commit 9d7dec27ace1 ("MIPS: Alchemy: remove
+all CONFIG_SOC_AU1??? defines") from the mips tree and commit
+7137c6bcb7ff ("ALSA: deprecate MIPS AU1X00 AC97 driver") from the sound
+tree.
 
-This is correct, the version from the wireless tree should be use (ie.,
-setting the value to 8).  I guess wireless-next doesn't include the
-change that went into Linus' tree yet.
-
+Just context changes.  I fixed it up (see below) anc can carry the fix
+as necessary.
 -- 
 Cheers,
-Luca.
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc sound/mips/Kconfig
+index 0a0d501,77dd0a1..0000000
+--- a/sound/mips/Kconfig
++++ b/sound/mips/Kconfig
+@@@ -23,8 -23,8 +23,8 @@@ config SND_SGI_HAL
+  
+  
+  config SND_AU1X00
+- 	tristate "Au1x00 AC97 Port Driver"
++ 	tristate "Au1x00 AC97 Port Driver (DEPRECATED)"
+ -	depends on SOC_AU1000 || SOC_AU1100 || SOC_AU1500
+ +	depends on MIPS_ALCHEMY
+  	select SND_PCM
+  	select SND_AC97_CODEC
+  	help
