@@ -1,52 +1,90 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next v2] bcma: driver_chipcommon_pmu.c needs linux/export.h
-Date: Tue, 20 Sep 2011 13:51:39 -0700
-Message-ID: <4E78FCDB.1010002@xenotime.net>
-References: <20110920173102.d38155c7defbbc29beaae7c0@canb.auug.org.au>	<4E78CFC0.4020003@xenotime.net> <CACna6rxGrd-ORWZrc0xsAOKptU_Xj3eGh9qSfX9vJYCPTZrCRg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH -next v2] bcma: driver_chipcommon_pmu.c needs
+ linux/export.h
+Date: Wed, 21 Sep 2011 07:11:03 +1000
+Message-ID: <20110921071103.b4faaa4648ec3c09a4505ab1@canb.auug.org.au>
+References: <20110920173102.d38155c7defbbc29beaae7c0@canb.auug.org.au>
+	<4E78CFC0.4020003@xenotime.net>
+	<CACna6rxGrd-ORWZrc0xsAOKptU_Xj3eGh9qSfX9vJYCPTZrCRg@mail.gmail.com>
+	<4E78FCDB.1010002@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__21_Sep_2011_07_11_03_+1000_Cd=aur2Hxw/4KxLk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:46736 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751180Ab1ITUvl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 16:51:41 -0400
-In-Reply-To: <CACna6rxGrd-ORWZrc0xsAOKptU_Xj3eGh9qSfX9vJYCPTZrCRg@mail.gmail.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:35216 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751150Ab1ITVLP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 17:11:15 -0400
+In-Reply-To: <4E78FCDB.1010002@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Wed__21_Sep_2011_07_11_03_+1000_Cd=aur2Hxw/4KxLk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-bcma/driver_chipcommon_pmu.c needs to include <linux/export.h>
-to fix these warnings:
+Hi Randy,
 
-drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: data definition has no type or storage class
-drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: parameter names (without types) in function declaration
-drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: data definition has no type or storage class
-drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: parameter names (without types) in function declaration
-drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: data definition has no type or storage class
-drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: parameter names (without types) in function declaration
-drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: data definition has no type or storage class
-drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: parameter names (without types) in function declaration
+On Tue, 20 Sep 2011 13:51:39 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
+>
+> From: Randy Dunlap <rdunlap@xenotime.net>
+>=20
+> bcma/driver_chipcommon_pmu.c needs to include <linux/export.h>
+> to fix these warnings:
+>=20
+> drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: data definition has n=
+o type or storage class
+> drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: type defaults to 'int=
+' in declaration of 'EXPORT_SYMBOL_GPL'
+> drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: parameter names (with=
+out types) in function declaration
+> drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: data definition has n=
+o type or storage class
+> drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: type defaults to 'int=
+' in declaration of 'EXPORT_SYMBOL_GPL'
+> drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: parameter names (with=
+out types) in function declaration
+> drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: data definition has n=
+o type or storage class
+> drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: type defaults to 'int=
+' in declaration of 'EXPORT_SYMBOL_GPL'
+> drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: parameter names (with=
+out types) in function declaration
+> drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: data definition has n=
+o type or storage class
+> drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: type defaults to 'int=
+' in declaration of 'EXPORT_SYMBOL_GPL'
+> drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: parameter names (with=
+out types) in function declaration
+>=20
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
- drivers/bcma/driver_chipcommon_pmu.c |    1 +
- 1 file changed, 1 insertion(+)
+I have added this to my collection of merge fixups for the moduleh tree
+(since linux/export.h doesn't exist in Linus' tree, yet).
 
---- next-2011-0920.orig/drivers/bcma/driver_chipcommon_pmu.c
-+++ next-2011-0920/drivers/bcma/driver_chipcommon_pmu.c
-@@ -9,6 +9,7 @@
-  */
- 
- #include "bcma_private.h"
-+#include <linux/export.h>
- #include <linux/bcma/bcma.h>
- 
- static u32 bcma_chipco_pll_read(struct bcma_drv_cc *cc, u32 offset)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__21_Sep_2011_07_11_03_+1000_Cd=aur2Hxw/4KxLk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOeQFnAAoJEDMEi1NhKgbs+10H/1AQ3BFgi/cfBF8EE6vrfYS/
+S4FA3IMi4/u/SSvpsDQUwbwE0YrDdYIU0DkCsEMEGaZ3zUiaUV8VXW+Q5HAg961t
+mLjjXhS2cyYsyw+VsTpLUG22tYNfU3zydfk/yTxIcl4gRpIbpXz1JYkO2vtyfAHP
+BBuS6W0cqkMY7b/ygNtXbh/rmIL5VDcTjhFMZBxNanrpVsMCRfS3CNp9LycCyNxb
+lSFkEx4b9/gSZmyBUZKAEUAP/2iyoS/r1mg9sU6nvAaFVHV/0oiaZ2bXrYRL5y/Y
+93pfGPnkmZK+D53ItJadFfj/40CFXH8Xm23KYWoY1wmKaUy5ThR2z8azNvrFnDQ=
+=VrL6
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__21_Sep_2011_07_11_03_+1000_Cd=aur2Hxw/4KxLk--
