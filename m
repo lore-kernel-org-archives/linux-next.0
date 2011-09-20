@@ -1,42 +1,54 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Sept 19 (i7core_edac)
-Date: Mon, 19 Sep 2011 14:20:53 -0700
-Message-ID: <4E77B235.30403@xenotime.net>
-References: <20110919190117.f5d02ff24b9ab7dc17035d75@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with Linus' tree
+Date: Tue, 20 Sep 2011 13:22:25 +1000
+Message-ID: <20110920132225.0c912a905789a688eebb2a89@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110919190117.f5d02ff24b9ab7dc17035d75@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sedat Dilek <sedat.dilek@googlemail.com>, linux-edac@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__20_Sep_2011_13_22_25_+1000_fowl0XtZHas0ZYIR"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:38452 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753759Ab1ITDWe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2011 23:22:34 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-On 09/19/2011 02:01 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The linux-next tree is now available from
-> git://github.com/sfrothwell/linux-next.git as a temporary measure while
-> the kernel.org servers are unavailable.
-> 
-> The powerpc allyesconfig build still fails today.
-> 
-> Changes since 20110916:
+--Signature=_Tue__20_Sep_2011_13_22_25_+1000_fowl0XtZHas0ZYIR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-i7core_edac.c build still fails on i386:
+Hi John,
 
-ERROR: "__udivdi3" [drivers/edac/i7core_edac.ko] undefined!
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-pci.c between commit 16a9d06c753a
+("iwlagn: sysfs couldn't find the priv pointer") from Linus' tree and
+commit 18d0077f0c4a ("iwlagn: remove drvdata support from bus layer")
+from the wireless tree.
 
-[Untested/buggy ;] Fix was posted by Sedat Dilek here:
-http://marc.info/?l=linux-next&m=131436817426589&w=2
+I fixed it up (I used the version from the wireless tree) and can carry
+the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-on Aug. 26.  Just remove the last ')' in 2 places:
+--Signature=_Tue__20_Sep_2011_13_22_25_+1000_fowl0XtZHas0ZYIR
+Content-Type: application/pgp-signature
 
-+			cache_line_size * 1000000);
-and
-+		1000000 * cache_line_size);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+iQEcBAEBAgAGBQJOeAbxAAoJEDMEi1NhKgbsHkMIAI6Eo9xI1PG0S+oBwY/TPRoi
+526p897V0heRqemTRJvVxvBU0RtgfIdd568PklzuMoqZPYAI2H8mS3JaFkcbDrX9
+6XELlOVGUGhK45kvda1o0fYULQIcIbIfqTObO/z3WmJxZF+nwhxUMtLH7sAYT5L9
+wZdPEUMPesQ03KlBExTjElNqhHxRQpPnoFBQWGnjduKQXzdNbdXT7EQar994wxIJ
+e5ZUp3GbIUkPkaNVDdhU0yWKIBNkTk4I8+5O6C0CRjpHtA+qBUwll1GYFuotMbpZ
+b+/k9PMTkRmwjVqkBxHaiF3Uoj7ECwWhyHqTq8updTeZmdK3KI+swYb4m9dFJZ8=
+=n7/y
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__20_Sep_2011_13_22_25_+1000_fowl0XtZHas0ZYIR--
