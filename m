@@ -1,54 +1,33 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] bcma: needs export.h
-Date: Tue, 20 Sep 2011 10:39:12 -0700
-Message-ID: <4E78CFC0.4020003@xenotime.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: Re: [PATCH -next] bcma: needs export.h
+Date: Tue, 20 Sep 2011 20:45:57 +0200
+Message-ID: <CACna6rxGrd-ORWZrc0xsAOKptU_Xj3eGh9qSfX9vJYCPTZrCRg@mail.gmail.com>
 References: <20110920173102.d38155c7defbbc29beaae7c0@canb.auug.org.au>
+	<4E78CFC0.4020003@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:60045 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751164Ab1ITRjP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 13:39:15 -0400
-In-Reply-To: <20110920173102.d38155c7defbbc29beaae7c0@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, zajec5@gmail.com, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4E78CFC0.4020003@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+2011/9/20 Randy Dunlap <rdunlap@xenotime.net>:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+>
+> bcma/driver_chipcommon_pmu.c needs to include <linux/export.h>,
+> so add it to the headers that are included by bcma_private.h.
 
-bcma/driver_chipcommon_pmu.c needs to include <linux/export.h>,
-so add it to the headers that are included by bcma_private.h.
+Please take a look at discussion in:
+[PATCH -next] bcma: main.c needs to include <linux/slab.h>
+thread (by Andrew).
 
-Fixes these warnings:
+I believe that according to the discussion, such a includes should be
+done in .c files.
 
-drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: data definition has no type or storage class
-drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: parameter names (without types) in function declaration
-drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: data definition has no type or storage class
-drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: parameter names (without types) in function declaration
-drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: data definition has no type or storage class
-drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: parameter names (without types) in function declaration
-drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: data definition has no type or storage class
-drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: parameter names (without types) in function declaration
+Andrew: can you comment? Am I right?
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
- drivers/bcma/bcma_private.h |    1 +
- 1 file changed, 1 insertion(+)
-
---- next-2011-0920.orig/drivers/bcma/bcma_private.h
-+++ next-2011-0920/drivers/bcma/bcma_private.h
-@@ -7,6 +7,7 @@
- 
- #include <linux/bcma/bcma.h>
- #include <linux/delay.h>
-+#include <linux/export.h>
- 
- #define BCMA_CORE_SIZE		0x1000
- 
+--=20
+Rafa=C5=82
