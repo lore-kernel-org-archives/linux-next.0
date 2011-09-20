@@ -1,40 +1,35 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: manual merge of the wireless tree with Linus' tree
-Date: Tue, 20 Sep 2011 08:55:16 -0400
-Message-ID: <20110920125516.GA7800@tuxdriver.com>
-References: <20110920132814.16d957ac9ddccb2e47ece1c2@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with Linus' tree
+Date: Tue, 20 Sep 2011 05:53:28 -0700
+Message-ID: <20110920125328.GA9736@kroah.com>
+References: <20110920164649.b22e95cf65f4678da99a0a81@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:53965 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751338Ab1ITNAi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 09:00:38 -0400
+Received: from out3.smtp.messagingengine.com ([66.111.4.27]:51171 "EHLO
+	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750696Ab1ITNEP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Sep 2011 09:04:15 -0400
 Content-Disposition: inline
-In-Reply-To: <20110920132814.16d957ac9ddccb2e47ece1c2@canb.auug.org.au>
+In-Reply-To: <20110920164649.b22e95cf65f4678da99a0a81@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Luciano Coelho <coelho@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>
 
-On Tue, Sep 20, 2011 at 01:28:14PM +1000, Stephen Rothwell wrote:
-> Hi John,
+On Tue, Sep 20, 2011 at 04:46:49PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Today's linux-next merge of the wireless tree got a conflict in
-> drivers/net/wireless/wl12xx/main.c between commit 7a5e4877c14d ("wl12xx:
-> add max_sched_scan_ssids value to the hw description") from Linus' tree
-> and commit 221737d24f88 ("wl12xx: increase number of allowed SSIDs in
-> sched_scan") from the wireless tree.
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/comedi/drivers/ni_labpc.c between commit c19cc78efe92
+> ("staging: fix comedi build when ISA_DMA_API is enabled but COMEDI_PCI is
+> not enabled") from Linus' tree and commit d6aa8366dde1 ("staging: fix
+> comedi build errors") from the staging tree.
 > 
-> I fixed it up (I used the wireless tree version) and can carry the fix as
-> necessary.
-> 
-> John, maybe you could merge the wireless-current tree (or the part of it
-> that has already been merged into Linus' tree) into the wireless tree and
-> fix these merge issues.
+> I have used the version from Linus' tree.
 
-Yes, I will -- I'm trying to get resynced w/ Dave...
+Thank you, that should be correct.  I'll merge the two together when
+kernel.org comes back.
 
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+greg k-h
