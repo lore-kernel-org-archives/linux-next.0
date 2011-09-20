@@ -1,34 +1,54 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the kernel-doc
- tree
-Date: Tue, 20 Sep 2011 15:04:45 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1109201504040.13109@pobox.suse.cz>
-References: <20110919163946.9165592b447bf5b578146f83@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] bcma: needs export.h
+Date: Tue, 20 Sep 2011 10:39:12 -0700
+Message-ID: <4E78CFC0.4020003@xenotime.net>
+References: <20110920173102.d38155c7defbbc29beaae7c0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110919163946.9165592b447bf5b578146f83@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy9.bluehost.com ([69.89.24.6]:60045 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751164Ab1ITRjP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 13:39:15 -0400
+In-Reply-To: <20110920173102.d38155c7defbbc29beaae7c0@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amos Kong <kongjianjun@gmail.com>, Randy Dunlap <rdunlap@xenotime.net>, Paul Bolle <pebolle@tiscali.nl>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, zajec5@gmail.com, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Mon, 19 Sep 2011, Stephen Rothwell wrote:
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-> Today's linux-next merge of the trivial tree got a conflict in
-> Documentation/PCI/pci.txt between commit b814f0357fbe
-> ("Documentation/PCI/pci.txt: fix a reference doc name") from the
-> kernel-doc tree and commit c460578a674f ("Documentation: fix broken
-> references") from the trivial tree.
-> 
-> It looks like the former supercedes the latter, so I used that.
+bcma/driver_chipcommon_pmu.c needs to include <linux/export.h>,
+so add it to the headers that are included by bcma_private.h.
 
-I don't know where to get either linux-next or linux-doc at the moment, so 
-just correct me if I am wrong -- I will just drop the 
-Documentation/PCI/pci.txt hunk from c460578a674f in my tree, right?
+Fixes these warnings:
 
-Thanks,
+drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: data definition has no type or storage class
+drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: parameter names (without types) in function declaration
+drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: data definition has no type or storage class
+drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/bcma/driver_chipcommon_pmu.c:36:1: warning: parameter names (without types) in function declaration
+drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: data definition has no type or storage class
+drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/bcma/driver_chipcommon_pmu.c:45:1: warning: parameter names (without types) in function declaration
+drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: data definition has no type or storage class
+drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+drivers/bcma/driver_chipcommon_pmu.c:54:1: warning: parameter names (without types) in function declaration
 
--- 
-Jiri Kosina
-SUSE Labs
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
+ drivers/bcma/bcma_private.h |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- next-2011-0920.orig/drivers/bcma/bcma_private.h
++++ next-2011-0920/drivers/bcma/bcma_private.h
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/bcma/bcma.h>
+ #include <linux/delay.h>
++#include <linux/export.h>
+ 
+ #define BCMA_CORE_SIZE		0x1000
+ 
