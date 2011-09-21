@@ -1,29 +1,59 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with the powerpc tree
-Date: Wed, 21 Sep 2011 07:06:32 -0700
-Message-ID: <20110921140632.GB19567@kroah.com>
-References: <20110921145023.e38d553e218c8b5a2e71e9d8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Sept 21
+Date: Thu, 22 Sep 2011 00:22:35 +1000
+Message-ID: <20110922002235.53ae8ed70b92d9d325a79a62@canb.auug.org.au>
+References: <20110921155850.09c858bb38205bb2cc0c8f0a@canb.auug.org.au>
+	<CAFkjPTk0JWAYSJBC4fK6DT10MxER+vuFbYNvR6=cTN=sxmZNgg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__22_Sep_2011_00_22_35_+1000_fGbKHG=drGQQ3wQ+"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:43187 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751189Ab1IUOWp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2011 10:22:45 -0400
+In-Reply-To: <CAFkjPTk0JWAYSJBC4fK6DT10MxER+vuFbYNvR6=cTN=sxmZNgg@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+
+--Signature=_Thu__22_Sep_2011_00_22_35_+1000_fGbKHG=drGQQ3wQ+
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20110921145023.e38d553e218c8b5a2e71e9d8@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Jamie Iles <jamie@jamieiles.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 21, 2011 at 02:50:23PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the tty tree got a conflict in
-> drivers/tty/serial/8250.c between commit 7df5659eefad ("serial/8250: Move
-> UPIO_TSI to powerpc") from the powerpc tree and commit 4834d0289785
-> ("tty: serial8250: remove UPIO_DWAPB{,32}") from the tty tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+Hi Eric,
 
-Looks great, thanks.
+On Wed, 21 Sep 2011 09:10:31 -0500 Eric Van Hensbergen <ericvh@gmail.com> w=
+rote:
+>
+> You can switch the v9fs tree to pull from the for-next branch of
+> github.com:ericvh/linux.git until kernel.org gets back.  Hopefully
+> that will resolve the reported merge conflict.
 
-greg k-h
+OK, I will switch to this tree from tomorrow - assuming that the real
+Eric does't complain :-).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__22_Sep_2011_00_22_35_+1000_fGbKHG=drGQQ3wQ+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOefMrAAoJEDMEi1NhKgbsYPEH/jlZp1hM95YFt0QKFcJS83zC
+sCuGTb8ZkgoR9vohAUHF4V9xUIIunfpWBcruhaUX4rVZixG0+urvZMe2TTyqLhqZ
+f9hgMfl1CdBPJ8J6HX0BqiIxrB1DkbVqoJeFtatWe+rKDHOf3uqguuUIYQWx/9kU
+st1N4VwhpfAaGFsZWFoNBVS9U8WpCCtBEq+hMZeL78nfxYm1ID1ExyqqxN5dv/aC
+qYdUFeCpH/R8AITJNj3KTdBzeBlhcrrvLEKJ8E70vK50dzW9KBttpNgC66wQVkMH
+EGvpK1SBW9cKblnAanPPOs5+ZMebSbTP7As4JU58VCuzE8EBkwHWYn7aHVXZjDE=
+=1Qkd
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__22_Sep_2011_00_22_35_+1000_fGbKHG=drGQQ3wQ+--
