@@ -1,61 +1,44 @@
-From: Andrew Morton <akpm@google.com>
-Subject: Re: [PATCH -next] bcma: needs export.h
-Date: Tue, 20 Sep 2011 15:40:23 -0700
-Message-ID: <20110920154023.c90396d8.akpm@google.com>
-References: <20110920173102.d38155c7defbbc29beaae7c0@canb.auug.org.au>
-	<4E78CFC0.4020003@xenotime.net>
-	<CACna6rxGrd-ORWZrc0xsAOKptU_Xj3eGh9qSfX9vJYCPTZrCRg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm tree with Linus' tree
+Date: Wed, 21 Sep 2011 10:33:29 +1000
+Message-ID: <20110921103329.c24fb7e8c8b34217c38f92b2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp-out.google.com ([216.239.44.51]:37348 "EHLO
-	smtp-out.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752190Ab1ITWkl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 18:40:41 -0400
-In-Reply-To: <CACna6rxGrd-ORWZrc0xsAOKptU_Xj3eGh9qSfX9vJYCPTZrCRg@mail.gmail.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:48105 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750711Ab1IUAdg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 20:33:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>
 
-On Tue, 20 Sep 2011 20:45:57 +0200
-Rafa__ Mi__ecki <zajec5@gmail.com> wrote:
+Hi Russell,
 
-> 2011/9/20 Randy Dunlap <rdunlap@xenotime.net>:
-> > From: Randy Dunlap <rdunlap@xenotime.net>
-> >
-> > bcma/driver_chipcommon_pmu.c needs to include <linux/export.h>,
-> > so add it to the headers that are included by bcma_private.h.
-> 
-> Please take a look at discussion in:
-> [PATCH -next] bcma: main.c needs to include <linux/slab.h>
-> thread (by Andrew).
-> 
-> I believe that according to the discussion, such a includes should be
-> done in .c files.
-> 
-> Andrew: can you comment? Am I right?
+Today's linux-next merge of the arm tree got a conflict in
+arch/arm/mach-integrator/integrator_ap.c between commit b71d8429ec36
+("mach-integrator: fix VGA base regression") from Linus' tree and commit
+b79573586838 ("ARM: 7087/2: mach-integrator: get timer frequency from
+clock") from the arm tree.
 
-Ordinarily, yes, it is preferable to include the needed .h files from
-within the .c files.  However quite a mumber of kernel subsystems do
-take the #include "everything.h" approach.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-However, drivers/bcma is a bit odd in that it has bcma_private.h which
-includes delay.h (the everything.h approach) but most .c files
-explicitly include other things, including export.h.
-
-There's no real pattern here and yes, I agree that the minimal and more
-typical approach is better.
-
---- a/drivers/bcma/driver_chipcommon_pmu.c~bcma-needs-exporth
-+++ a/drivers/bcma/driver_chipcommon_pmu.c
-@@ -10,6 +10,7 @@
- 
- #include "bcma_private.h"
- #include <linux/bcma/bcma.h>
-+#include <linux/export.h>
- 
- static u32 bcma_chipco_pll_read(struct bcma_drv_cc *cc, u32 offset)
- {
-_
+diff --cc arch/arm/mach-integrator/integrator_ap.c
+index 8cdc730,c698811..0000000
+--- a/arch/arm/mach-integrator/integrator_ap.c
++++ b/arch/arm/mach-integrator/integrator_ap.c
+@@@ -32,7 -32,7 +32,8 @@@
+  #include <linux/interrupt.h>
+  #include <linux/io.h>
+  #include <linux/mtd/physmap.h>
++ #include <linux/clk.h>
+ +#include <video/vga.h>
+  
+  #include <mach/hardware.h>
+  #include <mach/platform.h>
