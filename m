@@ -1,44 +1,148 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH -next] bcma: main.c and driver_mips.c need linux/export.h
-Date: Wed, 21 Sep 2011 14:49:06 -0700
-Message-ID: <4E7A5BD2.40502@xenotime.net>
-References: <20110920173102.d38155c7defbbc29beaae7c0@canb.auug.org.au>	<4E78CFC0.4020003@xenotime.net>	<CACna6rxGrd-ORWZrc0xsAOKptU_Xj3eGh9qSfX9vJYCPTZrCRg@mail.gmail.com>	<4E78FCDB.1010002@xenotime.net>	<CACna6rywFitSNkkwo6tNy887vdsoyHG5Cadk6Bb8_qBJ+gc42w@mail.gmail.com>	<4E7A084C.3000304@xenotime.net> <CACna6ryNw+YgTiO5dBSGcTfUabM_yO0LaSsbGpC_X6JrQudnBQ@mail.gmail.com> <4E7A521B.50104@xenotime.net> <4E7A5A2F.7030402@lwfinger.net>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Subject: [PATCH -next] rtlwifi: rtl8192c: Add includes of export.h
+Date: Wed, 21 Sep 2011 17:22:11 -0500
+Message-ID: <4e7a6393.eQ0IEnMVbVlQIbx0%Larry.Finger@lwfinger.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:40689 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751012Ab1IUVtI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2011 17:49:08 -0400
-In-Reply-To: <4E7A5A2F.7030402@lwfinger.net>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.125]:50015 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750964Ab1IUWWQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2011 18:22:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: paul.gortmaker@windriver.com
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, akpm@linux-foundation.org
 
-On 09/21/2011 02:42 PM, Larry Finger wrote:
-> On 09/21/2011 04:07 PM, Randy Dunlap wrote:
->> From: Randy Dunlap<rdunlap@xenotime.net>
->>
->> main.c and driver_mips.c use EXPORT_SYMBOL() etc.
->> so they should include<linux/export.h>.
->>
->> Signed-off-by: Randy Dunlap<rdunlap@xenotime.net>
-> 
-> From this commit message, it appears that every routine that uses EXPORT_SYMBOL() will need to include this header. I looked at modifying rtlwifi and friends to include this header, but found that include/linux/export.h does not exist in any of my source trees. From that I assume that the change will happen in 3.2.
-> 
-> I have prepared a patch, but cannot use it at the moment. Is there somewhere that I should send it?
+With the split of include/linux/module.h into two parts, several files in
+drivers rtlwifi and rtl8192c need to include the new file.
 
-Hi Larry,
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+---
 
-linux/export.h is only in linux-next.  I think that you should just prepare
-a linux-next patch for rtlwifi and then push it after Paul Gortmaker's
-module.h-split git tree has been merged (it splits module.h into module.h
-and export.h), or maybe you could ask Paul to merge your patch into his tree.
+Paul,
 
-[I added Paul to the cc: list.]
+At Randy Dunlap's suggestion, I am sending this to you in hopes that
+I can save you some time. I think I found all the routines that will have
+a problem, but as these patches do not compile, I cannot be sure.
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Larry
+---
+
+Index: wireless-testing-new/drivers/net/wireless/rtlwifi/base.c
+===================================================================
+--- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/base.c
++++ wireless-testing-new/drivers/net/wireless/rtlwifi/base.c
+@@ -30,6 +30,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/ip.h>
++#include <linux/export.h>
+ #include "wifi.h"
+ #include "rc.h"
+ #include "base.h"
+Index: wireless-testing-new/drivers/net/wireless/rtlwifi/cam.c
+===================================================================
+--- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/cam.c
++++ wireless-testing-new/drivers/net/wireless/rtlwifi/cam.c
+@@ -29,6 +29,8 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/export.h>
++
+ #include "wifi.h"
+ #include "cam.h"
+ 
+Index: wireless-testing-new/drivers/net/wireless/rtlwifi/efuse.c
+===================================================================
+--- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/efuse.c
++++ wireless-testing-new/drivers/net/wireless/rtlwifi/efuse.c
+@@ -27,6 +27,8 @@
+  *
+  *****************************************************************************/
+ 
++#include <linux/export.h>
++
+ #include "wifi.h"
+ #include "efuse.h"
+ 
+Index: wireless-testing-new/drivers/net/wireless/rtlwifi/pci.c
+===================================================================
+--- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/pci.c
++++ wireless-testing-new/drivers/net/wireless/rtlwifi/pci.c
+@@ -27,6 +27,8 @@
+  *
+  *****************************************************************************/
+ 
++#include <linux/export.h>
++
+ #include "core.h"
+ #include "wifi.h"
+ #include "pci.h"
+Index: wireless-testing-new/drivers/net/wireless/rtlwifi/ps.c
+===================================================================
+--- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/ps.c
++++ wireless-testing-new/drivers/net/wireless/rtlwifi/ps.c
+@@ -27,6 +27,8 @@
+  *
+  *****************************************************************************/
+ 
++#include <linux/export.h>
++
+ #include "wifi.h"
+ #include "base.h"
+ #include "ps.h"
+Index: wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/dm_common.c
+===================================================================
+--- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/rtl8192c/dm_common.c
++++ wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/dm_common.c
+@@ -27,6 +27,8 @@
+  *
+  *****************************************************************************/
+ 
++#include <linux/export.h>
++
+ #include "dm_common.h"
+ #include "phy_common.h"
+ #include "../pci.h"
+Index: wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/fw_common.c
+===================================================================
+--- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/rtl8192c/fw_common.c
++++ wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/fw_common.c
+@@ -30,6 +30,8 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/firmware.h>
++#include <linux/export.h>
++
+ #include "../wifi.h"
+ #include "../pci.h"
+ #include "../base.h"
+Index: wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/phy_common.c
+===================================================================
+--- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/rtl8192c/phy_common.c
++++ wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/phy_common.c
+@@ -27,6 +27,8 @@
+  *
+  *****************************************************************************/
+ 
++#include <linux/export.h>
++
+ #include "../wifi.h"
+ #include "../rtl8192ce/reg.h"
+ #include "../rtl8192ce/def.h"
+Index: wireless-testing-new/drivers/net/wireless/rtlwifi/usb.c
+===================================================================
+--- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/usb.c
++++ wireless-testing-new/drivers/net/wireless/rtlwifi/usb.c
+@@ -28,6 +28,8 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/usb.h>
++#include <linux/export.h>
++
+ #include "core.h"
+ #include "wifi.h"
+ #include "usb.h"
