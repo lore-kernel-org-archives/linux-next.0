@@ -1,37 +1,40 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: linux-next: manual merge of the omap_dss2 tree with the arm
- tree
-Date: Wed, 21 Sep 2011 09:13:30 +0300
-Message-ID: <1316585610.1949.8.camel@deskari>
-References: <20110921130222.58e566a354feef69f3064d04@canb.auug.org.au>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: Re: [PATCH -next v2] bcma: driver_chipcommon_pmu.c needs linux/export.h
+Date: Wed, 21 Sep 2011 08:45:28 +0200
+Message-ID: <CACna6rywFitSNkkwo6tNy887vdsoyHG5Cadk6Bb8_qBJ+gc42w@mail.gmail.com>
+References: <20110920173102.d38155c7defbbc29beaae7c0@canb.auug.org.au>
+	<4E78CFC0.4020003@xenotime.net>
+	<CACna6rxGrd-ORWZrc0xsAOKptU_Xj3eGh9qSfX9vJYCPTZrCRg@mail.gmail.com>
+	<4E78FCDB.1010002@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog121.obsmtp.com ([74.125.149.145]:38085 "EHLO
-	na3sys009aog121.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751863Ab1IUGUb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Sep 2011 02:20:31 -0400
-In-Reply-To: <20110921130222.58e566a354feef69f3064d04@canb.auug.org.au>
+Received: from mail-wy0-f180.google.com ([74.125.82.180]:36699 "EHLO
+	mail-wy0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751192Ab1IUGqJ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2011 02:46:09 -0400
+In-Reply-To: <4E78FCDB.1010002@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-On Wed, 2011-09-21 at 13:02 +1000, Stephen Rothwell wrote:
-> Hi Tomi,
-> 
-> Today's linux-next merge of the omap_dss2 tree got a conflict in
-> drivers/video/omap/lcd_apollon.c drivers/video/omap/lcd_ldp.c
-> drivers/video/omap/lcd_overo.c between commit 1bc857f700fb ("ARM: gpio:
-> omap: convert drivers to use asm/gpio.h rather than mach/gpio.h") from
-> the arm tree and commits db3136b14a2b ("OMAPFB: Remove unused lcd
-> drivers") and 0cde58449424 ("OMAPDSS: Port the Apollon display driver to
-> DSS2") from the omap_dss2 tree.
-> 
-> The latter two commist removed these files, so I did that.
+W dniu 20 wrze=C5=9Bnia 2011 22:51 u=C5=BCytkownik Randy Dunlap
+<rdunlap@xenotime.net> napisa=C5=82:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+>
+> bcma/driver_chipcommon_pmu.c needs to include <linux/export.h>
+> to fix these warnings:
+>
+> drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: data definition h=
+as no type or storage class
+> drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: type defaults to =
+'int' in declaration of 'EXPORT_SYMBOL_GPL'
+> drivers/bcma/driver_chipcommon_pmu.c:27:1: warning: parameter names (=
+without types) in function declaration
 
-Thanks, this is also correct.
+Don't you get the same warning for core.c? Weird...
 
- Tomi
+--=20
+Rafa=C5=82
