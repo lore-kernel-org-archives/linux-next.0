@@ -1,27 +1,28 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm tree with Linus' tree
-Date: Wed, 21 Sep 2011 10:33:29 +1000
-Message-ID: <20110921103329.c24fb7e8c8b34217c38f92b2@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap_dss2 tree with the arm-soc
+ tree
+Date: Wed, 21 Sep 2011 12:58:44 +1000
+Message-ID: <20110921125844.d83e02ba538d7626d6bdefcf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:48105 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:58371 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750711Ab1IUAdg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 20:33:36 -0400
+	with ESMTP id S1751561Ab1IUC6t (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 22:58:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Arnd Bergmann <arnd@arndb.de>
 
-Hi Russell,
+Hi Tomi,
 
-Today's linux-next merge of the arm tree got a conflict in
-arch/arm/mach-integrator/integrator_ap.c between commit b71d8429ec36
-("mach-integrator: fix VGA base regression") from Linus' tree and commit
-b79573586838 ("ARM: 7087/2: mach-integrator: get timer frequency from
-clock") from the arm tree.
+Today's linux-next merge of the omap_dss2 tree got a conflict in
+arch/arm/mach-omap2/board-4430sdp.c between commit 8f5b5a41ebc7 ("ARM:
+OMAP: Introduce SoC specific early_init") from the arm-soc tree and
+commit 58282610da02 ("OMAP: 4430SDP: Remove unneeded lcd config") from
+the omap_dss2 tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -29,16 +30,28 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-integrator/integrator_ap.c
-index 8cdc730,c698811..0000000
---- a/arch/arm/mach-integrator/integrator_ap.c
-+++ b/arch/arm/mach-integrator/integrator_ap.c
-@@@ -32,7 -32,7 +32,8 @@@
-  #include <linux/interrupt.h>
-  #include <linux/io.h>
-  #include <linux/mtd/physmap.h>
-+ #include <linux/clk.h>
- +#include <video/vga.h>
+diff --cc arch/arm/mach-omap2/board-4430sdp.c
+index f3917b3,d3874a6..0000000
+--- a/arch/arm/mach-omap2/board-4430sdp.c
++++ b/arch/arm/mach-omap2/board-4430sdp.c
+@@@ -381,14 -379,12 +379,6 @@@ static struct platform_device *sdp4430_
+  	&sdp4430_vbat,
+  };
   
-  #include <mach/hardware.h>
-  #include <mach/platform.h>
+- static struct omap_lcd_config sdp4430_lcd_config __initdata = {
+- 	.ctrl_name	= "internal",
+- };
+- 
+- static struct omap_board_config_kernel sdp4430_config[] __initdata = {
+- 	{ OMAP_TAG_LCD,		&sdp4430_lcd_config },
+- };
+- 
+ -static void __init omap_4430sdp_init_early(void)
+ -{
+ -	omap2_init_common_infrastructure();
+ -	omap2_init_common_devices(NULL, NULL);
+ -}
+ -
+  static struct omap_musb_board_data musb_board_data = {
+  	.interface_type		= MUSB_INTERFACE_UTMI,
+  	.mode			= MUSB_OTG,
