@@ -1,44 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the s390 tree
-Date: Wed, 21 Sep 2011 13:55:47 +1000
-Message-ID: <20110921135547.3b9f46eb225a694316158ae8@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: manual merge of the spi tree with the arm tree
+Date: Tue, 20 Sep 2011 22:18:56 -0600
+Message-ID: <CACxGe6vHDGQnr=h-oC1sfqqO2yKiYBj_opmVtugjqojy_zHZFQ@mail.gmail.com>
+References: <20110921133456.3072657340220296eec6d7b6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:38244 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752129Ab1IUDzu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 23:55:50 -0400
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:58447 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750861Ab1IUETR convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2011 00:19:17 -0400
+In-Reply-To: <20110921133456.3072657340220296eec6d7b6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Borntraeger <borntraeger@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Sasha Levin <levinsasha928@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Viresh Kumar <viresh.kumar@st.com>
 
-Hi all,
+Thanks Stephen.  I'll drop the offending hunk from my tree.
 
-Today's linux-next merge of the kvm tree got a conflict in
-include/linux/kvm.h between commit b6cf8788a338 ("[S390] kvm: extension
-capability for new address space layout") from the s390 tree and commit
-d36fe129f29a ("KVM: x86: Raise the hard VCPU count limit") from the kvm
-tree.
+g.
 
-Just context changes.  I fixed it up (see below) anc can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+On Tue, Sep 20, 2011 at 9:34 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Grant,
+>
+> Today's linux-next merge of the spi tree got a conflict in
+> drivers/spi/spi-pl022.c between commit 67fc8b9fe70c ("PM: add runtime=
+ PM
+> support to core Primecell driver") from the arm tree and commit
+> 4eb389a89154 ("spi/spi-pl022: Resolve formatting issues") from the sp=
+i
+> tree.
+>
+> The former removes the lines modified by the latter, so I just remove=
+d
+> the lines (see below).
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+>
+> diff --cc drivers/spi/spi-pl022.c
+> index 3520cf9,02b2eda..0000000
+> --- a/drivers/spi/spi-pl022.c
+> +++ b/drivers/spi/spi-pl022.c
+> @@@ -2235,8 -2237,11 +2225,10 @@@ pl022_probe(struct amba_device *ade=
+v, c
+> =A0 err_start_queue:
+> =A0 err_init_queue:
+> =A0 =A0 =A0 =A0destroy_queue(pl022);
+> - =A0 =A0 =A0 pl022_dma_remove(pl022);
+> + =A0 =A0 =A0 if (platform_info->enable_dma)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pl022_dma_remove(pl022);
+> +
+> =A0 =A0 =A0 =A0free_irq(adev->irq[0], pl022);
+> =A0- =A0 =A0 =A0pm_runtime_disable(&adev->dev);
+> =A0 err_no_irq:
+> =A0 =A0 =A0 =A0clk_put(pl022->clk);
+> =A0 err_no_clk:
+> @@@ -2429,9 -2404,10 +2422,8 @@@ static struct amba_driver pl022_driv=
+er
+> =A0 =A0 =A0 =A0.id_table =A0 =A0 =A0 =3D pl022_ids,
+> =A0 =A0 =A0 =A0.probe =A0 =A0 =A0 =A0 =A0=3D pl022_probe,
+> =A0 =A0 =A0 =A0.remove =A0 =A0 =A0 =A0 =3D __devexit_p(pl022_remove),
+> =A0- =A0 =A0 =A0.suspend =A0 =A0 =A0 =A0=3D pl022_suspend,
+> =A0- =A0 =A0 =A0.resume =A0 =A0 =A0 =A0 =3D pl022_resume,
+> =A0};
+>
+> -
+> =A0static int __init pl022_init(void)
+> =A0{
+> =A0 =A0 =A0 =A0return amba_driver_register(&pl022_driver);
+>
 
-diff --cc include/linux/kvm.h
-index aace6b8,55f5afb..0000000
---- a/include/linux/kvm.h
-+++ b/include/linux/kvm.h
-@@@ -553,7 -553,7 +553,8 @@@ struct kvm_ppc_pvinfo 
-  #define KVM_CAP_SPAPR_TCE 63
-  #define KVM_CAP_PPC_SMT 64
-  #define KVM_CAP_PPC_RMA	65
-+ #define KVM_CAP_MAX_VCPUS 66       /* returns max vcpus per vm */
- +#define KVM_CAP_S390_GMAP 71
-  
-  #ifdef KVM_CAP_IRQ_ROUTING
-  
+
+
+--=20
+Grant Likely, B.Sc., P.Eng.
+Secret Lab Technologies Ltd.
