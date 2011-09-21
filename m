@@ -1,25 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the tty tree with the powerpc tree
-Date: Wed, 21 Sep 2011 14:50:23 +1000
-Message-ID: <20110921145023.e38d553e218c8b5a2e71e9d8@canb.auug.org.au>
+Date: Wed, 21 Sep 2011 15:01:21 +1000
+Message-ID: <20110921150121.9f530384bc0bb6c2268fd9ea@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:53127 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751050Ab1IUEu3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2011 00:50:29 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Jamie Iles <jamie@jamieiles.com>, Greg KH <greg@kroah.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hector Martin <hector@marcansoft.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Andre Heider <a.heider@gmail.com>, Geoff Levand <geoff@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/tty/serial/8250.c between commit 7df5659eefad ("serial/8250: Move
-UPIO_TSI to powerpc") from the powerpc tree and commit 4834d0289785
-("tty: serial8250: remove UPIO_DWAPB{,32}") from the tty tree.
+Today's linux-next merge of the tty tree got conflicts in
+arch/powerpc/include/asm/udbg.h and arch/powerpc/kernel/udbg.c between
+commit c26afe9e8591 ("powerpc/ps3: Add gelic udbg driver") from the
+powerpc tree and commit dcd83aaff1c8 ("tty/powerpc: introduce the ePAPR
+embedded hypervisor byte channel driver") from the tty tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -27,90 +25,37 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/tty/serial/8250.c
-index 610b8e6,435ce14..0000000
---- a/drivers/tty/serial/8250.c
-+++ b/drivers/tty/serial/8250.c
-@@@ -443,42 -443,24 +443,6 @@@ static void au_serial_out(struct uart_p
-  	__raw_writel(value, p->membase + offset);
-  }
+diff --cc arch/powerpc/include/asm/udbg.h
+index 6587ec7,5354ae9..0000000
+--- a/arch/powerpc/include/asm/udbg.h
++++ b/arch/powerpc/include/asm/udbg.h
+@@@ -54,9 -54,7 +54,10 @@@ extern void __init udbg_init_40x_realmo
+  extern void __init udbg_init_cpm(void);
+  extern void __init udbg_init_usbgecko(void);
+  extern void __init udbg_init_wsp(void);
+ +extern void __init udbg_init_ps3gelic(void);
+ +extern void __init udbg_init_debug_opal_raw(void);
+ +extern void __init udbg_init_debug_opal_hvsi(void);
++ extern void __init udbg_init_ehv_bc(void);
   
-- /* Save the LCR value so it can be re-written when a Busy Detect IRQ occurs. */
-- static inline void dwapb_save_out_value(struct uart_port *p, int offset,
-- 					int value)
-- {
-- 	struct uart_8250_port *up =
-- 		container_of(p, struct uart_8250_port, port);
-- 
-- 	if (offset == UART_LCR)
-- 		up->lcr = value;
-- }
-- 
-- /* Read the IER to ensure any interrupt is cleared before returning from ISR. */
-- static inline void dwapb_check_clear_ier(struct uart_port *p, int offset)
-- {
-- 	if (offset == UART_TX || offset == UART_IER)
-- 		p->serial_in(p, UART_IER);
-- }
-- 
-- static void dwapb_serial_out(struct uart_port *p, int offset, int value)
-- {
-- 	int save_offset = offset;
-- 	offset = map_8250_out_reg(p, offset) << p->regshift;
-- 	dwapb_save_out_value(p, save_offset, value);
-- 	writeb(value, p->membase + offset);
-- 	dwapb_check_clear_ier(p, save_offset);
-- }
-- 
-- static void dwapb32_serial_out(struct uart_port *p, int offset, int value)
-- {
-- 	int save_offset = offset;
-- 	offset = map_8250_out_reg(p, offset) << p->regshift;
-- 	dwapb_save_out_value(p, save_offset, value);
-- 	writel(value, p->membase + offset);
-- 	dwapb_check_clear_ier(p, save_offset);
-- }
-- 
- -static unsigned int tsi_serial_in(struct uart_port *p, int offset)
- -{
- -	unsigned int tmp;
- -	offset = map_8250_in_reg(p, offset) << p->regshift;
- -	if (offset == UART_IIR) {
- -		tmp = readl(p->membase + (UART_IIR & ~3));
- -		return (tmp >> 16) & 0xff; /* UART_IIR % 4 == 2 */
- -	} else
- -		return readb(p->membase + offset);
- -}
- -
- -static void tsi_serial_out(struct uart_port *p, int offset, int value)
- -{
- -	offset = map_8250_out_reg(p, offset) << p->regshift;
- -	if (!((offset == UART_IER) && (value & UART_IER_UUE)))
- -		writeb(value, p->membase + offset);
- -}
- -
-  static unsigned int io_serial_in(struct uart_port *p, int offset)
-  {
-  	offset = map_8250_in_reg(p, offset) << p->regshift;
-@@@ -517,16 -501,11 +483,6 @@@ static void set_io_from_upio(struct uar
-  		p->serial_out = au_serial_out;
-  		break;
+  #endif /* __KERNEL__ */
+  #endif /* _ASM_POWERPC_UDBG_H */
+diff --cc arch/powerpc/kernel/udbg.c
+index 35f9482,b4607a9..0000000
+--- a/arch/powerpc/kernel/udbg.c
++++ b/arch/powerpc/kernel/udbg.c
+@@@ -67,12 -67,8 +67,14 @@@ void __init udbg_early_init(void
+  	udbg_init_usbgecko();
+  #elif defined(CONFIG_PPC_EARLY_DEBUG_WSP)
+  	udbg_init_wsp();
+ +#elif defined(CONFIG_PPC_EARLY_DEBUG_PS3GELIC)
+ +	udbg_init_ps3gelic();
+ +#elif defined(CONFIG_PPC_EARLY_DEBUG_OPAL_RAW)
+ +	udbg_init_debug_opal_raw();
+ +#elif defined(CONFIG_PPC_EARLY_DEBUG_OPAL_HVSI)
+ +	udbg_init_debug_opal_hvsi();
++ #elif defined(CONFIG_PPC_EARLY_DEBUG_EHV_BC)
++ 	udbg_init_ehv_bc();
+  #endif
   
-- 	case UPIO_DWAPB:
-- 		p->serial_in = mem_serial_in;
-- 		p->serial_out = dwapb_serial_out;
-- 		break;
-- 
-- 	case UPIO_DWAPB32:
-- 		p->serial_in = mem32_serial_in;
-- 		p->serial_out = dwapb32_serial_out;
-- 		break;
-- 
- -	case UPIO_TSI:
- -		p->serial_in = tsi_serial_in;
- -		p->serial_out = tsi_serial_out;
- -		break;
- -
-  	default:
-  		p->serial_in = io_serial_in;
-  		p->serial_out = io_serial_out;
+  #ifdef CONFIG_PPC_EARLY_DEBUG
