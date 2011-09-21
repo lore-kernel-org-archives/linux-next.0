@@ -1,47 +1,41 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] nfc: NFC_WILINK depends on NFC_NCI
-Date: Wed, 21 Sep 2011 11:02:37 -0700
-Message-ID: <4E7A26BD.1090202@xenotime.net>
-References: <20110921155850.09c858bb38205bb2cc0c8f0a@canb.auug.org.au>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: linux-next: tmem: temporary home for tmem.git tree (for frontswap,
+ which is the final core kernel patchset for tmem)
+Date: Wed, 21 Sep 2011 12:18:19 -0700 (PDT)
+Message-ID: <b6034dd3-1750-49b5-b466-c125c9704db2@default>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:58313 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753472Ab1IUSCj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2011 14:02:39 -0400
-In-Reply-To: <20110921155850.09c858bb38205bb2cc0c8f0a@canb.auug.org.au>
+Received: from rcsinet15.oracle.com ([148.87.113.117]:47029 "EHLO
+	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752479Ab1IUTSx convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2011 15:18:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>, Samuel Ortiz <sameo@linux.intel.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Wilk <konrad.wilk@oracle.com>, akpm@linux-foundation.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+Hi Stephen --
 
-nwcwilink.c uses nci_*() interfaces, so it should depend on
-NFC_NCI.
+There's a few tweaks in the tmem/frontswap patchset (for which
+the current version was last pulled into linux-next from kernel.org).
+Changes are mostly cosmetic and mostly in response to feedback from
+Andrew Morton, with a bit of patchset restructuring suggested by
+Konrad Wilk.  I've been hoping that kernel.org would come back up
+but if it's not too much trouble to switch temporarily, please
+switch tmem to:
 
-Fixes these build errors:
-ERROR: "nci_register_device" [drivers/nfc/nfcwilink.ko] undefined!
-ERROR: "nci_allocate_device" [drivers/nfc/nfcwilink.ko] undefined!
-ERROR: "nci_recv_frame" [drivers/nfc/nfcwilink.ko] undefined!
-ERROR: "nci_free_device" [drivers/nfc/nfcwilink.ko] undefined!
-ERROR: "nci_unregister_device" [drivers/nfc/nfcwilink.ko] undefined!
+git://oss.oracle.com/git/djm/tmem.git#tmem
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
- drivers/nfc/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I would appreciate having the exposure on the latest bits
+before the 3.2 merge window.
 
---- next-2011-0921.orig/drivers/nfc/Kconfig
-+++ next-2011-0921/drivers/nfc/Kconfig
-@@ -29,7 +29,7 @@ config NFC_PN533
- 
- config NFC_WILINK
- 	tristate "Texas Instruments NFC WiLink driver"
--	depends on TI_ST
-+	depends on TI_ST && NFC_NCI
- 	help
- 	  This enables the NFC driver for Texas Instrument's BT/FM/GPS/NFC
- 	  combo devices. This makes use of shared transport line discipline
+Thanks!
+Dan
+
+Thanks... for the memory!
+I really could use more / my throughput's on the floor
+The balloon is flat / my swap disk's fat / I've OOM's in store
+Overcommitted so much
+(with apologies to Bob Hope)
