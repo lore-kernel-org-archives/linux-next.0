@@ -1,55 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap_dss2 tree with the arm tree
-Date: Wed, 21 Sep 2011 13:02:22 +1000
-Message-ID: <20110921130222.58e566a354feef69f3064d04@canb.auug.org.au>
+Subject: linux-next: manual merge of the spi tree with the arm tree
+Date: Wed, 21 Sep 2011 13:34:56 +1000
+Message-ID: <20110921133456.3072657340220296eec6d7b6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__21_Sep_2011_13_02_22_+1000_7N5cCMFZUSvQzcqW"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:48589 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:41015 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751715Ab1IUDC3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 23:02:29 -0400
+	with ESMTP id S1751561Ab1IUDe7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2011 23:34:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Viresh Kumar <viresh.kumar@st.com>
 
---Signature=_Wed__21_Sep_2011_13_02_22_+1000_7N5cCMFZUSvQzcqW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Grant,
 
-Hi Tomi,
+Today's linux-next merge of the spi tree got a conflict in
+drivers/spi/spi-pl022.c between commit 67fc8b9fe70c ("PM: add runtime PM
+support to core Primecell driver") from the arm tree and commit
+4eb389a89154 ("spi/spi-pl022: Resolve formatting issues") from the spi
+tree.
 
-Today's linux-next merge of the omap_dss2 tree got a conflict in
-drivers/video/omap/lcd_apollon.c drivers/video/omap/lcd_ldp.c
-drivers/video/omap/lcd_overo.c between commit 1bc857f700fb ("ARM: gpio:
-omap: convert drivers to use asm/gpio.h rather than mach/gpio.h") from
-the arm tree and commits db3136b14a2b ("OMAPFB: Remove unused lcd
-drivers") and 0cde58449424 ("OMAPDSS: Port the Apollon display driver to
-DSS2") from the omap_dss2 tree.
-
-The latter two commist removed these files, so I did that.
---=20
+The former removes the lines modified by the latter, so I just removed
+the lines (see below).
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__21_Sep_2011_13_02_22_+1000_7N5cCMFZUSvQzcqW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOeVO+AAoJEDMEi1NhKgbsIgIH/jb/ZSYtJgXdQgFC0hh9ozzo
-iuL/AWSgILcmjOZDMeMK/zH6YWgtCpJPaBf6+xmZtR8hCIumP38kz7+x7Eu1NAwL
-9/O7z8Fdrm/f/iWJDBsnWPrPFsS2DV5KIIOx8YewpCs6ReTzag305ceMx/vkENoJ
-JPlbSB8syCcbOwzdJmlIgGcVLBmhbVAoFSAThERLgyEnwtaFNpk1ejCmCOieqles
-vZr0C9AAakPSlzbXAC+9mhkE/AIhpKyERyaWq8vb7iurGOT23P6GTWSIIvISGsHs
-7J51gPeLBUFe6CzH1Lul2ctNYl+7BwcbCURi2OadxTlkgrFjf/KKCdeWlwW4BU8=
-=A82p
------END PGP SIGNATURE-----
-
---Signature=_Wed__21_Sep_2011_13_02_22_+1000_7N5cCMFZUSvQzcqW--
+diff --cc drivers/spi/spi-pl022.c
+index 3520cf9,02b2eda..0000000
+--- a/drivers/spi/spi-pl022.c
++++ b/drivers/spi/spi-pl022.c
+@@@ -2235,8 -2237,11 +2225,10 @@@ pl022_probe(struct amba_device *adev, c
+   err_start_queue:
+   err_init_queue:
+  	destroy_queue(pl022);
+- 	pl022_dma_remove(pl022);
++ 	if (platform_info->enable_dma)
++ 		pl022_dma_remove(pl022);
++ 
+  	free_irq(adev->irq[0], pl022);
+ -	pm_runtime_disable(&adev->dev);
+   err_no_irq:
+  	clk_put(pl022->clk);
+   err_no_clk:
+@@@ -2429,9 -2404,10 +2422,8 @@@ static struct amba_driver pl022_driver 
+  	.id_table	= pl022_ids,
+  	.probe		= pl022_probe,
+  	.remove		= __devexit_p(pl022_remove),
+ -	.suspend	= pl022_suspend,
+ -	.resume		= pl022_resume,
+  };
+  
+- 
+  static int __init pl022_init(void)
+  {
+  	return amba_driver_register(&pl022_driver);
