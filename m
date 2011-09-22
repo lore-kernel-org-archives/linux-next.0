@@ -1,53 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the arm-soc tree
-Date: Thu, 22 Sep 2011 16:45:13 +1000
-Message-ID: <20110922164513.084ba0366628d756f0499669@canb.auug.org.au>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] staging: dt3155v4l: fix build break
+Date: Thu, 22 Sep 2011 09:04:42 +0200
+Message-ID: <1316675082-9310-1-git-send-email-m.szyprowski@samsung.com>
+References: <20110922131232.56210b544f587210621ae339@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__22_Sep_2011_16_45_13_+1000_F4Gydq87FT8AE32X"
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:44331 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751294Ab1IVGpe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Sep 2011 02:45:34 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:18708 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750789Ab1IVHE4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Sep 2011 03:04:56 -0400
+In-reply-to: <20110922131232.56210b544f587210621ae339@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "Justin P. Mattock" <justinmattock@gmail.com>
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Greg Kroah-Hartman <gregkh@suse.de>, Marin Mitov <mitov@issp.bas.bg>, Marek Szyprowski <m.szyprowski@samsung.com>
 
---Signature=_Thu__22_Sep_2011_16_45_13_+1000_F4Gydq87FT8AE32X
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch fixes build break caused by commit ba7fcb0c9549 ("[media] media: vb2: dma
+contig allocator: use dma_addr instread of paddr").
 
-Hi Jiri,
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/staging/dt3155v4l/dt3155v4l.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Today's linux-next merge of the trivial tree got a conflict in
-arch/arm/mach-nuc93x/time.c between commit 6adc1e7ff19d ("ARM:
-mach-nuc93x: delete") from the arm-soc tree and commit 699324871fcc
-("treewide: remove extra semicolons from various parts of the kernel")
-from the trivial tree.
-
-The former removed the file, so I did that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__22_Sep_2011_16_45_13_+1000_F4Gydq87FT8AE32X
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOetl5AAoJEDMEi1NhKgbsQ/UIAI6VxxCE+WBgfHMXbzCCJoLG
-2pA5aDeDLJkwaVQcv6RLxsMF3OdBmoihhHQUBx8uYy3gdso6T6BriKIh9t/qhwh8
-weg0DmYihfrj8nVwdiIsWse9sbVWPJJhA6itWZ09rZYz8NTwOgwJs0ONI6XjgQDq
-bxwzf/BTfq5CBUBVpMxMKuY+1s6xb77zgRKrymMQBboq5Zn5wLteUUazRpJW+lya
-zU7+h4y6yRWnuLAwlcrEV03DOX097JDHOyjaM//IKISW8+PMxsnNUhrBvsBT68yG
-QtObfmsZh1CUnecsXmzV5fCiAsgUzUsgCIp0gE0Qc45k2mPqlJgYrx9OyDRMvLA=
-=ZEwL
------END PGP SIGNATURE-----
-
---Signature=_Thu__22_Sep_2011_16_45_13_+1000_F4Gydq87FT8AE32X--
+diff --git a/drivers/staging/dt3155v4l/dt3155v4l.c b/drivers/staging/dt3155v4l/dt3155v4l.c
+index 05aa41c..0ede5d1 100644
+--- a/drivers/staging/dt3155v4l/dt3155v4l.c
++++ b/drivers/staging/dt3155v4l/dt3155v4l.c
+@@ -207,7 +207,7 @@ dt3155_start_acq(struct dt3155_priv *pd)
+ 	struct vb2_buffer *vb = pd->curr_buf;
+ 	dma_addr_t dma_addr;
+ 
+-	dma_addr = vb2_dma_contig_plane_paddr(vb, 0);
++	dma_addr = vb2_dma_contig_plane_dma_addr(vb, 0);
+ 	iowrite32(dma_addr, pd->regs + EVEN_DMA_START);
+ 	iowrite32(dma_addr + img_width, pd->regs + ODD_DMA_START);
+ 	iowrite32(img_width, pd->regs + EVEN_DMA_STRIDE);
+@@ -374,7 +374,7 @@ dt3155_irq_handler_even(int irq, void *dev_id)
+ 	ivb = list_first_entry(&ipd->dmaq, typeof(*ivb), done_entry);
+ 	list_del(&ivb->done_entry);
+ 	ipd->curr_buf = ivb;
+-	dma_addr = vb2_dma_contig_plane_paddr(ivb, 0);
++	dma_addr = vb2_dma_contig_plane_dma_addr(ivb, 0);
+ 	iowrite32(dma_addr, ipd->regs + EVEN_DMA_START);
+ 	iowrite32(dma_addr + img_width, ipd->regs + ODD_DMA_START);
+ 	iowrite32(img_width, ipd->regs + EVEN_DMA_STRIDE);
+-- 
+1.7.1.569.g6f426
