@@ -1,49 +1,49 @@
 From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH -next] pps gpio client: add missing dependency
-Date: Thu, 22 Sep 2011 09:16:35 +0200
-Message-ID: <1316675795-5327-1-git-send-email-heiko.carstens@de.ibm.com>
+Subject: [PATCH -next] seeq: fix compile breakage on s390
+Date: Thu, 22 Sep 2011 09:17:55 +0200
+Message-ID: <1316675875-5423-1-git-send-email-heiko.carstens@de.ibm.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate3.uk.ibm.com ([194.196.100.163]:41331 "EHLO
+Received: from mtagate3.uk.ibm.com ([194.196.100.163]:41993 "EHLO
 	mtagate3.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751001Ab1IVHQk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Sep 2011 03:16:40 -0400
-Received: from d06nrmr1307.portsmouth.uk.ibm.com (d06nrmr1307.portsmouth.uk.ibm.com [9.149.38.129])
-	by mtagate3.uk.ibm.com (8.13.1/8.13.1) with ESMTP id p8M7Gbc6010665
-	for <linux-next@vger.kernel.org>; Thu, 22 Sep 2011 07:16:37 GMT
-Received: from d06av08.portsmouth.uk.ibm.com (d06av08.portsmouth.uk.ibm.com [9.149.37.249])
-	by d06nrmr1307.portsmouth.uk.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id p8M7Gb0d618610
-	for <linux-next@vger.kernel.org>; Thu, 22 Sep 2011 08:16:37 +0100
-Received: from d06av08.portsmouth.uk.ibm.com (loopback [127.0.0.1])
-	by d06av08.portsmouth.uk.ibm.com (8.14.4/8.13.1/NCO v10.0 AVout) with ESMTP id p8M7GaUC010509
-	for <linux-next@vger.kernel.org>; Thu, 22 Sep 2011 08:16:37 +0100
+	with ESMTP id S1751001Ab1IVHR7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Sep 2011 03:17:59 -0400
+Received: from d06nrmr1707.portsmouth.uk.ibm.com (d06nrmr1707.portsmouth.uk.ibm.com [9.149.39.225])
+	by mtagate3.uk.ibm.com (8.13.1/8.13.1) with ESMTP id p8M7Hwwt011477
+	for <linux-next@vger.kernel.org>; Thu, 22 Sep 2011 07:17:58 GMT
+Received: from d06av07.portsmouth.uk.ibm.com (d06av07.portsmouth.uk.ibm.com [9.149.37.248])
+	by d06nrmr1707.portsmouth.uk.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id p8M7HvGD1945628
+	for <linux-next@vger.kernel.org>; Thu, 22 Sep 2011 08:17:57 +0100
+Received: from d06av07.portsmouth.uk.ibm.com (loopback [127.0.0.1])
+	by d06av07.portsmouth.uk.ibm.com (8.14.4/8.13.1/NCO v10.0 AVout) with ESMTP id p8M7HvvZ029743
+	for <linux-next@vger.kernel.org>; Thu, 22 Sep 2011 01:17:57 -0600
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, James Nuss <jamesnuss@nanometrics.ca>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-Add "depends on GENERIC_HARDIRQS" to avoid compile breakage on s390:
+The SEEQ drivers should depend on HAS_IOMEM to prevent compile breakage
+on !HAS_IOMEM architectures:
 
-drivers/built-in.o: In function `pps_gpio_remove':
-linux-next/drivers/pps/clients/pps-gpio.c:189: undefined reference to `free_irq'
+drivers/net/ethernet/seeq/seeq8005.c: In function 'seeq8005_probe1':
+drivers/net/ethernet/seeq/seeq8005.c:179:2: error:
+  implicit declaration of function 'inw' [-Werror=implicit-function-declaration]
 
-Cc: James Nuss <jamesnuss@nanometrics.ca>
 Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 ---
- drivers/pps/clients/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/net/ethernet/seeq/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/pps/clients/Kconfig b/drivers/pps/clients/Kconfig
-index c2e0f1e..445197d 100644
---- a/drivers/pps/clients/Kconfig
-+++ b/drivers/pps/clients/Kconfig
-@@ -31,7 +31,7 @@ config PPS_CLIENT_PARPORT
- 
- config PPS_CLIENT_GPIO
- 	tristate "PPS client using GPIO"
--	depends on PPS
-+	depends on PPS && GENERIC_HARDIRQS
- 	help
- 	  If you say yes here you get support for a PPS source using
- 	  GPIO. To be useful you must also register a platform device
+diff --git a/drivers/net/ethernet/seeq/Kconfig b/drivers/net/ethernet/seeq/Kconfig
+index 49b6d5b..29f1853 100644
+--- a/drivers/net/ethernet/seeq/Kconfig
++++ b/drivers/net/ethernet/seeq/Kconfig
+@@ -5,6 +5,7 @@
+ config NET_VENDOR_SEEQ
+ 	bool "SEEQ devices"
+ 	default y
++	depends on HAS_IOMEM
+ 	depends on (ARM && ARCH_ACORN) || SGI_HAS_SEEQ || EXPERIMENTAL
+ 	---help---
+ 	  If you have a network (Ethernet) card belonging to this class, say Y
 -- 
 1.7.5.4
