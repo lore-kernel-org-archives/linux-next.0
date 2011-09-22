@@ -1,60 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mmc tree
-Date: Thu, 22 Sep 2011 16:13:50 +1000
-Message-ID: <20110922161350.a3a0f41a56dd99760f688e3a@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the arm-soc tree
+Date: Thu, 22 Sep 2011 16:45:13 +1000
+Message-ID: <20110922164513.084ba0366628d756f0499669@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__22_Sep_2011_16_13_50_+1000_Y4OOR032fEEbhH1F"
+ boundary="Signature=_Thu__22_Sep_2011_16_45_13_+1000_F4Gydq87FT8AE32X"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:54013 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:44331 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751058Ab1IVGN6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Sep 2011 02:13:58 -0400
+	with ESMTP id S1751294Ab1IVGpe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Sep 2011 02:45:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Adrian Hunter <adrian.hunter@intel.com>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "Justin P. Mattock" <justinmattock@gmail.com>
 
---Signature=_Thu__22_Sep_2011_16_13_50_+1000_Y4OOR032fEEbhH1F
+--Signature=_Thu__22_Sep_2011_16_45_13_+1000_F4Gydq87FT8AE32X
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+Hi Jiri,
 
-After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the trivial tree got a conflict in
+arch/arm/mach-nuc93x/time.c between commit 6adc1e7ff19d ("ARM:
+mach-nuc93x: delete") from the arm-soc tree and commit 699324871fcc
+("treewide: remove extra semicolons from various parts of the kernel")
+from the trivial tree.
 
-drivers/mmc/core/core.c: In function 'mmc_do_hw_reset':
-drivers/mmc/core/core.c:1848:11: error: 'struct mmc_ios' has no member name=
-d 'ddr'
-
-Caused by commit a0721d241b06 ("mmc: core: add eMMC hardware reset
-support"). ddr was removed by commit 7fd781e8f9b7 ("mmc: remove unused
-"ddr" parameter in struct mmc_ios") before v3.1-rc2.
-
-Please build test ...
-
-I have used the mmc tree from next-20110921 for today.
+The former removed the file, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__22_Sep_2011_16_13_50_+1000_Y4OOR032fEEbhH1F
+--Signature=_Thu__22_Sep_2011_16_45_13_+1000_F4Gydq87FT8AE32X
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOetIeAAoJEDMEi1NhKgbsCukH/jaWKhptTC4pfnp129Bp6FGf
-yktmUenXzCjAnlTMkqNhEbCIHS/PC2FKw/lTXIT7DxF1V9FdO/P0h25CTD403Ptv
-nSctnzEOo8bfjhg2s46bs6AvJvdAXWXyG4gdiYN18ooLXdeLCaqk/W6PljuPVMuG
-Ao170gtY///wezcI1g9/e3KYA/Q2RS1HTjkAVsM7Go2PTwT12K+W6XhbgvykLOap
-CbtkavWGW6Shbwc9tVaSHWPpH0ssi/LnWZZnVuNzQSk22un3x5z2ioEViOKXTy3n
-Qd/RSbFX2gQlIZiUu+qvXQXk+0BG/ljdKhG4iYeILq6MMgauG5Zf+Sf53VMSv5I=
-=9J8T
+iQEcBAEBAgAGBQJOetl5AAoJEDMEi1NhKgbsQ/UIAI6VxxCE+WBgfHMXbzCCJoLG
+2pA5aDeDLJkwaVQcv6RLxsMF3OdBmoihhHQUBx8uYy3gdso6T6BriKIh9t/qhwh8
+weg0DmYihfrj8nVwdiIsWse9sbVWPJJhA6itWZ09rZYz8NTwOgwJs0ONI6XjgQDq
+bxwzf/BTfq5CBUBVpMxMKuY+1s6xb77zgRKrymMQBboq5Zn5wLteUUazRpJW+lya
+zU7+h4y6yRWnuLAwlcrEV03DOX097JDHOyjaM//IKISW8+PMxsnNUhrBvsBT68yG
+QtObfmsZh1CUnecsXmzV5fCiAsgUzUsgCIp0gE0Qc45k2mPqlJgYrx9OyDRMvLA=
+=ZEwL
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__22_Sep_2011_16_13_50_+1000_Y4OOR032fEEbhH1F--
+--Signature=_Thu__22_Sep_2011_16_45_13_+1000_F4Gydq87FT8AE32X--
