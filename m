@@ -1,32 +1,63 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: linux-next: manual merge of the akpm with the block tree
-Date: Thu, 22 Sep 2011 09:37:17 -0400
-Message-ID: <20110922133717.GA21575@infradead.org>
-References: <20110922182625.4a18ee494a0f3bf977fc8ea3@canb.auug.org.au>
+From: Mikulas Patocka <mpatocka@redhat.com>
+Subject: Re: [PATCH -next] sysfs: add unsigned long cast to prevent compile
+ warning
+Date: Thu, 22 Sep 2011 10:16:51 -0400 (EDT)
+Message-ID: <Pine.LNX.4.64.1109221014240.28236@hs20-bc2-1.build.redhat.com>
+References: <1316675701-5230-1-git-send-email-heiko.carstens@de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 173-166-109-252-newengland.hfc.comcastbusiness.net ([173.166.109.252]:54128
-	"EHLO bombadil.infradead.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752543Ab1IVNhV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 Sep 2011 09:37:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20110922182625.4a18ee494a0f3bf977fc8ea3@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:52728 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752254Ab1IVORD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 Sep 2011 10:17:03 -0400
+In-Reply-To: <1316675701-5230-1-git-send-email-heiko.carstens@de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Eric Miao <eric.miao@linaro.org>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-next@vger.kernel.org
 
-On Thu, Sep 22, 2011 at 06:26:25PM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
+Hi
+
+> "sysfs: use rb-tree for inode number lookup" added a new printk which
+> causes a new compile warning on s390 (and few other architectures):
 > 
-> Today's linux-next merge of the scsi-post-merge tree got a conflict in
-> drivers/block/brd.c between commit 5a7bbad27a41 ("block: remove support
-> for bio remapping from ->make_request") from the block tree and commit
-> 4559c71773c5 ("brd_make_request() always returns 0, which doesn't make
-> much sense") from the akpm tree.
+> fs/sysfs/dir.c: In function 'sysfs_link_sibling':
+> fs/sysfs/dir.c:63:4: warning: format '%lx' expects argument of type
+>   'long unsigned int', but argument 2 has type 'ino_t' [-Wform
+> 
+> Add an explicit unsigned long cast since ino_t is an unsigned long on
+> most architectures.
+> 
+> Cc: Mikulas Patocka <mpatocka@redhat.com>
+> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+> ---
+>  fs/sysfs/dir.c |    3 ++-
+>  1 files changed, 2 insertions(+), 1 deletions(-)
+> 
+> diff --git a/fs/sysfs/dir.c b/fs/sysfs/dir.c
+> index c3646d9..9a6e020 100644
+> --- a/fs/sysfs/dir.c
+> +++ b/fs/sysfs/dir.c
+> @@ -60,7 +60,8 @@ static void sysfs_link_sibling(struct sysfs_dirent *sd)
+>  		} else if (sd->s_ino > node->s_ino) {
+>  			p = &node->inode_node.rb_right;
+>  		} else {
+> -			printk(KERN_CRIT "sysfs: inserting duplicate inode '%lx'\n", sd->s_ino);
+> +			printk(KERN_CRIT "sysfs: inserting duplicate inode '%lux'\n",
 
-Where did the latter patch come from?  Given that brd_make_request is
-for the ramdisk driver that never does remapping returning anything but
-zero would be a bug anyway.
+This change is wrong. Leave the format string as it was ... "%lux" 
+actually prints a decimal long unsigned integer followed by the character 
+"x". "%lx" prints the hexadecimal unsigned long string.
+
+> +			       (unsigned long) sd->s_ino);
+
+OK, this is good.
+
+>  			BUG();
+>  		}
+>  #undef node
+> -- 
+> 1.7.5.4
+
+Mikulas
