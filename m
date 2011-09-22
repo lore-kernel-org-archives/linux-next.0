@@ -1,37 +1,63 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: no tree for Sept 6
-Date: Thu, 22 Sep 2011 14:48:55 -0300
-Message-ID: <4E7B7507.6090008@infradead.org>
-References: <20110906164049.4dd3961cb82800b8d7cc8741@canb.auug.org.au> <CACqU3MXcZ72eYNd=duPYdR_gOe-ejnHoLSMqK_ZU3y=MR2-0+A@mail.gmail.com> <CA+5PVA7CETUa0i3U20ifz5YjXAywTGD2NEQt1GcJz1OwY_DtEg@mail.gmail.com> <CACqU3MXQw4+QyBmCPcO8ZmYu0T6N+DStXBoa=JUv+ej6cWMTnw@mail.gmail.com> <CA+5PVA7Oj9BNTA93m8-rj4a7Ze_N7m3mG0-+GLG1zUSG+ekqJQ@mail.gmail.com> <CACqU3MW3w10LsZvyY4RNQ1-0TgrW39PaGeVnj78bk+p6c=1uFQ@mail.gmail.com> <4E677AF5.7050903@infradead.org> <20110911141958.8e404c8b943af1c73886cee5@canb.auug.org.au> <4E7A9544.9040006@infradead.org> <20110922122352.61843f389e78c6ffde0a703b@canb.auug.org.au> <4E7AA20D.2000605@infradead.org> <20110923002630.1f6f8e6fed7e53a2479b73ac@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Thu, 22 Sep 2011 13:19:09 -0700
+Message-ID: <20110922201909.GA13347@kroah.com>
+References: <20110922131232.56210b544f587210621ae339@canb.auug.org.au>
+ <4E7B2E43.3080609@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:47949 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752267Ab1IVRtE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Sep 2011 13:49:04 -0400
-In-Reply-To: <20110923002630.1f6f8e6fed7e53a2479b73ac@canb.auug.org.au>
+Received: from out2.smtp.messagingengine.com ([66.111.4.26]:37250 "EHLO
+	out2.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753841Ab1IVUTQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 Sep 2011 16:19:16 -0400
+Content-Disposition: inline
+In-Reply-To: <4E7B2E43.3080609@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Em 22-09-2011 11:26, Stephen Rothwell escreveu:
-> Hi Mauro,
+On Thu, Sep 22, 2011 at 09:46:59AM -0300, Mauro Carvalho Chehab wrote:
+> Em 22-09-2011 00:12, Stephen Rothwell escreveu:
+> > Hi Mauro,
+> > 
+> > After merging the v4l-dvb tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > drivers/staging/dt3155v4l/dt3155v4l.c: In function 'dt3155_start_acq':
+> > drivers/staging/dt3155v4l/dt3155v4l.c:210:2: error: implicit declaration of function 'vb2_dma_contig_plane_paddr'
+> > drivers/staging/dt3155v4l/dt3155v4l.c: At top level:
+> > drivers/staging/dt3155v4l/dt3155v4l.c:321:2: warning: initialization from incompatible pointer type
+> > drivers/staging/dt3155v4l/dt3155v4l.c:325:2: warning: initialization from incompatible pointer type
+> > 
+> > Casued by commit ba7fcb0c9549 ("[media] media: vb2: dma contig allocator:
+> > use dma_addr instread of paddr").
+> > 
+> > I have used the v4l-dvb tree from next-20110921 for today.
 > 
-> On Wed, 21 Sep 2011 23:48:45 -0300 Mauro Carvalho Chehab <mchehab@infradead.org> wrote:
->>
->> Ok, just set a git tree for the edac drivers I'm maintaining.
->> It is at:
->> 	git://git.infradead.org/users/mchehab/edac.git
->>
->> It replaces both my old i7core and edac trees.
+> Hi Stephen,
 > 
-> I will switch to this starting tomorrow.  It is called edac and I have
-> removed the i7core_edac and i7300_edac trees.
+> I think that the right thing to do is to disable the building of this
+> staging driver, if it is not using the current media core API's.
+> 
+> Greg,
+> 
+> If possible, I prefer to merge those staging drivers for the media
+> subsystem via my tree, as it helps me to solve in advance conflicts
+> like that. Maybe we could add a drivers/staging/media tree or
+> drivers/media/staging, and move those beasts to there.
+> 
+> What do you think?
 
-OK!
+Yes, I would _LOVE_ a drivers/staging/media/ directory so that I know
+which drivers I am supposed to be ignoring and leaving to you :)
 
-Thank you!
-Mauro
+Just let me know which ones I should move into there and I will do that
+today and let you maintain them all and just forward any emails to you.
+Which will keep issues like this from happening in the future.
+
+thanks,
+
+greg k-h
