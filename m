@@ -1,111 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the l2-mtd tree with the at91 tree
-Date: Thu, 22 Sep 2011 15:36:09 +1000
-Message-ID: <20110922153609.2bed2393969ac4283dc360d6@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mmc tree
+Date: Thu, 22 Sep 2011 16:13:50 +1000
+Message-ID: <20110922161350.a3a0f41a56dd99760f688e3a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__22_Sep_2011_16_13_50_+1000_Y4OOR032fEEbhH1F"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:53399 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:54013 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750962Ab1IVFgM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Sep 2011 01:36:12 -0400
+	with ESMTP id S1751058Ab1IVGN6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Sep 2011 02:13:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Chris Ball <cjb@laptop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Adrian Hunter <adrian.hunter@intel.com>
 
-Hi Artem,
+--Signature=_Thu__22_Sep_2011_16_13_50_+1000_Y4OOR032fEEbhH1F
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the l2-mtd tree got conflicts in
-arch/arm/mach-at91/board-afeb-9260v1.c,
-arch/arm/mach-at91/board-neocore926.c. arch/arm/mach-at91/board-rm9200dk.c,
-arch/arm/mach-at91/board-sam9g20ek.c and
-arch/arm/mach-at91/board-sam9m10g45ek.c between commit 36706ab70b26
-("ARM: at91/boards: use -EINVAL for invalid gpio") from the at91 tree and
-commit 1754aab9bb86 ("mtd: ATMEL, AVR32: inline nand partition table
-access") from the l2-mtd tree.
+Hi Chris,
 
-Just context changes.  I fixed them up (see below) and can carry the
-fixes as necessary.
--- 
+After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+drivers/mmc/core/core.c: In function 'mmc_do_hw_reset':
+drivers/mmc/core/core.c:1848:11: error: 'struct mmc_ios' has no member name=
+d 'ddr'
+
+Caused by commit a0721d241b06 ("mmc: core: add eMMC hardware reset
+support"). ddr was removed by commit 7fd781e8f9b7 ("mmc: remove unused
+"ddr" parameter in struct mmc_ios") before v3.1-rc2.
+
+Please build test ...
+
+I have used the mmc tree from next-20110921 for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-at91/board-afeb-9260v1.c
-index 2d92043,a053e91..0000000
---- a/arch/arm/mach-at91/board-afeb-9260v1.c
-+++ b/arch/arm/mach-at91/board-afeb-9260v1.c
-@@@ -142,9 -135,9 +136,10 @@@ static struct atmel_nand_data __initdat
-  	.cle		= 22,
-  	.rdy_pin	= AT91_PIN_PC13,
-  	.enable_pin	= AT91_PIN_PC14,
-- 	.partition_info	= nand_partitions,
-  	.bus_width_16	= 0,
- +	.det_pin	= -EINVAL,
-+ 	.parts		= afeb9260_nand_partition,
-+ 	.num_parts	= ARRAY_SIZE(afeb9260_nand_partition),
-  };
-  
-  
-diff --cc arch/arm/mach-at91/board-neocore926.c
-index 0e6b86e,60f0cee..0000000
---- a/arch/arm/mach-at91/board-neocore926.c
-+++ b/arch/arm/mach-at91/board-neocore926.c
-@@@ -195,8 -188,8 +189,9 @@@ static struct atmel_nand_data __initdat
-  	.rdy_pin		= AT91_PIN_PB19,
-  	.rdy_pin_active_low	= 1,
-  	.enable_pin		= AT91_PIN_PD15,
-- 	.partition_info		= nand_partitions,
- +	.det_pin		= -EINVAL,
-+ 	.parts			= neocore926_nand_partition,
-+ 	.num_parts		= ARRAY_SIZE(neocore926_nand_partition),
-  };
-  
-  static struct sam9_smc_config __initdata neocore926_nand_smc_config = {
-diff --cc arch/arm/mach-at91/board-rm9200dk.c
-index e34e84e,b5f2faf..0000000
---- a/arch/arm/mach-at91/board-rm9200dk.c
-+++ b/arch/arm/mach-at91/board-rm9200dk.c
-@@@ -153,8 -143,9 +147,9 @@@ static struct atmel_nand_data __initdat
-  	.cle		= 21,
-  	.det_pin	= AT91_PIN_PB1,
-  	.rdy_pin	= AT91_PIN_PC2,
- -	// .enable_pin	= ... not there
- +	.enable_pin	= -EINVAL,
-- 	.partition_info	= nand_partitions,
-+ 	.parts		= dk_nand_partition,
-+ 	.num_parts	= ARRAY_SIZE(dk_nand_partition),
-  };
-  
-  #define DK_FLASH_BASE	AT91_CHIPSELECT_0
-diff --cc arch/arm/mach-at91/board-sam9g20ek.c
-index 757d74f,0031227..0000000
---- a/arch/arm/mach-at91/board-sam9g20ek.c
-+++ b/arch/arm/mach-at91/board-sam9g20ek.c
-@@@ -170,8 -163,8 +164,9 @@@ static struct atmel_nand_data __initdat
-  	.cle		= 22,
-  	.rdy_pin	= AT91_PIN_PC13,
-  	.enable_pin	= AT91_PIN_PC14,
-- 	.partition_info	= nand_partitions,
- +	.det_pin	= -EINVAL,
-+ 	.parts		= ek_nand_partition,
-+ 	.num_parts	= ARRAY_SIZE(ek_nand_partition),
-  };
-  
-  static struct sam9_smc_config __initdata ek_nand_smc_config = {
-diff --cc arch/arm/mach-at91/board-sam9m10g45ek.c
-index e3694b1,00d041c..0000000
---- a/arch/arm/mach-at91/board-sam9m10g45ek.c
-+++ b/arch/arm/mach-at91/board-sam9m10g45ek.c
-@@@ -150,8 -143,8 +144,9 @@@ static struct atmel_nand_data __initdat
-  	.cle		= 22,
-  	.rdy_pin	= AT91_PIN_PC8,
-  	.enable_pin	= AT91_PIN_PC14,
-- 	.partition_info	= nand_partitions,
- +	.det_pin	= -EINVAL,
-+ 	.parts		= ek_nand_partition,
-+ 	.num_parts	= ARRAY_SIZE(ek_nand_partition),
-  };
-  
-  static struct sam9_smc_config __initdata ek_nand_smc_config = {
+--Signature=_Thu__22_Sep_2011_16_13_50_+1000_Y4OOR032fEEbhH1F
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOetIeAAoJEDMEi1NhKgbsCukH/jaWKhptTC4pfnp129Bp6FGf
+yktmUenXzCjAnlTMkqNhEbCIHS/PC2FKw/lTXIT7DxF1V9FdO/P0h25CTD403Ptv
+nSctnzEOo8bfjhg2s46bs6AvJvdAXWXyG4gdiYN18ooLXdeLCaqk/W6PljuPVMuG
+Ao170gtY///wezcI1g9/e3KYA/Q2RS1HTjkAVsM7Go2PTwT12K+W6XhbgvykLOap
+CbtkavWGW6Shbwc9tVaSHWPpH0ssi/LnWZZnVuNzQSk22un3x5z2ioEViOKXTy3n
+Qd/RSbFX2gQlIZiUu+qvXQXk+0BG/ljdKhG4iYeILq6MMgauG5Zf+Sf53VMSv5I=
+=9J8T
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__22_Sep_2011_16_13_50_+1000_Y4OOR032fEEbhH1F--
