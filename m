@@ -1,148 +1,89 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Subject: [PATCH -next] rtlwifi: rtl8192c: Add includes of export.h
-Date: Wed, 21 Sep 2011 17:22:11 -0500
-Message-ID: <4e7a6393.eQ0IEnMVbVlQIbx0%Larry.Finger@lwfinger.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Adding hwspinlock-next to linux-next
+Date: Thu, 22 Sep 2011 11:18:06 +1000
+Message-ID: <20110922111806.4dd806f5ec14c219932e74ff@canb.auug.org.au>
+References: <CAK=WgbaPkTpsp-Zp9FCQW5t4dMp6ogJtzL4nOgR73wErrvg8Ng@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__22_Sep_2011_11_18_06_+1000_8kydMMA7kgmEy2xv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.125]:50015 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750964Ab1IUWWQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2011 18:22:16 -0400
+Received: from calzone.tip.net.au ([203.10.76.15]:36684 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750826Ab1IVBSR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2011 21:18:17 -0400
+In-Reply-To: <CAK=WgbaPkTpsp-Zp9FCQW5t4dMp6ogJtzL4nOgR73wErrvg8Ng@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paul.gortmaker@windriver.com
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, akpm@linux-foundation.org
+To: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-With the split of include/linux/module.h into two parts, several files in
-drivers rtlwifi and rtl8192c need to include the new file.
+--Signature=_Thu__22_Sep_2011_11_18_06_+1000_8kydMMA7kgmEy2xv
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
----
+Hi Ohad,
 
-Paul,
+On Wed, 21 Sep 2011 20:22:56 +0300 Ohad Ben-Cohen <ohad@wizery.com> wrote:
+>
+> Can you please add the following hwspinlock tree to linux-next ?
+>=20
+> git://github.com/ohadbc/hwspinlock-next.git linux-next
 
-At Randy Dunlap's suggestion, I am sending this to you in hopes that
-I can save you some time. I think I found all the routines that will have
-a problem, but as these patches do not compile, I cannot be sure.
+I have added that from today.
 
-Larry
----
+> (I'll most likely switch to kernel.org once it's up again)
 
-Index: wireless-testing-new/drivers/net/wireless/rtlwifi/base.c
-===================================================================
---- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/base.c
-+++ wireless-testing-new/drivers/net/wireless/rtlwifi/base.c
-@@ -30,6 +30,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/ip.h>
-+#include <linux/export.h>
- #include "wifi.h"
- #include "rc.h"
- #include "base.h"
-Index: wireless-testing-new/drivers/net/wireless/rtlwifi/cam.c
-===================================================================
---- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/cam.c
-+++ wireless-testing-new/drivers/net/wireless/rtlwifi/cam.c
-@@ -29,6 +29,8 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
-+#include <linux/export.h>
-+
- #include "wifi.h"
- #include "cam.h"
- 
-Index: wireless-testing-new/drivers/net/wireless/rtlwifi/efuse.c
-===================================================================
---- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/efuse.c
-+++ wireless-testing-new/drivers/net/wireless/rtlwifi/efuse.c
-@@ -27,6 +27,8 @@
-  *
-  *****************************************************************************/
- 
-+#include <linux/export.h>
-+
- #include "wifi.h"
- #include "efuse.h"
- 
-Index: wireless-testing-new/drivers/net/wireless/rtlwifi/pci.c
-===================================================================
---- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/pci.c
-+++ wireless-testing-new/drivers/net/wireless/rtlwifi/pci.c
-@@ -27,6 +27,8 @@
-  *
-  *****************************************************************************/
- 
-+#include <linux/export.h>
-+
- #include "core.h"
- #include "wifi.h"
- #include "pci.h"
-Index: wireless-testing-new/drivers/net/wireless/rtlwifi/ps.c
-===================================================================
---- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/ps.c
-+++ wireless-testing-new/drivers/net/wireless/rtlwifi/ps.c
-@@ -27,6 +27,8 @@
-  *
-  *****************************************************************************/
- 
-+#include <linux/export.h>
-+
- #include "wifi.h"
- #include "base.h"
- #include "ps.h"
-Index: wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/dm_common.c
-===================================================================
---- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/rtl8192c/dm_common.c
-+++ wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/dm_common.c
-@@ -27,6 +27,8 @@
-  *
-  *****************************************************************************/
- 
-+#include <linux/export.h>
-+
- #include "dm_common.h"
- #include "phy_common.h"
- #include "../pci.h"
-Index: wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/fw_common.c
-===================================================================
---- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/rtl8192c/fw_common.c
-+++ wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/fw_common.c
-@@ -30,6 +30,8 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/firmware.h>
-+#include <linux/export.h>
-+
- #include "../wifi.h"
- #include "../pci.h"
- #include "../base.h"
-Index: wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/phy_common.c
-===================================================================
---- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/rtl8192c/phy_common.c
-+++ wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/phy_common.c
-@@ -27,6 +27,8 @@
-  *
-  *****************************************************************************/
- 
-+#include <linux/export.h>
-+
- #include "../wifi.h"
- #include "../rtl8192ce/reg.h"
- #include "../rtl8192ce/def.h"
-Index: wireless-testing-new/drivers/net/wireless/rtlwifi/usb.c
-===================================================================
---- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/usb.c
-+++ wireless-testing-new/drivers/net/wireless/rtlwifi/usb.c
-@@ -28,6 +28,8 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/usb.h>
-+#include <linux/export.h>
-+
- #include "core.h"
- #include "wifi.h"
- #include "usb.h"
+Understood.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Thu__22_Sep_2011_11_18_06_+1000_8kydMMA7kgmEy2xv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOeozOAAoJEDMEi1NhKgbsQRgH/je23RSsiifzEqNSrgmTAs3q
+O7NDUEcxGAvh75LWI3x2Vh8Yvn7/crVbIGiPOIyMfEa1mTYkzxyrBq1nCJ6I1zlD
+xGdyvhfY4P0GbeZ7jxuX4vNmBLq/b7NiGBv9n+2d+MpT+Vm49lZi06zz0BIFFTfj
+9xxFfpVycclFARoQTlsvNnmJcPRtzqAk3pCbcH1Eud5Syi7jmPfkMwepmOle92/3
+/A18UEvYxaCwzTMNRmqOiIPfs/9B82DznD9j3p9DUgl4BNmGauNghUITzmg2eE8T
+LWe4+VevjhWxI0/vOHrdEpAcPESNOOyZbQR2tGbldCIkMf0+JCtaev7uAi+QjxI=
+=9D0G
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__22_Sep_2011_11_18_06_+1000_8kydMMA7kgmEy2xv--
