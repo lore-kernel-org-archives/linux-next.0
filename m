@@ -1,39 +1,59 @@
-From: Chris Friesen <chris.friesen@genband.com>
-Subject: Re: [BUG?] anyone aware of pagecache issues with 2.6.27?
-Date: Tue, 27 Sep 2011 16:58:30 -0600
-Message-ID: <4E825516.4010205@genband.com>
-References: <4E81EFE1.9090000@genband.com> <20110928085519.ba69b44b767b3f201dcbc366@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the akpm tree with the tree
+Date: Wed, 28 Sep 2011 09:03:58 +1000
+Message-ID: <20110928090358.10935976cc6c185069082610@canb.auug.org.au>
+References: <20110927165920.14b00e8595d10135d2a4397a@canb.auug.org.au>
+	<CAL26m8JbvOi05irJdhtsas2=PWdy4V+hkTYHp029RAvDGnUZgA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__28_Sep_2011_09_03_58_+1000_k6MZWyNweybQ4krY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from exprod7og113.obsmtp.com ([64.18.2.179]:55869 "EHLO
-	exprod7og113.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753446Ab1I0W7Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 18:59:24 -0400
-In-Reply-To: <20110928085519.ba69b44b767b3f201dcbc366@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:56270 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752510Ab1I0XEM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 19:04:12 -0400
+In-Reply-To: <CAL26m8JbvOi05irJdhtsas2=PWdy4V+hkTYHp029RAvDGnUZgA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Vaibhav Nagarnaik <vnagarnaik@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
-On 09/27/2011 04:55 PM, Stephen Rothwell wrote:
-> Hi Chris,
+--Signature=_Wed__28_Sep_2011_09_03_58_+1000_k6MZWyNweybQ4krY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Tue, 27 Sep 2011 09:52:27 -0700 Vaibhav Nagarnaik <vnagarnaik@google.com=
+> wrote:
 >
-> On Tue, 27 Sep 2011 09:46:41 -0600 Chris Friesen<chris.friesen@genband.com>  wrote:
->>
->> I realize this is a long shot, but I figure it's worth a try.
->
-> You would be much better off asking this on linux-kernel rather than linux-next.
+> Looks good to me. Do I need to provide Acked-by?
 
-No kidding...obviously didn't catch the erroneous auto-complete.  Sorry 
-for the typo.
+Not to me, that is just a merge fixup patch in linux-next.  It is not
+permanent until Andrew or Linus actually take the original patches and
+merge them.
 
-Chris
+But it good to know that it is probablt correct, thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-Chris Friesen
-Software Developer
-GENBAND
-chris.friesen@genband.com
-www.genband.com
+--Signature=_Wed__28_Sep_2011_09_03_58_+1000_k6MZWyNweybQ4krY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOglZeAAoJEDMEi1NhKgbsbrQH/0/lLD4am07onUVO9DOKS6D+
+IotkQZsLgC7pDhWBnL9MfhpdxvCadE3+/PDdXrFFBOj9DhbmlrsclRgm6k209N4Q
+3eMSTGvGrmdgKugoVUh1/X09CQtI4Eap61VhtOO6V8MhXlLxFt1/xNj/ioMGXAay
+IETtMu/lhVnPLiH8bSwb4KCE1GMcxyHRaLehglO0obuxf9KlE5OFMPS2FRdry4aN
+YiVfXiKOFiXSfAHTvG6jHJb/ZJo/9d8Vn1BWhh1xQ/kwnCxutVWtNEQPNASdvzl6
+ovnbSY3y5G18FkOtGMuuttOn4C36ojmdLDSC/aRz2jbrHj0rhEfuKh0YxSul4b0=
+=otL6
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__28_Sep_2011_09_03_58_+1000_k6MZWyNweybQ4krY--
