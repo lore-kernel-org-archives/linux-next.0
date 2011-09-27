@@ -1,52 +1,52 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Tue, 27 Sep 2011 17:24:46 +0200
-Message-ID: <201109271724.46371.arnd@arndb.de>
-References: <20110927112524.fd0b8f1fe69bc63855ead2d7@canb.auug.org.au> <20110927072517.GB11359@flint.arm.linux.org.uk>
+From: Chris Friesen <chris.friesen@genband.com>
+Subject: [BUG?] anyone aware of pagecache issues with 2.6.27?
+Date: Tue, 27 Sep 2011 09:46:41 -0600
+Message-ID: <4E81EFE1.9090000@genband.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:63762 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750805Ab1I0PZB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 11:25:01 -0400
-In-Reply-To: <20110927072517.GB11359@flint.arm.linux.org.uk>
+Received: from exprod7og112.obsmtp.com ([64.18.2.177]:39389 "EHLO
+	exprod7og112.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464Ab1I0QJj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 12:09:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Jon Medhurst <tixy@yxit.co.uk>
+To: linux-next@vger.kernel.org
 
-On Tuesday 27 September 2011, Russell King wrote:
-> On Tue, Sep 27, 2011 at 11:25:24AM +1000, Stephen Rothwell wrote:
-> > Hi Arnd,
-> > 
-> > [I have a feeling that I may have reported this previously]
-> > 
-> > Today's linux-next merge of the arm-soc tree got a conflict in
-> > arch/arm/mm/dma-mapping.c between commit e73fc88e19d7 ("ARM: 7059/1:
-> > LPAE: Use PMD_(SHIFT|SIZE|MASK) instead of PGDIR_*") from the arm tree
-> > and commit 99d1717dd7fe ("ARM: Add init_consistent_dma_size()") from the
-> > arm-soc tree.
-> > 
-> > I fixed it up (I think - see below) and can carry the fix as necessary.
 
-Ok, looks good.
+I realize this is a long shot, but I figure it's worth a try.
 
-> This has happened because I've dropped a large chunk of my tree from the
-> for-next branch due to some horrible conflicts and some bad workflow
-> practice in a git tree I recently merged (so this merge which I'd
-> normally do has been exposed.)
+What we're seeing is that "cached" gets large (several gigs) and "free" 
+gets small, and when we get into this state our system responsiveness 
+starts dropping.  If I do "echo 3 > /proc/sys/vm/drop_caches", then it 
+immediately frees up a couple gig of memory and things work as expected.
 
-Since we have a few conflicts already, I think I'll wait for your
-tree to go in first and then send my pull requests with the proper
-fixups. I could already pull in some branches that I know I will
-have to wait for.
+Based on the fact that memory is immediately reclaimable from the cache 
+it appears that the bulk of the cache is clean pages.  This shouldn't 
+have a major impact on memory allocation, but at least on this setup it 
+does.  It seems like there is something not quite right about the 
+mechanism that reclaims clean pages from the cache.  Is anyone aware of 
+issues in this area for 2.6.27-vintage kernels?
 
-Do you generally send one pull request for each branch you have
-in the for-next branch, or do you send a single request for something
-that roughly resembles the for-next branch at the time of the merge
-window?
+Is there a way to limit how much memory gets used for the page cache? 
+drop_caches seems to help, but it's a really big hammer.
 
-	Arnd
+System details:
+2.6.27 kernel, x86-64, 8GB RAM, no swap.  Root is on a tmpfs filesystem, 
+local disks are used for miscellaneous stuff including /var/log, we have 
+some sizeable network-mounted filesystems. 
+/proc/sys/vm/overcommit_memory is set to 2, with overcommit_ratio set to 
+100.
+
+
+Thanks,
+Chris
+
+
+-- 
+Chris Friesen
+Software Developer
+GENBAND
+chris.friesen@genband.com
+www.genband.com
