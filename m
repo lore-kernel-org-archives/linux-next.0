@@ -1,48 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
-Date: Tue, 27 Sep 2011 16:10:55 +1000
-Message-ID: <20110927161055.05bbb0586fffbfbb2307f30b@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the mfd tree with the arm tree
+Date: Tue, 27 Sep 2011 16:22:34 +1000
+Message-ID: <20110927162234.9331686758ee3c9f1b079db7@canb.auug.org.au>
+References: <20110927134534.af4c3bdad6918111a2e03034@canb.auug.org.au>
+	<CAKnu2MoTz5cv9m+x84NeEbO-6YaK0QwwSaHpFwfBWiBG+GrdLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__27_Sep_2011_16_22_34_+1000_4QclpEE8i1qo_wL0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:51569 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:50581 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752869Ab1I0GLG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 02:11:06 -0400
+	with ESMTP id S1753009Ab1I0GWk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 02:22:40 -0400
+In-Reply-To: <CAKnu2MoTz5cv9m+x84NeEbO-6YaK0QwwSaHpFwfBWiBG+GrdLw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, "Igor M. Liplianin" <liplianin@netup.ru>, Mauro Carvalho Chehab <mchehab@redhat.com>
+To: Linus Walleij <linus.ml.walleij@gmail.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Greg,
+--Signature=_Tue__27_Sep_2011_16_22_34_+1000_4QclpEE8i1qo_wL0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/misc/altera-stapl/altera.c between commit cff4fa8415a3 ("[media]
-altera-stapl: it is time to move out from staging") from the v4l-dvb tree
-and commit 99c978529a40 ("staging: Add module.h to drivers/staging
-users") from the staging tree.
+Hi Linus,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+On Tue, 27 Sep 2011 07:52:28 +0200 Linus Walleij <linus.ml.walleij@gmail.co=
+m> wrote:
+>
+> Nothing mentioning the AB3559 should be left after the merge, so the
+> IRQ_AB3550_END should be gone.
+>=20
+> delete IRQ_AB3550_END and
+> #define NR_IRQS IRQ_U300_GPIO_END
 
-Mauro, you could, of course, apply Paul's patch to the file in its new
-location.
--- 
+OK, I will fix this up tomorrow.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/misc/altera-stapl/altera.c
-index 1a2c50b,c2eff6a..0000000
---- a/drivers/misc/altera-stapl/altera.c
-+++ b/drivers/misc/altera-stapl/altera.c
-@@@ -28,7 -28,8 +28,8 @@@
-  #include <linux/string.h>
-  #include <linux/firmware.h>
-  #include <linux/slab.h>
-+ #include <linux/module.h>
- -#include "altera.h"
- +#include <misc/altera.h>
-  #include "altera-exprt.h"
-  #include "altera-jtag.h"
-  
+--Signature=_Tue__27_Sep_2011_16_22_34_+1000_4QclpEE8i1qo_wL0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOgWuqAAoJEDMEi1NhKgbsx8IIAKDP2h/POQexnkLI5crbTuRV
+vSbXjlTQZkRb8HxUGrYiGN6HbJ/rpTOMU8xy7Jen+6usDebe+dt3EEOdKimyD8mt
+THM+5J0k1Rd8fYACNd7SEWG7bQRMQsmzHKNro7B+U9X2kQolP7oyKl+oBfrMkX1j
+wzuss3dsMWUshxqKRDKuuPOq8yqSbjfmf03mXTLuNWOLPr8RDYMqyXlxO3+T41pt
+Nc6UeXh1EbpFICZlBi+vb1/Cg5XMgBZ83k+FTt4Rz0RqmsF1uTeUsEi3CIEUZumT
+EaDRAUz5Oat4GxSvqzM1rZNkvpdFNtN72U0TwcXnOLZHclK63ccpmFi/zdmPf4Q=
+=DY7i
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Sep_2011_16_22_34_+1000_4QclpEE8i1qo_wL0--
