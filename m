@@ -1,53 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the v4l-dvb tree
-Date: Tue, 27 Sep 2011 14:23:20 +1000
-Message-ID: <20110927142320.d0d8001ba975f88311855110@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the iommu tree
+Date: Tue, 27 Sep 2011 15:03:57 +1000
+Message-ID: <20110927150357.8e1bb98b8185361cc4072f1e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__27_Sep_2011_14_23_20_+1000_NKxlsMRJE4s47YF3"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:49093 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:38217 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750821Ab1I0EX1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 00:23:27 -0400
+	with ESMTP id S1751848Ab1I0FEI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 01:04:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joerg.roedel@amd.com>, Suresh Siddha <suresh.b.siddha@intel.com>
 
---Signature=_Tue__27_Sep_2011_14_23_20_+1000_NKxlsMRJE4s47YF3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Jiri,
+Today's linux-next merge of the tip tree got a conflict in
+drivers/iommu/Makefile between commit fcf3a6ef4a58 ("omap: iommu/iovmm:
+move to dedicated iommu folder") from the iommu tree and commit
+d3f138106b4b ("iommu: Rename the DMAR and INTR_REMAP config options")
+from the tip tree.
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/media/video/s5p-fimc/fimc-capture.c between commit 2319c539e39b
-("[media] s5p-fimc: Remove sensor management code from FIMC capture
-driver") from the v4l-dvb tree and commit 18df7b82e25c ("treewide:
-Correct spelling of successfully in comments") from the trivial tree.
-
-The former removed the code that the latter modified.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__27_Sep_2011_14_23_20_+1000_NKxlsMRJE4s47YF3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOgU+4AAoJEDMEi1NhKgbs6oUH/0w1xiIe26OhjcQXZbS0XmXq
-/LJLIGyA1JiyngJN1D1kQsaTmSSHvfmbeIikp+6oCBEnHW0L+5UkxWQ82tlkY/f6
-54sPQUep5f8hmVwoGiOvCYv+fQIM6QffO0XvGH2EK73oNxxjqPOPRN8UNMt7eAxt
-FVAj2KMoUV3MD1yaajUw/rkn2uZ9K5HmI9RfsYnLIZCiU5nARto1fcFKLtHmu6K5
-QH1NmX3lHW0puTgtGOJJo77UW5k5KRUMneKwFDf+07zJHxEE8aPfbetDBGWyR/mh
-IwcJhUnPAHTQYzdZF4M5rNtwH6uawQWg3ubTXJGzlsqXbTYag1dxcqHCcUB6evU=
-=pF+L
------END PGP SIGNATURE-----
-
---Signature=_Tue__27_Sep_2011_14_23_20_+1000_NKxlsMRJE4s47YF3--
+diff --cc drivers/iommu/Makefile
+index f798cdd,6394994..0000000
+--- a/drivers/iommu/Makefile
++++ b/drivers/iommu/Makefile
+@@@ -1,8 -1,6 +1,9 @@@
+  obj-$(CONFIG_IOMMU_API) += iommu.o
+  obj-$(CONFIG_MSM_IOMMU) += msm_iommu.o msm_iommu_dev.o
+  obj-$(CONFIG_AMD_IOMMU) += amd_iommu.o amd_iommu_init.o
+- obj-$(CONFIG_DMAR) += dmar.o iova.o intel-iommu.o
+- obj-$(CONFIG_INTR_REMAP) += dmar.o intr_remapping.o
++ obj-$(CONFIG_DMAR_TABLE) += dmar.o
++ obj-$(CONFIG_INTEL_IOMMU) += iova.o intel-iommu.o
++ obj-$(CONFIG_IRQ_REMAP) += intr_remapping.o
+ +obj-$(CONFIG_OMAP_IOMMU) += omap-iommu.o
+ +obj-$(CONFIG_OMAP_IOVMM) += omap-iovmm.o
+ +obj-$(CONFIG_OMAP_IOMMU_DEBUG) += omap-iommu-debug.o
