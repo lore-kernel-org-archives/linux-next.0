@@ -1,185 +1,39 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH -next] rtlwifi: rtl8192c: Add includes of export.h
-Date: Tue, 27 Sep 2011 18:58:08 -0400
-Message-ID: <4E825500.4000606@windriver.com>
-References: <4e7a6393.eQ0IEnMVbVlQIbx0%Larry.Finger@lwfinger.net>
+From: Chris Friesen <chris.friesen@genband.com>
+Subject: Re: [BUG?] anyone aware of pagecache issues with 2.6.27?
+Date: Tue, 27 Sep 2011 16:58:30 -0600
+Message-ID: <4E825516.4010205@genband.com>
+References: <4E81EFE1.9090000@genband.com> <20110928085519.ba69b44b767b3f201dcbc366@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:60338 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752693Ab1I0W6S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 18:58:18 -0400
-In-Reply-To: <4e7a6393.eQ0IEnMVbVlQIbx0%Larry.Finger@lwfinger.net>
+Received: from exprod7og113.obsmtp.com ([64.18.2.179]:55869 "EHLO
+	exprod7og113.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753446Ab1I0W7Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 18:59:24 -0400
+In-Reply-To: <20110928085519.ba69b44b767b3f201dcbc366@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, akpm@linux-foundation.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On 11-09-21 06:22 PM, Larry Finger wrote:
-> With the split of include/linux/module.h into two parts, several files in
-> drivers rtlwifi and rtl8192c need to include the new file.
-> 
-> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-> ---
-> 
-> Paul,
-> 
-> At Randy Dunlap's suggestion, I am sending this to you in hopes that
-> I can save you some time. I think I found all the routines that will have
-> a problem, but as these patches do not compile, I cannot be sure.
+On 09/27/2011 04:55 PM, Stephen Rothwell wrote:
+> Hi Chris,
+>
+> On Tue, 27 Sep 2011 09:46:41 -0600 Chris Friesen<chris.friesen@genband.com>  wrote:
+>>
+>> I realize this is a long shot, but I figure it's worth a try.
+>
+> You would be much better off asking this on linux-kernel rather than linux-next.
 
-Hi Larry -- thanks for the patch, but...
+No kidding...obviously didn't catch the erroneous auto-complete.  Sorry 
+for the typo.
 
-> 
-> Larry
-> ---
-> 
-> Index: wireless-testing-new/drivers/net/wireless/rtlwifi/base.c
-> ===================================================================
-> --- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/base.c
-> +++ wireless-testing-new/drivers/net/wireless/rtlwifi/base.c
-> @@ -30,6 +30,7 @@
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
->  #include <linux/ip.h>
-> +#include <linux/export.h>
+Chris
 
-This one needs module.h (which it has in my current tree) because it
-calls module_init and module_exit.  All the other ones in your patch
-match what I have in tree already though, so that is a good double
-check to have.  There are some other ones that I found through many
-randconfig builds that aren't in your patch. Here is the current list
-in my tree:
-
-~/git/module.h/linux-2.6.git$ git diff ^v3.1-rc6  HEAD drivers/net/wireless/rtlwifi |diffstat
- base.c                |    1 +
- cam.c                 |    1 +
- efuse.c               |    1 +
- pci.c                 |    1 +
- ps.c                  |    1 +
- rtl8192c/dm_common.c  |    1 +
- rtl8192c/fw_common.c  |    1 +
- rtl8192c/main.c       |    1 +
- rtl8192c/phy_common.c |    1 +
- rtl8192ce/sw.c        |    1 +
- rtl8192cu/sw.c        |    1 +
- rtl8192de/sw.c        |    1 +
- rtl8192se/sw.c        |    1 +
- usb.c                 |    1 +
- 14 files changed, 14 insertions(+)
-
-Thanks,
-Paul.
- 
->  #include "wifi.h"
->  #include "rc.h"
->  #include "base.h"
-> Index: wireless-testing-new/drivers/net/wireless/rtlwifi/cam.c
-> ===================================================================
-> --- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/cam.c
-> +++ wireless-testing-new/drivers/net/wireless/rtlwifi/cam.c
-> @@ -29,6 +29,8 @@
->  
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
-> +#include <linux/export.h>
-
-Have this already.
-
-> +
->  #include "wifi.h"
->  #include "cam.h"
->  
-> Index: wireless-testing-new/drivers/net/wireless/rtlwifi/efuse.c
-> ===================================================================
-> --- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/efuse.c
-> +++ wireless-testing-new/drivers/net/wireless/rtlwifi/efuse.c
-> @@ -27,6 +27,8 @@
->   *
->   *****************************************************************************/
->  
-> +#include <linux/export.h>
-> +
->  #include "wifi.h"
->  #include "efuse.h"
->  
-> Index: wireless-testing-new/drivers/net/wireless/rtlwifi/pci.c
-> ===================================================================
-> --- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/pci.c
-> +++ wireless-testing-new/drivers/net/wireless/rtlwifi/pci.c
-> @@ -27,6 +27,8 @@
->   *
->   *****************************************************************************/
->  
-> +#include <linux/export.h>
-> +
->  #include "core.h"
->  #include "wifi.h"
->  #include "pci.h"
-> Index: wireless-testing-new/drivers/net/wireless/rtlwifi/ps.c
-> ===================================================================
-> --- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/ps.c
-> +++ wireless-testing-new/drivers/net/wireless/rtlwifi/ps.c
-> @@ -27,6 +27,8 @@
->   *
->   *****************************************************************************/
->  
-> +#include <linux/export.h>
-> +
->  #include "wifi.h"
->  #include "base.h"
->  #include "ps.h"
-> Index: wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/dm_common.c
-> ===================================================================
-> --- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/rtl8192c/dm_common.c
-> +++ wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/dm_common.c
-> @@ -27,6 +27,8 @@
->   *
->   *****************************************************************************/
->  
-> +#include <linux/export.h>
-> +
->  #include "dm_common.h"
->  #include "phy_common.h"
->  #include "../pci.h"
-> Index: wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/fw_common.c
-> ===================================================================
-> --- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/rtl8192c/fw_common.c
-> +++ wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/fw_common.c
-> @@ -30,6 +30,8 @@
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
->  #include <linux/firmware.h>
-> +#include <linux/export.h>
-> +
->  #include "../wifi.h"
->  #include "../pci.h"
->  #include "../base.h"
-> Index: wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/phy_common.c
-> ===================================================================
-> --- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/rtl8192c/phy_common.c
-> +++ wireless-testing-new/drivers/net/wireless/rtlwifi/rtl8192c/phy_common.c
-> @@ -27,6 +27,8 @@
->   *
->   *****************************************************************************/
->  
-> +#include <linux/export.h>
-> +
->  #include "../wifi.h"
->  #include "../rtl8192ce/reg.h"
->  #include "../rtl8192ce/def.h"
-> Index: wireless-testing-new/drivers/net/wireless/rtlwifi/usb.c
-> ===================================================================
-> --- wireless-testing-new.orig/drivers/net/wireless/rtlwifi/usb.c
-> +++ wireless-testing-new/drivers/net/wireless/rtlwifi/usb.c
-> @@ -28,6 +28,8 @@
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
->  #include <linux/usb.h>
-> +#include <linux/export.h>
-> +
->  #include "core.h"
->  #include "wifi.h"
->  #include "usb.h"
+-- 
+Chris Friesen
+Software Developer
+GENBAND
+chris.friesen@genband.com
+www.genband.com
