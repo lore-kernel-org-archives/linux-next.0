@@ -1,52 +1,31 @@
-From: Chris Friesen <chris.friesen@genband.com>
-Subject: [BUG?] anyone aware of pagecache issues with 2.6.27?
-Date: Tue, 27 Sep 2011 09:46:41 -0600
-Message-ID: <4E81EFE1.9090000@genband.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Sept 27 (power/qos.c)
+Date: Tue, 27 Sep 2011 09:30:22 -0700
+Message-ID: <4E81FA1E.3060702@xenotime.net>
+References: <20110927173530.ceae2e49537a81da65287bf3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from exprod7og112.obsmtp.com ([64.18.2.177]:39389 "EHLO
-	exprod7og112.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751464Ab1I0QJj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 12:09:39 -0400
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:45069 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750926Ab1I0QaY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 12:30:24 -0400
+In-Reply-To: <20110927173530.ceae2e49537a81da65287bf3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, pm list <linux-pm@lists.linux-foundation.org>
+
+On 09/27/2011 12:35 AM, Stephen Rothwell wrote:
+> Hi all,
 
 
-I realize this is a long shot, but I figure it's worth a try.
+When CONFIG_PM_SLEEP is not enabled:
 
-What we're seeing is that "cached" gets large (several gigs) and "free" 
-gets small, and when we get into this state our system responsiveness 
-starts dropping.  If I do "echo 3 > /proc/sys/vm/drop_caches", then it 
-immediately frees up a couple gig of memory and things work as expected.
-
-Based on the fact that memory is immediately reclaimable from the cache 
-it appears that the bulk of the cache is clean pages.  This shouldn't 
-have a major impact on memory allocation, but at least on this setup it 
-does.  It seems like there is something not quite right about the 
-mechanism that reclaims clean pages from the cache.  Is anyone aware of 
-issues in this area for 2.6.27-vintage kernels?
-
-Is there a way to limit how much memory gets used for the page cache? 
-drop_caches seems to help, but it's a really big hammer.
-
-System details:
-2.6.27 kernel, x86-64, 8GB RAM, no swap.  Root is on a tmpfs filesystem, 
-local disks are used for miscellaneous stuff including /var/log, we have 
-some sizeable network-mounted filesystems. 
-/proc/sys/vm/overcommit_memory is set to 2, with overcommit_ratio set to 
-100.
-
-
-Thanks,
-Chris
+drivers/base/power/qos.c:231:29: error: 'struct dev_pm_info' has no member named 'entry'
 
 
 -- 
-Chris Friesen
-Software Developer
-GENBAND
-chris.friesen@genband.com
-www.genband.com
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
