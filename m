@@ -1,43 +1,201 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] dmar: fix build warnings when ACPI is not enabled
-Date: Tue, 27 Sep 2011 10:31:34 -0700
-Message-ID: <4E820876.5090206@xenotime.net>
-References: <20110926172348.be01ff9a1c16267ffd000d2a@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: Tree for Sept 27 (power/qos.c)
+Date: Tue, 27 Sep 2011 22:05:11 +0200
+Message-ID: <201109272205.12021.rjw@sisk.pl>
+References: <20110927173530.ceae2e49537a81da65287bf3@canb.auug.org.au> <4E81FA1E.3060702@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:45237 "HELO
-	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751567Ab1I0Rbg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 13:31:36 -0400
-In-Reply-To: <20110926172348.be01ff9a1c16267ffd000d2a@canb.auug.org.au>
+Received: from ogre.sisk.pl ([217.79.144.158]:59784 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751429Ab1I0UC7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Sep 2011 16:02:59 -0400
+In-Reply-To: <4E81FA1E.3060702@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, pm list <linux-pm@lists.linux-foundation.org>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Tuesday, September 27, 2011, Randy Dunlap wrote:
+> On 09/27/2011 12:35 AM, Stephen Rothwell wrote:
+> > Hi all,
+> 
+> 
+> When CONFIG_PM_SLEEP is not enabled:
+> 
+> drivers/base/power/qos.c:231:29: error: 'struct dev_pm_info' has no member named 'entry'
 
-Fix build warnings when CONFIG_ACPI is not enabled:
+Thanks for the report.
 
-include/linux/dmar.h:248:46: warning: 'struct acpi_dmar_header' declared inside parameter list
-include/linux/dmar.h:248:46: warning: its scope is only this definition or declaration, which is probably not what you want
-include/linux/dmar.h:252:46: warning: 'struct acpi_dmar_header' declared inside parameter list
+Below is a patch and it should be fixed in linux-next now.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Rafael
+
 ---
- include/linux/dmar.h |    2 ++
- 1 file changed, 2 insertions(+)
+From: Rafael J. Wysocki <rjw@sisk.pl>
+Subject: PM / QoS: Fix build issue for CONFIG_PM_SLEEP unset
 
---- next-2011-0927.orig/include/linux/dmar.h
-+++ next-2011-0927/include/linux/dmar.h
-@@ -244,6 +244,8 @@ extern int dmar_parse_dev_scope(void *st
- 				struct pci_dev ***devices, u16 segment);
- extern int intel_iommu_init(void);
- #else /* !CONFIG_INTEL_IOMMU: */
-+struct acpi_dmar_header;
+Commit d41a041b58684710638cbc0d5342a661b50db124 "PM / QoS: Add
+function dev_pm_qos_read_value() (v2)" introduced a build problem
+for CONFIG_PM_SLEEP, because it overlooked this case entirely.
+
+To fix this issue, use the power.power_state in struct device to
+indicate whether or not PM QoS constraints can be applied to the
+device object in question instead of checking the device's
+power.entry field that is valid only for CONFIG_PM_SLEEP set.
+
+Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
+---
+ drivers/base/power/main.c  |    2 +-
+ drivers/base/power/power.h |   10 +++++++++-
+ drivers/base/power/qos.c   |   11 ++++-------
+ include/linux/pm.h         |    2 ++
+ include/linux/pm_qos.h     |    9 +++++++--
+ 5 files changed, 23 insertions(+), 11 deletions(-)
+
+Index: linux/drivers/base/power/main.c
+===================================================================
+--- linux.orig/drivers/base/power/main.c
++++ linux/drivers/base/power/main.c
+@@ -22,7 +22,6 @@
+ #include <linux/mutex.h>
+ #include <linux/pm.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/pm_qos.h>
+ #include <linux/resume-trace.h>
+ #include <linux/interrupt.h>
+ #include <linux/sched.h>
+@@ -67,6 +66,7 @@ void device_pm_init(struct device *dev)
+ 	spin_lock_init(&dev->power.lock);
+ 	pm_runtime_init(dev);
+ 	INIT_LIST_HEAD(&dev->power.entry);
++	dev->power.power_state = PMSG_INVALID;
+ }
+ 
+ /**
+Index: linux/include/linux/pm.h
+===================================================================
+--- linux.orig/include/linux/pm.h
++++ linux/include/linux/pm.h
+@@ -326,6 +326,7 @@ extern struct dev_pm_ops generic_subsys_
+  *			requested by a driver.
+  */
+ 
++#define PM_EVENT_INVALID	(-1)
+ #define PM_EVENT_ON		0x0000
+ #define PM_EVENT_FREEZE 	0x0001
+ #define PM_EVENT_SUSPEND	0x0002
+@@ -346,6 +347,7 @@ extern struct dev_pm_ops generic_subsys_
+ #define PM_EVENT_AUTO_SUSPEND	(PM_EVENT_AUTO | PM_EVENT_SUSPEND)
+ #define PM_EVENT_AUTO_RESUME	(PM_EVENT_AUTO | PM_EVENT_RESUME)
+ 
++#define PMSG_INVALID	((struct pm_message){ .event = PM_EVENT_INVALID, })
+ #define PMSG_ON		((struct pm_message){ .event = PM_EVENT_ON, })
+ #define PMSG_FREEZE	((struct pm_message){ .event = PM_EVENT_FREEZE, })
+ #define PMSG_QUIESCE	((struct pm_message){ .event = PM_EVENT_QUIESCE, })
+Index: linux/drivers/base/power/power.h
+===================================================================
+--- linux.orig/drivers/base/power/power.h
++++ linux/drivers/base/power/power.h
+@@ -1,3 +1,5 @@
++#include <linux/pm_qos.h>
 +
- static inline int intel_iommu_init(void) { return -ENODEV; }
- static inline int dmar_parse_one_rmrr(struct acpi_dmar_header *header)
+ #ifdef CONFIG_PM_RUNTIME
+ 
+ extern void pm_runtime_init(struct device *dev);
+@@ -35,15 +37,21 @@ extern void device_pm_move_last(struct d
+ static inline void device_pm_init(struct device *dev)
  {
+ 	spin_lock_init(&dev->power.lock);
++	dev->power.power_state = PMSG_INVALID;
+ 	pm_runtime_init(dev);
+ }
+ 
++static inline void device_pm_add(struct device *dev)
++{
++	dev_pm_qos_constraints_init(dev);
++}
++
+ static inline void device_pm_remove(struct device *dev)
+ {
++	dev_pm_qos_constraints_destroy(dev);
+ 	pm_runtime_remove(dev);
+ }
+ 
+-static inline void device_pm_add(struct device *dev) {}
+ static inline void device_pm_move_before(struct device *deva,
+ 					 struct device *devb) {}
+ static inline void device_pm_move_after(struct device *deva,
+Index: linux/include/linux/pm_qos.h
+===================================================================
+--- linux.orig/include/linux/pm_qos.h
++++ linux/include/linux/pm_qos.h
+@@ -7,6 +7,7 @@
+ #include <linux/plist.h>
+ #include <linux/notifier.h>
+ #include <linux/miscdevice.h>
++#include <linux/device.h>
+ 
+ #define PM_QOS_RESERVED 0
+ #define PM_QOS_CPU_DMA_LATENCY 1
+@@ -142,9 +143,13 @@ static inline int dev_pm_qos_remove_glob
+ 					struct notifier_block *notifier)
+ 			{ return 0; }
+ static inline void dev_pm_qos_constraints_init(struct device *dev)
+-			{ return; }
++{
++	dev->power.power_state = PMSG_ON;
++}
+ static inline void dev_pm_qos_constraints_destroy(struct device *dev)
+-			{ return; }
++{
++	dev->power.power_state = PMSG_INVALID;
++}
+ #endif
+ 
+ #endif
+Index: linux/drivers/base/power/qos.c
+===================================================================
+--- linux.orig/drivers/base/power/qos.c
++++ linux/drivers/base/power/qos.c
+@@ -149,6 +149,7 @@ void dev_pm_qos_constraints_init(struct
+ {
+ 	mutex_lock(&dev_pm_qos_mtx);
+ 	dev->power.constraints = NULL;
++	dev->power.power_state = PMSG_ON;
+ 	mutex_unlock(&dev_pm_qos_mtx);
+ }
+ 
+@@ -165,6 +166,7 @@ void dev_pm_qos_constraints_destroy(stru
+ 
+ 	mutex_lock(&dev_pm_qos_mtx);
+ 
++	dev->power.power_state = PMSG_INVALID;
+ 	c = dev->power.constraints;
+ 	if (!c)
+ 		goto out;
+@@ -222,20 +224,15 @@ int dev_pm_qos_add_request(struct device
+ 
+ 	req->dev = dev;
+ 
+-	device_pm_lock();
+ 	mutex_lock(&dev_pm_qos_mtx);
+ 
+-	if (dev->power.constraints) {
+-		device_pm_unlock();
+-	} else {
+-		if (list_empty(&dev->power.entry)) {
++	if (!dev->power.constraints) {
++		if (dev->power.power_state.event == PM_EVENT_INVALID) {
+ 			/* The device has been removed from the system. */
+-			device_pm_unlock();
+ 			req->dev = NULL;
+ 			ret = -ENODEV;
+ 			goto out;
+ 		} else {
+-			device_pm_unlock();
+ 			/*
+ 			 * Allocate the constraints data on the first call to
+ 			 * add_request, i.e. only if the data is not already
