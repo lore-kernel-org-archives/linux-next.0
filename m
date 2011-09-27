@@ -1,54 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the tip tree
-Date: Tue, 27 Sep 2011 17:13:59 +1000
-Message-ID: <20110927171359.db102aea408b07771336d6f0@canb.auug.org.au>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Tue, 27 Sep 2011 08:25:18 +0100
+Message-ID: <20110927072517.GB11359@flint.arm.linux.org.uk>
+References: <20110927112524.fd0b8f1fe69bc63855ead2d7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__27_Sep_2011_17_13_59_+1000_wZ7KECTcqp1OmHOA"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:35147 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751105Ab1I0HOI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 03:14:08 -0400
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:58284 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751105Ab1I0H0P (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 03:26:15 -0400
+Content-Disposition: inline
+In-Reply-To: <20110927112524.fd0b8f1fe69bc63855ead2d7@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Suresh Siddha <suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Jon Medhurst <tixy@yxit.co.uk>
 
---Signature=_Tue__27_Sep_2011_17_13_59_+1000_wZ7KECTcqp1OmHOA
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 27, 2011 at 11:25:24AM +1000, Stephen Rothwell wrote:
+> Hi Arnd,
+> 
+> [I have a feeling that I may have reported this previously]
+> 
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/mm/dma-mapping.c between commit e73fc88e19d7 ("ARM: 7059/1:
+> LPAE: Use PMD_(SHIFT|SIZE|MASK) instead of PGDIR_*") from the arm tree
+> and commit 99d1717dd7fe ("ARM: Add init_consistent_dma_size()") from the
+> arm-soc tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary.
 
-Hi Andrew,
+This has happened because I've dropped a large chunk of my tree from the
+for-next branch due to some horrible conflicts and some bad workflow
+practice in a git tree I recently merged (so this merge which I'd
+normally do has been exposed.)
 
-Today's linux-next merge of the akpm tree got conflicts in
-drivers/iommu/dmar.c and include/linux/dmar.h between commit 318fe7df9d84
-("iommu: Move IOMMU specific code to intel-iommu.c") from the tip tree
-and commit 432fb2751763 ("When do pci remove/rescan on system that have
-more iommus, got") from the akpm tree.
-
-The former moved that code the the latter cares about to another files.
-I have dropped this patch from the akpm tree for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__27_Sep_2011_17_13_59_+1000_wZ7KECTcqp1OmHOA
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOgXe3AAoJEDMEi1NhKgbs1pAH/18IYP1XUadNiq0X1xlwL55X
-hXOw6yOorsPM9I/CF67NGIB1flqbKPh+P34b0uTvdi0E2qbMvIATw8HhFcNaJ1RC
-+HYeEVJmgt+anixrSPBJgNorMlGbkHhyKn2ordSTEOZFfc7ZrJKMzrPPYCeeI4CC
-eI51NryYX6+UXPY2bf3kVQNWYSvHxyXB0Cqpow85dO1PcbLiXV5qvObSl1t4SfW6
-ixECmcmZ6syeRMVtMGChOi2njCFtsMc/GlGM9Eaw6zf41/r7Dp5aEQ+jm+n9wcas
-BWb+E5EkGq1mzcHoBqtPlnBoOiacLfem0YdcQ69L0dbcwvErQmXhMuY7/dsPLx0=
-=E289
------END PGP SIGNATURE-----
-
---Signature=_Tue__27_Sep_2011_17_13_59_+1000_wZ7KECTcqp1OmHOA--
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
