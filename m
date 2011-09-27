@@ -1,67 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the wireless-current
- tree
-Date: Tue, 27 Sep 2011 12:51:32 +1000
-Message-ID: <20110927125132.002db8176a66f85286dcd027@canb.auug.org.au>
+Subject: linux-next: manual merge of the mfd tree with the arm tree
+Date: Tue, 27 Sep 2011 13:45:34 +1000
+Message-ID: <20110927134534.af4c3bdad6918111a2e03034@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:41382 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:56190 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752184Ab1I0Cvi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Sep 2011 22:51:38 -0400
+	with ESMTP id S1751979Ab1I0Dpg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Sep 2011 23:45:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-Hi all,
+Hi Samuel,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-scan.c between commit 6c80c39d9a69
-("iwlagn: fix dangling scan request") from the wireless-current tree and
-commits 63013ae30159 ("iwlagn: priv->status moves to iwl_shared") and
-6ac2f839b0b2 ("iwlagn: priv->mutex moves to iwl_shared") from the net
-tree.
+Today's linux-next merge of the mfd tree got a conflict in
+arch/arm/mach-u300/include/mach/irqs.h between commit cc890cd78acd ("ARM:
+7083/1: rewrite U300 GPIO to use gpiolib") from the  tree and commit
+e085f9a2e27d ("mfd: Delete ab3550 driver") from the mfd tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+I fixed it up (I think - see below) anc can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/iwlwifi/iwl-scan.c
-index 77e528f,fc5af34..0000000
---- a/drivers/net/wireless/iwlwifi/iwl-scan.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-scan.c
-@@@ -403,8 -413,19 +413,8 @@@ int iwl_mac_hw_scan(struct ieee80211_h
-  	if (req->n_channels == 0)
-  		return -EINVAL;
+diff --cc arch/arm/mach-u300/include/mach/irqs.h
+index d270fea,a6867b1..0000000
+--- a/arch/arm/mach-u300/include/mach/irqs.h
++++ b/arch/arm/mach-u300/include/mach/irqs.h
+@@@ -106,25 -106,9 +106,19 @@@
+  #define IRQ_U300_NFIF			45
+  #define IRQ_U300_NFIF2			46
+  #define IRQ_U300_SYSCON_PLL_LOCK	47
+ -#define U300_NR_IRQS			48
+ +#define U300_VIC_IRQS_END		48
+  #endif
   
-- 	mutex_lock(&priv->mutex);
-+ 	mutex_lock(&priv->shrd->mutex);
+ -#define NR_IRQS U300_NR_IRQS
+ +/* Maximum 8*7 GPIO lines */
+ +#ifdef CONFIG_GPIO_U300
+ +#define IRQ_U300_GPIO_BASE		(U300_VIC_IRQS_END)
+ +#define IRQ_U300_GPIO_END		(IRQ_U300_GPIO_BASE + 56)
+ +#else
+ +#define IRQ_U300_GPIO_END		(U300_VIC_IRQS_END)
+ +#endif
+ +
+- /* Optional AB3550 mixsig chip */
+- #ifdef CONFIG_AB3550_CORE
+- #define IRQ_AB3550_BASE			(IRQ_U300_GPIO_END)
+- #define IRQ_AB3550_END			(IRQ_AB3550_BASE + 38)
+- #else
+ +#define IRQ_AB3550_END			(IRQ_U300_GPIO_END)
+- #endif
+ +
+ +#define NR_IRQS				(IRQ_AB3550_END)
   
- -	if (test_bit(STATUS_SCANNING, &priv->shrd->status) &&
- -	    priv->scan_type != IWL_SCAN_NORMAL) {
- -		IWL_DEBUG_SCAN(priv, "Scan already in progress.\n");
- -		ret = -EAGAIN;
- -		goto out_unlock;
- -	}
- -
- -	/* mac80211 will only ask for one band at a time */
- -	priv->scan_request = req;
- -	priv->scan_vif = vif;
- -
-  	/*
-  	 * If an internal scan is in progress, just set
-  	 * up the scan_request as per above.
-@@@ -432,7 -439,8 +442,7 @@@
-  
-  	IWL_DEBUG_MAC80211(priv, "leave\n");
-  
-- 	mutex_unlock(&priv->mutex);
- -out_unlock:
-+ 	mutex_unlock(&priv->shrd->mutex);
-  
-  	return ret;
-  }
+  #endif
