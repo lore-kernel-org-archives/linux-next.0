@@ -1,207 +1,68 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Sept 27 (power/qos.c)
-Date: Tue, 27 Sep 2011 15:07:07 -0700
-Message-ID: <4E82490B.2040805@xenotime.net>
-References: <20110927173530.ceae2e49537a81da65287bf3@canb.auug.org.au> <4E81FA1E.3060702@xenotime.net> <201109272205.12021.rjw@sisk.pl>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH -next] qdio: add missing export.h include
+Date: Tue, 27 Sep 2011 18:17:18 -0400
+Message-ID: <4E824B6E.20409@windriver.com>
+References: <1316676108-5729-1-git-send-email-heiko.carstens@de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201109272205.12021.rjw@sisk.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, pm list <linux-pm@lists.linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:54533 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752643Ab1I0WR0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 18:17:26 -0400
+In-Reply-To: <1316676108-5729-1-git-send-email-heiko.carstens@de.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, Frank Blaschka <blaschka@linux.vnet.ibm.com>, Jan Glauber <jang@linux.vnet.ibm.com>
 
-On 09/27/2011 01:05 PM, Rafael J. Wysocki wrote:
-> On Tuesday, September 27, 2011, Randy Dunlap wrote:
->> On 09/27/2011 12:35 AM, Stephen Rothwell wrote:
->>> Hi all,
->>
->>
->> When CONFIG_PM_SLEEP is not enabled:
->>
->> drivers/base/power/qos.c:231:29: error: 'struct dev_pm_info' has no member named 'entry'
+On 11-09-22 03:21 AM, Heiko Carstens wrote:
+> Fix compile breakage caused by splitting module.h:
 > 
-> Thanks for the report.
+> drivers/s390/cio/qdio_setup.c:31:1:
+>  warning: data definition has no type or storage class [enabled by default]
+> drivers/s390/cio/qdio_setup.c:31:1:
+>  warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+
+Thanks, I've squashed this into what contained the other
+s390 changes from you, which now touches the following:
+
+ arch/s390/crypto/sha_common.c    |    1 +
+ arch/s390/mm/init.c              |    1 +
+ drivers/s390/char/fs3270.c       |    1 +
+ drivers/s390/char/sclp_cpi_sys.c |    1 +
+ drivers/s390/char/vmcp.c         |    1 +
+ drivers/s390/char/vmur.c         |    1 +
+ drivers/s390/cio/chp.c           |    2 ++
+ drivers/s390/cio/qdio_debug.c    |    2 ++
+ drivers/s390/cio/qdio_setup.c    |    1 +
+ drivers/s390/kvm/kvm_virtio.c    |    1 +
+ drivers/s390/scsi/zfcp_aux.c     |    1 +
+ drivers/s390/scsi/zfcp_ccw.c     |    1 +
+ drivers/s390/scsi/zfcp_dbf.c     |    1 +
+ drivers/s390/scsi/zfcp_scsi.c    |    1 +
+ 14 files changed, 16 insertions(+)
+
+Paul.
+
 > 
-> Below is a patch and it should be fixed in linux-next now.
-
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-
-Thanks.
-
-> Rafael
-> 
+> Cc: Frank Blaschka <blaschka@linux.vnet.ibm.com>
+> Cc: Jan Glauber <jang@linux.vnet.ibm.com>
+> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 > ---
-> From: Rafael J. Wysocki <rjw@sisk.pl>
-> Subject: PM / QoS: Fix build issue for CONFIG_PM_SLEEP unset
+>  drivers/s390/cio/qdio_setup.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
 > 
-> Commit d41a041b58684710638cbc0d5342a661b50db124 "PM / QoS: Add
-> function dev_pm_qos_read_value() (v2)" introduced a build problem
-> for CONFIG_PM_SLEEP, because it overlooked this case entirely.
-> 
-> To fix this issue, use the power.power_state in struct device to
-> indicate whether or not PM QoS constraints can be applied to the
-> device object in question instead of checking the device's
-> power.entry field that is valid only for CONFIG_PM_SLEEP set.
-> 
-> Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
-> ---
->  drivers/base/power/main.c  |    2 +-
->  drivers/base/power/power.h |   10 +++++++++-
->  drivers/base/power/qos.c   |   11 ++++-------
->  include/linux/pm.h         |    2 ++
->  include/linux/pm_qos.h     |    9 +++++++--
->  5 files changed, 23 insertions(+), 11 deletions(-)
-> 
-> Index: linux/drivers/base/power/main.c
-> ===================================================================
-> --- linux.orig/drivers/base/power/main.c
-> +++ linux/drivers/base/power/main.c
-> @@ -22,7 +22,6 @@
->  #include <linux/mutex.h>
->  #include <linux/pm.h>
->  #include <linux/pm_runtime.h>
-> -#include <linux/pm_qos.h>
->  #include <linux/resume-trace.h>
->  #include <linux/interrupt.h>
->  #include <linux/sched.h>
-> @@ -67,6 +66,7 @@ void device_pm_init(struct device *dev)
->  	spin_lock_init(&dev->power.lock);
->  	pm_runtime_init(dev);
->  	INIT_LIST_HEAD(&dev->power.entry);
-> +	dev->power.power_state = PMSG_INVALID;
->  }
->  
->  /**
-> Index: linux/include/linux/pm.h
-> ===================================================================
-> --- linux.orig/include/linux/pm.h
-> +++ linux/include/linux/pm.h
-> @@ -326,6 +326,7 @@ extern struct dev_pm_ops generic_subsys_
->   *			requested by a driver.
->   */
->  
-> +#define PM_EVENT_INVALID	(-1)
->  #define PM_EVENT_ON		0x0000
->  #define PM_EVENT_FREEZE 	0x0001
->  #define PM_EVENT_SUSPEND	0x0002
-> @@ -346,6 +347,7 @@ extern struct dev_pm_ops generic_subsys_
->  #define PM_EVENT_AUTO_SUSPEND	(PM_EVENT_AUTO | PM_EVENT_SUSPEND)
->  #define PM_EVENT_AUTO_RESUME	(PM_EVENT_AUTO | PM_EVENT_RESUME)
->  
-> +#define PMSG_INVALID	((struct pm_message){ .event = PM_EVENT_INVALID, })
->  #define PMSG_ON		((struct pm_message){ .event = PM_EVENT_ON, })
->  #define PMSG_FREEZE	((struct pm_message){ .event = PM_EVENT_FREEZE, })
->  #define PMSG_QUIESCE	((struct pm_message){ .event = PM_EVENT_QUIESCE, })
-> Index: linux/drivers/base/power/power.h
-> ===================================================================
-> --- linux.orig/drivers/base/power/power.h
-> +++ linux/drivers/base/power/power.h
-> @@ -1,3 +1,5 @@
-> +#include <linux/pm_qos.h>
-> +
->  #ifdef CONFIG_PM_RUNTIME
->  
->  extern void pm_runtime_init(struct device *dev);
-> @@ -35,15 +37,21 @@ extern void device_pm_move_last(struct d
->  static inline void device_pm_init(struct device *dev)
->  {
->  	spin_lock_init(&dev->power.lock);
-> +	dev->power.power_state = PMSG_INVALID;
->  	pm_runtime_init(dev);
->  }
->  
-> +static inline void device_pm_add(struct device *dev)
-> +{
-> +	dev_pm_qos_constraints_init(dev);
-> +}
-> +
->  static inline void device_pm_remove(struct device *dev)
->  {
-> +	dev_pm_qos_constraints_destroy(dev);
->  	pm_runtime_remove(dev);
->  }
->  
-> -static inline void device_pm_add(struct device *dev) {}
->  static inline void device_pm_move_before(struct device *deva,
->  					 struct device *devb) {}
->  static inline void device_pm_move_after(struct device *deva,
-> Index: linux/include/linux/pm_qos.h
-> ===================================================================
-> --- linux.orig/include/linux/pm_qos.h
-> +++ linux/include/linux/pm_qos.h
+> diff --git a/drivers/s390/cio/qdio_setup.c b/drivers/s390/cio/qdio_setup.c
+> index d9a46a4..25f4988 100644
+> --- a/drivers/s390/cio/qdio_setup.c
+> +++ b/drivers/s390/cio/qdio_setup.c
 > @@ -7,6 +7,7 @@
->  #include <linux/plist.h>
->  #include <linux/notifier.h>
->  #include <linux/miscdevice.h>
-> +#include <linux/device.h>
+>   * Author(s): Jan Glauber <jang@linux.vnet.ibm.com>
+>   */
+>  #include <linux/kernel.h>
+> +#include <linux/export.h>
+>  #include <linux/slab.h>
+>  #include <asm/qdio.h>
 >  
->  #define PM_QOS_RESERVED 0
->  #define PM_QOS_CPU_DMA_LATENCY 1
-> @@ -142,9 +143,13 @@ static inline int dev_pm_qos_remove_glob
->  					struct notifier_block *notifier)
->  			{ return 0; }
->  static inline void dev_pm_qos_constraints_init(struct device *dev)
-> -			{ return; }
-> +{
-> +	dev->power.power_state = PMSG_ON;
-> +}
->  static inline void dev_pm_qos_constraints_destroy(struct device *dev)
-> -			{ return; }
-> +{
-> +	dev->power.power_state = PMSG_INVALID;
-> +}
->  #endif
->  
->  #endif
-> Index: linux/drivers/base/power/qos.c
-> ===================================================================
-> --- linux.orig/drivers/base/power/qos.c
-> +++ linux/drivers/base/power/qos.c
-> @@ -149,6 +149,7 @@ void dev_pm_qos_constraints_init(struct
->  {
->  	mutex_lock(&dev_pm_qos_mtx);
->  	dev->power.constraints = NULL;
-> +	dev->power.power_state = PMSG_ON;
->  	mutex_unlock(&dev_pm_qos_mtx);
->  }
->  
-> @@ -165,6 +166,7 @@ void dev_pm_qos_constraints_destroy(stru
->  
->  	mutex_lock(&dev_pm_qos_mtx);
->  
-> +	dev->power.power_state = PMSG_INVALID;
->  	c = dev->power.constraints;
->  	if (!c)
->  		goto out;
-> @@ -222,20 +224,15 @@ int dev_pm_qos_add_request(struct device
->  
->  	req->dev = dev;
->  
-> -	device_pm_lock();
->  	mutex_lock(&dev_pm_qos_mtx);
->  
-> -	if (dev->power.constraints) {
-> -		device_pm_unlock();
-> -	} else {
-> -		if (list_empty(&dev->power.entry)) {
-> +	if (!dev->power.constraints) {
-> +		if (dev->power.power_state.event == PM_EVENT_INVALID) {
->  			/* The device has been removed from the system. */
-> -			device_pm_unlock();
->  			req->dev = NULL;
->  			ret = -ENODEV;
->  			goto out;
->  		} else {
-> -			device_pm_unlock();
->  			/*
->  			 * Allocate the constraints data on the first call to
->  			 * add_request, i.e. only if the data is not already
-> --
-
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
