@@ -1,55 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Tue, 27 Sep 2011 11:25:24 +1000
-Message-ID: <20110927112524.fd0b8f1fe69bc63855ead2d7@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the wireless-current
+ tree
+Date: Tue, 27 Sep 2011 12:51:32 +1000
+Message-ID: <20110927125132.002db8176a66f85286dcd027@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:50364 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:41382 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751149Ab1I0BZ2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Sep 2011 21:25:28 -0400
+	with ESMTP id S1752184Ab1I0Cvi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Sep 2011 22:51:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Russell King <rmk@arm.linux.org.uk>, Jon Medhurst <tixy@yxit.co.uk>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-Hi Arnd,
+Hi all,
 
-[I have a feeling that I may have reported this previously]
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-scan.c between commit 6c80c39d9a69
+("iwlagn: fix dangling scan request") from the wireless-current tree and
+commits 63013ae30159 ("iwlagn: priv->status moves to iwl_shared") and
+6ac2f839b0b2 ("iwlagn: priv->mutex moves to iwl_shared") from the net
+tree.
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mm/dma-mapping.c between commit e73fc88e19d7 ("ARM: 7059/1:
-LPAE: Use PMD_(SHIFT|SIZE|MASK) instead of PGDIR_*") from the arm tree
-and commit 99d1717dd7fe ("ARM: Add init_consistent_dma_size()") from the
-arm-soc tree.
-
-I fixed it up (I think - see below) and can carry the fix as necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mm/dma-mapping.c
-index 235eb77,50be842..0000000
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@@ -117,14 -119,10 +119,9 @@@ static void __dma_free_buffer(struct pa
-  }
+diff --cc drivers/net/wireless/iwlwifi/iwl-scan.c
+index 77e528f,fc5af34..0000000
+--- a/drivers/net/wireless/iwlwifi/iwl-scan.c
++++ b/drivers/net/wireless/iwlwifi/iwl-scan.c
+@@@ -403,8 -413,19 +413,8 @@@ int iwl_mac_hw_scan(struct ieee80211_h
+  	if (req->n_channels == 0)
+  		return -EINVAL;
   
-  #ifdef CONFIG_MMU
-- /* Sanity check size */
-- #if (CONSISTENT_DMA_SIZE % SZ_2M)
-- #error "CONSISTENT_DMA_SIZE must be multiple of 2MiB"
-- #endif
+- 	mutex_lock(&priv->mutex);
++ 	mutex_lock(&priv->shrd->mutex);
   
-- #define CONSISTENT_OFFSET(x)	(((unsigned long)(x) - CONSISTENT_BASE) >> PAGE_SHIFT)
-- #define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - CONSISTENT_BASE) >> PMD_SHIFT)
-- #define NUM_CONSISTENT_PTES (CONSISTENT_DMA_SIZE >> PMD_SHIFT)
+ -	if (test_bit(STATUS_SCANNING, &priv->shrd->status) &&
+ -	    priv->scan_type != IWL_SCAN_NORMAL) {
+ -		IWL_DEBUG_SCAN(priv, "Scan already in progress.\n");
+ -		ret = -EAGAIN;
+ -		goto out_unlock;
+ -	}
  -
-+ #define CONSISTENT_OFFSET(x)	(((unsigned long)(x) - consistent_base) >> PAGE_SHIFT)
- -#define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - consistent_base) >> PGDIR_SHIFT)
-++#define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - consistent_base) >> PMD_SHIFT)
+ -	/* mac80211 will only ask for one band at a time */
+ -	priv->scan_request = req;
+ -	priv->scan_vif = vif;
+ -
+  	/*
+  	 * If an internal scan is in progress, just set
+  	 * up the scan_request as per above.
+@@@ -432,7 -439,8 +442,7 @@@
   
-  /*
-   * These are the page tables (2MB each) covering uncached, DMA consistent allocations
+  	IWL_DEBUG_MAC80211(priv, "leave\n");
+  
+- 	mutex_unlock(&priv->mutex);
+ -out_unlock:
++ 	mutex_unlock(&priv->shrd->mutex);
+  
+  	return ret;
+  }
