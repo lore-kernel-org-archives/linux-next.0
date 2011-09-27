@@ -1,62 +1,125 @@
-From: Tixy <tixy@yxit.co.uk>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Tue, 27 Sep 2011 07:20:57 +0100
-Message-ID: <1317104457.2238.16.camel@computer2>
-References: <20110927112524.fd0b8f1fe69bc63855ead2d7@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the  tree
+Date: Tue, 27 Sep 2011 16:59:20 +1000
+Message-ID: <20110927165920.14b00e8595d10135d2a4397a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110927112524.fd0b8f1fe69bc63855ead2d7@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Russell King <rmk@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:39008 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750823Ab1I0G7X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 02:59:23 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vaibhav Nagarnaik <vnagarnaik@google.com>, Frederic Weisbecker <fweisbec@gmail.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
-On Tue, 2011-09-27 at 11:25 +1000, Stephen Rothwell wrote:
-> Hi Arnd,
-> 
-> [I have a feeling that I may have reported this previously]
-> 
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/mm/dma-mapping.c between commit e73fc88e19d7 ("ARM: 7059/1:
-> LPAE: Use PMD_(SHIFT|SIZE|MASK) instead of PGDIR_*") from the arm tree
-> and commit 99d1717dd7fe ("ARM: Add init_consistent_dma_size()") from
-> the
-> arm-soc tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as
-> necessary.
+Hi Andrew,
 
-The fixup looks correct to me.
+Today's linux-next merge of the scsi-post-merge tree got conflicts in
+arch/x86/kernel/apic/apic.c, arch/x86/kernel/cpu/mcheck/therm_throt.c,
+arch/x86/kernel/cpu/mcheck/threshold.c and arch/x86/kernel/irq.c between
+commit ef14aea88fee ("x86: Call idle notifier after irq_enter()") from
+the rcu tree and commit 6a541324a31f ("The current interrupt traces from
+irq_handler_entry and irq_handler_exit") from the akpm tree.
 
+Just context changes. I fixed them up (see below) and can carry the fixes
+as necessary.
 -- 
-Jon Medhurst (usually known as Tixy)
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/arm/mm/dma-mapping.c
-> index 235eb77,50be842..0000000
-> --- a/arch/arm/mm/dma-mapping.c
-> +++ b/arch/arm/mm/dma-mapping.c
-> @@@ -117,14 -119,10 +119,9 @@@ static void __dma_free_buffer(struct pa
->   }
->   
->   #ifdef CONFIG_MMU
-> - /* Sanity check size */
-> - #if (CONSISTENT_DMA_SIZE % SZ_2M)
-> - #error "CONSISTENT_DMA_SIZE must be multiple of 2MiB"
-> - #endif
->   
-> - #define CONSISTENT_OFFSET(x)  (((unsigned long)(x) - CONSISTENT_BASE) >> PAGE_SHIFT)
-> - #define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - CONSISTENT_BASE) >> PMD_SHIFT)
-> - #define NUM_CONSISTENT_PTES (CONSISTENT_DMA_SIZE >> PMD_SHIFT)
->  -
-> + #define CONSISTENT_OFFSET(x)  (((unsigned long)(x) - consistent_base) >> PAGE_SHIFT)
->  -#define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - consistent_base) >> PGDIR_SHIFT)
-> ++#define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - consistent_base) >> PMD_SHIFT)
->   
->   /*
->    * These are the page tables (2MB each) covering uncached, DMA consistent allocations 
+diff --cc arch/x86/kernel/apic/apic.c
+index 4af04d4,0fe559f..0000000
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@@ -857,9 -858,11 +858,11 @@@ void __irq_entry smp_apic_timer_interru
+  	 * Besides, if we don't timer interrupts ignore the global
+  	 * interrupt lock, which is the WrongThing (tm) to do.
+  	 */
+ -	exit_idle();
+  	irq_enter();
+ +	exit_idle();
++ 	trace_irq_vector_entry(LOCAL_TIMER_VECTOR);
+  	local_apic_timer_interrupt();
++ 	trace_irq_vector_exit(LOCAL_TIMER_VECTOR);
+  	irq_exit();
+  
+  	set_irq_regs(old_regs);
+@@@ -1790,8 -1794,9 +1793,9 @@@ void smp_spurious_interrupt(struct pt_r
+  {
+  	u32 v;
+  
+ -	exit_idle();
+  	irq_enter();
+ +	exit_idle();
++ 	trace_irq_vector_entry(SPURIOUS_APIC_VECTOR);
+  	/*
+  	 * Check if this really is a spurious interrupt and ACK it
+  	 * if it is a vectored one.  Just in case...
+@@@ -1827,8 -1833,9 +1832,9 @@@ void smp_error_interrupt(struct pt_reg
+  		"Illegal register address",	/* APIC Error Bit 7 */
+  	};
+  
+ -	exit_idle();
+  	irq_enter();
+ +	exit_idle();
++ 	trace_irq_vector_entry(ERROR_APIC_VECTOR);
+  	/* First tickle the hardware, only then report what went on. -- REW */
+  	v0 = apic_read(APIC_ESR);
+  	apic_write(APIC_ESR, 0);
+diff --cc arch/x86/kernel/cpu/mcheck/therm_throt.c
+index ce21561,6b7edb5..0000000
+--- a/arch/x86/kernel/cpu/mcheck/therm_throt.c
++++ b/arch/x86/kernel/cpu/mcheck/therm_throt.c
+@@@ -397,10 -398,12 +398,12 @@@ static void (*smp_thermal_vector)(void
+  
+  asmlinkage void smp_thermal_interrupt(struct pt_regs *regs)
+  {
+ -	exit_idle();
+  	irq_enter();
+ +	exit_idle();
++ 	trace_irq_vector_entry(THERMAL_APIC_VECTOR);
+  	inc_irq_stat(irq_thermal_count);
+  	smp_thermal_vector();
++ 	trace_irq_vector_exit(THERMAL_APIC_VECTOR);
+  	irq_exit();
+  	/* Ack only at the end to avoid potential reentry */
+  	ack_APIC_irq();
+diff --cc arch/x86/kernel/cpu/mcheck/threshold.c
+index aa578ca,ffde17b..0000000
+--- a/arch/x86/kernel/cpu/mcheck/threshold.c
++++ b/arch/x86/kernel/cpu/mcheck/threshold.c
+@@@ -19,10 -20,12 +20,12 @@@ void (*mce_threshold_vector)(void) = de
+  
+  asmlinkage void smp_threshold_interrupt(void)
+  {
+ -	exit_idle();
+  	irq_enter();
+ +	exit_idle();
++ 	trace_irq_vector_entry(THRESHOLD_APIC_VECTOR);
+  	inc_irq_stat(irq_threshold_count);
+  	mce_threshold_vector();
++ 	trace_irq_vector_exit(THRESHOLD_APIC_VECTOR);
+  	irq_exit();
+  	/* Ack only at the end to avoid potential reentry */
+  	ack_APIC_irq();
+diff --cc arch/x86/kernel/irq.c
+index 5d31e5b,64aad37..0000000
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@@ -209,10 -212,10 +212,9 @@@ void smp_x86_platform_ipi(struct pt_reg
+  
+  	ack_APIC_irq();
+  
+ -	exit_idle();
+ -
+  	irq_enter();
+- 
+ +	exit_idle();
+- 
++ 	trace_irq_vector_entry(X86_PLATFORM_IPI_VECTOR);
+  	inc_irq_stat(x86_platform_ipis);
+  
+  	if (x86_platform_ipi_callback)
