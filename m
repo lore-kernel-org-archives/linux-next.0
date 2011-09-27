@@ -1,107 +1,55 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Mon, 26 Sep 2011 17:49:12 -0700
-Message-ID: <20110927004912.GB10408@kroah.com>
-References: <20110922131232.56210b544f587210621ae339@canb.auug.org.au>
- <4E7B2E43.3080609@infradead.org>
- <20110922201909.GA13347@kroah.com>
- <4E7C9736.30707@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Tue, 27 Sep 2011 11:25:24 +1000
+Message-ID: <20110927112524.fd0b8f1fe69bc63855ead2d7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4E7C9736.30707@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:50364 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751149Ab1I0BZ2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Sep 2011 21:25:28 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Russell King <rmk@arm.linux.org.uk>, Jon Medhurst <tixy@yxit.co.uk>
 
-On Fri, Sep 23, 2011 at 11:27:02AM -0300, Mauro Carvalho Chehab wrote:
-> Em 22-09-2011 17:19, Greg KH escreveu:
-> > On Thu, Sep 22, 2011 at 09:46:59AM -0300, Mauro Carvalho Chehab wrote:
-> >> Em 22-09-2011 00:12, Stephen Rothwell escreveu:
-> >>> Hi Mauro,
-> >>>
-> >>> After merging the v4l-dvb tree, today's linux-next build (x86_64
-> >>> allmodconfig) failed like this:
-> >>>
-> >>> drivers/staging/dt3155v4l/dt3155v4l.c: In function 'dt3155_start_acq':
-> >>> drivers/staging/dt3155v4l/dt3155v4l.c:210:2: error: implicit declaration of function 'vb2_dma_contig_plane_paddr'
-> >>> drivers/staging/dt3155v4l/dt3155v4l.c: At top level:
-> >>> drivers/staging/dt3155v4l/dt3155v4l.c:321:2: warning: initialization from incompatible pointer type
-> >>> drivers/staging/dt3155v4l/dt3155v4l.c:325:2: warning: initialization from incompatible pointer type
-> >>>
-> >>> Casued by commit ba7fcb0c9549 ("[media] media: vb2: dma contig allocator:
-> >>> use dma_addr instread of paddr").
-> >>>
-> >>> I have used the v4l-dvb tree from next-20110921 for today.
-> >>
-> >> Hi Stephen,
-> >>
-> >> I think that the right thing to do is to disable the building of this
-> >> staging driver, if it is not using the current media core API's.
-> >>
-> >> Greg,
-> >>
-> >> If possible, I prefer to merge those staging drivers for the media
-> >> subsystem via my tree, as it helps me to solve in advance conflicts
-> >> like that. Maybe we could add a drivers/staging/media tree or
-> >> drivers/media/staging, and move those beasts to there.
-> >>
-> >> What do you think?
-> > 
-> > Yes, I would _LOVE_ a drivers/staging/media/ directory so that I know
-> > which drivers I am supposed to be ignoring and leaving to you :)
-> 
-> :)
-> 
-> If you receive any new drivers like the dt3155v4l that include
-> one of those files:
-> 	linux/videodev2.h
-> 	media/*.h
-> 	linux/dvb/*.h
-> They're dependent on the media core. So, could you please let me know about
-> its addition at staging, by either forwarding it to me or adding it at the 
-> new staging/media c/c me on your reply?
-> 
-> > Just let me know which ones I should move into there and I will do that
-> > today and let you maintain them all and just forward any emails to you.
-> > Which will keep issues like this from happening in the future.
-> 
-> At the current linux-next tree, the drivers are media stuff:
-> 	staging/easycap
-> 	staging/go7007
-> 	staging/solo6x10
-> 	staging/cx25821
-> 	staging/lirc
-> 	staging/cxd2099
-> 	staging/altera-stapl
-> 	staging/dt3155v4l
-> 
-> >From the above:
-> 	 staging/tm6000 can be moved to /drivers/media/video, after a final checkpatch
-> cleanup patch I've made. However, I have some changesets for it on my -next tree,
-> so it is probably wiser if I move it on my tree instead on yours.
-> 
-> 	staging/cx25281 can also be moved to drivers/media/video after some codingstyle
-> fixups. I think you're received some such patches recently. Not sure if they cover the
-> remaining checkpatch.pl significative complains.
-> 
-> 	staging/cxd2099 has one problem: it exposes a wrong DVB API for the conditional
-> access module, due to the lack of a proper API definition. It is a driver optionally used 
-> by some DVB cards, so moving it may require some include fixups. I don't want to move it
-> out of staging while we don't have a solution for the API issue. I'm planning to discuss 
-> it during the media KS workshop in Plague.
-> 
-> 	staging/altera-stapl can be moved to drivers/misc. One include needs to be fixup
-> when moving it, as one DVB driver uses it for a couple boards that come with this
-> companion chipset.
-> 
-> If you prefer, I can do the git mv patches for those weird stuff.
+Hi Arnd,
 
-That would be easiest, if you want to create drivers/staging/media/ and
-move what you want to maintain into it, please do so.
+[I have a feeling that I may have reported this previously]
 
-thanks,
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mm/dma-mapping.c between commit e73fc88e19d7 ("ARM: 7059/1:
+LPAE: Use PMD_(SHIFT|SIZE|MASK) instead of PGDIR_*") from the arm tree
+and commit 99d1717dd7fe ("ARM: Add init_consistent_dma_size()") from the
+arm-soc tree.
 
-greg k-h
+I fixed it up (I think - see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mm/dma-mapping.c
+index 235eb77,50be842..0000000
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@@ -117,14 -119,10 +119,9 @@@ static void __dma_free_buffer(struct pa
+  }
+  
+  #ifdef CONFIG_MMU
+- /* Sanity check size */
+- #if (CONSISTENT_DMA_SIZE % SZ_2M)
+- #error "CONSISTENT_DMA_SIZE must be multiple of 2MiB"
+- #endif
+  
+- #define CONSISTENT_OFFSET(x)	(((unsigned long)(x) - CONSISTENT_BASE) >> PAGE_SHIFT)
+- #define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - CONSISTENT_BASE) >> PMD_SHIFT)
+- #define NUM_CONSISTENT_PTES (CONSISTENT_DMA_SIZE >> PMD_SHIFT)
+ -
++ #define CONSISTENT_OFFSET(x)	(((unsigned long)(x) - consistent_base) >> PAGE_SHIFT)
+ -#define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - consistent_base) >> PGDIR_SHIFT)
+++#define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - consistent_base) >> PMD_SHIFT)
+  
+  /*
+   * These are the page tables (2MB each) covering uncached, DMA consistent allocations
