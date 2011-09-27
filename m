@@ -1,52 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with the mfd tree
-Date: Tue, 27 Sep 2011 16:29:19 +1000
-Message-ID: <20110927162919.1bf769d918a16a35d91ac1da@canb.auug.org.au>
+From: Tixy <tixy@yxit.co.uk>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Tue, 27 Sep 2011 07:20:57 +0100
+Message-ID: <1317104457.2238.16.camel@computer2>
+References: <20110927112524.fd0b8f1fe69bc63855ead2d7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__27_Sep_2011_16_29_19_+1000_TSd8N6wyhqLkZxQM"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:60255 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751276Ab1I0G3Z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 02:29:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110927112524.fd0b8f1fe69bc63855ead2d7@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Russell King <rmk@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__27_Sep_2011_16_29_19_+1000_TSd8N6wyhqLkZxQM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2011-09-27 at 11:25 +1000, Stephen Rothwell wrote:
+> Hi Arnd,
+> 
+> [I have a feeling that I may have reported this previously]
+> 
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/mm/dma-mapping.c between commit e73fc88e19d7 ("ARM: 7059/1:
+> LPAE: Use PMD_(SHIFT|SIZE|MASK) instead of PGDIR_*") from the arm tree
+> and commit 99d1717dd7fe ("ARM: Add init_consistent_dma_size()") from
+> the
+> arm-soc tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as
+> necessary.
 
-Hi Paul,
+The fixup looks correct to me.
 
-Today's linux-next merge of the moduleh tree got a conflict in
-drivers/mfd/ab3550-core.c between commit e085f9a2e27d ("mfd: Delete
-ab3550 driver") from the mfd tree and commit afb68c4877b2 ("mfd: Add
-module.h to the implicit drivers/mfd users") from the moduleh tree.
+-- 
+Jon Medhurst (usually known as Tixy)
 
-The former removes this file, so I did that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__27_Sep_2011_16_29_19_+1000_TSd8N6wyhqLkZxQM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOgW0/AAoJEDMEi1NhKgbsmAkH/RiB48X9qcYU4CBvWQc2Ewqn
-+cVl8mPW2MosODmQGQO+DBR2iDUVO9aJUUdvsm7Fl8gIUYcz7iB7yXr+5R53O/l8
-UuWk1rf/qeESm/M8IvtaVqVPn/DZYmQROyEd4B+USg0RxgItXrr5HCQv+jR4eTgN
-b95aiqVXQywk6tVOF5Qn5pHvSB+KH0Pz9yMsMKRj6KorLIaQW/jrrMGtUOsT3fgo
-gzIo4YWP51QtX4SSxvcg1VPw++NBwYh/wrHPoJIq1Dd1LXGVZUydWiZku6x6aXiN
-ipSGlXe1jG/7qd6x5rjUqMGo5nN5jb3huoaTvC8g30zLm3wCLYvou/Wcpu/xeds=
-=n9tK
------END PGP SIGNATURE-----
-
---Signature=_Tue__27_Sep_2011_16_29_19_+1000_TSd8N6wyhqLkZxQM--
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/mm/dma-mapping.c
+> index 235eb77,50be842..0000000
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@@ -117,14 -119,10 +119,9 @@@ static void __dma_free_buffer(struct pa
+>   }
+>   
+>   #ifdef CONFIG_MMU
+> - /* Sanity check size */
+> - #if (CONSISTENT_DMA_SIZE % SZ_2M)
+> - #error "CONSISTENT_DMA_SIZE must be multiple of 2MiB"
+> - #endif
+>   
+> - #define CONSISTENT_OFFSET(x)  (((unsigned long)(x) - CONSISTENT_BASE) >> PAGE_SHIFT)
+> - #define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - CONSISTENT_BASE) >> PMD_SHIFT)
+> - #define NUM_CONSISTENT_PTES (CONSISTENT_DMA_SIZE >> PMD_SHIFT)
+>  -
+> + #define CONSISTENT_OFFSET(x)  (((unsigned long)(x) - consistent_base) >> PAGE_SHIFT)
+>  -#define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - consistent_base) >> PGDIR_SHIFT)
+> ++#define CONSISTENT_PTE_INDEX(x) (((unsigned long)(x) - consistent_base) >> PMD_SHIFT)
+>   
+>   /*
+>    * These are the page tables (2MB each) covering uncached, DMA consistent allocations 
