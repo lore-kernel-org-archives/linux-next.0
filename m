@@ -1,54 +1,79 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rcu tree with Linus' tree
-Date: Tue, 27 Sep 2011 15:14:54 +1000
-Message-ID: <20110927151454.9892b23391f20bea20741c21@canb.auug.org.au>
+From: Linus Walleij <linus.ml.walleij@gmail.com>
+Subject: Re: linux-next: manual merge of the mfd tree with the arm tree
+Date: Tue, 27 Sep 2011 07:52:28 +0200
+Message-ID: <CAKnu2MoTz5cv9m+x84NeEbO-6YaK0QwwSaHpFwfBWiBG+GrdLw@mail.gmail.com>
+References: <20110927134534.af4c3bdad6918111a2e03034@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__27_Sep_2011_15_14_54_+1000_S6wOs8v5xOY.Jx8w"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:33209 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752696Ab1I0FPF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 01:15:05 -0400
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:49428 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752857Ab1I0Fw3 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 01:52:29 -0400
+In-Reply-To: <20110927134534.af4c3bdad6918111a2e03034@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>, Borislav Petkov <borislav.petkov@amd.com>, Frederic Weisbecker <fweisbec@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__27_Sep_2011_15_14_54_+1000_S6wOs8v5xOY.Jx8w
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+2011/9/27 Stephen Rothwell <sfr@canb.auug.org.au>:
 
-Hi Paul,
+> Today's linux-next merge of the mfd tree got a conflict in
+> arch/arm/mach-u300/include/mach/irqs.h between commit cc890cd78acd ("=
+ARM:
+> 7083/1: rewrite U300 GPIO to use gpiolib") from the  tree and commit
+> e085f9a2e27d ("mfd: Delete ab3550 driver") from the mfd tree.
+> I fixed it up (I think - see below) anc can carry the fix as necessar=
+y.
+> (...)
+>
+> diff --cc arch/arm/mach-u300/include/mach/irqs.h
+> index d270fea,a6867b1..0000000
+> --- a/arch/arm/mach-u300/include/mach/irqs.h
+> +++ b/arch/arm/mach-u300/include/mach/irqs.h
+> @@@ -106,25 -106,9 +106,19 @@@
+> =A0#define IRQ_U300_NFIF =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 45
+> =A0#define IRQ_U300_NFIF2 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A046
+> =A0#define IRQ_U300_SYSCON_PLL_LOCK =A0 =A0 =A047
+> =A0-#define U300_NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A048
+> =A0+#define U300_VIC_IRQS_END =A0 =A0 =A0 =A0 =A0 =A0 48
+> =A0#endif
+>
+> =A0-#define NR_IRQS U300_NR_IRQS
+> =A0+/* Maximum 8*7 GPIO lines */
+> =A0+#ifdef CONFIG_GPIO_U300
+> =A0+#define IRQ_U300_GPIO_BASE =A0 =A0 =A0 =A0 =A0 =A0(U300_VIC_IRQS_=
+END)
+> =A0+#define IRQ_U300_GPIO_END =A0 =A0 =A0 =A0 =A0 =A0 (IRQ_U300_GPIO_=
+BASE + 56)
+> =A0+#else
+> =A0+#define IRQ_U300_GPIO_END =A0 =A0 =A0 =A0 =A0 =A0 (U300_VIC_IRQS_=
+END)
+> =A0+#endif
+> =A0+
+> - /* Optional AB3550 mixsig chip */
+> - #ifdef CONFIG_AB3550_CORE
+> - #define IRQ_AB3550_BASE =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ (IRQ_U300_GPIO_END)
+> - #define IRQ_AB3550_END =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0(IRQ_AB3550_BASE + 38)
+> - #else
+> =A0+#define IRQ_AB3550_END =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0(IRQ_U300_GPIO_END)
+> - #endif
+> =A0+
+> =A0+#define NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 (IRQ_AB3550_END)
 
-Today's linux-next merge of the rcu tree got a conflict in
-arch/x86/kernel/cpu/mcheck/mce.c between commit b77e70bf3535 ("x86, mce:
-Replace MCE_SELF_VECTOR by irq_work") from Linus' tree and commit
-ef14aea88fee ("x86: Call idle notifier after irq_enter()") from the rcu
-tree.
+Nothing mentioning the AB3559 should be left after the merge, so the
+IRQ_AB3550_END should be gone.
 
-The commit in Linus' tree seem to superced the need for the rcu tree
-patch ... so I effectively dropped the rcu tree change to this file.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+delete IRQ_AB3550_END and
+#define NR_IRQS IRQ_U300_GPIO_END
 
---Signature=_Tue__27_Sep_2011_15_14_54_+1000_S6wOs8v5xOY.Jx8w
-Content-Type: application/pgp-signature
+I will watch this closely in the merge window.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOgVvOAAoJEDMEi1NhKgbs9ckIAICoUjk3DwhxLXFZ2iw0yYaJ
-E0HpZc7EtVj9a+WEH3i6tvK3Vk0w8BPJluQJRfjRKErCcEORwHCljip/9TlMnS8l
-8fZR5VwS5jIjuK0kAC1gcUW4y33s/0BYWbVkE6MTNLbI7VU7HmCA/oUxrhldhOpx
-MowvSqofRqdm/O/ii1nskKz3RZLqgIqlMPCI0C0QJZl6NLjbzyLtSkLYYX5QfPiX
-Ags7A1ahaoTrWoAOgAs68C6s44o3hEQw9r14YRoRJhaSlbMKhdf3TJzzrqtXUkhu
-d39KIuz1YryAU0nY7YUHSS0Y8HT+swOox9+Vp0H+qCLrEGYMhEnzBUzopiA3y1Q=
-=FtR4
------END PGP SIGNATURE-----
-
---Signature=_Tue__27_Sep_2011_15_14_54_+1000_S6wOs8v5xOY.Jx8w--
+Thanks,
+Linus Walleij
