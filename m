@@ -1,35 +1,42 @@
-From: wwguy <wey-yi.w.guy@intel.com>
-Subject: Re: linux-next: manual merge of the net tree with the
- wireless-current tree
-Date: Tue, 27 Sep 2011 07:41:41 -0700
-Message-ID: <1317134501.9384.0.camel@wwguy-ubuntu>
-References: <20110927125132.002db8176a66f85286dcd027@canb.auug.org.au>
-	 <20110927130926.GA2824@tuxdriver.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: manual merge of the moduleh tree with the mfd tree
+Date: Tue, 27 Sep 2011 10:54:45 -0400
+Message-ID: <CAP=VYLqybADeb=nMgbyK-J0NWAF7jtrTnS212qDez5WcpQADoQ@mail.gmail.com>
+References: <20110927162919.1bf769d918a16a35d91ac1da@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110927130926.GA2824@tuxdriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Berg, Johannes" <johannes.berg@intel.com>, "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:50469 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751770Ab1I0Oyw convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 10:54:52 -0400
+In-Reply-To: <20110927162919.1bf769d918a16a35d91ac1da@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-On Tue, 2011-09-27 at 06:09 -0700, John W. Linville wrote:
-> On Tue, Sep 27, 2011 at 12:51:32PM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the net tree got a conflict in
-> > drivers/net/wireless/iwlwifi/iwl-scan.c between commit 6c80c39d9a69
-> > ("iwlagn: fix dangling scan request") from the wireless-current tree and
-> > commits 63013ae30159 ("iwlagn: priv->status moves to iwl_shared") and
-> > 6ac2f839b0b2 ("iwlagn: priv->mutex moves to iwl_shared") from the net
-> > tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary.
-> 
-> Looks good, thanks!
-> 
-Thanks a lot for fixing it.
+On Tue, Sep 27, 2011 at 2:29 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Paul,
+>
+> Today's linux-next merge of the moduleh tree got a conflict in
+> drivers/mfd/ab3550-core.c between commit e085f9a2e27d ("mfd: Delete
+> ab3550 driver") from the mfd tree and commit afb68c4877b2 ("mfd: Add
+> module.h to the implicit drivers/mfd users") from the moduleh tree.
+>
+> The former removes this file, so I did that.
 
-Wey
+Thanks -- I'll simply drop the changes to that file.  I'll have an alte=
+rnate
+pull site for linux-next to you by your tomorrow morning as well.
+
+P.
+
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+>
