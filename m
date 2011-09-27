@@ -1,125 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the  tree
-Date: Tue, 27 Sep 2011 16:59:20 +1000
-Message-ID: <20110927165920.14b00e8595d10135d2a4397a@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Tue, 27 Sep 2011 17:13:59 +1000
+Message-ID: <20110927171359.db102aea408b07771336d6f0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__27_Sep_2011_17_13_59_+1000_wZ7KECTcqp1OmHOA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:39008 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:35147 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750823Ab1I0G7X (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 02:59:23 -0400
+	with ESMTP id S1751105Ab1I0HOI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 03:14:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vaibhav Nagarnaik <vnagarnaik@google.com>, Frederic Weisbecker <fweisbec@gmail.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Suresh Siddha <suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+
+--Signature=_Tue__27_Sep_2011_17_13_59_+1000_wZ7KECTcqp1OmHOA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the scsi-post-merge tree got conflicts in
-arch/x86/kernel/apic/apic.c, arch/x86/kernel/cpu/mcheck/therm_throt.c,
-arch/x86/kernel/cpu/mcheck/threshold.c and arch/x86/kernel/irq.c between
-commit ef14aea88fee ("x86: Call idle notifier after irq_enter()") from
-the rcu tree and commit 6a541324a31f ("The current interrupt traces from
-irq_handler_entry and irq_handler_exit") from the akpm tree.
+Today's linux-next merge of the akpm tree got conflicts in
+drivers/iommu/dmar.c and include/linux/dmar.h between commit 318fe7df9d84
+("iommu: Move IOMMU specific code to intel-iommu.c") from the tip tree
+and commit 432fb2751763 ("When do pci remove/rescan on system that have
+more iommus, got") from the akpm tree.
 
-Just context changes. I fixed them up (see below) and can carry the fixes
-as necessary.
--- 
+The former moved that code the the latter cares about to another files.
+I have dropped this patch from the akpm tree for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/kernel/apic/apic.c
-index 4af04d4,0fe559f..0000000
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@@ -857,9 -858,11 +858,11 @@@ void __irq_entry smp_apic_timer_interru
-  	 * Besides, if we don't timer interrupts ignore the global
-  	 * interrupt lock, which is the WrongThing (tm) to do.
-  	 */
- -	exit_idle();
-  	irq_enter();
- +	exit_idle();
-+ 	trace_irq_vector_entry(LOCAL_TIMER_VECTOR);
-  	local_apic_timer_interrupt();
-+ 	trace_irq_vector_exit(LOCAL_TIMER_VECTOR);
-  	irq_exit();
-  
-  	set_irq_regs(old_regs);
-@@@ -1790,8 -1794,9 +1793,9 @@@ void smp_spurious_interrupt(struct pt_r
-  {
-  	u32 v;
-  
- -	exit_idle();
-  	irq_enter();
- +	exit_idle();
-+ 	trace_irq_vector_entry(SPURIOUS_APIC_VECTOR);
-  	/*
-  	 * Check if this really is a spurious interrupt and ACK it
-  	 * if it is a vectored one.  Just in case...
-@@@ -1827,8 -1833,9 +1832,9 @@@ void smp_error_interrupt(struct pt_reg
-  		"Illegal register address",	/* APIC Error Bit 7 */
-  	};
-  
- -	exit_idle();
-  	irq_enter();
- +	exit_idle();
-+ 	trace_irq_vector_entry(ERROR_APIC_VECTOR);
-  	/* First tickle the hardware, only then report what went on. -- REW */
-  	v0 = apic_read(APIC_ESR);
-  	apic_write(APIC_ESR, 0);
-diff --cc arch/x86/kernel/cpu/mcheck/therm_throt.c
-index ce21561,6b7edb5..0000000
---- a/arch/x86/kernel/cpu/mcheck/therm_throt.c
-+++ b/arch/x86/kernel/cpu/mcheck/therm_throt.c
-@@@ -397,10 -398,12 +398,12 @@@ static void (*smp_thermal_vector)(void
-  
-  asmlinkage void smp_thermal_interrupt(struct pt_regs *regs)
-  {
- -	exit_idle();
-  	irq_enter();
- +	exit_idle();
-+ 	trace_irq_vector_entry(THERMAL_APIC_VECTOR);
-  	inc_irq_stat(irq_thermal_count);
-  	smp_thermal_vector();
-+ 	trace_irq_vector_exit(THERMAL_APIC_VECTOR);
-  	irq_exit();
-  	/* Ack only at the end to avoid potential reentry */
-  	ack_APIC_irq();
-diff --cc arch/x86/kernel/cpu/mcheck/threshold.c
-index aa578ca,ffde17b..0000000
---- a/arch/x86/kernel/cpu/mcheck/threshold.c
-+++ b/arch/x86/kernel/cpu/mcheck/threshold.c
-@@@ -19,10 -20,12 +20,12 @@@ void (*mce_threshold_vector)(void) = de
-  
-  asmlinkage void smp_threshold_interrupt(void)
-  {
- -	exit_idle();
-  	irq_enter();
- +	exit_idle();
-+ 	trace_irq_vector_entry(THRESHOLD_APIC_VECTOR);
-  	inc_irq_stat(irq_threshold_count);
-  	mce_threshold_vector();
-+ 	trace_irq_vector_exit(THRESHOLD_APIC_VECTOR);
-  	irq_exit();
-  	/* Ack only at the end to avoid potential reentry */
-  	ack_APIC_irq();
-diff --cc arch/x86/kernel/irq.c
-index 5d31e5b,64aad37..0000000
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@@ -209,10 -212,10 +212,9 @@@ void smp_x86_platform_ipi(struct pt_reg
-  
-  	ack_APIC_irq();
-  
- -	exit_idle();
- -
-  	irq_enter();
-- 
- +	exit_idle();
-- 
-+ 	trace_irq_vector_entry(X86_PLATFORM_IPI_VECTOR);
-  	inc_irq_stat(x86_platform_ipis);
-  
-  	if (x86_platform_ipi_callback)
+--Signature=_Tue__27_Sep_2011_17_13_59_+1000_wZ7KECTcqp1OmHOA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOgXe3AAoJEDMEi1NhKgbs1pAH/18IYP1XUadNiq0X1xlwL55X
+hXOw6yOorsPM9I/CF67NGIB1flqbKPh+P34b0uTvdi0E2qbMvIATw8HhFcNaJ1RC
++HYeEVJmgt+anixrSPBJgNorMlGbkHhyKn2ordSTEOZFfc7ZrJKMzrPPYCeeI4CC
+eI51NryYX6+UXPY2bf3kVQNWYSvHxyXB0Cqpow85dO1PcbLiXV5qvObSl1t4SfW6
+ixECmcmZ6syeRMVtMGChOi2njCFtsMc/GlGM9Eaw6zf41/r7Dp5aEQ+jm+n9wcas
+BWb+E5EkGq1mzcHoBqtPlnBoOiacLfem0YdcQ69L0dbcwvErQmXhMuY7/dsPLx0=
+=E289
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Sep_2011_17_13_59_+1000_wZ7KECTcqp1OmHOA--
