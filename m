@@ -1,52 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the net-current tree
-Date: Wed, 28 Sep 2011 12:54:28 +1000
-Message-ID: <20110928125428.70d5cf10ea59f729135d5dff@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb
+ tree
+Date: Tue, 27 Sep 2011 07:18:54 -0700
+Message-ID: <20110927141854.GA23403@kroah.com>
+References: <20110927161055.05bbb0586fffbfbb2307f30b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43408 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751558Ab1I1Cyc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 22:54:32 -0400
+Received: from out3.smtp.messagingengine.com ([66.111.4.27]:57351 "EHLO
+	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751558Ab1I1DC2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Sep 2011 23:02:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20110927161055.05bbb0586fffbfbb2307f30b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antonio Quartulli <ordex@autistici.org>, Marek Lindner <lindner_marek@yahoo.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, "Igor M. Liplianin" <liplianin@netup.ru>, Mauro Carvalho Chehab <mchehab@redhat.com>
 
-Hi all,
+On Tue, Sep 27, 2011 at 04:10:55PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/misc/altera-stapl/altera.c between commit cff4fa8415a3 ("[media]
+> altera-stapl: it is time to move out from staging") from the v4l-dvb tree
+> and commit 99c978529a40 ("staging: Add module.h to drivers/staging
+> users") from the staging tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-Today's linux-next merge of the net tree got a conflict in
-net/batman-adv/soft-interface.c between commit 8b267b312df9 ("batman-adv:
-do_bcast has to be true for broadcast packets only") from the net-current
-tree and commit 3d393e473210 ("batman-adv: implement AP-isolation on the
-sender side") from the net tree.
+Looks fine, thanks.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc net/batman-adv/soft-interface.c
-index 05dd351,aceeabc..0000000
---- a/net/batman-adv/soft-interface.c
-+++ b/net/batman-adv/soft-interface.c
-@@@ -595,11 -596,12 +596,12 @@@ static int interface_tx(struct sk_buff 
-  		goto dropped;
-  
-  	/* Register the client MAC in the transtable */
-- 	tt_local_add(soft_iface, ethhdr->h_source);
-+ 	tt_local_add(soft_iface, ethhdr->h_source, skb->skb_iif);
-  
-- 	orig_node = transtable_search(bat_priv, ethhdr->h_dest);
-+ 	orig_node = transtable_search(bat_priv, ethhdr->h_source,
-+ 				      ethhdr->h_dest);
- -	if (is_multicast_ether_addr(ethhdr->h_dest) ||
- -				(orig_node && orig_node->gw_flags)) {
- +	do_bcast = is_multicast_ether_addr(ethhdr->h_dest);
- +	if (do_bcast ||	(orig_node && orig_node->gw_flags)) {
-  		ret = gw_is_target(bat_priv, skb, orig_node);
-  
-  		if (ret < 0)
+greg k-h
