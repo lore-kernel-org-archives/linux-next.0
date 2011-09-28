@@ -1,71 +1,56 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Wed, 28 Sep 2011 15:58:05 +0200
-Message-ID: <201109281558.05289.rjw@sisk.pl>
-References: <20110928145144.3d074db9aa9b6f858e0dc4fb@canb.auug.org.au> <CACVXFVMrPNZupCQnBMBXsSA1OH=15m9QBKhXT1Of+LghZbKn0Q@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH -next] qdio: add missing export.h include
+Date: Wed, 28 Sep 2011 10:03:22 -0400
+Message-ID: <4E83292A.3070502@windriver.com>
+References: <1316676108-5729-1-git-send-email-heiko.carstens@de.ibm.com> <4E824F3A.6070302@windriver.com> <20110928063425.GA2621@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:33758 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754417Ab1I1Nzw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Sep 2011 09:55:52 -0400
-In-Reply-To: <CACVXFVMrPNZupCQnBMBXsSA1OH=15m9QBKhXT1Of+LghZbKn0Q@mail.gmail.com>
+Received: from mail.windriver.com ([147.11.1.11]:50798 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754496Ab1I1OGT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 10:06:19 -0400
+In-Reply-To: <20110928063425.GA2621@osiris.boeblingen.de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ming Lei <ming.lei@canonical.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, Frank Blaschka <blaschka@linux.vnet.ibm.com>, Jan Glauber <jang@linux.vnet.ibm.com>
 
-On Wednesday, September 28, 2011, Ming Lei wrote:
-> Hi Stephen and Rafael,
+On 11-09-28 02:34 AM, Heiko Carstens wrote:
+> On Tue, Sep 27, 2011 at 06:33:30PM -0400, Paul Gortmaker wrote:
+>> On 11-09-22 03:21 AM, Heiko Carstens wrote:
+>>> Fix compile breakage caused by splitting module.h:
+>>>
+>>> drivers/s390/cio/qdio_setup.c:31:1:
+>>>  warning: data definition has no type or storage class [enabled by default]
+>>> drivers/s390/cio/qdio_setup.c:31:1:
+>>>  warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+>>
+>> Now that I look at this, and the other patch, I'm not
+>> seeing how this is possible.  Unless there is some
+>> convoluted CPP magic going on, I don't see any instances
+>> of EXPORT_SYMBOL in qdio_setup.c -- similarly I don't
+>> see any module_ or MODULE_ references in zfcp_qdio.c
+>>
+>> Am I missing something obvious here?   The line numbers
+>> you quote dont match anything meaningful -- so I'm wondering
+>> if perhaps these changes are meant to be in advance of the
+>> s390 changes you've got queued in next -- which is fine, but
+>> it would be nice to have that called out.
 > 
-> Sorry, the attachment patch can fix the build failure, which is
-> caused by unset CONFIG_RUNTIME_PM.
+> Oh right, I should have mentioned this. Sorry!
+> he two patches fix compile breakages only in -next because of s390
+> related patches in the scsi and net git trees. Since it's not possible
+> to add the compile fixes (at least for the new export.h header file)
+> to the scsi or net trees I just sent these patches towards you...
 
-First off, that's CONFIG_PM_RUNTIME.  Second, why do you want to build
-rpm-traces.c at all if CONFIG_PM_RUNTIME is unset?
+OK, thanks for the info.  I'll update the commit header with
+a note indicating those two changes are in anticipation of
+pending s390 changes.
 
-Rafael
+Paul.
 
-
-> On Wed, Sep 28, 2011 at 12:51 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi Rafael,
-> >
-> > After merging the pm tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >
-> > In file included from include/trace/ftrace.h:567:0,
-> >                 from include/trace/define_trace.h:96,
-> >                 from include/trace/events/rpm.h:99,
-> >                 from kernel/trace/rpm-traces.c:15:
-> > include/trace/events/rpm.h: In function 'ftrace_raw_event_rpm_internal':
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'usage_count'
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'disable_depth'
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'runtime_auto'
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'request_pending'
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'irq_safe'
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'child_count'
-> > In file included from include/trace/ftrace.h:771:0,
-> >                 from include/trace/define_trace.h:96,
-> >                 from include/trace/events/rpm.h:99,
-> >                 from kernel/trace/rpm-traces.c:15:
-> > include/trace/events/rpm.h: In function 'perf_trace_rpm_internal':
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'usage_count'
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'disable_depth'
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'runtime_auto'
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'request_pending'
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'irq_safe'
-> > include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no member named 'child_count'
-> >
-> > Presumably caused by commit 53b615ccca56 ("PM / Runtime: Introduce trace
-> > points for tracing rpm_* functions").
-> >
-> > I have used the pm tree from next-20110927 for today.
-> > --
-> > Cheers,
-> > Stephen Rothwell                    sfr@canb.auug.org.au
-> > http://www.canb.auug.org.au/~sfr/
-> >
 > 
+> Thanks,
+> Heiko
