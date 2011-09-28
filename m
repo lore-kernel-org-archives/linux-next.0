@@ -1,59 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm tree with the tree
-Date: Wed, 28 Sep 2011 09:03:58 +1000
-Message-ID: <20110928090358.10935976cc6c185069082610@canb.auug.org.au>
-References: <20110927165920.14b00e8595d10135d2a4397a@canb.auug.org.au>
-	<CAL26m8JbvOi05irJdhtsas2=PWdy4V+hkTYHp029RAvDGnUZgA@mail.gmail.com>
+Subject: Re: linux-next: New location for the module.h split content
+Date: Wed, 28 Sep 2011 11:13:02 +1000
+Message-ID: <20110928111302.effdf3ba197447a158509cbf@canb.auug.org.au>
+References: <20110928003903.GA16710@windriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__28_Sep_2011_09_03_58_+1000_k6MZWyNweybQ4krY"
+ boundary="Signature=_Wed__28_Sep_2011_11_13_02_+1000_iYYlnWVj=aZGMe7B"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:56270 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:40058 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752510Ab1I0XEM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 19:04:12 -0400
-In-Reply-To: <CAL26m8JbvOi05irJdhtsas2=PWdy4V+hkTYHp029RAvDGnUZgA@mail.gmail.com>
+	with ESMTP id S1751151Ab1I1BNK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 21:13:10 -0400
+In-Reply-To: <20110928003903.GA16710@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vaibhav Nagarnaik <vnagarnaik@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__28_Sep_2011_09_03_58_+1000_k6MZWyNweybQ4krY
+--Signature=_Wed__28_Sep_2011_11_13_02_+1000_iYYlnWVj=aZGMe7B
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Paul,
 
-On Tue, 27 Sep 2011 09:52:27 -0700 Vaibhav Nagarnaik <vnagarnaik@google.com=
-> wrote:
+On Tue, 27 Sep 2011 20:39:04 -0400 Paul Gortmaker <paul.gortmaker@windriver=
+.com> wrote:
 >
-> Looks good to me. Do I need to provide Acked-by?
+> I've placed the module split content for linux-next on one of
+> our local servers as per the pull request info below, to serve
+> as an alternate source while kernel.org is down.
+>=20
+> --------
+>=20
+> The following changes since commit b6fd41e29dea9c6753b1843a77e50433e6123b=
+cb:
+>=20
+>   Linux 3.1-rc6 (2011-09-12 14:02:02 -0700)
+>=20
+> are available in the git repository at:
+>   git://openlinux.windriver.com/people/paulg/linux-next for-sfr
 
-Not to me, that is just a merge fixup patch in linux-next.  It is not
-permanent until Andrew or Linus actually take the original patches and
-merge them.
+I will switch to this from today.
 
-But it good to know that it is probablt correct, thanks.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__28_Sep_2011_09_03_58_+1000_k6MZWyNweybQ4krY
+--Signature=_Wed__28_Sep_2011_11_13_02_+1000_iYYlnWVj=aZGMe7B
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOglZeAAoJEDMEi1NhKgbsbrQH/0/lLD4am07onUVO9DOKS6D+
-IotkQZsLgC7pDhWBnL9MfhpdxvCadE3+/PDdXrFFBOj9DhbmlrsclRgm6k209N4Q
-3eMSTGvGrmdgKugoVUh1/X09CQtI4Eap61VhtOO6V8MhXlLxFt1/xNj/ioMGXAay
-IETtMu/lhVnPLiH8bSwb4KCE1GMcxyHRaLehglO0obuxf9KlE5OFMPS2FRdry4aN
-YiVfXiKOFiXSfAHTvG6jHJb/ZJo/9d8Vn1BWhh1xQ/kwnCxutVWtNEQPNASdvzl6
-ovnbSY3y5G18FkOtGMuuttOn4C36ojmdLDSC/aRz2jbrHj0rhEfuKh0YxSul4b0=
-=otL6
+iQEcBAEBAgAGBQJOgnSeAAoJEDMEi1NhKgbsAlcH/0zEhZn80flOtOWSYpsOzxA0
+pIglePwfb7r12g/eEOKq0l943dnU9ULg8UoOpETRm0qlRfEysIN93r43v6GI/Omw
+TuqkBJ9XhZ/NgsVq+mZv4P24QZCGoqDeGmERXJCImU0W8LdgWpX4UBzI8vzfRZex
+1gDhw9ONcg6dQP9GcyxJNypAq9GIq+DQhZiBCCY4uJ27NtyB2Q3TdPL/KoB8KdkK
+sd3uT8FlsGKiAYMY0i1lfxEz9pAQWHPSkA/ZnCWyiRV/wHbwemFvNamxD+Eqf5/I
+lPecDHBijM6jPahGaOrDxPtsxMo1P/pM3og143Mcs+TCVBy3GREy51GVf5IKUzs=
+=piMi
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Sep_2011_09_03_58_+1000_k6MZWyNweybQ4krY--
+--Signature=_Wed__28_Sep_2011_11_13_02_+1000_iYYlnWVj=aZGMe7B--
