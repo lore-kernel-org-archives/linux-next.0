@@ -1,67 +1,109 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH -next] qdio: add missing export.h include
-Date: Wed, 28 Sep 2011 14:54:39 +1000
-Message-ID: <20110928145439.7ed4a378cd7772f9037e0c83@canb.auug.org.au>
-References: <1316676108-5729-1-git-send-email-heiko.carstens@de.ibm.com>
-	<4E824F3A.6070302@windriver.com>
+From: Ming Lei <ming.lei@canonical.com>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Wed, 28 Sep 2011 13:11:24 +0800
+Message-ID: <CACVXFVMrPNZupCQnBMBXsSA1OH=15m9QBKhXT1Of+LghZbKn0Q@mail.gmail.com>
+References: <20110928145144.3d074db9aa9b6f858e0dc4fb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__28_Sep_2011_14_54_39_+1000_4C+MSM4AHEZi905E"
+Content-Type: multipart/mixed; boundary=0016e64c145e6fa9e804adf96c52
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:48046 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751969Ab1I1Eyr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 00:54:47 -0400
-In-Reply-To: <4E824F3A.6070302@windriver.com>
+Received: from youngberry.canonical.com ([91.189.89.112]:47244 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752160Ab1I1FLZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 01:11:25 -0400
+In-Reply-To: <20110928145144.3d074db9aa9b6f858e0dc4fb@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux-next@vger.kernel.org, Frank Blaschka <blaschka@linux.vnet.ibm.com>, Jan Glauber <jang@linux.vnet.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__28_Sep_2011_14_54_39_+1000_4C+MSM4AHEZi905E
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+--0016e64c145e6fa9e804adf96c52
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Stephen and Rafael,
 
-On Tue, 27 Sep 2011 18:33:30 -0400 Paul Gortmaker <paul.gortmaker@windriver=
-.com> wrote:
+Sorry, the attachment patch can fix the build failure, which is
+caused by unset CONFIG_RUNTIME_PM.
+
+thanks,
+--
+Ming Lei
+
+On Wed, Sep 28, 2011 at 12:51 PM, Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+> Hi Rafael,
 >
-> Now that I look at this, and the other patch, I'm not
-> seeing how this is possible.  Unless there is some
-> convoluted CPP magic going on, I don't see any instances
-> of EXPORT_SYMBOL in qdio_setup.c -- similarly I don't
-> see any module_ or MODULE_ references in zfcp_qdio.c
->=20
-> Am I missing something obvious here?   The line numbers
-> you quote dont match anything meaningful -- so I'm wondering
-> if perhaps these changes are meant to be in advance of the
-> s390 changes you've got queued in next -- which is fine, but
-> it would be nice to have that called out.
+> After merging the pm tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> In file included from include/trace/ftrace.h:567:0,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/trace/define_trace.h:96,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/trace/events/rpm.h:99,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from kernel/trace/rpm-traces.c:15:
+> include/trace/events/rpm.h: In function 'ftrace_raw_event_rpm_internal':
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'usage_count'
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'disable_depth'
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'runtime_auto'
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'request_pending'
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'irq_safe'
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'child_count'
+> In file included from include/trace/ftrace.h:771:0,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/trace/define_trace.h:96,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from include/trace/events/rpm.h:99,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 from kernel/trace/rpm-traces.c:15:
+> include/trace/events/rpm.h: In function 'perf_trace_rpm_internal':
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'usage_count'
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'disable_depth'
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'runtime_auto'
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'request_pending'
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'irq_safe'
+> include/trace/events/rpm.h:16:1: error: 'struct dev_pm_info' has no membe=
+r named 'child_count'
+>
+> Presumably caused by commit 53b615ccca56 ("PM / Runtime: Introduce trace
+> points for tracing rpm_* functions").
+>
+> I have used the pm tree from next-20110927 for today.
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug.org=
+.au
+> http://www.canb.auug.org.au/~sfr/
+>
 
-There is a patch in the net tree in linux-next that adds two
-EXPORT_SYMBOL_GPLs to qdio_setup.c.
+--0016e64c145e6fa9e804adf96c52
+Content-Type: text/x-patch; charset=US-ASCII;
+	name="0001-kernel-trace-rpm-traces.c-fix-build-failure-if-RUNTI.patch"
+Content-Disposition: attachment;
+	filename="0001-kernel-trace-rpm-traces.c-fix-build-failure-if-RUNTI.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_gt3uwngy1
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__28_Sep_2011_14_54_39_+1000_4C+MSM4AHEZi905E
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOgqiPAAoJEDMEi1NhKgbsooYH/R91NWReIySq8SqIS/xdIHRj
-mo1Crt5RJlCkV8sFo+3XJECdsfNYMtkU6XU4VOOyS6DEWG5fmAKIfIjOLnhZriPu
-e7jOVCFDAvCnEdLSKEH8lLO3kzzkCUjAbFedg/oT4wY588dav5dpEih4sGZ9LK0C
-KFDUrJoihspinIhddCB1id8ul5vIvuGBuAxTwzg0Bb+DyOMAxnfkXuNW0yc01F2e
-r6XT1yafWnNttRl6NKfUm5+xBhD805R7lnVGRysj+te4fBptsyr0xlIIp40aW96x
-H9qtkfvyTVi8q5/oWLyLSNbxWukiNshuAY0ieYkTUzq+J03WztleDen+99Ci1JE=
-=GOUZ
------END PGP SIGNATURE-----
-
---Signature=_Wed__28_Sep_2011_14_54_39_+1000_4C+MSM4AHEZi905E--
+RnJvbSBmZWIwMzdlOTU3MTQ5ZjBkYzQwNWI4MGI0YmI5Y2RhZmVjNmZjYjBmIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNaW5nIExlaSA8bWluZy5sZWlAY2Fub25pY2FsLmNvbT4KRGF0
+ZTogV2VkLCAyOCBTZXAgMjAxMSAxMzowNzowNCArMDgwMApTdWJqZWN0OiBbUEFUQ0hdIGtlcm5l
+bC90cmFjZS9ycG0tdHJhY2VzLmM6IGZpeCBidWlsZCBmYWlsdXJlIGlmIFJVTlRJTUVfUE0KIHVu
+c2V0CgoKU2lnbmVkLW9mZi1ieTogTWluZyBMZWkgPG1pbmcubGVpQGNhbm9uaWNhbC5jb20+Ci0t
+LQoga2VybmVsL3RyYWNlL3JwbS10cmFjZXMuYyB8ICAgIDIgKysKIDEgZmlsZXMgY2hhbmdlZCwg
+MiBpbnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2tlcm5lbC90cmFj
+ZS9ycG0tdHJhY2VzLmMgYi9rZXJuZWwvdHJhY2UvcnBtLXRyYWNlcy5jCmluZGV4IDk5ODk0OWUu
+LmMxNjFjNWUgMTAwNjQ0Ci0tLSBhL2tlcm5lbC90cmFjZS9ycG0tdHJhY2VzLmMKKysrIGIva2Vy
+bmVsL3RyYWNlL3JwbS10cmFjZXMuYwpAQCAtMTEsNiArMTEsNyBAQAogI2luY2x1ZGUgPGxpbnV4
+L21vZHVsZS5oPgogI2luY2x1ZGUgPGxpbnV4L3VzYi5oPgogCisjaWZkZWYgQ09ORklHX1BNX1JV
+TlRJTUUKICNkZWZpbmUgQ1JFQVRFX1RSQUNFX1BPSU5UUwogI2luY2x1ZGUgPHRyYWNlL2V2ZW50
+cy9ycG0uaD4KIApAQCAtMTgsNCArMTksNSBAQCBFWFBPUlRfVFJBQ0VQT0lOVF9TWU1CT0xfR1BM
+KHJwbV9yZXR1cm5faW50KTsKIEVYUE9SVF9UUkFDRVBPSU5UX1NZTUJPTF9HUEwocnBtX2lkbGUp
+OwogRVhQT1JUX1RSQUNFUE9JTlRfU1lNQk9MX0dQTChycG1fc3VzcGVuZCk7CiBFWFBPUlRfVFJB
+Q0VQT0lOVF9TWU1CT0xfR1BMKHJwbV9yZXN1bWUpOworI2VuZGlmCiAKLS0gCjEuNy41LjQKCg==
+--0016e64c145e6fa9e804adf96c52--
