@@ -1,38 +1,49 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH -next] x86: perf_event_amd.c needs <asm/apicdef.h>
-Date: Wed, 28 Sep 2011 08:58:02 +0200
-Message-ID: <20110928065801.GA14126@elte.hu>
-References: <20110926172348.be01ff9a1c16267ffd000d2a@canb.auug.org.au>
- <4E820138.90301@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the net tree
+Date: Wed, 28 Sep 2011 17:00:08 +1000
+Message-ID: <20110928170008.6d603da5213d16a87b0485c2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__28_Sep_2011_17_00_08_+1000_09XwrI5QSYjBTeyL"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4E820138.90301@xenotime.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Robert Richter <robert.richter@amd.com>, Andre Przywara <andre.przywara@amd.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kalle Valo <kvalo@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
+--Signature=_Wed__28_Sep_2011_17_00_08_+1000_09XwrI5QSYjBTeyL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Randy Dunlap <rdunlap@xenotime.net> wrote:
+Hi Paul,
 
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> Fix build error by adding <asm/apicdef.h> header file:
-> 
-> arch/x86/kernel/cpu/perf_event_amd.c:350:2: error: 'BAD_APICID' undeclared (first use in this function)
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> ---
-> 
-> Found in linux-next and patch only applies cleanly to linux-next,
-> but looks like mainline could use a similar patch (with more
-> header files).
-> 
->  arch/x86/kernel/cpu/perf_event_amd.c |    1 +
->  1 file changed, 1 insertion(+)
+Today's linux-next merge of the moduleh tree got a conflict in
+drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif.c between commit
+af2bf4b4ee58 ("staging: remove ath6kl") from the  tree and commit
+33cffa3526be ("staging: Add module.h to more drivers implicitly using
+it") from the moduleh tree.
 
-Applied to tip:perf/core, thanks Randy!
+The former removed the file, so I did that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	Ingo
+--Signature=_Wed__28_Sep_2011_17_00_08_+1000_09XwrI5QSYjBTeyL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOgsX4AAoJEDMEi1NhKgbsOIwH+gODoD1jut/JYSK9WeKLq9UV
+rWMVlXIp3d7w46APkfKonwMJez68xNacvTQBEm9iMmgvjWCN839LJ6f2h2f81eND
+oBYSzT138IBDXedcCgh89NL2JEXl8CqOfpWgVXAwDSwQpl0DNheP4VxhHViIcGLf
+6wFcgOnGAwBD/iW+bH5vjVRyU3ElKDOQjQAo4d0oetFU/3y1jQX64el0WNFJiZmF
+0nIED35J2OGCuH7W22V0vtMoRKALKqBmpII32QcdposzyXNVTcNdxVFpFjem4nMl
+KH5WCdS16BW07CzR+iR0j3EzxSiyEqPNQsVAdEmFPIo5Fiw/+1Ddmu5lRdXqI0E=
+=q2k7
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__28_Sep_2011_17_00_08_+1000_09XwrI5QSYjBTeyL--
