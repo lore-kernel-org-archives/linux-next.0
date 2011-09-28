@@ -1,56 +1,72 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH -next] qdio: add missing export.h include
-Date: Wed, 28 Sep 2011 10:03:22 -0400
-Message-ID: <4E83292A.3070502@windriver.com>
-References: <1316676108-5729-1-git-send-email-heiko.carstens@de.ibm.com> <4E824F3A.6070302@windriver.com> <20110928063425.GA2621@osiris.boeblingen.de.ibm.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Wed, 28 Sep 2011 16:47:55 +0200
+Message-ID: <201109281647.55538.rjw@sisk.pl>
+References: <20110928145144.3d074db9aa9b6f858e0dc4fb@canb.auug.org.au> <CACVXFVMrPNZupCQnBMBXsSA1OH=15m9QBKhXT1Of+LghZbKn0Q@mail.gmail.com> <201109281558.05289.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:50798 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754496Ab1I1OGT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 10:06:19 -0400
-In-Reply-To: <20110928063425.GA2621@osiris.boeblingen.de.ibm.com>
+Received: from ogre.sisk.pl ([217.79.144.158]:33900 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754357Ab1I1Opm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Sep 2011 10:45:42 -0400
+In-Reply-To: <201109281558.05289.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org, Frank Blaschka <blaschka@linux.vnet.ibm.com>, Jan Glauber <jang@linux.vnet.ibm.com>
+To: Ming Lei <ming.lei@canonical.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11-09-28 02:34 AM, Heiko Carstens wrote:
-> On Tue, Sep 27, 2011 at 06:33:30PM -0400, Paul Gortmaker wrote:
->> On 11-09-22 03:21 AM, Heiko Carstens wrote:
->>> Fix compile breakage caused by splitting module.h:
->>>
->>> drivers/s390/cio/qdio_setup.c:31:1:
->>>  warning: data definition has no type or storage class [enabled by default]
->>> drivers/s390/cio/qdio_setup.c:31:1:
->>>  warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
->>
->> Now that I look at this, and the other patch, I'm not
->> seeing how this is possible.  Unless there is some
->> convoluted CPP magic going on, I don't see any instances
->> of EXPORT_SYMBOL in qdio_setup.c -- similarly I don't
->> see any module_ or MODULE_ references in zfcp_qdio.c
->>
->> Am I missing something obvious here?   The line numbers
->> you quote dont match anything meaningful -- so I'm wondering
->> if perhaps these changes are meant to be in advance of the
->> s390 changes you've got queued in next -- which is fine, but
->> it would be nice to have that called out.
+On Wednesday, September 28, 2011, Rafael J. Wysocki wrote:
+> On Wednesday, September 28, 2011, Ming Lei wrote:
+> > Hi Stephen and Rafael,
+> > 
+> > Sorry, the attachment patch can fix the build failure, which is
+> > caused by unset CONFIG_RUNTIME_PM.
 > 
-> Oh right, I should have mentioned this. Sorry!
-> he two patches fix compile breakages only in -next because of s390
-> related patches in the scsi and net git trees. Since it's not possible
-> to add the compile fixes (at least for the new export.h header file)
-> to the scsi or net trees I just sent these patches towards you...
+> First off, that's CONFIG_PM_RUNTIME.  Second, why do you want to build
+> rpm-traces.c at all if CONFIG_PM_RUNTIME is unset?
 
-OK, thanks for the info.  I'll update the commit header with
-a note indicating those two changes are in anticipation of
-pending s390 changes.
+IOW, what about the appended patch instead?
 
-Paul.
+Rafael
 
-> 
-> Thanks,
-> Heiko
+---
+From: Rafael J. Wysocki <rjw@sisk.pl>
+Subject: PM / Tracing: Build runtime PM tracepoints if PM_RUNTIME is set
+
+Do not build kernel/trace/rpm-traces.c if CONFIG_PM_RUNTIME is not
+set, which avoids a build failure.
+
+Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
+---
+ kernel/power/Kconfig  |    4 ++++
+ kernel/trace/Makefile |    2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+Index: linux/kernel/power/Kconfig
+===================================================================
+--- linux.orig/kernel/power/Kconfig
++++ linux/kernel/power/Kconfig
+@@ -238,3 +238,7 @@ config PM_GENERIC_DOMAINS
+ config PM_GENERIC_DOMAINS_RUNTIME
+ 	def_bool y
+ 	depends on PM_RUNTIME && PM_GENERIC_DOMAINS
++
++config RUNTIME_PM_TRACEPOINTS
++	def_bool y
++	depends on PM_RUNTIME && TRACEPOINTS
+Index: linux/kernel/trace/Makefile
+===================================================================
+--- linux.orig/kernel/trace/Makefile
++++ linux/kernel/trace/Makefile
+@@ -53,7 +53,7 @@ endif
+ obj-$(CONFIG_EVENT_TRACING) += trace_events_filter.o
+ obj-$(CONFIG_KPROBE_EVENT) += trace_kprobe.o
+ obj-$(CONFIG_TRACEPOINTS) += power-traces.o
+-obj-$(CONFIG_TRACEPOINTS) += rpm-traces.o
++obj-$(CONFIG_RUNTIME_PM_TRACEPOINTS) += rpm-traces.o
+ ifeq ($(CONFIG_TRACING),y)
+ obj-$(CONFIG_KGDB_KDB) += trace_kdb.o
+ endif
