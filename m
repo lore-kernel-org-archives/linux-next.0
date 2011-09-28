@@ -1,44 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with Linus' tree
-Date: Wed, 28 Sep 2011 16:20:40 +1000
-Message-ID: <20110928162040.f22c4eb1f63b5ae7e4a13a34@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the net tree
+Date: Wed, 28 Sep 2011 16:34:06 +1000
+Message-ID: <20110928163406.843e4be56b42dca280d85489@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:41108 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:50817 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752693Ab1I1GUr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 02:20:47 -0400
+	with ESMTP id S1750821Ab1I1GeM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 02:34:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Toshiharu Okada <toshiharu-linux@dsn.okisemi.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pavel Roskin <proski@gnu.org>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
 Hi Paul,
 
 Today's linux-next merge of the moduleh tree got a conflict in
-drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c between commit
-124d770a6459 ("pch_gbe: added the process of FIFO over run error") from
-Linus' tree and commit c3c292bec445 ("drivers/net: Add module.h to
-drivers who were implicitly using it") from the moduleh tree.
+drivers/net/wireless/ath/ath5k/debug.c between commit 931be260ed54
+("ath5k: clean up base.h and its use") from the net tree and commits
+9ec3f961e31a ("drivers/net: Add export.h to files using
+EXPORT_SYMBOL/THIS_MODULE") and 0cccb17382f1 ("drivers/net: Add
+moduleparam.h to drivers as required") from the moduleh tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.  (I am
+pretty sure that this file doesn't need module.h, but not completely).
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
-index 5dc61b4,848dce1..0000000
---- a/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
-+++ b/drivers/net/ethernet/oki-semi/pch_gbe/pch_gbe_main.c
-@@@ -20,6 -20,8 +20,7 @@@
+diff --cc drivers/net/wireless/ath/ath5k/debug.c
+index fce8c90,1051ede..0000000
+--- a/drivers/net/wireless/ath/ath5k/debug.c
++++ b/drivers/net/wireless/ath/ath5k/debug.c
+@@@ -58,13 -58,9 +58,15 @@@
+   * THE POSSIBILITY OF SUCH DAMAGES.
+   */
   
-  #include "pch_gbe.h"
-  #include "pch_gbe_api.h"
- -#include <linux/prefetch.h>
-+ #include <linux/module.h>
+ +#include <linux/module.h>
++ #include <linux/moduleparam.h>
+ -#include "base.h"
+++#include <linux/export.h>
+ +#include <linux/seq_file.h>
+ +#include <linux/list.h>
+  #include "debug.h"
+ +#include "ath5k.h"
+ +#include "reg.h"
+ +#include "base.h"
   
-  #define DRV_VERSION     "1.00"
-  const char pch_driver_version[] = DRV_VERSION;
+  static unsigned int ath5k_debug;
+  module_param_named(debug, ath5k_debug, uint, 0);
