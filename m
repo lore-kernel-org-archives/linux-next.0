@@ -1,44 +1,31 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: manual merge of the moduleh tree with the staging
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the moduleh tree with the sound
  tree
-Date: Wed, 28 Sep 2011 10:56:06 -0400
-Message-ID: <4E833586.5070401@windriver.com>
-References: <20110928164419.372feaa0c5554687403a9af5@canb.auug.org.au> <20110928164824.29edfa867dfe583ff5b982e8@canb.auug.org.au>
+Date: Wed, 28 Sep 2011 16:21:52 +0100
+Message-ID: <20110928152152.GB28309@sirena.org.uk>
+References: <20110928170349.bf96e9f99c989c0d5190d2fc@canb.auug.org.au>
+ <CAOyKLY9wHtmJJsXuucg0HVvvX4os_WDk4pipT1ev7xZRHbr=gg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:61354 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751133Ab1I1O4U (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 10:56:20 -0400
-In-Reply-To: <20110928164824.29edfa867dfe583ff5b982e8@canb.auug.org.au>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:60582 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752878Ab1I1PV7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 11:21:59 -0400
+Content-Disposition: inline
+In-Reply-To: <CAOyKLY9wHtmJJsXuucg0HVvvX4os_WDk4pipT1ev7xZRHbr=gg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@cam.ac.uk>, Greg KH <greg@kroah.com>
+To: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
 
-On 11-09-28 02:48 AM, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> On Wed, 28 Sep 2011 16:44:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next merge of the moduleh tree got a conflict in
->> drivers/staging/iio/accel/adis16201_ring.c between commit 779921683e6d
->> ("staging:iio:accel header housekeeping - remove unecessary includes")
->> from the staging tree and commit 15f310ea9641 ("staging: Add export.h for
->> THIS_MODULE/EXPORT_SYMBOL to drivers/staging users") from the moduleh
->> tree.
-> 
-> Also drivers/staging/iio/accel/adis16203_ring.c,
-> drivers/staging/iio/accel/adis16204_ring.c,
-> drivers/staging/iio/accel/adis16209_ring.c,
-> drivers/staging/iio/accel/adis16240_ring.c,
-> drivers/staging/iio/gyro/adis16260_ring.c and
-> drivers/staging/iio/meter/ade7758_ring.c
+On Wed, Sep 28, 2011 at 03:02:39PM +0100, Liam Girdwood wrote:
+> On 28 September 2011 08:03, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-I've moved the export.h in all of these up near the top to make
-the conflict go away.
+> > [Mark Brown <broonie@opensource.wolfsonmicro.com> was left off the cc list
+> > because his host is not reolving in the DNS currently.]
 
-Thanks,
-Paul.
+> + Mark's other address.
+
+And if you'd let your mail server deal with it the mail would've got
+through fine :/
