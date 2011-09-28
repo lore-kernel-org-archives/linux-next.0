@@ -1,109 +1,87 @@
-From: Borislav Petkov <bp@amd64.org>
-Subject: Re: linux-next: build failure after merge of the moduleh tree
-Date: Wed, 28 Sep 2011 09:58:45 +0200
-Message-ID: <20110928075845.GB30838@aftab>
-References: <20110928174214.17a58be15d84d67c185930e1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the moduleh tree
+Date: Wed, 28 Sep 2011 18:00:05 +1000
+Message-ID: <20110928180005.7bf3b73645d7d73e30399e2b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s15228384.onlinehome-server.info ([87.106.30.177]:45368 "EHLO
-	mail.x86-64.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751467Ab1I1H65 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 03:58:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20110928174214.17a58be15d84d67c185930e1@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:40167 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751817Ab1I1IAJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 04:00:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Petkov, Borislav" <Borislav.Petkov@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ilan Elias <ilane@ti.com>, "John W. Linville" <linville@tuxdriver.com>
 
-On Wed, Sep 28, 2011 at 03:42:14AM -0400, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> After merging the moduleh tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> arch/x86/kernel/sys_x86_64.c:28:10: warning: 'enum align_flags' declared inside parameter list
-> arch/x86/kernel/sys_x86_64.c:28:10: warning: its scope is only this definition or declaration, which is probably not what you want
-> arch/x86/kernel/sys_x86_64.c:28:22: error: parameter 3 ('flags') has incomplete type
-> arch/x86/kernel/sys_x86_64.c:27:15: warning: function declaration isn't a prototype
-> arch/x86/kernel/sys_x86_64.c: In function 'align_addr':
-> arch/x86/kernel/sys_x86_64.c:33:6: error: 'va_align' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c:33:6: note: each undeclared identifier is reported only once for each function it appears in
-> arch/x86/kernel/sys_x86_64.c:33:2: error: implicit declaration of function 'mmap_is_ia32'
-> arch/x86/kernel/sys_x86_64.c:39:17: error: 'ALIGN_VDSO' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c:48:16: error: 'ALIGN_TOPDOWN' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c: In function 'control_va_addr_alignment':
-> arch/x86/kernel/sys_x86_64.c:59:6: error: 'va_align' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c:69:20: error: 'ALIGN_VA_32' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c:71:20: error: 'ALIGN_VA_64' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c: In function 'arch_get_unmapped_area_topdown':
-> arch/x86/kernel/sys_x86_64.c:231:11: error: 'ALIGN_TOPDOWN' undeclared (first use in this function)
-> 
-> Presumably caused by commit dfb09f9b7ab0 ("x86, amd: Avoid cache aliasing
-> penalties on AMD family 15h") from the tip tree interacting with the
-> module.h split up.
-> 
-> I applied the following patch (which could be applied to the tip
-> tree ...).
-> 
-> From 6b1212311c0728a7e3054e1f187e7c3b9f464bd5 Mon Sep 17 00:00:00 2001
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 28 Sep 2011 17:28:50 +1000
-> Subject: [PATCH] x86, amd: include linux/elf.h since we use stuff from
->  asm/elf.h
-> 
-> The lack of this inclusion causes build erros after the module.h split up:
-> 
-> arch/x86/kernel/sys_x86_64.c:28:10: warning: 'enum align_flags' declared inside parameter list
-> arch/x86/kernel/sys_x86_64.c:28:10: warning: its scope is only this definition or declaration, which is probably not what you want
-> arch/x86/kernel/sys_x86_64.c:28:22: error: parameter 3 ('flags') has incomplete type
-> arch/x86/kernel/sys_x86_64.c:27:15: warning: function declaration isn't a prototype
-> arch/x86/kernel/sys_x86_64.c: In function 'align_addr':
-> arch/x86/kernel/sys_x86_64.c:33:6: error: 'va_align' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c:33:6: note: each undeclared identifier is reported only once for each function it appears in
-> arch/x86/kernel/sys_x86_64.c:33:2: error: implicit declaration of function 'mmap_is_ia32'
-> arch/x86/kernel/sys_x86_64.c:39:17: error: 'ALIGN_VDSO' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c:48:16: error: 'ALIGN_TOPDOWN' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c: In function 'control_va_addr_alignment':
-> arch/x86/kernel/sys_x86_64.c:59:6: error: 'va_align' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c:69:20: error: 'ALIGN_VA_32' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c:71:20: error: 'ALIGN_VA_64' undeclared (first use in this function)
-> arch/x86/kernel/sys_x86_64.c: In function 'arch_get_unmapped_area_topdown':
-> arch/x86/kernel/sys_x86_64.c:231:11: error: 'ALIGN_TOPDOWN' undeclared (first use in this function)
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/x86/kernel/sys_x86_64.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/sys_x86_64.c b/arch/x86/kernel/sys_x86_64.c
-> index fe7d2da..0514890 100644
-> --- a/arch/x86/kernel/sys_x86_64.c
-> +++ b/arch/x86/kernel/sys_x86_64.c
-> @@ -14,6 +14,7 @@
->  #include <linux/personality.h>
->  #include <linux/random.h>
->  #include <linux/uaccess.h>
-> +#include <linux/elf.h>
->  
->  #include <asm/ia32.h>
->  #include <asm/syscalls.h>
+Hi Paul,
 
-Yep, it looks good, thanks Stephen. Btw, this is the second time
-something like that happens as a result from the module split tree,
-here's the first one: http://marc.info/?l=linux-kernel&m=131296515915227
+After merging the moduleh tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-It's a good thing we have linux-next! :-)
+drivers/nfc/nfcwilink.c:318:12: error: 'THIS_MODULE' undeclared here (not in a function)
+drivers/nfc/nfcwilink.c:340:15: error: expected declaration specifiers or '...' before string constant
+drivers/nfc/nfcwilink.c:340:1: warning: data definition has no type or storage class
+drivers/nfc/nfcwilink.c:340:1: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
+drivers/nfc/nfcwilink.c:340:15: warning: function declaration isn't a prototype
+drivers/nfc/nfcwilink.c:341:20: error: expected declaration specifiers or '...' before string constant
+drivers/nfc/nfcwilink.c:341:1: warning: data definition has no type or storage class
+drivers/nfc/nfcwilink.c:341:1: warning: type defaults to 'int' in declaration of 'MODULE_DESCRIPTION'
+drivers/nfc/nfcwilink.c:341:20: warning: function declaration isn't a prototype
+drivers/nfc/nfcwilink.c:342:16: error: expected declaration specifiers or '...' before string constant
+drivers/nfc/nfcwilink.c:342:1: warning: data definition has no type or storage class
+drivers/nfc/nfcwilink.c:342:1: warning: type defaults to 'int' in declaration of 'MODULE_LICENSE'
+drivers/nfc/nfcwilink.c:342:16: warning: function declaration isn't a prototype
 
-Thanks.
+Caused by commit 93aead46428d ("NFC: driver for TI shared transport")
+from the wireless tree interacting with the module.h split up.
+
+I applied the patch below for today (which should be applied to the
+wireless tree).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 28 Sep 2011 17:56:29 +1000
+Subject: [PATCH] NFC: use of module facilities requires the inclusion of
+ module.h
+
+Otherwise the module.h split up produces this build failure:
+
+drivers/nfc/nfcwilink.c:318:12: error: 'THIS_MODULE' undeclared here (not in a function)
+drivers/nfc/nfcwilink.c:340:15: error: expected declaration specifiers or '...' before string constant
+drivers/nfc/nfcwilink.c:340:1: warning: data definition has no type or storage class
+drivers/nfc/nfcwilink.c:340:1: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
+drivers/nfc/nfcwilink.c:340:15: warning: function declaration isn't a prototype
+drivers/nfc/nfcwilink.c:341:20: error: expected declaration specifiers or '...' before string constant
+drivers/nfc/nfcwilink.c:341:1: warning: data definition has no type or storage class
+drivers/nfc/nfcwilink.c:341:1: warning: type defaults to 'int' in declaration of 'MODULE_DESCRIPTION'
+drivers/nfc/nfcwilink.c:341:20: warning: function declaration isn't a prototype
+drivers/nfc/nfcwilink.c:342:16: error: expected declaration specifiers or '...' before string constant
+drivers/nfc/nfcwilink.c:342:1: warning: data definition has no type or storage class
+drivers/nfc/nfcwilink.c:342:1: warning: type defaults to 'int' in declaration of 'MODULE_LICENSE'
+drivers/nfc/nfcwilink.c:342:16: warning: function declaration isn't a prototype
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/nfc/nfcwilink.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/nfc/nfcwilink.c b/drivers/nfc/nfcwilink.c
+index 5b0f1ff..06c3642 100644
+--- a/drivers/nfc/nfcwilink.c
++++ b/drivers/nfc/nfcwilink.c
+@@ -27,6 +27,7 @@
+  *
+  */
+ #include <linux/platform_device.h>
++#include <linux/module.h>
+ #include <linux/nfc.h>
+ #include <net/nfc/nci.h>
+ #include <net/nfc/nci_core.h>
+-- 
+1.7.6.3
 
 -- 
-Regards/Gruss,
-Boris.
-
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-GM: Alberto Bozzo
-Reg: Dornach, Landkreis Muenchen
-HRB Nr. 43632 WEEE Registernr: 129 19551
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
