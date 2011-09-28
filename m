@@ -1,56 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with the  tree
-Date: Wed, 28 Sep 2011 16:53:00 +1000
-Message-ID: <20110928165300.8126288f6c0e0554acda4c21@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH -next] x86: perf_event_amd.c needs <asm/apicdef.h>
+Date: Wed, 28 Sep 2011 08:58:02 +0200
+Message-ID: <20110928065801.GA14126@elte.hu>
+References: <20110926172348.be01ff9a1c16267ffd000d2a@canb.auug.org.au>
+ <4E820138.90301@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:53726 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750844Ab1I1GxE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 02:53:04 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yogesh Ashok Powar <yogeshp@marvell.com>, Amitkumar Karwar <akarwar@marvell.com>, Bing Zhao <bzhao@marvell.com>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4E820138.90301@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Robert Richter <robert.richter@amd.com>, Andre Przywara <andre.przywara@amd.com>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
 
-Today's linux-next merge of the moduleh tree got conflicts in
-net/mac80211/util.c and net/wireless/util.c between commit 0879fa44b541
-("cfg80211/mac80211: move information element parsing logic to cfg80211")
-from the net tree and commit c1f5764979c5 ("net: Add export.h for
-EXPORT_SYMBOL/THIS_MODULE to non-modules") from the moduleh tree.
+* Randy Dunlap <rdunlap@xenotime.net> wrote:
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> From: Randy Dunlap <rdunlap@xenotime.net>
+> 
+> Fix build error by adding <asm/apicdef.h> header file:
+> 
+> arch/x86/kernel/cpu/perf_event_amd.c:350:2: error: 'BAD_APICID' undeclared (first use in this function)
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> ---
+> 
+> Found in linux-next and patch only applies cleanly to linux-next,
+> but looks like mainline could use a similar patch (with more
+> header files).
+> 
+>  arch/x86/kernel/cpu/perf_event_amd.c |    1 +
+>  1 file changed, 1 insertion(+)
 
-diff --cc net/mac80211/util.c
-index 2c9dc36,7a55c69..0000000
---- a/net/mac80211/util.c
-+++ b/net/mac80211/util.c
-@@@ -19,6 -19,8 +19,7 @@@
-  #include <linux/etherdevice.h>
-  #include <linux/if_arp.h>
-  #include <linux/bitmap.h>
- -#include <linux/crc32.h>
-+ #include <linux/export.h>
-  #include <net/net_namespace.h>
-  #include <net/cfg80211.h>
-  #include <net/rtnetlink.h>
-diff --cc net/wireless/util.c
-index 6304ed6,3ba8eea..0000000
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@@ -6,7 -6,7 +6,8 @@@
-  #include <linux/bitops.h>
-  #include <linux/etherdevice.h>
-  #include <linux/slab.h>
- +#include <linux/crc32.h>
-+ #include <linux/export.h>
-  #include <net/cfg80211.h>
-  #include <net/ip.h>
-  #include "core.h"
+Applied to tip:perf/core, thanks Randy!
+
+	Ingo
