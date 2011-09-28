@@ -1,63 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
-Date: Wed, 28 Sep 2011 19:56:01 +1000
-Message-ID: <20110928195601.9d0da0ea27186c4ce9349d94@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (akpm tree
+ related)
+Date: Wed, 28 Sep 2011 20:01:14 +1000
+Message-ID: <20110928200114.f9976eddc3d14bd831ddabed@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:43303 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751481Ab1I1KBT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 06:01:19 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, Huang Ying <ying.huang@intel.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
 
 Hi all,
 
 After merging the final tree, today's linux-next build (sparc32 defconfig)
 failed like this:
 
-In file included from include/linux/irq_work.h:4:0,
-                 from include/linux/perf_event.h:510,
-                 from arch/sparc/mm/fault_32.c:21:
-include/linux/llist.h: In function 'llist_add':
-include/linux/llist.h:158:2: error: implicit declaration of function 'in_nmi'
-In file included from include/linux/irq_work.h:4:0,
-                 from include/linux/perf_event.h:510,
-                 from arch/sparc/kernel/unaligned_32.c:18:
-include/linux/llist.h: In function 'llist_add':
-include/linux/llist.h:158:2: error: implicit declaration of function 'in_nmi'
-In file included from include/linux/irq_work.h:4:0,
-                 from include/linux/perf_event.h:510,
-                 from kernel/sys.c:16:
-include/linux/llist.h: In function 'llist_add':
-include/linux/llist.h:158:2: error: implicit declaration of function 'in_nmi'
+fs/direct-io.c: In function '__blockdev_direct_IO':
+fs/direct-io.c:1327:2: error: implicit declaration of function 'prefetch'
 
-Caused by commit 510d7dc70eab ("llist: make all llist functions inline")
-from the akpm tree.
+Caused by commit 30ddb4d48213 ("dio: optimize cache misses in the
+submission path").
 
-I applied this patch for today:
+I have added this patch for today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 28 Sep 2011 19:51:38 +1000
-Subject: [PATCH] llist: using in_nmi requires including hardirq.h
+Date: Wed, 28 Sep 2011 19:58:28 +1000
+Subject: [PATCH] dio: using prefetch requires including prefetch.h
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- include/linux/llist.h |    1 +
+ fs/direct-io.c |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/include/linux/llist.h b/include/linux/llist.h
-index 5d23564..fb81b7b 100644
---- a/include/linux/llist.h
-+++ b/include/linux/llist.h
-@@ -73,6 +73,7 @@ struct llist_node {
- #ifdef CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG
- #define CHECK_NMI_SAFE_CMPXCHG()
- #else
-+#include <linux/hardirq.h>
- #define CHECK_NMI_SAFE_CMPXCHG()	BUG_ON(in_nmi())
- #endif
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index a05ca05..8d22849 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -36,6 +36,7 @@
+ #include <linux/rwsem.h>
+ #include <linux/uio.h>
+ #include <linux/atomic.h>
++#include <linux/prefetch.h>
  
+ /*
+  * How many user pages to map in one call to get_user_pages().  This determines
 -- 
 1.7.6.3
 
