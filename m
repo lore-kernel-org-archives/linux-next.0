@@ -1,51 +1,44 @@
-From: Ming Lei <ming.lei@canonical.com>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Wed, 28 Sep 2011 22:47:03 +0800
-Message-ID: <CACVXFVMLBHu+CY1pgQnY04S_3iLN1z5S2vPiMdN6rsW=gBdWog@mail.gmail.com>
-References: <20110928145144.3d074db9aa9b6f858e0dc4fb@canb.auug.org.au>
-	<CACVXFVMrPNZupCQnBMBXsSA1OH=15m9QBKhXT1Of+LghZbKn0Q@mail.gmail.com>
-	<201109281558.05289.rjw@sisk.pl>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: manual merge of the moduleh tree with the staging
+ tree
+Date: Wed, 28 Sep 2011 10:56:06 -0400
+Message-ID: <4E833586.5070401@windriver.com>
+References: <20110928164419.372feaa0c5554687403a9af5@canb.auug.org.au> <20110928164824.29edfa867dfe583ff5b982e8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201109281558.05289.rjw@sisk.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:61354 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751133Ab1I1O4U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 10:56:20 -0400
+In-Reply-To: <20110928164824.29edfa867dfe583ff5b982e8@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@cam.ac.uk>, Greg KH <greg@kroah.com>
 
-Hi,
-
-2011/9/28 Rafael J. Wysocki <rjw@sisk.pl>:
-> On Wednesday, September 28, 2011, Ming Lei wrote:
->> Hi Stephen and Rafael,
+On 11-09-28 02:48 AM, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> On Wed, 28 Sep 2011 16:44:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >>
->> Sorry, the attachment patch can fix the build failure, which is
->> caused by unset CONFIG_RUNTIME_PM.
->
-> First off, that's CONFIG_PM_RUNTIME. =A0Second, why do you want to bu=
-ild
-> rpm-traces.c at all if CONFIG_PM_RUNTIME is unset?
->
+>> Today's linux-next merge of the moduleh tree got a conflict in
+>> drivers/staging/iio/accel/adis16201_ring.c between commit 779921683e6d
+>> ("staging:iio:accel header housekeeping - remove unecessary includes")
+>> from the staging tree and commit 15f310ea9641 ("staging: Add export.h for
+>> THIS_MODULE/EXPORT_SYMBOL to drivers/staging users") from the moduleh
+>> tree.
+> 
+> Also drivers/staging/iio/accel/adis16203_ring.c,
+> drivers/staging/iio/accel/adis16204_ring.c,
+> drivers/staging/iio/accel/adis16209_ring.c,
+> drivers/staging/iio/accel/adis16240_ring.c,
+> drivers/staging/iio/gyro/adis16260_ring.c and
+> drivers/staging/iio/meter/ade7758_ring.c
 
-Yes, you are right,  follows the correct fix:
+I've moved the export.h in all of these up near the top to make
+the conflict go away.
 
-diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-index 56bdab5..f49405f 100644
---- a/kernel/trace/Makefile
-+++ b/kernel/trace/Makefile
-@@ -53,7 +53,9 @@ endif
- obj-$(CONFIG_EVENT_TRACING) +=3D trace_events_filter.o
- obj-$(CONFIG_KPROBE_EVENT) +=3D trace_kprobe.o
- obj-$(CONFIG_TRACEPOINTS) +=3D power-traces.o
-+ifeq ($(CONFIG_PM_RUNTIME),y)
- obj-$(CONFIG_TRACEPOINTS) +=3D rpm-traces.o
-+endif
- ifeq ($(CONFIG_TRACING),y)
- obj-$(CONFIG_KGDB_KDB) +=3D trace_kdb.o
- endif
-
-thanks,
---
-Ming Lei
+Thanks,
+Paul.
