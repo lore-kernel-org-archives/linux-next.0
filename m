@@ -1,79 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm tree
-Date: Wed, 28 Sep 2011 19:22:20 +1000
-Message-ID: <20110928192220.6d85ae23a2f2ef316139a310@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Wed, 28 Sep 2011 19:56:01 +1000
+Message-ID: <20110928195601.9d0da0ea27186c4ce9349d94@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__28_Sep_2011_19_22_20_+1000_RlgdBTOqj909DXmG"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:38923 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751713Ab1I1JWd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 05:22:33 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-
---Signature=_Wed__28_Sep_2011_19_22_20_+1000_RlgdBTOqj909DXmG
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, Huang Ying <ying.huang@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+Hi all,
 
-After merging the akpm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the final tree, today's linux-next build (sparc32 defconfig)
+failed like this:
 
-In file included from arch/powerpc/boot/stdio.c:12:0:
-arch/powerpc/boot/stdio.h:10:17: error: expected declaration specifiers or =
-'...' before numeric constant
-arch/powerpc/boot/stdio.h:10:20: error: expected declaration specifiers or =
-'...' before numeric constant
-arch/powerpc/boot/stdio.h:10:8: warning: return type defaults to 'int'
-arch/powerpc/boot/stdio.h:10:8: warning: function declaration isn't a proto=
-type
-arch/powerpc/boot/stdio.h: In function '__printf':
-arch/powerpc/boot/stdio.h:14:17: error: expected declaration specifiers or =
-'...' before numeric constant
-arch/powerpc/boot/stdio.h:14:20: error: expected declaration specifiers or =
-'...' before numeric constant
-arch/powerpc/boot/stdio.h:14:23: error: expected '=3D', ',', ';', 'asm' or =
-'__attribute__' before 'int'
-arch/powerpc/boot/stdio.h:16:12: error: storage class specified for paramet=
-er 'vsprintf'
+In file included from include/linux/irq_work.h:4:0,
+                 from include/linux/perf_event.h:510,
+                 from arch/sparc/mm/fault_32.c:21:
+include/linux/llist.h: In function 'llist_add':
+include/linux/llist.h:158:2: error: implicit declaration of function 'in_nmi'
+In file included from include/linux/irq_work.h:4:0,
+                 from include/linux/perf_event.h:510,
+                 from arch/sparc/kernel/unaligned_32.c:18:
+include/linux/llist.h: In function 'llist_add':
+include/linux/llist.h:158:2: error: implicit declaration of function 'in_nmi'
+In file included from include/linux/irq_work.h:4:0,
+                 from include/linux/perf_event.h:510,
+                 from kernel/sys.c:16:
+include/linux/llist.h: In function 'llist_add':
+include/linux/llist.h:158:2: error: implicit declaration of function 'in_nmi'
 
-And went down hill from there (it produced hundreds of errors).
+Caused by commit 510d7dc70eab ("llist: make all llist functions inline")
+from the akpm tree.
 
-Caused by commit a52af697aaeb ("treewide: use __printf not __attribute__
-((format(printf,...)))").  Maybe because some of these files are part of
-the boot wrappers and are built (effectively) independently of the kernel
-itself.  Notice that arch/powerpc/boot/stdio.h does not include any
-kernel headers ...
+I applied this patch for today:
 
-I have reverted that commit (and the follup ones b31d03e43e56
-"treewide-use-__printf-not-__attribute__formatprintf-checkpatch-fixes"
-and f43c361e2bd9 "kernel.h/checkpatch: mark strict_strto<foo> and
-simple_strto<foo> as obsolete") for today.
---=20
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 28 Sep 2011 19:51:38 +1000
+Subject: [PATCH] llist: using in_nmi requires including hardirq.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/llist.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/include/linux/llist.h b/include/linux/llist.h
+index 5d23564..fb81b7b 100644
+--- a/include/linux/llist.h
++++ b/include/linux/llist.h
+@@ -73,6 +73,7 @@ struct llist_node {
+ #ifdef CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG
+ #define CHECK_NMI_SAFE_CMPXCHG()
+ #else
++#include <linux/hardirq.h>
+ #define CHECK_NMI_SAFE_CMPXCHG()	BUG_ON(in_nmi())
+ #endif
+ 
+-- 
+1.7.6.3
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__28_Sep_2011_19_22_20_+1000_RlgdBTOqj909DXmG
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOgudMAAoJEDMEi1NhKgbscAAIAJQWo9Pf9LFIXFVVFUoMD3KZ
-VpSdXcFC9maeTZGO71yuFOSoVlbUfQ1G6ttS2qJu3jqpFra9ScbU1P2RtJo2OM8z
-3CTXzROqYACdUghQXwNWvM0CNHwFz3V8imnsHLHAIL3ZZAoafb5zpgelr6urXltW
-yztsl89XII/k/MYcZR0wm4bdKu2zz2zBg44puHPRugqhnMxROVflOCzPRSkkVAfB
-kw69ZhlB/CadyXJo6hVXL42Mq05N9+NgMfd5tWc6ouVBNwbEKlOSO8SwoOnM9FV/
-il9s7dDn5WWZU2e6P4StDU/rsnv+IKru1bEQQ3xOqUm82Hh89YzXLoBBzuDPrEA=
-=h6wU
------END PGP SIGNATURE-----
-
---Signature=_Wed__28_Sep_2011_19_22_20_+1000_RlgdBTOqj909DXmG--
