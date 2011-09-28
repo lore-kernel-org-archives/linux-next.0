@@ -1,64 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the moduleh tree
-Date: Wed, 28 Sep 2011 18:35:52 +1000
-Message-ID: <20110928183552.cb27a2b28b02fec275bca009@canb.auug.org.au>
+Date: Wed, 28 Sep 2011 18:41:50 +1000
+Message-ID: <20110928184150.0fcf097b7f9128f8639059f3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__28_Sep_2011_18_41_50_+1000_L0zjN0ZKq=mjwi=4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43390 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:34177 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751220Ab1I1If4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 04:35:56 -0400
+	with ESMTP id S1752058Ab1I1Il5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 04:41:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kalle Valo <kvalo@qca.qualcomm.com>, Vasanthakumar Thiagarajan <vthiagar@qca.qualcomm.com>, Raja Mani <rmani@qca.qualcomm.com>, Vivek Natarajan <nataraja@qca.qualcomm.com>, Suraj Sumangala <surajs@qca.qualcomm.com>, Joe Perches <joe@perches.com>, Jouni Malinen <jouni@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Wed__28_Sep_2011_18_41_50_+1000_L0zjN0ZKq=mjwi=4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Paul,
 
 After merging the moduleh tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+allmodconfig) went on producing more failures (beyond those reported
+earlier).  I have used the version of the moduleh tree from next-20110927
+for today and will see if I have more stamina tomorrow.
 
-drivers/net/wireless/ath/ath6kl/init.c:27:26: error: expected ')' before 'uint'
-
-Caused by commit bdcd81707973 ("Add ath6kl cleaned up driver") from the
-net tree interacting with the module.h split up.
-
-I have applied the following patch for today (which sould be applied to
-the net or wireless trees).
-
->From 1875bfc8881cca3064c7d7fad024555fe1652926 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 28 Sep 2011 18:32:34 +1000
-Subject: [PATCH] wireless/ath6kl: use of module_param requires the inclusion
- of moduleparam.h
-
-Otheriwse the module.h split up fails like this:
-
-drivers/net/wireless/ath/ath6kl/init.c:27:26: error: expected ')' before 'uint'
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/wireless/ath/ath6kl/init.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath6kl/init.c b/drivers/net/wireless/ath/ath6kl/init.c
-index 9d10322..8552da0 100644
---- a/drivers/net/wireless/ath/ath6kl/init.c
-+++ b/drivers/net/wireless/ath/ath6kl/init.c
-@@ -15,6 +15,7 @@
-  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-  */
- 
-+#include <linux/moduleparam.h>
- #include <linux/mmc/sdio_func.h>
- #include "core.h"
- #include "cfg80211.h"
--- 
-1.7.6.3
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__28_Sep_2011_18_41_50_+1000_L0zjN0ZKq=mjwi=4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOgt3OAAoJEDMEi1NhKgbsSc8H/AnRWE8MrZq8p5O+sc8wb+GN
+BiuwyKzNh3F14c/PL+hwhxBMPE3eE68xEzQypxKioMAygi9qklGE/Pc7PniAN6e8
+RIsqxt0Yn/5bpXyfkhR2lmxaMiPD2LfnYUSFw9dDyutbwVyzKvAkGlwuesmwcaZh
+heMFPMRCntReDhO8srbzK4F0qqQM4K2e7vVFqTMqeYEGvLuT34YAzByCJB9u0Tgv
+a9YaF0ILiEO7LLN34eZQ6GIxoh0/I/n8FTxdn1zrWT9WRWKZIFCjzl3iCcE8LPd8
+1LpFYdf76f3DcGL/oJA0NpKxGvtE8r+pOYjBW61vD7SmySIEI6XvdUOWdvb8Wbk=
+=4P8M
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__28_Sep_2011_18_41_50_+1000_L0zjN0ZKq=mjwi=4--
