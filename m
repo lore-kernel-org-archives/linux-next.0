@@ -1,67 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: New location for the module.h split content
-Date: Wed, 28 Sep 2011 11:13:02 +1000
-Message-ID: <20110928111302.effdf3ba197447a158509cbf@canb.auug.org.au>
-References: <20110928003903.GA16710@windriver.com>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Wed, 28 Sep 2011 12:54:28 +1000
+Message-ID: <20110928125428.70d5cf10ea59f729135d5dff@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__28_Sep_2011_11_13_02_+1000_iYYlnWVj=aZGMe7B"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:40058 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:43408 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751151Ab1I1BNK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 21:13:10 -0400
-In-Reply-To: <20110928003903.GA16710@windriver.com>
+	with ESMTP id S1751558Ab1I1Cyc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2011 22:54:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antonio Quartulli <ordex@autistici.org>, Marek Lindner <lindner_marek@yahoo.de>
 
---Signature=_Wed__28_Sep_2011_11_13_02_+1000_iYYlnWVj=aZGMe7B
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Paul,
+Today's linux-next merge of the net tree got a conflict in
+net/batman-adv/soft-interface.c between commit 8b267b312df9 ("batman-adv:
+do_bcast has to be true for broadcast packets only") from the net-current
+tree and commit 3d393e473210 ("batman-adv: implement AP-isolation on the
+sender side") from the net tree.
 
-On Tue, 27 Sep 2011 20:39:04 -0400 Paul Gortmaker <paul.gortmaker@windriver=
-.com> wrote:
->
-> I've placed the module split content for linux-next on one of
-> our local servers as per the pull request info below, to serve
-> as an alternate source while kernel.org is down.
->=20
-> --------
->=20
-> The following changes since commit b6fd41e29dea9c6753b1843a77e50433e6123b=
-cb:
->=20
->   Linux 3.1-rc6 (2011-09-12 14:02:02 -0700)
->=20
-> are available in the git repository at:
->   git://openlinux.windriver.com/people/paulg/linux-next for-sfr
-
-I will switch to this from today.
-
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__28_Sep_2011_11_13_02_+1000_iYYlnWVj=aZGMe7B
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOgnSeAAoJEDMEi1NhKgbsAlcH/0zEhZn80flOtOWSYpsOzxA0
-pIglePwfb7r12g/eEOKq0l943dnU9ULg8UoOpETRm0qlRfEysIN93r43v6GI/Omw
-TuqkBJ9XhZ/NgsVq+mZv4P24QZCGoqDeGmERXJCImU0W8LdgWpX4UBzI8vzfRZex
-1gDhw9ONcg6dQP9GcyxJNypAq9GIq+DQhZiBCCY4uJ27NtyB2Q3TdPL/KoB8KdkK
-sd3uT8FlsGKiAYMY0i1lfxEz9pAQWHPSkA/ZnCWyiRV/wHbwemFvNamxD+Eqf5/I
-lPecDHBijM6jPahGaOrDxPtsxMo1P/pM3og143Mcs+TCVBy3GREy51GVf5IKUzs=
-=piMi
------END PGP SIGNATURE-----
-
---Signature=_Wed__28_Sep_2011_11_13_02_+1000_iYYlnWVj=aZGMe7B--
+diff --cc net/batman-adv/soft-interface.c
+index 05dd351,aceeabc..0000000
+--- a/net/batman-adv/soft-interface.c
++++ b/net/batman-adv/soft-interface.c
+@@@ -595,11 -596,12 +596,12 @@@ static int interface_tx(struct sk_buff 
+  		goto dropped;
+  
+  	/* Register the client MAC in the transtable */
+- 	tt_local_add(soft_iface, ethhdr->h_source);
++ 	tt_local_add(soft_iface, ethhdr->h_source, skb->skb_iif);
+  
+- 	orig_node = transtable_search(bat_priv, ethhdr->h_dest);
++ 	orig_node = transtable_search(bat_priv, ethhdr->h_source,
++ 				      ethhdr->h_dest);
+ -	if (is_multicast_ether_addr(ethhdr->h_dest) ||
+ -				(orig_node && orig_node->gw_flags)) {
+ +	do_bcast = is_multicast_ether_addr(ethhdr->h_dest);
+ +	if (do_bcast ||	(orig_node && orig_node->gw_flags)) {
+  		ret = gw_is_target(bat_priv, skb, orig_node);
+  
+  		if (ret < 0)
