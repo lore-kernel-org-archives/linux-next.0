@@ -1,74 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Sept 29 (kvm)
-Date: Fri, 30 Sep 2011 08:58:10 +1000
-Message-ID: <20110930085810.11bc8e2e38e1400a8b0b4cec@canb.auug.org.au>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH -next] x86 mrst: fix build error when X86_MRST is not
+ enabled
+Date: Thu, 29 Sep 2011 23:57:08 +0100
+Message-ID: <20110929235708.1bbd1166@lxorguk.ukuu.org.uk>
 References: <20110929165730.661cf28c9bb27b8a85432cd2@canb.auug.org.au>
-	<4E84CC00.8090702@xenotime.net>
+	<4E84D684.107@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__30_Sep_2011_08_58_10_+1000_/obfP//LqmsQJq94"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:58361 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751351Ab1I2W6R (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 18:58:17 -0400
-In-Reply-To: <4E84CC00.8090702@xenotime.net>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:52561 "EHLO
+	www.etchedpixels.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751620Ab1I2XAF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 19:00:05 -0400
+In-Reply-To: <4E84D684.107@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, x86 maintainers <x86@kernel.org>
 
---Signature=_Fri__30_Sep_2011_08_58_10_+1000_/obfP//LqmsQJq94
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 29 Sep 2011 13:35:16 -0700
+Randy Dunlap <rdunlap@xenotime.net> wrote:
 
-[Just cc'ing the kvm guys ]
+> From: Randy Dunlap <rdunlap@xenotime.net>
+> 
+> Fix build when CONFIG_X86_INTEL_MID is enabled but
+> CONFIG_X86_MRST is not enabled.  Fixes this build error:
 
-On Thu, 29 Sep 2011 12:50:24 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
-e:
->
-> On 09/28/11 23:57, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > The linux-next tree is now available from
-> > git://github.com/sfrothwell/linux-next.git as a temporary measure while
-> > the kernel.org servers are unavailable.
->=20
->=20
-> kvm build on i386 says:
->=20
-> ERROR: "__udivdi3" [arch/x86/kvm/kvm.ko] undefined!
->=20
-> which is used in somewhere in start_apic_timer()  (probably the divide :).
->=20
->=20
-> --=20
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code =
-***
->=20
+This looks wrong. Unfortunately until we get kernel.org back its hard to
+do much about it and see what is in all the trees.
 
+> -#ifdef CONFIG_X86_INTEL_MID
+> +#ifdef CONFIG_X86_MRST
+>  
+>  static inline enum mrst_cpu_type mrst_identify_cpu(void)
+>  {
+>  	return __mrst_cpu_chip;
+>  }
+>  
+> -#else /* !CONFIG_X86_INTEL_MID */
+> +#else /* !CONFIG_X86_MRST */
+>  
+>  #define mrst_identify_cpu()    (0)
+>  
+> -#endif /* !CONFIG_X86_INTEL_MID */
+> +#endif /* !CONFIG_X86_MRST */
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+This breaks Medfield so NAK
 
---Signature=_Fri__30_Sep_2011_08_58_10_+1000_/obfP//LqmsQJq94
-Content-Type: application/pgp-signature
+The correct behaviour should be 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+INTEL_MID defined -> mrst_cpu_chip has meaning
+INTEL_MID not defined -> mrst_identify_chip is 0
 
-iQEcBAEBAgAGBQJOhPgCAAoJEDMEi1NhKgbsKJwH/R28tBVZ4MDMr3O/MSG+q8WS
-pVnFsTa9IFG26stxObEBhJ+lCphGTFZr/Qhz10mVvMYopcaeeNXabq6Y9AcGO5gL
-ckBs8vhXPzp2MCdjHJWtFr6ZSq4O1hP0quBgHlErLrg9U7XEFR5jWfZR8GP53x6I
-jU44Go4edvrZOSdK81ZO48epcDAsrYOImE6UZzBcdoW8ntPq+DOWkHT1bCUFqPyv
-3iK8rbr2msCwEa/gojK5G1Y/pRTXY5PtSekA8BAcMybWbAV/gCEsn2zfGa63gNei
-LEqMrYRyLEz571sbDc6WgcZ01YjuqkWAlvzImTSxzABAiG2wyLVQGAs/dw2GlTg=
-=vzPC
------END PGP SIGNATURE-----
-
---Signature=_Fri__30_Sep_2011_08_58_10_+1000_/obfP//LqmsQJq94--
+your change makes it 0 for Medfield which means it will crash on boot.
