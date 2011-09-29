@@ -1,68 +1,68 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
+From: Ming Lei <ming.lei@canonical.com>
 Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Thu, 29 Sep 2011 11:26:18 +0200
-Message-ID: <201109291126.18470.rjw@sisk.pl>
-References: <20110928145144.3d074db9aa9b6f858e0dc4fb@canb.auug.org.au> <201109282132.46887.rjw@sisk.pl> <CACVXFVM6CjZacbbvn0VzM78SNDa6geHSw1dsrCL1bbTBU=pH1g@mail.gmail.com>
+Date: Thu, 29 Sep 2011 17:32:43 +0800
+Message-ID: <CACVXFVOA486EvvymPchHB9V1WBLhsdFQRtr_zuOOo4HTbE0OKA@mail.gmail.com>
+References: <20110928145144.3d074db9aa9b6f858e0dc4fb@canb.auug.org.au>
+	<201109282132.46887.rjw@sisk.pl>
+	<CACVXFVM6CjZacbbvn0VzM78SNDa6geHSw1dsrCL1bbTBU=pH1g@mail.gmail.com>
+	<201109291126.18470.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary=002215b03162db165004ae113017
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:36265 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932065Ab1I2JYF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 Sep 2011 05:24:05 -0400
-In-Reply-To: <CACVXFVM6CjZacbbvn0VzM78SNDa6geHSw1dsrCL1bbTBU=pH1g@mail.gmail.com>
+Received: from youngberry.canonical.com ([91.189.89.112]:36493 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755096Ab1I2Jcp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 05:32:45 -0400
+In-Reply-To: <201109291126.18470.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ming Lei <ming.lei@canonical.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thursday, September 29, 2011, Ming Lei wrote:
-> On Thu, Sep 29, 2011 at 3:32 AM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> > On Wednesday, September 28, 2011, Ming Lei wrote:
-> >> Hi,
-> >>
-> >> 2011/9/28 Rafael J. Wysocki <rjw@sisk.pl>:
-> >> > On Wednesday, September 28, 2011, Ming Lei wrote:
-> >> >> Hi Stephen and Rafael,
-> >> >>
-> >> >> Sorry, the attachment patch can fix the build failure, which is
-> >> >> caused by unset CONFIG_RUNTIME_PM.
-> >> >
-> >> > First off, that's CONFIG_PM_RUNTIME.  Second, why do you want to build
-> >> > rpm-traces.c at all if CONFIG_PM_RUNTIME is unset?
-> >> >
-> >>
-> >> Yes, you are right,  follows the correct fix:
-> >>
-> >> diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-> >> index 56bdab5..f49405f 100644
-> >> --- a/kernel/trace/Makefile
-> >> +++ b/kernel/trace/Makefile
-> >> @@ -53,7 +53,9 @@ endif
-> >>  obj-$(CONFIG_EVENT_TRACING) += trace_events_filter.o
-> >>  obj-$(CONFIG_KPROBE_EVENT) += trace_kprobe.o
-> >>  obj-$(CONFIG_TRACEPOINTS) += power-traces.o
-> >> +ifeq ($(CONFIG_PM_RUNTIME),y)
-> >>  obj-$(CONFIG_TRACEPOINTS) += rpm-traces.o
-> >> +endif
-> >>  ifeq ($(CONFIG_TRACING),y)
-> >>  obj-$(CONFIG_KGDB_KDB) += trace_kdb.o
-> >>  endif
-> >
-> > Well, this still is kind of ugly.  I'd prefer my patch sent in this thread.
-> 
-> Both are doable, :-)
-> 
-> But I don't think it is ugly, and this way is taken by BLOCK/PERF_EVENTS/
-> KGDB_KDB in kernel/trace/Makefile.
+--002215b03162db165004ae113017
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-You're right about this.
+On Thu, Sep 29, 2011 at 5:26 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
+>> But I don't think it is ugly, and this way is taken by BLOCK/PERF_EVENTS=
+/
+>> KGDB_KDB in kernel/trace/Makefile.
+>
+> You're right about this.
+>
+>> Also this one is a simple fix and don't introduce any new config option,
+>> which is unnecessary.
+>
+> OK, I'll use your last patch. =A0Care to resend it with a sign-off?
 
-> Also this one is a simple fix and don't introduce any new config option,
-> which is unnecessary.
+OK, thanks, see attachment.
 
-OK, I'll use your last patch.  Care to resend it with a sign-off?
+thanks,
+--
+Ming Lei
 
-Rafael
+--002215b03162db165004ae113017
+Content-Type: text/x-patch; charset=US-ASCII;
+	name="0001-kernel-trace-Makefile-build-rpm-traces.c-only-if-CON.patch"
+Content-Disposition: attachment;
+	filename="0001-kernel-trace-Makefile-build-rpm-traces.c-only-if-CON.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_gt5jpevi0
+
+RnJvbSBhNWEzNGFjMTc1ZTAyMjMxNDhiOWZlODA4OWM5OWUyNzg4MmNmMDI0IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNaW5nIExlaSA8bWluZy5sZWlAY2Fub25pY2FsLmNvbT4KRGF0
+ZTogV2VkLCAyOCBTZXAgMjAxMSAyMjo0MDowNiArMDgwMApTdWJqZWN0OiBbUEFUQ0hdIGtlcm5l
+bC90cmFjZS9NYWtlZmlsZTogYnVpbGQgcnBtLXRyYWNlcy5jIG9ubHkgaWYKIENPTkZJR19QTV9S
+VU5USU1FCgoKU2lnbmVkLW9mZi1ieTogTWluZyBMZWkgPG1pbmcubGVpQGNhbm9uaWNhbC5jb20+
+Ci0tLQoga2VybmVsL3RyYWNlL01ha2VmaWxlIHwgICAgMiArKwogMSBmaWxlcyBjaGFuZ2VkLCAy
+IGluc2VydGlvbnMoKyksIDAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEva2VybmVsL3RyYWNl
+L01ha2VmaWxlIGIva2VybmVsL3RyYWNlL01ha2VmaWxlCmluZGV4IDU2YmRhYjUuLmY0OTQwNWYg
+MTAwNjQ0Ci0tLSBhL2tlcm5lbC90cmFjZS9NYWtlZmlsZQorKysgYi9rZXJuZWwvdHJhY2UvTWFr
+ZWZpbGUKQEAgLTUzLDcgKzUzLDkgQEAgZW5kaWYKIG9iai0kKENPTkZJR19FVkVOVF9UUkFDSU5H
+KSArPSB0cmFjZV9ldmVudHNfZmlsdGVyLm8KIG9iai0kKENPTkZJR19LUFJPQkVfRVZFTlQpICs9
+IHRyYWNlX2twcm9iZS5vCiBvYmotJChDT05GSUdfVFJBQ0VQT0lOVFMpICs9IHBvd2VyLXRyYWNl
+cy5vCitpZmVxICgkKENPTkZJR19QTV9SVU5USU1FKSx5KQogb2JqLSQoQ09ORklHX1RSQUNFUE9J
+TlRTKSArPSBycG0tdHJhY2VzLm8KK2VuZGlmCiBpZmVxICgkKENPTkZJR19UUkFDSU5HKSx5KQog
+b2JqLSQoQ09ORklHX0tHREJfS0RCKSArPSB0cmFjZV9rZGIubwogZW5kaWYKLS0gCjEuNy41LjQK
+Cg==
+--002215b03162db165004ae113017--
