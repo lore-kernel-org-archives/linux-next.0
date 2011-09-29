@@ -1,37 +1,49 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Sept 29 (kvm)
-Date: Thu, 29 Sep 2011 12:50:24 -0700
-Message-ID: <4E84CC00.8090702@xenotime.net>
+Subject: [PATCH] olpc: olpc-xo1-sci.c is an input driver, depends on INPUT
+Date: Thu, 29 Sep 2011 13:17:29 -0700
+Message-ID: <4E84D259.5020008@xenotime.net>
 References: <20110929165730.661cf28c9bb27b8a85432cd2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:42667 "HELO
-	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753157Ab1I2Tu0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 15:50:26 -0400
+Received: from oproxy9.bluehost.com ([69.89.24.6]:45875 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1757476Ab1I2URc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 16:17:32 -0400
 In-Reply-To: <20110929165730.661cf28c9bb27b8a85432cd2@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Andres Salomon <dilinger@debian.org>, x86 maintainers <x86@kernel.org>
 
-On 09/28/11 23:57, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The linux-next tree is now available from
-> git://github.com/sfrothwell/linux-next.git as a temporary measure while
-> the kernel.org servers are unavailable.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
+Fix build errors when CONFIG_INPUT is disabled (shortened list):
 
-kvm build on i386 says:
+olpc-xo1-sci.c:(.text+0x1aee6): undefined reference to `input_event'
+olpc-xo1-sci.c:(.text+0x1b077): undefined reference to `input_unregister_device'
+olpc-xo1-sci.c:(.text+0x1b081): undefined reference to `input_free_device'
+arch/x86/built-in.o:olpc-xo1-sci.c:(.text+0x1b270): more undefined references to `input_event' follow
+olpc-xo1-sci.c:(.devinit.text+0x155): undefined reference to `input_allocate_device'
+olpc-xo1-sci.c:(.devinit.text+0x1a4): undefined reference to `input_register_device'
 
-ERROR: "__udivdi3" [arch/x86/kvm/kvm.ko] undefined!
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Andres Salomon <dilinger@debian.org>
+---
+Found in linux-next but also applies to mainline.
 
-which is used in somewhere in start_apic_timer()  (probably the divide :).
+ arch/x86/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--- next-2011-0929.orig/arch/x86/Kconfig
++++ next-2011-0929/arch/x86/Kconfig
+@@ -2052,7 +2052,7 @@ config OLPC_XO1_RTC
+ 
+ config OLPC_XO1_SCI
+ 	bool "OLPC XO-1 SCI extras"
+-	depends on OLPC && OLPC_XO1_PM
++	depends on OLPC && OLPC_XO1_PM && INPUT
+ 	select POWER_SUPPLY
+ 	select GPIO_CS5535
+ 	select MFD_CORE
