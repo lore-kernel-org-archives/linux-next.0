@@ -1,58 +1,51 @@
-From: Andres Salomon <dilinger@queued.net>
-Subject: Re: [PATCH] olpc: olpc-xo1-sci.c is an input driver, depends on
- INPUT
-Date: Thu, 29 Sep 2011 13:34:46 -0700
-Message-ID: <20110929133446.40ff3250@queued.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] x86 mrst: fix build error when X86_MRST is not enabled
+Date: Thu, 29 Sep 2011 13:35:16 -0700
+Message-ID: <4E84D684.107@xenotime.net>
 References: <20110929165730.661cf28c9bb27b8a85432cd2@canb.auug.org.au>
-	<4E84D259.5020008@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4E84D259.5020008@xenotime.net>
+In-Reply-To: <20110929165730.661cf28c9bb27b8a85432cd2@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, x86 maintainers <x86@kernel.org>, dsd@laptop.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, x86 maintainers <x86@kernel.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 29 Sep 2011 13:17:29 -0700
-Randy Dunlap <rdunlap@xenotime.net> wrote:
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> Fix build errors when CONFIG_INPUT is disabled (shortened list):
-> 
-> olpc-xo1-sci.c:(.text+0x1aee6): undefined reference to `input_event'
-> olpc-xo1-sci.c:(.text+0x1b077): undefined reference to
-> `input_unregister_device' olpc-xo1-sci.c:(.text+0x1b081): undefined
-> reference to `input_free_device'
-> arch/x86/built-in.o:olpc-xo1-sci.c:(.text+0x1b270): more undefined
-> references to `input_event' follow
-> olpc-xo1-sci.c:(.devinit.text+0x155): undefined reference to
-> `input_allocate_device' olpc-xo1-sci.c:(.devinit.text+0x1a4):
-> undefined reference to `input_register_device'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> Cc: Andres Salomon <dilinger@debian.org>
-> ---
-> Found in linux-next but also applies to mainline.
-> 
->  arch/x86/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- next-2011-0929.orig/arch/x86/Kconfig
-> +++ next-2011-0929/arch/x86/Kconfig
-> @@ -2052,7 +2052,7 @@ config OLPC_XO1_RTC
->  
->  config OLPC_XO1_SCI
->  	bool "OLPC XO-1 SCI extras"
-> -	depends on OLPC && OLPC_XO1_PM
-> +	depends on OLPC && OLPC_XO1_PM && INPUT
->  	select POWER_SUPPLY
->  	select GPIO_CS5535
->  	select MFD_CORE
+Fix build when CONFIG_X86_INTEL_MID is enabled but
+CONFIG_X86_MRST is not enabled.  Fixes this build error:
 
-Thanks!
+rtc.c:(.init.text+0x2fbb): undefined reference to `__mrst_cpu_chip'
 
-Hm.  This might actually need a 'select INPUT' though, since
-OLPC_XO1_SCI is bool while INPUT is tristate.  Sigh, bool..
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
+ arch/x86/include/asm/mrst.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- next-2011-0929.orig/arch/x86/include/asm/mrst.h
++++ next-2011-0929/arch/x86/include/asm/mrst.h
+@@ -32,18 +32,18 @@ enum mrst_cpu_type {
+ 
+ extern enum mrst_cpu_type __mrst_cpu_chip;
+ 
+-#ifdef CONFIG_X86_INTEL_MID
++#ifdef CONFIG_X86_MRST
+ 
+ static inline enum mrst_cpu_type mrst_identify_cpu(void)
+ {
+ 	return __mrst_cpu_chip;
+ }
+ 
+-#else /* !CONFIG_X86_INTEL_MID */
++#else /* !CONFIG_X86_MRST */
+ 
+ #define mrst_identify_cpu()    (0)
+ 
+-#endif /* !CONFIG_X86_INTEL_MID */
++#endif /* !CONFIG_X86_MRST */
+ 
+ enum mrst_timer_options {
+ 	MRST_TIMER_DEFAULT,
