@@ -1,69 +1,59 @@
-From: Ming Lei <ming.lei@canonical.com>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Thu, 29 Sep 2011 09:32:39 +0800
-Message-ID: <CACVXFVM6CjZacbbvn0VzM78SNDa6geHSw1dsrCL1bbTBU=pH1g@mail.gmail.com>
-References: <20110928145144.3d074db9aa9b6f858e0dc4fb@canb.auug.org.au>
-	<201109281558.05289.rjw@sisk.pl>
-	<CACVXFVMLBHu+CY1pgQnY04S_3iLN1z5S2vPiMdN6rsW=gBdWog@mail.gmail.com>
-	<201109282132.46887.rjw@sisk.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the regmap tree
+Date: Thu, 29 Sep 2011 15:18:41 +1000
+Message-ID: <20110929151841.1ee572099f6bc4db67138825@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__29_Sep_2011_15_18_41_+1000_gHBEfJYgt335IHsf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:42299 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753706Ab1I2Bcl convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2011 21:32:41 -0400
-In-Reply-To: <201109282132.46887.rjw@sisk.pl>
+Received: from calzone.tip.net.au ([203.10.76.15]:49100 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753781Ab1I2FSs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 01:18:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
 
-On Thu, Sep 29, 2011 at 3:32 AM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> On Wednesday, September 28, 2011, Ming Lei wrote:
->> Hi,
->>
->> 2011/9/28 Rafael J. Wysocki <rjw@sisk.pl>:
->> > On Wednesday, September 28, 2011, Ming Lei wrote:
->> >> Hi Stephen and Rafael,
->> >>
->> >> Sorry, the attachment patch can fix the build failure, which is
->> >> caused by unset CONFIG_RUNTIME_PM.
->> >
->> > First off, that's CONFIG_PM_RUNTIME. =A0Second, why do you want to=
- build
->> > rpm-traces.c at all if CONFIG_PM_RUNTIME is unset?
->> >
->>
->> Yes, you are right, =A0follows the correct fix:
->>
->> diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
->> index 56bdab5..f49405f 100644
->> --- a/kernel/trace/Makefile
->> +++ b/kernel/trace/Makefile
->> @@ -53,7 +53,9 @@ endif
->> =A0obj-$(CONFIG_EVENT_TRACING) +=3D trace_events_filter.o
->> =A0obj-$(CONFIG_KPROBE_EVENT) +=3D trace_kprobe.o
->> =A0obj-$(CONFIG_TRACEPOINTS) +=3D power-traces.o
->> +ifeq ($(CONFIG_PM_RUNTIME),y)
->> =A0obj-$(CONFIG_TRACEPOINTS) +=3D rpm-traces.o
->> +endif
->> =A0ifeq ($(CONFIG_TRACING),y)
->> =A0obj-$(CONFIG_KGDB_KDB) +=3D trace_kdb.o
->> =A0endif
->
-> Well, this still is kind of ugly. =A0I'd prefer my patch sent in this=
- thread.
+--Signature=_Thu__29_Sep_2011_15_18_41_+1000_gHBEfJYgt335IHsf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Both are doable, :-)
+Hi Mark,
 
-But I don't think it is ugly, and this way is taken by BLOCK/PERF_EVENT=
-S/
-KGDB_KDB in kernel/trace/Makefile. Also this one is a simple fix and
-don't introduce any new config option, which is unnecessary.
+After merging the regmap tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
+drivers/base/regmap/regcache.c: In function 'regcache_cache_only':
+drivers/base/regmap/regcache.c:276:2: error: 'struct regmap' has no member =
+named 'sync_lock'
+drivers/base/regmap/regcache.c:278:19: error: 'struct regmap' has no member=
+ named 'sync_lock'
 
-thanks,
---
-Ming Lei
+Caused by commit 38f6916976f9 ("regmap: Grab the lock in
+regcache_cache_only()").
+
+I have used the regmap tree from next-20110928 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__29_Sep_2011_15_18_41_+1000_gHBEfJYgt335IHsf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOg/+xAAoJEDMEi1NhKgbsoVsH/3EDtja3JBYtw7xqPJGEIk2k
+kg+eRW6xhghy+Tua1M6fNh6HYiCAVyNJoVPfnAbEespPmN7HXBWkifqQWJQOFLAj
+00YaR78vhz3rYFOn61cdWcaei0QI9fsG3oTl+M0xZ/6PLRCJq6xsRQ0VZNeTdFsu
+pLx1vlEj/23hV3vIpAKxS2uVfja5opdc27TMhyfiDisktWLdRoHuvJUvujm5RZXb
+UnpKAFK5v9kgkno84jipK09iRI482BeLYjg2rTDPYkv7cS5n5cAlRjRZTmlWtp4V
+jziUxtD0O2AJE+X1XQ9xvVQB7xgyPzQ4ANrOIyv1xxRlI3IACIUtPiTp8HPLCkQ=
+=MiHZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__29_Sep_2011_15_18_41_+1000_gHBEfJYgt335IHsf--
