@@ -1,21 +1,25 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the regmap tree
-Date: Thu, 29 Sep 2011 10:43:18 +0100
-Message-ID: <20110929094318.GA3697@opensource.wolfsonmicro.com>
-References: <20110929151841.1ee572099f6bc4db67138825@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Please include pin control subsystem in linux-next
+Date: Thu, 29 Sep 2011 14:57:41 +0200
+Message-ID: <CACRpkdZcQU6pGrsZ684GvK9T8jD0qVKx6wx8kwdT=Qd7+1QwCw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110929151841.1ee572099f6bc4db67138825@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:47414 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753530Ab1I2M5l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 08:57:41 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linaro-dev@lists.linaro.org
 
-On Thu, Sep 29, 2011 at 03:18:41PM +1000, Stephen Rothwell wrote:
+Hi Stephen,
 
-> After merging the regmap tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+my pin control subsystem is maturing, so could you please
+include this in linux-next:
 
-Fixed now, thanks for reporting.
+git://git.linaro.org/people/triad/linux-pinctrl.git for-next
+
+Yours,
+Linus Walleij
