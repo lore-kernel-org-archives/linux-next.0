@@ -1,52 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with the staging tree
-Date: Thu, 29 Sep 2011 15:55:57 +1000
-Message-ID: <20110929155557.1baa18a46e6dc142a97cf1d0@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (moduleh
+ tree related)
+Date: Thu, 29 Sep 2011 16:40:28 +1000
+Message-ID: <20110929164028.912fba5b3fd2c4d12663de04@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__29_Sep_2011_15_55_57_+1000_UWpkYBieKfXx5GYd"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@cam.ac.uk>, Greg KH <greg@kroah.com>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Thu__29_Sep_2011_15_55_57_+1000_UWpkYBieKfXx5GYd
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:52333 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751282Ab1I2Gka (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 02:40:30 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Paul,
+Hi all,
 
-Today's linux-next merge of the moduleh tree got a conflict in
-drivers/staging/iio/accel/adis16220_core.c between commits 7991029a55fa
-("staging:iio:accel:adis16220 iio_chan_spec conversion") and 6f4ebab56870
-("staging: iio: adis16220_core.c: add module.h") from the staging tree
-and commit 6eee8b750254 ("staging: Add module.h to more drivers
-implicitly using it") from the moduleh tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-The staging commits are a superset of the part of the moduleh commit that
-affects this file, so I dropped the moduleh change (module.h was added in
-different places).
---=20
+drivers/staging/cxt1e1/linux.c:113:32: error: expected ')' before 'int'
+drivers/staging/cxt1e1/linux.c:117:30: error: expected ')' before 'int'
+drivers/staging/cxt1e1/linux.c:121:30: error: expected ')' before 'int'
+drivers/staging/cxt1e1/linux.c:125:31: error: expected ')' before 'int'
+drivers/staging/cxt1e1/linux.c:129:31: error: expected ')' before 'int'
+
+Caused by the module split.  The fix in the moduleh tree (commit
+6eee8b750254 ("staging: Add module.h to more drivers implicitly using
+i")) is incorrect in that module.h has been included too late.
+
+I have applied the following patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 29 Sep 2011 16:36:21 +1000
+Subject: [PATCH] staging: move the module.h include in cxt1e1/linux.c
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/cxt1e1/linux.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/cxt1e1/linux.c b/drivers/staging/cxt1e1/linux.c
+index e7029af..6e574fe 100644
+--- a/drivers/staging/cxt1e1/linux.c
++++ b/drivers/staging/cxt1e1/linux.c
+@@ -15,6 +15,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/types.h>
++#include <linux/module.h>
+ #include <linux/netdevice.h>
+ #include <linux/hdlc.h>
+ #include <linux/if_arp.h>
+@@ -163,7 +164,6 @@ mkret (int bsd)
+ 
+ /***************************************************************************/
+ #include <linux/workqueue.h>
+-#include <linux/module.h>
+ 
+ /***
+  * One workqueue (wq) per port (since musycc allows simultaneous group
+-- 
+1.7.6.3
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__29_Sep_2011_15_55_57_+1000_UWpkYBieKfXx5GYd
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOhAhtAAoJEDMEi1NhKgbsDxIH/R0Es7fzFSLpoUQiCykRS+8u
-7JauUmMgqBW5o2iJ+qoJijIIWEndF4f7ZASrpglq9hFOXTzo7BXS+ju/Vx3TPET7
-GpnRDijOx/F1xQ1MMTBHIiEfxJPJ/EqWfnPPhoaHM4jZdrTgV/3jBGeMy+ezxWSo
-rZ3YFmVHztJsU1W4sp7fqVh1g6cuh6ZOnvXNPkJ7lO718GgNUEc+MoE4RVDwADmp
-Ydim/ZfJMINRrzotKYcrYW4AXkBqAUiUw2QJuHO3J+YclecKqp+2OgxSG3b4r2/d
-NtyI+bgNqOS0AivwQkSs6ifE/qOJ9zDVvMBTarI/MwA1VR6+eLSh5ZqbEW6TPhs=
-=5jSU
------END PGP SIGNATURE-----
-
---Signature=_Thu__29_Sep_2011_15_55_57_+1000_UWpkYBieKfXx5GYd--
