@@ -1,59 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the regmap tree
-Date: Thu, 29 Sep 2011 15:18:41 +1000
-Message-ID: <20110929151841.1ee572099f6bc4db67138825@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the staging tree
+Date: Thu, 29 Sep 2011 15:55:57 +1000
+Message-ID: <20110929155557.1baa18a46e6dc142a97cf1d0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__29_Sep_2011_15_18_41_+1000_gHBEfJYgt335IHsf"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:49100 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753781Ab1I2FSs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 01:18:48 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
+ boundary="Signature=_Thu__29_Sep_2011_15_55_57_+1000_UWpkYBieKfXx5GYd"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@cam.ac.uk>, Greg KH <greg@kroah.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__29_Sep_2011_15_18_41_+1000_gHBEfJYgt335IHsf
+--Signature=_Thu__29_Sep_2011_15_55_57_+1000_UWpkYBieKfXx5GYd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+Hi Paul,
 
-After merging the regmap tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the moduleh tree got a conflict in
+drivers/staging/iio/accel/adis16220_core.c between commits 7991029a55fa
+("staging:iio:accel:adis16220 iio_chan_spec conversion") and 6f4ebab56870
+("staging: iio: adis16220_core.c: add module.h") from the staging tree
+and commit 6eee8b750254 ("staging: Add module.h to more drivers
+implicitly using it") from the moduleh tree.
 
-drivers/base/regmap/regcache.c: In function 'regcache_cache_only':
-drivers/base/regmap/regcache.c:276:2: error: 'struct regmap' has no member =
-named 'sync_lock'
-drivers/base/regmap/regcache.c:278:19: error: 'struct regmap' has no member=
- named 'sync_lock'
-
-Caused by commit 38f6916976f9 ("regmap: Grab the lock in
-regcache_cache_only()").
-
-I have used the regmap tree from next-20110928 for today.
+The staging commits are a superset of the part of the moduleh commit that
+affects this file, so I dropped the moduleh change (module.h was added in
+different places).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__29_Sep_2011_15_18_41_+1000_gHBEfJYgt335IHsf
+--Signature=_Thu__29_Sep_2011_15_55_57_+1000_UWpkYBieKfXx5GYd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOg/+xAAoJEDMEi1NhKgbsoVsH/3EDtja3JBYtw7xqPJGEIk2k
-kg+eRW6xhghy+Tua1M6fNh6HYiCAVyNJoVPfnAbEespPmN7HXBWkifqQWJQOFLAj
-00YaR78vhz3rYFOn61cdWcaei0QI9fsG3oTl+M0xZ/6PLRCJq6xsRQ0VZNeTdFsu
-pLx1vlEj/23hV3vIpAKxS2uVfja5opdc27TMhyfiDisktWLdRoHuvJUvujm5RZXb
-UnpKAFK5v9kgkno84jipK09iRI482BeLYjg2rTDPYkv7cS5n5cAlRjRZTmlWtp4V
-jziUxtD0O2AJE+X1XQ9xvVQB7xgyPzQ4ANrOIyv1xxRlI3IACIUtPiTp8HPLCkQ=
-=MiHZ
+iQEcBAEBAgAGBQJOhAhtAAoJEDMEi1NhKgbsDxIH/R0Es7fzFSLpoUQiCykRS+8u
+7JauUmMgqBW5o2iJ+qoJijIIWEndF4f7ZASrpglq9hFOXTzo7BXS+ju/Vx3TPET7
+GpnRDijOx/F1xQ1MMTBHIiEfxJPJ/EqWfnPPhoaHM4jZdrTgV/3jBGeMy+ezxWSo
+rZ3YFmVHztJsU1W4sp7fqVh1g6cuh6ZOnvXNPkJ7lO718GgNUEc+MoE4RVDwADmp
+Ydim/ZfJMINRrzotKYcrYW4AXkBqAUiUw2QJuHO3J+YclecKqp+2OgxSG3b4r2/d
+NtyI+bgNqOS0AivwQkSs6ifE/qOJ9zDVvMBTarI/MwA1VR6+eLSh5ZqbEW6TPhs=
+=5jSU
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__29_Sep_2011_15_18_41_+1000_gHBEfJYgt335IHsf--
+--Signature=_Thu__29_Sep_2011_15_55_57_+1000_UWpkYBieKfXx5GYd--
