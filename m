@@ -1,68 +1,21 @@
-From: Ming Lei <ming.lei@canonical.com>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Thu, 29 Sep 2011 17:32:43 +0800
-Message-ID: <CACVXFVOA486EvvymPchHB9V1WBLhsdFQRtr_zuOOo4HTbE0OKA@mail.gmail.com>
-References: <20110928145144.3d074db9aa9b6f858e0dc4fb@canb.auug.org.au>
-	<201109282132.46887.rjw@sisk.pl>
-	<CACVXFVM6CjZacbbvn0VzM78SNDa6geHSw1dsrCL1bbTBU=pH1g@mail.gmail.com>
-	<201109291126.18470.rjw@sisk.pl>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the regmap tree
+Date: Thu, 29 Sep 2011 10:43:18 +0100
+Message-ID: <20110929094318.GA3697@opensource.wolfsonmicro.com>
+References: <20110929151841.1ee572099f6bc4db67138825@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=002215b03162db165004ae113017
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:36493 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755096Ab1I2Jcp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 05:32:45 -0400
-In-Reply-To: <201109291126.18470.rjw@sisk.pl>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110929151841.1ee572099f6bc4db67138825@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
+List-Id: linux-next.vger.kernel.org
 
---002215b03162db165004ae113017
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 29, 2011 at 03:18:41PM +1000, Stephen Rothwell wrote:
 
-On Thu, Sep 29, 2011 at 5:26 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
->> But I don't think it is ugly, and this way is taken by BLOCK/PERF_EVENTS=
-/
->> KGDB_KDB in kernel/trace/Makefile.
->
-> You're right about this.
->
->> Also this one is a simple fix and don't introduce any new config option,
->> which is unnecessary.
->
-> OK, I'll use your last patch. =A0Care to resend it with a sign-off?
+> After merging the regmap tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 
-OK, thanks, see attachment.
-
-thanks,
---
-Ming Lei
-
---002215b03162db165004ae113017
-Content-Type: text/x-patch; charset=US-ASCII;
-	name="0001-kernel-trace-Makefile-build-rpm-traces.c-only-if-CON.patch"
-Content-Disposition: attachment;
-	filename="0001-kernel-trace-Makefile-build-rpm-traces.c-only-if-CON.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_gt5jpevi0
-
-RnJvbSBhNWEzNGFjMTc1ZTAyMjMxNDhiOWZlODA4OWM5OWUyNzg4MmNmMDI0IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNaW5nIExlaSA8bWluZy5sZWlAY2Fub25pY2FsLmNvbT4KRGF0
-ZTogV2VkLCAyOCBTZXAgMjAxMSAyMjo0MDowNiArMDgwMApTdWJqZWN0OiBbUEFUQ0hdIGtlcm5l
-bC90cmFjZS9NYWtlZmlsZTogYnVpbGQgcnBtLXRyYWNlcy5jIG9ubHkgaWYKIENPTkZJR19QTV9S
-VU5USU1FCgoKU2lnbmVkLW9mZi1ieTogTWluZyBMZWkgPG1pbmcubGVpQGNhbm9uaWNhbC5jb20+
-Ci0tLQoga2VybmVsL3RyYWNlL01ha2VmaWxlIHwgICAgMiArKwogMSBmaWxlcyBjaGFuZ2VkLCAy
-IGluc2VydGlvbnMoKyksIDAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEva2VybmVsL3RyYWNl
-L01ha2VmaWxlIGIva2VybmVsL3RyYWNlL01ha2VmaWxlCmluZGV4IDU2YmRhYjUuLmY0OTQwNWYg
-MTAwNjQ0Ci0tLSBhL2tlcm5lbC90cmFjZS9NYWtlZmlsZQorKysgYi9rZXJuZWwvdHJhY2UvTWFr
-ZWZpbGUKQEAgLTUzLDcgKzUzLDkgQEAgZW5kaWYKIG9iai0kKENPTkZJR19FVkVOVF9UUkFDSU5H
-KSArPSB0cmFjZV9ldmVudHNfZmlsdGVyLm8KIG9iai0kKENPTkZJR19LUFJPQkVfRVZFTlQpICs9
-IHRyYWNlX2twcm9iZS5vCiBvYmotJChDT05GSUdfVFJBQ0VQT0lOVFMpICs9IHBvd2VyLXRyYWNl
-cy5vCitpZmVxICgkKENPTkZJR19QTV9SVU5USU1FKSx5KQogb2JqLSQoQ09ORklHX1RSQUNFUE9J
-TlRTKSArPSBycG0tdHJhY2VzLm8KK2VuZGlmCiBpZmVxICgkKENPTkZJR19UUkFDSU5HKSx5KQog
-b2JqLSQoQ09ORklHX0tHREJfS0RCKSArPSB0cmFjZV9rZGIubwogZW5kaWYKLS0gCjEuNy41LjQK
-Cg==
---002215b03162db165004ae113017--
+Fixed now, thanks for reporting.
