@@ -1,64 +1,68 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH] olpc: olpc-xo1-sci.c is an input driver, depends on INPUT
-Date: Thu, 29 Sep 2011 13:36:59 -0700
-Message-ID: <4E84D6EB.3020300@xenotime.net>
-References: <20110929165730.661cf28c9bb27b8a85432cd2@canb.auug.org.au>	<4E84D259.5020008@xenotime.net> <20110929133446.40ff3250@queued.net>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: manual merge of the moduleh tree with the net tree
+Date: Thu, 29 Sep 2011 16:47:52 -0400
+Message-ID: <20110929204752.GA2808@windriver.com>
+References: <20110928163406.843e4be56b42dca280d85489@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110929133446.40ff3250@queued.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andres Salomon <dilinger@queued.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, x86 maintainers <x86@kernel.org>, dsd@laptop.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:60763 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756898Ab1I2UsS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 16:48:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20110928163406.843e4be56b42dca280d85489@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pavel Roskin <proski@gnu.org>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-On 09/29/11 13:34, Andres Salomon wrote:
-> On Thu, 29 Sep 2011 13:17:29 -0700
-> Randy Dunlap <rdunlap@xenotime.net> wrote:
-> 
->> From: Randy Dunlap <rdunlap@xenotime.net>
->>
->> Fix build errors when CONFIG_INPUT is disabled (shortened list):
->>
->> olpc-xo1-sci.c:(.text+0x1aee6): undefined reference to `input_event'
->> olpc-xo1-sci.c:(.text+0x1b077): undefined reference to
->> `input_unregister_device' olpc-xo1-sci.c:(.text+0x1b081): undefined
->> reference to `input_free_device'
->> arch/x86/built-in.o:olpc-xo1-sci.c:(.text+0x1b270): more undefined
->> references to `input_event' follow
->> olpc-xo1-sci.c:(.devinit.text+0x155): undefined reference to
->> `input_allocate_device' olpc-xo1-sci.c:(.devinit.text+0x1a4):
->> undefined reference to `input_register_device'
->>
->> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
->> Cc: Andres Salomon <dilinger@debian.org>
->> ---
->> Found in linux-next but also applies to mainline.
->>
->>  arch/x86/Kconfig |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> --- next-2011-0929.orig/arch/x86/Kconfig
->> +++ next-2011-0929/arch/x86/Kconfig
->> @@ -2052,7 +2052,7 @@ config OLPC_XO1_RTC
->>  
->>  config OLPC_XO1_SCI
->>  	bool "OLPC XO-1 SCI extras"
->> -	depends on OLPC && OLPC_XO1_PM
->> +	depends on OLPC && OLPC_XO1_PM && INPUT
->>  	select POWER_SUPPLY
->>  	select GPIO_CS5535
->>  	select MFD_CORE
-> 
-> Thanks!
-> 
-> Hm.  This might actually need a 'select INPUT' though, since
-> OLPC_XO1_SCI is bool while INPUT is tristate.  Sigh, bool..
+[linux-next: manual merge of the moduleh tree with the net tree] On 28/09/2011 (Wed 16:34) Stephen Rothwell wrote:
 
-I try to avoid using "select", but you can resubmit the patch
-to do that if you must.
+> Hi Paul,
+> 
+> Today's linux-next merge of the moduleh tree got a conflict in
+> drivers/net/wireless/ath/ath5k/debug.c between commit 931be260ed54
+> ("ath5k: clean up base.h and its use") from the net tree and commits
+> 9ec3f961e31a ("drivers/net: Add export.h to files using
+> EXPORT_SYMBOL/THIS_MODULE") and 0cccb17382f1 ("drivers/net: Add
+> moduleparam.h to drivers as required") from the moduleh tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.  (I am
+> pretty sure that this file doesn't need module.h, but not completely).
 
+The conflict is gone, but you were correct in your original assessment
+that the module.h was no longer needed.  I've added this to the
+post-merge queue of patches.
+
+Thanks,
+Paul.
+
+>From 13a6768b382b3d2f96b9caa9fa6df1f2f7f3aeb6 Mon Sep 17 00:00:00 2001
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date: Thu, 29 Sep 2011 16:37:30 -0400
+Subject: [PATCH] drivers/net: wireless/ath/ath5k/debug.c does not need
+ module.h
+
+It only has module_param and EXPORT_SYMBOL, so now that export.h
+is in scope at the same time as the recent ath5k update, we can
+delete this module.h include.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+diff --git a/drivers/net/wireless/ath/ath5k/debug.c b/drivers/net/wireless/ath/ath5k/debug.c
+index d2bdd90..f542b41 100644
+--- a/drivers/net/wireless/ath/ath5k/debug.c
++++ b/drivers/net/wireless/ath/ath5k/debug.c
+@@ -59,8 +59,6 @@
+  */
+ #include <linux/export.h>
+ #include <linux/moduleparam.h>
+-
+-#include <linux/module.h>
+ #include <linux/seq_file.h>
+ #include <linux/list.h>
+ #include "debug.h"
 -- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+1.7.6
