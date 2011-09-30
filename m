@@ -1,54 +1,45 @@
-From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Subject: [PATCH] staging: add module.h to various iio drivers
-Date: Fri, 30 Sep 2011 18:06:58 -0400
-Message-ID: <1317420418-28335-1-git-send-email-paul.gortmaker@windriver.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-l3A5Bk7waGM@public.gmane.org
-Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH] drivers/usb: Add module.h to various dwc3 drivers
+Date: Fri, 30 Sep 2011 18:08:59 -0400
+Message-ID: <1317420539-28541-1-git-send-email-paul.gortmaker@windriver.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:43266 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755610Ab1I3WJK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Sep 2011 18:09:10 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: gregkh@suse.de
+Cc: linux-usb@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-Since they are assuming it is there implicitly and will fail otherwise
-with things like:
+These files uses the full set of MODULE_ macros and so need to
+include module.h directly.
 
-drivers/staging/iio/impedance-analyzer/ad5933.c:816: warning: type
- defaults to =E2=80=98int=E2=80=99 in declaration of =E2=80=98MODULE_AU=
-THOR=E2=80=99
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-drivers/staging/iio/adc/ad7280a.c:990: warning: type defaults to =E2=80=
-=98int=E2=80=99
- in declaration of =E2=80=98MODULE_AUTHOR=E2=80=99
-
-Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-
-diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/ad=
-c/ad7280a.c
-index ab6cf9c..6ca4532 100644
---- a/drivers/staging/iio/adc/ad7280a.c
-+++ b/drivers/staging/iio/adc/ad7280a.c
-@@ -14,6 +14,7 @@
- #include <linux/err.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 443e4fb..20d0503 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -51,6 +51,7 @@
+ 
+ #include <linux/usb/ch9.h>
+ #include <linux/usb/gadget.h>
 +#include <linux/module.h>
-=20
- #include "../iio.h"
- #include "../sysfs.h"
-diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/=
-staging/iio/impedance-analyzer/ad5933.c
-index acc0e69..5783742 100644
---- a/drivers/staging/iio/impedance-analyzer/ad5933.c
-+++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
-@@ -16,6 +16,7 @@
- #include <linux/types.h>
- #include <linux/err.h>
- #include <linux/delay.h>
+ 
+ #include "core.h"
+ #include "gadget.h"
+diff --git a/drivers/usb/dwc3/dwc3-omap.c b/drivers/usb/dwc3/dwc3-omap.c
+index 08fffe6..b4a654e 100644
+--- a/drivers/usb/dwc3/dwc3-omap.c
++++ b/drivers/usb/dwc3/dwc3-omap.c
+@@ -45,6 +45,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/ioport.h>
+ #include <linux/io.h>
 +#include <linux/module.h>
- #include <asm/div64.h>
-=20
- #include "../iio.h"
---=20
+ 
+ #include "io.h"
+ 
+-- 
 1.7.6
