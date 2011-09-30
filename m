@@ -1,75 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the final tree
-Date: Fri, 30 Sep 2011 11:05:14 +1000
-Message-ID: <20110930110514.eadb199f27c5418b28cab6c9@canb.auug.org.au>
+Date: Fri, 30 Sep 2011 11:12:41 +1000
+Message-ID: <20110930111241.829ed0ada733516b71ab120d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__30_Sep_2011_11_05_14_+1000_szYBZ+j/7zT57AN."
+ boundary="Signature=_Fri__30_Sep_2011_11_12_41_+1000_OcJY2M1M7F0fPSxu"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__30_Sep_2011_11_05_14_+1000_szYBZ+j/7zT57AN.
+--Signature=_Fri__30_Sep_2011_11_12_41_+1000_OcJY2M1M7F0fPSxu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, the next-20110929 build (s390x allmodconfig)
+After merging the final tree, today's linux-next build (avr32 allnoconfig)
 failed like this:
 
-drivers/s390/char/zcore.c:393: error: 'THIS_MODULE' undeclared here (not in=
- a function)
-drivers/s390/char/zcore.c:741: error: expected declaration specifiers or '.=
-..' before string constant
-drivers/s390/char/zcore.c:741: warning: data definition has no type or stor=
-age class
-drivers/s390/char/zcore.c:741: warning: type defaults to 'int' in declarati=
-on of 'MODULE_AUTHOR'
-drivers/s390/char/zcore.c:741: warning: function declaration isn't a protot=
-ype
-drivers/s390/char/zcore.c:742: error: expected declaration specifiers or '.=
-..' before string constant
-drivers/s390/char/zcore.c:742: warning: data definition has no type or stor=
-age class
-drivers/s390/char/zcore.c:742: warning: type defaults to 'int' in declarati=
-on of 'MODULE_DESCRIPTION'
-drivers/s390/char/zcore.c:742: warning: function declaration isn't a protot=
-ype
-drivers/s390/char/zcore.c:743: error: expected declaration specifiers or '.=
-..' before string constant
-drivers/s390/char/zcore.c:743: warning: data definition has no type or stor=
-age class
-drivers/s390/char/zcore.c:743: warning: type defaults to 'int' in declarati=
-on of 'MODULE_LICENSE'
-drivers/s390/char/zcore.c:743: warning: function declaration isn't a protot=
-ype
+arch/avr32/mach-at32ap/pio.c: In function 'pio_probe':
+arch/avr32/mach-at32ap/pio.c:401: error: 'THIS_MODULE' undeclared (first us=
+e in this function)
 
-Probably revealed by the module.h split up.
-
-This file needs to include module.h
+Probably revealed by the module.h split up.  I guess it needs export.h
+included.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__30_Sep_2011_11_05_14_+1000_szYBZ+j/7zT57AN.
+--Signature=_Fri__30_Sep_2011_11_12_41_+1000_OcJY2M1M7F0fPSxu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOhRXKAAoJEDMEi1NhKgbswXMH/jWyTmhYoaSwBlY4X9LXw/ME
-8IPfkmjHlKSLEqHRQjiZ8zWBE1sKFwxmdueqlUOi7UrjJd8fitRBQ5VrvpgPZYRn
-HdWHk5JckO0Fwqdr1vRZ0Dp4uZcxV2Nvlgw40BZx54DCfcH42JDf2QDM7532O1dJ
-zlFlHDOxpCK0rd0HSim9AMZR2m/0tUatTOrxDmbAnnqrcYOWOgp+HxDzRWicCHNz
-Cct4ESIkXrJgz7Bn3gTak5723iZ5Ah7Dim6EeUk7oI5xfawqLYgaKDWeMevPMWMj
-seQUMAC8dd3AWl4ftGb/ixPbGFRZtWSeXK82yIFtA4Nt5a04f1MS1WXMgrIka2w=
-=kPgi
+iQEcBAEBAgAGBQJOhReJAAoJEDMEi1NhKgbs7jsH/2vp0hXUod62kQIevU5LImBa
+acfnLCOt6rjkKvMWisSlUkRQ3JNLuzoot2tGDL2FDFCl1fbOPG7yGXydH99EAUqV
+Pfh+xBVGHIfzg1Lj2BJpGVxgBZ1pHTb7IStuI0PsUcfGnI/cMA4UOqn2Vt9jUjqc
+JhXtwUhq0LzME7wfMnsYHEuJ6JKV96lXNaUoRJ9bMtXfbIyLHGHrVjJF/9pBhWWQ
+5YMqhjVx7UuJrNXGiXv5NHjXaufKQe45gYBgo79YI1VPfsjb4syzPlNIUzybSFju
+lPreZa6oWkevDQSTc8485hdIDrSXCUmYIslI9ZnWHXwxlrqh4JwGd2M4kyiaKEg=
+=dGGG
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__30_Sep_2011_11_05_14_+1000_szYBZ+j/7zT57AN.--
+--Signature=_Fri__30_Sep_2011_11_12_41_+1000_OcJY2M1M7F0fPSxu--
