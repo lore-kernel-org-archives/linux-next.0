@@ -1,47 +1,74 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the final tree
-Date: Fri, 30 Sep 2011 11:49:22 +0900
-Message-ID: <4E852E32.6090703@renesas.com>
-References: <20110930113811.c2fa2d532dfa799a49c146f4@canb.auug.org.au>
+Date: Fri, 30 Sep 2011 13:05:50 +1000
+Message-ID: <20110930130550.2f6597491fa1b59f3be839e0@canb.auug.org.au>
+References: <20110930111241.829ed0ada733516b71ab120d@canb.auug.org.au>
+	<CAP=VYLoycp1aUYGxQkb+U70CFRvu=nz6pdd63Zapn7a-+gXWVw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-reply-to: <20110930113811.c2fa2d532dfa799a49c146f4@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mundt <lethal@linux-sh.org>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__30_Sep_2011_13_05_50_+1000_U1BJD/rDZ6KB7uU8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:58174 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756105Ab1I3DFx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 23:05:53 -0400
+In-Reply-To: <CAP=VYLoycp1aUYGxQkb+U70CFRvu=nz6pdd63Zapn7a-+gXWVw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
+--Signature=_Fri__30_Sep_2011_13_05_50_+1000_U1BJD/rDZ6KB7uU8
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for the report.
-I will submit a patch for the issue soon.
-Since I used the net-next.git, the build failure didn't happen.
-This is because that the linux/device.h of the net-next.git has "#include <linux/module.h>".
-But, I was wrong to remove "#include <linux/module.h>" in the sh_eth.{c,h}.
+Hi Paul,
 
-Thanks,
-Yoshihiro Shimoda
+On Thu, 29 Sep 2011 22:40:59 -0400 Paul Gortmaker <paul.gortmaker@windriver=
+.com> wrote:
+>
+> On Thu, Sep 29, 2011 at 9:12 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> >
+> > After merging the final tree, today's linux-next build (avr32 allnoconf=
+ig)
+> > failed like this:
+> >
+> > arch/avr32/mach-at32ap/pio.c: In function 'pio_probe':
+> > arch/avr32/mach-at32ap/pio.c:401: error: 'THIS_MODULE' undeclared (firs=
+t use in this function)
+> >
+> > Probably revealed by the module.h split up. =C2=A0I guess it needs expo=
+rt.h
+> > included.
+>=20
+> Since export.h does not exist for most people, I'm OK adding it
+> in instances like this as a post-merge patch.
 
-2011/09/30 10:38, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, the next-20110929 build (various sh configs)
-> failed like this:
-> 
-> drivers/net/ethernet/renesas/sh_eth.c:601: error: 'THIS_MODULE' undeclared here (not in a function)
-> drivers/net/ethernet/renesas/sh_eth.c:1970: error: expected declaration specifiers or '...' before string constant
-> drivers/net/ethernet/renesas/sh_eth.c:1970: warning: data definition has no type or storage class
-> drivers/net/ethernet/renesas/sh_eth.c:1970: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
-> drivers/net/ethernet/renesas/sh_eth.c:1970: warning: function declaration isn't a prototype
-> drivers/net/ethernet/renesas/sh_eth.c:1971: error: expected declaration specifiers or '...' before string constant
-> drivers/net/ethernet/renesas/sh_eth.c:1971: warning: data definition has no type or storage class
-> drivers/net/ethernet/renesas/sh_eth.c:1971: warning: type defaults to 'int' in declaration of 'MODULE_DESCRIPTION'
-> drivers/net/ethernet/renesas/sh_eth.c:1971: warning: function declaration isn't a prototype
-> drivers/net/ethernet/renesas/sh_eth.c:1972: error: expected declaration specifiers or '...' before string constant
-> drivers/net/ethernet/renesas/sh_eth.c:1972: warning: data definition has no type or storage class
-> drivers/net/ethernet/renesas/sh_eth.c:1972: warning: type defaults to 'int' in declaration of 'MODULE_LICENSE'
-> drivers/net/ethernet/renesas/sh_eth.c:1972: warning: function declaration isn't a prototype
-> 
-> Presumbly revealed by the module.h split up.  This file needs to include module.h.
+I had another look at this and it turns out that export.h is already
+included, but only conditionally.  I guess the include just needs moving
+to the top of the file.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__30_Sep_2011_13_05_50_+1000_U1BJD/rDZ6KB7uU8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOhTIOAAoJEDMEi1NhKgbsxnMIAKJ8JZBbKnSP1V17dglTn+Vp
+otaoj9N42oEbVnXXl8ygV4oPbM48bjb3+S04oDiKt4Y/iabRYOqP+0xf8osuX9JJ
+qKpQeu6yi7S07IiO9OMhbftv6paUZw/R6g3V2Te7NpXwJrDVIfhoGnwPbnOb1D8P
+X3KgbAqhIBilFcTqA7fvul+F6TNNcYKnL2spKe5JV45iHXWdF1nsWSVugKUL/w0q
+Bo61FGy/W5GrDJ4MwS05MLWLXADW3eH6q7nWI0gnBZYOxH0sPomduWcUwJs6KlMx
+43harmNqrdHMo8Gj2Wb36hPuEH2o2kfXERmhKV8Egvx52+8LQZ38JoyCAbfbl/M=
+=QAe4
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__30_Sep_2011_13_05_50_+1000_U1BJD/rDZ6KB7uU8--
