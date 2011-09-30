@@ -1,96 +1,159 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] intel_sst: fix compile error
-Date: Fri, 30 Sep 2011 13:39:50 -0400
-Message-ID: <4E85FEE6.1060504@windriver.com>
-References: <20110930112337.02e0ba383ffd12b6d5d24f39@canb.auug.org.au>	 <1317350135-15055-1-git-send-email-guanqun.lu@intel.com> <1317350095.1573.1786.camel@vkoul-udesk3>
+Subject: Re: linux-next: build failure after merge of the moduleh tree
+Date: Fri, 30 Sep 2011 14:56:46 -0400
+Message-ID: <CAP=VYLq5-6RG9DnQkrAV98Mpn6iBwnrscsFP--PN6jkmYVYPCQ@mail.gmail.com>
+References: <20110930145042.4a7ee530848262294b297939@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1317350095.1573.1786.camel@vkoul-udesk3>
+In-Reply-To: <20110930145042.4a7ee530848262294b297939@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Lu Guanqun <guanqun.lu@intel.com>, gregkh@suse.de, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, alan@linux.intel.com, fengguang.wu@intel.com, devel@driverdev.osuosl.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
-On 11-09-29 10:34 PM, Vinod Koul wrote:
-> On Fri, 2011-09-30 at 10:35 +0800, Lu Guanqun wrote:
->> include module.h to fix the following compile errors:
->>
->> drivers/staging/intel_sst/intelmid.c:52: error: expected declaration specifiers or '...' before string constant
->> drivers/staging/intel_sst/intelmid.c:52: warning: data definition has no type or storage class
->> drivers/staging/intel_sst/intelmid.c:52: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
->> drivers/staging/intel_sst/intelmid.c:52: warning: function declaration isn't a prototype
->> drivers/staging/intel_sst/intelmid.c:53: error: expected declaration specifiers or '...' before string constant
->> drivers/staging/intel_sst/intelmid.c:53: warning: data definition has no type or storage class
->> drivers/staging/intel_sst/intelmid.c:53: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
->> drivers/staging/intel_sst/intelmid.c:53: warning: function declaration isn't a prototype
->> drivers/staging/intel_sst/intelmid.c:54: error: expected declaration specifiers or '...' before string constant
->> drivers/staging/intel_sst/intelmid.c:54: warning: data definition has no type or storage class
->> drivers/staging/intel_sst/intelmid.c:54: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
->> drivers/staging/intel_sst/intelmid.c:54: warning: function declaration isn't a prototype
->> drivers/staging/intel_sst/intelmid.c:55: error: expected declaration specifiers or '...' before string constant
->> drivers/staging/intel_sst/intelmid.c:55: warning: data definition has no type or storage class
->> drivers/staging/intel_sst/intelmid.c:55: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
->> drivers/staging/intel_sst/intelmid.c:55: warning: function declaration isn't a prototype
->> drivers/staging/intel_sst/intelmid.c:56: error: expected declaration specifiers or '...' before string constant
->> drivers/staging/intel_sst/intelmid.c:56: warning: data definition has no type or storage class
->> drivers/staging/intel_sst/intelmid.c:56: warning: type defaults to 'int' in declaration of 'MODULE_DESCRIPTION'
->> drivers/staging/intel_sst/intelmid.c:56: warning: function declaration isn't a prototype
->> drivers/staging/intel_sst/intelmid.c:57: error: expected declaration specifiers or '...' before string constant
->> drivers/staging/intel_sst/intelmid.c:57: warning: data definition has no type or storage class
->> drivers/staging/intel_sst/intelmid.c:57: warning: type defaults to 'int' in declaration of 'MODULE_LICENSE'
->> drivers/staging/intel_sst/intelmid.c:57: warning: function declaration isn't a prototype
->> drivers/staging/intel_sst/intelmid.c:58: error: expected declaration specifiers or '...' before string constant
->> drivers/staging/intel_sst/intelmid.c:58: warning: data definition has no type or storage class
->> drivers/staging/intel_sst/intelmid.c:58: warning: type defaults to 'int' in declaration of 'MODULE_SUPPORTED_DEVICE'
->> drivers/staging/intel_sst/intelmid.c:58: warning: function declaration isn't a prototype
->> drivers/staging/intel_sst/intelmid.c:64: error: expected ')' before 'int'
->> drivers/staging/intel_sst/intelmid.c:65: error: expected ')' before string constant
->> drivers/staging/intel_sst/intelmid.c:66: error: expected ')' before numeric constant
->> drivers/staging/intel_sst/intelmid.c:67: error: expected ')' before string constant
->> drivers/staging/intel_sst/intelmid.c:461: warning: data definition has no type or storage class
->> drivers/staging/intel_sst/intelmid.c:461: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
->> drivers/staging/intel_sst/intelmid.c:461: warning: parameter names (without types) in function declaration
->> drivers/staging/intel_sst/intelmid.c:475: warning: data definition has no type or storage class
->> drivers/staging/intel_sst/intelmid.c:475: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
->> drivers/staging/intel_sst/intelmid.c:475: warning: parameter names (without types) in function declaration
->> drivers/staging/intel_sst/intelmid.c: In function 'snd_intelmad_probe':
->> drivers/staging/intel_sst/intelmid.c:859: error: 'THIS_MODULE' undeclared (first use in this function)
->> drivers/staging/intel_sst/intelmid.c:859: error: (Each undeclared identifier is reported only once
->> drivers/staging/intel_sst/intelmid.c:859: error: for each function it appears in.)
->> drivers/staging/intel_sst/intelmid.c: At top level:
->> drivers/staging/intel_sst/intelmid.c:989: error: 'THIS_MODULE' undeclared here (not in a function)
+On Fri, Sep 30, 2011 at 12:50 AM, Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
+> Hi Paul,
+>
+> After merging the moduleh tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/pinctrl/core.c:80:1: warning: data definition has no type or =
+storage class [enabled by default]
+> drivers/pinctrl/core.c:80:1: warning: type defaults to 'int' in decla=
+ration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> drivers/pinctrl/core.c:80:1: warning: parameter names (without types)=
+ in function declaration [enabled by default]
+> drivers/pinctrl/core.c:86:1: warning: data definition has no type or =
+storage class [enabled by default]
+> drivers/pinctrl/core.c:86:1: warning: type defaults to 'int' in decla=
+ration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> drivers/pinctrl/core.c:86:1: warning: parameter names (without types)=
+ in function declaration [enabled by default]
+> drivers/pinctrl/core.c:152:1: warning: data definition has no type or=
+ storage class [enabled by default]
+> drivers/pinctrl/core.c:152:1: warning: type defaults to 'int' in decl=
+aration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> drivers/pinctrl/core.c:152:1: warning: parameter names (without types=
+) in function declaration [enabled by default]
+> drivers/pinctrl/core.c:590:1: warning: data definition has no type or=
+ storage class [enabled by default]
+> drivers/pinctrl/core.c:590:1: warning: type defaults to 'int' in decl=
+aration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> drivers/pinctrl/core.c:590:1: warning: parameter names (without types=
+) in function declaration [enabled by default]
+> drivers/pinctrl/core.c:614:1: warning: data definition has no type or=
+ storage class [enabled by default]
+> drivers/pinctrl/core.c:614:1: warning: type defaults to 'int' in decl=
+aration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> drivers/pinctrl/core.c:614:1: warning: parameter names (without types=
+) in function declaration [enabled by default]
+> drivers/pinctrl/pinmux.c: In function 'pin_request':
+> drivers/pinctrl/pinmux.c:143:2: error: implicit declaration of functi=
+on 'try_module_get' [-Werror=3Dimplicit-function-declaration]
+> drivers/pinctrl/pinmux.c: In function 'pin_free':
+> drivers/pinctrl/pinmux.c:206:2: error: implicit declaration of functi=
+on 'module_put' [-Werror=3Dimplicit-function-declaration]
+> drivers/pinctrl/pinmux.c: At top level:
+> drivers/pinctrl/pinmux.c:234:1: warning: data definition has no type =
+or storage class [enabled by default]
+> drivers/pinctrl/pinmux.c:234:1: warning: type defaults to 'int' in de=
+claration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> drivers/pinctrl/pinmux.c:234:1: warning: parameter names (without typ=
+es) in function declaration [enabled by default]
+> drivers/pinctrl/pinmux.c:257:1: warning: data definition has no type =
+or storage class [enabled by default]
+> drivers/pinctrl/pinmux.c:257:1: warning: type defaults to 'int' in de=
+claration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> drivers/pinctrl/pinmux.c:257:1: warning: parameter names (without typ=
+es) in function declaration [enabled by default]
+> drivers/pinctrl/pinmux.c:754:1: warning: data definition has no type =
+or storage class [enabled by default]
+> drivers/pinctrl/pinmux.c:754:1: warning: type defaults to 'int' in de=
+claration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> drivers/pinctrl/pinmux.c:754:1: warning: parameter names (without typ=
+es) in function declaration [enabled by default]
+> drivers/pinctrl/pinmux.c:779:1: warning: data definition has no type =
+or storage class [enabled by default]
+> drivers/pinctrl/pinmux.c:779:1: warning: type defaults to 'int' in de=
+claration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> drivers/pinctrl/pinmux.c:779:1: warning: parameter names (without typ=
+es) in function declaration [enabled by default]
+> drivers/pinctrl/pinmux.c:813:1: warning: data definition has no type =
+or storage class [enabled by default]
+> drivers/pinctrl/pinmux.c:813:1: warning: type defaults to 'int' in de=
+claration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> drivers/pinctrl/pinmux.c:813:1: warning: parameter names (without typ=
+es) in function declaration [enabled by default]
+> drivers/pinctrl/pinmux.c:837:1: warning: data definition has no type =
+or storage class [enabled by default]
+> drivers/pinctrl/pinmux.c:837:1: warning: type defaults to 'int' in de=
+claration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> drivers/pinctrl/pinmux.c:837:1: warning: parameter names (without typ=
+es) in function declaration [enabled by default]
+>
+>
+> Caused by commit 05f20c997d73 ("drivers: create a pin control subsyst=
+em
+> v8"), revelealed by the module.h split.
+>
+> I have applied the following patch for today (Linus, the
+> drivers/pinctrl/pinmux.c part of this can be applied to your tree).
 
-A minor nit, but we probably don't need all 70 lines of the
-compile failure in the long log.  It doesn't really add any
-value or information.  Just a comment that the file really
-needs module.h since it is a module source file would suffice.
+I've queued the remaining export.h part to core.c as a post-merge patch=
+ in the
+modsplit-post-merge queue.
 
-Thanks,
 Paul.
 
->>
->> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> Signed-off-by: Lu Guanqun <guanqun.lu@intel.com>
->> ---
->>  drivers/staging/intel_sst/intelmid.c |    1 +
->>  1 files changed, 1 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/staging/intel_sst/intelmid.c b/drivers/staging/intel_sst/intelmid.c
->> index 25656ad..492b660 100644
->> --- a/drivers/staging/intel_sst/intelmid.c
->> +++ b/drivers/staging/intel_sst/intelmid.c
->> @@ -27,6 +27,7 @@
->>  
->>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->>  
->> +#include <linux/module.h>
->>  #include <linux/slab.h>
->>  #include <linux/io.h>
->>  #include <linux/platform_device.h>
-> Thanks I was midway of creating this fix :)
-> 
-> Acked-by: Vinod Koul <vinod.koul@intel.com>
-> 
-> 
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 30 Sep 2011 14:39:04 +1000
+> Subject: [PATCH] pinctrl: EXPORT_SYMBOL needs export.h
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+> =A0drivers/pinctrl/core.c =A0 | =A0 =A01 +
+> =A0drivers/pinctrl/pinmux.c | =A0 =A01 +
+> =A02 files changed, 2 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+> index 4229628..f9263b2 100644
+> --- a/drivers/pinctrl/core.c
+> +++ b/drivers/pinctrl/core.c
+> @@ -12,6 +12,7 @@
+> =A0#define pr_fmt(fmt) "pinctrl core: " fmt
+>
+> =A0#include <linux/kernel.h>
+> +#include <linux/export.h>
+> =A0#include <linux/init.h>
+> =A0#include <linux/device.h>
+> =A0#include <linux/slab.h>
+> diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+> index 37803f0..6b28f2b 100644
+> --- a/drivers/pinctrl/pinmux.c
+> +++ b/drivers/pinctrl/pinmux.c
+> @@ -12,6 +12,7 @@
+> =A0#define pr_fmt(fmt) "pinmux core: " fmt
+>
+> =A0#include <linux/kernel.h>
+> +#include <linux/module.h>
+> =A0#include <linux/init.h>
+> =A0#include <linux/device.h>
+> =A0#include <linux/slab.h>
+> --
+> 1.7.6.3
+>
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next"=
+ in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
