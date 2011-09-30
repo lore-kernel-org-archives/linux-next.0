@@ -1,51 +1,138 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the final tree
-Date: Fri, 30 Sep 2011 11:12:41 +1000
-Message-ID: <20110930111241.829ed0ada733516b71ab120d@canb.auug.org.au>
+Date: Fri, 30 Sep 2011 11:23:37 +1000
+Message-ID: <20110930112337.02e0ba383ffd12b6d5d24f39@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__30_Sep_2011_11_12_41_+1000_OcJY2M1M7F0fPSxu"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__30_Sep_2011_11_23_37_+1000_mT8Qs1FfyfKFusI1"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:37063 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751961Ab1I3BXk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 21:23:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Lu Guanqun <guanqun.lu@intel.com>, Vinod Koul <vinod.koul@intel.com>, Wu Fengguang <fengguang.wu@intel.com>, devel@driverdev.osuosl.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
---Signature=_Fri__30_Sep_2011_11_12_41_+1000_OcJY2M1M7F0fPSxu
+--Signature=_Fri__30_Sep_2011_11_23_37_+1000_mT8Qs1FfyfKFusI1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (avr32 allnoconfig)
+After merging the final tree, today's linux-next build (i386 allmodconfig)
 failed like this:
 
-arch/avr32/mach-at32ap/pio.c: In function 'pio_probe':
-arch/avr32/mach-at32ap/pio.c:401: error: 'THIS_MODULE' undeclared (first us=
-e in this function)
+drivers/staging/intel_sst/intelmid.c:52: error: expected declaration specif=
+iers or '...' before string constant
+drivers/staging/intel_sst/intelmid.c:52: warning: data definition has no ty=
+pe or storage class
+drivers/staging/intel_sst/intelmid.c:52: warning: type defaults to 'int' in=
+ declaration of 'MODULE_AUTHOR'
+drivers/staging/intel_sst/intelmid.c:52: warning: function declaration isn'=
+t a prototype
+drivers/staging/intel_sst/intelmid.c:53: error: expected declaration specif=
+iers or '...' before string constant
+drivers/staging/intel_sst/intelmid.c:53: warning: data definition has no ty=
+pe or storage class
+drivers/staging/intel_sst/intelmid.c:53: warning: type defaults to 'int' in=
+ declaration of 'MODULE_AUTHOR'
+drivers/staging/intel_sst/intelmid.c:53: warning: function declaration isn'=
+t a prototype
+drivers/staging/intel_sst/intelmid.c:54: error: expected declaration specif=
+iers or '...' before string constant
+drivers/staging/intel_sst/intelmid.c:54: warning: data definition has no ty=
+pe or storage class
+drivers/staging/intel_sst/intelmid.c:54: warning: type defaults to 'int' in=
+ declaration of 'MODULE_AUTHOR'
+drivers/staging/intel_sst/intelmid.c:54: warning: function declaration isn'=
+t a prototype
+drivers/staging/intel_sst/intelmid.c:55: error: expected declaration specif=
+iers or '...' before string constant
+drivers/staging/intel_sst/intelmid.c:55: warning: data definition has no ty=
+pe or storage class
+drivers/staging/intel_sst/intelmid.c:55: warning: type defaults to 'int' in=
+ declaration of 'MODULE_AUTHOR'
+drivers/staging/intel_sst/intelmid.c:55: warning: function declaration isn'=
+t a prototype
+drivers/staging/intel_sst/intelmid.c:56: error: expected declaration specif=
+iers or '...' before string constant
+drivers/staging/intel_sst/intelmid.c:56: warning: data definition has no ty=
+pe or storage class
+drivers/staging/intel_sst/intelmid.c:56: warning: type defaults to 'int' in=
+ declaration of 'MODULE_DESCRIPTION'
+drivers/staging/intel_sst/intelmid.c:56: warning: function declaration isn'=
+t a prototype
+drivers/staging/intel_sst/intelmid.c:57: error: expected declaration specif=
+iers or '...' before string constant
+drivers/staging/intel_sst/intelmid.c:57: warning: data definition has no ty=
+pe or storage class
+drivers/staging/intel_sst/intelmid.c:57: warning: type defaults to 'int' in=
+ declaration of 'MODULE_LICENSE'
+drivers/staging/intel_sst/intelmid.c:57: warning: function declaration isn'=
+t a prototype
+drivers/staging/intel_sst/intelmid.c:58: error: expected declaration specif=
+iers or '...' before string constant
+drivers/staging/intel_sst/intelmid.c:58: warning: data definition has no ty=
+pe or storage class
+drivers/staging/intel_sst/intelmid.c:58: warning: type defaults to 'int' in=
+ declaration of 'MODULE_SUPPORTED_DEVICE'
+drivers/staging/intel_sst/intelmid.c:58: warning: function declaration isn'=
+t a prototype
+drivers/staging/intel_sst/intelmid.c:64: error: expected ')' before 'int'
+drivers/staging/intel_sst/intelmid.c:65: error: expected ')' before string =
+constant
+drivers/staging/intel_sst/intelmid.c:66: error: expected ')' before numeric=
+ constant
+drivers/staging/intel_sst/intelmid.c:67: error: expected ')' before string =
+constant
+drivers/staging/intel_sst/intelmid.c:461: warning: data definition has no t=
+ype or storage class
+drivers/staging/intel_sst/intelmid.c:461: warning: type defaults to 'int' i=
+n declaration of 'EXPORT_SYMBOL_GPL'
+drivers/staging/intel_sst/intelmid.c:461: warning: parameter names (without=
+ types) in function declaration
+drivers/staging/intel_sst/intelmid.c:475: warning: data definition has no t=
+ype or storage class
+drivers/staging/intel_sst/intelmid.c:475: warning: type defaults to 'int' i=
+n declaration of 'EXPORT_SYMBOL_GPL'
+drivers/staging/intel_sst/intelmid.c:475: warning: parameter names (without=
+ types) in function declaration
+drivers/staging/intel_sst/intelmid.c: In function 'snd_intelmad_probe':
+drivers/staging/intel_sst/intelmid.c:859: error: 'THIS_MODULE' undeclared (=
+first use in this function)
+drivers/staging/intel_sst/intelmid.c:859: error: (Each undeclared identifie=
+r is reported only once
+drivers/staging/intel_sst/intelmid.c:859: error: for each function it appea=
+rs in.)
+drivers/staging/intel_sst/intelmid.c: At top level:
+drivers/staging/intel_sst/intelmid.c:989: error: 'THIS_MODULE' undeclared h=
+ere (not in a function)
 
-Probably revealed by the module.h split up.  I guess it needs export.h
-included.
+Presumably revealed by the module.h split up.  This file needs to include
+mofdule.h.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__30_Sep_2011_11_12_41_+1000_OcJY2M1M7F0fPSxu
+--Signature=_Fri__30_Sep_2011_11_23_37_+1000_mT8Qs1FfyfKFusI1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOhReJAAoJEDMEi1NhKgbs7jsH/2vp0hXUod62kQIevU5LImBa
-acfnLCOt6rjkKvMWisSlUkRQ3JNLuzoot2tGDL2FDFCl1fbOPG7yGXydH99EAUqV
-Pfh+xBVGHIfzg1Lj2BJpGVxgBZ1pHTb7IStuI0PsUcfGnI/cMA4UOqn2Vt9jUjqc
-JhXtwUhq0LzME7wfMnsYHEuJ6JKV96lXNaUoRJ9bMtXfbIyLHGHrVjJF/9pBhWWQ
-5YMqhjVx7UuJrNXGiXv5NHjXaufKQe45gYBgo79YI1VPfsjb4syzPlNIUzybSFju
-lPreZa6oWkevDQSTc8485hdIDrSXCUmYIslI9ZnWHXwxlrqh4JwGd2M4kyiaKEg=
-=dGGG
+iQEcBAEBAgAGBQJOhRoZAAoJEDMEi1NhKgbsCloH/1LPmSSfds3ZEWiHIkqGEZ6q
+LMaPGNwVq8Cv641L/33cYQC/5s0Lr47n0ddgmVjDPxnsitiMgUUe9XGWiaU9CUQ/
+jnk8qXOBB/YoP7sb93ukDC0ZJvfWFYpcjWlq5vMaBj3avYk8iyovVHxDKSJ3WKOd
+gQWOV++LjU6KfBxCWpewrW9UN0qI23N0iT89AXoB25arP27OSpKs1alsPopu8MK/
+txEHCuA9+l2KAlcHdIKvgBkxf0wJcvBKqQEhAaf+SQ1hd5Q4I04yrLw2H9h37Ez7
+A1brycyroh9XWwvv7YEx8VPboVMzIRMyi8iJr8LxzgGa2AS3fUEUysFKKuuGqBM=
+=kE+I
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__30_Sep_2011_11_12_41_+1000_OcJY2M1M7F0fPSxu--
+--Signature=_Fri__30_Sep_2011_11_23_37_+1000_mT8Qs1FfyfKFusI1--
