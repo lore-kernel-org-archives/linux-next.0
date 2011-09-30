@@ -1,50 +1,37 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Fri, 30 Sep 2011 09:57:12 +0200
-Message-ID: <20110930075712.GA2412@osiris.boeblingen.de.ibm.com>
-References: <20110930110514.eadb199f27c5418b28cab6c9@canb.auug.org.au>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH -next] x86 mrst: fix build error when X86_MRST is not
+ enabled
+Date: Fri, 30 Sep 2011 10:04:04 +0100
+Message-ID: <20110930100404.1a83ce65@lxorguk.ukuu.org.uk>
+References: <20110929165730.661cf28c9bb27b8a85432cd2@canb.auug.org.au>
+	<4E84D684.107@xenotime.net>
+	<20110929235708.1bbd1166@lxorguk.ukuu.org.uk>
+	<4E84FC4D.3080506@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate1.uk.ibm.com ([194.196.100.161]:48773 "EHLO
-	mtagate1.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755538Ab1I3H5R (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Sep 2011 03:57:17 -0400
-Content-Disposition: inline
-In-Reply-To: <20110930110514.eadb199f27c5418b28cab6c9@canb.auug.org.au>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:32876 "EHLO
+	www.etchedpixels.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752001Ab1I3JGI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Sep 2011 05:06:08 -0400
+In-Reply-To: <4E84FC4D.3080506@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, Sep 30, 2011 at 11:05:14AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, the next-20110929 build (s390x allmodconfig)
-> failed like this:
-> 
-> drivers/s390/char/zcore.c:393: error: 'THIS_MODULE' undeclared here (not in a function)
-> drivers/s390/char/zcore.c:741: error: expected declaration specifiers or '...' before string constant
-> drivers/s390/char/zcore.c:741: warning: data definition has no type or storage class
-> drivers/s390/char/zcore.c:741: warning: type defaults to 'int' in declaration of 'MODULE_AUTHOR'
-> drivers/s390/char/zcore.c:741: warning: function declaration isn't a prototype
-> drivers/s390/char/zcore.c:742: error: expected declaration specifiers or '...' before string constant
-> drivers/s390/char/zcore.c:742: warning: data definition has no type or storage class
-> drivers/s390/char/zcore.c:742: warning: type defaults to 'int' in declaration of 'MODULE_DESCRIPTION'
-> drivers/s390/char/zcore.c:742: warning: function declaration isn't a prototype
-> drivers/s390/char/zcore.c:743: error: expected declaration specifiers or '...' before string constant
-> drivers/s390/char/zcore.c:743: warning: data definition has no type or storage class
-> drivers/s390/char/zcore.c:743: warning: type defaults to 'int' in declaration of 'MODULE_LICENSE'
-> drivers/s390/char/zcore.c:743: warning: function declaration isn't a prototype
-> 
-> Probably revealed by the module.h split up.
-> 
-> This file needs to include module.h
+> arch/x86/platform/mrst/mrst.c -- where __mrst_cpu_chip lives --
 
-Hmm.. wondering why I haven't seen that during my build tests a couple of
-days ago. Anyway, thanks for letting us know!
-I added a patch to our local tree. As soon as Martin pushes it out it
-should be fixed.
+In your tree yes
 
-Thanks,
-Heiko
+> is only built when CONFIG_X86_MRST is enabled.  You make it sound like
+> __mrst_cpu_chip needs to live any time that CONFIG_X86_INTEL_MID
+> is enabled, which sounds reasonable to me.
+> 
+> caveat:  given the current linux-next merge trees (as you mentioned).
+> 
+> Does anyone care?  If so, please help fix this muck.
+
+It's already sorted, you are just seeing an out of order arrival of
+patches to trees. I guess once kernel.org is back it'll all sort
