@@ -1,138 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the final tree
-Date: Fri, 30 Sep 2011 11:23:37 +1000
-Message-ID: <20110930112337.02e0ba383ffd12b6d5d24f39@canb.auug.org.au>
+Date: Fri, 30 Sep 2011 11:38:11 +1000
+Message-ID: <20110930113811.c2fa2d532dfa799a49c146f4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__30_Sep_2011_11_23_37_+1000_mT8Qs1FfyfKFusI1"
+ boundary="Signature=_Fri__30_Sep_2011_11_38_11_+1000_UsyJvIcijIPvUi6P"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:37063 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:47958 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751961Ab1I3BXk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 21:23:40 -0400
+	with ESMTP id S1751422Ab1I3BiP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2011 21:38:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Lu Guanqun <guanqun.lu@intel.com>, Vinod Koul <vinod.koul@intel.com>, Wu Fengguang <fengguang.wu@intel.com>, devel@driverdev.osuosl.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mundt <lethal@linux-sh.org>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 
---Signature=_Fri__30_Sep_2011_11_23_37_+1000_mT8Qs1FfyfKFusI1
+--Signature=_Fri__30_Sep_2011_11_38_11_+1000_UsyJvIcijIPvUi6P
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (i386 allmodconfig)
+After merging the final tree, the next-20110929 build (various sh configs)
 failed like this:
 
-drivers/staging/intel_sst/intelmid.c:52: error: expected declaration specif=
-iers or '...' before string constant
-drivers/staging/intel_sst/intelmid.c:52: warning: data definition has no ty=
-pe or storage class
-drivers/staging/intel_sst/intelmid.c:52: warning: type defaults to 'int' in=
- declaration of 'MODULE_AUTHOR'
-drivers/staging/intel_sst/intelmid.c:52: warning: function declaration isn'=
-t a prototype
-drivers/staging/intel_sst/intelmid.c:53: error: expected declaration specif=
-iers or '...' before string constant
-drivers/staging/intel_sst/intelmid.c:53: warning: data definition has no ty=
-pe or storage class
-drivers/staging/intel_sst/intelmid.c:53: warning: type defaults to 'int' in=
- declaration of 'MODULE_AUTHOR'
-drivers/staging/intel_sst/intelmid.c:53: warning: function declaration isn'=
-t a prototype
-drivers/staging/intel_sst/intelmid.c:54: error: expected declaration specif=
-iers or '...' before string constant
-drivers/staging/intel_sst/intelmid.c:54: warning: data definition has no ty=
-pe or storage class
-drivers/staging/intel_sst/intelmid.c:54: warning: type defaults to 'int' in=
- declaration of 'MODULE_AUTHOR'
-drivers/staging/intel_sst/intelmid.c:54: warning: function declaration isn'=
-t a prototype
-drivers/staging/intel_sst/intelmid.c:55: error: expected declaration specif=
-iers or '...' before string constant
-drivers/staging/intel_sst/intelmid.c:55: warning: data definition has no ty=
-pe or storage class
-drivers/staging/intel_sst/intelmid.c:55: warning: type defaults to 'int' in=
- declaration of 'MODULE_AUTHOR'
-drivers/staging/intel_sst/intelmid.c:55: warning: function declaration isn'=
-t a prototype
-drivers/staging/intel_sst/intelmid.c:56: error: expected declaration specif=
-iers or '...' before string constant
-drivers/staging/intel_sst/intelmid.c:56: warning: data definition has no ty=
-pe or storage class
-drivers/staging/intel_sst/intelmid.c:56: warning: type defaults to 'int' in=
- declaration of 'MODULE_DESCRIPTION'
-drivers/staging/intel_sst/intelmid.c:56: warning: function declaration isn'=
-t a prototype
-drivers/staging/intel_sst/intelmid.c:57: error: expected declaration specif=
-iers or '...' before string constant
-drivers/staging/intel_sst/intelmid.c:57: warning: data definition has no ty=
-pe or storage class
-drivers/staging/intel_sst/intelmid.c:57: warning: type defaults to 'int' in=
- declaration of 'MODULE_LICENSE'
-drivers/staging/intel_sst/intelmid.c:57: warning: function declaration isn'=
-t a prototype
-drivers/staging/intel_sst/intelmid.c:58: error: expected declaration specif=
-iers or '...' before string constant
-drivers/staging/intel_sst/intelmid.c:58: warning: data definition has no ty=
-pe or storage class
-drivers/staging/intel_sst/intelmid.c:58: warning: type defaults to 'int' in=
- declaration of 'MODULE_SUPPORTED_DEVICE'
-drivers/staging/intel_sst/intelmid.c:58: warning: function declaration isn'=
-t a prototype
-drivers/staging/intel_sst/intelmid.c:64: error: expected ')' before 'int'
-drivers/staging/intel_sst/intelmid.c:65: error: expected ')' before string =
-constant
-drivers/staging/intel_sst/intelmid.c:66: error: expected ')' before numeric=
- constant
-drivers/staging/intel_sst/intelmid.c:67: error: expected ')' before string =
-constant
-drivers/staging/intel_sst/intelmid.c:461: warning: data definition has no t=
-ype or storage class
-drivers/staging/intel_sst/intelmid.c:461: warning: type defaults to 'int' i=
-n declaration of 'EXPORT_SYMBOL_GPL'
-drivers/staging/intel_sst/intelmid.c:461: warning: parameter names (without=
- types) in function declaration
-drivers/staging/intel_sst/intelmid.c:475: warning: data definition has no t=
-ype or storage class
-drivers/staging/intel_sst/intelmid.c:475: warning: type defaults to 'int' i=
-n declaration of 'EXPORT_SYMBOL_GPL'
-drivers/staging/intel_sst/intelmid.c:475: warning: parameter names (without=
- types) in function declaration
-drivers/staging/intel_sst/intelmid.c: In function 'snd_intelmad_probe':
-drivers/staging/intel_sst/intelmid.c:859: error: 'THIS_MODULE' undeclared (=
-first use in this function)
-drivers/staging/intel_sst/intelmid.c:859: error: (Each undeclared identifie=
-r is reported only once
-drivers/staging/intel_sst/intelmid.c:859: error: for each function it appea=
-rs in.)
-drivers/staging/intel_sst/intelmid.c: At top level:
-drivers/staging/intel_sst/intelmid.c:989: error: 'THIS_MODULE' undeclared h=
-ere (not in a function)
+drivers/net/ethernet/renesas/sh_eth.c:601: error: 'THIS_MODULE' undeclared =
+here (not in a function)
+drivers/net/ethernet/renesas/sh_eth.c:1970: error: expected declaration spe=
+cifiers or '...' before string constant
+drivers/net/ethernet/renesas/sh_eth.c:1970: warning: data definition has no=
+ type or storage class
+drivers/net/ethernet/renesas/sh_eth.c:1970: warning: type defaults to 'int'=
+ in declaration of 'MODULE_AUTHOR'
+drivers/net/ethernet/renesas/sh_eth.c:1970: warning: function declaration i=
+sn't a prototype
+drivers/net/ethernet/renesas/sh_eth.c:1971: error: expected declaration spe=
+cifiers or '...' before string constant
+drivers/net/ethernet/renesas/sh_eth.c:1971: warning: data definition has no=
+ type or storage class
+drivers/net/ethernet/renesas/sh_eth.c:1971: warning: type defaults to 'int'=
+ in declaration of 'MODULE_DESCRIPTION'
+drivers/net/ethernet/renesas/sh_eth.c:1971: warning: function declaration i=
+sn't a prototype
+drivers/net/ethernet/renesas/sh_eth.c:1972: error: expected declaration spe=
+cifiers or '...' before string constant
+drivers/net/ethernet/renesas/sh_eth.c:1972: warning: data definition has no=
+ type or storage class
+drivers/net/ethernet/renesas/sh_eth.c:1972: warning: type defaults to 'int'=
+ in declaration of 'MODULE_LICENSE'
+drivers/net/ethernet/renesas/sh_eth.c:1972: warning: function declaration i=
+sn't a prototype
 
-Presumably revealed by the module.h split up.  This file needs to include
-mofdule.h.
-
+Presumbly revealed by the module.h split up.  This file needs to include mo=
+dule.h.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__30_Sep_2011_11_23_37_+1000_mT8Qs1FfyfKFusI1
+--Signature=_Fri__30_Sep_2011_11_38_11_+1000_UsyJvIcijIPvUi6P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOhRoZAAoJEDMEi1NhKgbsCloH/1LPmSSfds3ZEWiHIkqGEZ6q
-LMaPGNwVq8Cv641L/33cYQC/5s0Lr47n0ddgmVjDPxnsitiMgUUe9XGWiaU9CUQ/
-jnk8qXOBB/YoP7sb93ukDC0ZJvfWFYpcjWlq5vMaBj3avYk8iyovVHxDKSJ3WKOd
-gQWOV++LjU6KfBxCWpewrW9UN0qI23N0iT89AXoB25arP27OSpKs1alsPopu8MK/
-txEHCuA9+l2KAlcHdIKvgBkxf0wJcvBKqQEhAaf+SQ1hd5Q4I04yrLw2H9h37Ez7
-A1brycyroh9XWwvv7YEx8VPboVMzIRMyi8iJr8LxzgGa2AS3fUEUysFKKuuGqBM=
-=kE+I
+iQEcBAEBAgAGBQJOhR2DAAoJEDMEi1NhKgbsY0IH/jPjbwV1cuPkvgvx2H5wtmV+
+BS3F3QzQD50AVS6Adit7AtKzPQD/bpqRZ7+QMB/0rDN9iMcld3RCBu6vbRnUApcu
+vDOkKEbt0LGrTIxMAfGF5NXgW90uhAn25rXorVkwyxv3DcVue8D/ZTYBg/1B0pUB
+6Y9l332vht17a5T+c2SihqVxk29D+XjHPIKfeuIu7pRUukmi4VaIRu58QOFv1uel
+ko4rEasLzWgx/QXu1BQ5t7I7CZRAy7ekNxyKAUXvVAmTitG2MPKF6d/DUzimWTol
+FqrLEnbZedf2jS32h43p0k7CQXJlpvVN7VG4EipwFKUJjox+abN9ujBzWz7LKxg=
+=ry9l
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__30_Sep_2011_11_23_37_+1000_mT8Qs1FfyfKFusI1--
+--Signature=_Fri__30_Sep_2011_11_38_11_+1000_UsyJvIcijIPvUi6P--
