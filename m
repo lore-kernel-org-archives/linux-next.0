@@ -1,48 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no tree for 2011-10-03
-Date: Mon, 3 Oct 2011 18:13:42 +1100
-Message-ID: <20111003181342.122f4c03fb92c3759d73d6fc@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: movement of my usb / staging / tty / driver-core trees
+Date: Mon, 3 Oct 2011 15:02:19 -0700
+Message-ID: <20111003220219.GA9913@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__3_Oct_2011_18_13_42_+1100_sC3WnwPy4Rn=J6Qf"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:42778 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750877Ab1JCHN5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Oct 2011 03:13:57 -0400
+Received: from out2.smtp.messagingengine.com ([66.111.4.26]:53132 "EHLO
+	out2.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932667Ab1JCWCe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Oct 2011 18:02:34 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 
---Signature=_Mon__3_Oct_2011_18_13_42_+1100_sC3WnwPy4Rn=J6Qf
-Content-Type: text/plain; charset=US-ASCII
+
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Stephen,
 
-There will be no tree today due to a public holiday
+Now that git.kernel.org is back up, I've moved my linux-next git trees
+to a different name, dropping the "2.6" suffix on them.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+So, they are now at:
 
---Signature=_Mon__3_Oct_2011_18_13_42_+1100_sC3WnwPy4Rn=J6Qf
+ USB:		git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+ staging:	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+ driver-core:	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+ TTY:		git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
+
+All of the branch names are the same as before, and they are now all up
+to date with the local copy of my trees that I kept while kernel.org was
+down.
+
+If you have any problems with them, please let me know.  I'll be
+updating the MAINTAINERS file for 3.2 to update the locations to keep
+everything in sync.
+
+thanks,
+
+greg k-h
+
+--yrj/dFKFPuw6o+aM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Version: GnuPG v2.0.18 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOiWCmAAoJEDMEi1NhKgbsFscH/AlRq67nJKg6O/lZAsG4b8nf
-ZZAv2TY6avx2uiQVP7W+BuU2Bah9A8sZgw9xELe3EiIRkhHAgHFbwb8qM1GdTv98
-2SctHcQbHAvKtJATSZnJRN9qvd2p5xe97ZG7yZB6LaW/B+iHXTyLDQqhUBdkU+ew
-5FkP6GQcdnd0h5LunS6PJL2dSH0PYllUTYfHgjQ9qKA39237i36u+clL1fMVD8kc
-2mxz8CFHZGaFpTt8r4NQnB0jFKaw8N+qOhZ12tzfI9wzhV09wcKzSr9dM3bRIqcA
-4W4NlItF6CN2485W393zBvkRtbVZa1Hz1RefZubcuKWaYXTMdOjv0XRqUR+WBQc=
-=vD3t
+iEYEARECAAYFAk6KMOsACgkQMUfUDdst+ylhcQCcCoqtNHfZqXV1hAcRRrC7XZ1L
+UZgAn1ptZccr2xpIMOpkvQgRc+WD1m7F
+=+ZTC
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__3_Oct_2011_18_13_42_+1100_sC3WnwPy4Rn=J6Qf--
+--yrj/dFKFPuw6o+aM--
