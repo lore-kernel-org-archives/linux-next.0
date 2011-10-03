@@ -1,45 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: build failure after merge of the moduleh tree
-Date: Mon, 3 Oct 2011 08:55:41 +0200
-Message-ID: <CACRpkdYyPWkVJpfxvF95PtjC7cv13N-8YtNs_6vfvhTD8fEMvQ@mail.gmail.com>
-References: <20110930145042.4a7ee530848262294b297939@canb.auug.org.au>
-	<CACRpkdYkVOxHhyV1yap20YupFdw_ux39DqMK6wLb+LR+EHRusg@mail.gmail.com>
-	<20110930231906.7859fd1df20e5609301b3646@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no tree for 2011-10-03
+Date: Mon, 3 Oct 2011 18:13:42 +1100
+Message-ID: <20111003181342.122f4c03fb92c3759d73d6fc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__3_Oct_2011_18_13_42_+1100_sC3WnwPy4Rn=J6Qf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:58680 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750827Ab1JCGzm convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Oct 2011 02:55:42 -0400
-In-Reply-To: <20110930231906.7859fd1df20e5609301b3646@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:42778 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750877Ab1JCHN5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Oct 2011 03:13:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Sep 30, 2011 at 3:19 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> On Fri, 30 Sep 2011 14:52:28 +0200 Linus Walleij <linus.walleij@linar=
-o.org> wrote:
->>
->> On Fri, Sep 30, 2011 at 6:50 AM, Stephen Rothwell <sfr@canb.auug.org=
-=2Eau> wrote:
->>
->> > I have applied the following patch for today (Linus, the
->> > drivers/pinctrl/pinmux.c part of this can be applied to your tree)=
-=2E
->>
->> Thanks a lot Stephen, applied and pushed this to the pinctrl tree!
->
-> You can't apply the whole patch since export.h doe not exist outside =
-the
-> moduleh tree in linux-next (did you try to build it?). =A0As I said a=
-bove
-> only the drivers/pinctrl/pinmux.c part is applicable to your tree.
+--Signature=_Mon__3_Oct_2011_18_13_42_+1100_sC3WnwPy4Rn=J6Qf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK right, I fixed it up, sorry...
+Hi all,
 
-Thanks,
-Linus Walleij
+There will be no tree today due to a public holiday
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__3_Oct_2011_18_13_42_+1100_sC3WnwPy4Rn=J6Qf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOiWCmAAoJEDMEi1NhKgbsFscH/AlRq67nJKg6O/lZAsG4b8nf
+ZZAv2TY6avx2uiQVP7W+BuU2Bah9A8sZgw9xELe3EiIRkhHAgHFbwb8qM1GdTv98
+2SctHcQbHAvKtJATSZnJRN9qvd2p5xe97ZG7yZB6LaW/B+iHXTyLDQqhUBdkU+ew
+5FkP6GQcdnd0h5LunS6PJL2dSH0PYllUTYfHgjQ9qKA39237i36u+clL1fMVD8kc
+2mxz8CFHZGaFpTt8r4NQnB0jFKaw8N+qOhZ12tzfI9wzhV09wcKzSr9dM3bRIqcA
+4W4NlItF6CN2485W393zBvkRtbVZa1Hz1RefZubcuKWaYXTMdOjv0XRqUR+WBQc=
+=vD3t
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__3_Oct_2011_18_13_42_+1100_sC3WnwPy4Rn=J6Qf--
