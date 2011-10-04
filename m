@@ -1,58 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the net and
- wireless trees
-Date: Tue, 4 Oct 2011 17:14:49 +1100
-Message-ID: <20111004171449.de5c45332510a453cc3ff879@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the wireless tree
+Date: Tue, 4 Oct 2011 17:46:42 +1100
+Message-ID: <20111004174642.64d42f2bdd6c3b5fd316644a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__4_Oct_2011_17_14_49_+1100_OOHQJAq5upA9nka+"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eliad Peller <eliad@wizery.com>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__4_Oct_2011_17_46_42_+1100_3_fgbSe_SSUwhtm0"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:34532 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751261Ab1JDGqy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 02:46:54 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kalle Valo <kvalo@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>
 
---Signature=_Tue__4_Oct_2011_17_14_49_+1100_OOHQJAq5upA9nka+
+--Signature=_Tue__4_Oct_2011_17_46_42_+1100_3_fgbSe_SSUwhtm0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Paul,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/brcm80211/brcmsmac/mac80211_if.c between commit
-37a41b4affa3 ("mac80211: add ieee80211_vif param to tsf functions") from
-the net tree, commit 8a3a3c85e44d ("mac80211: pass vif param to conf_tx()
-callback") from the wireless tree and several commits from the staging
-tree.
+Today's linux-next merge of the moduleh tree got a conflict in
+drivers/net/wireless/ath/ath6kl/init.c between commit c6efe578fc5d
+("wireless/ath6kl: use of module_param requires the inclusion of
+moduleparam.h") from the wireless tree and the same patch as a merge fix
+for the moduleh tree.
 
-I fixed it up (just removed the forward declarions that were changed by
-the former commits) and can carry the fix as necessary.
+I dropped the moduleh tree merge fix.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__4_Oct_2011_17_14_49_+1100_OOHQJAq5upA9nka+
+--Signature=_Tue__4_Oct_2011_17_46_42_+1100_3_fgbSe_SSUwhtm0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOiqRZAAoJEECxmPOUX5FErKoP/AmwS5HyNOfvBp/EEXOv9dye
-QCfuTa8O3zOyCbVruJ5RLPQeOJt+EU/oiHoBiTR7YTIDJjRC649laW9zRSwcOd7h
-TX2I1pfaLLRChpOoSbqUiTo8UalP6DPRKEpDlmHhcHTfq1/mASwqNE9ynVOcJVqm
-IjD4gefpSR9TUp2y1EzRaeHh4w614zHCmjsEXCXxCC9lStfpncVAdk8NVOhDVhSP
-uU44vgkE9BtwdqOZR7H4JjNaCXLQlYmsPp5LO+c6P5ElupOa+W1D2UWe0HCL/93T
-/BLQF8TVMzCzekVKUhqls+5sWaFLpGYLrs4LByl4QYK4zNxZgM587/Xo/zXkQSni
-3YdaBq2veYQIYe0mavEHMCMzKofAYHo7PPiZYy5y3/6boULu9DECoN3xSXH0/y+n
-JEqoTKYZ9MWlGXC6GEbfgJBf+4+jlZBMctC4QOOhfIjqEjksrDIo9K6cb9XG+xEr
-vbWckn2jXi01x7LSvuE5Mx1xqLKj0pU5q1tKGwJhyGslyH9NpvUESye4aiQwmJdH
-TkciZBB5aAjkd5/juy7Sd9elQWg4tTElBA36vQOWtvoC7JPksiW9DcvpHX4RZ+9q
-XCtVvWcKAk+s1rjKMKf8aDfqVj7p5oxZXV4P3LsrEJr/UXbO2/wZLIBmb1CwH4hT
-+A1eFsop0Xhk7kXuw2Mm
-=ThXa
+iQIcBAEBCAAGBQJOiqvSAAoJEECxmPOUX5FEqOYP/RLYmsTPD3Vmm990xfJIRjhx
+l4qeAY8xHKgmN++uDJPt05E5elKgRYMRRvqUERplqowh47UXKM/eE1fLEjA9hxPz
+IauJsRUAgMdnZv+Qtafim30o2JReUF8U9uZGPH3hqU37kZQ8fwG9eU2I6FzcBelH
+XTukgFezHZ+HQrMqQphQOfxOqic/uF7TOUqunaOEr/jGxnILlNPTgDMW+zJWfGTd
+ZsL4z1IqN/mrRF/+cVdWobTKp+tcK9GcP4VQVRNn3q42qRHfKJpQJguyTr4asdjS
+21xxnovoGCvL0u+XNCCbGG+ep2BrH756wpd+/aKI43z0wvDk6jwmq3TiyqRL6aMu
+xQGyktIXXY1Rvv3yyL1FYqTkJpOKeKEWJPsydv1bW5XKmk0vPOcwyZKetprZMwxO
+twWqyiXnKyJmduDBN9yZBDGJBzqVBOPPnAHeNBgMGHeps7HLp8Y2nrlHet+CxqRz
+chEjRfQbQkrMfiqRxxrL4zuMdLsNcDXrMabtGAji8Gk9kxkm/gHZvdpAoe98imug
+Y10jeiRD4Eb6NV8Pre7GlP5BdJcFZ9yPdjnrTTCyj7/oMqOFA93vuEcb7ZK43XLp
+53iuZuE+ocZxLxEsSBd+zeBDa7VWUYX3MTGcO4oxPWRjo8Uwv0Liy/GOARHqjrod
+M1myJ0bt/ufZcCY1YANe
+=fn1U
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__4_Oct_2011_17_14_49_+1100_OOHQJAq5upA9nka+--
+--Signature=_Tue__4_Oct_2011_17_46_42_+1100_3_fgbSe_SSUwhtm0--
