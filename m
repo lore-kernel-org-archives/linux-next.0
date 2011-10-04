@@ -1,55 +1,51 @@
-From: Kalle Valo <kvalo@qca.qualcomm.com>
-Subject: Re: linux-next: build failure after merge of the moduleh tree
-Date: Tue, 4 Oct 2011 10:35:29 +0300
-Message-ID: <4E8AB741.9030707@qca.qualcomm.com>
-References: <20111004180333.44f741dc08063a918c9b581f@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: build failure after merge of the arm-soc tree
+Date: Tue, 4 Oct 2011 09:40:12 +0200
+Message-ID: <201110040940.12876.arnd@arndb.de>
+References: <20111004112623.aa04e959d29cb19af8053739@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wolverine02.qualcomm.com ([199.106.114.251]:7356 "EHLO
-	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754071Ab1JDHfh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 03:35:37 -0400
-In-Reply-To: <20111004180333.44f741dc08063a918c9b581f@canb.auug.org.au>
+Received: from moutng.kundenserver.de ([212.227.17.8]:53106 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754574Ab1JDHk1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 03:40:27 -0400
+In-Reply-To: <20111004112623.aa04e959d29cb19af8053739@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless <linux-wireless@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>, stable@kernel.org
 
-On 10/04/2011 10:03 AM, Stephen Rothwell wrote:
-> After merging the moduleh tree, today's linux-next build (x86_64
+On Tuesday 04 October 2011, Stephen Rothwell wrote:
+> After merging the arm-soc tree, today's linux-next build (x86_64
 > allmodconfig) failed like this:
 > 
-> drivers/net/wireless/ath/ath6kl/debug.c:237:11: error: 'THIS_MODULE' undeclared here (not in a function)
+> ERROR: "clk_enable" [drivers/misc/atmel_pwm.ko] undefined!
+> ERROR: "clk_disable" [drivers/misc/atmel_pwm.ko] undefined!
+> ERROR: "clk_put" [drivers/misc/atmel_pwm.ko] undefined!
+> ERROR: "clk_get_rate" [drivers/misc/atmel_pwm.ko] undefined!
+> ERROR: "clk_get" [drivers/misc/atmel_pwm.ko] undefined!
 > 
-> Caused by commit 9a7308341b71 ("ath6kl: silence "invalid rate" warning")
-> from the wireless tree interacting with the module.h split.
+> Caused by commit 9dccc010c816 ("ARM: at91: remove dependency for Atmel
+> PWM driver selector in Kconfig").
 > 
-> I added this patch:
+> I have used the arm-soc tree from next-20110930 for today.
 
-John&Paul, how do we handle this patch?
+Ah, thanks for tracking this down. I actually noticed the same
+problem on an ARM build but did not realize it was from one of
+the patches I had jut put in there myself.
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 4 Oct 2011 18:01:03 +1100
-> Subject: [PATCH] ath6kl: THIS_MODULES needs export.h
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/net/wireless/ath/ath6kl/debug.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath6kl/debug.c b/drivers/net/wireless/ath/ath6kl/debug.c
-> index ba3f23d..7879b53 100644
-> --- a/drivers/net/wireless/ath/ath6kl/debug.c
-> +++ b/drivers/net/wireless/ath/ath6kl/debug.c
-> @@ -19,6 +19,7 @@
->  #include <linux/circ_buf.h>
->  #include <linux/fs.h>
->  #include <linux/vmalloc.h>
-> +#include <linux/export.h>
->  
->  #include "debug.h"
->  #include "target.h"
+I'm really glad I didn't send this to Linus cc:stable yet then.
+Nicolas, in my randconfig branch, I've fixed this by adding
 
-Kalle
+	depends on HAVE_CLK
+
+which I think is the right solution. I'll replace your patch
+with one that does this if you don't mind.
+
+I'd also remove the stable tag for this patch, because it can
+have unintended side-effects on other architectures.
+
+	Arnd
