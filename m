@@ -1,68 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Tue, 4 Oct 2011 18:44:19 +1100
-Message-ID: <20111004184419.80cb1cc4cb47e6bce83bff2d@canb.auug.org.au>
-References: <20110930153255.6e3a0d6dc7758b7fb5561fc6@canb.auug.org.au>
-	<20110929230226.5fed4095.akpm00@gmail.com>
+Subject: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Tue, 4 Oct 2011 19:05:42 +1100
+Message-ID: <20111004190542.3ae8a2d575b936520ad36c52@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__4_Oct_2011_18_44_19_+1100_zMMuwhx7YIvjppg1"
+ boundary="Signature=_Tue__4_Oct_2011_19_05_42_+1100_WkCJQHv.R8ksb6Ol"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:53848 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:49718 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755165Ab1JDHob (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 03:44:31 -0400
-In-Reply-To: <20110929230226.5fed4095.akpm00@gmail.com>
+	with ESMTP id S1751261Ab1JDIGG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 04:06:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm00@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@cam.ac.uk>
 
---Signature=_Tue__4_Oct_2011_18_44_19_+1100_zMMuwhx7YIvjppg1
+--Signature=_Tue__4_Oct_2011_19_05_42_+1100_WkCJQHv.R8ksb6Ol
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-On Thu, 29 Sep 2011 23:02:26 -0700 Andrew Morton <akpm00@gmail.com> wrote:
->
-> > Caused by commit 15e19cbbbf2a ("x86: implement strict user copy checks
-> > for x86_64") when built with gcc 4.6.0.  This does not fail when built
-> > with 4.5.2.
->=20
-> That patch is a PITA.  I've been waiting for some saviour to come along
-> and fix all the warnings it emits before proceeding with it.  As I am
-> apparently saviourless I shall hide that patch from the mm->linux-next
-> drop, so only I get to suffer its effects.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-OK, I have dropped that commit from linux-next.
+drivers/staging/iio/industrialio-buffer.c: In function 'iio_show_fixed_type=
+':
+drivers/staging/iio/industrialio-buffer.c:108:7: error: '__LITTLE_ENDIAN' u=
+ndeclared (first use in this function)
 
+Caused by commit 8310b86c3cd2 ("staging:iio:scan element types: introduce
+endian description to the data format") from the staging tree.  Missing
+include file ...
+
+I haven't bothered fixing this for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__4_Oct_2011_18_44_19_+1100_zMMuwhx7YIvjppg1
+--Signature=_Tue__4_Oct_2011_19_05_42_+1100_WkCJQHv.R8ksb6Ol
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOirlTAAoJEECxmPOUX5FELkIP/14Z3Vr/HvL3LtNnwdf1rW7g
-sbZPWlJAw7yYgLfELTIbuZCHguqfJ02WESGyYHc+RXRFysCf0VTJ98VXCaufiSNu
-Oea3nH/+aq6QubLHIRmO4Q90UD0b3aTy/bUOVJF5ynRahPkKHiDieSolbY69/AN0
-70+6l9yV3dsVJDkH0PpbLENCnl0pRgi3suBkcpQv5iyXSGnJKHBH5Ku6KdjH6cXy
-UGZvjMrhnBAcx4I63ONpfcfbAXFow+PR84e/gtXK+Zy0Rx72CRX/nrQgmJTfPG1k
-F6VNbWBteqd8EbzxTFCIDTgvdjblfDf+eBgNPDijnVa2oWSstP6EHdYG7CPXNvAD
-r2yadXOWdkO/aseMIvZjs/G8pH2iGfIA1+srvNYkVORMGyC/C1NXxoigJ+PUa/3A
-GfH8Dsna7lH6JcXiPL0n2rK2sFxYtCcd1J9j+3s88P9rbcOhJf1RCh30WMI20Zfj
-lNGWc4+p5WxkMtIjsViAZzHTer1Hu9yjo702TATjto1f/SyZ0Qwk8vVSU/RrFklP
-eK6Fkw9ISrc3gIUqqtKhNOEA+Mas7ud7cag/keLXGFJ0+fo0WUWedcjdpBE4+H5s
-GNeHDnUSN1F3bRHz/uvLpv9oKf0f/gKBUImFWeQR9jxiC1VLEiuJ2PgB4vb25uBJ
-BmY5pYkIdKc5lJE76mDR
-=xqD/
+iQIcBAEBCAAGBQJOir5WAAoJEECxmPOUX5FE2aQP/RcROePylH428++LczcPlclT
+FLaZ9ULVa9RAvfQQ3x0e0w9GmFBYiJ8pzD35Lk9kI64qGJJ5Rnz/YESQ+rlYVjYr
+p9N86BFUf0PPkxK8G/vmGgb06bTVBuWHatlagUMyetkWalzKlDWM5kYkRfcQVSrE
+KErra0qXwI7ad1/ChxIL1q74c2FDPAcuyrEidJPx6JrGFD0ttJCFryMlXgn8hEOx
+OeX8ZJAu+sOlvJmBLSqo1SZ7vYPbgi4S1Uxjh1+dI+0xnXcmcgaBI0rnlujCzspM
+bnsbVn2E54DWnuTCntjHQ119Z0XCldkd63JAREpUtFgoFdCkBB+fPeX73qeMGyyh
+x4b+Bn1tV0WwX23oLHrspvT/vvzBJ2uQa6wU07ivVtEITQrjr8MW8mIpTouRyWDs
+3yPZQujxMSdaOgIsz0HJu79kHJMEa1v+zwv9Z2kw7Ye4h9GazTtvcSWZVpVzclCH
+vOuS0y1SP4XJMKzmwiHzl3F3pGthWDh9zZXd4/y3MmOVVRitdwKF1humAji5x2dx
+1pO/DuxDDXW6Dp0kG56QhyOp2LomTgIYqcVcGM8WP1Pq7QiPp/r9J04/xsZBOZ3J
+TVjAucW9cfc4rZ9KDQYHeyRjIl+xYim7LVqJxVLhmpGyEZ8s9l/ZHJIkSyvVi26n
+erP/tz5RJId74T3pzTNi
+=Kn6D
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__4_Oct_2011_18_44_19_+1100_zMMuwhx7YIvjppg1--
+--Signature=_Tue__4_Oct_2011_19_05_42_+1100_WkCJQHv.R8ksb6Ol--
