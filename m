@@ -1,72 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the arm-soc tree
-Date: Tue, 4 Oct 2011 16:50:30 +1100
-Message-ID: <20111004165030.ab90295677251fc80bf843a2@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the block tree
+Date: Tue, 4 Oct 2011 17:14:15 +1100
+Message-ID: <20111004171415.db52e4eb5c913afeba0a3bee@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__4_Oct_2011_17_14_15_+1100_Klqg0K1B1gETGnQ="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:40117 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:59124 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751727Ab1JDFuf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 01:50:35 -0400
+	with ESMTP id S1751563Ab1JDGOY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 02:14:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Jens Axboe <jaxboe@fusionio.com>, Jerome Marchand <jmarchan@redhat.com>
+
+--Signature=_Tue__4_Oct_2011_17_14_15_+1100_Klqg0K1B1gETGnQ=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in
-arch/arm/mach-omap2/Makefile between commit f41caddbe73f ("omap2+: Use
-Kconfig symbol in Makefile instead of obj-y") from the arm-soc tree and
-commitb 3c3dc22366b ("usb: musb: fix build breakage") from the usb tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/zram/zram_drv.c between commit 5a7bbad27a41 ("block:
+remove support for bio remapping from ->make_request") from the block
+tree and commit 0900beae178a ("staging: zram: fix zram locking") from the
+staging tree.
 
-I fixed it up (I think, see below) and can carry the fix as necessary.
--- 
+I fixed it up (I think - see below) and can carry the fix as necessary.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-omap2/Makefile
-index 8bd389d,7317a2b..0000000
---- a/arch/arm/mach-omap2/Makefile
-+++ b/arch/arm/mach-omap2/Makefile
-@@@ -218,21 -229,24 +218,17 @@@ obj-$(CONFIG_MACH_OMAP_ZOOM3)		+= board
-  					   board-zoom-debugboard.o
-  obj-$(CONFIG_MACH_OMAP_3630SDP)		+= board-3630sdp.o \
-  					   board-zoom-peripherals.o \
- -					   board-zoom-display.o \
- -					   board-flash.o \
- -					   hsmmc.o
- -obj-$(CONFIG_MACH_CM_T35)		+= board-cm-t35.o \
- -					   hsmmc.o
- +					   board-zoom-display.o
- +obj-$(CONFIG_MACH_CM_T35)		+= board-cm-t35.o
-  obj-$(CONFIG_MACH_CM_T3517)		+= board-cm-t3517.o
- -obj-$(CONFIG_MACH_IGEP0020)		+= board-igep0020.o \
- -					   hsmmc.o
- -obj-$(CONFIG_MACH_OMAP3_TOUCHBOOK)	+= board-omap3touchbook.o \
- -					   hsmmc.o
- -obj-$(CONFIG_MACH_OMAP_4430SDP)		+= board-4430sdp.o \
- -					   hsmmc.o
- -obj-$(CONFIG_MACH_OMAP4_PANDA)		+= board-omap4panda.o \
- -					   hsmmc.o
- +obj-$(CONFIG_MACH_IGEP0020)		+= board-igep0020.o
- +obj-$(CONFIG_MACH_OMAP3_TOUCHBOOK)	+= board-omap3touchbook.o
-- obj-$(CONFIG_MACH_OMAP_4430SDP)		+= board-4430sdp.o \
-- 					   omap_phy_internal.o
-- obj-$(CONFIG_MACH_OMAP4_PANDA)		+= board-omap4panda.o \
-- 					   omap_phy_internal.o
-++obj-$(CONFIG_MACH_OMAP_4430SDP)		+= board-4430sdp.o
-++obj-$(CONFIG_MACH_OMAP4_PANDA)		+= board-omap4panda.o
- +
-- obj-$(CONFIG_MACH_PCM049)		+= board-omap4pcm049.o \
-- 					   omap_phy_internal.o
-++obj-$(CONFIG_MACH_PCM049)		+= board-omap4pcm049.o
-  
-- obj-$(CONFIG_MACH_OMAP3517EVM)		+= board-am3517evm.o \
-- 					   omap_phy_internal.o
-+ obj-$(CONFIG_MACH_OMAP3517EVM)		+= board-am3517evm.o
-  
-  obj-$(CONFIG_MACH_CRANEBOARD)		+= board-am3517crane.o
-  
+diff --cc drivers/staging/zram/zram_drv.c
+index 02589ca,b9926ee..0000000
+--- a/drivers/staging/zram/zram_drv.c
++++ b/drivers/staging/zram/zram_drv.c
+@@@ -572,9 -573,18 +573,17 @@@ static void zram_make_request(struct re
+  	}
+ =20
+  	__zram_make_request(zram, bio, bio_data_dir(bio));
++ 	up_read(&zram->init_lock);
++=20
+ -	return 0;
+++	return;
++=20
++ error_unlock:
++ 	up_read(&zram->init_lock);
++ error:
++ 	bio_io_error(bio);
+ -	return 0;
+  }
+ =20
+- void zram_reset_device(struct zram *zram)
++ void __zram_reset_device(struct zram *zram)
+  {
+  	size_t index;
+ =20
+
+--Signature=_Tue__4_Oct_2011_17_14_15_+1100_Klqg0K1B1gETGnQ=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOiqQ3AAoJEECxmPOUX5FEukwP/R8Rjn74C8CWGsv0FPVe7uJ0
+pfzwpfaQl6xSvBZA7ZF+m6HLsfw/98DE8ffu6tnq+H1aa/C6+vkH4Sxe7/pHVrGc
+9yfuS0TCTpTxTmBZ74J7TcZfzeild/IQ6ZhsRfDRYS0r0F6tWf4A7Q6hrvotSAey
+DTIBDPYqnTpC+SUp/WS9i/cuHw21ZnEI51ldoBjSq7xB4PAKiCCNW8U2xEZOvxBu
+PzoMX7lHCTj2BMhdauuO63PhywcWQlwX29tyjsgHJP1yFJWTv75zgRrX4k5hXPoM
+9s4dr/zpzZZxHk77Pb3Qht2Ub/uNfnkqfZz85sn76mIQyQRaHBBJKCMhnlts+xNL
+QY8PNQ91OaHLLuZD4bhN246Wc9VoIehHXfrFH3HxmjTMj6eV6TH4a6wJ+0EStr4N
+86RNFNEs6B/9xg0tlQjNLQkZk8xuZhQLqMH/G5PtvV2u/fKifJTEvNFBW3kO8BKm
+FESCMkFw9p9w0uUxO9HvBSr02eWQpojclmTa0pY8G3c9WeFx0UUcMs3ew73UrWO7
+e9uZuvdCjZ3QrXy2OF2Ar57sPRpcfmRA4yyumdx1cEY8U7+qgkQpj53IvQMY8Dhq
+BLU6c7uQxh/i1hDlb229SZgii13lxUgojzagYp5JWu4IQcqMIE8cBtTn+QXn6i5J
+w/+hLTiGwGCzYXqi/C0h
+=og2j
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__4_Oct_2011_17_14_15_+1100_Klqg0K1B1gETGnQ=--
