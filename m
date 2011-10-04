@@ -1,58 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the arm-soc tree
-Date: Tue, 4 Oct 2011 11:26:23 +1100
-Message-ID: <20111004112623.aa04e959d29cb19af8053739@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap_dss2 tree with the arm-soc
+ tree
+Date: Tue, 4 Oct 2011 15:06:28 +1100
+Message-ID: <20111004150628.4c4aa1595977f3d5165215f3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__4_Oct_2011_11_26_23_+1100_94jEW.TRCOVl7FZq"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:44570 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:43003 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752014Ab1JDA0d (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Oct 2011 20:26:33 -0400
+	with ESMTP id S1750942Ab1JDEGf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 00:06:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>, stable@kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>
 
---Signature=_Tue__4_Oct_2011_11_26_23_+1100_94jEW.TRCOVl7FZq
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Tomi,
 
-Hi Arnd,
+Today's linux-next merge of the omap_dss2 tree got a conflict in
+arch/arm/mach-omap2/board-rx51.c between commit 8f5b5a41ebc7 ("ARM: OMAP:
+Introduce SoC specific early_init") from the arm-soc tree and commit
+cc9347352509 ("OMAP: RX51: Remove unused old omapfb stuff") from the
+omap_dss2 tree.
 
-After merging the arm-soc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-ERROR: "clk_enable" [drivers/misc/atmel_pwm.ko] undefined!
-ERROR: "clk_disable" [drivers/misc/atmel_pwm.ko] undefined!
-ERROR: "clk_put" [drivers/misc/atmel_pwm.ko] undefined!
-ERROR: "clk_get_rate" [drivers/misc/atmel_pwm.ko] undefined!
-ERROR: "clk_get" [drivers/misc/atmel_pwm.ko] undefined!
-
-Caused by commit 9dccc010c816 ("ARM: at91: remove dependency for Atmel
-PWM driver selector in Kconfig").
-
-I have used the arm-soc tree from next-20110930 for today.
---=20
+Just context changes.  I fixed it up (I think - see below) and can carry
+the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__4_Oct_2011_11_26_23_+1100_94jEW.TRCOVl7FZq
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOilKvAAoJEDMEi1NhKgbsE7wH/1dLkcaSOH8ZcEFpqgatXa5n
-nBZC02dqTlEnW+KplLla9arD/Bz1jptTNuXWiwQJdQ91CvmYvo5PzFePMVBBMLtg
-qAU1sawghdJWA5bgaLL2a/9MdwUY3fZCIQu38nEn48zANrPzO1YJxz9N7TNK7GqW
-WuPQIcCKhEhv16Vdfr4SVCLgidpxaw9uZUKFXeZNiMJtxqWo1ug5xLjPMV3GiGkc
-eGp3aCjV1x4xbAOUQdUzlfCAjECzWHPIQgqBv9p3P4mo/VVpeQO8tOCJkNV8G86K
-JJtoZBNWpVARsNgbWFFw5gJSGVOeTJlYlMoSgcroNtxmtV3HrZoYQ1qUD+Qu/Zk=
-=fk28
------END PGP SIGNATURE-----
-
---Signature=_Tue__4_Oct_2011_11_26_23_+1100_94jEW.TRCOVl7FZq--
+diff --cc arch/arm/mach-omap2/board-rx51.c
+index e2e958a,9e7dde6..0000000
+--- a/arch/arm/mach-omap2/board-rx51.c
++++ b/arch/arm/mach-omap2/board-rx51.c
+@@@ -79,29 -79,15 +79,6 @@@ static struct cpuidle_params rx51_cpuid
+  	{7505 + 15274, 484329, 1},
+  };
+  
+- static struct omap_lcd_config rx51_lcd_config = {
+- 	.ctrl_name	= "internal",
+- };
+- 
+- static struct omap_fbmem_config rx51_fbmem0_config = {
+- 	.size = 752 * 1024,
+- };
+- 
+- static struct omap_fbmem_config rx51_fbmem1_config = {
+- 	.size = 752 * 1024,
+- };
+- 
+- static struct omap_fbmem_config rx51_fbmem2_config = {
+- 	.size = 752 * 1024,
+- };
+- 
+- static struct omap_board_config_kernel rx51_config[] = {
+- 	{ OMAP_TAG_FBMEM,	&rx51_fbmem0_config },
+- 	{ OMAP_TAG_FBMEM,	&rx51_fbmem1_config },
+- 	{ OMAP_TAG_FBMEM,	&rx51_fbmem2_config },
+- 	{ OMAP_TAG_LCD,		&rx51_lcd_config },
+- };
+- 
+ -static void __init rx51_init_early(void)
+ -{
+ -	struct omap_sdrc_params *sdrc_params;
+ -
+ -	omap2_init_common_infrastructure();
+ -	sdrc_params = nokia_get_sdram_timings();
+ -	omap2_init_common_devices(sdrc_params, sdrc_params);
+ -}
+ -
+  extern void __init rx51_peripherals_init(void);
+  
+  #ifdef CONFIG_OMAP_MUX
+@@@ -118,17 -104,9 +95,15 @@@ static struct omap_musb_board_data musb
+  
+  static void __init rx51_init(void)
+  {
+ +	struct omap_sdrc_params *sdrc_params;
+ +
+  	omap3_mux_init(board_mux, OMAP_PACKAGE_CBB);
+- 	omap_board_config = rx51_config;
+- 	omap_board_config_size = ARRAY_SIZE(rx51_config);
+  	omap3_pm_init_cpuidle(rx51_cpuidle_params);
+  	omap_serial_init();
+ +
+ +	sdrc_params = nokia_get_sdram_timings();
+ +	omap_sdrc_init(sdrc_params, sdrc_params);
+ +
+  	usb_musb_init(&musb_board_data);
+  	rx51_peripherals_init();
+  
