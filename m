@@ -1,67 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: movement of my usb / staging / tty / driver-core trees
-Date: Tue, 4 Oct 2011 10:10:15 +1100
-Message-ID: <20111004101015.6a6be8feba23e04756a3e8a2@canb.auug.org.au>
-References: <20111003220219.GA9913@kroah.com>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Tue, 4 Oct 2011 11:05:55 +1100
+Message-ID: <20111004110555.bf9d9303a401177c0f380a35@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__4_Oct_2011_10_10_15_+1100_cCjT20R=wOE2+Fi3"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:49717 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:54518 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750733Ab1JCXKZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Oct 2011 19:10:25 -0400
-In-Reply-To: <20111003220219.GA9913@kroah.com>
+	with ESMTP id S1751346Ab1JDAGF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 Oct 2011 20:06:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Stephen Warren <swarren@nvidia.com>, Marc Dietrich <marvin24@gmx.de>, Olof Johansson <olof@lixom.net>
 
---Signature=_Tue__4_Oct_2011_10_10_15_+1100_cCjT20R=wOE2+Fi3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Arnd,
 
-Hi Greg,
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-tegra/board-paz00.h between commit ea5abbd215b7 ("ARM:
+7101/1: arm/tegra: Replace <mach/gpio.h> with <mach/gpio-tegra.h>") from
+the arm tree and commit 9aaa15a739a0 ("ARM: tegra: paz00: enable rfkill
+for internal wifi card") from the arm-soc tree.
 
-On Mon, 3 Oct 2011 15:02:19 -0700 Greg KH <greg@kroah.com> wrote:
->
-> Now that git.kernel.org is back up, I've moved my linux-next git trees
-> to a different name, dropping the "2.6" suffix on them.
->=20
-> So, they are now at:
->=20
->  USB:		git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
->  staging:	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
->  driver-core:	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver=
--core.git
->  TTY:		git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
->=20
-> All of the branch names are the same as before, and they are now all up
-> to date with the local copy of my trees that I kept while kernel.org was
-> down.
-
-OK, I have switched to these from today.
-
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__4_Oct_2011_10_10_15_+1100_cCjT20R=wOE2+Fi3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOikDXAAoJEDMEi1NhKgbsplAH/jubFYX+2r5KC/QDzQ6EBU5a
-CdkkS/1n0dpcHS/mnBxbof61nrmnyIis0aGHk+d0MbaZDwyl69NWuV+NiYxbeiPi
-W/mXY7dLhmZnIIU0J2ZM9z3NlxDkuqGvQdWX2b2bn/QR+X/Gb+pVQK3eF9sYkqB+
-mWbsrwdOQqSOkgRwINWZaxhxWeqodtAtI03wNDjNMrYD10C8UH2nEy38xMBaylEz
-vT51PRnAhKI8ugsPVGnxVYtL5cizR0FGKazvkOHogr96esMXyP0uGbgSYguMsF5L
-GHfnX9QvwQCcv1R+fJWRSQq/1YBfxAxBna906g9a6y2ib4tOIRXvOKjhZUS2lFY=
-=rqmT
------END PGP SIGNATURE-----
-
---Signature=_Tue__4_Oct_2011_10_10_15_+1100_cCjT20R=wOE2+Fi3--
+diff --cc arch/arm/mach-tegra/board-paz00.h
+index 42ce863,86057c3..0000000
+--- a/arch/arm/mach-tegra/board-paz00.h
++++ b/arch/arm/mach-tegra/board-paz00.h
+@@@ -17,12 -17,18 +17,20 @@@
+  #ifndef _MACH_TEGRA_BOARD_PAZ00_H
+  #define _MACH_TEGRA_BOARD_PAZ00_H
+  
+ +#include <mach/gpio-tegra.h>
+ +
+- #define TEGRA_GPIO_SD1_CD		TEGRA_GPIO_PV5
+- #define TEGRA_GPIO_SD1_WP		TEGRA_GPIO_PH1
+- #define TEGRA_GPIO_SD1_POWER		TEGRA_GPIO_PT3
+- #define TEGRA_ULPI_RST			TEGRA_GPIO_PV0
++ /* SDCARD */
++ #define TEGRA_GPIO_SD1_CD	TEGRA_GPIO_PV5
++ #define TEGRA_GPIO_SD1_WP	TEGRA_GPIO_PH1
++ #define TEGRA_GPIO_SD1_POWER	TEGRA_GPIO_PT3
++ 
++ /* ULPI */
++ #define TEGRA_ULPI_RST		TEGRA_GPIO_PV0
++ 
++ /* WIFI */
++ #define TEGRA_WIFI_PWRN		TEGRA_GPIO_PK5
++ #define TEGRA_WIFI_RST		TEGRA_GPIO_PD1
++ #define TEGRA_WIFI_LED		TEGRA_GPIO_PD0
+  
+  void paz00_pinmux_init(void);
+  
