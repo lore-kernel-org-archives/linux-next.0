@@ -1,49 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap_dss2 tree with the arm-soc
- tree
-Date: Tue, 4 Oct 2011 15:06:49 +1100
-Message-ID: <20111004150649.345c9046ba1984216112aec7@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the arm-soc tree
+Date: Tue, 4 Oct 2011 16:50:30 +1100
+Message-ID: <20111004165030.ab90295677251fc80bf843a2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:40117 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751727Ab1JDFuf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 01:50:35 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>
 
-Hi Tomi,
+Hi Greg,
 
-Today's linux-next merge of the omap_dss2 tree got a conflict in
-arch/arm/mach-omap2/board-2430sdp.c between commit 8f5b5a41ebc7 ("ARM:
-OMAP: Introduce SoC specific early_init") from the arm-soc tree and
-commit 6e896ff9ff1c ("OMAP: 2420SDP: Port the display driver to new
-DSS2") from the omap_dss2 tree.
+Today's linux-next merge of the usb tree got a conflict in
+arch/arm/mach-omap2/Makefile between commit f41caddbe73f ("omap2+: Use
+Kconfig symbol in Makefile instead of obj-y") from the arm-soc tree and
+commitb 3c3dc22366b ("usb: musb: fix build breakage") from the usb tree.
 
-Just context changes.  I fixed it up (I think - see below) and can carry
-the fix as necessary.
+I fixed it up (I think, see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-omap2/board-2430sdp.c
-index 4191743,6ab6350..0000000
---- a/arch/arm/mach-omap2/board-2430sdp.c
-+++ b/arch/arm/mach-omap2/board-2430sdp.c
-@@@ -137,10 -192,12 +192,6 @@@ static inline void board_smc91x_init(vo
+diff --cc arch/arm/mach-omap2/Makefile
+index 8bd389d,7317a2b..0000000
+--- a/arch/arm/mach-omap2/Makefile
++++ b/arch/arm/mach-omap2/Makefile
+@@@ -218,21 -229,24 +218,17 @@@ obj-$(CONFIG_MACH_OMAP_ZOOM3)		+= board
+  					   board-zoom-debugboard.o
+  obj-$(CONFIG_MACH_OMAP_3630SDP)		+= board-3630sdp.o \
+  					   board-zoom-peripherals.o \
+ -					   board-zoom-display.o \
+ -					   board-flash.o \
+ -					   hsmmc.o
+ -obj-$(CONFIG_MACH_CM_T35)		+= board-cm-t35.o \
+ -					   hsmmc.o
+ +					   board-zoom-display.o
+ +obj-$(CONFIG_MACH_CM_T35)		+= board-cm-t35.o
+  obj-$(CONFIG_MACH_CM_T3517)		+= board-cm-t3517.o
+ -obj-$(CONFIG_MACH_IGEP0020)		+= board-igep0020.o \
+ -					   hsmmc.o
+ -obj-$(CONFIG_MACH_OMAP3_TOUCHBOOK)	+= board-omap3touchbook.o \
+ -					   hsmmc.o
+ -obj-$(CONFIG_MACH_OMAP_4430SDP)		+= board-4430sdp.o \
+ -					   hsmmc.o
+ -obj-$(CONFIG_MACH_OMAP4_PANDA)		+= board-omap4panda.o \
+ -					   hsmmc.o
+ +obj-$(CONFIG_MACH_IGEP0020)		+= board-igep0020.o
+ +obj-$(CONFIG_MACH_OMAP3_TOUCHBOOK)	+= board-omap3touchbook.o
+- obj-$(CONFIG_MACH_OMAP_4430SDP)		+= board-4430sdp.o \
+- 					   omap_phy_internal.o
+- obj-$(CONFIG_MACH_OMAP4_PANDA)		+= board-omap4panda.o \
+- 					   omap_phy_internal.o
+++obj-$(CONFIG_MACH_OMAP_4430SDP)		+= board-4430sdp.o
+++obj-$(CONFIG_MACH_OMAP4_PANDA)		+= board-omap4panda.o
+ +
+- obj-$(CONFIG_MACH_PCM049)		+= board-omap4pcm049.o \
+- 					   omap_phy_internal.o
+++obj-$(CONFIG_MACH_PCM049)		+= board-omap4pcm049.o
   
-  #endif
+- obj-$(CONFIG_MACH_OMAP3517EVM)		+= board-am3517evm.o \
+- 					   omap_phy_internal.o
++ obj-$(CONFIG_MACH_OMAP3517EVM)		+= board-am3517evm.o
   
-- static struct omap_board_config_kernel sdp2430_config[] __initdata = {
-- 	{OMAP_TAG_LCD, &sdp2430_lcd_config},
-- };
-- 
- -static void __init omap_2430sdp_init_early(void)
- -{
- -	omap2_init_common_infrastructure();
- -	omap2_init_common_devices(NULL, NULL);
- -}
- -
-  static struct regulator_consumer_supply sdp2430_vmmc1_supplies[] = {
-  	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.0"),
-  };
+  obj-$(CONFIG_MACH_CRANEBOARD)		+= board-am3517crane.o
+  
