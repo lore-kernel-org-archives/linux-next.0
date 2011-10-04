@@ -1,86 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with the  tree
-Date: Tue, 4 Oct 2011 17:57:24 +1100
-Message-ID: <20111004175724.b253f03270f1067531e5d95d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the moduleh tree
+Date: Tue, 4 Oct 2011 18:03:33 +1100
+Message-ID: <20111004180333.44f741dc08063a918c9b581f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__4_Oct_2011_17_57_24_+1100_Z8lDrzcNT4t5VkBw"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Tue__4_Oct_2011_18_03_33_+1100_WU1CQ9q/fwc4eM/f"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:33444 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754165Ab1JDHDm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 03:03:42 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@cam.ac.uk>, Greg KH <greg@kroah.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kalle Valo <kvalo@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>
 
---Signature=_Tue__4_Oct_2011_17_57_24_+1100_Z8lDrzcNT4t5VkBw
+--Signature=_Tue__4_Oct_2011_18_03_33_+1100_WU1CQ9q/fwc4eM/f
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Paul,
 
-Today's linux-next merge of the moduleh tree got a conflict in
-drivers/staging/iio/industrialio-ring.c between commit 14555b14455f
-("staging:iio: replacing term ring with buffer in the IIO core") from the
-staging tree and commit 4903058fe223 ("staging: Add export.h for
-THIS_MODULE/EXPORT_SYMBOL to drivers/staging users") from the moduleh
-tree.
+After merging the moduleh tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-The former renamed the file modified by the latter.  The new file is
-drivers/staging/iio/industrialio-buffer.c and will need to include
-export.h.
+drivers/net/wireless/ath/ath6kl/debug.c:237:11: error: 'THIS_MODULE' undecl=
+ared here (not in a function)
+
+Caused by commit 9a7308341b71 ("ath6kl: silence "invalid rate" warning")
+from the wireless tree interacting with the module.h split.
+
+I added this patch:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 4 Oct 2011 17:48:56 +1100
-Subject: [PATCH] staging: Add export.h for EXPORT_SYMBOL to
- drivers/staging/iio/industrialio-buffer.c
+Date: Tue, 4 Oct 2011 18:01:03 +1100
+Subject: [PATCH] ath6kl: THIS_MODULES needs export.h
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/staging/iio/industrialio-buffer.c |    1 +
+ drivers/net/wireless/ath/ath6kl/debug.c |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/staging/iio/industrialio-buffer.c b/drivers/staging/ii=
-o/industrialio-buffer.c
-index 4ce101a..628aa69 100644
---- a/drivers/staging/iio/industrialio-buffer.c
-+++ b/drivers/staging/iio/industrialio-buffer.c
-@@ -14,6 +14,7 @@
-  * - Alternative access techniques?
-  */
- #include <linux/kernel.h>
-+#include <linux/export.h>
- #include <linux/device.h>
+diff --git a/drivers/net/wireless/ath/ath6kl/debug.c b/drivers/net/wireless=
+/ath/ath6kl/debug.c
+index ba3f23d..7879b53 100644
+--- a/drivers/net/wireless/ath/ath6kl/debug.c
++++ b/drivers/net/wireless/ath/ath6kl/debug.c
+@@ -19,6 +19,7 @@
+ #include <linux/circ_buf.h>
  #include <linux/fs.h>
- #include <linux/cdev.h>
+ #include <linux/vmalloc.h>
++#include <linux/export.h>
+=20
+ #include "debug.h"
+ #include "target.h"
 --=20
 1.7.6.3
-
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__4_Oct_2011_17_57_24_+1100_Z8lDrzcNT4t5VkBw
+--Signature=_Tue__4_Oct_2011_18_03_33_+1100_WU1CQ9q/fwc4eM/f
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOiq5UAAoJEECxmPOUX5FELbAP/ibj7BF2b9ZStSt45pUgqjIJ
-gINsAfQXeV9wvMtY3RaQDvTBWg8ZQvN3XzresHjVKksms/YFnEfJ9vwKfmk8Lam8
-b+kbUOidHAZBdj9LMo/VwySwyGnyCX7QLDXZmWiTuS1pKNlN60SKzQnUl05yfGgO
-vLjDMqiD3ypKfkoPW8LP7o+EKu+/T5ira32UndiRSwWW2ZUK+0wYQV21PLIZ0Ovl
-k7t1cvY+ELW9XCOiGXvvylkQSaez3L+4y/IP585aKQ+VwgT+DoOl0X7hw0mQIltV
-r3JYGxRJRiY3LrJ4b5E42D4HBGuKdgK5hHpfs45gKVd9pxFKFNA7jHs7IoHfSyL/
-N5uGMz/Ji1v4OZWmWJQfPEp77qKZj5HeMWnpCXCUVb4YyUKCsG/dSYIDzTBP9e6x
-7hVX0+02JwG2PN95OVt13sRh9HKB6mDEIg1hqMYXYUsNdsi9C3q5XIY4t5M4My1O
-Z5E6VdsXThBUwpxGtvM5E57sj7ncDoU04fiTJmPxmB54wt6YB7pSVtQDrc9vG7M9
-wvm5rvNKoYFhx3VoLefy0bVgtASXjMGnFC/mu6UpVonXpuP5eNAhrB3aMZGg054Z
-sC8uQMPgE9rNf4Qtm5KOvOazBJpFZKEC9cdcFthkY4nB2ZWvsjUUSZALK/0qWvV+
-yKI3yJtOnbeHZR0QSJA3
-=+9PI
+iQIcBAEBCAAGBQJOiq/FAAoJEECxmPOUX5FExJcQAJAtsW8Cax0YZRhVnjvtDWtR
+24XFScXrAzUTiHhL7TDKocl2ulhpLTIB5KpFXWr6BdwslgELEKkX0qtg+2xuWvZB
+7O44kBEJQBi2uTUalsfJV8OVRzGNta0wSfBpAxQn34Jarmp9jIL1mIuTFk9GCGfK
+gk6UPvxlL1of9svAGWgzfsgPAJlMzWlJ8JonvsuL2KHEeR/3YaD5MAFWrDcncS3b
+jb+EBEMBslIEix4Y4Ysjbaum/GxkfmO6WmZ0a1uExak2nE3BVw7ODr4H6IQVSU4D
+eWbdrpkL+ziip+Egoavr6GYQFQ2j4Vs0XmhSm+341jFrg0rKDCANq5rXGdI+dUpZ
+u12cFVNQpOQr0IUHohTsv3iHzFnGyE6rcnm3crMVFU6akUsmtZ4NHfyRQP9EjocM
+TTFwSvC5U0ZsZVYbsRJoCRTzucOasCZnfdTqMjFwGIwQfzYlTcsUGV6CILO8Gcn1
+WETPFLIyUSj1R6smNNBomllCtSwrrodRzVw6i2MTnq8DPuujudPoJ08FWOJHN0xh
+IkAYDnc/NXC3sJh0zXJMyNjU8uZ/lv6QPWAfQyrjV+YDq2D6FfAya3hAb7tzs8mj
+5JAfZRn4uDR6JHO1IxvP3CBPTV/8GXVbS5f7uCv403JjvSxnjagMclSDvkKAMv/9
+9df8zgSHzOdt6vghjS1Y
+=Hk5u
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__4_Oct_2011_17_57_24_+1100_Z8lDrzcNT4t5VkBw--
+--Signature=_Tue__4_Oct_2011_18_03_33_+1100_WU1CQ9q/fwc4eM/f--
