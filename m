@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the moduleh tree
-Date: Tue, 4 Oct 2011 18:21:11 +1100
-Message-ID: <20111004182111.d180e11f61c23740e6d6988f@canb.auug.org.au>
+Date: Tue, 4 Oct 2011 18:32:57 +1100
+Message-ID: <20111004183257.fea644e6ca5403a253990604@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__4_Oct_2011_18_21_11_+1100_gnH6N.JOEFizi9dA"
+ boundary="Signature=_Tue__4_Oct_2011_18_32_57_+1100_zGIBzFHjDC/QemtF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:34523 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:47549 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754071Ab1JDHVS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 03:21:18 -0400
+	with ESMTP id S1754071Ab1JDHdG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 03:33:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Hennerich <michael.hennerich@analog.com>, Jonathan Cameron <jic23@cam.ac.uk>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ali Bahar <ali@internetdog.org>, Larry Finger <Larry.Finger@lwfinger.net>, Greg KH <greg@kroah.com>
 
---Signature=_Tue__4_Oct_2011_18_21_11_+1100_gnH6N.JOEFizi9dA
+--Signature=_Tue__4_Oct_2011_18_32_57_+1100_zGIBzFHjDC/QemtF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,77 +24,61 @@ Content-Transfer-Encoding: quoted-printable
 Hi Paul,
 
 After merging the moduleh tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+allmodconfig) produced these errors/warnings:
 
-drivers/staging/iio/adc/ad7746.c:345:8: error: 'S_IWUSR' undeclared here (n=
-ot in a function)
-drivers/staging/iio/adc/ad7746.c:436:8: error: 'S_IRUGO' undeclared here (n=
-ot in a function)
-drivers/staging/iio/adc/ad7746.c:681:19: error: 'THIS_MODULE' undeclared he=
-re (not in a function)
-drivers/staging/iio/adc/ad7746.c:778:1: warning: data definition has no typ=
-e or storage class [enabled by default]
-drivers/staging/iio/adc/ad7746.c:778:1: warning: type defaults to 'int' in =
-declaration of 'MODULE_DEVICE_TABLE' [-Wimplicit-int]
-drivers/staging/iio/adc/ad7746.c:778:1: warning: parameter names (without t=
-ypes) in function declaration [enabled by default]
-drivers/staging/iio/adc/ad7746.c:799:15: error: expected declaration specif=
-iers or '...' before string constant
-drivers/staging/iio/adc/ad7746.c:800:20: error: expected declaration specif=
-iers or '...' before string constant
-drivers/staging/iio/adc/ad7746.c:801:16: error: expected declaration specif=
-iers or '...' before string constant
+drivers/staging/rtl8712/usb_intf.c:172:1: warning: data definition has no t=
+ype or storage class [enabled by default]
+drivers/staging/rtl8712/usb_intf.c:172:1: warning: type defaults to 'int' i=
+n declaration of 'MODULE_DEVICE_TABLE' [-Wimplicit-int]
+drivers/staging/rtl8712/usb_intf.c:172:1: warning: parameter names (without=
+ types) in function declaration [enabled by default]
+drivers/staging/rtl8712/usb_intf.c: In function 'r8712u_drv_entry':
+drivers/staging/rtl8712/usb_intf.c:649:9: error: 'THIS_MODULE' undeclared (=
+first use in this function)
+drivers/staging/rtl8712/hal_init.c:66:17: error: expected declaration speci=
+fiers or '...' before string constant
 
-Caused by commit 83e416f458d5 ("staging: iio: adc: Replace, rewrite
-ad7745 from scratch") from the staging tree interacting with the module.h
-split.
+Caused by various commits in the staging tree interacting with the
+module.h split.
 
-I added the following patch:
+I have added the following patch:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 4 Oct 2011 18:18:28 +1100
-Subject: [PATCH] staging: iio: adc: add includes of module.h and stat.h
-
-fixes these build problems:
-
-drivers/staging/iio/adc/ad7746.c:345:8: error: 'S_IWUSR' undeclared here (n=
-ot in a function)
-drivers/staging/iio/adc/ad7746.c:436:8: error: 'S_IRUGO' undeclared here (n=
-ot in a function)
-drivers/staging/iio/adc/ad7746.c:681:19: error: 'THIS_MODULE' undeclared he=
-re (not in a function)
-drivers/staging/iio/adc/ad7746.c:778:1: warning: data definition has no typ=
-e or storage class [enabled by default]
-drivers/staging/iio/adc/ad7746.c:778:1: warning: type defaults to 'int' in =
-declaration of 'MODULE_DEVICE_TABLE' [-Wimplicit-int]
-drivers/staging/iio/adc/ad7746.c:778:1: warning: parameter names (without t=
-ypes) in function declaration [enabled by default]
-drivers/staging/iio/adc/ad7746.c:799:15: error: expected declaration specif=
-iers or '...' before string constant
-drivers/staging/iio/adc/ad7746.c:800:20: error: expected declaration specif=
-iers or '...' before string constant
-drivers/staging/iio/adc/ad7746.c:801:16: error: expected declaration specif=
-iers or '...' before string constant
+Date: Tue, 4 Oct 2011 18:30:10 +1100
+Subject: [PATCH] staging: r8712u:  include module.h where needed
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/staging/iio/adc/ad7746.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ drivers/staging/rtl8712/hal_init.c |    1 +
+ drivers/staging/rtl8712/usb_intf.c |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/staging/iio/adc/ad7746.c b/drivers/staging/iio/adc/ad7=
-746.c
-index 0b251ad..3fe0c17 100644
---- a/drivers/staging/iio/adc/ad7746.c
-+++ b/drivers/staging/iio/adc/ad7746.c
-@@ -13,6 +13,8 @@
- #include <linux/sysfs.h>
- #include <linux/i2c.h>
- #include <linux/delay.h>
+diff --git a/drivers/staging/rtl8712/hal_init.c b/drivers/staging/rtl8712/h=
+al_init.c
+index 1bd9c37..d0029aa 100644
+--- a/drivers/staging/rtl8712/hal_init.c
++++ b/drivers/staging/rtl8712/hal_init.c
+@@ -32,6 +32,7 @@
+ #include <linux/device.h>
+ #include <linux/usb/ch9.h>
+ #include <linux/firmware.h>
 +#include <linux/module.h>
-+#include <linux/stat.h>
 =20
- #include "../iio.h"
- #include "../sysfs.h"
+ #include "osdep_service.h"
+ #include "drv_types.h"
+diff --git a/drivers/staging/rtl8712/usb_intf.c b/drivers/staging/rtl8712/u=
+sb_intf.c
+index 0a2f274..fb2e89c 100644
+--- a/drivers/staging/rtl8712/usb_intf.c
++++ b/drivers/staging/rtl8712/usb_intf.c
+@@ -29,6 +29,7 @@
+ #define _HCI_INTF_C_
+=20
+ #include <linux/usb.h>
++#include <linux/module.h>
+=20
+ #include "osdep_service.h"
+ #include "drv_types.h"
 --=20
 1.7.6.3
 
@@ -103,25 +87,25 @@ Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__4_Oct_2011_18_21_11_+1100_gnH6N.JOEFizi9dA
+--Signature=_Tue__4_Oct_2011_18_32_57_+1100_zGIBzFHjDC/QemtF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOirPnAAoJEECxmPOUX5FEjJgQAIVY9R1j6D+PdkHyOv5Hrvb+
-p8Atg2hdj+fBCPdb8CLUAntnHzqBkvNLtiA6+vjqw5xYPlW0DEwChMAS/xrnqmf7
-i8TP814bWuMoFvynJvImsab+Gk+YQ1GgfOWKeizyWu52yPEoY6WxS8dYX+oScZJ7
-hi46QipE/7vcMW/y0av7j8XFi/mkn4J9snJcHMtMGdwiV14xGGq1m00zkzNb+I8o
-e9o2KZVxRPiXyOE3VRpjJDkAakV12ko8rCbvw1AdSSVisKmAvy+68P8ubCgUSMAX
-1TJby3BPHC6xT30bHRJ17wHhsLPHUXqIqFDzOyyCBGbMouHeVN1NBWqIoaFPJ9GW
-Tl5olPLU/LqREFjexpAHbhEHYkwlJ4FUeVw6dBbeTN07aA6+S0owhSDPnhjghS5I
-SbhQba/fu2ZAnADVRfHj6L6Q8tRvCRcertnKpudWAxTu/MiR1ZQ6QsdWqXbCqkez
-RLZ1wlMVLnw6Wj0zijtOdwGJHNJJ6zS35ZKdIqlJ3KVm2AIszv2PuBd1YcJvxb/l
-kbrIPn0Bg8AgGfJjNEt9FCkvl26kr0Ig2V3x7tcfoWIiZxwA/SKDJwVRjbd7PPHO
-w4KYr75fWjZ9teSFklNLHr3/OGJ22tq+ebTCDMikHxXwUnSIhk4G2o7RhgKElXCv
-oYNMYm1X2DtIXjJ9EK33
-=+AvV
+iQIcBAEBCAAGBQJOirapAAoJEECxmPOUX5FEgewP/3vgtWtjpd6Wsbo1u2IZ0ENN
+ZuBoQldicQ9BA54mdhOCjX4TC1Tu4PRBFWOSzUef/KT7/qaYjnHGmmcHoWV+f3pz
+KKUJ9Jzup4pVXhbX9PKpTPWvLtI0xnzIJX2ITPBmotGkgkw8mSJSoTX/YcE+RAc7
+H5qkjbm0uacNudVvJgL9SMrVDDs+Y4K8OMy5BfTCS7mIg4MmzMvF49ELKfmdua56
+MeQQFFPd06Bu/JaRudtxQVVF7lhndeyJ0Ib8i+sX85s1iKk40f8AMoo2GNTUaFup
+FAnzZPJc39WAhwtosF/sCnIkHpo6X80HJeFhcg2/yShWEuXv9BaYKur2eZnxNjKo
+A0fINXoN5q/G3nRNNJtj2R2gE8uRyRFnCuoyhe19kxIrVe5I7ep1iUahHwBILbff
+EGtJp/30uUXgPdb1G30cT6JmttTUGgWWIAArxJJxJp1oI2ud28ZAbPQ5XFKT9Cbb
+HIVAMRL3qE6aq2fav9ssT9uJKPuChHLN9/jDnKFjTPpb05ku5n4iPfZFXPMO0Dg4
+ENichA7F/bgq+/x986JMsnZV7uNZqPr/x1uwz2+L8pG508G/3B9WQYewadNPjsSw
+NBbmV3smlqR0m6BlRne5wQ3pDhDIY9Pir6hGWjiiBQ/aXuhKdSPdUd6MwmnYa71r
+Ks5yhXNzIIXqEPEleti2
+=zG11
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__4_Oct_2011_18_21_11_+1100_gnH6N.JOEFizi9dA--
+--Signature=_Tue__4_Oct_2011_18_32_57_+1100_zGIBzFHjDC/QemtF--
