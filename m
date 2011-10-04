@@ -1,31 +1,57 @@
-From: Jonathan Cameron <jic23@cam.ac.uk>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- tree related)
-Date: Tue, 04 Oct 2011 09:49:32 +0100
-Message-ID: <4E8AC89C.7010409@cam.ac.uk>
-References: <20111004190542.3ae8a2d575b936520ad36c52@canb.auug.org.au>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: linux-next: build failure after merge of the arm-soc tree
+Date: Tue, 04 Oct 2011 11:39:31 +0200
+Message-ID: <4E8AD453.8000809@atmel.com>
+References: <20111004112623.aa04e959d29cb19af8053739@canb.auug.org.au> <201110040940.12876.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111004190542.3ae8a2d575b936520ad36c52@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from newsmtp5.atmel.com ([204.2.163.5]:5367 "EHLO sjogate2.atmel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755668Ab1JDKRJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Oct 2011 06:17:09 -0400
+In-Reply-To: <201110040940.12876.arnd@arndb.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, stable@kernel.org
 
-On 10/04/11 09:05, Stephen Rothwell wrote:
-> Hi all,
+On 10/04/2011 09:40 AM, Arnd Bergmann :
+> On Tuesday 04 October 2011, Stephen Rothwell wrote:
+>> After merging the arm-soc tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> ERROR: "clk_enable" [drivers/misc/atmel_pwm.ko] undefined!
+>> ERROR: "clk_disable" [drivers/misc/atmel_pwm.ko] undefined!
+>> ERROR: "clk_put" [drivers/misc/atmel_pwm.ko] undefined!
+>> ERROR: "clk_get_rate" [drivers/misc/atmel_pwm.ko] undefined!
+>> ERROR: "clk_get" [drivers/misc/atmel_pwm.ko] undefined!
+>>
+>> Caused by commit 9dccc010c816 ("ARM: at91: remove dependency for Atmel
+>> PWM driver selector in Kconfig").
+>>
+>> I have used the arm-soc tree from next-20110930 for today.
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> Ah, thanks for tracking this down. I actually noticed the same
+> problem on an ARM build but did not realize it was from one of
+> the patches I had jut put in there myself.
 > 
-> drivers/staging/iio/industrialio-buffer.c: In function 'iio_show_fixed_type':
-> drivers/staging/iio/industrialio-buffer.c:108:7: error: '__LITTLE_ENDIAN' undeclared (first use in this function)
+> I'm really glad I didn't send this to Linus cc:stable yet then.
+> Nicolas, in my randconfig branch, I've fixed this by adding
 > 
-> Caused by commit 8310b86c3cd2 ("staging:iio:scan element types: introduce
-> endian description to the data format") from the staging tree.  Missing
-> include file ...
+> 	depends on HAVE_CLK
 > 
-> I haven't bothered fixing this for today.
-gah.  Sorry about that one.  Clearly should be an ifdef not an if.  Will send patch shortly.
+> which I think is the right solution. I'll replace your patch
+> with one that does this if you don't mind.
+
+Sure, thanks a lot for fixing this!
+
+> I'd also remove the stable tag for this patch, because it can
+> have unintended side-effects on other architectures.
+
+Yes, I have not figured out it can have such an impact.
+
+Thanks for your help, best regards,
+-- 
+Nicolas Ferre
