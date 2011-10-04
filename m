@@ -1,25 +1,61 @@
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Subject: Re: linux-next: build failure after merge of the moduleh tree
-Date: Tue, 04 Oct 2011 10:09:37 -0500
-Message-ID: <4E8B21B1.1020308@lwfinger.net>
-References: <20111004180333.44f741dc08063a918c9b581f@canb.auug.org.au> <4E8AB741.9030707@qca.qualcomm.com> <20111004191408.8f211d359d9e5d7b65129c4c@canb.auug.org.au>
+From: Jonathan Cameron <jic23@cam.ac.uk>
+Subject: Re: linux-next: manual merge of the moduleh tree with the  tree
+Date: Tue, 04 Oct 2011 16:22:38 +0100
+Message-ID: <4E8B24BE.8060102@cam.ac.uk>
+References: <20111004175724.b253f03270f1067531e5d95d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:51425 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932302Ab1JDPJm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 11:09:42 -0400
-In-Reply-To: <20111004191408.8f211d359d9e5d7b65129c4c@canb.auug.org.au>
+Received: from ppsw-51.csi.cam.ac.uk ([131.111.8.151]:45428 "EHLO
+	ppsw-51.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932427Ab1JDPOQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 11:14:16 -0400
+In-Reply-To: <20111004175724.b253f03270f1067531e5d95d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kalle Valo <kvalo@qca.qualcomm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, linux-wireless <linux-wireless@vger.kernel.org>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
 
-On 10/04/2011 03:14 AM, Stephen Rothwell wrote:
->
-> Since it adds an include of export.h (which only exists in Paul's tree),
-> it goes into Paul's post merge patch series.
+On 10/04/11 07:57, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> Today's linux-next merge of the moduleh tree got a conflict in
+> drivers/staging/iio/industrialio-ring.c between commit 14555b14455f
+> ("staging:iio: replacing term ring with buffer in the IIO core") from the
+> staging tree and commit 4903058fe223 ("staging: Add export.h for
+> THIS_MODULE/EXPORT_SYMBOL to drivers/staging users") from the moduleh
+> tree.
+> 
+> The former renamed the file modified by the latter.  The new file is
+> drivers/staging/iio/industrialio-buffer.c and will need to include
+> export.h.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 4 Oct 2011 17:48:56 +1100
+> Subject: [PATCH] staging: Add export.h for EXPORT_SYMBOL to
+>  drivers/staging/iio/industrialio-buffer.c
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Acked-by: Jonathan Cameron <jic23@cam.ac.uk>
 
-Sounds good. ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
+Sorry Paul, I fear this going to keep happening.  Is there
+a minimal set of patches Greg could pull into staging-next
+to avoid more similar issues?
+(assuming it isn't already all sorted out!)
+> ---
+>  drivers/staging/iio/industrialio-buffer.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/industrialio-buffer.c b/drivers/staging/iio/industrialio-buffer.c
+> index 4ce101a..628aa69 100644
+> --- a/drivers/staging/iio/industrialio-buffer.c
+> +++ b/drivers/staging/iio/industrialio-buffer.c
+> @@ -14,6 +14,7 @@
+>   * - Alternative access techniques?
+>   */
+>  #include <linux/kernel.h>
+> +#include <linux/export.h>
+>  #include <linux/device.h>
+>  #include <linux/fs.h>
+>  #include <linux/cdev.h>
