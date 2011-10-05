@@ -1,41 +1,64 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Wed, 05 Oct 2011 10:46:13 +0200
-Message-ID: <1317804373.6766.0.camel@twins>
-References: <20111005172528.0d0a8afc65acef7ace22a24e@canb.auug.org.au>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: linux-next: manual merge of the usb tree with the arm-soc tree
+Date: Wed, 5 Oct 2011 11:52:39 +0300
+Message-ID: <20111005085237.GB24472@legolas.emea.dhcp.ti.com>
+References: <20111004165030.ab90295677251fc80bf843a2@canb.auug.org.au>
+ <20111004152611.GC29994@kroah.com>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="H1spWtNR+x+ondvy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:44238 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932903Ab1JEIqe convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 04:46:34 -0400
-In-Reply-To: <20111005172528.0d0a8afc65acef7ace22a24e@canb.auug.org.au>
+Received: from na3sys009aog117.obsmtp.com ([74.125.149.242]:53795 "EHLO
+	na3sys009aog117.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932659Ab1JEIwn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 04:52:43 -0400
+Content-Disposition: inline
+In-Reply-To: <20111004152611.GC29994@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Huang Ying <ying.huang@intel.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>
 
-On Wed, 2011-10-05 at 17:25 +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> net/rds/ib_rdma.c: In function 'rds_ib_reuse_fmr':
-> net/rds/ib_rdma.c:272:2: error: implicit declaration of function 'llist_del_first' [-Werror=implicit-function-declaration]
-> net/rds/ib_rdma.c:272:6: warning: assignment makes pointer from integer without a cast [enabled by default]
-> net/rds/ib_rdma.c: In function 'rds_ib_flush_mr_pool':
-> net/rds/ib_rdma.c:671:4: error: implicit declaration of function 'llist_add_batch' [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
-> 
-> Caused by commit 1230db8e1543 ("llist: Make some llist functions inline")
-> interacting with commit 1bc144b62524 ("net, rds, Replace xlist in
-> net/rds/xlist.h with llist") from the net tree.  The former commit
-> removes the declarations of llist_del_first() and llist_add_batch() with
-> no explanation (and probably by accident since the definitions still
-> exist).
 
-Ugh yes, my bad. Ingo objected to inlining all those functions and I
-then screwed up. There are no users of those two functions in my tree.
+--H1spWtNR+x+ondvy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 04, 2011 at 08:26:11AM -0700, Greg KH wrote:
+> On Tue, Oct 04, 2011 at 04:50:30PM +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> >=20
+> > Today's linux-next merge of the usb tree got a conflict in
+> > arch/arm/mach-omap2/Makefile between commit f41caddbe73f ("omap2+: Use
+> > Kconfig symbol in Makefile instead of obj-y") from the arm-soc tree and
+> > commitb 3c3dc22366b ("usb: musb: fix build breakage") from the usb tree.
+> >=20
+> > I fixed it up (I think, see below) and can carry the fix as necessary.
+>=20
+> Ick, what a mess.  Tony and Felipe, is what is below correct?
+
+looks ok, but I don't see omap_phy_internal.o being added anywhere.
+Maybe this hunk doesn't show...
+
+--=20
+balbi
+
+--H1spWtNR+x+ondvy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOjBrVAAoJEAv8Txj19kN1NvYH/j+ulDV3Hph1PA8VhY+Kbc/L
+dXq5VwGWWr5FBuo7P1FbkfIf+YdbsSilLBzMpTWDWgHYn/tUZKVU8hIDIFrGUDy3
+yHhBeGVXf7Zl9QwbpKlkXXBgYG4FBky7Op0UCRxnbw737v/6Dm2gwCQp2ysMBWEv
+W+ERS0O8DykoDBdvss7FLM1J0j/jc2sOGN0qzmG7jkdag9JMVeEkQf9Oldd7EI6r
+d0o8iSbRsNn9ZPyH04G9Q5zUGdGL5KsNTItKKGeqVngQ/4tJZ/m6tzH8IHNazVDA
+iRkUUsVGBMIIWJlCzqzUPFZHPNNQN/rbo/lEH5FouQTqn5kYdY5pgy2ez6qWhic=
+=JPIe
+-----END PGP SIGNATURE-----
+
+--H1spWtNR+x+ondvy--
