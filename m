@@ -1,45 +1,64 @@
-From: "Hennerich, Michael" <Michael.Hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] staging: add module.h to various iio drivers
-Date: Wed, 5 Oct 2011 07:39:07 +0100
-Message-ID: <544AC56F16B56944AEC3BD4E3D59177146E73435AC@LIMKCMBX1.ad.analog.com>
-References: <1317420418-28335-1-git-send-email-paul.gortmaker@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the moduleh tree
+Date: Wed, 5 Oct 2011 18:20:50 +1100
+Message-ID: <20111005182050.d9576590f52d84aa952c235a@canb.auug.org.au>
+References: <20111004175703.0e319ee270c9dcd1ff253164@canb.auug.org.au>
+	<20111005040005.GB14123@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1317420418-28335-1-git-send-email-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Content-Language: en-US
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, "gregkh-l3A5Bk7waGM@public.gmane.org" <gregkh-l3A5Bk7waGM@public.gmane.org>
-Cc: "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Device-drivers-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org" <Device-drivers-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__5_Oct_2011_18_20_50_+1100_tdx4nSUA_7jjFH66"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111005040005.GB14123@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-UGF1bCBHb3J0bWFrZXIgd3JvdGUgb24gMjAxMS0xMC0wMToNCj4gU2luY2UgdGhleSBhcmUgYXNz
-dW1pbmcgaXQgaXMgdGhlcmUgaW1wbGljaXRseSBhbmQgd2lsbCBmYWlsIG90aGVyd2lzZQ0KPiB3
-aXRoIHRoaW5ncyBsaWtlOg0KPg0KPiBkcml2ZXJzL3N0YWdpbmcvaWlvL2ltcGVkYW5jZS1hbmFs
-eXplci9hZDU5MzMuYzo4MTY6IHdhcm5pbmc6IHR5cGUNCj4gIGRlZmF1bHRzIHRvIOKAmGludOKA
-mSBpbiBkZWNsYXJhdGlvbiBvZiDigJhNT0RVTEVfQVVUSE9S4oCZDQo+IGRyaXZlcnMvc3RhZ2lu
-Zy9paW8vYWRjL2FkNzI4MGEuYzo5OTA6IHdhcm5pbmc6IHR5cGUgZGVmYXVsdHMgdG8g4oCYaW50
-4oCZDQo+ICBpbiBkZWNsYXJhdGlvbiBvZiDigJhNT0RVTEVfQVVUSE9S4oCZDQo+IFNpZ25lZC1v
-ZmYtYnk6IFBhdWwgR29ydG1ha2VyIDxwYXVsLmdvcnRtYWtlckB3aW5kcml2ZXIuY29tPg0KDQpB
-Y2tlZC1ieTogTWljaGFlbCBIZW5uZXJpY2ggPG1pY2hhZWwuaGVubmVyaWNoQGFuYWxvZy5jb20+
-DQoNCj4NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9paW8vYWRjL2FkNzI4MGEuYw0K
-PiBiL2RyaXZlcnMvc3RhZ2luZy9paW8vYWRjL2FkNzI4MGEuYyBpbmRleCBhYjZjZjljLi42Y2E0
-NTMyIDEwMDY0NCAtLS0NCj4gYS9kcml2ZXJzL3N0YWdpbmcvaWlvL2FkYy9hZDcyODBhLmMgKysr
-DQo+IGIvZHJpdmVycy9zdGFnaW5nL2lpby9hZGMvYWQ3MjgwYS5jIEBAIC0xNCw2ICsxNCw3IEBA
-DQo+ICAjaW5jbHVkZSA8bGludXgvZXJyLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvZGVsYXkuaD4N
-Cj4gICNpbmNsdWRlIDxsaW51eC9pbnRlcnJ1cHQuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9tb2R1
-bGUuaD4NCj4NCj4gICNpbmNsdWRlICIuLi9paW8uaCINCj4gICNpbmNsdWRlICIuLi9zeXNmcy5o
-Ig0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2lpby9pbXBlZGFuY2UtYW5hbHl6ZXIv
-YWQ1OTMzLmMNCj4gYi9kcml2ZXJzL3N0YWdpbmcvaWlvL2ltcGVkYW5jZS1hbmFseXplci9hZDU5
-MzMuYyBpbmRleCBhY2MwZTY5Li41NzgzNzQyDQo+IDEwMDY0NCAtLS0gYS9kcml2ZXJzL3N0YWdp
-bmcvaWlvL2ltcGVkYW5jZS1hbmFseXplci9hZDU5MzMuYyArKysNCj4gYi9kcml2ZXJzL3N0YWdp
-bmcvaWlvL2ltcGVkYW5jZS1hbmFseXplci9hZDU5MzMuYyBAQCAtMTYsNiArMTYsNyBAQA0KPiAg
-I2luY2x1ZGUgPGxpbnV4L3R5cGVzLmg+ICNpbmNsdWRlIDxsaW51eC9lcnIuaD4gI2luY2x1ZGUN
-Cj4gIDxsaW51eC9kZWxheS5oPiArI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPiAjaW5jbHVkZSA8
-YXNtL2RpdjY0Lmg+DQo+DQo+ICAjaW5jbHVkZSAiLi4vaWlvLmgiDQoNCkdyZWV0aW5ncywNCk1p
-Y2hhZWwNCg0KLS0NCkFuYWxvZyBEZXZpY2VzIEdtYkggICAgICBXaWxoZWxtLVdhZ2VuZmVsZC1T
-dHIuIDYgICAgICA4MDgwNyBNdWVuY2hlbg0KU2l0eiBkZXIgR2VzZWxsc2NoYWZ0OiBNdWVuY2hl
-bjsgUmVnaXN0ZXJnZXJpY2h0OiBNdWVuY2hlbiBIUkIgNDAzNjg7DQpHZXNjaGFlZnRzZnVlaHJl
-cjpEci5DYXJzdGVuIFN1Y2tyb3csIFRob21hcyBXZXNzZWwsIFdpbGxpYW0gQS4gTWFydGluLCBN
-YXJnYXJldCBTZWlmDQoNCg0K
+--Signature=_Wed__5_Oct_2011_18_20_50_+1100_tdx4nSUA_7jjFH66
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Paul,
+
+On Wed, 5 Oct 2011 00:00:06 -0400 Paul Gortmaker <paul.gortmaker@windriver.=
+com> wrote:
+>
+>  staging-Add-export.h-to-rts5139-rts51x_scsi.c.patch
+>  pinctrl-EXPORT_SYMBOL-needs-export.h.patch
+> +staging-Add-export.h-for-EXPORT_SYMBOL-to-drivers-st.patch
+> +ath6kl-THIS_MODULES-needs-export.h.patch
+> +ath6kl-module_param-needs-the-inclusion-of-modulepar.patch
+> +staging-iio-adc-add-includes-of-module.h-and-stat.h.patch
+> +staging-r8712u-include-module.h-where-needed.patch
+
+You should be able to drop these last 2 as well (Greg has picked them up).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__5_Oct_2011_18_20_50_+1100_tdx4nSUA_7jjFH66
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOjAVSAAoJEECxmPOUX5FEpTsP/04y8a+zzA6yGeW54dSCSzzf
+L1nAUG08fnnRQ+bhB1UHR8f74pYWPQlWjejtXk0Jnse+Yt3KpLCukqRKtI/pom9L
+6zy96pbcYyLhVSJJEMmckHSbbyHkmgEzFRLHCD8FkvcOZ5is3fZeNjvaZJpY+p7Y
+1WfYjQUHCGsgSPiOMaU0XU9l4EtiLmCVyPRmFrvzzp3E27sEIg7cqNL8fdJFckjR
+g0IBgoVxIQ0tul+i5HTGRvcQJGTPXMAC7nFLCs2k64VJO10Ci7beWGLEn6XNg6sZ
+8eff9jVl9CMjX/eASdLktHUasSMh/jV+CqV6zBl+kkE7U0mRqBWTDWtTRkKAk61k
+qrEUMOnKF8IN615yqODZOa93z4pSD3cGDvc6emD4sjzuVjfd65OS2xZcCQZ/G9d9
+VuwEqE48jLZ0vLn0POigLxY9Up8f05sebzDp1za7sZ/Jw7xXGw5NgLxiNbkSM4Ow
+nRNlkVzSHQ8VT2ZxT+JLHL2oY9AOtOq0pFUEBRf/zMyhNEcxwX0DJX47eeWrb+Au
+mvS5SlfdZD1PNpMaua3q5gMyAhD7gF74+VdvKIPUyIYzyyKa880RuheTVohJWLpA
+dEvb3DjipY+qLujzrGyEw11SFhZEeFIEuGU1G18/9WwZmQEOMOow2dTawQwdb5LK
+Bo9mEke/hl9YvrVf94tS
+=6Yey
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__5_Oct_2011_18_20_50_+1100_tdx4nSUA_7jjFH66--
