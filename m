@@ -1,68 +1,56 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: manual merge of the usb tree with the arm-soc tree
-Date: Wed, 5 Oct 2011 13:53:53 +0300
-Message-ID: <20111005105352.GJ24472@legolas.emea.dhcp.ti.com>
-References: <20111004165030.ab90295677251fc80bf843a2@canb.auug.org.au>
- <20111004152611.GC29994@kroah.com>
- <20111005085237.GB24472@legolas.emea.dhcp.ti.com>
- <20111005215133.14e6afa68aae2527f5a5c090@canb.auug.org.au>
-Reply-To: balbi@ti.com
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: linux-next: Tree for Oct 5
+Date: Wed, 05 Oct 2011 08:09:19 -0400
+Message-ID: <27222.1317816559@turing-police.cc.vt.edu>
+References: <20111005193750.78af4ac777e9b69230d62375@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IJAclU0AInkryoed"
+Content-Type: multipart/signed; boundary="==_Exmh_1317816559_4646P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog101.obsmtp.com ([74.125.149.67]:58554 "EHLO
-	na3sys009aog101.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933571Ab1JEKx6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 06:53:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20111005215133.14e6afa68aae2527f5a5c090@canb.auug.org.au>
+Received: from lennier.cc.vt.edu ([198.82.162.213]:53651 "EHLO
+	lennier.cc.vt.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934334Ab1JEMKc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 08:10:32 -0400
+In-Reply-To: Your message of "Wed, 05 Oct 2011 19:37:50 +1100."
+             <20111005193750.78af4ac777e9b69230d62375@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: balbi@ti.com, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-
---IJAclU0AInkryoed
+--==_Exmh_1317816559_4646P
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, 05 Oct 2011 19:37:50 +1100, Stephen Rothwell said:
 
-On Wed, Oct 05, 2011 at 09:51:33PM +1100, Stephen Rothwell wrote:
-> Hi,
->=20
-> On Wed, 5 Oct 2011 11:52:39 +0300 Felipe Balbi <balbi@ti.com> wrote:
-> >
-> > looks ok, but I don't see omap_phy_internal.o being added anywhere.
-> > Maybe this hunk doesn't show...
->=20
-> Yeah, it didn't conflict, so there is a
->=20
-> obj-y                                   +=3D omap_phy_internal.o
->=20
-> line a bit further down.
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ). 
 
-nice, looks good then :-)
+So I managed to bodger up my local linux-next tree, decided to start from
+scratch. Had a good 'git pull' of Linus's tree from yesterday, so I did a 'git
+clone -l' of that. Then:
 
---=20
-balbi
+[/usr/src/linux-next] git remote add linux-next git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+[/usr/src/linux-next] git fetch linux-next
+fatal: The remote end hung up unexpectedly
 
---IJAclU0AInkryoed
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Am I pointing something in the wrong place, or does git need to be kicked at
+the kernel.org end? It's apparently tree-specific - pulling Linus's tree from
+git.kernel.org works just fine.
+
+
+--==_Exmh_1317816559_4646P
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-iQEcBAEBAgAGBQJOjDdAAAoJEAv8Txj19kN1bYoH/icgXcRNyYu45ux8WPhMjs8j
-cBagdMzDqA48Dll7mm1FbJeogPGmY7UB9Gn0MFr3E6eD6ip0QG+ku93aIqw4dV4q
-9WSE9Dj+3sFO3TX5IfQ7ud/R/270uYsy2Zhg2a1TjA9IFNltB8nDCBSWAqnUPC4e
-A//rT14Thdg4H6B5T0v5TZ+KFYhyBDF3mIjH9KpDwNHQfVu+o8s5jLgBNIwMyn+G
-bC9sO7k5YZmbHDgCWL1Ip9AvIvoCgZU4fNVbfnCgXS7vkmbUnfjnYhLuX/InJUBN
-QJ9Vvz4Z2Wzn6VbZianxA0Hyt4Hlvcqeu4Zy6DDXeABHMrDT17OMoqbz6iOXKj8=
-=x3RD
+iD8DBQFOjEjvcC3lWbTT17ARArTKAJ9sSapFu2oFt2X/rsxkaZ/mSRjnAwCfaI7O
+1xYQhgrWg9SruNnxCzlL0Jg=
+=eNw6
 -----END PGP SIGNATURE-----
 
---IJAclU0AInkryoed--
+--==_Exmh_1317816559_4646P--
