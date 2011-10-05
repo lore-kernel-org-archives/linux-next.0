@@ -1,73 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Changed location for arm-lpae/for-next
-Date: Wed, 5 Oct 2011 12:06:21 +1100
-Message-ID: <20111005120621.46c24fe4b8f83ac78944b777@canb.auug.org.au>
-References: <20111004132614.GA13865@e102109-lin.cambridge.arm.com>
+From: Rasesh Mody <rmody@brocade.com>
+Subject: [net-next 1/1] bna: Multiple Definition and Interface Setup Fix
+Date: Tue, 4 Oct 2011 19:31:20 -0700
+Message-ID: <1317781880-26515-1-git-send-email-rmody@brocade.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__5_Oct_2011_12_06_21_+1100_sq4TKZ7QRRKSxc6O"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:56750 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756202Ab1JEBGb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Oct 2011 21:06:31 -0400
-In-Reply-To: <20111004132614.GA13865@e102109-lin.cambridge.arm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Russell King <rmk@arm.linux.org.uk>
+Content-Type: text/plain
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: davem@davemloft.net, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, rdunlap@xenotime.net, sfr@canb.auug.org.au, huangj@brocade.com, adapter_linux_open_src_team@brocade.com, Rasesh Mody <rmody@brocade.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__5_Oct_2011_12_06_21_+1100_sq4TKZ7QRRKSxc6O
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/net/built-in.o: In function `bfa_ioc_ct2_poweron':
+(.text+0xcdc90): multiple definition of `bfa_ioc_ct2_poweron'
+drivers/scsi/built-in.o:(.text+0x17f9a0): first defined here
 
-Hi Catalin,
+This patch renames bfa_ioc_ct2_poweron() to bfa_nw_ioc_ct2_poweron() to avoid
+multiple definition with Brocade scsi driver. It also modifies asic specific
+interface setup to allocate MSIX resources at power on in case of 1860 HW with
+no asic block and warns if the asic gen is neither BFI_ASIC_GEN_CT nor
+BFI_ASIC_GEN_CT2.
 
-On Tue, 4 Oct 2011 14:26:14 +0100 Catalin Marinas <catalin.marinas@arm.com>=
- wrote:
->
-> Since I don't know when I'll get my account back on kernel.org, I
-> re-instated my tree on linux-arm.org. Could you please pull this tree
-> instead of arm-lpae/for-next:
->=20
->   git://linux-arm.org/linux-2.6.git for-next
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Rasesh Mody <rmody@brocade.com>
+---
+ drivers/net/ethernet/brocade/bna/bfa_ioc.c    |    5 ++++-
+ drivers/net/ethernet/brocade/bna/bfa_ioc.h    |    2 +-
+ drivers/net/ethernet/brocade/bna/bfa_ioc_ct.c |    2 +-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
-OK, I have switched to that from today.  However, that site is also
-inaccessible today :-(
-
-> BTW, you could name it catalin/for-next or something else rather than
-> arm-lpae as I have some kmemleak patches in there as well (I could split
-> the patches in two branches if you'd prefer).
-
-I would prefer that you split the kmemleak patches out into a separate
-tree or branch.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__5_Oct_2011_12_06_21_+1100_sq4TKZ7QRRKSxc6O
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOi62NAAoJEECxmPOUX5FEif8P/0sa3tCEDtVnrL02FNFabey1
-C7BBG4EMXt8LHmPjBhELs2ZZFrIfjmKxGnG4j4Oox4w6jO2NlMmXcq9RDI4cSUJi
-A9Iyflyf794QOkBXrWcLJ9iOxE8Wo81qsu6bioEKVxXM5gnWCmIQhIMJbrPQ3AFA
-2FoaTfymZLN6FfZnU1AU0ax6UWyNW7C/nUBNOHFxlqR16zoQdq9wdg4xavAujXKl
-Gr+eg9/65g4OWt7HgRvTxrXv3w72F49YJOi8yA576EjvnQMUy9k5WTDq1pWoqs5u
-hZ4u+GvVGr3BXjBtg7CHN6FTTpRK9+TViVWUlyxAeCYhU8JMY4NmzfclHeBBAALi
-kr7Y+2DpEx8zrCpzVygMz8Ms/EhNVg9bHB9qv2deBAZy3O9Tc3Y3n9CfBvSBL4td
-qHsjGMSpj/e+IkCFaemprUj4QF+IbhxK62gFr0RIpdtL6F/yFJ7ZpGe8P3oBr9v6
-NK4kBUhyb9MqwU95D1iLfopa1BKZWHllYhzDS/SbXZjNxNGXdVfcj2fJLxy7zjo7
-MWLaw6HHgXYXCjN9TkvFWiT5wbuOmgzYZETuEEat2veLJhBsQfUdgPSOPNwgOWjM
-YKnf7e/+I9hddtrlDYdiQ7B8n+xsAACr3Jx3phVDdnFKwJSj9HKomis+f2KAqUZW
-spYaUoFJcDUK4ehC18FW
-=vHD3
------END PGP SIGNATURE-----
-
---Signature=_Wed__5_Oct_2011_12_06_21_+1100_sq4TKZ7QRRKSxc6O--
+diff --git a/drivers/net/ethernet/brocade/bna/bfa_ioc.c b/drivers/net/ethernet/brocade/bna/bfa_ioc.c
+index e02d607..b0307a0 100644
+--- a/drivers/net/ethernet/brocade/bna/bfa_ioc.c
++++ b/drivers/net/ethernet/brocade/bna/bfa_ioc.c
+@@ -2006,8 +2006,11 @@ bfa_nw_ioc_pci_init(struct bfa_ioc *ioc, struct bfa_pcidev *pcidev,
+ 	 */
+ 	if (ioc->asic_gen == BFI_ASIC_GEN_CT)
+ 		bfa_nw_ioc_set_ct_hwif(ioc);
+-	else
++	else {
++		WARN_ON(ioc->asic_gen != BFI_ASIC_GEN_CT2);
+ 		bfa_nw_ioc_set_ct2_hwif(ioc);
++		bfa_nw_ioc_ct2_poweron(ioc);
++	}
+ 
+ 	bfa_ioc_map_port(ioc);
+ 	bfa_ioc_reg_init(ioc);
+diff --git a/drivers/net/ethernet/brocade/bna/bfa_ioc.h b/drivers/net/ethernet/brocade/bna/bfa_ioc.h
+index d5a21f4..ca158d1 100644
+--- a/drivers/net/ethernet/brocade/bna/bfa_ioc.h
++++ b/drivers/net/ethernet/brocade/bna/bfa_ioc.h
+@@ -281,7 +281,7 @@ void bfa_nw_ioc_mbox_regisr(struct bfa_ioc *ioc, enum bfi_mclass mc,
+ 
+ void bfa_nw_ioc_set_ct_hwif(struct bfa_ioc *ioc);
+ void bfa_nw_ioc_set_ct2_hwif(struct bfa_ioc *ioc);
+-void bfa_ioc_ct2_poweron(struct bfa_ioc *ioc);
++void bfa_nw_ioc_ct2_poweron(struct bfa_ioc *ioc);
+ 
+ void bfa_nw_ioc_attach(struct bfa_ioc *ioc, void *bfa,
+ 		struct bfa_ioc_cbfn *cbfn);
+diff --git a/drivers/net/ethernet/brocade/bna/bfa_ioc_ct.c b/drivers/net/ethernet/brocade/bna/bfa_ioc_ct.c
+index c2d3b1a..348479b 100644
+--- a/drivers/net/ethernet/brocade/bna/bfa_ioc_ct.c
++++ b/drivers/net/ethernet/brocade/bna/bfa_ioc_ct.c
+@@ -454,7 +454,7 @@ bfa_ioc_ct2_lpu_read_stat(struct bfa_ioc *ioc)
+ #define __MSIX_VT_NUMVT_(_v)		((_v) << __MSIX_VT_NUMVT__SH)
+ #define __MSIX_VT_OFST_			0x000007ff
+ void
+-bfa_ioc_ct2_poweron(struct bfa_ioc *ioc)
++bfa_nw_ioc_ct2_poweron(struct bfa_ioc *ioc)
+ {
+ 	void __iomem *rb = ioc->pcidev.pci_bar_kva;
+ 	u32 r32;
+-- 
+1.7.1
