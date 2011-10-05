@@ -1,64 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the moduleh tree
-Date: Wed, 5 Oct 2011 18:20:50 +1100
-Message-ID: <20111005182050.d9576590f52d84aa952c235a@canb.auug.org.au>
-References: <20111004175703.0e319ee270c9dcd1ff253164@canb.auug.org.au>
-	<20111005040005.GB14123@windriver.com>
+Subject: linux-next: manual merge of the moduleh tree with the mfd tree
+Date: Wed, 5 Oct 2011 18:36:41 +1100
+Message-ID: <20111005183641.922f5e5da976b972f25a6d90@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__5_Oct_2011_18_20_50_+1100_tdx4nSUA_7jjFH66"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111005040005.GB14123@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Wed__5_Oct_2011_18_36_41_+1100_=euAgXMDvF5COyfk"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:43247 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757895Ab1JEHgs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 03:36:48 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Todd Poynor <toddpoynor@google.com>, Samuel Ortiz <sameo@linux.intel.com>
 
---Signature=_Wed__5_Oct_2011_18_20_50_+1100_tdx4nSUA_7jjFH66
+--Signature=_Wed__5_Oct_2011_18_36_41_+1100_=euAgXMDvF5COyfk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Paul,
 
-On Wed, 5 Oct 2011 00:00:06 -0400 Paul Gortmaker <paul.gortmaker@windriver.=
-com> wrote:
->
->  staging-Add-export.h-to-rts5139-rts51x_scsi.c.patch
->  pinctrl-EXPORT_SYMBOL-needs-export.h.patch
-> +staging-Add-export.h-for-EXPORT_SYMBOL-to-drivers-st.patch
-> +ath6kl-THIS_MODULES-needs-export.h.patch
-> +ath6kl-module_param-needs-the-inclusion-of-modulepar.patch
-> +staging-iio-adc-add-includes-of-module.h-and-stat.h.patch
-> +staging-r8712u-include-module.h-where-needed.patch
+Today's linux-next merge of the moduleh tree got a conflict in
+drivers/mfd/twl6030-irq.c between commit 2b8af0825999 ("mfd: Fix twl6030
+lockdep recursion warning on setting wake IRQs") from the mfd tree and
+commit c86747746435 ("mfd: Add export.h for EXPORT_SYMBOL/THIS_MODULE as
+required") from the moduleh tree.
 
-You should be able to drop these last 2 as well (Greg has picked them up).
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__5_Oct_2011_18_20_50_+1100_tdx4nSUA_7jjFH66
+diff --cc drivers/mfd/twl6030-irq.c
+index deec3ec,b57383b..0000000
+--- a/drivers/mfd/twl6030-irq.c
++++ b/drivers/mfd/twl6030-irq.c
+@@@ -37,7 -37,7 +37,8 @@@
+  #include <linux/kthread.h>
+  #include <linux/i2c/twl.h>
+  #include <linux/platform_device.h>
+ +#include <linux/suspend.h>
++ #include <linux/export.h>
+ =20
+  #include "twl-core.h"
+ =20
+
+--Signature=_Wed__5_Oct_2011_18_36_41_+1100_=euAgXMDvF5COyfk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOjAVSAAoJEECxmPOUX5FEpTsP/04y8a+zzA6yGeW54dSCSzzf
-L1nAUG08fnnRQ+bhB1UHR8f74pYWPQlWjejtXk0Jnse+Yt3KpLCukqRKtI/pom9L
-6zy96pbcYyLhVSJJEMmckHSbbyHkmgEzFRLHCD8FkvcOZ5is3fZeNjvaZJpY+p7Y
-1WfYjQUHCGsgSPiOMaU0XU9l4EtiLmCVyPRmFrvzzp3E27sEIg7cqNL8fdJFckjR
-g0IBgoVxIQ0tul+i5HTGRvcQJGTPXMAC7nFLCs2k64VJO10Ci7beWGLEn6XNg6sZ
-8eff9jVl9CMjX/eASdLktHUasSMh/jV+CqV6zBl+kkE7U0mRqBWTDWtTRkKAk61k
-qrEUMOnKF8IN615yqODZOa93z4pSD3cGDvc6emD4sjzuVjfd65OS2xZcCQZ/G9d9
-VuwEqE48jLZ0vLn0POigLxY9Up8f05sebzDp1za7sZ/Jw7xXGw5NgLxiNbkSM4Ow
-nRNlkVzSHQ8VT2ZxT+JLHL2oY9AOtOq0pFUEBRf/zMyhNEcxwX0DJX47eeWrb+Au
-mvS5SlfdZD1PNpMaua3q5gMyAhD7gF74+VdvKIPUyIYzyyKa880RuheTVohJWLpA
-dEvb3DjipY+qLujzrGyEw11SFhZEeFIEuGU1G18/9WwZmQEOMOow2dTawQwdb5LK
-Bo9mEke/hl9YvrVf94tS
-=6Yey
+iQIcBAEBCAAGBQJOjAkJAAoJEECxmPOUX5FEt1MQAI8EZh+LTBW7laG7Q+ZRKcnG
+JSgXRe9BSM+YdeebU+EgKj5JRGZVwPBEHP5p+GxO4+ZGrx5XHDeJFYxnIzKQwwUp
+g20TXRizNfez9lfnyY5Xb+7PjmtNsJptTwNblUxaG0m6WGZAU0qB/Jy2vFcWvtiM
+VkCnplmUkeJLmF2JFW5KYisu36YWkK5Qkq2ewgfks9VWCA2mTKZGasKhtJQ5n7hg
+KCD56H9VHFj10jSBpPJm47dRrHdKyjPBjm+h4OlHlNHjEz9/aetWZZP11BYByGBx
+zbzf3wZhVX1IFvakM/ybE4R/CxjPPrDIfXQC46ZcVl5R8M9+OMoKBcNQjtCI5MiT
+JVieW7oHCUS8b5fG/lYs2frbjgCpEkUbZePX1GXb+WKhT8/md8CxAy+G9doIaQYy
+Ibfe6Q8mS70+rWB39wl4PFtY/XUupfI/pKgnQPQskEBxy1SgCmM9Kx4gZp7g1bqh
+S3NgBcM8Yhcu+Bvf7hfeUSom756uNs4/oA17cMqcD1Mm/Gu5j3eG1KsrpzFf81NW
+5glAbwUXml5RFpJcYUq1dl2t6DMlTzSJ1KNDIgNkbxUdGnIqikK10K07XZueW97Q
+HqHB8O3MuDDa+kbkS1x9CiuRarf66CCBdjb4vQMffa4TfBr3FYLJMoQTycGj0O45
+8y6igMY0LPlfssQpsZCh
+=WMcB
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__5_Oct_2011_18_20_50_+1100_tdx4nSUA_7jjFH66--
+--Signature=_Wed__5_Oct_2011_18_36_41_+1100_=euAgXMDvF5COyfk--
