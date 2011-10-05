@@ -1,100 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Changed location for arm-lpae/for-next
-Date: Thu, 6 Oct 2011 09:56:25 +1100
-Message-ID: <20111006095625.c4814b818efdc61842451625@canb.auug.org.au>
-References: <20111004132614.GA13865@e102109-lin.cambridge.arm.com>
-	<20111005120621.46c24fe4b8f83ac78944b777@canb.auug.org.au>
-	<CAHkRjk7YBJJO9HW3JC0AUT2-JTyMwj=4=zd==dSG=pfBvCiFNg@mail.gmail.com>
+Subject: Re: new location for writeback-for-next
+Date: Thu, 6 Oct 2011 10:01:25 +1100
+Message-ID: <20111006100125.c73e2de988eab6c14773ef6e@canb.auug.org.au>
+References: <20111005151546.GA5472@localhost>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Oct_2011_09_56_25_+1100_gX7i+C4e=nQ9CiH3"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:35895 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934900Ab1JEW4f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 18:56:35 -0400
-In-Reply-To: <CAHkRjk7YBJJO9HW3JC0AUT2-JTyMwj=4=zd==dSG=pfBvCiFNg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Russell King <rmk@arm.linux.org.uk>
+ boundary="Signature=_Thu__6_Oct_2011_10_01_25_+1100_0Ga/ZR.8M2mtB/Gf"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111005151546.GA5472@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wu Fengguang <fengguang.wu@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__6_Oct_2011_09_56_25_+1100_gX7i+C4e=nQ9CiH3
+--Signature=_Thu__6_Oct_2011_10_01_25_+1100_0Ga/ZR.8M2mtB/Gf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Catlain,
+Hi,
 
-On Wed, 5 Oct 2011 18:04:56 +0100 Catalin Marinas <catalin.marinas@arm.com>=
- wrote:
+On Wed, 5 Oct 2011 23:15:46 +0800 Wu Fengguang <fengguang.wu@intel.com> wro=
+te:
 >
-> Ah, sorry about that, some IT issues again (looks fine internally). If
-> you don't mind to change them again, I created two branches on github,
-> the first one for LPAE and the other for kmemleak:
+> Since the kernel.org git tree is still not accessible, would you pull
+> from this tree instead of the old writeback.git?
 >=20
-> git://github.com/cmarinas/linux.git for-next
+>         git://github.com/fengguang/linux.git  writeback-for-next
 
 I have switched to that from today.
 
-> git://github.com/cmarinas/linux.git kmemleak
-
-And added that from today as well.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Thu__6_Oct_2011_09_56_25_+1100_gX7i+C4e=nQ9CiH3
+--Signature=_Thu__6_Oct_2011_10_01_25_+1100_0Ga/ZR.8M2mtB/Gf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOjOCZAAoJEECxmPOUX5FE1/AP/2ZUnHKC8mgUxd46K3RubkzK
-fjodizcnjHhgX1H4JLnRmGJWrNba2c6kV4le+aXpgVhV1lvPZC5DvuxjwhTv2mUK
-XYmMQUJpvrzjqM28k7IY2Zpl9F+ENfoIHf0z0iG7BtIzP05eJThqFxvuaElqm3Q9
-YK8IhTyVHBqL2PoZ+L3To70zZUPp02T2oNqJJ/F+Bs7rVmSHrsIeSww5feXJ2x0M
-ytVKio3tSAAW1l4nOmXpiE5zzJgDN6hpsNaJ46ozcI/yGk4R6/O5gjvmzfKPE6mo
-WVCDJvWqNX25UcoIp6+7PaPV5vu1uVhrU8ihJhNHwNmCZxmWVaRs4YyH5a8a3xg3
-g6+iM6Umy49wUTajkGYVDaZsALH5LAy8pLV6kDJghwMMSYnpRCNs6kDBzglIBLT7
-LyNX/S3stIGmJ45Vpsv+ivycP7FqcbzEDjSL+2u638U0TPg3eUwyfluqAiQZcP5U
-Ur3RJK7xcx+XN9kAN8m3tzUAoq9XPerF5sqFLqyRFFw/0hnaxFpkBQ0wPVrFQd5o
-aFcwuKTqpuW4pRsn2VuFxQKg8gLN8WgqTqlDTJngxxmZM3IM5BucK65b197R+Slp
-JmbjpxbBETytyGDOKRzTP+VJcMFyJzeg5cxzdsWZShAZCYasTlY5WelkFVk/kybS
-/mqZa7dp5iwgR8mgcE34
-=trlj
+iQIcBAEBCAAGBQJOjOHFAAoJEECxmPOUX5FE+J4QAJfHVzrO+1/Pa5XG0EoTbzUn
+QWxEGuu56SVeAmffdydRCX106GVAV6sc4wi53fgi8H1CymwjvuD5VYlySbJLLkU5
+TAlHh5DSn3C+0SKUXNahJyGdvNXeHM6SeMGVX0rr75JFXtX2ikB7lt+sUza4gDK7
+n+nvf0MKjNNV4mx+Bwjp3Cd+oOcClSxJLoWi3QLNNob69oDgqvtnrbzgUk/cndTa
+zv3OmqIYM5gFZzBmj5h/d4pa3CtV6wZxyWZ2jy44GJ7zdKgzyHrLlj+7aCIYXW9X
+79Lhm7lpkFOAjw/Hy+lDZ4h/auVZvgwJE/et9jUzMgKrzthUSvsF6wguSq/VNZ3s
+pwzuPUarkYYIaHYj05/o+Ztd5Dx3/onNA3UP4E9v1HxTbLK7ozitrPTzsvWq1/l5
+Obqc5h1Lz56+287ub0HnFRNAbKOipyb2YIwSSDa7DDdBufAfe1Lg1RdcCyL2oSgj
+oFIJ7f46XOLG3Y72nyj62dVACjiEhlE6DDzp6wat9Tas26FrBeExnwrhhLvdIzYV
+m+Chg23oOFjVp8yqiUi9GoEmKucp1er9t1Y40HF9ZRGp0ghcylCyeliGa0dPrtwD
+zX++sgRzkvpOyNieAYS5ndCUzup2+JlOCMb/UTsD27cj0eTt18unnVuO68dV2Nqo
+M+ytRhTSSgjl0k3ShUd5
+=nt7Y
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__6_Oct_2011_09_56_25_+1100_gX7i+C4e=nQ9CiH3--
+--Signature=_Thu__6_Oct_2011_10_01_25_+1100_0Ga/ZR.8M2mtB/Gf--
