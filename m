@@ -1,64 +1,62 @@
-From: Felipe Balbi <balbi@ti.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the usb tree with the arm-soc tree
-Date: Wed, 5 Oct 2011 11:52:39 +0300
-Message-ID: <20111005085237.GB24472@legolas.emea.dhcp.ti.com>
+Date: Wed, 5 Oct 2011 21:51:33 +1100
+Message-ID: <20111005215133.14e6afa68aae2527f5a5c090@canb.auug.org.au>
 References: <20111004165030.ab90295677251fc80bf843a2@canb.auug.org.au>
- <20111004152611.GC29994@kroah.com>
-Reply-To: balbi@ti.com
+	<20111004152611.GC29994@kroah.com>
+	<20111005085237.GB24472@legolas.emea.dhcp.ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="H1spWtNR+x+ondvy"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog117.obsmtp.com ([74.125.149.242]:53795 "EHLO
-	na3sys009aog117.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932659Ab1JEIwn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 04:52:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20111004152611.GC29994@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__5_Oct_2011_21_51_33_+1100_ZP=cCNrD/sM8qGcU"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111005085237.GB24472@legolas.emea.dhcp.ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: balbi@ti.com
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+List-Id: linux-next.vger.kernel.org
 
-
---H1spWtNR+x+ondvy
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Wed__5_Oct_2011_21_51_33_+1100_ZP=cCNrD/sM8qGcU
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 04, 2011 at 08:26:11AM -0700, Greg KH wrote:
-> On Tue, Oct 04, 2011 at 04:50:30PM +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> >=20
-> > Today's linux-next merge of the usb tree got a conflict in
-> > arch/arm/mach-omap2/Makefile between commit f41caddbe73f ("omap2+: Use
-> > Kconfig symbol in Makefile instead of obj-y") from the arm-soc tree and
-> > commitb 3c3dc22366b ("usb: musb: fix build breakage") from the usb tree.
-> >=20
-> > I fixed it up (I think, see below) and can carry the fix as necessary.
->=20
-> Ick, what a mess.  Tony and Felipe, is what is below correct?
+Hi,
 
-looks ok, but I don't see omap_phy_internal.o being added anywhere.
-Maybe this hunk doesn't show...
+On Wed, 5 Oct 2011 11:52:39 +0300 Felipe Balbi <balbi@ti.com> wrote:
+>
+> looks ok, but I don't see omap_phy_internal.o being added anywhere.
+> Maybe this hunk doesn't show...
 
+Yeah, it didn't conflict, so there is a
+
+obj-y                                   +=3D omap_phy_internal.o
+
+line a bit further down.
 --=20
-balbi
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---H1spWtNR+x+ondvy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Signature=_Wed__5_Oct_2011_21_51_33_+1100_ZP=cCNrD/sM8qGcU
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJOjBrVAAoJEAv8Txj19kN1NvYH/j+ulDV3Hph1PA8VhY+Kbc/L
-dXq5VwGWWr5FBuo7P1FbkfIf+YdbsSilLBzMpTWDWgHYn/tUZKVU8hIDIFrGUDy3
-yHhBeGVXf7Zl9QwbpKlkXXBgYG4FBky7Op0UCRxnbw737v/6Dm2gwCQp2ysMBWEv
-W+ERS0O8DykoDBdvss7FLM1J0j/jc2sOGN0qzmG7jkdag9JMVeEkQf9Oldd7EI6r
-d0o8iSbRsNn9ZPyH04G9Q5zUGdGL5KsNTItKKGeqVngQ/4tJZ/m6tzH8IHNazVDA
-iRkUUsVGBMIIWJlCzqzUPFZHPNNQN/rbo/lEH5FouQTqn5kYdY5pgy2ez6qWhic=
-=JPIe
+iQIcBAEBCAAGBQJOjDa1AAoJEECxmPOUX5FEhm4P/A2LBD0YeZYOtvRWOYLl/ZuS
+x/tD4nAWUf/7vW8wejifd+yVPw4Spzodw1CL7xRjGM+GM1dEN8jFHrZCreHHqNuP
+ivnXRtB9xqB1A0LwCvcVQwSMWGShzV8swVpZZJTrotSYrPOnEro3nfj4PJbJBqb5
+GjkmFaFQQrC7ILW4vIlR1IPEe/fSKZk2SbqqXlxrCyOCurlt+xCZgScfu0YdvWBx
+SnFtGyfG/MjnRYFq8bYsfpmF/MNvxoOkj5xzvjQ7kHTymWDx4VhaTWL7b0DQ6no/
+o6zvWaejF7tldldN+P/6Qpo4jsynFHiH6VIt3QrSN3EUv9j6MQCZxDpqK8AOjd7p
+ZpuhTQztq4vbmlfB2UJtBk6Ofxro9KHFdWZlfeoBQC36w79mR2WNt57ySHnzu6YS
+WxadSs73VE0njqbVf55sAJz9pZ7S1RcVLkw1C8OynuwMpEnJAW3iogQ8YEJlRTQr
+z0ROT9wm1/k+z5DHo6UPn5W7OBfxnpyFu2VGgS0A0teetPXepEvvr6ykVZ92Rw59
+NI//7Mk6qrBVe5b26XJo2iJ+7OyFWRME7iVJdx6Tig6S9zu+I+m773EGM3+euQQ4
+kdu5tPa/F29ODJrR6/+CUKWsRPTBLH2WCa20rHD9vZcCrOdcEXm9cljHpSUm/ZUQ
+EbTu90wEArFkUyLyqMgF
+=27v5
 -----END PGP SIGNATURE-----
 
---H1spWtNR+x+ondvy--
+--Signature=_Wed__5_Oct_2011_21_51_33_+1100_ZP=cCNrD/sM8qGcU--
