@@ -1,64 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm tree
-Date: Wed, 5 Oct 2011 19:07:26 +1100
-Message-ID: <20111005190726.1c09bf91a67b7a264ca61b61@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (akpm tree
+ related)
+Date: Wed, 5 Oct 2011 19:23:53 +1100
+Message-ID: <20111005192353.f6171e1a747fc7eda143c2bb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__5_Oct_2011_19_07_26_+1100_MtgDfSmWyeJ2qpwc"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:54129 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757979Ab1JEIHf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 04:07:35 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Wed__5_Oct_2011_19_23_53_+1100_SyoM.6qZLqrNuab."
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Ledford <dledford@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__5_Oct_2011_19_07_26_+1100_MtgDfSmWyeJ2qpwc
+--Signature=_Wed__5_Oct_2011_19_23_53_+1100_SyoM.6qZLqrNuab.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-After merging the akpm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the final tree, today's linux-next build (powerpc allyesconfi=
+g)
+failed like this:
 
-ipc/mqueue.c: In function 'mqueue_get_inode':
-ipc/mqueue.c:154:4: error: implicit declaration of function 'vmalloc'
-ipc/mqueue.c:154:19: warning: assignment makes pointer from integer without=
- a cast
-ipc/mqueue.c: In function 'mqueue_evict_inode':
-ipc/mqueue.c:278:3: error: implicit declaration of function 'vfree'
+kernel/cgroup_task_counter.c: In function 'task_counter_create':
+kernel/cgroup_task_counter.c:60:3: error: implicit declaration of function =
+'ERR_PTR' [-Werror=3Dimplicit-function-declaration]
+kernel/cgroup_task_counter.c:60:3: warning: return makes pointer from integ=
+er without a cast [enabled by default]
 
-Caused by commit 8a53f9442429 ("ipc/mqueue: update maximums for the
-mqueue subsystem").  See Rule 1 in Documentation/SubmitChecklist.
+Caused by commit 7d8662e11b18 ("cgroups: add a task counter subsystem")
+from the akpm tree.
 
-I have added the following patch for today:
+I added the following patch for today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 5 Oct 2011 19:05:10 +1100
-Subject: [PATCH] ipc/mqueue: vlammoc requires vmalloc.h
+Date: Wed, 5 Oct 2011 19:20:15 +1100
+Subject: [PATCH] cgroups: ERR_PTR needs err.h
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- ipc/mqueue.c |    1 +
+ kernel/cgroup_task_counter.c |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index 0474ddb..229a5fb 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -33,6 +33,7 @@
- #include <linux/pid.h>
- #include <linux/ipc_namespace.h>
+diff --git a/kernel/cgroup_task_counter.c b/kernel/cgroup_task_counter.c
+index 2374905..201d8e3 100644
+--- a/kernel/cgroup_task_counter.c
++++ b/kernel/cgroup_task_counter.c
+@@ -11,6 +11,7 @@
+ #include <linux/cgroup.h>
  #include <linux/slab.h>
-+#include <linux/vmalloc.h>
+ #include <linux/res_counter.h>
++#include <linux/err.h>
 =20
- #include <net/sock.h>
- #include "util.h"
+=20
+ struct task_counter {
 --=20
 1.7.6.3
 
@@ -67,25 +64,25 @@ Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__5_Oct_2011_19_07_26_+1100_MtgDfSmWyeJ2qpwc
+--Signature=_Wed__5_Oct_2011_19_23_53_+1100_SyoM.6qZLqrNuab.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOjBA+AAoJEECxmPOUX5FE0i8P/3h+qk4pO9tzHY44dX/hIdv4
-ZXuBH0Si77UsV3f0FpCUcrSaAJdj3B6DdlFUu9OAnoUH9TNiTqA4PVLwoAt2/P2D
-sNb7KfLr8qcOw0zHCZ3ptw617C9Jr8BT3z39o310nNXyIX9+bfafUyvimzbXLC9o
-OBlB5hLpGaeOUzHr7qwQW2fLkqh/lIiJARlLbG+03hKgyzcdK+ayZg2F2QoDt6Fh
-QP0s5+pUO5W5VUL9lsWFANwBpMULYOFUW1uKwoD5UrCzpkvSDcLQ7YUV53+GIkuP
-5PpTonQfduj0kzcFYG+PzRHsE41niOZ6Nrmrv5w5UcCYoO1+ARWvl9GLSoSxKFwU
-WICfoUIIAaWPr0Cqb3QyH7E1Sm2Xzolix0UiYGvYZ85G900iA+ebzksI4b3spjuG
-GOtmyB/qXoK7meFzA3DhgKAS5f1Wtic1WlSzQslnrPc4vjXNUon4gaaQB40Tj9eA
-BtJYyfqeaNwMjvDJUwDR//MpvldKmbL0D2RIw9wte4MepxRX8Y2Nq1DWZXPbvCzb
-f2T41NZE3ATRBaTbmQYpwLyNGr2JDQYDAHNGiznln4GJ4lP2+mXODkjYvD+fzzdl
-sQiM4h8IaDzwG7snwEtn3EA3CxSBUnunn86PZ6tOZLBBIUYLGSzGB3qJHBgFsAEk
-brm41gCMN0W5fd9i5Vwu
-=s8Yu
+iQIcBAEBCAAGBQJOjBQZAAoJEECxmPOUX5FEj3cP/jTbjndcgukAUpvCp/sAJgq5
+EMYiGULSyufn3bH1yZuhbWCtD0QmXD7mKhgvpYx04FLC5fuuPjOS9EU4S5LRjtqT
+txvACRR3TkAxlEU50L6M6VVBOYRC9seyFFaQP2BIZP/3J1kGs+8NBMDYBWcZWevw
+c/e7nIbc5/O+f7zV48GU1+3pGe90kRx9+qnmobiFy6QGTl2Kx/Tke+2nOQ37Bm5Y
+/f8u84DNdZIlpugNPKnkFk9Zd0fiAjRwm1NiltZS0XZPrnajrIlcx6XZvWMZrH8L
+aapPl8Jww/9lKmcwA8uDVtkWdmaYKTnXsxcwMD9OXcFUzle9WPP1RLVRkQJoGQvx
+qmxz5rcEszFZyeBZ4QG2AC8PEOj9+2fkCPXWN5Cu9yh5+Hzmi2XZ2ufzqf6dtUUA
+RMCIKW1RtctwZekyjClicWJCggKjzZ72nVCZk0pvbwOhZZtRV4//50fsTYPHrg8u
+6XP4acmI9CNHWCSrGwqP+v7+kHHms/PtXoV/zul2rzModvYQqaUvvFxKRaygh+DF
+RZbCIebdYOAjSqqm+Lm+4K7ji4IkwCu4NtsdUAr9s3IXjxD5stqvg8sPJ7MHOPZu
+OAdkAozIag53NKpX+HyEwRSMUIQSzYLKvTbLIIz79n9h0UGrHG+eaM58hXohwswx
+YqGl9O8bUhvQHujeymG5
+=6da/
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__5_Oct_2011_19_07_26_+1100_MtgDfSmWyeJ2qpwc--
+--Signature=_Wed__5_Oct_2011_19_23_53_+1100_SyoM.6qZLqrNuab.--
