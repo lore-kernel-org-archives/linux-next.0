@@ -1,88 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (akpm tree
- related)
-Date: Wed, 5 Oct 2011 19:23:53 +1100
-Message-ID: <20111005192353.f6171e1a747fc7eda143c2bb@canb.auug.org.au>
+Subject: Re: [net-next 1/1] bna: Multiple Definition and Interface Setup Fix
+Date: Wed, 5 Oct 2011 19:26:01 +1100
+Message-ID: <20111005192601.fa947a78b188f4a021042a5e@canb.auug.org.au>
+References: <1317781880-26515-1-git-send-email-rmody@brocade.com>
+	<20111004.232713.1345786533613742751.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__5_Oct_2011_19_23_53_+1100_SyoM.6qZLqrNuab."
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__5_Oct_2011_19_26_01_+1100_SQp.ZCGy9p2wn1mz"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:37821 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932104Ab1JEI0I (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 04:26:08 -0400
+In-Reply-To: <20111004.232713.1345786533613742751.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: rmody@brocade.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, rdunlap@xenotime.net, huangj@brocade.com, adapter_linux_open_src_team@brocade.com
 
---Signature=_Wed__5_Oct_2011_19_23_53_+1100_SyoM.6qZLqrNuab.
+--Signature=_Wed__5_Oct_2011_19_26_01_+1100_SQp.ZCGy9p2wn1mz
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, 04 Oct 2011 23:27:13 -0400 (EDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Rasesh Mody <rmody@brocade.com>
+> Date: Tue, 4 Oct 2011 19:31:20 -0700
+>=20
+> > drivers/net/built-in.o: In function `bfa_ioc_ct2_poweron':
+> > (.text+0xcdc90): multiple definition of `bfa_ioc_ct2_poweron'
+> > drivers/scsi/built-in.o:(.text+0x17f9a0): first defined here
+> >=20
+> > This patch renames bfa_ioc_ct2_poweron() to bfa_nw_ioc_ct2_poweron() to=
+ avoid
+> > multiple definition with Brocade scsi driver. It also modifies asic spe=
+cific
+> > interface setup to allocate MSIX resources at power on in case of 1860 =
+HW with
+> > no asic block and warns if the asic gen is neither BFI_ASIC_GEN_CT nor
+> > BFI_ASIC_GEN_CT2.
+> >=20
+> > Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+> > Signed-off-by: Rasesh Mody <rmody@brocade.com>
+>=20
+> Applied, thanks.
 
-After merging the final tree, today's linux-next build (powerpc allyesconfi=
-g)
-failed like this:
-
-kernel/cgroup_task_counter.c: In function 'task_counter_create':
-kernel/cgroup_task_counter.c:60:3: error: implicit declaration of function =
-'ERR_PTR' [-Werror=3Dimplicit-function-declaration]
-kernel/cgroup_task_counter.c:60:3: warning: return makes pointer from integ=
-er without a cast [enabled by default]
-
-Caused by commit 7d8662e11b18 ("cgroups: add a task counter subsystem")
-from the akpm tree.
-
-I added the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 5 Oct 2011 19:20:15 +1100
-Subject: [PATCH] cgroups: ERR_PTR needs err.h
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- kernel/cgroup_task_counter.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/kernel/cgroup_task_counter.c b/kernel/cgroup_task_counter.c
-index 2374905..201d8e3 100644
---- a/kernel/cgroup_task_counter.c
-+++ b/kernel/cgroup_task_counter.c
-@@ -11,6 +11,7 @@
- #include <linux/cgroup.h>
- #include <linux/slab.h>
- #include <linux/res_counter.h>
-+#include <linux/err.h>
-=20
-=20
- struct task_counter {
---=20
-1.7.6.3
+I also manually applied this to linux-next today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__5_Oct_2011_19_23_53_+1100_SyoM.6qZLqrNuab.
+--Signature=_Wed__5_Oct_2011_19_26_01_+1100_SQp.ZCGy9p2wn1mz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOjBQZAAoJEECxmPOUX5FEj3cP/jTbjndcgukAUpvCp/sAJgq5
-EMYiGULSyufn3bH1yZuhbWCtD0QmXD7mKhgvpYx04FLC5fuuPjOS9EU4S5LRjtqT
-txvACRR3TkAxlEU50L6M6VVBOYRC9seyFFaQP2BIZP/3J1kGs+8NBMDYBWcZWevw
-c/e7nIbc5/O+f7zV48GU1+3pGe90kRx9+qnmobiFy6QGTl2Kx/Tke+2nOQ37Bm5Y
-/f8u84DNdZIlpugNPKnkFk9Zd0fiAjRwm1NiltZS0XZPrnajrIlcx6XZvWMZrH8L
-aapPl8Jww/9lKmcwA8uDVtkWdmaYKTnXsxcwMD9OXcFUzle9WPP1RLVRkQJoGQvx
-qmxz5rcEszFZyeBZ4QG2AC8PEOj9+2fkCPXWN5Cu9yh5+Hzmi2XZ2ufzqf6dtUUA
-RMCIKW1RtctwZekyjClicWJCggKjzZ72nVCZk0pvbwOhZZtRV4//50fsTYPHrg8u
-6XP4acmI9CNHWCSrGwqP+v7+kHHms/PtXoV/zul2rzModvYQqaUvvFxKRaygh+DF
-RZbCIebdYOAjSqqm+Lm+4K7ji4IkwCu4NtsdUAr9s3IXjxD5stqvg8sPJ7MHOPZu
-OAdkAozIag53NKpX+HyEwRSMUIQSzYLKvTbLIIz79n9h0UGrHG+eaM58hXohwswx
-YqGl9O8bUhvQHujeymG5
-=6da/
+iQIcBAEBCAAGBQJOjBSZAAoJEECxmPOUX5FEP3IP/R0Z9V/eP3U4G2DXmMzyzwsH
+kcjAoSwVEikENiQbSRh4FnIapD9CkL8VqY0Vov5oP6KqOB7QtouaeR2fmXF/vwsH
+WK6vpBfarrfFQw2Ye4CXsmKrJGOOyaHixROnQE4XKuM/KkB8TheqIC3EzDTHVeRX
+aDpiCimIsBU7hjepy0gaAZ33/SHSUjqJqfoONBJGN082tMBDOae29MgOMlrM7esN
+/czw3U5JIXzz9XiSJBySCBDq8WgurZzSwTKZHEyl1X6T10W9Np0k0B0SkkKMxAum
+0o9+WrN7wwZVpb1OW3vKZsy5iQ3BtGpJ/GjlLvI3LJ2RRLXI25Ribt6WH/oC7Lu1
+9W2SNS6gHrTyKqDiAE1w5r7dcxWyfr3XT+qZRvrMW8MYIdwj/mjDGi27iHuYh6P3
+ebe6VBeEf5S5cZBKuwu1BGIhB3jZtZlTshJWyMcKIwnV2IRpR+ml2zoQyhw8Gei3
+n4nm27CsIIzZdmbHyE/2Jn3OQkTIs77Ua6Dbzd3J1RF+uHoG/Excv7zmt8cludbV
+7e+xBw7n3EHk1/ZqEAKSLElNX1BrG6PkUi5x/kdC6P5dG29TR0c4KrJVuJDysxhC
+Pbdxf8aZ5ojqe/bXgqY8TyXWG8bPkjrV5V6rsY2YYh8mhnc3OWQBD7G9lrQvOXnm
+F0dVhoLdh3UQm9G71UbZ
+=1R/c
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__5_Oct_2011_19_23_53_+1100_SyoM.6qZLqrNuab.--
+--Signature=_Wed__5_Oct_2011_19_26_01_+1100_SQp.ZCGy9p2wn1mz--
