@@ -1,61 +1,96 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: manual merge of the moduleh tree
-Date: Wed, 5 Oct 2011 00:00:06 -0400
-Message-ID: <20111005040005.GB14123@windriver.com>
-References: <20111004175703.0e319ee270c9dcd1ff253164@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the moduleh tree with the  tree
+Date: Wed, 5 Oct 2011 00:18:28 -0400
+Message-ID: <20111005041828.GC14123@windriver.com>
+References: <20111004175724.b253f03270f1067531e5d95d@canb.auug.org.au>
+ <4E8B24BE.8060102@cam.ac.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:38627 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751657Ab1JEESj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 00:18:39 -0400
 Content-Disposition: inline
-In-Reply-To: <20111004175703.0e319ee270c9dcd1ff253164@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <4E8B24BE.8060102@cam.ac.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
 
-[linux-next: manual merge of the moduleh tree] On 04/10/2011 (Tue 17:57) Stephen Rothwell wrote:
+[Re: linux-next: manual merge of the moduleh tree with the  tree] On 04/10/2011 (Tue 16:22) Jonathan Cameron wrote:
 
-> Hi Paul,
+> On 10/04/11 07:57, Stephen Rothwell wrote:
+> > Hi Paul,
+> > 
+> > Today's linux-next merge of the moduleh tree got a conflict in
+> > drivers/staging/iio/industrialio-ring.c between commit 14555b14455f
+> > ("staging:iio: replacing term ring with buffer in the IIO core") from the
+> > staging tree and commit 4903058fe223 ("staging: Add export.h for
+> > THIS_MODULE/EXPORT_SYMBOL to drivers/staging users") from the moduleh
+> > tree.
+> > 
+> > The former renamed the file modified by the latter.  The new file is
+> > drivers/staging/iio/industrialio-buffer.c and will need to include
+> > export.h.
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Tue, 4 Oct 2011 17:48:56 +1100
+> > Subject: [PATCH] staging: Add export.h for EXPORT_SYMBOL to
+> >  drivers/staging/iio/industrialio-buffer.c
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Acked-by: Jonathan Cameron <jic23@cam.ac.uk>
 > 
-> I also dropped the following already applied patches:
-> 
-> wireless-ath6kl-use-of-module_param-requires-the-inc.patch
-> staging-add-module.h-to-various-iio-drivers.patch
+> Sorry Paul, I fear this going to keep happening.  Is there
+> a minimal set of patches Greg could pull into staging-next
+> to avoid more similar issues?
+> (assuming it isn't already all sorted out!)
 
-I've dropped these, plus the usb dwc3 patch which I see Greg picked
-up. I've also added the five new fixups for the staging and ath6l that
-you posted from the previous tree -- only two of them need to be in the
-post-merge queue long term (the export.h ones).
+Git will handle renames without issue (e.g. net-next renames
+nearly all the drivers, and there are no issues there). I'm
+not sure what you've got planned that makes you think this will keep
+happening, but regardless, what you can do to help out is this:
 
-Series delta is below.
+If you create/rewrite some staging driver, check whether it
+uses module_param and only that -- if so it needs moduleparam.h
 
-Thanks,
+Then check if it uses MODULE_* or module_*  -- such as
+MODULE_LICENSE and module_table or similar.  If so you really
+need to include module.h or else it will build fail in linux-next.
+The module.h will give you moduleparam.h (and export.h in l-next).
+
+Finally if it only uses EXPORT_SYMBOL and/or THIS_MODULE, it will
+eventually need export.h -- but since your tree won't have that
+file (yet) you can put a module.h include into that file, and give
+me a heads up on it and I can "downgrade" the include to be just
+for export.h later (via my post-merge queue of patches).  By putting
+the module.h in as a placeholder for the export.h, you manage to
+avoid Stephen having to deal with it as a build failure.
+
+Greg can't pull the module.h tree into staging permanently since
+the streams have to be presented separately for the final permanent
+merge upstream.  But there is nothing stopping you from fetching
+the module.h content, merging it into your sandbox and having it
+present during your testing if you were so inclined.
+
+Thanks for asking,
 Paul.
 
----
-
-diff --git a/series b/series
-index eccd196..d99df0f 100644
---- a/series
-+++ b/series
-@@ -1,7 +1,6 @@
- drivers-md-change-module.h-export.h-in-persistent-da.patch
- block-bsg-lib.c-change-module.h-export.h-in-power-co.patch
- drivers-base-change-module.h-export.h-in-power-commo.patch
--wireless-ath6kl-use-of-module_param-requires-the-inc.patch
- rtlwifi-use-of-module_param-requires-the-inclusion-o.patch
- mmc-using-module_param-requires-the-inclusion-of-mod.patch
- NFC-use-of-module-facilities-requires-the-inclusion-.patch
-@@ -14,7 +13,10 @@ drivers-net-Add-module.h-to-wireless-ath-ath6kl-sdio.patch
- drivers-net-wireless-ath-ath5k-debug.c-does-not-need.patch
- drivers-bcma-driver_chipcommon_pmu.c-needs-export.h-.patch
- drivers-base-Add-export.h-to-regmap-regcache.c.patch
--drivers-usb-Add-module.h-to-various-dwc3-drivers.patch
--staging-add-module.h-to-various-iio-drivers.patch
- staging-Add-export.h-to-rts5139-rts51x_scsi.c.patch
- pinctrl-EXPORT_SYMBOL-needs-export.h.patch
-+staging-Add-export.h-for-EXPORT_SYMBOL-to-drivers-st.patch
-+ath6kl-THIS_MODULES-needs-export.h.patch
-+ath6kl-module_param-needs-the-inclusion-of-modulepar.patch
-+staging-iio-adc-add-includes-of-module.h-and-stat.h.patch
-+staging-r8712u-include-module.h-where-needed.patch
+> > ---
+> >  drivers/staging/iio/industrialio-buffer.c |    1 +
+> >  1 files changed, 1 insertions(+), 0 deletions(-)
+> > 
+> > diff --git a/drivers/staging/iio/industrialio-buffer.c b/drivers/staging/iio/industrialio-buffer.c
+> > index 4ce101a..628aa69 100644
+> > --- a/drivers/staging/iio/industrialio-buffer.c
+> > +++ b/drivers/staging/iio/industrialio-buffer.c
+> > @@ -14,6 +14,7 @@
+> >   * - Alternative access techniques?
+> >   */
+> >  #include <linux/kernel.h>
+> > +#include <linux/export.h>
+> >  #include <linux/device.h>
+> >  #include <linux/fs.h>
+> >  #include <linux/cdev.h>
+> 
