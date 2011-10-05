@@ -1,105 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tip tree
-Date: Wed, 5 Oct 2011 17:25:28 +1100
-Message-ID: <20111005172528.0d0a8afc65acef7ace22a24e@canb.auug.org.au>
+From: "Hennerich, Michael" <Michael.Hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] staging: add module.h to various iio drivers
+Date: Wed, 5 Oct 2011 07:39:07 +0100
+Message-ID: <544AC56F16B56944AEC3BD4E3D59177146E73435AC@LIMKCMBX1.ad.analog.com>
+References: <1317420418-28335-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__5_Oct_2011_17_25_28_+1100_dhJCLRNhNAmdY4ej"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:50497 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933898Ab1JEGZj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 02:25:39 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Huang Ying <ying.huang@intel.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1317420418-28335-1-git-send-email-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Content-Language: en-US
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, "gregkh-l3A5Bk7waGM@public.gmane.org" <gregkh-l3A5Bk7waGM@public.gmane.org>
+Cc: "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Device-drivers-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org" <Device-drivers-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__5_Oct_2011_17_25_28_+1100_dhJCLRNhNAmdY4ej
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
-
-net/rds/ib_rdma.c: In function 'rds_ib_reuse_fmr':
-net/rds/ib_rdma.c:272:2: error: implicit declaration of function 'llist_del=
-_first' [-Werror=3Dimplicit-function-declaration]
-net/rds/ib_rdma.c:272:6: warning: assignment makes pointer from integer wit=
-hout a cast [enabled by default]
-net/rds/ib_rdma.c: In function 'rds_ib_flush_mr_pool':
-net/rds/ib_rdma.c:671:4: error: implicit declaration of function 'llist_add=
-_batch' [-Werror=3Dimplicit-function-declaration]
-cc1: some warnings being treated as errors
-
-Caused by commit 1230db8e1543 ("llist: Make some llist functions inline")
-interacting with commit 1bc144b62524 ("net, rds, Replace xlist in
-net/rds/xlist.h with llist") from the net tree.  The former commit
-removes the declarations of llist_del_first() and llist_add_batch() with
-no explanation (and probably by accident since the definitions still
-exist).
-
-I have added the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 5 Oct 2011 17:16:29 +1100
-Subject: [PATCH] llist: add back llist_add_batch and llist_del_first
-
-Commit 1230db8e1543 ("llist: Make some llist functions inline") appears
-to have deleted the definitions by accident.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/llist.h |    6 ++++++
- 1 files changed, 6 insertions(+), 0 deletions(-)
-
-diff --git a/include/linux/llist.h b/include/linux/llist.h
-index 837fb4a..7287734 100644
---- a/include/linux/llist.h
-+++ b/include/linux/llist.h
-@@ -178,4 +178,10 @@ static inline struct llist_node *llist_del_all(struct =
-llist_head *head)
- {
- 	return xchg(&head->first, NULL);
- }
-+
-+extern bool llist_add_batch(struct llist_node *new_first,
-+			    struct llist_node *new_last,
-+			    struct llist_head *head);
-+extern struct llist_node *llist_del_first(struct llist_head *head);
-+
- #endif /* LLIST_H */
---=20
-1.7.6.3
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__5_Oct_2011_17_25_28_+1100_dhJCLRNhNAmdY4ej
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOi/hYAAoJEECxmPOUX5FELywQAI8tJ8VUghyoz32qfScneYBq
-jYdGZUms02M/9XnBjKNL369+wMqR/VDoQclZ2m0F0E86Rl6FbtI0FSkqHpqJHEgV
-jnCak5BYUTUzsb6dy8dbHTC05xa8To7TU+Tc7eQDrG8WLq+zzrrRcH4VQuJw3bwc
-Zxf33tdkYi6tFwg+m/1LWT6e3dLVzOUQ9/ZBQbFst1+gZRnvkpddQyGNtlFPL3D+
-UahsaDF51NHAOuQMx8vK4rtQV7p+kHrEvHqLCZMksehGDVKf5nvGaG8htDnA0kVq
-sHtpNIm7PyCmJTtiEBKl+X0A/g1gx4zsVS9bhKHaEJhm28nuMjWpcwdTFAo9VwjL
-/IjSDWJd1ltVSh+gs0bMkdXGjMx7tIXrkI6TFVIBRe5SB5dUOCoPN400Xqx4hzYE
-UGe9I/4K/DWsY38sQHMZhD4atLr/6M3VBrDH1E7BbiqrCdH/w+N+3BYiNCoeypS/
-uJ9m+yWRmq+kGOHVpVOkv/9qpjCc1AH4Sq3ogTKDNmWacDAzEGE/rfmtoMxLErrM
-FRMRV5K0c4IxmyXuRXze1TEfuu7iQ3CVi7kugMbpEulv6RcUyEfHjLkVD8m4Qwp9
-IoTum3Low1gbX3/MEoK0IYdEdHa18mUewL2xdQX39udF03HCN4nUMy3lv2QFgFLi
-YaYiZNoJ1f3zovlsSJf3
-=5oyD
------END PGP SIGNATURE-----
-
---Signature=_Wed__5_Oct_2011_17_25_28_+1100_dhJCLRNhNAmdY4ej--
+UGF1bCBHb3J0bWFrZXIgd3JvdGUgb24gMjAxMS0xMC0wMToNCj4gU2luY2UgdGhleSBhcmUgYXNz
+dW1pbmcgaXQgaXMgdGhlcmUgaW1wbGljaXRseSBhbmQgd2lsbCBmYWlsIG90aGVyd2lzZQ0KPiB3
+aXRoIHRoaW5ncyBsaWtlOg0KPg0KPiBkcml2ZXJzL3N0YWdpbmcvaWlvL2ltcGVkYW5jZS1hbmFs
+eXplci9hZDU5MzMuYzo4MTY6IHdhcm5pbmc6IHR5cGUNCj4gIGRlZmF1bHRzIHRvIOKAmGludOKA
+mSBpbiBkZWNsYXJhdGlvbiBvZiDigJhNT0RVTEVfQVVUSE9S4oCZDQo+IGRyaXZlcnMvc3RhZ2lu
+Zy9paW8vYWRjL2FkNzI4MGEuYzo5OTA6IHdhcm5pbmc6IHR5cGUgZGVmYXVsdHMgdG8g4oCYaW50
+4oCZDQo+ICBpbiBkZWNsYXJhdGlvbiBvZiDigJhNT0RVTEVfQVVUSE9S4oCZDQo+IFNpZ25lZC1v
+ZmYtYnk6IFBhdWwgR29ydG1ha2VyIDxwYXVsLmdvcnRtYWtlckB3aW5kcml2ZXIuY29tPg0KDQpB
+Y2tlZC1ieTogTWljaGFlbCBIZW5uZXJpY2ggPG1pY2hhZWwuaGVubmVyaWNoQGFuYWxvZy5jb20+
+DQoNCj4NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9paW8vYWRjL2FkNzI4MGEuYw0K
+PiBiL2RyaXZlcnMvc3RhZ2luZy9paW8vYWRjL2FkNzI4MGEuYyBpbmRleCBhYjZjZjljLi42Y2E0
+NTMyIDEwMDY0NCAtLS0NCj4gYS9kcml2ZXJzL3N0YWdpbmcvaWlvL2FkYy9hZDcyODBhLmMgKysr
+DQo+IGIvZHJpdmVycy9zdGFnaW5nL2lpby9hZGMvYWQ3MjgwYS5jIEBAIC0xNCw2ICsxNCw3IEBA
+DQo+ICAjaW5jbHVkZSA8bGludXgvZXJyLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvZGVsYXkuaD4N
+Cj4gICNpbmNsdWRlIDxsaW51eC9pbnRlcnJ1cHQuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9tb2R1
+bGUuaD4NCj4NCj4gICNpbmNsdWRlICIuLi9paW8uaCINCj4gICNpbmNsdWRlICIuLi9zeXNmcy5o
+Ig0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2lpby9pbXBlZGFuY2UtYW5hbHl6ZXIv
+YWQ1OTMzLmMNCj4gYi9kcml2ZXJzL3N0YWdpbmcvaWlvL2ltcGVkYW5jZS1hbmFseXplci9hZDU5
+MzMuYyBpbmRleCBhY2MwZTY5Li41NzgzNzQyDQo+IDEwMDY0NCAtLS0gYS9kcml2ZXJzL3N0YWdp
+bmcvaWlvL2ltcGVkYW5jZS1hbmFseXplci9hZDU5MzMuYyArKysNCj4gYi9kcml2ZXJzL3N0YWdp
+bmcvaWlvL2ltcGVkYW5jZS1hbmFseXplci9hZDU5MzMuYyBAQCAtMTYsNiArMTYsNyBAQA0KPiAg
+I2luY2x1ZGUgPGxpbnV4L3R5cGVzLmg+ICNpbmNsdWRlIDxsaW51eC9lcnIuaD4gI2luY2x1ZGUN
+Cj4gIDxsaW51eC9kZWxheS5oPiArI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPiAjaW5jbHVkZSA8
+YXNtL2RpdjY0Lmg+DQo+DQo+ICAjaW5jbHVkZSAiLi4vaWlvLmgiDQoNCkdyZWV0aW5ncywNCk1p
+Y2hhZWwNCg0KLS0NCkFuYWxvZyBEZXZpY2VzIEdtYkggICAgICBXaWxoZWxtLVdhZ2VuZmVsZC1T
+dHIuIDYgICAgICA4MDgwNyBNdWVuY2hlbg0KU2l0eiBkZXIgR2VzZWxsc2NoYWZ0OiBNdWVuY2hl
+bjsgUmVnaXN0ZXJnZXJpY2h0OiBNdWVuY2hlbiBIUkIgNDAzNjg7DQpHZXNjaGFlZnRzZnVlaHJl
+cjpEci5DYXJzdGVuIFN1Y2tyb3csIFRob21hcyBXZXNzZWwsIFdpbGxpYW0gQS4gTWFydGluLCBN
+YXJnYXJldCBTZWlmDQoNCg0K
