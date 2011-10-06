@@ -1,65 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the gpio tree
-Date: Thu, 6 Oct 2011 14:48:26 +1100
-Message-ID: <20111006144826.a69a5ea59d4ca94f8f7414cf@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Oct_2011_14_48_26_+1100_7TJTgztXCFKYvzA/"
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: [PATCH] ASoC: fix codec breakage caused by the volsw/volsw_2r merger
+Date: Thu,  6 Oct 2011 07:43:21 +0300
+Message-ID: <1317876201-7041-1-git-send-email-peter.ujfalusi@ti.com>
+References: <20111006132204.29c84ed7349daf8c4aa39c3b@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:47380 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753223Ab1JFDsg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 23:48:36 -0400
+Received: from na3sys009aog121.obsmtp.com ([74.125.149.145]:48730 "EHLO
+	na3sys009aog121.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751312Ab1JFEnx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Oct 2011 00:43:53 -0400
+In-Reply-To: <20111006132204.29c84ed7349daf8c4aa39c3b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>
 
---Signature=_Thu__6_Oct_2011_14_48_26_+1100_7TJTgztXCFKYvzA/
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+By accident few places still uses the _2r calls from
+the core.
+This is a quick fix, the drivers using the old callbacks
+going to be changed.
 
-Hi Grant,
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
 
-After merging the gpio tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Hi Stephen, Mark,
 
-ERROR: "irq_setup_generic_chip" [drivers/gpio/gpio-pch.ko] undefined!
-ERROR: "irq_alloc_generic_chip" [drivers/gpio/gpio-pch.ko] undefined!
-ERROR: "irq_setup_generic_chip" [drivers/gpio/gpio-ml-ioh.ko] undefined!
-ERROR: "irq_alloc_generic_chip" [drivers/gpio/gpio-ml-ioh.ko] undefined!
+I'm really sorry, I can not explain how it happened.
+Please find a quick fox for the issue.
+I'm going to fix the drivers meanwhile.
 
-Presumably caused by commits 54be566317b6 ("gpio-ml-ioh: Support
-interrupt function") and 38eb18a6f92d ("gpio-pch: Support interrupt
-function").
+Regards,
+Peter
 
-I have used the gpio tree from next-20111005 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+ include/sound/soc.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
---Signature=_Thu__6_Oct_2011_14_48_26_+1100_7TJTgztXCFKYvzA/
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOjSUKAAoJEECxmPOUX5FE/GMQAIfUtWCtDBhS3GGa+HUyx2Zj
-YYtVbE9GXvFllj/6C81F7n4G/t9iW0F7HRU4m1SdPcWwiP/4+B/jtjrn5Uy4J2tV
-vr8TuZ1Z1mf+luGh8wRwUzw1BgE9hjaLL0tI092dVbsPkKEZ2aZktiaOugyJyrbV
-WdO3Fmcki2RXVx9N+YjpGUV7vojRoKmzmzbJV2fT0JW88mcqB6RGksXjpaxlVCu0
-amC4T7ARGtshF8xsiEV1W0GUq5ntSYyucE+xemFzaIXXYSMMopAjREIvLow/dBov
-yOBKvXuJBY7qXaHJhE2Q9WLqOt2VOgqtbEHDSlSya0rLeXTcSuJUf0XfTDRwrlNF
-r8irJ8v7BDOLwMS0CN5RyiZtSxUm6Vbhl1K7mSEyMCPRto76+SjbgxdrM6yYwAwI
-+HaYBnj8wpflwRIS0qRD6nWw7cnReEMyALSeOAQSoiDDwmnf8nadfxYdKmyaRlva
-qT+WGBqCdPMVVMQ5PuBZy6bT3pUHydLXuSZCnfSHe+PPvb7464bl7ux2li1ub2YW
-WnAHrTgIxRfhVvrTJ8dt44Nq12EhEk7G070PHFVX3jH5pFUlE+KKVGs7Cs+GDj2n
-NHhb9OoPA5DM5CmXGt9snGB6twGXNSUiDZuxPv8tgOSGB6u/eWIZ6Ou8QWAVw11Q
-TDMIYS8aMjJhS7Z4uSg2
-=hDjz
------END PGP SIGNATURE-----
-
---Signature=_Thu__6_Oct_2011_14_48_26_+1100_7TJTgztXCFKYvzA/--
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index 88ba85a..858291d 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -393,6 +393,8 @@ int snd_soc_get_volsw(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol);
+ int snd_soc_put_volsw(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_value *ucontrol);
++#define snd_soc_get_volsw_2r snd_soc_get_volsw
++#define snd_soc_put_volsw_2r snd_soc_put_volsw
+ int snd_soc_info_volsw_s8(struct snd_kcontrol *kcontrol,
+ 	struct snd_ctl_elem_info *uinfo);
+ int snd_soc_get_volsw_s8(struct snd_kcontrol *kcontrol,
+-- 
+1.7.7
