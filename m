@@ -1,66 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Thu, 6 Oct 2011 13:22:04 +1100
-Message-ID: <20111006132204.29c84ed7349daf8c4aa39c3b@canb.auug.org.au>
+Subject: Re: [PATCH] drivers/media: fix dependencies in video
+ mt9t001/mt9p031
+Date: Thu, 6 Oct 2011 14:02:14 +1100
+Message-ID: <20111006140214.b64b22b77f2f831442d59794@canb.auug.org.au>
+References: <4E83A02F.2020309@xenotime.net>
+	<1317418491-26513-1-git-send-email-paul.gortmaker@windriver.com>
+	<4E8644D5.6080307@xenotime.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Oct_2011_13_22_04_+1100_1z5aA06QpYvmsYA."
+ boundary="Signature=_Thu__6_Oct_2011_14_02_14_+1100_5V6Yt/gIeO6_v0JX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:49951 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:49020 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757932Ab1JFCWS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 22:22:18 -0400
+	with ESMTP id S1752250Ab1JFDC2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 23:02:28 -0400
+In-Reply-To: <4E8644D5.6080307@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-media@vger.kernel.org
 
---Signature=_Thu__6_Oct_2011_13_22_04_+1100_1z5aA06QpYvmsYA.
-Content-Type: text/plain; charset=US-ASCII
+--Signature=_Thu__6_Oct_2011_14_02_14_+1100_5V6Yt/gIeO6_v0JX
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Mauro,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Fri, 30 Sep 2011 15:38:13 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
+>
+> On 09/30/11 14:34, Paul Gortmaker wrote:
+> > Both mt9t001.c and mt9p031.c have two identical issues, those
+> > being that they will need module.h inclusion for the upcoming
+> > cleanup going on there, and that their dependencies don't limit
+> > selection of configs that will fail to compile as follows:
+> >=20
+> > drivers/media/video/mt9p031.c:457: error: implicit declaration of funct=
+ion =E2=80=98v4l2_subdev_get_try_crop=E2=80=99
+> > drivers/media/video/mt9t001.c:787: error: =E2=80=98struct v4l2_subdev=
+=E2=80=99 has no member named =E2=80=98entity=E2=80=99
+> >=20
+> > The related config options are CONFIG_MEDIA_CONTROLLER and
+> > CONFIG_VIDEO_V4L2_SUBDEV_API.  Looking at the code, it appears
+> > that the driver was never intended to work without these enabled,
+> > so add a dependency on CONFIG_VIDEO_V4L2_SUBDEV_API, which in
+> > turn already has a dependency on CONFIG_MEDIA_CONTROLLER.
+> >=20
+> > Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+>=20
+> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
-sound/soc/codecs/wm_hubs.c: In function 'wm8993_put_dc_servo':
-sound/soc/codecs/wm_hubs.c:225:2: error: implicit declaration of function '=
-snd_soc_put_volsw_2r' [-Werror=3Dimplicit-function-declaration]
-sound/soc/codecs/wm_hubs.c: At top level:
-sound/soc/codecs/wm_hubs.c:365:1: error: 'snd_soc_get_volsw_2r' undeclared =
-here (not in a function)
+Ping?
 
-Caused by commit 0f9887d11e7c ("ASoC: Consolidate use of controls with
-custom get/put function").
-
-I have used the sound-asoc tree from next-20111005 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__6_Oct_2011_13_22_04_+1100_1z5aA06QpYvmsYA.
+--Signature=_Thu__6_Oct_2011_14_02_14_+1100_5V6Yt/gIeO6_v0JX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOjRDMAAoJEECxmPOUX5FET54P/j29k9mY8SWsQUR3z7MUpEbu
-tcC+dZGRuYMHjbAtbWyfHJdxYSi3ckDoz8BZ8sbNqd5ljH3g60BmFooqL500k00h
-uf7IyFG489rfd9CE+iEms0AM1yUAp5/sq3ugtkBO0nCLOiQMQt0OmYhwjcRUpRDc
-qckmp95SY0s45HQWAam9P5gCOAENp5OJX6rKBQ7+Jst4ffoJXA5pg9NxZRT10DoM
-qBHMHQOzNswTjete090LlqYLQ6vwlCleeOXIPE5GBrE7D+tGYOS2+9ptPIgiBjfW
-LI6SND5mX3MUxNMkTgfFt4/tQs/rkqvdk3kLw7KRE8LAtjoam+70HfutzcGP+EHV
-VEEgY78IrxQSc8om8Iea0LTRhFrnKNLmtSaJiMtdX8z+569HUrSpEOpcBVTUnzLy
-z4eTykOSkBg7H2ziCEYuSbf2dcNaDyGg23vo2SHFB/wAx+eSmeOuEAOoQvHohZam
-r51l4+eCu3mG/zVJ+WCHeW8FWTVyFSxQz7t2VWqwWTzYfPIa54iK/ET8ZubpZYba
-UlOaC0+tH5gtaINRlKWpiMqrwdZmhvSc180z02speAf7onDFDyGQgKrzGgDnbGKT
-fvqCEgl5t8mE3DjeRM9aq8yQVGetD2YB4WBCwEFhJ42TFusKBKV+dgw0yxZL0U4C
-gIrGYbW/jh+e8NCvwDRU
-=Cxeo
+iQIcBAEBCAAGBQJOjRo2AAoJEECxmPOUX5FEN9YQAJDGa1UL4mqZAe9Y3gc1SRU2
+ZjWL11vlwed1Qr1Ert3WJnOOmQ1zAht25hGawhLjIOTAMC9qhFz76hNsY4AzQY3T
+Jq/rsominQ6z/chTheynt2GOuu0hJC9UfnPkdvorf66PyqcPFAXFr+51swAt+0fB
+igW9lFigLgcBtL9QeqHfLjDEA8/cZZRmIAacon5/wfMK9gGEKlwWWeWcfXLbdJnM
+f+tD1zaxgEo1RC0BVjJvsgxRenfNsRCw1QhYoQsbI/FL2UewITt56qpVPLoIQKPe
+SVrYm6QO9//7hxyhd/cvyde3u2ypogjB0MaVcZnPeyoGhAt9UzTRkvSgOmseEUEN
+xXmj8tzmgjDzEZiNkk0ZpCwTpBHEW71CH5lVvz8QAAPkPd8QHwXldvIWuYcej/lM
+vln9ivIT5UlWQkKTZKQ4YWIdw6WWcUUW+ynICYqzdFob+hELdBVLaMruEQME+DKg
+MshdtXn2Wwj3Q1Z3sa7bB+Hb37Lz5gZ0PP9E64x/Dq9ucLGDMODA8l7QBak9aab/
+tbsuLYgQ4Vm20fnOe0n4RlXLFGwZnGT1cZwI3NQkTRjOi7T7zsvuO5v/hZjfsNpR
+lmVTr8zm1vrB+96gvAedfjVpnXKVf7EfKft1QBTx29yjwag7792HxFGQPP7rWbbL
+iOtz69Y+4xEuVEvMBdBQ
+=Z1Ab
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__6_Oct_2011_13_22_04_+1100_1z5aA06QpYvmsYA.--
+--Signature=_Thu__6_Oct_2011_14_02_14_+1100_5V6Yt/gIeO6_v0JX--
