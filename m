@@ -1,43 +1,23 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Subject: Re: linux-next: manual merge of the staging tree with the net
- tree
-Date: Thu, 6 Oct 2011 10:59:10 +0200
-Message-ID: <4E8D6DDE.9050102@broadcom.com>
-References: <20111006155810.14a6b5c199edc388bbf11437@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ASoC: Replace remaining use of *_volsw_2r with *_volsw
+Date: Thu, 6 Oct 2011 11:16:59 +0100
+Message-ID: <20111006101658.GC14518@opensource.wolfsonmicro.com>
+References: <20111006132204.29c84ed7349daf8c4aa39c3b@canb.auug.org.au>
+ <1317884352-17067-1-git-send-email-peter.ujfalusi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=iso-8859-1;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms3.broadcom.com ([216.31.210.19]:4003 "EHLO MMS3.broadcom.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S935622Ab1JFI7T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Oct 2011 04:59:19 -0400
-In-Reply-To: <20111006155810.14a6b5c199edc388bbf11437@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Eliad Peller <eliad@wizery.com>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1317884352-17067-1-git-send-email-peter.ujfalusi@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+List-Id: linux-next.vger.kernel.org
 
-On 10/06/2011 06:58 AM, Stephen Rothwell wrote:
-> Hi Greg,
->
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/brcm80211/brcmsmac/mac80211_if.c between commit
-> 37a41b4affa3 ("mac80211: add ieee80211_vif param to tsf functions") from
-> the net tree and commit 3956b4a2ddb0 ("staging: brcm80211: remove locking
-> macro definitions") from the staging tree.
->
-> I fixed it up (which essentially means I used the staging tree version
-> with one small change to the brcms_ops_conf_tx prototype) and can carry
-> the fixes as necessary.
+On Thu, Oct 06, 2011 at 09:59:12AM +0300, Peter Ujfalusi wrote:
+> The snd_soc_*_volsw_2r functionality has been merged to
+> *volsw callbacks.
+> Few places still used the get, or put variant of volsw_2r,
+> replace those with the corresponding *_volsw.
 
-Thanks, Stephen
-
-I had to make the mac80211 conf_tx callback change  for the mainline 
-patch as well.
-
-Acked.
-
-Gr. AvS
+Applied, thanks.
