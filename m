@@ -1,60 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: new location for writeback-for-next
-Date: Thu, 6 Oct 2011 10:01:25 +1100
-Message-ID: <20111006100125.c73e2de988eab6c14773ef6e@canb.auug.org.au>
-References: <20111005151546.GA5472@localhost>
+Subject: Re: linux-next: build failure after merge of the arm-soc tree
+Date: Thu, 6 Oct 2011 11:13:17 +1100
+Message-ID: <20111006111317.531e6fcc1829fc9927d4924d@canb.auug.org.au>
+References: <20111004112623.aa04e959d29cb19af8053739@canb.auug.org.au>
+	<201110040940.12876.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Oct_2011_10_01_25_+1100_0Ga/ZR.8M2mtB/Gf"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111005151546.GA5472@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wu Fengguang <fengguang.wu@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__6_Oct_2011_11_13_17_+1100_azSOk0zn8BQoUPpA"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:58758 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935580Ab1JFANg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2011 20:13:36 -0400
+In-Reply-To: <201110040940.12876.arnd@arndb.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>, stable@kernel.org
 
---Signature=_Thu__6_Oct_2011_10_01_25_+1100_0Ga/ZR.8M2mtB/Gf
+--Signature=_Thu__6_Oct_2011_11_13_17_+1100_azSOk0zn8BQoUPpA
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Arnd,
 
-On Wed, 5 Oct 2011 23:15:46 +0800 Wu Fengguang <fengguang.wu@intel.com> wro=
-te:
+On Tue, 4 Oct 2011 09:40:12 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> Since the kernel.org git tree is still not accessible, would you pull
-> from this tree instead of the old writeback.git?
+> On Tuesday 04 October 2011, Stephen Rothwell wrote:
+> > After merging the arm-soc tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > ERROR: "clk_enable" [drivers/misc/atmel_pwm.ko] undefined!
+> > ERROR: "clk_disable" [drivers/misc/atmel_pwm.ko] undefined!
+> > ERROR: "clk_put" [drivers/misc/atmel_pwm.ko] undefined!
+> > ERROR: "clk_get_rate" [drivers/misc/atmel_pwm.ko] undefined!
+> > ERROR: "clk_get" [drivers/misc/atmel_pwm.ko] undefined!
+> >=20
+> > Caused by commit 9dccc010c816 ("ARM: at91: remove dependency for Atmel
+> > PWM driver selector in Kconfig").
+> >=20
+> > I have used the arm-soc tree from next-20110930 for today.
 >=20
->         git://github.com/fengguang/linux.git  writeback-for-next
+> Ah, thanks for tracking this down. I actually noticed the same
+> problem on an ARM build but did not realize it was from one of
+> the patches I had jut put in there myself.
+>=20
+> I'm really glad I didn't send this to Linus cc:stable yet then.
+> Nicolas, in my randconfig branch, I've fixed this by adding
+>=20
+> 	depends on HAVE_CLK
+>=20
+> which I think is the right solution. I'll replace your patch
+> with one that does this if you don't mind.
+>=20
+> I'd also remove the stable tag for this patch, because it can
+> have unintended side-effects on other architectures.
 
-I have switched to that from today.
-
+I am still getting the failure ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__6_Oct_2011_10_01_25_+1100_0Ga/ZR.8M2mtB/Gf
+--Signature=_Thu__6_Oct_2011_11_13_17_+1100_azSOk0zn8BQoUPpA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOjOHFAAoJEECxmPOUX5FE+J4QAJfHVzrO+1/Pa5XG0EoTbzUn
-QWxEGuu56SVeAmffdydRCX106GVAV6sc4wi53fgi8H1CymwjvuD5VYlySbJLLkU5
-TAlHh5DSn3C+0SKUXNahJyGdvNXeHM6SeMGVX0rr75JFXtX2ikB7lt+sUza4gDK7
-n+nvf0MKjNNV4mx+Bwjp3Cd+oOcClSxJLoWi3QLNNob69oDgqvtnrbzgUk/cndTa
-zv3OmqIYM5gFZzBmj5h/d4pa3CtV6wZxyWZ2jy44GJ7zdKgzyHrLlj+7aCIYXW9X
-79Lhm7lpkFOAjw/Hy+lDZ4h/auVZvgwJE/et9jUzMgKrzthUSvsF6wguSq/VNZ3s
-pwzuPUarkYYIaHYj05/o+Ztd5Dx3/onNA3UP4E9v1HxTbLK7ozitrPTzsvWq1/l5
-Obqc5h1Lz56+287ub0HnFRNAbKOipyb2YIwSSDa7DDdBufAfe1Lg1RdcCyL2oSgj
-oFIJ7f46XOLG3Y72nyj62dVACjiEhlE6DDzp6wat9Tas26FrBeExnwrhhLvdIzYV
-m+Chg23oOFjVp8yqiUi9GoEmKucp1er9t1Y40HF9ZRGp0ghcylCyeliGa0dPrtwD
-zX++sgRzkvpOyNieAYS5ndCUzup2+JlOCMb/UTsD27cj0eTt18unnVuO68dV2Nqo
-M+ytRhTSSgjl0k3ShUd5
-=nt7Y
+iQIcBAEBCAAGBQJOjPKdAAoJEECxmPOUX5FEhmUQAJ5UcH0D9lBq76vNK+GfDXrL
+0a02oZoSKUT2ChRRkO9N5V84zbLCB/dd/O6ref1sAo2pOUJoDxX0hgX9yPcjt2+7
+vmQy2jY4DuMPWuVyS+I/nKPpIh2PsBBMXTqaoafw2ItM6uCeVuuj/D6xGtEHEE7a
+NbgTTR97dsbNDD5Pd7O3HhpPtMoZKYrxaf4JuBSZJlg3TeROIFo0mTLfaihssdRI
+m8nIya5Nw+zfVWgABf4gYeE+bFiksPC8Z05JFP+FOnzcqpzjBRbOmWdK06pZQQ/T
+Jq4DZH5OBKL6T+6GrxtrbUpU2fMBwK9ldiruSrn3tPxl4bjz2lyTRyO9H9bj+UOj
+xUfe7tSVXZwfHZS3fXZPVhjk5QdK6FOD5sOMN39OMXvFx+kBfwOgdixg8Z7TFMIP
+QA2SFURKSxzgikpQNUK56LXluGKJr4rWlbq2lKFqQ5A/GyQkeB/qN7R7X+FBCERM
+G5JYTYzY98+FqPt8/JoOq5DnXEFGSrYP0gp3wwGUYbTMLYq1fZIKvw5Rj7dM/t3a
+YnZ0UmUlmfQ9C6z4UHHnzj4RxBlDQTie1OWe2V8gz5JpFd0j/s/cpZMYlTnlcDXD
+E48cviKt+pKyBfi87xR+GwRGgFvUhk4vc8wsEiMS/6dP40KN+fFgUwp704qdRL2t
+mYnH/SkEKuv0xakoz/3Q
+=/csh
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__6_Oct_2011_10_01_25_+1100_0Ga/ZR.8M2mtB/Gf--
+--Signature=_Thu__6_Oct_2011_11_13_17_+1100_azSOk0zn8BQoUPpA--
