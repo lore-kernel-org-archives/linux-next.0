@@ -1,83 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the net tree
-Date: Thu, 6 Oct 2011 16:04:33 +1100
-Message-ID: <20111006160433.44de2a1374b6ec4efc97e04e@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the pm tree
+Date: Thu, 6 Oct 2011 16:27:56 +1100
+Message-ID: <20111006162756.c2ce5222b2cd9061d471986f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__6_Oct_2011_16_04_33_+1100_XIAb135vYIODAlvJ"
+ boundary="Signature=_Thu__6_Oct_2011_16_27_56_+1100_ZVY/04=pWsIJnp0K"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:44088 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:33855 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750780Ab1JFFEr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Oct 2011 01:04:47 -0400
+	with ESMTP id S932255Ab1JFF2W (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Oct 2011 01:28:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ian Campbell <Ian.Campbell@citrix.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Mark Einon <mark.einon@gmail.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Barry Song <baohua.song@csr.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
---Signature=_Thu__6_Oct_2011_16_04_33_+1100_XIAb135vYIODAlvJ
+--Signature=_Thu__6_Oct_2011_16_27_56_+1100_ZVY/04=pWsIJnp0K
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Paul,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/et131x/et1310_tx.c between commit bf3f1a6081aa ("et131x:
-convert to SKB paged frag API") from the net tree and commit 10f00a49b048
-("staging: et131x: Rename var name 'etdev' to 'adapter' throughout
-module") from the staging tree.
+Today's linux-next merge of the moduleh tree got a conflict in
+kernel/power/hibernate.c between commit 55415f553b8b ("PM / Hibernate:
+Add resumewait param to support MMC-like devices as resume file") from
+the pm tree and commit 5ee961c64584 ("kernel: Fix files explicitly
+needing EXPORT_SYMBOL infrastructure") from the moduleh tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/et131x/et1310_tx.c
-index 03e7a4e,2ecb934..0000000
---- a/drivers/staging/et131x/et1310_tx.c
-+++ b/drivers/staging/et131x/et1310_tx.c
-@@@ -519,12 -392,12 +392,12 @@@ static int nic_send_packet(struct et131
-  			 * returned by pci_map_page() is always 32-bit
-  			 * addressable (as defined by the pci/dma subsystem)
-  			 */
- -			desc[frag++].addr_lo =3D
- -			    pci_map_page(adapter->pdev,
- -					 frags[i - 1].page,
- -					 frags[i - 1].page_offset,
- -					 frags[i - 1].size,
- -					 PCI_DMA_TODEVICE);
- +			desc[frag++].addr_lo =3D skb_frag_dma_map(
-- 							&etdev->pdev->dev,
-++							&adapter->pdev->dev,
- +							&frags[i - 1],
- +							0,
- +							frags[i - 1].size,
- +							PCI_DMA_TODEVICE);
-  		}
-  	}
- =20
+diff --cc kernel/power/hibernate.c
+index 0f87850,ce21f25..0000000
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@@ -14,7 -14,7 +14,8 @@@
+  #include <linux/reboot.h>
+  #include <linux/string.h>
+  #include <linux/device.h>
+ +#include <linux/async.h>
++ #include <linux/export.h>
+  #include <linux/kmod.h>
+  #include <linux/delay.h>
+  #include <linux/fs.h>
 
---Signature=_Thu__6_Oct_2011_16_04_33_+1100_XIAb135vYIODAlvJ
+--Signature=_Thu__6_Oct_2011_16_27_56_+1100_ZVY/04=pWsIJnp0K
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOjTbhAAoJEECxmPOUX5FEOg8P/R2VbR6MqtVIGuLAjk6238DO
-swW5979xb0aZRJHFqQ8t/pl6c2AJMr0oyakNIwNaY2HpFq32Kqtf6yIo/K1STB8E
-Tg2wCu2JSpEY68zJW8EHVEAypHz5WS0fFgS1xAnHz/jqyoFih59bhsgmV9Sxb8KK
-QglqepjYGAXQHbjwDa19Kjg8H+zaGc9Janow9moX1YOLj3NvMTpiDDKaqsrDC7H9
-/LZNEejEAszHx8eAubKpctAhCBqBBLf0QQYApVZBvab05Vvrvb/6/DNTLvv/8/IL
-KlBvR5Vow5ckhSnpnm/8VOMOynsBiVQhfvp1x0G4Sz5hood3Ytsu6QegUAfzeUdh
-CP6RsuaneV7GIYlDsS4uzv2d7p045edEPoDS+z1TX9obKY6PfMxyaiBDVKt0E0MK
-TvxzyQuROCzPe1TWNS6iGvK6+M0hqBEF+CEcjOwZnd2JG0K2xrb83Uq8uusk5pKf
-szDpBeYzhFLO+tBlf9YAuWpP7c6CBXhRI1edwUrhdsVPQ/2sNp14NHeeo+ZqBZnu
-v6yzzWvEsuxa3AnAu0D/eUxIFzsXnn74pZPL2TJhSTiKU0o2kC0H9D/sPeshhPmo
-AZHcLx0ubaME9m8UtHVAJ1PqqUEWYsWFvJmQaM5IuP5rBW+CLEDKD7Yv/+ffl584
-kSC8keGoeiqu8GJkHWGd
-=eTYo
+iQIcBAEBCAAGBQJOjTxcAAoJEECxmPOUX5FEgT0P+wbp9jpUv6O9dc2H/Gj72OSS
+EOl5tpm8k1jpsm2yVOb+z31dhbff3YQR6jCs8wPZ7kK+solBk5RrTPpKAg5+OE3s
+S3AUm41bkTR4mVqBYiumQceKQHC6VRomVrziGKJ/fLlM4CG8auSwNl1ydweWwiVz
+6+A0M9U1gDN+SYb6dVN0L3AHMgS6TZ0FUqiDuaTZgI6DoC6wiWCk01G26MFxPq0P
+8S8PB4IfMxKBTtmCR/tUFENcYTtvoElzGEOz6EIYgrlJSqCYgO0BnkmuqS6e2hEK
+rmOsIha6zTvIeSP2Q0tzZwpF4WUSjMWCZ9bJhPuaM5RRcPRbhC+/vzfxUjg4VRtQ
+610uVI+PmnEZCpWuGmPA6NBiLsTwb8xmCmvrC13dlF6+U/M/vRQ0JUYTJiw7EylS
+9ePn7sTr/QW6OGvLsOIiy64NWi92yxEXCfZrZ1Vjfc5GXXHDgNKbR8lgM6vXB+H6
+E6acpcFGRt+GV2LhQfwzZBgoe3LCyJ/EnCfuxKTZuhQU054ao0dsGf8cePxM/x6M
+JOi1ogHB3JCzzU7O7yOey18nWgCEbHru4Fr8t6wQRtiJ6AMEr6DUrk0MxmdnvqWO
+lKZ6Ovq75L3CNqWhDBHCFot0hiKQSQICNa2ESSHOtUPSTwuFfD8MZgaiz7JsvXuK
+g/fRWQRCeIDoeKw47mz9
+=4l3k
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__6_Oct_2011_16_04_33_+1100_XIAb135vYIODAlvJ--
+--Signature=_Thu__6_Oct_2011_16_27_56_+1100_ZVY/04=pWsIJnp0K--
