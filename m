@@ -1,23 +1,20 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ASoC: Replace remaining use of *_volsw_2r with *_volsw
-Date: Thu, 6 Oct 2011 11:16:59 +0100
-Message-ID: <20111006101658.GC14518@opensource.wolfsonmicro.com>
-References: <20111006132204.29c84ed7349daf8c4aa39c3b@canb.auug.org.au>
- <1317884352-17067-1-git-send-email-peter.ujfalusi@ti.com>
+From: Mark Salter <msalter@redhat.com>
+Subject: Including C6X in linux-next
+Date: Thu, 06 Oct 2011 12:04:44 -0400
+Message-ID: <1317917085.2703.16.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1317884352-17067-1-git-send-email-peter.ujfalusi@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+Sender: linux-arch-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Oct 06, 2011 at 09:59:12AM +0300, Peter Ujfalusi wrote:
-> The snd_soc_*_volsw_2r functionality has been merged to
-> *volsw callbacks.
-> Few places still used the get, or put variant of volsw_2r,
-> replace those with the corresponding *_volsw.
+Hi Stephen,
 
-Applied, thanks.
+All of the patches in the latest C6X patch set have gotten Acked-bys, so
+I guess its time to include it in the linux-next tree. The patches are
+available on the "for-linux-next" branch at:
+
+   http://linux-c6x.org/git/projects/linux-c6x-upstreaming.git
