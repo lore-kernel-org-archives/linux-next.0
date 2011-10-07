@@ -1,45 +1,45 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: linux-pm tree back at kernel.org (Re: linux-next: temporary github repository)
-Date: Fri, 7 Oct 2011 23:01:20 +0200
-Message-ID: <201110072301.21087.rjw@sisk.pl>
-References: <20110918212535.a1038aa5f0caad9d83e351b2@canb.auug.org.au> <201109181518.35788.rjw@sisk.pl>
+From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Subject: [PATCH -next] infiniband: fix ipath_chip_init.c build errors
+Date: Fri, 07 Oct 2011 13:59:41 -0700
+Message-ID: <4E8F683D.9020604@xenotime.net>
+References: <20111007174230.702f4a0bf1fe71dab5e10961@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:55080 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754420Ab1JGU7D (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 7 Oct 2011 16:59:03 -0400
-In-Reply-To: <201109181518.35788.rjw@sisk.pl>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20111007174230.702f4a0bf1fe71dab5e10961-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Marciniszyn <infinipath-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
 
-On Sunday, September 18, 2011, Rafael J. Wysocki wrote:
-> Hi,
-> 
-> On Sunday, September 18, 2011, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Since kernel.org has not returned yet, I have created a temporary
-> > repository on github that will contain linux-next until the kernel.org
-> > servers return. You can access it at
-> > git://github.com/sfrothwell/linux-next.git
-> 
-> OK, so the temporary location of the linux-pm tree's linux-next branch is at:
-> 
-> git://github.com/rjwysocki/linux-pm.git linux-next
+Add <linux/stat.h> to fix build errors:
 
-The linux-pm tree is back at kernel.org, so please use:
+drivers/infiniband/hw/ipath/ipath_init_chip.c:54:1: error: 'S_IRUGO' undeclared here (not in a function)
+drivers/infiniband/hw/ipath/ipath_init_chip.c:54:1: error: bit-field '<anonymous>' width not an integer constant
+drivers/infiniband/hw/ipath/ipath_init_chip.c:67:1: error: 'S_IWUSR' undeclared here (not in a function)
+drivers/infiniband/hw/ipath/ipath_init_chip.c:67:1: error: bit-field '<anonymous>' width not an integer constant
 
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+Signed-off-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Cc:	Mike Marciniszyn <infinipath-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>
+Cc:	linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+---
+ drivers/infiniband/hw/ipath/ipath_init_chip.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-from now on.  I'm still planning to keep the tree at github up to date, though.
-
-Thanks,
-Rafael
+--- next-2011-1007.orig/drivers/infiniband/hw/ipath/ipath_init_chip.c
++++ next-2011-1007/drivers/infiniband/hw/ipath/ipath_init_chip.c
+@@ -35,6 +35,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/moduleparam.h>
+ #include <linux/slab.h>
++#include <linux/stat.h>
+ #include <linux/vmalloc.h>
+ 
+ #include "ipath_kernel.h"
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
