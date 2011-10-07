@@ -1,68 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-pm tree back at kernel.org (Re: linux-next: temporary
- github repository)
-Date: Sat, 8 Oct 2011 10:20:54 +1100
-Message-ID: <20111008102054.d542c3cccfc714b12b61e37b@canb.auug.org.au>
-References: <20110918212535.a1038aa5f0caad9d83e351b2@canb.auug.org.au>
-	<201109181518.35788.rjw@sisk.pl>
-	<201110072301.21087.rjw@sisk.pl>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: Re: [PATCH -next] infiniband: fix ipath_chip_init.c build errors
+Date: Sat, 8 Oct 2011 10:28:14 +1100
+Message-ID: <20111008102814.ca235496f72423e215cbe8ac@canb.auug.org.au>
+References: <20111007174230.702f4a0bf1fe71dab5e10961@canb.auug.org.au>
+	<4E8F683D.9020604@xenotime.net>
+	<CAL1RGDXoiRfR1Ku67tRgbhxzyWQmDrjKCztnVd6wbwi0Uud90Q@mail.gmail.com>
+	<4E8F77B8.3000805@xenotime.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sat__8_Oct_2011_10_20_54_+1100_rWyZsw7J3D.ZfKwC"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:51695 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754028Ab1JGXVC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Oct 2011 19:21:02 -0400
-In-Reply-To: <201110072301.21087.rjw@sisk.pl>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+ boundary="Signature=_Sat__8_Oct_2011_10_28_14_+1100_50GbdkWsV/hd1iro"
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4E8F77B8.3000805-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Roland Dreier <roland-BHEL68pLQRGGvPXPguhicg@public.gmane.org>
+Cc: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Marciniszyn <infinipath-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Sat__8_Oct_2011_10_20_54_+1100_rWyZsw7J3D.ZfKwC
+--Signature=_Sat__8_Oct_2011_10_28_14_+1100_50GbdkWsV/hd1iro
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi all,
 
-On Fri, 7 Oct 2011 23:01:20 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+On Fri, 07 Oct 2011 15:05:44 -0700 Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org> wrot=
+e:
 >
-> The linux-pm tree is back at kernel.org, so please use:
+> On 10/07/11 14:21, Roland Dreier wrote:
+> > On Fri, Oct 7, 2011 at 1:59 PM, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org> wro=
+te:
+> >> Add <linux/stat.h> to fix build errors:
+> >=20
+> > When did this break?  I build ipath in my test config all the time...
 >=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
->=20
-> from now on.  I'm still planning to keep the tree at github up to date, t=
-hough.
+> First I saw it was in today's linux-next (20111007).
 
-OK, I will use the kernel.org tree from now on (linux-next branch, right?).
+Its probably associated with the module.h split up.  But see Rule 1 in
+Documentation/SubmitChecklist.  Implicit inclusion of files can easily
+break when built for a different architecture or config ...
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sat__8_Oct_2011_10_20_54_+1100_rWyZsw7J3D.ZfKwC
+--Signature=_Sat__8_Oct_2011_10_28_14_+1100_50GbdkWsV/hd1iro
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOj4lWAAoJEECxmPOUX5FEojgQAJBymryo9SB/Va8OzdFWt2od
-n+O4mKNWN4g4Uk9TPVMhJdeOui3UoJoVdLChBltGm7fkwco9dcksI5Ps+8ooHzcb
-qGzZ06LvVyR4yCv+Teo+eAiQpjtTsngTbL92l9EltoJSMS+PoHMSs6ARR0s0do6t
-IzC3fJtZ5e6EHiJ9/NRh0GPgujgGyGChkm/NZAxwpmv7uv+je9N1cpMgm2aLHaUL
-FpwPOPLwA+IOpqGNkcfh9KYH4nBcsEPjhrLj58+AISoZI6F5VWaaDvVRjySdcnXQ
-5NWFzflavMl7DFa3PKIdH86ucp4Y1KdzFLF1yOID6U2pzqXPGtB2dNR4JHZh2JUV
-eFUO3SHsjYcn0s4+7WZuS/xkNv12/rTEWLnagZCNB7n66NSqFMgq+kAYke0HrrAi
-M9JG/Bp1OjwT3QEIqEFBFZHLdUlMaHRlhY3R8UeDlBFc27hUlc1uNgc+jFw2LoxT
-S2MWXJW4GDHMGg69bPkLhQT9uUzzKTsNutsWiWpizTh95vave7r+2gWoB608bx8S
-5vYWCmw2vbJbzc0TVgCSohIico54UYfGpu8+OYCKrNYAmKRyuhjWMaYGijQAZC4F
-DDrl1xAzhhPKMa5P1QSBCjccKtumsgbRzB3tEf0IaKG/7+3srcEg6J9Hk5SYqjX9
-20G93VfnOV+c4J3z8TMf
-=u5et
+iQIcBAEBCAAGBQJOj4sOAAoJEECxmPOUX5FE+bEP/05mdE6nFwRFEStsN6b8k8YT
+W6DoQptlHRBFjoDjk5KDYwIIWL4lsoG46GEiRO4xoNuZAVGKK8cIr0DuzfHNoNDT
+PHf/pcaIril0MZJa9bZ/XrEeEaPU/aLY7Cp90xKsST/b2eejgR4sZhg7YUbx5/6W
+xzTxFQbgjHxrtZ+SPQkVVNfX3jGqKkvwldRMY7O/KrZZzkmZcOTQi6Vtf9SJzmDf
+eNpdCn1fwwpHaywC/6zC06GUKt+gn491hAm1jMFR8mnPSjEEq43FN3LhapzmTK4x
+N/LPTO32rI1wuAyM71qp+g0qsjtlAlupbC92IXjPoGJBW+TCqC4uXRMRBmZTyd2J
+ww1B2pT70OKLeVYS8aIuoMLHNaI5JS95dwnEZGy838Hb03rJS8KMpNVxLjQpF22j
+lACqbaU/AF65F7U0cZh5eZ97xtnjD0qDvDGbh5OC1YDh4MHOS9DAqCF1n4sqJQ3b
+3pLFk9S227StGa0GS4e5gwXlsknVZ7FHMMmltmf7TJ9898BKrXDul8k5VJX70U8s
++DM2C76/TmlaO8QFiloJHGLMabSmRs1rhhZ7MUUEBCCML/Hn4RsfXqmWj8waEcax
+Gq4WP5ybNXvY4mTdTZEJOU/8arI9A1hyOdel1w1YfJ0qI5z3zQ2aoe+CZi638/52
+NcElVmkX7w7lnCLf0G7t
+=80ES
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__8_Oct_2011_10_20_54_+1100_rWyZsw7J3D.ZfKwC--
+--Signature=_Sat__8_Oct_2011_10_28_14_+1100_50GbdkWsV/hd1iro--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
