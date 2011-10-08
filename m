@@ -1,67 +1,37 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH -next] usb gadget: fix langwell_udc.c build error
-Date: Sat, 8 Oct 2011 13:03:28 +0300
-Message-ID: <20111008100326.GA24633@legolas.emea.dhcp.ti.com>
-References: <20111007174230.702f4a0bf1fe71dab5e10961@canb.auug.org.au>
- <4E8F67C6.5020603@xenotime.net>
-Reply-To: balbi@ti.com
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-pm tree back at kernel.org (Re: linux-next: temporary github repository)
+Date: Sat, 8 Oct 2011 12:12:34 +0200
+Message-ID: <201110081212.34736.rjw@sisk.pl>
+References: <20110918212535.a1038aa5f0caad9d83e351b2@canb.auug.org.au> <201110072301.21087.rjw@sisk.pl> <20111008102054.d542c3cccfc714b12b61e37b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4E8F67C6.5020603@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, linux-usb@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ogre.sisk.pl ([217.79.144.158]:55775 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751575Ab1JHKKQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 8 Oct 2011 06:10:16 -0400
+In-Reply-To: <20111008102054.d542c3cccfc714b12b61e37b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
+On Saturday, October 08, 2011, Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> On Fri, 7 Oct 2011 23:01:20 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+> >
+> > The linux-pm tree is back at kernel.org, so please use:
+> > 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+> > 
+> > from now on.  I'm still planning to keep the tree at github up to date, though.
+> 
+> OK, I will use the kernel.org tree from now on (linux-next branch, right?).
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, the linux-next branch.
 
-Hi,
-
-On Fri, Oct 07, 2011 at 01:57:42PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
->=20
-> Move function to fix langwell_udc.c build error:
->=20
-> drivers/usb/gadget/langwell_udc.c: In function 'show_langwell_udc':
-> drivers/usb/gadget/langwell_udc.c:1693:3: error: implicit declaration of =
-function 'lpm_device_speed'
-> drivers/usb/gadget/langwell_udc.c: At top level:
-> drivers/usb/gadget/langwell_udc.c:2637:37: error: conflicting types for '=
-lpm_device_speed'
-> drivers/usb/gadget/langwell_udc.c:1693:20: note: previous implicit declar=
-ation of 'lpm_device_speed' was here
-
-I don't have this compile error on my branch, did something go in
-without me noticing ?
-
-Can you blame a comit which introduced this ?
-
-btw, all I have is a warning.
-
---=20
-balbi
-
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOkB/uAAoJEAv8Txj19kN1ACgH/2VwYOJkUVEjj030UzZOSXtc
-Cmx/Aea0lmXqJGMHnmaiv03ijci2jhHmOjwYF7vrhhNHLDUfLyUqn86YTv7mnDEj
-QRuNDCKUW8YgSVxNGBhcbGO/Yf71cMUVw0SuxkLSeIDJc8U4XLbnrNUvq0qM2Jqc
-u7h9e8a0yWnDd53kTIhLUGuE/JAB2KuLa5s89Q37CXN9tJw1d6JF+x/rsV8QjoUi
-Eak9EEUZSo1YwlwTYLXV+aojszpsAowbEfQ9UFjd0Ko3GbZQojb8Lf4IGEOXeQn0
-rGSWE7yowVBPzY7HiThvfnSLD4O4JXq21beebdgqTnNDMk92aAQjZAGVJRw5j44=
-=i/g8
------END PGP SIGNATURE-----
-
---vkogqOf2sHV7VnPd--
+Thanks,
+Rafael
