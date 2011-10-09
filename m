@@ -1,57 +1,95 @@
-From: "MONEY GRAM CUSTOMER CARE" <jdomingo@inpa.gov.br>
-Subject: (unknown)
-Date: Sun, 9 Oct 2011 16:56:17 -0400 (AMT)
-Message-ID: <45897.209.73.132.65.1318193777.squirrel__10360.2877738469$1318193803$gmane$org@webmail.inpa.gov.br>
-Reply-To: m_gram22@ozledim.net
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH -next] usb gadget: fix langwell_udc.c build error
+Date: Mon, 10 Oct 2011 01:36:40 +0300
+Message-ID: <20111009223638.GA29776@legolas.emea.dhcp.ti.com>
+References: <20111007174230.702f4a0bf1fe71dab5e10961@canb.auug.org.au>
+ <4E8F67C6.5020603@xenotime.net>
+ <20111008100326.GA24633@legolas.emea.dhcp.ti.com>
+ <4E91DF00.8060107@xenotime.net>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailserver.inpa.gov.br ([200.17.53.9]:52666 "EHLO
-	mailserver.inpa.gov.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751229Ab1JIU43 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 9 Oct 2011 16:56:29 -0400
-Subject: 
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4E91DF00.8060107@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: balbi@ti.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
 
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-MONEY GRAM SERVICE
+On Sun, Oct 09, 2011 at 10:50:56AM -0700, Randy Dunlap wrote:
+> On 10/08/11 03:03, Felipe Balbi wrote:
+> > Hi,
+> >=20
+> > On Fri, Oct 07, 2011 at 01:57:42PM -0700, Randy Dunlap wrote:
+> >> From: Randy Dunlap <rdunlap@xenotime.net>
+> >>
+> >> Move function to fix langwell_udc.c build error:
+> >>
+> >> drivers/usb/gadget/langwell_udc.c: In function 'show_langwell_udc':
+> >> drivers/usb/gadget/langwell_udc.c:1693:3: error: implicit declaration =
+of function 'lpm_device_speed'
+> >> drivers/usb/gadget/langwell_udc.c: At top level:
+> >> drivers/usb/gadget/langwell_udc.c:2637:37: error: conflicting types fo=
+r 'lpm_device_speed'
+> >> drivers/usb/gadget/langwell_udc.c:1693:20: note: previous implicit dec=
+laration of 'lpm_device_speed' was here
+> >=20
+> > I don't have this compile error on my branch, did something go in
+> > without me noticing ?
+>=20
+> probably not.  What version of gcc are you using?
 
-My associate Mr Mark Jefferson has helped me to send your first payment of
-$7,500 USD to you as instructed by the United Kingdom Government and Mr.
-David Cameron the United Kingdom prime minister after the last G20
-meeting, making you one of the beneficiaries through an email natural
-simple ballot selection.
+I believe it did, I don't have lpm_device_speed() at all.
 
-He told Allan Davis to keep sending you $7,500 USD via Money Gram twice a
-week until the FULL payment of ($820,000.00 ) is completed.
+> I'm using 4.5.1.
 
-MONEY TRANSFER REFERENCE:2116-3297
+4.6.1
 
-SENDER'S NAME: Mark Jefferson
-AMOUNT: US $7,500
+> > Can you blame a comit which introduced this ?
+>=20
+> I don't see such a commit.
 
-To track your funds forward money gram
-Transfer agent Mr Allan Davis
+$ git log --pretty=3Doneline -S'lpm_device_speed' HEAD --	\
+	drivers/usb/gadget/langwell_udc.c
 
-Your Name.____________
-Phone .______________
-Country_______________
+what's the output ?
 
-Contact Allan Davis for the funds clearance
-certificate (FCC) necessary for the release of your funds
+> > btw, all I have is a warning.
+>=20
+> What warning?
 
-E-mail m_gram22@ozledim.net
+drivers/usb/gadget/langwell_udc.c: In function =E2=80=98langwell_ep_dequeue=
+=E2=80=99:
+drivers/usb/gadget/langwell_udc.c:919:11: warning: cast from pointer to int=
+eger of different size [-Wpointer-to-int-cast]
 
-D/L: + {44}70-45-78-97-78
+--=20
+balbi
 
-You cannot pickup the money until the certificate is obtained by you.
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Note: that if you are not the owner of this appropriate e-mail address
-then kindly ignore this message.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-Regards
-Mr. Forlan Desmond.
+iQEcBAEBAgAGBQJOkiH2AAoJEAv8Txj19kN1Ww0H/1eTSD4kAkXiR4JssU6pudnv
+qBfHjpLDin9FrrxJkJclsVOqnCxxAdH8hN/pA74gCElXKzpl5+dwJBi7ufs4ukPW
+khKwKCUT7TC/4PJCEU8yTXHMVK8EDFrkoxvmGdRQrROM+PDHYBnZUsIx2m1vhPxI
+J62BS0zT8ACtp7CEiL5WsjNPa/2hIaR4FLN2xZDtHbMKbXfD8jHC4OnC3t5bB2hI
+CwaoAKOdVkBmJxrYPSjzplen8Vw9xLYwcZFdwvQE3QgnMnL1wV95xW09ztYx4syr
+22dHSHkpWZaRWrHZrZW4EK1iX9pXACxhsWLVEjCNk7W7PPHBsst/GvHQiSQOiWc=
+=h0Nm
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
