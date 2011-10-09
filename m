@@ -1,51 +1,88 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
 Subject: Re: [PATCH] drivers/media: fix dependencies in video mt9t001/mt9p031
-Date: Sat, 08 Oct 2011 07:52:57 -0300
-Message-ID: <4E902B89.7030004@redhat.com>
-References: <4E83A02F.2020309@xenotime.net> <1317418491-26513-1-git-send-email-paul.gortmaker@windriver.com> <4E8644D5.6080307@xenotime.net> <20111006140214.b64b22b77f2f831442d59794@canb.auug.org.au>
+Date: Sat, 8 Oct 2011 23:39:27 -0400
+Message-ID: <CAP=VYLr-RYXL+WjHittjFXJ-GNwx_mqiKT34NKUvTOfrKbpZEQ@mail.gmail.com>
+References: <4E83A02F.2020309@xenotime.net>
+	<1317418491-26513-1-git-send-email-paul.gortmaker@windriver.com>
+	<4E8644D5.6080307@xenotime.net>
+	<20111006140214.b64b22b77f2f831442d59794@canb.auug.org.au>
+	<4E902B89.7030004@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20111006140214.b64b22b77f2f831442d59794@canb.auug.org.au>
-Sender: linux-media-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-media@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:48778 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751641Ab1JIDj3 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 8 Oct 2011 23:39:29 -0400
+In-Reply-To: <4E902B89.7030004@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, linux-media@vger.kernel.org
 
-Em 06-10-2011 00:02, Stephen Rothwell escreveu:
-> Hi Mauro,
->
-> On Fri, 30 Sep 2011 15:38:13 -0700 Randy Dunlap<rdunlap@xenotime.net>=
-  wrote:
+On Sat, Oct 8, 2011 at 6:52 AM, Mauro Carvalho Chehab
+<mchehab@redhat.com> wrote:
+> Em 06-10-2011 00:02, Stephen Rothwell escreveu:
 >>
->> On 09/30/11 14:34, Paul Gortmaker wrote:
->>> Both mt9t001.c and mt9p031.c have two identical issues, those
->>> being that they will need module.h inclusion for the upcoming
->>> cleanup going on there, and that their dependencies don't limit
->>> selection of configs that will fail to compile as follows:
->>>
->>> drivers/media/video/mt9p031.c:457: error: implicit declaration of f=
-unction =E2=80=98v4l2_subdev_get_try_crop=E2=80=99
->>> drivers/media/video/mt9t001.c:787: error: =E2=80=98struct v4l2_subd=
-ev=E2=80=99 has no member named =E2=80=98entity=E2=80=99
->>>
->>> The related config options are CONFIG_MEDIA_CONTROLLER and
->>> CONFIG_VIDEO_V4L2_SUBDEV_API.  Looking at the code, it appears
->>> that the driver was never intended to work without these enabled,
->>> so add a dependency on CONFIG_VIDEO_V4L2_SUBDEV_API, which in
->>> turn already has a dependency on CONFIG_MEDIA_CONTROLLER.
->>>
->>> Reported-by: Randy Dunlap<rdunlap@xenotime.net>
->>> Signed-off-by: Paul Gortmaker<paul.gortmaker@windriver.com>
+>> Hi Mauro,
 >>
->> Acked-by: Randy Dunlap<rdunlap@xenotime.net>
+>> On Fri, 30 Sep 2011 15:38:13 -0700 Randy Dunlap<rdunlap@xenotime.net=
 >
-> Ping?
->
-Sorry, I was assuming that this patch would be going together with the
-other module.h trees. I'll apply it on my tree.
+>> =A0wrote:
+>>>
+>>> On 09/30/11 14:34, Paul Gortmaker wrote:
+>>>>
+>>>> Both mt9t001.c and mt9p031.c have two identical issues, those
+>>>> being that they will need module.h inclusion for the upcoming
+>>>> cleanup going on there, and that their dependencies don't limit
+>>>> selection of configs that will fail to compile as follows:
+>>>>
+>>>> drivers/media/video/mt9p031.c:457: error: implicit declaration of
+>>>> function =91v4l2_subdev_get_try_crop=92
+>>>> drivers/media/video/mt9t001.c:787: error: =91struct v4l2_subdev=92=
+ has no
+>>>> member named =91entity=92
+>>>>
+>>>> The related config options are CONFIG_MEDIA_CONTROLLER and
+>>>> CONFIG_VIDEO_V4L2_SUBDEV_API. =A0Looking at the code, it appears
+>>>> that the driver was never intended to work without these enabled,
+>>>> so add a dependency on CONFIG_VIDEO_V4L2_SUBDEV_API, which in
+>>>> turn already has a dependency on CONFIG_MEDIA_CONTROLLER.
+>>>>
+>>>> Reported-by: Randy Dunlap<rdunlap@xenotime.net>
+>>>> Signed-off-by: Paul Gortmaker<paul.gortmaker@windriver.com>
+>>>
+>>> Acked-by: Randy Dunlap<rdunlap@xenotime.net>
+>>
+>> Ping?
+>>
+> Sorry, I was assuming that this patch would be going together with th=
+e
+> other module.h trees. I'll apply it on my tree.
 
-Thanks,
-Mauro
+Thanks.  Since the files in question don't exist on mainline, there is =
+no real
+way I can have it directly on the module.h tree.  If your file(s) neede=
+d the
+export.h file, (which my tree creates) then I'd have carried it as a po=
+st-merge
+delta to get past the chicken-and-egg problem of who's new file comes 1=
+st.
+
+But since your file really just needs module.h -- you can add it to you=
+r tree
+right away.  Plus the Kconfig change I made really should be SOB by the
+folks who know the driver restrictions; I just made an educated guess.
+
+Paul.
+
+>
+> Thanks,
+> Mauro
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next"=
+ in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
