@@ -1,88 +1,79 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] drivers/media: fix dependencies in video mt9t001/mt9p031
-Date: Sat, 8 Oct 2011 23:39:27 -0400
-Message-ID: <CAP=VYLr-RYXL+WjHittjFXJ-GNwx_mqiKT34NKUvTOfrKbpZEQ@mail.gmail.com>
-References: <4E83A02F.2020309@xenotime.net>
-	<1317418491-26513-1-git-send-email-paul.gortmaker@windriver.com>
-	<4E8644D5.6080307@xenotime.net>
-	<20111006140214.b64b22b77f2f831442d59794@canb.auug.org.au>
-	<4E902B89.7030004@redhat.com>
+Subject: Re: linux-next: build failure after merge of the moduleh tree
+Date: Sun, 9 Oct 2011 01:08:09 -0400
+Message-ID: <20111009050809.GS19986@windriver.com>
+References: <20110928181815.45f540034ddde2b206fc4e57@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:48778 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751641Ab1JIDj3 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 8 Oct 2011 23:39:29 -0400
-In-Reply-To: <4E902B89.7030004@redhat.com>
+Received: from mail.windriver.com ([147.11.1.11]:45166 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750797Ab1JIFIc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 9 Oct 2011 01:08:32 -0400
+Content-Disposition: inline
+In-Reply-To: <20110928181815.45f540034ddde2b206fc4e57@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, linux-media@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Per Forlin <per.forlin@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Akinobu Mita <akinobu.mita@gmail.com>
 
-On Sat, Oct 8, 2011 at 6:52 AM, Mauro Carvalho Chehab
-<mchehab@redhat.com> wrote:
-> Em 06-10-2011 00:02, Stephen Rothwell escreveu:
->>
->> Hi Mauro,
->>
->> On Fri, 30 Sep 2011 15:38:13 -0700 Randy Dunlap<rdunlap@xenotime.net=
->
->> =A0wrote:
->>>
->>> On 09/30/11 14:34, Paul Gortmaker wrote:
->>>>
->>>> Both mt9t001.c and mt9p031.c have two identical issues, those
->>>> being that they will need module.h inclusion for the upcoming
->>>> cleanup going on there, and that their dependencies don't limit
->>>> selection of configs that will fail to compile as follows:
->>>>
->>>> drivers/media/video/mt9p031.c:457: error: implicit declaration of
->>>> function =91v4l2_subdev_get_try_crop=92
->>>> drivers/media/video/mt9t001.c:787: error: =91struct v4l2_subdev=92=
- has no
->>>> member named =91entity=92
->>>>
->>>> The related config options are CONFIG_MEDIA_CONTROLLER and
->>>> CONFIG_VIDEO_V4L2_SUBDEV_API. =A0Looking at the code, it appears
->>>> that the driver was never intended to work without these enabled,
->>>> so add a dependency on CONFIG_VIDEO_V4L2_SUBDEV_API, which in
->>>> turn already has a dependency on CONFIG_MEDIA_CONTROLLER.
->>>>
->>>> Reported-by: Randy Dunlap<rdunlap@xenotime.net>
->>>> Signed-off-by: Paul Gortmaker<paul.gortmaker@windriver.com>
->>>
->>> Acked-by: Randy Dunlap<rdunlap@xenotime.net>
->>
->> Ping?
->>
-> Sorry, I was assuming that this patch would be going together with th=
-e
-> other module.h trees. I'll apply it on my tree.
+[linux-next: build failure after merge of the moduleh tree] On 28/09/2011 (Wed 18:18) Stephen Rothwell wrote:
 
-Thanks.  Since the files in question don't exist on mainline, there is =
-no real
-way I can have it directly on the module.h tree.  If your file(s) neede=
-d the
-export.h file, (which my tree creates) then I'd have carried it as a po=
-st-merge
-delta to get past the chicken-and-egg problem of who's new file comes 1=
-st.
+> Hi Paul,
+> 
+> After merging the moduleh tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/mmc/core/debugfs.c:28:35: error: expected ')' before numeric constant
+> 
+> Caused by commit b5a62f8be3af ("mmc: add module param to set fault
+> injection attributes") from the mmc tree interacting with the module.h
+> split up.
+> 
+> I have applied the patch below for today (something similar could be
+> applied to the mmc tree).
 
-But since your file really just needs module.h -- you can add it to you=
-r tree
-right away.  Plus the Kconfig change I made really should be SOB by the
-folks who know the driver restrictions; I just made an educated guess.
+Hi Chris,
 
+I was wondering if you were going to apply this to the mmc tree.  Since
+the module_param addition isn't in the module.h baseline, I'd be
+speculatively fixing an issue that hasn't been created yet, which isn't
+the end of the world, but it doesn't feel quite right to do that either.
+
+If it is in the mmc tree, then the include fix will be guaranteed to be
+present wherever the module_param usage is present.
+
+Thanks,
 Paul.
 
->
-> Thanks,
-> Mauro
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+
+>From 00812c67db3d0ade3571684191781d866293f1ba Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 28 Sep 2011 18:09:12 +1000
+Subject: [PATCH] mmc: using module_param requires the inclusion of
+ moduleparam.h
+
+Commit "mmc: add module param to set fault injection attributes" adds
+a module_param to this file.  But it is relying on the old implicit
+"module.h is everywhere" behaviour, and without the explicit include
+of moduleparam.h, the pending module.h split up produces this error:
+
+drivers/mmc/core/debugfs.c:28:35: error: expected ')' before numeric constant
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
+index 0a1e7cf..65138e0 100644
+--- a/drivers/mmc/core/debugfs.c
++++ b/drivers/mmc/core/debugfs.c
+@@ -7,6 +7,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
++#include <linux/moduleparam.h>
+ #include <linux/debugfs.h>
+ #include <linux/fs.h>
+ #include <linux/export.h>
+-- 
+1.7.6
