@@ -1,113 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 Subject: Re: [PATCH -next] usb gadget: fix langwell_udc.c build error
-Date: Mon, 10 Oct 2011 10:33:57 +1100
-Message-ID: <20111010103357.0039532470cdaa59c09d1803@canb.auug.org.au>
+Date: Mon, 10 Oct 2011 08:10:01 +0300
+Message-ID: <20111010050959.GA30935@legolas.emea.dhcp.ti.com>
 References: <20111007174230.702f4a0bf1fe71dab5e10961@canb.auug.org.au>
-	<4E8F67C6.5020603@xenotime.net>
-	<20111008100326.GA24633@legolas.emea.dhcp.ti.com>
+ <4E8F67C6.5020603@xenotime.net>
+ <20111008100326.GA24633@legolas.emea.dhcp.ti.com>
+ <4E91DF00.8060107@xenotime.net>
+ <20111009223638.GA29776@legolas.emea.dhcp.ti.com>
+ <4E9228CA.1060904@xenotime.net>
+Reply-To: balbi-l0cyMroinI0@public.gmane.org
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__10_Oct_2011_10_33_57_+1100_9h.foZK1J75htygV"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:41774 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751429Ab1JIXeJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 9 Oct 2011 19:34:09 -0400
-In-Reply-To: <20111008100326.GA24633@legolas.emea.dhcp.ti.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: balbi@ti.com
-Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4E9228CA.1060904-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Michal Nazarewicz <mina86-deATy8a+UHjQT0dZR+AlfA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__10_Oct_2011_10_33_57_+1100_9h.foZK1J75htygV
-Content-Type: text/plain; charset=US-ASCII
+
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Sat, 8 Oct 2011 13:03:28 +0300 Felipe Balbi <balbi@ti.com> wrote:
->
-> On Fri, Oct 07, 2011 at 01:57:42PM -0700, Randy Dunlap wrote:
-> > From: Randy Dunlap <rdunlap@xenotime.net>
-> >=20
-> > Move function to fix langwell_udc.c build error:
-> >=20
-> > drivers/usb/gadget/langwell_udc.c: In function 'show_langwell_udc':
-> > drivers/usb/gadget/langwell_udc.c:1693:3: error: implicit declaration o=
-f function 'lpm_device_speed'
-> > drivers/usb/gadget/langwell_udc.c: At top level:
-> > drivers/usb/gadget/langwell_udc.c:2637:37: error: conflicting types for=
- 'lpm_device_speed'
-> > drivers/usb/gadget/langwell_udc.c:1693:20: note: previous implicit decl=
-aration of 'lpm_device_speed' was here
+On Sun, Oct 09, 2011 at 04:05:46PM -0700, Randy Dunlap wrote:
+> On 10/09/11 15:36, Felipe Balbi wrote:
+> > git log --pretty=3Doneline -S'lpm_device_speed' HEAD --	\
+> > 	drivers/usb/gadget/langwell_udc.c
 >=20
-> I don't have this compile error on my branch, did something go in
-> without me noticing ?
->=20
-> Can you blame a comit which introduced this ?
->=20
-> btw, all I have is a warning.
+> e538dfdae85244fd2c4231725d82cc1f1bc4942c usb: Provide usb_speed_string() =
+function
 
-The code in that file is structured like this (in linux-next and the usb
-tree):
+Aha, now I know why, that went straight througth Greg.
 
-static ssize_t show_langwell_udc(struct device *_dev,
-                struct device_attribute *attr, char *buf)
-{
-	...
-	t =3D scnprintf(next, size,
-                "Device LPM Control Reg:\n"
-                "Parallel Transceiver : %d\n"
-                "Serial Transceiver : %d\n"
-                "Port Speed: %s\n"
-                "Port Force Full Speed Connenct: %s\n"
-                "PHY Low Power Suspend Clock: %s\n"
-                "BmAttributes: %d\n\n",
-                LPM_PTS(tmp_reg),
-                (tmp_reg & LPM_STS) ? 1 : 0,
-                usb_speed_string(lpm_device_speed(tmp_reg)),
-                (tmp_reg & LPM_PFSC) ? "Force Full Speed" : "Not Force",
-                (tmp_reg & LPM_PHCD) ? "Disabled" : "Enabled",
-                LPM_BA(tmp_reg));
-	...
-}
+Greg, can you pick this patch ? It's clearly needed. Meanwhile, I'll
+cherry-pick that commit from your tree and apply Randy's fix too.
 
-...
+Here's my ack for $SUBJECT:
 
-static inline enum usb_device_speed lpm_device_speed(u32 reg)
-{
-	...
-}
-
-So this function is clearly used before it is declared.  What does yours
-look like?
+Acked-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+balbi
 
---Signature=_Mon__10_Oct_2011_10_33_57_+1100_9h.foZK1J75htygV
-Content-Type: application/pgp-signature
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOki9lAAoJEECxmPOUX5FEY9oQAJbZG3aAI4rFVMTW9MA9QnzS
-GIpbpu9aCSQcsHNo32PxjnKMBW3JI/6aMWruO30SgRt8knB4NoQhl+IfjrRvmg55
-7sIisBBHVYgRHcuCdt+oJN3MbnKd7rLBy4rCKbdGqq9Z0Ad+XZCAz1m3kC3CHvvv
-kybB4EVKUe5DxRlVsUY5BhRwMAsadhOknTW2KwGv8xVJ/MBDuKAM+JoML/co61sG
-WWt29RXUDiGI9ok0k6zHPY8Xi3yht8TtAsR4yFQJmM4IDuv2gk40GG8TnwZ5QGY6
-0RL02FDf37NSRezu+UIU3A0GWmb45F8wHCqKlUcJItvJoKLvIQVoC4km1LErOQ/Y
-PTRk6qugb6q0Ac/ISf+Ew+gB/vSX42zdAAHTnE1GDmMQcP6qLw2VralDGwE4bafi
-e05sfbPcxrWZFeDHKNeViVSChhKXA+xtctGjenTQLi/roj/0n3NEEWFxInytwy6Z
-Siruc6hKQA/eX1ywzunTGbi55OODZx6ne7YxUSwERaVZW9Ih3KOoSWCVwsOhz6Am
-ZlC9WtN51iUtJFSag0PNGgLy97qAqMKKjOyLZycnu5ME/U+j6Xa95i3BoRX3hGFU
-tVnGvjtnG/CIov2GVmiuHNiWFDDP9FtvnWWaJBqfFdRxJTVP0wfhj5IWQJcnegeE
-SkFIjCmOEiclEqmW1rYp
-=8OP0
+iQEcBAEBAgAGBQJOkn4nAAoJEAv8Txj19kN1NpMH/1N4iNiL/LLh+qBIwemM9kqC
+0uga5Hd609oxBkD6qCSLBj6QDJ+ekvCNIFvRC/10izJCeoTQ7ioIlDJpMJFMRNFD
+Y6ncYkUPTSBQc8Y+SEYJuMIVozPglKQpBp4POO5hwe1j5edsW4gPkL37g9rsSvs8
+dn0u7DuPupReeHC+P8X4T39EiwJr9jssFe+zvuOLfM3nWvVA45SR5AfqpuCuZTco
+4cPD/KSUFjXK6rFSjUlPNFFltOkxq1GSy3LLz+Z6y0oUh8q+lqZAFNG4tmIW4fxu
+rBw7TEHHBTpOZ5hffMFI0/H/QePEcQDmILyM2zSC+gClwgns1D7kR+QT6o++KB8=
+=e5UV
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__10_Oct_2011_10_33_57_+1100_9h.foZK1J75htygV--
+--azLHFNyN32YCQGCU--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
