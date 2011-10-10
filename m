@@ -1,81 +1,49 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] usb gadget: fix langwell_udc.c build error
-Date: Mon, 10 Oct 2011 10:40:27 -0700
-Message-ID: <4E932E0B.8060204@xenotime.net>
-References: <20111007174230.702f4a0bf1fe71dab5e10961@canb.auug.org.au> <4E8F67C6.5020603@xenotime.net> <20111008100326.GA24633@legolas.emea.dhcp.ti.com> <4E91DF00.8060107@xenotime.net> <20111009223638.GA29776@legolas.emea.dhcp.ti.com> <4E9228CA.1060904@xenotime.net> <20111010050959.GA30935@legolas.emea.dhcp.ti.com> <20111010171645.GA24628@kroah.com>
+From: Mike Marciniszyn <mike.marciniszyn@qlogic.com>
+Subject: RE: [PATCH -next] infiniband: fix ipath_chip_init.c build errors
+Date: Mon, 10 Oct 2011 11:57:55 -0700
+Message-ID: <35AAF1E4A771E142979F27B51793A48888433C0838@AVEXMB1.qlogic.org>
+References: <20111007174230.702f4a0bf1fe71dab5e10961@canb.auug.org.au>
+ <4E8F683D.9020604@xenotime.net>
+ <CAL1RGDXoiRfR1Ku67tRgbhxzyWQmDrjKCztnVd6wbwi0Uud90Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:35329 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752490Ab1JJRk3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Oct 2011 13:40:29 -0400
-In-Reply-To: <20111010171645.GA24628@kroah.com>
+Received: from tx2ehsobe001.messaging.microsoft.com ([65.55.88.11]:34896 "EHLO
+	TX2EHSOBE001.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751825Ab1JJS6A convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Oct 2011 14:58:00 -0400
+In-Reply-To: <CAL1RGDXoiRfR1Ku67tRgbhxzyWQmDrjKCztnVd6wbwi0Uud90Q@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Felipe Balbi <balbi@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Michal Nazarewicz <mina86@mina86.com>
+To: Roland Dreier <roland@purestorage.com>, Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Dept_Infinipath <Dept_Infinipath@qlogic.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+As do I.
 
-Move function to fix langwell_udc.c build error:
+I've confirmed that patch does no harm, but I would like to see the error.
 
-drivers/usb/gadget/langwell_udc.c: In function 'show_langwell_udc':
-drivers/usb/gadget/langwell_udc.c:1693:3: error: implicit declaration of function 'lpm_device_speed'
-drivers/usb/gadget/langwell_udc.c: At top level:
-drivers/usb/gadget/langwell_udc.c:2637:37: error: conflicting types for 'lpm_device_speed'
-drivers/usb/gadget/langwell_udc.c:1693:20: note: previous implicit declaration of 'lpm_device_speed' was here
+Which of the github repos exposes the error?
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Acked-by: Felipe Balbi <balbi@ti.com>
-Cc:	Felipe Balbi <balbi@ti.com>
-Cc:	linux-usb@vger.kernel.org
----
- drivers/usb/gadget/langwell_udc.c |   28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+Mike
 
---- next-2011-1007.orig/drivers/usb/gadget/langwell_udc.c
-+++ next-2011-1007/drivers/usb/gadget/langwell_udc.c
-@@ -1562,6 +1562,20 @@ static ssize_t show_function(struct devi
- static DEVICE_ATTR(function, S_IRUGO, show_function, NULL);
- 
- 
-+static inline enum usb_device_speed lpm_device_speed(u32 reg)
-+{
-+	switch (LPM_PSPD(reg)) {
-+	case LPM_SPEED_HIGH:
-+		return USB_SPEED_HIGH;
-+	case LPM_SPEED_FULL:
-+		return USB_SPEED_FULL;
-+	case LPM_SPEED_LOW:
-+		return USB_SPEED_LOW;
-+	default:
-+		return USB_SPEED_UNKNOWN;
-+	}
-+}
-+
- /* device "langwell_udc" sysfs attribute file */
- static ssize_t show_langwell_udc(struct device *_dev,
- 		struct device_attribute *attr, char *buf)
-@@ -2634,20 +2648,6 @@ done:
- 	dev_vdbg(&dev->pdev->dev, "<--- %s()\n", __func__);
- }
- 
--static inline enum usb_device_speed lpm_device_speed(u32 reg)
--{
--	switch (LPM_PSPD(reg)) {
--	case LPM_SPEED_HIGH:
--		return USB_SPEED_HIGH;
--	case LPM_SPEED_FULL:
--		return USB_SPEED_FULL;
--	case LPM_SPEED_LOW:
--		return USB_SPEED_LOW;
--	default:
--		return USB_SPEED_UNKNOWN;
--	}
--}
--
- /* port change detect interrupt handler */
- static void handle_port_change(struct langwell_udc *dev)
- {
+> -----Original Message-----
+> From: Roland Dreier [mailto:roland@purestorage.com]
+> Sent: Friday, October 07, 2011 5:21 PM
+> To: Randy Dunlap
+> Cc: Stephen Rothwell; linux-next@vger.kernel.org; linux-kernel;
+> Dept_Infinipath; linux-rdma@vger.kernel.org; Andrew Morton
+> Subject: Re: [PATCH -next] infiniband: fix ipath_chip_init.c build
+> errors
+>
+> On Fri, Oct 7, 2011 at 1:59 PM, Randy Dunlap <rdunlap@xenotime.net>
+> wrote:
+> > Add <linux/stat.h> to fix build errors:
+>
+> When did this break?  I build ipath in my test config all the time...
+>
+>  - R.
+
+
+This message and any attached documents contain information from QLogic Corporation or its wholly-owned subsidiaries that may be confidential. If you are not the intended recipient, you may not read, copy, distribute, or use this information. If you have received this transmission in error, please notify the sender immediately by reply e-mail and then delete this message.
