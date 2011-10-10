@@ -1,47 +1,81 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH -next] usb gadget: fix langwell_udc.c build error
-Date: Mon, 10 Oct 2011 10:16:45 -0700
-Message-ID: <20111010171645.GA24628@kroah.com>
-References: <20111007174230.702f4a0bf1fe71dab5e10961@canb.auug.org.au>
- <4E8F67C6.5020603@xenotime.net>
- <20111008100326.GA24633@legolas.emea.dhcp.ti.com>
- <4E91DF00.8060107@xenotime.net>
- <20111009223638.GA29776@legolas.emea.dhcp.ti.com>
- <4E9228CA.1060904@xenotime.net>
- <20111010050959.GA30935@legolas.emea.dhcp.ti.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] usb gadget: fix langwell_udc.c build error
+Date: Mon, 10 Oct 2011 10:40:27 -0700
+Message-ID: <4E932E0B.8060204@xenotime.net>
+References: <20111007174230.702f4a0bf1fe71dab5e10961@canb.auug.org.au> <4E8F67C6.5020603@xenotime.net> <20111008100326.GA24633@legolas.emea.dhcp.ti.com> <4E91DF00.8060107@xenotime.net> <20111009223638.GA29776@legolas.emea.dhcp.ti.com> <4E9228CA.1060904@xenotime.net> <20111010050959.GA30935@legolas.emea.dhcp.ti.com> <20111010171645.GA24628@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20111010050959.GA30935@legolas.emea.dhcp.ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Michal Nazarewicz <mina86@mina86.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:35329 "HELO
+	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752490Ab1JJRk3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Oct 2011 13:40:29 -0400
+In-Reply-To: <20111010171645.GA24628@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Felipe Balbi <balbi@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Michal Nazarewicz <mina86@mina86.com>
 
-On Mon, Oct 10, 2011 at 08:10:01AM +0300, Felipe Balbi wrote:
-> Hi,
-> 
-> On Sun, Oct 09, 2011 at 04:05:46PM -0700, Randy Dunlap wrote:
-> > On 10/09/11 15:36, Felipe Balbi wrote:
-> > > git log --pretty=oneline -S'lpm_device_speed' HEAD --	\
-> > > 	drivers/usb/gadget/langwell_udc.c
-> > 
-> > e538dfdae85244fd2c4231725d82cc1f1bc4942c usb: Provide usb_speed_string() function
-> 
-> Aha, now I know why, that went straight througth Greg.
-> 
-> Greg, can you pick this patch ? It's clearly needed. Meanwhile, I'll
-> cherry-pick that commit from your tree and apply Randy's fix too.
-> 
-> Here's my ack for $SUBJECT:
-> 
-> Acked-by: Felipe Balbi <balbi@ti.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Um, pick what patch?
+Move function to fix langwell_udc.c build error:
 
-Randy, care to resend it to me with Felipe's ack?
+drivers/usb/gadget/langwell_udc.c: In function 'show_langwell_udc':
+drivers/usb/gadget/langwell_udc.c:1693:3: error: implicit declaration of function 'lpm_device_speed'
+drivers/usb/gadget/langwell_udc.c: At top level:
+drivers/usb/gadget/langwell_udc.c:2637:37: error: conflicting types for 'lpm_device_speed'
+drivers/usb/gadget/langwell_udc.c:1693:20: note: previous implicit declaration of 'lpm_device_speed' was here
 
-thanks,
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Acked-by: Felipe Balbi <balbi@ti.com>
+Cc:	Felipe Balbi <balbi@ti.com>
+Cc:	linux-usb@vger.kernel.org
+---
+ drivers/usb/gadget/langwell_udc.c |   28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-greg k-h
+--- next-2011-1007.orig/drivers/usb/gadget/langwell_udc.c
++++ next-2011-1007/drivers/usb/gadget/langwell_udc.c
+@@ -1562,6 +1562,20 @@ static ssize_t show_function(struct devi
+ static DEVICE_ATTR(function, S_IRUGO, show_function, NULL);
+ 
+ 
++static inline enum usb_device_speed lpm_device_speed(u32 reg)
++{
++	switch (LPM_PSPD(reg)) {
++	case LPM_SPEED_HIGH:
++		return USB_SPEED_HIGH;
++	case LPM_SPEED_FULL:
++		return USB_SPEED_FULL;
++	case LPM_SPEED_LOW:
++		return USB_SPEED_LOW;
++	default:
++		return USB_SPEED_UNKNOWN;
++	}
++}
++
+ /* device "langwell_udc" sysfs attribute file */
+ static ssize_t show_langwell_udc(struct device *_dev,
+ 		struct device_attribute *attr, char *buf)
+@@ -2634,20 +2648,6 @@ done:
+ 	dev_vdbg(&dev->pdev->dev, "<--- %s()\n", __func__);
+ }
+ 
+-static inline enum usb_device_speed lpm_device_speed(u32 reg)
+-{
+-	switch (LPM_PSPD(reg)) {
+-	case LPM_SPEED_HIGH:
+-		return USB_SPEED_HIGH;
+-	case LPM_SPEED_FULL:
+-		return USB_SPEED_FULL;
+-	case LPM_SPEED_LOW:
+-		return USB_SPEED_LOW;
+-	default:
+-		return USB_SPEED_UNKNOWN;
+-	}
+-}
+-
+ /* port change detect interrupt handler */
+ static void handle_port_change(struct langwell_udc *dev)
+ {
