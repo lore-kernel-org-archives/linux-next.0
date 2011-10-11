@@ -1,77 +1,113 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the s5p tree with the arm tree
-Date: Tue, 11 Oct 2011 13:07:51 +1100
-Message-ID: <20111011130751.c8d3890734c7dd2b4c014439@canb.auug.org.au>
+Subject: linux-next: manual merge of the hid tree with Linus' tree
+Date: Tue, 11 Oct 2011 14:37:55 +1100
+Message-ID: <20111011143755.68708e9f278048e12321a9e6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__11_Oct_2011_13_07_51_+1100_z4CLThnHz9E_Yv7G"
+ boundary="Signature=_Tue__11_Oct_2011_14_37_55_+1100_6RW2hr+DpDRUvYut"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:38885 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:55818 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752773Ab1JKCIK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Oct 2011 22:08:10 -0400
+	with ESMTP id S1751819Ab1JKDiH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Oct 2011 23:38:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Herrmann <dh.herrmann@googlemail.com>, Bastien Nocera <hadess@hadess.net>, Jason Gerecke <killertofu@gmail.com>, Dmitry Torokhov <dtor@mail.ru>
 
---Signature=_Tue__11_Oct_2011_13_07_51_+1100_z4CLThnHz9E_Yv7G
+--Signature=_Tue__11_Oct_2011_14_37_55_+1100_6RW2hr+DpDRUvYut
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+Hi Jiri,
 
-Today's linux-next merge of the s5p tree got a conflict in
-arch/arm/mach-exynos4/Kconfig between commit 15e0d9e37c7f ("ARM: pm: let
-platforms select cpu_suspend support") from the arm tree and commits
-bf856fbb5e10 ("ARM: EXYNOS4: Use generic DMA PL330 driver"), 0da3beadcbed
-("ARM: S5P: Make the common S5P PM code conditionally compile") and
-e2e13621b267 ("ARM: S5P: Make the sleep code common for S5P series SoCs")
-from the s5p tree.
+Today's linux-next merge of the hid tree got a conflict in
+drivers/hid/hid-wacom.c between commit 3512069eefd3 ("Input: wacom - add
+POINTER and DIRECT device properties") from Linus' tree and commit
+3797ef6b6bc0 ("HID: wacom: Set input bits before registration") from the
+hid tree.
 
-I did the obvious fixup (see below) and can carry the fix as necessary.
+I fixed it up (maybe - see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-exynos4/Kconfig
-index a652735,dd660eb..0000000
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@@ -11,8 -11,9 +11,10 @@@ if ARCH_EXYNOS
+diff --cc drivers/hid/hid-wacom.c
+index 72ca689,519f56c..0000000
+--- a/drivers/hid/hid-wacom.c
++++ b/drivers/hid/hid-wacom.c
+@@@ -304,6 -304,46 +304,48 @@@ static int wacom_raw_event(struct hid_d
+  	return 1;
+  }
  =20
-  config CPU_EXYNOS4210
-  	bool
-- 	select S3C_PL330_DMA
-+ 	select SAMSUNG_DMADEV
-+ 	select S5P_PM if PM
-+ 	select S5P_SLEEP if PM
- +	select ARM_CPU_SUSPEND if PM
-  	help
-  	  Enable EXYNOS4210 CPU support
- =20
++ static int wacom_input_mapped(struct hid_device *hdev, struct hid_input *=
+hi,
++ 	struct hid_field *field, struct hid_usage *usage, unsigned long **bit,
++ 								int *max)
++ {
++ 	struct input_dev *input =3D hi->input;
++=20
+++	__set_bit(INPUT_PROP_POINTER, input->propbit);
+++
++ 	/* Basics */
++ 	input->evbit[0] |=3D BIT(EV_KEY) | BIT(EV_ABS) | BIT(EV_REL);
++=20
++ 	__set_bit(REL_WHEEL, input->relbit);
++=20
++ 	__set_bit(BTN_TOOL_PEN, input->keybit);
++ 	__set_bit(BTN_TOUCH, input->keybit);
++ 	__set_bit(BTN_STYLUS, input->keybit);
++ 	__set_bit(BTN_STYLUS2, input->keybit);
++ 	__set_bit(BTN_LEFT, input->keybit);
++ 	__set_bit(BTN_RIGHT, input->keybit);
++ 	__set_bit(BTN_MIDDLE, input->keybit);
++=20
++ 	/* Pad */
++ 	input->evbit[0] |=3D BIT(EV_MSC);
++=20
++ 	__set_bit(MSC_SERIAL, input->mscbit);
++=20
++ 	__set_bit(BTN_0, input->keybit);
++ 	__set_bit(BTN_1, input->keybit);
++ 	__set_bit(BTN_TOOL_FINGER, input->keybit);
++=20
++ 	/* Distance, rubber and mouse */
++ 	__set_bit(BTN_TOOL_RUBBER, input->keybit);
++ 	__set_bit(BTN_TOOL_MOUSE, input->keybit);
++=20
++ 	input_set_abs_params(input, ABS_X, 0, 16704, 4, 0);
++ 	input_set_abs_params(input, ABS_Y, 0, 12064, 4, 0);
++ 	input_set_abs_params(input, ABS_PRESSURE, 0, 511, 0, 0);
++ 	input_set_abs_params(input, ABS_DISTANCE, 0, 32, 0, 0);
++=20
++ 	return 0;
++ }
++=20
+  static int wacom_probe(struct hid_device *hdev,
+  		const struct hid_device_id *id)
+  {
 
---Signature=_Tue__11_Oct_2011_13_07_51_+1100_z4CLThnHz9E_Yv7G
+--Signature=_Tue__11_Oct_2011_14_37_55_+1100_6RW2hr+DpDRUvYut
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOk6T3AAoJEECxmPOUX5FErD8P/2kaeOTig8itBsXSDf13o2GB
-tWVsNEGOXDJxjv+ZuNDAmyvhoEyKevsvYm1zVOG8afDrmv62NVtUcahKMbxKdAXI
-gxe6gstULigFgvhOjMyL0xw4q/gfKdLgEia/viszHHUpDjb0v+pQ/x/cevO7Ex2E
-20LUBplHYmaAXXxVVSBgpUvUExbj78Ui9f+DyxQ80lR7EGXaOSRMQ823So+OCtVG
-4QOQqMx3zPmXwhfUvnPXrSJWWHiMJW8n1fkpxuPrUqHVARqF08KFjDTtGOtcExsu
-MCOurC4niXxok5dTgWJke1Bkypr4bX3TOiq0K+iqNa8pjAVOQuu2EPgrC+ZKVX46
-mGn60vWSNdlh5/B8TgSIwLU+SxOxYLQ8a75axScKpbKG6xRAxQkNAWYabd5xmUXe
-zaiU1apXcXwUV+93RLlJCyr91iUtzViXyy83BMLCqpCmclXqf+Yb/HqHHhWiDCzf
-KMra9BbiWeXOIN961xlt0BBzjgnsZ31RHiGWUXLx805T9RxrLLuayg4B1lhSmxtv
-cQZNr/ZwjXTDdSylau89Iw0WZtzeWrVocZ1OotJeCQZ/vmErYUZngpE0mYR8e4ww
-6leOESNe28dKlIBDdDC1rQ9oZKwpyZkOJ51rBocgYy/ntmy5n9U3pIyJEI8ccRgo
-cDM4h9NMB3zrc261zLR9
-=C2je
+iQIcBAEBCAAGBQJOk7oTAAoJEECxmPOUX5FEyAQP/3n2KLFOEx4n40KdraseoLcj
+CujWau6dXVPTXyFAflR0ab91F/vC33q7sMFqRHa7ZayX0xt6vR0Fx2skAriJlCmj
+4nZqYl57UY/JFyRv7MedKhqLj8KFUnGIuh4lotuUvuZqQHC3RhiHrnsGeL4tLPQ/
+1YDRBPC58FVg9IrSiKxeSG5u9oSw2Zoew+uhfOp00BDE55/Vjtfmkax0n0oT/lgj
+t1g7NRo943ZJBJGiF3/tnIn5TleEPLgG6Mv6r1uicifC/UMaI1K/Y8iKh/4iY+7N
+P6IT+0C//nvif8hHrijDHeH0d4DkcEe30HgbLgtMuB2v9YoFaFUXBQkdcXSeGfzH
+dqt5zOkIxjYecBLbcPjbUGGgJKAaofE8bdjznR12lMgbQLZt9LUqhBQbS28lfWG8
+KUmn4PWyIGvciPIi5q7QWD/7dGBSOHT/mjuu7HUkuIfeEBRYJEx1FUmwkDp2DbdB
+bNYoWiHrIXOlPLHsUksEzf7UKT1ybfFaFEjjFaLK6Z4wDmlEfmUQQNm4f12u4oO1
+9iTNMrk32+uzzNWThqgtIiyIS4wyeceuvAWhfmaujaZYKuv1b6odssWaSDzswlim
+7L7J5c2QtLqsTRTy7fG38moIir+qix8up5RuL4gwbMCWRGC1Yw5vX02s1v9T9a+d
+axrHoePuRRBQM8aBOMle
+=04TZ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__11_Oct_2011_13_07_51_+1100_z4CLThnHz9E_Yv7G--
+--Signature=_Tue__11_Oct_2011_14_37_55_+1100_6RW2hr+DpDRUvYut--
