@@ -1,71 +1,160 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the infiniband tree
-Date: Tue, 11 Oct 2011 14:49:52 +1100
-Message-ID: <20111011144952.22ef7175eb5c4588448f8856@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound tree with the arm-soc tree
+Date: Tue, 11 Oct 2011 15:43:04 +1100
+Message-ID: <20111011154304.f7fefc4f7f86b4b10348578c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__11_Oct_2011_14_49_52_+1100_yb/vExX+/OmMM2.Y"
+ boundary="Signature=_Tue__11_Oct_2011_15_43_04_+1100_FX=7aUQFssi/xrcp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:49832 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:41629 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754138Ab1JKDt7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Oct 2011 23:49:59 -0400
+	with ESMTP id S1750918Ab1JKEnX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 00:43:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland Dreier <rdreier@cisco.com>, linux-rdma@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Faisal Latif <faisal.latif@intel.com>, Tatyana Nikolova <Tatyana.E.Nikolova@intel.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Liam Girdwood <lrg@ti.com>, Misael Lopez Cruz <misael.lopez@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jarkko Nikula <jarkko.nikula@bitmer.com>, Tony Lindgren <tony@atomide.com>, Arnd Bergmann <arnd@arndb.de>
 
---Signature=_Tue__11_Oct_2011_14_49_52_+1100_yb/vExX+/OmMM2.Y
+--Signature=_Tue__11_Oct_2011_15_43_04_+1100_FX=7aUQFssi/xrcp
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Takashi,
 
-After merging the infiniband tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the sound tree got a conflict in
+arch/arm/plat-omap/devices.c between commit 40246e0003f0 ("ARM: OMAP:
+mcbsp: Move out omap_mcbsp_register_board_cfg from plat-omap/devices")
+from the arm-soc tree and commit d231f5cbac9e ("OMAP: McPDM: Convert
+McPDM device to omap_device") from the sound tree.
 
-drivers/infiniband/hw/nes/nes_mgt.c: In function 'get_fpdu_info':
-drivers/infiniband/hw/nes/nes_mgt.c:328:3: error: 'NES_DBG_PAU' undeclared =
-(first use in this function)
-drivers/infiniband/hw/nes/nes_mgt.c:328:3: note: each undeclared identifier=
- is reported only once for each function it appears in
-drivers/infiniband/hw/nes/nes_mgt.c: In function 'nes_chg_qh_handler':
-drivers/infiniband/hw/nes/nes_mgt.c:664:4: error: 'NES_DBG_PAU' undeclared =
-(first use in this function)
-drivers/infiniband/hw/nes/nes_mgt.c: In function 'nes_change_quad_hash':
-drivers/infiniband/hw/nes/nes_mgt.c:728:3: error: 'NES_DBG_PAU' undeclared =
-(first use in this function)
+Just overlapping removals.  I fixed it up (see below) and can carry the
+fix as necessary.
 
-Caused by commit cf3fbdf123bf ("RDMA/nes: Support for Packed And
-Unaligned fpdus").  Please build tes ...
+Mark, Liam:  That sound tree commit has a few Signed-off-by lines with no
+email addresses.
 
-I have used the version of the infiniband tree from next-20111007 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__11_Oct_2011_14_49_52_+1100_yb/vExX+/OmMM2.Y
+diff --cc arch/arm/plat-omap/devices.c
+index acd132c,40eca9b..0000000
+--- a/arch/arm/plat-omap/devices.c
++++ b/arch/arm/plat-omap/devices.c
+@@@ -24,44 -24,56 +24,11 @@@
+  #include <plat/tc.h>
+  #include <plat/board.h>
+  #include <plat/mmc.h>
+ -#include <mach/gpio.h>
+  #include <plat/menelaus.h>
+ -#include <plat/mcbsp.h>
+  #include <plat/omap44xx.h>
+ =20
+- #if defined(CONFIG_SND_OMAP_SOC_MCPDM) || \
+- 		defined(CONFIG_SND_OMAP_SOC_MCPDM_MODULE)
+-=20
+- static struct resource mcpdm_resources[] =3D {
+- 	{
+- 		.name		=3D "mcpdm_mem",
+- 		.start		=3D OMAP44XX_MCPDM_BASE,
+- 		.end		=3D OMAP44XX_MCPDM_BASE + SZ_4K,
+- 		.flags		=3D IORESOURCE_MEM,
+- 	},
+- 	{
+- 		.name		=3D "mcpdm_irq",
+- 		.start		=3D OMAP44XX_IRQ_MCPDM,
+- 		.end		=3D OMAP44XX_IRQ_MCPDM,
+- 		.flags		=3D IORESOURCE_IRQ,
+- 	},
+- };
+-=20
+- static struct platform_device omap_mcpdm_device =3D {
+- 	.name		=3D "omap-mcpdm",
+- 	.id		=3D -1,
+- 	.num_resources	=3D ARRAY_SIZE(mcpdm_resources),
+- 	.resource	=3D mcpdm_resources,
+- };
+-=20
+- static void omap_init_mcpdm(void)
+- {
+- 	(void) platform_device_register(&omap_mcpdm_device);
+- }
+- #else
+- static inline void omap_init_mcpdm(void) {}
+- #endif
+-=20
+  /*-----------------------------------------------------------------------=
+--*/
+ =20
+ -#if defined(CONFIG_OMAP_MCBSP) || defined(CONFIG_OMAP_MCBSP_MODULE)
+ -
+ -static struct platform_device **omap_mcbsp_devices;
+ -
+ -void omap_mcbsp_register_board_cfg(struct resource *res, int res_count,
+ -			struct omap_mcbsp_platform_data *config, int size)
+ -{
+ -	int i;
+ -
+ -	omap_mcbsp_devices =3D kzalloc(size * sizeof(struct platform_device *),
+ -				     GFP_KERNEL);
+ -	if (!omap_mcbsp_devices) {
+ -		printk(KERN_ERR "Could not register McBSP devices\n");
+ -		return;
+ -	}
+ -
+ -	for (i =3D 0; i < size; i++) {
+ -		struct platform_device *new_mcbsp;
+ -		int ret;
+ -
+ -		new_mcbsp =3D platform_device_alloc("omap-mcbsp", i + 1);
+ -		if (!new_mcbsp)
+ -			continue;
+ -		platform_device_add_resources(new_mcbsp, &res[i * res_count],
+ -					res_count);
+ -		new_mcbsp->dev.platform_data =3D &config[i];
+ -		ret =3D platform_device_add(new_mcbsp);
+ -		if (ret) {
+ -			platform_device_put(new_mcbsp);
+ -			continue;
+ -		}
+ -		omap_mcbsp_devices[i] =3D new_mcbsp;
+ -	}
+ -}
+ -
+ -#else
+ -void omap_mcbsp_register_board_cfg(struct resource *res, int res_count,
+ -			struct omap_mcbsp_platform_data *config, int size)
+ -{  }
+ -#endif
+ -
+ -/*-----------------------------------------------------------------------=
+--*/
+ -
+  #if defined(CONFIG_MMC_OMAP) || defined(CONFIG_MMC_OMAP_MODULE) || \
+  	defined(CONFIG_MMC_OMAP_HS) || defined(CONFIG_MMC_OMAP_HS_MODULE)
+ =20
+
+--Signature=_Tue__11_Oct_2011_15_43_04_+1100_FX=7aUQFssi/xrcp
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOk7zgAAoJEECxmPOUX5FELikQAJf6mGhQV7fpQM2uiFIIDvaS
-wBlCc210MWztKnNqvV0ckv+T+yhDkAsyqNwJCy/Beq9qexJPGD7MPm0XHRIBZPRJ
-CBTopZR026kSm3t/6GNRLGDbFMgMWRngNePAjphMMs8aSQcJG9iWtKA+KP/ZipVu
-iaIvxwgbJELKObWKxPlj/U7nIHkNbdUWNI7aSmTzo9SwEbn5D75v5NbKCRCZaP1L
-9sLbGehBzyFh1k9uOHGOlJQDClpMLxBntVJmd23rZ/GwAXgfAFV6ZSA78b1mKh0K
-rnXu3gUo+19CGPxVBlD+ufjScbkju2dm94kzUPgK7dfvyjKlOT0CiwjUyJqNGDCp
-P7lgS5UyaxRNcmq9vW7rg6tkwMBdiYzDyehRBPe7vgSW4Rh0RteVduMBxMngFWqN
-VNQfYCHkqPtg5bnjZpfMRC13wyV8TMsaV8urT0uTzXegCHMtw9RoBVxDu8Jlh6I1
-SoWwx+nRjDpc0w6B/L3H4HtUHaw5jtTHPkWIKiKs35jXOfR/45mZexPZNAvcpcni
-A19+0OVPU+08+5i7hEsOxNprE5RB19JAcnt+cDb5MxHUbWBKDs7JkyYVij2qw8H8
-sBehuJF+WRCUpQeSd8hn3k4daU9jcr9ExCpmgQWxitFD11aGF8YsAPtDE7hyDqVF
-GkKbolDHcCYcwf7IQCpI
-=1crY
+iQIcBAEBCAAGBQJOk8lYAAoJEECxmPOUX5FETc8P/j8Zt28T0PJZjZZ5MGVUp5va
+urnTqS7VxG6bRCq7wmQpnGVtO7AwzclXIgpCh5T0kVCVRm0nVWAbh2hBT5gSwV2l
+T9FN45Z+SAyqbSfrOuxGde7zk0yYevSVi7/K0WOv70kO6lPby9P8ZQQbz+zzTRMh
+td6qPrAMz0EakUz68PkMBGmRhm7pOd0AnQLdAiDC92/BRtF4cIuids404PM033xm
+25ek1hNjFschRH7mXInd8gfMC8ykoSAaf9w3taSKLELxys0vtZOoJeJeoces3Qfp
+I3dsEOt8RvnQwtl/6QZRdquS735h9jN15+vzpFJSVulwPfZnSY9jAl19M2hengD0
+2k8G2m2+XrnbCl/93AU08RVcrnRBADuvLP6zeDf26MqsbMmTI+bsuQWxNv0rPjLz
+l62Em9JqFCTEJtXxNWDQhP2GZykX4OdD6ywu+WvYdQrFMgiqkAzy2CkDuVB1e3v/
+aHf1Nbvs3FOyiJnBnpqaRzrJQexNZa+LG91FYcJJeUVkhry9cmo/bdfhHuWTq3+n
+Ldtow+scyM2gE8tN91HchwSRhr8Ms7zBVR7lsWyvre1DOu8jtPrfO7mPMdp/gkbR
+w829NjhUc61R3eH6IbZL1v89x/YDif5cqJ7cxsQLBecwre19p7XtAX/GLIVxamOg
+y2gfcchTvtciD2FOpmep
+=lHKP
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__11_Oct_2011_14_49_52_+1100_yb/vExX+/OmMM2.Y--
+--Signature=_Tue__11_Oct_2011_15_43_04_+1100_FX=7aUQFssi/xrcp--
