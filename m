@@ -1,86 +1,69 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: mmc core broken dependency on CONFIG_BLOCK (Was: linux-next:
- Tree for Oct 11 (mmc))
-Date: Tue, 11 Oct 2011 14:59:34 -0700
-Message-ID: <4E94BC46.5080505@xenotime.net>
-References: <1172297901.46681.1318361517579.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: SCSI trees moved back to kernel.org
+Date: Wed, 12 Oct 2011 09:26:18 +1100
+Message-ID: <20111012092618.e35391f58873edb1cc0bb5cb@canb.auug.org.au>
+References: <1316101053.2983.42.camel@dabdike.hansenpartnership.com>
+	<1318351928.2992.19.camel@dabdike.int.hansenpartnership.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__12_Oct_2011_09_26_18_+1100_11aiN1g+=zbuB7Yq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:53778 "HELO
-	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751297Ab1JKV7g (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 17:59:36 -0400
-In-Reply-To: <1172297901.46681.1318361517579.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:44016 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750956Ab1JKW02 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 18:26:28 -0400
+In-Reply-To: <1318351928.2992.19.camel@dabdike.int.hansenpartnership.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrei Warkentin <awarkentin@vmware.com>
-Cc: Namjae Jeon <linkinjeon@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 
-On 10/11/11 12:31, Andrei Warkentin wrote:
-> Hi Randy,
-> 
-> ----- Original Message -----
->> From: "Randy Dunlap" <rdunlap@xenotime.net>
->> To: "Stephen Rothwell" <sfr@canb.auug.org.au>
->> Cc: linux-next@vger.kernel.org, "LKML" <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org, "Chris Ball"
->> <cjb@laptop.org>
->> Sent: Tuesday, October 11, 2011 2:49:39 PM
->> Subject: Re: linux-next: Tree for Oct 11 (mmc)
->>
->> On 10/11/11 02:11, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> The linux-next tree is now available from
->>> git://github.com/sfrothwell/linux-next.git as a temporary measure
->>> while
->>> the kernel.org servers are unavailable.
->>>
->>> It may also turn up on git.kernel.org (depending on the mirroring).
->>>  The
->>> patch set is still absent, however.
->>>
->>> Changes since 20111007:
->>
->>
->> When CONFIG_BLOCK is not enabled:
->>
->> In file included from
->> next-2011-1011/drivers/mmc/card/sdio_uart.c:43:0:
->> next-2011-1011/include/linux/mmc/card.h:175:12: error:
->> 'DISK_NAME_LEN' undeclared here (not in a function)
->>
->> Deleting the #include <linux/mmc/card.h> fixes the sdio_uart.c build.
->> However, the same problem occurs in mmc/core/core.c:
->>
-> 
-> Because linux/genhd is now included, oops. I'm pretty positive this is due to the "mmc : general purpose partition support" patch pulled recently. I am adding NamJae, who was the author.
-> 
->> In file included from next-2011-1011/drivers/mmc/core/core.c:30:0:
->> next-2011-1011/include/linux/mmc/card.h:175:12: error:
->> 'DISK_NAME_LEN' undeclared here (not in a function)
->>
->> Should mmc/core/ depend on BLOCK?  or should it just be made
->> to build even when BLOCK is not enabled?
->>
-> 
-> I don't think there should be a direct dependency on BLOCK. I have two suggestions -
-> 1) Have our own define similar to (and in fact smaller):
->    linux/genhd.h:#define DISK_NAME_LEN                     32
-> 2) Put the MMC physical partition code under an #ifdef CONFIG_BLOCK, which is a reasonable
->    proposition, given that there wouldn't be any need to parse physical partition info if
->    it would never be consumed by the MMC block driver.
-> 
-> Thoughts?
+--Signature=_Wed__12_Oct_2011_09_26_18_+1100_11aiN1g+=zbuB7Yq
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Agreed on part 2).  Do part 1) if it is required, but it's usually better
-not to duplicate constants or structs etc.
-IOW, can DISK_NAME_LEN in linux/genhd.h be exposed even when CONFIG_BLOCK
-is not enabled?
+Hi James,
 
+On Tue, 11 Oct 2011 11:52:08 -0500 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> OK, all the trees are back in their usual locations on kernel.org,
+> that's
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi-rc-fixes-2.6.git
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi-misc-2.6.git
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi-post-merge-2.6.git
 
+OK, I have switched to use those.  However the last one gives:
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+fatal: Couldn't find remote ref refs/heads/merge-base
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__12_Oct_2011_09_26_18_+1100_11aiN1g+=zbuB7Yq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOlMKKAAoJEECxmPOUX5FE2gAQAJjIjHoCoTrTYPwLuraaejBB
+ZhcK74q4UqtiDrfrc9m7eXumbf7wLya+6jzqZB6X6c5i30xCLV52SXF/GUBkKpl4
+UgHEUeG8u6tjGLnsFPCE6cytPfD4dcoU57I+X9LVtlAuMn5xKXlj1g7NNkKjKGjO
+09JWlrTT8gY1wBLrjhksJY0bnywwdq9E7/IZA0p/h2rdH7M84QHFSHxCMKgPXJZg
+qEIp4xBV0x3fT+z4cE5bXoy2RGO0BzXpz9IqQsNTZ+NUSor39xkDYbfiwh/rG4tL
+db22es4DhfwU1Q7zA36b6T93BBH89OmNktln7Vn/+9xo0+UtQ2zkbKyfVmEFATBh
+Lf9UpF7471x9sptQJYbUXHFxCMEnyAQjkKGQuAvxREJhI1eQY5BXPsRl8z41Bh+z
+zkb2596KylDAdoSEbxwPLg4xqrKKolWmMVub4XLPDd/z6bMBV2y5w5kN/QnqG4cW
+Cj08RN7KkZ4ZkNuxPidwvrBZ5IY7BMRBN8UfLU9Xj/q+vPkMVa8oonhioEh5/R6P
+4ZX9wcaOrTekjxYrXUfRT4cX4dG/b4TrE2v8yMeJpeq6XbXOdzA/UVKpUTYGBk93
+ab1sJox7j1ICbR2y3I0aNaEgvGXH9pvwxRQnKAPNzMWB31mxBRvs7sw9MsrSDrSU
+sBYLioR9927w3ckzluN6
+=pOc1
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Oct_2011_09_26_18_+1100_11aiN1g+=zbuB7Yq--
