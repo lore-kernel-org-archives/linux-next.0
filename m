@@ -1,48 +1,39 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: build warning after merge of the moduleh tree
-Date: Tue, 11 Oct 2011 09:16:18 -0400
-Message-ID: <20111011131618.GV19986@windriver.com>
-References: <20111011202142.4d18840463055a8bdb9d1590@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: SCSI trees moved back to kernel.org
+Date: Tue, 11 Oct 2011 11:52:08 -0500
+Message-ID: <1318351928.2992.19.camel@dabdike.int.hansenpartnership.com>
+References: <1316101053.2983.42.camel@dabdike.hansenpartnership.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:46422 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753398Ab1JKNRJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 09:17:09 -0400
-Content-Disposition: inline
-In-Reply-To: <20111011202142.4d18840463055a8bdb9d1590@canb.auug.org.au>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33857 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754035Ab1JKQwN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Oct 2011 12:52:13 -0400
+In-Reply-To: <1316101053.2983.42.camel@dabdike.hansenpartnership.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gleb Natapov <gleb@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: linux-scsi <linux-scsi@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>
 
-[linux-next: build warning after merge of the moduleh tree] On 11/10/2011 (Tue 20:21) Stephen Rothwell wrote:
+On Thu, 2011-09-15 at 10:37 -0500, James Bottomley wrote:
+> I've relocated the scsi-rc-fixes and scsi-misc trees on to my own
+> infrastructure while master.kernel.org is down.  The locations are:
+> 
+> git://bedivere.hansenpartnership.com/git/scsi-rc-fixes-2.6.git
+> git://bedivere.hansenpartnership.com/git/scsi-misc-2.6.git
 
-> Hi Paul,
-> 
-> After merging the moduleh tree, today's linux-next build (i386 defconfig)
-> produced this warning:
-> 
-> arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: data definition has no type or storage class [enabled by default]
-> arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-> arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: parameter names (without types) in function declaration [enabled by default]
-> 
-> Introduced by commit 144d31e6f190 ("perf, intel: Use GO/HO bits in
-> perf-ctr") from the tip tree interacting with the module.h slipt up.
-> 
-> I'll add a patch tomorrow to add an include of export.h to this file.
+OK, all the trees are back in their usual locations on kernel.org,
+that's
 
-Hi Stephen,
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi-rc-fixes-2.6.git
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi-misc-2.6.git
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi-post-merge-2.6.git
 
-I've added this and the other nmi export to the post-merge queue.  I'll
-assume for the moment that the regulator tree will pick up the 3rd one,
-like you recommended.
+I'll be shutting down git access on bedivere shortly.
 
 Thanks,
-Paul.
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+james
