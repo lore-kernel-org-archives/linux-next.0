@@ -1,41 +1,48 @@
-From: Mike Marciniszyn <mike.marciniszyn-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH -next] infiniband: fix ipath_chip_init.c build errors
-Date: Tue, 11 Oct 2011 06:06:29 -0700
-Message-ID: <35AAF1E4A771E142979F27B51793A48888433C0972@AVEXMB1.qlogic.org>
-References: <20111007174230.702f4a0bf1fe71dab5e10961@canb.auug.org.au>
- <4E8F683D.9020604@xenotime.net>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: build warning after merge of the moduleh tree
+Date: Tue, 11 Oct 2011 09:16:18 -0400
+Message-ID: <20111011131618.GV19986@windriver.com>
+References: <20111011202142.4d18840463055a8bdb9d1590@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4E8F683D.9020604-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Content-Language: en-US
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Cc: "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dept_Infinipath <Dept_Infinipath-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>, "linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Roland Dreier <roland-BHEL68pLQRGGvPXPguhicg@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:46422 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753398Ab1JKNRJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 09:17:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20111011202142.4d18840463055a8bdb9d1590@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gleb Natapov <gleb@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-> Add <linux/stat.h> to fix build errors:
->
-> drivers/infiniband/hw/ipath/ipath_init_chip.c:54:1: error: 'S_IRUGO'
-> undeclared here (not in a function)
-> drivers/infiniband/hw/ipath/ipath_init_chip.c:54:1: error: bit-field
-> '<anonymous>' width not an integer constant
-> drivers/infiniband/hw/ipath/ipath_init_chip.c:67:1: error: 'S_IWUSR'
-> undeclared here (not in a function)
-> drivers/infiniband/hw/ipath/ipath_init_chip.c:67:1: error: bit-field
-> '<anonymous>' width not an integer constant
->
-> Signed-off-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+[linux-next: build warning after merge of the moduleh tree] On 11/10/2011 (Tue 20:21) Stephen Rothwell wrote:
 
-Thanks for the patch!
+> Hi Paul,
+> 
+> After merging the moduleh tree, today's linux-next build (i386 defconfig)
+> produced this warning:
+> 
+> arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: data definition has no type or storage class [enabled by default]
+> arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+> arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: parameter names (without types) in function declaration [enabled by default]
+> 
+> Introduced by commit 144d31e6f190 ("perf, intel: Use GO/HO bits in
+> perf-ctr") from the tip tree interacting with the module.h slipt up.
+> 
+> I'll add a patch tomorrow to add an include of export.h to this file.
 
-Acked-by: Mike Marciniszyn <mike.marciniszyn-h88ZbnxC6KDQT0dZR+AlfA@public.gmane.org>
+Hi Stephen,
 
+I've added this and the other nmi export to the post-merge queue.  I'll
+assume for the moment that the regulator tree will pick up the 3rd one,
+like you recommended.
 
-This message and any attached documents contain information from QLogic Corporation or its wholly-owned subsidiaries that may be confidential. If you are not the intended recipient, you may not read, copy, distribute, or use this information. If you have received this transmission in error, please notify the sender immediately by reply e-mail and then delete this message.
+Thanks,
+Paul.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
