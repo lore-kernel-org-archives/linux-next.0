@@ -1,56 +1,38 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH] treewide: Use __printf not
- __attribute__((format(printf,...)))
-Date: Tue, 11 Oct 2011 10:43:50 -0700
-Message-ID: <1318355030.8896.12.camel@Joe-Laptop>
-References: <5a0bef0143ed2b3176917fdc0ddd6a47f4c79391.1314303846.git.joe@perches.com>
-	 <20110825165006.af771ef7.akpm@linux-foundation.org>
-	 <1314316801.19476.6.camel@Joe-Laptop>
-	 <20110825170534.0d425c75.akpm@linux-foundation.org>
-	 <1314319088.19476.17.camel@Joe-Laptop>
-	 <20110825180734.9beae279.akpm@linux-foundation.org>
-	 <1314327338.19476.30.camel@Joe-Laptop>
-	 <20111011172208.GA3633@shutemov.name>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] x86: perf_event_intel.c needs export.h
+Date: Tue, 11 Oct 2011 11:26:19 -0700
+Message-ID: <4E948A4B.3010009@xenotime.net>
+References: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from perches-mx.perches.com ([206.117.179.246]:49580 "EHLO
-	labridge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754955Ab1JKRny (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Oct 2011 13:43:54 -0400
-In-Reply-To: <20111011172208.GA3633@shutemov.name>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, x86 maintainers <x86@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2011-10-11 at 20:22 +0300, Kirill A. Shutemov wrote:
-> On Thu, Aug 25, 2011 at 07:55:37PM -0700, Joe Perches wrote:
-> > Standardize the style for compiler based printf format verification=
-=2E
-> > Standardized the location of __printf too.
-> > Done via script and a little typing.
-> > $ grep -rPl --include=3D*.[ch] -w "__attribute__" * | \
-> >   grep -vP "^(tools|scripts|include/linux/compiler-gcc.h)" | \
-> >   xargs perl -n -i -e 'local $/; while (<>) { s/\b__attribute__\s*\=
-(\s*\(\s*format\s*\(\s*printf\s*,\s*(.+)\s*,\s*(.+)\s*\)\s*\)\s*\)/__pr=
-intf($1, $2)/g ; print; }'
-> > Completely untested...
-> This patch breaks ARCH=3Dum (linux-next-20111011):
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Hi Kirill, thanks for reporting this.
+Add <linux/export.h> to fix build warnings:
 
-I think it breaks almost all the the arches with modifications.
+arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: data definition has no type or storage class
+arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
+arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: parameter names (without types) in function declaration
 
-> In file included from /home/kas/git/public/linux-next/arch/um/os-Linu=
-x/aio.c:17:0:
-> /home/kas/git/public/linux-next/arch/um/include/shared/user.h:26:17: =
-error: expected declaration specifiers or =E2=80=98...=E2=80=99 before =
-numeric constant
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
+ arch/x86/kernel/cpu/perf_event_intel.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Hey Andrew, I think _all_ of the arch/... changes
-except arch/frv and arch/s390 should be reverted.
-
-Andrew, I don't know if you saw this:
-https://lkml.org/lkml/2011/9/28/324
+--- next-2011-1011.orig/arch/x86/kernel/cpu/perf_event_intel.c
++++ next-2011-1011/arch/x86/kernel/cpu/perf_event_intel.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/stddef.h>
+ #include <linux/types.h>
++#include <linux/export.h>
+ #include <linux/init.h>
+ #include <linux/slab.h>
+ 
