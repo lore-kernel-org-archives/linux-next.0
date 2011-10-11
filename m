@@ -1,160 +1,146 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound tree with the arm-soc tree
-Date: Tue, 11 Oct 2011 15:43:04 +1100
-Message-ID: <20111011154304.f7fefc4f7f86b4b10348578c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the md tree
+Date: Tue, 11 Oct 2011 16:29:48 +1100
+Message-ID: <20111011162948.c3ca0fc8726a7d7b80e39744@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__11_Oct_2011_15_43_04_+1100_FX=7aUQFssi/xrcp"
+ boundary="Signature=_Tue__11_Oct_2011_16_29_48_+1100_QlV8u651g2m9QnOs"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:41629 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:53561 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750918Ab1JKEnX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 00:43:23 -0400
+	with ESMTP id S1750903Ab1JKF34 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 01:29:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Liam Girdwood <lrg@ti.com>, Misael Lopez Cruz <misael.lopez@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jarkko Nikula <jarkko.nikula@bitmer.com>, Tony Lindgren <tony@atomide.com>, Arnd Bergmann <arnd@arndb.de>
+To: Neil Brown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__11_Oct_2011_15_43_04_+1100_FX=7aUQFssi/xrcp
+--Signature=_Tue__11_Oct_2011_16_29_48_+1100_QlV8u651g2m9QnOs
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Takashi,
+Hi Neil,
 
-Today's linux-next merge of the sound tree got a conflict in
-arch/arm/plat-omap/devices.c between commit 40246e0003f0 ("ARM: OMAP:
-mcbsp: Move out omap_mcbsp_register_board_cfg from plat-omap/devices")
-from the arm-soc tree and commit d231f5cbac9e ("OMAP: McPDM: Convert
-McPDM device to omap_device") from the sound tree.
+After merging the md tree, today's linux-next build (x86_64_allmodconfig)
+failed like this:
 
-Just overlapping removals.  I fixed it up (see below) and can carry the
-fix as necessary.
+drivers/md/dm-raid.c:597:25: error: unknown type name 'mdk_rdev_t'
+drivers/md/dm-raid.c:614:24: error: unknown type name 'mddev_t'
+drivers/md/dm-raid.c:614:40: error: unknown type name 'mdk_rdev_t'
+drivers/md/dm-raid.c:654:23: error: unknown type name 'mdk_rdev_t'
+drivers/md/dm-raid.c:654:41: error: unknown type name 'mdk_rdev_t'
+drivers/md/dm-raid.c:692:34: error: unknown type name 'mddev_t'
+drivers/md/dm-raid.c:692:50: error: unknown type name 'mdk_rdev_t'
+drivers/md/dm-raid.c:812:27: error: unknown type name 'mddev_t'
+drivers/md/dm-raid.c:812:43: error: unknown type name 'mdk_rdev_t'
+drivers/md/dm-raid.c: In function 'analyse_superblocks':
+drivers/md/dm-raid.c:852:2: error: unknown type name 'mdk_rdev_t'
+drivers/md/dm-raid.c:853:2: error: unknown type name 'mddev_t'
+drivers/md/dm-raid.c:853:19: warning: initialization from incompatible poin=
+ter type [enabled by default]
+drivers/md/dm-raid.c:856:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:856:2: error: request for member 'disks' in something =
+not a structure or union
+drivers/md/dm-raid.c:856:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:856:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:856:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:856:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:856:2: warning: left-hand operand of comma expression =
+has no effect [-Wunused-value]
+drivers/md/dm-raid.c:856:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:856:2: error: request for member 'disks' in something =
+not a structure or union
+drivers/md/dm-raid.c:856:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:856:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:856:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:857:12: error: request for member 'meta_bdev' in somet=
+hing not a structure or union
+drivers/md/dm-raid.c:860:3: error: implicit declaration of function 'super_=
+load' [-Werror=3Dimplicit-function-declaration]
+drivers/md/dm-raid.c:882:2: error: implicit declaration of function 'super_=
+validate' [-Werror=3Dimplicit-function-declaration]
+drivers/md/dm-raid.c:885:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:885:2: error: request for member 'disks' in something =
+not a structure or union
+drivers/md/dm-raid.c:885:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:885:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:885:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:885:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:885:2: warning: left-hand operand of comma expression =
+has no effect [-Wunused-value]
+drivers/md/dm-raid.c:885:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:885:2: error: request for member 'disks' in something =
+not a structure or union
+drivers/md/dm-raid.c:885:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:885:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c:885:2: error: request for member 'same_set' in somethi=
+ng not a structure or union
+drivers/md/dm-raid.c: In function 'raid_ctr':
+drivers/md/dm-raid.c:965:22: error: 'super_sync' undeclared (first use in t=
+his function)
+drivers/md/dm-raid.c:965:22: note: each undeclared identifier is reported o=
+nly once for each function it appears in
+drivers/md/dm-raid.c: In function 'raid_status':
+drivers/md/dm-raid.c:1100:4: error: unknown type name 'raid5_conf_t'
+drivers/md/dm-raid.c:1103:4: error: request for member 'max_nr_stripes' in =
+something not a structure or union
+drivers/md/dm-raid.c: In function 'raid_io_hints':
+drivers/md/dm-raid.c:1149:2: error: unknown type name 'raid5_conf_t'
+drivers/md/dm-raid.c:1152:46: error: request for member 'raid_disks' in som=
+ething not a structure or union
+drivers/md/dm-raid.c:1152:65: error: request for member 'max_degraded' in s=
+omething not a structure or union
 
-Mark, Liam:  That sound tree commit has a few Signed-off-by lines with no
-email addresses.
+Caused by commits 4251a3bcf0e1 ("md: removing typedefs:  mdk_rdev_t ->
+struct md_rdev") and 724d5bc7708a ("md: remove typedefs: mddev_t ->
+struct mddev").
 
+Have you dropped better versions of these commits?  Please build test.
+
+I have used the version of the tree from next-20111006 since
+next-20111007 had another build problem.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/plat-omap/devices.c
-index acd132c,40eca9b..0000000
---- a/arch/arm/plat-omap/devices.c
-+++ b/arch/arm/plat-omap/devices.c
-@@@ -24,44 -24,56 +24,11 @@@
-  #include <plat/tc.h>
-  #include <plat/board.h>
-  #include <plat/mmc.h>
- -#include <mach/gpio.h>
-  #include <plat/menelaus.h>
- -#include <plat/mcbsp.h>
-  #include <plat/omap44xx.h>
- =20
-- #if defined(CONFIG_SND_OMAP_SOC_MCPDM) || \
-- 		defined(CONFIG_SND_OMAP_SOC_MCPDM_MODULE)
--=20
-- static struct resource mcpdm_resources[] =3D {
-- 	{
-- 		.name		=3D "mcpdm_mem",
-- 		.start		=3D OMAP44XX_MCPDM_BASE,
-- 		.end		=3D OMAP44XX_MCPDM_BASE + SZ_4K,
-- 		.flags		=3D IORESOURCE_MEM,
-- 	},
-- 	{
-- 		.name		=3D "mcpdm_irq",
-- 		.start		=3D OMAP44XX_IRQ_MCPDM,
-- 		.end		=3D OMAP44XX_IRQ_MCPDM,
-- 		.flags		=3D IORESOURCE_IRQ,
-- 	},
-- };
--=20
-- static struct platform_device omap_mcpdm_device =3D {
-- 	.name		=3D "omap-mcpdm",
-- 	.id		=3D -1,
-- 	.num_resources	=3D ARRAY_SIZE(mcpdm_resources),
-- 	.resource	=3D mcpdm_resources,
-- };
--=20
-- static void omap_init_mcpdm(void)
-- {
-- 	(void) platform_device_register(&omap_mcpdm_device);
-- }
-- #else
-- static inline void omap_init_mcpdm(void) {}
-- #endif
--=20
-  /*-----------------------------------------------------------------------=
---*/
- =20
- -#if defined(CONFIG_OMAP_MCBSP) || defined(CONFIG_OMAP_MCBSP_MODULE)
- -
- -static struct platform_device **omap_mcbsp_devices;
- -
- -void omap_mcbsp_register_board_cfg(struct resource *res, int res_count,
- -			struct omap_mcbsp_platform_data *config, int size)
- -{
- -	int i;
- -
- -	omap_mcbsp_devices =3D kzalloc(size * sizeof(struct platform_device *),
- -				     GFP_KERNEL);
- -	if (!omap_mcbsp_devices) {
- -		printk(KERN_ERR "Could not register McBSP devices\n");
- -		return;
- -	}
- -
- -	for (i =3D 0; i < size; i++) {
- -		struct platform_device *new_mcbsp;
- -		int ret;
- -
- -		new_mcbsp =3D platform_device_alloc("omap-mcbsp", i + 1);
- -		if (!new_mcbsp)
- -			continue;
- -		platform_device_add_resources(new_mcbsp, &res[i * res_count],
- -					res_count);
- -		new_mcbsp->dev.platform_data =3D &config[i];
- -		ret =3D platform_device_add(new_mcbsp);
- -		if (ret) {
- -			platform_device_put(new_mcbsp);
- -			continue;
- -		}
- -		omap_mcbsp_devices[i] =3D new_mcbsp;
- -	}
- -}
- -
- -#else
- -void omap_mcbsp_register_board_cfg(struct resource *res, int res_count,
- -			struct omap_mcbsp_platform_data *config, int size)
- -{  }
- -#endif
- -
- -/*-----------------------------------------------------------------------=
---*/
- -
-  #if defined(CONFIG_MMC_OMAP) || defined(CONFIG_MMC_OMAP_MODULE) || \
-  	defined(CONFIG_MMC_OMAP_HS) || defined(CONFIG_MMC_OMAP_HS_MODULE)
- =20
-
---Signature=_Tue__11_Oct_2011_15_43_04_+1100_FX=7aUQFssi/xrcp
+--Signature=_Tue__11_Oct_2011_16_29_48_+1100_QlV8u651g2m9QnOs
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOk8lYAAoJEECxmPOUX5FETc8P/j8Zt28T0PJZjZZ5MGVUp5va
-urnTqS7VxG6bRCq7wmQpnGVtO7AwzclXIgpCh5T0kVCVRm0nVWAbh2hBT5gSwV2l
-T9FN45Z+SAyqbSfrOuxGde7zk0yYevSVi7/K0WOv70kO6lPby9P8ZQQbz+zzTRMh
-td6qPrAMz0EakUz68PkMBGmRhm7pOd0AnQLdAiDC92/BRtF4cIuids404PM033xm
-25ek1hNjFschRH7mXInd8gfMC8ykoSAaf9w3taSKLELxys0vtZOoJeJeoces3Qfp
-I3dsEOt8RvnQwtl/6QZRdquS735h9jN15+vzpFJSVulwPfZnSY9jAl19M2hengD0
-2k8G2m2+XrnbCl/93AU08RVcrnRBADuvLP6zeDf26MqsbMmTI+bsuQWxNv0rPjLz
-l62Em9JqFCTEJtXxNWDQhP2GZykX4OdD6ywu+WvYdQrFMgiqkAzy2CkDuVB1e3v/
-aHf1Nbvs3FOyiJnBnpqaRzrJQexNZa+LG91FYcJJeUVkhry9cmo/bdfhHuWTq3+n
-Ldtow+scyM2gE8tN91HchwSRhr8Ms7zBVR7lsWyvre1DOu8jtPrfO7mPMdp/gkbR
-w829NjhUc61R3eH6IbZL1v89x/YDif5cqJ7cxsQLBecwre19p7XtAX/GLIVxamOg
-y2gfcchTvtciD2FOpmep
-=lHKP
+iQIcBAEBCAAGBQJOk9RMAAoJEECxmPOUX5FEdJsP/iDJUcpuSTafHhlX874icwHk
++1HIJpp+wtRl25kjumw98dTsCk2m8lur4Q1grztTYoo8fen8mXFMVjw4iQHosVU0
+jETgSWnAwKF6ZmtIyv2BAOWiMCQZ77a5dyg36toUr4JlvfS1kKqUhKh8BKzoo2Oy
+aBJE3mc7VbDHVEF051ZVYPh92U2HlNQ9wtK0RuFT68nmAFmQJ4wuIxYonHj+FHrO
+RMCVb3fla0Jb6Og9iLLUIOQwdALtww76z/H4cExcitfstadGsn1KZB1xqOP6NYU3
+y/RdHAarMA/rWeQQ5XI53cmiEN67qd0x6yOrxumk9yS2dEwmnYf5jP+lUwTCSvn6
+x9FU9CxGLjxHeRkwPa9XsR1zUVvMkWun0kLsrN+foZMjcTFYsrJ0hcYqiM3bUzsN
+p8bN5Jj9flDEvol5KOH+TofT+fYqal7NXEMEXT1+62NWngcaNG4zSWj3RQiKPPix
+DQZFvf4ymQaGqw8AAjoCkTqTjZGt9F8CDFhZeNIrO3RyagXRThebAFhXzghmOuVT
+nY1YcONUmRvCtmXmA7XhupjNmm5TsKqXManKDoCRDcniOGEfy0kLt9t3STEaW87e
+6ylf8tsWTUdvCN84hJeP7tI6PfHCwIMUC/cNfY4G532IntY+2lW1Ab+j7fCv2cim
+HdNlqGfKdi5V6wEyKvnu
+=k6r8
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__11_Oct_2011_15_43_04_+1100_FX=7aUQFssi/xrcp--
+--Signature=_Tue__11_Oct_2011_16_29_48_+1100_QlV8u651g2m9QnOs--
