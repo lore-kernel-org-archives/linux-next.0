@@ -1,117 +1,180 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap_dss2 tree with the arm-soc
- tree
-Date: Tue, 11 Oct 2011 16:50:56 +1100
-Message-ID: <20111011165056.7220219065d219bf4ee1f91c@canb.auug.org.au>
+From: "Ujfalusi, Peter" <peter.ujfalusi@ti.com>
+Subject: Re: linux-next: manual merge of the sound tree with the arm-soc tree
+Date: Tue, 11 Oct 2011 09:15:02 +0300
+Message-ID: <CAPo=G1yMZm-gcVsqL3V7o-y=+cFfeQxVup27_48wdtV0_LTnkQ@mail.gmail.com>
+References: <20111011154304.f7fefc4f7f86b4b10348578c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__11_Oct_2011_16_50_56_+1100_70QG16D28EnZMD52"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:40966 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751328Ab1JKFvE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 01:51:04 -0400
+Received: from na3sys009aog111.obsmtp.com ([74.125.149.205]:43409 "EHLO
+	na3sys009aog111.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751175Ab1JKGPE convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Oct 2011 02:15:04 -0400
+In-Reply-To: <20111011154304.f7fefc4f7f86b4b10348578c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@ti.com>, Misael Lopez Cruz <misael.lopez@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jarkko Nikula <jarkko.nikula@bitmer.com>, Tony Lindgren <tony@atomide.com>, Arnd Bergmann <arnd@arndb.de>
 
---Signature=_Tue__11_Oct_2011_16_50_56_+1100_70QG16D28EnZMD52
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Tomi,
+On Tue, Oct 11, 2011 at 7:43 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Takashi,
+>
+> Today's linux-next merge of the sound tree got a conflict in
+> arch/arm/plat-omap/devices.c between commit 40246e0003f0 ("ARM: OMAP:
+> mcbsp: Move out omap_mcbsp_register_board_cfg from plat-omap/devices"=
+)
+> from the arm-soc tree and commit d231f5cbac9e ("OMAP: McPDM: Convert
+> McPDM device to omap_device") from the sound tree.
+>
+> Just overlapping removals. =A0I fixed it up (see below) and can carry=
+ the
+> fix as necessary.
 
-Today's linux-next merge of the omap_dss2 tree got a conflict in
-arch/arm/mach-omap2/board-h4.c between commit be7324605873 ("ARM: OMAP2+:
-Remove custom init_irq for remaining boards") from the arm-soc tree and
-commit cbf1455bfc9f ("OMAP: H4: Port the display driver to new DSS2")
-from the omap_dss2 tree.
+Thanks, the McBSP change came via linux-omap while we had the McPDM
+changes coming via sound tree.
 
-Just context changes If fixed it up (see below) and can carry the fix as
-necessary.
+>
+> Mark, Liam: =A0That sound tree commit has a few Signed-off-by lines w=
+ith no
+> email addresses.
+
+I can not track their new contact information. They used to work for TI=
+, and I
+have been advised to give them credit for their work on this area.
+I could have added no longer valid email addresses...
+
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+P=E9ter
 
-diff --cc arch/arm/mach-omap2/board-h4.c
-index a65effe,f7c09de..0000000
---- a/arch/arm/mach-omap2/board-h4.c
-+++ b/arch/arm/mach-omap2/board-h4.c
-@@@ -285,10 -301,17 +300,6 @@@ static struct omap_usb_config h4_usb_co
-  	.hmc_mode	=3D 0x00,		/* 0:dev|otg 1:disable 2:disable */
-  };
- =20
-- static struct omap_board_config_kernel h4_config[] __initdata =3D {
-- 	{ OMAP_TAG_LCD,		&h4_lcd_config },
-- };
--=20
- -static void __init omap_h4_init_early(void)
- -{
- -	omap2_init_common_infrastructure();
- -	omap2_init_common_devices(NULL, NULL);
- -}
- -
- -static void __init omap_h4_init_irq(void)
- -{
- -	omap2_init_irq();
- -}
- -
-  static struct at24_platform_data m24c01 =3D {
-  	.byte_len	=3D SZ_1K / 8,
-  	.page_size	=3D 16,
-@@@ -359,17 -379,24 +367,19 @@@ static void __init omap_h4_init(void
-  	platform_add_devices(h4_devices, ARRAY_SIZE(h4_devices));
-  	omap2_usbfs_init(&h4_usb_config);
-  	omap_serial_init();
- +	omap_sdrc_init(NULL, NULL);
-  	h4_init_flash();
-+=20
-+ 	omap_display_init(&h4_dss_data);
-  }
- =20
- -static void __init omap_h4_map_io(void)
- -{
- -	omap2_set_globals_242x();
- -	omap242x_map_common_io();
- -}
- -
-  MACHINE_START(OMAP_H4, "OMAP2420 H4 board")
-  	/* Maintainer: Paul Mundt <paul.mundt@nokia.com> */
- -	.boot_params	=3D 0x80000100,
- +	.atag_offset	=3D 0x100,
-  	.reserve	=3D omap_reserve,
- -	.map_io		=3D omap_h4_map_io,
- -	.init_early	=3D omap_h4_init_early,
- -	.init_irq	=3D omap_h4_init_irq,
- +	.map_io		=3D omap242x_map_io,
- +	.init_early	=3D omap2420_init_early,
- +	.init_irq	=3D omap2_init_irq,
-  	.init_machine	=3D omap_h4_init,
-  	.timer		=3D &omap2_timer,
-  MACHINE_END
-
---Signature=_Tue__11_Oct_2011_16_50_56_+1100_70QG16D28EnZMD52
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOk9lAAAoJEECxmPOUX5FE1CcP/jydPAjDrrtQMXXQmXAF+oOo
-kd8aab8KdZfKcF/yNdoLQexcrP4jwFd+mOyUopOY5OMYs43iDJ5uWmh3wVvFSu/J
-19PP0I/aNPNWUCrpy/Ykt8FDakxkmxF7LT/0Z0DBx6H+61eDthHSU54vIgOKnHhs
-+30Qv+tqAPp5yt4aTAua3Vt8ZqfrJgR+rVhTdNmHEkRPUqtfKhT4cFE5Z8Sy+KPU
-qS4hzxf1hq+BlTAO4aA4IZNOYQY1VDPe7Khsib186PODgT56tdqFmfGEKBUCVMrD
-REUtGERHWZFKJqxYT+f5xNpyCl3jrKc/PGmrUKeHsJymF7MGRy9Bu8MQ2rGZbIiA
-ZLCud3xCCaefXvediHCSyZrO+Vts+6JRb2Xy8oy0FiNHgb9AdiZO33R4bhCi+4Gi
-QKHpPOB6HQvM4MUYBWBLJUBdKrFEjzkmoAluAG5t5Fv4kAgYsZ3zahcHWLR3G59A
-zosZjyOzNVExXnVMSg6U2FwIlq8AhWfzqRuh701mKyRTVCe7QquiAWPyPvcgNquY
-arQfYztgZ+R/OM7cEA4eJb3n/v30KmZC+pwqAtmhpOxqhpd9F3b7p1wFPqNCYfor
-di9S2uP52X4mfZt1mOeRGQGdJMa4QINxtGA2PsqKkP6UvAbFcKqID+LtO1PNurOa
-QKBR8e2vr2qRxtq18yl0
-=ylqA
------END PGP SIGNATURE-----
-
---Signature=_Tue__11_Oct_2011_16_50_56_+1100_70QG16D28EnZMD52--
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+>
+> diff --cc arch/arm/plat-omap/devices.c
+> index acd132c,40eca9b..0000000
+> --- a/arch/arm/plat-omap/devices.c
+> +++ b/arch/arm/plat-omap/devices.c
+> @@@ -24,44 -24,56 +24,11 @@@
+> =A0#include <plat/tc.h>
+> =A0#include <plat/board.h>
+> =A0#include <plat/mmc.h>
+> =A0-#include <mach/gpio.h>
+> =A0#include <plat/menelaus.h>
+> =A0-#include <plat/mcbsp.h>
+> =A0#include <plat/omap44xx.h>
+>
+> - #if defined(CONFIG_SND_OMAP_SOC_MCPDM) || \
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 defined(CONFIG_SND_OMAP_SOC_MCPDM_MODUL=
+E)
+> -
+> - static struct resource mcpdm_resources[] =3D {
+> - =A0 =A0 =A0 {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "mcpdm_me=
+m",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0 =A0 =A0 =A0 =A0=3D OMAP44XX_=
+MCPDM_BASE,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0 =A0 =A0 =A0 =A0=3D OMAP44X=
+X_MCPDM_BASE + SZ_4K,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D IORESOURC=
+E_MEM,
+> - =A0 =A0 =A0 },
+> - =A0 =A0 =A0 {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "mcpdm_ir=
+q",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0 =A0 =A0 =A0 =A0=3D OMAP44XX_=
+IRQ_MCPDM,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0 =A0 =A0 =A0 =A0=3D OMAP44X=
+X_IRQ_MCPDM,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D IORESOURC=
+E_IRQ,
+> - =A0 =A0 =A0 },
+> - };
+> -
+> - static struct platform_device omap_mcpdm_device =3D {
+> - =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "omap-mcpdm",
+> - =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> - =A0 =A0 =A0 .num_resources =A0=3D ARRAY_SIZE(mcpdm_resources),
+> - =A0 =A0 =A0 .resource =A0 =A0 =A0 =3D mcpdm_resources,
+> - };
+> -
+> - static void omap_init_mcpdm(void)
+> - {
+> - =A0 =A0 =A0 (void) platform_device_register(&omap_mcpdm_device);
+> - }
+> - #else
+> - static inline void omap_init_mcpdm(void) {}
+> - #endif
+> -
+> =A0/*----------------------------------------------------------------=
+---------*/
+>
+> =A0-#if defined(CONFIG_OMAP_MCBSP) || defined(CONFIG_OMAP_MCBSP_MODUL=
+E)
+> =A0-
+> =A0-static struct platform_device **omap_mcbsp_devices;
+> =A0-
+> =A0-void omap_mcbsp_register_board_cfg(struct resource *res, int res_=
+count,
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct omap_mcbsp_pla=
+tform_data *config, int size)
+> =A0-{
+> =A0- =A0 =A0 =A0int i;
+> =A0-
+> =A0- =A0 =A0 =A0omap_mcbsp_devices =3D kzalloc(size * sizeof(struct p=
+latform_device *),
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 GFP_KERNEL);
+> =A0- =A0 =A0 =A0if (!omap_mcbsp_devices) {
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "Could not register M=
+cBSP devices\n");
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0return;
+> =A0- =A0 =A0 =A0}
+> =A0-
+> =A0- =A0 =A0 =A0for (i =3D 0; i < size; i++) {
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0struct platform_device *new_mcbsp;
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0int ret;
+> =A0-
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0new_mcbsp =3D platform_device_alloc("=
+omap-mcbsp", i + 1);
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0if (!new_mcbsp)
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0continue;
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0platform_device_add_resources(new_mcb=
+sp, &res[i * res_count],
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0res_count);
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0new_mcbsp->dev.platform_data =3D &con=
+fig[i];
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0ret =3D platform_device_add(new_mcbsp=
+);
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0if (ret) {
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0platform_device_put(n=
+ew_mcbsp);
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0continue;
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0}
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0omap_mcbsp_devices[i] =3D new_mcbsp;
+> =A0- =A0 =A0 =A0}
+> =A0-}
+> =A0-
+> =A0-#else
+> =A0-void omap_mcbsp_register_board_cfg(struct resource *res, int res_=
+count,
+> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct omap_mcbsp_pla=
+tform_data *config, int size)
+> =A0-{ =A0}
+> =A0-#endif
+> =A0-
+> =A0-/*---------------------------------------------------------------=
+----------*/
+> =A0-
+> =A0#if defined(CONFIG_MMC_OMAP) || defined(CONFIG_MMC_OMAP_MODULE) ||=
+ \
+> =A0 =A0 =A0 =A0defined(CONFIG_MMC_OMAP_HS) || defined(CONFIG_MMC_OMAP=
+_HS_MODULE)
+>
+>
