@@ -1,40 +1,83 @@
-From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: linux-next: Tree for Oct 11 (iio/resolver)
-Date: Tue, 11 Oct 2011 13:45:14 -0700
-Message-ID: <4E94AADA.4080204@xenotime.net>
-References: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: mmc core broken dependency on CONFIG_BLOCK (Was: linux-next:
+ Tree for Oct 11 (mmc))
+Date: Tue, 11 Oct 2011 14:59:34 -0700
+Message-ID: <4E94BC46.5080505@xenotime.net>
+References: <1172297901.46681.1318361517579.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20111011201127.455df266dcbffb1d621f8576-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:53778 "HELO
+	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751297Ab1JKV7g (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 17:59:36 -0400
+In-Reply-To: <1172297901.46681.1318361517579.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrei Warkentin <awarkentin@vmware.com>
+Cc: Namjae Jeon <linkinjeon@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On 10/11/11 02:11, Stephen Rothwell wrote:
-> Hi all,
+On 10/11/11 12:31, Andrei Warkentin wrote:
+> Hi Randy,
 > 
-> The linux-next tree is now available from
-> git://github.com/sfrothwell/linux-next.git as a temporary measure while
-> the kernel.org servers are unavailable.
+> ----- Original Message -----
+>> From: "Randy Dunlap" <rdunlap@xenotime.net>
+>> To: "Stephen Rothwell" <sfr@canb.auug.org.au>
+>> Cc: linux-next@vger.kernel.org, "LKML" <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org, "Chris Ball"
+>> <cjb@laptop.org>
+>> Sent: Tuesday, October 11, 2011 2:49:39 PM
+>> Subject: Re: linux-next: Tree for Oct 11 (mmc)
+>>
+>> On 10/11/11 02:11, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> The linux-next tree is now available from
+>>> git://github.com/sfrothwell/linux-next.git as a temporary measure
+>>> while
+>>> the kernel.org servers are unavailable.
+>>>
+>>> It may also turn up on git.kernel.org (depending on the mirroring).
+>>>  The
+>>> patch set is still absent, however.
+>>>
+>>> Changes since 20111007:
+>>
+>>
+>> When CONFIG_BLOCK is not enabled:
+>>
+>> In file included from
+>> next-2011-1011/drivers/mmc/card/sdio_uart.c:43:0:
+>> next-2011-1011/include/linux/mmc/card.h:175:12: error:
+>> 'DISK_NAME_LEN' undeclared here (not in a function)
+>>
+>> Deleting the #include <linux/mmc/card.h> fixes the sdio_uart.c build.
+>> However, the same problem occurs in mmc/core/core.c:
+>>
 > 
-> It may also turn up on git.kernel.org (depending on the mirroring).  The
-> patch set is still absent, however.
+> Because linux/genhd is now included, oops. I'm pretty positive this is due to the "mmc : general purpose partition support" patch pulled recently. I am adding NamJae, who was the author.
 > 
-> Changes since 20111007:
+>> In file included from next-2011-1011/drivers/mmc/core/core.c:30:0:
+>> next-2011-1011/include/linux/mmc/card.h:175:12: error:
+>> 'DISK_NAME_LEN' undeclared here (not in a function)
+>>
+>> Should mmc/core/ depend on BLOCK?  or should it just be made
+>> to build even when BLOCK is not enabled?
+>>
+> 
+> I don't think there should be a direct dependency on BLOCK. I have two suggestions -
+> 1) Have our own define similar to (and in fact smaller):
+>    linux/genhd.h:#define DISK_NAME_LEN                     32
+> 2) Put the MMC physical partition code under an #ifdef CONFIG_BLOCK, which is a reasonable
+>    proposition, given that there wouldn't be any need to parse physical partition info if
+>    it would never be consumed by the MMC block driver.
+> 
+> Thoughts?
 
-When no GPIO support is enabled:
-
-drivers/staging/iio/resolver/ad2s1210.c:657:14: error: array type has incomplete element type
-drivers/staging/iio/resolver/ad2s1210.c:665:44: warning: type defaults to 'int' in type name
-drivers/staging/iio/resolver/ad2s1210.c:665:44: warning: type defaults to 'int' in type name
-drivers/staging/iio/resolver/ad2s1210.c:665:44: error: negative width in bit-field '<anonymous>'
-drivers/staging/iio/resolver/ad2s1210.c:671:14: error: array type has incomplete element type
-drivers/staging/iio/resolver/ad2s1210.c:679:34: warning: type defaults to 'int' in type name
-drivers/staging/iio/resolver/ad2s1210.c:679:34: warning: type defaults to 'int' in type name
-drivers/staging/iio/resolver/ad2s1210.c:679:34: error: negative width in bit-field '<anonymous>'
+Agreed on part 2).  Do part 1) if it is required, but it's usually better
+not to duplicate constants or structs etc.
+IOW, can DISK_NAME_LEN in linux/genhd.h be exposed even when CONFIG_BLOCK
+is not enabled?
 
 
 
