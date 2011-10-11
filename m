@@ -1,38 +1,45 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] x86: perf_event_intel.c needs export.h
-Date: Tue, 11 Oct 2011 11:26:19 -0700
-Message-ID: <4E948A4B.3010009@xenotime.net>
+Subject: Re: linux-next: Tree for Oct 11 (mmc)
+Date: Tue, 11 Oct 2011 11:49:39 -0700
+Message-ID: <4E948FC3.2080801@xenotime.net>
 References: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
 In-Reply-To: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-mmc-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, x86 maintainers <x86@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On 10/11/11 02:11, Stephen Rothwell wrote:
+> Hi all,
+> 
+> The linux-next tree is now available from
+> git://github.com/sfrothwell/linux-next.git as a temporary measure while
+> the kernel.org servers are unavailable.
+> 
+> It may also turn up on git.kernel.org (depending on the mirroring).  The
+> patch set is still absent, however.
+> 
+> Changes since 20111007:
 
-Add <linux/export.h> to fix build warnings:
 
-arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: data definition has no type or storage class
-arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL'
-arch/x86/kernel/cpu/perf_event_intel.c:1323:1: warning: parameter names (without types) in function declaration
+When CONFIG_BLOCK is not enabled:
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
- arch/x86/kernel/cpu/perf_event_intel.c |    1 +
- 1 file changed, 1 insertion(+)
+In file included from next-2011-1011/drivers/mmc/card/sdio_uart.c:43:0:
+next-2011-1011/include/linux/mmc/card.h:175:12: error: 'DISK_NAME_LEN' undeclared here (not in a function)
 
---- next-2011-1011.orig/arch/x86/kernel/cpu/perf_event_intel.c
-+++ next-2011-1011/arch/x86/kernel/cpu/perf_event_intel.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/stddef.h>
- #include <linux/types.h>
-+#include <linux/export.h>
- #include <linux/init.h>
- #include <linux/slab.h>
- 
+Deleting the #include <linux/mmc/card.h> fixes the sdio_uart.c build.
+However, the same problem occurs in mmc/core/core.c:
+
+In file included from next-2011-1011/drivers/mmc/core/core.c:30:0:
+next-2011-1011/include/linux/mmc/card.h:175:12: error: 'DISK_NAME_LEN' undeclared here (not in a function)
+
+Should mmc/core/ depend on BLOCK?  or should it just be made
+to build even when BLOCK is not enabled?
+
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
