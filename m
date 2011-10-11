@@ -1,45 +1,59 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Oct 11 (mmc)
-Date: Tue, 11 Oct 2011 11:49:39 -0700
-Message-ID: <4E948FC3.2080801@xenotime.net>
+Subject: [PATCH -next] jbd2: fix build when CONFIG_BUG is not enabled
+Date: Tue, 11 Oct 2011 12:15:20 -0700
+Message-ID: <4E9495C8.1030200@xenotime.net>
 References: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:52071 "HELO
+	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755220Ab1JKTPX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 15:15:23 -0400
 In-Reply-To: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au>
-Sender: linux-mmc-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Arnaud Lacombe <lacombar@gmail.com>
 
-On 10/11/11 02:11, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The linux-next tree is now available from
-> git://github.com/sfrothwell/linux-next.git as a temporary measure while
-> the kernel.org servers are unavailable.
-> 
-> It may also turn up on git.kernel.org (depending on the mirroring).  The
-> patch set is still absent, however.
-> 
-> Changes since 20111007:
+From: Randy Dunlap <rdunlap@xenotime.net>
 
+Fix build error when CONFIG_BUG is not enabled:
 
-When CONFIG_BLOCK is not enabled:
+fs/jbd2/transaction.c:1175:3: error: implicit declaration of function '__WARN'
 
-In file included from next-2011-1011/drivers/mmc/card/sdio_uart.c:43:0:
-next-2011-1011/include/linux/mmc/card.h:175:12: error: 'DISK_NAME_LEN' undeclared here (not in a function)
+by changing __WARN() to WARN_ON(), as suggested by
+Arnaud Lacombe <lacombar@gmail.com>.
 
-Deleting the #include <linux/mmc/card.h> fixes the sdio_uart.c build.
-However, the same problem occurs in mmc/core/core.c:
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnaud Lacombe <lacombar@gmail.com>
+---
 
-In file included from next-2011-1011/drivers/mmc/core/core.c:30:0:
-next-2011-1011/include/linux/mmc/card.h:175:12: error: 'DISK_NAME_LEN' undeclared here (not in a function)
+Same build error as reported on 31-AUG-2011 for
+linux-next 20110830.
 
-Should mmc/core/ depend on BLOCK?  or should it just be made
-to build even when BLOCK is not enabled?
+ fs/jbd2/transaction.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--- next-2011-1011.orig/fs/jbd2/transaction.c
++++ next-2011-1011/fs/jbd2/transaction.c
+@@ -27,6 +27,7 @@
+ #include <linux/highmem.h>
+ #include <linux/hrtimer.h>
+ #include <linux/backing-dev.h>
++#include <linux/bug.h>
+ #include <linux/module.h>
+ 
+ static void __jbd2_journal_temp_unlink_buffer(struct journal_head *jh);
+@@ -1171,8 +1172,7 @@ out_unlock_bh:
+ 	jbd_unlock_bh_state(bh);
+ out:
+ 	JBUFFER_TRACE(jh, "exit");
+-	if (ret)
+-		__WARN();	/* All errors are bugs, so dump the stack */
++	WARN_ON(ret);	/* All errors are bugs, so dump the stack */
+ 	return ret;
+ }
+ 
