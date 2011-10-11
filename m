@@ -1,66 +1,122 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: SCSI trees moved back to kernel.org
-Date: Wed, 12 Oct 2011 09:44:13 +1100
-Message-ID: <20111012094413.316ecd636261d45266459fdb@canb.auug.org.au>
-References: <1316101053.2983.42.camel@dabdike.hansenpartnership.com>
-	<1318351928.2992.19.camel@dabdike.int.hansenpartnership.com>
-	<20111012092618.e35391f58873edb1cc0bb5cb@canb.auug.org.au>
-	<1318372516.2992.32.camel@dabdike.int.hansenpartnership.com>
+From: NamJae Jeon <linkinjeon@gmail.com>
+Subject: Re: mmc core broken dependency on CONFIG_BLOCK (Was: linux-next: Tree
+ for Oct 11 (mmc))
+Date: Wed, 12 Oct 2011 08:20:48 +0900
+Message-ID: <CAKYAXd86Hvq5SEVvmf4M99smeXbDiUsS+ASXy9-U7xmrREGjvQ@mail.gmail.com>
+References: <1172297901.46681.1318361517579.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
+	<4E94BC46.5080505@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__12_Oct_2011_09_44_13_+1100_jCzuZEm1xIlzr/ZZ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:53663 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750990Ab1JKWoY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 18:44:24 -0400
-In-Reply-To: <1318372516.2992.32.camel@dabdike.int.hansenpartnership.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <4E94BC46.5080505@xenotime.net>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>, Andrei Warkentin <awarkentin@vmware.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__12_Oct_2011_09_44_13_+1100_jCzuZEm1xIlzr/ZZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi James,
-
-On Tue, 11 Oct 2011 17:35:16 -0500 James Bottomley <James.Bottomley@HansenP=
-artnership.com> wrote:
+2011/10/12 Randy Dunlap <rdunlap@xenotime.net>:
+> On 10/11/11 12:31, Andrei Warkentin wrote:
+>> Hi Randy,
+>>
+>> ----- Original Message -----
+>>> From: "Randy Dunlap" <rdunlap@xenotime.net>
+>>> To: "Stephen Rothwell" <sfr@canb.auug.org.au>
+>>> Cc: linux-next@vger.kernel.org, "LKML" <linux-kernel@vger.kernel.or=
+g>, linux-mmc@vger.kernel.org, "Chris Ball"
+>>> <cjb@laptop.org>
+>>> Sent: Tuesday, October 11, 2011 2:49:39 PM
+>>> Subject: Re: linux-next: Tree for Oct 11 (mmc)
+>>>
+>>> On 10/11/11 02:11, Stephen Rothwell wrote:
+>>>> Hi all,
+>>>>
+>>>> The linux-next tree is now available from
+>>>> git://github.com/sfrothwell/linux-next.git as a temporary measure
+>>>> while
+>>>> the kernel.org servers are unavailable.
+>>>>
+>>>> It may also turn up on git.kernel.org (depending on the mirroring)=
+=2E
+>>>> =C2=A0The
+>>>> patch set is still absent, however.
+>>>>
+>>>> Changes since 20111007:
+>>>
+>>>
+>>> When CONFIG_BLOCK is not enabled:
+>>>
+>>> In file included from
+>>> next-2011-1011/drivers/mmc/card/sdio_uart.c:43:0:
+>>> next-2011-1011/include/linux/mmc/card.h:175:12: error:
+>>> 'DISK_NAME_LEN' undeclared here (not in a function)
+>>>
+>>> Deleting the #include <linux/mmc/card.h> fixes the sdio_uart.c buil=
+d.
+>>> However, the same problem occurs in mmc/core/core.c:
+>>>
+>>
+>> Because linux/genhd is now included, oops. I'm pretty positive this =
+is due to the "mmc : general purpose partition support" patch pulled re=
+cently. I am adding NamJae, who was the author.
+>>
+>>> In file included from next-2011-1011/drivers/mmc/core/core.c:30:0:
+>>> next-2011-1011/include/linux/mmc/card.h:175:12: error:
+>>> 'DISK_NAME_LEN' undeclared here (not in a function)
+>>>
+>>> Should mmc/core/ depend on BLOCK? =C2=A0or should it just be made
+>>> to build even when BLOCK is not enabled?
+>>>
+>>
+>> I don't think there should be a direct dependency on BLOCK. I have t=
+wo suggestions -
+>> 1) Have our own define similar to (and in fact smaller):
+>> =C2=A0 =C2=A0linux/genhd.h:#define DISK_NAME_LEN =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 32
+>> 2) Put the MMC physical partition code under an #ifdef CONFIG_BLOCK,=
+ which is a reasonable
+>> =C2=A0 =C2=A0proposition, given that there wouldn't be any need to p=
+arse physical partition info if
+>> =C2=A0 =C2=A0it would never be consumed by the MMC block driver.
+>>
+>> Thoughts?
 >
-> Um, sorry, fixed I think.  That's what comes of trying to create the
-> tree without actually having access to the old one.
+> Agreed on part 2). =C2=A0Do part 1) if it is required, but it's usual=
+ly better
+> not to duplicate constants or structs etc.
+> IOW, can DISK_NAME_LEN in linux/genhd.h be exposed even when CONFIG_B=
+LOCK
+> is not enabled?
 
-Its empty anyway, so no harm done.
+Hi Randy, Andrei.
 
-Thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I suggest third option for this.
+As you know, MMC like ATA Driver and SCSI Driver etc.. can not enable
+without CONFIG_BLOCK
+So I think that mmc should be depended from CONFIG_BLOCK like other
+block device driver.
+see the their Kconfig. How do you think ?
+-----------------------------------------------------------------------=
+---------------------------------------------------------
+menuconfig ATA
+        tristate "Serial ATA and Parallel ATA drivers"
+        depends on HAS_IOMEM
+        depends on BLOCK
+        depends on !(M32R || M68K) || BROKEN
 
---Signature=_Wed__12_Oct_2011_09_44_13_+1100_jCzuZEm1xIlzr/ZZ
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+config SCSI
+        tristate "SCSI device support"
+        depends on BLOCK
+        select SCSI_DMA if HAS_DMA
+        ---help---
+-----------------------------------------------------------------------=
+----------------------------------------------
 
-iQIcBAEBCAAGBQJOlMa9AAoJEECxmPOUX5FEOVEP/1n+qtF0yW1h0xK/lEnahxCf
-ry0tieHVYIHUTSjBOVq/TjZRNGtiAD+ZqXfglySRZ3l+E9aYLAMUYNq6pqs0Ea13
-rEv8ovBDiYWXT2zVjxuhNAWaexpy/aW42vumTbPWV4trpbxZ6SYAtz/Q4lZaN92L
-xr7nnCKqP25L6Lxje6XU/Clo8rQpU9Rx2w1KM1rDjbu9vexhydQkFGY1zsM7y8Dz
-x5H3exI+aS6lkfG9p7d/UBg+2XD+1DyBHW+pmjYKMXucjbojGZSpUQ7ogZsFTIh7
-I1RSH6yCukBMyl+y2Qy2aJzAoyK1cK96Y+t1PtOqMt6G/R4qvKyC+WBbpCt/ZFwN
-qeC19Mwc5ZGcmk5ACOdnRvf5cImt42yY9b6oygdFnAeYeSl8brh4Wulh1nxDzwYa
-Yx3T63DtqjX/5ubfkPloUze9f5cJ+EJFRaUldv+Pldj7t3Y6onUQ/wSJF3YG/1Z0
-XdCmIvU6yXJZKoCVG4d9yMq2MiR850v+el8c+1+d4vgNkoZY/6DSYLDlzvt17/gu
-F86X6ZWvj55YZpYXBO6nE5ixdxSyzZztiBnzkbjIUP+0g930oLKCATyyAbAeDmPk
-eNZNY57NTPMVicGnoBWPuazNGDCvBDHjFRoqDF9NbhAir8mThco5HQN4SNYiw7k9
-5reY55dNgJsMBuJd5ZU0
-=jvO3
------END PGP SIGNATURE-----
-
---Signature=_Wed__12_Oct_2011_09_44_13_+1100_jCzuZEm1xIlzr/ZZ--
+>
+>
+> --
+> ~Randy
+> *** Remember to use Documentation/SubmitChecklist when testing your c=
+ode ***
+>
