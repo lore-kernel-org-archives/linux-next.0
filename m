@@ -1,44 +1,34 @@
-From: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>
-Subject: Re: linux-next: Tree for Oct 11 (iio/resolver)
-Date: Wed, 12 Oct 2011 09:58:10 +0100
-Message-ID: <4E9556A2.9050005@cam.ac.uk>
-References: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au> <4E94AADA.4080204@xenotime.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the tip tree
+Date: Wed, 12 Oct 2011 08:53:08 -0600
+Message-ID: <20111012145308.GA18777@kroah.com>
+References: <20111012163452.7f1822bb8dca107daf26d28b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4E94AADA.4080204-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>, Greg KH <gregkh-l3A5Bk7waGM@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out3.smtp.messagingengine.com ([66.111.4.27]:56155 "EHLO
+	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752453Ab1JLOxd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Oct 2011 10:53:33 -0400
+Content-Disposition: inline
+In-Reply-To: <20111012163452.7f1822bb8dca107daf26d28b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-On 10/11/11 21:45, Randy Dunlap wrote:
-> On 10/11/11 02:11, Stephen Rothwell wrote:
->> Hi all,
->>
->> The linux-next tree is now available from
->> git://github.com/sfrothwell/linux-next.git as a temporary measure while
->> the kernel.org servers are unavailable.
->>
->> It may also turn up on git.kernel.org (depending on the mirroring).  The
->> patch set is still absent, however.
->>
->> Changes since 20111007:
+On Wed, Oct 12, 2011 at 04:34:52PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> When no GPIO support is enabled:
-Thanks Randy. Fix is clearly to add the GENERIC_GPIO dependence which should always
-have been there for this driver.  Previously it was building a non working driver
-as the stubs covered everything being used.  I'll sort a patch shortly and chase down
-if we have any others missing GENERIC_GPIO dependencies.
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/hv/Makefile between commit 6f4151c89b7d ("x86: Hyper-V:
+> Integrate the clocksource with Hyper-V detection code") from the tip tree
+> and commit 46a971913611 ("Staging: hv: move hyperv code out of staging
+> directory") from the staging tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Jonathan
-> 
-> drivers/staging/iio/resolver/ad2s1210.c:657:14: error: array type has incomplete element type
-> drivers/staging/iio/resolver/ad2s1210.c:665:44: warning: type defaults to 'int' in type name
-> drivers/staging/iio/resolver/ad2s1210.c:665:44: warning: type defaults to 'int' in type name
-> drivers/staging/iio/resolver/ad2s1210.c:665:44: error: negative width in bit-field '<anonymous>'
-> drivers/staging/iio/resolver/ad2s1210.c:671:14: error: array type has incomplete element type
-> drivers/staging/iio/resolver/ad2s1210.c:679:34: warning: type defaults to 'int' in type name
-> drivers/staging/iio/resolver/ad2s1210.c:679:34: warning: type defaults to 'int' in type name
-> drivers/staging/iio/resolver/ad2s1210.c:679:34: error: negative width in bit-field '<anonymous>'
+The fix looks correct, thanks.
+
+greg k-h
