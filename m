@@ -1,92 +1,73 @@
-From: Arvind R <arvino55@gmail.com>
-Subject: [PATCH 3.1-rc9] edac:i82975x fix 32bit compile and cleanup
-Date: Wed, 12 Oct 2011 10:28:56 +0530
-Message-ID: <CAA_L+UPmnbe20kyHMKCMabhqggwvChmdZo0P8ENNCGA7xfNUbQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the pm tree
+Date: Wed, 12 Oct 2011 16:28:05 +1100
+Message-ID: <20111012162805.1056a7f7fe3f1140d767a601@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__12_Oct_2011_16_28_05_+1100__5PUE.sc8q_Lnz5_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:54060 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751436Ab1JLE65 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Oct 2011 00:58:57 -0400
+Received: from calzone.tip.net.au ([203.10.76.15]:51487 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750918Ab1JLF2L (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Oct 2011 01:28:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: trivial@kernel.org
-Cc: linux-edac@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, torvalds@linux-foundation.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, "K. Y. Srinivasan" <kys@microsoft.com>
 
-Subject: [PATCH 3.1-rc9] edac:i82975x fix 32bit compile and cleanup
+--Signature=_Wed__12_Oct_2011_16_28_05_+1100__5PUE.sc8q_Lnz5_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-the clean up achieves:
-  1. fix warning on 32-bit compile
-  2. reorder info extraction for clarity
-  3. add error-trap diagnostic message
-  4. handle ALL modes of memory configurations
+Hi Greg,
 
-Signed-off-by: Arvind R. <arvino55@gmail.com>
----
- i82975x_edac.c |   30 +++++++++++++++++++-----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
----
-diff -up a/drivers/edac/i82975x_edac.c b/drivers/edac/i82975x_edac.c
---- a/drivers/edac/i82975x_edac.c
-+++ b/drivers/edac/i82975x_edac.c
-@@ -277,11 +277,9 @@ static void i82975x_get_error_info(struc
- static int i82975x_process_error_info(struct mem_ctl_info *mci,
- 		struct i82975x_error_info *info, int handle_errors)
- {
--	int row, multi_chan, chan;
-+	int row, chan;
- 	unsigned long offst, page;
+Today's linux-next merge of the staging tree got a conflict in
+drivers/Kconfig between commit a3c98b8b2ede ("PM: Introduce devfreq:
+generic DVFS framework with device-specific OPPs") from the pm tree and
+commit 46a971913611 ("Staging: hv: move hyperv code out of staging
+directory") from the staging tree.
 
--	multi_chan = mci->csrows[0].nr_channels - 1;
--
- 	if (!(info->errsts2 & 0x0003))
- 		return 0;
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-@@ -294,20 +292,30 @@ static int i82975x_process_error_info(st
- 	}
+diff --cc drivers/Kconfig
+index a1efd75,ce3c35f..0000000
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@@ -130,6 -130,6 +130,8 @@@ source "drivers/iommu/Kconfig
+ =20
+  source "drivers/virt/Kconfig"
+ =20
++ source "drivers/hv/Kconfig"
++=20
+ +source "drivers/devfreq/Kconfig"
+ +
+  endmenu
 
- 	page = (unsigned long) info->eap;
--	if (info->xeap & 1)
--		page |= 0x100000000ul;
--	chan = page & 1;
- 	page >>= 1;
--	offst = page & ((1 << PAGE_SHIFT) - 1);
--	page >>= PAGE_SHIFT;
-+	if (info->xeap & 1)
-+		page |= 0x80000000;
-+	page >>= (PAGE_SHIFT - 1);
- 	row = edac_mc_find_csrow_by_page(mci, page);
+--Signature=_Wed__12_Oct_2011_16_28_05_+1100__5PUE.sc8q_Lnz5_
+Content-Type: application/pgp-signature
 
-+	if (row == -1)	{
-+		i82975x_mc_printk(mci, KERN_ERR, "error processing EAP:\n"
-+			"\tXEAP=%u\n"
-+			"\t EAP=0x%08x\n"
-+			"\tPAGE=0x%08x\n",
-+			(info->xeap & 1) ? 1 : 0, info->eap, (unsigned int) page);
-+		return 0;
-+	}
-+	chan = (mci->csrows[row].nr_channels == 1) ? 0 : info->eap & 1;
-+	offst = info->eap
-+			& ((1 << PAGE_SHIFT) -
-+				(1 << mci->csrows[row].grain));
-+
- 	if (info->errsts & 0x0002)
- 		edac_mc_handle_ue(mci, page, offst , row, "i82975x UE");
- 	else
- 		edac_mc_handle_ce(mci, page, offst, info->derrsyn, row,
--				multi_chan ? chan : 0,
--				"i82975x CE");
-+				chan, "i82975x CE");
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
- 	return 1;
- }
-@@ -410,7 +418,7 @@ static void i82975x_init_csrows(struct m
- 		csrow->last_page = cumul_size - 1;
- 		csrow->nr_pages = cumul_size - last_cumul_size;
- 		last_cumul_size = cumul_size;
--		csrow->grain = 1 << 6;	/* I82975X_EAP has 64B resolution */
-+		csrow->grain = 1 << 7;	/* 128Byte cache-line resolution */
- 		csrow->mtype = MEM_DDR2; /* I82975x supports only DDR2 */
- 		csrow->dtype = i82975x_dram_type(mch_window, index);
- 		csrow->edac_mode = EDAC_SECDED; /* only supported */
+iQIcBAEBCAAGBQJOlSVlAAoJEECxmPOUX5FE/1wP/3N6WHLn9HIwzoRPPOqTgz57
+mlGWR9KdRbWkbwXI9/9uGhajXdXoj2ECzftBZUif4T+y+sud0wMNjoCCNu+LYRXI
+kAPtfmKG0NqEAr9L8HuWr4xTRRr/GnvWl+GqTu5e9ThBZN46QM3778WsrWi8N0aM
+QZgDBzMqX8p3p87U1AxnOtnLo139mNQS6u4nnQtyh2Ed4hIiLokp3OqaZKC+iyvI
+wAsf5lwQXgvzx/zSF4As9JBBpKB2Ncw6K8vtayQ5+MitDzEtD98PJn3KDdIK3xVX
+nslFwi4cjz7HE81FC2J5N1swKiACmGYvq6yqvFixVIqnvF74AoDF5GAafWTr039C
+8mD0f9N4vERIHkTKmNodlj7yn02xkxdgsdD0aXaOqdV5CVlyaKto4kCgo34eGnDr
+XRbjM/iWvzCtDSTkjUOtcNdaoMMj+8QA2SH3+QJM1WxAquFV84a1Kq3f7/PX10pM
+JSkilhwQgOqKc1mDbbrUuAPHxsJVX7pL/L5ERHLqD6w9XwENpWoKQY4HjEAY3osk
+X172TPKg3nCOd95JAhSERReksVsrRyp5UJZxG0RPA1Xf8Gr5s71o6I6JAhPnhjAS
+o1qiSbyVzIFEjXnYGsiu2XZqMcZcCHk5IHu46GZDqRw/CsC6lraM5EIH4UYjlbQO
+tzlZG0oTiBDFWxQ0LZjy
+=9lgE
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Oct_2011_16_28_05_+1100__5PUE.sc8q_Lnz5_--
