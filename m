@@ -1,108 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mmc tree with the mips tree
-Date: Wed, 12 Oct 2011 14:15:43 +1100
-Message-ID: <20111012141543.fb3319f1b5345f5dcb9cdc52@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Wed, 12 Oct 2011 15:24:51 +1100
+Message-ID: <20111012152451.66ce5ddffb4c5b3a4f6a31cf@canb.auug.org.au>
+References: <20111006144826.a69a5ea59d4ca94f8f7414cf@canb.auug.org.au>
+	<20111011173714.d54bbcee6c0676ddcc37a1f3@canb.auug.org.au>
+	<4E93EA10.4030405@dsn.lapis-semi.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__12_Oct_2011_14_15_43_+1100_D0F/4zQfvTbdwQa/"
+ boundary="Signature=_Wed__12_Oct_2011_15_24_51_+1100_ixEDUKGsPJXaxJyD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:39104 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:34579 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751888Ab1JLDPv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 23:15:51 -0400
+	with ESMTP id S1750946Ab1JLEY5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Oct 2011 00:24:57 -0400
+In-Reply-To: <4E93EA10.4030405@dsn.lapis-semi.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Manuel Lauss <manuel.lauss@googlemail.com>, Ralf Baechle <ralf@linux-mips.org>, Girish K S <girish.shivananjappa@linaro.org>
+To: Tomoya MORINAGA <tomoya-linux@dsn.lapis-semi.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>
 
---Signature=_Wed__12_Oct_2011_14_15_43_+1100_D0F/4zQfvTbdwQa/
+--Signature=_Wed__12_Oct_2011_15_24_51_+1100_ixEDUKGsPJXaxJyD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+Hi,
 
-Today's linux-next merge of the mmc tree got a conflict in
-drivers/mmc/host/au1xmmc.c between commit 404b3fb0b766 ("MMC: au1xmmc:
-Remove Alchemy CPU subtype dependencies") from the mips tree and commit
-a0c8202a148f ("mmc: replace printk with appropriate display macro") from
-the mmc tree.
+On Tue, 11 Oct 2011 16:02:40 +0900 Tomoya MORINAGA <tomoya-linux@dsn.lapis-=
+semi.com> wrote:
+>
+> (2011/10/11 15:37), Stephen Rothwell wrote:
+> >=20
+> > On Thu, 6 Oct 2011 14:48:26 +1100 Stephen Rothwell<sfr@canb.auug.org.au=
+>  wrote:
+> >>
+> >> After merging the gpio tree, today's linux-next build (x86_64
+> >> allmodconfig) failed like this:
+> >>
+> >> ERROR: "irq_setup_generic_chip" [drivers/gpio/gpio-pch.ko] undefined!
+> >> ERROR: "irq_alloc_generic_chip" [drivers/gpio/gpio-pch.ko] undefined!
+> >> ERROR: "irq_setup_generic_chip" [drivers/gpio/gpio-ml-ioh.ko] undefine=
+d!
+> >> ERROR: "irq_alloc_generic_chip" [drivers/gpio/gpio-ml-ioh.ko] undefine=
+d!
+> >>
+> >> Presumably caused by commits 54be566317b6 ("gpio-ml-ioh: Support
+> >> interrupt function") and 38eb18a6f92d ("gpio-pch: Support interrupt
+> >> function").
+> >>
+> >> I have used the gpio tree from next-20111005 for today.
+> >=20
+> > I am still getting this build failure.
+> >=20
+> I built this driver with success using linux-3.0.
+> I want to try to build with the same as your build environment.
+> Where can I get your environment ?
 
-I fixed it up (see below) and can carry the fix as necessary.
+Just try building gpio-pch and gpio-ml-ioh as modules ...
+irq_setup_generic_chip() does not have an EXPORT_SYMBOL (and didn't in
+v3.0 either).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/mmc/host/au1xmmc.c
-index 56e7834,707bc7d..0000000
---- a/drivers/mmc/host/au1xmmc.c
-+++ b/drivers/mmc/host/au1xmmc.c
-@@@ -1036,12 -1028,11 +1036,11 @@@ static int __devinit au1xmmc_probe(stru
-  	tasklet_init(&host->finish_task, au1xmmc_tasklet_finish,
-  			(unsigned long)host);
- =20
- -#ifdef CONFIG_SOC_AU1200
- -	ret =3D au1xmmc_dbdma_init(host);
- -	if (ret)
- -		pr_info(DRIVER_NAME ": DBDMA init failed; using PIO\n");
- -#endif
- +	if (has_dbdma()) {
- +		ret =3D au1xmmc_dbdma_init(host);
- +		if (ret)
-- 			printk(KERN_INFO DRIVER_NAME ": DBDMA init failed; "
-- 						     "using PIO\n");
-++			pr_info(DRIVER_NAME ": DBDMA init failed; using PIO\n");
- +	}
- =20
-  #ifdef CONFIG_LEDS_CLASS
-  	if (host->platdata && host->platdata->led) {
-@@@ -1189,15 -1181,15 +1188,15 @@@ static struct platform_driver au1xmmc_d
- =20
-  static int __init au1xmmc_init(void)
-  {
- -#ifdef CONFIG_SOC_AU1200
- -	/* DSCR_CMD0_ALWAYS has a stride of 32 bits, we need a stride
- -	 * of 8 bits.  And since devices are shared, we need to create
- -	 * our own to avoid freaking out other devices.
- -	 */
- -	memid =3D au1xxx_ddma_add_device(&au1xmmc_mem_dbdev);
- -	if (!memid)
- -		pr_err("au1xmmc: cannot add memory dbdma dev\n");
- -#endif
- +	if (has_dbdma()) {
- +		/* DSCR_CMD0_ALWAYS has a stride of 32 bits, we need a stride
- +		* of 8 bits.  And since devices are shared, we need to create
- +		* our own to avoid freaking out other devices.
- +		*/
- +		memid =3D au1xxx_ddma_add_device(&au1xmmc_mem_dbdev);
- +		if (!memid)
-- 			printk(KERN_ERR "au1xmmc: cannot add memory dbdma\n");
-++			pr_err("au1xmmc: cannot add memory dbdma dev\n");
- +	}
-  	return platform_driver_register(&au1xmmc_driver);
-  }
- =20
-
---Signature=_Wed__12_Oct_2011_14_15_43_+1100_D0F/4zQfvTbdwQa/
+--Signature=_Wed__12_Oct_2011_15_24_51_+1100_ixEDUKGsPJXaxJyD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOlQZfAAoJEECxmPOUX5FEk0sP/1xZ2OmT5Y/qTUxt7cz8whtP
-9yrWBmRGow9x2sYisxqJYaZd839ygO9KBpX6EdzC6eC8oH+U/inEkCPt8DXjV8Q3
-677rybFfNV4IOsInzJy4SO67KmBfBumE31Rewudt5XXQYRhCPNbDbb6K+z5f5Ohw
-Kr1j9PvjPGnl+CxOgl3S5bK7Ae9tL1GbuWJBWcXtsKVO5ZaFPHGHKodE2NPeV3JA
-EfK2KM3nuKHafz8z8A9o3BK4g4OiCAgzh6ZHpIfsPUgXbdE65AlpDGHuRrZ6t4oQ
-1NY86SpB++W2B+eCIcRp8NdLzkOO0ekEKuSgldAL9MjQKajMIfvPpGPNBwP4Hssy
-iqCBb9144a3qeZiNmYeTQJWAPSdJCF33I4N9nq1bcWW4o5UgEYO7OWle7j+uptzD
-Vnv19lC/0NgPziLJnR8qtxGWEK7nRpnFFKlH5GA2/rHJ7cPOM90MJaOvdkFAO0fK
-QXYW5cP9URz65gTDtV2lILUDfhTpv7pbA3H65QNfBdqgyTeOQ5rCin0k04O02s0E
-5cqBw31txHEeSPOECbOSxPSuVtRKQyOzxknuxRm+FoDhaNw+Wc5ZeHR3NHRj6e3s
-EFzZJGyG+OchSgVmAvpzn/JIm/WaCZ46pF0wOL4v1RRS4bE68fJHimED2qE9pBMT
-QQ4xo6MG8Hk/jLsIRL3h
-=k8Ax
+iQIcBAEBCAAGBQJOlRaTAAoJEECxmPOUX5FEx/YP/i9jYIDcXmWC6iT0bSejxs4c
+izL/T3/yrYNpDIwDcVmaG3fqItK0WuUaTAVGke4eUV5urfsoZfuFeebEHSaJj/kU
+OP6jrHwOFEtW/tfz8F3r/nK7FJdM5qzWY0YkwJg1QoEaHm3MsBI+eRmnIEQQt54T
+GUHzZri9zWIEHJ1hE5zaq/x65PDl9t9LxCDnwplKFwD8XmBJBbb5bps6WCSAlAwT
+loQ4Vv0vOoC+Bi/W4DgpmcjDzO3O2+qdKEvzvJz0cT17Uhs+JNdhk+HWXpL6ov3w
+RF/+2fJHDxkwG1aRix+oIGcM95l7BCeh/mI/6cgLOXZL0wr/6E9Pv211LoeE+pPT
+EhSJHMBy6h42WL6Y9J4lSsfRWW7syBd/IrgnsY1j5njyyADzBOdhYjH5V0rZw7U9
+3+3OedljunGbBL7LGkuxjfr79E223gnm4FlyApbVk/OUnb20HA/jbyL/YYdIhmXe
+JCw7Wtsf7le3IgHkQO3iZfAl2VZhUBcQbZbewtuMZ4jPy1zHtaJGHgJ6zC6PL4dU
+a9A91UQfMRCHfTq2IegDj6fdeTGa9j49pSYAaHli2Nnl1x3kCLR1sYm+7i4l3i13
+APQAqBiGlVIXzbK0poUjesLftS++y7xj7HVaqZxmcdPDftK6EIR7mPVkG2sFcXry
+vnFfE0rlS7gHz21B9h/m
+=8EUU
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__12_Oct_2011_14_15_43_+1100_D0F/4zQfvTbdwQa/--
+--Signature=_Wed__12_Oct_2011_15_24_51_+1100_ixEDUKGsPJXaxJyD--
