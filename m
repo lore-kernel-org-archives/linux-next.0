@@ -1,35 +1,36 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the pm tree
-Date: Wed, 12 Oct 2011 08:53:25 -0600
-Message-ID: <20111012145325.GB18777@kroah.com>
-References: <20111012162805.1056a7f7fe3f1140d767a601@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Oct 12
+Date: Wed, 12 Oct 2011 08:26:05 -0700
+Message-ID: <4E95B18D.9070806@xenotime.net>
+References: <20111012175425.a2e3e6e6a92265e433aeca25@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3.smtp.messagingengine.com ([66.111.4.27]:35579 "EHLO
-	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752473Ab1JLOxd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Oct 2011 10:53:33 -0400
-Content-Disposition: inline
-In-Reply-To: <20111012162805.1056a7f7fe3f1140d767a601@canb.auug.org.au>
+Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:50099 "HELO
+	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751458Ab1JLP0M (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Oct 2011 11:26:12 -0400
+In-Reply-To: <20111012175425.a2e3e6e6a92265e433aeca25@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Oct 12, 2011 at 04:28:05PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+On 10/11/11 23:54, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/Kconfig between commit a3c98b8b2ede ("PM: Introduce devfreq:
-> generic DVFS framework with device-specific OPPs") from the pm tree and
-> commit 46a971913611 ("Staging: hv: move hyperv code out of staging
-> directory") from the staging tree.
+> The linux-next tree is now available from
+> git://github.com/sfrothwell/linux-next.git as a temporary measure while
+> the kernel.org servers are unavailable.
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+> It may also turn up on git.kernel.org (depending on the mirroring).  The
+> patch is still absent, however.
+> 
+> Changes since 20111011:
 
-The fix for this, and the drivers/Makefile file look correct, thanks.
+eh?  I can't find it on github or kernel.org.  what gives?
 
-greg k-h
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
