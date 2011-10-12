@@ -1,75 +1,97 @@
-From: NamJae Jeon <linkinjeon@gmail.com>
-Subject: Re: mmc core broken dependency on CONFIG_BLOCK (Was: linux-next: Tree
- for Oct 11 (mmc))
-Date: Wed, 12 Oct 2011 10:55:08 +0900
-Message-ID: <CAKYAXd_HAv5+kg26tGLZcDHWmD2MoQFFTwoDtFuvsqgZTcPJwA@mail.gmail.com>
-References: <CAKYAXd_MJy_3TAoM_buCmP5g3j1e=Vh5vZPJP9O_nxDrWiHsAw@mail.gmail.com>
-	<1711499402.60485.1318380603125.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the wireless tree
+Date: Wed, 12 Oct 2011 13:36:00 +1100
+Message-ID: <20111012133600.256fea364b17e6bf96ee1081@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1711499402.60485.1318380603125.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Andrei Warkentin <awarkentin@vmware.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@xenotime.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__12_Oct_2011_13_36_00_+1100_qpLE67rUHAYjb+5o"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:45227 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751404Ab1JLCgI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Oct 2011 22:36:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jpirko@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Arend van Spriel <arend@broadcom.com>
 
-2011/10/12 Andrei Warkentin <awarkentin@vmware.com>:
-> Hi,
->
-> ----- Original Message -----
->> From: "NamJae Jeon" <linkinjeon@gmail.com>
->> To: "Andrei Warkentin" <awarkentin@vmware.com>
->> Cc: linux-next@vger.kernel.org, "LKML" <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org, "Chris Ball"
->> <cjb@laptop.org>, "Stephen Rothwell" <sfr@canb.auug.org.au>, "Randy Dunlap" <rdunlap@xenotime.net>
->> Sent: Tuesday, October 11, 2011 8:16:51 PM
->> Subject: Re: mmc core broken dependency on CONFIG_BLOCK (Was: linux-next: Tree for Oct 11 (mmc))
->>
->> 2011/10/12 Andrei Warkentin <awarkentin@vmware.com>:
->> > ----- Original Message -----
->> >> From: "NamJae Jeon" <linkinjeon@gmail.com>
->> >> To: "Randy Dunlap" <rdunlap@xenotime.net>, "Andrei Warkentin"
->> >> <awarkentin@vmware.com>
->> >> Cc: linux-next@vger.kernel.org, "LKML"
->> >> <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org, "Chris
->> >> Ball"
->> >> <cjb@laptop.org>, "Stephen Rothwell" <sfr@canb.auug.org.au>
->> >> Sent: Tuesday, October 11, 2011 7:20:48 PM
->> >> Subject: Re: mmc core broken dependency on CONFIG_BLOCK (Was:
->> >> linux-next: Tree for Oct 11 (mmc))
->> >>
->> >> Hi Randy, Andrei.
->> >>
->> >> I suggest third option for this.
->> >> As you know, MMC like ATA Driver and SCSI Driver etc.. can not
->> >> enable
->> >> without CONFIG_BLOCK
->> >> So I think that mmc should be depended from CONFIG_BLOCK like
->> >> other
->> >> block device driver.
->> >> see the their Kconfig. How do you think ?
->> >
->> > MMC core doesn't not imply MMC_BLOCK. You could well use SDIO
->> > devices via MMC without any flash storage whatsoever.
->> > What I want to say is that MMC_BLOCK already depends on BLOCK. MMC,
->> > however, has no such functional dependence, as it
->> > just (effectively) provides bus and device enumeration. So I think
->> > the better solution is wrapping all MMC partition
->> > code within mmc/core/mmc.c and card.h with CONFIG_BLOCK.
->> yes, you're right, I found it after sending mail. If so, should I
->> wrap
->> CONFIG_MMC_BLOCK instead of CONFIG_MMC ? After I add CONFIG_MMC_BLOCK
->> in core/mmc.c, card.h, I can see compile is okay.
->> Thanks.
->> >
->
-> I am not sure if it should be CONFIG_MMC_BLOCK or CONFIG_BLOCK. After all, the
-> code you're wrapping doesn't really depend on CONFIG_MMC_BLOCK, it gets consumed by it, and
-> it depends (in using that one define) only on CONFIG_BLOCK. Maybe I'm overthinking it
-> and the code should just define it's own MAX_MMC_PART_NAME to be like 10 or something.
-yes, I agree your opinion,  If we define it is easy to solve.
-I will send new patch for it today.
-Thanks.
->
-> A
->
+--Signature=_Wed__12_Oct_2011_13_36_00_+1100_qpLE67rUHAYjb+5o
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi John,
+
+After merging the wireless tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/net/wireless/brcm80211/brcmfmac/dhd_linux.c:1131:2: error: unknown =
+field 'ndo_set_multicast_list' specified in initializer
+drivers/net/wireless/brcm80211/brcmfmac/dhd_linux.c:1132:1: warning: initia=
+lization from incompatible pointer type [enabled by default]
+drivers/net/wireless/brcm80211/brcmfmac/dhd_linux.c:1132:1: warning: (near =
+initialization for 'brcmf_netdev_ops_pri.ndo_validate_addr') [enabled by de=
+fault]
+
+Caused by commit 5b435de0d786 ("net: wireless: add brcm80211 drivers")
+interacting with commit b81693d9149c ("net: remove ndo_set_multicast_list
+callback") from the net-next tree.
+
+I have applied the following merge fixup patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 12 Oct 2011 13:33:10 +1100
+Subject: [PATCH] net: wireless: brcm80211: replace ndo_set_multicast_list  =
+with ndo_set_rx_mode
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ .../net/wireless/brcm80211/brcmfmac/dhd_linux.c    |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/wireless/brcm80211/brcmfmac/dhd_linux.c b/drivers/=
+net/wireless/brcm80211/brcmfmac/dhd_linux.c
+index 99ba5e3..03607ca 100644
+--- a/drivers/net/wireless/brcm80211/brcmfmac/dhd_linux.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/dhd_linux.c
+@@ -1128,7 +1128,7 @@ static struct net_device_ops brcmf_netdev_ops_pri =3D=
+ {
+ 	.ndo_do_ioctl =3D brcmf_netdev_ioctl_entry,
+ 	.ndo_start_xmit =3D brcmf_netdev_start_xmit,
+ 	.ndo_set_mac_address =3D brcmf_netdev_set_mac_address,
+-	.ndo_set_multicast_list =3D brcmf_netdev_set_multicast_list
++	.ndo_set_rx_mode =3D brcmf_netdev_set_multicast_list
+ };
+=20
+ int brcmf_net_attach(struct brcmf_pub *drvr, int ifidx)
+--=20
+1.7.6.3
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__12_Oct_2011_13_36_00_+1100_qpLE67rUHAYjb+5o
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOlP0QAAoJEECxmPOUX5FEl2kQAJwjZtVfV425wQdg+0+R7rf0
+BdjfSf0LZnC64bPRx9Fnlh4AKjFf7T641Tr6yZrLMNbJh4pYeEojwzIg7v5jn6UO
+E/pVdZV3ra7wtvxusg0vQlOECw9/XV+XiSa2vgRIcpSKEO71ifqW5/9UJ0LhtgKN
+lc9MnkcZqPRQZwpXRvU71M2y2JvWBQnP0Aa23gBH3aaFyz//2x4bUTw+VpLlpNo9
+JX3xmYtZHhiPcrjbGRWlEJXmHfp9DVJXPSSpuu+ZIrKbBFGfNIsmmGiMgCVNGwh7
+UGKA8inAbpIzIm5vWgFJiejYUJSLm1fDB9le4rhEnNG4bQ3P7jOejK+0Af2Km6Ka
+6qht0FwBqVUx/aVbbAi81kV1kQRHe/Mm0C0u2UfIrW1BkSlTzjg2ZEerJ4h0zjj/
+5ay0/154olSQgqvdSBpvBQu7TFy6k0VpkCNSrkgl7C86sEJMSoSGZR1HChic7u74
+CV+IH4KosQcJeCoYesNzdtC+Tosw0Z2cge+WKuuQDT3fDwoYqjkNldHkjgtuIYto
+ZqRDVNH9c/G8+jnPoXlMdQG1eoVI1p7APpsjLlimWbdlBf9+m+ZXYRIe/pSyt0A1
+PXiPdoTEIDZg56GrBa3SKCuvrY3GouGol7PSFxjhl4EJleD54dq0I9N71gJf9FQc
+NaZ4wv7b9j5Wz9eXzREu
+=b85/
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Oct_2011_13_36_00_+1100_qpLE67rUHAYjb+5o--
