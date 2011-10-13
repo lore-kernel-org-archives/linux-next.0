@@ -1,55 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the net tree
-Date: Thu, 13 Oct 2011 16:43:53 +1100
-Message-ID: <20111013164353.09c495e1b63d23e380cca1f7@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the fbdev tree
+Date: Thu, 13 Oct 2011 17:02:25 +1100
+Message-ID: <20111013170225.254bc2d590deee544913ab6c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__13_Oct_2011_16_43_53_+1100__cd91dPJ13Bc48dn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Thu__13_Oct_2011_17_02_25_+1100_lXJMlOsr1lQ0zVs2"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:55841 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750960Ab1JMGCk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Oct 2011 02:02:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arend van Spriel <arend@broadcom.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Jiri Pirko <jpirko@redhat.com>, Eliad Peller <eliad@wizery.com>, "John W. Linville" <linville@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>
 
---Signature=_Thu__13_Oct_2011_16_43_53_+1100__cd91dPJ13Bc48dn
+--Signature=_Thu__13_Oct_2011_17_02_25_+1100_lXJMlOsr1lQ0zVs2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the staging tree got a conflicts in
-drivers/staging/brcm80211/brcmfmac/dhd_linux.c and
-drivers/staging/brcm80211/brcmsmac/mac80211_if.c between commits from the
-net-next tree and commit fc2d6e573be6 ("staging: brcm80211: remove
-brcm80211 driver from the staging tree") from the staging tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/xgifb/XGI_main_26.c between commit 0d5c6ca30bb0
+("staging: xgifb: use display information in info not in var for
+panning") from the fbdev tree and commit fd26d42019cb ("staging: xgifb:
+avoid direct references xgi_video_info") from the staging tree.
 
-The latter removed the files, so I did that
+I fixed it up (I think - see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__13_Oct_2011_16_43_53_+1100__cd91dPJ13Bc48dn
+diff --cc drivers/staging/xgifb/XGI_main_26.c
+index f8b88ad,36db231..0000000
+--- a/drivers/staging/xgifb/XGI_main_26.c
++++ b/drivers/staging/xgifb/XGI_main_26.c
+@@@ -1363,8 -1300,8 +1300,8 @@@ static int XGIfb_do_set_var(struct fb_v
+  	return 0;
+  }
+ =20
+- #ifdef XGIFB_PAN
+- static int XGIfb_pan_var(struct fb_var_screeninfo *var, struct fb_info *i=
+nfo)
++ static int XGIfb_pan_var(struct xgifb_video_info *xgifb_info,
+ -			 struct fb_var_screeninfo *var)
+++			 struct fb_var_screeninfo *var, struct fb_info *info)
+  {
+  	unsigned int base;
+ =20
+@@@ -1686,7 -1634,7 +1624,7 @@@ static int XGIfb_pan_display(struct fb_
+  						> info->var.yres_virtual)
+  			return -EINVAL;
+  	}
+- 	err =3D XGIfb_pan_var(var, info);
+ -	err =3D XGIfb_pan_var(xgifb_info, var);
+++	err =3D XGIfb_pan_var(xgifb_info, var, info);
+  	if (err < 0)
+  		return err;
+ =20
+
+--Signature=_Thu__13_Oct_2011_17_02_25_+1100_lXJMlOsr1lQ0zVs2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOlnqZAAoJEECxmPOUX5FEVvMP/1GUqQdKC7EsKL/ldG9jNtsj
-GsESUdKVgCJgE6Ab9MEXfsSf+K/mZvwMh+tZb6DUxcFpDFypULzPwwZ7qRRH5jCb
-G0sNCGBJe3GN0WZTui3KIUurljkfIPmcBx9reYuZRv9QFta/vHQAh1f+QMKeI4Ye
-u0MqdlWAsw3k1II8pBhil2FH0lIOUeAKCQt5b7kJFXMr/+r7Horoea+O0couyefc
-svnaxIaNhBZTImXNqyFuxOP8qdQD6vV+hq3TT686U0t98g06ly7vbFx4QbSxzZex
-5tjwBL+npzdnoVyJIp4zIyUwbbWlfItyGYEGXVlLGp6fmg8fmp5qQ6LHN00GpM7k
-2eSy+DYtmXcJAdxH7YyLtlFCMFrfA9GaByI9An2dmC0/dRX+REhBHoQslIOoiu4u
-C6X/JCw5k1FeO/Pe2SD91k5vjfa+bMbK/M3G3VFYfcgIuYZYxXVi2Ol3MkEMpO+j
-pZHaO3PUQVn6roSwi2p9zxMmrDmkVLfIKO7W3Z3SiuijRsSOfalOL7zZ/+3yP8sz
-r50kS2h27fviUWN0RDSaAHh/SPNDJhATKOLzVWvfvQU+GFnQ03zNtG6BSJXm4hIs
-d/wBq6Ogq4nCRSnVIDoAw8Rhjv4xYqBD9TQtywknDYP6qeCZ/15fp3xvA8dUejMi
-d8fi6mEf5E1iozX+epgf
-=PZPQ
+iQIcBAEBCAAGBQJOln7xAAoJEECxmPOUX5FEv88QAKUXFiGRtIxlu3mupisjhJT5
+ySSbr+C3Ba2IZsE70TEx0XIe+/4Wh61pNUWrCV8wKStJZsKmn8UaRrZIyKnV8H1z
+rYtLTZvNwdzmzYmreHEM98Wn5VO/0xDUtEsCTcTNcK2ApGow/csc3GbZv9dlPRC8
+iduN/QO2RLsk13VmbiUBF7CakAygLg8AtctwvJERVab2vGs7wzdqMUscaeW2uRA2
+TgMBdfiqXgkkTTSjdwptplSZc8vTb2TXDG4m93pEb5V7XZRnM5owp0iMbs6iuGUJ
+tf1IAQAIqfVbhIjblcHsDB9T4E3y6lKdnXJ29YiZzJgiLXADMo/pXDFUeAyjZ8M0
+uhPOL/S6X8VHFiTWAVLhMJVIvXTsqrNDPtRyBb+f8os0Wph22vTPdDAbEobDtpRL
+pTmfExJ8/2OB75ptyEtUieVsmCAVJ/iedz2CQaMCMw0GOow2R3zEu7JskAI+x9YY
+6Ewdzk/xId9eRuw41WndERudlSh9nrSkZxcVU8nnIt6IrJCjag3gv7EHBBhKCLOy
+9nwENs+j3u0CYJQgv6XfrV2LsJNt0hTohxyYS/oWfaHtoR1AgzVdPM3SQE7yu98S
+TPYhYYgmEYqEFahpZyJ/oH9BRvLspyo/Gk8RryORKjn3Eg0gg+KWa9SMaiqFSSTW
+WEIFYMfhM4FkWNvAsKqk
+=bzqx
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__13_Oct_2011_16_43_53_+1100__cd91dPJ13Bc48dn--
+--Signature=_Thu__13_Oct_2011_17_02_25_+1100_lXJMlOsr1lQ0zVs2--
