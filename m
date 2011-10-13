@@ -1,55 +1,32 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: linux-m68k.git is back
-Date: Thu, 13 Oct 2011 09:22:13 +0200
-Message-ID: <CAMuHMdV4BEVPKBG7=-vvZ9fjEsaFjq+8Aw11XstqxpSfR8_1NA@mail.gmail.com>
+From: Tomoya MORINAGA <tomoya-linux@dsn.lapis-semi.com>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Thu, 13 Oct 2011 17:22:06 +0900
+Message-ID: <4E969FAE.5000909@dsn.lapis-semi.com>
+References: <20111006144826.a69a5ea59d4ca94f8f7414cf@canb.auug.org.au> <20111011173714.d54bbcee6c0676ddcc37a1f3@canb.auug.org.au> <4E93EA10.4030405@dsn.lapis-semi.com> <20111012152451.66ce5ddffb4c5b3a4f6a31cf@canb.auug.org.au> <4E9525AC.9080909@dsn.lapis-semi.com> <CABMQnV+S2WbW0YZBiMXfs81b2dyLzj9wBxPmNuFrYErKfXsWtg@mail.gmail.com> <4E9551B8.4060601@dsn.lapis-semi.com> <20111013035714.GD15829@ponder.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:54778 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753290Ab1JMHWO convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Oct 2011 03:22:14 -0400
+Received: from sm-d311v.smileserver.ne.jp ([203.211.202.206]:26022 "EHLO
+	sm-d311v.smileserver.ne.jp" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752227Ab1JMIWL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Oct 2011 04:22:11 -0400
+In-Reply-To: <20111013035714.GD15829@ponder.secretlab.ca>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linux/m68k <linux-m68k@vger.kernel.org>, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next <linux-next@vger.kernel.org>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+(2011/10/13 12:57), Grant Likely wrote:
+> I've temporarily pushed out a commit that makes the pch and ml_ioh
+> bool instead of tristate.  If that other patch gets acked by Thomas,
+> then I should probably take it through the gpio tree.
+Let me clarify your intention.
+Does previous patch for generic-chip posted by Nobuhiro enable 
+pch/ml_ioh gpio driver works on both module and built-in ?
+If yes, why do you need to change tristate to bool ?
 
-linux-m68k.git is back, in the usual place:
-
-http://git.kernel.org/?p=3Dlinux/kernel/git/geert/linux-m68k.git
-
-Interesting branches:
-  - master: main development, containing accepted changesets,
-  - m68k-queue: (almost) identical to master, but nice changesets
-rebased on top of
-    the latest v* tag (incl. release candidates) from Linus (I don't
-follow stable),
-  - for-linus: What I will ask Linus to pull in this merge window,
-  - for-next: What's destined for the next merge window,
-  - for-*: What's destined for a specific merge window. The latest over=
-lap with
-    for-linus/for-next,
-  - m68k-v*: State of m68k-queue when v* was current.
-
-master and m68k-v* are never rebased. m68k-queue and for-* are rebased =
-when a
-new v* comes out.
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+-- 
+tomoya
+ROHM Co., Ltd.
