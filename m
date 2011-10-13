@@ -1,41 +1,53 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] infiniband: fix printk format in hw/nes_cm.c
-Date: Thu, 13 Oct 2011 15:08:07 -0700
-Message-ID: <4E976147.9030000@xenotime.net>
-References: <20111013181606.a204565fad9caaa0fe680b75@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: problem fetching the moduleh tree
+Date: Fri, 14 Oct 2011 09:58:26 +1100
+Message-ID: <20111014095826.cf6c8f622e411dff5d04d187@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:47863 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755010Ab1JMWIJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Oct 2011 18:08:09 -0400
-In-Reply-To: <20111013181606.a204565fad9caaa0fe680b75@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Faisal Latif <faisal.latif@intel.com>, Linux RDMA <linux-rdma@vger.kernel.org>, Roland Dreier <roland@kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__14_Oct_2011_09_58_26_+1100_7S4FdBj9xxbhaETE"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Fri__14_Oct_2011_09_58_26_+1100_7S4FdBj9xxbhaETE
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix printk format warning seen on x86_64:
-drivers/infiniband/hw/nes/nes_cm.c:3190:2: warning: format '%zu' expects type 'size_t', but argument 11 has type 'int'
+Hi Paul,
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Faisal Latif <faisal.latif@intel.com>
----
- drivers/infiniband/hw/nes/nes_cm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+when trying to fetch the moduleh tree
+(git://openlinux.windriver.com/people/paulg/linux-next#for-sfr) today, I
+get a connection to the server, but it just hangs after that.  I will use
+what I have from yesterday.
 
---- next-2011-1013.orig/drivers/infiniband/hw/nes/nes_cm.c
-+++ next-2011-1013/drivers/infiniband/hw/nes/nes_cm.c
-@@ -3189,7 +3189,7 @@ int nes_accept(struct iw_cm_id *cm_id, s
- 
- 	nes_debug(NES_DBG_CM, "QP%u, Destination IP = 0x%08X:0x%04X, local = "
- 		  "0x%08X:0x%04X, rcv_nxt=0x%08X, snd_nxt=0x%08X, mpa + "
--		  "private data length=%zu.\n", nesqp->hwqp.qp_id,
-+		  "private data length=%u.\n", nesqp->hwqp.qp_id,
- 		  ntohl(cm_id->remote_addr.sin_addr.s_addr),
- 		  ntohs(cm_id->remote_addr.sin_port),
- 		  ntohl(cm_id->local_addr.sin_addr.s_addr),
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__14_Oct_2011_09_58_26_+1100_7S4FdBj9xxbhaETE
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOl20SAAoJEECxmPOUX5FEwwkP/ixmM/KjgFdxw8mYbHpW4Ov/
+d40Bqx6TSwkJTecllkVCvyWTQnVRJ666GxWCptO4n6WIFbiFnQ644O0huEai4imv
+vKVMGAnVyYIIuM+foBaoXf1dnvzIDk5zrRf8uILNqxjiaH5i7jijp10RHWoqUFqj
+C6Eigyge60lN6VINdsJLcdpdkI8m9KQtw0MmB6IEkUyTCxD5K8xokKDnJOZCiH3Z
+jiKBkEgJ77a0sL+4X3UQ5lIQQ/12E8U3EzStB0juZWK9iEcjOSJkKhLt2jOBVzfs
+APOyHfnGIh1UxVLWJMFlXKJ5DGW/wz0GtNkk23Z/hHET6DMl4NGZIq/cgaJZxUHy
+INftco3Cq8boj9s7BzOkk3TBFzvOQOXOo5uw57oC1YUjqlYEgN/y+H6oU5LH/3T1
+HkgZZ0lN40SMIsSfpnp9HLgnYkoqe2q1Y1x8SAp/NanTobZcsX8k+ZAz4SoiTR52
+o/x4OhfLEUqJOpKdZr8RmGlGj602xjo4Mg79h2PDQyU8I3HwyPEtdr+y1H1opNPf
+wZVDLUr9qxDC9FjqLX266lyWQ1SaShTRDrw8H+q/+YqVK1jEvYh7i4pZHTbVslQX
+2rthY6L57yCavH6mV8EuO8qTIPBt3Ts80VTW9xF7OyV7IPg1Nw0OBvitgo2IQgTd
+mZvgN3+IWUVXRIZPmBHe
+=7+NC
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__14_Oct_2011_09_58_26_+1100_7S4FdBj9xxbhaETE--
