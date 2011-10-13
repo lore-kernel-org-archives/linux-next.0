@@ -1,58 +1,126 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with the  tree
-Date: Thu, 13 Oct 2011 17:31:17 +1100
-Message-ID: <20111013173117.77aea58ac2a9b5a2ffc4fa48@canb.auug.org.au>
+Subject: currently missing kernel devel trees
+Date: Thu, 13 Oct 2011 17:43:58 +1100
+Message-ID: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__13_Oct_2011_17_31_17_+1100_eb8UblO6TwPkEN+D"
+ boundary="Signature=_Thu__13_Oct_2011_17_43_58_+1100_QgoXl.BhHOLcJ4Ow"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:36657 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:41686 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750918Ab1JMGbY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Oct 2011 02:31:24 -0400
+	with ESMTP id S1751734Ab1JMGoG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Oct 2011 02:44:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Thu__13_Oct_2011_17_31_17_+1100_eb8UblO6TwPkEN+D
+--Signature=_Thu__13_Oct_2011_17_43_58_+1100_QgoXl.BhHOLcJ4Ow
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi all,
 
-Today's linux-next merge of the moduleh tree got a conflict in
-arch/arm/plat-s5p/dev-tv.c between commits from the s5p tree and fixup
-patch "arm-Add-export.h-to-recently-added-files-for-EXPORT_.patch" from
-the moduleh tree.
+With the mrege window approaching (sometime) I thought I would see how
+many of the 200 odd trees that are included in linux-next are actually
+currently inaccessible.  The list below (of 63 trees) is a couple of days
+out of date.  These are the trees that were hosted on git.kernel.org that
+have not popped up anywhere else (or, at least I have not been informed
+is they have) nor been resurrected on kernel.org.
 
-The file above has been removed, so I dropped that hunk from the patch.
+Some of these may be no longer useful (please tell me).  Some may have no
+commits for v3.2.  But I bet that at leaset some do.
+
+linux-spec
+omap
+pxa
+blackfin
+m68k
+4xx
+galak
+sh
+rmobile
+tile
+unicore32
+xtensa
+configfs
+ecryptfs
+ext3
+fatfs
+fuse
+gfs2
+hfsplus
+jfs
+logfs
+nilfs2
+omfs
+squashfs
+udf
+vfs
+vfs-scale
+pci
+i2c
+jdelvare-hwmon
+docs
+kconfig
+idle-test
+powertools
+cpupowerutils
+dlm
+swiotlb
+ibft
+iscsi-target
+async_tx
+bluetooth
+cpufreq
+input-mt
+lsm
+pcmcia
+kgdb
+uclinux
+hdlc
+drm
+agp
+watchdog
+bdev
+nommu
+audit
+irda
+ptrace
+sfi
+asm-generic
+drivers-x86
+hwpoison
+sysctl
+namespace
+bkl-config
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__13_Oct_2011_17_31_17_+1100_eb8UblO6TwPkEN+D
+--Signature=_Thu__13_Oct_2011_17_43_58_+1100_QgoXl.BhHOLcJ4Ow
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOloW1AAoJEECxmPOUX5FEhtsQAIHiz8wCcYkClpP+Vj6cCg1w
-rsmJNKIqci7zDs7EUNr+c0YhqKcDhYlWZ2k6MfEcjN7ILx5blQcMpLHkUPj3rJQ5
-Jd5AP9Qnsf234/30GTRotc5cnIcBQ0Dk4jpSpXwl31PAG2StneHnOYhz5HICC0zk
-zH/H61nZhbA4u0aQjnAFhu7Wrv8/Hnz32TRPupMS+CqX3gAckFin/uK0LKM9disc
-feAzotliJfY6wlN1K3xo7+0xhqoZJM0gNN6bBy1hQB9BuHzyIxrw7aaojugePG0S
-GqOdWz8UlAvkVnt7lCItugcQgMWtYQUsNZBHsUb3OHbQTKgKmTeNyUZTCwS+RKqj
-H0YpyGMWpKGGgvICrDoJpzh3AOiBdaMVHFWvDN9l1zQr+mQ7AIH6brVdit/9ktgx
-ZGTnU6CzGCc19h7kR30wwRe2z0QekYXdNuITLhQbB458uenIBtYI7SImOIcR6xvj
-Py5P33/mD8Z+ps1aYb7TbUhpQqgk7+pSMN06mrepCktPNA7KzfIN8p8BBVIsNE9+
-UdGJsGrK+KIdjaGsMxNyZta2MqlqDJXs1hqZR8o3nvs0CAqOOpa9o3GR6ly0/fgP
-QA83HySBitrINf9GAFOiSwf8HG6npINB30nCRe0RFVR1N/pMMvRQESMVJRbYwXOv
-KJubG5z0zI5wAvdrZUfh
-=NAq2
+iQIcBAEBCAAGBQJOloiuAAoJEECxmPOUX5FEsF4P/1IMluJ9rHPjBob/7j2egJOx
+PYQr9OoyPT6C3Xyjzb0l6z79jC1ThC7GTuP0GQGmHdeNZNHbUM/I6HfTTNkWxKay
+4hgD2rtOw1OqlkF4RutcXFQ7EPmS15jidafLieS9Sej18WezJP91Wz9Jes/G4/Og
+kAGY2U1TBJkizA3fdIRUoc9zAO1UQNMglz1ywp8vjjnKolBWYpkkLN0TcwulTz8d
+7Q+Zri7JZWbVh5XwYmRegglIRmK+xg9GUdiLP/K22nNBufsGqUSoFu7HnYM4lblb
+5dcsOv7Fwdh9xoRXMNJpdlsCiXpZPfD4868JbCjTbgG9NQ8bJNfWRVPBLVckOruG
+xXQ+UYTRjAHyZ60ttRtad9Agtwn94skK1hzphKcA29/1Xgvp+Aqsfd5lsEknnouo
+RX9DRvEIv5V+MmaTgnUKuGOrS2weeeDSYUytCLlgoWEJ+VFsusn6JPFkRtDGxup5
+7E4KNVQRXADAs7Sy+uAMrvDI88q+HkjwVNrMLUS/zm1M9o3nrtHGTe/1I67VZErI
+kQfpU9sfbFAWQSK4wpgbsE0p7ZNDwtckIEsXGmIkjoCYMZEn/UBeXji6MxewXuhJ
+z6cIuH0M+wWZPg0lMEBpbglDU2bautj/QidkH0mWDWPj40r3T4F8rTT2GE4Nokq2
+NcryfWi6pyq1VcJVTnbs
+=MoCo
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__13_Oct_2011_17_31_17_+1100_eb8UblO6TwPkEN+D--
+--Signature=_Thu__13_Oct_2011_17_43_58_+1100_QgoXl.BhHOLcJ4Ow--
