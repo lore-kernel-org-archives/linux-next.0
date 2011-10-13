@@ -1,53 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: problem fetching the moduleh tree
-Date: Fri, 14 Oct 2011 09:58:26 +1100
-Message-ID: <20111014095826.cf6c8f622e411dff5d04d187@canb.auug.org.au>
+Subject: Re: currently missing kernel devel trees
+Date: Fri, 14 Oct 2011 10:00:47 +1100
+Message-ID: <20111014100047.132544054e0421324908ee9c@canb.auug.org.au>
+References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
+	<CAEKwDSDdLvNHYugPLGTj49kWPN0JnxECkjDFaam6ZA8agExCiQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__14_Oct_2011_09_58_26_+1100_7S4FdBj9xxbhaETE"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__14_Oct_2011_10_00_47_+1100_aiYOv+kniPgwXR_D"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:43631 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751883Ab1JMXAx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Oct 2011 19:00:53 -0400
+In-Reply-To: <CAEKwDSDdLvNHYugPLGTj49kWPN0JnxECkjDFaam6ZA8agExCiQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bob Copeland <me@bobcopeland.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Fri__14_Oct_2011_09_58_26_+1100_7S4FdBj9xxbhaETE
+--Signature=_Fri__14_Oct_2011_10_00_47_+1100_aiYOv+kniPgwXR_D
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Bob,
 
-when trying to fetch the moduleh tree
-(git://openlinux.windriver.com/people/paulg/linux-next#for-sfr) today, I
-get a connection to the server, but it just hangs after that.  I will use
-what I have from yesterday.
+On Thu, 13 Oct 2011 11:15:38 -0400 Bob Copeland <me@bobcopeland.com> wrote:
+>
+> > omfs
+>=20
+> git://github.com/bcopeland/omfs.git for-next
+>=20
+> Though I don't have anything queued for 3.2 (should have some updates
+> for 3.3 though).
 
+OK, I have switched to that.  Let me know if I need to switch back to
+kernel.org some time.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__14_Oct_2011_09_58_26_+1100_7S4FdBj9xxbhaETE
+--Signature=_Fri__14_Oct_2011_10_00_47_+1100_aiYOv+kniPgwXR_D
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOl20SAAoJEECxmPOUX5FEwwkP/ixmM/KjgFdxw8mYbHpW4Ov/
-d40Bqx6TSwkJTecllkVCvyWTQnVRJ666GxWCptO4n6WIFbiFnQ644O0huEai4imv
-vKVMGAnVyYIIuM+foBaoXf1dnvzIDk5zrRf8uILNqxjiaH5i7jijp10RHWoqUFqj
-C6Eigyge60lN6VINdsJLcdpdkI8m9KQtw0MmB6IEkUyTCxD5K8xokKDnJOZCiH3Z
-jiKBkEgJ77a0sL+4X3UQ5lIQQ/12E8U3EzStB0juZWK9iEcjOSJkKhLt2jOBVzfs
-APOyHfnGIh1UxVLWJMFlXKJ5DGW/wz0GtNkk23Z/hHET6DMl4NGZIq/cgaJZxUHy
-INftco3Cq8boj9s7BzOkk3TBFzvOQOXOo5uw57oC1YUjqlYEgN/y+H6oU5LH/3T1
-HkgZZ0lN40SMIsSfpnp9HLgnYkoqe2q1Y1x8SAp/NanTobZcsX8k+ZAz4SoiTR52
-o/x4OhfLEUqJOpKdZr8RmGlGj602xjo4Mg79h2PDQyU8I3HwyPEtdr+y1H1opNPf
-wZVDLUr9qxDC9FjqLX266lyWQ1SaShTRDrw8H+q/+YqVK1jEvYh7i4pZHTbVslQX
-2rthY6L57yCavH6mV8EuO8qTIPBt3Ts80VTW9xF7OyV7IPg1Nw0OBvitgo2IQgTd
-mZvgN3+IWUVXRIZPmBHe
-=7+NC
+iQIcBAEBCAAGBQJOl22fAAoJEECxmPOUX5FE4G0P/RBlBUBIWUTPNLllKYZDq23+
+e8zDP/EYOCwrPJ7zvWiJs3X1Zh/czSONxB90BYEb9VJevWbWY3Loq6YLKV8CAT2n
+y4ht2BXPgw9qjLhkFo7pkv+n6MUZEzvfc2PJWJSLdt6+T9p2z9YZkZ7AGaO2y4+F
+SW/QNnyXdkIqWpVeclPsvdMhhhdwIDVsYuWagIanta7B3GKU5a1VH6eUkh8Wq841
+z2cGXOcVfCg7mMwX4mU+wDpLTdvaFwAuy3ddvJkpzuCbz51kFCM/K4OPBSMklYgR
+JLrz9n4rywPhMQ4Au6hOF1BCLhS4PkIgl1oMYktj2AGbaS3KJZwI2bnmuTgem/od
+AlZbYKp3Kk0dHAn46+IdU3ixk67T7xNO3x35pkA0q1I+xdXl0eTO+gvFD+jBCG0M
+W0MFewrB77UPU5Q9uHqc5BpXJaApjtJiRaHVBCrQq90cp5wIC+DZ4MTo+0RqTLAG
+ye2PvtcvBZRVwKSHBRMWYtj77BV2O63lzX6yaNPpuJUxbbTu9BzCvhTQH3JmReYf
+2KiB/4aENG867r7gKLFfUk+tee8chCgwOOB3cJVpbXesTt7YHxFH1bCWO6SjKrc+
+d7ZZn8nRPVofXTBPGD44mUzfUD7cId2XSDp6IlK4N3Yj6oR4T9iMH2WoYJomPF2J
+sg37ekSnuJv68BSrl3ph
+=Fk6z
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__14_Oct_2011_09_58_26_+1100_7S4FdBj9xxbhaETE--
+--Signature=_Fri__14_Oct_2011_10_00_47_+1100_aiYOv+kniPgwXR_D--
