@@ -1,30 +1,29 @@
-From: Bob Copeland <me@bobcopeland.com>
-Subject: Re: currently missing kernel devel trees
-Date: Thu, 13 Oct 2011 11:15:38 -0400
-Message-ID: <CAEKwDSDdLvNHYugPLGTj49kWPN0JnxECkjDFaam6ZA8agExCiQ@mail.gmail.com>
-References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the fbdev tree
+Date: Thu, 13 Oct 2011 09:10:14 -0600
+Message-ID: <20111013151014.GA28061@kroah.com>
+References: <20111013170225.254bc2d590deee544913ab6c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20111013170225.254bc2d590deee544913ab6c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Oct 13, 2011 at 2:43 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> With the mrege window approaching (sometime) I thought I would see how
-> many of the 200 odd trees that are included in linux-next are actually
-> currently inaccessible.
+On Thu, Oct 13, 2011 at 05:02:25PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/xgifb/XGI_main_26.c between commit 0d5c6ca30bb0
+> ("staging: xgifb: use display information in info not in var for
+> panning") from the fbdev tree and commit fd26d42019cb ("staging: xgifb:
+> avoid direct references xgi_video_info") from the staging tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary.
 
-> omfs
+The fix looks correct to me, thanks.
 
-git://github.com/bcopeland/omfs.git for-next
-
-Though I don't have anything queued for 3.2 (should have some updates
-for 3.3 though).
-
--- 
-Bob Copeland %% www.bobcopeland.com
+greg k-h
