@@ -1,42 +1,36 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Oct 11 (ata/pata_of_platform.c)
-Date: Fri, 14 Oct 2011 10:58:01 -0700
-Message-ID: <4E987829.3080104@xenotime.net>
-References: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au> <4E94A920.40503@xenotime.net>
+From: Oleg Nesterov <oleg@redhat.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+	(sparc, ptrace trees related)
+Date: Fri, 14 Oct 2011 21:09:50 +0200
+Message-ID: <20111014190950.GA10791@redhat.com>
+References: <20111014180714.e11e15fd35dfaca839c6421e@canb.auug.org.au> <20111014.035459.2238341687770152474.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4E94A920.40503@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Anton Vorontsov <avorontsov@ru.mvista.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:4872 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755361Ab1JNTNx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 14 Oct 2011 15:13:53 -0400
+Content-Disposition: inline
+In-Reply-To: <20111014.035459.2238341687770152474.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt.fleming@intel.com, tj@kernel.org
 
-On 10/11/2011 01:37 PM, Randy Dunlap wrote:
-> On 10/11/11 02:11, Stephen Rothwell wrote:
->> Hi all,
->>
->> The linux-next tree is now available from
->> git://github.com/sfrothwell/linux-next.git as a temporary measure while
->> the kernel.org servers are unavailable.
->>
->> It may also turn up on git.kernel.org (depending on the mirroring).  The
->> patch set is still absent, however.
->>
->> Changes since 20111007:
->>
->> Removed tree: ide (at the maintainer's request)
-> 
-> 
-> drivers/ata/pata_of_platform.c:55:13: error: 'NO_IRQ' undeclared (first use in this function)
+On 10/14, David Miller wrote:
+>
+> Now you guys are creating conflicts against those fixed up patches in
+> another non-sparc tree, and adding new kinds of build failures as
+> well.
+>
+> This doesn't work.
 
+Sorry David and Stephen.
 
-[adding Author: Anton]
+Stephen, could you please temporary remove ptrace from linux-next?
 
-Build error still present in linux-next of 20111014.
+I'll send you another email once I fix the conflicts, can't do this
+right now.
 
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Oleg.
