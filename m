@@ -1,71 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the mips tree
-Date: Fri, 14 Oct 2011 14:31:42 +1100
-Message-ID: <20111014143142.392df4f9634efc30febfcfaa@canb.auug.org.au>
+Subject: linux-next: manual merge of the ptrace tree with the sparc tree
+Date: Fri, 14 Oct 2011 15:47:38 +1100
+Message-ID: <20111014154738.5aee83104a71266012e46a9d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__14_Oct_2011_14_31_42_+1100_H_SLRCv4x_ElQCeB"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Manuel Lauss <manuel.lauss@googlemail.com>, Ralf Baechle <ralf@linux-mips.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__14_Oct_2011_15_47_38_+1100_h2vmu3x.TuRv49mR"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:60537 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932094Ab1JNErw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Oct 2011 00:47:52 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>, David Miller <davem@davemloft.net>
 
---Signature=_Fri__14_Oct_2011_14_31_42_+1100_H_SLRCv4x_ElQCeB
+--Signature=_Fri__14_Oct_2011_15_47_38_+1100_h2vmu3x.TuRv49mR
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi all,
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/ide/Kconfig between commit a60891de4357 ("MIPS: Alchemy: remove
-all CONFIG_SOC_AU1??? defines") from the mips tree and commit
-6af677ea59fb ("Kconfig: remove redundant CONFIG_ prefix on two symbols")
-from the trivial tree.
+Today's linux-next merge of the ptrace tree got conflicts in
+arch/sparc/kernel/signal32.c, arch/sparc/kernel/signal_32.c and
+arch/sparc/kernel/signal_64.c between commit faddf598f0ba ("sparc: Use
+set_current_blocked()") from the sparc tree and commit 383fe35697e4
+("sparc: Use set_current_blocked() and block_sigmask()") from the ptrace
+tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I used ther version from the ptrace tree as these seem to go further (and
+have a later Auther Date).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/ide/Kconfig
-index ff7c6bb,76b6d98..0000000
---- a/drivers/ide/Kconfig
-+++ b/drivers/ide/Kconfig
-@@@ -681,8 -681,8 +681,8 @@@ config BLK_DEV_IDE_AU1XX
-         select IDE_XFER_MODE
-  choice
-         prompt "IDE Mode for AMD Alchemy Au1200"
--        default CONFIG_BLK_DEV_IDE_AU1XXX_PIO_DBDMA
-+        default BLK_DEV_IDE_AU1XXX_PIO_DBDMA
- -       depends on SOC_AU1200 && BLK_DEV_IDE_AU1XXX
- +       depends on BLK_DEV_IDE_AU1XXX
- =20
-  config BLK_DEV_IDE_AU1XXX_PIO_DBDMA
-         bool "PIO+DbDMA IDE for AMD Alchemy Au1200"
-
---Signature=_Fri__14_Oct_2011_14_31_42_+1100_H_SLRCv4x_ElQCeB
+--Signature=_Fri__14_Oct_2011_15_47_38_+1100_h2vmu3x.TuRv49mR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOl60eAAoJEECxmPOUX5FE/cwP/j9lrLMz24+5Ag+xtogEfmaf
-+yR9eklmlzinbJ1Ss8+ns9XjzLpSt55kmHcxKlvPL7w96j2fPV8dyRS74XEUTUjS
-PUemtOl3fA07c4TGQyB8kJL1rzwy/CMXI5HqlefqolUy24LPb9siqtN8pcR1bQoM
-k7nq9m0ukbjApjOALGX3VhE0kbOA70FwoZnTyXY52gl/kRLLlvvVBsFc0rLTL7ar
-gg/rZdOD5q4BBd8qLUieGcYMO7htaZtgEanTOymjqT5gE6TdIwwolwKarI9xbCYa
-awfg8K6+3JY1+5A08L7+LxiSzVViWrn1EqTkjmShgIzTocxqsB0kP+kbfZqdoEbM
-aDtkgc5/2+e8k0qMICJgLjOzQ+1IHRDqfE+QbzgdICaEIejaWRtN/gp5WRSU9zPp
-jtAoqMoMvIIhZYAlF+6miNH0Usok03No/dCEVsdvhbiVVdltX/x0M5eRd5rB5QmN
-SagaEVfDX+TJsTVbdfRh5pM+Fj8U8kgv1Onwxh59Jm7kUmBtUgnbLXLEFa98kOQR
-ga+FJYzUH1ju8Lq/9/GHM1lG6zpOSm0Mv3VrQ3Q4Fz8rov/loQ6GyzArlAwHmjhg
-vOwpbceSOlT3LA5/KrebAuw6NOWhX8INRHaJeVZgHySGBNi666vxvQJ48tiLiHfd
-3eLVPg7wNZ3IfoecWO1A
-=OVCB
+iQIcBAEBCAAGBQJOl77qAAoJEECxmPOUX5FEeiYP/3UqsSkh+YhlbH/QAJYZZZwq
+idouWmxie4nKF+5Y4ir/6UFTTiL6+TzGPtZKAAQxJ09B6A8qggsFzEWidRTK7ky1
+pxmXkqDQwk7yaUBzDGKO2BI1DFMvpChglWha90U4mhgncqQdPdtxY4NnFhoQYKat
+XIUGmq5yRn3ltHQYjTO09U/Bt3eQIyOxqIOgQkTByDTxIRF2XkW1qsalNES5BXmA
+cu99CnXUIUmfWklcQk71zHdVjcXUPtfR4vL+WAOzl0XoTCQumG4PnB3LvVAxyhN2
+JZosZ/wI0rSsFCF9uEkw4AGkIVFFCAbq9Epfan8nX8jsFrGJgck4o8RGkLxBRamf
+k8jXqYmkb2orfcEm0n4S2kRmRuSM9BeHJ5IkZV6cl1JBDUQNWhu6/9zgnhetAn1T
+LuxUPjUav0H5cLgxfaZDAPket4tcmxH8yMMaAxnNtAskZ3+ssRHoY8WTsu06ZcaE
+zMD7HZ9pl1EHclh6fznOohfyRY8bEk7h+VOAw+501kweGs2cUszHc6tTPmYFllHJ
+amKA9a3830Zh6J+WkYyR5KN5uz8umkBxJy/KUhz3UxDHVUYdnoIohrNtPjjz4gVQ
+maOW5wrWxt5eEHk+A7uDDPaBT5emNKwaHBckGy4Oapb23Yx2uXEKwmiLNkPez8YW
+l0VGewbrxRGen/wrnhQh
+=h6AK
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__14_Oct_2011_14_31_42_+1100_H_SLRCv4x_ElQCeB--
+--Signature=_Fri__14_Oct_2011_15_47_38_+1100_h2vmu3x.TuRv49mR--
