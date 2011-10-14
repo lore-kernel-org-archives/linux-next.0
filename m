@@ -1,85 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (sparc,
- ptrace trees related)
-Date: Fri, 14 Oct 2011 22:38:04 +1100
-Message-ID: <20111014223804.c955c49972b7b19b5d3b352f@canb.auug.org.au>
-References: <20111014180714.e11e15fd35dfaca839c6421e@canb.auug.org.au>
-	<20111014.035459.2238341687770152474.davem@davemloft.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Oct 11 (ata/pata_of_platform.c)
+Date: Fri, 14 Oct 2011 10:58:01 -0700
+Message-ID: <4E987829.3080104@xenotime.net>
+References: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au> <4E94A920.40503@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__14_Oct_2011_22_38_04_+1100_n1MQAlrRdJl82V0V"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:57854 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752431Ab1JNLiP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Oct 2011 07:38:15 -0400
-In-Reply-To: <20111014.035459.2238341687770152474.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt.fleming@intel.com, tj@kernel.org, oleg@redhat.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4E94A920.40503@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Anton Vorontsov <avorontsov@ru.mvista.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__14_Oct_2011_22_38_04_+1100_n1MQAlrRdJl82V0V
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/11/2011 01:37 PM, Randy Dunlap wrote:
+> On 10/11/11 02:11, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> The linux-next tree is now available from
+>> git://github.com/sfrothwell/linux-next.git as a temporary measure while
+>> the kernel.org servers are unavailable.
+>>
+>> It may also turn up on git.kernel.org (depending on the mirroring).  The
+>> patch set is still absent, however.
+>>
+>> Changes since 20111007:
+>>
+>> Removed tree: ide (at the maintainer's request)
+> 
+> 
+> drivers/ata/pata_of_platform.c:55:13: error: 'NO_IRQ' undeclared (first use in this function)
 
-Hi Dave,
 
-On Fri, 14 Oct 2011 03:54:59 -0400 (EDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 14 Oct 2011 18:07:14 +1100
->=20
-> > After merging the final tree, today's linux-next build (sparc64 defconf=
-ig)
-> > failed like this:
-> >=20
-> > arch/sparc/kernel/signal_64.c: In function 'handle_signal':
-> > arch/sparc/kernel/signal_64.c:482:11: error: unused variable 'blocked' =
-[-Werror=3Dunused-variable]
-> >=20
-> > Caused by my merge of commits faddf598f0ba ("sparc: Use
-> > set_current_blocked()") form the sparc tree and 383fe35697e4 ("sparc: U=
-se
-> > set_current_blocked() and block_sigmask()") from the ptrace tree.
-> >=20
-> > I have added the following merge fix patch for today.
->=20
-> Now you guys are creating conflicts against those fixed up patches in
-> another non-sparc tree, and adding new kinds of build failures as
-> well.
+[adding Author: Anton]
 
-To be a little fair, this particular build failure was caused because
-when I did the merge, I didn't notice that the "blocked" variables needed
-to be removed.  But otherwise, I defer to your knowledge.
+Build error still present in linux-next of 20111014.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__14_Oct_2011_22_38_04_+1100_n1MQAlrRdJl82V0V
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOmB8cAAoJEECxmPOUX5FECsIQAI+EmfQyM8kGOLzpoWT1fMBX
-q/zJM0trell8SRxuSz30icb+8IIJPGLu3Vs5I9nfgrGaLOLcN4OsmXO4ITxx+l0e
-SAkx8SIU26vAQPyvkYSn2AmKXUDFTyc8cdW8rMhV9AhQnixo28K9swW+yoS+GdfQ
-ak7DZjuma5TLP/mkH2FfHmnPF8UeWjobnpURqg+uPktp7eTYngVzBm3oP1D3I84z
-viEyhL/1hBt9fYZZe2MiQ5NpiK452fQ5szdaIKWX83g2G98GjbXnoemN97uPbXhq
-dF2Wt8DPY3CuyQgKpAVUQAaO4D3PKJ5dvWa/fDLr7zQI9Y0CCBaebe7PQ/PIw05H
-dyrSIEZk9BuPbUmjfAXEOJN44/HOQ5WRRjwJWy7t+CknIIxEjEaKgXxGKoKdphpZ
-/8FbXLx4waoHscsq4sHAIJuvAsgH8AYej8gkKxCDtkTEUOIWh3/S15tEEXXxp/6v
-5GELnH5SiyaAdBNJMvWTXDh5Z8+vBV9XycaDJZqBbYrn6fg68pZ754m+jcLLJPv1
-plrqxz63be9x1Eqo7Ri+IZPrNuT+7QmiOgTFwOSIk16Wx++7AeCkpAJiK++1dBqR
-JIBGLUYYLmAV60aKrLWCoNXKK6tF/lBkQAHwwX/7YXHMLGCM0dYXeIYCZoMqeZzu
-chZLUHaBcsRkJ2hCfU7I
-=csLc
------END PGP SIGNATURE-----
-
---Signature=_Fri__14_Oct_2011_22_38_04_+1100_n1MQAlrRdJl82V0V--
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
