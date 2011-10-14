@@ -1,88 +1,118 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm with the ext3 tree
-Date: Fri, 14 Oct 2011 17:34:23 +1100
-Message-ID: <20111014173423.839933d5c22913a06bd721fc@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (sparc,
+ ptrace trees related)
+Date: Fri, 14 Oct 2011 18:07:14 +1100
+Message-ID: <20111014180714.e11e15fd35dfaca839c6421e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__14_Oct_2011_17_34_23_+1100_8Qey/J5/Q.htmvA8"
+ boundary="Signature=_Fri__14_Oct_2011_18_07_14_+1100_PoOCDQntuJjmze__"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:58331 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:56381 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751300Ab1JNGef (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Oct 2011 02:34:35 -0400
+	with ESMTP id S1755143Ab1JNHH1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Oct 2011 03:07:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Jan Kara <jack@suse.cz>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>, Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
 
---Signature=_Fri__14_Oct_2011_17_34_23_+1100_8Qey/J5/Q.htmvA8
+--Signature=_Fri__14_Oct_2011_18_07_14_+1100_PoOCDQntuJjmze__
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi All,
 
-Today's linux-next merge of the akpm tree got a conflict in
-fs/udf/udfdecl.h between various commits from the ext3 tree and commit
-2ea9eff85131 ("treewide: use __printf not __attribute__((format
-(printf,...)))") from the scsi-post-merge tree.
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
+arch/sparc/kernel/signal_64.c: In function 'handle_signal':
+arch/sparc/kernel/signal_64.c:482:11: error: unused variable 'blocked' [-We=
+rror=3Dunused-variable]
+
+Caused by my merge of commits faddf598f0ba ("sparc: Use
+set_current_blocked()") form the sparc tree and 383fe35697e4 ("sparc: Use
+set_current_blocked() and block_sigmask()") from the ptrace tree.
+
+I have added the following merge fix patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 14 Oct 2011 17:58:53 +1100
+Subject: [PATCH] sparc: fix mismerge of signal*.c
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/kernel/signal32.c  |    1 -
+ arch/sparc/kernel/signal_32.c |    1 -
+ arch/sparc/kernel/signal_64.c |    1 -
+ 3 files changed, 0 insertions(+), 3 deletions(-)
+
+diff --git a/arch/sparc/kernel/signal32.c b/arch/sparc/kernel/signal32.c
+index 74a5dde..22b7c6a 100644
+--- a/arch/sparc/kernel/signal32.c
++++ b/arch/sparc/kernel/signal32.c
+@@ -776,7 +776,6 @@ static inline int handle_signal32(unsigned long signr, =
+struct k_sigaction *ka,
+ 				  siginfo_t *info,
+ 				  sigset_t *oldset, struct pt_regs *regs)
+ {
+-	sigset_t blocked;
+ 	int err;
+=20
+ 	if (ka->sa.sa_flags & SA_SIGINFO)
+diff --git a/arch/sparc/kernel/signal_32.c b/arch/sparc/kernel/signal_32.c
+index 9e005b6..b3a2229 100644
+--- a/arch/sparc/kernel/signal_32.c
++++ b/arch/sparc/kernel/signal_32.c
+@@ -465,7 +465,6 @@ static inline int
+ handle_signal(unsigned long signr, struct k_sigaction *ka,
+ 	      siginfo_t *info, sigset_t *oldset, struct pt_regs *regs)
+ {
+-	sigset_t blocked;
+ 	int err;
+=20
+ 	if (ka->sa.sa_flags & SA_SIGINFO)
+diff --git a/arch/sparc/kernel/signal_64.c b/arch/sparc/kernel/signal_64.c
+index 26560e9..27332cd 100644
+--- a/arch/sparc/kernel/signal_64.c
++++ b/arch/sparc/kernel/signal_64.c
+@@ -479,7 +479,6 @@ static inline int handle_signal(unsigned long signr, st=
+ruct k_sigaction *ka,
+ 				siginfo_t *info,
+ 				sigset_t *oldset, struct pt_regs *regs)
+ {
+-	sigset_t blocked;
+ 	int err;
+=20
+ 	err =3D setup_rt_frame(ka, regs, signr, oldset,
+--=20
+1.7.7
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/udf/udfdecl.h
-index f7273fb,4a33c72..0000000
---- a/fs/udf/udfdecl.h
-+++ b/fs/udf/udfdecl.h
-@@@ -18,21 -16,6 +18,21 @@@
-  #define UDF_PREALLOCATE
-  #define UDF_DEFAULT_PREALLOC_BLOCKS	8
- =20
-- __attribute__((format(printf, 3, 4)))
-- extern void _udf_err(struct super_block *sb, const char *function,
-++extern __printf(3, 4)
-++void _udf_err(struct super_block *sb, const char *function,
- +		     const char *fmt, ...);
- +#define udf_err(sb, fmt, ...)					\
- +	_udf_err(sb, __func__, fmt, ##__VA_ARGS__)
- +
-- __attribute__((format(printf, 3, 4)))
-- extern void _udf_warn(struct super_block *sb, const char *function,
-++extern __printf(3, 4)
-++void _udf_warn(struct super_block *sb, const char *function,
- +		      const char *fmt, ...);
- +#define udf_warn(sb, fmt, ...)					\
- +	_udf_warn(sb, __func__, fmt, ##__VA_ARGS__)
- +
- +#define udf_info(fmt, ...)					\
- +	pr_info("INFO " fmt, ##__VA_ARGS__)
- +
-  #undef UDFFS_DEBUG
- =20
-  #ifdef UDFFS_DEBUG
-
---Signature=_Fri__14_Oct_2011_17_34_23_+1100_8Qey/J5/Q.htmvA8
+--Signature=_Fri__14_Oct_2011_18_07_14_+1100_PoOCDQntuJjmze__
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOl9fvAAoJEECxmPOUX5FE9VAQAJq+fJFwF/6zAWJUgI3ilLVE
-YsQEEdJ8nE7P3IN/gOhkou0pmNxjwhWnVqpGh6LceMXTmhqa7o7fE2hqW6PF1YZ/
-gjl/o+xySjM+BHOsCqUJDZQSjPMBrZIKrWjnTo2rTsvuWsqbC6YkM9+dnnt+sBh0
-5Qg1my83ryzhHjDIJ9hED96H7TTeOUYaKCDWFp9lUeec0ASGcki4/Y1LY5BcPUSk
-zX7QIMXFQ9eIjW99uTsz7YtByJ9IfXfmmu4BIt6eZyjOD2WnyYMWiQUJp/xjz6Cd
-TdpmsV5jBJl1Y9flUCWiauVmPy/rDxlVynO+M337g0JVS/WzA1tgxMavZF79llPh
-6MOvYYy981PcboiDWNES9iTgHJ80emxVhTK1vGOgUhTmVMKMBi0XH4BRq7M+VDwu
-sX5bVCMXV+VEgBq4VYZSMJY7TYSnUiN8Sl/y/i+Ma3VhdNPw4R/U/AlKCl0FEjC5
-0NSwpfKfssaOZ/f2VqvYhfnsGg+0ghQywlN4GDrchE8dc0pJO/cFc96po3Fl4rIC
-iGuGnCPNzM1Ub8GJk/5jWpyUk+oFwEljdqRcOHMT4iwJV+sDoa7dgrC/XgRKS65k
-jjkyTaKJkKNGFUowfeK/tYLqn489Fsy0FoftQblNdLIOBFdvufgi5Fi3p7IB6iDZ
-9mkMv+ja8yYqccaMzhSf
-=fhcG
+iQIcBAEBCAAGBQJOl9+iAAoJEECxmPOUX5FEQ34P/2GWJxJL7z2fmUn+dutQ0mZw
+vVlBTI84cCTHmYYcG+aK9dzI1C/D1uyXOS89PixOVQT5x3lzOOraQlTlm21djOm4
+ijTgbdVw10ZhKyMaAKi33MtINmHIdqbEn4Kd2RNL1uYCXOMq2K2rN4eheJjEzPaN
+K/0J+ZNsiYiuWNcb5glA3Yfv6VPDs5a4eZWFjk9PemVvY45i0HXWa43XoMC6CJBS
+o2VKrGxUuTraHDiJmOGfHNiZ0R01z65RCrForogwwruKh+IUe8PQdzlsZe1FPBH6
+gs8EBpswk8CWZR8pYxnYw2WwM9S07ks1Frw728G4JpGTJqljWGtGM5KkM9Kr1UI/
+RXBZ2b2p3GPHuO8bmJPMKs7Sljovpf6cDUzg63kluuh/lTh62+dt8st24oW5al+/
+3MZxKRrRLQm0oruVwdWSP6xMYco7feZCcX3kPqHyt65HXqxgjFbkNMipiUePFk/6
+aLJ5LCpcDanloeLtKqfPUMZMJIApJMLUnnR9osHM8M0L2BExs7KCcrOk9tnT7ulq
+qnlSRWgM6hAycdESyVdVDxrXIDSE3MaMZPxv1yyDEE8NeGtOd68CieCrQ3f3htow
+n8eeuhsvMjE+YtX0mXA5X+FfuU3q2eOqa97HA/SWdJaLeYlIW2boljplym3vMFjj
+HxUST2eQIxehxwLGtx2A
+=y+i5
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__14_Oct_2011_17_34_23_+1100_8Qey/J5/Q.htmvA8--
+--Signature=_Fri__14_Oct_2011_18_07_14_+1100_PoOCDQntuJjmze__--
