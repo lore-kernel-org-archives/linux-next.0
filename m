@@ -1,61 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ptrace tree with the sparc tree
-Date: Fri, 14 Oct 2011 15:47:38 +1100
-Message-ID: <20111014154738.5aee83104a71266012e46a9d@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the gpio tree
+Date: Fri, 14 Oct 2011 17:02:02 +1100
+Message-ID: <20111014170202.1260e712d288e87c05ccd29d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__14_Oct_2011_15_47_38_+1100_h2vmu3x.TuRv49mR"
+ boundary="Signature=_Fri__14_Oct_2011_17_02_02_+1100_oGA9g97ZPYP=nEnQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:60537 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:49683 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932094Ab1JNErw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Oct 2011 00:47:52 -0400
+	with ESMTP id S932507Ab1JNGCQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 Oct 2011 02:02:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt.fleming@intel.com>, David Miller <davem@davemloft.net>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>, Grant Likely <grant.likely@secretlab.ca>
 
---Signature=_Fri__14_Oct_2011_15_47_38_+1100_h2vmu3x.TuRv49mR
+--Signature=_Fri__14_Oct_2011_17_02_02_+1100_oGA9g97ZPYP=nEnQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Paul,
 
-Today's linux-next merge of the ptrace tree got conflicts in
-arch/sparc/kernel/signal32.c, arch/sparc/kernel/signal_32.c and
-arch/sparc/kernel/signal_64.c between commit faddf598f0ba ("sparc: Use
-set_current_blocked()") from the sparc tree and commit 383fe35697e4
-("sparc: Use set_current_blocked() and block_sigmask()") from the ptrace
-tree.
+Today's linux-next merge of the moduleh tree got a conflict in
+drivers/gpio/gpio-pch.c between commit 38eb18a6f92d ("gpio-pch: Support
+interrupt function") from the gpio tree and commit d331aa9b3a0b
+("drivers/gpio: Fix drivers who are implicit users of module.h") from the
+moduleh tree.
 
-I used ther version from the ptrace tree as these seem to go further (and
-have a later Auther Date).
+Just context changes.  I fxied it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__14_Oct_2011_15_47_38_+1100_h2vmu3x.TuRv49mR
+diff --cc drivers/gpio/gpio-pch.c
+index 46b5209,c9c4297..0000000
+--- a/drivers/gpio/gpio-pch.c
++++ b/drivers/gpio/gpio-pch.c
+@@@ -17,17 -17,10 +17,18 @@@
+  #include <linux/kernel.h>
+  #include <linux/pci.h>
+  #include <linux/gpio.h>
+ +#include <linux/interrupt.h>
+ +#include <linux/irq.h>
++ #include <linux/module.h>
+ =20
+ -#define PCH_GPIO_ALL_PINS	0xfff /* Mask for GPIO pins 0 to 11 */
+ -#define GPIO_NUM_PINS	12	/* Specifies number of GPIO PINS GPIO0-GPIO11 */
+ +#define PCH_EDGE_FALLING	0
+ +#define PCH_EDGE_RISING		BIT(0)
+ +#define PCH_LEVEL_L		BIT(1)
+ +#define PCH_LEVEL_H		(BIT(0) | BIT(1))
+ +#define PCH_EDGE_BOTH		BIT(2)
+ +#define PCH_IM_MASK		(BIT(0) | BIT(1) | BIT(2))
+ +
+ +#define PCH_IRQ_BASE		24
+ =20
+  struct pch_regs {
+  	u32	ien;
+
+--Signature=_Fri__14_Oct_2011_17_02_02_+1100_oGA9g97ZPYP=nEnQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOl77qAAoJEECxmPOUX5FEeiYP/3UqsSkh+YhlbH/QAJYZZZwq
-idouWmxie4nKF+5Y4ir/6UFTTiL6+TzGPtZKAAQxJ09B6A8qggsFzEWidRTK7ky1
-pxmXkqDQwk7yaUBzDGKO2BI1DFMvpChglWha90U4mhgncqQdPdtxY4NnFhoQYKat
-XIUGmq5yRn3ltHQYjTO09U/Bt3eQIyOxqIOgQkTByDTxIRF2XkW1qsalNES5BXmA
-cu99CnXUIUmfWklcQk71zHdVjcXUPtfR4vL+WAOzl0XoTCQumG4PnB3LvVAxyhN2
-JZosZ/wI0rSsFCF9uEkw4AGkIVFFCAbq9Epfan8nX8jsFrGJgck4o8RGkLxBRamf
-k8jXqYmkb2orfcEm0n4S2kRmRuSM9BeHJ5IkZV6cl1JBDUQNWhu6/9zgnhetAn1T
-LuxUPjUav0H5cLgxfaZDAPket4tcmxH8yMMaAxnNtAskZ3+ssRHoY8WTsu06ZcaE
-zMD7HZ9pl1EHclh6fznOohfyRY8bEk7h+VOAw+501kweGs2cUszHc6tTPmYFllHJ
-amKA9a3830Zh6J+WkYyR5KN5uz8umkBxJy/KUhz3UxDHVUYdnoIohrNtPjjz4gVQ
-maOW5wrWxt5eEHk+A7uDDPaBT5emNKwaHBckGy4Oapb23Yx2uXEKwmiLNkPez8YW
-l0VGewbrxRGen/wrnhQh
-=h6AK
+iQIcBAEBCAAGBQJOl9BaAAoJEECxmPOUX5FEn6QP/RqYgSEnwiuEvqFzf3uFJgYS
+3XIPbcMEEhgqarQuBBMKqmQdvr2oUgx/MxInqYp5FnxqKyMQmuUx93KCJ1DHgWIm
+ZK4Ij4bEbOGNU9pmY3ArWzcw19brdccr1G1rVaAc2uoK5pX4YqNB/zNx3ESP+fTm
+PdHImgiRD9nvTcNPe+x+0iKCPgzgTErOD737EBSoIYg3UiIdvue+g0F2ntkIi3go
+JVxNN26LhikcDbo6QfBFWtHmnCPEfn+6I8SNdkmxTFjaM3NObnzPkf7Zey1kn197
+lcHwYyF/1SdrQOcOY75E2NYMKDEK4bjE07KCp1oHLKBb5uG6nDqXow/iK9VbmYHS
+E1k7UYLxWCEd4FlaDsihF0QrD/eThCqGjrBWdPlKO1UmdKnQMpbSSWJ0eqr/YtlL
+2ANaor6a/XJW2PoczXnxAkgN4ZpZz2PHRioc/LNGMXK3Z88iCae9SqQ5LQmUfXza
+53An2jJ3/HAYU8DdZiRHTynLXr2D5uSz0SW+lne8+kEdPCsyItQ02zMgctIIRBh9
+ysX7DroxpOhO32FDMoA8s57jCBFz2FcSY9XPOl6B4fvRYw4EfccBPfpQ4Hi008E3
+P4IbwRYP0UNCiajPeoREfWa89XqbWuPuHIrPjZE+8mmGyZ5SzdvnlxtKlULqCyMf
+XRKTURnhaqtcD2+Ymiod
+=Pvuf
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__14_Oct_2011_15_47_38_+1100_h2vmu3x.TuRv49mR--
+--Signature=_Fri__14_Oct_2011_17_02_02_+1100_oGA9g97ZPYP=nEnQ--
