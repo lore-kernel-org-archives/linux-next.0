@@ -1,15 +1,34 @@
-From: Roland Dreier <roland@kernel.org>
-Subject: Re: [PATCH -next] infiniband: fix printk format in hw/nes_cm.c
-Date: Mon, 17 Oct 2011 14:18:30 -0700
-Message-ID: <CAL1RGDXqQ+5W2LH5c6jzR6_AygcJ+Xh=0fcHga=Ps8rjEnPE8w@mail.gmail.com>
-References: <20111013181606.a204565fad9caaa0fe680b75@canb.auug.org.au> <4E976147.9030000@xenotime.net>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: import of rr series failed
+Date: Wed, 19 Oct 2011 10:21:48 +1030
+Message-ID: <87botdc0yz.fsf@rustcorp.com.au>
+References: <20111014103638.accaae53bac0e74da3c787bd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4E976147.9030000@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Faisal Latif <faisal.latif@intel.com>, Linux RDMA <linux-rdma@vger.kernel.org>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:42233 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753087Ab1JSDFR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 Oct 2011 23:05:17 -0400
+In-Reply-To: <20111014103638.accaae53bac0e74da3c787bd@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-Thanks, rolled this into the offending commit.
+On Fri, 14 Oct 2011 10:36:38 +1100, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Non-text part: multipart/signed
+> Hi Rusty,
+> 
+> Importing the rr series today I got this error:
+> 
+> $ git am ../quilt/rr/virtio:dont_add_config_to_list_for_per_vq_vector.patch
+> Patch format detection failed.
+> 
+> I added a From line to the top using the address from the first SOB line.
+
+Weird, don't know how that slipped through my checking script :(
+
+Fixed up now, thanks.
+
+Rusty.
