@@ -1,34 +1,29 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: import of rr series failed
-Date: Wed, 19 Oct 2011 10:21:48 +1030
-Message-ID: <87botdc0yz.fsf@rustcorp.com.au>
-References: <20111014103638.accaae53bac0e74da3c787bd@canb.auug.org.au>
+From: Gustavo Padovan <padovan@profusion.mobi>
+Subject: Bluetooth tree url change
+Date: Thu, 20 Oct 2011 00:57:27 -0200
+Message-ID: <20111020025727.GA3077@joana>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:42233 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753087Ab1JSDFR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Oct 2011 23:05:17 -0400
-In-Reply-To: <20111014103638.accaae53bac0e74da3c787bd@canb.auug.org.au>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:51916 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751055Ab1JTC5C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 Oct 2011 22:57:02 -0400
+Received: by ywf7 with SMTP id 7so2352518ywf.19
+        for <linux-next@vger.kernel.org>; Wed, 19 Oct 2011 19:57:02 -0700 (PDT)
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org
 
-On Fri, 14 Oct 2011 10:36:38 +1100, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-Non-text part: multipart/signed
-> Hi Rusty,
-> 
-> Importing the rr series today I got this error:
-> 
-> $ git am ../quilt/rr/virtio:dont_add_config_to_list_for_per_vq_vector.patch
-> Patch format detection failed.
-> 
-> I added a From line to the top using the address from the first SOB line.
+Hi Stephen,
 
-Weird, don't know how that slipped through my checking script :(
+The bluetooth-next tree now has a new url, I drop the "-2.6" suffix when I
+moved back to kernel.org
 
-Fixed up now, thanks.
+git://git.kernel.org/pub/scm/linux/kernel/git/padovan/bluetooth-next.git
 
-Rusty.
+Thanks for your work!
+
+	Gustavo
