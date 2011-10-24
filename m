@@ -1,71 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: currently missing kernel devel trees
-Date: Mon, 24 Oct 2011 20:38:37 +1100
-Message-ID: <20111024203837.7610fabd2aca9e6ef14680fe@canb.auug.org.au>
+Date: Mon, 24 Oct 2011 20:50:28 +1100
+Message-ID: <20111024205028.42b236c4e318032d73317324@canb.auug.org.au>
 References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
-	<CAMjpGUcdTj2XBxMX9v7dY4ATPjCtU9xj+xXvj3D5Ma2gsMA8Ww@mail.gmail.com>
-	<CAMjpGUe+jgnpB4pPhSBV=zYgNSUTzWYa2_KmPuWhjZw_6zjLMw@mail.gmail.com>
+	<20111016211102.GA15720@infomag.iguana.be>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Oct_2011_20_38_37_+1100_OYK2LUM3RxKFD_YM"
+ boundary="Signature=_Mon__24_Oct_2011_20_50_28_+1100_I_KtQjWWmafI4LiW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:49763 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:52663 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754513Ab1JXJiy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Oct 2011 05:38:54 -0400
-In-Reply-To: <CAMjpGUe+jgnpB4pPhSBV=zYgNSUTzWYa2_KmPuWhjZw_6zjLMw@mail.gmail.com>
+	with ESMTP id S1754068Ab1JXJuq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Oct 2011 05:50:46 -0400
+In-Reply-To: <20111016211102.GA15720@infomag.iguana.be>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Frysinger <vapier.adi@gmail.com>
+To: Wim Van Sebroeck <wim@iguana.be>
 Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Mon__24_Oct_2011_20_38_37_+1100_OYK2LUM3RxKFD_YM
+--Signature=_Mon__24_Oct_2011_20_50_28_+1100_I_KtQjWWmafI4LiW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
+Hi Wim,
 
-On Sat, 15 Oct 2011 13:57:11 -0400 Mike Frysinger <vapier.adi@gmail.com> wr=
-ote:
+On Sun, 16 Oct 2011 23:11:02 +0200 Wim Van Sebroeck <wim@iguana.be> wrote:
 >
-> On Thu, Oct 13, 2011 at 23:25, Mike Frysinger wrote:
-> > On Thu, Oct 13, 2011 at 02:43, Stephen Rothwell wrote:
-> >> blackfin
-> >
-> > i was waiting for hpa to get back to me so i could get my repo enabled
-> > again on git.kernel.org ... but maybe that'll take until/post LKS ?
+> ...
+> > watchdog
+> ...
 >=20
-> ah, got my info today.  this tree should be alive again for you to merge =
-in.
+> Untill I have the time to do something new could you use the following tr=
+ee and branch:
+>=20
+> git://www.linux-watchdog.org/linux-watchdog.git linux-next
+>=20
+> I started filling it with 5 patches allready, but still need to add some =
+others in the next day.
 
-Thanks, looks good.
-
+OK, I have switched to using this.  Please let me know if/when you switch
+back to kernel.org.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__24_Oct_2011_20_38_37_+1100_OYK2LUM3RxKFD_YM
+--Signature=_Mon__24_Oct_2011_20_50_28_+1100_I_KtQjWWmafI4LiW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOpTIdAAoJEECxmPOUX5FE4d0P/jBQaTLDchH3hIIW8R/25Qj8
-ldGzAZqVhHsaSCKcYr+qCTsGbIS0K1ucqNbICDg6yhh7V8vaG2HCAv0vApiH83x9
-B7GF24HfUilT3rX681F6pNrQ61gKD5KCdo26J8xJrJWmZQNhIiw19dd49lItUDFH
-GKzo8Gzy9tfVXPm+R5GijFPL4BHNmKOgkpxWDts+PKLWN+ga4Kpp4mSOt4FqUgWh
-lSy0BZAh0WHT0aDZPKHACk7OLguUfcCW8M7kIAf9J16xLtfn2RzX2TRTi/5/xIT/
-ByDhktebGkEaMygkUR6HYSIo5rLHq4BMCAwafgT4xMoEUcPI9KA2Lj4XTxg1xUZ0
-PtZI84m9XdG/dfGLtum+QQYmi7Wi2Nyn9/lTKleRtLdLqvq/JyYCJuzcnnzIrN+y
-qo961maSMRUlVcUr6G3nebE9ccPodg63xKfIMDHG9Mnkk0SByebYED2Kt0oqdJ7s
-mQBn8Fbzhwbfw746qbz7lbKdJZ5WYHERMEMbEgYSRsw1gIQ+u3DTG39YeIUbrrws
-6X1AVJni2ae3xvLunLOrv/+4Z6KckfUK2jQV1kAiMCFQMtG2WCyidAmsJ/PInLsZ
-dQh1aLUzWBxG6R1aJzvv0pavKZ9Pu2BkWzNNW2DvPmuWm+0HIxFsUG6Q/ItsoCYh
-Ehqx1ewKodhiU6bDdaCj
-=C+av
+iQIcBAEBCAAGBQJOpTTkAAoJEECxmPOUX5FEkYEQAIclG+DLjGQX90U0CVvutfzJ
+E83vLE5SfS3g6tYVfEeF6dJInBZv18qrpaqRY4IGHMtSY+G8nmualzfOxRCFHKLj
+fCfSAYk/cgMgZzaaIG062yxsIfh6ucBhlieSG0LRyEzTmA4cnRDJCY40YPnZ/3hY
+B89k4ouVAqBiirZbaUGxDYn2K/jpmpHrNjayNcYYir5ziMv4EBJY4REIJi1qLbw9
+KX902wJQtvgJGNMmRuPDPAMUWXOrj1+BIal642KO641lJdZ91Og4sHCzrGLyPrV3
+QlpnbhpfuIHgvugWMHC2XWpQC9iYaTD9sjVzIHCVNK7l7vjW6Aus40iI0Wo4SvOO
+f6k9tibgI0wCKeTZtTRQIdtTZof0skXXgsh9/r5Z084xQYhtTE4cHjIqaAfkNt9V
+2wnZ642e95PtgoorGz9lTUeuKqpvOfBJI+A64Lw7PNbIjEso1qW6xYFGb7C7dCes
+4HSkOAId8O2JWyKioYe6HXH/EBOp58Ps1/fCJ7zD7mNjndK5FEj1xkgRp1uC/HzW
+AJQiEvwqyCK79L791SX0k5nx05WOJdx21i8OyyEUhJInjLVsDDN1lrFe98lcY/w5
+WqNzee2vmgy8Tau4ZowBOmu8XKKMDlhEk557YwnbxWQDKZS01/gHom7yvZoHcd3b
+XkIhaaOdVETB7x66W8RG
+=bQd+
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Oct_2011_20_38_37_+1100_OYK2LUM3RxKFD_YM--
+--Signature=_Mon__24_Oct_2011_20_50_28_+1100_I_KtQjWWmafI4LiW--
