@@ -1,32 +1,69 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Updated target-pending.git branches for linux-next
-Date: Sun, 23 Oct 2011 23:05:27 -0700
-Message-ID: <1319436327.15576.4.camel@haakon2.linux-iscsi.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: currently missing kernel devel trees
+Date: Mon, 24 Oct 2011 20:20:55 +1100
+Message-ID: <20111024202055.8beb988e4a9d2e619dffdf2c@canb.auug.org.au>
+References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
+	<CAB3woddd=1Ps8HR4SPAOQxoxCnGLFDrjRN6KPJUFkpzmACXf4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <target-devel-owner@vger.kernel.org>
-Sender: target-devel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, target-devel <target-devel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__24_Oct_2011_20_20_55_+1100_8Iz9E7C5CpoBUu+G"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:34628 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753883Ab1JXJV2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Oct 2011 05:21:28 -0400
+In-Reply-To: <CAB3woddd=1Ps8HR4SPAOQxoxCnGLFDrjRN6KPJUFkpzmACXf4w@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Phillip Lougher <phillip.lougher@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Stephen,
+--Signature=_Mon__24_Oct_2011_20_20_55_+1100_8Iz9E7C5CpoBUu+G
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The target-pending.git tree is now back on kernel.org, and as before
-the following branch is used as 'for-next' updates to existing
-drivers/target/ code:
+Hi Phillip,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git for-next
+On Fri, 14 Oct 2011 02:03:18 +0100 Phillip Lougher <phillip.lougher@gmail.c=
+om> wrote:
+>
+> > squashfs
+>=20
+> git://gitorious.org/squashfs-linux-next/squashfs-linux-next.git master
 
-I've also added another branch that is being used for new target modules
-being merged in the next development cycle:
+I have swu=3Ditched to that, thanks.  Please let me know if/when you switch
+back to kernel.org.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git for-next-merge
+> I don't have anything queued up at the moment, though...
 
-If you would be so kind, please go ahead and add the second entry as well
-into your linux-next daily builds.
+I get one commit today (presumably added since you sent this email).
 
-Thank you,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---nab
+--Signature=_Mon__24_Oct_2011_20_20_55_+1100_8Iz9E7C5CpoBUu+G
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOpS33AAoJEECxmPOUX5FEq3IP/j80o4DwUbqLfQA69UF5+J94
+FuTacOpCk2y1749delabmCc7DkT7zJScM+8R1t5T1pBXcYex5qowfxkK4/LRLWLY
+5lnXuZOzuV2xRHgr/4YPd0vud5p1JfHFwqu9LGgy+qyZAldO8WbzeI5/Z+4DGzae
+NYH2m/lJQgtTeavLmjGl7/WJw3Kr6U7K84zS5+3bPFGp82PP4Q/SV27HcbMEw0OF
+YIPwgEL2+yvJo3fYnSAnjRGR2IUIrZWHt2+7d7AN94lx8owgRRAiW8F+xVuPeKKX
+/QMbLIqAWzkvjxrS1p4cxHZSdk6ERpuPh+dwVZxApCqVIKtZSgM4yi4Xx6pNjs8B
+AG0+87dTqAn7d3Yemohj5//WF0pT77QccJ6aHJv6Fco+uEEvs9i6nbMz2evvvgyJ
+f1sSUAP3YadbufIUAhZzYtwGKvDx0iVILqjWBvAGz9wVXYrWw60G9Fd0mnt7zE78
+GYfkitDPeyYwDfoc7BP+XvbHznu/TJm7/j9Bqfuxrwtj0MvknxoE9Xt9O9kMLcfq
+y2h23yYGofHC9FrufJ/eQyl2mOENX8XRHzVVnl8YqcebzOMELZ2NTtEm/McMfICp
+7MZJ1db/dGPqfStTTkTIxP5bz0pkZrE9F1wHWIeXmZ86+yD52Q0ZPIrQ/HgUaphW
+1EdRw2nDm919Md9KcHBc
+=GH9y
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__24_Oct_2011_20_20_55_+1100_8Iz9E7C5CpoBUu+G--
