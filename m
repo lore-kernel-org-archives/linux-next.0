@@ -1,79 +1,52 @@
-From: Rob Herring <rob.herring@calxeda.com>
+From: Russell King <rmk@arm.linux.org.uk>
 Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Mon, 24 Oct 2011 16:08:56 -0500
-Message-ID: <4EA5D3E8.9020602@calxeda.com>
-References: <20111025073946.019dca49157f5835e1394084@canb.auug.org.au> <20111024204824.GB32545@flint.arm.linux.org.uk>
+Date: Mon, 24 Oct 2011 22:16:58 +0100
+Message-ID: <20111024211658.GD32545@flint.arm.linux.org.uk>
+References: <20111025072013.1824cfd24495819777ad2660@canb.auug.org.au> <20111024203041.GA32545@flint.arm.linux.org.uk> <20111024210952.GQ23421@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp198.dfw.emailsrvr.com ([67.192.241.198]:58352 "EHLO
-	smtp198.dfw.emailsrvr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756003Ab1JXVQj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Oct 2011 17:16:39 -0400
-In-Reply-To: <20111024204824.GB32545@flint.arm.linux.org.uk>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:48634 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755990Ab1JXVRQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Oct 2011 17:17:16 -0400
+Content-Disposition: inline
+In-Reply-To: <20111024210952.GQ23421@pengutronix.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>
 
-On 10/24/2011 03:48 PM, Russell King wrote:
-> On Tue, Oct 25, 2011 at 07:39:46AM +1100, Stephen Rothwell wrote:
->> Today's linux-next merge of the arm-soc tree got a conflict in
->> arch/arm/common/gic.c between commits 292b293ceef2 ("ARM: gic:
->> consolidate PPI handling") and 28af690a284d ("ARM: gic, local timers: use
->> the request_percpu_irq() interface") from the arm tree and commits
->> 2071a2a4b8ed ("ARM: gic: add irq_domain support") and e3f14d321b34 ("ARM:
->> gic: add OF based initialization") from the arm-soc tree.
->>
->> I hacked it up (almost certainly incorrectly - see below). Someone will
->> have to provide Linus with a fix for this.
+On Mon, Oct 24, 2011 at 11:09:52PM +0200, Sascha Hauer wrote:
+> On Mon, Oct 24, 2011 at 09:30:41PM +0100, Russell King wrote:
+> > On Tue, Oct 25, 2011 at 07:20:13AM +1100, Stephen Rothwell wrote:
+> > > Hi Arnd,
+> > > 
+> > > Today's linux-next merge of the arm-soc tree got a conflict in
+> > > arch/arm/plat-mxc/include/mach/memory.h between commit c039bad00f21
+> > > ("ARM: plat-mxc: remove mach/memory.h") from the arm tree and commits
+> > > ae4fa7f66e54 ("ARM i.MX: allow to compile together ARMv4 and ARMv5 based
+> > > SoCs") and 7409cd1cd554 ("ARM i.MX: allow to compile together all i.MX5
+> > > based SoCs") from the arm-soc tree.
+> > > 
+> > > The former removed the file, so I did that.
+> > 
+> > Stephen - thanks.
+> > 
+> > ARM guys, we need to be smarter about this stuff - if we're consolidating
+> > code across the ARM tree, committing changes to files which we're going
+> > to remove really isn't a good idea.  It probably means something else has
+> > changed elsewhere to accomodate the deletion of the file, which this
+> > kind of resolution won't fix up.
 > 
-> Yes, this looks quite wrong:
-> 
->> @@@ -332,29 -304,12 +325,22 @@@
->>   		writel_relaxed(0xffffffff, base + GIC_DIST_ENABLE_CLEAR + i * 4 / 32);
->>   
->>   	/*
->> - 	 * Limit number of interrupts registered to the platform maximum
->> - 	 */
->> - 	irq_limit = gic->irq_offset + gic_irqs;
->> - 	if (WARN_ON(irq_limit > NR_IRQS))
->> - 		irq_limit = NR_IRQS;
->> - 
->> - 	/*
->>   	 * Setup the Linux IRQ subsystem.
->>   	 */
->>  +	for (i = 0; i < nrppis; i++) {
->>  +		int ppi = i + ppi_base;
->>  +
->>  +		irq_set_percpu_devid(ppi);
->>  +		irq_set_chip_and_handler(ppi, &gic_chip,
->>  +					 handle_percpu_devid_irq);
->>  +		irq_set_chip_data(ppi, gic);
->>  +		set_irq_flags(ppi, IRQF_VALID | IRQF_NOAUTOEN);
->>  +	}
->>  +
->> - 	for (i = irq_start + nrppis; i < irq_limit; i++) {
->> - 		irq_set_chip_and_handler(i, &gic_chip, handle_fasteoi_irq);
->> - 		irq_set_chip_data(i, gic);
->> - 		set_irq_flags(i, IRQF_VALID | IRQF_PROBE);
->> + 	irq_domain_for_each_irq(domain, i, irq) {
->> + 		irq_set_chip_and_handler(irq, &gic_chip, handle_fasteoi_irq);
->> + 		irq_set_chip_data(irq, gic);
->> + 		set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
->>   	}
->>   
->>   	writel_relaxed(1, base + GIC_DIST_CTRL);
-> 
-> We definitely need to sort this out before either tree gets pushed to
-> Linus, otherwise we're going to end up annoying Linus... even if we
-> provide a resolution.
-> 
-> I suspect I should've taken the GIC OF stuff via my tree...
+> In this case deleting the file is the correct solution. I removed some
+> definitions of PLAT_PHYS_OFFSET which got unused due to "ARM i.MX: allow
+> to compile together..." and Nicolas removed the need for PLAT_PHYS_OFFSET
+> at all.
 
-Yes, as it turns out to be pretty dependent on your tree.
+Ok, at least this one is trivial.  Thanks for the confirmation.
 
-I'm testing the fix for this and will send a new pull request.
-
-Rob
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
