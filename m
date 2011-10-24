@@ -1,71 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: currently missing kernel devel trees
-Date: Mon, 24 Oct 2011 20:50:28 +1100
-Message-ID: <20111024205028.42b236c4e318032d73317324@canb.auug.org.au>
-References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
-	<20111016211102.GA15720@infomag.iguana.be>
+Subject: Re: Bluetooth tree url change
+Date: Mon, 24 Oct 2011 20:58:20 +1100
+Message-ID: <20111024205820.c4c6fad8c3910596738492e7@canb.auug.org.au>
+References: <20111020025727.GA3077@joana>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__24_Oct_2011_20_50_28_+1100_I_KtQjWWmafI4LiW"
+ boundary="Signature=_Mon__24_Oct_2011_20_58_20_+1100_FPa5CQF9khLQyHLj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:52663 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:55761 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754068Ab1JXJuq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Oct 2011 05:50:46 -0400
-In-Reply-To: <20111016211102.GA15720@infomag.iguana.be>
+	with ESMTP id S1754544Ab1JXJ6l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Oct 2011 05:58:41 -0400
+In-Reply-To: <20111020025727.GA3077@joana>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Gustavo Padovan <padovan@profusion.mobi>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Mon__24_Oct_2011_20_50_28_+1100_I_KtQjWWmafI4LiW
+--Signature=_Mon__24_Oct_2011_20_58_20_+1100_FPa5CQF9khLQyHLj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wim,
+Hi Gustavo,
 
-On Sun, 16 Oct 2011 23:11:02 +0200 Wim Van Sebroeck <wim@iguana.be> wrote:
+On Thu, 20 Oct 2011 00:57:27 -0200 Gustavo Padovan <padovan@profusion.mobi>=
+ wrote:
 >
-> ...
-> > watchdog
-> ...
+> The bluetooth-next tree now has a new url, I drop the "-2.6" suffix when I
+> moved back to kernel.org
 >=20
-> Untill I have the time to do something new could you use the following tr=
-ee and branch:
->=20
-> git://www.linux-watchdog.org/linux-watchdog.git linux-next
->=20
-> I started filling it with 5 patches allready, but still need to add some =
-others in the next day.
+> git://git.kernel.org/pub/scm/linux/kernel/git/padovan/bluetooth-next.git
 
-OK, I have switched to using this.  Please let me know if/when you switch
-back to kernel.org.
+OK, I have switched to this now.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__24_Oct_2011_20_50_28_+1100_I_KtQjWWmafI4LiW
+--Signature=_Mon__24_Oct_2011_20_58_20_+1100_FPa5CQF9khLQyHLj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOpTTkAAoJEECxmPOUX5FEkYEQAIclG+DLjGQX90U0CVvutfzJ
-E83vLE5SfS3g6tYVfEeF6dJInBZv18qrpaqRY4IGHMtSY+G8nmualzfOxRCFHKLj
-fCfSAYk/cgMgZzaaIG062yxsIfh6ucBhlieSG0LRyEzTmA4cnRDJCY40YPnZ/3hY
-B89k4ouVAqBiirZbaUGxDYn2K/jpmpHrNjayNcYYir5ziMv4EBJY4REIJi1qLbw9
-KX902wJQtvgJGNMmRuPDPAMUWXOrj1+BIal642KO641lJdZ91Og4sHCzrGLyPrV3
-QlpnbhpfuIHgvugWMHC2XWpQC9iYaTD9sjVzIHCVNK7l7vjW6Aus40iI0Wo4SvOO
-f6k9tibgI0wCKeTZtTRQIdtTZof0skXXgsh9/r5Z084xQYhtTE4cHjIqaAfkNt9V
-2wnZ642e95PtgoorGz9lTUeuKqpvOfBJI+A64Lw7PNbIjEso1qW6xYFGb7C7dCes
-4HSkOAId8O2JWyKioYe6HXH/EBOp58Ps1/fCJ7zD7mNjndK5FEj1xkgRp1uC/HzW
-AJQiEvwqyCK79L791SX0k5nx05WOJdx21i8OyyEUhJInjLVsDDN1lrFe98lcY/w5
-WqNzee2vmgy8Tau4ZowBOmu8XKKMDlhEk557YwnbxWQDKZS01/gHom7yvZoHcd3b
-XkIhaaOdVETB7x66W8RG
-=bQd+
+iQIcBAEBCAAGBQJOpTa8AAoJEECxmPOUX5FE6oEP/RyKyDTi0TqCLBFDm4/Fvr2M
+I4fCAxZ7dbvVLPd44GclJf9ZrTQekFGF7jQ0ZU5PGApi36yW6PuqMQ1cNxsk8uXi
+97zWmTrs+xRkwXMPnLg59atyIK0TnzbyyeKYX7X93vOMrHMHvaPzFJ84fyzBDh1x
+r+H0CQhsIRNLAySETJtv3x99omq5KjRb9lpnzW9Zsl1Un8dRtDs1Rx0x/q8ajSvX
++rM0YFDVnAZmfzTtvvA1FBah5NEZ+ElZRRzoH2PA2T5rZGhjgkk/gR6qjpdUpXwm
+h+x0s8U9Y8dW6iHV1/LfVUlvL0HKUce9TdbZHBd++UHSYmqhteYIzgkj+9YkIToE
+NUm8eu9IM3o1QYMPKvZkYWLp3Kj+Hyg6Yk0bPv9FpZLXf1ephGSlYj0kerCrKoZ2
+QUUk6Jcmm2qkwrmfuVP3ZSEu61UW1A8ogkFUhMQ0O7hzWPqvm1GttYHwNoJTWwwm
+0vj7m7hKG+trSeP/JyzsHvjlipMwA6qK7v8LvrWF8fTFkK6og2edViFtG3hY2mNR
+QnWOUdO9YEo1jT+S0Tt33T6hmlzD3RaHrhLwuI6f1Hp0iQP5lM5T7LxZpRBfU61U
+WP+CUu5e/UNjyGlkyTvj6EpHGug7QhXbgujHJCdgvDE851fcPRQiRiLV+zON4qH2
+Yn9PJ7JU0jkN+FXaFJ6x
+=CN4p
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__24_Oct_2011_20_50_28_+1100_I_KtQjWWmafI4LiW--
+--Signature=_Mon__24_Oct_2011_20_58_20_+1100_FPa5CQF9khLQyHLj--
