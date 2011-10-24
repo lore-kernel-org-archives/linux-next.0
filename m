@@ -1,52 +1,77 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Mon, 24 Oct 2011 22:16:58 +0100
-Message-ID: <20111024211658.GD32545@flint.arm.linux.org.uk>
-References: <20111025072013.1824cfd24495819777ad2660@canb.auug.org.au> <20111024203041.GA32545@flint.arm.linux.org.uk> <20111024210952.GQ23421@pengutronix.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the libata tree with the at91 tree
+Date: Tue, 25 Oct 2011 08:38:19 +1100
+Message-ID: <20111025083819.0940cc9ecefac0d5390a23eb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:48634 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755990Ab1JXVRQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 Oct 2011 17:17:16 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__25_Oct_2011_08_38_19_+1100_wX.lmN0WBYP.PoKZ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jeff Garzik <jeff@garzik.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergei Shtylyov <sshtylyov@ru.mvista.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Tue__25_Oct_2011_08_38_19_+1100_wX.lmN0WBYP.PoKZ
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20111024210952.GQ23421@pengutronix.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 24, 2011 at 11:09:52PM +0200, Sascha Hauer wrote:
-> On Mon, Oct 24, 2011 at 09:30:41PM +0100, Russell King wrote:
-> > On Tue, Oct 25, 2011 at 07:20:13AM +1100, Stephen Rothwell wrote:
-> > > Hi Arnd,
-> > > 
-> > > Today's linux-next merge of the arm-soc tree got a conflict in
-> > > arch/arm/plat-mxc/include/mach/memory.h between commit c039bad00f21
-> > > ("ARM: plat-mxc: remove mach/memory.h") from the arm tree and commits
-> > > ae4fa7f66e54 ("ARM i.MX: allow to compile together ARMv4 and ARMv5 based
-> > > SoCs") and 7409cd1cd554 ("ARM i.MX: allow to compile together all i.MX5
-> > > based SoCs") from the arm-soc tree.
-> > > 
-> > > The former removed the file, so I did that.
-> > 
-> > Stephen - thanks.
-> > 
-> > ARM guys, we need to be smarter about this stuff - if we're consolidating
-> > code across the ARM tree, committing changes to files which we're going
-> > to remove really isn't a good idea.  It probably means something else has
-> > changed elsewhere to accomodate the deletion of the file, which this
-> > kind of resolution won't fix up.
-> 
-> In this case deleting the file is the correct solution. I removed some
-> definitions of PLAT_PHYS_OFFSET which got unused due to "ARM i.MX: allow
-> to compile together..." and Nicolas removed the need for PLAT_PHYS_OFFSET
-> at all.
+Hi Jeff,
 
-Ok, at least this one is trivial.  Thanks for the confirmation.
+Today's linux-next merge of the libata tree got a conflict in
+drivers/ata/pata_at91.c between commit 9585cf300d98 ("ARM: at91/pata: use
+gpio_is_valid to check the gpio") from the at91 tree and commit
+8e3bfdb95ad7 ("pata_at91: call clk_put() on ata_host_activate() failure")
+from the libata tree.
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/ata/pata_at91.c
+index 7822813,c6d1409..0000000
+--- a/drivers/ata/pata_at91.c
++++ b/drivers/ata/pata_at91.c
+@@@ -414,10 -414,13 +414,13 @@@ static int __devinit pata_at91_probe(st
+ =20
+  	host->private_data =3D info;
+ =20
+- 	return ata_host_activate(host, gpio_is_valid(irq) ? gpio_to_irq(irq) : 0,
+ -	ret =3D ata_host_activate(host, irq ? gpio_to_irq(irq) : 0,
+ -			irq ? ata_sff_interrupt : NULL,
+++	ret =3D ata_host_activate(host, gpio_is_valid(irq) ? gpio_to_irq(irq) : =
+0,
+ +			gpio_is_valid(irq) ? ata_sff_interrupt : NULL,
+  			irq_flags, &pata_at91_sht);
+ =20
++ 	if (!ret)
++ 		return 0;
++=20
+  err_put:
+  	clk_put(info->mck);
+  	return ret;
+
+--Signature=_Tue__25_Oct_2011_08_38_19_+1100_wX.lmN0WBYP.PoKZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOpdrLAAoJEECxmPOUX5FE5qQQAIjBjCiA8lNYNeuydENyX5Cs
+i9XpoUjxp2uci5Y28ItWIFU65BkhggYuIIaYGLFLy0ywz3FsChzhtiADgZtBFTXI
+XyS3FIZlz6I0Y3FhxkMEjXYHPSUd5ka9Jp277EFgSm+kU4gOVJmewJ84F+l/BZGt
+tur+pYj0R4tUaSuQp/ufI9LcSZsahrjZ9p4QHOw5ATFZMps5J1cz1eQgsvPfZEvA
+WJE3N2KUjFS3sojwpccRzplWd54NT+FBvHKkhMPorKpThY2LzO5C2zAycfnwPmxT
+Be7PTDTrFMKqumnfXASMsmCBO0P31jOeh5xPc7FYe6IxMxKMFxGKL71LHnUr4ZJ1
+BP/TqNLAh0EwuMW2I6zOXhpuTxPs2u8SlT002greeKbyJhE68wi+mXHeTyZnqzQV
+4KnazwG6YSnZJUFWCyxVSLUa+tnqKHoPf5EgRAmpE18+JwJ1rt6PMcT7a5Ne1PRq
+QpUKZEYaAN3VQQvMH6a9AvL2Wu5vBHHlDag7m6JCGtoxl3obmZUgcRaoVQhpU1mI
+zFye2k6qhx5EpUoT6AQ7lrSW7hNS+tTTRwG+uFtP5ljeZCxt448nMzMn1kscTis5
+26yFBubJd3AmsDHBw7Fn8nSWWZRqiuDBgblvvM2BUskjCvCaDm541FgZhz8F0IAN
+mdfwnGt/IcMjQ98BlN6V
+=Emwo
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Oct_2011_08_38_19_+1100_wX.lmN0WBYP.PoKZ--
