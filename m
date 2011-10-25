@@ -1,30 +1,60 @@
-From: Jeff Layton <jlayton@redhat.com>
-Subject: Re: linux-next: build failure after merge of the cifs tree
-Date: Tue, 25 Oct 2011 11:58:07 -0400
-Message-ID: <20111025115807.66806f63@corrin.poochiereds.net>
-References: <20111026005939.ad20ab7a2dacce216c69e821@canb.auug.org.au>
-	<CAH2r5muLiYKCrS2f_DftZSnyuP0EC+vu99mENznCSL8ecnTkpg@mail.gmail.com>
-	<CAH2r5mtkByKNPYN50ioRoS79sAR_rhShANcm9o-Qvo7S762VFg@mail.gmail.com>
+From: Myron Stowe <mstowe@redhat.com>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Tue, 25 Oct 2011 11:14:38 -0600
+Message-ID: <1319562878.2417.18.camel@zim.stowe>
+References: <20111026004430.6725033af543cb336a786a3e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:17923 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:5736 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751099Ab1JYP5s (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Oct 2011 11:57:48 -0400
-In-Reply-To: <CAH2r5mtkByKNPYN50ioRoS79sAR_rhShANcm9o-Qvo7S762VFg@mail.gmail.com>
+	id S1752030Ab1JYROq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Oct 2011 13:14:46 -0400
+In-Reply-To: <20111026004430.6725033af543cb336a786a3e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On Tue, 25 Oct 2011 10:05:52 -0500
-Steve French <smfrench@gmail.com> wrote:
-
-> Corrected typo in proposed patch and merged to cifs-2.6.git
+On Wed, 2011-10-26 at 00:44 +1100, Stephen Rothwell wrote:
+> Hi Jesse,
 > 
+> After merging the pci tree, today's linux-next build (powerpc
+> pseries_defconfig) failed like this:
+> 
+> drivers/pci/pci.c:2605: error: redefinition of 'pcibios_set_master'
+> arch/powerpc/include/asm/pci.h:49: note: previous definition of
+> 'pcibios_set_master' was here
+> 
+> Presumably caused by commit 481da3e3d53e ("PCI: Pull PCI 'latency
+> timer'
+> setup up into the core").
+> 
+Yes, commit 481da3e3d53e is the culprit here.  I was trying to not
+modify architectures that had inline nop functions but it's now obvious
+that the compiler sees the architecture specific include files before it
+sees the __weak def I added in drivers/pci/pci.c
 
-Patch looks fine. Thanks for fixing it...
+I think the best approach here is to remove the inline versions of
+pcibios_set_master() for the architectures with inline nops.  This will
+effectively add the new generic code to those architectures; which will
+be a slight change in behavior for them.  This has the benefit of ending
+up with most architectures utilizing the new generic code and only those
+that absolutely must having specific versions of pcibios_set_master()
+that over-rides the generic __weak code.  If we encounter issues going
+forward with this approach for a specific architecture then we can add a
+non-weak empty version back in for it.
 
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
+If anyone has issues with such an approach please let me know.  In the
+mean time -
+
+I'll work on modifying the patch series accordingly.
+
+Jesse: can you drop the series from pci-2.6/linux-next and I'll re-post
+with v2?
+
+Stephen: do you need me to do anything here or can you also drop the
+series from linux-next?
+
+Myron
