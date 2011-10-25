@@ -1,39 +1,65 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: linux-next: manual merge of the tty tree with Linus' tree
-Date: Tue, 25 Oct 2011 12:03:01 +0200
-Message-ID: <4EA68955.8010102@atmel.com>
-References: <20111025191840.329d2a862d549ec6fe6b242f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Oct 25
+Date: Tue, 25 Oct 2011 21:42:55 +1100
+Message-ID: <20111025214255.4381ace152ef032ebb9cc740@canb.auug.org.au>
+References: <20111025203628.40a1b8a475e32053aa34dabe@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__25_Oct_2011_21_42_55_+1100_Y_3I+WNeD=r_VjV."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from newsmtp5.atmel.com ([204.2.163.5]:44012 "EHLO
-	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754180Ab1JYKIb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 06:08:31 -0400
-In-Reply-To: <20111025191840.329d2a862d549ec6fe6b242f@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:37794 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754143Ab1JYKnN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 06:43:13 -0400
+In-Reply-To: <20111025203628.40a1b8a475e32053aa34dabe@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Voss, Nikolaus" <N.Voss@weinmann.de>, Nicolas FERRE <nicolas.ferre@atmel.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
 
-On 10/25/2011 10:18 AM, Stephen Rothwell :
-> Hi Greg,
-> 
-> Today's linux-next merge of the tty tree got a conflict in 
-> drivers/tty/serial/atmel_serial.c between commit 0d0a3cc183c5 
-> ("atmel_serial: fix atmel_default_console_device") from Linus' tree
-> and commit 4cbf9f4864bd ("tty/serial: atmel_serial: auto-enumerate
-> ports") from the tty tree.
-> 
-> I just used the tty tree version (which may not be completely
-> correct).
+--Signature=_Tue__25_Oct_2011_21_42_55_+1100_Y_3I+WNeD=r_VjV.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I sent a patch now to fix this conflict. It can be applied on both
-current tty-next and linux-next (obviously).
+Hi all,
 
-Sorry for the noise and thank you to having take care of this.
+On Tue, 25 Oct 2011 20:36:28 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> It will not be put into the build system referred to below.
 
-Best regards,
--- 
-Nicolas Ferre
+Linus convinced me that it may be useful to do the builds anyway, so the
+results will start appearing at http://kisskb.ellerman.id.au/linux-next
+over the next few hours.  Take the results with a grain of salt, some
+failures may have been caused by my merge fixups (and sparc will fail due
+to me applying a fix for a bug that no longer exists :-().
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__25_Oct_2011_21_42_55_+1100_Y_3I+WNeD=r_VjV.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOppKvAAoJEECxmPOUX5FEfogQAJS0cWKFUltVyf34Mofkz8Fi
+bLzGhZxQBRCl7rjBmVxGYuOkcqphGa55boFDSb8pXs7xcDxhxbi13ud7CCVNaZMW
+U/DSXp4GJMW7lPST31uRF9bg4vX84Rs/+/ai19uWeViqtOjNYpG/tdYn99onulA3
+T0Bl3Vd/M+zANcmk1Z3Ukpf48aAO9/iC+oXsUrCv867L1H/IYdIfvisCq9tZmfmP
+Cv87e56/510+1hLS30xLmZpMZdkWxOZXhvOytn7UhYwfY13d9ohzdtK9Lnsv33v+
+5WYuAqdJb4vlS1k5M+r0c/Mw09df267qNOq77vlodVwncvVUkxOwhILL1d8MBQAE
+gA3SApZzECV4IOqWnfNA+4zsZN4IIEUF3j0U5sopgvV6TmvVR1RupnASDu0Ud+Wr
+eILhml5jN/fdQJlV7eI7aunNp1swyZZXGYBpRIz8veHYPIpOaM4DdtOCqSVhmZtS
+OxynMSRvIz/JVVM8ISFMHN9/nmloHi5LAeC6HUIVfE9C5p2xaWJsX1qEKdKTxZuo
+oca9sxozLUe8qEFgXW4Cvmx8kbnTIT+q7UGdPLuPUKdfmzocM5n+ePcqwCufgpAe
+6+DspxWIOHH/EjvZnsrZvpF4WNZhLEQs/NSSvLxLq4Vk04eB+myicKPKZXELftdi
+HwSx3cv8MPNMVrXZVs7V
+=IIS7
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Oct_2011_21_42_55_+1100_Y_3I+WNeD=r_VjV.--
