@@ -1,59 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with Linus' tree
-Date: Tue, 25 Oct 2011 19:18:40 +1100
-Message-ID: <20111025191840.329d2a862d549ec6fe6b242f@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the net-next tree
+Date: Tue, 25 Oct 2011 19:26:36 +1100
+Message-ID: <20111025192636.f816c8860ee168a0a4756eda@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Oct_2011_19_18_40_+1100_F0fs+N+_PyQS9yTl"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:33575 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753625Ab1JYISz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 04:18:55 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Tue__25_Oct_2011_19_26_36_+1100_5+fykKIOW=qJZ7+d"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Voss, Nikolaus" <N.Voss@weinmann.de>, Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jpirko@redhat.com>, Ian Campbell <Ian.Campbell@citrix.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Mark Einon <mark.einon@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__25_Oct_2011_19_18_40_+1100_F0fs+N+_PyQS9yTl
+--Signature=_Tue__25_Oct_2011_19_26_36_+1100_5+fykKIOW=qJZ7+d
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/tty/serial/atmel_serial.c between commit 0d0a3cc183c5
-("atmel_serial: fix atmel_default_console_device") from Linus' tree and
-commit 4cbf9f4864bd ("tty/serial: atmel_serial: auto-enumerate ports")
-from the tty tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/et131x/et1310_tx.c drivers/staging/et131x/et131x_netdev.c
+between commits afc4b13df143 ("net: remove use of ndo_set_multicast_list
+in drivers"), bf3f1a6081aa ("et131x: convert to SKB paged frag API") and
+5d6bcdfe38ce ("net: use DMA_x_DEVICE and dma_mapping_error with
+skb_frag_dma_map") from the net-next tree and commit d2796743cba2
+("staging: et131x: Put all .c files into one big file") from the staging
+tree.
 
-I just used the tty tree version (which may not be completely correct).
+The latter removed these files, so I did that but more fixup is proably
+needed.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__25_Oct_2011_19_18_40_+1100_F0fs+N+_PyQS9yTl
+--Signature=_Tue__25_Oct_2011_19_26_36_+1100_5+fykKIOW=qJZ7+d
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOpnDgAAoJEECxmPOUX5FEl+gP/2rYffmrtjqmam+EJ0L+Kdg3
-gmVuy/kMHfOi2jzoG8V4xAZZdSxSoribRV5WN1exyfmlx9jrVLAdwLAyYLcokPql
-lR0tVWPxpMatC96kGOa/iJJEzxArYSItvYUANNA4klyOIvDER7bHPd8+1zPHpbeJ
-hAooqb38grxZjMDrNCtn5Q1KBccQh14ei3aGXoqpaES4yLqsJ8qSCYTa7BlCqvbb
-2NOtTDt/AdjfDRu/0tweAHazsruU9v72SrBDLXxwGqY+swg2xEsZe9sTr3pCpAUD
-AC3AVFgHP9BXMLLNTnojeoTW1YTMeX2qu2ZGistN8KnOKl6x+kGv1Y6wcwMhOqYJ
-DRFTIQdDLSlUGVd5JKQMYBsiMd6DBDl2kf9xyJJMcfDPTWeUcG45d/Y2fGN5UTdq
-LMiIB+3oGXFE7YeUSEmwvoJ3zi8qURO1mecR0hom+nBadYMUbPG2zSze8taEKsCy
-w5WPB0I2cFR3/RRy1gRNUAOgngx3rO6cbd7sQHEOm2xaRFUnWPvT4T6/eth4B/Da
-616LQgA1McvooEFQJyntJ70OniXpQji31y4UF+6szn8QiOaKekrFKKTU48t8ySrg
-vDU5qonBGUW7J1Ze+v8/EXnBwQJH95AlpAARAOC490GM+pzYG+hV8dOQL+dd+bQU
-G80Xs3MONZAYo29yyXYs
-=VohI
+iQIcBAEBCAAGBQJOpnK8AAoJEECxmPOUX5FE4DkP/A+8ojZnxf73+gX+05N+PFD4
+Fe6VxHQR4eMCVNvY6CKmtCngwMHyDeWqXqSneOSB2bFrVDg6gpMTujMqaceoq4mt
+3J1QpZbJ6yGYhkYf3QqC7C5AgEgvThqcRS4C7pLukzNZDno7os26Lp095eIPyJDf
+9wAMr1oAn1Q/6Um0uRazC/RRCv0B0RsQGUhFGvua1E3bgKVYzOVmD4kyRGky6CiU
+VbUWIa+0pSZ1JaUR1zaHF+N1A/s1gtkVarc0iO7SbifK1x5Wq7e+BA72guTzaDGQ
+DMGLeC2C854j+WDbv1yiQ+KwCsyiEjMnITHDGmzVsd8nW3VxA1xg4/hSpQma0ktE
+ecQzFgl1R8/7NnT5unTkvTW+tU2dLtsO/y7952aXHLTS5qSImI5fMN2AhHTAD0UE
+luUQAx82VYFVwQI5MrYwPkEJkt8ycZ4VtOvlQQ54EFyuW80efF1ZGRB9wtNmgtKf
+J5+AHZ6n0EawwdkCpVmTVwiJClIShUgpNlStGVzXTKsmo0wA+j+D9RCYJNcHB3jS
+fKTHIjj+VGzDH37R5tznQqPxU9ZafPR91vLadNRizyuHGCwA6sYOsNp8E2DDlaYw
+gaPTxSoT7RpcKCIh16bjpijVeBaTXH7FrbPPkGXjTXlbQ0+mJOTuE2ycEp7Vx7GO
+idBP6fqx5yZ8ivpBzht/
+=Ti4E
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Oct_2011_19_18_40_+1100_F0fs+N+_PyQS9yTl--
+--Signature=_Tue__25_Oct_2011_19_26_36_+1100_5+fykKIOW=qJZ7+d--
