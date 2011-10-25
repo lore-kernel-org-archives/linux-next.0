@@ -1,77 +1,112 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: build failure after merge of the cifs tree
-Date: Tue, 25 Oct 2011 10:05:52 -0500
-Message-ID: <CAH2r5mtkByKNPYN50ioRoS79sAR_rhShANcm9o-Qvo7S762VFg@mail.gmail.com>
-References: <20111026005939.ad20ab7a2dacce216c69e821@canb.auug.org.au>
-	<CAH2r5muLiYKCrS2f_DftZSnyuP0EC+vu99mENznCSL8ecnTkpg@mail.gmail.com>
+From: Michal Hocko <mhocko@suse.cz>
+Subject: Re: linux-next: manual merge of the tip tree with the cputime tree
+Date: Tue, 25 Oct 2011 17:28:02 +0200
+Message-ID: <20111025152802.GA2731@tiehlicka.suse.cz>
+References: <20111025183518.6b9747b5d870b55129266785@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:38683 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751277Ab1JYPFx convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 11:05:53 -0400
-In-Reply-To: <CAH2r5muLiYKCrS2f_DftZSnyuP0EC+vu99mENznCSL8ecnTkpg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20111025183518.6b9747b5d870b55129266785@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>, Linus <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-Corrected typo in proposed patch and merged to cifs-2.6.git
+On Tue 25-10-11 18:35:18, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in fs/proc/stat.c
+> between commit f6116715d1ba ("[S390] cputime: add sparse checking and
+> cleanup") from the cputime tree and commit a25cac5198d4 ("proc: Consider
+> NO_HZ when printing idle and iowait times") from the tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-On Tue, Oct 25, 2011 at 9:51 AM, Steve French <smfrench@gmail.com> wrot=
-e:
-> Am fixing it now. =A0Jeff missed a stub for the non-freezer case.
->
-> diff --git a/include/linux/freezer.h b/include/linux/freezer.h
-> index a155561..cd2d55b 100644
-> --- a/include/linux/freezer.h
-> +++ b/include/linux/freezer.h
-> @@ -202,6 +202,8 @@ static inline void set_freezable_with_signal(void=
-) {}
->
-> =A0#define wait_event_freezable_timeout(wq, condition, timeout) =A0 =A0=
- =A0 =A0 =A0 \
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0wait_event_interruptible_timeout(wq, c=
-ondition, timeout)
-> +#define #define wait_event_freezekillable(wq, condition) =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 \
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 wait_event_killable(wq, condition)
->
->
-> On Tue, Oct 25, 2011 at 8:59 AM, Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
->> Hi all,
->>
->> After merging the cifs tree, today's linux-next build (powerpc
->> iseries_defconfig) failed like this:
->>
->> fs/cifs/transport.c: In function 'wait_for_response':
->> fs/cifs/transport.c:328: error: implicit declaration of function 'wa=
-it_event_freezekillable'
->>
->> Caused by commit f06ac72e9291 ("cifs, freezer: add
->> wait_event_freezekillable and have cifs use it"). =A0In this config,
->> CONFIG_FREEZER is not set.
->> --
->> Cheers,
->> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auu=
-g.org.au
->> http://www.canb.auug.org.au/~sfr/
->>
->
->
->
-> --
-> Thanks,
->
-> Steve
->
+Looks good.
+
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc fs/proc/stat.c
+> index 566cd04,42b274d..0000000
+> --- a/fs/proc/stat.c
+> +++ b/fs/proc/stat.c
+> @@@ -21,6 -22,35 +22,34 @@@
+>   #define arch_idle_time(cpu) 0
+>   #endif
+>   
+> + static cputime64_t get_idle_time(int cpu)
+> + {
+> + 	u64 idle_time = get_cpu_idle_time_us(cpu, NULL);
+> + 	cputime64_t idle;
+> + 
+> + 	if (idle_time == -1ULL) {
+> + 		/* !NO_HZ so we can rely on cpustat.idle */
+>  -		idle = kstat_cpu(cpu).cpustat.idle;
+>  -		idle = cputime64_add(idle, arch_idle_time(cpu));
+> ++		idle = kstat_cpu(cpu).cpustat.idle + arch_idle_time(cpu);
+> + 	} else
+> + 		idle = usecs_to_cputime(idle_time);
+> + 
+> + 	return idle;
+> + }
+> + 
+> + static cputime64_t get_iowait_time(int cpu)
+> + {
+> + 	u64 iowait_time = get_cpu_iowait_time_us(cpu, NULL);
+> + 	cputime64_t iowait;
+> + 
+> + 	if (iowait_time == -1ULL)
+> + 		/* !NO_HZ so we can rely on cpustat.iowait */
+> + 		iowait = kstat_cpu(cpu).cpustat.iowait;
+> + 	else
+> + 		iowait = usecs_to_cputime(iowait_time);
+> + 
+> + 	return iowait;
+> + }
+> + 
+>   static int show_stat(struct seq_file *p, void *v)
+>   {
+>   	int i, j;
+> @@@ -39,16 -69,17 +68,16 @@@
+>   	jif = boottime.tv_sec;
+>   
+>   	for_each_possible_cpu(i) {
+>  -		user = cputime64_add(user, kstat_cpu(i).cpustat.user);
+>  -		nice = cputime64_add(nice, kstat_cpu(i).cpustat.nice);
+>  -		system = cputime64_add(system, kstat_cpu(i).cpustat.system);
+>  -		idle = cputime64_add(idle, get_idle_time(i));
+>  -		iowait = cputime64_add(iowait, get_iowait_time(i));
+>  -		irq = cputime64_add(irq, kstat_cpu(i).cpustat.irq);
+>  -		softirq = cputime64_add(softirq, kstat_cpu(i).cpustat.softirq);
+>  -		steal = cputime64_add(steal, kstat_cpu(i).cpustat.steal);
+>  -		guest = cputime64_add(guest, kstat_cpu(i).cpustat.guest);
+>  -		guest_nice = cputime64_add(guest_nice,
+>  -			kstat_cpu(i).cpustat.guest_nice);
+>  +		user += kstat_cpu(i).cpustat.user;
+>  +		nice += kstat_cpu(i).cpustat.nice;
+>  +		system += kstat_cpu(i).cpustat.system;
+> - 		idle += kstat_cpu(i).cpustat.idle + arch_idle_time(i);
+> - 		iowait += kstat_cpu(i).cpustat.iowait;
+> ++		idle += get_idle_time(i);
+> ++		iowait +=  get_iowait_time(i);
+>  +		irq += kstat_cpu(i).cpustat.irq;
+>  +		softirq += kstat_cpu(i).cpustat.softirq;
+>  +		steal += kstat_cpu(i).cpustat.steal;
+>  +		guest += kstat_cpu(i).cpustat.guest;
+>  +		guest_nice += kstat_cpu(i).cpustat.guest_nice;
+>   		sum += kstat_cpu_irqs_sum(i);
+>   		sum += arch_irq_stat_cpu(i);
+>   
 
 
 
---=20
-Thanks,
-
-Steve
+-- 
+Michal Hocko
+SUSE Labs
+SUSE LINUX s.r.o.
+Lihovarska 1060/12
+190 00 Praha 9    
+Czech Republic
