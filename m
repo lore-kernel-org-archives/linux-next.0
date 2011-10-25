@@ -1,34 +1,39 @@
-From: Mike Miller <mike.miller@hp.com>
-Subject: Re: linux-next: manual merge of the akpm tree with the block tree
-Date: Tue, 25 Oct 2011 13:20:29 -0500
-Message-ID: <4EA6FDED.8060602@hp.com>
-References: <20111025200708.204caa3cb5d92d6f2ce35037@canb.auug.org.au>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: currently missing kernel devel trees
+Date: Tue, 25 Oct 2011 20:52:29 +0200
+Message-ID: <20111025185229.GY11844@infomag.iguana.be>
+References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au> <20111016211102.GA15720@infomag.iguana.be> <20111024205028.42b236c4e318032d73317324@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from g1t0028.austin.hp.com ([15.216.28.35]:21022 "EHLO
-	g1t0028.austin.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752904Ab1JYS1w (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 14:27:52 -0400
-In-Reply-To: <20111025200708.204caa3cb5d92d6f2ce35037@canb.auug.org.au>
+Received: from mailrelay004.isp.belgacom.be ([195.238.6.170]:31744 "EHLO
+	mailrelay004.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751150Ab1JYSyo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Oct 2011 14:54:44 -0400
+Content-Disposition: inline
+In-Reply-To: <20111024205028.42b236c4e318032d73317324@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On 10/25/2011 04:07 AM, Stephen Rothwell wrote:
-> Hi James,
->
-> Today's linux-next merge of the akpm tree got a conflict in
-> drivers/block/cciss.c between commit ab5dbebe33e0 ("cciss: add small
-> delay when using PCI Power Management to reset for kump") from the block
-> tree and commit c9e69629e873 ("cciss: add half second delay to PCI PM
-> reset code") from the akpm tree.
->
-> These are essentially the same patch, so I dropped the akpm tree one.
-That was my fault. I made multiple submissions. One because I had the 
-wrong code base and the patch had an offset. Then another because I 
-didn't hear from anyone.
+Hi Stephen,
 
--- mikem
+> > ...
+> > > watchdog
+> > ...
+> > 
+> > Untill I have the time to do something new could you use the following tree and branch:
+> > 
+> > git://www.linux-watchdog.org/linux-watchdog.git linux-next
+> > 
+> > I started filling it with 5 patches allready, but still need to add some others in the next day.
+> 
+> OK, I have switched to using this.  Please let me know if/when you switch
+> back to kernel.org.
+
+Thanks. If things change, I will let you know.
+
+Kind regards,
+Wim.
