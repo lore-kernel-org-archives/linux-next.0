@@ -1,62 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pci tree
-Date: Wed, 26 Oct 2011 00:44:30 +1100
-Message-ID: <20111026004430.6725033af543cb336a786a3e@canb.auug.org.au>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: Tree for Oct 25 (block ?)
+Date: Tue, 25 Oct 2011 15:50:40 +0200
+Message-ID: <4EA6BEB0.8040205@kernel.dk>
+References: <CA+icZUVe7DrbrbDB7wJWrT9FHUsV62UFdifWbe3MGL7ujkX5Vw@mail.gmail.com> <CA+icZUUO3rxx4OFBNbHm4J3BFH66HBDY2LXC6-r2WY8ioo+8Dg@mail.gmail.com> <4EA6BBC2.2060406@kernel.dk> <CA+icZUUYcdS5C5DL3RnSbkWWu4hVuq4ecy5u1+0QLwEuSzJMeg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Oct_2011_00_44_30_+1100_Qb3FBRpQzJ8VL+69"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:38040 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933466Ab1JYNoq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 09:44:46 -0400
+Received: from brick.kernel.dk ([87.104.106.3]:50209 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933347Ab1JYNus (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 Oct 2011 09:50:48 -0400
+In-Reply-To: <CA+icZUUYcdS5C5DL3RnSbkWWu4hVuq4ecy5u1+0QLwEuSzJMeg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Myron Stowe <mstowe@redhat.com>
+To: sedat.dilek@gmail.com
+Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
 
---Signature=_Wed__26_Oct_2011_00_44_30_+1100_Qb3FBRpQzJ8VL+69
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2011-10-25 15:43, Sedat Dilek wrote:
+> On Tue, Oct 25, 2011 at 3:38 PM, Jens Axboe <axboe@kernel.dk> wrote:
+>> On 2011-10-25 15:10, Sedat Dilek wrote:
+>>> On Tue, Oct 25, 2011 at 3:04 PM, Sedat Dilek <sedat.dilek@googlemail.com> wrote:
+>>>> On Tue, Oct 25, 2011 at 11:36 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>>> Hi all,
+>>>>>
+>>>>> *Note well*
+>>>>>
+>>>>> This tree has nate had any build testing at all.  As such, it probably
+>>>>> doesn't build :-) This tree is really just a roll up of the current state
+>>>>> of the trees when the v3.2 merge window opened.  It will not be put into
+>>>>> the build system referred to below.
+>>>>>
+>>>>
+>>>> I have generated a single linux-next (next-20111025) patch on top of
+>>>> v3.1, it's approx. 100M!
+>>>>
+>>>> $ du -h patch-v3.1-next-20111025.patch
+>>>> 96M     patch-v3.1-next-20111025.patch
+>>>>
+>>>> I noticed this build-failure:
+>>>>
+>>>>  CC      block/blk-throttle.o
+>>>>  CC [M]  fs/fuse/dir.o
+>>>> /mnt/sdb3/linux-kernel/linux-3.1/debian/build/source_i386_none/block/blk-throttle.c:
+>>>> In function 'blk_throtl_drain':
+>>>> /mnt/sdb3/linux-kernel/linux-3.1/debian/build/source_i386_none/block/blk-throttle.c:1221:2:
+>>>> error: implicit declaration of function 'lockdep_is_held'
+>>>> [-Werror=implicit-function-declaration]
+>>>> cc1: some warnings being treated as errors
+>>>>
+>>>> make[5]: *** [block/blk-throttle.o] Error 1
+>>>> make[4]: *** [block] Error 2
+>>>>
+>>>> This happens with Debian's gcc-4.6 (4.6.1-16) and default
+>>>> KBUILD_ENABLE_EXTRA_GCC_CHECKS value.
+>>>>
+>>>> - Sedat -
+>>>>
+>>>
+>>> Looks like "#include <linux/lockdep.h>" is missing in block/blk-throttle.c?
+>>
+>> Hmm, I wonder why it isn't triggering for cfq-iosched.o or elevator.o as
+>> well. Is blk-throttle modular? What is your .config?
+>>
+>> --
+>> Jens Axboe
+>>
+>>
+> 
+> CONFIG_BLK_DEV_THROTTLING=y
+> 
+> My kernel-config is attached.
 
-Hi Jesse,
+It's just a bug in blk-throttle, you can't use lockdep_is_help if
+!CONFIG_LOCKDEP. I don't think you can reliably do this without either
+wrapping a spinlock test inside CONFIG_SMP or not, or hide this in
+CONFIG_LOCKDEP.
 
-After merging the pci tree, today's linux-next build (powerpc
-pseries_defconfig) failed like this:
-
-drivers/pci/pci.c:2605: error: redefinition of 'pcibios_set_master'
-arch/powerpc/include/asm/pci.h:49: note: previous definition of 'pcibios_se=
-t_master' was here
-
-Presumably caused by commit 481da3e3d53e ("PCI: Pull PCI 'latency timer'
-setup up into the core").
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__26_Oct_2011_00_44_30_+1100_Qb3FBRpQzJ8VL+69
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOpr0+AAoJEECxmPOUX5FEn7AP/ikwUHYcJKsW1Gc4pFvt0iZc
-No1t9LFBhEeyAmQWcMkvgDOFMF2cFJZOu6FTryRMVH96oInvY//F7VKflHFZyat+
-DEG9jr4j8/YqLR8CeyhtAo/c6CMU+22T6zohSFms3q7YftlYx5pHssnCMgE5e/2i
-Mtlyg7h5DUy6xwLU86bMT8P6Z4oBglIsX3uV9LJNwg/1COtLGppVcNVjsgpvglFw
-wXer4t3QYB18MrRi6fwHuOU2muYRH236B7H762Nn2NUcYn/g0NMDG7l5K52q2irN
-djk5/fkv/b1V+HvT1USS0JJiZ3Cs8yNDHHtWcELMdfU3kVjaJXbd7AoROt5NWtKX
-F+UrvbPEQTz3C9HkQk4mmQBfsSsJqnW1OAkSLJ8PHN51ENk6yYVWZXcbx6krpCXc
-9PzATbNBRdD27vrNXYYKbbfuB6sFg8B3ijizD7YxXWXdvOdl1j9GBKyLIYhytSmX
-s8Hq6CLdd8ay8NvbVkGykByp9XVyQbJMmy10T91+QXFV99xAE5OebEQSW+yJ+h0g
-VGxQIkJNTTZhm/mpH8wvc/2lxt4s0YdbMsDEIQS60NglU4TrXOy+LEmONQ+Drxcw
-pb6bJSHqa0V5bxq2BPSnz0DvadO+4uvSXEGV757hpcsKpZIuqhtkhGh0ACKhCY4x
-X8YdDGwxWfUnktcNqQBH
-=x8wz
------END PGP SIGNATURE-----
-
---Signature=_Wed__26_Oct_2011_00_44_30_+1100_Qb3FBRpQzJ8VL+69--
+-- 
+Jens Axboe
