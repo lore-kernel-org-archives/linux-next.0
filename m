@@ -1,77 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bluetooth tree with Linus' tree
-Date: Tue, 25 Oct 2011 17:25:09 +1100
-Message-ID: <20111025172509.931831a5ad9ae3dab8fca562@canb.auug.org.au>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: linux-next: manual merge of the scsi tree with the s390 tree
+Date: Tue, 25 Oct 2011 09:05:21 +0200
+Message-ID: <20111025090521.51cbd1ce@de.ibm.com>
+References: <20111025171601.c2365840409d17df161ca8b5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Oct_2011_17_25_09_+1100_RCSxjPHuGjtwZXBB"
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/+n8C+7Z9Bo3gQqI3gbX.sIA"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:51915 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753063Ab1JYGZX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 02:25:23 -0400
+Received: from mtagate7.uk.ibm.com ([194.196.100.167]:35148 "EHLO
+	mtagate7.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752991Ab1JYHFg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 03:05:36 -0400
+In-Reply-To: <20111025171601.c2365840409d17df161ca8b5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Gustavo F. Padovan" <padovan@profusion.mobi>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Moore <pmoore@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Andrei Emeltchenko <andrei.emeltchenko@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Swen Schillig <swen@vnet.ibm.com>, Steffen Maier <maier@linux.vnet.ibm.com>, Jan Glauber <jang@linux.vnet.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
---Signature=_Tue__25_Oct_2011_17_25_09_+1100_RCSxjPHuGjtwZXBB
+--Sig_/+n8C+7Z9Bo3gQqI3gbX.sIA
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Gustavo,
+On Tue, 25 Oct 2011 17:16:01 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the bluetooth tree got a conflict in
-net/bluetooth/l2cap_sock.c between commit 6230c9b4f895 ("bluetooth:
-Properly clone LSM attributes to newly created child connections") from
-Linus' tree and commit 15770b1ab974 ("Bluetooth: convert force_active
-variable to flag in l2cap chan") from the bluetooth tree.
+> Today's linux-next merge of the scsi tree got a conflict in
+> drivers/s390/cio/qdio_main.c between commit 9c20b3dd8479 ("[S390] qdio:
+> EQBS retry after CCQ 96") from the s390 tree and commit dfe5bb506172
+> ("[SCSI] qdio: base support for hardware data router with zfcp") from the
+> scsi tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary.
 
-I fixed it up (see below) and can carry the fix as necessary.
+Looks good. Thanks Stephen.
+
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+blue skies,
+   Martin.
 
-diff --cc net/bluetooth/l2cap_sock.c
-index e829236,836d12e..0000000
---- a/net/bluetooth/l2cap_sock.c
-+++ b/net/bluetooth/l2cap_sock.c
-@@@ -931,12 -944,7 +946,9 @@@ static void l2cap_sock_init(struct soc
-  		chan->max_tx =3D pchan->max_tx;
-  		chan->tx_win =3D pchan->tx_win;
-  		chan->sec_level =3D pchan->sec_level;
-- 		chan->role_switch =3D pchan->role_switch;
-- 		chan->force_reliable =3D pchan->force_reliable;
-- 		chan->flushable =3D pchan->flushable;
-- 		chan->force_active =3D pchan->force_active;
-+ 		chan->flags =3D pchan->flags;
- +
- +		security_sk_clone(parent, sk);
-  	} else {
- =20
-  		switch (sk->sk_type) {
+"Reality continues to ruin my life." - Calvin.
 
---Signature=_Tue__25_Oct_2011_17_25_09_+1100_RCSxjPHuGjtwZXBB
-Content-Type: application/pgp-signature
+
+--Sig_/+n8C+7Z9Bo3gQqI3gbX.sIA
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOplZFAAoJEECxmPOUX5FEgjsP+wfLQkTRW/iVuvDvHajKcV+y
-FJpd3aVPJ62dP9hiswggUDoF1UTiynf9VkpeCPTsYTWlNeT/9lgykVLn/3HK72fp
-04WSu8hK3QIgyOtqTBwolDkcQahaaaJtDvHb7PQIBky9+NW+ucPAGkd0E7lEdgtt
-K31b+sUFNvlT1wUodXf+zcFNTUXfwBbo6wALWaY7hL+D+5sQX07kQ1zpqlqRuY5F
-zTSEPAhdw2sjllYpEz3oT/eILykLilc9HDcplhzDqOTPT5P4NS8aOKO4i0McSXq4
-E0YdhWvQLDMzmvDG6SDyci0ibi/q1gxHHLPjGqt+FbDJuLDA3atwgEoFhr/SjFeK
-jtTVm/SLIyfmHfmcS6vSealoN6+2UVy2oGVfc58T41e2azYUUeD/HQsB3BneGO5g
-rZ01rNnfO0hbPHoikUjiBr/rj2B0iWOs4B8zwoYEO89YoxyvxQZMoZG3LF88f+Qt
-ZG442D4P1uHd2vVboIBqVTv2nTO0DdXCjAlmoZyJnsrWf/SAFyI+VcSi6G9+yNiw
-EjOE7UYRe+dhRYYNUPJtudhoIVPhkpA857oc1xJETpNL3CBmOOIUOdDjMwRfrcgA
-N86LFVt2JNQYIGn3yk9svVZFz4vitSbCTJJS4jNboHUUdPkO4zIA3EGF+YNN2y1O
-2x2S9uKZxYJFTJM7hrb/
-=xLtF
+iQIcBAEBAgAGBQJOpl+xAAoJELvpdr8mrl3Slr8QALTyrKDnHDCX40noaHmNzH8q
+wA8aUIGQ4VoDSawyrdBK+5mSwDngIk7op3DobMKewdYDF9bthRvHGtNOHeA9/vPM
+YrsIqSnJz+XQV6knajRjF3iI3kDYCHtFfPk8OseYGzGWvv1EfGEjacLEiPzFFZFf
++nWde8sRyovWEwTXoJKIIy8xipy1B9WSiMn+TzrILHuCUsm2yClz4qWL/k7/5UjG
+UNTxlW7hYyyRI3cOuilAhhba9o6tq7BtQI5WhAgSCinh8Kh7GUNZK6esmt7FErcL
+iSxTiup7EVtjqxhQFUdyk2h9V4B9NIawiWHLICLPLiwUxxXWgoFhmaQ+P39qjiVj
+8DoHJaTyx9Jr4aFqyIUS4+v9jKzD9hnRl3UEq35JF/AHyZmpY5bA187/UKaP1eno
+hVnm3nBwrZ2sE20odO850274O8OME0VN1DJcFmucUCG3dBgSUKhqzFrKulmzYjkA
+X3o8a1ucYIwpg8t6wSSMgj8OTvbUJuKGZX45ZKwpHcup+cDkGgYF9aZgDkSeCnPZ
+wogIaru19u7jg9PNCK8hRRehlHou69c+DVFYogN2BzJvqSlYDvTRPPRupXxkqrai
+TMkAqUK31jUpu/5hv367s2nYICSfB69qZB+sRPazQEV5HIOVAHjDHMSc+hhI6ITm
+NR+j+/Tm6pJ09/OkNUPp
+=pIKP
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Oct_2011_17_25_09_+1100_RCSxjPHuGjtwZXBB--
+--Sig_/+n8C+7Z9Bo3gQqI3gbX.sIA--
