@@ -1,39 +1,62 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: currently missing kernel devel trees
-Date: Tue, 25 Oct 2011 20:52:29 +0200
-Message-ID: <20111025185229.GY11844@infomag.iguana.be>
-References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au> <20111016211102.GA15720@infomag.iguana.be> <20111024205028.42b236c4e318032d73317324@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Wed, 26 Oct 2011 06:58:39 +1100
+Message-ID: <20111026065839.e24d529ff6ff2e6fcc413a02@canb.auug.org.au>
+References: <20111026004430.6725033af543cb336a786a3e@canb.auug.org.au>
+	<1319562878.2417.18.camel@zim.stowe>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__26_Oct_2011_06_58_39_+1100_Bpv.S+F.ryMzI9vD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailrelay004.isp.belgacom.be ([195.238.6.170]:31744 "EHLO
-	mailrelay004.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751150Ab1JYSyo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Oct 2011 14:54:44 -0400
-Content-Disposition: inline
-In-Reply-To: <20111024205028.42b236c4e318032d73317324@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:57920 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751475Ab1JYT7F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 15:59:05 -0400
+In-Reply-To: <1319562878.2417.18.camel@zim.stowe>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Myron Stowe <mstowe@redhat.com>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-Hi Stephen,
+--Signature=_Wed__26_Oct_2011_06_58_39_+1100_Bpv.S+F.ryMzI9vD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > ...
-> > > watchdog
-> > ...
-> > 
-> > Untill I have the time to do something new could you use the following tree and branch:
-> > 
-> > git://www.linux-watchdog.org/linux-watchdog.git linux-next
-> > 
-> > I started filling it with 5 patches allready, but still need to add some others in the next day.
-> 
-> OK, I have switched to using this.  Please let me know if/when you switch
-> back to kernel.org.
+Hi Myron,
 
-Thanks. If things change, I will let you know.
+On Tue, 25 Oct 2011 11:14:38 -0600 Myron Stowe <mstowe@redhat.com> wrote:
+>
+> Stephen: do you need me to do anything here or can you also drop the
+> series from linux-next?
 
-Kind regards,
-Wim.
+I just use whatever is in Jesse's tree.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__26_Oct_2011_06_58_39_+1100_Bpv.S+F.ryMzI9vD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOpxTvAAoJEECxmPOUX5FEblwP/jzcdD6A0GQt24Kkte5XhWWy
+o9d5hZTGLHMDVUhid+HBE5ag1CBBTKzTkO9a4UgRZq9MMpKFR+5aLLl7+gFeYbxc
+EOv6FbJ8V8UOSrHlRcBgdVgZBxQRDJLR4xBLfjZGW25FOwIriy5G+CjT+kAtLeHU
+77Q1TNwP14FmZOFnY2LijS52KRmYnkyrcqBnOGjT+BrcGxHZ/eVrk5X8yRkhXQ8p
+ajvHRJVz8Jl/vBN82WA2Nq3WFXYvMjvmcsReP+VXQdd2oM4dwI97n93k0SLgOa6U
+6BT73lIcNFTmDmf7LVKABv4XsXo5UgDwL0C3MULETImfuEVWswmm7qn93RO0TIgl
+xiHoMH8OBgOUKb/POlHeIIGz7KryYF9513emGoqhmqK9leZ/xYIJDRV00MnEAR5A
+Vn2nF5VZN8rHgxMtmmlWWhApZvajq9dCsEf2/+kmiPSw54qHDYc74NFjXI9SMhQ0
+pUv6OHy0VQLKFO6YNk3oiL3ceKNRjVbuA8Rd9nojfUe28//+Ux55lqACS9HHBHiC
+vjP8hPebrvAKPI+cX3npNqsT8+goMO2TvWTUisC88Vb7/XK73Mf2j18p0K7piCtq
+NT1CcE7RjK2ft/3VO7o0DB4HpQFd8ONw2cjkeYF99cqe+12OhfG6lWDn0lUgu/BO
+wvOBCbL9X7/gkyrtoBFw
+=VeWL
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__26_Oct_2011_06_58_39_+1100_Bpv.S+F.ryMzI9vD--
