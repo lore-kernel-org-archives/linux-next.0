@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the tty tree with Linus' tree
-Date: Tue, 25 Oct 2011 19:12:17 +1100
-Message-ID: <20111025191217.31638338379ac498fda051fb@canb.auug.org.au>
+Date: Tue, 25 Oct 2011 19:18:40 +1100
+Message-ID: <20111025191840.329d2a862d549ec6fe6b242f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Oct_2011_19_12_17_+1100_V4K=Ef97Abn0aQgr"
+ boundary="Signature=_Tue__25_Oct_2011_19_18_40_+1100_F0fs+N+_PyQS9yTl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:42605 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:33575 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752434Ab1JYIM3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 04:12:29 -0400
+	with ESMTP id S1753625Ab1JYISz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 04:18:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Voss, Nikolaus" <N.Voss@weinmann.de>, Nicolas Ferre <nicolas.ferre@atmel.com>
 
---Signature=_Tue__25_Oct_2011_19_12_17_+1100_V4K=Ef97Abn0aQgr
+--Signature=_Tue__25_Oct_2011_19_18_40_+1100_F0fs+N+_PyQS9yTl
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,55 +24,36 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the tty tree got a conflict in
-drivers/tty/serial/8250_pci.c between commit dacacc3e794c
-("serial/8250_pci: delete duplicate data definition") from Linus' tree
-and commit 64d91cfaade2 ("8250_pci: Fix kernel panic when pch_uart is
-disabled") from the tty tree.
+drivers/tty/serial/atmel_serial.c between commit 0d0a3cc183c5
+("atmel_serial: fix atmel_default_console_device") from Linus' tree and
+commit 4cbf9f4864bd ("tty/serial: atmel_serial: auto-enumerate ports")
+from the tty tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+I just used the tty tree version (which may not be completely correct).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/tty/serial/8250_pci.c
-index 3abeca2,1b449b7..0000000
---- a/drivers/tty/serial/8250_pci.c
-+++ b/drivers/tty/serial/8250_pci.c
-@@@ -1598,7 -1639,14 +1639,8 @@@ static struct pci_serial_quirk pci_seri
-  		.vendor         =3D 0x10DB,
-  		.device         =3D 0x800D,
-  		.init		=3D pci_eg20t_init,
-+ 		.setup		=3D pci_default_setup,
-  	},
- -	{
- -		.vendor         =3D 0x10DB,
- -		.device         =3D 0x800D,
- -		.init		=3D pci_eg20t_init,
- -		.setup		=3D pci_default_setup,
- -	},
-  	/*
-  	 * Cronyx Omega PCI (PLX-chip based)
-  	 */
-
---Signature=_Tue__25_Oct_2011_19_12_17_+1100_V4K=Ef97Abn0aQgr
+--Signature=_Tue__25_Oct_2011_19_18_40_+1100_F0fs+N+_PyQS9yTl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOpm9hAAoJEECxmPOUX5FEEbkP/28YQyjlU/7fbvXg7jCK6XaN
-6qPNij3GW0maN9rtbKZmwGqwuLPEnwoSkp5P/WG4BncGP8uw+BLTHEIAolXD/7og
-l8u+tqkBDldV/Lcrwa4RGgdQF3y6YBp/eF55PZXqMeY0IwFzp4A6mzQ/4j4dCXy7
-7/xWdkDRlVlI20PBLg0d1BFHC1+TWdYxIA+qlBKSAX55k6z4MYxNJwMM68Z9eWR9
-9mGVNXXJf8n8qC6CGZKOB+mkE7u2tk8BKToVzBaogruS3EYohOg3ntgzpPnc4K/q
-7gqvDmMPL9eIBedbUQ5Do7dplwFNHb9E0wDg/SOlIDDp1a+YExT6kSgP0f+fkf0l
-prZB7Q8ZI6oEXqyLBop1wvVY0oqaoh7KibpPKBm7Ip4F1hHUkd8TLNvXhk9M9iNb
-7aTnPBzOFCofAffMwkECQkUd8mQolNqChwb9E8dIekBE01wMSu+TRV+M7K4uOS2J
-u1HneXuwAxqg8+OBBAYhjAbOBg6sgaj33mHMqFY0cQ7G4aa0FNRK7Bbg3gESADpL
-+l5NByk8Hrii6rgtPC6rNwHH7Q6JQNnxbAuudkEiAzEzbUHYp6rsfUNM1VHGTToq
-rS3gWPVvtLBzwSXrpGZvvBbIADJOoeEtmVVE5I9Avnq2hXrlO5riQKkQHKwjLcr9
-EbVdNwrRJeKn098cs8dH
-=58OA
+iQIcBAEBCAAGBQJOpnDgAAoJEECxmPOUX5FEl+gP/2rYffmrtjqmam+EJ0L+Kdg3
+gmVuy/kMHfOi2jzoG8V4xAZZdSxSoribRV5WN1exyfmlx9jrVLAdwLAyYLcokPql
+lR0tVWPxpMatC96kGOa/iJJEzxArYSItvYUANNA4klyOIvDER7bHPd8+1zPHpbeJ
+hAooqb38grxZjMDrNCtn5Q1KBccQh14ei3aGXoqpaES4yLqsJ8qSCYTa7BlCqvbb
+2NOtTDt/AdjfDRu/0tweAHazsruU9v72SrBDLXxwGqY+swg2xEsZe9sTr3pCpAUD
+AC3AVFgHP9BXMLLNTnojeoTW1YTMeX2qu2ZGistN8KnOKl6x+kGv1Y6wcwMhOqYJ
+DRFTIQdDLSlUGVd5JKQMYBsiMd6DBDl2kf9xyJJMcfDPTWeUcG45d/Y2fGN5UTdq
+LMiIB+3oGXFE7YeUSEmwvoJ3zi8qURO1mecR0hom+nBadYMUbPG2zSze8taEKsCy
+w5WPB0I2cFR3/RRy1gRNUAOgngx3rO6cbd7sQHEOm2xaRFUnWPvT4T6/eth4B/Da
+616LQgA1McvooEFQJyntJ70OniXpQji31y4UF+6szn8QiOaKekrFKKTU48t8ySrg
+vDU5qonBGUW7J1Ze+v8/EXnBwQJH95AlpAARAOC490GM+pzYG+hV8dOQL+dd+bQU
+G80Xs3MONZAYo29yyXYs
+=VohI
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Oct_2011_19_12_17_+1100_V4K=Ef97Abn0aQgr--
+--Signature=_Tue__25_Oct_2011_19_18_40_+1100_F0fs+N+_PyQS9yTl--
