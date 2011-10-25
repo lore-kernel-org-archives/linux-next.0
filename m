@@ -1,63 +1,57 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Tue, 25 Oct 2011 16:16:10 +0200
-Message-ID: <1319552170.10883.19.camel@edumazet-laptop>
-References: <20111026005530.a4bd779e1a8182ea57dbf99f@canb.auug.org.au>
+From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: build failure after merge of the cifs tree
+Date: Tue, 25 Oct 2011 09:51:37 -0500
+Message-ID: <CAH2r5muLiYKCrS2f_DftZSnyuP0EC+vu99mENznCSL8ecnTkpg@mail.gmail.com>
+References: <20111026005939.ad20ab7a2dacce216c69e821@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:57757 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933550Ab1JYOQb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 10:16:31 -0400
-In-Reply-To: <20111026005530.a4bd779e1a8182ea57dbf99f@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20111026005939.ad20ab7a2dacce216c69e821-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Linus <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Le mercredi 26 octobre 2011 =C3=A0 00:55 +1100, Stephen Rothwell a =C3=A9=
-crit :
+Am fixing it now.  Jeff missed a stub for the non-freezer case.
+
+diff --git a/include/linux/freezer.h b/include/linux/freezer.h
+index a155561..cd2d55b 100644
+--- a/include/linux/freezer.h
++++ b/include/linux/freezer.h
+@@ -202,6 +202,8 @@ static inline void set_freezable_with_signal(void) =
+{}
+
+ #define wait_event_freezable_timeout(wq, condition, timeout)		\
+ 		wait_event_interruptible_timeout(wq, condition, timeout)
++#define #define wait_event_freezekillable(wq, condition)		\
++		wait_event_killable(wq, condition)
+
+
+On Tue, Oct 25, 2011 at 8:59 AM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org=
+> wrote:
 > Hi all,
->=20
-> After merging the net-next tree, today's linux-next build (powerpc
-> pseries_defconfig) failed like this:
->=20
-> drivers/net/ethernet/ibm/ehea/ehea_main.c: In function 'write_swqe2_d=
-ata':
-> drivers/net/ethernet/ibm/ehea/ehea_main.c:1692: error: implicit decla=
-ration of function 'frag_size'
->=20
-> Presumably caused by commit 9e903e085262 ("net: add skb frag size
-> accessors").  I guess it should have been "skb_frag_size()".
+>
+> After merging the cifs tree, today's linux-next build (powerpc
+> iseries_defconfig) failed like this:
+>
+> fs/cifs/transport.c: In function 'wait_for_response':
+> fs/cifs/transport.c:328: error: implicit declaration of function 'wai=
+t_event_freezekillable'
+>
+> Caused by commit f06ac72e9291 ("cifs, freezer: add
+> wait_event_freezekillable and have cifs use it"). =A0In this config,
+> CONFIG_FREEZER is not set.
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr-3FnU+UHB4dPYtjvyW6yDsg@public.gmane.org=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+>
 
-My bad, sorry
 
-[PATCH] ehea: fix skb_frag_size typo
 
-commit 9e903e085262 (net: add skb frag size accessors) introduced a typ=
-o
-in ehea driver.
+--=20
+Thanks,
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Eric Dumazet <eric.dumazet@gmail.com>
----
- drivers/net/ethernet/ibm/ehea/ehea_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/ibm/ehea/ehea_main.c b/drivers/net/et=
-hernet/ibm/ehea/ehea_main.c
-index 0d4d4f6..37b70f7 100644
---- a/drivers/net/ethernet/ibm/ehea/ehea_main.c
-+++ b/drivers/net/ethernet/ibm/ehea/ehea_main.c
-@@ -1689,7 +1689,7 @@ static inline void write_swqe2_data(struct sk_buf=
-f *skb, struct net_device *dev,
- 			sgentry =3D &sg_list[i - sg1entry_contains_frag_data];
-=20
- 			sgentry->l_key =3D lkey;
--			sgentry->len =3D frag_size(frag);
-+			sgentry->len =3D skb_frag_size(frag);
- 			sgentry->vaddr =3D ehea_map_vaddr(skb_frag_address(frag));
- 			swqe->descriptors++;
- 		}
+Steve
