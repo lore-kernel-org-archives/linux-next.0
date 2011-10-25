@@ -1,22 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with the xen-two tree
-Date: Tue, 25 Oct 2011 19:34:42 +1100
-Message-ID: <20111025193442.66255eed8e72d5e88cce192f@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with Linus' tree
+Date: Tue, 25 Oct 2011 19:37:31 +1100
+Message-ID: <20111025193731.c4332cd9ca07b7d833b76914@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Oct_2011_19_34_42_+1100_WOpd3DhbC32dsllT"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:58781 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755261Ab1JYIpw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 04:45:52 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Tue__25_Oct_2011_19_37_31_+1100_R5wnl+TvT9Sk3EeB"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Magenheimer <dan.magenheimer@oracle.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Moore <pmoore@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__25_Oct_2011_19_34_42_+1100_WOpd3DhbC32dsllT
+--Signature=_Tue__25_Oct_2011_19_37_31_+1100_R5wnl+TvT9Sk3EeB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,51 +20,49 @@ Content-Transfer-Encoding: quoted-printable
 Hi Paul,
 
 Today's linux-next merge of the moduleh tree got a conflict in
-drivers/xen/xen-selfballoon.c between commit 38a1ed4f039d ("xen: Fix
-selfballooning and ensure it doesn't go too far") from the xen-two tree
-and commit 29ff02027c68 ("xen: fix implicit stat.h/module.h include usage
-in xen-selfballoon.c") from the moduleh tree.
+net/bluetooth/l2cap_sock.c between commit 6230c9b4f895 ("bluetooth:
+Properly clone LSM attributes to newly created child connections") from
+Linus' tree and commit ac86caa04348 ("net: Add export.h for
+EXPORT_SYMBOL/THIS_MODULE to non-modules") from the moduleh tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/xen/xen-selfballoon.c
-index d93c708,e21e3ce..0000000
---- a/drivers/xen/xen-selfballoon.c
-+++ b/drivers/xen/xen-selfballoon.c
-@@@ -68,8 -68,8 +68,10 @@@
-   */
+diff --cc net/bluetooth/l2cap_sock.c
+index a4a9d12,fa5e166..0000000
+--- a/net/bluetooth/l2cap_sock.c
++++ b/net/bluetooth/l2cap_sock.c
+@@@ -26,7 -26,7 +26,8 @@@
  =20
-  #include <linux/kernel.h>
- +#include <linux/bootmem.h>
- +#include <linux/swap.h>
-+ #include <linux/stat.h>
-+ #include <linux/module.h>
-  #include <linux/mm.h>
-  #include <linux/mman.h>
-  #include <linux/module.h>
+  /* Bluetooth L2CAP sockets. */
+ =20
+ +#include <linux/security.h>
++ #include <linux/export.h>
+ =20
+  #include <net/bluetooth/bluetooth.h>
+  #include <net/bluetooth/hci_core.h>
 
---Signature=_Tue__25_Oct_2011_19_34_42_+1100_WOpd3DhbC32dsllT
+--Signature=_Tue__25_Oct_2011_19_37_31_+1100_R5wnl+TvT9Sk3EeB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOpnSiAAoJEECxmPOUX5FEshgP/1Q8t/7Q/nPNl0tqUIvOihyz
-7RKfnS5ipi4aRu09qwtwVGNUV82crDxlii9INDbustYqQEcplL55o6fRDNSlxHbX
-bdD7y8U+Pb8gfYRI8SFx6K9Op8YWcgUjy9RbAMXTWmu8H/IsrCpS0jnn9PYK0vNO
-92KYyXxJqoqOM8q4yLKwXTZ828p968Sdy/mpMatrS6tPq49vcxA5nG8axY6lvUIN
-8SwDRZeMYQmA9nu5UAlp44yQTEazpS9OoHqSJwIAmlwA4Ma1//8tl5oBZKf84BX9
-sudU+Z26L/M8r1+FA2Mq0KFAYxVQt1QPA+4bLl40oupmyhKEWKAF3fr5+k+qhfe+
-ciYk6yJflUiyS5H0NQU5x6f+s7V4EYb+WytbSYGsoynUXW9nXLNCxuHF8Zy19sB9
-VTB+DpWwYNmIWv+6j6TjKwDPXUnnIzWRojZn4V5WTZiIZAIBGfKMgmPSKKhjF3Sk
-jpFR0BWzjdmVX1MHQ/DsEtxNx0ZU3Lc+UzX8MJtSPn591l5p4zT6XC9mBO9CtFJg
-gg/nHOntNEP/lCR3Gd/5agJEjRlRkdhupgDaV9Ypw9hqLkFW0e5p3qhAw/eFcNjo
-K1z5Iuwm+CK6ML1BMVnw2UzZPcDpLAgA1jVJ8c0u5Ac+73oEdHwzxOVMs2DuGzPQ
-FBDEUCPqjeGjOPJo542u
-=GXBP
+iQIcBAEBCAAGBQJOpnVLAAoJEECxmPOUX5FEFyYP/RrOkB5KTESa3AjUg8DRdCKq
+cTo5J3HuaW4pS0g0d4x5ZO1IiJWsQPkyincggRuQmlnVbdnxTIFniF8DzEcez+0u
+C2tyTfkDF5BGChvOQhTDy5S2vrLcjIHrFSjVbGKD1YPPIw5rqU0nQapv7ZekVWj8
+5cO748vHvoM/qFpFwX1FQUsuP4ItSt9WDGEoOacBdMJscdwU3HwuDbcl+Vz19/2U
+236yqHlnnhY5yoU6tMcQtBYFup3lGjykGSKquixaFKZxQKUQhpuoqI0mKYs8Otew
+4s7MMAhQkcxnjVB2UrdXI8J9HB9xnoyWF6VeJTkUwUo584LWkqq468YVcsAfeJ2W
+TU9Bv6R6XkB5oPhP2HUlbVH3+yyEiezYGfU6KQW6KMTosyqQ++/udO2WK6hru3+P
+MaJMGsysPOP1G7o7gdbxWFdTqGsoxv7GRvZvLss7BOr9CmOX9Lr2jRBzm9TQs5ls
+GDH8Qxo5duIvL3niCqIelqdZiMedzRRsTpqv/gmGIhBzAMx40Oxmy88kxhLkAUYb
+lKe4hZl8Ze5rKLz19JKO+AS+KiMbipeAoxmf+/fPKgsBBcGNkF8z/ZB2F39T8iR0
+Ua47QPIUCiGOj1nMSIb2m5uib8YYdPj1AjBY1QX2kb8jcDZpyE/mJC/LKtYeiTsR
+WPeJ+oBxuE89DNJqNCze
+=4pcM
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Oct_2011_19_34_42_+1100_WOpd3DhbC32dsllT--
+--Signature=_Tue__25_Oct_2011_19_37_31_+1100_R5wnl+TvT9Sk3EeB--
