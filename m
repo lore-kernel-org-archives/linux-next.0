@@ -1,41 +1,45 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Tue, 25 Oct 2011 09:04:14 +0100
-Message-ID: <20111025090414.4d0034ee@taxman.wild-wind.fr.eu.org>
-References: <20111025074532.cc8cf0d5a9611ecc1246f46d@canb.auug.org.au>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: linux-next: manual merge of the pm tree with the s390 tree
+Date: Tue, 25 Oct 2011 10:40:05 +0200
+Message-ID: <20111025104005.733cd419@de.ibm.com>
+References: <20111025182025.d57f82a57ceaa8fae7cc5127@canb.auug.org.au>
+	<201110251039.46327.rjw@sisk.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from inca-roads.misterjones.org ([213.251.177.50]:48813 "EHLO
-	inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751837Ab1JYIiY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Oct 2011 04:38:24 -0400
-In-Reply-To: <20111025074532.cc8cf0d5a9611ecc1246f46d@canb.auug.org.au>
+Received: from mtagate7.uk.ibm.com ([194.196.100.167]:51721 "EHLO
+	mtagate7.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752266Ab1JYIkK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 04:40:10 -0400
+In-Reply-To: <201110251039.46327.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Changhwan Youn <chaos.youn@samsung.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-On Tue, 25 Oct 2011 07:45:32 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, 25 Oct 2011 10:39:46 +0200
+"Rafael J. Wysocki" <rjw@sisk.pl> wrote:
 
-> Hi Arnd,
+> On Tuesday, October 25, 2011, Stephen Rothwell wrote:
+> > Hi Rafael,
+> > 
+> > Today's linux-next merge of the pm tree got a conflict in
+> > arch/s390/kernel/suspend.c between commit 4de2166b1804 ("[S390] sparse:
+> > fix sparse warnings about missing prototypes") from the s390 tree and
+> > commit 85055dd805f0 ("PM / Hibernate: Include storage keys in hibernation
+> > image on s390") from the pm tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary.
 > 
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/mach-exynos4/include/mach/entry-macro.S between commit
-> 292b293ceef2 ("ARM: gic: consolidate PPI handling") from the arm tree and
-> commit 3a0622811292 ("ARM: EXYNOS4: Add support MCT PPI for EXYNOS4212")
-> from the arm-soc tree.
-> 
-> Again, I hacked it up (again probably incorrectly - I kept both
-> additions).
+> The fix looks correct to me, so please carry it going forward (unless
+> Martin decides to pull it into his tree).
 
-I'll cook a patch for this shortly.
+I could add the git commit 85055dd805f0 from the pm tree to git390 and fix
+the merge conflict in the new sparse patch. Dunno if it is worthwhile.
 
-Thanks,
-
-	M.
 -- 
-I'm the slime oozin' out from your TV set...
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
