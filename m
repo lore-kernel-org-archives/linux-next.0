@@ -1,40 +1,39 @@
 From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: [PATCH] tty/serial: atmel_serial: fixup merge conflict
-Date: Tue, 25 Oct 2011 12:05:29 +0200
-Message-ID: <1319537129-7164-1-git-send-email-nicolas.ferre@atmel.com>
-References: <4EA68955.8010102@atmel.com>
+Subject: Re: linux-next: manual merge of the tty tree with Linus' tree
+Date: Tue, 25 Oct 2011 12:03:01 +0200
+Message-ID: <4EA68955.8010102@atmel.com>
+References: <20111025191840.329d2a862d549ec6fe6b242f@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from newsmtp5.atmel.com ([204.2.163.5]:52852 "EHLO
+Received: from newsmtp5.atmel.com ([204.2.163.5]:44012 "EHLO
 	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752856Ab1JYKFk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 06:05:40 -0400
-In-Reply-To: <4EA68955.8010102@atmel.com>
+	with ESMTP id S1754180Ab1JYKIb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 06:08:31 -0400
+In-Reply-To: <20111025191840.329d2a862d549ec6fe6b242f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au, greg@kroah.com
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, N.Voss@weinmann.de, nicolas.ferre@atmel.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Voss, Nikolaus" <N.Voss@weinmann.de>, Nicolas FERRE <nicolas.ferre@atmel.com>
 
-Proper atmel_console_init() merge using platform data.
+On 10/25/2011 10:18 AM, Stephen Rothwell :
+> Hi Greg,
+> 
+> Today's linux-next merge of the tty tree got a conflict in 
+> drivers/tty/serial/atmel_serial.c between commit 0d0a3cc183c5 
+> ("atmel_serial: fix atmel_default_console_device") from Linus' tree
+> and commit 4cbf9f4864bd ("tty/serial: atmel_serial: auto-enumerate
+> ports") from the tty tree.
+> 
+> I just used the tty tree version (which may not be completely
+> correct).
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
----
- drivers/tty/serial/atmel_serial.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+I sent a patch now to fix this conflict. It can be applied on both
+current tty-next and linux-next (obviously).
 
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index 358bbb2..9988c0c 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -1671,7 +1671,9 @@ static struct console atmel_console = {
- static int __init atmel_console_init(void)
- {
- 	if (atmel_default_console_device) {
--		int id = atmel_default_console_device->id;
-+		struct atmel_uart_data *pdata =
-+			atmel_default_console_device->dev.platform_data;
-+		int id = pdata->num;
- 		struct atmel_uart_port *port = &atmel_ports[id];
- 
- 		port->backup_imr = 0;
+Sorry for the noise and thank you to having take care of this.
+
+Best regards,
 -- 
-1.7.5.4
+Nicolas Ferre
