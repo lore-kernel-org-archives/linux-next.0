@@ -1,41 +1,58 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: manual merge of the pm tree with the s390 tree
-Date: Tue, 25 Oct 2011 10:44:40 +0200
-Message-ID: <201110251044.40354.rjw@sisk.pl>
-References: <20111025182025.d57f82a57ceaa8fae7cc5127@canb.auug.org.au> <201110251039.46327.rjw@sisk.pl> <20111025104005.733cd419@de.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the  tree
+Date: Tue, 25 Oct 2011 19:45:19 +1100
+Message-ID: <20111025194519.de13df739f60f9d961425558@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111025104005.733cd419@de.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__25_Oct_2011_19_45_19_+1100_Ln+s9IfXas7+OFID"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:33105 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755418Ab1JYIpd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 04:45:33 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tuesday, October 25, 2011, Martin Schwidefsky wrote:
-> On Tue, 25 Oct 2011 10:39:46 +0200
-> "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
-> 
-> > On Tuesday, October 25, 2011, Stephen Rothwell wrote:
-> > > Hi Rafael,
-> > > 
-> > > Today's linux-next merge of the pm tree got a conflict in
-> > > arch/s390/kernel/suspend.c between commit 4de2166b1804 ("[S390] sparse:
-> > > fix sparse warnings about missing prototypes") from the s390 tree and
-> > > commit 85055dd805f0 ("PM / Hibernate: Include storage keys in hibernation
-> > > image on s390") from the pm tree.
-> > > 
-> > > I fixed it up (see below) and can carry the fix as necessary.
-> > 
-> > The fix looks correct to me, so please carry it going forward (unless
-> > Martin decides to pull it into his tree).
-> 
-> I could add the git commit 85055dd805f0 from the pm tree to git390 and fix
-> the merge conflict in the new sparse patch. Dunno if it is worthwhile.
+--Signature=_Tue__25_Oct_2011_19_45_19_+1100_Ln+s9IfXas7+OFID
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Not really.  I think the conflict is easy enough to handle at merge time.
+Hi Paul,
 
-Thanks,
-Rafael
+Today's linux-next merge of the moduleh tree got a conflict in
+arch/arm/plat-s5p/dev-tv.c from merge fix patch
+"arm-Add-export.h-to-recently-added-files-for-EXPORT_.patch" from the
+moduleh tree.
+
+This file has been removed, so I dropped that hunk.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__25_Oct_2011_19_45_19_+1100_Ln+s9IfXas7+OFID
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOpncfAAoJEECxmPOUX5FEhW8P/jb/rUhZeNqUKWTYaFElRw5T
+3esek64eX6bho67kWxF31iiYB6fNuIjzcFNBYQOzccCGVa13Yw//gpdmdpI1cuk7
+drh4IeYSiL8vl8q1YF+jbaO8+fAA/AYkhSGxDvmAoYidJBjUw1HOkYFItLVAPoQj
+7Vz7gnTevxevY8+S+if+yW3IpmVu5FGnNXo07aVWTnOKH+ch4BGBADmFqEitt2EM
+CoQoKXzkpIU1HyS+DSbT7iDEtseRXQHiBciLk8Jhyfjc0xGqRmsOBcOrXX/RPaTn
+4M4DvubfwQjqXTzUhyVgVHDgVrDZKAMQet7q+nKcfsXjGER6/tCFC+o1wL4Kw78F
+OhH+Z00RmTqk+PsVxZw1WML4+vaXq8mL8M3bmvBGxI73r3UrMXM6kmKFcMmBizh6
+UrsxAbYvawZdJqW9my+FsobmaIFtqNisaA/BkOH54oqHRW2eB7ZoL2V92/I2xA3z
+xYfjCdTj0wgTTzuwbw8VkCNZC9ZJhnCtkcsDELRayB5WAF1XNCFY1MzjVSLXWP6C
+gbW7y3Q/meBahG9b6qHfEFmN8jQ/5FZvVlEAbM+bGd2IhIbetSQZOZnwo6HXGVzt
+WEyAijMYTdFwBL/VnKS7lqm1DoXlsv5DCEN1lFH4KAk24ASHGQrdJ5ZPVfe/UMGP
+obzN6v32WQXtxbUgBk9E
+=A2pr
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_Oct_2011_19_45_19_+1100_Ln+s9IfXas7+OFID--
