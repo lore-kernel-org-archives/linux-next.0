@@ -1,60 +1,34 @@
-From: Myron Stowe <mstowe@redhat.com>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Tue, 25 Oct 2011 11:14:38 -0600
-Message-ID: <1319562878.2417.18.camel@zim.stowe>
-References: <20111026004430.6725033af543cb336a786a3e@canb.auug.org.au>
+From: Mike Miller <mike.miller@hp.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the block tree
+Date: Tue, 25 Oct 2011 13:20:29 -0500
+Message-ID: <4EA6FDED.8060602@hp.com>
+References: <20111025200708.204caa3cb5d92d6f2ce35037@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:5736 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752030Ab1JYROq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 Oct 2011 13:14:46 -0400
-In-Reply-To: <20111026004430.6725033af543cb336a786a3e@canb.auug.org.au>
+Received: from g1t0028.austin.hp.com ([15.216.28.35]:21022 "EHLO
+	g1t0028.austin.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752904Ab1JYS1w (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 14:27:52 -0400
+In-Reply-To: <20111025200708.204caa3cb5d92d6f2ce35037@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
 
-On Wed, 2011-10-26 at 00:44 +1100, Stephen Rothwell wrote:
-> Hi Jesse,
-> 
-> After merging the pci tree, today's linux-next build (powerpc
-> pseries_defconfig) failed like this:
-> 
-> drivers/pci/pci.c:2605: error: redefinition of 'pcibios_set_master'
-> arch/powerpc/include/asm/pci.h:49: note: previous definition of
-> 'pcibios_set_master' was here
-> 
-> Presumably caused by commit 481da3e3d53e ("PCI: Pull PCI 'latency
-> timer'
-> setup up into the core").
-> 
-Yes, commit 481da3e3d53e is the culprit here.  I was trying to not
-modify architectures that had inline nop functions but it's now obvious
-that the compiler sees the architecture specific include files before it
-sees the __weak def I added in drivers/pci/pci.c
+On 10/25/2011 04:07 AM, Stephen Rothwell wrote:
+> Hi James,
+>
+> Today's linux-next merge of the akpm tree got a conflict in
+> drivers/block/cciss.c between commit ab5dbebe33e0 ("cciss: add small
+> delay when using PCI Power Management to reset for kump") from the block
+> tree and commit c9e69629e873 ("cciss: add half second delay to PCI PM
+> reset code") from the akpm tree.
+>
+> These are essentially the same patch, so I dropped the akpm tree one.
+That was my fault. I made multiple submissions. One because I had the 
+wrong code base and the patch had an offset. Then another because I 
+didn't hear from anyone.
 
-I think the best approach here is to remove the inline versions of
-pcibios_set_master() for the architectures with inline nops.  This will
-effectively add the new generic code to those architectures; which will
-be a slight change in behavior for them.  This has the benefit of ending
-up with most architectures utilizing the new generic code and only those
-that absolutely must having specific versions of pcibios_set_master()
-that over-rides the generic __weak code.  If we encounter issues going
-forward with this approach for a specific architecture then we can add a
-non-weak empty version back in for it.
-
-If anyone has issues with such an approach please let me know.  In the
-mean time -
-
-I'll work on modifying the patch series accordingly.
-
-Jesse: can you drop the series from pci-2.6/linux-next and I'll re-post
-with v2?
-
-Stephen: do you need me to do anything here or can you also drop the
-series from linux-next?
-
-Myron
+-- mikem
