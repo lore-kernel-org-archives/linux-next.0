@@ -1,62 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Wed, 26 Oct 2011 06:58:39 +1100
-Message-ID: <20111026065839.e24d529ff6ff2e6fcc413a02@canb.auug.org.au>
-References: <20111026004430.6725033af543cb336a786a3e@canb.auug.org.au>
-	<1319562878.2417.18.camel@zim.stowe>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: Updated target-pending.git branches for linux-next
+Date: Tue, 25 Oct 2011 13:04:10 -0700
+Message-ID: <1319573050.6463.2.camel@haakon2.linux-iscsi.org>
+References: <1319436327.15576.4.camel@haakon2.linux-iscsi.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__26_Oct_2011_06_58_39_+1100_Bpv.S+F.ryMzI9vD"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:57920 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751475Ab1JYT7F (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 15:59:05 -0400
-In-Reply-To: <1319562878.2417.18.camel@zim.stowe>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Myron Stowe <mstowe@redhat.com>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <target-devel-owner@vger.kernel.org>
+In-Reply-To: <1319436327.15576.4.camel@haakon2.linux-iscsi.org>
+Sender: target-devel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next <linux-next@vger.kernel.org>, target-devel <target-devel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__26_Oct_2011_06_58_39_+1100_Bpv.S+F.ryMzI9vD
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, 2011-10-23 at 23:05 -0700, Nicholas A. Bellinger wrote:
+> Hi Stephen,
+> 
+> The target-pending.git tree is now back on kernel.org, and as before
+> the following branch is used as 'for-next' updates to existing
+> drivers/target/ code:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git for-next
+> 
+> I've also added another branch that is being used for new target modules
+> being merged in the next development cycle:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git for-next-merge
+> 
+> If you would be so kind, please go ahead and add the second entry as well
+> into your linux-next daily builds.
+> 
 
-Hi Myron,
+Hi Stephen,
 
-On Tue, 25 Oct 2011 11:14:38 -0600 Myron Stowe <mstowe@redhat.com> wrote:
->
-> Stephen: do you need me to do anything here or can you also drop the
-> series from linux-next?
+Just another friendly reminder to please add the for-next-merge branch
+into Next/Trees..  Also if you would, please change the tree names to
+'target-updates' and 'target-merge' respectively.
 
-I just use whatever is in Jesse's tree.
+Thank you!
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__26_Oct_2011_06_58_39_+1100_Bpv.S+F.ryMzI9vD
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOpxTvAAoJEECxmPOUX5FEblwP/jzcdD6A0GQt24Kkte5XhWWy
-o9d5hZTGLHMDVUhid+HBE5ag1CBBTKzTkO9a4UgRZq9MMpKFR+5aLLl7+gFeYbxc
-EOv6FbJ8V8UOSrHlRcBgdVgZBxQRDJLR4xBLfjZGW25FOwIriy5G+CjT+kAtLeHU
-77Q1TNwP14FmZOFnY2LijS52KRmYnkyrcqBnOGjT+BrcGxHZ/eVrk5X8yRkhXQ8p
-ajvHRJVz8Jl/vBN82WA2Nq3WFXYvMjvmcsReP+VXQdd2oM4dwI97n93k0SLgOa6U
-6BT73lIcNFTmDmf7LVKABv4XsXo5UgDwL0C3MULETImfuEVWswmm7qn93RO0TIgl
-xiHoMH8OBgOUKb/POlHeIIGz7KryYF9513emGoqhmqK9leZ/xYIJDRV00MnEAR5A
-Vn2nF5VZN8rHgxMtmmlWWhApZvajq9dCsEf2/+kmiPSw54qHDYc74NFjXI9SMhQ0
-pUv6OHy0VQLKFO6YNk3oiL3ceKNRjVbuA8Rd9nojfUe28//+Ux55lqACS9HHBHiC
-vjP8hPebrvAKPI+cX3npNqsT8+goMO2TvWTUisC88Vb7/XK73Mf2j18p0K7piCtq
-NT1CcE7RjK2ft/3VO7o0DB4HpQFd8ONw2cjkeYF99cqe+12OhfG6lWDn0lUgu/BO
-wvOBCbL9X7/gkyrtoBFw
-=VeWL
------END PGP SIGNATURE-----
-
---Signature=_Wed__26_Oct_2011_06_58_39_+1100_Bpv.S+F.ryMzI9vD--
+--nab
