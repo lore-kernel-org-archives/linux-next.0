@@ -1,128 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi tree with the s390 tree
-Date: Tue, 25 Oct 2011 17:16:01 +1100
-Message-ID: <20111025171601.c2365840409d17df161ca8b5@canb.auug.org.au>
+Subject: linux-next: manual merge of the bluetooth tree with Linus' tree
+Date: Tue, 25 Oct 2011 17:25:09 +1100
+Message-ID: <20111025172509.931831a5ad9ae3dab8fca562@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__25_Oct_2011_17_16_01_+1100_NcMMTWaYKCCW38kt"
+ boundary="Signature=_Tue__25_Oct_2011_17_25_09_+1100_RCSxjPHuGjtwZXBB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:37470 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:51915 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753365Ab1JYGQT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 02:16:19 -0400
+	with ESMTP id S1753063Ab1JYGZX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2011 02:25:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Swen Schillig <swen@vnet.ibm.com>, Steffen Maier <maier@linux.vnet.ibm.com>, Jan Glauber <jang@linux.vnet.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+To: "Gustavo F. Padovan" <padovan@profusion.mobi>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Moore <pmoore@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Andrei Emeltchenko <andrei.emeltchenko@intel.com>
 
---Signature=_Tue__25_Oct_2011_17_16_01_+1100_NcMMTWaYKCCW38kt
+--Signature=_Tue__25_Oct_2011_17_25_09_+1100_RCSxjPHuGjtwZXBB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi Gustavo,
 
-Today's linux-next merge of the scsi tree got a conflict in
-drivers/s390/cio/qdio_main.c between commit 9c20b3dd8479 ("[S390] qdio:
-EQBS retry after CCQ 96") from the s390 tree and commit dfe5bb506172
-("[SCSI] qdio: base support for hardware data router with zfcp") from the
-scsi tree.
+Today's linux-next merge of the bluetooth tree got a conflict in
+net/bluetooth/l2cap_sock.c between commit 6230c9b4f895 ("bluetooth:
+Properly clone LSM attributes to newly created child connections") from
+Linus' tree and commit 15770b1ab974 ("Bluetooth: convert force_active
+variable to flag in l2cap chan") from the bluetooth tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/s390/cio/qdio_main.c
-index a108e28,d2c1f1b..0000000
---- a/drivers/s390/cio/qdio_main.c
-+++ b/drivers/s390/cio/qdio_main.c
-@@@ -145,26 -151,16 +145,28 @@@ again
-  		goto again;
-  	}
- =20
- -	if (rc < 0) {
- -		DBF_ERROR("%4x EQBS ERROR", SCH_NO(q));
- -		DBF_ERROR("%3d%3d%2d", count, tmp_count, nr);
- -		q->handler(q->irq_ptr->cdev,
- -			   QDIO_ERROR_ACTIVATE_CHECK_CONDITION,
- -			   q->nr, q->first_to_kick, count,
- -			   q->irq_ptr->int_parm);
- -		return 0;
- +	if (rc =3D=3D 2) {
- +		BUG_ON(tmp_count =3D=3D count);
- +		qperf_inc(q, eqbs_partial);
- +		DBF_DEV_EVENT(DBF_WARN, q->irq_ptr, "EQBS part:%02x",
- +			tmp_count);
- +		/*
- +		 * Retry once, if that fails bail out and process the
- +		 * extracted buffers before trying again.
- +		 */
- +		if (!retried++)
- +			goto again;
- +		else
- +			return count - tmp_count;
-  	}
- -	return count - tmp_count;
+diff --cc net/bluetooth/l2cap_sock.c
+index e829236,836d12e..0000000
+--- a/net/bluetooth/l2cap_sock.c
++++ b/net/bluetooth/l2cap_sock.c
+@@@ -931,12 -944,7 +946,9 @@@ static void l2cap_sock_init(struct soc
+  		chan->max_tx =3D pchan->max_tx;
+  		chan->tx_win =3D pchan->tx_win;
+  		chan->sec_level =3D pchan->sec_level;
+- 		chan->role_switch =3D pchan->role_switch;
+- 		chan->force_reliable =3D pchan->force_reliable;
+- 		chan->flushable =3D pchan->flushable;
+- 		chan->force_active =3D pchan->force_active;
++ 		chan->flags =3D pchan->flags;
  +
- +	DBF_ERROR("%4x EQBS ERROR", SCH_NO(q));
- +	DBF_ERROR("%3d%3d%2d", count, tmp_count, nr);
-- 	q->handler(q->irq_ptr->cdev, QDIO_ERROR_ACTIVATE_CHECK_CONDITION,
-- 		   0, -1, -1, q->irq_ptr->int_parm);
-++	q->handler(q->irq_ptr->cdev,
-++		   QDIO_ERROR_ACTIVATE_CHECK_CONDITION,
-++		   q->nr, q->first_to_kick, count,
-++		   q->irq_ptr->int_parm);
- +	return 0;
-  }
+ +		security_sk_clone(parent, sk);
+  	} else {
  =20
-  /**
-@@@ -207,12 -198,17 +209,12 @@@ again
-  		qperf_inc(q, sqbs_partial);
-  		goto again;
-  	}
- -	if (rc < 0) {
- -		DBF_ERROR("%4x SQBS ERROR", SCH_NO(q));
- -		DBF_ERROR("%3d%3d%2d", count, tmp_count, nr);
- -		q->handler(q->irq_ptr->cdev,
- -			   QDIO_ERROR_ACTIVATE_CHECK_CONDITION,
- -			   q->nr, q->first_to_kick, count,
- -			   q->irq_ptr->int_parm);
- -		return 0;
- -	}
- -	WARN_ON(tmp_count);
- -	return count - tmp_count;
- +
- +	DBF_ERROR("%4x SQBS ERROR", SCH_NO(q));
- +	DBF_ERROR("%3d%3d%2d", count, tmp_count, nr);
- +	q->handler(q->irq_ptr->cdev, QDIO_ERROR_ACTIVATE_CHECK_CONDITION,
-- 		   0, -1, -1, q->irq_ptr->int_parm);
-++		   q->nr, q->first_to_kick, count, q->irq_ptr->int_parm);
- +	return 0;
-  }
- =20
-  /* returns number of examined buffers and their common state in *state */
+  		switch (sk->sk_type) {
 
---Signature=_Tue__25_Oct_2011_17_16_01_+1100_NcMMTWaYKCCW38kt
+--Signature=_Tue__25_Oct_2011_17_25_09_+1100_RCSxjPHuGjtwZXBB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOplQhAAoJEECxmPOUX5FEvqkP/R5Pr+d26s77WVbfyQsXEFDB
-zJ2aogSlOj0dLQrLnU14IuUNME4rJ5ighwquNshwvvEr4DsdBMqhrffbD45qXO2H
-RrXVSMx7gCW+AXn20Ad/Umn+6DxTf9tA33T9jjZFIIE452xdskLXOkUEjXjRwmb+
-lkj18yW6AwYDKo5FQ27rf+CMvsK0z3FOWsBaEmTBU9Y7DWu7MS90bPBt9W8I/8qy
-bivusRxhUahncDmW3VmNYwMbndiTeFrwQvcJ8lU68VNbt8DtGIIaKe7TUy1B9Jbn
-Tzc9j4t5Lkpmby0QLdvmGYJGrfSaR4fyxu2SV3ItfMYtRhu7zBK8rrv8cTqW9vAV
-s8/aRKdc5p5As6X4phbq5ECeTdgn65eRRTHW5DxYpDz2IJ9ywIrPiGgsosBpKA9R
-hKxlyTwokgNXIB9VKPgfVFcOASa4q9s/HUvnkaW3EzbXWy85zCkG1BVR0xIvlhCP
-oS2CmpLFUB65jdyXEl+vLw7qIyfZBiKBC2OSSoNF8hqAfrERh5EfrQThhDhrBTEG
-d3o8kjHI4sOdkr7jcoXfU0e68tkVkWNzbIjwnegUC0NW5gHzmoKgMG6KE5kHlu8i
-akirpwreo4NN0yNer0zOIIkwWAsTdX0+QBm6vy9nuF7tIpeRYOh/eXbJN0GhIZtD
-MmlzTCd3A9HnD4t2aaUf
-=5kOk
+iQIcBAEBCAAGBQJOplZFAAoJEECxmPOUX5FEgjsP+wfLQkTRW/iVuvDvHajKcV+y
+FJpd3aVPJ62dP9hiswggUDoF1UTiynf9VkpeCPTsYTWlNeT/9lgykVLn/3HK72fp
+04WSu8hK3QIgyOtqTBwolDkcQahaaaJtDvHb7PQIBky9+NW+ucPAGkd0E7lEdgtt
+K31b+sUFNvlT1wUodXf+zcFNTUXfwBbo6wALWaY7hL+D+5sQX07kQ1zpqlqRuY5F
+zTSEPAhdw2sjllYpEz3oT/eILykLilc9HDcplhzDqOTPT5P4NS8aOKO4i0McSXq4
+E0YdhWvQLDMzmvDG6SDyci0ibi/q1gxHHLPjGqt+FbDJuLDA3atwgEoFhr/SjFeK
+jtTVm/SLIyfmHfmcS6vSealoN6+2UVy2oGVfc58T41e2azYUUeD/HQsB3BneGO5g
+rZ01rNnfO0hbPHoikUjiBr/rj2B0iWOs4B8zwoYEO89YoxyvxQZMoZG3LF88f+Qt
+ZG442D4P1uHd2vVboIBqVTv2nTO0DdXCjAlmoZyJnsrWf/SAFyI+VcSi6G9+yNiw
+EjOE7UYRe+dhRYYNUPJtudhoIVPhkpA857oc1xJETpNL3CBmOOIUOdDjMwRfrcgA
+N86LFVt2JNQYIGn3yk9svVZFz4vitSbCTJJS4jNboHUUdPkO4zIA3EGF+YNN2y1O
+2x2S9uKZxYJFTJM7hrb/
+=xLtF
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__25_Oct_2011_17_16_01_+1100_NcMMTWaYKCCW38kt--
+--Signature=_Tue__25_Oct_2011_17_25_09_+1100_RCSxjPHuGjtwZXBB--
