@@ -1,59 +1,57 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: manual merge of the moduleh tree with the xen-two
- tree
-Date: Wed, 26 Oct 2011 15:30:38 -0400
-Message-ID: <20111026193038.GA6385@windriver.com>
-References: <20111025193442.66255eed8e72d5e88cce192f@canb.auug.org.au>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: Updated target-pending.git branches for linux-next
+Date: Wed, 26 Oct 2011 12:44:01 -0700
+Message-ID: <1319658241.421.1.camel@haakon2.linux-iscsi.org>
+References: <1319436327.15576.4.camel@haakon2.linux-iscsi.org>
+	 <1319573050.6463.2.camel@haakon2.linux-iscsi.org>
+	 <20111027023405.f4f5d5b24eb504119c59892c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:42708 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751185Ab1JZTau (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Oct 2011 15:30:50 -0400
-Content-Disposition: inline
-In-Reply-To: <20111025193442.66255eed8e72d5e88cce192f@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <target-devel-owner@vger.kernel.org>
+In-Reply-To: <20111027023405.f4f5d5b24eb504119c59892c@canb.auug.org.au>
+Sender: target-devel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Magenheimer <dan.magenheimer@oracle.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-next <linux-next@vger.kernel.org>, target-devel <target-devel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
-[linux-next: manual merge of the moduleh tree with the xen-two tree] On 25/10/2011 (Tue 19:34) Stephen Rothwell wrote:
-
-> Hi Paul,
+On Thu, 2011-10-27 at 02:34 +1100, Stephen Rothwell wrote:
+> Hi Nicholas,
 > 
-> Today's linux-next merge of the moduleh tree got a conflict in
-> drivers/xen/xen-selfballoon.c between commit 38a1ed4f039d ("xen: Fix
-> selfballooning and ensure it doesn't go too far") from the xen-two tree
-> and commit 29ff02027c68 ("xen: fix implicit stat.h/module.h include usage
-> in xen-selfballoon.c") from the moduleh tree.
+> On Tue, 25 Oct 2011 13:04:10 -0700 "Nicholas A. Bellinger" <nab@linux-iscsi.org> wrote:
+> >
+> > On Sun, 2011-10-23 at 23:05 -0700, Nicholas A. Bellinger wrote:
+> > > 
+> > > The target-pending.git tree is now back on kernel.org, and as before
+> > > the following branch is used as 'for-next' updates to existing
+> > > drivers/target/ code:
+> > > 
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git for-next
+> > > 
+> > > I've also added another branch that is being used for new target modules
+> > > being merged in the next development cycle:
+> > > 
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git for-next-merge
+> > > 
+> > > If you would be so kind, please go ahead and add the second entry as well
+> > > into your linux-next daily builds.
+> > 
+> > Just another friendly reminder to please add the for-next-merge branch
+> > into Next/Trees..  Also if you would, please change the tree names to
+> > 'target-updates' and 'target-merge' respectively.
 > 
-> I fixed it up (see below) and can carry the fix as necessary.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> You said above that the for-next-merge branch is for "new target modules
+> being merged in the next development cycle" which I assumed to mean that
+> they would be intended for v3.3.  As such, I will add that branch after
+> v3.2-rc1 is released.  Let me know if my assumption is incorrect.
 > 
-> diff --cc drivers/xen/xen-selfballoon.c
-> index d93c708,e21e3ce..0000000
-> --- a/drivers/xen/xen-selfballoon.c
-> +++ b/drivers/xen/xen-selfballoon.c
-> @@@ -68,8 -68,8 +68,10 @@@
->    */
->   
->   #include <linux/kernel.h>
->  +#include <linux/bootmem.h>
->  +#include <linux/swap.h>
-> + #include <linux/stat.h>
-> + #include <linux/module.h>
->   #include <linux/mm.h>
->   #include <linux/mman.h>
->   #include <linux/module.h>
 
-Thanks, Stephen.
+Sorry, that is not what I intended to convey.  What's currently in
+for-next-merge it what's slated to go in this merge window..  Apologies
+for the extra confusion.
 
-I'll just drop the module.h commit, since there is clearly two module.h
-listings above, as 4fec0e0bde09095b6349dc6206dbf19cebcd0a7e from
-v3.1-rc3 and forward added the last line above.  The stat.h addition,
-while correct, isn't critical, since module.h has to include stat.h
+> I have renamed iscsi-target to target-updates.
 
-Paul.
+Thank you.
+
+--nab
