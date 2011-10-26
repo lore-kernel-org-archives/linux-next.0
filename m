@@ -1,68 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: kgdb-next temporarily moved to github
-Date: Thu, 27 Oct 2011 03:04:08 +1100
-Message-ID: <20111027030408.491e95ae8d0177a6b15e8306@canb.auug.org.au>
-References: <4EA5EC67.8000401@windriver.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Oct 25 (crypto)
+Date: Wed, 26 Oct 2011 09:27:57 -0700
+Message-ID: <4EA8350D.1080003@xenotime.net>
+References: <20111025203628.40a1b8a475e32053aa34dabe@canb.auug.org.au> <4EA75759.3050900@xenotime.net> <20111026062717.GA10230@gondor.apana.org.au> <20111026143347.462fea95@stein>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__27_Oct_2011_03_04_08_+1100_Ou3R3gl9vb4L_glo"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:57664 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933019Ab1JZQEX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Oct 2011 12:04:23 -0400
-In-Reply-To: <4EA5EC67.8000401@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <20111026143347.462fea95@stein>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, linux-crypto@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__27_Oct_2011_03_04_08_+1100_Ou3R3gl9vb4L_glo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/26/11 05:33, Stefan Richter wrote:
+> On Oct 26 Herbert Xu wrote:
+>> On Tue, Oct 25, 2011 at 05:42:01PM -0700, Randy Dunlap wrote:
+>>> On 10/25/11 02:36, Stephen Rothwell wrote:
+>>>> Hi all,
+>>>
+>>>
+>>> When CONFIG_NET is not enabled:
+>>
+>> Thanks, I'll add this patch.
+>>
+>> diff --git a/crypto/Kconfig b/crypto/Kconfig
+>> index a8442dc..259dea9 100644
+>> --- a/crypto/Kconfig
+>> +++ b/crypto/Kconfig
+>> @@ -103,6 +103,7 @@ config CRYPTO_MANAGER2
+>>  config CRYPTO_USER
+>>  	tristate "Userspace cryptographic algorithm configuration"
+>>  	select CRYPTO_MANAGER
+>> +	select NET
+>>  	help
+>>  	  Userapace configuration for cryptographic instantiations such as
+>>  	  cbc(aes).
+>>
+>> Cheers,
+> 
+> If you do it this way, you also need to select everything on which NET
+> depends on.  In v3.1, that would be (only) NLATTR which in turn does not
+> depend on anything else.
+> 
+> Furthermore, I am noticing in v3.1 that CRYPTO_MANAGER selects
+> CRYPTO_MANAGER2 which in turn has the following dependencies:
+> 
+> config CRYPTO_MANAGER2
+> 	def_tristate CRYPTO_MANAGER || (CRYPTO_MANAGER!=n && CRYPTO_ALGAPI=y)
+> 	select CRYPTO_AEAD2
+> 	select CRYPTO_HASH2
+> 	select CRYPTO_BLKCIPHER2
+> 	select CRYPTO_PCOMP2
+> 
+> I think you need to copy those dependencies into config CRYPTO_MANAGER.
 
-Hi Jason,
+That's correct, but it's better not to "select" an entire subsystem
+like NET at all.
 
-On Mon, 24 Oct 2011 17:53:27 -0500 Jason Wessel <jason.wessel@windriver.com=
-> wrote:
->
-> I have not been able to get my kernel.org account re-activated as of yet,
-> so I need to move the public dev tree to a different location until that
-> is resolved.
->=20
-> Can you please point the linux-next kgdb contribution to:
->=20
-> git://github.com/jwessel/linux-kgdb.git  kgdb-next
-
-I have switched to that now.  Please let me know if/when you move back to
-kernel.org.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__27_Oct_2011_03_04_08_+1100_Ou3R3gl9vb4L_glo
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOqC94AAoJEECxmPOUX5FEzzIP/3YCI1dOfMYEVqLrpM0YTGtH
-/x7BE5C75Gj9di3TI3qDilWadqvECOVaIIOFcx+ncgfoc0KjbB+7jpk4MkmKKp0W
-zm776LhsuYLHOnhNsJ90gJaoA5ka55CJgNfvjwm2CfJUdBAy2rVm1Ulj3YizCj5M
-P1pqVuItP3xmLsIg76xqPS7S6YXINT4fxuCoST/pY7Lz3DxlgVSHXSeynGsLQBUa
-3BBNtQMEEWdXh+nMOoK9auRNBvyt5wM9irEwMnuqKuAGdPwayZ18FyTzOktUnp2D
-pUSqR+lVBWKfycC+yxe1v/TvmdTX+dlI8rE7lEYDaAoEB5PppsIkAEzS0xyXlIRI
-oPzzBSd+OeuRA0TUxLnAAW26Jl/A8dghFP7qX64PbRLjNM2Cy7zR3QJyuB1LXeZR
-4j0wQOrPxQZARX0i5v6WNJx0lbBQXNvlcnvRaO4stOO0cCNddQ85Gc2tUPE6ECE3
-S31oqirZv/nGh/PJaIBrsQ0waUoEqoZbNGZUGY+vEZ/iolP/yCxZDWEc20eNk4EW
-LNLbteGkRoyU8bglOnHGHDe5Itx5hvLvMuBPX1jMzJcrlU3UAS5YDH3xojx4QGZL
-RV0KpjZZPjq1Pnngtv5Rt3x67K4eRAd4r0ZPC/F1zkCCNSSRKBUP+h4/CFZaCfiQ
-OUyeOgObbjMznNBVaKWK
-=gQrL
------END PGP SIGNATURE-----
-
---Signature=_Thu__27_Oct_2011_03_04_08_+1100_Ou3R3gl9vb4L_glo--
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
