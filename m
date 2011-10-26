@@ -1,72 +1,29 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Subject: Re: linux-next: Tree for Oct 25 (crypto)
-Date: Wed, 26 Oct 2011 19:15:17 +0200
-Message-ID: <20111026191517.71f3aa93@stein>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Oct 25 (mfd/ab8500)
+Date: Wed, 26 Oct 2011 11:26:09 -0700
+Message-ID: <4EA850C1.4060405@xenotime.net>
 References: <20111025203628.40a1b8a475e32053aa34dabe@canb.auug.org.au>
-	<4EA75759.3050900@xenotime.net>
-	<20111026062717.GA10230@gondor.apana.org.au>
-	<20111026143347.462fea95@stein>
-	<4EA8350D.1080003@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from einhorn.in-berlin.de ([192.109.42.8]:57077 "EHLO
-	einhorn.in-berlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932969Ab1JZRPe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Oct 2011 13:15:34 -0400
-In-Reply-To: <4EA8350D.1080003@xenotime.net>
+Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:58448 "HELO
+	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932818Ab1JZS0T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Oct 2011 14:26:19 -0400
+In-Reply-To: <20111025203628.40a1b8a475e32053aa34dabe@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, linux-crypto@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Samuel Ortiz <sameo@linux.intel.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Linus Walleij <linus.walleij@stericsson.com>
 
-On Oct 26 Randy Dunlap wrote:
-> On 10/26/11 05:33, Stefan Richter wrote:
-> > On Oct 26 Herbert Xu wrote:
-> >> --- a/crypto/Kconfig
-> >> +++ b/crypto/Kconfig
-> >> @@ -103,6 +103,7 @@ config CRYPTO_MANAGER2
-> >>  config CRYPTO_USER
-> >>  	tristate "Userspace cryptographic algorithm configuration"
-> >>  	select CRYPTO_MANAGER
-> >> +	select NET
-> >>  	help
-> >>  	  Userapace configuration for cryptographic instantiations such as
+On 10/25/11 02:36, Stephen Rothwell wrote:
+> Hi all,
 
-btw, typo: "Userspace"
 
-> >>  	  cbc(aes).
-> >>
-> >> Cheers,
-> > 
-> > If you do it this way, you also need to select everything on which NET
-> > depends on.  In v3.1, that would be (only) NLATTR which in turn does not
-> > depend on anything else.
-[...]
-> That's correct, but it's better not to "select" an entire subsystem
-> like NET at all.
+drivers/mfd/ab8500-core.c:881:7: error: 'AB8500_CUT3P3' undeclared
 
-I agree; I add to my comment the implication that --- as a rule of thumb
---- "select" should be avoided if the option to be selected has further
-dependencies.
 
-A downside of "config A\n depends on B" is of course that potential users
-of option A who are unaware of option B or not interested in B may miss how
-to enable A.  Sometimes, a comment in the Kconfig file can help then.
-Example (from linux-2.6.36/drivers/ieee1394/):
-
-comment "PCILynx controller requires I2C"
-	depends on IEEE1394 && I2C=n
-
-config IEEE1394_PCILYNX
-	tristate "PCILynx controller"
-	depends on PCI && IEEE1394 && I2C
-	select I2C_ALGOBIT
-	help
-	  Say Y here if you have an IEEE-1394 controller with the Texas
-	  Instruments PCILynx chip.
 -- 
-Stefan Richter
--=====-==-== =-=- ==-=-
-http://arcgraph.de/sr/
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
