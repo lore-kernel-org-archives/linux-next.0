@@ -1,83 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Updated target-pending.git branches for linux-next
-Date: Thu, 27 Oct 2011 02:34:05 +1100
-Message-ID: <20111027023405.f4f5d5b24eb504119c59892c@canb.auug.org.au>
-References: <1319436327.15576.4.camel@haakon2.linux-iscsi.org>
-	<1319573050.6463.2.camel@haakon2.linux-iscsi.org>
+Subject: Re: sound git tree back to kernel.org
+Date: Thu, 27 Oct 2011 02:50:10 +1100
+Message-ID: <20111027025010.e81919a7a95d64c256d70acb@canb.auug.org.au>
+References: <s5hmxcptfzj.wl%tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__27_Oct_2011_02_34_05_+1100_+huFiO8ODFD9zkbt"
-Return-path: <target-devel-owner@vger.kernel.org>
-In-Reply-To: <1319573050.6463.2.camel@haakon2.linux-iscsi.org>
-Sender: target-devel-owner@vger.kernel.org
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: linux-next <linux-next@vger.kernel.org>, target-devel <target-devel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__27_Oct_2011_02_50_10_+1100_2B35LbM._2.Sj.nU"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:48811 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933052Ab1JZPuW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Oct 2011 11:50:22 -0400
+In-Reply-To: <s5hmxcptfzj.wl%tiwai@suse.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__27_Oct_2011_02_34_05_+1100_+huFiO8ODFD9zkbt
+--Signature=_Thu__27_Oct_2011_02_50_10_+1100_2B35LbM._2.Sj.nU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Nicholas,
+Hi Takashi,
 
-On Tue, 25 Oct 2011 13:04:10 -0700 "Nicholas A. Bellinger" <nab@linux-iscsi=
-.org> wrote:
+On Tue, 25 Oct 2011 14:25:52 +0200 Takashi Iwai <tiwai@suse.de> wrote:
 >
-> On Sun, 2011-10-23 at 23:05 -0700, Nicholas A. Bellinger wrote:
-> >=20
-> > The target-pending.git tree is now back on kernel.org, and as before
-> > the following branch is used as 'for-next' updates to existing
-> > drivers/target/ code:
-> >=20
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git =
-for-next
-> >=20
-> > I've also added another branch that is being used for new target modules
-> > being merged in the next development cycle:
-> >=20
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git =
-for-next-merge
-> >=20
-> > If you would be so kind, please go ahead and add the second entry as we=
-ll
-> > into your linux-next daily builds.
+> could you update the sound git tree URL as below?
 >=20
-> Just another friendly reminder to please add the for-next-merge branch
-> into Next/Trees..  Also if you would, please change the tree names to
-> 'target-updates' and 'target-merge' respectively.
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
+>=20
+> Now back to kernel.org, and "-2.6" suffix was removed.
 
-You said above that the for-next-merge branch is for "new target modules
-being merged in the next development cycle" which I assumed to mean that
-they would be intended for v3.3.  As such, I will add that branch after
-v3.2-rc1 is released.  Let me know if my assumption is incorrect.
+I have switched to that now.  I assume that the for-linus branch (my
+sound-current tree) also exists there?
 
-I have renamed iscsi-target to target-updates.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__27_Oct_2011_02_34_05_+1100_+huFiO8ODFD9zkbt
+--Signature=_Thu__27_Oct_2011_02_50_10_+1100_2B35LbM._2.Sj.nU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOqChtAAoJEECxmPOUX5FEgE0P/3h1B0/qjCkzso4vPutRWFLu
-TMW1Rl2qO62X6y7RyKN+Njs82+P9qugUVCwCKAdoMDUk2brBjgYx230D/UBUUfIE
-ChBJlVNJuAQ/q29Sgtolel1DF68z3r60QXPHYqWXTqXEjlZHmNIIp9zLUyZVS0tn
-ox3zrKpeN76/w7MJ+rSm6fB9nvtTtw0BlMXNHkeaIK52Bgz/pgGBtrjDLqH4mpBM
-KRARHz4vo0pyAJmwGTANQl4LUJ2K5OTzFFn3RX/qnfynwKdw2af073BN6jsmYKI0
-vQy/eHaYXsf3Mw9rRw1DaTLGxYCo8/wyzWik10SUrQqTKvEeSs9AbyvqMNzorx9n
-KGF/GiNJtqRPGkmqV2XTODlOwec2AEYhgxm5LRTxaBmhU8BpxoBLX/KmksT4hvcW
-3OxSqLWzIsv9RKNv0KsD7t2vwBgX1bUT+O2hGjJIsXNdRQjMROJTiG37pYdF7xHS
-VQf/0snZVYypRrAKFzQlBNFQ+rRvUOwk/ctISaVErsT4sxtRuFZwJxtqn/MnYBBB
-5sNMpBI+YQjG2eseVduKIJ+b24sRGaf2ujPzMoDD3nv7PJGJccr1ee0wcXaN0zgu
-f1AqE2VnJLKUXqIzGxpgb+ZlrLsxjrJvEvu4MSUOIL29yt5ztk7ev//GVn3nmI1n
-5Mg3itQ8HwDEkWua18UL
-=PWh+
+iQIcBAEBCAAGBQJOqCwyAAoJEECxmPOUX5FEKzAP/jlBnffnvuKbzdC/lZGG1KxC
+H4Wv4bJKqa735rcSw+GAvfVqGTcpWxBkM1ccmy+iFPg1YuBPG9T/zLTdPTzL2O1S
+dc4Wx2QK+MSfGLmiwmyfAlN01TI1yljQkqFVcadfdCpowBIBnXUGdodBY7ujOpCm
+epxIY0eB0jjUAPn2v56rWZeXk6FQrCVwc9o2lQRAuDCxkYZl7kfWhShar4kR9+g8
+5w4sumksiB7aArT+wkf9RF880LD9ZRWN5Q3TGvC7Ka0hj19O0A0rBkk8rRB3RTtK
+q0FcV/ykw/zvf3eOiA95Q6596JPXpNQMU2UfxYpzEW3DdqF/yD73/P62wSDtm/hP
+E1Xxuo4BlrvDV/F9uw1ZkTRIYVvrYVAO+Qpl2TS61k5u7nBv2Gwv24MBnGbBlEPL
+LBUavbAjSEXHg7VLlLqroaI5rlGjqztaMVv6sUIIiT/FjgK1IgdqDgei0s67fFUk
+cjrUHlt3PzGm1kqNovGuxDZdsWCdC6MX9qKylvx7zyxhJmOc/QZarklr3EG33fE2
+UANYXhzMuMcJ6jPXO1htW2cM4gXLw6v0BflxQi1acDhCjHevObHk46L8eQ3VR9Yl
+gN7x5w49cvFktU6s3tL73nHT6v9JmdrAqSuMnkdIpMkrlJKt9FHuWsoY0+U3BdEK
+jtyCZMPCOH2uioKoxrGu
+=gLcM
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__27_Oct_2011_02_34_05_+1100_+huFiO8ODFD9zkbt--
+--Signature=_Thu__27_Oct_2011_02_50_10_+1100_2B35LbM._2.Sj.nU--
