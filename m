@@ -1,57 +1,39 @@
 From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: Updated target-pending.git branches for linux-next
-Date: Wed, 26 Oct 2011 12:44:01 -0700
-Message-ID: <1319658241.421.1.camel@haakon2.linux-iscsi.org>
-References: <1319436327.15576.4.camel@haakon2.linux-iscsi.org>
-	 <1319573050.6463.2.camel@haakon2.linux-iscsi.org>
-	 <20111027023405.f4f5d5b24eb504119c59892c@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Oct 25 (target)
+Date: Wed, 26 Oct 2011 12:53:11 -0700
+Message-ID: <1319658791.21607.5.camel@haakon2.linux-iscsi.org>
+References: <20111025203628.40a1b8a475e32053aa34dabe@canb.auug.org.au>
+	 <4EA853F2.4040503@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <target-devel-owner@vger.kernel.org>
-In-Reply-To: <20111027023405.f4f5d5b24eb504119c59892c@canb.auug.org.au>
-Sender: target-devel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, target-devel <target-devel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linux-iscsi.org ([67.23.28.174]:38413 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751440Ab1JZTxT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Oct 2011 15:53:19 -0400
+In-Reply-To: <4EA853F2.4040503@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, target-devel@vger.kernel.org
 
-On Thu, 2011-10-27 at 02:34 +1100, Stephen Rothwell wrote:
-> Hi Nicholas,
+On Wed, 2011-10-26 at 11:39 -0700, Randy Dunlap wrote:
+> On 10/25/11 02:36, Stephen Rothwell wrote:
+> > Hi all,
 > 
-> On Tue, 25 Oct 2011 13:04:10 -0700 "Nicholas A. Bellinger" <nab@linux-iscsi.org> wrote:
-> >
-> > On Sun, 2011-10-23 at 23:05 -0700, Nicholas A. Bellinger wrote:
-> > > 
-> > > The target-pending.git tree is now back on kernel.org, and as before
-> > > the following branch is used as 'for-next' updates to existing
-> > > drivers/target/ code:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git for-next
-> > > 
-> > > I've also added another branch that is being used for new target modules
-> > > being merged in the next development cycle:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git for-next-merge
-> > > 
-> > > If you would be so kind, please go ahead and add the second entry as well
-> > > into your linux-next daily builds.
-> > 
-> > Just another friendly reminder to please add the for-next-merge branch
-> > into Next/Trees..  Also if you would, please change the tree names to
-> > 'target-updates' and 'target-merge' respectively.
+> target_core_cdb.c needs to include <linux/export.h>:
 > 
-> You said above that the for-next-merge branch is for "new target modules
-> being merged in the next development cycle" which I assumed to mean that
-> they would be intended for v3.3.  As such, I will add that branch after
-> v3.2-rc1 is released.  Let me know if my assumption is incorrect.
+> drivers/target/target_core_cdb.c:1316:1: warning: data definition has no type or storage class [enabled by default]
+> drivers/target/target_core_cdb.c:1316:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
+> drivers/target/target_core_cdb.c:1316:1: warning: parameter names (without types) in function declaration [enabled by default]
+> 
 > 
 
-Sorry, that is not what I intended to convey.  What's currently in
-for-next-merge it what's slated to go in this merge window..  Apologies
-for the extra confusion.
+This one had been addressed in target-pending.git/for-next with a
+module.h include for target_core_cdb.c, but I'll change this now to use
+the proper export.h.
 
-> I have renamed iscsi-target to target-updates.
-
-Thank you.
+Thanks Randy!
 
 --nab
