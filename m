@@ -1,63 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: ext4 tree back to kernel.org
-Date: Fri, 28 Oct 2011 02:38:14 +1100
-Message-ID: <20111028023814.f74c8d8510f2fb2335eeccb1@canb.auug.org.au>
-References: <20111027140202.GD31921@thunk.org>
+Subject: linux-next: unable to fetch the leds and backlight trees
+Date: Fri, 28 Oct 2011 02:52:32 +1100
+Message-ID: <20111028025232.2fbe463c0dbbb6b02c278515@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__28_Oct_2011_02_38_14_+1100_GP0xD7oAV3IMDCiV"
+ boundary="Signature=_Fri__28_Oct_2011_02_52_32_+1100_eRz+QkG.4U9HtSmJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:57614 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:42840 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751529Ab1J0Pi0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Oct 2011 11:38:26 -0400
-In-Reply-To: <20111027140202.GD31921@thunk.org>
+	with ESMTP id S1752970Ab1J0Pwo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Oct 2011 11:52:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ted Ts'o <tytso@mit.edu>
+To: Richard Purdie <rpurdie@rpsys.net>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__28_Oct_2011_02_38_14_+1100_GP0xD7oAV3IMDCiV
+--Signature=_Fri__28_Oct_2011_02_52_32_+1100_eRz+QkG.4U9HtSmJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ted,
+Hi Richard,
 
-On Thu, 27 Oct 2011 10:02:02 -0400 Ted Ts'o <tytso@mit.edu> wrote:
->
-> I've actually been updating both kernel.org and github for a week or
-> so, this is probably a good time as any to ask that linux-next swtich
-> to tracking the dev branch at:
->=20
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
+Fetching the leds and backlight trees produces this error (after a long
+delay):
 
-OK, I have switched to that now.
+fatal: read error: Connection reset by peer
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__28_Oct_2011_02_38_14_+1100_GP0xD7oAV3IMDCiV
+--Signature=_Fri__28_Oct_2011_02_52_32_+1100_eRz+QkG.4U9HtSmJ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOqXrmAAoJEECxmPOUX5FEkhsP/1dsTQpQEIRHvvDOVHREKGxh
-J5ex1te9dxXDptjCemOx8g/IafxmXpfC+PjsE913LSQsmsoZQOPCEWlmXzgyOjJ3
-L2TgZhwmrQMFV83Dd9wcifxJnDVzEsUB/HgfD2gFBxGs06WuhglOxEa9AJANhUYD
-VkQ4+5+7m9ScCUvVLZQET1Frtfxc7EmRs+FCf+4/uW1jyQc+hDCsirKhKrc/h3mJ
-lqfYNIQFjrHU/WLJQsKY4W5dHh0gyioNciDMXYh/CQS8e3FQrt4IPX01LMoR7nwL
-d5NypY6sw/tV89l3l3ngHuHXZ+VvKmT3PI5A33YO8az90kbGrT+9+4Au9VgXzSHm
-yXYhRT+DieCXrAjy3Kaaqv2rDDJ/I/jOj6eRT9TlSfGC+y9Gh39izTyRuSLvOHx0
-zfK1izDgi/+Xy4hJfqLcArjfroMXTsAKydol8XTuy3FUmDSbV5wwn/6R4GaCm8UD
-toBd420w5+GXfjHkX+Dndg7AptxDBlJxm8q0+TDaauW0igc4Lzx7dfncAdJ1opPs
-9NEUUTsKKI58YyUG6nhEUjOTJ1Fnd3xh/JltOwJEo8kwMYRFvpi7IlUwZoxDsRwv
-8EW0FUokv0XohUBCNyZMpUXcCyTwxMG8P1g543ORqWNZEn7BKtor6M/qKoY0o/ki
-MlFUppeXNz6GT8ThgmUI
-=Xtow
+iQIcBAEBCAAGBQJOqX5AAAoJEECxmPOUX5FExlQP/24XKZZc/FfFFMlNwuyKvjIf
+/BYi2Pi0Wn+2f+mOvVYBv8wEnsd4Ve+zcbRkFbWt2P0/zhXRrYd83S/m1DcIMMsV
+khtuXiDxk4NPFM8MWGSiA+O3JIH/6Y4l35l5tm/31zWSd0xXaAYkocKxa5nnkL9P
+X7LV3EIBqePrVYhU6+aqLQjocEYt2rNMZOBeMIfGa1WMDyZhpa3KdaEK7T8lNbjK
+wyWp5/RS+f0qVbdQaU0WF6eNSUSVn7JE63bnY3tShc/xOZPzJEJ+zO4HXFQAm5uS
+pO/e6+Uou7fqalQKRq/n2n5lu22pIqP0QEPyWFKwUI41+mxekZKIP2v0HLA8046+
+BZni88WsT5xSe8Fa0t4Wh0+oqdz+AuZYCVxHlLteuhdLCJ5BRgJur0XwuEtrdmwt
+rvD0dDo6yC89fvETu9+1FQie3tfIl94cPF6dA7/KQPweFcFJTuHGD901edYaQIdl
+9x5tDmH7esZCWywpYbhHKz+og9/ySn2WVi2Ucu4hlwgzTEJZfxcz437hSZImX9Ra
+NEfD8Djje7SY0dCQiyXJ7/7RrKmdQvjCL6t6D8Yys+J3cHz9wo3K00XvlkJkID/F
+avmcrJ98bLDg6t2HoSo2CmJgb8SUh3VgDc6NTPMsVBHLPmlCtfhOKx3DWf1R6qkL
+XTDs2eU1zTcTS8UbD3dN
+=nvHE
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__28_Oct_2011_02_38_14_+1100_GP0xD7oAV3IMDCiV--
+--Signature=_Fri__28_Oct_2011_02_52_32_+1100_eRz+QkG.4U9HtSmJ--
