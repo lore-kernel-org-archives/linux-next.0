@@ -1,58 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: MMC tree moved back to kernel.org
-Date: Fri, 28 Oct 2011 02:17:49 +1100
-Message-ID: <20111028021749.aa53c526b82ac9f878e9947e@canb.auug.org.au>
-References: <m2ty6vih11.fsf@bob.laptop.org>
+Subject: Re: ext4 tree back to kernel.org
+Date: Fri, 28 Oct 2011 02:38:14 +1100
+Message-ID: <20111028023814.f74c8d8510f2fb2335eeccb1@canb.auug.org.au>
+References: <20111027140202.GD31921@thunk.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__28_Oct_2011_02_17_49_+1100_iLy5ISRuQsLNSFVy"
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <m2ty6vih11.fsf@bob.laptop.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-next@vger.kernel.org, linux-mmc@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__28_Oct_2011_02_38_14_+1100_GP0xD7oAV3IMDCiV"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:57614 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751529Ab1J0Pi0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 Oct 2011 11:38:26 -0400
+In-Reply-To: <20111027140202.GD31921@thunk.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ted Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__28_Oct_2011_02_17_49_+1100_iLy5ISRuQsLNSFVy
+--Signature=_Fri__28_Oct_2011_02_38_14_+1100_GP0xD7oAV3IMDCiV
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-HI Chris,
+Hi Ted,
 
-On Wed, 26 Oct 2011 17:23:22 -0400 Chris Ball <cjb@laptop.org> wrote:
+On Thu, 27 Oct 2011 10:02:02 -0400 Ted Ts'o <tytso@mit.edu> wrote:
 >
-> The mmc-next tree has returned to its original location at:
+> I've actually been updating both kernel.org and github for a week or
+> so, this is probably a good time as any to ask that linux-next swtich
+> to tracking the dev branch at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git mmc-next=20
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
 
-I have switched to that now.
-
+OK, I have switched to that now.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__28_Oct_2011_02_17_49_+1100_iLy5ISRuQsLNSFVy
+--Signature=_Fri__28_Oct_2011_02_38_14_+1100_GP0xD7oAV3IMDCiV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOqXYdAAoJEECxmPOUX5FELhMP/i0xpXilIDyVfOsEHfTaBkUE
-r/0iZAihMFOZERZvyaPbOIkeUifgTrlnjNyxDohqWezCshCjZkywWqc1x7SgVSaE
-oSOLpXj1uYrruUiqdAZYcGiL4p4yMbRZ3qjKkunByFKhlrVSgzFzVz/Z8rKskUyt
-XGtDhEvnOE7speB9AAsHBlFI8CsAaiz6I7C7NX2G/Q8XAxnwGH2Yp6JTdv4ro1pM
-RBM2KSKKwIB85ICHDtzJCP0v+6+x0kXSuoZDQbkqES61FDAHf5X7KfOY6ReZ5u0r
-ZwmakeZJMqSJ3vRUBddgii+379ZUJBpcx2P+pSyeu7znb0+0Cxgbg0d3RKIHL0uq
-n80VfxqlcslU/lNIuzoMqHocfKu2EV+yHaWcIUPb0Vrbpxvjsx6XsBDeMO9MEez0
-MMAlPCaXZuaSNRnUnCmFNJVLH34LS7i9e4lfiJdTSBubAoaZEAtMrLppyg4mifPW
-kdQOcKvbLK3tWaHWz7TmMKMt8ZAtmDSPNnxs6TWUVri5mwBpzUv2M+660jkn9xDc
-gcrLivWLKCyr1h8l2nXrhshkBa8Gp+3wEUbN4SMN5e3BkSaLrWU5qA6Ymer8Mkoc
-5LzaTwOZfaaJJhpNLhKPlUM1ifzpvzI0DgMQGb2FUKYg7XchEZv3ShtXNzjhxbyo
-NQnhjfn6nCTblsThjpL7
-=dogz
+iQIcBAEBCAAGBQJOqXrmAAoJEECxmPOUX5FEkhsP/1dsTQpQEIRHvvDOVHREKGxh
+J5ex1te9dxXDptjCemOx8g/IafxmXpfC+PjsE913LSQsmsoZQOPCEWlmXzgyOjJ3
+L2TgZhwmrQMFV83Dd9wcifxJnDVzEsUB/HgfD2gFBxGs06WuhglOxEa9AJANhUYD
+VkQ4+5+7m9ScCUvVLZQET1Frtfxc7EmRs+FCf+4/uW1jyQc+hDCsirKhKrc/h3mJ
+lqfYNIQFjrHU/WLJQsKY4W5dHh0gyioNciDMXYh/CQS8e3FQrt4IPX01LMoR7nwL
+d5NypY6sw/tV89l3l3ngHuHXZ+VvKmT3PI5A33YO8az90kbGrT+9+4Au9VgXzSHm
+yXYhRT+DieCXrAjy3Kaaqv2rDDJ/I/jOj6eRT9TlSfGC+y9Gh39izTyRuSLvOHx0
+zfK1izDgi/+Xy4hJfqLcArjfroMXTsAKydol8XTuy3FUmDSbV5wwn/6R4GaCm8UD
+toBd420w5+GXfjHkX+Dndg7AptxDBlJxm8q0+TDaauW0igc4Lzx7dfncAdJ1opPs
+9NEUUTsKKI58YyUG6nhEUjOTJ1Fnd3xh/JltOwJEo8kwMYRFvpi7IlUwZoxDsRwv
+8EW0FUokv0XohUBCNyZMpUXcCyTwxMG8P1g543ORqWNZEn7BKtor6M/qKoY0o/ki
+MlFUppeXNz6GT8ThgmUI
+=Xtow
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__28_Oct_2011_02_17_49_+1100_iLy5ISRuQsLNSFVy--
+--Signature=_Fri__28_Oct_2011_02_38_14_+1100_GP0xD7oAV3IMDCiV--
