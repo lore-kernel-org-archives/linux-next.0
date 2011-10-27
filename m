@@ -1,45 +1,62 @@
-From: Ted Ts'o <tytso@mit.edu>
-Subject: ext4 tree back to kernel.org
-Date: Thu, 27 Oct 2011 10:02:02 -0400
-Message-ID: <20111027140202.GD31921@thunk.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Updated target-pending.git branches for linux-next
+Date: Fri, 28 Oct 2011 02:09:44 +1100
+Message-ID: <20111028020944.905cc06e0795d2acebaa4f76@canb.auug.org.au>
+References: <1319436327.15576.4.camel@haakon2.linux-iscsi.org>
+	<1319573050.6463.2.camel@haakon2.linux-iscsi.org>
+	<20111027023405.f4f5d5b24eb504119c59892c@canb.auug.org.au>
+	<1319658241.421.1.camel@haakon2.linux-iscsi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; x-action=pgp-signed
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from li9-11.members.linode.com ([67.18.176.11]:46781 "EHLO
-	test.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753514Ab1J0OCG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 Oct 2011 10:02:06 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__28_Oct_2011_02_09_44_+1100_R4XuulJubsCoOjOp"
+Return-path: <target-devel-owner@vger.kernel.org>
+In-Reply-To: <1319658241.421.1.camel@haakon2.linux-iscsi.org>
+Sender: target-devel-owner@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-next <linux-next@vger.kernel.org>, target-devel <target-devel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Fri__28_Oct_2011_02_09_44_+1100_R4XuulJubsCoOjOp
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+Hi Nicholas,
 
-I've actually been updating both kernel.org and github for a week or
-so, this is probably a good time as any to ask that linux-next swtich
-to tracking the dev branch at:
+On Wed, 26 Oct 2011 12:44:01 -0700 "Nicholas A. Bellinger" <nab@linux-iscsi=
+.org> wrote:
+>
+> Sorry, that is not what I intended to convey.  What's currently in
+> for-next-merge it what's slated to go in this merge window..  Apologies
+> for the extra confusion.
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
+OK, I have added target-merge as well.
 
-Thanks,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-						- Ted
+--Signature=_Fri__28_Oct_2011_02_09_44_+1100_R4XuulJubsCoOjOp
+Content-Type: application/pgp-signature
+
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOqWRaAAoJENNvdpvBGATwx+kP/2zHjAaIHsTk0pP5uBCXpuBZ
-m4SZOOOMtnVXzBmk60c2CbGxIBR/EEJn5Mj/U6Q5RiutAlgdmpo/6iRxFEROOWyP
-Yun6mP5tdcQ1v5C+3vYJZuDDEuJLs8gMtDCJqL1XzE8TahgIJWxn0/ewyJexmWUf
-9jJk2VR516a2+aCs2CMJxRjYHO0FS/H7R1b4NP0UTroHnKl8CJqNJ0mH3om4N6Cw
-ADIgPqg1erk6iJeUZFOPJPhXQT4U3+VZ4/CicMfg/kQ3UnLue4zcpHdXp0H+mg3Y
-mXMV+9+n7Kyd7d8jB//bDIo7CHgq0RqoBobqca+fDR5yXY1VEMZDPMd+PX0Q9XUJ
-cQxVdcuOV2YMQV/9sSg9tOTxH6y2YOSwqWl+hU+snZaGEdad/CFJkRQUBgsHmG4L
-1B2HqsLhDW+Wg2EVrkctfn8wtLkrOCEFeHrHTrBV3EIEyQIgZRffZ6k/29/wUoEL
-nTPNYQkYW42J+TmeJYKsWwViilerHUPDy7hWaqrBZVP6a6hmcQmK5RW0yTXZP/ke
-Dt7H8lIzXYreFkEdHGr1ZwIidAswykL+r1738knRFy+tYJ70sAPt5pboT0WNJreT
-TzYakK2FRy9PGply5VKLaSuoP4Hir9HvEK5LHgG+f9QKDtzs7aKM+TbRsndV7ImR
-0vgW3lCpfl5jU1hKVQsR
-=Imwu
+iQIcBAEBCAAGBQJOqXQ4AAoJEECxmPOUX5FEPUMP/0fA8x50nrQvLq16X510V50/
+X3Ci7/vR4uJXF6yaEXUSMQghhDAe+LSxDrHqjod4M0BGZbQqv0DCMD/4F/vKCscH
+prHOTYXn8ZktVGQRpLt/BV+5rjwrb4Bbt2P3nKvQ3aDyQys7y7Jr/nIZ8Wb2X/6U
+4RLKwsWLdtdT2LsGJT98+VtOSBNJHllZUjBx5quwYxFtAwKn/ga+u2Qu58DCCZDk
+vCj9JEbK+Ns5Ik7U4j9kiyUymLLv0W6d9ekM1Qz3nz5d7lyud8Etgy49UvtysznZ
+G2xcPDpvFwfBz1fPwi7Yd9BZYI+8Pjg4bEBhXalBeTvDntQqadSmnjOiXqpUYEsy
+0AnHMfzNDYbKqfUd/AwtirqGrIkjLcwq1xB8ehjj/l8knz3RhaF1IONraIQn+7v4
+Q9oAEEOEcdVbU3+AEDUVcLv45BelyvadQg5RpFEpew7qwi8Y2DBcviQw05X6po6X
+zPtBscyg1XBFjDfQ4A6woXRuIbDHuGWmrDBEqX0+Jj9aYXSHErcAkDJNuFNozlr0
+YWyPtKM3qQ+CjnR1GAJpqSvGQQ3Iycc20kWXQifbA0J4yLrSGZd8zhZRQWGoBq3a
+7v3+SiKk5Z2dTbHT11aZrMBrWKBpIgr+H6OynQJORArv3vD4L4wnsvhuePeJMHf6
+Bnd7hlGe5OIVOkj6dov8
+=WsX/
 -----END PGP SIGNATURE-----
+
+--Signature=_Fri__28_Oct_2011_02_09_44_+1100_R4XuulJubsCoOjOp--
