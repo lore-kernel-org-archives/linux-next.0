@@ -1,36 +1,37 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: Tree for Oct 25 (crypto)
-Date: Thu, 27 Oct 2011 09:45:44 +0200
-Message-ID: <20111027074544.GA19905@gondor.apana.org.au>
-References: <20111025203628.40a1b8a475e32053aa34dabe@canb.auug.org.au> <4EA75759.3050900@xenotime.net> <20111026062717.GA10230@gondor.apana.org.au> <7836.1319699116@turing-police.cc.vt.edu>
+From: Ted Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH -next] jbd2: fix build when CONFIG_BUG is not enabled
+Date: Thu, 27 Oct 2011 04:06:11 -0400
+Message-ID: <20111027080611.GZ31921@thunk.org>
+References: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au>
+ <4E9495C8.1030200@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from li9-11.members.linode.com ([67.18.176.11]:56969 "EHLO
+	test.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753745Ab1J0IGS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 Oct 2011 04:06:18 -0400
 Content-Disposition: inline
-In-Reply-To: <7836.1319699116@turing-police.cc.vt.edu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Valdis.Kletnieks@vt.edu
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, linux-crypto@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <4E9495C8.1030200@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ext4@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Arnaud Lacombe <lacombar@gmail.com>
 
-On Thu, Oct 27, 2011 at 03:05:16AM -0400, Valdis.Kletnieks@vt.edu wrote:
-> On Wed, 26 Oct 2011 08:27:17 +0200, Herbert Xu said:
-> > On Tue, Oct 25, 2011 at 05:42:01PM -0700, Randy Dunlap wrote:
-> > > When CONFIG_NET is not enabled:
-> >
-> > Thanks, I'll add this patch.
+On Tue, Oct 11, 2011 at 12:15:20PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
 > 
-> > diff --git a/crypto/Kconfig b/crypto/Kconfig
-> > +	select NET
+> Fix build error when CONFIG_BUG is not enabled:
 > 
-> Are there any use cases where a config (probably embedded) would wantq
-> CRYPTO_USER but not CRYPTO_NET?  Would seem a shame to pull in the entire
+> fs/jbd2/transaction.c:1175:3: error: implicit declaration of function '__WARN'
+> 
+> by changing __WARN() to WARN_ON(), as suggested by
+> Arnaud Lacombe <lacombar@gmail.com>.
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Arnaud Lacombe <lacombar@gmail.com>
 
-Since the CRYPTO_USER interface sits on top of netlink I don't
-see how you could possibly avoid NET.
+Thanks, applied.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+					- Ted
