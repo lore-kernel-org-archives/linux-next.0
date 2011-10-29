@@ -1,70 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: HSI framework for linux-next
-Date: Sat, 29 Oct 2011 05:45:47 +1100
-Message-ID: <20111029054547.d38e09b870ad5b8b2dd2008a@canb.auug.org.au>
-References: <1319794066.28874.22.camel@groo>
+Subject: Re: currently missing kernel devel trees
+Date: Sat, 29 Oct 2011 17:50:29 +1100
+Message-ID: <20111029175029.cd25e5eb99b255a06e355abc@canb.auug.org.au>
+References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
+	<20111026204515.GA29207@redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sat__29_Oct_2011_05_45_47_+1100_EvX5N.aYlL/.=rwS"
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1319794066.28874.22.camel@groo>
-Sender: linux-omap-owner@vger.kernel.org
-To: Carlos Chinea <carlos.chinea@nokia.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, ext Linus Walleij <linus.walleij@linaro.org>, "peter_henn@gmx.de" <peter_henn@gmx.de>, "sjur.brandeland@stericsson.com" <sjur.brandeland@stericsson.com>, "govindraj.ti@gmail.com" <govindraj.ti@gmail.com>, "pawel.szyszuk@stericsson.com" <pawel.szyszuk@stericsson.com>, Sebastian Reichel <sre@debian.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Sat__29_Oct_2011_17_50_29_+1100_z1Gv/ZKdm+ODQFWj"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:43321 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751950Ab1J2Gup (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 29 Oct 2011 02:50:45 -0400
+In-Reply-To: <20111026204515.GA29207@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Teigland <teigland@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Sat__29_Oct_2011_05_45_47_+1100_EvX5N.aYlL/.=rwS
+--Signature=_Sat__29_Oct_2011_17_50_29_+1100_z1Gv/ZKdm+ODQFWj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Carlos,
+Hi David,
 
-On Fri, 28 Oct 2011 12:27:46 +0300 Carlos Chinea <carlos.chinea@nokia.com> =
-wrote:
+On Wed, 26 Oct 2011 16:45:15 -0400 David Teigland <teigland@redhat.com> wro=
+te:
 >
-> I have been working in an HSI framework for linux:
+> On Thu, Oct 13, 2011 at 05:43:58PM +1100, Stephen Rothwell wrote:
+> > dlm
 >=20
-> https://lkml.org/lkml/2011/6/10/280
->=20
-> The framework is in good shape and is currently being used for some
-> people so we would like it to see it integrated, if possible, for 3.3
->=20
-> Latest discussion for integration:
-> https://lkml.org/lkml/2011/10/20/177
->=20
-> Therefore, could you add the following tree to linux-next ?=20
+> Just restored as linux-dlm (no commits for 3.2)
 
-I will try to remember, but if I forget, then ping me when v3.2-rc1 has
-been released.  I don't put future code into linux-next until after -rc1
-to save false problems with the stuff that has still not been sent to
-Linus.
-
+I am now using the "next" branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git (it
+used to be .../dlm.git).  But it is, as you say, empty, so I guess it the
+the right thing.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sat__29_Oct_2011_05_45_47_+1100_EvX5N.aYlL/.=rwS
+--Signature=_Sat__29_Oct_2011_17_50_29_+1100_z1Gv/ZKdm+ODQFWj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOqvhbAAoJEECxmPOUX5FE4hoP/1X8lSwA6g1wMEjG4CnBnMKj
-Tsy052nOpmo1KmFuQvG1uAGLHOIdGY3WymrhG40mC/jkPE+1Bci7KDvXeq04WsCS
-QCPVQxKc9n+EzzGLNDkeTH+MZLYKpzaCdMz7HKyNsRbrcVTYA7nz71LfBc6uIrsk
-KtZlDd4OT0qQcW4eT8NtYoc/DGWIexmTQsW2KQc1L9brzwZdEJFHDpzMbHEAR13O
-RLihPOwudn9JwUC8gWjReG2LwKrWZnh07n6gXBf5jtvVrbmtt9KrjLr4v0L+Rzht
-ikSR3EexIUQtur4y5NsohlY792ZPHhVb0oxCIydMRsiDvgLTqIw4eOwqDCKh+lad
-UBgVyp8ugs5ygcY/lQLUjrVvLtPi65ENfAMpIgRhpgtCLfAdov42hrH/5xXQkmma
-0dm4HwK3WKelSPc1nKpWe6JfrvooXXMXMnlHeCW14pO45Ns4VgMEcJyQuHaV6B7t
-EDQ4X7rOvCnkEjE4//3o1EKVD+rVuKcidMVJ7Scdrpk4e7yf+DAeQQvOCLs+a1NI
-o/XUdKaic+OlNYqnM71m4EYoHy2BWWsCQC8ydzWTiI/7eaI4FehIN5XfXSPLGN00
-4bTMejWBn3nPy2Il7GFa5LTUsjUePiGXGkYNtZ5LGhImo5zukmaim4BTrbGrgv47
-XsiLrNqokzPotk9qsHAW
-=qhtN
+iQIcBAEBCAAGBQJOq6I1AAoJEECxmPOUX5FEFOEP/0H7JXpwNqvItRrOOImmDKoA
+rcOoSwmMXE3M/K927zLHbYe0/w45ZoL//gnU24joVSrI9Baa3u15qR48kRrpwjKd
+L+ioy6Bm5v4lVJMAz61uOOjl9Q5pUcSLTrfUuouL9cMOPIjm6fI1zsyhR5n4dXDG
+YL8APinALC6mABzGldh9rymi4UxwR4eWB6qhPXkgWkLWh3vS2I7YY7kiA3XAAgjl
+laLwADPwD/nNM07FXAF+BaRA4ViaVFkQvlBLDEh1JLKCY8Hv2MsJcvh7K8bqKVwk
+mOI9rUGvC6jk80ORfZP+NzWdTVrK34Ydd50cImXk7PPpTv1eDjygXXc1VSTWFcQP
+UH6/Q+byo4CTJYaOW6A/xrhtKnGqFygwd8aphAucGb8SAKfI5oyQUj7JbwXhEPG6
+xLKX/Fzy/OphzH26b0ntQFRYI9mantd0mOotUpccQWlO0tjZGcCfx//89Tq9S10D
+PgYpQBjriDMZa5rETbHe+pZY2t2JNnDyimZ8H03TArTVIxB3rYUW+PoRD2ld65XV
+dcicFG7yak4mrCl+3JEG3CGDO1RINMjyWzTYmqGbgqQ3kusxH6KpPR6oXPPmNtHF
+XvcPGmee72Q8ubdsYXzhMSeTFUSQDA6FGAHS6tdF2xGXwRSMD9p3evp8P3op8dvU
+25y90NYoQ2zMNrBm0YMn
+=C7gb
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__29_Oct_2011_05_45_47_+1100_EvX5N.aYlL/.=rwS--
+--Signature=_Sat__29_Oct_2011_17_50_29_+1100_z1Gv/ZKdm+ODQFWj--
