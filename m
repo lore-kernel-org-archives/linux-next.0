@@ -1,67 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: currently missing kernel devel trees
-Date: Sat, 29 Oct 2011 17:50:29 +1100
-Message-ID: <20111029175029.cd25e5eb99b255a06e355abc@canb.auug.org.au>
-References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
-	<20111026204515.GA29207@redhat.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: linux-next: Tree for Oct 25 (crypto)
+Date: Sat, 29 Oct 2011 19:20:27 -0400
+Message-ID: <49073.1319930427@turing-police.cc.vt.edu>
+References: <20111025203628.40a1b8a475e32053aa34dabe@canb.auug.org.au> <4EA75759.3050900@xenotime.net> <20111026062717.GA10230@gondor.apana.org.au> <7836.1319699116@turing-police.cc.vt.edu>
+            <20111027074544.GA19905@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__29_Oct_2011_17_50_29_+1100_z1Gv/ZKdm+ODQFWj"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43321 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751950Ab1J2Gup (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 29 Oct 2011 02:50:45 -0400
-In-Reply-To: <20111026204515.GA29207@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Teigland <teigland@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: multipart/signed; boundary="==_Exmh_1319930427_32791P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: Your message of "Thu, 27 Oct 2011 09:45:44 +0200."
+             <20111027074544.GA19905@gondor.apana.org.au>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.hengli.com.au>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, linux-crypto@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Sat__29_Oct_2011_17_50_29_+1100_z1Gv/ZKdm+ODQFWj
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--==_Exmh_1319930427_32791P
+Content-Type: text/plain; charset=us-ascii
 
-Hi David,
+On Thu, 27 Oct 2011 09:45:44 +0200, Herbert Xu said:
+> On Thu, Oct 27, 2011 at 03:05:16AM -0400, Valdis.Kletnieks@vt.edu wrote:
 
-On Wed, 26 Oct 2011 16:45:15 -0400 David Teigland <teigland@redhat.com> wro=
-te:
->
-> On Thu, Oct 13, 2011 at 05:43:58PM +1100, Stephen Rothwell wrote:
-> > dlm
->=20
-> Just restored as linux-dlm (no commits for 3.2)
+> > Are there any use cases where a config (probably embedded) would wantq
+> > CRYPTO_USER but not CRYPTO_NET?  Would seem a shame to pull in the entire
+> 
+> Since the CRYPTO_USER interface sits on top of netlink I don't
+> see how you could possibly avoid NET.
 
-I am now using the "next" branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git (it
-used to be .../dlm.git).  But it is, as you say, empty, so I guess it the
-the right thing.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Oh, OK.  The original bug report looked like just some utility functions not
+defined, so I didn't pick up on the "it needs netlink" aspect of it.
 
---Signature=_Sat__29_Oct_2011_17_50_29_+1100_z1Gv/ZKdm+ODQFWj
+--==_Exmh_1319930427_32791P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-iQIcBAEBCAAGBQJOq6I1AAoJEECxmPOUX5FEFOEP/0H7JXpwNqvItRrOOImmDKoA
-rcOoSwmMXE3M/K927zLHbYe0/w45ZoL//gnU24joVSrI9Baa3u15qR48kRrpwjKd
-L+ioy6Bm5v4lVJMAz61uOOjl9Q5pUcSLTrfUuouL9cMOPIjm6fI1zsyhR5n4dXDG
-YL8APinALC6mABzGldh9rymi4UxwR4eWB6qhPXkgWkLWh3vS2I7YY7kiA3XAAgjl
-laLwADPwD/nNM07FXAF+BaRA4ViaVFkQvlBLDEh1JLKCY8Hv2MsJcvh7K8bqKVwk
-mOI9rUGvC6jk80ORfZP+NzWdTVrK34Ydd50cImXk7PPpTv1eDjygXXc1VSTWFcQP
-UH6/Q+byo4CTJYaOW6A/xrhtKnGqFygwd8aphAucGb8SAKfI5oyQUj7JbwXhEPG6
-xLKX/Fzy/OphzH26b0ntQFRYI9mantd0mOotUpccQWlO0tjZGcCfx//89Tq9S10D
-PgYpQBjriDMZa5rETbHe+pZY2t2JNnDyimZ8H03TArTVIxB3rYUW+PoRD2ld65XV
-dcicFG7yak4mrCl+3JEG3CGDO1RINMjyWzTYmqGbgqQ3kusxH6KpPR6oXPPmNtHF
-XvcPGmee72Q8ubdsYXzhMSeTFUSQDA6FGAHS6tdF2xGXwRSMD9p3evp8P3op8dvU
-25y90NYoQ2zMNrBm0YMn
-=C7gb
+iD8DBQFOrIo7cC3lWbTT17ARAqLTAJ4tO11YTXGnzUPMNF9qFITPhJwAvACgmV/x
+UnTxPqqbZqAARe095NBobOc=
+=XJkt
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__29_Oct_2011_17_50_29_+1100_z1Gv/ZKdm+ODQFWj--
+--==_Exmh_1319930427_32791P--
