@@ -1,64 +1,70 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: git tree URL for IEEE 1394 (FireWire) kernel subsystem
-Date: Mon, 31 Oct 2011 18:57:01 +0100
-Message-ID: <20111031185701.5c8771c6@stein>
+Date: Tue, 1 Nov 2011 10:19:30 +1100
+Message-ID: <20111101101930.e12ca55cc07324b42cf01564@canb.auug.org.au>
 References: <20110917194757.2f561324@stein>
 	<20110918215144.f33db78e54224626c6ee408e@canb.auug.org.au>
+	<20111031185701.5c8771c6@stein>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/q0Iq_NJGsfJW/XKhrecHay8"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__1_Nov_2011_10_19_30_+1100_7j/Z+E7UHECF9shS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from einhorn.in-berlin.de ([192.109.42.8]:48068 "EHLO
-	einhorn.in-berlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755055Ab1JaR5Z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Oct 2011 13:57:25 -0400
-In-Reply-To: <20110918215144.f33db78e54224626c6ee408e@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:36731 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750762Ab1JaXTi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Oct 2011 19:19:38 -0400
+In-Reply-To: <20111031185701.5c8771c6@stein>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: linux-next@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
---Sig_/q0Iq_NJGsfJW/XKhrecHay8
+--Signature=_Tue__1_Nov_2011_10_19_30_+1100_7j/Z+E7UHECF9shS
 Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Stephen,
+Hi Stefan,
 
-please switch the ieee1394/for-next URL once more, now to
+On Mon, 31 Oct 2011 18:57:01 +0100 Stefan Richter <stefanr@s5r6.in-berlin.d=
+e> wrote:
+>
+> please switch the ieee1394/for-next URL once more, now to
+>=20
+>     git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git =
+for-next
+>=20
+> which is meant to be permanent.  (-2.6 suffix of the former name
+> dropped).  Current content is identical with my pull request to
+> Linus today.
 
-    git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git fo=
-r-next
+I have switched to that from today.
 
-which is meant to be permanent.  (-2.6 suffix of the former name
-dropped).  Current content is identical with my pull request to
-Linus today.
-
-Thanks,
 --=20
-Stefan Richter
--=3D=3D=3D=3D=3D-=3D=3D-=3D=3D =3D-=3D- =3D=3D=3D=3D=3D
-http://arcgraph.de/sr/
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Sig_/q0Iq_NJGsfJW/XKhrecHay8
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+--Signature=_Tue__1_Nov_2011_10_19_30_+1100_7j/Z+E7UHECF9shS
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.17 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJOruFyAAoJEHnzb7JUXXnQkboP/RR8y+ANZ8THjmbU6kBRK2x/
-2lpgoPbt0S73zNVs+XhXxaxhR2lWvgntbvpRAbdJ6YaPhL1GdJ2LBegcuuAT/N+Q
-PH7Cu6wj2o4kSuW2Ec34KQXszvL/0uEjhvE/AUU23h8mKFC4smKXIrFPDX789BoX
-D6S+2pUGxrKM/mj7+WRTOZml9EJGz4pIdtMmGwcsEXF2ht9tLEutgQoUAUhj9dKw
-NBuBWRPNA0apq5EW/90je2uhIX5/tAzJ4A0KYxxM9BHU9hoLVG060mpKthnkgxPF
-nwQgA3WigICvgMwSR2bYNBGzagXV2O1NrXLuVH3q8dGqwdrDoNeE1+iR0M0HT4wd
-67fFxFlJdqk0CEem5ZTt5D7/VqopUUublBnSfHvqrm3CTo70gJ7t6ETxFRDvEqcb
-rMeDZKZkx14kJvreS0oCXGcCiEoddG/X7nXAMDdG68SWM9gh/5YZfORs5jXxcXEQ
-6bwH51zJxsJfGklwW4NfMpV8XDuy+Y+lfSWoWXB4We6YF1dMAoYAQ8bkHjmRAP1Y
-v7cpFzb/zaOYWaHbow0P5D7LiPIQKYDZV+Hv5FBmKSgg2iQ6ttBTGO8ZRD98hS61
-f3NeRWAjzADJq0pFA95vTYizlc0BvmFdnuJJDPpKWKp0PtU4z+EcKIohg1PTGL3m
-GjgZomnXlAKK63D3fv3E
-=yVMM
+iQIcBAEBCAAGBQJOry0CAAoJEECxmPOUX5FEO7MP/jIbya2nARtVTHyPjLUhtK2Q
+s7JdXFBSQjlFCkWCvOZP31d2mPvu29MGJ30OWow3tfQlvXwuwV2MFEsBBTTGCwy/
+3Gm2T7V2wCXeWnIQDa7aQ1PL7NE0OqXtESccM1dVLN/Gu2P3K+8hNaNcQQo+Z+WN
+ELQ5DrF/zkFW6PKtwh8fwqRHJlKhoXKUUq6+zT8zCU8REw4mLrAriW6hRdVPKOfM
+QKDz9C5T+TJoPt1XMoZXI7JyID2epNHSftGMJ0JtGc3XFBsg8eUFYmS6b4cu5FkK
+chEdeO1bo1WBSGVC5O5DpK1GMbN/B3M6tQkbvWV/7RCfkjrnaIdt0Yo0TAwiLTL4
+iH+6l+VjYKmCN0TUa1cxCfN2PXI8Zp04p2lVGpgkwU7ZYNHHp437bEtljuKr2Pm0
+EyzFgDEh0ghHAhu81WW2LOLWkXofl6WE+yHtdYm9r7976jTtkRWq2D2SlZUViImL
+YUDN7iRFLio8Iu2qTcAwDq4WSUSWZsyed0DGbB7Nq9NAKf+uRfKsjJGeGqqo5wui
+rgkSnHfskfHrS4b8zikIkiyeIJADPNm8MjVoOX6C/8a+qsp7dSXHS8rZBJOqO61e
+5gzCOd7qC8KedMvlS2b3fVQxw8oekOD3xGz9M/VQtqEtEoQAdTYGtofVMTzE1GwP
+62hLeHNkwisivPjOk9Nf
+=Ce/R
 -----END PGP SIGNATURE-----
 
---Sig_/q0Iq_NJGsfJW/XKhrecHay8--
+--Signature=_Tue__1_Nov_2011_10_19_30_+1100_7j/Z+E7UHECF9shS--
