@@ -1,36 +1,64 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: Tree for Oct 25 (mfd/ab8500)
-Date: Mon, 31 Oct 2011 00:04:18 +0100
-Message-ID: <20111030230418.GA3846@sortiz-mobl>
-References: <20111025203628.40a1b8a475e32053aa34dabe@canb.auug.org.au>
- <4EA850C1.4060405@xenotime.net>
+From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Subject: Re: git tree URL for IEEE 1394 (FireWire) kernel subsystem
+Date: Mon, 31 Oct 2011 18:57:01 +0100
+Message-ID: <20111031185701.5c8771c6@stein>
+References: <20110917194757.2f561324@stein>
+	<20110918215144.f33db78e54224626c6ee408e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/q0Iq_NJGsfJW/XKhrecHay8"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:45040 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750740Ab1J3XAb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 30 Oct 2011 19:00:31 -0400
-Content-Disposition: inline
-In-Reply-To: <4EA850C1.4060405@xenotime.net>
+Received: from einhorn.in-berlin.de ([192.109.42.8]:48068 "EHLO
+	einhorn.in-berlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755055Ab1JaR5Z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Oct 2011 13:57:25 -0400
+In-Reply-To: <20110918215144.f33db78e54224626c6ee408e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Linus Walleij <linus.walleij@stericsson.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
-Hi Randy,
+--Sig_/q0Iq_NJGsfJW/XKhrecHay8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 26, 2011 at 11:26:09AM -0700, Randy Dunlap wrote:
-> On 10/25/11 02:36, Stephen Rothwell wrote:
-> > Hi all,
-> 
-> 
-> drivers/mfd/ab8500-core.c:881:7: error: 'AB8500_CUT3P3' undeclared
-Thanks for the report. This is now fixed.
+Stephen,
 
-Cheers,
-Samuel.
+please switch the ieee1394/for-next URL once more, now to
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+    git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git fo=
+r-next
+
+which is meant to be permanent.  (-2.6 suffix of the former name
+dropped).  Current content is identical with my pull request to
+Linus today.
+
+Thanks,
+--=20
+Stefan Richter
+-=3D=3D=3D=3D=3D-=3D=3D-=3D=3D =3D-=3D- =3D=3D=3D=3D=3D
+http://arcgraph.de/sr/
+
+--Sig_/q0Iq_NJGsfJW/XKhrecHay8
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.17 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOruFyAAoJEHnzb7JUXXnQkboP/RR8y+ANZ8THjmbU6kBRK2x/
+2lpgoPbt0S73zNVs+XhXxaxhR2lWvgntbvpRAbdJ6YaPhL1GdJ2LBegcuuAT/N+Q
+PH7Cu6wj2o4kSuW2Ec34KQXszvL/0uEjhvE/AUU23h8mKFC4smKXIrFPDX789BoX
+D6S+2pUGxrKM/mj7+WRTOZml9EJGz4pIdtMmGwcsEXF2ht9tLEutgQoUAUhj9dKw
+NBuBWRPNA0apq5EW/90je2uhIX5/tAzJ4A0KYxxM9BHU9hoLVG060mpKthnkgxPF
+nwQgA3WigICvgMwSR2bYNBGzagXV2O1NrXLuVH3q8dGqwdrDoNeE1+iR0M0HT4wd
+67fFxFlJdqk0CEem5ZTt5D7/VqopUUublBnSfHvqrm3CTo70gJ7t6ETxFRDvEqcb
+rMeDZKZkx14kJvreS0oCXGcCiEoddG/X7nXAMDdG68SWM9gh/5YZfORs5jXxcXEQ
+6bwH51zJxsJfGklwW4NfMpV8XDuy+Y+lfSWoWXB4We6YF1dMAoYAQ8bkHjmRAP1Y
+v7cpFzb/zaOYWaHbow0P5D7LiPIQKYDZV+Hv5FBmKSgg2iQ6ttBTGO8ZRD98hS61
+f3NeRWAjzADJq0pFA95vTYizlc0BvmFdnuJJDPpKWKp0PtU4z+EcKIohg1PTGL3m
+GjgZomnXlAKK63D3fv3E
+=yVMM
+-----END PGP SIGNATURE-----
+
+--Sig_/q0Iq_NJGsfJW/XKhrecHay8--
