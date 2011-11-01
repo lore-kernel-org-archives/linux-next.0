@@ -1,59 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm with the scsi tree
-Date: Tue, 1 Nov 2011 18:54:13 +1100
-Message-ID: <20111101185413.694c111f8b8bf015326fbc83@canb.auug.org.au>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: manual merge of the block tree with Linus' tree
+Date: Tue, 01 Nov 2011 09:09:45 +0100
+Message-ID: <4EAFA949.5060200@kernel.dk>
+References: <20111101161500.79aebe8d8f30162ea542a818@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__1_Nov_2011_18_54_13_+1100_ECBrmuEJXcc4varn"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:60263 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752166Ab1KAHye (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 03:54:34 -0400
+Received: from brick.kernel.dk ([87.104.106.3]:60427 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752120Ab1KAIJr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Nov 2011 04:09:47 -0400
+In-Reply-To: <20111101161500.79aebe8d8f30162ea542a818@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@cam.ac.uk>, Dave Kleikamp <dave.kleikamp@oracle.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, NeilBrown <neilb@suse.de>
 
---Signature=_Tue__1_Nov_2011_18_54_13_+1100_ECBrmuEJXcc4varn
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2011-11-01 06:15, Stephen Rothwell wrote:
+> Hi Jens,
+> 
+> Today's linux-next merge of the block tree got a conflict in
+> drivers/md/raid10.c between commit fd01b88c75a7 ("md: remove typedefs:
+> mddev_t -> struct mddev") from Linus' tree and commit 5a7bbad27a41
+> ("block: remove support for bio remapping from ->make_request") from the
+> block tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Hi Andrew,
+Fixup looks good, however don't you get the same conflict in basically
+all the raid personalities? Fixup is indeed just the simple int -> void
+transition, conflict is because of the mddev_t -> struct mddev change
+that is now in Linus' tree.
 
-Today's linux-next merge of the akpm tree got a conflict in
-drivers/scsi/sd.c between commit 21208ae5a21f ("[SCSI] sd: remove
-arbitrary SD_MAX_DISKS namespace limit") from the scsi tree and
-"drivers/scsi/sd.c: use ida_simple_get() and ida_simple_remove() in place
-of boilerplate code" from the akpm.
+I'll push my pending off to Linus today or tomorrow, so this will be
+resolved shortly.
 
-I think that the latter supercedes that former, so I used it.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__1_Nov_2011_18_54_13_+1100_ECBrmuEJXcc4varn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOr6WlAAoJEECxmPOUX5FEj7UQAIflCKAYH09ZpPY2IfB23amD
-7nYHEcp45lVoRYZw8XNNvRCNgUfieTLKAfe2BbbgmD39ZHwDFixQkc0ZALd//yfT
-X0w/6fA4t/LLwBmaYNFGZxTho1uYeJHJ4T5/m3uov3zUVyVVZ4hDc6JZqBBrf82+
-Hf9q6c5iQ/OODCmM2/xLirEf+DqaZelMxQgmsTwUS/1LhNo3Ts0K90XmaHjSm7qq
-n0/mgd0RpbC+DgtpqOcQBrH1a4U20+ioGYQ4xJGphZSxn/thYJ2isE8m0fws//4V
-wOw2VSJVVknXydzVeqroDT/+R6Lk+ALiuDELG/N8eTmdyAz3mSQLz6t7MlFt2oxJ
-mhmRo/XChEVWyji7nYSyzd5nqCJQKu2B6WSdUL0sUnnGqihOgpJZTcWsLZew4+lL
-v1BBkRyVFTQ8vKJuKPseBvTYDBUGc+YG7vBh+WTQGZV+Jcwm3Bei4Au4pVSRFbOO
-cWWgyKNmFKfSA0x2LX+EuOvY3zzr3WHoY33d4KFO0fCZGQ4FiueiwCk1S5SPHC42
-OHil5brS4MVgRoZRtaf88EChTyJEe9yD8hvKHabGNyYlinbsmRuSYERWpYYPQSz9
-uhdclNxIb2vf7ayWvw1KFRVgWVGiog+StxC9LSVEuIFsz9wivK+MUH6WPjZDEaOc
-nhDNXrx0QykD/5fzn+Wp
-=ws2k
------END PGP SIGNATURE-----
-
---Signature=_Tue__1_Nov_2011_18_54_13_+1100_ECBrmuEJXcc4varn--
+-- 
+Jens Axboe
