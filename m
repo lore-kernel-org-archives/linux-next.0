@@ -1,211 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the moduleh tree
-Date: Tue, 1 Nov 2011 18:38:14 +1100
-Message-ID: <20111101183814.15c0f8af2b8e3664466a1307@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm with the scsi tree
+Date: Tue, 1 Nov 2011 18:54:13 +1100
+Message-ID: <20111101185413.694c111f8b8bf015326fbc83@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__1_Nov_2011_18_38_14_+1100_==3S8pWm4kYW6NiS"
+ boundary="Signature=_Tue__1_Nov_2011_18_54_13_+1100_ECBrmuEJXcc4varn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43786 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:60263 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751883Ab1KAHiY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 03:38:24 -0400
+	with ESMTP id S1752166Ab1KAHye (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 03:54:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, Alasdair G Kergon <agk@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@cam.ac.uk>, Dave Kleikamp <dave.kleikamp@oracle.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
 
---Signature=_Tue__1_Nov_2011_18_38_14_+1100_==3S8pWm4kYW6NiS
+--Signature=_Tue__1_Nov_2011_18_54_13_+1100_ECBrmuEJXcc4varn
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Andrew,
 
-After merging the moduleh tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/scsi/sd.c between commit 21208ae5a21f ("[SCSI] sd: remove
+arbitrary SD_MAX_DISKS namespace limit") from the scsi tree and
+"drivers/scsi/sd.c: use ida_simple_get() and ida_simple_remove() in place
+of boilerplate code" from the akpm.
 
-drivers/md/dm-bufio.c:988:1: warning: data definition has no type or storag=
-e class [enabled by default]
-drivers/md/dm-bufio.c:988:1: warning: type defaults to 'int' in declaration=
- of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:988:1: warning: parameter names (without types) in fu=
-nction declaration [enabled by default]
-drivers/md/dm-bufio.c:997:1: warning: data definition has no type or storag=
-e class [enabled by default]
-drivers/md/dm-bufio.c:997:1: warning: type defaults to 'int' in declaration=
- of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:997:1: warning: parameter names (without types) in fu=
-nction declaration [enabled by default]
-drivers/md/dm-bufio.c:1006:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1006:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1006:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1036:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1036:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1036:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1049:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1049:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1049:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1059:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1059:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1059:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1135:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1135:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1135:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1158:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1158:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1158:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1232:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1232:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1232:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1238:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1238:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1238:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1245:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1245:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1245:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1251:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1251:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1251:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1257:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1257:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1257:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1263:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1263:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1263:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1269:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1269:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1269:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1489:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1489:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1489:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1534:1: warning: data definition has no type or stora=
-ge class [enabled by default]
-drivers/md/dm-bufio.c:1534:1: warning: type defaults to 'int' in declaratio=
-n of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
-drivers/md/dm-bufio.c:1534:1: warning: parameter names (without types) in f=
-unction declaration [enabled by default]
-drivers/md/dm-bufio.c:1676:63: error: expected ')' before 'ulong'
-drivers/md/dm-bufio.c:1677:40: error: expected ')' before string constant
-drivers/md/dm-bufio.c:1679:55: error: expected ')' before 'uint'
-drivers/md/dm-bufio.c:1680:35: error: expected ')' before string constant
-drivers/md/dm-bufio.c:1682:67: error: expected ')' before 'ulong'
-drivers/md/dm-bufio.c:1683:40: error: expected ')' before string constant
-drivers/md/dm-bufio.c:1685:79: error: expected ')' before 'ulong'
-drivers/md/dm-bufio.c:1686:46: error: expected ')' before string constant
-drivers/md/dm-bufio.c:1688:87: error: expected ')' before 'ulong'
-drivers/md/dm-bufio.c:1689:50: error: expected ')' before string constant
-drivers/md/dm-bufio.c:1691:73: error: expected ')' before 'ulong'
-drivers/md/dm-bufio.c:1692:43: error: expected ')' before string constant
-drivers/md/dm-bufio.c:1694:73: error: expected ')' before 'ulong'
-drivers/md/dm-bufio.c:1695:43: error: expected ')' before string constant
-drivers/md/dm-bufio.c:1697:15: error: expected declaration specifiers or '.=
-..' before string constant
-drivers/md/dm-bufio.c:1698:20: error: expected declaration specifiers or '.=
-..' before string constant
-drivers/md/dm-bufio.c:1699:16: error: expected declaration specifiers or '.=
-..' before string constant
-
-Caused by commit 0b068238c5ef ("The dm-bufio interface allows you to do
-cached I/O on devices") interacting with the modul.h split up.  This file
-should have included module.h in any case.
-
-I have added this merg fix patch (Alasdair, this could be added to the
-device-mapper tree):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 1 Nov 2011 18:30:49 +1100
-Subject: [PATCH] device-mapper: dm-bufio.c needs to include module.h
-
-since it uses the module facilities.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/md/dm-bufio.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
-index cb24666..3a94ef4 100644
---- a/drivers/md/dm-bufio.c
-+++ b/drivers/md/dm-bufio.c
-@@ -14,6 +14,7 @@
- #include <linux/vmalloc.h>
- #include <linux/version.h>
- #include <linux/shrinker.h>
-+#include <linux/module.h>
-=20
- #define DM_MSG_PREFIX "bufio"
-=20
---=20
-1.7.7
-
+I think that the latter supercedes that former, so I used it.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_Nov_2011_18_38_14_+1100_==3S8pWm4kYW6NiS
+--Signature=_Tue__1_Nov_2011_18_54_13_+1100_ECBrmuEJXcc4varn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOr6HmAAoJEECxmPOUX5FEeOMP/iHhYtxnS7qUfTgo/fhk18gP
-ybticRwq8mF887+e8LU9r/vGNEGHOp3ZgZfnSwWPoIaioDkswi4Ub9q450hkumsz
-a0sWU2qnxvybqxXFB2h99fNOV29I841cyq/cdPCaoUzEh8cDxBZ+9yMFMkXOntov
-1qYYQWAgNSmcdGoAVMAvoWqe3Dt5J5/JY6vnazUYFGaOUSiTayKaEE+JQ9DnY/9/
-K6nJw2Cp56W73FzO5TjRvHRrjIfKhpBVc7+7Pdanzxo20WpYy6DLj6c9Wy1dORdK
-5SYfzRHIObIWtT05hbIGtMMjXP0nFtwknBI+TGsCo5NhHyKfFhdZyYm8NDQWUWHa
-p2ltgv+438O27qJDWj37ix83S5WBslHDgOY9umiI9a5vNv3GHYDFwd9pjNb1ZSKF
-mugom41xJybemaIsM/Vkva/S7up9wBNxk3MMkkf6cqDpfCQa7hMkRw6dNgiBKEB3
-lfZOuCFtcEkcMZTXzQ6JJqZVThRxn/11tuF8ZZZdjY6zr0TWvvvY3NUVsnwZavi6
-opLMMtbyloZQX3tZPigg2C1MukLXS2nB/QWUs1fCJaeBCFgPZ4JMHmwjKK/nwFMm
-JzwUtO2IZ59P3E0M/AMsruMRH4z+O9E7YVV+dxTnV+0b90xfv8IT3WhlxnMamtjr
-P7bUOLYw2ZXP0kVQHDLl
-=HYGi
+iQIcBAEBCAAGBQJOr6WlAAoJEECxmPOUX5FEj7UQAIflCKAYH09ZpPY2IfB23amD
+7nYHEcp45lVoRYZw8XNNvRCNgUfieTLKAfe2BbbgmD39ZHwDFixQkc0ZALd//yfT
+X0w/6fA4t/LLwBmaYNFGZxTho1uYeJHJ4T5/m3uov3zUVyVVZ4hDc6JZqBBrf82+
+Hf9q6c5iQ/OODCmM2/xLirEf+DqaZelMxQgmsTwUS/1LhNo3Ts0K90XmaHjSm7qq
+n0/mgd0RpbC+DgtpqOcQBrH1a4U20+ioGYQ4xJGphZSxn/thYJ2isE8m0fws//4V
+wOw2VSJVVknXydzVeqroDT/+R6Lk+ALiuDELG/N8eTmdyAz3mSQLz6t7MlFt2oxJ
+mhmRo/XChEVWyji7nYSyzd5nqCJQKu2B6WSdUL0sUnnGqihOgpJZTcWsLZew4+lL
+v1BBkRyVFTQ8vKJuKPseBvTYDBUGc+YG7vBh+WTQGZV+Jcwm3Bei4Au4pVSRFbOO
+cWWgyKNmFKfSA0x2LX+EuOvY3zzr3WHoY33d4KFO0fCZGQ4FiueiwCk1S5SPHC42
+OHil5brS4MVgRoZRtaf88EChTyJEe9yD8hvKHabGNyYlinbsmRuSYERWpYYPQSz9
+uhdclNxIb2vf7ayWvw1KFRVgWVGiog+StxC9LSVEuIFsz9wivK+MUH6WPjZDEaOc
+nhDNXrx0QykD/5fzn+Wp
+=ws2k
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_Nov_2011_18_38_14_+1100_==3S8pWm4kYW6NiS--
+--Signature=_Tue__1_Nov_2011_18_54_13_+1100_ECBrmuEJXcc4varn--
