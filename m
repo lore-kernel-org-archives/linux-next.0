@@ -1,88 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mfd tree with the arm-soc tree
-Date: Tue, 1 Nov 2011 16:19:50 +1100
-Message-ID: <20111101161950.798537fc333958b0b7d72668@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the edac tree
+Date: Tue, 1 Nov 2011 17:00:00 +1100
+Message-ID: <20111101170000.6e7301a30bc21e917631eb88@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__1_Nov_2011_16_19_50_+1100_PY=vKR9tpze+JS/B"
+ boundary="Signature=_Tue__1_Nov_2011_17_00_00_+1100_cclQH4z7e3WcqmFw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:51713 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:39459 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750817Ab1KAFT6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 01:19:58 -0400
+	with ESMTP id S1751145Ab1KAGAL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 02:00:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kyle Manna <kyle@kylemanna.com>, Tony Lindgren <tony@atomide.com>, Arnd Bergmann <arnd@arndb.de>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov <borislav.petkov@amd.com>
 
---Signature=_Tue__1_Nov_2011_16_19_50_+1100_PY=vKR9tpze+JS/B
+--Signature=_Tue__1_Nov_2011_17_00_00_+1100_cclQH4z7e3WcqmFw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi Mauro,
 
-Today's linux-next merge of the mfd tree got a conflict in
-arch/arm/mach-omap2/board-omap3beagle.c between commit be7324605873
-("ARM: OMAP2+: Remove custom init_irq for remaining boards") from the
-arm-soc tree and commit 935bac2b14b0 ("arm: BeagleBoard: add support for
-the twl4030-madc") from the mfd tree.
+After merging the edac tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+arch/x86/kernel/cpu/mcheck/mce.c:39:28: fatal error: linux/edac_mce.h: No s=
+uch file or directory
+
+Caused by commit cdaf4f4e563c ("i7core_edac: Drop the edac_mce
+facility").  This commit removed the file include/linux/edac_mce.h which
+is still metioned by the above file (and MAINTAINERS).  Grep is your
+friend.
+
+I have used the version of the edac tree from next-20111025 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-omap2/board-omap3beagle.c
-index 70261bc,0d68c8d..0000000
---- a/arch/arm/mach-omap2/board-omap3beagle.c
-+++ b/arch/arm/mach-omap2/board-omap3beagle.c
-@@@ -444,6 -445,23 +445,11 @@@ static struct platform_device keys_gpi
-  	},
-  };
- =20
- -static void __init omap3_beagle_init_early(void)
- -{
- -	omap2_init_common_infrastructure();
- -	omap2_init_common_devices(mt46h32m32lf6_sdrc_params,
- -				  mt46h32m32lf6_sdrc_params);
- -}
- -
- -static void __init omap3_beagle_init_irq(void)
- -{
- -	omap3_init_irq();
- -}
- -
-+ static struct platform_device madc_hwmon =3D {
-+ 	.name	=3D "twl4030_madc_hwmon",
-+ 	.id	=3D -1,
-+ };
-+=20
-  static struct platform_device *omap3_beagle_devices[] __initdata =3D {
-  	&leds_gpio,
-  	&keys_gpio,
-
---Signature=_Tue__1_Nov_2011_16_19_50_+1100_PY=vKR9tpze+JS/B
+--Signature=_Tue__1_Nov_2011_17_00_00_+1100_cclQH4z7e3WcqmFw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOr4F2AAoJEECxmPOUX5FEVAwQAKVfuD6DK9tAy56CQABwhj2T
-z09JtjXts853G5JYlzgCGKo7SdsL/PjPzDGCK8nf7ZKzvUd6iYYqIyWykqmJa4XN
-rWcTyL4KHDOO8dIMxO+UEkKYm8XhYzUJ1WMDUARmSQN7SxJfIyEz78XPMyO/JZrL
-L18rh1BrHllYhQkkECLWdmmTOIhpBvs85aOvHgHK22AbZeSiVGM3dwEuty0n0C/5
-iy+GuoU3ZLu9FGMfkbqqNeinRlLviahyrVDcxrhMu56Vmbys0LEXvEydDBJYasbA
-4kgI93mHgQ548v2lRnci/ydYFicdk9UaK6yub/FzjYRMxxMaE6iwxrhvaprqaDHf
-uPTV5LO26GswGj+j0NiEnvfHOr+VK+N2/2Dzv4ksrvPwgLQ89NXJY8a2vRzZK+UM
-pgoOB2rdW98NsNhkpGE+WwRbTjoqQDOXJpSpYKYtoQ5P0IatUj0yiKusr84CO2rv
-4+FexckBOARHp7FdInZrbttFavIvKT0hwN4oVJ/R6QSxhqpvRJbK2P8Wcv5Nwg45
-EI1mhzhNabc8lQpMKlwEwKM5ek8i1o5UowC99vWl994cld4mGa68jKBHS7cy1cSw
-ROOlcFx1SbJF+QDd6+0LRlBwdU9fbBjwqnZaMucVueOA9UBNxn0B3N1X9zgx5W2H
-/QEkfKgav33AnFTwqG3Z
-=HCtT
+iQIcBAEBCAAGBQJOr4rgAAoJEECxmPOUX5FEcuQP/00Hb+k2GilzGPMNaG7evd2E
+AXxBrdbgjo9F4yPSQEdXOicGLEi4wP1G9VKfd+8tuAqmlhJnNlQN7nyBOTI4CN5b
+Yho7w4RbbSZ/ONAFFiaby7MLy4lo1AcB8kTRZ3E+uB4NJZY53f3AIQlmEsCP+Wne
+WfibnqddB/UiZd/M+H9v6JXUvY7AcMFKqx5+wauoOpH5L6ots6TphtJJJ68RhgVz
+lviSthRWLQ6+Kccx1bagIb3klaYjrhxFaM1mXLbsXjJSCOwcRZvLOJUuYUsTACni
+V6cZXeFcUBhPLAvQbD1GewsyfTY+WlOr5toy9yu2isShbfYV0ipnyQFe8jvs8omf
+uZ+IwibYoQ0yGJuiN1P4orKgQFpiwW+ss5CACTyQzmTZHIeicWhbhirGP/ZDv0ly
+Du4o0pANe7qcD+xyFXQ8J9cEKTufB0wKzb6C7SscKim7Dc0/zX0T9jsFtqh0+jQp
+Gacl1SNXrLdyO9bU0rfYjACEixXY58OJ0+u/Se+HwziTHwwrMoK1/hKxWmWqV/w8
++RZKHc3e3YLHGBlZFGjZ28PztIeOi6Uyq5/PJZGqvhzz4DbLunxvhzRSU1OsE6rJ
+O6NOs4vj/Cchv2XIv3oe5LTLw5JP5cRVT17OX0xjiqVtys+5qhzOj7m6iUOyeJSA
+SHpmmV1H8Rh/d45Y8AWM
+=3XpC
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_Nov_2011_16_19_50_+1100_PY=vKR9tpze+JS/B--
+--Signature=_Tue__1_Nov_2011_17_00_00_+1100_cclQH4z7e3WcqmFw--
