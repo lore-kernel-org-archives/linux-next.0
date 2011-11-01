@@ -1,19 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (sound tree
- related)
-Date: Tue, 1 Nov 2011 20:24:52 +1100
-Message-ID: <20111101202452.76723ee949d47fb37a6207dd@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+ (device-mapper and moduleh trees related)
+Date: Tue, 1 Nov 2011 20:29:58 +1100
+Message-ID: <20111101202958.89f11454f4546b6abbfb18d6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__1_Nov_2011_20_24_52_+1100_xD5IS=Gud5yHaOFk"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Ozerkov <kozerkov@parallels.com>, "Denis V. Lunev" <den@openvz.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__1_Nov_2011_20_29_58_+1100_1WizZX3JEUOE3PBj"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:47527 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752865Ab1KAJaB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 05:30:01 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alasdair G Kergon <agk@redhat.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Thornber <thornber@redhat.com>, Mike Snitzer <snitzer@redhat.com>
 
---Signature=_Tue__1_Nov_2011_20_24_52_+1100_xD5IS=Gud5yHaOFk
+--Signature=_Tue__1_Nov_2011_20_29_58_+1100_1WizZX3JEUOE3PBj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -23,40 +27,75 @@ Hi all,
 After merging the final tree, today's linux-next build (powerpc
 allyesconfig) failed like this:
 
-In file included from sound/pci/intel8x0.c:46:0:
-arch/powerpc/include/asm/kvm_para.h: In function 'kvm_arch_para_features':
-arch/powerpc/include/asm/kvm_para.h:166:22: error: 'KVM_HC_FEATURES' undecl=
-ared (first use in this function)
+drivers/md/persistent-data/dm-space-map-checker.c:386:1: warning: data defi=
+nition has no type or storage class [enabled by default]
+drivers/md/persistent-data/dm-space-map-checker.c:386:1: warning: type defa=
+ults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+drivers/md/persistent-data/dm-space-map-checker.c:386:1: warning: parameter=
+ names (without types) in function declaration [enabled by default]
+drivers/md/persistent-data/dm-space-map-checker.c:417:1: warning: data defi=
+nition has no type or storage class [enabled by default]
+drivers/md/persistent-data/dm-space-map-checker.c:417:1: warning: type defa=
+ults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+drivers/md/persistent-data/dm-space-map-checker.c:417:1: warning: parameter=
+ names (without types) in function declaration [enabled by default]
 
-Caused by commit 228cf79376f1 ("ALSA: intel8x0: Improve performance in
-virtual environment").  It should probably be including linux/kvm_para.h
-instead of asm/kvm_para.h.
+Caused by commit 661ae8a9604f ("The persistent-data library offers a
+re-usable framework for the storage") interacting with the module.h split
+up.
 
-I have reverted that commit for today.
+I added this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 1 Nov 2011 20:27:43 +1100
+Subject: [PATCH] device-mapper: using EXPORT_SYBOL in dm-space-map-checker.c
+ needs export.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/md/persistent-data/dm-space-map-checker.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/md/persistent-data/dm-space-map-checker.c b/drivers/md=
+/persistent-data/dm-space-map-checker.c
+index bb44a93..50ed53b 100644
+--- a/drivers/md/persistent-data/dm-space-map-checker.c
++++ b/drivers/md/persistent-data/dm-space-map-checker.c
+@@ -7,6 +7,7 @@
+ #include "dm-space-map-checker.h"
+=20
+ #include <linux/device-mapper.h>
++#include <linux/export.h>
+=20
+ #ifdef CONFIG_DM_DEBUG_SPACE_MAPS
+=20
+--=20
+1.7.7
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_Nov_2011_20_24_52_+1100_xD5IS=Gud5yHaOFk
+--Signature=_Tue__1_Nov_2011_20_29_58_+1100_1WizZX3JEUOE3PBj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOr7rkAAoJEECxmPOUX5FEgaAQAINnkg1gySuuuR0rqydZSWYZ
-N0ktK2AAkrFv2EtLMPRoWxFGLp0Y0wz2rASJWj7Jf/L27kmhE3RY/VikwVVFIeLI
-GyZ3yEZ8ryQK4VnKNbRvRnC93IMvPNUxenRvC++ARkpRNaHqDdL7NQGpehHbP11p
-tCAlYY3FkSbUZq17r+ToAnvgu6CSME+sRRE3rJ2YLWymy5RXQI9CAMMKhtNp3LTH
-RzRQK2kW0UFtSvjB0jcX/ttVPs0w5pHeI9XHAHwzMb3ATbgG+T2HcLOfNyLi54jj
-M5a8qBIBNlblj5E1AJEEPlxy7FStGQmqJ+4k/TNuKTIXB74Bpuzq/IcgOF8dXZyJ
-TFGyYHq8FqlZWjIgnqSDwmzSPvGRrIKZsRx0Qp3Sqh7AHesJ+h/dN1fpS6yctzBn
-FdIQ8fqs3YxKPm+h75SnnXfquVyxu+xvir3glZ3XsFVkaoryO0ydvKi2BxRHXovn
-EC4uLrhNe+jnfa4mGoQ1ifEHDk87d9fRQXv57BHscimwiOyinAYBrq7WCTPk6q/e
-/UopnoHdqD/ScYq7XU2GN3c6oeD0b+FoaIglydiRXkIxv8g10+S6V69eHq9PNy7R
-+mcdLehuqVACVauvn4p0AUr4Yoz2jcufXKlfzlPfV4Q/Sspt78j2HXKYksl/8Qbu
-FUb80NTuPMJisaDyMFE5
-=dlfx
+iQIcBAEBCAAGBQJOr7wWAAoJEECxmPOUX5FEK3QP/1eDaUJlzLM6IGxv6ZKOeNzM
+dEKrSigvhDlJoT7ND2IqwWMl874zPngYWLcrW0IMCiKlcS5cdu2VcKVT8dmQPTyr
+IWfkIsYlJzyMBD2qf8+XaYBXATvgnBkFYV+OhizjftWJEyiM95PJky7+wxde0gaP
+K1qtRwLQpSXMyC+icLe/Mf6aAnyY8xfqyCA7AT8sNge7GQHl6NpYQ7uzqcnQlef8
+0hSbASFmlRYAVWBqqFUJpkv+udFFTRnkX5yvkYrBkuDikYuw0GwEZ/ZaN3aqoIRV
+W/CXp42/a5vx22P4u71bJ8VgHac2A2JS4kWnzs7qg1HHmToVivRLn85gggv6KJ/Y
+w3Bfn5llWM0xy92k69+Ouh4TDAHm0qei6qkoNxaEEXYXLbtQmAqml3/5R78XlJtW
+wtnpEMorBWZuKM21CXn0hNOEzMFZqMB/P7xQn765173/vAzRw+QNXUEj2erFrdKi
+iPdxZwkXd9Dptl9YMyj5ipUjSE8n4KiDQvPhtpA12tmO2fSDFRRrz89mrUZiPLo5
+RQ3ApkfHUycOcr98Z8ylAgVJ17scAIyUSWQmv9mIvNY/hKm8jVd7N2zu4OtPO4Pw
+ntrDVofoZY/5BHTBfEpjNBLHhxinWZ7IItoRjoe7esdVLhy+S0TfYz3saR3XVkl0
+ZRzO3CkVf+IdWGTRDcwW
+=DDFv
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_Nov_2011_20_24_52_+1100_xD5IS=Gud5yHaOFk--
+--Signature=_Tue__1_Nov_2011_20_29_58_+1100_1WizZX3JEUOE3PBj--
