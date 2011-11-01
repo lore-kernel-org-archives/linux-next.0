@@ -1,22 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with the mfd tree
-Date: Tue, 1 Nov 2011 18:05:17 +1100
-Message-ID: <20111101180517.8a53c259b54ee6df641bb4f4@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the device-mapper
+ tree
+Date: Tue, 1 Nov 2011 18:22:18 +1100
+Message-ID: <20111101182218.0046a4f479cc11a405349736@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__1_Nov_2011_18_05_17_+1100_xa4rUCsbv7cDjO+9"
+ boundary="Signature=_Tue__1_Nov_2011_18_22_18_+1100_q0UhHDPZ1/xYCP=h"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43766 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:49569 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751671Ab1KAHFW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 03:05:22 -0400
+	with ESMTP id S1751540Ab1KAHW0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 03:22:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Thornber <thornber@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Alasdair G Kergon <agk@redhat.com>
 
---Signature=_Tue__1_Nov_2011_18_05_17_+1100_xa4rUCsbv7cDjO+9
+--Signature=_Tue__1_Nov_2011_18_22_18_+1100_q0UhHDPZ1/xYCP=h
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,35 +25,52 @@ Content-Transfer-Encoding: quoted-printable
 Hi Paul,
 
 Today's linux-next merge of the moduleh tree got a conflict in
-drivers/mfd/ab3550-core.c between commit 6508204630f4 ("mfd: Delete
-ab3550 driver") from the mfd tree and commit 4e36dd331423 ("mfd: Add
-module.h to the implicit drivers/mfd users") from the moduleh tree.
+drivers/md/persistent-data/dm-space-map-disk.c between commit
+661ae8a9604f ("The persistent-data library offers a re-usable framework
+for the storage") from the device-mapper tree and fix up patch
+"drivers-md-change-module.h-export.h-in-persistent-da.patch" from the
+moduleh tree.
 
-The latter deleted the file, so I did that.
+I fixed it up (see below) (the include of bitops.h has been removed in
+the device-mapper commit).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_Nov_2011_18_05_17_+1100_xa4rUCsbv7cDjO+9
+diff --cc drivers/md/persistent-data/dm-space-map-disk.c
+index aeff785,e6b9d67..0000000
+--- a/drivers/md/persistent-data/dm-space-map-disk.c
++++ b/drivers/md/persistent-data/dm-space-map-disk.c
+@@@ -12,7 -11,8 +12,7 @@@
+ =20
+  #include <linux/list.h>
+  #include <linux/slab.h>
+- #include <linux/module.h>
+ -#include <linux/bitops.h>
++ #include <linux/export.h>
+  #include <linux/device-mapper.h>
+ =20
+  #define DM_MSG_PREFIX "space map disk"
+
+--Signature=_Tue__1_Nov_2011_18_22_18_+1100_q0UhHDPZ1/xYCP=h
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOr5otAAoJEECxmPOUX5FEFnEP/0sdLACkFwFZpG89tvTGhTzz
-SeydRx9ZG72krwGn07KoM8tkjbgzwt2Osa8i+chbKhNiJfea+13AH1s4/Mleu89g
-VvB+fm66n6+4dUpCqeVBm+x5h4Jh1Kkl6tk26es0oFrVvzQJEtMmNaci4ORCItDb
-l04abgbP9DT73Deb21SSe2XACsRb0Xw0/Udgr8XQ353Q+P1At2IVaEAtd42Z7+2A
-1uhDJvTrtBUFxApjM2t7sbHVpbH9Eq0xCbF+w+MzX7ADzP4RC/vpcVNmbAcZbYWj
-0jyWo4xhwzQHIcMtCJTzjfYrrA2AhluTck7GdX0P63A15cpCbieMNQZcvWUTdoSp
-/vEpFJo1o1etnKt314sM9dXx2zO+YqqI01CPrVkLN7h1w9bko93Pn0GxylHDzx1V
-iJ1cpBvUyonDNN6loIR90U0JfsNvveQbeDze/Oz3bxKaoux2swMmcvMVmKG/ZR9c
-DrOCJRgnF8R9UQtYaK3ZX/cBp/iKxAGtCZzFoPB7yIU7+hyYY/9kXbQp0DdvaUmK
-wsXigJG9fM30fS8e7xAbgfnaVuz6bi8CrOwAPlOum2I6r4vV3mhy2k+8FgVqNB+C
-B7Jlx/eCw9BXe2mm35HXNlsZ0XBBcFlcNIAcLQc6qmlNp3J9D8U1gKhZOAbKohph
-9mh2Qj2dHzEfUr947kdY
-=XFMb
+iQIcBAEBCAAGBQJOr54qAAoJEECxmPOUX5FEn2QQAIwOm7uFVA4DzeTsYcWdX/So
+frCqGyc/M5E9bBVMOXNOsK7SBlNKXMNelf46K0L2FPTFpDxBLDtS4CDbPT1qfr3Q
+NzocDcrZuMN803QY+FMZg64iTwGZQo1T6TdX7h6VRl1k5WyPq4+/YgU209BYfXY1
+LUqax8NrGx3pf26lQeFCMLMx4s7Oo5UiKASEbTL4sdj9HlLaRSS+GRNOycI0tRTM
+eNEn0DhGXDW4cHnUaYoL0eEXgdGxUfuYXX3crTiaU4d1QslIaES49Rxf01G944E5
+R/OsZB242td+r/Dwf84B2Ey2XfmEoYM5aTcJo0hPxZrtj2SMqeTTLzuZzZFASKE7
+OoFafy9BNyQR7VutV8DcpJK/6IClknULnOTAgGtDvyUJT5dc7v3XpgBTsnS62a1M
+jHLaQrbQFbK9f1WSKxM7BAXhY0aBQBrocd+euhBmVuhZM1NZ84n0Ei8s73Wxpckc
+MyMK75M+ZGVOqPyRjk06g+NKbDyHeyA7V+bkzVAOhLQHcbap6xgSacBNqU+yw68W
+uPOIL+dnmLbvRP6r58Cf34emASIcAddv+W/liQXHH8M2G6jvxwu3AteHWTK9IuC1
+XRmenUU/AR1gB7eewE+Ut+ovr3FMnlay8+IXbOO6Imzw98N5FFpU5fZ8bUnFF0Jf
+uYOdp8iRq6rrYvzW2FYk
+=LSc6
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_Nov_2011_18_05_17_+1100_xa4rUCsbv7cDjO+9--
+--Signature=_Tue__1_Nov_2011_18_22_18_+1100_q0UhHDPZ1/xYCP=h--
