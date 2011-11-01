@@ -1,70 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-Date: Tue, 1 Nov 2011 20:03:55 +1100
-Message-ID: <20111101200355.52daf4662050ed7ad6b67cfa@canb.auug.org.au>
-References: <20111101161500.79aebe8d8f30162ea542a818@canb.auug.org.au>
-	<4EAFA949.5060200@kernel.dk>
+Subject: linux-next: build failure after merge of the final tree (sound tree
+ related)
+Date: Tue, 1 Nov 2011 20:24:52 +1100
+Message-ID: <20111101202452.76723ee949d47fb37a6207dd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__1_Nov_2011_20_03_55_+1100_C7YfbfslR0aICgXe"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:51196 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752231Ab1KAJEE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 05:04:04 -0400
-In-Reply-To: <4EAFA949.5060200@kernel.dk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, NeilBrown <neilb@suse.de>
+ boundary="Signature=_Tue__1_Nov_2011_20_24_52_+1100_xD5IS=Gud5yHaOFk"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Ozerkov <kozerkov@parallels.com>, "Denis V. Lunev" <den@openvz.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__1_Nov_2011_20_03_55_+1100_C7YfbfslR0aICgXe
+--Signature=_Tue__1_Nov_2011_20_24_52_+1100_xD5IS=Gud5yHaOFk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi all,
 
-On Tue, 01 Nov 2011 09:09:45 +0100 Jens Axboe <axboe@kernel.dk> wrote:
->
-> Fixup looks good, however don't you get the same conflict in basically
-> all the raid personalities? Fixup is indeed just the simple int -> void
-> transition, conflict is because of the mddev_t -> struct mddev change
-> that is now in Linus' tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I got these conflicts in all the raid personalities a while ago.  I am
-not sure why this turned up for just raid10 again.
+In file included from sound/pci/intel8x0.c:46:0:
+arch/powerpc/include/asm/kvm_para.h: In function 'kvm_arch_para_features':
+arch/powerpc/include/asm/kvm_para.h:166:22: error: 'KVM_HC_FEATURES' undecl=
+ared (first use in this function)
 
-> I'll push my pending off to Linus today or tomorrow, so this will be
-> resolved shortly.
+Caused by commit 228cf79376f1 ("ALSA: intel8x0: Improve performance in
+virtual environment").  It should probably be including linux/kvm_para.h
+instead of asm/kvm_para.h.
 
-OK, thanks.
-
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_Nov_2011_20_03_55_+1100_C7YfbfslR0aICgXe
+--Signature=_Tue__1_Nov_2011_20_24_52_+1100_xD5IS=Gud5yHaOFk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOr7X7AAoJEECxmPOUX5FE57cQAJNRu7v3m3LXDCWDY7cnAjs8
-Pw8jA3zORDGmsJC0YzlSYXMT3SicppcL3FvlBQ0/6rJNvCDY6XnzH2N2HAo55WXG
-z0vChewPSG3VWqzb+xmCDosZL4OcYm54hb/8NQ/sOxcgINVQU8583/e8iwryhLxN
-D2zmMt6dYcmI6NEjDMyb1wAImXYJUAMHrkNVL4bLHF0EBCv2mnP5XpC7jCG/DLP2
-Y7caMdnzm6F3BbbnvFmh1gqyxGqAb2tVex3jfwsLADROsqacCtYOEs74K4T6NERT
-sru8jnhqtkAe7PFUstmUKn8kdkuKTdVuG+2cDydI5NFxxpmprlCdnXOacPQp36Wa
-Ef0H+qhbAFArSNnaKAANCqiWVcLRrzbEkIy8c5HOtAoGyadujgpWtTxulf7toHlN
-wEc7A6YIQyURmCr78fkNaGGsJqOV9szHCJLSCjanCeUzpaDgU++Dmk5MBFGXfReD
-FwYFu9zcv3867fnrG3u04nXHe9AU8hXCxzowAFaPfixLSTUKMiUxlf/SNWdklQeI
-arXm9HKLjqw0D6Z4f8GG6fr+GxHQL4pDYHHgh9hnECuvIxE6EvT0183VKk8chh9E
-1zeVLr9ykoSHaiPz7suEG7EQo8/YvuNei+0gIASyyI1dwRebUhcXs6r8q/lNjPqt
-crfVwiNnmA3tmW3YKeSB
-=Fk6T
+iQIcBAEBCAAGBQJOr7rkAAoJEECxmPOUX5FEgaAQAINnkg1gySuuuR0rqydZSWYZ
+N0ktK2AAkrFv2EtLMPRoWxFGLp0Y0wz2rASJWj7Jf/L27kmhE3RY/VikwVVFIeLI
+GyZ3yEZ8ryQK4VnKNbRvRnC93IMvPNUxenRvC++ARkpRNaHqDdL7NQGpehHbP11p
+tCAlYY3FkSbUZq17r+ToAnvgu6CSME+sRRE3rJ2YLWymy5RXQI9CAMMKhtNp3LTH
+RzRQK2kW0UFtSvjB0jcX/ttVPs0w5pHeI9XHAHwzMb3ATbgG+T2HcLOfNyLi54jj
+M5a8qBIBNlblj5E1AJEEPlxy7FStGQmqJ+4k/TNuKTIXB74Bpuzq/IcgOF8dXZyJ
+TFGyYHq8FqlZWjIgnqSDwmzSPvGRrIKZsRx0Qp3Sqh7AHesJ+h/dN1fpS6yctzBn
+FdIQ8fqs3YxKPm+h75SnnXfquVyxu+xvir3glZ3XsFVkaoryO0ydvKi2BxRHXovn
+EC4uLrhNe+jnfa4mGoQ1ifEHDk87d9fRQXv57BHscimwiOyinAYBrq7WCTPk6q/e
+/UopnoHdqD/ScYq7XU2GN3c6oeD0b+FoaIglydiRXkIxv8g10+S6V69eHq9PNy7R
++mcdLehuqVACVauvn4p0AUr4Yoz2jcufXKlfzlPfV4Q/Sspt78j2HXKYksl/8Qbu
+FUb80NTuPMJisaDyMFE5
+=dlfx
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_Nov_2011_20_03_55_+1100_C7YfbfslR0aICgXe--
+--Signature=_Tue__1_Nov_2011_20_24_52_+1100_xD5IS=Gud5yHaOFk--
