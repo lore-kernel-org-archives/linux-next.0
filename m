@@ -1,60 +1,88 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build failure after merge of the crypto-current
-	tree
-Date: Tue, 1 Nov 2011 12:11:29 +1100
-Message-ID: <20111101011128.GA30055@gondor.apana.org.au>
-References: <20111101115851.2e37ac680db78bdba0661691@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the logfs tree with Linus' tree
+Date: Tue, 1 Nov 2011 14:10:00 +1100
+Message-ID: <20111101141000.3531dbfbf0490c6d3521d6b6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__1_Nov_2011_14_10_00_+1100_7LzjNqVIugOtRnGS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from helcar.apana.org.au ([209.40.204.226]:32790 "EHLO
-	fornost.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750825Ab1KABLb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Oct 2011 21:11:31 -0400
-Content-Disposition: inline
-In-Reply-To: <20111101115851.2e37ac680db78bdba0661691@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:40677 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751758Ab1KADKT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Oct 2011 23:10:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Prasad Joshi <prasadjoshi.linux@gmail.com>, =?UTF-8?B?IkrDtnJuIEVuZ2Vs?= =?UTF-8?B?Ig==?= <joern@logfs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josef Bacik <josef@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
 
-On Tue, Nov 01, 2011 at 11:58:51AM +1100, Stephen Rothwell wrote:
-> Hi Herbert,
-> 
-> After merging the crypto-current tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
->   GEN     /scratch/sfr/x86_64_allmodconfig/Makefile
-> scripts/kconfig/conf --allmodconfig Kconfig
-> net/Kconfig:5:error: recursive dependency detected!
-> net/Kconfig:5:	symbol NET is selected by CRYPTO_USER
-> crypto/Kconfig:103:	symbol CRYPTO_USER depends on CRYPTO
-> crypto/Kconfig:15:	symbol CRYPTO is selected by BT
-> net/bluetooth/Kconfig:5:	symbol BT depends on NET
-> warning: (SCSI_CXGB3_ISCSI && SCSI_CXGB4_ISCSI && SCSI_BNX2X_FCOE) selects NETDEVICES which has unmet direct dependencies (NET)
-> warning: (SCSI_CXGB3_ISCSI && SCSI_CXGB4_ISCSI && SCSI_BNX2_ISCSI && SCSI_BNX2X_FCOE) selects ETHERNET which has unmet direct dependencies (NETDEVICES && NET)
+--Signature=_Tue__1_Nov_2011_14_10_00_+1100_7LzjNqVIugOtRnGS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hmm, don't know why I didn't see that here.
+Hi all,
 
-Does making it a dependency cause this to go away?
+Today's linux-next merge of the logfs tree got a conflict in
+fs/logfs/file.c between commit 02c24a82187d ("fs: push i_mutex and
+filemap_write_and_wait down into ->fsync() handlers") from Linus' tree
+and commit 39da12ef4bbe ("logfs: take write mutex lock during fsync and
+sync") from the logfs tree.
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 259dea9..527a857 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -102,8 +102,8 @@ config CRYPTO_MANAGER2
- 
- config CRYPTO_USER
- 	tristate "Userspace cryptographic algorithm configuration"
-+	depends on NET
- 	select CRYPTO_MANAGER
--	select NET
- 	help
- 	  Userapace configuration for cryptographic instantiations such as
- 	  cbc(aes).
+I have no idea what needs to be done here.  I fixed it like below to make
+it build, but a better fix is needed.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+diff --cc fs/logfs/file.c
+index b548c87,f85d603..0000000
+--- a/fs/logfs/file.c
++++ b/fs/logfs/file.c
+@@@ -219,20 -219,13 +219,22 @@@ long logfs_ioctl(struct file *file, uns
+  	}
+  }
+ =20
+ -int logfs_fsync(struct file *file, int datasync)
+ +int logfs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+  {
+  	struct super_block *sb =3D file->f_mapping->host->i_sb;
+ +	struct inode *inode =3D file->f_mapping->host;
+ +	int ret;
+ +
+ +	ret =3D filemap_write_and_wait_range(inode->i_mapping, start, end);
+ +	if (ret)
+ +		return ret;
+ =20
+ +	mutex_lock(&inode->i_mutex);
++ 	logfs_get_wblocks(sb, NULL, WF_LOCK);
+  	logfs_write_anchor(sb);
++ 	logfs_put_wblocks(sb, NULL, WF_LOCK);
+ +	mutex_unlock(&inode->i_mutex);
+ +
+  	return 0;
+  }
+ =20
+
+--Signature=_Tue__1_Nov_2011_14_10_00_+1100_7LzjNqVIugOtRnGS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOr2MIAAoJEECxmPOUX5FE2GIP/0xPNlty3ICEwD5TxH/zSXiP
+Dwy7ClqkZlLK+sBLMFmEhsHrn7JpKWFUNekpCWSQ9yuzUppd+2zKT4Y5kblBEau/
+UEWcXHf2wiiumimoAkUvl8zSLaImCQCYw/91ruA2gdDj7lryR85AIZbEhftd5p6o
+9F9Wa5YDIIF9Wj87ehiPoaipr0vjG48JQovNbgnLcQo/O/I0raDOXH8W+bszTpMX
+fBGObsdzy18OoeHmFHXfBCLDwtjeO+18Y5K26qZGJrgLtbLAdNKB6ZYWPhP2IJK7
+tdy5UFlJCFYH4ozhDvDmQcKKgu6uUaqccr/TSv7L+VZJWkbFLUk41qxVUzXvXMNF
+wQqMkH1jig4r9KeMCwSLuUQkwv+Ivxo2vISbmXga34c1hcMEVdSDIcwO51297tWr
+UzB/039gQt3Ozk9sduGTGUCIiFL+tKg3oIDlfiDsUXPtPUnRKfmW7sND2Ig5rccM
+OvJXoagU1wFe4ZeRX9ItB2dxkp9bhdf/2H0XJET29mo0rNGxhHhBV3QQ/darKiE6
++N5SS2nTU61JaQ793ob6W3ySqT2dEzTZBMk5IypMQWlVlSCVyWb/z+RcqoNQ1H0X
+spIjMGH+3Cxh92MrBwY/WtIFonAJ40yKPaw7yFeiQx3DjQRvNHmCMF7Wt+I4i2u4
+NDKfoF1pZ0N4Ywy+fqQs
+=3oHY
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__1_Nov_2011_14_10_00_+1100_7LzjNqVIugOtRnGS--
