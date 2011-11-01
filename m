@@ -1,70 +1,107 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: git tree URL for IEEE 1394 (FireWire) kernel subsystem
-Date: Tue, 1 Nov 2011 10:19:30 +1100
-Message-ID: <20111101101930.e12ca55cc07324b42cf01564@canb.auug.org.au>
-References: <20110917194757.2f561324@stein>
-	<20110918215144.f33db78e54224626c6ee408e@canb.auug.org.au>
-	<20111031185701.5c8771c6@stein>
+Subject: linux-next: build failure after merge of the crypto-current tree
+Date: Tue, 1 Nov 2011 11:58:51 +1100
+Message-ID: <20111101115851.2e37ac680db78bdba0661691@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__1_Nov_2011_10_19_30_+1100_7j/Z+E7UHECF9shS"
+ boundary="Signature=_Tue__1_Nov_2011_11_58_51_+1100_R__G+wW+4zIqxa7J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:36731 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:33388 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750762Ab1JaXTi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Oct 2011 19:19:38 -0400
-In-Reply-To: <20111031185701.5c8771c6@stein>
+	with ESMTP id S1753692Ab1KAA7D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Oct 2011 20:59:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc: linux-next@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__1_Nov_2011_10_19_30_+1100_7j/Z+E7UHECF9shS
+--Signature=_Tue__1_Nov_2011_11_58_51_+1100_R__G+wW+4zIqxa7J
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stefan,
+Hi Herbert,
 
-On Mon, 31 Oct 2011 18:57:01 +0100 Stefan Richter <stefanr@s5r6.in-berlin.d=
-e> wrote:
->
-> please switch the ieee1394/for-next URL once more, now to
->=20
->     git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git =
-for-next
->=20
-> which is meant to be permanent.  (-2.6 suffix of the former name
-> dropped).  Current content is identical with my pull request to
-> Linus today.
+After merging the crypto-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I have switched to that from today.
+  GEN     /scratch/sfr/x86_64_allmodconfig/Makefile
+scripts/kconfig/conf --allmodconfig Kconfig
+net/Kconfig:5:error: recursive dependency detected!
+net/Kconfig:5:	symbol NET is selected by CRYPTO_USER
+crypto/Kconfig:103:	symbol CRYPTO_USER depends on CRYPTO
+crypto/Kconfig:15:	symbol CRYPTO is selected by BT
+net/bluetooth/Kconfig:5:	symbol BT depends on NET
+warning: (SCSI_CXGB3_ISCSI && SCSI_CXGB4_ISCSI && SCSI_BNX2X_FCOE) selects =
+NETDEVICES which has unmet direct dependencies (NET)
+warning: (SCSI_CXGB3_ISCSI && SCSI_CXGB4_ISCSI && SCSI_BNX2_ISCSI && SCSI_B=
+NX2X_FCOE) selects ETHERNET which has unmet direct dependencies (NETDEVICES=
+ && NET)
+#
+# configuration written to .config
+#
+WITHOUT_DISTCC:=20
+ARCH=3Dx86_64
+CCVER=3D4.6
+net/Kconfig:5:error: recursive dependency detected!
+net/Kconfig:5:	symbol NET is selected by CRYPTO_USER
+crypto/Kconfig:103:	symbol CRYPTO_USER depends on CRYPTO
+crypto/Kconfig:15:	symbol CRYPTO is selected by BT
+net/bluetooth/Kconfig:5:	symbol BT depends on NET
+warning: (SCSI_CXGB3_ISCSI && SCSI_CXGB4_ISCSI && SCSI_BNX2X_FCOE) selects =
+NETDEVICES which has unmet direct dependencies (NET)
+warning: (SCSI_CXGB3_ISCSI && SCSI_CXGB4_ISCSI && SCSI_BNX2_ISCSI && SCSI_B=
+NX2X_FCOE) selects ETHERNET which has unmet direct dependencies (NETDEVICES=
+ && NET)
+*
+* Restart config...
+*
+*
+* Security options
+*
+Enable access key retention support (KEYS) [Y/n/?] y
+  TRUSTED KEYS (TRUSTED_KEYS) [M/n/?] m
+  ENCRYPTED KEYS (ENCRYPTED_KEYS) [M/n/y/?] m
+  Enable the /proc/keys file by which keys may be viewed (KEYS_DEBUG_PROC_K=
+EYS) [Y/n/?] y
+Restrict unprivileged access to the kernel syslog (SECURITY_DMESG_RESTRICT)=
+ [Y/n/?] y
+Enable different security models (SECURITY) [N/y/?] (NEW) aborted!
+
+Console input/output is redirected. Run 'make oldconfig' to update configur=
+ation.
+
+Presumbly caused by commit ea8bdfcff175 ("crypto: user - Add dependency
+on NET").
+
+I have used the crypto-current tree from next-20111025 for today (i.e. that
+commit has not been added to linux-next today).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_Nov_2011_10_19_30_+1100_7j/Z+E7UHECF9shS
+--Signature=_Tue__1_Nov_2011_11_58_51_+1100_R__G+wW+4zIqxa7J
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOry0CAAoJEECxmPOUX5FEO7MP/jIbya2nARtVTHyPjLUhtK2Q
-s7JdXFBSQjlFCkWCvOZP31d2mPvu29MGJ30OWow3tfQlvXwuwV2MFEsBBTTGCwy/
-3Gm2T7V2wCXeWnIQDa7aQ1PL7NE0OqXtESccM1dVLN/Gu2P3K+8hNaNcQQo+Z+WN
-ELQ5DrF/zkFW6PKtwh8fwqRHJlKhoXKUUq6+zT8zCU8REw4mLrAriW6hRdVPKOfM
-QKDz9C5T+TJoPt1XMoZXI7JyID2epNHSftGMJ0JtGc3XFBsg8eUFYmS6b4cu5FkK
-chEdeO1bo1WBSGVC5O5DpK1GMbN/B3M6tQkbvWV/7RCfkjrnaIdt0Yo0TAwiLTL4
-iH+6l+VjYKmCN0TUa1cxCfN2PXI8Zp04p2lVGpgkwU7ZYNHHp437bEtljuKr2Pm0
-EyzFgDEh0ghHAhu81WW2LOLWkXofl6WE+yHtdYm9r7976jTtkRWq2D2SlZUViImL
-YUDN7iRFLio8Iu2qTcAwDq4WSUSWZsyed0DGbB7Nq9NAKf+uRfKsjJGeGqqo5wui
-rgkSnHfskfHrS4b8zikIkiyeIJADPNm8MjVoOX6C/8a+qsp7dSXHS8rZBJOqO61e
-5gzCOd7qC8KedMvlS2b3fVQxw8oekOD3xGz9M/VQtqEtEoQAdTYGtofVMTzE1GwP
-62hLeHNkwisivPjOk9Nf
-=Ce/R
+iQIcBAEBCAAGBQJOr0RMAAoJEECxmPOUX5FEjgUP/RdMcNJnhvFDI0qWPpYJ2ScK
+6cvv524q/+EjRtVdH1X/CsU8ExdykGiSpaE8Wnrpot5s96d1kAQlGS+gMxVbaSC4
+SvIm6KsqhOpLSFbpaUyf3VJZt9HOhNOiMeWfh2+5KfOaYJlIFW6IJS2GvkQBx+3p
+t0gRvaGaa+IG3a/stIavyLnhpejthBY5E1Fbdn/LOfM0XSvStlgAJOl5/uRVBWz8
+UX72JsXNIewULi5qNYI8reeFQhCBnrqhHk76ykQ9OZYrZtTbYW8VeiD6ku/SSE4X
++2jNUdHVS5t4E6acLWCSMr9eJe5/ogS6Ac1Lf5ZUmzW+yBs3PDiIgFpep2XFtjtq
+OQCZC3YhdjALkcuH7buVPoTM32w6PRvx7UCMAWncxzt0Jbnko7qhJRPc1zmC8rDE
+ieX383myMPIb/Gt4blIFyWj445S+WEQB+HRiPThvr1kdil3ogDkhW3gy1ePAdo4e
+q6S8etEuf8pNiWuaErvcWuRpPvDs4ENRyjDjn4lw5XSZXW/aPB08au719hESh1Cy
+SpQ6qR9anMbdha4BARW6dRuL4HHYf320EA1fcfBzZ+/cjomDX6+8Aun3ZNP3XMWr
+i1tZNUR9O5BxPfWXS66x+l/3+mEun7Ojl/9ygcdiZfMNwzrZjEtMhHoom5mcQFb2
+vnIUbZKQx2c+Knc2enSP
+=V0R5
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_Nov_2011_10_19_30_+1100_7j/Z+E7UHECF9shS--
+--Signature=_Tue__1_Nov_2011_11_58_51_+1100_R__G+wW+4zIqxa7J--
