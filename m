@@ -1,77 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the watchdog tree
-Date: Tue, 1 Nov 2011 16:37:48 +1100
-Message-ID: <20111101163748.26d5f1264b56961e36ff0ced@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the crypto-current
+ tree
+Date: Tue, 1 Nov 2011 17:02:51 +1100
+Message-ID: <20111101170251.30878c7f7ce73c863bedee95@canb.auug.org.au>
+References: <20111101115851.2e37ac680db78bdba0661691@canb.auug.org.au>
+	<20111101152312.5751b7ac8b4a998b6ef867be@canb.auug.org.au>
+	<20111101051810.GA7519@gondor.apana.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__1_Nov_2011_16_37_48_+1100_QyHcbMa1e1qTCjx8"
+ boundary="Signature=_Tue__1_Nov_2011_17_02_51_+1100_78RE=y/XYJe3IUDf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:55193 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:38510 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751145Ab1KAGAX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 02:00:23 -0400
+	with ESMTP id S1750778Ab1KAGCz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 02:02:55 -0400
+In-Reply-To: <20111101051810.GA7519@gondor.apana.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__1_Nov_2011_16_37_48_+1100_QyHcbMa1e1qTCjx8
+--Signature=_Tue__1_Nov_2011_17_02_51_+1100_78RE=y/XYJe3IUDf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wim,
+Hi Herbert,
 
-After merging the watchdog tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Tue, 1 Nov 2011 16:18:10 +1100 Herbert Xu <herbert@gondor.apana.org.au> =
+wrote:
+>
+> So did the change to depends_on fix it?
 
-drivers/watchdog/wm831x_wdt.c: In function 'wm831x_wdt_start':
-drivers/watchdog/wm831x_wdt.c:56:40: error: 'struct watchdog_device' has no=
- member named 'priv'
-drivers/watchdog/wm831x_wdt.c: In function 'wm831x_wdt_stop':
-drivers/watchdog/wm831x_wdt.c:79:40: error: 'struct watchdog_device' has no=
- member named 'priv'
-drivers/watchdog/wm831x_wdt.c: In function 'wm831x_wdt_ping':
-drivers/watchdog/wm831x_wdt.c:102:40: error: 'struct watchdog_device' has n=
-o member named 'priv'
-drivers/watchdog/wm831x_wdt.c: In function 'wm831x_wdt_set_timeout':
-drivers/watchdog/wm831x_wdt.c:144:40: error: 'struct watchdog_device' has n=
-o member named 'priv'
-drivers/watchdog/wm831x_wdt.c: In function 'wm831x_wdt_probe':
-drivers/watchdog/wm831x_wdt.c:215:12: error: 'struct watchdog_device' has n=
-o member named 'parent'
-drivers/watchdog/wm831x_wdt.c:216:12: error: 'struct watchdog_device' has n=
-o member named 'priv'
+I have not yet had time to test that ...
 
-Caused by commit 5b04099edc42 ("watchdog: Convert wm831x driver to
-watchdog core").
-
-I have used the version of the watchdog tree from next-20111025 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_Nov_2011_16_37_48_+1100_QyHcbMa1e1qTCjx8
+--Signature=_Tue__1_Nov_2011_17_02_51_+1100_78RE=y/XYJe3IUDf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOr4WsAAoJEECxmPOUX5FE45kP/ji2AdhaiQ7D7xMl6PmxOEP6
-oU+56F17RV75+z7pl8B6FzowZSG4x7mcwgtlRAEgeKXKWjwMxxK0vDoQgu9Xd6Q0
-pdYU0guGJg6vsF4riHtT9kvznQEbueyeRkeSAwskH2dckw/sVjYFZs6D+vuv9SJt
-nbhuoD9iOxLfRfIAooOMFLBE6k3rhNTK5yDMJuAJvmWr/YAkqDq1lKOvqCx5YFCm
-uo7385bCX8GNsO94l8h2gt+2qdRRaYcG8VKqWpPJXosPRaXVm88JYgWtLb6NkhUi
-znsgWxqe0bwKM+CcMnWEnWnpDRCl77MtTNH2p1iGC19jxODsTQdTOfAjWpaH8rLW
-h1l1JbsFaxEFju6V3vRTuo4xfy8eobHNMO3mgMviA1mY3VYJcQRCUqRmC7d3QmCP
-0JkijkfdVbYvAgUWuZxgzJzcbip1xCOxJJXrl2ei6VQTVcGEn5E8ZsIy9+qvFoA1
-2d5AiMLK/xwHaj6vdgnt7LMgP7NSSJ/th96PV0ueArJWVS37axDIY76uN/jnVjv/
-xNkiRVGZEPRcENuXfHtsYwh+393kgKmyHkrW6swwgm2kJ5OPWdjESJ/E8b+gvExJ
-epxK5j//tXGD3D5tizY1OBNxECd+HgpZhdpORl9UpKnxt7LCJordLqsh8vL/qdW6
-SyI2iuA4VhSIKPwof6Ab
-=k834
+iQIcBAEBCAAGBQJOr4uLAAoJEECxmPOUX5FEUiYQAJsC6pgvjmQN77QyUlKBD2D/
+XZZxX/MN0aPTxqVKS0gU1JPCRM/bxaBLaikxOUyYp5MqJ7MNsIgOHPT3LjSVKoGE
+YuT1nTcmUf75J5CfjhAlH7WH8YNP1Vi14FXjDVoK1G/ifY+JmAWqydVr44w8mcpP
+nu0zy7jmGKsR2m2vPr/IxEzaLO9punRiQ6LRRQOyepJuV3G7tgyC2W2HUjuN/1S0
+e0dI/xgzFinRDLLqJn9Oru5cgWLfGG82hAL/0gbpQPsSrYG07Zv/XUJTS5DIZnej
+TKvvJXSHU7sME3buMCbAcE2MHHAkRXnn0GUa4Pubqz/7vMb5e6LRNibgGNn3t4P8
+a0UiChn6/sCVDtkqBLajI3oleJSVcBuQmNVydMKUQuwEEWMHeNgNdGg2P/71oh9E
+gXYZJEFFWv8Q4ZKj76CqRvoiuM9UQVfbxjRIghGOMf2xDydZmTvn4FsJ9sQ8HuKG
+m+mATERpVoIhmcIIf+aM3QPNdtszCpgpoXSNyyrwfyxsOlp8PJpUvPTImlmIbt++
+XytOyajfZb2ISt7GXaqiS94KPV7ovcbsqQHncH/EThLmXf7kQ9eYPavp+ZvxEyxJ
+HIKUqlbgvHC7TXHsIs1iAcmAO1wV2yA5oenLrzcmS+pEreePsbEqKcXHGwZcgxk5
+YYncENYp5aiBC2C2YEgs
+=eiHa
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_Nov_2011_16_37_48_+1100_QyHcbMa1e1qTCjx8--
+--Signature=_Tue__1_Nov_2011_17_02_51_+1100_78RE=y/XYJe3IUDf--
