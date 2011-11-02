@@ -1,33 +1,41 @@
-From: Phillip Lougher <phillip.lougher@gmail.com>
-Subject: Re: currently missing kernel devel trees
-Date: Wed, 2 Nov 2011 17:32:52 +0000
-Message-ID: <CAB3wodfhuucag7QtdToGa5Y-6c9QA3_CMLg1kRHBOeoQRhymjw@mail.gmail.com>
-References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
-	<CAB3woddd=1Ps8HR4SPAOQxoxCnGLFDrjRN6KPJUFkpzmACXf4w@mail.gmail.com>
+From: Ben Dooks <ben@trinity.fluff.org>
+Subject: Re: linux-next: manual merge of the bjdooks-i2c tree with Linus'
+	tree
+Date: Wed, 2 Nov 2011 17:46:25 +0000
+Message-ID: <20111102174625.GI18361@trinity.fluff.org>
+References: <20111102122221.9040e7a07bb0e3e2c46a5188@canb.auug.org.au> <20111102022850.GA5875@zhy>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:61291 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755821Ab1KBRcx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Nov 2011 13:32:53 -0400
-In-Reply-To: <CAB3woddd=1Ps8HR4SPAOQxoxCnGLFDrjRN6KPJUFkpzmACXf4w@mail.gmail.com>
+Received: from trinity.fluff.org ([89.16.178.74]:42167 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755795Ab1KBRq2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Nov 2011 13:46:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20111102022850.GA5875@zhy>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Yong Zhang <yong.zhang0@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Oct 14, 2011 at 2:03 AM, Phillip Lougher
-<phillip.lougher@gmail.com> wrote:
->> squashfs
->
-> git://gitorious.org/squashfs-linux-next/squashfs-linux-next.git master
->
+On Wed, Nov 02, 2011 at 10:28:50AM +0800, Yong Zhang wrote:
+> On Wed, Nov 02, 2011 at 12:22:21PM +1100, Stephen Rothwell wrote:
+> > Hi Ben,
+> > 
+> > Today's linux-next merge of the bjdooks-i2c tree got a conflict in
+> > drivers/i2c/busses/i2c-designware-platdrv.c between commit 4311051c358a
+> > ("i2c: irq: Remove IRQF_DISABLED") from Linus' tree and commit
+> > f8420b7bf6ce ("fixup merge") from the bjdooks-i2c tree.
+> > 
+> > I fixed it up (by removing the IRQF_DISABLED flag) but this change should
+> > probably be sent to Linus as it appears to have been fixed up incorrectly
+> > there.
+> 
+> Yeah, we should remove that flag. And that is what commit 4311051c358a
+> want to achieve.
 
-Can you please update to pull from
-
-git://git.kernel.org/pub/scm/linux/kernel/git/pkl/squashfs-next.git master
-
-Thanks
-
-Phillip
+Unfortunately there was a merge conflict. I thought it got fixed, but
+seems not. I will sort out fixing it later.
+ 
+-- 
+Large Hadron Colada: A large Pina Colada that makes the universe disappear.
