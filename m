@@ -1,35 +1,37 @@
-From: Ted Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH -next] ext4: fix printk format warning in page-io
-Date: Tue, 1 Nov 2011 21:59:29 -0400
-Message-ID: <20111102015929.GP32161@thunk.org>
-References: <20111101205323.c12f2f940f23febba8ab8989@canb.auug.org.au>
- <4EB08189.2@xenotime.net>
+From: Yong Zhang <yong.zhang0@gmail.com>
+Subject: Re: linux-next: manual merge of the bjdooks-i2c tree with Linus' tree
+Date: Wed, 2 Nov 2011 10:28:50 +0800
+Message-ID: <20111102022850.GA5875@zhy>
+References: <20111102122221.9040e7a07bb0e3e2c46a5188@canb.auug.org.au>
+Reply-To: Yong Zhang <yong.zhang0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from li9-11.members.linode.com ([67.18.176.11]:60842 "EHLO
-	test.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752515Ab1KBB7g (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Nov 2011 21:59:36 -0400
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:58213 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754339Ab1KBC3E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 22:29:04 -0400
 Content-Disposition: inline
-In-Reply-To: <4EB08189.2@xenotime.net>
+In-Reply-To: <20111102122221.9040e7a07bb0e3e2c46a5188@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Nov 01, 2011 at 04:32:25PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
+On Wed, Nov 02, 2011 at 12:22:21PM +1100, Stephen Rothwell wrote:
+> Hi Ben,
 > 
-> Fix printk format warning:
+> Today's linux-next merge of the bjdooks-i2c tree got a conflict in
+> drivers/i2c/busses/i2c-designware-platdrv.c between commit 4311051c358a
+> ("i2c: irq: Remove IRQF_DISABLED") from Linus' tree and commit
+> f8420b7bf6ce ("fixup merge") from the bjdooks-i2c tree.
 > 
-> fs/ext4/page-io.c:108:5: warning: format '%d' expects type 'int', but argument 6 has type 'ssize_t'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> Cc:	"Theodore Ts'o" <tytso@mit.edu>
-> Cc:	Andreas Dilger <adilger.kernel@dilger.ca>
-> Cc:	linux-ext4@vger.kernel.org
+> I fixed it up (by removing the IRQF_DISABLED flag) but this change should
+> probably be sent to Linus as it appears to have been fixed up incorrectly
+> there.
 
-Thanks, I'll get this fixed before I send my pull request.
+Yeah, we should remove that flag. And that is what commit 4311051c358a
+want to achieve.
 
-	     	      	    	     	  - Ted
+Thanks,
+Yong
