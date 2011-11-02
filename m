@@ -1,41 +1,75 @@
-From: Ben Dooks <ben@trinity.fluff.org>
-Subject: Re: linux-next: manual merge of the bjdooks-i2c tree with Linus'
-	tree
-Date: Wed, 2 Nov 2011 17:46:25 +0000
-Message-ID: <20111102174625.GI18361@trinity.fluff.org>
-References: <20111102122221.9040e7a07bb0e3e2c46a5188@canb.auug.org.au> <20111102022850.GA5875@zhy>
+From: =?utf-8?B?SsO2cm4=?= Engel <joern@logfs.org>
+Subject: Re: linux-next: manual merge of the logfs tree with Linus' tree
+Date: Wed, 2 Nov 2011 20:00:46 +0100
+Message-ID: <20111102190046.GB3485@logfs.org>
+References: <20111101141000.3531dbfbf0490c6d3521d6b6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:42167 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755795Ab1KBRq2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Nov 2011 13:46:28 -0400
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20111102022850.GA5875@zhy>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Yong Zhang <yong.zhang0@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20111101141000.3531dbfbf0490c6d3521d6b6@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Prasad Joshi <prasadjoshi.linux@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josef Bacik <josef@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Nov 02, 2011 at 10:28:50AM +0800, Yong Zhang wrote:
-> On Wed, Nov 02, 2011 at 12:22:21PM +1100, Stephen Rothwell wrote:
-> > Hi Ben,
-> > 
-> > Today's linux-next merge of the bjdooks-i2c tree got a conflict in
-> > drivers/i2c/busses/i2c-designware-platdrv.c between commit 4311051c358a
-> > ("i2c: irq: Remove IRQF_DISABLED") from Linus' tree and commit
-> > f8420b7bf6ce ("fixup merge") from the bjdooks-i2c tree.
-> > 
-> > I fixed it up (by removing the IRQF_DISABLED flag) but this change should
-> > probably be sent to Linus as it appears to have been fixed up incorrectly
-> > there.
-> 
-> Yeah, we should remove that flag. And that is what commit 4311051c358a
-> want to achieve.
+On Tue, 1 November 2011 14:10:00 +1100, Stephen Rothwell wrote:
+>=20
+> Hi all,
+>=20
+> Today's linux-next merge of the logfs tree got a conflict in
+> fs/logfs/file.c between commit 02c24a82187d ("fs: push i_mutex and
+> filemap_write_and_wait down into ->fsync() handlers") from Linus' tre=
+e
+> and commit 39da12ef4bbe ("logfs: take write mutex lock during fsync a=
+nd
+> sync") from the logfs tree.
+>=20
+> I have no idea what needs to be done here.  I fixed it like below to =
+make
+> it build, but a better fix is needed.
 
-Unfortunately there was a merge conflict. I thought it got fixed, but
-seems not. I will sort out fixing it later.
- 
--- 
-Large Hadron Colada: A large Pina Colada that makes the universe disappear.
+=46rom a code perspective your fix below is correct, to the best of my
+judgement.  I'm less sure what to do from a git perspective.
+Explicitly tell Linus about it in the logfs pull request?
+
+> diff --cc fs/logfs/file.c
+> index b548c87,f85d603..0000000
+> --- a/fs/logfs/file.c
+> +++ b/fs/logfs/file.c
+> @@@ -219,20 -219,13 +219,22 @@@ long logfs_ioctl(struct file *file, u=
+ns
+>   	}
+>   }
+>  =20
+>  -int logfs_fsync(struct file *file, int datasync)
+>  +int logfs_fsync(struct file *file, loff_t start, loff_t end, int da=
+tasync)
+>   {
+>   	struct super_block *sb =3D file->f_mapping->host->i_sb;
+>  +	struct inode *inode =3D file->f_mapping->host;
+>  +	int ret;
+>  +
+>  +	ret =3D filemap_write_and_wait_range(inode->i_mapping, start, end)=
+;
+>  +	if (ret)
+>  +		return ret;
+>  =20
+>  +	mutex_lock(&inode->i_mutex);
+> + 	logfs_get_wblocks(sb, NULL, WF_LOCK);
+>   	logfs_write_anchor(sb);
+> + 	logfs_put_wblocks(sb, NULL, WF_LOCK);
+>  +	mutex_unlock(&inode->i_mutex);
+>  +
+>   	return 0;
+>   }
+>  =20
+
+
+
+J=C3=B6rn
+
+--=20
+You can take my soul, but not my lack of enthusiasm.
+-- Wally
