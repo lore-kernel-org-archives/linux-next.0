@@ -1,38 +1,33 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: linux-next: build failure after merge of the watchdog tree
-Date: Wed, 2 Nov 2011 17:43:39 +0100
-Message-ID: <20111102164339.GA11844@infomag.iguana.be>
-References: <20111101163748.26d5f1264b56961e36ff0ced@canb.auug.org.au> <20111101120206.GB10029@opensource.wolfsonmicro.com>
+From: Phillip Lougher <phillip.lougher@gmail.com>
+Subject: Re: currently missing kernel devel trees
+Date: Wed, 2 Nov 2011 17:32:52 +0000
+Message-ID: <CAB3wodfhuucag7QtdToGa5Y-6c9QA3_CMLg1kRHBOeoQRhymjw@mail.gmail.com>
+References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
+	<CAB3woddd=1Ps8HR4SPAOQxoxCnGLFDrjRN6KPJUFkpzmACXf4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailrelay006.isp.belgacom.be ([195.238.6.172]:59912 "EHLO
-	mailrelay006.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755585Ab1KBQq0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Nov 2011 12:46:26 -0400
-Content-Disposition: inline
-In-Reply-To: <20111101120206.GB10029@opensource.wolfsonmicro.com>
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:61291 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755821Ab1KBRcx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Nov 2011 13:32:53 -0400
+In-Reply-To: <CAB3woddd=1Ps8HR4SPAOQxoxCnGLFDrjRN6KPJUFkpzmACXf4w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Marc, Stephen,
+On Fri, Oct 14, 2011 at 2:03 AM, Phillip Lougher
+<phillip.lougher@gmail.com> wrote:
+>> squashfs
+>
+> git://gitorious.org/squashfs-linux-next/squashfs-linux-next.git master
+>
 
-> On Tue, Nov 01, 2011 at 04:37:48PM +1100, Stephen Rothwell wrote:
-> 
-> > drivers/watchdog/wm831x_wdt.c: In function 'wm831x_wdt_start':
-> > drivers/watchdog/wm831x_wdt.c:56:40: error: 'struct watchdog_device' has no member named 'priv'
-> > drivers/watchdog/wm831x_wdt.c: In function 'wm831x_wdt_stop':
-> 
-> Wim, it looks from this error like you've applied the original version of
-> this I sent on 20th July against the then current API, not the updated
-> version I sent on 25th July (which was resent on 4th October) after you
-> revised the API.
+Can you please update to pull from
 
-Yes indeed. I know I compile tested your second patch, but with all the changing of systems I screwed up and indeed used the first patch :-(.
+git://git.kernel.org/pub/scm/linux/kernel/git/pkl/squashfs-next.git master
 
-Anyway, I corrected it.
+Thanks
 
-Thanks,
-Wim.
+Phillip
