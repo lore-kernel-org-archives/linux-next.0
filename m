@@ -1,33 +1,40 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: ASoC and regmap trees have moved back to kernel.org
-Date: Wed, 2 Nov 2011 21:44:02 +0000
-Message-ID: <20111102214402.GA31393@sirena.org.uk>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: build failure after merge of the crypto-current
+	tree
+Date: Thu, 3 Nov 2011 10:39:36 +1100
+Message-ID: <20111102233936.GA10058@gondor.apana.org.au>
+References: <20111101115851.2e37ac680db78bdba0661691@canb.auug.org.au> <20111102200900.GA3454@hades>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:50383 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751255Ab1KBVoI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Nov 2011 17:44:08 -0400
+Received: from helcar.apana.org.au ([209.40.204.226]:37742 "EHLO
+	fornost.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753085Ab1KBXjq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Nov 2011 19:39:46 -0400
 Content-Disposition: inline
+In-Reply-To: <20111102200900.GA3454@hades>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+To: Luis Henriques <henrix@camandro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steffen Klassert <steffen.klassert@secunet.com>
 
-Hi Stephen,
+On Wed, Nov 02, 2011 at 08:09:13PM +0000, Luis Henriques wrote:
+>
+> I'm not sure if this is related, but I am currently unable to build mainline
+> kernel when disabling CONFIG_NET.  This seems to be due to the patch serie:
+> 
+> http://news.gmane.org/gmane.linux.kernel.cryptoapi/cutoff=6228
+> 
+> For instance, commit 6ad414fe710d4fd3a8c8c6c2ad8fefcfcc207968 adds a dependency
+> over function nla_put(), which is only defined when CONFIG_NET is enabled.
 
-Please update my git trees in -next to use kernel.org again:
+Indeed, I missed the dependency in the report functions which
+is built even when CRYPTO_USER is turned off.
 
-ASoC:
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-regmap:
-   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
-
-Please leave the regulator tree where it is for now, Liam's kernel.org
-account will hopefully be being restored shortly so he can take that
-over again.
+Does this patch fix the problem for you?
 
 Thanks,
-Mark
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
