@@ -1,70 +1,102 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tmem tree with Linus' tree
-Date: Wed, 2 Nov 2011 14:53:53 +1100
-Message-ID: <20111102145353.152925cdeee425109cf7882f@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net tree
+ related)
+Date: Wed, 2 Nov 2011 16:37:08 +1100
+Message-ID: <20111102163708.75d719e765dea20e0c4c5a04@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__2_Nov_2011_14_53_53_+1100_fCAcSpWWBsH+dvmo"
+ boundary="Signature=_Wed__2_Nov_2011_16_37_08_+1100_Nt6k6I4h11x20WA5"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Magenheimer <dan.magenheimer@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Rientjes <rientjes@google.com>, Andrew Morton <akpm@linux-foundation.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__2_Nov_2011_14_53_53_+1100_fCAcSpWWBsH+dvmo
+--Signature=_Wed__2_Nov_2011_16_37_08_+1100_Nt6k6I4h11x20WA5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
+Hi all,
 
-Today's linux-next merge of the tmem tree got a conflict in mm/swapfile.c
-between commit 43362a4977e3 ("oom: fix race while temporarily setting
-current's oom_score_adj") from Linus' tree and commit 6ce5607c1edf ("mm:
-frontswap: core swap subsystem hooks and headers") from the tmem tree.
+[I thought I had reported this, but it was a similar problem in another
+driver.]
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+drivers/net/ethernet/xilinx/ll_temac_main.c: In function 'temac_start_xmit':
+drivers/net/ethernet/xilinx/ll_temac_main.c:717:3: error: implicit declarat=
+ion of function 'frag_size' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 9e903e085262 ("net: add skb frag size accessors").
+
+I have added this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 2 Nov 2011 16:31:37 +1100
+Subject: [PATCH] net: fix typo in drivers/net/ethernet/xilinx/ll_temac_main=
+.c
+
+Commit 9e903e085262 ("net: add skb frag size accessors") used frag_size
+instead of skb_frag_size in this file.
+
+Fixes this build error:
+
+drivers/net/ethernet/xilinx/ll_temac_main.c: In function 'temac_start_xmit':
+drivers/net/ethernet/xilinx/ll_temac_main.c:717:3: error: implicit declarat=
+ion of function 'frag_size' [-Werror=3Dimplicit-function-declaration]
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/ethernet/xilinx/ll_temac_main.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethe=
+rnet/xilinx/ll_temac_main.c
+index 4d1658e..caf3659 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -716,8 +716,8 @@ static int temac_start_xmit(struct sk_buff *skb, struct=
+ net_device *ndev)
+ 		cur_p =3D &lp->tx_bd_v[lp->tx_bd_tail];
+ 		cur_p->phys =3D dma_map_single(ndev->dev.parent,
+ 					     skb_frag_address(frag),
+-					     frag_size(frag), DMA_TO_DEVICE);
+-		cur_p->len =3D frag_size(frag);
++					     skb_frag_size(frag), DMA_TO_DEVICE);
++		cur_p->len =3D skb_frag_size(frag);
+ 		cur_p->app0 =3D 0;
+ 		frag++;
+ 	}
+--=20
+1.7.7
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc mm/swapfile.c
-index c9d6540,9d79741..0000000
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@@ -1616,8 -1637,8 +1637,8 @@@ SYSCALL_DEFINE1(swapoff, const char __u
-  	spin_unlock(&swap_lock);
- =20
-  	oom_score_adj =3D test_set_oom_score_adj(OOM_SCORE_ADJ_MAX);
-- 	err =3D try_to_unuse(type);
-+ 	err =3D try_to_unuse(type, false, 0); /* force all pages to be unused */
- -	test_set_oom_score_adj(oom_score_adj);
- +	compare_swap_oom_score_adj(OOM_SCORE_ADJ_MAX, oom_score_adj);
- =20
-  	if (err) {
-  		/*
-
---Signature=_Wed__2_Nov_2011_14_53_53_+1100_fCAcSpWWBsH+dvmo
+--Signature=_Wed__2_Nov_2011_16_37_08_+1100_Nt6k6I4h11x20WA5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOsL7RAAoJEECxmPOUX5FEHjIQAJtR+/nR/LUxravIx9/hLBgb
-UZkMtCtLYTLwJDyAGL940+OGVu+KGQOn5dXVjR5I6GUPSV3W+Og9RLJkhhkJ/z01
-i4BsBcRR7nzvpXEBd4AUEy0JwE6hil3GXwzpP7XD8Axrr3qA6jZDb2padBVcbAxv
-MHUOKmGpc4t+bNcMKAVDGu6QZzSr5vOkOL65UtCcy6V5Bn5IYNEX66daszxmW4H3
-K55wRCjn1nhdJ+Fb2UnrlulxJ7upQa2V3LABgEMau3Q1TleH211aN8e/64zJ/lN0
-6fThz/xsSl2Xa8AhfUezToo4NxCE7MWHhpzBnDPbtNAGgKCngpBr8R1cVC0VMYDd
-MbOLTbj7G/jY4zUCNFvEs4tfMMP4lmW9OFQWlWeUoVcyPMZLffo631MAa6ZTPKmv
-3RddsR6Xl3lrHB/5a/29ZJ8VxHc2w1SW4lZoaqnpu3nuae3mEsj4uCXNXS6oTyej
-yiaCHwD9Hqf1kYOwVsAeFOHhIjG5QeveFjntF8eXEbuodqEw9lz/0gEE5OVfqBi/
-1T+zDal5lbu9sW9SWJbEeidgd76ItmmsH7AgxBG7mMnWo1aMbWs6V1b/rOGQtjtB
-McJHN7DcoMFCDnyuRw1UDwJIYmEhczpajzwUftrK8Fr7acPfDVz5Z9lsdOq9H6tb
-WnPiSp/OWwRAjtE95cAC
-=56Yb
+iQIcBAEBCAAGBQJOsNcEAAoJEECxmPOUX5FE5ewP/2ro6ZAHBloRr9LCWHqoMLPC
+AcAArTryTXhV6PspAFwR2YCdUmNEX2grAJV9dN0IQ7FweTaYX6+Y6tG/iB0k4iYk
+lD4EzSpmO61S5GOPRBpxTBFR/onGDXj6+9bE8/tdUwpVO4HPMvECf2EwaJpGvyxZ
+QEVw0JoSmNRlFKv+/JHRmnESx4qCrLTCs2Er63IQo5+ssSCC7ueQZDlOKsPAjJ5H
+24ojHAjZKxqvWCoJPRCb/9fybGqQcFQKZmoOr4NvP8florYX8YTvO61IlORqULry
+kkQFCFyq6zbLlRxCkfDruR6bj4/1fJIdE46syfrR00peZoiad4cElFpHnMXRNGfq
+IfQhRyCxlrxHNYbuSTW5He2Z1m2SgSCAYkNFR6Y6YVFCPNup9FNiZvmO6HSx+njz
+DYo72+UFCzplfab4SkkiNUCnuU5nGhoDrREjDydLySdH3Z3/M3CdQY+sqfZvoTM9
+MXWBczRgg2ecWh/9yZQxI+/whi/XmoNtL2d79/VsTJCp6NmBMCI83cwKnaQOfH69
+2Xaz8UhucdJthTZZrMLFkRwV0Fc5OE4pm+JakFXJPHWHv5o8ElE2j8gV5HXZVmlQ
+OMI+Le29iOEZNWKhX7bsYU5oPF1l6suE7Vp9PEjipWCOD9X79xio30zq4P86KM3/
+xK9VmeTpzrCE11rI52uF
+=ReYY
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__2_Nov_2011_14_53_53_+1100_fCAcSpWWBsH+dvmo--
+--Signature=_Wed__2_Nov_2011_16_37_08_+1100_Nt6k6I4h11x20WA5--
