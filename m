@@ -1,37 +1,70 @@
-From: Yong Zhang <yong.zhang0@gmail.com>
-Subject: Re: linux-next: manual merge of the bjdooks-i2c tree with Linus' tree
-Date: Wed, 2 Nov 2011 10:28:50 +0800
-Message-ID: <20111102022850.GA5875@zhy>
-References: <20111102122221.9040e7a07bb0e3e2c46a5188@canb.auug.org.au>
-Reply-To: Yong Zhang <yong.zhang0@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tmem tree with Linus' tree
+Date: Wed, 2 Nov 2011 14:53:53 +1100
+Message-ID: <20111102145353.152925cdeee425109cf7882f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:58213 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754339Ab1KBC3E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Nov 2011 22:29:04 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__2_Nov_2011_14_53_53_+1100_fCAcSpWWBsH+dvmo"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Rientjes <rientjes@google.com>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__2_Nov_2011_14_53_53_+1100_fCAcSpWWBsH+dvmo
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20111102122221.9040e7a07bb0e3e2c46a5188@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 02, 2011 at 12:22:21PM +1100, Stephen Rothwell wrote:
-> Hi Ben,
-> 
-> Today's linux-next merge of the bjdooks-i2c tree got a conflict in
-> drivers/i2c/busses/i2c-designware-platdrv.c between commit 4311051c358a
-> ("i2c: irq: Remove IRQF_DISABLED") from Linus' tree and commit
-> f8420b7bf6ce ("fixup merge") from the bjdooks-i2c tree.
-> 
-> I fixed it up (by removing the IRQF_DISABLED flag) but this change should
-> probably be sent to Linus as it appears to have been fixed up incorrectly
-> there.
+Hi Dan,
 
-Yeah, we should remove that flag. And that is what commit 4311051c358a
-want to achieve.
+Today's linux-next merge of the tmem tree got a conflict in mm/swapfile.c
+between commit 43362a4977e3 ("oom: fix race while temporarily setting
+current's oom_score_adj") from Linus' tree and commit 6ce5607c1edf ("mm:
+frontswap: core swap subsystem hooks and headers") from the tmem tree.
 
-Thanks,
-Yong
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc mm/swapfile.c
+index c9d6540,9d79741..0000000
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@@ -1616,8 -1637,8 +1637,8 @@@ SYSCALL_DEFINE1(swapoff, const char __u
+  	spin_unlock(&swap_lock);
+ =20
+  	oom_score_adj =3D test_set_oom_score_adj(OOM_SCORE_ADJ_MAX);
+- 	err =3D try_to_unuse(type);
++ 	err =3D try_to_unuse(type, false, 0); /* force all pages to be unused */
+ -	test_set_oom_score_adj(oom_score_adj);
+ +	compare_swap_oom_score_adj(OOM_SCORE_ADJ_MAX, oom_score_adj);
+ =20
+  	if (err) {
+  		/*
+
+--Signature=_Wed__2_Nov_2011_14_53_53_+1100_fCAcSpWWBsH+dvmo
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOsL7RAAoJEECxmPOUX5FEHjIQAJtR+/nR/LUxravIx9/hLBgb
+UZkMtCtLYTLwJDyAGL940+OGVu+KGQOn5dXVjR5I6GUPSV3W+Og9RLJkhhkJ/z01
+i4BsBcRR7nzvpXEBd4AUEy0JwE6hil3GXwzpP7XD8Axrr3qA6jZDb2padBVcbAxv
+MHUOKmGpc4t+bNcMKAVDGu6QZzSr5vOkOL65UtCcy6V5Bn5IYNEX66daszxmW4H3
+K55wRCjn1nhdJ+Fb2UnrlulxJ7upQa2V3LABgEMau3Q1TleH211aN8e/64zJ/lN0
+6fThz/xsSl2Xa8AhfUezToo4NxCE7MWHhpzBnDPbtNAGgKCngpBr8R1cVC0VMYDd
+MbOLTbj7G/jY4zUCNFvEs4tfMMP4lmW9OFQWlWeUoVcyPMZLffo631MAa6ZTPKmv
+3RddsR6Xl3lrHB/5a/29ZJ8VxHc2w1SW4lZoaqnpu3nuae3mEsj4uCXNXS6oTyej
+yiaCHwD9Hqf1kYOwVsAeFOHhIjG5QeveFjntF8eXEbuodqEw9lz/0gEE5OVfqBi/
+1T+zDal5lbu9sW9SWJbEeidgd76ItmmsH7AgxBG7mMnWo1aMbWs6V1b/rOGQtjtB
+McJHN7DcoMFCDnyuRw1UDwJIYmEhczpajzwUftrK8Fr7acPfDVz5Z9lsdOq9H6tb
+WnPiSp/OWwRAjtE95cAC
+=56Yb
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__2_Nov_2011_14_53_53_+1100_fCAcSpWWBsH+dvmo--
