@@ -1,43 +1,33 @@
-From: Luis Henriques <henrix@camandro.org>
-Subject: Re: linux-next: build failure after merge of the crypto-current tree
-Date: Wed, 2 Nov 2011 20:09:13 +0000
-Message-ID: <20111102200900.GA3454@hades>
-References: <20111101115851.2e37ac680db78bdba0661691@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: ASoC and regmap trees have moved back to kernel.org
+Date: Wed, 2 Nov 2011 21:44:02 +0000
+Message-ID: <20111102214402.GA31393@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from balrog.mythic-beasts.com ([93.93.130.6]:58666 "EHLO
-	balrog.mythic-beasts.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750889Ab1KBUxl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Nov 2011 16:53:41 -0400
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:50383 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751255Ab1KBVoI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Nov 2011 17:44:08 -0400
 Content-Disposition: inline
-In-Reply-To: <20111101115851.2e37ac680db78bdba0661691@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Steffen Klassert <steffen.klassert@secunet.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
 
-Hi,
+Hi Stephen,
 
-In gmane.linux.kernel, you wrote:
-> --Signature=_Tue__1_Nov_2011_11_58_51_+1100_R__G+wW+4zIqxa7J
-> Content-Type: text/plain; charset=US-ASCII
-> Content-Disposition: inline
-> Content-Transfer-Encoding: quoted-printable
->
-> Hi Herbert,
->
-> After merging the crypto-current tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+Please update my git trees in -next to use kernel.org again:
 
-I'm not sure if this is related, but I am currently unable to build mainline
-kernel when disabling CONFIG_NET.  This seems to be due to the patch serie:
+ASoC:
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-http://news.gmane.org/gmane.linux.kernel.cryptoapi/cutoff=6228
+regmap:
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
 
-For instance, commit 6ad414fe710d4fd3a8c8c6c2ad8fefcfcc207968 adds a dependency
-over function nla_put(), which is only defined when CONFIG_NET is enabled.
+Please leave the regulator tree where it is for now, Liam's kernel.org
+account will hopefully be being restored shortly so he can take that
+over again.
 
-Cheers,
---
-Luis Henriques
+Thanks,
+Mark
