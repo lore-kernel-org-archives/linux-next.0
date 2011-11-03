@@ -1,47 +1,69 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: Changed location for arm-lpae/for-next
-Date: Thu, 3 Nov 2011 10:29:24 +0000
-Message-ID: <CAHkRjk4ow5EZyqj3j6yDocsX5BPjDQvrqX1enPfyDt5kp=qxaQ@mail.gmail.com>
+Date: Thu, 3 Nov 2011 21:45:37 +1100
+Message-ID: <20111103214537.87f44ff9a80db78fe163b368@canb.auug.org.au>
 References: <20111004132614.GA13865@e102109-lin.cambridge.arm.com>
- <20111005120621.46c24fe4b8f83ac78944b777@canb.auug.org.au>
- <CAHkRjk7YBJJO9HW3JC0AUT2-JTyMwj=4=zd==dSG=pfBvCiFNg@mail.gmail.com> <20111006095625.c4814b818efdc61842451625@canb.auug.org.au>
+	<20111005120621.46c24fe4b8f83ac78944b777@canb.auug.org.au>
+	<CAHkRjk7YBJJO9HW3JC0AUT2-JTyMwj=4=zd==dSG=pfBvCiFNg@mail.gmail.com>
+	<20111006095625.c4814b818efdc61842451625@canb.auug.org.au>
+	<CAHkRjk4ow5EZyqj3j6yDocsX5BPjDQvrqX1enPfyDt5kp=qxaQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__3_Nov_2011_21_45_37_+1100_jZJNbCUFD2juxQnx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:40157 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752277Ab1KCK3q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Nov 2011 06:29:46 -0400
-In-Reply-To: <20111006095625.c4814b818efdc61842451625@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:55238 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752670Ab1KCKqB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Nov 2011 06:46:01 -0400
+In-Reply-To: <CAHkRjk4ow5EZyqj3j6yDocsX5BPjDQvrqX1enPfyDt5kp=qxaQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Catalin Marinas <catalin.marinas@arm.com>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Russell King <rmk@arm.linux.org.uk>
 
-Hi Stephen,
+--Signature=_Thu__3_Nov_2011_21_45_37_+1100_jZJNbCUFD2juxQnx
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 5 October 2011 23:56, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Wed, 5 Oct 2011 18:04:56 +0100 Catalin Marinas <catalin.marinas@arm.com> wrote:
->> I created two branches on github,
->> the first one for LPAE and the other for kmemleak:
->>
->> git://github.com/cmarinas/linux.git for-next
+Hi Catalin,
+
+On Thu, 3 Nov 2011 10:29:24 +0000 Catalin Marinas <catalin.marinas@arm.com>=
+ wrote:
 >
-> I have switched to that from today.
->
->> git://github.com/cmarinas/linux.git kmemleak
->
-> And added that from today as well.
+> I now got my kernel.org account back and I plan to remove the github
+> tree. You can get the above branches from:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/linux.git for-next
+> git://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/linux.git kmemleak
 
-I now got my kernel.org account back and I plan to remove the github
-tree. You can get the above branches from:
+OK, I have switched back to these.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/linux.git for-next
-git://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/linux.git kmemleak
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-(the first one contains the ARM LPAE patches)
+--Signature=_Thu__3_Nov_2011_21_45_37_+1100_jZJNbCUFD2juxQnx
+Content-Type: application/pgp-signature
 
-Thanks.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
--- 
-Catalin
+iQIcBAEBCAAGBQJOsnDRAAoJEECxmPOUX5FEhLwP/RKheyOegWiSS4cDxGpb8VKD
+fOw8MYNp4xaIlthqGLIJGsuJEy22S83s4vkJW15XiKTHphio8iMd5+58MbGvGLxS
+t8wrTs+mdnAIhwRa7WNttIs9CSrDLIxX/OxYsGoaPjORgDcDbHtVlslh6l2a+kH4
+tvG7Sc6iEZCU35rDy5bJoMqO9yeWWVK4SfM1a7q9MFAV6l1pUicyzptQc0+BrtSo
+ebhcXOj0LYrSuSn1difiVxIy3CLQhcfxOpZURQkInMw9bG9N4PkC5tIYPf/HFLlF
+X5leqpjYJv1tePM3QwQ4WseLA9VyQHdO5TeNnfSyMHTPY/Pnbee9rnK/8ipnw6Nj
+Q8g4KEbHoX/1Vtx8knmo2oXe17edqafE8QjVS2t0aFU5ff8H1C9D2nKFkDiacegN
+JvsswYWPogX0S3pddK6/VNaD5/1fmniJoYcEEc+REXbrEgOkgvmGXolW8hKUDHEE
+FVaCO5Jdzp/xjTQTHx+riFqDC7KaWlainS7Mx+VwvVZA2nRC+SgSQ128uTPDkCxw
+h13Wxuo1J1+fCala9KWp3cNYXJl+wdji7oPM93urbZQrTeN78KT3izWuB0UT6DoF
+vretyc87+EgAAT/R4RpXfvCUr0IZAQyxGTlrGq6gp5AZ3D1sC+stz59WvgECoBTA
+v81hm6bQQSkNf4aPs3NE
+=j/hL
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Nov_2011_21_45_37_+1100_jZJNbCUFD2juxQnx--
