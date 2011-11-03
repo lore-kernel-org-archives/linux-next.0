@@ -1,69 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Changed location for arm-lpae/for-next
-Date: Thu, 3 Nov 2011 21:45:37 +1100
-Message-ID: <20111103214537.87f44ff9a80db78fe163b368@canb.auug.org.au>
-References: <20111004132614.GA13865@e102109-lin.cambridge.arm.com>
-	<20111005120621.46c24fe4b8f83ac78944b777@canb.auug.org.au>
-	<CAHkRjk7YBJJO9HW3JC0AUT2-JTyMwj=4=zd==dSG=pfBvCiFNg@mail.gmail.com>
-	<20111006095625.c4814b818efdc61842451625@canb.auug.org.au>
-	<CAHkRjk4ow5EZyqj3j6yDocsX5BPjDQvrqX1enPfyDt5kp=qxaQ@mail.gmail.com>
+From: Luis Henriques <henrix@camandro.org>
+Subject: Re: linux-next: build failure after merge of the crypto-current
+	tree
+Date: Thu, 3 Nov 2011 10:15:54 +0000
+Message-ID: <20111103101554.GA17569@onza.mythic-beasts.com>
+References: <20111101115851.2e37ac680db78bdba0661691@canb.auug.org.au> <20111102200900.GA3454@hades> <20111102233936.GA10058@gondor.apana.org.au> <20111103055824.GC22141@secunet.com> <20111103061628.GA12678@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__3_Nov_2011_21_45_37_+1100_jZJNbCUFD2juxQnx"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:55238 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752670Ab1KCKqB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Nov 2011 06:46:01 -0400
-In-Reply-To: <CAHkRjk4ow5EZyqj3j6yDocsX5BPjDQvrqX1enPfyDt5kp=qxaQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Russell King <rmk@arm.linux.org.uk>
-
---Signature=_Thu__3_Nov_2011_21_45_37_+1100_jZJNbCUFD2juxQnx
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20111103061628.GA12678@gondor.apana.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Catalin,
+On Thu, Nov 03, 2011 at 05:16:28PM +1100, Herbert Xu wrote:
+> On Thu, Nov 03, 2011 at 06:58:24AM +0100, Steffen Klassert wrote:
+> > On Thu, Nov 03, 2011 at 10:39:36AM +1100, Herbert Xu wrote:
+> > > On Wed, Nov 02, 2011 at 08:09:13PM +0000, Luis Henriques wrote:
+> > > >
+> > > > I'm not sure if this is related, but I am currently unable to build mainline
+> > > > kernel when disabling CONFIG_NET.  This seems to be due to the patch serie:
+> > > > 
+> > > > http://news.gmane.org/gmane.linux.kernel.cryptoapi/cutoff=6228
+> > > > 
+> > > > For instance, commit 6ad414fe710d4fd3a8c8c6c2ad8fefcfcc207968 adds a dependency
+> > > > over function nla_put(), which is only defined when CONFIG_NET is enabled.
+> > > 
+> > > Indeed, I missed the dependency in the report functions which
+> > > is built even when CRYPTO_USER is turned off.
+> > > 
+> > > Does this patch fix the problem for you?
+> > > 
+> > 
+> > Hm, did you forget to add the patch to the mail?
+> 
+> Probably :)
+> 
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index 527a857..cdba95c 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -38,6 +38,7 @@ config CRYPTO_ALGAPI
+>  
+>  config CRYPTO_ALGAPI2
+>  	tristate
+> +	select NLATTR
+>  
+>  config CRYPTO_AEAD
+>  	tristate
 
-On Thu, 3 Nov 2011 10:29:24 +0000 Catalin Marinas <catalin.marinas@arm.com>=
- wrote:
->
-> I now got my kernel.org account back and I plan to remove the github
-> tree. You can get the above branches from:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/linux.git for-next
-> git://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/linux.git kmemleak
+No, this did not solved the problem; build still fails.  The problem is
+that, in lib/nlattr.c, we have:
 
-OK, I have switched back to these.
+#ifdef CONFIG_NET
+...
+EXPORT_SYMBOL(nla_put);
+...
+#endif
 
---=20
+So, I still have an undefined reference to nla_put.
+
+BTW, I'm not talking about the -next tree, so this problem may or may not
+be the same one reported by Stephen.
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__3_Nov_2011_21_45_37_+1100_jZJNbCUFD2juxQnx
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOsnDRAAoJEECxmPOUX5FEhLwP/RKheyOegWiSS4cDxGpb8VKD
-fOw8MYNp4xaIlthqGLIJGsuJEy22S83s4vkJW15XiKTHphio8iMd5+58MbGvGLxS
-t8wrTs+mdnAIhwRa7WNttIs9CSrDLIxX/OxYsGoaPjORgDcDbHtVlslh6l2a+kH4
-tvG7Sc6iEZCU35rDy5bJoMqO9yeWWVK4SfM1a7q9MFAV6l1pUicyzptQc0+BrtSo
-ebhcXOj0LYrSuSn1difiVxIy3CLQhcfxOpZURQkInMw9bG9N4PkC5tIYPf/HFLlF
-X5leqpjYJv1tePM3QwQ4WseLA9VyQHdO5TeNnfSyMHTPY/Pnbee9rnK/8ipnw6Nj
-Q8g4KEbHoX/1Vtx8knmo2oXe17edqafE8QjVS2t0aFU5ff8H1C9D2nKFkDiacegN
-JvsswYWPogX0S3pddK6/VNaD5/1fmniJoYcEEc+REXbrEgOkgvmGXolW8hKUDHEE
-FVaCO5Jdzp/xjTQTHx+riFqDC7KaWlainS7Mx+VwvVZA2nRC+SgSQ128uTPDkCxw
-h13Wxuo1J1+fCala9KWp3cNYXJl+wdji7oPM93urbZQrTeN78KT3izWuB0UT6DoF
-vretyc87+EgAAT/R4RpXfvCUr0IZAQyxGTlrGq6gp5AZ3D1sC+stz59WvgECoBTA
-v81hm6bQQSkNf4aPs3NE
-=j/hL
------END PGP SIGNATURE-----
-
---Signature=_Thu__3_Nov_2011_21_45_37_+1100_jZJNbCUFD2juxQnx--
+--
+Luis Henriques
