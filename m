@@ -1,55 +1,60 @@
-From: =?utf-8?B?SsO2cm4=?= Engel <joern@logfs.org>
-Subject: Re: linux-next: manual merge of the logfs tree with Linus' tree
-Date: Thu, 3 Nov 2011 02:25:04 +0100
-Message-ID: <20111103012504.GC3485@logfs.org>
-References: <20111101141000.3531dbfbf0490c6d3521d6b6@canb.auug.org.au> <20111102190046.GB3485@logfs.org> <20111103120257.c0c13ebacc8d245ca75edbf1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci-current tree
+Date: Thu, 3 Nov 2011 12:53:25 +1100
+Message-ID: <20111103125325.c1e20275e3a68498465b5ddf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from [85.183.114.52] ([85.183.114.52]:45683 "EHLO Dublin.logfs.org"
-	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753516Ab1KCBYI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Nov 2011 21:24:08 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__3_Nov_2011_12_53_25_+1100_Mvdu9EM_GG.a6b64"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__3_Nov_2011_12_53_25_+1100_Mvdu9EM_GG.a6b64
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20111103120257.c0c13ebacc8d245ca75edbf1@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Prasad Joshi <prasadjoshi.linux@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josef Bacik <josef@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 3 November 2011 12:02:57 +1100, Stephen Rothwell wrote:
-> On Wed, 2 Nov 2011 20:00:46 +0100 J=C3=B6rn Engel <joern@logfs.org> w=
-rote:
-> > On Tue, 1 November 2011 14:10:00 +1100, Stephen Rothwell wrote:
-> > >=20
-> > > Today's linux-next merge of the logfs tree got a conflict in
-> > > fs/logfs/file.c between commit 02c24a82187d ("fs: push i_mutex an=
-d
-> > > filemap_write_and_wait down into ->fsync() handlers") from Linus'=
- tree
-> > > and commit 39da12ef4bbe ("logfs: take write mutex lock during fsy=
-nc and
-> > > sync") from the logfs tree.
-> > >=20
-> > > I have no idea what needs to be done here.  I fixed it like below=
- to make
-> > > it build, but a better fix is needed.
-> >=20
-> > From a code perspective your fix below is correct, to the best of m=
-y
-> > judgement.  I'm less sure what to do from a git perspective.
-> > Explicitly tell Linus about it in the logfs pull request?
->=20
-> I was concered about the locking order (or if both locks were needed =
-at
-> all).  And, yes, tell Linus.
+Hi Jesse,
 
-Locking order should be fine.  Whether both locks are needed is a
-valid question.  I suspect the answer is yes.
+After merging the pci-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-J=C3=B6rn
+drivers/pci/ats.c:13:26: fatal error: linux/export.h: No such file or direc=
+tory
 
+Caused by commit 571eba1b8aa9 ("PCI: Fix compile errors with PCI_ATS and !
+PCI_IOV").
+
+You didn't build this, right? :-(  linux/export.h does not yet exist in
+Linus' tree ...  I have used the pci-current tree from next-20111102 for
+today.
 --=20
-Simplicity is prerequisite for reliability.
--- Edsger W. Dijkstra
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__3_Nov_2011_12_53_25_+1100_Mvdu9EM_GG.a6b64
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOsfQVAAoJEECxmPOUX5FEYkcP/2tMq2R+LjyKUhPFNyMA4RGp
+ZsqU0nkSuC9roWGex452L8I3+C5yQm5n255EzHMeE5d2+00PYnQmtQd7gEL56yGN
+R0OQ40/IDMVC6iaddjVIw6CtcpeFNsFhcUD20tjgxiaao8HOB+r2dD00LlPt373v
+cL8nzNAQwy34759qUNLAvEnFaSn7TSbWh6+pBqCf9j6dN6UhAM86DdqilImW7k0f
+IRlmN5qWujIQt72n5NsU6kGWUtbREqS4PGoXlEIB+BO1bxqLoZlzfr2uS6cD0S1e
+/cxZedzhYhhb3/e/WwiWU75FA/5A50j4mrPc8xnzO3jRZIwln2yUpEMFSoPXrIGa
+T3VVI1iOc3EQQQx31xFMHeXSpi8+tSEERA4+MMdEOAk/I9csruSTpf/K8ZDk3Ir3
+E8BQL3BElhlhJ93CLRxyLb1v+c9NetfZGnXIEKnqexVbyjLtzzzobdVRU/RTAqO3
+0xKEk9nw6esj4Jp/LWOuJIDEdmQMRZ2Q1ICmgeJ5qII4Jzme8/eMRrm3O3bQWzna
+t3B2By403mbydzSbZ/ButjTv6vorO6vAz0MAmegDz9EX4uABCoickiNyoPeEEKtg
+6QcX4fOEPkJVY/MW4YSgLZs7onJSRTU54x2RJEWEPgWUO4L5v/BAljsbjTQKzS14
+JGk8iWad6LpdyiJxSUMX
+=GkdP
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Nov_2011_12_53_25_+1100_Mvdu9EM_GG.a6b64--
