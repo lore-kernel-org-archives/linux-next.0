@@ -1,69 +1,95 @@
-From: Luis Henriques <henrix@camandro.org>
-Subject: Re: linux-next: build failure after merge of the crypto-current
-	tree
-Date: Thu, 3 Nov 2011 10:15:54 +0000
-Message-ID: <20111103101554.GA17569@onza.mythic-beasts.com>
-References: <20111101115851.2e37ac680db78bdba0661691@canb.auug.org.au> <20111102200900.GA3454@hades> <20111102233936.GA10058@gondor.apana.org.au> <20111103055824.GC22141@secunet.com> <20111103061628.GA12678@gondor.apana.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Nov 3
+Date: Thu, 3 Nov 2011 22:41:33 +1100
+Message-ID: <20111103224133.1f327c9c4804212af408d576@canb.auug.org.au>
+References: <20111103172036.0795ce9559ab2dbfd5740a26@canb.auug.org.au>
+	<CA+icZUX1juRU51gXFrX7ZeKgtV9=0bmFKLYZCcuyTfW5E1SL+A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__3_Nov_2011_22_41_33_+1100_nOPrrGncSQA+BfdH"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:49516 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755749Ab1KCLlv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Nov 2011 07:41:51 -0400
+In-Reply-To: <CA+icZUX1juRU51gXFrX7ZeKgtV9=0bmFKLYZCcuyTfW5E1SL+A@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Christoph Hellwig <hch@lst.de>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Nick Piggin <npiggin@kernel.dk>
+
+--Signature=_Thu__3_Nov_2011_22_41_33_+1100_nOPrrGncSQA+BfdH
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20111103061628.GA12678@gondor.apana.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 03, 2011 at 05:16:28PM +1100, Herbert Xu wrote:
-> On Thu, Nov 03, 2011 at 06:58:24AM +0100, Steffen Klassert wrote:
-> > On Thu, Nov 03, 2011 at 10:39:36AM +1100, Herbert Xu wrote:
-> > > On Wed, Nov 02, 2011 at 08:09:13PM +0000, Luis Henriques wrote:
-> > > >
-> > > > I'm not sure if this is related, but I am currently unable to build mainline
-> > > > kernel when disabling CONFIG_NET.  This seems to be due to the patch serie:
-> > > > 
-> > > > http://news.gmane.org/gmane.linux.kernel.cryptoapi/cutoff=6228
-> > > > 
-> > > > For instance, commit 6ad414fe710d4fd3a8c8c6c2ad8fefcfcc207968 adds a dependency
-> > > > over function nla_put(), which is only defined when CONFIG_NET is enabled.
-> > > 
-> > > Indeed, I missed the dependency in the report functions which
-> > > is built even when CRYPTO_USER is turned off.
-> > > 
-> > > Does this patch fix the problem for you?
-> > > 
-> > 
-> > Hm, did you forget to add the patch to the mail?
-> 
-> Probably :)
-> 
-> diff --git a/crypto/Kconfig b/crypto/Kconfig
-> index 527a857..cdba95c 100644
-> --- a/crypto/Kconfig
-> +++ b/crypto/Kconfig
-> @@ -38,6 +38,7 @@ config CRYPTO_ALGAPI
->  
->  config CRYPTO_ALGAPI2
->  	tristate
-> +	select NLATTR
->  
->  config CRYPTO_AEAD
->  	tristate
+Hi Sedat,
 
-No, this did not solved the problem; build still fails.  The problem is
-that, in lib/nlattr.c, we have:
+On Thu, 3 Nov 2011 08:29:06 +0100 Sedat Dilek <sedat.dilek@googlemail.com> =
+wrote:
+>
+> Whuzzz up with VFS tree(s)?
+>=20
+> [1] and [2] lists:
+> vfs             git
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git#for-next
 
-#ifdef CONFIG_NET
-...
-EXPORT_SYMBOL(nla_put);
-...
-#endif
+I undrestanm that Al is unwell.  This tree has not been restored since
+the troubles on kernel.org.
 
-So, I still have an undefined reference to nla_put.
+> vfs-scale       git
+> git://git.kernel.org/pub/scm/linux/kernel/git/npiggin/linux-npiggin.git#v=
+fs-scale-working
 
-BTW, I'm not talking about the -next tree, so this problem may or may not
-be the same one reported by Stephen.
+Again, this is one of the trees that has not been restored.
 
+> Isn't vfs-scale [2] done?
+
+Maybe.
+
+> I have so long not heard or read from Nick Piggin (vfs-scale), I hope
+> he is well.
+
+People don't seem to let me know when trees are no longer needed.
+
+> Christoph take over as interim VFS stuff from Al (hope he is well,
+> too) and I have seen his and pending stuff from FS folk was merged
+> into Linus-tree.
+
+Yeah, Linus has pulled it so quickly I did not see the point in adding it
+to linus-next.
+
+> Christoph, your for-next GIT branch [3] is dedicated for linux-next (v3.3=
+)?
+
+Hi Chrisoph, is this tree going to be ongoing (but I don't want v3.3
+stuff until after the merge window closes)?
+
+--=20
 Cheers,
---
-Luis Henriques
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__3_Nov_2011_22_41_33_+1100_nOPrrGncSQA+BfdH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOsn3tAAoJEECxmPOUX5FEGRYP/Rpxj1EOn4Tk3L+sZ5RTcbKZ
+OClb4US2irM5se6bh74M/ubsIaDZHxLoja+kIY670ivkxHu0i7ADpzh21efQ96lV
+QqqQUnjupP6rW5jX7A350hUldmbmnrOpvdAWIbNIApW4ZLf4Y6OrxkaJ/+MWdSiC
+LAsVWTaGV9xMIW211DHZytQNJtI+h3cwDnDwRwP8GdLFPl+sFNHWTDXp+mThU6zd
+PLamuWxJhJcgg3jW9HNXSXrGEYTod7dc1JyKHRJdbOS+KCA6GV4//aMr/VKUiZ/U
+fccZX40gQUrFjh/WoEQR8FtRyrvuku5NDQwQkQYWzPlLuTxBuG1Yz8Q0ag4IhMm/
+99vunP4dwyU1mL+Y4O7BgVulr41VtgqgoP30mF7Fl29eOzft5kZyL/UDM9mczC/l
+KaQbb+Cqii8t8tpll7cEbo7LgCl3MdlnK3ASBHdb4zSSUk4NN1Fl2SY0Db+4cpfe
+jISgtDZ/O/X7ufCtn3nQc4OGg2ZhwKQ+2LfzZE/tEVsoNiF8Yq9LN0LBhZ0jFj5C
+rp6wawgvnrb0onE0JgPfr4bLwGAweX1azYEN+nH2hax1uSmFvM1pNcvJVTG4QJ+e
+PSun6AclhCL3jM04pxTp+pvDD+GIqs6tPsUr1K2iYVGOLtTMPO1dfmfG0I75kB5h
+2VpbbKfoKMFaoRq6Nvwc
+=heWx
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Nov_2011_22_41_33_+1100_nOPrrGncSQA+BfdH--
