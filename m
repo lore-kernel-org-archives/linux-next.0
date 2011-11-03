@@ -1,65 +1,66 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: scsi: killing requests for dead queue
-Date: Thu, 03 Nov 2011 14:23:24 -0700
-Message-ID: <4eb3064c133909be1c@agluck-desktop.sc.intel.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] staging: et131x depends on NET
+Date: Thu, 03 Nov 2011 14:24:00 -0700
+Message-ID: <4EB30670.40205@xenotime.net>
+References: <20111102165413.8cf3105a12e435f078c813eb@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:54499 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751934Ab1KCVXZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Nov 2011 17:23:25 -0400
+Received: from oproxy9.bluehost.com ([69.89.24.6]:54999 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751942Ab1KCVYm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Nov 2011 17:24:42 -0400
+In-Reply-To: <20111102165413.8cf3105a12e435f078c813eb@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, linux-scsi@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mark Einon <mark.einon@gmail.com>, Greg KH <gregkh@suse.de>
 
-First saw these messages on next-20111102 (but my previous build from linux-next
-was next-20111017 ... so a big gap).  Still there today in next-20111103. Not seeing
-these messages from Linus 3.2 merge window builds.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-lspci says:
-----------
-20:01.0 SCSI storage controller: LSI Logic / Symbios Logic 53c1030 PCI-X Fusion-MPT Dual Ultra320 SCSI (rev 08)
-20:01.1 SCSI storage controller: LSI Logic / Symbios Logic 53c1030 PCI-X Fusion-MPT Dual Ultra320 SCSI (rev 08)
+ET131X uses netdev interfaces so it should depend on NET.
 
-extract from dmesg:
-------------------
-Fusion MPT base driver 3.04.20
-Copyright (c) 1999-2008 LSI Corporation
-Fusion MPT SPI Host driver 3.04.20
-GSI 27 (level, low) -> CPU 0 (0x0000) vector 54
-mptspi 0000:20:01.0: PCI INT A -> GSI 27 (level, low) -> IRQ 54
-mptbase: ioc0: Initiating bringup
-ioc0: LSI53C1030 C0: Capabilities={Initiator,Target}
-scsi0 : ioc0: LSI53C1030 C0, FwRev=01032341h, Ports=1, MaxQ=255, IRQ=54
-scsi 0:0:0:0: Direct-Access     HP 36.4G MAU3036NC        HPC2 PQ: 0 ANSI: 3
-scsi target0:0:0: Beginning Domain Validation
-scsi target0:0:0: Ending Domain Validation
-scsi target0:0:0: FAST-160 WIDE SCSI 320.0 MB/s DT IU QAS RTI WRFLOW PCOMP (6.25 ns, offset 127)
-sd 0:0:0:0: Attached scsi generic sg0 type 0
-sd 0:0:0:0: [sda] 71132960 512-byte logical blocks: (36.4 GB/33.9 GiB)
-scsi 0:0:1:0: Direct-Access     HP 36.4G MAU3036NC        HPC2 PQ: 0 ANSI: 3
-scsi target0:0:1: Beginning Domain Validation
-sd 0:0:0:0: [sda] Write Protect is off
-sd 0:0:0:0: [sda] Mode Sense: cf 00 10 08
-sd 0:0:0:0: [sda] Write cache: disabled, read cache: enabled, supports DPO and FUA
-scsi target0:0:1: Ending Domain Validation
-scsi target0:0:1: FAST-160 WIDE SCSI 320.0 MB/s DT IU QAS RTI WRFLOW PCOMP (6.25 ns, offset 127)
-sd 0:0:1:0: Attached scsi generic sg1 type 0
-sd 0:0:1:0: [sdb] 71132960 512-byte logical blocks: (36.4 GB/33.9 GiB)
- sda: sda1
-sd 0:0:1:0: [sdb] Write Protect is off
-sd 0:0:1:0: [sdb] Mode Sense: cf 00 10 08
-scsi: killing requests for dead queue
-scsi: killing requests for dead queue
-sd 0:0:1:0: [sdb] Write cache: disabled, read cache: enabled, supports DPO and FUA
-scsi: killing requests for dead queue
-scsi: killing requests for dead queue
-scsi: killing requests for dead queue
-scsi: killing requests for dead queue
-sd 0:0:0:0: [sda] Attached SCSI disk
-scsi: killing requests for dead queue
-scsi: killing requests for dead queue
-scsi: killing requests for dead queue
-scsi: killing requests for dead queue
+Fixes these build errors:
+ERROR: "ethtool_op_get_link" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "eth_validate_addr" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "register_netdev" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "phy_connect" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "phy_find_first" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "mdiobus_register" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "mdiobus_alloc" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "alloc_etherdev_mqs" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "netif_device_detach" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "phy_stop" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "netif_device_attach" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "phy_start" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "free_netdev" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "mdiobus_free" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "mdiobus_unregister" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "unregister_netdev" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "__netif_schedule" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "phy_print_status" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "dev_kfree_skb_any" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "dev_alloc_skb" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "netif_rx" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "eth_type_trans" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "skb_put" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "phy_ethtool_gset" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "phy_ethtool_sset" [drivers/staging/et131x/et131x.ko] undefined!
+ERROR: "phy_mii_ioctl" [drivers/staging/et131x/et131x.ko] undefined!
 
-bunch more "scsi: killing requests for dead queue" messages. But system
-does eventually come up (and the messages stop).
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
+ drivers/staging/et131x/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- next-2011-1102.orig/drivers/staging/et131x/Kconfig
++++ next-2011-1102/drivers/staging/et131x/Kconfig
+@@ -1,6 +1,6 @@
+ config ET131X
+ 	tristate "Agere ET-1310 Gigabit Ethernet support"
+-	depends on PCI
++	depends on PCI && NET
+ 	default n
+ 	---help---
+ 	  This driver supports Agere ET-1310 ethernet adapters.
