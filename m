@@ -1,76 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the logfs tree with Linus' tree
-Date: Thu, 3 Nov 2011 12:02:57 +1100
-Message-ID: <20111103120257.c0c13ebacc8d245ca75edbf1@canb.auug.org.au>
-References: <20111101141000.3531dbfbf0490c6d3521d6b6@canb.auug.org.au>
-	<20111102190046.GB3485@logfs.org>
+Subject: Re: currently missing kernel devel trees
+Date: Thu, 3 Nov 2011 12:18:37 +1100
+Message-ID: <20111103121837.67328c488685926f4a0f0f08@canb.auug.org.au>
+References: <20111013174358.b20fedb97c7b53db2ba82ff6@canb.auug.org.au>
+	<CAB3woddd=1Ps8HR4SPAOQxoxCnGLFDrjRN6KPJUFkpzmACXf4w@mail.gmail.com>
+	<CAB3wodfhuucag7QtdToGa5Y-6c9QA3_CMLg1kRHBOeoQRhymjw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__3_Nov_2011_12_02_57_+1100_HUUhplcr8I6F8gDg"
+ boundary="Signature=_Thu__3_Nov_2011_12_18_37_+1100_kSSkwrFWrbv8spQX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:34131 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:46291 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752013Ab1KCBDO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Nov 2011 21:03:14 -0400
-In-Reply-To: <20111102190046.GB3485@logfs.org>
+	with ESMTP id S1752897Ab1KCBSj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Nov 2011 21:18:39 -0400
+In-Reply-To: <CAB3wodfhuucag7QtdToGa5Y-6c9QA3_CMLg1kRHBOeoQRhymjw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?SsO2cm4=?= Engel <joern@logfs.org>
-Cc: Prasad Joshi <prasadjoshi.linux@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josef Bacik <josef@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>
+To: Phillip Lougher <phillip.lougher@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Thu__3_Nov_2011_12_02_57_+1100_HUUhplcr8I6F8gDg
-Content-Type: text/plain; charset=UTF-8
+--Signature=_Thu__3_Nov_2011_12_18_37_+1100_kSSkwrFWrbv8spQX
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi J=C3=B6rn,
+Hi Phillip,
 
-On Wed, 2 Nov 2011 20:00:46 +0100 J=C3=B6rn Engel <joern@logfs.org> wrote:
+On Wed, 2 Nov 2011 17:32:52 +0000 Phillip Lougher <phillip.lougher@gmail.co=
+m> wrote:
 >
-> On Tue, 1 November 2011 14:10:00 +1100, Stephen Rothwell wrote:
-> >=20
-> > Today's linux-next merge of the logfs tree got a conflict in
-> > fs/logfs/file.c between commit 02c24a82187d ("fs: push i_mutex and
-> > filemap_write_and_wait down into ->fsync() handlers") from Linus' tree
-> > and commit 39da12ef4bbe ("logfs: take write mutex lock during fsync and
-> > sync") from the logfs tree.
-> >=20
-> > I have no idea what needs to be done here.  I fixed it like below to ma=
-ke
-> > it build, but a better fix is needed.
+> Can you please update to pull from
 >=20
-> From a code perspective your fix below is correct, to the best of my
-> judgement.  I'm less sure what to do from a git perspective.
-> Explicitly tell Linus about it in the logfs pull request?
+> git://git.kernel.org/pub/scm/linux/kernel/git/pkl/squashfs-next.git master
 
-I was concered about the locking order (or if both locks were needed at
-all).  And, yes, tell Linus.
+I have switched to that now.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__3_Nov_2011_12_02_57_+1100_HUUhplcr8I6F8gDg
+--Signature=_Thu__3_Nov_2011_12_18_37_+1100_kSSkwrFWrbv8spQX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOsehBAAoJEECxmPOUX5FEelIP/Rra1ApIW6Xo6UdNF0JQ8mB8
-XZdepsBlzEQ9xmoLrIa9pOuCkFZLy/ozyk1lGIzRkEiHHLfWr/42of5rsgne//r0
-M3m9Gsyk2zvT24BO9XpKutlOzSJLrYNxXMF/hKws5bEIVWR+qS4vGquCEXhX5iNA
-HrunnVyoMDHnz+GhgjFlbvaN58snwBd1qp0w4FeCjHQwKlSGpo435ry5WRDuwXT+
-wC/hSPKBTWw0q6FCrt+Krh4P1Ov9oA2eiByjtAQr2JJS8+NQBDchkH3TdPVOQswr
-eEton0qL0apnpJaVLHZezwe+ZMsGuwhVwNBMUlGNollmrQuJkkCHuU5LN7Im6sof
-z2Q5iewkucYTPUCx03xxeJ0Lnwwu3vcAe8VOu2KMVM16iuCug9jvphUN7XPvlJqj
-yWz/5pxT2dkYuGIlzFwFmwxCZaV1+AzA4wqZSi1sfqs/jZCQJXScVeabLR5DAict
-XLjMx8MadKTLUptPhp0z28D/4i7Qiil3OrllhhyFZ6RXupeVeWEdVR1kbWPnyCRh
-ltMi24wXl+TC8K/2/UgqTvdb0OZXk5gFR06WtaVhCv/Dpq+9k1xYhjoxgGjKWGn2
-fFQ9CJ+XyqrOWiw8TbpN/1cr5gzDz2UVfgJ2uRZBLYfzOFUl/7NLhLO1V5bRaZhQ
-p2FTFYAyHZHQGf29sbrt
-=WHh7
+iQIcBAEBCAAGBQJOsevtAAoJEECxmPOUX5FENZEP/0BHHN1QFc7LqINPEe+9LyzJ
+WR6FejSE5LD/IuVAEFP/JZARVcYML44KRGfuLqt/HG//w3uXI8k2HI7C7HQ+Uqsj
++hIdhb9caO/EMzCfg0QZkZCtLjZGMpvHKYpVzc/CfGw9dZHhXyPIPstKFI41qYb6
+3V5cPjTCQJBxc0XpK/UvTImQqVip2FmVnisbRRKpB27/l8ESdzrAnxC4g4GyqHzn
+r0XrNjuw9QwzxspXdGHCV4rHsjeIgCpfQi+nuex19BMxMNcARGJmXh8ATrpQywKr
+KGV7nZ+/cZUxhyCYqn/E9O5I0hFg4MmeGhlKGDbm8I6PdYb5k2ow6JS+aBCe4uRm
+D1vmB0IEVYIqf3Udvdikysb0J1MV1s7cWYCv85L9LKUCopP8Pu1Hfyi+o0taKoAA
+CQRK4VAWTDhz8xGOlE6RaUCEfZFGm4G/tAVFqN6sD2p6kXEvkhFCWKiDfzNYhZUV
+IBZF2Tld8KTtJTUkAkeCNy1fxwENdOPpz7I4vNA6wT91KjRT/T55NVNzaD052AM2
+8a9idUesHxHYsWHf2jJOdv9dufqd5eeXgRReHoL23+gp3XE4qvq11Qe7g4stBdoB
+ay8LxFQ8q1yLkEUUvInYimg6BqARD5b7CuMp+tPAxCqIcaIk0yKAbZZqB+Yx/JKU
+sZnCbKMuo3uETHRKPfu1
+=qqGS
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__3_Nov_2011_12_02_57_+1100_HUUhplcr8I6F8gDg--
+--Signature=_Thu__3_Nov_2011_12_18_37_+1100_kSSkwrFWrbv8spQX--
