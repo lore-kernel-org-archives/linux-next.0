@@ -1,37 +1,99 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: build failure after merge of the pci-current tree
-Date: Wed, 2 Nov 2011 19:04:36 -0700
-Message-ID: <20111102190436.5b4c805a@jbarnes-desktop>
-References: <20111103125325.c1e20275e3a68498465b5ddf@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Thu, 3 Nov 2011 13:09:24 +1100
+Message-ID: <20111103130924.5811caec6db378f467006fc3@canb.auug.org.au>
+References: <20110912120501.764336af05069fa23a371b5e@canb.auug.org.au>
+	<4E6D6C0D.60100@codeaurora.org>
+	<20110913115533.403d4fe6d961ccc8ba9b58b7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__3_Nov_2011_13_09_24_+1100_F0bQ2TFBX66Sg01="
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111103125325.c1e20275e3a68498465b5ddf@canb.auug.org.au>
+In-Reply-To: <20110913115533.403d4fe6d961ccc8ba9b58b7@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus <torvalds@linux-foundation.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Brown <davidb@codeaurora.org>, Russell King <rmk@arm.linux.org.uk>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 3 Nov 2011 12:53:25 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Thu__3_Nov_2011_13_09_24_+1100_F0bQ2TFBX66Sg01=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Jesse,
-> 
-> After merging the pci-current tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/pci/ats.c:13:26: fatal error: linux/export.h: No such file or directory
-> 
-> Caused by commit 571eba1b8aa9 ("PCI: Fix compile errors with PCI_ATS and !
-> PCI_IOV").
-> 
-> You didn't build this, right? :-(  linux/export.h does not yet exist in
-> Linus' tree ...  I have used the pci-current tree from next-20111102 for
-> today.
+Hi Arnd,
 
-Oh I thought Randy said this stuff was in -next already...  Sorry for
-the trouble.
+On Tue, 13 Sep 2011 11:55:33 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Sun, 11 Sep 2011 19:18:53 -0700 Stephen Boyd <sboyd@codeaurora.org> wr=
+ote:
+> >
+> > The device tree machine description also needs to have the .fixup and
+> > .reserve callbacks added to it so that the device tree machines boot
+> > properly. Perhaps the soc tree needs to pull in Russell's tree at some
+> > point to resolve this subtle logical conflict or when the trees are
+> > merged together someone will need to do an evil merge and add the
+> > callbacks in the merge commit.
+>=20
+> Ah, right.  I have added this merge fixup for today and can carry it as
+> necessary.
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+I am still applying this patch to the arm-soc merge.  I assume that it is
+needed in Linus' tree now.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 13 Sep 2011 11:51:48 +1000
+Subject: [PATCH] arm-soc: merge fixup for fixup/reserve being added to MACH=
+INE descriptions
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/mach-msm/board-msm8x60.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-msm/board-msm8x60.c b/arch/arm/mach-msm/board-ms=
+m8x60.c
+index 328df27..4ad2afb 100644
+--- a/arch/arm/mach-msm/board-msm8x60.c
++++ b/arch/arm/mach-msm/board-msm8x60.c
+@@ -153,6 +153,8 @@ MACHINE_END
+ #ifdef CONFIG_OF
+ /* TODO: General device tree support for all MSM. */
+ DT_MACHINE_START(MSM_DT, "Qualcomm MSM (Flattened Device Tree)")
++	.fixup =3D msm8x60_fixup,
++	.reserve =3D msm8x60_reserve,
+ 	.map_io =3D msm8x60_map_io,
+ 	.init_irq =3D msm8x60_init_irq,
+ 	.init_machine =3D msm8x60_dt_init,
+--=20
+1.7.5.4
+
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__3_Nov_2011_13_09_24_+1100_F0bQ2TFBX66Sg01=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOsffUAAoJEECxmPOUX5FE8w8P/2gPsqrqM8Nj1jYdA1PwnNSq
+78yPE6z+lpz1FUpEqVgd9hU6MUTBABYMMTjM86j0D1l256+Z1gunEX5OTdY8W5sn
+CVLMs2FEl5VEHrqV7oQOdL+DO/LsDhFjc1iUCc+QUeiBQJgJb+75PCAL0EZ8QhLD
+/KOt7MAgg3uA27smGF1RLRQeRl6LiN5rKE1Cr8T+l09hPS/hrJ9UPlK57/DXMwjP
+lWWuSZ+Nf530FU8IqL64XMTE034WqtrQpm/ggc+mH/Xqx2fLEHoNYvtEUu31/yap
+CTOqZ6m6cmxZsooPlDN0RbPVRjQ3RIBV76TB+QlxNS70qF5aqMp7c+c/gQ4M9VRK
+zzxoDDXuoq32tYvh/zHir2W3ugqLyojKrgyWAX6dfm37dMUZfz8dKtgNU6gIrCER
+tOxTdo2o3/ivibwVpr3bXX9tP1rQxlcmjXYh4SF2PsjcJCOpuKysYzkO4wiXcYPx
+/nsOIuGEOXIqEg/690IVvTY1dS/j0twBNn6HdY9WTYhWruIpRj+7U8FwuQx7u8yx
+OOF9mGzO6s4IaNwH9q7YPzqKVphRXNY+16Adb8scm4k3DqH7L+0dmuhYGs75CJOv
+UNdzdjd8Pn/NkmRK9DyJihRbzKcfRdxId6qBTEAjm2pPFN3A/h3jpEIrdHAk/cNd
+rnHt64KXIbkYaoSZxQQS
+=bRW9
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Nov_2011_13_09_24_+1100_F0bQ2TFBX66Sg01=--
