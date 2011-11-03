@@ -1,36 +1,80 @@
-From: Luis Henriques <henrix@camandro.org>
-Subject: Re: linux-next: build failure after merge of the crypto-current
-	tree
-Date: Thu, 3 Nov 2011 11:59:33 +0000
-Message-ID: <20111103115933.GA12708@onza.mythic-beasts.com>
-References: <20111101115851.2e37ac680db78bdba0661691@canb.auug.org.au> <20111102200900.GA3454@hades> <20111102233936.GA10058@gondor.apana.org.au> <20111103055824.GC22141@secunet.com> <20111103061628.GA12678@gondor.apana.org.au> <20111103101554.GA17569@onza.mythic-beasts.com> <20111103114214.GA14681@gondor.apana.org.au>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: build failure after merge of the pci-current tree
+Date: Thu, 3 Nov 2011 08:02:37 -0700
+Message-ID: <20111103080237.2b1b5d41@jbarnes-desktop>
+References: <20111103125325.c1e20275e3a68498465b5ddf@canb.auug.org.au>
+	<20111103143256.216308862667829a1fccfdf2@canb.auug.org.au>
+	<20111103161959.a2130732d0cc781fc2e50d10@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/tsV5oDTCTsenJRYe_OKMCBS"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from onza.mythic-beasts.com ([93.93.131.30]:43170 "EHLO
-	onza.mythic-beasts.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755638Ab1KCL7j (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Nov 2011 07:59:39 -0400
-Content-Disposition: inline
-In-Reply-To: <20111103114214.GA14681@gondor.apana.org.au>
+Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:35430 "HELO
+	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932517Ab1KCPCl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Nov 2011 11:02:41 -0400
+In-Reply-To: <20111103161959.a2130732d0cc781fc2e50d10@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On Thu, Nov 03, 2011 at 10:42:14PM +1100, Herbert Xu wrote:
-> On Thu, Nov 03, 2011 at 10:15:54AM +0000, Luis Henriques wrote:
+--Sig_/tsV5oDTCTsenJRYe_OKMCBS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 3 Nov 2011 16:19:59 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi all,
+>=20
+> On Thu, 3 Nov 2011 14:32:56 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
 > >
-> > No, this did not solved the problem; build still fails.  The problem is
-> > that, in lib/nlattr.c, we have:
-> 
-> Ugh, for the time being I guess we'll have to wrap these within
-> CONFIG_NET, as I'd rather not have CONFIG_CRYPTO depend on CONFIG_NET.
-> 
-> Please let me know whether this patch fixes the problem.
+> > On Thu, 3 Nov 2011 12:53:25 +1100 Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
+> > >
+> > > After merging the pci-current tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > >=20
+> > > drivers/pci/ats.c:13:26: fatal error: linux/export.h: No such file or=
+ directory
+> > >=20
+> > > Caused by commit 571eba1b8aa9 ("PCI: Fix compile errors with PCI_ATS =
+and !
+> > > PCI_IOV").
+> >=20
+> > I have added that patch as a merge fix where I merge the module.h split
+> > up tree.  (Included below for Paul's benefit.)
+>=20
+> Actually, this was already in the moduleh tree.  Sorry for the noise.
 
-Yep, it compiles and boots.  Thanks for the patch.
+Ok I'll drop it from my tree then.
 
-Cheers,
---
-Luis Henriques
+Thanks,
+--=20
+Jesse Barnes, Intel Open Source Technology Center
+
+--Sig_/tsV5oDTCTsenJRYe_OKMCBS
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQIcBAEBAgAGBQJOsq0NAAoJEIEoDkX4Qk9h3dMP/R8Xj8Gg4u2FjHXxQ88sikar
+3TvDhzRpT1BeHvmWzvYlKu+DzJKySe92SK8XToK7+p3/pmKDRnbQ4zlo75+7Wzu5
+yBes6j/sV3RP5oFBsD2RyTjx1aFU3RLiuWEE4Fey06Dq2Hcyd0AqUVwqdwCX+M+3
+fwSp4tGHIHnxMRSjGZ9LwwXW+qCqBhQrgh8fy0PY/2MQBmPrnOK/BaDHsRuVEbg5
+tBDdG9cPgtfkFBKMkNK8AW4U7YXRTB1YHNI2bycIOykd3nQQErYUnDTYLuFx9lAC
+z5XEqnLOji8Id5YzdywLigYmejKJDb3Vqh8gju/JHuHQLTYdN42LyhSXLQzt5HLQ
+AghIGXqMzHI+bRwKjBULHXFMh0p9ya/47KXDap2CW9hR/lS5iLsSAuG21GJm3FqM
+/KUVrVHCmN7OPV5KIM0PVBzIpqCAnH9cmBCJLc07zDkPOY9vPHy3nIMCfNhVGwhf
+9qbIkEUMvT1lAd4zjFTeIjYeJeN6aZgOzlcWBplKj5bJKrjKcWjjwrKUKrlkwd5s
+goOFmmKfIFd8VOel4UVGH5sSGF51xA9R9Lb6eLQ9csmlGI9HQaFfVSmsIWHFtyMr
+Jg4fjaAi/YXfLvOtQaLWW2/HHHtyhMmqfPqmydm6O/k74F2YJnSAv20vfw/793gW
+onrDSqcwyUXx0PbMqtRP
+=EjRK
+-----END PGP SIGNATURE-----
+
+--Sig_/tsV5oDTCTsenJRYe_OKMCBS--
