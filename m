@@ -1,71 +1,47 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for Nov 3
-Date: Thu, 3 Nov 2011 08:29:06 +0100
-Message-ID: <CA+icZUX1juRU51gXFrX7ZeKgtV9=0bmFKLYZCcuyTfW5E1SL+A@mail.gmail.com>
-References: <20111103172036.0795ce9559ab2dbfd5740a26@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: Changed location for arm-lpae/for-next
+Date: Thu, 3 Nov 2011 10:29:24 +0000
+Message-ID: <CAHkRjk4ow5EZyqj3j6yDocsX5BPjDQvrqX1enPfyDt5kp=qxaQ@mail.gmail.com>
+References: <20111004132614.GA13865@e102109-lin.cambridge.arm.com>
+ <20111005120621.46c24fe4b8f83ac78944b777@canb.auug.org.au>
+ <CAHkRjk7YBJJO9HW3JC0AUT2-JTyMwj=4=zd==dSG=pfBvCiFNg@mail.gmail.com> <20111006095625.c4814b818efdc61842451625@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:49500 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751673Ab1KCH3I convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Nov 2011 03:29:08 -0400
-In-Reply-To: <20111103172036.0795ce9559ab2dbfd5740a26@canb.auug.org.au>
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:40157 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752277Ab1KCK3q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Nov 2011 06:29:46 -0400
+In-Reply-To: <20111006095625.c4814b818efdc61842451625@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Hellwig <hch@lst.de>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Nick Piggin <npiggin@kernel.dk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Russell King <rmk@arm.linux.org.uk>
 
-On Thu, Nov 3, 2011 at 7:20 AM, Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> Hi all,
+Hi Stephen,
+
+On 5 October 2011 23:56, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Wed, 5 Oct 2011 18:04:56 +0100 Catalin Marinas <catalin.marinas@arm.com> wrote:
+>> I created two branches on github,
+>> the first one for LPAE and the other for kmemleak:
+>>
+>> git://github.com/cmarinas/linux.git for-next
 >
-> The linux-next tree on github is no longer being updated and will be
-> removed soon.
+> I have switched to that from today.
 >
-> The patch is still absent from kernel.org.
+>> git://github.com/cmarinas/linux.git kmemleak
 >
-> The summary at the end now has a "git -1 --oneline" appended to the l=
-ines
-> indicating which tree is being merged. =C2=A0 This was suggested by M=
-auro
-> Chehab as an aid to maintainers so that they can easily tell which ve=
-rsion
-> of their tree was merged. =C2=A0Comments welcome.
->
-> Changes since 20111102:
->
-> Renamed trees:
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0wireless -> wireless-next
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0wireless-current -> wireless
->
+> And added that from today as well.
 
-Whuzzz up with VFS tree(s)?
+I now got my kernel.org account back and I plan to remove the github
+tree. You can get the above branches from:
 
-[1] and [2] lists:
-vfs             git
-git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git#for-next
-vfs-scale       git
-git://git.kernel.org/pub/scm/linux/kernel/git/npiggin/linux-npiggin.git=
-#vfs-scale-working
+git://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/linux.git for-next
+git://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/linux.git kmemleak
 
-Isn't vfs-scale [2] done?
-I have so long not heard or read from Nick Piggin (vfs-scale), I hope
-he is well.
+(the first one contains the ARM LPAE patches)
 
-Christoph take over as interim VFS stuff from Al (hope he is well,
-too) and I have seen his and pending stuff from FS folk was merged
-into Linus-tree.
-Christoph, your for-next GIT branch [3] is dedicated for linux-next (v3=
-=2E3)?
+Thanks.
 
-- Sedat -
-
-[1] http://git.us.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;=
-a=3Dblob;f=3DNext/Trees#l89
-[2] http://git.us.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;=
-a=3Dblob;f=3DNext/Trees#l90
-[3] http://git.kernel.org/?p=3Dlinux/kernel/git/hch/vfs-queue.git;a=3Ds=
-hortlog;h=3Drefs/heads/for-next
+-- 
+Catalin
