@@ -1,30 +1,43 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: RE: scsi: killing requests for dead queue
-Date: Fri, 4 Nov 2011 12:05:32 -0700
-Message-ID: <987664A83D2D224EAE907B061CE93D5301FBD0FEC5@orsmsx505.amr.corp.intel.com>
-References: <4eb3064c133909be1c@agluck-desktop.sc.intel.com>
-	<201111041838.46062.bvanassche@acm.org>
-	<987664A83D2D224EAE907B061CE93D5301FBD0FDFE@orsmsx505.amr.corp.intel.com>
- <CAO+b5-qR61O7cQCRgpPGYUB2rewHN2fN+CUvsXb8NC+-k2_C=w@mail.gmail.com>
+From: Pekka Enberg <penberg@kernel.org>
+Subject: Re: linux-next: Tree for Nov 3 (KVMTOOL_TEST_ENABLE)
+Date: Fri, 4 Nov 2011 22:03:47 +0200
+Message-ID: <CAOJsxLGnUk9NaV2dNZH3rOMaRcCvn7Hb6w=Gn_fq9eEv2NXQnA@mail.gmail.com>
+References: <20111103172036.0795ce9559ab2dbfd5740a26@canb.auug.org.au>
+	<4EB33525.808@xenotime.net>
+	<4EB419F5.6070308@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:47528 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932296Ab1KDTFe convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Nov 2011 15:05:34 -0400
-In-Reply-To: <CAO+b5-qR61O7cQCRgpPGYUB2rewHN2fN+CUvsXb8NC+-k2_C=w@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:62686 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751233Ab1KDUDs convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Nov 2011 16:03:48 -0400
+In-Reply-To: <4EB419F5.6070308@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, James Bottomley <JBottomley@parallels.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Michal Marek <mmarek@suse.cz>, x86 maintainers <x86@kernel.org>, Sasha Levin <levinsasha928@gmail.com>, Ingo Molnar <mingo@elte.hu>
 
-> I might be wrong but I doubt that anyone is interested in these
-> messages. It's not even mentioned in these messages which queue is
-> being cleaned up.
+On Fri, Nov 4, 2011 at 6:59 PM, Randy Dunlap <rdunlap@xenotime.net> wro=
+te:
+> On 11/03/2011 05:43 PM, Randy Dunlap wrote:
+>> On 11/02/2011 11:20 PM, Stephen Rothwell wrote:
+>>> Hi all,
+>>
+>>
+>> When KVMTOOL_TEST_ENABLE is enabled but CONFIG_BLOCK is not enabled,=
+ there are
+>> MANY build errors. =A0This one (case) is probably fixed by adding "s=
+elect BLOCK", but it's
+>> all rather ugly.
+>
+> kconfig even tells us:
+>
+> warning: (KVMTOOL_TEST_ENABLE) selects KGDB which has unmet direct de=
+pendencies (HAVE_ARCH_KGDB && DEBUG_KERNEL && EXPERIMENTAL)
+> warning: (KVMTOOL_TEST_ENABLE) selects BLK_DEV which has unmet direct=
+ dependencies (BLOCK)
 
-Your patch does indeed get rid of the 56 messages from my boot log.
-
--Tony 
+Sasha, I guess your patch fixes this? Can you send me a version that
+doesn't add the oldconfig magic that Ingo objected to?
