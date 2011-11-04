@@ -1,57 +1,40 @@
-From: Mark Einon <mark.einon@gmail.com>
-Subject: [PATCH] linux-next: et131x: Fix build error when CONFIG_PM_SLEEP not enabled
-Date: Fri,  4 Nov 2011 17:58:02 +0000
-Message-ID: <1320429482-2332-1-git-send-email-mark.einon@gmail.com>
-References: <4EB30C0B.8080200@xenotime.net>
+From: "Luck, Tony" <tony.luck@intel.com>
+Subject: RE: scsi: killing requests for dead queue
+Date: Fri, 4 Nov 2011 11:07:16 -0700
+Message-ID: <987664A83D2D224EAE907B061CE93D5301FBD0FDFE@orsmsx505.amr.corp.intel.com>
+References: <4eb3064c133909be1c@agluck-desktop.sc.intel.com>
+ <201111041838.46062.bvanassche@acm.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:45088 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755187Ab1KDR7k (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Nov 2011 13:59:40 -0400
-In-Reply-To: <4EB30C0B.8080200@xenotime.net>
+Received: from mga03.intel.com ([143.182.124.21]:46367 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752570Ab1KDSHS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Nov 2011 14:07:18 -0400
+In-Reply-To: <201111041838.46062.bvanassche@acm.org>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: rdunlap@xenotime.net
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, gregkh@suse.de, Mark Einon <mark.einon@gmail.com>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, James Bottomley <JBottomley@parallels.com>
 
-Randy Dunlap reports that the ex131x driver doesn't build when CONFIG_PM_SLEEP is not enabled.
-This bug was introduced when moving code around to remove some forward declarations earlier, the #endif part of #ifdef CONFIG_PM_SLEEP was not moved at the same time. Now fixed by moving it to its proper place.
+> Commit 3308511 causes the SCSI queue cleanup code to be invoked
+> for every killed queue. Since the SCSI scanning code can create
+> and destroy SCSI queues repeatedly while probing LUNs, the
+> following message can be printed several times during boot:
+>
+>    scsi: killing requests for dead queue
 
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: Mark Einon <mark.einon@gmail.com>
----
- drivers/staging/et131x/et131x.c |   12 ++++++------
- 1 files changed, 6 insertions(+), 6 deletions(-)
+Does this message show up in some other situation (like when
+a device has failed?). Would you actually want to see these
+messages then?  If so, demoting them to debug sounds like
+the wrong thing to do.
 
-diff --git a/drivers/staging/et131x/et131x.c b/drivers/staging/et131x/et131x.c
-index f5f44a0..0c1c6ca 100644
---- a/drivers/staging/et131x/et131x.c
-+++ b/drivers/staging/et131x/et131x.c
-@@ -4469,6 +4469,12 @@ static int et131x_resume(struct device *dev)
- 	return 0;
- }
- 
-+static SIMPLE_DEV_PM_OPS(et131x_pm_ops, et131x_suspend, et131x_resume);
-+#define ET131X_PM_OPS (&et131x_pm_ops)
-+#else
-+#define ET131X_PM_OPS NULL
-+#endif
-+
- /* ISR functions */
- 
- /**
-@@ -5470,12 +5476,6 @@ err_out:
- 	return result;
- }
- 
--static SIMPLE_DEV_PM_OPS(et131x_pm_ops, et131x_suspend, et131x_resume);
--#define ET131X_PM_OPS (&et131x_pm_ops)
--#else
--#define ET131X_PM_OPS NULL
--#endif
--
- static DEFINE_PCI_DEVICE_TABLE(et131x_pci_table) = {
- 	{ PCI_VDEVICE(ATT, ET131X_PCI_DEVICE_ID_GIG), 0UL},
- 	{ PCI_VDEVICE(ATT, ET131X_PCI_DEVICE_ID_FAST), 0UL},
--- 
-1.7.6.4
+Would it be better to clean things up when destroying queues
+during LUN probes?
+
+-Tony
+
+[apologies if these questions are na=EFve - scsi is all a black
+box to me]
