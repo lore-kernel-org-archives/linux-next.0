@@ -1,37 +1,66 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Nov 3 (KVMTOOL_TEST_ENABLE)
-Date: Fri, 04 Nov 2011 09:59:33 -0700
-Message-ID: <4EB419F5.6070308@xenotime.net>
-References: <20111103172036.0795ce9559ab2dbfd5740a26@canb.auug.org.au> <4EB33525.808@xenotime.net>
+From: Bart Van Assche <bvanassche@acm.org>
+Subject: Re: scsi: killing requests for dead queue
+Date: Fri, 4 Nov 2011 18:38:45 +0100
+Message-ID: <201111041838.46062.bvanassche@acm.org>
+References: <4eb3064c133909be1c@agluck-desktop.sc.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:41218 "HELO
-	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S932825Ab1KDRAU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Nov 2011 13:00:20 -0400
-In-Reply-To: <4EB33525.808@xenotime.net>
+Received: from relay03ant.iops.be ([212.53.5.218]:50527 "EHLO
+	relay03ant.iops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752871Ab1KDRpH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Nov 2011 13:45:07 -0400
+In-Reply-To: <4eb3064c133909be1c@agluck-desktop.sc.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Michal Marek <mmarek@suse.cz>, x86 maintainers <x86@kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>
+To: Tony Luck <tony.luck@intel.com>
+Cc: linux-scsi@vger.kernel.org, linux-next@vger.kernel.org, James Bottomley <JBottomley@parallels.com>
 
-On 11/03/2011 05:43 PM, Randy Dunlap wrote:
-> On 11/02/2011 11:20 PM, Stephen Rothwell wrote:
->> Hi all,
+On Thursday 03 November 2011 22:23:24 you wrote:
+> First saw these messages on next-20111102 (but my previous build from linux-next
+> was next-20111017 ... so a big gap).  Still there today in next-20111103. Not seeing
+> these messages from Linus 3.2 merge window builds.
 > 
-> 
-> When KVMTOOL_TEST_ENABLE is enabled but CONFIG_BLOCK is not enabled, there are
-> MANY build errors.  This one (case) is probably fixed by adding "select BLOCK", but it's
-> all rather ugly.
+> scsi: killing requests for dead queue
 
-kconfig even tells us:
+Does the patch below help ?
 
-warning: (KVMTOOL_TEST_ENABLE) selects KGDB which has unmet direct dependencies (HAVE_ARCH_KGDB && DEBUG_KERNEL && EXPERIMENTAL)
-warning: (KVMTOOL_TEST_ENABLE) selects BLK_DEV which has unmet direct dependencies (BLOCK)
+[PATCH] [SCSI] Silence queue cleanup code
 
+Commit 3308511 causes the SCSI queue cleanup code to be invoked
+for every killed queue. Since the SCSI scanning code can create
+and destroy SCSI queues repeatedly while probing LUNs, the
+following message can be printed several times during boot:
 
+    scsi: killing requests for dead queue
+
+This confuses users, so change the severity of that message to
+KERN_DEBUG.
+
+See also http://marc.info/?l=linux-scsi&m=132035543616061.
+
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Reported-by: Tony Luck <tony.luck@intel.com>
+Cc: <stable@kernel.org>
+Cc: James Bottomley <JBottomley@Parallels.com>
+---
+ drivers/scsi/scsi_lib.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index b4d43ae..79ce802 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1489,7 +1489,7 @@ static void scsi_request_fn(struct request_queue *q)
+ 	struct request *req;
+ 
+ 	if (!sdev) {
+-		printk("scsi: killing requests for dead queue\n");
++		pr_debug("scsi: killing requests for dead queue\n");
+ 		while ((req = blk_peek_request(q)) != NULL)
+ 			scsi_kill_request(req, q);
+ 		return;
 -- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+1.7.3.4
