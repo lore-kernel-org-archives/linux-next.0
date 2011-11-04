@@ -1,29 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bluetooth tree with Linus' tree
-Date: Fri, 4 Nov 2011 13:55:23 +1100
-Message-ID: <20111104135523.e82306ceccecef3e4687f58f@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the v4l-dvb tree
+Date: Fri, 4 Nov 2011 15:39:11 +1100
+Message-ID: <20111104153911.9e0c0650581af106b33aaf41@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__4_Nov_2011_13_55_23_+1100_dbpxy8RMvquvSzvY"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo F. Padovan" <padovan@profusion.mobi>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Andrew Morton <akpm@linux-foundation.org>, Mat Martineau <mathewm@codeaurora.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__4_Nov_2011_15_39_11_+1100_vMTQqldO9jjLzmjh"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:51585 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750818Ab1KDEjV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Nov 2011 00:39:21 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Mauro Carvalho Chehab <mchehab@redhat.com>
 
---Signature=_Fri__4_Nov_2011_13_55_23_+1100_dbpxy8RMvquvSzvY
+--Signature=_Fri__4_Nov_2011_15_39_11_+1100_vMTQqldO9jjLzmjh
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Gustavo,
+Hi Paul,
 
-Today's linux-next merge of the bluetooth tree got a conflict in
-include/net/bluetooth/bluetooth.h between commit b9075fa968a0 ("treewide:
-use __printf not __attribute__((format(printf,...)))") from Linus' tree
-and commit 5254c96d4e25 ("Bluetooth: Add BT_CHANNEL_POLICY socket
-option") from the bluetooth tree.
+Today's linux-next merge of the moduleh tree got conflicts in
+drivers/media/video/mt9m111.c and drivers/media/video/ov6650.c between
+commit 95d20109ad64 ("[media] V4L: replace soc-camera specific
+soc_mediabus.h with v4l2-mediabus.h") from the v4l-dvb tree and commit
+7a707b89202f ("drivers/media: Add module.h to all files using it
+implicitly") from the moduleh tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -31,67 +36,58 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/net/bluetooth/bluetooth.h
-index e86af08,38cd3da..0000000
---- a/include/net/bluetooth/bluetooth.h
-+++ b/include/net/bluetooth/bluetooth.h
-@@@ -77,7 -77,34 +77,34 @@@ struct bt_power=20
-  #define BT_POWER_FORCE_ACTIVE_OFF 0
-  #define BT_POWER_FORCE_ACTIVE_ON  1
+diff --cc drivers/media/video/mt9m111.c
+index f023cc0,66e3c3c..0000000
+--- a/drivers/media/video/mt9m111.c
++++ b/drivers/media/video/mt9m111.c
+@@@ -13,12 -13,11 +13,13 @@@
+  #include <linux/log2.h>
+  #include <linux/gpio.h>
+  #include <linux/delay.h>
+ +#include <linux/v4l2-mediabus.h>
++ #include <linux/module.h>
  =20
-+ #define BT_CHANNEL_POLICY	10
-+=20
-+ /* BR/EDR only (default policy)
-+  *   AMP controllers cannot be used.
-+  *   Channel move requests from the remote device are denied.
-+  *   If the L2CAP channel is currently using AMP, move the channel to BR/=
-EDR.
-+  */
-+ #define BT_CHANNEL_POLICY_BREDR_ONLY		0
-+=20
-+ /* BR/EDR Preferred
-+  *   Allow use of AMP controllers.
-+  *   If the L2CAP channel is currently on AMP, move it to BR/EDR.
-+  *   Channel move requests from the remote device are allowed.
-+  */
-+ #define BT_CHANNEL_POLICY_BREDR_PREFERRED	1
-+=20
-+ /* AMP Preferred
-+  *   Allow use of AMP controllers
-+  *   If the L2CAP channel is currently on BR/EDR and AMP controller
-+  *     resources are available, initiate a channel move to AMP.
-+  *   Channel move requests from the remote device are allowed.
-+  *   If the L2CAP socket has not been connected yet, try to create
-+  *     and configure the channel directly on an AMP controller rather
-+  *     than BR/EDR.
-+  */
-+ #define BT_CHANNEL_POLICY_AMP_PREFERRED		2
-+=20
- -__attribute__((format (printf, 2, 3)))
- +__printf(2, 3)
-  int bt_printk(const char *level, const char *fmt, ...);
+ +#include <media/soc_camera.h>
+  #include <media/v4l2-common.h>
+ +#include <media/v4l2-ctrls.h>
+  #include <media/v4l2-chip-ident.h>
+ -#include <media/soc_camera.h>
  =20
-  #define BT_INFO(fmt, arg...)   bt_printk(KERN_INFO, pr_fmt(fmt), ##arg)
+  /*
+   * MT9M111, MT9M112 and MT9M131:
+diff --cc drivers/media/video/ov6650.c
+index d5b0572,2e16806..0000000
+--- a/drivers/media/video/ov6650.c
++++ b/drivers/media/video/ov6650.c
+@@@ -28,7 -28,7 +28,8 @@@
+  #include <linux/delay.h>
+  #include <linux/i2c.h>
+  #include <linux/slab.h>
+ +#include <linux/v4l2-mediabus.h>
++ #include <linux/module.h>
+ =20
+  #include <media/soc_camera.h>
+  #include <media/v4l2-chip-ident.h>
 
---Signature=_Fri__4_Nov_2011_13_55_23_+1100_dbpxy8RMvquvSzvY
+--Signature=_Fri__4_Nov_2011_15_39_11_+1100_vMTQqldO9jjLzmjh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOs1QbAAoJEECxmPOUX5FE7+IP/2Sk2tyDsVRal2yjDs7zGs4f
-0bz7jteU4dF7dyJVAQvQP4ARqpnQLoAXj8JP/eBc5CrAEPhWMSFSHeFwRMBG+qaC
-2TUSQCtSC3gg5UHwR7G5DuS4l1wf52j4LWqIUK+xPhuyyFiqt1/7KCgcop1nA8vx
-zJYzotijvHPyerAFKSKu4R1CvLtUE6r++ZEHaV7nKoQHON6khSMFZufy7WSiyZyx
-skm4JbVQ0vtIJW2u2qZWIKskRhoclrUFAYEfGwxIfWBCBozqX0btyX/hv7GSGFcX
-GQCSvXa2yTazqAPOCOhokDp/OENBhmYHvExVoDRQ6pqjxdoBsOOrQ8ZoAQULg6+k
-AwPqlS9qO+5LjLqxPG4/atMMsmBRcQVJ8WnusNjq3wkUao4dV0EGj4Vj2H8Ng8EP
-LufuWX8hVVtKtjzSArfiXlmdjjR84Q8JJIyUBNYQXZ4tZNtjclZUPbYFdLH13k3Q
-BdxuPabo9QMwQBVTJTKWL5xlXFmoQncZPgfiVA9rQoUEohDyTmMyT9ewFl27wmqg
-GsmqL6cGsjeiw6Mrp8ZTVP2jV/s4mHXLXBmLtk7kWxdaf6+9dMS9eeoJ4kn9PChy
-BrWPhxA+a4Tw8bp6JfGneCt/6SbdnWniJjAexX2Nnk629UzPXX/Q7ssg/vhmwA7z
-FK/WUTSeE4IbRZXJW7Fq
-=iDiM
+iQIcBAEBCAAGBQJOs2xvAAoJEECxmPOUX5FEPd4P/R7cNEhfTYJWa+8zGdXwJHhO
+0Nqpaz9ZJ8Xrm1d4dV9fXL2NOAeGV/w9S0iRmHKsFk41GQzLBb2mq8j/ihgIjV7r
+XupW082bJugKeD+p9D5s37qBCpXce0KBxEt/nfp5Jkol9AjkA8hlcFo6L9OsL/aS
+dZ1qg3xYNEzcZLvNBDOkSZImWR2f0af6I/NwgkBDAoGsRTGxWDkE8ysUv2P58vf9
++x2UplR2ecG1ky2xllMDy0vYG5Fs1uxBhl7H9wg/Lziie4QVWr0stWjBFArfjQPE
+jHVI9gfVZHDiwelAKljpw/GsfpUhHQc+z5TQOeU5PHSpdK8VCfrxfOiBqoc3GZTf
+gppQEFNJ8/u8g8By0GL+zXF6RvClCN8+1c2uBSKWbSQLUKLKaHOjDVqNLrTYorJr
+UAm/MsmF5ebNVVmgR4mWw87JX1JcaGfnOuKfh8xcxb70N12LbcrZokzlWfSI7uDw
+2GQPrXEZygRZGQ0WfaQ8Rf03wYtxioAgYJFZwXj5uSe8Ktk8evVfwOy+L/8oPpEc
+xRZhjsga9A3zHj7uWFX7dXmsEiHBWIZLImiW4RAOkFUlQu4Frz7RxdNXL9n3hjhX
+5bxWnHM6ZVyANuZ1VqU7dye+mnTMJZ+8PKGDKpiZRXVkzHfKv5IQURd/oeSbXCT5
+LuazTFekD29At39NQ4nT
+=ScdL
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__4_Nov_2011_13_55_23_+1100_dbpxy8RMvquvSzvY--
+--Signature=_Fri__4_Nov_2011_15_39_11_+1100_vMTQqldO9jjLzmjh--
