@@ -1,62 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
-Date: Mon, 7 Nov 2011 10:33:13 +1100
-Message-ID: <20111107103313.6e1067675b2cd2f2de6bded7@canb.auug.org.au>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: failing to fetch the sysctl tree
+Date: Sun, 06 Nov 2011 15:41:50 -0800
+Message-ID: <m139e0q0n5.fsf@fess.ebiederm.org>
+References: <20111107095835.208466a386fbcf046c512d70@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__7_Nov_2011_10_33_13_+1100_D8zptsq41phhrOqo"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:44175 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752126Ab1KFXdU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Nov 2011 18:33:20 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:37666 "EHLO
+	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754272Ab1KFXk7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Nov 2011 18:40:59 -0500
+In-Reply-To: <20111107095835.208466a386fbcf046c512d70@canb.auug.org.au>
+	(Stephen Rothwell's message of "Mon, 7 Nov 2011 09:58:35 +1100")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__7_Nov_2011_10_33_13_+1100_D8zptsq41phhrOqo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Hi Arnd,
+> Hi Eric,
+>
+> Fetching the sysctl tree produces this error:
+>
+> fatal: Couldn't find remote ref refs/heads/master
+>
+> And indeed the sysctl tree on git.kernel.org is completely empty (i.e.
+> there are no commits).  Maybe you should remove it and recreate it as a
+> fork of Linus' tree.
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-exynos/Kconfig between commit830145796a5c ("ARM: EXYNOS:
-Add ARCH_EXYNOS and reorganize arch/arm/mach-exynos") from Linus' tree
-and commit 8f7e34205f6f ("Merge branch 'next/cleanup3' into for-next")
-from the arm-soc tree.
+Something weird happened when I re-uploaded things.  Apparently hitting
+Ctrl-C if when you are uploading and realized you forgot to clone from
+Linus's repository is fatal to how git.kernel.org manages things.  Last
+I checked I could not even delete the broken repository.
 
-I just used the version from Linus' tree.  Arnd, it seems that some of
-these merges were done differently by Linus, so can you please clean up
-the arm-soc tree now that it looks like Linus may have merged all its
-content.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Can you please switch to linux/kernel/git/ebiederm/sysctl.git instead of
+sysctl-2.6.git.
 
---Signature=_Mon__7_Nov_2011_10_33_13_+1100_D8zptsq41phhrOqo
-Content-Type: application/pgp-signature
+With a little luck I will have something interesting in there this
+round.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOtxk5AAoJEECxmPOUX5FEPtgP/0K6zerJT/QuP284vXonr8QH
-PENgu9tndc6YsMtn1Ex3WRbj8F74wzvY4UXCKoQdJK4K/sfia4XDTrwdL12Cxp3q
-Y20czOp0gflhye8vAn3/9MrhBMpW4X2R0JEb2Y2pVaL5uF+nTrXR5rF7f/vxmAJw
-+We742Py7h7aStVK3OKl02pSMlDTU0UNDvx2Z4F+4UPt+d9hGFGHcqal0CtmsirB
-acdvrC4y/191YcH7D3nXka1BC/rG/zfGMhPjnY6vEZsxYzR7inNrtbE6ZRgjyeo2
-Kv2nWH7Te2RzvLFYSeD2GkN3z09suaSnNedp3Wh6ZZARQsV9YuRwkcQQk/vJkUqx
-eFFrVXIqYQz5macAp1HNqMp4SfNuwbagPS+JMXI+QYME3VLW7rLMOits8LAy1H3l
-qpt0xYp4OUu3f2Hmbl4aG6Em1z26WpRqOQF2KOPQIPnMY3L6MiQ8Z430AKWF5LSJ
-CTjc7p2McAw5gcEALgm5HllsLSy6AeBXn2+si4TKjc8wpAEwUEKhzKYdw7QmLKW8
-hbjY3zh/jqqQy34sK5Rn94UaPZt0Y9GRd55o1uCEF4XK3kFtD7+lyNU9tSGVodU2
-S8kCoQIYATsM6IhBcz+45ldV2XD8+yWAxogNYwZxgyIdLw0YnVFn3B4GdrDDaZ++
-pjbfDqRhEUAukE5UU1hV
-=IZzA
------END PGP SIGNATURE-----
-
---Signature=_Mon__7_Nov_2011_10_33_13_+1100_D8zptsq41phhrOqo--
+Thanks,
+Eric
