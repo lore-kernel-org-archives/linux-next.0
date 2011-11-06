@@ -1,68 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the origin tree
-Date: Mon, 7 Nov 2011 10:12:02 +1100
-Message-ID: <20111107101202.96fcb76d580e5265bd99aeee@canb.auug.org.au>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: failing to fetch the acpi tree
+Date: Sun, 6 Nov 2011 18:26:26 -0500
+Message-ID: <CAJvTdK=tcFaqmDdtW6zCaddBixVE9Ee2SGAv39fjJtbTp-iDZw@mail.gmail.com>
+References: <20111107095429.28cb33a8ec512a2bd7690dba@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__7_Nov_2011_10_12_02_+1100_Bu3e=1AuJqKkLT07"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:40962 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752126Ab1KFXMK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Nov 2011 18:12:10 -0500
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:60379 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752126Ab1KFX02 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Nov 2011 18:26:28 -0500
+In-Reply-To: <20111107095429.28cb33a8ec512a2bd7690dba@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Rose <gregory.v.rose@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__7_Nov_2011_10_12_02_+1100_Bu3e=1AuJqKkLT07
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I am still fetching from git://github.com/lenb/linux.git#acpi, is that correct?
 
-Hi Linus,
+Hi Stephen,
 
-Starting with the origin tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+wow -- what was fast, I just nuked that branch about 30 minutes ago:-)
 
-drivers/net/ethernet/intel/ixgbe/ixgbe_main.c: In function 'ixgbe_set_inter=
-rupt_capability':
-drivers/net/ethernet/intel/ixgbe/ixgbe_main.c:4724:3: error: implicit decla=
-ration of function 'ixgbe_disable_sriov'
-drivers/net/ethernet/intel/ixgbe/ixgbe_main.c: In function 'ixgbe_remove':
-drivers/net/ethernet/intel/ixgbe/ixgbe_main.c:7773:3: error: implicit decla=
-ration of function 'ixgbe_check_vf_assignment'
+Please delete my github tree from your linux-next script
+and start using this one:
 
-Caused by commit 9487dc844054 ("ixgbe: Fix compiler warnings") which hid
-the declarations of ixgbe_disable_sriov() and ixgbe_check_vf_assignment()
-when CONFIG_PCI_IOV is not defined.
+git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git next
 
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+This "next" branch will be the consolidation of what used to be
+acpi-test
+idle-test
+tools
+and whatever other power management trees I used to have for linux-next.
 
---Signature=_Mon__7_Nov_2011_10_12_02_+1100_Bu3e=1AuJqKkLT07
-Content-Type: application/pgp-signature
+BTW. At this instant the new branch is empty, while I do my own testing.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOtxRCAAoJEECxmPOUX5FE0YoP/3K3tJkPzrzI4G5HUuC9r7hu
-leD55/bXhI87iuHiluFLZHFhTGagbjIGQkWF3fXY/lNz3R/qU+E5Z+RmkP9pJ3p+
-wTI52FK76l9LwTUqfj4Yjyt7DWV+5fCMKBJ0WhBwSy7BQzXnq+CccwWbrod7bxKa
-jwKTRdFOMH+C9FtTGhavL06rqfrFbupIGe2dK9hfsjrnHW2JrorClHly0/gVvcqt
-5Q2XfVAX+NkVcbwCAZ34XKS5R3eBU1hpb6N5JfX28x555GwjPzVIcANWRh6RtFSn
-A+TvQ42Lt/pvrIsPWrwvUouBMuXbOOLz38iU1OLM9HFLhLMd7z83Ux/sEJ0c+Z8l
-YZePi6yQdG3gAU5sstd99PKqpGH1dauiweyTEWOSWOGGpjhbhAclifnwpovuUwgZ
-7Rh+kh29dHkNll23XaDiQc3npSyplMVPCH5Eb1FUfbFoysvKTsc7NqqUKxnlzHZJ
-Jxjxmif/ker3ULNV3bhVvOAVJ3s5Ewc6SYO/xvAjpaxSLy5cdcPy9eB8SyzYTWds
-qE7vdLL6ttyXGHes/oT590qfB76pEgkHKA5lF5GAkhfCp1jPiBFXH0V3F7F3tdw8
-xh5XPI3TJPOLmfyjgBp45X4BJOFC5OlkdbR4tPynFjfh1rkubcD9R+UGZV78qQvJ
-KjzmXbyuopzLQw27tJnB
-=kUQX
------END PGP SIGNATURE-----
-
---Signature=_Mon__7_Nov_2011_10_12_02_+1100_Bu3e=1AuJqKkLT07--
+thanks,
+-Len
