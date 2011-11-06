@@ -1,59 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: failing to fetch the acpi tree
-Date: Mon, 7 Nov 2011 09:54:29 +1100
-Message-ID: <20111107095429.28cb33a8ec512a2bd7690dba@canb.auug.org.au>
+Subject: linux-next: failing to fetch the sysctl tree
+Date: Mon, 7 Nov 2011 09:58:35 +1100
+Message-ID: <20111107095835.208466a386fbcf046c512d70@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__7_Nov_2011_09_54_29_+1100_K3wVe8X26uMMqDmt"
+ boundary="Signature=_Mon__7_Nov_2011_09_58_35_+1100_GdyoBaBhjzk.e0F1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:45543 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:50473 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751581Ab1KFWyg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Nov 2011 17:54:36 -0500
+	with ESMTP id S1753052Ab1KFW6s (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Nov 2011 17:58:48 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__7_Nov_2011_09_54_29_+1100_K3wVe8X26uMMqDmt
+--Signature=_Mon__7_Nov_2011_09_58_35_+1100_GdyoBaBhjzk.e0F1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Len,
+Hi Eric,
 
-Fetching the acpi tree, produces this error:
+Fetching the sysctl tree produces this error:
 
-fatal: Couldn't find remote ref refs/heads/acpi
+fatal: Couldn't find remote ref refs/heads/master
 
-I am still fetching from git://github.com/lenb/linux.git#acpi, is that
-correct?
+And indeed the sysctl tree on git.kernel.org is completely empty (i.e.
+there are no commits).  Maybe you should remove it and recreate it as a
+fork of Linus' tree.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__7_Nov_2011_09_54_29_+1100_K3wVe8X26uMMqDmt
+--Signature=_Mon__7_Nov_2011_09_58_35_+1100_GdyoBaBhjzk.e0F1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOtxAlAAoJEECxmPOUX5FEQksP/ipOxQT+6e/6oKnLNfCxBDBQ
-0Lnp66h4pt8dfQIOoNJ9TFa8EqMjoRLPPf6KY4kNKHopADLhgk2B8tX86n3pHUgq
-fR865k9vvRRMFKltJMVGvg3W7+SQeZUDrjNGrJbMycmbGZq3Jqr0VdQTb/c5ZX+7
-slIGJRJx9aFxRyBI+NEPJYV5g1MKUD3yzv0qNOtUWtaB58i1hebNN9crWixxiAfd
-1ISFSmE6R4Cz7E+Raa46zFY+CDIV/69GuimTN01s4NU/oxhkiOQwUaP8flkLPUuM
-e6k7G6ESudUpCvgTalqJ7zxJqnfGJxc8Br+5pXYI9kMkidgQjGydATsHm40QdiUi
-m8svtgY4gjI91GJ6DRHHXWuwTdrjES7E8rg3avH/mHiXBnpeVh4vHCkZC5MjMkiy
-O31oD50CuOYz36OiIgbiMh5hN2VQYSWnAZnGYlpmPMgzzIWn0M8tAFENqia+h5xG
-E2jBGyUuvEyNyhkN73RIDTf6kGc4PjgUtxyYqlmnSwDkKlhaayINPXfqcGt3qBP0
-6cSzegAFQlvy58WUVOrCQh/1++oMhVyF5aO43h/uukxcXZSs/uD4/JlElcIMLTHb
-S3v8TYz/kBRuMAgtMvZ/XMEB65H1Sk6LEDfC+WAcWv02kRFTy/8xzG14I5+pQypg
-HH8zCyOM61VTd/olUskM
-=i/sQ
+iQIcBAEBCAAGBQJOtxEbAAoJEECxmPOUX5FEEUMP+wYNrIwLpmEBAIUwf7g2Mar/
+T6PaurTS7aPNqWYEGVY2HukVoPhDhze/sSHz5Qc63m87WT3ErDs7wovNYiRmnsy2
+yEHy14rTx2NcdQ4RNl7KhrjfpwOCj2iF8AzcOYEBPbVF198vxXszvfecsPE50FBn
+l4Le+XYXHvdnjUDeoUBs8h8AQSiTcJBTfjkaZ3M+UrrZvfUaCn6pXcTapB+s7ua4
+a78+x7A0NCjh9T3W1FjnF+tPLiQN443w4FVMfd0N6PZGfb+qnbp3dAtsImpIyed5
+MWflbPXFS9PuarJ2PBePI8TlWpU/WS1x3MfCpFSO8dPNn+4/fuvg+7resXMiSO1m
+z8+CvCVq7KR6ffbqUh8gnkjWBrw7QSMf7VTEYhQoQ6pKHFm55+XdS4ywBtwoegnh
+n34BieyqRFINzrnnAJKBP82mwx8zKbkJYgEUmebDZZ5YP4GeEPpDraIJl8TNiz7r
+2BMMJWiY1TfL/7BSyQVt4JukOceq6LHHK8VOLUjvSjzC4NEphSKCXEL1faJaDvcB
+CI7RwvHghr3zeusTZK1ugMXupLyMteW60TpXeH8mAs6JFLpjKTqEEW/+BxmVTB5c
+9TKgZiDRiX/hiTUUOeHhevMjkb1g6Qm779/A09HvnF7XFOBy7RHJJifPe21IBVbY
+H2vdqqB1RZKKn/doSiIg
+=3Sbl
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__7_Nov_2011_09_54_29_+1100_K3wVe8X26uMMqDmt--
+--Signature=_Mon__7_Nov_2011_09_58_35_+1100_GdyoBaBhjzk.e0F1--
