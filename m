@@ -1,43 +1,59 @@
-From: Pekka Enberg <penberg@kernel.org>
-Subject: Re: linux-next: Tree for Nov 3 (KVMTOOL_TEST_ENABLE)
-Date: Fri, 4 Nov 2011 22:03:47 +0200
-Message-ID: <CAOJsxLGnUk9NaV2dNZH3rOMaRcCvn7Hb6w=Gn_fq9eEv2NXQnA@mail.gmail.com>
-References: <20111103172036.0795ce9559ab2dbfd5740a26@canb.auug.org.au>
-	<4EB33525.808@xenotime.net>
-	<4EB419F5.6070308@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: failing to fetch the acpi tree
+Date: Mon, 7 Nov 2011 09:54:29 +1100
+Message-ID: <20111107095429.28cb33a8ec512a2bd7690dba@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__7_Nov_2011_09_54_29_+1100_K3wVe8X26uMMqDmt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:62686 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751233Ab1KDUDs convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Nov 2011 16:03:48 -0400
-In-Reply-To: <4EB419F5.6070308@xenotime.net>
+Received: from calzone.tip.net.au ([203.10.76.15]:45543 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751581Ab1KFWyg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Nov 2011 17:54:36 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Michal Marek <mmarek@suse.cz>, x86 maintainers <x86@kernel.org>, Sasha Levin <levinsasha928@gmail.com>, Ingo Molnar <mingo@elte.hu>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 4, 2011 at 6:59 PM, Randy Dunlap <rdunlap@xenotime.net> wro=
-te:
-> On 11/03/2011 05:43 PM, Randy Dunlap wrote:
->> On 11/02/2011 11:20 PM, Stephen Rothwell wrote:
->>> Hi all,
->>
->>
->> When KVMTOOL_TEST_ENABLE is enabled but CONFIG_BLOCK is not enabled,=
- there are
->> MANY build errors. =A0This one (case) is probably fixed by adding "s=
-elect BLOCK", but it's
->> all rather ugly.
->
-> kconfig even tells us:
->
-> warning: (KVMTOOL_TEST_ENABLE) selects KGDB which has unmet direct de=
-pendencies (HAVE_ARCH_KGDB && DEBUG_KERNEL && EXPERIMENTAL)
-> warning: (KVMTOOL_TEST_ENABLE) selects BLK_DEV which has unmet direct=
- dependencies (BLOCK)
+--Signature=_Mon__7_Nov_2011_09_54_29_+1100_K3wVe8X26uMMqDmt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sasha, I guess your patch fixes this? Can you send me a version that
-doesn't add the oldconfig magic that Ingo objected to?
+Hi Len,
+
+Fetching the acpi tree, produces this error:
+
+fatal: Couldn't find remote ref refs/heads/acpi
+
+I am still fetching from git://github.com/lenb/linux.git#acpi, is that
+correct?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__7_Nov_2011_09_54_29_+1100_K3wVe8X26uMMqDmt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOtxAlAAoJEECxmPOUX5FEQksP/ipOxQT+6e/6oKnLNfCxBDBQ
+0Lnp66h4pt8dfQIOoNJ9TFa8EqMjoRLPPf6KY4kNKHopADLhgk2B8tX86n3pHUgq
+fR865k9vvRRMFKltJMVGvg3W7+SQeZUDrjNGrJbMycmbGZq3Jqr0VdQTb/c5ZX+7
+slIGJRJx9aFxRyBI+NEPJYV5g1MKUD3yzv0qNOtUWtaB58i1hebNN9crWixxiAfd
+1ISFSmE6R4Cz7E+Raa46zFY+CDIV/69GuimTN01s4NU/oxhkiOQwUaP8flkLPUuM
+e6k7G6ESudUpCvgTalqJ7zxJqnfGJxc8Br+5pXYI9kMkidgQjGydATsHm40QdiUi
+m8svtgY4gjI91GJ6DRHHXWuwTdrjES7E8rg3avH/mHiXBnpeVh4vHCkZC5MjMkiy
+O31oD50CuOYz36OiIgbiMh5hN2VQYSWnAZnGYlpmPMgzzIWn0M8tAFENqia+h5xG
+E2jBGyUuvEyNyhkN73RIDTf6kGc4PjgUtxyYqlmnSwDkKlhaayINPXfqcGt3qBP0
+6cSzegAFQlvy58WUVOrCQh/1++oMhVyF5aO43h/uukxcXZSs/uD4/JlElcIMLTHb
+S3v8TYz/kBRuMAgtMvZ/XMEB65H1Sk6LEDfC+WAcWv02kRFTy/8xzG14I5+pQypg
+HH8zCyOM61VTd/olUskM
+=i/sQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Nov_2011_09_54_29_+1100_K3wVe8X26uMMqDmt--
