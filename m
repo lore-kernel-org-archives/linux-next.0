@@ -1,74 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: failing to fetch the sysctl tree
-Date: Mon, 7 Nov 2011 21:33:19 +1100
-Message-ID: <20111107213319.01f37a306f1c29faa386891e@canb.auug.org.au>
-References: <20111107095835.208466a386fbcf046c512d70@canb.auug.org.au>
-	<m139e0q0n5.fsf@fess.ebiederm.org>
+From: "Rose, Gregory V" <gregory.v.rose@intel.com>
+Subject: RE: linux-next: build failure after merge of the origin tree
+Date: Mon, 7 Nov 2011 08:46:35 -0800
+Message-ID: <43F901BD926A4E43B106BF17856F075501A1CCA399@orsmsx508.amr.corp.intel.com>
+References: <20111107101202.96fcb76d580e5265bd99aeee@canb.auug.org.au>
+ <20111106.205259.1237400984015921904.davem@davemloft.net>
+ <20111107134706.3e7fc633f913b5e155153127@canb.auug.org.au>
+ <20111106.223619.1348742215191441592.davem@davemloft.net>
+ <EAE7BD3E-8965-47A4-B3CA-01686E2602C2@intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__7_Nov_2011_21_33_19_+1100_dekgjeUGKPG1J4QC"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:57787 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753065Ab1KGKd2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 05:33:28 -0500
-In-Reply-To: <m139e0q0n5.fsf@fess.ebiederm.org>
+Received: from mga14.intel.com ([143.182.124.37]:24684 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755190Ab1KGQqk convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 11:46:40 -0500
+In-Reply-To: <EAE7BD3E-8965-47A4-B3CA-01686E2602C2@intel.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, David Miller <davem@davemloft.net>
+Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
---Signature=_Mon__7_Nov_2011_21_33_19_+1100_dekgjeUGKPG1J4QC
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
 
-On Sun, 06 Nov 2011 15:41:50 -0800 ebiederm@xmission.com (Eric W. Biederman=
-) wrote:
->
-> Something weird happened when I re-uploaded things.  Apparently hitting
-> Ctrl-C if when you are uploading and realized you forgot to clone from
-> Linus's repository is fatal to how git.kernel.org manages things.  Last
-> I checked I could not even delete the broken repository.
->=20
-> Can you please switch to linux/kernel/git/ebiederm/sysctl.git instead of
-> sysctl-2.6.git.
+> -----Original Message-----
+> From: Kirsher, Jeffrey T
+> Sent: Sunday, November 06, 2011 9:30 PM
+> To: David Miller
+> Cc: sfr@canb.auug.org.au; torvalds@linux-foundation.org; linux-
+> next@vger.kernel.org; linux-kernel@vger.kernel.org; Rose, Gregory V;
+> netdev@vger.kernel.org
+> Subject: Re: linux-next: build failure after merge of the origin tree
+> 
+> 
+> 
+> Cheers,
+> Jeff
+> 
+> On Nov 6, 2011, at 19:38, "David Miller" <davem@davemloft.net> wrote:
+> 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 7 Nov 2011 13:47:06 +1100
+> >
+> >>> If you just revert the commit in origin from -next, then you will get
+> >>> conflicts with you pull the net.git tree in.
+> >>
+> >> I got no conflicts when I merged in the net tree and can see no fix for
+> >> this problem in the net tree.  My current head of the net tree is
+> 1a6422f
+> >> "etherh: Add MAINTAINERS entry for etherh".
+> >
+> > Ok, Jeff please take a look at this and send me a fix soon.
+> >
+> > Thanks.
+> 
+> Ok Dave, at this point, I am puttying together a patch to revert this fix
+> since it appears that more trouble comes with this fix.  I will take a
+> look at it quickly before sending out a patch to fix the issue.
 
-Done.
+My bad...  I fixed a compiler warning that occurred with CONFIG_PCI_IOV turned on and didn't realize that my patch would cause an error when turning it back off.
 
-BTW to remove the other tree do this:
+I'll have it fixed ASAP.
 
-ssh gitolte@ra.kernel.org unlock pub/scm/linux/kernel/git/ebiederm/sysctl-2=
-.6
-ssh gitolte@ra.kernel.org rm pub/scm/linux/kernel/git/ebiederm/sysctl-2.6
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__7_Nov_2011_21_33_19_+1100_dekgjeUGKPG1J4QC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJOt7PvAAoJEECxmPOUX5FEa7MP/1LbKfUFj7PVQ9JYdBQW48q9
-pOq91X1/T3NKNRyagFLMO4bdL3ZJU/0FND99IiF4VZmgFGKA7VzmPtlBpf+oudoD
-yqDFSQt1o3LSayBhCx85aE4LhchIeDLcmUzttiQLULaEi3/IexDlcV4SLKyR1VnT
-qr64IJMD/A/wr/3uR/tnPmtre2M99p7qOEHDAyG/v4dc+U8gZ1FSWUG1st/Si3Kr
-LvA71QV1a/zbB3DZNp4Xh3HNlny9jGSLocd5dwaeLmNX3n5EYaRteyxAB4C6XaWW
-pD0gReudAbfxD7QbDJN/T4ZBaAlhRIQEKG3c8NZ89Psti554E9hfLX9iLFHwaifN
-kxUS1jWPmmNoxS6V7Xn59VT/0bAPVYUBUkCM5IE3tjzs9ySRKjhoEisf9/mTLZHb
-eCTmCNFjXf0uU/lEiP+Xn6tpvwyS0wfckrqoOwi98+Hx7opwC4cD5reQvMH49qbV
-4WGxMRi0GRBuRcsL1BPzJnClsMlzJ4gUsYF/yD2R3CIivKTHr3BjC6KtcOEM2aJN
-Pc/4IIU4XjqI95/r4VEiD8V7gaU6UJzDpEKWhYgGBah+OEzaCFD/yrQpsXJVO8m0
-uxwICV2L3O/CuXh7YaoXPgzGuAh7urn5I/1s+N1/5sCS2pP6V7obPkrXmFvtbYQa
-YlA+FVo0Llv7CDyiw1bT
-=wiOC
------END PGP SIGNATURE-----
-
---Signature=_Mon__7_Nov_2011_21_33_19_+1100_dekgjeUGKPG1J4QC--
+- Greg
