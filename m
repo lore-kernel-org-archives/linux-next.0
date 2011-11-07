@@ -1,79 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: failing to fetch the acpi tree
-Date: Mon, 7 Nov 2011 21:19:38 +1100
-Message-ID: <20111107211938.5a1ddb93f1f15fdf34e50042@canb.auug.org.au>
-References: <20111107095429.28cb33a8ec512a2bd7690dba@canb.auug.org.au>
-	<CAJvTdK=tcFaqmDdtW6zCaddBixVE9Ee2SGAv39fjJtbTp-iDZw@mail.gmail.com>
+Subject: Re: linux-next: failing to fetch the sysctl tree
+Date: Mon, 7 Nov 2011 21:33:19 +1100
+Message-ID: <20111107213319.01f37a306f1c29faa386891e@canb.auug.org.au>
+References: <20111107095835.208466a386fbcf046c512d70@canb.auug.org.au>
+	<m139e0q0n5.fsf@fess.ebiederm.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__7_Nov_2011_21_19_38_+1100_5COBqC=zmjHDeENz"
+ boundary="Signature=_Mon__7_Nov_2011_21_33_19_+1100_dekgjeUGKPG1J4QC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43422 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:57787 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753240Ab1KGKTr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 05:19:47 -0500
-In-Reply-To: <CAJvTdK=tcFaqmDdtW6zCaddBixVE9Ee2SGAv39fjJtbTp-iDZw@mail.gmail.com>
+	with ESMTP id S1753065Ab1KGKd2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 05:33:28 -0500
+In-Reply-To: <m139e0q0n5.fsf@fess.ebiederm.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__7_Nov_2011_21_19_38_+1100_5COBqC=zmjHDeENz
+--Signature=_Mon__7_Nov_2011_21_33_19_+1100_dekgjeUGKPG1J4QC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Len,
+Hi Eric,
 
-On Sun, 6 Nov 2011 18:26:26 -0500 Len Brown <lenb@kernel.org> wrote:
+On Sun, 06 Nov 2011 15:41:50 -0800 ebiederm@xmission.com (Eric W. Biederman=
+) wrote:
 >
-> Please delete my github tree from your linux-next script
-> and start using this one:
+> Something weird happened when I re-uploaded things.  Apparently hitting
+> Ctrl-C if when you are uploading and realized you forgot to clone from
+> Linus's repository is fatal to how git.kernel.org manages things.  Last
+> I checked I could not even delete the broken repository.
 >=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git next
+> Can you please switch to linux/kernel/git/ebiederm/sysctl.git instead of
+> sysctl-2.6.git.
 
 Done.
 
-> This "next" branch will be the consolidation of what used to be
-> acpi-test
-> idle-test
-> tools
+BTW to remove the other tree do this:
 
-OK, I removed the idle-test and powertools trees.
-
-> and whatever other power management trees I used to have for linux-next.
-
-The only other tree I have associated with you is the sfi tree whose
-contact is listed as <sfi-devel@simplefirmware.org> which I am fetching
-from (the nonexistent)
-git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux-sfi-2.6.git.
-Should I drop that as well?
+ssh gitolte@ra.kernel.org unlock pub/scm/linux/kernel/git/ebiederm/sysctl-2=
+.6
+ssh gitolte@ra.kernel.org rm pub/scm/linux/kernel/git/ebiederm/sysctl-2.6
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__7_Nov_2011_21_19_38_+1100_5COBqC=zmjHDeENz
+--Signature=_Mon__7_Nov_2011_21_33_19_+1100_dekgjeUGKPG1J4QC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOt7C6AAoJEECxmPOUX5FEEwMP/22sczfQU7JaOUViVi2wEVNc
-NeAZVjiXuI3/G037rx0m3kFW8WlcIinwiCHPFgpA0fWfBd+JbtMnq2vqw1hgaoJV
-zb4nV7iF2yuZEeosQv4T9lMOsxy/AwpVIagAy2fojICkCiEKbOwMlbJWTHQuVYxh
-J6+NeT8W/Wkk1ZVsgJMuASo/HJGtadAUEMkEfLNMgEStph9KcYXPTyUnf8MSRXXL
-7OddE0jV3U0EOznNpD4ulYtm/Koa8G26ZQxeMcf2+y0+yWkuyUrAFw1QQWS0i3uD
-azXOPjUs4H2bYpeMtE1+qQ9pOW2Xvi/lrsjIFobsbzwk56zvtxhg1Vt87q2QBfSn
-7PaKl8s84A/TFGsPx2ezXDP1iRio0graONE6CnL2xvAhX0CK4hg3Vj8elMSW5jzR
-d6zRaKf6OZvrYJYEt+KPryEHilsW1sDK/h2x+Okox7+4wR5r0rfjJgte1Trb1pYA
-BwxiTH+oPswEYcDX+xyK97aQTb+OK8rFS2XVHxgLNtR47bH6SdMDDsVElcxGoZJY
-O7YA0ba2mFRlRFshq1vWMu2PXnhkOWbSNnPV2Cz9VN5x7e2tqeUYxwJCzXMQzhuq
-a194bGRroNEIsKZ7rv8DQmhyIHh1xwQaWDQ5stZ/xPwmGj+cEYSiuB3z9kXjdTcH
-K4pMcB/04TOmJc8tVJke
-=NWiJ
+iQIcBAEBCAAGBQJOt7PvAAoJEECxmPOUX5FEa7MP/1LbKfUFj7PVQ9JYdBQW48q9
+pOq91X1/T3NKNRyagFLMO4bdL3ZJU/0FND99IiF4VZmgFGKA7VzmPtlBpf+oudoD
+yqDFSQt1o3LSayBhCx85aE4LhchIeDLcmUzttiQLULaEi3/IexDlcV4SLKyR1VnT
+qr64IJMD/A/wr/3uR/tnPmtre2M99p7qOEHDAyG/v4dc+U8gZ1FSWUG1st/Si3Kr
+LvA71QV1a/zbB3DZNp4Xh3HNlny9jGSLocd5dwaeLmNX3n5EYaRteyxAB4C6XaWW
+pD0gReudAbfxD7QbDJN/T4ZBaAlhRIQEKG3c8NZ89Psti554E9hfLX9iLFHwaifN
+kxUS1jWPmmNoxS6V7Xn59VT/0bAPVYUBUkCM5IE3tjzs9ySRKjhoEisf9/mTLZHb
+eCTmCNFjXf0uU/lEiP+Xn6tpvwyS0wfckrqoOwi98+Hx7opwC4cD5reQvMH49qbV
+4WGxMRi0GRBuRcsL1BPzJnClsMlzJ4gUsYF/yD2R3CIivKTHr3BjC6KtcOEM2aJN
+Pc/4IIU4XjqI95/r4VEiD8V7gaU6UJzDpEKWhYgGBah+OEzaCFD/yrQpsXJVO8m0
+uxwICV2L3O/CuXh7YaoXPgzGuAh7urn5I/1s+N1/5sCS2pP6V7obPkrXmFvtbYQa
+YlA+FVo0Llv7CDyiw1bT
+=wiOC
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__7_Nov_2011_21_19_38_+1100_5COBqC=zmjHDeENz--
+--Signature=_Mon__7_Nov_2011_21_33_19_+1100_dekgjeUGKPG1J4QC--
