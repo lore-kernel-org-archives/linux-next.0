@@ -1,66 +1,33 @@
-From: "Rose, Gregory V" <gregory.v.rose@intel.com>
-Subject: RE: linux-next: build failure after merge of the origin tree
-Date: Mon, 7 Nov 2011 08:46:35 -0800
-Message-ID: <43F901BD926A4E43B106BF17856F075501A1CCA399@orsmsx508.amr.corp.intel.com>
-References: <20111107101202.96fcb76d580e5265bd99aeee@canb.auug.org.au>
- <20111106.205259.1237400984015921904.davem@davemloft.net>
- <20111107134706.3e7fc633f913b5e155153127@canb.auug.org.au>
- <20111106.223619.1348742215191441592.davem@davemloft.net>
- <EAE7BD3E-8965-47A4-B3CA-01686E2602C2@intel.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Nov 5(7) [x86/platform/ts5500_adc.c]
+Date: Mon, 07 Nov 2011 09:22:19 -0800
+Message-ID: <4EB813CB.8060508@xenotime.net>
+References: <20111107141319.b1d38ed603420631274515e6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:24684 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755190Ab1KGQqk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 11:46:40 -0500
-In-Reply-To: <EAE7BD3E-8965-47A4-B3CA-01686E2602C2@intel.com>
-Content-Language: en-US
+Received: from oproxy9.bluehost.com ([69.89.24.6]:55684 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754932Ab1KGRXW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 12:23:22 -0500
+In-Reply-To: <20111107141319.b1d38ed603420631274515e6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>, David Miller <davem@davemloft.net>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jonas Fonseca <jonas.fonseca@savoirfairelinux.com>
+
+On 11/06/2011 07:13 PM, Stephen Rothwell wrote:
+> Hi all,
 
 
+When CONFIG_HWMON=m and CONFIG_TS5500_ADC=y (since it is bool):
 
-> -----Original Message-----
-> From: Kirsher, Jeffrey T
-> Sent: Sunday, November 06, 2011 9:30 PM
-> To: David Miller
-> Cc: sfr@canb.auug.org.au; torvalds@linux-foundation.org; linux-
-> next@vger.kernel.org; linux-kernel@vger.kernel.org; Rose, Gregory V;
-> netdev@vger.kernel.org
-> Subject: Re: linux-next: build failure after merge of the origin tree
-> 
-> 
-> 
-> Cheers,
-> Jeff
-> 
-> On Nov 6, 2011, at 19:38, "David Miller" <davem@davemloft.net> wrote:
-> 
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Mon, 7 Nov 2011 13:47:06 +1100
-> >
-> >>> If you just revert the commit in origin from -next, then you will get
-> >>> conflicts with you pull the net.git tree in.
-> >>
-> >> I got no conflicts when I merged in the net tree and can see no fix for
-> >> this problem in the net tree.  My current head of the net tree is
-> 1a6422f
-> >> "etherh: Add MAINTAINERS entry for etherh".
-> >
-> > Ok, Jeff please take a look at this and send me a fix soon.
-> >
-> > Thanks.
-> 
-> Ok Dave, at this point, I am puttying together a patch to revert this fix
-> since it appears that more trouble comes with this fix.  I will take a
-> look at it quickly before sending out a patch to fix the issue.
+ts5500_adc.c:(.devinit.text+0x322): undefined reference to `hwmon_device_register'
 
-My bad...  I fixed a compiler warning that occurred with CONFIG_PCI_IOV turned on and didn't realize that my patch would cause an error when turning it back off.
+You could make CONFIG_TS5500_ADC depend on CONFIG_HWMON=y ...
+or add loadable module support for ts5500 drivers/modules.
 
-I'll have it fixed ASAP.
-
-- Greg
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
