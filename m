@@ -1,45 +1,56 @@
-From: "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
-Subject: Re: linux-next: build failure after merge of the origin tree
-Date: Sun, 6 Nov 2011 21:29:36 -0800
-Message-ID: <EAE7BD3E-8965-47A4-B3CA-01686E2602C2@intel.com>
-References: <20111107101202.96fcb76d580e5265bd99aeee@canb.auug.org.au>
- <20111106.205259.1237400984015921904.davem@davemloft.net>
- <20111107134706.3e7fc633f913b5e155153127@canb.auug.org.au>
- <20111106.223619.1348742215191441592.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Nov 5
+Date: Mon, 7 Nov 2011 16:52:10 +1100
+Message-ID: <20111107165210.c2279fe23f628ad3534852f1@canb.auug.org.au>
+References: <20111107141319.b1d38ed603420631274515e6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__7_Nov_2011_16_52_10_+1100_33NztEwJHGjG93mt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:32398 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750771Ab1KGF3i convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 00:29:38 -0500
-In-Reply-To: <20111106.223619.1348742215191441592.davem@davemloft.net>
-Content-Language: en-US
+Received: from calzone.tip.net.au ([203.10.76.15]:46617 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751775Ab1KGFwU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 00:52:20 -0500
+In-Reply-To: <20111107141319.b1d38ed603420631274515e6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rose, Gregory V" <gregory.v.rose@intel.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
+--Signature=_Mon__7_Nov_2011_16_52_10_+1100_33NztEwJHGjG93mt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
+Clearly this was for Nov 7 :-)  (Thanks Randy)
+
+--=20
 Cheers,
-Jeff
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-On Nov 6, 2011, at 19:38, "David Miller" <davem@davemloft.net> wrote:
+--Signature=_Mon__7_Nov_2011_16_52_10_+1100_33NztEwJHGjG93mt
+Content-Type: application/pgp-signature
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 7 Nov 2011 13:47:06 +1100
-> 
->>> If you just revert the commit in origin from -next, then you will get
->>> conflicts with you pull the net.git tree in.
->> 
->> I got no conflicts when I merged in the net tree and can see no fix for
->> this problem in the net tree.  My current head of the net tree is 1a6422f
->> "etherh: Add MAINTAINERS entry for etherh".
-> 
-> Ok, Jeff please take a look at this and send me a fix soon.
-> 
-> Thanks.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-Ok Dave, at this point, I am puttying together a patch to revert this fix since it appears that more trouble comes with this fix.  I will take a look at it quickly before sending out a patch to fix the issue.
+iQIcBAEBCAAGBQJOt3IKAAoJEECxmPOUX5FEpTcP/i372SBiQcRIKFTqvXfO4zAc
+3ajXssNTZ5Mxj/60zhBL24fuUIyKbGPgiYO5mQiPj3b43M/75sase/7g4aQnyywz
+7PJwyojZpXTlEt086Mm/YPTIIDnM/lEmWFwfeVBgITdO2mQown/XMYYzbouKvvyd
++QzHHsOHz1rxGIGwvT9x2KNmDXU9kEKxqZv9kS6aJMBS3cg4eSwQep//aeO4xNkM
+EOLiTGT+jomuEpKadyp+NPzbxHBctt36Ked07XF2EQ7bsa/qIeJSsN4RbCk13yOB
+OOuHzkytpFqmyYoHCFoRawbtEUhiVoZ3O97Ga5Fv1M8X/kLJ7yVFxUP88cUfDbc+
+5WKRv4uzhdF57zSXyS2goUXZ/mwYvecSoJe9jJbi3DwhqkaibRPkvGWNecBF9Q8I
+fDvjEeWA4765/vXcMhnkzpuOE8sRur61G3qmuiph5lew9DpAXVxcThTgqvD48XP6
+Pl82iY0e+mspD7SiejurhVOJX+QQSyQd/8jPWcTCdSFaKR+sfXNYtJRJLCTOMgRa
+xd/521x1qeZvggo4kyLqR1UGnYCxpEy8HK941+VfRbaHpjbrYpfc0eU3a3ATvrZk
+GjvPntITNmRKqRPmQAagIeBZlEef3U5N9YV+ZkHoImwUdTxn5DtOVf+EGj4wYVgP
+6Gb1zaT1P/uNibpk4bY8
+=A9CF
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Nov_2011_16_52_10_+1100_33NztEwJHGjG93mt--
