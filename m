@@ -1,45 +1,58 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: failing to fetch the sysctl tree
-Date: Mon, 07 Nov 2011 16:52:17 -0800
-Message-ID: <m1pqh3o2pq.fsf@fess.ebiederm.org>
-References: <20111107095835.208466a386fbcf046c512d70@canb.auug.org.au>
-	<m139e0q0n5.fsf@fess.ebiederm.org>
-	<20111107213319.01f37a306f1c29faa386891e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bluetooth tree with Linus tree
+Date: Tue, 8 Nov 2011 12:58:22 +1100
+Message-ID: <20111108125822.2dbe82c96523fc42b42e5893@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__8_Nov_2011_12_58_22_+1100_wZgY6PQEH476JA4_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out01.mta.xmission.com ([166.70.13.231]:40241 "EHLO
-	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750771Ab1KHAv0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 19:51:26 -0500
-In-Reply-To: <20111107213319.01f37a306f1c29faa386891e@canb.auug.org.au>
-	(Stephen Rothwell's message of "Mon, 7 Nov 2011 21:33:19 +1100")
+Received: from calzone.tip.net.au ([203.10.76.15]:55172 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750906Ab1KHB63 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 20:58:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Gustavo F. Padovan" <padovan@profusion.mobi>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hedberg <johan.hedberg@intel.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Signature=_Tue__8_Nov_2011_12_58_22_+1100_wZgY6PQEH476JA4_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Eric,
->
-> On Sun, 06 Nov 2011 15:41:50 -0800 ebiederm@xmission.com (Eric W. Biederman) wrote:
->>
->> Something weird happened when I re-uploaded things.  Apparently hitting
->> Ctrl-C if when you are uploading and realized you forgot to clone from
->> Linus's repository is fatal to how git.kernel.org manages things.  Last
->> I checked I could not even delete the broken repository.
->> 
->> Can you please switch to linux/kernel/git/ebiederm/sysctl.git instead of
->> sysctl-2.6.git.
->
-> Done.
->
-> BTW to remove the other tree do this:
->
-> ssh gitolte@ra.kernel.org unlock pub/scm/linux/kernel/git/ebiederm/sysctl-2.6
-> ssh gitolte@ra.kernel.org rm pub/scm/linux/kernel/git/ebiederm/sysctl-2.6
+Hi Gustavo,
 
-Thanks.  unlock was apparently the gitolite magic command I did not know about.
+Today's linux-next merge of the bluetooth tree got a conflict in
+net/bluetooth/mgmt.c between commit dafbde395ed5 ("Bluetooth: Set
+HCI_MGMT flag only in read_controller_info") from Linus' tree and commit
+e395042c2836 ("Bluetooth: Convert power off mechanism to use
+delayed_work") from the bluetooth tree.
 
-Eric
+I fixed it up and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__8_Nov_2011_12_58_22_+1100_wZgY6PQEH476JA4_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOuIy+AAoJEECxmPOUX5FE52QQAIQ6iHhkiPZFLtkbH1uRKKzk
+e1Kcw6vEpNWtt3lHYzXcO1Pa1+mgDO6YPRzEXZDY25lCEqvIbCS5wtHJXNG2zU1f
+ADwqKHvGfSr8mEr7tOdw2NczxkitLGug4eWIFSdUcd3hRqFR2+mQeePIQu3JLVJH
+w6O9CTe3843CurK7okSHgPoAY8XvkiEQ9fcMflkkrJUYWp7P+T3GHCe3IKxXVYuW
+r/+ZZsgOD7TSZVo2dbyMI29TYKY6JZv4EckfbB/y5N9hgxvQOc0jZ0KYTC6ITOZF
+UUrjS4KUoPb+3YL0/cCmQMl26OxjWJFEetV1xu+EW/QGpI0IbsDHWgO81HnJLGsT
+aiWjebNBmQ5MUsfqIygVvFwzy2YAB1ETSHGcEJ+tf1TLkmfiVyhducdoaxF3izcL
+c+XFYzjbx9SQIBcNEZ5W0NtQTdbfmWlTnaTLx7mEQV5TlP9aD/NoUyVTnjIhCKGA
+pn0s6bq4/Oya8CESRVt0kXf/moBumYDQURpCWxLthJ0XVg3LOTRqvyi7f7F11iL2
+ktpkuMR1XC+9o2paPnxdCVrYFujv9Pg2LriHt7YeuGrkRdkigBW8A/RK/ERZiTkB
+aBMIj57oSjRZE9wGX3MyeRE+zkUQ3mNWvhoaqJntTK/NblHgR3b561kQfUUj+TXW
+e5s6hR8u94Jh517itOwI
+=4zL4
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__8_Nov_2011_12_58_22_+1100_wZgY6PQEH476JA4_--
