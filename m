@@ -1,69 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re:
-Date: Tue, 8 Nov 2011 15:40:23 +1100
-Message-ID: <20111108154023.43bbb49e80eb6854a4d94f35@canb.auug.org.au>
-References: <20111108125822.2dbe82c96523fc42b42e5893@canb.auug.org.au>
-	<20111108022631.GA31211@localhost>
+Subject: linux-next: incorrect build fix
+Date: Wed, 9 Nov 2011 08:26:24 +1100
+Message-ID: <20111109082624.ea5697763c50ef9128244783@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__8_Nov_2011_15_40_23_+1100_DfVySr4mBSYPhaHl"
+ boundary="Signature=_Wed__9_Nov_2011_08_26_24_+1100_1.vBDq31obDZ23GO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:59679 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:59577 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750893Ab1KHEkc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 23:40:32 -0500
-In-Reply-To: <20111108022631.GA31211@localhost>
+	with ESMTP id S1751560Ab1KHV0f (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2011 16:26:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wu Fengguang <fengguang.wu@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__8_Nov_2011_15_40_23_+1100_DfVySr4mBSYPhaHl
+--Signature=_Wed__9_Nov_2011_08_26_24_+1100_1.vBDq31obDZ23GO
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Tue, 8 Nov 2011 10:26:31 +0800 Wu Fengguang <fengguang.wu@intel.com> wro=
-te:
->
-> I'm moving back to kernel.org and would you please switch
->=20
->         git://github.com/fengguang/linux.git#writeback-for-next
->=20
-> to
->=20
->         git://git.kernel.org/pub/scm/linux/kernel/git/wfg/linux.git#write=
-back-for-next
+I noticed in commit 8644c202ff42 ("ARM: EXYNOS: Fix compiler error with
+THIS_MODULE") in the s5p tree, an include of linux/module.h is used to
+get THIS_MODULE. For THIS_MODULE, you only need to include
+linux/export.h, now.  To fix the other errors that were fixed by side
+effects of including module.h, you should include linux/time.h (for
+struct timeval, USEC_PER_SEC and do_gettimeofday).
 
-OK, I have switched to that now.
-
+Please try a bit harder to get these things right.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__8_Nov_2011_15_40_23_+1100_DfVySr4mBSYPhaHl
+--Signature=_Wed__9_Nov_2011_08_26_24_+1100_1.vBDq31obDZ23GO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOuLK3AAoJEECxmPOUX5FEmVgP/2qem4Y2OPjfq8Z9XRrW2jYX
-N1Stl0cBJ8uAkqPwNJdENO6T92YM6uhN4ckIcpFQ7iVdXc60PXGx1xRLR8afXmJL
-RBqHKOlGKmP5IZq7nlEJimysMAfNBjjFZeIwVSR7M6iCb1DFOajX5uki6elKzlKN
-xMh4lgS4/TQD/escKWfE4WVV1FLg7dE5BClGGAJScNJB1MrDCxSkld9LC2FYesyT
-FBpLENHgRupayzIBThYDVkTHejA+rpcBprMi0Rat0yxC6AtAPFO1KhupCZhd4u59
-zkSjvokBIru5GtdBhFSOqPgXHdVPXkdyzV1PAytRfcSDeOPSiZ/tzZ7rWl2uSKCH
-yOADeFvcoWsAq9j4/J0zcdy7rojPsu76sW9hMUOqWgyjJR7xD0dAPV1vZpcSO1gQ
-zNVMlyWdMqyUrBd+y3eCz/QPJtiGWz5DgbOSbnAmh+Ua9MCnEpRUXtsT5zSm2cy7
-n/QPV0oTn/wM1ogRsLQTfgk4kqsx8yOoHbk5smAz8+vPHrSDuHbCor3bYCTm6K1A
-UDExD5U/0YgkLQ/b22uRxJo9Wrmw9xOgfibE9vZGegJ/6vRs5YjS6KYRhoKwSOk4
-jvwVPmYonhFgP3P8laXQ6fwkS1qwnf4x0eHITu3Lhz+oEV7HeeujPQNpCeFVBwib
-/qI/HqalEGZHEd9j0p1j
-=c1Hq
+iQIcBAEBCAAGBQJOuZ6AAAoJEECxmPOUX5FECIsP/16sKoV/S40Ooqf6qpeLotm2
+fv7gQM6qUgYw4qNBU6YnP0NmnHNw8+7XC1c02g32FRHYpdC+TDQG0i0v4chPrX8m
+SisXt+PeMmfARPQMdy1dLX6tScLcQb3QUcbg1avsGZHZGvSIegpETOcyM/TK/i52
+SLT68jvrDnA2oyw2ai5WDVqnsCCVJe6rrp0QR97pGKgO3MNqbuBCIYta36QXfyjU
+SsyD3Q4oWEY60Id1NHHvPYY//vp7t4D73PViia+g301xQRzbLKf2i9INoZC0pEfp
+WeFXxblcloUa9sdoLNE4/Fp+Fxkj4yZ8gym2RHDzFPPU7iyPJWM7Ro4lf5QHhjRS
+wuowSnQKntQKAJ6hFEbVOpk5f+6PjxLUrpHy0YHFyJVwtXfWmh7KZx9e20o9tPCr
+ZVgefT7o45vD4t+r2z9YBkIdkjFI0AEUmIr0sSidRNx8yhR23E+k0vCxpr6JgnB8
+Tkur06r2GXgfCBKPKqaZbe9nXd+EWmLmwYfVzVCPfkcCfRhtNFAEOytT25GN+xie
+yu6FOKngC9eiijGXn9hutKOZx5SHP/maqSOTSp92WVlhbOeZL33+BA8i/TPlUogK
+tCwIB51YGFMZhWN0P1wRhlR6hNNox9uKDHVGzCE6EdfITBrlVIbWaEqL9hzf51ai
+AuzSKFZFgqt2pjtKAxWn
+=9/5b
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__8_Nov_2011_15_40_23_+1100_DfVySr4mBSYPhaHl--
+--Signature=_Wed__9_Nov_2011_08_26_24_+1100_1.vBDq31obDZ23GO--
