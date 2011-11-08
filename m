@@ -1,60 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: incorrect build fix
-Date: Wed, 9 Nov 2011 08:26:24 +1100
-Message-ID: <20111109082624.ea5697763c50ef9128244783@canb.auug.org.au>
+Subject: Re: HSI framework for linux-next
+Date: Wed, 9 Nov 2011 08:51:40 +1100
+Message-ID: <20111109085140.908f89d0e2b8160cc959d67c@canb.auug.org.au>
+References: <1319794066.28874.22.camel@groo>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__9_Nov_2011_08_26_24_+1100_1.vBDq31obDZ23GO"
+ boundary="Signature=_Wed__9_Nov_2011_08_51_40_+1100_BlUvxPXo0PhUn6A2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:59577 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:32823 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751560Ab1KHV0f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2011 16:26:35 -0500
+	with ESMTP id S1750899Ab1KHVv5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2011 16:51:57 -0500
+In-Reply-To: <1319794066.28874.22.camel@groo>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Carlos Chinea <carlos.chinea@nokia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, ext Linus Walleij <linus.walleij@linaro.org>, "peter_henn@gmx.de" <peter_henn@gmx.de>, "sjur.brandeland@stericsson.com" <sjur.brandeland@stericsson.com>, "govindraj.ti@gmail.com" <govindraj.ti@gmail.com>, "pawel.szyszuk@stericsson.com" <pawel.szyszuk@stericsson.com>, Sebastian Reichel <sre@debian.org>
 
---Signature=_Wed__9_Nov_2011_08_26_24_+1100_1.vBDq31obDZ23GO
+--Signature=_Wed__9_Nov_2011_08_51_40_+1100_BlUvxPXo0PhUn6A2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Carlos,
 
-I noticed in commit 8644c202ff42 ("ARM: EXYNOS: Fix compiler error with
-THIS_MODULE") in the s5p tree, an include of linux/module.h is used to
-get THIS_MODULE. For THIS_MODULE, you only need to include
-linux/export.h, now.  To fix the other errors that were fixed by side
-effects of including module.h, you should include linux/time.h (for
-struct timeval, USEC_PER_SEC and do_gettimeofday).
+On Fri, 28 Oct 2011 12:27:46 +0300 Carlos Chinea <carlos.chinea@nokia.com> =
+wrote:
+>
+> I have been working in an HSI framework for linux:
+>=20
+> https://lkml.org/lkml/2011/6/10/280
+>=20
+> The framework is in good shape and is currently being used for some
+> people so we would like it to see it integrated, if possible, for 3.3
+>=20
+> Latest discussion for integration:
+> https://lkml.org/lkml/2011/10/20/177
+>=20
+> Therefore, could you add the following tree to linux-next ?=20
+> 	git@gitorious.org:kernel-hsi/kernel-hsi.git for-next
+>=20
+> Currently the framework does not have any HSI/SSI controller driver, but
+> myself I am working on an SSI OMAP one, which needs some changes to get
+> full acceptance. So hopefully I will have the changes done and acked on
+> time.
+> There are also other people preparing their controllers for integration
+> (see the integration discussion)
 
-Please try a bit harder to get these things right.
+Right, so -rc1 has been released so I can consider this.  Just a couple of =
+things:
+
+	Linus (and the rest of us) is being a bit nmore paranoid about
+where to fetch trees from.  Public git hosters (like gitorious) can be
+problematic since it is hard for us to verify the owners of trees
+reliably.  You either need to apply for a kernel.org account, or you will
+need to add a signed tag to your tree before asking Linus to pull from
+it.  And that atg will have to be singned with a GPG key that can be
+verified by Linus ...
+
+	I am not sure how to translate that gitorious URI above into a
+simple, publically fetchable URI (git://gitorious.org...).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__9_Nov_2011_08_26_24_+1100_1.vBDq31obDZ23GO
+--Signature=_Wed__9_Nov_2011_08_51_40_+1100_BlUvxPXo0PhUn6A2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOuZ6AAAoJEECxmPOUX5FECIsP/16sKoV/S40Ooqf6qpeLotm2
-fv7gQM6qUgYw4qNBU6YnP0NmnHNw8+7XC1c02g32FRHYpdC+TDQG0i0v4chPrX8m
-SisXt+PeMmfARPQMdy1dLX6tScLcQb3QUcbg1avsGZHZGvSIegpETOcyM/TK/i52
-SLT68jvrDnA2oyw2ai5WDVqnsCCVJe6rrp0QR97pGKgO3MNqbuBCIYta36QXfyjU
-SsyD3Q4oWEY60Id1NHHvPYY//vp7t4D73PViia+g301xQRzbLKf2i9INoZC0pEfp
-WeFXxblcloUa9sdoLNE4/Fp+Fxkj4yZ8gym2RHDzFPPU7iyPJWM7Ro4lf5QHhjRS
-wuowSnQKntQKAJ6hFEbVOpk5f+6PjxLUrpHy0YHFyJVwtXfWmh7KZx9e20o9tPCr
-ZVgefT7o45vD4t+r2z9YBkIdkjFI0AEUmIr0sSidRNx8yhR23E+k0vCxpr6JgnB8
-Tkur06r2GXgfCBKPKqaZbe9nXd+EWmLmwYfVzVCPfkcCfRhtNFAEOytT25GN+xie
-yu6FOKngC9eiijGXn9hutKOZx5SHP/maqSOTSp92WVlhbOeZL33+BA8i/TPlUogK
-tCwIB51YGFMZhWN0P1wRhlR6hNNox9uKDHVGzCE6EdfITBrlVIbWaEqL9hzf51ai
-AuzSKFZFgqt2pjtKAxWn
-=9/5b
+iQIcBAEBCAAGBQJOuaRsAAoJEECxmPOUX5FEH28P/3QXJgKwfLjKLOITZKNv6Gya
+dAir4rs5TSb6IJlxjxjJSyY7fDkaK/ees1y9ptCEVyvWTSegGaVWSHzrqp4+fb1l
+66ew0UwFAph6FRVgCswAXOQTDlAUL2Eny4xebjBYlkefZUJCjy1vG0hz92jeEcKt
++aVA9OUVRhBH5Wtf11o8yyCGESyaNMG702uKBXujj4E0dEN8TtonE8zE6Nojcwkg
+cIGo1eSdc1b3HedLhqDB1DavBjvA/w3SqcDtSA3NR7VmmvlWe+3WxQjpFBPt1H3I
+PGbAseq1T56lUCrijxPyz3ESS/MF9hRfiUYhL/UBhOHwneEW/PN77EpRiiHSSO15
+PabNmmKJBPaxusj/quF7NxV7s5F+qG2AjY8WpE7jGy07kJG5O02T84qGQBGiTasa
+PvoiTJ/vKZwOUdkBDlHcSEAqosJ912GI7mfLyr8LsLZt1Ws7YmHPLvrZqWnyRuhG
+nbYg0ioYgP0dBWD8ghwbpRv5U4KxKfDIdiXXyKDc6dCmemHbEpTtUyZi8Yvl/auh
+ek/rGRUWN2gHBXRjCvgC9WM+1qtGzZK3fUERULzQtabYa1KU4lX86v7Cdt2kQTcg
+wKjDQXsTkAMIisByirNNyGHDMM805//tECkSWLn/3lyOqSejmwBPRn4Bcs5UV5PJ
+WVW7j16VifjWUrpUAcxU
+=TpD1
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__9_Nov_2011_08_26_24_+1100_1.vBDq31obDZ23GO--
+--Signature=_Wed__9_Nov_2011_08_51_40_+1100_BlUvxPXo0PhUn6A2--
