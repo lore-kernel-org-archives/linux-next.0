@@ -1,30 +1,45 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with Linus' tree
-Date: Mon, 7 Nov 2011 20:07:40 +0100
-Message-ID: <201111072007.41353.arnd@arndb.de>
-References: <20111107103313.6e1067675b2cd2f2de6bded7@canb.auug.org.au>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: failing to fetch the sysctl tree
+Date: Mon, 07 Nov 2011 16:52:17 -0800
+Message-ID: <m1pqh3o2pq.fsf@fess.ebiederm.org>
+References: <20111107095835.208466a386fbcf046c512d70@canb.auug.org.au>
+	<m139e0q0n5.fsf@fess.ebiederm.org>
+	<20111107213319.01f37a306f1c29faa386891e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.171]:56979 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752764Ab1KGTIH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 14:08:07 -0500
-In-Reply-To: <20111107103313.6e1067675b2cd2f2de6bded7@canb.auug.org.au>
+Received: from out01.mta.xmission.com ([166.70.13.231]:40241 "EHLO
+	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750771Ab1KHAv0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Nov 2011 19:51:26 -0500
+In-Reply-To: <20111107213319.01f37a306f1c29faa386891e@canb.auug.org.au>
+	(Stephen Rothwell's message of "Mon, 7 Nov 2011 21:33:19 +1100")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Monday 07 November 2011, Stephen Rothwell wrote:
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-> I just used the version from Linus' tree.  Arnd, it seems that some of
-> these merges were done differently by Linus, so can you please clean up
-> the arm-soc tree now that it looks like Linus may have merged all its
-> content.
+> Hi Eric,
+>
+> On Sun, 06 Nov 2011 15:41:50 -0800 ebiederm@xmission.com (Eric W. Biederman) wrote:
+>>
+>> Something weird happened when I re-uploaded things.  Apparently hitting
+>> Ctrl-C if when you are uploading and realized you forgot to clone from
+>> Linus's repository is fatal to how git.kernel.org manages things.  Last
+>> I checked I could not even delete the broken repository.
+>> 
+>> Can you please switch to linux/kernel/git/ebiederm/sysctl.git instead of
+>> sysctl-2.6.git.
+>
+> Done.
+>
+> BTW to remove the other tree do this:
+>
+> ssh gitolte@ra.kernel.org unlock pub/scm/linux/kernel/git/ebiederm/sysctl-2.6
+> ssh gitolte@ra.kernel.org rm pub/scm/linux/kernel/git/ebiederm/sysctl-2.6
 
-Ok, done. Thanks for the info!
+Thanks.  unlock was apparently the gitolite magic command I did not know about.
 
-	Arnd
+Eric
