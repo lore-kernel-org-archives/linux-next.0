@@ -1,91 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: HSI framework for linux-next
-Date: Wed, 9 Nov 2011 08:51:40 +1100
-Message-ID: <20111109085140.908f89d0e2b8160cc959d67c@canb.auug.org.au>
-References: <1319794066.28874.22.camel@groo>
+Subject: linux-next: failed import of the rr quilt series
+Date: Wed, 9 Nov 2011 10:19:09 +1100
+Message-ID: <20111109101909.585d2406dc46af8890f28e66@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__9_Nov_2011_08_51_40_+1100_BlUvxPXo0PhUn6A2"
+ boundary="Signature=_Wed__9_Nov_2011_10_19_09_+1100_=5cWu3jO_E3MBfi2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:32823 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:47494 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750899Ab1KHVv5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2011 16:51:57 -0500
-In-Reply-To: <1319794066.28874.22.camel@groo>
+	with ESMTP id S1750865Ab1KHXTS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2011 18:19:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Carlos Chinea <carlos.chinea@nokia.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, ext Linus Walleij <linus.walleij@linaro.org>, "peter_henn@gmx.de" <peter_henn@gmx.de>, "sjur.brandeland@stericsson.com" <sjur.brandeland@stericsson.com>, "govindraj.ti@gmail.com" <govindraj.ti@gmail.com>, "pawel.szyszuk@stericsson.com" <pawel.szyszuk@stericsson.com>, Sebastian Reichel <sre@debian.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__9_Nov_2011_08_51_40_+1100_BlUvxPXo0PhUn6A2
+--Signature=_Wed__9_Nov_2011_10_19_09_+1100_=5cWu3jO_E3MBfi2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Carlos,
+Hi Rusty,
 
-On Fri, 28 Oct 2011 12:27:46 +0300 Carlos Chinea <carlos.chinea@nokia.com> =
-wrote:
->
-> I have been working in an HSI framework for linux:
->=20
-> https://lkml.org/lkml/2011/6/10/280
->=20
-> The framework is in good shape and is currently being used for some
-> people so we would like it to see it integrated, if possible, for 3.3
->=20
-> Latest discussion for integration:
-> https://lkml.org/lkml/2011/10/20/177
->=20
-> Therefore, could you add the following tree to linux-next ?=20
-> 	git@gitorious.org:kernel-hsi/kernel-hsi.git for-next
->=20
-> Currently the framework does not have any HSI/SSI controller driver, but
-> myself I am working on an SSI OMAP one, which needs some changes to get
-> full acceptance. So hopefully I will have the changes done and acked on
-> time.
-> There are also other people preparing their controllers for integration
-> (see the integration discussion)
+Tryiong to import the rr quilt series today produced this error:
 
-Right, so -rc1 has been released so I can consider this.  Just a couple of =
-things:
+Importing rr based on v3.1-8907-g43672a0
+$ git reset --hard 43672a0784707d795556b1f93925da8b8e797d03
+Checking out files: 100% (37600/37600), done.
+HEAD is now at 43672a0 Merge git://git.kernel.org/pub/scm/linux/kernel/git/=
+steve/linux-dm
+$ git am ../quilt/rr/virtio:pci_fix_use_after_free.patch
+Applying: virtio-pci: fix use after free
+error: patch failed: drivers/virtio/virtio_pci.c:822
+error: drivers/virtio/virtio_pci.c: patch does not apply
+Patch failed at 0001 virtio-pci: fix use after free
+When you have resolved this problem run "git am --resolved".
+If you would prefer to skip this patch, instead run "git am --skip".
+To restore the original branch and stop patching run "git am --abort".
 
-	Linus (and the rest of us) is being a bit nmore paranoid about
-where to fetch trees from.  Public git hosters (like gitorious) can be
-problematic since it is hard for us to verify the owners of trees
-reliably.  You either need to apply for a kernel.org account, or you will
-need to add a signed tag to your tree before asking Linus to pull from
-it.  And that atg will have to be singned with a GPG key that can be
-verified by Linus ...
+Maybe you forgot to update the BASE?
 
-	I am not sure how to translate that gitorious URI above into a
-simple, publically fetchable URI (git://gitorious.org...).
+I will use the rr tree from next-20111108 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__9_Nov_2011_08_51_40_+1100_BlUvxPXo0PhUn6A2
+--Signature=_Wed__9_Nov_2011_10_19_09_+1100_=5cWu3jO_E3MBfi2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOuaRsAAoJEECxmPOUX5FEH28P/3QXJgKwfLjKLOITZKNv6Gya
-dAir4rs5TSb6IJlxjxjJSyY7fDkaK/ees1y9ptCEVyvWTSegGaVWSHzrqp4+fb1l
-66ew0UwFAph6FRVgCswAXOQTDlAUL2Eny4xebjBYlkefZUJCjy1vG0hz92jeEcKt
-+aVA9OUVRhBH5Wtf11o8yyCGESyaNMG702uKBXujj4E0dEN8TtonE8zE6Nojcwkg
-cIGo1eSdc1b3HedLhqDB1DavBjvA/w3SqcDtSA3NR7VmmvlWe+3WxQjpFBPt1H3I
-PGbAseq1T56lUCrijxPyz3ESS/MF9hRfiUYhL/UBhOHwneEW/PN77EpRiiHSSO15
-PabNmmKJBPaxusj/quF7NxV7s5F+qG2AjY8WpE7jGy07kJG5O02T84qGQBGiTasa
-PvoiTJ/vKZwOUdkBDlHcSEAqosJ912GI7mfLyr8LsLZt1Ws7YmHPLvrZqWnyRuhG
-nbYg0ioYgP0dBWD8ghwbpRv5U4KxKfDIdiXXyKDc6dCmemHbEpTtUyZi8Yvl/auh
-ek/rGRUWN2gHBXRjCvgC9WM+1qtGzZK3fUERULzQtabYa1KU4lX86v7Cdt2kQTcg
-wKjDQXsTkAMIisByirNNyGHDMM805//tECkSWLn/3lyOqSejmwBPRn4Bcs5UV5PJ
-WVW7j16VifjWUrpUAcxU
-=TpD1
+iQIcBAEBCAAGBQJOubjtAAoJEECxmPOUX5FE670QAKfV68VjQdOFZBJ57O/fNDlu
+wSsUgn/F9+bXu38UfFiXZHflXjeuxJTaqD5vipDF/Dp/eSr6U97LwctAdakv2Mty
+ELV4RWYvFG6bFXQ6I0F1GHHoKSDoAjd2G/I5VejUz4kCtZHcGZhPbbdvUjCgNsVy
+efwx2J5wsaiw3WmcMfB1pfgeio9++Y1Irf3ULvBabQJSOvvYMMa1vE7idp5ogchv
+CRAaWWrUuW+L8GYaI5GGm+Qns30E6HqaXW2gsSzbNdM7/ylNpjJv4H98Yh1pl6ME
+Pp9UiCHH1iFoy6Ucm3aYmAHlguXAAWaoEyb8H6Chxrt07f8W4/J5r0cpH381W4kT
+4VxH5Fh0H7fjkbIsBxTjTj4zo8+FL8OheBYAsYxJ7YgG2Q5vlZ71yIh1kRjckgmX
+v6nBA57qju3RQ/H+DbP09Xt1tjOKT84bbqofsQ4zgd5KhyLuUNSAzemBcRRMQjZJ
+Hm+XEq3MNmqZXkSh4gY95pHmIxXSoF5glLKvr0Ch/u237poDG63RoxqPvTAUwlEE
+fletJo/nAaM7Wv+QqFlxOOXbObqUzM6krR2/wVEpt0BHZInYLJa+LYKug7/Tr9Gp
+C/QgjzPXK9y7JeDXwLPoGhoZSv98+8tVZ2c0pYduKXkYKIuVe/mOgZwAARcTlYui
+UovEXDeRPiWV2CRgqATh
+=I0Zh
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__9_Nov_2011_08_51_40_+1100_BlUvxPXo0PhUn6A2--
+--Signature=_Wed__9_Nov_2011_10_19_09_+1100_=5cWu3jO_E3MBfi2--
