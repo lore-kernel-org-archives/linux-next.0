@@ -1,71 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: failed import of the rr quilt series
-Date: Wed, 9 Nov 2011 10:19:09 +1100
-Message-ID: <20111109101909.585d2406dc46af8890f28e66@canb.auug.org.au>
+Subject: linux-next: manual merge of the m68knommu tree with the m68k tree
+Date: Wed, 9 Nov 2011 11:15:02 +1100
+Message-ID: <20111109111502.83ac206d957142cf44840d22@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__9_Nov_2011_10_19_09_+1100_=5cWu3jO_E3MBfi2"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:47494 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750865Ab1KHXTS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2011 18:19:18 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Wed__9_Nov_2011_11_15_02_+1100_QsEjH.ZZcQyhGIow"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Ungerer <gerg@snapgear.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__9_Nov_2011_10_19_09_+1100_=5cWu3jO_E3MBfi2
+--Signature=_Wed__9_Nov_2011_11_15_02_+1100_QsEjH.ZZcQyhGIow
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Greg,
 
-Tryiong to import the rr quilt series today produced this error:
+Today's linux-next merge of the m68knommu tree got a conflict in
+arch/m68k/kernel/Makefile between commits 4936f63cb790 ("m68k/irq: Add
+genirq support") and d890d7399525 ("m68k/irq: Remove obsolete m68k irq
+framework") from the m68k tree and commit 7bf6f100a307 ("m68k: merge the
+init_task code for mmu and non-mmu targets") from the m68knommu tree.
 
-Importing rr based on v3.1-8907-g43672a0
-$ git reset --hard 43672a0784707d795556b1f93925da8b8e797d03
-Checking out files: 100% (37600/37600), done.
-HEAD is now at 43672a0 Merge git://git.kernel.org/pub/scm/linux/kernel/git/=
-steve/linux-dm
-$ git am ../quilt/rr/virtio:pci_fix_use_after_free.patch
-Applying: virtio-pci: fix use after free
-error: patch failed: drivers/virtio/virtio_pci.c:822
-error: drivers/virtio/virtio_pci.c: patch does not apply
-Patch failed at 0001 virtio-pci: fix use after free
-When you have resolved this problem run "git am --resolved".
-If you would prefer to skip this patch, instead run "git am --skip".
-To restore the original branch and stop patching run "git am --abort".
-
-Maybe you forgot to update the BASE?
-
-I will use the rr tree from next-20111108 for today.
-
+I fixed it up (see below) and can carry the fixes as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__9_Nov_2011_10_19_09_+1100_=5cWu3jO_E3MBfi2
+diff --cc arch/m68k/kernel/Makefile
+index c569619,01ae30e..0000000
+--- a/arch/m68k/kernel/Makefile
++++ b/arch/m68k/kernel/Makefile
+@@@ -6,15 -6,16 +6,11 @@@ extra-$(CONFIG_MMU)	:=3D head.
+  extra-$(CONFIG_SUN3)	:=3D sun3-head.o
+  extra-y			+=3D vmlinux.lds
+ =20
+- obj-y	:=3D entry.o irq.o m68k_ksyms.o module.o process.o ptrace.o setup.o=
+ \
+- 	   signal.o sys_m68k.o syscalltable.o time.o traps.o
+ -obj-y	:=3D entry.o init_task.o m68k_ksyms.o module.o process.o ptrace.o
+++obj-y	:=3D entry.o irq.o init_task.o m68k_ksyms.o module.o process.o ptra=
+ce.o
++ obj-y	+=3D setup.o signal.o sys_m68k.o syscalltable.o time.o traps.o
+ =20
+ -obj-$(CONFIG_MMU)	+=3D ints.o devres.o vectors.o
+ -devres-$(CONFIG_MMU)	=3D ../../../kernel/irq/devres.o
+ +obj-$(CONFIG_MMU)	+=3D ints.o vectors.o
+ =20
+  ifndef CONFIG_MMU_SUN3
+  obj-y			+=3D dma.o
+  endif
+--ifndef CONFIG_MMU
+- obj-y			+=3D init_task.o
+- endif
+-=20
+ -obj-y			+=3D irq.o
+ -endif
+ -
+
+--Signature=_Wed__9_Nov_2011_11_15_02_+1100_QsEjH.ZZcQyhGIow
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOubjtAAoJEECxmPOUX5FE670QAKfV68VjQdOFZBJ57O/fNDlu
-wSsUgn/F9+bXu38UfFiXZHflXjeuxJTaqD5vipDF/Dp/eSr6U97LwctAdakv2Mty
-ELV4RWYvFG6bFXQ6I0F1GHHoKSDoAjd2G/I5VejUz4kCtZHcGZhPbbdvUjCgNsVy
-efwx2J5wsaiw3WmcMfB1pfgeio9++Y1Irf3ULvBabQJSOvvYMMa1vE7idp5ogchv
-CRAaWWrUuW+L8GYaI5GGm+Qns30E6HqaXW2gsSzbNdM7/ylNpjJv4H98Yh1pl6ME
-Pp9UiCHH1iFoy6Ucm3aYmAHlguXAAWaoEyb8H6Chxrt07f8W4/J5r0cpH381W4kT
-4VxH5Fh0H7fjkbIsBxTjTj4zo8+FL8OheBYAsYxJ7YgG2Q5vlZ71yIh1kRjckgmX
-v6nBA57qju3RQ/H+DbP09Xt1tjOKT84bbqofsQ4zgd5KhyLuUNSAzemBcRRMQjZJ
-Hm+XEq3MNmqZXkSh4gY95pHmIxXSoF5glLKvr0Ch/u237poDG63RoxqPvTAUwlEE
-fletJo/nAaM7Wv+QqFlxOOXbObqUzM6krR2/wVEpt0BHZInYLJa+LYKug7/Tr9Gp
-C/QgjzPXK9y7JeDXwLPoGhoZSv98+8tVZ2c0pYduKXkYKIuVe/mOgZwAARcTlYui
-UovEXDeRPiWV2CRgqATh
-=I0Zh
+iQIcBAEBCAAGBQJOucYGAAoJEECxmPOUX5FER4cP/A0s6U7K2h70UaNJnGPJIxXX
+KX9atst2voV5gs3VZtePqxGpUJ8MsrGBMUMRw9Bv6/5tvq9HTL/GUpmizzizgUv3
+9nm0SNBGthD5+b8/B597mbHy/ls+AyhI904YazS4nxZHM/FTG0N/Qc9EyZNhzfDw
+1pVHS6h09WpziN/VdEypeIQVULaicqyHnPobOd85hMtj10pJSyBCJ1nwaHg0jFNL
+kfK3QozZ1fkvrrKGl+6WfHv7xx5gMbScmnaVMZJh47Y3YjUtkJnfTaH0SNvBVQph
+v+SJa/Z6p4vEoI5CIDoc0pK/VDHwQ8OghRfAyKEuRuEVhRYlcFEGKp+TgfPUa1hx
+hc6Jxk2suAlU1hXnjKghXSILvqO2djBkR0LMylVri0TEu0glW+95IUNxVplzmDup
+qmrZEyrJOe8OB5rsd0wmcgUySIUiwN3VniuCLPSii+GH1nHN83wPzkqmOE6iZqbC
+iGvXWDRbhAaW02M/BNiLyadx70wDa/5YZi16SyGEPejV8Re7OgPVLYNPX+3Zdcwv
+ro2apbntlsH1npQFLMEk59L0gVgqY+eiy14BAkYF2lzBGLpIi+Algq2hNTWiNBKN
+iZYxZ7v45K8gPxx7JlaFjSg2IrU6ehEw1J7U9fSu94qAUfJM5Bf9DOSMw+l5gWmV
+G5xUp6JFcysOKjHcO6Y8
+=xfdu
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__9_Nov_2011_10_19_09_+1100_=5cWu3jO_E3MBfi2--
+--Signature=_Wed__9_Nov_2011_11_15_02_+1100_QsEjH.ZZcQyhGIow--
