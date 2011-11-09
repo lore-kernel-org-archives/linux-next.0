@@ -1,47 +1,62 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: incorrect build fix
-Date: Wed, 09 Nov 2011 16:12:44 +0900
-Message-ID: <004e01cc9eae$fa5f4ef0$ef1decd0$%kim@samsung.com>
-References: <20111109082624.ea5697763c50ef9128244783@canb.auug.org.au>
- <003401cc9ea6$785e7dc0$691b7940$%kim@samsung.com>
- <20111109173722.a7f4c7d65c13bcb80bf2e6ba@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: manual merge of the m68knommu tree with the m68k tree
+Date: Wed, 9 Nov 2011 08:13:38 +0100
+Message-ID: <CAMuHMdVsE4ZY3p8+kPgmKe5OOpoi1QV6BASK7gFYYTUDezyzLA@mail.gmail.com>
+References: <20111109111519.7d8969103ab32e7e8193c018@canb.auug.org.au>
+	<4EBA26D9.3050108@snapgear.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:37206 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752279Ab1KIHMq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Nov 2011 02:12:46 -0500
-In-reply-to: <20111109173722.a7f4c7d65c13bcb80bf2e6ba@canb.auug.org.au>
-Content-language: ko
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:35199 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751308Ab1KIHNj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Nov 2011 02:13:39 -0500
+In-Reply-To: <4EBA26D9.3050108@snapgear.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-next@vger.kernel.org, 'LKML' <linux-kernel@vger.kernel.org>
+To: Greg Ungerer <gerg@snapgear.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen Rothwell wrote:
-> 
-> Hi,
-> 
-> On Wed, 09 Nov 2011 15:11:50 +0900 Kukjin Kim <kgene.kim@samsung.com>
-> wrote:
-> >
-> > I'm not sure following......
-> > So only for THIS_MODULE, <linux/export.h> should be added instead of
-> > <linux/module.h>?
-> 
-> Yes, that is correct.   It means that much less code is included.  If
-> replacing module.h with export.h causes other build errors, they should
-> be fixed by including the correct files directly (module.h include a lot
-> of other include files).
+Hi Greg,
 
-I agree, okay. Will update Samsung stuff :)
+On Wed, Nov 9, 2011 at 08:08, Greg Ungerer <gerg@snapgear.com> wrote:
+> On 11/09/2011 10:15 AM, Stephen Rothwell wrote:
+>> Today's linux-next merge of the m68knommu tree got a conflict in
+>> arch/m68k/Kconfig between commit d890d7399525 ("m68k/irq: Remove obs=
+olete
+>> m68k irq framework") from the m68k tree and commit 4e8a9e70dfe8 ("m6=
+8k:
+>> selection of GENERIC_ATOMIC64 is not MMU specific") from the m68knom=
+mu
+>> tree.
+>>
+>> Just context changes. =C2=A0I fixed it up (see below) and can carry =
+the fix as
+>> necessary.
+>
+> Thanks. Both this and the previous m68k merge conflict patch look goo=
+d.
+>
+> Geert: would you prefer I hold off on these 2 patches until after
+> you merge your IRQ changes?
 
-Thanks.
+I'll ask Linus to pull them today or tomorrow. After that (and he has
+pulled), you can
+rebase your tree. Is that OK for you?
 
-Best regards,
-Kgene.
+Gr{oetje,eeting}s,
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
