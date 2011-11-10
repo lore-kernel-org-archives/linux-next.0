@@ -1,58 +1,61 @@
 From: Jeff Garzik <jeff@garzik.org>
-Subject: Re: linux-next: Tree for Oct 11 (ata/pata_of_platform.c)
-Date: Thu, 10 Nov 2011 13:18:58 -0500
-Message-ID: <4EBC1592.2060307@garzik.org>
-References: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au> <4E94A920.40503@xenotime.net> <4E987829.3080104@xenotime.net> <20111110135703.GA23609@elte.hu>
+Subject: Re: [PATCH] ata: Don't use NO_IRQ in pata_of_platform driver
+Date: Thu, 10 Nov 2011 15:34:30 -0500
+Message-ID: <4EBC3556.5000000@garzik.org>
+References: <20111110151852.GA7465@oksana.dev.rtsoft.ru> <20111110152606.GB3207@oksana.dev.rtsoft.ru> <20111110153816.239af1d7@lxorguk.ukuu.org.uk> <20111110162859.GA7088@oksana.dev.rtsoft.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:35236 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754002Ab1KJSTC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2011 13:19:02 -0500
-In-Reply-To: <20111110135703.GA23609@elte.hu>
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:45016 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752616Ab1KJUee (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2011 15:34:34 -0500
+In-Reply-To: <20111110162859.GA7088@oksana.dev.rtsoft.ru>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Anton Vorontsov <avorontsov@ru.mvista.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Anton Vorontsov <cbouatmailru@gmail.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Ingo Molnar <mingo@elte.hu>, Jeff Garzik <jgarzik@redhat.com>, Grant Likely <grant.likely@secretlab.ca>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, devicetree-discuss@lists.ozlabs.org
 
-On 11/10/2011 08:57 AM, Ingo Molnar wrote:
+On 11/10/2011 11:28 AM, Anton Vorontsov wrote:
+> Drivers should not use NO_IRQ; moreover, some architectures don't
+> have it nowadays. '0' is the 'no irq' case.
 >
-> * Randy Dunlap<rdunlap@xenotime.net>  wrote:
+> Signed-off-by: Anton Vorontsov<cbouatmailru@gmail.com>
+> Acked-by: Alan Cox<alan@linux.intel.com>
+> ---
 >
->> On 10/11/2011 01:37 PM, Randy Dunlap wrote:
->>> On 10/11/11 02:11, Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> The linux-next tree is now available from
->>>> git://github.com/sfrothwell/linux-next.git as a temporary measure while
->>>> the kernel.org servers are unavailable.
->>>>
->>>> It may also turn up on git.kernel.org (depending on the mirroring).  The
->>>> patch set is still absent, however.
->>>>
->>>> Changes since 20111007:
->>>>
->>>> Removed tree: ide (at the maintainer's request)
+> On Thu, Nov 10, 2011 at 03:38:16PM +0000, Alan Cox wrote:
+>> On Thu, 10 Nov 2011 19:26:06 +0400
+>> Anton Vorontsov<cbouatmailru@gmail.com>  wrote:
+>>
+>>> Drivers should not use NO_IRQ; moreover, some architectures don't
+>>> have it nowadays. '0' is the 'no irq' case.
 >>>
->>>
->>> drivers/ata/pata_of_platform.c:55:13: error: 'NO_IRQ' undeclared (first use in this function)
+>>> Signed-off-by: Anton Vorontsov<cbouatmailru@gmail.com>
 >>
->>
->> [adding Author: Anton]
->>
->> Build error still present in linux-next of 20111014.
+>> Acked-by: Alan Cox<alan@linux.intel.com>
 >
-> This build failure regression report was ignored twice and then
-> pushed upstream and is still unfixed a month after the initial
-> report. Upstream now fails to build on like 25% of x86 configs.
+> In case if we don't want a "band-aid fix" for 3.2, here is the patch
+> that just does the proper fix (w/ a risk to break minor architectures).
 >
-> What's going on with this bug guys?
+>   drivers/ata/pata_of_platform.c |    2 +-
+>   1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/ata/pata_of_platform.c b/drivers/ata/pata_of_platform.c
+> index a72ab0d..2a472c5 100644
+> --- a/drivers/ata/pata_of_platform.c
+> +++ b/drivers/ata/pata_of_platform.c
+> @@ -52,7 +52,7 @@ static int __devinit pata_of_platform_probe(struct platform_device *ofdev)
+>   	}
+>
+>   	ret = of_irq_to_resource(dn, 0,&irq_res);
+> -	if (ret == NO_IRQ)
+> +	if (!ret)
+>   		irq_res.start = irq_res.end = 0;
+>   	else
+>   		irq_res.flags = 0;
 
-
-Hum, I missed it in my LKML scans, and never got a CC.
-
-Will merge Anton's patch immediately...
+Unless someone screams, that is what I'll push upstream.
 
 	Jeff
