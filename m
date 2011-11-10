@@ -1,27 +1,44 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH 2/2] ata: Don't use NO_IRQ in pata_of_platform driver
-Date: Thu, 10 Nov 2011 15:38:16 +0000
-Message-ID: <20111110153816.239af1d7@lxorguk.ukuu.org.uk>
-References: <20111110151852.GA7465@oksana.dev.rtsoft.ru>
-	<20111110152606.GB3207@oksana.dev.rtsoft.ru>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Thu, 10 Nov 2011 07:48:12 -0800
+Message-ID: <20111110154812.GG27258@google.com>
+References: <20111110133106.12e519d17f6a28adfee3b883@canb.auug.org.au>
+ <201111101311.32012.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <20111110152606.GB3207@oksana.dev.rtsoft.ru>
-Sender: linux-ide-owner@vger.kernel.org
-To: Anton Vorontsov <cbouatmailru@gmail.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Jeff Garzik <jgarzik@redhat.com>, Grant Likely <grant.likely@secretlab.ca>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, devicetree-discuss@lists.ozlabs.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:59289 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932822Ab1KJPsT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2011 10:48:19 -0500
+Content-Disposition: inline
+In-Reply-To: <201111101311.32012.rjw@sisk.pl>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 10 Nov 2011 19:26:06 +0400
-Anton Vorontsov <cbouatmailru@gmail.com> wrote:
-
-> Drivers should not use NO_IRQ; moreover, some architectures don't
-> have it nowadays. '0' is the 'no irq' case.
+On Thu, Nov 10, 2011 at 01:11:31PM +0100, Rafael J. Wysocki wrote:
+> On Thursday, November 10, 2011, Stephen Rothwell wrote:
+> > Hi Rafael,
+> > 
+> > After merging the pm tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> > 
+> > mm/oom_kill.c: In function 'select_bad_process':
+> > mm/oom_kill.c:326:5: error: implicit declaration of function 'thaw_process'
+> > 
+> > Caused by commit 944e192db53c ("freezer: rename thaw_process() to
+> > __thaw_task() and simplify the implementation").
+> > 
+> > I have used the pm tree from next-20111109 for today.
 > 
-> Signed-off-by: Anton Vorontsov <cbouatmailru@gmail.com>
+> Thanks, I'll drop pm-freezer from my linux-next branch until that issue is
+> fixed.
 
-Acked-by: Alan Cox <alan@linux.intel.com>
+Will try to resolve soon.
 
-Alan
+Thanks.
+
+-- 
+tejun
