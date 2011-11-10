@@ -1,61 +1,51 @@
 From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for Oct 25 (pci/ats.c)
-Date: Thu, 10 Nov 2011 14:09:01 +0100
-Message-ID: <20111110130901.GA32026@elte.hu>
-References: <20111025203628.40a1b8a475e32053aa34dabe@canb.auug.org.au>
- <4EA85353.4060101@xenotime.net>
+Subject: Re: linux-next: Tree for Oct 11 (ata/pata_of_platform.c)
+Date: Thu, 10 Nov 2011 14:57:03 +0100
+Message-ID: <20111110135703.GA23609@elte.hu>
+References: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au>
+ <4E94A920.40503@xenotime.net>
+ <4E987829.3080104@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4EA85353.4060101@xenotime.net>
+In-Reply-To: <4E987829.3080104@xenotime.net>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Joerg Roedel <joerg.roedel@amd.com>, Yu Zhao <yu.zhao@intel.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Anton Vorontsov <avorontsov@ru.mvista.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Jeff Garzik <jeff@garzik.org>
 List-Id: linux-next.vger.kernel.org
 
 
 * Randy Dunlap <rdunlap@xenotime.net> wrote:
 
-> On 10/25/11 02:36, Stephen Rothwell wrote:
-> > Hi all,
+> On 10/11/2011 01:37 PM, Randy Dunlap wrote:
+> > On 10/11/11 02:11, Stephen Rothwell wrote:
+> >> Hi all,
+> >>
+> >> The linux-next tree is now available from
+> >> git://github.com/sfrothwell/linux-next.git as a temporary measure while
+> >> the kernel.org servers are unavailable.
+> >>
+> >> It may also turn up on git.kernel.org (depending on the mirroring).  The
+> >> patch set is still absent, however.
+> >>
+> >> Changes since 20111007:
+> >>
+> >> Removed tree: ide (at the maintainer's request)
+> > 
+> > 
+> > drivers/ata/pata_of_platform.c:55:13: error: 'NO_IRQ' undeclared (first use in this function)
 > 
 > 
-> When CONFIG_PCI_IOV is not enabled:
-> (probably because PCI_PRI selects PCI_ATS even when PCI_IOV is not
-> enabled)
+> [adding Author: Anton]
 > 
-> drivers/pci/ats.c:37:5: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:44:11: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:45:5: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:55:5: error: redefinition of 'pci_enable_ats'
-> drivers/pci/ats.c:60:2: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:60:2: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:66:52: error: 'struct pci_dev' has no member named 'physfn'
-> drivers/pci/ats.c:68:3: error: 'struct pci_dev' has no member named 'sriov'
-> drivers/pci/ats.c:69:11: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:70:13: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:75:8: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:76:21: error: 'struct pci_dev' has no member named 'sriov'
-> drivers/pci/ats.c:90:32: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:92:5: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:102:6: error: redefinition of 'pci_disable_ats'
-> drivers/pci/ats.c:106:2: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:106:2: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:108:31: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:110:32: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:112:5: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:115:52: error: 'struct pci_dev' has no member named 'physfn'
-> drivers/pci/ats.c:117:3: error: 'struct pci_dev' has no member named 'sriov'
-> drivers/pci/ats.c:118:7: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:119:12: error: 'struct pci_dev' has no member named 'ats'
-> drivers/pci/ats.c:121:21: error: 'struct pci_dev' has no member named 'sriov'
-> drivers/pci/ats.c:141:5: error: redefinition of 'pci_ats_queue_depth'
-> drivers/pci/ats.c:149:9: error: 'struct pci_dev' has no member named 'ats'
-> next-2011-1025/drivers/pci/ats.c:150:13: error: 'struct pci_dev' has no member named 'ats'
+> Build error still present in linux-next of 20111014.
 
-This build failure is still present upstream, in v3.2-rc1 and later 
-kernels.
+This build failure regression report was ignored twice and then 
+pushed upstream and is still unfixed a month after the initial 
+report. Upstream now fails to build on like 25% of x86 configs.
+
+What's going on with this bug guys?
 
 Thanks,
 
