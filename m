@@ -1,31 +1,32 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Subject: Re: linux-next: Tree for Nov 1 (ata/libata-sff.c)
-Date: Thu, 10 Nov 2011 16:26:56 -0500
-Message-ID: <4EBC41A0.4070008@pobox.com>
-References: <20111101205323.c12f2f940f23febba8ab8989@canb.auug.org.au> <4EB0854D.5090002@xenotime.net>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: build failure after merge of the crypto-current
+	tree
+Date: Fri, 11 Nov 2011 06:50:20 +0800
+Message-ID: <20111110225020.GB4318@gondor.apana.org.au>
+References: <20111101115851.2e37ac680db78bdba0661691@canb.auug.org.au> <20111102200900.GA3454@hades> <20111102233936.GA10058@gondor.apana.org.au> <20111103055824.GC22141@secunet.com> <20111103061628.GA12678@gondor.apana.org.au> <20111103101554.GA17569@onza.mythic-beasts.com> <20111103114214.GA14681@gondor.apana.org.au> <20111103115933.GA12708@onza.mythic-beasts.com> <20111110155019.GA7068@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <4EB0854D.5090002@xenotime.net>
-Sender: linux-ide-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from helcar.apana.org.au ([209.40.204.226]:55892 "EHLO
+	fornost.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751560Ab1KJWui (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2011 17:50:38 -0500
+Content-Disposition: inline
+In-Reply-To: <20111110155019.GA7068@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Luis Henriques <henrix@camandro.org>, Steffen Klassert <steffen.klassert@secunet.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/01/2011 07:48 PM, Randy Dunlap wrote:
-> On 11/01/2011 02:53 AM, Stephen Rothwell wrote:
->> Hi all,
+On Thu, Nov 10, 2011 at 04:50:19PM +0100, Ingo Molnar wrote:
 >
->
-> When ATA_SFF is enabled but ATA_BMDMA is not enabled:
->
->
-> drivers/ata/libata-sff.c: In function 'ata_pci_init_one':
-> drivers/ata/libata-sff.c:2538:3: error: implicit declaration of function 'ata_pci_bmdma_prepare_host'
-> drivers/ata/libata-sff.c:2549:40: error: 'ata_bmdma_interrupt' undeclared (first use in this function)
+> v3.2-rc1 has been released with this (commonly triggering) build bug 
+> included. Herbert, is the fix on the way to upstream?
 
-Absjoern's patch seen, thanks.
+Oops, I thought I had committed it already.  Let me push it now.
 
-
-
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
