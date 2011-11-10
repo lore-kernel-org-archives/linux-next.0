@@ -1,38 +1,31 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Thu, 10 Nov 2011 13:11:31 +0100
-Message-ID: <201111101311.32012.rjw@sisk.pl>
-References: <20111110133106.12e519d17f6a28adfee3b883@canb.auug.org.au>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH] MIPS/sound: DB1200 audio support depends on MIPS arch.
+Date: Thu, 10 Nov 2011 12:17:42 +0000
+Message-ID: <20111110121742.GE21453@linux-mips.org>
+References: <20111110122241.eed1e785e4c015a51b9ef585@canb.auug.org.au>
+ <1320924059-4142-1-git-send-email-manuel.lauss@googlemail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:34243 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753112Ab1KJMIw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Nov 2011 07:08:52 -0500
-In-Reply-To: <20111110133106.12e519d17f6a28adfee3b883@canb.auug.org.au>
+Received: from h5.dl5rb.org.uk ([81.2.74.5]:48213 "EHLO linux-mips.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S932395Ab1KJMSF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Nov 2011 07:18:05 -0500
+Content-Disposition: inline
+In-Reply-To: <1320924059-4142-1-git-send-email-manuel.lauss@googlemail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: Manuel Lauss <manuel.lauss@googlemail.com>
+Cc: alsa-devel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Thursday, November 10, 2011, Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> After merging the pm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> mm/oom_kill.c: In function 'select_bad_process':
-> mm/oom_kill.c:326:5: error: implicit declaration of function 'thaw_process'
-> 
-> Caused by commit 944e192db53c ("freezer: rename thaw_process() to
-> __thaw_task() and simplify the implementation").
-> 
-> I have used the pm tree from next-20111109 for today.
+On Thu, Nov 10, 2011 at 12:20:59PM +0100, Manuel Lauss wrote:
 
-Thanks, I'll drop pm-freezer from my linux-next branch until that issue is
-fixed.
+> DB1200 audio support should only be visible if MIPS/Alchemy arch is
+> selected.  Fixes an x86-allmodconfig build failure in linux-next.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Manuel Lauss <manuel.lauss@googlemail.com>
 
-Rafael
+Thanks, folded into the offending patch.
+
+  Ralf
