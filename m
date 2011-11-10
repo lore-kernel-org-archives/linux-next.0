@@ -1,51 +1,31 @@
-From: "Fenghua Yu" <fenghua.yu@intel.com>
-Subject: [PATCH] kernel/cpu.c: Add right qualifiers for intel_thermal_interrupt() and cpu_hotplug_pm_sync_init()
-Date: Thu, 10 Nov 2011 12:22:44 -0800
-Message-ID: <1320956564-21334-1-git-send-email-fenghua.yu@intel.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:34657 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755025Ab1KJUj6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Nov 2011 15:39:58 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, "Rafael J. Wysocki" <rjw@sisk.pl>, "Srivatsa S. Bhat" <sriva>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-pm <linux-pm@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
+From: Jeff Garzik <jgarzik@pobox.com>
+Subject: Re: linux-next: Tree for Nov 1 (ata/libata-sff.c)
+Date: Thu, 10 Nov 2011 16:26:56 -0500
+Message-ID: <4EBC41A0.4070008@pobox.com>
+References: <20111101205323.c12f2f940f23febba8ab8989@canb.auug.org.au> <4EB0854D.5090002@xenotime.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-2; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <4EB0854D.5090002@xenotime.net>
+Sender: linux-ide-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Fenghua Yu <fenghua.yu@intel.com>
+On 11/01/2011 07:48 PM, Randy Dunlap wrote:
+> On 11/01/2011 02:53 AM, Stephen Rothwell wrote:
+>> Hi all,
+>
+>
+> When ATA_SFF is enabled but ATA_BMDMA is not enabled:
+>
+>
+> drivers/ata/libata-sff.c: In function 'ata_pci_init_one':
+> drivers/ata/libata-sff.c:2538:3: error: implicit declaration of function 'ata_pci_bmdma_prepare_host'
+> drivers/ata/libata-sff.c:2549:40: error: 'ata_bmdma_interrupt' undeclared (first use in this function)
 
-Add __init for functions alloc_frozen_cpus() and cpu_hotplug_pm_sync_init()
-because they are only called during boot time.
+Absjoern's patch seen, thanks.
 
-Add static for function cpu_hotplug_pm_sync_init() because its scope is limited
-in this file only.
 
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
----
- kernel/cpu.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 563f136..cf915b8 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -470,7 +470,7 @@ out:
- 	cpu_maps_update_done();
- }
- 
--static int alloc_frozen_cpus(void)
-+static int __init alloc_frozen_cpus(void)
- {
- 	if (!alloc_cpumask_var(&frozen_cpus, GFP_KERNEL|__GFP_ZERO))
- 		return -ENOMEM;
-@@ -543,7 +543,7 @@ cpu_hotplug_pm_callback(struct notifier_block *nb,
- }
- 
- 
--int cpu_hotplug_pm_sync_init(void)
-+static int __init cpu_hotplug_pm_sync_init(void)
- {
- 	pm_notifier(cpu_hotplug_pm_callback, 0);
- 	return 0;
--- 
-1.6.0.3
