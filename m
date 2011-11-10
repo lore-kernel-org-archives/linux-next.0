@@ -1,61 +1,51 @@
-From: Jeff Garzik <jeff@garzik.org>
-Subject: Re: [PATCH] ata: Don't use NO_IRQ in pata_of_platform driver
-Date: Thu, 10 Nov 2011 15:34:30 -0500
-Message-ID: <4EBC3556.5000000@garzik.org>
-References: <20111110151852.GA7465@oksana.dev.rtsoft.ru> <20111110152606.GB3207@oksana.dev.rtsoft.ru> <20111110153816.239af1d7@lxorguk.ukuu.org.uk> <20111110162859.GA7088@oksana.dev.rtsoft.ru>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Fenghua Yu" <fenghua.yu@intel.com>
+Subject: [PATCH] kernel/cpu.c: Add right qualifiers for intel_thermal_interrupt() and cpu_hotplug_pm_sync_init()
+Date: Thu, 10 Nov 2011 12:22:44 -0800
+Message-ID: <1320956564-21334-1-git-send-email-fenghua.yu@intel.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:45016 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752616Ab1KJUee (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2011 15:34:34 -0500
-In-Reply-To: <20111110162859.GA7088@oksana.dev.rtsoft.ru>
+Received: from mga01.intel.com ([192.55.52.88]:34657 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755025Ab1KJUj6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Nov 2011 15:39:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <cbouatmailru@gmail.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Ingo Molnar <mingo@elte.hu>, Jeff Garzik <jgarzik@redhat.com>, Grant Likely <grant.likely@secretlab.ca>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, devicetree-discuss@lists.ozlabs.org
+To: Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, "Rafael J. Wysocki" <rjw@sisk.pl>, "Srivatsa S. Bhat" <sriva>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-pm <linux-pm@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
 
-On 11/10/2011 11:28 AM, Anton Vorontsov wrote:
-> Drivers should not use NO_IRQ; moreover, some architectures don't
-> have it nowadays. '0' is the 'no irq' case.
->
-> Signed-off-by: Anton Vorontsov<cbouatmailru@gmail.com>
-> Acked-by: Alan Cox<alan@linux.intel.com>
-> ---
->
-> On Thu, Nov 10, 2011 at 03:38:16PM +0000, Alan Cox wrote:
->> On Thu, 10 Nov 2011 19:26:06 +0400
->> Anton Vorontsov<cbouatmailru@gmail.com>  wrote:
->>
->>> Drivers should not use NO_IRQ; moreover, some architectures don't
->>> have it nowadays. '0' is the 'no irq' case.
->>>
->>> Signed-off-by: Anton Vorontsov<cbouatmailru@gmail.com>
->>
->> Acked-by: Alan Cox<alan@linux.intel.com>
->
-> In case if we don't want a "band-aid fix" for 3.2, here is the patch
-> that just does the proper fix (w/ a risk to break minor architectures).
->
->   drivers/ata/pata_of_platform.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/ata/pata_of_platform.c b/drivers/ata/pata_of_platform.c
-> index a72ab0d..2a472c5 100644
-> --- a/drivers/ata/pata_of_platform.c
-> +++ b/drivers/ata/pata_of_platform.c
-> @@ -52,7 +52,7 @@ static int __devinit pata_of_platform_probe(struct platform_device *ofdev)
->   	}
->
->   	ret = of_irq_to_resource(dn, 0,&irq_res);
-> -	if (ret == NO_IRQ)
-> +	if (!ret)
->   		irq_res.start = irq_res.end = 0;
->   	else
->   		irq_res.flags = 0;
+From: Fenghua Yu <fenghua.yu@intel.com>
 
-Unless someone screams, that is what I'll push upstream.
+Add __init for functions alloc_frozen_cpus() and cpu_hotplug_pm_sync_init()
+because they are only called during boot time.
 
-	Jeff
+Add static for function cpu_hotplug_pm_sync_init() because its scope is limited
+in this file only.
+
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+---
+ kernel/cpu.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 563f136..cf915b8 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -470,7 +470,7 @@ out:
+ 	cpu_maps_update_done();
+ }
+ 
+-static int alloc_frozen_cpus(void)
++static int __init alloc_frozen_cpus(void)
+ {
+ 	if (!alloc_cpumask_var(&frozen_cpus, GFP_KERNEL|__GFP_ZERO))
+ 		return -ENOMEM;
+@@ -543,7 +543,7 @@ cpu_hotplug_pm_callback(struct notifier_block *nb,
+ }
+ 
+ 
+-int cpu_hotplug_pm_sync_init(void)
++static int __init cpu_hotplug_pm_sync_init(void)
+ {
+ 	pm_notifier(cpu_hotplug_pm_callback, 0);
+ 	return 0;
+-- 
+1.6.0.3
