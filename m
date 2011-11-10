@@ -1,32 +1,38 @@
-From: Manuel Lauss <manuel.lauss@googlemail.com>
-Subject: Re: [PATCH] MIPS/sound: DB1200 audio support depends on MIPS arch.
-Date: Thu, 10 Nov 2011 12:46:16 +0100
-Message-ID: <CAOLZvyFYH7s4NJwKTvr-_WrS6kLKBZvgH8ZOi07EUgcZ-U-PHg@mail.gmail.com>
-References: <20111110122241.eed1e785e4c015a51b9ef585@canb.auug.org.au> <1320924059-4142-1-git-send-email-manuel.lauss@googlemail.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Thu, 10 Nov 2011 13:11:31 +0100
+Message-ID: <201111101311.32012.rjw@sisk.pl>
+References: <20111110133106.12e519d17f6a28adfee3b883@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:64912 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933922Ab1KJLq6 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2011 06:46:58 -0500
-In-Reply-To: <1320924059-4142-1-git-send-email-manuel.lauss@googlemail.com>
+Received: from ogre.sisk.pl ([217.79.144.158]:34243 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753112Ab1KJMIw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Nov 2011 07:08:52 -0500
+In-Reply-To: <20111110133106.12e519d17f6a28adfee3b883@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: alsa-devel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Manuel Lauss <manuel.lauss@googlemail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On Thu, Nov 10, 2011 at 12:20 PM, Manuel Lauss
-<manuel.lauss@googlemail.com> wrote:
-> DB1200 audio support should only be visible if MIPS/Alchemy arch is
-> selected. =A0Fixes an x86-allmodconfig build failure in linux-next.
->
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Manuel Lauss <manuel.lauss@googlemail.com>
+On Thursday, November 10, 2011, Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> After merging the pm tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> mm/oom_kill.c: In function 'select_bad_process':
+> mm/oom_kill.c:326:5: error: implicit declaration of function 'thaw_process'
+> 
+> Caused by commit 944e192db53c ("freezer: rename thaw_process() to
+> __thaw_task() and simplify the implementation").
+> 
+> I have used the pm tree from next-20111109 for today.
 
-Please ignore this one.  This is caused by  a stray change in on the
-Alchemy patches
-for 3.3.   I'll send a fix to Ralf asap.
+Thanks, I'll drop pm-freezer from my linux-next branch until that issue is
+fixed.
 
-Manuel
+Rafael
