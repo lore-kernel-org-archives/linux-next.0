@@ -1,90 +1,105 @@
 From: Anton Vorontsov <cbouatmailru@gmail.com>
-Subject: [PATCH] ata: Fix build error in pata_of_platform (NO_IRQ usage)
-Date: Thu, 10 Nov 2011 19:18:52 +0400
-Message-ID: <20111110151852.GA7465@oksana.dev.rtsoft.ru>
-References: <20111011201127.455df266dcbffb1d621f8576@canb.auug.org.au>
- <4E94A920.40503@xenotime.net>
- <4E987829.3080104@xenotime.net>
- <20111110135703.GA23609@elte.hu>
+Subject: [PATCH 1/2] of/irq: Get rid of NO_IRQ usage
+Date: Thu, 10 Nov 2011 19:25:41 +0400
+Message-ID: <20111110152541.GA3207@oksana.dev.rtsoft.ru>
+References: <20111110151852.GA7465@oksana.dev.rtsoft.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:34664 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933817Ab1KJPS5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2011 10:18:57 -0500
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:61738 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934229Ab1KJPZq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2011 10:25:46 -0500
 Content-Disposition: inline
-In-Reply-To: <20111110135703.GA23609@elte.hu>
+In-Reply-To: <20111110151852.GA7465@oksana.dev.rtsoft.ru>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Ingo Molnar <mingo@elte.hu>, Jeff Garzik <jgarzik@redhat.com>, Grant Likely <grant.likely@secretlab.ca>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, devicetree-discuss@lists.ozlabs.org
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, devicetree-discuss@lists.ozlabs.org, Alan Cox <alan@lxorguk.ukuu.org.uk>
 
-This patch makes a band-aid fix the following build failure:
+PPC32/64 defines NO_IRQ to zero, so no problems expected.
+ARM defines NO_IRQ to -1, but OF code relies on IRQ domains support,
+which returns correct ('0') value in 'no irq' case. So everything
+should be fine.
 
-  CC      drivers/ata/pata_of_platform.o
-drivers/ata/pata_of_platform.c: In function 'pata_of_platform_probe':
-drivers/ata/pata_of_platform.c:55:13: error: 'NO_IRQ' undeclared (first use in this function)
-drivers/ata/pata_of_platform.c:55:13: note: each undeclared identifier is reported only once for each function it appears in
-
-The proper fix (stop OF code from returning NO_IRQ values) is pending.
+Other arches might break if some of their OF drivers rely on NO_IRQ
+being not 0. If so, the drivers must be fixed, finally.
 
 Signed-off-by: Anton Vorontsov <cbouatmailru@gmail.com>
 ---
+ drivers/of/irq.c |   30 ++++++++++++++++++------------
+ 1 files changed, 18 insertions(+), 12 deletions(-)
 
-On Thu, Nov 10, 2011 at 02:57:03PM +0100, Ingo Molnar wrote:
-[...]
-> > > drivers/ata/pata_of_platform.c:55:13: error: 'NO_IRQ' undeclared (first use in this function)
-> > 
-> > [adding Author: Anton]
-> > 
-> > Build error still present in linux-next of 20111014.
-> 
-> This build failure regression report was ignored twice and then 
-> pushed upstream and is still unfixed a month after the initial 
-> report. Upstream now fails to build on like 25% of x86 configs.
-> 
-> What's going on with this bug guys?
-
-Here is the story:
-
-- NO_IRQ is evil[1], AFAIR the trend is to remove its usage completely;
-- Sane arches (x86) don't use it at all, or have it defined to 0
-  (PPC32/64).
-- On another arches it is either -1 or whatever random value;
-- The NO_IRQ disease spreads despite our willingness, even within
-  the new OF code.
-
-The new irq domain stuff (that is used on ARM) always returns 0
-in 'no irq' case, so we may easily remove it.
-
-So the proper fix would be two-fold: for OF and for that driver.
-But this is for 3.3 kernels. I'll send the two patches as follow-ups.
-
-In the meantime, the band-aid (for 3.2) is down below.
-
-[1]
-http://lkml.org/lkml/2005/11/22/159
-http://lkml.org/lkml/2005/11/22/227
-
- drivers/ata/pata_of_platform.c |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/ata/pata_of_platform.c b/drivers/ata/pata_of_platform.c
-index a72ab0d..f99e17b 100644
---- a/drivers/ata/pata_of_platform.c
-+++ b/drivers/ata/pata_of_platform.c
-@@ -16,6 +16,11 @@
- #include <linux/of_platform.h>
- #include <linux/ata_platform.h>
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index 6d3dd39..2dd4937 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -26,11 +26,6 @@
+ #include <linux/string.h>
+ #include <linux/slab.h>
  
-+/* For archs that don't support NO_IRQ (such as x86), provide a dummy value */
-+#ifndef NO_IRQ
-+#define NO_IRQ 0
-+#endif
-+
- static int __devinit pata_of_platform_probe(struct platform_device *ofdev)
+-/* For archs that don't support NO_IRQ (such as x86), provide a dummy value */
+-#ifndef NO_IRQ
+-#define NO_IRQ 0
+-#endif
+-
+ /**
+  * irq_of_parse_and_map - Parse and map an interrupt into linux virq space
+  * @device: Device node of the device whose interrupt is to be mapped
+@@ -42,12 +37,23 @@
+ unsigned int irq_of_parse_and_map(struct device_node *dev, int index)
  {
- 	int ret;
+ 	struct of_irq oirq;
++	int ret = 0;
+ 
+ 	if (of_irq_map_one(dev, index, &oirq))
+-		return NO_IRQ;
+-
+-	return irq_create_of_mapping(oirq.controller, oirq.specifier,
+-				     oirq.size);
++		goto no_irq;
++
++	ret = irq_create_of_mapping(oirq.controller, oirq.specifier,
++				    oirq.size);
++no_irq:
++#ifdef NO_IRQ
++#if NO_IRQ != 0
++	if (ret == NO_IRQ)
++		pr_warn("Hit NO_IRQ case for your arch. Drivers might expect "
++			"NO_IRQ, but we return 0. If anything breaks, driver "
++			"have to be fixed.\n");
++#endif
++#endif
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(irq_of_parse_and_map);
+ 
+@@ -345,7 +351,7 @@ int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
+ 
+ 	/* Only dereference the resource if both the
+ 	 * resource and the irq are valid. */
+-	if (r && irq != NO_IRQ) {
++	if (r && irq) {
+ 		r->start = r->end = irq;
+ 		r->flags = IORESOURCE_IRQ;
+ 		r->name = dev->full_name;
+@@ -363,7 +369,7 @@ int of_irq_count(struct device_node *dev)
+ {
+ 	int nr = 0;
+ 
+-	while (of_irq_to_resource(dev, nr, NULL) != NO_IRQ)
++	while (of_irq_to_resource(dev, nr, NULL))
+ 		nr++;
+ 
+ 	return nr;
+@@ -383,7 +389,7 @@ int of_irq_to_resource_table(struct device_node *dev, struct resource *res,
+ 	int i;
+ 
+ 	for (i = 0; i < nr_irqs; i++, res++)
+-		if (of_irq_to_resource(dev, i, res) == NO_IRQ)
++		if (!of_irq_to_resource(dev, i, res))
+ 			break;
+ 
+ 	return i;
 -- 
 1.7.5.3
