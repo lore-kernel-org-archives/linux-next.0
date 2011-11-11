@@ -1,76 +1,114 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the slave-dma tree with the s5p tree
-Date: Fri, 11 Nov 2011 12:00:13 +1100
-Message-ID: <20111111120013.e425db4686acbd346e10a49b@canb.auug.org.au>
+Subject: linux-next: manual merge of the input tree with the s5p tree
+Date: Fri, 11 Nov 2011 13:11:47 +1100
+Message-ID: <20111111131147.3f7ab8c9f14a7d87cc83b5ac@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__11_Nov_2011_12_00_13_+1100_ASC/S.0MAtN/PJ4J"
+ boundary="Signature=_Fri__11_Nov_2011_13_11_47_+1100__4zMnpzn28wz4kWm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:36833 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:60630 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752151Ab1KKBAX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2011 20:00:23 -0500
+	with ESMTP id S1751560Ab1KKCMA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Nov 2011 21:12:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
 
---Signature=_Fri__11_Nov_2011_12_00_13_+1100_ASC/S.0MAtN/PJ4J
+--Signature=_Fri__11_Nov_2011_13_11_47_+1100__4zMnpzn28wz4kWm
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Vinod,
+Hi Dmitry,
 
-Today's linux-next merge of the slave-dma tree got a conflict in
-drivers/dma/pl330.c between commit c6e00b47067b ("DMA: PL330: Add device
-tree support") from the s5p tree and commit dab6538e29e6 ("DMA: PL330:
-Fix build warning") from the slave-dma tree.
+Today's linux-next merge of the input tree got a conflict in
+drivers/input/keyboard/samsung-keypad.c between commit 532f74540134
+("input: samsung-keypad: Add device tree support") from the s5p tree and
+commit 400bf2995be6 ("Input: samsung-keypad - switch to using
+SIMPLE_DEV_PM_OPS") from the input tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/dma/pl330.c
-index a626e15,186b822..0000000
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@@ -870,8 -856,8 +870,8 @@@ pl330_probe(struct amba_device *adev, c
-  	INIT_LIST_HEAD(&pd->channels);
+diff --cc drivers/input/keyboard/samsung-keypad.c
+index 8a0060c,1a2b755..0000000
+--- a/drivers/input/keyboard/samsung-keypad.c
++++ b/drivers/input/keyboard/samsung-keypad.c
+@@@ -21,10 -21,8 +21,10 @@@
+  #include <linux/module.h>
+  #include <linux/platform_device.h>
+  #include <linux/slab.h>
+ +#include <linux/of.h>
+ +#include <linux/of_gpio.h>
+  #include <linux/sched.h>
+- #include <plat/keypad.h>
++ #include <linux/input/samsung-keypad.h>
  =20
-  	/* Initialize channel parameters */
-- 	num_chan =3D max(pdat ? pdat->nr_valid_peri : (u8)pi->pcfg.num_peri,
-- 			(u8)pi->pcfg.num_chan);
- -	num_chan =3D max(pdat ? (int)pdat->nr_valid_peri : 0,
- -					(int)pi->pcfg.num_chan);
-++	num_chan =3D max(pdat ? (int)pdat->nr_valid_peri : (int)pi->pcfg.num_per=
-i,
-++			(int)pi->pcfg.num_chan);
-  	pdmac->peripherals =3D kzalloc(num_chan * sizeof(*pch), GFP_KERNEL);
+  #define SAMSUNG_KEYIFCON			0x00
+  #define SAMSUNG_KEYIFSTSCLR			0x04
+@@@ -578,24 -440,11 +578,22 @@@ static int samsung_keypad_resume(struc
  =20
-  	for (i =3D 0; i < num_chan; i++) {
+  	return 0;
+  }
+-=20
+- static const struct dev_pm_ops samsung_keypad_pm_ops =3D {
+- 	.suspend	=3D samsung_keypad_suspend,
+- 	.resume		=3D samsung_keypad_resume,
+- };
+  #endif
+ =20
+ +#ifdef CONFIG_OF
+ +static const struct of_device_id samsung_keypad_dt_match[] =3D {
+ +	{ .compatible =3D "samsung,s3c6410-keypad" },
+ +	{ .compatible =3D "samsung,s5pv210-keypad" },
+ +	{},
+ +};
+ +MODULE_DEVICE_TABLE(of, samsung_keypad_dt_match);
+ +#else
+ +#define samsung_keypad_dt_match NULL
+ +#endif
+ +
++ static SIMPLE_DEV_PM_OPS(samsung_keypad_pm_ops,
++ 			 samsung_keypad_suspend, samsung_keypad_resume);
++=20
+  static struct platform_device_id samsung_keypad_driver_ids[] =3D {
+  	{
+  		.name		=3D "samsung-keypad",
+@@@ -614,10 -463,7 +612,8 @@@ static struct platform_driver samsung_k
+  	.driver		=3D {
+  		.name	=3D "samsung-keypad",
+  		.owner	=3D THIS_MODULE,
+ +		.of_match_table =3D samsung_keypad_dt_match,
+- #ifdef CONFIG_PM
+  		.pm	=3D &samsung_keypad_pm_ops,
+- #endif
+  	},
+  	.id_table	=3D samsung_keypad_driver_ids,
+  };
 
---Signature=_Fri__11_Nov_2011_12_00_13_+1100_ASC/S.0MAtN/PJ4J
+--Signature=_Fri__11_Nov_2011_13_11_47_+1100__4zMnpzn28wz4kWm
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOvHOdAAoJEECxmPOUX5FEzzIP/AgLG0xN3oQOHL0zhsH7KpMI
-MwpAq5aggaBzlCU5mPipHlaJzawj317w4oEBku1zWzjxW3R33YTBs+b2SA7xxpmy
-T8+8sr8RWFBIkEDLQjwAp6We+jJg/KUzfGst9T4y4poX4IXYntCBGBaZNJMqbf1y
-KcACzDsVjv5jDg7A/UyGp/PoIQBBrc27x6yiGmqn5QsV6XPac6wFRPTp12/Gs0zv
-3HDiNNtWTjW6RdC4grCtNS53c8PLmE0xmzmIoj1KLE5jkjXezopQzrSQUL3sCxnf
-HlZd+bVNjZ9/NPTi+InevXdESfMvFw7ZjQYdep5E5FJ98A8PM8TTr+HVDRYwi98e
-LSmedOCQ0GSXGJVpvbq5b1Rt6tTUI4gzg96QD4KOVbSqCmtVUdh7M8KdqTO24Qpj
-3eG38j8HT5AHZgKSXPK2J6k8IF/GT2qgbHZGI71E43MSRDGoRjS9Jmpd1EpXUJQa
-78pCUWFZeMWggT8CbgvAy0IrSyj8MEE4HQIJrC9fmn/O5EbLtqzNrcD8IjLlSJXe
-BERChRe1EGBzkaMbRl+EYpKn0w5YrGbILj23rR1+gWe9TNbqzNv2NL1s6GuCD52s
-ipRElKPMU4TG2IgRzPkw24VEYPCTPTYui6f6Bxgvh3aqgBXH+v4HTXGYSWlC445f
-gsCESoZm2CrXrMoGHq9T
-=/U1w
+iQIcBAEBCAAGBQJOvIRjAAoJEECxmPOUX5FE6cwP/j7IpBR0T7qRyyHwwm77TCoH
+7WMdOSC8EInlhZ5dodzMMPYAwzGMtYa++S8ATEAildAWCbN0WACIuiehjyboHu+l
+Whq2PS6jtM9PyoCwBPtYzu/dUFeuy032WX6oIfvCyxqrL9ac6GXhDooL43V/tC2X
+qnfOFvu6QTMkGnPy/OqFAtaSV+sK9rU/m0I5SDYgHFGlvNMnu7Lc7jzzMUwct1ST
+Ks3hrbv94q9QxfR+dU12NSX+cRtXSelfWtJrbNd8Uhobw2H/gORnuo1JH9ZXgLGc
+Bz4S3fo+ybvyr2ljKtZwE7glO6jLbMs130nQoXVoHz00b1cA+dvIYSBNQYLbHO2x
+jOMouF5oleBsVOjIGtR6IsV3VL63F2YgiH2MJQV6ZyHAMW9QldH8bpBy/YLNnKwY
+q+anrLH/4JgJQfC8PQPuQaZ83oUknmRohhpWo7abBkEpamXAQFxLHcHQZAE+TEmW
+pktgzMKu0UGk2xFhwZyE1P8D58d52ZA0sxBVytmznwUHU//EzUugcko+dKvaU3dd
+ISfdRSqDohTJLd9Xm16ukNAQUQb1lTsJQA9WMUyUPuWnsACeGJHXd7oYYF6Id1dR
+jNyrzFhBkOXYKhYb5ModDxrY5JOd8BYIhpC/8jjeX6J5DgVuCIO/BKF4mnvTyuZ9
+LX7SwhGeBKOM2K1Ic1ej
+=38Al
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__11_Nov_2011_12_00_13_+1100_ASC/S.0MAtN/PJ4J--
+--Signature=_Fri__11_Nov_2011_13_11_47_+1100__4zMnpzn28wz4kWm--
