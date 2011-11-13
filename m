@@ -1,82 +1,49 @@
-From: Mike Frysinger <vapier@gentoo.org>
-Subject: Re: Blackfin.git tree change
-Date: Sun, 13 Nov 2011 11:50:27 -0500
-Message-ID: <201111131150.28881.vapier@gentoo.org>
-References: <CAA_GA1f8+6bqXGXo33GDbJmXvaqdD-qMUh=ejx0+Ag-shmc0uw@mail.gmail.com> <20111113231944.4677bd7a2154975c989663ab@canb.auug.org.au> <CAA_GA1fFspdayjpLNpm1C-kPug6n7LXyJ0dqiX=3d_gHt2U9xg@mail.gmail.com>
+From: Anders Larsen <al@alarsen.net>
+Subject: [PATCH -next] qnx4fs: Use kmemdup rather than duplicating its implementation
+Date: Sun, 13 Nov 2011 18:47:49 +0100
+Message-ID: <201111131847.49842.al@alarsen.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart660606697.167xMpUnOm";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.gentoo.org ([140.211.166.183]:53223 "EHLO smtp.gentoo.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752891Ab1KMQua (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 13 Nov 2011 11:50:30 -0500
-In-Reply-To: <CAA_GA1fFspdayjpLNpm1C-kPug6n7LXyJ0dqiX=3d_gHt2U9xg@mail.gmail.com>
+Received: from de01.mail.all-tld.net ([195.140.232.8]:59292 "EHLO
+	de01.mail.all-tld.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752643Ab1KMSTS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Nov 2011 13:19:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bob Liu <lliubbo@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sonic.zhang@analog.com
+To: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Thomas Meyer <thomas@m3y3r.de>
 
---nextPart660606697.167xMpUnOm
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: Thomas Meyer <thomas@m3y3r.de>
 
-On Sunday 13 November 2011 09:50:41 Bob Liu wrote:
-> On Sun, Nov 13, 2011 at 8:19 PM, Stephen Rothwell wrote:
-> > The only thing I did notice, is that this commit was in Mike's tree but
-> > is not in yours:
-> >=20
-> > Author: Sonic Zhang <sonic.zhang@analog.com>
-> > Date:   Mon Aug 1 17:53:21 2011 +0800
-> >=20
-> >    Blackfin: add serial TX IRQ in individual platform resource
-> >=20
-> >    The serial TX IRQ is not simply (RX IRQ + 1) on some Blackfin chips,
-> >    so move the values to the platform resources.
-> >=20
-> >    Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
-> >    Signed-off-by: Mike Frysinger <vapier@gentoo.org>
-> >=20
-> > Just in case it was forgotten.
->=20
-> Sorry for that, I thought that patch has been merged to mainline.
-> I'll update it soon. Thanks.
+Use kmemdup rather than duplicating its implementation
 
-i figured this would be a good test for you merging things ;).  this patch=
-=20
-needs to be merged into mainline before 3.2 is released ... and the sooner,=
-=20
-the better.
+The semantic patch that makes this change is available
+in scripts/coccinelle/api/memdup.cocci.
 
-it was waiting on the tty/serial layers to be merged, and now that they hav=
-e,=20
-that patch can now be merged.
-=2Dmike
+Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+Signed-off-by: Anders Larsen <al@alarsen.net>
+---
 
---nextPart660606697.167xMpUnOm
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.17 (GNU/Linux)
-
-iQIcBAABAgAGBQJOv/VUAAoJEEFjO5/oN/WB4FgP/jYQbn53ktAvdzBXwb4a2gCw
-JVwinG+Gt6EIyfbufXjE120fASGF9ym4yObt732vVOI5u8fOHPJl+leXWu7fW3hn
-uk/r9yt0lh0momw42rRcK5xmScDC3q3ge2XDtHyn06EO4/Q4TGLFuJEksilDjx1Y
-jEi9ZHCuxapJo4Ed5Fg0m2zhpAPcrbPemerQgjNR3rdlr8xloHkHgCZA1D29z0ul
-Oo4e2RcMnbbSE44xhNxr31/BlKhQ/1fqS5dRWZcHTBU6Kev4BETRL2rc5F4RTPQd
-bNsmiqmRmWioebrDj4orTmzQPT/Ub6w4SCogGduIPsWQvkLIuDeqo74A0ENthL25
-SjJAOCJddYNuXXuKkkCiVppjynGtFczdAdncxMUh87Iaz6KQ+dLBjdcQwqyfPc6Q
-5wt/JquHg4weEkYk8OTzyaQg6oMNCpgs3I26lmt2Vgija/eV33Hgus6VkpSKFdEs
-nxYWACDScVzCKTAmLPpEvPIf2jC6Yx72y/3AFX5YYLDHdU1ohkku27Bt789kZfPv
-THcvHnLm1fnBdgdM0WtDzK3jW3IhSawJ3nXPT+fnL2Q1t7BiAqfjb8zXFhNrk7qu
-2U+8zknD92Kbwy9IAUngPz66smPmwf6No19l7DpIljtFqcxuSLHcL5iz9yvOy6Yc
-inpxsl4K0I1G8SOF+uau
-=t4CQ
------END PGP SIGNATURE-----
-
---nextPart660606697.167xMpUnOm--
+diff -u -p a/fs/qnx4/inode.c b/fs/qnx4/inode.c
+--- a/fs/qnx4/inode.c 2011-11-07 19:38:23.987165894 +0100
++++ b/fs/qnx4/inode.c 2011-11-08 10:33:59.882543999 +0100
+@@ -199,12 +199,13 @@ static const char *qnx4_checkroot(struct
+ 					if (!strcmp(rootdir->di_fname,
+ 						    QNX4_BMNAME)) {
+ 						found = 1;
+-						qnx4_sb(sb)->BitMap = kmalloc( sizeof( struct qnx4_inode_entry ), GFP_KERNEL );
++						qnx4_sb(sb)->BitMap = kmemdup(rootdir,
++									      sizeof(struct qnx4_inode_entry),
++									      GFP_KERNEL);
+ 						if (!qnx4_sb(sb)->BitMap) {
+ 							brelse (bh);
+ 							return "not enough memory for bitmap inode";
+-						}
+-						memcpy( qnx4_sb(sb)->BitMap, rootdir, sizeof( struct qnx4_inode_entry ) );	/* keep bitmap inode known */
++						}/* keep bitmap inode known */
+ 						break;
+ 					}
+ 				}
