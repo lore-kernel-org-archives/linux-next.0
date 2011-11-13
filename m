@@ -1,112 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Blackfin.git tree change
-Date: Sun, 13 Nov 2011 23:19:44 +1100
-Message-ID: <20111113231944.4677bd7a2154975c989663ab@canb.auug.org.au>
-References: <CAA_GA1f8+6bqXGXo33GDbJmXvaqdD-qMUh=ejx0+Ag-shmc0uw@mail.gmail.com>
+Subject: linux-next: missing trees
+Date: Mon, 14 Nov 2011 00:37:16 +1100
+Message-ID: <20111114003716.40787de80a8b2925aa76ca32@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sun__13_Nov_2011_23_19_44_+1100_bopK4kjb3T7HGvQa"
+ boundary="Signature=_Mon__14_Nov_2011_00_37_16_+1100_+vNQSFqYAUuuAhEq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:35732 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:40648 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751180Ab1KMMUH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Nov 2011 07:20:07 -0500
-In-Reply-To: <CAA_GA1f8+6bqXGXo33GDbJmXvaqdD-qMUh=ejx0+Ag-shmc0uw@mail.gmail.com>
+	with ESMTP id S1753013Ab1KMNh0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Nov 2011 08:37:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bob Liu <lliubbo@gmail.com>
-Cc: Linux-Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>, sonic.zhang@analog.com
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Sun__13_Nov_2011_23_19_44_+1100_bopK4kjb3T7HGvQa
+--Signature=_Mon__14_Nov_2011_00_37_16_+1100_+vNQSFqYAUuuAhEq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bob,
+Hi all,
 
-On Fri, 11 Nov 2011 18:49:59 +0800 Bob Liu <lliubbo@gmail.com> wrote:
->
-> I'll take most of the arch Blackfin maintain work from now on.
->=20
-> My tree is:
-> git://git.kernel.org/pub/scm/linux/kernel/git/lliubbo/blackfin.git#for-li=
-nus
->=20
-> Would you please update it for linux-next.
+The trees below are still missing from linux-next.  The URL column is
+relative to git://git.kernel.org/pub/scm/linux/kernel/git/ .
 
-OK, I have switched to that tree and will put you as the contact.  Should
-I also keep Mike as a contact for problems with this tree?
-
-The only thing I did notice, is that this commit was in Mike's tree but
-is not in yours:
-
-Author: Sonic Zhang <sonic.zhang@analog.com>
-Date:   Mon Aug 1 17:53:21 2011 +0800
-
-    Blackfin: add serial TX IRQ in individual platform resource
-   =20
-    The serial TX IRQ is not simply (RX IRQ + 1) on some Blackfin chips,
-    so move the values to the platform resources.
-   =20
-    Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
-    Signed-off-by: Mike Frysinger <vapier@gentoo.org>
-
-Just in case it was forgotten.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+Tree		URL				branch
+----		---				------
+audit-current	viro/audit-current.git		for-linus
+sh-current	lethal/sh-2.6.git		sh-fixes-for-linus
+rmobile-current	lethal/sh-2.6.git		rmobile-fixes-for-linus
+linux-spec	dwalker/linux-spec		for-next
+omap		tmlind/linux-omap-2.6.git	for-next
+pxa		ycmiao/pxa-linux-2.6.git	for-next
+4xx		jwboyer/powerpc-4xx.git		next
+sh		lethal/sh-2.6.git		sh-latest
+rmobile		lethal/sh-2.6.git		rmobile-latest
+unicore32	epip/linux-unicore.git		unicore32
+xtensa		czankel/xtensa-next.git		master
+configfs	jlbec/configfs.git		linux-next
+ecryptfs	ecryptfs/ecryptfs-2.6.git	next
+fatfs		hirofumi/fatfs-2.6.git		master
+fuse		mszeredi/fuse.git		for-next
+hfsplus		hch/hfsplus.git			for-next
+jfs		shaggy/jfs-2.6.git		next
+nilfs2		ryusuke/nilfs2.git		for-next
+vfs		viro/vfs-2.6.git		for-next
+vfs-scale	npiggin/linux-npiggin.git	vfs-scale-working
+kconfig		rostedt/linux-2.6-kconfig.git	for-next
+cpupowerutils	brodo/cpupowerutils.git		master
+swiotlb		konrad/swiotlb-2.6.git		master
+ibft		konrad/ibft-2.6.git		master
+async_tx	djbw/async_tx.git		next
+cpufreq		davej/cpufreq.git		next
+input-mt	rydberg/input-mt.git		next
+lsm		chrisw/lsm-2.6.git		for-next
+pcmcia		brodo/pcmcia-2.6.git		master
+hdlc		chris/linux-2.6.git		hdlc-next
+bdev		viro/bdev.git			master
+nommu		dhowells/linux-2.6-nommu.git	master
+sfi		lenb/linux-sfi-2.6.git		sfi-test
+asm-generic	arnd/asm-generic		next
+drivers-x86	mjg59/platform-drivers-x86	linux-next
+hwpoison	ak/linux-mce-2.6.git		hwpoison
+namespace	ebiederm/linux-2.6-nsfd.git	master
+bkl-config	arnd/bkl.git			config
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Sun__13_Nov_2011_23_19_44_+1100_bopK4kjb3T7HGvQa
+--Signature=_Mon__14_Nov_2011_00_37_16_+1100_+vNQSFqYAUuuAhEq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOv7XgAAoJEECxmPOUX5FEk8YP/23rnx8KdwpW7c28mQP7YI8p
-2vIi1WjO6xd/WMDh9SudHhEVdJ2s6L8C7cuJVcyf6XMCjV25ai1LVrQ5RQVfi39l
-5CqvhbfHglPcKKUaFCpkl6shXZSx8RSJlUo/SAYPiHjWgQ51rbIeVQ+3K2p7o+PA
-BlDYuWCr6GbCYdRk44IE0Y0Eth04sm6ezPwItEkfaeuKc6JHAPIcMY32Nhr9cXZt
-c6P5OJnRhvaN4JDbMzlS9KsshqJjLdg/+hkfkykSOnrOepiUN0RJWcy6ADwdzSB+
-ElMT6kIiIaL5NJOLQUzO5lqZ4RG08g/i8Gk2WduOOB9/gW9Zanq1KqRooVaHtb3c
-5uk9idZeb5EIOnWYdu+p5BKwaP8NEmxr762ZPE2npnBETon8QP0tsI+JBibk5doM
-1vPJMVKX1apudp3pA+NjFnRcC2Q97ZiyGB+sNWxToCc74F1wqioS+Nt6EFr6PAWM
-QxtjK2axjFpzi7lOiKhOfbhAGWvSnC+jiXISxbKxY2KspFg6tJS50Sf7d6ev/hFs
-AYSxzelVYrUqSjVLZCFivN6Rkv1bkZ2wqlwOOxM430tZXsPrwsK51VQJ3YYZbycp
-5M4c+6bBPG/UtfhzD20v79DuMlOsNz7+C216PvVASlJHS3VRT9SiagX8cBMRSPxM
-9KHPWyz9u5QkIoA1tnKq
-=45aS
+iQIcBAEBCAAGBQJOv8gMAAoJEECxmPOUX5FEuOMP/16v1L/mi5+fO1SHu7TMoGxO
+VpLErbcvfE91zelv2e9QsSX7DlPJGV4CVapreE4aME+okaIF4cTRiEUU7NZN51JF
+4jPN0L28E3+kyLq3TNoMrffqwBcnPld26+5mSqjuAkUNcBU1HFBtEl62yk/9U70L
+SlNNytFulYLcwsNKW3CLyjv8wAU1p7dDKFvCRzLWZqCtr8KIaRIwSjgEwdZpovvO
+mi5SQYp8TdEXHMmEIOOeaLvvgXMpCNgYH7fPOLxUZ5dB2Pdh16/yZXHFiZ4bxp6L
+k0yWvHS6lWqmii0PJpY9CmIyw7fAhqIhDj8c1yv+M/c/zHuay1PZFxzvUyOVI0eU
+PVZj2eQa07nt3oBjrirmt2mKFRm3z0rTBVqtBQvi3mh2CcD3KibvEVHlRos3/EzG
+JnGqjSj6r+muih+kYF3oB/2Jbv9qP7l7QjCwkEaBaWagSwIqyGy8xHIU1tIgq98x
+Wb43I+ZwQUC5XWwVP2aBYQ2TvRG5InmRtGTYDHXfiz+4XgzWmlBExD44JzVBIVmI
+5qqMIDPFDdZNOjd9r9cxPPAE1YIporkxuhQpxXBe4s05hsBxWB0Qw7E1htx8oqL7
+cqnC7++nxtmJTYOMB/jWN5naddCZEYsXLwRsmwExK9C9mQBUzPVVWX5alX+/Y20V
+Krd/Z+518bwl88RBwHsu
+=2fvr
 -----END PGP SIGNATURE-----
 
---Signature=_Sun__13_Nov_2011_23_19_44_+1100_bopK4kjb3T7HGvQa--
+--Signature=_Mon__14_Nov_2011_00_37_16_+1100_+vNQSFqYAUuuAhEq--
