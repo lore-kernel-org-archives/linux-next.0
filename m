@@ -1,67 +1,112 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Fri, 11 Nov 2011 13:27:58 +0100
-Message-ID: <201111111327.58960.rjw@sisk.pl>
-References: <20111110133106.12e519d17f6a28adfee3b883@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Blackfin.git tree change
+Date: Sun, 13 Nov 2011 23:19:44 +1100
+Message-ID: <20111113231944.4677bd7a2154975c989663ab@canb.auug.org.au>
+References: <CAA_GA1f8+6bqXGXo33GDbJmXvaqdD-qMUh=ejx0+Ag-shmc0uw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sun__13_Nov_2011_23_19_44_+1100_bopK4kjb3T7HGvQa"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:35865 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751879Ab1KKMZT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Nov 2011 07:25:19 -0500
-In-Reply-To: <20111110133106.12e519d17f6a28adfee3b883@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:35732 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751180Ab1KMMUH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Nov 2011 07:20:07 -0500
+In-Reply-To: <CAA_GA1f8+6bqXGXo33GDbJmXvaqdD-qMUh=ejx0+Ag-shmc0uw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bob Liu <lliubbo@gmail.com>
+Cc: Linux-Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>, sonic.zhang@analog.com
 
-On Thursday, November 10, 2011, Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> After merging the pm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> mm/oom_kill.c: In function 'select_bad_process':
-> mm/oom_kill.c:326:5: error: implicit declaration of function 'thaw_process'
-> 
-> Caused by commit 944e192db53c ("freezer: rename thaw_process() to
-> __thaw_task() and simplify the implementation").
-> 
-> I have used the pm tree from next-20111109 for today.
+--Signature=_Sun__13_Nov_2011_23_19_44_+1100_bopK4kjb3T7HGvQa
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The appended patch fixes the build problem for me.  I've added it to my
-linux-next branch already.
+Hi Bob,
 
-Tejun, please let me know if that's OK.
+On Fri, 11 Nov 2011 18:49:59 +0800 Bob Liu <lliubbo@gmail.com> wrote:
+>
+> I'll take most of the arch Blackfin maintain work from now on.
+>=20
+> My tree is:
+> git://git.kernel.org/pub/scm/linux/kernel/git/lliubbo/blackfin.git#for-li=
+nus
+>=20
+> Would you please update it for linux-next.
 
-Rafael
+OK, I have switched to that tree and will put you as the contact.  Should
+I also keep Mike as a contact for problems with this tree?
 
----
-From: Rafael J. Wysocki <rjw@sisk.pl>
-Subject: PM / Freezer: Fix fallout of thaw_process() -> __thaw_task() rename
+The only thing I did notice, is that this commit was in Mike's tree but
+is not in yours:
 
-The changset that renamed thaw_process() to __thaw_task() forgot to
-modify oom_kill.c in accordance with that change and introduced
-a build problem.  Fix it.
+Author: Sonic Zhang <sonic.zhang@analog.com>
+Date:   Mon Aug 1 17:53:21 2011 +0800
 
-Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
----
- mm/oom_kill.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+    Blackfin: add serial TX IRQ in individual platform resource
+   =20
+    The serial TX IRQ is not simply (RX IRQ + 1) on some Blackfin chips,
+    so move the values to the platform resources.
+   =20
+    Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
+    Signed-off-by: Mike Frysinger <vapier@gentoo.org>
 
-Index: linux/mm/oom_kill.c
-===================================================================
---- linux.orig/mm/oom_kill.c
-+++ linux/mm/oom_kill.c
-@@ -323,7 +323,7 @@ static struct task_struct *select_bad_pr
- 		 */
- 		if (test_tsk_thread_flag(p, TIF_MEMDIE)) {
- 			if (unlikely(frozen(p)))
--				thaw_process(p);
-+				__thaw_task(p);
- 			return ERR_PTR(-1UL);
- 		}
- 		if (!p->mm)
+Just in case it was forgotten.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Sun__13_Nov_2011_23_19_44_+1100_bopK4kjb3T7HGvQa
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOv7XgAAoJEECxmPOUX5FEk8YP/23rnx8KdwpW7c28mQP7YI8p
+2vIi1WjO6xd/WMDh9SudHhEVdJ2s6L8C7cuJVcyf6XMCjV25ai1LVrQ5RQVfi39l
+5CqvhbfHglPcKKUaFCpkl6shXZSx8RSJlUo/SAYPiHjWgQ51rbIeVQ+3K2p7o+PA
+BlDYuWCr6GbCYdRk44IE0Y0Eth04sm6ezPwItEkfaeuKc6JHAPIcMY32Nhr9cXZt
+c6P5OJnRhvaN4JDbMzlS9KsshqJjLdg/+hkfkykSOnrOepiUN0RJWcy6ADwdzSB+
+ElMT6kIiIaL5NJOLQUzO5lqZ4RG08g/i8Gk2WduOOB9/gW9Zanq1KqRooVaHtb3c
+5uk9idZeb5EIOnWYdu+p5BKwaP8NEmxr762ZPE2npnBETon8QP0tsI+JBibk5doM
+1vPJMVKX1apudp3pA+NjFnRcC2Q97ZiyGB+sNWxToCc74F1wqioS+Nt6EFr6PAWM
+QxtjK2axjFpzi7lOiKhOfbhAGWvSnC+jiXISxbKxY2KspFg6tJS50Sf7d6ev/hFs
+AYSxzelVYrUqSjVLZCFivN6Rkv1bkZ2wqlwOOxM430tZXsPrwsK51VQJ3YYZbycp
+5M4c+6bBPG/UtfhzD20v79DuMlOsNz7+C216PvVASlJHS3VRT9SiagX8cBMRSPxM
+9KHPWyz9u5QkIoA1tnKq
+=45aS
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__13_Nov_2011_23_19_44_+1100_bopK4kjb3T7HGvQa--
