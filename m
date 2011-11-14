@@ -1,42 +1,78 @@
-From: Greg Ungerer <gerg@snapgear.com>
-Subject: Re: linux-next: manual merge of the m68knommu tree with the m68k
- tree
-Date: Mon, 14 Nov 2011 10:29:04 +1000
-Message-ID: <4EC060D0.5000808@snapgear.com>
-References: <20111114110305.5b04e0b5509cd0489c7d9440@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+Date: Mon, 14 Nov 2011 11:53:46 +1100
+Message-ID: <20111114115346.5638260db4dda17e244e6eb3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111114110305.5b04e0b5509cd0489c7d9440@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kars de Jong <jongk@linux-m68k.org>, Geert Uytterhoeven <geert@linux-m68k.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__14_Nov_2011_11_53_46_+1100_8HVn3nrA3.cKYAqt"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:48629 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751419Ab1KNAxz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Nov 2011 19:53:55 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Miao <realmz6@gmail.com>
 
-Hi Stephen,
+--Signature=_Mon__14_Nov_2011_11_53_46_+1100_8HVn3nrA3.cKYAqt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 14/11/11 10:03, Stephen Rothwell wrote:
-> Today's linux-next merge of the m68knommu tree got a conflict in
-> arch/m68k/Kconfig.debug between commit 049755db2c3f ("m68k/mvme16x: Add
-> support for EARLY_PRINTK") from the m68k tree and commit d0106cf0aa29
-> ("m68k: support configure time command line for MMU m68k") from the
-> m68knommu tree.
->
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+Hi John,
 
-Thanks for the heads up. Geert's irq changes have been pushed in now,
-so I will rebase my patches and fix up the few bits of breakage you
-have seen.
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/wireless/libertas/cfg.c between commit d929bbc63069
+("wireless: libertas: fix unaligned le64 accesses") from the wireless
+tree and commit 731f8e1c41a4 ("libertas: release bss references and avoid
+warning from cfg80211_inform_bss") from the wireless-next tree.
 
-Thanks
-Greg
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+diff --cc drivers/net/wireless/libertas/cfg.c
+index a7f1ab2,89f34ad..0000000
+--- a/drivers/net/wireless/libertas/cfg.c
++++ b/drivers/net/wireless/libertas/cfg.c
+@@@ -632,9 -633,9 +633,9 @@@ static int lbs_ret_scan(struct lbs_priv
+  				     LBS_SCAN_RSSI_TO_MBM(rssi)/100);
+ =20
+  			if (channel &&
+- 			    !(channel->flags & IEEE80211_CHAN_DISABLED))
+- 				cfg80211_inform_bss(wiphy, channel,
++ 			    !(channel->flags & IEEE80211_CHAN_DISABLED)) {
++ 				bss =3D cfg80211_inform_bss(wiphy, channel,
+ -					bssid, le64_to_cpu(*(__le64 *)tsfdesc),
+ +					bssid, get_unaligned_le64(tsfdesc),
+  					capa, intvl, ie, ielen,
+  					LBS_SCAN_RSSI_TO_MBM(rssi),
+  					GFP_KERNEL);
 
--- 
-------------------------------------------------------------------------
-Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
-SnapGear Group, McAfee                      PHONE:       +61 7 3435 2888
-8 Gardner Close                             FAX:         +61 7 3217 5323
-Milton, QLD, 4064, Australia                WEB: http://www.SnapGear.com
+--Signature=_Mon__14_Nov_2011_11_53_46_+1100_8HVn3nrA3.cKYAqt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOwGaaAAoJEECxmPOUX5FEvJwP/jvNjQbPtKMerTNpGeNEOR2F
+Hg5rUx/3LkRBhEc36MaOcrn+42KfdnTwxtdAsGab8VDOw0gureZVbOPruj4LEFI0
+Lmu58jYb0EXVqxaUtI+0gZVSYGRK+KKo73jZ+DX/q+P1KICH1eA7Arp+pwgSXR7v
+ec86QXoznpuDBXS9LAOjezmN2wedLheA8EfzfMZ4lDCMXNUYslV+Uor59N5NgOJH
+BrEIxJ9oDD1/y227if2Dv5X7vNQwHtaCuBSKYDBlVQJL3Pr0tsl5oZIF3dYGH+KO
+SkcrmcqxXqACtP6zqDM07WeEHsixvCvgPzieHjxwlIJQAZ+bShU8fvn4FGWO4KvG
+mUdPijP0QG2JKhVLpbQHImztgw9OtOjus9tPMtR9VgsiPfw0AY20FqPMQV2obIy7
+oqj7inJjmzQGX9Ik09vQjmnl9L1ivRmuDXyozKqOvP4ZtjEK87tDl9qWtxJtptkG
+NhClGTJV5rskFst5Q+3Lwu0NN4YDW8jfZ2vTobC3A4QN1ethOYcVz0X9oDo3kGzO
+p/KYEz9mYfH5O81CVyzxpJFksOmYHd16ak5Vk68urvv9us4CjHxGEinh3/TSgJRU
+iadRt+LhewfSDs+dkDgKIgATKZ2bkXnkvMjJ2TtaV87o8S+eopHDBJtL1b3MMDbM
+kfCdml+7scIon4oZ2d3D
+=8Q0f
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__14_Nov_2011_11_53_46_+1100_8HVn3nrA3.cKYAqt--
