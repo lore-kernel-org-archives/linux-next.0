@@ -1,38 +1,74 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: AT91 defconfig
-Date: Tue, 15 Nov 2011 07:03:25 +0100
-Message-ID: <20111115060325.GA19322@game.jcrosoft.org>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH v2] kernel/cpu.c: Add right qualifiers for alloc_frozen_cpus() and cpu_hotplug_pm_sync_init()
+Date: Tue, 15 Nov 2011 21:17:14 +0100
+Message-ID: <201111152117.15026.rjw@sisk.pl>
+References: <1321315040-4644-1-git-send-email-fenghua.yu@intel.com> <4EC200D4.9040505@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mo4.mail-out.ovh.net ([178.32.228.4]:54426 "EHLO
-	mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753329Ab1KOIbm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Nov 2011 03:31:42 -0500
-Received: from mail172.ha.ovh.net (b7.ovh.net [213.186.33.57])
-	by mo4.mail-out.ovh.net (Postfix) with SMTP id 6BDDF100451F
-	for <linux-next@vger.kernel.org>; Tue, 15 Nov 2011 07:11:21 +0100 (CET)
-Content-Disposition: inline
+Received: from ogre.sisk.pl ([217.79.144.158]:40863 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756396Ab1KOUOc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Nov 2011 15:14:32 -0500
+In-Reply-To: <4EC200D4.9040505@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>, Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, Rusty Russell <rusty@rustcorp.com.au>, linux-kernel <linux-kernel@vger.kernel.org>, linux-pm <linux-pm@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
-HI Stephen,
+On Tuesday, November 15, 2011, Srivatsa S. Bhat wrote:
+> On 11/15/2011 05:27 AM, Fenghua Yu wrote:
+> > From: Fenghua Yu <fenghua.yu@intel.com>
+> > 
+> > Add __init for functions alloc_frozen_cpus() and cpu_hotplug_pm_sync_init()
+> > because they are only called during boot time.
+> > 
+> > Add static for function cpu_hotplug_pm_sync_init() because its scope is limited
+> > in this file only.
+> > 
+> > Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> 
+> Acked-by: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
 
-	the at91 defconfig have changed
+Well, I guess I can take this one, right?  Any objections from anyone?
 
-	the followong defconfig at91sam9260ek_defconfig,
-	at91sam9g20ek_defconfig, at91sam9rlek_defconfig, at91cap9adk_defconfig
-	are replace by at91sam9260_defconfig, at91sam9g20_defconfig
-	at91cap9_defconfig and at91sam9rl_defconfig
+Rafael
 
-	where all the board are enabled
 
-	to cover all board now we just need to compile this list of defconfg
-	on AT91
-	at91cap9_defconfig  at91rm9200_defconfig  at91sam9260_defconfig
-	at91sam9261_defconfig  at91sam9263_defconfig  at91sam9g20_defconfig
-	at91sam9g45_defconfig  at91sam9rl_defconfig
-
-Best Regards,
-J.
+> > ---
+> > v2: Change a function name typo in the title.
+> > 
+> >  kernel/cpu.c |    4 ++--
+> >  1 files changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/cpu.c b/kernel/cpu.c
+> > index 563f136..cf915b8 100644
+> > --- a/kernel/cpu.c
+> > +++ b/kernel/cpu.c
+> > @@ -470,7 +470,7 @@ out:
+> >  	cpu_maps_update_done();
+> >  }
+> > 
+> > -static int alloc_frozen_cpus(void)
+> > +static int __init alloc_frozen_cpus(void)
+> >  {
+> >  	if (!alloc_cpumask_var(&frozen_cpus, GFP_KERNEL|__GFP_ZERO))
+> >  		return -ENOMEM;
+> > @@ -543,7 +543,7 @@ cpu_hotplug_pm_callback(struct notifier_block *nb,
+> >  }
+> > 
+> > 
+> > -int cpu_hotplug_pm_sync_init(void)
+> > +static int __init cpu_hotplug_pm_sync_init(void)
+> >  {
+> >  	pm_notifier(cpu_hotplug_pm_callback, 0);
+> >  	return 0;
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
