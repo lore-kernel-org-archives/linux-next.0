@@ -1,68 +1,45 @@
-From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2] kernel/cpu.c: Add right qualifiers for alloc_frozen_cpus()
- and cpu_hotplug_pm_sync_init()
-Date: Tue, 15 Nov 2011 11:34:04 +0530
-Message-ID: <4EC200D4.9040505@linux.vnet.ibm.com>
-References: <1321315040-4644-1-git-send-email-fenghua.yu@intel.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the input tree with the s5p tree
+Date: Tue, 15 Nov 2011 16:26:21 +0900
+Message-ID: <004501cca367$dfbbd650$9f3382f0$%kim@samsung.com>
+References: <20111111131159.848e724c5a9257d0b9f0f0f9@canb.auug.org.au>
+ <201111101941.59570.dmitry.torokhov@gmail.com>
+ <20111111165741.5a6d5f14ad70f98776d3b39a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp03.in.ibm.com ([122.248.162.3]:59948 "EHLO
-	e28smtp03.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752501Ab1KOGZx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Nov 2011 01:25:53 -0500
-Received: from /spool/local
-	by e28smtp03.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <srivatsa.bhat@linux.vnet.ibm.com>;
-	Tue, 15 Nov 2011 11:36:13 +0530
-In-Reply-To: <1321315040-4644-1-git-send-email-fenghua.yu@intel.com>
+Received: from mailout3.samsung.com ([203.254.224.33]:16643 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753218Ab1KOH0X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Nov 2011 02:26:23 -0500
+In-reply-to: <20111111165741.5a6d5f14ad70f98776d3b39a@canb.auug.org.au>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Andrew Morton <akpm@linux-foundation.org>, Rusty Russell <rusty@rustcorp.com.au>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-kernel <linux-kernel@vger.kernel.org>, linux-pm <linux-pm@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
 
-On 11/15/2011 05:27 AM, Fenghua Yu wrote:
-> From: Fenghua Yu <fenghua.yu@intel.com>
+Stephen Rothwell wrote:
 > 
-> Add __init for functions alloc_frozen_cpus() and cpu_hotplug_pm_sync_init()
-> because they are only called during boot time.
+> Hi Dmitry,
 > 
-> Add static for function cpu_hotplug_pm_sync_init() because its scope is limited
-> in this file only.
+> On Thu, 10 Nov 2011 19:41:59 -0800 Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> >
+> > Please drop the whole HAVE_SAMSUNG_KEYPAD thing; HAVE_CLK is all
+> > this driver needs. Expanding beyond Samsung will allow greater
+> > compile coverage.
 > 
-> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> OK, I have modified the conflict resolution for tomorrow.
+> 
+OK, I will git-revert it in my tree.
 
-Acked-by: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
+Sorry for late response.
+Thanks.
 
-Thanks,
-Srivatsa S. Bhat
-
-> ---
-> v2: Change a function name typo in the title.
-> 
->  kernel/cpu.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/cpu.c b/kernel/cpu.c
-> index 563f136..cf915b8 100644
-> --- a/kernel/cpu.c
-> +++ b/kernel/cpu.c
-> @@ -470,7 +470,7 @@ out:
->  	cpu_maps_update_done();
->  }
-> 
-> -static int alloc_frozen_cpus(void)
-> +static int __init alloc_frozen_cpus(void)
->  {
->  	if (!alloc_cpumask_var(&frozen_cpus, GFP_KERNEL|__GFP_ZERO))
->  		return -ENOMEM;
-> @@ -543,7 +543,7 @@ cpu_hotplug_pm_callback(struct notifier_block *nb,
->  }
-> 
-> 
-> -int cpu_hotplug_pm_sync_init(void)
-> +static int __init cpu_hotplug_pm_sync_init(void)
->  {
->  	pm_notifier(cpu_hotplug_pm_callback, 0);
->  	return 0;
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
