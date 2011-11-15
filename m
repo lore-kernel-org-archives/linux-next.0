@@ -1,80 +1,42 @@
 From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the pm tree (and warning)
-Date: Tue, 15 Nov 2011 21:52:40 +0100
-Message-ID: <201111152152.40971.rjw@sisk.pl>
-References: <20111114131730.ae09bb18b87e67f61a97275e@canb.auug.org.au> <201111150014.50898.rjw@sisk.pl> <Pine.LNX.4.64.1111150032170.32143@axis700.grange>
+Subject: Re: linux-next: Tree for Nov 15
+Date: Tue, 15 Nov 2011 22:03:26 +0100
+Message-ID: <201111152203.26186.rjw@sisk.pl>
+References: <20111115131742.f9ebaf818fd152ef779f4d19@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
-  charset="iso-8859-1"
+  charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:40941 "EHLO ogre.sisk.pl"
+Received: from ogre.sisk.pl ([217.79.144.158]:40958 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932241Ab1KOUt6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Nov 2011 15:49:58 -0500
-In-Reply-To: <Pine.LNX.4.64.1111150032170.32143@axis700.grange>
+	id S1755562Ab1KOVAn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Nov 2011 16:00:43 -0500
+In-Reply-To: <20111115131742.f9ebaf818fd152ef779f4d19@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Dan Williams <dan.j.williams@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
 
-On Tuesday, November 15, 2011, Guennadi Liakhovetski wrote:
-> Hi Rafael
+On Tuesday, November 15, 2011, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Tue, 15 Nov 2011, Rafael J. Wysocki wrote:
+> The patch is still absent from kernel.org.
 > 
-> > On Monday, November 14, 2011, Stephen Rothwell wrote:
-> > > Hi Rafael,
-> > > 
-> > > After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
-> > > failed like this:
-> > > 
-> > > drivers/dma/dmatest.c: In function 'dmatest_func':
-> > > drivers/dma/dmatest.c:255:2: error: implicit declaration of function 'set_freezable_with_signal' [-Werror=implicit-function-declaration]
-> > > 
-> > > Caused by commit cd3bc8fbc2d5 ("freezer: kill unused
-> > > set_freezable_with_signal()") interacting with commit 981ed70d8e4f
-> > > ("dmatest: make dmatest threads freezable") from Linus' tree (merged into
-> > > v3.2-rc1).
-> > > 
-> > > I reverted the pm tree commit for today.
-> > 
-> > Thanks, I've added the following patch to linux-pm/linux-next, which should
-> > fix this problem (Tejun, if that's not the right thing to do, please let me
-> > know).
-> > 
-> > Rafael
-> > 
-> > 
-> > ---
-> > From: Rafael J. Wysocki <rjw@sisk.pl>
-> > Subject: Freezer: Make dmatest_func() use set_freezable()
-> > 
-> > According to the commit cd3bc8fbc2d55ae0918184fb34992054dc4eb710
-> > (freezer: kill unused set_freezable_with_signal()) changelog,
-> > it should be sufficient to use set_freezable() instead of
-> > set_freezable_with_signal(), which has been removed, in
-> > dmatest_func(), so do that and fix a build issue.
-> > 
-> > Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
-> > ---
-> >  drivers/dma/dmatest.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > Index: linux/drivers/dma/dmatest.c
-> > ===================================================================
-> > --- linux.orig/drivers/dma/dmatest.c
-> > +++ linux/drivers/dma/dmatest.c
-> > @@ -252,7 +252,7 @@ static int dmatest_func(void *data)
-> >  	int			i;
-> >  
-> >  	thread_name = current->comm;
-> > -	set_freezable_with_signal();
-> > +	set_freezable();
+> Changes since 20111114:
 > 
-> No, this isn't a correct fix.
+> The m86knommu tree lost 2 conflicts.
+> 
+> The pm tree still had its build failures for which I reverted a commit
+> and applied a patch.
 
-OK, I'll drop it, then.
+Hmm.  If that was the patch you sent yestarday, it definitely is there in my
+tree.
+
+The "kill unused set_freezable_with_signal()" commit still has to be reverted,
+unfortunately, but Tejun is working on a fix (AFAICS).
+
+I'm going to drop pm-freezer from my linux-next branch for now.
 
 Thanks,
 Rafael
