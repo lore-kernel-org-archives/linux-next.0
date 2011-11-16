@@ -1,37 +1,50 @@
-From: Guan Xuetao <gxt@mprc.pku.edu.cn>
-Subject: Re: unicore32 tree created on github
-Date: Wed, 16 Nov 2011 15:03:24 +0800
-Message-ID: <1321427004.1867.37.camel@epip-laptop>
-References: <1321409752.1867.30.camel@epip-laptop>
-	 <20111116144959.9db10ac8bbebbfa2796b4f50@canb.auug.org.au>
-Reply-To: gxt@mprc.pku.edu.cn
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Michal Simek <monstr@monstr.eu>
+Subject: [PATCH] mm: Fix alloc_vm_area for noMMU system
+Date: Wed, 16 Nov 2011 08:51:02 +0100
+Message-ID: <1321429862-17703-1-git-send-email-monstr@monstr.eu>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mprc.pku.edu.cn ([162.105.203.9]:40042 "EHLO mprc.pku.edu.cn"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753978Ab1KPHDr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Nov 2011 02:03:47 -0500
-In-Reply-To: <20111116144959.9db10ac8bbebbfa2796b4f50@canb.auug.org.au>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:65392 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754627Ab1KPHvG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Nov 2011 02:51:06 -0500
+Received: by bke11 with SMTP id 11so218145bke.19
+        for <linux-next@vger.kernel.org>; Tue, 15 Nov 2011 23:51:05 -0800 (PST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: linux-next@vger.kernel.org
+Cc: sfr@canb.auug.org.au, Michal Simek <monstr@monstr.eu>, David Vrabel <david.vrabel@citrix.com>, Andrew Morton <akpm@linux-foundation.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-On Wed, 2011-11-16 at 14:49 +1100, Stephen Rothwell wrote:
-> Hi,
-> 
-> On Wed, 16 Nov 2011 10:15:52 +0800 Guan Xuetao <gxt@mprc.pku.edu.cn> wrote:
-> >
-> > I created unicore32 branch on github. Could you please update my git
-> > trees in linux-next to:
-> > 
-> >    git://github.com/gxt/linux.git unicore32
-> 
-> OK, I have switched to that.  I assume that at some point it will move
-> back to kernel.org.  Please let me know when it does.
-I know. Thanks for your reminding.
+Patch:
+"xen: map foreign pages for shared rings by updating the PTEs directly"
+(sha1: 5149c0d53f6959d6ab87b4702d544b17ebdc783e) changed number
+of argument for alloc_vm_area but forget to change it for noMMU systems.
+This patch fix it.
 
-Thanks,
-Guan Xuetao
+CC: David Vrabel <david.vrabel@citrix.com>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Michal Simek <monstr@monstr.eu>
+
+---
+It is for linux-next tree.
+
+Michal
+---
+ mm/nommu.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 73419c5..b982290 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -454,7 +454,7 @@ void  __attribute__((weak)) vmalloc_sync_all(void)
+  *	between processes, it syncs the pagetable across all
+  *	processes.
+  */
+-struct vm_struct *alloc_vm_area(size_t size)
++struct vm_struct *alloc_vm_area(size_t size, pte_t **ptes)
+ {
+ 	BUG();
+ 	return NULL;
+-- 
+1.7.5.4
