@@ -1,57 +1,44 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] staging: fix more ET131X build errors
-Date: Tue, 15 Nov 2011 17:04:12 -0800
-Message-ID: <4EC30C0C.9020409@xenotime.net>
-References: <20111115131742.f9ebaf818fd152ef779f4d19@canb.auug.org.au>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Date: Tue, 15 Nov 2011 20:26:48 -0500
+Message-ID: <20111116012648.GE12453@fieldses.org>
+References: <20111116102952.d653d19f69ca5a7fad8a0291@canb.auug.org.au>
+ <20111116001404.GD12453@fieldses.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:46569 "HELO
-	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1757666Ab1KPBGA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Nov 2011 20:06:00 -0500
-In-Reply-To: <20111115131742.f9ebaf818fd152ef779f4d19@canb.auug.org.au>
+Received: from fieldses.org ([174.143.236.118]:59432 "EHLO fieldses.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757688Ab1KPB0t (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Nov 2011 20:26:49 -0500
+Content-Disposition: inline
+In-Reply-To: <20111116001404.GD12453@fieldses.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <gregkh@suse.de>, Mark Einon <mark.einon@gmail.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Tue, Nov 15, 2011 at 07:14:04PM -0500, J. Bruce Fields wrote:
+> On Wed, Nov 16, 2011 at 10:29:52AM +1100, Stephen Rothwell wrote:
+> > Hi Bruce,
+> > 
+> > After merging the nfsd tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > fs/nfsd/nfs4state.c:4446:5: error: expected ';', ',' or ')' before 'void'
+> > fs/nfsd/nfs4state.c: In function 'nfsd_forget_locks':
+> > fs/nfsd/nfs4state.c:4468:2: error: implicit declaration of function 'nfsd_release_n_owners' [-Werror=implicit-function-declaration]
+> > 
+> > Caused by commit 16bfdaafa2c6 ("nfsd4: share open and lock owner hash
+> > tables").  Please build test *before* releasing code ...  :-(
+> 
+> I do--so what happened?
+> 
+> Aie, sorry, I see: we added a CONFIG_NFSD_FAULT_INJECTION recently, but
+> I didn't add that to my configs....
+> 
+> OK, I've fixed up my test scripts, and I'll push out a fix soon.
 
-ET131X is a network device, so it should depend on
-NETDEVICES.  (This part won't be needed when the driver
-moves to drivers/net/.)  It also uses PHYLIB interfaces,
-so it should select PHYLIB.  Fixes these build errors:
+Done, thanks for the report.
 
-ERROR: "phy_connect" [drivers/staging/et131x/et131x.ko] undefined!
-ERROR: "phy_find_first" [drivers/staging/et131x/et131x.ko] undefined!
-ERROR: "mdiobus_register" [drivers/staging/et131x/et131x.ko] undefined!
-ERROR: "mdiobus_alloc" [drivers/staging/et131x/et131x.ko] undefined!
-ERROR: "phy_stop" [drivers/staging/et131x/et131x.ko] undefined!
-ERROR: "phy_start" [drivers/staging/et131x/et131x.ko] undefined!
-ERROR: "mdiobus_free" [drivers/staging/et131x/et131x.ko] undefined!
-ERROR: "mdiobus_unregister" [drivers/staging/et131x/et131x.ko] undefined!
-ERROR: "phy_print_status" [drivers/staging/et131x/et131x.ko] undefined!
-ERROR: "phy_ethtool_gset" [drivers/staging/et131x/et131x.ko] undefined!
-ERROR: "phy_ethtool_sset" [drivers/staging/et131x/et131x.ko] undefined!
-ERROR: "phy_mii_ioctl" [drivers/staging/et131x/et131x.ko] undefined!
-
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Mark Einon <mark.einon@gmail.com>
----
- drivers/staging/et131x/Kconfig |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-Apply after "depends on NET" patch.
---- next-2011-1115.orig/drivers/staging/et131x/Kconfig
-+++ next-2011-1115/drivers/staging/et131x/Kconfig
-@@ -1,6 +1,7 @@
- config ET131X
- 	tristate "Agere ET-1310 Gigabit Ethernet support"
--	depends on PCI && NET
-+	depends on PCI && NET && NETDEVICES
-+	select PHYLIB
- 	default n
- 	---help---
- 	  This driver supports Agere ET-1310 ethernet adapters.
+--b.
