@@ -1,44 +1,28 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: build failure after merge of the nfsd tree
-Date: Tue, 15 Nov 2011 20:26:48 -0500
-Message-ID: <20111116012648.GE12453@fieldses.org>
-References: <20111116102952.d653d19f69ca5a7fad8a0291@canb.auug.org.au>
- <20111116001404.GD12453@fieldses.org>
+From: Guan Xuetao <gxt@mprc.pku.edu.cn>
+Subject: unicore32 tree created on github
+Date: Wed, 16 Nov 2011 10:15:52 +0800
+Message-ID: <1321409752.1867.30.camel@epip-laptop>
+Reply-To: gxt@mprc.pku.edu.cn
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fieldses.org ([174.143.236.118]:59432 "EHLO fieldses.org"
+Received: from mprc.pku.edu.cn ([162.105.203.9]:44286 "EHLO mprc.pku.edu.cn"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757688Ab1KPB0t (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Nov 2011 20:26:49 -0500
-Content-Disposition: inline
-In-Reply-To: <20111116001404.GD12453@fieldses.org>
+	id S1756040Ab1KPCRZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Nov 2011 21:17:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-On Tue, Nov 15, 2011 at 07:14:04PM -0500, J. Bruce Fields wrote:
-> On Wed, Nov 16, 2011 at 10:29:52AM +1100, Stephen Rothwell wrote:
-> > Hi Bruce,
-> > 
-> > After merging the nfsd tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > fs/nfsd/nfs4state.c:4446:5: error: expected ';', ',' or ')' before 'void'
-> > fs/nfsd/nfs4state.c: In function 'nfsd_forget_locks':
-> > fs/nfsd/nfs4state.c:4468:2: error: implicit declaration of function 'nfsd_release_n_owners' [-Werror=implicit-function-declaration]
-> > 
-> > Caused by commit 16bfdaafa2c6 ("nfsd4: share open and lock owner hash
-> > tables").  Please build test *before* releasing code ...  :-(
-> 
-> I do--so what happened?
-> 
-> Aie, sorry, I see: we added a CONFIG_NFSD_FAULT_INJECTION recently, but
-> I didn't add that to my configs....
-> 
-> OK, I've fixed up my test scripts, and I'll push out a fix soon.
+Hi Stephen,
 
-Done, thanks for the report.
+I created unicore32 branch on github. Could you please update my git
+trees in linux-next to:
 
---b.
+   git://github.com/gxt/linux.git unicore32
+
+
+Thanks,
+Guan Xuetao
