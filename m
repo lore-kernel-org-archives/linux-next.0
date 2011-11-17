@@ -1,32 +1,31 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: [PATCH -next] staging: slicoss depends on NET
-Date: Thu, 17 Nov 2011 09:42:19 -0800
-Message-ID: <20111117174219.GB13208@suse.de>
-References: <20111101205323.c12f2f940f23febba8ab8989@canb.auug.org.au>
- <4EB067ED.60106@xenotime.net>
- <4EC53F18.2080303@xenotime.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Nov 17 (bluetooth)
+Date: Thu, 17 Nov 2011 09:50:39 -0800
+Message-ID: <4EC5496F.2080509@xenotime.net>
+References: <20111117150733.a70faf2c9030d511d5367e1e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:38636 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753208Ab1KQRtv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Nov 2011 12:49:51 -0500
-Content-Disposition: inline
-In-Reply-To: <4EC53F18.2080303@xenotime.net>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:35376 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752194Ab1KQRwj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Nov 2011 12:52:39 -0500
+In-Reply-To: <20111117150733.a70faf2c9030d511d5367e1e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Lior Dotan <liodot@gmail.com>, Christopher Harrer <charrer@alacritech.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marcel Holtmann <marcel@holtmann.org>, "Gustavo F. Padovan" <padovan@profusion.mobi>, linux-bluetooth@vger.kernel.org
 
-On Thu, Nov 17, 2011 at 09:06:32AM -0800, Randy Dunlap wrote:
-> adding driver devel mailing list.
-> 
-> Greg- ping-  there are a lot of staging patches that need to be merged.
+On 11/16/2011 08:07 PM, Stephen Rothwell wrote:
+> Hi all,
 
-Yes there are, 460 to be exact, I'll be digging through them today if
-all goes well with my "real job" tasks.
 
-thanks,
+When CONFIG_BT_L2CAP is not enabled:
 
-greg k-h
+net/built-in.o: In function `hci_dev_open':
+(.text+0xdce9a): undefined reference to `enable_hs'
+
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
