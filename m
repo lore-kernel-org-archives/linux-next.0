@@ -1,31 +1,48 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Nov 17 (bluetooth)
-Date: Thu, 17 Nov 2011 09:50:39 -0800
-Message-ID: <4EC5496F.2080509@xenotime.net>
-References: <20111117150733.a70faf2c9030d511d5367e1e@canb.auug.org.au>
+From: Bart Van Assche <bvanassche@acm.org>
+Subject: Re: linux-next: Tree for Nov 16 (infiniband: ib_srpt.c)
+Date: Thu, 17 Nov 2011 19:51:35 +0100
+Message-ID: <CAO+b5-q8doXbGBVkCD+jSjov8ermfVCgBB+WJUPXj=eVh1z87A@mail.gmail.com>
+References: <20111116133342.3eb15cac16f4c081dc6ed009@canb.auug.org.au>
+	<4EC472A1.6000407@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:35376 "HELO
-	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752194Ab1KQRwj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Nov 2011 12:52:39 -0500
-In-Reply-To: <20111117150733.a70faf2c9030d511d5367e1e@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marcel Holtmann <marcel@holtmann.org>, "Gustavo F. Padovan" <padovan@profusion.mobi>, linux-bluetooth@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4EC472A1.6000407@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux RDMA <linux-rdma@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 11/16/2011 08:07 PM, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Nov 17, 2011 at 3:34 AM, Randy Dunlap <rdunlap@xenotime.net> wr=
+ote:
+> On 11/15/2011 06:33 PM, Stephen Rothwell wrote:
+>> Hi all,
+>
+>
+> When CONFIG_BUG is not enabled:
+>
+> next-2011-1116/drivers/infiniband/ulp/srpt/ib_srpt.c: In function 'sr=
+pt_cm_dreq_recv':
+> next-2011-1116/drivers/infiniband/ulp/srpt/ib_srpt.c:2761:3: error: i=
+mplicit declaration of function '__WARN'
+>
+>
+> jbd2 has a similar issue (still unpatched). =A0One of the comments in=
+ that thread
+> was that ext4 probably should use WARN_ON() instead of __WARN().
+>
+> Or (Arnd said):
+> Hmm, my feeling is that we shouldn't do that either, and that jbd2 sh=
+ould
+> be changed. If we want a function that does what __WARN() does today,=
+ we
+> should probably make a conscious decision about what we want it to be=
+ called
+> and not have it start with "__". <end Arnd>
 
+Thanks for reporting this. The __WARN() statements in ib_srpt are
+present in code paths that should never be reached. I'll post a patch
+that addresses the build failure.
 
-When CONFIG_BT_L2CAP is not enabled:
-
-net/built-in.o: In function `hci_dev_open':
-(.text+0xdce9a): undefined reference to `enable_hs'
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Bart.
