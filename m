@@ -1,57 +1,80 @@
-From: Jiri Slaby <jslaby@suse.cz>
-Subject: Re: linux-next: manual merge of the tty tree with the tty.current
- tree
-Date: Fri, 18 Nov 2011 09:41:15 +0100
-Message-ID: <4EC61A2B.5060501@suse.cz>
-References: <20111118143010.4a6c9eb17b86d24b9ebe706b@canb.auug.org.au>
+From: Andrei Emeltchenko <andrei.emeltchenko.news@gmail.com>
+Subject: Re: linux-next: Tree for Nov 17 (bluetooth)
+Date: Fri, 18 Nov 2011 11:58:58 +0200
+Message-ID: <20111118095855.GB9034@aemeltch-MOBL1>
+References: <20111117150733.a70faf2c9030d511d5367e1e@canb.auug.org.au>
+ <4EC5496F.2080509@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:50989 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752158Ab1KRIlT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Nov 2011 03:41:19 -0500
-In-Reply-To: <20111118143010.4a6c9eb17b86d24b9ebe706b@canb.auug.org.au>
+Received: from mga01.intel.com ([192.55.52.88]:30371 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752611Ab1KRJ7H (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Nov 2011 04:59:07 -0500
+Content-Disposition: inline
+In-Reply-To: <4EC5496F.2080509@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Young <dyoung@redhat.com>, Jiri Slaby <jirislaby@gmail.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marcel Holtmann <marcel@holtmann.org>, "Gustavo F. Padovan" <padovan@profusion.mobi>, linux-bluetooth@vger.kernel.org
 
-On 11/18/2011 04:30 AM, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the tty tree got a conflict in
-> drivers/tty/tty_ldisc.c between commits df92d0561de3 ("TTY: ldisc, allow
-> waiting for ldisc arbitrarily long") and 0c73c08ec73d ("TTY: ldisc, wait
-> for ldisc infinitely in hangup") from the tty.current tree and commits
-> 66ef27c3fd0e ("tty_ldisc: remove unnecessary negative return check for
-> wait_event_timeout") and 8b3ffa173ffa ("TTY: ldisc, remove some unneeded
-> includes") from the tty tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+Hi Randy,
 
-Looks good. Thanks.
-
-> drivers/tty/tty_ldisc.c index 8e0924f,174db3b..0000000 ---
-> a/drivers/tty/tty_ldisc.c +++ b/drivers/tty/tty_ldisc.c @@@ -24,19 -16,8
-> +16,9 @@@ #include <linux/device.h> #include <linux/wait.h> #include
-> <linux/bitops.h> - #include <linux/delay.h> #include <linux/seq_file.h>
-> - #include <linux/uaccess.h> - #include <asm/system.h> - - #include
-> <linux/kbd_kern.h> - #include <linux/vt_kern.h> - #include
-> <linux/selection.h> - - #include <linux/kmod.h> - #include
-> <linux/nsproxy.h> +#include <linux/ratelimit.h> /* * This guards the
-> refcounted line discipline lists. The lock @@@ -553,13 -533,11 +535,11
-> @@@ static void tty_ldisc_flush_works(struc * Wait for the line
-> discipline to become idle. The discipline must * have been halted for
-> this to guarantee it remains idle. */ -static int
-> tty_ldisc_wait_idle(struct tty_struct *tty) +static int
-> tty_ldisc_wait_idle(struct tty_struct *tty, long timeout) { - int ret; +
-> long ret; ret = wait_event_timeout(tty_ldisc_idle, -
-> atomic_read(&tty->ldisc->users) == 1, 5 * HZ); +
-> atomic_read(&tty->ldisc->users) == 1, timeout); - if (ret < 0) - return
-> ret; return ret > 0 ? 0 : -EBUSY; }
+On Thu, Nov 17, 2011 at 09:50:39AM -0800, Randy Dunlap wrote:
+> On 11/16/2011 08:07 PM, Stephen Rothwell wrote:
+> > Hi all,
 > 
--- 
-js
-suse labs
+> 
+> When CONFIG_BT_L2CAP is not enabled:
+> 
+> net/built-in.o: In function `hci_dev_open':
+> (.text+0xdce9a): undefined reference to `enable_hs'
+
+Despite not enabling L2CAP sounds strange we might find solution even for
+this usage :-)
+I am thinking about moving enable_hs to common part not depending on
+CONFIG_BT_L2CAP option:
+
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index cfd399f..ed0a656 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -54,6 +54,8 @@
+ 
+ #define AUTO_OFF_TIMEOUT 2000
+ 
++int enable_hs;
++
+ static void hci_cmd_task(unsigned long arg);
+ static void hci_rx_task(unsigned long arg);
+ static void hci_tx_task(unsigned long arg);
+@@ -2691,3 +2693,6 @@ int hci_cancel_inquiry(struct hci_dev *hdev)
+ 
+        return hci_send_cmd(hdev, HCI_OP_INQUIRY_CANCEL, 0, NULL);
+ }
++
++module_param(enable_hs, bool, 0644);
++MODULE_PARM_DESC(enable_hs, "Enable High Speed");
+diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+index e49b6e5..f36bc3f 100644
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@ -58,7 +58,6 @@
+ #include <net/bluetooth/a2mp.h>
+ 
+ int disable_ertm;
+-int enable_hs;
+ 
+ static u32 l2cap_feat_mask = L2CAP_FEAT_FIXED_CHAN;
+ static u8 l2cap_fixed_chan[8] = { L2CAP_FC_L2CAP, };
+@@ -4811,6 +4810,3 @@ void l2cap_exit(void)
+ 
+ module_param(disable_ertm, bool, 0644);
+ MODULE_PARM_DESC(disable_ertm, "Disable enhanced retransmission mode");
+-
+-module_param(enable_hs, bool, 0644);
+-MODULE_PARM_DESC(enable_hs, "Enable High Speed");
+
+
+Best regards 
+Andrei Emeltchenko 
