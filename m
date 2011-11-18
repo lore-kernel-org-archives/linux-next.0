@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with the  tree
-Date: Fri, 18 Nov 2011 12:04:29 +1100
-Message-ID: <20111118120429.14bbc7667cbf09a5d211a1c5@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the mips tree
+Date: Fri, 18 Nov 2011 14:22:45 +1100
+Message-ID: <20111118142245.5f4156be67f6048f58595b0d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__18_Nov_2011_12_04_29_+1100_i4P7fgO1CO=1hGWX"
+ boundary="Signature=_Fri__18_Nov_2011_14_22_45_+1100_Cw8v4Odxe5zIsBo7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:54971 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:46306 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755163Ab1KRBEh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Nov 2011 20:04:37 -0500
+	with ESMTP id S1755992Ab1KRDW5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Nov 2011 22:22:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, Sylwester Nawrocki <snjw23@gmail.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gabor Juhos <juhosg@openwrt.org>, Ralf Baechle <ralf@linux-mips.org>, Rong Wang <Rong.Wang@csr.com>
 
---Signature=_Fri__18_Nov_2011_12_04_29_+1100_i4P7fgO1CO=1hGWX
+--Signature=_Fri__18_Nov_2011_14_22_45_+1100_Cw8v4Odxe5zIsBo7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi Greg,
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-drivers/staging/media/as102/as102_drv.h between commit d29387e8de8b
-("media/staging: fix allyesconfig build error") from Linus' tree and
-commit 82aae98df488 ("[media] staging: as102: Remove leftovers of the SPI
-bus driver") from the v4l-dvb tree.
+Today's linux-next merge of the tty tree got a conflict in
+drivers/tty/serial/Makefile between commit 58235d376b15 ("SERIAL: AR933X:
+Add driver for the built-in UART of the SoC") from the mips tree and
+commit 161e773cbd0c ("UART: add CSR SiRFprimaII SoC on-chip uart
+drivers") from the tty tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -35,42 +35,36 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/media/as102/as102_drv.h
-index fd33f5a,0ecef9e..0000000
---- a/drivers/staging/media/as102/as102_drv.h
-+++ b/drivers/staging/media/as102/as102_drv.h
-@@@ -37,8 -27,9 +27,10 @@@
-  #define DRIVER_FULL_NAME "Abilis Systems as10x usb driver"
-  #define DRIVER_NAME "as10x_usb"
- =20
- -extern int debug;
- +extern int as102_debug;
- +#define debug	as102_debug
-+ extern struct usb_driver as102_usb_driver;
-+ extern int elna_enable;
- =20
-  #define dprintk(debug, args...) \
-  	do { if (debug) {	\
+diff --cc drivers/tty/serial/Makefile
+index 62f7d28,af57089..0000000
+--- a/drivers/tty/serial/Makefile
++++ b/drivers/tty/serial/Makefile
+@@@ -89,4 -94,4 +89,5 @@@ obj-$(CONFIG_SERIAL_MSM_SMD)	+=3D msm_smd
+  obj-$(CONFIG_SERIAL_MXS_AUART) +=3D mxs-auart.o
+  obj-$(CONFIG_SERIAL_LANTIQ)	+=3D lantiq.o
+  obj-$(CONFIG_SERIAL_XILINX_PS_UART) +=3D xilinx_uartps.o
+ +obj-$(CONFIG_SERIAL_AR933X)   +=3D ar933x_uart.o
++ obj-$(CONFIG_SERIAL_SIRFSOC) +=3D sirfsoc_uart.o
 
---Signature=_Fri__18_Nov_2011_12_04_29_+1100_i4P7fgO1CO=1hGWX
+--Signature=_Fri__18_Nov_2011_14_22_45_+1100_Cw8v4Odxe5zIsBo7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOxa8dAAoJEECxmPOUX5FE2dMP/1/hxKd4Cnux7znrmfihpeUM
-5+gfoDyvxWtbmVCc4OGnLEcMYPgJjigtsCctwfyzRDsVhl+Bcs7Dc3sWP0HRb7/R
-yHl+oNKSuqN8xrQYy0uvUjdausFDEYCWZ28zNdHI2fCsSdbEbQrrIigPPM4mju9a
-doGLHLkHjR1zqFRE968rxabZszzD6atMrmQRn4i/K7YxJsOArnEYx66LQ5BLhuBy
-1hrIixQLZvZ7H3QVdgH9d+T0QraaAU0n2RNLqK6EVLlgMJFu+KJXZZLB7KMaXQMP
-7k/3Hk9xDOgmdBMs1ImO6K8g8w5eit5osDISVwaeYPBjGYMaxQ2MXu5a3qm4cwMN
-dU7RFCsQ9wanjqYcLuajug9FnKyZQvsxhPrJMFiFOicOGVKZ0nppUoPN9ArcV8Ec
-FYSr0WAWYUNA3gYQlAZVxirQiRJ5YSN4MlNyWqPatTholEcJyrYcrvJiQXDV8dfR
-vu4o+5w5hpjPF8PJe5H4W6+71jgidvlpOirUsJ0mug1z1YfosqOoJbE8wCV4ZDzt
-dtAaox2Aeuf24sjUUOmeUzpDmhHEUCCRx2LTDxaTeHYTdDcqMY50szccOhaLgTWK
-4AFN/IOr+dNl71OduSvQlBxISTyGMoAR9gw57zSTKKfKzBYCukQNrY9ORZanOq+u
-xn41m6S1aktm0BvY6YkL
-=V00n
+iQIcBAEBCAAGBQJOxc+FAAoJEECxmPOUX5FEjsUP/3QnOG3efHgg13tl3OlaGjc8
+3W2rT0ibZkOHemAPS69mbuyNrrzrZWvdgpX2EGwcu3Dtb1vo4hJiHF7USsEVOmn5
+7+0Ecq8imUnC1CBMffgisQHtiPkW7RAUYpH+PIppal0o5dAwoHEpcgJEi4P0R4MD
+979MAVlPZzu5Yx6hSI85SWWJd39KcbSC61tP0OP0RFbkKQTwTjCwhZ7EAlDskjE2
+tMM/YHiD+AZUocd7INPgNfJBtDmkQeoYN6/xgOeMMKOcnk/i3hgqdL+394HkfNln
+phKHlqA8ns3DhLFFjzco36xq5q7SmM56PIl8Up7eeB0wQN1I6BY04MmEWgxFvdge
+ayyyA90blPY52Cz31SsBE5WS+gKqc1cbvXkvGg7/Sh7xvmB24FS2Qvseo7/7KisB
+7NU+CmlZA70sP1hlZUmb2a8SLLSaVFJPNWwoOY0PFyQ160Z6R8AO99AbgBKwZXiX
+CTW2zPTgtaqdqIYgtga8p+L1WfFNfGX0woP2Ooi3Crd013n0IJNfulofbUR4CTvY
+Kd3bOadPwKRKrd+hjJ81z18R6p2O1RfJyHo7tW+KVDW74NfaMjQBbUooIVVb+HL6
+b5125hvYShrVudyaYFSUei7y0ya+SKvnWD3BXYDs7sODHJx5hH5fcIkwm9pkHa2G
+hfq8Qp49UmOr81Gxib/K
+=aqtz
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__18_Nov_2011_12_04_29_+1100_i4P7fgO1CO=1hGWX--
+--Signature=_Fri__18_Nov_2011_14_22_45_+1100_Cw8v4Odxe5zIsBo7--
