@@ -1,50 +1,57 @@
-From: Bart Van Assche <bvanassche-HInyCGIudOg@public.gmane.org>
-Subject: Re: [PATCH] ib_srpt: Make compilation with BUG=n proceed
-Date: Fri, 18 Nov 2011 08:52:18 +0100
-Message-ID: <CAO+b5-oakXVhbxNMOh2LZ7bLKnuTz3B7Q-KbHF_XKjLjNnqueg@mail.gmail.com>
-References: <201111172025.44546.bvanassche@acm.org>
-	<CAL1RGDV+vgQ7J1VtyeGi-eNw00Bxe35xRJgBu0X4-5PAG4q-nQ@mail.gmail.com>
+From: Jiri Slaby <jslaby@suse.cz>
+Subject: Re: linux-next: manual merge of the tty tree with the tty.current
+ tree
+Date: Fri, 18 Nov 2011 09:41:15 +0100
+Message-ID: <4EC61A2B.5060501@suse.cz>
+References: <20111118143010.4a6c9eb17b86d24b9ebe706b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1RGDV+vgQ7J1VtyeGi-eNw00Bxe35xRJgBu0X4-5PAG4q-nQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Roland Dreier <roland-BHEL68pLQRGGvPXPguhicg@public.gmane.org>
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nicholas Bellinger <nab-IzHhD5pYlfBP7FQvKIMDCQ@public.gmane.org>, Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:50989 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752158Ab1KRIlT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Nov 2011 03:41:19 -0500
+In-Reply-To: <20111118143010.4a6c9eb17b86d24b9ebe706b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Young <dyoung@redhat.com>, Jiri Slaby <jirislaby@gmail.com>
 
-On Fri, Nov 18, 2011 at 12:45 AM, Roland Dreier <roland-BHEL68pLQRGGvPXPguhicg@public.gmane.org=
-> wrote:
-> On Thu, Nov 17, 2011 at 11:25 AM, Bart Van Assche <bvanassche-HInyCGIudOg@public.gmane.org=
-> wrote:
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pr_err("%s[%d]: unexpected opcode %d",=
- __func__, __LINE__,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0opcode);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 WARN_ON(true);
->
-> Not a big deal, but I guess this could just be
->
-> =A0 =A0 =A0 =A0WARN(1, "unexpected opcode %d", opcode);
+On 11/18/2011 04:30 AM, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the tty tree got a conflict in
+> drivers/tty/tty_ldisc.c between commits df92d0561de3 ("TTY: ldisc, allow
+> waiting for ldisc arbitrarily long") and 0c73c08ec73d ("TTY: ldisc, wait
+> for ldisc infinitely in hangup") from the tty.current tree and commits
+> 66ef27c3fd0e ("tty_ldisc: remove unnecessary negative return check for
+> wait_event_timeout") and 8b3ffa173ffa ("TTY: ldisc, remove some unneeded
+> includes") from the tty tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-As far as I can see with CONFIG_BUG=3Dn WARN() is defined as follows:
+Looks good. Thanks.
 
-#define WARN(condition, format...) ({                                  =
- \
-        int __ret_warn_on =3D !!(condition);                           =
-   \
-        unlikely(__ret_warn_on);                                       =
- \
-})
-
-So the changing pr_err(); WARN_ON(true); into WARN(1, ...) would cause
-no error message to be printed if CONFIG_BUG=3Dn. Is that the way kerne=
-l
-code should behave if CONFIG_BUG=3Dn ?
-
-Bart.
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> drivers/tty/tty_ldisc.c index 8e0924f,174db3b..0000000 ---
+> a/drivers/tty/tty_ldisc.c +++ b/drivers/tty/tty_ldisc.c @@@ -24,19 -16,8
+> +16,9 @@@ #include <linux/device.h> #include <linux/wait.h> #include
+> <linux/bitops.h> - #include <linux/delay.h> #include <linux/seq_file.h>
+> - #include <linux/uaccess.h> - #include <asm/system.h> - - #include
+> <linux/kbd_kern.h> - #include <linux/vt_kern.h> - #include
+> <linux/selection.h> - - #include <linux/kmod.h> - #include
+> <linux/nsproxy.h> +#include <linux/ratelimit.h> /* * This guards the
+> refcounted line discipline lists. The lock @@@ -553,13 -533,11 +535,11
+> @@@ static void tty_ldisc_flush_works(struc * Wait for the line
+> discipline to become idle. The discipline must * have been halted for
+> this to guarantee it remains idle. */ -static int
+> tty_ldisc_wait_idle(struct tty_struct *tty) +static int
+> tty_ldisc_wait_idle(struct tty_struct *tty, long timeout) { - int ret; +
+> long ret; ret = wait_event_timeout(tty_ldisc_idle, -
+> atomic_read(&tty->ldisc->users) == 1, 5 * HZ); +
+> atomic_read(&tty->ldisc->users) == 1, timeout); - if (ret < 0) - return
+> ret; return ret > 0 ? 0 : -EBUSY; }
+> 
+-- 
+js
+suse labs
