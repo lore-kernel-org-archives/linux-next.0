@@ -1,59 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the slave-dma tree with the s5p tree
-Date: Mon, 21 Nov 2011 11:08:37 +1100
-Message-ID: <20111121110837.05684cae0be90d4e7f0df47e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Mon, 21 Nov 2011 12:57:03 +1100
+Message-ID: <20111121125703.fbb955c4fc468ba176086168@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_Nov_2011_11_08_37_+1100_VwYRUgdVUXtzLaO2"
+ boundary="Signature=_Mon__21_Nov_2011_12_57_03_+1100_bEZ2OI1nu=QbbkWr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:56462 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:59983 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754221Ab1KUAIw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Nov 2011 19:08:52 -0500
+	with ESMTP id S1754773Ab1KUB53 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Nov 2011 20:57:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>
 
---Signature=_Mon__21_Nov_2011_11_08_37_+1100_VwYRUgdVUXtzLaO2
+--Signature=_Mon__21_Nov_2011_12_57_03_+1100_bEZ2OI1nu=QbbkWr
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Vinod,
+Hi Greg,
 
-Today's linux-next merge of the slave-dma tree got a conflict in
-drivers/dma/pl330.c between commit fc0b5cccc8dd ("DMA: PL330: Infer
-transfer direction from transfer request instead of platform data") from
-the s5p tree and commit db8196df4bb6 ("dmaengine: move drivers to
-dma_transfer_direction") from the slave-dma tree.
+After merging the driver-core tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-The former removed the code modified by the latter, so I did that.
+fs/debugfs/file.c: In function 'debugfs_print_regs32':
+fs/debugfs/file.c:560:7: error: implicit declaration of function 'readl' [-=
+Werror=3Dimplicit-function-declaration]
+
+Caused by commit 1a087c6ad975 ("debugfs: add tools to printk 32-bit
+registers"). To use readl(), linux/io.h should be included.
+
+I have used the driver-core tree from next-20111118 for today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__21_Nov_2011_11_08_37_+1100_VwYRUgdVUXtzLaO2
+--Signature=_Mon__21_Nov_2011_12_57_03_+1100_bEZ2OI1nu=QbbkWr
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOyZaFAAoJEECxmPOUX5FEDQMP/01jn4FDiN0J65XpMIXmlRZT
-Tc+73JeEkeZp9lwxUdPvqBg6T9o+g9kv4lBNLGpXNDehcmqidN86NvRVNVsxg6hS
-MU1nnQBY/kArQzq3JkaXhiWy66QBm/T+q1KM/6l/AqGab9DmOcrkfYLirZyxpgaW
-DIT9XBDANpM7u1e5rCFk6TvllJBgStpPFVbHcL3IRKG+8kfVnGPhxA/oTzh7kNmt
-rdAIG0G6ZdGRxry2Q0uJmaxsw+Spmq1KCM/0I7YhBB1adOpCIpZiT4OAzRfgNoUH
-y11kNU/NTByA0DslO71OVOj58QRCjl8olLrk9gLuVtWWIhMZTl/9VM0r8teiEaVW
-DG6RTPbJ6IX3uPdL554HCuona6Z9P57aSkAPcs6y/wPfrFAVO3fcHXRf0MBS4T4N
-TMuyPxnw8ht2DlXmicx6YAfcOYyySspmViHARsCxjmmJ8IlRrTCmVWW2W558WLm+
-aKJlVrOMqdTayBGbI+g1VGhy4Vp1Z5U/n1Q3Xcnq3qDWrMwyhW8BU40eEGAMfKDB
-3N/Q0qW6lUgKn3OL5ztCUoXTJDRtWdv5tLd2ZzLzT5LOJ+ovjntB+BCugKjstIFO
-z/dJAg/NlIHtj8CHKxdpZTjlaAoZqwTUtLNwM5cgFx8KDVH4az645RpI2/yLy4ZP
-L/RaBTT7YgmSSymTGyvr
-=Zu1w
+iQIcBAEBCAAGBQJOya/vAAoJEECxmPOUX5FEPGcP/0Gn4RlahY10/8x5jRN6YKDq
+Zy2kQUCGhAeD58/cOykVQckEDf9hMXSsAJ/gP7wbGl1zc6/ozzEAJaowDsV9CYvo
+HI4fZDTu+TuDUC07vLgVIGNoMOrCB3kYXfuGY1ab4pqBc0TL5Sj6XWzIHYxycj0n
+hzj3s9DFT+heX/1cdcSvPsV74pyVZA/JmyUjpDqIRgaM9LAV8/hmdrUI3ky/DOOR
+v8CiJDQJOd5XIQI20Ucq2WdVYupsPC9NJZuuRlHtadx9yZd9I+LPS+WDYd5WYR9H
+UpOqukFdyq/B2id5AcL09fr+eQ+TxAnNl4K3FFoUNxD0/EV7PVzpPUTBCo5WMgqP
+bNifUZPL9wPnsrz7LdXIq+HSqAODVWhCobv//Y7A4iTX7okExIceqkSOvr6QlUv/
+U+VDDayF90kmuFcPgXMKY3D3BiZnb7csUDfs046aglxPcV6qLa6/wDAsGvIz4n6l
+8wAWavQH7B7ptWhKMjmbIb8nZCqE3v6vwSJAbu2P94IbooFCobwsC06yTMVn4Wm/
+wbD+IaerL/usJy3rhfHbKXIHJVLk3+PWnLXSXK9A9okZcSMJrjLn/nn5dMT+NDjl
+bklLdgV+4U5F6mACNQ+vPEVUic1zClxG+WdSd6pW9jGVDBsajz6u38GAhXEQqLaD
+2z7emb0AiYkm+YGla/3U
+=AOhA
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__21_Nov_2011_11_08_37_+1100_VwYRUgdVUXtzLaO2--
+--Signature=_Mon__21_Nov_2011_12_57_03_+1100_bEZ2OI1nu=QbbkWr--
