@@ -1,155 +1,59 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: [PATCH UPDATED] dmatest: don't use set_freezable_with_signal()
-Date: Mon, 21 Nov 2011 11:20:41 -0800
-Message-ID: <20111121192041.GB25776@google.com>
-References: <20111121184316.GH15314@google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: eCryptfs tree back on git.kernel.org
+Date: Tue, 22 Nov 2011 08:22:14 +1100
+Message-ID: <20111122082214.af2f778f03082921c5a099f6@canb.auug.org.au>
+References: <20111121161607.GC2830@boyd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:45079 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754017Ab1KUTU5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2011 14:20:57 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__22_Nov_2011_08_22_14_+1100_f8mhwA0.GcpdO=UD"
+Return-path: <ecryptfs-owner@vger.kernel.org>
+In-Reply-To: <20111121161607.GC2830@boyd>
+Sender: ecryptfs-owner@vger.kernel.org
+To: Tyler Hicks <tyhicks@canonical.com>
+Cc: linux-next@vger.kernel.org, ecryptfs@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Tue__22_Nov_2011_08_22_14_+1100_f8mhwA0.GcpdO=UD
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20111121184316.GH15314@google.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Dan Williams <dan.j.williams@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, rjw@sisk.pl, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+Content-Transfer-Encoding: quoted-printable
 
-Commit 981ed70d8e (dmatest: make dmatest threads freezable) made
-dmatest kthread use set_freezable_with_signal(); however, the
-interface is scheduled to be removed in the next merge window.
+Hi Tyler,
 
-The problem is that unlike userland tasks there's no default place
-which handles signal pending state and it isn't clear who owns and/or
-is responsible for clearing TIF_SIGPENDING.  For example, in the
-current code, try_to_freeze() clears TIF_SIGPENDING but it isn't sure
-whether it actually owns the TIF_SIGPENDING nor is it race-free -
-ie. the task may continue to run with TIF_SIGPENDING set after the
-freezable section.
+On Mon, 21 Nov 2011 10:16:08 -0600 Tyler Hicks <tyhicks@canonical.com> wrot=
+e:
+>
+> Hi Stephen - The eCryptfs devel tree is back on kernel.org. Please track
+> this branch:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/ecryptfs.git#next
 
-Unfortunately, we don't have wait_for_completion_freezable_timeout().
-This patch open codes it and uses wait_event_freezable_timeout()
-instead and removes timeout reloading - wait_event_freezable_timeout()
-won't return across freezing events (currently racy but fix scheduled)
-and timer doesn't decrement while the task is in freezer.  Although
-this does lose timer-reset-over-freezing, given that timeout is
-supposed to be long enough and failure to finish inside is considered
-irrecoverable, I don't think this is worth the complexity.
+OK, I have switched to that, now.  I also changed your contact address.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-While at it, move completion to outer scope and explain that we're
-ignoring dangling pointer problem after timeout.  This should give
-slightly better chance at avoiding oops after timeout.
+--Signature=_Tue__22_Nov_2011_08_22_14_+1100_f8mhwA0.GcpdO=UD
+Content-Type: application/pgp-signature
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>
----
-Oops, forgot to replace set_freezable_with_signal() with
-set_freezable().  Updated.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-Thank you.
+iQIcBAEBCAAGBQJOysEGAAoJEECxmPOUX5FErxkP/3iKCFC4FHUrMYpq/IE1U0sA
+jYPW/YBFN1sY3CS9VghGz9dsKuW05AxeVMw7LiXHTMm0vdiGs2H66QKA8dqtwzr3
+0G3wse6JxJEwAVJLaDid//R8qXWRVNRswaxoZvPvCnfoMvXExNe0xMeVMoaRGB69
+O3ehHi0kvmHCZMeXB+zxHP+uFUARrMtGoCG7lw6uSPIrC4FJqWazcmEPKc/1Dra7
+lTD7zRYhW0lxAfSnlVE9BEdG6klJRxvqXOGH+P2ee8brIFRLp3gKVtXkVzDXDhsv
+WI+KOt5Z9bNvthJpPPlcmhn93EO9RAuxHinUt8msTdml0xXkQblFcnj7Rn2XRx4p
+PVjOEvIrjO21gzQoNOUWyLfMnWZTutxEVfvKpzx04YQCWuX4cGd0tTHzsbKzB5VF
+OwJXeCGlgE3yBSs+gnDYZadjGt2zlX+cOLOop26/v/NDtk5mmUTxaaIZBvJk/+HG
+7qWQQl3kgMQ3429t9ANo2wsm6PhwFohcHNIAKJ/S6mpHru7Ml4gQpk5w7Qus5reb
+lpWMoXRDUtX11j01iTWoZt8V7tIzAhNzv6UPeEM465Fpdo0owj3B4HWDELTaCu2h
+npMeuQ4vQ9toQ3fR2AtKFbDwao5yiR994nRtSnIy+2fMnIbpMnpDv6WXGGnNA6nk
+DITwEbeUFPspioZDsaUG
+=+VDl
+-----END PGP SIGNATURE-----
 
- drivers/dma/dmatest.c |   46 +++++++++++++++++++++++++++-------------------
- 1 file changed, 27 insertions(+), 19 deletions(-)
-
-Index: work/drivers/dma/dmatest.c
-===================================================================
---- work.orig/drivers/dma/dmatest.c
-+++ work/drivers/dma/dmatest.c
-@@ -214,9 +214,18 @@ static unsigned int dmatest_verify(u8 **
- 	return error_count;
- }
- 
--static void dmatest_callback(void *completion)
-+/* poor man's completion - we want to use wait_event_freezable() on it */
-+struct dmatest_done {
-+	bool			done;
-+	wait_queue_head_t	*wait;
-+};
-+
-+static void dmatest_callback(void *arg)
- {
--	complete(completion);
-+	struct dmatest_done *done = arg;
-+
-+	done->done = true;
-+	wake_up_all(done->wait);
- }
- 
- /*
-@@ -235,7 +244,9 @@ static void dmatest_callback(void *compl
-  */
- static int dmatest_func(void *data)
- {
-+	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(done_wait);
- 	struct dmatest_thread	*thread = data;
-+	struct dmatest_done	done = { .wait = &done_wait };
- 	struct dma_chan		*chan;
- 	const char		*thread_name;
- 	unsigned int		src_off, dst_off, len;
-@@ -252,7 +263,7 @@ static int dmatest_func(void *data)
- 	int			i;
- 
- 	thread_name = current->comm;
--	set_freezable_with_signal();
-+	set_freezable();
- 
- 	ret = -ENOMEM;
- 
-@@ -306,9 +317,6 @@ static int dmatest_func(void *data)
- 		struct dma_async_tx_descriptor *tx = NULL;
- 		dma_addr_t dma_srcs[src_cnt];
- 		dma_addr_t dma_dsts[dst_cnt];
--		struct completion cmp;
--		unsigned long start, tmo, end = 0 /* compiler... */;
--		bool reload = true;
- 		u8 align = 0;
- 
- 		total_tests++;
-@@ -391,9 +399,9 @@ static int dmatest_func(void *data)
- 			continue;
- 		}
- 
--		init_completion(&cmp);
-+		done.done = false;
- 		tx->callback = dmatest_callback;
--		tx->callback_param = &cmp;
-+		tx->callback_param = &done;
- 		cookie = tx->tx_submit(tx);
- 
- 		if (dma_submit_error(cookie)) {
-@@ -407,20 +415,20 @@ static int dmatest_func(void *data)
- 		}
- 		dma_async_issue_pending(chan);
- 
--		do {
--			start = jiffies;
--			if (reload)
--				end = start + msecs_to_jiffies(timeout);
--			else if (end <= start)
--				end = start + 1;
--			tmo = wait_for_completion_interruptible_timeout(&cmp,
--								end - start);
--			reload = try_to_freeze();
--		} while (tmo == -ERESTARTSYS);
-+		wait_event_freezable_timeout(done_wait, done.done,
-+					     msecs_to_jiffies(timeout));
- 
- 		status = dma_async_is_tx_complete(chan, cookie, NULL, NULL);
- 
--		if (tmo == 0) {
-+		if (!done.done) {
-+			/*
-+			 * We're leaving the timed out dma operation with
-+			 * dangling pointer to done_wait.  To make this
-+			 * correct, we'll need to allocate wait_done for
-+			 * each test iteration and perform "who's gonna
-+			 * free it this time?" dancing.  For now, just
-+			 * leave it dangling.
-+			 */
- 			pr_warning("%s: #%u: test timed out\n",
- 				   thread_name, total_tests - 1);
- 			failed_tests++;
+--Signature=_Tue__22_Nov_2011_08_22_14_+1100_f8mhwA0.GcpdO=UD--
