@@ -1,68 +1,49 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] digsig: fix build errors
-Date: Sun, 20 Nov 2011 22:12:34 -0800
-Message-ID: <4EC9EBD2.3040708@xenotime.net>
-References: <20111121133936.ae0ecadbf39ae50da6b842d1@canb.auug.org.au>
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: Re: linux-next: build warning after merge of the Linus' tree
+Date: Mon, 21 Nov 2011 09:25:06 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.1111210922090.10414@axis700.grange>
+References: <20111121131701.44b49fc7da28170c9ee6b524@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:58029 "HELO
-	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751899Ab1KUGOv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2011 01:14:51 -0500
-In-Reply-To: <20111121133936.ae0ecadbf39ae50da6b842d1@canb.auug.org.au>
+Received: from moutng.kundenserver.de ([212.227.126.186]:65236 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752175Ab1KUIZX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2011 03:25:23 -0500
+In-Reply-To: <20111121131701.44b49fc7da28170c9ee6b524@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dmitry Kasatkin <dmitry.kasatkin@intel.com>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+Hi Stephen
 
-Fix build errors by adding kconfig dependency on KEYS:
+On Mon, 21 Nov 2011, Stephen Rothwell wrote:
 
-lib/digsig.c:106:16: error: dereferencing pointer to incomplete type
-lib/digsig.c:107:11: error: dereferencing pointer to incomplete type
-lib/digsig.c:184:14: error: dereferencing pointer to incomplete type
-lib/digsig.c:223:3: error: 'key_ref_t' undeclared (first use in this function)
-lib/digsig.c:223:13: error: expected ';' before 'kref'
-lib/digsig.c:224:3: error: 'kref' undeclared (first use in this function)
-lib/digsig.c:224:3: error: implicit declaration of function 'keyring_search'
-lib/digsig.c:231:3: error: implicit declaration of function 'request_key'
+> Hi all,
+> 
+> Building Linus' tree today linux-next (x86_64_allmodconfig)
+> produced quite a few of these warnings:
+> 
+> include/media/soc_camera.h: In function 'soc_camera_i2c_to_vdev':
+> include/media/soc_camera.h:257:34: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+> 
+> This was introduced by commit 2f0babb7e432 ("[media] V4L: soc-camera:
+> make (almost) all client drivers re-usable outside of the framework").
+> 
+> This warning is caused by the "grp_id" member of "struct v4l2_subdev" -
+> which is a u32 - being cast to a pointer.  That pointer is dereferenced,
+> so I have no idea how that is supposed to work on any 64 bit platform.
 
-and after changing lib/Kconfig:
-warning: (INTEGRITY_DIGSIG) selects DIGSIG which has unmet direct dependencies (CRYPTO && KEYS)
+soc-camera atm supports 7 platforms (if I haven't forgotten anyone), none 
+of them is 64-bit. But you're right, it shall compile cleanly on 64 bits 
+too, I'm working on a patch. Unfortunately, while working on it I came 
+across other regressions, that blocked my tests... But a solution will be 
+found.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@intel.com>
+Thanks
+Guennadi
 ---
- lib/Kconfig                |    4 ++--
- security/integrity/Kconfig |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
---- next-2011-1121.orig/lib/Kconfig
-+++ next-2011-1121/lib/Kconfig
-@@ -294,10 +294,10 @@ config MPILIB_EXTRA
- 
- config DIGSIG
- 	tristate "In-kernel signature checker"
--	depends on CRYPTO
-+	depends on CRYPTO && KEYS
- 	select MPILIB
- 	help
- 	  Digital signature verification. Currently only RSA is supported.
--	  Implementation is done using GnuPG MPI library
-+	  Implementation is done using GnuPG MPI library.
- 
- endmenu
---- next-2011-1121.orig/security/integrity/Kconfig
-+++ next-2011-1121/security/integrity/Kconfig
-@@ -5,7 +5,7 @@ config INTEGRITY
- 
- config INTEGRITY_DIGSIG
- 	boolean "Digital signature verification using multiple keyrings"
--	depends on INTEGRITY
-+	depends on INTEGRITY && CRYPTO && KEYS
- 	default n
- 	select DIGSIG
- 	help
+Guennadi Liakhovetski, Ph.D.
+Freelance Open-Source Software Developer
+http://www.open-technology.de/
