@@ -1,64 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the driver-core tree
-Date: Mon, 21 Nov 2011 12:57:03 +1100
-Message-ID: <20111121125703.fbb955c4fc468ba176086168@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the Linus' tree
+Date: Mon, 21 Nov 2011 13:17:01 +1100
+Message-ID: <20111121131701.44b49fc7da28170c9ee6b524@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_Nov_2011_12_57_03_+1100_bEZ2OI1nu=QbbkWr"
+ boundary="Signature=_Mon__21_Nov_2011_13_17_01_+1100_EjYAxwxitb7niML6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:59983 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:42771 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754773Ab1KUB53 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Nov 2011 20:57:29 -0500
+	with ESMTP id S1754913Ab1KUCRW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Nov 2011 21:17:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 
---Signature=_Mon__21_Nov_2011_12_57_03_+1100_bEZ2OI1nu=QbbkWr
+--Signature=_Mon__21_Nov_2011_13_17_01_+1100_EjYAxwxitb7niML6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-After merging the driver-core tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Building Linus' tree today linux-next (x86_64_allmodconfig)
+produced quite a few of these warnings:
 
-fs/debugfs/file.c: In function 'debugfs_print_regs32':
-fs/debugfs/file.c:560:7: error: implicit declaration of function 'readl' [-=
-Werror=3Dimplicit-function-declaration]
+include/media/soc_camera.h: In function 'soc_camera_i2c_to_vdev':
+include/media/soc_camera.h:257:34: warning: cast to pointer from integer of=
+ different size [-Wint-to-pointer-cast]
 
-Caused by commit 1a087c6ad975 ("debugfs: add tools to printk 32-bit
-registers"). To use readl(), linux/io.h should be included.
+This was introduced by commit 2f0babb7e432 ("[media] V4L: soc-camera:
+make (almost) all client drivers re-usable outside of the framework").
 
-I have used the driver-core tree from next-20111118 for today.
-
+This warning is caused by the "grp_id" member of "struct v4l2_subdev" -
+which is a u32 - being cast to a pointer.  That pointer is dereferenced,
+so I have no idea how that is supposed to work on any 64 bit platform.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__21_Nov_2011_12_57_03_+1100_bEZ2OI1nu=QbbkWr
+--Signature=_Mon__21_Nov_2011_13_17_01_+1100_EjYAxwxitb7niML6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOya/vAAoJEECxmPOUX5FEPGcP/0Gn4RlahY10/8x5jRN6YKDq
-Zy2kQUCGhAeD58/cOykVQckEDf9hMXSsAJ/gP7wbGl1zc6/ozzEAJaowDsV9CYvo
-HI4fZDTu+TuDUC07vLgVIGNoMOrCB3kYXfuGY1ab4pqBc0TL5Sj6XWzIHYxycj0n
-hzj3s9DFT+heX/1cdcSvPsV74pyVZA/JmyUjpDqIRgaM9LAV8/hmdrUI3ky/DOOR
-v8CiJDQJOd5XIQI20Ucq2WdVYupsPC9NJZuuRlHtadx9yZd9I+LPS+WDYd5WYR9H
-UpOqukFdyq/B2id5AcL09fr+eQ+TxAnNl4K3FFoUNxD0/EV7PVzpPUTBCo5WMgqP
-bNifUZPL9wPnsrz7LdXIq+HSqAODVWhCobv//Y7A4iTX7okExIceqkSOvr6QlUv/
-U+VDDayF90kmuFcPgXMKY3D3BiZnb7csUDfs046aglxPcV6qLa6/wDAsGvIz4n6l
-8wAWavQH7B7ptWhKMjmbIb8nZCqE3v6vwSJAbu2P94IbooFCobwsC06yTMVn4Wm/
-wbD+IaerL/usJy3rhfHbKXIHJVLk3+PWnLXSXK9A9okZcSMJrjLn/nn5dMT+NDjl
-bklLdgV+4U5F6mACNQ+vPEVUic1zClxG+WdSd6pW9jGVDBsajz6u38GAhXEQqLaD
-2z7emb0AiYkm+YGla/3U
-=AOhA
+iQIcBAEBCAAGBQJOybSdAAoJEECxmPOUX5FEgJQP/1CtTBXGty19o/NUpXOsPgPN
+lnxPuaqsfE1WvESV7fn1sr0D2zBCq0tgbkSk9bUz1xIyNMTW/i/TXHLCYwph3oH/
+LjVm6YZWIztEbhnsr1yUoZTPOz8BoR69hHnhZ4j9fcspDRdOkon0sj8ryJtH4Dhc
+ip/9ljJi2LZ16YzwO3ObogirKRRJs7snTIhiXBD48xFV6oUHL4IkCdT8XR5dOwv7
+NSQXTAR6/3mV0GY9Fy2xHyWjBce9yAJUSKsTHHvFdJ0ZCWU0BN6g/6gu/mhXCZAt
+zEgHUDohgeFxRsCjXzEkb0o1R3Dvg+aI180X4BQ57NPZwoFAnbCBehxwiibA/9Ry
+yPBxomhh44iPaYjhCwl/GQIsiELaTH9kIY7CxfYSyGCwyGM67KdF5KE9XC3rQraA
+b0INznmC521mA2teCTYzY22wEM9YLi4DnHKGtHEwIWwsiBG5X97qCBxKo6nbLOIN
+hSV49ITw3hPGK1Z/1C5vht5rWw9iMN+ALisQRKrAOH813n0QfNQQroCV3pfI84N2
+xOpORQ48AI2Z8hlPF6FNWdm8ba2barfRpT4e0dQijEAloJd+KpF2Sr/Sd42hIPDW
+lC87CB5g/L0gD7aZU85TALAN5vcytkL+tvC2YdzcGLeuHRK1ctF7WCH7psD8Ognm
+N+vy1FfJw+mq8w1+g+Op
+=uT6r
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__21_Nov_2011_12_57_03_+1100_bEZ2OI1nu=QbbkWr--
+--Signature=_Mon__21_Nov_2011_13_17_01_+1100_EjYAxwxitb7niML6--
