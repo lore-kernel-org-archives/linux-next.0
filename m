@@ -1,68 +1,59 @@
-From: Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH] ib_srpt: Make compilation with BUG=n proceed
-Date: Sat, 19 Nov 2011 10:11:15 +0100
-Message-ID: <CAO+b5-rWt1i1CrpqRKkVJevbhgDc=Ja=1QpmQg0sKg_ihe8q-w@mail.gmail.com>
-References: <201111172025.44546.bvanassche@acm.org>
-	<CAL1RGDV+vgQ7J1VtyeGi-eNw00Bxe35xRJgBu0X4-5PAG4q-nQ@mail.gmail.com>
-	<CAO+b5-oakXVhbxNMOh2LZ7bLKnuTz3B7Q-KbHF_XKjLjNnqueg@mail.gmail.com>
-	<CAL1RGDXhS8hc=ERvicXa8xgcLYFP+w5GLvzQOYw6mn0MGyk1XA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the slave-dma tree with the s5p tree
+Date: Mon, 21 Nov 2011 11:08:37 +1100
+Message-ID: <20111121110837.05684cae0be90d4e7f0df47e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__21_Nov_2011_11_08_37_+1100_VwYRUgdVUXtzLaO2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:36629 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752185Ab1KSJLQ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 19 Nov 2011 04:11:16 -0500
-In-Reply-To: <CAL1RGDXhS8hc=ERvicXa8xgcLYFP+w5GLvzQOYw6mn0MGyk1XA@mail.gmail.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:56462 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754221Ab1KUAIw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 20 Nov 2011 19:08:52 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland Dreier <roland@purestorage.com>
-Cc: linux-rdma@vger.kernel.org, linux-next@vger.kernel.org, Nicholas Bellinger <nab@linux-iscsi.org>, Christoph Hellwig <hch@infradead.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Fri, Nov 18, 2011 at 9:10 PM, Roland Dreier <roland@purestorage.com>=
- wrote:
-> On Thu, Nov 17, 2011 at 11:52 PM, Bart Van Assche <bvanassche@acm.org=
-> wrote:
-> > As far as I can see with CONFIG_BUG=3Dn WARN() is defined as follow=
-s:
-> >
-> > #define WARN(condition, format...) ({ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
-> > =A0 =A0 =A0 =A0int __ret_warn_on =3D !!(condition); =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
-> > =A0 =A0 =A0 =A0unlikely(__ret_warn_on); =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
-> > })
-> >
-> > So the changing pr_err(); WARN_ON(true); into WARN(1, ...) would ca=
-use
-> > no error message to be printed if CONFIG_BUG=3Dn. Is that the way k=
-ernel
-> > code should behave if CONFIG_BUG=3Dn ?
->
-> I don't know the code well enough to know what it *should* do ...
-> pretty much all WARN (or WARN_ON or __WARN) gives over a
-> printk is that it includes the backtrace. =A0Which might not be parti=
-cularly
-> useful in this case.
->
-> So maybe pr_err() without WARN_ON is the best thing. =A0I was
-> just responding microlocally to the couple of lines here without
-> thinking through what output is actually useful.
+--Signature=_Mon__21_Nov_2011_11_08_37_+1100_VwYRUgdVUXtzLaO2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-According to the description in init/Kconfig, BUG=3Dn should only be
-used on embedded systems with no facilities for error reporting. I do
-not expect that anyone will miss the pr_err() output on such a system.
+Hi Vinod,
 
-> What are these error messages for? =A0A "can never happen" bug
-> in the ib_srpt logic, or something that could be triggered by an
-> insane initiator sending a bogus sequence?
+Today's linux-next merge of the slave-dma tree got a conflict in
+drivers/dma/pl330.c between commit fc0b5cccc8dd ("DMA: PL330: Infer
+transfer direction from transfer request instead of platform data") from
+the s5p tree and commit db8196df4bb6 ("dmaengine: move drivers to
+dma_transfer_direction") from the slave-dma tree.
 
-These messages are present in code paths that should never be reached,
-no matter how the initiator or the IB network behaves. These messages
-have been useful while making ib_srpt robust against IB cable pulling
-- see e.g. http://www.mail-archive.com/linux-rdma@vger.kernel.org/msg09=
-664.html.
+The former removed the code modified by the latter, so I did that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Bart.
+--Signature=_Mon__21_Nov_2011_11_08_37_+1100_VwYRUgdVUXtzLaO2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOyZaFAAoJEECxmPOUX5FEDQMP/01jn4FDiN0J65XpMIXmlRZT
+Tc+73JeEkeZp9lwxUdPvqBg6T9o+g9kv4lBNLGpXNDehcmqidN86NvRVNVsxg6hS
+MU1nnQBY/kArQzq3JkaXhiWy66QBm/T+q1KM/6l/AqGab9DmOcrkfYLirZyxpgaW
+DIT9XBDANpM7u1e5rCFk6TvllJBgStpPFVbHcL3IRKG+8kfVnGPhxA/oTzh7kNmt
+rdAIG0G6ZdGRxry2Q0uJmaxsw+Spmq1KCM/0I7YhBB1adOpCIpZiT4OAzRfgNoUH
+y11kNU/NTByA0DslO71OVOj58QRCjl8olLrk9gLuVtWWIhMZTl/9VM0r8teiEaVW
+DG6RTPbJ6IX3uPdL554HCuona6Z9P57aSkAPcs6y/wPfrFAVO3fcHXRf0MBS4T4N
+TMuyPxnw8ht2DlXmicx6YAfcOYyySspmViHARsCxjmmJ8IlRrTCmVWW2W558WLm+
+aKJlVrOMqdTayBGbI+g1VGhy4Vp1Z5U/n1Q3Xcnq3qDWrMwyhW8BU40eEGAMfKDB
+3N/Q0qW6lUgKn3OL5ztCUoXTJDRtWdv5tLd2ZzLzT5LOJ+ovjntB+BCugKjstIFO
+z/dJAg/NlIHtj8CHKxdpZTjlaAoZqwTUtLNwM5cgFx8KDVH4az645RpI2/yLy4ZP
+L/RaBTT7YgmSSymTGyvr
+=Zu1w
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__21_Nov_2011_11_08_37_+1100_VwYRUgdVUXtzLaO2--
