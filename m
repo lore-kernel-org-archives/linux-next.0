@@ -1,59 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: eCryptfs tree back on git.kernel.org
-Date: Tue, 22 Nov 2011 08:22:14 +1100
-Message-ID: <20111122082214.af2f778f03082921c5a099f6@canb.auug.org.au>
-References: <20111121161607.GC2830@boyd>
+Subject: linux-next: failure to fetch the cpufreq tree
+Date: Tue, 22 Nov 2011 10:57:56 +1100
+Message-ID: <20111122105756.08df5d9306102fc31e33dec7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_Nov_2011_08_22_14_+1100_f8mhwA0.GcpdO=UD"
-Return-path: <ecryptfs-owner@vger.kernel.org>
-In-Reply-To: <20111121161607.GC2830@boyd>
-Sender: ecryptfs-owner@vger.kernel.org
-To: Tyler Hicks <tyhicks@canonical.com>
-Cc: linux-next@vger.kernel.org, ecryptfs@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__22_Nov_2011_10_57_56_+1100_E/=X/OTlAaJfpXQC"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:45880 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752242Ab1KUX6N (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2011 18:58:13 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Jones <davej@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__22_Nov_2011_08_22_14_+1100_f8mhwA0.GcpdO=UD
+--Signature=_Tue__22_Nov_2011_10_57_56_+1100_E/=X/OTlAaJfpXQC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tyler,
+Hi Dave,
 
-On Mon, 21 Nov 2011 10:16:08 -0600 Tyler Hicks <tyhicks@canonical.com> wrot=
-e:
->
-> Hi Stephen - The eCryptfs devel tree is back on kernel.org. Please track
-> this branch:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/ecryptfs.git#next
+Fetching the cpufreq tree produces this error:
 
-OK, I have switched to that, now.  I also changed your contact address.
+fatal: Couldn't find remote ref refs/heads/next
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__22_Nov_2011_08_22_14_+1100_f8mhwA0.GcpdO=UD
+--Signature=_Tue__22_Nov_2011_10_57_56_+1100_E/=X/OTlAaJfpXQC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOysEGAAoJEECxmPOUX5FErxkP/3iKCFC4FHUrMYpq/IE1U0sA
-jYPW/YBFN1sY3CS9VghGz9dsKuW05AxeVMw7LiXHTMm0vdiGs2H66QKA8dqtwzr3
-0G3wse6JxJEwAVJLaDid//R8qXWRVNRswaxoZvPvCnfoMvXExNe0xMeVMoaRGB69
-O3ehHi0kvmHCZMeXB+zxHP+uFUARrMtGoCG7lw6uSPIrC4FJqWazcmEPKc/1Dra7
-lTD7zRYhW0lxAfSnlVE9BEdG6klJRxvqXOGH+P2ee8brIFRLp3gKVtXkVzDXDhsv
-WI+KOt5Z9bNvthJpPPlcmhn93EO9RAuxHinUt8msTdml0xXkQblFcnj7Rn2XRx4p
-PVjOEvIrjO21gzQoNOUWyLfMnWZTutxEVfvKpzx04YQCWuX4cGd0tTHzsbKzB5VF
-OwJXeCGlgE3yBSs+gnDYZadjGt2zlX+cOLOop26/v/NDtk5mmUTxaaIZBvJk/+HG
-7qWQQl3kgMQ3429t9ANo2wsm6PhwFohcHNIAKJ/S6mpHru7Ml4gQpk5w7Qus5reb
-lpWMoXRDUtX11j01iTWoZt8V7tIzAhNzv6UPeEM465Fpdo0owj3B4HWDELTaCu2h
-npMeuQ4vQ9toQ3fR2AtKFbDwao5yiR994nRtSnIy+2fMnIbpMnpDv6WXGGnNA6nk
-DITwEbeUFPspioZDsaUG
-=+VDl
+iQIcBAEBCAAGBQJOyuWEAAoJEECxmPOUX5FEgHQP/2JI5j+nD/w21ui1jDc85VhQ
+0hXNgefs41tIMRMZ65re/3tA0MhYQQsG/ELYUw6aoGLIMZhc1ZQMQ7eANu0M+//5
+jn+T6R+FdScoPxOeq5W7aRO7g9DMqHiYFoYiAux7RYeaYO8NhfwM3LCe3UoPyuk8
+VrpvoYlr2s4kG2yMDxKxpwvY81OfUQB4GFbd6NPhEcxIo8KFU+C0JE3bOig00Dw9
+b0F3S8n8zbPSz3/1Yy2ZrNSaYO++wph0KlSkDslxy5mixu5o3SAFrAWzbiwZoMmU
+jxUlz+0kcVf8JYw6VnbqwxtUp1CCFfnfPQ3c80BO2QtLkrPcdiAx1KZFHMoiAoAB
+qOAQk9RfmkZtIyiPFAIBhQaumgylZEFwv5s1NV7df/0hJMBJMUJE0X1MbaLfNV7C
+39y6mByIhsv39P7VB8zUdbHaU4ISHXRGQOPa5QbAnKbDGAPZH2FIF/U87O1ULhex
+/+jx25MeKq0Asw8C+br6gNvcmVWQkeUQ+ZT7fnRQkOcHtXlBWW90lL1rgIukre74
+66W3TkPadnj6+nCAsmw7zjOPQrdThLsyb4w8UGb47qO6j5Slqpb0qqfVfmRCOPGI
+YGEmtzbc1h8M8Ny+jbPFcV9q/wVGAKgup14qLZIrc6ypytap4UcBDXqCymTXrFyr
+OboexZGCKoecr50vm6QE
+=a6Ee
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_Nov_2011_08_22_14_+1100_f8mhwA0.GcpdO=UD--
+--Signature=_Tue__22_Nov_2011_10_57_56_+1100_E/=X/OTlAaJfpXQC--
