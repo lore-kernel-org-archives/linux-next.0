@@ -1,51 +1,90 @@
-From: Alessandro Rubini <rubini@gnudd.com>
-Subject: [PATCH] debugfs: bugfix: include <linux/io.h> in file.c
-Date: Mon, 21 Nov 2011 10:01:40 +0100
-Message-ID: <20111121090140.GA17821@mail.gnudd.com>
-References: <20111121125703.fbb955c4fc468ba176086168@canb.auug.org.au>
+From: "Kasatkin, Dmitry" <dmitry.kasatkin@intel.com>
+Subject: Re: [PATCH -next] digsig: fix build errors
+Date: Mon, 21 Nov 2011 12:32:48 +0200
+Message-ID: <CALLzPKYmmah9EcXgN2ruRLoFSjV-ozn1pBMans=n2_ouB8Tqsg@mail.gmail.com>
+References: <20111121133936.ae0ecadbf39ae50da6b842d1@canb.auug.org.au>
+	<4EC9EBD2.3040708@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20111121125703.fbb955c4fc468ba176086168@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: greg@kroah.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <4EC9EBD2.3040708@xenotime.net>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-The regs32 machinery uses readl. I forgot the mandatory include
-and the code was not compiling on all archs.
+On Mon, Nov 21, 2011 at 8:12 AM, Randy Dunlap <rdunlap@xenotime.net> wr=
+ote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+>
+> Fix build errors by adding kconfig dependency on KEYS:
+>
+> lib/digsig.c:106:16: error: dereferencing pointer to incomplete type
+> lib/digsig.c:107:11: error: dereferencing pointer to incomplete type
+> lib/digsig.c:184:14: error: dereferencing pointer to incomplete type
+> lib/digsig.c:223:3: error: 'key_ref_t' undeclared (first use in this =
+function)
+> lib/digsig.c:223:13: error: expected ';' before 'kref'
+> lib/digsig.c:224:3: error: 'kref' undeclared (first use in this funct=
+ion)
+> lib/digsig.c:224:3: error: implicit declaration of function 'keyring_=
+search'
+> lib/digsig.c:231:3: error: implicit declaration of function 'request_=
+key'
+>
+> and after changing lib/Kconfig:
+> warning: (INTEGRITY_DIGSIG) selects DIGSIG which has unmet direct dep=
+endencies (CRYPTO && KEYS)
+>
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@intel.com>
+> ---
+> =C2=A0lib/Kconfig =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0| =C2=A0 =C2=A04 ++--
+> =C2=A0security/integrity/Kconfig | =C2=A0 =C2=A02 +-
+> =C2=A02 files changed, 3 insertions(+), 3 deletions(-)
+>
+> --- next-2011-1121.orig/lib/Kconfig
+> +++ next-2011-1121/lib/Kconfig
+> @@ -294,10 +294,10 @@ config MPILIB_EXTRA
+>
+> =C2=A0config DIGSIG
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0tristate "In-kernel signature checker"
+> - =C2=A0 =C2=A0 =C2=A0 depends on CRYPTO
+> + =C2=A0 =C2=A0 =C2=A0 depends on CRYPTO && KEYS
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Alessandro Rubini <rubini@gnudd.com>
----
+this patch was in /crypto dir before, now it is in /lib...
+I think CRYPTO is not needed at all at the moment..
 
-> After merging the driver-core tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/debugfs/file.c: In function 'debugfs_print_regs32':
-> fs/debugfs/file.c:560:7: error: implicit declaration of function 'readl' [-
-> Werror=implicit-function-declaration]
 
-I'm learning the lesson. I'll be more careful next time.
-Sorry for your patience.
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0select MPILIB
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0help
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Digital signature verification. Cur=
+rently only RSA is supported.
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 Implementation is done using GnuPG MPI =
+library
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 Implementation is done using GnuPG MPI =
+library.
+>
+> =C2=A0endmenu
+> --- next-2011-1121.orig/security/integrity/Kconfig
+> +++ next-2011-1121/security/integrity/Kconfig
+> @@ -5,7 +5,7 @@ config INTEGRITY
+>
+> =C2=A0config INTEGRITY_DIGSIG
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0boolean "Digital signature verification us=
+ing multiple keyrings"
+> - =C2=A0 =C2=A0 =C2=A0 depends on INTEGRITY
+> + =C2=A0 =C2=A0 =C2=A0 depends on INTEGRITY && CRYPTO && KEYS
 
-/alessandro
+Is it really needed, because 2 lines bellow is "select DIGSIG", which
+will depend on KEYS??
 
- fs/debugfs/file.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index fc98ec9..e0a3a59 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -19,6 +19,7 @@
- #include <linux/pagemap.h>
- #include <linux/namei.h>
- #include <linux/debugfs.h>
-+#include <linux/io.h>
- 
- static ssize_t default_read_file(struct file *file, char __user *buf,
- 				 size_t count, loff_t *ppos)
--- 
-1.6.0.2
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0default n
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0select DIGSIG
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0help
+>
+
+Thanks!
