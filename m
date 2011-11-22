@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the wireless-next tree
-Date: Tue, 22 Nov 2011 14:25:02 +1100
-Message-ID: <20111122142502.ca68d0a1640b2a8480d51ad2@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the wireless-next tree
+Date: Tue, 22 Nov 2011 14:35:23 +1100
+Message-ID: <20111122143523.ee83308efc48baf19f691441@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_Nov_2011_14_25_02_+1100_ika2I3GvSRbSNfUQ"
+ boundary="Signature=_Tue__22_Nov_2011_14_35_23_+1100_HKevlburjjgNG5Wl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:40428 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:37437 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753365Ab1KVDZQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2011 22:25:16 -0500
+	with ESMTP id S1753365Ab1KVDfm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2011 22:35:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Stanislaw Gruszka <sgruszka@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stanislaw Gruszka <sgruszka@redhat.com>
 
---Signature=_Tue__22_Nov_2011_14_25_02_+1100_ika2I3GvSRbSNfUQ
+--Signature=_Tue__22_Nov_2011_14_35_23_+1100_HKevlburjjgNG5Wl
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,47 +24,45 @@ Content-Transfer-Encoding: quoted-printable
 Hi John,
 
 After merging the wireless-next tree, today's linux-next build
-(x86_64_allmodconfig) produced this warning:
+(x86_64_allmodconfig) failed like this:
 
-drivers/net/wireless/iwlegacy/debug.c:1395:1: warning: data definition has =
-no type or storage class [enabled by default]
-drivers/net/wireless/iwlegacy/debug.c:1395:1: warning: type defaults to 'in=
-t' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
-drivers/net/wireless/iwlegacy/debug.c:1395:1: warning: parameter names (wit=
-hout types) in function declaration [enabled by default]
-drivers/net/wireless/iwlegacy/debug.c:1410:1: warning: data definition has =
-no type or storage class [enabled by default]
-drivers/net/wireless/iwlegacy/debug.c:1410:1: warning: type defaults to 'in=
-t' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
-drivers/net/wireless/iwlegacy/debug.c:1410:1: warning: parameter names (wit=
-hout types) in function declaration [enabled by default]
+ERROR: "il_dbgfs_unregister" [drivers/net/wireless/iwlegacy/iwl4965.ko] und=
+efined!
+ERROR: "il_dbgfs_register" [drivers/net/wireless/iwlegacy/iwl4965.ko] undef=
+ined!
+ERROR: "il_dbgfs_unregister" [drivers/net/wireless/iwlegacy/iwl3945.ko] und=
+efined!
+ERROR: "il_dbgfs_register" [drivers/net/wireless/iwlegacy/iwl3945.ko] undef=
+ined!
 
-This indicates that this file needs to include export.h.
+Presumably caused by the large cleanup of iwlegacy.
+
+I have used the wireless-next tree from next-20111121 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__22_Nov_2011_14_25_02_+1100_ika2I3GvSRbSNfUQ
+--Signature=_Tue__22_Nov_2011_14_35_23_+1100_HKevlburjjgNG5Wl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOyxYOAAoJEECxmPOUX5FEPncP/iq68LFuZIr0VqTbYXvSP8FN
-GuUMaeUR7snVSQ5LLoAHVMO6X2Jx+YMla25x3xmZ3VBw2uabZ9oC3RF2gZ7bNzgh
-FxX/ko2IsZBM1uR1dth4hZjKSVXuZxac+YOSQskQN6dggbDPRM8bMhBxOeAJbcRH
-k8V/fKK0exvit/+aafXoFKF0TmDdliMF9k5BwhHKWkCulFBx+/kKK4PBdxLFx6sN
-ElDYf9tiULvMRiClK9oOSE4JEmX2DCzk08dBqIuF+JwZBp2SlV5ZU6Kp32wcGGKt
-BRWoNsLeBAgE7VjTs2xapxYr7k+GkK1Qls3uY1GKTYhqtGbgjfkvFp3OUrme34NH
-y28DbWX9bOnPdn9ry2mkvCQW1oprGFdfi44/8f6JsbbrQgQ+K3HC746397IUGr2M
-DlMuNUKlpLSTtgS8PsRj1lrOaQiU590uBdgoZB37k3jXyc8i8CUmOvqFlsktB5nX
-oYmCY+LiHhGkvjnA9rqtTU0ptHPZWE3RIZKCXsGivwp1y/ZL7Da4/jH5zNyVllqu
-sa3Hz1kd4WSVWAdjLSIKcS5ea96Vvox+kScyQJLWH0n3D2+lvv51Lfx5e6FXir7A
-1n0/SU744jU+8z9b+yuPp8wwiADUVysgQ8TcnZJaPik+AYvmXDMSTf9rj4TAT3J/
-qJL/OQzV2u2WKTQw6jyT
-=Z7dW
+iQIcBAEBCAAGBQJOyxh7AAoJEECxmPOUX5FEGdAP/j8kzrzpUHpmrrtPyGa5ZmJQ
+FcL6mNdKGfUchPrvfaYSHkawQoIZVoU1UgmxzPwrsqGKJrYTu9cpEbUxPBGdoSnx
+fW6AOiQoLCrA5bT/4Ngd2b+3kugetEiKA8CUHcKsDEoq9lryEJPG6wzCyEgNe+SW
+hy7JC3ex98jGpdkRWu5ZmkHxZyZ+JL5cQRQxm8bDf17ZLBIuqLf1y10er6B+qsds
+xk4vu8rlZF5J8jlM7HCWhktphUq+5gh0NsvF7GAIjXS/GT207mpESIhC260HYsTO
+0RQtdWiRavdFuT3x/+nT9Pt/2770bT6Szmo4+0cIhTrrOohpTw1zUFKQLOpj4QpY
+RhuFUps00V/IpLKfWEKsWquusCzb2m4eiCUrB0oiGQQF7PvhRVPFccmuYKXEE1FF
+zZwHsjnPFwxvOQhAF1C/RR2Dx2MytDz6J3+9TWPY8l1RY/7t1ktAk24BsEf7gcpo
+LtYNk3ks+5I3laeVVBvO33doWRt+A5FB7sEasxdDt7T0BFYVZKKLajgcTpitpwgl
+kZT+0YZQn/7XfLjm8qDNfdWGesRxmVDEdVlFPl8QkPlZKOR6kigfZRtfIfb10BSX
+1B1uaL69rLWuk7xIbKazV17Sq/+g/49GPTrMc6yHscyroV4Em+wi/x53jnnP9L4g
+UsHmHMJ9AAExQj9tyY9n
+=g208
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_Nov_2011_14_25_02_+1100_ika2I3GvSRbSNfUQ--
+--Signature=_Tue__22_Nov_2011_14_35_23_+1100_HKevlburjjgNG5Wl--
