@@ -1,49 +1,51 @@
 From: Catalin Marinas <catalin.marinas@arm.com>
 Subject: Re: linux-next: manual merge of the arm-lpae tree with the arm tree
-Date: Tue, 22 Nov 2011 09:47:38 +0000
-Message-ID: <20111122094738.GB31064@arm.com>
+Date: Tue, 22 Nov 2011 09:58:45 +0000
+Message-ID: <20111122095845.GC31064@arm.com>
 References: <20111122120358.aa2cefdcdace9a98acafd4b9@canb.auug.org.au>
+ <20111122081317.GB22232@flint.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:37064 "EHLO
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:38538 "EHLO
 	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751119Ab1KVJr7 (ORCPT
+	by vger.kernel.org with ESMTP id S1751167Ab1KVJ6y (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Nov 2011 04:47:59 -0500
+	Tue, 22 Nov 2011 04:58:54 -0500
 Content-Disposition: inline
-In-Reply-To: <20111122120358.aa2cefdcdace9a98acafd4b9@canb.auug.org.au>
+In-Reply-To: <20111122081317.GB22232@flint.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Pitre <nicolas.pitre@linaro.org>, Russell King <rmk@arm.linux.org.uk>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Pitre <nicolas.pitre@linaro.org>
 
-Hi Stephen,
-
-On Tue, Nov 22, 2011 at 01:03:58AM +0000, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm-lpae tree got a conflict in
-> arch/arm/mm/ioremap.c between commit 3afb51f744b6 ("ARM: add generic
-> ioremap optimization by reusing static mappings") from the arm tree and
-> commit ec93d80c4b07 ("ARM: LPAE: Page table maintenance for the 3-level
-> format") from the arm-lpae tree.
+On Tue, Nov 22, 2011 at 08:13:17AM +0000, Russell King wrote:
+> On Tue, Nov 22, 2011 at 12:03:58PM +1100, Stephen Rothwell wrote:
+> > diff --cc arch/arm/mm/ioremap.c
+> > index 12c7ad2,d1f78ba..0000000
+> > --- a/arch/arm/mm/ioremap.c
+> > +++ b/arch/arm/mm/ioremap.c
+> > @@@ -194,7 -208,14 +202,8 @@@ void __iomem * __arm_ioremap_pfn_caller
+> >   	 */
+> >   	if (pfn >= 0x100000 && (__pfn_to_phys(pfn) & ~SUPERSECTION_MASK))
+> >   		return NULL;
+> > + #endif
+> >   
+> >  -	/*
+> >  -	 * Don't allow RAM to be mapped - this causes problems with ARMv6+
+> >  -	 */
+> >  -	if (WARN_ON(pfn_valid(pfn)))
+> >  -		return NULL;
+> >  -
 > 
-> I guessed (probably incorrectly) about the fix up (see below).  Please
-> supply a better fix if necessary.
+> This certainly is not correct - if Catalin's lpae tree is removing this
+> then that needs to be fixed.
 
-Thanks for pointing out. I'll have a look at the conflict and let you
-know.
-
-> More generally, is the LPAE stuff going to be merged soon?  
-
-Hopefully I get it merged during the upcoming merging window (for
-3.3-rc1) but it does not depend only on me.
-
-> The above
-> arm-lpae commit dates from February (though it was recommitted on Nov
-> 15) ...
-
-Maybe I should do a 'git rebase --ignore-date', it doesn't make much
-sense for a reworked patch to still keep the original author date.
+No, my patch just adds the #endif. The combined diff above means that
+WARN_ON line above is only found in my version of ioremap.c (as my patch
+doesn't touch that line). The "if (WARN_ON))" block was removed in the
+"generic ioremap optimisation" patch and Stephen also removed it in the
+resulting ioremap.c after fixing the conflict.
 
 -- 
 Catalin
