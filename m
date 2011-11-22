@@ -1,93 +1,110 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the at91 tree with the arm tree
-Date: Tue, 22 Nov 2011 12:22:50 +1100
-Message-ID: <20111122122250.0ea392605bac51e69331b9a2@canb.auug.org.au>
+Subject: linux-next: manual merge of the s5p tree with the arm tree
+Date: Tue, 22 Nov 2011 13:01:59 +1100
+Message-ID: <20111122130159.ba1426acb6e340c6f906d9b5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_Nov_2011_12_22_50_+1100_ClLzGPotq5.YCD4T"
+ boundary="Signature=_Tue__22_Nov_2011_13_01_59_+1100__.sNxPwnDpO9xNGQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:58167 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:35687 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756824Ab1KVBXO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2011 20:23:14 -0500
+	with ESMTP id S1753497Ab1KVCCP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2011 21:02:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Russell King <rmk@arm.linux.org.uk>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Russell King <rmk@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>
 
---Signature=_Tue__22_Nov_2011_12_22_50_+1100_ClLzGPotq5.YCD4T
+--Signature=_Tue__22_Nov_2011_13_01_59_+1100__.sNxPwnDpO9xNGQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Kukjin,
 
-Today's linux-next merge of the at91 tree got a conflict in
-arch/arm/mach-at91/setup.c between commit cf48c02e3bf0 ("ARM: mach-at91:
-remove arch specific special handling for ioremap") from the arm tree and
-commit 6a5f01336ed8 ("ARM: at91: make DBGU soc independent") from the
-at91 tree.
+Today's linux-next merge of the s5p tree got a conflict in
+arch/arm/mach-exynos/cpu.c between commit db0d4db22a78 ("ARM: gic: allow
+GIC to support non-banked setups") from the  tree and commit fae3f1696b33
+("ARM: EXYNOS: Enable conversion of GIC dt irq specifier to linux virq")
+from the s5p tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-at91/setup.c
-index cf98a8f,3c309dc..0000000
---- a/arch/arm/mach-at91/setup.c
-+++ b/arch/arm/mach-at91/setup.c
-@@@ -73,9 -75,24 +75,6 @@@ static struct map_desc at91_io_desc __i
-  	.type		=3D MT_DEVICE,
-  };
+diff --cc arch/arm/mach-exynos/cpu.c
+index 6e34485,8e09f34..0000000
+--- a/arch/arm/mach-exynos/cpu.c
++++ b/arch/arm/mach-exynos/cpu.c
+@@@ -206,6 -231,24 +230,13 @@@ void __init exynos4_init_clocks(int xta
+  	exynos4_setup_clocks();
+  }
  =20
-- #define AT91_DBGU0	0xfffff200
-- #define AT91_DBGU1	0xffffee00
--=20
- -void __iomem *at91_ioremap(unsigned long p, size_t size, unsigned int typ=
-e)
+ -static void exynos4_gic_irq_fix_base(struct irq_data *d)
  -{
- -	if (p >=3D AT91_BASE_SYS && p <=3D (AT91_BASE_SYS + SZ_16K - 1))
- -		return (void __iomem *)AT91_IO_P2V(p);
+ -	struct gic_chip_data *gic_data =3D irq_data_get_irq_chip_data(d);
  -
- -	return __arm_ioremap_caller(p, size, type, __builtin_return_address(0));
+ -	gic_data->cpu_base =3D S5P_VA_GIC_CPU +
+ -			    (gic_bank_offset * smp_processor_id());
+ -
+ -	gic_data->dist_base =3D S5P_VA_GIC_DIST +
+ -			    (gic_bank_offset * smp_processor_id());
  -}
- -EXPORT_SYMBOL(at91_ioremap);
  -
- -void at91_iounmap(volatile void __iomem *addr)
- -{
- -	unsigned long virt =3D (unsigned long)addr;
- -
- -	if (virt >=3D VMALLOC_START && virt < VMALLOC_END)
- -		__iounmap(addr);
- -}
- -EXPORT_SYMBOL(at91_iounmap);
- -
-  static void __init soc_detect(u32 dbgu_base)
++ #ifdef CONFIG_OF
++ static const struct of_device_id exynos4_dt_irq_match[] =3D {
++ 	{ .compatible =3D "arm,cortex-a9-gic", .data =3D gic_of_init, },
++ 	{},
++ };
++ #endif
++=20
+  void __init exynos4_init_irq(void)
   {
-  	u32 cidr, socid;
+  	int irq;
+@@@ -213,8 -255,17 +244,13 @@@
+ =20
+  	gic_bank_offset =3D soc_is_exynos4412() ? 0x4000 : 0x8000;
+ =20
+- 	gic_init_bases(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU, gic_bank_=
+offset);
++ 	if (!of_have_populated_dt())
+ -		gic_init(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
+++		gic_init_bases(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU, gic_bank=
+_offset);
++ #ifdef CONFIG_OF
++ 	else
++ 		of_irq_init(exynos4_dt_irq_match);
++ #endif
+ =20
+ -	gic_arch_extn.irq_eoi =3D exynos4_gic_irq_fix_base;
+ -	gic_arch_extn.irq_unmask =3D exynos4_gic_irq_fix_base;
+ -	gic_arch_extn.irq_mask =3D exynos4_gic_irq_fix_base;
+ -
+  	for (irq =3D 0; irq < MAX_COMBINER_NR; irq++) {
+ =20
+  		combiner_init(irq, (void __iomem *)S5P_VA_COMBINER(irq),
 
---Signature=_Tue__22_Nov_2011_12_22_50_+1100_ClLzGPotq5.YCD4T
+--Signature=_Tue__22_Nov_2011_13_01_59_+1100__.sNxPwnDpO9xNGQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOyvlqAAoJEECxmPOUX5FEmoEQAJ3r8kHAGPw350g4mZChLU81
-gvGIUpA9ojolgiGDN+BuPlJ/AUXURQtNtZ6txFTKzb16N00QJUG3JejxwoYrGVnc
-9iMXVsQOIsl4yUHNlyQgaFcAvtQvmcpuVgKu555Rzpm40XPW8kaoUH2S0M9xGRKN
-9fVuHrVJkJPi/c5CqTHPrigUgcRroiVZb60tHOMrmM+WZvpTGUYzUW5y8FvfOULx
-N0yq902Tv+cy5L0GrmxQgmDOkrWi1DQKlZhFr+26pSrriErtOthrSAoTGmBHpjyR
-MyF/0v48hRUiRfNTMnB4GDG2HBLD05oRtwVd0jjG4hO9BQP6wBoMIsdRoto6VrUL
-rjAzxAxCOLVBDySTAO7vn3s/e7v/stK2vfK9QnZTU58yKpNhJJ2raMWqzd4ayAV9
-0m5XchYVUTOljomhH3Wqp5YoChcAyfzCX5t1x6bshGKZJH9+093ws/JyEuqbDHA2
-i/shmAGOE6kKGPy5+q4z/aEQGtcnxKi6FSWqCruWv1H7NhLLbDlLBsmZH3kpP1s9
-B5MJJUASJ2sIrLJjxG0ymLaFd8Uz+f9/7UY2YJur0ZVU0j95x04aLUBUV6dTLA83
-Z100CWjahgP3y83W5tTdTPBueYIBuigF66P90E5Y2KacPFDQNsJWSPI6BDhDEvT/
-l2cerOUfd1IWCB/h+Hhb
-=14G1
+iQIcBAEBCAAGBQJOywKXAAoJEECxmPOUX5FE7ocP/iP4lYn4GyQTCT+1pShHHZJV
+HFo/EpSeKxBoBAGfQ6B+FpRtF6QGFifAfAcWtcVUZYP1uYrMB7IG8jCGDWOtq0Wa
+K1aSUSyK1BJyNL5E9lyvFt3zl+T5ErzAvGGpUf1val5wU5O/dlyMdf00Ww3tK+BA
+s4SYlo6Rb7RY+GyD8JtXrvw9cui5Q+r53Iki9HU/K+q1COTMqis7udOxJ/QT0Q1X
+9j75MtUtyepu0XjB9+r4im6TLQ6DUvNDxrzgi7ZUS9G5c+rtONgc8jHJDJlYcbqi
+7L0tC6ziNCYwzhrJwFCYzGchYx6/4opCowWz7IU8LZKAYC3FA2J+vRNdyir7nqVw
+KRfCHrTeZZpSiPJgaI0puN5zROhH40e7mAwN62sNducJEq2ynMnYu1hlz26t1qDi
+ig9O5XBQsG4dpf/8pWo2AAKX6XesCXsUvwTU0dmZNbnaLnhdQ2m9ZLhkKxYVmhvX
+FJBEU3knQDK6NdjHjqxMzrqvY+rJLJy1RMJJoYx/jrVBZ3qngJIaVFeZvfqRj5cT
+soTxiBEmljL7ZLhJquLviJxNOTMbPy3M+u2R7MPHP11C7bUJ8qdXC/gqcuYq8RgF
+HCXOI97PAOaEnpkayULLw5SFyiUAwK6zvgo9WZJ0ti7dhU/g2pim5NMKAS617xcT
+/3Ys/6WPaApkae7/n8sR
+=R1YZ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_Nov_2011_12_22_50_+1100_ClLzGPotq5.YCD4T--
+--Signature=_Tue__22_Nov_2011_13_01_59_+1100__.sNxPwnDpO9xNGQ--
