@@ -1,68 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the wireless-next tree
-Date: Tue, 22 Nov 2011 14:35:23 +1100
-Message-ID: <20111122143523.ee83308efc48baf19f691441@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the arm tree
+Date: Tue, 22 Nov 2011 17:17:17 +1100
+Message-ID: <20111122171717.25bcc1eaf6b7e80cfa34a554@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_Nov_2011_14_35_23_+1100_HKevlburjjgNG5Wl"
+ boundary="Signature=_Tue__22_Nov_2011_17_17_17_+1100_JVWvtsWbxH90o4YU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:37437 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:37621 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753365Ab1KVDfm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2011 22:35:42 -0500
+	with ESMTP id S1753194Ab1KVGR2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2011 01:17:28 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stanislaw Gruszka <sgruszka@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Tue__22_Nov_2011_14_35_23_+1100_HKevlburjjgNG5Wl
+--Signature=_Tue__22_Nov_2011_17_17_17_+1100_JVWvtsWbxH90o4YU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Andrew,
 
-After merging the wireless-next tree, today's linux-next build
-(x86_64_allmodconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in mm/vmalloc.c
+between commit be9b7335e706 ("mm: add vm_area_add_early()") from the arm
+tree and commit "mm: add vm_area_add_early()" from the akpm tree.
 
-ERROR: "il_dbgfs_unregister" [drivers/net/wireless/iwlegacy/iwl4965.ko] und=
-efined!
-ERROR: "il_dbgfs_register" [drivers/net/wireless/iwlegacy/iwl4965.ko] undef=
-ined!
-ERROR: "il_dbgfs_unregister" [drivers/net/wireless/iwlegacy/iwl3945.ko] und=
-efined!
-ERROR: "il_dbgfs_register" [drivers/net/wireless/iwlegacy/iwl3945.ko] undef=
-ined!
-
-Presumably caused by the large cleanup of iwlegacy.
-
-I have used the wireless-next tree from next-20111121 for today.
+These are clearly meant to be the same patch, so I dropped the version
+from the akpm tree.  (The arm version has a "BUG_ON(vmap_initialized);"
+at the start of vm_area_add_early()).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__22_Nov_2011_14_35_23_+1100_HKevlburjjgNG5Wl
+--Signature=_Tue__22_Nov_2011_17_17_17_+1100_JVWvtsWbxH90o4YU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOyxh7AAoJEECxmPOUX5FEGdAP/j8kzrzpUHpmrrtPyGa5ZmJQ
-FcL6mNdKGfUchPrvfaYSHkawQoIZVoU1UgmxzPwrsqGKJrYTu9cpEbUxPBGdoSnx
-fW6AOiQoLCrA5bT/4Ngd2b+3kugetEiKA8CUHcKsDEoq9lryEJPG6wzCyEgNe+SW
-hy7JC3ex98jGpdkRWu5ZmkHxZyZ+JL5cQRQxm8bDf17ZLBIuqLf1y10er6B+qsds
-xk4vu8rlZF5J8jlM7HCWhktphUq+5gh0NsvF7GAIjXS/GT207mpESIhC260HYsTO
-0RQtdWiRavdFuT3x/+nT9Pt/2770bT6Szmo4+0cIhTrrOohpTw1zUFKQLOpj4QpY
-RhuFUps00V/IpLKfWEKsWquusCzb2m4eiCUrB0oiGQQF7PvhRVPFccmuYKXEE1FF
-zZwHsjnPFwxvOQhAF1C/RR2Dx2MytDz6J3+9TWPY8l1RY/7t1ktAk24BsEf7gcpo
-LtYNk3ks+5I3laeVVBvO33doWRt+A5FB7sEasxdDt7T0BFYVZKKLajgcTpitpwgl
-kZT+0YZQn/7XfLjm8qDNfdWGesRxmVDEdVlFPl8QkPlZKOR6kigfZRtfIfb10BSX
-1B1uaL69rLWuk7xIbKazV17Sq/+g/49GPTrMc6yHscyroV4Em+wi/x53jnnP9L4g
-UsHmHMJ9AAExQj9tyY9n
-=g208
+iQIcBAEBCAAGBQJOyz5tAAoJEECxmPOUX5FE7hIP/27GBoc1+SqU3S3KzX1Pwief
+/IQIiQsv/CQHM6IbFgB7wbHgDmCoGJMXICzWQN9DfVxv+5rzOz2NnC+42/eyxia+
+KDCy5TggvmU3dHJ1NLdxpxxRCLpGZszeqI8HV5D/cne6UI6Zd1SOUZM/yHCbyF7Y
+9Hn0uASjlLixQyDbQOdW+qfFkT34uYdV3a1rL8CXl79vLUBpigNd72o+ZYrIXZJ7
+4970ZXoxf600q539zvidsXjSfTZ5ziI6jiy0M6kprjfgxVmcIFVjYUrsRv58Yj9k
+d+Sd5GKC57AIahL+pe3ihZJneXQjls6wlin5BP4fK15SZfXj3aBml9QMteYI0z/h
+bGu9K3tL/2vYYNPESmNgHf57nrFh6hWA9MGdJP4ZrpkbFPaCz99roTKkBvt3Fyc5
+8/q/OPFuhkjAwbVn33xrVqW3pk/OlwzKhMOS6T8Em4Pzn20+RqSAQY1A1y5D0qSN
+C+8yNLnX8RV5A/GHJUg1aMYfwtdT4SjOIJ95WG4M5PfUcBmKnClCNzJiMmUT9Nia
+toZIdR0NuH7c10cvFCayuYQJHst0/o66K1KZObLYpzXmYbWkT2Yfj4OcUOvq6psO
+TG/ZNk6U1mK2sxxppVbe8w7BKlRMtJkxuAUoXkDhYFgbVazt4DGvO7ZUXMJO7MRE
+MPBI1LM93XwYAQop/x7M
+=RFPD
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_Nov_2011_14_35_23_+1100_HKevlburjjgNG5Wl--
+--Signature=_Tue__22_Nov_2011_17_17_17_+1100_JVWvtsWbxH90o4YU--
