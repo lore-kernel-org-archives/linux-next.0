@@ -1,138 +1,204 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-lpae tree with the arm tree
-Date: Tue, 22 Nov 2011 12:03:58 +1100
-Message-ID: <20111122120358.aa2cefdcdace9a98acafd4b9@canb.auug.org.au>
+Subject: linux-next: manual merge of the at91 tree with the arm tree
+Date: Tue, 22 Nov 2011 12:19:00 +1100
+Message-ID: <20111122121900.f0946f93526d7f10e7cbfeb5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_Nov_2011_12_03_58_+1100_fguqivX+Je1Coa2Z"
+ boundary="Signature=_Tue__22_Nov_2011_12_19_00_+1100_FciYZLPthIwXT6wg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:37631 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:40587 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750898Ab1KVBEN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2011 20:04:13 -0500
+	with ESMTP id S1754367Ab1KVBTR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2011 20:19:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Russell King <rmk@arm.linux.org.uk>
+To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Tue__22_Nov_2011_12_03_58_+1100_fguqivX+Je1Coa2Z
+--Signature=_Tue__22_Nov_2011_12_19_00_+1100_FciYZLPthIwXT6wg
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Catalin,
+Hi all,
 
-Today's linux-next merge of the arm-lpae tree got a conflict in
-arch/arm/mm/ioremap.c between commit 3afb51f744b6 ("ARM: add generic
-ioremap optimization by reusing static mappings") from the arm tree and
-commit ec93d80c4b07 ("ARM: LPAE: Page table maintenance for the 3-level
-format") from the arm-lpae tree.
+Today's linux-next merge of the at91 tree got conflicts in
+arch/arm/mach-at91/at91cap9.c, arch/arm/mach-at91/at91sam9260.c,
+arch/arm/mach-at91/at91sam9261.c, arch/arm/mach-at91/at91sam9263.c,
+arch/arm/mach-at91/at91sam9g45.c and arch/arm/mach-at91/at91sam9rl.c
+between commit b91dfe91bb61 ("ARM: restart: at91: use new restart hook")
+from the arm tree and commit 92996c285e17 ("ARM: at91: make shutdown
+controler soc independent") from the at91 tree.
 
-I guessed (probably incorrectly) about the fix up (see below).  Please
-supply a better fix if necessary.
-
-More generally, is the LPAE stuff going to be merged soon?  The above
-arm-lpae commit dates from February (though it was recommitted on Nov
-15) ...
-
+Just context changes.  I fixed it up (see below) and can carry the fixes
+as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mm/ioremap.c
-index 12c7ad2,d1f78ba..0000000
---- a/arch/arm/mm/ioremap.c
-+++ b/arch/arm/mm/ioremap.c
-@@@ -194,7 -208,14 +202,8 @@@ void __iomem * __arm_ioremap_pfn_caller
-  	 */
-  	if (pfn >=3D 0x100000 && (__pfn_to_phys(pfn) & ~SUPERSECTION_MASK))
-  		return NULL;
-+ #endif
- =20
- -	/*
- -	 * Don't allow RAM to be mapped - this causes problems with ARMv6+
- -	 */
- -	if (WARN_ON(pfn_valid(pfn)))
- -		return NULL;
- -
-  	type =3D get_mem_type(mtype);
-  	if (!type)
-  		return NULL;
-@@@ -329,34 -322,28 +338,34 @@@ __arm_ioremap_exec(unsigned long phys_a
-  void __iounmap(volatile void __iomem *io_addr)
-  {
-  	void *addr =3D (void *)(PAGE_MASK & (unsigned long)io_addr);
- -#if !defined(CONFIG_SMP) && !defined(CONFIG_ARM_LPAE)
- -	struct vm_struct **p, *tmp;
- +	struct vm_struct *vm;
- =20
- -	/*
- -	 * If this is a section based mapping we need to handle it
- -	 * specially as the VM subsystem does not know how to handle
- -	 * such a beast. We need the lock here b/c we need to clear
- -	 * all the mappings before the area can be reclaimed
- -	 * by someone else.
- -	 */
- -	write_lock(&vmlist_lock);
- -	for (p =3D &vmlist ; (tmp =3D *p) ; p =3D &tmp->next) {
- -		if ((tmp->flags & VM_IOREMAP) && (tmp->addr =3D=3D addr)) {
- -			if (tmp->flags & VM_ARM_SECTION_MAPPING) {
- -				unmap_area_sections((unsigned long)tmp->addr,
- -						    tmp->size);
- -			}
- +	read_lock(&vmlist_lock);
- +	for (vm =3D vmlist; vm; vm =3D vm->next) {
- +		if (vm->addr > addr)
- +			break;
- +		if (!(vm->flags & VM_IOREMAP))
- +			continue;
- +		/* If this is a static mapping we must leave it alone */
- +		if ((vm->flags & VM_ARM_STATIC_MAPPING) &&
- +		    (vm->addr <=3D addr) && (vm->addr + vm->size > addr)) {
- +			read_unlock(&vmlist_lock);
- +			return;
- +		}
-- #ifndef CONFIG_SMP
-++#if !defined(CONFIG_SMP) && !defined(CONFIG_ARM_LPAE)
- +		/*
- +		 * If this is a section based mapping we need to handle it
- +		 * specially as the VM subsystem does not know how to handle
- +		 * such a beast.
- +		 */
- +		if ((vm->addr =3D=3D addr) &&
- +		    (vm->flags & VM_ARM_SECTION_MAPPING)) {
- +			unmap_area_sections((unsigned long)vm->addr, vm->size);
-  			break;
-  		}
- -	}
- -	write_unlock(&vmlist_lock);
-  #endif
- +	}
- +	read_unlock(&vmlist_lock);
- =20
-  	vunmap(addr);
+diff --cc arch/arm/mach-at91/at91cap9.c
+index 2937339,81a9f38..0000000
+--- a/arch/arm/mach-at91/at91cap9.c
++++ b/arch/arm/mach-at91/at91cap9.c
+@@@ -333,10 -326,16 +326,16 @@@ static void __init at91cap9_map_io(void
+  	at91_init_sram(0, AT91CAP9_SRAM_BASE, AT91CAP9_SRAM_SIZE);
   }
+ =20
++ static void __init at91cap9_ioremap_registers(void)
++ {
++ 	at91_ioremap_shdwc(AT91CAP9_BASE_SHDWC);
++ 	at91sam926x_ioremap_pit(AT91CAP9_BASE_PIT);
++ 	at91sam9_ioremap_smc(0, AT91CAP9_BASE_SMC);
++ }
++=20
+  static void __init at91cap9_initialize(void)
+  {
+ -	at91_arch_reset =3D at91cap9_reset;
+ +	arm_pm_restart =3D at91cap9_restart;
+- 	pm_power_off =3D at91cap9_poweroff;
+  	at91_extern_irq =3D (1 << AT91CAP9_ID_IRQ0) | (1 << AT91CAP9_ID_IRQ1);
+ =20
+  	/* Register GPIO subsystem */
+diff --cc arch/arm/mach-at91/at91sam9260.c
+index ec9e23d,5e25cef..0000000
+--- a/arch/arm/mach-at91/at91sam9260.c
++++ b/arch/arm/mach-at91/at91sam9260.c
+@@@ -325,10 -318,16 +318,16 @@@ static void __init at91sam9260_map_io(v
+  	}
+  }
+ =20
++ static void __init at91sam9260_ioremap_registers(void)
++ {
++ 	at91_ioremap_shdwc(AT91SAM9260_BASE_SHDWC);
++ 	at91sam926x_ioremap_pit(AT91SAM9260_BASE_PIT);
++ 	at91sam9_ioremap_smc(0, AT91SAM9260_BASE_SMC);
++ }
++=20
+  static void __init at91sam9260_initialize(void)
+  {
+ -	at91_arch_reset =3D at91sam9_alt_reset;
+ +	arm_pm_restart =3D at91sam9_alt_restart;
+- 	pm_power_off =3D at91sam9260_poweroff;
+  	at91_extern_irq =3D (1 << AT91SAM9260_ID_IRQ0) | (1 << AT91SAM9260_ID_IR=
+Q1)
+  			| (1 << AT91SAM9260_ID_IRQ2);
+ =20
+diff --cc arch/arm/mach-at91/at91sam9261.c
+index 19ac7c0,a0538c5..0000000
+--- a/arch/arm/mach-at91/at91sam9261.c
++++ b/arch/arm/mach-at91/at91sam9261.c
+@@@ -285,10 -278,16 +278,16 @@@ static void __init at91sam9261_map_io(v
+  		at91_init_sram(0, AT91SAM9261_SRAM_BASE, AT91SAM9261_SRAM_SIZE);
+  }
+ =20
++ static void __init at91sam9261_ioremap_registers(void)
++ {
++ 	at91_ioremap_shdwc(AT91SAM9261_BASE_SHDWC);
++ 	at91sam926x_ioremap_pit(AT91SAM9261_BASE_PIT);
++ 	at91sam9_ioremap_smc(0, AT91SAM9261_BASE_SMC);
++ }
++=20
+  static void __init at91sam9261_initialize(void)
+  {
+ -	at91_arch_reset =3D at91sam9_alt_reset;
+ +	arm_pm_restart =3D at91sam9_alt_restart;
+- 	pm_power_off =3D at91sam9261_poweroff;
+  	at91_extern_irq =3D (1 << AT91SAM9261_ID_IRQ0) | (1 << AT91SAM9261_ID_IR=
+Q1)
+  			| (1 << AT91SAM9261_ID_IRQ2);
+ =20
+diff --cc arch/arm/mach-at91/at91sam9263.c
+index 50d0163,0d90b6a..0000000
+--- a/arch/arm/mach-at91/at91sam9263.c
++++ b/arch/arm/mach-at91/at91sam9263.c
+@@@ -303,10 -296,17 +296,17 @@@ static void __init at91sam9263_map_io(v
+  	at91_init_sram(1, AT91SAM9263_SRAM1_BASE, AT91SAM9263_SRAM1_SIZE);
+  }
+ =20
++ static void __init at91sam9263_ioremap_registers(void)
++ {
++ 	at91_ioremap_shdwc(AT91SAM9263_BASE_SHDWC);
++ 	at91sam926x_ioremap_pit(AT91SAM9263_BASE_PIT);
++ 	at91sam9_ioremap_smc(0, AT91SAM9263_BASE_SMC0);
++ 	at91sam9_ioremap_smc(1, AT91SAM9263_BASE_SMC1);
++ }
++=20
+  static void __init at91sam9263_initialize(void)
+  {
+ -	at91_arch_reset =3D at91sam9_alt_reset;
+ +	arm_pm_restart =3D at91sam9_alt_restart;
+- 	pm_power_off =3D at91sam9263_poweroff;
+  	at91_extern_irq =3D (1 << AT91SAM9263_ID_IRQ0) | (1 << AT91SAM9263_ID_IR=
+Q1);
+ =20
+  	/* Register GPIO subsystem */
+diff --cc arch/arm/mach-at91/at91sam9g45.c
+index ff21f7a,72c3cce..0000000
+--- a/arch/arm/mach-at91/at91sam9g45.c
++++ b/arch/arm/mach-at91/at91sam9g45.c
+@@@ -338,10 -331,16 +331,16 @@@ static void __init at91sam9g45_map_io(v
+  	init_consistent_dma_size(SZ_4M);
+  }
+ =20
++ static void __init at91sam9g45_ioremap_registers(void)
++ {
++ 	at91_ioremap_shdwc(AT91SAM9G45_BASE_SHDWC);
++ 	at91sam926x_ioremap_pit(AT91SAM9G45_BASE_PIT);
++ 	at91sam9_ioremap_smc(0, AT91SAM9G45_BASE_SMC);
++ }
++=20
+  static void __init at91sam9g45_initialize(void)
+  {
+ -	at91_arch_reset =3D at91sam9g45_reset;
+ +	arm_pm_restart =3D at91sam9g45_restart;
+- 	pm_power_off =3D at91sam9g45_poweroff;
+  	at91_extern_irq =3D (1 << AT91SAM9G45_ID_IRQ0);
+ =20
+  	/* Register GPIO subsystem */
+diff --cc arch/arm/mach-at91/at91sam9rl.c
+index 61cbb46,96247f6..0000000
+--- a/arch/arm/mach-at91/at91sam9rl.c
++++ b/arch/arm/mach-at91/at91sam9rl.c
+@@@ -290,10 -283,16 +283,16 @@@ static void __init at91sam9rl_map_io(vo
+  	at91_init_sram(0, AT91SAM9RL_SRAM_BASE, sram_size);
+  }
+ =20
++ static void __init at91sam9rl_ioremap_registers(void)
++ {
++ 	at91_ioremap_shdwc(AT91SAM9RL_BASE_SHDWC);
++ 	at91sam926x_ioremap_pit(AT91SAM9RL_BASE_PIT);
++ 	at91sam9_ioremap_smc(0, AT91SAM9RL_BASE_SMC);
++ }
++=20
+  static void __init at91sam9rl_initialize(void)
+  {
+ -	at91_arch_reset =3D at91sam9_alt_reset;
+ +	arm_pm_restart =3D at91sam9_alt_restart;
+- 	pm_power_off =3D at91sam9rl_poweroff;
+  	at91_extern_irq =3D (1 << AT91SAM9RL_ID_IRQ0);
+ =20
+  	/* Register GPIO subsystem */
 
---Signature=_Tue__22_Nov_2011_12_03_58_+1100_fguqivX+Je1Coa2Z
+--Signature=_Tue__22_Nov_2011_12_19_00_+1100_FciYZLPthIwXT6wg
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOyvT+AAoJEECxmPOUX5FE2nAP/23j+X08bWc4cy8XUmOOidVg
-/7lR+E/3oC1+AT7krRyML0wFhBQ6fOJ5WalqPKpZaMPkHIkml1BA/fE9R2rCmefp
-v+tiBxm1a3JUsr4r6sUe/7KmTn/fWbFSB+sQXol75SEC1BRNYh17BrpJjWfShhZX
-4K9rHu2POHUf0ZVgOEqgbImA1F1m7l5M+McMw3YUBpez1DhhUmegSIxQTPwGMiXA
-QwXHCfp+fY1x/anoYzMoWhK44klXHD4DIIFuBffPFeZBjDRBAe2/XFJCj9Art/i+
-jn+fCBiG8t8JFb6n0hgp6XH5Y4TppOxJGMWnafb7sZsG/qlHpE9ZQt3hqVohA7OS
-nJwa1qvzJ/rm4M9/DG+iz6d5op6ekUJQJQmbHF4s99lDsfMEdWoDTOqrBVTH4+xi
-wnvtzE/j4kCoX/lj4BX7e9m+5j7q7o9nb5OjnbnUoAP099u0EtYTaAaRUzQmF6L6
-MJXqo9WOM+c33zEWpHXsrH/lZ0ZaHBKLCVs215pXm0qgygHtvgCGsOvp7+KOcXbh
-AC3VlU1XHIpqGHifaUjxF5H6dUPxB0icTUNnfxFr8nZ1YZi6wokZst5lV4qYkmTa
-E03jNRR7n90N8r4rk98+VosxdUR8XW2agLzMG816u/21fT4C3ZH/9VfPCJjTNlQq
-565YyKqwNgfBkDRk2vzG
-=ga5c
+iQIcBAEBCAAGBQJOyviEAAoJEECxmPOUX5FE/AsP/3oI7XNxUogbPKp1DjsUGVB8
+3HPVN6zgWhCrayboldwudhc//FwOTWtkVEi09rXjMLCmSTbhIYMMm9ohNb6/Hu1j
+BWeNux1pItSg77XAWKZNasrittpeny11FwidJx5bixdbcdfgBzTbCdTkzJsqjm1g
+URcDhieFUNEpplYLCMZSuqUZTY9s0pX1tFXJokRgmEqIxUuoOInldhazjC/YM1Fr
+piJYIQjk1C6cV7NQVrDdXrGiH5RciHTvjqFyHWul1BA51oCXXkbJUw4DSHRJz10E
+XOc+fI+LzgqOJ3f29yHSyLMgYafgoZ/WkvtS/62A7Ah2Nt5o8ohcM/g5JbyCXlZA
+A9RLorEBeP3IRaGzSOEDcfs6/riBmhCb+kaZ0TQFiBmIDHfpEKxizsMdFHEljayC
+rTO+rFlcDm/oAwy6eSjEz8fiSUQyqBGcvm5/7L+SjEgSUy1BGzIltPKEbpCLhjQG
+mJ65jFUpkuFOoUkUqHtWb4PRAd5EbB7tOYbJV/w70MhZxjkjwKyYBACgfeBNtUDv
+QPkSW1fwQ2hr64pgucaTgU7gUz8KMdL+wmz51xITYB6qT0gVJPQqZh7U8Bfcbnit
+P/+E+1V/PYYxawoaIDmBef1ldQ1WjPXshGsUAGR/NZ3FG6Bq3MjjR0dZQHSdbz8q
+5sHR2vsY0voisWQofMj+
+=hSgj
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_Nov_2011_12_03_58_+1100_fguqivX+Je1Coa2Z--
+--Signature=_Tue__22_Nov_2011_12_19_00_+1100_FciYZLPthIwXT6wg--
