@@ -1,103 +1,80 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: HSI framework for linux-next
-Date: Thu, 24 Nov 2011 09:07:00 +1100
-Message-ID: <20111124090700.9ea32aae4722035f20b09867@canb.auug.org.au>
-References: <1319794066.28874.22.camel@groo>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (net-next tree related)
+Date: Wed, 23 Nov 2011 15:02:13 -0800
+Message-ID: <20111123150213.ed7257cb.akpm@linux-foundation.org>
+References: <20111123150004.59be04eb36c480ec44edc9d5@canb.auug.org.au>
+	<20111123120937.GB27968@hmsreliant.think-freely.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__24_Nov_2011_09_07_00_+1100_lqxHbpNmjQBk/1mb"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:41464 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752594Ab1KWWHL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2011 17:07:11 -0500
-In-Reply-To: <1319794066.28874.22.camel@groo>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32933 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756482Ab1KWXCP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2011 18:02:15 -0500
+In-Reply-To: <20111123120937.GB27968@hmsreliant.think-freely.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Carlos Chinea <carlos.chinea@nokia.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, ext Linus Walleij <linus.walleij@linaro.org>, "peter_henn@gmx.de" <peter_henn@gmx.de>, "sjur.brandeland@stericsson.com" <sjur.brandeland@stericsson.com>, "govindraj.ti@gmail.com" <govindraj.ti@gmail.com>, "pawel.szyszuk@stericsson.com" <pawel.szyszuk@stericsson.com>, Sebastian Reichel <sre@debian.org>
+To: Neil Horman <nhorman@tuxdriver.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__24_Nov_2011_09_07_00_+1100_lqxHbpNmjQBk/1mb
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 23 Nov 2011 07:09:37 -0500
+Neil Horman <nhorman@tuxdriver.com> wrote:
 
-Hi Carlos,
-
-On Fri, 28 Oct 2011 12:27:46 +0300 Carlos Chinea <carlos.chinea@nokia.com> =
-wrote:
+> On Wed, Nov 23, 2011 at 03:00:04PM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the final tree, today's linux-next build (powerpc allnoconfig)
+> > failed like this:
+> > 
+> > In file included from include/linux/netdevice.h:53:0,
+> >                  from include/linux/icmpv6.h:173,
+> >                  from include/linux/ipv6.h:220,
+> >                  from include/net/ipv6.h:16,
+> >                  from include/linux/sunrpc/clnt.h:26,
+> >                  from include/linux/nfs_fs.h:50,
+> >                  from init/do_mounts.c:20:
+> > include/net/netprio_cgroup.h:23:29: error: field 'css' has incomplete type
 >
-> I have been working in an HSI framework for linux:
->=20
-> https://lkml.org/lkml/2011/6/10/280
->=20
-> The framework is in good shape and is currently being used for some
-> people so we would like it to see it integrated, if possible, for 3.3
->=20
-> Latest discussion for integration:
-> https://lkml.org/lkml/2011/10/20/177
->=20
-> Therefore, could you add the following tree to linux-next ?=20
-> 	git@gitorious.org:kernel-hsi/kernel-hsi.git for-next
+> ...
+>
+> FYI, I've got a more appropriate fix building right now getting posted for the
+> net-next tree.  I'll cc you on it.
 
-I have added that tree to linux-next today using
-git://gitorious.org/kernel-hsi/kernel-hsi.git as the URL and just you as
-the contact in case if issues.
+This header looks to be pretty screwed up:
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+- Extraneous newline after "struct cgroup_netprio_state"
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+- Weird special-casing of the CONFIG_CGROUPS &&
+  !CONFIG_NETPRIO_CGROUP case looks suspicious.
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+- Unnecessary use of IS_ENABLED - jsut use #ifdef CONFIG_NETPRIO_CGROUP
 
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+- Adds code stubs specifically for the CONFIG_CGROUPS &&
+  !CONFIG_NETPRIO_CGROUP case.  Doesn't add any for the !CONFIG_CGROUPS
+  case.  Seems wrong.
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
+- Uses empty macros for the sock_update_netprioidx() and
+  skb_update_prio() which can cause build errors.  Should be changed to
+  plain old typechecked inline C functions.  If that causes build
+  errors then something else is screwed up.
 
---Signature=_Thu__24_Nov_2011_09_07_00_+1100_lqxHbpNmjQBk/1mb
-Content-Type: application/pgp-signature
+- Adds a stub for skb_update_prio() but there's no non-stub version
+  of it.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+also
 
-iQIcBAEBCAAGBQJOzW6EAAoJEECxmPOUX5FEIPsP/27n2UNVkmt0RMVHB0QvAWdA
-mS4SUuZX6Wk4qC+55QECmx0sv9SLl6+dsbp5EZ+eCqqTVoafR1bJolHayFU3BkmQ
-gvLULSIvtOjY4Jb29+DiwvQUflCjvKDiAlcxPHBP8DAVE/PFnCmgckNEI44zKySt
-6qlYfmr2SB9+29QZi8PIHkDrWLyDXS5Jj+o98GXDmpTzfAlWMeCrkgHUYNJx1J41
-iDTK23f4v1tNbvcDJUsw3dBJZtMiFoM2rR3p0t/iEMaXRsFxFtpqTNAB3od6/t21
-9ZhFxnbaPLcpe0I/ibbuMlbB6td+LFNv8CtpuUCY/wtzL6YVXK1zodyGGdJHtBVG
-qEoKU1iT3CECaMEPA6z5l6uZ7yTr2GeDLk7gGNxmC5N6L6ISgd46Nw/VcSBb0WqB
-xSI4cILGkn0df/R5o18K4QNV5YE5O21wcNQ0Kb1HygGyduKDeTONn9KabU3uPz3a
-THm5amHtO9jV3Z3rsxJKwAB6nls8L5Ie3lAzdMoA8UL/Z1yVWmTMq1N9sP6gMeXc
-8IiIqUDGApayU9J7ZVELhd5QwV5KS6wKNO+z1grx9NfSul3M50qf6NRJZEawvdsV
-g1jII86KrFS20ofWFW4i1tCDzWdSl0iFPppKGD7k0GvddXZxtcAjZxbYfWZySKHW
-pOAs1o9Q5SeIYC8buVes
-=u0s0
------END PGP SIGNATURE-----
+- doesn't compile
 
---Signature=_Thu__24_Nov_2011_09_07_00_+1100_lqxHbpNmjQBk/1mb--
+
+Needs a thorough redo.  Please take a look at the other cgroup
+subsystem headers.  The basic pattern is
+
+#ifdef CONFIG_FOO_CGROUP
+<definitions and declarations>
+#else
+<any needed stubs go here>
+#endif
+
+And that's it.
