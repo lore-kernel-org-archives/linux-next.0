@@ -1,86 +1,75 @@
 From: Neil Horman <nhorman@tuxdriver.com>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-next tree related)
-Date: Wed, 23 Nov 2011 07:09:37 -0500
-Message-ID: <20111123120937.GB27968@hmsreliant.think-freely.org>
-References: <20111123150004.59be04eb36c480ec44edc9d5@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20111123150004.59be04eb36c480ec44edc9d5@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Subject: [PATCH] netprio_cgroup: Fix build break
+Date: Wed, 23 Nov 2011 07:32:33 -0500
+Message-ID: <1322051553-28987-1-git-send-email-nhorman@tuxdriver.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:43935 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750985Ab1KWMcy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2011 07:32:54 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: netdev@vger.kernel.org
+Cc: Neil Horman <nhorman@tuxdriver.com>, Kirill Smelkov <kirr@mns.spb.ru>, "David S. Miller" <davem@davemloft.net>, john.r.fastabend@intel.com, robert.w.love@intel.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Wed, Nov 23, 2011 at 03:00:04PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (powerpc allnoconfig)
-> failed like this:
-> 
-> In file included from include/linux/netdevice.h:53:0,
->                  from include/linux/icmpv6.h:173,
->                  from include/linux/ipv6.h:220,
->                  from include/net/ipv6.h:16,
->                  from include/linux/sunrpc/clnt.h:26,
->                  from include/linux/nfs_fs.h:50,
->                  from init/do_mounts.c:20:
-> include/net/netprio_cgroup.h:23:29: error: field 'css' has incomplete type
-> 
-> And several more similar.
-> 
-> Caused by commit 5bc1421e34ec ("net: add network priority cgroup
-> infrastructure (v4)").
-> 
-> I have added the following (minimal, but probably not optimal) patch for
-> today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 23 Nov 2011 14:49:49 +1100
-> Subject: [PATCH] net: fix build error in network priority cgroup
->  infrastructure
-> 
-> Fixes this error:
-> 
-> In file included from include/linux/netdevice.h:53:0,
->                  from include/linux/icmpv6.h:173,
->                  from include/linux/ipv6.h:220,
->                  from include/net/ipv6.h:16,
->                  from include/linux/sunrpc/clnt.h:26,
->                  from include/linux/nfs_fs.h:50,
->                  from init/do_mounts.c:20:
-> include/net/netprio_cgroup.h:23:29: error: field 'css' has incomplete type
-> 
-> When CONFIG_CGROUPS is not set.
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/net/netprio_cgroup.h |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/include/net/netprio_cgroup.h b/include/net/netprio_cgroup.h
-> index c432e99..da71b91 100644
-> --- a/include/net/netprio_cgroup.h
-> +++ b/include/net/netprio_cgroup.h
-> @@ -20,7 +20,9 @@
->  
->  struct cgroup_netprio_state
->  {
-> +#ifdef CONFIG_CGROUPS
->  	struct cgroup_subsys_state css;
-> +#endif
->  	u32 prioidx;
->  };
->  
-> -- 
-> 1.7.7.3
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-FYI, I've got a more appropriate fix building right now getting posted for the
-net-next tree.  I'll cc you on it.
+I broke the build with the addition of netprio_cgroups if CONFIG_CGROUPS=n.
+This patch corrects it by moving the offending struct into an ifdef
+CONFIG_CGROUPS block.  Also clean up a few needless defines and inline functions
+that don't get called if CONFIG_CGROUPS isn't defined while Im at it.
 
-Neil
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+CC: Kirill Smelkov <kirr@mns.spb.ru>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: john.r.fastabend@intel.com
+CC: robert.w.love@intel.com
+CC: Stephen Rothwell <sfr@canb.auug.org.au>
+CC: linux-next@vger.kernel.org
+---
+ include/net/netprio_cgroup.h |   18 +++++-------------
+ 1 files changed, 5 insertions(+), 13 deletions(-)
+
+diff --git a/include/net/netprio_cgroup.h b/include/net/netprio_cgroup.h
+index c432e99..e503b87 100644
+--- a/include/net/netprio_cgroup.h
++++ b/include/net/netprio_cgroup.h
+@@ -18,11 +18,6 @@
+ #include <linux/hardirq.h>
+ #include <linux/rcupdate.h>
+ 
+-struct cgroup_netprio_state
+-{
+-	struct cgroup_subsys_state css;
+-	u32 prioidx;
+-};
+ 
+ struct netprio_map {
+ 	struct rcu_head rcu;
+@@ -32,6 +27,11 @@ struct netprio_map {
+ 
+ #ifdef CONFIG_CGROUPS
+ 
++struct cgroup_netprio_state {
++	struct cgroup_subsys_state css;
++	u32 prioidx;
++};
++
+ #ifndef CONFIG_NETPRIO_CGROUP
+ extern int net_prio_subsys_id;
+ #endif
+@@ -52,14 +52,6 @@ static inline struct cgroup_netprio_state
+ #else
+ 
+ #define sock_update_netprioidx(sk)
+-#define skb_update_prio(skb)
+-
+-static inline struct cgroup_netprio_state
+-		*task_netprio_state(struct task_struct *p)
+-{
+-	return NULL;
+-}
+-
+ #endif
+ 
+ #endif  /* _NET_CLS_CGROUP_H */
+-- 
+1.7.6.4
