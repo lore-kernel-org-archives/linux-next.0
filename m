@@ -1,40 +1,82 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: manual merge of the arm-lpae tree with the arm tree
-Date: Tue, 22 Nov 2011 11:05:25 +0000
-Message-ID: <20111122110525.GA32577@arm.com>
-References: <20111122120358.aa2cefdcdace9a98acafd4b9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 23 Nov 2011 11:17:51 +1100
+Message-ID: <20111123111751.60b1e8ba032f6077fa03ca13@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__23_Nov_2011_11_17_51_+1100_1thCe.__6n2=ThQY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:47809 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753859Ab1KVLFx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Nov 2011 06:05:53 -0500
-Content-Disposition: inline
-In-Reply-To: <20111122120358.aa2cefdcdace9a98acafd4b9@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:51824 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752313Ab1KWASD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2011 19:18:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Pitre <nicolas.pitre@linaro.org>, Russell King <rmk@arm.linux.org.uk>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maciej =?UTF-8?B?xbtlbmN6eWtvd3NraQ==?= <maze@google.com>, Alexey Dobriyan <adobriyan@gmail.com>
 
-Stephen,
+--Signature=_Wed__23_Nov_2011_11_17_51_+1100_1thCe.__6n2=ThQY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 22, 2011 at 01:03:58AM +0000, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm-lpae tree got a conflict in
-> arch/arm/mm/ioremap.c between commit 3afb51f744b6 ("ARM: add generic
-> ioremap optimization by reusing static mappings") from the arm tree and
-> commit ec93d80c4b07 ("ARM: LPAE: Page table maintenance for the 3-level
-> format") from the arm-lpae tree.
-> 
-> I guessed (probably incorrectly) about the fix up (see below).  Please
-> supply a better fix if necessary.
+Hi all,
 
-The fix-up looks correct from an LPAE perspective. I cannot comment on
-the correctness of Nicolas' patch, that's to be discussed on the ARM
-Linux list.
+Today's linux-next merge of the net-next tree got a conflict in
+net/ipv4/inet_diag.c between commit 717b6d836646 ("net-netlink: fix diag
+to export IPv4 tos for dual-stack IPv6 sockets") from the net tree and
+commit 4e3fd7a06dc2 ("net: remove ipv6_addr_copy()") from the net-next
+tree.
 
-Thanks.
+Just context changes.  I fixed it up (see below) can can carry the fix as
+necessary,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Catalin
+diff --cc net/ipv4/inet_diag.c
+index ccee270,bbebdec..0000000
+--- a/net/ipv4/inet_diag.c
++++ b/net/ipv4/inet_diag.c
+@@@ -132,13 -129,10 +132,11 @@@ static int inet_csk_diag_fill(struct so
+  	if (r->idiag_family =3D=3D AF_INET6) {
+  		const struct ipv6_pinfo *np =3D inet6_sk(sk);
+ =20
+ -		*(struct in6_addr *)r->id.idiag_src =3D np->rcv_saddr;
+ -		*(struct in6_addr *)r->id.idiag_dst =3D np->daddr;
+  		if (ext & (1 << (INET_DIAG_TCLASS - 1)))
+  			RTA_PUT_U8(skb, INET_DIAG_TCLASS, np->tclass);
+ +
+- 		ipv6_addr_copy((struct in6_addr *)r->id.idiag_src,
+- 			       &np->rcv_saddr);
+- 		ipv6_addr_copy((struct in6_addr *)r->id.idiag_dst,
+- 			       &np->daddr);
+++		*(struct in6_addr *)r->id.idiag_src =3D np->rcv_saddr;
+++		*(struct in6_addr *)r->id.idiag_dst =3D np->daddr;
+  	}
+  #endif
+ =20
+
+--Signature=_Wed__23_Nov_2011_11_17_51_+1100_1thCe.__6n2=ThQY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOzDuvAAoJEECxmPOUX5FEBh0P/2oKg99DWqZnmILmMvkYLuax
+DXoKW9V7yxixy5oYPgTyG3WlAA53WsifGbBqkwvK9EYZBWRceGqYZ9oMLdZZEKXa
+R8pg5qnXRigu9etv5wZAqGCAoKA2R9aShZHlR4FGn6UVkAvYe06XhSij99k8C4KH
++pSrahqZ2sgqusBErkucadqSZ8h/UviG/ElXfmz0l5YTKJdrkECykEqo9K2Ur34Z
+ChnQPJLY0GyAvKDzvaUGX/aajbKFct60cKgy0SMe6vciSyYCPMwxjH6b0+PVodTU
+Hcjm81++lHTYPWsM+7uExL9+fVW/qQSyvZiuHGTmN7ZLJFt2ZSWoc9mgpDpSZ/56
+izzZrOKLLtQkFEwDZvkEwKYRGahfevpDKmxBwTLPaW+MElpr8pX+9VPG7hfP3gk1
+1zMpVndh/rGf2b1Yfl8Z2UHYCr0ogtWSG0Yf9+ZGOVUCNt1gOqrMoYCkQUAvXiym
+B52r4MBvFn696UfxUsTm/RbGXIVeIJ/cZTpFh35q0BlqoYJdHnwV//pGefqjxXdW
+3fP3/9pZer4rYkOm+np+o6ODuHrqJI5oG8bcSMhj5tct5qsv/1Fk95yoxq8SI9Fm
+PoRbRf2oiOeypGGfaXVaSjy6Wl2pqGEN8Sq3evJQRQnX+xwp8SBsZqQVI8MOvkct
+wCu+BsZPuc+stmKUtEms
+=Ef/y
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_Nov_2011_11_17_51_+1100_1thCe.__6n2=ThQY--
