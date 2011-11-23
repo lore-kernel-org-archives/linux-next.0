@@ -1,32 +1,29 @@
-From: Neil Horman <nhorman@tuxdriver.com>
-Subject: Re: [PATCH] netprio_cgroup: Fix build break
-Date: Wed, 23 Nov 2011 09:22:09 -0500
-Message-ID: <20111123142209.GC27968@hmsreliant.think-freely.org>
-References: <1322051553-28987-1-git-send-email-nhorman@tuxdriver.com>
- <20111123131147.GA11508@tugrik.mns.mnsspb.ru>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: regulator tree has moved back to kernel.org
+Date: Wed, 23 Nov 2011 17:16:45 +0000
+Message-ID: <20111123171645.GA1065@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:33571 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755557Ab1KWOWU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2011 09:22:20 -0500
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:40111 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752384Ab1KWRQs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2011 12:16:48 -0500
 Content-Disposition: inline
-In-Reply-To: <20111123131147.GA11508@tugrik.mns.mnsspb.ru>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kirill Smelkov <kirr@mns.spb.ru>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, john.r.fastabend@intel.com, robert.w.love@intel.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@ti.com>
 
-On Wed, Nov 23, 2011 at 05:11:47PM +0400, Kirill Smelkov wrote:
-> On Wed, Nov 23, 2011 at 07:32:33AM -0500, Neil Horman wrote:
-> > I broke the build with the addition of netprio_cgroups if CONFIG_CGROUPS=n.
-> > This patch corrects it by moving the offending struct into an ifdef
-> > CONFIG_CGROUPS block.  Also clean up a few needless defines and inline functions
-> > that don't get called if CONFIG_CGROUPS isn't defined while Im at it.
-> 
-> Thanks Neil, now it compiles ok.
-> 
-Np, sorry for the trouble.  I should have double checked that make oldconfig did
-what I assumed it did
-Neil
+Hi Stephen,
+
+Please update the regulator tree in -next to use kernel.org again:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+While Liam has his kernel.org account back now he's currently busy
+rennovating his house so I'm still looking after the tree and it seems
+better to host it on kernel.org.
+
+Thanks,
+Mark
