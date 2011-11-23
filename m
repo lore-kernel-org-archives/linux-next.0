@@ -1,63 +1,86 @@
-From: "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: Re: [PATCH] dmatest: don't use set_freezable_with_signal()
-Date: Tue, 22 Nov 2011 23:48:07 -0800
-Message-ID: <CABE8wwu-ZH47tFkaEmYfWtXzgeR9KmEWXbtXD5FEQc3R9tV7aQ@mail.gmail.com>
-References: <20111121184316.GH15314@google.com>
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (uprobes tree related)
+Date: Wed, 23 Nov 2011 15:24:43 +0530
+Message-ID: <20111123095443.GA22971@linux.vnet.ibm.com>
+References: <20111123152854.98c60a7c859f28c2efa30717@canb.auug.org.au>
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=iso-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga07.intel.com ([143.182.124.22]:32436 "EHLO
-	azsmga101.ch.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755592Ab1KWHsK convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2011 02:48:10 -0500
-In-Reply-To: <20111121184316.GH15314@google.com>
+Received: from e2.ny.us.ibm.com ([32.97.182.142]:50769 "EHLO e2.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753673Ab1KWJzd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Nov 2011 04:55:33 -0500
+Received: from /spool/local
+	by e2.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+	Wed, 23 Nov 2011 04:55:32 -0500
+Content-Disposition: inline
+In-Reply-To: <20111123152854.98c60a7c859f28c2efa30717@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Stephen Rothwell <sfr@canb.auug.org.au>, rjw@sisk.pl, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Nov 21, 2011 at 10:43 AM, Tejun Heo <tj@kernel.org> wrote:
-> Commit 981ed70d8e (dmatest: make dmatest threads freezable) made
-> dmatest kthread use set_freezable_with_signal(); however, the
-> interface is scheduled to be removed in the next merge window.
->
-> The problem is that unlike userland tasks there's no default place
-> which handles signal pending state and it isn't clear who owns and/or
-> is responsible for clearing TIF_SIGPENDING. =A0For example, in the
-> current code, try_to_freeze() clears TIF_SIGPENDING but it isn't sure
-> whether it actually owns the TIF_SIGPENDING nor is it race-free -
-> ie. the task may continue to run with TIF_SIGPENDING set after the
-> freezable section.
->
-> Unfortunately, we don't have wait_for_completion_freezable_timeout().
-> This patch open codes it and uses wait_event_freezable_timeout()
-> instead and removes timeout reloading - wait_event_freezable_timeout(=
-)
-> won't return across freezing events (currently racy but fix scheduled=
-)
-> and timer doesn't decrement while the task is in freezer. =A0Although
-> this does lose timer-reset-over-freezing, given that timeout is
-> supposed to be long enough and failure to finish inside is considered
-> irrecoverable, I don't think this is worth the complexity.
->
-> While at it, move completion to outer scope and explain that we're
-> ignoring dangling pointer problem after timeout. =A0This should give
-> slightly better chance at avoiding oops after timeout.
->
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Nicolas Ferre <nicolas.ferre@atmel.com>
+
+Hey Stephen, 
+
+> After merging the uprobes tree, today's linux-next build (sparc64
+> defconfig) failed like this:
+> 
+> In file included from include/linux/mm_types.h:15:0,
+>                  from include/linux/kmemcheck.h:4,
+>                  from include/linux/skbuff.h:18,
+>                  from net/8021q/vlan_core.c:1:
+> include/linux/uprobes.h: In function 'register_uprobe':
+> include/linux/uprobes.h:148:10: error: 'ENOSYS' undeclared (first use in this function)
+> 
+
+Oh sorry for missing this.
+
+> And several more.
+> 
+> Caused by commit fb16338b69cd ("register_unregister_uprobe" - "Uprobes:
+> register/unregister probes").
+> 
+> I have added this patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 23 Nov 2011 15:11:20 +1100
+> Subject: [PATCH] uprobes: using ENOSYS requires errno.h
+> 
+> Fixes this build problem:
+> 
+> In file included from include/linux/mm_types.h:15:0,
+>                  from include/linux/kmemcheck.h:4,
+>                  from include/linux/skbuff.h:18,
+>                  from net/8021q/vlan_core.c:1:
+> include/linux/uprobes.h: In function 'register_uprobe':
+> include/linux/uprobes.h:148:10: error: 'ENOSYS' undeclared (first use in this function)
+> 
+> when CONFIG_UPROBES is not defined.
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
-> Guennadi, Dan, how does this look? =A0If it's okay, do you guys mind
-> routing this through pm tree? =A0I have some patches stacked on top
-> removal of freezable_with_signal and it would be much easier to route
-> these together.
->
-> Thank you.
+>  include/linux/uprobes.h |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index 091dfb8..e2e0674 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -23,6 +23,7 @@
+>   *	Jim Keniston
+>   */
+>  
+> +#include <linux/errno.h>
+>  #include <linux/rbtree.h>
+>  
+>  struct vm_area_struct;
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
+Yes, this is the right fix. So I will fold this into my patch.
 
-(for the revised commit a75ca055 on
-git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git pm-freezer)
+-- 
+Thanks and Regards
+Srikar
