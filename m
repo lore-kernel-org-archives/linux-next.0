@@ -1,33 +1,79 @@
-From: Deng-Cheng Zhu <dczhu@mips.com>
-Subject: Re: linux-next: manual merge of the tip tree with the mips tree
-Date: Wed, 23 Nov 2011 10:07:25 +0800
-Message-ID: <4ECC555D.4080902@mips.com>
-References: <20111123130148.2a437aabdf6120e7e9b6928c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the net-next tree
+Date: Wed, 23 Nov 2011 14:27:42 +1100
+Message-ID: <20111123142742.9b4fb79fd3748325753a896a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111123130148.2a437aabdf6120e7e9b6928c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__23_Nov_2011_14_27_42_+1100_cMGT=Q/OnerWj4Hw"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:51287 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756714Ab1KWD1y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2011 22:27:54 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>, Frederic Weisbecker <fweisbec@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-On 11/23/2011 10:01 AM, Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the tip tree got a conflict in
-> arch/mips/kernel/perf_event_mipsxx.c between commit f40c522a4216
-> ("MIPS/Perf-events: Remove erroneous check on active_events") and
-> c481e48d9478 ("MIPS/Perf-events: Remove pmu and event state checking in
-> validate_event()") from the mips tree and commit aa2bc1ade590 ("perf:
-> Don't use -ENOSPC for out of PMU resources") from the tip tree.
->
-> Just context changes (and one hunk was removed).  I fixed it up (see
-> below) and can carry the fix as necessary.
+--Signature=_Wed__23_Nov_2011_14_27_42_+1100_cMGT=Q/OnerWj4Hw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I was aware of this conflict while writing that patch series based
-on linux-mips tree. Your changes look good to me. Thanks for the fixup!
+Hi Andrew,
 
+Today's linux-next merge of the akpm got a conflict in
+include/linux/cgroup_subsys.h between commit 5bc1421e34ec ("net: add
+network priority cgroup infrastructure (v4)") from the net-next tree and
+commit 22a20a26f21c ("cgroups: add a task counter subsystem") from the
+akpm tree.
 
-Deng-Cheng
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/linux/cgroup_subsys.h
+index 0bd390c,5425822..0000000
+--- a/include/linux/cgroup_subsys.h
++++ b/include/linux/cgroup_subsys.h
+@@@ -67,8 -67,8 +67,14 @@@ SUBSYS(perf
+ =20
+  /* */
+ =20
+ +#ifdef CONFIG_NETPRIO_CGROUP
+ +SUBSYS(net_prio)
+ +#endif
+ +
+ +/* */
+++
++ #ifdef CONFIG_CGROUP_TASK_COUNTER
++ SUBSYS(tasks)
++ #endif
++=20
++ /* */
+
+--Signature=_Wed__23_Nov_2011_14_27_42_+1100_cMGT=Q/OnerWj4Hw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOzGguAAoJEECxmPOUX5FE1rEQAJTVVX35i0vcp2ba53PuE5K8
+6udjOmvxpbUARONSKzBt4KT1y/XXdF0kU3qUBQEDyAPJKXaf0yJr1X+kyu4Z9LKG
+XQoll455vi73vaH3ywY1szfoLwHr58JejIwm3hmPXyC+XKgU3OHsEJAnTPZ/WixL
+W5OdppmqA6h2n/8K2ul3IrZosz09jf22ozwdMoPPRDDixPFEti9L/FPd+/lRWhBc
+ai9T/mpTJFlOm0xpk8YE2FcBcW6E/8sBCApbWUGUCCqH4SpZg0nsTwsY/FZtTOfX
+L//RgGFLP95qQwYHx2Yws+sKjqwjX1ImnMNzr/Fwxa2idImswxJ9PP7hFRvbVSfm
+TKdASpGkcywR4/c8JY01fPHJ6z9JeYPBFDVpt564PQinX1tCSrfIIWVeuw5s0YNc
+hbZdFdhccD5BQ7646xsTCjlv3Wzgqwb0IDQvTUhq0au/hP4dYt3Sxq/sanHrhlPk
+hLD2qz0bxPmnzH2KtNFZEz3hjVNcg78UJV3lJ8zifUKhpCpOkKHsXKYbfl4FwLJf
+GAwmlSkyfB/9QNQoL92whgG5XqigsHZSbLxNAPMVvs1rOMmDsuucynCjRnDO/zgz
+YpMh5wQZSWzUMmsVw7njfQ2Ngr1krK6RAp+q/oot6vXn1u7auaEHUsHMRBvMw3Km
+GtgqhGaYSok+hzy25C6g
+=cYn7
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_Nov_2011_14_27_42_+1100_cMGT=Q/OnerWj4Hw--
