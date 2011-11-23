@@ -1,30 +1,88 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 22 Nov 2011 19:23:56 -0500 (EST)
-Message-ID: <20111122.192356.1964321544725536133.davem@davemloft.net>
-References: <20111123111751.60b1e8ba032f6077fa03ca13@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111123111751.60b1e8ba032f6077fa03ca13@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, maze@google.com, adobriyan@gmail.com
-List-Id: linux-next.vger.kernel.org
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 23 Nov 2011 11:17:51 +1100
+Subject: linux-next: manual merge of the tip tree with the mips tree
+Date: Wed, 23 Nov 2011 13:01:48 +1100
+Message-ID: <20111123130148.2a437aabdf6120e7e9b6928c@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__23_Nov_2011_13_01_48_+1100_AbgM4kL//fQY7cFK"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:52419 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754288Ab1KWCCJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2011 21:02:09 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Deng-Cheng Zhu <dczhu@mips.com>, Ralf Baechle <ralf@linux-mips.org>
 
-> Hi all,
-> 
-> Today's linux-next merge of the net-next tree got a conflict in
-> net/ipv4/inet_diag.c between commit 717b6d836646 ("net-netlink: fix diag
-> to export IPv4 tos for dual-stack IPv6 sockets") from the net tree and
-> commit 4e3fd7a06dc2 ("net: remove ipv6_addr_copy()") from the net-next
-> tree.
-> 
-> Just context changes.  I fixed it up (see below) can can carry the fix as
-> necessary,
+--Signature=_Wed__23_Nov_2011_13_01_48_+1100_AbgM4kL//fQY7cFK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yep, I anticipated this one too, thanks Stephen.
+Hi all,
+
+Today's linux-next merge of the tip tree got a conflict in
+arch/mips/kernel/perf_event_mipsxx.c between commit f40c522a4216
+("MIPS/Perf-events: Remove erroneous check on active_events") and
+c481e48d9478 ("MIPS/Perf-events: Remove pmu and event state checking in
+validate_event()") from the mips tree and commit aa2bc1ade590 ("perf:
+Don't use -ENOSPC for out of PMU resources") from the tip tree.
+
+Just context changes (and one hunk was removed).  I fixed it up (see
+below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/mips/kernel/perf_event_mipsxx.c
+index bda4bc9,315fc0b..0000000
+--- a/arch/mips/kernel/perf_event_mipsxx.c
++++ b/arch/mips/kernel/perf_event_mipsxx.c
+@@@ -710,16 -731,16 +710,16 @@@ static int validate_group(struct perf_e
+ =20
+  	memset(&fake_cpuc, 0, sizeof(fake_cpuc));
+ =20
+ -	if (!validate_event(&fake_cpuc, leader))
+ +	if (mipsxx_pmu_alloc_counter(&fake_cpuc, &leader->hw) < 0)
+- 		return -ENOSPC;
++ 		return -EINVAL;
+ =20
+  	list_for_each_entry(sibling, &leader->sibling_list, group_entry) {
+ -		if (!validate_event(&fake_cpuc, sibling))
+ +		if (mipsxx_pmu_alloc_counter(&fake_cpuc, &sibling->hw) < 0)
+- 			return -ENOSPC;
++ 			return -EINVAL;
+  	}
+ =20
+ -	if (!validate_event(&fake_cpuc, event))
+ +	if (mipsxx_pmu_alloc_counter(&fake_cpuc, &event->hw) < 0)
+- 		return -ENOSPC;
++ 		return -EINVAL;
+ =20
+  	return 0;
+  }
+
+--Signature=_Wed__23_Nov_2011_13_01_48_+1100_AbgM4kL//fQY7cFK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOzFQMAAoJEECxmPOUX5FEQxIP/RH2SpAcwNdrJmqihjptyRtD
+56CYG/SBIQj/lTERcRb2TsYXBR+uf+7ftKhIALtpyWaZIYwzrRs3Fook6gE8HGCP
+BrO8Pn07NOM7JMJ52dB8MjJFFV/vh0MHYW3WnEZ85G3qVmSM5z+lPl5hewBzWidZ
+iMxcH+J6xV3ly80eVI/SmDa3IN1UcBpi9aX6C8uy1Rjk9G2T/WfDheNQkP95U4Iu
+zua0l+TKU5OkBo95I27U8tkRJGcZ0QGwW7X/79poTvhwEx1CsDGsoDZlhBqML4Qh
+mtwQrm8C9Jd2awkuTtyFJoterQAh0kNNTGQtIxjmTq908cA594Ia7CQbxMXD86tw
+qRIc4veeY2OlO3fPS6LA9LSt3tOnu+9dfkfSosY5rQUEDHEV5xLVt29bUJm4DtM1
+WJXo3WbGMXcZMs5YZPh5WwEF97hba8/BuO23QWeCKMEY0cFBCq+mrrYc/IupCgmX
+eMc6pjkrYFrlNfVt+fe2yZCA2r2GCso88kDLBn7HKOJWmPwhuK98jQIiXg8XrM1b
+oEDour2wgpvKc81Jaf71+H7XQ04cRfj+lO4TgQEr+BeOsz6624IbhKn5wkwrXJmW
+CbAY6knLLqxJO2wPRi7qcfJFLa4Ix98mLlqoGTY5D+PApw0oyFKC4zzcmCzGxmHQ
+gsx4fSYEbgMn/O5ZPKTR
+=joMK
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_Nov_2011_13_01_48_+1100_AbgM4kL//fQY7cFK--
