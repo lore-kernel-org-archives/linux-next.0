@@ -1,82 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (net-next
+Subject: linux-next: build failure after merge of the final tree (uprobes
  tree related)
-Date: Wed, 23 Nov 2011 15:00:04 +1100
-Message-ID: <20111123150004.59be04eb36c480ec44edc9d5@canb.auug.org.au>
+Date: Wed, 23 Nov 2011 15:28:54 +1100
+Message-ID: <20111123152854.98c60a7c859f28c2efa30717@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__23_Nov_2011_15_00_04_+1100_HwQkzJ/w/jvY0cw6"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__23_Nov_2011_15_28_54_+1100_XiMA9wdGWUMq.Bav"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:59754 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756042Ab1KWE3I (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2011 23:29:08 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__23_Nov_2011_15_00_04_+1100_HwQkzJ/w/jvY0cw6
+--Signature=_Wed__23_Nov_2011_15_28_54_+1100_XiMA9wdGWUMq.Bav
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Srikar,
 
-After merging the final tree, today's linux-next build (powerpc allnoconfig)
-failed like this:
+After merging the uprobes tree, today's linux-next build (sparc64
+defconfig) failed like this:
 
-In file included from include/linux/netdevice.h:53:0,
-                 from include/linux/icmpv6.h:173,
-                 from include/linux/ipv6.h:220,
-                 from include/net/ipv6.h:16,
-                 from include/linux/sunrpc/clnt.h:26,
-                 from include/linux/nfs_fs.h:50,
-                 from init/do_mounts.c:20:
-include/net/netprio_cgroup.h:23:29: error: field 'css' has incomplete type
+In file included from include/linux/mm_types.h:15:0,
+                 from include/linux/kmemcheck.h:4,
+                 from include/linux/skbuff.h:18,
+                 from net/8021q/vlan_core.c:1:
+include/linux/uprobes.h: In function 'register_uprobe':
+include/linux/uprobes.h:148:10: error: 'ENOSYS' undeclared (first use in th=
+is function)
 
-And several more similar.
+And several more.
 
-Caused by commit 5bc1421e34ec ("net: add network priority cgroup
-infrastructure (v4)").
+Caused by commit fb16338b69cd ("register_unregister_uprobe" - "Uprobes:
+register/unregister probes").
 
-I have added the following (minimal, but probably not optimal) patch for
-today:
+I have added this patch for today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 23 Nov 2011 14:49:49 +1100
-Subject: [PATCH] net: fix build error in network priority cgroup
- infrastructure
+Date: Wed, 23 Nov 2011 15:11:20 +1100
+Subject: [PATCH] uprobes: using ENOSYS requires errno.h
 
-Fixes this error:
+Fixes this build problem:
 
-In file included from include/linux/netdevice.h:53:0,
-                 from include/linux/icmpv6.h:173,
-                 from include/linux/ipv6.h:220,
-                 from include/net/ipv6.h:16,
-                 from include/linux/sunrpc/clnt.h:26,
-                 from include/linux/nfs_fs.h:50,
-                 from init/do_mounts.c:20:
-include/net/netprio_cgroup.h:23:29: error: field 'css' has incomplete type
+In file included from include/linux/mm_types.h:15:0,
+                 from include/linux/kmemcheck.h:4,
+                 from include/linux/skbuff.h:18,
+                 from net/8021q/vlan_core.c:1:
+include/linux/uprobes.h: In function 'register_uprobe':
+include/linux/uprobes.h:148:10: error: 'ENOSYS' undeclared (first use in th=
+is function)
 
-When CONFIG_CGROUPS is not set.
+when CONFIG_UPROBES is not defined.
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- include/net/netprio_cgroup.h |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ include/linux/uprobes.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/include/net/netprio_cgroup.h b/include/net/netprio_cgroup.h
-index c432e99..da71b91 100644
---- a/include/net/netprio_cgroup.h
-+++ b/include/net/netprio_cgroup.h
-@@ -20,7 +20,9 @@
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index 091dfb8..e2e0674 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -23,6 +23,7 @@
+  *	Jim Keniston
+  */
 =20
- struct cgroup_netprio_state
- {
-+#ifdef CONFIG_CGROUPS
- 	struct cgroup_subsys_state css;
-+#endif
- 	u32 prioidx;
- };
++#include <linux/errno.h>
+ #include <linux/rbtree.h>
 =20
+ struct vm_area_struct;
 --=20
 1.7.7.3
 
@@ -84,25 +82,25 @@ index c432e99..da71b91 100644
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__23_Nov_2011_15_00_04_+1100_HwQkzJ/w/jvY0cw6
+--Signature=_Wed__23_Nov_2011_15_28_54_+1100_XiMA9wdGWUMq.Bav
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOzG/EAAoJEECxmPOUX5FE8CoP/iSK5UWvw1Ed2P6C7JCkRkT2
-Nk1h+6C8ocC8r7cP0vplLtIYW92J1VyKnEw9FfsTgvxZ7LHfL5dTRDyckLbYJkK0
-US9a5t7QLFhlE1RzzJCGZm6731tpSbyapQZrNls0G0MjAG56ChSNcwvh7h5x9IC9
-I8HqMGWcA1kgNZoawetJFgUcZnY3sNZ78LpteZ8afW/imQXGLU7OiZUnGx19u7CX
-paD/RBKJqqKB5ms4qvFk3QSh46HswrVSpvWwn911GPkYkLzrwwi+CntJ/sdUbAyD
-I+Wm4Md20Wo/riPMCYVtGrjr9Ms5Sxa2c2xAU0Foa8p6Ab/IERtHsI6PMO/+dl4Y
-hVFPa46u5XEK9uDHFmZK1Wh89pCKdSjDvtGDDStjUg7htPKfJZNYiiYqF9AxW3dE
-MOavcFzwOQWNUL2gpaANVy8ao2xsmU0VIuR7sEOjgsd3uRxarrGVz7eAFh1hpgUv
-Hzj95FwZ4nL/WJnAneGaJOrG+ljIDcF7S1PmDp1M7KJnzajMEdzXJ1GKdqNCfYg7
-frFIKgFfm2bLHG20UYpJezsJdX7xmznUnPNMCK6fPhkpsbC9moxEnSlCEhrNCE6P
-DCcO0f8Ww9rKZCeJxnnJXfJnivfv9HEkKmNL65ftP48nVCGmqiGVurK5/XAZuovM
-BXgnso3EhwEN3VEERWW2
-=937q
+iQIcBAEBCAAGBQJOzHaGAAoJEECxmPOUX5FEqCkP/2kEI8fn/PmH623+YBtJe22I
+02qwVtOwr/KHembhXEAChPOYItFH2KfG5TrFooLnHKw/9sjzISoXSRxrMwucFhLS
+hPNuiTzkitycbWpOh29mWbp8NqLSHeqni4rhrjCiBvS2S6ymHkvIuW698u2Bxrkj
+Qz6vc979THQ0bzCae1QcatvM+hfNZZMETjpSWbtqd9cRpuPKsgcAFbZKR6OyEaVv
+gmAPKNQD3rGxCV7rEH8GRf27lAeJHmNaQpUZ9VfhG7273LbzzdGVkWTOtTmCFQ4f
+eKamxpC/jVXylWQqOx2wycxzKgfBB/o6BHTZiRx/xIWo/kloMoAN8CyUye1hypNJ
+yqxcG3wlEPVAam6UuqITw4fsjsUtg9fAEtJxnYShpdjbr1s+FQGEhLmnQkUYK6x6
+bIUaj5jM3/PQdaVDQakgLfTmLtpVd0LYmXbGqxjRfnH+ZXFMRVrhy6ke1s2ZtmlX
+H/FEWiJLKTPg2xJm5UsGj+aDOKbi16UGnNs1fTbMjvLnjRQ0ot0VdcZKlLogpuf3
+MOI+2AWA+mDS7P0uNepQ+Hn0JHUCuDc4hPiPkzkZxzHhM4ZBiPCbIaWW0VB1qT9v
+XhGAeHfS4tNqj1lD1zCJVOxsoon+vJUAK02JOOvQHhV36TcQ1lnG6bxYIazGJAd7
+GxF2iYRAsWR+OPsq+o3v
+=xTw8
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__23_Nov_2011_15_00_04_+1100_HwQkzJ/w/jvY0cw6--
+--Signature=_Wed__23_Nov_2011_15_28_54_+1100_XiMA9wdGWUMq.Bav--
