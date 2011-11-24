@@ -1,74 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the cgroup tree with the pm tree
-Date: Fri, 25 Nov 2011 10:13:41 +1100
-Message-ID: <20111125101341.d05da222778d1bd380003e20@canb.auug.org.au>
-References: <20111124152018.66ee4f15447837dd01443fdb@canb.auug.org.au>
-	<CAOS58YP146w66g2hyJSn10hWjtWmSjQBo36BaJ4ZibZcJAB0nw@mail.gmail.com>
+Subject: Re: vhost tree for linux-next
+Date: Fri, 25 Nov 2011 10:42:14 +1100
+Message-ID: <20111125104214.c815493e4949af69b1869d17@canb.auug.org.au>
+References: <20111124203843.GC4873@redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__25_Nov_2011_10_13_41_+1100_1QfnLD2dptZQ4cVy"
+ boundary="Signature=_Fri__25_Nov_2011_10_42_14_+1100_ZzmdANIcc1tH.pTE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:44495 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:58154 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753487Ab1KXXNv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 18:13:51 -0500
-In-Reply-To: <CAOS58YP146w66g2hyJSn10hWjtWmSjQBo36BaJ4ZibZcJAB0nw@mail.gmail.com>
+	with ESMTP id S1754891Ab1KXXmV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 18:42:21 -0500
+In-Reply-To: <20111124203843.GC4873@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.cz>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Fri__25_Nov_2011_10_13_41_+1100_1QfnLD2dptZQ4cVy
+--Signature=_Fri__25_Nov_2011_10_42_14_+1100_ZzmdANIcc1tH.pTE
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi Michael,
 
-On Thu, 24 Nov 2011 13:12:29 -0800 Tejun Heo <tj@kernel.org> wrote:
+On Thu, 24 Nov 2011 22:38:44 +0200 "Michael S. Tsirkin" <mst@redhat.com> wr=
+ote:
 >
-> On Wed, Nov 23, 2011 at 8:20 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> > Today's linux-next merge of the cgroup tree got a conflict in
-> > kernel/cgroup_freezer.c between commit 6907483b4e80 ("freezer: make
-> > freezing indicate freeze condition in effect") from the pm tree and
-> > commit 41dfa07cedcc ("cgroup_freezer: fix freezing groups with stopped
-> > tasks") from the cgroup tree.
-> >
-> > I think that the latter is a superset of the former (but I may be wrong=
-),
-> > so I used that.
+> I normally merge things through Dave, Rusty, Jesse or Jens,
+> not directly to Linus. However, sometimes there's a large change
+> (for example, my recent RFC for pci_iomap changes)
+> where estimating how it interacts with other platforms and planned
+> changes in the next kernel would be beneficial.
 >=20
-> We'll need to do freezing() || is_task_frozen_enough() there. I'll
-> update pm-freezer after I push cgroup fix upstream next week.
+> For this purpose, it would be helpful if my tree were added to linux-next.
+> The tree is:
+> git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git linux-next
+>=20
+> Could you do this please?
 
-Thanks, I have updated my merge resolution.
+1) I asked you to cc this request much wider than this (I do not know
+what is going on in all areas of the kernel, so I rely on feedback from
+others to determine if stuff should go into linux-next).
+
+2) as fas as I can tell the current contents of that tree was posted for
+review/feedback for the first time today.   Give it a few days for any
+responses ...
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__25_Nov_2011_10_13_41_+1100_1QfnLD2dptZQ4cVy
+--Signature=_Fri__25_Nov_2011_10_42_14_+1100_ZzmdANIcc1tH.pTE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOzs+lAAoJEECxmPOUX5FEf+0P/iDqOHiKTxRqQbdJVvGg2PmV
-z9ln/SdYEkwpnRXLOEZ/46FzjcP0aCzjDxynT9rMgdHi5dJK1vhI/6BulxsH0L1p
-LkXHJxN89gTa6vZGA/sErQTMMHSsoJkkZgqfFaRoMB5t/1Kkw7Hf6cy6kG22Lm4y
-9ELHiMoCNHZsSIC3Aq4o6sb4JHcEG7TlDLB+jcItmGRrCM9AtlgP5rsHO35S83zG
-hNsgdhmLjPLgRGNmzznT+XeTXM/MNab8Ybw8Z4d45z83daAOyWcinHpwTayz49T4
-4uN91EWyo9S3+HpzPZgKK/7ANN2IAGccCH6IHhE/y34PUQfCeio29P5/cgGKKYyB
-kT1roGd8Ny9zD51kGfzpJKxwiGDqUGtUqL3PvP2BgXqL76+WhNQ2xZ61DBwSX6tv
-tVSZD+uJpH45mXgeR6OA8JQMqptlzNYjIyQMP6bD+ev8Qm/DKQds4lTI3w1WEIg3
-Btx2IzCIv2F16lEfUF4JruUV9tZDvU3iYTm5f4LaIag/Elu0/z7jL2Wvmy9JZbU5
-sRSejlSSzPPatzJgwEweUagSeU3oI7vkdRF8JvyMbe5lGnFn8a5NKTIFFmcwlirB
-gDmwCVu5KwoNWugMLp03xTa2SIGT1C8tCd2kE+cu3bvikqUQoJgbeTeFTc58jMHO
-PTa0ybugnoeXxL8yI2hG
-=PRym
+iQIcBAEBCAAGBQJOztZWAAoJEECxmPOUX5FER3kP/3qqFoQp0C+a8+o3Af7fSu2h
+LchzJEqEjWsn3DywmN/4niHZCKnZyAtgkPH85iTGrTp40YwjML54W27ZFo01314h
+GZeQYj8eA87UwW3S0I1LoHlnjnvjAfIJyzyRYBaMKRuja0ZmAOGSkRx6cjt5IZXv
+3STYyA8yKH7hUsDfXO6TNdTymI4Od4TC0GqAOcdOJXwG2SGRAK7JxRxklm0I61A9
+JhRofFIG6mfa4dgNHk39IPtp7mM2ej2v1r3QGEE5TTua5VlG5lhE3fyPI5OU1jzJ
+9Rem7fecZeNAbclNXKvY1prIeUAItfRna965VyaT3kzvYSnABG0ZTyrgJPgYgpWQ
+mqrQDz+95WIJBvfIEe5W3vMYLGes+9juc7nDnIUkx/ZhHB+GQYcCj3UeYo4Lcvs7
+8DbdAzC1lzKgZ8RciGMGn7Z7miuQUIz9PmmGHhuT8u3qXSCYVCHSdV1xGDtlhiu8
+PVOjHUG3yMJuFTQU4CVORZhJ6mUvPZsFoO7x09VpMpDGnNCwF2Ul6nOaejIqgBmt
+VaRaWkjhsMrDBDajlQVUrj2yTbjOBZE6x1qJC68CeWNamRHdo4pL2vSbj8c11buz
+iUtDGkoDUrEOLGmNZqFiHpPzhkS9zCAw2flQKJ89DwciBQ6D8AAMqPsoCLcQEUkP
+6w7Q8anIoJVuQcrK5EF5
+=8N3a
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__25_Nov_2011_10_13_41_+1100_1QfnLD2dptZQ4cVy--
+--Signature=_Fri__25_Nov_2011_10_42_14_+1100_ZzmdANIcc1tH.pTE--
