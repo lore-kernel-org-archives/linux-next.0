@@ -1,53 +1,58 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Fri, 25 Nov 2011 06:25:28 +0800
-Message-ID: <CAAQ0ZWQZ4jMjHAKq3O1PXb7kdie5hMSTy68_3hxqnPgXkVgr3w@mail.gmail.com>
-References: <20111124115239.ff33728e7e9a99426528c214@canb.auug.org.au>
-	<201111241554.09598.arnd@arndb.de>
+From: Jamie Iles <jamie@jamieiles.com>
+Subject: Re: [PATCH] at91_ether: use gpio_is_valid for phy IRQ line
+Date: Thu, 24 Nov 2011 22:28:36 +0000
+Message-ID: <20111124222836.GB28582@gallagher>
+References: <1322128098-17724-1-git-send-email-jamie@jamieiles.com>
+ <1322169674-4109-1-git-send-email-nicolas.ferre@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:47147 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750736Ab1KXWZb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 17:25:31 -0500
-In-Reply-To: <201111241554.09598.arnd@arndb.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1322169674-4109-1-git-send-email-nicolas.ferre@atmel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: jamie@jamieiles.com, netdev@vger.kernel.org, plagnioj@jcrosoft.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
-On 24 November 2011 23:54, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thursday 24 November 2011, Stephen Rothwell wrote:
->> Hi Arnd,
->>
->> Today's linux-next merge of the arm-soc tree got a conflict in
->> arch/arm/tools/mach-types between commit bb9b25f923fc ("ARM: Update
->> mach-types") from the arm tree and commit 9b7c547f7747 ("ARM: Update
->> mach-types to fix mxs build breakage") from the arm-soc tree.
->>
->> The arm tree version is a superset of the arm-soc version, so I used that.
->
-> Thanks for catching this!
->
-> Shawn, please make sure that any updates to mach-types go only through
-> Russell's tree. Unfortunately I did not realize that this was out of
-> scope when I merged it, otherwise I would have complained yesterday.
->
-Sorry if I have misunderstood Russell's comment below.
+Hi Nicolas,
 
-http://thread.gmane.org/gmane.linux.ports.arm.kernel/139196/focus=140505
+On Thu, Nov 24, 2011 at 10:21:14PM +0100, Nicolas Ferre wrote:
+> Use the generic gpiolib gpio_is_valid() function to test
+> if the phy IRQ line GPIO is actually provided.
+> 
+> For non-connected or non-existing phy IRQ lines, -EINVAL
+> value is used for phy_irq_pin field of struct at91_eth_data.
+> 
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+> ---
+>  drivers/net/ethernet/cadence/at91_ether.c |   23 +++++++++++++----------
+>  1 files changed, 13 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/cadence/at91_ether.c b/drivers/net/ethernet/cadence/at91_ether.c
+> index 56624d3..a1c4143 100644
+> --- a/drivers/net/ethernet/cadence/at91_ether.c
+> +++ b/drivers/net/ethernet/cadence/at91_ether.c
+> @@ -255,8 +255,7 @@ static void enable_phyirq(struct net_device *dev)
+>  	unsigned int dsintr, irq_number;
+>  	int status;
+>  
+> -	irq_number = lp->board_data.phy_irq_pin;
+> -	if (!irq_number) {
+> +	if (!gpio_is_valid(lp->board_data.phy_irq_pin)) {
+>  		/*
+>  		 * PHY doesn't have an IRQ pin (RTL8201, DP83847, AC101L),
+>  		 * or board does not have it connected.
+> @@ -265,6 +264,7 @@ static void enable_phyirq(struct net_device *dev)
+>  		return;
+>  	}
+>  
+> +	irq_number = lp->board_data.phy_irq_pin;
 
-But I thought he would not send patch on mach-types for -rc series.
-That's why I came up with this patch and sent it to you.  After all,
-we do not want to see mxs build breakage in a release.
+Does this need to be:
 
-> Russell, is it ok for you if the patch (see below for reference)
-> goes into 3.2-rc4 through the arm-soc tree? I can remove if if you
-> think that's better, but I have a lot of fixes stacked on top now
-> that I'd prefer not to rebase.
->
+	irq_number = gpio_to_irq(lp->board_data.phy_irq_pin);
 
--- 
-Regards,
-Shawn
+and the same for the other occurrences?  Otherwise this looks like the 
+right thing to me.
+
+Jamie
