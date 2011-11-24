@@ -1,34 +1,48 @@
-From: Sasha Levin <levinsasha928@gmail.com>
-Subject: Re: linux-next: build failure of Linus' tree
-Date: Thu, 24 Nov 2011 10:09:05 +0200
-Message-ID: <1322122145.4248.2.camel@lappy>
-References: <20111124112117.f9abeb7a3f4868be71389372@canb.auug.org.au>
+From: Jamie Iles <jamie@jamieiles.com>
+Subject: Re: linux-next: manual merge of the at91 tree with the arm-soc tree
+Date: Thu, 24 Nov 2011 09:56:03 +0000
+Message-ID: <20111124095603.GA5048@totoro>
+References: <20111124121611.fe102955910da2b603032d07@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111124112117.f9abeb7a3f4868be71389372@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:52512 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751397Ab1KXJ4H (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 04:56:07 -0500
+Content-Disposition: inline
+In-Reply-To: <20111124121611.fe102955910da2b603032d07@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jamie Iles <jamie@jamieiles.com>, Arnd Bergmann <arnd@arndb.de>
 
-On Thu, 2011-11-24 at 11:21 +1100, Stephen Rothwell wrote:
+Hi Stephen,
+
+On Thu, Nov 24, 2011 at 12:16:11PM +1100, Stephen Rothwell wrote:
 > Hi all,
 > 
-> today's linux-next build of Linus' (x86_64_allmodconfig) failed like this:
+> Today's linux-next merge of the at91 tree got conflicts in
+> arch/arm/mach-at91/board-cap9adk.c, arch/arm/mach-at91/board-cpu9krea.c,
+> arch/arm/mach-at91/board-cpuat91.c,
+> arch/arm/mach-at91/board-snapper9260.c and
+> arch/arm/mach-at91/include/mach/board.h between commit 84e0cdb0a262
+> ("macb: unify at91 and avr32 platform data") from the arm-soc tree and
+> commit 1509f4847dd1 ("at91/boards: use -EINVAL for invalid gpio") from
+> the at91 tree.
 > 
-> drivers/staging/iio/industrialio-core.c: In function 'iio_event_getfd':
-> drivers/staging/iio/industrialio-core.c:262:32: error: 'ev_int' undeclared (first use in this function)
+> I fixed them up (see below) and can carry the fix as necessary.
 > 
-> Caused by commit b46413367961 ("iio: fix a leak due to improper use of
-> anon_inode_getfd()").
-> 
-> I have reverted that commit for today.
+> However, it looks to me that struct macb_platform_data (in
+> include/linux/platform_data/macb.h) will need its phy_irq_pin members
+> changed to int as well (which may have other consequences).
 
-I've sent a patch yesterday named "iio: Fix build error in
-industrialio-core.c" which should fix that.
+That looks correct to me.  I've just posted a patch to convert 
+phy_irq_pin to an int and from inspection that shouldn't break anything 
+by itself.
 
--- 
+The macb driver doesn't currently use the phy_irq_pin member, but the 
+at91_ether driver does and that compares to 0 for no IRQ so the 
+assignment of -EINVAL _could_.
 
-Sasha.
+Jamie
