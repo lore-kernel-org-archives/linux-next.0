@@ -1,125 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the at91 tree with the arm-soc tree
-Date: Thu, 24 Nov 2011 12:16:11 +1100
-Message-ID: <20111124121611.fe102955910da2b603032d07@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the regulator tree
+Date: Thu, 24 Nov 2011 14:10:46 +1100
+Message-ID: <20111124141046.fdb4b9b923d850b0686924c3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__24_Nov_2011_12_16_11_+1100_9yVWVubjIwtoMC/c"
+ boundary="Signature=_Thu__24_Nov_2011_14_10_46_+1100_tR99srbXyEeP1xV."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:46838 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:34469 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751155Ab1KXBQb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2011 20:16:31 -0500
+	with ESMTP id S1755657Ab1KXDLE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2011 22:11:04 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jamie Iles <jamie@jamieiles.com>, Arnd Bergmann <arnd@arndb.de>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>, Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
 
---Signature=_Thu__24_Nov_2011_12_16_11_+1100_9yVWVubjIwtoMC/c
+--Signature=_Thu__24_Nov_2011_14_10_46_+1100_tR99srbXyEeP1xV.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the at91 tree got conflicts in
-arch/arm/mach-at91/board-cap9adk.c, arch/arm/mach-at91/board-cpu9krea.c,
-arch/arm/mach-at91/board-cpuat91.c,
-arch/arm/mach-at91/board-snapper9260.c and
-arch/arm/mach-at91/include/mach/board.h between commit 84e0cdb0a262
-("macb: unify at91 and avr32 platform data") from the arm-soc tree and
-commit 1509f4847dd1 ("at91/boards: use -EINVAL for invalid gpio") from
-the at91 tree.
+After merging the regulator tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed them up (see below) and can carry the fix as necessary.
+drivers/regulator/gpio-regulator.c: In function 'gpio_regulator_probe':
+drivers/regulator/gpio-regulator.c:287:8: error: too few arguments to funct=
+ion 'regulator_register'
+include/linux/regulator/driver.h:215:23: note: declared here
 
-However, it looks to me that struct macb_platform_data (in
-include/linux/platform_data/macb.h) will need its phy_irq_pin members
-changed to int as well (which may have other consequences).
+
+Caused by commit 2c043bcbf287 ("regulator: pass additional of_node to
+regulator_register()").
+
+drivers/regulator/gpio-regulator.c was added in commit 3f0292ae8bb1
+("regulator: Add driver for gpio-controlled regulators") which was
+included in Linus' tree before v3.2-rc1.
+
+I have used the regulator tree from next-20111123 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-at91/board-cap9adk.c
-index af5520c,abadf5d..0000000
---- a/arch/arm/mach-at91/board-cap9adk.c
-+++ b/arch/arm/mach-at91/board-cap9adk.c
-@@@ -153,7 -154,8 +154,8 @@@ static struct at91_mmc_data __initdata=20
-  /*
-   * MACB Ethernet device
-   */
- -static struct at91_eth_data __initdata cap9adk_macb_data =3D {
- +static struct macb_platform_data __initdata cap9adk_macb_data =3D {
-+ 	.phy_irq_pin	=3D -EINVAL,
-  	.is_rmii	=3D 1,
-  };
- =20
-diff --cc arch/arm/mach-at91/board-cpu9krea.c
-index 04d2b9b,d583805..0000000
---- a/arch/arm/mach-at91/board-cpu9krea.c
-+++ b/arch/arm/mach-at91/board-cpu9krea.c
-@@@ -99,7 -100,8 +100,8 @@@ static struct at91_udc_data __initdata=20
-  /*
-   * MACB Ethernet device
-   */
- -static struct at91_eth_data __initdata cpu9krea_macb_data =3D {
- +static struct macb_platform_data __initdata cpu9krea_macb_data =3D {
-+ 	.phy_irq_pin	=3D -EINVAL,
-  	.is_rmii	=3D 1,
-  };
- =20
-diff --cc arch/arm/mach-at91/board-cpuat91.c
-index 7a4c82e,e1991d6..0000000
---- a/arch/arm/mach-at91/board-cpuat91.c
-+++ b/arch/arm/mach-at91/board-cpuat91.c
-@@@ -82,7 -82,8 +82,8 @@@ static void __init cpuat91_init_early(v
-  	at91_set_serial_console(0);
-  }
- =20
- -static struct at91_eth_data __initdata cpuat91_eth_data =3D {
- +static struct macb_platform_data __initdata cpuat91_eth_data =3D {
-+ 	.phy_irq_pin	=3D -EINVAL,
-  	.is_rmii	=3D 1,
-  };
- =20
-diff --cc arch/arm/mach-at91/board-snapper9260.c
-index fbec934,752fd05..0000000
---- a/arch/arm/mach-at91/board-snapper9260.c
-+++ b/arch/arm/mach-at91/board-snapper9260.c
-@@@ -63,9 -64,11 +64,11 @@@ static struct at91_udc_data __initdata=20
-  	.vbus_pin		=3D SNAPPER9260_IO_EXP_GPIO(5),
-  	.vbus_active_low	=3D 1,
-  	.vbus_polled		=3D 1,
-+ 	.pullup_pin		=3D -EINVAL,
-  };
- =20
- -static struct at91_eth_data snapper9260_macb_data =3D {
- +static struct macb_platform_data snapper9260_macb_data =3D {
-+ 	.phy_irq_pin	=3D -EINVAL,
-  	.is_rmii	=3D 1,
-  };
- =20
-
---Signature=_Thu__24_Nov_2011_12_16_11_+1100_9yVWVubjIwtoMC/c
+--Signature=_Thu__24_Nov_2011_14_10_46_+1100_tR99srbXyEeP1xV.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOzZrbAAoJEECxmPOUX5FE1o8P/2siHmtPSjKQ/NQUWam/6qpC
-fo/I9h/8v76DYOaI+Y/omiSi/BJVT+8FWM7d/VoebAfqXQIzdaFIOq6BpgPXkygs
-eoyzY3eooZWMRWNCA/Zg7yAgdWsz42+853QO6rM/pXm4i4+yu46vVG5AXuyXtPva
-5+u9txcBNUSF+2NM8XJcD4GdWW907NfAaejlq29ENKd3PFRaQdmy51AfAm8hRpQj
-r8ZMhWJIhr83WAA5b5ooqq41zNxkE2hnDsl4RY2wF7x/v+e4CHYt87eO9l2dxR3X
-Ek/LWEPI0hQheu02Gbqlv8h4rsk5O3yQkxMqP7R6KyZYLmpj/Ub0tLN16hI19s2n
-pLQExSuvAwu3AX96pmuC9Tg8phqYP21Fz8uCt78K7EmvdM/udDqF0H1NMaAkVyP8
-RnqY9Cict0ZYox8um0IqwW5JTeK8ReK26XT8VgUGZ8rERg5//7bT2lPrZSytUhz8
-1ZdJfXP7UhymdcWIgoRSRPOYNcw3S3w+LSyrSyQ9Mlv/D01Zs90VoY4YEu0tMiFe
-zB3729EkDwaFp73B/fIvOz0HmIGFZvG0uEBu42Dl4lZPsP6l7QsXOyUImXZajH4J
-U79uCk0/aMIxvD691eRjrok/sA0+isAGrz70BQKeITK+/zL+d2nuxyadJso7ESq4
-HXx6uA9Ukd3gVW5A4pj4
-=HpHl
+iQIcBAEBCAAGBQJOzbW2AAoJEECxmPOUX5FEXJcP/R+2xrhw9aVkB7YeSG2dcSc5
+FlXdYp78wksZgX/LyUT1DY6ylNVYDYdglhoEq3Q3yvTKonGZHVEp+mccKmyf3cBr
+/lVN6A5EOuyrx7MwIVc1QghfPsup+cEuI1/sgRfh3IxZHviizIEzhVZkCiXLNt/4
+H590sXlAlBZ6RV2whMNdkCTNJ/Z6OBmCyAP/Xtvdh+70Lh5IA9aVmqQdvkKYzAJU
+oCl86BMiQZ3PcKqVSEuAL0grylYDOPpsQLBj/+dDPegVjv0bn2uk3b4OBI/znDrU
+BPdhBrJOLmTxSwmju84PBc4sCFZvjlDJZ/tmGZeoR5WZ94gpqiRvtPEmWUpVQrbh
+hgcTmW5GWJNY7y06oWTeLL5wCntIpC+Nsh+LK6KFZVp/Y/LhitDST5nLbLUzBHU7
+Tdl3thsRP8D+1yxH0wsLit+WMKLAeeINC6wlUSdpxeBuTsv2pDKQHz0FIPdqOZyV
+3sV3D5gY6QqlxuZ0WGXDhoBalsnR5/1KjjvNS3WJqJ762gmfGnd2DTxxrTLlBS/2
+mCS3QTPxi1Eo7fjsWM3uNM7hGSt0LAIgOu769sZqkHRKRue3aoYGfPvSVnLT9Jkz
+v/3AN+op6JIGOENvrrX1U0UgmMTM5ctoS+IVijRsvx0w4WyX3twYHQgmrnDhzY4T
+6dwKeyQPYio4fB5aYjjt
+=2iiz
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__24_Nov_2011_12_16_11_+1100_9yVWVubjIwtoMC/c--
+--Signature=_Thu__24_Nov_2011_14_10_46_+1100_tR99srbXyEeP1xV.--
