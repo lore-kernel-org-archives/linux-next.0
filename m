@@ -1,34 +1,60 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with Linus' tree
-Date: Thu, 24 Nov 2011 15:55:03 +0000
-Message-ID: <201111241555.03715.arnd@arndb.de>
-References: <20111124115805.d2b5cdc699b9d6ed300b9c09@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: [PATCH] crypto: serpent-sse2 - should select CRYPTO_CRYPTD
+Date: Thu, 24 Nov 2011 10:35:29 -0800
+Message-ID: <4ECE8E71.1080606@xenotime.net>
+References: <4ECD527E.8000506@xenotime.net> <20111124063741.17986.23462.stgit@localhost6.localdomain6>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:64030 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754742Ab1KXP5l (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 10:57:41 -0500
-In-Reply-To: <20111124115805.d2b5cdc699b9d6ed300b9c09@canb.auug.org.au>
+Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:32967 "HELO
+	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752401Ab1KXSiF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 13:38:05 -0500
+In-Reply-To: <20111124063741.17986.23462.stgit@localhost6.localdomain6>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Jamie Iles <jamie.iles@mathembedded.com>
+To: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, linux-next@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, LKML <linux-kernel@vger.kernel.org>
 
-On Thursday 24 November 2011, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> drivers/net/ethernet/cadence/Kconfig between commit eccab1ec87d0
-> ("net/cadence: enable by default NET_ATMEL") from Linus' tree and commit
-> f75ba50bdc2b ("macb: initial support for Cadence GEM") from the arm-soc
-> tree.
+On 11/23/2011 10:37 PM, Jussi Kivilinna wrote:
+> Since serpent_sse2_glue.c uses cryptd, CRYPTO_SERPENT_SSE2_X86_64 and
+> CRYPTO_SERPENT_SSE2_586 should be selecting CRYPTO_CRYPTD.
 > 
-> I fixed it up (see below) and can carry the fix as necessary.
+> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+> Signed-off-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
 
-Yes, looks good.
+Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
-Thanks,
+Thanks.
 
-	Arnd
+> ---
+>  crypto/Kconfig |    2 ++
+>  1 files changed, 2 insertions(+), 0 deletions(-)
+> 
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index 16e0c13..b8d1b10 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -770,6 +770,7 @@ config CRYPTO_SERPENT_SSE2_X86_64
+>  	tristate "Serpent cipher algorithm (x86_64/SSE2)"
+>  	depends on X86 && 64BIT
+>  	select CRYPTO_ALGAPI
+> +	select CRYPTO_CRYPTD
+>  	select CRYPTO_SERPENT
+>  	help
+>  	  Serpent cipher algorithm, by Anderson, Biham & Knudsen.
+> @@ -787,6 +788,7 @@ config CRYPTO_SERPENT_SSE2_586
+>  	tristate "Serpent cipher algorithm (i586/SSE2)"
+>  	depends on X86 && !64BIT
+>  	select CRYPTO_ALGAPI
+> +	select CRYPTO_CRYPTD
+>  	select CRYPTO_SERPENT
+>  	help
+>  	  Serpent cipher algorithm, by Anderson, Biham & Knudsen.
+> 
+
+
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
