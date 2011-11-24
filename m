@@ -1,37 +1,123 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: manual merge of the cgroup tree with the pm tree
-Date: Thu, 24 Nov 2011 13:12:29 -0800
-Message-ID: <CAOS58YP146w66g2hyJSn10hWjtWmSjQBo36BaJ4ZibZcJAB0nw@mail.gmail.com>
-References: <20111124152018.66ee4f15447837dd01443fdb@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: [PATCH] at91_ether: use gpio_is_valid for phy IRQ line
+Date: Thu, 24 Nov 2011 22:21:14 +0100
+Message-ID: <1322169674-4109-1-git-send-email-nicolas.ferre@atmel.com>
+References: <1322128098-17724-1-git-send-email-jamie@jamieiles.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:60990 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754020Ab1KXVMa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 16:12:30 -0500
-In-Reply-To: <20111124152018.66ee4f15447837dd01443fdb@canb.auug.org.au>
+Received: from newsmtp5.atmel.com ([204.2.163.5]:31253 "EHLO
+	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751618Ab1KXVVi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 16:21:38 -0500
+In-Reply-To: <1322128098-17724-1-git-send-email-jamie@jamieiles.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.cz>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: jamie@jamieiles.com, netdev@vger.kernel.org
+Cc: plagnioj@jcrosoft.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Nicolas Ferre <nicolas.ferre@atmel.com>
 
-Hello,
+Use the generic gpiolib gpio_is_valid() function to test
+if the phy IRQ line GPIO is actually provided.
 
-On Wed, Nov 23, 2011 at 8:20 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Today's linux-next merge of the cgroup tree got a conflict in
-> kernel/cgroup_freezer.c between commit 6907483b4e80 ("freezer: make
-> freezing indicate freeze condition in effect") from the pm tree and
-> commit 41dfa07cedcc ("cgroup_freezer: fix freezing groups with stopped
-> tasks") from the cgroup tree.
->
-> I think that the latter is a superset of the former (but I may be wrong),
-> so I used that.
+For non-connected or non-existing phy IRQ lines, -EINVAL
+value is used for phy_irq_pin field of struct at91_eth_data.
 
-We'll need to do freezing() || is_task_frozen_enough() there. I'll
-update pm-freezer after I push cgroup fix upstream next week.
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+---
+ drivers/net/ethernet/cadence/at91_ether.c |   23 +++++++++++++----------
+ 1 files changed, 13 insertions(+), 10 deletions(-)
 
-Thank you.
-
+diff --git a/drivers/net/ethernet/cadence/at91_ether.c b/drivers/net/ethernet/cadence/at91_ether.c
+index 56624d3..a1c4143 100644
+--- a/drivers/net/ethernet/cadence/at91_ether.c
++++ b/drivers/net/ethernet/cadence/at91_ether.c
+@@ -255,8 +255,7 @@ static void enable_phyirq(struct net_device *dev)
+ 	unsigned int dsintr, irq_number;
+ 	int status;
+ 
+-	irq_number = lp->board_data.phy_irq_pin;
+-	if (!irq_number) {
++	if (!gpio_is_valid(lp->board_data.phy_irq_pin)) {
+ 		/*
+ 		 * PHY doesn't have an IRQ pin (RTL8201, DP83847, AC101L),
+ 		 * or board does not have it connected.
+@@ -265,6 +264,7 @@ static void enable_phyirq(struct net_device *dev)
+ 		return;
+ 	}
+ 
++	irq_number = lp->board_data.phy_irq_pin;
+ 	status = request_irq(irq_number, at91ether_phy_interrupt, 0, dev->name, dev);
+ 	if (status) {
+ 		printk(KERN_ERR "at91_ether: PHY IRQ %d request failed - status %d!\n", irq_number, status);
+@@ -319,8 +319,7 @@ static void disable_phyirq(struct net_device *dev)
+ 	unsigned int dsintr;
+ 	unsigned int irq_number;
+ 
+-	irq_number = lp->board_data.phy_irq_pin;
+-	if (!irq_number) {
++	if (!gpio_is_valid(lp->board_data.phy_irq_pin)) {
+ 		del_timer_sync(&lp->check_timer);
+ 		return;
+ 	}
+@@ -365,6 +364,7 @@ static void disable_phyirq(struct net_device *dev)
+ 	disable_mdi();
+ 	spin_unlock_irq(&lp->lock);
+ 
++	irq_number = lp->board_data.phy_irq_pin;
+ 	free_irq(irq_number, dev);			/* Free interrupt handler */
+ }
+ 
+@@ -1077,7 +1077,7 @@ static int __init at91ether_setup(unsigned long phy_type, unsigned short phy_add
+ 	netif_carrier_off(dev);		/* will be enabled in open() */
+ 
+ 	/* If board has no PHY IRQ, use a timer to poll the PHY */
+-	if (!lp->board_data.phy_irq_pin) {
++	if (!gpio_is_valid(lp->board_data.phy_irq_pin)) {
+ 		init_timer(&lp->check_timer);
+ 		lp->check_timer.data = (unsigned long)dev;
+ 		lp->check_timer.function = at91ether_check_link;
+@@ -1169,7 +1169,8 @@ static int __devexit at91ether_remove(struct platform_device *pdev)
+ 	struct net_device *dev = platform_get_drvdata(pdev);
+ 	struct at91_private *lp = netdev_priv(dev);
+ 
+-	if (lp->board_data.phy_irq_pin >= 32)
++	if (gpio_is_valid(lp->board_data.phy_irq_pin) &&
++	    lp->board_data.phy_irq_pin >= 32)
+ 		gpio_free(lp->board_data.phy_irq_pin);
+ 
+ 	unregister_netdev(dev);
+@@ -1188,11 +1189,12 @@ static int at91ether_suspend(struct platform_device *pdev, pm_message_t mesg)
+ {
+ 	struct net_device *net_dev = platform_get_drvdata(pdev);
+ 	struct at91_private *lp = netdev_priv(net_dev);
+-	int phy_irq = lp->board_data.phy_irq_pin;
+ 
+ 	if (netif_running(net_dev)) {
+-		if (phy_irq)
++		if (gpio_is_valid(lp->board_data.phy_irq_pin)) {
++			int phy_irq = lp->board_data.phy_irq_pin;
+ 			disable_irq(phy_irq);
++		}
+ 
+ 		netif_stop_queue(net_dev);
+ 		netif_device_detach(net_dev);
+@@ -1206,7 +1208,6 @@ static int at91ether_resume(struct platform_device *pdev)
+ {
+ 	struct net_device *net_dev = platform_get_drvdata(pdev);
+ 	struct at91_private *lp = netdev_priv(net_dev);
+-	int phy_irq = lp->board_data.phy_irq_pin;
+ 
+ 	if (netif_running(net_dev)) {
+ 		clk_enable(lp->ether_clk);
+@@ -1214,8 +1215,10 @@ static int at91ether_resume(struct platform_device *pdev)
+ 		netif_device_attach(net_dev);
+ 		netif_start_queue(net_dev);
+ 
+-		if (phy_irq)
++		if (gpio_is_valid(lp->board_data.phy_irq_pin)) {
++			int phy_irq = lp->board_data.phy_irq_pin;
+ 			enable_irq(phy_irq);
++		}
+ 	}
+ 	return 0;
+ }
 -- 
-tejun
+1.7.5.4
