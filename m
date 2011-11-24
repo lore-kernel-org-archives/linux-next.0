@@ -1,34 +1,62 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-next tree related)
-Date: Wed, 23 Nov 2011 18:44:25 -0500 (EST)
-Message-ID: <20111123.184425.1412287327735765077.davem@davemloft.net>
-References: <20111123150004.59be04eb36c480ec44edc9d5@canb.auug.org.au>
-	<20111123120937.GB27968@hmsreliant.think-freely.org>
-	<20111123150213.ed7257cb.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure of Linus' tree
+Date: Thu, 24 Nov 2011 11:21:17 +1100
+Message-ID: <20111124112117.f9abeb7a3f4868be71389372@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111123150213.ed7257cb.akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org
-Cc: nhorman@tuxdriver.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__24_Nov_2011_11_21_17_+1100_SCtczkjnaQU+X..Y"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:33188 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753861Ab1KXAVf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2011 19:21:35 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Wed, 23 Nov 2011 15:02:13 -0800
+--Signature=_Thu__24_Nov_2011_11_21_17_+1100_SCtczkjnaQU+X..Y
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Needs a thorough redo.  Please take a look at the other cgroup
-> subsystem headers.  The basic pattern is
-> 
-> #ifdef CONFIG_FOO_CGROUP
-> <definitions and declarations>
-> #else
-> <any needed stubs go here>
-> #endif
-> 
-> And that's it.
+Hi all,
 
-I told Neil to put the stub in net/core/dev.c since that's the one and
-only call site.
+today's linux-next build of Linus' (x86_64_allmodconfig) failed like this:
+
+drivers/staging/iio/industrialio-core.c: In function 'iio_event_getfd':
+drivers/staging/iio/industrialio-core.c:262:32: error: 'ev_int' undeclared =
+(first use in this function)
+
+Caused by commit b46413367961 ("iio: fix a leak due to improper use of
+anon_inode_getfd()").
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__24_Nov_2011_11_21_17_+1100_SCtczkjnaQU+X..Y
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJOzY39AAoJEECxmPOUX5FEO44QAICWQVPkZYApOoer3k4Ps5JV
+yqir4XC1nlASGt8bOyhoIDjqZAnAYKGViyf59rvHPNTu5YYZ0IdFlU1sNCYZcVcn
+Cr/AY9qb22UY6gulBvnTCxEN7prWzxev4kHWlCaurAFRGX0RieUpWHofc9m8upwA
+g08yZxob1aNgBLF2N1LY58yIi9CBhfOzWXxrQURa7soMAwjUjNZE9FAIHjxmDvAa
+BrSPMbCUxnSvtoIlUgGJajbOAyEvlFXAkHZC49YxSrwo7gvzMlDzAOYoYRINn2E5
+5rqkSN2fCFwZY4FpmPy8CtsZPK/YuhtKHkLflaLEaTl2LSQNIgavCJ4o4AeNCTv+
+qDUIYBt9Sp8zRjUoMHgHozeFr51ieVKh3X6y3LX98BHkjUL5KPzDW+2EFm440bwb
+HGmTu29oiBQ4AVb/xO0xy6dR01eQ9tqdFuJ7XhSLiPparUbXBJLLHtJ6ctUBaRkz
+ZgdJqF51DeBYSagQx8RtRnozKgBErZ4LtuISQTgDW1+4UtrEelvUrdNEvznrGlVF
+fpNyEW7dafE+baozM8XBY6fV3iI+ORyj4PzLRwnSFjrYCJKi3K1zIrW1Zcqh9J+a
+vYAEgqK76JgRkAs9e54dhnTNxmN7ldcSfL6sn9Uc+eF85mPgNFhI5kdV2LZZVI26
+v7LbURyM2Y02iOVHXOJx
+=vY4r
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__24_Nov_2011_11_21_17_+1100_SCtczkjnaQU+X..Y--
