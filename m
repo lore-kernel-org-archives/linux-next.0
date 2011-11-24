@@ -1,69 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the regulator tree
-Date: Thu, 24 Nov 2011 14:10:46 +1100
-Message-ID: <20111124141046.fdb4b9b923d850b0686924c3@canb.auug.org.au>
+Subject: linux-next: manual merge of the cgroup tree with the pm tree
+Date: Thu, 24 Nov 2011 15:20:18 +1100
+Message-ID: <20111124152018.66ee4f15447837dd01443fdb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__24_Nov_2011_14_10_46_+1100_tR99srbXyEeP1xV."
+ boundary="Signature=_Thu__24_Nov_2011_15_20_18_+1100_J2OPY9doEK=ZYCca"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:34469 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:60587 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755657Ab1KXDLE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2011 22:11:04 -0500
+	with ESMTP id S1751971Ab1KXEUf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Nov 2011 23:20:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>, Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.cz>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
---Signature=_Thu__24_Nov_2011_14_10_46_+1100_tR99srbXyEeP1xV.
+--Signature=_Thu__24_Nov_2011_15_20_18_+1100_J2OPY9doEK=ZYCca
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Tejun,
 
-After merging the regulator tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the cgroup tree got a conflict in
+kernel/cgroup_freezer.c between commit 6907483b4e80 ("freezer: make
+freezing indicate freeze condition in effect") from the pm tree and
+commit 41dfa07cedcc ("cgroup_freezer: fix freezing groups with stopped
+tasks") from the cgroup tree.
 
-drivers/regulator/gpio-regulator.c: In function 'gpio_regulator_probe':
-drivers/regulator/gpio-regulator.c:287:8: error: too few arguments to funct=
-ion 'regulator_register'
-include/linux/regulator/driver.h:215:23: note: declared here
-
-
-Caused by commit 2c043bcbf287 ("regulator: pass additional of_node to
-regulator_register()").
-
-drivers/regulator/gpio-regulator.c was added in commit 3f0292ae8bb1
-("regulator: Add driver for gpio-controlled regulators") which was
-included in Linus' tree before v3.2-rc1.
-
-I have used the regulator tree from next-20111123 for today.
+I think that the latter is a superset of the former (but I may be wrong),
+so I used that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__24_Nov_2011_14_10_46_+1100_tR99srbXyEeP1xV.
+--Signature=_Thu__24_Nov_2011_15_20_18_+1100_J2OPY9doEK=ZYCca
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOzbW2AAoJEECxmPOUX5FEXJcP/R+2xrhw9aVkB7YeSG2dcSc5
-FlXdYp78wksZgX/LyUT1DY6ylNVYDYdglhoEq3Q3yvTKonGZHVEp+mccKmyf3cBr
-/lVN6A5EOuyrx7MwIVc1QghfPsup+cEuI1/sgRfh3IxZHviizIEzhVZkCiXLNt/4
-H590sXlAlBZ6RV2whMNdkCTNJ/Z6OBmCyAP/Xtvdh+70Lh5IA9aVmqQdvkKYzAJU
-oCl86BMiQZ3PcKqVSEuAL0grylYDOPpsQLBj/+dDPegVjv0bn2uk3b4OBI/znDrU
-BPdhBrJOLmTxSwmju84PBc4sCFZvjlDJZ/tmGZeoR5WZ94gpqiRvtPEmWUpVQrbh
-hgcTmW5GWJNY7y06oWTeLL5wCntIpC+Nsh+LK6KFZVp/Y/LhitDST5nLbLUzBHU7
-Tdl3thsRP8D+1yxH0wsLit+WMKLAeeINC6wlUSdpxeBuTsv2pDKQHz0FIPdqOZyV
-3sV3D5gY6QqlxuZ0WGXDhoBalsnR5/1KjjvNS3WJqJ762gmfGnd2DTxxrTLlBS/2
-mCS3QTPxi1Eo7fjsWM3uNM7hGSt0LAIgOu769sZqkHRKRue3aoYGfPvSVnLT9Jkz
-v/3AN+op6JIGOENvrrX1U0UgmMTM5ctoS+IVijRsvx0w4WyX3twYHQgmrnDhzY4T
-6dwKeyQPYio4fB5aYjjt
-=2iiz
+iQIcBAEBCAAGBQJOzcYCAAoJEECxmPOUX5FEWTIQAJMxT1/uRdlcwtaFCbciUaXn
+UAnjLHjHfeNqC526tkIjsuLle2iyj2k1myX0uRyym1R2u9Y7t7fPtJCFElYWRwgg
+Ev87BRG3RcxvNhPPeusxFqdKgvj86CoFGwSrrDTaXhR4Z7pJiyWb2cNCfsv7qpiV
+BTa64iT1Yb91S+GW/V51Njh5Nb+X/jJEsiLL17UepUj1d1rzVsyOA46tkIvf+mB+
+8ztP5qsIV4qYNtT1QHmPULZe/HRd1DtweeNm4kEHg9xDSRZeZNi6VlYAq6pPrBJg
+WrzR0o9zKb19lM95aFDAo+D4lEmN3+KVij5sqXhI0VozOYevtrJpjO0H4E2JDY1l
+4cpYGk1njirjhGqE8cS39YqqTtFigdtQEDgBvDk4dMx6OWUZNT4gJ94Tp5Fv87EU
+zTrU4VTUgLKTdmgJ5ZuhKM6b68kTolc3m3HQq/I8u5/7FmKLJCi/DZeVkPPPOcF/
+6iZhySKaGFvHiIiCUqa59cKCnkS/Rg4Tmtc575l3I+BxX/O3GpdR1a5uACCuywjw
+jmTtm5U6egl/n3ucYM4uzg8XCocmVmO+BrSnCvtge4hNoAAKWsXzHghHqv1O4oyd
+ocXRY7D8OW25r8V8eprRfAbCmb4QC0cKq6JEaZwcmfDbDf0S76meZ4qFNi7rLKWf
+8oPLvgOJfQwhNObId3jR
+=dGe9
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__24_Nov_2011_14_10_46_+1100_tR99srbXyEeP1xV.--
+--Signature=_Thu__24_Nov_2011_15_20_18_+1100_J2OPY9doEK=ZYCca--
