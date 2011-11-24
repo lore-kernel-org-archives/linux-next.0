@@ -1,48 +1,43 @@
-From: Jamie Iles <jamie@jamieiles.com>
-Subject: Re: linux-next: manual merge of the at91 tree with the arm-soc tree
-Date: Thu, 24 Nov 2011 09:56:03 +0000
-Message-ID: <20111124095603.GA5048@totoro>
-References: <20111124121611.fe102955910da2b603032d07@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the final tree (pm tree related)
+Date: Thu, 24 Nov 2011 11:15:05 +0100
+Message-ID: <201111241115.05836.rjw@sisk.pl>
+References: <20111114142423.fe126b8c8cfd275d7dd138cc@canb.auug.org.au> <20111124171949.994860621f4f83a650cf9b5b@canb.auug.org.au> <CAOS58YPAh3e_sa4JrHdVD40scNED5Z4g4t6JNU8MT8kq8vZV2Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:52512 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751397Ab1KXJ4H (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 04:56:07 -0500
-Content-Disposition: inline
-In-Reply-To: <20111124121611.fe102955910da2b603032d07@canb.auug.org.au>
+Received: from ogre.sisk.pl ([217.79.144.158]:55595 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755393Ab1KXKMT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Nov 2011 05:12:19 -0500
+In-Reply-To: <CAOS58YPAh3e_sa4JrHdVD40scNED5Z4g4t6JNU8MT8kq8vZV2Q@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jamie Iles <jamie@jamieiles.com>, Arnd Bergmann <arnd@arndb.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
-
-On Thu, Nov 24, 2011 at 12:16:11PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Thursday, November 24, 2011, Tejun Heo wrote:
+> Hello,
 > 
-> Today's linux-next merge of the at91 tree got conflicts in
-> arch/arm/mach-at91/board-cap9adk.c, arch/arm/mach-at91/board-cpu9krea.c,
-> arch/arm/mach-at91/board-cpuat91.c,
-> arch/arm/mach-at91/board-snapper9260.c and
-> arch/arm/mach-at91/include/mach/board.h between commit 84e0cdb0a262
-> ("macb: unify at91 and avr32 platform data") from the arm-soc tree and
-> commit 1509f4847dd1 ("at91/boards: use -EINVAL for invalid gpio") from
-> the at91 tree.
+> On Wed, Nov 23, 2011 at 10:19 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >> > Subject: [PATCH] freezer: fix more fallout from the thaw_process rename
+> >> >
+> >> > Commit 944e192db53c "freezer: rename thaw_process() to __thaw_task()
+> >> > and simplify the implementation" did not create a !CONFIG_FREEZER version
+> >> > of __thaw_task().
+> >> >
+> >> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> >>
+> >> I've applied your patch to linux-pm/pm-freezer and merged it into
+> >> linux-pm/linux-next.
 > 
-> I fixed them up (see below) and can carry the fix as necessary.
-> 
-> However, it looks to me that struct macb_platform_data (in
-> include/linux/platform_data/macb.h) will need its phy_irq_pin members
-> changed to int as well (which may have other consequences).
+> Ah.. that's my bad. I was actually looking at that diff and somehow it
+> just slipped my mind. Rafael, can you please apply Stephen's patch on
+> top of pm-freezer?
 
-That looks correct to me.  I've just posted a patch to convert 
-phy_irq_pin to an int and from inspection that shouldn't break anything 
-by itself.
+Sure, I will do that later today.
 
-The macb driver doesn't currently use the phy_irq_pin member, but the 
-at91_ether driver does and that compares to 0 for no IRQ so the 
-assignment of -EINVAL _could_.
-
-Jamie
+Thanks,
+Rafael
