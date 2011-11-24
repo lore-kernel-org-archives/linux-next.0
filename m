@@ -1,28 +1,74 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] regulator: Fix compile break due to missing arguments to
- regulator_register
-Date: Thu, 24 Nov 2011 10:51:54 +0000
-Message-ID: <20111124105153.GE8470@opensource.wolfsonmicro.com>
-References: <1322119637-32634-1-git-send-email-rnayak@ti.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Thu, 24 Nov 2011 15:54:09 +0000
+Message-ID: <201111241554.09598.arnd@arndb.de>
+References: <20111124115239.ff33728e7e9a99426528c214@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59424 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753483Ab1KXKv4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Nov 2011 05:51:56 -0500
-Content-Disposition: inline
-In-Reply-To: <1322119637-32634-1-git-send-email-rnayak@ti.com>
+Received: from moutng.kundenserver.de ([212.227.126.187]:49972 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754406Ab1KXPyY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 10:54:24 -0500
+In-Reply-To: <20111124115239.ff33728e7e9a99426528c214@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rajendra Nayak <rnayak@ti.com>
-Cc: sfr@canb.auug.org.au, lrg@slimlogic.co.uk, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, heiko@sntech.de
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Shawn Guo <shawn.guo@linaro.org>
 
-On Thu, Nov 24, 2011 at 12:57:17PM +0530, Rajendra Nayak wrote:
-> The commit 2c043bcbf287 ("regulator: pass additional of_node to
-> regulator_register()") caused a compile break because it missed
-> updating the regulator_register() call in gpio-regulator.c with
-> the additional parameter (NULL).
+On Thursday 24 November 2011, Stephen Rothwell wrote:
+> Hi Arnd,
+> 
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/tools/mach-types between commit bb9b25f923fc ("ARM: Update
+> mach-types") from the arm tree and commit 9b7c547f7747 ("ARM: Update
+> mach-types to fix mxs build breakage") from the arm-soc tree.
+> 
+> The arm tree version is a superset of the arm-soc version, so I used that.
 
-Applied, thanks.  Please do submit patches against -next.
+Thanks for catching this!
+
+Shawn, please make sure that any updates to mach-types go only through
+Russell's tree. Unfortunately I did not realize that this was out of
+scope when I merged it, otherwise I would have complained yesterday.
+
+Russell, is it ok for you if the patch (see below for reference)
+goes into 3.2-rc4 through the arm-soc tree? I can remove if if you
+think that's better, but I have a lot of fixes stacked on top now
+that I'd prefer not to rebase.
+
+	Arnd
+
+---
+commit 9b7c547f7747991fe62f622698ea1bf470f256f4
+Author: Shawn Guo <shawn.guo@linaro.org>
+Date:   Wed Nov 16 21:44:33 2011 +0800
+
+    ARM: Update mach-types to fix mxs build breakage
+    
+    Add entry m28evk to fix the following mxs build breakage.
+    
+      CHK     include/generated/compile.h
+      CC      arch/arm/mach-mxs/clock-mx28.o
+    arch/arm/mach-mxs/clock-mx28.c: In function 'clk_misc_init':
+    arch/arm/mach-mxs/clock-mx28.c:748: error: implicit declaration of
+    function 'machine_is_m28evk'
+    make[1]: *** [arch/arm/mach-mxs/clock-mx28.o] Error 1
+    make: *** [arch/arm/mach-mxs] Error 2
+    
+    Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+    Acked-by: Uwe Kleine-K<C3><B6>nig <u.kleine-koenig@pengutronix.de>
+
+diff --git a/arch/arm/tools/mach-types b/arch/arm/tools/mach-types
+index 5bdeef9..ccbe16f 100644
+--- a/arch/arm/tools/mach-types
++++ b/arch/arm/tools/mach-types
+@@ -1123,5 +1123,6 @@ blissc                    MACH_BLISSC             BLISSC                  3491
+ thales_adc             MACH_THALES_ADC         THALES_ADC              3492
+ ubisys_p9d_evp         MACH_UBISYS_P9D_EVP     UBISYS_P9D_EVP          3493
+ atdgp318               MACH_ATDGP318           ATDGP318                3494
++m28evk                 MACH_M28EVK             M28EVK                  3613
+ smdk4212               MACH_SMDK4212           SMDK4212                3638
+ smdk4412               MACH_SMDK4412           SMDK4412                3765
