@@ -1,123 +1,53 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: [PATCH] at91_ether: use gpio_is_valid for phy IRQ line
-Date: Thu, 24 Nov 2011 22:21:14 +0100
-Message-ID: <1322169674-4109-1-git-send-email-nicolas.ferre@atmel.com>
-References: <1322128098-17724-1-git-send-email-jamie@jamieiles.com>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Fri, 25 Nov 2011 06:25:28 +0800
+Message-ID: <CAAQ0ZWQZ4jMjHAKq3O1PXb7kdie5hMSTy68_3hxqnPgXkVgr3w@mail.gmail.com>
+References: <20111124115239.ff33728e7e9a99426528c214@canb.auug.org.au>
+	<201111241554.09598.arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from newsmtp5.atmel.com ([204.2.163.5]:31253 "EHLO
-	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751618Ab1KXVVi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 16:21:38 -0500
-In-Reply-To: <1322128098-17724-1-git-send-email-jamie@jamieiles.com>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:47147 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750736Ab1KXWZb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 17:25:31 -0500
+In-Reply-To: <201111241554.09598.arnd@arndb.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: jamie@jamieiles.com, netdev@vger.kernel.org
-Cc: plagnioj@jcrosoft.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-Use the generic gpiolib gpio_is_valid() function to test
-if the phy IRQ line GPIO is actually provided.
+On 24 November 2011 23:54, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Thursday 24 November 2011, Stephen Rothwell wrote:
+>> Hi Arnd,
+>>
+>> Today's linux-next merge of the arm-soc tree got a conflict in
+>> arch/arm/tools/mach-types between commit bb9b25f923fc ("ARM: Update
+>> mach-types") from the arm tree and commit 9b7c547f7747 ("ARM: Update
+>> mach-types to fix mxs build breakage") from the arm-soc tree.
+>>
+>> The arm tree version is a superset of the arm-soc version, so I used that.
+>
+> Thanks for catching this!
+>
+> Shawn, please make sure that any updates to mach-types go only through
+> Russell's tree. Unfortunately I did not realize that this was out of
+> scope when I merged it, otherwise I would have complained yesterday.
+>
+Sorry if I have misunderstood Russell's comment below.
 
-For non-connected or non-existing phy IRQ lines, -EINVAL
-value is used for phy_irq_pin field of struct at91_eth_data.
+http://thread.gmane.org/gmane.linux.ports.arm.kernel/139196/focus=140505
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
----
- drivers/net/ethernet/cadence/at91_ether.c |   23 +++++++++++++----------
- 1 files changed, 13 insertions(+), 10 deletions(-)
+But I thought he would not send patch on mach-types for -rc series.
+That's why I came up with this patch and sent it to you.  After all,
+we do not want to see mxs build breakage in a release.
 
-diff --git a/drivers/net/ethernet/cadence/at91_ether.c b/drivers/net/ethernet/cadence/at91_ether.c
-index 56624d3..a1c4143 100644
---- a/drivers/net/ethernet/cadence/at91_ether.c
-+++ b/drivers/net/ethernet/cadence/at91_ether.c
-@@ -255,8 +255,7 @@ static void enable_phyirq(struct net_device *dev)
- 	unsigned int dsintr, irq_number;
- 	int status;
- 
--	irq_number = lp->board_data.phy_irq_pin;
--	if (!irq_number) {
-+	if (!gpio_is_valid(lp->board_data.phy_irq_pin)) {
- 		/*
- 		 * PHY doesn't have an IRQ pin (RTL8201, DP83847, AC101L),
- 		 * or board does not have it connected.
-@@ -265,6 +264,7 @@ static void enable_phyirq(struct net_device *dev)
- 		return;
- 	}
- 
-+	irq_number = lp->board_data.phy_irq_pin;
- 	status = request_irq(irq_number, at91ether_phy_interrupt, 0, dev->name, dev);
- 	if (status) {
- 		printk(KERN_ERR "at91_ether: PHY IRQ %d request failed - status %d!\n", irq_number, status);
-@@ -319,8 +319,7 @@ static void disable_phyirq(struct net_device *dev)
- 	unsigned int dsintr;
- 	unsigned int irq_number;
- 
--	irq_number = lp->board_data.phy_irq_pin;
--	if (!irq_number) {
-+	if (!gpio_is_valid(lp->board_data.phy_irq_pin)) {
- 		del_timer_sync(&lp->check_timer);
- 		return;
- 	}
-@@ -365,6 +364,7 @@ static void disable_phyirq(struct net_device *dev)
- 	disable_mdi();
- 	spin_unlock_irq(&lp->lock);
- 
-+	irq_number = lp->board_data.phy_irq_pin;
- 	free_irq(irq_number, dev);			/* Free interrupt handler */
- }
- 
-@@ -1077,7 +1077,7 @@ static int __init at91ether_setup(unsigned long phy_type, unsigned short phy_add
- 	netif_carrier_off(dev);		/* will be enabled in open() */
- 
- 	/* If board has no PHY IRQ, use a timer to poll the PHY */
--	if (!lp->board_data.phy_irq_pin) {
-+	if (!gpio_is_valid(lp->board_data.phy_irq_pin)) {
- 		init_timer(&lp->check_timer);
- 		lp->check_timer.data = (unsigned long)dev;
- 		lp->check_timer.function = at91ether_check_link;
-@@ -1169,7 +1169,8 @@ static int __devexit at91ether_remove(struct platform_device *pdev)
- 	struct net_device *dev = platform_get_drvdata(pdev);
- 	struct at91_private *lp = netdev_priv(dev);
- 
--	if (lp->board_data.phy_irq_pin >= 32)
-+	if (gpio_is_valid(lp->board_data.phy_irq_pin) &&
-+	    lp->board_data.phy_irq_pin >= 32)
- 		gpio_free(lp->board_data.phy_irq_pin);
- 
- 	unregister_netdev(dev);
-@@ -1188,11 +1189,12 @@ static int at91ether_suspend(struct platform_device *pdev, pm_message_t mesg)
- {
- 	struct net_device *net_dev = platform_get_drvdata(pdev);
- 	struct at91_private *lp = netdev_priv(net_dev);
--	int phy_irq = lp->board_data.phy_irq_pin;
- 
- 	if (netif_running(net_dev)) {
--		if (phy_irq)
-+		if (gpio_is_valid(lp->board_data.phy_irq_pin)) {
-+			int phy_irq = lp->board_data.phy_irq_pin;
- 			disable_irq(phy_irq);
-+		}
- 
- 		netif_stop_queue(net_dev);
- 		netif_device_detach(net_dev);
-@@ -1206,7 +1208,6 @@ static int at91ether_resume(struct platform_device *pdev)
- {
- 	struct net_device *net_dev = platform_get_drvdata(pdev);
- 	struct at91_private *lp = netdev_priv(net_dev);
--	int phy_irq = lp->board_data.phy_irq_pin;
- 
- 	if (netif_running(net_dev)) {
- 		clk_enable(lp->ether_clk);
-@@ -1214,8 +1215,10 @@ static int at91ether_resume(struct platform_device *pdev)
- 		netif_device_attach(net_dev);
- 		netif_start_queue(net_dev);
- 
--		if (phy_irq)
-+		if (gpio_is_valid(lp->board_data.phy_irq_pin)) {
-+			int phy_irq = lp->board_data.phy_irq_pin;
- 			enable_irq(phy_irq);
-+		}
- 	}
- 	return 0;
- }
+> Russell, is it ok for you if the patch (see below for reference)
+> goes into 3.2-rc4 through the arm-soc tree? I can remove if if you
+> think that's better, but I have a lot of fixes stacked on top now
+> that I'd prefer not to rebase.
+>
+
 -- 
-1.7.5.4
+Regards,
+Shawn
