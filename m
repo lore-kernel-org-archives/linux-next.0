@@ -1,43 +1,56 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the final tree (pm tree related)
-Date: Thu, 24 Nov 2011 11:15:05 +0100
-Message-ID: <201111241115.05836.rjw@sisk.pl>
-References: <20111114142423.fe126b8c8cfd275d7dd138cc@canb.auug.org.au> <20111124171949.994860621f4f83a650cf9b5b@canb.auug.org.au> <CAOS58YPAh3e_sa4JrHdVD40scNED5Z4g4t6JNU8MT8kq8vZV2Q@mail.gmail.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: linux-next: manual merge of the at91 tree with the arm-soc tree
+Date: Thu, 24 Nov 2011 11:47:36 +0100
+Message-ID: <4ECE20C8.70400@atmel.com>
+References: <20111124121611.fe102955910da2b603032d07@canb.auug.org.au> <20111124095603.GA5048@totoro>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:55595 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755393Ab1KXKMT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Nov 2011 05:12:19 -0500
-In-Reply-To: <CAOS58YPAh3e_sa4JrHdVD40scNED5Z4g4t6JNU8MT8kq8vZV2Q@mail.gmail.com>
+Received: from newsmtp5.atmel.com ([204.2.163.5]:56361 "EHLO
+	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751974Ab1KXKsJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 05:48:09 -0500
+In-Reply-To: <20111124095603.GA5048@totoro>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jamie Iles <jamie@jamieiles.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-On Thursday, November 24, 2011, Tejun Heo wrote:
-> Hello,
+On 11/24/2011 10:56 AM, Jamie Iles :
+> Hi Stephen,
 > 
-> On Wed, Nov 23, 2011 at 10:19 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >> > Subject: [PATCH] freezer: fix more fallout from the thaw_process rename
-> >> >
-> >> > Commit 944e192db53c "freezer: rename thaw_process() to __thaw_task()
-> >> > and simplify the implementation" did not create a !CONFIG_FREEZER version
-> >> > of __thaw_task().
-> >> >
-> >> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> >>
-> >> I've applied your patch to linux-pm/pm-freezer and merged it into
-> >> linux-pm/linux-next.
+> On Thu, Nov 24, 2011 at 12:16:11PM +1100, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Today's linux-next merge of the at91 tree got conflicts in
+>> arch/arm/mach-at91/board-cap9adk.c, arch/arm/mach-at91/board-cpu9krea.c,
+>> arch/arm/mach-at91/board-cpuat91.c,
+>> arch/arm/mach-at91/board-snapper9260.c and
+>> arch/arm/mach-at91/include/mach/board.h between commit 84e0cdb0a262
+>> ("macb: unify at91 and avr32 platform data") from the arm-soc tree and
+>> commit 1509f4847dd1 ("at91/boards: use -EINVAL for invalid gpio") from
+>> the at91 tree.
+>>
+>> I fixed them up (see below) and can carry the fix as necessary.
+>>
+>> However, it looks to me that struct macb_platform_data (in
+>> include/linux/platform_data/macb.h) will need its phy_irq_pin members
+>> changed to int as well (which may have other consequences).
 > 
-> Ah.. that's my bad. I was actually looking at that diff and somehow it
-> just slipped my mind. Rafael, can you please apply Stephen's patch on
-> top of pm-freezer?
+> That looks correct to me.  I've just posted a patch to convert 
+> phy_irq_pin to an int and from inspection that shouldn't break anything 
+> by itself.
 
-Sure, I will do that later today.
+Good, I will Acknowledge it.
 
-Thanks,
-Rafael
+> The macb driver doesn't currently use the phy_irq_pin member, but the 
+> at91_ether driver does and that compares to 0 for no IRQ so the 
+> assignment of -EINVAL _could_.
+
+Yes indeed, I have a patch to address that and I send it now. However, I
+guess that this will go on top of Jean-Christophe's gpio patch series.
+
+Best regards,
+-- 
+Nicolas Ferre
