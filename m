@@ -1,85 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Date: Fri, 25 Nov 2011 12:49:13 +1100
-Message-ID: <20111125124913.405fc8360a185f3116adb5ec@canb.auug.org.au>
-References: <20111116113007.5656a7b4823ba085a46c57ae@canb.auug.org.au>
+Subject: linux-next: manual merge of the cgroup tree with the pm tree
+Date: Fri, 25 Nov 2011 14:21:11 +1100
+Message-ID: <20111125142111.ddfd48752425ddf79f194770@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__25_Nov_2011_12_49_13_+1100_i2qrpGQKO2ekhjEW"
+ boundary="Signature=_Fri__25_Nov_2011_14_21_11_+1100_tOchpYrLVwXUezLa"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:37466 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:43290 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753620Ab1KYBtY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 20:49:24 -0500
-In-Reply-To: <20111116113007.5656a7b4823ba085a46c57ae@canb.auug.org.au>
+	with ESMTP id S1750820Ab1KYDVU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 22:21:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Rob Clark <rob.clark@linaro.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
 
---Signature=_Fri__25_Nov_2011_12_49_13_+1100_i2qrpGQKO2ekhjEW
+--Signature=_Fri__25_Nov_2011_14_21_11_+1100_tOchpYrLVwXUezLa
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Tejun,
 
-On Wed, 16 Nov 2011 11:30:07 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->=20
-> drivers/staging/gma500/framebuffer.c: In function 'psb_user_framebuffer_c=
-reate':
-> drivers/staging/gma500/framebuffer.c:558:44: error: 'struct drm_mode_fb_c=
-md2' has no member named 'handle'
->=20
-> Caused by commit 308e5bcbdb10 ("drm: add an fb creation ioctl that takes
-> a pixel format v5").  Please build test *before* publishing code.  :-(
->=20
-> I have used the drm tree from next-20111115 for today.
->=20
-> I also get the following warnings in that file:
->=20
-> drivers/staging/gma500/framebuffer.c: In function 'psb_framebuffer_init':
-> drivers/staging/gma500/framebuffer.c:297:2: warning: passing argument 2 o=
-f 'drm_helper_mode_fill_fb_struct' from incompatible pointer type [enabled =
-by default]
-> include/drm/drm_crtc_helper.h:121:12: note: expected 'struct drm_mode_fb_=
-cmd2 *' but argument is of type 'struct drm_mode_fb_cmd *'
-> drivers/staging/gma500/framebuffer.c:564:2: warning: passing argument 2 o=
-f 'psb_framebuffer_create' from incompatible pointer type [enabled by defau=
-lt]
-> drivers/staging/gma500/framebuffer.c:314:32: note: expected 'struct drm_m=
-ode_fb_cmd *' but argument is of type 'struct drm_mode_fb_cmd2 *'
+Today's linux-next merge of the cgroup tree got a conflict in
+kernel/cgroup_freezer.c between commit 22b4e111fa01 ("cgroup_freezer:
+prepare for removal of TIF_FREEZE") from the pm tree and commit
+cfb5ec210751 ("cgroup: don't use subsys->can_attach_task() or
+->attach_task()") from the cgroup tree.
 
-Ping?
+The latter removes the code modified by the latter, so I just removed it
+(freezer_can_attach_task).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__25_Nov_2011_12_49_13_+1100_i2qrpGQKO2ekhjEW
+--Signature=_Fri__25_Nov_2011_14_21_11_+1100_tOchpYrLVwXUezLa
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOzvQZAAoJEECxmPOUX5FE0PsQAJt+Gj2Vfr2DERZQElphX9F6
-d0zCwsJDm/kpNzkwGxzWMLf2TVAx7GlDPTZW2hA8PGcXLo5K/mC/RRgxk/Ghl9RV
-6pBh4H6blVu0gWaHt05D6SEj5wAuxN5aY1WczVWYUV/YgqU2CIGSH8sDFT+Ub3td
-NTbuG7+iNWBYex0FVt+Iv7/jnYn2ZlE69U7PfAwx1qgZKWgSUNLlNo1CatRPIGnF
-0IOlXkj1Kv+SfKgCDiaAnQgmLNA8At1P+bVNYCB8/ynqc9iIT0tkZk3VT4Pbc5B5
-K7q3j7TNrvLPexqZ5eyyKzGLAV7FqYMFhxZwtDGyxrf+QK8DXx89ABQjmi4XCoJ3
-bGseRDIzuo+emm/b8XsBQRl3Pbx8HIgHhEeZezCI60Uhgs3qesBynReLFuBOV0sM
-1g5petfz3pXPzBvLes4CzSuUHNJUdNfxvSlu7eEG8fSo4XIOqt5rhGkI4ginAqLO
-+TnsFDtSXliE29llXQM9d1gfg4+TcNk1F9+I9K3N41q3XNnMaxMRG57Allt3x0dF
-Nsg9dcEeJSY7rQjAm+zGxINA9HEiWWKYOf2DfVo3X/9HdLQYnDSuNSwKfNtc1ViM
-p6bUNlfXNlEUGAbzgynUNekP+/5reyr7oBH4hwyU2U9rv3W0bl4l8i4+GZ6xii+V
-MQvllM5sz9CgpkE5IX9L
-=Q7EZ
+iQIcBAEBCAAGBQJOzwmnAAoJEECxmPOUX5FEuUkP/3AJMVuXZ3Q5TMplvPkDnVkW
+WClekeoE9fy040Z9pfE/vNFtKpRKtaZyudpJuz3rSJd6dOSMWVHh056lWEO0A9ju
+U2x8ahTz1IHWLsSmBrWfui8x4aVmodut+uHSGnS7F4hqwz/xgKgd57HLZQdrwtDx
+f2BmIHvXYM0N4zCmdYVtjjAbdduBfErzzY/aFo2WpkEANT68cIDn9YYaD4F26fUY
+7/HmmD2o/rDFvxLM3yVwGQG3dehz7TLe12KiuIPbVLzsf45v7VS4rjkTknMqy68V
+brWi+4Dr9Juyp1pIDDlhcnNtyKD1tfFd3mgLnrWrodRMrK+mZv4O3GQnibbN+eMM
+uj9myfC1n+2DQenwJbKW4K32UImbeu0TAbvp7vPUkXbC/RFpQ4U0TpxD3XpTK/p/
+o5XBfg5gVCQnK2xd66WLvpS2lcpmtGk/NcsZShS+/igh8Hmz7r1P0Bbs0Iz2cDrj
+KLY/L2PXYNBY64sHSNrhptBrtmklnTViGQ8eHyQzsDAixOIL4IILDTQGpGJ8tCQW
+dU3GennAqIDD6Hs3XGAA3IOeFQohAUgoiWQNd4WpfB3Khd4ECrV3e+7VRsc4KegB
+3glZ9qPHK08mtpCEgAU+3uAcl+v2Xo7I0hr5BUqRCpocD8qdCQniPVl8SntCUSU6
+bm5MmloJMWO+IGqqUJJl
+=cj90
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__25_Nov_2011_12_49_13_+1100_i2qrpGQKO2ekhjEW--
+--Signature=_Fri__25_Nov_2011_14_21_11_+1100_tOchpYrLVwXUezLa--
