@@ -1,77 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: vhost tree for linux-next
-Date: Fri, 25 Nov 2011 10:42:14 +1100
-Message-ID: <20111125104214.c815493e4949af69b1869d17@canb.auug.org.au>
-References: <20111124203843.GC4873@redhat.com>
+Subject: Re: linux-next: build failure after merge of the drm tree
+Date: Fri, 25 Nov 2011 12:49:13 +1100
+Message-ID: <20111125124913.405fc8360a185f3116adb5ec@canb.auug.org.au>
+References: <20111116113007.5656a7b4823ba085a46c57ae@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__25_Nov_2011_10_42_14_+1100_ZzmdANIcc1tH.pTE"
+ boundary="Signature=_Fri__25_Nov_2011_12_49_13_+1100_i2qrpGQKO2ekhjEW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:58154 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:37466 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754891Ab1KXXmV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 18:42:21 -0500
-In-Reply-To: <20111124203843.GC4873@redhat.com>
+	with ESMTP id S1753620Ab1KYBtY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2011 20:49:24 -0500
+In-Reply-To: <20111116113007.5656a7b4823ba085a46c57ae@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-next@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Rob Clark <rob.clark@linaro.org>
 
---Signature=_Fri__25_Nov_2011_10_42_14_+1100_ZzmdANIcc1tH.pTE
+--Signature=_Fri__25_Nov_2011_12_49_13_+1100_i2qrpGQKO2ekhjEW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+Hi Dave,
 
-On Thu, 24 Nov 2011 22:38:44 +0200 "Michael S. Tsirkin" <mst@redhat.com> wr=
-ote:
+On Wed, 16 Nov 2011 11:30:07 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> I normally merge things through Dave, Rusty, Jesse or Jens,
-> not directly to Linus. However, sometimes there's a large change
-> (for example, my recent RFC for pci_iomap changes)
-> where estimating how it interacts with other platforms and planned
-> changes in the next kernel would be beneficial.
+> After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 >=20
-> For this purpose, it would be helpful if my tree were added to linux-next.
-> The tree is:
-> git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git linux-next
+> drivers/staging/gma500/framebuffer.c: In function 'psb_user_framebuffer_c=
+reate':
+> drivers/staging/gma500/framebuffer.c:558:44: error: 'struct drm_mode_fb_c=
+md2' has no member named 'handle'
 >=20
-> Could you do this please?
+> Caused by commit 308e5bcbdb10 ("drm: add an fb creation ioctl that takes
+> a pixel format v5").  Please build test *before* publishing code.  :-(
+>=20
+> I have used the drm tree from next-20111115 for today.
+>=20
+> I also get the following warnings in that file:
+>=20
+> drivers/staging/gma500/framebuffer.c: In function 'psb_framebuffer_init':
+> drivers/staging/gma500/framebuffer.c:297:2: warning: passing argument 2 o=
+f 'drm_helper_mode_fill_fb_struct' from incompatible pointer type [enabled =
+by default]
+> include/drm/drm_crtc_helper.h:121:12: note: expected 'struct drm_mode_fb_=
+cmd2 *' but argument is of type 'struct drm_mode_fb_cmd *'
+> drivers/staging/gma500/framebuffer.c:564:2: warning: passing argument 2 o=
+f 'psb_framebuffer_create' from incompatible pointer type [enabled by defau=
+lt]
+> drivers/staging/gma500/framebuffer.c:314:32: note: expected 'struct drm_m=
+ode_fb_cmd *' but argument is of type 'struct drm_mode_fb_cmd2 *'
 
-1) I asked you to cc this request much wider than this (I do not know
-what is going on in all areas of the kernel, so I rely on feedback from
-others to determine if stuff should go into linux-next).
-
-2) as fas as I can tell the current contents of that tree was posted for
-review/feedback for the first time today.   Give it a few days for any
-responses ...
-
+Ping?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__25_Nov_2011_10_42_14_+1100_ZzmdANIcc1tH.pTE
+--Signature=_Fri__25_Nov_2011_12_49_13_+1100_i2qrpGQKO2ekhjEW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJOztZWAAoJEECxmPOUX5FER3kP/3qqFoQp0C+a8+o3Af7fSu2h
-LchzJEqEjWsn3DywmN/4niHZCKnZyAtgkPH85iTGrTp40YwjML54W27ZFo01314h
-GZeQYj8eA87UwW3S0I1LoHlnjnvjAfIJyzyRYBaMKRuja0ZmAOGSkRx6cjt5IZXv
-3STYyA8yKH7hUsDfXO6TNdTymI4Od4TC0GqAOcdOJXwG2SGRAK7JxRxklm0I61A9
-JhRofFIG6mfa4dgNHk39IPtp7mM2ej2v1r3QGEE5TTua5VlG5lhE3fyPI5OU1jzJ
-9Rem7fecZeNAbclNXKvY1prIeUAItfRna965VyaT3kzvYSnABG0ZTyrgJPgYgpWQ
-mqrQDz+95WIJBvfIEe5W3vMYLGes+9juc7nDnIUkx/ZhHB+GQYcCj3UeYo4Lcvs7
-8DbdAzC1lzKgZ8RciGMGn7Z7miuQUIz9PmmGHhuT8u3qXSCYVCHSdV1xGDtlhiu8
-PVOjHUG3yMJuFTQU4CVORZhJ6mUvPZsFoO7x09VpMpDGnNCwF2Ul6nOaejIqgBmt
-VaRaWkjhsMrDBDajlQVUrj2yTbjOBZE6x1qJC68CeWNamRHdo4pL2vSbj8c11buz
-iUtDGkoDUrEOLGmNZqFiHpPzhkS9zCAw2flQKJ89DwciBQ6D8AAMqPsoCLcQEUkP
-6w7Q8anIoJVuQcrK5EF5
-=8N3a
+iQIcBAEBCAAGBQJOzvQZAAoJEECxmPOUX5FE0PsQAJt+Gj2Vfr2DERZQElphX9F6
+d0zCwsJDm/kpNzkwGxzWMLf2TVAx7GlDPTZW2hA8PGcXLo5K/mC/RRgxk/Ghl9RV
+6pBh4H6blVu0gWaHt05D6SEj5wAuxN5aY1WczVWYUV/YgqU2CIGSH8sDFT+Ub3td
+NTbuG7+iNWBYex0FVt+Iv7/jnYn2ZlE69U7PfAwx1qgZKWgSUNLlNo1CatRPIGnF
+0IOlXkj1Kv+SfKgCDiaAnQgmLNA8At1P+bVNYCB8/ynqc9iIT0tkZk3VT4Pbc5B5
+K7q3j7TNrvLPexqZ5eyyKzGLAV7FqYMFhxZwtDGyxrf+QK8DXx89ABQjmi4XCoJ3
+bGseRDIzuo+emm/b8XsBQRl3Pbx8HIgHhEeZezCI60Uhgs3qesBynReLFuBOV0sM
+1g5petfz3pXPzBvLes4CzSuUHNJUdNfxvSlu7eEG8fSo4XIOqt5rhGkI4ginAqLO
++TnsFDtSXliE29llXQM9d1gfg4+TcNk1F9+I9K3N41q3XNnMaxMRG57Allt3x0dF
+Nsg9dcEeJSY7rQjAm+zGxINA9HEiWWKYOf2DfVo3X/9HdLQYnDSuNSwKfNtc1ViM
+p6bUNlfXNlEUGAbzgynUNekP+/5reyr7oBH4hwyU2U9rv3W0bl4l8i4+GZ6xii+V
+MQvllM5sz9CgpkE5IX9L
+=Q7EZ
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__25_Nov_2011_10_42_14_+1100_ZzmdANIcc1tH.pTE--
+--Signature=_Fri__25_Nov_2011_12_49_13_+1100_i2qrpGQKO2ekhjEW--
