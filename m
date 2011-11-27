@@ -1,55 +1,39 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: (repost) vhost tree for linux-next
-Date: Sun, 27 Nov 2011 08:00:08 -0600
-Message-ID: <1322402408.2992.4.camel@dabdike.int.hansenpartnership.com>
-References: <20111124203843.GC4873@redhat.com>
-	 <20111127124816.GA23270@redhat.com>
-	 <1322401139.2992.1.camel@dabdike.int.hansenpartnership.com>
-	 <20111127135916.GB23302@redhat.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: build failure after merge of the cgroup tree
+Date: Sun, 27 Nov 2011 11:33:44 -0800
+Message-ID: <20111127193336.GD4266@google.com>
+References: <20111125145022.d5578c15eb900e2628a072b2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44661 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751460Ab1K0OAL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 27 Nov 2011 09:00:11 -0500
-In-Reply-To: <20111127135916.GB23302@redhat.com>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:52799 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751823Ab1K0Tdt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Nov 2011 14:33:49 -0500
+Content-Disposition: inline
+In-Reply-To: <20111125145022.d5578c15eb900e2628a072b2@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-next@vger.kernel.org, sfr@canb.auug.org.au, linux-pci@vger.kernel.org, netdev@vger.kernel.org, linux-scsi@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-On Sun, 2011-11-27 at 15:59 +0200, Michael S. Tsirkin wrote:
-> On Sun, Nov 27, 2011 at 07:38:59AM -0600, James Bottomley wrote:
-> > On Sun, 2011-11-27 at 14:48 +0200, Michael S. Tsirkin wrote:
-> > > I normally merge things through Dave, Rusty, Jesse or Jens,
-> > > not directly to Linus. However, sometimes there's a large change
-> > > (for example, my recent RFC for pci_iomap changes)
-> > > where estimating how it interacts with other platforms and planned
-> > > changes in the next kernel would be beneficial.
-> > > 
-> > > For this purpose, it would be helpful if my tree were added to linux-next.
-> > > The tree is:
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git linux-next
-> > > 
-> > > Could you do this please?
-> > > (The current contents of that tree was posted for review/feedback
-> > > for the first time today.   It might make sense to give it a few days
-> > > for any responses ...)
-> > 
-> > I'm a little confused by your to: field.  This is a linux-arch issue,
-> > isn't it, since it's altering architecture implementations of a PCI
-> > function rather than altering anything in SCSI or net?
-> > 
-> > James
-> 
-> Yes. Stephen Rothwell asked me to Cc widely to see if anyone
-> objects to picking this stuff in linux-next.
-> Sorry about any confusion.
+Hello,
 
-I;m fine with that, but the fact that you didn't send it to linux-arch
-was more my point ...
+On Fri, Nov 25, 2011 at 02:50:22PM +1100, Stephen Rothwell wrote:
+> I don't know how to fix this up (the obvious fix will cause us to have
+> nested rcu_read_lock()s and I have no idea if that is allowed).  Can you
+> please provide me with a merge resolution?   I am also wondering why such
+> closely related work is happening in 2 different trees.
 
-James
+Sorry about all the conflicts.  There have been major updates to both
+freezer and cgroup and cgroup_freezer happens to receive changes from
+both subsystem changes.  I dropped cgroup changes for now as Linus
+doesn't seem to be too happy with the current approach.  Once an
+agreeable approach is found, I'll pull in pm-freezer branch into
+cgroup and then put cgroup changes on top of them.  That should remove
+most of merging headaches.
+
+Thanks.
+
+-- 
+tejun
