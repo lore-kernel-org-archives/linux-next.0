@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build warning after merge of the drm tree
-Date: Mon, 28 Nov 2011 13:36:41 +1100
-Message-ID: <20111128133641.f847eab9b122d999786b382f@canb.auug.org.au>
+Date: Mon, 28 Nov 2011 13:41:56 +1100
+Message-ID: <20111128134156.186426a6dd7d612d488c87b1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Nov_2011_13_36_42_+1100_7NJKFobTk9kt9N8B"
+ boundary="Signature=_Mon__28_Nov_2011_13_41_56_+1100_rKv=.yJNj9_vhq.a"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:35887 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:37633 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754858Ab1K1Cgw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Nov 2011 21:36:52 -0500
+	with ESMTP id S1753297Ab1K1CmC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Nov 2011 21:42:02 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
---Signature=_Mon__28_Nov_2011_13_36_42_+1100_7NJKFobTk9kt9N8B
+--Signature=_Mon__28_Nov_2011_13_41_56_+1100_rKv=.yJNj9_vhq.a
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -26,43 +26,42 @@ Hi Dave,
 After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
 produced this warning:
 
-drivers/gpu/drm/gma500/framebuffer.c: In function 'psb_framebuffer_init':
-drivers/gpu/drm/gma500/framebuffer.c:264:2: warning: passing argument 2 of =
-'drm_helper_mode_fill_fb_struct' from incompatible pointer type [enabled by=
- default]
-include/drm/drm_crtc_helper.h:121:12: note: expected 'struct drm_mode_fb_cm=
-d2 *' but argument is of type 'struct drm_mode_fb_cmd *'
+drivers/gpu/drm/gma500/framebuffer.c: At top level:
+drivers/gpu/drm/gma500/framebuffer.c:669:2: warning: initialization from in=
+compatible pointer type [enabled by default]
+drivers/gpu/drm/gma500/framebuffer.c:669:2: warning: (near initialization f=
+or 'psb_mode_funcs.fb_create') [enabled by default]
 
 Caused by commit 4d8d096e9ae8 ("gma500: introduce the framebuffer support
 code") interacting with commit 308e5bcbdb10 ("drm: add an fb creation
-ioctl that takes a pixel format v5").  The version in staging was fixed
-up, but not this version (which should been done during commit
-b63e0f9cb433 ("Merge branch 'drm-gma500-alanc' into drm-core-next")).
+ioctl that takes a pixel format v5").  Again this should have been fixed
+up in commit b63e0f9cb433 ("Merge branch 'drm-gma500-alanc' into
+drm-core-next").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__28_Nov_2011_13_36_42_+1100_7NJKFobTk9kt9N8B
+--Signature=_Mon__28_Nov_2011_13_41_56_+1100_rKv=.yJNj9_vhq.a
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO0vO6AAoJEECxmPOUX5FE6FsQAKa93RhQX4Lb8Bn82jSOLYTI
-KMo61Y4HufKjmWMZ/R5+0laf8U6VVFO5wbBVPBLSJde7KKx3/KogQzrTNhUjOpYC
-tuYsNm577HDPZzJq2sgEJVZpwV3D0RFVjALEgj1pjTghd6MgozrEOEfwago49lpo
-gA4cwZorLSZcbXm42ehSDjJh1/qtkozpibYU2LBHuNSOwY6LFB0E6trCnjnG1OUD
-hULY2fcG8hQGpcGvxwpdelccDwOQCvvOvjkGyTKXGDDugGf+qSBkBngcub1VMBsH
-1EmRhCeial52de4wGVzAkJmVGqijsn9NVKTMkGIvbEzrVzvPWhsQLrfx40iELtKa
-5sop4wzRNwTWcHAE6H7smIpsUiSpiyp7xbMOutWxsLxuHNj+w0pQF25vcAwofgSs
-MLZfLxB2+QXhUgnBRW+XfOVCf6PEl7v2u2qnxdmWcN1++MYGGDT8u6FC0il8UxCJ
-BDkPX/Sxf6hd2qTlCiXCCWKNfH7iSj0H74ZeUhm91o7OpzzKC805yoUSICIXfuJh
-G8tjscEiuOTgJ7wBrjYu0AbpFZ9xXH7nMboDXiYjdxE3QDkEUmEMzOjD/T5C89vW
-y9NLEtDZsbvpaeVUVkEXsqA9W2EGjMDHkYpuZTHYY50IBrV0OOc9YY8KARxyHwuq
-kM263uEDgOivbuzWhcxz
-=Lhtk
+iQIcBAEBCAAGBQJO0vT0AAoJEECxmPOUX5FErIwQAJMOEdum0kCLtONBTl5jB2WE
+CsD2fLWKIJhwwfNZc9RY6ccyRK13YxHYo6dA/BwOIumaX8lXkb5clVeUKUsxFft5
+RSaWIvUaeyuT7j9XlocIYtyFMfq9e7VPzClIyN7Bs7I8T2K2U3Emip3/iHbRNhe2
+9jtqLL0Bw0iS/+Fia0TnE3B39VfV6Z37+kQNyNrZgM+FDmHAS/ikWTkg5tiW4r8n
+qcJrurbASScsViGK+1+v26PXTU4N3TvQinf68EmuFEb85pXCTstkS5b9GvseaK4F
+wGEBap6o1+oVopDlacoZO/BJO0NtgU2taMU5rsRW5vsm2Y20PcPuVjT4H8UPphVz
+T6aiRQnUtfay40mc1gQR/cmKdhZyk/G2719Mx2x9aiw9n0J27fwcyQWAw0J411Ww
+7D8h4sUJQmzMVAzBwMNb89j0yCM3XqsnO7VtzPyEvrQ1mQrbmYZRZLR43vFDrI/z
+CxA2n1lcs0iBWWqCCmGNFk7tKmDDkfxgAzxkt/J6/RPGF7XBERp2FExXDv/Yki1D
+sxbknJbQkAvY4BlqWGTADS/SW6NvoKnyxt6dPzTs7fSlza2jttneJv4MweSSaply
+XyrgB0RpHsixY0sk3YwhX+hHUTbb8rP/XwKFmtdXzTl49Sxi+IV64lhXJrwN2/id
+2Mxtv79Tv/pjy47wbx5z
+=H4xd
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Nov_2011_13_36_42_+1100_7NJKFobTk9kt9N8B--
+--Signature=_Mon__28_Nov_2011_13_41_56_+1100_rKv=.yJNj9_vhq.a--
