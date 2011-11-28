@@ -1,38 +1,38 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Mon, 28 Nov 2011 19:11:36 +0000
-Message-ID: <201111281911.36341.arnd@arndb.de>
-References: <20111128105633.8a8c06afce3cdccb1ce0d7b7@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: merge conflict resolution for pm-freezer
+Date: Mon, 28 Nov 2011 15:30:55 -0800
+Message-ID: <20111128233055.GF3858@google.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:65399 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753211Ab1K1TLl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Nov 2011 14:11:41 -0500
-In-Reply-To: <20111128105633.8a8c06afce3cdccb1ce0d7b7@canb.auug.org.au>
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:32941 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754374Ab1K1XbB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Nov 2011 18:31:01 -0500
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Russell King <rmk@arm.linux.org.uk>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>, sfr@canb.auug.org.au
+Cc: linux-pm@vger.kernel.org, linux-next@vger.kernel.org
 
-On Sunday 27 November 2011, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/plat-omap/include/plat/common.h between commit 4e65331c6bb4
-> ("ARM: 7159/1: OMAP: Introduce local common.h files") from the  tree and
-> commit 13662dc5b177 ("ARM: OMAP: HWMOD: Unify DSS resets for OMAPs") from
-> the arm-soc tree.
-> 
-> I did the obvious fixup (see below) and can carry the fix as necessary.
+Hello, Rafael, Stephen.
 
-Your fix looks technically correct, thanks!
+Linus just pulled cgroup fixes which conflicts with pm-freezer.  The
+resolution is mostly trivial.  The cgroup fix changes frozen() test to
+is_task_frozen_enough() while pm-freezer commit prepends "freezing()
+&& " to it.  They just need to be combined into "freezing() &&
+is_task_frozen_enough()".
 
-Tony, I believe what you actually want here is to move omap_dss_reset
-into mach-omap2/common.h, right?
+The following git branch contains merged branch.  I pulled the current
+linus/master a34815b96 "Merge branch 'for-3.2-fixes' of
+git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup" into
+pm-freezer and resolved the conflict described above.
 
-I guess that I will at some point pull in the first commit from
-Russell's stable devel branch, so I can do that fixup instead.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git pm-freezer-merge
 
-	Arnd
+Rafael, please feel free to pull or resolve in any way you see fit.
+
+Thanks.
+
+-- 
+tejun
