@@ -1,73 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the driver-core
- tree
-Date: Mon, 28 Nov 2011 15:22:22 +1100
-Message-ID: <20111128152222.e6aeb95e31d45f44d8adf615@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the drm tree
+Date: Mon, 28 Nov 2011 14:07:49 +0900
+Message-ID: <20111128050749.GC9372@kroah.com>
+References: <20111116113007.5656a7b4823ba085a46c57ae@canb.auug.org.au>
+ <20111125124913.405fc8360a185f3116adb5ec@canb.auug.org.au>
+ <20111125103011.18e167cd@lxorguk.ukuu.org.uk>
+ <20111128135204.33bb929d7495d7830d09dfc3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Nov_2011_15_22_22_+1100_xXTS.g9r0SMmhe04"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:45833 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752705Ab1K1EWa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Nov 2011 23:22:30 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-
---Signature=_Mon__28_Nov_2011_15_22_22_+1100_xXTS.g9r0SMmhe04
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20111128135204.33bb929d7495d7830d09dfc3@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, Rob Clark <rob.clark@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+On Mon, Nov 28, 2011 at 01:52:04PM +1100, Stephen Rothwell wrote:
+> Hi Alan,
+> 
+> On Fri, 25 Nov 2011 10:30:11 +0000 Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
+> >
+> > > Ping?
+> > 
+> > As I said last time you asked this - the correct merge resolution is to
+> > pull the DRM updates and mark the staging GMA500 Kconfig "&& BROKEN". The
+> > staging driver is frozen while we merge outside of staging and will not
+> > be getting any attention at this point - changes there just mess up the
+> > move work which is far more important.
+> > 
+> > Also nothing in staging should be allowed to hold up real work. The
+> > resolution for anything in staging blocking merges is to mark the staging
+> > parts && BROKEN IMHO
+> 
+> Then if you are moving a driver out of staging, you should put a patch in
+> your tree to disable it in staging (or remove it in staging) and send
+> that patch to Greg as well.
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/iio/adc/ad799x_core.c between commit 6e5af184f810
-("staging:iio: Use module_i2c_driver to register I2C drivers") from the
-tree and commit 55e4390cb04e ("staging:iio: Add missing
-MODULE_DEVICE_TABLE and MODULE_ALIAS") from the staging tree.
+That patch is already in my staging-next tree, so all should be good
+now.
 
-Just context differences.  I fixed it up (see below) and can carry the
-fix as necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Even then, I don't think that broken staging drivers should stop any
+other tree from being included, except for the staging tree itself.
 
-diff --cc drivers/staging/iio/adc/ad799x_core.c
-index c0d2f88,5bedb19..0000000
---- a/drivers/staging/iio/adc/ad799x_core.c
-+++ b/drivers/staging/iio/adc/ad799x_core.c
-@@@ -934,4 -944,6 +935,3 @@@ module_i2c_driver(ad799x_driver)
-  MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
-  MODULE_DESCRIPTION("Analog Devices AD799x ADC");
-  MODULE_LICENSE("GPL v2");
-- MODULE_ALIAS("i2c:ad799x");
- -
- -module_init(ad799x_init);
- -module_exit(ad799x_exit);
+thanks,
 
---Signature=_Mon__28_Nov_2011_15_22_22_+1100_xXTS.g9r0SMmhe04
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO0wx+AAoJEECxmPOUX5FE6ukQAKJ7bN4HVyGXHvsIiyls8loU
-YSbfbqgo9ajXWmoIexqH8yOcdPJyOI1a61wJfhnyxh4wU9qon7Y2BKNgRDeuJPJf
-tjXz3IjHEVT8y8QTSzdgwVZ1DNnFtcXFP1S/KkblEvSGTHcvZeAJktKA7ad564FO
-zw7kfF5iWIuYA6yBEl99Oc8xgdXmUgBV1ETJ51eTv+gNaopDgr5+HZCbPU2XNGop
-4zkazgtKGmcokRix1Zt5MRg/yQJehjOwdXpc6HRPWu5bCbeHiupS8u8lFQbbiKFX
-ssVQHVsNLU9NnCUHFjdIRwQl1z1hylHV81oGQlTK9kTyf35vAQzxchKdBsO3nl00
-Zk1QgLJ8hYLZu3XlQB01MC0hUxPzqXoSsye7GhOGtGYLtNNcFs7Gt7PPmwRHsFrt
-xvLBwW7E8kAXWSXL1lLDsjgKJeWbeQqDUg4zQ0GaXB77H20ikltKC+26rxrbWDng
-3GQwReZI8gmObsIq/64LHAzEDpP0RONqkyB0D1vUJHVybRRUBjwcBUxHL7qcb0Ig
-hTjdZqqhPFX/hn7Y0B2suA63joGSxo6Sw17ZfxiDLpX65VnV95Hna/Sj3e+CScLf
-FaQciXrScZ8bT+44PQGgeWtl7ZQrce0gMSz91ejc+ENvI9MRwY4VNSM6xOotOpoY
-e0Qmo6+jX0LhNJcV4G+a
-=0Sih
------END PGP SIGNATURE-----
-
---Signature=_Mon__28_Nov_2011_15_22_22_+1100_xXTS.g9r0SMmhe04--
+greg k-h
