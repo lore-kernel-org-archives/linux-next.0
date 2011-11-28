@@ -1,129 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm tree
-Date: Mon, 28 Nov 2011 13:49:17 +1100
-Message-ID: <20111128134917.ba94950dcf6f6aa03ebd4ffe@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the drm tree
+Date: Mon, 28 Nov 2011 13:52:04 +1100
+Message-ID: <20111128135204.33bb929d7495d7830d09dfc3@canb.auug.org.au>
+References: <20111116113007.5656a7b4823ba085a46c57ae@canb.auug.org.au>
+	<20111125124913.405fc8360a185f3116adb5ec@canb.auug.org.au>
+	<20111125103011.18e167cd@lxorguk.ukuu.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Nov_2011_13_49_17_+1100_G7NQ3Y6b44q.8jQh"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, Alan Cox <alan@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__28_Nov_2011_13_52_04_+1100_Jv5CLBfM4lYoVfoC"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:46026 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755931Ab1K1CwL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Nov 2011 21:52:11 -0500
+In-Reply-To: <20111125103011.18e167cd@lxorguk.ukuu.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Rob Clark <rob.clark@linaro.org>, Greg KH <greg@kroah.com>
 
---Signature=_Mon__28_Nov_2011_13_49_17_+1100_G7NQ3Y6b44q.8jQh
+--Signature=_Mon__28_Nov_2011_13_52_04_+1100_Jv5CLBfM4lYoVfoC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Alan,
 
-After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+On Fri, 25 Nov 2011 10:30:11 +0000 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
+e:
+>
+> > Ping?
+>=20
+> As I said last time you asked this - the correct merge resolution is to
+> pull the DRM updates and mark the staging GMA500 Kconfig "&& BROKEN". The
+> staging driver is frozen while we merge outside of staging and will not
+> be getting any attention at this point - changes there just mess up the
+> move work which is far more important.
+>=20
+> Also nothing in staging should be allowed to hold up real work. The
+> resolution for anything in staging blocking merges is to mark the staging
+> parts && BROKEN IMHO
 
-drivers/gpu/drm/gma500/psb_drv.c: At top level:
-drivers/gpu/drm/gma500/psb_drv.c:1162:2: warning: braces around scalar init=
-ializer [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1162:2: warning: (near initialization for =
-'driver.fops') [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1163:4: error: field name not in record or=
- union initializer
-drivers/gpu/drm/gma500/psb_drv.c:1163:4: error: (near initialization for 'd=
-river.fops')
-drivers/gpu/drm/gma500/psb_drv.c:1163:4: warning: initialization from incom=
-patible pointer type [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1163:4: warning: (near initialization for =
-'driver.fops') [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1164:4: error: field name not in record or=
- union initializer
-drivers/gpu/drm/gma500/psb_drv.c:1164:4: error: (near initialization for 'd=
-river.fops')
-drivers/gpu/drm/gma500/psb_drv.c:1164:4: warning: excess elements in scalar=
- initializer [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1164:4: warning: (near initialization for =
-'driver.fops') [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1165:4: error: field name not in record or=
- union initializer
-drivers/gpu/drm/gma500/psb_drv.c:1165:4: error: (near initialization for 'd=
-river.fops')
-drivers/gpu/drm/gma500/psb_drv.c:1165:4: warning: excess elements in scalar=
- initializer [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1165:4: warning: (near initialization for =
-'driver.fops') [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1166:4: error: field name not in record or=
- union initializer
-drivers/gpu/drm/gma500/psb_drv.c:1166:4: error: (near initialization for 'd=
-river.fops')
-drivers/gpu/drm/gma500/psb_drv.c:1166:4: warning: excess elements in scalar=
- initializer [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1166:4: warning: (near initialization for =
-'driver.fops') [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1167:4: error: field name not in record or=
- union initializer
-drivers/gpu/drm/gma500/psb_drv.c:1167:4: error: (near initialization for 'd=
-river.fops')
-drivers/gpu/drm/gma500/psb_drv.c:1167:4: warning: excess elements in scalar=
- initializer [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1167:4: warning: (near initialization for =
-'driver.fops') [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1168:4: error: field name not in record or=
- union initializer
-drivers/gpu/drm/gma500/psb_drv.c:1168:4: error: (near initialization for 'd=
-river.fops')
-drivers/gpu/drm/gma500/psb_drv.c:1168:4: warning: excess elements in scalar=
- initializer [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1168:4: warning: (near initialization for =
-'driver.fops') [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1169:4: error: field name not in record or=
- union initializer
-drivers/gpu/drm/gma500/psb_drv.c:1169:4: error: (near initialization for 'd=
-river.fops')
-drivers/gpu/drm/gma500/psb_drv.c:1169:4: warning: excess elements in scalar=
- initializer [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1169:4: warning: (near initialization for =
-'driver.fops') [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1170:4: error: field name not in record or=
- union initializer
-drivers/gpu/drm/gma500/psb_drv.c:1170:4: error: (near initialization for 'd=
-river.fops')
-drivers/gpu/drm/gma500/psb_drv.c:1170:4: warning: excess elements in scalar=
- initializer [enabled by default]
-drivers/gpu/drm/gma500/psb_drv.c:1170:4: warning: (near initialization for =
-'driver.fops') [enabled by default]
+Then if you are moving a driver out of staging, you should put a patch in
+your tree to disable it in staging (or remove it in staging) and send
+that patch to Greg as well.
 
-Caused by commit 5c49fd3aa0ab ("gma500: Add the core DRM files and
-headers") interacting with commit e08e96de986c ("drm: Make the per-driver
-file_operations struct const").  Again needed fixing up in commit
-b63e0f9cb433 ("Merge branch 'drm-gma500-alanc' into drm-core-next").  Or
-Alan should do his work based on the drm-next tree (which would then have
-to become non rebasing) ...
-
-I have used the version of the drm tree from next-20111115 again.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__28_Nov_2011_13_49_17_+1100_G7NQ3Y6b44q.8jQh
+--Signature=_Mon__28_Nov_2011_13_52_04_+1100_Jv5CLBfM4lYoVfoC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO0vatAAoJEECxmPOUX5FEzyUQAJmFRNpbTaeWZb36+wishP3z
-6Zi8l+HsfLgJuftLfFABnRivJLHTtSOnIipipGmWuwmKm+OgoISLS8QpoM3K5Obh
-J/ELmEf13JhmiWh+0s+hTVyrdFXkkAq0m8L3Swpr9FrjJt0Atc57ThoFE6/80pzA
-QHp8yd1Y8v8FcwwkTvv2gUBevtbvQxSGvNbD+iUdEMJUJcT1M7oz3kWrj/OkhNuS
-y9ox0ZaCmjoEL6wCfUbGZeGeX9tniOKtpUUS3b8Gd5yCgoUrPDHOYwy3oIK34D61
-kNbM1AndXMOrk/hiORYmpODtsH+n53CWRu4A3Tlxi+FPLIMuYVhix/ziy2uFp3+Q
-dOqF+JKBBDJXwAtpp98tu2nVzGqKXw4xsEAHKzSXnaGlSEeSOasB8iqwgsam+hey
-cGK01IkO/UI5HxrxdRC5EZeWlz5Ye97oDlkvH8UoNIvkO4g1rlAmBeHRdFKlNdJj
-s6wUb60XUboLoKEsgfhoYfzdbJ8V4r/gYRGGSn2CLvUpM8CdWU0J1M7UColL0l6P
-mKVEjkAdtnQCcKbF+aS3YGUg/vEgA3OGHIQlvYmGcreVRHiRzGbdApMUoUQmH0tC
-OxMAMEYT7spYcx6ThMVBAfltMdvkWUC5kQgoddP8TeHBM35RiQDOoUe+U6hOTSxp
-whRt8ixxm5qVL/QCnPe/
-=wljf
+iQIcBAEBCAAGBQJO0vdUAAoJEECxmPOUX5FEngAP/3ntrSmddSXWID9AYJkae7jI
+6qvYQksXkZIghNdSONcyyvz71K0EfB/gQawCXWzxbT6ZNpHs/3twXn54A/BFg/qX
+TcwXZsuR7WCLnCTfVaP3V4rEpoKF2WEO2lRwC2dB8i5sx5OzoOb0+YoXiNj88K/u
+oZT1zvemQsz5fyVrfEZOt/i4T+cOHqTvkQbdWpmJo+JIzjFSTzSF8fFORQCGwWd4
+3+flAPSlKQ6FWNXHLKcvVnevNcdc1HYD1K5fdxL8L+RFl2w++sLMsI4gVRxvwRVA
+gsiFztqk0E3SfevztL3A+fd1RJPBvejRU12df0b9/UKt2LreNDou6M0zbxeH7P6b
+zQHmlVqlD5IGqNKL08sgyZMTos3T9HgBw6IN8AfHXZKO76UKGA/f6PcK11tcpAAz
+2PIAzQGVjc5Tm9jGiS2wuxgiiBUWtnxRqW1okukG+QhZS6OtvY7tRMwV2K8cyJs0
+IFb3VnNT7aAr1ZBRjprOHguKQ+WYGcbf2gkkVyMfw8JFH0R/V7x1Enze5Wh6p6Z/
+TxPIPhRygMsY54JSFFKSOcMqO50VJIZcJiWViqopArJUPjJIV2H9YJludDQMN7XK
+cueqw75/kBW4vXsRvWQuSCWnE8VUeDGjPmrsW/ib+7Dq7akKMVFZVioZBa8VoiYz
+kzboSe3Gs9iKY1GhUbdp
+=MXTJ
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Nov_2011_13_49_17_+1100_G7NQ3Y6b44q.8jQh--
+--Signature=_Mon__28_Nov_2011_13_52_04_+1100_Jv5CLBfM4lYoVfoC--
