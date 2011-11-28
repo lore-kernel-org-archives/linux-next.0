@@ -1,22 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with Linus' tree
-Date: Mon, 28 Nov 2011 15:18:57 +1100
-Message-ID: <20111128151857.d4ce49d38ed4983f8ba4d68e@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the driver-core
+ tree
+Date: Mon, 28 Nov 2011 15:22:22 +1100
+Message-ID: <20111128152222.e6aeb95e31d45f44d8adf615@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Nov_2011_15_18_57_+1100_0AJ=+_imff9LC0yQ"
+ boundary="Signature=_Mon__28_Nov_2011_15_22_22_+1100_xXTS.g9r0SMmhe04"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:35019 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:45833 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752624Ab1K1ETH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Nov 2011 23:19:07 -0500
+	with ESMTP id S1752705Ab1K1EWa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Nov 2011 23:22:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Whitcroft <apw@canonical.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
 
---Signature=_Mon__28_Nov_2011_15_18_57_+1100_0AJ=+_imff9LC0yQ
+--Signature=_Mon__28_Nov_2011_15_22_22_+1100_xXTS.g9r0SMmhe04
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,36 +25,49 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/iio/industrialio-core.c between commit aaa0b4f00729
-("iio: iio_event_getfd -- fix ev_int build failure") from Linus' tree and
-commit f791cec85073 ("Subject: fix build breakage in
-drivers/staging/iio/industrialio-core.c") from the staging tree.
+drivers/staging/iio/adc/ad799x_core.c between commit 6e5af184f810
+("staging:iio: Use module_i2c_driver to register I2C drivers") from the
+tree and commit 55e4390cb04e ("staging:iio: Add missing
+MODULE_DEVICE_TABLE and MODULE_ALIAS") from the staging tree.
 
-The former was a more extensive fix (and is upstream), so I used that.
+Just context differences.  I fixed it up (see below) and can carry the
+fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__28_Nov_2011_15_18_57_+1100_0AJ=+_imff9LC0yQ
+diff --cc drivers/staging/iio/adc/ad799x_core.c
+index c0d2f88,5bedb19..0000000
+--- a/drivers/staging/iio/adc/ad799x_core.c
++++ b/drivers/staging/iio/adc/ad799x_core.c
+@@@ -934,4 -944,6 +935,3 @@@ module_i2c_driver(ad799x_driver)
+  MODULE_AUTHOR("Michael Hennerich <hennerich@blackfin.uclinux.org>");
+  MODULE_DESCRIPTION("Analog Devices AD799x ADC");
+  MODULE_LICENSE("GPL v2");
+- MODULE_ALIAS("i2c:ad799x");
+ -
+ -module_init(ad799x_init);
+ -module_exit(ad799x_exit);
+
+--Signature=_Mon__28_Nov_2011_15_22_22_+1100_xXTS.g9r0SMmhe04
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO0wuxAAoJEECxmPOUX5FE3kMP/iY2CukbOQFhjWiyt/QH22ia
-10VHtjdTERqRudnEZcbnHOr+rf+jsbW5fdE2vSyelc7mVqDNmlziHevyetqw+Mz4
-e27K5RPiphb88gz83hSGzWpjpCgu0OmBLtxDe3X9JoeiYIxpJeF7PbAorDPGvY/A
-OWq/zElgru3mHgGGQfwqkkAlvvA6iTnEpCxj4pZZ3AsjRPaYwOLJzZM0kAa4hPfO
-gv2ahk2pIjRDQP8XLHCdO/VbO2NRqpZSy5lUhtGNIULZOgInfZ2AZc6HQfNhdvTE
-6ynV/xk88/uHu6T2NtF0Jm9cNxZsqqLqw2pKDEKrdoAXludfcSr5yKdjCcFumdiL
-KFSj1R0a0nK605/XCzougP4go41Y7VXQ5EcQlPyrzQkWSTBTBlqXwYdycHSTQL4A
-d4sdm+NvWAGIwBPeGrHN2sufHAq2Pp0S4WFlL0j2iIxVagnWL2HrA6UzRvFaQCCB
-tf0HtdTC5JESHA0TgPJorRsbLGmRVllSaMZbmKeAn1VfS+ER2CcPOU7QmZ4y6Rn6
-KEpefjTIz0AsVgo3zK7ZiLH7hwInztB8RTUOsXW4xQauCe+/DrgOLCkslbDba3uw
-omVn13yHGqJPqJdTZ5yxMQ7HfBNtflfGYIGkrySsBBNrALaWXUJzrLL99mWjeVIq
-bQhl9KIjnE20OV3n6hVl
-=fd7d
+iQIcBAEBCAAGBQJO0wx+AAoJEECxmPOUX5FE6ukQAKJ7bN4HVyGXHvsIiyls8loU
+YSbfbqgo9ajXWmoIexqH8yOcdPJyOI1a61wJfhnyxh4wU9qon7Y2BKNgRDeuJPJf
+tjXz3IjHEVT8y8QTSzdgwVZ1DNnFtcXFP1S/KkblEvSGTHcvZeAJktKA7ad564FO
+zw7kfF5iWIuYA6yBEl99Oc8xgdXmUgBV1ETJ51eTv+gNaopDgr5+HZCbPU2XNGop
+4zkazgtKGmcokRix1Zt5MRg/yQJehjOwdXpc6HRPWu5bCbeHiupS8u8lFQbbiKFX
+ssVQHVsNLU9NnCUHFjdIRwQl1z1hylHV81oGQlTK9kTyf35vAQzxchKdBsO3nl00
+Zk1QgLJ8hYLZu3XlQB01MC0hUxPzqXoSsye7GhOGtGYLtNNcFs7Gt7PPmwRHsFrt
+xvLBwW7E8kAXWSXL1lLDsjgKJeWbeQqDUg4zQ0GaXB77H20ikltKC+26rxrbWDng
+3GQwReZI8gmObsIq/64LHAzEDpP0RONqkyB0D1vUJHVybRRUBjwcBUxHL7qcb0Ig
+hTjdZqqhPFX/hn7Y0B2suA63joGSxo6Sw17ZfxiDLpX65VnV95Hna/Sj3e+CScLf
+FaQciXrScZ8bT+44PQGgeWtl7ZQrce0gMSz91ejc+ENvI9MRwY4VNSM6xOotOpoY
+e0Qmo6+jX0LhNJcV4G+a
+=0Sih
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Nov_2011_15_18_57_+1100_0AJ=+_imff9LC0yQ--
+--Signature=_Mon__28_Nov_2011_15_22_22_+1100_xXTS.g9r0SMmhe04--
