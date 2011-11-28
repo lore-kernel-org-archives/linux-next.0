@@ -1,69 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Date: Mon, 28 Nov 2011 13:53:17 +1100
-Message-ID: <20111128135317.a99880b234c6c060a622fa31@canb.auug.org.au>
-References: <20111116113007.5656a7b4823ba085a46c57ae@canb.auug.org.au>
-	<20111125124913.405fc8360a185f3116adb5ec@canb.auug.org.au>
-	<20111125103011.18e167cd@lxorguk.ukuu.org.uk>
-	<CAPM=9twsvX=hFS9S01-ht8JHhAAy4uP8N5NxPUDY9UpbsvQWmw@mail.gmail.com>
+Subject: linux-next: manual merge of the staging tree with Linus' tree
+Date: Mon, 28 Nov 2011 15:18:57 +1100
+Message-ID: <20111128151857.d4ce49d38ed4983f8ba4d68e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__28_Nov_2011_13_53_17_+1100_i+4n=4q27SY6shMP"
+ boundary="Signature=_Mon__28_Nov_2011_15_18_57_+1100_0AJ=+_imff9LC0yQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43043 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:35019 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755905Ab1K1CxY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Nov 2011 21:53:24 -0500
-In-Reply-To: <CAPM=9twsvX=hFS9S01-ht8JHhAAy4uP8N5NxPUDY9UpbsvQWmw@mail.gmail.com>
+	with ESMTP id S1752624Ab1K1ETH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Nov 2011 23:19:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Whitcroft <apw@canonical.com>
 
---Signature=_Mon__28_Nov_2011_13_53_17_+1100_i+4n=4q27SY6shMP
+--Signature=_Mon__28_Nov_2011_15_18_57_+1100_0AJ=+_imff9LC0yQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Greg,
 
-On Fri, 25 Nov 2011 10:34:19 +0000 Dave Airlie <airlied@gmail.com> wrote:
->
-> I just pushed jbarnes patch into my tree for now, at pushed out the
-> mainline gma500 code with it.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/iio/industrialio-core.c between commit aaa0b4f00729
+("iio: iio_event_getfd -- fix ev_int build failure") from Linus' tree and
+commit f791cec85073 ("Subject: fix build breakage in
+drivers/staging/iio/industrialio-core.c") from the staging tree.
 
-And it is a mess (see my linux-next reports).
-
-> But if someone can send a patch to Greg to mark GMA500 broken in
-> staging that would be good.
-
-See my reply to Alan.
-
+The former was a more extensive fix (and is upstream), so I used that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__28_Nov_2011_13_53_17_+1100_i+4n=4q27SY6shMP
+--Signature=_Mon__28_Nov_2011_15_18_57_+1100_0AJ=+_imff9LC0yQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO0vedAAoJEECxmPOUX5FEEAoP/01Qmo/rxxW4GLdRF690crGo
-AODFIcLjUm55CoExIoFEWMvwM3x0jQ8GETUQ+XePSG1FpevE0aFPA5kn2u8o6KGy
-66KFVAQEOXsYfD4dtXmnBpepkcnnNGf8MFCZfK3Fg6LkVLfla/y9VC1CtAeO9MpP
-xKpuxFBsUqF1c7tbUkPwKhMoUopQUh62AZceGBF9slSL9TgzLepQQKi7r0rMLVWn
-NHSYufEqvGjDKQaYTjfuZrgM54KRfxh61TqyCY7k4z+SpqnBLKT+jpvH0uJk6LUO
-YNgg0MZDipAa5OtN7ys2wJnAxY2bdQmSdjOhm5hpHERGYtfuvOqAwiP2Tnfyh2P2
-nMSwYo4RuKSqAfURwSNW6YvalzlCMD3itR4IRiqyfgSsx9xOJgQBuKC7JNsEGRS1
-hLxAaCbTj5peG1umrCCMj3fAeadjbXSFHxBpk7aTayaqW1clZubdpk+pUMxeduIq
-sEQ7GkPYxrhS7wo/KN6TZCGqs7hCI8g0Cn+d1fHe6Rra4l6Su4i29m9TYoqtq7TV
-VF3vEFl4KxElRdnO8eb9VERwTHSKxAwNLih1NrsL0x3BQSxYIQsYpOqEHpl7Or38
-D3tjizH884WIHOpKMNQW02Bt490dIKUVPbiSh01OKNLM2llgqxnPhed7woviZdAY
-Xjz6Tf+zUlpRUiO1MJZJ
-=8leR
+iQIcBAEBCAAGBQJO0wuxAAoJEECxmPOUX5FE3kMP/iY2CukbOQFhjWiyt/QH22ia
+10VHtjdTERqRudnEZcbnHOr+rf+jsbW5fdE2vSyelc7mVqDNmlziHevyetqw+Mz4
+e27K5RPiphb88gz83hSGzWpjpCgu0OmBLtxDe3X9JoeiYIxpJeF7PbAorDPGvY/A
+OWq/zElgru3mHgGGQfwqkkAlvvA6iTnEpCxj4pZZ3AsjRPaYwOLJzZM0kAa4hPfO
+gv2ahk2pIjRDQP8XLHCdO/VbO2NRqpZSy5lUhtGNIULZOgInfZ2AZc6HQfNhdvTE
+6ynV/xk88/uHu6T2NtF0Jm9cNxZsqqLqw2pKDEKrdoAXludfcSr5yKdjCcFumdiL
+KFSj1R0a0nK605/XCzougP4go41Y7VXQ5EcQlPyrzQkWSTBTBlqXwYdycHSTQL4A
+d4sdm+NvWAGIwBPeGrHN2sufHAq2Pp0S4WFlL0j2iIxVagnWL2HrA6UzRvFaQCCB
+tf0HtdTC5JESHA0TgPJorRsbLGmRVllSaMZbmKeAn1VfS+ER2CcPOU7QmZ4y6Rn6
+KEpefjTIz0AsVgo3zK7ZiLH7hwInztB8RTUOsXW4xQauCe+/DrgOLCkslbDba3uw
+omVn13yHGqJPqJdTZ5yxMQ7HfBNtflfGYIGkrySsBBNrALaWXUJzrLL99mWjeVIq
+bQhl9KIjnE20OV3n6hVl
+=fd7d
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Nov_2011_13_53_17_+1100_i+4n=4q27SY6shMP--
+--Signature=_Mon__28_Nov_2011_15_18_57_+1100_0AJ=+_imff9LC0yQ--
