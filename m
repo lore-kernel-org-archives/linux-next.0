@@ -1,93 +1,93 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Subject: Re: linux-next: build failure after merge of the hid tree
-Date: Mon, 28 Nov 2011 17:30:59 -0800
-Message-ID: <4ED435D3.70300@goop.org>
-References: <20111129120059.a1818d7eaf663546edc6dc34@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vhost tree with the hexagon tree
+Date: Tue, 29 Nov 2011 14:22:59 +1100
+Message-ID: <20111129142259.78d3e10678c8e9d8376d52aa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__29_Nov_2011_14_22_59_+1100_IZPZ3tB7bMZaxAFU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from claw.goop.org ([74.207.240.146]:35462 "EHLO claw.goop.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751663Ab1K2BbF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Nov 2011 20:31:05 -0500
-In-Reply-To: <20111129120059.a1818d7eaf663546edc6dc34@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:39951 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752499Ab1K2DXJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Nov 2011 22:23:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jikos@jikos.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Kuo <rkuo@codeaurora.org>
 
+--Signature=_Tue__29_Nov_2011_14_22_59_+1100_IZPZ3tB7bMZaxAFU
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA512
+Hi Michael,
 
-On 11/28/2011 05:00 PM, Stephen Rothwell wrote:
-> Hi Jiri,
->
-> After merging the hid tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> drivers/hid/hid-input.c: In function 'hidinput_hid_event':
-> drivers/hid/hid-input.c:865:6: error: 'struct hid_device' has no member
-named 'battery_val'
-> drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member
-named 'battery_min'
-> drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member
-named 'battery_max'
->
-> Caused by commit 4f5ca836bef3 ("HID: hid-input: add support for HID
-> devices reporting Battery Strength"). Those members are only defined when
-> CONFIG_HID_BATTERY_STRENGTH is set.
->
-> I have used the hid tree from next-20111128 for today.
+Today's linux-next merge of the vhost tree got a conflict in
+arch/hexagon/Kconfig between commit 5237bae0d8c9 ("various Kconfig
+cleanup and old platform build code removal") from the hexagon tree and
+commit4673ca8eb369  ("lib: move GENERIC_IOMAP to lib/Kconfig") from the
+vhost tree.
 
-Oh, sorry about that.  Is this sufficient?
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Subject: [PATCH] hid-input: fix compile for !HID_BATTERY_STRENGTH
+diff --cc arch/hexagon/Kconfig
+index a35ec47,9059e39..0000000
+--- a/arch/hexagon/Kconfig
++++ b/arch/hexagon/Kconfig
+@@@ -24,7 -26,8 +24,8 @@@ config HEXAGO
+  	select HAVE_ARCH_KGDB
+  	select HAVE_ARCH_TRACEHOOK
+  	select NO_IOPORT
+ +	select STACKTRACE_SUPPORT
++ 	select GENERIC_IOMAP
+ -	# mostly generic routines, with some accelerated ones
+  	---help---
+  	  Qualcomm Hexagon is a processor architecture designed for high
+  	  performance and low power across a wide variety of applications.
+@@@ -71,9 -74,15 +72,6 @@@ config GENERIC_CSU
+  config GENERIC_IRQ_PROBE
+  	def_bool y
+ =20
+- config GENERIC_IOMAP
+- 	def_bool y
+-=20
+ -#config ZONE_DMA
+ -#	bool
+ -#	default y
+ -
+ -config HAS_DMA
+ -	bool
+ -	select HAVE_DMA_ATTRS
+ -	default y
+ -
+  config NEED_SG_DMA_LENGTH
+  	def_bool y
+ =20
 
-As reported by Stephen Rothwell:
-drivers/hid/hid-input.c: In function 'hidinput_hid_event':
-drivers/hid/hid-input.c:865:6: error: 'struct hid_device' has no member
-named 'battery_val'
-drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member
-named 'battery_min'
-drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member
-named 'battery_max'
+--Signature=_Tue__29_Nov_2011_14_22_59_+1100_IZPZ3tB7bMZaxAFU
+Content-Type: application/pgp-signature
 
-Signed-off-by: Jeremy Fitzhardinge <jeremy@goop.org>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 83afb86..d9cadb3 100644
-- --- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -861,12 +861,14 @@ void hidinput_hid_event(struct hid_device *hid,
-struct hid_field *field, struct
- 
-     input = field->hidinput->input;
- 
-+#ifdef CONFIG_HID_BATTERY_STRENGTH
-     if (usage->hid == HID_DC_BATTERYSTRENGTH) {
-         hid->battery_val = value;
-         hid_dbg(hid, "battery value is %d (range %d-%d)\n",
-             value, hid->battery_min, hid->battery_max);
-         return;
-     }
-+#endif
- 
-     if (!usage->type)
-         return;
-
-    J
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEkBAEBCgAGBQJO1DXKAAoJEAUkni6MUg7H2/wIPAk0oHGVawNScWJdJXMhMVca
-ApxAr1h2v5kgIzRlihkpOiK3opft/GzBYh54HHd4nPdC5D4KAmuOXeX2+fwVgIEG
-SlrwsGU4J9n9uH/e3qgJf2aANcWH+bQwqL58ZyLE0Yo+N3dBzDNaNGd8Gygw8jk+
-mGtsMAfjIwe5vDLmsIED1+hqGNUL8/vt+TnCcpNVWUdrUtCT7dpDifcoeblO/qrs
-5hWbpf+AOek7UEoHQ0qAbRLi8A1FcoMs20mHiSpkfVn2d2gUYUYZRjeW66xwuKB7
-Q9iYEoOEszj+07nkHvS8VZZFMIXKsBOvkDVrktQtgDTZzI71axbgKPK8UESjjH4U
-uMPpWmv8yA==
-=2NZE
+iQIcBAEBCAAGBQJO1FATAAoJEECxmPOUX5FEfK0P/1xcdJOQOe2uee80yAPx5VQE
+IYNWO11mtcTxoSBIyKiU0i3x7F5G49F3pLQB23WBexsqKS80nYr4+KWh4EW6ZKz8
+NeJ5GSR8x67CEyCVEP7KgDl99cI2XvAL44E30E5ePB/gPu/zwDK1iRiqr2oV6Dve
+5U9JcWdZ7JRYnXSB1g668ZsWDKFECkedT88QA1kkD62PysDjCRobLOPBNI27R0YR
+CJQdrFd0vnZBHSYnjIFE1c32Rau84/9HAw+He5hS2InioBoW0DIYFWaw1Jwmybgh
+F1gRtcVdnt2oo9KmLc06HtV4fUuVhD7CGbYgwVp1hXDVfxTk57aBQu81ZNeD0pdp
+Tg1lY7Al1iJFawJqfgokuTy/WncQt1HRlTERxr8Z//OpphwAZGUtILKKZ7Y39UBv
+YXqyv9DwfCiDxDAF8ZzUqVZloM4HfSmCfYAv+rNIVCSPMpMHEQSSFQDLECPgildD
+kfFqDFiF5Mnwo2zIVlU9t2rH5MEKtKfdMGtD6Gs6T4k63gAvhc+6QARGF1xJv5yD
+a+739KrEQbVatI8OmZCMIeqclTyljkOhUzvyMdbA3gRIebWxbnifRGBY21+uYs0n
+GuLxZwr55HiRIJu0Qygs8+ZQqeprkKyAPw44+mLlArhzYEcL/VUfHBq9iDyzi+Wi
+JzMLmyf9PEFa4wXnL/Rt
+=8iJN
 -----END PGP SIGNATURE-----
+
+--Signature=_Tue__29_Nov_2011_14_22_59_+1100_IZPZ3tB7bMZaxAFU--
