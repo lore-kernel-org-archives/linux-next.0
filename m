@@ -1,97 +1,64 @@
-From: Boaz Harrosh <bharrosh-C4P08NqkoRlBDgjK7y7TUQ@public.gmane.org>
-Subject: ore: FIX breakage when MISC_FILESYSTEMS is not set
-Date: Mon, 28 Nov 2011 16:13:03 -0800
-Message-ID: <4ED4238F.4090407@panasas.com>
-References: <20111124174358.d88f11c0ff700e5e6b3bf73b@canb.auug.org.au> <4ECE91F3.9010007@xenotime.net> <4ED422CC.60706@panasas.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the hid tree
+Date: Tue, 29 Nov 2011 12:00:59 +1100
+Message-ID: <20111129120059.a1818d7eaf663546edc6dc34@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4ED422CC.60706-C4P08NqkoRlBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Benny Halevy <bhalevy-4/WYdZTkCtzQT0dZR+AlfA@public.gmane.org>, Michal Marek <mmarek-AlSwsSmVLrQ@public.gmane.org>, NFS list <linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open-osd <osd-dev-yNzVSZO3znNg9hUCZPvPmw@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__29_Nov_2011_12_00_59_+1100_ydKj00YmSWqYfFce"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>
 List-Id: linux-next.vger.kernel.org
 
+--Signature=_Tue__29_Nov_2011_12_00_59_+1100_ydKj00YmSWqYfFce
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As Reported by Randy Dunlap
+Hi Jiri,
 
-When MISC_FILESYSTEMS is not enabled:
+After merging the hid tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-fs/built-in.o: In function `objio_alloc_io_state':
-objio_osd.c:(.text+0xcb525): undefined reference to `ore_get_rw_state'
-fs/built-in.o: In function `_write_done':
-objio_osd.c:(.text+0xcb58d): undefined reference to `ore_check_io'
-fs/built-in.o: In function `_read_done':
-...
+drivers/hid/hid-input.c: In function 'hidinput_hid_event':
+drivers/hid/hid-input.c:865:6: error: 'struct hid_device' has no member nam=
+ed 'battery_val'
+drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member nam=
+ed 'battery_min'
+drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member nam=
+ed 'battery_max'
 
-When MISC_FILESYSTEMS, which is more of a GUI thing then anything else,
-is not selected. exofs/Kconfig is never examined during Kconfig,
-and it can not do it's magic stuff to automatically select everything
-needed.
+Caused by commit 4f5ca836bef3 ("HID: hid-input: add support for HID
+devices reporting Battery Strength").  Those members are only defined when
+CONFIG_HID_BATTERY_STRENGTH is set.
 
-The solution is to force all users of ORE (exofs, nfs) to manually
-select everything auto-magically selected before.
+I have used the hid tree from next-20111128 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-(This is  why it is a bad idea to put libraries in random parts of
- the tree)
+--Signature=_Tue__29_Nov_2011_12_00_59_+1100_ydKj00YmSWqYfFce
+Content-Type: application/pgp-signature
 
-Reported-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Signed-off-by: Boaz Harrosh <bharrosh-C4P08NqkoRlBDgjK7y7TUQ@public.gmane.org>
----
- fs/exofs/Kconfig |   17 +++++++++--------
- fs/nfs/Kconfig   |    2 ++
- 2 files changed, 11 insertions(+), 8 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-diff --git a/fs/exofs/Kconfig b/fs/exofs/Kconfig
-index da42f32..6b05d99 100644
---- a/fs/exofs/Kconfig
-+++ b/fs/exofs/Kconfig
-@@ -1,17 +1,18 @@
--# Note ORE needs to "select ASYNC_XOR". So Not to force multiple selects
--# for every ORE user we do it like this. Any user should add itself here
--# at the "depends on EXOFS_FS || ..." with an ||. The dependencies are
--# selected here, and we default to "ON". So in effect it is like been
--# selected by any of the users.
-+# ORE - Objects Raid Engine (libore.ko)
-+# This library needs to be selected by it's users for example the below EXOFS
-+# filesystem.
-+# All users must do:
-+#	depends on SCSI_OSD_ULD
-+#	select ASYNC_XOR
-+#	select ORE
- config ORE
- 	tristate
--	depends on EXOFS_FS || PNFS_OBJLAYOUT
--	select ASYNC_XOR
--	default SCSI_OSD_ULD
- 
- config EXOFS_FS
- 	tristate "exofs: OSD based file system support"
- 	depends on SCSI_OSD_ULD
-+	select ASYNC_XOR
-+	select ORE
- 	help
- 	  EXOFS is a file system that uses an OSD storage device,
- 	  as its backing storage.
-diff --git a/fs/nfs/Kconfig b/fs/nfs/Kconfig
-index dbcd821..3708d76 100644
---- a/fs/nfs/Kconfig
-+++ b/fs/nfs/Kconfig
-@@ -96,6 +96,8 @@ config PNFS_BLOCK
- config PNFS_OBJLAYOUT
- 	tristate
- 	depends on NFS_FS && NFS_V4_1 && SCSI_OSD_ULD
-+	select ASYNC_XOR
-+	select ORE
- 	default m
- 
- config ROOT_NFS
--- 
-1.7.6.4
+iQIcBAEBCAAGBQJO1C7LAAoJEECxmPOUX5FEyKQP/01V8OBsu+lRNfwkuE5ZXaym
+gBQ3dUW5ZXMyyTkI01qgIfa8cAAC3TSn9Sf1zL3n9TPcsPZ0G5GzNWZ0kyA00WY8
+g/72RK8KFO/wPTnE3GnwIyHbwfA2LAnrEkupw/z2mgI6EGn48r4oR/hLl4cvmVEE
++uD3dFdRXnQknPjpUxkxXxC0c/+drUU0X4Q/0Jw91XoNP3UDDizB5WxrCSmz1MEu
+DNNB3NZuqXdFUOEgoKdbp4CIZuy2hO1HOqDN6hw2VtrQoSFrQbvEiqy3Oqo0FJfV
+5gzZUj2YynU/uFxQgHKeo0dbU4vkwhWweAIYST3+Doj0ldKrjBBrPmbTXwbTYEKf
+ARsF4rD084UGpkzTl1K2NrwzOg4bRNbs1sKaY6EddENPhIqbc5goP0SqYjYV5O1y
+U6ouyuXvD0x0u60tBy5UpkmWkRlThJCQ9ebBbvlR4DD5GQmxBQ6UKdRhckwPiBB+
+9n0A+aibrqtma7YVQYpne8H80yxI+y8qXOF/9pMFFiEb+ZEfeHuqj25SgP/PErbf
++t4knZiECKF02Ocgh2Kq6UtVC7I+EKnV/JG+8P16y+oopg7UT0P7Ndn23SGq5t7W
+G9FmwRXYqlbww6E17vqZTx8YibyeTsJg6j1W/QXlyjO9ZLbIF+qxBhMN9xu4/ggm
+jCVQ/XWWfMwtALbAFO8K
+=fASJ
+-----END PGP SIGNATURE-----
 
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Signature=_Tue__29_Nov_2011_12_00_59_+1100_ydKj00YmSWqYfFce--
