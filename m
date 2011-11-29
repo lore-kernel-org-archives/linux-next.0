@@ -1,64 +1,93 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the hid tree
-Date: Tue, 29 Nov 2011 12:00:59 +1100
-Message-ID: <20111129120059.a1818d7eaf663546edc6dc34@canb.auug.org.au>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: build failure after merge of the hid tree
+Date: Mon, 28 Nov 2011 17:30:59 -0800
+Message-ID: <4ED435D3.70300@goop.org>
+References: <20111129120059.a1818d7eaf663546edc6dc34@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__29_Nov_2011_12_00_59_+1100_ydKj00YmSWqYfFce"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiri Kosina <jikos@jikos.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Fitzhardinge <jeremy@goop.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from claw.goop.org ([74.207.240.146]:35462 "EHLO claw.goop.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751663Ab1K2BbF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Nov 2011 20:31:05 -0500
+In-Reply-To: <20111129120059.a1818d7eaf663546edc6dc34@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jiri Kosina <jikos@jikos.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__29_Nov_2011_12_00_59_+1100_ydKj00YmSWqYfFce
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
 
-After merging the hid tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+On 11/28/2011 05:00 PM, Stephen Rothwell wrote:
+> Hi Jiri,
+>
+> After merging the hid tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> drivers/hid/hid-input.c: In function 'hidinput_hid_event':
+> drivers/hid/hid-input.c:865:6: error: 'struct hid_device' has no member
+named 'battery_val'
+> drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member
+named 'battery_min'
+> drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member
+named 'battery_max'
+>
+> Caused by commit 4f5ca836bef3 ("HID: hid-input: add support for HID
+> devices reporting Battery Strength"). Those members are only defined when
+> CONFIG_HID_BATTERY_STRENGTH is set.
+>
+> I have used the hid tree from next-20111128 for today.
 
+Oh, sorry about that.  Is this sufficient?
+
+Subject: [PATCH] hid-input: fix compile for !HID_BATTERY_STRENGTH
+
+As reported by Stephen Rothwell:
 drivers/hid/hid-input.c: In function 'hidinput_hid_event':
-drivers/hid/hid-input.c:865:6: error: 'struct hid_device' has no member nam=
-ed 'battery_val'
-drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member nam=
-ed 'battery_min'
-drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member nam=
-ed 'battery_max'
+drivers/hid/hid-input.c:865:6: error: 'struct hid_device' has no member
+named 'battery_val'
+drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member
+named 'battery_min'
+drivers/hid/hid-input.c:866:3: error: 'struct hid_device' has no member
+named 'battery_max'
 
-Caused by commit 4f5ca836bef3 ("HID: hid-input: add support for HID
-devices reporting Battery Strength").  Those members are only defined when
-CONFIG_HID_BATTERY_STRENGTH is set.
+Signed-off-by: Jeremy Fitzhardinge <jeremy@goop.org>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-I have used the hid tree from next-20111128 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index 83afb86..d9cadb3 100644
+- --- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -861,12 +861,14 @@ void hidinput_hid_event(struct hid_device *hid,
+struct hid_field *field, struct
+ 
+     input = field->hidinput->input;
+ 
++#ifdef CONFIG_HID_BATTERY_STRENGTH
+     if (usage->hid == HID_DC_BATTERYSTRENGTH) {
+         hid->battery_val = value;
+         hid_dbg(hid, "battery value is %d (range %d-%d)\n",
+             value, hid->battery_min, hid->battery_max);
+         return;
+     }
++#endif
+ 
+     if (!usage->type)
+         return;
 
---Signature=_Tue__29_Nov_2011_12_00_59_+1100_ydKj00YmSWqYfFce
-Content-Type: application/pgp-signature
-
+    J
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO1C7LAAoJEECxmPOUX5FEyKQP/01V8OBsu+lRNfwkuE5ZXaym
-gBQ3dUW5ZXMyyTkI01qgIfa8cAAC3TSn9Sf1zL3n9TPcsPZ0G5GzNWZ0kyA00WY8
-g/72RK8KFO/wPTnE3GnwIyHbwfA2LAnrEkupw/z2mgI6EGn48r4oR/hLl4cvmVEE
-+uD3dFdRXnQknPjpUxkxXxC0c/+drUU0X4Q/0Jw91XoNP3UDDizB5WxrCSmz1MEu
-DNNB3NZuqXdFUOEgoKdbp4CIZuy2hO1HOqDN6hw2VtrQoSFrQbvEiqy3Oqo0FJfV
-5gzZUj2YynU/uFxQgHKeo0dbU4vkwhWweAIYST3+Doj0ldKrjBBrPmbTXwbTYEKf
-ARsF4rD084UGpkzTl1K2NrwzOg4bRNbs1sKaY6EddENPhIqbc5goP0SqYjYV5O1y
-U6ouyuXvD0x0u60tBy5UpkmWkRlThJCQ9ebBbvlR4DD5GQmxBQ6UKdRhckwPiBB+
-9n0A+aibrqtma7YVQYpne8H80yxI+y8qXOF/9pMFFiEb+ZEfeHuqj25SgP/PErbf
-+t4knZiECKF02Ocgh2Kq6UtVC7I+EKnV/JG+8P16y+oopg7UT0P7Ndn23SGq5t7W
-G9FmwRXYqlbww6E17vqZTx8YibyeTsJg6j1W/QXlyjO9ZLbIF+qxBhMN9xu4/ggm
-jCVQ/XWWfMwtALbAFO8K
-=fASJ
+iQEkBAEBCgAGBQJO1DXKAAoJEAUkni6MUg7H2/wIPAk0oHGVawNScWJdJXMhMVca
+ApxAr1h2v5kgIzRlihkpOiK3opft/GzBYh54HHd4nPdC5D4KAmuOXeX2+fwVgIEG
+SlrwsGU4J9n9uH/e3qgJf2aANcWH+bQwqL58ZyLE0Yo+N3dBzDNaNGd8Gygw8jk+
+mGtsMAfjIwe5vDLmsIED1+hqGNUL8/vt+TnCcpNVWUdrUtCT7dpDifcoeblO/qrs
+5hWbpf+AOek7UEoHQ0qAbRLi8A1FcoMs20mHiSpkfVn2d2gUYUYZRjeW66xwuKB7
+Q9iYEoOEszj+07nkHvS8VZZFMIXKsBOvkDVrktQtgDTZzI71axbgKPK8UESjjH4U
+uMPpWmv8yA==
+=2NZE
 -----END PGP SIGNATURE-----
-
---Signature=_Tue__29_Nov_2011_12_00_59_+1100_ydKj00YmSWqYfFce--
