@@ -1,73 +1,42 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Tue, 29 Nov 2011 10:06:17 +0200
-Message-ID: <1322553977.1869.1.camel@deskari>
-References: <20111128105633.8a8c06afce3cdccb1ce0d7b7@canb.auug.org.au>
-	 <201111281911.36341.arnd@arndb.de>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: linux-next: build warning after merge of the l2-mtd tree
+Date: Tue, 29 Nov 2011 10:54:37 +0100
+Message-ID: <878vmz8d9e.fsf@free.fr>
+References: <20111129143358.0859ae27c22f2c752a608f65@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-lyLvMVTx+RZKJbDjTWbn"
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog115.obsmtp.com ([74.125.149.238]:33470 "EHLO
-	na3sys009aog115.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751801Ab1K2IGY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 29 Nov 2011 03:06:24 -0500
-In-Reply-To: <201111281911.36341.arnd@arndb.de>
+Received: from smtp1-g21.free.fr ([212.27.42.1]:41078 "EHLO smtp1-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753026Ab1K2Jys (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Nov 2011 04:54:48 -0500
+In-Reply-To: <20111129143358.0859ae27c22f2c752a608f65@canb.auug.org.au>
+	(Stephen Rothwell's message of "Tue, 29 Nov 2011 14:33:58 +1100")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Russell King <rmk@arm.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Artem Bityutskiy <dedekind1@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> After merging the l2-mtd tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> drivers/mtd/devices/docg3.c: In function 'doc_write_page_ecc_init':
+> drivers/mtd/devices/docg3.c:577:6: warning: suggest parentheses around operand
+> of '!' or change '|' to '||' or '!' to '~' [-Wparentheses]
 
---=-lyLvMVTx+RZKJbDjTWbn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi,
+My fault, I've been too lazy with that commit for too long, and code like
+writel(!reg1 | reg2, adr) is error prone. Artem did point out the warning
+already, so that's on me.
 
-On Mon, 2011-11-28 at 19:11 +0000, Arnd Bergmann wrote:
-> On Sunday 27 November 2011, Stephen Rothwell wrote:
-> > Today's linux-next merge of the arm-soc tree got a conflict in
-> > arch/arm/plat-omap/include/plat/common.h between commit 4e65331c6bb4
-> > ("ARM: 7159/1: OMAP: Introduce local common.h files") from the  tree an=
-d
-> > commit 13662dc5b177 ("ARM: OMAP: HWMOD: Unify DSS resets for OMAPs") fr=
-om
-> > the arm-soc tree.
-> >=20
-> > I did the obvious fixup (see below) and can carry the fix as necessary.
->=20
-> Your fix looks technically correct, thanks!
->=20
-> Tony, I believe what you actually want here is to move omap_dss_reset
-> into mach-omap2/common.h, right?
+I'll mend the fix in a V2 to a cleanup patch already submitted to linux-mtd.
 
-omap_dss_reset will never be used by omap1 boards, so I think
-mach-omap2/common.h would be a good place for it.
+Cheers.
 
- Tomi
+-- 
+Robert
 
-
---=-lyLvMVTx+RZKJbDjTWbn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAABAgAGBQJO1JJ0AAoJEPo9qoy8lh71dKUP/0wFNnNLM9BRhTbISdtb+ayF
-Oxv1wvIlxZVv/jfAcrKZUYJ8mloa6vB8O3cKKfB9ggGk26SbrEeyt7VCm1pb2QMK
-CTko1W4lwVrThu3LO/XytEgw0sp3+0m2xkXnHcNobkdOXGsZuvX9CY1XiKSybh7l
-lbJXOMf+tpWWOIlNNzXKlyRqWpgXetyOW/0wcjKjeV29MZY3FTMw9AE/bN5i/X00
-Ab7bTg1iLu5eIADSXtd5TGNc0kEbtkdulCREkzdTz1iGU7avhayTS5Lm3SOyxH1f
-iRpsrkFBGRCxFDepq0V0n6MFg/thVFdU6GH85s7LKcrgvFOjGteh//gDb/DKnEsB
-PgCEIqykvGQMeIatXR7Lyb4hbdhzN+0NCVx8MukaETbQWWc/jYHTnuLmEjPzqhQ2
-shqJ2DX3HBtFl+c+ka5FqLp6f7uqyUuLzsNrC8dHHbroLKkjJcRvbmQD08w0/kkK
-YAu0+9R1ILtq+GkL77b/nXaHUqEan4QoT96tJqoCJxDy8uvr7yvxP4HoV5KzS0xb
-lbcWOk7IQ7n/SlVZEutdETvEj11UCSapJbWaUL6m7XAtfKMamBAcnD/b6KJ/5gPZ
-p8WQ/8IhFqWjP2IPsVHl5w0panlYGBpb12NVB3K7xNwRr6tqFmUkAUerZfM5E6uT
-r8Emy+kkuf4xKtz/5bqQ
-=66ee
------END PGP SIGNATURE-----
-
---=-lyLvMVTx+RZKJbDjTWbn--
+PS: there will be another warning about an unused function
+doc_get_erase_count(). This one will be fixed a bit later I'm afraid.
