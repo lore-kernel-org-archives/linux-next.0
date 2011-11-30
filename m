@@ -1,118 +1,65 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Subject: Re: [osd-dev] [PATCH v3] ore: FIX breakage when MISC_FILESYSTEMS
- is not set
-Date: Tue, 29 Nov 2011 17:00:45 -0800
-Message-ID: <4ED5803D.8030906@panasas.com>
-References: <20111124174358.d88f11c0ff700e5e6b3bf73b@canb.auug.org.au> <4ECE91F3.9010007@xenotime.net> <4ED422CC.60706@panasas.com> <4ED4238F.4090407@panasas.com> <4ED56C59.208@panasas.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (akpm tree
+ related)
+Date: Wed, 30 Nov 2011 15:42:31 +1100
+Message-ID: <20111130154231.42db05b2eb2baa11f3e7c561@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__30_Nov_2011_15_42_31_+1100_tUYSXQ/JJqPqRx+n"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from natasha.panasas.com ([67.152.220.90]:51932 "EHLO
-	natasha.panasas.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757054Ab1K3BHV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Nov 2011 20:07:21 -0500
-In-Reply-To: <4ED56C59.208@panasas.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:41464 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752104Ab1K3Eml (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Nov 2011 23:42:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>, Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: Michal Marek <mmarek@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, NFS list <linux-nfs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Benny Halevy <bhalevy@tonian.com>, linux-next@vger.kernel.org, open-osd <osd-dev@open-osd.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Rientjes <rientjes@google.com>
 
-On 11/29/2011 03:35 PM, Boaz Harrosh wrote:
-> 
-> As Reported by Randy Dunlap
-> 
+--Signature=_Wed__30_Nov_2011_15_42_31_+1100_tUYSXQ/JJqPqRx+n
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Randy Hi
+Hi Andrew,
 
-I think I prefer this simple solution for now, instead of
-the complete move of the ore to lib/
+After merging the final tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-It solves the warning problem you reported and let us
-keep the convenience of selecting everything in one place. As
-was said there are more dependencies on the way.
+kernel/cpuset.c: In function 'cpuset_change_task_nodemask':
+kernel/cpuset.c:971:17: error: 'struct task_struct' has no member named 'me=
+mpolicy'
 
-I will look into the additional ASYNC_CORE and XOR_BLOCKS selects
-you mentioned. For some reason it works but I'll try to find a
-way to break it or prove It is sound.
+Caused by commit abf5d6d23d83 ("cpusets: stall when updating mems_allowed
+for mempolicy or disjoint nodemask") from the akpm tree.  The mempolicy
+member is only available when CONFIG_NUMA is set.
 
-Please advise?
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks
-Heart
+--Signature=_Wed__30_Nov_2011_15_42_31_+1100_tUYSXQ/JJqPqRx+n
+Content-Type: application/pgp-signature
 
-> When MISC_FILESYSTEMS is not enabled:
-> 
-> fs/built-in.o: In function `objio_alloc_io_state':
-> objio_osd.c:(.text+0xcb525): undefined reference to `ore_get_rw_state'
-> fs/built-in.o: In function `_write_done':
-> objio_osd.c:(.text+0xcb58d): undefined reference to `ore_check_io'
-> fs/built-in.o: In function `_read_done':
-> ...
-> 
-> When MISC_FILESYSTEMS, which is more of a GUI thing then anything else,
-> is not selected. exofs/Kconfig is never examined during Kconfig,
-> and it can not do it's magic stuff to automatically select everything
-> needed.
-> 
-> We must split exofs/Kconfig in two. The ore one is always included.
-> And the exofs one is left in it's old place in the menu.
-> 
-> Signed-off-by: Boaz Harrosh <bharrosh@panasas.com>
-> ---
->  fs/Kconfig           |    2 ++
->  fs/exofs/Kconfig     |   11 -----------
->  fs/exofs/ore.Kconfig |   12 ++++++++++++
->  3 files changed, 14 insertions(+), 11 deletions(-)
->  create mode 100644 fs/exofs/ore.Kconfig
-> 
-> diff --git a/fs/Kconfig b/fs/Kconfig
-> index 5f4c45d..fd7bfef 100644
-> --- a/fs/Kconfig
-> +++ b/fs/Kconfig
-> @@ -218,6 +218,8 @@ source "fs/exofs/Kconfig"
->  
->  endif # MISC_FILESYSTEMS
->  
-> +source "fs/exofs/ore.Kconfig"
-> +
->  menuconfig NETWORK_FILESYSTEMS
->  	bool "Network File Systems"
->  	default y
-> diff --git a/fs/exofs/Kconfig b/fs/exofs/Kconfig
-> index da42f32..86194b2 100644
-> --- a/fs/exofs/Kconfig
-> +++ b/fs/exofs/Kconfig
-> @@ -1,14 +1,3 @@
-> -# Note ORE needs to "select ASYNC_XOR". So Not to force multiple selects
-> -# for every ORE user we do it like this. Any user should add itself here
-> -# at the "depends on EXOFS_FS || ..." with an ||. The dependencies are
-> -# selected here, and we default to "ON". So in effect it is like been
-> -# selected by any of the users.
-> -config ORE
-> -	tristate
-> -	depends on EXOFS_FS || PNFS_OBJLAYOUT
-> -	select ASYNC_XOR
-> -	default SCSI_OSD_ULD
-> -
->  config EXOFS_FS
->  	tristate "exofs: OSD based file system support"
->  	depends on SCSI_OSD_ULD
-> diff --git a/fs/exofs/ore.Kconfig b/fs/exofs/ore.Kconfig
-> new file mode 100644
-> index 0000000..1ca7fb7
-> --- /dev/null
-> +++ b/fs/exofs/ore.Kconfig
-> @@ -0,0 +1,12 @@
-> +# ORE - Objects Raid Engine (libore.ko)
-> +#
-> +# Note ORE needs to "select ASYNC_XOR". So Not to force multiple selects
-> +# for every ORE user we do it like this. Any user should add itself here
-> +# at the "depends on EXOFS_FS || ..." with an ||. The dependencies are
-> +# selected here, and we default to "ON". So in effect it is like been
-> +# selected by any of the users.
-> +config ORE
-> +	tristate
-> +	depends on EXOFS_FS || PNFS_OBJLAYOUT
-> +	select ASYNC_XOR
-> +	default SCSI_OSD_ULD
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO1bQ3AAoJEECxmPOUX5FE5cEQAIlEwVYRfdas+90GhOp6MD/f
+LvVh+FBIy2SFJQQ4KzkOvAFbsrJccSTy6bn/SbaXLNjcm+EWQ8iQvqXFKl2Op+a0
+nz96Y7D0viAofaj6kKQYSXpnuTwK73W1FnpF/MZ2h5kwzEPx2/s9/+GcRRHmpxFy
+Icqlfo9C2F90cuRp7KQAcu2yV+O1e/dK3nA2fv2hK23Kt51iaotUrbiyRXcS3Rg6
+S280vlnZSjwmTcoHItYZ2bOGsP7xamR52RjDeZuWyZBEwmO2FA8yOesSHBXEuygH
+i70tSX3vvQXKmBEDr94eaJSRO0Vr3Se2/MAzotfKwzDxdQL6ojehOd5ltokWutJM
+4Yd75e+FYRz9SgYHTZbhIk+4wuUv8Z8Jol3ZtimNT79uyOfr/NUqaspHKFScCB9N
+oNCo5T59qZtrpYWWdIumwBzUYlLLi/aqkUItfNK8et6AE4NZbcHAxwCweUKQUurp
+nH48zcQNVakbdEgUWetb7EVClMK2QXjPIsl/JHbhsEDj5va9aBnQGt6mfziM3Nab
+0c0BLRjVbiVwLwEk+nIKiGNXbiGuVyM8qs6W2ypozxSewXc+JeozTQnTpLgsN9ia
+Pb2uIPtCu3lz3oNJZT7ld+AQdfTySoKrgMqmreLPffE0AzNfToSFzt7sFfdrykW9
+k1AAA/LYybZQQHa4JmZH
+=qv7U
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__30_Nov_2011_15_42_31_+1100_tUYSXQ/JJqPqRx+n--
