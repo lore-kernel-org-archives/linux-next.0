@@ -1,76 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vhost tree with the hexagon
- tree
-Date: Wed, 30 Nov 2011 20:50:30 +1100
-Message-ID: <20111130205030.ed1e48bf5588a1aeeb2f4a3d@canb.auug.org.au>
-References: <20111129142259.78d3e10678c8e9d8376d52aa@canb.auug.org.au>
-	<20111130064553.GA2393@codeaurora.org>
+From: Neil Horman <nhorman@tuxdriver.com>
+Subject: Re: linux-next: build failure after merge of the final tree (akpm
+ tree related)
+Date: Wed, 30 Nov 2011 06:48:41 -0500
+Message-ID: <20111130114841.GB5677@hmsreliant.think-freely.org>
+References: <20111130155226.b571cfd7887f03f9e8e1285b@canb.auug.org.au>
+ <20111130.004010.1075431174091251814.davem@davemloft.net>
+ <20111129220728.b3351335.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__30_Nov_2011_20_50_30_+1100_jsCO=y6F_4xuNS1N"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:58425 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753412Ab1K3Jun (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 04:50:43 -0500
-In-Reply-To: <20111130064553.GA2393@codeaurora.org>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:34888 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753592Ab1K3Lst (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 06:48:49 -0500
+Content-Disposition: inline
+In-Reply-To: <20111129220728.b3351335.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Richard Kuo <rkuo@codeaurora.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__30_Nov_2011_20_50_30_+1100_jsCO=y6F_4xuNS1N
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Richard,
-
-On Wed, 30 Nov 2011 00:45:53 -0600 Richard Kuo <rkuo@codeaurora.org> wrote:
->
-> On Tue, Nov 29, 2011 at 02:22:59PM +1100, Stephen Rothwell wrote:
-> >=20
-> > Today's linux-next merge of the vhost tree got a conflict in
-> > arch/hexagon/Kconfig between commit 5237bae0d8c9 ("various Kconfig
-> > cleanup and old platform build code removal") from the hexagon tree and
-> > commit4673ca8eb369  ("lib: move GENERIC_IOMAP to lib/Kconfig") from the
-> > vhost tree.
-> >=20
-> > Just context changes.  I fixed it up (see below) and can carry the fix =
-as
-> > necessary.
->=20
-> I was figuring this would happen.  What would be the best way for me to
-> fix this?  Maybe rebase my patches on top of the vhost tree?
-
-No, just ignore it.  Linus will fix it up when he merges the trees into
-his.  Its pretty trivial anyway.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__30_Nov_2011_20_50_30_+1100_jsCO=y6F_4xuNS1N
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO1fxmAAoJEECxmPOUX5FE3WIQAI1b2vM45UIY/Ef0xp52fm6o
-dQqIP+cOtMpkSJZhSMOYMPccehMAJdqTxsTB7ObjpsOCBRKWw0O6E2DksATlAgrY
-ZDMa4KGPrHhtnzyfdR4+SH6lx5C/Sp0JqGe/QuPhG4eT0xxCfolp0qYoqxNcpteH
-KlEN0PYuENoojMEMr+ctMvn0MJnsu1RwlbDnhJf10Asq4e0FbKUi7KFTd36ZNOKB
-Ys51HdU6nFR1MZzHMfSFLHKDwt7gw8gFy5aBL/1bUYGX2R/ovzxsxzUJGoZ8nPku
-I/GJPWKban49O6ZH214yRIXwht2Cex+GsoWMbmv+2mi5lmEqzd3EVgzLy1xPgrFn
-IuRwVpBM3mAbi3XnF6jamt1RhGhdMhTv+lON33qmStsksOjy9BfS7EHWi7cqd1mb
-8ksrvUiBo8SJA7CGPtjF0vWV4ChwD43Kwlvzp2AGumIWbYxurwileWelLeeRQFSF
-/PF8reo0L6+UfYH6QsdjfKWEUiqccFkLxnUyYYqrUC2srKnnq8oJPj7sZn7MQnjb
-XhY/ErZ/X/un1S0UeLa0CwyJiYWRaVaoTZDncnKQvSDTMln/bESjZyCkllR2w5LJ
-Cb91FMYCVw9U7P6ztOrUx5dTvwnpXSZlU7DzGtCHDG5n5zFYZKtx71O1EHyoqlSP
-6xQEakZONcOd2w8x3ckk
-=+due
------END PGP SIGNATURE-----
-
---Signature=_Wed__30_Nov_2011_20_50_30_+1100_jsCO=y6F_4xuNS1N--
+On Tue, Nov 29, 2011 at 10:07:28PM -0800, Andrew Morton wrote:
+> On Wed, 30 Nov 2011 00:40:10 -0500 (EST) David Miller <davem@davemloft.net> wrote:
+> 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Wed, 30 Nov 2011 15:52:26 +1100
+> > 
+> > > And many more similar.
+> > > 
+> > > Caused (or exposed) by commit 9222aa56c0ce
+> > > ("include/net/netprio_cgroup.h: various fixes") from the akpm tree.
+> > > 
+> > > I have reverted that commit for today.
+> > 
+> > Andrew, please submit networking bug fixes to the networking maintainers
+> > in order to avoid problems like this in the future.
+> > 
+> > Unlike other subsystems, I guarentee to handle it within 24 hours, often
+> > much faster.
+> > 
+> 
+> This is my attempt to address the issues I mentioned last week.  It is
+> still under development and doesn't work yet.  I thought it did.
+> 
+> I'm now trying to get my brain around what that code is doing with
+> Kconfig symbols and net_prio_subsys_id.  I'm suspecting it's all to
+> make cgroup-subsys-within-a-module appear to work.
+> 
+> afaict net_prio_subsys_id is an enum if CONFIG_NETPRIO_CGROUP=y and is
+> an `extern int' when CONFIG_NETPRIO_CGROUP=m.  It's unclear to me why
+> the extern int version or net_prio_subsys_id exists at all, really.
+> 
+> 
+I implemented this code the same way that the net_cls cgroup does.  I'm not at
+all sure whats going on in your tree, as its building as both a module and
+monolitically in net-next.  I'll get it sorted today though.
+Neil
