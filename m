@@ -1,69 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (akpm tree
- related)
-Date: Wed, 30 Nov 2011 15:52:26 +1100
-Message-ID: <20111130155226.b571cfd7887f03f9e8e1285b@canb.auug.org.au>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH] at91_ether: use gpio_is_valid for phy IRQ line
+Date: Wed, 30 Nov 2011 05:44:03 +0100
+Message-ID: <20111130044403.GY15008@game.jcrosoft.org>
+References: <1322128098-17724-1-git-send-email-jamie@jamieiles.com>
+ <1322169674-4109-1-git-send-email-nicolas.ferre@atmel.com>
+ <20111129.185342.105454076866922618.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__30_Nov_2011_15_52_26_+1100_nKmj.hMCD7Ioe5om"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:46206 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752271Ab1K3Ewd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Nov 2011 23:52:33 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Wed__30_Nov_2011_15_52_26_+1100_nKmj.hMCD7Ioe5om
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20111129.185342.105454076866922618.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: nicolas.ferre@atmel.com, jamie@jamieiles.com, netdev@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+On 18:53 Tue 29 Nov     , David Miller wrote:
+> From: Nicolas Ferre <nicolas.ferre@atmel.com>
+> Date: Thu, 24 Nov 2011 22:21:14 +0100
+> 
+> > Use the generic gpiolib gpio_is_valid() function to test
+> > if the phy IRQ line GPIO is actually provided.
+> > 
+> > For non-connected or non-existing phy IRQ lines, -EINVAL
+> > value is used for phy_irq_pin field of struct at91_eth_data.
+> > 
+> > Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+> 
+> I'm assuming this goes through the ARM tree, because in both of my networking
+> trees there is no ARM at91 implementation of gpio_is_valid().
+yes the depending patch series is in the arm-soc
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+can we have your ack or sob?
 
-In file included from include/linux/netdevice.h:54:0,
-                 from arch/powerpc/net/bpf_jit_comp.c:14:
-include/net/netprio_cgroup.h:34:12: error: 'net_prio_subsys_id' redeclared =
-as different kind of symbol
-include/linux/cgroup_subsys.h:71:1: note: previous definition of 'net_prio_=
-subsys_id' was here
-
-And many more similar.
-
-Caused (or exposed) by commit 9222aa56c0ce
-("include/net/netprio_cgroup.h: various fixes") from the akpm tree.
-
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__30_Nov_2011_15_52_26_+1100_nKmj.hMCD7Ioe5om
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO1baKAAoJEECxmPOUX5FEtPAQAIfz+pGTykdFoYAt8JrQgxg7
-kCpVNvO2MYbyNmJNAxJ66En/nRAYQjco/ZFFN+PiqfVg6G/g3OJjgO6QxJbQ9Yfk
-g/qv8/tvlluwTgVwiyaPgHKbnfeDRuFtZHh5IWA5jwryPTILU+/bdmQbxHdhZxYi
-rVoeak+zRajuIwsLzyWVC4GLBUSyQxOAxIlM74v7iKut5lI8kxfM6xGUNP7IA4SI
-oAriHklEbwlZC58p6NrmFcb66I9gXsDXtauZTnaPhpI+YRrso0VqMdbTDTtRZjtY
-ITyDfUe4T0sW7kkfNXumUn1EwvxT/xrsIVTbWqoJQIybl6xaKixGPb6gPe8Hatqx
-2a9QTvd57s5nFRs7t+6KyuW68n4rwIxKJVvmZwJQ2OmAtCI1EFgg1RML2ZPXE54N
-ttbcyvAT+ovcC9DGDV8ygctp3pR8cOCJ4GRanbo+JQpe26TATN7S9cogwYa/t78x
-WAlqknwn2FGasJ3+ik8zt4j22R4RKuYYmoTXgODiMhbcpBqkvKYD5o5QOgR431oy
-XabWf81U0W1qwHjOMct133bG2V7G2C+oEicnVVImv7FarjEr5j6E4lGuKd28CSga
-gi56JsHKO7g3VRKl8UCVBBIpOhgpQrI1MBzSnM2hH0Rbv9eDK7JtBQ/qwTsBnCPc
-f3NQZ+mm4ypo55mb973u
-=s/zC
------END PGP SIGNATURE-----
-
---Signature=_Wed__30_Nov_2011_15_52_26_+1100_nKmj.hMCD7Ioe5om--
+Best Regards,
+J.
