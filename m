@@ -1,33 +1,47 @@
-From: Dave Airlie <airlied@gmail.com>
-Subject: Re: linux-next: Tree for Nov 29 (drm)
-Date: Wed, 30 Nov 2011 17:51:07 +0000
-Message-ID: <CAPM=9tzOQxGG8mL=WQiyDFddusmH05_ghALosks0_N=-UUCisA@mail.gmail.com>
-References: <20111129152040.3040fe9780886ee0e066a131@canb.auug.org.au>
-	<4ED5417C.1030908@xenotime.net>
-	<1322673417.31541.1.camel@segulix>
-	<4ED67387.90902@xenotime.net>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: merge conflict resolution for pm-freezer
+Date: Wed, 30 Nov 2011 20:51:54 +0100
+Message-ID: <201111302051.54501.rjw@sisk.pl>
+References: <20111128233055.GF3858@google.com> <201111292321.27660.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:60926 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750951Ab1K3RvI convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 12:51:08 -0500
-In-Reply-To: <4ED67387.90902@xenotime.net>
+Received: from ogre.sisk.pl ([217.79.144.158]:36106 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751039Ab1K3TtB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 30 Nov 2011 14:49:01 -0500
+In-Reply-To: <201111292321.27660.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: =?ISO-8859-1?Q?S=E9rgio_Basto?= <sergio@serjux.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: sfr@canb.auug.org.au, linux-pm@vger.kernel.org, linux-next@vger.kernel.org
 
-2011/11/30 Randy Dunlap <rdunlap@xenotime.net>:
-> On 11/30/2011 09:16 AM, S=E9rgio Basto wrote:
->> Randy, not dri-devel@lists.sourceforge.net, anymore
->> now is dri-devel@lists.freedesktop.org
->
-> Argh, thanks.
-> That was thunderbird trying to be too helpful. :(
+On Tuesday, November 29, 2011, Rafael J. Wysocki wrote:
+> On Tuesday, November 29, 2011, Tejun Heo wrote:
+> > Hello, Rafael, Stephen.
+> > 
+> > Linus just pulled cgroup fixes which conflicts with pm-freezer.  The
+> > resolution is mostly trivial.  The cgroup fix changes frozen() test to
+> > is_task_frozen_enough() while pm-freezer commit prepends "freezing()
+> > && " to it.  They just need to be combined into "freezing() &&
+> > is_task_frozen_enough()".
+> > 
+> > The following git branch contains merged branch.  I pulled the current
+> > linus/master a34815b96 "Merge branch 'for-3.2-fixes' of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup" into
+> > pm-freezer and resolved the conflict described above.
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git pm-freezer-merge
+> > 
+> > Rafael, please feel free to pull or resolve in any way you see fit.
+> 
+> Well, could you please post a fix patch on top of my pm-freezer branch?
+> That would be the most convenient way to me. :-)
 
-Ah well I got it and it should be fixed now.
+No, that won't work.  I think I'll resolve the conflict when merging pm-freezer
+into pm-for-linus later.
 
-Dave.
+Thanks,
+Rafael
