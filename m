@@ -1,63 +1,76 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: [PATCH v3] ore: FIX breakage when MISC_FILESYSTEMS is not set
-Date: Wed, 30 Nov 2011 09:31:29 +0100
-Message-ID: <4ED5E9E1.9050709@suse.cz>
-References: <20111124174358.d88f11c0ff700e5e6b3bf73b@canb.auug.org.au> <4ECE91F3.9010007@xenotime.net> <4ED422CC.60706@panasas.com> <4ED4238F.4090407@panasas.com> <4ED56C59.208@panasas.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the vhost tree with the hexagon
+ tree
+Date: Wed, 30 Nov 2011 20:50:30 +1100
+Message-ID: <20111130205030.ed1e48bf5588a1aeeb2f4a3d@canb.auug.org.au>
+References: <20111129142259.78d3e10678c8e9d8376d52aa@canb.auug.org.au>
+	<20111130064553.GA2393@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__30_Nov_2011_20_50_30_+1100_jsCO=y6F_4xuNS1N"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:58352 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752383Ab1K3Iau (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 30 Nov 2011 03:30:50 -0500
-In-Reply-To: <4ED56C59.208@panasas.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:58425 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753412Ab1K3Jun (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 04:50:43 -0500
+In-Reply-To: <20111130064553.GA2393@codeaurora.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Boaz Harrosh <bharrosh@panasas.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Trond Myklebust <Trond.Myklebust@netapp.com>, Stephen Rothwell <sfr@canb.auug.org.au>, NFS list <linux-nfs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Benny Halevy <bhalevy@tonian.com>, linux-next@vger.kernel.org, open-osd <osd-dev@open-osd.org>
+To: Richard Kuo <rkuo@codeaurora.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Dne 30.11.2011 00:35, Boaz Harrosh napsal(a):
-> 
-> As Reported by Randy Dunlap
-> 
-> When MISC_FILESYSTEMS is not enabled:
-> 
-> fs/built-in.o: In function `objio_alloc_io_state':
-> objio_osd.c:(.text+0xcb525): undefined reference to `ore_get_rw_state'
-> fs/built-in.o: In function `_write_done':
-> objio_osd.c:(.text+0xcb58d): undefined reference to `ore_check_io'
-> fs/built-in.o: In function `_read_done':
-> ...
-> 
-> When MISC_FILESYSTEMS, which is more of a GUI thing then anything else,
-> is not selected. exofs/Kconfig is never examined during Kconfig,
-> and it can not do it's magic stuff to automatically select everything
-> needed.
-> 
-> We must split exofs/Kconfig in two. The ore one is always included.
-> And the exofs one is left in it's old place in the menu.
-> 
-> Signed-off-by: Boaz Harrosh <bharrosh@panasas.com>
-> ---
->  fs/Kconfig           |    2 ++
->  fs/exofs/Kconfig     |   11 -----------
->  fs/exofs/ore.Kconfig |   12 ++++++++++++
->  3 files changed, 14 insertions(+), 11 deletions(-)
->  create mode 100644 fs/exofs/ore.Kconfig
-> 
-> diff --git a/fs/Kconfig b/fs/Kconfig
-> index 5f4c45d..fd7bfef 100644
-> --- a/fs/Kconfig
-> +++ b/fs/Kconfig
-> @@ -218,6 +218,8 @@ source "fs/exofs/Kconfig"
->  
->  endif # MISC_FILESYSTEMS
->  
-> +source "fs/exofs/ore.Kconfig"
-> +
+--Signature=_Wed__30_Nov_2011_20_50_30_+1100_jsCO=y6F_4xuNS1N
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I suggest you name it Kconfig.ore. We have a couple of Kconfig.* files
-in the tree, so let's be consistent.
+Hi Richard,
 
-Michal
+On Wed, 30 Nov 2011 00:45:53 -0600 Richard Kuo <rkuo@codeaurora.org> wrote:
+>
+> On Tue, Nov 29, 2011 at 02:22:59PM +1100, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next merge of the vhost tree got a conflict in
+> > arch/hexagon/Kconfig between commit 5237bae0d8c9 ("various Kconfig
+> > cleanup and old platform build code removal") from the hexagon tree and
+> > commit4673ca8eb369  ("lib: move GENERIC_IOMAP to lib/Kconfig") from the
+> > vhost tree.
+> >=20
+> > Just context changes.  I fixed it up (see below) and can carry the fix =
+as
+> > necessary.
+>=20
+> I was figuring this would happen.  What would be the best way for me to
+> fix this?  Maybe rebase my patches on top of the vhost tree?
+
+No, just ignore it.  Linus will fix it up when he merges the trees into
+his.  Its pretty trivial anyway.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__30_Nov_2011_20_50_30_+1100_jsCO=y6F_4xuNS1N
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO1fxmAAoJEECxmPOUX5FE3WIQAI1b2vM45UIY/Ef0xp52fm6o
+dQqIP+cOtMpkSJZhSMOYMPccehMAJdqTxsTB7ObjpsOCBRKWw0O6E2DksATlAgrY
+ZDMa4KGPrHhtnzyfdR4+SH6lx5C/Sp0JqGe/QuPhG4eT0xxCfolp0qYoqxNcpteH
+KlEN0PYuENoojMEMr+ctMvn0MJnsu1RwlbDnhJf10Asq4e0FbKUi7KFTd36ZNOKB
+Ys51HdU6nFR1MZzHMfSFLHKDwt7gw8gFy5aBL/1bUYGX2R/ovzxsxzUJGoZ8nPku
+I/GJPWKban49O6ZH214yRIXwht2Cex+GsoWMbmv+2mi5lmEqzd3EVgzLy1xPgrFn
+IuRwVpBM3mAbi3XnF6jamt1RhGhdMhTv+lON33qmStsksOjy9BfS7EHWi7cqd1mb
+8ksrvUiBo8SJA7CGPtjF0vWV4ChwD43Kwlvzp2AGumIWbYxurwileWelLeeRQFSF
+/PF8reo0L6+UfYH6QsdjfKWEUiqccFkLxnUyYYqrUC2srKnnq8oJPj7sZn7MQnjb
+XhY/ErZ/X/un1S0UeLa0CwyJiYWRaVaoTZDncnKQvSDTMln/bESjZyCkllR2w5LJ
+Cb91FMYCVw9U7P6ztOrUx5dTvwnpXSZlU7DzGtCHDG5n5zFYZKtx71O1EHyoqlSP
+6xQEakZONcOd2w8x3ckk
+=+due
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__30_Nov_2011_20_50_30_+1100_jsCO=y6F_4xuNS1N--
