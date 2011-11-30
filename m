@@ -1,40 +1,61 @@
-From: Eric Van Hensbergen <ericvh@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for Sept 21
-Date: Wed, 30 Nov 2011 15:02:58 -0600
-Message-ID: <CAFkjPTmDk2BmF8U52Te=YojJsFCcz2bJPJG8X0mZFjqAho9TyQ@mail.gmail.com>
+Date: Thu, 1 Dec 2011 10:39:33 +1100
+Message-ID: <20111201103933.2d4ba55b53b10080939c3723@canb.auug.org.au>
 References: <20110921155850.09c858bb38205bb2cc0c8f0a@canb.auug.org.au>
- <CAFkjPTk0JWAYSJBC4fK6DT10MxER+vuFbYNvR6=cTN=sxmZNgg@mail.gmail.com> <20110922002235.53ae8ed70b92d9d325a79a62@canb.auug.org.au>
+	<CAFkjPTk0JWAYSJBC4fK6DT10MxER+vuFbYNvR6=cTN=sxmZNgg@mail.gmail.com>
+	<20110922002235.53ae8ed70b92d9d325a79a62@canb.auug.org.au>
+	<CAFkjPTmDk2BmF8U52Te=YojJsFCcz2bJPJG8X0mZFjqAho9TyQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:52243 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752324Ab1K3VDU convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 16:03:20 -0500
-In-Reply-To: <20110922002235.53ae8ed70b92d9d325a79a62@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__1_Dec_2011_10_39_33_+1100_T9cdOy+fsr6/SR5v"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAFkjPTmDk2BmF8U52Te=YojJsFCcz2bJPJG8X0mZFjqAho9TyQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Van Hensbergen <ericvh@gmail.com>
 Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Sep 21, 2011 at 9:22 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Eric,
->
-> On Wed, 21 Sep 2011 09:10:31 -0500 Eric Van Hensbergen <ericvh@gmail.=
-com> wrote:
->>
->> You can switch the v9fs tree to pull from the for-next branch of
->> github.com:ericvh/linux.git until kernel.org gets back. =A0Hopefully
->> that will resolve the reported merge conflict.
->
-> OK, I will switch to this tree from tomorrow - assuming that the real
-> Eric does't complain :-).
->
+--Signature=_Thu__1_Dec_2011_10_39_33_+1100_T9cdOy+fsr6/SR5v
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v9fs tree for-next branch is back on kernel.org:
-git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs.git for-next
+Hi Eric,
 
-Thanks,
-    -eric
+On Wed, 30 Nov 2011 15:02:58 -0600 Eric Van Hensbergen <ericvh@gmail.com> w=
+rote:
+>
+> v9fs tree for-next branch is back on kernel.org:
+> git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs.git for-next
+
+I have switched to that now.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__1_Dec_2011_10_39_33_+1100_T9cdOy+fsr6/SR5v
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO1r61AAoJEECxmPOUX5FEFuUQAIQ7RNDCcW7J1btw1RkIn4Sk
+lFQu5xXDHDr/dORubzR4Glt8nHmZTn5dxYn+LyW/WgaeERl+yq+e4xAVYnPAlXKU
+mZhqAU9TKP7w1C++unc8OJKm0MU4ADS8N4k7OjrqK5qHPI2aoRRW4coSaNwwUtLd
+Y+tireYsTUK+IOteOoCp7StP9N0/JwsB4qYo8/jaSJAFujFJWbongLnTClo5+tU8
+s5yLvrkfDRa95aiI2Hl/wiExeQUUKwhds7dYSj7nOeG2P57te2ro1hvctNZPmAt/
+xc7adqsQxwFZW6UFcGIT5kz5IDzqu9jQU/1rCsMQKnMgYUioeCDuPjj82SN/uWxu
+e7wgSclozBfQDpHKvGzt/71T4SkNWVUpd5dq8GhAyPmMaacidh9u2pIMYvG2q67e
+V8NZPTSFKq2nSveUR9jGZ5w46trUq3jijbLCBskCHovVMcGXlLkY0RFVeiTUTomy
+eHofmg3YrHS7UqV4qyiSgRXipChMHMnTz7rA72NsvCscQfwrg5Q2o6J++ROYvQbu
+Yv7PppAA9qM5cZFiqVwIkQT0wX9a/ym6/DzI1pB5bZuyToX677O8CaUpYaKqqV8p
+ThtbKirlzQ292vlOVoBWl+410WZC5cjs+Eu2sFblzgxPL5WwqqkIs3H9ho85ntdv
+mcsfBemFlrCbCLxytdpT
+=h14j
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__1_Dec_2011_10_39_33_+1100_T9cdOy+fsr6/SR5v--
