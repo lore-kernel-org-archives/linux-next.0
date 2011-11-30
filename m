@@ -1,50 +1,46 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the final tree (akpm
- tree related)
-Date: Tue, 29 Nov 2011 22:07:28 -0800
-Message-ID: <20111129220728.b3351335.akpm@linux-foundation.org>
-References: <20111130155226.b571cfd7887f03f9e8e1285b@canb.auug.org.au>
-	<20111130.004010.1075431174091251814.davem@davemloft.net>
+From: Richard Kuo <rkuo@codeaurora.org>
+Subject: Re: linux-next: manual merge of the vhost tree with the hexagon
+ tree
+Date: Wed, 30 Nov 2011 00:45:53 -0600
+Message-ID: <20111130064553.GA2393@codeaurora.org>
+References: <20111129142259.78d3e10678c8e9d8376d52aa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44081 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754262Ab1K3GGY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 01:06:24 -0500
-In-Reply-To: <20111130.004010.1075431174091251814.davem@davemloft.net>
+Received: from wolverine02.qualcomm.com ([199.106.114.251]:40573 "EHLO
+	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751820Ab1K3GyH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 01:54:07 -0500
+Content-Disposition: inline
+In-Reply-To: <20111129142259.78d3e10678c8e9d8376d52aa@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 30 Nov 2011 00:40:10 -0500 (EST) David Miller <davem@davemloft.net> wrote:
-
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 30 Nov 2011 15:52:26 +1100
+On Tue, Nov 29, 2011 at 02:22:59PM +1100, Stephen Rothwell wrote:
+> Hi Michael,
 > 
-> > And many more similar.
-> > 
-> > Caused (or exposed) by commit 9222aa56c0ce
-> > ("include/net/netprio_cgroup.h: various fixes") from the akpm tree.
-> > 
-> > I have reverted that commit for today.
+> Today's linux-next merge of the vhost tree got a conflict in
+> arch/hexagon/Kconfig between commit 5237bae0d8c9 ("various Kconfig
+> cleanup and old platform build code removal") from the hexagon tree and
+> commit4673ca8eb369  ("lib: move GENERIC_IOMAP to lib/Kconfig") from the
+> vhost tree.
 > 
-> Andrew, please submit networking bug fixes to the networking maintainers
-> in order to avoid problems like this in the future.
-> 
-> Unlike other subsystems, I guarentee to handle it within 24 hours, often
-> much faster.
-> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
+> -- 
 
-This is my attempt to address the issues I mentioned last week.  It is
-still under development and doesn't work yet.  I thought it did.
+I was figuring this would happen.  What would be the best way for me to
+fix this?  Maybe rebase my patches on top of the vhost tree?
 
-I'm now trying to get my brain around what that code is doing with
-Kconfig symbols and net_prio_subsys_id.  I'm suspecting it's all to
-make cgroup-subsys-within-a-module appear to work.
 
-afaict net_prio_subsys_id is an enum if CONFIG_NETPRIO_CGROUP=y and is
-an `extern int' when CONFIG_NETPRIO_CGROUP=m.  It's unclear to me why
-the extern int version or net_prio_subsys_id exists at all, really.
+Thanks,
+Richard Kuo
+
+
+
+-- 
+
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
