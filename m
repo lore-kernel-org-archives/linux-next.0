@@ -1,141 +1,54 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [osd-dev] [PATCH v3] ore: FIX breakage when MISC_FILESYSTEMS
- is not set
-Date: Wed, 30 Nov 2011 10:00:18 -0800
-Message-ID: <4ED66F32.6070303@xenotime.net>
-References: <20111124174358.d88f11c0ff700e5e6b3bf73b@canb.auug.org.au> <4ECE91F3.9010007@xenotime.net> <4ED422CC.60706@panasas.com> <4ED4238F.4090407@panasas.com> <4ED56C59.208@panasas.com> <4ED5803D.8030906@panasas.com>
+Subject: Re: linux-next: Tree for Nov 29 (drm)
+Date: Wed, 30 Nov 2011 10:18:47 -0800
+Message-ID: <4ED67387.90902@xenotime.net>
+References: <20111129152040.3040fe9780886ee0e066a131@canb.auug.org.au>	 <4ED5417C.1030908@xenotime.net> <1322673417.31541.1.camel@segulix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:57336 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1757690Ab1K3RBm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 12:01:42 -0500
-In-Reply-To: <4ED5803D.8030906@panasas.com>
+Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:43141 "HELO
+	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1757945Ab1K3RUI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 12:20:08 -0500
+In-Reply-To: <1322673417.31541.1.camel@segulix>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Boaz Harrosh <bharrosh@panasas.com>
-Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, Michal Marek <mmarek@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, NFS list <linux-nfs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Benny Halevy <bhalevy@tonian.com>, linux-next@vger.kernel.org, open-osd <osd-dev@open-osd.org>
+To: =?ISO-8859-1?Q?S=E9rgio_Basto?= <sergio@serjux.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
-On 11/29/2011 05:00 PM, Boaz Harrosh wrote:
-> On 11/29/2011 03:35 PM, Boaz Harrosh wrote:
+On 11/30/2011 09:16 AM, S=E9rgio Basto wrote:
+> Randy, not dri-devel@lists.sourceforge.net, anymore=20
+> now is dri-devel@lists.freedesktop.org
+
+Argh, thanks.
+That was thunderbird trying to be too helpful. :(
+
+
+> On Tue, 2011-11-29 at 12:33 -0800, Randy Dunlap wrote:=20
+>> On 11/28/2011 08:20 PM, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20111128:
+>>>
+>>> The drm tree lost its build failure but gained another for which I
+>>> applied a patch.
 >>
->> As Reported by Randy Dunlap
 >>
-> 
-> Randy Hi
-> 
-> I think I prefer this simple solution for now, instead of
-> the complete move of the ore to lib/
-
-sounds good to me.
-
-> It solves the warning problem you reported and let us
-> keep the convenience of selecting everything in one place. As
-> was said there are more dependencies on the way.
-> 
-> I will look into the additional ASYNC_CORE and XOR_BLOCKS selects
-> you mentioned. For some reason it works but I'll try to find a
-> way to break it or prove It is sound.
-> 
-> Please advise?
-
-I'm not terribly worried about them.  If they work, that's fine.
-If they break some day, it's easy to fix.
-or if you prefer to fix it now, you could add something like:
-
-# for ASYNC_XOR selects:
-	select ASYNC_CORE
-	select XOR_BLOCKS
-
-Either way is OK with me.
-
-
-Thanks.
-
-> Thanks
-> Heart
-> 
->> When MISC_FILESYSTEMS is not enabled:
+>> ERROR: "drm_helper_get_fb_bpp_depth" [drivers/gpu/drm/vmwgfx/vmwgfx.=
+ko] undefined!
 >>
->> fs/built-in.o: In function `objio_alloc_io_state':
->> objio_osd.c:(.text+0xcb525): undefined reference to `ore_get_rw_state'
->> fs/built-in.o: In function `_write_done':
->> objio_osd.c:(.text+0xcb58d): undefined reference to `ore_check_io'
->> fs/built-in.o: In function `_read_done':
->> ...
+>> Full x86_64 randconfig file is attached.
 >>
->> When MISC_FILESYSTEMS, which is more of a GUI thing then anything else,
->> is not selected. exofs/Kconfig is never examined during Kconfig,
->> and it can not do it's magic stuff to automatically select everything
->> needed.
->>
->> We must split exofs/Kconfig in two. The ore one is always included.
->> And the exofs one is left in it's old place in the menu.
->>
->> Signed-off-by: Boaz Harrosh <bharrosh@panasas.com>
->> ---
->>  fs/Kconfig           |    2 ++
->>  fs/exofs/Kconfig     |   11 -----------
->>  fs/exofs/ore.Kconfig |   12 ++++++++++++
->>  3 files changed, 14 insertions(+), 11 deletions(-)
->>  create mode 100644 fs/exofs/ore.Kconfig
->>
->> diff --git a/fs/Kconfig b/fs/Kconfig
->> index 5f4c45d..fd7bfef 100644
->> --- a/fs/Kconfig
->> +++ b/fs/Kconfig
->> @@ -218,6 +218,8 @@ source "fs/exofs/Kconfig"
->>  
->>  endif # MISC_FILESYSTEMS
->>  
->> +source "fs/exofs/ore.Kconfig"
->> +
->>  menuconfig NETWORK_FILESYSTEMS
->>  	bool "Network File Systems"
->>  	default y
->> diff --git a/fs/exofs/Kconfig b/fs/exofs/Kconfig
->> index da42f32..86194b2 100644
->> --- a/fs/exofs/Kconfig
->> +++ b/fs/exofs/Kconfig
->> @@ -1,14 +1,3 @@
->> -# Note ORE needs to "select ASYNC_XOR". So Not to force multiple selects
->> -# for every ORE user we do it like this. Any user should add itself here
->> -# at the "depends on EXOFS_FS || ..." with an ||. The dependencies are
->> -# selected here, and we default to "ON". So in effect it is like been
->> -# selected by any of the users.
->> -config ORE
->> -	tristate
->> -	depends on EXOFS_FS || PNFS_OBJLAYOUT
->> -	select ASYNC_XOR
->> -	default SCSI_OSD_ULD
->> -
->>  config EXOFS_FS
->>  	tristate "exofs: OSD based file system support"
->>  	depends on SCSI_OSD_ULD
->> diff --git a/fs/exofs/ore.Kconfig b/fs/exofs/ore.Kconfig
->> new file mode 100644
->> index 0000000..1ca7fb7
->> --- /dev/null
->> +++ b/fs/exofs/ore.Kconfig
->> @@ -0,0 +1,12 @@
->> +# ORE - Objects Raid Engine (libore.ko)
->> +#
->> +# Note ORE needs to "select ASYNC_XOR". So Not to force multiple selects
->> +# for every ORE user we do it like this. Any user should add itself here
->> +# at the "depends on EXOFS_FS || ..." with an ||. The dependencies are
->> +# selected here, and we default to "ON". So in effect it is like been
->> +# selected by any of the users.
->> +config ORE
->> +	tristate
->> +	depends on EXOFS_FS || PNFS_OBJLAYOUT
->> +	select ASYNC_XOR
->> +	default SCSI_OSD_ULD
-> 
-> --
+>> --------------------------------------------------------------------=
+----------
+>> -- _______________________________________________ Dri-devel mailing=
+ list Dri-devel@lists.sourceforge.net https://lists.sourceforge.net/lis=
+ts/listinfo/dri-devel
+>=20
 
 
--- 
+--=20
 ~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+*** Remember to use Documentation/SubmitChecklist when testing your cod=
+e ***
