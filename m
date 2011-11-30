@@ -1,47 +1,33 @@
-From: =?ISO-8859-1?Q?S=E9rgio?= Basto <sergio@serjux.com>
+From: Dave Airlie <airlied@gmail.com>
 Subject: Re: linux-next: Tree for Nov 29 (drm)
-Date: Wed, 30 Nov 2011 17:16:57 +0000
-Message-ID: <1322673417.31541.1.camel@segulix>
+Date: Wed, 30 Nov 2011 17:51:07 +0000
+Message-ID: <CAPM=9tzOQxGG8mL=WQiyDFddusmH05_ghALosks0_N=-UUCisA@mail.gmail.com>
 References: <20111129152040.3040fe9780886ee0e066a131@canb.auug.org.au>
-	 <4ED5417C.1030908@xenotime.net>
+	<4ED5417C.1030908@xenotime.net>
+	<1322673417.31541.1.camel@segulix>
+	<4ED67387.90902@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4ED5417C.1030908@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:60926 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750951Ab1K3RvI convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 12:51:08 -0500
+In-Reply-To: <4ED67387.90902@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
-List-Id: linux-next.vger.kernel.org
+Cc: =?ISO-8859-1?Q?S=E9rgio_Basto?= <sergio@serjux.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
-Randy, not dri-devel@lists.sourceforge.net, anymore=20
-now is dri-devel@lists.freedesktop.org
+2011/11/30 Randy Dunlap <rdunlap@xenotime.net>:
+> On 11/30/2011 09:16 AM, S=E9rgio Basto wrote:
+>> Randy, not dri-devel@lists.sourceforge.net, anymore
+>> now is dri-devel@lists.freedesktop.org
+>
+> Argh, thanks.
+> That was thunderbird trying to be too helpful. :(
 
-On Tue, 2011-11-29 at 12:33 -0800, Randy Dunlap wrote:=20
-> On 11/28/2011 08:20 PM, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > Changes since 20111128:
-> >=20
-> > The drm tree lost its build failure but gained another for which I
-> > applied a patch.
->=20
->=20
-> ERROR: "drm_helper_get_fb_bpp_depth" [drivers/gpu/drm/vmwgfx/vmwgfx.k=
-o] undefined!
->=20
-> Full x86_64 randconfig file is attached.
->=20
-> ---------------------------------------------------------------------=
----------
-> All the data continuously generated in your IT infrastructure=20
-> contains a definitive record of customers, application performance,=20
-> security threats, fraudulent activity, and more. Splunk takes this=20
-> data and makes sense of it. IT sense. And common sense.
-> http://p.sf.net/sfu/splunk-novd2d
-> -- _______________________________________________ Dri-devel mailing =
-list Dri-devel@lists.sourceforge.net https://lists.sourceforge.net/list=
-s/listinfo/dri-devel
+Ah well I got it and it should be fixed now.
 
---=20
-S=C3=A9rgio M. B.
+Dave.
