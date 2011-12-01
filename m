@@ -1,34 +1,46 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: linux-next: build failure after merge of the v9fs tree
-Date: Thu, 01 Dec 2011 08:57:06 -0800
-Message-ID: <1322758626.30801.5.camel@joe2Laptop>
-References: <20111201120215.4320090bef1da653abad3392@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] exit: fix writeback build errors
+Date: Thu, 01 Dec 2011 10:19:11 -0800
+Message-ID: <4ED7C51F.3090007@xenotime.net>
+References: <20111201155342.45847a6edcf25cde48c4a6de@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111201120215.4320090bef1da653abad3392@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:38006 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753702Ab1LARU1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Dec 2011 12:20:27 -0500
+In-Reply-To: <20111201155342.45847a6edcf25cde48c4a6de@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wu Fengguang <fengguang.wu@intel.com>
 
-On Thu, 2011-12-01 at 12:02 +1100, Stephen Rothwell wrote:
-> Hi Eric,
-> 
-> After merging the v9fs tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> ERROR: "_p9_debug" [net/9p/9pnet_virtio.ko] undefined!
-> ERROR: "_p9_debug" [net/9p/9pnet_rdma.ko] undefined!
-> ERROR: "_p9_debug" [net/9p/9pnet.ko] undefined!
-> 
-> Caused by commit be9e4aa9e783 ("9p: Reduce object size with
-> CONFIG_NET_9P_DEBUG").
-> 
-> I have used the v9fs tree from next-20111130 for today.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Thanks Stephen.
+Fix build errors:
+kernel/exit.c:1039:3: error: 'dirty_throttle_leaks' undeclared (first use in this function)
+kernel/exit.c:1039:3: warning: type defaults to 'int' in type name
+kernel/exit.c:1039:3: warning: initialization makes pointer from integer without a cast
+kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
+kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
+kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
+kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
 
-Clearly I didn't sufficiently compile test this.
-Sorry.  I'll resubmit.
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Wu Fengguang <fengguang.wu@intel.com>
+---
+ kernel/exit.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20111201.orig/kernel/exit.c
++++ linux-next-20111201/kernel/exit.c
+@@ -51,6 +51,7 @@
+ #include <trace/events/sched.h>
+ #include <linux/hw_breakpoint.h>
+ #include <linux/oom.h>
++#include <linux/writeback.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/unistd.h>
