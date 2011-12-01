@@ -1,39 +1,34 @@
-From: Josh Boyer <jwboyer@gmail.com>
-Subject: Re: linux-next: manual merge of the trivial tree with the 4xx tree
-Date: Thu, 1 Dec 2011 10:39:43 -0500
-Message-ID: <CA+5PVA5Ww-_CHTaTLSVih9D6sihrD0TGwHGwGbG5-tDZPcer2w@mail.gmail.com>
-References: <20111201131604.fa4e2fe14d5f370924592939@canb.auug.org.au>
+From: Joe Perches <joe@perches.com>
+Subject: Re: linux-next: build failure after merge of the v9fs tree
+Date: Thu, 01 Dec 2011 08:57:06 -0800
+Message-ID: <1322758626.30801.5.camel@joe2Laptop>
+References: <20111201120215.4320090bef1da653abad3392@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:59706 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754766Ab1LAPjo convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Dec 2011 10:39:44 -0500
-In-Reply-To: <20111201131604.fa4e2fe14d5f370924592939@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111201120215.4320090bef1da653abad3392@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jkosina@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tanmay Inamdar <tinamdar@apm.com>, Paul Bolle <pebolle@tiscali.nl>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Nov 30, 2011 at 9:16 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Jiri,
->
-> Today's linux-next merge of the trivial tree got a conflict in
-> arch/powerpc/platforms/40x/Kconfig between commit d5b9ee7b514e
-> ("powerpc/40x: Add APM8018X SOC support") from the 4xx tree and commi=
-t
-> ff5f483f3091 ("powerpc: 4xx: remove commented out Kconfig entries") f=
-rom
-> the trivial tree.
->
-> Just context changes. =A0I fixed it up (see below) and can carry the =
-fix as
-> necessary.
+On Thu, 2011-12-01 at 12:02 +1100, Stephen Rothwell wrote:
+> Hi Eric,
+> 
+> After merging the v9fs tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> ERROR: "_p9_debug" [net/9p/9pnet_virtio.ko] undefined!
+> ERROR: "_p9_debug" [net/9p/9pnet_rdma.ko] undefined!
+> ERROR: "_p9_debug" [net/9p/9pnet.ko] undefined!
+> 
+> Caused by commit be9e4aa9e783 ("9p: Reduce object size with
+> CONFIG_NET_9P_DEBUG").
+> 
+> I have used the v9fs tree from next-20111130 for today.
 
-That seems correct to me.  If you don't mind carrying it, I'd appreciat=
-e it.
+Thanks Stephen.
 
-josh
+Clearly I didn't sufficiently compile test this.
+Sorry.  I'll resubmit.
