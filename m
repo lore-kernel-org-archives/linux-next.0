@@ -1,50 +1,37 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: linux-next not booting on snowball
-Date: Thu, 1 Dec 2011 14:03:34 -0500 (EST)
-Message-ID: <alpine.LFD.2.02.1112011400380.2357@xanadu.home>
-References: <4ED79454.1090304@linaro.org> <20111201145801.GB2103@sirena.org.uk> <4ED79E9F.7060103@linaro.org>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: RE: linux-next: manual merge of the staging tree with the hid tree
+Date: Thu, 1 Dec 2011 20:46:24 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1112012045540.18207@pobox.suse.cz>
+References: <20111201143952.9aea929b16c7212570fc1bd2@canb.auug.org.au> <20111201035113.GA7647@kroah.com> <6E21E5352C11B742B20C142EB499E0481AA7B139@TK5EX14MBXC126.redmond.corp.microsoft.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:57881 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755759Ab1LATDi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Dec 2011 14:03:38 -0500
-Received: by qadb14 with SMTP id b14so575733qad.19
-        for <linux-next@vger.kernel.org>; Thu, 01 Dec 2011 11:03:38 -0800 (PST)
-In-Reply-To: <4ED79E9F.7060103@linaro.org>
+Received: from cantor2.suse.de ([195.135.220.15]:59958 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752466Ab1LATq0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 1 Dec 2011 14:46:26 -0500
+In-Reply-To: <6E21E5352C11B742B20C142EB499E0481AA7B139@TK5EX14MBXC126.redmond.corp.microsoft.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Stephen Warren <swarren@nvidia.com>, Kevin Hilman <khilman@ti.com>, Jamie Iles <jamie@jamieiles.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: KY Srinivasan <kys@microsoft.com>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Meyer <thomas@m3y3r.de>
 
-On Thu, 1 Dec 2011, Daniel Lezcano wrote:
+On Thu, 1 Dec 2011, KY Srinivasan wrote:
 
-> On 12/01/2011 03:58 PM, Mark Brown wrote:
-> > On Thu, Dec 01, 2011 at 03:51:00PM +0100, Daniel Lezcano wrote:
-> > 
-> >> commit 549158d2ab01e8370d2773044fe09738a26f7086
-> >> Author: Nicolas Pitre <nicolas.pitre@linaro.org>
-> >> Date:   Thu Aug 25 00:35:59 2011 -0400
-> > 
-> >>     ARM: move iotable mappings within the vmalloc region
-> >>    
-> > 
-> > I recently reported an issue with this patch on s3c64xx which I'm
-> > avoiding with the below change, I believe Nicolas folded this in to his
-> > code but it's not propagated into -next yet.
-> > 
-[...]
+> > Ok, that's fine, Jiri, want me to just delete the driver from my tree
+> > now to remove any of these conflicts?
 > 
-> Thanks for the patch Mark. I applied it and tried to boot but the kernel
-> is still stuck on the same place :(
+> Yesterday (Nov 30th, 2011) I had sent a patch for the mouse driver to 
+> fix a bug that got introduced during the recent cleanup to exit staging. 
+> This patch was against the staging tree that Greg is planning to delete. 
+> It is a trivial patch; can you pick this up for the hid tree. If you 
+> prefer, I could rebase the patch against your tree. Let me know.
 
-Please have a look at this email:
+I will pick the one you have sent against staging tree, no need for you to 
+respin.
 
-http://article.gmane.org/gmane.linux.ports.arm.kernel/141386
+Thanks,
 
-There are two patches in there which should help you get some debugging 
-info out.
-
-
-Nicolas
+-- 
+Jiri Kosina
+SUSE Labs
