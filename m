@@ -1,61 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Sept 21
-Date: Thu, 1 Dec 2011 10:39:33 +1100
-Message-ID: <20111201103933.2d4ba55b53b10080939c3723@canb.auug.org.au>
-References: <20110921155850.09c858bb38205bb2cc0c8f0a@canb.auug.org.au>
-	<CAFkjPTk0JWAYSJBC4fK6DT10MxER+vuFbYNvR6=cTN=sxmZNgg@mail.gmail.com>
-	<20110922002235.53ae8ed70b92d9d325a79a62@canb.auug.org.au>
-	<CAFkjPTmDk2BmF8U52Te=YojJsFCcz2bJPJG8X0mZFjqAho9TyQ@mail.gmail.com>
+Subject: linux-next: build failure after merge of the v9fs tree
+Date: Thu, 1 Dec 2011 12:02:15 +1100
+Message-ID: <20111201120215.4320090bef1da653abad3392@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__1_Dec_2011_10_39_33_+1100_T9cdOy+fsr6/SR5v"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFkjPTmDk2BmF8U52Te=YojJsFCcz2bJPJG8X0mZFjqAho9TyQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Thu__1_Dec_2011_12_02_15_+1100_wh492BBl=gaUqd5L"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:51925 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753377Ab1LABC2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 20:02:28 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
 
---Signature=_Thu__1_Dec_2011_10_39_33_+1100_T9cdOy+fsr6/SR5v
+--Signature=_Thu__1_Dec_2011_12_02_15_+1100_wh492BBl=gaUqd5L
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Eric,
 
-On Wed, 30 Nov 2011 15:02:58 -0600 Eric Van Hensbergen <ericvh@gmail.com> w=
-rote:
->
-> v9fs tree for-next branch is back on kernel.org:
-> git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs.git for-next
+After merging the v9fs tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I have switched to that now.
+ERROR: "_p9_debug" [net/9p/9pnet_virtio.ko] undefined!
+ERROR: "_p9_debug" [net/9p/9pnet_rdma.ko] undefined!
+ERROR: "_p9_debug" [net/9p/9pnet.ko] undefined!
 
+Caused by commit be9e4aa9e783 ("9p: Reduce object size with
+CONFIG_NET_9P_DEBUG").
+
+I have used the v9fs tree from next-20111130 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__1_Dec_2011_10_39_33_+1100_T9cdOy+fsr6/SR5v
+--Signature=_Thu__1_Dec_2011_12_02_15_+1100_wh492BBl=gaUqd5L
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO1r61AAoJEECxmPOUX5FEFuUQAIQ7RNDCcW7J1btw1RkIn4Sk
-lFQu5xXDHDr/dORubzR4Glt8nHmZTn5dxYn+LyW/WgaeERl+yq+e4xAVYnPAlXKU
-mZhqAU9TKP7w1C++unc8OJKm0MU4ADS8N4k7OjrqK5qHPI2aoRRW4coSaNwwUtLd
-Y+tireYsTUK+IOteOoCp7StP9N0/JwsB4qYo8/jaSJAFujFJWbongLnTClo5+tU8
-s5yLvrkfDRa95aiI2Hl/wiExeQUUKwhds7dYSj7nOeG2P57te2ro1hvctNZPmAt/
-xc7adqsQxwFZW6UFcGIT5kz5IDzqu9jQU/1rCsMQKnMgYUioeCDuPjj82SN/uWxu
-e7wgSclozBfQDpHKvGzt/71T4SkNWVUpd5dq8GhAyPmMaacidh9u2pIMYvG2q67e
-V8NZPTSFKq2nSveUR9jGZ5w46trUq3jijbLCBskCHovVMcGXlLkY0RFVeiTUTomy
-eHofmg3YrHS7UqV4qyiSgRXipChMHMnTz7rA72NsvCscQfwrg5Q2o6J++ROYvQbu
-Yv7PppAA9qM5cZFiqVwIkQT0wX9a/ym6/DzI1pB5bZuyToX677O8CaUpYaKqqV8p
-ThtbKirlzQ292vlOVoBWl+410WZC5cjs+Eu2sFblzgxPL5WwqqkIs3H9ho85ntdv
-mcsfBemFlrCbCLxytdpT
-=h14j
+iQIcBAEBCAAGBQJO1tIXAAoJEECxmPOUX5FEzBIP/i5mZjfVBh0dkl9CULdvw65W
+qzu0qwzfhHA42BWWF78Mea3IwHmkKo0n4GQEFZl/pQ2oU1hOyG8YGZt+QbpDCno/
+7HXMS+YI+0IlcmT/eJa/C+ePkHa+t2S/vHoHp2MiW4xpGPuTc4vUIyWczJy6keHg
+TAqNMLObgNBVj76dXiwyvhIb+0oNMOd5lNmnpJjH9Cp+QXIuI1W7U69joWidPLMJ
+WIOk5YT0QhWYbf/IrzBTKbJ29zxjODACQjVi4T/+2e+NF3D4+2ZR07xOkg9xN/8k
+DE5QthVt2/Xm097EV8dbVg/W73J4bo5JZuJoN12jXHkzUVdjVTET9cfAm4j81Kw+
+exWgHFeXUiTD1r2ZTvfIQRVdOOJbA1nDOA0xCqOgLzm18JBz7Bpf/DeihpzwegVL
+O+eky7LGdMzKvAXZecy+uzBQaXe0YrlH0kTM2MOe0Ev7E3z3hrYdlijfTOBxtcIe
+Xg3NfMhwVCnalFx6OudObxrkrNVKgcC0nsx0HH/s/xzIjkX/lUGHepxUBhx/e1pN
+FzuHrwI1XDq+Z6gEoZeRQm35h751+YJv/ImOydZLZMzsDk0UeYXSQjkif2yqk0V0
++9Y7TnBFdFT7q8leJCmMBzvoIgedAVK7nWmubykpVHBduk4Tx1/t4yAbsQgBnj/K
+oUgB1bEaKw4q5x1F+P4u
+=zdCI
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__1_Dec_2011_10_39_33_+1100_T9cdOy+fsr6/SR5v--
+--Signature=_Thu__1_Dec_2011_12_02_15_+1100_wh492BBl=gaUqd5L--
