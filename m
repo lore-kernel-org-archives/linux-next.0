@@ -1,93 +1,127 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the 4xx tree
-Date: Thu, 1 Dec 2011 13:16:04 +1100
-Message-ID: <20111201131604.fa4e2fe14d5f370924592939@canb.auug.org.au>
+From: Robert Hancock <hancockrwd@gmail.com>
+Subject: Re: ERROR: end_request: I/O error, dev fd0, sector 0
+Date: Wed, 30 Nov 2011 20:25:03 -0600
+Message-ID: <CADLC3L1y_Z1Ui-WdNfWXF232TG+EiDGSxOzi1NrMHOxd5V9CiA@mail.gmail.com>
+References: <CA+icZUVoiWrtwB9Yw2a-2DqKO=24dfm0JoaTCBwftkRPK2E0QQ@mail.gmail.com>
+	<4ED11933.2000108@gmail.com>
+	<CA+icZUVhxHxoED2P7=kYqxYyg-8s3am4PSAvZLE8YSYAAHpaqA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__1_Dec_2011_13_16_04_+1100_mY9YfupVwUnIju5Q"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:47467 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752479Ab1LACQT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 21:16:19 -0500
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:38637 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753377Ab1LACZE convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 21:25:04 -0500
+In-Reply-To: <CA+icZUVhxHxoED2P7=kYqxYyg-8s3am4PSAvZLE8YSYAAHpaqA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tanmay Inamdar <tinamdar@apm.com>, Josh Boyer <jwboyer@gmail.com>, Paul Bolle <pebolle@tiscali.nl>
+To: sedat.dilek@gmail.com
+Cc: Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
---Signature=_Thu__1_Dec_2011_13_16_04_+1100_mY9YfupVwUnIju5Q
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, Nov 27, 2011 at 7:52 AM, Sedat Dilek <sedat.dilek@googlemail.co=
+m> wrote:
+> On Sat, Nov 26, 2011 at 5:52 PM, Robert Hancock <hancockrwd@gmail.com=
+> wrote:
+>> On 11/25/2011 06:53 AM, Sedat Dilek wrote:
+>>>
+>>> Hi,
+>>>
+>>> I am watching this issue for a long while, due to my
+>>> floppy-blacklist.conf file since next-20110603.
+>>>
+>>> The bad: The boot-process stalls for approx 10-13 secs when booting
+>>> into my Debian/sid i386 system.
+>>>
+>>> # dmesg | grep -A1 -B1 "end_request: I/O error, dev fd0, sector 0"
+>>> [ =A0 =A02.422854] sd 2:0:0:0: [sdb] Attached SCSI disk
+>>> [ =A0 15.289939] end_request: I/O error, dev fd0, sector 0
+>>> [ =A0 15.342914] EXT4-fs (sda5): mounted filesystem with ordered da=
+ta
+>>> mode. Opts: (null)
+>>>
+>>> The funny part is my IBM laptop has no physical floppy drive!
+>>>
+>>> # dmesg | egrep -i 'floppy|fd0'
+>>> [ =A0 =A00.726358] Floppy drive(s): fd0 is 1.44M
+>>> [ =A0 15.289939] end_request: I/O error, dev fd0, sector 0
+>>>
+>>> If I blacklist "floppy" kernel-module, the boot-process is as expec=
+ted
+>>> without the above mentionned delay.
+>>>
+>>> [ /etc/modprobe.d/floppy-blacklist.conf ]
+>>> # This file blacklists the floppy driver.
+>>> #
+>>> # XXX: Workaround: My IBM ThinkPad T40p (model 2374SG6) notebook ha=
+s
+>>> no physical FDD
+>>> # dmesg from linux-next (next-20110603) says:
+>>> # [ =A0 =A00.755294] Floppy drive(s): fd0 is 1.44M
+>>> # [ =A0 15.238507] end_request: I/O error, dev fd0, sector 0
+>>> blacklist floppy
+>>> - EOF -
+>>>
+>>> I searched for the line and found bool blk_update_request() in
+>>> block/blk-core.c file (see [1]).
+>>>
+>>> I have attached kern.log and dmesg.
+>>>
+>>> Hope this helps to narrow down the issue.
+>>
+>> It looks like your laptop's BIOS indicates it has a floppy controlle=
+r that's
+>> active:
+>>
+>> Nov 25 11:00:32 tbox kernel: [ =A0 =A00.060821] pnp 00:09: [io =A00x=
+03f0-0x03f5]
+>> Nov 25 11:00:32 tbox kernel: [ =A0 =A00.060825] pnp 00:09: [io =A00x=
+03f7]
+>> Nov 25 11:00:32 tbox kernel: [ =A0 =A00.060828] pnp 00:09: [irq 6]
+>> Nov 25 11:00:32 tbox kernel: [ =A0 =A00.060831] pnp 00:09: [dma 2]
+>> Nov 25 11:00:32 tbox kernel: [ =A0 =A00.060892] pnp 00:09: Plug and =
+Play ACPI
+>> device, IDs PNP0700 (active)
+>>
+>> That's presumably why the floppy driver ends up being loaded. And ap=
+parently
+>> it does have a floppy controller, since the floppy driver seems able=
+ to talk
+>> to it. Maybe that model of laptop had an optional bay-mounted floppy=
+ drive
+>> or something?
+>>
+>
+> Could be... next to CD_ROM bay maybe.
+>
+>> I'm not sure there's a workaround for this at the kernel level, sinc=
+e the
+>> kernel probably can't determine if there's actually a floppy drive i=
+nstalled
+>> without trying to read from it (which is likely being triggered by p=
+artition
+>> probing or something). The read error will be what is triggering the=
+ message
+>> you saw.
+>>
+>> Is there a BIOS option to disable the floppy controller?
+>>
+>
+> I have disabled "Floppy-Drive" in BIOS setup now (was set to
+> "enabled"), but I have still the modprobe backlist for floppy
+> activated.
+>
+> Can you explain the stalling of ***10-12 seconds*** with a wrong FDD
+> BIOS setting?
+> That's really a long duration, with systemd my boot-process takes
+> approx 15-18 seconds.
 
-Hi Jiri,
+Well, I can imagine that the floppy request takes that long to time
+out or fail. I'm not sure why this would be delaying the boot process,
+however.
 
-Today's linux-next merge of the trivial tree got a conflict in
-arch/powerpc/platforms/40x/Kconfig between commit d5b9ee7b514e
-("powerpc/40x: Add APM8018X SOC support") from the 4xx tree and commit
-ff5f483f3091 ("powerpc: 4xx: remove commented out Kconfig entries") from
-the trivial tree.
+>
+> Attached is the new dmesg output (kernel-config was not changed).
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/powerpc/platforms/40x/Kconfig
-index 8883f2c,bd69cf8..0000000
---- a/arch/powerpc/platforms/40x/Kconfig
-+++ b/arch/powerpc/platforms/40x/Kconfig
-@@@ -172,28 -148,3 +148,12 @@@ config IBM405_ERR7
-  # All 40x-based cores, up until the 405GPR and 405EP have this errata.
-  config IBM405_ERR51
-  	bool
- +
-- #config BIOS_FIXUP
-- #	bool
-- #	depends on BUBINGA || EP405 || SYCAMORE || WALNUT
-- #	default y
--=20
-- #config PPC4xx_DMA
-- #	bool "PPC4xx DMA controller support"
-- #	depends on 4xx
--=20
-- #config PPC4xx_EDMA
-- #	bool
-- #	depends on !STB03xxx && PPC4xx_DMA
-- #	default y
-- #
--=20
- +config APM8018X
- +	bool "APM8018X"
- +	depends on 40x
- +	default n
- +	select PPC40x_SIMPLE
- +	help
- +	  This option enables support for the AppliedMicro APM8018X evaluation
- +	  board.
--=20
-
---Signature=_Thu__1_Dec_2011_13_16_04_+1100_mY9YfupVwUnIju5Q
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO1uNkAAoJEECxmPOUX5FEY2oP/jGALnnEPdWU/HklxTY8K2vi
-R4k+gEesBRy0Vo8mBzPY9cxIU/NZQRtkhJETc2P6PSXnNGMuTj/Eqg2dFfTBknNS
-AuBW6tr73Ey087qV+Q+c7U6ckSix3VjSduDHgC46CjndbEkax0azeAsGTgNP1YHp
-MtqLA4oBLI/dRURP808t+XSrAY7KWqEwYe2VABLLafz2h06z9iMp7msnFky4IFJV
-t2OPTH+LBPirvByzuGtTBx4x16vWwMA5SiP0lliC8AYvly0tUsqKgx8H4nn5Lu6c
-4yLbDPq8fpTn4w9I7MD0z8G+Z6l7XnAwS5JYvG72vw2k1CII+jr1zQbTwD0fITVD
-cB5oQg4CjFcrwdPK0bWFHI31TlfROFOiaLWcoloFMltG68cAConqaojORi71PFIx
-QYFUYCjUTXmamQ5UfpKKkPmtJT36E7FqQ1ItqBNXOjZNR5iM52SQzfbtfe0QxE56
-XmeZZXb8E72cvNjVML3EVVnad+sSa3hiriOh8GVYkvitViVKyuzXoTrgrXAswqWP
-uESU5tstpVxo65J/3jr5WfTq0QNZlH5+6MksC7QKBFPsWCbMjs73Jxc334VBlRgp
-gh8IfdX5BKq1TDOKI18AFF2PjcWlSacbQeVFBvg64L4egoNXEi2+s1T+W2TrC1jT
-8qT8b0OYIKZ8jDP8YEUR
-=7ZE+
------END PGP SIGNATURE-----
-
---Signature=_Thu__1_Dec_2011_13_16_04_+1100_mY9YfupVwUnIju5Q--
+It looks like the BIOS is no longer reporting the floppy controller as
+present, so hopefully you shouldn't need the workaround.
