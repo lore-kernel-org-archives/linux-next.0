@@ -1,40 +1,40 @@
-From: Jiri Kosina <jikos@jikos.cz>
-Subject: Re: linux-next: manual merge of the staging tree with the hid tree
-Date: Thu, 1 Dec 2011 20:42:50 +0100 (CET)
-Message-ID: <alpine.LRH.2.00.1112012042360.28290@twin.jikos.cz>
-References: <20111201143952.9aea929b16c7212570fc1bd2@canb.auug.org.au> <20111201035113.GA7647@kroah.com> <20111201183956.GA32559@kroah.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: merge conflict resolution for pm-freezer
+Date: Thu, 1 Dec 2011 22:42:57 +0100
+Message-ID: <201112012242.58090.rjw@sisk.pl>
+References: <20111128233055.GF3858@google.com> <201111302051.54501.rjw@sisk.pl> <20111201185322.GC13173@google.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from twin.jikos.cz ([89.185.236.188]:58600 "EHLO twin.jikos.cz"
+Received: from ogre.sisk.pl ([217.79.144.158]:38082 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751704Ab1LAUEL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 1 Dec 2011 15:04:11 -0500
-In-Reply-To: <20111201183956.GA32559@kroah.com>
+	id S1754348Ab1LAVkE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 1 Dec 2011 16:40:04 -0500
+In-Reply-To: <20111201185322.GC13173@google.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>, Thomas Meyer <thomas@m3y3r.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: sfr@canb.auug.org.au, linux-pm@vger.kernel.org, linux-next@vger.kernel.org
 
-On Thu, 1 Dec 2011, Greg KH wrote:
-
-> > > Today's linux-next merge of the staging tree got a conflict in
-> > > drivers/hid/hid-hyperv.c between commit b95f5bcb811e ("HID: Move the
-> > > hid-hyperv driver out of staging") from the hid tree and various commits
-> > > from the staging tree (this was drivers/staging/hv/hv_mouse.c).
-> > > 
-> > > The commit message says that all the changes that happened when this file
-> > > moved from staging have also been applied to the staging file, so I just
-> > > used the version from the hid tree.
-> > 
-> > Ok, that's fine, Jiri, want me to just delete the driver from my tree
-> > now to remove any of these conflicts?
+On Thursday, December 01, 2011, Tejun Heo wrote:
+> Hello, Rafael.  (Sorry about the delay).
 > 
-> I've removed it from my tree now.
+> On Wed, Nov 30, 2011 at 08:51:54PM +0100, Rafael J. Wysocki wrote:
+> > > > Rafael, please feel free to pull or resolve in any way you see fit.
+> > > 
+> > > Well, could you please post a fix patch on top of my pm-freezer branch?
+> > > That would be the most convenient way to me. :-)
+> > 
+> > No, that won't work.  I think I'll resolve the conflict when merging pm-freezer
+> > into pm-for-linus later.
+> 
+> Heh, yeah, I was a bit confused.  If you don't want to pull it
+> directly, I think the best way would be merging and then comparing the
+> two trees.
 
-Yes, I think it's the proper thing to do now.
+Can you please double check if cgroup_freezer.c is correct in my linux-next
+branch?
 
-Thanks,
-
--- 
-Jiri Kosina
+Rafael
