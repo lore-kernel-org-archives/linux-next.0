@@ -1,127 +1,61 @@
-From: Robert Hancock <hancockrwd@gmail.com>
-Subject: Re: ERROR: end_request: I/O error, dev fd0, sector 0
-Date: Wed, 30 Nov 2011 20:25:03 -0600
-Message-ID: <CADLC3L1y_Z1Ui-WdNfWXF232TG+EiDGSxOzi1NrMHOxd5V9CiA@mail.gmail.com>
-References: <CA+icZUVoiWrtwB9Yw2a-2DqKO=24dfm0JoaTCBwftkRPK2E0QQ@mail.gmail.com>
-	<4ED11933.2000108@gmail.com>
-	<CA+icZUVhxHxoED2P7=kYqxYyg-8s3am4PSAvZLE8YSYAAHpaqA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the hid tree
+Date: Thu, 1 Dec 2011 14:39:52 +1100
+Message-ID: <20111201143952.9aea929b16c7212570fc1bd2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__1_Dec_2011_14_39_52_+1100_E7+8XVwWkvx.A0Y3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:38637 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753377Ab1LACZE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 21:25:04 -0500
-In-Reply-To: <CA+icZUVhxHxoED2P7=kYqxYyg-8s3am4PSAvZLE8YSYAAHpaqA@mail.gmail.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:40838 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753660Ab1LADkE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2011 22:40:04 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>, Thomas Meyer <thomas@m3y3r.de>, Jiri Kosina <jikos@jikos.cz>
 
-On Sun, Nov 27, 2011 at 7:52 AM, Sedat Dilek <sedat.dilek@googlemail.co=
-m> wrote:
-> On Sat, Nov 26, 2011 at 5:52 PM, Robert Hancock <hancockrwd@gmail.com=
-> wrote:
->> On 11/25/2011 06:53 AM, Sedat Dilek wrote:
->>>
->>> Hi,
->>>
->>> I am watching this issue for a long while, due to my
->>> floppy-blacklist.conf file since next-20110603.
->>>
->>> The bad: The boot-process stalls for approx 10-13 secs when booting
->>> into my Debian/sid i386 system.
->>>
->>> # dmesg | grep -A1 -B1 "end_request: I/O error, dev fd0, sector 0"
->>> [ =A0 =A02.422854] sd 2:0:0:0: [sdb] Attached SCSI disk
->>> [ =A0 15.289939] end_request: I/O error, dev fd0, sector 0
->>> [ =A0 15.342914] EXT4-fs (sda5): mounted filesystem with ordered da=
-ta
->>> mode. Opts: (null)
->>>
->>> The funny part is my IBM laptop has no physical floppy drive!
->>>
->>> # dmesg | egrep -i 'floppy|fd0'
->>> [ =A0 =A00.726358] Floppy drive(s): fd0 is 1.44M
->>> [ =A0 15.289939] end_request: I/O error, dev fd0, sector 0
->>>
->>> If I blacklist "floppy" kernel-module, the boot-process is as expec=
-ted
->>> without the above mentionned delay.
->>>
->>> [ /etc/modprobe.d/floppy-blacklist.conf ]
->>> # This file blacklists the floppy driver.
->>> #
->>> # XXX: Workaround: My IBM ThinkPad T40p (model 2374SG6) notebook ha=
-s
->>> no physical FDD
->>> # dmesg from linux-next (next-20110603) says:
->>> # [ =A0 =A00.755294] Floppy drive(s): fd0 is 1.44M
->>> # [ =A0 15.238507] end_request: I/O error, dev fd0, sector 0
->>> blacklist floppy
->>> - EOF -
->>>
->>> I searched for the line and found bool blk_update_request() in
->>> block/blk-core.c file (see [1]).
->>>
->>> I have attached kern.log and dmesg.
->>>
->>> Hope this helps to narrow down the issue.
->>
->> It looks like your laptop's BIOS indicates it has a floppy controlle=
-r that's
->> active:
->>
->> Nov 25 11:00:32 tbox kernel: [ =A0 =A00.060821] pnp 00:09: [io =A00x=
-03f0-0x03f5]
->> Nov 25 11:00:32 tbox kernel: [ =A0 =A00.060825] pnp 00:09: [io =A00x=
-03f7]
->> Nov 25 11:00:32 tbox kernel: [ =A0 =A00.060828] pnp 00:09: [irq 6]
->> Nov 25 11:00:32 tbox kernel: [ =A0 =A00.060831] pnp 00:09: [dma 2]
->> Nov 25 11:00:32 tbox kernel: [ =A0 =A00.060892] pnp 00:09: Plug and =
-Play ACPI
->> device, IDs PNP0700 (active)
->>
->> That's presumably why the floppy driver ends up being loaded. And ap=
-parently
->> it does have a floppy controller, since the floppy driver seems able=
- to talk
->> to it. Maybe that model of laptop had an optional bay-mounted floppy=
- drive
->> or something?
->>
->
-> Could be... next to CD_ROM bay maybe.
->
->> I'm not sure there's a workaround for this at the kernel level, sinc=
-e the
->> kernel probably can't determine if there's actually a floppy drive i=
-nstalled
->> without trying to read from it (which is likely being triggered by p=
-artition
->> probing or something). The read error will be what is triggering the=
- message
->> you saw.
->>
->> Is there a BIOS option to disable the floppy controller?
->>
->
-> I have disabled "Floppy-Drive" in BIOS setup now (was set to
-> "enabled"), but I have still the modprobe backlist for floppy
-> activated.
->
-> Can you explain the stalling of ***10-12 seconds*** with a wrong FDD
-> BIOS setting?
-> That's really a long duration, with systemd my boot-process takes
-> approx 15-18 seconds.
+--Signature=_Thu__1_Dec_2011_14_39_52_+1100_E7+8XVwWkvx.A0Y3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Well, I can imagine that the floppy request takes that long to time
-out or fail. I'm not sure why this would be delaying the boot process,
-however.
+Hi Greg,
 
->
-> Attached is the new dmesg output (kernel-config was not changed).
+Today's linux-next merge of the staging tree got a conflict in
+drivers/hid/hid-hyperv.c between commit b95f5bcb811e ("HID: Move the
+hid-hyperv driver out of staging") from the hid tree and various commits
+from the staging tree (this was drivers/staging/hv/hv_mouse.c).
 
-It looks like the BIOS is no longer reporting the floppy controller as
-present, so hopefully you shouldn't need the workaround.
+The commit message says that all the changes that happened when this file
+moved from staging have also been applied to the staging file, so I just
+used the version from the hid tree.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__1_Dec_2011_14_39_52_+1100_E7+8XVwWkvx.A0Y3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO1vcIAAoJEECxmPOUX5FEphIP/1a4i9jUKKjWqQc6mwxw6J/c
+wgxrdYlhQVmCZXbSxkQtMOUo7eqndsVsauU34d2CEsfRyZXaUcmKwzDeG0dkIvRZ
+Qg2NOnw8Tj+N1xmSguvvjLJX1wlS5sUYJk8e3c06qG6PAdDop7foaCPUh0KA2wpI
+AO8NJdLTX4Dm4fVVFVUXPQExguqP/5Cyl+H7By+pEVLXzyaFrR1wJZDJ+SNCtA3W
+mHf6lkqx5Rgyj30HIeZj0edbRih2FNihL7+hpz86HO5Mjdf0HuDiacBnjmpdN1oQ
+BQ6SqiwsY4T6GkyoSSkl2ySHNhwg0EqGuqntuoK5ptDfDiigVSYroTI7wXnhYDbQ
+8XWyt16oZGwSbozFfi6+hxv1N2v/X+70kghWaGKtm32dS59PUq6L3bg9314tYVcD
+ZLi4uxvTdVILYM3yqWz85AOGeWQh79Hg0lkd7z2mYskn38CV15GoGlpBi78vf5iu
+HW646Mop8pEIG2zPlXcQWulzQ/UyhYFhLNW8wFFiy9wloC/UXAbSY0Wsh0AJnDMP
+v3oc23hJC8QSJWUHWYc25Dx7xoUDTWieE/QpSzazpljQYCLd987Oa0MlC21OTkHe
+040HSR2furTuzdDUcQSKw5pRBAfxJ/+z5BAl2xqwfCLBSJWES/TTEk4fi7kDOG+P
+SxT3bY0/HkvjX0o2ip2w
+=P/q+
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__1_Dec_2011_14_39_52_+1100_E7+8XVwWkvx.A0Y3--
