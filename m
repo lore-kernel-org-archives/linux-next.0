@@ -1,135 +1,62 @@
-From: Wu Fengguang <fengguang.wu@intel.com>
-Subject: Re: [PATCH -next] exit: fix writeback build errors
-Date: Fri, 2 Dec 2011 09:10:15 +0800
-Message-ID: <20111202011015.GA9724@localhost>
-References: <20111201155342.45847a6edcf25cde48c4a6de@canb.auug.org.au>
- <4ED7C51F.3090007@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (sound-asoc
+ tree related)
+Date: Fri, 2 Dec 2011 14:38:45 +1100
+Message-ID: <20111202143845.9d912c4378d42bcbfa44a8f0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__2_Dec_2011_14_38_45_+1100_wrdODFx3bQOm_cF/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:37912 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755433Ab1LBBUS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 1 Dec 2011 20:20:18 -0500
-Content-Disposition: inline
-In-Reply-To: <4ED7C51F.3090007@xenotime.net>
+Received: from calzone.tip.net.au ([203.10.76.15]:45151 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756485Ab1LBDi5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Dec 2011 22:38:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Dec 02, 2011 at 02:19:11AM +0800, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> Fix build errors:
-> kernel/exit.c:1039:3: error: 'dirty_throttle_leaks' undeclared (first use in this function)
-> kernel/exit.c:1039:3: warning: type defaults to 'int' in type name
-> kernel/exit.c:1039:3: warning: initialization makes pointer from integer without a cast
-> kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
-> kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
-> kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
-> kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Fri__2_Dec_2011_14_38_45_+1100_wrdODFx3bQOm_cF/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks! I merged this with the original patch, so as to make it
-bisectable.
+Hi all,
 
----
-Subject: writeback: charge leaked page dirties to active tasks
-Date: Tue Apr 05 13:21:19 CST 2011
+After merging the final tree, today's linux-next build (powwepc
+allyesconfig) failed like this:
 
-It's a years long problem that a large number of short-lived dirtiers
-(eg. gcc instances in a fast kernel build) may starve long-run dirtiers
-(eg. dd) as well as pushing the dirty pages to the global hard limit.
+sound/soc/codecs/wm8994.c: In function 'wm8994_codec_probe':
+sound/soc/codecs/wm8994.c:3511:4: error: label 'err' used but not defined
 
-The solution is to charge the pages dirtied by the exited gcc to the
-other random dirtying tasks. It sounds not perfect, however should
-behave good enough in practice, seeing as that throttled tasks aren't
-actually running so those that are running are more likely to pick it up
-and get throttled, therefore promoting an equal spread.
+Caused by commit 7270cebef293 ("ASoC: Convert WM8994 to devm_kzalloc()").
 
-Randy: fix compile error: 'dirty_throttle_leaks' undeclared in exit.c
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: Wu Fengguang <fengguang.wu@intel.com>
----
- include/linux/writeback.h |    2 ++
- kernel/exit.c             |    3 +++
- mm/page-writeback.c       |   27 +++++++++++++++++++++++++++
- 3 files changed, 32 insertions(+)
+--Signature=_Fri__2_Dec_2011_14_38_45_+1100_wrdODFx3bQOm_cF/
+Content-Type: application/pgp-signature
 
---- linux-next.orig/include/linux/writeback.h	2011-11-30 15:11:31.000000000 +0800
-+++ linux-next/include/linux/writeback.h	2011-12-02 09:07:19.000000000 +0800
-@@ -7,6 +7,8 @@
- #include <linux/sched.h>
- #include <linux/fs.h>
- 
-+DECLARE_PER_CPU(int, dirty_throttle_leaks);
-+
- /*
-  * The 1/4 region under the global dirty thresh is for smooth dirty throttling:
-  *
---- linux-next.orig/mm/page-writeback.c	2011-11-30 15:11:39.000000000 +0800
-+++ linux-next/mm/page-writeback.c	2011-12-02 09:07:19.000000000 +0800
-@@ -1236,6 +1236,22 @@ void set_page_dirty_balance(struct page 
- 
- static DEFINE_PER_CPU(int, bdp_ratelimits);
- 
-+/*
-+ * Normal tasks are throttled by
-+ *	loop {
-+ *		dirty tsk->nr_dirtied_pause pages;
-+ *		take a snap in balance_dirty_pages();
-+ *	}
-+ * However there is a worst case. If every task exit immediately when dirtied
-+ * (tsk->nr_dirtied_pause - 1) pages, balance_dirty_pages() will never be
-+ * called to throttle the page dirties. The solution is to save the not yet
-+ * throttled page dirties in dirty_throttle_leaks on task exit and charge them
-+ * randomly into the running tasks. This works well for the above worst case,
-+ * as the new task will pick up and accumulate the old task's leaked dirty
-+ * count and eventually get throttled.
-+ */
-+DEFINE_PER_CPU(int, dirty_throttle_leaks) = 0;
-+
- /**
-  * balance_dirty_pages_ratelimited_nr - balance dirty memory state
-  * @mapping: address_space which was dirtied
-@@ -1283,6 +1299,17 @@ void balance_dirty_pages_ratelimited_nr(
- 			ratelimit = 0;
- 		}
- 	}
-+	/*
-+	 * Pick up the dirtied pages by the exited tasks. This avoids lots of
-+	 * short-lived tasks (eg. gcc invocations in a kernel build) escaping
-+	 * the dirty throttling and livelock other long-run dirtiers.
-+	 */
-+	p = &__get_cpu_var(dirty_throttle_leaks);
-+	if (*p > 0 && current->nr_dirtied < ratelimit) {
-+		nr_pages_dirtied = min(*p, ratelimit - current->nr_dirtied);
-+		*p -= nr_pages_dirtied;
-+		current->nr_dirtied += nr_pages_dirtied;
-+	}
- 	preempt_enable();
- 
- 	if (unlikely(current->nr_dirtied >= ratelimit))
---- linux-next.orig/kernel/exit.c	2011-11-30 15:11:31.000000000 +0800
-+++ linux-next/kernel/exit.c	2011-12-02 09:08:12.000000000 +0800
-@@ -51,6 +51,7 @@
- #include <trace/events/sched.h>
- #include <linux/hw_breakpoint.h>
- #include <linux/oom.h>
-+#include <linux/writeback.h>
- 
- #include <asm/uaccess.h>
- #include <asm/unistd.h>
-@@ -1037,6 +1038,8 @@ NORET_TYPE void do_exit(long code)
- 	validate_creds_for_do_exit(tsk);
- 
- 	preempt_disable();
-+	if (tsk->nr_dirtied)
-+		__this_cpu_add(dirty_throttle_leaks, tsk->nr_dirtied);
- 	exit_rcu();
- 	/* causes final put_task_struct in finish_task_switch(). */
- 	tsk->state = TASK_DEAD;
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO2EhFAAoJEECxmPOUX5FEAf8P/ROhLmMbqglPPA8xXTzTWcrF
+L3s2x6a1JTAFW83Wy79Je0eAlzKMJaHpbZ0+vpUolnjcmN2sJEqGigBdYSyd+sEK
+GLba2SjGJoiIYIvv5q/eDaU/mr88ytccspXcUbxTPCo2SNfJn6putLitv+yunQ+L
+5S4ESapQHpMzRSnZPBup+7RETTKVe/npX3Q+Bvng/wUCJdY8fGw5OT1ZDS7zuj/+
+Sj0XDLLYEhFK9BHp+BZm4gPNeQU+FxPHeVVgZahYCI0n/IQrjEF1o8ny79ur1j1/
+6mXeZDKsKq+CZa88YZ1SBN0QkCWbjEA5ZRwun64ke3Jd9enybXAbaP3iqHX5BTEP
+DYpyIhwMYKP0bMdHxn+5AvzPwJx1pVT8rNg6xCvFFYFwEB5GC7WJDg9YBi1JDjCM
+0Ki/1oOjv3XHFOwTJ2NMqT9Wjn0CB+wOAf8+hZgJWSs2cXhSf0cG6WMPHB4vO297
+KhV/s9lE6IjU6BAIJDRDtzmPb97iz/rvW20RSyBlWwxWETQUVoMApljsVqoPRsqc
+Zvl7jjtwF0lUvgN9lp7N499od5cRApwP8JBnV9WW3OiBlJFMGWnU5qBv7wZFmhlH
+YS/M+6Atx8GvqoqIcsAsyCkhSyyTgSxRYVqm8p3aKyauwXckuv4R1IQFSEjb3GHE
+Ls3a1I6EozsRKPB11ykG
+=8Lhr
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__2_Dec_2011_14_38_45_+1100_wrdODFx3bQOm_cF/--
