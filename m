@@ -1,29 +1,26 @@
-From: Cong Wang <amwang@redhat.com>
-Subject: Please add my tree to linux-next
-Date: Fri, 02 Dec 2011 12:22:54 +0800
-Message-ID: <4ED8529E.5070608@redhat.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (sound-asoc tree related)
+Date: Fri, 2 Dec 2011 10:53:24 +0000
+Message-ID: <20111202105323.GE8245@opensource.wolfsonmicro.com>
+References: <20111202143845.9d912c4378d42bcbfa44a8f0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38286 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753112Ab1LBKx0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Dec 2011 05:53:26 -0500
+Content-Disposition: inline
+In-Reply-To: <20111202143845.9d912c4378d42bcbfa44a8f0@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Fri, Dec 02, 2011 at 02:38:45PM +1100, Stephen Rothwell wrote:
 
-As Andrew Morton suggested, please add my tree which contains all
-of my patches for kmap_atomic() [1] to linux-next. Some of the
-individual patches already got ACK from subsystem maintainers.
-The tree is hosted on github:
+> sound/soc/codecs/wm8994.c: In function 'wm8994_codec_probe':
+> sound/soc/codecs/wm8994.c:3511:4: error: label 'err' used but not defined
 
-     git://github.com/congwang/linux.git #kmap_atomic
-
-I already rebased it to today's Linus tree.
-
-Please let me know if I need to do anything else.
-
-Thanks!
-
-1. http://lkml.org/lkml/2011/11/27/2
+PowerPC is just being nuts here.
