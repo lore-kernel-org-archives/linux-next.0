@@ -1,78 +1,135 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: linux-next not booting on snowball
-Date: Thu, 1 Dec 2011 19:11:18 -0500 (EST)
-Message-ID: <alpine.LFD.2.02.1112011856310.2357@xanadu.home>
-References: <4ED79454.1090304@linaro.org> <20111201145801.GB2103@sirena.org.uk> <4ED79E9F.7060103@linaro.org> <alpine.LFD.2.02.1112011400380.2357@xanadu.home> <4ED8087F.7030507@linaro.org>
+From: Wu Fengguang <fengguang.wu@intel.com>
+Subject: Re: [PATCH -next] exit: fix writeback build errors
+Date: Fri, 2 Dec 2011 09:10:15 +0800
+Message-ID: <20111202011015.GA9724@localhost>
+References: <20111201155342.45847a6edcf25cde48c4a6de@canb.auug.org.au>
+ <4ED7C51F.3090007@xenotime.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:60704 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755715Ab1LBALX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Dec 2011 19:11:23 -0500
-Received: by qadb14 with SMTP id b14so853180qad.19
-        for <linux-next@vger.kernel.org>; Thu, 01 Dec 2011 16:11:22 -0800 (PST)
-In-Reply-To: <4ED8087F.7030507@linaro.org>
+Received: from mga14.intel.com ([143.182.124.37]:37912 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755433Ab1LBBUS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 1 Dec 2011 20:20:18 -0500
+Content-Disposition: inline
+In-Reply-To: <4ED7C51F.3090007@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Stephen Warren <swarren@nvidia.com>, Kevin Hilman <khilman@ti.com>, Jamie Iles <jamie@jamieiles.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 2 Dec 2011, Daniel Lezcano wrote:
-
-> On 12/01/2011 08:03 PM, Nicolas Pitre wrote:
-> > Please have a look at this email:
-> > 
-> > http://article.gmane.org/gmane.linux.ports.arm.kernel/141386
-> > 
-> > There are two patches in there which should help you get some debugging 
-> > info out.
+On Fri, Dec 02, 2011 at 02:19:11AM +0800, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
 > 
+> Fix build errors:
+> kernel/exit.c:1039:3: error: 'dirty_throttle_leaks' undeclared (first use in this function)
+> kernel/exit.c:1039:3: warning: type defaults to 'int' in type name
+> kernel/exit.c:1039:3: warning: initialization makes pointer from integer without a cast
+> kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
+> kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
+> kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
+> kernel/exit.c:1039:1: warning: type defaults to 'int' in declaration of 'pao_T__'
 > 
-> Thanks Nicolas,
-> 
-> I have applied the patches and I get:
-> 
-> ---------------------
-> 
-> <6>Booting Linux on physical CPU 0
-> <6>Initializing cgroup subsys cpuset
-> <6>Initializing cgroup subsys cpu
-> <5>Linux version 3.2.0-rc2+ (dlezcano@monster) (gcc version 4.3.2
-> (Debian 4.3.2-1.1) ) #7 SMP PREEMPT Thu Dec 1 2
-> 3:58:34 CET 2011
-> CPU: ARMv7 Processor [412fc091] revision 1 (ARMv7), cr=10c5387f
-> CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
-> Machine: Calao Systems Snowball platform
-> <4>Ignoring unrecognised tag 0x41000403
-> Memory policy: ECC disabled, Data cache writealloc
-> 
-> ---------------------
-> 
-> I am not able to understand these informations, I hope they can help to
-> understand the problem.
-> 
-> Is there something else I can do to help ?
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 
-Yes.  Either you have access to a fancy debugger and then you could 
-trace what happens from the moment devicemaps_init() is entered.
+Thanks! I merged this with the original patch, so as to make it
+bisectable.
 
-Or, using the good old way, just insert a couple of
+---
+Subject: writeback: charge leaked page dirties to active tasks
+Date: Tue Apr 05 13:21:19 CST 2011
 
-	printk("%s:%s line %d\n", __FILE__, __func__, __LINE__);
+It's a years long problem that a large number of short-lived dirtiers
+(eg. gcc instances in a fast kernel build) may starve long-run dirtiers
+(eg. dd) as well as pushing the dirty pages to the global hard limit.
 
-in a couple places (still with the 2 earlier patches applied).  Good 
-locations for those traces would be:
+The solution is to charge the pages dirtied by the exited gcc to the
+other random dirtying tasks. It sounds not perfect, however should
+behave good enough in practice, seeing as that throttled tasks aren't
+actually running so those that are running are more likely to pick it up
+and get throttled, therefore promoting an equal spread.
 
- - Upon entering devicemaps_init() to confirm it makes that far.
+Randy: fix compile error: 'dirty_throttle_leaks' undeclared in exit.c
 
- - Just before and right after the call to mdesc->map_io(), still in 
-   devicemaps_init().
+Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Wu Fengguang <fengguang.wu@intel.com>
+---
+ include/linux/writeback.h |    2 ++
+ kernel/exit.c             |    3 +++
+ mm/page-writeback.c       |   27 +++++++++++++++++++++++++++
+ 3 files changed, 32 insertions(+)
 
- - If you don't see the trace after mdesc->map_io(), then the problem is
-   most likely in u8500_map_io(), in which case you should add more 
-   traces in there to narrow the problem area down to the problematic
-   call.
-
-
-Nicolas
+--- linux-next.orig/include/linux/writeback.h	2011-11-30 15:11:31.000000000 +0800
++++ linux-next/include/linux/writeback.h	2011-12-02 09:07:19.000000000 +0800
+@@ -7,6 +7,8 @@
+ #include <linux/sched.h>
+ #include <linux/fs.h>
+ 
++DECLARE_PER_CPU(int, dirty_throttle_leaks);
++
+ /*
+  * The 1/4 region under the global dirty thresh is for smooth dirty throttling:
+  *
+--- linux-next.orig/mm/page-writeback.c	2011-11-30 15:11:39.000000000 +0800
++++ linux-next/mm/page-writeback.c	2011-12-02 09:07:19.000000000 +0800
+@@ -1236,6 +1236,22 @@ void set_page_dirty_balance(struct page 
+ 
+ static DEFINE_PER_CPU(int, bdp_ratelimits);
+ 
++/*
++ * Normal tasks are throttled by
++ *	loop {
++ *		dirty tsk->nr_dirtied_pause pages;
++ *		take a snap in balance_dirty_pages();
++ *	}
++ * However there is a worst case. If every task exit immediately when dirtied
++ * (tsk->nr_dirtied_pause - 1) pages, balance_dirty_pages() will never be
++ * called to throttle the page dirties. The solution is to save the not yet
++ * throttled page dirties in dirty_throttle_leaks on task exit and charge them
++ * randomly into the running tasks. This works well for the above worst case,
++ * as the new task will pick up and accumulate the old task's leaked dirty
++ * count and eventually get throttled.
++ */
++DEFINE_PER_CPU(int, dirty_throttle_leaks) = 0;
++
+ /**
+  * balance_dirty_pages_ratelimited_nr - balance dirty memory state
+  * @mapping: address_space which was dirtied
+@@ -1283,6 +1299,17 @@ void balance_dirty_pages_ratelimited_nr(
+ 			ratelimit = 0;
+ 		}
+ 	}
++	/*
++	 * Pick up the dirtied pages by the exited tasks. This avoids lots of
++	 * short-lived tasks (eg. gcc invocations in a kernel build) escaping
++	 * the dirty throttling and livelock other long-run dirtiers.
++	 */
++	p = &__get_cpu_var(dirty_throttle_leaks);
++	if (*p > 0 && current->nr_dirtied < ratelimit) {
++		nr_pages_dirtied = min(*p, ratelimit - current->nr_dirtied);
++		*p -= nr_pages_dirtied;
++		current->nr_dirtied += nr_pages_dirtied;
++	}
+ 	preempt_enable();
+ 
+ 	if (unlikely(current->nr_dirtied >= ratelimit))
+--- linux-next.orig/kernel/exit.c	2011-11-30 15:11:31.000000000 +0800
++++ linux-next/kernel/exit.c	2011-12-02 09:08:12.000000000 +0800
+@@ -51,6 +51,7 @@
+ #include <trace/events/sched.h>
+ #include <linux/hw_breakpoint.h>
+ #include <linux/oom.h>
++#include <linux/writeback.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/unistd.h>
+@@ -1037,6 +1038,8 @@ NORET_TYPE void do_exit(long code)
+ 	validate_creds_for_do_exit(tsk);
+ 
+ 	preempt_disable();
++	if (tsk->nr_dirtied)
++		__this_cpu_add(dirty_throttle_leaks, tsk->nr_dirtied);
+ 	exit_rcu();
+ 	/* causes final put_task_struct in finish_task_switch(). */
+ 	tsk->state = TASK_DEAD;
