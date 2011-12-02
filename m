@@ -1,20 +1,23 @@
 From: Dave Martin <dave.martin@linaro.org>
 Subject: Re: [PATCH] ata: Don't use NO_IRQ in pata_of_platform driver
-Date: Fri, 2 Dec 2011 19:19:17 +0000
-Message-ID: <20111202191917.GB3037@localhost.localdomain>
-References: <20111110151852.GA7465@oksana.dev.rtsoft.ru>
- <20111110152606.GB3207@oksana.dev.rtsoft.ru>
- <20111110153816.239af1d7@lxorguk.ukuu.org.uk>
- <20111110162859.GA7088@oksana.dev.rtsoft.ru>
+Date: Fri, 2 Dec 2011 19:26:18 +0000
+Message-ID: <20111202192618.GC3037@localhost.localdomain>
+References: <20111110162859.GA7088@oksana.dev.rtsoft.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:58907 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751704Ab1LBT0X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Dec 2011 14:26:23 -0500
 Content-Disposition: inline
 In-Reply-To: <20111110162859.GA7088@oksana.dev.rtsoft.ru>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Anton Vorontsov <cbouatmailru@gmail.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, devicetree-discuss@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Linus Torvalds <torvalds@linux-foundation.org>, Jeff Garzik <jgarzik@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, devicetree-discuss@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Linus Torvalds <torvalds@linux-foundation.org>, Jeff Garzik <jgarzik@redhat.com>, Pawel Moll <pawel.moll@arm.com>, linux-arm-kernel@localhost.localdomain
+
+[expanding CC -- apologies to anyone who gets this mail twice]
 
 On Thu, Nov 10, 2011 at 08:28:59PM +0400, Anton Vorontsov wrote:
 > Drivers should not use NO_IRQ; moreover, some architectures don't
