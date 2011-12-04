@@ -1,112 +1,94 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] ata: Don't use NO_IRQ in pata_of_platform driver
-Date: Sat, 3 Dec 2011 19:56:08 +0100
-Message-ID: <CAMuHMdXvwJ4f6a5Y2+TXn1X3CAg2Ok51f2+n4ye0uTfAVgBC1Q@mail.gmail.com>
-References: <20111110151852.GA7465@oksana.dev.rtsoft.ru>
-	<20111110152606.GB3207@oksana.dev.rtsoft.ru>
-	<20111110153816.239af1d7@lxorguk.ukuu.org.uk>
-	<20111110162859.GA7088@oksana.dev.rtsoft.ru>
-	<20111202191917.GB3037@localhost.localdomain>
-	<20111202232243.6af6f1e2@lxorguk.ukuu.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Please add my tree to linux-next
+Date: Mon, 5 Dec 2011 10:09:30 +1100
+Message-ID: <20111205100930.1bedc458a5e78b85c563465d@canb.auug.org.au>
+References: <4ED8529E.5070608@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <20111202232243.6af6f1e2@lxorguk.ukuu.org.uk>
-Sender: linux-ide-owner@vger.kernel.org
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Dave Martin <dave.martin@linaro.org>, Anton Vorontsov <cbouatmailru@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, devicetree-discuss@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Linus Torvalds <torvalds@linux-foundation.org>, Jeff Garzik <jgarzik@redhat.com>, linux-arch@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__5_Dec_2011_10_09_30_+1100_iMzhljuTxY.RTSod"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:33552 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754742Ab1LDXJm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Dec 2011 18:09:42 -0500
+In-Reply-To: <4ED8529E.5070608@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Cong Wang <amwang@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Sat, Dec 3, 2011 at 00:22, Alan Cox <alan@lxorguk.ukuu.org.uk> wrote=
-:
->> This is now broken on ARM where, for good or bad, NO_IRQ currently i=
-s
->> used and is -1.
+--Signature=_Mon__5_Dec_2011_10_09_30_+1100_iMzhljuTxY.RTSod
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Fri, 02 Dec 2011 12:22:54 +0800 Cong Wang <amwang@redhat.com> wrote:
 >
-> Good.
->
-> ARM developers have been told to change this for several years. The n=
-ice
-> approach hasn't worked, the patient approach hasn't worked so now fin=
-ally
-> ARM is going to be dragged kicking and screaming into doing the work
-> everyone else did several years ago.
->
-> I have so little sympathy over this that you'll need a quantum physic=
-ist
-> to measure it.
->
->> Half-removing NO_IRQ is going to be problematic, though...
->> I really don't care whether the "no irq" value is 0 or -1, but it is
->> abundantly clear that choosing different values to mean the same thi=
-ng
->> on opposite sides of an interface does not work.
->
-> You've had years to fix it. If I were you I'd delete NO_IRQ from your
-> tree, type make and get it done. It's not even a big job to clean it =
-out.
->
-> At that point various other drivers will also start working properly =
-on
-> ARM because they use 0 for polled mode.
+> As Andrew Morton suggested, please add my tree which contains all
+> of my patches for kmap_atomic() [1] to linux-next. Some of the
+> individual patches already got ACK from subsystem maintainers.
+> The tree is hosted on github:
+>=20
+>      git://github.com/congwang/linux.git #kmap_atomic
 
-Not just ARM:
+I have added this tree to linux-next today.
 
-arch/arm/include/asm/irq.h:#ifndef
-NO_IRQarch/arm/include/asm/irq.h:#define NO_IRQ =C2=A0 =C2=A0 =C2=A0 ((=
-unsigned
-int)(-1))arch/microblaze/include/asm/irq.h:#define NO_IRQ
-(-1)arch/mn10300/include/asm/irq.h:#define NO_IRQ
-INT_MAXarch/openrisc/include/asm/irq.h:#define NO_IRQ
-(-1)arch/parisc/include/asm/irq.h:#define NO_IRQ
-(-1)arch/powerpc/include/asm/irq.h:#define NO_IRQ
-(0)arch/powerpc/include/asm/machdep.h: =C2=A0 =C2=A0 /* Return an irq, =
-or NO_IRQ
-to indicate=C2=A0arch/powerpc/include/asm/parport.h: =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 if (virq
-=3D=3D NO_IRQ)arch/powerpc/include/asm/qe_ic.h: =C2=A0 =C2=A0 =C2=A0 if=
- (cascade_irq !=3D
-NO_IRQ)arch/powerpc/include/asm/qe_ic.h: =C2=A0 =C2=A0 =C2=A0 if (casca=
-de_irq !=3D
-NO_IRQ)arch/powerpc/include/asm/qe_ic.h: =C2=A0 =C2=A0 =C2=A0 if (casca=
-de_irq !=3D
-NO_IRQ)arch/powerpc/include/asm/qe_ic.h: =C2=A0 =C2=A0 =C2=A0 if (casca=
-de_irq !=3D
-NO_IRQ)arch/powerpc/include/asm/qe_ic.h: =C2=A0 =C2=A0 =C2=A0 if (casca=
-de_irq =3D=3D
-NO_IRQ)arch/powerpc/include/asm/qe_ic.h: =C2=A0 =C2=A0 =C2=A0 if (casca=
-de_irq !=3D
-NO_IRQ)arch/sparc/include/asm/irq_32.h:#define NO_IRQ
-0xffffffffarch/sparc/include/asm/irq_64.h:#define NO_IRQ
-0xffffffff
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-And it's not just definitions of NO_IRQ. These are easy to find.
-On some archs (notably ARM) zero still seems to be a valid IRQ number,
-e.g. IRQ_LOCOMO_KEY and IRQ_DMA0C0.
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-Also, UML has TIMER_IRQ being zero.
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-A quick grep found many more IRQ definitions being zero, but
-surprisingly the few
-I looked into were definitions without users (e.g. SE7343_FPGA_IRQ_MRSH=
-PC0,
-ROUTE_VIA_IRQ0 aka IRQ_MB93493_VDC_ROUTE).
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
-Perhaps request_irq() should just reject zero to find all of them?
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
 
-Gr{oetje,eeting}s,
+--Signature=_Mon__5_Dec_2011_10_09_30_+1100_iMzhljuTxY.RTSod
+Content-Type: application/pgp-signature
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+iQIcBAEBCAAGBQJO2/2qAAoJEECxmPOUX5FE3CkQAI7+qhXFubBAltrOyfNzwi3x
+zjhgcQJXO2eHqGLxpSeToM3rrslZxre+Ue5TUy2uRxpOeE/cayWETFD2jB/UJ4e+
+ZUP49ZolaHsWrBey0uGkx+n6ByKGABoHv3zrGMgRpuhaaG4LuFuZaUmTxaxITm2T
+jCCkpxmdMJ7P4LEB5mpEfLsBCFaaGBNBVsG+vq/+NcU5Z15BRyhxgkWJq+/+bzC2
+aAhsQ1+2pkqqvPdWVBzLQ/X6MFf7vxo6HU+gbGj+CijKaB0WdmuuR0lMmPVLYFSz
+jrt0ewUIn4AmFnoUmu5XMQcbYVX8nBu4b4Uzn10B4nFsnA5ptjDbcqb2+qHvjMtg
+L5XLBkn4KUUYT5CLvnEjyZb2zjgHBOaEkwj4nZJfShe84Lcpjn0j9YqVHhDqC8fu
+8MW6mtmIxZ5ruzCF1DODRLQ8oPVsPw4oqkFlu801WY3Isy9ogD8JLf9lhx1eFkOg
+dtb8fuwUmivENINhK+zlOxnx8iONp6L241cqd0Qq2txaQj3M7+n6iDhH02GbN9wT
+0ka39YTHm2b9u8HTJYQWPbdvtlCG2geR8AXSYH8nALn3M8WkpWev51+gd4SETiCd
+G8QmTtTh9JwefktdgLF9T7M2uiESfUfRM01ssq8pEJbBNmzKyZoCAoJ5in7ZMhpf
+hKyRnd7iyVH/4z/AgyuI
+=5+vd
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+--Signature=_Mon__5_Dec_2011_10_09_30_+1100_iMzhljuTxY.RTSod--
