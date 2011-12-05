@@ -1,79 +1,70 @@
-From: Cong Wang <amwang@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: Please add my tree to linux-next
-Date: Mon, 05 Dec 2011 13:40:29 +0800
-Message-ID: <4EDC594D.5040008@redhat.com>
-References: <4ED8529E.5070608@redhat.com> <20111205100930.1bedc458a5e78b85c563465d@canb.auug.org.au>
+Date: Mon, 5 Dec 2011 17:12:07 +1100
+Message-ID: <20111205171207.3b3bc1ad6d99ad7d7c9c0792@canb.auug.org.au>
+References: <4ED8529E.5070608@redhat.com>
+	<20111205100930.1bedc458a5e78b85c563465d@canb.auug.org.au>
+	<4EDC594D.5040008@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__5_Dec_2011_17_12_07_+1100_DTY43Ukl0qONS9No"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:7255 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750761Ab1LEFkl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Dec 2011 00:40:41 -0500
-In-Reply-To: <20111205100930.1bedc458a5e78b85c563465d@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:39917 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751768Ab1LEGMT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 01:12:19 -0500
+In-Reply-To: <4EDC594D.5040008@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Cong Wang <amwang@redhat.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-=E4=BA=8E 2011=E5=B9=B412=E6=9C=8805=E6=97=A5 07:09, Stephen Rothwell =E5=
-=86=99=E9=81=93:
-> Hi,
+--Signature=_Mon__5_Dec_2011_17_12_07_+1100_DTY43Ukl0qONS9No
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+On Mon, 05 Dec 2011 13:40:29 +0800 Cong Wang <amwang@redhat.com> wrote:
 >
-> On Fri, 02 Dec 2011 12:22:54 +0800 Cong Wang<amwang@redhat.com>  wrot=
-e:
->>
->> As Andrew Morton suggested, please add my tree which contains all
->> of my patches for kmap_atomic() [1] to linux-next. Some of the
->> individual patches already got ACK from subsystem maintainers.
->> The tree is hosted on github:
->>
->>       git://github.com/congwang/linux.git #kmap_atomic
->
-> I have added this tree to linux-next today.
->
-> Thanks for adding your subsystem tree as a participant of linux-next.=
-  As
-> you may know, this is not a judgment of your code.  The purpose of
-> linux-next is for integration testing and to lower the impact of
-> conflicts between subsystems in the next merge window.
->
-> You will need to ensure that the patches/commits in your tree/series =
-have
-> been:
->       * submitted under GPL v2 (or later) and include the Contributor=
-'s
-> 	Signed-off-by,
+> >       * submitted under GPL v2 (or later) and include the Contributor's
+> > 	Signed-off-by,
+>=20
+> When I sent the patches out, they all have my Signed-off-by, but not in t=
+he
+> commit logs in my tree. Is this a problem?
 
-When I sent the patches out, they all have my Signed-off-by, but not in=
- the
-commit logs in my tree. Is this a problem?
+Yes, you must have a signed-off-by line for each person who handles the
+patches (in this case just you, since you are also the author).
+Linus (in theory) would not merge your tree if you asked him to if it
+lacked signed-off-by lines (and I will have to drop it if they are not
+added - this will mean rebasing your tree, of course).
 
->       * posted to the relevant mailing list,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Yes, see http://lkml.org/lkml/2011/11/27/2.
+--Signature=_Mon__5_Dec_2011_17_12_07_+1100_DTY43Ukl0qONS9No
+Content-Type: application/pgp-signature
 
->       * reviewed by you (or another maintainer of your subsystem tree=
-),
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-Yes.
+iQIcBAEBCAAGBQJO3GC3AAoJEECxmPOUX5FEWQIP+gNqoQHg7YQu9txs4FaYLaxB
+pgON4KUZ/z8pRFbrYEPLu1jSJrZs6gxDKwbGNEUHupkzZs9cFb3cAsW5Wn3eg7He
+k2AkDjnUkKGxxkH8RvmdXdbmOqtCDqRd0oupXVMvYXYbDJPQxoM3G15g9r54NIRJ
+3NQCALtLzva3hORKumz7lfvvmgQkMOBU4KUrPeSZqvzBu3+SLaXfLt2gPR11vsyq
+9/zu9TK4HOyz5n9XkgSy1+REVPFDB10X/03g2foOfY7zBSXgiVQ4BdfFzCRKWqt+
+l/P4tPJ1EOywYtYqQ3onD7QbTRgwYvnBfp+QL7dLRAHPZ1Yrfqt+GJcbWC8z/tuF
+Ng5vuAuhvhZ1271AIhGr9WyaAtDHMbyVmyp6hgUakov6X78Al0fh7HQue/7PG6Af
+lmHb6g88nBPedLif4QdoPTgE1/ycHeRrrLoWuChIMzx3eKx+P1CiIbCSlHBEsicL
+/R1iZMvef6sPRCz23XQxgvYQtQE2tA2dssM83P1jykkO6h06/alJqpecHBofrfJG
+ahjt4RTvHSuEsEg9SN4Lqxauh0WuhI6hXTW/ES/VBPt1LvHKTeZhmIVZyTgBy0vo
+YmjXAgt70AujrBl1HuM7ZGno4zv3z0WKHkAFWCSqPmh46Vw70kcR0fFYJ5203+v9
+XBnwIOua1wseLPo6Ngzp
+=wLX9
+-----END PGP SIGNATURE-----
 
->       * successfully unit tested, and
-
-Yes, compile-tested on x86_64 and ppc.
-
->       * destined for the current or next Linux merge window.
-
-Yes, for next merge window.
-
->
-> Basically, this should be just what you would send to Linus (or ask h=
-im
-> to fetch).  It is allowed to be rebased if you deem it necessary.
->
-
-Ok.
-
-Thanks!
+--Signature=_Mon__5_Dec_2011_17_12_07_+1100_DTY43Ukl0qONS9No--
