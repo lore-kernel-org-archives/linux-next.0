@@ -1,74 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound-asoc tree with the s5p tree
-Date: Mon, 5 Dec 2011 13:01:02 +1100
-Message-ID: <20111205130102.aec262d85aa6b47b0aec7011@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the wireless-next
+ tree
+Date: Mon, 5 Dec 2011 13:37:57 +1100
+Message-ID: <20111205133757.2b6cd1675543c7da26f663a5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_Dec_2011_13_01_02_+1100_Ukmme00FjnHS=/tB"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:58600 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751855Ab1LECBN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Dec 2011 21:01:13 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+ boundary="Signature=_Mon__5_Dec_2011_13_37_57_+1100_i.ZOMeC5xJ/1oPuf"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Justin P. Mattock" <justinmattock@gmail.com>, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__5_Dec_2011_13_01_02_+1100_Ukmme00FjnHS=/tB
+--Signature=_Mon__5_Dec_2011_13_37_57_+1100_i.ZOMeC5xJ/1oPuf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jiri,
 
-Today's linux-next merge of the sound-asoc tree got a conflict in
-arch/arm/mach-s3c64xx/mach-crag6410.c between commit c5c32c965dad ("ARM:
-S3C64XX: Hook up Littlemill audio card on Cragganmore") from the s5p tree
-and commit 6414261f0a2a ("ASoC: Rename Speyside WM8962 to Tobermory")
-from the sound-asoc tree.
+Today's linux-next merge of the trivial tree got a conflict in
+net/mac80211/work.c between commit e76aadc57228 ("mac80211: revert
+on-channel work optimisations") from the wireless-next tree and commit
+42b2aa86c667 ("treewide: Fix typos in various parts of the kernel, and
+fix some comments") from the trivial tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+The former removed the comment that was fixed in the latter, so I did
+that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-s3c64xx/mach-crag6410.c
-index 6ff76c0,55c0e75..0000000
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@@ -346,8 -338,7 +346,8 @@@ static struct platform_device *crag6410
-  	&crag6410_lcd_powerdev,
-  	&crag6410_backlight_device,
-  	&speyside_device,
-- 	&speyside_wm8962_device,
-+ 	&tobermory_device,
- +	&littlemill_device,
-  	&lowland_device,
-  	&wallvdd_device,
-  };
-
---Signature=_Mon__5_Dec_2011_13_01_02_+1100_Ukmme00FjnHS=/tB
+--Signature=_Mon__5_Dec_2011_13_37_57_+1100_i.ZOMeC5xJ/1oPuf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO3CXeAAoJEECxmPOUX5FEp0sP+wf8v6hFIXkvOGare3tR4d/G
-GZjx8yNp5bp7b4CXm+JPDa/qswONODlSDtgRZcDeZpXOwEO3pPoSi30rv7ALlNnE
-Ej7X29ek8NLpbafRcbPeAqqCeNQvyJ0LhyEkxUVcGWokkheiRricc25rD6JCNkmN
-SACuuZdT1muuBek583/ABwCcXUADIqh1/1IOIUI7rzq+lPVGssuih3n/DnQTUI64
-Cn1XfYlNAQue102bhFsExOwUKQR7eHLSbz6zwZ5TDhKA7my0+ve/3gF9h8ImbAMG
-w8hWIFydQ7DdSFUFZtLazet5fSLKmnUS7qmM4yPQ2vjlwSbyAKy0x91zev4ke29C
-QYmO9QVfV+q9Dnk9tXicrr5jh0nhVqeOPHzdKTAafGODx/ZkCAS/jUToLRlcfLFz
-nQ5V5VygRVPTKiVn4/Pm726y2k5sRuyr/Bcq/cu87/4WFreryZwe2vNlitd7dhwv
-2sPdtr7cXf0+vLd2RoICsVYuXQSa0KtkBOKD24wh46gNXZf+EkH4S2mlCAX0LwRG
-QL5kjKJ6Ynb3zY1NrgSRRkLPwBgWD2OfaQc2tIh2wxeOkd8wa7tZ6Gvmmsla8Tvg
-tPojAqn8KEVvCKJrsLBZbOw+KyEk5FQl+Q5mVhG0/9vSBb+Nms/w5ORWyiZwpLoL
-c0EQpsGfNXKkLqC8Rtgk
-=nyu0
+iQIcBAEBCAAGBQJO3C6FAAoJEECxmPOUX5FEWy0P/0xr/j4wGjTR7K9+j8XGcJsG
+0kGuAkvzdF2uESyYvbJfZEUPkp3K7DjXditHnCvuMH1aOhnFWfbdMAGlOAwsp8ft
+ZZ1ApLelAfX8D3QOEdueMRUqCTtUb4HIp4dkbXaTJm0YxpF/gQepinWn6EBG/+nI
+/+81hX1wYQzbO/V1vyyYYsaKcOvi5SI2IK5ETTPO+dhZYOyX9DU6OQtYPPBa9j7B
+D/kgcduKtiRUN5HMh/xQzubYysRx8l6f88dPDnFAKn2G3EfWfUrBqLgL3Cm/pDfj
+0fQCMKioCmPhcPdACA5AK4rKM8LOpeFvaD+LBiHxwRgkgqAMQWA0ZUvlE35Fzxzv
+dCyc3Tiv2mMKU2zd7+u7mT1v03a3hJ7Cg92thi/pBRD2Vzd/fmSnLKXzlWIVFpmx
+OEV3WYeD5asqNB2VdjhrYvMDsS2g0QQWmoUnqJTH6yz1jcFrjsDdK2lEGWMtOFHA
+Ha31+2Ivf+VERbeiaqF9A8ubnttfqdpFcnyuQBna06VIIOdmdoVxaIXq95biVd2T
+/9GR436/qd+N5qmpNdQIAa/cffdc9a5jzmSX1a+HwmZk/RODP5+HuC8MR2Umlr6F
+uw2SF9DnClf9lvbEHG47tYTuahXQz3eT7pC6w+dMTel7yS/pcl9WP/yZq2SL0W8D
+AyM5EJsEi+1p6e4PVABK
+=0g/B
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__5_Dec_2011_13_01_02_+1100_Ukmme00FjnHS=/tB--
+--Signature=_Mon__5_Dec_2011_13_37_57_+1100_i.ZOMeC5xJ/1oPuf--
