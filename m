@@ -1,59 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the  tree
-Date: Mon, 5 Dec 2011 12:34:28 +1100
-Message-ID: <20111205123428.47213da24624d85aa84711f3@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound-asoc tree with the s5p tree
+Date: Mon, 5 Dec 2011 13:01:02 +1100
+Message-ID: <20111205130102.aec262d85aa6b47b0aec7011@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_Dec_2011_12_34_28_+1100_ncL=u0oM=6_Q0Cd1"
+ boundary="Signature=_Mon__5_Dec_2011_13_01_02_+1100_Ukmme00FjnHS=/tB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43936 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:58600 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751354Ab1LEBes (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Dec 2011 20:34:48 -0500
+	with ESMTP id S1751855Ab1LECBN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Dec 2011 21:01:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wey-Yi Guy <wey-yi.w.guy@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes.berg@intel.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
---Signature=_Mon__5_Dec_2011_12_34_28_+1100_ncL=u0oM=6_Q0Cd1
+--Signature=_Mon__5_Dec_2011_13_01_02_+1100_Ukmme00FjnHS=/tB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-agn.c between commits from the
-tree and commit 7335613ae27a ("iwlwifi: move all mac80211 related
-functions to one place") from the net-next tree.
+Today's linux-next merge of the sound-asoc tree got a conflict in
+arch/arm/mach-s3c64xx/mach-crag6410.c between commit c5c32c965dad ("ARM:
+S3C64XX: Hook up Littlemill audio card on Cragganmore") from the s5p tree
+and commit 6414261f0a2a ("ASoC: Rename Speyside WM8962 to Tobermory")
+from the sound-asoc tree.
 
-I just used the net-next version (which may require some fixes).
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__5_Dec_2011_12_34_28_+1100_ncL=u0oM=6_Q0Cd1
+diff --cc arch/arm/mach-s3c64xx/mach-crag6410.c
+index 6ff76c0,55c0e75..0000000
+--- a/arch/arm/mach-s3c64xx/mach-crag6410.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
+@@@ -346,8 -338,7 +346,8 @@@ static struct platform_device *crag6410
+  	&crag6410_lcd_powerdev,
+  	&crag6410_backlight_device,
+  	&speyside_device,
+- 	&speyside_wm8962_device,
++ 	&tobermory_device,
+ +	&littlemill_device,
+  	&lowland_device,
+  	&wallvdd_device,
+  };
+
+--Signature=_Mon__5_Dec_2011_13_01_02_+1100_Ukmme00FjnHS=/tB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO3B+kAAoJEECxmPOUX5FEBBEP/22HNpjAxOb5Vt6tCcMoqeXS
-ZNHzv3D5Wgx/DcihPcyxnN9nQIqu/h3AwQStPYw//5dcEUBL/8p5JNZ/hzUZhasT
-nRxad4c472ox/4Y9qSf5CRw60tkynDfho1d8uKyBu4Rvhu7AWzemEXn7La9fnOAA
-ceqCmNLW0hLbGDWlNIGUW36vUA3G/R0lVJ/sYJd5SyF6vBfSSEdwGw1FcnmbZeCN
-pQiAUfrJjB3stnFRk7OZ1cDwLqqVnN4TnM4wDKVL79bt6Ofd/Up8W4Rq/0s6Y9ka
-91NDQgMPLSu319evvqXXc02buDPSOjtH8/oXWO/XtY0HL6SNWgSueYvtot+gnGNq
-3+QNoHSNp7hzPmLe9VnFly+BZYzFEnIvmf7Dh8gLS1uLx6QyrQgNnhZ519hasqmE
-yVOie4VQYkiBoMf5Izbj0eijsa+UNAlLplTS0cFO21vM01SnYZEaLTnqj7Zh78mX
-0LateKKbdxG2Q+xRbW8QpwGAM5530rOYd5hMUKD5Sd52fkFpP54E4xw97r8J5L9k
-JY1+3imjcFYloC4sTpVIYNEWrx5eJdgJ21QSa4BO6Z2zrB/dTGXXy2y2yeCy+XeG
-UplvWfThDHw0gD/3GUwTL568FlQBtiQAWz23qDpRYds5R7EPY829jVmrU4cN2qkG
-iY/a6Cx77eC8M9t3aKYm
-=Tc7x
+iQIcBAEBCAAGBQJO3CXeAAoJEECxmPOUX5FEp0sP+wf8v6hFIXkvOGare3tR4d/G
+GZjx8yNp5bp7b4CXm+JPDa/qswONODlSDtgRZcDeZpXOwEO3pPoSi30rv7ALlNnE
+Ej7X29ek8NLpbafRcbPeAqqCeNQvyJ0LhyEkxUVcGWokkheiRricc25rD6JCNkmN
+SACuuZdT1muuBek583/ABwCcXUADIqh1/1IOIUI7rzq+lPVGssuih3n/DnQTUI64
+Cn1XfYlNAQue102bhFsExOwUKQR7eHLSbz6zwZ5TDhKA7my0+ve/3gF9h8ImbAMG
+w8hWIFydQ7DdSFUFZtLazet5fSLKmnUS7qmM4yPQ2vjlwSbyAKy0x91zev4ke29C
+QYmO9QVfV+q9Dnk9tXicrr5jh0nhVqeOPHzdKTAafGODx/ZkCAS/jUToLRlcfLFz
+nQ5V5VygRVPTKiVn4/Pm726y2k5sRuyr/Bcq/cu87/4WFreryZwe2vNlitd7dhwv
+2sPdtr7cXf0+vLd2RoICsVYuXQSa0KtkBOKD24wh46gNXZf+EkH4S2mlCAX0LwRG
+QL5kjKJ6Ynb3zY1NrgSRRkLPwBgWD2OfaQc2tIh2wxeOkd8wa7tZ6Gvmmsla8Tvg
+tPojAqn8KEVvCKJrsLBZbOw+KyEk5FQl+Q5mVhG0/9vSBb+Nms/w5ORWyiZwpLoL
+c0EQpsGfNXKkLqC8Rtgk
+=nyu0
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__5_Dec_2011_12_34_28_+1100_ncL=u0oM=6_Q0Cd1--
+--Signature=_Mon__5_Dec_2011_13_01_02_+1100_Ukmme00FjnHS=/tB--
