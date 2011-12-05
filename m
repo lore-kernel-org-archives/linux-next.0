@@ -1,25 +1,39 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: manual merge of the sound-asoc tree with the s5p tree
-Date: Mon, 5 Dec 2011 10:28:08 +0000
-Message-ID: <20111205102807.GA11150@opensource.wolfsonmicro.com>
-References: <20111205130102.aec262d85aa6b47b0aec7011@canb.auug.org.au>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the  tree
+Date: Mon, 5 Dec 2011 09:53:21 -0500
+Message-ID: <20111205145320.GA2531@tuxdriver.com>
+References: <20111205123428.47213da24624d85aa84711f3@canb.auug.org.au>
+ <20111205153416.e1dd01e5368ce7c016d99a59@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:58716 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753683Ab1LEK2L (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 05:28:11 -0500
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:39312 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932268Ab1LEPAR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 10:00:17 -0500
 Content-Disposition: inline
-In-Reply-To: <20111205130102.aec262d85aa6b47b0aec7011@canb.auug.org.au>
+In-Reply-To: <20111205153416.e1dd01e5368ce7c016d99a59@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wey-Yi Guy <wey-yi.w.guy@intel.com>, Johannes Berg <johannes.berg@intel.com>
 
-On Mon, Dec 05, 2011 at 01:01:02PM +1100, Stephen Rothwell wrote:
+On Mon, Dec 05, 2011 at 03:34:16PM +1100, Stephen Rothwell wrote:
+> On Mon, 5 Dec 2011 12:34:28 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the net-next tree got a conflict in
+> > drivers/net/wireless/iwlwifi/iwl-agn.c between commits from the
+> 
+> wireless (sorry)
+> 
+> > tree and commit 7335613ae27a ("iwlwifi: move all mac80211 related
+> > functions to one place") from the net-next tree.
+> > 
+> > I just used the net-next version (which may require some fixes).
 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+Yeah, I'll try to get that straightened-out over the next day or two.
 
-Thanks!
+John
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
