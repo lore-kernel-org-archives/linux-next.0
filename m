@@ -1,65 +1,46 @@
-From: Alan Cox <alan-qBU/x9rampVanCEyBjwyrvXRex20P6io@public.gmane.org>
-Subject: Re: [PATCH] ata: Don't use NO_IRQ in pata_of_platform driver
-Date: Mon, 5 Dec 2011 20:53:44 +0000
-Message-ID: <20111205205344.3c0c0894@lxorguk.ukuu.org.uk>
-References: <20111110162859.GA7088@oksana.dev.rtsoft.ru>
- <20111202192618.GC3037@localhost.localdomain>
- <CA+55aFwekNWz+V4440f=2iu_BfOxSg0NjVogv4cZZDFbJBNoAQ@mail.gmail.com>
- <1322867573.11728.22.camel@pasglop>
- <20111205161157.GA27550@localhost.localdomain>
- <alpine.LFD.2.02.1112051236350.2357@xanadu.home>
- <20111205180253.GB29812@localhost.localdomain>
- <alpine.LFD.2.02.1112051310150.2357@xanadu.home>
- <4EDD1897.4030208@gmail.com>
- <20111205202125.GA32592@oksana.dev.rtsoft.ru>
- <4EDD2DE1.1050606@gmail.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH pm/linux-next] cgroup_freezer: drop unnecessary freezing()
+ from try_to_freeze_cgroup()
+Date: Mon, 5 Dec 2011 13:32:04 -0800
+Message-ID: <20111205213204.GL627@google.com>
+References: <20111128233055.GF3858@google.com>
+ <201111302051.54501.rjw@sisk.pl>
+ <20111201185322.GC13173@google.com>
+ <201112012242.58090.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <4EDD2DE1.1050606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Nicolas Pitre <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Jeff Garzik <jgarzik-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:33034 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751455Ab1LEVcP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 16:32:15 -0500
+Content-Disposition: inline
+In-Reply-To: <201112012242.58090.rjw@sisk.pl>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: sfr@canb.auug.org.au, linux-pm@vger.kernel.org, linux-next@vger.kernel.org
 
-On Mon, 05 Dec 2011 14:47:29 -0600
-Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+986b11c3ee "Merge branch 'pm-freezer' of ..." added unnecessary
+freezing() test in try_to_freeze_cgroup() while merging.  Drop it.
 
-> On 12/05/2011 02:21 PM, Anton Vorontsov wrote:
-> > On Mon, Dec 05, 2011 at 01:16:39PM -0600, Rob Herring wrote:
-> > [...]
-> >> At least for DT enabled platforms, we could force "no irq" to be 0 in
-> >> the DT irq code. Searching the dts files, I found 2 occurrences of IRQ0.
-> > 
-> > Please note that there are HW IRQ numbers and "Virtual" IRQ numbers.
-> > dev->irq and thus the thing that we pass into request_irq() is a
-> > virtual IRQ thing, a "cookie".
-> > 
-> > While in device tree you see real HW IRQ numbers.
-> > 
-> > Legal VIRQ is always > 0, while HW IRQ could be >= 0.
-> > 
-> 
-> If this was all true, then there would be no discussion.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+This shouldn't be harmful but still is unnecessary.
 
-Or more to the point. If the ARM people concerned had listened in 2005,
-2006 or 2008 there would be no discussion.
+Thanks.
 
-> This is what we are working towards, but irq_chips all over the arm tree
-> do not support any translation or have base fixed at compile time. Only
-> a few have been converted. And some ARM platforms may never get
-> converted to DT.
+ kernel/cgroup_freezer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You've had six years. Let them break, it'll motivate any users to fix
-them.
-
-Alan
+--- work/kernel/cgroup_freezer.c	2011-12-05 13:25:34.156948390 -0800
++++ misc/kernel/cgroup_freezer.c	2011-12-05 13:26:58.787447558 -0800
+@@ -283,7 +283,7 @@
+ 	while ((task = cgroup_iter_next(cgroup, &it))) {
+ 		if (!freeze_task(task))
+ 			continue;
+-		if (freezing(task) && is_task_frozen_enough(task))
++		if (is_task_frozen_enough(task))
+ 			continue;
+ 		if (!freezing(task) && !freezer_should_skip(task))
+ 			num_cant_freeze_now++;
