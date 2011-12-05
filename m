@@ -1,57 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the wireless-next
- tree
-Date: Mon, 5 Dec 2011 13:37:57 +1100
-Message-ID: <20111205133757.2b6cd1675543c7da26f663a5@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the net-next tree with the  tree
+Date: Mon, 5 Dec 2011 15:34:16 +1100
+Message-ID: <20111205153416.e1dd01e5368ce7c016d99a59@canb.auug.org.au>
+References: <20111205123428.47213da24624d85aa84711f3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_Dec_2011_13_37_57_+1100_i.ZOMeC5xJ/1oPuf"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Justin P. Mattock" <justinmattock@gmail.com>, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__5_Dec_2011_15_34_16_+1100_/ssrxf6Sk90=A5NQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:34981 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754802Ab1LEEe2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Dec 2011 23:34:28 -0500
+In-Reply-To: <20111205123428.47213da24624d85aa84711f3@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wey-Yi Guy <wey-yi.w.guy@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes.berg@intel.com>
 
---Signature=_Mon__5_Dec_2011_13_37_57_+1100_i.ZOMeC5xJ/1oPuf
+--Signature=_Mon__5_Dec_2011_15_34_16_+1100_/ssrxf6Sk90=A5NQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+On Mon, 5 Dec 2011 12:34:28 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the net-next tree got a conflict in
+> drivers/net/wireless/iwlwifi/iwl-agn.c between commits from the
 
-Today's linux-next merge of the trivial tree got a conflict in
-net/mac80211/work.c between commit e76aadc57228 ("mac80211: revert
-on-channel work optimisations") from the wireless-next tree and commit
-42b2aa86c667 ("treewide: Fix typos in various parts of the kernel, and
-fix some comments") from the trivial tree.
+wireless (sorry)
 
-The former removed the comment that was fixed in the latter, so I did
-that.
+> tree and commit 7335613ae27a ("iwlwifi: move all mac80211 related
+> functions to one place") from the net-next tree.
+>=20
+> I just used the net-next version (which may require some fixes).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__5_Dec_2011_13_37_57_+1100_i.ZOMeC5xJ/1oPuf
+--Signature=_Mon__5_Dec_2011_15_34_16_+1100_/ssrxf6Sk90=A5NQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO3C6FAAoJEECxmPOUX5FEWy0P/0xr/j4wGjTR7K9+j8XGcJsG
-0kGuAkvzdF2uESyYvbJfZEUPkp3K7DjXditHnCvuMH1aOhnFWfbdMAGlOAwsp8ft
-ZZ1ApLelAfX8D3QOEdueMRUqCTtUb4HIp4dkbXaTJm0YxpF/gQepinWn6EBG/+nI
-/+81hX1wYQzbO/V1vyyYYsaKcOvi5SI2IK5ETTPO+dhZYOyX9DU6OQtYPPBa9j7B
-D/kgcduKtiRUN5HMh/xQzubYysRx8l6f88dPDnFAKn2G3EfWfUrBqLgL3Cm/pDfj
-0fQCMKioCmPhcPdACA5AK4rKM8LOpeFvaD+LBiHxwRgkgqAMQWA0ZUvlE35Fzxzv
-dCyc3Tiv2mMKU2zd7+u7mT1v03a3hJ7Cg92thi/pBRD2Vzd/fmSnLKXzlWIVFpmx
-OEV3WYeD5asqNB2VdjhrYvMDsS2g0QQWmoUnqJTH6yz1jcFrjsDdK2lEGWMtOFHA
-Ha31+2Ivf+VERbeiaqF9A8ubnttfqdpFcnyuQBna06VIIOdmdoVxaIXq95biVd2T
-/9GR436/qd+N5qmpNdQIAa/cffdc9a5jzmSX1a+HwmZk/RODP5+HuC8MR2Umlr6F
-uw2SF9DnClf9lvbEHG47tYTuahXQz3eT7pC6w+dMTel7yS/pcl9WP/yZq2SL0W8D
-AyM5EJsEi+1p6e4PVABK
-=0g/B
+iQIcBAEBCAAGBQJO3EnIAAoJEECxmPOUX5FEjYEQAJHa2ESHSmXpnrfwmJqEco0O
+pk2qM80T3xYeQfNIG15c+/iqJy1vLELesLpIckODM38/8FpQjBtd4orDB13VvCkQ
+kAlXDTm6JHA5YG9DQI6FkpckkfQaUQ42uzr1NAUcGOLTGSZdbEkZoLqtnt2HAorc
+ppVz+EbL8/WK5SevtwVP2qbspq/GFnIPw8129Dnpz1gBr/TKslGYz0obDTxm3B3e
+eMyz+jjkF8vg6dKJ674zpdzHek5v1tPaLmfl8azgY8k6V5yfpyEsr5bin7XjrzD+
+d9zQJpGU/mFx4gF2hnsmDW7zCM/cJD0hSelnWMRdlO4TYO0T2WA0WI5KuHXlUPmj
+f+HJmBZQlkFkpC5PAUxfY/BqlXbFnKR+0PyqJ4k9s29I+hwjouV/dYjw57PRfkEr
+j8MoofE5/FSQzpfYllj2SwNauK5HU+pS+87oFZXecz/wU83uT2T8mHSpn/bM7j6g
+lhdexl2fwNh50y8v+8mfB7Vp9ZkveVvMkQGpdxQyiTs/tvdLsmBCzB6hiLe5gaIz
+6unsmljaQt7J7h6RqZcsDMaNnuTKP3K1u733aYyWXaYVixdEtqenutssOyYJedys
+evDLa0IftEZPuwJWlOJdT7x52mst0duRRpn/Rxz3PDKLn1nx49777AZxSoys/zTM
+JR8n3yB+ynTgDE8SkmbC
+=Tpql
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__5_Dec_2011_13_37_57_+1100_i.ZOMeC5xJ/1oPuf--
+--Signature=_Mon__5_Dec_2011_15_34_16_+1100_/ssrxf6Sk90=A5NQ--
