@@ -1,46 +1,58 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: [PATCH pm/linux-next] cgroup_freezer: drop unnecessary freezing()
- from try_to_freeze_cgroup()
-Date: Mon, 5 Dec 2011 13:32:04 -0800
-Message-ID: <20111205213204.GL627@google.com>
-References: <20111128233055.GF3858@google.com>
- <201111302051.54501.rjw@sisk.pl>
- <20111201185322.GC13173@google.com>
- <201112012242.58090.rjw@sisk.pl>
+From: Julie Sullivan <kernelmail.jms@gmail.com>
+Subject: linux-next web page needs updating
+Date: Mon, 5 Dec 2011 21:39:56 +0000
+Message-ID: <CAAVPGON4_H+LYr2io6pJphpRWcquz9-OdNvZnUwBGbAiy_tgBQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:33034 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751455Ab1LEVcP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 16:32:15 -0500
-Content-Disposition: inline
-In-Reply-To: <201112012242.58090.rjw@sisk.pl>
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:37194 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932489Ab1LEVj4 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 16:39:56 -0500
+Received: by yenm1 with SMTP id m1so2235483yen.19
+        for <linux-next@vger.kernel.org>; Mon, 05 Dec 2011 13:39:56 -0800 (PST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: sfr@canb.auug.org.au, linux-pm@vger.kernel.org, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
 
-986b11c3ee "Merge branch 'pm-freezer' of ..." added unnecessary
-freezing() test in try_to_freeze_cgroup() while merging.  Drop it.
+On Fri, Dec 2, 2011 at 8:57 PM, Dan Carpenter <dan.carpenter@oracle.com=
+> wrote:
+> On Fri, Dec 02, 2011 at 07:36:54AM -0300, Joilnen Leite wrote:
+>> Should I to do git pull ?
+>> or like said http://linux.f-seidel.de/linux-next/pmwiki/pmwiki.php?n=
+=3DLinux-next.FAQ
+>>
+>> $ git remote add linux-next
+>> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+>> $ git fetch linux-next
+>> $ git fetch --tags linux-next
+>> ... # later on
+>> $ git remote update
+>
+> No. =A0Don't update. =A0After the fetch do a git checkout next-201112=
+01.
+>
+> The problem is that you have to update from one tree to the other
+> tree but linux-next doesn't follow a linear plan like that. =A0Linux
+> next is rebuilt every day independently from the day before.
+>
+> regards,
+> dan carpenter
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
-This shouldn't be harmful but still is unnecessary.
 
-Thanks.
+Joilnen, if you haven't figured this out already and still can't set
+linux-next up as a remote:
+This line (still on the linux-next web page to date):
 
- kernel/cgroup_freezer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
 
---- work/kernel/cgroup_freezer.c	2011-12-05 13:25:34.156948390 -0800
-+++ misc/kernel/cgroup_freezer.c	2011-12-05 13:26:58.787447558 -0800
-@@ -283,7 +283,7 @@
- 	while ((task = cgroup_iter_next(cgroup, &it))) {
- 		if (!freeze_task(task))
- 			continue;
--		if (freezing(task) && is_task_frozen_enough(task))
-+		if (is_task_frozen_enough(task))
- 			continue;
- 		if (!freezing(task) && !freezer_should_skip(task))
- 			num_cant_freeze_now++;
+is actually now wrong (it's been replaced on kernel.org), so you need
+to replace it with this line:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
+instead. HTH,
+
+Cheers
+Julie
