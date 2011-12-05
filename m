@@ -1,58 +1,63 @@
-From: Julie Sullivan <kernelmail.jms@gmail.com>
-Subject: linux-next web page needs updating
-Date: Mon, 5 Dec 2011 21:39:56 +0000
-Message-ID: <CAAVPGON4_H+LYr2io6pJphpRWcquz9-OdNvZnUwBGbAiy_tgBQ@mail.gmail.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: [PATCH] x86/intel_mid: Fix the Kconfig for MID selection
+Date: Mon, 05 Dec 2011 23:14:39 +0000
+Message-ID: <20111205231433.28811.51297.stgit@bob.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:37194 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932489Ab1LEVj4 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 16:39:56 -0500
-Received: by yenm1 with SMTP id m1so2235483yen.19
-        for <linux-next@vger.kernel.org>; Mon, 05 Dec 2011 13:39:56 -0800 (PST)
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:53492 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932508Ab1LEXU3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 18:20:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: mingo@elte.hu, linux-next@vger.kernel.org
 
-On Fri, Dec 2, 2011 at 8:57 PM, Dan Carpenter <dan.carpenter@oracle.com=
-> wrote:
-> On Fri, Dec 02, 2011 at 07:36:54AM -0300, Joilnen Leite wrote:
->> Should I to do git pull ?
->> or like said http://linux.f-seidel.de/linux-next/pmwiki/pmwiki.php?n=
-=3DLinux-next.FAQ
->>
->> $ git remote add linux-next
->> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
->> $ git fetch linux-next
->> $ git fetch --tags linux-next
->> ... # later on
->> $ git remote update
->
-> No. =A0Don't update. =A0After the fetch do a git checkout next-201112=
-01.
->
-> The problem is that you have to update from one tree to the other
-> tree but linux-next doesn't follow a linear plan like that. =A0Linux
-> next is rebuilt every day independently from the day before.
->
-> regards,
-> dan carpenter
+From: Alan Cox <alan@linux.intel.com>
+
+We could build all the bits to make generic MID work if you picked
+MID platform alone but that's really silly. Instead use select and
+two variables.
+
+This looks a bit daft right now but once we add a Medfield selection
+it'll start to look a good deal more sensible.
+
+Reported-by: Ingo Molnar <mingo@elte.hu>
+Signed-off-by: Alan Cox <alan@linux.intel.com>
+---
+
+ arch/x86/Kconfig |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
 
 
-Joilnen, if you haven't figured this out already and still can't set
-linux-next up as a remote:
-This line (still on the linux-next web page to date):
-
-git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
-
-is actually now wrong (it's been replaced on kernel.org), so you need
-to replace it with this line:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-
-instead. HTH,
-
-Cheers
-Julie
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 4ee940c..b884f4c 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -395,7 +395,7 @@ config X86_INTEL_CE
+ 	  This option compiles in support for the CE4100 SOC for settop
+ 	  boxes and media devices.
+ 
+-config X86_INTEL_MID
++config X86_WANT_INTEL_MID
+ 	bool "Intel MID platform support"
+ 	depends on X86_32
+ 	depends on X86_EXTENDED_PLATFORM
+@@ -404,7 +404,7 @@ config X86_INTEL_MID
+ 	  systems which do not have the PCI legacy interfaces (Moorestown,
+ 	  Medfield). If you are building for a PC class system say N here.
+ 
+-if X86_INTEL_MID
++if X86_WANT_INTEL_MID
+ 
+ config X86_MRST
+        bool "Moorestown MID platform"
+@@ -416,6 +416,7 @@ config X86_MRST
+ 	select SPI
+ 	select INTEL_SCU_IPC
+ 	select X86_PLATFORM_DEVICES
++	select X86_INTEL_MID
+ 	---help---
+ 	  Moorestown is Intel's Low Power Intel Architecture (LPIA) based Moblin
+ 	  Internet Device(MID) platform. Moorestown consists of two chips:
