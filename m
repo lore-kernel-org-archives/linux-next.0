@@ -1,49 +1,47 @@
-From: Alan Cox <alan-qBU/x9rampVanCEyBjwyrvXRex20P6io@public.gmane.org>
-Subject: Re: [PATCH] ata: Don't use NO_IRQ in pata_of_platform driver
-Date: Mon, 5 Dec 2011 18:45:22 +0000
-Message-ID: <20111205184522.316598de@lxorguk.ukuu.org.uk>
-References: <20111110162859.GA7088@oksana.dev.rtsoft.ru>
- <20111202192618.GC3037@localhost.localdomain>
- <CA+55aFwekNWz+V4440f=2iu_BfOxSg0NjVogv4cZZDFbJBNoAQ@mail.gmail.com>
- <1322867573.11728.22.camel@pasglop>
- <20111205161157.GA27550@localhost.localdomain>
- <alpine.LFD.2.02.1112051236350.2357@xanadu.home>
- <20111205180253.GB29812@localhost.localdomain>
- <alpine.LFD.2.02.1112051310150.2357@xanadu.home>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: Tree for Sept 28 (mrst)
+Date: Mon, 5 Dec 2011 19:10:33 +0000
+Message-ID: <20111205191033.191615af@lxorguk.ukuu.org.uk>
+References: <20110928200404.6ed0d6c34161d233be8994fd@canb.auug.org.au>
+	<4E839B94.9040305@xenotime.net>
+	<4EDD0FED.7060301@xenotime.net>
+	<20111205184105.GA20121@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <alpine.LFD.2.02.1112051310150.2357-QuJgVwGFrdf/9pzu0YdTqQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Nicolas Pitre <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jeff Garzik <jgarzik-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:47527 "EHLO
+	earthlight.etchedpixels.co.uk" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932126Ab1LETJA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 14:09:00 -0500
+In-Reply-To: <20111205184105.GA20121@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, x86 maintainers <x86@kernel.org>
 
-> But as you illustrated, there is a large number of drivers that already 
-> assume no IRQ is < 0, even if they don't use any IRQ #0 themselves.  
-> That is a much bigger problem to fix.
+On Mon, 5 Dec 2011 19:41:05 +0100
+Ingo Molnar <mingo@elte.hu> wrote:
 
-And a much larger number assuming the reverse is true which are hiding
-potential bugs on ARM.
+> 
+> * Randy Dunlap <rdunlap@xenotime.net> wrote:
+> 
+> > On 09/28/2011 03:11 PM, Randy Dunlap wrote:
+> > > On 09/28/11 03:04, Stephen Rothwell wrote:
+> > >> Hi all,
+> > > 
+> > > 
+> > > When CONFIG_X86_INTEL_MID=y but CONFIG_X86_MRST is not enabled
+> > > (this is on an i386/X86_32 build):
+> > > 
+> > > rtc.c:(.init.text+0x6234): undefined reference to `__mrst_cpu_chip'
+> > > 
+> > > Full randconfig file is attached.
+> > 
+> > Hm, it's now 20111205 and this build error is still around.
+> > Is there any hope for getting it fixed?
+> 
+> Alan?
 
-Looking at the serial stuff the best checks appear to be looking at
-"irq", "-1" and NO_IRQ.
-
-For migration stuff that's doing broken things like
-
-	if (irq < 0)
-
-can be changed to
-
-	if (irq <= 0)
-
-and that can be done before NO_IRQ itself is nailed on ARM and PA-RISC.
+Don't think I saw the original report - I'll take a look. I imagine it's
+just an X86_MRST that didn't get changed rightly.
