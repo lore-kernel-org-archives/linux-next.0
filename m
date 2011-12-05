@@ -1,94 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please add my tree to linux-next
-Date: Mon, 5 Dec 2011 10:09:30 +1100
-Message-ID: <20111205100930.1bedc458a5e78b85c563465d@canb.auug.org.au>
-References: <4ED8529E.5070608@redhat.com>
+Subject: linux-next: manual merge of the s5p tree with the arm tree
+Date: Mon, 5 Dec 2011 11:01:41 +1100
+Message-ID: <20111205110141.90c553323cf5d29fd2c3eeae@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_Dec_2011_10_09_30_+1100_iMzhljuTxY.RTSod"
+ boundary="Signature=_Mon__5_Dec_2011_11_01_41_+1100_UnhDfWmtUkD_C9i_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:33552 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:39525 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754742Ab1LDXJm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Dec 2011 18:09:42 -0500
-In-Reply-To: <4ED8529E.5070608@redhat.com>
+	with ESMTP id S1755370Ab1LEAB4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Dec 2011 19:01:56 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Cong Wang <amwang@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jamie Iles <jamie@jamieiles.com>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Mon__5_Dec_2011_10_09_30_+1100_iMzhljuTxY.RTSod
+--Signature=_Mon__5_Dec_2011_11_01_41_+1100_UnhDfWmtUkD_C9i_
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Kukjin,
 
-On Fri, 02 Dec 2011 12:22:54 +0800 Cong Wang <amwang@redhat.com> wrote:
->
-> As Andrew Morton suggested, please add my tree which contains all
-> of my patches for kmap_atomic() [1] to linux-next. Some of the
-> individual patches already got ACK from subsystem maintainers.
-> The tree is hosted on github:
->=20
->      git://github.com/congwang/linux.git #kmap_atomic
+Today's linux-next merge of the s5p tree got a conflict in
+arch/arm/mach-s3c64xx/mach-crag6410.c between commit 774b51f8f826 ("ARM:
+s3c64xx: convert to MULTI_IRQ_HANDLER") from the arm tree and commit
+8504a3cb5cbc ("ARM: S3C64XX: Configure WM1250 EV1 GPIOs on Cragganmore")
+from the s5p tree.
 
-I have added this tree to linux-next today.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
+diff --cc arch/arm/mach-s3c64xx/mach-crag6410.c
+index 988ac2e,b2381c1..0000000
+--- a/arch/arm/mach-s3c64xx/mach-crag6410.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
+@@@ -37,7 -37,8 +37,9 @@@
+  #include <linux/mfd/wm831x/irq.h>
+  #include <linux/mfd/wm831x/gpio.h>
+ =20
++ #include <sound/wm1250-ev1.h>
++=20
+ +#include <asm/hardware/vic.h>
+  #include <asm/mach/arch.h>
+  #include <asm/mach-types.h>
+ =20
 
---Signature=_Mon__5_Dec_2011_10_09_30_+1100_iMzhljuTxY.RTSod
+--Signature=_Mon__5_Dec_2011_11_01_41_+1100_UnhDfWmtUkD_C9i_
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO2/2qAAoJEECxmPOUX5FE3CkQAI7+qhXFubBAltrOyfNzwi3x
-zjhgcQJXO2eHqGLxpSeToM3rrslZxre+Ue5TUy2uRxpOeE/cayWETFD2jB/UJ4e+
-ZUP49ZolaHsWrBey0uGkx+n6ByKGABoHv3zrGMgRpuhaaG4LuFuZaUmTxaxITm2T
-jCCkpxmdMJ7P4LEB5mpEfLsBCFaaGBNBVsG+vq/+NcU5Z15BRyhxgkWJq+/+bzC2
-aAhsQ1+2pkqqvPdWVBzLQ/X6MFf7vxo6HU+gbGj+CijKaB0WdmuuR0lMmPVLYFSz
-jrt0ewUIn4AmFnoUmu5XMQcbYVX8nBu4b4Uzn10B4nFsnA5ptjDbcqb2+qHvjMtg
-L5XLBkn4KUUYT5CLvnEjyZb2zjgHBOaEkwj4nZJfShe84Lcpjn0j9YqVHhDqC8fu
-8MW6mtmIxZ5ruzCF1DODRLQ8oPVsPw4oqkFlu801WY3Isy9ogD8JLf9lhx1eFkOg
-dtb8fuwUmivENINhK+zlOxnx8iONp6L241cqd0Qq2txaQj3M7+n6iDhH02GbN9wT
-0ka39YTHm2b9u8HTJYQWPbdvtlCG2geR8AXSYH8nALn3M8WkpWev51+gd4SETiCd
-G8QmTtTh9JwefktdgLF9T7M2uiESfUfRM01ssq8pEJbBNmzKyZoCAoJ5in7ZMhpf
-hKyRnd7iyVH/4z/AgyuI
-=5+vd
+iQIcBAEBCAAGBQJO3AnlAAoJEECxmPOUX5FE4DgQAKl8W6ie7IRWu9iYC/SXpbzJ
+rBPH/Zz36LCJUbpiRSxa5mlgBgSuZDHEjp0gsDXa0oybho+227R3Lp+qkmG8lK2O
+XH1feX9WYtQJJ4nsfVwV7wke8av61s1ESnNLyQulxdg8kI4fxfOWPOCW1x7ECx/N
+ifDmCH9WfjnR5qSNQN8cdKkpvoaSIk0lBRkeQdBa/4g6RnvQuhACDDnpnmKGCppI
+G9C04XqA4e6P/+QhDCr2Fi3zgC5BO395WWtz0blPrxUw/bjlBBxx4we5za9E8CZ5
+rj/IyjehSVlPnn4v9gIuWXJVv2uBSVgnFZOVLv90G1MW029vEgdzT1hlzNEmYKFm
+ty5mDmBawuL9leTB6CEhOBhDVfiE42iqTNkWgSgUgsKkXoiEX/aXMs50dVbhm5Ri
+8qyclyETm8l6Zip/aBOWginXHAGjHy3Fu27WGC49Bg8KduoEWnxGbjJjcHi7h2kV
+H2+Zn34XcZWQYc7hRcYQIXo96XsFjnNA0VaqzuAVdkmcMzTGNm8Sw/EmU2iG6cdC
+TvMrRsKv+4f5WFZ8mpHaQxmfv1jtGub+e1wuTi/W0PHa6lE64ViZR++P/ZTVMRN2
+S80EbIg0ndP8/bkox3jxXoGmvIiBiY6CwHDaZIFha1oQunMOwoScxe+mcpdZDcWj
+XDyFWeU49emmooyil4il
+=GpjR
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__5_Dec_2011_10_09_30_+1100_iMzhljuTxY.RTSod--
+--Signature=_Mon__5_Dec_2011_11_01_41_+1100_UnhDfWmtUkD_C9i_--
