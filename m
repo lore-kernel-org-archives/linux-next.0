@@ -1,127 +1,56 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Tue, 6 Dec 2011 09:28:56 -0800
-Message-ID: <20111206092856.61d759dd@jbarnes-desktop>
-References: <20111206111852.6931fd03f0b1a86e318a29e3@canb.auug.org.au>
-	<CAErSpo6YrEZZjd=j6xoUfSvDHTT+-9g0zAb=ff2F1jA-0V9rHw@mail.gmail.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH] ata: Don't use NO_IRQ in pata_of_platform driver
+Date: Tue, 6 Dec 2011 14:11:42 -0500 (EST)
+Message-ID: <alpine.LFD.2.02.1112061408000.2357@xanadu.home>
+References: <20111110162859.GA7088@oksana.dev.rtsoft.ru> <20111202192618.GC3037@localhost.localdomain> <CA+55aFwekNWz+V4440f=2iu_BfOxSg0NjVogv4cZZDFbJBNoAQ@mail.gmail.com> <1322867573.11728.22.camel@pasglop> <20111205161157.GA27550@localhost.localdomain>
+ <alpine.LFD.2.02.1112051236350.2357@xanadu.home> <20111205180253.GB29812@localhost.localdomain> <alpine.LFD.2.02.1112051310150.2357@xanadu.home> <20111205192605.GD29812@localhost.localdomain> <alpine.LFD.2.02.1112051443190.2357@xanadu.home>
+ <20111206093709.GB2274@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/L16Zns18.C_g+H7ORtf0pij"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:32896 "HELO
-	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751769Ab1LFR0S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Dec 2011 12:26:18 -0500
-In-Reply-To: <CAErSpo6YrEZZjd=j6xoUfSvDHTT+-9g0zAb=ff2F1jA-0V9rHw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <20111206093709.GB2274@linaro.org>
+Sender: linux-ide-owner@vger.kernel.org
+To: Dave Martin <dave.martin@linaro.org>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Linus Torvalds <torvalds@linux-foundation.org>, Anton Vorontsov <cbouatmailru@gmail.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, devicetree-discuss@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Jeff Garzik <jgarzik@redhat.com>, Pawel Moll <pawel.moll@arm.com>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
---Sig_/L16Zns18.C_g+H7ORtf0pij
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Tue, 6 Dec 2011, Dave Martin wrote:
 
-On Mon, 5 Dec 2011 20:16:54 -0700
-Bjorn Helgaas <bhelgaas@google.com> wrote:
-
-> On Mon, Dec 5, 2011 at 5:18 PM, Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
-> > Hi Jesse,
+> On Mon, Dec 05, 2011 at 02:49:01PM -0500, Nicolas Pitre wrote:
+> 
+> > No need to convert everything.
+> > 
+> > First move is to make irq=0 meaning no IRQ.  That means making things 
+> > like:
+> > 
+> > 	if (irq < 0)
+> > 	if (irq >= 0)
+> > 
+> > into
+> > 
+> > 	if (irq <= 0)
+> > 	if (irq > 0)
+> > 
+> > And replace NO_IRQ with 0.
 > >
-> > After merging the pci tree, today's linux-next build
-> > (powerpc_ppc64_defconfig) failed like this:
-> >
-> > arch/powerpc/kernel/pci_64.c: In function 'pcibios_map_io_space':
-> > arch/powerpc/kernel/pci_64.c:201:2: error: implicit declaration of func=
-tion 'pcibios_phb_map_phb_io_space' [-Werror=3Dimplicit-function-declaratio=
-n]
-> >
-> > Caused by commit fb8fca4ff3f7 ("powerpc/PCI: split PHB part out of
-> > pcibios_map_io_space()").
-> >
-> > arch/powerpc/kernel/pci-common.c: In function 'pcibios_scan_phb':
-> > arch/powerpc/kernel/pci-common.c:1726:7: error: incompatible type for a=
-rgument 5 of 'pci_create_root_bus'
-> > include/linux/pci.h:665:17: note: expected 'struct list_head *' but arg=
-ument is of type 'struct list_head'
-> >
-> > Caused by commit 3c73944e7ace ("powerpc/PCI: convert to
-> > pci_create_root_bus()").
-> >
-> > I have used the pci tree from next-20111205 for today.
-> > --
-> > Cheers,
-> > Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug.o=
-rg.au
-> > http://www.canb.auug.org.au/~sfr/
->=20
-> I fixed these; the updated patches are on
-> git://github.com/bjorn-helgaas/linux.git on
-> the "pci-scan-v4" branch (head f9da8b214fef1ac4072e4af2a663293ab965f796).
->=20
-> Here's the incremental diff from v3 to v4 (hand-created and whitespace-da=
-maged):
->=20
-> diff --git a/c4677881a:arch/powerpc/kernel/pci_64.c
-> b/f9da8b214:arch/powerpc/kernel/pci_64.c
-> index 4401425..3318d39 100644
-> --- a/c4677881a:arch/powerpc/kernel/pci_64.c
-> +++ b/f9da8b214:arch/powerpc/kernel/pci_64.c
-> @@ -197,7 +198,7 @@ int __devinit pcibios_map_io_space(struct pci_bus *bu=
-s)
->                 return 0;
->         }
->=20
-> -       return pcibios_phb_map_phb_io_space(pci_bus_to_host(bus));
-> +       return pcibios_map_phb_io_space(pci_bus_to_host(bus));
->  }
->  EXPORT_SYMBOL_GPL(pcibios_map_io_space);
->=20
-> diff --git a/c4677881a:arch/powerpc/kernel/pci-common.c
-> b/f9da8b214:arch/powerpc/kernel/pci-common.c
-> index 8c47c57..2aa707b 100644
-> --- a/c4677881a:arch/powerpc/kernel/pci-common.c
-> +++ b/f9da8b214:arch/powerpc/kernel/pci-common.c
-> @@ -1711,7 +1712,7 @@ void __devinit pcibios_scan_phb(struct
-> pci_controller *hose)
->=20
->         /* Create an empty bus for the toplevel */
->         bus =3D pci_create_root_bus(hose->parent, hose->first_busno,
-> -                                 hose->ops, hose, resources);
-> +                                 hose->ops, hose, &resources);
->         if (bus =3D=3D NULL) {
->                 pr_err("Failed to create bus for PCI domain %04x\n",
->                         hose->global_number);
->=20
+> > That change shouldn't break anything, except those drivers which are 1) 
+> > being passed an actual IRQ #0 and 2) testing for no IRQ.  I suspect that 
+> > those conditions aren't very common together.
+> 
+> To clarify, you're suggesting that the meanings of all other IRQ values
+> would not change initially?
 
-I merged this fix into the original commit as a v2 patch, hope today's
-linux-next builds.
+Initially, or even ever.
 
-Thanks,
---=20
-Jesse Barnes, Intel Open Source Technology Center
+> (i.e., we remap HW irq 0, if there is one,
+> to some other random number but have a 1:1 mapping for everything else).
 
---Sig_/L16Zns18.C_g+H7ORtf0pij
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+Exact.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+> That could make sense as an approach.
 
-iQIcBAEBAgAGBQJO3lDYAAoJEIEoDkX4Qk9h5hMQALG1cRoRLjOyT98DzuoYZZ0I
-bhguISCd8IjyKWh6pq2mD75JLDt0y1OkgYIqEdWgM17mCyNzDzQr052GQU3xUSpF
-qK4KAg0k2zyt/eUW+30gkWiCO6nYz3xcD7ozqFZ/z7LtcDRaFbrjT7wTbK2bCuAo
-yAUJ7V4aQOkz3HDDsEgmqFMTthD3r/kNM0Q/4sjQ2emNZt4zSv82+m7Hu+FFGUfe
-fxTvuLP0zrhbA6MhI5VGnELPtWdbx9snjz7eV71dH61HS+fz4TQZGYF5H5n0JHFB
-uZpZS8ddB/+JMpGeC+LNyYkrnB0Kgvxl/GEhV9swd0Ah9TmLbo8PZezk/aQGN63A
-09fVlWpdhnK6CuzV102+NTGGlQei4ZDsKoMoPMj+6irWB4GOXvsD4i/IWJ6tN2u/
-TRK+X7ptdCv1gKRgeRZ10/0JypSP5BiNYTMvQLHOqLQGYYq+1857AetB9LVDKj53
-alMwmFKbBfVxgs1IhN5I447MrZtdp+JyBEZk88ePJpPpePvuNN0p3yITxmSchA8E
-ENpWhPPbzvhL8ykaQihUOQgbutVT8CBMvHrPoFBQnLeM4ens7RhI0RB58S3m68YB
-L432EiDA2Xqq8YJF5+YNrOH1kxl1vnprpqStYugAVUWmcCEChzwS5gwjoRJEm4WB
-9UsnpSDC/f1qRho13ewk
-=3eLt
------END PGP SIGNATURE-----
+You might notice that a true IRQ #0 passed to generic drivers is not 
+really frequent.
 
---Sig_/L16Zns18.C_g+H7ORtf0pij--
+
+Nicolas
