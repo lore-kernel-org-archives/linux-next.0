@@ -1,63 +1,68 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: [PATCH] x86/intel_mid: Fix the Kconfig for MID selection
-Date: Mon, 05 Dec 2011 23:14:39 +0000
-Message-ID: <20111205231433.28811.51297.stgit@bob.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci tree
+Date: Tue, 6 Dec 2011 11:18:52 +1100
+Message-ID: <20111206111852.6931fd03f0b1a86e318a29e3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:53492 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932508Ab1LEXU3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 18:20:29 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: mingo@elte.hu, linux-next@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__6_Dec_2011_11_18_52_+1100_v0.M4vDb4rBJ4mb0"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Alan Cox <alan@linux.intel.com>
+--Signature=_Tue__6_Dec_2011_11_18_52_+1100_v0.M4vDb4rBJ4mb0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We could build all the bits to make generic MID work if you picked
-MID platform alone but that's really silly. Instead use select and
-two variables.
+Hi Jesse,
 
-This looks a bit daft right now but once we add a Medfield selection
-it'll start to look a good deal more sensible.
+After merging the pci tree, today's linux-next build
+(powerpc_ppc64_defconfig) failed like this:
 
-Reported-by: Ingo Molnar <mingo@elte.hu>
-Signed-off-by: Alan Cox <alan@linux.intel.com>
----
+arch/powerpc/kernel/pci_64.c: In function 'pcibios_map_io_space':
+arch/powerpc/kernel/pci_64.c:201:2: error: implicit declaration of function=
+ 'pcibios_phb_map_phb_io_space' [-Werror=3Dimplicit-function-declaration]
 
- arch/x86/Kconfig |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+Caused by commit fb8fca4ff3f7 ("powerpc/PCI: split PHB part out of
+pcibios_map_io_space()").
 
+arch/powerpc/kernel/pci-common.c: In function 'pcibios_scan_phb':
+arch/powerpc/kernel/pci-common.c:1726:7: error: incompatible type for argum=
+ent 5 of 'pci_create_root_bus'
+include/linux/pci.h:665:17: note: expected 'struct list_head *' but argumen=
+t is of type 'struct list_head'
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 4ee940c..b884f4c 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -395,7 +395,7 @@ config X86_INTEL_CE
- 	  This option compiles in support for the CE4100 SOC for settop
- 	  boxes and media devices.
- 
--config X86_INTEL_MID
-+config X86_WANT_INTEL_MID
- 	bool "Intel MID platform support"
- 	depends on X86_32
- 	depends on X86_EXTENDED_PLATFORM
-@@ -404,7 +404,7 @@ config X86_INTEL_MID
- 	  systems which do not have the PCI legacy interfaces (Moorestown,
- 	  Medfield). If you are building for a PC class system say N here.
- 
--if X86_INTEL_MID
-+if X86_WANT_INTEL_MID
- 
- config X86_MRST
-        bool "Moorestown MID platform"
-@@ -416,6 +416,7 @@ config X86_MRST
- 	select SPI
- 	select INTEL_SCU_IPC
- 	select X86_PLATFORM_DEVICES
-+	select X86_INTEL_MID
- 	---help---
- 	  Moorestown is Intel's Low Power Intel Architecture (LPIA) based Moblin
- 	  Internet Device(MID) platform. Moorestown consists of two chips:
+Caused by commit 3c73944e7ace ("powerpc/PCI: convert to
+pci_create_root_bus()").
+
+I have used the pci tree from next-20111205 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__6_Dec_2011_11_18_52_+1100_v0.M4vDb4rBJ4mb0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO3V9sAAoJEECxmPOUX5FEu88QAI23j/h/q51Myq5MHYnUuhgR
+NbxTR7kdM1BLX5LNv2pDdDXdzWLwKJlmdxSx3neVmviCMSUdvnho4SyAkQEUXO/R
+0jyNU1ys9DAdJUmUNMADZqd5aylMAqrQRufPWG0CPAF7z7CRnyfO+Nc7q815GKUW
+/4vUtMK3VfDYk2ar7nHpjbsdaky5bEjL+ZxzyatHvLgtnvEHmJ+xM/TZpJurVtJ7
+Sc4BbDw7FMrdMas5g6SbOkUif0ecs3FQnX/sWohbW75EaoTsFkVk0o8vtB2v1dhj
+EnQR/oUoJ4OxZPaftx3s9aZhuaiwk80RiUnXlVwsmYqsiBcxXyGIEUeAt2CRwcwD
+fmdpesYIPUH2kRAPi6Y9JhnpgWRVRBBZ8n+g+7tkR79F650l9oyy5NnonbHWB3yX
+2gnHKu4be+HE09J9wIx+c/Zi/VKiL8RGFtrQ90P48HPNlrIrN1lPPK997HtpB66t
+vCaPQGGvQuZM8aGPussFdevlw0GEdkb60qM/ZpH4tMyBV+7Wfy4L1IVu/9GHs2UR
+/d57FvEzFTA4k+GHhyizE+JkaBNpLQa+fnCuyAezUm4riTgsPnlxfA2Op8B24Mlz
+FiDMotjA8SDmlhwMfNctcjDk6mBr/USoswvGLUhvOWLv4QXb3sL9NXPgEdi+khfz
+BC27HZrPCqoNhebz1V9j
+=RPFV
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__6_Dec_2011_11_18_52_+1100_v0.M4vDb4rBJ4mb0--
