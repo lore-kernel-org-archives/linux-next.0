@@ -1,109 +1,111 @@
-From: Anton Vorontsov <anton.vorontsov@linaro.org>
-Subject: [PATCH v3] of/irq: Get rid of NO_IRQ usage
-Date: Wed, 7 Dec 2011 03:16:26 +0400
-Message-ID: <20111206231626.GA31683@oksana.dev.rtsoft.ru>
-References: <20111110151852.GA7465@oksana.dev.rtsoft.ru>
- <20111110152541.GA3207@oksana.dev.rtsoft.ru>
- <4EDE877A.4080708@gmail.com>
- <CA+55aFwGFogD4ROCH9m=c2jqB2axvrH-dnKPtA8kxXL9b3CVBw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Mark Einon <mark.einon@gmail.com>
+Subject: [PATCH] linux-next:et131x: Revert changes from previous commit
+Date: Tue,  6 Dec 2011 23:23:10 +0000
+Message-ID: <1323213790-22039-1-git-send-email-mark.einon@gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:53696 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753333Ab1LFXQc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Dec 2011 18:16:32 -0500
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwGFogD4ROCH9m=c2jqB2axvrH-dnKPtA8kxXL9b3CVBw@mail.gmail.com>
+Received: from mail-ww0-f42.google.com ([74.125.82.42]:35663 "EHLO
+	mail-ww0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754444Ab1LFXZA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Dec 2011 18:25:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Rob Herring <robherring2@gmail.com>, Ingo Molnar <mingo@elte.hu>, Jeff Garzik <jgarzik@redhat.com>, Grant Likely <grant.likely@secretlab.ca>, Stephen Rothwell <sfr@canb.auug.org.au>, devicetree-discuss@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+To: linux-next@vger.kernel.org
+Cc: romieu@fr.zoreil.com, linux-kernel@vger.kernel.org, rdunlap@xenotime.net, Mark Einon <mark.einon@gmail.com>
 
-PPC32/64 defines NO_IRQ to zero, so no problems expected.
-ARM defines NO_IRQ to -1, but OF code relies on IRQ domains support,
-which returns correct ('0') value in 'no irq' case. So everything
-should be fine.
+In commit 834d0ee317b (uintxy_t removal) not all changes were trival text replacements, some converted u64 -> dma_addr_t.
+In some configurations dma_addr_t is a u32, meaning that some bit operations cause build warnings. From Randy Dunlap:
 
-Other arches might break if some of their OF drivers rely on NO_IRQ
-being not 0. If so, the drivers must be fixed, finally.
+----------------
+on i386 (X86_32) builds:
 
-Signed-off-by: Anton Vorontsov <anton.vorontsov@linaro.org>
+drivers/staging/et131x/et131x.c:2483:8: warning: right shift count >= width of type
+drivers/staging/et131x/et131x.c:2531:8: warning: right shift count >= width of type
+----------------
+
+Removed these by reverting dma_addr_t back to u64 types, as well as reverting some other non-trivial changes from the aforementioned commit.
+
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Mark Einon <mark.einon@gmail.com>
 ---
+ drivers/staging/et131x/et131x.c |   28 +++++++++++++---------------
+ 1 files changed, 13 insertions(+), 15 deletions(-)
 
-On Tue, Dec 06, 2011 at 01:25:07PM -0800, Linus Torvalds wrote:
-> On Tue, Dec 6, 2011 at 1:22 PM, Rob Herring <robherring2@gmail.com> wrote:
-> >
-> > This warning code is really ugly. Can we just drop it? In my searching
-> > of in kernel dts files, there's only 1 instance I have found (Versatile
-> > AB watchdog) that would hit this.
-> 
-> I do agree. Especially since we never got any input on whether it works or not.
-> 
-> > If not, you don't need to handle irq_create_of_mapping return as that is
-> > already always 0 for no irq or error.
-> 
-> Yeah, I'd like to just remove NO_IRQ from the OF paths. Afaik, it
-> hasn't worked as NO_IRQ before anyway, so even if the rest of the
-> drivers end up continuing using NO_IRQ, the OF-enabled ones on ARM
-> should just stop. There can't be many of those yet.
-
-Okay, here it goes.
-
- drivers/of/irq.c |   13 ++++---------
- 1 files changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index 791270b..ac6da0d 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -26,11 +26,6 @@
- #include <linux/string.h>
- #include <linux/slab.h>
+diff --git a/drivers/staging/et131x/et131x.c b/drivers/staging/et131x/et131x.c
+index 7ae3e53..2c4069f 100644
+--- a/drivers/staging/et131x/et131x.c
++++ b/drivers/staging/et131x/et131x.c
+@@ -299,8 +299,8 @@ struct fbr_lookup {
+ 	dma_addr_t	 ring_physaddr;
+ 	void		*mem_virtaddrs[MAX_DESC_PER_RING_RX / FBR_CHUNKS];
+ 	dma_addr_t	 mem_physaddrs[MAX_DESC_PER_RING_RX / FBR_CHUNKS];
+-	dma_addr_t	 real_physaddr;
+-	u32		 offset;
++	u64		 real_physaddr;
++	u64		 offset;
+ 	u32		 local_full;
+ 	u32		 num_entries;
+ 	u32		 buffsize;
+@@ -1902,10 +1902,9 @@ static void et131x_config_rx_dma_regs(struct et131x_adapter *adapter)
+ 	/* Set the address and parameters of Free buffer ring 1 (and 0 if
+ 	 * required) into the 1310's registers
+ 	 */
+-	writel(((u64) rx_local->fbr[0]->real_physaddr) >> 32,
++	writel((u32) (rx_local->fbr[0]->real_physaddr >> 32),
+ 	       &rx_dma->fbr1_base_hi);
+-	writel(((u64) rx_local->fbr[0]->real_physaddr) & DMA_BIT_MASK(32),
+-	       &rx_dma->fbr1_base_lo);
++	writel((u32) rx_local->fbr[0]->real_physaddr, &rx_dma->fbr1_base_lo);
+ 	writel(rx_local->fbr[0]->num_entries - 1, &rx_dma->fbr1_num_des);
+ 	writel(ET_DMA10_WRAP, &rx_dma->fbr1_full_offset);
  
--/* For archs that don't support NO_IRQ (such as x86), provide a dummy value */
--#ifndef NO_IRQ
--#define NO_IRQ 0
--#endif
--
- /**
-  * irq_of_parse_and_map - Parse and map an interrupt into linux virq space
-  * @device: Device node of the device whose interrupt is to be mapped
-@@ -44,7 +39,7 @@ unsigned int irq_of_parse_and_map(struct device_node *dev, int index)
- 	struct of_irq oirq;
+@@ -1927,10 +1926,9 @@ static void et131x_config_rx_dma_regs(struct et131x_adapter *adapter)
+ 		fbr_entry++;
+ 	}
  
- 	if (of_irq_map_one(dev, index, &oirq))
--		return NO_IRQ;
-+		return 0;
+-	writel(((u64) rx_local->fbr[1]->real_physaddr) >> 32,
++	writel((u32) (rx_local->fbr[1]->real_physaddr >> 32),
+ 	       &rx_dma->fbr0_base_hi);
+-	writel(((u64) rx_local->fbr[1]->real_physaddr) & DMA_BIT_MASK(32),
+-	       &rx_dma->fbr0_base_lo);
++	writel((u32) rx_local->fbr[1]->real_physaddr, &rx_dma->fbr0_base_lo);
+ 	writel(rx_local->fbr[1]->num_entries - 1, &rx_dma->fbr0_num_des);
+ 	writel(ET_DMA10_WRAP, &rx_dma->fbr0_full_offset);
  
- 	return irq_create_of_mapping(oirq.controller, oirq.specifier,
- 				     oirq.size);
-@@ -345,7 +340,7 @@ int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
- 
- 	/* Only dereference the resource if both the
- 	 * resource and the irq are valid. */
--	if (r && irq != NO_IRQ) {
-+	if (r && irq) {
- 		r->start = r->end = irq;
- 		r->flags = IORESOURCE_IRQ;
- 		r->name = dev->full_name;
-@@ -363,7 +358,7 @@ int of_irq_count(struct device_node *dev)
+@@ -2275,10 +2273,10 @@ static inline u32 bump_free_buff_ring(u32 *free_buff_ring, u32 limit)
+  * @mask: correct mask
+  */
+ static void et131x_align_allocated_memory(struct et131x_adapter *adapter,
+-					  dma_addr_t *phys_addr, u32 *offset,
+-					  u32 mask)
++					  u64 *phys_addr, u64 *offset,
++					  u64 mask)
  {
- 	int nr = 0;
+-	dma_addr_t new_addr = *phys_addr & ~mask;
++	u64 new_addr = *phys_addr & ~mask;
  
--	while (of_irq_to_resource(dev, nr, NULL) != NO_IRQ)
-+	while (of_irq_to_resource(dev, nr, NULL))
- 		nr++;
+ 	*offset = 0;
  
- 	return nr;
-@@ -383,7 +378,7 @@ int of_irq_to_resource_table(struct device_node *dev, struct resource *res,
- 	int i;
+@@ -2430,8 +2428,8 @@ static int et131x_rx_dma_memory_alloc(struct et131x_adapter *adapter)
+ 			rx_ring->fbr[1]->offset);
+ #endif
+ 	for (i = 0; i < (rx_ring->fbr[0]->num_entries / FBR_CHUNKS); i++) {
+-		dma_addr_t fbr1_tmp_physaddr;
+-		u32 fbr1_offset;
++		u64 fbr1_tmp_physaddr;
++		u64 fbr1_offset;
+ 		u32 fbr1_align;
  
- 	for (i = 0; i < nr_irqs; i++, res++)
--		if (of_irq_to_resource(dev, i, res) == NO_IRQ)
-+		if (!of_irq_to_resource(dev, i, res))
- 			break;
+ 		/* This code allocates an area of memory big enough for N
+@@ -2496,8 +2494,8 @@ static int et131x_rx_dma_memory_alloc(struct et131x_adapter *adapter)
+ #ifdef USE_FBR0
+ 	/* Same for FBR0 (if in use) */
+ 	for (i = 0; i < (rx_ring->fbr[1]->num_entries / FBR_CHUNKS); i++) {
+-		dma_addr_t fbr0_tmp_physaddr;
+-		u32 fbr0_offset;
++		u64 fbr0_tmp_physaddr;
++		u64 fbr0_offset;
  
- 	return i;
+ 		fbr_chunksize =
+ 		    ((FBR_CHUNKS + 1) * rx_ring->fbr[1]->buffsize) - 1;
 -- 
-1.7.5.3
+1.7.7.3
