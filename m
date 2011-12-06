@@ -1,43 +1,44 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: [PATCH] x86, intel_mid: Kconfig select fix
-Date: Tue, 06 Dec 2011 13:28:22 +0000
-Message-ID: <20111206132811.4041.32549.stgit@bob.linux.org.uk>
+From: Dave Martin <dave.martin@linaro.org>
+Subject: Re: [PATCH] ata: Don't use NO_IRQ in pata_of_platform driver
+Date: Tue, 6 Dec 2011 13:25:27 +0000
+Message-ID: <20111206132527.GA13780@linaro.org>
+References: <20111205161157.GA27550@localhost.localdomain>
+ <alpine.LFD.2.02.1112051236350.2357@xanadu.home>
+ <20111205180253.GB29812@localhost.localdomain>
+ <alpine.LFD.2.02.1112051310150.2357@xanadu.home>
+ <20111205192605.GD29812@localhost.localdomain>
+ <alpine.LFD.2.02.1112051443190.2357@xanadu.home>
+ <20111206093709.GB2274@linaro.org>
+ <20111206104654.GN14542@n2100.arm.linux.org.uk>
+ <20111206113735.GC2274@linaro.org>
+ <20111206114952.GS14542@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:55849 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752386Ab1LFNQf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Dec 2011 08:16:35 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: mingo@elte.hu, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ide-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20111206114952.GS14542@n2100.arm.linux.org.uk>
+Sender: linux-ide-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Pawel Moll <pawel.moll@arm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, devicetree-discuss@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, Jeff Garzik <jgarzik@redhat.com>, linux-ide@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Anton Vorontsov <cbouatmailru@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-From: Alan Cox <alan@linux.intel.com>
+On Tue, Dec 06, 2011 at 11:49:52AM +0000, Russell King - ARM Linux wrote:
+> On Tue, Dec 06, 2011 at 11:37:35AM +0000, Dave Martin wrote:
+> > 1) All OF code and drivers should be migrating to use 0 instead of NO_IRQ
+> >    for the no-interrupt case.  Code which receives irq numbers directly
+> >    from the OF framework and refers to NO_IRQ, or expects 0 to be a valid
+> >    needs to be fixed.
+> > 
+> > 2) Where we hit a problem, board code needs to be adapted to remap HW IRQs
+> >    0-15 to different software values.  (This could be done using irq
+> >    domains, or not)
+> 
+> No AMBA driver I'm aware of ever uses an IRQ number 0 or is passed such
+> an IRQ number.
 
-If we select a symbol it should have a type declared first otherwise in
-some situations the config tools get upset. They are currently perhaps a
-bit too resilient which is why this wasn't noticed initially.
+OK, hopefully we can safely ignore that case, then.
 
-Signed-off-by: Alan Cox <alan@linux.intel.com>
----
+But other than that, you're in agreement?
 
- arch/x86/Kconfig |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
-
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index b884f4c..d48585b 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -406,6 +406,9 @@ config X86_WANT_INTEL_MID
- 
- if X86_WANT_INTEL_MID
- 
-+config X86_INTEL_MID
-+	bool
-+
- config X86_MRST
-        bool "Moorestown MID platform"
- 	depends on PCI
+Cheers
+---Dave
