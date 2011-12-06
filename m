@@ -1,111 +1,83 @@
-From: Mark Einon <mark.einon@gmail.com>
-Subject: [PATCH] linux-next:et131x: Revert changes from previous commit
-Date: Tue,  6 Dec 2011 23:23:10 +0000
-Message-ID: <1323213790-22039-1-git-send-email-mark.einon@gmail.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f42.google.com ([74.125.82.42]:35663 "EHLO
-	mail-ww0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754444Ab1LFXZA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Dec 2011 18:25:00 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: romieu@fr.zoreil.com, linux-kernel@vger.kernel.org, rdunlap@xenotime.net, Mark Einon <mark.einon@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Wed, 7 Dec 2011 10:52:52 +1100
+Message-ID: <20111207105252.25156be522cc26b520eac8f0@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__7_Dec_2011_10_52_52_+1100_hUws5Zn40Fw8ZpLX"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Lauri Hintsala <lauri.hintsala@bluegiga.com>, Shawn Guo <shawn.guo@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-In commit 834d0ee317b (uintxy_t removal) not all changes were trival text replacements, some converted u64 -> dma_addr_t.
-In some configurations dma_addr_t is a u32, meaning that some bit operations cause build warnings. From Randy Dunlap:
+--Signature=_Wed__7_Dec_2011_10_52_52_+1100_hUws5Zn40Fw8ZpLX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-----------------
-on i386 (X86_32) builds:
+Hi Arnd,
 
-drivers/staging/et131x/et131x.c:2483:8: warning: right shift count >= width of type
-drivers/staging/et131x/et131x.c:2531:8: warning: right shift count >= width of type
-----------------
+Today's linux-next merge of the arm-soc tree got conflicts in
+arch/arm/mach-mxs/mach-m28evk.c and
+arch/arm/mach-mxs/mach-stmp378x_devb.c between commit d4e717535e94 ("ARM:
+restart: mxs: use new restart hook") from the arm tree and commit
+8d2d2d1d7e96 ("ARM: mxs: fix machines' initializers order") from the
+arm-soc tree.
 
-Removed these by reverting dma_addr_t back to u64 types, as well as reverting some other non-trivial changes from the aforementioned commit.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: Mark Einon <mark.einon@gmail.com>
----
- drivers/staging/et131x/et131x.c |   28 +++++++++++++---------------
- 1 files changed, 13 insertions(+), 15 deletions(-)
+diff --cc arch/arm/mach-mxs/mach-m28evk.c
+index 7799cd9,6b00577..0000000
+--- a/arch/arm/mach-mxs/mach-m28evk.c
++++ b/arch/arm/mach-mxs/mach-m28evk.c
+@@@ -361,7 -361,6 +361,7 @@@ static struct sys_timer m28evk_timer =3D=20
+  MACHINE_START(M28EVK, "DENX M28 EVK")
+  	.map_io		=3D mx28_map_io,
+  	.init_irq	=3D mx28_init_irq,
+- 	.init_machine	=3D m28evk_init,
+  	.timer		=3D &m28evk_timer,
++ 	.init_machine	=3D m28evk_init,
+ +	.restart	=3D mxs_restart,
+  MACHINE_END
+diff --cc arch/arm/mach-mxs/mach-stmp378x_devb.c
+index 857e857,6834dea..0000000
+--- a/arch/arm/mach-mxs/mach-stmp378x_devb.c
++++ b/arch/arm/mach-mxs/mach-stmp378x_devb.c
+@@@ -115,7 -115,6 +115,7 @@@ static struct sys_timer stmp378x_dvb_ti
+  MACHINE_START(STMP378X, "STMP378X")
+  	.map_io		=3D mx23_map_io,
+  	.init_irq	=3D mx23_init_irq,
+- 	.init_machine	=3D stmp378x_dvb_init,
+  	.timer		=3D &stmp378x_dvb_timer,
++ 	.init_machine	=3D stmp378x_dvb_init,
+ +	.restart	=3D mxs_restart,
+  MACHINE_END
 
-diff --git a/drivers/staging/et131x/et131x.c b/drivers/staging/et131x/et131x.c
-index 7ae3e53..2c4069f 100644
---- a/drivers/staging/et131x/et131x.c
-+++ b/drivers/staging/et131x/et131x.c
-@@ -299,8 +299,8 @@ struct fbr_lookup {
- 	dma_addr_t	 ring_physaddr;
- 	void		*mem_virtaddrs[MAX_DESC_PER_RING_RX / FBR_CHUNKS];
- 	dma_addr_t	 mem_physaddrs[MAX_DESC_PER_RING_RX / FBR_CHUNKS];
--	dma_addr_t	 real_physaddr;
--	u32		 offset;
-+	u64		 real_physaddr;
-+	u64		 offset;
- 	u32		 local_full;
- 	u32		 num_entries;
- 	u32		 buffsize;
-@@ -1902,10 +1902,9 @@ static void et131x_config_rx_dma_regs(struct et131x_adapter *adapter)
- 	/* Set the address and parameters of Free buffer ring 1 (and 0 if
- 	 * required) into the 1310's registers
- 	 */
--	writel(((u64) rx_local->fbr[0]->real_physaddr) >> 32,
-+	writel((u32) (rx_local->fbr[0]->real_physaddr >> 32),
- 	       &rx_dma->fbr1_base_hi);
--	writel(((u64) rx_local->fbr[0]->real_physaddr) & DMA_BIT_MASK(32),
--	       &rx_dma->fbr1_base_lo);
-+	writel((u32) rx_local->fbr[0]->real_physaddr, &rx_dma->fbr1_base_lo);
- 	writel(rx_local->fbr[0]->num_entries - 1, &rx_dma->fbr1_num_des);
- 	writel(ET_DMA10_WRAP, &rx_dma->fbr1_full_offset);
- 
-@@ -1927,10 +1926,9 @@ static void et131x_config_rx_dma_regs(struct et131x_adapter *adapter)
- 		fbr_entry++;
- 	}
- 
--	writel(((u64) rx_local->fbr[1]->real_physaddr) >> 32,
-+	writel((u32) (rx_local->fbr[1]->real_physaddr >> 32),
- 	       &rx_dma->fbr0_base_hi);
--	writel(((u64) rx_local->fbr[1]->real_physaddr) & DMA_BIT_MASK(32),
--	       &rx_dma->fbr0_base_lo);
-+	writel((u32) rx_local->fbr[1]->real_physaddr, &rx_dma->fbr0_base_lo);
- 	writel(rx_local->fbr[1]->num_entries - 1, &rx_dma->fbr0_num_des);
- 	writel(ET_DMA10_WRAP, &rx_dma->fbr0_full_offset);
- 
-@@ -2275,10 +2273,10 @@ static inline u32 bump_free_buff_ring(u32 *free_buff_ring, u32 limit)
-  * @mask: correct mask
-  */
- static void et131x_align_allocated_memory(struct et131x_adapter *adapter,
--					  dma_addr_t *phys_addr, u32 *offset,
--					  u32 mask)
-+					  u64 *phys_addr, u64 *offset,
-+					  u64 mask)
- {
--	dma_addr_t new_addr = *phys_addr & ~mask;
-+	u64 new_addr = *phys_addr & ~mask;
- 
- 	*offset = 0;
- 
-@@ -2430,8 +2428,8 @@ static int et131x_rx_dma_memory_alloc(struct et131x_adapter *adapter)
- 			rx_ring->fbr[1]->offset);
- #endif
- 	for (i = 0; i < (rx_ring->fbr[0]->num_entries / FBR_CHUNKS); i++) {
--		dma_addr_t fbr1_tmp_physaddr;
--		u32 fbr1_offset;
-+		u64 fbr1_tmp_physaddr;
-+		u64 fbr1_offset;
- 		u32 fbr1_align;
- 
- 		/* This code allocates an area of memory big enough for N
-@@ -2496,8 +2494,8 @@ static int et131x_rx_dma_memory_alloc(struct et131x_adapter *adapter)
- #ifdef USE_FBR0
- 	/* Same for FBR0 (if in use) */
- 	for (i = 0; i < (rx_ring->fbr[1]->num_entries / FBR_CHUNKS); i++) {
--		dma_addr_t fbr0_tmp_physaddr;
--		u32 fbr0_offset;
-+		u64 fbr0_tmp_physaddr;
-+		u64 fbr0_offset;
- 
- 		fbr_chunksize =
- 		    ((FBR_CHUNKS + 1) * rx_ring->fbr[1]->buffsize) - 1;
--- 
-1.7.7.3
+--Signature=_Wed__7_Dec_2011_10_52_52_+1100_hUws5Zn40Fw8ZpLX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO3qrUAAoJEECxmPOUX5FE+LoP/A7ACnJXayTXkVxoPjX97c8I
+7iBXkzTJ2EtER81cOzicRqp6gCBmFfv5cK1qRy521GAWkE84Rq0yEid3m88lqyn9
+BKmqu2/jixDGUXAPap4cT2Ms1hyEeDJR3jNjqSh4ilXJi63CHQoLuxMXjF/0RxoV
+I8DD6izt8R1vYue2jBQmXjZzOgbK6SC8WyWgu2MhaHCj7/Hr0O3L/JrMdyofyl7I
+xuVSxHGxb6AQfENZtiO7t6P4fLlnnKAmmVYOdsn7iFy4TeUwTc4XB6+mXA9le6KT
+Ui9p0Awe5HvSNpPOZJg3EOzE6f+gqt3L/T3CW6F68jnbMPHWtLFZAUR6HSjVI/tJ
+ijXAtuKJlZBqRuBOgRtlhIjQ7l1OMS02c6ZNiLkfs2D0khTduWlxoL8i/+PO1beM
+TMd/qWg3q17TNFuQ1w0nRj6p//g+TR8vVEJYUuNPLYwrQExjakzjbmoV+dkeNc4Y
+/oxptlVpzREmjs9XQyekqdzIu4WZdEN1XOolygG0qRsP6UbC1S5jVhbNml1VwFQn
+K5t98Xb3vuTLqPajHcBluU/uoiXzeBpIDDsJXB9mt95gRAezXsk4c8bR4j7wAmQP
+exC7YavKM+IbCwetw5mWVihoGXNU9nLyplyy7ne5yuc6VUAYL7VNTpX1Y/XVR0Zc
+H+PO4zwp5upMvln+NnhW
+=BNDp
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__7_Dec_2011_10_52_52_+1100_hUws5Zn40Fw8ZpLX--
