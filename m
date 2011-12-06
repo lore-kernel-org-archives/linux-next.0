@@ -1,77 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the memblock tree with the arm tree
-Date: Tue, 6 Dec 2011 14:18:16 +1100
-Message-ID: <20111206141816.628d9fc4ab58e23eb9fc63f0@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the memblock tree
+Date: Tue, 6 Dec 2011 14:38:08 +1100
+Message-ID: <20111206143808.3fa5f3785538a37c9686734d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__6_Dec_2011_14_18_16_+1100_e8hsKNvNMuzqVbDY"
+ boundary="Signature=_Tue__6_Dec_2011_14_38_08_+1100_YAB2kWqK3inb_TwP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:39650 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:51607 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756452Ab1LFDSd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 22:18:33 -0500
+	with ESMTP id S1756523Ab1LFDiS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2011 22:38:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__6_Dec_2011_14_18_16_+1100_e8hsKNvNMuzqVbDY
+--Signature=_Tue__6_Dec_2011_14_38_08_+1100_YAB2kWqK3inb_TwP
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Tejun,
 
-[Tejun, I know you told me about these, but I am reporting them anyway
-just for completeness.]
+After merging the memblock tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Today's linux-next merge of the memblock tree got a conflict in
-arch/arm/mm/init.c between commit 27a3f0e91bed ("ARM: sort the meminfo
-array earlier") from the arm tree and commit 0dac7e2d90aa ("memblock:
-Kill memblock_init()") from the memblock tree.
+arch/powerpc/mm/numa.c: In function 'get_node_active_region':
+arch/powerpc/mm/numa.c:143:11: error: dereferencing pointer to incomplete t=
+ype
+arch/powerpc/mm/numa.c:144:11: error: dereferencing pointer to incomplete t=
+ype
+arch/powerpc/mm/numa.c:145:11: error: dereferencing pointer to incomplete t=
+ype
+arch/powerpc/mm/numa.c: In function 'mark_reserved_regions_for_nid':
+arch/powerpc/mm/numa.c:960:29: error: storage size of 'node_ar' isn't known
+arch/powerpc/mm/numa.c:960:29: error: unused variable 'node_ar' [-Werror=3D=
+unused-variable]
+cc1: all warnings being treated as errors
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+Caused by commit 9d0d131f9f6d ("memblock: Kill early_node_map[]") which
+seems to have misspelled CONFIG_HAVE_MEMBLOCK_NODE_MAP as
+CONFIG_MEMBLOCK_HAVE_NODE_MAP in include/linux/mmzone.h.
+
+I have dropped the memblock tree for today - we can try again tomorrow.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mm/init.c
-index 786addd,7c38474..0000000
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@@ -310,7 -331,8 +311,6 @@@ void __init arm_memblock_init(struct me
-  {
-  	int i;
- =20
-- 	memblock_init();
- -	sort(&meminfo.bank, meminfo.nr_banks, sizeof(meminfo.bank[0]), meminfo_c=
-mp, NULL);
- -
-  	for (i =3D 0; i < mi->nr_banks; i++)
-  		memblock_add(mi->bank[i].start, mi->bank[i].size);
- =20
-
---Signature=_Tue__6_Dec_2011_14_18_16_+1100_e8hsKNvNMuzqVbDY
+--Signature=_Tue__6_Dec_2011_14_38_08_+1100_YAB2kWqK3inb_TwP
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO3Yl4AAoJEECxmPOUX5FEr2gP/0ZXipvyq7QO3vhk0yqUa4Qe
-4ZVR4yoAOkBwGa39bLCiG31FG7Zw+aK1WdX2TmEJoA4B07I0VhILWONxGIUJGuN5
-0wPUdML1dUhAQmaPrCPkFaFmyPSYUmFAeT18YtEHHcZgsZVchHDjtO/DlN19gUn5
-LtfPCUZ5OySnrl66jNqVtr7qMENFfIIZFxIvzwK/zuQPMaT2dk1C34qQHBxy0vNF
-MkmvmjYGMhuoPtZqHyj2c7M9jf+x3kPiRX1Tu2JHjg830UejNgNxq4/FEf+bAh9o
-z7HMw6Mg+Ok3/5KATGO9OTQ+5RfmBo0a/O89cl1KXRtZliKuyAHtRZg8ptTSpkyG
-N9GNlj/3VKzbDeiC5A83oSLCpeGFw73kkdq+rLBAAGA86NMsGYqWtzAqj0pN5dtw
-cx+Na/U7Fnp/7S8iSkFQIQKnawB5DkRz4u7dAjpTonKt+23RuqU/kcgTzXKC+5sO
-nzTCLTys+Y0TsjeDHBw2AxDx8QLBa1MaQ/JrL6pNUeqGJrs+TMr+mSX+FBLc0Irk
-ptu/AlsRH7IF/Hw8C2yiV9wJklYe4gq0qjZqnupyMVU9hC6LIf47qBggHO22jaRy
-wtLjhJuDewr/DS5t8pR4r64WYXD3BLGNl7yz1Slf6XfSveaXoGPUrtGX7ZBBOCUf
-Dr6L2jjn0HCX8c0ENsVV
-=v6kD
+iQIcBAEBCAAGBQJO3Y4gAAoJEECxmPOUX5FEXnAP/0ur1LGLBKjbfSRk+Yk2gDN3
+eKTqHGN2ZkDhRqVJHUMrbXUYdJsr9SoGbBBE0m/qqiwJoOFpPT/HZRoIJ+NKoVzw
+Tpm6n/WObVPF/EKUNz6XEZzqy137bEEsaNNVSHGWNOpfPVfoACVMnRhcc9QKEOqo
+0TdCnr9trpVcIDjYoXbmhu9rDfK/pILxs+8awO5LETVlVQB/wc0RgUAhtyz8cHZ/
+h2+W7StF2dWgaMyjAIxsCGkRis2BREFVtlY+1ASIaebiQBAPga5aNl/VArlqrOi/
+HeeV4yttba2rM6/e9DCvJNfnSp8vd3pcoaad9Omv+VTkTApAcaFicQU7GiyycTeP
+mCnjQuTgwWzpuEKD7iYbnJ/klSoI4AJTzOtA8VovbAklh187dSZP5YeXMWSK+oHx
+kRGU+yVQ6isCyQsKz2Pr96IJeBxda6IzC0h5OxXH0K1sxeTM2oVKVq2uphkQgfGb
+pwK6bkVfebqf7r5SqyZ7qwQmHMigc1vOAWTfcbrMkDzYnXBuLycRZq4jDmFIveYm
+VbQtLzsC0erLhrxU9urEFKyXdxCSyQmhHWs1guWzrNTSPPLAPZH46SGz54PAOw2/
+z/OH3DUG0MsDrA5Snt9eLi4f9ss7SmSAkl7IPwqQS9oRwd1VpPBkofZLZVFy4apA
+f+AyXMLxBFAEkHrLU+2v
+=qNFz
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__6_Dec_2011_14_18_16_+1100_e8hsKNvNMuzqVbDY--
+--Signature=_Tue__6_Dec_2011_14_38_08_+1100_YAB2kWqK3inb_TwP--
