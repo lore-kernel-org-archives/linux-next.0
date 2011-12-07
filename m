@@ -1,96 +1,84 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please include xshm in linux-next
-Date: Thu, 8 Dec 2011 00:28:22 +1100
-Message-ID: <20111208002822.796a4cdbe4007773717e9043@canb.auug.org.au>
-References: <CACRpkdYDR4S_P-CUiJoB1bBpESGs9nG+5=Mr5M-5cGF5UkOvJw@mail.gmail.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: build failure after merge of the final tree (pci tree related)
+Date: Wed, 7 Dec 2011 08:08:43 -0700
+Message-ID: <CAErSpo59CuEBbu4QWMkK23TyXafhMLOh1G7Z8YxojqiQmCM0Fw@mail.gmail.com>
+References: <20111207170533.3dea865573c916e79d274eca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__8_Dec_2011_00_28_22_+1100_sT390GO3qJCbDI6/"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:41588 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755357Ab1LGN2d (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2011 08:28:33 -0500
-In-Reply-To: <CACRpkdYDR4S_P-CUiJoB1bBpESGs9nG+5=Mr5M-5cGF5UkOvJw@mail.gmail.com>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:52424 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755798Ab1LGPJF convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2011 10:09:05 -0500
+Received: by bkbzv3 with SMTP id zv3so544537bkb.19
+        for <linux-next@vger.kernel.org>; Wed, 07 Dec 2011 07:09:04 -0800 (PST)
+In-Reply-To: <20111207170533.3dea865573c916e79d274eca@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?B?IlNqdXIgQnLDpm5kZWxhbmQi?= <sjur.brandeland@stericsson.com>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Thu__8_Dec_2011_00_28_22_+1100_sT390GO3qJCbDI6/
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Linus,
-
-On Wed, 7 Dec 2011 13:27:33 +0100 Linus Walleij <linus.walleij@linaro.org> =
-wrote:
+On Tue, Dec 6, 2011 at 11:05 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi all,
 >
-> while we are in the process of setting up a kernel.org repo for
-> my colleague Sjur Br=C3=A6ndeland, could you please include the
-> xshm-for-next branch from my ST-Ericsson tree on kernel.org
-> so we catch any build problems etc:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-stericsson.git
-> xshm-for-next
+> After merging the final tree, today's linux-next build (sparc64 defco=
+nfig)
+> failed like this:
+>
+> arch/sparc/kernel/pci.c: In function 'pci_scan_one_pbm':
+> arch/sparc/kernel/pci.c:697:7: error: incompatible type for argument =
+5 of 'pci_create_root_bus'
+> include/linux/pci.h:665:17: note: expected 'struct list_head *' but a=
+rgument is of type 'struct list_head'
+>
+> Caused by commit fa3cec8aff53 ("sparc/PCI: convert to pci_create_root=
+_bus
+> ()"). Same typo as for the powerpc tree. :-( =A0Please double check t=
+he
+> rest of those changes, please.
+>
+> I applied the following patch for today.
 
-I have added this tree with you and Sjur as contacts in case of trouble.
+Thanks for doing that, sorry for the trouble.  I don't have a set of
+cross-compilers, unfortunately, but I will inspect the rest manually.
+Do we have to discover problems one-by-one, or can you tell us about
+any other arch build problems at the same time?
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Thu__8_Dec_2011_00_28_22_+1100_sT390GO3qJCbDI6/
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO32n2AAoJEECxmPOUX5FEwcwQAIBEVZZZoZJldmuyPFcO1/1X
-lsuAB1mtBbD5CKh7/h58znYMA6/RigXTM9d6rogKdmifaolC4lcsVRIfU5PBYT7q
-0cOZhyw9D3mi3RB8PfgSC1CMUtunVBOALKliHLkLnNUeusVXLsWwQkEoWaeeT42/
-p6R6Bw40tUb3Gz/co3/tUZPnJsGhXJRANU/hM509pXh9T8Si+ph5bgFN2aMM2+VX
-WuCxKsVJkR2OWL8pmTOKbIMEzZOh6SpOugBivCo2JWEA0jwirN/s1ICfuZdu8/Sa
-GpEnULKCngkHB+3yUn78+3cE5qvcSCoWeBBtNKnsUDMty535JEDoqXJ5yoUoQL1i
-7xmnHYFnicx7Y35oNDMbSL3jzA/TgEfOjgafcf+H+/m2BfJ+2XbZMjAzGAB+Svj5
-uj8OO5l3hHn1hMMmIcKJFpv0sc+aLUhOnmq1SBNGpA7Ef0Y2oGLyUJut1rvjobiF
-6S3tvNLJQxLtZNYncdX+UDkncPeTM6HzZGYB8bYK/b0DfXKQMcEWNsXkGLW4fQ9g
-kJdIIf8T2zS9gUusJDUJuF5dQLMExJYwrD4XKZEof2XtlrRuOH7D3eoHOVzRs0HK
-YUL629rIJiwIGqTa3o7pBubyeTR/982CQf9DM7PYtKe10rTgfe6jHG9Dtk1zwiZv
-k4IjZFlZwNY5Bxs5mFMZ
-=bjZA
------END PGP SIGNATURE-----
-
---Signature=_Thu__8_Dec_2011_00_28_22_+1100_sT390GO3qJCbDI6/--
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 7 Dec 2011 17:02:12 +1100
+> Subject: [PATCH] sparc/PCI: fix up typo from pci_create_root_bus conv=
+ersion
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+> =A0arch/sparc/kernel/pci.c | =A0 =A02 +-
+> =A01 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
+> index 0905dbd..bb8bc2e 100644
+> --- a/arch/sparc/kernel/pci.c
+> +++ b/arch/sparc/kernel/pci.c
+> @@ -694,7 +694,7 @@ struct pci_bus * __devinit pci_scan_one_pbm(struc=
+t pci_pbm_info *pbm,
+> =A0 =A0 =A0 =A0pci_add_resource(&resources, &pbm->io_space);
+> =A0 =A0 =A0 =A0pci_add_resource(&resources, &pbm->mem_space);
+> =A0 =A0 =A0 =A0bus =3D pci_create_root_bus(parent, pbm->pci_first_bus=
+no, pbm->pci_ops,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pbm=
+, resources);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pbm=
+, &resources);
+> =A0 =A0 =A0 =A0if (!bus) {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "Failed to create bus =
+for %s\n",
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 node->full_name);
+> --
+> 1.7.7.3
+>
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
