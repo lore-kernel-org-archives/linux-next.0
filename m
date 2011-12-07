@@ -1,67 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (pci
- tree related)
-Date: Thu, 8 Dec 2011 07:24:12 +1100
-Message-ID: <20111208072412.e9cf00f9bcdbc4450fe2d2d4@canb.auug.org.au>
-References: <20111207170533.3dea865573c916e79d274eca@canb.auug.org.au>
-	<CAErSpo59CuEBbu4QWMkK23TyXafhMLOh1G7Z8YxojqiQmCM0Fw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__8_Dec_2011_07_24_12_+1100_2MMqbw3gXn5Slf.A"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:37391 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756627Ab1LGUYY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2011 15:24:24 -0500
-In-Reply-To: <CAErSpo59CuEBbu4QWMkK23TyXafhMLOh1G7Z8YxojqiQmCM0Fw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+From: David Herrmann <dh.herrmann@googlemail.com>
+Subject: [PATCH] HID: wiimote: Select INPUT_FF_MEMLESS
+Date: Wed,  7 Dec 2011 21:33:59 +0100
+Message-ID: <1323290039-28073-1-git-send-email-dh.herrmann@googlemail.com>
+References: <4EDFD23D.4030703@xenotime.net>
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <4EDFD23D.4030703@xenotime.net>
+Sender: linux-input-owner@vger.kernel.org
+To: linux-input@vger.kernel.org
+Cc: rdunlap@xenotime.net, linux-next@vger.kernel.org, jkosina@suse.cz, linux-kernel@vger.kernel.org, David Herrmann <dh.herrmann@googlemail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__8_Dec_2011_07_24_12_+1100_2MMqbw3gXn5Slf.A
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We depend on memless force-feedback support, therefore correctly select the
+related config options.
 
-Hi Bjorn,
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: David Herrmann <dh.herrmann@googlemail.com>
+---
+Hi Randy
 
-On Wed, 7 Dec 2011 08:08:43 -0700 Bjorn Helgaas <bhelgaas@google.com> wrote:
->
-> Thanks for doing that, sorry for the trouble.  I don't have a set of
-> cross-compilers, unfortunately, but I will inspect the rest manually.
-> Do we have to discover problems one-by-one, or can you tell us about
-> any other arch build problems at the same time?
+Thanks for reporting this. This patch should fix this. I don't know whether such
+fixes belong to stable tree, if they do, Jiri could you CC stable when applying
+it?
 
-Well, I only have time to do a couple of arches by hand during the day,
-but overnight we build almost all arches - see
-http://kisskb.ellerman.id.au/linux-next .
+Cheers
+David
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+ drivers/hid/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
---Signature=_Thu__8_Dec_2011_07_24_12_+1100_2MMqbw3gXn5Slf.A
-Content-Type: application/pgp-signature
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index edf2b2b..dae04a0 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -591,6 +591,7 @@ config HID_WIIMOTE
+ 	depends on BT_HIDP
+ 	depends on LEDS_CLASS
+ 	select POWER_SUPPLY
++	select INPUT_FF_MEMLESS
+ 	---help---
+ 	Support for the Nintendo Wii Remote bluetooth device.
+ 
+-- 
+1.7.8
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO38tsAAoJEECxmPOUX5FEUkcP/3KoJYmNBaLHmcqaA8rxwtYK
-8tQrbbIqsjy6+dhhgqk8QmLAjKHTbaFm2cqUlFnU7JxgHAgQBJEqpDxeNP2Ikd+z
-8qoDOz1qZfjIQM9mkCtxQDiqR4a6yTfrbmtAePGHjLgfszgpvpJukpToQGyx0cN7
-k+CZp3nF827bAHL1XTLmo9oY5H395avYWuhHAdCMRp8Nd14CTX0ZtXV+dQcl8Usi
-YeDVPkd1dxoU9MWwCmzOJ07SQdg5edCNJwNIZnLS9SoCqjmkX5s4AutWQnZqi87o
-uQ08fBm4qjWXpffTdAMUbpHyZiRULtwtdHdDvvzLF3gjHu8kHAC5z8udLHQIh0hJ
-Xb8zQBDFGPM4aBttRLcZaeUIOZHoPLJPfcHncjv0iLhjFq8Gy9PC5GKYfq2uF+1z
-gG8CFPeSEVI2aJ7p4Dyt/cfRr00BWq4Vcl41C7pRxrEiIdqvYZPZGvxLwXllD2pj
-9ZZAwjQte0kwd1/9D8pGCjvgvtC7Qg89X4GyfcCtltrc3RT7yyBlhk1vEe7GBi4p
-nalBC6on5mwM62dp0219f1Zn9ScqwFGXBSkF2xLXalSAwMilZeTavTeInKAAN0Zd
-S3FmyEzOXuvrFBnftDEwC/p3zTULQ+kfP2wHjM/D10uxz5EQ+8CaBD10jPN/K+XZ
-4kquX9iWphVHr28EZPGl
-=P3iD
------END PGP SIGNATURE-----
-
---Signature=_Thu__8_Dec_2011_07_24_12_+1100_2MMqbw3gXn5Slf.A--
