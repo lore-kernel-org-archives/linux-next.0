@@ -1,53 +1,47 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Wed, 7 Dec 2011 11:28:43 -0800
-Message-ID: <20111207192842.GF31337@atomide.com>
-References: <20111128105633.8a8c06afce3cdccb1ce0d7b7@canb.auug.org.au>
- <201111281911.36341.arnd@arndb.de>
- <1322553977.1869.1.camel@deskari>
+From: Don Zickus <dzickus@redhat.com>
+Subject: Re: linux-next: Tree for Dec 7 (x86, not SMP)
+Date: Wed, 7 Dec 2011 14:42:52 -0500
+Message-ID: <20111207194252.GH1669@redhat.com>
+References: <20111207171218.e11db78531e7f20659e2ca65@canb.auug.org.au>
+ <4EDFBA25.1020102@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:43729 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756664Ab1LGT2t (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2011 14:28:49 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:19849 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756603Ab1LGTnA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Dec 2011 14:43:00 -0500
 Content-Disposition: inline
-In-Reply-To: <1322553977.1869.1.camel@deskari>
+In-Reply-To: <4EDFBA25.1020102@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-* Tomi Valkeinen <tomi.valkeinen@ti.com> [111128 23:31]:
-> Hi,
-> 
-> On Mon, 2011-11-28 at 19:11 +0000, Arnd Bergmann wrote:
-> > On Sunday 27 November 2011, Stephen Rothwell wrote:
-> > > Today's linux-next merge of the arm-soc tree got a conflict in
-> > > arch/arm/plat-omap/include/plat/common.h between commit 4e65331c6bb4
-> > > ("ARM: 7159/1: OMAP: Introduce local common.h files") from the  tree and
-> > > commit 13662dc5b177 ("ARM: OMAP: HWMOD: Unify DSS resets for OMAPs") from
-> > > the arm-soc tree.
-> > > 
-> > > I did the obvious fixup (see below) and can carry the fix as necessary.
+On Wed, Dec 07, 2011 at 11:10:29AM -0800, Randy Dunlap wrote:
+> On 12/06/2011 10:12 PM, Stephen Rothwell wrote:
+> > Hi all,
 > > 
-> > Your fix looks technically correct, thanks!
-> > 
-> > Tony, I believe what you actually want here is to move omap_dss_reset
-> > into mach-omap2/common.h, right?
+> > Changes since 20111206:
 > 
-> omap_dss_reset will never be used by omap1 boards, so I think
-> mach-omap2/common.h would be a good place for it.
+> 
+> When CONFIG_SMP is not enabled:
+> (I think that's the cause, but it could be some other kconfig option.)
 
-Sorry for the delay. Yes mach-omap2/common.h is the way to go. That
-comes from Russells devel-stable branch and was needed for the ARM
-restart changes.
+Yeah it doesn't seem to be that one.  I think it is CONFIG_X86_LOCAL_APIC,
+but I can't quickly figure out how to disable it (it keeps getting
+re-enabled somewhere).
 
-Tomi, if you need to, you can base your branch on commit
-deee6d5359969a0ce4e2760cfd7b9f379bd5698a in Russell's devel-stable
-branch.
+Can you attach your .config?
 
-Regards,
+Thanks,
+Don
 
-Tony
+> 
+> 
+> arch/x86/built-in.o: In function `test_nmi_ipi':
+> nmi_selftest.c:(.text+0xf7a0): undefined reference to `apic'
+> 
+> -- 
+> ~Randy
+> *** Remember to use Documentation/SubmitChecklist when testing your code ***
