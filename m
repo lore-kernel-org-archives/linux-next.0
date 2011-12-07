@@ -1,40 +1,112 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Wed, 7 Dec 2011 10:59:06 +0800
-Message-ID: <CAAQ0ZWS80uirq3GRFRmVwSf+-MEgWgu9fUsU+J+bWKqbQW3V-w@mail.gmail.com>
-References: <20111207105314.3afd16489c0304e2eae7a71d@canb.auug.org.au>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v3] of/irq: Get rid of NO_IRQ usage
+Date: Tue, 06 Dec 2011 21:51:14 -0600
+Message-ID: <4EDEE2B2.7080606@gmail.com>
+References: <20111110151852.GA7465@oksana.dev.rtsoft.ru> <20111110152541.GA3207@oksana.dev.rtsoft.ru> <4EDE877A.4080708@gmail.com> <CA+55aFwGFogD4ROCH9m=c2jqB2axvrH-dnKPtA8kxXL9b3CVBw@mail.gmail.com> <20111206231626.GA31683@oksana.dev.rtsoft.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:34440 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752995Ab1LGC7I convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Dec 2011 21:59:08 -0500
-In-Reply-To: <20111207105314.3afd16489c0304e2eae7a71d@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Dong Aisheng <b29396@freescale.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <20111206231626.GA31683@oksana.dev.rtsoft.ru>
+Sender: linux-ide-owner@vger.kernel.org
+To: Anton Vorontsov <anton.vorontsov@linaro.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Jeff Garzik <jgarzik@redhat.com>, Grant Likely <grant.likely@secretlab.ca>, Stephen Rothwell <sfr@canb.auug.org.au>, devicetree-discuss@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Michal Simek <monstr@monstr.eu>, John Linn <John.Linn@xilinx.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On 12/06/2011 05:16 PM, Anton Vorontsov wrote:
+> PPC32/64 defines NO_IRQ to zero, so no problems expected.
+> ARM defines NO_IRQ to -1, but OF code relies on IRQ domains support,
+> which returns correct ('0') value in 'no irq' case. So everything
+> should be fine.
+> 
+> Other arches might break if some of their OF drivers rely on NO_IRQ
+> being not 0. If so, the drivers must be fixed, finally.
+> 
+> Signed-off-by: Anton Vorontsov <anton.vorontsov@linaro.org>
+> ---
 
-On 7 December 2011 07:53, Stephen Rothwell <sfr@canb.auug.org.au> wrote=
-:
-> Hi Arnd,
->
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/mach-mxs/include/mach/common.h between commit d4e717535e94
-> ("ARM: restart: mxs: use new restart hook") from the arm tree and com=
-mit
-> 4e1b4ecaa231 ("ARM: mxs: add saif clkmux functions") from the arm-soc
-> tree.
->
-> Just context changes. =A0I fixed it up (see below) and can carry the =
-fix as
-> necessary.
+Looks fine, but I think we have to wait for microblaze to be fixed or
+some confirmation from microblaze folks that no driver would use IRQ0.
+There was a patch posted by Grant in back in Feb, but nothing has
+happened since:
 
-The fix looks right.
+http://article.gmane.org/gmane.linux.uclinux.microblaze/10121/
 
-Regards,
-Shawn
+Rob
+
+> 
+> On Tue, Dec 06, 2011 at 01:25:07PM -0800, Linus Torvalds wrote:
+>> On Tue, Dec 6, 2011 at 1:22 PM, Rob Herring <robherring2@gmail.com> wrote:
+>>>
+>>> This warning code is really ugly. Can we just drop it? In my searching
+>>> of in kernel dts files, there's only 1 instance I have found (Versatile
+>>> AB watchdog) that would hit this.
+>>
+>> I do agree. Especially since we never got any input on whether it works or not.
+>>
+>>> If not, you don't need to handle irq_create_of_mapping return as that is
+>>> already always 0 for no irq or error.
+>>
+>> Yeah, I'd like to just remove NO_IRQ from the OF paths. Afaik, it
+>> hasn't worked as NO_IRQ before anyway, so even if the rest of the
+>> drivers end up continuing using NO_IRQ, the OF-enabled ones on ARM
+>> should just stop. There can't be many of those yet.
+> 
+> Okay, here it goes.
+> 
+>  drivers/of/irq.c |   13 ++++---------
+>  1 files changed, 4 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+> index 791270b..ac6da0d 100644
+> --- a/drivers/of/irq.c
+> +++ b/drivers/of/irq.c
+> @@ -26,11 +26,6 @@
+>  #include <linux/string.h>
+>  #include <linux/slab.h>
+>  
+> -/* For archs that don't support NO_IRQ (such as x86), provide a dummy value */
+> -#ifndef NO_IRQ
+> -#define NO_IRQ 0
+> -#endif
+> -
+>  /**
+>   * irq_of_parse_and_map - Parse and map an interrupt into linux virq space
+>   * @device: Device node of the device whose interrupt is to be mapped
+> @@ -44,7 +39,7 @@ unsigned int irq_of_parse_and_map(struct device_node *dev, int index)
+>  	struct of_irq oirq;
+>  
+>  	if (of_irq_map_one(dev, index, &oirq))
+> -		return NO_IRQ;
+> +		return 0;
+>  
+>  	return irq_create_of_mapping(oirq.controller, oirq.specifier,
+>  				     oirq.size);
+> @@ -345,7 +340,7 @@ int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
+>  
+>  	/* Only dereference the resource if both the
+>  	 * resource and the irq are valid. */
+> -	if (r && irq != NO_IRQ) {
+> +	if (r && irq) {
+>  		r->start = r->end = irq;
+>  		r->flags = IORESOURCE_IRQ;
+>  		r->name = dev->full_name;
+> @@ -363,7 +358,7 @@ int of_irq_count(struct device_node *dev)
+>  {
+>  	int nr = 0;
+>  
+> -	while (of_irq_to_resource(dev, nr, NULL) != NO_IRQ)
+> +	while (of_irq_to_resource(dev, nr, NULL))
+>  		nr++;
+>  
+>  	return nr;
+> @@ -383,7 +378,7 @@ int of_irq_to_resource_table(struct device_node *dev, struct resource *res,
+>  	int i;
+>  
+>  	for (i = 0; i < nr_irqs; i++, res++)
+> -		if (of_irq_to_resource(dev, i, res) == NO_IRQ)
+> +		if (!of_irq_to_resource(dev, i, res))
+>  			break;
+>  
+>  	return i;
+
