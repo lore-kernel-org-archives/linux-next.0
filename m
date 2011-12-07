@@ -1,87 +1,125 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: build failure after merge of the final tree (pci
- tree related)
-Date: Wed, 7 Dec 2011 09:13:54 -0800
-Message-ID: <20111207091354.412a9102@jbarnes-desktop>
-References: <20111207170533.3dea865573c916e79d274eca@canb.auug.org.au>
-	<CAErSpo59CuEBbu4QWMkK23TyXafhMLOh1G7Z8YxojqiQmCM0Fw@mail.gmail.com>
-	<CAErSpo5fO87Aj8_PcdTT5V1JC6D8_o5WEpEMmHCeC=2PA9rkoQ@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: [PATCH] linux-next:et131x: Revert changes from previous commit
+Date: Wed, 07 Dec 2011 10:57:22 -0800
+Message-ID: <4EDFB712.1000508@xenotime.net>
+References: <1323213790-22039-1-git-send-email-mark.einon@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_//YYdEWMj2BFX4DjXepp_Va4"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAErSpo5fO87Aj8_PcdTT5V1JC6D8_o5WEpEMmHCeC=2PA9rkoQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy9.bluehost.com ([69.89.24.6]:56726 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756709Ab1LGR6E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2011 12:58:04 -0500
+In-Reply-To: <1323213790-22039-1-git-send-email-mark.einon@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Einon <mark.einon@gmail.com>
+Cc: linux-next@vger.kernel.org, romieu@fr.zoreil.com, linux-kernel@vger.kernel.org
 
---Sig_//YYdEWMj2BFX4DjXepp_Va4
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On 12/06/2011 03:23 PM, Mark Einon wrote:
+> In commit 834d0ee317b (uintxy_t removal) not all changes were trival text replacements, some converted u64 -> dma_addr_t.
+> In some configurations dma_addr_t is a u32, meaning that some bit operations cause build warnings. From Randy Dunlap:
+> 
+> ----------------
+> on i386 (X86_32) builds:
+> 
+> drivers/staging/et131x/et131x.c:2483:8: warning: right shift count >= width of type
+> drivers/staging/et131x/et131x.c:2531:8: warning: right shift count >= width of type
+> ----------------
+> 
+> Removed these by reverting dma_addr_t back to u64 types, as well as reverting some other non-trivial changes from the aforementioned commit.
+> 
+> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+> Signed-off-by: Mark Einon <mark.einon@gmail.com>
 
-On Wed, 7 Dec 2011 08:25:39 -0700
-Bjorn Helgaas <bhelgaas@google.com> wrote:
+Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
-> On Wed, Dec 7, 2011 at 8:08 AM, Bjorn Helgaas <bhelgaas@google.com> wrote:
-> > On Tue, Dec 6, 2011 at 11:05 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >> Hi all,
-> >>
-> >> After merging the final tree, today's linux-next build (sparc64 defcon=
-fig)
-> >> failed like this:
-> >>
-> >> arch/sparc/kernel/pci.c: In function 'pci_scan_one_pbm':
-> >> arch/sparc/kernel/pci.c:697:7: error: incompatible type for argument 5=
- of 'pci_create_root_bus'
-> >> include/linux/pci.h:665:17: note: expected 'struct list_head *' but ar=
-gument is of type 'struct list_head'
-> >>
-> >> Caused by commit fa3cec8aff53 ("sparc/PCI: convert to pci_create_root_=
-bus
-> >> ()"). Same typo as for the powerpc tree. :-( =A0Please double check the
-> >> rest of those changes, please.
-> >>
-> >> I applied the following patch for today.
-> >
-> > Thanks for doing that, sorry for the trouble. =A0I don't have a set of
-> > cross-compilers, unfortunately, but I will inspect the rest manually.
-> > Do we have to discover problems one-by-one, or can you tell us about
-> > any other arch build problems at the same time?
->=20
-> I checked the rest manually and didn't find any similar problems.
->=20
-> The corrected patch attached (same as with Stephen's fixup) is
-> attached.  Also available
-> at git://github.com/bjorn-helgaas/linux.git on the "pci-scan-v5"
-> branch as c0cab2621d0cf75e86fbbad44d0b2b84c3a42f97)
+Thanks.
 
-Squashed the fix into the original patch.  Thanks guys.
+> ---
+>  drivers/staging/et131x/et131x.c |   28 +++++++++++++---------------
+>  1 files changed, 13 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/staging/et131x/et131x.c b/drivers/staging/et131x/et131x.c
+> index 7ae3e53..2c4069f 100644
+> --- a/drivers/staging/et131x/et131x.c
+> +++ b/drivers/staging/et131x/et131x.c
+> @@ -299,8 +299,8 @@ struct fbr_lookup {
+>  	dma_addr_t	 ring_physaddr;
+>  	void		*mem_virtaddrs[MAX_DESC_PER_RING_RX / FBR_CHUNKS];
+>  	dma_addr_t	 mem_physaddrs[MAX_DESC_PER_RING_RX / FBR_CHUNKS];
+> -	dma_addr_t	 real_physaddr;
+> -	u32		 offset;
+> +	u64		 real_physaddr;
+> +	u64		 offset;
+>  	u32		 local_full;
+>  	u32		 num_entries;
+>  	u32		 buffsize;
+> @@ -1902,10 +1902,9 @@ static void et131x_config_rx_dma_regs(struct et131x_adapter *adapter)
+>  	/* Set the address and parameters of Free buffer ring 1 (and 0 if
+>  	 * required) into the 1310's registers
+>  	 */
+> -	writel(((u64) rx_local->fbr[0]->real_physaddr) >> 32,
+> +	writel((u32) (rx_local->fbr[0]->real_physaddr >> 32),
+>  	       &rx_dma->fbr1_base_hi);
+> -	writel(((u64) rx_local->fbr[0]->real_physaddr) & DMA_BIT_MASK(32),
+> -	       &rx_dma->fbr1_base_lo);
+> +	writel((u32) rx_local->fbr[0]->real_physaddr, &rx_dma->fbr1_base_lo);
+>  	writel(rx_local->fbr[0]->num_entries - 1, &rx_dma->fbr1_num_des);
+>  	writel(ET_DMA10_WRAP, &rx_dma->fbr1_full_offset);
+>  
+> @@ -1927,10 +1926,9 @@ static void et131x_config_rx_dma_regs(struct et131x_adapter *adapter)
+>  		fbr_entry++;
+>  	}
+>  
+> -	writel(((u64) rx_local->fbr[1]->real_physaddr) >> 32,
+> +	writel((u32) (rx_local->fbr[1]->real_physaddr >> 32),
+>  	       &rx_dma->fbr0_base_hi);
+> -	writel(((u64) rx_local->fbr[1]->real_physaddr) & DMA_BIT_MASK(32),
+> -	       &rx_dma->fbr0_base_lo);
+> +	writel((u32) rx_local->fbr[1]->real_physaddr, &rx_dma->fbr0_base_lo);
+>  	writel(rx_local->fbr[1]->num_entries - 1, &rx_dma->fbr0_num_des);
+>  	writel(ET_DMA10_WRAP, &rx_dma->fbr0_full_offset);
+>  
+> @@ -2275,10 +2273,10 @@ static inline u32 bump_free_buff_ring(u32 *free_buff_ring, u32 limit)
+>   * @mask: correct mask
+>   */
+>  static void et131x_align_allocated_memory(struct et131x_adapter *adapter,
+> -					  dma_addr_t *phys_addr, u32 *offset,
+> -					  u32 mask)
+> +					  u64 *phys_addr, u64 *offset,
+> +					  u64 mask)
+>  {
+> -	dma_addr_t new_addr = *phys_addr & ~mask;
+> +	u64 new_addr = *phys_addr & ~mask;
+>  
+>  	*offset = 0;
+>  
+> @@ -2430,8 +2428,8 @@ static int et131x_rx_dma_memory_alloc(struct et131x_adapter *adapter)
+>  			rx_ring->fbr[1]->offset);
+>  #endif
+>  	for (i = 0; i < (rx_ring->fbr[0]->num_entries / FBR_CHUNKS); i++) {
+> -		dma_addr_t fbr1_tmp_physaddr;
+> -		u32 fbr1_offset;
+> +		u64 fbr1_tmp_physaddr;
+> +		u64 fbr1_offset;
+>  		u32 fbr1_align;
+>  
+>  		/* This code allocates an area of memory big enough for N
+> @@ -2496,8 +2494,8 @@ static int et131x_rx_dma_memory_alloc(struct et131x_adapter *adapter)
+>  #ifdef USE_FBR0
+>  	/* Same for FBR0 (if in use) */
+>  	for (i = 0; i < (rx_ring->fbr[1]->num_entries / FBR_CHUNKS); i++) {
+> -		dma_addr_t fbr0_tmp_physaddr;
+> -		u32 fbr0_offset;
+> +		u64 fbr0_tmp_physaddr;
+> +		u64 fbr0_offset;
+>  
+>  		fbr_chunksize =
+>  		    ((FBR_CHUNKS + 1) * rx_ring->fbr[1]->buffsize) - 1;
 
---=20
-Jesse Barnes, Intel Open Source Technology Center
 
---Sig_//YYdEWMj2BFX4DjXepp_Va4
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQIcBAEBAgAGBQJO357SAAoJEIEoDkX4Qk9hvzkP/iF5FQek+w7tF//oQmKYCjBU
-xmGAvfyI/VZK7a5eqNimPVY7Zz6xCTmWmnGrehmHWo9I9IysmUZ0K0rQ3fdbTrci
-9mOU5FK8yykyKCktqbz9eAftB21crKupyy8Ewy8c1xtdk4S5IffjyXlwfpU+odxR
-qVB/iGC3wRpBCIxaoj7x5lcrvnesxZpi5ZOoHTWI9rbHzCu4y7f1w5QrbuNK+9DG
-G5y6y991PC4AvzGARbYikdYXM7/oTf8GqMzy1BzJlXGF3BH/Bh2vBHtbKVQf0Ndk
-D4bU8oJdKlWKIRZLYAn5xkGonwQDVoYSDMXbmXbIjHvmNXWuWkeKyE0v2+eucFC7
-s7ETwg7VkrUeVnuTJmOc0taR5+7R56GF1RrxbCgd5EhUImY4CZwyQuLvV9jW4SCT
-4IXZnsg78zLHDiKWVJTfCNFEh0lZ+02kaD6fUqdWa/H3AzCTwljrwGKLec3j/FQ5
-Uw4Dy0OqciwaiCMEmgWwpWUTFZ+GM/STXEYtNg3mveHObs1o63KWoj5o/mP2zKSc
-UaQdCNbBIxslPbA5bOR1HpdYRuNIsXd6c7o+deMWhLzzNkiVRdVUmRo3GoulIm9H
-/FVVVpLGS9s2RuJdA1MQqpMTOjNu4JgjOx45Rh6UoPJV+iAmrGP1yRn934frHEvs
-QJUjnebtW9twprzJmV7X
-=O/rF
------END PGP SIGNATURE-----
-
---Sig_//YYdEWMj2BFX4DjXepp_Va4--
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
