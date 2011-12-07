@@ -1,82 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the memblock tree
-Date: Thu, 8 Dec 2011 07:54:05 +1100
-Message-ID: <20111208075405.911cefd2ee3c2ed81cdc5f4b@canb.auug.org.au>
-References: <20111206143808.3fa5f3785538a37c9686734d@canb.auug.org.au>
+From: Don Zickus <dzickus@redhat.com>
+Subject: Re: linux-next: Tree for Dec 7 (x86, not SMP)
+Date: Wed, 7 Dec 2011 16:06:30 -0500
+Message-ID: <20111207210630.GI1669@redhat.com>
+References: <20111207171218.e11db78531e7f20659e2ca65@canb.auug.org.au>
+ <4EDFBA25.1020102@xenotime.net>
+ <20111207194252.GH1669@redhat.com>
+ <4EDFCFF9.2080906@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__8_Dec_2011_07_54_05_+1100_O4iM2CW8HhXlAxs2"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:37709 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757098Ab1LGUyQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2011 15:54:16 -0500
-In-Reply-To: <20111206143808.3fa5f3785538a37c9686734d@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:34730 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756722Ab1LGVGf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Dec 2011 16:06:35 -0500
+Content-Disposition: inline
+In-Reply-To: <4EDFCFF9.2080906@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__8_Dec_2011_07_54_05_+1100_O4iM2CW8HhXlAxs2
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Dec 07, 2011 at 12:43:37PM -0800, Randy Dunlap wrote:
+> On 12/07/2011 11:42 AM, Don Zickus wrote:
+> > On Wed, Dec 07, 2011 at 11:10:29AM -0800, Randy Dunlap wrote:
+> >> On 12/06/2011 10:12 PM, Stephen Rothwell wrote:
+> >>> Hi all,
+> >>>
+> >>> Changes since 20111206:
+> >>
+> >>
+> >> When CONFIG_SMP is not enabled:
+> >> (I think that's the cause, but it could be some other kconfig option.)
+> > 
+> > Yeah it doesn't seem to be that one.  I think it is CONFIG_X86_LOCAL_APIC,
+> > but I can't quickly figure out how to disable it (it keeps getting
+> > re-enabled somewhere).
+> > 
+> > Can you attach your .config?
+> 
+> Certainly. Done.
+> Thanks.
 
-Hi Tejun,
+Ok, I was right it does depend on the local apic.  The following patch
+fixed the problem for me.
 
-On Tue, 6 Dec 2011 14:38:08 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the memblock tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->=20
-> arch/powerpc/mm/numa.c: In function 'get_node_active_region':
-> arch/powerpc/mm/numa.c:143:11: error: dereferencing pointer to incomplete=
- type
-> arch/powerpc/mm/numa.c:144:11: error: dereferencing pointer to incomplete=
- type
-> arch/powerpc/mm/numa.c:145:11: error: dereferencing pointer to incomplete=
- type
-> arch/powerpc/mm/numa.c: In function 'mark_reserved_regions_for_nid':
-> arch/powerpc/mm/numa.c:960:29: error: storage size of 'node_ar' isn't kno=
-wn
-> arch/powerpc/mm/numa.c:960:29: error: unused variable 'node_ar' [-Werror=
-=3Dunused-variable]
-> cc1: all warnings being treated as errors
->=20
-> Caused by commit 9d0d131f9f6d ("memblock: Kill early_node_map[]") which
-> seems to have misspelled CONFIG_HAVE_MEMBLOCK_NODE_MAP as
-> CONFIG_MEMBLOCK_HAVE_NODE_MAP in include/linux/mmzone.h.
->=20
-> I have dropped the memblock tree for today - we can try again tomorrow.
-
-Ping?
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Don 
+-----8<----
 
---Signature=_Thu__8_Dec_2011_07_54_05_+1100_O4iM2CW8HhXlAxs2
-Content-Type: application/pgp-signature
+From: Don Zickus <dzickus@redhat.com>
+Date: Wed, 7 Dec 2011 16:03:40 -0500
+Subject: [PATCH] x86, NMI: NMI selftest depends on the local apic
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+The selftest doesn't work with out a local apic for now.
 
-iQIcBAEBCAAGBQJO39JtAAoJEECxmPOUX5FENrYP/iSXC6VOB7PXRm2Wo1OG8QW6
-Y0g9KGL7L1uCq/pOJ71CTwgde3XGLPzLZw+7Ald5VDPtL4KBoqo354J5xxU/XGOW
-Xqjwz3UOrKXHv2ZBjrgg8XgL4mHxcamldsQrTcGDzb+6grm+eWRfEfm7wFJcjPX/
-CQRwqAsfa5s0TvdvOnYvJvgu6Ce7KZO7QX7ihgThTnY//IXeRbnYlMISbHhsCwzk
-SNuhG5kPiOFXG6on8zT3o7VZdZ1Om6KMRC1w+92SuI3KUmqyZjV5OvpKHvyjATan
-kLk77cRJurwLHp99OBFn46NiBB3t5TkMjzPMgPcCgHoN0hHGwNwYZqN04QH7pP/u
-7+a/hKhMHjvRzc+BQ9Ae7j78J8IKpJvzMGrgcZ4eXyC5Obj2XCjo5t3z6i7BDIV3
-O4AYLFUc6qXWiUrc3W8OiuoPfnOkp8UisyFFxwOOVLeL7arm2Yv36q/odqlTvpWL
-khRxfxif7I5kZ4JeqIu+p8f4mn9A92NeghvpJJjrO1S7Z6VW8uBDuGEm5VFvAheI
-P5LMueCCirX5qlRNDPCmdBiwu73/PohLI0F7zvZRNFkGABvbemkAGaOK3fV4GCMX
-DWKCV1b74wPSx+FSc8vD8nefXZjuOpYBy6xLLfXoHSqO4vJMRNdIqddWFxk+rEoe
-ch9CQrDt09HCWoSmDaYv
-=q47H
------END PGP SIGNATURE-----
+Reported-by: Randy Durlap <rdunlap@xenotime.net>
+Signed-off-by: Don Zickus <dzickus@redhat.com>
+---
+ arch/x86/Kconfig.debug |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
---Signature=_Thu__8_Dec_2011_07_54_05_+1100_O4iM2CW8HhXlAxs2--
+diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
+index 020a4f1..d6eea6d 100644
+--- a/arch/x86/Kconfig.debug
++++ b/arch/x86/Kconfig.debug
+@@ -286,7 +286,7 @@ config DEBUG_STRICT_USER_COPY_CHECKS
+ 
+ config DEBUG_NMI_SELFTEST
+ 	bool "NMI Selftest"
+-	depends on DEBUG_KERNEL
++	depends on DEBUG_KERNEL && X86_LOCAL_APIC
+ 	---help---
+ 	  Enabling this option turns on a quick NMI selftest to verify
+ 	  that the NMI behaves correctly.
+-- 
+1.7.6.4
