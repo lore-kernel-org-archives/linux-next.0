@@ -1,98 +1,316 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: linux-next not booting on snowball
-Date: Tue, 6 Dec 2011 23:09:29 -0500 (EST)
-Message-ID: <alpine.LFD.2.02.1112062227120.2907@xanadu.home>
-References: <4ED79454.1090304@linaro.org> <20111201145801.GB2103@sirena.org.uk> <4ED79E9F.7060103@linaro.org> <alpine.LFD.2.02.1112011400380.2357@xanadu.home> <4ED8087F.7030507@linaro.org> <alpine.LFD.2.02.1112011856310.2357@xanadu.home>
- <4ED90B6F.6050205@linaro.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the cputime tree
+Date: Wed, 7 Dec 2011 15:09:56 +1100
+Message-ID: <20111207150956.52d41fd8580de3b66abd5d2d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; CHARSET=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:53132 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753459Ab1LGEJg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Dec 2011 23:09:36 -0500
-Received: by qcqz2 with SMTP id z2so69639qcq.19
-        for <linux-next@vger.kernel.org>; Tue, 06 Dec 2011 20:09:36 -0800 (PST)
-In-Reply-To: <4ED90B6F.6050205@linaro.org>
-Content-ID: <alpine.LFD.2.02.1112062248251.2907@xanadu.home>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Stephen Warren <swarren@nvidia.com>, Kevin Hilman <khilman@ti.com>, Jamie Iles <jamie@jamieiles.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__7_Dec_2011_15_09_56_+1100_1yGplJCjE2ekCAGW"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Glauber Costa <glommer@parallels.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 2 Dec 2011, Daniel Lezcano wrote:
+--Signature=_Wed__7_Dec_2011_15_09_56_+1100_1yGplJCjE2ekCAGW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ##########################################################################
-> ## ez-pine-gpg v0.4h ## http://Business-PHP.com/opensource/ez-pine-gpg/
-> ## Tue Dec  6 22:27:12 EST 2011 ## xanadu.home
-> ##########################################################################
-> gpg: Signature made Fri 02 Dec 2011 12:31:27 PM EST using RSA key ID A9506600
-> gpg: Can't check signature: public key not found
-> %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-> %%%%%%%%%%%% Something went wrong --- See above for more info %%%%%%%%%%%%
-> %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> On 12/02/2011 01:11 AM, Nicolas Pitre wrote:
-> > Yes.  Either you have access to a fancy debugger and then you could 
-> > trace what happens from the moment devicemaps_init() is entered.
-> > 
-> > Or, using the good old way, just insert a couple of
-> > 
-> > 	printk("%s:%s line %d\n", __FILE__, __func__, __LINE__);
-> > 
-> > in a couple places (still with the 2 earlier patches applied).  Good 
-> > locations for those traces would be:
-> > 
-> >  - Upon entering devicemaps_init() to confirm it makes that far.
-> > 
-> >  - Just before and right after the call to mdesc->map_io(), still in 
-> >    devicemaps_init().
-> > 
-> >  - If you don't see the trace after mdesc->map_io(), then the problem is
-> >    most likely in u8500_map_io(), in which case you should add more 
-> >    traces in there to narrow the problem area down to the problematic
-> >    call.
-> 
-> The kernel hangs at:
-> 
-> u8500_map_io
->  -> ux500_map_io
->    -> ux500_read_asicid(addr=9001dbf4), base=9001d000
->      ->  readl(__io_address(9001dbf4)=f901dbf4);
+Hi all,
 
-OK, forget my debug patches then.  They won't help you in that case 
-because the ux500_read_asicid code is cheating.  It is expecting 
-mappings from the iotable_init() to be valid right away.  The 
-local_flush_tlb_all() + flush_cache_all() calls that follows are a clear 
-indicator of a layering violation here.  My debugging patch expressly 
-doesn't make those mappings effective untill they're all set up in order 
-to preserve the debug UART alive.  So the readl() is crashing the kernel 
-since there is no actual mapping for it.
+Today's linux-next merge of the tip tree got conflicts in
+kernel/sched/core.c, fs/proc/uptime.c, fs/proc/stat.c,
+drivers/cpufreq/cpufreq_conservative.c,
+drivers/cpufreq/cpufreq_ondemand.c and drivers/macintosh/rack-meter.c
+between commit c5927fe412bf ("[S390] cputime: add sparse checking and
+cleanup") from the cputime tree and commit 3292beb340c7
+("sched/accounting: Change cpustat fields to an array") from the tip tree.
 
-If my install_temp_mm() code is disabled (make it #if 0 instead of 
-#ifdef CONFIG_DEBUG_LL), execution should go past that point as the 
-needed mapping would be installed and ux500_map_io() would complete its 
-job.
+I fixed it up (I hope - see below) and can carry the fix as necessary.  (I
+used the tip version of fs/proc/uptime.c, fs/proc/stat.c and
+drivers/macintosh/rack-meter.c).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-In fact, the first thing that u8500_map_io() does is to re-map the debug 
-UART so you should be able to continue tracing the code past that point 
-(or past the call to ux500_map_io() given its included cache/TLB 
-flushes).
+diff --cc kernel/sched/core.c
+index 18cad44,3c5b21e..0000000
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@@ -2166,7 -935,7 +935,7 @@@ static int irqtime_account_hi_update(vo
+ =20
+  	local_irq_save(flags);
+  	latest_ns =3D this_cpu_read(cpu_hardirq_time);
+- 	if (nsecs_to_cputime64(latest_ns) > cpustat->irq)
+ -	if (cputime64_gt(nsecs_to_cputime64(latest_ns), cpustat[CPUTIME_IRQ]))
+++	if (nsecs_to_cputime64(latest_ns) > cpustat[CPUTIME_IRQ])
+  		ret =3D 1;
+  	local_irq_restore(flags);
+  	return ret;
+@@@ -2181,7 -950,7 +950,7 @@@ static int irqtime_account_si_update(vo
+ =20
+  	local_irq_save(flags);
+  	latest_ns =3D this_cpu_read(cpu_softirq_time);
+- 	if (nsecs_to_cputime64(latest_ns) > cpustat->softirq)
+ -	if (cputime64_gt(nsecs_to_cputime64(latest_ns), cpustat[CPUTIME_SOFTIRQ]=
+))
+++	if (nsecs_to_cputime64(latest_ns) > cpustat[CPUTIME_SOFTIRQ])
+  		ret =3D 1;
+  	local_irq_restore(flags);
+  	return ret;
+@@@ -3867,20 -2633,18 +2633,18 @@@ static inline void task_group_account_f
+  void account_user_time(struct task_struct *p, cputime_t cputime,
+  		       cputime_t cputime_scaled)
+  {
+- 	struct cpu_usage_stat *cpustat =3D &kstat_this_cpu.cpustat;
++ 	int index;
+ =20
+  	/* Add user time to process. */
+ -	p->utime =3D cputime_add(p->utime, cputime);
+ -	p->utimescaled =3D cputime_add(p->utimescaled, cputime_scaled);
+ +	p->utime +=3D cputime;
+ +	p->utimescaled +=3D cputime_scaled;
+  	account_group_user_time(p, cputime);
+ =20
++ 	index =3D (TASK_NICE(p) > 0) ? CPUTIME_NICE : CPUTIME_USER;
++=20
+  	/* Add user time to cpustat. */
+- 	if (TASK_NICE(p) > 0)
+- 		cpustat->nice +=3D (__force cputime64_t) cputime;
+- 	else
+- 		cpustat->user +=3D (__force cputime64_t) cputime;
+ -	task_group_account_field(p, index, cputime);
+++	task_group_account_field(p, index, (__force cputime64_t) cputime);
+ =20
+- 	cpuacct_update_stats(p, CPUACCT_STAT_USER, cputime);
+  	/* Account for user time used */
+  	acct_update_integrals(p);
+  }
+@@@ -3894,21 -2658,24 +2658,21 @@@
+  static void account_guest_time(struct task_struct *p, cputime_t cputime,
+  			       cputime_t cputime_scaled)
+  {
+- 	struct cpu_usage_stat *cpustat =3D &kstat_this_cpu.cpustat;
+ -	u64 tmp;
++ 	u64 *cpustat =3D kcpustat_this_cpu->cpustat;
+ =20
+ -	tmp =3D cputime_to_cputime64(cputime);
+ -
+  	/* Add guest time to process. */
+ -	p->utime =3D cputime_add(p->utime, cputime);
+ -	p->utimescaled =3D cputime_add(p->utimescaled, cputime_scaled);
+ +	p->utime +=3D cputime;
+ +	p->utimescaled +=3D cputime_scaled;
+  	account_group_user_time(p, cputime);
+ -	p->gtime =3D cputime_add(p->gtime, cputime);
+ +	p->gtime +=3D cputime;
+ =20
+  	/* Add guest time to cpustat. */
+  	if (TASK_NICE(p) > 0) {
+- 		cpustat->nice +=3D (__force cputime64_t) cputime;
+- 		cpustat->guest_nice +=3D (__force cputime64_t) cputime;
+ -		cpustat[CPUTIME_NICE] +=3D tmp;
+ -		cpustat[CPUTIME_GUEST_NICE] +=3D tmp;
+++		cpustat[CPUTIME_NICE] +=3D (__force cputime64_t) cputime;
+++		cpustat[CPUTIME_GUEST_NICE] +=3D (__force cputime64_t) cputime;
+  	} else {
+- 		cpustat->user +=3D (__force cputime64_t) cputime;
+- 		cpustat->guest +=3D (__force cputime64_t) cputime;
+ -		cpustat[CPUTIME_USER] +=3D tmp;
+ -		cpustat[CPUTIME_GUEST] +=3D tmp;
+++		cpustat[CPUTIME_USER] +=3D (__force cputime64_t) cputime;
+++		cpustat[CPUTIME_GUEST] +=3D (__force cputime64_t) cputime;
+  	}
+  }
+ =20
+@@@ -3921,16 -2688,15 +2685,15 @@@
+   */
+  static inline
+  void __account_system_time(struct task_struct *p, cputime_t cputime,
+- 			cputime_t cputime_scaled, cputime64_t *target_cputime64)
++ 			cputime_t cputime_scaled, int index)
+  {
+  	/* Add system time to process. */
+ -	p->stime =3D cputime_add(p->stime, cputime);
+ -	p->stimescaled =3D cputime_add(p->stimescaled, cputime_scaled);
+ +	p->stime +=3D cputime;
+ +	p->stimescaled +=3D cputime_scaled;
+  	account_group_system_time(p, cputime);
+ =20
+  	/* Add system time to cpustat. */
+- 	*target_cputime64 +=3D (__force cputime64_t) cputime;
+- 	cpuacct_update_stats(p, CPUACCT_STAT_SYSTEM, cputime);
+ -	task_group_account_field(p, index, cputime);
+++	task_group_account_field(p, index, (__force cputime64_t) cputime);
+ =20
+  	/* Account for system time used */
+  	acct_update_integrals(p);
+@@@ -3970,9 -2735,10 +2732,9 @@@ void account_system_time(struct task_st
+   */
+  void account_steal_time(cputime_t cputime)
+  {
+- 	struct cpu_usage_stat *cpustat =3D &kstat_this_cpu.cpustat;
++ 	u64 *cpustat =3D kcpustat_this_cpu->cpustat;
+ -	u64 cputime64 =3D cputime_to_cputime64(cputime);
+ =20
+- 	cpustat->steal +=3D (__force cputime64_t) cputime;
+ -	cpustat[CPUTIME_STEAL] +=3D cputime64;
+++	cpustat[CPUTIME_STEAL] +=3D (__force cputime64_t) cputime;
+  }
+ =20
+  /*
+@@@ -3981,13 -2747,14 +2743,13 @@@
+   */
+  void account_idle_time(cputime_t cputime)
+  {
+- 	struct cpu_usage_stat *cpustat =3D &kstat_this_cpu.cpustat;
++ 	u64 *cpustat =3D kcpustat_this_cpu->cpustat;
+  	struct rq *rq =3D this_rq();
+ =20
+  	if (atomic_read(&rq->nr_iowait) > 0)
+- 		cpustat->iowait +=3D (__force cputime64_t) cputime;
+ -		cpustat[CPUTIME_IOWAIT] +=3D cputime64;
+++		cpustat[CPUTIME_IOWAIT] +=3D (__force cputime64_t) cputime;
+  	else
+- 		cpustat->idle +=3D (__force cputime64_t) cputime;
+ -		cpustat[CPUTIME_IDLE] +=3D cputime64;
+++		cpustat[CPUTIME_IDLE] +=3D (__force cputime64_t) cputime;
+  }
+ =20
+  static __always_inline bool steal_account_process_tick(void)
+@@@ -4037,15 -2804,16 +2799,15 @@@ static void irqtime_account_process_tic
+  						struct rq *rq)
+  {
+  	cputime_t one_jiffy_scaled =3D cputime_to_scaled(cputime_one_jiffy);
+- 	struct cpu_usage_stat *cpustat =3D &kstat_this_cpu.cpustat;
+ -	u64 tmp =3D cputime_to_cputime64(cputime_one_jiffy);
++ 	u64 *cpustat =3D kcpustat_this_cpu->cpustat;
+ =20
+  	if (steal_account_process_tick())
+  		return;
+ =20
+  	if (irqtime_account_hi_update()) {
+- 		cpustat->irq +=3D (__force cputime64_t) cputime_one_jiffy;
+ -		cpustat[CPUTIME_IRQ] +=3D tmp;
+++		cpustat[CPUTIME_IRQ] +=3D (__force cputime64_t) cputime_one_jiffy;
+  	} else if (irqtime_account_si_update()) {
+- 		cpustat->softirq +=3D (__force cputime64_t) cputime_one_jiffy;
+ -		cpustat[CPUTIME_SOFTIRQ] +=3D tmp;
+++		cpustat[CPUTIME_SOFTIRQ] +=3D (__force cputime64_t) cputime_one_jiffy;
+  	} else if (this_cpu_ksoftirqd() =3D=3D p) {
+  		/*
+  		 * ksoftirqd time do not get accounted in cpu_softirq_time.
+diff --cc drivers/cpufreq/cpufreq_conservative.c
+index 7f31a03,118bff7..0000000
+--- a/drivers/cpufreq/cpufreq_conservative.c
++++ b/drivers/cpufreq/cpufreq_conservative.c
+@@@ -95,26 -95,26 +95,26 @@@ static struct dbs_tuners=20
+  	.freq_step =3D 5,
+  };
+ =20
+- static inline cputime64_t get_cpu_idle_time_jiffy(unsigned int cpu,
+- 							cputime64_t *wall)
++ static inline u64 get_cpu_idle_time_jiffy(unsigned int cpu, u64 *wall)
+  {
+- 	cputime64_t idle_time;
++ 	u64 idle_time;
+  	cputime64_t cur_wall_time;
+- 	cputime64_t busy_time;
++ 	u64 busy_time;
+ =20
+  	cur_wall_time =3D jiffies64_to_cputime64(get_jiffies_64());
+- 	busy_time  =3D kstat_cpu(cpu).cpustat.user;
+- 	busy_time +=3D kstat_cpu(cpu).cpustat.system;
+- 	busy_time +=3D kstat_cpu(cpu).cpustat.irq;
+- 	busy_time +=3D kstat_cpu(cpu).cpustat.softirq;
+- 	busy_time +=3D kstat_cpu(cpu).cpustat.steal;
+- 	busy_time +=3D kstat_cpu(cpu).cpustat.nice;
++ 	busy_time =3D kcpustat_cpu(cpu).cpustat[CPUTIME_USER] +
++ 		    kcpustat_cpu(cpu).cpustat[CPUTIME_SYSTEM];
++=20
++ 	busy_time +=3D kcpustat_cpu(cpu).cpustat[CPUTIME_IRQ];
++ 	busy_time +=3D kcpustat_cpu(cpu).cpustat[CPUTIME_SOFTIRQ];
++ 	busy_time +=3D kcpustat_cpu(cpu).cpustat[CPUTIME_STEAL];
++ 	busy_time +=3D kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
+ =20
+ -	idle_time =3D cputime64_sub(cur_wall_time, busy_time);
+ +	idle_time =3D cur_wall_time - busy_time;
+  	if (wall)
+- 		*wall =3D (cputime64_t)jiffies_to_usecs(cur_wall_time);
++ 		*wall =3D jiffies_to_usecs(cur_wall_time);
+ =20
+- 	return (cputime64_t)jiffies_to_usecs(idle_time);
++ 	return jiffies_to_usecs(idle_time);
+  }
+ =20
+  static inline cputime64_t get_cpu_idle_time(unsigned int cpu, cputime64_t=
+ *wall)
+diff --cc drivers/cpufreq/cpufreq_ondemand.c
+index 07cffe2,f3d327c..0000000
+--- a/drivers/cpufreq/cpufreq_ondemand.c
++++ b/drivers/cpufreq/cpufreq_ondemand.c
+@@@ -119,26 -119,26 +119,26 @@@ static struct dbs_tuners=20
+  	.powersave_bias =3D 0,
+  };
+ =20
+- static inline cputime64_t get_cpu_idle_time_jiffy(unsigned int cpu,
+- 							cputime64_t *wall)
++ static inline u64 get_cpu_idle_time_jiffy(unsigned int cpu, u64 *wall)
+  {
+- 	cputime64_t idle_time;
++ 	u64 idle_time;
+  	cputime64_t cur_wall_time;
+- 	cputime64_t busy_time;
++ 	u64 busy_time;
+ =20
+  	cur_wall_time =3D jiffies64_to_cputime64(get_jiffies_64());
+- 	busy_time  =3D kstat_cpu(cpu).cpustat.user;
+- 	busy_time +=3D kstat_cpu(cpu).cpustat.system;
+- 	busy_time +=3D kstat_cpu(cpu).cpustat.irq;
+- 	busy_time +=3D kstat_cpu(cpu).cpustat.softirq;
+- 	busy_time +=3D kstat_cpu(cpu).cpustat.steal;
+- 	busy_time +=3D kstat_cpu(cpu).cpustat.nice;
++ 	busy_time =3D kcpustat_cpu(cpu).cpustat[CPUTIME_USER] +
++ 		    kcpustat_cpu(cpu).cpustat[CPUTIME_SYSTEM];
++=20
++ 	busy_time +=3D kcpustat_cpu(cpu).cpustat[CPUTIME_IRQ];
++ 	busy_time +=3D kcpustat_cpu(cpu).cpustat[CPUTIME_SOFTIRQ];
++ 	busy_time +=3D kcpustat_cpu(cpu).cpustat[CPUTIME_STEAL];
++ 	busy_time +=3D kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
+ =20
+ -	idle_time =3D cputime64_sub(cur_wall_time, busy_time);
+ +	idle_time =3D cur_wall_time - busy_time;
+  	if (wall)
+- 		*wall =3D (cputime64_t)jiffies_to_usecs(cur_wall_time);
++ 		*wall =3D jiffies_to_usecs(cur_wall_time);
+ =20
+- 	return (cputime64_t)jiffies_to_usecs(idle_time);
++ 	return jiffies_to_usecs(idle_time);
+  }
+ =20
+  static inline cputime64_t get_cpu_idle_time(unsigned int cpu, cputime64_t=
+ *wall)
 
-So try this:
+--Signature=_Wed__7_Dec_2011_15_09_56_+1100_1yGplJCjE2ekCAGW
+Content-Type: application/pgp-signature
 
- - Disable the install_temp_mm() code.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
- - Remove all printk traces you added so far.
+iQIcBAEBCAAGBQJO3ucUAAoJEECxmPOUX5FEFVEQAJL0+64IyFrr9OnwT0gHzkcI
+e+OALmqR5SwkQYV813vaCU5l+fQC5lWmz0FiI4SC8p6GRtO28Fhr1/Y8ft8kNEx+
+7iFqXJd4QJcVK06OfB+lghqR7P5dW6A8TN+T4TqJ4RVnSoD9Mcd9fjPtYvBkY+7j
+RQX6Qvdb8IBYc+YzYNwI5PLsoy7NQWpVABVFTavAW6ABm5hLOvHuu8cAVZ1OfbFw
+xIIJuMatg1/0U55Mx5AUyszYjg5XUyRSunmqbIdJRlJCbFBDBzqcGWgVJhf8ms4U
+B914HYh7CtYwywlOGHlSaonK7XXHj1SkGssIUcoAuEIgq45T/0tfnRcSXJvSEage
+Slv7wkY0IgK3cYK67pFhraqg7QfP1NQg/f2UWIeLwtBzxat/Ii6/Wf8/nGwrkLyk
+v44HGthDrtoExPKm8TwbHpPQOj4ZbTprhMTrax7moLdAqSjZcUx+vyPHrAusWwS7
+ljua1AK+KfYCN0BKyEg9+Z9vxkbRFBrhMqVNl7VcY7ipd5RlHB7nv2ECqrRiT2av
+l7jOmvRmChdDqWguHKXW1J1cGBlGFu0NkEEBemXiXStCkMSU30yZ/jmHMD1ZnSCw
+HG8RFsNGVqxr2yxRbjFR+NMzfRA7u4A+GxkCqh9ZS5epEH9hrKWI0BRRCebAMvch
+3dLO9O5fKfRtDH+7rKr/
+=EA2H
+-----END PGP SIGNATURE-----
 
- - Keep the printascii() hack in printk.c active.
-
- - Test that kernel and see what you get.
-
- - If still nothing then resume adding your printk traces but only from 
-   the moment ux500_map_io() returned in u8500_map_io() and beyond.
-
-
-Nicolas
+--Signature=_Wed__7_Dec_2011_15_09_56_+1100_1yGplJCjE2ekCAGW--
