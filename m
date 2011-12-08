@@ -1,105 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-lpae tree with the arm tree
-Date: Thu, 8 Dec 2011 11:00:59 +1100
-Message-ID: <20111208110059.1d88730db9358e079949b89c@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Dec 7 (x86, not SMP)
+Date: Wed, 07 Dec 2011 18:45:47 -0800
+Message-ID: <4EE024DB.1020409@xenotime.net>
+References: <20111207171218.e11db78531e7f20659e2ca65@canb.auug.org.au> <4EDFBA25.1020102@xenotime.net> <20111207194252.GH1669@redhat.com> <4EDFCFF9.2080906@xenotime.net> <20111207210630.GI1669@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__8_Dec_2011_11_00_59_+1100_BBhR3wDf_ZUBoeTB"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:51549 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751225Ab1LHABT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2011 19:01:19 -0500
+Received: from oproxy9.bluehost.com ([69.89.24.6]:44896 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755250Ab1LHBq0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2011 20:46:26 -0500
+In-Reply-To: <20111207210630.GI1669@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
+To: Don Zickus <dzickus@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__8_Dec_2011_11_00_59_+1100_BBhR3wDf_ZUBoeTB
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Catalin,
+> From: Don Zickus <dzickus@redhat.com>
+> Date: Wed, 7 Dec 2011 16:03:40 -0500
+> Subject: [PATCH] x86, NMI: NMI selftest depends on the local apic
+> 
+> The selftest doesn't work with out a local apic for now.
+> 
+> Reported-by: Randy Durlap <rdunlap@xenotime.net>
+> Signed-off-by: Don Zickus <dzickus@redhat.com>
 
-Today's linux-next merge of the arm-lpae tree got a conflict in
-arch/arm/mm/idmap.c between commits 8903826d0cd9 ("ARM: idmap: populate
-identity map pgd at init time using .init.text") and 4e8ee7de227e ("ARM:
-SMP: use idmap_pgd for mapping MMU enable during secondary booting") from
-the arm tree and commit 1932aa1edc86 ("ARM: LPAE: Add identity mapping
-support for the 3-level page table format") from the arm-lpae tree.
+Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
-I tried to fix it up (see below) and can carry the fix as necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks.
 
-diff --cc arch/arm/mm/idmap.c
-index 660f1bc,267db72..0000000
---- a/arch/arm/mm/idmap.c
-+++ b/arch/arm/mm/idmap.c
-@@@ -1,13 -1,34 +1,38 @@@
-  #include <linux/kernel.h>
- =20
-  #include <asm/cputype.h>
- +#include <asm/idmap.h>
-  #include <asm/pgalloc.h>
-  #include <asm/pgtable.h>
- +#include <asm/sections.h>
- +
- +pgd_t *idmap_pgd;
- =20
-+ #ifdef CONFIG_ARM_LPAE
-+ static void idmap_add_pmd(pud_t *pud, unsigned long addr, unsigned long e=
-nd,
-+ 	unsigned long prot)
-+ {
-+ 	pmd_t *pmd;
-+ 	unsigned long next;
-+=20
-+ 	if (pud_none_or_clear_bad(pud) || (pud_val(*pud) & L_PGD_SWAPPER)) {
-+ 		pmd =3D pmd_alloc_one(&init_mm, addr);
-+ 		if (!pmd) {
-+ 			pr_warning("Failed to allocate identity pmd.\n");
-+ 			return;
-+ 		}
-+ 		pud_populate(&init_mm, pud, pmd);
-+ 		pmd +=3D pmd_index(addr);
-+ 	} else
-+ 		pmd =3D pmd_offset(pud, addr);
-+=20
-+ 	do {
-+ 		next =3D pmd_addr_end(addr, end);
-+ 		*pmd =3D __pmd((addr & PMD_MASK) | prot);
-+ 		flush_pmd_entry(pmd);
-+ 	} while (pmd++, addr =3D next, addr !=3D end);
-+ }
-+ #else	/* !CONFIG_ARM_LPAE */
-  static void idmap_add_pmd(pud_t *pud, unsigned long addr, unsigned long e=
-nd,
-  	unsigned long prot)
-  {
+> ---
+>  arch/x86/Kconfig.debug |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
+> index 020a4f1..d6eea6d 100644
+> --- a/arch/x86/Kconfig.debug
+> +++ b/arch/x86/Kconfig.debug
+> @@ -286,7 +286,7 @@ config DEBUG_STRICT_USER_COPY_CHECKS
+>  
+>  config DEBUG_NMI_SELFTEST
+>  	bool "NMI Selftest"
+> -	depends on DEBUG_KERNEL
+> +	depends on DEBUG_KERNEL && X86_LOCAL_APIC
+>  	---help---
+>  	  Enabling this option turns on a quick NMI selftest to verify
+>  	  that the NMI behaves correctly.
 
---Signature=_Thu__8_Dec_2011_11_00_59_+1100_BBhR3wDf_ZUBoeTB
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO3/47AAoJEECxmPOUX5FEOREP/jrw/rlK85UdifJzEPy0UbtC
-MnS2eD193EA1M6Rw9GSVG9vRhok7SnVArf1Gz0W9en1XK9LKJqYzI8rmWUFkVGgL
-Xcd0G8NGXJkXeUFbA7bMKXgajrUIm3vjdYnHyeqCLCEr1My9170547EGXemNlpQ+
-kAoxUvgW3k1JfrAgoETOrPMJzQDNl13s3hqGX9rfckcRzDJ+ue/A6E9oQFB0VqtT
-I6o8xzGLT4C2622buXT4maDy/PPfcesorYNvFNnMqEFdBqtKv6sTZlWuder1ViFt
-pHE9BaeYWLpXXyWC6tpaMG/hScRdzqcqmNcBPfwhyUrSy9KJjLzq0ttD2xjez7t/
-qx8pEIFhtZBnkKZJGtpn/IYLRRmZbIj27kv4w1hrT9xT+zLk+j2cOSHb770sts7Y
-kuoVIYGrz4w2g609Cehg6hSMjMfsbFAdMWQlCGbfLPNt0IWqsngbXIdRcvUCrnFp
-KdZkWiw8toAo98wGoqN7rCrL1Aerhum1/G/xT2Lbconr3pJfifoITvESx/U4gPBk
-ByNdN/wbw1Y/Cb+iC4+bXS7R9Rlz0L8Z9qDYoLiua0QY3LdcERHrXGVKxCC2r2lO
-QpwtWRZHUOmH3PNyhyZCefesDhP3DcyIv//pxgdAujeeafdGS40KNrnN+aTFcgL4
-wWurKJcdiGTYXOFQ0EbH
-=olmj
------END PGP SIGNATURE-----
-
---Signature=_Thu__8_Dec_2011_11_00_59_+1100_BBhR3wDf_ZUBoeTB--
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
