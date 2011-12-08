@@ -1,55 +1,58 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Dec 7 (x86, not SMP)
-Date: Wed, 07 Dec 2011 18:45:47 -0800
-Message-ID: <4EE024DB.1020409@xenotime.net>
-References: <20111207171218.e11db78531e7f20659e2ca65@canb.auug.org.au> <4EDFBA25.1020102@xenotime.net> <20111207194252.GH1669@redhat.com> <4EDFCFF9.2080906@xenotime.net> <20111207210630.GI1669@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the xshm tree
+Date: Thu, 8 Dec 2011 15:13:22 +1100
+Message-ID: <20111208151322.146d37ed76b5a4fead2a6e03@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__8_Dec_2011_15_13_22_+1100_9LV5GW2k+1kYNG8S"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:44896 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755250Ab1LHBq0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2011 20:46:26 -0500
-In-Reply-To: <20111207210630.GI1669@redhat.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:45157 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756741Ab1LHENe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2011 23:13:34 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Don Zickus <dzickus@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?B?IlNqdXIgQnLDpm5k?= =?UTF-8?B?ZWxhbmQi?= <sjur.brandeland@stericsson.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+--Signature=_Thu__8_Dec_2011_15_13_22_+1100_9LV5GW2k+1kYNG8S
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Don Zickus <dzickus@redhat.com>
-> Date: Wed, 7 Dec 2011 16:03:40 -0500
-> Subject: [PATCH] x86, NMI: NMI selftest depends on the local apic
-> 
-> The selftest doesn't work with out a local apic for now.
-> 
-> Reported-by: Randy Durlap <rdunlap@xenotime.net>
-> Signed-off-by: Don Zickus <dzickus@redhat.com>
+Hi all,
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+After merging the xshm tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-Thanks.
+warning: (XSHM_CHR) selects XSHM which has unmet direct dependencies (CONFI=
+G_C2C)
 
-> ---
->  arch/x86/Kconfig.debug |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
-> index 020a4f1..d6eea6d 100644
-> --- a/arch/x86/Kconfig.debug
-> +++ b/arch/x86/Kconfig.debug
-> @@ -286,7 +286,7 @@ config DEBUG_STRICT_USER_COPY_CHECKS
->  
->  config DEBUG_NMI_SELFTEST
->  	bool "NMI Selftest"
-> -	depends on DEBUG_KERNEL
-> +	depends on DEBUG_KERNEL && X86_LOCAL_APIC
->  	---help---
->  	  Enabling this option turns on a quick NMI selftest to verify
->  	  that the NMI behaves correctly.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Thu__8_Dec_2011_15_13_22_+1100_9LV5GW2k+1kYNG8S
+Content-Type: application/pgp-signature
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO4DliAAoJEECxmPOUX5FEOicP+wWb93rBBDIP2tRYu9HR15A0
+m7vXnOIbmvmY9ISGEOafhqQws0bqrDTM4tGticdhHUhuqh59l/UJFejIgM1Momyj
+s2QtHMu55AlJz9nPwSXh3XVwelcg5xmNfvcJkWySc+llJhDWfb4PmGl9NeGFp4qf
+2ixJun+1uwD4lIOdWOPaXiuoqx0ENDS5oQUnz50o09NtcHiVffBcpVceBLCrY7Od
+n8M/c3dyQiObRhHI5p3TlffuO49iINXnWB5qaSpVSStETScO6cqgokx1W472eiLd
+YKNA3aVTLsRAcFRS4k/fv7PsaWt2UEoWyPUJuIphPaEpQZI0lAmdb25xHZxB58cD
+bOG2FoiQcfTN0pXjOwdUlZpx/fiq9iwyGpBtZvnaf/Yrb5UERn9N+f2zSzRMhusw
+tZ1CT8dDVzJbX0LpLlWWD+2o8Jx9Fqm6s0fEBuXDLFLZSo0KhWlttSw3WN2+bMTH
+zV+/Zp4anSZ793d5q3kLdorMOALcw6LVEqyourdjdeWtrTWY1Z+kIU0frIGaJNRf
+MIv7ciAWryda5Zcb+OKSp3cDTXzxrv+lAmDRQYZFXU9OvbUIo/mnvFkvi0A0lypT
+as8Ud8idL5Gyt9R9oTJkfzbRwOqX7gK8nLWqCwgx4kOXr7rfprWJjSr31az7ykha
+yLVtEAuEvRU9kHs4ZAOC
+=XvfX
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__8_Dec_2011_15_13_22_+1100_9LV5GW2k+1kYNG8S--
