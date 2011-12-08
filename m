@@ -1,40 +1,63 @@
-From: Michael Neuling <mikey@neuling.org>
-Subject: [PATCH] powerpc: fix compile error with 85xx/p1023_rds.c
-Date: Thu, 08 Dec 2011 17:10:54 +1100
-Message-ID: <7679.1323324654@neuling.org>
+From: David Herrmann <dh.herrmann@googlemail.com>
+Subject: Re: [PATCH] HID: wiimote: Select INPUT_FF_MEMLESS
+Date: Thu, 8 Dec 2011 09:31:20 +0100
+Message-ID: <CANq1E4T6uoezonoaBk6agD4-6A7QMSiP0ySDPg+5r50G8LYWTA@mail.gmail.com>
+References: <4EDFD23D.4030703@xenotime.net>
+	<1323290039-28073-1-git-send-email-dh.herrmann@googlemail.com>
+	<b92a2d1d30910b75f3354926d9fa26f6.squirrel@host171.canaca.com>
 Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:42338 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750768Ab1LHGK6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Dec 2011 01:10:58 -0500
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:42256 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752475Ab1LHIbX convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Dec 2011 03:31:23 -0500
+In-Reply-To: <b92a2d1d30910b75f3354926d9fa26f6.squirrel@host171.canaca.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kyle Moffett <Kyle.D.Moffett@boeing.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <michaele@au1.ibm.com>, sfr@canb.auug.org.au, linux-next@vger.kernel.org
+To: simon@mungewell.org
+Cc: linux-input@vger.kernel.org, rdunlap@xenotime.net, linux-next@vger.kernel.org, jkosina@suse.cz, linux-kernel@vger.kernel.org
 
-Current linux-next compiled with mpc85xx_smp_defconfig causes this:
-arch/powerpc/platforms/85xx/p1023_rds.c: In function 'mpc85xx_rds_pic_init':
-arch/powerpc/platforms/85xx/p1023_rds.c:102:14: error: 'np' undeclared (first use in this function)
-arch/powerpc/platforms/85xx/p1023_rds.c:102:14: note: each undeclared identifier is reported only once for each function it appears in
+On Wed, Dec 7, 2011 at 10:07 PM,  <simon@mungewell.org> wrote:
+>
+>> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+>> index edf2b2b..dae04a0 100644
+>> --- a/drivers/hid/Kconfig
+>> +++ b/drivers/hid/Kconfig
+>> @@ -591,6 +591,7 @@ config HID_WIIMOTE
+>> =A0 =A0 =A0 depends on BT_HIDP
+>> =A0 =A0 =A0 depends on LEDS_CLASS
+>> =A0 =A0 =A0 select POWER_SUPPLY
+>> + =A0 =A0 select INPUT_FF_MEMLESS
+>> =A0 =A0 =A0 ---help---
+>> =A0 =A0 =A0 Support for the Nintendo Wii Remote bluetooth device.
+>
+> I don't mean to be a complainer, but shouldn't the WiiMote module dep=
+end
+> on FF_MEMLESS rather than just forcing it on.
 
-Introduced in: 
-  commit 996983b75cebb1bc1c2c545f20336f24ebfa17af
-  Author: Kyle Moffett <Kyle.D.Moffett@boeing.com>
-  Date:   Fri Dec 2 06:28:02 2011 +0000
-  powerpc/mpic: Search for open-pic device-tree node if NULL
+I have considered that but "grep -r FF_MEMLESS" returned no other
+driver using "depend" so I decided to use "select", too.
 
-Signed-off-by: Michael Neuling <mikey@neuling.org>
+> The module could also #define the appropriate bits so that FF_MEMLESS=
+ was
+> only used when available, the rumble motor is a very small part of th=
+e
+> WiiMote's feature set.
+>
+> Some people might not want FF_MEMLESS enabled.
 
-diff --git a/arch/powerpc/platforms/85xx/p1023_rds.c b/arch/powerpc/platforms/85xx/p1023_rds.c
-index e92a714..d951e70 100644
---- a/arch/powerpc/platforms/85xx/p1023_rds.c
-+++ b/arch/powerpc/platforms/85xx/p1023_rds.c
-@@ -99,7 +99,6 @@ static void __init mpc85xx_rds_pic_init(void)
- 		0, 256, " OpenPIC  ");
- 
- 	BUG_ON(mpic == NULL);
--	of_node_put(np);
- 
- 	mpic_init(mpic);
- }
+Why? It is a really small feature that depends only on CONFIG_INPUT.
+Just 600 lines of code. I don't see why someone who wants to enable
+the way bigger wiimote driver and HID core would bother about
+=46F_MEMLESS? Why should someone want to disable the rumble-feature of
+the wiimote?
+I cannot see any real use-case here. Maybe you can explain a bit more.
+
+> Simon.
+>
+
+Cheers
+David
