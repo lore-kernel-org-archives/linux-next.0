@@ -1,45 +1,69 @@
-From: Tony Luck <tony.luck@intel.com>
-Subject: Re: linux-next: build failure after merge of the final tree (pci tree related)
-Date: Thu, 8 Dec 2011 11:01:40 -0800
-Message-ID: <CA+8MBb+n_y=BGQihjGujAq7=cUwpdOTP0-7uRoftFeXouD=QHw@mail.gmail.com>
-References: <20111207170533.3dea865573c916e79d274eca@canb.auug.org.au>
-	<CAErSpo59CuEBbu4QWMkK23TyXafhMLOh1G7Z8YxojqiQmCM0Fw@mail.gmail.com>
-	<20111208072412.e9cf00f9bcdbc4450fe2d2d4@canb.auug.org.au>
+From: Sean Young <sean@mess.org>
+Subject: Re: [PATCH] HID: wiimote: Select INPUT_FF_MEMLESS
+Date: Thu, 8 Dec 2011 22:43:23 +0000
+Message-ID: <20111208224323.GA29342@pip.mess.org>
+References: <4EDFD23D.4030703@xenotime.net>
+ <1323290039-28073-1-git-send-email-dh.herrmann@googlemail.com>
+ <b92a2d1d30910b75f3354926d9fa26f6.squirrel@host171.canaca.com>
+ <CANq1E4T6uoezonoaBk6agD4-6A7QMSiP0ySDPg+5r50G8LYWTA@mail.gmail.com>
+ <80063840e8a9778675e9a63db6f1d956.squirrel@host171.canaca.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:62366 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751361Ab1LHTBl convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Dec 2011 14:01:41 -0500
-In-Reply-To: <20111208072412.e9cf00f9bcdbc4450fe2d2d4@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <80063840e8a9778675e9a63db6f1d956.squirrel@host171.canaca.com>
+Sender: linux-input-owner@vger.kernel.org
+To: simon@mungewell.org
+Cc: David Herrmann <dh.herrmann@googlemail.com>, linux-input@vger.kernel.org, rdunlap@xenotime.net, linux-next@vger.kernel.org, jkosina@suse.cz, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-ia64 builds are failing to build next-20111208
+On Thu, Dec 08, 2011 at 11:23:26AM -0500, simon@mungewell.org wrote:
+> 
+> >> I don't mean to be a complainer, but shouldn't the WiiMote module depend
+> >> on FF_MEMLESS rather than just forcing it on.
+> > > > I have considered that but "grep -r FF_MEMLESS" returned no other
+> > driver using "depend" so I decided to use "select", too.
+> 
+> If you look at 'Kconfig' every other driver is fragmented into a 'driver'
+> and 'driver_ff', it is only the 'driver_ff' bit which does the
+> force-feedback and all the 'drivers' would appear to work OK (as pure
+> input devices) with FF disabled.
+
+Which also requires these drivers to have #ifdef's in their code, they
+would be much cleaner without those.
+
+> Someone here will be able to comment whether that is policy, convention or
+> just historic....
+> 
+> >> Some people might not want FF_MEMLESS enabled.
+> >
+> > Why? It is a really small feature that depends only on CONFIG_INPUT.
+> > Just 600 lines of code. I don't see why someone who wants to enable
+> > the way bigger wiimote driver and HID core would bother about
+> > FF_MEMLESS? Why should someone want to disable the rumble-feature of
+> > the wiimote?
+> 
+> 600 lines where? What's the other costs to the system when enabling the FF
+> code in the kernel.
+
+There is just ff-memless.c which will be compiled into a module (unless 
+not configured to so of of course), which is less than 600 lines including 
+comments. Nothing else changes.
+
+The fact that these drivers can be built without force feedback enabled 
+is an analomy. If every feature a piece of hardware provides were 
+configurable with #ifdef's, the code would not be very maintainable.
+
+> > I cannot see any real use-case here. Maybe you can explain a bit more.
+> 
+> Again I'm not here to kick up a fuss; it just looked different from the
+> norm, so I was flagging it.
+
+I guess once upon time people considered force feedback not useful enough
+to compile in.
+
+I'm hoping that patches for removing the CONFIG_*_FF #ifdefs would be 
+accepted.
 
 
-arch/ia64/pci/pci.c: In function =91add_window=92:
-arch/ia64/pci/pci.c:321: error: =91struct acpi_resource=92 has no membe=
-r
-named =91flags=92
-arch/ia64/pci/pci.c:322: error: =91struct acpi_resource=92 has no membe=
-r named =91end=92
-arch/ia64/pci/pci.c:322: error: =91struct acpi_resource=92 has no membe=
-r
-named =91start=92
-
-problem from this commit
-
-
-commit ab57d8e403c084bf5bacae31d6bc14bef9b75a22
-Author: Bjorn Helgaas <bhelgaas@google.com>
-Date:   Fri Oct 28 16:26:31 2011 -0600
-
-    ia64/PCI: convert to pci_create_root_bus() for correct root bus res=
-ources
-
--Tony
+Sean
