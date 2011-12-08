@@ -1,51 +1,49 @@
-From: simon@mungewell.org
-Subject: Re: [PATCH] HID: wiimote: Select INPUT_FF_MEMLESS
-Date: Thu, 8 Dec 2011 11:23:26 -0500
-Message-ID: <80063840e8a9778675e9a63db6f1d956.squirrel@host171.canaca.com>
-References: <4EDFD23D.4030703@xenotime.net>
-    <1323290039-28073-1-git-send-email-dh.herrmann@googlemail.com>
-    <b92a2d1d30910b75f3354926d9fa26f6.squirrel@host171.canaca.com>
-    <CANq1E4T6uoezonoaBk6agD4-6A7QMSiP0ySDPg+5r50G8LYWTA@mail.gmail.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: build failure after merge of the memblock tree
+Date: Thu, 8 Dec 2011 10:49:52 -0800
+Message-ID: <20111208184952.GA12108@google.com>
+References: <20111206143808.3fa5f3785538a37c9686734d@canb.auug.org.au>
+ <20111208075405.911cefd2ee3c2ed81cdc5f4b@canb.auug.org.au>
+ <CAOS58YOSp6VOJ6WCOyYf3KEJ=_p9ZG4LXmK8YiDgn4Y7DbVHKA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <CANq1E4T6uoezonoaBk6agD4-6A7QMSiP0ySDPg+5r50G8LYWTA@mail.gmail.com>
-Sender: linux-input-owner@vger.kernel.org
-To: David Herrmann <dh.herrmann@googlemail.com>
-Cc: simon@mungewell.org, linux-input@vger.kernel.org, rdunlap@xenotime.net, linux-next@vger.kernel.org, jkosina@suse.cz, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:44864 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464Ab1LHSt4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Dec 2011 13:49:56 -0500
+Content-Disposition: inline
+In-Reply-To: <CAOS58YOSp6VOJ6WCOyYf3KEJ=_p9ZG4LXmK8YiDgn4Y7DbVHKA@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Hello,
 
->> I don't mean to be a complainer, but shouldn't the WiiMote module depend
->> on FF_MEMLESS rather than just forcing it on.
->
-> I have considered that but "grep -r FF_MEMLESS" returned no other
-> driver using "depend" so I decided to use "select", too.
+On Wed, Dec 07, 2011 at 01:30:44PM -0800, Tejun Heo wrote:
+> Still trying to restore my cross build setup. I think I will be able
+> to send update series later today.
 
-If you look at 'Kconfig' every other driver is fragmented into a 'driver'
-and 'driver_ff', it is only the 'driver_ff' bit which does the
-force-feedback and all the 'drivers' would appear to work OK (as pure
-input devices) with FF disabled.
+Made the following changes,
 
-Someone here will be able to comment whether that is policy, convention or
-just historic....
+* Fix the CONFIG_HAVE typo bug.
 
->> Some people might not want FF_MEMLESS enabled.
->
-> Why? It is a really small feature that depends only on CONFIG_INPUT.
-> Just 600 lines of code. I don't see why someone who wants to enable
-> the way bigger wiimote driver and HID core would bother about
-> FF_MEMLESS? Why should someone want to disable the rumble-feature of
-> the wiimote?
+* Remove 7 space -> tab conversion in arch/score/Kconfig to ease
+  conflict resolution.
 
-600 lines where? What's the other costs to the system when enabling the FF
-code in the kernel.
+* Merge resolution in arch/arm/mm/init.c was incorrect.  Both sort()
+  and memblock_init() calls should be removed.  Fixed.
 
-> I cannot see any real use-case here. Maybe you can explain a bit more.
+memblock-kill-early_node_map is now 7bd0b0f0da.
 
-Again I'm not here to kick up a fuss; it just looked different from the
-norm, so I was flagging it.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git memblock-kill-early_node_map
 
-Simon
+Merge result can be verified against the following branch (d8b950f4c3)
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git memblock-kill-early_node_map-next
+
+Thanks.
+
+-- 
+tejun
