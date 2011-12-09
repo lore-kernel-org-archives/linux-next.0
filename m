@@ -1,73 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the memblock tree
-Date: Fri, 9 Dec 2011 15:57:59 +1100
-Message-ID: <20111209155759.957c1dcab32a19b643268c23@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Fri, 9 Dec 2011 16:08:56 +1100
+Message-ID: <20111209160856.d1f8de40a6d415cd5d9cafc7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Dec_2011_15_57_59_+1100_9k1=nGZ0Sdazceu2"
+ boundary="Signature=_Fri__9_Dec_2011_16_08_56_+1100_O1VXmGpYeQUec7Kz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43071 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:55183 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750790Ab1LIE6J (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Dec 2011 23:58:09 -0500
+	with ESMTP id S1750707Ab1LIFJF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Dec 2011 00:09:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <ddaney.cavm@gmail.com>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Rientjes <rientjes@google.com>
 
---Signature=_Fri__9_Dec_2011_15_57_59_+1100_9k1=nGZ0Sdazceu2
+--Signature=_Fri__9_Dec_2011_16_08_56_+1100_O1VXmGpYeQUec7Kz
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in
-arch/mips/Kconfig between commit 9d15ffc824a9 ("mips: Use
-HAVE_MEMBLOCK_NODE_MAP") from the memblock tree and commit "MIPS:
-randomize PIE load address" from the akpm tree.
+After merging the akpm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
+In file included from kernel/fork.c:21:0:
+include/linux/mempolicy.h: In function 'task_has_mempolicy':
+include/linux/mempolicy.h:258:13: error: dereferencing pointer to incomplet=
+e type
+
+And several more like that.
+
+Caused by commit 9d15457f147d
+("cpusets-stall-when-updating-mems_allowed-for-mempolicy-or-disjoint-nodema=
+sk-fix-2").
+
+I have reverted that patch for today (and the following trivial patch
+"cpusets-stall-when-updating-mems_allowed-for-mempolicy-or-disjoint-nodemas=
+k-fix-2-fix").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/mips/Kconfig
-index 7639c77,c2911b7..0000000
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@@ -25,9 -25,7 +25,10 @@@ config MIP
-  	select GENERIC_IRQ_SHOW
-  	select HAVE_ARCH_JUMP_LABEL
-  	select IRQ_FORCED_THREADING
- +	select HAVE_MEMBLOCK
- +	select HAVE_MEMBLOCK_NODE_MAP
- +	select ARCH_DISCARD_MEMBLOCK
-+ 	select ARCH_BINFMT_ELF_RANDOMIZE_PIE
- =20
-  menu "Machine selection"
- =20
-
---Signature=_Fri__9_Dec_2011_15_57_59_+1100_9k1=nGZ0Sdazceu2
+--Signature=_Fri__9_Dec_2011_16_08_56_+1100_O1VXmGpYeQUec7Kz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO4ZVXAAoJEECxmPOUX5FEp7EP/RXklGrZbAyXDz1N3p4SxRhP
-sPFntCrmVyWN4yAKqFvnu2hue4e8sXzl8ilREz0PVvwn+ZiFy8Lr0WVQZ0OFZgbf
-0mljTz7RXQ2mz5yI5TQ49J2PThwJ3PDZNK3BuoLlAO5fjcERwOzVCxZ57BEsHhaN
-2nwUe1Ilsb0CFn/5Dfle6IolTbt4u9SHDgHwB5NQsy9eqsVY73CmsXlHs/6fS+eM
-ftSnES7ejuM39vLAezWspUzclCwwwCxsnmABnA+2Rj1kFgL11kM2QVTa1vDE71o1
-2N0bderjUDHmkpfrIoQvTAgV2Nhj4LeVXPdFRQKnkFzClQ/tekelT8EDXtAzR9sl
-dCkVEOggBCJTZMO8fNb/d/sbVeDtPP7cQL01IUMEXqjIdGp9cBYrfW1FSjPirgpa
-9ukCcKGdE6Aqv3mKOKHQyGX4TCdVLsrR1UFNljKOkaFHb5bJrO/YFBj31Bz1wN3l
-RVqSguC6wfpEH7Hb0QyACePNWqPb1B4visOfo7SpDwYhV6dwYN9e7CL0bNW/ZOK1
-Reg83TIK7AK8yhYuq9vfVjKfMfU/g2ZQ2f6PbiLMbLVB7GlpO1hP4N/bTtwwFshG
-L6veh3CPvqJMsOC97PYQOGvw5lQoXm87muWZoxdt5AFcX29suoVrp5JD5YcGGK/v
-DheQimLXgnVWZKNvIzBj
-=vflS
+iQIcBAEBCAAGBQJO4ZfoAAoJEECxmPOUX5FE48wP/iCzKJ3ssKteiJa2qRwbGkou
+iWMly3PMApPlneJkvI2YkJg+CSaU6QNfdHFiaqZPBM/aMVcRy+5wVeLKTrx7fzuz
+IqPeg+7T7xeBnX8meCJr7FP3vkk51odLFWCA4rF0SK+oBjVu5IwijBbXPTZIH+LK
+4dLoYJu5aL4XVpRaF+OtTAOfLT2AEZXdTvzR9QsRIGxbISjWMGPoMnV1+yK1QURk
+jGZuGsyi/fm/rID4XGRX2ti3qjG+b0HGIUcgYSkEePpAVQ9A5UUZEdpaZlS75z5s
+qAvSuuXPfpLRydpysfIrrRCRXfdn25nVBscRMvpDWsUWwdrboPg9WRKp5OtNEoae
+z9aDk6yw5YD40/cnz7iWXYmR+fZODIotYyaKjceU5p/M8zNzadwsgJmc/NJYxIMR
+Xluhy9C+hcivMg4ETUwRTTuijJ2t2pZmzAWaXEEXxo7FcdgXI9kKOh6BjBIr5Wv7
+L3TGWPaKPzSq1aV+Jx0H3ciJkdTQgEix0vc5WkLM/jI4xE38aRDu/epRnkSFRqzJ
+0biMN4O/4zpvPTSmy48YAVv62HzyyL3K3AQIK/ehIM7l/F9CWPZDhJATp2d+Y/uR
+viOjbStcb0hr5fxpS45vUDRMUoySL7QfCYi7aW+dzvUmb329izbshRpni7sxsCyF
+eXiKZl16+cou/q1s02a1
+=8cRa
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__9_Dec_2011_15_57_59_+1100_9k1=nGZ0Sdazceu2--
+--Signature=_Fri__9_Dec_2011_16_08_56_+1100_O1VXmGpYeQUec7Kz--
