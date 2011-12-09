@@ -1,39 +1,59 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the arm-lpae tree with the arm tree
-Date: Fri, 9 Dec 2011 10:36:52 +0000
-Message-ID: <20111209103652.GA23753@arm.com>
+Date: Fri, 9 Dec 2011 22:11:47 +1100
+Message-ID: <20111209221147.01607dbecde64cfc7baaef28@canb.auug.org.au>
 References: <20111208110059.1d88730db9358e079949b89c@canb.auug.org.au>
+	<20111209103652.GA23753@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:50641 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750844Ab1LIKhK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Dec 2011 05:37:10 -0500
-Content-Disposition: inline
-In-Reply-To: <20111208110059.1d88730db9358e079949b89c@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__9_Dec_2011_22_11_47_+1100_MPif7L6UkWz+x/eR"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111209103652.GA23753@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>
 Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Will Deacon <Will.Deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--Signature=_Fri__9_Dec_2011_22_11_47_+1100_MPif7L6UkWz+x/eR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 08, 2011 at 12:00:59AM +0000, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm-lpae tree got a conflict in
-> arch/arm/mm/idmap.c between commits 8903826d0cd9 ("ARM: idmap: populate
-> identity map pgd at init time using .init.text") and 4e8ee7de227e ("ARM:
-> SMP: use idmap_pgd for mapping MMU enable during secondary booting") from
-> the arm tree and commit 1932aa1edc86 ("ARM: LPAE: Add identity mapping
-> support for the 3-level page table format") from the arm-lpae tree.
-> 
-> I tried to fix it up (see below) and can carry the fix as necessary.
+Hi Catalin,
 
-The fix looks correct but Russell merged the LPAE patches into his tree
-last night and sorted out the conflicts, so you can now drop my for-next
-branch from -next (I'll still keep the kmemleak one).
+On Fri, 9 Dec 2011 10:36:52 +0000 Catalin Marinas <catalin.marinas@arm.com>=
+ wrote:
+>
+> The fix looks correct but Russell merged the LPAE patches into his tree
+> last night and sorted out the conflicts, so you can now drop my for-next
+> branch from -next (I'll still keep the kmemleak one).
 
-Thanks.
+OK, will do.  Thanks for letting me know.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-Catalin
+--Signature=_Fri__9_Dec_2011_22_11_47_+1100_MPif7L6UkWz+x/eR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO4ezzAAoJEECxmPOUX5FECwwQAKSZG5U1ApMMmmIQ1kQ6IEDa
+h5Tn8MD0wg108LDYQZ5JyRAtl5TX489BX20q/25TpE8Q9gv7JBtxm8JDw9SBlc8e
+J8oRyra/Gzq2Fzf/4maAao6tMJs3OXEEiCAqHjk8pdQNlgnysaQTnunenESXvlDm
+0N1yCTrrfMZCEUMFMaJL97hEvW7I1fMyVeepIlHIGvC7K68nwSlvj4JeYCmrqMLR
+QcJRIWT1/9JP8GTRTzM9Y881edR+Iyglzh1EVsfznQk7wXfnFwWv2xpfV31fALrN
+rmG0uJnMfFHtkAEN3Cp951kGnyWJCLjnVr0Ld16Hd2iigUtmaYj6IJPCs/+aITmy
+a7vklAF/z7asq69xkxwVhNin/Wudxpljlz6BerkxQOSsERal9hoT30l1bw/7LKU6
+iVUx0JQaMeC4GXYUc1hWCCrglMAE0AkcHPR21y7Ykklqomdy4/7czhZiR/1eLigB
+P0fpWL0N4zii5jn0FNnBizz45AZBXuLb18dKFXmbvceXnJY4lmeE2IJ6QChKX0gl
+VI+fUF3L4zJaJrVmw4W+LJmnlecCRzvy4/ZLR6jvk2Lz+7Wpii1f/YkelDEJ1RHE
+8Vg9P7I84/P+tL6n/NY3Rhq0ebP9QLlUbnF6zI8LTqy4o9wz/2oldbcIGNU82epO
+522OF2/9shPwgwdiAyOL
+=Hvjb
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__9_Dec_2011_22_11_47_+1100_MPif7L6UkWz+x/eR--
