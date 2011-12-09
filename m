@@ -1,46 +1,73 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: manual merge of the 4xx tree with the powerpc tree
-Date: Fri, 09 Dec 2011 15:41:42 +1100
-Message-ID: <1323405702.19891.7.camel@pasglop>
-References: <20111209123811.12cf28971f21a309976f31bb@canb.auug.org.au>
-	 <CA+5PVA5vVC=e24imM0QxbT10kBAF4v=kwheKs7cOHKKcC+if=A@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the memblock tree
+Date: Fri, 9 Dec 2011 15:57:59 +1100
+Message-ID: <20111209155759.957c1dcab32a19b643268c23@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__9_Dec_2011_15_57_59_+1100_9k1=nGZ0Sdazceu2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:48909 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750854Ab1LIEmJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Dec 2011 23:42:09 -0500
-In-Reply-To: <CA+5PVA5vVC=e24imM0QxbT10kBAF4v=kwheKs7cOHKKcC+if=A@mail.gmail.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:43071 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750790Ab1LIE6J (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Dec 2011 23:58:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Josh Boyer <jwboyer@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Tanmay Inamdar <tinamdar@apm.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <ddaney.cavm@gmail.com>, Tejun Heo <tj@kernel.org>
 
-On Thu, 2011-12-08 at 20:46 -0500, Josh Boyer wrote:
-> On Thu, Dec 8, 2011 at 8:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi Josh,
-> >
-> > Today's linux-next merge of the 4xx tree got a conflict in
-> > arch/powerpc/platforms/40x/ppc40x_simple.c between commit 11eab297f57b
-> > ("powerpc: Add support for OpenBlockS 600") from the powerpc tree and
-> > commit d5b9ee7b514e ("powerpc/40x: Add APM8018X SOC support") from the
-> > 4xx tree.
-> 
-> I blame BenH.  I sent him a pull request with d5b9ee7b514e in it
-> before he went and updated his tree.  Still not pulled afaik.  Guess
-> I'll be rebasing my next branch tomorrow to pick up a series from Tony
-> Breeds, unless Ben handles the outstanding pull before I wake up :).
+--Signature=_Fri__9_Dec_2011_15_57_59_+1100_9k1=nGZ0Sdazceu2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Don't bother rebasing, I can deal with a minor merge conflict like
-that :-)
+Hi Andrew,
 
-> > I fixed it up (see below) and can carry the fix as necessary.
-> 
-> Looks correct to me.  Hopefully you won't have to carry it long.
-> >
-> > [Josh: I have changed you contact address to the above]
+Today's linux-next merge of the akpm tree got a conflict in
+arch/mips/Kconfig between commit 9d15ffc824a9 ("mips: Use
+HAVE_MEMBLOCK_NODE_MAP") from the memblock tree and commit "MIPS:
+randomize PIE load address" from the akpm tree.
 
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/mips/Kconfig
+index 7639c77,c2911b7..0000000
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@@ -25,9 -25,7 +25,10 @@@ config MIP
+  	select GENERIC_IRQ_SHOW
+  	select HAVE_ARCH_JUMP_LABEL
+  	select IRQ_FORCED_THREADING
+ +	select HAVE_MEMBLOCK
+ +	select HAVE_MEMBLOCK_NODE_MAP
+ +	select ARCH_DISCARD_MEMBLOCK
++ 	select ARCH_BINFMT_ELF_RANDOMIZE_PIE
+ =20
+  menu "Machine selection"
+ =20
+
+--Signature=_Fri__9_Dec_2011_15_57_59_+1100_9k1=nGZ0Sdazceu2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO4ZVXAAoJEECxmPOUX5FEp7EP/RXklGrZbAyXDz1N3p4SxRhP
+sPFntCrmVyWN4yAKqFvnu2hue4e8sXzl8ilREz0PVvwn+ZiFy8Lr0WVQZ0OFZgbf
+0mljTz7RXQ2mz5yI5TQ49J2PThwJ3PDZNK3BuoLlAO5fjcERwOzVCxZ57BEsHhaN
+2nwUe1Ilsb0CFn/5Dfle6IolTbt4u9SHDgHwB5NQsy9eqsVY73CmsXlHs/6fS+eM
+ftSnES7ejuM39vLAezWspUzclCwwwCxsnmABnA+2Rj1kFgL11kM2QVTa1vDE71o1
+2N0bderjUDHmkpfrIoQvTAgV2Nhj4LeVXPdFRQKnkFzClQ/tekelT8EDXtAzR9sl
+dCkVEOggBCJTZMO8fNb/d/sbVeDtPP7cQL01IUMEXqjIdGp9cBYrfW1FSjPirgpa
+9ukCcKGdE6Aqv3mKOKHQyGX4TCdVLsrR1UFNljKOkaFHb5bJrO/YFBj31Bz1wN3l
+RVqSguC6wfpEH7Hb0QyACePNWqPb1B4visOfo7SpDwYhV6dwYN9e7CL0bNW/ZOK1
+Reg83TIK7AK8yhYuq9vfVjKfMfU/g2ZQ2f6PbiLMbLVB7GlpO1hP4N/bTtwwFshG
+L6veh3CPvqJMsOC97PYQOGvw5lQoXm87muWZoxdt5AFcX29suoVrp5JD5YcGGK/v
+DheQimLXgnVWZKNvIzBj
+=vflS
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__9_Dec_2011_15_57_59_+1100_9k1=nGZ0Sdazceu2--
