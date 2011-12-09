@@ -1,64 +1,147 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the 4xx tree with the powerpc tree
-Date: Fri, 9 Dec 2011 12:51:16 +1100
-Message-ID: <20111209125116.f8a5d071c3e86d26c7f8660e@canb.auug.org.au>
-References: <20111209123811.12cf28971f21a309976f31bb@canb.auug.org.au>
-	<CA+5PVA5vVC=e24imM0QxbT10kBAF4v=kwheKs7cOHKKcC+if=A@mail.gmail.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: build failure after merge of the final tree (pci tree related)
+Date: Thu, 8 Dec 2011 20:53:17 -0700
+Message-ID: <CAErSpo4V4Nhga5q7wHSiLmr4LubV4Sy+8gMZuob+163ZOHr__Q@mail.gmail.com>
+References: <20111207170533.3dea865573c916e79d274eca@canb.auug.org.au>
+ <CAErSpo59CuEBbu4QWMkK23TyXafhMLOh1G7Z8YxojqiQmCM0Fw@mail.gmail.com>
+ <20111208072412.e9cf00f9bcdbc4450fe2d2d4@canb.auug.org.au> <CA+8MBb+n_y=BGQihjGujAq7=cUwpdOTP0-7uRoftFeXouD=QHw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Dec_2011_12_51_16_+1100_=KHtd8zT5SYgbZS."
+Content-Type: multipart/mixed; boundary=f46d040fa088e3dad804b3a0badf
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:50912 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751703Ab1LIBvY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Dec 2011 20:51:24 -0500
-In-Reply-To: <CA+5PVA5vVC=e24imM0QxbT10kBAF4v=kwheKs7cOHKKcC+if=A@mail.gmail.com>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:34074 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752379Ab1LIDxj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Dec 2011 22:53:39 -0500
+Received: by wgbdr13 with SMTP id dr13so4745667wgb.1
+        for <linux-next@vger.kernel.org>; Thu, 08 Dec 2011 19:53:38 -0800 (PST)
+In-Reply-To: <CA+8MBb+n_y=BGQihjGujAq7=cUwpdOTP0-7uRoftFeXouD=QHw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Josh Boyer <jwboyer@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Tanmay Inamdar <tinamdar@apm.com>
+To: Tony Luck <tony.luck@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Fri__9_Dec_2011_12_51_16_+1100_=KHtd8zT5SYgbZS.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+--f46d040fa088e3dad804b3a0badf
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: quoted-printable
 
-Hi Josh,
-
-On Thu, 8 Dec 2011 20:46:39 -0500 Josh Boyer <jwboyer@gmail.com> wrote:
+On Thu, Dec 8, 2011 at 12:01 PM, Tony Luck <tony.luck@intel.com> wrote:
+> ia64 builds are failing to build next-20111208
 >
-> I blame BenH.  I sent him a pull request with d5b9ee7b514e in it
-> before he went and updated his tree.  Still not pulled afaik.  Guess
-> I'll be rebasing my next branch tomorrow to pick up a series from Tony
-> Breeds, unless Ben handles the outstanding pull before I wake up :).
+>
+> arch/ia64/pci/pci.c: In function =91add_window=92:
+> arch/ia64/pci/pci.c:321: error: =91struct acpi_resource=92 has no member
+> named =91flags=92
+> arch/ia64/pci/pci.c:322: error: =91struct acpi_resource=92 has no member =
+named =91end=92
+> arch/ia64/pci/pci.c:322: error: =91struct acpi_resource=92 has no member
+> named =91start=92
+>
+> problem from this commit
+>
+>
+> commit ab57d8e403c084bf5bacae31d6bc14bef9b75a22
+> Author: Bjorn Helgaas <bhelgaas@google.com>
+> Date: =A0 Fri Oct 28 16:26:31 2011 -0600
+>
+> =A0 =A0ia64/PCI: convert to pci_create_root_bus() for correct root bus re=
+sources
+>
+> -Tony
 
-Don't bother rebasing, let Ben handle the conflict in the merge.
+Sigh, I'm sorry.  Attached are the incremental patch to fix this, and
+an updated version of the original patch.  I'm not git-smart enough to
+push it this time (the box where I normally do that is down at the
+moment, along with my notes).
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Bjorn
 
---Signature=_Fri__9_Dec_2011_12_51_16_+1100_=KHtd8zT5SYgbZS.
-Content-Type: application/pgp-signature
+--f46d040fa088e3dad804b3a0badf
+Content-Type: application/octet-stream; name="patch.ia64-incremental"
+Content-Disposition: attachment; filename="patch.ia64-incremental"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_gvynt2h80
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Y29tbWl0IGZhYzExZDRmOTY2ZmJmOTY1YjIwNDc1NzkwNzRjZjEwZWE1M2QyYjgKQXV0aG9yOiBC
+am9ybiBIZWxnYWFzIDxiaGVsZ2Fhc0Bnb29nbGUuY29tPgpEYXRlOiAgIFRodSBEZWMgOCAyMDox
+NjoxMyAyMDExIC0wNzAwCgpkaWZmIC0tZ2l0IGEvYXJjaC9pYTY0L3BjaS9wY2kuYyBiL2FyY2gv
+aWE2NC9wY2kvcGNpLmMKaW5kZXggYTg0OGZhZC4uNWVlZDc0YyAxMDA2NDQKLS0tIGEvYXJjaC9p
+YTY0L3BjaS9wY2kuYworKysgYi9hcmNoL2lhNjQvcGNpL3BjaS5jCkBAIC0zMTgsOCArMzE4LDgg
+QEAgc3RhdGljIF9fZGV2aW5pdCBhY3BpX3N0YXR1cyBhZGRfd2luZG93KHN0cnVjdCBhY3BpX3Jl
+c291cmNlICpyZXMsIHZvaWQgKmRhdGEpCiAKIAkvKiBIUCdzIGZpcm13YXJlIGhhcyBhIGhhY2sg
+dG8gd29yayBhcm91bmQgYSBXaW5kb3dzIGJ1Zy4KIAkgKiBJZ25vcmUgdGhlc2UgdGlueSBtZW1v
+cnkgcmFuZ2VzICovCi0JaWYgKCEoKHJlcy0+ZmxhZ3MgJiBJT1JFU09VUkNFX01FTSkgJiYKLQkg
+ICAgICAocmVzLT5lbmQgLSByZXMtPnN0YXJ0IDwgMTYpKSkKKwlpZiAoISgod2luZG93LT5yZXNv
+dXJjZS5mbGFncyAmIElPUkVTT1VSQ0VfTUVNKSAmJgorCSAgICAgICh3aW5kb3ctPnJlc291cmNl
+LmVuZCAtIHdpbmRvdy0+cmVzb3VyY2Uuc3RhcnQgPCAxNikpKQogCQlwY2lfYWRkX3Jlc291cmNl
+KCZpbmZvLT5yZXNvdXJjZXMsICZ3aW5kb3ctPnJlc291cmNlKTsKIAogCXJldHVybiBBRV9PSzsK
+--f46d040fa088e3dad804b3a0badf
+Content-Type: application/octet-stream;
+	name="patch.ia64-pci-convert-to-pci_create"
+Content-Disposition: attachment;
+	filename="patch.ia64-pci-convert-to-pci_create"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_gvyntj771
 
-iQIcBAEBCAAGBQJO4WmUAAoJEECxmPOUX5FEiXEP/iKMXQUoiEyDQH1457TWkCBL
-O+h0km6lcJGrHCaNIVCJqXWZSsJbSYLa5yWxNuQabkoc1M6mpH311jShqbCnDlSl
-NcgCsJMSKKU667fzoxbaj1tSvYPQnODihqWY4Yr5wYCkG3t6O0H14oOHjJv5cuLu
-oMNcbSlR2UkazZKFLACOSqqmX6Ex1L8UaA9dawVC3eNIVHpfJ6T5MpiHkYOkkLSx
-6ZXkV3DoAmrbhcCJn4jLaXK/TIceJFGk5wv9WblXKwxHhZOX+8cUaBtWTUKqye2p
-eU/6X1VKv6aHVqwQGIy5gmbpctNf8ZvPu4xiqka56REcD7G6A01p+2KzoaMgFB8Z
-7NXuZsVhUu+5KNjQuezYOzauKcyzEGB7f7j/T2bTS4rEenMOR7fC1H2h4M3F2vd4
-EGjAQBT6e72bTw0y3vZgQuwqaG9NpQsgIccVO3rOvfz6LMsIgsho7R4ne368ORw+
-Pp7H9ksCBSbAP2osQwOwRrAyyfhu88r+EScDjuXhNsjGgrBBzNZ86BkhH5lKuQ1P
-WezaK8aI5ThVzD4p+x2PapBubBkkhpYBYRgoEaxnMYcZVlalgh7UuArxViL0Qi0o
-a6n7xMyMlvOcjRzDa/RzYD6VSPeNkmhJVik0qQogHZEl679qD5e9xbtBiygtL8GI
-O0lPGNXT050P7RRkkux1
-=QTCy
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Dec_2011_12_51_16_+1100_=KHtd8zT5SYgbZS.--
+Y29tbWl0IDM2OWEzMTAzMmRjMTIwMDYwZWJiZmI1YjViOTVlMzdlMWRiNDQ4YTUKQXV0aG9yOiBC
+am9ybiBIZWxnYWFzIDxiaGVsZ2Fhc0Bnb29nbGUuY29tPgpEYXRlOiAgIFR1ZSBPY3QgMTEgMTE6
+MjU6MzAgMjAxMSAtMDYwMAoKICAgIGlhNjQvUENJOiBjb252ZXJ0IHRvIHBjaV9jcmVhdGVfcm9v
+dF9idXMoKSBmb3IgY29ycmVjdCByb290IGJ1cyByZXNvdXJjZXMKICAgIAogICAgQ29udmVydCBm
+cm9tIHBjaV9jcmVhdGVfYnVzKCkgdG8gcGNpX2NyZWF0ZV9yb290X2J1cygpLiAgVGhpcyB3YXkg
+dGhlIHJvb3QKICAgIGJ1cyByZXNvdXJjZXMgYXJlIGNvcnJlY3QgaW1tZWRpYXRlbHkuICBUaGlz
+IGZpeGVzIHRoZSBwcm9ibGVtIG9mICJlYXJseSIKICAgIGFuZCAiaGVhZGVyIiBxdWlya3Mgc2Vl
+aW5nIGluY29ycmVjdCByb290IGJ1cyByZXNvdXJjZXMuCiAgICAKICAgIFdlIGNhbid0IHVzZSBw
+Y2lfc2Nhbl9yb290X2J1cygpIGJlY2F1c2UsIGxpa2UgeDg2LCBBQ1BJIGhvdHBsdWcgY3VycmVu
+dGx5CiAgICByZXF1aXJlcyBwY2lfYnVzX2FkZF9kZXZpY2VzKCkgaW4gYSBzZXBhcmF0ZSBob3N0
+IGJyaWRnZSAuc3RhcnQoKSBtZXRob2QuCiAgICAKICAgIENDOiBUb255IEx1Y2sgPHRvbnkubHVj
+a0BpbnRlbC5jb20+CiAgICBTaWduZWQtb2ZmLWJ5OiBCam9ybiBIZWxnYWFzIDxiaGVsZ2Fhc0Bn
+b29nbGUuY29tPgoKZGlmZiAtLWdpdCBhL2FyY2gvaWE2NC9wY2kvcGNpLmMgYi9hcmNoL2lhNjQv
+cGNpL3BjaS5jCmluZGV4IDA0ZjJmZDkuLjVlZWQ3NGMgMTAwNjQ0Ci0tLSBhL2FyY2gvaWE2NC9w
+Y2kvcGNpLmMKKysrIGIvYXJjaC9pYTY0L3BjaS9wY2kuYwpAQCAtMTM0LDYgKzEzNCw3IEBAIGFs
+bG9jX3BjaV9jb250cm9sbGVyIChpbnQgc2VnKQogc3RydWN0IHBjaV9yb290X2luZm8gewogCXN0
+cnVjdCBhY3BpX2RldmljZSAqYnJpZGdlOwogCXN0cnVjdCBwY2lfY29udHJvbGxlciAqY29udHJv
+bGxlcjsKKwlzdHJ1Y3QgbGlzdF9oZWFkIHJlc291cmNlczsKIAljaGFyICpuYW1lOwogfTsKIApA
+QCAtMzE1LDI0ICszMTYsMTMgQEAgc3RhdGljIF9fZGV2aW5pdCBhY3BpX3N0YXR1cyBhZGRfd2lu
+ZG93KHN0cnVjdCBhY3BpX3Jlc291cmNlICpyZXMsIHZvaWQgKmRhdGEpCiAJCQkJICZ3aW5kb3ct
+PnJlc291cmNlKTsKIAl9CiAKLQlyZXR1cm4gQUVfT0s7Ci19CisJLyogSFAncyBmaXJtd2FyZSBo
+YXMgYSBoYWNrIHRvIHdvcmsgYXJvdW5kIGEgV2luZG93cyBidWcuCisJICogSWdub3JlIHRoZXNl
+IHRpbnkgbWVtb3J5IHJhbmdlcyAqLworCWlmICghKCh3aW5kb3ctPnJlc291cmNlLmZsYWdzICYg
+SU9SRVNPVVJDRV9NRU0pICYmCisJICAgICAgKHdpbmRvdy0+cmVzb3VyY2UuZW5kIC0gd2luZG93
+LT5yZXNvdXJjZS5zdGFydCA8IDE2KSkpCisJCXBjaV9hZGRfcmVzb3VyY2UoJmluZm8tPnJlc291
+cmNlcywgJndpbmRvdy0+cmVzb3VyY2UpOwogCi1zdGF0aWMgdm9pZCBfX2RldmluaXQKLXBjaWJp
+b3Nfc2V0dXBfcm9vdF93aW5kb3dzKHN0cnVjdCBwY2lfYnVzICpidXMsIHN0cnVjdCBwY2lfY29u
+dHJvbGxlciAqY3RybCkKLXsKLQlpbnQgaTsKLQotCXBjaV9idXNfcmVtb3ZlX3Jlc291cmNlcyhi
+dXMpOwotCWZvciAoaSA9IDA7IGkgPCBjdHJsLT53aW5kb3dzOyBpKyspIHsKLQkJc3RydWN0IHJl
+c291cmNlICpyZXMgPSAmY3RybC0+d2luZG93W2ldLnJlc291cmNlOwotCQkvKiBIUCdzIGZpcm13
+YXJlIGhhcyBhIGhhY2sgdG8gd29yayBhcm91bmQgYSBXaW5kb3dzIGJ1Zy4KLQkJICogSWdub3Jl
+IHRoZXNlIHRpbnkgbWVtb3J5IHJhbmdlcyAqLwotCQlpZiAoKHJlcy0+ZmxhZ3MgJiBJT1JFU09V
+UkNFX01FTSkgJiYKLQkJICAgIChyZXMtPmVuZCAtIHJlcy0+c3RhcnQgPCAxNikpCi0JCQljb250
+aW51ZTsKLQkJcGNpX2J1c19hZGRfcmVzb3VyY2UoYnVzLCByZXMsIDApOwotCX0KKwlyZXR1cm4g
+QUVfT0s7CiB9CiAKIHN0cnVjdCBwY2lfYnVzICogX19kZXZpbml0CkBAIC0zNDMsNiArMzMzLDcg
+QEAgcGNpX2FjcGlfc2Nhbl9yb290KHN0cnVjdCBhY3BpX3BjaV9yb290ICpyb290KQogCWludCBi
+dXMgPSByb290LT5zZWNvbmRhcnkuc3RhcnQ7CiAJc3RydWN0IHBjaV9jb250cm9sbGVyICpjb250
+cm9sbGVyOwogCXVuc2lnbmVkIGludCB3aW5kb3dzID0gMDsKKwlzdHJ1Y3QgcGNpX3Jvb3RfaW5m
+byBpbmZvOwogCXN0cnVjdCBwY2lfYnVzICpwYnVzOwogCWNoYXIgKm5hbWU7CiAJaW50IHB4bTsK
+QEAgLTM1OSwxMSArMzUwLDEwIEBAIHBjaV9hY3BpX3NjYW5fcm9vdChzdHJ1Y3QgYWNwaV9wY2lf
+cm9vdCAqcm9vdCkKIAkJY29udHJvbGxlci0+bm9kZSA9IHB4bV90b19ub2RlKHB4bSk7CiAjZW5k
+aWYKIAorCUlOSVRfTElTVF9IRUFEKCZpbmZvLnJlc291cmNlcyk7CiAJYWNwaV93YWxrX3Jlc291
+cmNlcyhkZXZpY2UtPmhhbmRsZSwgTUVUSE9EX05BTUVfX0NSUywgY291bnRfd2luZG93LAogCQkJ
+JndpbmRvd3MpOwogCWlmICh3aW5kb3dzKSB7Ci0JCXN0cnVjdCBwY2lfcm9vdF9pbmZvIGluZm87
+Ci0KIAkJY29udHJvbGxlci0+d2luZG93ID0KIAkJCWttYWxsb2Nfbm9kZShzaXplb2YoKmNvbnRy
+b2xsZXItPndpbmRvdykgKiB3aW5kb3dzLAogCQkJCSAgICAgR0ZQX0tFUk5FTCwgY29udHJvbGxl
+ci0+bm9kZSk7CkBAIC0zODcsOSArMzc3LDEyIEBAIHBjaV9hY3BpX3NjYW5fcm9vdChzdHJ1Y3Qg
+YWNwaV9wY2lfcm9vdCAqcm9vdCkKIAkgKiBzaG91bGQgaGFuZGxlIHRoZSBjYXNlIGhlcmUsIGJ1
+dCBpdCBhcHBlYXJzIHRoYXQgSUE2NCBoYXNuJ3QKIAkgKiBzdWNoIHF1aXJrLiBTbyB3ZSBqdXN0
+IGlnbm9yZSB0aGUgY2FzZSBub3cuCiAJICovCi0JcGJ1cyA9IHBjaV9jcmVhdGVfYnVzKE5VTEws
+IGJ1cywgJnBjaV9yb290X29wcywgY29udHJvbGxlcik7Ci0JaWYgKCFwYnVzKQorCXBidXMgPSBw
+Y2lfY3JlYXRlX3Jvb3RfYnVzKE5VTEwsIGJ1cywgJnBjaV9yb290X29wcywgY29udHJvbGxlciwK
+KwkJCQkgICAmaW5mby5yZXNvdXJjZXMpOworCWlmICghcGJ1cykgeworCQlwY2lfZnJlZV9yZXNv
+dXJjZV9saXN0KCZpbmZvLnJlc291cmNlcyk7CiAJCXJldHVybiBOVUxMOworCX0KIAogCXBidXMt
+PnN1Ym9yZGluYXRlID0gcGNpX3NjYW5fY2hpbGRfYnVzKHBidXMpOwogCXJldHVybiBwYnVzOwpA
+QCAtNTA3LDE0ICs1MDAsMTAgQEAgcGNpYmlvc19maXh1cF9idXMgKHN0cnVjdCBwY2lfYnVzICpi
+KQogCWlmIChiLT5zZWxmKSB7CiAJCXBjaV9yZWFkX2JyaWRnZV9iYXNlcyhiKTsKIAkJcGNpYmlv
+c19maXh1cF9icmlkZ2VfcmVzb3VyY2VzKGItPnNlbGYpOwotCX0gZWxzZSB7Ci0JCXBjaWJpb3Nf
+c2V0dXBfcm9vdF93aW5kb3dzKGIsIGItPnN5c2RhdGEpOwogCX0KIAlsaXN0X2Zvcl9lYWNoX2Vu
+dHJ5KGRldiwgJmItPmRldmljZXMsIGJ1c19saXN0KQogCQlwY2liaW9zX2ZpeHVwX2RldmljZV9y
+ZXNvdXJjZXMoZGV2KTsKIAlwbGF0Zm9ybV9wY2lfZml4dXBfYnVzKGIpOwotCi0JcmV0dXJuOwog
+fQogCiB2b2lkIF9fZGV2aW5pdAo=
+--f46d040fa088e3dad804b3a0badf--
