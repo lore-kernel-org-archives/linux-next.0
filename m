@@ -1,48 +1,67 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] xshm: fix build errors, depends on NET
-Date: Fri, 09 Dec 2011 14:21:50 -0800
-Message-ID: <4EE289FE.90006@xenotime.net>
-References: <20111209163247.1de15dcb5b735ca5e1ad030b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: error while fetching the hexagon quilt series
+Date: Sun, 11 Dec 2011 15:30:55 +1100
+Message-ID: <20111211153055.aaaecee7ee8815dd0b9eddf9@canb.auug.org.au>
+References: <20111209103444.64a1e274b03ac7f7bb6c54fe@canb.auug.org.au>
+	<20111209163146.GA2506@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sun__11_Dec_2011_15_30_55_+1100_YWOu3B_mIIolAZFZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:59689 "HELO
-	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751843Ab1LIVWT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Dec 2011 16:22:19 -0500
-In-Reply-To: <20111209163247.1de15dcb5b735ca5e1ad030b@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:42789 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751221Ab1LKEbG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 10 Dec 2011 23:31:06 -0500
+In-Reply-To: <20111209163146.GA2506@codeaurora.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sjur Brendeland <sjur.brandeland@stericsson.com>
+To: Richard Kuo <rkuo@codeaurora.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Sun__11_Dec_2011_15_30_55_+1100_YWOu3B_mIIolAZFZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix build errors in xshm.  xshm uses netlink, so it
-should depend on NET.
+Hi Richard,
 
-ERROR: "genl_unregister_family" [drivers/xshm/xshm.ko] undefined!
-ERROR: "netlink_unicast" [drivers/xshm/xshm.ko] undefined!
-ERROR: "genl_register_family_with_ops" [drivers/xshm/xshm.ko] undefined!
-ERROR: "init_net" [drivers/xshm/xshm.ko] undefined!
-ERROR: "__alloc_skb" [drivers/xshm/xshm.ko] undefined!
-ERROR: "kfree_skb" [drivers/xshm/xshm.ko] undefined!
-ERROR: "skb_put" [drivers/xshm/xshm.ko] undefined!
+On Fri, 9 Dec 2011 10:31:46 -0600 Richard Kuo <rkuo@codeaurora.org> wrote:
+>
+> Can a read error result from network/server issues?  Sometimes our servers
+> are...  not reliable.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Sjur Brendeland <sjur.brandeland@stericsson.com>
----
- drivers/xshm/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Yeah.  It seems to be OK now.
 
---- linux-next-20111209.orig/drivers/xshm/Kconfig
-+++ linux-next-20111209/drivers/xshm/Kconfig
-@@ -5,6 +5,7 @@ config XSHM
- 
- config XSHM_CHR
- 	tristate "Character device for External Shared Memory (XSHM)"
-+	depends on NET
- 	select XSHM
- 	default n
- 	---help---
+> I haven't changed that directory since the last time you fetched, so the
+> previous fetch will be fine.
+
+OK, good.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sun__11_Dec_2011_15_30_55_+1100_YWOu3B_mIIolAZFZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO5DH/AAoJEECxmPOUX5FEn10QAKMw0k3DUAd06w9RWB1IrfKX
+BkyoUIjc5i/kQ2nd+NYJDiJyrnaNOuUZWgBtqvV7HQCtzAfB7/SBvlDrtdwYFTDD
+oPywwzy3HVTDA3FpHKb4QZ3Fh/8O2r6kpZ0FsRjr57rzA7oAp+ux/t4LYGSzqfvu
+PBq1DYgir8vIErXzYvOdHb8LOoY54VI5xF/qQuaRtjTzNUqqGUpJK9nKsO1K7eT/
+RhpG3IxfH0d1lBfp5S3FM666E+y9SNPvanpMplET841w2WR7NCErph6CwEU+VVW3
+XCQzuzRukMQsSv9gjsxu6Y6WbJOAoj/H+Pp8JG6W2+GYhFZJGTexvgDIWrem5tMv
+5opgNWpPQghZa/v24UbxyrlT/J+Nsjdy0eC1RIXcLZ4mY16blWFuQ+Frw4MamF81
+W0ohaCCl2aoWBy9Vkjk2gAObJyjAZI4WFLlWe2h1R7A/Q7QbY0PjUZEGZWj70EaN
+pHsjFJeOZfDsvOfrYSN2+QobPc4ijFp54m2WWUeasDPZdO9i3cNBod/TJQ00/JVv
+LoOJ30EaL9lSJ42dbU7JBnJt2sZYtcXCXjL3Xy3FJi6Un87kjFNbucdBerUv7Y6r
+BwMhHJdn8h+jfDpltZsAELPs2FXRfsbQc+PfJcOe5IjoQkQJd2XNMUS8bzc7iter
+YCOyTso33n71k7uo5TkN
+=Q6Fo
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__11_Dec_2011_15_30_55_+1100_YWOu3B_mIIolAZFZ--
