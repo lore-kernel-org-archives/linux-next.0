@@ -1,34 +1,27 @@
-From: Michael Neuling <mikey@neuling.org>
-Subject: [PATCH] powerpc: fix compile error with 85xx/p1022_ds.c
-Date: Mon, 12 Dec 2011 09:49:14 +1100
-Message-ID: <22284.1323643754@neuling.org>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [PATCH] HID: wiimote: Select INPUT_FF_MEMLESS
+Date: Mon, 12 Dec 2011 00:27:52 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1112120027360.21970@pobox.suse.cz>
+References: <4EDFD23D.4030703@xenotime.net> <1323290039-28073-1-git-send-email-dh.herrmann@googlemail.com>
 Mime-Version: 1.0
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:49574 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752439Ab1LKWtP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 Dec 2011 17:49:15 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kyle Moffett <Kyle.D.Moffett@boeing.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, sfr@canb.auug.org.au, linux-next@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1323290039-28073-1-git-send-email-dh.herrmann@googlemail.com>
+Sender: linux-input-owner@vger.kernel.org
+To: David Herrmann <dh.herrmann@googlemail.com>
+Cc: linux-input@vger.kernel.org, rdunlap@xenotime.net, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Current linux-next compiled with mpc85xx_defconfig causes this:
- arch/powerpc/platforms/85xx/p1022_ds.c:341:14: error: 'udbg_progress' undeclared here (not in a function)
+On Wed, 7 Dec 2011, David Herrmann wrote:
 
-Add include to fix this.
+> We depend on memless force-feedback support, therefore correctly select the
+> related config options.
+> 
+> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+> Signed-off-by: David Herrmann <dh.herrmann@googlemail.com>
 
-Signed-off-by: Michael Neuling <mikey@neuling.org>
+Applied (with Cc to stable@ added). Thanks,
 
-diff --git a/arch/powerpc/platforms/85xx/p1022_ds.c b/arch/powerpc/platforms/85xx/p1022_ds.c
-index bb3d84f..b0984ad 100644
---- a/arch/powerpc/platforms/85xx/p1022_ds.c
-+++ b/arch/powerpc/platforms/85xx/p1022_ds.c
-@@ -25,6 +25,7 @@
- 
- #include <sysdev/fsl_soc.h>
- #include <sysdev/fsl_pci.h>
-+#include <asm/udbg.h>
- #include <asm/fsl_guts.h>
- #include "smp.h"
- 
+-- 
+Jiri Kosina
+SUSE Labs
