@@ -1,71 +1,34 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: build failure after merge of the final tree (pci
- tree related)
-Date: Mon, 12 Dec 2011 12:53:09 -0800
-Message-ID: <20111212125309.54a47973@jbarnes-desktop>
-References: <20111207170533.3dea865573c916e79d274eca@canb.auug.org.au>
-	<CAErSpo59CuEBbu4QWMkK23TyXafhMLOh1G7Z8YxojqiQmCM0Fw@mail.gmail.com>
-	<20111208072412.e9cf00f9bcdbc4450fe2d2d4@canb.auug.org.au>
-	<CA+8MBb+n_y=BGQihjGujAq7=cUwpdOTP0-7uRoftFeXouD=QHw@mail.gmail.com>
-	<CAErSpo4V4Nhga5q7wHSiLmr4LubV4Sy+8gMZuob+163ZOHr__Q@mail.gmail.com>
-	<0207C53569FE594381A4F2EB66570B2A018EFB78F3@orsmsx508.amr.corp.intel.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: Tree for Dec 12
+Date: Mon, 12 Dec 2011 16:26:04 -0500
+Message-ID: <20111212212604.GA11844@phenom.dumpdata.com>
+References: <20111212161444.22a11535656c6bfbd884d9ec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/0+Q3updznu1azjrq_1vFuGQ"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:40562 "HELO
-	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753897Ab1LLUxP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Dec 2011 15:53:15 -0500
-In-Reply-To: <0207C53569FE594381A4F2EB66570B2A018EFB78F3@orsmsx508.amr.corp.intel.com>
+Received: from acsinet15.oracle.com ([141.146.126.227]:18512 "EHLO
+	acsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754002Ab1LLV1E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Dec 2011 16:27:04 -0500
+Content-Disposition: inline
+In-Reply-To: <20111212161444.22a11535656c6bfbd884d9ec@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Sig_/0+Q3updznu1azjrq_1vFuGQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Dec 12, 2011 at 04:14:44PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20111209:
+> 
+> New tree: remoteproc
+> 
+> Removed tree: arm-lpae (its job is done)
+> 
+> The drm tree gained a conflict against Linus' tree.
 
-On Fri, 9 Dec 2011 12:02:48 -0800
-"Luck, Tony" <tony.luck@intel.com> wrote:
-
-> > Sigh, I'm sorry.  Attached are the incremental patch to fix this, and
-> > an updated version of the original patch.  I'm not git-smart enough to
-> > push it this time (the box where I normally do that is down at the
-> > moment, along with my notes).
->=20
-> Bjorn,
->=20
-> Thanks - the incremental patch works great.
-
-Thanks, just applied it (by hand) to the linux-next branch.  Hopefully
-I didn't botch it...
-
-Thanks,
---=20
-Jesse Barnes, Intel Open Source Technology Center
-
---Sig_/0+Q3updznu1azjrq_1vFuGQ
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQIcBAEBAgAGBQJO5mm1AAoJEIEoDkX4Qk9hWwwQAIo9Wz9I4FLk3GXtR9QZDhv5
-+NsbtPA2VtvX55Um6YXD10NDOkYEWAqGxn1pAGDk2Hrj47MUwVap/Zw8ZNrgXdI5
-LRtMLF+kkORdRTD7B8GM7iMm7rXCPr3rksQtrYVo7sDFfzBSkYF+6Tbi6tJ8d7Fr
-LenyQSoxFOBBkbtUEcgshTSrCzTXU/X4T7Plytsgaynh0+qbJ+VizwQPJDBQWdsR
-PkUgzC2KS5u9+sx9AfSsW1ojjdSPfNElKUru8mrA5RD5lcBzHQFVe8s32GIkrNOa
-hE3nWOUqs7t3m9eGNnomklGkQjwVGEoqxgqjv7GzuqsYXS9WUmIvpK642Z1zrZaT
-3qCzxNHyqRu1h0x7o8wOWsDbUjrb9qtrlwz24j0wOXsL6d5cX6AN2AaZquw3u4su
-ssEo1fAU7FNCdr9oTcKCf8L3uskmeS4SyRei2/gR182zkHPZpTdiAdOG/+/v57In
-QGBg50C4C0tZJ+jwLfh7bjXJaIyJkwXFtlhxb9fB6f05cSuYdIc7yg9XPrZaT8RD
-ww13wViyydtoJMtvvKfrVeuGTPXpgslbZ3iVaYyPP+ucTj5eIN0XariJP4IOX4O8
-VqXChIwaZXDHlmZt/27yJTgIHgDAdPEYsc2Hz6W5m5A1XtuBEHejwseqlvCIrgJh
-vSGpKzjCd356vuQWF/AN
-=8rMd
------END PGP SIGNATURE-----
-
---Sig_/0+Q3updznu1azjrq_1vFuGQ--
+Using wholesale the drm tree for the rivers/gpu/drm/nouveau/nouveau_sgdma.c
+is the right approach. I tried to create a patch to send to you for it (by
+merging drm-next against Linus' tree and running mergetool) - but I don't seem
+to get anything out of it (just some fix to the Intel driver).
