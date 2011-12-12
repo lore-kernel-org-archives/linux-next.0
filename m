@@ -1,73 +1,130 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Mon, 12 Dec 2011 15:26:01 +1100
-Message-ID: <20111212152601.e03fe38dc6606f70d86a1cef@canb.auug.org.au>
+Date: Mon, 12 Dec 2011 15:41:39 +1100
+Message-ID: <20111212154139.9c8aaa79884568ca461cb3f6@canb.auug.org.au>
 References: <20111209160856.d1f8de40a6d415cd5d9cafc7@canb.auug.org.au>
 	<20111208214744.19117662.akpm@linux-foundation.org>
+	<20111212152601.e03fe38dc6606f70d86a1cef@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__12_Dec_2011_15_26_01_+1100_WRdmvxpXZhEjoG7p"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:38891 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752101Ab1LLE0P (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Dec 2011 23:26:15 -0500
-In-Reply-To: <20111208214744.19117662.akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Mon__12_Dec_2011_15_41_39_+1100_UY4M_jALS9/.WCrN"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111212152601.e03fe38dc6606f70d86a1cef@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Rientjes <rientjes@google.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__12_Dec_2011_15_26_01_+1100_WRdmvxpXZhEjoG7p
+--Signature=_Mon__12_Dec_2011_15_41_39_+1100_UY4M_jALS9/.WCrN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-On Thu, 8 Dec 2011 21:47:44 -0800 Andrew Morton <akpm@linux-foundation.org>=
- wrote:
+On Mon, 12 Dec 2011 15:26:01 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> I suppose this is a good enough fix for that:
+> On Thu, 8 Dec 2011 21:47:44 -0800 Andrew Morton <akpm@linux-foundation.or=
+g> wrote:
+> >
+> > I suppose this is a good enough fix for that:
+> >=20
+> >  include/linux/mempolicy.h |   10 ----------
+> >  mm/mempolicy.c            |   12 ++++++++++++
+> >  2 files changed, 12 insertions(+), 10 deletions(-)
 >=20
->  include/linux/mempolicy.h |   10 ----------
->  mm/mempolicy.c            |   12 ++++++++++++
->  2 files changed, 12 insertions(+), 10 deletions(-)
+> OK, I applied this to the akpm tree today.
 
-OK, I applied this to the akpm tree today.
+Actually I applied this:  (put the inlines the the correct file):
 
-> > I have reverted that patch for today (and the following trivial patch
-> > "cpusets-stall-when-updating-mems_allowed-for-mempolicy-or-disjoint-nod=
-emask-fix-2-fix").
->=20
-> And I'll drop that one now.
+ include/linux/mempolicy.h |   10 ----------
+ kernel/cpuset.c           |   12 ++++++++++++
+ 2 files changed, 12 insertions(+), 10 deletions(-)
 
-And dropped that one.
+diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
+index d2589e2..7978eec 100644
+--- a/include/linux/mempolicy.h
++++ b/include/linux/mempolicy.h
+@@ -253,11 +253,6 @@ static inline int vma_migratable(struct vm_area_struct=
+ *vma)
+ 	return 1;
+ }
+=20
+-static inline bool task_has_mempolicy(struct task_struct *task)
+-{
+-	return task->mempolicy;
+-}
+-
+ #else
+=20
+ struct mempolicy {};
+@@ -384,11 +379,6 @@ static inline int mpol_to_str(char *buffer, int maxlen=
+, struct mempolicy *pol,
+ 	return 0;
+ }
+=20
+-static inline bool task_has_mempolicy(struct task_struct *task)
+-{
+-	return false;
+-}
+-
+ #endif /* CONFIG_NUMA */
+ #endif /* __KERNEL__ */
+=20
+diff --git a/kernel/cpuset.c b/kernel/cpuset.c
+index ba5dfe5..540ef69 100644
+--- a/kernel/cpuset.c
++++ b/kernel/cpuset.c
+@@ -938,6 +938,18 @@ static void cpuset_migrate_mm(struct mm_struct *mm, co=
+nst nodemask_t *from,
+ 	guarantee_online_mems(task_cs(tsk),&tsk->mems_allowed);
+ }
+=20
++#ifdef CONFIG_NUMA
++static inline bool task_has_mempolicy(struct task_struct *task)
++{
++	return task->mempolicy;
++}
++#else
++static inline bool task_has_mempolicy(struct task_struct *task)
++{
++	return false;
++}
++#endif
++
+ /*
+  * cpuset_change_task_nodemask - change task's mems_allowed and mempolicy
+  * @tsk: the task to change
+--=20
+1.7.7.3
+
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__12_Dec_2011_15_26_01_+1100_WRdmvxpXZhEjoG7p
+--Signature=_Mon__12_Dec_2011_15_41_39_+1100_UY4M_jALS9/.WCrN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO5YJZAAoJEECxmPOUX5FEGJcP/37OOtW6o3XKML3r06nIu6X8
-KsQMtey0pfLOa/SetJgc472c925cgXCEAdoDaM3pXMZL731pIvk/AIFJq8x9KGDK
-+1cTKpN3OFyWRyfJnKH5SatXro8A+F92Gs/ZOFeuPSox9gtKJ5iqoxaehMFa69ry
-BXP8nwrIi5Kx1m0x4AhgU68cqtP0xt2sAA05C5bp2rHSKQ1tZdjLNZRUMpPP+D1v
-EaxQoSXcJJr4ts1bS1hYoMU34nuxbEtEaYjB7/mKjX/KY60xJ1pfMEBEpCTJx4M/
-tzyWb+WoE8eSmjRxzdFkdmkbeedUyipfls8lviGd2n3JGShsSiXAZbJrbcqMAowx
-9GaYmPq3Sdu9MB/eVLQb/ELTlAcPDX+0+WKEMEMiGgEldSxDUpDi1praZ/eYKFMh
-Y4vGfDrwLhLmy8CI0pFSbuK7gVTt9hgnRsbZRd0R5ttb9m2BI7p6dy36Nowzckqs
-YlM9awiw4+57+ZFkiPMRZ2ysItfmnr3JSOL0kyXTtFMIe/jnXzAtVoAHflweij2b
-oQzxegTSQ8bTguH8lw/jEA0NqtH8PHrIUXgmg6d7yZEt/eEnG9qi0S+pALy50NF/
-dfaNoLEyWYh8GT2yXs2veh3f0KmO/auSEfiUsTJqY4V8lulxbEhIqSlQmi1RgKMx
-mLkxiXMkpAHBnlnF2Hcc
-=CR4K
+iQIcBAEBCAAGBQJO5YYDAAoJEECxmPOUX5FEOaMP/jdzDbmQf0mHLlhkIxCEiEsh
+LIu1yGqYUgRvRkfPOhB3sE/Cv1YlbqAMU5hpIOw/+gEQ1IiMCasl7sD371P3Hr+f
+a0umCJV3Br0xYi9awGKYyhX0KSnCTN/x7HeVQuy2+JpE2KnixKiAZU0aDjwPbs+z
+5PGalGk8p7SIjHdnZ5xs0pJMInNdjRFpwC5mBRfsiabjIQCOuCm850AJ5/VUqNI0
+EABrH/kpKMHzJwmxkVGf+6YMyxjbSfSQdLKWGD4rKB7+QKRk/DyVZTPM+2s3oWYS
+Ay96kI1Q0avVu5NGUyRLYQP+kx0MvT+UqGO0F5Qs4I5a9UKaCcZashJ+iAhCuhau
+n4c8XoNLoUGVwYHgasuP5Ige/UCSA9aO0oe6Szn/aC1pz/c2NIEigHTKaaa7ZGdp
+mkDBLczNW9A4uf2bBdfI4GzmH6Pgnp2y+23qZDvi5S7SnPh6c4rqUF522suYE8Az
+1WcanyrWV5pz4anewJVkydF87XKVPDg7EvkZyQXqoenqs0q9Y72FxMLjqYOulTfm
+JIoDZQWx4jy/MD9lSdAy+Gg8GWcFPqfHI0oEkcXpJomfgrUx4T37n0La0yzwAAQs
+4ck4eDmQgfWF0N6kNonCobeYnQ3875BVaB+JHhFdDD+3OCSGXyNyD1DZNwQc8yDa
+G+DPLJoRYlpZ8tTtP2yW
+=/iT7
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__12_Dec_2011_15_26_01_+1100_WRdmvxpXZhEjoG7p--
+--Signature=_Mon__12_Dec_2011_15_41_39_+1100_UY4M_jALS9/.WCrN--
