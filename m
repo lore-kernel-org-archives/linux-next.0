@@ -1,37 +1,57 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the wireless-next
- tree
-Date: Mon, 12 Dec 2011 00:33:55 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1112120033380.21970@pobox.suse.cz>
-References: <20111205133757.2b6cd1675543c7da26f663a5@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 12 Dec 2011 13:06:08 +1100
+Message-ID: <20111212130608.9684ebb0a98ee767e4b3d040@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:39189 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752402Ab1LKXd7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 Dec 2011 18:33:59 -0500
-In-Reply-To: <20111205133757.2b6cd1675543c7da26f663a5@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Justin P. Mattock" <justinmattock@gmail.com>, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__12_Dec_2011_13_06_08_+1100_hO3O5YO0.2ThBoJW"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, Jerome Glisse <jglisse@redhat.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 5 Dec 2011, Stephen Rothwell wrote:
+--Signature=_Mon__12_Dec_2011_13_06_08_+1100_hO3O5YO0.2ThBoJW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Jiri,
-> 
-> Today's linux-next merge of the trivial tree got a conflict in
-> net/mac80211/work.c between commit e76aadc57228 ("mac80211: revert
-> on-channel work optimisations") from the wireless-next tree and commit
-> 42b2aa86c667 ("treewide: Fix typos in various parts of the kernel, and
-> fix some comments") from the trivial tree.
-> 
-> The former removed the comment that was fixed in the latter, so I did
-> that.
+Hi Dave,
 
-I have now dropped the conflicting hunk, thanks for reporting, Stephen.
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/nouveau/nouveau_sgdma.c between commit a10e9e1dbb39
+("drm/nouveau: fix oopses caused by clear being called on unpopulated
+ttms") from Linus' tree and commit 649bf3ca7734 ("drm/ttm: merge
+ttm_backend and ttm_tt V5") from the drm tree.
 
--- 
-Jiri Kosina
-SUSE Labs
+I have no idea how to fix this up, so I just used the version from the
+drm tree.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__12_Dec_2011_13_06_08_+1100_hO3O5YO0.2ThBoJW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO5WGQAAoJEECxmPOUX5FEWH0P/j1Na4TemQcXp+GHizwk7vmp
+joPIviU13MQWJUYcwfx2EUunF0uLvqlZUM3+TPhde237pVE2BxZLKx3Gg+HYGTRU
+TbBauGLzyjOnuC/NSDdVQpicRKMY7y7W1/gi3/+WZQE4eTPuIE+GR5YA/gc02JMj
+gmfp1Kubn+/Z7e9JoFMq+QY77QStYQtXoCcUBziJpKhunjObdB/qa82Q0HAMTi1h
+vatUTB8WmWx+pmvFJ5uxAWlxHqHQbY09s7ojQoKG2Ik2AF159wGkH3fkMyiA5mC8
+7gzXxA3G9BEtH7GrXOTWWTD3igGOHebiNOGREWrb9/AgkZ7q2fr+MiOqFPxweiX5
+Z3haZ7oQQHLMlb/d0Of3nSseKCig+F8H8QASq+RjZ59GmjgO1a9jvKRMR0g6FLnk
+TAHrbdCCpeWDcxXAHDuN2XVv2bGZUQJRiq+zM3r8tjXtp1Pob0ZHE8GPaTUj8AT7
+m2ejWRsTlHmQvDcmSyUtNXSHIQKj7L7xjM3kBz3DIJLxGbdFM8lphyMLSkjukjaf
+K7WEbZtH2b0OgmNDZ1U26FUMpeCiQYG5Wrb5tc9R/YUuRe25FaNWuuFEEZQJVXMa
+rVVXAsWYly+/sg7aIRH3a4QkD4mNPvMr6wMWteDJ4bQXLXhl6c1kSqluRr/osHSJ
+6osW2lhbOeadpGprWSEh
+=3xMl
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__12_Dec_2011_13_06_08_+1100_hO3O5YO0.2ThBoJW--
