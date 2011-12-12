@@ -1,92 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Subject: Re: Re-add ibft tree to linux-next please
-Date: Tue, 13 Dec 2011 09:44:19 +1100
-Message-ID: <20111213094419.4c0ea2403c6d09751612892a@canb.auug.org.au>
+Date: Mon, 12 Dec 2011 18:10:54 -0500
+Message-ID: <20111212231054.GA14439@phenom.dumpdata.com>
 References: <20111212145330.GA16278@andromeda.dapyr.net>
+ <20111213094419.4c0ea2403c6d09751612892a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Dec_2011_09_44_19_+1100_9LabR7rrOdi5PTm9"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111212145330.GA16278@andromeda.dapyr.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Konrad Rzeszutek Wilk <konrad@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pjones@redhat.com
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Tue__13_Dec_2011_09_44_19_+1100_9LabR7rrOdi5PTm9
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from acsinet15.oracle.com ([141.146.126.227]:43809 "EHLO
+	acsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752137Ab1LLXLz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Dec 2011 18:11:55 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20111213094419.4c0ea2403c6d09751612892a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Konrad Rzeszutek Wilk <konrad@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pjones@redhat.com
 
-Hi Konrad,
+On Tue, Dec 13, 2011 at 09:44:19AM +1100, Stephen Rothwell wrote:
+> Hi Konrad,
+> 
+> On Mon, 12 Dec 2011 10:53:30 -0400 Konrad Rzeszutek Wilk <konrad@kernel.org> wrote:
+> >
+> > I've one patch for the iBFT and since I am the co-maintainer of said tree,
+> > please add this tree to your awesome build system:
+> > 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft.git
+> > 
+> > The branch is "linux-next"
+> 
+> OK, I have added that from today.  There is currently nothing in that
+> branch, right?
 
-On Mon, 12 Dec 2011 10:53:30 -0400 Konrad Rzeszutek Wilk <konrad@kernel.org=
-> wrote:
->
-> I've one patch for the iBFT and since I am the co-maintainer of said tree,
-> please add this tree to your awesome build system:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft.git
->=20
-> The branch is "linux-next"
+Yup. I want to shakedown the patches first in my #testing on first so that
+you aren't hit with any compile errors.
 
-OK, I have added that from today.  There is currently nothing in that
-branch, right?
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Tue__13_Dec_2011_09_44_19_+1100_9LabR7rrOdi5PTm9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO5oPDAAoJEECxmPOUX5FEaBwP/0lzObQioyNwX+QkNWO4Quh6
-UpbVQY1IWH7lvm6VVcljHfU7woqLam1pOqEh0/1tJfixuyjd+2Y85bmfvZ8yLPJ5
-7ExkrjMYLdZhniDxbWID62V/dd2Y3Ti58a5XjRdGvTZPkrK0yZdPqaVmNtZFLJK9
-fBWw6Db+RFA5iIlPdm2CM0h243uLRpnxJs3ApixziM8si+XRmUvFH92eYDbUysdS
-WyUGihF9/a2Z5Z33R/RxuPyhEXhJZprSv2reTI/LaxdX8Co9yyZP7TknMIWZOkBm
-MA6xPEQipYpPYFFzn8OhPfIXLd/QcAHbevPAYZDt8XajtaCdgjqNEuKOjsPaHQae
-LQT1ywFehhINUc/0cGSM0t1wKn536Y8AULdCnn5y1VWP8Es6DrTDSR5/oXliqeUi
-MlZ4buuiMHX4UNXhW13OA+cmzWemRL15IbCarjSkVf8ZSDxS8agl9fHIBRJQevxN
-OoaBbDEM5ybba3SJi4PPcMlFvhRcFsf9qaWarpX/fOjxcG3cXwRcYIDF1yQkAVOJ
-saIe7R65Jl+N3I3Hd59OOMSMuegk9GvJLiaMjqtc3grVGNc+Cbw1Nc8hNRBRXEiA
-c1CmLhNsGZxX0Y4ijsVDilwWyK3tvjqf1MRKg33IEtaJbKcZftmz9077hq528uas
-fRFyneOby1JRdYWwS2JR
-=uNIw
------END PGP SIGNATURE-----
-
---Signature=_Tue__13_Dec_2011_09_44_19_+1100_9LabR7rrOdi5PTm9--
+> 
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgment of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window. 
+> 
+> You will need to ensure that the patches/commits in your tree/series have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
+> 	Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and 
+>      * destined for the current or next Linux merge window.
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell 
+> sfr@canb.auug.org.au
+> 
+> Legal Stuff:
+> By participating in linux-next, your subsystem tree contributions are
+> public and will be included in the linux-next trees.  You may be sent
+> e-mail messages indicating errors or other issues when the
+> patches/commits from your subsystem tree are merged and tested in
+> linux-next.  These messages may also be cross-posted to the linux-next
+> mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+> project and IBM (my employer) make no warranties regarding the linux-next
+> project, the testing procedures, the results, the e-mails, etc.  If you
+> don't agree to these ground rules, let me know and I'll remove your tree
+> from participation in linux-next.
