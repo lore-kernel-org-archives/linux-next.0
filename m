@@ -1,63 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 13 Dec 2011 14:58:05 +1100
-Message-ID: <20111213145805.dfdab4f81bc8ffb22c582393@canb.auug.org.au>
+From: Ohad Ben-Cohen <ohad@wizery.com>
+Subject: Re: [PATCH] rpmsg: rename virtqueue_add_buf_gfp to virtqueue_add_buf
+Date: Tue, 13 Dec 2011 09:20:57 +0200
+Message-ID: <CAK=WgbY2Kw0G7OkkN6f7=rExFpBzHVy_7r1xCrHe02nSuOUC3Q@mail.gmail.com>
+References: <1323760467.11759.2.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Dec_2011_14_58_05_+1100_PRQHMZbX/K8BXXKy"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:47638 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753918Ab1LMD6Q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Dec 2011 22:58:16 -0500
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:62514 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751036Ab1LMHVS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Dec 2011 02:21:18 -0500
+In-Reply-To: <1323760467.11759.2.camel@phoenix>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Axel Lin <axel.lin@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org
 
---Signature=_Tue__13_Dec_2011_14_58_05_+1100_PRQHMZbX/K8BXXKy
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Dec 13, 2011 at 9:14 AM, Axel Lin <axel.lin@gmail.com> wrote:
+> Since commit 7bb7aef2 "virtio: rename virtqueue_add_buf_gfp to virtqu=
+eue_add_buf",
+> virtqueue_add_buf_gfp is renamed to virtqueue_add_buf now.
+>
+> This patch fixes below build error:
+> =A0CC [M] =A0drivers/rpmsg/virtio_rpmsg_bus.o
+> drivers/rpmsg/virtio_rpmsg_bus.c: In function 'rpmsg_send_offchannel_=
+raw':
+> drivers/rpmsg/virtio_rpmsg_bus.c:723: error: implicit declaration of =
+function 'virtqueue_add_buf_gfp'
+> make[2]: *** [drivers/rpmsg/virtio_rpmsg_bus.o] Error 1
+> make[1]: *** [drivers/rpmsg] Error 2
+> make: *** [drivers] Error 2
+>
+> Signed-off-by: Axel Lin <axel.lin@gmail.com>
+> ---
+> I got the build error on linux-next 20111212.
+> So this patch is against linux-next.
 
-Hi all,
+Thanks a lot for the heads up, Axel !
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Stephen, can you please carry this patch in linux-next ?
 
-drivers/base/regmap/regmap.c: In function 'regmap_reinit_cache':
-drivers/base/regmap/regmap.c:259:2: error: too many arguments to function '=
-regcache_init'
-drivers/base/regmap/internal.h:109:5: note: declared here
-
-Caused by commit bf315173359b ("regmap: Allow drivers to reinitialise the
-register cache at runtime").
-
-I have used the sound-asoc tree from next-20111212 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__13_Dec_2011_14_58_05_+1100_PRQHMZbX/K8BXXKy
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO5s1NAAoJEECxmPOUX5FEgpUQAKKyeWHWnxnTrOVTlYc0CyTB
-+Une/7YyhnK8hyCuAacmB2y1q1ECiMRppGXRzrzqlLi/s6WOiA+FknrRaF3COQLT
-ajB4E5bP3WmgzbL4+dm0m+j08e2W5SZj868RPHuxvS3Co3cEUhS44Mi8++KGCQM5
-JuV+h+Q+ftlQ8bpb4IEmYO+iqITdY7PUSwJIBm7+vxDMlndVP3T2Q4Kbb7mYn9h9
-QgmEGQRwn4gKx+L2i9OvOiyOCdQqPl9g+6nUynjp8D1BH5wCKwIusPpZIw+SlfVI
-G5oZlDrTROZIe6KOvwgS9NYn4F0tUvNVEWZz3wu9GO27xaeJjrI/2yiPxijMa+Wn
-Q/eod5FWau1WweXZSU/WMrUflCqXP2jXvCbrrkMGvXEh7kGJowWvUsfsx9h/lYQD
-mgoU36dliUntZqEHpSnaqfamtE7Ke3A6NzXUGjeNLvt+I09efEKUHMrJqrv4EK0S
-uOl+hSuI/ybfnw1SDc4ZqmKgOZKhZValy0b1lb9rlJzuG2aTKFGWeUEJelc77M3q
-D/rYuNrNt2ZCqSXYKH2B1mVcDkJehY34mZxD8Ya2sJpAqKJGlb0NZvk9iUmRZgJo
-V2hYblybrIWDQ15kwbmOHwjQn2IWoV1HAKB00Mq7ZMb6zfmef8SUG+0R5BqG2sCT
-mwIPS6Cfw8GwGtrsNDci
-=A0tv
------END PGP SIGNATURE-----
-
---Signature=_Tue__13_Dec_2011_14_58_05_+1100_PRQHMZbX/K8BXXKy--
+Thanks!
+Ohad.
