@@ -1,46 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next not booting on snowball
-Date: Tue, 13 Dec 2011 13:35:12 +0100
-Message-ID: <CACRpkdaJUNap3498-cORbW77EBT-4_pyxeLQahn4g3UOhHm3bg@mail.gmail.com>
-References: <4ED79454.1090304@linaro.org>
-	<20111201145801.GB2103@sirena.org.uk>
-	<4ED79E9F.7060103@linaro.org>
-	<alpine.LFD.2.02.1112011400380.2357@xanadu.home>
-	<4ED8087F.7030507@linaro.org>
-	<alpine.LFD.2.02.1112011856310.2357@xanadu.home>
-	<4ED90B6F.6050205@linaro.org>
-	<alpine.LFD.2.02.1112062227120.2907@xanadu.home>
+From: Tabi Timur-B04825 <B04825@freescale.com>
+Subject: Re: [PATCH] powerpc: fix compile error with 85xx/p1022_ds.c
+Date: Tue, 13 Dec 2011 20:56:48 +0000
+Message-ID: <CAOZdJXVyQd2CYCArTU1+6hRxOeVPkJP1evrGRKeO7cQPBU_vFA@mail.gmail.com>
+References: <22284.1323643754@neuling.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:54342 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752611Ab1LMMfN convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Dec 2011 07:35:13 -0500
-Received: by iaeh11 with SMTP id h11so4721943iae.19
-        for <linux-next@vger.kernel.org>; Tue, 13 Dec 2011 04:35:12 -0800 (PST)
-In-Reply-To: <alpine.LFD.2.02.1112062227120.2907@xanadu.home>
+Received: from va3ehsobe006.messaging.microsoft.com ([216.32.180.16]:50068
+	"EHLO VA3EHSOBE009.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1755114Ab1LMU4y convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Dec 2011 15:56:54 -0500
+In-Reply-To: <22284.1323643754@neuling.org>
+Content-Language: en-US
+Content-ID: <EDBF6396A9C4DC4BB9C6B437E6D7075B@freescale.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Stephen Warren <swarren@nvidia.com>, Kevin Hilman <khilman@ti.com>, Jamie Iles <jamie@jamieiles.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: Michael Neuling <mikey@neuling.org>, Gala Kumar-B11780 <B11780@freescale.com>
+Cc: Kyle Moffett <Kyle.D.Moffett@boeing.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Wed, Dec 7, 2011 at 5:09 AM, Nicolas Pitre <nicolas.pitre@linaro.org=
-> wrote:
+On Sun, Dec 11, 2011 at 4:49 PM, Michael Neuling <mikey@neuling.org> wr=
+ote:
+> Current linux-next compiled with mpc85xx_defconfig causes this:
+> =A0arch/powerpc/platforms/85xx/p1022_ds.c:341:14: error: 'udbg_progre=
+ss' undeclared here (not in a function)
+>
+> Add include to fix this.
+>
+> Signed-off-by: Michael Neuling <mikey@neuling.org>
 
->> The kernel hangs at:
->>
->> u8500_map_io
->> =A0-> ux500_map_io
->> =A0 =A0-> ux500_read_asicid(addr=3D9001dbf4), base=3D9001d000
->> =A0 =A0 =A0-> =A0readl(__io_address(9001dbf4)=3Df901dbf4);
+Acked-by: Timur Tabi <timur@freescale.com>
 
-This code isn't strictly necessary so I moved it out of the way.
-
-Then it hangs on the second iotable_init() call instead.
-
-I'm digging into this to see what I can find...
-
-Yours,
-Linus Walleij
+--=20
+Timur Tabi
+Linux kernel developer at Freescale
