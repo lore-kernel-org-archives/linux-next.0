@@ -1,82 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] rpmsg: rename virtqueue_add_buf_gfp to
- virtqueue_add_buf
-Date: Tue, 13 Dec 2011 18:37:51 +1100
-Message-ID: <20111213183751.502abede7b5c3382d153ce51@canb.auug.org.au>
-References: <1323760467.11759.2.camel@phoenix>
-	<CAK=WgbY2Kw0G7OkkN6f7=rExFpBzHVy_7r1xCrHe02nSuOUC3Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next not booting on snowball
+Date: Tue, 13 Dec 2011 13:35:12 +0100
+Message-ID: <CACRpkdaJUNap3498-cORbW77EBT-4_pyxeLQahn4g3UOhHm3bg@mail.gmail.com>
+References: <4ED79454.1090304@linaro.org>
+	<20111201145801.GB2103@sirena.org.uk>
+	<4ED79E9F.7060103@linaro.org>
+	<alpine.LFD.2.02.1112011400380.2357@xanadu.home>
+	<4ED8087F.7030507@linaro.org>
+	<alpine.LFD.2.02.1112011856310.2357@xanadu.home>
+	<4ED90B6F.6050205@linaro.org>
+	<alpine.LFD.2.02.1112062227120.2907@xanadu.home>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Dec_2011_18_37_51_+1100_ydEDxFWdrOIXBlTW"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK=WgbY2Kw0G7OkkN6f7=rExFpBzHVy_7r1xCrHe02nSuOUC3Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Axel Lin <axel.lin@gmail.com>, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:54342 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752611Ab1LMMfN convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Dec 2011 07:35:13 -0500
+Received: by iaeh11 with SMTP id h11so4721943iae.19
+        for <linux-next@vger.kernel.org>; Tue, 13 Dec 2011 04:35:12 -0800 (PST)
+In-Reply-To: <alpine.LFD.2.02.1112062227120.2907@xanadu.home>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Stephen Warren <swarren@nvidia.com>, Kevin Hilman <khilman@ti.com>, Jamie Iles <jamie@jamieiles.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
---Signature=_Tue__13_Dec_2011_18_37_51_+1100_ydEDxFWdrOIXBlTW
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Dec 7, 2011 at 5:09 AM, Nicolas Pitre <nicolas.pitre@linaro.org=
+> wrote:
 
-Hi,
+>> The kernel hangs at:
+>>
+>> u8500_map_io
+>> =A0-> ux500_map_io
+>> =A0 =A0-> ux500_read_asicid(addr=3D9001dbf4), base=3D9001d000
+>> =A0 =A0 =A0-> =A0readl(__io_address(9001dbf4)=3Df901dbf4);
 
-On Tue, 13 Dec 2011 09:20:57 +0200 Ohad Ben-Cohen <ohad@wizery.com> wrote:
->
-> On Tue, Dec 13, 2011 at 9:14 AM, Axel Lin <axel.lin@gmail.com> wrote:
-> > Since commit 7bb7aef2 "virtio: rename virtqueue_add_buf_gfp to virtqueu=
-e_add_buf",
-> > virtqueue_add_buf_gfp is renamed to virtqueue_add_buf now.
-> >
-> > This patch fixes below build error:
-> > =C2=A0CC [M] =C2=A0drivers/rpmsg/virtio_rpmsg_bus.o
-> > drivers/rpmsg/virtio_rpmsg_bus.c: In function 'rpmsg_send_offchannel_ra=
-w':
-> > drivers/rpmsg/virtio_rpmsg_bus.c:723: error: implicit declaration of fu=
-nction 'virtqueue_add_buf_gfp'
-> > make[2]: *** [drivers/rpmsg/virtio_rpmsg_bus.o] Error 1
-> > make[1]: *** [drivers/rpmsg] Error 2
-> > make: *** [drivers] Error 2
-> >
-> > Signed-off-by: Axel Lin <axel.lin@gmail.com>
-> > ---
-> > I got the build error on linux-next 20111212.
-> > So this patch is against linux-next.
->=20
-> Thanks a lot for the heads up, Axel !
->=20
-> Stephen, can you please carry this patch in linux-next ?
+This code isn't strictly necessary so I moved it out of the way.
 
-I seem to have mislaid my copy :-(
+Then it hangs on the second iotable_init() call instead.
 
-If Axel could send to to me again, I will put it in as a merge fix tomorrow.
+I'm digging into this to see what I can find...
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__13_Dec_2011_18_37_51_+1100_ydEDxFWdrOIXBlTW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO5wDPAAoJEECxmPOUX5FEVXMP/2hbLK2ek6Dh24vKAjIt6pVN
-0POaaadmvlCksuXgSssaAr0do6iWybX1t77xEWXATp3n2hR5etVPVioeWR1DYSq+
-BU4FNZAcXIzmKSMvP4HcnD2uInejuAvFa31mPkvbNe8MeXM63qhqqqxi7vUBVvAD
-deLxBHJVLZpXiN+gZieq/Vk4C0qTCWnns0uGt2xyi1ONXF6eLAEeiUI83xrh6Wz4
-UQc3G0kXKWiAjWuticmfjAu2ZgqUaYFnz+TpPpOhl91Ha8i/0U10u496phTVZzOV
-+ao8XNa/0zjxhYvuvFKYmqM22zeJLcP0zyk/uzRS5xbAJUt1ptnyD9TCJekvNfAm
-EqhZJePoAmdRvBKbNPUivd/snI2POkbxDFft7EJZeGZdCs075VVwwR3ms528EbKO
-P/1tP52pmzC2ZYXPYR/AOyz0zvYVoLMIEjuJzR1hzX3JN5L6sVGhkESQBsci9rF2
-TcBgzKEtA9oN22n2BO9QPvQ9uAiTdEO1+Ro/e6HzMSv4hQX6JA15/3OLABi+VTy+
-VaYavpU3W8dZHPbpX5oZtgxCIF1i/br5XnEDuFC0oS2RifXV3EkQdJDxb/vl2yli
-BLiX8pwMB5L+8fKxHtObLW30iT2jfFpk2hvzdQAGodwPKXdmug3qJnArKyUSmxFr
-t08binZkHFInkZ5sosHG
-=gNkf
------END PGP SIGNATURE-----
-
---Signature=_Tue__13_Dec_2011_18_37_51_+1100_ydEDxFWdrOIXBlTW--
+Yours,
+Linus Walleij
