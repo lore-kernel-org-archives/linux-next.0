@@ -1,103 +1,63 @@
-From: Michael Neuling <mikey@neuling.org>
-Subject: Re: [PATCH] serial: fix Kconfig for Freescale 16550
-Date: Tue, 13 Dec 2011 13:58:56 +1100
-Message-ID: <749.1323745136@neuling.org>
-References: <7963.1323736263@neuling.org> <20111213005444.GA27190@suse.de> <21148.1323741202@neuling.org> <20111213024738.GA17663@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Tue, 13 Dec 2011 14:58:05 +1100
+Message-ID: <20111213145805.dfdab4f81bc8ffb22c582393@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__13_Dec_2011_14_58_05_+1100_PRQHMZbX/K8BXXKy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:41942 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753468Ab1LMC67 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Dec 2011 21:58:59 -0500
-In-reply-to: <20111213024738.GA17663@windriver.com>
+Received: from calzone.tip.net.au ([203.10.76.15]:47638 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753918Ab1LMD6Q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Dec 2011 22:58:16 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Greg KH <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Michal Marek <mmarek@suse.cz>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In message <20111213024738.GA17663@windriver.com> you wrote:
-> [Re: [PATCH] serial: fix Kconfig for Freescale 16550] On 13/12/2011 (Tue 12:5
-3) Michael Neuling wrote:
-> 
-> > In message <20111213005444.GA27190@suse.de> you wrote:
-> 
-> [...]
-> 
-> > > Then you can't select SERIAL_8250 as a module at all, right?  
-> > 
-> > Correct, unless SERIAL_8250_FOL=n of course.
-> > 
-> > > Perhaps you should allow SERIAL_8250_FSL to be a module as well here?
-> > > So changing the bool to a tristate should be the correct option?  Can
-> > > you try that?
-> > 
-> > Yep, that works also.  New patch below.  
-> > 
-> > This should probably be aced by Paul to ensure he's cool with it being
-> > a module now. 
-> 
-> This will still be broken, but in a different place and for different
-> boards.  [The legacy_serial.c won't link for 8250=m on FSL boards.]
-> 
-> I think your original fix was closer to the right one.   Let me expand
-> on that.   This thing isn't a real stand alone driver.  It is an errata
-> fix that is specific to Freescale boards, and only is relevant in fixing
-> magic SysRQ functionality on the serial console.   The Freescale boards
-> are almost exclusively headless, with a serial console interface to
-> u-boot as the only way to do initial interaction with the board at
-> bootup.  So having serial as a module on these boards is largely
-> academic.  (But if you want modular serial, you still can, and you
-> dont need the errata fix for that.)
-> 
-> So, with all that in mind, I think this is the right fix.  I'll launch
-> some build coverage against it, but it seems straightforward.  Thanks
-> for the report, and sorry for catching pmac in the fallout.
-> 
-> Paul.
-> ---
-> 
->  From 675520f2d175bd71bf857b75a5a9b5a08ee0ee54 Mon Sep 17 00:00:00 2001
-> From: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Date: Mon, 12 Dec 2011 21:18:15 -0500
-> Subject: [PATCH] serial: make FSL errata depend on 8250_CONSOLE, not just
->  8250
-> 
-> The recent commit "serial: add irq handler for Freescale 16550 errata"
-> would allow Kconfig choices that had 8250 support as a module and
-> yet still try and build in the errata fix non-modular, resulting
-> in build failures for some non-embedded PPC targets.
-> 
-> Since we hook in the errata fix from legacy_serial.c, which is
-> built only for PPC_UDBG_16550, and since the errata is only really
-> relevant for SysRQ on serial console, tighten up the dependencies
-> to be exactly that.
-> 
-> We'll get coverage on the relevant Freescale boards because the
-> Kconfig for their CPU types all select the PPC_UDBG_16550 option,
-> and the defconfigs also all select the 8250_CONSOLE option.  Also,
-> the 8250_CONSOLE option has a strict dependency on "SERIAL_8250=y"
-> which resolves the reported problem for non Freescale targets.
-> 
-> Reported-by: Michael Neuling <mikey@neuling.org>
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+--Signature=_Tue__13_Dec_2011_14_58_05_+1100_PRQHMZbX/K8BXXKy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Works here for me (although it still seems like a Kconfig bug).
+Hi all,
 
-Tested-by: Michael Neuling <mikey@neuling.org>
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-> 
-> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-> index aa46993..5c46e90 100644
-> --- a/drivers/tty/serial/Kconfig
-> +++ b/drivers/tty/serial/Kconfig
-> @@ -99,7 +99,7 @@ config SERIAL_8250_PNP
->  
->  config SERIAL_8250_FSL
->  	bool
-> -	depends on SERIAL_8250 && PPC
-> +	depends on SERIAL_8250_CONSOLE && PPC_UDBG_16550
->  	default PPC
->  
->  config SERIAL_8250_HP300
-> -- 
-> 1.7.7
-> 
+drivers/base/regmap/regmap.c: In function 'regmap_reinit_cache':
+drivers/base/regmap/regmap.c:259:2: error: too many arguments to function '=
+regcache_init'
+drivers/base/regmap/internal.h:109:5: note: declared here
+
+Caused by commit bf315173359b ("regmap: Allow drivers to reinitialise the
+register cache at runtime").
+
+I have used the sound-asoc tree from next-20111212 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__13_Dec_2011_14_58_05_+1100_PRQHMZbX/K8BXXKy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO5s1NAAoJEECxmPOUX5FEgpUQAKKyeWHWnxnTrOVTlYc0CyTB
++Une/7YyhnK8hyCuAacmB2y1q1ECiMRppGXRzrzqlLi/s6WOiA+FknrRaF3COQLT
+ajB4E5bP3WmgzbL4+dm0m+j08e2W5SZj868RPHuxvS3Co3cEUhS44Mi8++KGCQM5
+JuV+h+Q+ftlQ8bpb4IEmYO+iqITdY7PUSwJIBm7+vxDMlndVP3T2Q4Kbb7mYn9h9
+QgmEGQRwn4gKx+L2i9OvOiyOCdQqPl9g+6nUynjp8D1BH5wCKwIusPpZIw+SlfVI
+G5oZlDrTROZIe6KOvwgS9NYn4F0tUvNVEWZz3wu9GO27xaeJjrI/2yiPxijMa+Wn
+Q/eod5FWau1WweXZSU/WMrUflCqXP2jXvCbrrkMGvXEh7kGJowWvUsfsx9h/lYQD
+mgoU36dliUntZqEHpSnaqfamtE7Ke3A6NzXUGjeNLvt+I09efEKUHMrJqrv4EK0S
+uOl+hSuI/ybfnw1SDc4ZqmKgOZKhZValy0b1lb9rlJzuG2aTKFGWeUEJelc77M3q
+D/rYuNrNt2ZCqSXYKH2B1mVcDkJehY34mZxD8Ya2sJpAqKJGlb0NZvk9iUmRZgJo
+V2hYblybrIWDQ15kwbmOHwjQn2IWoV1HAKB00Mq7ZMb6zfmef8SUG+0R5BqG2sCT
+mwIPS6Cfw8GwGtrsNDci
+=A0tv
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__13_Dec_2011_14_58_05_+1100_PRQHMZbX/K8BXXKy--
