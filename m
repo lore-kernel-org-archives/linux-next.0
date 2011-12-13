@@ -1,52 +1,100 @@
-From: Konrad Rzeszutek Wilk <konrad@darnok.org>
-Subject: Re: Re-add ibft tree to linux-next please
-Date: Mon, 12 Dec 2011 21:15:37 -0500
-Message-ID: <20111213021536.GC2730@konrad-lan>
-References: <20111212145330.GA16278@andromeda.dapyr.net>
- <4EE68D57.7030603@zytor.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] serial: fix Kconfig for Freescale 16550
+Date: Mon, 12 Dec 2011 21:47:38 -0500
+Message-ID: <20111213024738.GA17663@windriver.com>
+References: <7963.1323736263@neuling.org>
+ <20111213005444.GA27190@suse.de>
+ <21148.1323741202@neuling.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:49436 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753468Ab1LMCsY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Dec 2011 21:48:24 -0500
 Content-Disposition: inline
-In-Reply-To: <4EE68D57.7030603@zytor.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Konrad Rzeszutek Wilk <konrad@kernel.org>, "Brown, Len" <len.brown@intel.com>, linux-acpi@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pjones@redhat.com
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <21148.1323741202@neuling.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michael Neuling <mikey@neuling.org>
+Cc: Greg KH <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, Michal Marek <mmarek@suse.cz>
 
-On Mon, Dec 12, 2011 at 03:25:11PM -0800, H. Peter Anvin wrote:
-> On 12/12/2011 06:53 AM, Konrad Rzeszutek Wilk wrote:
-> > Hey Stephen,
-> > 
-> > I've one patch for the iBFT and since I am the co-maintainer of said tree,
-> > please add this tree to your awesome build system:
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft.git
-> > 
-> > The branch is "linux-next"
-> > 
-> > Signed-off-by: Konrad Rzeszutek Wilk <konrad@kernel.org>
-> > CC: Peter Jones <pjones@redhat.com>
-> > Thanks!
-> > 
-> > P.S.
-> > After kernel.org went down, I choose not to resurface the iBFT tree b/c I
-> > figured that the driver was sooo stable that there would be no need for any
-> > patches. Well, not the case
+[Re: [PATCH] serial: fix Kconfig for Freescale 16550] On 13/12/2011 (Tue 12:53) Michael Neuling wrote:
+
+> In message <20111213005444.GA27190@suse.de> you wrote:
+
+[...]
+
+> > Then you can't select SERIAL_8250 as a module at all, right?  
 > 
-> iBFT is basically an ACPI table with nonstandard discovery.  Any way we
-> could get this merged into the ACPI core eventually?
+> Correct, unless SERIAL_8250_FOL=n of course.
+> 
+> > Perhaps you should allow SERIAL_8250_FSL to be a module as well here?
+> > So changing the bool to a tristate should be the correct option?  Can
+> > you try that?
+> 
+> Yep, that works also.  New patch below.  
+> 
+> This should probably be aced by Paul to ensure he's cool with it being
+> a module now. 
 
-Part of the driver has been exported to the SCSI tree already (the software and
-broadcam iSCSI one). The only two remainig pieces are the SysFS skeleton
-(which should probably still sit in drivers/firmware) and iBFT finder.
+This will still be broken, but in a different place and for different
+boards.  [The legacy_serial.c won't link for 8250=m on FSL boards.]
 
-The remaining piece that could be moved to drivers/acpi is the "finder" of
-the IBFT which can find it via ACPI, similar to how MADT tables are found
-(so perhaps arch/x86/acpi?).
+I think your original fix was closer to the right one.   Let me expand
+on that.   This thing isn't a real stand alone driver.  It is an errata
+fix that is specific to Freescale boards, and only is relevant in fixing
+magic SysRQ functionality on the serial console.   The Freescale boards
+are almost exclusively headless, with a serial console interface to
+u-boot as the only way to do initial interaction with the board at
+bootup.  So having serial as a module on these boards is largely
+academic.  (But if you want modular serial, you still can, and you
+dont need the errata fix for that.)
 
-The trick is that we also have to retain the code functionality if
-"# CONFIG_ACPI is not set" to scan the memory for the iBFT. That part
-should definitly _not_ be moved to drivers/acpi. It could be moved to
-arch/x86/ .. but it could also stay in drivers/firmware. <shrugs>
+So, with all that in mind, I think this is the right fix.  I'll launch
+some build coverage against it, but it seems straightforward.  Thanks
+for the report, and sorry for catching pmac in the fallout.
 
+Paul.
+---
+
+ From 675520f2d175bd71bf857b75a5a9b5a08ee0ee54 Mon Sep 17 00:00:00 2001
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date: Mon, 12 Dec 2011 21:18:15 -0500
+Subject: [PATCH] serial: make FSL errata depend on 8250_CONSOLE, not just
+ 8250
+
+The recent commit "serial: add irq handler for Freescale 16550 errata"
+would allow Kconfig choices that had 8250 support as a module and
+yet still try and build in the errata fix non-modular, resulting
+in build failures for some non-embedded PPC targets.
+
+Since we hook in the errata fix from legacy_serial.c, which is
+built only for PPC_UDBG_16550, and since the errata is only really
+relevant for SysRQ on serial console, tighten up the dependencies
+to be exactly that.
+
+We'll get coverage on the relevant Freescale boards because the
+Kconfig for their CPU types all select the PPC_UDBG_16550 option,
+and the defconfigs also all select the 8250_CONSOLE option.  Also,
+the 8250_CONSOLE option has a strict dependency on "SERIAL_8250=y"
+which resolves the reported problem for non Freescale targets.
+
+Reported-by: Michael Neuling <mikey@neuling.org>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index aa46993..5c46e90 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -99,7 +99,7 @@ config SERIAL_8250_PNP
+ 
+ config SERIAL_8250_FSL
+ 	bool
+-	depends on SERIAL_8250 && PPC
++	depends on SERIAL_8250_CONSOLE && PPC_UDBG_16550
+ 	default PPC
+ 
+ config SERIAL_8250_HP300
+-- 
+1.7.7
