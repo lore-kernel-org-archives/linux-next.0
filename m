@@ -1,54 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next not booting on snowball
-Date: Wed, 14 Dec 2011 09:38:04 +0100
-Message-ID: <CACRpkdZwPTUPdE2XT+aHNvWZW22Ohb3xxHKVQ8H-UaBxumLBvQ@mail.gmail.com>
-References: <4ED79454.1090304@linaro.org>
-	<20111201145801.GB2103@sirena.org.uk>
-	<4ED79E9F.7060103@linaro.org>
-	<alpine.LFD.2.02.1112011400380.2357@xanadu.home>
-	<4ED8087F.7030507@linaro.org>
-	<alpine.LFD.2.02.1112011856310.2357@xanadu.home>
-	<4ED90B6F.6050205@linaro.org>
-	<alpine.LFD.2.02.1112062227120.2907@xanadu.home>
-	<CACRpkdaJUNap3498-cORbW77EBT-4_pyxeLQahn4g3UOhHm3bg@mail.gmail.com>
-	<CACRpkda_EzSbYAmeXQz1XjwKLfmV6JiDcC=4+4HiABWRVg2UPw@mail.gmail.com>
-	<20111214082718.GC3072@opensource.wolfsonmicro.com>
+From: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 14 Dec 2011 10:24:57 +0100
+Message-ID: <1323854697.28489.7.camel@twins>
+References: <20111214154844.3ad4e1d685c7987cba0820a0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:38520 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754686Ab1LNIiE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2011 03:38:04 -0500
-Received: by iaeh11 with SMTP id h11so912169iae.19
-        for <linux-next@vger.kernel.org>; Wed, 14 Dec 2011 00:38:04 -0800 (PST)
-In-Reply-To: <20111214082718.GC3072@opensource.wolfsonmicro.com>
+Received: from casper.infradead.org ([85.118.1.10]:47760 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754905Ab1LNJZv convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2011 04:25:51 -0500
+In-Reply-To: <20111214154844.3ad4e1d685c7987cba0820a0@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Stephen Warren <swarren@nvidia.com>, Kevin Hilman <khilman@ti.com>, Jamie Iles <jamie@jamieiles.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Srinidhi KASAGAR <srinidhi.kasagar@stericsson.com>, Rabin VINCENT <rabin.vincent@stericsson.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Dec 14, 2011 at 9:27 AM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Wed, Dec 14, 2011 at 09:24:33AM +0100, Linus Walleij wrote:
->
->> The above remaps and reads from some random ROM page to get
->> the ASIC ID is actually not screwing things up. Right now.
->
-> The ASIC ID reads are also done by Samsung platforms which boot fine -
-> it's not strictly good but it happens to work (and has done for some
-> considerable time).
+On Wed, 2011-12-14 at 15:48 +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the driver-core tree, today's linux-next build
+> (powerpc_ppc64_defconfig) failed like this:
+> 
+> In file included from include/linux/slab.h:185:0,
+>                  from include/linux/kref.h:19,
+>                  from include/linux/kobject.h:24,
+>                  from include/linux/sysdev.h:24,
+>                  from include/linux/node.h:17,
+>                  from include/linux/swap.h:10,
+>                  from include/linux/suspend.h:4,
+>                  from arch/powerpc/kernel/asm-offsets.c:24:
+> include/linux/slub_def.h:100:17: error: field 'kobj' has incomplete type
+> 
+> Caused by commit 4af679cd7cbb ("kref: Inline all functions") ... we now
+> have kref.h -> slab.h -> slub_def.h -> kobject.h -> kref.h when
+> CONFIG_SLUB is set.
 
-Yes some chicken and egg problem here to some extent :-/
+Egads, that's nasty.. 
 
-What would be elegant is some readl_early_physical(u32 addr);
-that is guaranteed to set up a temporary mapping, read out that
-32-bit word wherever it lives and tear it the map down in a
-controlled manner afterwards. We could tag it __init so it
-is not abused at runtime.
+The nicest thing I can come up with is something like the below, but its
+not all that nice at all :/
 
-This could atleast collect these hacks in one place.
 
-Don't know how easy it'd be to achieve that...
 
-Linus Walleij
+---
+--- a/include/linux/kref.h
++++ b/include/linux/kref.h
+@@ -16,7 +16,8 @@
+ #define _KREF_H_
+ 
+ #include <linux/types.h>
+-#include <linux/slab.h>
++
++extern void kfree(const void *);
+ 
+ struct kref {
+ 	atomic_t refcount;
