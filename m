@@ -1,116 +1,108 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: Tree for Dec 9 (ibmphp)
-Date: Tue, 13 Dec 2011 17:41:08 -0700
-Message-ID: <CAErSpo5dbAJiJ4FhR4bso+4MnJ9mk45T2Z+spmdzRr95w8jAZg@mail.gmail.com>
-References: <20111209163247.1de15dcb5b735ca5e1ad030b@canb.auug.org.au>
- <d4bdd33396b823c5241c4939b981e8a6.squirrel@xenotime.net> <4EE637F3.7070606@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 14 Dec 2011 13:25:58 +1100
+Message-ID: <20111214132558.d9ffe5dfb2f09089cec4a21f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=0016e6d784ffda375a04b402a040
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__14_Dec_2011_13_25_58_+1100_Xkr.ZDFhE3ks.Lle"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:58413 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754176Ab1LNAl3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Dec 2011 19:41:29 -0500
-Received: by wgbdr13 with SMTP id dr13so465942wgb.1
-        for <linux-next@vger.kernel.org>; Tue, 13 Dec 2011 16:41:28 -0800 (PST)
-In-Reply-To: <4EE637F3.7070606@xenotime.net>
+Received: from calzone.tip.net.au ([203.10.76.15]:41967 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753731Ab1LNC0I (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Dec 2011 21:26:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>, Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antonio Quartulli <ordex@autistici.org>
 
---0016e6d784ffda375a04b402a040
-Content-Type: text/plain; charset=ISO-8859-1
+--Signature=_Wed__14_Dec_2011_13_25_58_+1100_Xkr.ZDFhE3ks.Lle
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 12, 2011 at 10:20 AM, Randy Dunlap <rdunlap@xenotime.net> wrote=
-:
-> On 12/09/2011 10:51 AM, Randy Dunlap wrote:
->>
->> On Thu, December 8, 2011 9:32 pm, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20111208:
->>
->> (This build error =A0was first seen in 20111208.)
->>
->>
->> ERROR: "pci_scan_bus" [drivers/pci/hotplug/ibmphp.ko] undefined!
->>
->> Full randconfig file is attached.
->
->
-> Same for 20111212.
+Hi all,
 
-I changed pci_scan_bus() from an inline function (visible to modules)
-to a normal function (by default, not visible to modules), which broke
-the ibmphp.ko build.
+Today's linux-next merge of the net-next tree got conflicts in
+net/batman-adv/translation-table.c between commits 03fc3070457d
+("batman-adv: in case of roaming mark the client with TT_CLIENT_ROAM")
+and 797399b415b7 ("batman-adv: delete global entry in case of roaming")
+from the net tree and commit 48100bac89a6 ("batman-adv: create a common
+substructure for tt_global/local_entry") from the net-next tree.
 
-The updated patch is attached, as well as the incremental change (just
-adding "EXPORT_SYMBOL(pci_scan_bus);".
+I fixed it up (I think - see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-(Also available at git://github.com/bjorn-helgaas/linux.git on the "pci-sca=
-n-v6"
-branch as bef4a9eefaa69dd9bc998e29d619127d1653683d)
+diff --cc net/batman-adv/translation-table.c
+index 5f09a57,cc87acf..0000000
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@@ -245,12 -242,10 +242,12 @@@ void tt_local_add(struct net_device *so
+  	if (tt_global_entry) {
+  		/* This node is probably going to update its tt table */
+  		tt_global_entry->orig_node->tt_poss_change =3D true;
+ -		/* The global entry has to be marked as PENDING and has to be
+ +		/* The global entry has to be marked as ROAMING and has to be
+  		 * kept for consistency purpose */
+- 		tt_global_entry->flags |=3D TT_CLIENT_ROAM;
+ -		tt_global_entry->common.flags |=3D TT_CLIENT_PENDING;
+++		tt_global_entry->common.flags |=3D TT_CLIENT_ROAM;
+ +		tt_global_entry->roam_at =3D jiffies;
+ +
+- 		send_roam_adv(bat_priv, tt_global_entry->addr,
++ 		send_roam_adv(bat_priv, tt_global_entry->common.addr,
+  			      tt_global_entry->orig_node);
+  	}
+  out:
+@@@ -704,21 -668,9 +671,21 @@@ void tt_global_del(struct bat_priv *bat
+ =20
+  	if (tt_global_entry->orig_node =3D=3D orig_node) {
+  		if (roaming) {
+ -			tt_global_entry->common.flags |=3D TT_CLIENT_ROAM;
+ -			tt_global_entry->roam_at =3D jiffies;
+ -			goto out;
+ +			/* if we are deleting a global entry due to a roam
+ +			 * event, there are two possibilities:
+ +			 * 1) the client roamed from node A to node B =3D> we mark
+ +			 *    it with TT_CLIENT_ROAM, we start a timer and we
+ +			 *    wait for node B to claim it. In case of timeout
+ +			 *    the entry is purged.
+ +			 * 2) the client roamed to us =3D> we can directly delete
+ +			 *    the global entry, since it is useless now. */
+ +			tt_local_entry =3D tt_local_hash_find(bat_priv,
+ -							tt_global_entry->addr);
+++							tt_global_entry->common.addr);
+ +			if (!tt_local_entry) {
+- 				tt_global_entry->flags |=3D TT_CLIENT_ROAM;
+++				tt_global_entry->common.flags |=3D TT_CLIENT_ROAM;
+ +				tt_global_entry->roam_at =3D jiffies;
+ +				goto out;
+ +			}
+  		}
+  		_tt_global_del(bat_priv, tt_global_entry, message);
+  	}
 
-Bjorn
+--Signature=_Wed__14_Dec_2011_13_25_58_+1100_Xkr.ZDFhE3ks.Lle
+Content-Type: application/pgp-signature
 
---0016e6d784ffda375a04b402a040
-Content-Type: application/octet-stream; name="patch.convert-pci_scan_bus"
-Content-Disposition: attachment; filename="patch.convert-pci_scan_bus"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_gw5m5wr01
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-Y29tbWl0IDNhZTRhYjgxM2I2MGQ5YzQyZmJkZmM3OTQ3M2M1NWM1M2NiODU0NDcKQXV0aG9yOiBC
-am9ybiBIZWxnYWFzIDxiaGVsZ2Fhc0Bnb29nbGUuY29tPgpEYXRlOiAgIFRodSBPY3QgMjcgMTE6
-NDU6MzggMjAxMSAtMDYwMAoKICAgIFBDSTogY29udmVydCBwY2lfc2Nhbl9idXMoKSB0byB1c2Ug
-cGNpX2NyZWF0ZV9yb290X2J1cygpCiAgICAKICAgIEkgcGxhbiB0byBkZXByZWNhdGUgcGNpX3Nj
-YW5fYnVzX3BhcmVudGVkKCksIHNvIHVzZSBwY2lfY3JlYXRlX3Jvb3RfYnVzKCkKICAgIGRpcmVj
-dGx5IGluc3RlYWQuICBwY2lfc2Nhbl9idXMoKSBpdHNlbGYgd2lsbCBiZSByZW1vdmVkIGFzIHNv
-b24gYXMgYWxsCiAgICBjYWxsZXJzIGFyZSBnb25lLCBzbyB0aGlzIGlzIGp1c3QgYW4gaW50ZXJp
-bSBzdGVwLgogICAgCiAgICBTaWduZWQtb2ZmLWJ5OiBCam9ybiBIZWxnYWFzIDxiaGVsZ2Fhc0Bn
-b29nbGUuY29tPgoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL3Byb2JlLmMgYi9kcml2ZXJzL3Bj
-aS9wcm9iZS5jCmluZGV4IDlmNGIwMGMuLmYwNjZjOWIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvcGNp
-L3Byb2JlLmMKKysrIGIvZHJpdmVycy9wY2kvcHJvYmUuYwpAQCAtMTY0OSw2ICsxNjQ5LDI1IEBA
-IHN0cnVjdCBwY2lfYnVzICogX19kZXZpbml0IHBjaV9zY2FuX2J1c19wYXJlbnRlZChzdHJ1Y3Qg
-ZGV2aWNlICpwYXJlbnQsCiB9CiBFWFBPUlRfU1lNQk9MKHBjaV9zY2FuX2J1c19wYXJlbnRlZCk7
-CiAKK3N0cnVjdCBwY2lfYnVzICogX19kZXZpbml0IHBjaV9zY2FuX2J1cyhpbnQgYnVzLCBzdHJ1
-Y3QgcGNpX29wcyAqb3BzLAorCQkJCQl2b2lkICpzeXNkYXRhKQoreworCUxJU1RfSEVBRChyZXNv
-dXJjZXMpOworCXN0cnVjdCBwY2lfYnVzICpiOworCisJcGNpX2FkZF9yZXNvdXJjZSgmcmVzb3Vy
-Y2VzLCAmaW9wb3J0X3Jlc291cmNlKTsKKwlwY2lfYWRkX3Jlc291cmNlKCZyZXNvdXJjZXMsICZp
-b21lbV9yZXNvdXJjZSk7CisJYiA9IHBjaV9jcmVhdGVfcm9vdF9idXMoTlVMTCwgYnVzLCBvcHMs
-IHN5c2RhdGEsICZyZXNvdXJjZXMpOworCWlmIChiKSB7CisJCWItPnN1Ym9yZGluYXRlID0gcGNp
-X3NjYW5fY2hpbGRfYnVzKGIpOworCQlwY2lfYnVzX2FkZF9kZXZpY2VzKGIpOworCX0gZWxzZSB7
-CisJCXBjaV9mcmVlX3Jlc291cmNlX2xpc3QoJnJlc291cmNlcyk7CisJfQorCXJldHVybiBiOwor
-fQorRVhQT1JUX1NZTUJPTChwY2lfc2Nhbl9idXMpOworCiAjaWZkZWYgQ09ORklHX0hPVFBMVUcK
-IC8qKgogICogcGNpX3Jlc2Nhbl9idXMgLSBzY2FuIGEgUENJIGJ1cyBmb3IgZGV2aWNlcy4KZGlm
-ZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvcGNpLmggYi9pbmNsdWRlL2xpbnV4L3BjaS5oCmluZGV4
-IDMyMzdjYzguLmEwODI1OTMgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvcGNpLmgKKysrIGIv
-aW5jbHVkZS9saW51eC9wY2kuaApAQCAtNjYwLDE1ICs2NjAsNyBAQCBleHRlcm4gc3RydWN0IHBj
-aV9idXMgKnBjaV9maW5kX2J1cyhpbnQgZG9tYWluLCBpbnQgYnVzbnIpOwogdm9pZCBwY2lfYnVz
-X2FkZF9kZXZpY2VzKGNvbnN0IHN0cnVjdCBwY2lfYnVzICpidXMpOwogc3RydWN0IHBjaV9idXMg
-KnBjaV9zY2FuX2J1c19wYXJlbnRlZChzdHJ1Y3QgZGV2aWNlICpwYXJlbnQsIGludCBidXMsCiAJ
-CQkJICAgICAgc3RydWN0IHBjaV9vcHMgKm9wcywgdm9pZCAqc3lzZGF0YSk7Ci1zdGF0aWMgaW5s
-aW5lIHN0cnVjdCBwY2lfYnVzICogX19kZXZpbml0IHBjaV9zY2FuX2J1cyhpbnQgYnVzLCBzdHJ1
-Y3QgcGNpX29wcyAqb3BzLAotCQkJCQkgICB2b2lkICpzeXNkYXRhKQotewotCXN0cnVjdCBwY2lf
-YnVzICpyb290X2J1czsKLQlyb290X2J1cyA9IHBjaV9zY2FuX2J1c19wYXJlbnRlZChOVUxMLCBi
-dXMsIG9wcywgc3lzZGF0YSk7Ci0JaWYgKHJvb3RfYnVzKQotCQlwY2lfYnVzX2FkZF9kZXZpY2Vz
-KHJvb3RfYnVzKTsKLQlyZXR1cm4gcm9vdF9idXM7Ci19CitzdHJ1Y3QgcGNpX2J1cyAqcGNpX3Nj
-YW5fYnVzKGludCBidXMsIHN0cnVjdCBwY2lfb3BzICpvcHMsIHZvaWQgKnN5c2RhdGEpOwogc3Ry
-dWN0IHBjaV9idXMgKnBjaV9jcmVhdGVfcm9vdF9idXMoc3RydWN0IGRldmljZSAqcGFyZW50LCBp
-bnQgYnVzLAogCQkJCSAgICBzdHJ1Y3QgcGNpX29wcyAqb3BzLCB2b2lkICpzeXNkYXRhLAogCQkJ
-CSAgICBzdHJ1Y3QgbGlzdF9oZWFkICpyZXNvdXJjZXMpOwo=
---0016e6d784ffda375a04b402a040
-Content-Type: application/octet-stream; name="patch.export"
-Content-Disposition: attachment; filename="patch.export"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_gw5m663f2
+iQIcBAEBCAAGBQJO6Ak2AAoJEECxmPOUX5FE8oYP/Rsm4XNUuKNXI/Pjs+SVLAUQ
+rZKDgD1vmngGmjaMbUCWyr/n3CPObgphlFKY4wmKcoHaZZwQzHsOE+nkt1kuER8H
+EAFo4mBS6eZzIf1cHB5lnXu8cCLkC7J72yiH3Eo37eQLGqx/jgYl9+VN3J2aXRIc
+ZGZO5syB1tIWAbVDKzaBdK+iGtABZt7SRDxZDgk1RYPyVQCNG5FGxBCbU9SZgASI
+kZ1BniWsvl4kgiz+CdZdN2KC4dMYNGH25E7rNbyS11C3pUb8fq1o4ZAwFWMqCQUH
+voCWS9XurXdJDa9dzRlyMgpYOm1Bf0iY34IX6Lcl4ylr68hFaIWZYLH7yEtMSM5d
+WFWvXZYGmGkuyn+XGFen/3WUWVw+3u3ddMrmtnki45kVeaFfV3Zj+WNX05lnytp6
++Sw0iCT8ilDp4M2dmhwFjg998ifaoAt1hwm4k/mqKNNxKx44T8SmubY+FeckQvHJ
+U00KbPEQLiaCqPzREWx+XZAmFkqtXCBJ3Rlud/GInkFpLPerNx9Qvy0Dd3YzA/GB
+9ILC8lnYkdgU3u0DWXYXnZ5/WAYpZqEWdnmkD3zGCEwh2QicM5CszNI7m1WGDbqj
+1EKa3r/7pmu4rPNBr1k0qzySFaVTAaUMjcfHICfx/UeBrjur+6+qHsJPtfzSTQdq
+FYiyh7UO6ED48JCSOclo
+=5uUp
+-----END PGP SIGNATURE-----
 
-ZGlmZiAtLWdpdCBhLzAxYzEzODJkMzpkcml2ZXJzL3BjaS9wcm9iZS5jIGIvYmVmNGE5ZWVmOmRy
-aXZlcnMvcGNpL3Byb2JlLmMKaW5kZXggODE4MmQ2OS4uZjAxYTAxYSAxMDA2NDQKLS0tIGEvMDFj
-MTM4MmQzOmRyaXZlcnMvcGNpL3Byb2JlLmMKKysrIGIvYmVmNGE5ZWVmOmRyaXZlcnMvcGNpL3By
-b2JlLmMKQEAgLTE2NTgsNiArMTY1OCw3IEBAIHN0cnVjdCBwY2lfYnVzICogX19kZXZpbml0IHBj
-aV9zY2FuX2J1cyhpbnQgYnVzLCBzdHJ1Y3QgcGNpX29wcyAqb3BzLAogCX0KIAlyZXR1cm4gYjsK
-IH0KK0VYUE9SVF9TWU1CT0wocGNpX3NjYW5fYnVzKTsKIAogI2lmZGVmIENPTkZJR19IT1RQTFVH
-CiAvKioK
---0016e6d784ffda375a04b402a040--
+--Signature=_Wed__14_Dec_2011_13_25_58_+1100_Xkr.ZDFhE3ks.Lle--
