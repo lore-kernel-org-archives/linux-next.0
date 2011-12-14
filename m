@@ -1,48 +1,47 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Wed, 14 Dec 2011 09:01:44 -0800
-Message-ID: <20111214170144.GA6933@kroah.com>
-References: <20111214154844.3ad4e1d685c7987cba0820a0@canb.auug.org.au>
- <1323854697.28489.7.camel@twins>
- <20111214150359.GA840@kroah.com>
- <1323875585.28489.48.camel@twins>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm tree with the cgroup tree
+Date: Wed, 14 Dec 2011 10:08:51 -0800
+Message-ID: <20111214100851.2ead3872.akpm@linux-foundation.org>
+References: <20111214175101.daac0549e5ed9d766c3a9bb5@canb.auug.org.au>
+	<20111214161628.GC10791@somewhere.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3.smtp.messagingengine.com ([66.111.4.27]:55867 "EHLO
-	out3.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752045Ab1LNRCL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 Dec 2011 12:02:11 -0500
-Received: from compute2.internal (compute2.nyi.mail.srv.osa [10.202.2.42])
-	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id DD7D9206F8
-	for <linux-next@vger.kernel.org>; Wed, 14 Dec 2011 12:02:07 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <1323875585.28489.48.camel@twins>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55156 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755466Ab1LNSGd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2011 13:06:33 -0500
+In-Reply-To: <20111214161628.GC10791@somewhere.redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On Wed, Dec 14, 2011 at 04:13:05PM +0100, Peter Zijlstra wrote:
-> On Wed, 2011-12-14 at 07:03 -0800, Greg KH wrote:
+On Wed, 14 Dec 2011 17:16:31 +0100 Frederic Weisbecker <fweisbec@gmail.com> wrote:
+
+> > 
+> > cgroups: new cancel_attach_task() subsystem callback
+> > cgroups: ability to stop res charge propagation on bounded ancestor
+> > cgroups: add res counter common ancestor searching
+> > res_counter: allow charge failure pointer to be null
+> > cgroups: pull up res counter charge failure interpretation to caller
+> > cgroups: allow subsystems to cancel a fork
+> > cgroups: add a task counter subsystem
+> > cgroups: ERR_PTR needs err.h
+> > cgroup: Fix task counter common ancestor logic
+> > cgroup-fix-task-counter-common-ancestor-logic-checkpatch-fixes
+> > 
+> > I am wondering if that patch set should be included in the cgroup tree?
 > 
-> > I'll remove the use of kfree in the WARN_ON(), which should solve this
-> > problem.
-> 
-> The alternative is that we introduce something like CONFIG_KREF_DEBUG
-> and out-of-line the functions in that case while also adding more debug
-> checks. Alexey recently proposed a refcnt.h thing that almost does what
-> kref does but has different debug checks.
+> That would be probably the easier solution.
+> Andrew, do you mind if I rebase these patches and target them to Tejun's
+> tree instead?
 
-That might be nice to have, but the kfree check was there to catch
-people who were trying to be "tricky", and they will not be running with
-that debug option enabled.
+Sure, that works,  I'll drop them.
 
-I'll just remove it, and rely on the documentation and public
-humiliation instead of kernel warnings to try to enforce this rule.
-It's worked pretty good so far with the kobject rules :)
+> We can keep them on a standalone branch there based on Tejuns until
+> we reach an agreement on their upstreamability.
 
-thanks,
-
-greg k-h
+I wondered what had been happening with that discussion.  I guess we
+need to restart it.
