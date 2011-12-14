@@ -1,49 +1,57 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: linux-next: manual merge of the akpm tree with the cgroup tree
-Date: Wed, 14 Dec 2011 17:16:31 +0100
-Message-ID: <20111214161628.GC10791@somewhere.redhat.com>
-References: <20111214175101.daac0549e5ed9d766c3a9bb5@canb.auug.org.au>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: Tree for Dec 9 (ibmphp)
+Date: Wed, 14 Dec 2011 08:30:16 -0800
+Message-ID: <20111214083016.4c938d32@jbarnes-desktop>
+References: <20111209163247.1de15dcb5b735ca5e1ad030b@canb.auug.org.au>
+	<d4bdd33396b823c5241c4939b981e8a6.squirrel@xenotime.net>
+	<4EE637F3.7070606@xenotime.net>
+	<CAErSpo5dbAJiJ4FhR4bso+4MnJ9mk45T2Z+spmdzRr95w8jAZg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:37011 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752045Ab1LNQQg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2011 11:16:36 -0500
-Content-Disposition: inline
-In-Reply-To: <20111214175101.daac0549e5ed9d766c3a9bb5@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAErSpo5dbAJiJ4FhR4bso+4MnJ9mk45T2Z+spmdzRr95w8jAZg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Dec 14, 2011 at 05:51:01PM +1100, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> Today's linux-next merge of the akpme tree got conflicts in several files
-> between commits from the cgroup  tree and commit "cgroups: add previous
-> cgroup in can_attach_task/attach_task callbacks" from the akpm tree.
-> 
-> This got a bit to hard to resolve, so I dropped that patch and the
-> following from the akpm tree.
+On Tue, 13 Dec 2011 17:41:08 -0700
+Bjorn Helgaas <bhelgaas@google.com> wrote:
 
-Yeah there are many things I need to update to get a clean rebase.
+> On Mon, Dec 12, 2011 at 10:20 AM, Randy Dunlap <rdunlap@xenotime.net>=
+ wrote:
+> > On 12/09/2011 10:51 AM, Randy Dunlap wrote:
+> >>
+> >> On Thu, December 8, 2011 9:32 pm, Stephen Rothwell wrote:
+> >>> Hi all,
+> >>>
+> >>> Changes since 20111208:
+> >>
+> >> (This build error =A0was first seen in 20111208.)
+> >>
+> >>
+> >> ERROR: "pci_scan_bus" [drivers/pci/hotplug/ibmphp.ko] undefined!
+> >>
+> >> Full randconfig file is attached.
+> >
+> >
+> > Same for 20111212.
+>=20
+> I changed pci_scan_bus() from an inline function (visible to modules)
+> to a normal function (by default, not visible to modules), which brok=
+e
+> the ibmphp.ko build.
+>=20
+> The updated patch is attached, as well as the incremental change (jus=
+t
+> adding "EXPORT_SYMBOL(pci_scan_bus);".
+>=20
+> (Also available at git://github.com/bjorn-helgaas/linux.git on the "p=
+ci-scan-v6"
+> branch as bef4a9eefaa69dd9bc998e29d619127d1653683d)
 
-> 
-> cgroups: new cancel_attach_task() subsystem callback
-> cgroups: ability to stop res charge propagation on bounded ancestor
-> cgroups: add res counter common ancestor searching
-> res_counter: allow charge failure pointer to be null
-> cgroups: pull up res counter charge failure interpretation to caller
-> cgroups: allow subsystems to cancel a fork
-> cgroups: add a task counter subsystem
-> cgroups: ERR_PTR needs err.h
-> cgroup: Fix task counter common ancestor logic
-> cgroup-fix-task-counter-common-ancestor-logic-checkpatch-fixes
-> 
-> I am wondering if that patch set should be included in the cgroup tree?
+Just pushed the fix (rolled it into a v2 of the convert patch).
 
-That would be probably the easier solution.
-Andrew, do you mind if I rebase these patches and target them to Tejun's
-tree instead? We can keep them on a standalone branch there based on Tejuns until
-we reach an agreement on their upstreamability.
+--=20
+Jesse Barnes, Intel Open Source Technology Center
