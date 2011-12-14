@@ -1,47 +1,70 @@
-From: Sean MacLennan <seanm@seanm.ca>
-Subject: Re: linux-next: Tree for Dec 12 (staging/rtl8192e)
-Date: Tue, 13 Dec 2011 23:39:39 -0500
-Message-ID: <20111213233939.572235ff@opus.seanm.ca>
-References: <20111212161444.22a11535656c6bfbd884d9ec@canb.auug.org.au>
-	<4EE63A9C.1090503@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 14 Dec 2011 15:48:44 +1100
+Message-ID: <20111214154844.3ad4e1d685c7987cba0820a0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__14_Dec_2011_15_48_44_+1100_vueZBRwQda_XK_qD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from toronto-hs-216-138-233-67.s-ip.magma.ca ([216.138.233.67]:59672
-	"HELO yow.seanm.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755758Ab1LNEqY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Dec 2011 23:46:24 -0500
-In-Reply-To: <4EE63A9C.1090503@xenotime.net>
+Received: from calzone.tip.net.au ([203.10.76.15]:39091 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751115Ab1LNEsz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Dec 2011 23:48:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
-On Mon, 12 Dec 2011 09:32:12 -0800
-Randy Dunlap <rdunlap@xenotime.net> wrote:
+--Signature=_Wed__14_Dec_2011_15_48_44_+1100_vueZBRwQda_XK_qD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 12/11/2011 09:14 PM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20111209:
-> 
-> 
-> ERROR:
-> "rtllib_crypt_delayed_deinit" [drivers/staging/rtl8192e/rtllib.ko]
-> undefined! ERROR:
-> "rtllib_get_crypto_ops" [drivers/staging/rtl8192e/rtllib.ko]
-> undefined! ERROR:
-> "rtllib_crypt_deinit_entries" [drivers/staging/rtl8192e/rtllib.ko]
-> undefined! ERROR:
-> "rtllib_crypt_deinit_handler" [drivers/staging/rtl8192e/rtllib.ko]
-> undefined!
-> 
-> Full randconfig file is attached.
-> 
+Hi Greg,
 
-This is my fault and I am working on a patch for this. I can submit a
-quick fix if needed.
+After merging the driver-core tree, today's linux-next build
+(powerpc_ppc64_defconfig) failed like this:
 
+In file included from include/linux/slab.h:185:0,
+                 from include/linux/kref.h:19,
+                 from include/linux/kobject.h:24,
+                 from include/linux/sysdev.h:24,
+                 from include/linux/node.h:17,
+                 from include/linux/swap.h:10,
+                 from include/linux/suspend.h:4,
+                 from arch/powerpc/kernel/asm-offsets.c:24:
+include/linux/slub_def.h:100:17: error: field 'kobj' has incomplete type
+
+Caused by commit 4af679cd7cbb ("kref: Inline all functions") ... we now
+have kref.h -> slab.h -> slub_def.h -> kobject.h -> kref.h when
+CONFIG_SLUB is set.
+
+I have used the driver-core tree from next-20111213 for today.
+
+--=20
 Cheers,
-   Sean
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__14_Dec_2011_15_48_44_+1100_vueZBRwQda_XK_qD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO6CqsAAoJEECxmPOUX5FElB8P/1mQCuIXST/ksrf9eMS0R9MS
+fVpmbfEx1fF1p1TaRpd75OyIuxT6qB7N3UARGe3PwcoFQDgFbzSMjIGXKia1ffsZ
+fM37VDjwUiEA4g7fw+qXcBk4bgOwSUOfoAr4IKlG7W2H31i6n2WDWGlCpvuDCtt2
+vaDJuPmA9zknAA5OBtyyIUhS/QUIxrXxFZETF15Ao4fMzznxGWRGgnDZmi51Unlq
+J93M9xvVs0Uur9AGY4nJGLaU9kXZ7mQWBnnWfqVNKXj8dVXnseoOORZraqzIeBhQ
+gm+NHpQga6+Om7K1FBPvGkZWD0skbwf40PB96Hyp3vbxuGPraWRHLM+Vj8gc/g0N
+asm4an8dT0Uv1VK/90g26JactgGsv/zGOwX9M8PyxhQahvB93HcHSDmktyglen6H
+Cxbp/LyKEI96D6ON9SlVQMKG9buiGjGBsnW4tOXCBYvaCHsEoEX5FwjNqlwOvNf1
+KzHurj9WFb3IyEaV/Y1/h0L8hWkndyIBT76pBY44u0+EnZEPylVP64+4aanAtkU9
++91TDW1aVDESdrevelekBtcrZfV6QfmmxcqPbw0pPH9Gc/djJmPK99KlvS7Z/tgK
+slQkhwptNqwBhI9KaJIkrjgmbCxtX+DsHRjWpKika/jMbZa+20ZX8mnOtk/jqoeu
+/WSrrqpXONTbtnocYhZd
+=9ylO
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__14_Dec_2011_15_48_44_+1100_vueZBRwQda_XK_qD--
