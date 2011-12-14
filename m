@@ -1,46 +1,49 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Wed, 14 Dec 2011 07:03:59 -0800
-Message-ID: <20111214150359.GA840@kroah.com>
-References: <20111214154844.3ad4e1d685c7987cba0820a0@canb.auug.org.au>
- <1323854697.28489.7.camel@twins>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the cgroup tree
+Date: Wed, 14 Dec 2011 17:16:31 +0100
+Message-ID: <20111214161628.GC10791@somewhere.redhat.com>
+References: <20111214175101.daac0549e5ed9d766c3a9bb5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:37011 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752045Ab1LNQQg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2011 11:16:36 -0500
 Content-Disposition: inline
-In-Reply-To: <1323854697.28489.7.camel@twins>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20111214175101.daac0549e5ed9d766c3a9bb5@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On Wed, Dec 14, 2011 at 10:24:57AM +0100, Peter Zijlstra wrote:
-> On Wed, 2011-12-14 at 15:48 +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > After merging the driver-core tree, today's linux-next build
-> > (powerpc_ppc64_defconfig) failed like this:
-> > 
-> > In file included from include/linux/slab.h:185:0,
-> >                  from include/linux/kref.h:19,
-> >                  from include/linux/kobject.h:24,
-> >                  from include/linux/sysdev.h:24,
-> >                  from include/linux/node.h:17,
-> >                  from include/linux/swap.h:10,
-> >                  from include/linux/suspend.h:4,
-> >                  from arch/powerpc/kernel/asm-offsets.c:24:
-> > include/linux/slub_def.h:100:17: error: field 'kobj' has incomplete type
-> > 
-> > Caused by commit 4af679cd7cbb ("kref: Inline all functions") ... we now
-> > have kref.h -> slab.h -> slub_def.h -> kobject.h -> kref.h when
-> > CONFIG_SLUB is set.
+On Wed, Dec 14, 2011 at 05:51:01PM +1100, Stephen Rothwell wrote:
+> Hi Andrew,
 > 
-> Egads, that's nasty.. 
+> Today's linux-next merge of the akpme tree got conflicts in several files
+> between commits from the cgroup  tree and commit "cgroups: add previous
+> cgroup in can_attach_task/attach_task callbacks" from the akpm tree.
 > 
-> The nicest thing I can come up with is something like the below, but its
-> not all that nice at all :/
+> This got a bit to hard to resolve, so I dropped that patch and the
+> following from the akpm tree.
 
-I'll remove the use of kfree in the WARN_ON(), which should solve this
-problem.
+Yeah there are many things I need to update to get a clean rebase.
 
-greg k-h
+> 
+> cgroups: new cancel_attach_task() subsystem callback
+> cgroups: ability to stop res charge propagation on bounded ancestor
+> cgroups: add res counter common ancestor searching
+> res_counter: allow charge failure pointer to be null
+> cgroups: pull up res counter charge failure interpretation to caller
+> cgroups: allow subsystems to cancel a fork
+> cgroups: add a task counter subsystem
+> cgroups: ERR_PTR needs err.h
+> cgroup: Fix task counter common ancestor logic
+> cgroup-fix-task-counter-common-ancestor-logic-checkpatch-fixes
+> 
+> I am wondering if that patch set should be included in the cgroup tree?
+
+That would be probably the easier solution.
+Andrew, do you mind if I rebase these patches and target them to Tejun's
+tree instead? We can keep them on a standalone branch there based on Tejuns until
+we reach an agreement on their upstreamability.
