@@ -1,42 +1,29 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: linux-next: build warnings after merge of the final tree
-Date: Wed, 14 Dec 2011 08:47:01 -0800
-Message-ID: <4EE8D305.8020407@zytor.com>
-References: <20111214181545.6e13bc954cb7ddce9086e861@canb.auug.org.au> <1323880322.23971.33.camel@gandalf.stny.rr.com>
+From: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 14 Dec 2011 16:13:05 +0100
+Message-ID: <1323875585.28489.48.camel@twins>
+References: <20111214154844.3ad4e1d685c7987cba0820a0@canb.auug.org.au>
+	 <1323854697.28489.7.camel@twins> <20111214150359.GA840@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:59840 "EHLO mail.zytor.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756194Ab1LNQrn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 Dec 2011 11:47:43 -0500
-In-Reply-To: <1323880322.23971.33.camel@gandalf.stny.rr.com>
+Received: from casper.infradead.org ([85.118.1.10]:54621 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757645Ab1LNQzg convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2011 11:55:36 -0500
+In-Reply-To: <20111214150359.GA840@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
 
-On 12/14/2011 08:32 AM, Steven Rostedt wrote:
-> On Wed, 2011-12-14 at 18:15 +1100, Stephen Rothwell wrote:
-> 
->> Maybe caused by commit d5e553d6e0a4 ("trace: Include <asm/asm-offsets.h>
->> in trace_syscalls.c") from the tip tree.  These warnings may have been
->> here for a while as it is hard to catch the new ones among the flood.
->>
-> 
-> hpa,
-> 
-> Was this change only needed for x86? If so, could you put that into
-> asm/ftrace.h instead?
-> 
+On Wed, 2011-12-14 at 07:03 -0800, Greg KH wrote:
 
-Yes (on both accounts).  It was part of the syscall changes; I'll move
-the include.
+> I'll remove the use of kfree in the WARN_ON(), which should solve this
+> problem.
 
-	-hpa
-
-
--- 
-H. Peter Anvin, Intel Open Source Technology Center
-I work for Intel.  I don't speak on their behalf.
+The alternative is that we introduce something like CONFIG_KREF_DEBUG
+and out-of-line the functions in that case while also adding more debug
+checks. Alexey recently proposed a refcnt.h thing that almost does what
+kref does but has different debug checks.
