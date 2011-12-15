@@ -1,66 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net-next tree with the wireless
- tree
-Date: Thu, 15 Dec 2011 14:16:46 +1100
-Message-ID: <20111215141646.02d82d2c0a905076ffb130d8@canb.auug.org.au>
-References: <20111215135330.94caf28045fd307801fa5ef9@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 15 Dec 2011 14:38:32 +1100
+Message-ID: <20111215143832.3d1f01c73e78804c479f4340@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Dec_2011_14_16_46_+1100_ruHT9CT.fcg8LQ5/"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20111215135330.94caf28045fd307801fa5ef9@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
+ boundary="Signature=_Thu__15_Dec_2011_14_38_32_+1100_Y2g8P/wt027DdFVI"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__15_Dec_2011_14_16_46_+1100_ruHT9CT.fcg8LQ5/
+--Signature=_Thu__15_Dec_2011_14_38_32_+1100_Y2g8P/wt027DdFVI
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Thu, 15 Dec 2011 13:53:30 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the net-next tree got a conflict in
-> drivers/net/wireless/iwlwifi/iwl-agn.c between commit 81670a491849
-> ("iwlwifi: tx_sync only on PAN context") from the wireless tree and
-> commits from the net-next tree.
->=20
-> I used the version of this file from the wireless-next tree (where this
-> conflict has been resolved).
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Unfortunately, it was the wrong resolution for the net-next tree due to
-other changes in this file :-(
+sound/soc/codecs/wm8993.c: In function 'wm8993_i2c_probe':
+sound/soc/codecs/wm8993.c:1594:29: error: 'dev' undeclared (first use in th=
+is function)
 
-So instead, I just used the version of this file from the net-next tree.
+Caused by commit f6a9336879ca ("ASoC: Convert wm8993 to devm_kzalloc
+()").  I really should not be seeing this sort of build problem ...
+
+I have used the sound-asoc tree from next-20111214 for today,
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__15_Dec_2011_14_16_46_+1100_ruHT9CT.fcg8LQ5/
+--Signature=_Thu__15_Dec_2011_14_38_32_+1100_Y2g8P/wt027DdFVI
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO6WaeAAoJEECxmPOUX5FEgiMP/iC1Wj45b4vsXRHc32nurDtQ
-tYVpSSb1XpXLIjZnVjiBH2Kv/Z21dTRH+IRns0oZthihpIwvy479cOrs5AA7qPWj
-N/cIHXhAfIgTltLcHb4c/VKl1nUyi3NZaVLWTfelm/bfelbyc9Qp7SWmSAatUf3e
-uewEOl8Z7I7IgqPCKrUsZj9oqtkWGjg90VB2ng0RlkTFj/dZUNPNYa9BVU0nmtBm
-w+QRH7z/F+6QR4y6ywJjyT/nvLnPy+EUUZiUyFB7e4ODc+O9zfIR596DcfMeoVCC
-BjCv8iNvdf5hW0rDZjwonhsnDccji1/uvlWapXq7LXpL9+IYvlvcIQjHVkBDbhHw
-afqIK/dRPMFymwY0fY37uHKRw4g+0a/wP9tqwOXwnDm9+6ClTjURW7QE9NEnKSA8
-ykgfOGnNfPgqmLtbQW0NnTT7QHEuRb0xxiC8sjAOmmdb2GTTRQesUxjlrDuwQUNj
-UMOvIHbVbdIx7JPQraR06YHUS0n8VTBR/RpFPbcqdqFwGkuj+tZfsXU3PN0R7NPK
-dnXJNOV/r4r+4bhjiICmpz55wGbV0pCDFXPvhHvjkd46BTYFoocd+eAkPPC4TK2S
-4elXpUWAV6BMkNffshjXrzAN9QP1oZXFeYF3HfFRT5oQs6oNSLTEVNnW5KYsqtP4
-7wFkf6zzyw0lGzNxpep5
-=SJZB
+iQIcBAEBCAAGBQJO6Wu4AAoJEECxmPOUX5FEqssQAJoyxcplm/2c0iLxMKvtWdHX
+I5QvlokYY2IJZEM0B1btvfIt2sbrwHuFE/dmF4gvM7fK1WOWLjpkHR0J15yAn07R
+YLGVqYmRGtnDRFnYLUz51m1bDCJoBEjWzvUMnvabuweY26A95LUAL4SCbrrRu9y+
+AYKXhOAZGcN82e4INbRmSCOBO3PjrigJmSMS3smxcfJyGwIQyupcEBdJDHUsn6J2
+S7vDrdY1IMwid0qT2esxEiLYpjynopdSVEddLVB77HHctczGqef5Z89dxbY+qbbD
+rDOyd3hjUydISoHgUir56SFcOcWGYcax4q2em4B3HD5BCGa9hqVPIvKiUVaiga8E
+38We8wRDWvSWtsWWpuC8qIszcNzNPFc0Pp9ZUy01KGCrRWOAY9/DPVkDR3ApxT18
+xrRZvnQzKIY9H8/2xHXBFQ8nUM9YNHfMe/whyi9IAAy7KCi3FWDKgP91PF5+8MIo
+QhIL86WvqYQMlLIkIURFj2FUrlfiuCqqOvJfmNX5pDR0OexN6+vPUOU5BP1yi3iR
+zY15osY2K/ZKSYpPpT3kYKmF4YS8pYpAwcMyCT2RJBm4thkR+Iiw6JDSyP7tAQDZ
+i61Ia1Xz5BWgRIs3B69RCOC2/5epuysCD1HvEjyCToaCcS1bHvIf4OlQqQl5RncC
+FcNwq9JCMUPuXR8ZVbpm
+=0lJW
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__15_Dec_2011_14_16_46_+1100_ruHT9CT.fcg8LQ5/--
+--Signature=_Thu__15_Dec_2011_14_38_32_+1100_Y2g8P/wt027DdFVI--
