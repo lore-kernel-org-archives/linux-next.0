@@ -1,77 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the regmap tree
-Date: Thu, 15 Dec 2011 17:17:52 +1100
-Message-ID: <20111215171752.db0b6732fb591a91ef8c790a@canb.auug.org.au>
+From: Ashish Jangam <Ashish.Jangam@kpitcummins.com>
+Subject: RE: linux-next: build failure after merge of the regmap tree
+Date: Thu, 15 Dec 2011 06:24:44 +0000
+Message-ID: <C3AE124F08223B42BC95AEB82F0F6CED1F9D0855@KCHJEXMB01.kpit.com>
+References: <20111215170517.0b7fc08487881743ca76c192@canb.auug.org.au>
+ <20111215061757.GC24287@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Dec_2011_17_17_52_+1100_PmZ9jvrTmKtBG7xC"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:60268 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753050Ab1LOGSA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 01:18:00 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@slimlogic.co.uk>, Ashish Jangam <ashish.jangam@kpitcummins.com>, David Dajun Chen <dchen@diasemi.com>, Samuel Ortiz <sameo@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111215061757.GC24287@sirena.org.uk>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, David Dajun Chen <dchen@diasemi.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__15_Dec_2011_17_17_52_+1100_PmZ9jvrTmKtBG7xC
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Mark,
-
-After merging the regmap tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/mfd/da9052-spi.c: In function 'da9052_spi_probe':
-drivers/mfd/da9052-spi.c:42:2: error: 'da9052_regmap_config' undeclared (fi=
-rst use in this function)
-
-Caused by commit cfe04478fa1b ("MFD: DA9052/53 MFD core module add SPI
-support v2").  Really, was this ever build tested?
-
-da9052_regmap_config is defined in drivers/mfd/da9052-core.c but not
-declared in any header file.
-
-drivers/regulator/da9052-regulator.c: In function 'da9052_regulator_probe':
-drivers/regulator/da9052-regulator.c:550:11: error: too few arguments to fu=
-nction 'regulator_register'
-include/linux/regulator/driver.h:215:23: note: declared here
-
-Caused by commit 08bf1c0ae97f ("regulator: DA9052/53 Regulator support")
-from the regulator tree interacting with commit 2c043bcbf287 ("regulator:
-pass additional of_node to regulator_register()") also from the regulator
-tree.  Again, building the above file depends on CONFIG_PMIC_DA9052 which
-noone ever set before.
-
-I have used the regmap tree from next-20111214 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__15_Dec_2011_17_17_52_+1100_PmZ9jvrTmKtBG7xC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO6ZEQAAoJEECxmPOUX5FEMAMP/3VUqilkWMwOt80cfvGjXOCi
-TCwPDBATGLsDGMPX5RLPvEO1P1Hx3tvp4NzmB4GdiHUii0HCfz5FYvmddtEmn0xA
-okVfrf5tpSfgedaxZ0bMrDtC/xJqODYLLIeK3EmUe910GpqjGAtK1KuZ1aaW1sLA
-5O1VxSRAJe89mJBXI0WbfQ32XQqwYsob8h3FC6QaMiWPpUCom1vNdOpuwNNN9fVF
-PUs++jSpWds1xw6nTCWnSaiiedG6iXJYlvLlKT33l/0AOnnk9/ZE5YkDua5mSUoE
-HD2XI57yEvjJY6Xbx1WVc1BNO2gCXBoOWOcHk9KaCo4AsB09reMuqnDUM1nIGO/3
-nC1DNEIkPMD/29Ddyj8ZiB3h7YJvgipaQzgCA5lTgu/+rW376QscxAh8X6Le8YYk
-4vus/lO8+75IqkECLfIkBstU5BTVXdGLihHPls5ojCZS/rWbQ9DANTUwOCzpax0Y
-k52EWiUnWu8g37EVtLFTyYqLWwkiYoSWFsmrKELaQWjeEg5Q4l/HIXcbC0y/1Vqr
-cuy+Dfp/Gqu9HDxoD48JIFz7TFeS5rbTxV9xVsGVhcHwlotb7vSPefqWwqVzKQ0Y
-ejVxoDPeOOu1F6P6qqDK42vuHhif6NfJU1OqaDEGyXNcyBt+wotoYDOvEs+InvC8
-212J3d2euya1xSAQujQM
-=JzM/
------END PGP SIGNATURE-----
-
---Signature=_Thu__15_Dec_2011_17_17_52_+1100_PmZ9jvrTmKtBG7xC--
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYXJrIEJyb3duIFttYWlsdG86
+YnJvb25pZUBvcGVuc291cmNlLndvbGZzb25taWNyby5jb21dDQo+IFNlbnQ6IFRodXJzZGF5LCBE
+ZWNlbWJlciAxNSwgMjAxMSAxMTo0OCBBTQ0KPiBUbzogU3RlcGhlbiBSb3Rod2VsbA0KPiBDYzog
+bGludXgtbmV4dEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
+IEFzaGlzaA0KPiBKYW5nYW07IEdyYW50IExpa2VseTsgRGF2aWQgRGFqdW4gQ2hlbg0KPiBTdWJq
+ZWN0OiBSZTogbGludXgtbmV4dDogYnVpbGQgZmFpbHVyZSBhZnRlciBtZXJnZSBvZiB0aGUgcmVn
+bWFwIHRyZWUNCj4gDQo+IE9uIFRodSwgRGVjIDE1LCAyMDExIGF0IDA1OjA1OjE3UE0gKzExMDAs
+IFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+IA0KPiA+IGRyaXZlcnMvZ3Bpby9ncGlvLWRhOTA1
+Mi5jOjI1OjM1OiBmYXRhbCBlcnJvcjogbGludXgvbWZkL2RhOTA1Mi9ncGlvLmg6DQo+IE5vIHN1
+Y2ggZmlsZSBvciBkaXJlY3RvcnkNCj4gDQo+ID4gU28sIGl0IGxvb2tzIGxpa2UgdGhpcyB3b3Vs
+ZCBuZXZlciBoYXZlIGJ1aWx0DQo+ID4gKGluY2x1ZGUvbGludXgvbWZkL2RhOTA1Mi9ncGlvLmgg
+bmV2ZXIgZXhpc3RlZCkgYnV0IG5vb25lIGV2ZXIgZW5hYmxlZA0KPiA+IENPTkZJR19QTUlDX0RB
+OTA1MiBiZWZvcmUgKHdoaWNoIENPTkZJR19HUElPX0RBOTA1MiBkZXBlbmRzIG9uKS4NCj4gDQo+
+ID4gZHJpdmVycy9ncGlvL2dwaW8tZGE5MDUyLmMgd2FzIGFkZGVkIHdpdGggY29tbWl0IDA3YmZj
+OTE1MjM2NSAoIkdQSU86DQo+ID4gREE5MDUyIEdQSU8gbW9kdWxlIHYzIikgaW4gdjMuMS1yYzEu
+DQo+IA0KPiBUaGUgaXNzdWUgaGVyZSBpcyB0aGF0IHRoZSBHUElPIGRyaXZlciB3YXMgbWVyZ2Vk
+IHByaW9yIHRvIHJldmlldyBiZWluZw0KPiBjb21wbGV0ZWQgZm9yIHRoZSBNRkQgYW5kIHRoZW4g
+cHJvYmxlbXMgd2l0aCB0aGUgTUZEIGNhdXNlZCBsb3RzIG9mDQo+IGNoYW5nZXMgaW4gdGhlIHJl
+c3Qgb2YgdGhlIHNlcmllcy4gIFRoZSBNRkQgcmV2aWV3IGlzIG5vdyBmaW5lIHNvIGl0J3MNCj4g
+YmVlbiBtZXJnZWQgKHZpYSByZWdtYXAgZHVlIHRvIHVzZSBvZiBuZXcgcmVnbWFwIGZlYXR1cmVz
+KSBidXQgdGhlIEdQSU8NCj4gZHJpdmVyIG5lZWRzIHVwZGF0aW5nLg0KPiANCj4gQXNoaXNoIG9y
+IERhbmVpbCwgY291bGQgeW91IHBsZWFzZSBzZW5kIGEgcGF0Y2ggZml4aW5nIHRoaXM/ICBQb3Nz
+aWJseQ0KPiBqdXN0IGEgY2FzZSBvZiBhZGRpbmcgdGhlIG5ldyBoZWFkZXIuDQpJIGhhdmUgYSBm
+aXggZm9yIHRoaXMgaXNzdWUgd2lsbCBqdXN0IHRha2UgYW4gaW5jcmVtZW50YWwgcGF0Y2ggYW5k
+IHBvc3QgaXQuDQoNCgoK
