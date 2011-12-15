@@ -1,66 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi tree
-Date: Thu, 15 Dec 2011 12:58:18 +1100
-Message-ID: <20111215125818.f9ffb338c0085f2ba9908a42@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the target-merge tree
+Date: Thu, 15 Dec 2011 13:29:02 +1100
+Message-ID: <20111215132902.d0a90a93696702e09b0c60bf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Dec_2011_12_58_18_+1100_GO.CHrohSPg1I3TY"
+ boundary="Signature=_Thu__15_Dec_2011_13_29_02_+1100_HXTn+6Gah25Ftrjk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:34747 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:53295 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758541Ab1LOB62 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2011 20:58:28 -0500
+	with ESMTP id S1755863Ab1LOC3M (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2011 21:29:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>, Christoph Hellwig <hch@infradead.org>
 
---Signature=_Thu__15_Dec_2011_12_58_18_+1100_GO.CHrohSPg1I3TY
+--Signature=_Thu__15_Dec_2011_13_29_02_+1100_HXTn+6Gah25Ftrjk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi Nicholas,
 
-After merging the scsi tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the target-merge tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-drivers/scsi/qla4xxx/ql4_os.c:2135:6: error: redefinition of 'qla4xxx_check=
-_relogin_flash_ddb'
-drivers/scsi/qla4xxx/ql4_os.c:2081:6: note: previous definition of 'qla4xxx=
-_check_relogin_flash_ddb' was here
+drivers/infiniband/ulp/srpt/ib_srpt.c:48:39: fatal error: target/target_cor=
+e_device.h: No such file or directory
 
-Caused by a bad automatic merge when I merged the scsi tree today.  The
-patch "[SCSI] qla4xxx: fix flash/ddb support" appears in both the scsi
-and scsi-rc-fixes tree (as separate commits) and git has messed up the
-merge.  I fixed it up by using the version of this file from the scsi
-tree.
+Caused by commit e0d85e515640 ("ib_srpt: Initial SRP Target merge for
+v3.2-rc1") interacting with commit c4795fb20edf ("target: header
+reshuffle, part2") from the target-updates tree which removed
+include/target/target_core_device.h.
+
+I tried to figure out what set of include files is now needed, but
+couldn't easily, so I have dropped the target-merge tree for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__15_Dec_2011_12_58_18_+1100_GO.CHrohSPg1I3TY
+--Signature=_Thu__15_Dec_2011_13_29_02_+1100_HXTn+6Gah25Ftrjk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO6VQ6AAoJEECxmPOUX5FEXo4P/i+zBdKryYCg20/JO6QMkSHK
-pInC08yAd1fUyHX3sE8dbz0Xaft4UA2Iba9z8Rut7a1uqEAVWXRU3eM8PUpt2kYR
-xUfhXfYuGv0k62p8q1ZFge2U4b6vfKFW2gfEW2tmMXK+K0Vu8jIKWHNX3tNE/AEr
-B4AOLax3qisS1V0I+e594YzrGWWRVrbmsYpnOv9R0vQEjYQdvqtoj7soX3P4Zanq
-/HNj5mLMs3vvgkUm/6pB5ly7eDlwVjBwCQvOiBgoKuZ8qgeGQAt8Bvwo6rdxQMAE
-KlmoIoFZDwhXOLgTBKqc+aTTtJ228DUdBI/7kzCuahMQMEtJz/P55jLrrYgZc1E9
-hvUI76iMl4O/vEU3SDmQcf+ynw2Vu1922/X8N9MW7monRCJme20ecw99gPzd6SC/
-RDoQ6B5QhYMD5IiRKpgeHVca9KhYOfz8cpikn5/xmF2Mqh+5JKKpSvdgo6VKYhRw
-9231SMuMyttiE3nHc6RU+7EVUGEOupLoYRdCrzWL7l0wbfMMUxOIvzfh0MvpbOpk
-8/lqsIolTWpii71cKZvn2mlC2XY1fZzcrGTHkfke1qpgu50huewlPDOvabO5SKNf
-6DYO/D1gv19UPDmK4kxAutJcmL7cVIC2lKK1HZFFBchLwMJQde6UDzvXat92DKHH
-S+X0IdWk6BZ41g6hIOBj
-=s+m1
+iQIcBAEBCAAGBQJO6VtuAAoJEECxmPOUX5FE+awP/0BK60Sa3X830mTQrczL0caW
+kEwTSII3jjV0/PgnAA5Wl0L6e4eEqtCsrAzqY1rdvWJx/tYScbW+RFSSGmJfU8oN
+W6b9DLzjdXVMjVYaHrA/sZ7/Y6s0Uyq14tsGvJ8XhSwIhbhsWFvKPTdYKSUodb46
+dgCtja2xwcQ7YEpwW6UBXrXWVkrvK2/WhhNo5hrbHsj7wRGvBUIDUWyAsD0DydW/
+BOfzj5c6oXzOeNDi1jL2uFEqoALIQJWWDN32ANhLM9wO3U92oQ6e/K8eOZcykNpa
+HSw5Ze8hqxRCKs114iFqGFE6Qk++yIHRAyBI+Ux8CbNsh7aSW3XZzcDahxKTUo5k
+K/TaTppvfjPTIqS4WVU/AmLQBwYeAdZyFbgn6ievOhBpSFhV54EPESl1iK/BuBvx
+LibP1HGG2gGDLTXTZELyS9WYcBVlHuAUm8IY9JTvxfzJ3bclsUhi6RsMr6eSJDeF
+398zr0rb0PtX6FnipzThxNVX0/1FunPVaJRf6VwjL4L5rIEEu3fplJq9DLT9MwZH
+VZrwCjb1y4D+C00GYnmcjszoHydANP+rZK7yPxUIhCXaWc39Lg4Oay5o9AOEaCDc
+CNx7lp+ZduFef5yAr38kBacloq5HW726CI2rODVW1bV+Eexm3EHEBZlCZ8abDMGV
+eUzzSF4cRCDi/C/XpSK2
+=Nyev
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__15_Dec_2011_12_58_18_+1100_GO.CHrohSPg1I3TY--
+--Signature=_Thu__15_Dec_2011_13_29_02_+1100_HXTn+6Gah25Ftrjk--
