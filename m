@@ -1,42 +1,71 @@
-From: Ashish Jangam <Ashish.Jangam@kpitcummins.com>
-Subject: RE: linux-next: build failure after merge of the regmap tree
-Date: Thu, 15 Dec 2011 06:24:44 +0000
-Message-ID: <C3AE124F08223B42BC95AEB82F0F6CED1F9D0855@KCHJEXMB01.kpit.com>
-References: <20111215170517.0b7fc08487881743ca76c192@canb.auug.org.au>
- <20111215061757.GC24287@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Thu, 15 Dec 2011 17:37:54 +1100
+Message-ID: <20111215173754.87103f66f6188693933cb539@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111215061757.GC24287@sirena.org.uk>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, David Dajun Chen <dchen@diasemi.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__15_Dec_2011_17_37_54_+1100_ZPOiJvA/ckhFVgNf"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:57771 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750996Ab1LOGiE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 01:38:04 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYXJrIEJyb3duIFttYWlsdG86
-YnJvb25pZUBvcGVuc291cmNlLndvbGZzb25taWNyby5jb21dDQo+IFNlbnQ6IFRodXJzZGF5LCBE
-ZWNlbWJlciAxNSwgMjAxMSAxMTo0OCBBTQ0KPiBUbzogU3RlcGhlbiBSb3Rod2VsbA0KPiBDYzog
-bGludXgtbmV4dEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
-IEFzaGlzaA0KPiBKYW5nYW07IEdyYW50IExpa2VseTsgRGF2aWQgRGFqdW4gQ2hlbg0KPiBTdWJq
-ZWN0OiBSZTogbGludXgtbmV4dDogYnVpbGQgZmFpbHVyZSBhZnRlciBtZXJnZSBvZiB0aGUgcmVn
-bWFwIHRyZWUNCj4gDQo+IE9uIFRodSwgRGVjIDE1LCAyMDExIGF0IDA1OjA1OjE3UE0gKzExMDAs
-IFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+IA0KPiA+IGRyaXZlcnMvZ3Bpby9ncGlvLWRhOTA1
-Mi5jOjI1OjM1OiBmYXRhbCBlcnJvcjogbGludXgvbWZkL2RhOTA1Mi9ncGlvLmg6DQo+IE5vIHN1
-Y2ggZmlsZSBvciBkaXJlY3RvcnkNCj4gDQo+ID4gU28sIGl0IGxvb2tzIGxpa2UgdGhpcyB3b3Vs
-ZCBuZXZlciBoYXZlIGJ1aWx0DQo+ID4gKGluY2x1ZGUvbGludXgvbWZkL2RhOTA1Mi9ncGlvLmgg
-bmV2ZXIgZXhpc3RlZCkgYnV0IG5vb25lIGV2ZXIgZW5hYmxlZA0KPiA+IENPTkZJR19QTUlDX0RB
-OTA1MiBiZWZvcmUgKHdoaWNoIENPTkZJR19HUElPX0RBOTA1MiBkZXBlbmRzIG9uKS4NCj4gDQo+
-ID4gZHJpdmVycy9ncGlvL2dwaW8tZGE5MDUyLmMgd2FzIGFkZGVkIHdpdGggY29tbWl0IDA3YmZj
-OTE1MjM2NSAoIkdQSU86DQo+ID4gREE5MDUyIEdQSU8gbW9kdWxlIHYzIikgaW4gdjMuMS1yYzEu
-DQo+IA0KPiBUaGUgaXNzdWUgaGVyZSBpcyB0aGF0IHRoZSBHUElPIGRyaXZlciB3YXMgbWVyZ2Vk
-IHByaW9yIHRvIHJldmlldyBiZWluZw0KPiBjb21wbGV0ZWQgZm9yIHRoZSBNRkQgYW5kIHRoZW4g
-cHJvYmxlbXMgd2l0aCB0aGUgTUZEIGNhdXNlZCBsb3RzIG9mDQo+IGNoYW5nZXMgaW4gdGhlIHJl
-c3Qgb2YgdGhlIHNlcmllcy4gIFRoZSBNRkQgcmV2aWV3IGlzIG5vdyBmaW5lIHNvIGl0J3MNCj4g
-YmVlbiBtZXJnZWQgKHZpYSByZWdtYXAgZHVlIHRvIHVzZSBvZiBuZXcgcmVnbWFwIGZlYXR1cmVz
-KSBidXQgdGhlIEdQSU8NCj4gZHJpdmVyIG5lZWRzIHVwZGF0aW5nLg0KPiANCj4gQXNoaXNoIG9y
-IERhbmVpbCwgY291bGQgeW91IHBsZWFzZSBzZW5kIGEgcGF0Y2ggZml4aW5nIHRoaXM/ICBQb3Nz
-aWJseQ0KPiBqdXN0IGEgY2FzZSBvZiBhZGRpbmcgdGhlIG5ldyBoZWFkZXIuDQpJIGhhdmUgYSBm
-aXggZm9yIHRoaXMgaXNzdWUgd2lsbCBqdXN0IHRha2UgYW4gaW5jcmVtZW50YWwgcGF0Y2ggYW5k
-IHBvc3QgaXQuDQoNCgoK
+--Signature=_Thu__15_Dec_2011_17_37_54_+1100_ZPOiJvA/ckhFVgNf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Greg,
+
+After merging the driver-core tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/xen/xen-selfballoon.c:305:36: error: expected ')' before '(' token
+drivers/xen/xen-selfballoon.c:327:42: error: expected ')' before '(' token
+drivers/xen/xen-selfballoon.c:349:48: error: expected ')' before '(' token
+
+etc ...
+
+[Along with many warnings like:
+
+drivers/xen/xen-selfballoon.c:284:8: warning: 'struct device_attribute' dec=
+lared inside parameter list [enabled by default]
+]
+
+Presumably caused by commit drivers/xen/xen-selfballoon.c ("xen-balloon:
+convert sysdev_class to a regular subsystem").
+
+I have used the driver-core tree from next-20111213 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__15_Dec_2011_17_37_54_+1100_ZPOiJvA/ckhFVgNf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO6ZXCAAoJEECxmPOUX5FEkpwQAKZAIVt8txATWl3jM+spIEFo
+jJfVbDjhG53tFVzzuJn+QoPr2P5tz1YnzAJCt1GWeSUcO00XcShFV/cXfuiRkv+i
+h37+KfCEOyp30jPUZRDARCVdjyJPFwvzZ4NlU8zASncxPNPJpCGgypwYhsjK+COe
+U2PU/pGx46i10AFfvYLPobOM8HoMKJQHMCgXW6vDDTBe+n+S0pd8EeKvmTd8ByIS
+bQbyTiDGgRUeSBTubFjl2MKcYT/oAcD5MJUuQ5VtXoSQ4waBe367Qjs/aVgp5yWJ
+jUXg9Kq84s7hZqdBbuyvwXdLqd6E38BfgCXrCdGgmZdEJVZIris1SaA3Yy0vQjmx
+uffCx7xN4w6GcEyoBPSTWW36XUp2piUPWrCy5w07BJjHCy8nsbwjULcO3I6XuWLa
+QQocxDaThTNgXNLaDEgP6DB+ZsX9t33M4rb2uSRgpvlOBJj/T9saLGjMcGUyyIcd
+FST1K6VspKQdSqP5H/mzFdhAVUc4/sqNEEqi0JzjpnMcY4ASlmdidnWLio6/hH1Z
+Dkxz6S8BFZzuH3Jjk9Gcwq566IDC7Huo8mdAeiSDdSyaQOituYZcIhZ0tXHJgQtF
+x+RbkSlZLv/uSw4kibJ+IJlJEE/1WpJmBgwnVwpLcVww9UzHPwJ+i/hcKLcD5Xen
+nU6An+E22ILHG6gktAKf
+=fAi/
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__15_Dec_2011_17_37_54_+1100_ZPOiJvA/ckhFVgNf--
