@@ -1,37 +1,38 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Thu, 15 Dec 2011 06:10:17 +0000
-Message-ID: <20111215061017.GB24287@sirena.org.uk>
-References: <20111215143832.3d1f01c73e78804c479f4340@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the regmap tree
+Date: Thu, 15 Dec 2011 06:17:57 +0000
+Message-ID: <20111215061757.GC24287@sirena.org.uk>
+References: <20111215170517.0b7fc08487881743ca76c192@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:49764 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:33021 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752667Ab1LOGKT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 01:10:19 -0500
+	with ESMTP id S1751716Ab1LOGR7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 01:17:59 -0500
 Content-Disposition: inline
-In-Reply-To: <20111215143832.3d1f01c73e78804c479f4340@canb.auug.org.au>
+In-Reply-To: <20111215170517.0b7fc08487881743ca76c192@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ashishj3 <ashish.jangam@kpitcummins.com>, Grant Likely <grant.likely@secretlab.ca>, David Dajun Chen <dchen@diasemi.com>
 
-On Thu, Dec 15, 2011 at 02:38:32PM +1100, Stephen Rothwell wrote:
+On Thu, Dec 15, 2011 at 05:05:17PM +1100, Stephen Rothwell wrote:
 
-> Caused by commit f6a9336879ca ("ASoC: Convert wm8993 to devm_kzalloc
-> ()").  I really should not be seeing this sort of build problem ...
+> drivers/gpio/gpio-da9052.c:25:35: fatal error: linux/mfd/da9052/gpio.h: No such file or directory
 
-So, the big problem with this stuff is that I can't usefully do much
-with my for-next tree directly except for build test it and it's
-difficult to usefully do anything with the resulting binaries especially
-as the configurations which usually turn things up are generally very
-slow to build.  This means I tend to mostly test on my work tree which
-does contain some other code (often code which is required in order to
-do an actual test) with substantially different configurations and pure
-for-next tests tend to drop off the end of the day.  Doing them in
-parallel tends not to work so well due to the I/O scheduler issues and
-the impact on disk cache.
+> So, it looks like this would never have built
+> (include/linux/mfd/da9052/gpio.h never existed) but noone ever enabled
+> CONFIG_PMIC_DA9052 before (which CONFIG_GPIO_DA9052 depends on).
 
-In this case the fix for the typo got squashed into a change that isn't
-published yet by mistake.
+> drivers/gpio/gpio-da9052.c was added with commit 07bfc9152365 ("GPIO:
+> DA9052 GPIO module v3") in v3.1-rc1.
+
+The issue here is that the GPIO driver was merged prior to review being
+completed for the MFD and then problems with the MFD caused lots of
+changes in the rest of the series.  The MFD review is now fine so it's
+been merged (via regmap due to use of new regmap features) but the GPIO
+driver needs updating.
+
+Ashish or Daneil, could you please send a patch fixing this?  Possibly
+just a case of adding the new header.
