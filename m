@@ -1,71 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the driver-core tree
-Date: Thu, 15 Dec 2011 17:37:54 +1100
-Message-ID: <20111215173754.87103f66f6188693933cb539@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Thu, 15 Dec 2011 10:53:52 +0400
+Message-ID: <1323932032.3210.7.camel@dabdike>
+References: <20111215125818.f9ffb338c0085f2ba9908a42@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Dec_2011_17_37_54_+1100_ZPOiJvA/ckhFVgNf"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:57771 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750996Ab1LOGiE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 01:38:04 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:46476 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932261Ab1LOGx6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Dec 2011 01:53:58 -0500
+In-Reply-To: <20111215125818.f9ffb338c0085f2ba9908a42@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__15_Dec_2011_17_37_54_+1100_ZPOiJvA/ckhFVgNf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2011-12-15 at 12:58 +1100, Stephen Rothwell wrote:
+> Hi James,
+> 
+> After merging the scsi tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> drivers/scsi/qla4xxx/ql4_os.c:2135:6: error: redefinition of 'qla4xxx_check_relogin_flash_ddb'
+> drivers/scsi/qla4xxx/ql4_os.c:2081:6: note: previous definition of 'qla4xxx_check_relogin_flash_ddb' was here
+> 
+> Caused by a bad automatic merge when I merged the scsi tree today.  The
+> patch "[SCSI] qla4xxx: fix flash/ddb support" appears in both the scsi
+> and scsi-rc-fixes tree (as separate commits) and git has messed up the
+> merge.  I fixed it up by using the version of this file from the scsi
+> tree.
 
-Hi Greg,
+Erk sorry ... I blame tglx ... I had to rebase the rc-fixes tree to get
+a cc stable on to one of his patches, but I need to rebase scsi-misc as
+well since it's built on top of rc-fixes.  Should be fixed for the next
+go around (which is where the duplicate came from).
 
-After merging the driver-core tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/xen/xen-selfballoon.c:305:36: error: expected ')' before '(' token
-drivers/xen/xen-selfballoon.c:327:42: error: expected ')' before '(' token
-drivers/xen/xen-selfballoon.c:349:48: error: expected ')' before '(' token
-
-etc ...
-
-[Along with many warnings like:
-
-drivers/xen/xen-selfballoon.c:284:8: warning: 'struct device_attribute' dec=
-lared inside parameter list [enabled by default]
-]
-
-Presumably caused by commit drivers/xen/xen-selfballoon.c ("xen-balloon:
-convert sysdev_class to a regular subsystem").
-
-I have used the driver-core tree from next-20111213 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__15_Dec_2011_17_37_54_+1100_ZPOiJvA/ckhFVgNf
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO6ZXCAAoJEECxmPOUX5FEkpwQAKZAIVt8txATWl3jM+spIEFo
-jJfVbDjhG53tFVzzuJn+QoPr2P5tz1YnzAJCt1GWeSUcO00XcShFV/cXfuiRkv+i
-h37+KfCEOyp30jPUZRDARCVdjyJPFwvzZ4NlU8zASncxPNPJpCGgypwYhsjK+COe
-U2PU/pGx46i10AFfvYLPobOM8HoMKJQHMCgXW6vDDTBe+n+S0pd8EeKvmTd8ByIS
-bQbyTiDGgRUeSBTubFjl2MKcYT/oAcD5MJUuQ5VtXoSQ4waBe367Qjs/aVgp5yWJ
-jUXg9Kq84s7hZqdBbuyvwXdLqd6E38BfgCXrCdGgmZdEJVZIris1SaA3Yy0vQjmx
-uffCx7xN4w6GcEyoBPSTWW36XUp2piUPWrCy5w07BJjHCy8nsbwjULcO3I6XuWLa
-QQocxDaThTNgXNLaDEgP6DB+ZsX9t33M4rb2uSRgpvlOBJj/T9saLGjMcGUyyIcd
-FST1K6VspKQdSqP5H/mzFdhAVUc4/sqNEEqi0JzjpnMcY4ASlmdidnWLio6/hH1Z
-Dkxz6S8BFZzuH3Jjk9Gcwq566IDC7Huo8mdAeiSDdSyaQOituYZcIhZ0tXHJgQtF
-x+RbkSlZLv/uSw4kibJ+IJlJEE/1WpJmBgwnVwpLcVww9UzHPwJ+i/hcKLcD5Xen
-nU6An+E22ILHG6gktAKf
-=fAi/
------END PGP SIGNATURE-----
-
---Signature=_Thu__15_Dec_2011_17_37_54_+1100_ZPOiJvA/ckhFVgNf--
+James
