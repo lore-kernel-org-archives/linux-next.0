@@ -1,84 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the iommu tree with the pci-current
- tree
-Date: Fri, 16 Dec 2011 13:30:26 +1100
-Message-ID: <20111216133026.8bac235bb8495cfd8669b761@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the driver-core tree
+Date: Fri, 16 Dec 2011 15:56:54 +1100
+Message-ID: <20111216155654.238e65a67263d1ca5884e74a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__16_Dec_2011_13_30_26_+1100__CUUaCkCT_BD.QhL"
+ boundary="Signature=_Fri__16_Dec_2011_15_56_54_+1100_XD.OR=_5WWSA2eVd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:36517 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:36677 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756452Ab1LPCai (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 21:30:38 -0500
+	with ESMTP id S1756346Ab1LPE5Q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 23:57:16 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Jesse Barnes <jbarnes@virtuousgeek.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Greg KH <greg@kroah.com>, Dimitri Sivanich <sivanich@sgi.com>
 
---Signature=_Fri__16_Dec_2011_13_30_26_+1100__CUUaCkCT_BD.QhL
+--Signature=_Fri__16_Dec_2011_15_56_54_+1100_XD.OR=_5WWSA2eVd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Joerg,
+Hi Andrew,
 
-Today's linux-next merge of the iommu tree got a conflict in
-drivers/pci/hotplug/acpiphp_glue.c between commit 619a5182d1f3 ("PCI
-hotplug: Always allow acpiphp to handle non-PCIe bridges") from the
-pci-current tree and commit d90116ea38f7 ("PCI/ACPI: Make acpiphp ignore
-root bridges using SHPC native hotplug") from the iommu tree.
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/base/sys.c between commit ca22e56debc5 ("driver-core: implement
+'sysdev' functionality for regular devices and buses") from the
+driver-core tree and commit "tick-sched: add specific do_timer_cpu value
+for nohz off mode" from the scsi-post-merge tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pci/hotplug/acpiphp_glue.c
-index 9ddf69e,ba43c03..0000000
---- a/drivers/pci/hotplug/acpiphp_glue.c
-+++ b/drivers/pci/hotplug/acpiphp_glue.c
-@@@ -132,18 -132,6 +132,18 @@@ register_slot(acpi_handle handle, u32 l
-  	if (!acpi_pci_check_ejectable(pbus, handle) && !is_dock_device(handle))
-  		return AE_OK;
+diff --cc drivers/base/sys.c
+index 409f5ce,67d81a2..0000000
+--- a/drivers/base/sys.c
++++ b/drivers/base/sys.c
+@@@ -331,8 -331,14 +331,6 @@@ void sysdev_unregister(struct sys_devic
+  EXPORT_SYMBOL_GPL(sysdev_register);
+  EXPORT_SYMBOL_GPL(sysdev_unregister);
  =20
- +	pdev =3D pbus->self;
- +	if (pdev && pci_is_pcie(pdev)) {
- +		tmp =3D acpi_find_root_bridge_handle(pdev);
- +		if (tmp) {
- +			struct acpi_pci_root *root =3D acpi_pci_find_root(tmp);
- +
- +			if (root && (root->osc_control_set &
-- 					OSC_PCI_EXPRESS_NATIVE_HP_CONTROL))
-++					OSC_PCI_NATIVE_HOTPLUG))
- +				return AE_OK;
- +		}
- +	}
- +
-  	acpi_evaluate_integer(handle, "_ADR", NULL, &adr);
-  	device =3D (adr >> 16) & 0xffff;
-  	function =3D adr & 0xffff;
+- #define to_ext_attr(x) container_of(x, struct sysdev_ext_attribute, attr)
+-=20
+ -int __init system_bus_init(void)
+ -{
+ -	system_kset =3D kset_create_and_add("system", NULL, &devices_kset->kobj);
+ -	if (!system_kset)
+ -		return -ENOMEM;
+ -	return 0;
+ -}
+ -
+  ssize_t sysdev_store_ulong(struct sys_device *sysdev,
+  			   struct sysdev_attribute *attr,
+  			   const char *buf, size_t size)
 
---Signature=_Fri__16_Dec_2011_13_30_26_+1100__CUUaCkCT_BD.QhL
+--Signature=_Fri__16_Dec_2011_15_56_54_+1100_XD.OR=_5WWSA2eVd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO6q1CAAoJEECxmPOUX5FESHEP/RX6tAwNmtF510znQXrHpgm0
-QiE3B5Zuvh9BBPNFIlYyhZo++PAFf9Ttd92OGWJ3tt0bR+ZZPey6M1CzssBl33Mx
-4h+MYbk+EiFhn+aN6/dUiFN07SngqekCjf7BEPjXiMTbQbkGjfMSQZAfdkfhkNkZ
-fBtyUgMax2SshpDBulFpELblZT3WQV9xrxP2PFZuSUfegXALc/OsTYfG03d1XF6w
-vPYUQOf3amgdqwXXvGx5b6pbWC/VZOGsMdvn/MsVfOeWB75xr6TTlsrVHWRNMW5d
-qy8UHKcX7WtsDZEQcXBW/DBe0E7JnpabVx11h34h5o5kVre0awBegIueitzxmzDH
-49Dp1ehqGce6ulztaeDYPSXk9d5AXGGky0gEU6WEJacHHKQav7kSgUC43I9mc7yq
-q20VLtpj1RTzNRT6HASDPvo74wS+vkmFjSy/ydsYYq/Ay+lOejRe5ZvBj2u/hfqM
-reijT7PY00r4H1bApuAj7ewds2DO3zmwjvahMKfiTPMYcKjvDUQOv3mwoESzD+Jt
-LuNCfNuUyxvr+w42az/e/ONf6v0gcflR21Ds2W0+2SdswyZmXnEW/NZdKc+ZtcQQ
-9EmLDKBlop9BFbJp1AEvoW8+JFg2ys2ZbDvjP3DAdxcyLFGScyaoZxS4xPn3YS5o
-p9we7/NlV0Ya3e5m2BST
-=6bWc
+iQIcBAEBCAAGBQJO6s+WAAoJEECxmPOUX5FEJqYP/1whTK9cxsueG4dt15ijENIK
+0PfOf0xzDXw6XXO4tAHr26R54X3Rxe1WFt3qTvnPcXqJi4HBHoUOf3eZuIUBtd/4
+iET24PuaUABT8HSGEzgUbAsIkoxFFJmPhe2Hb84yzTaI18km70C0/x9aQVK7WVzB
+nErI6XJkg58D+nR6yZ1HbTjFvpNYSYoeOVmjdl6cVyL/g19poJGBmvv5gNK3/kbP
+WkerfYBbxwjmmccnccmAP4pjXlW13LHIuzTBohgVKFY8QSQ9TsWBIIYdSJyTbvJo
+IOiuRlmhLyZcq+RW4GMQlzkyWQa/+lNI82/eOthIbeyjQSACwoxhZ46xbUuQwdzs
+KuHCqlpb77fiSJjpwZeI+kw5svsLnQJYu0CuqiptXE6kgF2Nlz8+YfWluZPZ5jk2
+Tm3mDErGpihgPfjk2K+Osf7Ud/Lx5+bi9haqQkKo+r3reHCNnxOGfge/XNGOiS2R
+OVnBsIJ6VrWn0//2Q+lB9HtKtpW/fx71E/w9SX0mtXZy4xJnKrJwMwHALvtybnQp
+NBz0AL4kLHMETRwt7nt/4ysKzDH94zAfYB+ikWDdwJZvtkglnkL9Raagk/6LOczh
+iOn39PCoSbe5o1NIynkf1ReCpVlPLE/TPtzdulch/XUsKFwjnWqBUvElgkQC+z/U
+aaBS6JpH1r8YqWcy4uNT
+=RsvE
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__16_Dec_2011_13_30_26_+1100__CUUaCkCT_BD.QhL--
+--Signature=_Fri__16_Dec_2011_15_56_54_+1100_XD.OR=_5WWSA2eVd--
