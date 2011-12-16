@@ -1,69 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the target-merge tree
-Date: Fri, 16 Dec 2011 11:55:08 +1100
-Message-ID: <20111216115508.2ce6cf31f55ddd9a043e8b19@canb.auug.org.au>
-References: <20111215132902.d0a90a93696702e09b0c60bf@canb.auug.org.au>
-	<CAO+b5-pyo=kR5JuWbQzMd6X70s4AwSWJV7dq3F9BvwLwTDPm7A@mail.gmail.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 16 Dec 2011 12:07:58 +1100
+Message-ID: <20111216120758.60f967a88c934890e77fa7bd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__16_Dec_2011_11_55_08_+1100_e3f9WtBHwFNs9/A6"
+ boundary="Signature=_Fri__16_Dec_2011_12_07_58_+1100_5hdKTycW7OZ7XfXb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:36842 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:52266 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759805Ab1LPAzR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 19:55:17 -0500
-In-Reply-To: <CAO+b5-pyo=kR5JuWbQzMd6X70s4AwSWJV7dq3F9BvwLwTDPm7A@mail.gmail.com>
+	with ESMTP id S1753413Ab1LPBIB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 20:08:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__16_Dec_2011_11_55_08_+1100_e3f9WtBHwFNs9/A6
+--Signature=_Fri__16_Dec_2011_12_07_58_+1100_5hdKTycW7OZ7XfXb
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bart,
+Hi all,
 
-On Thu, 15 Dec 2011 12:26:49 +0100 Bart Van Assche <bvanassche@acm.org> wro=
-te:
->
-> The (untested) patch below allowed me to make ib_srpt build again. By
+Today's linux-next merge of the net-next tree got a conflict in
+net/ipv6/route.c between commit bb3c36863e80 ("ipv6: Check dest prefix
+length on original route not copied one in rt6_alloc_cow()") from the net
+tree and commit 3830847396fa ("ipv6: Various cleanups in route.c") from
+the net-next tree.
 
-I used that patch as a merge fix up today.
-
-> the way, has the patch "ib_srpt: Make compilation with BUG=3Dn proceed"
-> already been queued in the target-merge tree
-> (http://www.mail-archive.com/linux-rdma@vger.kernel.org/msg10030.html)
-> ?
-
-It not in the target-merge tree that I have in linux-next.
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__16_Dec_2011_11_55_08_+1100_e3f9WtBHwFNs9/A6
+diff --cc net/ipv6/route.c
+index b582a0a,4bf362b..0000000
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@@ -727,11 -727,11 +727,11 @@@ static struct rt6_info *rt6_alloc_cow(c
+  		struct neighbour *neigh;
+  		int attempts =3D !in_softirq();
+ =20
+- 		if (!(rt->rt6i_flags&RTF_GATEWAY)) {
++ 		if (!(rt->rt6i_flags & RTF_GATEWAY)) {
+ -			if (rt->rt6i_dst.plen !=3D 128 &&
+ +			if (ort->rt6i_dst.plen !=3D 128 &&
+  			    ipv6_addr_equal(&ort->rt6i_dst.addr, daddr))
+  				rt->rt6i_flags |=3D RTF_ANYCAST;
+- 			ipv6_addr_copy(&rt->rt6i_gateway, daddr);
++ 			rt->rt6i_gateway =3D *daddr;
+  		}
+ =20
+  		rt->rt6i_flags |=3D RTF_CACHE;
+
+--Signature=_Fri__16_Dec_2011_12_07_58_+1100_5hdKTycW7OZ7XfXb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO6pbsAAoJEECxmPOUX5FEE4AP/jdIgA3qIk0AMPlavXLnD1ME
-0fPk2WTOAVtwTEIAmo/zf7AD7SL+T6tL70mxqdTbMPlwFIB+xK368rhVsKbXP3qk
-6bXw1FMjpc1qdwAxXMgRpgbXI7VODlZsjf3RkQuCi2g5QTftxe1VvVcqbosP+CQC
-z+wlG070a2rYvyfkzfxVGpj/KEt/QzJcrjsKYDgrAl6ZOIKhPcdJmHOhQdLsb0si
-RKEtTA3Y+92V4oGqVSToBGZ+Rfz3kdg7QPbeBYgD9b8rOF2yuhx67Px1SS3Tu3fb
-3i3K/kn8ftQWj9UB2M9FYV0oyngfbtynIb+SCQbF5X3f/2lH3iUopE8xMcJbzUFo
-zKO7pZvd71lK75jN4n6glq1Z1bTWrpzz1ftLHvbFBcgZVPc2uny92CDMv2NyoUkA
-1o3ck9LABpBCoCKE3zj4JXxnNbZXplOwcO1bNG4F1aFSgcDdqHHFtYpavgSSXzC0
-czsncrdp0BT0BzkoRTw+LyT6bJk/VO8yWdcAbbc6LmdkQbrsHVpmzZBlsrGv1dUN
-TavNlpxEQxwOzVUhPj4domNgpcfDhEvdSdHRvSpY9Xm4rh5G9MCtcd9rA0H9xjrD
-VZRcOcEtQSUdACNZkTRJj/D0JtRlC83Vk/CI/0JLNLzh6DktJdd2oyGxcuLAyvDt
-lrTOzpDvWvO3u/CQ139S
-=VoI1
+iQIcBAEBCAAGBQJO6pnuAAoJEECxmPOUX5FEzRUQAI9QGCRHfZJxIgDwF+xCtj5+
+zrUnCOKfv9FV5pZVJHsKbJ8T8DjbBz4IG1XXb6iVN7EynkRqm7xgTDc5gHG7iT6z
+NZSGZKKSWoZxWPGRzIidIXxzIg+l31AIGFZNQPDjyjj8V3JcjKOhp0Zuto/kHxYt
+t7kzrBpkWukwL7miMWCTER/hbO5u4gf8+eaVZRjVzGBwDVkkdBsRABoSDAaUJxBp
+lOxtYNGo/vDT1Kc4sHaowo+LowBqmT0b6N2MG90uzpnFVF1UAoHZrNZvD1QUBJLw
+t8+XzGM1mLuMDKzehbpXmQJzwDXRqxuCoOzhO6TMt4hAkz+AzLjOdEpbvzm1jHn4
+yonQUYepB1Wr4qDJsWjth3Gs8hegAH/RUSXo1L6ecwIN8vG+Ut0sBDQLfy07DE2Z
+yfR+q9i0dHEQrbAyoWYFptwWn45NfofqVcWDe7hd86Km/D3KooWlXVqg4TN+Yo4J
+WSs6dHOCWr0Vg6VocVOHrNKdVHYRLDZk/kNCRn2I1QqpoW6AZwj4LjwvvTbcL1yQ
+vXAasUdeDBmsJ8kW31fEc+wkamczgohCvF7cAtsN7aIdtKYiylpKH1vy8omGYNrn
+DtjWTQAd9pMmcW2kDNfGF9SJxb1YduK4up1BKYwolYleT3s2ekSYFVm1qTasfjqL
+n5Upm5WB9aVh9HL68FFG
+=2UKO
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__16_Dec_2011_11_55_08_+1100_e3f9WtBHwFNs9/A6--
+--Signature=_Fri__16_Dec_2011_12_07_58_+1100_5hdKTycW7OZ7XfXb--
