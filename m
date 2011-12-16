@@ -1,34 +1,84 @@
-From: Glauber Costa <glommer@parallels.com>
-Subject: Re: linux-next: Tree for Dec 15 (memcontrol)
-Date: Fri, 16 Dec 2011 06:07:11 +0400
-Message-ID: <4EEAA7CF.8010006@parallels.com>
-References: <20111215191115.fd4ef2ab8fa11872ea22d70e@canb.auug.org.au> <4EEA8693.8020905@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the iommu tree with the pci-current
+ tree
+Date: Fri, 16 Dec 2011 13:30:26 +1100
+Message-ID: <20111216133026.8bac235bb8495cfd8669b761@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__16_Dec_2011_13_30_26_+1100__CUUaCkCT_BD.QhL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.parallels.com ([64.131.90.16]:38730 "EHLO mx2.parallels.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756420Ab1LPCHu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Dec 2011 21:07:50 -0500
-In-Reply-To: <4EEA8693.8020905@xenotime.net>
+Received: from calzone.tip.net.au ([203.10.76.15]:36517 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756452Ab1LPCai (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 21:30:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Jesse Barnes <jbarnes@virtuousgeek.org>
 
-On 12/16/2011 03:45 AM, Randy Dunlap wrote:
-> On 12/15/2011 12:11 AM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20111214:
->
->
-> memcontrol.c:(.text+0x31f9d): undefined reference to `mem_cgroup_sockets_init'
-> memcontrol.c:(.text+0x326dd): undefined reference to `mem_cgroup_sockets_destroy'
->
-> Full randconfig file is attached.
->
-Hi.
+--Signature=_Fri__16_Dec_2011_13_30_26_+1100__CUUaCkCT_BD.QhL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks. This one is also fixed by one patch I am about to send.
+Hi Joerg,
+
+Today's linux-next merge of the iommu tree got a conflict in
+drivers/pci/hotplug/acpiphp_glue.c between commit 619a5182d1f3 ("PCI
+hotplug: Always allow acpiphp to handle non-PCIe bridges") from the
+pci-current tree and commit d90116ea38f7 ("PCI/ACPI: Make acpiphp ignore
+root bridges using SHPC native hotplug") from the iommu tree.
+
+I fixed it up (I think - see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/pci/hotplug/acpiphp_glue.c
+index 9ddf69e,ba43c03..0000000
+--- a/drivers/pci/hotplug/acpiphp_glue.c
++++ b/drivers/pci/hotplug/acpiphp_glue.c
+@@@ -132,18 -132,6 +132,18 @@@ register_slot(acpi_handle handle, u32 l
+  	if (!acpi_pci_check_ejectable(pbus, handle) && !is_dock_device(handle))
+  		return AE_OK;
+ =20
+ +	pdev =3D pbus->self;
+ +	if (pdev && pci_is_pcie(pdev)) {
+ +		tmp =3D acpi_find_root_bridge_handle(pdev);
+ +		if (tmp) {
+ +			struct acpi_pci_root *root =3D acpi_pci_find_root(tmp);
+ +
+ +			if (root && (root->osc_control_set &
+- 					OSC_PCI_EXPRESS_NATIVE_HP_CONTROL))
+++					OSC_PCI_NATIVE_HOTPLUG))
+ +				return AE_OK;
+ +		}
+ +	}
+ +
+  	acpi_evaluate_integer(handle, "_ADR", NULL, &adr);
+  	device =3D (adr >> 16) & 0xffff;
+  	function =3D adr & 0xffff;
+
+--Signature=_Fri__16_Dec_2011_13_30_26_+1100__CUUaCkCT_BD.QhL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO6q1CAAoJEECxmPOUX5FESHEP/RX6tAwNmtF510znQXrHpgm0
+QiE3B5Zuvh9BBPNFIlYyhZo++PAFf9Ttd92OGWJ3tt0bR+ZZPey6M1CzssBl33Mx
+4h+MYbk+EiFhn+aN6/dUiFN07SngqekCjf7BEPjXiMTbQbkGjfMSQZAfdkfhkNkZ
+fBtyUgMax2SshpDBulFpELblZT3WQV9xrxP2PFZuSUfegXALc/OsTYfG03d1XF6w
+vPYUQOf3amgdqwXXvGx5b6pbWC/VZOGsMdvn/MsVfOeWB75xr6TTlsrVHWRNMW5d
+qy8UHKcX7WtsDZEQcXBW/DBe0E7JnpabVx11h34h5o5kVre0awBegIueitzxmzDH
+49Dp1ehqGce6ulztaeDYPSXk9d5AXGGky0gEU6WEJacHHKQav7kSgUC43I9mc7yq
+q20VLtpj1RTzNRT6HASDPvo74wS+vkmFjSy/ydsYYq/Ay+lOejRe5ZvBj2u/hfqM
+reijT7PY00r4H1bApuAj7ewds2DO3zmwjvahMKfiTPMYcKjvDUQOv3mwoESzD+Jt
+LuNCfNuUyxvr+w42az/e/ONf6v0gcflR21Ds2W0+2SdswyZmXnEW/NZdKc+ZtcQQ
+9EmLDKBlop9BFbJp1AEvoW8+JFg2ys2ZbDvjP3DAdxcyLFGScyaoZxS4xPn3YS5o
+p9we7/NlV0Ya3e5m2BST
+=6bWc
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__16_Dec_2011_13_30_26_+1100__CUUaCkCT_BD.QhL--
