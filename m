@@ -1,23 +1,36 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: build failure after merge of the regmap tree
-Date: Fri, 16 Dec 2011 01:11:18 -0700
-Message-ID: <CACxGe6tmqXWZJThk4m31=HzWMZPMMgO4f8h9H=xc_0thjWOJ8Q@mail.gmail.com>
+From: Ashish Jangam <Ashish.Jangam@kpitcummins.com>
+Subject: RE: linux-next: build failure after merge of the regmap tree
+Date: Fri, 16 Dec 2011 08:15:05 +0000
+Message-ID: <C3AE124F08223B42BC95AEB82F0F6CED1F9D1AD3@KCHJEXMB01.kpit.com>
 References: <C3AE124F08223B42BC95AEB82F0F6CED1F9D0895@KCHJEXMB01.kpit.com>
- <1323941146.32031.49.camel@dhruva> <CACxGe6tfxGToC2ScUdQv7KNu2xdhxA4ZG=Ms=oZZCQ+2A-aiTQ@mail.gmail.com>
+ <1323941146.32031.49.camel@dhruva>
+ <CACxGe6tfxGToC2ScUdQv7KNu2xdhxA4ZG=Ms=oZZCQ+2A-aiTQ@mail.gmail.com>
  <C3AE124F08223B42BC95AEB82F0F6CED1F9D1AB5@KCHJEXMB01.kpit.com>
+ <CACxGe6tmqXWZJThk4m31=HzWMZPMMgO4f8h9H=xc_0thjWOJ8Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:57538 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751174Ab1LPILk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Dec 2011 03:11:40 -0500
-In-Reply-To: <C3AE124F08223B42BC95AEB82F0F6CED1F9D1AB5@KCHJEXMB01.kpit.com>
+Received: from db3ehsobe001.messaging.microsoft.com ([213.199.154.139]:35775
+	"EHLO DB3EHSOBE001.bigfish.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756416Ab1LPIPJ convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 16 Dec 2011 03:15:09 -0500
+In-Reply-To: <CACxGe6tmqXWZJThk4m31=HzWMZPMMgO4f8h9H=xc_0thjWOJ8Q@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ashish Jangam <Ashish.Jangam@kpitcummins.com>
+To: Grant Likely <grant.likely@secretlab.ca>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dajun <dajun.chen@diasemi.com>
+
+-----Original Message-----
+=46rom: glikely@secretlab.ca [mailto:glikely@secretlab.ca] On Behalf Of=
+ Grant Likely
+Sent: Friday, December 16, 2011 1:41 PM
+To: Ashish Jangam
+Cc: Stephen Rothwell; linux-next@vger.kernel.org; linux-kernel@vger.ker=
+nel.org; Mark Brown; Dajun
+Subject: Re: linux-next: build failure after merge of the regmap tree
 
 On Fri, Dec 16, 2011 at 12:19 AM, Ashish Jangam
 <Ashish.Jangam@kpitcummins.com> wrote:
@@ -60,5 +73,7 @@ y
 
 Are the LEDs attached to GPIOs?  If so, then is there a reason that
 the leds-gpio driver can't be used?
+
+Oh yes we can use leds-gpio driver.
 
 g.
