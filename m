@@ -1,81 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the driver-core tree
-Date: Fri, 16 Dec 2011 15:56:54 +1100
-Message-ID: <20111216155654.238e65a67263d1ca5884e74a@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Fri, 16 Dec 2011 16:39:28 +1100
+Message-ID: <20111216163928.030494ce1beb330e4e8b7b40@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__16_Dec_2011_15_56_54_+1100_XD.OR=_5WWSA2eVd"
+ boundary="Signature=_Fri__16_Dec_2011_16_39_28_+1100_XS=M/gTPfBogq_Gy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:36677 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:35459 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756346Ab1LPE5Q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 23:57:16 -0500
+	with ESMTP id S1751198Ab1LPFjh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Dec 2011 00:39:37 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Greg KH <greg@kroah.com>, Dimitri Sivanich <sivanich@sgi.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
 
---Signature=_Fri__16_Dec_2011_15_56_54_+1100_XD.OR=_5WWSA2eVd
+--Signature=_Fri__16_Dec_2011_16_39_28_+1100_XS=M/gTPfBogq_Gy
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in
-drivers/base/sys.c between commit ca22e56debc5 ("driver-core: implement
-'sysdev' functionality for regular devices and buses") from the
-driver-core tree and commit "tick-sched: add specific do_timer_cpu value
-for nohz off mode" from the scsi-post-merge tree.
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+arch/powerpc/kernel/rtas_flash.c: In function 'rtas_flash_release':
+arch/powerpc/kernel/rtas_flash.c:218:16: error: 'struct proc_dir_entry' has=
+ no member named 'count'
+arch/powerpc/kernel/rtas_flash.c: In function 'rtas_excl_open':
+arch/powerpc/kernel/rtas_flash.c:343:21: error: 'struct proc_dir_entry' has=
+ no member named 'count'
+arch/powerpc/kernel/rtas_flash.c:348:16: error: 'struct proc_dir_entry' has=
+ no member named 'count'
+arch/powerpc/kernel/rtas_flash.c: In function 'rtas_excl_release':
+arch/powerpc/kernel/rtas_flash.c:358:16: error: 'struct proc_dir_entry' has=
+ no member named 'count'
+arch/powerpc/kernel/rtas_flash.c: In function 'validate_flash_release':
+arch/powerpc/kernel/rtas_flash.c:541:16: error: 'struct proc_dir_entry' has=
+ no member named 'count'
+
+Caused by commit aef714db6205 ("core kernel: add refcount type and
+refcount misuse debugging").
+
+This would also break in drivers/nubus/proc.c
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/base/sys.c
-index 409f5ce,67d81a2..0000000
---- a/drivers/base/sys.c
-+++ b/drivers/base/sys.c
-@@@ -331,8 -331,14 +331,6 @@@ void sysdev_unregister(struct sys_devic
-  EXPORT_SYMBOL_GPL(sysdev_register);
-  EXPORT_SYMBOL_GPL(sysdev_unregister);
- =20
-- #define to_ext_attr(x) container_of(x, struct sysdev_ext_attribute, attr)
--=20
- -int __init system_bus_init(void)
- -{
- -	system_kset =3D kset_create_and_add("system", NULL, &devices_kset->kobj);
- -	if (!system_kset)
- -		return -ENOMEM;
- -	return 0;
- -}
- -
-  ssize_t sysdev_store_ulong(struct sys_device *sysdev,
-  			   struct sysdev_attribute *attr,
-  			   const char *buf, size_t size)
-
---Signature=_Fri__16_Dec_2011_15_56_54_+1100_XD.OR=_5WWSA2eVd
+--Signature=_Fri__16_Dec_2011_16_39_28_+1100_XS=M/gTPfBogq_Gy
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO6s+WAAoJEECxmPOUX5FEJqYP/1whTK9cxsueG4dt15ijENIK
-0PfOf0xzDXw6XXO4tAHr26R54X3Rxe1WFt3qTvnPcXqJi4HBHoUOf3eZuIUBtd/4
-iET24PuaUABT8HSGEzgUbAsIkoxFFJmPhe2Hb84yzTaI18km70C0/x9aQVK7WVzB
-nErI6XJkg58D+nR6yZ1HbTjFvpNYSYoeOVmjdl6cVyL/g19poJGBmvv5gNK3/kbP
-WkerfYBbxwjmmccnccmAP4pjXlW13LHIuzTBohgVKFY8QSQ9TsWBIIYdSJyTbvJo
-IOiuRlmhLyZcq+RW4GMQlzkyWQa/+lNI82/eOthIbeyjQSACwoxhZ46xbUuQwdzs
-KuHCqlpb77fiSJjpwZeI+kw5svsLnQJYu0CuqiptXE6kgF2Nlz8+YfWluZPZ5jk2
-Tm3mDErGpihgPfjk2K+Osf7Ud/Lx5+bi9haqQkKo+r3reHCNnxOGfge/XNGOiS2R
-OVnBsIJ6VrWn0//2Q+lB9HtKtpW/fx71E/w9SX0mtXZy4xJnKrJwMwHALvtybnQp
-NBz0AL4kLHMETRwt7nt/4ysKzDH94zAfYB+ikWDdwJZvtkglnkL9Raagk/6LOczh
-iOn39PCoSbe5o1NIynkf1ReCpVlPLE/TPtzdulch/XUsKFwjnWqBUvElgkQC+z/U
-aaBS6JpH1r8YqWcy4uNT
-=RsvE
+iQIcBAEBCAAGBQJO6tmQAAoJEECxmPOUX5FElPkQAKXfEVfU+AGAq15hNllqvb+x
+QY15CozCLj+Mjj4rvUJ31riBFJm/m+nfaSyy4tOCXGzouR7G66aU5vqthKbnXsD2
+HiPYJMvbS9SrYlnJgjolL6PF9ENhNuBnEWpv2/rNPQlODiJY6XPzxkpUZCDil89N
+SriZ25fbiLUoOmf1XxM17wbJOz8iL/W2i6InKT9Ij6aIaoFCNY2nrQWOskdoFYgJ
+SA/POqWd/dsUyq8D73dNcwjeMxoUz9fLKGFjiy7XXO1+kLOanuT+OJzYuz/a93og
+cSb2wR3tM7vM3DDNZktYtIFnVkerzuiaV2fkXNLqzZf9NbmjW0T8pLedRUeWSMN7
+iGAslL0+7kE7okpRE4qpceP1qYipXrzTSpfPQcAfNFAx2FLfTCUATurkSOj6sUOA
+YNHeI/wEbF0IR70SwQkZOy/Dzh64kzBdyRvKv6vR7ICW7jr4Nj7em+E5/BaPedly
+YlPogigFrPo+Y0tls9CGQzIMD/xURfLP+x+PDCQdVBtXUGb0Tje0hp4p5uNXkoSF
+5esiUKvKCvfF5uNFlcjG2Hi+8+U42Pl2Hnh9D9TlflhqSUg7ABFmnf3ugjPqXcu8
+o+wohVEI22Ko6ygiQ+A9U2JvFHe+5z4Fr02dPrUKcibrKJGscDpDPwLIWXn56f1W
+LeB4wSguxv6QLOWepJ6F
+=Po0/
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__16_Dec_2011_15_56_54_+1100_XD.OR=_5WWSA2eVd--
+--Signature=_Fri__16_Dec_2011_16_39_28_+1100_XS=M/gTPfBogq_Gy--
