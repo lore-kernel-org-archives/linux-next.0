@@ -1,70 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Fri, 16 Dec 2011 12:50:01 +1100
-Message-ID: <20111216125001.33635d34b5397292e6190b9a@canb.auug.org.au>
+From: Glauber Costa <glommer@parallels.com>
+Subject: Re: linux-next: Tree for Dec 15 (memcontrol)
+Date: Fri, 16 Dec 2011 06:07:11 +0400
+Message-ID: <4EEAA7CF.8010006@parallels.com>
+References: <20111215191115.fd4ef2ab8fa11872ea22d70e@canb.auug.org.au> <4EEA8693.8020905@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__16_Dec_2011_12_50_01_+1100_Z=O9cjr_4MhogIjr"
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:46751 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757710Ab1LPBuL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2011 20:50:11 -0500
+Received: from mx2.parallels.com ([64.131.90.16]:38730 "EHLO mx2.parallels.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756420Ab1LPCHu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Dec 2011 21:07:50 -0500
+In-Reply-To: <4EEA8693.8020905@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, majianpeng <majianpeng@gmail.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
 
---Signature=_Fri__16_Dec_2011_12_50_01_+1100_Z=O9cjr_4MhogIjr
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 12/16/2011 03:45 AM, Randy Dunlap wrote:
+> On 12/15/2011 12:11 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20111214:
+>
+>
+> memcontrol.c:(.text+0x31f9d): undefined reference to `mem_cgroup_sockets_init'
+> memcontrol.c:(.text+0x326dd): undefined reference to `mem_cgroup_sockets_destroy'
+>
+> Full randconfig file is attached.
+>
+Hi.
 
-Hi Jens,
-
-After merging the block tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-block/cfq-iosched.c: In function 'cfq_init_queue':
-block/cfq-iosched.c:3690:14: error: 'cic_index_lock' undeclared (first use =
-in this function)
-block/cfq-iosched.c:3691:15: error: 'cic_index_ida' undeclared (first use i=
-n this function)
-block/cfq-iosched.c:3691:34: error: 'struct cfq_data' has no member named '=
-cic_index'
-
-Presumably this was not build tested with CONFIG_CFQ_GROUP_IOSCHED set.
-
-Caused by commit a73f730d013f ("block, cfq: move cfqd->cic_index to
-q->id") interacting with commit 2984ff38ccf6 ("cfq-iosched: free
-cic_index if blkio_alloc_blkg_stats fails").
-
-I have used the block tree from next-20111215 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__16_Dec_2011_12_50_01_+1100_Z=O9cjr_4MhogIjr
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO6qPJAAoJEECxmPOUX5FEBH8P/R4JTVvL3iOSxXeeYdUS6R5N
-wVIajTEWivRJHk2OjJ8+MEgDdQfZ386vuuoCKzAKPmDWgERL6RQCCAkVfhGdeFyn
-2ww+zQ8Ji4sCiv9VbsBrl31Fe5OQyORct54coo6JgcsfLVBHapqnCTcczGEIVq1t
-qCtOJAhINEb+73hHEn5qP33qWhbhZitLX/kzpmEQ/LN9OZtIhTZmfBEd8gV3dGN9
-vH58qVObefhDYKSziHVEVz4dkKeC2aT393bxU7xcC4zf04ptaES/MTkLFOzAig9K
-128Y3f7wrB0W+mt1BcjU4V+VMV9scP3isHgavZAuXnicQQhoNafxx6gVkU/mUmBe
-uaoImo/7PbUpq5hblVrrLbPBalcMr3w+5GYE/MIE9Yila4hpyfFZyP0WlCJuNGTJ
-qUZIFSwvEq1AGhXeT/g1cRwHucUMsLqPmmofpRICHA2YJJsVjyM9PZ4y02ys7tKH
-XDqLCuRcpEHyGGeO5k3m+c2lXnddRWg+qeYbnJgR7qsLpFcWvfKGeLHSIpcTUQPo
-UuM6PrXmQ0sDfq2tKSU8iIFVl1/SALRL8N70CBgq7jygRU4sDgPkiUH3pbbRGz4h
-KILwFOCS/3TxQftOV9Aw4ipoUOy7kvXLzZ43Mph73iO0OP6UngTf5vMYpcMEDUPk
-lb9jzJ54lyzM4wc0Pzlg
-=zQTV
------END PGP SIGNATURE-----
-
---Signature=_Fri__16_Dec_2011_12_50_01_+1100_Z=O9cjr_4MhogIjr--
+Thanks. This one is also fixed by one patch I am about to send.
