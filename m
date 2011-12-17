@@ -1,81 +1,60 @@
-From: NeilBrown <neilb@suse.de>
-Subject: Re: linux-next: build failure after merge of the final tree (akpm
- tree related)
-Date: Sat, 17 Dec 2011 16:02:28 +1100
-Message-ID: <20111217160228.3a946f4b@notabene.brown>
-References: <20111217154219.5f3d476c25e648b1b4239857@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: strange commit in the uprobes tree
+Date: Sat, 17 Dec 2011 18:28:11 +1100
+Message-ID: <20111217182811.ead5e91706f5198f7d7f5560@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/JxugTYmFfFTVMjaJjdK45Rb"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sat__17_Dec_2011_18_28_11_+1100_=1N_rSdkufp14=WF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:38767 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750745Ab1LQFCo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 17 Dec 2011 00:02:44 -0500
-In-Reply-To: <20111217154219.5f3d476c25e648b1b4239857@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:39091 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751086Ab1LQH2U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Dec 2011 02:28:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Purdie <rpurdie@rpsys.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Randy Dunlap <rdunlap@xenotime.net>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
---Sig_/JxugTYmFfFTVMjaJjdK45Rb
+--Signature=_Sat__17_Dec_2011_18_28_11_+1100_=1N_rSdkufp14=WF
 Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, 17 Dec 2011 15:42:19 +1100 Stephen Rothwell <sfr@canb.auug.org.au>
-wrote:
+Hi Srikar,
 
-> Hi all,
->=20
-> After merging the final tree, today's linux-next build (m68k allmodconfig)
-> failed like this:
->=20
-> drivers/leds/leds-tca6507.c:158: error: field 'gpio' has incomplete type
-> drivers/leds/leds-tca6507.c: In function 'tca6507_gpio_set_value':
-> drivers/leds/leds-tca6507.c:534: warning: type defaults to 'int' in decla=
-ration of '__mptr'
-> drivers/leds/leds-tca6507.c:534: warning: initialization from incompatibl=
-e pointer type
-> drivers/leds/leds-tca6507.c: In function 'tca6507_probe':
-> drivers/leds/leds-tca6507.c:618: error: implicit declaration of function =
-'gpiochip_add'
-> drivers/leds/leds-tca6507.c: In function 'tca6507_remove':
-> drivers/leds/leds-tca6507.c:651: error: implicit declaration of function =
-'gpiochip_remove'
->=20
-> Caused by commit 7a9244d89523 ("leds: add driver for TCA6507 LED controll=
-er").
->=20
-> Maybe this driver needs some dependencies ...
+I just fetched the uprobes tree and noticed that commit 05f7cebbdbc8
+("rcu: Introduce bulk reference count") has no patch, just a commit
+message.   In the previous version of your tree, the commit had Paul as
+author and now has you (which is what brought it to my attention), but
+the lack of patch is more interesting ... I do notice that there is
+another patch from Paul ("rcu: Introduce raw SRCU read-side primitives")
+and was wondering if that replaces the above patch.
 
-Yes... I think it actually needs the 'gpio' aspect of the driver to be
-dependant of GPIOLIB being available.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-I'll get a patch or two off to Andrew on Monday.
-
-Thanks,
-NeilBrown
-
---Sig_/JxugTYmFfFTVMjaJjdK45Rb
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+--Signature=_Sat__17_Dec_2011_18_28_11_+1100_=1N_rSdkufp14=WF
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.18 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIVAwUBTuwiZDnsnt1WYoG5AQIH4BAAtbZ8jDc2NBQ059HCvm11HemZy9WKfcfM
-k4905I1oU2mdQ4BqZ0xSG8j+BHDTvHUsJ422CWT5P55NbFhejiRhRk1a71UwX2uU
-lrPHa/Ih0IDJxa5t+AC6DK8AgM5uzmQPMmL9OtNGmhSFtQYERy/qBLOSV2t8c+cW
-QV5qHmVEbA7I9BTUSn1cTxvUOeW31pWSgmjIvHJ9A04o22xerco7Pf99969jN3Xx
-By/Cxr5kBbDhT/371cdDjG/o/7C7Pl866JKkSuT2nIGQ9v9np5IIkTHMcRxGUvBs
-VPuvUonKh89gcaLRF1RLFMjv3qq80Bfyty6Gw0junXHeDwe9jsJDVM1bBfdsQNgB
-ydJmy2WHs0UDo8mtox++5mJOVIIm2CZgxIGXNfZri5VkljoxzzVD128oTmNnUZQ6
-wSzhblRSyXQhAdBKZC/hzJb1LaCqN6x9b+2NOn+6rYOUxoWONdbRjQGQCJgOwbiK
-tguM4uah7Ex0e/2vPegFmj6PgpHibMO1UuxaGyj2/BWlZobzVSEPTo6gV9S5ETY7
-XQcwq2FSELLCCxFq1Zeqem84eQafGSvLF98u8l/gccPMKHKdCgq59BiwMi87oKqV
-oxKKYqL7nbE0t1ykp85ZAJbDI2bK2ANFJLJU1+rWKXhkCFICXNYnQ/67bakDcv1q
-sd2/jR1f3D4=
-=t4Jc
+iQIcBAEBCAAGBQJO7ESLAAoJEECxmPOUX5FEJJ8P/jGBsSROmbYzelfTMlB0O0A2
+YzUvIENF+RxIXkxUnjId0ntP+r+4kPXeMuziYNxKM0CusLuzatsM+4waOC0Di2KX
+2ePNwwLZyHvzx9QXcLe+wSTaJw7538J/5IdvwEEwu1z08+BdfY9s/02DsQtij0Sl
+QOyA5rqrr8B/e2RitdC2ZrbangJOzbbIw1dWbIiCcT1WszUMGhwecu0AG9H3F8wR
+Z/6lhAxmA3yFjYbyEJs4lBVhp3Y+Qqv5xU8gOgkIgUnx8d4WLQTWBkhbt/E5FOcd
+karLI32IWp2LvJtkHxMCiM+KAHF0vaLRAEhFijMQo032H9tlGlzm87k0ADuWbOHv
+7v0CRlgyHWxM1lYTqyU5S9OfZYwgJI1qT5ocp+lU99h5gXtM4pZ+WIzn0BNKKL1b
+w63Y31PtAsyXUi39CBxkkrBq29BkpkM7HJz+Pe6+iwwdigo6uQKH3KJx3/uBPFwM
+QpzbYZX8Tl/uI922YeWdwBcXxSATbCu09O0g9g8utpAGnQgA7MiQyv94psNtJhxv
+vOW3iPDo4e6NJfCQbAk5IWRbxyipcCojgUmZRY/YTPkssxSBFpF4lf3d0N5WNI+R
+AWFw6CA4cl2lhDf6ERcdy1BTZIgJSHhUVYPMJxe5lkHC9U1eTXE+pv7X0NHFuCHp
+0Q5yoXUBee956ID2XJ2U
+=WiuY
 -----END PGP SIGNATURE-----
 
---Sig_/JxugTYmFfFTVMjaJjdK45Rb--
+--Signature=_Sat__17_Dec_2011_18_28_11_+1100_=1N_rSdkufp14=WF--
