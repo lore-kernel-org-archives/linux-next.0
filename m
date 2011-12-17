@@ -1,60 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: strange commit in the uprobes tree
-Date: Sat, 17 Dec 2011 18:28:11 +1100
-Message-ID: <20111217182811.ead5e91706f5198f7d7f5560@canb.auug.org.au>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Sat, 17 Dec 2011 20:49:24 +0300
+Message-ID: <20111217174923.GA4650@p183.telecom.by>
+References: <20111216163928.030494ce1beb330e4e8b7b40@canb.auug.org.au>
+ <20111216140039.c279e8d7.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__17_Dec_2011_18_28_11_+1100_=1N_rSdkufp14=WF"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:39091 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751086Ab1LQH2U (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Dec 2011 02:28:20 -0500
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:37905 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752506Ab1LQRtb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Dec 2011 12:49:31 -0500
+Content-Disposition: inline
+In-Reply-To: <20111216140039.c279e8d7.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, benh@kernel.crashing.org
 
---Signature=_Sat__17_Dec_2011_18_28_11_+1100_=1N_rSdkufp14=WF
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Dec 16, 2011 at 02:00:39PM -0800, Andrew Morton wrote:
+> On Fri, 16 Dec 2011 16:39:28 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > Hi Andrew,
+> > 
+> > After merging the akpm tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> > 
+> > arch/powerpc/kernel/rtas_flash.c: In function 'rtas_flash_release':
+> > arch/powerpc/kernel/rtas_flash.c:218:16: error: 'struct proc_dir_entry' has no member named 'count'
+> > arch/powerpc/kernel/rtas_flash.c: In function 'rtas_excl_open':
+> > arch/powerpc/kernel/rtas_flash.c:343:21: error: 'struct proc_dir_entry' has no member named 'count'
+> > arch/powerpc/kernel/rtas_flash.c:348:16: error: 'struct proc_dir_entry' has no member named 'count'
+> > arch/powerpc/kernel/rtas_flash.c: In function 'rtas_excl_release':
+> > arch/powerpc/kernel/rtas_flash.c:358:16: error: 'struct proc_dir_entry' has no member named 'count'
+> > arch/powerpc/kernel/rtas_flash.c: In function 'validate_flash_release':
+> > arch/powerpc/kernel/rtas_flash.c:541:16: error: 'struct proc_dir_entry' has no member named 'count'
+> > 
+> > Caused by commit aef714db6205 ("core kernel: add refcount type and
+> > refcount misuse debugging").
+> > 
+> > This would also break in drivers/nubus/proc.c
+> > 
+> > I have reverted that commit for today.
+> 
+> Thanks.  The plan apepars to be to make `struct kref' usable in this
+> situation so I'll drop these patches.
 
-Hi Srikar,
+If krefs would lose barriers, we might as well remove struct kref altogether.
+Besides questionable mandatory passing of destructor to every kref_put(),
+it is syntax sugar.
 
-I just fetched the uprobes tree and noticed that commit 05f7cebbdbc8
-("rcu: Introduce bulk reference count") has no patch, just a commit
-message.   In the previous version of your tree, the commit had Paul as
-author and now has you (which is what brought it to my attention), but
-the lack of patch is more interesting ... I do notice that there is
-another patch from Paul ("rcu: Introduce raw SRCU read-side primitives")
-and was wondering if that replaces the above patch.
+Non-atomic _refcnt_t do not fit into krefs regardless.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__17_Dec_2011_18_28_11_+1100_=1N_rSdkufp14=WF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO7ESLAAoJEECxmPOUX5FEJJ8P/jGBsSROmbYzelfTMlB0O0A2
-YzUvIENF+RxIXkxUnjId0ntP+r+4kPXeMuziYNxKM0CusLuzatsM+4waOC0Di2KX
-2ePNwwLZyHvzx9QXcLe+wSTaJw7538J/5IdvwEEwu1z08+BdfY9s/02DsQtij0Sl
-QOyA5rqrr8B/e2RitdC2ZrbangJOzbbIw1dWbIiCcT1WszUMGhwecu0AG9H3F8wR
-Z/6lhAxmA3yFjYbyEJs4lBVhp3Y+Qqv5xU8gOgkIgUnx8d4WLQTWBkhbt/E5FOcd
-karLI32IWp2LvJtkHxMCiM+KAHF0vaLRAEhFijMQo032H9tlGlzm87k0ADuWbOHv
-7v0CRlgyHWxM1lYTqyU5S9OfZYwgJI1qT5ocp+lU99h5gXtM4pZ+WIzn0BNKKL1b
-w63Y31PtAsyXUi39CBxkkrBq29BkpkM7HJz+Pe6+iwwdigo6uQKH3KJx3/uBPFwM
-QpzbYZX8Tl/uI922YeWdwBcXxSATbCu09O0g9g8utpAGnQgA7MiQyv94psNtJhxv
-vOW3iPDo4e6NJfCQbAk5IWRbxyipcCojgUmZRY/YTPkssxSBFpF4lf3d0N5WNI+R
-AWFw6CA4cl2lhDf6ERcdy1BTZIgJSHhUVYPMJxe5lkHC9U1eTXE+pv7X0NHFuCHp
-0Q5yoXUBee956ID2XJ2U
-=WiuY
------END PGP SIGNATURE-----
-
---Signature=_Sat__17_Dec_2011_18_28_11_+1100_=1N_rSdkufp14=WF--
+Now, rtas_flash.c. What this code simply doesn't work:
+->count can be temporarily increased by simply issuing readdir().
