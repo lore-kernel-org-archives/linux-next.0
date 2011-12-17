@@ -1,57 +1,40 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Sat, 17 Dec 2011 20:49:24 +0300
-Message-ID: <20111217174923.GA4650@p183.telecom.by>
-References: <20111216163928.030494ce1beb330e4e8b7b40@canb.auug.org.au>
- <20111216140039.c279e8d7.akpm@linux-foundation.org>
+From: David Daney <david.s.daney@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree (mips
+ tree related)
+Date: Sat, 17 Dec 2011 10:06:59 -0800
+Message-ID: <4EECDA43.6040004@gmail.com>
+References: <20111217155044.094c4c2b51af7c66e8ec90a3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:37905 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752506Ab1LQRtb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Dec 2011 12:49:31 -0500
-Content-Disposition: inline
-In-Reply-To: <20111216140039.c279e8d7.akpm@linux-foundation.org>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:59579 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752118Ab1LQSHF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Dec 2011 13:07:05 -0500
+In-Reply-To: <20111217155044.094c4c2b51af7c66e8ec90a3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, benh@kernel.crashing.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hillf Danton <dhillf@gmail.com>, David Daney <david.daney@cavium.com>, linux-mips@linux-mips.org, "Jayachandran C." <jayachandranc@netlogicmicro.com>
 
-On Fri, Dec 16, 2011 at 02:00:39PM -0800, Andrew Morton wrote:
-> On Fri, 16 Dec 2011 16:39:28 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi Andrew,
-> > 
-> > After merging the akpm tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> > 
-> > arch/powerpc/kernel/rtas_flash.c: In function 'rtas_flash_release':
-> > arch/powerpc/kernel/rtas_flash.c:218:16: error: 'struct proc_dir_entry' has no member named 'count'
-> > arch/powerpc/kernel/rtas_flash.c: In function 'rtas_excl_open':
-> > arch/powerpc/kernel/rtas_flash.c:343:21: error: 'struct proc_dir_entry' has no member named 'count'
-> > arch/powerpc/kernel/rtas_flash.c:348:16: error: 'struct proc_dir_entry' has no member named 'count'
-> > arch/powerpc/kernel/rtas_flash.c: In function 'rtas_excl_release':
-> > arch/powerpc/kernel/rtas_flash.c:358:16: error: 'struct proc_dir_entry' has no member named 'count'
-> > arch/powerpc/kernel/rtas_flash.c: In function 'validate_flash_release':
-> > arch/powerpc/kernel/rtas_flash.c:541:16: error: 'struct proc_dir_entry' has no member named 'count'
-> > 
-> > Caused by commit aef714db6205 ("core kernel: add refcount type and
-> > refcount misuse debugging").
-> > 
-> > This would also break in drivers/nubus/proc.c
-> > 
-> > I have reverted that commit for today.
-> 
-> Thanks.  The plan apepars to be to make `struct kref' usable in this
-> situation so I'll drop these patches.
+On 12/16/2011 08:50 PM, Stephen Rothwell wrote:
+> Hi all,
+>
+> After merging the final tree, today's linux-next build (mips almost all
+> configs) failed like this:
+>
+> arch/mips/mm/tlb-r4k.c: In function 'local_flush_tlb_range':
+> arch/mips/mm/tlb-r4k.c:128: error: 'HPAGE_SIZE' undeclared (first use in this function)
+> arch/mips/mm/tlb-r4k.c:130: error: 'HPAGE_SHIFT' undeclared (first use in this function)
+>
+> Probably caused by commit 0b07e859f87b ("MIPS: Flush huge TLB").
 
-If krefs would lose barriers, we might as well remove struct kref altogether.
-Besides questionable mandatory passing of destructor to every kref_put(),
-it is syntax sugar.
+Indeed that is the case.
 
-Non-atomic _refcnt_t do not fit into krefs regardless.
+We have a patch for this issue:  http://patchwork.linux-mips.org/patch/3114/
 
-Now, rtas_flash.c. What this code simply doesn't work:
-->count can be temporarily increased by simply issuing readdir().
+Perhaps Ralf will push out a mips-for-linux-next containing this patch 
+in the near future.
+
+David Daney
