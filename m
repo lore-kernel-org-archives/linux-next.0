@@ -1,81 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Sat, 17 Dec 2011 15:27:29 +1100
-Message-ID: <20111217152729.38099acb10e3514b389a5d0d@canb.auug.org.au>
-References: <20111217152253.1aedda0936cd5d1d98be5e76@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (sound-asoc
+ tree related)
+Date: Sat, 17 Dec 2011 15:34:15 +1100
+Message-ID: <20111217153415.8e912e96dae9cca7a9128e4a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sat__17_Dec_2011_15_27_29_+1100_Be/LydVoavsvbLNu"
+ boundary="Signature=_Sat__17_Dec_2011_15_34_15_+1100_wCYLIZQnVF9J8P1f"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:42862 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:33493 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750901Ab1LQE1f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Dec 2011 23:27:35 -0500
-In-Reply-To: <20111217152253.1aedda0936cd5d1d98be5e76@canb.auug.org.au>
+	with ESMTP id S1751955Ab1LQEeZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Dec 2011 23:34:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>, Paul Mundt <lethal@linux-sh.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@linux.intel.com>
 
---Signature=_Sat__17_Dec_2011_15_27_29_+1100_Be/LydVoavsvbLNu
+--Signature=_Sat__17_Dec_2011_15_34_15_+1100_wCYLIZQnVF9J8P1f
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi all,
 
-On Sat, 17 Dec 2011 15:22:53 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the final tree, today's linux-next build (sh
-> edosk7705_defconfig and lots of other sh configs) failed like this:
->=20
-> mm/pgtable-generic.c: In function 'pmdp_clear_flush_young':
-> mm/pgtable-generic.c:76: error: call to '__build_bug_failed' declared wit=
-h attribute error: BUILD_BUG failed
->=20
-> This is the
->=20
-> 	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
->=20
-> in pmdp_clear_flush_young().
->=20
-> Exposed by commit 835cea45a4a0 ("hugetlb: replace BUG() with BUILD_BUG()
-> for dummy definitions") from the akpm tree but I don't know the root
-> cause.
->=20
-> This may have a fix somewhere (if it is sh specific) but the current sh
-> tree in linux-next
-> (git://git.kernel.org/pub/scm/linux/kernel/git/lethal/sh-2.6.git) does
-> not exist.
+After merging the final tree, today's linux-next build (i386 allmodconfig)
+failed like this:
 
-We are getting the same for all the cris config builds.
+sound/soc/mid-x86/sst_platform.c: In function 'sst_platform_open':
+sound/soc/mid-x86/sst_platform.c:274: error: 'ret_val' undeclared (first us=
+e in this function)
+
+Caused by commit 03c33042dbcd ("ASoC: sst_platform: fix the dsp driver
+interface").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sat__17_Dec_2011_15_27_29_+1100_Be/LydVoavsvbLNu
+--Signature=_Sat__17_Dec_2011_15_34_15_+1100_wCYLIZQnVF9J8P1f
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO7BoxAAoJEECxmPOUX5FEG9YP/RasaKyJxZsNC+XztVswT0uW
-h9UuGOzEcRnySoo1/9JegBqgJHXB0JecpJVmVdhIVaLRtvM+eCbzwFpiQz+8xN8d
-vBv5xZnh6zi1k3d03w6+rHUE1Aks4aUtKu6pU6eFB4tG/ciq4suXl3TWtPLkpoFM
-uhJmOtmZ3naM+MHLGw+1giFdcpleZMrh6cxu/d8dSEpGHhdVH4rhtSnMkJPv0Ez0
-62tpR09VsF+qsVahj/pOOz7ax7GxdhRbGNhr/JOAv3P/tgHuYrM2UY8oiUXL4+aX
-VlvvP0OK1D+lvGb/8bxCKcVGU08cR0IOrTjsTmBVFiOnMdQNRA6l9KTEcJfV7+yy
-okt9VzFiZalMpPh7MPDeJ0wW+UrKdAtuLVi/98HgbBDvRs30tiotNOlDYiT3Iuft
-5NBkp07EcnXgmFhR47AjySQcOFu6YtEO/JYwEUTxS20KXNQVRf0Jw7Z4WHloujvZ
-VmejUbnyBmYrIfKPLKOQnWzejZqmln9zj6OgKLTmLTacoIEMzXeycFaNHBNBz/Oh
-Ej7Yt3yP3AEP6n9FuE8msU7Sjw5BjR1lv7lsRxXYlLuDypRXBaxb2MW5jOeiI7wv
-rGbS0QStgWUfay+vCgSA/cALeRFO3hsC7KS9KcUIeKcpwrQHLD9ctT49611wmw8p
-ECWHK5yGYlHmGiAF5C/i
-=6ri5
+iQIcBAEBCAAGBQJO7BvHAAoJEECxmPOUX5FEZUcP/RsVsov/3UGbj49HgRJzA2uQ
+ytIwDg7EdLdLD1dDPOAQa/giEjx962JEWbhbwqMxSXxVXkSP+3EHAF3ijGy+ILkU
+Z7CFUZAhf7tt/i0Mov+WtlPum721uDFas9QB0dKL5nJfw66VhiL8nOQESCD8MAXi
+MyPlEXxJPoktiD0C9uiGhlYMbQCWslBvmWmleIQ0lwU4q6Cz8sc62Hg6qJtzEI20
+hcmtUc2FGJj0T10183AHY2RG5pzhSUnoumurtFQdrGMpQgDTjhb6C4xRmTGe4xmK
+d8I2phCXk0aVQAEm8TDaUnXbVwqHLpOqMrjACdTpOqSoq9kf3GwlZ3IrfyP2M+mj
+viC/t32emKRQgBnGoS3zzUKU/abQTdiyq2i5RwisYtPVun6zqbk1xReFIYjNDX0D
+Ocj74XGSsjM29uYTh/fbjLu6IA2Ky5jO8U+BCWZT01dDiyxKRe1GlDXco1zYYd+h
+QSum3Hv4euy6TH2N8E/igfXEGWDKMIs2gX2+JiRoKElHPI/AEwg553P0rtfJLelT
+DgG8ACUzAuwqRNVajnTZ8o5qRmuqP6dzOwwUuijPegvk0BomfAupUbsrWe2JiIs/
+DN8F6U6IatmNFSHEengqUYQqSSvCa9ICD1jz0QqQYpkBjoyfKG782+DTslowO7Tn
+WEJhW1OTNaRZ+qxNxArW
+=IBLq
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__17_Dec_2011_15_27_29_+1100_Be/LydVoavsvbLNu--
+--Signature=_Sat__17_Dec_2011_15_34_15_+1100_wCYLIZQnVF9J8P1f--
