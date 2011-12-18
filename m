@@ -1,90 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Mon, 19 Dec 2011 09:43:59 +1100
-Message-ID: <20111219094359.7006f8971a0cd7f46a88dc9c@canb.auug.org.au>
-References: <20111216163928.030494ce1beb330e4e8b7b40@canb.auug.org.au>
-	<20111216140039.c279e8d7.akpm@linux-foundation.org>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Mon, 19 Dec 2011 10:55:37 +1100
+Message-ID: <20111219105537.6c3346b5ed94fccd486ba136@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__19_Dec_2011_09_43_59_+1100_FxRis1B9ok=mpCze"
+ boundary="Signature=_Mon__19_Dec_2011_10_55_37_+1100_b34nRw1.ea/V2h5I"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:39036 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:58329 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751465Ab1LRWoG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Dec 2011 17:44:06 -0500
-In-Reply-To: <20111216140039.c279e8d7.akpm@linux-foundation.org>
+	with ESMTP id S1752129Ab1LRXzt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Dec 2011 18:55:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Mon__19_Dec_2011_09_43_59_+1100_FxRis1B9ok=mpCze
+--Signature=_Mon__19_Dec_2011_10_55_37_+1100_b34nRw1.ea/V2h5I
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-On Fri, 16 Dec 2011 14:00:39 -0800 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> On Fri, 16 Dec 2011 16:39:28 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > After merging the akpm tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >=20
-> > arch/powerpc/kernel/rtas_flash.c: In function 'rtas_flash_release':
-> > arch/powerpc/kernel/rtas_flash.c:218:16: error: 'struct proc_dir_entry'=
- has no member named 'count'
-> > arch/powerpc/kernel/rtas_flash.c: In function 'rtas_excl_open':
-> > arch/powerpc/kernel/rtas_flash.c:343:21: error: 'struct proc_dir_entry'=
- has no member named 'count'
-> > arch/powerpc/kernel/rtas_flash.c:348:16: error: 'struct proc_dir_entry'=
- has no member named 'count'
-> > arch/powerpc/kernel/rtas_flash.c: In function 'rtas_excl_release':
-> > arch/powerpc/kernel/rtas_flash.c:358:16: error: 'struct proc_dir_entry'=
- has no member named 'count'
-> > arch/powerpc/kernel/rtas_flash.c: In function 'validate_flash_release':
-> > arch/powerpc/kernel/rtas_flash.c:541:16: error: 'struct proc_dir_entry'=
- has no member named 'count'
-> >=20
-> > Caused by commit aef714db6205 ("core kernel: add refcount type and
-> > refcount misuse debugging").
-> >=20
-> > This would also break in drivers/nubus/proc.c
-> >=20
-> > I have reverted that commit for today.
->=20
-> Thanks.  The plan apepars to be to make `struct kref' usable in this
-> situation so I'll drop these patches.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-omap2/board-ti8168evm.c between commit fae51fbd5b0b ("ARM:
+restart: omap: use new restart hook") from the arm tree and commit
+a890b6760d97 ("ARM: OMAP: TI814X: Create board support and enable build
+for TI8148 EVM") from the arm-soc tree.
 
-OK, I have dropped that patch from the akpm tree in linux-next.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__19_Dec_2011_09_43_59_+1100_FxRis1B9ok=mpCze
+diff --cc arch/arm/mach-omap2/board-ti8168evm.c
+index 74713e3,5b6ad6e..0000000
+--- a/arch/arm/mach-omap2/board-ti8168evm.c
++++ b/arch/arm/mach-omap2/board-ti8168evm.c
+@@@ -43,10 -47,19 +47,21 @@@ static void __init ti81xx_evm_init(void
+  MACHINE_START(TI8168EVM, "ti8168evm")
+  	/* Maintainer: Texas Instruments */
+  	.atag_offset	=3D 0x100,
+- 	.map_io		=3D ti8168_evm_map_io,
+- 	.init_early	=3D ti816x_init_early,
+- 	.init_irq	=3D ti816x_init_irq,
++ 	.map_io		=3D ti81xx_map_io,
++ 	.init_early	=3D ti81xx_init_early,
++ 	.init_irq	=3D ti81xx_init_irq,
++ 	.timer		=3D &omap3_timer,
++ 	.init_machine	=3D ti81xx_evm_init,
+++	.restart	=3D omap_prcm_restart,
++ MACHINE_END
++=20
++ MACHINE_START(TI8148EVM, "ti8148evm")
++ 	/* Maintainer: Texas Instruments */
++ 	.atag_offset	=3D 0x100,
++ 	.map_io		=3D ti81xx_map_io,
++ 	.init_early	=3D ti81xx_init_early,
++ 	.init_irq	=3D ti81xx_init_irq,
+  	.timer		=3D &omap3_timer,
+- 	.init_machine	=3D ti8168_evm_init,
++ 	.init_machine	=3D ti81xx_evm_init,
+ +	.restart	=3D omap_prcm_restart,
+  MACHINE_END
+
+--Signature=_Mon__19_Dec_2011_10_55_37_+1100_b34nRw1.ea/V2h5I
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO7myvAAoJEECxmPOUX5FEiK8QAKPTh92CVv8TwejEnnKLnKg2
-qCmkSp7UyCxc4hAkP3JJlcxK4zD9PhnpHlCoNcFle/usqvmpPpjllhfnb05rpFCx
-24hULpd5AnObJsdKT3CF1V37FHrAYKdVZIMCP8pS8jCFyFJfMoEUF8abuV6lGc03
-A4TFbiA5+nYWgfk1YrZ/vRrEHpKtIDSZimyp0gL+tE2A3UIQqUzDp1yZmihIgkeE
-5ZOyFYZqzuf3mptyVt0tMcYOtpwdISOC+Y1e0n6KbRAtfWcdWLzByNyq8UuzDEWR
-ZBkqmrTp5ZAtkiPzEliuHPAy+KP1kyF2eDaThrLG4kehcyDVO6OoxyPWktUj3RvT
-BxFnTEf8BRmNCbjgiYOnNP2rkqtnSu6IM//S/3ZucIZWssAnxB0ya9vMQpwtFQt+
-8oVf9niImMcayr2XVA/jqbo/mKyToAEzrIe4tdmFsGzf8MLx64CrYZ2gJi0NXMX2
-z+YvnG6iy24OGm5ZxdEEOKE5O4BhSs+e8BQHtrS5TDZqBEOgBsb+TjKKicDjqesl
-sCNn92k18Sqy/n+kCu1BPm4f9vjj9RCnVkPYBnRDzduPQ/F+vghhnghB7p5mPZCw
-+AOyFwrd+JaBd2liDZ7YIbrr43p3xJUkEAX4FGEac0pIgjjIU5ENDMpxPMYzmIgd
-yOZnRRGiGgd28EQwoO6T
-=xc1P
+iQIcBAEBCAAGBQJO7n15AAoJEECxmPOUX5FEyYUP+gNO8pdiOPI9T+AblVP3npIF
+YxTkX3N0BDmHIbKt7YyzAFltsmOcoxjH/VEyjAVqGcxOWxtPyub+XB9uRsRBkQRQ
+ObH6qc28AUA9qApqywk3DVSPNJT3HoyhPAToZF0VwjmjSfbNnE9J4OabsQDXLdVn
+IXvocYHAREow9u2RS9fSulTfnxjOEnZuiR125eLgdTlIoCJ4Eug6nfbmf8g2BV8A
+vO+nMTKBWCgjQJ11b9xfr7GE6/CcYcAVO8IjF2z8/SR/gPaZ1d7AGOSElvcIL++K
+Qk79SOjaOGbk5k506yIp0jbO4FaNWb/hCzdsOB3SNVPTm/ScjZy+I1Ybdqh1LKeU
+WC8KFrWRkElgnsWEtOLZG8yFuhHquZ9GEXdlYvspX0FdoHlmnuP9e5drvBGQzuLr
+EPmvN/kVCkGu64VCEZAoYKdGGQmRobuHn0nOpv0O9etukE4+Ltb49cF5rPSyTfpo
+jSQlLemqrg6NRqGqM+Sf/dNrH6WTGLFoUFdoP7f4KcnimYPTbPM34ECJSRMwrqvP
+inthq1oUzwzg5FhQeYBKqM/aYmFiOcgi58uyNa9qLuhTM5Gwt21EglIjmG6DEnOh
+kVN3c+FwEzlPAvYYZXMAFfikQx1TAx4h2V55fU1RcroX6n+B/GUJzAe5oK+RDkD2
+B0J1Uvyr5n5AKaY04oUJ
+=YM/8
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Dec_2011_09_43_59_+1100_FxRis1B9ok=mpCze--
+--Signature=_Mon__19_Dec_2011_10_55_37_+1100_b34nRw1.ea/V2h5I--
