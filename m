@@ -1,94 +1,66 @@
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Subject: Re: linux-next: strange commit in the uprobes tree
-Date: Sun, 18 Dec 2011 12:11:46 +0530
-Message-ID: <20111218064146.GN8575@linux.vnet.ibm.com>
-References: <20111217182811.ead5e91706f5198f7d7f5560@canb.auug.org.au>
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next tree for s390 and cputime
+Date: Mon, 19 Dec 2011 09:36:59 +1100
+Message-ID: <20111219093659.104c96f11065a0d09eee4883@canb.auug.org.au>
+References: <20111216133712.56957b33@de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__19_Dec_2011_09_36_59_+1100_q9roVFCs.HERUTc9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e7.ny.us.ibm.com ([32.97.182.137]:50286 "EHLO e7.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750833Ab1LRGqM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 18 Dec 2011 01:46:12 -0500
-Received: from /spool/local
-	by e7.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-	Sun, 18 Dec 2011 01:46:12 -0500
-Content-Disposition: inline
-In-Reply-To: <20111217182811.ead5e91706f5198f7d7f5560@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:51083 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751968Ab1LRWhI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Dec 2011 17:37:08 -0500
+In-Reply-To: <20111216133712.56957b33@de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux-next@vger.kernel.org
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [2011-12-17 18:28:11]:
+--Signature=_Mon__19_Dec_2011_09_36_59_+1100_q9roVFCs.HERUTc9
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Srikar,
-> 
-> I just fetched the uprobes tree and noticed that commit 05f7cebbdbc8
-> ("rcu: Introduce bulk reference count") has no patch, just a commit
-> message.   In the previous version of your tree, the commit had Paul as
-> author and now has you (which is what brought it to my attention), but
-> the lack of patch is more interesting ... I do notice that there is
-> another patch from Paul ("rcu: Introduce raw SRCU read-side primitives")
-> and was wondering if that replaces the above patch.
-> 
+Hi Martin,
 
-Thanks Stephen for reporting this.  yes, the patch from Paul replaces
-the empty commit that you see.  After I cherry-picked the 3 commits from
-the -tip tree, I had pushed my existing patches that had older Paul's
-bulkref patch (removed the changes as part of merge; thats why it shows
-my name in author for the faulty commit;) I should have removed the
-commit. 
+On Fri, 16 Dec 2011 13:37:12 +0100 Martin Schwidefsky <schwidefsky@de.ibm.c=
+om> wrote:
+>
+> we completed the move of the s390 tree from marist.edu to kernel.org.
+> Please update the git pull for linux-next of the s390 and the cputime
+> tree to use the following two new locations:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git features
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git cputime
 
-Sorry for the inconvienience.
+I have switched to using those now.
 
-git log --oneline -n 16 output  as reported by you.
------------------------------
-6a80f33 perf: perf interface for uprobes
-6bb498e perf: rename target_module to target
-73cf3b4 tracing: uprobes trace_event interface
-b0c3265 tracing: Extract out common code for kprobes/uprobes traceevents.
-bdc41f9 tracing: modify is_delete, is_return from ints to bool.
-10b7939 uprobes: counter to optimize probe hits.
-e7ff3d7 uprobes: slot allocation.
-6866510 uprobes: handle breakpoint and signal step exception.
-8f5ef11 uprobes: Install and remove breakpoints.
-05f7ceb rcu: Introduce bulk reference count
-	^^^^ faulty commit.
-18fe9f4 x86: Call do_notify_resume() with interrupts enabled
-557824a x86: Clean up and extend do_int3()
-e73ddde rcu: Introduce raw SRCU read-side primitives
-	^^^^ 3 commits cherry-picked from -tip including the
-	superseeding patch from Paul.
-dc47ce9 Linux 3.2-rc5
-8def5f5 Merge git://git.samba.org/sfrench/cifs-2.6
-a776878 Merge branch 'x86-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Mon__19_Dec_2011_09_36_59_+1100_q9roVFCs.HERUTc9
+Content-Type: application/pgp-signature
 
-new git log --oneline -n 16 output after making the correction
---------------------------------------------------------------
-1b46788 perf: perf interface for uprobes
-9b6b4a2 perf: rename target_module to target
-ceeb93e tracing: uprobes trace_event interface
-fa05b8b tracing: Extract out common code for kprobes/uprobes traceevents.
-1a355a5 tracing: modify is_delete, is_return from ints to bool.
-3f563d4 uprobes: counter to optimize probe hits.
-59c919d uprobes: slot allocation.
-599b83b uprobes: handle breakpoint and signal step exception.
-70b8389 uprobes: Install and remove breakpoints.
-18fe9f4 x86: Call do_notify_resume() with interrupts enabled
-557824a x86: Clean up and extend do_int3()
-e73ddde rcu: Introduce raw SRCU read-side primitives
-dc47ce9 Linux 3.2-rc5
-8def5f5 Merge git://git.samba.org/sfrench/cifs-2.6
-a776878 Merge branch 'x86-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-e2f4e0b Merge branch 'spi/for-3.2' of git://git.pengutronix.de/git/wsa/linux-2.6
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
+iQIcBAEBCAAGBQJO7msLAAoJEECxmPOUX5FEinwP/3HlGskQmsxzmb/qil98pj4t
+ErFOL3Z2Mby1VLq1/hVciKzj3nM5P0aGlUrqJRBF8u/3KgruhrI3JqMLbdCj4Ezp
+Bvte3ajUfrLG0HXo2I8qEE3vgX6bgKOC7XhGc8+TrYt3+Z+BcF7G9XI1mjvqpOvm
+RIQbyHQZS93R3eis5CQQILHzXG+dzeYni+ZLonFVPKQkQfZCieiUMykFmiIjNXkT
+G4TruhdQWlKq1f0LqDqpqpVts2smu/ZdvTeGh7zl2LoP1EAbeRkX9KKHq1njARAQ
+hhsW0tlBTqY2ZJN3U7Nh0PgcPBPUhjNakywh6wa7SxRr4WykISNHXT79jbf8+zxQ
+Xw1vH8RwwQdL37qcwW2e6t9mlvzjkx/dbDnCJ1lkpXYNxBGEFPPxG17QSxbHzfg+
+uav4/SpzacS1zEpc7o8ljJ5UrAB3R00WMG7xH5jpB3/2QyGE9Xco1t4a4s4H7f08
+hi4Si62od0u0ee870WZCsrIK+/frMKSUDFfOCpmEX2P+Yb6Al2ulTbqVXdBDxXUn
+9uqwV/G1Jsgunrli881Jy4t2vy5DejYqiY0nxYTpv1qYyYkfv9XZ3F+5GpZIU8Rh
+zaTO6IHmULvnAvSR+izYjljKEuWyaL60hEh5TjWE3YMhx+6Dae+hkuFFUkwdIHNk
+9+ofjfptlFvtIC4k40Wr
+=fDz7
+-----END PGP SIGNATURE-----
 
-I have pushed in the change to for-next branch.
-
--- 
-Thanks and Regards
-Srikar
+--Signature=_Mon__19_Dec_2011_09_36_59_+1100_q9roVFCs.HERUTc9--
