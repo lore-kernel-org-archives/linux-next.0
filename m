@@ -1,76 +1,125 @@
-From: Glauber Costa <glommer@parallels.com>
-Subject: Re: linux-next: manual merge of the tip tree with the cputime tree
-Date: Mon, 19 Dec 2011 17:43:23 +0400
-Message-ID: <4EEF3F7B.9080405@parallels.com>
-References: <20111219154010.c2044c038a6174dd8fb6f477@canb.auug.org.au> <20111219080813.GB30432@elte.hu> <20111219101134.3c2c0db5@de.ibm.com> <20111219103513.GA17928@elte.hu> <20111219133151.4d14af80@de.ibm.com>
+From: "Dr. William Cole" <WilliamCole@yahoo.com>
+Subject: LET US WORK TOGETHER
+Date: Mon, 19 Dec 2011 05:39:57 -0800
+Message-ID: <20111219133946.C42764B008B__24987.9743707881$1324302725$gmane$org@tupu.netikka.net>
+Reply-To: <cole.william2010@yahoo.es>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+	boundary="----=_NextPart_000_0026_01C2A9A6.2A89A7C6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.parallels.com ([64.131.90.16]:45313 "EHLO mx2.parallels.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752407Ab1LSNoK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 Dec 2011 08:44:10 -0500
-In-Reply-To: <20111219133151.4d14af80@de.ibm.com>
+Received: from mbox2.netikka.net ([213.250.81.203]:52070 "EHLO
+	mbox2.netikka.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752739Ab1LSNvx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 08:51:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 12/19/2011 04:31 PM, Martin Schwidefsky wrote:
-> On Mon, 19 Dec 2011 11:35:13 +0100
-> Ingo Molnar<mingo@elte.hu>  wrote:
->
->>
->> * Martin Schwidefsky<schwidefsky@de.ibm.com>  wrote:
->>
->>> On Mon, 19 Dec 2011 09:08:13 +0100
->>> Ingo Molnar<mingo@elte.hu>  wrote:
->>>
->>>>
->>>> * Stephen Rothwell<sfr@canb.auug.org.au>  wrote:
->>>>
->>>>> Hi all,
->>>>>
->>>>> Today's linux-next merge of the tip tree got a conflict in
->>>>> fs/proc/uptime.c between commit c3e0ef9a298e ("[S390] fix cputime
->>>>> overflow in uptime_proc_show") from the cputime tree and commit
->>>>> 3292beb340c7 ("sched/accounting: Change cpustat fields to an array") from
->>>>> the tip tree.
->>>>>
->>>>> I fixed it up (I think - see below) and can carry the fix as necessary.
->>>>>
->>>>> Generally, you guys seem to be working a little at cross purposes ...
->>>>
->>>> Agreed.
->>>>
->>>> Martin, could you please send Peter and me a pull request of the
->>>> current cputime bits merged on top of tip:sched/core? Those bits
->>>> should go upstream via the scheduler tree.
->>>>
->>>
->>> All of it including "[S390] cputime: add sparse checking and
->>> cleanup" or just the fix for uptime ?
->>
->> I suspect we can take it all if it's all scheduling/time
->> related, and add new patches to sched/core to keep it all
->> concentrated in a single tree?
->
-> Ok, will do. Just one question: are you sure that you want the cpustat array
-> to be u64 instead of cputime64_t? The content of the cpustat array is defined
-> by the architecture semantics of cputime64_t, for CONFIG_VIRT_CPU_ACCOUNTING=y
-> this is not a jiffy counter. If the array is u64 we won't get the sparse
-> checking when reading from cpustat.
->
+This is a multi-part message in MIME format.
 
- From where I stand, all I care about is for it to be an array. 
-Otherwise the cgroup code get quite messy. At the time, and discussing 
-this with peterz, it made sense to change it to u64.
+------=_NextPart_000_0026_01C2A9A6.2A89A7C6
+Content-Type: text/plain;
+	charset="big5"
+Content-Transfer-Encoding: 7bit
 
-If my mind doesn't fail me, the main reason being it cputime64 is u64 
-everywhere, and it was just preventing us from doing simple assignments,
-like cpustat[idx] += tmp.
+To ensure that you get this message
+I have attached a file to this mail. 
+Please ensure you read the attached file
+and reply as soon as possible
 
-But if for whatever reason you want to move it back to cputime64_t, and 
-the maintainers agree so,I am fine with that, as long as you don't 
-revert to the old scheme of having a struct filled with fields.
+------=_NextPart_000_0026_01C2A9A6.2A89A7C6
+Content-Type: application/octet-stream;
+	name="LET US WORK TOGETHER.rtf"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="LET US WORK TOGETHER.rtf"
+
+e1xydGYxXGFuc2lcYW5zaWNwZzEyNTJcZGVmZjBcZGVmbGFuZzEwMzN7XGZv
+bnR0Ymx7XGYwXGZzd2lzc1xmcHJxMlxmY2hhcnNldDAgQ2FsaWJyaTt9e1xm
+MVxmc3dpc3NcZmNoYXJzZXQwIEFyaWFsO319DQp7XGNvbG9ydGJsIDtccmVk
+MFxncmVlbjBcYmx1ZTI1NTt9DQp7XCpcZ2VuZXJhdG9yIE1zZnRlZGl0IDUu
+NDEuMjEuMjUwOTt9XHZpZXdraW5kNFx1YzFccGFyZFxzYTIwMFxzbDI3Nlxz
+bG11bHQxXGJcZjBcZnMyMlxwYXINClxiMCBEZWFyIEZyaWVuZCxccGFyDQpc
+cGFyDQpccGFyDQpccGFyDQpccGFyDQpcYlxwYXINClxiMCBNeSBuYW1lIGlz
+IG5hbWUgaXMgRHIuIFdpbGxpYW0gQ29sZSwgYSBCcml0aXNoIG5hdGlvbmFs
+IGFuZCBhbiBpbnZlc3RtZW50IGNvbnN1bHRhbnQgYXR0YWNoZWQgdG8gdGhl
+IExpYnlhbiBpbnZlc3RtZW50IEF1dGhvcml0eSAoTElBKS5ccGFyDQpccGFy
+DQpccGFyDQpccGFyDQpccGFyDQogSSBzdGFydGVkIHdvcmtpbmcgZm9yIHRo
+ZSBMaWJ5YW4gZ292ZXJubWVudCB1bmRlciB0aGUgbGVhZGVyc2hpcCBvZiBN
+dWFtbWFyIE11aGFtbWFkIGFsLUdhZGRhZmkgc2luY2UgdGhlIGJlZ2lubmlu
+ZyBvZiAyMDAwIGFuZCBoYXZlIGFycmFuZ2VkIHNvIG1hbnkgZGVhbHMgYmV0
+d2VlbiB0aGUgZ292ZXJubWVudCBhbmQgdGhlIGludGVybmF0aW9uYWwgcGFy
+dG5lcnMgYnV0IGR1ZSB0byB0aGUgb25nb2luZyBjcmlzaXMgaW4gdGhlIGNv
+dW50cnkgSSBkZWNpZGVkIHRvIHF1aXQgbXkgam9iIGFuZCByZXR1cm4gdG8g
+bXkgaG9tZSBjb3VudHJ5IEVuZ2xhbmQgYmVjYXVzZSBJIGFtIG5vdCBpbiBz
+dXBwb3J0IG9mIHRoZSBMaWJ5YW4gbGVhZGVyIE11YW1tYXIgTXVoYW1tYWQg
+YWwtR2FkZGFmaSBkdWUgdG8gaGlzIGNyYWNrIGRvd24gb24gdGhlIG9wcG9z
+aXRpb24uIFxwYXINClxwYXINClxwYXINClxwYXINClxwYXINClRoZXJlIGFy
+ZSBzb21lIGZ1bmRzIHdoaWNoIEkgd2FzIGRpcmVjdGVkIHRvIG1vdmUgdG8g
+bmVpZ2hib3JpbmcgR2hhbmEgYXQgdGhlIGJlZ2lubmluZyBvZiB0aGUgdXBy
+aXNpbmcgZm9yIGZ1cnRoZXIgdHJhbnNmZXIgdG8gQ2hpbmEgZm9yIHRoZSBw
+dXJjaGFzZSBvZiBhcm1zIHRvIGJlIHVzZWQgaW4gdGhlIG9uZ29pbmcgd2Fy
+IGluIHRoZSBMaWJ5YS4gXHBhcg0KXHBhcg0KXHBhcg0KXHBhcg0KXHBhcg0K
+VGhlIGZ1bmRzIHdoaWNoIEkgc3VjY2VlZGVkIGluIG1vdmluZyB0aHJvdWdo
+IGEgY2xhbmRlc3RpbmUgYXJyYW5nZW1lbnQgdG8gYSBwcml2YXRlIGZpbmFu
+Y2UgY29tcGFueSBpbiBHaGFuYSBpcyBub3cgZGVwb3NpdGVkIHRoZXJlIHdh
+aXRpbmcgZm9yIG15IGZ1cnRoZXIgaW5zdHJ1Y3Rpb24gZm9yIG9ud2FyZCB0
+cmFuc2ZlciB0byBjaGluYSBmb3IgdGhlIHB1cmNoYXNlIG9mIHRoZSBhcm1z
+IGFuZCBhbW11bml0aW9ucyBmcm9tIGFuIGFybXMgbWFudWZhY3R1cmluZyBj
+b21wYW55IGluIENoaW5hIGJ1dCBJIG5vdyBkZWNpZGVkIHRvIGxlYXZlIHRo
+ZSBjb3VudHJ5IHdpdGggdGhlIHdob2xlIGRvY3VtZW50cyByZWxhdGluZyB0
+byB0aGlzIGZ1bmRzIGFzIHRoZSBMaWJ5YW4gbGVhZGVyIE11aGFtbWFkIGFs
+LUdhZGRhZmkgaGFzIGJlZW4gdG9wcGxlZCBhbmQga2lsbGVkIGJ5IHRoZSBy
+ZWJlbCBzLiBccGFyDQpccGFyDQpccGFyDQpccGFyDQpccGFyDQpJIHNhdyB0
+aGlzIGFzIGFuIG9wcG9ydHVuaXR5IHRvIGRpdmVydCB0aGlzIGZ1bmQgZm9y
+IG91ciBwZXJzb25hbCB1c2Ugc2luY2UgSSBoYXZlIHRoZSB3aG9sZSBkb2N1
+bWVudHMgYmVjYXVzZSB0d28gb2YgbXkgY29sbGVhZ3VlcywgdGhlIGRlZmVu
+c2UgY2hpZWYgQWJ1IEJha3IgWXVuaXMgYW5kIEdoYWRhZmlccnF1b3RlIHMg
+c29uIHdobyBhcmUgYXdhcmUgb2YgdGhpcyBkZXBvc2l0IHdlcmUgYWxsIGtp
+bGxlZCB0aGUgcmViZWwgZm9yY2VzIHRvZ2V0aGVyIHdpdGggR2hhZGFmaSB3
+aGVuIHRoZWlyIGNvbnZveSB3YXMgYXR0YWNoZWQgYnkgTlRPIHdhciBwbGFu
+ZS4gSSBhbSBjdXJyZW50bHkgaW4gbXkgbmF0aXZlIGNvdW50cnkgRW5nbGFu
+ZCB3YWl0aW5nIGZvciBhIHJlbGlhYmxlIHBhcnRuZXIgb24gd2hvc2UgbmFt
+ZSB0aGlzIGZ1bmQgc2hhbGwgYmUgdHJhbnNmZXJyZWQgc2luY2UgSSBhbSBp
+biBwb3NzZXNzaW9uIG9mIGFsbCB0aGUgZG9jdW1lbnRzLlxwYXINClxwYXIN
+ClxwYXINClxwYXINClxwYXINCiBJIHdpbGwgcGVyc29uYWxseSBmYWNpbGl0
+YXRlIHRoZSByZWxlYXNlIG9mIHRoaXMgZnVuZCBhbmQgaGF2ZSBpdCBtb3Zl
+ZCB0byB5b3VyIG5vbWluYXRlZCBhY2NvdW50IGFueXdoZXJlIGFyb3VuZCB0
+aGUgZ2xvYmUuIFxwYXINClxwYXINClxwYXINClxwYXINClxwYXINCkkgd2ls
+bCBiZSBhYmxlIHRvIGRvIHRoaXMgYmVjYXVzZSBJIHdhcyB0aGUgb25lIHRo
+YXQgb3JjaGVzdHJhdGVkIHRoZSBtb3ZlbWVudCBvZiB0aGlzIGZ1bmQgb3V0
+IG9mIExpYnlhIHRvIEdoYW5hIHRoZXJlZm9yZSBpcyBpbiBwb3NzZXNzaW9u
+IG9mIGFsbCB0aGUgcGFwZXJzIHRvIHRoYXQgZWZmZWN0LiBccGFyDQpccGFy
+DQpccGFyDQpccGFyDQpccGFyDQpccGFyDQpccGFyZCBGdXJ0aGVyIGRldGFp
+bHMgc2hhbGwgYmUgZ2l2ZW4gdG8geW91IHVwb24gdGhlIHJlY2VpcHQgb2Yg
+eW91ciBpbnRlcmVzdCB0byB3b3JrIHdpdGggbWUgb24gdGhpcyBwcm9qZWN0
+IHNvIHRoYXQgd2UgY2FuIHN1Y2Nlc3NmdWxseSBtb3ZlIHRoaXMgZnVuZCB0
+byB5b3VyIG5vbWluYXRlZCBhY2NvdW50LlxwYXINClxwYXINClxwYXINClxw
+YXINClxwYXINClxwYXINClxwYXINCiBBbGwgYXJyYW5nZW1lbnQgaGFzIGJl
+ZW4gY29uY2x1ZGVkIGZvciB0aGUgc3VjY2Vzc2Z1bCBjb25jbHVzaW9uIG9m
+IHRoZSByZWxlYXNlL3RyYW5zZmVyIG9mIHRoaXMgZnVuZCBpbiB5b3VyIG5h
+bWUuIFxwYXINClxwYXINClxwYXINClxwYXINClxwYXINClxwYXINCkdvIHRv
+IGh0dHA6Ly9zYWhhcmFyZXBvcnRlcnMuY29tL3ByZXNzLXJlbGVhc2UvbmV3
+LWxlYWtlZC1kb2N1bWVudC1yZXZlYWxzLWhzYmMtaGVsZC0xNGJuLWxpYnlh
+bi1mdW5kcyBccGFyDQpodHRwOi8vd2ViY2FjaGUuZ29vZ2xldXNlcmNvbnRl
+bnQuY29tL3NlYXJjaD9obD1lbiZnc19zbT1zJmdzX3VwbD0xMTYyNTgxbDEx
+NzQ3NDlsMGwxMTc2NjIybDM3bDMxbDFsOGwwbDJsMTE1Mmw0MDk2bDYtMS4z
+bDRsMCZxPWNhY2hlOnNZeGh6RTAxREo4SjpodHRwOi8vd3d3LmJiYy5jby51
+ay9uZXdzL3dvcmxkLWFmcmljYS0xNTM4OTU1MCtiYmMrbmV3cytyZXBvcnRz
+K2RlYXRoK29mK2dhZGRhZmkmY3Q9Y2xuayBccGFyDQpodHRwOi8vd3d3LmJi
+Yy5jby51ay9uZXdzL3dvcmxkLWFmcmljYS0xNTM5MDk4MCAgIGZvciBtb3Jl
+IGRldGFpbHMuXHBhcg0KXHBhcg0KXHBhcg0KXHBhcg0KXHBhcg0KXHBhcg0K
+XHBhcg0KXHBhcg0KUGxlYXNlIHRoaXMgaXMgaGlnaGx5IGNsYXNzaWZpZWQg
+aW5mb3JtYXRpb24gdGhlcmVmb3JlIEkgYWR2aXNlIHRoYXQgeW91IGtlZXAg
+aXQgdG8geW91cnNlbGYuIEkgc2hhbGwgYmUgd2lsbGluZyB0byBtZWV0IHdp
+dGggeW91IGFueXdoZXJlIGluIEV1cm9wZSBvciBwb3NzaWJseSBBZnJpY2Eg
+YnV0IGF0IHRoZSBtb21lbnQgSSBhbSBjdXJyZW50bHkgaW4gbXkgRW5nbGFu
+ZC4gR2V0IGJhY2sgdG8gbWUgb24gdGhpcyBlbWFpbDogXHVsIHcuY29sZTIw
+MDlAaG90bWFpbC5jb21cdWxub25lICBpZiB5b3UgYXJlIGludGVyZXN0ZWQg
+c28gdGhhdCB3ZSBjYW4gcHJvY2VlZC4gIFxwYXINClxwYXINClxwYXINClxw
+YXINClxwYXINClxwYXINCldlIHdpbGwgZGlzY3VzcyB0aGUgc2hhcmluZyBy
+YXRpbyBvbmNlIEkgaGVhciBmcm9tIHlvdSBiZWNhdXNlIHlvdSB3aWxsIHBs
+YXkgYSB2aXRhbCByb2xlIHRvIHRoZSBzdWNjZXNzIG9mIHRoaXMgYnVzaW5l
+c3MuXHBhcg0KUmVnYXJkc1xwYXINCkRyLiBXaWxsaWFtIENvbGVccGFyDQpc
+ZjFcZnMyMFxwYXINCn0NCgA=
+
+------=_NextPart_000_0026_01C2A9A6.2A89A7C6--
