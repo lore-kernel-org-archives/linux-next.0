@@ -1,37 +1,51 @@
-From: Jens Axboe <axboe@kernel.dk>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
 Subject: Re: linux-next: build failure after merge of the block tree
-Date: Mon, 19 Dec 2011 10:37:57 +0100
-Message-ID: <4EEF05F5.3050600@kernel.dk>
+Date: Mon, 19 Dec 2011 10:45:58 +0100
+Message-ID: <CA+icZUWrpTFPhM0cTQgvBPnMqT3zZufcxQ6c6wh7=EtkD4of9w@mail.gmail.com>
 References: <20111219141929.e27fd6b6ac0b9f6ae33f89c7@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:44999 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751063Ab1LSJiD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 04:38:03 -0500
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:41011 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751172Ab1LSJqB convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 04:46:01 -0500
 In-Reply-To: <20111219141929.e27fd6b6ac0b9f6ae33f89c7@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On 2011-12-19 04:19, Stephen Rothwell wrote:
+Just FYI:
+
+- block           git     git://git.kernel.dk/linux-2.6-block.git#for-n=
+ext
++ block           git     git://git.kernel.dk/linux-block.git#for-next
+
+- Sedat -
+
+[1] http://git.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;a=3D=
+blob;f=3DNext/Trees#l130
+[2] http://git.kernel.dk/?p=3Dlinux-block.git;a=3Dshortlog;h=3Drefs/hea=
+ds/for-next
+
+On Mon, Dec 19, 2011 at 4:19 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
 > Hi Jens,
-> 
+>
 > After merging the block tree, today's linux-next build (x86_64
 > allmodconfig) failed like this:
-> 
+>
 > ERROR: "ioc_cgroup_changed" [block/blk-cgroup.ko] undefined!
-> 
+>
 > Caused by commit dc86900e0a8f ("block, cfq: move ioc ioprio/cgroup
 > changed handling to cic").
-> 
+>
 > I have used the block tree from next-20111215 again today.
-
-Missing export, I've fixed it up and pushed out the change. Lets hope
-tomorrows tree is more succesful :-)
-
--- 
-Jens Axboe
+> --
+> Cheers,
+> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
