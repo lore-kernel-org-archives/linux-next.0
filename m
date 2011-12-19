@@ -1,91 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tegra tree with the arm tree
-Date: Mon, 19 Dec 2011 11:14:59 +1100
-Message-ID: <20111219111459.67d611cbd0844bc434597883@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Mon, 19 Dec 2011 12:06:13 +1100
+Message-ID: <20111219120613.2da854bacb6d6686248bb945@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__19_Dec_2011_11_14_59_+1100_Ok9v0t8m6oiiUGU3"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Erik Gilling <konkers@android.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Peter De Schrijver <pdeschrijver@nvidia.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__19_Dec_2011_12_06_13_+1100_zutKDrF56Pn9od9d"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:38993 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752007Ab1LSBGY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Dec 2011 20:06:24 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__19_Dec_2011_11_14_59_+1100_Ok9v0t8m6oiiUGU3
+--Signature=_Mon__19_Dec_2011_12_06_13_+1100_zutKDrF56Pn9od9d
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Al,
 
-Today's linux-next merge of the tegra tree got a conflict in
-arch/arm/mach-tegra/common.c between commit b8a0b3079c03 ("ARM: restart:
-tegra: use new restart hook") from the arm tree and commit c37c07ddf269
-("arm/tegra: prepare early init for multiple tegra variants") from the
-tegra tree.
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+In file included from include/linux/tracehook.h:51:0,
+                 from arch/powerpc/kernel/ptrace.c:25:
+include/linux/security.h: In function 'securityfs_create_dir':
+include/linux/security.h:3003:2: error: implicit declaration of function 'E=
+RR_PTR' [-Werror=3Dimplicit-function-declaration]
+include/linux/security.h:3003:2: error: return makes pointer from integer w=
+ithout a cast [-Werror]
+include/linux/security.h: In function 'securityfs_create_file':
+include/linux/security.h:3012:2: error: return makes pointer from integer w=
+ithout a cast [-Werror]
+In file included from include/linux/fs.h:2283:0,
+                 from include/linux/trace_seq.h:4,
+                 from include/linux/ftrace_event.h:5,
+                 from include/trace/syscall.h:6,
+                 from arch/powerpc/kernel/ptrace.c:32:
+include/linux/err.h: At top level:
+include/linux/err.h:22:35: error: conflicting types for 'ERR_PTR'
+include/linux/security.h:3003:9: note: previous implicit declaration of 'ER=
+R_PTR' was here
+
+And many more similar.
+
+Probably caused by commit 3073cb2e813c ("trim security.h") which
+presumably removed an include file that was including err.h :-(
+
+I have used the vfs tree from next-20111216 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-tegra/common.c
-index 20f396d,8911e62..0000000
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@@ -31,14 -33,26 +33,24 @@@
-  #include "clock.h"
-  #include "fuse.h"
- =20
- -void (*arch_reset)(char mode, const char *cmd) =3D tegra_assert_system_re=
-set;
- -
-+ static const struct of_device_id tegra_dt_irq_match[] __initconst =3D {
-+ 	{ .compatible =3D "arm,cortex-a9-gic", .data =3D gic_of_init },
-+ 	{ }
-+ };
-+=20
-+ void __init tegra_dt_init_irq(void)
-+ {
-+ 	tegra_init_irq();
-+ 	of_irq_init(tegra_dt_irq_match);
-+ }
-+=20
-  void tegra_assert_system_reset(char mode, const char *cmd)
-  {
-- 	void __iomem *reset =3D IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x04);
-+ 	void __iomem *reset =3D IO_ADDRESS(TEGRA_PMC_BASE + 0);
-  	u32 reg;
- =20
-- 	/* use *_related to avoid spinlock since caches are off */
-  	reg =3D readl_relaxed(reset);
-- 	reg |=3D 0x04;
-+ 	reg |=3D 0x10;
-  	writel_relaxed(reg, reset);
-  }
- =20
-
---Signature=_Mon__19_Dec_2011_11_14_59_+1100_Ok9v0t8m6oiiUGU3
+--Signature=_Mon__19_Dec_2011_12_06_13_+1100_zutKDrF56Pn9od9d
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO7oIDAAoJEECxmPOUX5FENdAP/1askjkNGYwiIdp/DVBBi1nG
-VDzvfYuKnIIrSXVbw+p0azRQQAa1WR9ZTpRDa1Get8+BymCWJoGkS+6+zxrYHH0w
-IbQ9G22KvIQNK0wiMbi3P20oZYLncLxSHnKFFbRC8Umd86VYNaXNpD6pbit2WvyO
-y0wAvB4BZlQduR2VDzBhKppehDAZM0pmuNB82B77MgPkCo0NB/4jXtzvHWmjQSxI
-YoB81TgoAqlFzszThuPr2j4DtRxmvYHfccM66kA3n0Bt5oY8pfSXUQRWlBJJPvQ/
-G1J90iyqc5b97hG0868zjzlwP7szFSgWvBOiaL+49EYXLjdPt+TQFK/Tt3ssU1jq
-1gcXxglh90wBrhHpd5PrwanV578T3mIHbQkVtevvbKcExf7bGYH23zjK6hHK7pBW
-rgDnHmV2jsAsol59eGHGm2VGolpSagRKEH2Lcuxj91LkIw+I4vJaGFZjSJVVWPjz
-i1PoUEIlEIEjNhU/YP0nVcI6DDiyoGtl1uijrVtrtR4jFSTyn8LqcdPhaKEF+WbZ
-RZsITQSeXKeffVyW5wrcBhGoHKXE/cLrWLhwdPBBUp1+HySEfP5+uix5fyw8lC2C
-dQNRfKV8EwG10C57bmszNqXYrBKfcyhhk9zqyIBDZAG8OeFOzeSL6U4TdwzIoH8n
-HMYigFRwbdTkDxyTBrnX
-=Du3Q
+iQIcBAEBCAAGBQJO7o4FAAoJEECxmPOUX5FEgh8P/1BTsmo9XcTH8iOF5BfW9kWo
+XyVl+GSiUdzrQBNxr0bNYr+DYlRbsJ8rMO3NnhwfNFnMkvxIyNvuAlU2enqafNDH
+xl/WlKoWOm+/yMRqSr+iVHRuiMawxK6/zFptkmibUVXfngPQKHnI18oH7+Sy4Ffm
+92nPBvOiBQnGO2vtQNolo0eKuHQrWepBzCytpu8krBfhCgv2mlDiyYuQvtYysBZq
+Q/rfGkYXFe1a1YnLCM8vp07gmmToODRERS36C1+1ZmkjV8ajPq0qBw+IDWDCTUaL
+BbtVcaqfybVpoek36NNzCuU7ok0rKvL7TTE7H3ZJUeJkw/T9jD4V/gy6FGc6VE5e
+N1B7x3rC/hqM4EjF9pmZP5GDj3nKBubUpnb8HjXHXviiwuu2mAL225SWvKtvyG+N
+ZdzP0nA3aCuhIH8sgYzt7ZWLA7cknl3zvTQBPpd1sR5wbMki/WxZSgoPdv0LI0Yt
+w9kfFu06MnrihJW2iwingc25+vrkbdUdcF/HGBNSoZxAwKIvszo1QyM07UPYJTtr
+dAFclAjLfRJ8uSPIkvYBuxZJ/AU3beNl/8Wu2ZTgYhzn4+XLi+/PPC84fxtIemyf
+UJD7ivSgrhzDDVlyAs/U4RdhwE50rJ32oLfvix6TTLtQx1WWn85XiV0DXOoaFQk/
+CFA4NBRaz/YTxliePaZn
+=kCa0
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Dec_2011_11_14_59_+1100_Ok9v0t8m6oiiUGU3--
+--Signature=_Mon__19_Dec_2011_12_06_13_+1100_zutKDrF56Pn9od9d--
