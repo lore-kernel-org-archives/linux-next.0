@@ -1,42 +1,69 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the tip tree with the cputime tree
-Date: Mon, 19 Dec 2011 12:25:47 +0100
-Message-ID: <20111219112547.GA32375@elte.hu>
-References: <20111219154010.c2044c038a6174dd8fb6f477@canb.auug.org.au>
- <20111219080813.GB30432@elte.hu>
- <20111219101134.3c2c0db5@de.ibm.com>
- <20111219103513.GA17928@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Mon, 19 Dec 2011 22:32:51 +1100
+Message-ID: <20111219223251.b8e821261330831e4861b297@canb.auug.org.au>
+References: <20111219141929.e27fd6b6ac0b9f6ae33f89c7@canb.auug.org.au>
+	<CA+icZUWrpTFPhM0cTQgvBPnMqT3zZufcxQ6c6wh7=EtkD4of9w@mail.gmail.com>
+	<4EEF0856.3040306@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__19_Dec_2011_22_32_51_+1100_d1TGDQCD3brYTt39"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:49435 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752364Ab1LSL1s (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 Dec 2011 06:27:48 -0500
-Content-Disposition: inline
-In-Reply-To: <20111219103513.GA17928@elte.hu>
+Received: from calzone.tip.net.au ([203.10.76.15]:42068 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751840Ab1LSLdF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 06:33:05 -0500
+In-Reply-To: <4EEF0856.3040306@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Glauber Costa <glommer@parallels.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@googlemail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
+--Signature=_Mon__19_Dec_2011_22_32_51_+1100_d1TGDQCD3brYTt39
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Ingo Molnar <mingo@elte.hu> wrote:
+On Mon, 19 Dec 2011 10:48:06 +0100 Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 2011-12-19 10:45, Sedat Dilek wrote:
+> > Just FYI:
+> >=20
+> > - block           git     git://git.kernel.dk/linux-2.6-block.git#for-n=
+ext
+> > + block           git     git://git.kernel.dk/linux-block.git#for-next
+>=20
+> linux-block.git is the one that should be used, however the 2.6 one is
+> just a link to the new one. So old urls work just fine as well, it all
+> goes to the same spot.
 
-> > All of it including "[S390] cputime: add sparse checking and 
-> > cleanup" or just the fix for uptime ?
-> 
-> I suspect we can take it all if it's all scheduling/time 
-> related, and add new patches to sched/core to keep it all 
-> concentrated in a single tree?
+Thanks, guys. I have switched to that now.
 
-Btw., i'd suggest to keep your commits as-is and merge 
-tip:sched/core into your tree - and send the result to me so 
-that we can make that the new sched/core.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-That way your commits are preserved and the conflicts are 
-resolved.
+--Signature=_Mon__19_Dec_2011_22_32_51_+1100_d1TGDQCD3brYTt39
+Content-Type: application/pgp-signature
 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-	Ingo
+iQIcBAEBCAAGBQJO7yDjAAoJEECxmPOUX5FEfbIP/j0IfzR9fr0lrX7xSUSKWITy
+df0m8r/1eQ8zryHvp8oedbaAGLlFXCLazcvH52Pn+L/93/dLN7M249qjX0muzxja
+OAApVJNRjO3eCMHe1j9lO9pzO2z3+Ajp2vo7KstLff08G0IjQMbP/YhoWLUsRhCY
+ttGxarC85aNxRP4qs6fMCdw15b6KoqiP+rDhEo8o0Ex+Mk57Ou4Mqmg7G0iV2J9D
+h3Il1DMfbLA0l/5qbzpmbnFZKRxsr+NN8HUykf/idsWh1mTCDBk1uUI/kqTbMi54
+L2vmMJ7fbs8DO80zqxan2LoRfgYHKkm+928LhqdakKEilSXanVb6d3ZE2ZWBYKFm
+4kpEhJ1oxXW0G72NCkswQPyJzNvrcR+cIZc7/aJJb6qVntg3mSDw8R0SJ7pYXdQi
+RelXDA3pzxvwqPuwPjY/XYHEuua+nhmQ+96B62Q4TMpG+AeAtx2dHDkRz09rPfWL
+S7q6CWXyUYXc9AqElb+UI0K8TVhGRVhktXLZrAPkU8Xo8S7wnsz/g6QwaLyd7EuP
+hXsP2Cmk58HNvSha550y0VVo4ycVIoXRjLl9k+tu8Uh7XtBqjqFJlk5UaLh9i56X
+vTKqYPzdseIpSJHreWLx47siIO6B4KYMYFGNrvSmOr2pSI1YdHsZudOYsEN8eL3d
+bVGJNXyxjf6Pro6hxzuh
+=igWm
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__19_Dec_2011_22_32_51_+1100_d1TGDQCD3brYTt39--
