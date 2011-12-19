@@ -1,75 +1,133 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: manual merge of the tip tree with the cputime tree
-Date: Mon, 19 Dec 2011 13:31:51 +0100
-Message-ID: <20111219133151.4d14af80@de.ibm.com>
-References: <20111219154010.c2044c038a6174dd8fb6f477@canb.auug.org.au>
-	<20111219080813.GB30432@elte.hu>
-	<20111219101134.3c2c0db5@de.ibm.com>
-	<20111219103513.GA17928@elte.hu>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: linux-next: Tree for Dec 16 (usb/gadget/langwell)
+Date: Mon, 19 Dec 2011 15:26:25 +0200
+Message-ID: <20111219132623.GD3146@legolas.emea.dhcp.ti.com>
+References: <20111216170042.650147ec79e792dce950f6e3@canb.auug.org.au>
+ <4EEB98E0.8080002@xenotime.net>
+ <20111216223505.GA14030@legolas.emea.dhcp.ti.com>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/Q7FmPuhIbtiu4EM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp18.uk.ibm.com ([195.75.94.114]:57168 "EHLO
-	e06smtp18.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751866Ab1LSMcM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 07:32:12 -0500
-Received: from /spool/local
-	by e06smtp18.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-	Mon, 19 Dec 2011 12:32:11 -0000
-In-Reply-To: <20111219103513.GA17928@elte.hu>
+Received: from na3sys009aog105.obsmtp.com ([74.125.149.75]:35230 "EHLO
+	na3sys009aog105.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753006Ab1LSN0j (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 Dec 2011 08:26:39 -0500
+Content-Disposition: inline
+In-Reply-To: <20111216223505.GA14030@legolas.emea.dhcp.ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Glauber Costa <glommer@parallels.com>
+To: Felipe Balbi <balbi@ti.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, heikki.krogerus@linux.intel.com
 
-On Mon, 19 Dec 2011 11:35:13 +0100
-Ingo Molnar <mingo@elte.hu> wrote:
 
-> 
-> * Martin Schwidefsky <schwidefsky@de.ibm.com> wrote:
-> 
-> > On Mon, 19 Dec 2011 09:08:13 +0100
-> > Ingo Molnar <mingo@elte.hu> wrote:
-> > 
-> > > 
-> > > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > 
-> > > > Hi all,
-> > > > 
-> > > > Today's linux-next merge of the tip tree got a conflict in
-> > > > fs/proc/uptime.c between commit c3e0ef9a298e ("[S390] fix cputime
-> > > > overflow in uptime_proc_show") from the cputime tree and commit
-> > > > 3292beb340c7 ("sched/accounting: Change cpustat fields to an array") from
-> > > > the tip tree.
-> > > > 
-> > > > I fixed it up (I think - see below) and can carry the fix as necessary.
-> > > > 
-> > > > Generally, you guys seem to be working a little at cross purposes ...
-> > > 
-> > > Agreed.
-> > > 
-> > > Martin, could you please send Peter and me a pull request of the 
-> > > current cputime bits merged on top of tip:sched/core? Those bits 
-> > > should go upstream via the scheduler tree.
-> > > 
-> > 
-> > All of it including "[S390] cputime: add sparse checking and 
-> > cleanup" or just the fix for uptime ?
-> 
-> I suspect we can take it all if it's all scheduling/time 
-> related, and add new patches to sched/core to keep it all 
-> concentrated in a single tree?
+--/Q7FmPuhIbtiu4EM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, will do. Just one question: are you sure that you want the cpustat array
-to be u64 instead of cputime64_t? The content of the cpustat array is defined
-by the architecture semantics of cputime64_t, for CONFIG_VIRT_CPU_ACCOUNTING=y
-this is not a jiffy counter. If the array is u64 we won't get the sparse
-checking when reading from cpustat.
+Hi,
 
--- 
-blue skies,
-   Martin.
+On Sat, Dec 17, 2011 at 12:35:06AM +0200, Felipe Balbi wrote:
+> On Fri, Dec 16, 2011 at 11:15:44AM -0800, Randy Dunlap wrote:
+> > On 12/15/2011 10:00 PM, Stephen Rothwell wrote:
+> > > Hi all,
+> > >=20
+> > > Changes since 20111215:
+> >=20
+> >=20
+> > (not new today; I saw this last week but apparently did not
+> > get around to reporting it)
+> >=20
+> >=20
+> > drivers/usb/gadget/langwell_udc.c: In function 'handle_setup_packet':
+> > drivers/usb/gadget/langwell_udc.c:2321:19: error: 'struct langwell_otg'=
+ has no member named 'otg'
+> > drivers/usb/gadget/langwell_udc.c:2322:15: error: 'struct langwell_otg'=
+ has no member named 'hsm'
+> > drivers/usb/gadget/langwell_udc.c: In function 'handle_usb_reset':
+> > drivers/usb/gadget/langwell_udc.c:2757:16: error: 'struct langwell_otg'=
+ has no member named 'otg'
+> > drivers/usb/gadget/langwell_udc.c:2758:12: error: 'struct langwell_otg'=
+ has no member named 'hsm'
+> > drivers/usb/gadget/langwell_udc.c: In function 'handle_bus_suspend':
+> > drivers/usb/gadget/langwell_udc.c:2774:15: error: 'struct langwell_otg'=
+ has no member named 'otg'
+> > drivers/usb/gadget/langwell_udc.c:2775:16: error: 'struct langwell_otg'=
+ has no member named 'hsm'
+> > drivers/usb/gadget/langwell_udc.c:2776:13: error: 'struct langwell_otg'=
+ has no member named 'hsm'
+> > drivers/usb/gadget/langwell_udc.c:2779:5: error: implicit declaration o=
+f function 'langwell_update_transceiver'
+> > drivers/usb/gadget/langwell_udc.c:2783:12: error: 'struct langwell_otg'=
+ has no member named 'hsm'
+> > drivers/usb/gadget/langwell_udc.c:2785:17: error: 'struct langwell_otg'=
+ has no member named 'hsm'
+> > drivers/usb/gadget/langwell_udc.c:2786:13: error: 'struct langwell_otg'=
+ has no member named 'hsm'
+> > drivers/usb/gadget/langwell_udc.c: In function 'handle_bus_resume':
+> > drivers/usb/gadget/langwell_udc.c:2827:15: error: 'struct langwell_otg'=
+ has no member named 'otg'
+> > drivers/usb/gadget/langwell_udc.c:2828:12: error: 'struct langwell_otg'=
+ has no member named 'hsm'
+> > drivers/usb/gadget/langwell_udc.c: In function 'langwell_udc_probe':
+> > drivers/usb/gadget/langwell_udc.c:3119:2: error: implicit declaration o=
+f function 'otg_to_langwell'
+> > drivers/usb/gadget/langwell_udc.c:3119:12: warning: assignment makes po=
+inter from integer without a cast
+> > drivers/usb/gadget/langwell_udc.c:3120:18: error: 'struct langwell_otg'=
+ has no member named 'regs'
+> > drivers/usb/gadget/langwell_udc.c: In function 'init':
+> > drivers/usb/gadget/langwell_udc.c:3529:2: error: implicit declaration o=
+f function 'langwell_register_peripheral'
+> > drivers/usb/gadget/langwell_udc.c: In function 'cleanup':
+> > drivers/usb/gadget/langwell_udc.c:3540:2: error: implicit declaration o=
+f function 'langwell_unregister_peripheral'
+> > drivers/usb/gadget/langwell_udc.c:3540:2: warning: 'return' with a valu=
+e, in function returning void
+>=20
+> aparently this has never been compiled with CONFIG_USB_LANGWELL_OTG
+> before.
+>=20
+> Xiaochen, please fix that ASAP. Now that I look at it, that driver
+> should have been on staging. It's pretty messed up. Isn't it one of
+> those devices which is based on ChipIdea's core ? I wonder when that
+> consolidation work will get done.
+>=20
+> I expect to see this fixed still on 3.2 series. Also needs a backport to
+> fix older stable kernels. v2.6.31 is the first kernel with that driver
+> available.
+>=20
+> Thanks for the report Randy
 
-"Reality continues to ruin my life." - Calvin.
+Xiaochen Shen <xiaochen.shen@intel.com> doesn't exist anymore. Maybe
+Alex and/or Heikki can take a look at it
+
+--=20
+balbi
+
+--/Q7FmPuhIbtiu4EM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJO7zt/AAoJEIaOsuA1yqREOJQP/15jIpWC7s9Iu0gQUoFAb4U2
+fxWZaqQidNAky1cJGckKHPU8qnwlfawhp9bXR32nUQO/jxW/npYwrw9OafMTc3Eq
+E2+nzCDsDR/WA4C+KTbMQCLkleLQJsIsglSGWd3k1eJKaxBtCXUPYlnN+rr0x/Mm
+nWA5HYASPgVCF0QuLEPm3DmTDrUMCnv2n1qubjh7C74SQOY0bY9ifoLehB84doWa
+NZYpoGtBzsK4UTk8Ss+jwA+B76o2nmrnjxneoZb71fMqX4u9o9ib62dRAF4/5KAl
+4LuRF8y3t4qeuKEPdLRH62YtueulNN372TOzZJm3UjVxEIxgqIddRkFjRNbluvt4
+DRE8hvSs0tqn3yF0QtMKD10eVc+UMl+zzsMQt2blMIrLGmdk0GCnqeI48ak+TjcD
+r0zpW5ehjIrhn+ynCs4iwmASYXECvPokgHRuC+Mg0GTTByA2S9koWXbFX/2/04wz
+PJAAWVj3ve551x2OdQ2R4DTiUt+vbopZvfiT7DswO3BlclQuthlxOJsNeGh9rVRS
+32aeCViLjhMuymFcPCSK2brVKxrxlMPoQMtImtHTFeYrZ+9sCwonk5dBXhpAPGGb
+4ajTm7JtJdjTWq7krj2TqDFFwPZUZ4h4RuDQ3OttZWD+mupFFTmO1X/lGW/4yZxj
+ATk9V+U3//O6YyW6+kSQ
+=fCSy
+-----END PGP SIGNATURE-----
+
+--/Q7FmPuhIbtiu4EM--
