@@ -1,57 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Mon, 19 Dec 2011 14:19:29 +1100
-Message-ID: <20111219141929.e27fd6b6ac0b9f6ae33f89c7@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with the xfs tree
+Date: Mon, 19 Dec 2011 15:11:45 +1100
+Message-ID: <20111219151145.dba82854f65671a877db8ed3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__19_Dec_2011_14_19_29_+1100_U=mnUbijSZNrzGYw"
+ boundary="Signature=_Mon__19_Dec_2011_15_11_45_+1100_6iI2M+Y0xIbf.Qx8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>, Ben Myers <bpm@sgi.com>, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__19_Dec_2011_14_19_29_+1100_U=mnUbijSZNrzGYw
+--Signature=_Mon__19_Dec_2011_15_11_45_+1100_6iI2M+Y0xIbf.Qx8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Rafael,
 
-After merging the block tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the pm tree got a conflict in
+fs/xfs/xfs_buf.c between commit 687d1c5e8e26 ("xfs: remove unused
+XBT_FORCE_SLEEP bit") from the xfs tree and commit a0acae0e886d
+("freezer: unexport refrigerator() and update try_to_freeze() slightly")
+from the pm tree.
 
-ERROR: "ioc_cgroup_changed" [block/blk-cgroup.ko] undefined!
-
-Caused by commit dc86900e0a8f ("block, cfq: move ioc ioprio/cgroup
-changed handling to cic").
-
-I have used the block tree from next-20111215 again today.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__19_Dec_2011_14_19_29_+1100_U=mnUbijSZNrzGYw
+diff --cc fs/xfs/xfs_buf.c
+index f84777e,0188299..0000000
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@@ -1701,8 -1701,12 +1701,8 @@@ xfsbufd
+  		struct list_head tmp;
+  		struct blk_plug plug;
+ =20
+ -		if (unlikely(freezing(current))) {
+ -			set_bit(XBT_FORCE_SLEEP, &target->bt_flags);
+ +		if (unlikely(freezing(current)))
+- 			refrigerator();
++ 			try_to_freeze();
+ -		} else {
+ -			clear_bit(XBT_FORCE_SLEEP, &target->bt_flags);
+ -		}
+ =20
+  		/* sleep for a long time if there is nothing to do. */
+  		if (list_empty(&target->bt_delwri_queue))
+
+--Signature=_Mon__19_Dec_2011_15_11_45_+1100_6iI2M+Y0xIbf.Qx8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO7q1BAAoJEECxmPOUX5FEJLUP/jlWgIID4FEsU5DcZq6PReWN
-69+nyF8zhgFcV9HJ8XgptXIUIvph5opjwOoIdhI4pha4s7wDo5ptJuQXhr0w9DRO
-S1J0uT5k8xjILubmHCRnpS4SseMdteObglUy3GrHQPTXyEx7SXAOKGdGZyu3XjQE
-9Hp1fCZr0eoARZk4Dmph9ucGer+h4Cn6ZPFdnNqnC1wm7b/Dv4gSTgFrGBzJAIxE
-PPWMDlmXdv3Udo6NQTaHoxMI+T8rjADqZtsnSpaNMP4QyvlNh+fbzqi+Yk+mJF2v
-JwELC1OXXXRODfrDJr1SzgJdBSENHSsLoO0zfZSg3f/ruKQe96GdXa0TNS9feY0c
-8Q+ltiP0aQs9UZ/bYZV+r89w6ktr4ZOk3PSTSgF32KmJDV7btM8k8t0PyFXuSg8h
-fKvoJh13RLirzCubDNPJCJlJKTTAyJNWgNVpgUfJ9pMTWoj442L4okGslfvAsKgv
-m3jyzL5oelKr/aFcYCVz2uClFKeW8fp5YW9E+bb55dcN6XuGkPaG6XevLmUgX+y2
-PYkjE8gd+p7xXkDY18WN7fHZpjhjChyRp6Nk1oALGtTiXHXqy1G7CoBua+f8qeYB
-aqnOJZyxnVuhmgKONdNxCvcgo0gGuGpngJtKYqDgfHiRB1EavLAayVTd27GV/Beg
-PX+Jee4jSx9HthWZfjxD
-=lAM4
+iQIcBAEBCAAGBQJO7rmBAAoJEECxmPOUX5FE3hsP/iNa2Xb+aB972p+nubbarcY/
+n8vEBDU4K8DVJG00AxQFxDERiQB3HyCd2EBGZ68BnRzm/bcUIHs0MHca7F5a0s+H
+eV8c6eq38SjEir1/vGrNNK9fXG1/L7rKii/rW0dRKXs6UKHWh6CZlry8ZNfXXyhP
+La/bwBE+INK2KboasTNLYEOyD6nWl5A6ziZ0gLfevM4ujTpHowBrF2tmwzIj/1jY
+Csg6tSpNWewJquez86RqqBH1Z9EzHMJX67jVUOD2DpMj/DnMSSwAc4LqFhM+/znL
+k5W8YURgJChAA6VCoIhHDO4/XgRZbVMFMMr2mRNRojSxJb3lvqMXy78WuOMLDMit
+so9vydZSRGGaeiPLoRs+DQP67f/2Zj+1pPnwq1bIK1ajwcF9Ijy8oe2lEXNdm23q
+1jugNlocBrstsh1ErN0tQh/qR4afVoNAVZpn99nK2EKwInxgYTQrNHtQImolJw7D
+7xigl9RDzvMrOfnGoe99bVGn+ct1sVQKF3724Dy91lf4lHQPdxZwxgXWmOg5PNn/
+p8SCgcmplQLz4MjE+SsVbbAqfCiddcjBMu5K67CtdKsOyCZxzCfAfO3L54ZTz/P1
+07BMoQe4kpXTtQx+HETug5RCGO9QSkjwLdQ5SP12Ykn30EhLRm8j+scnVnJJbG9l
+NBI8nHdkMCQhV0LEsqBO
+=r0dB
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Dec_2011_14_19_29_+1100_U=mnUbijSZNrzGYw--
+--Signature=_Mon__19_Dec_2011_15_11_45_+1100_6iI2M+Y0xIbf.Qx8--
