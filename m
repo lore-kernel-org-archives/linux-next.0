@@ -1,39 +1,65 @@
-From: Shawn Guo <shawn.guo@freescale.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Mon, 19 Dec 2011 09:32:36 +0800
-Message-ID: <20111219013235.GA4962@S2100-06.ap.freescale.net>
-References: <20111219105548.d30839e148800b38bc93d001@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the hid tree
+Date: Mon, 19 Dec 2011 12:34:32 +1100
+Message-ID: <20111219123432.f58b93575c90cdbf62a08fbc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__19_Dec_2011_12_34_32_+1100_KSAUh1eEq33P8Xh0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from am1ehsobe001.messaging.microsoft.com ([213.199.154.204]:12156
-	"EHLO AM1EHSOBE001.bigfish.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752053Ab1LSBTa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 18 Dec 2011 20:19:30 -0500
-Content-Disposition: inline
-In-Reply-To: <20111219105548.d30839e148800b38bc93d001@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:47368 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752102Ab1LSBek (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Dec 2011 20:34:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Russell King <rmk@arm.linux.org.uk>, Richard Zhao <richard.zhao@linaro.org>
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Breeds <tony@bakeyournoodle.com>
 
-On Mon, Dec 19, 2011 at 10:55:48AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-Hi Stephen,
+--Signature=_Mon__19_Dec_2011_12_34_32_+1100_KSAUh1eEq33P8Xh0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/mach-imx/mach-imx6q.c between commit 1237f0f6ecf6 ("ARM: 7198/1:
-> arm/imx6: add restart support for imx6q") from the arm tree and commit
-> 477fce49aef4 ("arm/imx6q-sabrelite: add enet phy ksz9021rn fixup") from
-> the arm-soc tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+Hi Jiri,
 
-It looks all right.  Thanks.
+After merging the hid tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
--- 
-Regards,
-Shawn
+drivers/hid/Kconfig:37: syntax error
+drivers/hid/Kconfig:36: invalid option
+
+Caused by commit 7e69ba7caeb0 ("HID: introduce proper dependency of
+HID_BATTERY on POWER_SUPPLY").
+
+I am sure that this "=3D=3D" v. "=3D" in Kconfig files was discussed last
+week ... :-(
+
+I have used the hid tree from next-20111216 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__19_Dec_2011_12_34_32_+1100_KSAUh1eEq33P8Xh0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO7pSoAAoJEECxmPOUX5FEcs0QAIohxlEAdR4kdYMJIx6q4f9N
+u1T7UKMSYS+ONPg5xlV6chA0FbpNyaFH3u3doMfNDUijq7Zr4CapqR2p7anEcmg0
+XFPwMdGL0qQ3plNXwHaPlNVGjaqiQ1s4+R92FhOTz8+vjh0OsrxJYd5Cd/7jV6IY
+TL905QJEziN2h0N/V/OhlBsPcF270gRj6tBnfNGKMxVWrI9vs0owCc/A6nLRZ6vL
+M/Xo7XdWTYhlI5RvpL8+4scO0k0+eZpvII/TSVXtUbTvm80H8cCdAksxuidPttVV
+kv+CUGuR+WeS42a6BRd84QsRTnKUQZDlOoQtX0SBSE4MYblgBGUCE3au0z4dWQ0B
+7tz7cSxFZr8uDe3675ZFTyKtNkeLtudSYA6pe4UCTiG5dcHmBnBSyPMBcNQsVe5a
+BDyOSGjyg0E74roQaKgqxSJCDNIdfw9+DhbImxhWGZWynT4/VvlWija9Fl4RZ0oH
+VEPfKVWMyD2bPm6SWe9EZSEsn7ZOsaPs3Up7UMuOKvw4Xmpc4482QvF9EWaEakFt
+NOs2ccEYyFgdGoKlqmQtCNDu9nHjju4l5hl4ALZdVBImOvG9bUcR6QIUBwxH9Pil
+zCfcE+gLL0r045bhaWrLKUGpyKVjOpQCzSdg/V81AMGLfqTxjtnHCPF29pvCn50j
+dKAuF/EtCvnj+Jq9N7aT
+=hTWd
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__19_Dec_2011_12_34_32_+1100_KSAUh1eEq33P8Xh0--
