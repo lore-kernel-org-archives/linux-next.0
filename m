@@ -1,65 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the hid tree
-Date: Mon, 19 Dec 2011 12:34:32 +1100
-Message-ID: <20111219123432.f58b93575c90cdbf62a08fbc@canb.auug.org.au>
+Subject: linux-next: manual merge of the l2-mtd tree with Linus' tree
+Date: Mon, 19 Dec 2011 13:57:16 +1100
+Message-ID: <20111219135716.f121c97ba912b6c17ec411a8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__19_Dec_2011_12_34_32_+1100_KSAUh1eEq33P8Xh0"
+ boundary="Signature=_Mon__19_Dec_2011_13_57_16_+1100_VXTx2MJxJ8nZtT9O"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:47368 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:60448 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752102Ab1LSBek (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Dec 2011 20:34:40 -0500
+	with ESMTP id S1752053Ab1LSC52 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Dec 2011 21:57:28 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@jikos.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Breeds <tony@bakeyournoodle.com>
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonas Gorski <jonas.gorski@gmail.com>
 
---Signature=_Mon__19_Dec_2011_12_34_32_+1100_KSAUh1eEq33P8Xh0
+--Signature=_Mon__19_Dec_2011_13_57_16_+1100_VXTx2MJxJ8nZtT9O
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Artem,
 
-After merging the hid tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the l2-mtd tree got a conflict in
+drivers/mtd/maps/bcm963xx-flash.c between commit 4e549d6d4a32 ("MTD:
+MAPS: bcm963xx-flash.c: explicitly include module.h") from Linus' tree
+and commit 573052d2e4a4 ("mtd: maps: remove the now unused
+bcm963xx-flash") from the l2-mtd tree.
 
-drivers/hid/Kconfig:37: syntax error
-drivers/hid/Kconfig:36: invalid option
-
-Caused by commit 7e69ba7caeb0 ("HID: introduce proper dependency of
-HID_BATTERY on POWER_SUPPLY").
-
-I am sure that this "=3D=3D" v. "=3D" in Kconfig files was discussed last
-week ... :-(
-
-I have used the hid tree from next-20111216 for today.
+The latter removes the file, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__19_Dec_2011_12_34_32_+1100_KSAUh1eEq33P8Xh0
+--Signature=_Mon__19_Dec_2011_13_57_16_+1100_VXTx2MJxJ8nZtT9O
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO7pSoAAoJEECxmPOUX5FEcs0QAIohxlEAdR4kdYMJIx6q4f9N
-u1T7UKMSYS+ONPg5xlV6chA0FbpNyaFH3u3doMfNDUijq7Zr4CapqR2p7anEcmg0
-XFPwMdGL0qQ3plNXwHaPlNVGjaqiQ1s4+R92FhOTz8+vjh0OsrxJYd5Cd/7jV6IY
-TL905QJEziN2h0N/V/OhlBsPcF270gRj6tBnfNGKMxVWrI9vs0owCc/A6nLRZ6vL
-M/Xo7XdWTYhlI5RvpL8+4scO0k0+eZpvII/TSVXtUbTvm80H8cCdAksxuidPttVV
-kv+CUGuR+WeS42a6BRd84QsRTnKUQZDlOoQtX0SBSE4MYblgBGUCE3au0z4dWQ0B
-7tz7cSxFZr8uDe3675ZFTyKtNkeLtudSYA6pe4UCTiG5dcHmBnBSyPMBcNQsVe5a
-BDyOSGjyg0E74roQaKgqxSJCDNIdfw9+DhbImxhWGZWynT4/VvlWija9Fl4RZ0oH
-VEPfKVWMyD2bPm6SWe9EZSEsn7ZOsaPs3Up7UMuOKvw4Xmpc4482QvF9EWaEakFt
-NOs2ccEYyFgdGoKlqmQtCNDu9nHjju4l5hl4ALZdVBImOvG9bUcR6QIUBwxH9Pil
-zCfcE+gLL0r045bhaWrLKUGpyKVjOpQCzSdg/V81AMGLfqTxjtnHCPF29pvCn50j
-dKAuF/EtCvnj+Jq9N7aT
-=hTWd
+iQIcBAEBCAAGBQJO7qgMAAoJEECxmPOUX5FELAMP/2DfMDfQfTvJDF+OmS5WjK3i
+U8J8HHHnD33uNAh8SuswkoeMR3VBVQZcGa3gLNXPLSGFmxLP8OvmDuqpUJnr6Cxo
+KVtfCc1gppZeDcAKuLutqp2Uxo/qgpOrK9XHS3bz46GyZPtPkitJAmlaBSiQ/ak0
+8Ze/WqmYYV4oCE65/DuJBaX6n2optvK+9vwWizGeogEIKxW27nRx3eYZK8cB+XHt
+n9nAtN9QEQcnLQ5HXx06bFTZfyhgYCzAGwr/6vHs7Mlr+18K+4yqEhtIJCRm/wW7
+3JNHKQSt/xKr3A4JOHZMk0xzs305ysmh9xf9nEbyvetWcVXK++2YQVDjIOix79TQ
+B2Q/8XmY/CL7CDzjjdy47J17mEHzOFWlIllyDJ06Qj9c0umLLulSFJcgZEdytoZK
+5HXlLriR+K/HrKxe7TPQqvG/ZR1B3vc68f9aOluAlRyZrzgx/6/uo3kzxDZlTTWK
+9jtH519TG6GSsPQnRCYhpbNMcOaWiBiZil1wCvUkG0fQ2q7SQKO8CSejBqxxtKKY
+9ecj+oDCxI9bXW6/p8no1xw9dKOWw0Woa0ct9YuBzONnGG495XZR6yIVxw0KBk/H
+xE3mNsw6OX7t9s7s+4excXV3e7xCsKxUluAXPhkL1iXShOj4UDNof6CagX6j9InT
+6oOjT3hs88RsMLDPcrcZ
+=HJ7X
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Dec_2011_12_34_32_+1100_KSAUh1eEq33P8Xh0--
+--Signature=_Mon__19_Dec_2011_13_57_16_+1100_VXTx2MJxJ8nZtT9O--
