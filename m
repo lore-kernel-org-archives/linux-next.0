@@ -1,74 +1,99 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with the xfs tree
-Date: Mon, 19 Dec 2011 15:11:45 +1100
-Message-ID: <20111219151145.dba82854f65671a877db8ed3@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the cputime tree
+Date: Mon, 19 Dec 2011 15:40:10 +1100
+Message-ID: <20111219154010.c2044c038a6174dd8fb6f477@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__19_Dec_2011_15_11_45_+1100_6iI2M+Y0xIbf.Qx8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Eric Sandeen <sandeen@sandeen.net>, Ben Myers <bpm@sgi.com>, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__19_Dec_2011_15_40_10_+1100_1WPumsYz+XsKIwYm"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:38679 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752146Ab1LSEkV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Dec 2011 23:40:21 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Glauber Costa <glommer@parallels.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
---Signature=_Mon__19_Dec_2011_15_11_45_+1100_6iI2M+Y0xIbf.Qx8
+--Signature=_Mon__19_Dec_2011_15_40_10_+1100_1WPumsYz+XsKIwYm
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi all,
 
-Today's linux-next merge of the pm tree got a conflict in
-fs/xfs/xfs_buf.c between commit 687d1c5e8e26 ("xfs: remove unused
-XBT_FORCE_SLEEP bit") from the xfs tree and commit a0acae0e886d
-("freezer: unexport refrigerator() and update try_to_freeze() slightly")
-from the pm tree.
+Today's linux-next merge of the tip tree got a conflict in
+fs/proc/uptime.c between commit c3e0ef9a298e ("[S390] fix cputime
+overflow in uptime_proc_show") from the cputime tree and commit
+3292beb340c7 ("sched/accounting: Change cpustat fields to an array") from
+the tip tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+I fixed it up (I think - see below) and can carry the fix as necessary.
+
+Generally, you guys seem to be working a little at cross purposes ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/xfs/xfs_buf.c
-index f84777e,0188299..0000000
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@@ -1701,8 -1701,12 +1701,8 @@@ xfsbufd
-  		struct list_head tmp;
-  		struct blk_plug plug;
+diff --cc fs/proc/uptime.c
+index ab51510,0fb22e4..0000000
+--- a/fs/proc/uptime.c
++++ b/fs/proc/uptime.c
+@@@ -6,30 -6,25 +6,29 @@@
+  #include <linux/time.h>
+  #include <linux/kernel_stat.h>
+  #include <asm/cputime.h>
  =20
- -		if (unlikely(freezing(current))) {
- -			set_bit(XBT_FORCE_SLEEP, &target->bt_flags);
- +		if (unlikely(freezing(current)))
-- 			refrigerator();
-+ 			try_to_freeze();
- -		} else {
- -			clear_bit(XBT_FORCE_SLEEP, &target->bt_flags);
- -		}
+  static int uptime_proc_show(struct seq_file *m, void *v)
+  {
+  	struct timespec uptime;
+  	struct timespec idle;
+- 	cputime64_t idletime;
+ +	u64 nsec;
+ +	u32 rem;
+  	int i;
++ 	u64 idletime =3D 0;
  =20
-  		/* sleep for a long time if there is nothing to do. */
-  		if (list_empty(&target->bt_delwri_queue))
+- 	idletime =3D 0;
+  	for_each_possible_cpu(i)
+- 		idletime +=3D kstat_cpu(i).cpustat.idle;
++ 		idletime +=3D kcpustat_cpu(i).cpustat[CPUTIME_IDLE];
+ =20
+  	do_posix_clock_monotonic_gettime(&uptime);
+  	monotonic_to_bootbased(&uptime);
+ -	cputime_to_timespec(idletime, &idle);
+ +	nsec =3D cputime64_to_jiffies64(idletime) * TICK_NSEC;
+ +	idle.tv_sec =3D div_u64_rem(nsec, NSEC_PER_SEC, &rem);
+ +	idle.tv_nsec =3D rem;
+  	seq_printf(m, "%lu.%02lu %lu.%02lu\n",
+  			(unsigned long) uptime.tv_sec,
+  			(uptime.tv_nsec / (NSEC_PER_SEC / 100)),
+  			(unsigned long) idle.tv_sec,
+  			(idle.tv_nsec / (NSEC_PER_SEC / 100)));
+  	return 0;
+  }
+ =20
 
---Signature=_Mon__19_Dec_2011_15_11_45_+1100_6iI2M+Y0xIbf.Qx8
+--Signature=_Mon__19_Dec_2011_15_40_10_+1100_1WPumsYz+XsKIwYm
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO7rmBAAoJEECxmPOUX5FE3hsP/iNa2Xb+aB972p+nubbarcY/
-n8vEBDU4K8DVJG00AxQFxDERiQB3HyCd2EBGZ68BnRzm/bcUIHs0MHca7F5a0s+H
-eV8c6eq38SjEir1/vGrNNK9fXG1/L7rKii/rW0dRKXs6UKHWh6CZlry8ZNfXXyhP
-La/bwBE+INK2KboasTNLYEOyD6nWl5A6ziZ0gLfevM4ujTpHowBrF2tmwzIj/1jY
-Csg6tSpNWewJquez86RqqBH1Z9EzHMJX67jVUOD2DpMj/DnMSSwAc4LqFhM+/znL
-k5W8YURgJChAA6VCoIhHDO4/XgRZbVMFMMr2mRNRojSxJb3lvqMXy78WuOMLDMit
-so9vydZSRGGaeiPLoRs+DQP67f/2Zj+1pPnwq1bIK1ajwcF9Ijy8oe2lEXNdm23q
-1jugNlocBrstsh1ErN0tQh/qR4afVoNAVZpn99nK2EKwInxgYTQrNHtQImolJw7D
-7xigl9RDzvMrOfnGoe99bVGn+ct1sVQKF3724Dy91lf4lHQPdxZwxgXWmOg5PNn/
-p8SCgcmplQLz4MjE+SsVbbAqfCiddcjBMu5K67CtdKsOyCZxzCfAfO3L54ZTz/P1
-07BMoQe4kpXTtQx+HETug5RCGO9QSkjwLdQ5SP12Ykn30EhLRm8j+scnVnJJbG9l
-NBI8nHdkMCQhV0LEsqBO
-=r0dB
+iQIcBAEBCAAGBQJO7sAqAAoJEECxmPOUX5FEN6YQAKg6p3bVuoiJCzYE8IHjOX0a
+i1mkJeGTVArf6CHqbj87BBczXcw8XRH1K3sN5/K7yqfbMz4OfVdsW1FRA2fR3uyH
+u1B7t0lP8h1fzpKJUdamUPJFzrGpOSzOSehuyX5Ob7OHHSOXkbW0eGUwgJXr5fRU
+HKpd5rUnj2Tw/bmusAT1QXjFWGuOtn4g1pHX2+U5FVtTk96EtMPgbTx1PReyT/gA
+yQdi9vs4XG+gJthoHeUlGT7MJ9BCKURWw62cZV1O2eLEaIKfKoFDQvTUug0p6IJo
+c0ZPekqzP4tD2TZW85wbcXVqCFFyzeJ+H12djt9MpgMqMWtIPL123aorHoafFVPT
+TTfukSmjV7hpWb0cFj5Y7PyQWCbrWxbstxzHZuOA9o3LiabFIl/aqOdCDVRpQGbK
+mLp6t28qEA3zkPDrIKEJieE1+Ow9Oh1sVSK9FxBv0Q7n1nUv1bjNvOwzafHwH+zR
+FBs3OE1029JOMj3EaEe0sjsZX1optxz4Ed+XTkeu4lkRi76/TJVh4fntVtmOVW2J
+OaWXsnjC7Ni4hbDBbTZt4iR3n4ov9xKBUWaHgZ5eWcQErQq9ellqP1ySwH9pW7Hh
+Q+j0ge2qb5k68xGOB7+Fl7BchpLG0YoD3dT6SkJ/3w//xkZoF6n+uNfDvSuhiwgT
+rBrJDx2gzPn1PGij7Cmd
+=3Lh9
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Dec_2011_15_11_45_+1100_6iI2M+Y0xIbf.Qx8--
+--Signature=_Mon__19_Dec_2011_15_40_10_+1100_1WPumsYz+XsKIwYm--
