@@ -1,52 +1,39 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: linux-next: manual merge of the tip tree with the cputime tree
-Date: Mon, 19 Dec 2011 15:25:19 +0100
-Message-ID: <20111219152519.252b75eb@de.ibm.com>
+Date: Mon, 19 Dec 2011 17:30:09 +0100
+Message-ID: <20111219163009.GC10017@elte.hu>
 References: <20111219154010.c2044c038a6174dd8fb6f477@canb.auug.org.au>
-	<20111219080813.GB30432@elte.hu>
-	<20111219101134.3c2c0db5@de.ibm.com>
-	<20111219103513.GA17928@elte.hu>
-	<20111219133151.4d14af80@de.ibm.com>
-	<1324303723.24621.1.camel@twins>
+ <20111219080813.GB30432@elte.hu>
+ <20111219101134.3c2c0db5@de.ibm.com>
+ <20111219103513.GA17928@elte.hu>
+ <20111219112547.GA32375@elte.hu>
+ <20111219152409.3a2c213e@de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp10.uk.ibm.com ([195.75.94.106]:35559 "EHLO
-	e06smtp10.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753071Ab1LSOZZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 09:25:25 -0500
-Received: from /spool/local
-	by e06smtp10.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-	Mon, 19 Dec 2011 14:25:24 -0000
-In-Reply-To: <1324303723.24621.1.camel@twins>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Glauber Costa <glommer@parallels.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20111219152409.3a2c213e@de.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Glauber Costa <glommer@parallels.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 19 Dec 2011 15:08:43 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
 
-> On Mon, 2011-12-19 at 13:31 +0100, Martin Schwidefsky wrote:
-> > Just one question: are you sure that you want the cpustat array
-> > to be u64 instead of cputime64_t? The content of the cpustat array is defined
-> > by the architecture semantics of cputime64_t, for CONFIG_VIRT_CPU_ACCOUNTING=y
-> > this is not a jiffy counter. If the array is u64 we won't get the sparse
-> > checking when reading from cpustat. 
+* Martin Schwidefsky <schwidefsky@de.ibm.com> wrote:
+
+> > That way your commits are preserved and the conflicts are 
+> > resolved.
 > 
-> So as Glauber said the reason was that we wanted to use simply
-> operators, and IIRC he wanted to add a few fields that had to be u64.
+> Just did that and pushed out the result on
 > 
-> I'm not sure what the current plans are wrt adding more fields, but with
-> your work cputime_t should again be a simple type and thus regular math
-> operators should work again, right?
+>  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git cputime-tip
 
-Correct.
+Hm, this fails spectacularly on 32-bit x86:
 
--- 
-blue skies,
-   Martin.
+/home/mingo/tip/drivers/cpufreq/cpufreq_ondemand.c: In function 'get_cpu_idle_time_jiffy':
+/home/mingo/tip/drivers/cpufreq/cpufreq_ondemand.c:137: error: expected ';' before ')' token
+/home/mingo/tip/drivers/cpufreq/cpufreq_ondemand.c:137: error: expected statement before ')' token
 
-"Reality continues to ruin my life." - Calvin.
+Thanks,
+
+	Ingo
