@@ -1,52 +1,39 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH] fbdev: matroxfb: Fix compilation after fb_var_screeninfo change
-Date: Tue, 20 Dec 2011 20:00:11 +0100
-Message-ID: <1324407611-6886-1-git-send-email-laurent.pinchart@ideasonboard.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:44681 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751958Ab1LTTAO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 14:00:14 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: linux-next: Tree for Dec 19 (nfc)
+Date: Tue, 20 Dec 2011 12:14:12 -0800
+Message-ID: <4EF0EC94.9050107@xenotime.net>
+References: <20111219185556.f07c1f43e28cfd594aaa5fe0@canb.auug.org.au>	 <4EEFA21B.5010305@xenotime.net> <1324399181.5354.0.camel@sortiz-mobl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1324399181.5354.0.camel@sortiz-mobl>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Samuel Ortiz <samuel-jcdQHdrhKHMdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Commit fb21c2f42879 ("fbdev: Add FOURCC-based format configuration API")
-modified the layout of the fb_var_screeninfo structure. Remove zero
-fields from the static initializers in the matroxfb driver accordingly.
+On 12/20/2011 08:39 AM, Samuel Ortiz wrote:
+> Hi Randy,
+> 
+> On Mon, 2011-12-19 at 12:44 -0800, Randy Dunlap wrote:
+>> On 12/18/2011 11:55 PM, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20111216:
+>>
+>>
+>> (not new today, just not reported earlier)
+> John applied my fix for this one. It should be fixed now.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/video/matrox/matroxfb_base.c  |    1 -
- drivers/video/matrox/matroxfb_crtc2.c |    1 -
- 2 files changed, 0 insertions(+), 2 deletions(-)
+Thanks for the info.
+The build still fails in linux-next 20111220 (today).
+Maybe it's fixed for tomorrow...
 
-diff --git a/drivers/video/matrox/matroxfb_base.c b/drivers/video/matrox/matroxfb_base.c
-index 44bf8d4..401a56e 100644
---- a/drivers/video/matrox/matroxfb_base.c
-+++ b/drivers/video/matrox/matroxfb_base.c
-@@ -147,7 +147,6 @@ static struct fb_var_screeninfo vesafb_defined = {
- 	39721L,48L,16L,33L,10L,
- 	96L,2L,~0,	/* No sync info */
- 	FB_VMODE_NONINTERLACED,
--	0, {0,0,0,0,0}
- };
- 
- 
-diff --git a/drivers/video/matrox/matroxfb_crtc2.c b/drivers/video/matrox/matroxfb_crtc2.c
-index d7112c3..02796a4 100644
---- a/drivers/video/matrox/matroxfb_crtc2.c
-+++ b/drivers/video/matrox/matroxfb_crtc2.c
-@@ -593,7 +593,6 @@ static struct fb_var_screeninfo matroxfb_dh_defined = {
- 		39721L,48L,16L,33L,10L,
- 		96L,2,0,	/* no sync info */
- 		FB_VMODE_NONINTERLACED,
--		0, {0,0,0,0,0}
- };
- 
- static int matroxfb_dh_regit(const struct matrox_fb_info *minfo,
 -- 
-Regards,
-
-Laurent Pinchart
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
