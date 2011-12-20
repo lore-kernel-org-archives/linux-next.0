@@ -1,78 +1,73 @@
-From: "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>
-Subject: Re: linux-next: build failure after merge of the wireless-next tree
-Date: Mon, 19 Dec 2011 19:24:38 -0800
-Message-ID: <CAB=NE6Wm8Np2_BSEZ1V5Cn0p3EL2qQ56aBV5JEGRSZXfwSp78w@mail.gmail.com>
-References: <20111220131802.e3782dfbf8172281a7df5a5c@canb.auug.org.au>
- <CAB=NE6V12m2_u6YGxhmqjNGs9OjdOKFpCAYu5cs_Hezwwk9LLA@mail.gmail.com> <20111220135704.8c87c166d9ac18d4ea308107@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: "Luis R. Rodriguez" <rodrigue@qca.qualcomm.com>
+Subject: [PATCH] ath9k: fix roadkill due to Joe's patch on ath_dbg() changes
+Date: Mon, 19 Dec 2011 19:30:43 -0800
+Message-ID: <1324351843-4115-1-git-send-email-rodrigue@qca.qualcomm.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:38185 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752050Ab1LTDZB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 22:25:01 -0500
-In-Reply-To: <20111220135704.8c87c166d9ac18d4ea308107@canb.auug.org.au>
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:36899 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752521Ab1LTDax (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 22:30:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zefir Kurtisi <zefir.kurtisi@neratec.com>, linux-wireless <linux-wireless@vger.kernel.org>, mcgrof@bombadil.infradead.org
+To: linville@tuxdriver.com
+Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, zefir.kurtisi@neratec.com, "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Mon, Dec 19, 2011 at 6:57 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Luis,
->
-> On Mon, 19 Dec 2011 18:42:02 -0800 "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com> wrote:
->>
->> On Mon, Dec 19, 2011 at 6:18 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> > Hi John,
->> >
->> > After merging the wireless-next tree, today's linux-next build (x86_64
->> > allmodconfig) failed like this:
->> >
->> > drivers/net/wireless/ath/ath9k/dfs.c: In function 'ath9k_postprocess_radar_event':
->> > drivers/net/wireless/ath/ath9k/dfs.c:73:1: error: 'ATH_DBG_ATH_DBG_DFS' undeclared (first use in this function)
->> > drivers/net/wireless/ath/ath9k/dfs.c: In function 'ath9k_dfs_process_phyerr':
->> > drivers/net/wireless/ath/ath9k/dfs.c:166:1: error: 'ATH_DBG_ATH_DBG_DFS' undeclared (first use in this function)
->> >
->> > Caused by commit 29942bc12537 ("ath9k: add DFS radar pulse processing").
->> > ath_dbg prepends ATH_DBG_ to its second argument.
->> >
->> > I have used the wireless-next tree from next-20111219 for today.
->>
->> Odd, gitweb for wireless-next.git shows only one commit to dfs.c, the
->> change that introduced it:
->>
->> http://git.kernel.org/?p=linux/kernel/git/linville/wireless-next.git;a=history;f=drivers/net/wireless/ath/ath9k/dfs.c;h=e4e84a9e62730f3780a7eda6b4b00d535dd1d428;hb=HEAD
->>
->> In that version of the file I see nothing with ATH_DBG_ATH_DBG_DFS. I
->> also do not see it on wireless-testing.
->>
->> mcgrof@tux ~/wireless-testing (git::master)$ git show 29942bc12537 |
->> grep ATH_DBG_ATH_DBG_DFS
->
-> Yeah, see my comment above .. search for ATH_DBG_DFS.
+From: Luis R. Rodriguez <mcgrof@qca.qualcomm.com>
 
-Ah fuck, Joe's patch got in *later* and it did not address changing
-dfs.c. I had raised this as a comment to Joe's patch while we had
-pending patches. It seems this is collateral damage or roadkill.
+Joe changed ath_dbg() to simpify code but while his patch was
+being merged dfs.c was born and as such did not get the change
+Joe envisioned. This fixes that. Test compiled with:
 
-commit d2182b69dcb6a68b1ef6070b2efd094e13dea3f1
-Author: Joe Perches <joe@perches.com>
-Date:   Thu Dec 15 14:55:53 2011 -0800
+ make allmodconfig
 
-    ath: Convert ath_dbg(bar, ATH_DBG_<FOO>, to ath_dbg(bar, FOO
+Cc: Joe Perches <joe@perches.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: John W. Linville <linville@tuxdriver.com>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Luis R. Rodriguez <mcgrof@qca.qualcomm.com>
+---
+ drivers/net/wireless/ath/ath9k/dfs.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-    Add ATH_DBG_ to macros to shorten the uses and
-    reduce the line count.
-
-    Coalesce ath_dbg formats.
-    Add missing spaces to coalesced formats.
-    Add missing newline terminations to ath_dbg formats.
-    Align ath_dbg arguments where appropriate.
-    Standardize ath_dbg formats without periods.
-
-    Signed-off-by: Joe Perches <joe@perches.com>
-    Signed-off-by: John W. Linville <linville@tuxdriver.com>
-
-Sorry for the trouble but the fix is trivial, I'll sumbit shortly.
-
-  Luis
+diff --git a/drivers/net/wireless/ath/ath9k/dfs.c b/drivers/net/wireless/ath/ath9k/dfs.c
+index e4e84a9..f4f56af 100644
+--- a/drivers/net/wireless/ath/ath9k/dfs.c
++++ b/drivers/net/wireless/ath/ath9k/dfs.c
+@@ -66,7 +66,7 @@ ath9k_postprocess_radar_event(struct ath_softc *sc,
+ 	u8 rssi;
+ 	u16 dur;
+ 
+-	ath_dbg(ath9k_hw_common(sc->sc_ah), ATH_DBG_DFS,
++	ath_dbg(ath9k_hw_common(sc->sc_ah), DFS,
+ 		"pulse_bw_info=0x%x, pri,ext len/rssi=(%u/%u, %u/%u)\n",
+ 		are->pulse_bw_info,
+ 		are->pulse_length_pri, are->rssi,
+@@ -161,7 +161,7 @@ void ath9k_dfs_process_phyerr(struct ath_softc *sc, void *data,
+ 
+ 	if ((!(rs->rs_phyerr != ATH9K_PHYERR_RADAR)) &&
+ 	    (!(rs->rs_phyerr != ATH9K_PHYERR_FALSE_RADAR_EXT))) {
+-		ath_dbg(common, ATH_DBG_DFS,
++		ath_dbg(common, DFS,
+ 			"Error: rs_phyer=0x%x not a radar error\n",
+ 			rs->rs_phyerr);
+ 		return;
+@@ -190,7 +190,7 @@ void ath9k_dfs_process_phyerr(struct ath_softc *sc, void *data,
+ 	ard.pulse_length_ext = vdata_end[-2];
+ 	ard.pulse_length_pri = vdata_end[-3];
+ 
+-	ath_dbg(common, ATH_DBG_DFS,
++	ath_dbg(common, DFS,
+ 		"bw_info=%d, length_pri=%d, length_ext=%d, "
+ 		"rssi_pri=%d, rssi_ext=%d\n",
+ 		ard.pulse_bw_info, ard.pulse_length_pri, ard.pulse_length_ext,
+@@ -200,7 +200,7 @@ void ath9k_dfs_process_phyerr(struct ath_softc *sc, void *data,
+ 	drp.ts = mactime;
+ 	if (ath9k_postprocess_radar_event(sc, &ard, &drp)) {
+ 		static u64 last_ts;
+-		ath_dbg(common, ATH_DBG_DFS,
++		ath_dbg(common, DFS,
+ 			"ath9k_dfs_process_phyerr: channel=%d, ts=%llu, "
+ 			"width=%d, rssi=%d, delta_ts=%llu\n",
+ 			drp.freq, drp.ts, drp.width, drp.rssi, drp.ts-last_ts);
+-- 
+1.7.4.15.g7811d
