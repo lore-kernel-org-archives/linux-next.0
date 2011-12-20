@@ -1,38 +1,89 @@
-From: Konrad Rzeszutek Wilk <konrad@darnok.org>
-Subject: Re: [Xen-devel] linux-next: Tree for Dec 19 (xen)
-Date: Mon, 19 Dec 2011 16:47:57 -0400
-Message-ID: <20111219204757.GB29852@andromeda.dapyr.net>
-References: <20111219185556.f07c1f43e28cfd594aaa5fe0@canb.auug.org.au>
-	<4EEF9F44.8080707@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Tue, 20 Dec 2011 11:31:12 +1100
+Message-ID: <20111220113112.7db5cb344aa1f7fc33734cc8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <virtualization-bounces@lists.linux-foundation.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__20_Dec_2011_11_31_12_+1100_nD=0XLQ1PYwJ2XkW"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:42471 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753044Ab1LTAbW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 19:31:22 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Tue__20_Dec_2011_11_31_12_+1100_nD=0XLQ1PYwJ2XkW
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <4EEF9F44.8080707@xenotime.net>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
-List-Post: <mailto:virtualization@lists.linux-foundation.org>
-List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
-Sender: virtualization-bounces@lists.linux-foundation.org
-Errors-To: virtualization-bounces@lists.linux-foundation.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jeremy Fitzhardinge <jeremy@goop.org>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, LKML <linux-kernel@vger.kernel.org>, Linux Virtualization <virtualization@lists.linux-foundation.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 19, 2011 at 12:32:04PM -0800, Randy Dunlap wrote:
-> On 12/18/2011 11:55 PM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20111216:
-> 
-> 
-> drivers/xen/xenbus/xenbus_dev_frontend.c: In function 'xenbus_init':
-> drivers/xen/xenbus/xenbus_dev_frontend.c:609:2: error: implicit declaration of function 'xen_domain'
-> 
-> Full randconfig file is attached.
+Hi Al,
 
-Fixed. Thx!
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+In file included from ipc/util.c:28:0:
+include/linux/security.h: In function 'security_real_capable':
+include/linux/security.h:1885:2: error: implicit declaration of function '_=
+_task_cred' [-Werror=3Dimplicit-function-declaration]
+include/linux/security.h:1885:2: warning: passing argument 2 of 'cap_capabl=
+e' makes pointer from integer without a cast [enabled by default]
+include/linux/security.h:69:12: note: expected 'const struct cred *' but ar=
+gument is of type 'int'
+include/linux/security.h: In function 'security_real_capable_noaudit':
+include/linux/security.h:1897:11: warning: passing argument 2 of 'cap_capab=
+le' makes pointer from integer without a cast [enabled by default]
+include/linux/security.h:69:12: note: expected 'const struct cred *' but ar=
+gument is of type 'int'
+In file included from kernel/groups.c:7:0:
+
+So security.h needs to include linux/cred.h ...
+
+include/linux/security.h: In function 'security_real_capable':
+include/linux/security.h:1885:25: error: dereferencing pointer to incomplet=
+e type
+include/linux/security.h:1885:25: error: dereferencing pointer to incomplet=
+e type
+include/linux/security.h:1885:25: error: dereferencing pointer to incomplet=
+e type
+include/linux/security.h:1885:25: error: dereferencing pointer to incomplet=
+e type
+include/linux/security.h:1885:25: error: dereferencing pointer to incomplet=
+e type
+
+And linux/cred.h needs to include linux/sched.h :-(
+
+Caused by commit ae1a442f9d95 ("trim security.h").
+
+I have used the vfs tree form next-20111216 again today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__20_Dec_2011_11_31_12_+1100_nD=0XLQ1PYwJ2XkW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO79dQAAoJEECxmPOUX5FECy8P/2DU1Koku2Iet7DXxjdDsUP0
+r8Vuu95CXCahj2iFC9SmKEIUHkFOFSL0wAhIB4PMzs7ZKkLkE9lDNN8v04i7Rkqf
+0A5ms3lShf/UxLZmaiaeJvTcbl3w8aSAWvBgfcojXzpee7dqfZtrSok3Iey5b6cT
+4BMGCOU2+40T8SWe3/nZpOzdxyyPsWQFPDzxSDKUdzSQs/hc7Xl/937/gJinUwXw
+JJsEmtPlcXj7eb7s7UvgIF85698avJwfnl8B6uhp/1gi/1imdkx1olkRqclIr6sp
+fFLrwTqfZBuJrdVwIY0JGu1JKaoxLpclHUWXpXJhES4BuJ4g1bijiEMVa6BKOMnY
+AwVfBxg9u2wwztqfNIj8lLwMAcLelgQXzvsPJyzzAoNJg9f1tkUp1TGruGye0GUv
+zzSCCUiZX8h2eeHvgDFLoXChbJbsEybo9Oi41jdP7ndEvAdsUIESTIg0Zv5AJDBd
+3F1/yoiVRiXWXC7A8GYnifQe9tUow1FT3+eWEmsjKXNOE850JRJygeMv1Bve7jOI
+KjcVjhEGCRrXKQPxooknEB1Q0qxnizT7MF5R1mA1uhFqT2PySSermbfj9Exg7/Py
+zLTwlX3Z+W12BlumfWP4+AKA7gio9V/VJ65Ly0Nx7YOpmepEjMhBuCTKCdwqFF/8
+HYX0Jt9aM/danBjpdVgB
+=JpmC
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__20_Dec_2011_11_31_12_+1100_nD=0XLQ1PYwJ2XkW--
