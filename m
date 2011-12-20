@@ -1,75 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the fbdev tree
-Date: Tue, 20 Dec 2011 16:32:14 +1100
-Message-ID: <20111220163214.351b13b464c46f506f329b30@canb.auug.org.au>
+Subject: linux-next: manual merge of the cgroup tree with the block tree
+Date: Tue, 20 Dec 2011 17:10:00 +1100
+Message-ID: <20111220171000.e38cee0ea6b9bafc2851ad4b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__20_Dec_2011_16_32_14_+1100_dRa3gys=dCN8KbZf"
+ boundary="Signature=_Tue__20_Dec_2011_17_10_00_+1100_.ZvkFtMcCGAKD/D2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:55801 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:54780 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751030Ab1LTFcX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 00:32:23 -0500
+	with ESMTP id S1751850Ab1LTGKJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 01:10:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
 
---Signature=_Tue__20_Dec_2011_16_32_14_+1100_dRa3gys=dCN8KbZf
+--Signature=_Tue__20_Dec_2011_17_10_00_+1100_.ZvkFtMcCGAKD/D2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Tejun,
 
-After merging the fbdev tree, today's linux-next build (powerpc ppc64_defco=
-nfig)
-produced this warning:
+Today's linux-next merge of the cgroup tree got a conflict in
+block/blk-cgroup.c between commit 6e736be7f282 ("block: make ioc get/put
+interface more conventional and fix race on alloction") from the block
+tree and commit bb9d97b6dffa ("cgroup: don't use subsys->can_attach_task
+() or ->attach_task()") from the cgroup tree.
 
-drivers/video/matrox/matroxfb_base.c:150:2: warning: braces around scalar i=
-nitializer [enabled by default]
-drivers/video/matrox/matroxfb_base.c:150:2: warning: (near initialization f=
-or 'vesafb_defined.colorspace') [enabled by default]
-drivers/video/matrox/matroxfb_base.c:150:2: warning: excess elements in sca=
-lar initializer [enabled by default]
-drivers/video/matrox/matroxfb_base.c:150:2: warning: (near initialization f=
-or 'vesafb_defined.colorspace') [enabled by default]
-drivers/video/matrox/matroxfb_crtc2.c:596:3: warning: braces around scalar =
-initializer [enabled by default]
-drivers/video/matrox/matroxfb_crtc2.c:596:3: warning: (near initialization =
-for 'matroxfb_dh_defined.colorspace') [enabled by default]
-drivers/video/matrox/matroxfb_crtc2.c:596:3: warning: excess elements in sc=
-alar initializer [enabled by default]
-drivers/video/matrox/matroxfb_crtc2.c:596:3: warning: (near initialization =
-for 'matroxfb_dh_defined.colorspace') [enabled by default]
-
-Introduced by commit fb21c2f42879 ("fbdev: Add FOURCC-based format
-configuration API").
+I guessed about fixing it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__20_Dec_2011_16_32_14_+1100_dRa3gys=dCN8KbZf
+diff --cc block/blk-cgroup.c
+index 2788693,b8c143d..0000000
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@@ -1641,15 -1648,18 +1648,19 @@@ static int blkiocg_can_attach(struct cg
+  	return ret;
+  }
+ =20
+- static void blkiocg_attach_task(struct cgroup *cgrp, struct task_struct *=
+tsk)
++ static void blkiocg_attach(struct cgroup_subsys *ss, struct cgroup *cgrp,
++ 			   struct cgroup_taskset *tset)
+  {
++ 	struct task_struct *task;
+  	struct io_context *ioc;
+ =20
+- 	/* we don't lose anything even if ioc allocation fails */
+- 	ioc =3D get_task_io_context(tsk, GFP_ATOMIC, NUMA_NO_NODE);
+- 	if (ioc) {
+- 		ioc_cgroup_changed(ioc);
+- 		put_io_context(ioc, NULL);
++ 	cgroup_taskset_for_each(task, cgrp, tset) {
+ -		task_lock(task);
+ -		ioc =3D task->io_context;
+ -		if (ioc)
+ -			ioc->cgroup_changed =3D 1;
+ -		task_unlock(task);
+++		/* we don't lose anything even if ioc allocation fails */
+++		ioc =3D get_task_io_context(task, GFP_ATOMIC, NUMA_NO_NODE);
+++		if (ioc) {
+++			ioc_cgroup_changed(ioc);
+++			put_io_context(ioc, NULL);
+++		}
+  	}
+  }
+ =20
+
+--Signature=_Tue__20_Dec_2011_17_10_00_+1100_.ZvkFtMcCGAKD/D2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO8B3eAAoJEECxmPOUX5FEvqkP/R8ANSkaz3Lb7RAbs0chnNQD
-rXyjbarmgGC0QBKal8392nS2Vkj6Z4/VQ7nj7ArXC5I74sw2r+8cbEcrkJx7QFy0
-r5JlTEPCMPY6HN87yuBg/JRARym/bJGzlffD+qPnerq6noh7a7fj1ONANWjNGJZz
-hirp+EwGjx7+EvPkWKeU8pqn8fjF0tXdKeuKG5Bdwfa8tSy0Jwj2XQmu2ptC/NTW
-Ilt0lYN9XCxTvifJCdzw314wbwL73nM72lMLFB4Ixs04nUv9i/W+BwcCxeoy+r/8
-KmRI3ITYVbPAxyBIuyQCvGY5Oi8ALpSHQLZ4//kMBTgvM0BJbLwFFfFFJhzNoQiK
-4pgFcFSELYQEhlA5KUeh9bWvuW8h56zVrWKF7EKNH+2+Lcq9B6dEo5PFnmPAmjAK
-9mvmp2v4piMUv+/Y3XI/OwKIUGNzRUd3xiEKclWIhHasBuNRwNiU4bG4F+ZwN2hS
-K5TUHyMK2yjDl+gmecOtizu4jWI+FvDMcG6GJ4aq1BisY+EpoP3CgnaSl07vG1qc
-OISdzjdsGpmPcZ8UxHDHfgWfvSFUR6EP1CHsH0OhPgFjB+sia9UezBUTX0g/7bbt
-UjF9iKE4p3PXfzOPgz4cMBa37UxMT2IFsN1APi4MDU9+OMGqMH3/W9G3O8fC+i/I
-kWAY9vHUykQEvKQDDT2z
-=g6TW
+iQIcBAEBCAAGBQJO8Ca4AAoJEECxmPOUX5FEg34P/R2cF/IrUyyk9YNpEDzj543a
+JXsw3mTT1TTwfT8GSkl2uoZ8q9pqFPPrB8N5vRvIbffavIJUMQvK3qKZpHIrDVv6
+ecQDh/hpIH2pzOd056f1tY9WKTAgPLCloMEpjUa8rs4m0beesVEMYeUxseZ5+MVg
+8oHjpOLeS0ClJ5Q4+YUtHGlX3yieLs4GEF5Y9HOMxzm3Flozxtk5O5eoVn6UGtk2
+PHsOVldI6ZBsuAtIQmHB+p5PBhc8Pk3BP99c5/d7oS/EXvTFq3mBQ4ucuUyFmalR
+dKAXIIhjEvXXvvOu9qYHX3Fz/9pbBnOZQ8iAjO4Ychu/vDbfnr0JynhUtZiNndes
+y+8bv+2GPsQ8167DeFb6jc7Ksxa0QsuDy9bU8GDTiLMXCDhi1eFUdyHztrxBFKRY
+can5qehQcRDpOiypOH90c5i+8SlJpLULzMO4t1nrgnz/BiTDJatEc3+tfxVMPedx
+8ZyOn7UxDW2GYQKzCTSQ4vPrgqOu4QkMfbmQoJCJPfioZyx2QwNpCFKjXEXzCyYF
+w44i+Y23bX626bxdjds0hED4n8rP4445UVllXjVvub20fGUZgWiA2DZMC4+8CCOo
+zsvJ60Ftmc+TWb/VCnkplv2KQ0QepfHrQJGnfXcz8hHSXFn7Kc8GrtIvh3Zy8LKA
+YwcOAQJw4d+nEgwABMNd
+=T1LV
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__20_Dec_2011_16_32_14_+1100_dRa3gys=dCN8KbZf--
+--Signature=_Tue__20_Dec_2011_17_10_00_+1100_.ZvkFtMcCGAKD/D2--
