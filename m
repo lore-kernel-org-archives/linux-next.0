@@ -1,68 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the wireless-next tree
-Date: Tue, 20 Dec 2011 13:18:02 +1100
-Message-ID: <20111220131802.e3782dfbf8172281a7df5a5c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rr tree
+Date: Tue, 20 Dec 2011 13:39:27 +1100
+Message-ID: <20111220133927.f74f564f566166253bcef211@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__20_Dec_2011_13_18_02_+1100__gkaBSMz4Onyt8A_"
+ boundary="Signature=_Tue__20_Dec_2011_13_39_27_+1100_zRWos/X7NBrEtD.4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:57753 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:52328 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752253Ab1LTCSM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 21:18:12 -0500
+	with ESMTP id S1750922Ab1LTCja (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 21:39:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zefir Kurtisi <zefir.kurtisi@neratec.com>, "Luis R. Rodriguez" <mcgrof@qca.qualcomm.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__20_Dec_2011_13_18_02_+1100__gkaBSMz4Onyt8A_
+--Signature=_Tue__20_Dec_2011_13_39_27_+1100_zRWos/X7NBrEtD.4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Rusty,
 
-After merging the wireless-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the rr tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-drivers/net/wireless/ath/ath9k/dfs.c: In function 'ath9k_postprocess_radar_=
-event':
-drivers/net/wireless/ath/ath9k/dfs.c:73:1: error: 'ATH_DBG_ATH_DBG_DFS' und=
-eclared (first use in this function)
-drivers/net/wireless/ath/ath9k/dfs.c: In function 'ath9k_dfs_process_phyerr=
-':
-drivers/net/wireless/ath/ath9k/dfs.c:166:1: error: 'ATH_DBG_ATH_DBG_DFS' un=
-declared (first use in this function)
+drivers/infiniband/hw/ehca/ehca_main.c:68:6: error: conflicting types for '=
+ehca_use_hp_mr'
+drivers/infiniband/hw/ehca/ehca_classes.h:382:12: note: previous declaratio=
+n of 'ehca_use_hp_mr' was here
+drivers/infiniband/hw/ehca/ehca_main.c:71:6: error: conflicting types for '=
+ehca_scaling_code'
+drivers/infiniband/hw/ehca/ehca_classes.h:383:12: note: previous declaratio=
+n of 'ehca_scaling_code' was here
+drivers/pci/hotplug/rpaphp_core.c:40:6: error: conflicting types for 'rpaph=
+p_debug'
+drivers/pci/hotplug/rpaphp.h:49:12: note: previous declaration of 'rpaphp_d=
+ebug' was here
 
-Caused by commit 29942bc12537 ("ath9k: add DFS radar pulse processing").
-ath_dbg prepends ATH_DBG_ to its second argument.
 
-I have used the wireless-next tree from next-20111219 for today.
+Caused by commit 314332ce8f31 ("module_param: make bool parameters really
+bool (drivers & misc)").
+
+I have used the rr tree from next-20111219 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__20_Dec_2011_13_18_02_+1100__gkaBSMz4Onyt8A_
+--Signature=_Tue__20_Dec_2011_13_39_27_+1100_zRWos/X7NBrEtD.4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO7/BaAAoJEECxmPOUX5FEzLMQAJo6USdgdFiAV/vr3UUzfmgX
-MhFTTfopVBjSIhBDVqwiStKYGnzml4ycubcgDyIsAcuCosqh4vPKHVYwAPCjLW/F
-TZaWnDF66x56/T8yodT8Qm+8BWF46cFySl1ezYi2L9bIoiG1kG7aZ0pi1bZMr+PY
-9sA5BWl159fXCS557zvtkvLFAVvU6dSW75JYbfSAnlsWKqLSU8ecqXy+0vaAAM6O
-AznT3jANiZEY3MUzRypSPMvAxFjZArGWpKd6NRkG4ftWgsKAEhKwMS4HN7C4qDnD
-2goUh+2moXi/DlzYyFXA5X9BRWnIokPyPq2gp8KL774L4PTwU3u6Or1RPx/OFOFR
-8Sihq94MX3N2S1Mo/TnO2vy5PxGGsovwL0ObPyG9+rvVTOFyAT+IBpSAUi7LB2uf
-AgunhNVLi1n1N9MqZEImg6EI3EsW1mOr8novzfv/Xkt0ldxnbCiKXUYBnu/wftFi
-e1MesjhYrwMqWR1FeQPOFsetHIpUaSYvILt66tQalf17XevISna8x3cg5LIcDMdg
-IVpAt5UJcz9E8BxT3gjfd6iT1f6hF/B+xc3eQomYbg15UgXGsFsk5pqGc9MXu135
-lGGb82r25B4z1rGA8/BTJeHuYCe2KmXxYjqk2RaCvo7dxzFpPhQw8WLnZeC7U/QQ
-G/pxuCwLetxaEq4wIysI
-=BZqK
+iQIcBAEBCAAGBQJO7/VfAAoJEECxmPOUX5FE4YEP/0aQ6ayCdiu7wSlgfPtZO4x5
+/8S/OY2bwUuKAlPOhaxBiuzKgcDKReGExP0jr2T8ivE+421HLbeL21dgKyUqm1tX
++7jQati79aK1+lXqhNqd7av2tM3Q6roteRDo4jtTwth/qF6LHAZGQvUQQI3Okja3
+n5DG7pzQKcaYBFCJTZUGr4Xja9IxJyNJFKXO/Z7w1HaO8wU738FPuf3lx/9jwCcb
+ZQqfTeiIaEWKznJwawIbet8Cj5AthUft60W5yJz6MRSQeneicvP2q5PSab2n/ngG
+GSQjVSky6ADrTUGwZFyDPFPeZuboLmcFDeJ2OOKpn+KSJTlIoBjO5wUE0LHyCv1K
+T/p+I11WbzvjKNnizcTUzrUCMXdXTVJd8HLFmAp9VqsinKuBAC9EShx0Bw1KWcJQ
+sScKC2Q8cJ+w40OkHD3B3uP2UTLiCgfT6mg4+t339LE7xjDxIVgr4/eL0o/hcKgs
+tTca6W7We5DpwloKbF3J+ycRfvy+6eoL908YgJkGfNCDKK7gMfQLiuJVjuGoTtC/
+QYY0NiMiyDyEiYB4NOeNmQ8SVwuxPIqVJq7ntvef0V0f8MYvvnJIzv3dlSD5r6zk
+qGGmqY9qTXvxooCM9ecChWbd5WKTSOBGZNFsq065dBvz9G7DisZhnTYojGtgbqp3
+hYx09pQEiizJcXn0lodV
+=MvMF
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__20_Dec_2011_13_18_02_+1100__gkaBSMz4Onyt8A_--
+--Signature=_Tue__20_Dec_2011_13_39_27_+1100_zRWos/X7NBrEtD.4--
