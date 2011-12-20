@@ -1,73 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cputime tree with the powerpc tree
-Date: Tue, 20 Dec 2011 16:11:13 +1100
-Message-ID: <20111220161113.3724f901fae728fb26f90407@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the fbdev tree
+Date: Tue, 20 Dec 2011 16:32:14 +1100
+Message-ID: <20111220163214.351b13b464c46f506f329b30@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__20_Dec_2011_16_11_13_+1100_/89oeNuyWBR0m+qb"
+ boundary="Signature=_Tue__20_Dec_2011_16_32_14_+1100_dRa3gys=dCN8KbZf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:60792 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:55801 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750999Ab1LTFLa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 00:11:30 -0500
+	with ESMTP id S1751030Ab1LTFcX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 00:32:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Schwab <schwab@linux-m68k.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
---Signature=_Tue__20_Dec_2011_16_11_13_+1100_/89oeNuyWBR0m+qb
+--Signature=_Tue__20_Dec_2011_16_32_14_+1100_dRa3gys=dCN8KbZf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Martin,
+Hi all,
 
-Today's linux-next merge of the cputime tree got a conflict in
-arch/powerpc/include/asm/cputime.h between commit 9f5072d4f63f ("powerpc:
-Fix wrong divisor in usecs_to_cputime") from the powerpc tree and commit
-648616343cdb ("[S390] cputime: add sparse checking and cleanup") from the
-cputime tree.
+After merging the fbdev tree, today's linux-next build (powerpc ppc64_defco=
+nfig)
+produced this warning:
 
-I fixed it up (see below) and can carry the fix as necessary.
+drivers/video/matrox/matroxfb_base.c:150:2: warning: braces around scalar i=
+nitializer [enabled by default]
+drivers/video/matrox/matroxfb_base.c:150:2: warning: (near initialization f=
+or 'vesafb_defined.colorspace') [enabled by default]
+drivers/video/matrox/matroxfb_base.c:150:2: warning: excess elements in sca=
+lar initializer [enabled by default]
+drivers/video/matrox/matroxfb_base.c:150:2: warning: (near initialization f=
+or 'vesafb_defined.colorspace') [enabled by default]
+drivers/video/matrox/matroxfb_crtc2.c:596:3: warning: braces around scalar =
+initializer [enabled by default]
+drivers/video/matrox/matroxfb_crtc2.c:596:3: warning: (near initialization =
+for 'matroxfb_dh_defined.colorspace') [enabled by default]
+drivers/video/matrox/matroxfb_crtc2.c:596:3: warning: excess elements in sc=
+alar initializer [enabled by default]
+drivers/video/matrox/matroxfb_crtc2.c:596:3: warning: (near initialization =
+for 'matroxfb_dh_defined.colorspace') [enabled by default]
+
+Introduced by commit fb21c2f42879 ("fbdev: Add FOURCC-based format
+configuration API").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/powerpc/include/asm/cputime.h
-index 33a3580,e94935c..0000000
---- a/arch/powerpc/include/asm/cputime.h
-+++ b/arch/powerpc/include/asm/cputime.h
-@@@ -130,7 -114,7 +114,7 @@@ extern u64 __cputime_usec_factor
- =20
-  static inline unsigned long cputime_to_usecs(const cputime_t ct)
-  {
-- 	return mulhdu(ct, __cputime_usec_factor);
- -	return mulhdu((__force u64) ct, __cputime_msec_factor) * USEC_PER_MSEC;
-++	return mulhdu((__force u64) ct, __cputime_usec_factor);
-  }
- =20
-  static inline cputime_t usecs_to_cputime(const unsigned long us)
-
---Signature=_Tue__20_Dec_2011_16_11_13_+1100_/89oeNuyWBR0m+qb
+--Signature=_Tue__20_Dec_2011_16_32_14_+1100_dRa3gys=dCN8KbZf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO8BjxAAoJEECxmPOUX5FEVCQQAJJtD3EOXNIzf2H3Ma3OnCHs
-tGsBsCiKP8a7nhuFel87pGf6bKsJa/0Zjwe29FLoS1VHIci91qniEyopEmX/MOjo
-l+YDaoSnwUpspixmOLd/MEaIil5VuQnfyoRfUpc5Vh3hTa//xDdKGsmTn7ZEIx6f
-iiB7DYrcoOEJLP1I8GDAjOZTe4UYpJAVwokRfaUCgDXNwAAZliKxI+UBjYFpAWPd
-zMtzQA9wbY0eWG96pfbIQkYQDmqE8hyGxRl16DV8uIo0+udpZ8qC+agAPZZt65IX
-xAwJvXP3ihiQus3Z+aeAgur75n1ByScI1G3PKVW1TnG/xzprJtmB/15RIu4scGA2
-uYugXq1l9BWv5etvdiXBG4CfcxUswQaYNgCP3qaNKw9HmzUhpEjdHew+/mKcZ2xB
-XSSvCZcX4WVp+jdZL5vusftP2sGzD3oCrn3gQoUKBbJekXDw9zBeJIC8tSuHxLl2
-l+dF5lYy5tYsogX/SHWvHAQ5ZtoP+QirhT70i7wJXalWD8BkWg7ykQnPvbJfsTf+
-elMjFGUMvMbOEStr8zTC0zX5zAlNAwKZ7f6LxnYxzFkbYbXL6P5VparLAh9XhA77
-Ed3tZo0FS8b+zncWDFNOrUj5Y694kywwhe9kviuL35Ewn0kC78T+MsrZusZKfWRc
-6hJwOOTUVKvtmbFduS0c
-=cdFm
+iQIcBAEBCAAGBQJO8B3eAAoJEECxmPOUX5FEvqkP/R8ANSkaz3Lb7RAbs0chnNQD
+rXyjbarmgGC0QBKal8392nS2Vkj6Z4/VQ7nj7ArXC5I74sw2r+8cbEcrkJx7QFy0
+r5JlTEPCMPY6HN87yuBg/JRARym/bJGzlffD+qPnerq6noh7a7fj1ONANWjNGJZz
+hirp+EwGjx7+EvPkWKeU8pqn8fjF0tXdKeuKG5Bdwfa8tSy0Jwj2XQmu2ptC/NTW
+Ilt0lYN9XCxTvifJCdzw314wbwL73nM72lMLFB4Ixs04nUv9i/W+BwcCxeoy+r/8
+KmRI3ITYVbPAxyBIuyQCvGY5Oi8ALpSHQLZ4//kMBTgvM0BJbLwFFfFFJhzNoQiK
+4pgFcFSELYQEhlA5KUeh9bWvuW8h56zVrWKF7EKNH+2+Lcq9B6dEo5PFnmPAmjAK
+9mvmp2v4piMUv+/Y3XI/OwKIUGNzRUd3xiEKclWIhHasBuNRwNiU4bG4F+ZwN2hS
+K5TUHyMK2yjDl+gmecOtizu4jWI+FvDMcG6GJ4aq1BisY+EpoP3CgnaSl07vG1qc
+OISdzjdsGpmPcZ8UxHDHfgWfvSFUR6EP1CHsH0OhPgFjB+sia9UezBUTX0g/7bbt
+UjF9iKE4p3PXfzOPgz4cMBa37UxMT2IFsN1APi4MDU9+OMGqMH3/W9G3O8fC+i/I
+kWAY9vHUykQEvKQDDT2z
+=g6TW
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__20_Dec_2011_16_11_13_+1100_/89oeNuyWBR0m+qb--
+--Signature=_Tue__20_Dec_2011_16_32_14_+1100_dRa3gys=dCN8KbZf--
