@@ -1,77 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd tree
-Date: Tue, 20 Dec 2011 14:17:31 +1100
-Message-ID: <20111220141731.04efb8c1b002e3a313076378@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Dec 19
+Date: Tue, 20 Dec 2011 14:20:48 +1100
+Message-ID: <20111220142048.eeccb51ed290d8223ba2c580@canb.auug.org.au>
+References: <20111219185556.f07c1f43e28cfd594aaa5fe0@canb.auug.org.au>
+	<20111220015235.GB8290@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__20_Dec_2011_14_17_31_+1100_gdjoyRnlr6+XXf1r"
+ boundary="Signature=_Tue__20_Dec_2011_14_20_48_+1100_Ee3fqmksr.KacI2m"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:37743 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:54038 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751696Ab1LTDRg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 22:17:36 -0500
+	with ESMTP id S1752121Ab1LTDUy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2011 22:20:54 -0500
+In-Reply-To: <20111220015235.GB8290@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@st.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__20_Dec_2011_14_17_31_+1100_gdjoyRnlr6+XXf1r
+--Signature=_Tue__20_Dec_2011_14_20_48_+1100_Ee3fqmksr.KacI2m
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi Mark,
 
-After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+On Tue, 20 Dec 2011 01:52:35 +0000 Mark Brown <broonie@opensource.wolfsonmi=
+cro.com> wrote:
+>
+> On Mon, Dec 19, 2011 at 06:55:56PM +1100, Stephen Rothwell wrote:
+>=20
+> > The regmap tree still has one build failure so I used the version of the
+> > tree from next-20111214.
+>=20
+> Please tell maintainers if you're doing this.  What is the issue here?
+> The only thing I can think of is the broken GPIO driver that got merged
+> some time ago without its dependencies which you were (much more sanely)
+> flagging as broken.
 
-drivers/built-in.o: In function `i2c_block_write':
-stmpe-i2c.c:(.text+0xf4553): undefined reference to `i2c_smbus_write_i2c_bl=
-ock_data'
-drivers/built-in.o: In function `i2c_block_read':
-stmpe-i2c.c:(.text+0xf457f): undefined reference to `i2c_smbus_read_i2c_blo=
-ck_data'
-drivers/built-in.o: In function `i2c_reg_write':
-stmpe-i2c.c:(.text+0xf45ab): undefined reference to `i2c_smbus_write_byte_d=
-ata'
-drivers/built-in.o: In function `i2c_reg_read':
-stmpe-i2c.c:(.text+0xf45d4): undefined reference to `i2c_smbus_read_byte_da=
-ta'
-drivers/built-in.o: In function `stmpe_init':
-stmpe-i2c.c:(.init.text+0xaf22): undefined reference to `i2c_register_drive=
-r'
-drivers/built-in.o: In function `stmpe_exit':
-stmpe-i2c.c:(.exit.text+0x5e5): undefined reference to `i2c_del_driver'
+Its this:
 
-Caused by commit b25a31a3b4d3 ("mfd: Separate out STMPE controller and
-interface specific code").
+> drivers/mfd/da9052-spi.c: In function 'da9052_spi_probe':
+> drivers/mfd/da9052-spi.c:42:2: error: 'da9052_regmap_config' undeclared (=
+first use in this function)
+>
+> Caused by commit cfe04478fa1b ("MFD: DA9052/53 MFD core module add SPI
+> support v2").
 
-I have used the mfd tree from next-20111219 for today.
+Which I reported to you on Dec 15 (along with another build error in the
+regulator tree that you have fixed).  You even created a patch to fix it
+(Subject: [PATCH] mfd: Declare da9052_regmap_config for the bus drivers)
+but that has not appeared in your tree yet.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__20_Dec_2011_14_17_31_+1100_gdjoyRnlr6+XXf1r
+--Signature=_Tue__20_Dec_2011_14_20_48_+1100_Ee3fqmksr.KacI2m
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO7/5LAAoJEECxmPOUX5FE4skP/RJevMmB9UCCBOBXy6EZn9Mt
-qJKe3eJetTVzN6KbB6QP6A2VhpvGQJV0IA1cZvEtlaF3gLgdq9NGhk4YE6F/zsHa
-v2vNtC/XkDiihBZqLGtTY7uFDE85djTDq/5pJ1zHFKFC/9u4NpowKboEvxwbIMrb
-k2IQygQBub7G4EALkYdA5OEzHRx2q46rDp4vIwewypE91q84Hw3b5HmT146gZFU/
-GxEk6t7gD7Ms4R1AFXEeXOtnCQL8epjtFWQdvyEYGrTsWcofupE2IQMSAPcrjJky
-z0CMqQtEz1OOoh2q1ySx88Xu2AFG9a6pQ3DuYoLZ92tKXBa7F7Dp2Y7dx9sqUhAg
-6eg6qBnb/WsyYa64TlTBLmQUutvL62VqZrKOWHShns9RmeT9iUtzZWj/LyKj1JQ+
-DDm3yfswmBaTsMLRCfD4oLW7GVKWv/NyILVMFAuhWr57H8TrirzlZAj3DnFbUqKr
-zJgQhVpHV4JlUTm1wkuOidGuL27ryvntR+1LeExNCJz8n2v7f0eWBFgt+PBiBf8P
-qvPliL2KYR+RGFdItAfVfJEaGE2n1RYw3OfLczp0dHwZ4A1W7vnkZBv9pt4FThuO
-9vgpvBbJnF64iMtWCbYAeBiHgcEecvNG6UtknxUim/rKm3eNS+OJCTNTn2E5kiH0
-s5uiag95LFXNfk9e3FRD
-=ahLh
+iQIcBAEBCAAGBQJO7/8QAAoJEECxmPOUX5FE/DMQAJ1vg1af3Qti0d6n8ShjyiS/
+XK3wrggsDmYyoRQr7IyiYYpSMI0ymaqGXeUX0Muy1U8yxY/3IzZfwdI0uSSo5k7N
+8u4/Cb+LScot5/qjtuUKIodYZlJ3v8v8pBBGl0EKTxQ5ZuLsnIh0DMPmf/9uGu3z
+fsy/tRL+TJqnC3iWWJ3El/8yAA1+Zljmee7W0NoAAoObkwH3mcIiZzBsGAb0u/jJ
+Ly4YleZ2rivWYKi3FUR8tTCqB2qpQviCCaw979Ta1YK/OHUUv+Vf0avPuDgYgUeN
+bGUC4ZIKE4X5+VMBdz/+5WcnYi84uVYi6AAAVlv4k2lHpeYF/SwBG1DxmKXNaR5h
+jLI889ktW8h2c7KBTuDTy8CuumGcYo8j+Y32+x6yhyrQrzeB7n0r2ku0Ur/FkK9k
+7C6qLMKwhzE+Nzav7ZtFrkcQyenY13DqGutTTUsPn5DOTFHMhFS21XzT2O3pL0sp
+vDpt7YruOfBle4CdMlAHk8S8yJ7mqK1GB18yIcf6UEIGwC1iD7rfCMg7tRHy4mWW
+umpMMoI07/qpd+E4bvysa42yNq9Wh5dcbZXYsQUxLgcXPPLXs2mLDGpUKbilA2BZ
+EuJG7sMoZ/OG+UHGb++lhwyK7nVAkl/ajKio8MnW/WZoodxE4G1plmtapaQgclDv
+XZdeUGFRXE1bMTeEMTwA
+=5yDd
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__20_Dec_2011_14_17_31_+1100_gdjoyRnlr6+XXf1r--
+--Signature=_Tue__20_Dec_2011_14_20_48_+1100_Ee3fqmksr.KacI2m--
