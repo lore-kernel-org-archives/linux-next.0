@@ -1,69 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the 4xx tree
-Date: Wed, 21 Dec 2011 11:13:49 +1100
-Message-ID: <20111221111349.c9d73384a0a2c89cd211239e@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the ext4 tree
+Date: Wed, 21 Dec 2011 11:18:01 +1100
+Message-ID: <20111221111801.75611ea16ad03f68e9856bd2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Dec_2011_11_13_49_+1100_v28VHEAqYHF3mQu2"
+ boundary="Signature=_Wed__21_Dec_2011_11_18_01_+1100_g_SF3NmD42vX/vOd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:50158 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:48513 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753532Ab1LUAN7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 19:13:59 -0500
+	with ESMTP id S1753340Ab1LUASL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 19:18:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Josh Boyer <jwboyer@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suzuki Poulose <suzuki@in.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
 
---Signature=_Wed__21_Dec_2011_11_13_49_+1100_v28VHEAqYHF3mQu2
+--Signature=_Wed__21_Dec_2011_11_18_01_+1100_g_SF3NmD42vX/vOd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Josh,
+Hi Al,
 
-After merging the 4xx tree, today's linux-next build (powerpc ppc64_defconf=
-ig)
-produced these warnings:
+Today's linux-next merge of the vfs tree got a conflict in
+fs/ext4/ioctl.c between commit 5e8af306ef80 ("ext4: fix potential
+deadlock with setuid files and EXT4_IOC_MOVE_EXT") from theext4  tree and
+commit 99b4f71273d9 ("vfs: mnt_drop_write_file()") from the vfs tree.
 
-WARN: Uncompressed kernel (size 0xe32858) overlaps the address of the wrapp=
-er()
-WARN: Fixing the link_address of wrapper to (0xf00000)
-WARN: Uncompressed kernel (size 0xd6c9e8) overlaps the address of the wrapp=
-er(0x400000)
-WARN: Fixing the link_address of wrapper to (0xe00000)
-
-Introduced by commit c55aef0e5bc6 ("powerpc/boot: Change the load address
-for the wrapper to fit the kernel").   Maybe "WARN" is not the best
-prefix for this.  To me it implies that something may go wrong and there
-is something to be fixed ...  If this is purely informational, then maybe
-"INFO" would be better.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__21_Dec_2011_11_13_49_+1100_v28VHEAqYHF3mQu2
+diff --cc fs/ext4/ioctl.c
+index ff1aab7,d37b3bb..0000000
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@@ -246,7 -246,9 +246,7 @@@ setversion_out
+ =20
+  		err =3D ext4_move_extents(filp, donor_filp, me.orig_start,
+  					me.donor_start, me.len, &me.moved_len);
+- 		mnt_drop_write(filp->f_path.mnt);
++ 		mnt_drop_write_file(filp);
+ -		if (me.moved_len > 0)
+ -			file_remove_suid(donor_filp);
+ =20
+  		if (copy_to_user((struct move_extent __user *)arg,
+  				 &me, sizeof(me)))
+
+--Signature=_Wed__21_Dec_2011_11_18_01_+1100_g_SF3NmD42vX/vOd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO8SS9AAoJEECxmPOUX5FEAG8P/1U/McLvI066uiG1yqiIHkcy
-WtOr0RLXtW76TVfubMhCU+XzrOebWR09zLbTmKu1dBhjN7mZvIyvRmvAMjHIVvo8
-HSDEs7PT+HMIEg7ZS9BMAbXTJfwEaOILt2Yw46Xw0UOylsHopU77aOuKLJ6L4x2q
-YxxtWMcJMSPrxFcFBd5yqL2sY5TCFflmrnZ40Tovj+oxX/Yjy0xG6KkmfZmOCbiX
-XAsYxOlZZ0UTW4VjKkgjIKBNrbxr/fH151+/AixyGQAwfd0FxCMfjPrE1s6lnCeT
-pfRdqBBU16XbsUUVria2snt+n6twqVgf2YVCa579ztEkdHdBp2owNGNHFD54EWr7
-XGWnoiPmDKfvq5BlWOhlpeQX851mez5xXZli0msVLNC4SovQ8uRAJl0pGzcpxfKF
-7M3yKiMDQjiSnblLMQ3LDYau9MkoRVafbIcgG11EVomv9Z7q16UKZwkvQh3uHM2g
-ONu/IMoyCA4mkJVlh4sgJPyba694fUsoSM34+5/sODP8NmJfyuzacIjpBQT626ku
-C6ucCl8wiZF/IOqXY6eioJqJnc1L8Zn28PpwwBCel7yUqt7dJjGQa9e+eNU06Rac
-+UDdF7o8pThyr8G0eOdnMmoj17xCl1i3PlE6qbEUa2Ate1BmOURDUhbOWRYiAC0E
-XGVOtCruXawgxFuqwfzm
-=yhDc
+iQIcBAEBCAAGBQJO8SW5AAoJEECxmPOUX5FEpdsP/3EdSBpAUpFmxUKWfLOHTHLG
+wpLuKiV9KD5AH7jlfywmufF9sVD2UrDNIu7xfjhbZE2E2yzUlrWnBibT18SI+DXt
+1foSd/jPKitDEdNwlh6d4+L8Lm34C3zquHHT9EALC314qIqcQ3y5POiWKVJbFBcD
+5nXW9ym3gG5OG/Gvvxi6YppYpVOvo3MUcL3HvRUSBJZu2dDkTO5ACfkZ7aY4re9P
+24edg56doJ36AOjQZQZU0YJ6EhvTaNE6CnZHtxdHiLMj03i3qtJpqWfEG5ZKhelE
+vr55k7Pb+oeoyNi2Tt5NvyJLBaHGwcu7S9GRQvdk2W7IwD97LSk/3DAQCgizFjTe
+5hZXIw9qvVoNlJfo+iunNgwKE6dQzaeJmR14jQRH9a25/uzgjsVKMNxpB1fFM3wB
+kM47kvcSgey6HecTwEsYlslGQX7H3bJ82EfFsx6Z4C7DqeKFLeHrwIDukO8OC0gN
+1ntVEtZgMu9gvTWHdyXdmlRWo634usMDEhKvRdO5/XtHaNa/Rqne8UlSTNLw/KdI
+ISZRqz5CQqpO+1+vTNx7E8qcuMUsMTxENlCh3d5CNZkQKwCAUbYuUfteXG63sJIi
+Pp+WfiT1Z6EvSSNZuuySqni1Ct81QUjOfdZQnXUFudSdax9cZv0HnPDJKNCyL2yX
+k68/REMtBArs4rp9VLnO
+=jnBg
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__21_Dec_2011_11_13_49_+1100_v28VHEAqYHF3mQu2--
+--Signature=_Wed__21_Dec_2011_11_18_01_+1100_g_SF3NmD42vX/vOd--
