@@ -1,77 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm tree with Linus' tree
-Date: Wed, 21 Dec 2011 10:08:48 +1100
-Message-ID: <20111221100848.19ff7107b4a8a63818d3c767@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the 4xx tree
+Date: Wed, 21 Dec 2011 11:13:49 +1100
+Message-ID: <20111221111349.c9d73384a0a2c89cd211239e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Dec_2011_10_08_48_+1100_DGTtwkQ/ltuaXdo6"
+ boundary="Signature=_Wed__21_Dec_2011_11_13_49_+1100_v28VHEAqYHF3mQu2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:34001 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:50158 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752378Ab1LTXI6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 18:08:58 -0500
+	with ESMTP id S1753532Ab1LUAN7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 19:13:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Magnus Damm <damm@opensource.se>, Paul Mundt <lethal@linux-sh.org>
+To: Josh Boyer <jwboyer@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suzuki Poulose <suzuki@in.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
---Signature=_Wed__21_Dec_2011_10_08_48_+1100_DGTtwkQ/ltuaXdo6
+--Signature=_Wed__21_Dec_2011_11_13_49_+1100_v28VHEAqYHF3mQu2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+Hi Josh,
 
-Today's linux-next merge of the arm tree got a conflict in
-arch/arm/mach-shmobile/board-kota2.c between commit 1b6cec8a6910 ("ARM:
-mach-shmobile: Kota2 PINT fix") from Linus' tree and commit a83d8e27d2f6
-("ARM: shmobile: convert smp platforms to gic_handle_irq()") from the arm
-tree.
+After merging the 4xx tree, today's linux-next build (powerpc ppc64_defconf=
+ig)
+produced these warnings:
 
-Just context changes.  I fixed it up (see below) and can carry the change
-as necessary.
+WARN: Uncompressed kernel (size 0xe32858) overlaps the address of the wrapp=
+er()
+WARN: Fixing the link_address of wrapper to (0xf00000)
+WARN: Uncompressed kernel (size 0xd6c9e8) overlaps the address of the wrapp=
+er(0x400000)
+WARN: Fixing the link_address of wrapper to (0xe00000)
+
+Introduced by commit c55aef0e5bc6 ("powerpc/boot: Change the load address
+for the wrapper to fit the kernel").   Maybe "WARN" is not the best
+prefix for this.  To me it implies that something may go wrong and there
+is something to be fixed ...  If this is purely informational, then maybe
+"INFO" would be better.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-shmobile/board-kota2.c
-index f44150b,1b4439d..0000000
---- a/arch/arm/mach-shmobile/board-kota2.c
-+++ b/arch/arm/mach-shmobile/board-kota2.c
-@@@ -549,9 -447,8 +549,9 @@@ struct sys_timer kota2_timer =3D=20
- =20
-  MACHINE_START(KOTA2, "kota2")
-  	.map_io		=3D kota2_map_io,
- -	.init_irq	=3D kota2_init_irq,
- +	.nr_irqs	=3D NR_IRQS_LEGACY,
- +	.init_irq	=3D sh73a0_init_irq,
-- 	.handle_irq	=3D shmobile_handle_irq_gic,
-+ 	.handle_irq	=3D gic_handle_irq,
-  	.init_machine	=3D kota2_init,
-  	.timer		=3D &kota2_timer,
-  MACHINE_END
-
---Signature=_Wed__21_Dec_2011_10_08_48_+1100_DGTtwkQ/ltuaXdo6
+--Signature=_Wed__21_Dec_2011_11_13_49_+1100_v28VHEAqYHF3mQu2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO8RWAAAoJEECxmPOUX5FEgzUP/REmLoTM9omPRf5I5fuksFjr
-d7Leb37cFsl4KSHH4NBfEuQEzBcURUb0ZFXIefQfMcAJyE9R1ox8Bdsfc05CVH7V
-jzrm0uKd0ZkO3gybyFxQjqJPSefE343KmJzn+PwvvFdG5TN/9SjiJYbLSSA3WhJU
-R3rfmN+DHr7iqdp/D5f5teWgR+eaNJMXnWRSCs0pT88vRLQnNgeV6Aqo4JxBy090
-zkePLLmNBRRsO/O/mJ7t3cINjPTfsfXfF6jOjT0lcV/kOU4ROlxHhbK+m7/zwy0B
-LTRVaMwdeHfhA9eGWpz206czAgv8J0G+k/7d5hC8d1H6HjSJERP2bCQsgZETgTOt
-1aGLjGmtF2aDeFlzwpg3mL4Af3oCESUbQodDAg32D0v0mwjRr/Xt7irlkBZWFogP
-VMxaOtDv5+H9jOWTMuLG5xW+SpegNB7IT+BDHcFT0mw+Dw+DsLKLGvUZzPw5mTac
-e4ZfTaxICLEuoupnKBXzYkEz4PDwoGjZs93sfkIy8dr8hSdn9x6n68QmydnWEq3q
-bvX9ysg4Ftf3cGcS4g++SYIvr53JpldhaX0xTVyj8I/fU9F33UVi7RM4iSAB/WNu
-gumloGX05+XuRiWJn76mmxk0M58LFx8kUFnepD2MYsZ1utAPpaIS8bGk/4Sf3eSQ
-wPtPLB9RQKlj/zi7oKBR
-=SIGj
+iQIcBAEBCAAGBQJO8SS9AAoJEECxmPOUX5FEAG8P/1U/McLvI066uiG1yqiIHkcy
+WtOr0RLXtW76TVfubMhCU+XzrOebWR09zLbTmKu1dBhjN7mZvIyvRmvAMjHIVvo8
+HSDEs7PT+HMIEg7ZS9BMAbXTJfwEaOILt2Yw46Xw0UOylsHopU77aOuKLJ6L4x2q
+YxxtWMcJMSPrxFcFBd5yqL2sY5TCFflmrnZ40Tovj+oxX/Yjy0xG6KkmfZmOCbiX
+XAsYxOlZZ0UTW4VjKkgjIKBNrbxr/fH151+/AixyGQAwfd0FxCMfjPrE1s6lnCeT
+pfRdqBBU16XbsUUVria2snt+n6twqVgf2YVCa579ztEkdHdBp2owNGNHFD54EWr7
+XGWnoiPmDKfvq5BlWOhlpeQX851mez5xXZli0msVLNC4SovQ8uRAJl0pGzcpxfKF
+7M3yKiMDQjiSnblLMQ3LDYau9MkoRVafbIcgG11EVomv9Z7q16UKZwkvQh3uHM2g
+ONu/IMoyCA4mkJVlh4sgJPyba694fUsoSM34+5/sODP8NmJfyuzacIjpBQT626ku
+C6ucCl8wiZF/IOqXY6eioJqJnc1L8Zn28PpwwBCel7yUqt7dJjGQa9e+eNU06Rac
++UDdF7o8pThyr8G0eOdnMmoj17xCl1i3PlE6qbEUa2Ate1BmOURDUhbOWRYiAC0E
+XGVOtCruXawgxFuqwfzm
+=yhDc
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__21_Dec_2011_10_08_48_+1100_DGTtwkQ/ltuaXdo6--
+--Signature=_Wed__21_Dec_2011_11_13_49_+1100_v28VHEAqYHF3mQu2--
