@@ -1,73 +1,42 @@
-From: Felipe Balbi <balbi@ti.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
 Subject: Re: [PATCH] usb: fix renesas mod_gadget printk format warning
-Date: Wed, 21 Dec 2011 23:16:26 +0200
-Message-ID: <20111221211624.GB17951@legolas.emea.dhcp.ti.com>
-References: <20111221174733.9ba0861e762e8d96844b060b@canb.auug.org.au>
- <4EF2424D.4020200@xenotime.net>
-Reply-To: balbi@ti.com
+Date: Wed, 21 Dec 2011 14:19:41 -0800
+Message-ID: <4EF25B7D.8080905@xenotime.net>
+References: <20111221174733.9ba0861e762e8d96844b060b@canb.auug.org.au> <4EF2424D.4020200@xenotime.net> <20111221211624.GB17951@legolas.emea.dhcp.ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tsOsTdHNUZQcU9Ye"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog117.obsmtp.com ([74.125.149.242]:42921 "EHLO
-	na3sys009aog117.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751214Ab1LUVQb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Dec 2011 16:16:31 -0500
-Content-Disposition: inline
-In-Reply-To: <4EF2424D.4020200@xenotime.net>
+Received: from oproxy9.bluehost.com ([69.89.24.6]:60490 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754141Ab1LUVTk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Dec 2011 16:19:40 -0500
+In-Reply-To: <20111221211624.GB17951@legolas.emea.dhcp.ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
+To: balbi@ti.com
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, Greg KH <gregkh@suse.de>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Andrew Morton <akpm@linux-foundation.org>
 
+On 12/21/2011 01:16 PM, Felipe Balbi wrote:
+> Hi,
+> 
+> On Wed, Dec 21, 2011 at 12:32:13PM -0800, Randy Dunlap wrote:
+>> From: Randy Dunlap <rdunlap@xenotime.net>
+>>
+>> Fix printk format warning:
+>>
+>> drivers/usb/renesas_usbhs/mod_gadget.c:188:3: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'dma_addr_t'
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> a bit too late:
+> 
+> http://git.kernel.org/?p=linux/kernel/git/balbi/usb.git;a=commitdiff;h=8418153a4ccd38a3bc3229bc4bd161e3e5db88d2
+> 
 
---tsOsTdHNUZQcU9Ye
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, that's good.  But it's not in linux-next yet??
 
-Hi,
-
-On Wed, Dec 21, 2011 at 12:32:13PM -0800, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
->=20
-> Fix printk format warning:
->=20
-> drivers/usb/renesas_usbhs/mod_gadget.c:188:3: warning: format '%x' expect=
-s type 'unsigned int', but argument 3 has type 'dma_addr_t'
->=20
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-
-a bit too late:
-
-http://git.kernel.org/?p=3Dlinux/kernel/git/balbi/usb.git;a=3Dcommitdiff;h=
-=3D8418153a4ccd38a3bc3229bc4bd161e3e5db88d2
-
---=20
-balbi
-
---tsOsTdHNUZQcU9Ye
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJO8kyoAAoJEIaOsuA1yqREuw8QAJS3Sb6cy16RVEw4w9B5QlL7
-6gfI0fM6oFjzKDNFfVcORv5/tnvm2SfsKb0nrEEHii6WtapMdlBe1hbNyujiJRPu
-5rdooJKGaU/yC84TR2QE4+t9B1s/93pGeU4WCUrcTsdoNTkvqnLhpImkVGZ2hGN1
-2bj9qK7dn1YQpD4jhryxH43s+5+zlqTsjX9UNfWcBW4QXk4VcM4YEeJ/PYMkY/ed
-+DEtg0tVCwtggXSWcfQe8yuxaYT0p6nvPdX20QsB25KwUEnYHi3/+DF+/CmhkIVM
-TKRbDokfU38oHsqomDgp7XJvd34SACY5RL1rAsrsHyZ0q2KdiyGSGPrj2dWeFFrA
-zyv1zvVUVF+/2qu6DubM3RWvemfiAto1Ua9XhxMfr8yw7Y2tYDsuZWJkgQEGbwty
-MNoZTE95UvZshggAApV0YAQnal4RXHrOGwPteNxYiNb2diA9pAXSyw7g4hEavWfX
-o77G5CMIVN/rnXzR270Y3ckaJ8piM260ylWMYAw9bB8tQubmYhbwJMlbAXW0RxDu
-BedSq2ZomrJJ6eR5njXTm29mKIPeYxfkl6vRPYQ4RyJYjCQhjhrbzOxRSjHqM7co
-1QnCN2D3OKSH2CidTA4PaHYV98yftjgvpAqOPvs1s2uqBlvRhAPcba+TtP5XRJ3e
-BHISnD/lqtDL1KCaZjKf
-=wDii
------END PGP SIGNATURE-----
-
---tsOsTdHNUZQcU9Ye--
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
