@@ -1,42 +1,39 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: sparc: __mcount_loc already exists (was: Re: Build
- regressions/improvements in v3.2-rc6)
-Date: Wed, 21 Dec 2011 08:59:03 +0100
-Message-ID: <CAMuHMdUvnTWvaTndObFjA_pJXNWVpDBqxviyDpYvihc7pDiV3Q@mail.gmail.com>
+From: "Arend van Spriel" <arend@broadcom.com>
+Subject: Re: linux-next: manual merge of the wireless-next tree with the
+ tree
+Date: Wed, 21 Dec 2011 11:47:09 +0100
+Message-ID: <4EF1B92D.9040405@broadcom.com>
+References: <20111221124931.992e4e4265f2c3cd1d2e75b4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sparclinux@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain;
+ charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mms2.broadcom.com ([216.31.210.18]:2774 "EHLO mms2.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752636Ab1LUKrY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Dec 2011 05:47:24 -0500
+In-Reply-To: <20111221124931.992e4e4265f2c3cd1d2e75b4@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>
 
-On Wed, Dec 21, 2011 at 08:51, Geert Uytterhoeven <geert@linux-m68k.org=
-> wrote:
-> Note that I deleted 5238 lines about "__mcount_loc already exists", t=
-o avoid
-> my email being rejected.
+On 12/21/2011 02:49 AM, Stephen Rothwell wrote:
+> Hi John,
+> 
+> Today's linux-next merge of the wireless-next tree got a conflict in
+> drivers/net/wireless/brcm80211/brcmfmac/dhd_linux.c between commit
+> 3db1cd5c05f3 ("net: fix assignment of 0/1 to bool variables") from the
+> tree and commit 3fb1d8d2dad3 ("brcm80211: fmac: move driver up status to
+> struct brcmf_bus") from the wireless-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
+> 
 
-I anyone planning to fix this? It only happens for sparc64/sparc-allmod=
-config,
-and appeared in v3.2-rc3.
+Thanks, Stephen
 
-linus: http://kisskb.ellerman.id.au/kisskb/buildresult/5167232/
-linux-next: http://kisskb.ellerman.id.au/kisskb/buildresult/5166753/
+I noticed Rusty's patch and the use of 0/1 for bool in our tree. Was
+going to fix that, but this fix looks fine.
 
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+Gr. AvS
