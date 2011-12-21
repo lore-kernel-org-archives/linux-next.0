@@ -1,67 +1,139 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the bluetooth tree
-Date: Wed, 21 Dec 2011 13:19:41 +1100
-Message-ID: <20111221131941.b946391eb42a6d2d76d4fd58@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Wed, 21 Dec 2011 14:18:01 +1100
+Message-ID: <20111221141801.8791507b21aa3531bf59c42e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Dec_2011_13_19_41_+1100_7Aux_RtAN95NEbld"
+ boundary="Signature=_Wed__21_Dec_2011_14_18_01_+1100_lAPFX=1tMNIAN3rw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:41789 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:59094 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752519Ab1LUCTu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 21:19:50 -0500
+	with ESMTP id S1750703Ab1LUDSN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 22:18:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Gustavo F. Padovan" <padovan@profusion.mobi>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jakob Bornecrantz <jakob@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
 
---Signature=_Wed__21_Dec_2011_13_19_41_+1100_7Aux_RtAN95NEbld
+--Signature=_Wed__21_Dec_2011_14_18_01_+1100_lAPFX=1tMNIAN3rw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Gustavo,
+Hi Dave,
 
-After merging the bluetooth tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/vmwgfx/vmwgfx_kms.c between commit e7ac9211f29f ("vmwgfx:
+Refactor kms code to use vmw_user_lookup_handle helper") from Linus' tree
+and commit 308e5bcbdb10 ("drm: add an fb creation ioctl that takes a
+pixel format v5") from the drm tree.
 
-drivers/net/wireless/ath/ath9k/dfs.c: In function 'ath9k_postprocess_radar_=
-event':
-drivers/net/wireless/ath/ath9k/dfs.c:73:1: error: 'ATH_DBG_ATH_DBG_DFS' und=
-eclared (first use in this function)
-drivers/net/wireless/ath/ath9k/dfs.c: In function 'ath9k_dfs_process_phyerr=
-':
-drivers/net/wireless/ath/ath9k/dfs.c:166:1: error: 'ATH_DBG_ATH_DBG_DFS' un=
-declared (first use in this function)
+I fixed it up (I think - see below) and can carry the fix as necessary.
 
-This has been inherited by the rebase onto the wireless-next tree.  I
-have used the bluetooth tree from next-20111220 for today.
+Dave, you might like to merge the branch you sent to Linus into your
+drm-next branch to fix this up.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__21_Dec_2011_13_19_41_+1100_7Aux_RtAN95NEbld
+diff --cc drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+index 8aa1dbb,1748a71..0000000
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+@@@ -1123,29 -1041,46 +1131,29 @@@ static struct drm_framebuffer *vmw_kms_
+  		return ERR_PTR(-ENOENT);
+  	}
+ =20
+ -	/**
+ -	 * End conditioned code.
+ -	 */
+ -
+ -	ret =3D vmw_user_surface_lookup_handle(dev_priv, tfile,
+ -					     mode_cmd.handle, &surface);
+ +	/* returns either a dmabuf or surface */
+ +	ret =3D vmw_user_lookup_handle(dev_priv, tfile,
+- 				     mode_cmd->handle,
+++				     mode_cmd.handle,
+ +				     &surface, &bo);
+  	if (ret)
+ -		goto try_dmabuf;
+ -
+ -	if (!surface->scanout)
+ -		goto err_not_scanout;
+ -
+ -	ret =3D vmw_kms_new_framebuffer_surface(dev_priv, file_priv, surface,
+ -					      &vfb, &mode_cmd);
+ -
+ -	/* vmw_user_surface_lookup takes one ref so does new_fb */
+ -	vmw_surface_unreference(&surface);
+ -
+ -	if (ret) {
+ -		DRM_ERROR("failed to create vmw_framebuffer: %i\n", ret);
+ -		ttm_base_object_unref(&user_obj);
+ -		return ERR_PTR(ret);
+ -	} else
+ -		vfb->user_obj =3D user_obj;
+ -	return &vfb->base;
+ -
+ -try_dmabuf:
+ -	DRM_INFO("%s: trying buffer\n", __func__);
+ -
+ -	ret =3D vmw_user_dmabuf_lookup(tfile, mode_cmd.handle, &bo);
+ -	if (ret) {
+ -		DRM_ERROR("failed to find buffer: %i\n", ret);
+ -		return ERR_PTR(-ENOENT);
+ -	}
+ -
+ -	ret =3D vmw_kms_new_framebuffer_dmabuf(dev_priv, bo, &vfb,
+ -					     &mode_cmd);
+ -
+ -	/* vmw_user_dmabuf_lookup takes one ref so does new_fb */
+ -	vmw_dmabuf_unreference(&bo);
+ +		goto err_out;
+ +
+ +	/* Create the new framebuffer depending one what we got back */
+ +	if (bo)
+ +		ret =3D vmw_kms_new_framebuffer_dmabuf(dev_priv, bo, &vfb,
+- 						     mode_cmd);
+++						     &mode_cmd);
+ +	else if (surface)
+ +		ret =3D vmw_kms_new_framebuffer_surface(dev_priv, file_priv,
+- 						      surface, &vfb, mode_cmd);
+++						      surface, &vfb, &mode_cmd);
+ +	else
+ +		BUG();
+ +
+ +err_out:
+ +	/* vmw_user_lookup_handle takes one ref so does new_fb */
+ +	if (bo)
+ +		vmw_dmabuf_unreference(&bo);
+ +	if (surface)
+ +		vmw_surface_unreference(&surface);
+ =20
+  	if (ret) {
+  		DRM_ERROR("failed to create vmw_framebuffer: %i\n", ret);
+
+--Signature=_Wed__21_Dec_2011_14_18_01_+1100_lAPFX=1tMNIAN3rw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO8UI9AAoJEECxmPOUX5FEUa0P/R0jcYmT9pGIA9/ZePaOSvIy
-fdqugw3386Onp+SEgzyrAMh5e3K7C4L24QQJqJEIgbDk30x0VNWvwSXkArHyMFEO
-ovMnCmEe2CyPDay6KIY4eYGxcF+pUkSrP0AvAwII0E2MHCMMDGf9qkMC4jYDTsKN
-4WnQwzncsWOiE/xvd8jY8Gq29mEHcp0xHKqVjnxvWpger638SRhnjfvce37+e00L
-eKlKzXrp3//f4RJXaNu0/cGjJqFBhppU/PTMlp5vKibeiNhkn5EiFC7dXWImrZmE
-T7+u928UYzozQl6wyPeG41soZGffnc543w4W3ToucsLkM7gGzOhNkjz//v9wzz71
-ynkcrEqBGFnQ/X1FQSsL0VDm7U7Z4VSg71ZMjdyH030nXfz8D2rObyPbsvwtQRpT
-3FjHqp7nsaJjtFMU8NrlpgMkA5t+7AYJL/h4F3PSzb0dywOXaAdlcoVFkBrpP4th
-VVBuf0iUhcstBQHtdb00yTBinUyIN6lCmOYzrKN735prNBB7wbMWaQQf1+kmTOqT
-tBItKH4yN1CM0jEmYdPOaAo51IgJcXq8f+VtENhJygRLezpB8SLMsPIXBZdhSxmf
-XO/VUoLeZDhtlhzxIjjDyA4KQBGi2MiTt0xMbOo6Cx0h0taESBix9h86M9J5EbfV
-/4gztCuWQmYGRtBrRIWc
-=t3s2
+iQIcBAEBCAAGBQJO8U/pAAoJEECxmPOUX5FEbWEQAIDG7K+pcrC/krT2p8rl4BDV
+Pyp2WMARFSD3yHMPRXomPezzHBCfv8r9TDQHObiK5yNlz72tW448tigbV+er9uVX
+Q7TJ6xWM97UzunOLNIL9/wRQLWk8rEDb0V+UottLoO09LtRhH3sW/o3Pg+EyKwgT
+7ItS0TNRNimfpz72QJDU0CzuvZehALy9BzPUPY+QuSOY0qcowX18nJ4p7Uo4NMO8
+eDgu2Qyq3qSx6PErJbA+xOYRmIgWKiWvbzp5O4kUeS4/rvvJgYugVxQbCVFZIKzT
+lRrZhH8x/zmhHBieLyJ5PsCbaxdUN4gOTq79VljShC+41brGnY9oW9a/1AAf8OOa
+aDOrtZOldYXTug+3rTdJ9fgpbXku7LLn/HiuImVH/jWy4dzuzSiOegezC/nX8JsQ
+Um8YPU9OGSwGfReFehCsjQKav/hFmybJ+ftFGbBz8Fe3s1UMBWYfYhi3gAQLvt4q
+F5kN4WLnZc0XmxDM1GdFxdMfH2Gfc1oSTT8QMJvBvyk2TnIum+gG7wZYKqTVaDUp
+lOcqY1WiOc75AELRJ1MST7Bej8kskTN5BYrjSDI0Cs6fifxQomB4Qh6GmLrBWEqB
+1a/ddN+vehneRkZK7oI+6zd9mQ2QVmjRc7SFdW+9BzWrqxHPAlFwGStwElu0Bar6
+yYeqGHgIIRqLCC2n0kAV
+=U3Xo
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__21_Dec_2011_13_19_41_+1100_7Aux_RtAN95NEbld--
+--Signature=_Wed__21_Dec_2011_14_18_01_+1100_lAPFX=1tMNIAN3rw--
