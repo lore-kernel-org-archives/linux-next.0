@@ -1,139 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Wed, 21 Dec 2011 14:18:01 +1100
-Message-ID: <20111221141801.8791507b21aa3531bf59c42e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (mfd tree
+ related)
+Date: Wed, 21 Dec 2011 17:33:01 +1100
+Message-ID: <20111221173301.1111dc371e11d5c7025f03ea@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Dec_2011_14_18_01_+1100_lAPFX=1tMNIAN3rw"
+ boundary="Signature=_Wed__21_Dec_2011_17_33_01_+1100_8aMus3PSCPlttZSj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:59094 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:39936 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750703Ab1LUDSN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 22:18:13 -0500
+	with ESMTP id S1751138Ab1LUGdJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Dec 2011 01:33:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jakob Bornecrantz <jakob@vmware.com>, Thomas Hellstrom <thellstrom@vmware.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benoit Cousson <b-cousson@ti.com>
 
---Signature=_Wed__21_Dec_2011_14_18_01_+1100_lAPFX=1tMNIAN3rw
+--Signature=_Wed__21_Dec_2011_17_33_01_+1100_8aMus3PSCPlttZSj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/vmwgfx/vmwgfx_kms.c between commit e7ac9211f29f ("vmwgfx:
-Refactor kms code to use vmw_user_lookup_handle helper") from Linus' tree
-and commit 308e5bcbdb10 ("drm: add an fb creation ioctl that takes a
-pixel format v5") from the drm tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
+drivers/mfd/twl-core.c: In function 'twl_probe':
+drivers/mfd/twl-core.c:1212:22: error: 'TWL6030_IRQ_BASE' undeclared (first=
+ use in this function)
+drivers/mfd/twl-core.c:1212:22: note: each undeclared identifier is reporte=
+d only once for each function it appears in
+drivers/mfd/twl-core.c:1213:39: error: 'TWL6030_BASE_NR_IRQS' undeclared (f=
+irst use in this function)
+drivers/mfd/twl-core.c:1215:22: error: 'TWL4030_IRQ_BASE' undeclared (first=
+ use in this function)
+drivers/mfd/twl-core.c:1216:39: error: 'TWL4030_BASE_NR_IRQS' undeclared (f=
+irst use in this function)
+drivers/mfd/twl-core.c:1218:3: error: implicit declaration of function 'irq=
+_domain_add_simple' [-Werror=3Dimplicit-function-declaration]
 
-Dave, you might like to merge the branch you sent to Linus into your
-drm-next branch to fix this up.
+Caused by commit 4eea8b1d717d ("mfd: Add initial DT support for
+twl4030/twl6030").  A missing include?  Or a CONFIG problem?
 
+This build does not have CONFIG_IRQ_DOMAIN set.
+
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-index 8aa1dbb,1748a71..0000000
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-@@@ -1123,29 -1041,46 +1131,29 @@@ static struct drm_framebuffer *vmw_kms_
-  		return ERR_PTR(-ENOENT);
-  	}
- =20
- -	/**
- -	 * End conditioned code.
- -	 */
- -
- -	ret =3D vmw_user_surface_lookup_handle(dev_priv, tfile,
- -					     mode_cmd.handle, &surface);
- +	/* returns either a dmabuf or surface */
- +	ret =3D vmw_user_lookup_handle(dev_priv, tfile,
-- 				     mode_cmd->handle,
-++				     mode_cmd.handle,
- +				     &surface, &bo);
-  	if (ret)
- -		goto try_dmabuf;
- -
- -	if (!surface->scanout)
- -		goto err_not_scanout;
- -
- -	ret =3D vmw_kms_new_framebuffer_surface(dev_priv, file_priv, surface,
- -					      &vfb, &mode_cmd);
- -
- -	/* vmw_user_surface_lookup takes one ref so does new_fb */
- -	vmw_surface_unreference(&surface);
- -
- -	if (ret) {
- -		DRM_ERROR("failed to create vmw_framebuffer: %i\n", ret);
- -		ttm_base_object_unref(&user_obj);
- -		return ERR_PTR(ret);
- -	} else
- -		vfb->user_obj =3D user_obj;
- -	return &vfb->base;
- -
- -try_dmabuf:
- -	DRM_INFO("%s: trying buffer\n", __func__);
- -
- -	ret =3D vmw_user_dmabuf_lookup(tfile, mode_cmd.handle, &bo);
- -	if (ret) {
- -		DRM_ERROR("failed to find buffer: %i\n", ret);
- -		return ERR_PTR(-ENOENT);
- -	}
- -
- -	ret =3D vmw_kms_new_framebuffer_dmabuf(dev_priv, bo, &vfb,
- -					     &mode_cmd);
- -
- -	/* vmw_user_dmabuf_lookup takes one ref so does new_fb */
- -	vmw_dmabuf_unreference(&bo);
- +		goto err_out;
- +
- +	/* Create the new framebuffer depending one what we got back */
- +	if (bo)
- +		ret =3D vmw_kms_new_framebuffer_dmabuf(dev_priv, bo, &vfb,
-- 						     mode_cmd);
-++						     &mode_cmd);
- +	else if (surface)
- +		ret =3D vmw_kms_new_framebuffer_surface(dev_priv, file_priv,
-- 						      surface, &vfb, mode_cmd);
-++						      surface, &vfb, &mode_cmd);
- +	else
- +		BUG();
- +
- +err_out:
- +	/* vmw_user_lookup_handle takes one ref so does new_fb */
- +	if (bo)
- +		vmw_dmabuf_unreference(&bo);
- +	if (surface)
- +		vmw_surface_unreference(&surface);
- =20
-  	if (ret) {
-  		DRM_ERROR("failed to create vmw_framebuffer: %i\n", ret);
-
---Signature=_Wed__21_Dec_2011_14_18_01_+1100_lAPFX=1tMNIAN3rw
+--Signature=_Wed__21_Dec_2011_17_33_01_+1100_8aMus3PSCPlttZSj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO8U/pAAoJEECxmPOUX5FEbWEQAIDG7K+pcrC/krT2p8rl4BDV
-Pyp2WMARFSD3yHMPRXomPezzHBCfv8r9TDQHObiK5yNlz72tW448tigbV+er9uVX
-Q7TJ6xWM97UzunOLNIL9/wRQLWk8rEDb0V+UottLoO09LtRhH3sW/o3Pg+EyKwgT
-7ItS0TNRNimfpz72QJDU0CzuvZehALy9BzPUPY+QuSOY0qcowX18nJ4p7Uo4NMO8
-eDgu2Qyq3qSx6PErJbA+xOYRmIgWKiWvbzp5O4kUeS4/rvvJgYugVxQbCVFZIKzT
-lRrZhH8x/zmhHBieLyJ5PsCbaxdUN4gOTq79VljShC+41brGnY9oW9a/1AAf8OOa
-aDOrtZOldYXTug+3rTdJ9fgpbXku7LLn/HiuImVH/jWy4dzuzSiOegezC/nX8JsQ
-Um8YPU9OGSwGfReFehCsjQKav/hFmybJ+ftFGbBz8Fe3s1UMBWYfYhi3gAQLvt4q
-F5kN4WLnZc0XmxDM1GdFxdMfH2Gfc1oSTT8QMJvBvyk2TnIum+gG7wZYKqTVaDUp
-lOcqY1WiOc75AELRJ1MST7Bej8kskTN5BYrjSDI0Cs6fifxQomB4Qh6GmLrBWEqB
-1a/ddN+vehneRkZK7oI+6zd9mQ2QVmjRc7SFdW+9BzWrqxHPAlFwGStwElu0Bar6
-yYeqGHgIIRqLCC2n0kAV
-=U3Xo
+iQIcBAEBCAAGBQJO8X2dAAoJEECxmPOUX5FE7acQAKfO1JnHBxP1N23UHIovjsfY
+DpcXbSEfKGcC1O//3fg7KJNSyF0/miKsAhMvSJFuBTwFbE0AlpZkj7qlSMuDtwvq
+zXw8TrPvHegzwoKL5kjc6+q6BoyGsYKWa8ecjqmkmT8C1my+HxjhweCnPwutMI7W
+mOst3FKfJOgWCXKKAJr5XlfMDVnb3cl/m/vO9ycYlOjRe+ozN+j2SaiIeruFeySH
+HSDb3ik6gCn/4GSzWWj8NjV8mXcRnqvZXmVDYueS1EVDLUm1ZF+OHPi0EEknrVv4
+uP22MT0q5sw76IOCl6UAgd1AoTEnEKkOZ6OtuVlKx6XayWyvvMuOhFt7Kme8ZaCL
+G9l+/gedGBcMM6zTSGqHB0UCRZjSTszgi7qn3MMtK0D9Z+NtQ38UPGpGhO3Z/FLG
+eaZjlykm7CeshX2XHzu306mNVYvVG7Pub8F5dxxNbas6IYK7aphFy5qnKbI6IwwV
+PWL8Z7aBSUE+4nU4SuH8vRK9VRC9TqsAliEpwjQmw+GpB3Gj4Aq5rs7O7Jy61JQw
+iQt9clZj5NdEkbKsLGCwRmdpaMtA1dJpehJSyxM28HUjefEi+0fixugCM6suLK0R
+YtxMDG9EDkfYFElaO2MGwOGA6GwO1zCD8AnQchdiOSZKxbLBdqEYHaEc/Ty1zTXA
+qGhTwMITY4GYhPwideBe
+=pr19
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__21_Dec_2011_14_18_01_+1100_lAPFX=1tMNIAN3rw--
+--Signature=_Wed__21_Dec_2011_17_33_01_+1100_8aMus3PSCPlttZSj--
