@@ -1,51 +1,59 @@
-From: Josh Boyer <jwboyer@gmail.com>
-Subject: Re: linux-next: build warnings after merge of the 4xx tree
-Date: Tue, 20 Dec 2011 20:11:17 -0500
-Message-ID: <CA+5PVA7NhzxwxR5WGDmUQ432NehNnzRT+y05wve+FBXHyGaiwA@mail.gmail.com>
-References: <20111221111349.c9d73384a0a2c89cd211239e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the slave-dma tree with the arm-soc
+ tree
+Date: Wed, 21 Dec 2011 12:20:46 +1100
+Message-ID: <20111221122046.e6b8f4a9eb06015cb4f89d36@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__21_Dec_2011_12_20_46_+1100_bEj_oeRvN4tjQV2Z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:61370 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751067Ab1LUBLS convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 20:11:18 -0500
-In-Reply-To: <20111221111349.c9d73384a0a2c89cd211239e@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:51750 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752699Ab1LUBU6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 20:20:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suzuki Poulose <suzuki@in.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkVyaWMgQsOpbmFyZCI=?= <eric@eukrea.com>, Sascha Hauer <s.hauer@pengutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
-On Tue, Dec 20, 2011 at 7:13 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Josh,
->
-> After merging the 4xx tree, today's linux-next build (powerpc ppc64_d=
-efconfig)
-> produced these warnings:
->
-> WARN: Uncompressed kernel (size 0xe32858) overlaps the address of the=
- wrapper()
-> WARN: Fixing the link_address of wrapper to (0xf00000)
-> WARN: Uncompressed kernel (size 0xd6c9e8) overlaps the address of the=
- wrapper(0x400000)
-> WARN: Fixing the link_address of wrapper to (0xe00000)
->
-> Introduced by commit c55aef0e5bc6 ("powerpc/boot: Change the load add=
-ress
-> for the wrapper to fit the kernel"). =A0 Maybe "WARN" is not the best
-> prefix for this. =A0To me it implies that something may go wrong and =
-there
-> is something to be fixed ... =A0If this is purely informational, then=
- maybe
-> "INFO" would be better.
+--Signature=_Wed__21_Dec_2011_12_20_46_+1100_bEj_oeRvN4tjQV2Z
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-INFO indeed would be better.  I'll try and whip up a patch tomorrow
-unless Suzie beats me to it.
+Hi Vinod,
 
-Sorry about that.  I saw the WARN during my testing, but the commit
-log explicitly mentioned it an brainwashed me into thinking it was OK.
- I blame holiday-itis.
+Today's linux-next merge of the slave-dma tree got a conflict in
+drivers/dma/Kconfig between commit eb444fee9289 ("dma: MX3_IPU fix
+depends") from the arm-soc tree and commit 8e2d41f8c856 ("dma i.MX:
+remove individual SOC dependency") from the slave-dma tree.
 
-josh
+The latter seems to be a superset of the former, so I used that
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__21_Dec_2011_12_20_46_+1100_bEj_oeRvN4tjQV2Z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJO8TRuAAoJEECxmPOUX5FEK08QAJ6hdxQsn1BqAFKOKU9DjMVp
+C8ftGQKFahnOFuPwJd1RuuY1JWKCBFZvj61Ei22cNiFZEno22BtlDqqI8AKp7HIa
+pLMdxPT7CinpGRBXVzMQNmEfbIp5cPbaiLNSEbm5i2StF5eEWa0yrKjKHt7P9+D2
+qLySL4jpMsvuD4kCcEam88+1JrwHy/YCAehQfL8J6zoBlMvL3+xEjtH8HZyJXDQm
+x50TyPq7m3icTFeMc8Nx4bF4YSCO0pT/3r5mlA8QaqCNjkvX2wPQ/H5y6ZO5EgW3
+5alEUVJUP5eibhCYU4ozJsQZ/tn9fwVEEsi9fnluWQKo0HCnf+iLdajMjB/cfiQi
+1UQLdAbmjNrVXae/sdF4RGfYT+OKMYvRTkR5O9tE25YbuwDK0OH8jpYwwH6xJA3B
+nZNMtevi52fMiruYQ00zR7lwi8/KXzAHMMKja/uCP9EOfXi6wZlnLkF8xO//Lj/s
+W2TlIqLHuT0k6MLpOL7yDhDzRoYuLcvlG8Btf+XJ7GnF0mYx28B3TkbqwPB+yTQD
+sOPl5Qst/3oii9iOXHHXzxG5k/Vo6skAzlag0COlLHfDVNsJIchH/2di48GJIsHX
+i3VPcnvtFyymNIlM/RzmIh5bpYfUa8UyG2JC5kUgwAcyylqJAoV/L7kA2gkyk/i4
+O/Zc66QRueOQmwaHr3nO
+=1ObF
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__21_Dec_2011_12_20_46_+1100_bEj_oeRvN4tjQV2Z--
