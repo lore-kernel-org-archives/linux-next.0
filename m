@@ -1,66 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfs tree with the ext4 tree
-Date: Wed, 21 Dec 2011 11:43:44 +1100
-Message-ID: <20111221114344.dbe58177e02e83e572811e9e@canb.auug.org.au>
-References: <20111221111801.75611ea16ad03f68e9856bd2@canb.auug.org.au>
+From: Josh Boyer <jwboyer@gmail.com>
+Subject: Re: linux-next: build warnings after merge of the 4xx tree
+Date: Tue, 20 Dec 2011 20:11:17 -0500
+Message-ID: <CA+5PVA7NhzxwxR5WGDmUQ432NehNnzRT+y05wve+FBXHyGaiwA@mail.gmail.com>
+References: <20111221111349.c9d73384a0a2c89cd211239e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Dec_2011_11_43_44_+1100_WVVW.i5CZYVfz=UK"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:44644 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753691Ab1LUAnw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 19:43:52 -0500
-In-Reply-To: <20111221111801.75611ea16ad03f68e9856bd2@canb.auug.org.au>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:61370 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751067Ab1LUBLS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 20:11:18 -0500
+In-Reply-To: <20111221111349.c9d73384a0a2c89cd211239e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suzuki Poulose <suzuki@in.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
---Signature=_Wed__21_Dec_2011_11_43_44_+1100_WVVW.i5CZYVfz=UK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Al,
-
-On Wed, 21 Dec 2011 11:18:01 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Tue, Dec 20, 2011 at 7:13 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Josh,
 >
-> Today's linux-next merge of the vfs tree got a conflict in
-> fs/ext4/ioctl.c between commit 5e8af306ef80 ("ext4: fix potential
-> deadlock with setuid files and EXT4_IOC_MOVE_EXT") from theext4  tree and
-> commit 99b4f71273d9 ("vfs: mnt_drop_write_file()") from the vfs tree.
->=20
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+> After merging the 4xx tree, today's linux-next build (powerpc ppc64_d=
+efconfig)
+> produced these warnings:
+>
+> WARN: Uncompressed kernel (size 0xe32858) overlaps the address of the=
+ wrapper()
+> WARN: Fixing the link_address of wrapper to (0xf00000)
+> WARN: Uncompressed kernel (size 0xd6c9e8) overlaps the address of the=
+ wrapper(0x400000)
+> WARN: Fixing the link_address of wrapper to (0xe00000)
+>
+> Introduced by commit c55aef0e5bc6 ("powerpc/boot: Change the load add=
+ress
+> for the wrapper to fit the kernel"). =A0 Maybe "WARN" is not the best
+> prefix for this. =A0To me it implies that something may go wrong and =
+there
+> is something to be fixed ... =A0If this is purely informational, then=
+ maybe
+> "INFO" would be better.
 
-Of course, the build still failed (see yesterday's report) :-(
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+INFO indeed would be better.  I'll try and whip up a patch tomorrow
+unless Suzie beats me to it.
 
---Signature=_Wed__21_Dec_2011_11_43_44_+1100_WVVW.i5CZYVfz=UK
-Content-Type: application/pgp-signature
+Sorry about that.  I saw the WARN during my testing, but the commit
+log explicitly mentioned it an brainwashed me into thinking it was OK.
+ I blame holiday-itis.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO8SvAAAoJEECxmPOUX5FEv5sP/0qB8wU813ARFqGspoA39kkn
-H7aAhD19IyjyzgC3+uDjk1g0QtxhfFi2vfk3noGNewYbERKBNqt9KOUC1ovPCYAx
-GnooTiTTvbnM7rGPi76AxsKazvGqqH/uuuPat6ood1Pz80k3etKiJzqdRcc1uV43
-ot9M+9mmNqThWJA4aZ7W/VMACBFbe40jcdhBZb9TTWs8mI/YS9bKr02RrgiQEhxT
-fvLLRGUOtM5xrdu9KkGclvWCFe028LTP6wP/WzFk//12cXzn3mr75XBWU+UdUUt1
-qWhVn2s04dVN51AfaypFnwjjs2FLAgqM8dZEu+IwCZLycnFORXXEn7KZA1ptjl31
-Lva/QENl3uvKafzpuNaGlbVe8QHug+KwHHhEbPnsZMd69VcbSiucDq50ey4ounxf
-jZC4psPIRI/KumTxnpibjYBWwUxSd8c+6v+wbcf27BJrF4HvhQQMST5SZteLKhTe
-dVSi0U7jQixnZkqEMQ3ALu6Ndl9EPtMKxEEtyZLgH86Zu/10MARntZf8LdnMHKlQ
-EEVJIwmplxKThdIsTXZLBgJj3G7+xnDq/BvJOOcGQYlTEVOU+J6C+81UH8gZguTV
-zK/HMdwS34spu0PHmKuh242no+oLNHQsoNTYRfhL8Xt3VFP+8OdrLsi3hPLZftM5
-S/ieaGS7e937f2yBitoW
-=PniR
------END PGP SIGNATURE-----
-
---Signature=_Wed__21_Dec_2011_11_43_44_+1100_WVVW.i5CZYVfz=UK--
+josh
