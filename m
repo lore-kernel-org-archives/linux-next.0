@@ -1,82 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-next tree with the  tree
-Date: Wed, 21 Dec 2011 12:49:31 +1100
-Message-ID: <20111221124931.992e4e4265f2c3cd1d2e75b4@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the bluetooth tree
+Date: Wed, 21 Dec 2011 13:19:41 +1100
+Message-ID: <20111221131941.b946391eb42a6d2d76d4fd58@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Dec_2011_12_49_31_+1100_dTnpmGLCfTatxGKm"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Franky Lin <frankyl@broadcom.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__21_Dec_2011_13_19_41_+1100_7Aux_RtAN95NEbld"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:41789 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752519Ab1LUCTu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Dec 2011 21:19:50 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Gustavo F. Padovan" <padovan@profusion.mobi>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 
---Signature=_Wed__21_Dec_2011_12_49_31_+1100_dTnpmGLCfTatxGKm
+--Signature=_Wed__21_Dec_2011_13_19_41_+1100_7Aux_RtAN95NEbld
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Gustavo,
 
-Today's linux-next merge of the wireless-next tree got a conflict in
-drivers/net/wireless/brcm80211/brcmfmac/dhd_linux.c between commit
-3db1cd5c05f3 ("net: fix assignment of 0/1 to bool variables") from the
-tree and commit 3fb1d8d2dad3 ("brcm80211: fmac: move driver up status to
-struct brcmf_bus") from the wireless-next tree.
+After merging the bluetooth tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
+drivers/net/wireless/ath/ath9k/dfs.c: In function 'ath9k_postprocess_radar_=
+event':
+drivers/net/wireless/ath/ath9k/dfs.c:73:1: error: 'ATH_DBG_ATH_DBG_DFS' und=
+eclared (first use in this function)
+drivers/net/wireless/ath/ath9k/dfs.c: In function 'ath9k_dfs_process_phyerr=
+':
+drivers/net/wireless/ath/ath9k/dfs.c:166:1: error: 'ATH_DBG_ATH_DBG_DFS' un=
+declared (first use in this function)
+
+This has been inherited by the rebase onto the wireless-next tree.  I
+have used the bluetooth tree from next-20111220 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/wireless/brcm80211/brcmfmac/dhd_linux.c
-index 2c3a99d,72bee2c..0000000
---- a/drivers/net/wireless/brcm80211/brcmfmac/dhd_linux.c
-+++ b/drivers/net/wireless/brcm80211/brcmfmac/dhd_linux.c
-@@@ -805,7 -784,7 +784,7 @@@ static int brcmf_netdev_stop(struct net
-  		return 0;
- =20
-  	/* Set state and stop OS transmissions */
-- 	drvr->up =3D false;
- -	drvr->bus_if->drvr_up =3D 0;
-++	drvr->bus_if->drvr_up =3D false;
-  	netif_stop_queue(ndev);
- =20
-  	return 0;
-@@@ -842,8 -821,8 +821,8 @@@ static int brcmf_netdev_open(struct net
-  	}
-  	/* Allow transmit calls */
-  	netif_start_queue(ndev);
-- 	drvr_priv->pub.up =3D true;
-- 	if (brcmf_cfg80211_up(drvr_priv->pub.config)) {
- -	drvr->bus_if->drvr_up =3D 1;
-++	drvr->bus_if->drvr_up =3D true;
-+ 	if (brcmf_cfg80211_up(drvr->config)) {
-  		brcmf_dbg(ERROR, "failed to bring up cfg80211\n");
-  		return -1;
-  	}
-
---Signature=_Wed__21_Dec_2011_12_49_31_+1100_dTnpmGLCfTatxGKm
+--Signature=_Wed__21_Dec_2011_13_19_41_+1100_7Aux_RtAN95NEbld
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO8TsrAAoJEECxmPOUX5FESNkP/2ns12RFGl7HEov//PQkFrHZ
-1Go9JvHlvZERDosFgsOx2ZMrj/HSwLE+bePpYi+TVQh3quUFk25JAGMZITjdqNRy
-RaI2v5S8LtLtUnaNxSSOtqSzuFqCh6fMWuy+hBTJbC+f4CY+z66KUbiVZlqIGH7g
-mlrYdg6hUw6PFgTzL/kbd8xgwvzDyj/pYUm3y5IDs0bSNFB9V2LD9aHaGCPXoTlj
-/X7X1PAblhWhjJeyTnHA18Qrg8Qgz7EUGnF2NgIc1fmkUrGnmXatdIhILaOq4JhR
-+2RC43sXS4jjZKIMCasRy/TN4kUOUpZ/50fUWs/KtEhAcCqyfa1FyLO8FFybASPx
-FTCnZhX/1B8M/1gWwBXEYCto+gzvGQzQN6OiBj77IV1YE2LGsrSa4H1uk4etJZjl
-G3s3HsbJrKzTIn8aYHo8POQFW8U+i5J92FAWGiW/XI+wde6I9DA/lKfyO/2tR7wV
-o/DR6zajzstqX9E7N/QUc65Ydrzvq9XAi3efO2nlaXL6aLXPWCa6lHJ50rqJJTCI
-sbJ8u3RZD5BiSPuvKB2gsvmuEnsI0Ka+K0Hjks3AkFiIHyplKLH1GJ7OL+ir3kXD
-2xG7Zc+U5OOVhjSlX+SdyOph5JpWLyXyYs+J8zd5zwL7DXBzm6zUlWGPznb73D+M
-QEQEpffpU0C0ZoYLaQVR
-=fK20
+iQIcBAEBCAAGBQJO8UI9AAoJEECxmPOUX5FEUa0P/R0jcYmT9pGIA9/ZePaOSvIy
+fdqugw3386Onp+SEgzyrAMh5e3K7C4L24QQJqJEIgbDk30x0VNWvwSXkArHyMFEO
+ovMnCmEe2CyPDay6KIY4eYGxcF+pUkSrP0AvAwII0E2MHCMMDGf9qkMC4jYDTsKN
+4WnQwzncsWOiE/xvd8jY8Gq29mEHcp0xHKqVjnxvWpger638SRhnjfvce37+e00L
+eKlKzXrp3//f4RJXaNu0/cGjJqFBhppU/PTMlp5vKibeiNhkn5EiFC7dXWImrZmE
+T7+u928UYzozQl6wyPeG41soZGffnc543w4W3ToucsLkM7gGzOhNkjz//v9wzz71
+ynkcrEqBGFnQ/X1FQSsL0VDm7U7Z4VSg71ZMjdyH030nXfz8D2rObyPbsvwtQRpT
+3FjHqp7nsaJjtFMU8NrlpgMkA5t+7AYJL/h4F3PSzb0dywOXaAdlcoVFkBrpP4th
+VVBuf0iUhcstBQHtdb00yTBinUyIN6lCmOYzrKN735prNBB7wbMWaQQf1+kmTOqT
+tBItKH4yN1CM0jEmYdPOaAo51IgJcXq8f+VtENhJygRLezpB8SLMsPIXBZdhSxmf
+XO/VUoLeZDhtlhzxIjjDyA4KQBGi2MiTt0xMbOo6Cx0h0taESBix9h86M9J5EbfV
+/4gztCuWQmYGRtBrRIWc
+=t3s2
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__21_Dec_2011_12_49_31_+1100_dTnpmGLCfTatxGKm--
+--Signature=_Wed__21_Dec_2011_13_19_41_+1100_7Aux_RtAN95NEbld--
