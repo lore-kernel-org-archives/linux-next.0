@@ -1,76 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the final tree
-Date: Thu, 22 Dec 2011 16:33:04 +1100
-Message-ID: <20111222163304.26be6d0f5e514fefb078c0a6@canb.auug.org.au>
-References: <20111214181545.6e13bc954cb7ddce9086e861@canb.auug.org.au>
-	<1323880322.23971.33.camel@gandalf.stny.rr.com>
-	<4EE8D305.8020407@zytor.com>
+Subject: linux-next: build failure after merge of the final tree (wireless
+ tree related)
+Date: Thu, 22 Dec 2011 16:58:49 +1100
+Message-ID: <20111222165849.df5ea3e2997375de24f1490b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__22_Dec_2011_16_33_04_+1100_t4Tvbnz4kJCvcKst"
+ boundary="Signature=_Thu__22_Dec_2011_16_58_49_+1100_YAObj.MuTJT6uYWE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:52143 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:43339 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752374Ab1LVFdP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Dec 2011 00:33:15 -0500
-In-Reply-To: <4EE8D305.8020407@zytor.com>
+	with ESMTP id S1751765Ab1LVF67 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Dec 2011 00:58:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: "John W. Linville" <linville@tuxdriver.com>, Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kalle Valo <kvalo@qca.qualcomm.com>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Thu__22_Dec_2011_16_33_04_+1100_t4Tvbnz4kJCvcKst
+--Signature=_Thu__22_Dec_2011_16_58_49_+1100_YAObj.MuTJT6uYWE
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Peter,
+Hi ,
 
-On Wed, 14 Dec 2011 08:47:01 -0800 "H. Peter Anvin" <hpa@zytor.com> wrote:
->
-> On 12/14/2011 08:32 AM, Steven Rostedt wrote:
-> > On Wed, 2011-12-14 at 18:15 +1100, Stephen Rothwell wrote:
-> >=20
-> >> Maybe caused by commit d5e553d6e0a4 ("trace: Include <asm/asm-offsets.=
-h>
-> >> in trace_syscalls.c") from the tip tree.  These warnings may have been
-> >> here for a while as it is hard to catch the new ones among the flood.
-> >>
-> >=20
-> > hpa,
-> >=20
-> > Was this change only needed for x86? If so, could you put that into
-> > asm/ftrace.h instead?
-> >=20
->=20
-> Yes (on both accounts).  It was part of the syscall changes; I'll move
-> the include.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Ping?
+drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ')' before=
+ 'KBUILD_MODNAME'
+drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: 'KBUILD_MODNAME' un=
+declared here (not in a function)
+drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ',' or ';'=
+ before string constant
+drivers/net/wireless/ath/ath6kl/init.c:32:1: error: expected ')' before 'KB=
+UILD_MODNAME'
+drivers/net/wireless/ath/ath6kl/init.c:32:1: error: 'KBUILD_MODNAME' undecl=
+ared here (not in a function)
+drivers/net/wireless/ath/ath6kl/init.c:32:1: error: expected ',' or ';' bef=
+ore string constant
+drivers/net/wireless/ath/ath6kl/init.c:33:1: error: expected ')' before 'KB=
+UILD_MODNAME'
+drivers/net/wireless/ath/ath6kl/init.c:33:1: error: invalid initializer
+drivers/net/wireless/ath/ath6kl/init.c:33:1: error: expected ',' or ';' bef=
+ore string constant
+drivers/net/wireless/ath/ath6kl/init.c:34:1: error: expected ')' before 'KB=
+UILD_MODNAME'
+drivers/net/wireless/ath/ath6kl/init.c:34:1: error: invalid initializer
+drivers/net/wireless/ath/ath6kl/init.c:34:1: error: expected ',' or ';' bef=
+ore string constant
+
+I can't figure out what goes wrong here.  On the compile command line,
+KBUILD_MODNAME is not defined, but KBUILD_BASE_NAME is.
+
+However, reverting commit fde57764ef87 ("ath6kl: enable USB support")
+made the problem go away.  That commit caused the above two files to be
+built into two separate modules.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__22_Dec_2011_16_33_04_+1100_t4Tvbnz4kJCvcKst
+--Signature=_Thu__22_Dec_2011_16_58_49_+1100_YAObj.MuTJT6uYWE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO8sEQAAoJEECxmPOUX5FEV/oP/iI+sI2uZzvXPxhT907a/jCa
-WNrIlfq/NWLFUaQ6km62qXiPkkSTLNDwlM+YWABXkf45SLR/oOVLntH673DV216P
-nSOms0qvfTifHpYF0yQRN43s8isL3PoxQKtbsPErhA5A1xjgOBO/SFlG26WlHZKd
-pKwkFLjkywRgrnLdKLh7rk6cApncL7Qv3I4kcrsOGtLLSnF6lDPuovMrVdalScEq
-ZyO68ZPfj1JQNqNd2MSwPSnKRpcmb499BKZExC/0GRrxUH1iLK3MGoRc85WzQbHd
-7fLSyj2bSx0qhC+L1Z3TpKwR8VIuAB6Q9c7FEaz4vjdG+WdTqq/YiQdxadGxnWGz
-MqBqYmkhn0lKy3kWol37KCBfx6E8T3skc+yIDvDINUL+7FXrMsE9MO/9rzQMsWK1
-JQuSO/rU0tx1uNk0aYNBGxOaSLFwcT0Uw4qyoBy5q//8X2EyjgbAlKCDchoDv37L
-A6c99AyXXnxFIgbMvzuFU4PwUD5WwsB3EOr3vLHdnd9CbAMYlDOMq+X5xuAG+vqs
-BXcDEVPkL8LQ5R+W557Z0cTmgwVm3NWj30f9S9h2yvl7ZhzuPagkbYL/p2FeekZY
-/UoZLSs9WcgSd7E5DvzpKhiDF1kxP6FnNFhwjIhwNTZopNOpu2/PvZiP9MpmFtzi
-J4llKVp8xALM40bAn2tG
-=R18X
+iQIcBAEBCAAGBQJO8scZAAoJEECxmPOUX5FEVr4P/3nqrG7OJ7R92D0uTEzgD4uX
+664SYUGxK8yXjmIs6H5e1gYyeYg/2sj2xP4EKW+8NzHdmqXji27KIVexLsBLK1YZ
+OmFNQaBFSqfdpz09TrhPl23xM9SxJN1E4bmdLbg4xCYfq+5kVHGgSBFTXVeRHNpg
+QC5OXP2f5xpQ9VkjLJ4EZyRHdpjkP9IifRXfj0+jx7I/Go2AWWo8JyP31PllNQv2
+8OZcirzluLT0oYLChFVQu3oqHTd6UHBEFict5KMPVXLQByQrjBIu+wo9RIQ2+nsw
+ZiBiNZ9wmdXtMje5rh/I4nekvd79rz1nKwriB7odQFxypMpaFmXPACa0b3u2MQus
+W16Qq6qEFYAl4b3+CtJULpm1iDKEYJI7mt4jgsvgEc6y0foS5xvdvlsrYoYa1qOr
+xT6ZqrhiA1duOPtcaO2rJx9kge6E+Jf2XzgLagYHN8TQJkudjhTcGfwIQuZNio+2
+YosfeVIiVp86/chH/zfbQnQurbs9lx2Fqpnita2cKUQ+5oz9dickzCaFSNGSyOER
+/tPNo9vEaCoLxfKSvYASVGfdObDDe2XfwYmNo9ZP3qNH3j/bysp5a/VVCJ7big5b
+AiWfbIOcqBXaglSN9sbPTqkqFoPt7cS5dXKu+pbygpiP5NFeGuSetGJ9Y2Al131N
+bQC6TzBb2rXGvnGqFM+Y
+=0kbt
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__22_Dec_2011_16_33_04_+1100_t4Tvbnz4kJCvcKst--
+--Signature=_Thu__22_Dec_2011_16_58_49_+1100_YAObj.MuTJT6uYWE--
