@@ -1,69 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree (net
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Subject: Re: linux-next: build failure after merge of the final tree (wireless
  tree related)
-Date: Thu, 22 Dec 2011 02:01:59 -0500 (EST)
-Message-ID: <20111222.020159.138601584172644611.davem@davemloft.net>
-References: <20111222170726.b16565ef7d1434cc4ec170d7@canb.auug.org.au>
+Date: Thu, 22 Dec 2011 10:38:56 +0200
+Message-ID: <4EF2ECA0.2080501@qca.qualcomm.com>
+References: <20111222165849.df5ea3e2997375de24f1490b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20111222170726.b16565ef7d1434cc4ec170d7@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, eric.dumazet@gmail.com
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from wolverine02.qualcomm.com ([199.106.114.251]:9003 "EHLO
+	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753976Ab1LVImM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Dec 2011 03:42:12 -0500
+In-Reply-To: <20111222165849.df5ea3e2997375de24f1490b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, Michal Marek <mmarek@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, linux-wireless <linux-wireless@vger.kernel.org>, ath6kl-devel <ath6kl-devel@qualcomm.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 22 Dec 2011 17:07:26 +1100
+Hi Stephen,
 
-> After merging the final tree, today's linux-next build (sparc32 defconfig)
-> failed like this:
-> 
-> net/ipv4/route.c: In function 'rt_check_expire':
-> net/ipv4/route.c:873:4: error: implicit declaration of function 'prefetch' [-Werror=implicit-function-declaration]
-> 
-> Caused by commit 9f28a2fc0bd7 ("ipv4: reintroduce route cache garbage
-> collector").
-> 
-> Linus, that commit is in the latest pull request you have from Dave ...
+I'll add linux-wireless and ath6kl-devel as I'm sick today and hopefully
+someone else from our team will take a look at it.
 
-Sorry, that was just reinstating code that got removed but we forgot
-the prefetch.h header.  Both Eric and I test built this as well as did
-run time testing on the fix.
+On 12/22/2011 07:58 AM, Stephen Rothwell wrote:
 
-Linus, could you just apply this obvious fix directly?  Sorry for the
-trouble.
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ')' before 'KBUILD_MODNAME'
+> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
+> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ',' or ';' before string constant
+> drivers/net/wireless/ath/ath6kl/init.c:32:1: error: expected ')' before 'KBUILD_MODNAME'
+> drivers/net/wireless/ath/ath6kl/init.c:32:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
+> drivers/net/wireless/ath/ath6kl/init.c:32:1: error: expected ',' or ';' before string constant
+> drivers/net/wireless/ath/ath6kl/init.c:33:1: error: expected ')' before 'KBUILD_MODNAME'
+> drivers/net/wireless/ath/ath6kl/init.c:33:1: error: invalid initializer
+> drivers/net/wireless/ath/ath6kl/init.c:33:1: error: expected ',' or ';' before string constant
+> drivers/net/wireless/ath/ath6kl/init.c:34:1: error: expected ')' before 'KBUILD_MODNAME'
+> drivers/net/wireless/ath/ath6kl/init.c:34:1: error: invalid initializer
+> drivers/net/wireless/ath/ath6kl/init.c:34:1: error: expected ',' or ';' before string constant
+> 
+> I can't figure out what goes wrong here.  On the compile command line,
+> KBUILD_MODNAME is not defined, but KBUILD_BASE_NAME is.
+> 
+> However, reverting commit fde57764ef87 ("ath6kl: enable USB support")
+> made the problem go away.  That commit caused the above two files to be
+> built into two separate modules.
 
-Thanks.
+Is this ppc specific problem? Is there anything we should do on ath6kl
+to fix this?
 
-> I applied the following patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 22 Dec 2011 17:03:29 +1100
-> Subject: [PATCH] ipv4: using prefetch requires including prefetch.h
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  net/ipv4/route.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-> index 7460483..9c01f56 100644
-> --- a/net/ipv4/route.c
-> +++ b/net/ipv4/route.c
-> @@ -91,6 +91,7 @@
->  #include <linux/rcupdate.h>
->  #include <linux/times.h>
->  #include <linux/slab.h>
-> +#include <linux/prefetch.h>
->  #include <net/dst.h>
->  #include <net/net_namespace.h>
->  #include <net/protocol.h>
-> -- 
-> 1.7.8.197.g73c6b
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+Kalle
