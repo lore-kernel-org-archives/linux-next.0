@@ -1,85 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (wireless
- tree related)
-Date: Thu, 22 Dec 2011 16:58:49 +1100
-Message-ID: <20111222165849.df5ea3e2997375de24f1490b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net tree
+ related)
+Date: Thu, 22 Dec 2011 17:07:26 +1100
+Message-ID: <20111222170726.b16565ef7d1434cc4ec170d7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__22_Dec_2011_16_58_49_+1100_YAObj.MuTJT6uYWE"
+ boundary="Signature=_Thu__22_Dec_2011_17_07_26_+1100_zPnZRsnIu7nYL/Zw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:43339 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:44263 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751765Ab1LVF67 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Dec 2011 00:58:59 -0500
+	with ESMTP id S1752417Ab1LVGHf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Dec 2011 01:07:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>, Michal Marek <mmarek@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kalle Valo <kvalo@qca.qualcomm.com>, Rusty Russell <rusty@rustcorp.com.au>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Eric Dumazet <eric.dumazet@gmail.com>
 
---Signature=_Thu__22_Dec_2011_16_58_49_+1100_YAObj.MuTJT6uYWE
+--Signature=_Thu__22_Dec_2011_17_07_26_+1100_zPnZRsnIu7nYL/Zw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi ,
+Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+After merging the final tree, today's linux-next build (sparc32 defconfig)
+failed like this:
 
-drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ')' before=
- 'KBUILD_MODNAME'
-drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: 'KBUILD_MODNAME' un=
-declared here (not in a function)
-drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ',' or ';'=
- before string constant
-drivers/net/wireless/ath/ath6kl/init.c:32:1: error: expected ')' before 'KB=
-UILD_MODNAME'
-drivers/net/wireless/ath/ath6kl/init.c:32:1: error: 'KBUILD_MODNAME' undecl=
-ared here (not in a function)
-drivers/net/wireless/ath/ath6kl/init.c:32:1: error: expected ',' or ';' bef=
-ore string constant
-drivers/net/wireless/ath/ath6kl/init.c:33:1: error: expected ')' before 'KB=
-UILD_MODNAME'
-drivers/net/wireless/ath/ath6kl/init.c:33:1: error: invalid initializer
-drivers/net/wireless/ath/ath6kl/init.c:33:1: error: expected ',' or ';' bef=
-ore string constant
-drivers/net/wireless/ath/ath6kl/init.c:34:1: error: expected ')' before 'KB=
-UILD_MODNAME'
-drivers/net/wireless/ath/ath6kl/init.c:34:1: error: invalid initializer
-drivers/net/wireless/ath/ath6kl/init.c:34:1: error: expected ',' or ';' bef=
-ore string constant
+net/ipv4/route.c: In function 'rt_check_expire':
+net/ipv4/route.c:873:4: error: implicit declaration of function 'prefetch' =
+[-Werror=3Dimplicit-function-declaration]
 
-I can't figure out what goes wrong here.  On the compile command line,
-KBUILD_MODNAME is not defined, but KBUILD_BASE_NAME is.
+Caused by commit 9f28a2fc0bd7 ("ipv4: reintroduce route cache garbage
+collector").
 
-However, reverting commit fde57764ef87 ("ath6kl: enable USB support")
-made the problem go away.  That commit caused the above two files to be
-built into two separate modules.
+Linus, that commit is in the latest pull request you have from Dave ...
+
+I applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 22 Dec 2011 17:03:29 +1100
+Subject: [PATCH] ipv4: using prefetch requires including prefetch.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/ipv4/route.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+index 7460483..9c01f56 100644
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -91,6 +91,7 @@
+ #include <linux/rcupdate.h>
+ #include <linux/times.h>
+ #include <linux/slab.h>
++#include <linux/prefetch.h>
+ #include <net/dst.h>
+ #include <net/net_namespace.h>
+ #include <net/protocol.h>
+--=20
+1.7.8.197.g73c6b
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__22_Dec_2011_16_58_49_+1100_YAObj.MuTJT6uYWE
+--Signature=_Thu__22_Dec_2011_17_07_26_+1100_zPnZRsnIu7nYL/Zw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO8scZAAoJEECxmPOUX5FEVr4P/3nqrG7OJ7R92D0uTEzgD4uX
-664SYUGxK8yXjmIs6H5e1gYyeYg/2sj2xP4EKW+8NzHdmqXji27KIVexLsBLK1YZ
-OmFNQaBFSqfdpz09TrhPl23xM9SxJN1E4bmdLbg4xCYfq+5kVHGgSBFTXVeRHNpg
-QC5OXP2f5xpQ9VkjLJ4EZyRHdpjkP9IifRXfj0+jx7I/Go2AWWo8JyP31PllNQv2
-8OZcirzluLT0oYLChFVQu3oqHTd6UHBEFict5KMPVXLQByQrjBIu+wo9RIQ2+nsw
-ZiBiNZ9wmdXtMje5rh/I4nekvd79rz1nKwriB7odQFxypMpaFmXPACa0b3u2MQus
-W16Qq6qEFYAl4b3+CtJULpm1iDKEYJI7mt4jgsvgEc6y0foS5xvdvlsrYoYa1qOr
-xT6ZqrhiA1duOPtcaO2rJx9kge6E+Jf2XzgLagYHN8TQJkudjhTcGfwIQuZNio+2
-YosfeVIiVp86/chH/zfbQnQurbs9lx2Fqpnita2cKUQ+5oz9dickzCaFSNGSyOER
-/tPNo9vEaCoLxfKSvYASVGfdObDDe2XfwYmNo9ZP3qNH3j/bysp5a/VVCJ7big5b
-AiWfbIOcqBXaglSN9sbPTqkqFoPt7cS5dXKu+pbygpiP5NFeGuSetGJ9Y2Al131N
-bQC6TzBb2rXGvnGqFM+Y
-=0kbt
+iQIcBAEBCAAGBQJO8skeAAoJEECxmPOUX5FEpJ8P/3COL4qJAgYd0aYdIKIrngj1
++r2N4UZypMKg1hYcR4RCETeb/qyotgppdTwX93GNF+nXQ2if/2ql0B2cUWkB4a6F
+s1IvsLRQLBcEtqkPtElJZuUa3geEfGVF7x2GxQ+7TpSKF/1mgVs9dUMZa18yOsxL
+31IcVV9Rb15trJuWVQM3Rk+1SC/zlPdyMjLAnI2mnEIy2I1HGCKwi4WQTJQjE26N
+2AStPiDoEzin6tMfbKp17TVBVLYAZs0SkIwvzxh2J3Vlp3MNIR+rybOZTRQJsvtZ
+p0IUKPk4Kh4xiXtLJZ562fAOkli7YRYYf4uVq26CZuHKvpejUnfy9jHJuqoVEpwn
+AsrM9G8NAFFgTBWLKDj/ha2Gr1IAuUy5R2NLahi8YPWe9aZAWOcn31097V62T8XL
+tStFOSrFupUWVE7bfD0ZKdrvuZpUKpyfUhQpWapt56JLucCchcVSQawTjSluIS21
+8f+14EyI4TOR3Z5OfT1+EaIRHxCyYFhUEojSHPsYcmFl0GXkSzn823EVc5yh4fpb
+UjNqUzJwqrJQYxQiJWWf/W9CW37xoZyOy9IIof+xOcC5E3wftjE+gTZdMBqXLYhe
+NhBzDpP7qzQrYMZZKAGHYCv/hAL4je1quDv5RseHW1cq6Sry5QB96e6So9OPIv3P
+fVc9q7kRE5i0IbcuQ9Qg
+=A/m7
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__22_Dec_2011_16_58_49_+1100_YAObj.MuTJT6uYWE--
+--Signature=_Thu__22_Dec_2011_17_07_26_+1100_zPnZRsnIu7nYL/Zw--
