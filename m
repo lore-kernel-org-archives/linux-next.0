@@ -1,47 +1,50 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: linux-next: build failure after merge of the final tree (wireless
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the final tree (mfd
  tree related)
-Date: Thu, 22 Dec 2011 17:57:17 +0100
-Message-ID: <4EF3616D.5050506@suse.cz>
-References: <20111222165849.df5ea3e2997375de24f1490b@canb.auug.org.au>
+Date: Thu, 22 Dec 2011 18:30:20 +0100
+Message-ID: <20111222173020.GI5183@sortiz-mobl>
+References: <20111221173301.1111dc371e11d5c7025f03ea@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:34963 "EHLO mx2.suse.de"
+Received: from mga02.intel.com ([134.134.136.20]:49133 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751411Ab1LVQzp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 Dec 2011 11:55:45 -0500
-In-Reply-To: <20111222165849.df5ea3e2997375de24f1490b@canb.auug.org.au>
+	id S1753164Ab1LVRZE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 Dec 2011 12:25:04 -0500
+Content-Disposition: inline
+In-Reply-To: <20111221173301.1111dc371e11d5c7025f03ea@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@qca.qualcomm.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benoit Cousson <b-cousson@ti.com>
 
-Dne 22.12.2011 06:58, Stephen Rothwell napsal(a):
-> Hi ,
+Hi Stephen,
+
+On Wed, Dec 21, 2011 at 05:33:01PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
 > After merging the final tree, today's linux-next build (powerpc
 > allyesconfig) failed like this:
 > 
-> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ')' before 'KBUILD_MODNAME'
-> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
-[...]
+> drivers/mfd/twl-core.c: In function 'twl_probe':
+> drivers/mfd/twl-core.c:1212:22: error: 'TWL6030_IRQ_BASE' undeclared (first use in this function)
+> drivers/mfd/twl-core.c:1212:22: note: each undeclared identifier is reported only once for each function it appears in
+> drivers/mfd/twl-core.c:1213:39: error: 'TWL6030_BASE_NR_IRQS' undeclared (first use in this function)
+> drivers/mfd/twl-core.c:1215:22: error: 'TWL4030_IRQ_BASE' undeclared (first use in this function)
+> drivers/mfd/twl-core.c:1216:39: error: 'TWL4030_BASE_NR_IRQS' undeclared (first use in this function)
+> drivers/mfd/twl-core.c:1218:3: error: implicit declaration of function 'irq_domain_add_simple' [-Werror=implicit-function-declaration]
 > 
-> I can't figure out what goes wrong here.  On the compile command line,
-> KBUILD_MODNAME is not defined, but KBUILD_BASE_NAME is.
+> Caused by commit 4eea8b1d717d ("mfd: Add initial DT support for
+> twl4030/twl6030").  A missing include?  Or a CONFIG problem?
+> 
+> This build does not have CONFIG_IRQ_DOMAIN set.
+> 
+> I have reverted that commit for today.
+I just pushed Benoit's new patch, this build failure should be fixed now.
 
-scripts/Makefile.lib says
-# Note: It's possible that one object gets potentially linked into more
-#       than one module. In that case KBUILD_MODNAME will be set to foo_bar,
-#       where foo and bar are the name of the modules.
+Cheers,
+Samuel.
 
-but reality does not match this comment:
-modname_flags  = $(if $(filter 1,$(words $(modname))),\
-                 -D"KBUILD_MODNAME=KBUILD_STR($(call name-fix,$(modname)))")
-
-But I wonder why you need to link all the object files twice? Usually,
-drivers have a foo_common.ko and foo_{usb,pci,whatever}.ko that provide
-the pci/usb/whatever driver.
-
-Michal
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
