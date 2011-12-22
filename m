@@ -1,84 +1,114 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mfd tree with the rr tree
-Date: Thu, 22 Dec 2011 13:30:45 +1100
-Message-ID: <20111222133045.cb50cc6322a87655f8c75d25@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (pm tree
+ related)
+Date: Thu, 22 Dec 2011 16:28:46 +1100
+Message-ID: <20111222162846.51beb2e1b6b5c6ff2378ad33@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__22_Dec_2011_13_30_45_+1100_tiIX5gaasWXV6Zgu"
+ boundary="Signature=_Thu__22_Dec_2011_16_28_46_+1100_bs4_zalAtMb7Ey93"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:34691 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:41462 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752683Ab1LVCax (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Dec 2011 21:30:53 -0500
+	with ESMTP id S1752638Ab1LVF2z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Dec 2011 00:28:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jochen Friedrich <jochen@scram.de>, Rusty Russell <rusty@rustcorp.com.au>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__22_Dec_2011_13_30_45_+1100_tiIX5gaasWXV6Zgu
+--Signature=_Thu__22_Dec_2011_16_28_46_+1100_bs4_zalAtMb7Ey93
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi ,
 
-Today's linux-next merge of the mfd tree got a conflict in
-scripts/mod/file2alias.c between commits f5385e2664e7 ("modpost: use a
-table rather than a giant if/else statement") and c89845fbf083 ("modpost:
-use linker section to generate table") from the rr tree and commit
-6837bbf06393 ("ARM: sa11x0: Implement autoloading of codec and codec
-pdata for mcp bus") from the mfd tree.
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig) failed like this:
 
-I fixed it up (see below - the rest of the change to this file from the
-mfd tree is removed) and can carry the fix as necessary.
+drivers/base/bus.o: In function `dev_pm_qos_add_ancestor_request':
+bus.c:(.text+0x4c0): multiple definition of `dev_pm_qos_add_ancestor_reques=
+t'
+drivers/base/core.o:core.c:(.text+0x8ec): first defined here
+drivers/base/dd.o: In function `dev_pm_qos_add_ancestor_request':
+dd.c:(.text+0x418): multiple definition of `dev_pm_qos_add_ancestor_request'
+drivers/base/core.o:core.c:(.text+0x8ec): first defined here
+kernel/sysctl_binary.o: In function `dev_pm_qos_add_ancestor_request':
+sysctl_binary.c:(.text+0x124): multiple definition of `dev_pm_qos_add_ances=
+tor_request'
+
+Caused by commit 513dcbda6199 ("PM / QoS: Introduce
+dev_pm_qos_add_ancestor_request()") from the pm tree.
+
+Please build with and without config options that protect new code ... :-(
+
+I applied this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 22 Dec 2011 16:22:27 +1100
+Subject: [PATCH] PM / QoS: fix build problem with new
+ dev_pm_qos_add_ancestor_request api
+
+Fixes these errors:
+
+drivers/base/bus.o: In function `dev_pm_qos_add_ancestor_request':
+bus.c:(.text+0x4c0): multiple definition of `dev_pm_qos_add_ancestor_reques=
+t'
+drivers/base/core.o:core.c:(.text+0x8ec): first defined here
+drivers/base/dd.o: In function `dev_pm_qos_add_ancestor_request':
+dd.c:(.text+0x418): multiple definition of `dev_pm_qos_add_ancestor_request'
+drivers/base/core.o:core.c:(.text+0x8ec): first defined here
+kernel/sysctl_binary.o: In function `dev_pm_qos_add_ancestor_request':
+sysctl_binary.c:(.text+0x124): multiple definition of `dev_pm_qos_add_ances=
+tor_request'
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/pm_qos.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
+index b4d67e5..e5bbcba 100644
+--- a/include/linux/pm_qos.h
++++ b/include/linux/pm_qos.h
+@@ -155,7 +155,7 @@ static inline void dev_pm_qos_constraints_destroy(struc=
+t device *dev)
+ {
+ 	dev->power.power_state =3D PMSG_INVALID;
+ }
+-int dev_pm_qos_add_ancestor_request(struct device *dev,
++static inline int dev_pm_qos_add_ancestor_request(struct device *dev,
+ 				    struct dev_pm_qos_request *req, s32 value)
+ 			{ return 0; }
+ #endif
+--=20
+1.7.8.197.g73c6b
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc scripts/mod/file2alias.c
-index c1057bd,e8c7eb1..0000000
---- a/scripts/mod/file2alias.c
-+++ b/scripts/mod/file2alias.c
-@@@ -821,8 -773,16 +821,18 @@@ static int do_spi_entry(const char *fil
- =20
-  	return 1;
-  }
- +ADD_TO_DEVTABLE("spi", struct spi_device_id, do_spi_entry);
- =20
-+ /* Looks like: mcp:S */
-+ static int do_mcp_entry(const char *filename, struct mcp_device_id *id,
-+ 			char *alias)
-+ {
-+ 	sprintf(alias, MCP_MODULE_PREFIX "%s", id->name);
-+=20
-+ 	return 1;
-+ }
-++ADD_TO_DEVTABLE("mcp", struct mcp_device_id, do_mcp_entry);
-+=20
-  static const struct dmifield {
-  	const char *prefix;
-  	int field;
-
---Signature=_Thu__22_Dec_2011_13_30_45_+1100_tiIX5gaasWXV6Zgu
+--Signature=_Thu__22_Dec_2011_16_28_46_+1100_bs4_zalAtMb7Ey93
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO8pZVAAoJEECxmPOUX5FEOZMP/1CW8yDHAxCCxNdop00fp+bV
-JBqGP2V9cuOFYLGdss6GqV7Su9YQhLpJ/D6JA+oq9s2nBC34GkY6iCT9uJj5XoYW
-Y4OR5Cj+det+gOYbNBGENZ5WHYz3aGn1J5gcVwvnFTpYxbQgrBtjLnhKQgWLsSff
-OaDOrcMUBrzCY6m/rUJtAzlAS7n71PHzC3fC10Xubgnti14FQmyk/m67+npAGXt5
-e6tOrYZwL5ljFExQghaHrD5nG7sw2V7UXwZVrz8w8tz1oqMvBOnpqrG0umdcbTMT
-YL3FsJj2b7YJFFkbbRD9EsrD8r2ZfzmBz8TMZe5PbHEcnZRPxH3NE/6uvwiqN2Y8
-5PQwHT2O1octD7HIV67mnV6ax4J8F+M0nAEAzS5jz18/ts1SaM72zdvLNgMpMw95
-SSSIqt337dBURbbkOEGYeV8+q6tIz3qN57YoUfUy8w7P7PRWAL3cJoWOW5j23ZGe
-Uv04BQ2ChIKooDVHH32RugHwfNQnG03Nnen+kylQzwjLljAkvVaQfWAux/IOntqb
-7DzxF6JUuF2NNckdENLN2Q3iWm5ZjHRIpitLN002XEMVvChwRdzbXRo+8om0Tyfn
-rn5wP2QMdAaTOcGxbGnYpxYAzPj7oaeunlIz/Dx+eCnnFmGbGzRP8ZhDHAJ/BSU0
-iaFpaSsxTosAnbTCBAQ6
-=0Z4G
+iQIcBAEBCAAGBQJO8sAOAAoJEECxmPOUX5FE0Z8P/0v12br53C1tc7TDmFCS0xpd
+G35NelJe/m1XDRnIBi+Wmo6ashyskTbusABmKiH2CVjo/m63kOdfoak56EIXbUlb
+jphF8jCVH8DEDvEZZTZjdYmNc+3WnVkv1LTg5RRIB+2B0gRylzNVUXfwCXUN2y+B
+Tj1CZplc74lxelRNL/YRncA3ytUBCLh37VRfDrCtkgZ1j9ciM6jLVRq+LQVPiaE9
+u2K+/P2lACDyHq5X9JhLkzKjRRBedNBI7jXN58ZfIEt7UJrUGy3k2ewDskjXcfAG
+DBg0hAzxX+ZDe7qOXItb3Gi7MQZYYckCEAPVjQqnYPJ1J/IWUwlGh5PtOTpi+3K7
+vaHfL8y5jZxw+pUCcQed31IO1w8eDCJXgF5xXXg8koPD7fjpk1hlha5F2h4a3S1S
+HuCVk9dXLB7qp7/SpRN+a6gILLMjOLVBGq2b30zHLCd9Pai0Fl/5Zl+OFB0ggF7o
+C5qOV08jZQTAtnL+jQsS/fj5tOFEfLkWNpN/D4l4DsVYxNdlXA8oQqINm4JE7cCN
+ycYqzl77oe5cWu39W1x/++byJ+0xGl71YWKv5h+4lDokj917E7Bm5rdgYMQ5NDdH
+x755b4/To8yCIkRFpaaBGmxL1hgY7AfAmtEx+lNU84zsKg6XgiD5NwbXnyyWrb4R
+zGK1DbpdLs4VqvFZYAsU
+=Gq7x
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__22_Dec_2011_13_30_45_+1100_tiIX5gaasWXV6Zgu--
+--Signature=_Thu__22_Dec_2011_16_28_46_+1100_bs4_zalAtMb7Ey93--
