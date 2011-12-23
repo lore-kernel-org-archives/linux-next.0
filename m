@@ -1,56 +1,59 @@
-From: Ohad Ben-Cohen <ohad@wizery.com>
-Subject: Re: Adding remoteproc/rpmsg to linux-next
-Date: Fri, 23 Dec 2011 13:45:19 +0200
-Message-ID: <CAK=WgbYanX_q8JDO6MF3zLWMkRiJ6uynmu+s7eBNrX4qL0N8ug@mail.gmail.com>
-References: <CAK=WgbaU6vpiBGSgogYPjQNmrF-U0wk1rSXMX83DdgQa9hw5Mw@mail.gmail.com>
- <20111212103301.5ff6a582dca82394ace40e8d@canb.auug.org.au>
- <CAK=WgbZm9txdvZ1VW-iUn5306yMz1Y=DT_Uygwi6zPZNyWx7gA@mail.gmail.com> <201112221522.21146.arnd@arndb.de>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: build failure after merge of the final tree (wireless
+ tree related)
+Date: Fri, 23 Dec 2011 21:50:48 +0100
+Message-ID: <4EF4E9A8.7070102@suse.cz>
+References: <20111222165849.df5ea3e2997375de24f1490b@canb.auug.org.au> <4EF3616D.5050506@suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:48580 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756551Ab1LWLpk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Dec 2011 06:45:40 -0500
-In-Reply-To: <201112221522.21146.arnd@arndb.de>
+Received: from cantor2.suse.de ([195.135.220.15]:36724 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757744Ab1LWUtO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 23 Dec 2011 15:49:14 -0500
+In-Reply-To: <4EF3616D.5050506@suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-next@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Brian Swetland <swetland@google.com>, akpm@linux-foundation.org, Greg KH <greg@kroah.com>, Stephen Boyd <sboyd@codeaurora.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Rusty Russell <rusty@rustcorp.com.au>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Saravana Kannan <skannan@codeaurora.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
 
-On Thu, Dec 22, 2011 at 5:22 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> Either way works for me, too. Right now, I would tend to let you send it
-> to Linus directly because I haven't looked at the latest versions of the
-> code for some time.
+Dne 22.12.2011 17:57, Michal Marek napsal(a):
+> Dne 22.12.2011 06:58, Stephen Rothwell napsal(a):
+>> Hi ,
+>>
+>> After merging the final tree, today's linux-next build (powerpc
+>> allyesconfig) failed like this:
+>>
+>> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ')' before 'KBUILD_MODNAME'
+>> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
+> [...]
+>>
+>> I can't figure out what goes wrong here.  On the compile command line,
+>> KBUILD_MODNAME is not defined, but KBUILD_BASE_NAME is.
+> 
+> scripts/Makefile.lib says
+> # Note: It's possible that one object gets potentially linked into more
+> #       than one module. In that case KBUILD_MODNAME will be set to foo_bar,
+> #       where foo and bar are the name of the modules.
+> 
+> but reality does not match this comment:
+> modname_flags  = $(if $(filter 1,$(words $(modname))),\
+>                  -D"KBUILD_MODNAME=KBUILD_STR($(call name-fix,$(modname)))")
 
-Directly to Linus it is then.
+Thinking about this more, the comment is wrong. The reason is that with
+the the modules builtin, KBUILD_MODNAME is needed to generate names of
+commandline options to set module parameters: <module name>.<param
+name>. And ath6kl_sdio_ath6kl_usb.<param> would first look silly, second
+the name would change if we disabled one of the drivers.
 
-> While I generally trust you to do the right thing
-> there, I'm not 100% comfortable to vouch for it in the way that an Ack
-> or pull would imply without doing a more detailed review of the latest
-> code.
 
-Sure, I fully understand.
+> But I wonder why you need to link all the object files twice? Usually,
+> drivers have a foo_common.ko and foo_{usb,pci,whatever}.ko that provide
+> the pci/usb/whatever driver.
 
-> I know that I promised you that review, but haven't gotten to it, sorry.
-> I've done a 5 minute review now and it absolutely looks good to go in
-> as far as I can tell, so I certainly don't object to you sending it
-> to Linus for 3.3.
+Another option is to build both drivers in a single module. Or, as a
+band-aid, make the two drivers module-only, by adding 'depends on m' to
+their Kconfig entries.
 
-Thanks.
-
-> If you think you need more Acks or if there are other
-> reasons to have it go through arm-soc, please tell me and I'll try harder
-> to find the time for a proper review.
-
-I do have explicit Acks on the changes to other sub-systems, though
-ideally I'd be happy to have some explicit Acks on the generic code
-too.
-
-But I hope this should be fine. Let's try to proceed this way and see
-how it goes (maybe I should just tell Linus that despite the lack of
-explicit Acks to some of the patches, people do think this is
-good-to-go).
-
-Thanks!
-Ohad.
+Michal
