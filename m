@@ -1,95 +1,56 @@
-From: Giuseppe CAVALLARO <peppe.cavallaro@st.com>
-Subject: Re: [net-next] stmmac: fix missing module license in the main.
-Date: Fri, 23 Dec 2011 12:16:20 +0100
-Message-ID: <4EF46304.8070806@st.com>
-References: <4EF3DB45.30401@xenotime.net> <1324636267-25533-1-git-send-email-peppe.cavallaro@st.com>
+From: Ohad Ben-Cohen <ohad@wizery.com>
+Subject: Re: Adding remoteproc/rpmsg to linux-next
+Date: Fri, 23 Dec 2011 13:45:19 +0200
+Message-ID: <CAK=WgbYanX_q8JDO6MF3zLWMkRiJ6uynmu+s7eBNrX4qL0N8ug@mail.gmail.com>
+References: <CAK=WgbaU6vpiBGSgogYPjQNmrF-U0wk1rSXMX83DdgQa9hw5Mw@mail.gmail.com>
+ <20111212103301.5ff6a582dca82394ace40e8d@canb.auug.org.au>
+ <CAK=WgbZm9txdvZ1VW-iUn5306yMz1Y=DT_Uygwi6zPZNyWx7gA@mail.gmail.com> <201112221522.21146.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------030208080706080200000805"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1324636267-25533-1-git-send-email-peppe.cavallaro@st.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: netdev@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
-
-This is a multi-part message in MIME format.
---------------030208080706080200000805
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:48580 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756551Ab1LWLpk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Dec 2011 06:45:40 -0500
+In-Reply-To: <201112221522.21146.arnd@arndb.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-next@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Brian Swetland <swetland@google.com>, akpm@linux-foundation.org, Greg KH <greg@kroah.com>, Stephen Boyd <sboyd@codeaurora.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Rusty Russell <rusty@rustcorp.com.au>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Saravana Kannan <skannan@codeaurora.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>
 
-Sorry I had forgotten to add you on copy.
+On Thu, Dec 22, 2011 at 5:22 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> Either way works for me, too. Right now, I would tend to let you send it
+> to Linus directly because I haven't looked at the latest versions of the
+> code for some time.
 
-Peppe
+Directly to Linus it is then.
 
-p.s. patch attached here too.
+> While I generally trust you to do the right thing
+> there, I'm not 100% comfortable to vouch for it in the way that an Ack
+> or pull would imply without doing a more detailed review of the latest
+> code.
 
-On 12/23/2011 11:31 AM, Giuseppe CAVALLARO wrote:
-> This patch fixes the following warning raised
-> when compile:
-> 
-> WARNING: modpost: missing MODULE_LICENSE()
-> in drivers/net/ethernet/stmicro/stmmac/stmmac.o
-> 
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    4 ++++
->  1 files changed, 4 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index b314592..3738b47 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -2039,3 +2039,7 @@ err:
->  
->  __setup("stmmaceth=", stmmac_cmdline_opt);
->  #endif
-> +
-> +MODULE_DESCRIPTION("STMMAC 10/100/1000 Ethernet device driver");
-> +MODULE_AUTHOR("Giuseppe Cavallaro <peppe.cavallaro@st.com>");
-> +MODULE_LICENSE("GPL");
+Sure, I fully understand.
 
+> I know that I promised you that review, but haven't gotten to it, sorry.
+> I've done a 5 minute review now and it absolutely looks good to go in
+> as far as I can tell, so I certainly don't object to you sending it
+> to Linus for 3.3.
 
+Thanks.
 
---------------030208080706080200000805
-Content-Type: text/x-patch;
- name="0001-stmmac-fix-missing-module-license-in-the-main.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-stmmac-fix-missing-module-license-in-the-main.patch"
+> If you think you need more Acks or if there are other
+> reasons to have it go through arm-soc, please tell me and I'll try harder
+> to find the time for a proper review.
 
->From c24fa5e2784f85e6170a495bc42dea9a854cb3da Mon Sep 17 00:00:00 2001
-From: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Date: Fri, 23 Dec 2011 11:25:13 +0100
-Subject: [net-next] stmmac: fix missing module license in the main.
+I do have explicit Acks on the changes to other sub-systems, though
+ideally I'd be happy to have some explicit Acks on the generic code
+too.
 
-This patch fixes the following warning raised
-when compile:
+But I hope this should be fine. Let's try to proceed this way and see
+how it goes (maybe I should just tell Linus that despite the lack of
+explicit Acks to some of the patches, people do think this is
+good-to-go).
 
-WARNING: modpost: missing MODULE_LICENSE()
-in drivers/net/ethernet/stmicro/stmmac/stmmac.o
-
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: Giuseppe Cavallaro <peppe.cavallaro@st.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index b314592..3738b47 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2039,3 +2039,7 @@ err:
- 
- __setup("stmmaceth=", stmmac_cmdline_opt);
- #endif
-+
-+MODULE_DESCRIPTION("STMMAC 10/100/1000 Ethernet device driver");
-+MODULE_AUTHOR("Giuseppe Cavallaro <peppe.cavallaro@st.com>");
-+MODULE_LICENSE("GPL");
--- 
-1.7.4.4
-
-
---------------030208080706080200000805--
+Thanks!
+Ohad.
