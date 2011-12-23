@@ -1,36 +1,45 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Dec 22 (netdev/stmmac)
-Date: Thu, 22 Dec 2011 17:37:09 -0800
-Message-ID: <4EF3DB45.30401@xenotime.net>
-References: <20111222172039.dc704e5bbfc3d91a844897b3@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: Tree for Dec 21
+Date: Thu, 22 Dec 2011 16:42:44 -0800
+Message-ID: <20111223004244.GU17084@google.com>
+References: <20111221174733.9ba0861e762e8d96844b060b@canb.auug.org.au>
+ <20111221151503.4d78f94f.akpm@linux-foundation.org>
+ <20111222150836.af172886.akpm@linux-foundation.org>
+ <20111222232036.GP17084@google.com>
+ <20111222152427.c944c747.akpm@linux-foundation.org>
+ <20111222233843.GR17084@google.com>
+ <20111222154427.89b245c7.akpm@linux-foundation.org>
+ <20111222234639.GS17084@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:32900 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753177Ab1LWAhQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Dec 2011 19:37:16 -0500
-In-Reply-To: <20111222172039.dc704e5bbfc3d91a844897b3@canb.auug.org.au>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:62531 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753177Ab1LWAmw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Dec 2011 19:42:52 -0500
+Content-Disposition: inline
+In-Reply-To: <20111222234639.GS17084@google.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Netdev <netdev@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org, x86@kernel.org
 
-On 12/21/2011 10:20 PM, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Dec 22, 2011 at 03:46:39PM -0800, Tejun Heo wrote:
+> On Thu, Dec 22, 2011 at 03:44:27PM -0800, Andrew Morton wrote:
+> > > Weird, I can't reproduce the problem on block/for-3.3/core.  Trying
+> > > linux-next... hmmm, it works there too.
+> > 
+> > This machine is next to my desk, about 50 yards from your cube ;)
 > 
-> This will probably be the last linux-next tree until the new year (unless
-> I get exceedingly bored :-)).
+> Heh, physical access feels like such distant concept.  :)
+> 
+> I'll test with the config and if I still can't reproduce it, play with
+> your machine.
 
-goody :)
+Couldn't reproduce it on block/for-3.3 or next & you were already
+gone.  Is anyone else seeing this?
 
-
-WARNING: modpost: missing MODULE_LICENSE() in drivers/net/ethernet/stmicro/stmmac/stmmac.o
-see include/linux/module.h for more information
-
-
+Thanks.
 
 -- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+tejun
