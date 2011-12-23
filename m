@@ -1,46 +1,36 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the final tree (pm tree related)
-Date: Fri, 23 Dec 2011 01:32:58 +0100
-Message-ID: <201112230132.58765.rjw@sisk.pl>
-References: <20111222162846.51beb2e1b6b5c6ff2378ad33@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Dec 22 (netdev/stmmac)
+Date: Thu, 22 Dec 2011 17:37:09 -0800
+Message-ID: <4EF3DB45.30401@xenotime.net>
+References: <20111222172039.dc704e5bbfc3d91a844897b3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:38195 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752765Ab1LWA3w (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 Dec 2011 19:29:52 -0500
-In-Reply-To: <20111222162846.51beb2e1b6b5c6ff2378ad33@canb.auug.org.au>
+Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:32900 "HELO
+	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753177Ab1LWAhQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Dec 2011 19:37:16 -0500
+In-Reply-To: <20111222172039.dc704e5bbfc3d91a844897b3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Netdev <netdev@vger.kernel.org>
 
-On Thursday, December 22, 2011, Stephen Rothwell wrote:
-> Hi ,
+On 12/21/2011 10:20 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
-> 
-> drivers/base/bus.o: In function `dev_pm_qos_add_ancestor_request':
-> bus.c:(.text+0x4c0): multiple definition of `dev_pm_qos_add_ancestor_request'
-> drivers/base/core.o:core.c:(.text+0x8ec): first defined here
-> drivers/base/dd.o: In function `dev_pm_qos_add_ancestor_request':
-> dd.c:(.text+0x418): multiple definition of `dev_pm_qos_add_ancestor_request'
-> drivers/base/core.o:core.c:(.text+0x8ec): first defined here
-> kernel/sysctl_binary.o: In function `dev_pm_qos_add_ancestor_request':
-> sysctl_binary.c:(.text+0x124): multiple definition of `dev_pm_qos_add_ancestor_request'
-> 
-> Caused by commit 513dcbda6199 ("PM / QoS: Introduce
-> dev_pm_qos_add_ancestor_request()") from the pm tree.
-> 
-> Please build with and without config options that protect new code ... :-(
+> This will probably be the last linux-next tree until the new year (unless
+> I get exceedingly bored :-)).
 
-My bad, sorry.
+goody :)
 
-This issue should be fixed in my linux-next branch now.
 
-Thanks,
-Rafael
+WARNING: modpost: missing MODULE_LICENSE() in drivers/net/ethernet/stmicro/stmmac/stmmac.o
+see include/linux/module.h for more information
+
+
+
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
