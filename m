@@ -1,65 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: kbuild tree back at kernel.org
-Date: Sat, 24 Dec 2011 10:38:15 +1100
-Message-ID: <20111224103815.94de170a704b45c42577a559@canb.auug.org.au>
-References: <4EF4EB49.1090803@suse.cz>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Subject: Re: linux-next: build failure after merge of the final tree (wireless
+ tree related)
+Date: Sat, 24 Dec 2011 03:26:12 +0200
+Message-ID: <4EF52A34.70409@qca.qualcomm.com>
+References: <20111222165849.df5ea3e2997375de24f1490b@canb.auug.org.au> <4EF3616D.5050506@suse.cz>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__24_Dec_2011_10_38_15_+1100_ntlTbDEwpQuNG762"
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:49642 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753007Ab1LWXiY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Dec 2011 18:38:24 -0500
-In-Reply-To: <4EF4EB49.1090803@suse.cz>
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:27014 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752982Ab1LXB0a (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Dec 2011 20:26:30 -0500
+In-Reply-To: <4EF3616D.5050506@suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Michal Marek <mmarek@suse.cz>
-Cc: linux-next@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Sat__24_Dec_2011_10_38_15_+1100_ntlTbDEwpQuNG762
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 12/22/2011 06:57 PM, Michal Marek wrote:
+> Dne 22.12.2011 06:58, Stephen Rothwell napsal(a):
+>> Hi ,
+>>
+>> After merging the final tree, today's linux-next build (powerpc
+>> allyesconfig) failed like this:
+>>
+>> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ')' before 'KBUILD_MODNAME'
+>> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
+> [...]
+>>
+>> I can't figure out what goes wrong here.  On the compile command line,
+>> KBUILD_MODNAME is not defined, but KBUILD_BASE_NAME is.
+> 
+> scripts/Makefile.lib says
+> # Note: It's possible that one object gets potentially linked into more
+> #       than one module. In that case KBUILD_MODNAME will be set to foo_bar,
+> #       where foo and bar are the name of the modules.
+> 
+> but reality does not match this comment:
+> modname_flags  = $(if $(filter 1,$(words $(modname))),\
+>                  -D"KBUILD_MODNAME=KBUILD_STR($(call name-fix,$(modname)))")
+> 
+> But I wonder why you need to link all the object files twice?
 
-Hi Michal,
+No particular reason. I just didn't know that it's not allowed.
 
-On Fri, 23 Dec 2011 21:57:45 +0100 Michal Marek <mmarek@suse.cz> wrote:
->
-> The kbuild tree is back at git.kernel.org:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/mmarek/kbuild.git#rc-fixes
-> git://git.kernel.org/pub/scm/linux/kernel/git/mmarek/kbuild.git#for-next
->=20
-> Could you please update your linux-next urls? I'm pushing to both the
-> new and old location for the time being, so there is no hurry.
+> Usually, drivers have a foo_common.ko and foo_{usb,pci,whatever}.ko
+that provide
+> the pci/usb/whatever driver.
 
-I have switched to those now, thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I have been planning to do the same for ath6kl. I just need to do a bit
+of interface cleanup before I can cleanly separate the core module. I'll
+start looking at that next.
 
---Signature=_Sat__24_Dec_2011_10_38_15_+1100_ntlTbDEwpQuNG762
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO9RDnAAoJEECxmPOUX5FEdU8P/A+2AJzNgO1Ylpb/DUXSOxTx
-GHMwtbj6SIXjXIzdYWa0eQ08ON2lxQkbNwc1hupAXJVwx2a7ClxjoTA74xiY/4Es
-y1rJsgud7vVWzOZXkBqGOHMJjHssGOHFbY2wCm3qGeRF1TX9i0c0uEfLHe310sto
-wR3I8qHvmFL3q3WTxZ5YWDlhiaMwCP6IHrxdNlOCuEzWKy5KdvGE0DoU72fA0+hn
-YDjga+/5Rw84JDouUflD/naBJWtoTqQt5+FPOQ/YKygZizBBQanE3wBhxuG0A/rU
-7DtJ/TYZ+i/t+QVCdmD1V3D9q8UNXqO62eQGnqMEO8pAY4Jn/zd30WaQNK8gvrvW
-uy5OUFNePJyqQ6fZut2QnFOjCUorcL1DLH/p7xscxfVDHfJrbt8oJvifl2YckpFK
-8CNSffnhfxjpezk/M4+3XiKAenoo57HlHMFWKAea75zp+C49JCO6HykZFj9Tj5HI
-6M7Rud8wE0j5vX26qK8XJL8fXCgPjMgtVCkLQ4SvR8WBcXrkvKPFc396wWF70MwL
-xlj1faJ6sspcP8nrQ1FJJ4IjDkr1cenCWDlNEs0yyUFdoiobp+WT027A35DCWCNY
-UNiskMkwXUBLRk2ck+VA2gr4HqfP/vF+ztWjNiT0pT60eyzDUe7TzQSqEYCDbfd9
-xYx0QAF0KonTyEwWswog
-=zkBA
------END PGP SIGNATURE-----
-
---Signature=_Sat__24_Dec_2011_10_38_15_+1100_ntlTbDEwpQuNG762--
+Kalle
