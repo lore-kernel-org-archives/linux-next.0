@@ -1,39 +1,32 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH block/for-3.3/core] block: an exiting task should be allowed
- to create io_context
-Date: Sun, 25 Dec 2011 14:29:34 +0100
-Message-ID: <4EF7253E.3070606@kernel.dk>
-References: <20111221174733.9ba0861e762e8d96844b060b@canb.auug.org.au> <20111221151503.4d78f94f.akpm@linux-foundation.org> <20111222150836.af172886.akpm@linux-foundation.org> <20111222232036.GP17084@google.com> <20111222152427.c944c747.akpm@linux-foundation.org> <20111222233843.GR17084@google.com> <20111222154427.89b245c7.akpm@linux-foundation.org> <20111222234639.GS17084@google.com> <20111223004244.GU17084@google.com> <alpine.LSU.2.00.1112232058550.3225@eggly.anvils> <20111225010238.GA6013@htj.dyndns.org>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: linux-next: Tree for Dec 21
+Date: Sun, 25 Dec 2011 17:08:24 +0100
+Message-ID: <CA+icZUWYC1kYf19Zw1Jg2onAOpj3P4pRVt5h6HJp5RxuowTXZw@mail.gmail.com>
+References: <20111221174733.9ba0861e762e8d96844b060b@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:58140 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752143Ab1LYN3n (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Dec 2011 08:29:43 -0500
-In-Reply-To: <20111225010238.GA6013@htj.dyndns.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org, Hugh Dickins <hughd@google.com>, x86@kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20111221174733.9ba0861e762e8d96844b060b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Matthew Garrett <mjg59@srcf.ucam.org>
+List-Id: linux-next.vger.kernel.org
 
-On 2011-12-25 02:02, Tejun Heo wrote:
-> While fixing io_context creation / task exit race condition,
-> 6e736be7f2 "block: make ioc get/put interface more conventional and
-> fix race on alloction" also prevented an exiting (%PF_EXITING) task
-> from creating its own io_context.  This is incorrect as exit path may
-> issue IOs, e.g. from exit_files(), and if those IOs are the first ones
-> issued by the task, io_context needs to be created to process the IOs.
-> 
-> Combined with the existing problem of io_context / io_cq creation
-> failure having the possibility of stalling IO, this problem results in
-> deterministic full IO lockup with certain workloads.
-> 
-> Fix it by allowing io_context creation regardless of %PF_EXITING for
-> %current.
+On Wed, Dec 21, 2011 at 7:47 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Changes since 20111220:
+>
 
-Thanks, applied.
+[ CC mjg59 ]
 
--- 
-Jens Axboe
+What happened to drivers-x86 listed in [1]?
+
+$ git clone git://git.kernel.org/pub/scm/linux/kernel/git/mjg59/platform-drivers-x86
+Cloning into 'platform-drivers-x86'...
+fatal: The remote end hung up unexpectedly
+
+- Sedat -
+
+[1] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=Next/Trees#l184
