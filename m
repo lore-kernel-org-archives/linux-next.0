@@ -1,34 +1,52 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: manual merge of the cgroup tree with the block tree
-Date: Tue, 27 Dec 2011 09:41:46 -0800
-Message-ID: <CAOS58YOT9TncY_AyJneg2YtM2Jmm=pTMStuY1fEsvHhOMcwdrA@mail.gmail.com>
-References: <20111220171000.e38cee0ea6b9bafc2851ad4b@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH block/for-3.3/core] block: an exiting task should be
+ allowed to create io_context
+Date: Tue, 27 Dec 2011 14:07:38 -0800
+Message-ID: <20111227140738.c9eedb7c.akpm@linux-foundation.org>
+References: <20111221174733.9ba0861e762e8d96844b060b@canb.auug.org.au>
+	<20111221151503.4d78f94f.akpm@linux-foundation.org>
+	<20111222150836.af172886.akpm@linux-foundation.org>
+	<20111222232036.GP17084@google.com>
+	<20111222152427.c944c747.akpm@linux-foundation.org>
+	<20111222233843.GR17084@google.com>
+	<20111222154427.89b245c7.akpm@linux-foundation.org>
+	<20111222234639.GS17084@google.com>
+	<20111223004244.GU17084@google.com>
+	<alpine.LSU.2.00.1112232058550.3225@eggly.anvils>
+	<20111225010238.GA6013@htj.dyndns.org>
+	<4EF7253E.3070606@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:36614 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754863Ab1L0Rls (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Dec 2011 12:41:48 -0500
-In-Reply-To: <20111220171000.e38cee0ea6b9bafc2851ad4b@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <4EF7253E.3070606@kernel.dk>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org, Hugh Dickins <hughd@google.com>, x86@kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hello, Stephen.
+On Sun, 25 Dec 2011 14:29:34 +0100
+Jens Axboe <axboe@kernel.dk> wrote:
 
-On Mon, Dec 19, 2011 at 10:10 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Today's linux-next merge of the cgroup tree got a conflict in
-> block/blk-cgroup.c between commit 6e736be7f282 ("block: make ioc get/put
-> interface more conventional and fix race on alloction") from the block
-> tree and commit bb9d97b6dffa ("cgroup: don't use subsys->can_attach_task
-> () or ->attach_task()") from the cgroup tree.
->
-> I guessed about fixing it up (see below) and can carry the fix as
-> necessary.
+> On 2011-12-25 02:02, Tejun Heo wrote:
+> > While fixing io_context creation / task exit race condition,
+> > 6e736be7f2 "block: make ioc get/put interface more conventional and
+> > fix race on alloction" also prevented an exiting (%PF_EXITING) task
+> > from creating its own io_context.  This is incorrect as exit path may
+> > issue IOs, e.g. from exit_files(), and if those IOs are the first ones
+> > issued by the task, io_context needs to be created to process the IOs.
+> > 
+> > Combined with the existing problem of io_context / io_cq creation
+> > failure having the possibility of stalling IO, this problem results in
+> > deterministic full IO lockup with certain workloads.
+> > 
+> > Fix it by allowing io_context creation regardless of %PF_EXITING for
+> > %current.
 
-Yes, this looks correct to me.  Thank you very much. :)
+The patch works for me.
 
--- 
-tejun
+> Thanks, applied.
+
+So we get another great big bisection hole in mainline.  I feel
+duty bound to rewhine about this :(
+
