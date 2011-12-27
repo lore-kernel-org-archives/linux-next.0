@@ -1,22 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the s5p tree with the arm tree
-Date: Wed, 28 Dec 2011 10:33:26 +1100
-Message-ID: <20111228103326.b4f211f3c46127b8acf2dda6@canb.auug.org.au>
+Subject: linux-next: manual merge of the s5p tree with the arm-current tree
+Date: Wed, 28 Dec 2011 10:33:41 +1100
+Message-ID: <20111228103341.e448b4f44a2ba321a16f54ce@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Dec_2011_10_33_26_+1100_k8yY/QI4_M.0PVL3"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:45976 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751396Ab1L0Xdf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Dec 2011 18:33:35 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Wed__28_Dec_2011_10_33_41_+1100_dTDl2_XIJ.yWl3Sl"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Javi Merino <javi.merino@arm.com>, Boojin Kim <boojin.kim@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__28_Dec_2011_10_33_26_+1100_k8yY/QI4_M.0PVL3
+--Signature=_Wed__28_Dec_2011_10_33_41_+1100_dTDl2_XIJ.yWl3Sl
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,37 +20,37 @@ Content-Transfer-Encoding: quoted-printable
 Hi Kukjin,
 
 Today's linux-next merge of the s5p tree got a conflict in
-arch/arm/mach-s5p64x0/init.c between commit 95af214becab ("ARM: 7246/1:
-S5P64X0: introduce arch/arm/mach-s5p64x0/common.[ch]") from the arm tree
-and commit afba7f91e640 ("ARM: SAMSUNG: remove struct
-'s3c24xx_uart_clksrc' and all uses of it") from the s5p tree.
+arch/arm/common/pl330.c between commit abb959f8a3f1 ("ARM: 7237/1: PL330:
+Fix driver freeze") from the arm-current tree and commit 5f3f34eb0ed2
+("DMA: PL330: Merge PL330 driver into drivers/dma/") from the s5p tree.
 
-I just removed the file, but the latter patch will probably need applying
-in some form to arch/arm/mach-s5p64x0/common.c.
+The latter removed the file and merged it into drivers/dma/pl330.c.
+There may be further fixups requires to that file.  I just removed
+arch/arm/common/pl330.c.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__28_Dec_2011_10_33_26_+1100_k8yY/QI4_M.0PVL3
+--Signature=_Wed__28_Dec_2011_10_33_41_+1100_dTDl2_XIJ.yWl3Sl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO+lXGAAoJEECxmPOUX5FETPEP/Aki6DwRki+X8s+CH2J5Xsvy
-5Rslm6VWJP6fJ5jCQ90aoArhbvcCD3XDnPGR7ytAY4RT+LhISYPudBE2WMPOkFY3
-6KS5oCaOFQcE6fRwmRUSX+dpTrn2ughSN6R6SopJ/5eRn3y1xkKLSC0shpkNk3C6
-BUtaHIdqgZqR/mkef/+WmwJ8pPIaXNtx59k1d+a6CcHuAZsKdS11MRnyn2becENE
-Vc3mPrBum/PEjJ6Wl4ToMXbiBhIhoN8mFg3oMkFisEGKFzs/DSPRLmTEsGWV4voI
-i90IzzLVYWeC6f6DbBlR9j9T8Nhb2JvYQ4u6JgwQ1t+1fQgVkHen0BA3xYaN9H6/
-VCbXE1B2B3yIK64D2CoPS2MMZSQHBvLRpVSTNP0hN0jVH1d9k3vzZdAOhOLbKw3k
-6ZP2y32DCWZcI4Ii3mMEgjVAajjEkN0nmI3FfPi4lCWm7yb4GPcacSxNh0aDu+5j
-duz+kcO17TGsKf4yGc/ZwUKngfRIT4nesBrKPeAqiic6QCLXNyotorq+OZITIqBB
-hL3pVHLaY3tCORr4QATbEhHrJBUWR0IlUoaMuE4mzQmojQxruV7JS4/zJujgbkkM
-PWmr1HnjVu3wsrai4MOD9YMvoz2EqaUXK/5H9rlhlZ3Pjwz+cAFoV0o6UkSyS+fH
-pDYAWQQ3qoIUig8f3jqa
-=/TmH
+iQIcBAEBCAAGBQJO+lXVAAoJEECxmPOUX5FEyiwP/Ry41dR4MuXAEstZZXb+e4/g
+B+f6Qz9DQV5lNbSZa/2B12xiBmQtn7DXbpLS0FK0BciFfDMdWsT8JIR/Z0Yt8pfh
+Lt5stvwmJGsMeATIrGPr1HPdWuZ2i+Ujhyhb7cXGqOaTOKhi3ujqjBR4LDUJGC8G
+dDMYN2ujILqCdSYuToOvNPSe4EJBTW1zT3BsbFhh9miK2yicdwibM8vzPteU8Yxd
+Cr71EIDV+JvonZM4BK3wzepewgEcpyphT1EmRQ5P38kx1zUfi97TvIGaftn2oe9U
+7wXTE9RcAeKvfj7YLQs/LLF0zo88mCFXN5xA5ngGriwTsZZZvp5Ct6fgOrfw0U6o
+ojZhf7go7bT7zFf+bTkXXFSX2ElNJiftDy7J5QRTq/Ze7aD2y339bRtGTJtopuFJ
+WKdUD8pfZ3cMiJFtwnRX+ZDhDqVm94ghm+pWLv8OFfaWZ4mH2JeiuTRUUfO2hD3S
+TAf0NMajdegk1xb1WDZeWrijk3ViSivhZpr47xS2h+Zc9FJ51AtdnzCsH56efJ0T
+bC8Pqkjt9L95ppVs/Iz5IBcu8P563ilqoi5TtNpDHCd451l06rTEvbc8mImRKLZk
+OOmSmiPz4fONDw/zusAmDcfMD0adbK574RkCALpRf6LmCaiVt1n+OtlFHKfr4BJP
+AXn7H7NffDUEUkEOpm4m
+=P+QR
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Dec_2011_10_33_26_+1100_k8yY/QI4_M.0PVL3--
+--Signature=_Wed__28_Dec_2011_10_33_41_+1100_dTDl2_XIJ.yWl3Sl--
