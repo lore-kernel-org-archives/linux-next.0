@@ -1,60 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the rr tree
-Date: Wed, 28 Dec 2011 18:16:40 +1100
-Message-ID: <20111228181640.d299620c8e66237509fbba37@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Wed, 28 Dec 2011 18:54:38 +1100
+Message-ID: <20111228185438.63b46e806d8e11310b34ec9d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Dec_2011_18_16_40_+1100_QEizd7v/yjjGQuel"
+ boundary="Signature=_Wed__28_Dec_2011_18_54_38_+1100_DHNbhTbdaUak/y2S"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__28_Dec_2011_18_16_40_+1100_QEizd7v/yjjGQuel
+--Signature=_Wed__28_Dec_2011_18_54_38_+1100_DHNbhTbdaUak/y2S
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Andrew,
 
-After merging the rr tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+Today's linux-next merge of the akpm tree got a conflict in
+include/linux/lglock.h between commit e30e2fdfe562 ("VFS: Fix race
+between CPU hotplug and lglocks") from Linus' tree and commit
+"brlocks/lglocks: clean up code" from the akpm tree.
 
-drivers/net/virtio_net.c: In function 'virtnet_open':
-drivers/net/virtio_net.c:732:3: warning: passing argument 1 of 'queue_delay=
-ed_work' from incompatible pointer type [enabled by default]
-include/linux/workqueue.h:352:12: note: expected 'struct workqueue_struct *=
-' but argument is of type 'struct workqueue_struct **'
-
-Introduced by commit c49a776ffe1b ("virtio_net: use non-reentrant workqueue=
-").
-
+Given the extent of the conflict and that this patch also conflicts in
+several other files (fs/dcache.c, fs/file_table.c, fs/namei.c,
+fs/namespace.c - presumably against the vfs tree), I have dropped this
+patch (and the following
+"brlocks-lglocks-clean-up-code-checkpatch-fixes") from the akpm tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__28_Dec_2011_18_16_40_+1100_QEizd7v/yjjGQuel
+--Signature=_Wed__28_Dec_2011_18_54_38_+1100_DHNbhTbdaUak/y2S
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO+sJYAAoJEECxmPOUX5FEp2EP/juvr9AbIKe2cgJxQlSmiN5Z
-b0SRVm9dUkRzobZvLmeGDz3eU3yiCiThb733IgKiGBqnenhRYssG6vw99LXduSvV
-2LaFKiWteQqvEaYvOGlXEqtyuepyJ/wScnh5zcgrtEHq2aPJubVje3fxvK2PrC9u
-t/Th6YrJeGy6nvqFwjHGX11G3zpDwXamBLK513YXRWbWCv5WX7yHLUur3lyJ+KL3
-HUpupda70X6AFjXxMVg9uvwsQ7//tERo/qgo/mMnHcIzD8KB0EpwdzOxWNcrZtPL
-/oSF0am/xD5F0NQjGmcDM2e54KJmJhAWpUFWnpdk4d1sCNJd9MIZRoRoTwq2VFuZ
-dpGHp0Q7CmbCuA+0tBpEuVE5wT/t57cAGkTXtlgIfjnTaOHHlbS956MEGRPzuz5S
-cbldx66EURAxE8iIaRLZB8JJEvHcIXKLOBxyW2KeKTXEebpSWPLIRtjmt1w7tUOJ
-8tDW4N3rSCpQVl9B8tddJZRQgn2aPRwt4UzIBbhmuydUp3i+oQ6fiQ2SLXHhYZGX
-yTxoYDKPc+GTdn39xqzQqjD6cSRlkVz1S9BGSnLxD0EI/Uz7L07gO95psKdU7fHp
-Y/YIzwS3PY+ccEXhxO2AL8vu0YaOcaPvWFGF1HqLMsb2c9Ce4K2WUXO7ZWMsbpmp
-MPymseuocN26AjW9Ggcu
-=OZgO
+iQIcBAEBCAAGBQJO+ss+AAoJEECxmPOUX5FE9bAP/A0xGFMWdkIl/tIj8X0CxwmS
+WxwGRsu0VYYfG34vpzQQW4V2dd0Kr307FvyH7heruP8/pat13pGLIvU08iordwgm
+2Iq2Xcpwj6DNGW9FOYobAFf+CTnUyoGC+t6mFYlT3TWB73vNnjbTXHSYIMOoQO0a
+YjE7gRNaFwbDZbpAA51IufDRAlwOs8qynspuamxwJbfTdacYZqUhS9p8LR91W2Mx
+UVGslr1nEBkwY7A5ruK/b1rX5RiI1RgsdC++UeALVSvAqUOyRNkJ+ROaunq88BY/
+gSS55mtqyqMAQcWzOmSi+V2bsWd4eQH76Emdf+8Jg7ks7k1ob8T+a/NW/8CTgsgf
+1VzG9aXdG6wc3iF8LRZ2gwz2Y6CWC2TGA3FmaYgoHKgmpInqtYdc/atHnYx1cPwh
+SsmVkk+zMUhP1pnKGsbGxr6O6MTlLkASOWAlZQHR+RHv3V8uTgI0IsMK3fIY3CLF
+U7SLg/5bzCk6itgHCS4enmy039pgfWIWO7WUIBGbzinLnCQnE60YgWuLFGHgx6R8
+3tE9BgyGaDsUiDOSna1WDVSx/qzB9H/B30qyHJ28tLm32joYZGN8jaCSs4ipjl2g
+sON3SXocvu0zufGNodumIDhVq4eHICY9G/Ne6QKhOPd7HFOV0WOhwN8aue3yAU25
+cAwFKOO72me6BwIMxssP
+=YpGt
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Dec_2011_18_16_40_+1100_QEizd7v/yjjGQuel--
+--Signature=_Wed__28_Dec_2011_18_54_38_+1100_DHNbhTbdaUak/y2S--
