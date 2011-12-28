@@ -1,31 +1,38 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: linux-next: Tree for Dec 28 (via_wdt)
-Date: Wed, 28 Dec 2011 18:57:51 +0100
-Message-ID: <20111228175751.GA14460@infomag.iguana.be>
-References: <20111228201806.d6de27fa2dbd9e3a3b7a2603@canb.auug.org.au> <4EFB5BF2.3020600@xenotime.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Dec 28 (fs-writeback)
+Date: Wed, 28 Dec 2011 12:24:13 -0800
+Message-ID: <4EFB7AED.1090408@xenotime.net>
+References: <20111228201806.d6de27fa2dbd9e3a3b7a2603@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailrelay004.isp.belgacom.be ([195.238.6.170]:28405 "EHLO
-	mailrelay004.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753832Ab1L1R5x (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Dec 2011 12:57:53 -0500
-Content-Disposition: inline
-In-Reply-To: <4EFB5BF2.3020600@xenotime.net>
+Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:36861 "HELO
+	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754128Ab1L1TYy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Dec 2011 14:24:54 -0500
+In-Reply-To: <20111228201806.d6de27fa2dbd9e3a3b7a2603@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marc Vertes <marc.vertes@sigfox.com>, linux-watchdog@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-Hi Randi,
-
-> via_wdt needs a MODULE_LICENSE():
+On 12/28/2011 01:18 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> WARNING: modpost: missing MODULE_LICENSE() in drivers/watchdog/via_wdt.o
-> see include/linux/module.h for more information
+> I got bored :-(  I also hate tree wide, flag day changes :-(
+> 
+> Changes since 20111222:
 
-Fixed.
 
-Thanks,
-Wim.
+(on both i386 and x86_64 builds:)
+
+
+fs/fs-writeback.c:510:11: error: 'PAGE_CACHE_SHIFT' undeclared (first use in this function)
+
+
+Needs to #include <linux/pagemap.h> ??
+
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
