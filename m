@@ -1,70 +1,112 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ext3 tree
-Date: Wed, 28 Dec 2011 11:22:54 +1100
-Message-ID: <20111228112254.551c2ee5a1ac8509962d6611@canb.auug.org.au>
+Subject: linux-next: manual merge of the l2-mtd tree with the logfs tree
+Date: Wed, 28 Dec 2011 12:48:33 +1100
+Message-ID: <20111228124833.80c36e5660fdd9fe0c8481ba@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Dec_2011_11_22_54_+1100_9FCCECjo.VvnRCEy"
+ boundary="Signature=_Wed__28_Dec_2011_12_48_33_+1100_oUI0VuHxxxlLvn9h"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jan Kara <jack@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Prasad Joshi <prasadjoshi.linux@gmail.com>, =?UTF-8?B?IkrDtnJuIEVuZ2VsIg==?= <joern@logfs.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__28_Dec_2011_11_22_54_+1100_9FCCECjo.VvnRCEy
+--Signature=_Wed__28_Dec_2011_12_48_33_+1100_oUI0VuHxxxlLvn9h
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jan,
+Hi Artem,
 
-After merging the ext3 tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the l2-mtd tree got a conflict in
+fs/logfs/dev_mtd.c between commit d1cc3ad397f2 ("Logfs: Allow NULL
+block_isbad() methods") from the  tree and commit 22aed0c2578c ("mtd:
+introduce mtd_block_isbad interface") from the l2-mtd tree.
 
-fs/reiserfs/super.c: In function 'reiserfs_show_options':
-fs/reiserfs/super.c:652:20: error: 'struct reiserfs_sb_info' has no member =
-named 's_qf_names'
-fs/reiserfs/super.c:653:50: error: 'struct reiserfs_sb_info' has no member =
-named 's_qf_names'
-fs/reiserfs/super.c:656:20: error: 'struct reiserfs_sb_info' has no member =
-named 's_qf_names'
-fs/reiserfs/super.c:657:50: error: 'struct reiserfs_sb_info' has no member =
-named 's_qf_names'
-fs/reiserfs/super.c:660:20: error: 'struct reiserfs_sb_info' has no member =
-named 's_jquota_fmt'
-fs/reiserfs/super.c:661:21: error: 'struct reiserfs_sb_info' has no member =
-named 's_jquota_fmt'
-fs/reiserfs/super.c:663:26: error: 'struct reiserfs_sb_info' has no member =
-named 's_jquota_fmt'
-
-Caused by commit 5fa84b871b97 ("reiserfs: Properly display mount options
-in /proc/mounts").  Hint: CONFIG_QUOTA is not set in this build.
-
-I have used the ext3 tree from next-20111222 for today.
+I fixed it up (see below) and can carry the fix as necessary.  I am a
+little worried that the block_isbad member of struct mtd_info may be
+hidden in the future and so break the NULL checks here.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__28_Dec_2011_11_22_54_+1100_9FCCECjo.VvnRCEy
+diff --cc fs/logfs/dev_mtd.c
+index d054d7e,136c736..0000000
+--- a/fs/logfs/dev_mtd.c
++++ b/fs/logfs/dev_mtd.c
+@@@ -147,16 -150,17 +150,16 @@@ static struct page *logfs_mtd_find_firs
+  {
+  	struct logfs_super *super =3D logfs_super(sb);
+  	struct address_space *mapping =3D super->s_mapping_inode->i_mapping;
+- 	filler_t *filler =3D mtd_readpage;
++ 	filler_t *filler =3D logfs_mtd_readpage;
+  	struct mtd_info *mtd =3D super->s_mtd;
+ =20
+ -	if (!mtd->block_isbad)
+ -		return NULL;
+ -
+  	*ofs =3D 0;
+ -	while (mtd_block_isbad(mtd, *ofs)) {
+ -		*ofs +=3D mtd->erasesize;
+ -		if (*ofs >=3D mtd->size)
+ -			return NULL;
+ +	if (mtd->block_isbad) {
+- 		while (mtd->block_isbad(mtd, *ofs)) {
+++		while (mtd_block_isbad(mtd, *ofs)) {
+ +			*ofs +=3D mtd->erasesize;
+ +			if (*ofs >=3D mtd->size)
+ +				return NULL;
+ +		}
+  	}
+  	BUG_ON(*ofs & ~PAGE_MASK);
+  	return read_cache_page(mapping, *ofs >> PAGE_SHIFT, filler, sb);
+@@@ -166,16 -170,17 +169,16 @@@ static struct page *logfs_mtd_find_last
+  {
+  	struct logfs_super *super =3D logfs_super(sb);
+  	struct address_space *mapping =3D super->s_mapping_inode->i_mapping;
+- 	filler_t *filler =3D mtd_readpage;
++ 	filler_t *filler =3D logfs_mtd_readpage;
+  	struct mtd_info *mtd =3D super->s_mtd;
+ =20
+ -	if (!mtd->block_isbad)
+ -		return NULL;
+ -
+  	*ofs =3D mtd->size - mtd->erasesize;
+ -	while (mtd_block_isbad(mtd, *ofs)) {
+ -		*ofs -=3D mtd->erasesize;
+ -		if (*ofs <=3D 0)
+ -			return NULL;
+ +	if (mtd->block_isbad) {
+- 		while (mtd->block_isbad(mtd, *ofs)) {
+++		while (mtd_block_isbad(mtd, *ofs)) {
+ +			*ofs -=3D mtd->erasesize;
+ +			if (*ofs <=3D 0)
+ +				return NULL;
+ +		}
+  	}
+  	*ofs =3D *ofs + mtd->erasesize - 0x1000;
+  	BUG_ON(*ofs & ~PAGE_MASK);
+
+--Signature=_Wed__28_Dec_2011_12_48_33_+1100_oUI0VuHxxxlLvn9h
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO+mFeAAoJEECxmPOUX5FEauUP+wc4egpHdwTB7XSCDmIQ3mTr
-H9gfvHyFyW7MufrhaRdI7YZp+vEI4DRx/0GXHhrIHFr9muy8ZC4PPchA/XAK2T3/
-GsfPXu//UjLJhl0K1o0gnIsFz6jYUKCv6JKFe6PSyUZQJ6ERqwTj5zucKyRo4CiF
-pZ4Nu0TSgtf5Uc+/eSyJpcsuUlSjLehYhMsf64kCZER4st4Inr2rVo3SdkAysQME
-pliLUxoQp/fswYPxfoHN77T+wqWRHQxClRPqkvjIVY8NxmiIn1a/iASK76nzNKLb
-UW0YcGPB4h9XaDNOi0cshwzNNSYvd4ALeTInomwSv/IERg8lPW+sDJqv/OUWWsle
-TSxzPr9S+X2x7qvEFDnx/em+QVCUYpIy0E8cbKnKV/YfbQbms6jSxcoKaKMR2MTV
-U39JmJWVAfjmRS7JJ+ug8jE39dWwx2DnUgL2Kka3xw9vMYdwiVssLrf2ROPIU4Xo
-nQFAUI9+Bn8K5Em7dpONJyDQtPtq4Bvlk9hy8aT7z9z5KkNMOQL80xydoWTpNJvO
-e5N42q2SKC5IK+woSm42xq1bblIwwTJ/cU8LPo7jLmEd8G4Vj0zYqkHAE3ntfZy9
-9Gkckv19vx58dSbqgPcziL5qiTrxmNtdwWvk94V7EgiyixzFWA7j3zqzE6RXIW95
-WDIV9jJhyWw0u94J4jLb
-=FKsd
+iQIcBAEBCAAGBQJO+nVxAAoJEECxmPOUX5FE3zQQAJJMb3q5MnBpFisb7yGeyhkb
++gr3s3TMH+PCA95bjaAq93/Fc1Brwp6AFD64ekRlN+9RtCo3O912qwWsmVE90jmv
+Kp/1vRNpr/7FoRWD/K0haOWi5AqY+TZgyCNXEu2DJHC2kNKMxtSFx7ciXQPNqNlg
+4DBMbFZTogPlj2TDiZTrgwK6HqMxD+/oC/A86yOJ4YwcI5IiD+c5pcrGFKpsnClI
+T24jgiVy2bqslg2iLzKdjLdr/jRxECXTRMvEdQyFQhaIhKstc7rgZS5Y9jrJ3ZQI
+UHGS78rqu1EFQM1QT6E+thJoZPQw8HhvLzYaFjibuq99EUOgW72ZckbUncpRtDJa
+zJkJunHqKCkWBftVL43yjok3VP5tJWcxY3rQ99RYWM9/kqHq1m0Ea8RsgbqdbHR7
+3iqnZ0i8eC/OMI3v+2gdbezQ66N1fwMJgJGvtqIy6f4SeJzamvF6EafmP61Zj/78
+umq6k/BNqSWNLWnClqrC2M1RbD57+fQMt1nh1+9UT9iqa5F6dTPiTv7aO4NSvONt
+hQExfO8T5gzttuBe08r0gvPTqx5VaxviEmYoHV5N2icOYRysmPratW6lADYYgGf5
+Sh5NoPOUyhR+1OAsmt+WOc/voJwosilULMz2UebqbIDfOAx47q8buK+UPOmipJ/+
+GI8j8dp3a84ciDZd5RO/
+=GxV8
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Dec_2011_11_22_54_+1100_9FCCECjo.VvnRCEy--
+--Signature=_Wed__28_Dec_2011_12_48_33_+1100_oUI0VuHxxxlLvn9h--
