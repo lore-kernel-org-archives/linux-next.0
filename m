@@ -1,58 +1,103 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Wed, 28 Dec 2011 18:54:38 +1100
-Message-ID: <20111228185438.63b46e806d8e11310b34ec9d@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the s5p tree with the arm tree
+Date: Wed, 28 Dec 2011 17:01:53 +0900
+Message-ID: <01ea01ccc536$f6584e70$e308eb50$%kim@samsung.com>
+References: <20111228100741.5a6a6f36055d2ea06c1d4014@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Dec_2011_18_54_38_+1100_DHNbhTbdaUak/y2S"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Wed__28_Dec_2011_18_54_38_+1100_DHNbhTbdaUak/y2S
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:46758 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750716Ab1L1IBy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Dec 2011 03:01:54 -0500
+In-reply-to: <20111228100741.5a6a6f36055d2ea06c1d4014@canb.auug.org.au>
+Content-language: ko
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Russell King' <rmk@arm.linux.org.uk>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Rajeshwari Shinde' <rajeshwari.s@samsung.com>, 'Padmavathi Venna' <padma.v@samsung.com>
 
-Hi Andrew,
+Stephen Rothwell wrote:
+> 
+> Hi Kukjin,
+> 
+Hi Stephen :)
 
-Today's linux-next merge of the akpm tree got a conflict in
-include/linux/lglock.h between commit e30e2fdfe562 ("VFS: Fix race
-between CPU hotplug and lglocks") from Linus' tree and commit
-"brlocks/lglocks: clean up code" from the akpm tree.
+> Today's linux-next merge of the s5p tree got a conflict in
+> arch/arm/mach-s3c64xx/Makefile between commit b024043b6d0d ("ARM: 7245/1:
+> S3C64XX: introduce arch/arm/mach-s3c64xx/common.[ch]") from the arm tree
+> and commits 8f8a8d269bb4 ("ARM: S3C64XX: Add basic cpuidle driver"),
+> a60879e7ca17 ("ARM: SAMSUNG: Remove SDHCI bus clocks from platform
+> data"), 875a59374cd1 ("ARM: SAMSUNG: Consolidation of SPI platform
+> devices to plat-samsung") and 4566c7f7612f ("ARM: S3C64XX: Modified files
+> for SPI consolidation work") from the s5p tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary.
+> 
 
-Given the extent of the conflict and that this patch also conflicts in
-several other files (fs/dcache.c, fs/file_table.c, fs/namei.c,
-fs/namespace.c - presumably against the vfs tree), I have dropped this
-patch (and the following
-"brlocks-lglocks-clean-up-code-checkpatch-fixes") from the akpm tree.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Looks good to me.
+Thanks.
 
---Signature=_Wed__28_Dec_2011_18_54_38_+1100_DHNbhTbdaUak/y2S
-Content-Type: application/pgp-signature
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJO+ss+AAoJEECxmPOUX5FE9bAP/A0xGFMWdkIl/tIj8X0CxwmS
-WxwGRsu0VYYfG34vpzQQW4V2dd0Kr307FvyH7heruP8/pat13pGLIvU08iordwgm
-2Iq2Xcpwj6DNGW9FOYobAFf+CTnUyoGC+t6mFYlT3TWB73vNnjbTXHSYIMOoQO0a
-YjE7gRNaFwbDZbpAA51IufDRAlwOs8qynspuamxwJbfTdacYZqUhS9p8LR91W2Mx
-UVGslr1nEBkwY7A5ruK/b1rX5RiI1RgsdC++UeALVSvAqUOyRNkJ+ROaunq88BY/
-gSS55mtqyqMAQcWzOmSi+V2bsWd4eQH76Emdf+8Jg7ks7k1ob8T+a/NW/8CTgsgf
-1VzG9aXdG6wc3iF8LRZ2gwz2Y6CWC2TGA3FmaYgoHKgmpInqtYdc/atHnYx1cPwh
-SsmVkk+zMUhP1pnKGsbGxr6O6MTlLkASOWAlZQHR+RHv3V8uTgI0IsMK3fIY3CLF
-U7SLg/5bzCk6itgHCS4enmy039pgfWIWO7WUIBGbzinLnCQnE60YgWuLFGHgx6R8
-3tE9BgyGaDsUiDOSna1WDVSx/qzB9H/B30qyHJ28tLm32joYZGN8jaCSs4ipjl2g
-sON3SXocvu0zufGNodumIDhVq4eHICY9G/Ne6QKhOPd7HFOV0WOhwN8aue3yAU25
-cAwFKOO72me6BwIMxssP
-=YpGt
------END PGP SIGNATURE-----
-
---Signature=_Wed__28_Dec_2011_18_54_38_+1100_DHNbhTbdaUak/y2S--
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/mach-s3c64xx/Makefile
+> index f37016c,2244c42..0000000
+> --- a/arch/arm/mach-s3c64xx/Makefile
+> +++ b/arch/arm/mach-s3c64xx/Makefile
+> @@@ -19,29 -19,29 +19,29 @@@ obj-y				+= common.o
+> clock.
+>   obj-$(CONFIG_CPU_S3C6400)	+= s3c6400.o
+>   obj-$(CONFIG_CPU_S3C6410)	+= s3c6410.o
+> 
+>  -obj-y				+= irq.o
+>  -obj-y				+= irq-eint.o
+>  +# PM
+>  +
+>  +obj-$(CONFIG_PM)		+= pm.o irq-pm.o sleep.o
+> ++obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
+> 
+>   # DMA support
+> 
+>   obj-$(CONFIG_S3C64XX_DMA)	+= dma.o
+> 
+>  -# Device setup
+>  +# Device support
+> 
+>  -obj-$(CONFIG_S3C64XX_SETUP_I2C0) += setup-i2c0.o
+>  -obj-$(CONFIG_S3C64XX_SETUP_I2C1) += setup-i2c1.o
+>  -obj-$(CONFIG_S3C64XX_SETUP_IDE) += setup-ide.o
+>  -obj-$(CONFIG_S3C64XX_SETUP_KEYPAD) += setup-keypad.o
+>  -obj-$(CONFIG_S3C64XX_SETUP_FB_24BPP) += setup-fb-24bpp.o
+>  -obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO) += setup-sdhci-gpio.o
+>  -obj-$(CONFIG_S3C64XX_SETUP_SPI) += setup-spi.o
+>  +obj-y				+= dev-uart.o
+>  +obj-y				+= dev-audio.o
+> - obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
+> 
+>  -# PM
+>  +# Device setup
+> 
+>  -obj-$(CONFIG_PM)		+= pm.o
+>  -obj-$(CONFIG_PM)		+= sleep.o
+>  -obj-$(CONFIG_PM)		+= irq-pm.o
+>  -obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
+>  +obj-$(CONFIG_S3C64XX_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
+>  +obj-$(CONFIG_S3C64XX_SETUP_I2C0)	+= setup-i2c0.o
+>  +obj-$(CONFIG_S3C64XX_SETUP_I2C1)	+= setup-i2c1.o
+>  +obj-$(CONFIG_S3C64XX_SETUP_IDE)		+= setup-ide.o
+>  +obj-$(CONFIG_S3C64XX_SETUP_KEYPAD)	+= setup-keypad.o
+> - obj-$(CONFIG_S3C64XX_SETUP_SDHCI)	+= setup-sdhci.o
+>  +obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
+> ++obj-$(CONFIG_S3C64XX_SETUP_SPI)		+= setup-spi.o
+> 
+>   # Machine support
+> 
