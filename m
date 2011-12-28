@@ -1,22 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the arm tree
-Date: Wed, 28 Dec 2011 16:40:52 +1100
-Message-ID: <20111228164052.7357f637a6bece1ef8068da6@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the powerpc tree
+Date: Wed, 28 Dec 2011 16:51:02 +1100
+Message-ID: <20111228165102.fbb6433fd94d11240134327e@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============3871222695103676824=="
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+To: Greg KH <greg@kroah.com>
+Cc: Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, Trinabh Gupta <g.trinabh@gmail.com>, Kay Sievers <kay.sievers@vrfy.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Arun R Bharadwaj <arun.r.bharadwaj@gmail.com>
+List-Id: linux-next.vger.kernel.org
+
+--===============3871222695103676824==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Dec_2011_16_40_52_+1100_YWDYFWzq/GJrI2Pd"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:55361 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750991Ab1L1Fk7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Dec 2011 00:40:59 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <rmk@arm.linux.org.uk>
+ boundary="Signature=_Wed__28_Dec_2011_16_51_02_+1100_yJ10y2J5.i621bn1"
 
---Signature=_Wed__28_Dec_2011_16_40_52_+1100_YWDYFWzq/GJrI2Pd
+--Signature=_Wed__28_Dec_2011_16_51_02_+1100_yJ10y2J5.i621bn1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,76 +31,132 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the driver-core tree got a conflict in
-arch/arm/plat-samsung/include/plat/cpu.h between commit b024043b6d0d
-("ARM: 7245/1: S3C64XX: introduce arch/arm/mach-s3c64xx/common.[ch]")
-from the arm tree and commit 4a858cfc9af8 ("arm: convert sysdev_class to
-a regular subsystem") from the driver-core tree.
+arch/powerpc/kernel/sysfs.c between commit 595fe91447b0 ("powerpc: Export
+PIR data through sysfs") from the powerpc tree and commits 8a25a2fd126c
+("cpu: convert 'cpu' and 'machinecheck' sysdev_class to a regular
+subsystem") and 707827f3387d ("powerpc/cpuidle: cpuidle driver for
+pSeries") from the driver-core tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/plat-samsung/include/plat/cpu.h
-index abbdadb,0122a22..0000000
---- a/arch/arm/plat-samsung/include/plat/cpu.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu.h
-@@@ -181,20 -183,22 +181,20 @@@ extern struct syscore_ops s3c2410_pm_sy
-  extern struct syscore_ops s3c2412_pm_syscore_ops;
-  extern struct syscore_ops s3c2416_pm_syscore_ops;
-  extern struct syscore_ops s3c244x_pm_syscore_ops;
- -extern struct syscore_ops s3c64xx_irq_syscore_ops;
+diff --cc arch/powerpc/kernel/sysfs.c
+index 6fdf5ff,5e7c165..0000000
+--- a/arch/powerpc/kernel/sysfs.c
++++ b/arch/powerpc/kernel/sysfs.c
+@@@ -51,8 -50,7 +51,8 @@@ static ssize_t store_smt_snooze_delay(s
+  	if (ret !=3D 1)
+  		return -EINVAL;
  =20
-- /* system device classes */
--=20
-- extern struct sysdev_class s3c2410_sysclass;
-- extern struct sysdev_class s3c2410a_sysclass;
-- extern struct sysdev_class s3c2412_sysclass;
-- extern struct sysdev_class s3c2416_sysclass;
-- extern struct sysdev_class s3c2440_sysclass;
-- extern struct sysdev_class s3c2442_sysclass;
-- extern struct sysdev_class s3c2443_sysclass;
-- extern struct sysdev_class s3c6410_sysclass;
-- extern struct sysdev_class s5p64x0_sysclass;
-- extern struct sysdev_class s5pv210_sysclass;
-- extern struct sysdev_class exynos4_sysclass;
-+ /* system device subsystems */
-+=20
-+ extern struct bus_type s3c2410_subsys;
-+ extern struct bus_type s3c2410a_subsys;
-+ extern struct bus_type s3c2412_subsys;
-+ extern struct bus_type s3c2416_subsys;
-+ extern struct bus_type s3c2440_subsys;
-+ extern struct bus_type s3c2442_subsys;
-+ extern struct bus_type s3c2443_subsys;
-+ extern struct bus_type s3c6410_subsys;
- -extern struct bus_type s3c64xx_subsys;
-+ extern struct bus_type s5p64x0_subsys;
-+ extern struct bus_type s5pv210_subsys;
-+ extern struct bus_type exynos4_subsys;
+- 	per_cpu(smt_snooze_delay, cpu->sysdev.id) =3D snooze;
++ 	per_cpu(smt_snooze_delay, cpu->dev.id) =3D snooze;
+ +	update_smt_snooze_delay(snooze);
  =20
-  extern void (*s5pc1xx_idle)(void);
+  	return count;
+  }
+@@@ -179,13 -177,11 +179,13 @@@ SYSFS_PMCSETUP(mmcra, SPRN_MMCRA)
+  SYSFS_PMCSETUP(purr, SPRN_PURR);
+  SYSFS_PMCSETUP(spurr, SPRN_SPURR);
+  SYSFS_PMCSETUP(dscr, SPRN_DSCR);
+ +SYSFS_PMCSETUP(pir, SPRN_PIR);
  =20
+- static SYSDEV_ATTR(mmcra, 0600, show_mmcra, store_mmcra);
+- static SYSDEV_ATTR(spurr, 0600, show_spurr, NULL);
+- static SYSDEV_ATTR(dscr, 0600, show_dscr, store_dscr);
+- static SYSDEV_ATTR(purr, 0600, show_purr, store_purr);
+- static SYSDEV_ATTR(pir, 0400, show_pir, NULL);
++ static DEVICE_ATTR(mmcra, 0600, show_mmcra, store_mmcra);
++ static DEVICE_ATTR(spurr, 0600, show_spurr, NULL);
++ static DEVICE_ATTR(dscr, 0600, show_dscr, store_dscr);
++ static DEVICE_ATTR(purr, 0600, show_purr, store_purr);
+++static DEVICE_ATTR(pir, 0400, show_pir, NULL);
+ =20
+  unsigned long dscr_default =3D 0;
+  EXPORT_SYMBOL(dscr_default);
+@@@ -386,19 -381,16 +385,19 @@@ static void __cpuinit register_cpu_onli
+ =20
+  #ifdef CONFIG_PPC64
+  	if (cpu_has_feature(CPU_FTR_MMCRA))
+- 		sysdev_create_file(s, &attr_mmcra);
++ 		device_create_file(s, &dev_attr_mmcra);
+ =20
+  	if (cpu_has_feature(CPU_FTR_PURR))
+- 		sysdev_create_file(s, &attr_purr);
++ 		device_create_file(s, &dev_attr_purr);
+ =20
+  	if (cpu_has_feature(CPU_FTR_SPURR))
+- 		sysdev_create_file(s, &attr_spurr);
++ 		device_create_file(s, &dev_attr_spurr);
+ =20
+  	if (cpu_has_feature(CPU_FTR_DSCR))
+- 		sysdev_create_file(s, &attr_dscr);
++ 		device_create_file(s, &dev_attr_dscr);
+ +
+ +	if (cpu_has_feature(CPU_FTR_PPCAS_ARCH_V2))
+- 		sysdev_create_file(s, &attr_pir);
+++		device_create_file(s, &dev_attr_pir);
+  #endif /* CONFIG_PPC64 */
+ =20
+  	cacheinfo_cpu_online(cpu);
+@@@ -459,19 -451,16 +458,19 @@@ static void unregister_cpu_online(unsig
+ =20
+  #ifdef CONFIG_PPC64
+  	if (cpu_has_feature(CPU_FTR_MMCRA))
+- 		sysdev_remove_file(s, &attr_mmcra);
++ 		device_remove_file(s, &dev_attr_mmcra);
+ =20
+  	if (cpu_has_feature(CPU_FTR_PURR))
+- 		sysdev_remove_file(s, &attr_purr);
++ 		device_remove_file(s, &dev_attr_purr);
+ =20
+  	if (cpu_has_feature(CPU_FTR_SPURR))
+- 		sysdev_remove_file(s, &attr_spurr);
++ 		device_remove_file(s, &dev_attr_spurr);
+ =20
+  	if (cpu_has_feature(CPU_FTR_DSCR))
+- 		sysdev_remove_file(s, &attr_dscr);
++ 		device_remove_file(s, &dev_attr_dscr);
+ +
+ +	if (cpu_has_feature(CPU_FTR_PPCAS_ARCH_V2))
+- 		sysdev_remove_file(s, &attr_pir);
+++		device_remove_file(s, &dev_attr_pir);
+  #endif /* CONFIG_PPC64 */
+ =20
+  	cacheinfo_cpu_offline(cpu);
 
---Signature=_Wed__28_Dec_2011_16_40_52_+1100_YWDYFWzq/GJrI2Pd
+--Signature=_Wed__28_Dec_2011_16_51_02_+1100_yJ10y2J5.i621bn1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO+qvkAAoJEECxmPOUX5FENjkP/jT3Zf3aUgx8RUkBKsKgEtur
-6HdHZv5ohHh0ZUO8y+WhxxvhPGybdHy09q9sJAXFOw+rBGGvMtTdngjv7Smf8+ow
-a5HXmHvSCJTme0ZMRr7LdoPSMSe7lBUVUP/oGe9K04+6kABf5l/1SSIAzSRzCjKY
-hF0y/qIDZ39/DT431w3YoOCbAZ++epPFP5rNDz3N6QRVDddr/NoMpa0H/Gcb7qVa
-2vq75H/Uy/7VqgmRRd+cmgJTPuwLgGc4nZVnNMWrZYphCkAAYvfegxlOXpCwAoJ9
-5PTOrnPRbb/GC92Se5MNWXG9bFetidoKaDBIJKqiUsCvoLqizl+sGcSc/dFXyENS
-nMoZloNsBxpLKidwFWNIAhT2a+UBEUFrJuHp2JoA8q1PtKq4/AH3iOtPqTMAzvhO
-2o8mqbdzmt3NeeojpQZ8oc2ZjW/6cAAe34xeYAJKMph7dTi8RgnnQMq0Gb5wDjfW
-aeEQoJK0uDscZbjY5n0FGF9n8OPa3wsb4wdq9G7hi6sW1yV2U0iBjAX2plRtu/1d
-NDIYk9SFNIbJ/lenDGWkvKHBuExOey7J3reAnC9l82RQMw23/+gItUZ40VAvkx3K
-b8Ypa+Ju6KRnPihwlCY+cl6ryRtZwDqNDYXRWDkleg7eWoiTTym2ZrjTJm8AaSCT
-v64AUjcbKe6cHs2rHgBN
-=H9tz
+iQIcBAEBCAAGBQJO+q5GAAoJEECxmPOUX5FEn5UQAJRxNbxTRt813eKeSbjP8cX+
+MQS7IhEATPwW08tSPqhdhPVM5USKI0ClTHKDKmQvdmmj5buN5jGpHLjbZjSmvhhl
+Ntv+bhl+gMrn13KirmdKx7oMEbF9rEyFa3NFHgQJeMtNYD4QBd5LN0CfabBGwt7R
+Qop9cJPW4rY9grI/FmtcjRBvJjEAmdr33eBIUwr+m0tT6q9TB0Pk1xLBd2sY5yOb
+hAnhXysavp6lEYDFDb3mdtAqDGc4tdzXwoXTh1a4Tx5BT6KOEFwLoSXFPkgqamet
+o8+4H2Vt0/gDV5g/9kta7HV6Innn23yoIpM+EAWykqXiPJXsZ/8GKH8ZxxSA+jlm
+QhDe2JcTPrU//LeZAqJ3xzDotG7Zgug9opGXY65VEYC55BuzIpTkcq//0qqvF/2p
+RQvjNdZb+5uZphW1CWV1ciMs8rrGgZaUyyRUARxz4QYrBI+A7xHHLTOzg8EKBQbs
+8IXew6Cp2e3wfQo2CFVVUcYuL/ujrDWSsJVtXUsk+XFKseESM1qQgfjlZoG05PT9
+y6+lL/2TF2TDVsOghbROGVMRxNGyFOQ3Gy0kwQzE3CPmsZMoBMdCdmV4dWhiNkes
+v7jUtap9E4pToCfq7SA0cS3gjRVOpJvNZj4RtnZrm6rJ7ySUqdB+pH7rjwpmxen/
+yxNyTbS6JT4JEGroL11m
+=SpoP
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Dec_2011_16_40_52_+1100_YWDYFWzq/GJrI2Pd--
+--Signature=_Wed__28_Dec_2011_16_51_02_+1100_yJ10y2J5.i621bn1--
+
+--===============3871222695103676824==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linuxppc-dev mailing list
+Linuxppc-dev@lists.ozlabs.org
+https://lists.ozlabs.org/listinfo/linuxppc-dev
+--===============3871222695103676824==--
