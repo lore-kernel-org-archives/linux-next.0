@@ -1,59 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the rr tree
-Date: Wed, 28 Dec 2011 15:17:21 +1100
-Message-ID: <20111228151721.ceff9dc7d7e1c1ab56518aa4@canb.auug.org.au>
+Subject: linux-next: manual merge of the workqueues tree with the tip tree
+Date: Wed, 28 Dec 2011 15:37:50 +1100
+Message-ID: <20111228153750.8db1e68b1c8857ceb2e59f88@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Dec_2011_15_17_21_+1100_Jy38hWvT0cWM9VY1"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:33947 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752268Ab1L1ERc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Dec 2011 23:17:32 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com>
+ boundary="Signature=_Wed__28_Dec_2011_15_37_50_+1100_E=to9k3KhvAKPWs0"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@suse.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Christoph Lameter <cl@linux.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__28_Dec_2011_15_17_21_+1100_Jy38hWvT0cWM9VY1
+--Signature=_Wed__28_Dec_2011_15_37_50_+1100_E=to9k3KhvAKPWs0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Tejun,
 
-Today's linux-next merge of the kvm tree got a conflict in
-arch/x86/kvm/mmu.c between commit d6e5215aba76 ("module_param: make bool
-parameters really bool (arch)") from the rr tree and commit d750ea28865d
-("KVM: MMU: remove oos_shadow parameter") from the kvm tree.
+Today's linux-next merge of the workqueues tree got a conflict in
+arch/x86/include/asm/percpu.h between commit cebef5beed3d ("x86: Fix and
+improve percpu_cmpxchg{8,16}b_double()") from the tip tree and commit
+933393f58fef ("percpu: Remove irqsafe_cpu_xxx variants") from the
+workqueues tree.
 
-The latter just removed the code modified by the former, so I did that.
-
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__28_Dec_2011_15_17_21_+1100_Jy38hWvT0cWM9VY1
+diff --cc arch/x86/include/asm/percpu.h
+index 529bf07e,562ccb5..0000000
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@@ -462,9 -446,8 +443,8 @@@ do {								=09
+  	__ret;								\
+  })
+ =20
+ -#define __this_cpu_cmpxchg_double_4(pcp1, pcp2, o1, o2, n1, n2)		percpu_c=
+mpxchg8b_double(pcp1, o1, o2, n1, n2)
+ -#define this_cpu_cmpxchg_double_4(pcp1, pcp2, o1, o2, n1, n2)		percpu_cmp=
+xchg8b_double(pcp1, o1, o2, n1, n2)
+ +#define __this_cpu_cmpxchg_double_4	percpu_cmpxchg8b_double
+ +#define this_cpu_cmpxchg_double_4	percpu_cmpxchg8b_double
+- #define irqsafe_cpu_cmpxchg_double_4	percpu_cmpxchg8b_double
+  #endif /* CONFIG_X86_CMPXCHG64 */
+ =20
+  /*
+@@@ -519,9 -503,8 +492,8 @@@
+  	__ret;								\
+  })
+ =20
+ -#define __this_cpu_cmpxchg_double_8(pcp1, pcp2, o1, o2, n1, n2)		percpu_c=
+mpxchg16b_double(pcp1, o1, o2, n1, n2)
+ -#define this_cpu_cmpxchg_double_8(pcp1, pcp2, o1, o2, n1, n2)		percpu_cmp=
+xchg16b_double(pcp1, o1, o2, n1, n2)
+ +#define __this_cpu_cmpxchg_double_8	percpu_cmpxchg16b_double
+ +#define this_cpu_cmpxchg_double_8	percpu_cmpxchg16b_double
+- #define irqsafe_cpu_cmpxchg_double_8	percpu_cmpxchg16b_double
+ =20
+  #endif
+ =20
+
+--Signature=_Wed__28_Dec_2011_15_37_50_+1100_E=to9k3KhvAKPWs0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO+phRAAoJEECxmPOUX5FEvjcQAKiTFAbrsni3Ew+pT4fEry3x
-OGv/XXQuNBHIdcg0LXdec0u/24SjR+KFlACZQ4rDr06o5L8tbVZ89chntnf4algx
-8kKLxdmDktrc0NQFHCLom0216AMUSqpthEq12i6N8rbI+XbmeR73fOAS8otqW4YQ
-AzbgkQZ/0hphSISp7S+lu3pwIIxXns0Ok/M5SAUcfCA3X43Eit50ILBoeV5zcFmD
-5s01ZDZQo5x9EUDKwgeJCUgqy+P9DGpTDv/3zQJoqoMJyZMsuz1FKSddC6M313E1
-fwg/YhnWz/kpqklBuohoeC6BgdxCy7ryE4NDBwrUOgp3ZzQUWJzJWCSFAxuG3Vab
-UKWWzUDrIpyhMlPT9nXmJFMSFxyU8b4jQhu441eyiS5hS9vLA8whMKAf0E9oxWvo
-zCyw5Eank1Bv+AXj4cq9WK1jAs14grClTQMR0y+6j6IKg2OdEhHvIcIkk82GmrQI
-UDirUeBUJ4pqm8bLn80PsFrYIPPS5MkDKkx9FH8YrwGuyZKmGmvz++Dqu4KWPYrd
-DWGvvo8KMxjtv9mhiTIJf97+UQNPZ0AjHaE6fTup7fIK9Pbp14hh9GkEV+91LgdQ
-8xs2kQcRTldLF6d9gdAiT409fPyUpz+sgoERChiPWI1VEwbUjbUKas5JAFqOnYOb
-K4TrTjFp3sJ/lBgmx/MP
-=yXEs
+iQIcBAEBCAAGBQJO+p0eAAoJEECxmPOUX5FEUCEP/0MNi00Ra8sew8TAE+UvPPZn
+NSBEJt/RRxCPbYjOZ0cLSYQcQmX8YAZlZhaxrZD7iNZ+00wPlQdleuBUxNqtjGcd
+hOUTmdGirkOwnmKsq7UpUkIXt1mO1XfD1hYZas/fnRpDpnB7Nq/Cj1bXtc7BfVNE
+8DDznZa8cFhZhOP+nGO+gcMv3X3/a5xWOqfpfY505/zbldfWWYBJPaJCnae9FwtE
+kSlHjoV3J/6pvrMn2mBF34B2aQevnr3HlEPYgToyPn/qD5jLcrillOLO9+LvwQRg
+4YWYZFb07AneaUQuKioHXF8lyRUBDrStAj0J0TrybH2I0FTVgbydBP+KbEfsCowk
+J5eWKDWdqYmxaQ1zEgd9KP3Zr3JJC5iHrdRjchcyO3LcZRxYui6fFDFt8mqFWT/x
+7hzwGsRfhOnad0dqg6ysRl8ojj3v5bDf6JBA+wt3sZBaL+6AgiG3j/MQgngI93zN
+pXDQSWmm4neG0A7VLtLuZ8OKLg6KRhKADOH5OcGtf9q38ChARMYhIUJh75Zg61Ew
+VcD1Le+6jTm0Ez8yKI+aRViIL2qVVDM0edUWVj2T6GMANqxGw7IZdiJMUvosjYbF
+hApjymApa8mDGOx8RNDeUWT6DgNzKBK2JHA2VX8LJE9guoWxy+L4QQ7V9bHFGWp9
+w9hgp+MlhtCorRG6SxEv
+=nAvQ
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Dec_2011_15_17_21_+1100_Jy38hWvT0cWM9VY1--
+--Signature=_Wed__28_Dec_2011_15_37_50_+1100_E=to9k3KhvAKPWs0--
