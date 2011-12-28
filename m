@@ -1,29 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the powerpc tree
-Date: Wed, 28 Dec 2011 16:51:02 +1100
-Message-ID: <20111228165102.fbb6433fd94d11240134327e@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the s390 tree
+Date: Wed, 28 Dec 2011 17:26:11 +1100
+Message-ID: <20111228172611.b23752f58cc9cda66c194dc2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3871222695103676824=="
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-To: Greg KH <greg@kroah.com>
-Cc: Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, Trinabh Gupta <g.trinabh@gmail.com>, Kay Sievers <kay.sievers@vrfy.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Arun R Bharadwaj <arun.r.bharadwaj@gmail.com>
-List-Id: linux-next.vger.kernel.org
-
---===============3871222695103676824==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Dec_2011_16_51_02_+1100_yJ10y2J5.i621bn1"
+ boundary="Signature=_Wed__28_Dec_2011_17_26_11_+1100_KD0==_Z5wuwC_ngX"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:37040 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750780Ab1L1G0d (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Dec 2011 01:26:33 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
---Signature=_Wed__28_Dec_2011_16_51_02_+1100_yJ10y2J5.i621bn1
+--Signature=_Wed__28_Dec_2011_17_26_11_+1100_KD0==_Z5wuwC_ngX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -31,132 +24,252 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the driver-core tree got a conflict in
-arch/powerpc/kernel/sysfs.c between commit 595fe91447b0 ("powerpc: Export
-PIR data through sysfs") from the powerpc tree and commits 8a25a2fd126c
-("cpu: convert 'cpu' and 'machinecheck' sysdev_class to a regular
-subsystem") and 707827f3387d ("powerpc/cpuidle: cpuidle driver for
-pSeries") from the driver-core tree.
+arch/s390/kernel/smp.c between commit 83a24e329084 ("[S390] topology: get
+rid of ifdefs") from the s390 tree and commit 8a25a2fd126c ("cpu: convert
+'cpu' and 'machinecheck' sysdev_class to a regular subsystem") from the
+driver-core tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
+
+I also applied the following merge fix patch (which may not be correct or
+enough) for the bits moved into topology.c:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 28 Dec 2011 17:19:21 +1100
+Subject: [PATCH] s390: fixup for sysdev removal
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/s390/kernel/topology.c |   22 +++++++++++-----------
+ 1 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+index 08a059d..b635a8b 100644
+--- a/arch/s390/kernel/topology.c
++++ b/arch/s390/kernel/topology.c
+@@ -366,8 +366,8 @@ void __init s390_init_cpu_topology(void)
+=20
+ static int cpu_management;
+=20
+-static ssize_t dispatching_show(struct sysdev_class *class,
+-				struct sysdev_class_attribute *attr,
++static ssize_t dispatching_show(struct device *dev,
++				struct device_attribute *attr,
+ 				char *buf)
+ {
+ 	ssize_t count;
+@@ -378,8 +378,8 @@ static ssize_t dispatching_show(struct sysdev_class *cl=
+ass,
+ 	return count;
+ }
+=20
+-static ssize_t dispatching_store(struct sysdev_class *dev,
+-				 struct sysdev_class_attribute *attr,
++static ssize_t dispatching_store(struct device *dev,
++				 struct device_attribute *attr,
+ 				 const char *buf,
+ 				 size_t count)
+ {
+@@ -405,11 +405,11 @@ out:
+ 	put_online_cpus();
+ 	return rc ? rc : count;
+ }
+-static SYSDEV_CLASS_ATTR(dispatching, 0644, dispatching_show,
++static DEIVCE_ATTR(dispatching, 0644, dispatching_show,
+ 			 dispatching_store);
+=20
+-static ssize_t cpu_polarization_show(struct sys_device *dev,
+-				     struct sysdev_attribute *attr, char *buf)
++static ssize_t cpu_polarization_show(struct device *dev,
++				     struct device_attribute *attr, char *buf)
+ {
+ 	int cpu =3D dev->id;
+ 	ssize_t count;
+@@ -435,10 +435,10 @@ static ssize_t cpu_polarization_show(struct sys_devic=
+e *dev,
+ 	mutex_unlock(&smp_cpu_state_mutex);
+ 	return count;
+ }
+-static SYSDEV_ATTR(polarization, 0444, cpu_polarization_show, NULL);
++static DEVICE_ATTR(polarization, 0444, cpu_polarization_show, NULL);
+=20
+ static struct attribute *topology_cpu_attrs[] =3D {
+-	&attr_polarization.attr,
++	&dev_attr_polarization.attr,
+ 	NULL,
+ };
+=20
+@@ -448,7 +448,7 @@ static struct attribute_group topology_cpu_attr_group =
+=3D {
+=20
+ int topology_cpu_init(struct cpu *cpu)
+ {
+-	return sysfs_create_group(&cpu->sysdev.kobj, &topology_cpu_attr_group);
++	return sysfs_create_group(&cpu->dev.kobj, &topology_cpu_attr_group);
+ }
+=20
+ static int __init topology_init(void)
+@@ -460,6 +460,6 @@ static int __init topology_init(void)
+ 	set_topology_timer();
+ out:
+ 	update_cpu_core_map();
+-	return sysdev_class_create_file(&cpu_sysdev_class, &attr_dispatching);
++	return device_create_file(cpu_subsys.dev_root, &dev_attr_dispatching);
+ }
+ device_initcall(topology_init);
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/powerpc/kernel/sysfs.c
-index 6fdf5ff,5e7c165..0000000
---- a/arch/powerpc/kernel/sysfs.c
-+++ b/arch/powerpc/kernel/sysfs.c
-@@@ -51,8 -50,7 +51,8 @@@ static ssize_t store_smt_snooze_delay(s
-  	if (ret !=3D 1)
-  		return -EINVAL;
- =20
-- 	per_cpu(smt_snooze_delay, cpu->sysdev.id) =3D snooze;
-+ 	per_cpu(smt_snooze_delay, cpu->dev.id) =3D snooze;
- +	update_smt_snooze_delay(snooze);
- =20
-  	return count;
+diff --cc arch/s390/kernel/smp.c
+index b1cd329,66cca03..0000000
+--- a/arch/s390/kernel/smp.c
++++ b/arch/s390/kernel/smp.c
+@@@ -923,21 -889,52 +923,21 @@@ out
+  	put_online_cpus();
+  	return rc ? rc : count;
   }
-@@@ -179,13 -177,11 +179,13 @@@ SYSFS_PMCSETUP(mmcra, SPRN_MMCRA)
-  SYSFS_PMCSETUP(purr, SPRN_PURR);
-  SYSFS_PMCSETUP(spurr, SPRN_SPURR);
-  SYSFS_PMCSETUP(dscr, SPRN_DSCR);
- +SYSFS_PMCSETUP(pir, SPRN_PIR);
+- static SYSDEV_ATTR(configure, 0644, cpu_configure_show, cpu_configure_sto=
+re);
++ static DEVICE_ATTR(configure, 0644, cpu_configure_show, cpu_configure_sto=
+re);
+  #endif /* CONFIG_HOTPLUG_CPU */
  =20
-- static SYSDEV_ATTR(mmcra, 0600, show_mmcra, store_mmcra);
-- static SYSDEV_ATTR(spurr, 0600, show_spurr, NULL);
-- static SYSDEV_ATTR(dscr, 0600, show_dscr, store_dscr);
-- static SYSDEV_ATTR(purr, 0600, show_purr, store_purr);
-- static SYSDEV_ATTR(pir, 0400, show_pir, NULL);
-+ static DEVICE_ATTR(mmcra, 0600, show_mmcra, store_mmcra);
-+ static DEVICE_ATTR(spurr, 0600, show_spurr, NULL);
-+ static DEVICE_ATTR(dscr, 0600, show_dscr, store_dscr);
-+ static DEVICE_ATTR(purr, 0600, show_purr, store_purr);
-++static DEVICE_ATTR(pir, 0400, show_pir, NULL);
+- static ssize_t show_cpu_address(struct sys_device *dev,
+- 				struct sysdev_attribute *attr, char *buf)
+ -static ssize_t cpu_polarization_show(struct device *dev,
+ -				     struct device_attribute *attr, char *buf)
+ -{
+ -	int cpu =3D dev->id;
+ -	ssize_t count;
+ -
+ -	mutex_lock(&smp_cpu_state_mutex);
+ -	switch (smp_cpu_polarization[cpu]) {
+ -	case POLARIZATION_HRZ:
+ -		count =3D sprintf(buf, "horizontal\n");
+ -		break;
+ -	case POLARIZATION_VL:
+ -		count =3D sprintf(buf, "vertical:low\n");
+ -		break;
+ -	case POLARIZATION_VM:
+ -		count =3D sprintf(buf, "vertical:medium\n");
+ -		break;
+ -	case POLARIZATION_VH:
+ -		count =3D sprintf(buf, "vertical:high\n");
+ -		break;
+ -	default:
+ -		count =3D sprintf(buf, "unknown\n");
+ -		break;
+ -	}
+ -	mutex_unlock(&smp_cpu_state_mutex);
+ -	return count;
+ -}
+ -static DEVICE_ATTR(polarization, 0444, cpu_polarization_show, NULL);
+ -
++ static ssize_t show_cpu_address(struct device *dev,
++ 				struct device_attribute *attr, char *buf)
+  {
+  	return sprintf(buf, "%d\n", __cpu_logical_map[dev->id]);
+  }
+- static SYSDEV_ATTR(address, 0444, show_cpu_address, NULL);
++ static DEVICE_ATTR(address, 0444, show_cpu_address, NULL);
  =20
-  unsigned long dscr_default =3D 0;
-  EXPORT_SYMBOL(dscr_default);
-@@@ -386,19 -381,16 +385,19 @@@ static void __cpuinit register_cpu_onli
+ -
+  static struct attribute *cpu_common_attrs[] =3D {
+  #ifdef CONFIG_HOTPLUG_CPU
+- 	&attr_configure.attr,
++ 	&dev_attr_configure.attr,
+  #endif
+- 	&attr_address.attr,
++ 	&dev_attr_address.attr,
+ -	&dev_attr_polarization.attr,
+  	NULL,
+  };
  =20
-  #ifdef CONFIG_PPC64
-  	if (cpu_has_feature(CPU_FTR_MMCRA))
-- 		sysdev_create_file(s, &attr_mmcra);
-+ 		device_create_file(s, &dev_attr_mmcra);
+@@@ -1120,16 -1108,58 +1120,16 @@@ static ssize_t __ref rescan_store(struc
+  	rc =3D smp_rescan_cpus();
+  	return rc ? rc : count;
+  }
+- static SYSDEV_CLASS_ATTR(rescan, 0200, NULL, rescan_store);
++ static DEVICE_ATTR(rescan, 0200, NULL, rescan_store);
+  #endif /* CONFIG_HOTPLUG_CPU */
  =20
-  	if (cpu_has_feature(CPU_FTR_PURR))
-- 		sysdev_create_file(s, &attr_purr);
-+ 		device_create_file(s, &dev_attr_purr);
+ -static ssize_t dispatching_show(struct device *dev,
+ -				struct device_attribute *attr,
+ -				char *buf)
+ -{
+ -	ssize_t count;
+ -
+ -	mutex_lock(&smp_cpu_state_mutex);
+ -	count =3D sprintf(buf, "%d\n", cpu_management);
+ -	mutex_unlock(&smp_cpu_state_mutex);
+ -	return count;
+ -}
+ -
+ -static ssize_t dispatching_store(struct device *dev,
+ -				 struct device_attribute *attr,
+ -				 const char *buf,
+ -				 size_t count)
+ -{
+ -	int val, rc;
+ -	char delim;
+ -
+ -	if (sscanf(buf, "%d %c", &val, &delim) !=3D 1)
+ -		return -EINVAL;
+ -	if (val !=3D 0 && val !=3D 1)
+ -		return -EINVAL;
+ -	rc =3D 0;
+ -	get_online_cpus();
+ -	mutex_lock(&smp_cpu_state_mutex);
+ -	if (cpu_management =3D=3D val)
+ -		goto out;
+ -	rc =3D topology_set_cpu_management(val);
+ -	if (!rc)
+ -		cpu_management =3D val;
+ -out:
+ -	mutex_unlock(&smp_cpu_state_mutex);
+ -	put_online_cpus();
+ -	return rc ? rc : count;
+ -}
+ -static DEVICE_ATTR(dispatching, 0644, dispatching_show,
+ -			 dispatching_store);
+ -
+ -static int __init topology_init(void)
+ +static int __init s390_smp_init(void)
+  {
+ -	int cpu;
+ -	int rc;
+ +	int cpu, rc;
  =20
-  	if (cpu_has_feature(CPU_FTR_SPURR))
-- 		sysdev_create_file(s, &attr_spurr);
-+ 		device_create_file(s, &dev_attr_spurr);
- =20
-  	if (cpu_has_feature(CPU_FTR_DSCR))
-- 		sysdev_create_file(s, &attr_dscr);
-+ 		device_create_file(s, &dev_attr_dscr);
- +
- +	if (cpu_has_feature(CPU_FTR_PPCAS_ARCH_V2))
-- 		sysdev_create_file(s, &attr_pir);
-++		device_create_file(s, &dev_attr_pir);
-  #endif /* CONFIG_PPC64 */
- =20
-  	cacheinfo_cpu_online(cpu);
-@@@ -459,19 -451,16 +458,19 @@@ static void unregister_cpu_online(unsig
- =20
-  #ifdef CONFIG_PPC64
-  	if (cpu_has_feature(CPU_FTR_MMCRA))
-- 		sysdev_remove_file(s, &attr_mmcra);
-+ 		device_remove_file(s, &dev_attr_mmcra);
- =20
-  	if (cpu_has_feature(CPU_FTR_PURR))
-- 		sysdev_remove_file(s, &attr_purr);
-+ 		device_remove_file(s, &dev_attr_purr);
- =20
-  	if (cpu_has_feature(CPU_FTR_SPURR))
-- 		sysdev_remove_file(s, &attr_spurr);
-+ 		device_remove_file(s, &dev_attr_spurr);
- =20
-  	if (cpu_has_feature(CPU_FTR_DSCR))
-- 		sysdev_remove_file(s, &attr_dscr);
-+ 		device_remove_file(s, &dev_attr_dscr);
- +
- +	if (cpu_has_feature(CPU_FTR_PPCAS_ARCH_V2))
-- 		sysdev_remove_file(s, &attr_pir);
-++		device_remove_file(s, &dev_attr_pir);
-  #endif /* CONFIG_PPC64 */
- =20
-  	cacheinfo_cpu_offline(cpu);
+  	register_cpu_notifier(&smp_cpu_nb);
+ -
+  #ifdef CONFIG_HOTPLUG_CPU
+- 	rc =3D sysdev_class_create_file(&cpu_sysdev_class, &attr_rescan);
++ 	rc =3D device_create_file(cpu_subsys.dev_root, &dev_attr_rescan);
+  	if (rc)
+  		return rc;
+  #endif
 
---Signature=_Wed__28_Dec_2011_16_51_02_+1100_yJ10y2J5.i621bn1
+--Signature=_Wed__28_Dec_2011_17_26_11_+1100_KD0==_Z5wuwC_ngX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO+q5GAAoJEECxmPOUX5FEn5UQAJRxNbxTRt813eKeSbjP8cX+
-MQS7IhEATPwW08tSPqhdhPVM5USKI0ClTHKDKmQvdmmj5buN5jGpHLjbZjSmvhhl
-Ntv+bhl+gMrn13KirmdKx7oMEbF9rEyFa3NFHgQJeMtNYD4QBd5LN0CfabBGwt7R
-Qop9cJPW4rY9grI/FmtcjRBvJjEAmdr33eBIUwr+m0tT6q9TB0Pk1xLBd2sY5yOb
-hAnhXysavp6lEYDFDb3mdtAqDGc4tdzXwoXTh1a4Tx5BT6KOEFwLoSXFPkgqamet
-o8+4H2Vt0/gDV5g/9kta7HV6Innn23yoIpM+EAWykqXiPJXsZ/8GKH8ZxxSA+jlm
-QhDe2JcTPrU//LeZAqJ3xzDotG7Zgug9opGXY65VEYC55BuzIpTkcq//0qqvF/2p
-RQvjNdZb+5uZphW1CWV1ciMs8rrGgZaUyyRUARxz4QYrBI+A7xHHLTOzg8EKBQbs
-8IXew6Cp2e3wfQo2CFVVUcYuL/ujrDWSsJVtXUsk+XFKseESM1qQgfjlZoG05PT9
-y6+lL/2TF2TDVsOghbROGVMRxNGyFOQ3Gy0kwQzE3CPmsZMoBMdCdmV4dWhiNkes
-v7jUtap9E4pToCfq7SA0cS3gjRVOpJvNZj4RtnZrm6rJ7ySUqdB+pH7rjwpmxen/
-yxNyTbS6JT4JEGroL11m
-=SpoP
+iQIcBAEBCAAGBQJO+raDAAoJEECxmPOUX5FEShQP/iq+IC+25HgeIyGhcsA9TgkL
+dVP+nN9417jfrTV4ZvLkxVmDnhOOz7yJh9/xtNY5I+9Ao0ySNx3naMiZZQd4eUgn
+0L4FL+BdGhSeFzSrwxRfziW/TE1sKuB/+BPq880EPElotpJ5r5UJRpRj3ZPtHDS+
+JaBoGRyTPiPXvwPouml1/PwJbYJdRhHdNSGgNwiciVld64gk/rOkrPd985dvW7f3
+tnFQlmaEQqyaLe9tdNqyJ4jfSzUjnkC6XFqsB9+V04Abc3D/mNOeFzD7bwUAXFyo
+0eURA5xpdt/lpISwIsJJBHFItyUjnDSr7/iliISqHIaXM+BstSCP2pmb6SufhNYi
+Bmr3JspKDoGjqUoIrPYjnp/9FJOwy9G09SwJYReBu/kS6cl19Hskxd6577GSwzL/
+oK90gDw+CzYy5zcSQ/5Feo2LGliESjju9/XKXFLS9zpJ3VCgQQwLiEuHBwIGvitE
+ZRN7jX85D7S0l0sTKYAahd41LU7nwIvSB8p2RTkEIbCoKcGx5z1znLRXfgyIezHV
+mOFNdDyvSso0BiAacdAHBG+psGMfYt7vj4ZkRHqWXK/yOLel/U+qih+Qk8Oh+Js5
+A4NATTxbSK3bAb6eJOLAIm74x8wYhuJOXk6hgQMV+Sn84gmFMjZ25pVuOLlCdCvR
+JfMEOdsh5vJOFJk3FXCC
+=q3gA
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Dec_2011_16_51_02_+1100_yJ10y2J5.i621bn1--
-
---===============3871222695103676824==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linuxppc-dev mailing list
-Linuxppc-dev@lists.ozlabs.org
-https://lists.ozlabs.org/listinfo/linuxppc-dev
---===============3871222695103676824==--
+--Signature=_Wed__28_Dec_2011_17_26_11_+1100_KD0==_Z5wuwC_ngX--
