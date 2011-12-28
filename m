@@ -1,87 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the workqueues tree with the tip tree
-Date: Wed, 28 Dec 2011 15:37:50 +1100
-Message-ID: <20111228153750.8db1e68b1c8857ceb2e59f88@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the tip tree
+Date: Wed, 28 Dec 2011 15:57:07 +1100
+Message-ID: <20111228155707.f4554d3d6b624189e4216aed@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Dec_2011_15_37_50_+1100_E=to9k3KhvAKPWs0"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@suse.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Christoph Lameter <cl@linux.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__28_Dec_2011_15_57_07_+1100_g06U9F01McEfOIj1"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:38836 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753279Ab1L1E5U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Dec 2011 23:57:20 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Kay Sievers <kay.sievers@vrfy.org>
 
---Signature=_Wed__28_Dec_2011_15_37_50_+1100_E=to9k3KhvAKPWs0
+--Signature=_Wed__28_Dec_2011_15_57_07_+1100_g06U9F01McEfOIj1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi Greg,
 
-Today's linux-next merge of the workqueues tree got a conflict in
-arch/x86/include/asm/percpu.h between commit cebef5beed3d ("x86: Fix and
-improve percpu_cmpxchg{8,16}b_double()") from the tip tree and commit
-933393f58fef ("percpu: Remove irqsafe_cpu_xxx variants") from the
-workqueues tree.
+Today's linux-next merge of the driver-core tree got a conflict in
+include/linux/cpu.h between commit 2987557f52b9 ("driver-core/cpu: Expose
+hotpluggability to the rest of the kernel") from the tip tree and commit
+8a25a2fd126c ("cpu: convert 'cpu' and 'machinecheck' sysdev_class to a
+regular subsystem") from the driver-core tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/include/asm/percpu.h
-index 529bf07e,562ccb5..0000000
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@@ -462,9 -446,8 +443,8 @@@ do {								=09
-  	__ret;								\
-  })
+diff --cc include/linux/cpu.h
+index 305c263,fc3da0d..0000000
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@@ -26,16 -26,15 +26,16 @@@ struct cpu=20
+  };
  =20
- -#define __this_cpu_cmpxchg_double_4(pcp1, pcp2, o1, o2, n1, n2)		percpu_c=
-mpxchg8b_double(pcp1, o1, o2, n1, n2)
- -#define this_cpu_cmpxchg_double_4(pcp1, pcp2, o1, o2, n1, n2)		percpu_cmp=
-xchg8b_double(pcp1, o1, o2, n1, n2)
- +#define __this_cpu_cmpxchg_double_4	percpu_cmpxchg8b_double
- +#define this_cpu_cmpxchg_double_4	percpu_cmpxchg8b_double
-- #define irqsafe_cpu_cmpxchg_double_4	percpu_cmpxchg8b_double
-  #endif /* CONFIG_X86_CMPXCHG64 */
+  extern int register_cpu(struct cpu *cpu, int num);
+- extern struct sys_device *get_cpu_sysdev(unsigned cpu);
++ extern struct device *get_cpu_device(unsigned cpu);
+ +extern bool cpu_is_hotpluggable(unsigned cpu);
  =20
-  /*
-@@@ -519,9 -503,8 +492,8 @@@
-  	__ret;								\
-  })
+- extern int cpu_add_sysdev_attr(struct sysdev_attribute *attr);
+- extern void cpu_remove_sysdev_attr(struct sysdev_attribute *attr);
++ extern int cpu_add_dev_attr(struct device_attribute *attr);
++ extern void cpu_remove_dev_attr(struct device_attribute *attr);
  =20
- -#define __this_cpu_cmpxchg_double_8(pcp1, pcp2, o1, o2, n1, n2)		percpu_c=
-mpxchg16b_double(pcp1, o1, o2, n1, n2)
- -#define this_cpu_cmpxchg_double_8(pcp1, pcp2, o1, o2, n1, n2)		percpu_cmp=
-xchg16b_double(pcp1, o1, o2, n1, n2)
- +#define __this_cpu_cmpxchg_double_8	percpu_cmpxchg16b_double
- +#define this_cpu_cmpxchg_double_8	percpu_cmpxchg16b_double
-- #define irqsafe_cpu_cmpxchg_double_8	percpu_cmpxchg16b_double
+- extern int cpu_add_sysdev_attr_group(struct attribute_group *attrs);
+- extern void cpu_remove_sysdev_attr_group(struct attribute_group *attrs);
++ extern int cpu_add_dev_attr_group(struct attribute_group *attrs);
++ extern void cpu_remove_dev_attr_group(struct attribute_group *attrs);
  =20
-  #endif
+- extern int sched_create_sysfs_power_savings_entries(struct sysdev_class *=
+cls);
++ extern int sched_create_sysfs_power_savings_entries(struct device *dev);
  =20
+  #ifdef CONFIG_HOTPLUG_CPU
+  extern void unregister_cpu(struct cpu *cpu);
 
---Signature=_Wed__28_Dec_2011_15_37_50_+1100_E=to9k3KhvAKPWs0
+--Signature=_Wed__28_Dec_2011_15_57_07_+1100_g06U9F01McEfOIj1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO+p0eAAoJEECxmPOUX5FEUCEP/0MNi00Ra8sew8TAE+UvPPZn
-NSBEJt/RRxCPbYjOZ0cLSYQcQmX8YAZlZhaxrZD7iNZ+00wPlQdleuBUxNqtjGcd
-hOUTmdGirkOwnmKsq7UpUkIXt1mO1XfD1hYZas/fnRpDpnB7Nq/Cj1bXtc7BfVNE
-8DDznZa8cFhZhOP+nGO+gcMv3X3/a5xWOqfpfY505/zbldfWWYBJPaJCnae9FwtE
-kSlHjoV3J/6pvrMn2mBF34B2aQevnr3HlEPYgToyPn/qD5jLcrillOLO9+LvwQRg
-4YWYZFb07AneaUQuKioHXF8lyRUBDrStAj0J0TrybH2I0FTVgbydBP+KbEfsCowk
-J5eWKDWdqYmxaQ1zEgd9KP3Zr3JJC5iHrdRjchcyO3LcZRxYui6fFDFt8mqFWT/x
-7hzwGsRfhOnad0dqg6ysRl8ojj3v5bDf6JBA+wt3sZBaL+6AgiG3j/MQgngI93zN
-pXDQSWmm4neG0A7VLtLuZ8OKLg6KRhKADOH5OcGtf9q38ChARMYhIUJh75Zg61Ew
-VcD1Le+6jTm0Ez8yKI+aRViIL2qVVDM0edUWVj2T6GMANqxGw7IZdiJMUvosjYbF
-hApjymApa8mDGOx8RNDeUWT6DgNzKBK2JHA2VX8LJE9guoWxy+L4QQ7V9bHFGWp9
-w9hgp+MlhtCorRG6SxEv
-=nAvQ
+iQIcBAEBCAAGBQJO+qGjAAoJEECxmPOUX5FEn4sQAKbatvQ7xRx7jH7W/9RR0zsv
+1WTuL1//YeLDjXTHi0Axfe0Wqy+yC19kHvKhmESkcLseF3Wc5Uojyy8m6bvUbUIZ
+Fdew9C7pRvaTLv4EOd6seWxknpN9IuNKbxxVXSMXxrMDW/hs2pt1e/E3T1fi0uNS
+DAqK4lUnKrzpmw4l8RZ/Fi9BDcxAj1/zBVHt7DOlTdEfe5q/WGx4Rksqy2Mvt5M8
+cNMkvyA8YsrCwXXgBqkvEwQP5fo6uGh2iDv2a8z//EqNLyLhj54kkJyhDNhI+mu7
+nb+CEaJrrDnklaJGsaC4w7f7JG7Yebvs8t4prxr75+Ot/j9TgbNzr4jyIo+hyGkU
+Azcq8BCTk464CHSMmpFnpI5rUznjQrfYwJY0y8XDMvojLQGv3OwBtCbjzpHfZZ+9
+vjVHARDCvKv+vDPVXRBsRpQra/h6PoPjwdqljmEshUQ9lcALSK0+/QKsTSc5SgJG
++Y/obYfgalx64bogLSQtm3ikYDwGveVaNcF90VocljIcKlHh8IKm2p6Z9BSlXgM5
+0vfXOPmXMgFWIDrD8n0/JDqLuVzGYODHEusrBvqrjFQLoaw6KUT+KnTPDmiUuDT0
+IhWRdPDguK8K1Quvx4pybwBfnmXf4MMFQKB2Iru7jPi8FtubTCtxWhGxY9PqZ0Aj
+/5hghTubFMNUlByN8AYq
+=hf8g
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Dec_2011_15_37_50_+1100_E=to9k3KhvAKPWs0--
+--Signature=_Wed__28_Dec_2011_15_57_07_+1100_g06U9F01McEfOIj1--
