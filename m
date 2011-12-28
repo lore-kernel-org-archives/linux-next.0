@@ -1,60 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the s5p tree with the arm tree
-Date: Wed, 28 Dec 2011 10:36:57 +1100
-Message-ID: <20111228103657.203bd438eabc392eb3363bb6@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ext3 tree
+Date: Wed, 28 Dec 2011 11:22:54 +1100
+Message-ID: <20111228112254.551c2ee5a1ac8509962d6611@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Dec_2011_10_36_57_+1100_Zy4m0cPnLSj6SP12"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:48544 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751490Ab1L0XhH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Dec 2011 18:37:07 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>
+ boundary="Signature=_Wed__28_Dec_2011_11_22_54_+1100_9FCCECjo.VvnRCEy"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__28_Dec_2011_10_36_57_+1100_Zy4m0cPnLSj6SP12
+--Signature=_Wed__28_Dec_2011_11_22_54_+1100_9FCCECjo.VvnRCEy
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+Hi Jan,
 
-Today's linux-next merge of the s5p tree got a conflict in
-arch/arm/mach-s5pv210/init.c between commit 3fa754c298b7 ("ARM: 7248/1:
-S5PV210: introduce arch/arm/mach-s5pv210/common.[ch]") from the arm tree
-and commit afba7f91e640 ("ARM: SAMSUNG: remove struct
-'s3c24xx_uart_clksrc' and all uses of it") from the s5p tree.
+After merging the ext3 tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I just removed the file, but the latter patch will probably need applying
-in some form to arch/arm/mach-s5pv210//common.c.
+fs/reiserfs/super.c: In function 'reiserfs_show_options':
+fs/reiserfs/super.c:652:20: error: 'struct reiserfs_sb_info' has no member =
+named 's_qf_names'
+fs/reiserfs/super.c:653:50: error: 'struct reiserfs_sb_info' has no member =
+named 's_qf_names'
+fs/reiserfs/super.c:656:20: error: 'struct reiserfs_sb_info' has no member =
+named 's_qf_names'
+fs/reiserfs/super.c:657:50: error: 'struct reiserfs_sb_info' has no member =
+named 's_qf_names'
+fs/reiserfs/super.c:660:20: error: 'struct reiserfs_sb_info' has no member =
+named 's_jquota_fmt'
+fs/reiserfs/super.c:661:21: error: 'struct reiserfs_sb_info' has no member =
+named 's_jquota_fmt'
+fs/reiserfs/super.c:663:26: error: 'struct reiserfs_sb_info' has no member =
+named 's_jquota_fmt'
+
+Caused by commit 5fa84b871b97 ("reiserfs: Properly display mount options
+in /proc/mounts").  Hint: CONFIG_QUOTA is not set in this build.
+
+I have used the ext3 tree from next-20111222 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__28_Dec_2011_10_36_57_+1100_Zy4m0cPnLSj6SP12
+--Signature=_Wed__28_Dec_2011_11_22_54_+1100_9FCCECjo.VvnRCEy
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJO+laZAAoJEECxmPOUX5FEm6kP/jKDK5Yx0nDph/IIQpt7crR1
-AV7LYZ3tB7veMcpn0IyMOnOH8GbVmjA7PEioc6AaY4tDnRbZReWateIU6E7TzkK4
-2SzLs8fDxRU7QJyRtLXoJ+rLG1uh+RPVQLQ9plM1oDw/ys3kNh4oJjk6bdgiI5s7
-G8wWHeSVdtnqUpF87z9763AotBy8igli+W9AnaDrd4npDrqCLN/pLZTJMyejMCmk
-EeBsBYl4bETK06WLov7Zp1TfQgqJfhTixFl0muwp3JlgYTooje9yUtR2NaURl5gr
-arercjPRHS2eH6w2hmV1++YBnjyAlxSXou/pkyu2Coi7ex7/0IqoPg+RJ/ZLMAtm
-N97NQ/4VdVN5ITbQx5C3UKykP6hGAU2EKO0GpjgzVIVOwxf9auDBC/JllagpD+Tr
-HcoQ/lQ0rumBm3XpuNKthMr2hyypnMaEjSkHEoqyvjxKO3YjjiGd1iiQn5Yh6k1Z
-B/ZaKO3YrJjmYL5GSp76PVRF76eTeiJbtKN86Y8THG432lsvmK/xOtCz8O7hSsZW
-UR0SUjjj1pr23ySSwn29oQl8UlirrJX/dybuPMLltn+w/vCo4w1ZLz4bMMaDhYdW
-GFaBDOoIYeucCCegtsLf/R9K+5/zXg5Z/JTUEitCBtk56Iq7od2N8vuMLgt0TPYB
-k1zrDgIJBaor1cc5WXiW
-=A5DH
+iQIcBAEBCAAGBQJO+mFeAAoJEECxmPOUX5FEauUP+wc4egpHdwTB7XSCDmIQ3mTr
+H9gfvHyFyW7MufrhaRdI7YZp+vEI4DRx/0GXHhrIHFr9muy8ZC4PPchA/XAK2T3/
+GsfPXu//UjLJhl0K1o0gnIsFz6jYUKCv6JKFe6PSyUZQJ6ERqwTj5zucKyRo4CiF
+pZ4Nu0TSgtf5Uc+/eSyJpcsuUlSjLehYhMsf64kCZER4st4Inr2rVo3SdkAysQME
+pliLUxoQp/fswYPxfoHN77T+wqWRHQxClRPqkvjIVY8NxmiIn1a/iASK76nzNKLb
+UW0YcGPB4h9XaDNOi0cshwzNNSYvd4ALeTInomwSv/IERg8lPW+sDJqv/OUWWsle
+TSxzPr9S+X2x7qvEFDnx/em+QVCUYpIy0E8cbKnKV/YfbQbms6jSxcoKaKMR2MTV
+U39JmJWVAfjmRS7JJ+ug8jE39dWwx2DnUgL2Kka3xw9vMYdwiVssLrf2ROPIU4Xo
+nQFAUI9+Bn8K5Em7dpONJyDQtPtq4Bvlk9hy8aT7z9z5KkNMOQL80xydoWTpNJvO
+e5N42q2SKC5IK+woSm42xq1bblIwwTJ/cU8LPo7jLmEd8G4Vj0zYqkHAE3ntfZy9
+9Gkckv19vx58dSbqgPcziL5qiTrxmNtdwWvk94V7EgiyixzFWA7j3zqzE6RXIW95
+WDIV9jJhyWw0u94J4jLb
+=FKsd
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Dec_2011_10_36_57_+1100_Zy4m0cPnLSj6SP12--
+--Signature=_Wed__28_Dec_2011_11_22_54_+1100_9FCCECjo.VvnRCEy--
