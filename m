@@ -1,66 +1,92 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH block/for-3.3/core] block: an exiting task should be
- allowed to create io_context
-Date: Wed, 28 Dec 2011 13:19:18 -0800
-Message-ID: <20111228211918.GA3516@google.com>
-References: <20111222233843.GR17084@google.com>
- <20111222154427.89b245c7.akpm@linux-foundation.org>
- <20111222234639.GS17084@google.com>
- <20111223004244.GU17084@google.com>
- <alpine.LSU.2.00.1112232058550.3225@eggly.anvils>
- <20111225010238.GA6013@htj.dyndns.org>
- <alpine.LSU.2.00.1112280010550.1398@eggly.anvils>
- <20111228164836.GP17712@google.com>
- <alpine.LSU.2.00.1112280939390.3320@eggly.anvils>
- <CAOS58YOzUcZz41+H+7dk5FteHy+Ufrtpk9dvdPqX6eie-GHi0Q@mail.gmail.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: linux-next: Tree for Dec 28 (nfnetlink)
+Date: Thu, 29 Dec 2011 02:03:30 +0100
+Message-ID: <20111229010330.GA2663@1984>
+References: <20111228201806.d6de27fa2dbd9e3a3b7a2603@canb.auug.org.au>
+ <4EFB87CC.6020105@xenotime.net>
+ <20111228.153304.1267926241298522965.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-scsi-owner@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="fUYQa+Pmc3FrFX/N"
+Return-path: <netfilter-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAOS58YOzUcZz41+H+7dk5FteHy+Ufrtpk9dvdPqX6eie-GHi0Q@mail.gmail.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Hugh Dickins <hughd@google.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org, x86@kernel.org
+In-Reply-To: <20111228.153304.1267926241298522965.davem@davemloft.net>
+Sender: netfilter-devel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: rdunlap@xenotime.net, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Dec 28, 2011 at 09:55:12AM -0800, Tejun Heo wrote:
-> Hello,
->=20
-> On Wed, Dec 28, 2011 at 9:50 AM, Hugh Dickins <hughd@google.com> wrot=
-e:
-> > "It's the tmpfs swapping test that I've been running, with variatio=
-ns,
-> > for years. =A0System booted with mem=3D700M and 1.5G swap, two repe=
-titious
-> > make -j20 kernel builds (of a 2.6.24 kernel: I stuck with that beca=
-use
-> > the balance of built to unbuilt source grows smaller with later ker=
-nels),
-> > one directly in a tmpfs, the other in a 1k-block ext2 (that I drive=
- with
-> > ext4's CONFIG_EXT4_USE_FOR_EXT23) on /dev/loop0 on a 450MB tmpfs fi=
-le."
-> >
-> > I doubt much of that (quoted from an older mail to someone else abo=
-ut
-> > one of the many other bugs it's found) is relevant: maybe just plen=
-ty
-> > of file I/O and swapping.
->=20
-> Plain -j4 build isn't triggering anything.  I'll try to replicate the=
- condition.
 
-It's not too reliable but I can reproduce it with -j 22 allmodconfig
-build inside qemu w/ 512M of memory.  I'll try to find out what's
-going on.
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks.
+On Wed, Dec 28, 2011 at 03:33:04PM -0500, David Miller wrote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+> Date: Wed, 28 Dec 2011 13:19:08 -0800
+> 
+> > On 12/28/2011 01:18 AM, Stephen Rothwell wrote:
+> >> Hi all,
+> >> 
+> >> I got bored :-(  I also hate tree wide, flag day changes :-(
+> >> 
+> >> Changes since 20111222:
+> > 
+> > 
+> > 
+> > warning: (NETFILTER_XT_MATCH_NFACCT) selects NETFILTER_NETLINK_ACCT which has unmet direct dependencies (NET && INET && NETFILTER && NETFILTER_ADVANCED)
+> > 
+> > and then
+> > 
+> > ERROR: "nfnetlink_subsys_unregister" [net/netfilter/nfnetlink_acct.ko] undefined!
+> > ERROR: "nfnetlink_subsys_register" [net/netfilter/nfnetlink_acct.ko] undefined!
+> > 
+> > 
+> > Full randconfig file is attached.
+> 
+> Pablo please fix this, thanks.
 
---=20
-tejun
---
-To unsubscribe from this list: send the line "unsubscribe linux-scsi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please, apply the following patch.
+
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0001-netfilter-Kconfig-fix-unmet-xt_nfacct-dependencies.patch"
+
+>From 3e52c20b633f9c829eaa9fe693a0cbef10ac4d02 Mon Sep 17 00:00:00 2001
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Date: Thu, 29 Dec 2011 01:50:25 +0100
+Subject: [PATCH] netfilter: Kconfig: fix unmet xt_nfacct dependencies
+
+warning: (NETFILTER_XT_MATCH_NFACCT) selects NETFILTER_NETLINK_ACCT which has
+nmet direct dependencies (NET && INET && NETFILTER && NETFILTER_ADVANCED)
+
+and then
+
+ERROR: "nfnetlink_subsys_unregister" [net/netfilter/nfnetlink_acct.ko]
+ndefined!
+ERROR: "nfnetlink_subsys_register" [net/netfilter/nfnetlink_acct.ko]
++undefined!
+
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+---
+ net/netfilter/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
+index f6275a0..f8ac4ef 100644
+--- a/net/netfilter/Kconfig
++++ b/net/netfilter/Kconfig
+@@ -908,7 +908,7 @@ config NETFILTER_XT_MATCH_MULTIPORT
+ 
+ config NETFILTER_XT_MATCH_NFACCT
+ 	tristate '"nfacct" match support'
+-	default m if NETFILTER_ADVANCED=n
++	depends on NETFILTER_ADVANCED
+ 	select NETFILTER_NETLINK_ACCT
+ 	help
+ 	  This option allows you to use the extended accounting through
+-- 
+1.7.7.3
+
+
+--fUYQa+Pmc3FrFX/N--
