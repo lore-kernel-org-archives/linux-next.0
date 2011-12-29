@@ -1,92 +1,33 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: linux-next: Tree for Dec 28 (nfnetlink)
-Date: Thu, 29 Dec 2011 02:03:30 +0100
-Message-ID: <20111229010330.GA2663@1984>
-References: <20111228201806.d6de27fa2dbd9e3a3b7a2603@canb.auug.org.au>
- <4EFB87CC.6020105@xenotime.net>
- <20111228.153304.1267926241298522965.davem@davemloft.net>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: build warning after merge of the rr tree
+Date: Thu, 29 Dec 2011 13:50:06 +1030
+Message-ID: <87k45ggj2x.fsf@rustcorp.com.au>
+References: <20111228181640.d299620c8e66237509fbba37@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="fUYQa+Pmc3FrFX/N"
-Return-path: <netfilter-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20111228.153304.1267926241298522965.davem@davemloft.net>
-Sender: netfilter-devel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: rdunlap@xenotime.net, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
-
---fUYQa+Pmc3FrFX/N
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:54182 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752329Ab1L2Des (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Dec 2011 22:34:48 -0500
+In-Reply-To: <20111228181640.d299620c8e66237509fbba37@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Dec 28, 2011 at 03:33:04PM -0500, David Miller wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> Date: Wed, 28 Dec 2011 13:19:08 -0800
+On Wed, 28 Dec 2011 18:16:40 +1100, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Non-text part: multipart/signed
+> Hi Rusty,
 > 
-> > On 12/28/2011 01:18 AM, Stephen Rothwell wrote:
-> >> Hi all,
-> >> 
-> >> I got bored :-(  I also hate tree wide, flag day changes :-(
-> >> 
-> >> Changes since 20111222:
-> > 
-> > 
-> > 
-> > warning: (NETFILTER_XT_MATCH_NFACCT) selects NETFILTER_NETLINK_ACCT which has unmet direct dependencies (NET && INET && NETFILTER && NETFILTER_ADVANCED)
-> > 
-> > and then
-> > 
-> > ERROR: "nfnetlink_subsys_unregister" [net/netfilter/nfnetlink_acct.ko] undefined!
-> > ERROR: "nfnetlink_subsys_register" [net/netfilter/nfnetlink_acct.ko] undefined!
-> > 
-> > 
-> > Full randconfig file is attached.
+> After merging the rr tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
 > 
-> Pablo please fix this, thanks.
+> drivers/net/virtio_net.c: In function 'virtnet_open':
+> drivers/net/virtio_net.c:732:3: warning: passing argument 1 of 'queue_delayed_work' from incompatible pointer type [enabled by default]
+> include/linux/workqueue.h:352:12: note: expected 'struct workqueue_struct *' but argument is of type 'struct workqueue_struct **'
 
-Please, apply the following patch.
+Oops, thanks.  Fixed.
 
---fUYQa+Pmc3FrFX/N
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="0001-netfilter-Kconfig-fix-unmet-xt_nfacct-dependencies.patch"
-
->From 3e52c20b633f9c829eaa9fe693a0cbef10ac4d02 Mon Sep 17 00:00:00 2001
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Thu, 29 Dec 2011 01:50:25 +0100
-Subject: [PATCH] netfilter: Kconfig: fix unmet xt_nfacct dependencies
-
-warning: (NETFILTER_XT_MATCH_NFACCT) selects NETFILTER_NETLINK_ACCT which has
-nmet direct dependencies (NET && INET && NETFILTER && NETFILTER_ADVANCED)
-
-and then
-
-ERROR: "nfnetlink_subsys_unregister" [net/netfilter/nfnetlink_acct.ko]
-ndefined!
-ERROR: "nfnetlink_subsys_register" [net/netfilter/nfnetlink_acct.ko]
-+undefined!
-
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
----
- net/netfilter/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index f6275a0..f8ac4ef 100644
---- a/net/netfilter/Kconfig
-+++ b/net/netfilter/Kconfig
-@@ -908,7 +908,7 @@ config NETFILTER_XT_MATCH_MULTIPORT
- 
- config NETFILTER_XT_MATCH_NFACCT
- 	tristate '"nfacct" match support'
--	default m if NETFILTER_ADVANCED=n
-+	depends on NETFILTER_ADVANCED
- 	select NETFILTER_NETLINK_ACCT
- 	help
- 	  This option allows you to use the extended accounting through
--- 
-1.7.7.3
-
-
---fUYQa+Pmc3FrFX/N--
+Cheers,
+Rusty.
