@@ -1,38 +1,100 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: build failure after merge of the ext3 tree
-Date: Mon, 2 Jan 2012 23:40:12 +0100
-Message-ID: <20120102224012.GE3626@quack.suse.cz>
-References: <20111228112254.551c2ee5a1ac8509962d6611@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Tue, 3 Jan 2012 10:34:11 +1100
+Message-ID: <20120103103411.85d160181f361e73f11c401b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__3_Jan_2012_10_34_11_+1100_xk==OsgiOJsUZcj1"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:52976 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753418Ab2ABXeZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jan 2012 18:34:25 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <rmk@arm.linux.org.uk>, Rajeshwari Shinde <rajeshwari.s@samsung.com>, Padmavathi Venna <padma.v@samsung.com>
+
+--Signature=_Tue__3_Jan_2012_10_34_11_+1100_xk==OsgiOJsUZcj1
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20111228112254.551c2ee5a1ac8509962d6611@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-  Hi,
+Hi all,
 
-On Wed 28-12-11 11:22:54, Stephen Rothwell wrote:
-> After merging the ext3 tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/reiserfs/super.c: In function 'reiserfs_show_options':
-> fs/reiserfs/super.c:652:20: error: 'struct reiserfs_sb_info' has no member named 's_qf_names'
-> fs/reiserfs/super.c:653:50: error: 'struct reiserfs_sb_info' has no member named 's_qf_names'
-> fs/reiserfs/super.c:656:20: error: 'struct reiserfs_sb_info' has no member named 's_qf_names'
-> fs/reiserfs/super.c:657:50: error: 'struct reiserfs_sb_info' has no member named 's_qf_names'
-> fs/reiserfs/super.c:660:20: error: 'struct reiserfs_sb_info' has no member named 's_jquota_fmt'
-> fs/reiserfs/super.c:661:21: error: 'struct reiserfs_sb_info' has no member named 's_jquota_fmt'
-> fs/reiserfs/super.c:663:26: error: 'struct reiserfs_sb_info' has no member named 's_jquota_fmt'
-> 
-> Caused by commit 5fa84b871b97 ("reiserfs: Properly display mount options
-> in /proc/mounts").  Hint: CONFIG_QUOTA is not set in this build.
-  Ah, stupid me. Fixed now. Thanks for letting me know.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-s3c64xx/Makefile between commit b024043b6d0d ("ARM: 7245/1:
+S3C64XX: introduce arch/arm/mach-s3c64xx/common.[ch]") from the arm tree
+and commits a60879e7ca17 ("ARM: SAMSUNG: Remove SDHCI bus clocks from
+platform data"), 875a59374cd1 ("ARM: SAMSUNG: Consolidation of SPI
+platform devices to plat-samsung") and 4566c7f7612f ("ARM: S3C64XX:
+Modified files for SPI consolidation work") from the arm-soc tree.
 
-									Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-s3c64xx/Makefile
+index f37016c,d7d9bb5..0000000
+--- a/arch/arm/mach-s3c64xx/Makefile
++++ b/arch/arm/mach-s3c64xx/Makefile
+@@@ -27,21 -26,21 +27,20 @@@ obj-$(CONFIG_PM)		+=3D pm.o irq-pm.o slee
+ =20
+  obj-$(CONFIG_S3C64XX_DMA)	+=3D dma.o
+ =20
+ -# Device setup
+ +# Device support
+ =20
+ -obj-$(CONFIG_S3C64XX_SETUP_I2C0) +=3D setup-i2c0.o
+ -obj-$(CONFIG_S3C64XX_SETUP_I2C1) +=3D setup-i2c1.o
+ -obj-$(CONFIG_S3C64XX_SETUP_IDE) +=3D setup-ide.o
+ -obj-$(CONFIG_S3C64XX_SETUP_KEYPAD) +=3D setup-keypad.o
+ -obj-$(CONFIG_S3C64XX_SETUP_FB_24BPP) +=3D setup-fb-24bpp.o
+ -obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO) +=3D setup-sdhci-gpio.o
+ -obj-$(CONFIG_S3C64XX_SETUP_SPI) +=3D setup-spi.o
+ +obj-y				+=3D dev-uart.o
+ +obj-y				+=3D dev-audio.o
+- obj-$(CONFIG_S3C64XX_DEV_SPI)	+=3D dev-spi.o
+ =20
+ -# PM
+ +# Device setup
+ =20
+ -obj-$(CONFIG_PM)		+=3D pm.o
+ -obj-$(CONFIG_PM)		+=3D sleep.o
+ -obj-$(CONFIG_PM)		+=3D irq-pm.o
+ +obj-$(CONFIG_S3C64XX_SETUP_FB_24BPP)	+=3D setup-fb-24bpp.o
+ +obj-$(CONFIG_S3C64XX_SETUP_I2C0)	+=3D setup-i2c0.o
+ +obj-$(CONFIG_S3C64XX_SETUP_I2C1)	+=3D setup-i2c1.o
+ +obj-$(CONFIG_S3C64XX_SETUP_IDE)		+=3D setup-ide.o
+ +obj-$(CONFIG_S3C64XX_SETUP_KEYPAD)	+=3D setup-keypad.o
+- obj-$(CONFIG_S3C64XX_SETUP_SDHCI)	+=3D setup-sdhci.o
+ +obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO)	+=3D setup-sdhci-gpio.o
+++obj-$(CONFIG_S3C64XX_SETUP_SPI)		+=3D setup-spi.o
+ =20
+  # Machine support
+ =20
+
+--Signature=_Tue__3_Jan_2012_10_34_11_+1100_xk==OsgiOJsUZcj1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPAj7zAAoJEECxmPOUX5FEOI0P/2DoL7HCYmDi+HDBR1rbIf9R
+EqFu3O06HnVqVByrTDJoZEBE9NYBeys6nFQmDUcDndP+aH96rTQiUGRrisK/JYnP
+htYO/9d2Z3Kv9X12x3eFnhBOESvGV0VXwuQuFCa4Ua0UuOq7e++5qKnnOqHrmVIH
+vib3UEnCLevu0W2nAblB9nT1XdUpWd+tFF+o3ZVxZdeUZdnqPyKq1JLqTJH+SB+F
+V8igKebDh4Pj3rmwooPZvi38cfp/OsqgMBiyBsc98Pc/7ddpYGoYsV91Vdms2MmA
+etxs0yBBiKNZOPxnRqpAHbG4osXBstR+418kOEvIDxe4eCjmMnU08RjctGskB/YG
+ZeBkLxUv9LvHv9gFAhY4yhoKt19kECCH33oPTwvXgC8pj+XyBr9wuzyCVkLUDvwl
+1JZM+0zK8nwcnWQkdUlzyDBgCSytK5MFUJdFMLGhvA9Mq98ZzMNrvtQq1sUwfn9i
+7pKhzsgkOnPH8bEU9R41oqx4xwAu/0GTZWijASovZ9ZyfF94oEQaDoo69xMeP4qJ
+1+LBWPPXTJ5YRvVu7h4VMnjm7RakmpNPFCbB6Hlv5v5XirDzhgPLXaHf2SrdOG2S
+Hd4kyUw6x5z8oNff7h2Q6ERbxZqLVr83jggOeMmBLA8JmAVtD8JaG5hb1Em5j2Cb
+zmWDTNinr06jRTtNR4IZ
+=iuPN
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__3_Jan_2012_10_34_11_+1100_xk==OsgiOJsUZcj1--
