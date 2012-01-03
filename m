@@ -1,116 +1,173 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the l2-mtd tree with the logfs tree
-Date: Tue, 3 Jan 2012 14:00:29 +1100
-Message-ID: <20120103140029.2f996dab9bdfd3ec5c876045@canb.auug.org.au>
+Subject: linux-next: manual merge of the input tree with the arm-soc tree
+Date: Tue, 3 Jan 2012 14:33:04 +1100
+Message-ID: <20120103143304.eeeaf5e11021721fd02dbce8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__3_Jan_2012_14_00_29_+1100_fu4v.CfGTceSpzzW"
+ boundary="Signature=_Tue__3_Jan_2012_14_33_04_+1100_RiG9aGM2CCM2ouhe"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:56560 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:36114 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750863Ab2ACDAj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jan 2012 22:00:39 -0500
+	with ESMTP id S1751041Ab2ACDdO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jan 2012 22:33:14 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Prasad Joshi <prasadjoshi.linux@gmail.com>, =?UTF-8?B?IkrDtnJuIEVuZ2VsIg==?= <joern@logfs.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Tue__3_Jan_2012_14_00_29_+1100_fu4v.CfGTceSpzzW
+--Signature=_Tue__3_Jan_2012_14_33_04_+1100_RiG9aGM2CCM2ouhe
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Artem,
+Hi Dmitry,
 
-Today's linux-next merge of the l2-mtd tree got a conflict in
-fs/logfs/dev_mtd.c between commit d1cc3ad397f2 ("Logfs: Allow NULL
-block_isbad() methods") from the logfs tree and commit 957afd905eda
-("logfs: do not use 'mtd->block_isbad' directly") from the l2-mtd tree.
+Today's linux-next merge of the input tree got a conflict in
+drivers/input/keyboard/samsung-keypad.c between commit b3d6ac3e5f93
+("input: samsung-keypad: Add device tree support") from the arm-soc tree
+and commit 48c98b1bb85a ("Input: samsung-keypad - implement runtime power
+management support") from the input tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/logfs/dev_mtd.c
-index d054d7e,e97404d..0000000
---- a/fs/logfs/dev_mtd.c
-+++ b/fs/logfs/dev_mtd.c
-@@@ -147,16 -149,17 +149,16 @@@ static struct page *logfs_mtd_find_firs
-  {
-  	struct logfs_super *super =3D logfs_super(sb);
-  	struct address_space *mapping =3D super->s_mapping_inode->i_mapping;
-- 	filler_t *filler =3D mtd_readpage;
-+ 	filler_t *filler =3D logfs_mtd_readpage;
-  	struct mtd_info *mtd =3D super->s_mtd;
+diff --cc drivers/input/keyboard/samsung-keypad.c
+index 8a0060c,b746fce..0000000
+--- a/drivers/input/keyboard/samsung-keypad.c
++++ b/drivers/input/keyboard/samsung-keypad.c
+@@@ -20,11 -20,11 +20,13 @@@
+  #include <linux/io.h>
+  #include <linux/module.h>
+  #include <linux/platform_device.h>
++ #include <linux/pm.h>
++ #include <linux/pm_runtime.h>
+  #include <linux/slab.h>
+ +#include <linux/of.h>
+ +#include <linux/of_gpio.h>
+  #include <linux/sched.h>
+- #include <plat/keypad.h>
++ #include <linux/input/samsung-keypad.h>
  =20
- -	if (!mtd_can_have_bb(mtd))
- -		return NULL;
- -
-  	*ofs =3D 0;
-- 	if (mtd->block_isbad) {
-- 		while (mtd->block_isbad(mtd, *ofs)) {
- -	while (mtd_block_isbad(mtd, *ofs)) {
- -		*ofs +=3D mtd->erasesize;
- -		if (*ofs >=3D mtd->size)
- -			return NULL;
-++	if (mtd_can_have_bb(mtd)) {
-++		while (mtd_block_isbad(mtd, *ofs)) {
- +			*ofs +=3D mtd->erasesize;
- +			if (*ofs >=3D mtd->size)
- +				return NULL;
- +		}
-  	}
-  	BUG_ON(*ofs & ~PAGE_MASK);
-  	return read_cache_page(mapping, *ofs >> PAGE_SHIFT, filler, sb);
-@@@ -166,16 -169,17 +168,16 @@@ static struct page *logfs_mtd_find_last
-  {
-  	struct logfs_super *super =3D logfs_super(sb);
-  	struct address_space *mapping =3D super->s_mapping_inode->i_mapping;
-- 	filler_t *filler =3D mtd_readpage;
-+ 	filler_t *filler =3D logfs_mtd_readpage;
-  	struct mtd_info *mtd =3D super->s_mtd;
+  #define SAMSUNG_KEYIFCON			0x00
+  #define SAMSUNG_KEYIFSTSCLR			0x04
+@@@ -69,8 -70,8 +72,9 @@@ struct samsung_keypad=20
+  	void __iomem *base;
+  	wait_queue_head_t wait;
+  	bool stopped;
++ 	bool wake_enabled;
+  	int irq;
+ +	enum samsung_keypad_type type;
+  	unsigned int row_shift;
+  	unsigned int rows;
+  	unsigned int cols;
+@@@ -421,18 -318,9 +438,19 @@@ static int __devinit samsung_keypad_pro
+  	keypad->row_shift =3D row_shift;
+  	keypad->rows =3D pdata->rows;
+  	keypad->cols =3D pdata->cols;
++ 	keypad->stopped =3D true;
+  	init_waitqueue_head(&keypad->wait);
  =20
- -	if (!mtd_can_have_bb(mtd))
- -		return NULL;
- -
-  	*ofs =3D mtd->size - mtd->erasesize;
-- 	if (mtd->block_isbad) {
-- 		while (mtd->block_isbad(mtd, *ofs)) {
- -	while (mtd_block_isbad(mtd, *ofs)) {
- -		*ofs -=3D mtd->erasesize;
- -		if (*ofs <=3D 0)
- -			return NULL;
-++	if (mtd_can_have_bb(mtd)) {
-++		while (mtd_block_isbad(mtd, *ofs)) {
- +			*ofs -=3D mtd->erasesize;
- +			if (*ofs <=3D 0)
- +				return NULL;
- +		}
-  	}
-  	*ofs =3D *ofs + mtd->erasesize - 0x1000;
-  	BUG_ON(*ofs & ~PAGE_MASK);
+ +	if (pdev->dev.of_node) {
+ +#ifdef CONFIG_OF
+ +		samsung_keypad_parse_dt_gpio(&pdev->dev, keypad);
+ +		keypad->type =3D of_device_is_compatible(pdev->dev.of_node,
+ +					"samsung,s5pv210-keypad");
+ +#endif
+ +	} else {
+ +		keypad->type =3D platform_get_device_id(pdev)->driver_data;
+ +	}
+ +
+  	input_dev->name =3D pdev->name;
+  	input_dev->id.bustype =3D BUS_HOST;
+  	input_dev->dev.parent =3D &pdev->dev;
+@@@ -471,21 -363,15 +493,21 @@@
+  	if (error)
+  		goto err_free_irq;
+ =20
+- 	device_init_wakeup(&pdev->dev, pdata->wakeup);
+- 	platform_set_drvdata(pdev, keypad);
+-=20
+ +	if (pdev->dev.of_node) {
+ +		devm_kfree(&pdev->dev, (void *)pdata->keymap_data->keymap);
+ +		devm_kfree(&pdev->dev, (void *)pdata->keymap_data);
+ +		devm_kfree(&pdev->dev, (void *)pdata);
+ +	}
+  	return 0;
+ =20
+  err_free_irq:
+  	free_irq(keypad->irq, keypad);
++ 	pm_runtime_disable(&pdev->dev);
++ 	device_init_wakeup(&pdev->dev, 0);
++ 	platform_set_drvdata(pdev, NULL);
+  err_put_clk:
+  	clk_put(keypad->clk);
+ +	samsung_keypad_dt_gpio_free(keypad);
+  err_unmap_base:
+  	iounmap(keypad->base);
+  err_free_mem:
+@@@ -578,24 -510,14 +647,25 @@@ static int samsung_keypad_resume(struc
+ =20
+  	return 0;
+  }
++ #endif
+ =20
+  static const struct dev_pm_ops samsung_keypad_pm_ops =3D {
+- 	.suspend	=3D samsung_keypad_suspend,
+- 	.resume		=3D samsung_keypad_resume,
++ 	SET_SYSTEM_SLEEP_PM_OPS(samsung_keypad_suspend, samsung_keypad_resume)
++ 	SET_RUNTIME_PM_OPS(samsung_keypad_runtime_suspend,
++ 			   samsung_keypad_runtime_resume, NULL)
+  };
+- #endif
+ =20
+ +#ifdef CONFIG_OF
+ +static const struct of_device_id samsung_keypad_dt_match[] =3D {
+ +	{ .compatible =3D "samsung,s3c6410-keypad" },
+ +	{ .compatible =3D "samsung,s5pv210-keypad" },
+ +	{},
+ +};
+ +MODULE_DEVICE_TABLE(of, samsung_keypad_dt_match);
+ +#else
+ +#define samsung_keypad_dt_match NULL
+ +#endif
+ +
+  static struct platform_device_id samsung_keypad_driver_ids[] =3D {
+  	{
+  		.name		=3D "samsung-keypad",
+@@@ -614,10 -536,7 +684,8 @@@ static struct platform_driver samsung_k
+  	.driver		=3D {
+  		.name	=3D "samsung-keypad",
+  		.owner	=3D THIS_MODULE,
+ +		.of_match_table =3D samsung_keypad_dt_match,
+- #ifdef CONFIG_PM
+  		.pm	=3D &samsung_keypad_pm_ops,
+- #endif
+  	},
+  	.id_table	=3D samsung_keypad_driver_ids,
+  };
 
---Signature=_Tue__3_Jan_2012_14_00_29_+1100_fu4v.CfGTceSpzzW
+--Signature=_Tue__3_Jan_2012_14_33_04_+1100_RiG9aGM2CCM2ouhe
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPAm9NAAoJEECxmPOUX5FE9IgP/jIArZPmyPfD40ykeleFR9fS
-bP6CBSsD11H4N8HvsPi4rdcLEhLvh1d73NhnoaCw9mQcjuIOZ0yib2ltPMFN6PQ8
-Fb6t7mBV4zB8ijsiZo4kpC4ymCnjXL96YoryJULzx5KMbaNd1fskdiHHwexv1KAC
-ELHKb18ThbxElEo5OwXvBpneVx8MXaQenXFDYWwjiFKnqACUhp20ZtGU+9tsGUbj
-w2czgJLNMpPl0SuvF69VZfX7KEc7bgFNJADpKN0cUvnf5NcM0ZisMUk1nxQNhP1w
-eH7LOZInImrIZOOQPQpzb05DeiQEAY52IOS6G/g9JDUHopHdNzIvPvuyakt9CnGc
-wiahQwkGAlW2IsqJgzCv0OaE0vkjP/a2sk8TCq7Xhx88d7FXgorh3q96qfgWgDNz
-Vhg1do6hLlebp5rpMQJnT3xMR6YTNCxy2ssx0SbfMyyAGb/iSrniSgkhl2VyWRhk
-weRIvrSbagvK/PBskYJxmvNJgVkf7CoGUmc6jnOQlaQXULCLannVWuLe30vcgGWt
-n1E1L9OXpWadqHwAWtDp79wNgIwWdf37jydUMTCVOfawQjV0pRLHg8Vuizq3cJgx
-TbSw28GzqOY8AeyqhrL8FU8WkLchaSXIcfakwuA0qp8bJ/Jlzlur4d0XeBKmaAE0
-rewlKEVMPL+9CHW8KxKh
-=NIeU
+iQIcBAEBCAAGBQJPAnbwAAoJEECxmPOUX5FE7BIP/0Qv5qJcnj1RHyKeBhKjAACy
+4E7HHo1cwhQfU7hFMbUiOJgnm3+OdarfencknbMI+37oUHNWFAYQnAWRRMFkk0MO
+xmSGcMV+q/VFILzt0pLf4i9K7+BZiQgPsfeVOSgMMkRbqlSqOQaWSxoB5e7IucZD
+r3cfg+I7ieymF67KqCOe9KryxH2rCSv6E/W4nG+lOrO7Ym1Zge6T8CF7pL86j+az
+PPGY/h9LxVisIg8nx6oegh5I/urrfdSo/am92lHvX6ceBc93T6PrkSKqkcYrVFeC
+heVCsBu4yxBFJ2yTSNYpBxdhe/MuDl9xuiG1SMJsTnA7HVylNHjbbM1YkfX7hBVO
+dzKdNjOGhZowqYmU6x2POyT82yV8oYdODcErjIrERIdTKT2RrHJYhBeXNbAjB6HH
+AgFgFZkmMLl4foDB0umJ98ZZNphBsxoz08F++xnGybELAdIVG1JeyzPVwf1Ki0+A
+PIS2aEveXdLz9SRDAfI5Vd7zOWxf5YcwQeiwNfQD75pqNnRRzCu6MlRcPvxwjYh8
+C6YcXjgUwkpgg0niQim0NXUiQo/QyUyzJQ4N6+yibAiVtpdFTuCr44aSrKQqte+q
+rGuXjdg/q1HSsvKeaacjvK6pa2JHOIRXuRtJWsh9VehllqJ+8N5qXB3muxKnKOj0
+5OUO9dMgyuYx8EFfXo+R
+=+1bC
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__3_Jan_2012_14_00_29_+1100_fu4v.CfGTceSpzzW--
+--Signature=_Tue__3_Jan_2012_14_33_04_+1100_RiG9aGM2CCM2ouhe--
