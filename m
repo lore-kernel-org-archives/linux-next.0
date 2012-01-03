@@ -1,91 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Tue, 3 Jan 2012 16:16:35 +1100
-Message-ID: <20120103161635.9ca6b528c313cf459bdf6de2@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the s5p tree
+Date: Tue, 3 Jan 2012 18:08:54 +1100
+Message-ID: <20120103180854.e9bff732db50c0fa9afd2967@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__3_Jan_2012_16_16_35_+1100_btvs77wHoPR=ABej"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Schwab <schwab@linux-m68k.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__3_Jan_2012_18_08_54_+1100_dBBZIUY0H9Ll6HtI"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:35966 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751051Ab2ACHJF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jan 2012 02:09:05 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Linus <torvalds@linux-foundation.org>
 
---Signature=_Tue__3_Jan_2012_16_16_35_+1100_btvs77wHoPR=ABej
+--Signature=_Tue__3_Jan_2012_18_08_54_+1100_dBBZIUY0H9Ll6HtI
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Kukjin,
 
-Today's linux-next merge of the tip tree got conflicts in
-arch/ia64/include/asm/cputime.h and include/asm-generic/cputime.h between
-commit 34845636a184 ("procfs: do not confuse jiffies with cputime64_t")
-from Linus' tree and commit 648616343cdb ("[S390] cputime: add sparse
-checking and cleanup") from the tip tree.
+After merging the s5p tree, today's linux-next build (powerpc
+ppc64_defconfig) failed badly.   The problem is that you have merged into
+your tree a version of the driver-core tree that I reported broken on Dec
+28.
 
-I did the obvious fix up (see below) which may not be completely correct.
+Presumably you merged the driver-core tree to fix up some conflicts I
+have reported.  Don't do that, please.  Either leave them for Linus to
+fix up, or do a merge of Linus' tree after he has merged the (hopefully
+fixed) driver-core tree during the merge window. Or send him your tree
+unmerged with the merged version available for him to use if he wants to.
+
+I have used the s5p tree from next-20111228 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/ia64/include/asm/cputime.h
-index 5a274af,461e52f..0000000
---- a/arch/ia64/include/asm/cputime.h
-+++ b/arch/ia64/include/asm/cputime.h
-@@@ -58,9 -46,10 +46,11 @@@ typedef u64 __nocast cputime64_t
-  /*
-   * Convert cputime <-> microseconds
-   */
-- #define cputime_to_usecs(__ct)		((__ct) / NSEC_PER_USEC)
-- #define usecs_to_cputime(__usecs)	((__usecs) * NSEC_PER_USEC)
-+ #define cputime_to_usecs(__ct)		\
-+ 	((__force u64)(__ct) / NSEC_PER_USEC)
-+ #define usecs_to_cputime(__usecs)	\
-+ 	(__force cputime_t)((__usecs) * NSEC_PER_USEC)
- +#define usecs_to_cputime64(__usecs)	usecs_to_cputime(__usecs)
- =20
-  /*
-   * Convert cputime <-> seconds
-diff --cc include/asm-generic/cputime.h
-index 12a1764,77202e2..0000000
---- a/include/asm-generic/cputime.h
-+++ b/include/asm-generic/cputime.h
-@@@ -38,9 -23,10 +23,11 @@@ typedef u64 __nocast cputime64_t
-  /*
-   * Convert cputime to microseconds and back.
-   */
-- #define cputime_to_usecs(__ct)		jiffies_to_usecs(__ct)
-- #define usecs_to_cputime(__msecs)	usecs_to_jiffies(__msecs)
-+ #define cputime_to_usecs(__ct)		\
-+ 	jiffies_to_usecs(cputime_to_jiffies(__ct));
-+ #define usecs_to_cputime(__msecs)	\
-+ 	jiffies_to_cputime(usecs_to_jiffies(__msecs));
- +#define usecs_to_cputime64(__msecs)	nsecs_to_jiffies64((__msecs) * 1000)
- =20
-  /*
-   * Convert cputime to seconds and back.
-
---Signature=_Tue__3_Jan_2012_16_16_35_+1100_btvs77wHoPR=ABej
+--Signature=_Tue__3_Jan_2012_18_08_54_+1100_dBBZIUY0H9Ll6HtI
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPAo8zAAoJEECxmPOUX5FE4xAP/1TyHQcEnSlyIi1ZBmO+DW+v
-9O4qkkMXHaooK057Z2vYm84XHu63F+slKDx8aokR4oYYpydPlIrhJ//AQN6kfoZK
-S12RptX0baxW+oQIlHg894QjMHLbrOtbr9XBJvde8ORbA0LSI1Gc88Xkefmb+D2G
-58FZj6thjj5BH/6H0Jdubqxf/ALPVoEWuYw2RA0WgUVAlihjigq48OqnyM3fI0Al
-3X7fn1pTY68yHpENAxL1g5o24SMKsyVsQw/tIBA/4qbJz5/bTrFnfYQbZwyfORhS
-1tSrhlbO3unaQ+CtexbNi6gv6kD3c4qUC7/xr2zwxD8yB5IeOLYSnncwY+O7dTfN
-3QYn/XPIkAF/D/mjt+gttcaIBNSMKY9tb9alyLmHmw9HpRVz0aZ0UlJQNrN2aBTJ
-I/eCJHl9w4LbLRk8s9iSlLtThuGATAEILat5XCFGe6Cbt1C0d5NljU6rU1DO/rWc
-RQzs7V+dgM4c5Pc3pqyt61l0qKEZm0URIac++3PM+okTVyzkDKXEsNL3Nn8Rk9Lm
-kDb0JdeWl1JO9N3YYumnZTiy3McBiHa2Ql38YO2PsarpIWSoLKi+ouM761H9mcCb
-LeoaYLZaUBDALcRjslldVr3D9xYrDEiSXb6GkEG2VshIBDLgebUYNsbgpv5AvGc4
-pEcW+lO+4KDvneILQa0V
-=DDTR
+iQIcBAEBCAAGBQJPAqmGAAoJEECxmPOUX5FEYVMQAI+uPy7yED9DKQISd9O66WOg
+OSI8iDonqS234UFRaLqNVq/G9Qb2qdVWW/7AE+EmuyW7MEFw249mC+x0kTlPDATY
+AcfVQ/M5YvQW5z+8sTNAEihiVr808SsJ6HRKVgjAMXCHmN8Vx0hInR42JpvLc8Nu
+JGTB08juPuhKo2XdgyjN9bkP1v/4DlLXIikp6wK7/zubshGpY+T0Z9FL58EOufyq
+uShFRmLxaIF04M0SfJVAuXdpBV/C7URriVXw72j0OXbKhOr5qsy2Hm/1HidWx3Am
+0btMKIRDnk6HvXv+EyaafZP23stkawYSxvDClUllL1C0VlJtBPG4g9323GRqnwsd
+OxtRDDUwU4zJpj1BlOTD3apceVYWfWidwL3NuPY/tclOXyD37GWyahyQKeWxEoCd
+pEBNeDUEU1L7ZES/HFsvaOdn9M25+wmRLgaJq+j4gi2IPUif01q3ZvIcOowxos5u
+5iQUdc8xZkBW6kY6iMHtnE9mgwh39/aJkECu3l8j88cuVj1BeEWyx8BBgkDP4hOJ
+n5WDpwjkBNDK68dJKdG4+J9qcqMYUj4L6t/3CtYBBK239ojdjuL/3IAjZs8rBV+S
++7lYBek6XT56/oENHDhL39P76tg8I1ua1YbxXZUsVqjknh3cdVCqq/UglZBSsRGo
+88XatwlVrMgQZUdbetGF
+=hfDj
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__3_Jan_2012_16_16_35_+1100_btvs77wHoPR=ABej--
+--Signature=_Tue__3_Jan_2012_18_08_54_+1100_dBBZIUY0H9Ll6HtI--
