@@ -1,131 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ext4 tree
-Date: Tue, 3 Jan 2012 11:35:33 +1100
-Message-ID: <20120103113533.b2fdd68aff5b6d3c100d41b6@canb.auug.org.au>
+Subject: linux-next: manual merge of the xfs tree with Linus' tree
+Date: Tue, 3 Jan 2012 12:06:32 +1100
+Message-ID: <20120103120632.a43a2ab50ac747093bbb2f5f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__3_Jan_2012_11_35_33_+1100_irc9iOhFtMonO.H7"
+ boundary="Signature=_Tue__3_Jan_2012_12_06_32_+1100_BlmFV3uEqccojw3+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:49575 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:50596 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753461Ab2ACAfn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jan 2012 19:35:43 -0500
+	with ESMTP id S1753461Ab2ACBGr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jan 2012 20:06:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Tso <tytso@MIT.EDU>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yongqiang Yang <xiaoqiangnk@gmail.com>, Jan Kara <jack@suse.cz>
+To: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Ben Myers <bpm@sgi.com>
 
---Signature=_Tue__3_Jan_2012_11_35_33_+1100_irc9iOhFtMonO.H7
+--Signature=_Tue__3_Jan_2012_12_06_32_+1100_BlmFV3uEqccojw3+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ted,
+Hi all,
 
-After merging the ext4 tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the xfs tree got a conflict in
+fs/xfs/xfs_sync.c between commit be4f1ac82877 ("xfs: log all dirty inodes
+in xfs_fs_sync_fs") from the  tree and commit 34625c661b01 ("xfs: remove
+xfs_qm_sync") from the xfs tree.
 
-fs/jbd2/built-in.o: In function `journal_clear_buffer_revoked_flags':
-(.opd+0x5b8): multiple definition of `journal_clear_buffer_revoked_flags'
-fs/jbd/built-in.o:(.opd+0x570): first defined here
-fs/jbd2/built-in.o: In function `.journal_clear_buffer_revoked_flags':
-(.text+0x7e80): multiple definition of `.journal_clear_buffer_revoked_flags'
-fs/jbd/built-in.o:(.text+0x7970): first defined here
-
-Caused by commit 7834c98154f1 ("jbd2: clear revoked flag on buffers
-before a new transaction started") interacting with commit 8c111b3f5633
-("jbd: clear revoked flag on buffers before a new transaction started")
-form the ext3 tree.
-
-I applied this merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 3 Jan 2012 11:31:37 +1100
-Subject: [PATCH] jbd2: sanitize a new global symbol
- (journal_clear_buffer_revoked_flags)
-
-Fixes these build errors (when combined with the ext3 tree):
-
-fs/jbd2/built-in.o: In function `journal_clear_buffer_revoked_flags':
-(.opd+0x5b8): multiple definition of `journal_clear_buffer_revoked_flags'
-fs/jbd/built-in.o:(.opd+0x570): first defined here
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/jbd2/commit.c     |    2 +-
- fs/jbd2/revoke.c     |    2 +-
- include/linux/jbd2.h |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-index 7f99e17..3f5c545 100644
---- a/fs/jbd2/commit.c
-+++ b/fs/jbd2/commit.c
-@@ -433,7 +433,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
- 	 * Clear revoked flag to reflect there is no revoked buffers
- 	 * in the next transaction which is going to be started.
- 	 */
--	journal_clear_buffer_revoked_flags(journal);
-+	jbd2_journal_clear_buffer_revoked_flags(journal);
-=20
- 	/*
- 	 * Switch to a new revoke table.
-diff --git a/fs/jbd2/revoke.c b/fs/jbd2/revoke.c
-index 1c36138..c99d839 100644
---- a/fs/jbd2/revoke.c
-+++ b/fs/jbd2/revoke.c
-@@ -487,7 +487,7 @@ int jbd2_journal_cancel_revoke(handle_t *handle, struct=
- journal_head *jh)
-  * revoke table to reflect there is no revoked buffers in the next
-  * transaction which is going to be started.
-  */
--void journal_clear_buffer_revoked_flags(journal_t *journal)
-+void jbd2_journal_clear_buffer_revoked_flags(journal_t *journal)
- {
- 	struct jbd2_revoke_table_s *revoke =3D journal->j_revoke;
- 	int i =3D 0;
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 17bf089..44b8072 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1151,7 +1151,7 @@ extern int	jbd2_journal_set_revoke(journal_t *, unsig=
-ned long long, tid_t);
- extern int	jbd2_journal_test_revoke(journal_t *, unsigned long long, tid_t=
-);
- extern void	jbd2_journal_clear_revoke(journal_t *);
- extern void	jbd2_journal_switch_revoke_table(journal_t *journal);
--extern void	journal_clear_buffer_revoked_flags(journal_t *journal);
-+extern void	jbd2_journal_clear_buffer_revoked_flags(journal_t *journal);
-=20
- /*
-  * The log thread user interface:
---=20
-1.7.8.197.g73c6b
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__3_Jan_2012_11_35_33_+1100_irc9iOhFtMonO.H7
+diff --cc fs/xfs/xfs_sync.c
+index f0994aedc,5b9ec37..0000000
+--- a/fs/xfs/xfs_sync.c
++++ b/fs/xfs/xfs_sync.c
+@@@ -385,20 -359,7 +385,17 @@@ xfs_quiesce_data
+  {
+  	int			error, error2 =3D 0;
+ =20
+ +	/*
+ +	 * Log all pending size and timestamp updates.  The vfs writeback
+ +	 * code is supposed to do this, but due to its overagressive
+ +	 * livelock detection it will skip inodes where appending writes
+ +	 * were written out in the first non-blocking sync phase if their
+ +	 * completion took long enough that it happened after taking the
+ +	 * timestamp for the cut-off in the blocking phase.
+ +	 */
+ +	xfs_inode_ag_iterator(mp, xfs_log_dirty_inode, 0);
+ +
+- 	xfs_qm_sync(mp, SYNC_TRYLOCK);
+- 	xfs_qm_sync(mp, SYNC_WAIT);
+-=20
+- 	/* force out the newly dirtied log buffers */
++ 	/* force out the log */
+  	xfs_log_force(mp, XFS_LOG_SYNC);
+ =20
+  	/* write superblock and hoover up shutdown errors */
+
+--Signature=_Tue__3_Jan_2012_12_06_32_+1100_BlmFV3uEqccojw3+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPAk1VAAoJEECxmPOUX5FEHtsP/3YBqW95jI6DO3A97Bv5dUfA
-vx771nLikQr13xHAKYdH/kAWZi/wdi6sgjahq7X/B/h7efKYOTPGtDNGHnm/rqQv
-OPaHU52F+SGIl4OMOCwHdn8aFSHl5DdoT1lMlv7xlixV2gS3+7cb1Qahl8oZfLqk
-/kZpL9i+/MiCyPikjgJZ64zVL4BH5DWLJqsYlZODimriEzeRtGA2eftmm3CcpfUP
-7r/F2R8DLdKjG37dHadHVqqLX8MBE823XQ/7G1kVfBBarpEw1DhDjulDo+Oyof8W
-ajSWq/1Q5PWfLJrPVvQizHAvHwO5wzfzPKfFUgw3Zue/ooYIm3Yq15n4rDw8fDY8
-kS1PYP9gr7JZWWeWE9A7d/vBncYgp3KMCC3KBArMFj74EPB9JDeeUZhPPX0DLZtv
-LxvsNsMlGu6sxUeOhkRVE16pm8X8ClRoCyMqmcA6YJL1heu0TQLhD6ZYj843L/5c
-vgac6ix09hLaKrNVVeWesUF0U1uMJ/N1BYGLTdGPotf+iwD3H8C8xge5hnq+oOjn
-/XbNUVLEUzN+6qb9mBaZ3IXbMFInjWn4J0SJaJgNO9hmngP2xxiKxen17NI2gmW4
-p5hD80hqqijXAb5Mca9BnG0AlaKtNFLOROwFZChQ0ZjFhhu3SjV7eAr7dMCjVwIR
-c/O0BRG+ZkS4A6P57srB
-=l4/H
+iQIcBAEBCAAGBQJPAlSYAAoJEECxmPOUX5FE2egP/jtqzuG4BanEyUnHkr007tc6
+AdsCF532Pmoi4uvbhySEvJf1boXvBbmIMpqgsYoYzp7F99IsyktW6LXp/1jhkmy0
+dbi/i/f3an0iLgANQNqnGXqiIomBNLkX4N7WZBjkcrP4mdLssYeQ9Lp+c1U/w2ZZ
+YnBIcQNv6scuDcQYzljuc1hYa2TPwg1nEX0yvDnYGd1QUg6R0ZpyMNKD0skW5wld
+wc0iczjRc9AVu+exT+6kuRGgreq1pERBGyWs+NaNESd3e9WzHjv/yqghSjGDyRYl
+7fL9XqK38MSpbl8gDYY1sHgqok9N1m0CpemKgWW1yTboJE/3NKg8+mDyo1vFmjc7
+ex7VEoD2Xw85kpS/HyTu00RtQ5hS+WFSsJoOQfxLQT90ckWl17PLeTvr3eUtSXzn
+cQ13NwjTQIVR4Z+ldK4aLzpO5NVQA8I4EhTVotCz8CAl9IyDsA66M1D5t/BggilR
+5qIqHgpBJ+fmDnAq5260rMEsMyt3m9hzVuzZR9CzsNuuNVhb72HXh7ovQkbMLXDG
+UF9LzXGrPpgJCRGMuZIx+78d/nuavezuabTLaYWPxF1nREz2e+WMC/8I5Xvawfa/
+m1KIjKw6uIADAbjL1miemvn/6iUwV3QZ1MXS4Vr9y8wZyVSduFvn8As9C+o5ZE3m
+H50ws7cA5FNGHNQAQCap
+=xnju
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__3_Jan_2012_11_35_33_+1100_irc9iOhFtMonO.H7--
+--Signature=_Tue__3_Jan_2012_12_06_32_+1100_BlmFV3uEqccojw3+--
