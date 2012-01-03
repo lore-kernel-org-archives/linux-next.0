@@ -1,64 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the s5p tree
-Date: Tue, 3 Jan 2012 18:08:54 +1100
-Message-ID: <20120103180854.e9bff732db50c0fa9afd2967@canb.auug.org.au>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: linux-next: manual merge of the l2-mtd tree with the logfs tree
+Date: Tue, 03 Jan 2012 09:45:45 +0200
+Message-ID: <1325576745.8917.15.camel@sauron.fi.intel.com>
+References: <20120103140029.2f996dab9bdfd3ec5c876045@canb.auug.org.au>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__3_Jan_2012_18_08_54_+1100_dBBZIUY0H9Ll6HtI"
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-O9957zKcilNnUcqWwfDP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:35966 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751051Ab2ACHJF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jan 2012 02:09:05 -0500
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:34449 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750879Ab2ACHnr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jan 2012 02:43:47 -0500
+In-Reply-To: <20120103140029.2f996dab9bdfd3ec5c876045@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Prasad Joshi <prasadjoshi.linux@gmail.com>, "=?ISO-8859-1?Q?=22J=F6rn?= Engel\"" <joern@logfs.org>
 
---Signature=_Tue__3_Jan_2012_18_08_54_+1100_dBBZIUY0H9Ll6HtI
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+
+--=-O9957zKcilNnUcqWwfDP
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kukjin,
+On Tue, 2012-01-03 at 14:00 +1100, Stephen Rothwell wrote:
+> Hi Artem,
+>=20
+> Today's linux-next merge of the l2-mtd tree got a conflict in
+> fs/logfs/dev_mtd.c between commit d1cc3ad397f2 ("Logfs: Allow NULL
+> block_isbad() methods") from the logfs tree and commit 957afd905eda
+> ("logfs: do not use 'mtd->block_isbad' directly") from the l2-mtd tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary.
 
-After merging the s5p tree, today's linux-next build (powerpc
-ppc64_defconfig) failed badly.   The problem is that you have merged into
-your tree a version of the driver-core tree that I reported broken on Dec
-28.
+Thanks Stephen, this fix up is good.
 
-Presumably you merged the driver-core tree to fix up some conflicts I
-have reported.  Don't do that, please.  Either leave them for Linus to
-fix up, or do a merge of Linus' tree after he has merged the (hopefully
-fixed) driver-core tree during the merge window. Or send him your tree
-unmerged with the merged version available for him to use if he wants to.
-
-I have used the s5p tree from next-20111228 for today.
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Best Regards,
+Artem Bityutskiy
 
---Signature=_Tue__3_Jan_2012_18_08_54_+1100_dBBZIUY0H9Ll6HtI
-Content-Type: application/pgp-signature
+--=-O9957zKcilNnUcqWwfDP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPAqmGAAoJEECxmPOUX5FEYVMQAI+uPy7yED9DKQISd9O66WOg
-OSI8iDonqS234UFRaLqNVq/G9Qb2qdVWW/7AE+EmuyW7MEFw249mC+x0kTlPDATY
-AcfVQ/M5YvQW5z+8sTNAEihiVr808SsJ6HRKVgjAMXCHmN8Vx0hInR42JpvLc8Nu
-JGTB08juPuhKo2XdgyjN9bkP1v/4DlLXIikp6wK7/zubshGpY+T0Z9FL58EOufyq
-uShFRmLxaIF04M0SfJVAuXdpBV/C7URriVXw72j0OXbKhOr5qsy2Hm/1HidWx3Am
-0btMKIRDnk6HvXv+EyaafZP23stkawYSxvDClUllL1C0VlJtBPG4g9323GRqnwsd
-OxtRDDUwU4zJpj1BlOTD3apceVYWfWidwL3NuPY/tclOXyD37GWyahyQKeWxEoCd
-pEBNeDUEU1L7ZES/HFsvaOdn9M25+wmRLgaJq+j4gi2IPUif01q3ZvIcOowxos5u
-5iQUdc8xZkBW6kY6iMHtnE9mgwh39/aJkECu3l8j88cuVj1BeEWyx8BBgkDP4hOJ
-n5WDpwjkBNDK68dJKdG4+J9qcqMYUj4L6t/3CtYBBK239ojdjuL/3IAjZs8rBV+S
-+7lYBek6XT56/oENHDhL39P76tg8I1ua1YbxXZUsVqjknh3cdVCqq/UglZBSsRGo
-88XatwlVrMgQZUdbetGF
-=hfDj
+iQIcBAABAgAGBQJPArIpAAoJECmIfjd9wqK0v7kP/0Zg2hXUJBuBBOS+/DjeZAkw
+3GttCgCHXr83uj7M/so2oDWMncjKAHV0jR+b4QKFKMONY4hF/tOO+aoZXOkfoG6K
+BtPAjKVVUzGp2O+BN9yJuVwMp+Wi8BJHeW+yQ01XyuT8E0/k5vzSTGyhPZCeLjl5
+K184NmKIBPVAEbx4ZF6Kbl1DGHY6e5hiCPhTyladeh9QNq7c6y0PxSBKg2qWROmb
+ZitttgRQVcZhn0lspjaifk4fnVB1/U9CJbf3P620TzAQB+rcxkUXVoubbYjtNyrz
+BHwcES07eri7LELxYdiuy5zVPlnl/bwwmZ4br92D3gJ74cPCh17UkBKCtq4N15nO
+VAbJi0lWwUOl6Crl+AIGd1ch0/u6d1Zwc7ESvzCvP2CppzbqAy3FtUIhXmzoq4DH
+PmphrYpwiOzUbmHxMTzg2HYFSypcDVaxSTzQxBXboFUpITUkKm2f/cYRTZdyR5LJ
+degQZumtOgWRN3UcXF78wErxOhcw1fR8qg9rG1rn2AWG+j26sqG/RKlyIDFmhJle
+NozCQEjcBL5M5KD/Cjc3WErNCDWxmOo14MLvbDksKeF8c92a4laydXLZtYDt6uwA
+RSZGBo+2JaLZ6JbY+k+dO5+C7loHfdc2zBzD1aveOcG36sjphjbR+NS7G8YGq0V3
+24lS6pdhqMIesHowD2qZ
+=SCiH
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__3_Jan_2012_18_08_54_+1100_dBBZIUY0H9Ll6HtI--
+--=-O9957zKcilNnUcqWwfDP--
