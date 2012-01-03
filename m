@@ -1,88 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gpio tree with the devicetree tree
-Date: Tue, 3 Jan 2012 15:47:17 +1100
-Message-ID: <20120103154717.da9468b24d9665b593054c10@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Tue, 3 Jan 2012 16:08:13 +1100
+Message-ID: <20120103160813.d2a8575c1de3bad0acd42280@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__3_Jan_2012_15_47_17_+1100_NvHLr9c_ysSZikO/"
+ boundary="Signature=_Tue__3_Jan_2012_16_08_13_+1100_qY/sm+ajoi_8FaXt"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__3_Jan_2012_15_47_17_+1100_NvHLr9c_ysSZikO/
+--Signature=_Tue__3_Jan_2012_16_08_13_+1100_qY/sm+ajoi_8FaXt
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
+Hi all,
 
-Today's linux-next merge of the gpio tree got a conflict in
-include/linux/of.h between commit 3ecdd0515287 ("dt: add empty
-of_get_node/of_put_node functions") from the devicetree tree and commit
-15c9a0acc3f7 ("of: create of_phandle_args to simplify return of phandle
-parsing data") from the gpio tree.
+Today's linux-next merge of the tip tree got a conflict in kernel/futex.c
+between commit e6780f7243ed ("futex: Fix uninterruptible loop due to
+gate_area") from the  tree and commit ab69f41ef93d ("futex: Fix
+uninterruptible loop due to gate_area") from the tip tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+OK, so these appear to be 2 different versions of the same fix.  I cannot
+figure out which to use, so I just used the version from the tip
+tree ...
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc include/linux/of.h
-index 9abd3ec,ea44fd7..0000000
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@@ -65,20 -65,13 +65,27 @@@ struct device_node=20
-  #endif
-  };
- =20
-+ #define MAX_PHANDLE_ARGS 8
-+ struct of_phandle_args {
-+ 	struct device_node *np;
-+ 	int args_count;
-+ 	uint32_t args[MAX_PHANDLE_ARGS];
-+ };
-+=20
- +#if defined(CONFIG_SPARC) || !defined(CONFIG_OF)
- +/* Dummy ref counting routines - to be implemented later */
- +static inline struct device_node *of_node_get(struct device_node *node)
- +{
- +	return node;
- +}
- +static inline void of_node_put(struct device_node *node)
- +{
- +}
- +#else
- +extern struct device_node *of_node_get(struct device_node *node);
- +extern void of_node_put(struct device_node *node);
- +#endif
- +
-  #ifdef CONFIG_OF
- =20
-  /* Pointer for first entry in chain of all nodes. */
-
---Signature=_Tue__3_Jan_2012_15_47_17_+1100_NvHLr9c_ysSZikO/
+--Signature=_Tue__3_Jan_2012_16_08_13_+1100_qY/sm+ajoi_8FaXt
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPAohVAAoJEECxmPOUX5FECKcQAJn8e/DVVSd+rpZ15Zf4wpr2
-4HV0B6OgSLnsJaWMgvEO7lZYUDE4UWJgRFQMonC53NOKBiEPlsiXt3uJ9JGU5nJM
-azrWBodRimfa5Y7nClTg/cATE6ArsAs4/GVQPPyC0RBY1OaSjK/b64fI0cjWcuj1
-rhqH13hOpKntiEHkQuktGQsIIX5OWDdJ5I6JsM2F2iyg32an6zeyeF2Z/bHlxvFl
-tFQklJEf6kvvLAErMtlZAF9PxGxqp4G5i+1DAHbxzp5hJaApbWUMW5/NRQGi3COE
-s1X+t6tZIf3V7fvdooriVDAGmCqlqM2KcTyA5gWPd4baQRWkHv/fuUNAHwEztvI4
-OfOJa/GVIraFTvmGjMTlcAzroy4qekY3pY5C1JHsMP+jRf2E/RIEc+b0GRDMEuTn
-l/R3S0Ei44iTWeZaNPdzGs0SJv1dLWWBrzc9qr9p0ErU2q4oWeFdVHDia569dKk9
-YX3m/GBxtZWPqVSPZh4pJopSjEgVJoP07DwdeDmVAqf2mKGbW0BpzG8DWGeuUb27
-i24mPLSNRxsHtnJUbT+DlGtemspvy8weTrQxSyS9//Zy9xtluVX2aclSD26HZhG7
-Jz6l7Cad3b9/zDUAFzrZA9hxzODWdCwccKuJaGMnnopqZT5GmeY/TY74Vrtw5cBd
-dkCF91gqvuj1WH0MdPmN
-=EBtd
+iQIcBAEBCAAGBQJPAo09AAoJEECxmPOUX5FEBAAP/0hlN7aW5Iz489LTKNAhfZhm
+DcIe3/QFBrNEXYjLRPA/mgQL11CLQ75+lk4xywbR54pXMuDwQuVDmwowbTsmtKQ4
+isumLVYxW4S109oLUpe6XG0uKJE+oCO1BvPOVAnWZn9nIW1wR/U8xkbil56tJZRk
+e13eIDYAoDbar1S9wc48jqtGzPu5GfiaCE+KeX/S08qcZmYek/RsCdEnN3gyyHFZ
+IwDZgUyOR4hpr/66+rfsz0Z6fUPnesvft4wbzcM/6xwG3KAtnJ9HddWrX1MIRGrv
+ThWEz9jbv77tztbe9zaKcj3AiuClPwAOsh5OI+CAdU/zKKeqA5Pv3TjIMjML4/51
+UqdNB1wilHSi/CVpzczc5peUHbX96ebw3ylSA4UCOQYqXBjqSBnLQvmZWTyr+TFN
+JRxEBdsMBaWH6yCuMdLVkA7nIl5+KWBfnFP/8u1e7siFwNPoWx/3/kOhtr8L21iF
+/cecQyhtWN2PfvTrhJjIfsq9rRzuAOfIwpITAcnoDKnU2dMrsbgOYEvOqjAQtmPa
++d0nocrSapWm9snZ/rjKGrpeoUlLffFAzyQPOGVJ2jXxzg9CpwEzmQC6Qev+1IGp
+YSWrchVzbOTAOyzYK6ne76QsSWrS7wOteJTFVpGkwMG2ZzLEkJLiBjF3LhJEQJmh
+WESdSFifHvrw2nqG80yq
+=qqu6
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__3_Jan_2012_15_47_17_+1100_NvHLr9c_ysSZikO/--
+--Signature=_Tue__3_Jan_2012_16_08_13_+1100_qY/sm+ajoi_8FaXt--
