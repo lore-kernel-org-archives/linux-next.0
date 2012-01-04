@@ -1,61 +1,52 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: linux-next: interesting merges in the arm-soc tree
-Date: Wed, 04 Jan 2012 10:48:31 +0100
-Message-ID: <4F04206F.6070500@atmel.com>
-References: <20120104104758.26b0ca5268d10fbf7b95903a@canb.auug.org.au>
+Date: Wed, 4 Jan 2012 09:50:10 +0000
+Message-ID: <201201040950.10835.arnd@arndb.de>
+References: <20120104104758.26b0ca5268d10fbf7b95903a@canb.auug.org.au> <01bc01ccca7b$f6483fe0$e2d8bfa0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from newsmtp5.atmel.com ([204.2.163.5]:37686 "EHLO
-	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754696Ab2ADJtP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 04:49:15 -0500
-In-Reply-To: <20120104104758.26b0ca5268d10fbf7b95903a@canb.auug.org.au>
+Received: from moutng.kundenserver.de ([212.227.126.171]:59602 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754942Ab2ADJu3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 04:50:29 -0500
+In-Reply-To: <01bc01ccca7b$f6483fe0$e2d8bfa0$%kim@samsung.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Mauro Carvalho Chehab <mchehab@infradead.org>, Vinod Koul <vinod.koul@intel.com>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Olof Johansson' <olof@lixom.net>, 'Mauro Carvalho Chehab' <mchehab@infradead.org>, 'Vinod Koul' <vinod.koul@intel.com>, 'Linus' <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-On 01/04/2012 12:47 AM, Stephen Rothwell :
-> Hi all,
+On Wednesday 04 January 2012, Kukjin Kim wrote:
+> > few conflicts (but that is not excuse) and there may be dependencies in a
+> > driver on the v4l-dvb tree (but maybe that means that that driver should
+> > be merged via the v4l-dvb tree - it looks like the "at91/drivers" is
+> > based on the v4l-dvb tree, so probably doesn't depend on anything else on
+> > the arm-soc tree).
+> > 
+> > If nothing else, are you sure that neither of those merged trees will
+> > rebase?  You have also just inherited any bugs in those two trees.
 > 
-> I noticed that the arm-soc tree has merged in the v4l-dvb and the 
-> slave-dma trees today.   Is there some good reason for this?  It 
-> fixes a few conflicts (but that is not excuse) and there may be 
-> dependencies in a driver on the v4l-dvb tree (but maybe that means 
-> that that driver should be merged via the v4l-dvb tree - it looks 
-> like the "at91/drivers" is based on the v4l-dvb tree, so probably 
-> doesn't depend on anything else on the arm-soc tree).
-> 
-> If nothing else, are you sure that neither of those merged trees 
-> will rebase?  You have also just inherited any bugs in those two 
-> trees.
+> I know, Vinod knows I merged his tree for above situation so he will not
+> rebase that and Arnd will send that after merging of slave-dma into mainline
+> during merge window. 
 
-We discussed this with Guennadi and Olof and decided to include this
-dependency in arm-soc. Anrd and Olof said that the at91/drivers branch
-could be merged late during the merge window and will make sure that
-the corresponding v4l-dvb branch is actually upstream before sending
-the pull request.
+Right. The same is true for the other branch (depends/v4l) in next/drivers2.
+The next/drivers2 branch will get submitted when all three of its dependencies
+are merged.
 
-Here is the conversation about this:
-http://thread.gmane.org/gmane.linux.ports.arm.kernel/144547/focus=144743
+Stephen, we have introduced a file arch/arm/arm-soc-for-next-contents.txt
+to help us track those dependencies, and maybe it can also help you
+understand our merge plans when you see potential problems like this.
 
-Best regards,
-- -- 
-Nicolas Ferre
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+Right now, there are 13 next/* branches that we plan to submit to Linus
+in order. All of those are merged into the for-next branch that you pull,
+and the contents.txt file tells you about the dependencies between those
+branches and to external branches.
 
-iQEcBAEBAgAGBQJPBCBqAAoJEAf03oE53VmQTtgH/2h9WBxjnwgcUrKOykHrXPPT
-apB4y7FQA0EIaO6RWPi6LpXuBtEz+tV2mGyaXahUETgKQ9Oc459+FxoSoOmJyssh
-vbaA4uWrPhdHXVVo464SLwxr/flUeb09iY3C+nIHn9JlYtqUriYOVUNCa+k/Oszp
-AoaeDHPfjkkZ+07vZdjpYu9BC/NidijJvQDWCZ+Z4Jsfi7cygIB+HZGNAptPFmyq
-jILk4LIdJcqsKmD0UA3i43WkTdqJQ4reZQk96POAX6151p7Ieh0PXNn68+oCYnwO
-c6JAaM1FVsEhZAV1G/w0EpfDa0JNHep8h87GOHernrU6KuOVrWB0SCp5l0zERiw=
-=mJTb
------END PGP SIGNATURE-----
+My understanding about the at91 changes from Nicolas Ferre is that they
+depend on both the v4l and previous arm-soc changesets, so it was decided
+to merge those through arm-soc after the v4l branch.
+
+	Arnd
