@@ -1,39 +1,74 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: merge of the wireless-next tree into the net-next
- tree
-Date: Tue, 03 Jan 2012 20:27:33 -0500 (EST)
-Message-ID: <20120103.202733.1070369898271428121.davem@davemloft.net>
-References: <20120104105947.8bac77d1d7198a49e6feeca8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with Linus' tree
+Date: Wed, 4 Jan 2012 12:40:20 +1100
+Message-ID: <20120104124020.5b481be704bd0040219ee0e0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__4_Jan_2012_12_40_20_+1100_WY2aPh+iFs/WMqnc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:45545 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754125Ab2ADBa5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jan 2012 20:30:57 -0500
-In-Reply-To: <20120104105947.8bac77d1d7198a49e6feeca8@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:56143 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751485Ab2ADBkc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jan 2012 20:40:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kvalo@qca.qualcomm.com, linville@tuxdriver.com
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 4 Jan 2012 10:59:47 +1100
+--Signature=_Wed__4_Jan_2012_12_40_20_+1100_WY2aPh+iFs/WMqnc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I noticed that the wireless-next tree has been merged into the net-next
-> tree today.  Has anything been done about the build failure I reported in
-> the wireless-next a while ago:
-> 
-> On 12/22/2011 16:58 +1100, Stephen Rothwell wrote:
->>
->> After merging the final tree, today's linux-next build (powerpc
->> allyesconfig) failed like this:
->> 
->> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ')' before 'KBUILD_MODNAME'
->> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
->> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ',' or ';' before string constant
+Hi John,
 
-It happens on any platform not just powerpc, John please fix this and
-don't have known unresolved -next build failures in your tree when you
-push to me.
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/rtlwifi/rtl8192cu/sw.c between commit 9d9779e723a5
+("drivers/net: Add module.h to drivers who were implicitly using it")
+from the  tree and commit e97173c985c0 ("rtl8192cu: Fix WARNING on
+suspend/resume") from the wireless tree.
+
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/wireless/rtlwifi/rtl8192cu/sw.c
+index c244f2f,a48bea6..0000000
+--- a/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c
++++ b/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c
+@@@ -42,7 -42,8 +42,9 @@@
+  #include "led.h"
+  #include "hw.h"
+  #include <linux/vmalloc.h>
+ +#include <linux/module.h>
++ #include <linux/atomic.h>
++ #include <linux/types.h>
+ =20
+  MODULE_AUTHOR("Georgia		<georgia@realtek.com>");
+  MODULE_AUTHOR("Ziv Huang	<ziv_huang@realtek.com>");
+
+--Signature=_Wed__4_Jan_2012_12_40_20_+1100_WY2aPh+iFs/WMqnc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPA64EAAoJEECxmPOUX5FEjTAP/Ai82hdlxmnpw5DHsGAFBWWp
+3r+TZT5hRFRwFDoFBuwH+QQX9h5LfPMcutjXBZT94L3/boq0+WhUKBNhATVYNGir
+8zudWqGaaCg0h8Jm0jacKC9ledfx55GlfDHp4rO7Mqp68kiEFgX7hQxu5hlRiVt/
+xDDeuzuaSIK8Ex+4h1ELhoSgdDwO2/ZNiizDNU5/Jqv8bhUzE4Pp9YtbYywtEwof
+ip7a2Av7nvRqZNZdGOCbit7jZ5YaBf8KRDWS0wmxAb1D0oQGAzB1fKZxOg5DlXAF
+VJadyzzc7epUEwgd5k9VDRnHB8Cl1e5C3XnaF6XSkool9LyOyKraUzpXhpn4Q4DN
+luYHfCO56cXzcw43E38ztzZGADHLYwGUM/LCnnHNCn4cMf/78mLc+YZAC+uLBTMd
+DouO3sST9/NVmTOIXqViwiKaHbBopfdEfhWOn1twIe1phx3vkfBevt+nUl1UtiNX
+UaUBD4Eo0QTgFD3U78spyzLI4Dt98ELRoqFVrvAcwZUbQerv7C0DfyTSVcZnaZsK
++yIgMIMiXeIgUvxnRfKrYGmLNuuQuuLD1qgbjV+DE16AktUH1llpIn2lUttrjQdn
+XohElee05MkSMBJRU9/NO0hulPh5xwqLNPaa3YGbg68V+L3vhQ8PTUczZnXukZMQ
+kWV/WkQJ2eGEloUS02Wj
+=YHOK
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__4_Jan_2012_12_40_20_+1100_WY2aPh+iFs/WMqnc--
