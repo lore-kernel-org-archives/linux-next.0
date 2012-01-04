@@ -1,100 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Thu, 5 Jan 2012 10:48:35 +1100
-Message-ID: <20120105104835.fd6c0fd173622af59d11012f@canb.auug.org.au>
-References: <20111228174518.721624fad9d048f9f85b3d50@canb.auug.org.au>
-	<20120104230720.GD24583@kroah.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH 4/6] ath6kl: get rid of AR_DBG_LVL_CHECK()
+Date: Wed, 04 Jan 2012 15:58:35 -0800
+Message-ID: <1325721515.4116.11.camel@joe2Laptop>
+References: <20120104230429.32306.75965.stgit@x201>
+	 <20120104230921.32306.63985.stgit@x201>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Jan_2012_10_48_35_+1100__S=vRLqHpgAmhm29"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:58860 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752281Ab2ADXsr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 18:48:47 -0500
-In-Reply-To: <20120104230720.GD24583@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>, Kay Sievers <kay.sievers@vrfy.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120104230921.32306.63985.stgit@x201>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: linville@tuxdriver.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, ath6kl-devel@qualcomm.com, davem@davemloft.net
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__5_Jan_2012_10_48_35_+1100__S=vRLqHpgAmhm29
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2012-01-05 at 01:09 +0200, Kalle Valo wrote:
+> We don't need it as debug calls already have a log level and compiler
+> should be smart enough to optimise away the code when ath6kl debug code
+> is not enabled. Also it makes it easier to abstract core code to
+> ath6kl_core.ko.
 
-Hi Greg,
+Changelog isn't representative of code changes.
+ATH6KL_DBG_ANY -> ATH6KL_DBG_IRQ.
 
-On Wed, 4 Jan 2012 15:07:20 -0800 Greg KH <greg@kroah.com> wrote:
->
-> Ok, I'll take off the warn_unused_result flag for device_create_file for
-> now, which should solve this, and your other build problems with the
-> driver-core tree.
+> diff --git a/drivers/net/wireless/ath/ath6kl/debug.c b/drivers/net/wireless/ath/ath6kl/debug.c
+[]
+> @@ -82,31 +82,31 @@ void ath6kl_dump_registers(struct ath6kl_device *dev,
+>  			   struct ath6kl_irq_enable_reg *irq_enable_reg)
+>  {
+>  
+> -	ath6kl_dbg(ATH6KL_DBG_ANY, ("<------- Register Table -------->\n"));
+> +	ath6kl_dbg(ATH6KL_DBG_IRQ, ("<------- Register Table -------->\n"));
 
-Yes, I think that is it.
-
-> > drivers/base/cpu.c: In function 'cpu_is_hotpluggable':
-> > drivers/base/cpu.c:272:9: error: implicit declaration of function 'get_=
-cpu_sysdev' [-Werror=3Dimplicit-function-declaration]
-> > drivers/base/cpu.c:272:27: warning: initialization makes pointer from i=
-nteger without a cast [enabled by default]
-> > drivers/base/cpu.c:273:16: error: 'struct cpu' has no member named 'sys=
-dev'
-> > drivers/base/cpu.c:273:16: warning: initialization from incompatible po=
-inter type [enabled by default]
-> > drivers/base/cpu.c:273:16: error: 'struct cpu' has no member named 'sys=
-dev'
-> > drivers/base/cpu.c:274:1: warning: control reaches end of non-void func=
-tion [-Wreturn-type]
-> >=20
-> > Caused by the above commit interacting with commit 2987557f52b9
-> > ("driver-core/cpu: Expose hotpluggability to the rest of the kernel")
-> > from the tip tree.  This is will fix up in the merge commit next time.
->=20
-> Yeah, nothing I can do here about this, sorry.
-
-Kay, Greg, any hints would be nice.  The tip tree commit is adding this:
-
-bool cpu_is_hotpluggable(unsigned cpu)
-{
-        struct sys_device *dev =3D get_cpu_sysdev(cpu);
-        return dev && container_of(dev, struct cpu, sysdev)->hotpluggable;
-}
-
-and, of course, all the sys_device stuff has now gone ...
-
-So is this correct?
-
-bool cpu_is_hotpluggable(unsigned cpu)
-{
-        struct device *dev =3D get_cpu_device(cpu);
-        return dev && container_of(dev, struct cpu, dev)->hotpluggable;
-}
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__5_Jan_2012_10_48_35_+1100__S=vRLqHpgAmhm29
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPBOVTAAoJEECxmPOUX5FEkrwP/iUsfoRBKlVZYr6yBE0d8pON
-rqsbuvC9lqnRtuvMmLmEGtSYvbtNdrPzeWfHrqLufW8HeBj0afbSywtlgAhDzPpG
-zbjpK4Yo1Dc/58Biq2jQrpwiumkDstbU4a5DPyP7+iMBgGS3DpvAtlXrNyc97F4R
-v3cUlLhE/0s96zdIiXF5PmVb1rhYLI35nP7Gs5KflIN07wqPFyZTeB2VwCPi8ZZ1
-33zDvVXGVoQezUC7+8V/ItLEBvbFuytRu0g6di81P0oAprfHPpKtW09gy5Zi41CD
-Nw6braEqMHzuVIcYwnNysl5cFewWgKRHdpJ3f2qtxRhT+6QiGNx/tKgMeVyMzG8w
-xe+GxeikHWt/eRMYscJy1POgFJhKEDX2Fzu/pw6wcGCngFZvjJyOZc325JgXXqZ5
-NznkDJHpAhfY0l2/hHxsD0XnzLoVDgAKOhoRaoIIKjwTQ7cEMIzAonZsUsvdnlzU
-G5NgAjHS/yZM4wbyRk0DuThL/qfpvqzCJGCecWgo314N7Z108lACZZIHZs0uiT3W
-6EUGHY99sHNyXrv5/4Gyx1Ujly3vzFIGTrARHdvhQ/nzwLJucTiLCOLNPw7160p9
-oCmpIlY6nqe03br+bWqxSyuSMskCRpys3J0W71/g+o670tM2WUVk25AmKOTb2/rf
-8t5DU3uRQpq+lHyNrTcp
-=pWAb
------END PGP SIGNATURE-----
-
---Signature=_Thu__5_Jan_2012_10_48_35_+1100__S=vRLqHpgAmhm29--
+etc...
