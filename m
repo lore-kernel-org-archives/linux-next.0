@@ -1,63 +1,43 @@
-From: "hpanvin@gmail.com" <hpa@zytor.com>
-Subject: Re: linux-next: build warnings after merge of the final tree
-Date: Wed, 04 Jan 2012 01:23:11 -0800
-Message-ID: <f5643ab8-9ba0-4ee6-b61e-403f03525a46@email.android.com>
-References: <20111214181545.6e13bc954cb7ddce9086e861@canb.auug.org.au> <1323880322.23971.33.camel@gandalf.stny.rr.com> <4EE8D305.8020407@zytor.com> <20111222163304.26be6d0f5e514fefb078c0a6@canb.auug.org.au> <20120104190613.2e76daaa000ccf61121fdcc1@canb.auug.org.au>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: ARM context switch changes for -next
+Date: Wed, 4 Jan 2012 09:25:01 +0000
+Message-ID: <20120104092501.GI22876@arm.com>
+References: <20120103181418.GH22876@arm.com>
+ <20120104095634.8f39a78b3ca6c85bd045bb97@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:34791 "EHLO mail.zytor.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754522Ab2ADJYQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Jan 2012 04:24:16 -0500
-In-Reply-To: <20120104190613.2e76daaa000ccf61121fdcc1@canb.auug.org.au>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:65350 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754522Ab2ADJZt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 04:25:49 -0500
+Content-Disposition: inline
+In-Reply-To: <20120104095634.8f39a78b3ca6c85bd045bb97@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-I thought it had been...?  Need to investigate (as baby permits...)
+Hi Stephen,
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, Jan 03, 2012 at 10:56:34PM +0000, Stephen Rothwell wrote:
+> On Tue, 3 Jan 2012 18:14:18 +0000 Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > Could you please pull the branch below into -next? I'd like to give it a
+> > few weeks of exposure before sending an official pull request to
+> > Russell. One of the patches introduces a scheduler hook and Peter Z
+> > agreed with it. You may get a conflict in -next since some scheduler
+> > files have been renamed.
+> 
+> Do you expect this to be merged by Linus during the 3.3 merge window?  If
+> so, it s a bit late (I expect Linus to do the 3.2 release any time).  If
+> not, I would like not to add it to -next until after v3.3-rc1 is released
+> so that it doesn't complicate things for the merge window.
 
->Hi again,
->
->On Thu, 22 Dec 2011 16:33:04 +1100 Stephen Rothwell
-><sfr@canb.auug.org.au> wrote:
->>
->> On Wed, 14 Dec 2011 08:47:01 -0800 "H. Peter Anvin" <hpa@zytor.com>
->wrote:
->> >
->> > On 12/14/2011 08:32 AM, Steven Rostedt wrote:
->> > > On Wed, 2011-12-14 at 18:15 +1100, Stephen Rothwell wrote:
->> > > 
->> > >> Maybe caused by commit d5e553d6e0a4 ("trace: Include
-><asm/asm-offsets.h>
->> > >> in trace_syscalls.c") from the tip tree.  These warnings may
->have been
->> > >> here for a while as it is hard to catch the new ones among the
->flood.
->> > >>
->> > > 
->> > > hpa,
->> > > 
->> > > Was this change only needed for x86? If so, could you put that
->into
->> > > asm/ftrace.h instead?
->> > 
->> > Yes (on both accounts).  It was part of the syscall changes; I'll
->move
->> > the include.
->> 
->> Ping?
->
->Can we please have this fixed ...
->-- 
->Cheers,
->Stephen Rothwell                    sfr@canb.auug.org.au
->http://www.canb.auug.org.au/~sfr/
+These patches are aimed for 3.4, not the upcoming merging window.
+
+I'll ping you again after 3.3-rc1.
+
+Thanks.
 
 -- 
-Sent from my Android phone with K-9 Mail. Please excuse my brevity.
+Catalin
