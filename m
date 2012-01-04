@@ -1,54 +1,29 @@
-From: "John W. Linville" <linville@tuxdriver.com>
+From: David Miller <davem@davemloft.net>
 Subject: Re: linux-next: merge of the wireless-next tree into the net-next
  tree
-Date: Wed, 4 Jan 2012 09:02:10 -0500
-Message-ID: <20120104140209.GA2540@tuxdriver.com>
+Date: Wed, 04 Jan 2012 13:24:12 -0500 (EST)
+Message-ID: <20120104.132412.1376413566875687968.davem@davemloft.net>
 References: <20120104105947.8bac77d1d7198a49e6feeca8@canb.auug.org.au>
- <20120103.202733.1070369898271428121.davem@davemloft.net>
+	<4F040799.7080604@qca.qualcomm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:44237 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752743Ab2ADOP4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 09:15:56 -0500
-Content-Disposition: inline
-In-Reply-To: <20120103.202733.1070369898271428121.davem@davemloft.net>
+Received: from shards.monkeyblade.net ([198.137.202.13]:51480 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754084Ab2ADS1l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 13:27:41 -0500
+In-Reply-To: <4F040799.7080604@qca.qualcomm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kvalo@qca.qualcomm.com
+To: kvalo@qca.qualcomm.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linville@tuxdriver.com
 
-On Tue, Jan 03, 2012 at 08:27:33PM -0500, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 4 Jan 2012 10:59:47 +1100
-> 
-> > I noticed that the wireless-next tree has been merged into the net-next
-> > tree today.  Has anything been done about the build failure I reported in
-> > the wireless-next a while ago:
-> > 
-> > On 12/22/2011 16:58 +1100, Stephen Rothwell wrote:
-> >>
-> >> After merging the final tree, today's linux-next build (powerpc
-> >> allyesconfig) failed like this:
-> >> 
-> >> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ')' before 'KBUILD_MODNAME'
-> >> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
-> >> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ',' or ';' before string constant
-> 
-> It happens on any platform not just powerpc, John please fix this and
-> don't have known unresolved -next build failures in your tree when you
-> push to me.
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Date: Wed, 4 Jan 2012 10:02:33 +0200
 
-I'm sorry, Dave.  I must have let this slip my mind over the holidays
--- maybe this explains why I didn't send the pull request before
-Christmas...
+> For a temporary solution I'll send a patch which forces ath6kl to
+> build only as a module and I'll send ath6kl_core.ko patches ASAP
+> after that.
 
-Kalle has sent a temporary fix that sidesteps the issue by forcing the
-SDIO and USB versions of ath6kl to be built as modules.  I'll forward
-that on to you today.
-
-John
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+That's not reasonable, fix it properly.
