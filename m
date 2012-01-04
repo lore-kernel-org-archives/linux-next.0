@@ -1,64 +1,83 @@
-From: Kalle Valo <kvalo@qca.qualcomm.com>
-Subject: Re: linux-next: merge of the wireless-next tree into the net-next
- tree
-Date: Wed, 4 Jan 2012 10:02:33 +0200
-Message-ID: <4F040799.7080604@qca.qualcomm.com>
-References: <20120104105947.8bac77d1d7198a49e6feeca8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the final tree
+Date: Wed, 4 Jan 2012 19:06:13 +1100
+Message-ID: <20120104190613.2e76daaa000ccf61121fdcc1@canb.auug.org.au>
+References: <20111214181545.6e13bc954cb7ddce9086e861@canb.auug.org.au>
+	<1323880322.23971.33.camel@gandalf.stny.rr.com>
+	<4EE8D305.8020407@zytor.com>
+	<20111222163304.26be6d0f5e514fefb078c0a6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__4_Jan_2012_19_06_13_+1100_=XMCdw1VstOWS2uq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wolverine02.qualcomm.com ([199.106.114.251]:48963 "EHLO
-	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752640Ab2ADIEr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 03:04:47 -0500
-In-Reply-To: <20120104105947.8bac77d1d7198a49e6feeca8@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:33336 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752607Ab2ADIG0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 03:06:26 -0500
+In-Reply-To: <20111222163304.26be6d0f5e514fefb078c0a6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-Hi,
+--Signature=_Wed__4_Jan_2012_19_06_13_+1100_=XMCdw1VstOWS2uq
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 01/04/2012 01:59 AM, Stephen Rothwell wrote:
+Hi again,
 
-> I noticed that the wireless-next tree has been merged into the net-next
-> tree today.  Has anything been done about the build failure I reported in
-> the wireless-next a while ago:
-> 
-> On 12/22/2011 16:58 +1100, Stephen Rothwell wrote:
->>
->> After merging the final tree, today's linux-next build (powerpc
->> allyesconfig) failed like this:
->>
->> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ')' before 'KBUILD_MODNAME'
->> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
->> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ',' or ';' before string constant
->> drivers/net/wireless/ath/ath6kl/init.c:32:1: error: expected ')' before 'KBUILD_MODNAME'
->> drivers/net/wireless/ath/ath6kl/init.c:32:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
->> drivers/net/wireless/ath/ath6kl/init.c:32:1: error: expected ',' or ';' before string constant
->> drivers/net/wireless/ath/ath6kl/init.c:33:1: error: expected ')' before 'KBUILD_MODNAME'
->> drivers/net/wireless/ath/ath6kl/init.c:33:1: error: invalid initializer
->> drivers/net/wireless/ath/ath6kl/init.c:33:1: error: expected ',' or ';' before string constant
->> drivers/net/wireless/ath/ath6kl/init.c:34:1: error: expected ')' before 'KBUILD_MODNAME'
->> drivers/net/wireless/ath/ath6kl/init.c:34:1: error: invalid initializer
->> drivers/net/wireless/ath/ath6kl/init.c:34:1: error: expected ',' or ';' before string constant
->>
->> I can't figure out what goes wrong here.  On the compile command line,
->> KBUILD_MODNAME is not defined, but KBUILD_BASE_NAME is.
->>
->> However, reverting commit fde57764ef87 ("ath6kl: enable USB support")
->> made the problem go away.  That commit caused the above two files to be
->> built into two separate modules.
-> 
-> 
-> There was some discussion, but I did not notice any fix (I may have
-> missed it).  I have been reverting that above commit ...
+On Thu, 22 Dec 2011 16:33:04 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Wed, 14 Dec 2011 08:47:01 -0800 "H. Peter Anvin" <hpa@zytor.com> wrote:
+> >
+> > On 12/14/2011 08:32 AM, Steven Rostedt wrote:
+> > > On Wed, 2011-12-14 at 18:15 +1100, Stephen Rothwell wrote:
+> > >=20
+> > >> Maybe caused by commit d5e553d6e0a4 ("trace: Include <asm/asm-offset=
+s.h>
+> > >> in trace_syscalls.c") from the tip tree.  These warnings may have be=
+en
+> > >> here for a while as it is hard to catch the new ones among the flood.
+> > >>
+> > >=20
+> > > hpa,
+> > >=20
+> > > Was this change only needed for x86? If so, could you put that into
+> > > asm/ftrace.h instead?
+> >=20
+> > Yes (on both accounts).  It was part of the syscall changes; I'll move
+> > the include.
+>=20
+> Ping?
 
-I started working on adding ath6kl_core.ko module which would fix this,
-but unfortunately I got distracted with other things and the patches are
-not ready yet. For a temporary solution I'll send a patch which forces
-ath6kl to build only as a module and I'll send ath6kl_core.ko patches
-ASAP after that.
+Can we please have this fixed ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Kalle
+--Signature=_Wed__4_Jan_2012_19_06_13_+1100_=XMCdw1VstOWS2uq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPBAh1AAoJEECxmPOUX5FEeBsP/3LXm2GIoBX9+SjaarruwAH1
+L/VRiNp8e+OfBb2U69bbL+si9KQAp+mp3gikaaVQnCdHrxZH9mSQqN/2BE8TOz2w
+FGb5zPUp/kqyDqIJ0/ixNOU9SK7o89KvTGKaFMK6FpoQv1Q/bIiyCr0MWUnrpwuP
+jAHx7TUODds8d5oJHEt2y6pBjxUL3lKEB38sVNUrpPmIZYMkzERprkoCn0bq+aqV
+mg44TjJoBbRbxXvt2kSrKN0hQhCvgiXZtELo2MUtxdm7KEmayWhgcUnCE39vsEmR
+OclwJ/ds9JvvoqUIxQMm/YzTAl0zpLJCc4hXQJB3gLcboGzo5wHkc73+7KK+Dl7q
+Oygw1iBk9NUCH/dsp6tUz+aBKANya/rOO6bnOb7xqd6cu+rAOqg+RG1AtD2ozz8c
+P3sIUnNI/SCZCEGWPtW2zJHr7KUyk4ILKoPaQFcfpNOKviLPpwH0ApSlfW7wRzGu
+M2FJFS+Fnn1MpoFwxWXVIEqwnAdiNfGIqyln8/uLyOR/5toONlatJE4pH42svF8J
+RvB9557FMWgIGDgeI1l8uLQp6G9VMGgksiiXI7q4IXINmvqoniijcO1uE4MyPhrK
+2VvigityJXJzi6Ppmsh4nSfPghadu2k+aQQ1dVDnY/bOFULQKBSwCZpzukTeHPwM
+jIUUD/ljv2vp2dTK9gNN
+=P/Hx
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__4_Jan_2012_19_06_13_+1100_=XMCdw1VstOWS2uq--
