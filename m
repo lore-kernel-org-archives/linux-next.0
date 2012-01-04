@@ -1,71 +1,64 @@
-From: Richard Zhao <richard.zhao@freescale.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the arm-soc
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Subject: Re: linux-next: merge of the wireless-next tree into the net-next
  tree
-Date: Wed, 4 Jan 2012 12:46:21 +0800
-Message-ID: <20120104044620.GL2414@b20223-02.ap.freescale.net>
-References: <20120104150658.aafd5ae8ebce944e897f1079@canb.auug.org.au>
+Date: Wed, 4 Jan 2012 10:02:33 +0200
+Message-ID: <4F040799.7080604@qca.qualcomm.com>
+References: <20120104105947.8bac77d1d7198a49e6feeca8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from am1ehsobe002.messaging.microsoft.com ([213.199.154.205]:8254
-	"EHLO AM1EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755458Ab2ADEqd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Jan 2012 23:46:33 -0500
-Content-Disposition: inline
-In-Reply-To: <20120104150658.aafd5ae8ebce944e897f1079@canb.auug.org.au>
+Received: from wolverine02.qualcomm.com ([199.106.114.251]:48963 "EHLO
+	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752640Ab2ADIEr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 03:04:47 -0500
+In-Reply-To: <20120104105947.8bac77d1d7198a49e6feeca8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, Richard Zhao <richard.zhao@linaro.org>, linux-arm-kernel@lists.infradead.org, Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 
-On Wed, Jan 04, 2012 at 03:06:58PM +1100, Stephen Rothwell wrote:
-> Hi all,
+Hi,
+
+On 01/04/2012 01:59 AM, Stephen Rothwell wrote:
+
+> I noticed that the wireless-next tree has been merged into the net-next
+> tree today.  Has anything been done about the build failure I reported in
+> the wireless-next a while ago:
 > 
-> Today's linux-next merge of the net-next tree got a conflict in
-> drivers/net/ethernet/freescale/fec.c between commit 0ebafefcaa7a ("net:
-> fec: add clk_prepare/clk_unprepare") from the arm-soc tree and commit
-> e163cc97f9ac ("net/fec: fix the .remove code") from the net-next tree.
+> On 12/22/2011 16:58 +1100, Stephen Rothwell wrote:
+>>
+>> After merging the final tree, today's linux-next build (powerpc
+>> allyesconfig) failed like this:
+>>
+>> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ')' before 'KBUILD_MODNAME'
+>> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
+>> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ',' or ';' before string constant
+>> drivers/net/wireless/ath/ath6kl/init.c:32:1: error: expected ')' before 'KBUILD_MODNAME'
+>> drivers/net/wireless/ath/ath6kl/init.c:32:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
+>> drivers/net/wireless/ath/ath6kl/init.c:32:1: error: expected ',' or ';' before string constant
+>> drivers/net/wireless/ath/ath6kl/init.c:33:1: error: expected ')' before 'KBUILD_MODNAME'
+>> drivers/net/wireless/ath/ath6kl/init.c:33:1: error: invalid initializer
+>> drivers/net/wireless/ath/ath6kl/init.c:33:1: error: expected ',' or ';' before string constant
+>> drivers/net/wireless/ath/ath6kl/init.c:34:1: error: expected ')' before 'KBUILD_MODNAME'
+>> drivers/net/wireless/ath/ath6kl/init.c:34:1: error: invalid initializer
+>> drivers/net/wireless/ath/ath6kl/init.c:34:1: error: expected ',' or ';' before string constant
+>>
+>> I can't figure out what goes wrong here.  On the compile command line,
+>> KBUILD_MODNAME is not defined, but KBUILD_BASE_NAME is.
+>>
+>> However, reverting commit fde57764ef87 ("ath6kl: enable USB support")
+>> made the problem go away.  That commit caused the above two files to be
+>> built into two separate modules.
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
-It's good. 
-
-Thanks
-Richard
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
 > 
-> diff --cc drivers/net/ethernet/freescale/fec.c
-> index 112af9b,b0b0445..0000000
-> --- a/drivers/net/ethernet/freescale/fec.c
-> +++ b/drivers/net/ethernet/freescale/fec.c
-> @@@ -1638,13 -1657,18 +1657,18 @@@ fec_drv_remove(struct platform_device *
->   	struct net_device *ndev = platform_get_drvdata(pdev);
->   	struct fec_enet_private *fep = netdev_priv(ndev);
->   	struct resource *r;
-> + 	int i;
->   
-> - 	fec_stop(ndev);
-> + 	unregister_netdev(ndev);
->   	fec_enet_mii_remove(fep);
-> + 	for (i = 0; i < FEC_IRQ_NUM; i++) {
-> + 		int irq = platform_get_irq(pdev, i);
-> + 		if (irq > 0)
-> + 			free_irq(irq, ndev);
-> + 	}
->  -	clk_disable(fep->clk);
->  +	clk_disable_unprepare(fep->clk);
->   	clk_put(fep->clk);
->   	iounmap(fep->hwp);
-> - 	unregister_netdev(ndev);
->   	free_netdev(ndev);
->   
->   	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> There was some discussion, but I did not notice any fix (I may have
+> missed it).  I have been reverting that above commit ...
 
+I started working on adding ath6kl_core.ko module which would fix this,
+but unfortunately I got distracted with other things and the patches are
+not ready yet. For a temporary solution I'll send a patch which forces
+ath6kl to build only as a module and I'll send ath6kl_core.ko patches
+ASAP after that.
 
-
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Kalle
