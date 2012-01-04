@@ -1,52 +1,54 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: interesting merges in the arm-soc tree
-Date: Wed, 4 Jan 2012 09:50:10 +0000
-Message-ID: <201201040950.10835.arnd@arndb.de>
-References: <20120104104758.26b0ca5268d10fbf7b95903a@canb.auug.org.au> <01bc01ccca7b$f6483fe0$e2d8bfa0$%kim@samsung.com>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: merge of the wireless-next tree into the net-next
+ tree
+Date: Wed, 4 Jan 2012 09:02:10 -0500
+Message-ID: <20120104140209.GA2540@tuxdriver.com>
+References: <20120104105947.8bac77d1d7198a49e6feeca8@canb.auug.org.au>
+ <20120103.202733.1070369898271428121.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.171]:59602 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754942Ab2ADJu3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 04:50:29 -0500
-In-Reply-To: <01bc01ccca7b$f6483fe0$e2d8bfa0$%kim@samsung.com>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:44237 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752743Ab2ADOP4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 09:15:56 -0500
+Content-Disposition: inline
+In-Reply-To: <20120103.202733.1070369898271428121.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Olof Johansson' <olof@lixom.net>, 'Mauro Carvalho Chehab' <mchehab@infradead.org>, 'Vinod Koul' <vinod.koul@intel.com>, 'Linus' <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kvalo@qca.qualcomm.com
 
-On Wednesday 04 January 2012, Kukjin Kim wrote:
-> > few conflicts (but that is not excuse) and there may be dependencies in a
-> > driver on the v4l-dvb tree (but maybe that means that that driver should
-> > be merged via the v4l-dvb tree - it looks like the "at91/drivers" is
-> > based on the v4l-dvb tree, so probably doesn't depend on anything else on
-> > the arm-soc tree).
-> > 
-> > If nothing else, are you sure that neither of those merged trees will
-> > rebase?  You have also just inherited any bugs in those two trees.
+On Tue, Jan 03, 2012 at 08:27:33PM -0500, David Miller wrote:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 4 Jan 2012 10:59:47 +1100
 > 
-> I know, Vinod knows I merged his tree for above situation so he will not
-> rebase that and Arnd will send that after merging of slave-dma into mainline
-> during merge window. 
+> > I noticed that the wireless-next tree has been merged into the net-next
+> > tree today.  Has anything been done about the build failure I reported in
+> > the wireless-next a while ago:
+> > 
+> > On 12/22/2011 16:58 +1100, Stephen Rothwell wrote:
+> >>
+> >> After merging the final tree, today's linux-next build (powerpc
+> >> allyesconfig) failed like this:
+> >> 
+> >> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ')' before 'KBUILD_MODNAME'
+> >> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: 'KBUILD_MODNAME' undeclared here (not in a function)
+> >> drivers/net/wireless/ath/ath6kl/cfg80211.c:27:1: error: expected ',' or ';' before string constant
+> 
+> It happens on any platform not just powerpc, John please fix this and
+> don't have known unresolved -next build failures in your tree when you
+> push to me.
 
-Right. The same is true for the other branch (depends/v4l) in next/drivers2.
-The next/drivers2 branch will get submitted when all three of its dependencies
-are merged.
+I'm sorry, Dave.  I must have let this slip my mind over the holidays
+-- maybe this explains why I didn't send the pull request before
+Christmas...
 
-Stephen, we have introduced a file arch/arm/arm-soc-for-next-contents.txt
-to help us track those dependencies, and maybe it can also help you
-understand our merge plans when you see potential problems like this.
+Kalle has sent a temporary fix that sidesteps the issue by forcing the
+SDIO and USB versions of ath6kl to be built as modules.  I'll forward
+that on to you today.
 
-Right now, there are 13 next/* branches that we plan to submit to Linus
-in order. All of those are merged into the for-next branch that you pull,
-and the contents.txt file tells you about the dependencies between those
-branches and to external branches.
-
-My understanding about the at91 changes from Nicolas Ferre is that they
-depend on both the v4l and previous arm-soc changesets, so it was decided
-to merge those through arm-soc after the v4l branch.
-
-	Arnd
+John
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
