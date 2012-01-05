@@ -1,39 +1,71 @@
-From: "David Laight" <David.Laight@ACULAB.COM>
-Subject: RE: [PATCH v2 4/6] ath6kl: get rid of AR_DBG_LVL_CHECK()
-Date: Thu, 5 Jan 2012 14:14:30 -0000
-Message-ID: <AE90C24D6B3A694183C094C60CF0A2F6D8AF33@saturn3.aculab.com>
-References: <20120105132812.22281.98859.stgit@x201>
+From: Anton Vorontsov <cbouatmailru@gmail.com>
+Subject: Re: linux-next: build failure after merge of the battery tree
+Date: Thu, 5 Jan 2012 19:25:36 +0400
+Message-ID: <20120105152536.GB28629@oksana.dev.rtsoft.ru>
+References: <20120105144042.4e03850089cce56a7e9312e4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0.aculab.com ([213.249.233.131]:44686 "HELO mx0.aculab.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1756740Ab2AEOOp convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 09:14:45 -0500
-Received: from mx0.aculab.com ([127.0.0.1])
- by localhost (mx0.aculab.com [127.0.0.1]) (amavisd-new, port 10024) with SMTP
- id 18307-02 for <linux-next@vger.kernel.org>;
- Thu,  5 Jan 2012 14:14:41 +0000 (GMT)
-Content-class: urn:content-classes:message
-In-Reply-To: <20120105132812.22281.98859.stgit@x201>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@qca.qualcomm.com>, linville@tuxdriver.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, ath6kl-devel@qualcomm.com, davem@davemloft.net
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120105144042.4e03850089cce56a7e9312e4@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
+On Thu, Jan 05, 2012 at 02:40:42PM +1100, Stephen Rothwell wrote:
+> Hi Anton,
+> 
+> After merging the battery tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> ERROR: "sysfs_create_link_nowarn" [drivers/power/power_supply.ko] undefined!
+> 
+> Caused by commit 8351665195ce ("power_supply: allow a power supply to
+> explicitly point to powered device").  That symbol is not exported to
+> modules.
+> 
+> I have used the battery tree from next-20120104 for today.
+
+Thanks for catching this, Stephen!
+
+I wonder why do we need to use _nowarn variant?..
+
+Something tells me that we actually want a warning.
+
+Jeremy, are you OK with the patch down below?
+
+- - - -
+From: Anton Vorontsov <cbouatmailru@gmail.com>
+Subject: power_supply: Drop usage of nowarn variant of sysfs_create_link()
+
+The function is not exported to modules, plus we do want to catch anyone
+who tries to create complex hierarchy (in that case we'd need to change
+'powers' symlink to a directory, probably under a different name to not
+break ABI).
+
+This patch fixes the following build error:
+
+ ERROR: "sysfs_create_link_nowarn" [drivers/power/power_supply.ko] undefined!
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Anton Vorontsov <cbouatmailru@gmail.com>
+---
+ drivers/power/power_supply_core.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
+index b10c121..47f4e11 100644
+--- a/drivers/power/power_supply_core.c
++++ b/drivers/power/power_supply_core.c
+@@ -149,7 +149,7 @@ EXPORT_SYMBOL_GPL(power_supply_get_by_name);
  
-> We don't need it as debug calls already have a log level and compiler
-> should be smart enough to optimise away the code when ath6kl 
-> debug code is not enabled.
-
-Have you checked?
-I think you are assuming that because the called
-function collapses, the call will be removed allowing
-the loop to be removed.
-I suspect this is only true if the function is inlined.
-IIRC the normal linkage rules mean that only static
-functions are candidates for inlining.
-
-	David
+ int power_supply_powers(struct power_supply *psy, struct device *dev)
+ {
+-	return sysfs_create_link_nowarn(&psy->dev->kobj, &dev->kobj, "powers");
++	return sysfs_create_link(&psy->dev->kobj, &dev->kobj, "powers");
+ }
+ EXPORT_SYMBOL_GPL(power_supply_powers);
+ 
+-- 
+1.7.7.3
