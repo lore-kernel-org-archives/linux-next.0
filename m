@@ -1,53 +1,52 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: build warning after merge of the vfs tree
-Date: Thu, 5 Jan 2012 12:34:48 +0100
-Message-ID: <20120105113448.GA14947@quack.suse.cz>
-References: <20120105173521.9adbe29e16ca0e7361f79c36@canb.auug.org.au>
- <20120105080657.GH23916@ZenIV.linux.org.uk>
- <20120105081418.GI23916@ZenIV.linux.org.uk>
+From: Kalle Valo <kvalo@qca.qualcomm.com>
+Subject: [PATCH v2 0/6] ath6kl: create ath6kl_core.ko
+Date: Thu, 05 Jan 2012 15:25:56 +0200
+Message-ID: <20120105132523.22281.95999.stgit@x201>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:45317 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755193Ab2AELeu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Jan 2012 06:34:50 -0500
-Content-Disposition: inline
-In-Reply-To: <20120105081418.GI23916@ZenIV.linux.org.uk>
+Received: from emh03.mail.saunalahti.fi ([62.142.5.109]:49805 "EHLO
+	emh03.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756802Ab2AEN0X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 08:26:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org
+To: linville@tuxdriver.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, ath6kl-devel@qualcomm.com, davem@davemloft.net
 
-On Thu 05-01-12 08:14:18, Al Viro wrote:
-> On Thu, Jan 05, 2012 at 08:06:57AM +0000, Al Viro wrote:
-> > On Thu, Jan 05, 2012 at 05:35:21PM +1100, Stephen Rothwell wrote:
-> > > Hi Al,
-> > > 
-> > > After merging the vfs tree, today's linux-next build (powerpc
-> > > ppc64_defconfig) produced this warning:
-> > > 
-> > > fs/reiserfs/super.c:701:2: warning: initialization from incompatible pointer type [enabled by default]
-> > > fs/reiserfs/super.c:701:2: warning: (near initialization for 'reiserfs_sops.show_options') [enabled by default]
-> > > 
-> > > Caused by commit 2ddeb2a58b11 ("vfs: switch ->show_options() to struct
-> > > dentry *") interacting with commit f1823b7b87d1 ("reiserfs: Properly
-> > > display mount options in /proc/mounts") from the ext3.  This needs some
-> > > merge fix ... (and will probably currently cause crashes :-()
-> > 
-> > Grrr...  Same as changes in the first commit, done to the function introduced
-> > by the second (i.e. replace mnt->mnt_sb with dentry->d_sb).  Incidentally,
-> > what are reiserfs patches doing in ext3 tree, of all places?
-> 
-> FWIW, an updated variant of Jan's patch would be this (on top of
-> vfs.git#for-next; I can pull his commit there in such form):
-  Thanks. I'm removing the old version of the patch from my tree so please
-carry the new version in your tree. I was just carrying the patch because
-of lack of reiserfs maintainer and because I originally wrote the patch to
-accommodate needs of quota tools...
+Here's the patchset to fix the allyesconfig build breakage. The fix is to
+create a separate module ath6kl_core.ko which both ath6kl_sdio.ko and
+ath6kl_usb.ko use.
 
-								Honza
+v2:
 
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+o fix ath6kl_dbg() to use va_format correctly (thanks to joe)
+o improved commit log in patch 4
+
+---
+
+Kalle Valo (6):
+      ath6kl: rename vif init and cleanup functions
+      ath6kl: unify cfg80211 init/cleanup functions
+      ath6kl: create core.c
+      ath6kl: get rid of AR_DBG_LVL_CHECK()
+      ath6kl: convert ath6kl_dbg() and ath6kl_dbg_dump() into functions
+      ath6kl: create ath6kl_core.ko
+
+
+ drivers/net/wireless/ath/ath6kl/Makefile   |   35 +--
+ drivers/net/wireless/ath/ath6kl/cfg80211.c |  207 ++++++++------------
+ drivers/net/wireless/ath/ath6kl/cfg80211.h |   12 +
+ drivers/net/wireless/ath/ath6kl/common.h   |    3 
+ drivers/net/wireless/ath/ath6kl/core.c     |  297 ++++++++++++++++++++++++++++
+ drivers/net/wireless/ath/ath6kl/core.h     |   10 +
+ drivers/net/wireless/ath/ath6kl/debug.c    |   68 +++++-
+ drivers/net/wireless/ath/ath6kl/debug.h    |   27 ---
+ drivers/net/wireless/ath/ath6kl/hif.c      |   10 +
+ drivers/net/wireless/ath/ath6kl/init.c     |  211 +-------------------
+ drivers/net/wireless/ath/ath6kl/sdio.c     |    4 
+ drivers/net/wireless/ath/ath6kl/usb.c      |    8 -
+ drivers/net/wireless/ath/ath6kl/wmi.c      |    3 
+ 13 files changed, 484 insertions(+), 411 deletions(-)
+ create mode 100644 drivers/net/wireless/ath/ath6kl/core.c
