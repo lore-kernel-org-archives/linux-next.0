@@ -1,62 +1,69 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH block/for-3.3/core] block: an exiting task should be
- allowed to create io_context
-Date: Wed, 4 Jan 2012 17:24:45 -0800
-Message-ID: <20120105012445.GP31746@google.com>
-References: <20111228164836.GP17712@google.com>
- <alpine.LSU.2.00.1112280939390.3320@eggly.anvils>
- <CAOS58YOzUcZz41+H+7dk5FteHy+Ufrtpk9dvdPqX6eie-GHi0Q@mail.gmail.com>
- <20111228211918.GA3516@google.com>
- <20120103173500.GB31746@google.com>
- <20120103175922.GC31746@google.com>
- <20120103200906.GG31746@google.com>
- <4F03631C.8080501@kernel.dk>
- <20120103221301.GH31746@google.com>
- <20120103223505.GI31746@google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the ext3 tree
+Date: Thu, 5 Jan 2012 13:06:09 +1100
+Message-ID: <20120105130609.2e4915ff183727456b527477@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ide-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120103223505.GI31746@google.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Hugh Dickins <hughd@google.com>, Shaohua Li <shaohua.li@intel.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org, x86@kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__5_Jan_2012_13_06_09_+1100_/BeyiupTGiCM7.T0"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, Jan Kara <jack@suse.cz>
 List-Id: linux-next.vger.kernel.org
 
-Hello, again.
+--Signature=_Thu__5_Jan_2012_13_06_09_+1100_/BeyiupTGiCM7.T0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 03, 2012 at 02:35:05PM -0800, Tejun Heo wrote:
-> > Hmmm... I disabled cfqq merge logic (commented out
-> > cfq_close_cooperator() and the following cfq_setup_merge() calls) in
-> > cfq_select_queue() and neither is triggering for quite a while now.
-> > Maybe cfqq refcnt is getting borked over cfqq merging / splitting?  It
-> > would also explain the low frequency of the issue too.  I'll try to
-> > further isolate it but It would be awesome if someone more familiar
-> > with the logic can go over that part.
-> 
-> Scrap that.  It triggered and yeah cfq_get_next_queue() is retrieving
-> empty cfqq from the service tree.
+Hi Al,
 
-Update: I've been running with ELEVATOR_INSERT_SORT_MERGE disabled and
-none of the issues triggered for about three hours now.  It usually
-triggers under an hour.
+Today's linux-next merge of the vfs tree got a conflict in
+include/linux/fs.h between commit 4789fd4495a4 ("quota: Fix deadlock with
+suspend and quotas") from the ext3 tree and commit cf31e70d6cf9 ("vfs:
+new helper - vfs_ustat()") from the vfs tree.
 
-Hugh, can you please verify whether the patch appended at the end
-makes the problem go away?
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks.
+diff --cc include/linux/fs.h
+index 3aba12c,7aacf31..0000000
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@@ -2531,8 -2489,6 +2489,7 @@@ extern void put_filesystem(struct file_
+  extern struct file_system_type *get_fs_type(const char *name);
+  extern struct super_block *get_super(struct block_device *);
+  extern struct super_block *get_active_super(struct block_device *bdev);
+- extern struct super_block *user_get_super(dev_t);
+ +extern void put_super(struct super_block *sb);
+  extern void drop_super(struct super_block *sb);
+  extern void iterate_supers(void (*)(struct super_block *, void *), void *=
+);
+  extern void iterate_supers_type(struct file_system_type *,
 
-diff --git a/block/elevator.c b/block/elevator.c
-index 99838f4..2e172d2 100644
---- a/block/elevator.c
-+++ b/block/elevator.c
-@@ -644,6 +644,9 @@ void __elv_add_request(struct request_queue *q, struct request *rq, int where)
- 
- 	rq->q = q;
- 
-+	if (where == ELEVATOR_INSERT_SORT_MERGE)
-+		where = ELEVATOR_INSERT_SORT;
-+
- 	if (rq->cmd_flags & REQ_SOFTBARRIER) {
- 		/* barriers are scheduling boundary, update end_sector */
- 		if (rq->cmd_type == REQ_TYPE_FS ||
+--Signature=_Thu__5_Jan_2012_13_06_09_+1100_/BeyiupTGiCM7.T0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPBQWRAAoJEECxmPOUX5FEKlMP/i5BTMBYAa87ymBgDkoIGBzE
+n8I586Rd9cEGRwLZ4LuYoJoVibNxEu1SxweFcw0RciGnTo73QrQRbzlF43sWoAB2
+Is1R9bVQrPSoScktQaB0rjiWLfOe4m4xUs/eXeWZUqKOCtuSY/CTk1awPD+YPWso
+1UuLzhlEr64+Gq1Iok0EciEtJEjW3vofSRib7cJSiILDIy3rCimZwFWzwulfS7PM
+xxIoRtI1mfyIjiRdVVZDhKz5XWWIRi8KDSp0wG2zZj6stBcdTygev8Dm8MAhGscH
+C1XmvahVeqIkg56t21DTQh56ssbeyQtlixcxGxaggTS2u+36RRrkuW+2jnoVm/p1
+YM/R7m3IB7OlKilAPOjRn1n3ZDgJ8GmuVmIeL4q2uj1ZU+2sotHtAL55HeE15/9A
+7RS19pyZgQxmnoAYQIq/gmsKbAbi1121ipkb967zybQ3M8DJaRzFuRBhV7fM9B4N
+CK3VTfTMHzVz/bh35MJS5MNg1rEbd8GVSJA4gctpuGJOnKAELVBDjgdLMF5F+zbs
+9dcYWFcIF2S1ivPQK4SiYnSrkVmS9LDUU4r6QvmgQXBB2KkJR4fwjY6aLblD53RB
+ZuaNlDR72vQU+E9my81kn5LjE/+0E+8jC6slQXIFUzroLzHmadq7lbGPFH46TE2n
+84DjsmT8SY15GvMkFXiZ
+=PkCl
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__5_Jan_2012_13_06_09_+1100_/BeyiupTGiCM7.T0--
