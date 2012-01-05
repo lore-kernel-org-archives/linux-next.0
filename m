@@ -1,67 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Thu, 5 Jan 2012 11:17:58 +1100
-Message-ID: <20120105111758.d0d640b9d072f04104a5fc4e@canb.auug.org.au>
-References: <20111228174518.721624fad9d048f9f85b3d50@canb.auug.org.au>
-	<20120104230720.GD24583@kroah.com>
-	<20120105104835.fd6c0fd173622af59d11012f@canb.auug.org.au>
-	<CAPXgP13TC4iuy=MW-p8x05VG8ad-9rC+jxm6qHtx90tBX9zhTw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the pci-current tree
+Date: Thu, 5 Jan 2012 11:19:40 +1100
+Message-ID: <20120105111940.e5675c8d16715767ed193461@canb.auug.org.au>
+References: <20120105110712.2666364926458942240d6534@canb.auug.org.au>
+	<20120104161122.4e9d844a@jbarnes-desktop>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Jan_2012_11_17_58_+1100_35FJ=6Nbob1jkk2c"
+ boundary="Signature=_Thu__5_Jan_2012_11_19_40_+1100_0nBWPN2a2kuVy=sc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:34519 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:48830 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932073Ab2AEASF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 19:18:05 -0500
-In-Reply-To: <CAPXgP13TC4iuy=MW-p8x05VG8ad-9rC+jxm6qHtx90tBX9zhTw@mail.gmail.com>
+	with ESMTP id S1757451Ab2AEATq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 19:19:46 -0500
+In-Reply-To: <20120104161122.4e9d844a@jbarnes-desktop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kay Sievers <kay.sievers@vrfy.org>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jones <davej@redhat.com>
 
---Signature=_Thu__5_Jan_2012_11_17_58_+1100_35FJ=6Nbob1jkk2c
+--Signature=_Thu__5_Jan_2012_11_19_40_+1100_0nBWPN2a2kuVy=sc
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kay,
+Hi Jesse,
 
-On Thu, 5 Jan 2012 01:01:51 +0100 Kay Sievers <kay.sievers@vrfy.org> wrote:
+On Wed, 4 Jan 2012 16:11:22 -0800 Jesse Barnes <jbarnes@virtuousgeek.org> w=
+rote:
 >
-> Yes, that look like the right pattern.
+> Arg failure of my hand merge.
 
-Good, thanks.
-
-> Stephen, thanks a lot for your help here, it's very much appreciated.
-> I know we cause a lot of trouble every other year. :)
-
-Its how I justify myself :-)
+Not really, the original was broken (as is the version in fc16 (which has
+been disabled there)).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__5_Jan_2012_11_17_58_+1100_35FJ=6Nbob1jkk2c
+--Signature=_Thu__5_Jan_2012_11_19_40_+1100_0nBWPN2a2kuVy=sc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIbBAEBCAAGBQJPBOw2AAoJEECxmPOUX5FEsX8P+MT7LK9RucY5uKwc6FqdyxXk
-HojASocxFv30zk9NZRyXJtplghJcqNQul2CyZSuDRL4JWmobTK4Ng6NFC/T/c/38
-O85Q2CLlSHTg5Sz61fqPYoggAeR78eP9+ovnOQkFSR7oiNDaH4ftqd7N6I+hQqgk
-XxQL/KtyT83I78OBvQPQjPGbaZ8gj1LK/STFL0QJtpHac0gKaArBANdpY/1Rxwy4
-0jifj5YHQL8VpPTmmVE6Zx7Pt6Zy2erTH/htIGpZ++5ByZRwS3fgEiP5+89UO29N
-VOtbvY2QEL+m/QvP6Ipr99FWMMkpZZAhYchri6wrfuoIllgbpXMYbFoghvFX4Rw1
-aU01cluaorDccUixyv9X722STZlUZRNBCQAJIbBsXUvgPbSWLIyDVdwz7Xfqn0Wt
-CKEPECl4Terag4Jhhx0fc6aXlCy/DZFux7kdb66YgeJ3hpdcTkmDzGcbYmH+jfKA
-45n6KbDW7HvMn4ekqbNvZRzW4l+yKt1MOXV+vM8q0hPT5vrqK6ucQwxTcXFDfbVR
-qjaoh04poPpqqUBArJ1z26l7u6pqmQ6IeTE6nxeJbLhMgJyE6AJJFGnsagtCQlDj
-xy4qYhxhjdCh9UwVc8RBGnEr3gjtOX2MWcgHLoJyrkTvwEWU7UveLQL+x8xXsbUw
-f8dL3d+P/l/bbqfeE90=
-=KgZk
+iQIcBAEBCAAGBQJPBOycAAoJEECxmPOUX5FE1qcP/A5lh+MIhW3hbSKgXYyC+dV4
+Y2uPA4gGm3ZBQIfaDQoUNz/XmgeuiIR0RZEypaF6mWq1PWAwY7zsDBuxMIDDzXRS
+7xho1JCetbI+BwHUBXSN191+6Zms+VaguqVAGpq9xb9vUa2e0HH7TRGIXkCj0v9A
+LvqUPM3rPgaBZDukd6b+QNRqKnsoZOSqrczg0Cs2F8+3O4xC8Z+myHF486sYUFyx
++OPeeC1cmf32qn5rWKckubbxcR/s1jAOYobx0+UuTS7szGnssQ4k6LN2hJVGYXSb
+Gk2+rwtJ7iDDzJjGJ2jjEg67wOBIvIK4nr1Zmp7JcGuUOaYeFf4LSOZFeEXacqcZ
+UWp2w13jt6F5lgGCyOOKOX7Eyk+jSryXqkCOanda2zGxOTDW8bRpHih0Zyx65yp/
+ZvsXs8Xn+cU0U3mxH6XllnYaR4WzKmtJimkU6IRXh5yG2tLspEwWYUIZkhc2SKdG
+w2Xi+xke+c83CGNGYj4oGh8R6a5xiuLJxhGJWIhN1t8odTpgQfmKnmJE20Sb344w
+hFVkAvWctyne4ddQHxkTBsGwccbkno/c0yh/pWJk3hGxpUIfoW9PyKFFZEZSDo/v
+rDuKwOO4f9onHIhnB4BkBZCc6Chbj+ANCxOpuKP5WV4kY0D/teuaF9aj/w3nzj/d
+JaOm24jvZRthuyVqjjfX
+=LnoU
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__5_Jan_2012_11_17_58_+1100_35FJ=6Nbob1jkk2c--
+--Signature=_Thu__5_Jan_2012_11_19_40_+1100_0nBWPN2a2kuVy=sc--
