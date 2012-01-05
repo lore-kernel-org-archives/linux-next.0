@@ -1,56 +1,44 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the net-next
- tree
-Date: Thu, 05 Jan 2012 17:51:49 -0500
-Message-ID: <1325803909.17118.17.camel@localhost>
-References: <20120105151255.f72ad113a93493bb55844034@canb.auug.org.au>
-	 <27624574.j8RvKjachg@sifl>
-	 <20120106091550.534131cb1fe6e3dee323699c@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Thu, 5 Jan 2012 15:19:58 -0800
+Message-ID: <20120105231958.GA15643@kroah.com>
+References: <20120105182937.58ec59c2fa2bc34e9e48542a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120106091550.534131cb1fe6e3dee323699c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out5.smtp.messagingengine.com ([66.111.4.29]:45533 "EHLO
+	out5.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758144Ab2AEXVs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 18:21:48 -0500
+Received: from compute5.internal (compute5.nyi.mail.srv.osa [10.202.2.45])
+	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id D11D020981
+	for <linux-next@vger.kernel.org>; Thu,  5 Jan 2012 18:21:47 -0500 (EST)
+Content-Disposition: inline
+In-Reply-To: <20120105182937.58ec59c2fa2bc34e9e48542a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Moore <pmoore@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrei Emeltchenko <andrei.emeltchenko@intel.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "Gustavo F. Padovan" <padovan@profusion.mobi>
-List-Id: linux-next.vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Michael Holzheu <holzheu@linux.vnet.ibm.com>
 
-On Fri, 2012-01-06 at 09:15 +1100, Stephen Rothwell wrote:
-> Hi Paul,
+On Thu, Jan 05, 2012 at 06:29:37PM +1100, Stephen Rothwell wrote:
+> Hi Andrew,
 > 
-> On Thu, 05 Jan 2012 16:25:53 -0500 Paul Moore <pmoore@redhat.com> wrote:
-> >
-> > On Thursday, January 05, 2012 03:12:55 PM Stephen Rothwell wrote:
-> > > 
-> > > Today's linux-next merge of the selinux tree got a conflict in
-> > > net/bluetooth/l2cap_sock.c between commit 15770b1ab974 ("Bluetooth:
-> > > convert force_active variable to flag in l2cap chan") from the net-next
-> > > tree and commit 53860f3d0499 ("bluetooth: Properly clone LSM attributes
-> > > to newly created child connections") from the selinux tree.
-> > > 
-> > > These both remove the same line, but there is probably something more
-> > > subtle going on ...  I just used the version from the net-next tree.
-> > 
-> > Something is a bit odd.  When I look in the current linux-next tree I see two 
-> > commits which fix a Bluetooth/LSM bug; the first is correct, the second one 
-> > appears to be some other commit which just hijacked the description from the 
-> > first ... I have no idea what is going on in the second commit; I'll leave 
-> > that to you git gurus :)
-> > 
-> >  * Correct commit -> 6230c9b4f8957c8938ee4cf2d03166d3c2dc89de
+> After merging the akpm tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
-> That is a commit in Linus' tree before v3.1
+> drivers/base/memory.c: In function 'memory_block_change_state':
+> drivers/base/memory.c:306:22: error: 'struct memory_block' has no member named 'sysdev'
+> drivers/base/memory.c:309:22: error: 'struct memory_block' has no member named 'sysdev'
 > 
-> >  * Garbage commit -> 53860f3d0499992855d58e33f0f79bfe642dfccb
-> 
-> That is the commit in the selinux tree.  This should be unnecessary as
-> the selinux tree is based on v3.1 (and I basically ignored it in the
-> merge resolution).
+> Caused by commit 2691cc121386 ("kdump: add udev events for memory
+> online/offline") interacting with commit 10fbcf4c6cb1 ("convert 'memory'
+> sysdev_class to a regular subsystem") from the driver-core tree.
 
-Thanks paul...  This must be a result of me rebasing my tree onto 3.1.
-No way I should have left this garbage.  It doesn't make sense.  I think
-I'll rewrite history for tomorrow since noone is going to notice or
-care...
+I can't recall this kdump patch coming through before, have I seen it?
+creating new uevents is not something to be done lightly, has this been
+tested with the existing userspace tools to make sure it doesn't cause
+problems?
 
--Eric
+thanks,
+
+greg k-h
