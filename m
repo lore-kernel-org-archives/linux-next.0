@@ -1,39 +1,70 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v2 5/6] ath6kl: convert ath6kl_dbg() and
- ath6kl_dbg_dump() into functions
-Date: Thu, 05 Jan 2012 08:38:09 -0800
-Message-ID: <1325781489.22154.19.camel@joe2Laptop>
-References: <20120105132523.22281.95999.stgit@x201>
-	 <20120105132834.22281.78822.stgit@x201>
+From: Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH block/for-3.3/core] block: an exiting task should be
+ allowed to create io_context
+Date: Thu, 5 Jan 2012 10:36:21 -0800 (PST)
+Message-ID: <alpine.LSU.2.00.1201051026090.2009@eggly.anvils>
+References: <20111228164836.GP17712@google.com> <alpine.LSU.2.00.1112280939390.3320@eggly.anvils> <CAOS58YOzUcZz41+H+7dk5FteHy+Ufrtpk9dvdPqX6eie-GHi0Q@mail.gmail.com> <20111228211918.GA3516@google.com> <20120103173500.GB31746@google.com> <20120103175922.GC31746@google.com>
+ <20120103200906.GG31746@google.com> <4F03631C.8080501@kernel.dk> <20120103221301.GH31746@google.com> <20120103223505.GI31746@google.com> <20120105012445.GP31746@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120105132834.22281.78822.stgit@x201>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kalle Valo <kvalo@qca.qualcomm.com>
-Cc: linville@tuxdriver.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, ath6kl-devel@qualcomm.com, davem@davemloft.net
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <20120105012445.GP31746@google.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Shaohua Li <shaohua.li@intel.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org, x86@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 2012-01-05 at 15:28 +0200, Kalle Valo wrote:
+On Wed, 4 Jan 2012, Tejun Heo wrote:
+> On Tue, Jan 03, 2012 at 02:35:05PM -0800, Tejun Heo wrote:
+> > > Hmmm... I disabled cfqq merge logic (commented out
+> > > cfq_close_cooperator() and the following cfq_setup_merge() calls) in
+> > > cfq_select_queue() and neither is triggering for quite a while now.
+> > > Maybe cfqq refcnt is getting borked over cfqq merging / splitting?  It
+> > > would also explain the low frequency of the issue too.  I'll try to
+> > > further isolate it but It would be awesome if someone more familiar
+> > > with the logic can go over that part.
+> > 
+> > Scrap that.  It triggered and yeah cfq_get_next_queue() is retrieving
+> > empty cfqq from the service tree.
+> 
+> Update: I've been running with ELEVATOR_INSERT_SORT_MERGE disabled and
+> none of the issues triggered for about three hours now.  It usually
+> triggers under an hour.
+> 
+> Hugh, can you please verify whether the patch appended at the end
+> makes the problem go away?
 
-Hey Kalle.
+I can vouch that it makes the list_debug.c:53 warnings go away: they
+used to come in half an hour, but I've run on two machines for 10
+hours so far without seeing any.
 
-> diff --git a/drivers/net/wireless/ath/ath6kl/debug.c b/drivers/net/wireless/ath/ath6kl/debug.c
-[]
-> +void ath6kl_dbg(enum ATH6K_DEBUG_MASK mask, const char *fmt, ...)
-[]
-> +	ath6kl_printk(KERN_DEBUG, "%pV", &vaf);
-[
-> diff --git a/drivers/net/wireless/ath/ath6kl/debug.h b/drivers/net/wireless/ath/ath6kl/debug.h
-[]
-> +void ath6kl_dbg(enum ATH6K_DEBUG_MASK mask, const char *fmt, ...);
+And I've not yet seen a cfq-iosched.c:2585 with that patch in; but
+those were more elusive - we'll have to run until tomorrow night
+before concluding that it makes those go away too.
 
-You need to add
+Or if you understand the connection between these, and would prefer
+to assume that it fixes them both, and want me to try another patch
+instead (I assume the one I'm running with is a workaround to narrow
+down the issue, rather than an intended fix?), let me know and I'll
+switch over.
 
-__printf(2, 3)
+Hugh
 
-to the prototype.
-
-If it's not there, the printf formats and arguments aren't verified.
-%pV could do the wrong/bad things.
+> 
+> Thanks.
+> 
+> diff --git a/block/elevator.c b/block/elevator.c
+> index 99838f4..2e172d2 100644
+> --- a/block/elevator.c
+> +++ b/block/elevator.c
+> @@ -644,6 +644,9 @@ void __elv_add_request(struct request_queue *q, struct request *rq, int where)
+>  
+>  	rq->q = q;
+>  
+> +	if (where == ELEVATOR_INSERT_SORT_MERGE)
+> +		where = ELEVATOR_INSERT_SORT;
+> +
+>  	if (rq->cmd_flags & REQ_SOFTBARRIER) {
+>  		/* barriers are scheduling boundary, update end_sector */
+>  		if (rq->cmd_type == REQ_TYPE_FS ||
+> 
