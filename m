@@ -1,92 +1,111 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the selinux tree
-Date: Thu, 5 Jan 2012 15:24:00 +1100
-Message-ID: <20120105152400.8ea64cf56587bac73d27c474@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Thu, 5 Jan 2012 17:28:56 +1100
+Message-ID: <20120105172856.07fc66f37d76f16a88d22799@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Jan_2012_15_24_00_+1100_9C1K3sPUjHJyI4L="
+ boundary="Signature=_Thu__5_Jan_2012_17_28_56_+1100_2a+Zu7F3f7VtEgvG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:50636 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:56883 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757849Ab2AEEYI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 23:24:08 -0500
+	with ESMTP id S1751377Ab2AEG3J (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 01:29:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>, Borislav Petkov <borislav.petkov@amd.com>, Jan Beulich <JBeulich@suse.com>, Kay Sievers <kay.sievers@vrfy.org>
 
---Signature=_Thu__5_Jan_2012_15_24_00_+1100_9C1K3sPUjHJyI4L=
+--Signature=_Thu__5_Jan_2012_17_28_56_+1100_2a+Zu7F3f7VtEgvG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Greg,
 
-After merging the selinux tree, today's linux-next build (x86_64
+After merging the driver-core tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-crypto/crypto_user.c: In function 'crypto_user_rcv_msg':
-crypto/crypto_user.c:385:2: error: implicit declaration of function 'securi=
-ty_netlink_recv' [-Werror=3Dimplicit-function-declaration]
+arch/x86/kernel/microcode_core.c: In function 'microcode_init':
+arch/x86/kernel/microcode_core.c:557:2: error: implicit declaration of func=
+tion 'sysdev_driver_unregister' [-Werror=3Dimplicit-function-declaration]
+arch/x86/kernel/microcode_core.c:557:28: error: 'cpu_sysdev_class' undeclar=
+ed (first use in this function)
+arch/x86/kernel/microcode_core.c:557:47: error: 'mc_sysdev_driver' undeclar=
+ed (first use in this function)
 
-Caused by commit f452f33b1f3a ("security: remove the
-security_netlink_recv hook as it is equivalent to capable()") interacting
-with commit a38f7907b926 ("crypto: Add userspace configuration API")
-which was added to Linus' tree before v3.2-rc1.
+Caused by commit 8a25a2fd126c ("cpu: convert 'cpu' and 'machinecheck'
+sysdev_class to a regular subsystem") interacting with commit
+bd399063976c ("x86, microcode: Fix the failure path of microcode update
+driver init code") which was added to Linux' tree in v3.2-rc5,
 
-I applied the following (supplied) fix as a merge fix.
+I have applied the following merge fix patch:
 
-From: Eric Paris <eparis@redhat.com>
-Subject: selinux tree pull for 2012-01-05, known build issue
-Date: Wed, 04 Jan 2012 17:47:18 -0500
+=46rom e4aefaed98c4462d5d5d71099756606b547e7364 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 5 Jan 2012 17:26:14 +1100
+Subject: [PATCH] cpu: fix up for sysdev removal
 
-I updated my SELinux tree which is based on 3.1.  I know there is a
-build problem after it is merged with current Linus.  The following
-patch is also needed as the security function is removed by my tree, but
-this caller was added by someone else.  I figured you could carry this
-patch and I'd make sure Linus does the same when he merges...
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/kernel/microcode_core.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/crypto/crypto_user.c b/crypto/crypto_user.c
-index 0605a2b..c7e5b66 100644
---- a/crypto/crypto_user.c
-+++ b/crypto/crypto_user.c
-@@ -382,7 +382,7 @@ static int crypto_user_rcv_msg(struct sk_buff *skb, str=
-uct nlmsghdr *nlh)
- 	type -=3D CRYPTO_MSG_BASE;
- 	link =3D &crypto_dispatch[type];
+diff --git a/arch/x86/kernel/microcode_core.c b/arch/x86/kernel/microcode_c=
+ore.c
+index ef127e54..fb34a56 100644
+--- a/arch/x86/kernel/microcode_core.c
++++ b/arch/x86/kernel/microcode_core.c
+@@ -540,7 +540,7 @@ static int __init microcode_init(void)
 =20
--	if (security_netlink_recv(skb, CAP_NET_ADMIN))
-+	if (!capable(CAP_NET_ADMIN))
- 		return -EPERM;
+ 	error =3D microcode_dev_init();
+ 	if (error)
+-		goto out_sysdev_driver;
++		goto out_driver;
 =20
- 	if ((type =3D=3D (CRYPTO_MSG_GETALG - CRYPTO_MSG_BASE) &&
-
+ 	register_syscore_ops(&mc_syscore_ops);
+ 	register_hotcpu_notifier(&mc_cpu_notifier);
+@@ -550,11 +550,11 @@ static int __init microcode_init(void)
+=20
+ 	return 0;
+=20
+-out_sysdev_driver:
++out_driver:
+ 	get_online_cpus();
+ 	mutex_lock(&microcode_mutex);
+=20
+-	sysdev_driver_unregister(&cpu_sysdev_class, &mc_sysdev_driver);
++	subsys_interface_unregister(&mc_cpu_interface);
+=20
+ 	mutex_unlock(&microcode_mutex);
+ 	put_online_cpus();
+--=20
+1.7.8.197.g73c6b
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__5_Jan_2012_15_24_00_+1100_9C1K3sPUjHJyI4L=
+--Signature=_Thu__5_Jan_2012_17_28_56_+1100_2a+Zu7F3f7VtEgvG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPBSXgAAoJEECxmPOUX5FEW3AP/3kaxdExNHn1R2MDSnf2ZC1l
-GHmOtXflbL6LNppQNIHOWUfsorA/+pvz8hk5v9qHOjOLt9O9Jk5fN8SHrhv5R1UF
-yTcKLbRxBtl/RAZzr/aAp6tDR1TZxaQsfw4kB6H9DNxpWrGbY7dKvZU5uzLzJ5wu
-GKevqFvM73x01I/J75Jr2qxsWZMfEH9pSDzMuhn4xNEca4/5Oj3a1Bn+PrgujxCM
-8/upmOxqgz/MJdeLl989tv8E4OalhhmPSGHPmq4MdFWsMUmq6kukHCSWJE4fCIyU
-gg3AKy3v0ZjtWcnYQhXYvoQDf7me0tNeJPv79YpTrplV2R0wgEwGETEqIrLnoZnA
-AKQo55FHfYaAeLkdyJI9OW5kdrDe/atpoNX739TyQOMYSSnu/9p7mvGoq4RAu/lt
-ZeClZj1MEsJdNp7S/hx848FEgkqABZskv3ou2o2QSPqou/6/sLGzXJkyvi12cNdO
-1cIthsOCXpNCCaGFadMCTIto6KuxLVqlxvy9ItbiPWnyGpYVA/+cv/V0CKQQjbqH
-g5clfNjzEdjm3W6NSX48FtM6v6OxZIbs9F30THMPThwIvD2iz5xCgRdZYpxhOk4H
-sM9+lVUu0TZVZWr+qRpmjUZPR8DYyqa5wdhadd+LCbKglEwmr+QnHx0dUls6UXmZ
-G8RXM2iHVTkzVzFjCb3c
-=gVth
+iQIcBAEBCAAGBQJPBUMoAAoJEECxmPOUX5FE1AcP/0ItjsVqARo2nymieDboahCZ
+6m1DuDXkKbwO3ecCvFYFPuFNFp23ZmCin7VVGzzr7VcLN46SKM1GkDXChs0cbErm
+eNesIwGiY3St07rBE6iM4RxgRL3OY3lsz+TqayT5y1To38542gKwI2xakIv5Derk
+CRheoCqFE6epYTdOt85IvEqqSFJ2sWyoT7oIGQx/Gq81XpSwsqaTHWnUromInTnm
+CsFfCXoUITtLjJVfODGd5afKeCNUoDHjZ4ThoQ1BexL3IEcijd1FoirQSA1nmR1i
+8EPp5fbo2JX2t5C7b3JUSjVfG96BbOI/cHGM/UHodDtqtQ1owMfX/EVuYaO5nbVZ
+KEi70le2PI4dgR9vQX3Ga+aLou1VacxAqRlOb+85D9UmrFInGsaWIEaErPH63xhn
+KYwPZOGMMBb/DE3ZPx4dK+2JbQCv+aAm3198u03Hl7JU5c6z0O/t6hptK2vq+L2X
+7s4N4ElVkFxeKQkD+nQRpzQeTwVZM32JgIYxpS5+RV397wGxvX/K1NqsvuOJ9MBu
+z35PELCho6Qu56MqNn4P9lQKdC8Igl/ype5R1PUkmQ8LDgUKzj/oYkt3fmjIo8gl
+ilS/IfrwDEwKESR6ELY+K05PiZiIaJBd39SE0cHUu7SS3KhS2hc9VHEWu5un6tDl
+wqy83oQ/f/5zbgv0bVuy
+=uI9k
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__5_Jan_2012_15_24_00_+1100_9C1K3sPUjHJyI4L=--
+--Signature=_Thu__5_Jan_2012_17_28_56_+1100_2a+Zu7F3f7VtEgvG--
