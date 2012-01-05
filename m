@@ -1,64 +1,55 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the s5p tree with the arm tree
-Date: Thu, 05 Jan 2012 09:46:02 +0900
-Message-ID: <00bf01cccb43$667542f0$335fc8d0$%kim@samsung.com>
-References: <20120104131830.ec4341de50a69f4f3f2c5b7b@canb.auug.org.au>
- <20120104090702.GA28052@flint.arm.linux.org.uk>
+From: Josh Triplett <josh@joshtriplett.org>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 4 Jan 2012 16:57:52 -0800
+Message-ID: <20120105005751.GA1761@leaf>
+References: <20111228174518.721624fad9d048f9f85b3d50@canb.auug.org.au>
+ <20120104230720.GD24583@kroah.com>
+ <20120105104835.fd6c0fd173622af59d11012f@canb.auug.org.au>
+ <CAPXgP13TC4iuy=MW-p8x05VG8ad-9rC+jxm6qHtx90tBX9zhTw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:51962 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757264Ab2AEAqV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 19:46:21 -0500
-In-reply-to: <20120104090702.GA28052@flint.arm.linux.org.uk>
-Content-language: ko
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:58577 "EHLO
+	relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757321Ab2AEA6C convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 19:58:02 -0500
+Content-Disposition: inline
+In-Reply-To: <CAPXgP13TC4iuy=MW-p8x05VG8ad-9rC+jxm6qHtx90tBX9zhTw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Russell King' <rmk@arm.linux.org.uk>, 'Stephen Rothwell' <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kay Sievers <kay.sievers@vrfy.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Russell King wrote:
-> 
-> On Wed, Jan 04, 2012 at 01:18:30PM +1100, Stephen Rothwell wrote:
-> > Hi Kukjin,
+On Thu, Jan 05, 2012 at 01:01:51AM +0100, Kay Sievers wrote:
+> On Thu, Jan 5, 2012 at 00:48, Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+>=20
+> > Kay, Greg, any hints would be nice. =A0The tip tree commit is addin=
+g this:
 > >
-> > Today's linux-next merge of the s5p tree got a conflict in
-> > arch/arm/plat-samsung/include/plat/system-reset.h between commit
-> > 281c8724c10c ("ARM: restart: Temporary #error to persuade platform
-> > maintainers to take the restart changes seriously") from the arm tree
-> and
-> > commit 08c6fc52956c ("ARM: restart: EXYNOS: use new restart hook") from
-> > the s5p tree.
+> > bool cpu_is_hotpluggable(unsigned cpu)
+> > {
+> > =A0 =A0 =A0 =A0struct sys_device *dev =3D get_cpu_sysdev(cpu);
+> > =A0 =A0 =A0 =A0return dev && container_of(dev, struct cpu, sysdev)-=
+>hotpluggable;
+> > }
 > >
-> > The arm tree patch seems to have had the desired affect so I used the
-> s5p
-> > tree version.
-> 
-> Err, what are the Samsung people playing at, merging the patches that
-> they've sent me for merging into their own tree?
-> 
-Russell, no. They will be removed in my tree.
+> > and, of course, all the sys_device stuff has now gone ...
+> >
+> > So is this correct?
+> >
+> > bool cpu_is_hotpluggable(unsigned cpu)
+> > {
+> > =A0 =A0 =A0 =A0struct device *dev =3D get_cpu_device(cpu);
+> > =A0 =A0 =A0 =A0return dev && container_of(dev, struct cpu, dev)->ho=
+tpluggable;
+> > }
+>=20
+> Yes, that look like the right pattern.
+>=20
+> Stephen, thanks a lot for your help here, it's very much appreciated.
 
-> This is a recipe for breakage, especially as the exynos patch depends
-> on previous patches in my tree _and_ patches in my tree depend on that
-> patch as well.
-> 
-Yes, you're right. So they should be sent to upstream via arm tree.
+Definitely, thanks for fixing up cpu_is_hotpluggable for this change.
 
-> Well, we'll see what we end up with when you do the next linux-next,
-> as by then my public tree should be updated with yesterdays work by
-> then.
-> 
-> I've a feeling that this coming merge window is going to be a horrible
-> mess.
-> 
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+- Josh Triplett
