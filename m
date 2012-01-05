@@ -1,84 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Thu, 5 Jan 2012 11:27:52 +1100
-Message-ID: <20120105112752.5bc8a1fe745dfe3adbc45fe9@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the s5p tree with the arm tree
+Date: Thu, 05 Jan 2012 09:46:02 +0900
+Message-ID: <00bf01cccb43$667542f0$335fc8d0$%kim@samsung.com>
+References: <20120104131830.ec4341de50a69f4f3f2c5b7b@canb.auug.org.au>
+ <20120104090702.GA28052@flint.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Jan_2012_11_27_52_+1100_pDWd=Kq1k3TxS9Up"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:59130 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757264Ab2AEA2B (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 19:28:01 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:51962 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757264Ab2AEAqV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 19:46:21 -0500
+In-reply-to: <20120104090702.GA28052@flint.arm.linux.org.uk>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>
+To: 'Russell King' <rmk@arm.linux.org.uk>, 'Stephen Rothwell' <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__5_Jan_2012_11_27_52_+1100_pDWd=Kq1k3TxS9Up
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Russell King wrote:
+> 
+> On Wed, Jan 04, 2012 at 01:18:30PM +1100, Stephen Rothwell wrote:
+> > Hi Kukjin,
+> >
+> > Today's linux-next merge of the s5p tree got a conflict in
+> > arch/arm/plat-samsung/include/plat/system-reset.h between commit
+> > 281c8724c10c ("ARM: restart: Temporary #error to persuade platform
+> > maintainers to take the restart changes seriously") from the arm tree
+> and
+> > commit 08c6fc52956c ("ARM: restart: EXYNOS: use new restart hook") from
+> > the s5p tree.
+> >
+> > The arm tree patch seems to have had the desired affect so I used the
+> s5p
+> > tree version.
+> 
+> Err, what are the Samsung people playing at, merging the patches that
+> they've sent me for merging into their own tree?
+> 
+Russell, no. They will be removed in my tree.
 
-Hi all,
+> This is a recipe for breakage, especially as the exynos patch depends
+> on previous patches in my tree _and_ patches in my tree depend on that
+> patch as well.
+> 
+Yes, you're right. So they should be sent to upstream via arm tree.
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-exynos/Makefile between commit cc511b8d84d8 ("ARM: 7257/1:
-EXYNOS: introduce arch/arm/mach-exynos/common.[ch]") from the arm tree
-and commit fca3de6ab9bf ("ARM: EXYNOS: Limit usage of pl330 device
-instance to non-dt build") from the arm-soc tree.
+> Well, we'll see what we end up with when you do the next linux-next,
+> as by then my public tree should be updated with yesterdays work by
+> then.
+> 
+> I've a feeling that this coming merge window is going to be a horrible
+> mess.
+> 
 
-I fixed it up (see below) and can carry the fix as necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks.
 
-diff --cc arch/arm/mach-exynos/Makefile
-index bcb9efc,db527ab..0000000
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@@ -19,8 -19,6 +19,8 @@@ obj-$(CONFIG_SOC_EXYNOS4212)	+=3D clock-e
-  obj-$(CONFIG_PM)		+=3D pm.o
-  obj-$(CONFIG_CPU_IDLE)		+=3D cpuidle.o
- =20
-- obj-$(CONFIG_ARCH_EXYNOS4)	+=3D dma.o pmu.o
-++obj-$(CONFIG_ARCH_EXYNOS4)	+=3D pmu.o
- +
-  obj-$(CONFIG_SMP)		+=3D platsmp.o headsmp.o
- =20
-  obj-$(CONFIG_EXYNOS4_MCT)	+=3D mct.o
-@@@ -46,8 -46,9 +48,10 @@@ obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+=3D dev-
-  obj-$(CONFIG_EXYNOS4_DEV_PD)		+=3D dev-pd.o
-  obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+=3D dev-sysmmu.o
-  obj-$(CONFIG_EXYNOS4_DEV_DWMCI)		+=3D dev-dwmci.o
-+ obj-$(CONFIG_EXYNOS4_DEV_DMA)		+=3D dma.o
-+ obj-$(CONFIG_EXYNOS4_DEV_USB_OHCI)	+=3D dev-ohci.o
- =20
- +obj-$(CONFIG_ARCH_EXYNOS4)		+=3D setup-i2c0.o
-  obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+=3D setup-fimc.o
-  obj-$(CONFIG_EXYNOS4_SETUP_FIMD0)	+=3D setup-fimd0.o
-  obj-$(CONFIG_EXYNOS4_SETUP_I2C1)	+=3D setup-i2c1.o
-
---Signature=_Thu__5_Jan_2012_11_27_52_+1100_pDWd=Kq1k3TxS9Up
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPBO6IAAoJEECxmPOUX5FE4bQP/jT5K1dB/P9ykC6LQrYyR4yv
-f8UazgVVwUOKzoPN34PWf+ubtG2XEX66C7mM0rYm7nkIHbT44BqoejXhauzpc4t2
-uqut8KNU+NC8CkzxMn1oAPO8pG/aRfGQhMvGdSc9HP/ia5XQUnGORYJVQV4LXzgq
-KN2nZIsa+Yuc4EmuyXpIW7fQ/ZJHG9EHSNLonSVgLiWF6G1EVMw0c3lz3Vo2eHn/
-YQfz1hhkjizGF3vc42S7yDk41C9FCZ5IML4Pkf+UTphVYutzx6mg6dkYC0bt+av6
-BAxuwcayGVqfQ3ORoKiZh1Z9irEbFX78DitRlfE3EZ+sh/+zOhoU12INhSAc0Gm6
-vFvzoIMOpxdoRZaGOPcO1rUDhdgXzAzTYD36USrsdN5OhTk4KlD3qpY0emZ3ujOX
-0ZZPA6Iw8mlykRpELiPQoz1IYF47pysetA1/EqbMIy836ICNPBrnj5Zgc99WvKYW
-57iWEA+t6khkGk1XrXVv7w1izYABGQ2tsVhPFipB/5u9qDwfIzSMFE3piv4TSv2R
-CEYQKbRKnFw5n6KP8zPlrw+mY+Iy6WCS1BJSu4SLT9B4T1/9jcQCNIfYOG2814HL
-mE8m/zSZSVxpU2s/w3hGQmsQCH0BXyCmnELHBn13j6wwX0gLFFrVGe+2e9RXiyVB
-FshxkLXqV1J9/ym/UqGB
-=qTkJ
------END PGP SIGNATURE-----
-
---Signature=_Thu__5_Jan_2012_11_27_52_+1100_pDWd=Kq1k3TxS9Up--
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
