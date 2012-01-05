@@ -1,65 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the vfs tree
-Date: Thu, 5 Jan 2012 17:35:21 +1100
-Message-ID: <20120105173521.9adbe29e16ca0e7361f79c36@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Thu, 5 Jan 2012 18:29:37 +1100
+Message-ID: <20120105182937.58ec59c2fa2bc34e9e48542a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ"
+ boundary="Signature=_Thu__5_Jan_2012_18_29_37_+1100_SFA+s.rM9TO7u4Fr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:48986 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:40761 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751310Ab2AEGfb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 01:35:31 -0500
+	with ESMTP id S1752132Ab2AEH3q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 02:29:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Greg KH <greg@kroah.com>, Michael Holzheu <holzheu@linux.vnet.ibm.com>
 
---Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ
+--Signature=_Thu__5_Jan_2012_18_29_37_+1100_SFA+s.rM9TO7u4Fr
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Andrew,
 
-After merging the vfs tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-fs/reiserfs/super.c:701:2: warning: initialization from incompatible pointe=
-r type [enabled by default]
-fs/reiserfs/super.c:701:2: warning: (near initialization for 'reiserfs_sops=
-.show_options') [enabled by default]
+drivers/base/memory.c: In function 'memory_block_change_state':
+drivers/base/memory.c:306:22: error: 'struct memory_block' has no member na=
+med 'sysdev'
+drivers/base/memory.c:309:22: error: 'struct memory_block' has no member na=
+med 'sysdev'
 
-Caused by commit 2ddeb2a58b11 ("vfs: switch ->show_options() to struct
-dentry *") interacting with commit f1823b7b87d1 ("reiserfs: Properly
-display mount options in /proc/mounts") from the ext3.  This needs some
-merge fix ... (and will probably currently cause crashes :-()
+Caused by commit 2691cc121386 ("kdump: add udev events for memory
+online/offline") interacting with commit 10fbcf4c6cb1 ("convert 'memory'
+sysdev_class to a regular subsystem") from the driver-core tree.
+
+I have added the following merge fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 5 Jan 2012 18:25:57 +1100
+Subject: [PATCH] memory: fix ups for class to subsystem conversion
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/base/memory.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index 3463e87..ed5de58 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -303,10 +303,10 @@ static int memory_block_change_state(struct memory_bl=
+ock *mem,
+ 	mem->state =3D to_state;
+ 	switch (mem->state) {
+ 	case MEM_OFFLINE:
+-		kobject_uevent(&mem->sysdev.kobj, KOBJ_OFFLINE);
++		kobject_uevent(&mem->dev.kobj, KOBJ_OFFLINE);
+ 		break;
+ 	case MEM_ONLINE:
+-		kobject_uevent(&mem->sysdev.kobj, KOBJ_ONLINE);
++		kobject_uevent(&mem->dev.kobj, KOBJ_ONLINE);
+ 		break;
+ 	default:
+ 		break;
+--=20
+1.7.8.197.g73c6b
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ
+--Signature=_Thu__5_Jan_2012_18_29_37_+1100_SFA+s.rM9TO7u4Fr
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPBUSpAAoJEECxmPOUX5FE9VIP/28QFn3dZieCy41w1MTbIMrg
-5EApTNp4snVMkalq2o0A5/HL7QwEAfKXwjygMLLM1xWPoEr2c2T/4rqfjnKHMdcs
-aGZoxYH+3Zk0dzoZn9qHRi6WQAaM8JKEocOYFSwxkmOBdKWUkm1Y22IFIhFYrw7o
-vPs1P0mvZyNarxcZNwNoxbVqsorw1J0MlQnLKfRYn+eX6hA136cDYHLPDLmtO+Lf
-vlYB95cMBOdpXtf4ZeYqkMfie5YJIBA3vxNYyDVYtxGkAItkF8PdyfhSWrTkXBrf
-/AJjI/anjNupo8UuvzmDyazbDPcWv3/uWyZSQW/ubZkTVXHtvG0GnagLHAKP3kOD
-+Q8fn8wEryVMHeCk/pGidkwojocuEmS1MdZDtNfkZlxWCmIrJg+RCPb0Fi9I8l3Z
-ns54G49Vz3sEWZeoGtdaypPb9UxLgdI+93KahPQsRVK6xbGQ8sODJlp0TcI0qxt6
-YySKvCRIS5PtINAFFO1GyZ14FbeOJs68X1X0Z2jqiBGDvjovVjCeC3EX0ffDccts
-rnfQF3ulOLHVM0ZPH+H2yTGOJpQEINdiHoxfk+5gUaHLb1l87D01+XBW0DPhl3Au
-UKMAnGRcGHQrn9nztKZEVcTUbzf+J8POA7/HrW3EETRiK6E6o4I+PfyvnVJHfeDE
-7ihwuHX6RNaxE18Aa5xz
-=Rsae
+iQIcBAEBCAAGBQJPBVFhAAoJEECxmPOUX5FE8XIP/0pKptKR1P0dVH0lFgHcSBtf
+OClICUifwCFjs7QbBs+4nhO9hDBEAdGg1DtRe1fSW6iF/N00x5bjedas+uomJWCM
+B4sqPwzk8KceDtDOnWiMrrvpqkXTsHsHQHgOAyBKv4NW9v67wGFyBSrzjb2jMQKE
+DCG1kzOkyG1N+mDE0+3oqeEw+bTJ/gZeLv+ghydTW7N8W3rorhsbXC9Ngv3kYT8Q
+MQ0IHwKsExXT1Q6QVwu4ZjxvcoaflufUur5TRVregVH6s06pVBSlke/pL7TYdb+0
+zLmdOVX9oHOJteN5V4wv4r9WI7UocruKxwigMd/ae3m1nmUF2py5dJlEWtzRw1PC
+SdaGaffLL50bnNsp0ezNhk5tmZnaSdwygQWpSoYtCWdMuSuSIB6zv56nASvQAmdD
+WboFfwDTCrJ/2PeFeqaK3VZnoSsBPrNApPmVcEA5e9KZbemulwtMJnsdCXVhDtfE
+PsHTVWnw+/hzoYj4J+7vTKtdxNT8q/iN1vqpxZig1femoAPweHKWL0DqLs6Yow4r
+EiYVEvIPr34glrAEhwutO2PsyBiJC5hCE3u+pevyNokXIW2J7iQcMLjfVMal5Gwj
+AJBwAUN8CO+Pov5V2njv9FcrBgRtrdaJ3WA51dOxthne8olB2MlEKBuW55Hsyl5W
+aGQdKzA3YsKsmzA7va5M
+=azfS
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__5_Jan_2012_17_35_21_+1100_ouhxGakfn4LtB2UQ--
+--Signature=_Thu__5_Jan_2012_18_29_37_+1100_SFA+s.rM9TO7u4Fr--
