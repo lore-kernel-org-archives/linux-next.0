@@ -1,69 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the ext3 tree
-Date: Thu, 5 Jan 2012 13:06:09 +1100
-Message-ID: <20120105130609.2e4915ff183727456b527477@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the pci-current tree
+Date: Thu, 5 Jan 2012 13:16:16 +1100
+Message-ID: <20120105131616.27011797fc72a415ddd335aa@canb.auug.org.au>
+References: <20120105110712.2666364926458942240d6534@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Jan_2012_13_06_09_+1100_/BeyiupTGiCM7.T0"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>, Jan Kara <jack@suse.cz>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__5_Jan_2012_13_16_16_+1100_9.XsQSiGVIrjJV4t"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:53439 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757664Ab2AECQY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 21:16:24 -0500
+In-Reply-To: <20120105110712.2666364926458942240d6534@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jones <davej@redhat.com>
 
---Signature=_Thu__5_Jan_2012_13_06_09_+1100_/BeyiupTGiCM7.T0
+--Signature=_Thu__5_Jan_2012_13_16_16_+1100_9.XsQSiGVIrjJV4t
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Jesse,
 
-Today's linux-next merge of the vfs tree got a conflict in
-include/linux/fs.h between commit 4789fd4495a4 ("quota: Fix deadlock with
-suspend and quotas") from the ext3 tree and commit cf31e70d6cf9 ("vfs:
-new helper - vfs_ustat()") from the vfs tree.
+On Thu, 5 Jan 2012 11:07:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the pci-current tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> arch/x86/pci/acpi.c:81:46: error: expected '}' before ';' token
+>=20
+> Caused by commit 4c33d0af35ba ("PCI: Add Dell Studio 1557 to pci=3Dnocrs
+> blacklist").  Please build test your tree ...
+>=20
+> I have used the pci-current tree from next-20120104 for today.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+Of course I got the same failure in the pci tree, so I used the
+next-20120104 version of it as well.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc include/linux/fs.h
-index 3aba12c,7aacf31..0000000
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@@ -2531,8 -2489,6 +2489,7 @@@ extern void put_filesystem(struct file_
-  extern struct file_system_type *get_fs_type(const char *name);
-  extern struct super_block *get_super(struct block_device *);
-  extern struct super_block *get_active_super(struct block_device *bdev);
-- extern struct super_block *user_get_super(dev_t);
- +extern void put_super(struct super_block *sb);
-  extern void drop_super(struct super_block *sb);
-  extern void iterate_supers(void (*)(struct super_block *, void *), void *=
-);
-  extern void iterate_supers_type(struct file_system_type *,
-
---Signature=_Thu__5_Jan_2012_13_06_09_+1100_/BeyiupTGiCM7.T0
+--Signature=_Thu__5_Jan_2012_13_16_16_+1100_9.XsQSiGVIrjJV4t
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPBQWRAAoJEECxmPOUX5FEKlMP/i5BTMBYAa87ymBgDkoIGBzE
-n8I586Rd9cEGRwLZ4LuYoJoVibNxEu1SxweFcw0RciGnTo73QrQRbzlF43sWoAB2
-Is1R9bVQrPSoScktQaB0rjiWLfOe4m4xUs/eXeWZUqKOCtuSY/CTk1awPD+YPWso
-1UuLzhlEr64+Gq1Iok0EciEtJEjW3vofSRib7cJSiILDIy3rCimZwFWzwulfS7PM
-xxIoRtI1mfyIjiRdVVZDhKz5XWWIRi8KDSp0wG2zZj6stBcdTygev8Dm8MAhGscH
-C1XmvahVeqIkg56t21DTQh56ssbeyQtlixcxGxaggTS2u+36RRrkuW+2jnoVm/p1
-YM/R7m3IB7OlKilAPOjRn1n3ZDgJ8GmuVmIeL4q2uj1ZU+2sotHtAL55HeE15/9A
-7RS19pyZgQxmnoAYQIq/gmsKbAbi1121ipkb967zybQ3M8DJaRzFuRBhV7fM9B4N
-CK3VTfTMHzVz/bh35MJS5MNg1rEbd8GVSJA4gctpuGJOnKAELVBDjgdLMF5F+zbs
-9dcYWFcIF2S1ivPQK4SiYnSrkVmS9LDUU4r6QvmgQXBB2KkJR4fwjY6aLblD53RB
-ZuaNlDR72vQU+E9my81kn5LjE/+0E+8jC6slQXIFUzroLzHmadq7lbGPFH46TE2n
-84DjsmT8SY15GvMkFXiZ
-=PkCl
+iQIcBAEBCAAGBQJPBQfwAAoJEECxmPOUX5FE8iYP/07rSq+hezC/YJ3o5yqbJMTA
+TwfCzfhJ4qmVPx/wZYy2PwCATxqq3MnacwepFNPwcwnJbVLJ6+waMKMeTmFjo6TT
+RVcytSyl9+q4h3OETc2YRXd0vJ5BpWjvw/BCNFNUIrF5bbGGwZ3lgUEkH7h1U+r0
+I0ZDMKCmJoG7Kdypey7oCVY0dWWAj2w2xks7m1VUwK8ZShd3HRlrY9jehLh8RsAi
+x3HnC8mjPrP7zRxOFRpmE9yWhei6jxRXzTGIAwmX5OMOlEY6fGGaSyPDG+psMza7
+/ekBhkCtfrbkE4oLaIvLgf0IoFHfXMsCIH8X/s8zuyUcjD5CDuscVU5J/IGrBipF
++vrBLDl+whBvApn0J2X8sB7MEVi81oMAswnXNtyfjzGJnUHKuYg84wJ89eiAlDRG
+U/Mvzf8UTdeljIlGcBSaIbW7fTX78wSQRAzygzD9a/LBDjhJqZQo7XnJOA/COywV
+yZE7fizqy2CGLi3zP8wIvE9WKupC89J+eqef+JiDzDFOb8Kp8tqbhlPDfGe1R8Dc
+YMbiReLZr2zOsmy53Yk4qfUn2KIGeryx6pDhiUePLY72oWt8P97lkF0M83ifPT3w
+/qeHzBQV1NhXgAKDODe//ta8cZoUEagCevhKap1NBCRBafu2I57YC63O/J8jPdNq
+NP4+7CIgOCgitXNWFWF4
+=kZte
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__5_Jan_2012_13_06_09_+1100_/BeyiupTGiCM7.T0--
+--Signature=_Thu__5_Jan_2012_13_16_16_+1100_9.XsQSiGVIrjJV4t--
