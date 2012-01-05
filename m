@@ -1,62 +1,67 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: build failure after merge of the pci-current tree
-Date: Wed, 4 Jan 2012 16:11:22 -0800
-Message-ID: <20120104161122.4e9d844a@jbarnes-desktop>
-References: <20120105110712.2666364926458942240d6534@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Thu, 5 Jan 2012 11:17:58 +1100
+Message-ID: <20120105111758.d0d640b9d072f04104a5fc4e@canb.auug.org.au>
+References: <20111228174518.721624fad9d048f9f85b3d50@canb.auug.org.au>
+	<20120104230720.GD24583@kroah.com>
+	<20120105104835.fd6c0fd173622af59d11012f@canb.auug.org.au>
+	<CAPXgP13TC4iuy=MW-p8x05VG8ad-9rC+jxm6qHtx90tBX9zhTw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/Bu87TMNeVMnqbam4quBE38Q"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120105110712.2666364926458942240d6534@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jones <davej@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__5_Jan_2012_11_17_58_+1100_35FJ=6Nbob1jkk2c"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from calzone.tip.net.au ([203.10.76.15]:34519 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932073Ab2AEASF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2012 19:18:05 -0500
+In-Reply-To: <CAPXgP13TC4iuy=MW-p8x05VG8ad-9rC+jxm6qHtx90tBX9zhTw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kay Sievers <kay.sievers@vrfy.org>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>
 
---Sig_/Bu87TMNeVMnqbam4quBE38Q
+--Signature=_Thu__5_Jan_2012_11_17_58_+1100_35FJ=6Nbob1jkk2c
 Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 5 Jan 2012 11:07:12 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Kay,
 
-> Hi Jesse,
->=20
-> After merging the pci-current tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> arch/x86/pci/acpi.c:81:46: error: expected '}' before ';' token
->=20
-> Caused by commit 4c33d0af35ba ("PCI: Add Dell Studio 1557 to pci=3Dnocrs
-> blacklist").  Please build test your tree ...
->=20
-> I have used the pci-current tree from next-20120104 for today.
+On Thu, 5 Jan 2012 01:01:51 +0100 Kay Sievers <kay.sievers@vrfy.org> wrote:
+>
+> Yes, that look like the right pattern.
 
-Arg failure of my hand merge.  Will fix now.
+Good, thanks.
+
+> Stephen, thanks a lot for your help here, it's very much appreciated.
+> I know we cause a lot of trouble every other year. :)
+
+Its how I justify myself :-)
 
 --=20
-Jesse Barnes, Intel Open Source Technology Center
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---Sig_/Bu87TMNeVMnqbam4quBE38Q
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+--Signature=_Thu__5_Jan_2012_11_17_58_+1100_35FJ=6Nbob1jkk2c
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPBOqqAAoJEIEoDkX4Qk9hP0YP/2z5ytZKjh+Zbpj3krgn3ydM
-0m+xsvfV3ZLtvv9RQpx7nygInHX5CjgEJUswtm+X2kcFHetZ1bGHO1WWhE6EI0+R
-9xsUbae8vrgA59xocuiJMBcl347FeMHiznQgAORgmEqfH86FPz3YDYKOaDiYOTGi
-n4dEqg6b8EwcoesAzh1EJ6sfpa+TAWSFhT0hjOnoFBzfcYAegcbTg2Z9ljiD1VMS
-w5aJlQIWj8U21WycabzHxA3zpQ6Lg8iS/23wvkPEQSQmEejmXxM4DmRECLzf6eKn
-GNYQCJlt55s2Dq/ulmpeijYg5IWRZdbBUPaCTOpUFjl+BTawlFp3lMPMyleBT310
-cx9qTbmPq3mlYSdErfxPN2AFNikJGzNTQRa5ZcJxsTYUyD+zA8CFnJ+yRaYKnI+2
-c2xgGQiVy0CFPUc/alDoyewQp0r4KE7q+QRTiGdTbS7/7SCR6eGF5/O4jxPERNVB
-73dnTLd+Ra8pe1rs2N5JvGF7PJ5Yogrk91oVw5MGoeKi5EMb1gMYYVC/d3rCEEOr
-ZLxi9lJoO1CF5IpDPj8mBsIgdlFDmPPaWUD7lpvixsu9S3C0HNPXlpSjR9XK/65W
-EJeoNdX7uOxxUywl02cg/L8PGfb+lJRx7jqvMcm9RYpvv8uMaBc1J3E2nOh9SL9p
-ayrUhG6I7YsSnaMXmrUe
-=nqMv
+iQIbBAEBCAAGBQJPBOw2AAoJEECxmPOUX5FEsX8P+MT7LK9RucY5uKwc6FqdyxXk
+HojASocxFv30zk9NZRyXJtplghJcqNQul2CyZSuDRL4JWmobTK4Ng6NFC/T/c/38
+O85Q2CLlSHTg5Sz61fqPYoggAeR78eP9+ovnOQkFSR7oiNDaH4ftqd7N6I+hQqgk
+XxQL/KtyT83I78OBvQPQjPGbaZ8gj1LK/STFL0QJtpHac0gKaArBANdpY/1Rxwy4
+0jifj5YHQL8VpPTmmVE6Zx7Pt6Zy2erTH/htIGpZ++5ByZRwS3fgEiP5+89UO29N
+VOtbvY2QEL+m/QvP6Ipr99FWMMkpZZAhYchri6wrfuoIllgbpXMYbFoghvFX4Rw1
+aU01cluaorDccUixyv9X722STZlUZRNBCQAJIbBsXUvgPbSWLIyDVdwz7Xfqn0Wt
+CKEPECl4Terag4Jhhx0fc6aXlCy/DZFux7kdb66YgeJ3hpdcTkmDzGcbYmH+jfKA
+45n6KbDW7HvMn4ekqbNvZRzW4l+yKt1MOXV+vM8q0hPT5vrqK6ucQwxTcXFDfbVR
+qjaoh04poPpqqUBArJ1z26l7u6pqmQ6IeTE6nxeJbLhMgJyE6AJJFGnsagtCQlDj
+xy4qYhxhjdCh9UwVc8RBGnEr3gjtOX2MWcgHLoJyrkTvwEWU7UveLQL+x8xXsbUw
+f8dL3d+P/l/bbqfeE90=
+=KgZk
 -----END PGP SIGNATURE-----
 
---Sig_/Bu87TMNeVMnqbam4quBE38Q--
+--Signature=_Thu__5_Jan_2012_11_17_58_+1100_35FJ=6Nbob1jkk2c--
