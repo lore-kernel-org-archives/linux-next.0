@@ -1,56 +1,42 @@
-From: Kalle Valo <kvalo@qca.qualcomm.com>
-Subject: Re: [PATCH 4/6] ath6kl: get rid of AR_DBG_LVL_CHECK()
-Date: Thu, 5 Jan 2012 10:57:05 +0200
-Message-ID: <4F0565E1.30909@qca.qualcomm.com>
-References: <20120104230429.32306.75965.stgit@x201>	 <20120104230921.32306.63985.stgit@x201> <1325721515.4116.11.camel@joe2Laptop>
+From: "David Laight" <David.Laight@ACULAB.COM>
+Subject: RE: [PATCH 5/6] ath6kl: convert ath6kl_dbg() and ath6kl_dbg_dump() into functions
+Date: Thu, 5 Jan 2012 10:41:28 -0000
+Message-ID: <AE90C24D6B3A694183C094C60CF0A2F6D8AF2F@saturn3.aculab.com>
+References: <1325720472.4116.7.camel@joe2Laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wolverine01.qualcomm.com ([199.106.114.254]:49852 "EHLO
-	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751247Ab2AEI5Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 03:57:24 -0500
-In-Reply-To: <1325721515.4116.11.camel@joe2Laptop>
+Received: from mx0.aculab.com ([213.249.233.131]:41658 "HELO mx0.aculab.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1756826Ab2AEKnO convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 05:43:14 -0500
+Received: from mx0.aculab.com ([127.0.0.1])
+ by localhost (mx0.aculab.com [127.0.0.1]) (amavisd-new, port 10024) with SMTP
+ id 07781-09 for <linux-next@vger.kernel.org>;
+ Thu,  5 Jan 2012 10:43:11 +0000 (GMT)
+Content-class: urn:content-classes:message
+In-Reply-To: <1325720472.4116.7.camel@joe2Laptop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joe Perches <joe@perches.com>
+To: Joe Perches <joe@perches.com>, Kalle Valo <kvalo@qca.qualcomm.com>
 Cc: linville@tuxdriver.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, ath6kl-devel@qualcomm.com, davem@davemloft.net
 
-On 01/05/2012 01:58 AM, Joe Perches wrote:
-> On Thu, 2012-01-05 at 01:09 +0200, Kalle Valo wrote:
->> We don't need it as debug calls already have a log level and compiler
->> should be smart enough to optimise away the code when ath6kl debug code
->> is not enabled. Also it makes it easier to abstract core code to
->> ath6kl_core.ko.
+ 
+> > +	va_start(args, fmt);
+> > +	ath6kl_printk(KERN_DEBUG, fmt, &args);
 > 
-> Changelog isn't representative of code changes.
-> ATH6KL_DBG_ANY -> ATH6KL_DBG_IRQ.
-> 
->> diff --git a/drivers/net/wireless/ath/ath6kl/debug.c b/drivers/net/wireless/ath/ath6kl/debug.c
-> []
->> @@ -82,31 +82,31 @@ void ath6kl_dump_registers(struct ath6kl_device *dev,
->>  			   struct ath6kl_irq_enable_reg *irq_enable_reg)
->>  {
->>  
->> -	ath6kl_dbg(ATH6KL_DBG_ANY, ("<------- Register Table -------->\n"));
->> +	ath6kl_dbg(ATH6KL_DBG_IRQ, ("<------- Register Table -------->\n"));
+> Passing a va_list as an argument?
+> I believe this doesn't work.
+> I think you'll need to add and use:
 
-It's related to this change:
+Passing a va_list certainly does work - vprintf() etc.
+What is problematical is taking the address of a va_list.
 
--		if (AR_DBG_LVL_CHECK(ATH6KL_DBG_IRQ))
--			ath6kl_dump_registers(dev, &dev->irq_proc_reg,
--					 &dev->irq_en_reg);
-+		ath6kl_dump_registers(dev, &dev->irq_proc_reg,
-+				      &dev->irq_en_reg);
+The likely problem is a 'levels of indirection' one
+because, when va_list needs to be a struct (very
+likely when arguments are passed in registers),
+it is often declared as as array type.
 
-So instead of checking ATH6KL_DBG_IRQ before calling the function the
-debug messages in function instead use ATH6KL_DBG_IRQ. I'll mention this
-in the commit log.
-
-I should get rid of that ATH6KL_DBG_ANY level completely, it's just
-confusing. But I'll do that later.
-
-Thank you for the review.
-
-Kalle
+	David
