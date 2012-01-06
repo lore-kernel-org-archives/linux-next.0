@@ -1,43 +1,35 @@
-From: Kalle Valo <kvalo@qca.qualcomm.com>
-Subject: Re: [PATCH v2 5/6] ath6kl: convert ath6kl_dbg() and ath6kl_dbg_dump()
- into functions
-Date: Fri, 6 Jan 2012 10:14:17 +0200
-Message-ID: <4F06AD59.3050207@qca.qualcomm.com>
-References: <20120105132523.22281.95999.stgit@x201>	 <20120105132834.22281.78822.stgit@x201> <1325781489.22154.19.camel@joe2Laptop>
+From: Cong Wang <amwang@redhat.com>
+Subject: Re: linux-next: manual merge of the kmap_atomic tree with the
+ staging tree
+Date: Fri, 06 Jan 2012 16:17:22 +0800
+Message-ID: <1325837842.9815.33.camel@cr0>
+References: <20120106184055.3669727def69e424cd98690d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1325781489.22154.19.camel@joe2Laptop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: linville@tuxdriver.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, ath6kl-devel@qualcomm.com, davem@davemloft.net
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:14306 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932909Ab2AFIRh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Jan 2012 03:17:37 -0500
+In-Reply-To: <20120106184055.3669727def69e424cd98690d@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Greg KH <greg@kroah.com>
 
-Hi Joe,
+On Fri, 2012-01-06 at 18:40 +1100, Stephen Rothwell wrote:
+> Hi Cong,
+> 
+> Today's linux-next merge of the kmap_atomic tree got conflicts in
+> drivers/net/hyperv/netvsc_drv.c and drivers/net/hyperv/rndis_filter.c
+> between commit 453263421f88 ("net/hyperv: Remove unnecessary kmap_atomic
+> in netvsc driver") from the staging tree and commit e91cd643d15d ("hv:
+> remove the second argument of k[un]map_atomic()") from the kmap_atomic
+> tree.
+> 
+> The former removed the code modified by the latter, so I did that.
 
-On 01/05/2012 06:38 PM, Joe Perches wrote:
-> On Thu, 2012-01-05 at 15:28 +0200, Kalle Valo wrote:
-> 
->> diff --git a/drivers/net/wireless/ath/ath6kl/debug.c b/drivers/net/wireless/ath/ath6kl/debug.c
-> []
->> +void ath6kl_dbg(enum ATH6K_DEBUG_MASK mask, const char *fmt, ...)
-> []
->> +	ath6kl_printk(KERN_DEBUG, "%pV", &vaf);
-> [
->> diff --git a/drivers/net/wireless/ath/ath6kl/debug.h b/drivers/net/wireless/ath/ath6kl/debug.h
-> []
->> +void ath6kl_dbg(enum ATH6K_DEBUG_MASK mask, const char *fmt, ...);
-> 
-> You need to add
-> 
-> __printf(2, 3)
-> 
-> to the prototype.
-> 
-> If it's not there, the printf formats and arguments aren't verified.
-> %pV could do the wrong/bad things.
+This makes sense for me.
 
-Nice, I'll add that to v3. Thanks again.
-
-Kalle
+Thanks for fixing it!
