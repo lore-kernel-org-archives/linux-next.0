@@ -1,61 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kmap_atomic tree with the staging
- tree
-Date: Fri, 6 Jan 2012 18:40:55 +1100
-Message-ID: <20120106184055.3669727def69e424cd98690d@canb.auug.org.au>
+From: Shaohua Li <shaohua.li@intel.com>
+Subject: Re: [PATCH block:for-3.3/core] block: disable
+ ELEVATOR_INSERT_SORT_MERGE
+Date: Fri, 06 Jan 2012 16:15:57 +0800
+Message-ID: <1325837757.22361.538.camel@sli10-conroe>
+References: <20120103221301.GH31746@google.com>
+	 <20120103223505.GI31746@google.com> <20120105012445.GP31746@google.com>
+	 <alpine.LSU.2.00.1201051026090.2009@eggly.anvils>
+	 <20120105183842.GF18486@google.com> <20120106021707.GA6276@google.com>
+	 <20120106023638.GC6276@google.com>
+	 <1325819655.22361.513.camel@sli10-conroe>
+	 <20120106030406.GD6276@google.com> <20120106033012.GE6276@google.com>
+	 <20120106035247.GF6276@google.com>
+	 <1325823545.22361.526.camel@sli10-conroe>
+	 <CAOS58YPUgK4J6j1Gme9O9HeL7GrwnJU8QTVKbVLA9cEXPQ1kag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__6_Jan_2012_18_40_55_+1100_PO+FhLS8yrnOTj74"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:50726 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752468Ab2AFHlF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jan 2012 02:41:05 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Cong Wang <amwang@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Greg KH <greg@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <CAOS58YPUgK4J6j1Gme9O9HeL7GrwnJU8QTVKbVLA9cEXPQ1kag@mail.gmail.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org, x86@kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__6_Jan_2012_18_40_55_+1100_PO+FhLS8yrnOTj74
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2012-01-05 at 20:38 -0800, Tejun Heo wrote:
+> Hello,
+> 
+> On Thu, Jan 5, 2012 at 8:19 PM, Shaohua Li <shaohua.li@intel.com> wrote:
+> >> For detailed discussion of the bug:
+> >>
+> >>  http://thread.gmane.org/gmane.linux.kernel.next/20064/focus=20159
+> >>
+> > this is overkill. when plug is added, we found huge performance
+> > regression, that's why we add INSERT_SORT_MERGE.
+> 
+> With what workload? I suspect most of the improvements is from merging
+> across different cfqqs, no? The whole recursive thing can't be very
+> useful if cross-cfqq merging isn't allowed. Maybe there are specific
+> cases where last_merge hint merging can be specially effective. I
+> don't know. Regardless, this is an apparent bug and the block tree
+> will be pushed mainline pretty soon. If necessary, fix it better
+> later. Doing complex things inside merge window usually isn't a good
+> idea.
+it's not related to the recursive merge. I forgot the detail of the
+workload why we add INSERT_SORT_MERGE, it's added several months ago
+anyway.
+Obviously we shouldn't do complex things inside the merge window. I just
+didn't agree to disable INSERT_SORT_MERGE, which will bring performance
+regression for sure. Can we just change CFQ like your first path?
 
-Hi Cong,
+Thanks,
+Shaohua
 
-Today's linux-next merge of the kmap_atomic tree got conflicts in
-drivers/net/hyperv/netvsc_drv.c and drivers/net/hyperv/rndis_filter.c
-between commit 453263421f88 ("net/hyperv: Remove unnecessary kmap_atomic
-in netvsc driver") from the staging tree and commit e91cd643d15d ("hv:
-remove the second argument of k[un]map_atomic()") from the kmap_atomic
-tree.
-
-The former removed the code modified by the latter, so I did that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__6_Jan_2012_18_40_55_+1100_PO+FhLS8yrnOTj74
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPBqWHAAoJEECxmPOUX5FEC90P/1BFxuAN8v6HigMJV+VGBsAB
-FA83sCAd8Z+bgw7GBtgxM31U+8GNJh/MDtiQLlywLfUA01XegOZ9+b5pLNVc/6ej
-pqNPOjkgGkHgCjEHnM2Jq/wVuNjSNQ3g/Q9v+JgO+ZSd0CF5GA4f/fAk7r6V+6nW
-8mu6mD8luVh2PHI7+cWQvr2xIg9nkNvvD3h0DbdQ/byTW3V7AC6uFfekkiflTAEV
-9agOvHMD25pQ+h/SMeA8vkOmrx51lamhESBJToTW0IaTqQcX9OBk7JYEPSUAegqA
-XkvOga4pEjUx7ChGB97DK3S60gGXTXtXhC7xqD9V5C6rVx1zQnqjRkNi8C8hTEo/
-nsP0mL5U4S0n1SDZWJfemRXTuPf5Fm9t/fq5FXeYbWRWVSdG/J+1PyH0w4JGcG5G
-WkyG1TpwNv3yppoMvGeNpAu1DV/sLH4XP4vx3PAhNIv+BMFLinz96SsHEZ0w8tBm
-f0LRmg+sy6lMYPe/EjJPQq7DX+vgtg4a/aiB3NQLpKqca1sqHfTeZdLYD0y3LCR9
-UNq2xXj9r4DJ9nPhwyEQ+qdFFnFIIMFMNu/DOVYnW0cmhCQo9IeexeCkg9LdFM33
-rfrd5W8U+5bNlZQMJ10KXk6LK5UxyHBBOAfCLYDtwWv7YMw5MazKLfH4Mb2q3ZjR
-+MJmWJk687Dsd50zj6lQ
-=WPdL
------END PGP SIGNATURE-----
-
---Signature=_Fri__6_Jan_2012_18_40_55_+1100_PO+FhLS8yrnOTj74--
