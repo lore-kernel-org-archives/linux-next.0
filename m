@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the v9fs tree
-Date: Fri, 6 Jan 2012 13:46:58 +1100
-Message-ID: <20120106134658.7589dec177541808dad20eb9@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the ext4 tree
+Date: Fri, 6 Jan 2012 13:54:42 +1100
+Message-ID: <20120106135442.1720766a6c1510abf51b2aff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__6_Jan_2012_13_46_58_+1100_/B5a9ZdHuiPALX.m"
+ boundary="Signature=_Fri__6_Jan_2012_13_54_42_+1100_zWGzpS/bwJ2SNGD/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:47373 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:52906 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758436Ab2AFCrI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 21:47:08 -0500
+	with ESMTP id S1751310Ab2AFCys (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 21:54:48 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Eric Van Hensbergen <ericvh@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Djalal Harouni <tixxdz@opendz.org>, Theodore Ts'o <tytso@mit.edu>
 
---Signature=_Fri__6_Jan_2012_13_46_58_+1100_/B5a9ZdHuiPALX.m
+--Signature=_Fri__6_Jan_2012_13_54_42_+1100_zWGzpS/bwJ2SNGD/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Al,
 
-Today's linux-next merge of the vfs tree got conflicts in
-fs/9p/vfs_inode.c and fs/9p/vfs_inode_dotl.c between commit 5d3851530d6d
-("9p: Reduce object size with CONFIG_NET_9P_DEBUG") from the v9fs tree
-and commits c2837de73e80 ("9p: don't bother with unixmode2p9mode() for
-link() and symlink()") and 3eda0de677b5 ("9p: propagate umode_t") from
+Today's linux-next merge of the vfs tree got a conflict in
+fs/ext4/ioctl.c between commits 2a415f129806 ("ext4: add missing
+ext4_resize_end on error paths") and 22cdfca56418 ("ext4: remove unneeded
+file_remove_suid() from ext4_ioctl()") from the ext4 tree and commit
+a561be7100cd ("switch a bunch of places to mnt_want_write_file()") from
 the vfs tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
@@ -35,140 +35,114 @@ I fixed it up (see below) and can carry the fix as necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/9p/vfs_inode.c
-index c8fe480,e0f20de..0000000
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@@ -127,14 -94,14 +122,14 @@@ static int p9mode2perm(struct v9fs_sess
-   * @rdev: major number, minor number in case of device files.
-   *
-   */
-- static int p9mode2unixmode(struct v9fs_session_info *v9ses,
-- 			   struct p9_wstat *stat, dev_t *rdev)
-+ static umode_t p9mode2unixmode(struct v9fs_session_info *v9ses,
-+ 			       struct p9_wstat *stat, dev_t *rdev)
-  {
-  	int res;
-- 	int mode =3D stat->mode;
-+ 	u32 mode =3D stat->mode;
- =20
- -	res =3D mode & S_IALLUGO;
-  	*rdev =3D 0;
- +	res =3D p9mode2perm(v9ses, stat);
- =20
-  	if ((mode & P9_DMDIR) =3D=3D P9_DMDIR)
-  		res |=3D S_IFDIR;
-@@@ -352,8 -329,8 +346,8 @@@ int v9fs_init_inode(struct v9fs_session
- =20
-  		break;
-  	default:
-- 		p9_debug(P9_DEBUG_ERROR, "BAD mode 0x%x S_IFMT 0x%x\n",
- -		P9_DPRINTK(P9_DEBUG_ERROR, "BAD mode 0x%hx S_IFMT 0x%x\n",
- -			   mode, mode & S_IFMT);
-++		p9_debug(P9_DEBUG_ERROR, "BAD mode 0x%hx S_IFMT 0x%x\n",
- +			 mode, mode & S_IFMT);
-  		err =3D -EINVAL;
-  		goto error;
+diff --cc fs/ext4/ioctl.c
+index f2c335b,d37b3bb..0000000
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@@ -173,11 -170,8 +173,11 @@@ flags_out
+  			err =3D ext4_mark_iloc_dirty(handle, inode, &iloc);
+  		}
+  		ext4_journal_stop(handle);
+ +
+ +unlock_out:
+ +		mutex_unlock(&inode->i_mutex);
+  setversion_out:
+- 		mnt_drop_write(filp->f_path.mnt);
++ 		mnt_drop_write_file(filp);
+  		return err;
   	}
-@@@ -375,7 -352,7 +369,7 @@@ struct inode *v9fs_get_inode(struct sup
-  	struct inode *inode;
-  	struct v9fs_session_info *v9ses =3D sb->s_fs_info;
+  	case EXT4_IOC_GROUP_EXTEND: {
+@@@ -197,13 -189,12 +197,13 @@@
+  			       EXT4_FEATURE_RO_COMPAT_BIGALLOC)) {
+  			ext4_msg(sb, KERN_ERR,
+  				 "Online resizing not supported with bigalloc");
+ -			return -EOPNOTSUPP;
+ +			err =3D -EOPNOTSUPP;
+ +			goto group_extend_out;
+  		}
  =20
-- 	p9_debug(P9_DEBUG_VFS, "super block: %p mode: %o\n", sb, mode);
- -	P9_DPRINTK(P9_DEBUG_VFS, "super block: %p mode: %ho\n", sb, mode);
-++	p9_debug(P9_DEBUG_VFS, "super block: %p mode: %ho\n", sb, mode);
+- 		err =3D mnt_want_write(filp->f_path.mnt);
++ 		err =3D mnt_want_write_file(filp);
+  		if (err)
+ -			return err;
+ +			goto group_extend_out;
  =20
-  	inode =3D new_inode(sb);
-  	if (!inode) {
-@@@ -1362,10 -1333,10 +1355,10 @@@ static int v9fs_vfs_mkspecial(struct in
-  static int
-  v9fs_vfs_symlink(struct inode *dir, struct dentry *dentry, const char *sy=
-mname)
-  {
- -	P9_DPRINTK(P9_DEBUG_VFS, " %lu,%s,%s\n", dir->i_ino,
- -					dentry->d_name.name, symname);
- +	p9_debug(P9_DEBUG_VFS, " %lu,%s,%s\n",
- +		 dir->i_ino, dentry->d_name.name, symname);
- =20
-- 	return v9fs_vfs_mkspecial(dir, dentry, S_IFLNK, symname);
-+ 	return v9fs_vfs_mkspecial(dir, dentry, P9_DMSYMLINK, symname);
-  }
- =20
-  /**
-@@@ -1419,14 -1391,16 +1412,16 @@@ clunk_fid
-   */
- =20
-  static int
-- v9fs_vfs_mknod(struct inode *dir, struct dentry *dentry, int mode, dev_t =
-rdev)
-+ v9fs_vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, de=
-v_t rdev)
-  {
-+ 	struct v9fs_session_info *v9ses =3D v9fs_inode2v9ses(dir);
-  	int retval;
-  	char *name;
-+ 	u32 perm;
- =20
-- 	p9_debug(P9_DEBUG_VFS, " %lu,%s mode: %x MAJOR: %u MINOR: %u\n",
- -	P9_DPRINTK(P9_DEBUG_VFS,
- -		" %lu,%s mode: %hx MAJOR: %u MINOR: %u\n", dir->i_ino,
- -		dentry->d_name.name, mode, MAJOR(rdev), MINOR(rdev));
-++	p9_debug(P9_DEBUG_VFS, " %lu,%s mode: %hx MAJOR: %u MINOR: %u\n",
- +		 dir->i_ino, dentry->d_name.name, mode,
- +		 MAJOR(rdev), MINOR(rdev));
- =20
-  	if (!new_valid_dev(rdev))
-  		return -EINVAL;
-diff --cc fs/9p/vfs_inode_dotl.c
-index 73488fb,8ef152a..0000000
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@@ -283,8 -283,8 +283,8 @@@ v9fs_vfs_create_dotl(struct inode *dir
+  		err =3D ext4_group_extend(sb, EXT4_SB(sb)->s_es, n_blocks_count);
+  		if (EXT4_SB(sb)->s_journal) {
+@@@ -213,10 -204,9 +213,10 @@@
+  		}
+  		if (err =3D=3D 0)
+  			err =3D err2;
+ +
+- 		mnt_drop_write(filp->f_path.mnt);
++ 		mnt_drop_write_file(filp);
+ +group_extend_out:
+  		ext4_resize_end(sb);
+ -
+  		return err;
   	}
  =20
-  	name =3D (char *) dentry->d_name.name;
-- 	p9_debug(P9_DEBUG_VFS, "name:%s flags:0x%x mode:0x%x\n",
-- 		 name, flags, omode);
- -	P9_DPRINTK(P9_DEBUG_VFS, "v9fs_vfs_create_dotl: name:%s flags:0x%x "
-++	p9_debug(P9_DEBUG_VFS, "v9fs_vfs_create_dotl: name:%s flags:0x%x "
-+ 			"mode:0x%hx\n", name, flags, omode);
+@@@ -256,7 -246,9 +256,7 @@@
  =20
-  	dfid =3D v9fs_fid_lookup(dentry->d_parent);
-  	if (IS_ERR(dfid)) {
-@@@ -810,9 -813,9 +810,9 @@@ v9fs_vfs_mknod_dotl(struct inode *dir,=20
-  	struct dentry *dir_dentry;
-  	struct posix_acl *dacl =3D NULL, *pacl =3D NULL;
+  		err =3D ext4_move_extents(filp, donor_filp, me.orig_start,
+  					me.donor_start, me.len, &me.moved_len);
+- 		mnt_drop_write(filp->f_path.mnt);
++ 		mnt_drop_write_file(filp);
+ -		if (me.moved_len > 0)
+ -			file_remove_suid(donor_filp);
  =20
-- 	p9_debug(P9_DEBUG_VFS, " %lu,%s mode: %x MAJOR: %u MINOR: %u\n",
- -	P9_DPRINTK(P9_DEBUG_VFS,
- -		" %lu,%s mode: %hx MAJOR: %u MINOR: %u\n", dir->i_ino,
- -		dentry->d_name.name, omode, MAJOR(rdev), MINOR(rdev));
-++	p9_debug(P9_DEBUG_VFS, " %lu,%s mode: %hx MAJOR: %u MINOR: %u\n",
- +		 dir->i_ino, dentry->d_name.name, omode,
- +		 MAJOR(rdev), MINOR(rdev));
+  		if (copy_to_user((struct move_extent __user *)arg,
+  				 &me, sizeof(me)))
+@@@ -284,13 -274,12 +284,13 @@@ mext_out
+  			       EXT4_FEATURE_RO_COMPAT_BIGALLOC)) {
+  			ext4_msg(sb, KERN_ERR,
+  				 "Online resizing not supported with bigalloc");
+ -			return -EOPNOTSUPP;
+ +			err =3D -EOPNOTSUPP;
+ +			goto group_add_out;
+  		}
  =20
-  	if (!new_valid_dev(rdev))
-  		return -EINVAL;
+- 		err =3D mnt_want_write(filp->f_path.mnt);
++ 		err =3D mnt_want_write_file(filp);
+  		if (err)
+ -			return err;
+ +			goto group_add_out;
+ =20
+  		err =3D ext4_group_add(sb, &input);
+  		if (EXT4_SB(sb)->s_journal) {
+@@@ -300,10 -289,9 +300,10 @@@
+  		}
+  		if (err =3D=3D 0)
+  			err =3D err2;
+ +
+- 		mnt_drop_write(filp->f_path.mnt);
++ 		mnt_drop_write_file(filp);
+ +group_add_out:
+  		ext4_resize_end(sb);
+ -
+  		return err;
+  	}
+ =20
 
---Signature=_Fri__6_Jan_2012_13_46_58_+1100_/B5a9ZdHuiPALX.m
+--Signature=_Fri__6_Jan_2012_13_54_42_+1100_zWGzpS/bwJ2SNGD/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPBmCiAAoJEECxmPOUX5FEPqkP/iZRoQ/zcbzqz4hfeKyQ5QwD
-4tZSAzEbJGXvHJgF+gPQhOtGVcrKbDCwa9SEVUIx+zm+OWW6SZCtAjC1r0i0e/yK
-PuddiTcfRc1su4bIOpZKdCrXIcWx3+nPRI1qX/v6JbKSWAmdoO4yJFw1xURyrADF
-ifJWjCN9QU6gC1o8fnjxPt9h5lGmcBOwSbVwtsAt8+awDhW0c/BFfYvlxKEgYRln
-vASW+ZNZuGoGPhOwbr0Ys63oxr8SnIW87tPIGLwAbHTkQInAbJQ1CgAFESZQF1hK
-qMXFBatqtwu388id6qKviS68ZoTfABdLDSmqK+Hv1R97jHeTIf6lR7ABeP+Gfpfs
-ZRcE5xHAaI73k/6z5safnHG4rhxjtAEBhJDmoJjSJgj4OPG7z/LlKAmLHJbeqp71
-YyJvGzmXzIguQwr/wEURQmhTcW2fA07D2uvL7mIbGZ8qlxfMOTeBHJOxCqawEqTb
-BQy1NvKxzzK0LcxQERGdBTjanYmDGQle0yyTjNgnFg2KRt+r7idJMiA98vXvggTi
-fqeEIsQxRowfCe3KCXkclrXhGDpWJKdx2MRlXAfvb5fKJowD5+PH769lV3q61RlP
-l3BrmWZnwrl4KlpcOPled5cU4unIqypcnf1EWpTCT1bQj4rFKxj8woxz/w4tIrOF
-esGDP/yd40IV163Yj+Ag
-=ZByF
+iQIcBAEBCAAGBQJPBmJyAAoJEECxmPOUX5FE0GcP+QET3Ivib5oISz1iGWVv8b6C
+na+cGNFKPIQ2g1RKhcfX+LZ+971We8x9hk7UEw0pVM9QkNZ62S4o1ZlXCuIx3jM0
+aEJ/CObD8kC86i5r7id6NgCpx8J1wC0tQjga4WhfaN8y6XRBcWu4vr3KrXGIti7y
+LFoVgh+sm1ATcpgmFXksqNYUuIdGxvgU6S0c1gi+fNPjm5YYyjYcIPbyGWwhOM8S
+b7C6V4VL76Rzv7pL+CkEbyGUoGY56GxQ9kU9mhACdKkm9ARGQeQCMOzKACOYO1Rm
+cghpYl63C7VA7oyh+TSty1OcldJzSqLOAZdXIIvdzckonm8XboEfELWd0RbvfO1J
+csza7cT8buAqDBzmbxTiZtFE50YXQWJ1DHx9enYbPyZ32isN0k2iWQwHjthn157q
+LsyxPT6XWpHE5Av69F1tjQsYz03Mb9OdJzWD4V5loSDK8D7MrWXIEHpJESAhGzIJ
+Nv5GUijpfYd8xOLCV++lA95Pm86H+wrIMa3MhqTB/Zpq4RcHyp0WNxuKQV+ExAXK
+Qwgvk3XgbGGW/Ds9RW/zJpe3FFL6yHjfo4c4pnF/vnYd4yQ9/hWV+CmohNOJ7eeo
+ybV86CAGAkP9WydwMfz8OiaiucjMm8mORDeA2zjOHiTAWyUA+aWPiMZh3s772Gvn
+biL+fPd8nGfoTSlAx3YB
+=6/KE
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__6_Jan_2012_13_46_58_+1100_/B5a9ZdHuiPALX.m--
+--Signature=_Fri__6_Jan_2012_13_54_42_+1100_zWGzpS/bwJ2SNGD/--
