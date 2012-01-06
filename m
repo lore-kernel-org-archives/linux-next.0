@@ -1,46 +1,49 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH block:for-3.3/core] cfq: merged request shouldn't jump to
- a different cfqq
-Date: Thu, 5 Jan 2012 20:40:06 -0800
-Message-ID: <CAOS58YPNaapUy0PBJjaHe+aSC-46_QJEEzSbJdcWLhxvqJzytA@mail.gmail.com>
-References: <20120103200906.GG31746@google.com>
-	<4F03631C.8080501@kernel.dk>
-	<20120103221301.GH31746@google.com>
-	<20120103223505.GI31746@google.com>
-	<20120105012445.GP31746@google.com>
-	<alpine.LSU.2.00.1201051026090.2009@eggly.anvils>
-	<20120105183842.GF18486@google.com>
-	<20120106021707.GA6276@google.com>
-	<20120106023638.GC6276@google.com>
-	<1325819655.22361.513.camel@sli10-conroe>
-	<20120106030406.GD6276@google.com>
-	<1325820878.22361.518.camel@sli10-conroe>
-	<CAOS58YOcciTFzYU9vsW2pnE=dbNo+rGz2XJ0Qjk4VHriNDw31g@mail.gmail.com>
-	<1325823349.22361.523.camel@sli10-conroe>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Thu, 5 Jan 2012 21:05:38 -0800
+Message-ID: <20120106050538.GC7633@kroah.com>
+References: <20120105182949.e35b2430b915b50e4bb9bc04@canb.auug.org.au>
+ <20120105155233.0d367bc3.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <1325823349.22361.523.camel@sli10-conroe>
-Sender: linux-ide-owner@vger.kernel.org
-To: Shaohua Li <shaohua.li@intel.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120105155233.0d367bc3.akpm@linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dimitri Sivanich <sivanich@sgi.com>, Kay Sievers <kay.sievers@vrfy.org>
 List-Id: linux-next.vger.kernel.org
 
-Hello,
+On Thu, Jan 05, 2012 at 03:52:33PM -0800, Andrew Morton wrote:
+> On Thu, 5 Jan 2012 18:29:49 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > Hi Andrew,
+> > 
+> > After merging the akpm tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> > 
+> > kernel/time/tick-sched.c:874:7: warning: 'struct sysdev_attribute' declared inside parameter list [enabled by default]
+> >
+> > ...
+> >
+> > Caused by commit 629d589817da ("tick-sched: add specific do_timer_cpu
+> > value for nohz off mode") interacting with the removal of sysdevs in the
+> > driver-core tree.  This patch will need reworking for that.
+> > 
+> > I have reverted that commit for today.
+> 
+> Bah.  I dropped it.
+> 
+> I must say, this week was a maximally inappropriate time to merge all this
+> sysdev stuff into linux-next.
 
-On Thu, Jan 5, 2012 at 8:15 PM, Shaohua Li <shaohua.li@intel.com> wrote:
-> don't know. I don't think a tweak for merge impacts isolation so much.
-> For rotate disk, request size hasn't impact to request cost, so this
-> doesn't impact isolation. Even for ssd, big size request is more
-> efficient to dispatch. And we already have breakage of fairness for SSD,
-> such as no idle.
+It was merged the week before christmas, there was a fun vacation break
+in there, and a "build warning turns to error" problem with the powerpc
+tree that we missed which caused it to be dropped from linux-next for a
+few days, which all combined to hit you now.
 
-I'm not saying they shouldn't be merged but the decision should be
-elevator's. Block core shouldn't decide it for the elevator. So,
-whether cross cfqq merge is a good idea or not is mostly irrelevant in
-this thread.
+Sorry about that, a fallout of the time of the year.  It had been a
+while since Kay and I had bothered a bunch of people, it was about time :)
 
-Thanks.
-
--- 
-tejun
+greg k-h
