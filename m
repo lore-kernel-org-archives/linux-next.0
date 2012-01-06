@@ -1,64 +1,86 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Thu, 5 Jan 2012 16:04:48 -0800
-Message-ID: <20120105160448.dc482ef6.akpm@linux-foundation.org>
-References: <20120105190405.1e3191fb5a43b2a0f1655e1f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Fri, 6 Jan 2012 12:03:17 +1100
+Message-ID: <20120106120317.500c45afe95ae20b4b6648a0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__6_Jan_2012_12_03_17_+1100__uBF06hiR6nr6FhK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44055 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758118Ab2AFAEu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 19:04:50 -0500
-In-Reply-To: <20120105190405.1e3191fb5a43b2a0f1655e1f@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:38704 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758249Ab2AFBDb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2012 20:03:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Russell King <rmk@arm.linux.org.uk>, "Govindraj.R" <govindraj.raja@ti.com>, Kevin Hilman <khilman@ti.com>
 
-On Thu, 5 Jan 2012 19:04:05 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Fri__6_Jan_2012_12_03_17_+1100__uBF06hiR6nr6FhK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi ,
-> 
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
-> 
-> In file included from include/trace/ftrace.h:567:0,
->                  from include/trace/define_trace.h:86,
->                  from include/trace/events/power.h:240,
->                  from kernel/trace/power-traces.c:14:
-> include/trace/events/kmem.h: In function 'ftrace_test_probe_kmalloc':
-> include/trace/events/kmem.h:45:1: error: implicit declaration of function 'check_trace_callback_type_kmalloc' [-Werror=implicit-function-declaration]
-> include/trace/events/kmem.h: In function 'ftrace_test_probe_kmem_cache_alloc':
->
-> ...
->
-> include/trace/events/kmem.h:267:1: error: implicit declaration of function 'check_trace_callback_type_mm_page_alloc_extfrag' [-Werror=implicit-function-declaration]
-> In file included from include/trace/ftrace.h:774:0,
->                  from include/trace/define_trace.h:86,
->                  from include/trace/events/power.h:240,
->                  from kernel/trace/power-traces.c:14:
-> include/trace/events/kmem.h: In function 'perf_test_probe_mm_page_pcpu_drain':
-> include/trace/events/kmem.h:256:1: error: implicit declaration of function 'check_trace_callback_type_mm_page_pcpu_drain' [-Werror=implicit-function-declaration]
-> 
-> I have no idea what has gone wrong here, but I did not get this error
-> yesterday.  The only thing that touched include/trace/events/kmem.h is
-> patch "mm-tracepoint: rename page-free events" from the akpm tree, but
-> that was there yesterday as well and doesn't look suspicious.
+Hi all,
 
-Yes, it's not due to anything in the akpm tree.  Tracing stuff blew up.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-omap2/pm34xx.c between commit e6ab10af962d ("ARM: OMAP:
+convert idle handlers from pm_idle to arm_pm_idle") from the arm tree and
+commit 2fd149645eb4 ("") from the arm-soc tree.
 
-> I just have to leave things broken for today in the hope that someone
-> figures something out.  This does not affect my X86_64 allmodconfig build
-> or my PowerPC builds (including an allyesconfig build).
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-It fails with sparc64 defconfig but succeeds with sparc64 allmodconfig.
-Some config-dependent thing.  3.2 is OK, so it's something in -next.
+diff --cc arch/arm/mach-omap2/pm34xx.c
+index df5c6bf,fc69875..0000000
+--- a/arch/arm/mach-omap2/pm34xx.c
++++ b/arch/arm/mach-omap2/pm34xx.c
+@@@ -485,21 -416,12 +416,11 @@@ void omap_sram_idle(void
+  	clkdm_allow_idle(mpu_pwrdm->pwrdm_clkdms[0]);
+  }
+ =20
+- int omap3_can_sleep(void)
+- {
+- 	if (!omap_uart_can_sleep())
+- 		return 0;
+- 	return 1;
+- }
+-=20
+  static void omap3_pm_idle(void)
+  {
+ -	local_irq_disable();
+  	local_fiq_disable();
+ =20
+- 	if (!omap3_can_sleep())
+- 		goto out;
+-=20
+ -	if (omap_irq_pending() || need_resched())
+ +	if (omap_irq_pending())
+  		goto out;
+ =20
+  	trace_power_start(POWER_CSTATE, 1, smp_processor_id());
 
-It could be that some far-off sparc64 Kconfig change is newly
-triggering this.  
+--Signature=_Fri__6_Jan_2012_12_03_17_+1100__uBF06hiR6nr6FhK
+Content-Type: application/pgp-signature
 
-I suppose I could get off my ass and actually work out why it broke,
-but the tracing code is too icky.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPBkhVAAoJEECxmPOUX5FEBn0P/3QHOHp+BHRutPrAYTBa7Nbs
+D44jO/+F3UiBD6AuzBY3MUuwgrVP76t28cfHlfHrQGZTdo/ZeWlC3+1lqre9y3nK
+Wdig7F3a8SXOIKtZyVuT5pmR7yEfxsRx1PAI9S6ShtSvUN8cKyp+mA0N8DnfYyw9
+iYZNvp0BicnnGsldIdyPJQqQqSH3coEgj6yHu8GiSXPk+aIEaXzUKugBRBgacxN7
+ZXpXCO/3+EiC9DwwarDjiA5M/9UwIaWp25u9uAvYy8tWu7eXxWkICAQySU39OupC
+ubAeqSWdshBS79Am8AFPPfh41UOfmpZeteUki0IY+a3Eza8vjIAH0Ba1HKd5PRdU
+nGZaaeTMgKYXGj4ZO8FIK3KcwL/WRfSyWFGCbSDOjYdPTuuMY3zhGTW640npO/4i
+p6A8mFWevgj3PiJoI2MBgQdUU34M1ALdfTP7Ix38lsNc9Y0Y5uXUBT86N3az7dIi
+tuvTfJoDMR2w3F/BTTpyvKAWw/JywISdB7gUk6VN3t7hKOJCVYvokKq2zxTSfFBt
+d4KV0ukfLA1npL33CRbrJH6hIkbF8hN7hSpibOlChDTnBENkH4Dbwgl/TdMwFzjx
+FBM5mSn8oDnkXWddKyrAx2NK1Pv7clKF+k9nhFww1A2ICIUor6mh8K/WT7KDOA2G
+lHDYvC30k5/UvJ8X0+W6
+=Zwps
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Jan_2012_12_03_17_+1100__uBF06hiR6nr6FhK--
