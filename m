@@ -1,99 +1,85 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Fri, 6 Jan 2012 12:03:45 +1100
-Message-ID: <20120106120345.8157a839b1c924315d728eea@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH block:for-3.3/core] cfq: merged request shouldn't jump to a
+ different cfqq
+Date: Thu, 5 Jan 2012 18:17:07 -0800
+Message-ID: <20120106021707.GA6276@google.com>
+References: <20111228211918.GA3516@google.com>
+ <20120103173500.GB31746@google.com>
+ <20120103175922.GC31746@google.com>
+ <20120103200906.GG31746@google.com>
+ <4F03631C.8080501@kernel.dk>
+ <20120103221301.GH31746@google.com>
+ <20120103223505.GI31746@google.com>
+ <20120105012445.GP31746@google.com>
+ <alpine.LSU.2.00.1201051026090.2009@eggly.anvils>
+ <20120105183842.GF18486@google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__6_Jan_2012_12_03_45_+1100_z.VV1Iz1g2zunkO7"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120105183842.GF18486@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hui Wang <jason77.wang@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Russell King <rmk@arm.linux.org.uk>, Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Jens Axboe <axboe@kernel.dk>, Shaohua Li <shaohua.li@intel.com>, Hugh Dickins <hughd@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org, x86@kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__6_Jan_2012_12_03_45_+1100_z.VV1Iz1g2zunkO7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When two requests are merged, if the absorbed request is older than
+the absorbing one, cfq_merged_requests() tries to reposition it in the
+cfqq->fifo list by list_move()'ing the absorbing request to the
+absorbed one before removing it.
 
-Hi all,
+This works if both requests are on the same cfqq but nothing
+guarantees that and the code ends up moving the merged request to a
+different cfqq's fifo list without adjusting the rest.  This leads to
+the following failures.
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-imx/mm-imx5.c between commit 9bdd46257ab3 ("ARM: plat-mxc:
-hook special idle handlers to arm_pm_idle") from the arm tree and commit
-010dc8af8f28 ("ARM: mx5: use generic irq chip pm interface for pm
-functions on") from the arm-soc tree.
+* A request may be on the fifo list of a cfqq without holding
+  reference to it and the cfqq can be freed before requst is finished.
+  Among other things, this triggers list debug warning and slab debug
+  use-after-free warning.
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+* As a request can be on the wrong fifo queue, it may be issued and
+  completed before its cfqq is scheduled.  If the cfqq didn't have
+  other requests on it, it would be empty by the time it's dispatched
+  triggering BUG_ON() in cfq_dispatch_request().
 
-diff --cc arch/arm/mach-imx/mm-imx5.c
-index 65139a6,bc17dfe..0000000
---- a/arch/arm/mach-imx/mm-imx5.c
-+++ b/arch/arm/mach-imx/mm-imx5.c
-@@@ -21,9 -22,27 +22,24 @@@
-  #include <mach/devices-common.h>
-  #include <mach/iomux-v3.h>
- =20
-+ static struct clk *gpc_dvfs_clk;
-+=20
-  static void imx5_idle(void)
-  {
- -	if (!need_resched()) {
- -		/* gpc clock is needed for SRPG */
- -		if (gpc_dvfs_clk =3D=3D NULL) {
- -			gpc_dvfs_clk =3D clk_get(NULL, "gpc_dvfs");
- -			if (IS_ERR(gpc_dvfs_clk))
- -				goto err0;
- -		}
- -		clk_enable(gpc_dvfs_clk);
- -		mx5_cpu_lp_set(WAIT_UNCLOCKED_POWER_OFF);
- -		if (tzic_enable_wake())
- -			goto err1;
- -		cpu_do_idle();
- -err1:
- -		clk_disable(gpc_dvfs_clk);
-++	/* gpc clock is needed for SRPG */
-++	if (gpc_dvfs_clk =3D=3D NULL) {
-++		gpc_dvfs_clk =3D clk_get(NULL, "gpc_dvfs");
-++		if (IS_ERR(gpc_dvfs_clk))
-++			goto err0;
-+ 	}
-++	clk_enable(gpc_dvfs_clk);
- +	mx5_cpu_lp_set(WAIT_UNCLOCKED_POWER_OFF);
-++	if (tzic_enable_wake())
-++		goto err1;
-++	cpu_do_idle();
-++err1:
-++	clk_disable(gpc_dvfs_clk);
-+ err0:
- -	local_irq_enable();
-  }
- =20
-  /*
+Fix it by making cfq_merged_requests() scan the absorbing request's
+fifo list for the correct slot and move there instead.
 
---Signature=_Fri__6_Jan_2012_12_03_45_+1100_z.VV1Iz1g2zunkO7
-Content-Type: application/pgp-signature
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Hugh Dickins <hughd@google.com>
+Cc: stable@vger.kernel.org
+---
+It survived my testing long enough and I'm relatively confident this
+should fix the crash but I might have gotten the scanning wrong, so
+please pay extra attention there.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+I suspect we just didn't have enough backward request-request merges
+before the recent plug merge updates to trigger this bug.
 
-iQIcBAEBCAAGBQJPBkhxAAoJEECxmPOUX5FEhzUP/13Z6r1SkJdlKHG3H4j8nHUy
-K5nWY9YbY8mAqo1B2dN/sC0LJa2nGwFaSOOHT4vDMbWxjHJfJ3j6xG3N5m3G3o1O
-2UbqxFsM77vWsKE5nYU9sOo6J7U6st3XLHxLt1jg3eI375tyQoMEGCkAPOHpB52l
-Gz9trKJHboX7LAeipXTDaQLULM8U8q0NghU9XSptKnMrh7L2MGGO3J7H4aWvuX2o
-2orM1+1EX5vtupT4+1ZGdJU2yUsaUAy3wLA4VSfL3fQDUpzXb7t+XLfoKjYZRG71
-SjJqcFyw5cOIvgk6rpwcE+1fJ5WlXkl4Pq0JHxwRhshshzqBFmw4M/njE7EzmVPN
-Lz5NRy2HjQ2v6mBvaSbjUd44QIOVg6Fe/BYT2GPkfjMnLQGC32LeF7HeNwwD1e3Z
-4F8prGNg4qY+VQwEuhi60OU8AD9Bv+lAgivF2rmlPZanvnGwXW5ltpmwr2Sj21FK
-NyGReYjmIN1s1VlQKzXqR+VKfRP2xwbrkxREFbQrifpgk6DYclDZa62g9/PBw/ZG
-s5tU4jHgUc95fqmQnUU3zX/ze3ojuZNTmcjggHZLUbk+lpGoNA5eppPnhp+LG2JM
-eIfxYHnVGE3ooxZYs3TF/0aHN2puPVZG6cZdaKufPw20TlJRw6f4N8ZWFP2m/jUL
-VuU0kH4fWQYHwEnbOlin
-=NSZh
------END PGP SIGNATURE-----
+Thanks.
 
---Signature=_Fri__6_Jan_2012_12_03_45_+1100_z.VV1Iz1g2zunkO7--
+ block/cfq-iosched.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
+index 163263d..a235cf3 100644
+--- a/block/cfq-iosched.c
++++ b/block/cfq-iosched.c
+@@ -1663,8 +1663,15 @@ cfq_merged_requests(struct request_queue *q, struct request *rq,
+ 	 */
+ 	if (!list_empty(&rq->queuelist) && !list_empty(&next->queuelist) &&
+ 	    time_before(rq_fifo_time(next), rq_fifo_time(rq))) {
+-		list_move(&rq->queuelist, &next->queuelist);
++		struct request *pos = rq;
++
+ 		rq_set_fifo_time(rq, rq_fifo_time(next));
++
++		list_for_each_entry_continue_reverse(pos, &cfqq->fifo, queuelist)
++			if (time_before_eq(rq_fifo_time(pos), rq_fifo_time(rq)))
++				break;
++		if (rq != pos)
++			list_move(&rq->queuelist, &pos->queuelist);
+ 	}
+ 
+ 	if (cfqq->next_rq == next)
