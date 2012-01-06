@@ -1,72 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Fri, 6 Jan 2012 21:31:42 +1100
-Message-ID: <20120106213142.bef2d9b63e09eb42234e2b01@canb.auug.org.au>
-References: <20120106120317.500c45afe95ae20b4b6648a0@canb.auug.org.au>
-	<20120106084841.GJ11810@n2100.arm.linux.org.uk>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH block:for-3.3/core] block: disable
+ ELEVATOR_INSERT_SORT_MERGE
+Date: Fri, 6 Jan 2012 07:34:52 -0800
+Message-ID: <20120106153452.GG6276@google.com>
+References: <20120105183842.GF18486@google.com>
+ <20120106021707.GA6276@google.com>
+ <20120106023638.GC6276@google.com>
+ <1325819655.22361.513.camel@sli10-conroe>
+ <20120106030406.GD6276@google.com>
+ <20120106033012.GE6276@google.com>
+ <20120106035247.GF6276@google.com>
+ <1325823545.22361.526.camel@sli10-conroe>
+ <CAOS58YPUgK4J6j1Gme9O9HeL7GrwnJU8QTVKbVLA9cEXPQ1kag@mail.gmail.com>
+ <1325837757.22361.538.camel@sli10-conroe>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__6_Jan_2012_21_31_42_+1100_s/496P=ZLwgEgBKj"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:39308 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758620Ab2AFKcA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Jan 2012 05:32:00 -0500
-In-Reply-To: <20120106084841.GJ11810@n2100.arm.linux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, "Govindraj.R" <govindraj.raja@ti.com>, Kevin Hilman <khilman@ti.com>
-
---Signature=_Fri__6_Jan_2012_21_31_42_+1100_s/496P=ZLwgEgBKj
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ide-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1325837757.22361.538.camel@sli10-conroe>
+Sender: linux-ide-owner@vger.kernel.org
+To: Shaohua Li <shaohua.li@intel.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org, x86@kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Russell,
+Hello, Shaohua.
 
-On Fri, 6 Jan 2012 08:48:41 +0000 Russell King - ARM Linux <linux@arm.linux=
-.org.uk> wrote:
->
-> On Fri, Jan 06, 2012 at 12:03:17PM +1100, Stephen Rothwell wrote:
-> >=20
-> > Today's linux-next merge of the arm-soc tree got a conflict in
-> > arch/arm/mach-omap2/pm34xx.c between commit e6ab10af962d ("ARM: OMAP:
-> > convert idle handlers from pm_idle to arm_pm_idle") from the arm tree a=
-nd
-> > commit 2fd149645eb4 ("") from the arm-soc tree.
->=20
-> Err, there's an empty description of a commit in the arm-soc tree?
+On Fri, Jan 06, 2012 at 04:15:57PM +0800, Shaohua Li wrote:
+> it's not related to the recursive merge. I forgot the detail of the
+> workload why we add INSERT_SORT_MERGE, it's added several months ago
+> anyway.
+> Obviously we shouldn't do complex things inside the merge window. I just
+> didn't agree to disable INSERT_SORT_MERGE, which will bring performance
+> regression for sure. Can we just change CFQ like your first path?
 
-Sorry about that:
+But that is exactly what was broken and papering it over is exactly
+the thing we shouldn't do, for now or for ever.  Think about it.  Your
+commit f1f8cc94651 "block, cfq: fix empty queue crash caused by
+request merge" fixed one symptom caused by cross cfqq merging
+happening behind cfq's back without properly root-causing it.  I'm not
+saying it was your fault but in the end all it did was obscuring the
+root cause of the problem further, making the next more subtle failure
+much more difficult to diagnose.
 
-ARM: OMAP2+: UART: Remove omap_uart_can_sleep and add pm_qos
+So, if you think cross-cfqq merging is a good idea, please go ahead
+and do it properly.  It shouldn't happen as a side effect of two bugs
+folded together.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+As for quicker fix than revamping merge infrastructure, adding another
+callback to explicitly ask elevator whether two requests chosen by
+block core can be merged.  I didn't go that route because I wasn't
+sure about the benefit of doing so - I still can't see how that would
+make a lot of difference without cross cfqq merging, and wanted to
+stay on the safer side given the intricacy of the problem.
 
---Signature=_Fri__6_Jan_2012_21_31_42_+1100_s/496P=ZLwgEgBKj
-Content-Type: application/pgp-signature
+So, if you wanna do that and have workload which is benefited enough
+to justify the extra step, let's do it after the merge window, merge
+as fixes and send it back via -stable.  But we shouldn't be doing that
+inside merge window when all other trees are getting pushed upstream
+and we don't have much time for testing ourselves or in linux-next.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Thanks.
 
-iQIcBAEBCAAGBQJPBs2OAAoJEECxmPOUX5FE7xsP/i6eYoHRxkVdg7srlSEKLn1A
-SznD9rAI+g32+6hSfDQ9YHH5Eh3aNK14ofPQ0B1D86tpPAH0GMLCi9kl/PUHt3h9
-LZo1HRGfdvYSqB4vQA/xW2jHf/kzL8MQAElexaOm9HEWbDa6HItVyb2jjja29/G/
-Pg92hGt7MbpN8K2pMcLmvXDTyNY9GVGInU++eFU7IEW6aEz0fOkzWuy1hSxKEWUj
-zCvkNjDQQpujpva4oTuId53WIaO2pLGvzMHVW0wNW1HJWIkWVrCDxkQtTFrwH791
-yuDyvXgbyxGFyb+iDW+74G3saS9koGhWCHsINd/AYqby6kRx0LcMALj+NRu2BVn0
-dfLYlE1rMGbJIox8wQBohnGKgYda12uK8sOvGmuD/guaQtxAjdLTB4ePAUNMu5lJ
-KRtDAvTxm5uKbBLjNprlAxY76rIGlG6qgVD1UnbyqHRn/jU7j/jdfCp/XOiHKFP5
-7d6bP2F+GDL4tAfKNVN7fZOoh6DEOIUeLlqB1oKX9NpaRSRwm0o+4vwYvQb06ji9
-8Kp+GOZB6K2x7ifW13Yz5uhXqAA0aPUbyHb8itlmmaC154HXHe6oPVbcSWWHTVdW
-9l3zeLZ91wg6PVrr7Ir2tzvH5gkvdiN0tSwMiCDzkgewGikpVBOaKS2C2XPNZcUe
-du/UwPUeS83dKgzA28iO
-=/GKA
------END PGP SIGNATURE-----
-
---Signature=_Fri__6_Jan_2012_21_31_42_+1100_s/496P=ZLwgEgBKj--
+-- 
+tejun
