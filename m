@@ -1,131 +1,78 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Sat, 7 Jan 2012 17:53:43 +1100
-Message-ID: <20120107175343.0939b70809a3356955d20e2c@canb.auug.org.au>
-References: <20120106120345.8157a839b1c924315d728eea@canb.auug.org.au>
- <20120107044439.GE4790@S2101-09.ap.freescale.net>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: build failure after merge of the battery tree
+Date: Sat, 07 Jan 2012 20:00:37 +1100
+Message-ID: <4F0809B5.9000105@goop.org>
+References: <20120105144042.4e03850089cce56a7e9312e4@canb.auug.org.au> <20120105152536.GB28629@oksana.dev.rtsoft.ru>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4962277167615707172=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20120107044439.GE4790@S2101-09.ap.freescale.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, Hui Wang <jason77.wang@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
-
---===============4962277167615707172==
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__7_Jan_2012_17_53_43_+1100_eavKjKT4eI6ewIc3"
-
---Signature=_Sat__7_Jan_2012_17_53_43_+1100_eavKjKT4eI6ewIc3
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Shawn,
-
-On Sat, 7 Jan 2012 12:44:42 +0800 Shawn Guo <shawn.guo@linaro.org> wrote:
->
-> On Fri, Jan 06, 2012 at 12:03:45PM +1100, Stephen Rothwell wrote:
-> > diff --cc arch/arm/mach-imx/mm-imx5.c
-> > index 65139a6,bc17dfe..0000000
-> > --- a/arch/arm/mach-imx/mm-imx5.c
-> > +++ b/arch/arm/mach-imx/mm-imx5.c
-> > @@@ -21,9 -22,27 +22,24 @@@
-> >   #include <mach/devices-common.h>
-> >   #include <mach/iomux-v3.h>
-> >  =20
-> > + static struct clk *gpc_dvfs_clk;
-> > +=20
-> >   static void imx5_idle(void)
-> >   {
-> >  -	if (!need_resched()) {
-> >  -		/* gpc clock is needed for SRPG */
-> >  -		if (gpc_dvfs_clk =3D=3D NULL) {
-> >  -			gpc_dvfs_clk =3D clk_get(NULL, "gpc_dvfs");
-> >  -			if (IS_ERR(gpc_dvfs_clk))
-> >  -				goto err0;
-> >  -		}
-> >  -		clk_enable(gpc_dvfs_clk);
-> >  -		mx5_cpu_lp_set(WAIT_UNCLOCKED_POWER_OFF);
-> >  -		if (tzic_enable_wake())
-> >  -			goto err1;
-> >  -		cpu_do_idle();
-> >  -err1:
-> >  -		clk_disable(gpc_dvfs_clk);
-> > ++	/* gpc clock is needed for SRPG */
-> > ++	if (gpc_dvfs_clk =3D=3D NULL) {
-> > ++		gpc_dvfs_clk =3D clk_get(NULL, "gpc_dvfs");
-> > ++		if (IS_ERR(gpc_dvfs_clk))
-> > ++			goto err0;
-> > + 	}
-> > ++	clk_enable(gpc_dvfs_clk);
-> >  +	mx5_cpu_lp_set(WAIT_UNCLOCKED_POWER_OFF);
-> > ++	if (tzic_enable_wake())
-> > ++		goto err1;
-> > ++	cpu_do_idle();
-> > ++err1:
-> > ++	clk_disable(gpc_dvfs_clk);
-> > + err0:
-> >  -	local_irq_enable();
->=20
-> This results in a compile error.
->=20
->   CC      arch/arm/mach-imx/mm-imx5.o
-> arch/arm/mach-imx/mm-imx5.c: In function =E2=80=98imx5_idle=E2=80=99:
-> arch/arm/mach-imx/mm-imx5.c:42:1: error: label at end of compound stateme=
-nt
-
-Ooops.  Sorry about that.  Just remove the label and turn the "goto err0"
-into "return".
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__7_Jan_2012_17_53_43_+1100_eavKjKT4eI6ewIc3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPB+v3AAoJEECxmPOUX5FEHa0P/2I2dV3mu0bs/oDqGBUnAKKe
-cX7rGL4dr0vJJHPGMbcKFhbNJkXoGtB4Po0g7AMuXXpuhNrkV9pKdsLqFvu+59Zq
-A2sTiNzTfMAuWTQ3bnujzEIMtDmIVi67vxuOsCnFbZZ6fejbVr4X8x3bA857Q3ZY
-Gq5SLsxu4C0DGM/MCA/1InSyc0WgabAMSo1RU4syqj/VIexstvYmJ4VM2BoNmBHt
-hntLQACFoPkpukcE+ouhWH0G2YFzo3Sd3jWKRv+1iguv5oZWHkg2AyYOeJ7QpDVk
-IQICrGIvw+Q5lUIYTqDFr/R8rJggfb126eSwKmO5UPYQgll2MPdu5QY6WCEioavn
-SqqXlMVBKsZ30CWws4LvjyAn6By4cIbUaybf7sHF5EVzcT/FPmobDo/Isl93Ag6i
-KvwzxndmbpOJ4gVz2VL2MA0M5x2vr0xL5S42felgVF+XOUgkJHRs2F1jiZRi56+I
-AsftDJG1oorAjfCffhVmIGYlaff4jmSixHeJhEowslgqeQmKKTfQYXq8DfuknyU6
-Sg49lmxOvROCY6Gfi6TixwfPkQDibw+76jR4kVoxMF+YwUoNcdnWWbQ2bcKNKr5/
-kIB5/c44uW5VJ1+2IkSp90ujuy4OtawF5Ie4ng7P5QXmOD83y4ngk3elvVJJUyOG
-Bu8rh2h1wJX3M2i+U6Px
-=k7jI
------END PGP SIGNATURE-----
-
---Signature=_Sat__7_Jan_2012_17_53_43_+1100_eavKjKT4eI6ewIc3--
-
-
---===============4962277167615707172==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from claw.goop.org ([74.207.240.146]:57293 "EHLO claw.goop.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751950Ab2AGJAk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 7 Jan 2012 04:00:40 -0500
+In-Reply-To: <20120105152536.GB28629@oksana.dev.rtsoft.ru>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Anton Vorontsov <cbouatmailru@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+On 01/06/2012 02:25 AM, Anton Vorontsov wrote:
+> On Thu, Jan 05, 2012 at 02:40:42PM +1100, Stephen Rothwell wrote:
+>> Hi Anton,
+>>
+>> After merging the battery tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> ERROR: "sysfs_create_link_nowarn" [drivers/power/power_supply.ko] undefined!
+>>
+>> Caused by commit 8351665195ce ("power_supply: allow a power supply to
+>> explicitly point to powered device").  That symbol is not exported to
+>> modules.
+>>
+>> I have used the battery tree from next-20120104 for today.
+> Thanks for catching this, Stephen!
+>
+> I wonder why do we need to use _nowarn variant?..
+>
+> Something tells me that we actually want a warning.
+>
+> Jeremy, are you OK with the patch down below?
 
---===============4962277167615707172==--
+Yep, that's fine.
+
+    J
+
+>
+> - - - -
+> From: Anton Vorontsov <cbouatmailru@gmail.com>
+> Subject: power_supply: Drop usage of nowarn variant of sysfs_create_link()
+>
+> The function is not exported to modules, plus we do want to catch anyone
+> who tries to create complex hierarchy (in that case we'd need to change
+> 'powers' symlink to a directory, probably under a different name to not
+> break ABI).
+>
+> This patch fixes the following build error:
+>
+>  ERROR: "sysfs_create_link_nowarn" [drivers/power/power_supply.ko] undefined!
+>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Anton Vorontsov <cbouatmailru@gmail.com>
+> ---
+>  drivers/power/power_supply_core.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
+> index b10c121..47f4e11 100644
+> --- a/drivers/power/power_supply_core.c
+> +++ b/drivers/power/power_supply_core.c
+> @@ -149,7 +149,7 @@ EXPORT_SYMBOL_GPL(power_supply_get_by_name);
+>  
+>  int power_supply_powers(struct power_supply *psy, struct device *dev)
+>  {
+> -	return sysfs_create_link_nowarn(&psy->dev->kobj, &dev->kobj, "powers");
+> +	return sysfs_create_link(&psy->dev->kobj, &dev->kobj, "powers");
+>  }
+>  EXPORT_SYMBOL_GPL(power_supply_powers);
+>  
