@@ -1,78 +1,35 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Subject: Re: linux-next: build failure after merge of the battery tree
-Date: Sat, 07 Jan 2012 20:00:37 +1100
-Message-ID: <4F0809B5.9000105@goop.org>
-References: <20120105144042.4e03850089cce56a7e9312e4@canb.auug.org.au> <20120105152536.GB28629@oksana.dev.rtsoft.ru>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: linux-next: Tree for Dec 28 (via_wdt)
+Date: Sat, 7 Jan 2012 11:20:34 +0100
+Message-ID: <20120107102034.GI23376@infomag.iguana.be>
+References: <20111228201806.d6de27fa2dbd9e3a3b7a2603@canb.auug.org.au> <4EFB5BF2.3020600@xenotime.net> <20111228175751.GA14460@infomag.iguana.be> <4F07B291.4040608@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from claw.goop.org ([74.207.240.146]:57293 "EHLO claw.goop.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751950Ab2AGJAk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 7 Jan 2012 04:00:40 -0500
-In-Reply-To: <20120105152536.GB28629@oksana.dev.rtsoft.ru>
+Received: from mailrelay010.isp.belgacom.be ([195.238.6.177]:63425 "EHLO
+	mailrelay010.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751006Ab2AGKUh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 7 Jan 2012 05:20:37 -0500
+Content-Disposition: inline
+In-Reply-To: <4F07B291.4040608@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <cbouatmailru@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marc Vertes <marc.vertes@sigfox.com>, linux-watchdog@vger.kernel.org
 
-On 01/06/2012 02:25 AM, Anton Vorontsov wrote:
-> On Thu, Jan 05, 2012 at 02:40:42PM +1100, Stephen Rothwell wrote:
->> Hi Anton,
->>
->> After merging the battery tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> ERROR: "sysfs_create_link_nowarn" [drivers/power/power_supply.ko] undefined!
->>
->> Caused by commit 8351665195ce ("power_supply: allow a power supply to
->> explicitly point to powered device").  That symbol is not exported to
->> modules.
->>
->> I have used the battery tree from next-20120104 for today.
-> Thanks for catching this, Stephen!
->
-> I wonder why do we need to use _nowarn variant?..
->
-> Something tells me that we actually want a warning.
->
-> Jeremy, are you OK with the patch down below?
+Hi Randy,
 
-Yep, that's fine.
+> >> via_wdt needs a MODULE_LICENSE():
+> >>
+> >> WARNING: modpost: missing MODULE_LICENSE() in drivers/watchdog/via_wdt.o
+> >> see include/linux/module.h for more information
+> > 
+> > Fixed.
+> 
+> Not yet in linux-next ??
 
-    J
+I noticed it yesterday afternoon also. So I "re-fixed" (and double-checked) it yesterday in the afternoon.
+So will be in linux-next with the next pull.
 
->
-> - - - -
-> From: Anton Vorontsov <cbouatmailru@gmail.com>
-> Subject: power_supply: Drop usage of nowarn variant of sysfs_create_link()
->
-> The function is not exported to modules, plus we do want to catch anyone
-> who tries to create complex hierarchy (in that case we'd need to change
-> 'powers' symlink to a directory, probably under a different name to not
-> break ABI).
->
-> This patch fixes the following build error:
->
->  ERROR: "sysfs_create_link_nowarn" [drivers/power/power_supply.ko] undefined!
->
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Anton Vorontsov <cbouatmailru@gmail.com>
-> ---
->  drivers/power/power_supply_core.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
-> index b10c121..47f4e11 100644
-> --- a/drivers/power/power_supply_core.c
-> +++ b/drivers/power/power_supply_core.c
-> @@ -149,7 +149,7 @@ EXPORT_SYMBOL_GPL(power_supply_get_by_name);
->  
->  int power_supply_powers(struct power_supply *psy, struct device *dev)
->  {
-> -	return sysfs_create_link_nowarn(&psy->dev->kobj, &dev->kobj, "powers");
-> +	return sysfs_create_link(&psy->dev->kobj, &dev->kobj, "powers");
->  }
->  EXPORT_SYMBOL_GPL(power_supply_powers);
->  
+Kind regards,
+Wim.
