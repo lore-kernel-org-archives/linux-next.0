@@ -1,27 +1,65 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Sun, 8 Jan 2012 17:32:14 -0800
-Message-ID: <CA+55aFyYR=66K721tVF3NgLg-MyFsVuy6kewJJBXaS1GVd+wXQ@mail.gmail.com>
-References: <20120109121133.76f5b7c4a4780954c4562244@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Date: Mon, 9 Jan 2012 12:55:31 +1100
+Message-ID: <20120109125531.dbcac0481adb6376fb7e9ca1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__9_Jan_2012_12_55_31_+1100_eFFWKWBK8eN0bjDw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:34483 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755130Ab2AIBcg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Jan 2012 20:32:36 -0500
-In-Reply-To: <20120109121133.76f5b7c4a4780954c4562244@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:54914 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755217Ab2AIBzm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Jan 2012 20:55:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@gmail.com>
 
-On Sun, Jan 8, 2012 at 5:11 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Then again ... it looks like the vfs tree has other changes to the btrfs
-> code so that I need the version from the vfs tree, not Linus' tree ...
+--Signature=_Mon__9_Jan_2012_12_55_31_+1100_eFFWKWBK8eN0bjDw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The btrfs changes (at lest most of them) will come through the btrfs
-tree, that's one of the reasons the vfs tree got re-built, afaik.
+Hi all,
 
-                      Linus
+After merging the sound-asoc tree, today's linux-next build (powerpc
+ppc64_defconfig and x86_64 allmodconfig) produced this warning:
+
+drivers/misc/Kconfig:212:error: recursive dependency detected!
+drivers/misc/Kconfig:212:	symbol ATMEL_SSC is selected by SND_ATMEL_SOC_SSC
+sound/soc/atmel/Kconfig:9:	symbol SND_ATMEL_SOC_SSC is selected by SND_AT91=
+_SOC_SAM9G20_WM8731
+sound/soc/atmel/Kconfig:18:	symbol SND_AT91_SOC_SAM9G20_WM8731 depends on A=
+TMEL_SSC
+
+Probably introduced by commit 739be96ab837 ("ASoC: Fix build dependency
+for SND_ATMEL_SOC_SSC").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__9_Jan_2012_12_55_31_+1100_eFFWKWBK8eN0bjDw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPCkkTAAoJEECxmPOUX5FEU54P/3VbQWqD5fxIF4Nkn/C2Gygl
+L5LMOMqAL53u1fb0VzjHChkCijYbM4+xMXgMozYHs6mGqtyyC+1cjO/sZNZtl6CS
+XpXNt5RihMDE1zxyLHYdhbRm+Itry3sn40ZT4ikw3VPKWFTxhOdNh6DpVHHlM56V
+TbrTYvp5agegd57I8Mm6I6m6Llha8EXR1k/D/BkATgOXd/GkimjeHt4MoNvVm+YA
+vCL7VqaelxxE5t0M6nGLlIhKaRRcXuJvEurnpbyzjsCT+TXhOYY/oyML+00eEVgp
+2tOnlgblgknS7sLkFT0KGx4zRCYZ7StO3nsY0UYoP1dgDhyMJlOiQu48+zXm4ilk
+8w76uSZwtRphCQ+MGFm0ijvyOm07QFRDtz9AqEh3jmuBb4LhuTrQVMRWTwmD+sqO
+rd625FNa6lt4nVbI49aHO0e83TsCRI8Mk9HJ4EKP2m/dOYE3WYMvvtBmiy2PLpue
+LkJawkc7bN1YcXWgVEWA23kaXGDj29Jl7iV2tZn4kzcsjYaeGx8gjoVLp7ShJ00J
+h7nM3bLdmhXfKu7ixtftUq+abTEeiixfmMaLhNr7VCs4D8zRaFQ1/K0HMbavQm5/
+mDTKfpbGM7x6rCHeL50Liptrxjc6lPyd2lSPdVhEY7fEensY2A/DJZMwzwOK4K1j
+EHe871EfvfxCvHDFRqSp
+=giaY
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__9_Jan_2012_12_55_31_+1100_eFFWKWBK8eN0bjDw--
