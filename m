@@ -1,59 +1,88 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
-Subject: Re: linux-next: build failure after merge of the battery tree
-Date: Mon, 9 Jan 2012 17:10:37 +0400
-Message-ID: <20120109131037.GA26091@oksana.dev.rtsoft.ru>
-References: <C3AE124F08223B42BC95AEB82F0F6CED1FDB2C78@KCHJEXMB02.kpit.com>
- <1326097770.3542.14.camel@dhruva>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Mon, 9 Jan 2012 07:42:59 -0800
+Message-ID: <20120109154259.GD9329@kroah.com>
+References: <20120105190405.1e3191fb5a43b2a0f1655e1f@canb.auug.org.au>
+ <20120105160448.dc482ef6.akpm@linux-foundation.org>
+ <20120109165950.53933c3050416bd242acff76@canb.auug.org.au>
+ <20120109172016.2496b94ce207c5f7f750a1ea@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:44190 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753714Ab2AINKn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jan 2012 08:10:43 -0500
-Received: by eaad14 with SMTP id d14so2002223eaa.19
-        for <linux-next@vger.kernel.org>; Mon, 09 Jan 2012 05:10:41 -0800 (PST)
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1326097770.3542.14.camel@dhruva>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ashish Jangam <ashish.jangam@kpitcummins.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+In-Reply-To: <20120109172016.2496b94ce207c5f7f750a1ea@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kay Sievers <kay.sievers@vrfy.org>, Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, Linus <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 09, 2012 at 01:59:29PM +0530, Ashish Jangam wrote:
-> > Hi Anton,
+On Mon, Jan 09, 2012 at 05:20:16PM +1100, Stephen Rothwell wrote:
+> On Mon, 9 Jan 2012 16:59:50 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Thu, 5 Jan 2012 16:04:48 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
+> > >
+> > > On Thu, 5 Jan 2012 19:04:05 +1100
+> > > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > 
+> > > > After merging the final tree, today's linux-next build (sparc64 defconfig)
+> > > > failed like this:
+> > > > 
+> > > > In file included from include/trace/ftrace.h:567:0,
+> > > >                  from include/trace/define_trace.h:86,
+> > > >                  from include/trace/events/power.h:240,
+> > > >                  from kernel/trace/power-traces.c:14:
+> > > > include/trace/events/kmem.h: In function 'ftrace_test_probe_kmalloc':
+> > > > include/trace/events/kmem.h:45:1: error: implicit declaration of function 'check_trace_callback_type_kmalloc' [-Werror=implicit-function-declaration]
+> > > > include/trace/events/kmem.h: In function 'ftrace_test_probe_kmem_cache_alloc':
+> > > >
+> > > > ...
+> > > >
+> > > > include/trace/events/kmem.h:267:1: error: implicit declaration of function 'check_trace_callback_type_mm_page_alloc_extfrag' [-Werror=implicit-function-declaration]
+> > > > In file included from include/trace/ftrace.h:774:0,
+> > > >                  from include/trace/define_trace.h:86,
+> > > >                  from include/trace/events/power.h:240,
+> > > >                  from kernel/trace/power-traces.c:14:
+> > > > include/trace/events/kmem.h: In function 'perf_test_probe_mm_page_pcpu_drain':
+> > > > include/trace/events/kmem.h:256:1: error: implicit declaration of function 'check_trace_callback_type_mm_page_pcpu_drain' [-Werror=implicit-function-declaration]
+> > > > 
+> > > > I have no idea what has gone wrong here, but I did not get this error
+> > > > yesterday.  The only thing that touched include/trace/events/kmem.h is
+> > > > patch "mm-tracepoint: rename page-free events" from the akpm tree, but
+> > > > that was there yesterday as well and doesn't look suspicious.
+> > > 
+> > > Yes, it's not due to anything in the akpm tree.  Tracing stuff blew up.
+> > > 
+> > > > I just have to leave things broken for today in the hope that someone
+> > > > figures something out.  This does not affect my X86_64 allmodconfig build
+> > > > or my PowerPC builds (including an allyesconfig build).
+> > > 
+> > > It fails with sparc64 defconfig but succeeds with sparc64 allmodconfig.
+> > > Some config-dependent thing.  3.2 is OK, so it's something in -next.
+> > > 
+> > > It could be that some far-off sparc64 Kconfig change is newly
+> > > triggering this.  
+> > > 
+> > > I suppose I could get off my ass and actually work out why it broke,
+> > > but the tracing code is too icky.
 > > 
-> > After merging the battery tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > drivers/power/da9052-battery.c: In function 'da9052_bat_read_volt':
-> > drivers/power/da9052-battery.c:293:2: error: implicit declaration of function 'da9052_adc_manual_read' [-Werror=implicit-function-declaration]
-> > drivers/power/da9052-battery.c: In function 'da9052_bat_check_presence':
-> > drivers/power/da9052-battery.c:306:2: error: implicit declaration of function 'da9052_adc_read_temp' [-Werror=implicit-function-declaration]
-> > drivers/power/da9052-battery.c: In function 'da9052_determine_vc_tbl_index':
-> > drivers/power/da9052-battery.c:348:1: warning: control reaches end of non-void function [-Wreturn-type]
-> > cc1: some warnings being treated as errors
-> > 
-> > Caused by commit ded7fc7b0550 ("power_supply: Add DA9052 battery driver").
-> > 
-> > The commit message says "This driver depends on DA9052 MFD core dirver for definitions and methods".  That core is presumably still pending inclusion.
-
-Well, it is in the MFD tree already, otherwise allmodconfig would not
-be able to select this driver.
-
-> > I have used the battery tree from next-20120104 for today.
-> This patch depends upon Da9052/53 MFD core and also on one of its incremental patch for ADC that got these functions definitions. Below is that patch.
-> We had already posted this patch.
+> > This failure is now in Linus' tree.  I am not sure when it got there.
 > 
-> Signed-off-by: David Dajun Chen <dchen@diasemi.com>
-> Signed-off-by: Ashish Jangam <ashish.jangam@kpitcummins.com>
-> ---
+> Bisected down to:
+> 
+> 8a25a2fd126c621f44f3aeaef80d51f00fc11639 is the first bad commit
+> commit 8a25a2fd126c621f44f3aeaef80d51f00fc11639
+> Author: Kay Sievers <kay.sievers@vrfy.org>
+> Date:   Wed Dec 21 14:29:42 2011 -0800
+> 
+>     cpu: convert 'cpu' and 'machinecheck' sysdev_class to a regular subsystem
 
-So, this patch should go via MFD tree asap. Otherwise, I'll have to
-disable this driver by making it depend on 'broken' in Kconfig.
+How is this triggering this build problem?  I didn't see this happen
+before, and it wasn't showing up in linux-next in the past, right?
 
-Thanks,
+This patch has nothing to to with tracing, perhaps it is an #include
+file problem?  Or is the build error a different one (remember the
+-Werror problem in linux-next that I fixed up for PPC?)
 
--- 
-Anton Vorontsov
-Email: cbouatmailru@gmail.com
+confused,
+
+greg k-h
