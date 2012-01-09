@@ -1,78 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for Jan 9 (net/core/sock.c)
-Date: Mon, 09 Jan 2012 13:44:28 -0800 (PST)
-Message-ID: <20120109.134428.1344005477076228276.davem@davemloft.net>
-References: <20120109170457.4465dfc66a0eace4a2230fef@canb.auug.org.au>
-	<4F0B5302.5050105@xenotime.net>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH] tracing/mm: Move include of trace/events/kmem.h out of
+ header into slab.c
+Date: Mon, 09 Jan 2012 17:15:42 -0500
+Message-ID: <1326147342.7642.41.camel@gandalf.stny.rr.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:36280 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755750Ab2AIVqc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jan 2012 16:46:32 -0500
-In-Reply-To: <4F0B5302.5050105@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: rdunlap@xenotime.net
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Kay Sievers <kay.sievers@vrfy.org>, Andrew Morton <akpm@linux-foundation.org>, Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, linux-next@vger.kernel.org, David Miller <davem@davemloft.net>, Linus <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Mon, 09 Jan 2012 12:50:10 -0800
+Including trace/events/*.h TRACE_EVENT() macro headers in other headers
+can cause strange side effects if another trace/event/*.h header
+includes that header. Having trace/events/kmem.h inside slab_def.h
+caused a compile error in sparc64 when changes were done to some header
+files. Moving the kmem.h trace header out of slab.h and into slab.c
+fixes the problem.
 
-> On 01/08/2012 10:04 PM, Stephen Rothwell wrote:
->> Hi all,
->> 
->> Changes since 20120106:
->> 
->> The net tree gained a build failure for which I applied a patch.
-> 
-> 
-> net/core/sock.c: In function 'sk_update_clone':
-> net/core/sock.c:1278:3: error: implicit declaration of function 'sock_update_memcg'
+Note, both slub.c and slob.c already include the trace/events/kmem.h
+file. Only slab.c had it missing.
 
-Sigh...
+Link: http://lkml.kernel.org/r/20120105190405.1e3191fb5a43b2a0f1655e1f@canb.auug.org.au
 
-I'll add the following patch, the example randconfig seems to work
-with it here at least:
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
 
-net: Fix build with INET disabled.
-
-> net/core/sock.c: In function 'sk_update_clone':
-> net/core/sock.c:1278:3: error: implicit declaration of function 'sock_update_memcg'
-
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 9b296ea..f944591 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -390,7 +390,6 @@ enum {
- 	OVER_LIMIT,
- };
+diff --git a/include/linux/slab_def.h b/include/linux/slab_def.h
+index d00e0ba..fbd1117 100644
+--- a/include/linux/slab_def.h
++++ b/include/linux/slab_def.h
+@@ -15,8 +15,6 @@
+ #include <asm/cache.h>		/* kmalloc_sizes.h needs L1_CACHE_BYTES */
+ #include <linux/compiler.h>
  
--#ifdef CONFIG_INET
- struct sock;
- #ifdef CONFIG_CGROUP_MEM_RES_CTLR_KMEM
- void sock_update_memcg(struct sock *sk);
-@@ -403,6 +402,5 @@ static inline void sock_release_memcg(struct sock *sk)
- {
- }
- #endif /* CONFIG_CGROUP_MEM_RES_CTLR_KMEM */
--#endif /* CONFIG_INET */
- #endif /* _LINUX_MEMCONTROL_H */
+-#include <trace/events/kmem.h>
+-
+ /*
+  * struct kmem_cache
+  *
+diff --git a/mm/slab.c b/mm/slab.c
+index 83311c9a..2acfa0d 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -121,6 +121,8 @@
+ #include	<asm/tlbflush.h>
+ #include	<asm/page.h>
  
-diff --git a/net/core/sock.c b/net/core/sock.c
-index c3ae73d..5c5af998 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -112,6 +112,7 @@
- #include <linux/highmem.h>
- #include <linux/user_namespace.h>
- #include <linux/jump_label.h>
-+#include <linux/memcontrol.h>
- 
- #include <asm/uaccess.h>
- #include <asm/system.h>
++#include <trace/events/kmem.h>
++
+ /*
+  * DEBUG	- 1 for kmem_cache_create() to honour; SLAB_RED_ZONE & SLAB_POISON.
+  *		  0 for faster, smaller code (especially in the critical paths).
