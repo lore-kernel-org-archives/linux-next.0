@@ -1,64 +1,43 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: Tree for Jan 9 (arch/x86/pci/amd_bus.c)
-Date: Mon, 9 Jan 2012 15:40:39 -0700
-Message-ID: <CAErSpo4+remnOA6gJXOz_54CsbbcOq_Yj=ua9gV_bq5dZ64ABA@mail.gmail.com>
-References: <20120109170457.4465dfc66a0eace4a2230fef@canb.auug.org.au> <4F0B569B.6050004@xenotime.net>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the battery tree
+Date: Mon, 9 Jan 2012 23:53:18 +0000
+Message-ID: <20120109235318.GJ30766@opensource.wolfsonmicro.com>
+References: <C3AE124F08223B42BC95AEB82F0F6CED1FDB2C78@KCHJEXMB02.kpit.com> <1326097770.3542.14.camel@dhruva> <20120109131037.GA26091@oksana.dev.rtsoft.ru>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=e89a8f22c691cdb6e604b6201787
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:39275 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755919Ab2AIWlD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jan 2012 17:41:03 -0500
-Received: by lahd3 with SMTP id d3so1600803lah.19
-        for <linux-next@vger.kernel.org>; Mon, 09 Jan 2012 14:41:01 -0800 (PST)
-In-Reply-To: <4F0B569B.6050004@xenotime.net>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:39127 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932158Ab2AIXxU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jan 2012 18:53:20 -0500
+Content-Disposition: inline
+In-Reply-To: <20120109131037.GA26091@oksana.dev.rtsoft.ru>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>, Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, x86 maintainers <x86@kernel.org>, linux-pci@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
+To: Anton Vorontsov <cbouatmailru@gmail.com>
+Cc: Ashish Jangam <ashish.jangam@kpitcummins.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
---e89a8f22c691cdb6e604b6201787
-Content-Type: text/plain; charset=ISO-8859-1
+On Mon, Jan 09, 2012 at 05:10:37PM +0400, Anton Vorontsov wrote:
+> On Mon, Jan 09, 2012 at 01:59:29PM +0530, Ashish Jangam wrote:
 
-On Mon, Jan 9, 2012 at 2:05 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> on several i386 builds:
->
-> amd_bus.c:(.init.text+0x134b): undefined reference to `amd_get_mmconfig_range'
+> > > Caused by commit ded7fc7b0550 ("power_supply: Add DA9052 battery driver").
 
-This is my fault.  I moved some code from amd_bus.c to amd_nb.c, and builds with
+> > > The commit message says "This driver depends on DA9052 MFD core dirver for definitions and methods".  That core is presumably still pending inclusion.
 
-        CONFIG_PCI=y
-        # CONFIG_AMD_NB not set
+> Well, it is in the MFD tree already, otherwise allmodconfig would not
+> be able to select this driver.
 
-now fail.  The attached patch should fix it.  I'll repost the series
-("x86/PCI: amd: factor out MMCONFIG discovery") with the fix.
+It didn't actually go in via the MFD tree, it went in via regmap, but
+same difference.
 
-Yinghai, it looks to me like there's no reason to build amd_bus.o
-unless we have CONFIG_AMD_NB=y, but speak up if I'm wrong :)
+> > > I have used the battery tree from next-20120104 for today.
+> > This patch depends upon Da9052/53 MFD core and also on one of its incremental patch for ADC that got these functions definitions. Below is that patch.
+> > We had already posted this patch.
 
-Bjorn
+> So, this patch should go via MFD tree asap. Otherwise, I'll have to
+> disable this driver by making it depend on 'broken' in Kconfig.
 
---e89a8f22c691cdb6e604b6201787
-Content-Type: application/octet-stream; name="patch.amd-build-fix"
-Content-Disposition: attachment; filename="patch.amd-build-fix"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_gx82rnqs0
-
-Y29tbWl0IGM3NjJmZTU4MTVmMTIyMDE1OWYyNTdlYzRjZjc1MWI0N2JhYjk4ZmYKQXV0aG9yOiBC
-am9ybiBIZWxnYWFzIDxiaGVsZ2Fhc0Bnb29nbGUuY29tPgpEYXRlOiAgIE1vbiBKYW4gOSAxMzo0
-MjoxMiAyMDEyIC0wNzAwCgogICAgeDg2L1BDSTogYnVpbGQgYW1kX2J1cy5vIG9ubHkgd2hlbiBD
-T05GSUdfQU1EX05CPXkKICAgIAogICAgV2Ugb25seSBuZWVkIGFtZF9idXMubyBmb3IgQU1EIHN5
-c3RlbXMgd2l0aCBQQ0kuICBhcmNoL3g4Ni9wY2kvTWFrZWZpbGUKICAgIGFscmVhZHkgZGVwZW5k
-cyBvbiBDT05GSUdfUENJPXksIHNvIHRoaXMgcGF0Y2gganVzdCBhZGRzIHRoZSBkZXBlbmRlbmN5
-CiAgICBvbiBDT05GSUdfQU1EX05CLgogICAgCiAgICBTaWduZWQtb2ZmLWJ5OiBCam9ybiBIZWxn
-YWFzIDxiaGVsZ2Fhc0Bnb29nbGUuY29tPgoKZGlmZiAtLWdpdCBhL2FyY2gveDg2L3BjaS9NYWtl
-ZmlsZSBiL2FyY2gveDg2L3BjaS9NYWtlZmlsZQppbmRleCA2Yjg3NTlmLi5kMjRkM2RhIDEwMDY0
-NAotLS0gYS9hcmNoL3g4Ni9wY2kvTWFrZWZpbGUKKysrIGIvYXJjaC94ODYvcGNpL01ha2VmaWxl
-CkBAIC0xOCw4ICsxOCw5IEBAIG9iai0kKENPTkZJR19YODZfTlVNQVEpCQkrPSBudW1hcV8zMi5v
-CiBvYmotJChDT05GSUdfWDg2X01SU1QpCQkrPSBtcnN0Lm8KIAogb2JqLXkJCQkJKz0gY29tbW9u
-Lm8gZWFybHkubwotb2JqLXkJCQkJKz0gYW1kX2J1cy5vIGJ1c19udW1hLm8KK29iai15CQkJCSs9
-IGJ1c19udW1hLm8KIAorb2JqLSQoQ09ORklHX0FNRF9OQikJCSs9IGFtZF9idXMubwogb2JqLSQo
-Q09ORklHX1BDSV9DTkIyMExFX1FVSVJLKQkrPSBicm9hZGNvbV9idXMubwogCiBpZmVxICgkKENP
-TkZJR19QQ0lfREVCVUcpLHkpCg==
---e89a8f22c691cdb6e604b6201787--
+The regmap tree has already been merged by Linus which makes things a
+bit tricky, it'd probably need to wait for -rc1 for Samuel to send it
+givne that Linus was saying he really wanted everything to have been in
+-next before the merge window.
