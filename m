@@ -1,88 +1,56 @@
-From: Greg KH <greg@kroah.com>
+From: Steven Rostedt <rostedt@goodmis.org>
 Subject: Re: linux-next: build failure after merge of the final tree
-Date: Mon, 9 Jan 2012 07:42:59 -0800
-Message-ID: <20120109154259.GD9329@kroah.com>
+Date: Mon, 09 Jan 2012 10:54:24 -0500
+Message-ID: <1326124464.7642.27.camel@gandalf.stny.rr.com>
 References: <20120105190405.1e3191fb5a43b2a0f1655e1f@canb.auug.org.au>
- <20120105160448.dc482ef6.akpm@linux-foundation.org>
- <20120109165950.53933c3050416bd242acff76@canb.auug.org.au>
- <20120109172016.2496b94ce207c5f7f750a1ea@canb.auug.org.au>
+	 <20120105160448.dc482ef6.akpm@linux-foundation.org>
+	 <20120109165950.53933c3050416bd242acff76@canb.auug.org.au>
+	 <20120109172016.2496b94ce207c5f7f750a1ea@canb.auug.org.au>
+	 <20120109154259.GD9329@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120109172016.2496b94ce207c5f7f750a1ea@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kay Sievers <kay.sievers@vrfy.org>, Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, Linus <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.125]:59520 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755695Ab2AIPy1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jan 2012 10:54:27 -0500
+In-Reply-To: <20120109154259.GD9329@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kay Sievers <kay.sievers@vrfy.org>, Andrew Morton <akpm@linux-foundation.org>, Frederic Weisbecker <fweisbec@gmail.com>, Ingo Molnar <mingo@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, Linus <torvalds@linux-foundation.org>
 
-On Mon, Jan 09, 2012 at 05:20:16PM +1100, Stephen Rothwell wrote:
-> On Mon, 9 Jan 2012 16:59:50 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Thu, 5 Jan 2012 16:04:48 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
-> > >
-> > > On Thu, 5 Jan 2012 19:04:05 +1100
-> > > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > 
-> > > > After merging the final tree, today's linux-next build (sparc64 defconfig)
-> > > > failed like this:
-> > > > 
-> > > > In file included from include/trace/ftrace.h:567:0,
-> > > >                  from include/trace/define_trace.h:86,
-> > > >                  from include/trace/events/power.h:240,
-> > > >                  from kernel/trace/power-traces.c:14:
-> > > > include/trace/events/kmem.h: In function 'ftrace_test_probe_kmalloc':
-> > > > include/trace/events/kmem.h:45:1: error: implicit declaration of function 'check_trace_callback_type_kmalloc' [-Werror=implicit-function-declaration]
-> > > > include/trace/events/kmem.h: In function 'ftrace_test_probe_kmem_cache_alloc':
-> > > >
-> > > > ...
-> > > >
-> > > > include/trace/events/kmem.h:267:1: error: implicit declaration of function 'check_trace_callback_type_mm_page_alloc_extfrag' [-Werror=implicit-function-declaration]
-> > > > In file included from include/trace/ftrace.h:774:0,
-> > > >                  from include/trace/define_trace.h:86,
-> > > >                  from include/trace/events/power.h:240,
-> > > >                  from kernel/trace/power-traces.c:14:
-> > > > include/trace/events/kmem.h: In function 'perf_test_probe_mm_page_pcpu_drain':
-> > > > include/trace/events/kmem.h:256:1: error: implicit declaration of function 'check_trace_callback_type_mm_page_pcpu_drain' [-Werror=implicit-function-declaration]
-> > > > 
-> > > > I have no idea what has gone wrong here, but I did not get this error
-> > > > yesterday.  The only thing that touched include/trace/events/kmem.h is
-> > > > patch "mm-tracepoint: rename page-free events" from the akpm tree, but
-> > > > that was there yesterday as well and doesn't look suspicious.
-> > > 
-> > > Yes, it's not due to anything in the akpm tree.  Tracing stuff blew up.
-> > > 
-> > > > I just have to leave things broken for today in the hope that someone
-> > > > figures something out.  This does not affect my X86_64 allmodconfig build
-> > > > or my PowerPC builds (including an allyesconfig build).
-> > > 
-> > > It fails with sparc64 defconfig but succeeds with sparc64 allmodconfig.
-> > > Some config-dependent thing.  3.2 is OK, so it's something in -next.
-> > > 
-> > > It could be that some far-off sparc64 Kconfig change is newly
-> > > triggering this.  
-> > > 
-> > > I suppose I could get off my ass and actually work out why it broke,
-> > > but the tracing code is too icky.
+On Mon, 2012-01-09 at 07:42 -0800, Greg KH wrote:
+>  
+> > 8a25a2fd126c621f44f3aeaef80d51f00fc11639 is the first bad commit
+> > commit 8a25a2fd126c621f44f3aeaef80d51f00fc11639
+> > Author: Kay Sievers <kay.sievers@vrfy.org>
+> > Date:   Wed Dec 21 14:29:42 2011 -0800
 > > 
-> > This failure is now in Linus' tree.  I am not sure when it got there.
+> >     cpu: convert 'cpu' and 'machinecheck' sysdev_class to a regular subsystem
 > 
-> Bisected down to:
+> How is this triggering this build problem?  I didn't see this happen
+> before, and it wasn't showing up in linux-next in the past, right?
 > 
-> 8a25a2fd126c621f44f3aeaef80d51f00fc11639 is the first bad commit
-> commit 8a25a2fd126c621f44f3aeaef80d51f00fc11639
-> Author: Kay Sievers <kay.sievers@vrfy.org>
-> Date:   Wed Dec 21 14:29:42 2011 -0800
-> 
->     cpu: convert 'cpu' and 'machinecheck' sysdev_class to a regular subsystem
+> This patch has nothing to to with tracing, perhaps it is an #include
+> file problem?  Or is the build error a different one (remember the
+> -Werror problem in linux-next that I fixed up for PPC?)
 
-How is this triggering this build problem?  I didn't see this happen
-before, and it wasn't showing up in linux-next in the past, right?
+I'll take a look at this today. The problem is that something probably
+included one of the "include/trace/event/*.h" files in a header. That's
+always a pain, as those files should not be in headers and only called
+by C files that directly use tracepoints. Those headers have the macro
+magic to create those undefined symbols that Stephen is seeing and when
+you have one trace/event/*.h included in another, it can sometimes cause
+strange side effects like this.
 
-This patch has nothing to to with tracing, perhaps it is an #include
-file problem?  Or is the build error a different one (remember the
--Werror problem in linux-next that I fixed up for PPC?)
+Thus, simply adding an "include" somewhere can trigger this.
 
-confused,
+I'll checkout latest mainline and see.
 
-greg k-h
+Stephen, what config does this trigger with?
+
+Thanks,
+
+-- Steve
