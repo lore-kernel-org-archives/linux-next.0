@@ -1,73 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the battery tree
-Date: Mon, 9 Jan 2012 13:11:00 +1100
-Message-ID: <20120109131100.941810596c078b4b6f5740e8@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: manual merge of the vfs tree with Linus' tree
+Date: Mon, 9 Jan 2012 02:14:16 +0000
+Message-ID: <20120109021416.GV23916@ZenIV.linux.org.uk>
+References: <20120109121133.76f5b7c4a4780954c4562244@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__9_Jan_2012_13_11_00_+1100_rVtmUsamD_=aXC27"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:33081 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753052Ab2AICLL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Jan 2012 21:11:11 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48495 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755142Ab2AICOR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Jan 2012 21:14:17 -0500
+Content-Disposition: inline
+In-Reply-To: <20120109121133.76f5b7c4a4780954c4562244@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <avorontsov@ru.mvista.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ashish Jangam <ashish.jangam@kpitcummins.com>, David Dajun Chen <dchen@diasemi.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
---Signature=_Mon__9_Jan_2012_13_11_00_+1100_rVtmUsamD_=aXC27
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jan 09, 2012 at 12:11:33PM +1100, Stephen Rothwell wrote:
+> Hi Al,
+> 
+> Today's linux-next merge of the vfs tree got a conflict in
+> fs/btrfs/super.c between commit 34c80b1d93e6 ("vfs: switch ->show_options
+> () to struct dentry *") from Linus' tree and commit 2ddeb2a58b11 ("vfs:
+> switch ->show_options() to struct dentry *") from the vfs tree.
+> 
+> I assume that you sent the correct version to Linus, so I used that.
+> Please, if you do change stuff just before sending it to Linus also update
+> your for-next branch.
+> 
+> Then again ... it looks like the vfs tree has other changes to the btrfs
+> code so that I need the version from the vfs tree, not Linus' tree ...
 
-Hi Anton,
-
-After merging the battery tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/power/da9052-battery.c: In function 'da9052_bat_read_volt':
-drivers/power/da9052-battery.c:293:2: error: implicit declaration of functi=
-on 'da9052_adc_manual_read' [-Werror=3Dimplicit-function-declaration]
-drivers/power/da9052-battery.c: In function 'da9052_bat_check_presence':
-drivers/power/da9052-battery.c:306:2: error: implicit declaration of functi=
-on 'da9052_adc_read_temp' [-Werror=3Dimplicit-function-declaration]
-drivers/power/da9052-battery.c: In function 'da9052_determine_vc_tbl_index':
-drivers/power/da9052-battery.c:348:1: warning: control reaches end of non-v=
-oid function [-Wreturn-type]
-cc1: some warnings being treated as errors
-
-Caused by commit ded7fc7b0550 ("power_supply: Add DA9052 battery driver").
-
-The commit message says "This driver depends on DA9052 MFD core dirver
-for definitions and methods".  That core is presumably still pending
-inclusion.
-
-I have used the battery tree from next-20120104 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__9_Jan_2012_13_11_00_+1100_rVtmUsamD_=aXC27
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPCky0AAoJEECxmPOUX5FEjdcP/1vajtSQ9x77dtF4vlOxlpCZ
-6JCwUlDCr/XD2NNdoP+HV3yRGkSADBfUjzyDsBDBeCSZ4EtK8NWLQpV8np3d7G/z
-DFz6w5JAEDtw7nOSoa7xn6zQZxoZIuOqLP0a3/3YAG5EkGn6sUZQ/imeeYI/4CvI
-8u7HkCbhZWug+AuuJinugWpqAvHRMCcqs/2MjlsoQ8EYgcy0xlds2c47qev3C/LB
-ZB1lfY1BZ4ybGv+Z2xltuxNqx/0u6m2jtuxy4ghm0YGrkHimZgJL1yYLWS1hil/q
-iIdmFX2JCrLhWh8o6pC7Dd24MUsd6GSYQTC/ay8p6VcXJep7uNaf5JuMxHhYyAOP
-BDIG8s/dcpnFFWGB57FjSFdr0TuSzvU5NhufXVTu91XBWe2vzmmiD1COBe94CUri
-Jfh87X/D4NlED2yTWfYeeUI1o2BlIwUFpjg7K8fvv2Mm0EAby9zNGyFAW5yDK/uc
-XwrjDh0G8KQb/VmDzmdybWxw2LihmoaqkgEbsJhjTgvUsejADnciO/g1ZUCnKfRv
-6fyvvPR+QyQQRfZbqa1UGMFBPDqLNpp62wXc3pAEzgzBHTggCNp/3ajSxPY2deQH
-CYKp72OuSPdJSM08WNNTY13LGWnq+BwBPMrrSOFF+p8CSNXmzIqY54LH7Tw6/vW2
-NW4KBC0QNLl04uyQAg2U
-=LrII
------END PGP SIGNATURE-----
-
---Signature=_Mon__9_Jan_2012_13_11_00_+1100_rVtmUsamD_=aXC27--
+btrfs stuff will (hopefully) get picked by Chris.  Until then I've got those
+patches in #for-next, rebased on top of what Linus had picked...
