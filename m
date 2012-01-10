@@ -1,42 +1,76 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Jan 9 (arch/x86/pci/amd_bus.c)
-Date: Tue, 10 Jan 2012 12:57:54 -0800
-Message-ID: <4F0CA652.5040103@xenotime.net>
-References: <20120109170457.4465dfc66a0eace4a2230fef@canb.auug.org.au> <4F0B569B.6050004@xenotime.net> <CAErSpo4+remnOA6gJXOz_54CsbbcOq_Yj=ua9gV_bq5dZ64ABA@mail.gmail.com>
+Subject: [PATCH -next] olpc: fix olpc-xo1-sci.c build when INPUT=m
+Date: Tue, 10 Jan 2012 13:30:03 -0800
+Message-ID: <4F0CADDB.5010303@xenotime.net>
+References: <20120110164454.b595335a42321c80fba56ea7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:52026 "HELO
-	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S932602Ab2AJT7o (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 14:59:44 -0500
-In-Reply-To: <CAErSpo4+remnOA6gJXOz_54CsbbcOq_Yj=ua9gV_bq5dZ64ABA@mail.gmail.com>
+Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:47258 "HELO
+	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756672Ab2AJUbx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 15:31:53 -0500
+In-Reply-To: <20120110164454.b595335a42321c80fba56ea7@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, x86 maintainers <x86@kernel.org>, linux-pci@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, x86 maintainers <x86@kernel.org>, Andres Salomon <dilinger@queued.net>, Chris Ball <cjb@laptop.org>, Jon Nettleton <jon.nettleton@gmail.com>
 
-On 01/09/2012 02:40 PM, Bjorn Helgaas wrote:
-> On Mon, Jan 9, 2012 at 2:05 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
->> on several i386 builds:
->>
->> amd_bus.c:(.init.text+0x134b): undefined reference to `amd_get_mmconfig_range'
-> 
-> This is my fault.  I moved some code from amd_bus.c to amd_nb.c, and builds with
-> 
->         CONFIG_PCI=y
->         # CONFIG_AMD_NB not set
-> 
-> now fail.  The attached patch should fix it.  I'll repost the series
-> ("x86/PCI: amd: factor out MMCONFIG discovery") with the fix.
-> 
-> Yinghai, it looks to me like there's no reason to build amd_bus.o
-> unless we have CONFIG_AMD_NB=y, but speak up if I'm wrong :)
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Seems to work for me.  Thanks.
+Fix build errors when CONFIG_INPUT=m.
+This is not pretty, but all of the OLPC kconfig options
+are bool instead of tristate.
 
+arch/x86/built-in.o: In function `send_lid_state':
+olpc-xo1-sci.c:(.text+0x1d323): undefined reference to `input_event'
+olpc-xo1-sci.c:(.text+0x1d338): undefined reference to `input_event'
+arch/x86/built-in.o: In function `free_ebook_switch':
+olpc-xo1-sci.c:(.text+0x1d529): undefined reference to `input_unregister_device'
+olpc-xo1-sci.c:(.text+0x1d533): undefined reference to `input_free_device'
+arch/x86/built-in.o: In function `free_power_button':
+olpc-xo1-sci.c:(.text+0x1d549): undefined reference to `input_unregister_device'
+olpc-xo1-sci.c:(.text+0x1d553): undefined reference to `input_free_device'
+arch/x86/built-in.o: In function `send_ebook_state':
+olpc-xo1-sci.c:(.text+0x1d632): undefined reference to `input_event'
+olpc-xo1-sci.c:(.text+0x1d647): undefined reference to `input_event'
+arch/x86/built-in.o: In function `xo1_sci_intr':
+olpc-xo1-sci.c:(.text+0x1d78e): undefined reference to `input_event'
+olpc-xo1-sci.c:(.text+0x1d7a3): undefined reference to `input_event'
+olpc-xo1-sci.c:(.text+0x1d7be): undefined reference to `input_event'
+arch/x86/built-in.o:olpc-xo1-sci.c:(.text+0x1d7d3): more undefined references to `input_event' follow
+arch/x86/built-in.o: In function `free_lid_switch':
+olpc-xo1-sci.c:(.text+0x1d7fd): undefined reference to `input_unregister_device'
+olpc-xo1-sci.c:(.text+0x1d807): undefined reference to `input_free_device'
+arch/x86/built-in.o: In function `setup_lid_switch':
+olpc-xo1-sci.c:(.devinit.text+0x155): undefined reference to `input_allocate_device'
+olpc-xo1-sci.c:(.devinit.text+0x1a4): undefined reference to `input_register_device'
+olpc-xo1-sci.c:(.devinit.text+0x1ce): undefined reference to `input_unregister_device'
+olpc-xo1-sci.c:(.devinit.text+0x1d8): undefined reference to `input_free_device'
+arch/x86/built-in.o: In function `xo1_sci_probe':
+olpc-xo1-sci.c:(.devinit.text+0x235): undefined reference to `input_allocate_device'
+olpc-xo1-sci.c:(.devinit.text+0x285): undefined reference to `input_register_device'
+olpc-xo1-sci.c:(.devinit.text+0x299): undefined reference to `input_free_device'
+olpc-xo1-sci.c:(.devinit.text+0x2e1): undefined reference to `input_register_device'
+olpc-xo1-sci.c:(.devinit.text+0x2f5): undefined reference to `input_free_device'
+olpc-xo1-sci.c:(.devinit.text+0x54c): undefined reference to `input_allocate_device'
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc:	Andres Salomon <dilinger@queued.net>
+Cc:	Chris Ball <cjb@laptop.org>
+Cc:	Jon Nettleton <jon.nettleton@gmail.com>
+---
+ arch/x86/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20120110.orig/arch/x86/Kconfig
++++ linux-next-20120110/arch/x86/Kconfig
+@@ -2132,6 +2132,7 @@ config OLPC_XO1_RTC
+ config OLPC_XO1_SCI
+ 	bool "OLPC XO-1 SCI extras"
+ 	depends on OLPC && OLPC_XO1_PM
++	depends on INPUT=y
+ 	select POWER_SUPPLY
+ 	select GPIO_CS5535
+ 	select MFD_CORE
