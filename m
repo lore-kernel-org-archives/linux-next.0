@@ -1,43 +1,37 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the battery tree
-Date: Mon, 9 Jan 2012 23:53:18 +0000
-Message-ID: <20120109235318.GJ30766@opensource.wolfsonmicro.com>
-References: <C3AE124F08223B42BC95AEB82F0F6CED1FDB2C78@KCHJEXMB02.kpit.com> <1326097770.3542.14.camel@dhruva> <20120109131037.GA26091@oksana.dev.rtsoft.ru>
+From: Tony Luck <tony.luck@intel.com>
+Subject: more PID churn during boot?
+Date: Mon, 9 Jan 2012 16:32:56 -0800
+Message-ID: <CA+8MBbKKTmZ2fD-j0xnQuxDh9jBO8jfV=gjP2cVvuPZg4r42+Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:39127 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932158Ab2AIXxU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jan 2012 18:53:20 -0500
-Content-Disposition: inline
-In-Reply-To: <20120109131037.GA26091@oksana.dev.rtsoft.ru>
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:50675 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933544Ab2AJAc5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jan 2012 19:32:57 -0500
+Received: by vbbfc26 with SMTP id fc26so3130278vbb.19
+        for <linux-next@vger.kernel.org>; Mon, 09 Jan 2012 16:32:56 -0800 (PST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <cbouatmailru@gmail.com>
-Cc: Ashish Jangam <ashish.jangam@kpitcummins.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
 
-On Mon, Jan 09, 2012 at 05:10:37PM +0400, Anton Vorontsov wrote:
-> On Mon, Jan 09, 2012 at 01:59:29PM +0530, Ashish Jangam wrote:
+Just noticed that linux-next kernels from late 2011 threw out this
+message during boot:
 
-> > > Caused by commit ded7fc7b0550 ("power_supply: Add DA9052 battery driver").
+udevd (124): /proc/124/oom_adj is deprecated, please use
+/proc/124/oom_score_adj instead.
 
-> > > The commit message says "This driver depends on DA9052 MFD core dirver for definitions and methods".  That core is presumably still pending inclusion.
+while the 2012 editions print:
 
-> Well, it is in the MFD tree already, otherwise allmodconfig would not
-> be able to select this driver.
+udevd (341): /proc/341/oom_adj is deprecated, please use
+/proc/341/oom_score_adj instead.
 
-It didn't actually go in via the MFD tree, it went in via regmap, but
-same difference.
 
-> > > I have used the battery tree from next-20120104 for today.
-> > This patch depends upon Da9052/53 MFD core and also on one of its incremental patch for ADC that got these functions definitions. Below is that patch.
-> > We had already posted this patch.
+So we are somehow burning through over 200 more PIDs just booting the
+system than
+we were last month.  Anyone know why?
 
-> So, this patch should go via MFD tree asap. Otherwise, I'll have to
-> disable this driver by making it depend on 'broken' in Kconfig.
+[This is on an ia64 running a SLES 11-SP1 user space - hence the old
+udevd binary]
 
-The regmap tree has already been merged by Linus which makes things a
-bit tricky, it'd probably need to wait for -rc1 for Samuel to send it
-givne that Linus was saying he really wanted everything to have been in
--next before the merge window.
+-Tony
