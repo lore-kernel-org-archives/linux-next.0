@@ -1,38 +1,56 @@
-From: Tony Luck <tony.luck@gmail.com>
-Subject: Re: more PID churn during boot?
-Date: Tue, 10 Jan 2012 11:25:00 -0800
-Message-ID: <CA+8MBb+=dQb9LE=pDbOw7DBh0Tr=rp4cTstxwQGWGDOguvMpaw@mail.gmail.com>
-References: <CA+8MBbKKTmZ2fD-j0xnQuxDh9jBO8jfV=gjP2cVvuPZg4r42+Q@mail.gmail.com>
-	<20120110121459.6b358afe6052810e91dfdd47@canb.auug.org.au>
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: linux-next: Tree for Jan 4 (usb/otg)
+Date: Tue, 10 Jan 2012 20:32:09 +0100
+Message-ID: <CAMuHMdXg=Fr6HLCLJvGBJD6wsUKN0=nRi7rboQU6+i5NwTWe3w@mail.gmail.com>
+References: <20120104191656.de575406a93b3c5226c531b2@canb.auug.org.au>
+	<4F04E96F.6040501@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:58050 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932175Ab2AJTZB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 14:25:01 -0500
-In-Reply-To: <20120110121459.6b358afe6052810e91dfdd47@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F04E96F.6040501-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 9, 2012 at 5:14 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> while the 2012 editions print:
+On Thu, Jan 5, 2012 at 01:06, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org> wrote=
+:
+> On 01/04/2012 12:16 AM, Stephen Rothwell wrote:
+>> Hi all,
 >>
->> udevd (341): /proc/341/oom_adj is deprecated, please use
->> /proc/341/oom_score_adj instead.
+>> Changes since 20120103:
+>
+>
+>
+> ERROR: "usb_add_hcd" [drivers/usb/otg/mv_otg.ko] undefined!
+> ERROR: "usb_remove_hcd" [drivers/usb/otg/mv_otg.ko] undefined!
 
-Ok - not a kernel problem. Building old kernels (that used to not have this
-much churn) while checking for the start point for a bisect started showing
-the same churn.
+And now it's in Linus' tree, for m68k allmodconfig:
 
-I tracked the start of the problem to when I updated my build machine
-on jan 3rd - and it's now throwing a new version of udevd[*] into the initrd
-that I throw at my test machine.
-Probably a bunch of other initrd components are new versions too.
+http://kisskb.ellerman.id.au/kisskb/buildresult/5361188/
+http://kisskb.ellerman.id.au/kisskb/buildresult/5361013/
 
--Tony
+BTW, strange that this error never popped up in linux-next before for t=
+hat
+config. Perhaps it was masked by the paride/bpck6.c build failure?
 
-[1] Builds since Jan 3rd all have this extra line in dmesg log:
-udev: starting version 147
+Gr{oetje,eeting}s,
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
