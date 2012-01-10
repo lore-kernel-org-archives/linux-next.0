@@ -1,68 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: please update the i.MX tree
-Date: Tue, 10 Jan 2012 11:52:18 +1100
-Message-ID: <20120110115218.e00ab8c01abd5b9ae9a3b166@canb.auug.org.au>
+Subject: Re: more PID churn during boot?
+Date: Tue, 10 Jan 2012 12:14:59 +1100
+Message-ID: <20120110121459.6b358afe6052810e91dfdd47@canb.auug.org.au>
+References: <CA+8MBbKKTmZ2fD-j0xnQuxDh9jBO8jfV=gjP2cVvuPZg4r42+Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Jan_2012_11_52_18_+1100_Wdl1pFxuUNPIz2mp"
+ boundary="Signature=_Tue__10_Jan_2012_12_14_59_+1100_ZK67iUrQjg8r0nlo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:57960 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:34008 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755753Ab2AJAwa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jan 2012 19:52:30 -0500
+	with ESMTP id S1755753Ab2AJBPH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jan 2012 20:15:07 -0500
+In-Reply-To: <CA+8MBbKKTmZ2fD-j0xnQuxDh9jBO8jfV=gjP2cVvuPZg4r42+Q@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+To: Tony Luck <tony.luck@intel.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__10_Jan_2012_11_52_18_+1100_Wdl1pFxuUNPIz2mp
+--Signature=_Tue__10_Jan_2012_12_14_59_+1100_ZK67iUrQjg8r0nlo
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sascha,
+[Just adding lkml to the recipients]
 
-It looks like most (if not all) of the i.MX tree has been merged into the
-arm-soc (and Linus') tree, so could you please update the i.MX tree to
-eliminate the conflicts I am getting.
-
-CONFLICT (content): Merge conflict in arch/arm/plat-mxc/include/mach/hardwa=
-re.h
-CONFLICT (modify/delete): arch/arm/mach-mx5/pm-imx5.c deleted in HEAD and m=
-odified in i.MX/for-next. Version i.MX/for-next of arch/arm/mach-mx5/pm-imx=
-5.c left in tree.
-CONFLICT (modify/delete): arch/arm/mach-mx5/Makefile deleted in HEAD and mo=
-dified in i.MX/for-next. Version i.MX/for-next of arch/arm/mach-mx5/Makefil=
-e left in tree.
-CONFLICT (modify/delete): arch/arm/mach-mx5/Kconfig deleted in HEAD and mod=
-ified in i.MX/for-next. Version i.MX/for-next of arch/arm/mach-mx5/Kconfig =
-left in tree.
+On Mon, 9 Jan 2012 16:32:56 -0800 Tony Luck <tony.luck@intel.com> wrote:
+>
+> Just noticed that linux-next kernels from late 2011 threw out this
+> message during boot:
+>=20
+> udevd (124): /proc/124/oom_adj is deprecated, please use
+> /proc/124/oom_score_adj instead.
+>=20
+> while the 2012 editions print:
+>=20
+> udevd (341): /proc/341/oom_adj is deprecated, please use
+> /proc/341/oom_score_adj instead.
+>=20
+>=20
+> So we are somehow burning through over 200 more PIDs just booting the
+> system than
+> we were last month.  Anyone know why?
+>=20
+> [This is on an ia64 running a SLES 11-SP1 user space - hence the old
+> udevd binary]
+>=20
+> -Tony
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__10_Jan_2012_11_52_18_+1100_Wdl1pFxuUNPIz2mp
+--Signature=_Tue__10_Jan_2012_12_14_59_+1100_ZK67iUrQjg8r0nlo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPC4vCAAoJEECxmPOUX5FEzcEP/ise0CeoRgT1M+0meRNoVw2t
-ANySEBvaCLiti/Z0Gn4OlZ7apsmcAgqnIU9dK44BrrASmLD4Gg4LKCF9uunsKzwT
-WkOPjVP5hAqsFQUB2UrhBV5HSjunBMnQR4qFXbvtOrTKe8kLj1gv2Xd1iUxoqrOx
-fKoIYYICJ1zOdatvrIpmhm2RcW0X5/ifph8jlRgPiVKUG4b45vn8fDf4wT4Ohyum
-zacgiDp7hTVW9dl47+aQ9HJfEIlTi/Osgx7fULZmFg9MXpC5lSPnWtj20D2ODmvH
-6xGIEvKx7ZfvUkGt3wNy7FIMhuRhDOANbXza+ah3GtkjhXqQ482ysxGw+3yxissB
-pmsB0OmatC2ZqbSmFGxNNUE72xCCONZa+0XlzAOSan7t2JquOTej3MUzxMHUc7ss
-+HzgijjPo8hrWSxeIi5S4zhkLdBtarCu0qDV4z/1+oWRu1XIF9/DerqBt6KdAlRl
-O9VaW3YKv1OeoR2pymIjeDMxszXFQQBxyQYXdttJWRlEH3s6Rv+IILn8KDsfdW/7
-Ov/+aDwthsuSJpPA5YKEjGEMyyg2jvSiLr+Ie74SD6Gi81NCt/hKIiJdol2rDjIB
-yRafmQ4Y/39XPWHwB1I/Ecx9zg0rpEnU/WUSL5H6VRfjqnEpin7crI0B6tZwREmD
-X4YLU9WQLmPN8iwA7vA1
-=W/Sn
+iQIcBAEBCAAGBQJPC5ETAAoJEECxmPOUX5FEnsYP/2V+n+FPVz8O5R6ODqIUwqRr
+TNKB1IuMMyncCx0mTQwL9LNOqBclOsZYOwmNZJCCnLloMcEOIVVWfJbeORnNn7L+
+NYyYwLDErXSP75XdMwxdP5K2mspBnkCVNDayQRW5Qu/d4K43ud3DR8tSkotNKbT6
+Y7RicaGyMXFjXs4LOyJUvprPx5TTLzQsjcBG1iva5hBJP3TxzzkgTZzacgaFzUUd
+hfGqwKqzTBWhLtdQHumMfCeKG46SCB6IN9gGzBLmUzSjXt1n2A3NYE0NWajehmkx
+Ui1gK4spF+s44WlhosvaOF4l9a3M6A3WElvqzp1tjkM4MLMQAINWx5UuWqLw/ac4
+vi6Z7HWY7UyWYJajCVpEmzsmtYJ/KzxplM6w1Pr9nwv8eGDx5/9y3vpLcKFFEHpU
+9RSDsiyIQpZdT/85lySJy2Xf26E7jJ0HutZMTwNhlMenMlC+BB95MleehMXR9MLZ
+/Y5cQ6jJeoXAoEqsh4/IzB118vmUgxmT5b9G6IvjvvqoddCiTAyLIxRR009iehMD
+28o2P3InoZCZmqEy3fNpDs7ghjginosZLYN6i/GPS3U06Bkrpkm1S7tTbaqmNdNJ
+mtmbLevpA7HKHsq2wHwVuB4dOzVwCuL5tKe3+ahLEQ6jmw7JZSfjiBEaRhKGJ9oQ
+6jhB0lQRnge+gvsw+VLZ
+=Cvxt
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Jan_2012_11_52_18_+1100_Wdl1pFxuUNPIz2mp--
+--Signature=_Tue__10_Jan_2012_12_14_59_+1100_ZK67iUrQjg8r0nlo--
