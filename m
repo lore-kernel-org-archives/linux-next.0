@@ -1,109 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ext3 tree with Linus' tree
-Date: Tue, 10 Jan 2012 12:22:15 +1100
-Message-ID: <20120110122215.a63256b9b640b8ef458e58f8@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree with the nfs tree
+Date: Tue, 10 Jan 2012 13:47:57 +1100
+Message-ID: <20120110134757.6e1a52401e7b427d4ba4c59b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Jan_2012_12_22_15_+1100_xOtWOo1eawteT7B/"
+ boundary="Signature=_Tue__10_Jan_2012_13_47_57_+1100_OeksFPPa=jJ0cvMx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:40791 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:48280 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932225Ab2AJBW0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jan 2012 20:22:26 -0500
+	with ESMTP id S1755969Ab2AJCsK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Jan 2012 21:48:10 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>
 
---Signature=_Tue__10_Jan_2012_12_22_15_+1100_xOtWOo1eawteT7B/
+--Signature=_Tue__10_Jan_2012_13_47_57_+1100_OeksFPPa=jJ0cvMx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jan,
+Hi Rusty,
 
-Today's linux-next merge of the ext3 tree got a conflict in
-fs/ext2/ioctl.c between commit 2a79f17e4a64 ("vfs: mnt_drop_write_file
-()") from Linus' tree and commit 6e85201ff4f4 ("ext2: protect inode
-changes in the SETVERSION and SETFLAGS ioctls") from the ext3 tree.
+Today's linux-next merge of the rr tree got a conflict in fs/nfs/client.c
+between commit 074b1d12fe25 ("NFSv4: Change the default setting of the
+nfs4_disable_idmapping parameter") from the nfs tree and commit
+5a925e82e106 ("module_param: make bool parameters really bool (drivers &
+misc)") from the rr tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
+
+Rusty: shouldn't bools be initialise with true/false instead of 1/0?=20
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/ext2/ioctl.c
-index 1089f76,b7f931f..0000000
---- a/fs/ext2/ioctl.c
-+++ b/fs/ext2/ioctl.c
-@@@ -80,28 -80,38 +80,38 @@@ long ext2_ioctl(struct file *filp, unsi
+diff --cc fs/nfs/client.c
+index 277dfaf,4a092a0..0000000
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@@ -84,7 -84,7 +84,7 @@@ retry
+  /*
+   * Turn off NFSv4 uid/gid mapping when using AUTH_SYS
+   */
+- static int nfs4_disable_idmapping =3D 1;
+ -static bool nfs4_disable_idmapping =3D 0;
+++static bool nfs4_disable_idmapping =3D 1;
  =20
-  		ext2_set_inode_flags(inode);
-  		inode->i_ctime =3D CURRENT_TIME_SEC;
-+ 		mutex_unlock(&inode->i_mutex);
-+=20
-  		mark_inode_dirty(inode);
-  setflags_out:
- -		mnt_drop_write(filp->f_path.mnt);
- +		mnt_drop_write_file(filp);
-  		return ret;
-  	}
-  	case EXT2_IOC_GETVERSION:
-  		return put_user(inode->i_generation, (int __user *) arg);
-- 	case EXT2_IOC_SETVERSION:
-+ 	case EXT2_IOC_SETVERSION: {
-+ 		__u32 generation;
-+=20
-  		if (!inode_owner_or_capable(inode))
-  			return -EPERM;
- -		ret =3D mnt_want_write(filp->f_path.mnt);
- +		ret =3D mnt_want_write_file(filp);
-  		if (ret)
-  			return ret;
-- 		if (get_user(inode->i_generation, (int __user *) arg)) {
-+ 		if (get_user(generation, (int __user *) arg)) {
-  			ret =3D -EFAULT;
-- 		} else {
-- 			inode->i_ctime =3D CURRENT_TIME_SEC;
-- 			mark_inode_dirty(inode);
-+ 			goto setversion_out;
-  		}
-+=20
-+ 		mutex_lock(&inode->i_mutex);
-+ 		inode->i_ctime =3D CURRENT_TIME_SEC;
-+ 		inode->i_generation =3D generation;
-+ 		mutex_unlock(&inode->i_mutex);
-+=20
-+ 		mark_inode_dirty(inode);
-+ setversion_out:
- -		mnt_drop_write(filp->f_path.mnt);
- +		mnt_drop_write_file(filp);
-  		return ret;
-+ 	}
-  	case EXT2_IOC_GETRSVSZ:
-  		if (test_opt(inode->i_sb, RESERVATION)
-  			&& S_ISREG(inode->i_mode)
+  /*
+   * RPC cruft for NFS
 
---Signature=_Tue__10_Jan_2012_12_22_15_+1100_xOtWOo1eawteT7B/
+--Signature=_Tue__10_Jan_2012_13_47_57_+1100_OeksFPPa=jJ0cvMx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPC5LHAAoJEECxmPOUX5FEPnYP/RucJ8W4zfibfMGd87KvRw1c
-Pq7wluT8aYuZPWIOGjb9etq22CQaFXrd1Kihv9wA/3AY8dQZQzp7ubnhy+fHJ3Cs
-u+dqCZeJSMfgJuXtLWmIZ76lrEZLeq64sQfyCjcclWxKG1dEmuySe/I8xeOuBP1G
-uvX4iXcVvnginJn8hD2PKtYZH0n1bWlfU7ssMNc7VL37ZHOiZCSwBRrHeX//oGDB
-IsMtRZ7Qdk8l2oMeHPv+/2qdSkHQ3Kl/oNDonslQdX6u0af5aDON8F+U+VEx9Ej6
-rBg+0ADwtrb1TBak5V92z8gzkKqGQSpUCXo2wS2W7z0qFh8oHEbTJiH5bk3IViK3
-JkT80mv41ZVHdjXRr5jCnN0BsMX0I/8T524foLT9/+c20T0B2ysI7JTNLaz69YEH
-PHI4H3Z8tACHTjxMhzpzrlK+SZz+bNLPlpRta4/Mbib1D7FPt6oixH9j1X/Bw4HE
-+mpeb7Yv+nyJFMm4K0abeI0kKhFBssGu3W53G0T6E4SwMlXmuli6Jx0QumEzVDpy
-B/teAoS1S2aXCbsaPP9UJvd1VGGI1/h0HPiAZl01Mh+H/AOC6ZsskM1PVO2uTtcq
-GCqEPZUuZzLJ14UvlCF5tCGPUTj/XLW1jnjXapTcaHrUqOVgA6pkrnEKFmp4tC3s
-VOJyL+9LsuXvSV2LAVmW
-=0UxI
+iQIcBAEBCAAGBQJPC6bdAAoJEECxmPOUX5FE83AP/ikT2gXfEFxbEnCUR0z9Svz+
+RCQwSd1BfWbYcImcId6668FG5LV5CW+D5B1ZIMeUDfGxn7CQFL7uVFqyqYsHIiBN
+d4su5kPBoIM6aXGdrtRB6Evgzo6MMaKaCcjgio3K3CUAiw24aSvnfCM2lhM/Zx5H
+yR368iW/GJLJvBiBdIDHGEtacYBwOOYI/9p2uGF1U0flzQLJnNkHc6ThkVrd1GDX
+lC1LD1CnY04uOcUzRtLkftSBAInDMkdPVwPi6AVF3Up5Mr2ZlAf77F/vKJglRyev
+oonzHTo4RVCzqXL2Ac7/FSeUZd8G8qKwnHzoG0suFK01284oEt9C4RRHQ86SJr+I
+EVOwHmk3PoGinZSVaQmjayB7iwb/vfJQSZlr5NvjjwclQp+Vfugc9jOR0vZCFFDB
+Sp+c67ryUfqLdjCiq5/MVeEgm5osiD86LRsmdpCAZXicdZ0L8EzJ6Jfe73EzF6z2
+SNr5YBbIToD6JsfgKfYp5XRLI4TmwVbvr60b+7AelAqvFSUh3ayJ7W66Racht6xF
+yCU/w878gRd5eTlPsxCOZj75yuk7SzDO24vkeFoUqfj6hkPfbygD3CBZQuhDnSlq
+Pp430welVqCx2uPweyhEItArtvcpe86lbAFJDjCo09xRBwB//xnGKHC9Sv5XGLBZ
+dcqp2qxXTHQTAPLCrIXg
+=m2yz
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Jan_2012_12_22_15_+1100_xOtWOo1eawteT7B/--
+--Signature=_Tue__10_Jan_2012_13_47_57_+1100_OeksFPPa=jJ0cvMx--
