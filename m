@@ -1,56 +1,42 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: linux-next: Tree for Jan 4 (usb/otg)
-Date: Tue, 10 Jan 2012 20:32:09 +0100
-Message-ID: <CAMuHMdXg=Fr6HLCLJvGBJD6wsUKN0=nRi7rboQU6+i5NwTWe3w@mail.gmail.com>
-References: <20120104191656.de575406a93b3c5226c531b2@canb.auug.org.au>
-	<4F04E96F.6040501@xenotime.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Jan 9 (arch/x86/pci/amd_bus.c)
+Date: Tue, 10 Jan 2012 12:57:54 -0800
+Message-ID: <4F0CA652.5040103@xenotime.net>
+References: <20120109170457.4465dfc66a0eace4a2230fef@canb.auug.org.au> <4F0B569B.6050004@xenotime.net> <CAErSpo4+remnOA6gJXOz_54CsbbcOq_Yj=ua9gV_bq5dZ64ABA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F04E96F.6040501-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:52026 "HELO
+	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932602Ab2AJT7o (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 14:59:44 -0500
+In-Reply-To: <CAErSpo4+remnOA6gJXOz_54CsbbcOq_Yj=ua9gV_bq5dZ64ABA@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, x86 maintainers <x86@kernel.org>, linux-pci@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
 
-On Thu, Jan 5, 2012 at 01:06, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org> wrote=
-:
-> On 01/04/2012 12:16 AM, Stephen Rothwell wrote:
->> Hi all,
+On 01/09/2012 02:40 PM, Bjorn Helgaas wrote:
+> On Mon, Jan 9, 2012 at 2:05 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
+>> on several i386 builds:
 >>
->> Changes since 20120103:
->
->
->
-> ERROR: "usb_add_hcd" [drivers/usb/otg/mv_otg.ko] undefined!
-> ERROR: "usb_remove_hcd" [drivers/usb/otg/mv_otg.ko] undefined!
+>> amd_bus.c:(.init.text+0x134b): undefined reference to `amd_get_mmconfig_range'
+> 
+> This is my fault.  I moved some code from amd_bus.c to amd_nb.c, and builds with
+> 
+>         CONFIG_PCI=y
+>         # CONFIG_AMD_NB not set
+> 
+> now fail.  The attached patch should fix it.  I'll repost the series
+> ("x86/PCI: amd: factor out MMCONFIG discovery") with the fix.
+> 
+> Yinghai, it looks to me like there's no reason to build amd_bus.o
+> unless we have CONFIG_AMD_NB=y, but speak up if I'm wrong :)
 
-And now it's in Linus' tree, for m68k allmodconfig:
+Seems to work for me.  Thanks.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/5361188/
-http://kisskb.ellerman.id.au/kisskb/buildresult/5361013/
 
-BTW, strange that this error never popped up in linux-next before for t=
-hat
-config. Perhaps it was masked by the paride/bpck6.c build failure?
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
