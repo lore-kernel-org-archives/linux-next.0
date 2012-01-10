@@ -1,76 +1,72 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] olpc: fix olpc-xo1-sci.c build when INPUT=m
-Date: Tue, 10 Jan 2012 13:30:03 -0800
-Message-ID: <4F0CADDB.5010303@xenotime.net>
-References: <20120110164454.b595335a42321c80fba56ea7@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: please update the i.MX tree
+Date: Wed, 11 Jan 2012 09:34:57 +1100
+Message-ID: <20120111093457.af3caeabe2dbf50b70942334@canb.auug.org.au>
+References: <20120110115218.e00ab8c01abd5b9ae9a3b166@canb.auug.org.au>
+	<20120110083020.GR5446@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__11_Jan_2012_09_34_57_+1100_ewBTBK0nYb7RKcxd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:47258 "HELO
-	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1756672Ab2AJUbx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 15:31:53 -0500
-In-Reply-To: <20120110164454.b595335a42321c80fba56ea7@canb.auug.org.au>
+Received: from calzone.tip.net.au ([203.10.76.15]:56709 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756549Ab2AJWfH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 17:35:07 -0500
+In-Reply-To: <20120110083020.GR5446@pengutronix.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, x86 maintainers <x86@kernel.org>, Andres Salomon <dilinger@queued.net>, Chris Ball <cjb@laptop.org>, Jon Nettleton <jon.nettleton@gmail.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Wed__11_Jan_2012_09_34_57_+1100_ewBTBK0nYb7RKcxd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix build errors when CONFIG_INPUT=m.
-This is not pretty, but all of the OLPC kconfig options
-are bool instead of tristate.
+Hi Sascha,
 
-arch/x86/built-in.o: In function `send_lid_state':
-olpc-xo1-sci.c:(.text+0x1d323): undefined reference to `input_event'
-olpc-xo1-sci.c:(.text+0x1d338): undefined reference to `input_event'
-arch/x86/built-in.o: In function `free_ebook_switch':
-olpc-xo1-sci.c:(.text+0x1d529): undefined reference to `input_unregister_device'
-olpc-xo1-sci.c:(.text+0x1d533): undefined reference to `input_free_device'
-arch/x86/built-in.o: In function `free_power_button':
-olpc-xo1-sci.c:(.text+0x1d549): undefined reference to `input_unregister_device'
-olpc-xo1-sci.c:(.text+0x1d553): undefined reference to `input_free_device'
-arch/x86/built-in.o: In function `send_ebook_state':
-olpc-xo1-sci.c:(.text+0x1d632): undefined reference to `input_event'
-olpc-xo1-sci.c:(.text+0x1d647): undefined reference to `input_event'
-arch/x86/built-in.o: In function `xo1_sci_intr':
-olpc-xo1-sci.c:(.text+0x1d78e): undefined reference to `input_event'
-olpc-xo1-sci.c:(.text+0x1d7a3): undefined reference to `input_event'
-olpc-xo1-sci.c:(.text+0x1d7be): undefined reference to `input_event'
-arch/x86/built-in.o:olpc-xo1-sci.c:(.text+0x1d7d3): more undefined references to `input_event' follow
-arch/x86/built-in.o: In function `free_lid_switch':
-olpc-xo1-sci.c:(.text+0x1d7fd): undefined reference to `input_unregister_device'
-olpc-xo1-sci.c:(.text+0x1d807): undefined reference to `input_free_device'
-arch/x86/built-in.o: In function `setup_lid_switch':
-olpc-xo1-sci.c:(.devinit.text+0x155): undefined reference to `input_allocate_device'
-olpc-xo1-sci.c:(.devinit.text+0x1a4): undefined reference to `input_register_device'
-olpc-xo1-sci.c:(.devinit.text+0x1ce): undefined reference to `input_unregister_device'
-olpc-xo1-sci.c:(.devinit.text+0x1d8): undefined reference to `input_free_device'
-arch/x86/built-in.o: In function `xo1_sci_probe':
-olpc-xo1-sci.c:(.devinit.text+0x235): undefined reference to `input_allocate_device'
-olpc-xo1-sci.c:(.devinit.text+0x285): undefined reference to `input_register_device'
-olpc-xo1-sci.c:(.devinit.text+0x299): undefined reference to `input_free_device'
-olpc-xo1-sci.c:(.devinit.text+0x2e1): undefined reference to `input_register_device'
-olpc-xo1-sci.c:(.devinit.text+0x2f5): undefined reference to `input_free_device'
-olpc-xo1-sci.c:(.devinit.text+0x54c): undefined reference to `input_allocate_device'
+On Tue, 10 Jan 2012 09:30:20 +0100 Sascha Hauer <s.hauer@pengutronix.de> wr=
+ote:
+>
+> On Tue, Jan 10, 2012 at 11:52:18AM +1100, Stephen Rothwell wrote:
+> >=20
+> > It looks like most (if not all) of the i.MX tree has been merged into t=
+he
+> > arm-soc (and Linus') tree, so could you please update the i.MX tree to
+> > eliminate the conflicts I am getting.
+>=20
+> Did this. Sorry, I was not aware that there is something in this branch.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc:	Andres Salomon <dilinger@queued.net>
-Cc:	Chris Ball <cjb@laptop.org>
-Cc:	Jon Nettleton <jon.nettleton@gmail.com>
----
- arch/x86/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Did you push it out? I just checked and it hasn't changed. Just to be
+clear, I am fetching git://git.pengutronix.de/git/imx/linux-2.6.git
+branch for-next and it hasn't changed since last September.
 
---- linux-next-20120110.orig/arch/x86/Kconfig
-+++ linux-next-20120110/arch/x86/Kconfig
-@@ -2132,6 +2132,7 @@ config OLPC_XO1_RTC
- config OLPC_XO1_SCI
- 	bool "OLPC XO-1 SCI extras"
- 	depends on OLPC && OLPC_XO1_PM
-+	depends on INPUT=y
- 	select POWER_SUPPLY
- 	select GPIO_CS5535
- 	select MFD_CORE
+Should I, instead, just remove that tree from linux-next and let you send
+stuff just via the arm-soc (or arm)tree?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__11_Jan_2012_09_34_57_+1100_ewBTBK0nYb7RKcxd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPDL0RAAoJEECxmPOUX5FEUoMP/243xCqyxcWiRe4bL2bclcmB
+7pS0RD9pQErxeO4atQ+HKtFnlNXhOPMjtvQDsx64oHBaOJnTDAA3bEt9buCw959R
+rwPcjGaSXVJuU4uNdKZHPxAsNDpFQyDKgbNz22crQuzc4s1HjeBCfUqqVQDB4H9Z
+VmWkE9bNxEMDdUb0slaShbA7a6LSQOnVlgIR68nM340yUgNYAKlJUaXgpr2ksATq
+bcpE+IPCp2ZHOdWhKGWtEOEmYwlteQeO58Kx+AO2S8cfc0+sazVcNL/9MwzbIoPz
+1HcjtdBh11j99bMvlG7VE/5F2L14Z9vbq5uYE8iKDa9f/WUsN26RMmpNBqgkehN7
+QOoyR2WFlZ0Z94CsxB/dkn7HCHek1wGzyO8GIjCPKfeWmN8/EAFalFgVFDvtgcrJ
+Qif0zcNs4DgHzGuidYWMIJ6vVhS75GXDY1IHe9ZtEmdcAKv+ltWLRLVoHojymZzg
+ITwa2AJobpabL57keLiOTCDUy7fbVHhf0oNg4hRJ5MsdTjLfEaDh5bmeqVlTlXH/
+Tx+dbWldWLm7QTfCQtO8EGnF9RvS9+ruttrFkZiDzhr0AlNKQg5itMqOA2zBka4A
+Wlpnscf/3O7KfqbJ4a2/Mzo8Gpeiit1KlHJXIWCp2EPm8lHdireAzi+06HSOaGu/
+96KAzY/JTifdvmpFyGKk
+=yXMf
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__11_Jan_2012_09_34_57_+1100_ewBTBK0nYb7RKcxd--
