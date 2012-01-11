@@ -1,63 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the ceph tree with Linus' tree
-Date: Wed, 11 Jan 2012 14:02:18 +1100
-Message-ID: <20120111140218.269abb02376954da5ef09a81@canb.auug.org.au>
-References: <20120111122744.7db3bfb91d79b1307db02228@canb.auug.org.au>
-	<20120111013127.GE23916@ZenIV.linux.org.uk>
-	<Pine.LNX.4.64.1201101732330.15859@cobra.newdream.net>
+Subject: linux-next: manual merge of the xen tree with Linus' tree
+Date: Wed, 11 Jan 2012 14:57:09 +1100
+Message-ID: <20120111145709.77ef7d68996cd5fa724326e5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__11_Jan_2012_14_02_18_+1100_EzdhmxUA/H556H1N"
+ boundary="Signature=_Wed__11_Jan_2012_14_57_09_+1100_3.I5m9WLz+XWRtAh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:46751 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:34562 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751063Ab2AKDCb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 22:02:31 -0500
-In-Reply-To: <Pine.LNX.4.64.1201101732330.15859@cobra.newdream.net>
+	with ESMTP id S1756726Ab2AKD5V (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 22:57:21 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sage Weil <sage@newdream.net>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <elder@dreamhost.com>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
---Signature=_Wed__11_Jan_2012_14_02_18_+1100_EzdhmxUA/H556H1N
+--Signature=_Wed__11_Jan_2012_14_57_09_+1100_3.I5m9WLz+XWRtAh
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sage,
+Hi all,
 
-On Tue, 10 Jan 2012 17:35:36 -0800 (PST) Sage Weil <sage@newdream.net> wrot=
-e:
->
-> BTW, should I let Linus resolve this, or merge his master back into my=20
-> tree, or rebase onto his master?
+Today's linux-next merge of the xen tree got a conflict in
+arch/x86/xen/Kconfig between commit 10fe570fc167 ("Revert "xen/debug:
+WARN_ON when identity PFN has no _PAGE_IOMAP flag set."") from Linus'
+tree and commit 23757fb5d678 ("xen: add CPU microcode update driver")
+from the xen tree.
 
-Let Linus resolve it (giving him a hint if necessary).
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__11_Jan_2012_14_02_18_+1100_EzdhmxUA/H556H1N
+diff --cc arch/x86/xen/Kconfig
+index fdce49c,4d04d4f..0000000
+--- a/arch/x86/xen/Kconfig
++++ b/arch/x86/xen/Kconfig
+@@@ -50,3 -50,14 +50,6 @@@ config XEN_DEBUG_F
+  	  Enable statistics output and various tuning options in debugfs.
+  	  Enabling this option may incur a significant performance overhead.
+ =20
+ -config XEN_DEBUG
+ -	bool "Enable Xen debug checks"
+ -	depends on XEN
+ -	default n
+ -	help
+ -	  Enable various WARN_ON checks in the Xen MMU code.
+ -	  Enabling this option WILL incur a significant performance overhead.
+ -
++ config MICROCODE_XEN
++        def_bool y
++        depends on XEN_DOM0 && MICROCODE
+
+--Signature=_Wed__11_Jan_2012_14_57_09_+1100_3.I5m9WLz+XWRtAh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPDPu6AAoJEECxmPOUX5FE/NgP/j0Vur4HCUP+Oqil9DoFgv/y
-74WxYuQWBtCfgR0YvkKQSiC189ZwlnUHRMQYnAYrmF882Vm2JlSI+7YdUVjIXnC6
-RenmDkNFM3W8EO308zkmDfrP+l7L4MVU4njBdWRaILZoJOo5ALhD+Un3JtU95Sr8
-fGJXqNkTouZCWZlqePtn/JgIDxxc8XwpMZ1k/8GGufy6icVB7WmfddnrsIF6mZQw
-BThSn8vrQwEtZZbrlgC7V8fi776EAPXh9z29PdnPdaEZqRAEa8NXkyVfS19TZQ1B
-mQY/g8AlBYtei0ssM3wWnSUGXlnmmMq8G8RHc4SZlTIkDVxzikK0BUFCxxA1ZB2k
-MlwViE0fMn5jyyPv0zHSls3rbTOh9CuooZQkZqEKL+TYtllffqn2gEl+mIQIUgcF
-NR445saKJjzM0i465gyxVBf7kFnWk9Ju2/SMYw2+LPWeC4yvQp4O4N59hbIk4An6
-24xxyw3OQht5+nI5vT9VJ4PNV2EFGwFc44O5o4qL+Z3qNKM2oMJ4gdRZbZUwUGoa
-DQbGzueIRqbn2OvPgVUGvzmk/MDqexn+1vhSXtoV078NGv7wHYSmXnM3rhCABbNM
-j+8cALPKuptTXZzB4ICbxz7cIeWzvgbjVipxqX8cUYxlNjEflrnT2/JluyfQQJFX
-jItctPt9LYuEvDMHy2nI
-=PGO5
+iQIcBAEBCAAGBQJPDQiVAAoJEECxmPOUX5FEG7AP/Rssqi+tUaxgVskTmlim2KNY
+kWhpjgiZ0j6Hq1gNncJa/YntMH+GP2IAaCOkXqf2KSzfi6/2ZxpB64qhpwUv6m7x
+Vy7qag1Qw6hIZ20jue9IdkI2Zw5nmk3kPwpvE9pYbvd8zUqTS2RSUyk4dxLTd2A2
+2YRqEGfGsJQ4axMLX5y2S4bTzIezUNWuw0z+SXs3wpiaiXUWl7Ge2XQfnN/gkNiu
+7bGw7nTwZirdZ5d70As5EEDmb42rEJ7OtU+3VSj4R90d/2m22a0IZyfwbcEFOYn+
+hzd1boox/8nWEHQXVYsWMvnD3b71c57ydcb1MBbJ+mxX0NLEwKQBzemwKywFafwV
+7mx4a58NkkvKvGQ4IDRry7gCzM+/8osI0rukLivLji6plJDLvwnB3Q2T+vI/G+dj
+gBZAIdwEjlry6Y4YmOu9EbGw4Cq/DRb5t+EcvGFKzfcE41tXdhVhBeL7W+gKaE1J
+844Yvfm2xtbthYv4tDjVer+gQr8IbVZ1IMfvS+A/TDqJqHzJKN1dL1wrAyKLKtAX
+EnrlfGr9dnS68yhR89bCCTfDCGJ8KN/FSIaHSlhHg+8dzHim2l6NAnuroI0ROJvt
+UVfjgNYNVtj1XJMFgoCo+w3wbonrF71bFh3TRRCE3Eb9jt3VQjar5QRVBQjxOT5m
+r3D7nPvrJGUr9G5pUvvl
+=NhaO
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__11_Jan_2012_14_02_18_+1100_EzdhmxUA/H556H1N--
+--Signature=_Wed__11_Jan_2012_14_57_09_+1100_3.I5m9WLz+XWRtAh--
