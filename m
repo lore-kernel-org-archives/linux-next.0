@@ -1,51 +1,45 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
+From: Alex Elder <elder@dreamhost.com>
 Subject: Re: linux-next: manual merge of the ceph tree with Linus' tree
-Date: Wed, 11 Jan 2012 01:49:00 +0000
-Message-ID: <20120111014900.GF23916@ZenIV.linux.org.uk>
+Date: Tue, 10 Jan 2012 18:10:22 -0800
+Message-ID: <1326247822.2443.18.camel@doink>
 References: <20120111122744.7db3bfb91d79b1307db02228@canb.auug.org.au>
- <20120111013127.GE23916@ZenIV.linux.org.uk>
- <Pine.LNX.4.64.1201101732330.15859@cobra.newdream.net>
+	 <20120111013127.GE23916@ZenIV.linux.org.uk>
+Reply-To: elder@dreamhost.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:47760 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756706Ab2AKBtE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 20:49:04 -0500
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.64.1201101732330.15859@cobra.newdream.net>
+Received: from mail.hq.newdream.net ([66.33.206.127]:46500 "EHLO
+	mail.hq.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756700Ab2AKCKX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 21:10:23 -0500
+In-Reply-To: <20120111013127.GE23916@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sage Weil <sage@newdream.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <elder@dreamhost.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sage Weil <sage@newdream.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jan 10, 2012 at 05:35:36PM -0800, Sage Weil wrote:
-> On Wed, 11 Jan 2012, Al Viro wrote:
-> > On Wed, Jan 11, 2012 at 12:27:44PM +1100, Stephen Rothwell wrote:
-> > > Hi Sage,
-> > > 
-> > > Today's linux-next merge of the ceph tree got a conflict in
-> > > fs/ceph/super.c between commit 3c5184ef1216 ("ceph: d_alloc_root() may
-> > > fail") from Linus' tree and commit 26d913cdd955 ("ceph: always initialize
-> > > the dentry in open_root_dentry()") from the ceph tree.
-> > > 
-> > > I fixed it up (see below) and can carry the fix as necessary.
+On Wed, 2012-01-11 at 01:31 +0000, Al Viro wrote:
+> On Wed, Jan 11, 2012 at 12:27:44PM +1100, Stephen Rothwell wrote:
+> > Hi Sage,
 > > 
-> > Ahem...  
+> > Today's linux-next merge of the ceph tree got a conflict in
+> > fs/ceph/super.c between commit 3c5184ef1216 ("ceph: d_alloc_root() may
+> > fail") from Linus' tree and commit 26d913cdd955 ("ceph: always initialize
+> > the dentry in open_root_dentry()") from the ceph tree.
 > > 
-> > >  +			root = d_obtain_alias(inode);
-> > >  +		}
-> > > + 		ceph_init_dentry(root);
-> > 
-> > What will happen if dentry returned by d_obtain_alias() had already existed?
+> > I fixed it up (see below) and can carry the fix as necessary.
 > 
-> ceph_init_dentry() bails out immediately if d_fsdata is non-NULL.
+> Ahem...  
+> 
+> >  +			root = d_obtain_alias(inode);
+> >  +		}
+> > + 		ceph_init_dentry(root);
+> 
+> What will happen if dentry returned by d_obtain_alias() had already existed?
 
-Right.
+I had *exactly* the same reaction, and maybe the code would
+have been a little less surprising if the null check were
+in the caller (here)  rather than in ceph_init_dentry().
 
-> BTW, should I let Linus resolve this, or merge his master back into my 
-> tree, or rebase onto his master?
-
-My fault - I should've checked your tree for conflicts and feed that fix to
-you since it turned out to have them.  I thought for some reason that ceph
-pull had already happened...
+					-Alex
