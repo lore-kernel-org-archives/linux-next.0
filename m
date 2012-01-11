@@ -1,56 +1,72 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: linux-next: please update the i.MX tree
-Date: Wed, 11 Jan 2012 09:34:29 +0100
-Message-ID: <20120111083429.GU5446@pengutronix.de>
-References: <20120110115218.e00ab8c01abd5b9ae9a3b166@canb.auug.org.au>
- <20120110083020.GR5446@pengutronix.de>
- <20120111093457.af3caeabe2dbf50b70942334@canb.auug.org.au>
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: Re: linux-next: manual merge of the v4l-dvb tree with the arm-soc
+ tree
+Date: Wed, 11 Jan 2012 09:36:51 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.1201110933480.1191@axis700.grange>
+References: <20120111133146.990e2b7115c9fa80e8fc3234@canb.auug.org.au>
+ <CAOesGMh0W1hvpySB8jtVBojZtoniHXur98Bzq1Feh3vAD4CkOg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:52328 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754214Ab2AKIei (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jan 2012 03:34:38 -0500
-Content-Disposition: inline
-In-Reply-To: <20120111093457.af3caeabe2dbf50b70942334@canb.auug.org.au>
+Received: from moutng.kundenserver.de ([212.227.126.186]:52466 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757032Ab2AKIhN convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jan 2012 03:37:13 -0500
+In-Reply-To: <CAOesGMh0W1hvpySB8jtVBojZtoniHXur98Bzq1Feh3vAD4CkOg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Nicolas Ferre <nicolas.ferre@atmel.com>
 
-On Wed, Jan 11, 2012 at 09:34:57AM +1100, Stephen Rothwell wrote:
-> Hi Sascha,
-> 
-> On Tue, 10 Jan 2012 09:30:20 +0100 Sascha Hauer <s.hauer@pengutronix.de> wrote:
+On Tue, 10 Jan 2012, Olof Johansson wrote:
+
+> On Tue, Jan 10, 2012 at 6:31 PM, Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+> > Hi Mauro,
 > >
-> > On Tue, Jan 10, 2012 at 11:52:18AM +1100, Stephen Rothwell wrote:
-> > > 
-> > > It looks like most (if not all) of the i.MX tree has been merged into the
-> > > arm-soc (and Linus') tree, so could you please update the i.MX tree to
-> > > eliminate the conflicts I am getting.
-> > 
-> > Did this. Sorry, I was not aware that there is something in this branch.
-> 
-> Did you push it out? I just checked and it hasn't changed. Just to be
-> clear, I am fetching git://git.pengutronix.de/git/imx/linux-2.6.git
-> branch for-next and it hasn't changed since last September.
+> > Today's linux-next merge of the v4l-dvb tree got conflicts in a lar=
+ge
+> > number of files between commits from the arm-soc tree and commits f=
+rom the
+> > v4l-dvb tree. =A0You have rebased the v4l-dvb tree onto v3.2 while =
+the
+> > arm-soc tree had merged a previous version. you have then added a l=
+ot
+> > more commits on top of the result - which produces all the conflict=
+s. =A0:-(
+> >
+> > This is exactly the sort of pain I alluded to when I first noted th=
+at the
+> > v4l-dvb tree had been merged into the arm-soc tree ...
+>=20
+> We do this every now and then though, it's not an issue as long as
+> nothing stupid is done with the dependent branch at the other end.
+> I.e. if it's actually a stable branch (which we got promised that it
+> was).
+>=20
+> So, why was the whole v4l tree rebased? Guennadi, you said it was
+> going to be a stable branch? What happened?
 
-I failed to wait until my push returned. It failed due to
-non-fast-forward pushing. Really fixed this now.
+Sorry, I don't think I _promised_ anything, I even don't think I said=20
+anything at all about the stability of that branch. On the contrary - I=
+=20
+suggested you to only take _one_ patch, about which we knew, that some =
+ARM=20
+patches depended upon, for which I've got Mauro's ack. This has been do=
+ne=20
+with the sole purpose for you to avoid any dependencies. Instead you=20
+decided to pull the whole branch.
 
-> 
-> Should I, instead, just remove that tree from linux-next and let you send
-> stuff just via the arm-soc (or arm)tree?
+> > Not happy.
+>=20
+> No kidding.  Mauro, can you undo your rebase or should I remove the
+> dependent branch (and the at91 branch that needs it) from arm-soc
+> instead?
 
-Yes, that's probably best. That's what I do anyway.
-
-Sascha
-
-
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks
+Guennadi
+---
+Guennadi Liakhovetski, Ph.D.
+=46reelance Open-Source Software Developer
+http://www.open-technology.de/
