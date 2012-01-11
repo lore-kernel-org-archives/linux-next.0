@@ -1,99 +1,69 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: manual merge of the v4l-dvb tree with the arm-soc
- tree
-Date: Wed, 11 Jan 2012 08:35:34 -0200
-Message-ID: <4F0D65F6.8080209@infradead.org>
-References: <20120111133146.990e2b7115c9fa80e8fc3234@canb.auug.org.au> <CAOesGMh0W1hvpySB8jtVBojZtoniHXur98Bzq1Feh3vAD4CkOg@mail.gmail.com> <Pine.LNX.4.64.1201110933480.1191@axis700.grange>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: please update the i.MX tree
+Date: Wed, 11 Jan 2012 21:37:32 +1100
+Message-ID: <20120111213732.019071ba3da4d7ca2615c68b@canb.auug.org.au>
+References: <20120110115218.e00ab8c01abd5b9ae9a3b166@canb.auug.org.au>
+	<20120110083020.GR5446@pengutronix.de>
+	<20120111093457.af3caeabe2dbf50b70942334@canb.auug.org.au>
+	<20120111083429.GU5446@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__11_Jan_2012_21_37_32_+1100_bOCAFi/G_5ow7WFn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:41202 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753678Ab2AKKfs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jan 2012 05:35:48 -0500
-In-Reply-To: <Pine.LNX.4.64.1201110933480.1191@axis700.grange>
+Received: from calzone.tip.net.au ([203.10.76.15]:39663 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753040Ab2AKKhp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jan 2012 05:37:45 -0500
+In-Reply-To: <20120111083429.GU5446@pengutronix.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Olof Johansson <olof@lixom.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
-On 11-01-2012 06:36, Guennadi Liakhovetski wrote:
-> On Tue, 10 Jan 2012, Olof Johansson wrote:
-> 
->> On Tue, Jan 10, 2012 at 6:31 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> Hi Mauro,
->>>
->>> Today's linux-next merge of the v4l-dvb tree got conflicts in a large
->>> number of files between commits from the arm-soc tree and commits from the
->>> v4l-dvb tree.  You have rebased the v4l-dvb tree onto v3.2 while the
->>> arm-soc tree had merged a previous version. you have then added a lot
->>> more commits on top of the result - which produces all the conflicts.  :-(
->>>
->>> This is exactly the sort of pain I alluded to when I first noted that the
->>> v4l-dvb tree had been merged into the arm-soc tree ...
->>
->> We do this every now and then though, it's not an issue as long as
->> nothing stupid is done with the dependent branch at the other end.
->> I.e. if it's actually a stable branch (which we got promised that it
->> was).
->>
->> So, why was the whole v4l tree rebased? Guennadi, you said it was
->> going to be a stable branch? What happened?
-> 
-> Sorry, I don't think I _promised_ anything, I even don't think I said 
-> anything at all about the stability of that branch. On the contrary - I 
-> suggested you to only take _one_ patch, about which we knew, that some ARM 
-> patches depended upon, for which I've got Mauro's ack. This has been done 
-> with the sole purpose for you to avoid any dependencies. Instead you 
-> decided to pull the whole branch.
+--Signature=_Wed__11_Jan_2012_21_37_32_+1100_bOCAFi/G_5ow7WFn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What I and Guennadi agreed (http://linuxtv.org/irc/v4l/index.php?date=2012-01-05)
-were to do just the reverse:
+Hi Sascha,
 
-He would be sending you one single patch with my ack, that would allow the 
-arm tree to be merged [1], I would wait for a few days for the arm tree to
-be pulled, and then I would rebase my -next tree to remove that patch
-from it.
+On Wed, 11 Jan 2012 09:34:29 +0100 Sascha Hauer <s.hauer@pengutronix.de> wr=
+ote:
+>
+> On Wed, Jan 11, 2012 at 09:34:57AM +1100, Stephen Rothwell wrote:
+> >=20
+> > Should I, instead, just remove that tree from linux-next and let you se=
+nd
+> > stuff just via the arm-soc (or arm)tree?
+>=20
+> Yes, that's probably best. That's what I do anyway.
 
-[1] http://git.linuxtv.org/gliakhovetski/v4l-dvb.git/commitdiff/88c6599d97b489ac543fa352159a81f60bddded7
+OK, done.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-My -next tree were never meant to be stable. It is just a patch repository
-where I merge from the real development repository, in order to test them
-against the hole changes. From time to time, when bad things happen
-(patch conflicts, compilation breakages, requests to remove bad patches),
-I just rebase it.
+--Signature=_Wed__11_Jan_2012_21_37_32_+1100_bOCAFi/G_5ow7WFn
+Content-Type: application/pgp-signature
 
-The media stable tree is stored elsewhere, but it contains the sort of patches
-that Linus once asked me to not send him: merge patches from upstream
-that are sometimes needed, due to some conflict dependencies. This time,
-there are two of such patches inside my tree. That's a second reason
-for me to rebase.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
->>> Not happy.
->>
->> No kidding.  Mauro, can you undo your rebase or should I remove the
->> dependent branch (and the at91 branch that needs it) from arm-soc
->> instead?
+iQIcBAEBCAAGBQJPDWZsAAoJEECxmPOUX5FED0IP/j2ULSgMx04toHdhlnZ8CMS5
+L+Mrgow2G2CrZFzz3GoMIwFoF9htoMvTR3LxBAcwDgoy+0i1cjt40BAFCLHYpBF0
+PSUB53G/A/ojph0K2a50uo6KrvTCaNPYVQRU3OVESvMN4o1VOanGbU7UhBOLLcln
+LIw8Ny39nLROlollvuLXVnQX7UzNPNptClbsIGB+q5R5mEYMPoUQqhEssXZOdUPf
+ny1yncaNlQf/Hm7owMtbx01PTK9A/j1w7+WxeibL/fQ3tiB0Zf/N5tl5nRx3H96G
+OzZRT6jsIO5f2ZGF6syaYuDmazNK6WOoUF5N4T87KBiGpI51W9KvXVDm1KVQMrfd
+4ydcvciSdhqsWplUNtqBBHQCY8kMPljAPUwyTJQqc2ClNdZ5qQzvmLs+XnCKKEH3
+TX2KAOYzgpnxt+O/KHNqRduiHpUsDbML8j166LW9i6za80MX3KKfgXQ7qjudxbJp
+jFk+TFeigei21heOlLPTlrdQ/6k646cPymtPp18NeNW73gPXzCAAwqpEph40QQbp
+kl7gSeZlSHllha/3rgeBF4JH6LeczkgAjoqJoAzFvwxqbhHWYJYyAYRfgK8iAgSD
+Vl1mr/n1gaHwLeay2HdmL71+2mU1PO6RCb7OJKphtKMvs3gNLeW6l2KHTEhhv0B/
+dbdiMtde2HV/K0t0ChmG
+=LdMn
+-----END PGP SIGNATURE-----
 
-I prefer if you could just pick this patch from Guennadi's tree:
- http://git.linuxtv.org/gliakhovetski/v4l-dvb.git/commitdiff/88c6599d97b489ac543fa352159a81f60bddded7
-
-and add my ack on it, removing the v4l-dvb merge from yours.
-
-Linus seems to prefer to have the arch trees merged before the drivers
-tree, with makes sense.
-
-Regards,
-Mauro
-> 
-> Thanks
-> Guennadi
-> ---
-> Guennadi Liakhovetski, Ph.D.
-> Freelance Open-Source Software Developer
-> http://www.open-technology.de/
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Signature=_Wed__11_Jan_2012_21_37_32_+1100_bOCAFi/G_5ow7WFn--
