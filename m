@@ -1,72 +1,99 @@
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
 Subject: Re: linux-next: manual merge of the v4l-dvb tree with the arm-soc
  tree
-Date: Wed, 11 Jan 2012 09:36:51 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.1201110933480.1191@axis700.grange>
-References: <20120111133146.990e2b7115c9fa80e8fc3234@canb.auug.org.au>
- <CAOesGMh0W1hvpySB8jtVBojZtoniHXur98Bzq1Feh3vAD4CkOg@mail.gmail.com>
+Date: Wed, 11 Jan 2012 08:35:34 -0200
+Message-ID: <4F0D65F6.8080209@infradead.org>
+References: <20120111133146.990e2b7115c9fa80e8fc3234@canb.auug.org.au> <CAOesGMh0W1hvpySB8jtVBojZtoniHXur98Bzq1Feh3vAD4CkOg@mail.gmail.com> <Pine.LNX.4.64.1201110933480.1191@axis700.grange>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:52466 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757032Ab2AKIhN convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jan 2012 03:37:13 -0500
-In-Reply-To: <CAOesGMh0W1hvpySB8jtVBojZtoniHXur98Bzq1Feh3vAD4CkOg@mail.gmail.com>
+Received: from casper.infradead.org ([85.118.1.10]:41202 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753678Ab2AKKfs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jan 2012 05:35:48 -0500
+In-Reply-To: <Pine.LNX.4.64.1201110933480.1191@axis700.grange>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: Olof Johansson <olof@lixom.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Nicolas Ferre <nicolas.ferre@atmel.com>
 
-On Tue, 10 Jan 2012, Olof Johansson wrote:
+On 11-01-2012 06:36, Guennadi Liakhovetski wrote:
+> On Tue, 10 Jan 2012, Olof Johansson wrote:
+> 
+>> On Tue, Jan 10, 2012 at 6:31 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> Hi Mauro,
+>>>
+>>> Today's linux-next merge of the v4l-dvb tree got conflicts in a large
+>>> number of files between commits from the arm-soc tree and commits from the
+>>> v4l-dvb tree.  You have rebased the v4l-dvb tree onto v3.2 while the
+>>> arm-soc tree had merged a previous version. you have then added a lot
+>>> more commits on top of the result - which produces all the conflicts.  :-(
+>>>
+>>> This is exactly the sort of pain I alluded to when I first noted that the
+>>> v4l-dvb tree had been merged into the arm-soc tree ...
+>>
+>> We do this every now and then though, it's not an issue as long as
+>> nothing stupid is done with the dependent branch at the other end.
+>> I.e. if it's actually a stable branch (which we got promised that it
+>> was).
+>>
+>> So, why was the whole v4l tree rebased? Guennadi, you said it was
+>> going to be a stable branch? What happened?
+> 
+> Sorry, I don't think I _promised_ anything, I even don't think I said 
+> anything at all about the stability of that branch. On the contrary - I 
+> suggested you to only take _one_ patch, about which we knew, that some ARM 
+> patches depended upon, for which I've got Mauro's ack. This has been done 
+> with the sole purpose for you to avoid any dependencies. Instead you 
+> decided to pull the whole branch.
 
-> On Tue, Jan 10, 2012 at 6:31 PM, Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
-> > Hi Mauro,
-> >
-> > Today's linux-next merge of the v4l-dvb tree got conflicts in a lar=
-ge
-> > number of files between commits from the arm-soc tree and commits f=
-rom the
-> > v4l-dvb tree. =A0You have rebased the v4l-dvb tree onto v3.2 while =
-the
-> > arm-soc tree had merged a previous version. you have then added a l=
-ot
-> > more commits on top of the result - which produces all the conflict=
-s. =A0:-(
-> >
-> > This is exactly the sort of pain I alluded to when I first noted th=
-at the
-> > v4l-dvb tree had been merged into the arm-soc tree ...
->=20
-> We do this every now and then though, it's not an issue as long as
-> nothing stupid is done with the dependent branch at the other end.
-> I.e. if it's actually a stable branch (which we got promised that it
-> was).
->=20
-> So, why was the whole v4l tree rebased? Guennadi, you said it was
-> going to be a stable branch? What happened?
+What I and Guennadi agreed (http://linuxtv.org/irc/v4l/index.php?date=2012-01-05)
+were to do just the reverse:
 
-Sorry, I don't think I _promised_ anything, I even don't think I said=20
-anything at all about the stability of that branch. On the contrary - I=
-=20
-suggested you to only take _one_ patch, about which we knew, that some =
-ARM=20
-patches depended upon, for which I've got Mauro's ack. This has been do=
-ne=20
-with the sole purpose for you to avoid any dependencies. Instead you=20
-decided to pull the whole branch.
+He would be sending you one single patch with my ack, that would allow the 
+arm tree to be merged [1], I would wait for a few days for the arm tree to
+be pulled, and then I would rebase my -next tree to remove that patch
+from it.
 
-> > Not happy.
->=20
-> No kidding.  Mauro, can you undo your rebase or should I remove the
-> dependent branch (and the at91 branch that needs it) from arm-soc
-> instead?
+[1] http://git.linuxtv.org/gliakhovetski/v4l-dvb.git/commitdiff/88c6599d97b489ac543fa352159a81f60bddded7
 
-Thanks
-Guennadi
----
-Guennadi Liakhovetski, Ph.D.
-=46reelance Open-Source Software Developer
-http://www.open-technology.de/
+My -next tree were never meant to be stable. It is just a patch repository
+where I merge from the real development repository, in order to test them
+against the hole changes. From time to time, when bad things happen
+(patch conflicts, compilation breakages, requests to remove bad patches),
+I just rebase it.
+
+The media stable tree is stored elsewhere, but it contains the sort of patches
+that Linus once asked me to not send him: merge patches from upstream
+that are sometimes needed, due to some conflict dependencies. This time,
+there are two of such patches inside my tree. That's a second reason
+for me to rebase.
+
+>>> Not happy.
+>>
+>> No kidding.  Mauro, can you undo your rebase or should I remove the
+>> dependent branch (and the at91 branch that needs it) from arm-soc
+>> instead?
+
+I prefer if you could just pick this patch from Guennadi's tree:
+ http://git.linuxtv.org/gliakhovetski/v4l-dvb.git/commitdiff/88c6599d97b489ac543fa352159a81f60bddded7
+
+and add my ack on it, removing the v4l-dvb merge from yours.
+
+Linus seems to prefer to have the arch trees merged before the drivers
+tree, with makes sense.
+
+Regards,
+Mauro
+> 
+> Thanks
+> Guennadi
+> ---
+> Guennadi Liakhovetski, Ph.D.
+> Freelance Open-Source Software Developer
+> http://www.open-technology.de/
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
