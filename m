@@ -1,45 +1,61 @@
-From: Alex Elder <elder@dreamhost.com>
-Subject: Re: linux-next: manual merge of the ceph tree with Linus' tree
-Date: Tue, 10 Jan 2012 18:10:22 -0800
-Message-ID: <1326247822.2443.18.camel@doink>
-References: <20120111122744.7db3bfb91d79b1307db02228@canb.auug.org.au>
-	 <20120111013127.GE23916@ZenIV.linux.org.uk>
-Reply-To: elder@dreamhost.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree with the arm-soc tree
+Date: Wed, 11 Jan 2012 13:31:46 +1100
+Message-ID: <20120111133146.990e2b7115c9fa80e8fc3234@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__11_Jan_2012_13_31_46_+1100_c58BTM0b/TJ0jKTZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.hq.newdream.net ([66.33.206.127]:46500 "EHLO
-	mail.hq.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756700Ab2AKCKX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 21:10:23 -0500
-In-Reply-To: <20120111013127.GE23916@ZenIV.linux.org.uk>
+Received: from calzone.tip.net.au ([203.10.76.15]:53026 "EHLO
+	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756760Ab2AKCb7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 21:31:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sage Weil <sage@newdream.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
-On Wed, 2012-01-11 at 01:31 +0000, Al Viro wrote:
-> On Wed, Jan 11, 2012 at 12:27:44PM +1100, Stephen Rothwell wrote:
-> > Hi Sage,
-> > 
-> > Today's linux-next merge of the ceph tree got a conflict in
-> > fs/ceph/super.c between commit 3c5184ef1216 ("ceph: d_alloc_root() may
-> > fail") from Linus' tree and commit 26d913cdd955 ("ceph: always initialize
-> > the dentry in open_root_dentry()") from the ceph tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary.
-> 
-> Ahem...  
-> 
-> >  +			root = d_obtain_alias(inode);
-> >  +		}
-> > + 		ceph_init_dentry(root);
-> 
-> What will happen if dentry returned by d_obtain_alias() had already existed?
+--Signature=_Wed__11_Jan_2012_13_31_46_+1100_c58BTM0b/TJ0jKTZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I had *exactly* the same reaction, and maybe the code would
-have been a little less surprising if the null check were
-in the caller (here)  rather than in ceph_init_dentry().
+Hi Mauro,
 
-					-Alex
+Today's linux-next merge of the v4l-dvb tree got conflicts in a large
+number of files between commits from the arm-soc tree and commits from the
+v4l-dvb tree.  You have rebased the v4l-dvb tree onto v3.2 while the
+arm-soc tree had merged a previous version. you have then added a lot
+more commits on top of the result - which produces all the conflicts.  :-(
+
+This is exactly the sort of pain I alluded to when I first noted that the
+v4l-dvb tree had been merged into the arm-soc tree ...
+
+Not happy.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__11_Jan_2012_13_31_46_+1100_c58BTM0b/TJ0jKTZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPDPSSAAoJEECxmPOUX5FEa1kP/iAIybu/OWiYiYa4HI00YKUL
+lZvR27u/GPmPoQ2SEjQziVHOJJDcIvlK4hkh1paworC45wZlhMitIm1YKsAsDd8s
+XBSRNF1RNOojzGs+u710GLsRXl/1tjalTZI8GttJM9YeYf9yN7V5X6oEQcWy7Gpo
+AqCBqRt8DzKN/x+ecoGC84YLZoeBNlg8waCHy6yAdxPI8b2hHlrhDmUNmf/lr5rC
+uE4vrd30n4UCajXFXxwKAHj/l2Q2cVL4pwUYeSmjVpQKm694ltni8MtSD28+jag0
+ZK5vK/BNHrLpEhOSLsLiT8Mjb2G6KzIooR0GKRnlEayWZNMUN07IEJdvM2m6C/lP
+z5yxB8QfyIdm4KhlXC6YCrqUsjG3VAZnpI2qMfwbk0+N5hjbXdm/YvYBrQk5Aq3z
+i3oDDn7xA93d2/+x3ke0BYYGKIQwKXca+yYA5E2wBLmJRXoYQTNdKzRMgO1ExTgP
+JjbKwTw75bFKHS5BUs6a//a4oucpEkS+8H6EvixiLmjMGDK7nhz/ytg694+kmt7S
+tqPdlJPmiKRVRO/MkcZeiocsmqDWtc2erWEjjAK9yMm/IFcIPvxohoWIONJ5s70n
+UMISIGXvvivIfRxs8osch1XeTIdlxYQg4bvmXP4cpUqqIf5Nvq8gi4zw56TZaUrr
+Fc0huhNzVAtQj6cv7Qxz
+=AqZa
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__11_Jan_2012_13_31_46_+1100_c58BTM0b/TJ0jKTZ--
