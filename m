@@ -1,33 +1,71 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: manual merge of the v4l-dvb tree with the arm-soc tree
-Date: Wed, 11 Jan 2012 07:09:33 -0800
-Message-ID: <CAOesGMjRa25zaxo55XNGRucvk7pNtFDyrMyf=-YSM1Aa7EG_Yw@mail.gmail.com>
-References: <20120111133146.990e2b7115c9fa80e8fc3234@canb.auug.org.au>
-	<Pine.LNX.4.64.1201110933480.1191@axis700.grange>
-	<4F0D65F6.8080209@infradead.org>
-	<201201111450.02798.arnd@arndb.de>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the xen tree with Linus' tree
+Date: Wed, 11 Jan 2012 16:29:05 +0100
+Message-ID: <20120111152905.GA26659@elte.hu>
+References: <20120111145709.77ef7d68996cd5fa724326e5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:34002 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932340Ab2AKPJe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jan 2012 10:09:34 -0500
-In-Reply-To: <201201111450.02798.arnd@arndb.de>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:35772 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932584Ab2AKP3k (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Jan 2012 10:29:40 -0500
+Content-Disposition: inline
+In-Reply-To: <20120111145709.77ef7d68996cd5fa724326e5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, linux-arm-kernel@lists.infradead.org, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>
 
-Hi,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Wed, Jan 11, 2012 at 6:50 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> I'll drop the remaining atmel patches from my next/drivers2 branch and let
-> Nicolas send me a new rebased pull request for 3.4. The patches in question
-> look simple enough, but if the developers can't get a simple dependency right
-> after discussing it for weeks, I'd rather not take it this time.
+> Hi all,
+> 
+> Today's linux-next merge of the xen tree got a conflict in
+> arch/x86/xen/Kconfig between commit 10fe570fc167 ("Revert "xen/debug:
+> WARN_ON when identity PFN has no _PAGE_IOMAP flag set."") from Linus'
+> tree and commit 23757fb5d678 ("xen: add CPU microcode update driver")
+> from the xen tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/x86/xen/Kconfig
+> index fdce49c,4d04d4f..0000000
+> --- a/arch/x86/xen/Kconfig
+> +++ b/arch/x86/xen/Kconfig
+> @@@ -50,3 -50,14 +50,6 @@@ config XEN_DEBUG_F
+>   	  Enable statistics output and various tuning options in debugfs.
+>   	  Enabling this option may incur a significant performance overhead.
+>   
+>  -config XEN_DEBUG
+>  -	bool "Enable Xen debug checks"
+>  -	depends on XEN
+>  -	default n
+>  -	help
+>  -	  Enable various WARN_ON checks in the Xen MMU code.
+>  -	  Enabling this option WILL incur a significant performance overhead.
+>  -
+> + config MICROCODE_XEN
+> +        def_bool y
+> +        depends on XEN_DOM0 && MICROCODE
 
-Sounds good to me.
+Jeremy, Konrad, the current Xen microcode crap was objected to 
+early last year by the people developing the x86 microcode 
+subsystem - still you have put it into the Xen tree, without 
+even Cc:-ing the people involved!
 
+To make it even clearer, because you don't seem to be able to 
+follow the proper upstream workflow unless forced to:
 
--Olof
+ NAKed-By: Ingo Molnar <mingo@elte.hu>
+
+Please remove it from the Xen tree until the proper agreeement 
+is reached.
+
+Thanks,
+
+	Ingo
