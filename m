@@ -1,134 +1,43 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: manual merge of the v4l-dvb tree with the arm-soc
- tree
-Date: Wed, 11 Jan 2012 18:47:55 -0200
-Message-ID: <4F0DF57B.6000804@infradead.org>
-References: <20120111133146.990e2b7115c9fa80e8fc3234@canb.auug.org.au> <Pine.LNX.4.64.1201110933480.1191@axis700.grange> <4F0D65F6.8080209@infradead.org> <201201111450.02798.arnd@arndb.de> <4F0DB16B.3010302@atmel.com> <CAOesGMhWPLu7cAxjJJaig-eKMFdtJ=zKKbCYp-GL9eHGQsEH4Q@mail.gmail.com>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: manual merge of the xen tree with Linus' tree
+Date: Thu, 12 Jan 2012 08:29:29 +1100
+Message-ID: <4F0DFF39.8090103@goop.org>
+References: <20120111145709.77ef7d68996cd5fa724326e5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:49168 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751176Ab2AKUsV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Jan 2012 15:48:21 -0500
-In-Reply-To: <CAOesGMhWPLu7cAxjJJaig-eKMFdtJ=zKKbCYp-GL9eHGQsEH4Q@mail.gmail.com>
+Received: from claw.goop.org ([74.207.240.146]:36927 "EHLO claw.goop.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758121Ab2AKV3o (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Jan 2012 16:29:44 -0500
+In-Reply-To: <20120111145709.77ef7d68996cd5fa724326e5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Arnd Bergmann <arnd@arndb.de>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, linux-arm-kernel@lists.infradead.org, "Wu, Josh" <Josh.wu@atmel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-On 11-01-2012 14:44, Olof Johansson wrote:
-> Hi,
-> 
-> On Wed, Jan 11, 2012 at 7:57 AM, Nicolas Ferre <nicolas.ferre@atmel.com> wrote:
->> On 01/11/2012 03:50 PM, Arnd Bergmann :
->>> On Wednesday 11 January 2012, Mauro Carvalho Chehab wrote:
->>>> What I and Guennadi agreed (http://linuxtv.org/irc/v4l/index.php?date=2012-01-05)
->>>> were to do just the reverse:
->>>>
->>>> He would be sending you one single patch with my ack, that would allow the
->>>> arm tree to be merged [1], I would wait for a few days for the arm tree to
->>>> be pulled, and then I would rebase my -next tree to remove that patch
->>>> from it.
->>>>
->>>> [1] http://git.linuxtv.org/gliakhovetski/v4l-dvb.git/commitdiff/88c6599d97b489ac543fa352159a81f60bddded7
->>>
->>> It's just not what happened. I got this series from Nicolas:
->>>
->>> 7a1834b ARM: at91: Update struct atmel_nand_data to support PMECC
->>> 9356fba ARM: at91/dma: DMA controller registering with DT support
->>> 31527e7 ARM: at91/dma: remove platform data from DMA controller
->>> 226e3aa ARM: at91: add Atmel ISI and ov2640 support on sam9m10g45 board
->>> e889a64 ARM: at91: add clock selection parameter for at91_add_device_isi()
->>> 7a13e73 media i.MX27 camera: Fix field_count handling.
->>> 166b37f media i.MX27 camera: add support for YUV420 format.
->>> 88c6599 V4L: atmel-isi: add code to enable/disable ISI_MCK clock
->>> ... (the rest of v4l at the time)
->>>
->>> and I merged it into the next/drivers2 branch, explaining that I would
->>> merge these as soon as the dependencies in v4l are merged. :(
->>>
->>>> My -next tree were never meant to be stable. It is just a patch repository
->>>> where I merge from the real development repository, in order to test them
->>>> against the hole changes. From time to time, when bad things happen
->>>> (patch conflicts, compilation breakages, requests to remove bad patches),
->>>> I just rebase it.
->>>
->>> Ok, thanks for the confirmation.
->>>
->>>> I prefer if you could just pick this patch from Guennadi's tree:
->>>>  http://git.linuxtv.org/gliakhovetski/v4l-dvb.git/commitdiff/88c6599d97b489ac543fa352159a81f60bddded7
->>>>
->>>> and add my ack on it, removing the v4l-dvb merge from yours.
->>>>
->>>> Linus seems to prefer to have the arch trees merged before the drivers
->>>> tree, with makes sense.
->>>
->>> I think it's better for you to just send everything you have right away,
->>> including the atmel-isi patch.
->>>
->>> I'll drop the remaining atmel patches from my next/drivers2 branch and let
->>> Nicolas send me a new rebased pull request for 3.4. The patches in question
->>> look simple enough, but if the developers can't get a simple dependency right
->>> after discussing it for weeks, I'd rather not take it this time.
->>
->> I am so astonished and sad about all this! I have the feeling of having
->> done exactly what Guennadi and Olof had asked me to do: What I get at
->> the end: people having a bad feeling about my work, not expected merge
->> conflicts which annoy everybody (only for a ridiculous amount of code),
->> my patches delayed and a comment saying that I cannot handle simple
->> dependency...
->> Nice result!
-> 
-> Personally, I don't blame you in this case, you're the victim.
-> 
->> - Guennadi did not want to take SoC/board code in his tree
->> => I had to take those lines of code through at91/arm-soc breaking the
->>   patch series and allowing the introduction of an out-of-sync merge
-> 
-> It was actually me who said we prefer to take the board code through
-> arm-soc, and given how conflict-ridden this merge window has been, I
-> think that has been a good decision. Otherwise even more conflicts
-> would have needed to be resolved at Linus' pulls, and while he's OK
-> with doing some of them, we should still try to keep them at a
-> reasonable level.
-> 
->> - I built a pull request with only the SoC/board code on top of a
->>  Linus' -rc tag (yes, that was breaking compilation on certain
->>  configurations in the meantime)
->> => I was told that I should bring the v4l dependency with my branch
-> 
-> This is where things broke down. The one thing I told Guennadi was
-> that the branch that we merge in *must not be rebased*. In hindsight,
-> I should have asked him to stage a minimal topic branch with _just_
-> the patches you needed, and pulled that in as the dependency instead
-> of the whole v4l tree.
-> 
->> - I resent a "pull request" on top of v4l branch after a discussion
->>  between Guennadi, Olof and me. The conclusion of this discussion was
->>  quite obvious:
->> http://article.gmane.org/gmane.linux.ports.arm.kernel/145196
->> => It was supposed to be the last time I moved those patches around...
-> 
-> Yep. The main problem is that the branch was not stable. Not your fault.
-> 
->> I have understood and approved all the reasons for the requested
->> changes, of course. But for which gain?
->>
->> Ok... well, it looks like a massive incomprehension which took us time
->> and ends up by wastefulness.
+On 01/11/2012 02:57 PM, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the xen tree got a conflict in
+> arch/x86/xen/Kconfig between commit 10fe570fc167 ("Revert "xen/debug:
+> WARN_ON when identity PFN has no _PAGE_IOMAP flag set."") from Linus'
+> tree and commit 23757fb5d678 ("xen: add CPU microcode update driver")
+> from the xen tree.
+>
+> Just context changes. I fixed it up (see below) and can carry the fix as
+> necessary.
 
-Yes, unfortunately.
+Do you know which branch this is coming from?  Are you by some chance
+still (or again) pulling from my "git://github.com/jsgf/linux-xen.git
+upstream/xen" repo, which contains a number of obsolete changes,
+including the microcode stuff (now removed)?
 
-> If you prepare a branch with just your changes, I'll pull it in as a
-> late/* branch and we can try to get it merged in for 3.3. That
-> requires that Mauro gets his pull done with enough margin to get our
-> late merge request sorted out and sent in though. I.e. his tree would
-> need to go in soon, not next week right before the window closes.
+I just created a new (empty)
+"git://git.kernel.org/pub/scm/linux/kernel/git/jeremy/xen.git
+upstream/linux-next" branch; could you make sure that replaces any other
+branch you have from either kernel.org xen.git or github.com/jsgf/linux-xen?
 
-I'm ready to send my pull request to Linus. I'll prepare the
-pull request message and send it in the sequence.
-
-Regards,
-Mauro.
+Thanks,
+    J
