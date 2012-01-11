@@ -1,72 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: please update the i.MX tree
-Date: Wed, 11 Jan 2012 09:34:57 +1100
-Message-ID: <20120111093457.af3caeabe2dbf50b70942334@canb.auug.org.au>
-References: <20120110115218.e00ab8c01abd5b9ae9a3b166@canb.auug.org.au>
-	<20120110083020.GR5446@pengutronix.de>
+Subject: linux-next: manual merge of the ceph tree with Linus' tree
+Date: Wed, 11 Jan 2012 12:27:44 +1100
+Message-ID: <20120111122744.7db3bfb91d79b1307db02228@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__11_Jan_2012_09_34_57_+1100_ewBTBK0nYb7RKcxd"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:56709 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756549Ab2AJWfH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2012 17:35:07 -0500
-In-Reply-To: <20120110083020.GR5446@pengutronix.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+ boundary="Signature=_Wed__11_Jan_2012_12_27_44_+1100_wW3BOkroEFX20_+q"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sage Weil <sage@newdream.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <elder@dreamhost.com>, Al Viro <viro@zeniv.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__11_Jan_2012_09_34_57_+1100_ewBTBK0nYb7RKcxd
+--Signature=_Wed__11_Jan_2012_12_27_44_+1100_wW3BOkroEFX20_+q
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sascha,
+Hi Sage,
 
-On Tue, 10 Jan 2012 09:30:20 +0100 Sascha Hauer <s.hauer@pengutronix.de> wr=
-ote:
->
-> On Tue, Jan 10, 2012 at 11:52:18AM +1100, Stephen Rothwell wrote:
-> >=20
-> > It looks like most (if not all) of the i.MX tree has been merged into t=
-he
-> > arm-soc (and Linus') tree, so could you please update the i.MX tree to
-> > eliminate the conflicts I am getting.
->=20
-> Did this. Sorry, I was not aware that there is something in this branch.
+Today's linux-next merge of the ceph tree got a conflict in
+fs/ceph/super.c between commit 3c5184ef1216 ("ceph: d_alloc_root() may
+fail") from Linus' tree and commit 26d913cdd955 ("ceph: always initialize
+the dentry in open_root_dentry()") from the ceph tree.
 
-Did you push it out? I just checked and it hasn't changed. Just to be
-clear, I am fetching git://git.pengutronix.de/git/imx/linux-2.6.git
-branch for-next and it hasn't changed since last September.
-
-Should I, instead, just remove that tree from linux-next and let you send
-stuff just via the arm-soc (or arm)tree?
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__11_Jan_2012_09_34_57_+1100_ewBTBK0nYb7RKcxd
+diff --cc fs/ceph/super.c
+index 48f61a1,ec74313..0000000
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@@ -636,21 -636,14 +636,21 @@@ static struct dentry *open_root_dentry(
+  	req->r_num_caps =3D 2;
+  	err =3D ceph_mdsc_do_request(mdsc, NULL, req);
+  	if (err =3D=3D 0) {
+ +		struct inode *inode =3D req->r_target_inode;
+ +		req->r_target_inode =3D NULL;
+  		dout("open_root_inode success\n");
+ -		if (ceph_ino(req->r_target_inode) =3D=3D CEPH_INO_ROOT &&
+ -		    fsc->sb->s_root =3D=3D NULL)
+ -			root =3D d_alloc_root(req->r_target_inode);
+ -		else
+ -			root =3D d_obtain_alias(req->r_target_inode);
+ +		if (ceph_ino(inode) =3D=3D CEPH_INO_ROOT &&
+ +		    fsc->sb->s_root =3D=3D NULL) {
+ +			root =3D d_alloc_root(inode);
+ +			if (!root) {
+ +				iput(inode);
+ +				root =3D ERR_PTR(-ENOMEM);
+ +				goto out;
+ +			}
+- 			ceph_init_dentry(root);
+ +		} else {
+ +			root =3D d_obtain_alias(inode);
+ +		}
++ 		ceph_init_dentry(root);
+ -		req->r_target_inode =3D NULL;
+  		dout("open_root_inode success, root dentry is %p\n", root);
+  	} else {
+  		root =3D ERR_PTR(err);
+
+--Signature=_Wed__11_Jan_2012_12_27_44_+1100_wW3BOkroEFX20_+q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPDL0RAAoJEECxmPOUX5FEUoMP/243xCqyxcWiRe4bL2bclcmB
-7pS0RD9pQErxeO4atQ+HKtFnlNXhOPMjtvQDsx64oHBaOJnTDAA3bEt9buCw959R
-rwPcjGaSXVJuU4uNdKZHPxAsNDpFQyDKgbNz22crQuzc4s1HjeBCfUqqVQDB4H9Z
-VmWkE9bNxEMDdUb0slaShbA7a6LSQOnVlgIR68nM340yUgNYAKlJUaXgpr2ksATq
-bcpE+IPCp2ZHOdWhKGWtEOEmYwlteQeO58Kx+AO2S8cfc0+sazVcNL/9MwzbIoPz
-1HcjtdBh11j99bMvlG7VE/5F2L14Z9vbq5uYE8iKDa9f/WUsN26RMmpNBqgkehN7
-QOoyR2WFlZ0Z94CsxB/dkn7HCHek1wGzyO8GIjCPKfeWmN8/EAFalFgVFDvtgcrJ
-Qif0zcNs4DgHzGuidYWMIJ6vVhS75GXDY1IHe9ZtEmdcAKv+ltWLRLVoHojymZzg
-ITwa2AJobpabL57keLiOTCDUy7fbVHhf0oNg4hRJ5MsdTjLfEaDh5bmeqVlTlXH/
-Tx+dbWldWLm7QTfCQtO8EGnF9RvS9+ruttrFkZiDzhr0AlNKQg5itMqOA2zBka4A
-Wlpnscf/3O7KfqbJ4a2/Mzo8Gpeiit1KlHJXIWCp2EPm8lHdireAzi+06HSOaGu/
-96KAzY/JTifdvmpFyGKk
-=yXMf
+iQIcBAEBCAAGBQJPDOWQAAoJEECxmPOUX5FERZ0P/RT8gd7tAEGOJuCIa6sUvKVC
+SDCQdgLuxjIhnX/smaOXf1sPxaNPijzClM/eZOCHhPCrBkmol5TaIJx27/OZK/OL
+p/ZGCGyT84zgoz1aeqhYSDF89vM/64PlSIzxLCTe08pwuzOA1mS0J1iTeqkzaNxW
+u9yIexAHdiZ2ICGPi5+L+ZTJTNCXdvHLmV+ne01bkoYJC8Swc1fOlOLFsYC6R01P
+wAy/V7yeqUZWXs5Q68K1aCBfOVWkwDtbVhzKsX/ID2ypt19ODCm0dhDgme3/7hcr
+MFMSjLv0y7Qi94J7R2Uf00xRAXv1noByPecGm3lrlzNVoSHkIVGp/V/Q1Mzhs0H8
+tSiDjEIr1vRzYwZdCGn5YJRlfaFPMePhLm5jH39ZyO0Ga2w2WvfKQaGShZ1wlTrr
+D5mQDZUEqzpPSgtFKsic1+7ZNYMXYYWarsQN8h7J3V0ii1IWbVx0SZSbtxzU+J9j
+e+ByB4jTi1EkgsEW7xzmTyxFrxNqjJ686iFwboDVcxJUTKhVVFOPSWEqOlfEWq3v
+Z6uK+c5cymSdpPwec31Xxwvk4XbaGny6sfX0hB5iZMyUlDtIUFC6MgCgiPCZMCV3
+sWcjYBwgUCG32agNHB0Kqn/94+baC4ilZoCKIyGJ0FLImA6iuLThnODzH/R424Ub
+hant7qrbw/zVC8fxK7HA
+=mF7f
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__11_Jan_2012_09_34_57_+1100_ewBTBK0nYb7RKcxd--
+--Signature=_Wed__11_Jan_2012_12_27_44_+1100_wW3BOkroEFX20_+q--
