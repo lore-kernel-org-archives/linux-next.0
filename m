@@ -1,71 +1,74 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: [GIT PULL v3] at91: devices and boards files update for 3.3
-Date: Thu, 12 Jan 2012 12:42:09 +0100
-Message-ID: <4F0EC711.1080704@atmel.com>
-References: <20120111133146.990e2b7115c9fa80e8fc3234@canb.auug.org.au> <201201111450.02798.arnd@arndb.de> <4F0DB16B.3010302@atmel.com> <201201111646.24731.arnd@arndb.de>
+From: Ohad Ben-Cohen <ohad@wizery.com>
+Subject: Re: linux-next problems
+Date: Thu, 12 Jan 2012 17:58:48 +0200
+Message-ID: <CAK=WgbbJsfdcjv86y6PC2w1jxCyApL-LFj8PvoKSQDL2e7m4iA@mail.gmail.com>
+References: <1326382689.1896.12.camel@deskari>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from newsmtp5.atmel.com ([204.2.163.5]:21945 "EHLO
-	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751457Ab2ALLmt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jan 2012 06:42:49 -0500
-In-Reply-To: <201201111646.24731.arnd@arndb.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Mauro Carvalho Chehab <mchehab@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, "Wu, Josh" <Josh.wu@atmel.com>
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <1326382689.1896.12.camel@deskari>
+Sender: linux-omap-owner@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tero Kristo <t-kristo@ti.com>, linux-omap mailing list <linux-omap@vger.kernel.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
++ Stephen
 
-Arnd, Olof,
+Thanks, Tomi.
 
-This is the pull request about devices and boards files already
-sent for 3.3 inclusion. This pull request is *without* the ISI
-board/devices
-patches that has been discussed earlier.
+On Thu, Jan 12, 2012 at 5:38 PM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
+> I was trying to compile linux-next for OMAP, but it doesn't compile with
+> the default configs.
+...
+> drivers/remoteproc/remoteproc_rpmsg.c:100:6: error: too few arguments to function 'vring_new_virtqueue'
 
-I have also tested the merging of those patches on top of today Linus'
-tree
-and it is going smoothly.
+This is due to a recent change in virtio.
 
-Thank you for your patience and understanding.
+Stephen, I guess this won't be relevant for more than a few days, but
+can you please take this patch below to linux-next ?
+(alternatively feel free just to squash this to the merge commit.
+whatever is easiest for you.)
 
+Thanks!
+Ohad.
 
-The following changes since commit
-805a6af8dba5dfdd35ec35dc52ec0122400b2610:
+>From 305aefa86e84a161f2535e4302eaf8b2338eeff8 Mon Sep 17 00:00:00 2001
+From: Ohad Ben-Cohen <ohad@wizery.com>
+Date: Thu, 12 Jan 2012 09:26:57 +0200
+Subject: [PATCH] remoteproc: don't use virtio's weak barriers
 
-  Linux 3.2 (2012-01-04 15:55:44 -0800)
+When creating a virtqueue for rpmsg, tell virtio we're not interested
+in "weak" smp barriers, since we're talking to a real device.
 
-are available in the git repository at:
-  git://github.com/at91linux/linux-at91.git for-arnd-3.3-device_boardV3
+On ARM, this means using a DSB instead of a DMB, which is needed
+for platforms that kick the remote processor using some kind of
+a mailbox device mapped to Device memory (otherwise the kick can
+jump ahead and wake the remote processor before it has observed
+the changes to the vrings).
 
-Hong Xu (1):
-      ARM: at91: Update struct atmel_nand_data to support PMECC
+Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+---
+ drivers/remoteproc/remoteproc_rpmsg.c |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
 
-Nicolas Ferre (2):
-      ARM: at91/dma: remove platform data from DMA controller
-      ARM: at91/dma: DMA controller registering with DT support
+diff --git a/drivers/remoteproc/remoteproc_rpmsg.c
+b/drivers/remoteproc/remoteproc_rpmsg.c
+index f30be4c..4f73e81 100644
+--- a/drivers/remoteproc/remoteproc_rpmsg.c
++++ b/drivers/remoteproc/remoteproc_rpmsg.c
+@@ -96,7 +96,11 @@ static struct virtqueue *rp_find_vq(struct
+virtio_device *vdev,
 
- arch/arm/mach-at91/at91sam9g45_devices.c |   19 ++++++++++---------
- arch/arm/mach-at91/at91sam9rl_devices.c  |    8 +-------
- arch/arm/mach-at91/include/mach/board.h  |    2 ++
- 3 files changed, 13 insertions(+), 16 deletions(-)
+ 	dev_dbg(rproc->dev, "vring%d: va %p qsz %d\n", id, addr, len);
 
-Best regards,
-- -- 
-Nicolas Ferre
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
-
-iQEcBAEBAgAGBQJPDscLAAoJEAf03oE53VmQUt8H+wV6uiURUj6MXRgPYhUrE38H
-quMt9Qse/drY3MOx6UjK4fJWprl+JRsyIlHRaa564vRf9W14uPpwMoyRwtgOUbf+
-x3IYBh+SD0DJgx/4RHvMCNlD7/0dQ4HoMVxTC5J0S5McoIYXttWqxY7QC4cMaCwa
-jwLFU3mWHCNe4WWkN9j18KBI7gUfW6CVzgJCS8RFBYV/ieN6BqWbKK341cJ7Ubrp
-VfHRhXAubJV2S/RwoCSOYvbAcANv0/HnVel0AOFD77uzqq6qtoLMeDew8JbaZGDT
-AwVWZg4Lt8iInpYeTuIAieNF0Z+VxWhOkLjhZovJ6kwoXgbbNFjzEMO4WL2Xkvg=
-=C5kr
------END PGP SIGNATURE-----
+-	vq = vring_new_virtqueue(len, AMP_VRING_ALIGN, vdev, addr,
++	/*
++	 * Create the new vq, and tell virtio we're not interested in
++	 * the 'weak' smp barriers, since we're talking with a real device.
++	 */
++	vq = vring_new_virtqueue(len, AMP_VRING_ALIGN, vdev, false, addr,
+ 					rproc_virtio_notify, callback, name);
+ 	if (!vq) {
+ 		dev_err(rproc->dev, "vring_new_virtqueue %s failed\n", name);
+-- 
+1.7.5.4
