@@ -1,31 +1,33 @@
-From: Ohad Ben-Cohen <ohad@wizery.com>
-Subject: Re: linux-next problems
-Date: Thu, 12 Jan 2012 18:11:04 +0200
-Message-ID: <CAK=WgbaEBpG0g9fF-kqN_OJwP=KUew-pNSDdgfmPFBUEFhyMag@mail.gmail.com>
-References: <1326382689.1896.12.camel@deskari> <CAK=WgbbJsfdcjv86y6PC2w1jxCyApL-LFj8PvoKSQDL2e7m4iA@mail.gmail.com>
- <1326384318.1896.20.camel@deskari>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Change the oss.oracle.com/git/tmem.git to
+ git://git.kernel.org/pub/scm/linux/kernel/git/konrad/mm.git
+Date: Thu, 12 Jan 2012 14:15:54 -0500
+Message-ID: <20120112191554.GA19862@phenom.dumpdata.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:55920 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752751Ab2ALQLZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jan 2012 11:11:25 -0500
-In-Reply-To: <1326384318.1896.20.camel@deskari>
+Received: from rcsinet15.oracle.com ([148.87.113.117]:54826 "EHLO
+	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751792Ab2ALTRw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jan 2012 14:17:52 -0500
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Tero Kristo <t-kristo@ti.com>, linux-omap mailing list <linux-omap@vger.kernel.org>, linux-next@vger.kernel.org
+To: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dan.magenheimer@oracle.com
 
-On Thu, Jan 12, 2012 at 6:05 PM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
-> Why don't you just update your for-next branch, and it will be included
-> into linux-next automatically?
+Hey Stephen,
 
-I need to merge Rusty's branch into my for-next branch in order to do that.
+I am taking the role of maintaining the cleancache and working
+on making the frontswap patches acceptable for the upstream tree.
 
-I could do that, but the downside is that my pull request will include
-Rusty's history.
+As this is merge window season, I've made the #linux-next branch be empty,
+but once the v3.3-rc1 branch is tagged I will start cracking on the patches.
 
-Not a big deal, but I slightly prefer to avoid it if possible.
+CC-ing Dan here so he can add his SOB to this.
 
-Ohad.
+Please substitute the git://oss.oracle.com/djm/tmem.git tree
+with git://git.kernel.org/pub/scm/linux/kernel/git/konrad/mm.git
+
+The branch to pull from is called #linux-next.
+
+Thanks!
