@@ -1,61 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-current tree with Linus' tree
-Date: Fri, 13 Jan 2012 11:49:51 +1100
-Message-ID: <20120113114951.7b7f131514437454e5682aa8@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the arm-current tree with Linus' tree
+Date: Fri, 13 Jan 2012 09:59:49 +0900
+Message-ID: <033201ccd18e$a6bd5950$f4380bf0$%kim@samsung.com>
+References: <20120113114951.7b7f131514437454e5682aa8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__13_Jan_2012_11_49_51_+1100_.JWQvWMDaYkmYrkL"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:45114 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756690Ab2AMAuB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jan 2012 19:50:01 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:56006 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756426Ab2AMBAB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jan 2012 20:00:01 -0500
+In-reply-to: <20120113114951.7b7f131514437454e5682aa8@canb.auug.org.au>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Russell King' <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>
 
---Signature=_Fri__13_Jan_2012_11_49_51_+1100_.JWQvWMDaYkmYrkL
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell wrote:
+> 
+> Hi Russell,
+> 
+> Today's linux-next merge of the arm-current tree got a conflict in
+> arch/arm/mach-exynos/common.c between (I think) commit 237c78beb8a9
+> ("Merge branch 'depends/rmk/for-linus' into samsung/dt") from Linus' tree
+> and commit 588ac27d3419 ("ARM: 7273/1: EXYNOS: Fix build error which was
+> from common.c and old cpu.c") from the arm-current tree.
+> 
+> So this arm-current fi is superceded by the merge above that is now in
+> Linus' tree.
+> 
+Oh, right. Now we don't need the commit 588ac27d3419.
 
-Hi Russell,
+Russell, could you please remove it in your tree?
 
-Today's linux-next merge of the arm-current tree got a conflict in
-arch/arm/mach-exynos/common.c between (I think) commit 237c78beb8a9
-("Merge branch 'depends/rmk/for-linus' into samsung/dt") from Linus' tree
-and commit 588ac27d3419 ("ARM: 7273/1: EXYNOS: Fix build error which was
-from common.c and old cpu.c") from the arm-current tree.
+> I fixed it up by ignoring the arm-current version.
 
-So this arm-current fi is superceded by the merge above that is now in
-Linus' tree.
+Thanks.
 
-I fixed it up by ignoring the arm-current version.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__13_Jan_2012_11_49_51_+1100_.JWQvWMDaYkmYrkL
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPD3+vAAoJEECxmPOUX5FEEl8P/jcffwKGEEpabEMkKUYXyb5w
-H+JKVEm2AmPEo7fiqBqyg52ILWYhKPi7KGJFPvLa8m0J83nESs7iDieBk5rwrrT8
-IBpKV9XUSUdFw9QmnJ2RnrhwoFor/4JFdoAyXRBewOgpbDyvkqL769izDa+wXUNT
-fEKMCkCcKv2g3ncn7rSRuEQLJ3/GPObQ/IvexihUhHblxahqcACXhAvxWjH3wR7K
-h7es1a0BxhEmMavRcJEH/yW3jJhy0k1U776OPWINIyI1jcXjLMvmDctnIdlgoYHy
-D//5MRyEsx9tvgy7y/13FCbTbhUnCeIX8Kixq6MEgwTkTcZe+uf4vwFwRZXm2H+o
-0qTHHkvIid2G8Vh1s4FVxbnGF+Ea4DTQ7XZuC9kmwbmm5wq/EGkIM9qzLfVa5hWf
-tRopOlAUpL5ofTGWsXQpbdSapDhi+8yLtgytCpal+zt+7AHAqYzndF7mHV7aWiGL
-LV0A0tTAyt3D6vkX9ZdKezb/rY75nD4z+bwoOSnKBFWytqGsKYiK8MqOeiYPJee3
-qvCp19TjBkzdXWQMlpsKnrlrGnkTUNK81SagDHA28Nm7h8HMY16qpqZeifLM6RI5
-i0j87UvScbROXulk7cQqUzmrqM5VdVnTwOqi9xu/GBa7jhPdLIlihfgco+bizel/
-v+7WquZh8Bbjhj1YjCen
-=zI5O
------END PGP SIGNATURE-----
-
---Signature=_Fri__13_Jan_2012_11_49_51_+1100_.JWQvWMDaYkmYrkL--
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
