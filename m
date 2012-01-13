@@ -1,83 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please include modem_shm in linux-next
-Date: Fri, 13 Jan 2012 11:10:55 +1100
-Message-ID: <20120113111055.83755960f93161d3542e4763@canb.auug.org.au>
-References: <CACRpkdYDR4S_P-CUiJoB1bBpESGs9nG+5=Mr5M-5cGF5UkOvJw@mail.gmail.com>
-	<81C3A93C17462B4BBD7E272753C105791FB10F9CC9@EXDCVYMBSTM005.EQ1STM.local>
+Subject: linux-next: manual merge of the arm-current tree with Linus' tree
+Date: Fri, 13 Jan 2012 11:49:51 +1100
+Message-ID: <20120113114951.7b7f131514437454e5682aa8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__13_Jan_2012_11_10_55_+1100_unB_bfdUQzEcC43E"
+ boundary="Signature=_Fri__13_Jan_2012_11_49_51_+1100_.JWQvWMDaYkmYrkL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:57813 "EHLO
+Received: from calzone.tip.net.au ([203.10.76.15]:45114 "EHLO
 	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756128Ab2AMALE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jan 2012 19:11:04 -0500
-In-Reply-To: <81C3A93C17462B4BBD7E272753C105791FB10F9CC9@EXDCVYMBSTM005.EQ1STM.local>
+	with ESMTP id S1756690Ab2AMAuB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Jan 2012 19:50:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
---Signature=_Fri__13_Jan_2012_11_10_55_+1100_unB_bfdUQzEcC43E
+--Signature=_Fri__13_Jan_2012_11_49_51_+1100_.JWQvWMDaYkmYrkL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi
+Hi Russell,
 
-On Fri, 13 Jan 2012 00:40:07 +0100 Sjur BRENDELAND <sjur.brandeland@sterics=
-son.com> wrote:
->
-> Could you please consider pulling the driver tree=20
-> git@github.com:sjurbren/modem-ipc.git for-next.
+Today's linux-next merge of the arm-current tree got a conflict in
+arch/arm/mach-exynos/common.c between (I think) commit 237c78beb8a9
+("Merge branch 'depends/rmk/for-linus' into samsung/dt") from Linus' tree
+and commit 588ac27d3419 ("ARM: 7273/1: EXYNOS: Fix build error which was
+from common.c and old cpu.c") from the arm-current tree.
 
-That is not a URL I can pull ... git://... please
+So this arm-current fi is superceded by the merge above that is now in
+Linus' tree.
 
-> I have gpg-signed the tag modem_shm_v5.
->=20
-> This replaces the previous branch you pulled from Linus Walleij:
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-stericsson.git=
- xshm-for-next
->=20
-> Please get back to me if any issues.
-
-I don't like adding new trees during the merge window.  If this code is
-for v3.4, please ping me after v3.3-rc1 is out.  Is the code in the old
-xshm tree going to be sent to Linus Torvalds during this merge window?
-
-I just had a look at this new version (I used
-git://github.com/sjurbren/modem-ipc.git branch for-next to fetch it) and
-there seems like a large amount of churn in the code if it is to be
-merged this merge window.   Also, the last patch (that adds the cif shm
-driver) you effectively change the module name of an existing driver - I
-am not sure what impat that will have on existing users.
-
-I would also like to hear from Linus Walleij ...
+I fixed it up by ignoring the arm-current version.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__13_Jan_2012_11_10_55_+1100_unB_bfdUQzEcC43E
+--Signature=_Fri__13_Jan_2012_11_49_51_+1100_.JWQvWMDaYkmYrkL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPD3aPAAoJEECxmPOUX5FEmEoP/RJTXuRZ4/lhFFWcDiDXpsiO
-zpcQo7HndaeTjJ/2uAndaVHZEAnReGA7KMEWgf1fMPy8DFbPFLWV/F1FB1iiFQHn
-GnPemCU9hbXZMYJXgkVsNCOJMTGxBvifIajR3J0OxOSzfiHBhHDy85o1/oUEf7Gm
-w/nvq5IjRr8RZNjXWQ3kF1g5E2gBJoXFMtofFMacQt+OkjpHQ9Q5kT8cfEjIzDdP
-uZhMcm2Fhk7dBlI0okNG1Nk1Pyfu//MZ4kqi9rkRHHiAaMVo/KN3pJnAuMT60lMj
-q3/m6KzAjpCkFSt5N11GoX8zSwBNSjf395pdOK9dc/skLESMtDoTb5nvM3Oejznv
-D9cUATDyzrAA7qKC8u6r28h5A47gitZXC9bWt9pDnE9Gkp9PktUpJFLdfW/9gIF6
-LI+BjuKRdmyVElyRv2csrsDh53lXaFXyd5u8dgxSatwqYlb4vbsWYX0YCHE8tt6v
-P7Xa2JPHNM5WDXMJl2FMYF/fxFpRHcTY1FBJeJy1/K09bCojKve1dEYRFbWINIYi
-6cdiKY7MKH6swgAc+LwI+wcCJJw73BTswrRakqSAfrEHI29217rRwuKNHNkXsgpt
-M6dtbnUU5LnmtIrflk5jz70iEcfDMeYM0KtOv/oK/1MB4L/24CtmkJWjMmVSr+GX
-auIF2pPRsrEMulZlHloM
-=6LQi
+iQIcBAEBCAAGBQJPD3+vAAoJEECxmPOUX5FEEl8P/jcffwKGEEpabEMkKUYXyb5w
+H+JKVEm2AmPEo7fiqBqyg52ILWYhKPi7KGJFPvLa8m0J83nESs7iDieBk5rwrrT8
+IBpKV9XUSUdFw9QmnJ2RnrhwoFor/4JFdoAyXRBewOgpbDyvkqL769izDa+wXUNT
+fEKMCkCcKv2g3ncn7rSRuEQLJ3/GPObQ/IvexihUhHblxahqcACXhAvxWjH3wR7K
+h7es1a0BxhEmMavRcJEH/yW3jJhy0k1U776OPWINIyI1jcXjLMvmDctnIdlgoYHy
+D//5MRyEsx9tvgy7y/13FCbTbhUnCeIX8Kixq6MEgwTkTcZe+uf4vwFwRZXm2H+o
+0qTHHkvIid2G8Vh1s4FVxbnGF+Ea4DTQ7XZuC9kmwbmm5wq/EGkIM9qzLfVa5hWf
+tRopOlAUpL5ofTGWsXQpbdSapDhi+8yLtgytCpal+zt+7AHAqYzndF7mHV7aWiGL
+LV0A0tTAyt3D6vkX9ZdKezb/rY75nD4z+bwoOSnKBFWytqGsKYiK8MqOeiYPJee3
+qvCp19TjBkzdXWQMlpsKnrlrGnkTUNK81SagDHA28Nm7h8HMY16qpqZeifLM6RI5
+i0j87UvScbROXulk7cQqUzmrqM5VdVnTwOqi9xu/GBa7jhPdLIlihfgco+bizel/
+v+7WquZh8Bbjhj1YjCen
+=zI5O
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__13_Jan_2012_11_10_55_+1100_unB_bfdUQzEcC43E--
+--Signature=_Fri__13_Jan_2012_11_49_51_+1100_.JWQvWMDaYkmYrkL--
