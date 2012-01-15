@@ -1,118 +1,40 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH -next] olpc: fix olpc-xo1-sci.c build when INPUT=m
-Date: Fri, 13 Jan 2012 15:51:34 -0800
-Message-ID: <4F10C386.5030109@xenotime.net>
-References: <20120110164454.b595335a42321c80fba56ea7@canb.auug.org.au>	<4F0CADDB.5010303@xenotime.net>	<4F10B169.4070807@xenotime.net> <20120113143122.3277e7a1@queued.net>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: linux-next: Tree for Jan 9 (irqdomain.c)
+Date: Sun, 15 Jan 2012 17:37:04 +0100
+Message-ID: <20120115163704.GB19026@linutronix.de>
+References: <20120109170457.4465dfc66a0eace4a2230fef@canb.auug.org.au>
+ <4F0B58B4.8010004@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-15
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:34014 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754143Ab2AMWxb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Jan 2012 17:53:31 -0500
-In-Reply-To: <20120113143122.3277e7a1@queued.net>
+Received: from www.linutronix.de ([62.245.132.108]:44118 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751338Ab2AOQhL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 15 Jan 2012 11:37:11 -0500
+Content-Disposition: inline
+In-Reply-To: <4F0B58B4.8010004@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andres Salomon <dilinger@queued.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, x86 maintainers <x86@kernel.org>, Chris Ball <cjb@laptop.org>, Jon Nettleton <jon.nettleton@gmail.com>, dsd@laptop.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <rob.herring@calxeda.com>
 
-On 01/13/2012 02:31 PM, Andres Salomon wrote:
-> On Fri, 13 Jan 2012 14:34:17 -0800
-> Randy Dunlap <rdunlap@xenotime.net> wrote:
-> 
->> On 01/10/2012 01:30 PM, Randy Dunlap wrote:
->>> From: Randy Dunlap <rdunlap@xenotime.net>
->>>
->>> Fix build errors when CONFIG_INPUT=m.
->>> This is not pretty, but all of the OLPC kconfig options
->>> are bool instead of tristate.
-> 
-> How about 'select INPUT' instead?
+* Randy Dunlap | 2012-01-09 13:14:28 [-0800]:
 
-No, we don't select major subsystems to be enabled.
-Linus has written about that...
+>On 01/08/2012 10:04 PM, Stephen Rothwell wrote:
+>> Hi all,
+>> 
+>> Changes since 20120106:
+>> 
+>> This tree is still broken for sparc64 defconfig (at least).
+>
+>
+>  CC      kernel/irq/irqdomain.o
+>In file included from arch/x86/include/asm/prom.h:24:0,
+>                 from include/linux/of.h:139,
+>                 from kernel/irq/irqdomain.c:5:
+>arch/x86/include/asm/irq_controller.h:4:8: error: redefinition of 'struct irq_domain'
 
-> Cc'ing dsd, as he's the one who worked on the SCI code.  I'm still
-> annoyed that this stuff is bool rather than tristate.. Might be worth
-> spending some time allowing it to be modular, if we can figure out a
-> non-racy solution.
+I just acked one of Rob's patches. I think this will be gone once his
+patches goes in.
 
-Yes, tristate would be a Good change.
-
-> 
->>
->>
->> ping.
->>
->> This patch is still needed in linux-next (20120113).
->>
->>
->>> arch/x86/built-in.o: In function `send_lid_state':
->>> olpc-xo1-sci.c:(.text+0x1d323): undefined reference to `input_event'
->>> olpc-xo1-sci.c:(.text+0x1d338): undefined reference to `input_event'
->>> arch/x86/built-in.o: In function `free_ebook_switch':
->>> olpc-xo1-sci.c:(.text+0x1d529): undefined reference to
->>> `input_unregister_device' olpc-xo1-sci.c:(.text+0x1d533): undefined
->>> reference to `input_free_device' arch/x86/built-in.o: In function
->>> `free_power_button': olpc-xo1-sci.c:(.text+0x1d549): undefined
->>> reference to `input_unregister_device'
->>> olpc-xo1-sci.c:(.text+0x1d553): undefined reference to
->>> `input_free_device' arch/x86/built-in.o: In function
->>> `send_ebook_state': olpc-xo1-sci.c:(.text+0x1d632): undefined
->>> reference to `input_event' olpc-xo1-sci.c:(.text+0x1d647):
->>> undefined reference to `input_event' arch/x86/built-in.o: In
->>> function `xo1_sci_intr': olpc-xo1-sci.c:(.text+0x1d78e): undefined
->>> reference to `input_event' olpc-xo1-sci.c:(.text+0x1d7a3):
->>> undefined reference to `input_event'
->>> olpc-xo1-sci.c:(.text+0x1d7be): undefined reference to
->>> `input_event' arch/x86/built-in.o:olpc-xo1-sci.c:(.text+0x1d7d3):
->>> more undefined references to `input_event' follow
->>> arch/x86/built-in.o: In function `free_lid_switch':
->>> olpc-xo1-sci.c:(.text+0x1d7fd): undefined reference to
->>> `input_unregister_device' olpc-xo1-sci.c:(.text+0x1d807): undefined
->>> reference to `input_free_device' arch/x86/built-in.o: In function
->>> `setup_lid_switch': olpc-xo1-sci.c:(.devinit.text+0x155): undefined
->>> reference to `input_allocate_device'
->>> olpc-xo1-sci.c:(.devinit.text+0x1a4): undefined reference to
->>> `input_register_device' olpc-xo1-sci.c:(.devinit.text+0x1ce):
->>> undefined reference to `input_unregister_device'
->>> olpc-xo1-sci.c:(.devinit.text+0x1d8): undefined reference to
->>> `input_free_device' arch/x86/built-in.o: In function
->>> `xo1_sci_probe': olpc-xo1-sci.c:(.devinit.text+0x235): undefined
->>> reference to `input_allocate_device'
->>> olpc-xo1-sci.c:(.devinit.text+0x285): undefined reference to
->>> `input_register_device' olpc-xo1-sci.c:(.devinit.text+0x299):
->>> undefined reference to `input_free_device'
->>> olpc-xo1-sci.c:(.devinit.text+0x2e1): undefined reference to
->>> `input_register_device' olpc-xo1-sci.c:(.devinit.text+0x2f5):
->>> undefined reference to `input_free_device'
->>> olpc-xo1-sci.c:(.devinit.text+0x54c): undefined reference to
->>> `input_allocate_device'
->>>
->>> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
->>> Cc:	Andres Salomon <dilinger@queued.net>
->>> Cc:	Chris Ball <cjb@laptop.org>
->>> Cc:	Jon Nettleton <jon.nettleton@gmail.com>
->>> ---
->>>  arch/x86/Kconfig |    1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> --- linux-next-20120110.orig/arch/x86/Kconfig
->>> +++ linux-next-20120110/arch/x86/Kconfig
->>> @@ -2132,6 +2132,7 @@ config OLPC_XO1_RTC
->>>  config OLPC_XO1_SCI
->>>  	bool "OLPC XO-1 SCI extras"
->>>  	depends on OLPC && OLPC_XO1_PM
->>> +	depends on INPUT=y
->>>  	select POWER_SUPPLY
->>>  	select GPIO_CS5535
->>>  	select MFD_CORE
->>>
->>
->>
-
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Sebastian
