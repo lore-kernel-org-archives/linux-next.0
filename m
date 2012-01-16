@@ -1,37 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Please include modem_shm in linux-next
-Date: Mon, 16 Jan 2012 16:46:16 +0100
-Message-ID: <CACRpkdYjvu2Tq7b6wGn9CnMtDjb7zcenbcUM7Br2gEVq7Xpq4Q@mail.gmail.com>
-References: <CACRpkdYDR4S_P-CUiJoB1bBpESGs9nG+5=Mr5M-5cGF5UkOvJw@mail.gmail.com>
-	<81C3A93C17462B4BBD7E272753C105791FB10F9CC9@EXDCVYMBSTM005.EQ1STM.local>
-	<20120113111055.83755960f93161d3542e4763@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Jan 11 (mce_amd.c)
+Date: Mon, 16 Jan 2012 10:32:19 -0800
+Message-ID: <4F146D33.4090302@xenotime.net>
+References: <20120111162301.108aef681cfe253f0d521ac8@canb.auug.org.au> <4F0E466D.7060005@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:60503 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754888Ab2APPqQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jan 2012 10:46:16 -0500
-Received: by iagf6 with SMTP id f6so2726458iag.19
-        for <linux-next@vger.kernel.org>; Mon, 16 Jan 2012 07:46:16 -0800 (PST)
-In-Reply-To: <20120113111055.83755960f93161d3542e4763@canb.auug.org.au>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:42860 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754760Ab2APReC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Jan 2012 12:34:02 -0500
+In-Reply-To: <4F0E466D.7060005@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Sjur BRENDELAND <sjur.brandeland@stericsson.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@amd64.org>, linux-edac@vger.kernel.org
 
-On Fri, Jan 13, 2012 at 1:10 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On 01/11/2012 06:33 PM, Randy Dunlap wrote:
+> On 01/10/2012 09:23 PM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20120110:
+> 
+> 
+> arch/x86/built-in.o: In function `threshold_create_bank':
+> mce_amd.c:(.cpuinit.text+0x61ad): undefined reference to `cpu_llc_shared_map'
+> 
+> 
+> i386 randconfig file is attached.
 
-> I would also like to hear from Linus Walleij ...
 
-Please replace my repo with Sjurs (whenever it merges fine).
+This build error is still present in linux-next 20120116.
 
-Sjur, I guess an option would be if you rebase your for-next
-onto 3.3-rc1 as soon as it appears? I usually do that as a
-starter, then rebase to later -rc:s only if necessary (e.g. due to
-massive fixes going in in the early -rc:s)
 
-For example for the last merge window my pull request was
-based on the 3.2-rc3 tag.
-
-Linus Walleij
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
