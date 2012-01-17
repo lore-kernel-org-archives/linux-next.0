@@ -1,47 +1,31 @@
-From: "Kasatkin, Dmitry" <dmitry.kasatkin@intel.com>
-Subject: Re: linux-next: Tree for Jan 13 (lib/digsig.c)
-Date: Tue, 17 Jan 2012 11:48:44 +0200
-Message-ID: <CALLzPKbnjLmbV2WAiN85LOWC16kH1TZkwQQtgz+6PJDac56-AQ@mail.gmail.com>
-References: <20120113155808.05431d23da358e37b19eee7c@canb.auug.org.au>
-	<4F10B2EC.1010906@xenotime.net>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: Re-add ibft tree to linux-next please
+Date: Tue, 17 Jan 2012 09:08:30 -0500
+Message-ID: <4F1580DE.1060002@kernel.org>
+References: <20111212145330.GA16278@andromeda.dapyr.net> <4EE68D57.7030603@zytor.com> <20111213021536.GC2730@konrad-lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:27480 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752615Ab2AQJsp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Jan 2012 04:48:45 -0500
-In-Reply-To: <4F10B2EC.1010906@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mimi Zohar <zohar@us.ibm.com>
-
-On Sat, Jan 14, 2012 at 12:40 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On 01/12/2012 08:58 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20120112:
->
->
-> ERROR: "crypto_alloc_shash" [lib/digsig.ko] undefined!
-> ERROR: "crypto_shash_final" [lib/digsig.ko] undefined!
-> ERROR: "crypto_shash_update" [lib/digsig.ko] undefined!
-> ERROR: "crypto_destroy_tfm" [lib/digsig.ko] undefined!
->
-Hi,
-
-I have done a fix and sent it to linux-security-modules mailing list...
-
-[PATCH 2/4] lib: digital signature dependency fix
-
-Thanks,
-Dmitry
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20111213021536.GC2730@konrad-lan>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Konrad Rzeszutek Wilk <konrad@darnok.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Konrad Rzeszutek Wilk <konrad@kernel.org>, "Brown, Len" <len.brown@intel.com>, linux-acpi@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pjones@redhat.com
+List-Id: linux-next.vger.kernel.org
 
 
->
-> Full randconfig file is attached.
->
-> --
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
+> The trick is that we also have to retain the code functionality if
+> "# CONFIG_ACPI is not set" to scan the memory for the iBFT. That part
+> should definitly _not_ be moved to drivers/acpi. It could be moved to
+> arch/x86/ .. but it could also stay in drivers/firmware. <shrugs>
+
+
+Are there really hardware/firmware configurations that support IBFT
+and do not support ACPI?
+
+If yes, do they require an OS that has CONFIG_ACPI=n?
+Or would finding the table with CONFIG_ACPI=y and acpi_disabled=1
+be sufficient?
+
+-Len
+
