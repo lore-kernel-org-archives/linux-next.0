@@ -1,61 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning in Linus' tree
-Date: Thu, 19 Jan 2012 10:36:26 +1100
-Message-ID: <20120119103626.a9b21533cf30da57ddc54947@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: build warning in Linus' tree
+Date: Wed, 18 Jan 2012 15:47:50 -0800
+Message-ID: <CA+55aFyNcD0n9xj5CjGZ9szQQYqGCNtbpXLGctkPZCh6ZdhDYw@mail.gmail.com>
+References: <20120119103626.a9b21533cf30da57ddc54947@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__19_Jan_2012_10_36_26_+1100_oXopTEUySA/IMY2t"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:54316 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752638Ab2ARXge (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jan 2012 18:36:34 -0500
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:65513 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753522Ab2ARXsM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jan 2012 18:48:12 -0500
+In-Reply-To: <20120119103626.a9b21533cf30da57ddc54947@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Wilcox <matthew.r.wilcox@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Matthew Wilcox <matthew.r.wilcox@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__19_Jan_2012_10_36_26_+1100_oXopTEUySA/IMY2t
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 18, 2012 at 3:36 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Building Linus' tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+>
+> drivers/block/nvme.c: In function 'nvme_alloc_ns':
+> drivers/block/nvme.c:1336:2: warning: passing argument 2 of 'blk_queue_make_request' from incompatible pointer type [enabled by default]
+> include/linux/blkdev.h:830:13: note: expected 'void (*)(struct request_queue *, struct bio *)' but argument is of type 'int (*)(struct request_queue *, struct bio *)'
 
-Hi all,
+That's a merge error of mine, resulting from a non-conflicting semantics change.
 
-Building Linus' tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+The type of make_request_fn has changed to void, but the nvme driver
+was based on the older version.
 
-drivers/block/nvme.c: In function 'nvme_alloc_ns':
-drivers/block/nvme.c:1336:2: warning: passing argument 2 of 'blk_queue_make=
-_request' from incompatible pointer type [enabled by default]
-include/linux/blkdev.h:830:13: note: expected 'void (*)(struct request_queu=
-e *, struct bio *)' but argument is of type 'int (*)(struct request_queue *=
-, struct bio *)'
+It's benign in that in the absence of truly crazy calling conventions
+it has no relevance apart from unnecessarily clearing the return value
+that now doesn't exist and isn't used, but the warning is clearly
+annoying.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I pushed out the obvious fix.
 
---Signature=_Thu__19_Jan_2012_10_36_26_+1100_oXopTEUySA/IMY2t
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPF1d6AAoJEECxmPOUX5FEfG8P/RoDpjVhxarIZwF017Q/9Y/t
-DgfM2O8wBv3y/LBMXM9I7H/WNVwDbIeJKDr/em8Ur/IVi+kLsHn3ljJ69bss7GOs
-nu3BLZs3s4RXJmRFMGcOp8dmiZIsjqoCdlsf19AKHLQJk/ncGomv0WWGkjHFEcRC
-9aE5iGpXMuv3/TanSuDAiYgxTJrVzgYvvWMVOw7UlvwmuyfDCdkUDaANWDhpaxVt
-u88yAClG8fGXu209/IkIpuriDaKqAmMkfhzEpqe+o2+gIe49tjB9zw+gdA4Vhohd
-gzGtHJH6ReWGGBxzRyHauEKIwvihUW1MKg+anplSZppUdAE3CkdZYN+SO2hsihJS
-MQxceVC3s1Ql1te+iatQyNYNTh5W4PYhySA/88nHo2tl+sBSlFQxhQku9+O6JfFw
-W6OA0voF0iynRLCfhonQg1TVr+4qH+XgyXoY8ZM0f+8eBa6xXNfSNycV3ApDpZd6
-QYThnUjmU3b34TDGaTreVVvtYuSzHOwhZWXarI06bv6bN+2LLAYclYfMzd1iTQPB
-Az4d1ot8c/neiRuJowrdZhMkx5rJjj/+EYRRrxIH1oiXbTJrb1DuOsGBSwXsT+UE
-TvCI/F0xPNbkDe0O2Uzt8jKCDNOt2R023aR3b0mMZhIF3SoS8HyQ2sEJENHfWufr
-WvkQ86vlc3Djv7dwivUJ
-=scNM
------END PGP SIGNATURE-----
-
---Signature=_Thu__19_Jan_2012_10_36_26_+1100_oXopTEUySA/IMY2t--
+                     Linus
