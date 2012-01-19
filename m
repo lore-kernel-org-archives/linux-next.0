@@ -1,51 +1,45 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build failure after merge of the origin tree
-Date: Thu, 19 Jan 2012 09:23:16 +0100
-Message-ID: <4F17D2F4.6030006@kernel.dk>
-References: <20120119103136.e92b828eca9f2e903da0ea29@canb.auug.org.au> <4F17D2A6.4070705@kernel.dk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:59731 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754104Ab2ASIXp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jan 2012 03:23:45 -0500
-In-Reply-To: <4F17D2A6.4070705@kernel.dk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Matthew Wilcox <matthew.r.wilcox@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Rusty Russell <rusty@rustcorp.com.au>
+From: Jan Schmidt <list.btrfs@jan-o-sch.net>
+Subject: [PATCH] Btrfs: fix uninit warning in backref.c
+Date: Thu, 19 Jan 2012 11:24:35 +0100
+Message-ID: <1326968675-12294-1-git-send-email-list.btrfs@jan-o-sch.net>
+References: <20120119100935.82c5ec6db156f3799835163f@canb.auug.org.au>
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+In-Reply-To: <20120119100935.82c5ec6db156f3799835163f@canb.auug.org.au>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: sfr@canb.auug.org.au, chris.mason@oracle.com, linux-btrfs@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sensille@gmx.net, torvalds@linux-foundation.org
+List-Id: linux-next.vger.kernel.org
 
-On 01/19/2012 09:21 AM, Jens Axboe wrote:
-> On 01/19/2012 12:31 AM, Stephen Rothwell wrote:
->> Hi Linus,
->>
->> After merging the origin tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> ERROR: "xen_biovec_phys_mergeable" [drivers/block/nvme.ko] undefined!
->>
->> This is weird, as CONFIG_BLOCK and CONFIG_XEN are both set in this build
->> and I started with an empty object directory.  And biomerge.o has been
->> built.
->>
->> Ah ha!
->>
->> drivers/xen/biomerge.c:14:1: warning: data definition has no type or storage class [enabled by default]
->> drivers/xen/biomerge.c:14:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
->> drivers/xen/biomerge.c:14:1: warning: parameter names (without types) in function declaration [enabled by default]
->>
->> drivers/xen/biomerge.c does not include export.h.  It would be nice if
->> this produced an error, not just the warnings above.  Caused by commit
->> 0b934ccd707f ("Xen: Export xen_biovec_phys_mergeable") (which was never
->> in linux-next :-().
->>
->> I applied the following patch for today:
-> 
-> Thanks Stephen, applied.
+Added initialization with the declaration of ret. It isn't set later on the
+switch-default branch (which should never be taken).
 
-Already in, even better :-)
+Signed-off-by: Jan Schmidt <list.btrfs@jan-o-sch.net>
+---
+ fs/btrfs/backref.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/fs/btrfs/backref.c b/fs/btrfs/backref.c
+index b9a8432..633c701 100644
+--- a/fs/btrfs/backref.c
++++ b/fs/btrfs/backref.c
+@@ -297,7 +297,7 @@ static int __add_delayed_refs(struct btrfs_delayed_ref_head *head, u64 seq,
+ 	struct btrfs_delayed_extent_op *extent_op = head->extent_op;
+ 	struct rb_node *n = &head->node.rb_node;
+ 	int sgn;
+-	int ret;
++	int ret = 0;
+ 
+ 	if (extent_op && extent_op->update_key)
+ 		btrfs_disk_key_to_cpu(info_key, &extent_op->key);
+@@ -392,7 +392,7 @@ static int __add_inline_refs(struct btrfs_fs_info *fs_info,
+ 			     struct btrfs_key *info_key, int *info_level,
+ 			     struct list_head *prefs)
+ {
+-	int ret;
++	int ret = 0;
+ 	int slot;
+ 	struct extent_buffer *leaf;
+ 	struct btrfs_key key;
 -- 
-Jens Axboe
+1.7.3.4
+
