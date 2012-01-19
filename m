@@ -1,26 +1,48 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: Tree for Jan 19 (uml)
-Date: Wed, 18 Jan 2012 19:40:53 -0800
-Message-ID: <CA+55aFyu1t6xuCpNmyrfAtScz2x2o7ozzhU7WQOyz7k1TwmC5w@mail.gmail.com>
-References: <20120119125932.a4c67005cf6a0938558e8b36@canb.auug.org.au>
- <4F1788EC.4040901@xenotime.net> <20120119131854.d1795a461302e72e727e63df@canb.auug.org.au>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: build failure after merge of the origin tree
+Date: Thu, 19 Jan 2012 09:21:58 +0100
+Message-ID: <4F17D2A6.4070705@kernel.dk>
+References: <20120119103136.e92b828eca9f2e903da0ea29@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:35154 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754128Ab2ASDlP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jan 2012 22:41:15 -0500
-In-Reply-To: <20120119131854.d1795a461302e72e727e63df@canb.auug.org.au>
+Received: from casper.infradead.org ([85.118.1.10]:59700 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754427Ab2ASIWb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jan 2012 03:22:31 -0500
+In-Reply-To: <20120119103136.e92b828eca9f2e903da0ea29@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "user-mode-linux-devel@lists.sourceforge.net" <user-mode-linux-devel@lists.sourceforge.net>, Richard Weinberger <richard@nod.at>, Eric Paris <eparis@redhat.com>
+Cc: Matthew Wilcox <matthew.r.wilcox@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Rusty Russell <rusty@rustcorp.com.au>
 
-On Wed, Jan 18, 2012 at 6:18 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> This file now needs protection against double inclusion.
+On 01/19/2012 12:31 AM, Stephen Rothwell wrote:
+> Hi Linus,
+> 
+> After merging the origin tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> ERROR: "xen_biovec_phys_mergeable" [drivers/block/nvme.ko] undefined!
+> 
+> This is weird, as CONFIG_BLOCK and CONFIG_XEN are both set in this build
+> and I started with an empty object directory.  And biomerge.o has been
+> built.
+> 
+> Ah ha!
+> 
+> drivers/xen/biomerge.c:14:1: warning: data definition has no type or storage class [enabled by default]
+> drivers/xen/biomerge.c:14:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
+> drivers/xen/biomerge.c:14:1: warning: parameter names (without types) in function declaration [enabled by default]
+> 
+> drivers/xen/biomerge.c does not include export.h.  It would be nice if
+> this produced an error, not just the warnings above.  Caused by commit
+> 0b934ccd707f ("Xen: Export xen_biovec_phys_mergeable") (which was never
+> in linux-next :-().
+> 
+> I applied the following patch for today:
 
-Done. I didn't check the UML end result, though, so...
+Thanks Stephen, applied.
 
-                 Linus
+-- 
+Jens Axboe
