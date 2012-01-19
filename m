@@ -1,48 +1,51 @@
 From: Jens Axboe <axboe@kernel.dk>
 Subject: Re: linux-next: build failure after merge of the origin tree
-Date: Thu, 19 Jan 2012 09:21:58 +0100
-Message-ID: <4F17D2A6.4070705@kernel.dk>
-References: <20120119103136.e92b828eca9f2e903da0ea29@canb.auug.org.au>
+Date: Thu, 19 Jan 2012 09:23:16 +0100
+Message-ID: <4F17D2F4.6030006@kernel.dk>
+References: <20120119103136.e92b828eca9f2e903da0ea29@canb.auug.org.au> <4F17D2A6.4070705@kernel.dk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:59700 "EHLO
+Received: from casper.infradead.org ([85.118.1.10]:59731 "EHLO
 	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754427Ab2ASIWb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jan 2012 03:22:31 -0500
-In-Reply-To: <20120119103136.e92b828eca9f2e903da0ea29@canb.auug.org.au>
+	with ESMTP id S1754104Ab2ASIXp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Jan 2012 03:23:45 -0500
+In-Reply-To: <4F17D2A6.4070705@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Matthew Wilcox <matthew.r.wilcox@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Rusty Russell <rusty@rustcorp.com.au>
 
-On 01/19/2012 12:31 AM, Stephen Rothwell wrote:
-> Hi Linus,
+On 01/19/2012 09:21 AM, Jens Axboe wrote:
+> On 01/19/2012 12:31 AM, Stephen Rothwell wrote:
+>> Hi Linus,
+>>
+>> After merging the origin tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> ERROR: "xen_biovec_phys_mergeable" [drivers/block/nvme.ko] undefined!
+>>
+>> This is weird, as CONFIG_BLOCK and CONFIG_XEN are both set in this build
+>> and I started with an empty object directory.  And biomerge.o has been
+>> built.
+>>
+>> Ah ha!
+>>
+>> drivers/xen/biomerge.c:14:1: warning: data definition has no type or storage class [enabled by default]
+>> drivers/xen/biomerge.c:14:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
+>> drivers/xen/biomerge.c:14:1: warning: parameter names (without types) in function declaration [enabled by default]
+>>
+>> drivers/xen/biomerge.c does not include export.h.  It would be nice if
+>> this produced an error, not just the warnings above.  Caused by commit
+>> 0b934ccd707f ("Xen: Export xen_biovec_phys_mergeable") (which was never
+>> in linux-next :-().
+>>
+>> I applied the following patch for today:
 > 
-> After merging the origin tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> ERROR: "xen_biovec_phys_mergeable" [drivers/block/nvme.ko] undefined!
-> 
-> This is weird, as CONFIG_BLOCK and CONFIG_XEN are both set in this build
-> and I started with an empty object directory.  And biomerge.o has been
-> built.
-> 
-> Ah ha!
-> 
-> drivers/xen/biomerge.c:14:1: warning: data definition has no type or storage class [enabled by default]
-> drivers/xen/biomerge.c:14:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
-> drivers/xen/biomerge.c:14:1: warning: parameter names (without types) in function declaration [enabled by default]
-> 
-> drivers/xen/biomerge.c does not include export.h.  It would be nice if
-> this produced an error, not just the warnings above.  Caused by commit
-> 0b934ccd707f ("Xen: Export xen_biovec_phys_mergeable") (which was never
-> in linux-next :-().
-> 
-> I applied the following patch for today:
+> Thanks Stephen, applied.
 
-Thanks Stephen, applied.
+Already in, even better :-)
 
 -- 
 Jens Axboe
