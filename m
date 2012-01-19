@@ -1,40 +1,61 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: build warning in Linus' tree
-Date: Wed, 18 Jan 2012 15:47:50 -0800
-Message-ID: <CA+55aFyNcD0n9xj5CjGZ9szQQYqGCNtbpXLGctkPZCh6ZdhDYw@mail.gmail.com>
-References: <20120119103626.a9b21533cf30da57ddc54947@canb.auug.org.au>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: build failure after merge of the cifs tree
+Date: Thu, 19 Jan 2012 11:01:53 +1100
+Message-ID: <20120119110153.7ffa3312b2943386750ac7ed@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:65513 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753522Ab2ARXsM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Jan 2012 18:48:12 -0500
-In-Reply-To: <20120119103626.a9b21533cf30da57ddc54947@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Matthew Wilcox <matthew.r.wilcox@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__19_Jan_2012_11_01_53_+1100_LjsflH7aNU1bec2/"
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 18, 2012 at 3:36 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Building Linus' tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
->
-> drivers/block/nvme.c: In function 'nvme_alloc_ns':
-> drivers/block/nvme.c:1336:2: warning: passing argument 2 of 'blk_queue_make_request' from incompatible pointer type [enabled by default]
-> include/linux/blkdev.h:830:13: note: expected 'void (*)(struct request_queue *, struct bio *)' but argument is of type 'int (*)(struct request_queue *, struct bio *)'
+--Signature=_Thu__19_Jan_2012_11_01_53_+1100_LjsflH7aNU1bec2/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That's a merge error of mine, resulting from a non-conflicting semantics change.
+Hi all,
 
-The type of make_request_fn has changed to void, but the nvme driver
-was based on the older version.
+After merging the cifs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-It's benign in that in the absence of truly crazy calling conventions
-it has no relevance apart from unnecessarily clearing the return value
-that now doesn't exist and isn't used, but the warning is clearly
-annoying.
+fs/cifs/connect.c: In function 'cifs_set_vol_auth':
+fs/cifs/connect.c:3843:17: error: 'CIFSSEC_MUST_LANMAN' undeclared (first u=
+se in this function)
+fs/cifs/connect.c:3843:17: note: each undeclared identifier is reported onl=
+y once for each function it appears in
 
-I pushed out the obvious fix.
+Caused by commit 8a8798a5ff90 ("cifs: fetch credentials out of keyring
+for non-krb5 auth multiuser mounts").
 
-                     Linus
+I have used the cifs tree from next-20120118 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__19_Jan_2012_11_01_53_+1100_LjsflH7aNU1bec2/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPF11xAAoJEECxmPOUX5FEUmoQAIBZIam4rhfZmxkzmOxINfgz
+oH/LrvY4YIRInibFqFnorSRCmLD1oy/zwKWqKw5bHJHxe2QVFVHMhlTB+Z10SWyk
+xP93T0Ik3S8gIXoDwBXPItZKe74xbv4jkxnbJTc3W1dl4W9GfNMLUeFymFjRQtHi
+w1k0cJl9Yua6fT9Y3ftLl5BEDQMi3BtY5wP+DDpWJjymsJPUqBbUHHlDIDJQBpty
+2PuHASnza/aaV8jSPYh7Ylv2+OvMNbCwRDC2bbVKlDKqhmnqJ4pktPWe8gvHToXe
+exDiKF9gWXkcROgndbdOudgkaAdVjq37z4AymfK58RbzoC2AyFSqw28g73zQwS5N
+VR+kdYRdFskuBgEU9V+m2p6H7qYTFDuMTSoIG68yluKd2ynmOgNjHpP47Xz0/P0l
+cFMFnRng3YvM7pDwUPqOPwMujTmx7otJrqHEJ8rn8W1hUIvxHzH6zG+7Lh0/F3n+
+QwHB9Dhe0c8AdqSUyJx7Wom5tYZ2cDSCLAjXZm1tdjhM/zrqKbUkn5T+qvNGUFBL
+hXCT4t/i2i7QMlbQUxClTOJRtl+xGPuijlJaqrcIcYY8KMd5tgpY7Js1v/X28QIa
+QWnhVy48t0VuPmKhCiq+QUqaS6qmdWo3+dVNQbs8MewknfCYb/a9vkw3Jwm0M7/x
+aUsbblcPTv9jsv83DFGl
+=nkk3
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__19_Jan_2012_11_01_53_+1100_LjsflH7aNU1bec2/--
