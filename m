@@ -1,21 +1,97 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Deepthi Dharwar <deepthi@linux.vnet.ibm.com>
 Subject: Re: linux-next: build failure after merge of the final tree
-Date: Fri, 20 Jan 2012 09:21:26 +0100
-Message-ID: <4F192406.9050209@linutronix.de>
-References: <20120120181131.8fc4b0b29893b614e7f1fd6e@canb.auug.org.au> <20120119233418.65995f2b.akpm@linux-foundation.org>
+Date: Fri, 20 Jan 2012 14:38:17 +0530
+Message-ID: <4F192F01.1030502@linux.vnet.ibm.com>
+References: <20120120182117.01a6eb5d3cfb3f2bdfb32ae4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120119233418.65995f2b.akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Gmeiner <christian.gmeiner@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Richard Purdie <rpurdie@rpsys.net>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp04.au.ibm.com ([202.81.31.146]:39805 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752031Ab2ATJI0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jan 2012 04:08:26 -0500
+Received: from /spool/local
+	by e23smtp04.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <deepthi@linux.vnet.ibm.com>;
+	Fri, 20 Jan 2012 08:53:51 +1000
+In-Reply-To: <20120120182117.01a6eb5d3cfb3f2bdfb32ae4@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Arun R Bharadwaj <arun.r.bharadwaj@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Trinabh Gupta <g.trinabh@gmail.com>
 
-On 01/20/2012 08:34 AM, Andrew Morton wrote:
-> Like this?
+On 01/20/2012 12:51 PM, Stephen Rothwell wrote:
 
-Yes.
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allmodconfig) failed like this:
+> 
+> arch/powerpc/platforms/pseries/processor_idle.c:35:6: error: redefinition of 'update_smt_snooze_delay'
+> arch/powerpc/include/asm/system.h:230:20: note: previous definition of 'update_smt_snooze_delay' was here
+> arch/powerpc/platforms/pseries/processor_idle.c:175:5: error: redefinition of 'pseries_notify_cpuidle_add_cpu'
+> arch/powerpc/include/asm/system.h:231:19: note: previous definition of 'pseries_notify_cpuidle_add_cpu' was here
+> 
+> Caused by commit 707827f3387d ("powerpc/cpuidle: cpuidle driver for
+> pSeries").  For this build, CONFIG_PSERIES_IDLE is "m".
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Linuxppc-dev mailing list
+> Linuxppc-dev@lists.ozlabs.org
+> https://lists.ozlabs.org/listinfo/linuxppc-dev
 
-Sebastian
+
+
+
+Hi Stephen,
+
+We had a discussion on this particular problem on ppcdev list a few
+days back and concluded that it is best not have pseries_idle
+as a module.
+
+http://old.nabble.com/-PATCH--cpuidle%3A-Default-y-for-pseries-to33118294.html#a33127587
+
+The following patch disables pseries cpuidle driver to be loaded as a
+module as there are build problems reported when one is trying to do so.
+
+arch/powerpc/platforms/pseries/processor_idle.c:35:6: error:
+redefinition of 'update_smt_snooze_delay'
+arch/powerpc/include/asm/system.h:230:20: note:
+previous definition of 'update_smt_snooze_delay' was here
+arch/powerpc/platforms/pseries/processor_idle.c:175:5:
+error: redefinition of 'pseries_notify_cpuidle_add_cpu'
+arch/powerpc/include/asm/system.h:231:19: note:
+previous definition of 'pseries_notify_cpuidle_add_cpu' was here
+
+Since the above two functions
+are used in core power architecture functions (store_smt_snooze_delay
+at kernel/sysfs.c and smp_xics_setup_cpu at platforms/pseries/smp.c),
+this requires some rework in these interactions. For now please
+disable PSERIES_IDLE to be built as a module for now.
+
+Signed-off-by: Deepthi Dharwar <deepthi@linux.vnet.ibm.com>
+---
+ arch/powerpc/platforms/pseries/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/powerpc/platforms/pseries/Kconfig
+b/arch/powerpc/platforms/pseries/Kconfig
+index ae7b6d4..31f22c1 100644
+--- a/arch/powerpc/platforms/pseries/Kconfig
++++ b/arch/powerpc/platforms/pseries/Kconfig
+@@ -122,7 +122,7 @@ config DTL
+ 	  Say N if you are unsure.
+
+ config PSERIES_IDLE
+-	tristate "Cpuidle driver for pSeries platforms"
++	bool "Cpuidle driver for pSeries platforms"
+ 	depends on CPU_IDLE
+ 	depends on PPC_PSERIES
+ 	default y
+
+Regards,
+Deepthi
