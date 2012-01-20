@@ -1,55 +1,35 @@
-From: Glauber Costa <glommer@parallels.com>
-Subject: Re: linux-next: Tree for Jan 19 (mm/memcontrol.c)
-Date: Fri, 20 Jan 2012 15:09:17 +0400
-Message-ID: <4F194B5D.6080701@parallels.com>
-References: <20120119125932.a4c67005cf6a0938558e8b36@canb.auug.org.au> <4F189A97.5080007@xenotime.net> <20120120090037.e32a119f.kamezawa.hiroyu@jp.fujitsu.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: Linux 3.3-1 out - merge window closed
+Date: Fri, 20 Jan 2012 12:41:43 -0500
+Message-ID: <20120120174143.GA15673@home.goodmis.org>
+References: <CA+55aFwWEhobGDzkuRoXaS37y3tMU41ExhiR+vCa68cUNRehKg@mail.gmail.com>
+ <20120120151452.2fe57bb87218f575e8909caf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.parallels.com ([64.131.90.16]:49578 "EHLO mx2.parallels.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752141Ab2ATLKJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 20 Jan 2012 06:10:09 -0500
-In-Reply-To: <20120120090037.e32a119f.kamezawa.hiroyu@jp.fujitsu.com>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.124]:57730 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754921Ab2ATRlp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jan 2012 12:41:45 -0500
+Content-Disposition: inline
+In-Reply-To: <20120120151452.2fe57bb87218f575e8909caf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On 01/20/2012 04:00 AM, KAMEZAWA Hiroyuki wrote:
-> On Thu, 19 Jan 2012 14:35:03 -0800
-> Randy Dunlap<rdunlap@xenotime.net>  wrote:
->
->> On 01/18/2012 05:59 PM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20120118:
->>
->>
->> on i386:
->>
->> mm/built-in.o:(__jump_table+0x8): undefined reference to `memcg_socket_limit_enabled'
->> mm/built-in.o:(__jump_table+0x14): undefined reference to `memcg_socket_limit_enabled'
->>
->>
->> Full randconfig file is attached.
->>
->
-> Thank you. Forwarding this to Costa.
->
-> Thanks,
-> -Kame
->
-Oh dear lord... So what happened here, is that I moved this code out of 
-CONFIG_INET to fix another problem, and forgot that it needed to be 
-wrapped under CONFIG_NET instead.
+On Fri, Jan 20, 2012 at 03:14:52PM +1100, Stephen Rothwell wrote:
+> 
+> This leaves 1174 commits (13%) in v3.3-rc1 that were not in next-20120106
+> for some reason (not too bad really, I guess).  Some will clearly be bug
+> fixes, of course.  Some will be quilt trees (probably rebased before
+> being sent to Linus).  Some will be patches that depend on work by others.
 
-It is not an excuse, but I did compiled it over at least 6 random 
-configs, and thought it was okay. I guess so many things select 
-CONFIG_NET that it ends up being hard to generate a config without it.
+Well, 19 of those were ktest patches. Although it's not something we
+need to worry about, as it's just a script for users to test their
+kernels and not something that would conflict with others. I'll send out
+that email to get ktest included into linux-next regardless.
 
-I think the fix for this needs to go through dave's tree, since it is 
-where the original fix went through.
+Thanks!
 
-I will send a fix shortly.
+-- Steve
