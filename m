@@ -1,44 +1,21 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Subject: Re: linux-next: build failure after merge of the final tree
-Date: Thu, 19 Jan 2012 23:34:18 -0800
-Message-ID: <20120119233418.65995f2b.akpm@linux-foundation.org>
-References: <20120120181131.8fc4b0b29893b614e7f1fd6e@canb.auug.org.au>
+Date: Fri, 20 Jan 2012 09:21:26 +0100
+Message-ID: <4F192406.9050209@linutronix.de>
+References: <20120120181131.8fc4b0b29893b614e7f1fd6e@canb.auug.org.au> <20120119233418.65995f2b.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46140 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751743Ab2ATH2y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Jan 2012 02:28:54 -0500
-In-Reply-To: <20120120181131.8fc4b0b29893b614e7f1fd6e@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Christian Gmeiner <christian.gmeiner@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Richard Purdie <rpurdie@rpsys.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120119233418.65995f2b.akpm@linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Gmeiner <christian.gmeiner@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Richard Purdie <rpurdie@rpsys.net>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 20 Jan 2012 18:11:31 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On 01/20/2012 08:34 AM, Andrew Morton wrote:
+> Like this?
 
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (s390 allmodconfig)
-> failed like this:
-> 
-> drivers/leds/leds-ot200.c: In function 'ot200_led_brightness_set':
-> drivers/leds/leds-ot200.c:114: error: implicit declaration of function 'outb'
-> 
-> Caused by commit 891b7aeff9fe ("leds: add led driver for Bachmann's ot200").
+Yes.
 
-Like this?
-
---- a/drivers/leds/Kconfig~leds-add-led-driver-for-bachmanns-ot200-fix
-+++ a/drivers/leds/Kconfig
-@@ -405,7 +405,7 @@ config LEDS_MAX8997
- 
- config LEDS_OT200
- 	tristate "LED support for the Bachmann OT200"
--	depends on LEDS_CLASS
-+	depends on LEDS_CLASS && HAS_IOMEM
- 	help
- 	  This option enables support for the LEDs on the Bachmann OT200.
- 	  Say Y to enable LEDs on the Bachmann OT200.
+Sebastian
