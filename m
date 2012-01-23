@@ -1,59 +1,28 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the crypto tree with the tegra tree
-Date: Mon, 23 Jan 2012 16:05:46 +1100
-Message-ID: <20120123160546.b3b6b80e3e40499cfa3193f7@canb.auug.org.au>
-References: <20120123120933.6d4c9cc7050fce2e9fbc9d3a@canb.auug.org.au>
-	<CAOesGMgH0owngSkJq72Wf01Z7YSsD9pzRZWtzSvZt+Q7ZA6qng@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 23 Jan 2012 10:47:22 +0000
+Message-ID: <20120123104722.GA9681@sirena.org.uk>
+References: <20120123121422.f3e41d97bae580544abfab63@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Jan_2012_16_05_46_+1100_2IXEGPjDVirOfqUk"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMgH0owngSkJq72Wf01Z7YSsD9pzRZWtzSvZt+Q7ZA6qng@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Henning Heinold <heinold@inf.fu-berlin.de>, Varun Wadekar <vwadekar@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__23_Jan_2012_16_05_46_+1100_2IXEGPjDVirOfqUk
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:56641 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753200Ab2AWKrZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jan 2012 05:47:25 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20120123121422.f3e41d97bae580544abfab63@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
 
-Hi Olof,
+On Mon, Jan 23, 2012 at 12:14:22PM +1100, Stephen Rothwell wrote:
 
-On Sun, 22 Jan 2012 20:24:16 -0800 Olof Johansson <olof@lixom.net> wrote:
->
-> I should cherry-pick in the same change as Herbert is carrying, and do
-> the rest of the fuse changes on top of that. I'll do that for
-> tomorrows -next.
+> Caused by commit 899896379670 ("ASoC: sgtl5000: Convert to table based
+> DAPM and control init").  Please at least build this stuff :-(
 
-Only if its going to get much worse or you need the change.  The conflict
-is trivial ...
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__23_Jan_2012_16_05_46_+1100_2IXEGPjDVirOfqUk
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPHOqqAAoJEECxmPOUX5FE9b8P/2s4vgeF9ja6zJvC+q7fw3pB
-BVMYS9x2EKeC9e8jJKMHVG80qsxBgqKcRxHLp+eAXhkAufgNoX39wGuyu/paLrQn
-V8dhTWORMdg+bvcqJYLK5G9E88bt2FmgaLjRNgjGR54nDYly9MtBJ9C0ohi50RoZ
-JqpsymwZx+W5MvpHw9cXRHnz2OYw8ZXLp4mP8WsvkhR/Yklgewpx6OYmILUG2Nga
-RBfOw1A7zl/Salvl0uh05+kSD2F9w/QrBfoWqKZox1/YDymqSqZZJy1ymOtUgunt
-VnE3KhxAnH7+G+7ifr+QsIiuMAdzgg7ekmq1qrUF9sKQayq5bkiWdUwYEXSmZdXY
-RJ4VRBnUg+/XWD77qn6SPQju5Zf/PNRvHgjjA6QxlFqjvv0T4VQ7qHem/XO2xDgK
-cHvNiFFGeuPP1GAfGNInogKcRmCeRETO98/A/iD5Vd57cJ1N8d41+cm6gCERHQlz
-9iAYKqrLopXObUb5UumlswRh2JnFd7Fvk22gPICGqKD+l/DgGCbAd6Tj/OzhcA5e
-wSeWsVyiYjYVJKJcnzicKNNdSU25/gAx6LvlQWPgCnQwBdKYEUA+9xvYKS6e0p4S
-dpLLCQIzdtiyJWKWPyNq8YFQpEb1spW7N78aNZhO/HzTHFPj9gxwK7r6zyXIKg+k
-GklqdnkLKbUGmYgAXXkZ
-=PjNx
------END PGP SIGNATURE-----
-
---Signature=_Mon__23_Jan_2012_16_05_46_+1100_2IXEGPjDVirOfqUk--
+Mainline doesn't build (and wouldn't usefully run) for any of my
+interesting configs right now which does tend to push testing of -next
+down the priority list.  Hopefully the fixes will make it into mainline
+at some point soon.
