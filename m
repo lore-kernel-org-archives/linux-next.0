@@ -1,68 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Mon, 23 Jan 2012 12:14:22 +1100
-Message-ID: <20120123121422.f3e41d97bae580544abfab63@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: manual merge of the crypto tree with the tegra tree
+Date: Mon, 23 Jan 2012 13:03:12 +1100
+Message-ID: <20120123020312.GA31912@gondor.apana.org.au>
+References: <20120123120933.6d4c9cc7050fce2e9fbc9d3a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Jan_2012_12_14_22_+1100_.X2jDET9o4bSnZJO"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38954 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752528Ab2AWBOj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 22 Jan 2012 20:14:39 -0500
+Received: from helcar.apana.org.au ([209.40.204.226]:39320 "EHLO
+	fornost.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752463Ab2AWCDU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Jan 2012 21:03:20 -0500
+Content-Disposition: inline
+In-Reply-To: <20120123120933.6d4c9cc7050fce2e9fbc9d3a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Henning Heinold <heinold@inf.fu-berlin.de>, Varun Wadekar <vwadekar@nvidia.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>
 
---Signature=_Mon__23_Jan_2012_12_14_22_+1100_.X2jDET9o4bSnZJO
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jan 23, 2012 at 12:09:33PM +1100, Stephen Rothwell wrote:
+> Hi Herbert,
+> 
+> Today's linux-next merge of the crypto tree got a conflict in
+> arch/arm/mach-tegra/fuse.c between commit b2609c7c7237 ("ARM: tegra:
+> fuse: add functions to access chip revision") from the tegra tree and
+> commit e87e06cd8cc0 ("arm: tegra: export tegra_chip_uid") from the crypto
+> tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-Hi all,
+Thanks!
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> By the way, adding the EXPORT_SYMBOL() really now only needs export.h not
+> module.h (assuming that the crypto tree has a recent enough base).
 
-sound/soc/codecs/sgtl5000.c:1398:18: error: 'sgtl500_dapm_widgets' undeclar=
-ed here (not in a function)
-sound/soc/codecs/sgtl5000.c:1399:22: error: negative width in bit-field '<a=
-nonymous>'
-sound/soc/codecs/sgtl5000.c:1400:17: error: 'sgtl500_dapm_routes' undeclare=
-d here (not in a function)
-sound/soc/codecs/sgtl5000.c:1401:21: error: negative width in bit-field '<a=
-nonymous>'
+OK noted.
 
-Caused by commit 899896379670 ("ASoC: sgtl5000: Convert to table based
-DAPM and control init").  Please at least build this stuff :-(
-
-I have used the sound-asoc tree from next-20120120 for today.
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__23_Jan_2012_12_14_22_+1100_.X2jDET9o4bSnZJO
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPHLRuAAoJEECxmPOUX5FEQMgQAKNiEm/IzhBFVaG5XSjsJ4ka
-o2sa0q7W065YAK9PJaEgVdWF96iu7TeuIWp5d0ZwVQbF+vtB74hdxhbXK8iMOtG/
-2PcBhNmylQD4oibffPq9UZj9TJBN40oIn6lL+8rFBcfuKnLLFRL4ZebNjNagscaR
-PRh4OJQJKnwPvCrC0b6Dbl98sA/3EMjLJG1lvDeY7dgjYUHLWcIC9YKF+cfXDn3B
-0fh9RsQ91c5ely6SiHkUMufL47rWf7O0CBB2kI7LwZaI2n0SfeWcsaihYvxbuMOO
-fC6aOvh4E92IJqyIefTXykbni3pPgQjYm6LwokYABqfOCcYQvgG0Lt7vOnoItwDj
-vUGSav+HO5nVpDycXJeKHV24VHy3cJYgpP7bLFDHuwUmcswoHUeilVcgf6aVDoXm
-IL+gJOyLwlP0hnjkwPJkplMdq3xovC+Bcv4fzC9WD/gshZ10WGOReCM9vt2Vwdzb
-NaVIyOwjWnnzW3g2ywlKhrJt2K7FmdTX4IHoD6dT7ep+h/gZVo7N7C7B1mrWGWJ+
-apbvR+KYsR//7l2TTJ3E/np7oezwSn+TAfxINHkMFD5h+SX2ovkOkalBwA+4hEkV
-Fx74VIWz4oB5g93jJJ1PZCSOZXPCtpVhkUq2dzMb5E/zouXnvUHugVHL5Q0eiGrc
-y/PacUp6REeY0zdy74X8
-=Jx4x
------END PGP SIGNATURE-----
-
---Signature=_Mon__23_Jan_2012_12_14_22_+1100_.X2jDET9o4bSnZJO--
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
