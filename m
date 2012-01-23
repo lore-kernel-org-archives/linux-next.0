@@ -1,100 +1,104 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfs tree
-Date: Mon, 23 Jan 2012 11:39:49 +1100
-Message-ID: <20120123113949.b8d1940bb60128c5c4efeece@canb.auug.org.au>
+Subject: linux-next: manual merge of the crypto tree with the tegra tree
+Date: Mon, 23 Jan 2012 12:09:33 +1100
+Message-ID: <20120123120933.6d4c9cc7050fce2e9fbc9d3a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Jan_2012_11_39_49_+1100_SxY68HtSrrc+lFx5"
-Return-path: <target-devel-owner@vger.kernel.org>
-Sender: target-devel-owner@vger.kernel.org
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, linux-scsi@vger.kernel.org, target-devel <target-devel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__23_Jan_2012_12_09_33_+1100_rZmz2td+CPsy00N0"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46254 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752540Ab2AWBJz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 22 Jan 2012 20:09:55 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Henning Heinold <heinold@inf.fu-berlin.de>, Varun Wadekar <vwadekar@nvidia.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>
 
---Signature=_Mon__23_Jan_2012_11_39_49_+1100_SxY68HtSrrc+lFx5
+--Signature=_Mon__23_Jan_2012_12_09_33_+1100_rZmz2td+CPsy00N0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Trond,
+Hi Herbert,
 
-After merging the nfs tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the crypto tree got a conflict in
+arch/arm/mach-tegra/fuse.c between commit b2609c7c7237 ("ARM: tegra:
+fuse: add functions to access chip revision") from the tegra tree and
+commit e87e06cd8cc0 ("arm: tegra: export tegra_chip_uid") from the crypto
+tree.
 
-drivers/target/iscsi/iscsi_target_configfs.c: In function 'lio_target_call_=
-addnptotpg':
-drivers/target/iscsi/iscsi_target_configfs.c:214:3: error: implicit declara=
-tion of function 'in6_pton' [-Werror=3Dimplicit-function-declaration]
-drivers/target/iscsi/iscsi_target_configfs.c:239:3: error: implicit declara=
-tion of function 'in_aton' [-Werror=3Dimplicit-function-declaration]
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 
-Presumably caused by some include file cleanup in the nfs tree (probably
-commit 0b5357cfc2e6 "NFS: Remove unnecessary includes from
-linux/nfs_fs_i.h").
-
-I applied the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 23 Jan 2012 11:35:02 +1100
-Subject: [PATCH] iscsi: in_aton needs linux/inet.h
-
-so include it directly.
-
-Fixes this error after a recent nfs cleanup:
-
-drivers/target/iscsi/iscsi_target_configfs.c: In function 'lio_target_call_=
-addnptotpg':
-drivers/target/iscsi/iscsi_target_configfs.c:214:3: error: implicit declara=
-tion of function 'in6_pton' [-Werror=3Dimplicit-function-declaration]
-drivers/target/iscsi/iscsi_target_configfs.c:239:3: error: implicit declara=
-tion of function 'in_aton' [-Werror=3Dimplicit-function-declaration]
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/target/iscsi/iscsi_target_configfs.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/target/iscsi/iscsi_target_configfs.c b/drivers/target/=
-iscsi/iscsi_target_configfs.c
-index 3468caa..6b35b37 100644
---- a/drivers/target/iscsi/iscsi_target_configfs.c
-+++ b/drivers/target/iscsi/iscsi_target_configfs.c
-@@ -21,6 +21,7 @@
-=20
- #include <linux/configfs.h>
- #include <linux/export.h>
-+#include <linux/inet.h>
- #include <target/target_core_base.h>
- #include <target/target_core_fabric.h>
- #include <target/target_core_fabric_configfs.h>
---=20
-1.7.9.rc0.23.g7e521
+By the way, adding the EXPORT_SYMBOL() really now only needs export.h not
+module.h (assuming that the crypto tree has a recent enough base).
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__23_Jan_2012_11_39_49_+1100_SxY68HtSrrc+lFx5
+diff --cc arch/arm/mach-tegra/fuse.c
+index 17fdd40,ea49bd9..0000000
+--- a/arch/arm/mach-tegra/fuse.c
++++ b/arch/arm/mach-tegra/fuse.c
+@@@ -119,7 -55,32 +120,8 @@@ unsigned long long tegra_chip_uid(void
+  {
+  	unsigned long long lo, hi;
+ =20
+ -	lo =3D fuse_readl(FUSE_UID_LOW);
+ -	hi =3D fuse_readl(FUSE_UID_HIGH);
+ +	lo =3D tegra_fuse_readl(FUSE_UID_LOW);
+ +	hi =3D tegra_fuse_readl(FUSE_UID_HIGH);
+  	return (hi << 32ull) | lo;
+  }
++ EXPORT_SYMBOL(tegra_chip_uid);
+ -
+ -int tegra_sku_id(void)
+ -{
+ -	int sku_id;
+ -	u32 reg =3D fuse_readl(FUSE_SKU_INFO);
+ -	sku_id =3D reg & 0xFF;
+ -	return sku_id;
+ -}
+ -
+ -int tegra_cpu_process_id(void)
+ -{
+ -	int cpu_process_id;
+ -	u32 reg =3D fuse_readl(FUSE_SPARE_BIT);
+ -	cpu_process_id =3D (reg >> 6) & 3;
+ -	return cpu_process_id;
+ -}
+ -
+ -int tegra_core_process_id(void)
+ -{
+ -	int core_process_id;
+ -	u32 reg =3D fuse_readl(FUSE_SPARE_BIT);
+ -	core_process_id =3D (reg >> 12) & 3;
+ -	return core_process_id;
+ -}
+
+
+--Signature=_Mon__23_Jan_2012_12_09_33_+1100_rZmz2td+CPsy00N0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPHKxVAAoJEECxmPOUX5FEvsAQAIPz+rftVIzKlFxU1U4OmRDg
-1EnrXtD0kkaAsDPyzomCMfcRNS8S135CUrQcei6fUmcyH+JcMCNFdlwna1S2pGFm
-bqbcvWLOD7puR/UGi2tX3EkGees22u6rudute9BRQy5+0iVmqBkczD822L0zht/A
-eGQA0KbwnQeqitwppivNpeM0zzBYcJAk2/kWvhH16n0iDqnUD3Y0vpW3VDq/GBpJ
-95gEsBKHFYYjBHAIufMsaBITI0MyJRajx7oA4nOAbttQxrjtInmTalD8VRd6Oavu
-UUBRYB+Xnc6aPxjnOiEWonzW5oC06XnoSkSmvDzMeA4rtxB6fPbUiY4FsjSLtOWi
-ewEY+nraZki5s1uJJ8MGWcLNdMPCI4lohCiczylmT2WOB8UhAGbBgc3Afzhaz+pT
-NpBY++FnhlksGPZ6pUw+jlPC6sqe5SKH6mZNpyjfk8NkG1Z/K4c+yuB2ImVUiXi2
-bjVVE+d3ai85tyBL1smA23dNcmlmA76exAYPkJeKEgFJJ+7RRd/cgkgeqiNYom1Q
-mACsyYFFVYmIfjJBVbNjR2dj9OrlAFozWEv2kyFLH5rweX8O7MjgARUI80xJ2hGf
-zwhT5G3TxO3vsRNNjoxrJslvKeiQS5Y8kmbnHZ2YN/LAo/RUn9jGHK9T7yZ3yKee
-FMFf736wwwwaOrdzezhn
-=gMy0
+iQIcBAEBCAAGBQJPHLNNAAoJEECxmPOUX5FEPhYP/1/Sun9hE98frLTKxuqAZeCH
+jh5+EF57aN7Y0lcXztYFzgzqVSIDm2L58pGxTfwVZTvP3r0lAA1A3DQ+qUHPHNKF
+eorrZoYss+/6cZFtmbvzywcvQP0dNl4dA9QdO50unH2tcyQbJkqfQE+Gr9pWGdAa
+fOdhXkugYxK1T5eZ6DroMBYIt7NHvlmxlE0EHYlcSH05yPzzned7j7vDhvWL+CdS
++s5H9kA4uwByMIpV9sw/bxQVLnFIy87Oj19dEKMfRuKrOsEerNUDzWvy8gbyJNMP
+yMmDuZ5lqL6ay6N5D85E5R634iN6VFWBBF1JGUQwzf8rvruKl1+vgHPfn8ejosgS
+x3OuptrB9pCXzoOOUusWsGSGXZIE0rUNX2xRBKxkSOmweIPRQ9IrXAKdU6rfelGs
+5i7x6z/O2AtMT8bjApRkGpH9vP9ZRlLw75qDQYyVeatpXYLErGsS81XYa6QWaig5
+soigboareuByQSDZx3L8YGg8fY2sq7i9J+Q4exlDaK4YXGZcBNLk3fXaNjNOCqLP
+nLl58qWc+CFaqfoHJo6kIYi7V3qHX6RY+pQIWwnotQIjBnGOgNADiyHv5MDxUvdr
+Uf9LmcpdKc1zNwFk7THtk1EQPp3AMZgmU//azcyWOMeZnSMUJkJQ3jG36u9yJBjl
+c3uPyDX7aA9PdmuHDKVH
+=ucWc
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_Jan_2012_11_39_49_+1100_SxY68HtSrrc+lFx5--
+--Signature=_Mon__23_Jan_2012_12_09_33_+1100_rZmz2td+CPsy00N0--
