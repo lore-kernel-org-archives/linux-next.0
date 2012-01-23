@@ -1,73 +1,100 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: Linux 3.3-1 out - merge window closed
-Date: Sun, 22 Jan 2012 11:35:50 +0100
-Message-ID: <CAMuHMdVMHnTHpwzCRaRZmTBLg9z+DJD1qJ7O3A6U3CJGFgN1Wg@mail.gmail.com>
-References: <CA+55aFwWEhobGDzkuRoXaS37y3tMU41ExhiR+vCa68cUNRehKg@mail.gmail.com>
-	<20120120151452.2fe57bb87218f575e8909caf@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the nfs tree
+Date: Mon, 23 Jan 2012 11:39:49 +1100
+Message-ID: <20120123113949.b8d1940bb60128c5c4efeece@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:44644 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751215Ab2AVKfw convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Jan 2012 05:35:52 -0500
-In-Reply-To: <20120120151452.2fe57bb87218f575e8909caf@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__23_Jan_2012_11_39_49_+1100_SxY68HtSrrc+lFx5"
+Return-path: <target-devel-owner@vger.kernel.org>
+Sender: target-devel-owner@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, linux-scsi@vger.kernel.org, target-devel <target-devel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Jan 20, 2012 at 05:14, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> On Thu, 19 Jan 2012 15:58:28 -0800 Linus Torvalds <torvalds@linux-fou=
-ndation.org> wrote:
->> (Stats for those that like them: 20% arch updates (arm, power, mips,
->> x86), 60% drivers (networking - wireless in particular, staging,
->> media, dri, sound, misc - including getting rid of 'struct sysdev'),
->> and 20% random stuff: filesystems, networking, perf etc)
->
-> More stats for the bored:
->
-> (I don't count merge commits below and everything is relative to v3.2=
-)
->
-> Of the 8899 commits in v3.3-rc1, 6918 were in next-20120106 (the firs=
-t
-> -next based on v3.2). =C2=A0A further 792 commits have the same subje=
-ct line as
-> commits in next-20120116 and a further 16 have the same patch-id.
->
-> This leaves 1174 commits (13%) in v3.3-rc1 that were not in next-2012=
-0106
-> for some reason (not too bad really, I guess). =C2=A0Some will clearl=
-y be bug
-> fixes, of course. =C2=A0Some will be quilt trees (probably rebased be=
-fore
-> being sent to Linus). =C2=A0Some will be patches that depend on work =
-by others.
+--Signature=_Mon__23_Jan_2012_11_39_49_+1100_SxY68HtSrrc+lFx5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Even more stats for the bored (more details in "Build regressions/impro=
-vements
-in v3.3-rc1"): 80 new build errors were introduced.
+Hi Trond,
 
-(Un?)fortunately not all of them can be attributed to the changesets
-that skipped
--next, as I know of several that affected the builds I'm most
-interested in in -next.
+After merging the nfs tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Gr{oetje,eeting}s,
+drivers/target/iscsi/iscsi_target_configfs.c: In function 'lio_target_call_=
+addnptotpg':
+drivers/target/iscsi/iscsi_target_configfs.c:214:3: error: implicit declara=
+tion of function 'in6_pton' [-Werror=3Dimplicit-function-declaration]
+drivers/target/iscsi/iscsi_target_configfs.c:239:3: error: implicit declara=
+tion of function 'in_aton' [-Werror=3Dimplicit-function-declaration]
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+Presumably caused by some include file cleanup in the nfs tree (probably
+commit 0b5357cfc2e6 "NFS: Remove unnecessary includes from
+linux/nfs_fs_i.h").
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+I applied the following patch for today:
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 23 Jan 2012 11:35:02 +1100
+Subject: [PATCH] iscsi: in_aton needs linux/inet.h
+
+so include it directly.
+
+Fixes this error after a recent nfs cleanup:
+
+drivers/target/iscsi/iscsi_target_configfs.c: In function 'lio_target_call_=
+addnptotpg':
+drivers/target/iscsi/iscsi_target_configfs.c:214:3: error: implicit declara=
+tion of function 'in6_pton' [-Werror=3Dimplicit-function-declaration]
+drivers/target/iscsi/iscsi_target_configfs.c:239:3: error: implicit declara=
+tion of function 'in_aton' [-Werror=3Dimplicit-function-declaration]
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/target/iscsi/iscsi_target_configfs.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/target/iscsi/iscsi_target_configfs.c b/drivers/target/=
+iscsi/iscsi_target_configfs.c
+index 3468caa..6b35b37 100644
+--- a/drivers/target/iscsi/iscsi_target_configfs.c
++++ b/drivers/target/iscsi/iscsi_target_configfs.c
+@@ -21,6 +21,7 @@
+=20
+ #include <linux/configfs.h>
+ #include <linux/export.h>
++#include <linux/inet.h>
+ #include <target/target_core_base.h>
+ #include <target/target_core_fabric.h>
+ #include <target/target_core_fabric_configfs.h>
+--=20
+1.7.9.rc0.23.g7e521
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__23_Jan_2012_11_39_49_+1100_SxY68HtSrrc+lFx5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPHKxVAAoJEECxmPOUX5FEvsAQAIPz+rftVIzKlFxU1U4OmRDg
+1EnrXtD0kkaAsDPyzomCMfcRNS8S135CUrQcei6fUmcyH+JcMCNFdlwna1S2pGFm
+bqbcvWLOD7puR/UGi2tX3EkGees22u6rudute9BRQy5+0iVmqBkczD822L0zht/A
+eGQA0KbwnQeqitwppivNpeM0zzBYcJAk2/kWvhH16n0iDqnUD3Y0vpW3VDq/GBpJ
+95gEsBKHFYYjBHAIufMsaBITI0MyJRajx7oA4nOAbttQxrjtInmTalD8VRd6Oavu
+UUBRYB+Xnc6aPxjnOiEWonzW5oC06XnoSkSmvDzMeA4rtxB6fPbUiY4FsjSLtOWi
+ewEY+nraZki5s1uJJ8MGWcLNdMPCI4lohCiczylmT2WOB8UhAGbBgc3Afzhaz+pT
+NpBY++FnhlksGPZ6pUw+jlPC6sqe5SKH6mZNpyjfk8NkG1Z/K4c+yuB2ImVUiXi2
+bjVVE+d3ai85tyBL1smA23dNcmlmA76exAYPkJeKEgFJJ+7RRd/cgkgeqiNYom1Q
+mACsyYFFVYmIfjJBVbNjR2dj9OrlAFozWEv2kyFLH5rweX8O7MjgARUI80xJ2hGf
+zwhT5G3TxO3vsRNNjoxrJslvKeiQS5Y8kmbnHZ2YN/LAo/RUn9jGHK9T7yZ3yKee
+FMFf736wwwwaOrdzezhn
+=gMy0
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__23_Jan_2012_11_39_49_+1100_SxY68HtSrrc+lFx5--
