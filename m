@@ -1,58 +1,53 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: Tree for Jan 24
-Date: Wed, 25 Jan 2012 00:18:16 +0100
-Message-ID: <201201250018.16848.rjw@sisk.pl>
-References: <20120124163055.3c99bca0d5dfd754a352fb02@canb.auug.org.au>
+From: John Stultz <john.stultz@linaro.org>
+Subject: Re: linux-next: build failure after merge of the input tree
+Date: Tue, 24 Jan 2012 15:16:32 -0800
+Message-ID: <1327446992.11738.8.camel@work-vm>
+References: <20120124142516.07860a401ac9216cfa10a6ad@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:48945 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752766Ab2AXXOq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Jan 2012 18:14:46 -0500
-In-Reply-To: <20120124163055.3c99bca0d5dfd754a352fb02@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120124142516.07860a401ac9216cfa10a6ad@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Jiri Slaby <jslaby@suse.cz>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On Tue, 2012-01-24 at 14:25 +1100, Stephen Rothwell wrote:
+> Hi Dmitry,
+> 
+> After merging the input tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> ERROR: ".ktime_get_monotonic_offset" [drivers/input/evdev.ko] undefined!
+> 
+> Caused by commit 04f2c50e5fd8 ("Input: add infrastructure for selecting
+> clockid for event time stamps").
+> 
+> I have used the input tree from next-20120123 for today.
 
-On Tuesday, January 24, 2012, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20120123:
-> 
-> New tree: ktest
-> Reinstated tree: input-mt
-> 
-> My fixes tree contains:
-> 	powerpc: make PSERIES_IDLE bool
-> 
-> Linus' tree gained a build failure for which I applied a patch.
-> 
-> The arm tree gained a conflict against Linus' tree.
-> 
-> The arm-soc tree lost its conflicts but gained another against the arm
-> tree.
-> 
-> The s5p tree gained conflicts against Linus' tree.
-> 
-> The nfs tree lost its build failure.
-> 
-> The sound-asoc tree lost its build failure.
-> 
-> The input tree gained a build failure so I used the version from
-> next-20120123.
-> 
-> The akpm tree lost several patches that were merged into Linus' tree.
+Huh.
 
-Is there any new material touching kernel/workqueue.c or kernel/freezer.c?
+ktime_get_monotonic_offset is a timekeeping core interface, defined
+along with ktime_get 
 
-We seem to have a freezer regression in linux-next which doesn't seem to be
-present in my tree.
+Hrmmm.. Ah. I suspect this will fix it:
 
-Thanks,
-Rafael
+
+Export ktime_get_monotonic_offset for evdev
+
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 9cf6bbb..9781add 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1230,6 +1230,8 @@ ktime_t ktime_get_monotonic_offset(void)
+ 	} while (read_seqretry(&xtime_lock, seq));
+ 	return timespec_to_ktime(wtom);
+ }
++EXPORT_SYMBOL_GPL(ktime_get_monotonic_offset);
++
+ 
+ /**
+  * xtime_update() - advances the timekeeping infrastructure
