@@ -1,50 +1,60 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] sunrpc: fix stats.h for CONFIG_PROC_FS not enabled
-Date: Mon, 23 Jan 2012 19:28:07 -0800
-Message-ID: <4F1E2547.1030206@xenotime.net>
-References: <20120123141155.3e6b665ef655e267f25d4e7f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the input tree
+Date: Tue, 24 Jan 2012 14:25:16 +1100
+Message-ID: <20120124142516.07860a401ac9216cfa10a6ad@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__24_Jan_2012_14_25_16_+1100_yoEXx9l/m9kYXoaz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:48028 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755249Ab2AXC3r (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jan 2012 21:29:47 -0500
-In-Reply-To: <20120123141155.3e6b665ef655e267f25d4e7f@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34936 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754071Ab2AXDZ1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jan 2012 22:25:27 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Netdev <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>, "J. Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <Trond.Myklebust@netapp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Tue__24_Jan_2012_14_25_16_+1100_yoEXx9l/m9kYXoaz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix build errors in linux/sunrpc/stats.h when CONFIG_PROC_FS
-is not enabled:
-- add parameter names to inline functions
-- fix placement of '(' in rpc_proc_unregister()
+Hi Dmitry,
 
-Fixes these errors:
-include/linux/sunrpc/stats.h:72:63: error: parameter name omitted
-include/linux/sunrpc/stats.h:73:46: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'net'
+After merging the input tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
+ERROR: ".ktime_get_monotonic_offset" [drivers/input/evdev.ko] undefined!
 
- include/linux/sunrpc/stats.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Caused by commit 04f2c50e5fd8 ("Input: add infrastructure for selecting
+clockid for event time stamps").
 
-diff -Naurp linux-next-20120123/include/linux/sunrpc/stats.h~prm_names linux-next-20120123/include/linux/sunrpc/stats.h
---- linux-next-20120123/include/linux/sunrpc/stats.h~prm_names	2012-01-23 19:19:49.000000000 -0800
-+++ linux-next-20120123/include/linux/sunrpc/stats.h	2012-01-23 19:20:54.000000000 -0800
-@@ -69,8 +69,8 @@ void			svc_seq_show(struct seq_file *,
- 				     const struct svc_stat *);
- #else
- 
--static inline struct proc_dir_entry *rpc_proc_register(struct net *, struct rpc_stat *s) { return NULL; }
--static inline void rpc_proc_unregisterstruct net *, (const char *p) {}
-+static inline struct proc_dir_entry *rpc_proc_register(struct net *net, struct rpc_stat *s) { return NULL; }
-+static inline void rpc_proc_unregister(struct net *net, const char *p) {}
- static inline void rpc_proc_zero(const struct rpc_program *p) {}
- 
- static inline struct proc_dir_entry *svc_proc_register(struct net *net, struct svc_stat *s,
+I have used the input tree from next-20120123 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__24_Jan_2012_14_25_16_+1100_yoEXx9l/m9kYXoaz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPHiScAAoJEECxmPOUX5FEPzUP/RuEeilb7HoFZO2CbH530wDW
+Q50EeWqHcXTtczX4qEio1bW7aefB54exDrvpchzObxGr4IHMJAFteFhm8kl3kDqY
+T66+ixG+ocenZgi/RO+bRYvz5650bVzw+g50yMBQ05dJS2PbAJ6q4Cay1OP19+5m
+iLH3yo7TTwbJetmdJwFI7AwF/fS64FlkQICman6/a0XoqoNFhqO/bZZt6exdBkSI
+EmcdHa8CAnWovkoRuDdQOtYE1atoX+ne85faYBiZbRw/Fyts+FyNxjPuShCLHm+F
+IuldmqdZohKHPoHldEGiRUqUl/Ra25p9vT0D4DV60MLyczfayo+d7iS3ngR8t2Su
+eRhgre+phx+RafRbFsH5go1MaYXsdjKBFhzrHWzHzt8vqO4CkZ1wcTah3eUr/BW8
+HfJCT3uXz9BBWhVnmFWZJNeqAmVzIw7pcXFiaCmwDCYCBbUWfvnLCeYNVYl7ClFf
+EVUHTRdvOvbV2wHl+E2YZgYBp3T8HvqSNTvx8o+9mT22tfk2CDN7n6hpa+G1KlRI
+RHYWWvEmIyXe9lRN2SjO9krSRJYT/91qoTeQvSU4w2TDGvuIjG+qSAsWzHei0e5v
+6djT8DbbIlyvRtJbIjt40ObUckMGLxqPAjXE/52I2RZE3l1L66PlsEieGa1NExFY
+NGzyzqhvDvNe1BHxh+6R
+=05gt
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__24_Jan_2012_14_25_16_+1100_yoEXx9l/m9kYXoaz--
