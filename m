@@ -1,53 +1,88 @@
-From: John Stultz <john.stultz@linaro.org>
-Subject: Re: linux-next: build failure after merge of the input tree
-Date: Tue, 24 Jan 2012 15:16:32 -0800
-Message-ID: <1327446992.11738.8.camel@work-vm>
-References: <20120124142516.07860a401ac9216cfa10a6ad@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jan 24
+Date: Wed, 25 Jan 2012 10:20:00 +1100
+Message-ID: <20120125102000.df33159bdc5f627730d9b1b4@canb.auug.org.au>
+References: <20120124163055.3c99bca0d5dfd754a352fb02@canb.auug.org.au>
+	<201201250018.16848.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120124142516.07860a401ac9216cfa10a6ad@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__25_Jan_2012_10_20_00_+1100_cXhyDffoyzdfSfYc"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38289 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752838Ab2AXXUM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Jan 2012 18:20:12 -0500
+In-Reply-To: <201201250018.16848.rjw@sisk.pl>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Jiri Slaby <jslaby@suse.cz>
 
-On Tue, 2012-01-24 at 14:25 +1100, Stephen Rothwell wrote:
-> Hi Dmitry,
-> 
-> After merging the input tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> ERROR: ".ktime_get_monotonic_offset" [drivers/input/evdev.ko] undefined!
-> 
-> Caused by commit 04f2c50e5fd8 ("Input: add infrastructure for selecting
-> clockid for event time stamps").
-> 
-> I have used the input tree from next-20120123 for today.
+--Signature=_Wed__25_Jan_2012_10_20_00_+1100_cXhyDffoyzdfSfYc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Huh.
+Hi Rafael,
 
-ktime_get_monotonic_offset is a timekeeping core interface, defined
-along with ktime_get 
+On Wed, 25 Jan 2012 00:18:16 +0100 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+>
+> Is there any new material touching kernel/workqueue.c or kernel/freezer.c?
+>=20
+> We seem to have a freezer regression in linux-next which doesn't seem to =
+be
+> present in my tree.
 
-Hrmmm.. Ah. I suspect this will fix it:
+There are no commits in next-20120124 that touch either of those files.
 
+Since v3.2 we have these (so in the merge window and Linus' tree):
 
-Export ktime_get_monotonic_offset for evdev
+$ git shortlog v3.2..master kernel/workqueue.c kernel/freezer.c
+Tejun Heo (17):
+      freezer: fix current->state restoration race in refrigerator()
+      freezer: unexport refrigerator() and update try_to_freeze() slightly
+      freezer: implement and use kthread_freezable_should_stop()
+      freezer: rename thaw_process() to __thaw_task() and simplify the impl=
+ement
+      freezer: use dedicated lock instead of task_lock() + memory barrier
+      freezer: make freezing indicate freeze condition in effect
+      freezer: test freezable conditions while holding freezer_lock
+      freezer: kill PF_FREEZING
+      freezer: clean up freeze_processes() failure path
+      freezer: make freezing() test freeze conditions in effect instead of =
+TIF_F
+      freezer: remove should_send_signal() and update frozen()
+      freezer: fix set_freezable[_with_signal]() race
+      freezer: restructure __refrigerator()
+      freezer: use lock_task_sighand() in fake_signal_wake_up()
+      freezer: remove unused @sig_only from freeze_task()
+      freezer: kill unused set_freezable_with_signal()
+      workqueue: make alloc_workqueue() take printf fmt and args for name
 
-Signed-off-by: John Stultz <john.stultz@linaro.org>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 9cf6bbb..9781add 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -1230,6 +1230,8 @@ ktime_t ktime_get_monotonic_offset(void)
- 	} while (read_seqretry(&xtime_lock, seq));
- 	return timespec_to_ktime(wtom);
- }
-+EXPORT_SYMBOL_GPL(ktime_get_monotonic_offset);
-+
- 
- /**
-  * xtime_update() - advances the timekeeping infrastructure
+--Signature=_Wed__25_Jan_2012_10_20_00_+1100_cXhyDffoyzdfSfYc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPHzygAAoJEECxmPOUX5FEKjUQAJoUE5hOaV0MbHKACodNRwyY
+ZAS3kQ4vO8lfbXz6P1iNwjsX2hPEAz1JvKMlG9Ze+5meqGCnOhRGZpFRlJlOX1lk
+/gT4h72c8IG1SJnK8c5wrtF3XA5+97THykBPZolgon34eH894re9LxB/FigRLaws
+0eyuulayQwA7udre+YCdUNxqcuEchACM7LQNLBnvpylCOHhJnFgTtuN/WwSqiCGO
+XjczXe7qPGDoRu2q9sdI0aqGvagWGy5NwTo3FznVgbyqdJkMW1SyAPZng8g/glFo
+0dAjM9HqgmnzDqe9FRMIihBVrtc/8yLs3Ruv4fNlr2KPW8cja/fd8N/1sbFzX/f3
+EmM7pMJFz0kqam8vekGbVEHHIGyY9Dfx0nF5w2rqVAvBd/Nlaysa3wNVU4blgjCd
+O+aAdM04fiXzcQ7zqXWlGOhYEojH1LK6TgUmiBcv8FXLrAgD00BP6VNetIuX3PPl
+BoeJrjmuOR84CuIYQrnrZAnFMVfGP5hhjfE5/oatPIGAd3hgMluGStepatsQDuTI
+p6w/lnu4XB9JaAcjR0El+wntgGSOxTHBAOO7JjfU49DJOQYXwQk4Mmk/NLSf1F58
+lq0OiQN9A8rQ4L09gDIG+JcrY1CAhqIiE5NiZjNFcUpntgG9cYrhUkPOlv38hBKp
+4Jz8PSInuOZ1XQimh1ZP
+=rw8s
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Jan_2012_10_20_00_+1100_cXhyDffoyzdfSfYc--
