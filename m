@@ -1,53 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unable to fetch the oprofile tree
-Date: Tue, 24 Jan 2012 11:04:55 +1100
-Message-ID: <20120124110455.519021de79b6fef5ad383ec2@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Tue, 24 Jan 2012 11:51:10 +1100
+Message-ID: <20120124115110.a94c5c0393253bf5b8c3b048@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__24_Jan_2012_11_04_55_+1100_UINw/N8ndqIOAH6v"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Robert Richter <robert.richter@amd.com>
+ boundary="Signature=_Tue__24_Jan_2012_11_51_10_+1100_BXDbPWF3drHbnf2A"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52980 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753267Ab2AXAvW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jan 2012 19:51:22 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__24_Jan_2012_11_04_55_+1100_UINw/N8ndqIOAH6v
+--Signature=_Tue__24_Jan_2012_11_51_10_+1100_BXDbPWF3drHbnf2A
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Robert,
+Hi Linus,
 
-Trying to fetch the oprofile tree produced this error for the past few
-days:
+After merging the origin tree, today's linux-next build (x86_64 allmodconfi=
+g)
+failed like this:
 
-fatal: unable to connect to amd64.org:
-amd64.org[0: 217.160.130.188]: errno=3DConnection timed out
+usr/include/linux/fs.h:13: included file 'linux/migrate_mode.h' is not expo=
+rted
+
+Caused by commit 6536e3123e5d ("mm: fix warnings regarding enum migrate_mod=
+e").
+
+I have applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 24 Jan 2012 11:41:32 +1100
+Subject: [PATCH] migrate_mode.h is not exported to user mode
+
+so move its include into fs.h inside the __KERNEL__ protection.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/fs.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 4b3a41f..386da09 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -10,7 +10,6 @@
+ #include <linux/ioctl.h>
+ #include <linux/blk_types.h>
+ #include <linux/types.h>
+-#include <linux/migrate_mode.h>
+=20
+ /*
+  * It's silly to have NR_OPEN bigger than NR_FILE, but you can change
+@@ -397,6 +396,7 @@ struct inodes_stat_t {
+ #include <linux/rculist_bl.h>
+ #include <linux/atomic.h>
+ #include <linux/shrinker.h>
++#include <linux/migrate_mode.h>
+=20
+ #include <asm/byteorder.h>
+=20
+--=20
+1.7.9.rc0.23.g7e521
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__24_Jan_2012_11_04_55_+1100_UINw/N8ndqIOAH6v
+--Signature=_Tue__24_Jan_2012_11_51_10_+1100_BXDbPWF3drHbnf2A
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPHfWnAAoJEECxmPOUX5FEML0QAJ7v9pVO546Lmgx0DRYiHxoV
-Q/9VPYL67N43AZ9sgxuNbq9nbDZFBCdUt+TFA6UuHpHJGcZRio0g0A81zRT0c2N8
-CKw5TXb9uRrQA53IR1vbp4BLQa4qy1O2ZGjKruLAwIzSf0AUi76qua2c62Cq4TsH
-W+U6yHx/kyNeiTp7qSubjM3jsgGCbDmHnjHbfrGVdMzfOAN2HZ8QQgU3yTgr6BkJ
-lFsCxCnkSloCJuklfL+b8a0xob9m2guXL7nL4mvq6YAT+IhecUgpFXPIXoKuh6sJ
-rFDJGVMvoV7zc88iXX+hJ7JAj/166u1GUEidkbF4+AYfgF9TYXcd+mi/SXh/TGjM
-HiMZDYnQoVfOkYmnQwyJHlByAhr1Vu9i/xmNf59LaqC8zbcCaewamDR0kID9qMjx
-2DK5zu3t2rgDtbUL4ev1o2Sp0QIn5QRm16rBL9XQnsv6SXHqZHZXBIWupSX3/q3S
-EyRNKRkZGpJRtiinH/gVrCu5NUDYEZUW0OBl+9SPhvKMwSd4299kiCSaQ44J7wIh
-tssDL2Fqv4a6eDk15b+OAtR2emNzOfh/9Qe9DFsYnSuE/+QP/O9xyr3sqWGvQXp9
-nYqeDfKuvyxKtEF7yIBo/Lmm+y2a19gf0Go/XWFR1Rch0acC6Y2yu+yLHThZPDPE
-xMuxeMl8K7+513zDuQE7
-=SGxQ
+iQIcBAEBCAAGBQJPHgB+AAoJEECxmPOUX5FE5XcP/RDzSfGZnnzLHKINuQFNPtBr
+VFrUFS4d9yjmJKfX4rYrxJt7sT4k0vYwox+rymukKCCjN+F9/QjQGBlfLc69tisR
+wYsxNnwcy+VE+r/7YWdiNDNshAzx6A/aRCBVp1vZj6adhaHC3wQ+bDiSidW61JTX
+Jo6VUX6oj5AlkMn03C8M0FfzlVxJFDW30f4VFC4Pr7+QIxXPSgQO+HPuqT0Zzk8u
+KXus2uWvuNEzqpaks3puwK5CmcpevWE8hVD9nzs6dz8FX4QhTt9fwyq1wctUOqY1
+48X/Iq1XZJ1jeM/BMtGhzy30URxPGb1xtoXdmHZaCvVw91JSJyhHw3xetUj4G7Jb
+shxNE57FVZ4XtH8MOX5Oy+ls/5Vl0QxAeA9WgKbz1XmYB2a2JRRXtmIQrqSZ8dW7
+l1F4iMYBjKq+tWJj4pBpDN7Xlg6K5pO9bWCx3T+1pz7EU917vuzWioNa5QB7dZz/
+zc5FTlO0UMgVIPAjRW+ZyZPMFAeCKaGicMjhtEnvacq0jwcYgG1ThnC/hmJLG610
+R348ditoYk9/0u0J6ENZGZh6E0mMWLRNGHfcQ0SslWvudjvpiKuRP093GU+nQJ5i
+NiasQy9r8jZQVYLGMscoZ24nFP7aZwza30L7sCq2m4Jo68UaSA6asxu0tylECCwl
+BAythB0vb8HTW6j6sIY6
+=uNiI
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__24_Jan_2012_11_04_55_+1100_UINw/N8ndqIOAH6v--
+--Signature=_Tue__24_Jan_2012_11_51_10_+1100_BXDbPWF3drHbnf2A--
