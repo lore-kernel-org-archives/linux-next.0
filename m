@@ -1,59 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the nfs tree
-Date: Tue, 24 Jan 2012 08:10:19 +1100
-Message-ID: <20120124081019.7c20935475f97925306de7e7@canb.auug.org.au>
-References: <20120123113949.b8d1940bb60128c5c4efeece@canb.auug.org.au>
-	<1327342389.2628.6.camel@lade.trondhjem.org>
+Subject: linux-next: unable to fetch the oprofile tree
+Date: Tue, 24 Jan 2012 11:04:55 +1100
+Message-ID: <20120124110455.519021de79b6fef5ad383ec2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__24_Jan_2012_08_10_19_+1100_+zQzepLY7AkmF.i5"
+ boundary="Signature=_Tue__24_Jan_2012_11_04_55_+1100_UINw/N8ndqIOAH6v"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1327342389.2628.6.camel@lade.trondhjem.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, linux-scsi@vger.kernel.org, target-devel <target-devel@vger.kernel.org>
+To: Robert Richter <robert.richter@amd.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__24_Jan_2012_08_10_19_+1100_+zQzepLY7AkmF.i5
+--Signature=_Tue__24_Jan_2012_11_04_55_+1100_UINw/N8ndqIOAH6v
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Trond,
+Hi Robert,
 
-On Mon, 23 Jan 2012 13:13:09 -0500 Trond Myklebust <Trond.Myklebust@netapp.=
-com> wrote:
->
-> Yep. I believe that is identical to the patch Bryan sent to James
-> Bottomley a few days ago. Could you please carry the above in your tree
-> until the iscsi folks get around to fixing this?
+Trying to fetch the oprofile tree produced this error for the past few
+days:
 
-Yeah, no problem.
+fatal: unable to connect to amd64.org:
+amd64.org[0: 217.160.130.188]: errno=3DConnection timed out
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__24_Jan_2012_08_10_19_+1100_+zQzepLY7AkmF.i5
+--Signature=_Tue__24_Jan_2012_11_04_55_+1100_UINw/N8ndqIOAH6v
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPHcy7AAoJEECxmPOUX5FENrYP+gNYvpU/E7nPm0eMbydEeAVp
-nkm3b/MkvkdOr26mj5yAfe6DFwERuIJX5o6N9CDCDO7C6BjAHFd79G/GX7/O7YR4
-4VYYwJuaRZMNxT0VfNhxlhM4MEE+afksy5V1dZM+iUuH1Ir921T6SuKh1sCD3QH+
-wrtjLaFaSaqIjmJvr9ecEg2kijUMjQ18gkv3gkpLpA0msvYz/8tc9ooVy0gF9XlA
-yUaHMdZ79nqwbAkch6FN8x5xA/GEqtjlCX0fNAiHwF2akJhsK0XIFASSOrLW4IGk
-zjs5QvEf9I+LTK/fkve7hIuGCb6vsjuSvPijSbVlRmvILpl1ef5EpAbh/uh0hwtz
-0H2jrd6jLL+ojjK4e8bY++V4pQDLcKPRuudGeXdOj6tRyhjctU3oMnac+zw/y3k+
-Q4wbNIDv9iLcQMOUwJZHxsNJGS0B8HigfQ5TbzXaNAbXmQvfaUC9fsaRtnUt0HbS
-ApzCMCVFGLjD0vKJcl15ynDGqGmOVgBjmUozyHiNTQWLCCzKALjOnj6oH1mEce+y
-kdJDV+aKOiJxK6KdoX3HJ0Y/dkVC7OtX64ZpGbvkzwpVq+QT2X8ug7frGBY9QnrA
-YZQIbtPDo3p6a7+n6Cc5R7zkhejZGYQAsq/uTq2F4wE4dfzM+MCAw4FKSjKdCJpJ
-IZ+umTulAxHKTBjA8SDK
-=nPRI
+iQIcBAEBCAAGBQJPHfWnAAoJEECxmPOUX5FEML0QAJ7v9pVO546Lmgx0DRYiHxoV
+Q/9VPYL67N43AZ9sgxuNbq9nbDZFBCdUt+TFA6UuHpHJGcZRio0g0A81zRT0c2N8
+CKw5TXb9uRrQA53IR1vbp4BLQa4qy1O2ZGjKruLAwIzSf0AUi76qua2c62Cq4TsH
+W+U6yHx/kyNeiTp7qSubjM3jsgGCbDmHnjHbfrGVdMzfOAN2HZ8QQgU3yTgr6BkJ
+lFsCxCnkSloCJuklfL+b8a0xob9m2guXL7nL4mvq6YAT+IhecUgpFXPIXoKuh6sJ
+rFDJGVMvoV7zc88iXX+hJ7JAj/166u1GUEidkbF4+AYfgF9TYXcd+mi/SXh/TGjM
+HiMZDYnQoVfOkYmnQwyJHlByAhr1Vu9i/xmNf59LaqC8zbcCaewamDR0kID9qMjx
+2DK5zu3t2rgDtbUL4ev1o2Sp0QIn5QRm16rBL9XQnsv6SXHqZHZXBIWupSX3/q3S
+EyRNKRkZGpJRtiinH/gVrCu5NUDYEZUW0OBl+9SPhvKMwSd4299kiCSaQ44J7wIh
+tssDL2Fqv4a6eDk15b+OAtR2emNzOfh/9Qe9DFsYnSuE/+QP/O9xyr3sqWGvQXp9
+nYqeDfKuvyxKtEF7yIBo/Lmm+y2a19gf0Go/XWFR1Rch0acC6Y2yu+yLHThZPDPE
+xMuxeMl8K7+513zDuQE7
+=SGxQ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__24_Jan_2012_08_10_19_+1100_+zQzepLY7AkmF.i5--
+--Signature=_Tue__24_Jan_2012_11_04_55_+1100_UINw/N8ndqIOAH6v--
