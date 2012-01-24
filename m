@@ -1,71 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure in Linus' tree
-Date: Tue, 24 Jan 2012 11:51:10 +1100
-Message-ID: <20120124115110.a94c5c0393253bf5b8c3b048@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-current tree with Linus' tree
+Date: Tue, 24 Jan 2012 11:59:09 +1100
+Message-ID: <20120124115909.0c2119249212ac9669860afc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__24_Jan_2012_11_51_10_+1100_BXDbPWF3drHbnf2A"
+ boundary="Signature=_Tue__24_Jan_2012_11_59_09_+1100_XPWVt_+J5yVOddE3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52980 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35107 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753267Ab2AXAvW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Jan 2012 19:51:22 -0500
+	id S1754456Ab2AXA7U (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Jan 2012 19:59:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Will Deacon <will.deacon@arm.com>
 
---Signature=_Tue__24_Jan_2012_11_51_10_+1100_BXDbPWF3drHbnf2A
+--Signature=_Tue__24_Jan_2012_11_59_09_+1100_XPWVt_+J5yVOddE3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Russell,
 
-After merging the origin tree, today's linux-next build (x86_64 allmodconfi=
-g)
-failed like this:
+Today's linux-next merge of the arm-current tree got a conflict in
+arch/arm/mach-mx5/Kconfig between commit 784a90c0a7d8 ("ARM i.MX: Merge
+i.MX5 support into mach-imx") from Linus' tree and commit a092f2b15399
+("ARM: 7291/1: cache: assume 64-byte L1 cachelines for ARMv7 CPUs") from
+the arm-current tree.
 
-usr/include/linux/fs.h:13: included file 'linux/migrate_mode.h' is not expo=
-rted
-
-Caused by commit 6536e3123e5d ("mm: fix warnings regarding enum migrate_mod=
-e").
-
-I have applied the following patch for today:
+The former removed the file and merged its contents into
+arch/arm/mach-imx/Kconfig, so I removed it and applied the following
+fixup patch - which I can carry as necessary.
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 24 Jan 2012 11:41:32 +1100
-Subject: [PATCH] migrate_mode.h is not exported to user mode
-
-so move its include into fs.h inside the __KERNEL__ protection.
+Date: Tue, 24 Jan 2012 11:56:27 +1100
+Subject: [PATCH] ARM: fix up for cache size assumed to be 64 bytes
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- include/linux/fs.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/arm/mach-imx/Kconfig |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 4b3a41f..386da09 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -10,7 +10,6 @@
- #include <linux/ioctl.h>
- #include <linux/blk_types.h>
- #include <linux/types.h>
--#include <linux/migrate_mode.h>
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index 09f357b..4defb97 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -87,7 +87,6 @@ config SOC_IMX35
 =20
- /*
-  * It's silly to have NR_OPEN bigger than NR_FILE, but you can change
-@@ -397,6 +396,7 @@ struct inodes_stat_t {
- #include <linux/rculist_bl.h>
- #include <linux/atomic.h>
- #include <linux/shrinker.h>
-+#include <linux/migrate_mode.h>
-=20
- #include <asm/byteorder.h>
-=20
+ config SOC_IMX5
+ 	select CPU_V7
+-	select ARM_L1_CACHE_SHIFT_6
+ 	select MXC_TZIC
+ 	select ARCH_MXC_IOMUX_V3
+ 	select ARCH_MXC_AUDMUX_V2
 --=20
 1.7.9.rc0.23.g7e521
 
@@ -73,25 +61,25 @@ index 4b3a41f..386da09 100644
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__24_Jan_2012_11_51_10_+1100_BXDbPWF3drHbnf2A
+--Signature=_Tue__24_Jan_2012_11_59_09_+1100_XPWVt_+J5yVOddE3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPHgB+AAoJEECxmPOUX5FE5XcP/RDzSfGZnnzLHKINuQFNPtBr
-VFrUFS4d9yjmJKfX4rYrxJt7sT4k0vYwox+rymukKCCjN+F9/QjQGBlfLc69tisR
-wYsxNnwcy+VE+r/7YWdiNDNshAzx6A/aRCBVp1vZj6adhaHC3wQ+bDiSidW61JTX
-Jo6VUX6oj5AlkMn03C8M0FfzlVxJFDW30f4VFC4Pr7+QIxXPSgQO+HPuqT0Zzk8u
-KXus2uWvuNEzqpaks3puwK5CmcpevWE8hVD9nzs6dz8FX4QhTt9fwyq1wctUOqY1
-48X/Iq1XZJ1jeM/BMtGhzy30URxPGb1xtoXdmHZaCvVw91JSJyhHw3xetUj4G7Jb
-shxNE57FVZ4XtH8MOX5Oy+ls/5Vl0QxAeA9WgKbz1XmYB2a2JRRXtmIQrqSZ8dW7
-l1F4iMYBjKq+tWJj4pBpDN7Xlg6K5pO9bWCx3T+1pz7EU917vuzWioNa5QB7dZz/
-zc5FTlO0UMgVIPAjRW+ZyZPMFAeCKaGicMjhtEnvacq0jwcYgG1ThnC/hmJLG610
-R348ditoYk9/0u0J6ENZGZh6E0mMWLRNGHfcQ0SslWvudjvpiKuRP093GU+nQJ5i
-NiasQy9r8jZQVYLGMscoZ24nFP7aZwza30L7sCq2m4Jo68UaSA6asxu0tylECCwl
-BAythB0vb8HTW6j6sIY6
-=uNiI
+iQIcBAEBCAAGBQJPHgJdAAoJEECxmPOUX5FEYdoP/1/T2FbDGJSfSRuXjawazs91
+a/xPlATvKmqyhoJzQApuGjmdMHG5sp7sywNM6JWtoc/CfrdLqrbI68lQO68m5Qdq
+jRnk+f+xg9Blm5Jj4MYYFIj+znYAoWCs2l42nj6clSAZU//MUeM3F4Th3HxAhDi9
+EKqhNJmn05Ke38+xcIbd0IBlrUWTDVH6T0cXiIj7WWyeFWbjv9v7f2H3uwvLSA+W
+ybgCi9A/g3aHiu9KEbsK+GVYlGJcIj7YW39X03sXsgRL2cJq1Qg1hYel54N7HQ8c
+88EBzfQMBC5ide4diUPStm+8tBJ+sAqMsKHwy+jPHvVybZG8EvgONK0z2WLfKFI4
+6nnKw6oRts4Cn8UcFi/RSnkOHZ5ENSWuKTahLNvd0SKcWT12KUVb9w5v19hO3SD3
+JuE/aVrY9YR1g6VBFLJxQVWdtQPljgKCa5JAkMeavSzqP+2JuCWwbr0I35nHs31F
+jmt8kYHSug+l42HmI6csLCW/U8+aSNTPULokeVndpXz1NK7OQb/1hXw+PH8Lo1j9
+M08Ri+IKT3T/vQIOLrdKjwmS7iSnuvp1c8fPxALioQLeB9MEe2yk6wktv+mQl8hO
+5LnVVLlaCFuIySLk8DiLLuHaEt3FtYzpmdMUCIiVCfsH/SmH55zRdBa2JRGuAHDx
+WVDM3uaUrTyfKSBw6rqj
+=j+bd
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__24_Jan_2012_11_51_10_+1100_BXDbPWF3drHbnf2A--
+--Signature=_Tue__24_Jan_2012_11_59_09_+1100_XPWVt_+J5yVOddE3--
