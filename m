@@ -1,64 +1,99 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for Jan 20 (drivers/media/radio/wl128x/)
-Date: Tue, 24 Jan 2012 22:33:43 +0100
-Message-ID: <CAMuHMdX8=x-=DQu0SCbqYK00+sP8a-kR=9KrUptAq-gqOXHAhA@mail.gmail.com>
-References: <20120120131243.7c867c7b96c75819b68aec8d@canb.auug.org.au>
-	<4F1A0783.9010501@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: dmaengine new location Re: linux-next: dropping trees
+Date: Wed, 25 Jan 2012 10:07:16 +1100
+Message-ID: <20120125100716.4ab6e97c6e7ec6bded4b5f8c@canb.auug.org.au>
+References: <CABE8wwsnQUJeHU7FoK0VkwRVRChVF2_7kQQPfPvtCOr2eF9hcw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4F1A0783.9010501@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>, Fabio Estevam <festevam@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__25_Jan_2012_10_07_16_+1100_EZiCpeAqytnfA3iW"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41994 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751123Ab2AXXIA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Jan 2012 18:08:00 -0500
+In-Reply-To: <CABE8wwsnQUJeHU7FoK0VkwRVRChVF2_7kQQPfPvtCOr2eF9hcw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, "Koul, Vinod" <vinod.koul@intel.com>
 
-On Sat, Jan 21, 2012 at 01:32, Randy Dunlap <rdunlap@xenotime.net> wrot=
-e:
-> On 01/19/2012 06:12 PM, Stephen Rothwell wrote:
->> Changes since 20120119:
+--Signature=_Wed__25_Jan_2012_10_07_16_+1100_EZiCpeAqytnfA3iW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dan,
+
+On Tue, 24 Jan 2012 00:40:55 -0800 Dan Williams <dan.j.williams@intel.com> =
+wrote:
 >
-> on x86_64:
->
-> ERROR: "st_register" [drivers/media/radio/wl128x/fm_drv.ko] undefined=
-!
-> ERROR: "st_unregister" [drivers/media/radio/wl128x/fm_drv.ko] undefin=
-ed!
+> Please add:
+>=20
+>    git://git.kernel.org/pub/scm/linux/kernel/git/djbw/dmaengine.git next
+>=20
+> to -next to replace the old async_tx.git tree.  It should be included
+> in the merge order after Vinod's slave dma tree at:
+>=20
+>    git://git.infradead.org/users/vkoul/slave-dma.git next
 
-Also in m68k allmodconfig since a while:
-http://kisskb.ellerman.id.au/kisskb/buildresult/5427875/
+I have added that from today.
 
-config RADIO_WL128X
-        tristate "Texas Instruments WL128x FM Radio"
-        depends on VIDEO_V4L2 && RFKILL
-        select TI_ST if NET && GPIOLIB
+Just for completeness:
 
-config TI_ST
-        tristate "Shared transport core driver"
-        depends on NET && GPIOLIB
-        select FW_LOADER
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-On m68k allmodconfig, GPIOLIB is not enabled, hence TI_ST
-will not be selected, and st_{,un}register() won't be there.
-Shouldn't the whole RADIO_WL128X depend on NET && GPIOLIB?
-Or depend on TI_ST, instead of selecting it?
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-BTW, shouldn't it be called ti_st_un{,un}register()?
-At first I thought the link error was related to SCSI tape drives ;-)
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-Gr{oetje,eeting}s,
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+--Signature=_Wed__25_Jan_2012_10_07_16_+1100_EZiCpeAqytnfA3iW
+Content-Type: application/pgp-signature
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPHzmkAAoJEECxmPOUX5FE4QEP/1OxIvtIxelQyUJarVOLxJKR
+bLGq0jUF2BDwiwqspJpQcrbilY3+Z69T5a9+kobrC39mMa78lzD2stT+Bv80eCVY
+D8AXLv+b8O9xRuDd5TklZdUxW60Ot6cz4RdnSu7+T01k1hJVxR++N80azrX2CVcZ
+SPsOhbT2oywop0z7b6BeN3EyHmBvl6aaw8GPlAkQVUdRLKMaWMaGCwc1O1J+r//B
+pMiipB3aKjngmiFf/xZUrMXwlQclXf3g7KLy+EheKEmeaSpqbAqxSQ5MHi0Rx6o6
+FnZiBiAjdKR5Xm0A61jOGmJB26I2dL87MzhBFsvhUeVXNr/sPkjkAH0oJRa2Qw1c
+crc4TRo7A8vz6K6PJsOA9pkgB6c2F0LXf0k/XeJt41RIuvDaLRgfo51BcAP052qg
+Lti0uv8ku+g05Ht9jfChHR2AqeaKR0w9HtJOTgBGfNhcQZDI1YNkuBGabgR2iD16
+LznoqS+7jrRHla0P+rHhUqWYYfsXl/qW9zb1sdlupfBIxGGnaWrJeKqFgXlQwaOS
+qQSRxPGXzwMiiV5SWvcsHExDdy5mwUWn74m2Y0qC1R+Cowd5Ar5AexT6VlvWDk87
+gBAC/8X9k2+xv8QrXyeEikXEyM6NOj1vaVpFNd/6aUK5/fzjNR6J+HYRV1/QNQtW
+3YduQHns9mtt0/1sYZoY
+=SzwJ
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Jan_2012_10_07_16_+1100_EZiCpeAqytnfA3iW--
