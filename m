@@ -1,60 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the s5p tree with Linus' tree
-Date: Tue, 24 Jan 2012 13:21:23 +1100
-Message-ID: <20120124132123.6957dd9c43aa692fa12e9c81@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] sunrpc: fix stats.h for CONFIG_PROC_FS not enabled
+Date: Mon, 23 Jan 2012 19:28:07 -0800
+Message-ID: <4F1E2547.1030206@xenotime.net>
+References: <20120123141155.3e6b665ef655e267f25d4e7f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__24_Jan_2012_13_21_23_+1100_q=emRr2hg5=N_8rr"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:48028 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755249Ab2AXC3r (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Jan 2012 21:29:47 -0500
+In-Reply-To: <20120123141155.3e6b665ef655e267f25d4e7f@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Netdev <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>, "J. Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <Trond.Myklebust@netapp.com>
 
---Signature=_Tue__24_Jan_2012_13_21_23_+1100_q=emRr2hg5=N_8rr
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Hi Kukjin,
+Fix build errors in linux/sunrpc/stats.h when CONFIG_PROC_FS
+is not enabled:
+- add parameter names to inline functions
+- fix placement of '(' in rpc_proc_unregister()
 
-Today's linux-next merge of the s5p tree got a conflict in
-arch/arm/mach-exynos/cpu.c between commit cc511b8d84d8 ("ARM: 7257/1:
-EXYNOS: introduce arch/arm/mach-exynos/common.[ch]") from Linus' tree and
-commit 566fcbb817fb ("ARM: EXYNOS: Add DMC1 and allow PPMU access for
-DMC") from the s5p tree.
+Fixes these errors:
+include/linux/sunrpc/stats.h:72:63: error: parameter name omitted
+include/linux/sunrpc/stats.h:73:46: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'net'
 
-The former removes this file, so the latter patch now needs to be applied
-to arch/arm/mach-exynos/common.c (I think).
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
 
-Maybe the s5p tree should be rebased onto v3.3-rc1 (or merged with it)
-since there are other conflicts as well due to duplicated patches (same
-patch different commit).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+ include/linux/sunrpc/stats.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---Signature=_Tue__24_Jan_2012_13_21_23_+1100_q=emRr2hg5=N_8rr
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPHhWjAAoJEECxmPOUX5FEDk8QAIN4xmLSL9x4WRKgm2QbB2b2
-Eknm+5H6150TjXpFDrPY2Dh0mJdOuFc4wpe/WI+m2Eg9cOBikYG2TGxBagSu92Wm
-CtIiL+gd5Mr9HlqD1rhdUrOpgcYxhxfSdn9IvpXxMXt3ixhs37CSU4s9635Nv0mw
-9osBzFr9joSklnaUAANzXxI6+Kfuazd4RDJP+ccPxIbvSn8PVxm1dDPCJT417UH9
-5TfrcoVrHc4CrQg2sUs1ib1tifpgUNY2tIq+5n8xSvP76Tl9YEDlhXCCBHks1+zE
-8UZLxumKpUr/fmeGLXpXSCsQYVVTEPUQ54kfePmS0bMPMKxtbUqDxB0V8CpZdzGe
-wPrkEJi15NRX9E4dy5qV1Oex7BcBh/0YFWjwKo4u4X1vETA2brsQED2jcWk8GKaG
-DdtY1TdoICawvQ0iHu4xbdARHESut2VLCjm4GnkKN0SBc7HbYIKCrwqs94JEYZrq
-2wQ02x3DV9KzxiT8jk0enbuhhBTQ9r+jXad0FmmiLWh8tkRg4d/eoVhZJrDN18T1
-BqY2hnfHxVUNnIs0MjYL5GDYCmD1Z8hUiHWZ0ATgwP28ri7M6xjBg+LfWPhw6D9T
-aZd9WR8T/2nKJza27JHx5IsGzqkHH8UU5SPiJCsFpfrHHblLiGxwNxtUTrDmsi87
-YEYMFqvrqyom9kI5HITk
-=XPrm
------END PGP SIGNATURE-----
-
---Signature=_Tue__24_Jan_2012_13_21_23_+1100_q=emRr2hg5=N_8rr--
+diff -Naurp linux-next-20120123/include/linux/sunrpc/stats.h~prm_names linux-next-20120123/include/linux/sunrpc/stats.h
+--- linux-next-20120123/include/linux/sunrpc/stats.h~prm_names	2012-01-23 19:19:49.000000000 -0800
++++ linux-next-20120123/include/linux/sunrpc/stats.h	2012-01-23 19:20:54.000000000 -0800
+@@ -69,8 +69,8 @@ void			svc_seq_show(struct seq_file *,
+ 				     const struct svc_stat *);
+ #else
+ 
+-static inline struct proc_dir_entry *rpc_proc_register(struct net *, struct rpc_stat *s) { return NULL; }
+-static inline void rpc_proc_unregisterstruct net *, (const char *p) {}
++static inline struct proc_dir_entry *rpc_proc_register(struct net *net, struct rpc_stat *s) { return NULL; }
++static inline void rpc_proc_unregister(struct net *net, const char *p) {}
+ static inline void rpc_proc_zero(const struct rpc_program *p) {}
+ 
+ static inline struct proc_dir_entry *svc_proc_register(struct net *net, struct svc_stat *s,
