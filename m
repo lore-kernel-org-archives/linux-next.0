@@ -1,88 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jan 24
-Date: Wed, 25 Jan 2012 10:20:00 +1100
-Message-ID: <20120125102000.df33159bdc5f627730d9b1b4@canb.auug.org.au>
-References: <20120124163055.3c99bca0d5dfd754a352fb02@canb.auug.org.au>
-	<201201250018.16848.rjw@sisk.pl>
+Subject: linux-next: build warning after merge of the usb.current tree
+Date: Wed, 25 Jan 2012 11:20:23 +1100
+Message-ID: <20120125112023.9cd8b4b1eedd717960e4c0a0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__25_Jan_2012_10_20_00_+1100_cXhyDffoyzdfSfYc"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38289 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752838Ab2AXXUM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Jan 2012 18:20:12 -0500
-In-Reply-To: <201201250018.16848.rjw@sisk.pl>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Jiri Slaby <jslaby@suse.cz>
+ boundary="Signature=_Wed__25_Jan_2012_11_20_23_+1100_1g13FRMaTJG4PqD+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__25_Jan_2012_10_20_00_+1100_cXhyDffoyzdfSfYc
+--Signature=_Wed__25_Jan_2012_11_20_23_+1100_1g13FRMaTJG4PqD+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Greg,
 
-On Wed, 25 Jan 2012 00:18:16 +0100 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
->
-> Is there any new material touching kernel/workqueue.c or kernel/freezer.c?
->=20
-> We seem to have a freezer regression in linux-next which doesn't seem to =
-be
-> present in my tree.
+After merging the usb.current tree, today's linux-next build (x86_64_allmod=
+config)
+produced this warning:
 
-There are no commits in next-20120124 that touch either of those files.
+drivers/usb/host/Kconfig:559:error: recursive dependency detected!
+drivers/usb/host/Kconfig:559:	symbol USB_HWA_HCD depends on UWB
+drivers/uwb/Kconfig:5:	symbol UWB is selected by USB_WUSB
+drivers/usb/wusbcore/Kconfig:4:	symbol USB_WUSB is selected by USB_HWA_HCD
 
-Since v3.2 we have these (so in the merge window and Linus' tree):
-
-$ git shortlog v3.2..master kernel/workqueue.c kernel/freezer.c
-Tejun Heo (17):
-      freezer: fix current->state restoration race in refrigerator()
-      freezer: unexport refrigerator() and update try_to_freeze() slightly
-      freezer: implement and use kthread_freezable_should_stop()
-      freezer: rename thaw_process() to __thaw_task() and simplify the impl=
-ement
-      freezer: use dedicated lock instead of task_lock() + memory barrier
-      freezer: make freezing indicate freeze condition in effect
-      freezer: test freezable conditions while holding freezer_lock
-      freezer: kill PF_FREEZING
-      freezer: clean up freeze_processes() failure path
-      freezer: make freezing() test freeze conditions in effect instead of =
-TIF_F
-      freezer: remove should_send_signal() and update frozen()
-      freezer: fix set_freezable[_with_signal]() race
-      freezer: restructure __refrigerator()
-      freezer: use lock_task_sighand() in fake_signal_wake_up()
-      freezer: remove unused @sig_only from freeze_task()
-      freezer: kill unused set_freezable_with_signal()
-      workqueue: make alloc_workqueue() take printf fmt and args for name
+Introduced by commit 0dd2b62ada6f ("drivers: usb: Fix dependency for
+USB_HWA_HCD").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__25_Jan_2012_10_20_00_+1100_cXhyDffoyzdfSfYc
+--Signature=_Wed__25_Jan_2012_11_20_23_+1100_1g13FRMaTJG4PqD+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPHzygAAoJEECxmPOUX5FEKjUQAJoUE5hOaV0MbHKACodNRwyY
-ZAS3kQ4vO8lfbXz6P1iNwjsX2hPEAz1JvKMlG9Ze+5meqGCnOhRGZpFRlJlOX1lk
-/gT4h72c8IG1SJnK8c5wrtF3XA5+97THykBPZolgon34eH894re9LxB/FigRLaws
-0eyuulayQwA7udre+YCdUNxqcuEchACM7LQNLBnvpylCOHhJnFgTtuN/WwSqiCGO
-XjczXe7qPGDoRu2q9sdI0aqGvagWGy5NwTo3FznVgbyqdJkMW1SyAPZng8g/glFo
-0dAjM9HqgmnzDqe9FRMIihBVrtc/8yLs3Ruv4fNlr2KPW8cja/fd8N/1sbFzX/f3
-EmM7pMJFz0kqam8vekGbVEHHIGyY9Dfx0nF5w2rqVAvBd/Nlaysa3wNVU4blgjCd
-O+aAdM04fiXzcQ7zqXWlGOhYEojH1LK6TgUmiBcv8FXLrAgD00BP6VNetIuX3PPl
-BoeJrjmuOR84CuIYQrnrZAnFMVfGP5hhjfE5/oatPIGAd3hgMluGStepatsQDuTI
-p6w/lnu4XB9JaAcjR0El+wntgGSOxTHBAOO7JjfU49DJOQYXwQk4Mmk/NLSf1F58
-lq0OiQN9A8rQ4L09gDIG+JcrY1CAhqIiE5NiZjNFcUpntgG9cYrhUkPOlv38hBKp
-4Jz8PSInuOZ1XQimh1ZP
-=rw8s
+iQIcBAEBCAAGBQJPH0rHAAoJEECxmPOUX5FEGyYP/jowAbVH4M4Zl9DF1JzotCcK
+YuVG9JLuM/TM02lIsy4jH5H6OsXrS07ixqVyhK/YOluLnOwu00x4mB5AOqBSGbFw
+9XeCyEgC+oBoTKKn+HTNgEX8ZDHNEPIAaFJ8DsL9yhxUhcZDUr1uXZhLB9Ml8Fgh
+QSCXmMAd4ZOL42BhSPKPcv0k/ThAoiJaYuP+caCAR65rzZsoDf++GJwTiXl53NNq
+gyEj6uAWwJKskzbEsyiXCQJlACzRj49xg6giWRNOmXbTFpNrgCXkBosOkD1WfCRC
+vxP5btVm8rW8K/y25SKGPGgSzh8dUExmIE7quCmKnsJ96ygioTMkpnC8HMy3M2OV
+ZeQxJvl4QNsjY2OBx01zcj31pnu1o0m4cO9rcIgz8Gj0grv5FOkHeU0spy5oF48Q
+5QaUzLfyTBSiK9SvUo7vn+urpxYPhCvAhUnJM4+a6B8cNHRH1E63i0AbHx+b9uKI
+3Ybf/gO3FlDZMq4aE4iEqq5g1T/yz4ASaSeV1J85YsOrk0TaU1VwjGkndTSnRxyO
+AumxbxVCdYa/YjGaH24VR7TAriH1vMF1jBAvO+HIUUoPJkt6eiPIz4365xFCIWan
+R1v3A4GXX1NSX4No8hLpz6MIoQGYfc0OT7irGLY11ZS46l6dBGyLVSxPh+sKixSC
+nw9PGpm2rTDSEezL5wQb
+=AiFH
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__25_Jan_2012_10_20_00_+1100_cXhyDffoyzdfSfYc--
+--Signature=_Wed__25_Jan_2012_11_20_23_+1100_1g13FRMaTJG4PqD+--
