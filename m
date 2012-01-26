@@ -1,63 +1,49 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Linux 3.3-1 out - merge window closed
-Date: Thu, 26 Jan 2012 01:48:36 -0800
-Message-ID: <20120126014836.aaf79457.akpm@linux-foundation.org>
-References: <CA+55aFwWEhobGDzkuRoXaS37y3tMU41ExhiR+vCa68cUNRehKg@mail.gmail.com>
-	<20120120151452.2fe57bb87218f575e8909caf@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for Jan 25 (net/sock.h, jump_label, memcg)
+Date: Thu, 26 Jan 2012 18:18:28 +0100
+Message-ID: <CAMuHMdWp1wEHqPXNs+kaMYpomJnfbZPJjRk5GVFCuCL4Q5zK7g@mail.gmail.com>
+References: <20120125141938.c1a9460d56948e1c7b26d3f8@canb.auug.org.au>
+	<4F2052DB.4060602@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33769 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750842Ab2AZJmn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jan 2012 04:42:43 -0500
-In-Reply-To: <20120120151452.2fe57bb87218f575e8909caf@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4F2052DB.4060602@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Gleb Natapov <gleb@redhat.com>, Netdev <netdev@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 20 Jan 2012 15:14:52 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Wed, Jan 25, 2012 at 20:07, Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
+> back to net/sock.h and jump_label:
+>
+> (on i386:)
+>
+> /next/linux-next-20120125/include/net/sock.h:953:2: error: implicit d=
+eclaration of function 'static_branch'
+> /next/linux-next-20120125/include/linux/jump_label.h:43:29: error: co=
+nflicting types for 'static_branch'
+>
+> Full randconfig file is attached.
 
-> Hi all,
-> 
-> On Thu, 19 Jan 2012 15:58:28 -0800 Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> >
-> > (Stats for those that like them: 20% arch updates (arm, power, mips,
-> > x86), 60% drivers (networking - wireless in particular, staging,
-> > media, dri, sound, misc - including getting rid of 'struct sysdev'),
-> > and 20% random stuff: filesystems, networking, perf etc)
-> 
-> More stats for the bored:
-> 
-> (I don't count merge commits below and everything is relative to v3.2)
-> 
-> Of the 8899 commits in v3.3-rc1, 6918 were in next-20120106 (the first
-> -next based on v3.2).  A further 792 commits have the same subject line as
-> commits in next-20120116 and a further 16 have the same patch-id.
-> 
-> This leaves 1174 commits (13%) in v3.3-rc1 that were not in next-20120106
-> for some reason (not too bad really, I guess).
+Without having to add randomness, also in m68k/allmodconfig, now in Lin=
+us'
+tree :-(
+http://kisskb.ellerman.id.au/kisskb/buildresult/5491860/
 
-That's a lot.  Please name names!
+Gr{oetje,eeting}s,
 
-I was impacted by several busted patches which had not appeared in
--next.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
 
-Also, I saw numerous patches which were significantly altered during
-their trip from -next to mainline, which is cheating.  These showed up
-as a massive reject storm when I attempted to git-merge linus-now with
-next-from-12-hours-ago.  I went in and checked.  tools/perf was a major
-culprit.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
 
-> Some will clearly be bug
-> fixes, of course.  Some will be quilt trees (probably rebased before
-> being sent to Linus).  Some will be patches that depend on work by others.
-
-The quilt trees would have been eliminated by the "commits have the
-same subject line" test?
-
-
-I don't think this is all a huuuge problem - we sort this stuff out
-fairly quickly.  But things could be improved a bit.
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
