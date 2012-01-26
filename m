@@ -1,39 +1,60 @@
-From: Glauber Costa <glommer@parallels.com>
-Subject: Re: linux-next: Tree for Jan 25 (net/sock.h, jump_label, memcg)
-Date: Fri, 27 Jan 2012 01:47:24 +0400
-Message-ID: <4F21C9EC.60009@parallels.com>
-References: <20120125141938.c1a9460d56948e1c7b26d3f8@canb.auug.org.au> <4F2052DB.4060602@xenotime.net> <CAMuHMdWp1wEHqPXNs+kaMYpomJnfbZPJjRk5GVFCuCL4Q5zK7g@mail.gmail.com> <20120126.134333.31948964659222759.davem@davemloft.net> <4F21B811.90904@parallels.com> <20120127084622.a16b0f43e6fcbd029cb1f923@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: merge of the arm tree into the at91 tree
+Date: Fri, 27 Jan 2012 09:36:19 +1100
+Message-ID: <20120127093619.f2c90c6aa8b542134a157956@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20120127084622.a16b0f43e6fcbd029cb1f923@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, geert@linux-m68k.org, rdunlap@xenotime.net, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, gleb@redhat.com, netdev@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__27_Jan_2012_09_36_19_+1100_sjeqKmYJCys86mlx"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 List-Id: linux-next.vger.kernel.org
 
-On 01/27/2012 01:46 AM, Stephen Rothwell wrote:
-> On Fri, 27 Jan 2012 00:31:13 +0400 Glauber Costa<glommer@parallels.com>  wrote:
->>
->> On the specifics of this bug, I verified this config compiles okay in
->> your tree + my patches at the day I last sent them. I also verified it
->> breaks on the tree today.
->>
->> The reason seems to be that some other patch tweaked with the header
->> files in an unrelated patch, and the static_branch definition that was
->> getting to us in sock.h, is no longer getting there.
->>
->> Including it explicitly fixes it here. I will again pass through a
->> battery of randconfigs on my own, and send you a fix.
->
-> Which is one of the reasons we have Rule 1 in Documentation/SubmitChecklist:
->
-> 1: If you use a facility then #include the file that defines/declares
->     that facility.  Don't depend on other header files pulling in ones
->     that you use.
->
-I understand that. I wasn't saying I am not to blame, just why this 
-wasn't catched in any test of mine before.
+--Signature=_Fri__27_Jan_2012_09_36_19_+1100_sjeqKmYJCys86mlx
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The fix is on its way.
+Hi all,
+
+I noticed that the for-next branch of the arm tree has been merged into
+the at91 tree.  My understanding (and Russell, please correct me if I am
+wrong) is that the for-next branch is *not* stable and may be rebased.
+This will cause all sorts of problems in linux-next in the future (and
+also when Russell or the arm=3Dsoc guys merge the at91 tree into theirs).
+
+In fact, I am going to have problems today as Russell has already rebase
+his for-next branch.  :-(
+
+I assume that the merge was done to fix some conflicts or pick up some
+functionality that is in Russell's tree.  This should be done by merging
+topic branch(es) of that tree that Russell has explicitly said are stable.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__27_Jan_2012_09_36_19_+1100_sjeqKmYJCys86mlx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPIdVjAAoJEECxmPOUX5FEx6kP/2eOPQsJ48Pr47Yc7OiJgwDk
+6FJOjytBwj5Zd6CV4mmnpfqW2T46p1wIePYo0aTwn5ToHL+G07yyUoxMnJ0vTqao
+G0eXZGTuDGmXUP3hbydGHIOtz7GaQpXGlmGuis3NUAzRuq3QQhkKx8TqriV3fUKH
+9V4iOEAEbih7I3owFOLOoRPXLyKP7ff1VkWlze9F6DK/nuwuNO40xHc9tzm8qAoI
+wGMUz22QWNNoHnGQvipjX4n0rRzOPqEg/zV1yMaZqS557w1zqFT0QyYoBfv3w6+v
+z2PwaE9TTzMa8nZCEazXFOlpPaLsPTrq6jtsEui++QZG7ySOnxE+drhTxWGHO1TL
+frTPSRfnmNn640MmCT9nzT16oNu8dG6KGjXjzRL33CKOU33EpEEADjeSjI/WQ1OU
+5mUcGRPK+ufiBfNQWSg9FRxbCR1/zRNZeI/zW7mhnJe9JiNmS22NYMrji/aihmEz
+fSlYQnQT+XlE+XHRJ4f4go8JrIHJAcsUnJ2sbs5SFWqoHVjkc/IiwIjk8DHKGm8R
+XuecBYotB0IYLE3XDylIiAWS5fQXMPS4lAxRDl6yjub6Mfs3ivGmJ4bybtcQfA9f
+NV1Ulesf3+Vza2Nm7+SAI1/E/5Q5510paWHP7YH6PH9u+R94T5K3pJj0RxrmMXu8
+zVRXYvfZure4QhmwCzxd
+=w6DT
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__27_Jan_2012_09_36_19_+1100_sjeqKmYJCys86mlx--
