@@ -1,44 +1,63 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] uwb & wusb: fix kconfig error
-Date: Wed, 25 Jan 2012 13:52:12 -0800
-Message-ID: <4F20798C.4040205@xenotime.net>
-References: <20120125141938.c1a9460d56948e1c7b26d3f8@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Linux 3.3-1 out - merge window closed
+Date: Thu, 26 Jan 2012 01:48:36 -0800
+Message-ID: <20120126014836.aaf79457.akpm@linux-foundation.org>
+References: <CA+55aFwWEhobGDzkuRoXaS37y3tMU41ExhiR+vCa68cUNRehKg@mail.gmail.com>
+	<20120120151452.2fe57bb87218f575e8909caf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:58969 "HELO
-	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752019Ab2AYUyE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Jan 2012 15:54:04 -0500
-In-Reply-To: <20120125141938.c1a9460d56948e1c7b26d3f8@canb.auug.org.au>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33769 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750842Ab2AZJmn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jan 2012 04:42:43 -0500
+In-Reply-To: <20120120151452.2fe57bb87218f575e8909caf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, Greg KH <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Fri, 20 Jan 2012 15:14:52 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Fix UWB/WUSB kconfig error by changing 'select' to 'depends on'.
+> Hi all,
+> 
+> On Thu, 19 Jan 2012 15:58:28 -0800 Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> >
+> > (Stats for those that like them: 20% arch updates (arm, power, mips,
+> > x86), 60% drivers (networking - wireless in particular, staging,
+> > media, dri, sound, misc - including getting rid of 'struct sysdev'),
+> > and 20% random stuff: filesystems, networking, perf etc)
+> 
+> More stats for the bored:
+> 
+> (I don't count merge commits below and everything is relative to v3.2)
+> 
+> Of the 8899 commits in v3.3-rc1, 6918 were in next-20120106 (the first
+> -next based on v3.2).  A further 792 commits have the same subject line as
+> commits in next-20120116 and a further 16 have the same patch-id.
+> 
+> This leaves 1174 commits (13%) in v3.3-rc1 that were not in next-20120106
+> for some reason (not too bad really, I guess).
 
-drivers/usb/wusbcore/Kconfig:4:error: recursive dependency detected!
-drivers/usb/wusbcore/Kconfig:4:	symbol USB_WUSB is selected by USB_HWA_HCD
-drivers/usb/host/Kconfig:559:	symbol USB_HWA_HCD depends on UWB
-drivers/uwb/Kconfig:5:	symbol UWB is selected by USB_WUSB
+That's a lot.  Please name names!
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
- drivers/usb/wusbcore/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I was impacted by several busted patches which had not appeared in
+-next.
 
---- linux-next-20120125.orig/drivers/usb/wusbcore/Kconfig
-+++ linux-next-20120125/drivers/usb/wusbcore/Kconfig
-@@ -6,7 +6,7 @@ config USB_WUSB
- 	depends on EXPERIMENTAL
- 	depends on USB
- 	depends on PCI
--        select UWB
-+	depends on UWB
-         select CRYPTO
-         select CRYPTO_BLKCIPHER
-         select CRYPTO_CBC
+Also, I saw numerous patches which were significantly altered during
+their trip from -next to mainline, which is cheating.  These showed up
+as a massive reject storm when I attempted to git-merge linus-now with
+next-from-12-hours-ago.  I went in and checked.  tools/perf was a major
+culprit.
+
+> Some will clearly be bug
+> fixes, of course.  Some will be quilt trees (probably rebased before
+> being sent to Linus).  Some will be patches that depend on work by others.
+
+The quilt trees would have been eliminated by the "commits have the
+same subject line" test?
+
+
+I don't think this is all a huuuge problem - we sort this stuff out
+fairly quickly.  But things could be improved a bit.
