@@ -1,60 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: merge of the arm tree into the at91 tree
-Date: Fri, 27 Jan 2012 09:36:19 +1100
-Message-ID: <20120127093619.f2c90c6aa8b542134a157956@canb.auug.org.au>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: merge of the arm tree into the at91 tree
+Date: Thu, 26 Jan 2012 23:23:04 +0000
+Message-ID: <20120126232304.GA10259@flint.arm.linux.org.uk>
+References: <20120127093619.f2c90c6aa8b542134a157956@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Jan_2012_09_36_19_+1100_sjeqKmYJCys86mlx"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__27_Jan_2012_09_36_19_+1100_sjeqKmYJCys86mlx
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:51716 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751323Ab2AZXX0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jan 2012 18:23:26 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20120127093619.f2c90c6aa8b542134a157956@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+On Fri, Jan 27, 2012 at 09:36:19AM +1100, Stephen Rothwell wrote:
+> I noticed that the for-next branch of the arm tree has been merged into
+> the at91 tree.  My understanding (and Russell, please correct me if I am
+> wrong) is that the for-next branch is *not* stable and may be rebased.
+> This will cause all sorts of problems in linux-next in the future (and
+> also when Russell or the arm=soc guys merge the at91 tree into theirs).
 
-I noticed that the for-next branch of the arm tree has been merged into
-the at91 tree.  My understanding (and Russell, please correct me if I am
-wrong) is that the for-next branch is *not* stable and may be rebased.
-This will cause all sorts of problems in linux-next in the future (and
-also when Russell or the arm=3Dsoc guys merge the at91 tree into theirs).
+And has already been rebuilt (I won't use 'rebased' because that's really
+not what happens to it.)  I've already re-explained this to Nicolas.  It's
+equivalent to someone basing their work off linux-next and expecting to
+have that pulled into some other tree.
 
-In fact, I am going to have problems today as Russell has already rebase
-his for-next branch.  :-(
+What's even worse is that Nicolas has published this as an official
+branch for other people.
 
-I assume that the merge was done to fix some conflicts or pick up some
-functionality that is in Russell's tree.  This should be done by merging
-topic branch(es) of that tree that Russell has explicitly said are stable.
+> In fact, I am going to have problems today as Russell has already rebase
+> his for-next branch.  :-(
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I suggest that you drop the at91 tree this time around if you get
+conflicts.
 
---Signature=_Fri__27_Jan_2012_09_36_19_+1100_sjeqKmYJCys86mlx
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPIdVjAAoJEECxmPOUX5FEx6kP/2eOPQsJ48Pr47Yc7OiJgwDk
-6FJOjytBwj5Zd6CV4mmnpfqW2T46p1wIePYo0aTwn5ToHL+G07yyUoxMnJ0vTqao
-G0eXZGTuDGmXUP3hbydGHIOtz7GaQpXGlmGuis3NUAzRuq3QQhkKx8TqriV3fUKH
-9V4iOEAEbih7I3owFOLOoRPXLyKP7ff1VkWlze9F6DK/nuwuNO40xHc9tzm8qAoI
-wGMUz22QWNNoHnGQvipjX4n0rRzOPqEg/zV1yMaZqS557w1zqFT0QyYoBfv3w6+v
-z2PwaE9TTzMa8nZCEazXFOlpPaLsPTrq6jtsEui++QZG7ySOnxE+drhTxWGHO1TL
-frTPSRfnmNn640MmCT9nzT16oNu8dG6KGjXjzRL33CKOU33EpEEADjeSjI/WQ1OU
-5mUcGRPK+ufiBfNQWSg9FRxbCR1/zRNZeI/zW7mhnJe9JiNmS22NYMrji/aihmEz
-fSlYQnQT+XlE+XHRJ4f4go8JrIHJAcsUnJ2sbs5SFWqoHVjkc/IiwIjk8DHKGm8R
-XuecBYotB0IYLE3XDylIiAWS5fQXMPS4lAxRDl6yjub6Mfs3ivGmJ4bybtcQfA9f
-NV1Ulesf3+Vza2Nm7+SAI1/E/5Q5510paWHP7YH6PH9u+R94T5K3pJj0RxrmMXu8
-zVRXYvfZure4QhmwCzxd
-=w6DT
------END PGP SIGNATURE-----
-
---Signature=_Fri__27_Jan_2012_09_36_19_+1100_sjeqKmYJCys86mlx--
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
