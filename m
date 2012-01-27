@@ -1,63 +1,67 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: linux-next: merge of the arm tree into the at91 tree
-Date: Fri, 27 Jan 2012 10:56:26 +0100
-Message-ID: <4F2274CA.7020809@atmel.com>
-References: <20120127093619.f2c90c6aa8b542134a157956@canb.auug.org.au>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Fri, 27 Jan 2012 10:24:40 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1201271021550.1364-100000@iolanthe.rowland.org>
+References: <20120127135912.e5f45bf1c4a99b114c18bf72@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120127093619.f2c90c6aa8b542134a157956@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King <rmk@arm.linux.org.uk>
-Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from iolanthe.rowland.org ([192.131.102.54]:44917 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752017Ab2A0PYm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Jan 2012 10:24:42 -0500
+In-Reply-To: <20120127135912.e5f45bf1c4a99b114c18bf72@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Kernel development list <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Michael Buesch <m@bues.ch>, Joerg Roedel <joerg.roedel@amd.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Fri, 27 Jan 2012, Stephen Rothwell wrote:
 
-On 01/26/2012 11:36 PM, Stephen Rothwell :
-> Hi all,
+> Hi Greg,
 > 
-> I noticed that the for-next branch of the arm tree has been merged 
-> into the at91 tree.  My understanding (and Russell, please correct 
-> me if I am wrong) is that the for-next branch is *not* stable and 
-> may be rebased. This will cause all sorts of problems in
-> linux-next in the future (and also when Russell or the arm=soc guys
-> merge the at91 tree into theirs).
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> In fact, I am going to have problems today as Russell has already 
-> rebase his for-next branch.  :-(
+> drivers/pci/xen-pcifront.c: In function 'pcifront_common_process':
+> drivers/pci/xen-pcifront.c:596:6: error: used struct type value where scalar is required
 > 
-> I assume that the merge was done to fix some conflicts or pick up 
-> some functionality that is in Russell's tree.  This should be done 
-> by merging topic branch(es) of that tree that Russell has 
-> explicitly said are stable.
+> Caused by commit f3ff9247088a ("Remove useless get_driver()/put_driver()
+> calls").
+> 
+> Please build test this stuff ...
+> 
+> I have used the driver-core tree from next-20120125 for today.
 
-Yes, I was anticipating a stable branch from Russell and never should
-have pushed into a branch that would have gone to linux-next: My
-mistake, sorry.
+Sorry about the mistake.  I don't always build-test everything because 
+it's not easy to do it on my system.  Anyway, the patch below will 
+fix the problem.
 
-Note that my intention was not to use this branch or one based on
-rmk/for-next in any "pull request". It was just a hint for people that
-wanted to work on at91 for 3.4...
+Alan Stern
 
-So, Stephen, can I ask you to remove the at91-next branch from your
-pull list. For the moment we can rely on arm-soc guys to experiment
-our changes in linux-next. It may be simpler for everyone.
+-----------------------------------------------------------------
+Subject: [PATCH] PCI/XEN: Fix bug introduced by a recent change
 
-thanks for your understanding, best regards,
-- -- 
-Nicolas Ferre
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+This patch (as1516) fixes a bug introduced during the removal of
+put_driver() and get_driver() from drivers/pci/xen-pcifront.c.
 
-iQEcBAEBAgAGBQJPInTFAAoJEAf03oE53VmQ01UIALIkAxoj3Oxou45+Ts0hjqCk
-ddQpqXsoZt44B/b+M+b2wPKK+stmjAVXT8KQJporgckmJyatc/H3BOdaCw5a4rGR
-PPrBjEZRx+cH6IXnzII2b73MkdvmKrICOlKpcuIlJiXPcpWet0J1K4lmMWxDPC2D
-zGeTFMqqUYMOxxADtRZhsHo/ryZivtaZf9LfYS5pYc7u4vhqjkCt8q07NabgIRaL
-GpfyXSLFl30Sqx53Di6DLr0OUUmHGPvjDj1xR3yqdeXtO9vpoiwZequlVX+PYboL
-S6OUPYjrDy8uRTNNkz1X8erruOx/y0T87/l4SHt28Aoz9p9sobcykcyRqQyHGJw=
-=YhKe
------END PGP SIGNATURE-----
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+
+---
+
+ drivers/pci/xen-pcifront.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: usb-3.3/drivers/pci/xen-pcifront.c
+===================================================================
+--- usb-3.3.orig/drivers/pci/xen-pcifront.c
++++ usb-3.3/drivers/pci/xen-pcifront.c
+@@ -593,7 +593,7 @@ static pci_ers_result_t pcifront_common_
+ 	}
+ 	pdrv = pcidev->driver;
+ 
+-	if (pdrv->driver) {
++	if (pdrv) {
+ 		if (pdrv->err_handler && pdrv->err_handler->error_detected) {
+ 			dev_dbg(&pcidev->dev,
+ 				"trying to call AER service\n");
