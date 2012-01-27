@@ -1,44 +1,72 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: merge of the arm tree into the at91 tree
-Date: Thu, 26 Jan 2012 23:23:04 +0000
-Message-ID: <20120126232304.GA10259@flint.arm.linux.org.uk>
-References: <20120127093619.f2c90c6aa8b542134a157956@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: XFS for-next branch
+Date: Fri, 27 Jan 2012 11:05:33 +1100
+Message-ID: <20120127110533.10304c6a33b83ac8e778915c@canb.auug.org.au>
+References: <20120125171244.GX8262@sgi.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__27_Jan_2012_11_05_33_+1100_i49ME4GPcmRrH3K."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:51716 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751323Ab2AZXX0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Jan 2012 18:23:26 -0500
-Content-Disposition: inline
-In-Reply-To: <20120127093619.f2c90c6aa8b542134a157956@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49523 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752098Ab2A0AFq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Jan 2012 19:05:46 -0500
+In-Reply-To: <20120125171244.GX8262@sgi.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ben Myers <bpm@sgi.com>
+Cc: linux-next@vger.kernel.org, xfs@oss.sgi.com, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
 
-On Fri, Jan 27, 2012 at 09:36:19AM +1100, Stephen Rothwell wrote:
-> I noticed that the for-next branch of the arm tree has been merged into
-> the at91 tree.  My understanding (and Russell, please correct me if I am
-> wrong) is that the for-next branch is *not* stable and may be rebased.
-> This will cause all sorts of problems in linux-next in the future (and
-> also when Russell or the arm=soc guys merge the at91 tree into theirs).
+--Signature=_Fri__27_Jan_2012_11_05_33_+1100_i49ME4GPcmRrH3K.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And has already been rebuilt (I won't use 'rebased' because that's really
-not what happens to it.)  I've already re-explained this to Nicolas.  It's
-equivalent to someone basing their work off linux-next and expecting to
-have that pulled into some other tree.
+Hi Ben,
 
-What's even worse is that Nicolas has published this as an official
-branch for other people.
+On Wed, 25 Jan 2012 11:12:44 -0600 Ben Myers <bpm@sgi.com> wrote:
+>
+> Could you pull XFS updates from
+>=20
+> git://oss.sgi.com/xfs/xfs.git for-next
+>=20
+> instead of from the oss/master branch for 3.3?
 
-> In fact, I am going to have problems today as Russell has already rebase
-> his for-next branch.  :-(
+OK, currently I fetch the "master" branch of that tree.  And you want em
+to switch to the "for-next" branch, right?  (Those two branches currently
+point to the same commit, so I have not changed yet.)
 
-I suggest that you drop the at91 tree this time around if you get
-conflicts.
+Did you mean "3.3", or "3.4"?
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+Currently the contacts for that tree are: David Chinner
+<david@fromorbit.com>, xfs-masters@oss.sgi.com.  Should I change that?
+i.e. who has control over the tree and can fix problems if I report them?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__27_Jan_2012_11_05_33_+1100_i49ME4GPcmRrH3K.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPIepNAAoJEECxmPOUX5FEmLcQAKg1mkTWQV8Qs0EkvU7ByKYu
+sAr1GA+ctvmkTedAFJGxQuuC62wAkD5HcWQ8+F3K2sSSBnuaMZJsUzMKIXE3ezYs
+Jttv1oHa/ZM4UjTjWsptqCn3q0Kg5m4R3cT+qvNFr0RSfC7Rthy/pRs4abDIRC9L
+Xa5TGRPSiNlLIEJpbvIQAUufPr5ps3FpvERlTOOKMvq2aaC0U1wE8y56463wdw5e
+FHEZeuqusnLMf8YdfEuCYbX3sLKyEL94cQr7hoas3vbNtgghE81A2KzQpAXSm6ZZ
+AbfFRGZVkKXVvX2hgRsdsL56lNj6TGIP8JPbsdxLyPUfZjldwXSEb7pwmudVkdIx
+qiRiBod1z01MZfTbqoFkMm9YcIW2KVtBIfAdYerWkyWa6b8TkuuOaF5MtWe2nMNh
+mwwdRKIrXEV1rxzbfcYY3hrl7ZBOGUngUf79WB+Tsv43CiejdI2HhWHssrPn+uPL
++rxINLHxg+rFtFJT7HEvMyMeKErRfyKqc32NAYmyF0+79Xrm0IKgZ1zT9xMIfmwS
+WOnG9iPQUEyTBJAnISp/7sVzaM78jbYfMe6Kv59q/oE5yZBsisMVQhrS85J5nAQw
+XchzEY9Br+Pc6tA3sCMEv+YbQRSmmdZ/do/wO6OmI5TUqBahIiiIAnun1QtAq2YL
+3VpMWsJv11Zq0jmjyecv
+=2f99
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__27_Jan_2012_11_05_33_+1100_i49ME4GPcmRrH3K.--
