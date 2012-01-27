@@ -1,100 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: XFS for-next branch
-Date: Sat, 28 Jan 2012 08:17:09 +1100
-Message-ID: <20120128081709.e7b0df733e5d35fe625eeea0@canb.auug.org.au>
-References: <20120125171244.GX8262@sgi.com>
-	<20120127110533.10304c6a33b83ac8e778915c@canb.auug.org.au>
-	<20120127160137.GJ8262@sgi.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Fri, 27 Jan 2012 14:36:28 -0800
+Message-ID: <20120127223628.GA4358@kroah.com>
+References: <20120127135912.e5f45bf1c4a99b114c18bf72@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__28_Jan_2012_08_17_09_+1100_+QlBc0Mzoc4o_b6H"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57311 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753329Ab2A0VRX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 Jan 2012 16:17:23 -0500
-In-Reply-To: <20120127160137.GJ8262@sgi.com>
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:43816 "EHLO
+	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751688Ab2A0Wgr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Jan 2012 17:36:47 -0500
+Received: from compute6.internal (compute6.nyi.mail.srv.osa [10.202.2.46])
+	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id F1A562069F
+	for <linux-next@vger.kernel.org>; Fri, 27 Jan 2012 17:36:46 -0500 (EST)
+Content-Disposition: inline
+In-Reply-To: <20120127135912.e5f45bf1c4a99b114c18bf72@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ben Myers <bpm@sgi.com>
-Cc: linux-next@vger.kernel.org, xfs@oss.sgi.com, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, "David S. Miller" <davem@davemloft.net>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Michael Buesch <m@bues.ch>, Joerg Roedel <joerg.roedel@amd.com>
 
---Signature=_Sat__28_Jan_2012_08_17_09_+1100_+QlBc0Mzoc4o_b6H
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jan 27, 2012 at 01:59:12PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/pci/xen-pcifront.c: In function 'pcifront_common_process':
+> drivers/pci/xen-pcifront.c:596:6: error: used struct type value where scalar is required
+> 
+> Caused by commit f3ff9247088a ("Remove useless get_driver()/put_driver()
+> calls").
+> 
+> Please build test this stuff ...
 
-Hi Ben,
+Sorry, I do build test this, but I didn't have Xen enabled in that
+.config as I never run Xen :)
 
-On Fri, 27 Jan 2012 10:01:37 -0600 Ben Myers <bpm@sgi.com> wrote:
->
-> On Fri, Jan 27, 2012 at 11:05:33AM +1100, Stephen Rothwell wrote:
-> > On Wed, 25 Jan 2012 11:12:44 -0600 Ben Myers <bpm@sgi.com> wrote:
-> > >
-> > > Could you pull XFS updates from
-> > >=20
-> > > git://oss.sgi.com/xfs/xfs.git for-next
-> > >=20
-> > > instead of from the oss/master branch for 3.3?
-> >=20
-> > OK, currently I fetch the "master" branch of that tree.  And you want em
-> > to switch to the "for-next" branch, right?  (Those two branches current=
-ly
-> > point to the same commit, so I have not changed yet.)
->=20
-> Yep, please switch to oss/for-next instead of oss/master.  I'll keep
-> them in sync normally, it's just that I'd like to have a little
-> flexability WRT what is in for-next.
+I'll queue up Alan's patch so all should be good now.
 
-Just to be crystal clear:  there are no branches in that tree called
-"oss/for-next" or "oss/master" - I assume that you are referring to the
-branches called "for-next" and "master", right?
+thanks,
 
->=20
-> > Did you mean "3.3", or "3.4"?
->=20
-> I meant only that I'd like to try it this way for a single release, see
-> how it goes, and then re-evaluate.
-
-Ah, ok, I see.
-
->=20
-> > Currently the contacts for that tree are: David Chinner
-> > <david@fromorbit.com>, xfs-masters@oss.sgi.com.  Should I change that?
-> > i.e. who has control over the tree and can fix problems if I report the=
-m?
->=20
-> I think Dave's suggestion is reasonable:  Keep him as a contact, add me,
-> and s/xfs-masters@oss.sgi.com/xfs@oss.sgi.com/.  It really helps that
-> you two are in the same timezone.  ;)
-
-OK, I will sort all this out on Monday.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__28_Jan_2012_08_17_09_+1100_+QlBc0Mzoc4o_b6H
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPIxRVAAoJEECxmPOUX5FEfKEP/RycUJ6kpRgXB3Sd+xpn0Fc6
-BjG48Hu3hPqpj972O7246mTuMysbPk7vlQkkGJZqReV0B9KWhTyNgx/slmUY5Obw
-bVm7iEN5TQEc47ika0znqqU+3GkmpSItzbhpBX8bJ33XacgorS4wSaq55JDqerRN
-0YaZfEbNVXqNhUiUNNsoutVNYJHbvBB4568hjFWBoMNaOcLd7XAtAc8L8eGLUSWk
-YBDeZd1LSN92S0BKtMXQ8ds+MgPgcvDy2bDzy8wjLvHDYia+LNXubmr3jQVreQxc
-t7lNVUclo4xEiDxwlWDI5VF0fp7up7vlDk4BscrckawQUsIQnhEoXmG634vVgaAH
-KF2oHsC40dEyAlctxvnGMWgOdrBkM8xhZb9j1rwBGhuVCAwRbDp76HwQOmqtbtp1
-AfXKXRNN+aY9oKjq0lRDkDcFD030k9eoZnuZ1zG3pCinTu49GYVn2Dm3mI0gtBpJ
-gEeomxNu5SYDSEfGsWGBkATgxPIk6aOWpANSt5RGCr0q6ZvfZB7K2NWtdsQWotNZ
-HPLpNZU8IEUr7ccZwqssOCJliUI/VwSQIYoVwOztJTibivHCXm1DhTELrQ/KCIwU
-JePaQgLTM8UQ32injtTgsglDAJI3DYWj+Jw/LyCLGX7QWGNHkaDGEjlptSxZ/4gR
-HZCET+5FUSIfzVWCstiq
-=UIhy
------END PGP SIGNATURE-----
-
---Signature=_Sat__28_Jan_2012_08_17_09_+1100_+QlBc0Mzoc4o_b6H--
+greg k-h
