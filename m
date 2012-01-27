@@ -1,67 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pm tree
-Date: Fri, 27 Jan 2012 12:53:15 +1100
-Message-ID: <20120127125315.e6e70511badf68c4e760afc3@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Fri, 27 Jan 2012 13:59:12 +1100
+Message-ID: <20120127135912.e5f45bf1c4a99b114c18bf72@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Jan_2012_12_53_15_+1100_nSPKJPZvT+xC.6g_"
+ boundary="Signature=_Fri__27_Jan_2012_13_59_12_+1100_yyPkG7dRZ2PC++TB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48300 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56055 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751645Ab2A0Bxj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Jan 2012 20:53:39 -0500
+	id S1751515Ab2A0C73 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Jan 2012 21:59:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Frid <afrid@nvidia.com>, Antti Miettinen <amiettinen@nvidia.com>, Diwakar Tundlam <dtundlam@nvidia.com>, Scott Williams <scwilliams@nvidia.com>, Yu-Huan Hsu <yhsu@nvidia.com>, markgross <markgross@thegnar.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, "David S. Miller" <davem@davemloft.net>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Michael Buesch <m@bues.ch>, Joerg Roedel <joerg.roedel@amd.com>
 
---Signature=_Fri__27_Jan_2012_12_53_15_+1100_nSPKJPZvT+xC.6g_
+--Signature=_Fri__27_Jan_2012_13_59_12_+1100_yyPkG7dRZ2PC++TB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Greg,
 
-After merging the pm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the driver-core tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-kernel/power/process.c: In function 'thaw_kernel_threads':
-kernel/power/process.c:199:2: error: 'g' undeclared (first use in this func=
-tion)
-kernel/power/process.c:199:2: note: each undeclared identifier is reported =
-only once for each function it appears in
-kernel/power/process.c:199:2: error: 'p' undeclared (first use in this func=
-tion)
+drivers/pci/xen-pcifront.c: In function 'pcifront_common_process':
+drivers/pci/xen-pcifront.c:596:6: error: used struct type value where scala=
+r is required
 
-Caused by commit 625278ca8016 ("PM / QoS: Simplify PM QoS expansion/merge").
+Caused by commit f3ff9247088a ("Remove useless get_driver()/put_driver()
+calls").
 
-Clearly never built :-(  At least, not in this form.
+Please build test this stuff ...
 
-I have used the pm tree from next-20120125 for today.
+I have used the driver-core tree from next-20120125 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__27_Jan_2012_12_53_15_+1100_nSPKJPZvT+xC.6g_
+--Signature=_Fri__27_Jan_2012_13_59_12_+1100_yyPkG7dRZ2PC++TB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPIgOLAAoJEECxmPOUX5FEr04P+wQMzYzLL1enHc2uIAVudGq6
-dgGDoce62CvKgFia2502Rp/e4s6QQuLL0FWx97Zd69Sk/t7tdA7eL9BQRZKJ2t6W
-7TaQex5hsW1vlyeOnBKCVUbdX33pPNsessSryJFCEC9NH529BThRrmUT+xzc8SIo
-eWK3zY908UbagypGHqRkS+08gkWveAd0s+Gz0Bte+EhHEW4e3kghcSR+tolJFufO
-/KQYI+8w8ClEBsgXaU+RS8SAiEc/YbtpSSbR8cl5lGa0se95yFaozNjaeHLFyLrr
-1QUaf/BKg/xf1jJvxtMUh8A7dkGdDxRgADfd1+F88bEsNBZRZ2YTpjdouj3wdeVR
-jqQagSbK2ePmo5HvnrJL0SvWRtsiaaAwapn5SOSVXYo4OnGxVrBP/C/9gdkDOI/a
-uVTAXPUAjzEdg2YBw4bKXAzIS2AOV5o7bmib7t3swxxixoYM5OUDKkwZUyS5HfvR
-ioJspqdrkN3n/Gs+zrTRiiiiNvchZO2VPidM2lzM21R+lEf2EPruYPuKjgSt5NBh
-60VmvA0y/dL1J+G/GUmWvw81ATayO9sGjjbN7XStcyj6YiDuElR4IgTltjPAdZEi
-8Vz1gK7PVQ+QfAIYKfbo6eQHhkDAA+DRMXimTpnsUZLCJFaUCL5GIH4wZL+Df0zs
-IqKbvSpNAoA8f4j8Qjjs
-=wTGo
+iQIcBAEBCAAGBQJPIhMAAAoJEECxmPOUX5FEyY0P/0KeXr87U1FOJhjER2/Q2NP/
+i2xWaDZKDNBAjVjC/zNN2iq3YomUaDvXEzuwY9BaBDxa6G9y0U6Uk6svwWdONqey
+iWHAMtI8L4F4fYFaraeLNiDEvB6bv8HdO+jPWBtTcrJowTzqmUWjpTrfnCPmQuau
+0vh/2krJQg82pthGeENeKVQEbZyMgbWh7V3u5OlhmQRBTsbLDuHpHfrMyptQq9un
+D2DV/Adx28Z41gQ31Hp5gE5mEuCYESDo8NAEwYjKXxnoAqSSnbMw4bdw3Nkbqo4h
+5IR6B+wlnKreEXC3c0wvAM6JlPmMzt3lK7sWs64emV8wLQvRaezScDzjtNc6NQTN
+znhioD/PyL6cFbXnYxQNNsnXA7zNX14ATuZFRbUvABzek0ZKPLtcjXNgqXzoo15S
+LKMG0prZ1uMQiIH9JYbNhpoj63pOakLJsD7cA7Tr2HjWwe7A2nZOyk4pIvDSzD4a
+dTv6Pk6Q5ILyQjxqII8Hsy7YwDK04mRNmx2HiR7yVU8sQZwfBDzdtLufkBzPdNXl
+rCIJgvJLrWIgCc1khTnZqHKljvA7MosPnjgaq/hV93nQe0Z83QmdR/ocbIG2fjqU
+L5/aPX6K8MIlGwNsxxGWnsm9slZS2cVMZJdAvGqLUExx+CFWk0UJXC3ALuIaf/0I
+7j7ZHHP6Kn9ky00GfP+j
+=hjVn
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Jan_2012_12_53_15_+1100_nSPKJPZvT+xC.6g_--
+--Signature=_Fri__27_Jan_2012_13_59_12_+1100_yyPkG7dRZ2PC++TB--
