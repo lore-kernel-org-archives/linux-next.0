@@ -1,67 +1,53 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Fri, 27 Jan 2012 10:24:40 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1201271021550.1364-100000@iolanthe.rowland.org>
-References: <20120127135912.e5f45bf1c4a99b114c18bf72@canb.auug.org.au>
+From: Ben Myers <bpm@sgi.com>
+Subject: Re: XFS for-next branch
+Date: Fri, 27 Jan 2012 10:01:37 -0600
+Message-ID: <20120127160137.GJ8262@sgi.com>
+References: <20120125171244.GX8262@sgi.com> <20120127110533.10304c6a33b83ac8e778915c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:44917 "HELO
-	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752017Ab2A0PYm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Jan 2012 10:24:42 -0500
-In-Reply-To: <20120127135912.e5f45bf1c4a99b114c18bf72@canb.auug.org.au>
+Received: from relay3.sgi.com ([192.48.152.1]:42605 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1756088Ab2A0QBm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Jan 2012 11:01:42 -0500
+Content-Disposition: inline
+In-Reply-To: <20120127110533.10304c6a33b83ac8e778915c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Kernel development list <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Michael Buesch <m@bues.ch>, Joerg Roedel <joerg.roedel@amd.com>
+Cc: linux-next@vger.kernel.org, xfs@oss.sgi.com, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
 
-On Fri, 27 Jan 2012, Stephen Rothwell wrote:
+Hey Stephen,
 
-> Hi Greg,
+On Fri, Jan 27, 2012 at 11:05:33AM +1100, Stephen Rothwell wrote:
+> On Wed, 25 Jan 2012 11:12:44 -0600 Ben Myers <bpm@sgi.com> wrote:
+> >
+> > Could you pull XFS updates from
+> > 
+> > git://oss.sgi.com/xfs/xfs.git for-next
+> > 
+> > instead of from the oss/master branch for 3.3?
 > 
-> After merging the driver-core tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/pci/xen-pcifront.c: In function 'pcifront_common_process':
-> drivers/pci/xen-pcifront.c:596:6: error: used struct type value where scalar is required
-> 
-> Caused by commit f3ff9247088a ("Remove useless get_driver()/put_driver()
-> calls").
-> 
-> Please build test this stuff ...
-> 
-> I have used the driver-core tree from next-20120125 for today.
+> OK, currently I fetch the "master" branch of that tree.  And you want em
+> to switch to the "for-next" branch, right?  (Those two branches currently
+> point to the same commit, so I have not changed yet.)
 
-Sorry about the mistake.  I don't always build-test everything because 
-it's not easy to do it on my system.  Anyway, the patch below will 
-fix the problem.
+Yep, please switch to oss/for-next instead of oss/master.  I'll keep
+them in sync normally, it's just that I'd like to have a little
+flexability WRT what is in for-next.
 
-Alan Stern
+> Did you mean "3.3", or "3.4"?
 
------------------------------------------------------------------
-Subject: [PATCH] PCI/XEN: Fix bug introduced by a recent change
+I meant only that I'd like to try it this way for a single release, see
+how it goes, and then re-evaluate.
 
-This patch (as1516) fixes a bug introduced during the removal of
-put_driver() and get_driver() from drivers/pci/xen-pcifront.c.
+> Currently the contacts for that tree are: David Chinner
+> <david@fromorbit.com>, xfs-masters@oss.sgi.com.  Should I change that?
+> i.e. who has control over the tree and can fix problems if I report them?
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+I think Dave's suggestion is reasonable:  Keep him as a contact, add me,
+and s/xfs-masters@oss.sgi.com/xfs@oss.sgi.com/.  It really helps that
+you two are in the same timezone.  ;)
 
----
-
- drivers/pci/xen-pcifront.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: usb-3.3/drivers/pci/xen-pcifront.c
-===================================================================
---- usb-3.3.orig/drivers/pci/xen-pcifront.c
-+++ usb-3.3/drivers/pci/xen-pcifront.c
-@@ -593,7 +593,7 @@ static pci_ers_result_t pcifront_common_
- 	}
- 	pdrv = pcidev->driver;
- 
--	if (pdrv->driver) {
-+	if (pdrv) {
- 		if (pdrv->err_handler && pdrv->err_handler->error_detected) {
- 			dev_dbg(&pcidev->dev,
- 				"trying to call AER service\n");
+Thanks,
+	Ben
