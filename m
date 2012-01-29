@@ -1,63 +1,116 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: merge of the arm tree into the at91 tree
-Date: Mon, 30 Jan 2012 08:06:55 +1100
-Message-ID: <20120130080655.4d963134c5b239e09fb65d7f@canb.auug.org.au>
-References: <20120127093619.f2c90c6aa8b542134a157956@canb.auug.org.au>
-	<4F2274CA.7020809@atmel.com>
+Subject: linux-next: manual merge of the arm tree with Linus' tree
+Date: Mon, 30 Jan 2012 10:38:41 +1100
+Message-ID: <20120130103841.041d276454d26b5adfae5a7a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__30_Jan_2012_08_06_55_+1100_PfZo=6aLcIj6Sz+7"
+ boundary="Signature=_Mon__30_Jan_2012_10_38_41_+1100_t=eJkQPqdZBpL8QD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47591 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46349 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752255Ab2A2VHJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 29 Jan 2012 16:07:09 -0500
-In-Reply-To: <4F2274CA.7020809@atmel.com>
+	id S1751279Ab2A2Xix (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 29 Jan 2012 18:38:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: Russell King <rmk@arm.linux.org.uk>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
 
---Signature=_Mon__30_Jan_2012_08_06_55_+1100_PfZo=6aLcIj6Sz+7
+--Signature=_Mon__30_Jan_2012_10_38_41_+1100_t=eJkQPqdZBpL8QD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Nicolas,
+Hi Russell,
 
-On Fri, 27 Jan 2012 10:56:26 +0100 Nicolas Ferre <nicolas.ferre@atmel.com> =
-wrote:
->
-> So, Stephen, can I ask you to remove the at91-next branch from your
-> pull list. For the moment we can rely on arm-soc guys to experiment
-> our changes in linux-next. It may be simpler for everyone.
+Today's linux-next merge of the arm tree got a conflict in
+arch/arm/mach-at91/at91cap9.c arch/arm/mach-at91/at91sam9g45.c between
+commit 14f991a730f4 ("ARM: at91: Fix at91sam9g45 and at91cap9 reset")
+from Linus' tree and commit c9dfafbaca0b ("ARM: mach-at91: move special
+idle code out of line") from the arm tree.
 
-Done.
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__30_Jan_2012_08_06_55_+1100_PfZo=6aLcIj6Sz+7
+diff --cc arch/arm/mach-at91/at91cap9.c
+index a42edc2,1d29a6c..0000000
+--- a/arch/arm/mach-at91/at91cap9.c
++++ b/arch/arm/mach-at91/at91cap9.c
+@@@ -313,6 -315,17 +314,12 @@@ static struct at91_gpio_bank at91cap9_g
+  	}
+  };
+ =20
++ static void at91cap9_idle(void)
++ {
++ 	at91_sys_write(AT91_PMC_SCDR, AT91_PMC_PCK);
++ 	cpu_do_idle();
++ }
++=20
+ -static void at91cap9_restart(char mode, const char *cmd)
+ -{
+ -	at91_sys_write(AT91_RSTC_CR, AT91_RSTC_KEY | AT91_RSTC_PROCRST | AT91_RS=
+TC_PERRST);
+ -}
+ -
+  /* --------------------------------------------------------------------
+   *  AT91CAP9 processor initialization
+   * -------------------------------------------------------------------- */
+@@@ -332,7 -344,8 +339,8 @@@ static void __init at91cap9_ioremap_reg
+ =20
+  static void __init at91cap9_initialize(void)
+  {
++ 	arm_pm_idle =3D at91cap9_idle;
+ -	arm_pm_restart =3D at91cap9_restart;
+ +	arm_pm_restart =3D at91sam9g45_restart;
+  	at91_extern_irq =3D (1 << AT91CAP9_ID_IRQ0) | (1 << AT91CAP9_ID_IRQ1);
+ =20
+  	/* Register GPIO subsystem */
+diff --cc arch/arm/mach-at91/at91sam9g45.c
+index 1cb6a96,0e80b39..0000000
+--- a/arch/arm/mach-at91/at91sam9g45.c
++++ b/arch/arm/mach-at91/at91sam9g45.c
+@@@ -317,6 -318,17 +317,12 @@@ static struct at91_gpio_bank at91sam9g4
+  	}
+  };
+ =20
++ static void at91sam9g45_idle(void)
++ {
++ 	at91_sys_write(AT91_PMC_SCDR, AT91_PMC_PCK);
++ 	cpu_do_idle();
++ }
++=20
+ -static void at91sam9g45_restart(char mode, const char *cmd)
+ -{
+ -	at91_sys_write(AT91_RSTC_CR, AT91_RSTC_KEY | AT91_RSTC_PROCRST | AT91_RS=
+TC_PERRST);
+ -}
+ -
+  /* --------------------------------------------------------------------
+   *  AT91SAM9G45 processor initialization
+   * -------------------------------------------------------------------- */
+
+--Signature=_Mon__30_Jan_2012_10_38_41_+1100_t=eJkQPqdZBpL8QD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPJbTvAAoJEECxmPOUX5FEX7UQAKW4AupCHWQFie0nBJlF9SxF
-vTghBe1bDp71VDQBbljGiXIq00F3N0nicuaMjop7t5BjQNVqL79xC5QmDkj/bZPv
-f3cCQCfKtA66ffXzWbu8TauCqBmBJnFP9CYFpyG39IlHZwhi3nSH0IOWiq1YbRcX
-TUSNsZbg1Uu56xgbAyPgS0b3aTbQkTMAYoApA3hVROhLkqE6VI3r8NCOSj4Gwe6T
-pAXzZDXpHrDOgPw9oui2cIsLnmPSjRPGWdyLdE9X6Znnsixv+T9fknQCinis/93d
-W27f+L3kQ55MnfbmCPowR2fY59t2ii9Udbfz5KDOaoZhlDkB0YRYsCXufpQjVeFq
-PPUohpMRvTedcEmlRp02wcuZDYua7pfqkr+BQBHK4P8zdaCclcESZh0k3+X/c178
-f0uQmX+v+evtnlgfTYDGRPIFtd0ncxG/UdCgGAevOcLH01FsKeWcfwKnWwnfUyoP
-KiCtwARaynkaFLeW4RRpsDb3fSMOJKQ7jsQYuwZ+Zfm4SJkZwQz36g0kp6kXo9Cb
-Lk5mLNLpy5vLJNZFSD6ST2CCVBs9MDLLpivuUCoDbG6uNsegnmyHrKUFub7rComc
-sBn3Wt4XKqBWEskoXT9eOTTtGXm7HcZo3EjeJYYGoiF6SSSZVcJDyaIcsUSMCxRE
-aXSyaR/ES6ksQQNX8cGy
-=BAiJ
+iQIcBAEBCAAGBQJPJdiBAAoJEECxmPOUX5FEIggP/RMD1++5S9PAnxcXOYGCw98S
+IHwAiaxwJXhzSBs7o7/vCF0OPW6c1q0HuTz6bELEp0JNbRn0QOWc/E/kXJMMF/rd
+qfFFMbA+wiXBa00d1yuiz9rmgPgMFkXwMzwRoRtEGlwAL8G9uNhAZ4dy5oL4flM4
+mwsSqlba/+yYDKm0pj4Ff84OnTT25TxRFhvLbRsTsGtPxt5XdpszRjMZ41fuPnSW
+IvYbvbrbI/P0vthbdg8X00gBGbDFaAryY3ZW9sl9GIbLT/qtGWyuweJkqdZWeW2Y
+I+SQo0VELxtX/Qd0q/K2XN4k3Oif+hUR7Z40F6VxUtXrBIEvzsT3rSKUcYcDZ461
+knFjdDklo3MKE8Zy5qhlEM16V8oc0A51/EbmVEKK6iUstSnQEjgIhMtl9USPp8w1
+0Z84NIGrpsWZbl7Aw+dNp47aVWKv3gZ1bXHdagdZpivyki+5PpkhL5iveEBem1fq
+E1oGFcNvpEsspvsCHJXQY3P4Bc4916rAlg9AklReSiTeOAQ1CVFcF93WctVjnRRH
+v7eZsxWv/GVn9IJKGs67tuakiBWKsuU9qQIfluWyygxks6dACWycD8S3XrmllyAw
+VrVmc4eTzelYwkxrMpmBdBwjjQzwhT4dIx9AAHACO52qBnXpMAmAGdjHckfzyMYo
+MEubgtKe6izhWegOm/sD
+=EF9i
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__30_Jan_2012_08_06_55_+1100_PfZo=6aLcIj6Sz+7--
+--Signature=_Mon__30_Jan_2012_10_38_41_+1100_t=eJkQPqdZBpL8QD--
