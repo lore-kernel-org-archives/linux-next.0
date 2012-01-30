@@ -1,50 +1,46 @@
-From: Ben Myers <bpm@sgi.com>
-Subject: Re: XFS for-next branch
-Date: Mon, 30 Jan 2012 12:27:17 -0600
-Message-ID: <20120130182717.GE7762@sgi.com>
-References: <20120125171244.GX8262@sgi.com> <20120127110533.10304c6a33b83ac8e778915c@canb.auug.org.au> <20120127160137.GJ8262@sgi.com> <20120128081709.e7b0df733e5d35fe625eeea0@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] cpufreq: fix gx-suspmod.c build
+Date: Mon, 30 Jan 2012 11:40:50 -0800
+Message-ID: <4F26F242.1060903@xenotime.net>
+References: <20120130144102.8d202c7d8eccd503a86b3053@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay1.sgi.com ([192.48.179.29]:50320 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752508Ab2A3S1U (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Jan 2012 13:27:20 -0500
-Content-Disposition: inline
-In-Reply-To: <20120128081709.e7b0df733e5d35fe625eeea0@canb.auug.org.au>
+Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:46853 "HELO
+	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752930Ab2A3Sms (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Jan 2012 13:42:48 -0500
+In-Reply-To: <20120130144102.8d202c7d8eccd503a86b3053@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, xfs@oss.sgi.com
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Hiroshi Miura <miura@da-cha.org>, Dave Jones <davej@redhat.com>, cpufreq@vger.kernel.org
 
-Hi Stephen,
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-On Sat, Jan 28, 2012 at 08:17:09AM +1100, Stephen Rothwell wrote:
-> On Fri, 27 Jan 2012 10:01:37 -0600 Ben Myers <bpm@sgi.com> wrote:
-> >
-> > On Fri, Jan 27, 2012 at 11:05:33AM +1100, Stephen Rothwell wrote:
-> > > On Wed, 25 Jan 2012 11:12:44 -0600 Ben Myers <bpm@sgi.com> wrote:
-> > > >
-> > > > Could you pull XFS updates from
-> > > > 
-> > > > git://oss.sgi.com/xfs/xfs.git for-next
-> > > > 
-> > > > instead of from the oss/master branch for 3.3?
-> > > 
-> > > OK, currently I fetch the "master" branch of that tree.  And you want em
-> > > to switch to the "for-next" branch, right?  (Those two branches currently
-> > > point to the same commit, so I have not changed yet.)
-> > 
-> > Yep, please switch to oss/for-next instead of oss/master.  I'll keep
-> > them in sync normally, it's just that I'd like to have a little
-> > flexability WRT what is in for-next.
-> 
-> Just to be crystal clear:  there are no branches in that tree called
-> "oss/for-next" or "oss/master" - I assume that you are referring to the
-> branches called "for-next" and "master", right?
+Fix build error & warnings:
 
-I am referring to for-next and master branches, at
-git://oss.sgi.com/xfs/xfs.git.  Sorry I wasn't very clear.
+drivers/cpufreq/gx-suspmod.c:175:35: error: macro "MODULE_DEVICE_TABLE" requires 2 arguments, but only 1 given
+drivers/cpufreq/gx-suspmod.c:175:1: warning: data definition has no type or storage class
+drivers/cpufreq/gx-suspmod.c:175:1: warning: type defaults to 'int' in declaration of 'MODULE_DEVICE_TABLE'
 
-Thanks,
-	Ben
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Hiroshi Miura <miura@da-cha.org>
+Cc:	Dave Jones <davej@redhat.com>
+Cc:	cpufreq@vger.kernel.org
+---
+ drivers/cpufreq/gx-suspmod.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20120130.orig/drivers/cpufreq/gx-suspmod.c
++++ linux-next-20120130/drivers/cpufreq/gx-suspmod.c
+@@ -172,7 +172,7 @@ static struct pci_device_id gx_chipset_t
+ 	{ PCI_VDEVICE(CYRIX, PCI_DEVICE_ID_CYRIX_5510), },
+ 	{ 0, },
+ };
+-MODULE_DEVICE_TABLE(gx_chipset_tbl);
++MODULE_DEVICE_TABLE(x86cpu, gx_chipset_tbl);
+ 
+ static void gx_write_byte(int reg, int value)
+ {
