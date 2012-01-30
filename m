@@ -1,38 +1,50 @@
-From: Neil Zhang <zhangwm@marvell.com>
-Subject: RE: linux-next: Tree for Jan 24 (usb/otg/mv_otg)
-Date: Sun, 29 Jan 2012 19:48:46 -0800
-Message-ID: <175CCF5F49938B4D99B2E3EF7F558EBE1A17429E0D@SC-VEXCH4.marvell.com>
-References: <20120124163055.3c99bca0d5dfd754a352fb02@canb.auug.org.au>
- <4F1EFA85.6040008@xenotime.net>
+From: Ben Myers <bpm@sgi.com>
+Subject: Re: XFS for-next branch
+Date: Mon, 30 Jan 2012 12:27:17 -0600
+Message-ID: <20120130182717.GE7762@sgi.com>
+References: <20120125171244.GX8262@sgi.com> <20120127110533.10304c6a33b83ac8e778915c@canb.auug.org.au> <20120127160137.GJ8262@sgi.com> <20120128081709.e7b0df733e5d35fe625eeea0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog103.obsmtp.com ([74.125.149.71]:41549 "EHLO
-	na3sys009aog103.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753339Ab2A3DuG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 29 Jan 2012 22:50:06 -0500
-In-Reply-To: <4F1EFA85.6040008@xenotime.net>
-Content-Language: en-US
+Received: from relay1.sgi.com ([192.48.179.29]:50320 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752508Ab2A3S1U (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jan 2012 13:27:20 -0500
+Content-Disposition: inline
+In-Reply-To: <20120128081709.e7b0df733e5d35fe625eeea0@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, Chao Xie <cxie4@marvell.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, xfs@oss.sgi.com
 
-SGkgUmFuZHksDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFJhbmR5IER1
-bmxhcCBbbWFpbHRvOnJkdW5sYXBAeGVub3RpbWUubmV0XQ0KPiBTZW50OiAyMDEy5bm0MeaciDI1
-5pelIDI6MzgNCj4gVG86IFN0ZXBoZW4gUm90aHdlbGwNCj4gQ2M6IGxpbnV4LW5leHRAdmdlci5r
-ZXJuZWwub3JnOyBMS01MOyBsaW51eC11c2I7IENoYW8gWGllOyBOZWlsIFpoYW5nDQo+IFN1Ympl
-Y3Q6IFJlOiBsaW51eC1uZXh0OiBUcmVlIGZvciBKYW4gMjQgKHVzYi9vdGcvbXZfb3RnKQ0KPiAN
-Cj4gT24gMDEvMjMvMjAxMiAwOTozMCBQTSwgU3RlcGhlbiBSb3Rod2VsbCB3cm90ZToNCj4gPiBI
-aSBhbGwsDQo+ID4NCj4gPiBDaGFuZ2VzIHNpbmNlIDIwMTIwMTIzOg0KPiANCj4gDQo+IG9uIGkz
-ODY6DQo+IA0KPiBFUlJPUjogInVzYl9yZW1vdmVfaGNkIiBbZHJpdmVycy91c2Ivb3RnL212X290
-Zy5rb10gdW5kZWZpbmVkIQ0KPiBFUlJPUjogInVzYl9hZGRfaGNkIiBbZHJpdmVycy91c2Ivb3Rn
-L212X290Zy5rb10gdW5kZWZpbmVkIQ0KPiANCj4gDQo+IEZ1bGwgcmFuZGNvbmZpZyBmaWxlIGlz
-IGF0dGFjaGVkLg0KPiANCg0KVGhhbmtzIGZvciB5b3VyIGluZm9ybWF0aW9uLCB0aGUgbWFydmVs
-bCBvdGcgZHJpdmVyIGlzIGRlcGVuZGVudCBvbiBlaGNpIGRyaXZlci4NCkkgaGF2ZSBzdWJtaXQg
-YSBwYXRjaCB0byBhZGQgdGhlIGRlcGVuZGVuY2UuDQpUaGFua3MuDQoNCj4gDQo+IC0tDQo+IH5S
-YW5keQ0KPiAqKiogUmVtZW1iZXIgdG8gdXNlIERvY3VtZW50YXRpb24vU3VibWl0Q2hlY2tsaXN0
-IHdoZW4gdGVzdGluZyB5b3VyDQo+IGNvZGUgKioqDQoNCkJlc3QgUmVnYXJkcywNCk5laWwgWmhh
-bmcNCg==
+Hi Stephen,
+
+On Sat, Jan 28, 2012 at 08:17:09AM +1100, Stephen Rothwell wrote:
+> On Fri, 27 Jan 2012 10:01:37 -0600 Ben Myers <bpm@sgi.com> wrote:
+> >
+> > On Fri, Jan 27, 2012 at 11:05:33AM +1100, Stephen Rothwell wrote:
+> > > On Wed, 25 Jan 2012 11:12:44 -0600 Ben Myers <bpm@sgi.com> wrote:
+> > > >
+> > > > Could you pull XFS updates from
+> > > > 
+> > > > git://oss.sgi.com/xfs/xfs.git for-next
+> > > > 
+> > > > instead of from the oss/master branch for 3.3?
+> > > 
+> > > OK, currently I fetch the "master" branch of that tree.  And you want em
+> > > to switch to the "for-next" branch, right?  (Those two branches currently
+> > > point to the same commit, so I have not changed yet.)
+> > 
+> > Yep, please switch to oss/for-next instead of oss/master.  I'll keep
+> > them in sync normally, it's just that I'd like to have a little
+> > flexability WRT what is in for-next.
+> 
+> Just to be crystal clear:  there are no branches in that tree called
+> "oss/for-next" or "oss/master" - I assume that you are referring to the
+> branches called "for-next" and "master", right?
+
+I am referring to for-next and master branches, at
+git://oss.sgi.com/xfs/xfs.git.  Sorry I wasn't very clear.
+
+Thanks,
+	Ben
