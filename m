@@ -1,63 +1,47 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: [PATCH] slub: prefetch next freelist pointer in slab_alloc()
-Date: Mon, 30 Jan 2012 15:53:51 -0600 (CST)
-Message-ID: <alpine.DEB.2.00.1201301549240.3895@router.home>
-References: <1324049134.25554.29.camel@edumazet-HP-Compaq-6005-Pro-SFF-PC> <alpine.DEB.2.00.1112161030270.26651@router.home> <alpine.LFD.2.02.1201242152480.1658@tux.localdomain> <CAMuHMdW-RbD-uxpOGmhv0LCsHLG-2Q0LvSRrB0cdM2efGRAYnw@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] mtd: fix nand/docg4.c printk format warnings
+Date: Mon, 30 Jan 2012 19:08:16 -0800
+Message-ID: <4F275B20.6010105@xenotime.net>
+References: <20120130144102.8d202c7d8eccd503a86b3053@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdW-RbD-uxpOGmhv0LCsHLG-2Q0LvSRrB0cdM2efGRAYnw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Pekka Enberg <penberg@kernel.org>, Eric Dumazet <eric.dumazet@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, David Rientjes <rientjes@google.com>, "Alex,Shi" <alex.shi@intel.com>, Shaohua Li <shaohua.li@intel.com>, Matt Mackall <mpm@selenic.com>, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:44032 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752960Ab2AaCKO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Jan 2012 21:10:14 -0500
+In-Reply-To: <20120130144102.8d202c7d8eccd503a86b3053@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Mon, 30 Jan 2012, Geert Uytterhoeven wrote:
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-> On Tue, Jan 24, 2012 at 20:54, Pekka Enberg <penberg@kernel.org> wrote:
-> > On Fri, 16 Dec 2011, Eric Dumazet wrote:
-> >>> Recycling a page is a problem, since freelist link chain is hot on
-> >>> cpu(s) which freed objects, and possibly very cold on cpu currently
-> >>> owning slab.
-> >
-> > On Fri, 16 Dec 2011, Christoph Lameter wrote:
-> >> Good idea. How do the tcp benchmarks look after this?
-> >>
-> >> Looks sane.
-> >>
-> >> Acked-by: Christoph Lameter <cl@linux.com>
-> >
-> > Applied, thanks!
->
-> m68k/allmodconfig at http://kisskb.ellerman.id.au/kisskb/buildresult/5527349/
->
-> mm/slub.c:274: error: implicit declaration of function 'prefetch'
->
-> Sorry, didn't notice it earlier due to other build breakage in -next.
+Fix printk format warnings for resource_size_t:
 
-Does this fix it?
+drivers/mtd/nand/docg4.c:1277:4: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'resource_size_t'
+drivers/mtd/nand/docg4.c:1277:4: warning: format '%x' expects type 'unsigned int', but argument 4 has type 'resource_size_t'
 
-
-Subject: slub: include include for prefetch
-
-Otherwise m68k breaks.
-
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Christoph Lameter <cl@linux.com>
-
-
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc:	David Woodhouse <dwmw2@infradead.org>
+Cc:	linux-mtd@lists.infradead.org
 ---
- mm/slub.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/mtd/nand/docg4.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Index: linux-2.6/mm/slub.c
-===================================================================
---- linux-2.6.orig/mm/slub.c	2012-01-13 10:04:06.000000000 -0600
-+++ linux-2.6/mm/slub.c	2012-01-30 15:51:55.000000000 -0600
-@@ -29,6 +29,7 @@
- #include <linux/math64.h>
- #include <linux/fault-inject.h>
- #include <linux/stacktrace.h>
-+#include <linux/prefetch.h>
-
- #include <trace/events/kmem.h>
+--- linux-next-20120130.orig/drivers/mtd/nand/docg4.c
++++ linux-next-20120130/drivers/mtd/nand/docg4.c
+@@ -1273,8 +1273,9 @@ static int __init probe_docg4(struct pla
+ 	virtadr = ioremap(r->start, resource_size(r));
+ 	if (!virtadr) {
+ 		dev_err(dev, "Diskonchip ioremap failed: "
+-			"0x%x bytes at 0x%x\n",
+-			resource_size(r), r->start);
++			"0x%llx bytes at 0x%llx\n",
++			(unsigned long long)resource_size(r),
++			(unsigned long long)r->start);
+ 		return -EIO;
+ 	}
+ 
