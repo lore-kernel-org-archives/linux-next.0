@@ -1,42 +1,76 @@
-From: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
-Subject: RE: Please include modem_shm in linux-next
-Date: Tue, 31 Jan 2012 09:45:22 +0100
-Message-ID: <81C3A93C17462B4BBD7E272753C105791FB6FA76E1@EXDCVYMBSTM005.EQ1STM.local>
-References: <CACRpkdYDR4S_P-CUiJoB1bBpESGs9nG+5=Mr5M-5cGF5UkOvJw@mail.gmail.com>
-	<81C3A93C17462B4BBD7E272753C105791FB10F9CC9@EXDCVYMBSTM005.EQ1STM.local>
-	<20120113111055.83755960f93161d3542e4763@canb.auug.org.au>
- <CACRpkdYjvu2Tq7b6wGn9CnMtDjb7zcenbcUM7Br2gEVq7Xpq4Q@mail.gmail.com>
+From: Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH -next] cifs: fix printk format warnings
+Date: Tue, 31 Jan 2012 05:42:31 -0500
+Message-ID: <20120131054231.66669e41@tlielax.poochiereds.net>
+References: <20120130144102.8d202c7d8eccd503a86b3053@canb.auug.org.au>
+	<4F2764E9.4010506@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eu1sys200aog114.obsmtp.com ([207.126.144.137]:55766 "EHLO
-	eu1sys200aog114.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753140Ab2AaIub convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Jan 2012 03:50:31 -0500
-In-Reply-To: <CACRpkdYjvu2Tq7b6wGn9CnMtDjb7zcenbcUM7Br2gEVq7Xpq4Q@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4F2764E9.4010506-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On Mon, 30 Jan 2012 19:50:01 -0800
+Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org> wrote:
 
->> I would also like to hear from Linus Walleij ...
->=20
-> Please replace my repo with Sjurs (whenever it merges fine).
->=20
-> Sjur, I guess an option would be if you rebase your for-next
-> onto 3.3-rc1 as soon as it appears?=20
+> From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+> 
+> Fix printk format warnings for ssize_t variables:
+> 
+> fs/cifs/connect.c:2145:3: warning: format '%ld' expects type 'long int', but argument 3 has type 'ssize_t'
+> fs/cifs/connect.c:2152:3: warning: format '%ld' expects type 'long int', but argument 3 has type 'ssize_t'
+> fs/cifs/connect.c:2160:3: warning: format '%ld' expects type 'long int', but argument 3 has type 'ssize_t'
+> fs/cifs/connect.c:2170:3: warning: format '%ld' expects type 'long int', but argument 3 has type 'ssize_t'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+> Cc:	Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+> Cc:	linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> ---
+>  fs/cifs/connect.c |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> --- linux-next-20120130.orig/fs/cifs/connect.c
+> +++ linux-next-20120130/fs/cifs/connect.c
+> @@ -2142,14 +2142,14 @@ cifs_set_cifscreds(struct smb_vol *vol,
+>  
+>  	len = delim - payload;
+>  	if (len > MAX_USERNAME_SIZE || len <= 0) {
+> -		cFYI(1, "Bad value from username search (len=%ld)", len);
+> +		cFYI(1, "Bad value from username search (len=%zd)", len);
+>  		rc = -EINVAL;
+>  		goto out_key_put;
+>  	}
+>  
+>  	vol->username = kstrndup(payload, len, GFP_KERNEL);
+>  	if (!vol->username) {
+> -		cFYI(1, "Unable to allocate %ld bytes for username", len);
+> +		cFYI(1, "Unable to allocate %zd bytes for username", len);
+>  		rc = -ENOMEM;
+>  		goto out_key_put;
+>  	}
+> @@ -2157,7 +2157,7 @@ cifs_set_cifscreds(struct smb_vol *vol,
+>  
+>  	len = key->datalen - (len + 1);
+>  	if (len > MAX_PASSWORD_SIZE || len <= 0) {
+> -		cFYI(1, "Bad len for password search (len=%ld)", len);
+> +		cFYI(1, "Bad len for password search (len=%zd)", len);
+>  		rc = -EINVAL;
+>  		kfree(vol->username);
+>  		vol->username = NULL;
+> @@ -2167,7 +2167,7 @@ cifs_set_cifscreds(struct smb_vol *vol,
+>  	++delim;
+>  	vol->password = kstrndup(delim, len, GFP_KERNEL);
+>  	if (!vol->password) {
+> -		cFYI(1, "Unable to allocate %ld bytes for password", len);
+> +		cFYI(1, "Unable to allocate %zd bytes for password", len);
+>  		rc = -ENOMEM;
+>  		kfree(vol->username);
+>  		vol->username = NULL;
 
-I have rebased to v3.3-rc1. Please pull:
-git://github.com/sjurbren/modem-ipc.git for-next.
+Looks correct.
 
-This replaces the previous branch "xshm-for-next" pulled from Linus Wal=
-leij.
-Please get back to me if you get any issues.
-
-Thanks,
-Sjur Br=E6ndeland
+Acked-by: Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
