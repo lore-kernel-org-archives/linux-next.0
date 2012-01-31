@@ -1,75 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the regmap tree with Linus' tree
-Date: Tue, 31 Jan 2012 13:59:50 +1100
-Message-ID: <20120131135950.0da0eb3e0da92b9a3b658354@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the staging tree
+Date: Tue, 31 Jan 2012 14:25:21 +1100
+Message-ID: <20120131142521.852ecb04b07f7174c179b3c8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__31_Jan_2012_13_59_50_+1100_/miLUupKmmc114HT"
+ boundary="Signature=_Tue__31_Jan_2012_14_25_21_+1100_Pz9Fci8mZrb.+VqJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41238 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57512 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752385Ab2AaDAF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Jan 2012 22:00:05 -0500
+	id S1753161Ab2AaDZb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jan 2012 22:25:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Allyn <mark.a.allyn@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Alan Cox <alan@linux.intel.com>
 
---Signature=_Tue__31_Jan_2012_13_59_50_+1100_/miLUupKmmc114HT
+--Signature=_Tue__31_Jan_2012_14_25_21_+1100_Pz9Fci8mZrb.+VqJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+Hi Greg,
 
-Today's linux-next merge of the regmap tree got a conflict in
-drivers/base/regmap/regmap.c between commit 421e8d2de3bd ("regmap: Reset
-cache status when reinitialsing the cache") from Linus' tree and commit
-a24f64a64837 ("regmap: Reset device debugfs when reinitialising the
-cache") from the regmap tree.
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
+drivers/staging/sep/sep_main.c: In function 'sep_allocate_dmatables_region':
+drivers/staging/sep/sep_main.c:217:2: warning: format '%X' expects argument=
+ of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat]
+drivers/staging/sep/sep_main.c: In function 'sep_activate_msgarea_context':
+drivers/staging/sep/sep_main.c:3348:5: warning: format '%X' expects argumen=
+t of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
+drivers/staging/sep/sep_main.c: In function 'sep_create_msgarea_context':
+drivers/staging/sep/sep_main.c:3380:5: warning: format '%X' expects argumen=
+t of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
+drivers/staging/sep/sep_main.c: In function 'sep_read':
+drivers/staging/sep/sep_main.c:3466:2: warning: format '%X' expects argumen=
+t of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat]
+drivers/staging/sep/sep_main.c: In function 'sep_fastcall_args_get':
+drivers/staging/sep/sep_main.c:3526:5: warning: format '%X' expects argumen=
+t of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
+drivers/staging/sep/sep_main.c:3567:5: warning: format '%X' expects argumen=
+t of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
+drivers/staging/sep/sep_main.c:3567:5: warning: format '%X' expects argumen=
+t of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat]
+
+Introduced by commit ff3d9c3c90c6 ("staging: sep: SEP update").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/base/regmap/regmap.c
-index 2cf4bbc,efe287e..0000000
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@@ -284,9 -347,8 +347,11 @@@ int regmap_reinit_cache(struct regmap *
-  	map->precious_reg =3D config->precious_reg;
-  	map->cache_type =3D config->cache_type;
- =20
- +	map->cache_bypass =3D false;
- +	map->cache_only =3D false;
- +
-+ 	regmap_debugfs_init(map);
-+=20
-  	ret =3D regcache_init(map, config);
- =20
-  	mutex_unlock(&map->lock);
-
---Signature=_Tue__31_Jan_2012_13_59_50_+1100_/miLUupKmmc114HT
+--Signature=_Tue__31_Jan_2012_14_25_21_+1100_Pz9Fci8mZrb.+VqJ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPJ1kmAAoJEECxmPOUX5FEopIP/RX4+9sTGfEu9e8u3P9UBwaX
-4eS5A9e62nUecFlbxnmyvR5KNHyp1vH1G3DQrvO+TVb4Tnf+uK57a/reHRg7CTSs
-ZMzQj/c1F8A9uusZ/dAXzVFqVsXR/1byfCMidHqttSwZ1GSOHUbGRc8a7/UQ1gDR
-9YvFfTEOwWwzuq09HruA2z5QdttEhhDl1/zJTAGxyc5xNwtyzFCFBwVsBgtNEXLu
-o9KNktswQ7KBWhtflZXQxSq5zmDi/UGMsqsibz2i0TRj+NPzEYx+7+YH/J8soqU6
-Hp1GENyImZmCciJ1b66HHIuYDLz+P1OpgBaRJVDWNBwse414Xh9gNKBuRLx9R765
-4gqtPiZcMNS0hSaS9cxDzxB9VvSupbAWonUS2UC2Pr7/MPMOimHWoxbfJuerXa76
-k2AhESrtY+GBs5e/z5ghjrk5L1OUz0gonyIFRnoWraBb26+DWA3n2k6Plo5NoZ23
-3G/+E6767f171roxFuKoLtzjPOfNvuOqn07BZ0SD3l/5DqZPJOiPbk2yZdCww0QA
-ulK0gX6+66sCvrDCDXDFaSBcFhA1eQOcICwmb857uLylM1Gl/oOBp0lL+5dyvaGq
-kI8K//idON9IOSUagtoONXxIdhOB8laxamoRYVz8JGb+xQ2smjSb2BQLn8ic4dpG
-YnxiBwWqiFHivIXjds84
-=k/LI
+iQIcBAEBCAAGBQJPJ18hAAoJEECxmPOUX5FEWucP/ReTXZgdvThIwegeKscKi6Qn
+fdkiL4DrlShChtV1cSaW7hv/bm+p7R3jU0ccDul/E3grFB+yU2nYwvQOFXtM+C2k
+5rID4VrSxBaUIbKyRQ1KzHjOF9qMZEudJpfnnlr33YqRMkH5fJH6ko0x8YIGPD3s
+q+TRgcJxnREWWgwwnLuw8yhfvOCobsYxNKxlS0EemjyHjyXPMzQg5LgIxRapz3/T
+hdot+TNR7JKgC5DBdoTdHEtSaEP3CNYaK+yzQHC1XsLpD9si/HOOO0WBK+u0KcdU
+zasoic3TtD0z3fnOuRKhfu1igzJ7sMRM3dwnErtUnWCbkPyALlv6FvksmruWlTfu
+gnZPZfbB2VW/kXsgg3uyDTMSEEzZP8G0j6FRft9RCMrr2xLhvlYN2TDhq99KvCGv
+LQICSAAdfUJFvYtJjzDMbAXH+Vp36qvUkiLHC3ddgvChVcpHHenL4h+2gEwaVFSm
+9l0Zh0vxHSpFKYTGzs2ZbGpAVSfRsy73Aph9x0G02Zp3cNuhUWUx4mAPPQa/YRyG
+M8SQA/9a2sMyDIbioNvAzwrL/RcdlnM+DC99dCXvPVRZkjK8YhKWvoc9ILYrFW4Q
+E8z2fNlDKkmZqypkSUtmjU3PnO+cvN9UTN3mh8dEV5ktpMK9dwWS7lQhvT0Aa9+E
+4Tvsu/xJoj5IyEaSsnOG
+=1ECR
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__31_Jan_2012_13_59_50_+1100_/miLUupKmmc114HT--
+--Signature=_Tue__31_Jan_2012_14_25_21_+1100_Pz9Fci8mZrb.+VqJ--
