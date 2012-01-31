@@ -1,53 +1,100 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: manual merge of the regmap tree with Linus' tree
-Date: Tue, 31 Jan 2012 11:12:26 +0000
-Message-ID: <20120131111226.GB18444@opensource.wolfsonmicro.com>
-References: <20120131135950.0da0eb3e0da92b9a3b658354@canb.auug.org.au>
+From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH -next] cifs: fix printk format warnings
+Date: Tue, 31 Jan 2012 07:43:37 -0600
+Message-ID: <CAH2r5mu2VXWkP49RzPuedN9hY6G-WcbyYB3WMJSf2NkRe2VO7Q@mail.gmail.com>
+References: <20120130144102.8d202c7d8eccd503a86b3053@canb.auug.org.au>
+	<4F2764E9.4010506@xenotime.net>
+	<20120131054231.66669e41@tlielax.poochiereds.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="s/l3CgOIzMHHjg/5"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120131135950.0da0eb3e0da92b9a3b658354@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120131054231.66669e41-9yPaYZwiELC+kQycOl6kW4xkIHaj4LzF@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
+Merged to cifs-2.6.git
 
---s/l3CgOIzMHHjg/5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, Jan 31, 2012 at 4:42 AM, Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org> wrote=
+:
+> On Mon, 30 Jan 2012 19:50:01 -0800
+> Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org> wrote:
+>
+>> From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+>>
+>> Fix printk format warnings for ssize_t variables:
+>>
+>> fs/cifs/connect.c:2145:3: warning: format '%ld' expects type 'long i=
+nt', but argument 3 has type 'ssize_t'
+>> fs/cifs/connect.c:2152:3: warning: format '%ld' expects type 'long i=
+nt', but argument 3 has type 'ssize_t'
+>> fs/cifs/connect.c:2160:3: warning: format '%ld' expects type 'long i=
+nt', but argument 3 has type 'ssize_t'
+>> fs/cifs/connect.c:2170:3: warning: format '%ld' expects type 'long i=
+nt', but argument 3 has type 'ssize_t'
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+>> Cc: =A0 Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+>> Cc: =A0 linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> ---
+>> =A0fs/cifs/connect.c | =A0 =A08 ++++----
+>> =A01 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> --- linux-next-20120130.orig/fs/cifs/connect.c
+>> +++ linux-next-20120130/fs/cifs/connect.c
+>> @@ -2142,14 +2142,14 @@ cifs_set_cifscreds(struct smb_vol *vol,
+>>
+>> =A0 =A0 =A0 len =3D delim - payload;
+>> =A0 =A0 =A0 if (len > MAX_USERNAME_SIZE || len <=3D 0) {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 cFYI(1, "Bad value from username search (l=
+en=3D%ld)", len);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 cFYI(1, "Bad value from username search (l=
+en=3D%zd)", len);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 rc =3D -EINVAL;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out_key_put;
+>> =A0 =A0 =A0 }
+>>
+>> =A0 =A0 =A0 vol->username =3D kstrndup(payload, len, GFP_KERNEL);
+>> =A0 =A0 =A0 if (!vol->username) {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 cFYI(1, "Unable to allocate %ld bytes for =
+username", len);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 cFYI(1, "Unable to allocate %zd bytes for =
+username", len);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 rc =3D -ENOMEM;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out_key_put;
+>> =A0 =A0 =A0 }
+>> @@ -2157,7 +2157,7 @@ cifs_set_cifscreds(struct smb_vol *vol,
+>>
+>> =A0 =A0 =A0 len =3D key->datalen - (len + 1);
+>> =A0 =A0 =A0 if (len > MAX_PASSWORD_SIZE || len <=3D 0) {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 cFYI(1, "Bad len for password search (len=3D=
+%ld)", len);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 cFYI(1, "Bad len for password search (len=3D=
+%zd)", len);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 rc =3D -EINVAL;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 kfree(vol->username);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 vol->username =3D NULL;
+>> @@ -2167,7 +2167,7 @@ cifs_set_cifscreds(struct smb_vol *vol,
+>> =A0 =A0 =A0 ++delim;
+>> =A0 =A0 =A0 vol->password =3D kstrndup(delim, len, GFP_KERNEL);
+>> =A0 =A0 =A0 if (!vol->password) {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 cFYI(1, "Unable to allocate %ld bytes for =
+password", len);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 cFYI(1, "Unable to allocate %zd bytes for =
+password", len);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 rc =3D -ENOMEM;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 kfree(vol->username);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 vol->username =3D NULL;
+>
+> Looks correct.
+>
+> Acked-by: Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 
-On Tue, Jan 31, 2012 at 01:59:50PM +1100, Stephen Rothwell wrote:
 
-> I fixed it up (I think - see below) and can carry the fix as necessary.
 
-Yes, that's the fix I've got.  I'm kind of surprised git didn't figure
-this out for itself, the tag I sent to Linus should be pre-merged into
-my -next branch as it was sitting in -next for a while.  I'll probably
-merge Linus' tree up at some point when he tags a new -rc.  Thanks.
+--=20
+Thanks,
 
---s/l3CgOIzMHHjg/5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPJ8yTAAoJEBus8iNuMP3d4S4P/2L1kUmfJ49/jwsI8NuhLQZe
-Z6qHHp3gciPf8N8Jbtm9lc9WKj9YiDs9Ha0jXJeZY40auwcivqwYsyfFOkfwHFxq
-lRr0hWPvvQ0kk1tfkzrkNhMN3EjhMEzBjcQ4CmCZfdKtbKhZgoUvEEc2a13bla72
-EMM6ASOZdZVeIsT2878SGzPU2F5gr0s9nnZKU7WHReURWNNSzH4dMdnkMrGKwdST
-tHaMuT9YLQowq04QOQsUEV+YoWithonhiG+d9Wp0UK27ZPhNyW7ZNX+YxmH4c4nt
-idxYhOOzI9Su9nkWFkRiAMyCujXEmWUTF0PIfgDb9UxKzJhIFxw1Ara+JQtCuVGZ
-r6NJ2/ESCjTNGRxnXtogbjt6XJ6o7OCPCvIY4Wtnbl8Kg0qqCuEoO2NxB7mRQeQV
-vF/usphT/9QlihyiHOfkI6M1KBKv2ojoYoiu6MCYJ3PUuJU7MHaFTKplUF43ecj9
-7xddsLLSSN7pjE8D8OtkJBsr0jV8i3NkmHyWEMFVA/Ea2LpOPnnnfMDwyc2Mhk3p
-/Sg0DszaVaFACrMoqJGJubV9c1HG8ThmBZRxcqP3Y4svkDG699Szck/ptgrLGIU4
-qb46qASKnNGCg8SEEMq2RahaZTgfcNxZeAI26Mv31EZr31SH8aLpa3uSAqZUXLEi
-5aNDY8AzsSjHqFeCbawi
-=0H8a
------END PGP SIGNATURE-----
-
---s/l3CgOIzMHHjg/5--
+Steve
