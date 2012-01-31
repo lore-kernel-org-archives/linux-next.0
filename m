@@ -1,76 +1,53 @@
-From: Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH -next] cifs: fix printk format warnings
-Date: Tue, 31 Jan 2012 05:42:31 -0500
-Message-ID: <20120131054231.66669e41@tlielax.poochiereds.net>
-References: <20120130144102.8d202c7d8eccd503a86b3053@canb.auug.org.au>
-	<4F2764E9.4010506@xenotime.net>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the regmap tree with Linus' tree
+Date: Tue, 31 Jan 2012 11:12:26 +0000
+Message-ID: <20120131111226.GB18444@opensource.wolfsonmicro.com>
+References: <20120131135950.0da0eb3e0da92b9a3b658354@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F2764E9.4010506-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="s/l3CgOIzMHHjg/5"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120131135950.0da0eb3e0da92b9a3b658354@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 30 Jan 2012 19:50:01 -0800
-Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org> wrote:
 
-> From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-> 
-> Fix printk format warnings for ssize_t variables:
-> 
-> fs/cifs/connect.c:2145:3: warning: format '%ld' expects type 'long int', but argument 3 has type 'ssize_t'
-> fs/cifs/connect.c:2152:3: warning: format '%ld' expects type 'long int', but argument 3 has type 'ssize_t'
-> fs/cifs/connect.c:2160:3: warning: format '%ld' expects type 'long int', but argument 3 has type 'ssize_t'
-> fs/cifs/connect.c:2170:3: warning: format '%ld' expects type 'long int', but argument 3 has type 'ssize_t'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-> Cc:	Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
-> Cc:	linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> ---
->  fs/cifs/connect.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> --- linux-next-20120130.orig/fs/cifs/connect.c
-> +++ linux-next-20120130/fs/cifs/connect.c
-> @@ -2142,14 +2142,14 @@ cifs_set_cifscreds(struct smb_vol *vol,
->  
->  	len = delim - payload;
->  	if (len > MAX_USERNAME_SIZE || len <= 0) {
-> -		cFYI(1, "Bad value from username search (len=%ld)", len);
-> +		cFYI(1, "Bad value from username search (len=%zd)", len);
->  		rc = -EINVAL;
->  		goto out_key_put;
->  	}
->  
->  	vol->username = kstrndup(payload, len, GFP_KERNEL);
->  	if (!vol->username) {
-> -		cFYI(1, "Unable to allocate %ld bytes for username", len);
-> +		cFYI(1, "Unable to allocate %zd bytes for username", len);
->  		rc = -ENOMEM;
->  		goto out_key_put;
->  	}
-> @@ -2157,7 +2157,7 @@ cifs_set_cifscreds(struct smb_vol *vol,
->  
->  	len = key->datalen - (len + 1);
->  	if (len > MAX_PASSWORD_SIZE || len <= 0) {
-> -		cFYI(1, "Bad len for password search (len=%ld)", len);
-> +		cFYI(1, "Bad len for password search (len=%zd)", len);
->  		rc = -EINVAL;
->  		kfree(vol->username);
->  		vol->username = NULL;
-> @@ -2167,7 +2167,7 @@ cifs_set_cifscreds(struct smb_vol *vol,
->  	++delim;
->  	vol->password = kstrndup(delim, len, GFP_KERNEL);
->  	if (!vol->password) {
-> -		cFYI(1, "Unable to allocate %ld bytes for password", len);
-> +		cFYI(1, "Unable to allocate %zd bytes for password", len);
->  		rc = -ENOMEM;
->  		kfree(vol->username);
->  		vol->username = NULL;
+--s/l3CgOIzMHHjg/5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Looks correct.
+On Tue, Jan 31, 2012 at 01:59:50PM +1100, Stephen Rothwell wrote:
 
-Acked-by: Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+> I fixed it up (I think - see below) and can carry the fix as necessary.
+
+Yes, that's the fix I've got.  I'm kind of surprised git didn't figure
+this out for itself, the tag I sent to Linus should be pre-merged into
+my -next branch as it was sitting in -next for a while.  I'll probably
+merge Linus' tree up at some point when he tags a new -rc.  Thanks.
+
+--s/l3CgOIzMHHjg/5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPJ8yTAAoJEBus8iNuMP3d4S4P/2L1kUmfJ49/jwsI8NuhLQZe
+Z6qHHp3gciPf8N8Jbtm9lc9WKj9YiDs9Ha0jXJeZY40auwcivqwYsyfFOkfwHFxq
+lRr0hWPvvQ0kk1tfkzrkNhMN3EjhMEzBjcQ4CmCZfdKtbKhZgoUvEEc2a13bla72
+EMM6ASOZdZVeIsT2878SGzPU2F5gr0s9nnZKU7WHReURWNNSzH4dMdnkMrGKwdST
+tHaMuT9YLQowq04QOQsUEV+YoWithonhiG+d9Wp0UK27ZPhNyW7ZNX+YxmH4c4nt
+idxYhOOzI9Su9nkWFkRiAMyCujXEmWUTF0PIfgDb9UxKzJhIFxw1Ara+JQtCuVGZ
+r6NJ2/ESCjTNGRxnXtogbjt6XJ6o7OCPCvIY4Wtnbl8Kg0qqCuEoO2NxB7mRQeQV
+vF/usphT/9QlihyiHOfkI6M1KBKv2ojoYoiu6MCYJ3PUuJU7MHaFTKplUF43ecj9
+7xddsLLSSN7pjE8D8OtkJBsr0jV8i3NkmHyWEMFVA/Ea2LpOPnnnfMDwyc2Mhk3p
+/Sg0DszaVaFACrMoqJGJubV9c1HG8ThmBZRxcqP3Y4svkDG699Szck/ptgrLGIU4
+qb46qASKnNGCg8SEEMq2RahaZTgfcNxZeAI26Mv31EZr31SH8aLpa3uSAqZUXLEi
+5aNDY8AzsSjHqFeCbawi
+=0H8a
+-----END PGP SIGNATURE-----
+
+--s/l3CgOIzMHHjg/5--
