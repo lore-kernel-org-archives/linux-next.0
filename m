@@ -1,48 +1,42 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warnings after merge of the staging tree
-Date: Mon, 30 Jan 2012 21:14:42 -0800
-Message-ID: <20120131051442.GA25054@kroah.com>
-References: <20120131142521.852ecb04b07f7174c179b3c8@canb.auug.org.au>
+From: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
+Subject: RE: Please include modem_shm in linux-next
+Date: Tue, 31 Jan 2012 09:45:22 +0100
+Message-ID: <81C3A93C17462B4BBD7E272753C105791FB6FA76E1@EXDCVYMBSTM005.EQ1STM.local>
+References: <CACRpkdYDR4S_P-CUiJoB1bBpESGs9nG+5=Mr5M-5cGF5UkOvJw@mail.gmail.com>
+	<81C3A93C17462B4BBD7E272753C105791FB10F9CC9@EXDCVYMBSTM005.EQ1STM.local>
+	<20120113111055.83755960f93161d3542e4763@canb.auug.org.au>
+ <CACRpkdYjvu2Tq7b6wGn9CnMtDjb7zcenbcUM7Br2gEVq7Xpq4Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:48943 "EHLO
-	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750794Ab2AaFPn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Jan 2012 00:15:43 -0500
-Received: from compute4.internal (compute4.nyi.mail.srv.osa [10.202.2.44])
-	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 2E4D721727
-	for <linux-next@vger.kernel.org>; Tue, 31 Jan 2012 00:15:43 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <20120131142521.852ecb04b07f7174c179b3c8@canb.auug.org.au>
+Received: from eu1sys200aog114.obsmtp.com ([207.126.144.137]:55766 "EHLO
+	eu1sys200aog114.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753140Ab2AaIub convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 Jan 2012 03:50:31 -0500
+In-Reply-To: <CACRpkdYjvu2Tq7b6wGn9CnMtDjb7zcenbcUM7Br2gEVq7Xpq4Q@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Allyn <mark.a.allyn@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Alan Cox <alan@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Tue, Jan 31, 2012 at 02:25:21PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the staging tree, today's linux-next build (x86_64
-> allmodconfig) produced these warnings:
-> 
-> drivers/staging/sep/sep_main.c: In function 'sep_allocate_dmatables_region':
-> drivers/staging/sep/sep_main.c:217:2: warning: format '%X' expects argument of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat]
-> drivers/staging/sep/sep_main.c: In function 'sep_activate_msgarea_context':
-> drivers/staging/sep/sep_main.c:3348:5: warning: format '%X' expects argument of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
-> drivers/staging/sep/sep_main.c: In function 'sep_create_msgarea_context':
-> drivers/staging/sep/sep_main.c:3380:5: warning: format '%X' expects argument of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
-> drivers/staging/sep/sep_main.c: In function 'sep_read':
-> drivers/staging/sep/sep_main.c:3466:2: warning: format '%X' expects argument of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat]
-> drivers/staging/sep/sep_main.c: In function 'sep_fastcall_args_get':
-> drivers/staging/sep/sep_main.c:3526:5: warning: format '%X' expects argument of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
-> drivers/staging/sep/sep_main.c:3567:5: warning: format '%X' expects argument of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
-> drivers/staging/sep/sep_main.c:3567:5: warning: format '%X' expects argument of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat]
-> 
-> Introduced by commit ff3d9c3c90c6 ("staging: sep: SEP update").
+Hi Stephen,
 
-Thanks, I've already told Alan about them, he said he would resolve them
-soon.
+>> I would also like to hear from Linus Walleij ...
+>=20
+> Please replace my repo with Sjurs (whenever it merges fine).
+>=20
+> Sjur, I guess an option would be if you rebase your for-next
+> onto 3.3-rc1 as soon as it appears?=20
 
-greg k-h
+I have rebased to v3.3-rc1. Please pull:
+git://github.com/sjurbren/modem-ipc.git for-next.
+
+This replaces the previous branch "xshm-for-next" pulled from Linus Wal=
+leij.
+Please get back to me if you get any issues.
+
+Thanks,
+Sjur Br=E6ndeland
