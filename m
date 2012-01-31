@@ -1,76 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the staging tree
-Date: Tue, 31 Jan 2012 14:25:21 +1100
-Message-ID: <20120131142521.852ecb04b07f7174c179b3c8@canb.auug.org.au>
+Subject: linux-next: manual merge of the kmap_atomic tree with the
+ staging.current tree
+Date: Tue, 31 Jan 2012 14:27:47 +1100
+Message-ID: <20120131142747.a2dd139403833a50939dbd17@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__31_Jan_2012_14_25_21_+1100_Pz9Fci8mZrb.+VqJ"
+ boundary="Signature=_Tue__31_Jan_2012_14_27_47_+1100_ef3dSH0lNoSS=XGU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57512 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56330 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753161Ab2AaDZb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Jan 2012 22:25:31 -0500
+	id S1752760Ab2AaD14 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Jan 2012 22:27:56 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Allyn <mark.a.allyn@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Alan Cox <alan@linux.intel.com>
+To: Cong Wang <amwang@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>
 
---Signature=_Tue__31_Jan_2012_14_25_21_+1100_Pz9Fci8mZrb.+VqJ
+--Signature=_Tue__31_Jan_2012_14_27_47_+1100_ef3dSH0lNoSS=XGU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Cong,
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+Today's linux-next merge of the kmap_atomic tree got a conflict in
+drivers/staging/gma500/mmu.c between commit 344bc24c2947 ("staging:
+delete gma500 driver") from the staging.current tree and commit
+cb422c115787 ("gma500: remove the second argument of k[un]map_atomic()")
+from the kmap_atomic tree.
 
-drivers/staging/sep/sep_main.c: In function 'sep_allocate_dmatables_region':
-drivers/staging/sep/sep_main.c:217:2: warning: format '%X' expects argument=
- of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat]
-drivers/staging/sep/sep_main.c: In function 'sep_activate_msgarea_context':
-drivers/staging/sep/sep_main.c:3348:5: warning: format '%X' expects argumen=
-t of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
-drivers/staging/sep/sep_main.c: In function 'sep_create_msgarea_context':
-drivers/staging/sep/sep_main.c:3380:5: warning: format '%X' expects argumen=
-t of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
-drivers/staging/sep/sep_main.c: In function 'sep_read':
-drivers/staging/sep/sep_main.c:3466:2: warning: format '%X' expects argumen=
-t of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat]
-drivers/staging/sep/sep_main.c: In function 'sep_fastcall_args_get':
-drivers/staging/sep/sep_main.c:3526:5: warning: format '%X' expects argumen=
-t of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
-drivers/staging/sep/sep_main.c:3567:5: warning: format '%X' expects argumen=
-t of type 'unsigned int', but argument 4 has type 'size_t' [-Wformat]
-drivers/staging/sep/sep_main.c:3567:5: warning: format '%X' expects argumen=
-t of type 'unsigned int', but argument 5 has type 'size_t' [-Wformat]
-
-Introduced by commit ff3d9c3c90c6 ("staging: sep: SEP update").
+The former removes this file (as the driver has migrated out of staging),
+so I did that.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__31_Jan_2012_14_25_21_+1100_Pz9Fci8mZrb.+VqJ
+--Signature=_Tue__31_Jan_2012_14_27_47_+1100_ef3dSH0lNoSS=XGU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPJ18hAAoJEECxmPOUX5FEWucP/ReTXZgdvThIwegeKscKi6Qn
-fdkiL4DrlShChtV1cSaW7hv/bm+p7R3jU0ccDul/E3grFB+yU2nYwvQOFXtM+C2k
-5rID4VrSxBaUIbKyRQ1KzHjOF9qMZEudJpfnnlr33YqRMkH5fJH6ko0x8YIGPD3s
-q+TRgcJxnREWWgwwnLuw8yhfvOCobsYxNKxlS0EemjyHjyXPMzQg5LgIxRapz3/T
-hdot+TNR7JKgC5DBdoTdHEtSaEP3CNYaK+yzQHC1XsLpD9si/HOOO0WBK+u0KcdU
-zasoic3TtD0z3fnOuRKhfu1igzJ7sMRM3dwnErtUnWCbkPyALlv6FvksmruWlTfu
-gnZPZfbB2VW/kXsgg3uyDTMSEEzZP8G0j6FRft9RCMrr2xLhvlYN2TDhq99KvCGv
-LQICSAAdfUJFvYtJjzDMbAXH+Vp36qvUkiLHC3ddgvChVcpHHenL4h+2gEwaVFSm
-9l0Zh0vxHSpFKYTGzs2ZbGpAVSfRsy73Aph9x0G02Zp3cNuhUWUx4mAPPQa/YRyG
-M8SQA/9a2sMyDIbioNvAzwrL/RcdlnM+DC99dCXvPVRZkjK8YhKWvoc9ILYrFW4Q
-E8z2fNlDKkmZqypkSUtmjU3PnO+cvN9UTN3mh8dEV5ktpMK9dwWS7lQhvT0Aa9+E
-4Tvsu/xJoj5IyEaSsnOG
-=1ECR
+iQIcBAEBCAAGBQJPJ1+zAAoJEECxmPOUX5FEnYMQAI4Q05nWk9PuW1rQgsUOf4oP
+v5dumtFA/gnaNT8juUquheJpPpaklUq99DTwZhbdX8WA+H030kjHE1NX8hQROf7c
+N0G5FGXNECxEbRGAUMt9kdVpUqnA9tN7zbMYpIeZfCeyykPWa8FEp2CaulP/qVh8
+u3xRyb2VlHDk1J8Yw3ZZRjGZWBm/V4NKDexRBrpige3rMNON3Cdh9g5/Fre3hU4M
+9VrfLE4UYiJhgx5g7nzDRm3GxGErWCVG5f8XVXwvh+THaXtVsY0xMLPcnHh5lX4F
+q7sni8MohscyPG8aoV26VSxA1VVoS4K/HXL643ue0fCT3EG8AW57yxJMmTGlolon
+pYosT+HhlrpvT2gCBYmL2AXOXUAL+UK3COxYoorYjY3Er+sVzzXS+jW557dv3Lmz
+jKJD/UXS7d1AMqY0vcW3cLrZaNHGBtean9awwR9GW71EPg74au1S5Q4FA7LUFLgI
+i7l+KSYpdAc5Pkb3mlloL+s1gpnZmO7JGdNbGVfTeKPm/Yt0kuSDkPXfJYa19bIK
+/hbxzifweNY29jP77oyVK1No9VYFqLMwN2JUKFLalekD2nND7XUA8HUQgGdeK+fT
+exZ6g3XgqywDxsmvzHeto0spVF8CypZ1sMYLNEnYgev9EE7kaTQrOJfY3Zl14EiX
+Yfxp+L9DF/IsIv1/8fET
+=uZhk
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__31_Jan_2012_14_25_21_+1100_Pz9Fci8mZrb.+VqJ--
+--Signature=_Tue__31_Jan_2012_14_27_47_+1100_ef3dSH0lNoSS=XGU--
