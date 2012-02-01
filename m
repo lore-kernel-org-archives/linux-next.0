@@ -1,76 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please include modem_shm in linux-next
-Date: Wed, 1 Feb 2012 11:45:43 +1100
-Message-ID: <20120201114543.0f8e35b3b9c6baadb2ba0c32@canb.auug.org.au>
-References: <CACRpkdYDR4S_P-CUiJoB1bBpESGs9nG+5=Mr5M-5cGF5UkOvJw@mail.gmail.com>
-	<81C3A93C17462B4BBD7E272753C105791FB10F9CC9@EXDCVYMBSTM005.EQ1STM.local>
-	<20120113111055.83755960f93161d3542e4763@canb.auug.org.au>
-	<CACRpkdYjvu2Tq7b6wGn9CnMtDjb7zcenbcUM7Br2gEVq7Xpq4Q@mail.gmail.com>
-	<81C3A93C17462B4BBD7E272753C105791FB6FA76E1@EXDCVYMBSTM005.EQ1STM.local>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ net-next tree
+Date: Wed, 1 Feb 2012 13:39:50 +1100
+Message-ID: <20120201133950.ece9e39bba11f943e4724014@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__1_Feb_2012_11_45_43_+1100_m9SOs02Dw1.vWle/"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54073 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753103Ab2BAApx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 31 Jan 2012 19:45:53 -0500
-In-Reply-To: <81C3A93C17462B4BBD7E272753C105791FB6FA76E1@EXDCVYMBSTM005.EQ1STM.local>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+ boundary="Signature=_Wed__1_Feb_2012_13_39_50_+1100_o3K7sK3MFzOWeO3n"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__1_Feb_2012_11_45_43_+1100_m9SOs02Dw1.vWle/
+--Signature=_Wed__1_Feb_2012_13_39_50_+1100_o3K7sK3MFzOWeO3n
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sjur,
+Hi John,
 
-On Tue, 31 Jan 2012 09:45:22 +0100 Sjur BRENDELAND <sjur.brandeland@sterics=
-son.com> wrote:
->
-> >> I would also like to hear from Linus Walleij ...
-> >=20
-> > Please replace my repo with Sjurs (whenever it merges fine).
-> >=20
-> > Sjur, I guess an option would be if you rebase your for-next
-> > onto 3.3-rc1 as soon as it appears?=20
->=20
-> I have rebased to v3.3-rc1. Please pull:
-> git://github.com/sjurbren/modem-ipc.git for-next.
->=20
-> This replaces the previous branch "xshm-for-next" pulled from Linus Walle=
-ij.
-> Please get back to me if you get any issues.
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/wireless/rtlwifi/rtl8192se/sw.c between commit e404decb0fb0
+("drivers/net: Remove unnecessary k.alloc/v.alloc OOM messages") from the
+net-next tree and commit f30d7507a811 ("rtlwifi: Convert RT_TRACE macro
+to use ##__VA_ARGS__") from the wireless-next tree.
 
-I have switched to this from today.
-
+The former removed the code modified by the latter, so I did that (see
+below).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__1_Feb_2012_11_45_43_+1100_m9SOs02Dw1.vWle/
+diff --cc drivers/net/wireless/rtlwifi/rtl8192se/sw.c
+index 36140cc,ca38dd9..0000000
+--- a/drivers/net/wireless/rtlwifi/rtl8192se/sw.c
++++ b/drivers/net/wireless/rtlwifi/rtl8192se/sw.c
+@@@ -186,9 -226,14 +226,11 @@@ static int rtl92s_init_sw_vars(struct i
+ =20
+  	/* for firmware buf */
+  	rtlpriv->rtlhal.pfirmware =3D vzalloc(sizeof(struct rt_firmware));
+ -	if (!rtlpriv->rtlhal.pfirmware) {
+ -		RT_TRACE(rtlpriv, COMP_ERR, DBG_EMERG,
+ -			 "Can't alloc buffer for fw\n");
+ +	if (!rtlpriv->rtlhal.pfirmware)
+  		return 1;
+ -	}
+ =20
++ 	rtlpriv->max_fw_size =3D sizeof(struct rt_firmware);
++=20
+  	pr_info("Driver for Realtek RTL8192SE/RTL8191SE\n"
+  		"Loading firmware %s\n", rtlpriv->cfg->fw_name);
+  	/* request fw */
+
+--Signature=_Wed__1_Feb_2012_13_39_50_+1100_o3K7sK3MFzOWeO3n
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPKIs3AAoJEECxmPOUX5FEK7MP/Rlc3s9fRujJ/6CjEXD9wYM8
-5UnZ01JTfW35ZqPnr7F1/1o8Y5f7ts4p/6D79b6oYPv5w5Lu42938Dt8fCwRbMJ6
-DxU0o/fk021p8+BqHrMv/FaN+4K3KiydzfOwh00bHD0EozSoJq2I9d+qb33cfNoz
-FgT0p0qcbJXpBd2a8qeoy6a60TpY5RRRchnsFN7vUCVH/asdwuQpNmjFWsw4nW2R
-2vw9zOjbTAHnJjHEbUKB/t151ZmNFQsXxmYTb1lkMr+V91/2mb2BHqDiaYJ6aNlQ
-u1ALugd23i4HWhM3DP/H6FzuVsAtuA6hdaI74LriCiWndy0NdUHAc74FG9E4aNcc
-PiYdUQ0lPgYHJB3GV1Vn7W/g7va1G3Lla3m0Jul2dNeh+56O0q6vugroHjKTOH4d
-iJ9X28I5PhUbyEGNQH9sFzxbMwZ2W8x2qHqD2lrAbZkDhgQm9L4Xr/+JKfxNraql
-PVyVmFs+zoudnepsKDBh80grTCHDkQmrsFgkpRQahbR+jLw8kmK4Xy4SrIr2wC8d
-NQYzaBNfJqZGrpV2CFX6tgPOdAeKxR5mOqChcUHWyI/qKChJVDgS4mwQaHfGvN+6
-foq/J8su4EcBbGRS/X3YjtnccIovTrWu2cUjAtYvyQUfrdkvHL/MKlWFP+hW7ZLE
-yHi02ivIAkbOCYrz43qo
-=pgVM
+iQIcBAEBCAAGBQJPKKX2AAoJEECxmPOUX5FEj14P/0V6AwPrzUGfAxESJHiEzpji
+maZ+61hEXWI9L4skvF1rDyIU0PHyRpzdm6yBxNL3/TdNLIUH/hGc5rsrMr2nonFv
+FzmOtnZrbyHrtiVdwU3QI70mBE6zxK+iA20Akt88M8tXu4KLEpLc9D51ih+G22M5
+K7JByqFZqEKP/1h3+iunESkMKxK0pKdmNplWsEuzAOl+nDfYinBin0dxvWAlBH+f
+zIUzhJBpVRkGHGSk0lUMSEPmLNasY7mzIM9HfUc9uMRNA2iIwASKhUJiLXzUidEu
+vrKle9hASokQd03ngmopGIq31hqHYOQaQk+otm19qkdikiQfyg4nQpEgbmaRC8U+
+TZPs2AHCOsQL7mmosyYHFt+3sAIl2/3+7LRa/15IJSuGeEPqYtAyyEPaLjVT0oF8
+tlA0GDeVgK7jROv8d7rJDwhz1mxeF6os/zXLkfF2D7TpyTher4xi4jk45DoguuSJ
+yqh5rgjjqSOcRzVkhJaOAMO1wjNI450YapwgD+eN2yJwUl4D6LjN8OLH27VooiyT
+3lOdF3xH78CxtSWnOrazCPLqKFfU8MpK9Ztw2UWSl+OEBbQA3NNm2gp8CKEeZhI4
+e4orLlei3VRQlG6KP1ajcQOrrTauZ7o4yLlxlmPvyrrMY2OXDHtyzQsmMd8c38GH
+GLdcBcwuBrkrl8BibH5T
+=MrdA
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__1_Feb_2012_11_45_43_+1100_m9SOs02Dw1.vWle/--
+--Signature=_Wed__1_Feb_2012_13_39_50_+1100_o3K7sK3MFzOWeO3n--
