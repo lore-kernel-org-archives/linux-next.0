@@ -1,30 +1,62 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Subject: linux-next wiki: IncludedTrees
-Date: Tue, 31 Jan 2012 19:21:00 -0800
-Message-ID: <CAN8TOE_OV51oTk2tL-BvY9OKR6EMBtAHmYSOii7-eZfsGNC3-w@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the modem-shm tree
+Date: Wed, 1 Feb 2012 16:00:57 +1100
+Message-ID: <20120201160057.7be520d38bf5d0dd6d29024d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__1_Feb_2012_16_00_57_+1100_P553fb2kmhI.npPi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:50577 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752412Ab2BADVB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 31 Jan 2012 22:21:01 -0500
-Received: by werb13 with SMTP id b13so613872wer.19
-        for <linux-next@vger.kernel.org>; Tue, 31 Jan 2012 19:21:00 -0800 (PST)
+Received: from chilli.pcug.org.au ([203.10.76.44]:48569 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750902Ab2BAFBK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Feb 2012 00:01:10 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Frank Seidel <frank@f-seidel.de>
-Cc: linux-next@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?B?IlNqdXIgQnLDpm5k?= =?UTF-8?B?ZWxhbmQi?= <sjur.brandeland@stericsson.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Frank,
+--Signature=_Wed__1_Feb_2012_16_00_57_+1100_P553fb2kmhI.npPi
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It looks like the IncludedTrees page on the linux-next wiki is broken
-due to an incorrect URL for the linux-next tree:
+Hi all,
 
-http://linux.f-seidel.de/linux-next/pmwiki/pmwiki.php?n=Linux-next.IncludedTrees
+After merging the modem-shm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Did the linux-next tree move? (Perhaps since the kernel.org hacking
-fiasco?) And is the linux-next wiki maintained still?
+scripts/Makefile.headersinst:18: include/linux/shm/Kbuild: No such file or =
+directory
 
-Thanks,
-Brian
+Caused by commit fdefb6d63aa1 ("modem_shm: Channel config definitions for
+ST-E M7400 driver").
+
+I have used the xshm tree from next-20120131 instead for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__1_Feb_2012_16_00_57_+1100_P553fb2kmhI.npPi
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPKMcJAAoJEECxmPOUX5FEwucQAKdDkC1xod360aQLPnnuioJ5
+fG6Aryld4W8IThwoHeiPflaUXE9uwp3luQo3xMuZ7F2zJSUWc7SwdmbWbRweKVzb
+iVL8Cy/gt0N/V7QD9XhsbldBqO9oZPa1XaaXiyyyOLzqu5L973PJ5SGGT4WMARxo
+5Oj6hyJor1xVmB8SwTxYFiVDn2RN/UrO8G4zIdF42ppxfX3cgxZM0sZ3EA0DJN33
+qSC0InuFgUWhNhmYVrTO1jpFiTtH1PthUD9Be1dydFekApEbFTtmaTKa2ZiklO3O
+gpZ1CAzlo2GWIQKVDBimy7r5in2+QZHMPPP4/8LPq5a5K3zGCt5lMaKXdbYYh7HU
+ddJ5/XpHmm/Uysp6jiMlI/eiASArbMcQMHziXXOCe4sRVO5U54BqXT9g3PR0AbhX
+x6+VWvX7vpIuiCzPzJuMjFTSFpa8drkdOS4QBokfhktWDnGSUoqekEDyFAG5yqTc
+ypxSRd0slS4gZVcXsQlOUHisnkmkhByLUHYAuMBP+Nr7E6RxWhU5SlkHWgKP8LwK
+d25h5COT8UH4kC3wLUoQnGTbs84833uCr2U4y2beFxN73vFt4mapFUjLpJARSLSs
+OjA/o/Y1ybPdK9BBJcPOyGv+MwLfCukwlharQ2Rs37EV+pxcxRSyJ9mypnXgoPuH
+5e7JcsqBppRKekMUE7h6
+=ES08
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__1_Feb_2012_16_00_57_+1100_P553fb2kmhI.npPi--
