@@ -1,30 +1,38 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Please add irqdomain branch to linux-next
-Date: Thu, 2 Feb 2012 14:10:31 -0700
-Message-ID: <CACxGe6sTO_Jy-vecKS9SoVs55ZA8BMc+O0NODLdq6KvkcbPByg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Feb 2 (kvmtool)
+Date: Thu, 02 Feb 2012 15:28:27 -0800
+Message-ID: <4F2B1C1B.1040700@xenotime.net>
+References: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:61798 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755385Ab2BBVKv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2012 16:10:51 -0500
+Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:57364 "HELO
+	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S933430Ab2BBWad (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2012 17:30:33 -0500
+In-Reply-To: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@kernel.org>, Sasha Levin <levinsasha928@gmail.com>, Asias He <asias.hejun@gmail.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
 
-Hi Stephen,
+On 02/01/2012 07:45 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20120201:
 
-Can you please add the following branch to linux-next?  It contains
-the majority of the irqdomain rework that I've been doing.  I'd like
-to get it marinating in linux-next early so I'm sure it will be ready
-when the v3.4 merge window rolls around.
 
-git://git.secretlab.ca/git/linux-2.6.git irqdomain/next
+On some randconfig i386 builds, I am seeing this:
 
-Thanks,
-g.
+warning: (KVMTOOL_TEST_ENABLE && AMD_IOMMU) selects PCI_MSI which has unmet direct dependencies (PCI && ARCH_SUPPORTS_MSI)
+
+because ARCH_SUPPORTS_MSI needs both X86_LOCAL_APIC and X86_IO_APIC
+but configs don't necessarily have both of them enabled.
+
+Do you want to add more selects here?
+(this mess could continue for quite some time with other kconfig symbols)
 
 -- 
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
