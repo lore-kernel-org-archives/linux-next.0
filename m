@@ -1,95 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please add irqdomain branch to linux-next
-Date: Fri, 3 Feb 2012 10:34:52 +1100
-Message-ID: <20120203103452.14370a8f0a97199094770443@canb.auug.org.au>
-References: <CACxGe6sTO_Jy-vecKS9SoVs55ZA8BMc+O0NODLdq6KvkcbPByg@mail.gmail.com>
+Subject: Re: linux-next: Tree for Feb 2 (fs/jffs2)
+Date: Fri, 3 Feb 2012 10:44:53 +1100
+Message-ID: <20120203104453.8438182da9f365c24d3c2128@canb.auug.org.au>
+References: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au>
+	<4F2AD4DE.7040508@xenotime.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__3_Feb_2012_10_34_52_+1100_fKru8lp8BGlZ76vC"
+ boundary="Signature=_Fri__3_Feb_2012_10_44_53_+1100_KPBENjOXy6lr7v/K"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:32899 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41741 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754319Ab2BBXfH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2012 18:35:07 -0500
-In-Reply-To: <CACxGe6sTO_Jy-vecKS9SoVs55ZA8BMc+O0NODLdq6KvkcbPByg@mail.gmail.com>
+	with ESMTP id S1753525Ab2BBXpE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2012 18:45:04 -0500
+In-Reply-To: <4F2AD4DE.7040508@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
 
---Signature=_Fri__3_Feb_2012_10_34_52_+1100_fKru8lp8BGlZ76vC
+--Signature=_Fri__3_Feb_2012_10_44_53_+1100_KPBENjOXy6lr7v/K
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
-
-On Thu, 2 Feb 2012 14:10:31 -0700 Grant Likely <grant.likely@secretlab.ca> =
-wrote:
->
-> Can you please add the following branch to linux-next?  It contains
-> the majority of the irqdomain rework that I've been doing.  I'd like
-> to get it marinating in linux-next early so I'm sure it will be ready
-> when the v3.4 merge window rolls around.
+On Thu, 02 Feb 2012 10:24:30 -0800 Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
 >=20
-> git://git.secretlab.ca/git/linux-2.6.git irqdomain/next
+> fs/jffs2/*.c still contains uses of ->read etc. instead of using
+> mtd_read() etc.
+>=20
+> fs/jffs2/read.c:36:8: error: 'struct mtd_info' has no member named 'read'
+> fs/jffs2/read.c:112:8: error: 'struct mtd_info' has no member named 'read'
+> fs/jffs2/nodemgmt.c:669:8: error: 'struct mtd_info' has no member named '=
+read'
+> fs/jffs2/readinode.c:83:9: error: 'struct mtd_info' has no member named '=
+read'
+> fs/jffs2/readinode.c:676:9: error: 'struct mtd_info' has no member named =
+'read'
+> fs/jffs2/readinode.c:954:8: error: 'struct mtd_info' has no member named =
+'read'
+> fs/jffs2/readinode.c:1040:9: error: 'struct mtd_info' has no member named=
+ 'read'
+> fs/jffs2/readinode.c:1216:8: error: 'struct mtd_info' has no member named=
+ 'read'
+> fs/jffs2/readinode.c:1275:10: error: 'struct mtd_info' has no member name=
+d 'read'
+> fs/jffs2/scan.c:286:8: error: 'struct mtd_info' has no member named 'read'
+> fs/jffs2/gc.c:590:8: error: 'struct mtd_info' has no member named 'read'
+> fs/jffs2/gc.c:894:10: error: 'struct mtd_info' has no member named 'read'
+> fs/jffs2/gc.c:977:9: error: 'struct mtd_info' has no member named 'read'
 
-Added from today.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+They were probably missed because they use the jffs2_flash_read() macro
+in fs/jffs2/os-linux.h
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Fri__3_Feb_2012_10_34_52_+1100_fKru8lp8BGlZ76vC
+--Signature=_Fri__3_Feb_2012_10_44_53_+1100_KPBENjOXy6lr7v/K
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPKx2cAAoJEECxmPOUX5FE4o8P/0HZrDu7S1mFn1wx9hmqg8ks
-LbRdBDA2LzuXcAHdwNahlVDzj4v+YnFzna2TgJl338k8+O4xo3C7Ya2wNanxkP7z
-l0ZPXE3KkiDOfcFOoYNVncKmBZNg1ioZFjXpsaxkeP6TqiVaB5O4O/BQizUQS2Pi
-3D1aT3RjJM6d1eivQsYteoXVTRD4tBAofuZCwtY5502Tj2bTBwcvJNPhl/pYm9ux
-UTUtZeLtc9XmIii44to5xCS49z6v09BN/fVED16XvSWxkog21dL7TGGN3xvBem3n
-OvofQVnomcxkbqaJ3n6lv8kxYfm5ITbaTHrI4q32nFmh1oTMhcmsRzpHUtztPSCB
-gdYEJETKqJpCZoH/32h7SPlvF+wau6U2/+KZPfT0pCa0T8zmymvfPXmJcNqIREa8
-kSN9GcIEcM8NXONh2qP5yLmq2vFJzJJYmdMASS2dODCzNj2mh+sN4Fad50uktopf
-s+o1CpQw5b4hjC0CKJcrrjs6i4lP/0yET3SijEitht1/aV9OhwcwkpMv5RlxCctG
-jphQdTwYQ7AbMKZ3W1eIP9jg5bz4GKb78EX37nXprf5ot4qFV7BnhR96VVwPmIUi
-FaacSRIjZHHc9d+STjmOgMJz0tZBYkgNpHzIIJqHnMLCzSJwTkNGLxRyOc4DF0qC
-rmkdObu6wIRLD/K/POr1
-=4jmT
+iQIcBAEBCAAGBQJPKx/1AAoJEECxmPOUX5FEjfMQAKkQBMSZ1l1DbYtAXeqWSI74
+gTF0UQn3Ejj6yQr9VlQRzBik46yxhSVsScvVZ6waIVAN/m3KVMyjninNm5LMdaWq
+rni9lCDUFXUTKQwZCtmTpyNQHxm4ua62xlH4wuWS0+YtS918XEpR8cnDoQHEYTO9
+kvhWf4X8tZoGzboBeCcKMH9TcA1WhEwnruVZ+jG4OF1QTvbiANss9dZxTe56DpnM
+ONRBqglftu+O6qpv/JIbxYZ6bKVyRJt7LU4iPKDi9qK2qgC1SJ83zSFq4BCGPjHs
+zoShD2rBfrNX9RRjgOYNeiUI+mGj0XVIt4oTQuRyzeA018xV5F7ep/OsFBSGfaYa
+9RqkZXTcBNjQ/xI7JB86YHrRjd/p3IHliYLfZ8jx/+v09Q7rYbC/rlxCdvvYz9cT
+D0nQ9qYme6AJAwx1alFv1ZOnJ2S/cOz3fM4MK7C9vJDdNsAXzOJN4u+o8DB2eddw
+GZR+ejy15WmgKVluIJi9XVOYKfGPgok6tILhMB3cC7YDz0op0KvXyrviO9HWBDJb
+IYgRWOnT9cus1Zk8ZcIJ3p0La/mE6RZhmFuJV8yb19/nw5ckuI4U9cpG6gsAGyoW
+IzGZOvuhg/jNleRX1Y9osJUmNOrfmUE+3LNl2f0RbDai2TiqyRdV5EUAD+WtH0bw
+sI2pkGkPKTdndIfyK0AQ
+=Nl48
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__3_Feb_2012_10_34_52_+1100_fKru8lp8BGlZ76vC--
+--Signature=_Fri__3_Feb_2012_10_44_53_+1100_KPBENjOXy6lr7v/K--
