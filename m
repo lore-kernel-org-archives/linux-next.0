@@ -1,40 +1,94 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Feb 2 (fs/jffs2)
-Date: Thu, 02 Feb 2012 10:24:30 -0800
-Message-ID: <4F2AD4DE.7040508@xenotime.net>
-References: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au>
+Subject: [PATCH] Re: linux-next: Tree for Feb 2 (media/radio/wl128x)
+Date: Thu, 02 Feb 2012 10:40:30 -0800
+Message-ID: <4F2AD89E.70805@xenotime.net>
+References: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au> <4F2AD0E4.6020801@xenotime.net> <4F2AC5F8.1000901@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:50917 "HELO
+	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754526Ab2BBRme (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2012 12:42:34 -0500
+In-Reply-To: <4F2AC5F8.1000901@ti.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Manjunatha Halli <x0130808@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Manjunatha Halli <manjunatha_halli@ti.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
 
-On 02/01/2012 07:45 PM, Stephen Rothwell wrote:
-> Hi all,
+On 02/02/2012 09:20 AM, Manjunatha Halli wrote:
+> Hi Randy Dunlap,
 > 
-> Changes since 20120201:
+> In config file you are missing the CONFIG_TI_ST config which builds the TI's shared transport driver upon which the FM driver works.
+> 
+> Please select this config in drivers/misc/ti-st/Kconfig which will solve the problem.
 
+Wrong answer.
 
-fs/jffs2/*.c still contains uses of ->read etc. instead of using
-mtd_read() etc.
+The problem seems to be that GPIOLIB is not enabled, but wl128x Kconfig says:
 
-fs/jffs2/read.c:36:8: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/read.c:112:8: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/nodemgmt.c:669:8: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/readinode.c:83:9: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/readinode.c:676:9: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/readinode.c:954:8: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/readinode.c:1040:9: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/readinode.c:1216:8: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/readinode.c:1275:10: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/scan.c:286:8: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/gc.c:590:8: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/gc.c:894:10: error: 'struct mtd_info' has no member named 'read'
-fs/jffs2/gc.c:977:9: error: 'struct mtd_info' has no member named 'read'
+config RADIO_WL128X
+	tristate "Texas Instruments WL128x FM Radio"
+	depends on VIDEO_V4L2 && RFKILL
+	select TI_ST if NET && GPIOLIB
+
+so TI_ST is not selected here.
+
+The Kconfig files should handle this properly.
+
+Here is one possible fix for you to consider.
+
+---
+From: Randy Dunlap <rdunlap@xenotime.net>
+
+Fix build errors when GPIOLIB is not enabled.
+Fix wl128x Kconfig to depend on GPIOLIB since TI_ST also
+depends on GPIOLIB.
+
+(.text+0xe6d60): undefined reference to `st_register'
+(.text+0xe7016): undefined reference to `st_unregister'
+(.text+0xe70ce): undefined reference to `st_unregister'
+
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Manjunatha Halli <manjunatha_halli@ti.com>
+---
+ drivers/media/radio/wl128x/Kconfig |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- linux-next-20120202.orig/drivers/media/radio/wl128x/Kconfig
++++ linux-next-20120202/drivers/media/radio/wl128x/Kconfig
+@@ -4,8 +4,8 @@
+ menu "Texas Instruments WL128x FM driver (ST based)"
+ config RADIO_WL128X
+ 	tristate "Texas Instruments WL128x FM Radio"
+-	depends on VIDEO_V4L2 && RFKILL
+-	select TI_ST if NET && GPIOLIB
++	depends on VIDEO_V4L2 && RFKILL && GPIOLIB
++	select TI_ST if NET
+ 	help
+ 	Choose Y here if you have this FM radio chip.
+ 
+
+> Regards
+> Manju
+> 
+> On 02/02/2012 12:07 PM, Randy Dunlap wrote:
+>> On 02/01/2012 07:45 PM, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20120201:
+>>
+>> drivers/built-in.o: In function `fmc_prepare':
+>> (.text+0xe6d60): undefined reference to `st_register'
+>> drivers/built-in.o: In function `fmc_prepare':
+>> (.text+0xe7016): undefined reference to `st_unregister'
+>> drivers/built-in.o: In function `fmc_release':
+>> (.text+0xe70ce): undefined reference to `st_unregister'
+>>
+>>
+>> Full randconfig file is attached.
+
 
 -- 
 ~Randy
