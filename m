@@ -1,43 +1,30 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with Linus' tree
-Date: Thu, 2 Feb 2012 11:26:39 -0800
-Message-ID: <20120202192639.GA5798@kroah.com>
-References: <20120130132451.1049903dbf990fed5876e5bc@canb.auug.org.au>
- <20120130023517.GA7937@kroah.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Please add irqdomain branch to linux-next
+Date: Thu, 2 Feb 2012 14:10:31 -0700
+Message-ID: <CACxGe6sTO_Jy-vecKS9SoVs55ZA8BMc+O0NODLdq6KvkcbPByg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39269 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752502Ab2BBT1T (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2012 14:27:19 -0500
-Received: from compute1.internal (compute1.nyi.mail.srv.osa [10.202.2.41])
-	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 357E420C63
-	for <linux-next@vger.kernel.org>; Thu,  2 Feb 2012 14:27:19 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <20120130023517.GA7937@kroah.com>
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:61798 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755385Ab2BBVKv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2012 16:10:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Len Brown <lenb@kernel.org>, Thomas Renninger <trenn@suse.de>, Len Brown <len.brown@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>
 
-On Sun, Jan 29, 2012 at 06:35:17PM -0800, Greg KH wrote:
-> On Mon, Jan 30, 2012 at 01:24:51PM +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next merge of the driver-core tree got a conflict in
-> > drivers/acpi/processor_driver.c between commit 54d5dcc45af7 ("ACPI
-> > processor hotplug: Split up acpi_processor_add") from Linus' tree and
-> > commit 9061e0e16700 ("ACPI: Load acpi-cpufreq from processor driver
-> > automatically") from the driver-core tree.
-> > 
-> > I fixed it up (I think- see below) and can carry the fix as necessary.
-> 
-> Thanks, I'll merge the driver-core next tree when 3.3-rc2 is out to
-> resolve this problem.
+Hi Stephen,
 
-This should now be resolved.
+Can you please add the following branch to linux-next?  It contains
+the majority of the irqdomain rework that I've been doing.  I'd like
+to get it marinating in linux-next early so I'm sure it will be ready
+when the v3.4 merge window rolls around.
 
-thanks,
+git://git.secretlab.ca/git/linux-2.6.git irqdomain/next
 
-greg k-h
+Thanks,
+g.
+
+-- 
+Grant Likely, B.Sc., P.Eng.
+Secret Lab Technologies Ltd.
