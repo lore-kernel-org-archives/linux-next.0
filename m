@@ -1,41 +1,43 @@
 From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: [PATCH] jffs2: update to new MTD interface (missed a few)
-Date: Fri, 03 Feb 2012 07:36:27 +0200
-Message-ID: <1328247387.6750.24.camel@sauron.fi.intel.com>
-References: <1328228469-10539-1-git-send-email-computersforpeace@gmail.com>
+Subject: Re: linux-next: Tree for Feb 2 (fs/jffs2)
+Date: Fri, 03 Feb 2012 07:37:35 +0200
+Message-ID: <1328247455.6750.25.camel@sauron.fi.intel.com>
+References: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au>
+	 <4F2AD4DE.7040508@xenotime.net>
 Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-cKbzJXqHnQdEBHk0rkNv"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:46320 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750811Ab2BCFe1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Feb 2012 00:34:27 -0500
-In-Reply-To: <1328228469-10539-1-git-send-email-computersforpeace@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>
+	boundary="=-C1G1Szhbc5YkJohSBUPA"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4F2AD4DE.7040508@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
 
---=-cKbzJXqHnQdEBHk0rkNv
+--=-C1G1Szhbc5YkJohSBUPA
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2012-02-02 at 16:21 -0800, Brian Norris wrote:
-> There were a few instances of the old MTD interface remaining for JFFS2. =
-We
-> fix one error that shows up (only when CONFIG_JFFS2_FS_WRITEBUFFER is not
-> defined) like this:
+On Thu, 2012-02-02 at 10:24 -0800, Randy Dunlap wrote:
+> On 02/01/2012 07:45 PM, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Changes since 20120201:
+>=20
+>=20
+> fs/jffs2/*.c still contains uses of ->read etc. instead of using
+> mtd_read() etc.
 
-Pushed to l2-mtd.git, thank you!
+The fix from Brian has been pushed to l2-mtd.git, should be fixed.
+Thanks for reporting and sorry for the breakage.
 
 --=20
 Best Regards,
 Artem Bityutskiy
 
---=-cKbzJXqHnQdEBHk0rkNv
+--=-C1G1Szhbc5YkJohSBUPA
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
@@ -43,19 +45,19 @@ Content-Transfer-Encoding: 7bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAABAgAGBQJPK3JbAAoJECmIfjd9wqK0agcQANJ+tR8fOcs2399i+NShneVH
-zp+mhyy9OBwVwy8BE9fC5az88sGWdK/DWB55rgw9qpQ4oTydClD0pdwumY6r7Twc
-PH8tO8iwLrefYxh+6IE01wwtJ3ltSz1FjCbI2vIOY6ZvyjaRlgX4yuhOCwuuA6S0
-FQ1CP/hfi0/4hIJ5YzCDtYve2ZKOZzgkqEgQW6b4PakZFiawMiSrqt7VxpfkuBsB
-CqpBWnAqOkUhrlUytvOFlgABacHsD7jMjpF5y+ADjba5sZSJbR3ytMAYXy3BKAVB
-XTSHjGr8X2esOGp/i7+4ynJMlD81JeY3cVAed0+InMiPnzTPtFqNKK8G8HMMOy2Y
-uB+4JAZBvEKOZ8AAE+1fzsxLkhiyUfaScugOW3FU4vqfz2rfpcxOlFbWhpR4aJUE
-+YZWGQ8Pyq92hhjl26diIM++xf22EbIxmSxBCXA0loBYY05hQXZAHhMC2jOtnvNM
-5oKPBRPCddAkEMGCO9xcvs9AxlonhKo7ErghjysvlWD6pc3Wyxa9VubH/fuJST9U
-dvXFKL32TSmqSWgEISqZByzlPmCjS6UbsYE7D2hNggY/908kh2cdr/VNTX2VTk4R
-eCwOawC2RUA99Va+TKfHw3lqg9+hIjC2hbktb8DmEO1RlnuaK8aYJkpo3V2fhEKu
-CN4emcEJ8h2ODkkH6vkw
-=TBWE
+iQIcBAABAgAGBQJPK3KfAAoJECmIfjd9wqK0n3IQAMUi9ZqetEHEPJ+nMKksAYfi
+FIhyFHMkRkDDm5mxaqTNarSgA+D+986KCAaCZTwlzm6fdmfLgXNcR/HgugRxDGiY
+Oy2+IXFYoE/GGGFOjOF4pqD4b5g1BqkdtRBCXLM6tIzrP0YIpb3pFZDzWzhF93pR
+ep+FWXED82SRmb5scieuaqALA4DfsNcJisVxBH5Sfk3BHxQcagMxNbKu4rZvYiQ7
+OjnvWQrD6P6PTJ/MIw1RqIuSXMSPHtvkqAA5y2jiaqFo96xeWtLpAI325rSzPCyO
+B4TOWNN3ugFvsVNieUQjKbVDoOhsRQiXdaAg3MCPLeE/qX5IkGrxB8Rz6e/f10Uw
+Kq3BN/lwAzwVxHlNOEw8YJrz1cMJ6sjanWIfafPkeerhnDEQjZVowJjMbaSwMlvk
+W/A07Pr/GoxtOcHabfu6aWlwpIgTL6JM/Pc0MK1DHPgHsR00houXarslLO19S9Qb
+fxSDuodaJKFcqZemy3M1/H01JwOZ/IQZrqPfBDP8sKTR9JLs+aca4g4+JGS6ymtL
+kE9k295cJ7pVHs7ACBRmyuPxaF1D7yTncZJKoHbuZ4pOxvnsTSA9BnIlUL3vDJ0t
+vHYPEjm2K7X4BtEIUA+K8Ixeq0FEaNoKI0/1BcHd4pbwBJEL8FdqF14nxY+aAm+z
+wmQyGJp4GIpKwmPK5liI
+=mTux
 -----END PGP SIGNATURE-----
 
---=-cKbzJXqHnQdEBHk0rkNv--
+--=-C1G1Szhbc5YkJohSBUPA--
