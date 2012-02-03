@@ -1,65 +1,39 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the final tree
- (regulator tree related)
-Date: Fri, 3 Feb 2012 11:02:35 +0000
-Message-ID: <20120203110234.GC3151@opensource.wolfsonmicro.com>
-References: <20120203161522.c079159878788e9ba7e7b242@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ driver-core.current tree
+Date: Fri, 3 Feb 2012 07:07:15 -0800
+Message-ID: <20120203150715.GA19534@kroah.com>
+References: <20120203145106.3c166564b7081d94ee2e79cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YD3LsXFS42OYHhNZ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120203161522.c079159878788e9ba7e7b242@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Samuel Ortiz <sameo@linux.intel.com>, Balaji T K <balajitk@ti.com>
-List-Id: linux-next.vger.kernel.org
-
-
---YD3LsXFS42OYHhNZ
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:41736 "EHLO
+	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756032Ab2BCPJP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Feb 2012 10:09:15 -0500
+Received: from compute3.internal (compute3.nyi.mail.srv.osa [10.202.2.43])
+	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id C1A50207FB
+	for <linux-next@vger.kernel.org>; Fri,  3 Feb 2012 10:09:14 -0500 (EST)
 Content-Disposition: inline
+In-Reply-To: <20120203145106.3c166564b7081d94ee2e79cd@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Renninger <trenn@suse.de>
 
-On Fri, Feb 03, 2012 at 04:15:22PM +1100, Stephen Rothwell wrote:
+On Fri, Feb 03, 2012 at 02:51:06PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in
+> drivers/base/cpu.c between commit 2885e25c422f ("driver core: cpu: remove
+> kernel warning when removing a cpu") from the driver-core.current tree
+> and commit fad12ac8c8c2 ("CPU: Introduce ARCH_HAS_CPU_AUTOPROBE and X86
+> parts") from the driver-core tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-> drivers/mfd/twl-core.c: In function 'add_children':
-> drivers/mfd/twl-core.c:752:10: error: 'struct regulator_consumer_supply' has no member named 'dev'
-> drivers/mfd/twl-core.c:753:10: error: 'struct regulator_consumer_supply' has no member named 'dev'
-> drivers/mfd/twl-core.c:754:10: error: 'struct regulator_consumer_supply' has no member named 'dev'
-> drivers/mfd/twl-core.c:800:10: error: 'struct regulator_consumer_supply' has no member named 'dev'
+Thanks for this, I'll fix it up when I merge them back together when
+3.3-rc3 comes out.
 
-> Caused by commit 737f360d5bef ("regulator: Remove support for supplies
-> specified by struct device").
-
-For stuff like this where it's clear that there's an issue with the
-side where the failure is noticed it's helpful to also let the people
-working on the driver side know - it can make things work better with
-timezones.  Unfortunately the TWL driver is both very interesting and
-not really getting TLC so it's not a great example here but still.  I've
-CCed a bunch of random people who show up in the commit log plus Samuel.
-
-I'll fix up this up and carry a patch via the regulator tree.
-
---YD3LsXFS42OYHhNZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPK77EAAoJEBus8iNuMP3dIz4P/392EAGxZ2WziGwgQ+RnvhiG
-gDiEQLaqvpc6UW6gT4IqxHHUqgY+gjh8x7svNb/BVG+EvbQoep5KORbCxP+5OIPJ
-q2L4pTm7JaRWZcDTTvF2qOOiMF4XyyK6nr6yXxsl2FLIBMCU+RgbKugv7A4OA6LJ
-XoRyAX4Jz+PUCzWgq7ndvNt43TolEuWwq4p3Sm2lSmDgspOUSZLOg1oAKHCu5fMb
-ByCNg9+Omd8iQCyLVPDB2tZT5WSn0r0Ai+64GutoWFH7mZT7rM/PvbgqMHe1pVee
-2lYi4ICH4xLfuwCHytT3hJCmI4lrR49PfKfWz7st4HFZG7XOVr2dhnUG5S+uqmfI
-Ss60xRuw3I37cOagDTH740qPJ/+i7O53kYzA2W3r8S9wh7wn442xAmvg8tk1OGA5
-shKu6nIm26SJsSxc3ZoJvdBEi4dHVtg84EeZEbNc17pCGxOkV0VK/fuUQ8A8CTeJ
-VFV3bDTBxWh8YtikF9dnnXqUwiTUvK+movYI5dz3r03muIzhT6LIj3SmF0SA5IcM
-JmL1NPVyK8v1BKkLbP4AjZSQqoqy+s+0igvwQMX/iVjmbGY8mLSMUcir8qgFQKex
-pDx+H6P1+FA4CfMtzay/sIPX/KT7mzks0YXZtiCAhNpsJ1AyAJtaBpDmIAyFuJkA
-fMONQNB+j/HyGZtMqBb5
-=b8R5
------END PGP SIGNATURE-----
-
---YD3LsXFS42OYHhNZ--
+greg k-h
