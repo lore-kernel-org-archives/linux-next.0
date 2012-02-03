@@ -1,39 +1,44 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- driver-core.current tree
-Date: Fri, 3 Feb 2012 07:07:15 -0800
-Message-ID: <20120203150715.GA19534@kroah.com>
-References: <20120203145106.3c166564b7081d94ee2e79cd@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Fri, 3 Feb 2012 16:18:08 -0700
+Message-ID: <CACxGe6uaxKoqKVyVZsaXZ6s-J3urJ7i_SxP2S-6sXQ7ZqXrYFw@mail.gmail.com>
+References: <20120203135432.e9ab5f0d41805bff0df10333@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:41736 "EHLO
-	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756032Ab2BCPJP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Feb 2012 10:09:15 -0500
-Received: from compute3.internal (compute3.nyi.mail.srv.osa [10.202.2.43])
-	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id C1A50207FB
-	for <linux-next@vger.kernel.org>; Fri,  3 Feb 2012 10:09:14 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <20120203145106.3c166564b7081d94ee2e79cd@canb.auug.org.au>
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:61657 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755142Ab2BCXS2 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Feb 2012 18:18:28 -0500
+In-Reply-To: <20120203135432.e9ab5f0d41805bff0df10333@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Renninger <trenn@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Fri, Feb 03, 2012 at 02:51:06PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> drivers/base/cpu.c between commit 2885e25c422f ("driver core: cpu: remove
-> kernel warning when removing a cpu") from the driver-core.current tree
-> and commit fad12ac8c8c2 ("CPU: Introduce ARCH_HAS_CPU_AUTOPROBE and X86
-> parts") from the driver-core tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+On Thu, Feb 2, 2012 at 7:54 PM, Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> Hi Grant,
+>
+> After merging the gpio tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/i2c/busses/i2c-gpio.c:18:22: fatal error: asm/gpio.h: No such=
+ file or directory
+> drivers/input/mouse/gpio_mouse.c:17:22: fatal error: asm/gpio.h: No s=
+uch file or directory
+> drivers/leds/leds-gpio.c:23:22: fatal error: asm/gpio.h: No such file=
+ or directory
+>
+> Caused by commit 4f79dfb562c2 ("gpiolib/arches: Centralise bolierplat=
+e
+> asm/gpio.h"). =A0Grep is your friend ...
+>
+> I have used the gpio tree from next-20120202 for today.
 
-Thanks for this, I'll fix it up when I merge them back together when
-3.3-rc3 comes out.
+I've dropped the patch from my tree.  Looks like there are still a few
+drivers that need to be either fixed up or made "depends on
+ARCH_HAVE_CUSTOM_GPIO_H".
 
-greg k-h
+g.
