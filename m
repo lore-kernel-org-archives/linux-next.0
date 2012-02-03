@@ -1,74 +1,95 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH] jffs2: update to new MTD interface (missed a few)
-Date: Thu, 02 Feb 2012 18:20:33 -0800
-Message-ID: <4F2B4471.8020203@xenotime.net>
-References: <1328228469-10539-1-git-send-email-computersforpeace@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound-asoc tree
+Date: Fri, 3 Feb 2012 12:59:02 +1100
+Message-ID: <20120203125902.558e273c84b339957869f281@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__3_Feb_2012_12_59_02_+1100_InIqXKZOh1sZ0uby"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:51426 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1756982Ab2BCBWj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2012 20:22:39 -0500
-In-Reply-To: <1328228469-10539-1-git-send-email-computersforpeace@gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56428 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757808Ab2BCB72 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2012 20:59:28 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>, Artem Bityutskiy <dedekind1@gmail.com>, linux-next@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 02/02/2012 04:21 PM, Brian Norris wrote:
-> There were a few instances of the old MTD interface remaining for JFFS2. We
-> fix one error that shows up (only when CONFIG_JFFS2_FS_WRITEBUFFER is not
-> defined) like this:
-> 
->   fs/jffs2/read.c: In function 'jffs2_read_dnode':
->   fs/jffs2/read.c:36:8: error: 'struct mtd_info' has no member named 'read'
->   fs/jffs2/read.c:112:8: error: 'struct mtd_info' has no member named 'read'
->   ...
-> 
-> We also simply remove two macros that are not in use, were not updated to
-> the new MTD interface, and don't even utilize the old interface properly.
-> (That means they weren't used since commit 8593fbc6, year 2006; almost 6
-> years ago, for those who don't want to do the math)
-> 
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+--Signature=_Fri__3_Feb_2012_12_59_02_+1100_InIqXKZOh1sZ0uby
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+Hi all,
 
-Thanks.
+Today's linux-next merge of the sound-asoc tree got a conflict in
+sound/soc/codecs/wm5100.c due to a bad merge resolution in commit
+05960268bcef ("Merge branch 'for-3.4' into asoc-next") from the
+sound-asoc tree which left the conflict unresolved.  :-(
 
-> ---
-> This fixes some linux-next build errors seen by Randy Dunlap
-> 
->  fs/jffs2/os-linux.h |    4 +---
->  1 files changed, 1 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/jffs2/os-linux.h b/fs/jffs2/os-linux.h
-> index ab65ee3..1cd3aec 100644
-> --- a/fs/jffs2/os-linux.h
-> +++ b/fs/jffs2/os-linux.h
-> @@ -76,7 +76,7 @@ static inline void jffs2_init_inode_info(struct jffs2_inode_info *f)
->  #define jffs2_write_nand_cleanmarker(c,jeb) (-EIO)
->  
->  #define jffs2_flash_write(c, ofs, len, retlen, buf) jffs2_flash_direct_write(c, ofs, len, retlen, buf)
-> -#define jffs2_flash_read(c, ofs, len, retlen, buf) ((c)->mtd->read((c)->mtd, ofs, len, retlen, buf))
-> +#define jffs2_flash_read(c, ofs, len, retlen, buf) (mtd_read((c)->mtd, ofs, len, retlen, buf))
->  #define jffs2_flush_wbuf_pad(c) ({ do{} while(0); (void)(c), 0; })
->  #define jffs2_flush_wbuf_gc(c, i) ({ do{} while(0); (void)(c), (void) i, 0; })
->  #define jffs2_write_nand_badblock(c,jeb,bad_offset) (1)
-> @@ -108,8 +108,6 @@ static inline void jffs2_init_inode_info(struct jffs2_inode_info *f)
->  
->  #define jffs2_cleanmarker_oob(c) (c->mtd->type == MTD_NANDFLASH)
->  
-> -#define jffs2_flash_write_oob(c, ofs, len, retlen, buf) ((c)->mtd->write_oob((c)->mtd, ofs, len, retlen, buf))
-> -#define jffs2_flash_read_oob(c, ofs, len, retlen, buf) ((c)->mtd->read_oob((c)->mtd, ofs, len, retlen, buf))
->  #define jffs2_wbuf_dirty(c) (!!(c)->wbuf_len)
->  
->  /* wbuf.c */
+I fixed it up (I think - see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+diff --cc sound/soc/codecs/wm5100.c
+index c1c351a,72ebbdb..0000000
+--- a/sound/soc/codecs/wm5100.c
++++ b/sound/soc/codecs/wm5100.c
+@@@ -2076,17 -2097,21 +2097,7 @@@ static void wm5100_micd_irq(struct wm51
+  			snd_soc_jack_report(wm5100->jack, SND_JACK_BTN_0,
+  					    SND_JACK_BTN_0);
+  		} else if (wm5100->jack_detecting) {
+- 			dev_dbg(wm5100->dev, "Headphone detected\n");
+- 			wm5100->jack_detecting =3D false;
+- 			snd_soc_jack_report(wm5100->jack, SND_JACK_HEADPHONE,
+- 					    SND_JACK_HEADPHONE);
+-=20
+- 			/* Increase the detection rate a bit for
+- 			 * responsiveness.
+- 			 */
+- 			regmap_update_bits(wm5100->regmap, WM5100_MIC_DETECT_1,
+- 					   WM5100_ACCDET_RATE_MASK,
+- 					   7 << WM5100_ACCDET_RATE_SHIFT);
+ -<<<<<<< HEAD
+ -			dev_dbg(codec->dev, "Headphone detected\n");
+ -			wm5100->jack_detecting =3D false;
+ -			snd_soc_jack_report(wm5100->jack, SND_JACK_HEADPHONE,
+ -					    SND_JACK_HEADPHONE);
+ -
+ -			/* Increase the detection rate a bit for
+ -			 * responsiveness.
+ -			 */
+ -			snd_soc_update_bits(codec, WM5100_MIC_DETECT_1,
+ -					    WM5100_ACCDET_RATE_MASK,
+ -					    7 << WM5100_ACCDET_RATE_SHIFT);
+ -=3D=3D=3D=3D=3D=3D=3D
++ 			wm5100_report_headphone(wm5100);
+ ->>>>>>> for-3.4
+  		}
+  	}
+  }
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--Signature=_Fri__3_Feb_2012_12_59_02_+1100_InIqXKZOh1sZ0uby
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPKz9mAAoJEECxmPOUX5FEsdwQAJHkJ0PBxEfqMHol3ntJ5Av5
+nbrf7Bcb29rtLPhRuNpplgZYlBc7pOmJl+4zczWJX9u4u86q17EjzSiZs0B7ArKo
+nEbg1BCvjZDEoYd2aVSB8T3nwu/YTo7YMWRLMj66+iHcmGuhei22h9SQxa0RmH7V
+tAjS4PTUhF6mtkmML05J8CYpxBgVGe4p8mFwRChHwe6qRZbpaBGqVssLWA3C2QKH
+EoZH0nX2YWSThXQ1wMMca9poixCPN34MAoky/g1FSV/g7Dn5mvYkBil9gIiXzTRl
+90NS4jrRcvKr7Kp7HqRzW0mjp4L4Ml/+53MUcVy/jIG/vgNgstxZ4UQGPJQkXi5D
+Tt+oNczxBkGEYj2gDU7wIXZkCi00ltZaVbF72GydFvK/D6vTJgGtjYOe8SOMw8Yc
+p7eedfKu5Co+TPlCKRFufTgIgXt555i/GFujQfUYsk1YaYSip0C9ULQIPl6qFFac
+V7ab7ebI64vbcqWOXMmQJsKg6TysoZCSS2NLYVRIzdrZnZfMZoOCS8gmcLfxVw7b
+HnM+qd5C2/DiJ6V/c3Tdc0BhgDCndEuRVQoaat5KzUtvjgSS47rHfeO3Hr3Z3bLS
+WLX7CE5GEyMJhwSOo7a79yKwagPcq6pzWFKRgyS5C2uHRXCzpcC/IafoXLXTQj72
+SfBoGGXYd+VDotv5pYh4
+=lP19
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__3_Feb_2012_12_59_02_+1100_InIqXKZOh1sZ0uby--
