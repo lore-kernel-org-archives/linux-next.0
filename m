@@ -1,63 +1,98 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Sat, 4 Feb 2012 12:10:24 +0000
-Message-ID: <20120204121024.GA8042@opensource.wolfsonmicro.com>
-References: <20120203135432.e9ab5f0d41805bff0df10333@canb.auug.org.au>
- <CACxGe6uaxKoqKVyVZsaXZ6s-J3urJ7i_SxP2S-6sXQ7ZqXrYFw@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: [PATCH] Re: linux-next: Tree for Feb 2 (media/radio/wl128x)
+Date: Sun, 05 Feb 2012 12:32:34 -0800
+Message-ID: <4F2EE762.1030801@xenotime.net>
+References: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au> <4F2AD0E4.6020801@xenotime.net> <4F2AC5F8.1000901@ti.com> <4F2AD89E.70805@xenotime.net> <4F2AD3E9.1070804@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACxGe6uaxKoqKVyVZsaXZ6s-J3urJ7i_SxP2S-6sXQ7ZqXrYFw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <4F2AD3E9.1070804@ti.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Manjunatha Halli <x0130808@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Manjunatha Halli <manjunatha_halli@ti.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
+On 02/02/2012 10:20 AM, Manjunatha Halli wrote:
+> On 02/02/2012 12:40 PM, Randy Dunlap wrote:
+>> On 02/02/2012 09:20 AM, Manjunatha Halli wrote:
+>>> Hi Randy Dunlap,
+>>>
+>>> In config file you are missing the CONFIG_TI_ST config which builds the TI's shared transport driver upon which the FM driver works.
+>>>
+>>> Please select this config in drivers/misc/ti-st/Kconfig which will solve the problem.
+>> Wrong answer.
+>>
+>> The problem seems to be that GPIOLIB is not enabled, but wl128x Kconfig says:
+>>
+>> config RADIO_WL128X
+>>     tristate "Texas Instruments WL128x FM Radio"
+>>     depends on VIDEO_V4L2&&  RFKILL
+>>     select TI_ST if NET&&  GPIOLIB
+>>
+>> so TI_ST is not selected here.
+>>
+>> The Kconfig files should handle this properly.
+>>
+>> Here is one possible fix for you to consider.
+>>
+>> ---
+>> From: Randy Dunlap<rdunlap@xenotime.net>
+>>
+>> Fix build errors when GPIOLIB is not enabled.
+>> Fix wl128x Kconfig to depend on GPIOLIB since TI_ST also
+>> depends on GPIOLIB.
+>>
+>> (.text+0xe6d60): undefined reference to `st_register'
+>> (.text+0xe7016): undefined reference to `st_unregister'
+>> (.text+0xe70ce): undefined reference to `st_unregister'
+>>
+>> Signed-off-by: Randy Dunlap<rdunlap@xenotime.net>
+>> Cc: Manjunatha Halli<manjunatha_halli@ti.com>
+>> ---
+>>   drivers/media/radio/wl128x/Kconfig |    4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> --- linux-next-20120202.orig/drivers/media/radio/wl128x/Kconfig
+>> +++ linux-next-20120202/drivers/media/radio/wl128x/Kconfig
+>> @@ -4,8 +4,8 @@
+>>   menu "Texas Instruments WL128x FM driver (ST based)"
+>>   config RADIO_WL128X
+>>       tristate "Texas Instruments WL128x FM Radio"
+>> -    depends on VIDEO_V4L2&&  RFKILL
+>> -    select TI_ST if NET&&  GPIOLIB
+>> +    depends on VIDEO_V4L2&&  RFKILL&&  GPIOLIB
+>> +    select TI_ST if NET
+>>       help
+>>       Choose Y here if you have this FM radio chip.
+>>
+>>
+>>> Regards
+>>> Manju
+>>>
+>>> On 02/02/2012 12:07 PM, Randy Dunlap wrote:
+>>>> On 02/01/2012 07:45 PM, Stephen Rothwell wrote:
+>>>>> Hi all,
+>>>>>
+>>>>> Changes since 20120201:
+>>>> drivers/built-in.o: In function `fmc_prepare':
+>>>> (.text+0xe6d60): undefined reference to `st_register'
+>>>> drivers/built-in.o: In function `fmc_prepare':
+>>>> (.text+0xe7016): undefined reference to `st_unregister'
+>>>> drivers/built-in.o: In function `fmc_release':
+>>>> (.text+0xe70ce): undefined reference to `st_unregister'
+>>>>
+>>>>
+>>>> Full randconfig file is attached.
+>>
+> 
+> This solutions seems fine for me...
+> 
+> My only concern is since TI_ST is already have GPIOLIB in its dependency list is it OK to have the same thing in FM driver also?.
 
---bg08WKrSYDhXBjb5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sure, it's OK.
 
-On Fri, Feb 03, 2012 at 04:18:08PM -0700, Grant Likely wrote:
 
-> I've dropped the patch from my tree.  Looks like there are still a few
-> drivers that need to be either fixed up or made "depends on
-> ARCH_HAVE_CUSTOM_GPIO_H".
-
-Would it not be better to add a followup patch replacing the removed
-headers with something like:
-
-  #ifndef __LINUX_GPIO_H
-  #warn Don't include asm/gpio.h directly, include linux/gpio.h instead
-  #endif
-
-instead?  Perhaps even without the ifdef.  That will mean we still get
-rid of the boilerplate and will encourage fixups to drivers, nothing
-that hits these can be relying on a custom implementation since all the
-headers concerned are boilerplate ones.
-
---bg08WKrSYDhXBjb5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPLSApAAoJEBus8iNuMP3duIgP/1WTnWcvXNzny933H8oug/wr
-gGtbMjFLi4l1xlEjSKApsEoTtIxq4xMmpqvF5cfsR+gf8Ste3G1GlaXZze+iCzSy
-M6m9lAohX92tfiokx84UqJpAe9ZrtaExITxj0LCmXs3E95K/s1NmcGZdOxHB4V9e
-h1ntoNBDJ2o6Cq5AZ4UZbTg3rUVrcZJMQ+Thh0654KWXKp726sRN4qCJMZBx9SUB
-lnH0ZS6tbRgmBh9LgB8ObzKkrctaADXlyWkOCJ21eQQVDf3FfUOn7kOUYzP8Sa9y
-k1cDGMgPmIrQ0Dut/CG36VMVfVR85h6AuNzoqlHQdyHFkdDXDxNZxb6+wN5c6XDF
-aHgshISVX/5zM/gBO73h/xnCvDHBvYI7FQxribkuGKAh71GrqkkLUskUrVpNWU/W
-2YvBpdR8/oYQS10lYwDRZ25fqmnTHgwDDzNPpM6QcHskKAnUMJNAoUuP1rFnWTKz
-lhIt0dnvZcpjDK0lWijICbUKTAs/u3PsNDbkwnkA3h4plYQeQUfXbqKO/3u7Pqnh
-6w0W6mM02XzZyAdAJ5QosCR95ujNnjbkVTK5/3Q/dIGgQnY+s0cLrwpFP4ZdQ9jv
-OwICkBxxwFPQe9H24dV0MzHg4ZoWjcnrMSz/iJpn/CGxDXjK+1GVkHi8lCR6ixKI
-1OHdpbiirYMngQ1IUtb+
-=S4jT
------END PGP SIGNATURE-----
-
---bg08WKrSYDhXBjb5--
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
