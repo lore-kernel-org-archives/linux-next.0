@@ -1,68 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the l2-mtd tree
-Date: Mon, 6 Feb 2012 12:07:06 +1100
-Message-ID: <20120206120706.cf5d951972d22eb7fa134fbd@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 6 Feb 2012 12:25:53 +1100
+Message-ID: <20120206122553.e794e84d5f586619d710fdcd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__6_Feb_2012_12_07_06_+1100_eT63kgjx0G/_OeaK"
+ boundary="Signature=_Mon__6_Feb_2012_12_25_53_+1100_8455OFflLRE4p96H"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49004 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:42220 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754411Ab2BFBHQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Feb 2012 20:07:16 -0500
+	with ESMTP id S1754674Ab2BFB0F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Feb 2012 20:26:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__6_Feb_2012_12_07_06_+1100_eT63kgjx0G/_OeaK
+--Signature=_Mon__6_Feb_2012_12_25_53_+1100_8455OFflLRE4p96H
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Artem,
+Hi all,
 
-After merging the l2-mtd tree, today's linux-next build (x86_64
+After merging the sound-asoc tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-drivers/mtd/devices/pmc551.c:191:12: error: conflicting types for 'pmc551_u=
-npoint'
-include/linux/mtd/pmc551.h:37:13: note: previous declaration of 'pmc551_unp=
-oint' was here
-drivers/mtd/devices/pmc551.c: In function 'pmc551_unpoint':
-drivers/mtd/devices/pmc551.c:196:1: warning: no return statement in functio=
-n returning non-void [-Wreturn-type]
+sound/soc/codecs/max9768.c: In function 'max9768_probe':
+sound/soc/codecs/max9768.c:138:3: error: implicit declaration of function '=
+snd_soc_add_controls' [-Werror=3Dimplicit-function-declaration]
 
-Caused by commit 753c57f84b57 ("mtd: return error code from
-mtd_unpoint").  [Mind you, I don't understand why those static functions
-would be declared in a header file ...]
+Caused by commit 022658beab55 ("ASoC: core: Add support for DAI and
+machine kcontrols").
 
-I have used the l2-mtd tree from next-20120203 for today.
+I have used the sound-asoc tree from next-20120203 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__6_Feb_2012_12_07_06_+1100_eT63kgjx0G/_OeaK
+--Signature=_Mon__6_Feb_2012_12_25_53_+1100_8455OFflLRE4p96H
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPLye6AAoJEECxmPOUX5FEE2YP/3sRlaf0iR6qSsui/6eiuq1s
-sksfUC3rl3b9SSrB6Pko6birHQ1ZsDrzJNQqb8hYQdIwSdtlQB8hkANP34C7AdAs
-B+I4nYHQ9NwcN5U/t/bd4eDw2gz3H4W3vZnpdKg4MdNKaRLzPolUA8723z7qabgR
-tyuz0DbViCHrIOV+HTp2QKLgrPlBvgZ4Ta5+omQg50ZgeUhZcmn+uPff2QhXcovr
-Gl6yOsKgZXQz5riy4BEt4Ix2eiTh5NWK4IORfZVPLRSy8mUR87m14HlnpLvOnTFv
-EE3QUmi1lAsbmJYu9BNNy8fI3mdXi8tOsPeFYuByQdI0RE01QG66l8K01qRyjlab
-qO0KyXM5fhj5QCsmtl9iRDjLgaztYQoMw7g7N82xwsaeR4HiDkrbH0ZqrU1IvSEw
-iAOBlRYFM0OlRGjohr7UL0Q7zoCNlBzci5vTHcxh43V0A8iIfNeZ1Nt/LhF+rp00
-XGRNjkPwG1MAnW5AaFR2ALfcfxoiE4BbK1lJbT9rF2qXtvbC67oK0NHB8V+C1fpR
-BJcjtzTiyMQZ/RNjZlLm6YmCuRPhA2C0q0L4pJyp+iNkNvGCXHarScNpQauVyI8G
-tnXiZepd71vAg/+CoQmxxf3grsgqd5WkJjvSbOETPheT05GHSp769j9HrcEW7e/2
-sYeGoujmKT8mpOc8h9+e
-=kZG4
+iQIcBAEBCAAGBQJPLywhAAoJEECxmPOUX5FEOREP/3P43HFPNXNq9hBLYsSkuYrm
+PGVVM8YTHhVg8SUIeX4524gt4skbGdHy4BqiUb32vfpJFZno4bY6jyDCFSEKTRSj
+g6/X2SQzswKACRvBIBd2g/JnP5pAQr8eAZnBRGIdON4QpOKzNc6EY4tl4ukuSv/R
+L7Bnx3lVdLKRk343+XPTpzBsndt0rVE6ncFOHblJazpbvEaJ7JdwhTe1/emXAkBf
+WQsMslTtXDaoSD4UcwF1QzaXXEYjtb2zRdOff0rZSJYimDZCm08bWwhNgeDLYLKX
+SYYFuzZkEagT3L4LlSIjcr2y9OcS0e7v88msLJFSK9PxEECrbM2RSl/NnnOZp7E8
+ndeELDicvaE17swcIRmXaqXteMqZBXQynUbpIYQO0oZ1g5SuGf58N5obs9zfoReW
+WSbL//HCxwntphCTPo+ucmMhG0Nkzfqs1XPlULF9lun/N5SHOJUxNXrjEdL6JV0w
+y6S6KJQe1f5EZJKX98A96KoDT4KKFdET2czZZmHB0UzB+LGP3yXm1Y/FyCyjnc7O
+8mw2AUJLDrFwQFoPosMLG7J3o6rmjbikq/lDNdXvemvP2/HUxa06OCPrq5Dfo8HE
+aD88eXcBbMM27MdPKkCWtK2AAKkUe4rasGc0ie5mEVuuog1POA9XctKXvLARBuns
+r7TbGNYzNgk9knNv/gUG
+=uvYg
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__6_Feb_2012_12_07_06_+1100_eT63kgjx0G/_OeaK--
+--Signature=_Mon__6_Feb_2012_12_25_53_+1100_8455OFflLRE4p96H--
