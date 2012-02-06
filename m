@@ -1,54 +1,47 @@
-From: Huang Changming-R66093 <r66093@freescale.com>
-Subject: RE: linux-next: build failure after merge of the final tree (mmc
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: build failure after merge of the final tree (gpio
  tree related)
-Date: Mon, 6 Feb 2012 04:50:03 +0000
-Message-ID: <110EED8CC96DFC488B7E717A2027A27C01B3F2@039-SN1MPN1-002.039d.mgd.msft.net>
-References: <20120206153916.48adb1f48711f665274909b7@canb.auug.org.au>
+Date: Sun, 5 Feb 2012 23:07:08 -0700
+Message-ID: <20120206060708.GC21449@ponder.secretlab.ca>
+References: <20120206152346.106057d7dd747d0daa47bbc8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120206153916.48adb1f48711f665274909b7@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Ball <cjb@laptop.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jiang Yutang-B14898 <B14898@freescale.com>, Anton Vorontsov <cbouatmailru@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:38973 "EHLO
+	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753025Ab2BFGHN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2012 01:07:13 -0500
+Content-Disposition: inline
+In-Reply-To: <20120206152346.106057d7dd747d0daa47bbc8@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Hans J. Koch" <hjk@linutronix.de>, Torben Hohn <torbenh@linutronix.de>
 
-Hi, 
-Chris' patch which defined the "platform_suspend" is needed.
-
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Monday, February 06, 2012 12:39 PM
-> To: Chris Ball
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Huang
-> Changming-R66093; Jiang Yutang-B14898; Anton Vorontsov
-> Subject: linux-next: build failure after merge of the final tree (mmc
-> tree related)
-> 
-> Hi all,
+On Mon, Feb 06, 2012 at 03:23:46PM +1100, Stephen Rothwell wrote:
+> Hi Grant,
 > 
 > After merging the final tree, today's linux-next build (powerpc
 > allyesconfig) failed like this:
 > 
-> drivers/mmc/host/sdhci-of-esdhc.c:143:2: error: unknown field
-> 'platform_suspend' specified in initializer
-> drivers/mmc/host/sdhci-of-esdhc.c:143:2: warning: initialization from
-> incompatible pointer type [enabled by default]
-> drivers/mmc/host/sdhci-of-esdhc.c:143:2: warning: (near initialization
-> for 'sdhci_esdhc_ops.get_timeout_clock') [enabled by default]
-> drivers/mmc/host/sdhci-of-esdhc.c:144:2: error: unknown field
-> 'platform_resume' specified in initializer
-> drivers/mmc/host/sdhci-of-esdhc.c:144:2: warning: initialization from
-> incompatible pointer type [enabled by default]
-> drivers/mmc/host/sdhci-of-esdhc.c:144:2: warning: (near initialization
-> for 'sdhci_esdhc_ops.platform_8bit_width') [enabled by default]
+> drivers/gpio/gpio-sodaville.c:130:2: error: unknown field 'dt_translate' specified in initializer
+> drivers/gpio/gpio-sodaville.c:130:2: warning: initialization from incompatible pointer type [enabled by default]
+> drivers/gpio/gpio-sodaville.c:130:2: warning: (near initialization for 'irq_domain_sdv_ops.match') [enabled by default]
+> drivers/gpio/gpio-sodaville.c: In function 'sdv_register_irqsupport':
+> drivers/gpio/gpio-sodaville.c:152:8: error: 'struct irq_domain' has no member named 'irq_base'
+> drivers/gpio/gpio-sodaville.c:182:2: error: implicit declaration of function 'irq_domain_add' [-Werror=implicit-function-declaration]
+> drivers/gpio/gpio-sodaville.c: In function 'sdv_gpio_remove':
+> drivers/gpio/gpio-sodaville.c:263:2: error: implicit declaration of function 'irq_domain_del' [-Werror=implicit-function-declaration]
 > 
-> Caused by commit 4f6eeb41eee9 ("mmc: esdhc: Implement power management
-> for ESDHC").  I can't see how that was ever even build tested ..
+> Caused by commit 8b26c833d229 ("gpio: Add a driver for Sodaville GPIO
+> controller") interacting with the irqdomain tree changes.
 > 
-> I have reverted that commit for today.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> I have reverted that commit for today.  I am not sure how you should
+> handle this ... you could send me a fixup patch that I should apply as a
+> merge fix when merging the irqdomain tree.
+
+The sodavile is an x86 driver only.  This problem can be solved by
+making it depend on x86, which I'll do now.  When x86 is converted to the
+new irq_domain code the problem will go even further away.
+
+g.
