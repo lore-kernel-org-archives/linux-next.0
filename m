@@ -1,132 +1,73 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: Please add irqdomain branch to linux-next
-Date: Sun, 5 Feb 2012 23:15:17 -0700
-Message-ID: <20120206061517.GD21449@ponder.secretlab.ca>
-References: <CACxGe6sTO_Jy-vecKS9SoVs55ZA8BMc+O0NODLdq6KvkcbPByg@mail.gmail.com>
- <1328492111.30631.24.camel@pasglop>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: linux-next: build failure after merge of the l2-mtd tree
+Date: Mon, 06 Feb 2012 11:14:14 +0200
+Message-ID: <1328519654.22240.31.camel@sauron.fi.intel.com>
+References: <20120206120706.cf5d951972d22eb7fa134fbd@canb.auug.org.au>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:36418 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752005Ab2BFGPV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2012 01:15:21 -0500
-Content-Disposition: inline
-In-Reply-To: <1328492111.30631.24.camel@pasglop>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-PEazU30TuUcS8KRchU3/"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120206120706.cf5d951972d22eb7fa134fbd@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, David Woodhouse <dwmw2@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Feb 06, 2012 at 12:35:11PM +1100, Benjamin Herrenschmidt wrote:
-> On Thu, 2012-02-02 at 14:10 -0700, Grant Likely wrote:
-> > Hi Stephen,
-> > 
-> > Can you please add the following branch to linux-next?  It contains
-> > the majority of the irqdomain rework that I've been doing.  I'd like
-> > to get it marinating in linux-next early so I'm sure it will be ready
-> > when the v3.4 merge window rolls around.
-> 
-> Ho !
-> 
-> I don't have v4 in my mailbox to reply to the individual patches,
-> but I've spotted some issues so here they are in no specific order.
-> 
-> @@ -739,31 +712,36 @@ unsigned int irq_create_mapping(struct irq_domain *host,
->  
->  	/* Get a virtual interrupt number */
->  	if (host->revmap_type == IRQ_DOMAIN_MAP_LEGACY) {
->  		/* Handle legacy */
->  		virq = (unsigned int)hwirq;
->  		if (virq == 0 || virq >= NUM_ISA_INTERRUPTS)
->  			return NO_IRQ;
->  		return virq;
->  	} else {
->  		/* Allocate a virtual interrupt number */
->  		hint = hwirq % irq_virq_count;
-> -		virq = irq_alloc_virt(host, 1, hint);
-> +		virq = irq_alloc_desc_from(hint, 0);
-> +		if (!virq)
-> +			virq = irq_alloc_desc_from(1, 0);
->  		if (virq == NO_IRQ) {
->  			pr_debug("irq: -> virq allocation failed\n");
->  			return NO_IRQ;
->  		}
-> 
-> So first, the way you "avoid" allocating irq 0 seems to be by ...
-> allocating irq 0 and then allocating again once you've done that :-)
-> 
-> You should either make sure hint is non-0 to begin with or use
-> irq_reserve_irq() to reserve irq 0 (tho I don't know whether the later
-> could be an issue on x86).
 
-Okay, I'll ensure that hint != 0
+--=-PEazU30TuUcS8KRchU3/
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Also, you no longer honor irq_virq_count. It's a limitation of
-> __irq_alloc_descs() to not be able to get an upper boundary, but you
-> need that for iseries and ps3 at least.
+On Mon, 2012-02-06 at 12:07 +1100, Stephen Rothwell wrote:
+> Hi Artem,
+>=20
+> After merging the l2-mtd tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/mtd/devices/pmc551.c:191:12: error: conflicting types for 'pmc551=
+_unpoint'
+> include/linux/mtd/pmc551.h:37:13: note: previous declaration of 'pmc551_u=
+npoint' was here
+> drivers/mtd/devices/pmc551.c: In function 'pmc551_unpoint':
+> drivers/mtd/devices/pmc551.c:196:1: warning: no return statement in funct=
+ion returning non-void [-Wreturn-type]
+>=20
+> Caused by commit 753c57f84b57 ("mtd: return error code from
+> mtd_unpoint").  [Mind you, I don't understand why those static functions
+> would be declared in a header file ...]
 
-I'll look at adding an upper limit to __irq_alloc_descs().  If that won't
-work, then I'll add an explicit test after allocation to make sure it is not
-over the limit.
+Thanks, fixed. I am doing rather massive MTD API cleaning, so new small
+issues are possible.
 
-> Also the default for irq_virq_count should probably be changed when you
-> move to the core to use IRQ_BITMAP_BITS (so we get the 8192 additional
-> irqs on SPARSE_IRQ).
+WRT the header file - I think it should not be in 'inlude/linux' at all
+- I'll try to cook a patch to kick it out of there, thanks!
 
-Good catch.
+--=20
+Best Regards,
+Artem Bityutskiy
 
-> 
-> Another thing I noticed, tho I'm still only half way through the series
-> so you -may- have fixed that, is that you allocate all descs on node 0
-> (not even the current node) and have no way to do otherwise.
+--=-PEazU30TuUcS8KRchU3/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-No, I've not fixed that.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-> Now, it's a bit of a nasty issue because ideally we should "move" the
-> descs around as we set the affinity of interrupts and we really can't do
-> that just yet, but at least having a way to allocate the desc with a
-> node number (adding a node argument to irq_create_mapping) would be
-> useful. For things like PCI we could make that use the node where the
-> device is, which is better than having everything on node 0.
+iQIcBAABAgAGBQJPL5nmAAoJECmIfjd9wqK00vgP/jTXzDlebZ5EHRT1jhXFa5O2
+OUrrBpqHMl81uq7A70JctZXbwVh0nJnc0Uj53SbxCuvjqoPrve7ymC6jLOcWqBU7
+M+CZZGmp63jzH5LQzeEVS03bDARqjMDoGh9hO0G+B0fhaqR8IhwUZT5nVvmUwYji
+GbuiBD/jqH78Oi+Cl5MwNgYGFXbBpdVCuIBmI2oH9RI4TrNnHS910FsKLOXpTzBM
+QHFXUMYt1nhU1mnrjRcx8bWYMrPacwfiS9Xcm6YT9lZngbYnQhNZMkfavr4wwuSk
+bH0RUuYGE1Xlbt4lxP5hn8Z4P8FARzu30b5pxuesBZxDQet028EcjRz3gU/laEsJ
+H/PCdj7KZLk9RLyp14bkgSh7mX0kQSoi8kKx0uaS0QHBtUbhl2PBXRxH4H1Dqf0D
+AoCbtBb/HbaglodVJSf5JnEWz6G8RPmLUQf7wU1510LgSMEUrj9evSwe4EBn7lUP
+smniMyefA0FCqt4sCO1M+afaunPiAQeRIA8oLMT06nMm3vh+L36RBIDMRtJ9kHGb
+8hnU6199gC4iBNaXjFHZ2h3T7cZHDJ5clCAbQuxVQCCJ41yDlHFFziSpsdIHfnSh
+eFakQlTSCzX2C6FTAuZPv8oMqc1Qqlyp/eh2rjTVcC5291RsblT/FCFiFnFu26Hd
+xHg4wp2mdy+sLX8QNtSr
+=B/mH
+-----END PGP SIGNATURE-----
 
-okay.
-
-> Also you should probably make the whole match & xlate business
-> #ifdef CONFIG_OF (especially in the definition of the irq domain). There
-> is no reason why archs couldn't use the domain mapper without
-> device-tree support.
-
-It builds and runs fine without the CONFIG_OF wrappers, but I can trim stuff
-down.
-
-> +int irq_domain_xlate_pci(struct irq_domain *d, struct device_node *ctrlr,
-> +			 const u32 *intspec, unsigned int intsize,
-> +			 unsigned long *out_hwirq, unsigned int *out_type)
-> +{
-> +	if (WARN_ON(intsize != 1))
-> +		return -EINVAL;
-> +	*out_hwirq = intspec[0];
-> +	*out_type = IRQ_TYPE_LEVEL_HIGH;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(irq_domain_xlate_pci);
-> 
-> That's bogus. PCI interrupts are level -low-. However some bridges
-> internally invert them on the way to the PIC (this is actually common
-> with PCIe bridges where they are generated from messages). So if you are
-> to provide a default helper, make it LEVEL_LOW really.
-
-Haha, good point.  I'll fix that.
-
-> Overall, I'm not that fan of those helpers... do they really "help" ?
-> IE, Is the call significantly smaller ?
-
-I think it makes the code a lot easier to read, and it makes it a lot
-easier for a user to know what they are supposed to do I think.  The
-build size change wasn't significant either way (but I've lost those
-numbers, I'll need to recalculate them again to give specifics)..
-
-Thanks for the review.
-
-g.
+--=-PEazU30TuUcS8KRchU3/--
