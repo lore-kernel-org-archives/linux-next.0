@@ -1,33 +1,67 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the final tree (gpio
- tree related)
-Date: Mon, 6 Feb 2012 14:02:13 +0000
-Message-ID: <20120206140213.GC10173@sirena.org.uk>
-References: <20120206152346.106057d7dd747d0daa47bbc8@canb.auug.org.au>
- <20120206060708.GC21449@ponder.secretlab.ca>
+From: Liam Girdwood <lrg@ti.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 06 Feb 2012 16:50:58 +0000
+Message-ID: <1328547058.3845.5.camel@odin>
+References: <20120206122553.e794e84d5f586619d710fdcd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:53048 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754408Ab2BFOCQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2012 09:02:16 -0500
-Content-Disposition: inline
-In-Reply-To: <20120206060708.GC21449@ponder.secretlab.ca>
+Received: from na3sys009aog114.obsmtp.com ([74.125.149.211]:38570 "EHLO
+	na3sys009aog114.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755156Ab2BFQvB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2012 11:51:01 -0500
+In-Reply-To: <20120206122553.e794e84d5f586619d710fdcd@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Hans J. Koch" <hjk@linutronix.de>, Torben Hohn <torbenh@linutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Feb 05, 2012 at 11:07:08PM -0700, Grant Likely wrote:
-> On Mon, Feb 06, 2012 at 03:23:46PM +1100, Stephen Rothwell wrote:
+Hi Stephen,
 
-> > drivers/gpio/gpio-sodaville.c: In function 'sdv_register_irqsupport':
-> > drivers/gpio/gpio-sodaville.c:152:8: error: 'struct irq_domain' has no member named 'irq_base'
+Btw, I have a new email address at TI now, any chance you could update
+your scripts. Thanks !
 
-> The sodavile is an x86 driver only.  This problem can be solved by
-> making it depend on x86, which I'll do now.  When x86 is converted to the
-> new irq_domain code the problem will go even further away.
+On Mon, 2012-02-06 at 12:25 +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the sound-asoc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> sound/soc/codecs/max9768.c: In function 'max9768_probe':
+> sound/soc/codecs/max9768.c:138:3: error: implicit declaration of function 'snd_soc_add_controls' [-Werror=implicit-function-declaration]
+> 
+> Caused by commit 022658beab55 ("ASoC: core: Add support for DAI and
+> machine kcontrols").
+> 
+> I have used the sound-asoc tree from next-20120203 for today.
 
-IIRC I saw a similar issue trying to build the twl-core driver on
-Samsung platforms (or possibly x86).
+Sorry, this should fix it.
+
+>From e3e06e913cb74a57b603a2e7ac0f08c995af4969 Mon Sep 17 00:00:00 2001
+From: Liam Girdwood <lrg@ti.com>
+Date: Mon, 6 Feb 2012 16:36:04 +0000
+Subject: [PATCH] ASoC: max9768 - Fix build and use new add control API.
+
+Fix build breakage by using the correct API call to add kcontrols.
+
+Signed-off-by: Liam Girdwood <lrg@ti.com>
+---
+ sound/soc/codecs/max9768.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/sound/soc/codecs/max9768.c b/sound/soc/codecs/max9768.c
+index 79e9901..17b3ec2 100644
+--- a/sound/soc/codecs/max9768.c
++++ b/sound/soc/codecs/max9768.c
+@@ -135,7 +135,7 @@ static int max9768_probe(struct snd_soc_codec *codec)
+ 	}
+ 
+ 	if (gpio_is_valid(max9768->mute_gpio)) {
+-		ret = snd_soc_add_controls(codec, max9768_mute,
++		ret = snd_soc_add_codec_controls(codec, max9768_mute,
+ 				ARRAY_SIZE(max9768_mute));
+ 		if (ret)
+ 			return ret;
+-- 
+1.7.5.4
