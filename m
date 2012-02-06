@@ -1,47 +1,132 @@
 From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: build failure after merge of the final tree (gpio
- tree related)
-Date: Sun, 5 Feb 2012 23:07:08 -0700
-Message-ID: <20120206060708.GC21449@ponder.secretlab.ca>
-References: <20120206152346.106057d7dd747d0daa47bbc8@canb.auug.org.au>
+Subject: Re: Please add irqdomain branch to linux-next
+Date: Sun, 5 Feb 2012 23:15:17 -0700
+Message-ID: <20120206061517.GD21449@ponder.secretlab.ca>
+References: <CACxGe6sTO_Jy-vecKS9SoVs55ZA8BMc+O0NODLdq6KvkcbPByg@mail.gmail.com>
+ <1328492111.30631.24.camel@pasglop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:38973 "EHLO
-	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753025Ab2BFGHN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2012 01:07:13 -0500
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:36418 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752005Ab2BFGPV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2012 01:15:21 -0500
 Content-Disposition: inline
-In-Reply-To: <20120206152346.106057d7dd747d0daa47bbc8@canb.auug.org.au>
+In-Reply-To: <1328492111.30631.24.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Hans J. Koch" <hjk@linutronix.de>, Torben Hohn <torbenh@linutronix.de>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>
 
-On Mon, Feb 06, 2012 at 03:23:46PM +1100, Stephen Rothwell wrote:
-> Hi Grant,
+On Mon, Feb 06, 2012 at 12:35:11PM +1100, Benjamin Herrenschmidt wrote:
+> On Thu, 2012-02-02 at 14:10 -0700, Grant Likely wrote:
+> > Hi Stephen,
+> > 
+> > Can you please add the following branch to linux-next?  It contains
+> > the majority of the irqdomain rework that I've been doing.  I'd like
+> > to get it marinating in linux-next early so I'm sure it will be ready
+> > when the v3.4 merge window rolls around.
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> Ho !
 > 
-> drivers/gpio/gpio-sodaville.c:130:2: error: unknown field 'dt_translate' specified in initializer
-> drivers/gpio/gpio-sodaville.c:130:2: warning: initialization from incompatible pointer type [enabled by default]
-> drivers/gpio/gpio-sodaville.c:130:2: warning: (near initialization for 'irq_domain_sdv_ops.match') [enabled by default]
-> drivers/gpio/gpio-sodaville.c: In function 'sdv_register_irqsupport':
-> drivers/gpio/gpio-sodaville.c:152:8: error: 'struct irq_domain' has no member named 'irq_base'
-> drivers/gpio/gpio-sodaville.c:182:2: error: implicit declaration of function 'irq_domain_add' [-Werror=implicit-function-declaration]
-> drivers/gpio/gpio-sodaville.c: In function 'sdv_gpio_remove':
-> drivers/gpio/gpio-sodaville.c:263:2: error: implicit declaration of function 'irq_domain_del' [-Werror=implicit-function-declaration]
+> I don't have v4 in my mailbox to reply to the individual patches,
+> but I've spotted some issues so here they are in no specific order.
 > 
-> Caused by commit 8b26c833d229 ("gpio: Add a driver for Sodaville GPIO
-> controller") interacting with the irqdomain tree changes.
+> @@ -739,31 +712,36 @@ unsigned int irq_create_mapping(struct irq_domain *host,
+>  
+>  	/* Get a virtual interrupt number */
+>  	if (host->revmap_type == IRQ_DOMAIN_MAP_LEGACY) {
+>  		/* Handle legacy */
+>  		virq = (unsigned int)hwirq;
+>  		if (virq == 0 || virq >= NUM_ISA_INTERRUPTS)
+>  			return NO_IRQ;
+>  		return virq;
+>  	} else {
+>  		/* Allocate a virtual interrupt number */
+>  		hint = hwirq % irq_virq_count;
+> -		virq = irq_alloc_virt(host, 1, hint);
+> +		virq = irq_alloc_desc_from(hint, 0);
+> +		if (!virq)
+> +			virq = irq_alloc_desc_from(1, 0);
+>  		if (virq == NO_IRQ) {
+>  			pr_debug("irq: -> virq allocation failed\n");
+>  			return NO_IRQ;
+>  		}
 > 
-> I have reverted that commit for today.  I am not sure how you should
-> handle this ... you could send me a fixup patch that I should apply as a
-> merge fix when merging the irqdomain tree.
+> So first, the way you "avoid" allocating irq 0 seems to be by ...
+> allocating irq 0 and then allocating again once you've done that :-)
+> 
+> You should either make sure hint is non-0 to begin with or use
+> irq_reserve_irq() to reserve irq 0 (tho I don't know whether the later
+> could be an issue on x86).
 
-The sodavile is an x86 driver only.  This problem can be solved by
-making it depend on x86, which I'll do now.  When x86 is converted to the
-new irq_domain code the problem will go even further away.
+Okay, I'll ensure that hint != 0
+
+> Also, you no longer honor irq_virq_count. It's a limitation of
+> __irq_alloc_descs() to not be able to get an upper boundary, but you
+> need that for iseries and ps3 at least.
+
+I'll look at adding an upper limit to __irq_alloc_descs().  If that won't
+work, then I'll add an explicit test after allocation to make sure it is not
+over the limit.
+
+> Also the default for irq_virq_count should probably be changed when you
+> move to the core to use IRQ_BITMAP_BITS (so we get the 8192 additional
+> irqs on SPARSE_IRQ).
+
+Good catch.
+
+> 
+> Another thing I noticed, tho I'm still only half way through the series
+> so you -may- have fixed that, is that you allocate all descs on node 0
+> (not even the current node) and have no way to do otherwise.
+
+No, I've not fixed that.
+
+> Now, it's a bit of a nasty issue because ideally we should "move" the
+> descs around as we set the affinity of interrupts and we really can't do
+> that just yet, but at least having a way to allocate the desc with a
+> node number (adding a node argument to irq_create_mapping) would be
+> useful. For things like PCI we could make that use the node where the
+> device is, which is better than having everything on node 0.
+
+okay.
+
+> Also you should probably make the whole match & xlate business
+> #ifdef CONFIG_OF (especially in the definition of the irq domain). There
+> is no reason why archs couldn't use the domain mapper without
+> device-tree support.
+
+It builds and runs fine without the CONFIG_OF wrappers, but I can trim stuff
+down.
+
+> +int irq_domain_xlate_pci(struct irq_domain *d, struct device_node *ctrlr,
+> +			 const u32 *intspec, unsigned int intsize,
+> +			 unsigned long *out_hwirq, unsigned int *out_type)
+> +{
+> +	if (WARN_ON(intsize != 1))
+> +		return -EINVAL;
+> +	*out_hwirq = intspec[0];
+> +	*out_type = IRQ_TYPE_LEVEL_HIGH;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(irq_domain_xlate_pci);
+> 
+> That's bogus. PCI interrupts are level -low-. However some bridges
+> internally invert them on the way to the PIC (this is actually common
+> with PCIe bridges where they are generated from messages). So if you are
+> to provide a default helper, make it LEVEL_LOW really.
+
+Haha, good point.  I'll fix that.
+
+> Overall, I'm not that fan of those helpers... do they really "help" ?
+> IE, Is the call significantly smaller ?
+
+I think it makes the code a lot easier to read, and it makes it a lot
+easier for a user to know what they are supposed to do I think.  The
+build size change wasn't significant either way (but I've lost those
+numbers, I'll need to recalculate them again to give specifics)..
+
+Thanks for the review.
 
 g.
