@@ -1,88 +1,51 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v5 3/5] netdev: ethernet dev_alloc_skb to netdev_alloc_skb
-Date: Tue, 7 Feb 2012 21:04:07 +0100
-Message-ID: <CAMuHMdXFz5zEWUkrJjNvOqkgt-n2uKc3wzD9H5NKKz1LT4BpOw@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH v5 3/5] netdev: ethernet dev_alloc_skb to
+ netdev_alloc_skb
+Date: Tue, 07 Feb 2012 15:29:05 -0500 (EST)
+Message-ID: <20120207.152905.1412072387367320828.davem@davemloft.net>
 References: <cf736034e7bd407297e2ea9fbf247fb410eb7b39.1328445742.git.netdev@pradeepdalvi.com>
 	<ef62da964e8660dfdf2a25cd643631bb15914ecf.1328445742.git.netdev@pradeepdalvi.com>
+	<CAMuHMdXFz5zEWUkrJjNvOqkgt-n2uKc3wzD9H5NKKz1LT4BpOw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:54582 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755661Ab2BGUEJ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Feb 2012 15:04:09 -0500
-In-Reply-To: <ef62da964e8660dfdf2a25cd643631bb15914ecf.1328445742.git.netdev@pradeepdalvi.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Pradeep A. Dalvi" <netdev@pradeepdalvi.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdXFz5zEWUkrJjNvOqkgt-n2uKc3wzD9H5NKKz1LT4BpOw@mail.gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: geert@linux-m68k.org
+Cc: netdev@pradeepdalvi.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Feb 5, 2012 at 13:50, Pradeep A. Dalvi <netdev@pradeepdalvi.com=
-> wrote:
-> diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ether=
-net/natsemi/sonic.c
-> index 26e25d7..0452e296 100644
-> --- a/drivers/net/ethernet/natsemi/sonic.c
-> +++ b/drivers/net/ethernet/natsemi/sonic.c
-> @@ -51,7 +51,7 @@ static int sonic_open(struct net_device *dev)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0printk("sonic_=
-open: initializing sonic driver.\n");
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0for (i =3D 0; i < SONIC_NUM_RRS; i++) {
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct sk_buff *sk=
-b =3D dev_alloc_skb(SONIC_RBSIZE + 2);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct sk_buff *sk=
-b =3D netdev_alloc_skb(dev, SONIC_RBSIZE + 2);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (skb =3D=3D=
- NULL) {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0while(i > 0) { /* free any that were allocated successful=
-ly */
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0i--;
-> @@ -422,7 +422,7 @@ static void sonic_rx(struct net_device *dev)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0status =3D son=
-ic_rda_get(dev, entry, SONIC_RD_STATUS);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (status & S=
-ONIC_RCR_PRX) {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0/* Malloc up new buffer. */
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 new_skb =3D dev_alloc_skb(SONIC_RBSIZE + 2);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 new_skb =3D netdev_alloc_skb(SONIC_RBSIZE + 2);
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Feb 2012 21:04:07 +0100
 
-drivers/net/ethernet/natsemi/sonic.c:425: error: too few arguments to
-function 'netdev_alloc_skb'
+> drivers/net/ethernet/natsemi/sonic.c:425: error: too few arguments to
+> function 'netdev_alloc_skb'
 
-cfr. m68k/defconfig http://kisskb.ellerman.id.au/kisskb/buildresult/558=
-3743/
+I just wrote and committed the following fix, which took less effort
+than your report most likely :-)
 
-Your search-and-replace script (hmm, you haven't used a script, have
-you?) forgot
-to add the first "dev" parameter.
+--------------------
+sonice: Fix build due to botched netdev_alloc_skb() conversion.
 
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0if (new_skb =3D=3D NULL) {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0printk(KERN_ERR "%s: Memory s=
-queeze, dropping packet.\n", dev->name);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0lp->stats.rx_dropped++;
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/ethernet/natsemi/sonic.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
+index 0452e296..46795e4 100644
+--- a/drivers/net/ethernet/natsemi/sonic.c
++++ b/drivers/net/ethernet/natsemi/sonic.c
+@@ -422,7 +422,7 @@ static void sonic_rx(struct net_device *dev)
+ 		status = sonic_rda_get(dev, entry, SONIC_RD_STATUS);
+ 		if (status & SONIC_RCR_PRX) {
+ 			/* Malloc up new buffer. */
+-			new_skb = netdev_alloc_skb(SONIC_RBSIZE + 2);
++			new_skb = netdev_alloc_skb(dev, SONIC_RBSIZE + 2);
+ 			if (new_skb == NULL) {
+ 				printk(KERN_ERR "%s: Memory squeeze, dropping packet.\n", dev->name);
+ 				lp->stats.rx_dropped++;
+-- 
+1.7.7.6
