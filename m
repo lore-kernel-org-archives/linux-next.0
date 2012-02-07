@@ -1,51 +1,69 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH v5 3/5] netdev: ethernet dev_alloc_skb to
- netdev_alloc_skb
-Date: Tue, 07 Feb 2012 15:29:05 -0500 (EST)
-Message-ID: <20120207.152905.1412072387367320828.davem@davemloft.net>
-References: <cf736034e7bd407297e2ea9fbf247fb410eb7b39.1328445742.git.netdev@pradeepdalvi.com>
-	<ef62da964e8660dfdf2a25cd643631bb15914ecf.1328445742.git.netdev@pradeepdalvi.com>
-	<CAMuHMdXFz5zEWUkrJjNvOqkgt-n2uKc3wzD9H5NKKz1LT4BpOw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the sound-asoc tree
+Date: Wed, 8 Feb 2012 10:52:28 +1100
+Message-ID: <20120208105228.a3b2ceeaba1a63e5df9dfbbc@canb.auug.org.au>
+References: <20120203125902.558e273c84b339957869f281@canb.auug.org.au>
+	<20120203105123.GB3151@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXFz5zEWUkrJjNvOqkgt-n2uKc3wzD9H5NKKz1LT4BpOw@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: geert@linux-m68k.org
-Cc: netdev@pradeepdalvi.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__8_Feb_2012_10_52_28_+1100_z681Py=ybApKpNKc"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40168 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753869Ab2BGXwj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Feb 2012 18:52:39 -0500
+In-Reply-To: <20120203105123.GB3151@opensource.wolfsonmicro.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Feb 2012 21:04:07 +0100
+--Signature=_Wed__8_Feb_2012_10_52_28_+1100_z681Py=ybApKpNKc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> drivers/net/ethernet/natsemi/sonic.c:425: error: too few arguments to
-> function 'netdev_alloc_skb'
+Hi Mark,
 
-I just wrote and committed the following fix, which took less effort
-than your report most likely :-)
+On Fri, 3 Feb 2012 10:51:24 +0000 Mark Brown <broonie@opensource.wolfsonmic=
+ro.com> wrote:
+>
+> On Fri, Feb 03, 2012 at 12:59:02PM +1100, Stephen Rothwell wrote:
+>=20
+> > I fixed it up (I think - see below) and can carry the fix as necessary.
+>=20
+> That's the correct fix, thanks.  I'll resolve this in my tree once
+> Linus' tree has merged the conflicting stuff.
 
---------------------
-sonice: Fix build due to botched netdev_alloc_skb() conversion.
+So, you have redone the merge (it was commit 05960268bcef and is now
+6127dd802637) and still left the conflict tags in
+sound/soc/codecs/wm5100.c ...
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- drivers/net/ethernet/natsemi/sonic.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+:-(
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --git a/drivers/net/ethernet/natsemi/sonic.c b/drivers/net/ethernet/natsemi/sonic.c
-index 0452e296..46795e4 100644
---- a/drivers/net/ethernet/natsemi/sonic.c
-+++ b/drivers/net/ethernet/natsemi/sonic.c
-@@ -422,7 +422,7 @@ static void sonic_rx(struct net_device *dev)
- 		status = sonic_rda_get(dev, entry, SONIC_RD_STATUS);
- 		if (status & SONIC_RCR_PRX) {
- 			/* Malloc up new buffer. */
--			new_skb = netdev_alloc_skb(SONIC_RBSIZE + 2);
-+			new_skb = netdev_alloc_skb(dev, SONIC_RBSIZE + 2);
- 			if (new_skb == NULL) {
- 				printk(KERN_ERR "%s: Memory squeeze, dropping packet.\n", dev->name);
- 				lp->stats.rx_dropped++;
--- 
-1.7.7.6
+--Signature=_Wed__8_Feb_2012_10_52_28_+1100_z681Py=ybApKpNKc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPMbk8AAoJEECxmPOUX5FEdkYP/j3KhAbVP6Is+lmht4+1krWw
+KhMmr+xRuyBq6bjU6SK6KvKtzm5yjjpKKbVJtfXMxKetMned8FojXtLzfLyVy0ld
+o8TaFVZWydqfvkRQfL2649JBRFUdt1KATXaxDOL3kEndhR6/jVAkbtJ+GFjY040A
+sYDNEEvHcXnDvlPPm1eWQYiKBqvuV8uUthm7wZs5LgpjCEBh0ni5KpdqOFTv1ay7
+4FBlV3mbpkRSsp2wgmyQz8tTeRw73v/w7upCYOEBgsK+kum9IgyL+CrL8CMw45zf
+zPTNYGNgkEND2vlE+Ff1uA+buJfMmyR4RqtWbT3eOe9M9af5cbTB/LmJiszxH5NV
+nIsPBj1HV96upyG/qZ/478LpswZSg0gp4/VoLFGnxzb1E4hKkZa3Wib+6vvKdcxA
+FEW7GItY5Iwh/OkXgzW7zHyVbqi8Ds3sV+cb7AAmBI2WGz6vkcYm7TZPwSFvB4CV
+Cm4YgkHD3WuvVpni0lMPO5PRAZdPPbotA3+Sfy3yQzRyjEM+n3eCHPjZH8mnzoiT
+afzTRCzribKTkNeF5lDwocdTz7Qfxw5fVXIWBy2x7eTIK9eT2rl6HVaZkFC193qN
+ZZSONFZkkVk6g8ZqUcxCqGAviXp1BN7zb6TlvveUn+z1TgaRxF9X986jG23XnOuE
+ITWSbkx/4MYpG8lyTbpV
+=8KDO
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__8_Feb_2012_10_52_28_+1100_z681Py=ybApKpNKc--
