@@ -1,60 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 7 Feb 2012 09:02:53 +1100
-Message-ID: <20120207090253.99a27268e61ccdea7f31ab2d@canb.auug.org.au>
-References: <20120206122553.e794e84d5f586619d710fdcd@canb.auug.org.au>
-	<1328547058.3845.5.camel@odin>
+Subject: linux-next: build failure after merge of the l2-mtd tree
+Date: Tue, 7 Feb 2012 13:58:15 +1100
+Message-ID: <20120207135815.b551929e844a3824d7943e76@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__7_Feb_2012_09_02_53_+1100_H6BtVD3rwyN55jur"
+ boundary="Signature=_Tue__7_Feb_2012_13_58_15_+1100_S3y2lrrQP0dJ8NPr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56236 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44537 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753206Ab2BFWDH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2012 17:03:07 -0500
-In-Reply-To: <1328547058.3845.5.camel@odin>
+	with ESMTP id S1755634Ab2BGC6c (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2012 21:58:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Liam Girdwood <lrg@ti.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__7_Feb_2012_09_02_53_+1100_H6BtVD3rwyN55jur
+--Signature=_Tue__7_Feb_2012_13_58_15_+1100_S3y2lrrQP0dJ8NPr
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Liam,
+Hi Artem,
 
-On Mon, 06 Feb 2012 16:50:58 +0000 Liam Girdwood <lrg@ti.com> wrote:
->
-> Btw, I have a new email address at TI now, any chance you could update
-> your scripts. Thanks !
+After merging the l2-mtd tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Done.
+drivers/mtd/devices/pmc551.c: In function 'pmc551_erase':
+drivers/mtd/devices/pmc551.c:157:2: error: implicit declaration of function=
+ 'pmc551_point' [-Werror=3Dimplicit-function-declaration]
+drivers/mtd/devices/pmc551.c: At top level:
+drivers/mtd/devices/pmc551.c:194:12: error: static declaration of 'pmc551_p=
+oint' follows non-static declaration
+drivers/mtd/devices/pmc551.c:157:2: note: previous implicit declaration of =
+'pmc551_point' was here
+drivers/mtd/devices/pmc551.c: In function 'pmc551_unpoint':
+drivers/mtd/devices/pmc551.c:229:1: warning: no return statement in functio=
+n returning non-void [-Wreturn-type]
+
+Caused by commit 1e43e2c68ec0 ("mtd: remove junk pmc551.h").  The last
+warning was already there.  Please try to build test this stuff before
+publishing ...
+
+I have used the version of the l2-mtd tree from next-20120203 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__7_Feb_2012_09_02_53_+1100_H6BtVD3rwyN55jur
+--Signature=_Tue__7_Feb_2012_13_58_15_+1100_S3y2lrrQP0dJ8NPr
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPME4NAAoJEECxmPOUX5FEE3oP+wVvtypspSDhk7u4anp2OfJI
-rmE5CVmKVs+OvbOIFJfk1OurH5KE/hHlsvNUQWXP9WAs6nj6lo/452eYbB70HnH1
-wEOq5l0ihIn6LDRi1gzlMEr83Y4lousEWn/FvzqeBsFkDoo7kJoZyyavtp9k0LvY
-ZNhfuvV4juww3/MxFPnf+QN1HQOaHeuub9RYqIIXrmm/CBGb8wych7sVPS7yhFMA
-mRJ1quKCj4jySpZsBFvoxR5lblLz9zoUxeiaYbx0s2plBrch7/j/TnzpIEM4CGxD
-WuzVAm+AS+ZSxFLhRkZFcqg61Uj02cA37pF35IckHGqhmG8CbPjWsdTmSzr3OrP/
-97A9okafzES/LrzpbwxK5SpJ4+uA7VPd5rCFo5bCxySYYEWjhfEt1wsMrTTKiimz
-7VHf9GJOm2KKYIjeCU5Z57EDnWPl92WyNG02NcosTHn7UJljVzJ+ZIc6vCm35/6p
-/zFzUHY0DPf9HDFDZmjLUslpLztVU7E1cTJJhNZQz3v80TnIM7ZviixMv0A8g2LX
-mNR8G7LfSubAK0JaPKN3mNTXL5MWY9qf4pPkImaC+FaWe4MIz/PBazvEjLuSmLfD
-yWYb9ufW7NWcK8evIYrgLxUG+f37CvEknnM21r/F1ap8nZQku40MTGXETVVoyS9o
-UkMk2wsVHFHVNd02EWe2
-=hiZJ
+iQIcBAEBCAAGBQJPMJNHAAoJEECxmPOUX5FEWmQQAKgscuIkKAdjEy8/UaKf9V0M
+1uwKYYq3oaobbANlWP3EUwsbw2pQiK/Q8KGVLPDioDrUR9Xm3S020gaUVeNJNUI+
+W8vl8DdD+hGWo3G+Upgx5ONwGWUHhtmBv6ij2769A+o+WPAcO7SyV223St5gFNhj
+CB3XIqdsdbsMOXYhPdAUbBswpZ1ARgM5Mz7+xJAs/SRBrmtNzcDf8dHmUjN2951I
+XRYdXLq0hbqBcc/n4HZywlUBssPrjfTW5awOZGAWLMHtdo0tPGd3aE5dCNub/0LV
+6TM65FEtTDeR9AYUvdL1zEujkdH523nJdHi5EcbLseQcccwK8vHwBYpW8mvnJDkd
+5FhfjUhJ6QkqBJKi8/FbRDdxaEmI3B/wcvB1cnFd26CQFivg3PsQknLHqHUuD5A3
+zZ1Wdw9acEDEP/IYM3oxQ1IBFmXSq+9qYeLHqOUObrhkkyu+DlOZpQYvI0rEQb91
+U31iBCzKK64JPRh+zbf1SpUQY3gG6HrMiWIKB7ZihwlJY//+Dm/MP/YFD/buCkce
+vJcoms8Vo2J9qGxomP17iiPoa0+l3qGbbCHjR/TKsyEBc8RxM9VqUXMy8qgjPKNG
+xp8uMbop+GKjkuZTFRJdX8LMgrm5+21U7w+G+nlv0704pz7rexrzR/yDG1zH4yzW
+7YpEm0bRXM6w4OQO9+Cx
+=0Kh0
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__7_Feb_2012_09_02_53_+1100_H6BtVD3rwyN55jur--
+--Signature=_Tue__7_Feb_2012_13_58_15_+1100_S3y2lrrQP0dJ8NPr--
