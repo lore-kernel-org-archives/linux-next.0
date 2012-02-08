@@ -1,29 +1,59 @@
-From: Cong Wang <amwang@redhat.com>
-Subject: Re: linux-next: manual merge of the kmap_atomic tree with the  tree
-Date: Wed, 08 Feb 2012 17:30:18 +0800
-Message-ID: <1328693418.2442.18.camel@cr0>
-References: <20120208151057.5ad413a05fbbb393b4a00109@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the sound-asoc tree
+Date: Wed, 8 Feb 2012 11:25:08 +0000
+Message-ID: <20120208112507.GD3120@opensource.wolfsonmicro.com>
+References: <20120203125902.558e273c84b339957869f281@canb.auug.org.au>
+ <20120203105123.GB3151@opensource.wolfsonmicro.com>
+ <20120208105228.a3b2ceeaba1a63e5df9dfbbc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20120208151057.5ad413a05fbbb393b4a00109@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YToU2i3Vx8H2dn7O"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54053 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751750Ab2BHLZK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Feb 2012 06:25:10 -0500
+Content-Disposition: inline
+In-Reply-To: <20120208105228.a3b2ceeaba1a63e5df9dfbbc@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Bruce Allan <bruce.w.allan@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-List-Id: linux-next.vger.kernel.org
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2012-02-08 at 15:10 +1100, Stephen Rothwell wrote:
-> Hi Cong,
-> 
-> Today's linux-next merge of the kmap_atomic tree got a conflict in
-> drivers/net/ethernet/intel/e1000e/netdev.c between commit 0e15df490eef
-> ("e1000e: minor whitespace and indentation cleanup") from the net-next
-> tree and commit 2b4ba510a572 ("net: remove the second argument of k
-> [un]map_atomic()") from the kmap_atomic tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
 
-Hi, Stephen,
+--YToU2i3Vx8H2dn7O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Looks good, thanks!
+On Wed, Feb 08, 2012 at 10:52:28AM +1100, Stephen Rothwell wrote:
+
+> So, you have redone the merge (it was commit 05960268bcef and is now
+> 6127dd802637) and still left the conflict tags in
+> sound/soc/codecs/wm5100.c ...
+
+*sigh*  This is why I don't like artificially split development.  Should
+be fixed now.
+
+--YToU2i3Vx8H2dn7O
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPMluKAAoJEBus8iNuMP3dMkUQAIYTn1xnMGitPfbpfCSaRcXx
+ha7cwzHlaarLw5NB61pxjG3mqp067KNwGQBBg7/fyeSxvYlzrGxkTvanh3yjjFdE
+dDTIosW8R7IHhTz8BkAMFAlRzBh0znUfClFtNhoxGW24OG1+UuEPiQ3x1T+99KEr
+lzyuomcRw/Sl0aNyGOkzq4oO3R2b4ueh/9dXPS/gyVECHmZBlJElX5AWGAK+9OL6
+LNXXL9e58Qaoa8oDcEApqHduTTGPVPmwrlkRW+6npxVMENoT2sCcprjKDX3IF5I4
+FffuiagGY5gSmZRFK4o4UzNEy/LVH6JxARbg/2OKiJuU4FY7CD8nxXPieKp3X1PT
+acLNq8sLbGZ2cSWz19ytonD9BWCwUUSEZZHWFWp8XqcbZ2YV2zhjfBytaV8NBaOo
+56h7cr5sXjBT6/KlHm5Q0g8oXF3Yfi6F6v6aejqGaZRjBQcerGjAshvAccPxotcu
+d2ZDtgJHrDKI5nvdzk/NGPDSVsNp3JJ87i1dJPtRtDjB49JbqeEwU916PskPaNJE
+00k6vDUKZM+oyCwfAC7cApdwqqld2DCrZdqiEv8Q5oQiLJbqerUv52MMhw36B+pV
+euyfAyVepJIVCkMS1KYytWKcVaVblsxv1EoKigEvfDalswmo4h6u1/KaJTx0sWXl
+awkSNFGFX3CihHanWTUy
+=Ya5p
+-----END PGP SIGNATURE-----
+
+--YToU2i3Vx8H2dn7O--
