@@ -1,99 +1,40 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the irqdomain tree with the arm tree
-Date: Wed, 8 Feb 2012 22:29:10 -0800
-Message-ID: <CACxGe6sskg2t0QtOgWCKvYFdqWbsM4Cbdt05ZaNCLzrdNd6iLQ@mail.gmail.com>
-References: <20120209151413.0dfec71771dd156843c0f4fa@canb.auug.org.au>
+From: Cong Wang <amwang@redhat.com>
+Subject: Re: linux-next: manual merge of the kmap_atomic tree with the
+ staging.current tree
+Date: Thu, 09 Feb 2012 16:39:57 +0800
+Message-ID: <1328776797.20628.18.camel@cr0>
+References: <20120209144807.78f2807f594959f3836cf2eb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120209151413.0dfec71771dd156843c0f4fa@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:5050 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751268Ab2BIIkM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Feb 2012 03:40:12 -0500
+In-Reply-To: <20120209144807.78f2807f594959f3836cf2eb@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Will Deacon <will.deacon@arm.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Jennings <sjenning@linux.vnet.ibm.com>, Greg KH <greg@kroah.com>, akpm@linux-foundation.org
 
-On Wed, Feb 8, 2012 at 8:14 PM, Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> Hi Grant,
->
-> Today's linux-next merge of the irqdomain tree got a conflict in
-> arch/arm/common/gic.c between commit c11907f588d6 ("ARM: 7318/1: gic:
-> refactor irq_start assignment") from the arm tree and commit 7da5a66b=
-bf1f
-> ("irq_domain: Remove 'new' irq_domain in favour of the ppc one") from=
- the
-> irqdomain tree.
->
-> I fixed it up (see below) and can carry the fix as necessary.
+On Thu, 2012-02-09 at 14:48 +1100, Stephen Rothwell wrote:
+> Hi Cong,
+> 
+> Today's linux-next merge of the kmap_atomic tree got a conflict in
+> drivers/staging/zcache/zcache-main.c between commit 2a4830110b90
+> ("staging: zcache: fix serialization bug in zv stats") from the
+> staging.current tree and commit a3a2486aeadb ("zcache: remove the second
+> argument of k [un]map_atomic()") from the kmap_atomic tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-Thanks Stephen.
+Looks good. Thanks, Stephen!
 
-The context fixup looks correct to me.  I'll test the current
-linux-next tree when I get a chance (I'm at a conference at the
-moment).
+Andrew, Greg,
 
+As Linus doesn't want to merge my tree, could any of you take my patches
+in kmap_atomic tree?
 
-g.
-
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
->
-> diff --cc arch/arm/common/gic.c
-> index ca6b5dd,8cf934c..0000000
-> --- a/arch/arm/common/gic.c
-> +++ b/arch/arm/common/gic.c
-> @@@ -348,12 -344,15 +345,11 @@@ void __init gic_cascade_irq(unsigned =
-in
->
-> =A0static void __init gic_dist_init(struct gic_chip_data *gic)
-> =A0{
-> - =A0 =A0 =A0 unsigned int i, irq;
-> + =A0 =A0 =A0 unsigned int i;
-> =A0 =A0 =A0 =A0u32 cpumask;
-> =A0 =A0 =A0 =A0unsigned int gic_irqs =3D gic->gic_irqs;
-> - =A0 =A0 =A0 struct irq_domain *domain =3D &gic->domain;
-> =A0 =A0 =A0 =A0void __iomem *base =3D gic_data_dist_base(gic);
-> =A0- =A0 =A0 =A0u32 cpu =3D 0;
-> =A0-
-> =A0-#ifdef CONFIG_SMP
-> =A0- =A0 =A0 =A0cpu =3D cpu_logical_map(smp_processor_id());
-> =A0-#endif
-> =A0+ =A0 =A0 =A0u32 cpu =3D cpu_logical_map(smp_processor_id());
->
-> =A0 =A0 =A0 =A0cpumask =3D 1 << cpu;
-> =A0 =A0 =A0 =A0cpumask |=3D cpumask << 8;
-> @@@ -694,12 -689,13 +686,12 @@@ void __init gic_init_bases(unsigned i=
-n
-> =A0 =A0 =A0 =A0 * For primary GICs, skip over SGIs.
-> =A0 =A0 =A0 =A0 * For secondary GICs, skip over PPIs, too.
-> =A0 =A0 =A0 =A0 */
-> =A0- =A0 =A0 =A0hwirq_base =3D 32;
-> =A0- =A0 =A0 =A0if (gic_nr =3D=3D 0) {
-> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0if ((irq_start & 31) > 0) {
-> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0hwirq_base =3D 16;
-> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (irq_start !=3D -1=
-)
-> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0irq_s=
-tart =3D (irq_start & ~31) + 16;
-> =A0- =A0 =A0 =A0 =A0 =A0 =A0 =A0}
-> =A0+ =A0 =A0 =A0if (gic_nr =3D=3D 0 && (irq_start & 31) > 0) {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 domain->hwirq_base =3D 16;
-> ++ =A0 =A0 =A0 =A0 =A0 =A0 =A0hwirq_base =3D 16;
-> =A0+ =A0 =A0 =A0 =A0 =A0 =A0 =A0if (irq_start !=3D -1)
-> =A0+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0irq_start =3D (irq_st=
-art & ~31) + 16;
-> =A0+ =A0 =A0 =A0} else {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 domain->hwirq_base =3D 32;
-> ++ =A0 =A0 =A0 =A0 =A0 =A0 =A0hwirq_base =3D 32;
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0/*
-
-
-
---=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+Thanks.
