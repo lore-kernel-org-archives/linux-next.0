@@ -1,57 +1,78 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: Tree for Feb 2 (trace/events/sunrpc.h)
-Date: Wed, 08 Feb 2012 22:30:24 -0500
-Message-ID: <1328758224.2200.134.camel@gandalf.stny.rr.com>
-References: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au>
-	 <4F2AD18D.9030904@xenotime.net>
-	 <1328755030.2200.133.camel@gandalf.stny.rr.com>
-	 <1328757287.3234.76.camel@lade.trondhjem.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kmap_atomic tree with the
+ staging.current tree
+Date: Thu, 9 Feb 2012 14:48:07 +1100
+Message-ID: <20120209144807.78f2807f594959f3836cf2eb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__9_Feb_2012_14_48_07_+1100_Os0RzSb+.lf2oYi1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.125]:37538 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757671Ab2BIDa0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Feb 2012 22:30:26 -0500
-In-Reply-To: <1328757287.3234.76.camel@lade.trondhjem.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43476 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757741Ab2BIDsR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Feb 2012 22:48:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>
+To: Cong Wang <amwang@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Jennings <sjenning@linux.vnet.ibm.com>, Greg KH <greg@kroah.com>
 
-On Thu, 2012-02-09 at 03:14 +0000, Myklebust, Trond wrote:
+--Signature=_Thu__9_Feb_2012_14_48_07_+1100_Os0RzSb+.lf2oYi1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hmm.... How about if we rather take that out of the RPC_DEBUG condition?
-> I'm assuming that if someone compiles in the tracepoint code, then they
-> want to be able to do a full trace independently of whether or not they
-> set CONFIG_SYSCTL.
+Hi Cong,
 
-Works for me.
+Today's linux-next merge of the kmap_atomic tree got a conflict in
+drivers/staging/zcache/zcache-main.c between commit 2a4830110b90
+("staging: zcache: fix serialization bug in zv stats") from the
+staging.current tree and commit a3a2486aeadb ("zcache: remove the second
+argument of k [un]map_atomic()") from the kmap_atomic tree.
 
-> 
-> 8<---------------------------------------------------------------------
-> From d051b60dcc3032b71cf8d9b96ac4bf24f12b6dcb Mon Sep 17 00:00:00 2001
-> From: Trond Myklebust <Trond.Myklebust@netapp.com>
-> Date: Wed, 8 Feb 2012 22:01:15 -0500
-> Subject: [PATCH] SUNRPC: Ensure that we can trace waitqueues when
->  !defined(CONFIG_SYSCTL)
-> 
-> The tracepoint code relies on the queue->name being defined in order to
-> be able to display the name of the waitqueue on which an RPC task is
-> sleeping.
-> 
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Reported-by: Steven Rostedt <rostedt@goodmis.org>
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Acked-by: Steven Rostedt <rostedt@goodmis.org>
+diff --cc drivers/staging/zcache/zcache-main.c
+index 875acd8,57550ae..0000000
+--- a/drivers/staging/zcache/zcache-main.c
++++ b/drivers/staging/zcache/zcache-main.c
+@@@ -674,9 -675,9 +674,9 @@@ static struct zv_hdr *zv_create(struct=20
+  			&page, &offset, ZCACHE_GFP_MASK);
+  	if (unlikely(ret))
+  		goto out;
+ -	zv_curr_dist_counts[chunks]++;
+ -	zv_cumul_dist_counts[chunks]++;
+ +	atomic_inc(&zv_curr_dist_counts[chunks]);
+ +	atomic_inc(&zv_cumul_dist_counts[chunks]);
+- 	zv =3D kmap_atomic(page, KM_USER0) + offset;
++ 	zv =3D kmap_atomic(page) + offset;
+  	zv->index =3D index;
+  	zv->oid =3D *oid;
+  	zv->pool_id =3D pool_id;
 
--- Steve
+--Signature=_Thu__9_Feb_2012_14_48_07_+1100_Os0RzSb+.lf2oYi1
+Content-Type: application/pgp-signature
 
-> Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
-> ---
->  include/linux/sunrpc/debug.h |    3 +++
->  include/linux/sunrpc/sched.h |   15 +++++++++++++--
->  net/sunrpc/sched.c           |    4 +---
->  3 files changed, 17 insertions(+), 5 deletions(-)
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPM0H3AAoJEECxmPOUX5FE6JEP/j8UvJ0i2cILob20mdEVE4k4
+grLz13sH9y8kx86vSga3zSfODW6srAV0bQ7vqfVhAxpxm2B6IgiR/KSKGMXORb4a
+Bfo28tKM3wx6j8qsitnIufY/vA3NxkxfLb6vv9NC45Pw9AV5eH8DdZbJYtSLQUPF
+mSDO8rH5/Ze9nSL+EIk8odI6d9+pTVLhoPcuvtfqHJmNl+LCrh9eh2+LrCtIwq1H
+NZ1ObwFcpreTGQNd3OF+Ewq1Q+hUxyzzUnzEEr5GyPWWaHzPDHHVw0pBkGU9rtZC
+4kKeYYuVUPn6Zw6nxKyUuqHigMx4fa/H/xIiy7J1ze50UZYfvqNxGLjHHc2+mQgN
+lntoQurYPIJ0m1OBTSMPGKSXW9t6kK0re7mYyv2lhjTNteksM1SQdimZN1QOZZUQ
+fqB7ffvnuv9bIysmWvfQ9tNLBojc5HM1JhT9MwAdXHbFcj6vik92f/EJWoIefPV5
+7hnND9TUJQQnZQr3kwllCkhXEeuhSJ21Msmb57cMHBLAQaz9ADq/TkmzWHfu3Qnv
+nKFn9sCst22wFsOh3Np6wpCqivKx8bN3WZPYQgiJMMQi3dB3ezuz0sIK25vuw3fq
+oqlQcBUvuJ0zFl+mv5/up2ub17BvVOQopPIjyGNB/f75oXpiY8BPCenzbhT5401h
+InSxpJb3PxUuCp8vvEJL
+=mOw5
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__9_Feb_2012_14_48_07_+1100_Os0RzSb+.lf2oYi1--
