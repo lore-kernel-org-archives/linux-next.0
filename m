@@ -1,107 +1,57 @@
-From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+From: Steven Rostedt <rostedt@goodmis.org>
 Subject: Re: linux-next: Tree for Feb 2 (trace/events/sunrpc.h)
-Date: Thu, 9 Feb 2012 03:14:48 +0000
-Message-ID: <1328757287.3234.76.camel@lade.trondhjem.org>
+Date: Wed, 08 Feb 2012 22:30:24 -0500
+Message-ID: <1328758224.2200.134.camel@gandalf.stny.rr.com>
 References: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au>
 	 <4F2AD18D.9030904@xenotime.net>
 	 <1328755030.2200.133.camel@gandalf.stny.rr.com>
+	 <1328757287.3234.76.camel@lade.trondhjem.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1328755030.2200.133.camel@gandalf.stny.rr.com>
-Content-Language: en-US
-Content-ID: <D077FD8824811144B273378A92AEBD13@tahoe.netapp.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.125]:37538 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757671Ab2BIDa0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Feb 2012 22:30:26 -0500
+In-Reply-To: <1328757287.3234.76.camel@lade.trondhjem.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
 Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>
-List-Id: linux-next.vger.kernel.org
 
-T24gV2VkLCAyMDEyLTAyLTA4IGF0IDIxOjM3IC0wNTAwLCBTdGV2ZW4gUm9zdGVkdCB3cm90ZToN
-Cj4gWyBBZGRlZCB0aGUgcGVyc29uIHJlc3BvbnNpYmxlIGZvciB0aGlzIF0NCj4gDQo+IE9uIFRo
-dSwgMjAxMi0wMi0wMiBhdCAxMDoxMCAtMDgwMCwgUmFuZHkgRHVubGFwIHdyb3RlOg0KPiA+IE9u
-IDAyLzAxLzIwMTIgMDc6NDUgUE0sIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+ID4gPiBIaSBh
-bGwsDQo+ID4gPiANCj4gPiA+IENoYW5nZXMgc2luY2UgMjAxMjAyMDE6DQo+ID4gDQo+ID4gDQo+
-ID4gDQo+ID4gaW5jbHVkZS90cmFjZS9ldmVudHMvc3VucnBjLmg6Njk6MTogZXJyb3I6IGltcGxp
-Y2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdycGNfcW5hbWUnDQo+ID4gaW5jbHVkZS90cmFj
-ZS9ldmVudHMvc3VucnBjLmg6Njk6MTogd2FybmluZzogZm9ybWF0ICclcycgZXhwZWN0cyB0eXBl
-ICdjaGFyIConLCBidXQgYXJndW1lbnQgOSBoYXMgdHlwZSAnaW50Jw0KPiANCj4gVGhpcyBoYXMg
-YWN0dWFsbHkgbm90aGluZyB0byBkbyB3aXRoIHRoZSB0cmFjZXBvaW50IGl0c2VsZi4gVGhlIGJ1
-ZyBpcw0KPiB3aXRoIHRoZSBycGNfcW5hbWUoKS4NCj4gDQo+IFRoZSB0cmFjZXBvaW50IHJlZmVy
-ZW5jZXMgcnBjX3FuYW1lKCkgYW5kIGluDQo+IGluY2x1ZGUvbGludXgvc3VucnBjL3NjaGVkLmg6
-DQo+IA0KPiANCj4gI2lmZGVmIFJQQ19ERUJVRw0KPiBzdGF0aWMgaW5saW5lIGNvbnN0IGNoYXIg
-KiBycGNfcW5hbWUoY29uc3Qgc3RydWN0IHJwY193YWl0X3F1ZXVlICpxKQ0KPiB7DQo+IAlyZXR1
-cm4gKChxICYmIHEtPm5hbWUpID8gcS0+bmFtZSA6ICJ1bmtub3duIik7DQo+IH0NCj4gI2VuZGlm
-DQo+IA0KPiBZb3VyIGNvbmZpZyBoYWQgUlBDX0RFQlVHIG5vdCBzZXQsIHRodXMgdGhlIGZ1bmN0
-aW9uIHdhcyBub3QgZGVmaW5lZC4NCj4gDQo+IA0KPiBUaGUgYmVsb3cgcGF0Y2ggZml4ZXMgdGhl
-IHByb2JsZW0gd2l0aCB0aGUgc2lkZSBlZmZlY3QgdGhhdCB0aGUgdHJhY2UNCj4gZGF0YSB3aWxs
-IGNvbnRhaW4gInVua25vd24iIGZvciBhbGwgcmVmZXJlbmNlcyB0byByY3VfcW5hbWUoKS4NCj4g
-DQo+IC0tIFN0ZXZlDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBTdGV2ZW4gUm9zdGVkdCA8cm9zdGVk
-dEBnb29kbWlzLm9yZz4NCj4gDQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9zdW5y
-cGMvc2NoZWQuaCBiL2luY2x1ZGUvbGludXgvc3VucnBjL3NjaGVkLmgNCj4gaW5kZXggZjdiMmRm
-NS4uYzg5YmE5NSAxMDA2NDQNCj4gLS0tIGEvaW5jbHVkZS9saW51eC9zdW5ycGMvc2NoZWQuaA0K
-PiArKysgYi9pbmNsdWRlL2xpbnV4L3N1bnJwYy9zY2hlZC5oDQo+IEBAIC0yNzUsNiArMjc1LDEx
-IEBAIHN0YXRpYyBpbmxpbmUgY29uc3QgY2hhciAqIHJwY19xbmFtZShjb25zdCBzdHJ1Y3QgcnBj
-X3dhaXRfcXVldWUgKnEpDQo+ICB7DQo+ICAJcmV0dXJuICgocSAmJiBxLT5uYW1lKSA/IHEtPm5h
-bWUgOiAidW5rbm93biIpOw0KPiAgfQ0KPiArI2Vsc2UNCj4gK3N0YXRpYyBpbmxpbmUgY29uc3Qg
-Y2hhciAqIHJwY19xbmFtZShjb25zdCBzdHJ1Y3QgcnBjX3dhaXRfcXVldWUgKnEpDQo+ICt7DQo+
-ICsJcmV0dXJuICJ1bmtub3duIjsNCj4gK30NCj4gICNlbmRpZg0KPiAgDQo+ICAjZW5kaWYgLyog
-X0xJTlVYX1NVTlJQQ19TQ0hFRF9IXyAqLw0KDQpIbW0uLi4uIEhvdyBhYm91dCBpZiB3ZSByYXRo
-ZXIgdGFrZSB0aGF0IG91dCBvZiB0aGUgUlBDX0RFQlVHIGNvbmRpdGlvbj8NCkknbSBhc3N1bWlu
-ZyB0aGF0IGlmIHNvbWVvbmUgY29tcGlsZXMgaW4gdGhlIHRyYWNlcG9pbnQgY29kZSwgdGhlbiB0
-aGV5DQp3YW50IHRvIGJlIGFibGUgdG8gZG8gYSBmdWxsIHRyYWNlIGluZGVwZW5kZW50bHkgb2Yg
-d2hldGhlciBvciBub3QgdGhleQ0Kc2V0IENPTkZJR19TWVNDVEwuDQoNCjg8LS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-DQpGcm9tIGQwNTFiNjBkY2MzMDMyYjcxY2Y4ZDliOTZhYzRiZjI0ZjEyYjZkY2IgTW9uIFNlcCAx
-NyAwMDowMDowMCAyMDAxDQpGcm9tOiBUcm9uZCBNeWtsZWJ1c3QgPFRyb25kLk15a2xlYnVzdEBu
-ZXRhcHAuY29tPg0KRGF0ZTogV2VkLCA4IEZlYiAyMDEyIDIyOjAxOjE1IC0wNTAwDQpTdWJqZWN0
-OiBbUEFUQ0hdIFNVTlJQQzogRW5zdXJlIHRoYXQgd2UgY2FuIHRyYWNlIHdhaXRxdWV1ZXMgd2hl
-bg0KICFkZWZpbmVkKENPTkZJR19TWVNDVEwpDQoNClRoZSB0cmFjZXBvaW50IGNvZGUgcmVsaWVz
-IG9uIHRoZSBxdWV1ZS0+bmFtZSBiZWluZyBkZWZpbmVkIGluIG9yZGVyIHRvDQpiZSBhYmxlIHRv
-IGRpc3BsYXkgdGhlIG5hbWUgb2YgdGhlIHdhaXRxdWV1ZSBvbiB3aGljaCBhbiBSUEMgdGFzayBp
-cw0Kc2xlZXBpbmcuDQoNClJlcG9ydGVkLWJ5OiBSYW5keSBEdW5sYXAgPHJkdW5sYXBAeGVub3Rp
-bWUubmV0Pg0KUmVwb3J0ZWQtYnk6IFN0ZXZlbiBSb3N0ZWR0IDxyb3N0ZWR0QGdvb2RtaXMub3Jn
-Pg0KU2lnbmVkLW9mZi1ieTogVHJvbmQgTXlrbGVidXN0IDxUcm9uZC5NeWtsZWJ1c3RAbmV0YXBw
-LmNvbT4NCi0tLQ0KIGluY2x1ZGUvbGludXgvc3VucnBjL2RlYnVnLmggfCAgICAzICsrKw0KIGlu
-Y2x1ZGUvbGludXgvc3VucnBjL3NjaGVkLmggfCAgIDE1ICsrKysrKysrKysrKystLQ0KIG5ldC9z
-dW5ycGMvc2NoZWQuYyAgICAgICAgICAgfCAgICA0ICstLS0NCiAzIGZpbGVzIGNoYW5nZWQsIDE3
-IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9pbmNsdWRlL2xp
-bnV4L3N1bnJwYy9kZWJ1Zy5oIGIvaW5jbHVkZS9saW51eC9zdW5ycGMvZGVidWcuaA0KaW5kZXgg
-YzI3ODZmMi4uMmExMWViMiAxMDA2NDQNCi0tLSBhL2luY2x1ZGUvbGludXgvc3VucnBjL2RlYnVn
-LmgNCisrKyBiL2luY2x1ZGUvbGludXgvc3VucnBjL2RlYnVnLmgNCkBAIC0zNCw2ICszNCw5IEBA
-DQogI2lmZGVmIENPTkZJR19TWVNDVEwNCiAjZGVmaW5lICBSUENfREVCVUcNCiAjZW5kaWYNCisj
-aWZkZWYgQ09ORklHX1RSQUNFUE9JTlRTDQorI2RlZmluZSBSUENfVFJBQ0VQT0lOVFMNCisjZW5k
-aWYNCiAvKiAjZGVmaW5lICBSUENfUFJPRklMRSAqLw0KIA0KIC8qDQpkaWZmIC0tZ2l0IGEvaW5j
-bHVkZS9saW51eC9zdW5ycGMvc2NoZWQuaCBiL2luY2x1ZGUvbGludXgvc3VucnBjL3NjaGVkLmgN
-CmluZGV4IGY3YjJkZjUuLjIyZGZjMjQgMTAwNjQ0DQotLS0gYS9pbmNsdWRlL2xpbnV4L3N1bnJw
-Yy9zY2hlZC5oDQorKysgYi9pbmNsdWRlL2xpbnV4L3N1bnJwYy9zY2hlZC5oDQpAQCAtMTk1LDcg
-KzE5NSw3IEBAIHN0cnVjdCBycGNfd2FpdF9xdWV1ZSB7DQogCXVuc2lnbmVkIGNoYXIJCW5yOwkJ
-CS8qICMgdGFza3MgcmVtYWluaW5nIGZvciBjb29raWUgKi8NCiAJdW5zaWduZWQgc2hvcnQJCXFs
-ZW47CQkJLyogdG90YWwgIyB0YXNrcyB3YWl0aW5nIGluIHF1ZXVlICovDQogCXN0cnVjdCBycGNf
-dGltZXIJdGltZXJfbGlzdDsNCi0jaWZkZWYgUlBDX0RFQlVHDQorI2lmIGRlZmluZWQoUlBDX0RF
-QlVHKSB8fCBkZWZpbmVkKFJQQ19UUkFDRVBPSU5UUykNCiAJY29uc3QgY2hhciAqCQluYW1lOw0K
-ICNlbmRpZg0KIH07DQpAQCAtMjcwLDExICsyNzAsMjIgQEAgc3RhdGljIGlubGluZSBpbnQgcnBj
-X3Rhc2tfaGFzX3ByaW9yaXR5KHN0cnVjdCBycGNfdGFzayAqdGFzaywgdW5zaWduZWQgY2hhciBw
-cmkNCiAJcmV0dXJuICh0YXNrLT50a19wcmlvcml0eSArIFJQQ19QUklPUklUWV9MT1cgPT0gcHJp
-byk7DQogfQ0KIA0KLSNpZmRlZiBSUENfREVCVUcNCisjaWYgZGVmaW5lZChSUENfREVCVUcpIHx8
-IGRlZmluZWQgKFJQQ19UUkFDRVBPSU5UUykNCiBzdGF0aWMgaW5saW5lIGNvbnN0IGNoYXIgKiBy
-cGNfcW5hbWUoY29uc3Qgc3RydWN0IHJwY193YWl0X3F1ZXVlICpxKQ0KIHsNCiAJcmV0dXJuICgo
-cSAmJiBxLT5uYW1lKSA/IHEtPm5hbWUgOiAidW5rbm93biIpOw0KIH0NCisNCitzdGF0aWMgaW5s
-aW5lIHZvaWQgcnBjX2Fzc2lnbl93YWl0cXVldWVfbmFtZShzdHJ1Y3QgcnBjX3dhaXRfcXVldWUg
-KnEsDQorCQljb25zdCBjaGFyICpuYW1lKQ0KK3sNCisJcS0+bmFtZSA9IG5hbWU7DQorfQ0KKyNl
-bHNlDQorc3RhdGljIGlubGluZSB2b2lkIHJwY19hc3NpZ25fd2FpdHF1ZXVlX25hbWUoc3RydWN0
-IHJwY193YWl0X3F1ZXVlICpxLA0KKwkJY29uc3QgY2hhciAqbmFtZSkNCit7DQorfQ0KICNlbmRp
-Zg0KIA0KICNlbmRpZiAvKiBfTElOVVhfU1VOUlBDX1NDSEVEX0hfICovDQpkaWZmIC0tZ2l0IGEv
-bmV0L3N1bnJwYy9zY2hlZC5jIGIvbmV0L3N1bnJwYy9zY2hlZC5jDQppbmRleCBkNzljNjNkLi4x
-YzU3MGE4IDEwMDY0NA0KLS0tIGEvbmV0L3N1bnJwYy9zY2hlZC5jDQorKysgYi9uZXQvc3VucnBj
-L3NjaGVkLmMNCkBAIC0yMDgsOSArMjA4LDcgQEAgc3RhdGljIHZvaWQgX19ycGNfaW5pdF9wcmlv
-cml0eV93YWl0X3F1ZXVlKHN0cnVjdCBycGNfd2FpdF9xdWV1ZSAqcXVldWUsIGNvbnN0IGMNCiAJ
-cXVldWUtPnFsZW4gPSAwOw0KIAlzZXR1cF90aW1lcigmcXVldWUtPnRpbWVyX2xpc3QudGltZXIs
-IF9fcnBjX3F1ZXVlX3RpbWVyX2ZuLCAodW5zaWduZWQgbG9uZylxdWV1ZSk7DQogCUlOSVRfTElT
-VF9IRUFEKCZxdWV1ZS0+dGltZXJfbGlzdC5saXN0KTsNCi0jaWZkZWYgUlBDX0RFQlVHDQotCXF1
-ZXVlLT5uYW1lID0gcW5hbWU7DQotI2VuZGlmDQorCXJwY19hc3NpZ25fd2FpdHF1ZXVlX25hbWUo
-cXVldWUsIHFuYW1lKTsNCiB9DQogDQogdm9pZCBycGNfaW5pdF9wcmlvcml0eV93YWl0X3F1ZXVl
-KHN0cnVjdCBycGNfd2FpdF9xdWV1ZSAqcXVldWUsIGNvbnN0IGNoYXIgKnFuYW1lKQ0KLS0gDQox
-LjcuNy42DQoNCg0KLS0gDQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4IE5GUyBjbGllbnQgbWFpbnRh
-aW5lcg0KDQpOZXRBcHANClRyb25kLk15a2xlYnVzdEBuZXRhcHAuY29tDQp3d3cubmV0YXBwLmNv
-bQ0KDQo=
+On Thu, 2012-02-09 at 03:14 +0000, Myklebust, Trond wrote:
+
+> Hmm.... How about if we rather take that out of the RPC_DEBUG condition?
+> I'm assuming that if someone compiles in the tracepoint code, then they
+> want to be able to do a full trace independently of whether or not they
+> set CONFIG_SYSCTL.
+
+Works for me.
+
+> 
+> 8<---------------------------------------------------------------------
+> From d051b60dcc3032b71cf8d9b96ac4bf24f12b6dcb Mon Sep 17 00:00:00 2001
+> From: Trond Myklebust <Trond.Myklebust@netapp.com>
+> Date: Wed, 8 Feb 2012 22:01:15 -0500
+> Subject: [PATCH] SUNRPC: Ensure that we can trace waitqueues when
+>  !defined(CONFIG_SYSCTL)
+> 
+> The tracepoint code relies on the queue->name being defined in order to
+> be able to display the name of the waitqueue on which an RPC task is
+> sleeping.
+> 
+> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+> Reported-by: Steven Rostedt <rostedt@goodmis.org>
+
+Acked-by: Steven Rostedt <rostedt@goodmis.org>
+
+-- Steve
+
+> Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+> ---
+>  include/linux/sunrpc/debug.h |    3 +++
+>  include/linux/sunrpc/sched.h |   15 +++++++++++++--
+>  net/sunrpc/sched.c           |    4 +---
+>  3 files changed, 17 insertions(+), 5 deletions(-)
+> 
