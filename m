@@ -1,177 +1,80 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Feb 2 (trace/events/sunrpc.h)
-Date: Thu, 09 Feb 2012 08:14:56 -0800
-Message-ID: <4F33F100.7030706@xenotime.net>
-References: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au>	 <4F2AD18D.9030904@xenotime.net>	 <1328755030.2200.133.camel@gandalf.stny.rr.com> <1328757287.3234.76.camel@lade.trondhjem.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] slub: prefetch next freelist pointer in slab_alloc()
+Date: Thu, 9 Feb 2012 21:00:22 +0100
+Message-ID: <CAMuHMdXRXRo9zuKj9E3jUrSMrvpUD2KjVZ76f_WJWvG=8dvTSw@mail.gmail.com>
+References: <1324049134.25554.29.camel@edumazet-HP-Compaq-6005-Pro-SFF-PC>
+	<alpine.DEB.2.00.1112161030270.26651@router.home>
+	<alpine.LFD.2.02.1201242152480.1658@tux.localdomain>
+	<CAMuHMdW-RbD-uxpOGmhv0LCsHLG-2Q0LvSRrB0cdM2efGRAYnw@mail.gmail.com>
+	<alpine.DEB.2.00.1201301549240.3895@router.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:38407 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753752Ab2BIQPT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Feb 2012 11:15:19 -0500
-In-Reply-To: <1328757287.3234.76.camel@lade.trondhjem.org>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:63443 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757427Ab2BIUAX convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Feb 2012 15:00:23 -0500
+In-Reply-To: <alpine.DEB.2.00.1201301549240.3895@router.home>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>
+To: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>, Eric Dumazet <eric.dumazet@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, David Rientjes <rientjes@google.com>, "Alex,Shi" <alex.shi@intel.com>, Shaohua Li <shaohua.li@intel.com>, Matt Mackall <mpm@selenic.com>, Linux-Next <linux-next@vger.kernel.org>
 
-On 02/08/2012 07:14 PM, Myklebust, Trond wrote:
-> On Wed, 2012-02-08 at 21:37 -0500, Steven Rostedt wrote:
->> [ Added the person responsible for this ]
+On Mon, Jan 30, 2012 at 22:53, Christoph Lameter <cl@linux.com> wrote:
+> On Mon, 30 Jan 2012, Geert Uytterhoeven wrote:
+>> m68k/allmodconfig at http://kisskb.ellerman.id.au/kisskb/buildresult=
+/5527349/
 >>
->> On Thu, 2012-02-02 at 10:10 -0800, Randy Dunlap wrote:
->>> On 02/01/2012 07:45 PM, Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> Changes since 20120201:
->>>
->>>
->>>
->>> include/trace/events/sunrpc.h:69:1: error: implicit declaration of function 'rpc_qname'
->>> include/trace/events/sunrpc.h:69:1: warning: format '%s' expects type 'char *', but argument 9 has type 'int'
+>> mm/slub.c:274: error: implicit declaration of function 'prefetch'
 >>
->> This has actually nothing to do with the tracepoint itself. The bug is
->> with the rpc_qname().
->>
->> The tracepoint references rpc_qname() and in
->> include/linux/sunrpc/sched.h:
->>
->>
->> #ifdef RPC_DEBUG
->> static inline const char * rpc_qname(const struct rpc_wait_queue *q)
->> {
->> 	return ((q && q->name) ? q->name : "unknown");
->> }
->> #endif
->>
->> Your config had RPC_DEBUG not set, thus the function was not defined.
->>
->>
->> The below patch fixes the problem with the side effect that the trace
->> data will contain "unknown" for all references to rcu_qname().
->>
->> -- Steve
->>
->> Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
->>
->>
->> diff --git a/include/linux/sunrpc/sched.h b/include/linux/sunrpc/sched.h
->> index f7b2df5..c89ba95 100644
->> --- a/include/linux/sunrpc/sched.h
->> +++ b/include/linux/sunrpc/sched.h
->> @@ -275,6 +275,11 @@ static inline const char * rpc_qname(const struct rpc_wait_queue *q)
->>  {
->>  	return ((q && q->name) ? q->name : "unknown");
->>  }
->> +#else
->> +static inline const char * rpc_qname(const struct rpc_wait_queue *q)
->> +{
->> +	return "unknown";
->> +}
->>  #endif
->>  
->>  #endif /* _LINUX_SUNRPC_SCHED_H_ */
-> 
-> Hmm.... How about if we rather take that out of the RPC_DEBUG condition?
-> I'm assuming that if someone compiles in the tracepoint code, then they
-> want to be able to do a full trace independently of whether or not they
-> set CONFIG_SYSCTL.
-> 
-> 8<---------------------------------------------------------------------
-> From d051b60dcc3032b71cf8d9b96ac4bf24f12b6dcb Mon Sep 17 00:00:00 2001
-> From: Trond Myklebust <Trond.Myklebust@netapp.com>
-> Date: Wed, 8 Feb 2012 22:01:15 -0500
-> Subject: [PATCH] SUNRPC: Ensure that we can trace waitqueues when
->  !defined(CONFIG_SYSCTL)
-> 
-> The tracepoint code relies on the queue->name being defined in order to
-> be able to display the name of the waitqueue on which an RPC task is
-> sleeping.
-> 
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Reported-by: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+>> Sorry, didn't notice it earlier due to other build breakage in -next=
+=2E
+>
+> Does this fix it?
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+Yep. Thx!
 
-Thanks.
+> Subject: slub: include include for prefetch
+>
+> Otherwise m68k breaks.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Christoph Lameter <cl@linux.com>
+
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
 > ---
->  include/linux/sunrpc/debug.h |    3 +++
->  include/linux/sunrpc/sched.h |   15 +++++++++++++--
->  net/sunrpc/sched.c           |    4 +---
->  3 files changed, 17 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/sunrpc/debug.h b/include/linux/sunrpc/debug.h
-> index c2786f2..2a11eb2 100644
-> --- a/include/linux/sunrpc/debug.h
-> +++ b/include/linux/sunrpc/debug.h
-> @@ -34,6 +34,9 @@
->  #ifdef CONFIG_SYSCTL
->  #define  RPC_DEBUG
->  #endif
-> +#ifdef CONFIG_TRACEPOINTS
-> +#define RPC_TRACEPOINTS
-> +#endif
->  /* #define  RPC_PROFILE */
->  
->  /*
-> diff --git a/include/linux/sunrpc/sched.h b/include/linux/sunrpc/sched.h
-> index f7b2df5..22dfc24 100644
-> --- a/include/linux/sunrpc/sched.h
-> +++ b/include/linux/sunrpc/sched.h
-> @@ -195,7 +195,7 @@ struct rpc_wait_queue {
->  	unsigned char		nr;			/* # tasks remaining for cookie */
->  	unsigned short		qlen;			/* total # tasks waiting in queue */
->  	struct rpc_timer	timer_list;
-> -#ifdef RPC_DEBUG
-> +#if defined(RPC_DEBUG) || defined(RPC_TRACEPOINTS)
->  	const char *		name;
->  #endif
->  };
-> @@ -270,11 +270,22 @@ static inline int rpc_task_has_priority(struct rpc_task *task, unsigned char pri
->  	return (task->tk_priority + RPC_PRIORITY_LOW == prio);
->  }
->  
-> -#ifdef RPC_DEBUG
-> +#if defined(RPC_DEBUG) || defined (RPC_TRACEPOINTS)
->  static inline const char * rpc_qname(const struct rpc_wait_queue *q)
->  {
->  	return ((q && q->name) ? q->name : "unknown");
->  }
-> +
-> +static inline void rpc_assign_waitqueue_name(struct rpc_wait_queue *q,
-> +		const char *name)
-> +{
-> +	q->name = name;
-> +}
-> +#else
-> +static inline void rpc_assign_waitqueue_name(struct rpc_wait_queue *q,
-> +		const char *name)
-> +{
-> +}
->  #endif
->  
->  #endif /* _LINUX_SUNRPC_SCHED_H_ */
-> diff --git a/net/sunrpc/sched.c b/net/sunrpc/sched.c
-> index d79c63d..1c570a8 100644
-> --- a/net/sunrpc/sched.c
-> +++ b/net/sunrpc/sched.c
-> @@ -208,9 +208,7 @@ static void __rpc_init_priority_wait_queue(struct rpc_wait_queue *queue, const c
->  	queue->qlen = 0;
->  	setup_timer(&queue->timer_list.timer, __rpc_queue_timer_fn, (unsigned long)queue);
->  	INIT_LIST_HEAD(&queue->timer_list.list);
-> -#ifdef RPC_DEBUG
-> -	queue->name = qname;
-> -#endif
-> +	rpc_assign_waitqueue_name(queue, qname);
->  }
->  
->  void rpc_init_priority_wait_queue(struct rpc_wait_queue *queue, const char *qname)
+> =C2=A0mm/slub.c | =C2=A0 =C2=A01 +
+> =C2=A01 file changed, 1 insertion(+)
+>
+> Index: linux-2.6/mm/slub.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- linux-2.6.orig/mm/slub.c =C2=A0 =C2=A02012-01-13 10:04:06.0000000=
+00 -0600
+> +++ linux-2.6/mm/slub.c 2012-01-30 15:51:55.000000000 -0600
+> @@ -29,6 +29,7 @@
+> =C2=A0#include <linux/math64.h>
+> =C2=A0#include <linux/fault-inject.h>
+> =C2=A0#include <linux/stacktrace.h>
+> +#include <linux/prefetch.h>
+>
+> =C2=A0#include <trace/events/kmem.h>
 
+Gr{oetje,eeting}s,
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
