@@ -1,59 +1,74 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: manual merge of the sound-asoc tree
-Date: Wed, 8 Feb 2012 11:25:08 +0000
-Message-ID: <20120208112507.GD3120@opensource.wolfsonmicro.com>
-References: <20120203125902.558e273c84b339957869f281@canb.auug.org.au>
- <20120203105123.GB3151@opensource.wolfsonmicro.com>
- <20120208105228.a3b2ceeaba1a63e5df9dfbbc@canb.auug.org.au>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: Tree for Feb 2 (trace/events/sunrpc.h)
+Date: Wed, 08 Feb 2012 21:37:10 -0500
+Message-ID: <1328755030.2200.133.camel@gandalf.stny.rr.com>
+References: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au>
+	 <4F2AD18D.9030904@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YToU2i3Vx8H2dn7O"
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54053 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751750Ab2BHLZK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Feb 2012 06:25:10 -0500
-Content-Disposition: inline
-In-Reply-To: <20120208105228.a3b2ceeaba1a63e5df9dfbbc@canb.auug.org.au>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:57625 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755114Ab2BIChM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Feb 2012 21:37:12 -0500
+In-Reply-To: <4F2AD18D.9030904@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, Trond Myklebust <Trond.Myklebust@netapp.com>
+
+[ Added the person responsible for this ]
+
+On Thu, 2012-02-02 at 10:10 -0800, Randy Dunlap wrote:
+> On 02/01/2012 07:45 PM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20120201:
+> 
+> 
+> 
+> include/trace/events/sunrpc.h:69:1: error: implicit declaration of function 'rpc_qname'
+> include/trace/events/sunrpc.h:69:1: warning: format '%s' expects type 'char *', but argument 9 has type 'int'
+
+This has actually nothing to do with the tracepoint itself. The bug is
+with the rpc_qname().
+
+The tracepoint references rpc_qname() and in
+include/linux/sunrpc/sched.h:
 
 
---YToU2i3Vx8H2dn7O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+#ifdef RPC_DEBUG
+static inline const char * rpc_qname(const struct rpc_wait_queue *q)
+{
+	return ((q && q->name) ? q->name : "unknown");
+}
+#endif
 
-On Wed, Feb 08, 2012 at 10:52:28AM +1100, Stephen Rothwell wrote:
+Your config had RPC_DEBUG not set, thus the function was not defined.
 
-> So, you have redone the merge (it was commit 05960268bcef and is now
-> 6127dd802637) and still left the conflict tags in
-> sound/soc/codecs/wm5100.c ...
 
-*sigh*  This is why I don't like artificially split development.  Should
-be fixed now.
+The below patch fixes the problem with the side effect that the trace
+data will contain "unknown" for all references to rcu_qname().
 
---YToU2i3Vx8H2dn7O
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+-- Steve
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
 
-iQIcBAEBAgAGBQJPMluKAAoJEBus8iNuMP3dMkUQAIYTn1xnMGitPfbpfCSaRcXx
-ha7cwzHlaarLw5NB61pxjG3mqp067KNwGQBBg7/fyeSxvYlzrGxkTvanh3yjjFdE
-dDTIosW8R7IHhTz8BkAMFAlRzBh0znUfClFtNhoxGW24OG1+UuEPiQ3x1T+99KEr
-lzyuomcRw/Sl0aNyGOkzq4oO3R2b4ueh/9dXPS/gyVECHmZBlJElX5AWGAK+9OL6
-LNXXL9e58Qaoa8oDcEApqHduTTGPVPmwrlkRW+6npxVMENoT2sCcprjKDX3IF5I4
-FffuiagGY5gSmZRFK4o4UzNEy/LVH6JxARbg/2OKiJuU4FY7CD8nxXPieKp3X1PT
-acLNq8sLbGZ2cSWz19ytonD9BWCwUUSEZZHWFWp8XqcbZ2YV2zhjfBytaV8NBaOo
-56h7cr5sXjBT6/KlHm5Q0g8oXF3Yfi6F6v6aejqGaZRjBQcerGjAshvAccPxotcu
-d2ZDtgJHrDKI5nvdzk/NGPDSVsNp3JJ87i1dJPtRtDjB49JbqeEwU916PskPaNJE
-00k6vDUKZM+oyCwfAC7cApdwqqld2DCrZdqiEv8Q5oQiLJbqerUv52MMhw36B+pV
-euyfAyVepJIVCkMS1KYytWKcVaVblsxv1EoKigEvfDalswmo4h6u1/KaJTx0sWXl
-awkSNFGFX3CihHanWTUy
-=Ya5p
------END PGP SIGNATURE-----
 
---YToU2i3Vx8H2dn7O--
+diff --git a/include/linux/sunrpc/sched.h b/include/linux/sunrpc/sched.h
+index f7b2df5..c89ba95 100644
+--- a/include/linux/sunrpc/sched.h
++++ b/include/linux/sunrpc/sched.h
+@@ -275,6 +275,11 @@ static inline const char * rpc_qname(const struct rpc_wait_queue *q)
+ {
+ 	return ((q && q->name) ? q->name : "unknown");
+ }
++#else
++static inline const char * rpc_qname(const struct rpc_wait_queue *q)
++{
++	return "unknown";
++}
+ #endif
+ 
+ #endif /* _LINUX_SUNRPC_SCHED_H_ */
