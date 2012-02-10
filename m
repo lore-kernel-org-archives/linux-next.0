@@ -1,87 +1,101 @@
-From: Seth Jennings <sjenning@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Fri, 10 Feb 2012 12:22:13 -0600
-Message-ID: <4F356055.2000203@linux.vnet.ibm.com>
-References: <20120210155800.ccef418fd5c2f2b87a5d6315@canb.auug.org.au> <20120210052947.GA2068@kroah.com> <80f07411-179e-4fe9-b591-32fbcaac414b@default> <20120210174359.GB5128@kroah.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PULL REQUEST] DMA-mapping framework redesign preparation patches
+Date: Fri, 10 Feb 2012 19:32:17 +0100
+Message-ID: <1328898737-15854-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e8.ny.us.ibm.com ([32.97.182.138]:41058 "EHLO e8.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759729Ab2BJSXE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 10 Feb 2012 13:23:04 -0500
-Received: from /spool/local
-	by e8.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <sjenning@linux.vnet.ibm.com>;
-	Fri, 10 Feb 2012 13:23:03 -0500
-In-Reply-To: <20120210174359.GB5128@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dan Magenheimer <dan.magenheimer@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>, Konrad Wilk <konrad.wilk@oracle.com>
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-alpha-owner@vger.kernel.org>
+Sender: linux-alpha-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, microblaze-uclinux@itee.uq.edu.au, linux-arch@vger.kernel.org, x86@kernel.org, linux-sh@vger.kernel.org, linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org, linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-mips@linux-mips.org, discuss@x86-64.org, linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, linaro-mm-sig@lists.linaro.org, Jonathan Corbet <corbet@lwn.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-On 02/10/2012 11:43 AM, Greg KH wrote:
-> On Fri, Feb 10, 2012 at 09:21:46AM -0800, Dan Magenheimer wrote:
->>> From: Greg KH [mailto:greg@kroah.com]
->>> Subject: Re: linux-next: build failure after merge of the staging tree
->>>
->>> On Fri, Feb 10, 2012 at 03:58:00PM +1100, Stephen Rothwell wrote:
->>>> Hi Greg,
->>>>
->>>> After merging the staging tree, today's linux-next build (x86_64
->>>> allmodconfig) failed like this:
->>>>
->>>> drivers/staging/ramster/ramster_o2net.c: In function 'ramster_remote_async_get_request_handler':
->>>> drivers/staging/ramster/ramster_o2net.c:91:2: error: implicit declaration of function
->>> 'o2net_force_data_magic' [-Werror=implicit-function-declaration]
->>>> drivers/staging/ramster/ramster_o2net.c: In function 'ramster_remote_put':
->>>> drivers/staging/ramster/ramster_o2net.c:250:2: error: implicit declaration of function
->>> 'o2net_nn_from_num' [-Werror=implicit-function-declaration]
->>>> drivers/staging/ramster/zcache-main.c:40:64: fatal error: ../zram/xvmalloc.h: No such file or
->>> directory
->>>>
->>>> Caused by commits ba351b02ab11 ("staging: ramster: local compression +
->>>> tmem") and 14a3cd58dd4f ("staging: ramster: ramster-specific new files").
->>>>
->>>> I have used the version of the staging tree from next-20120209 for today.
->>>
->>> Ugh, I wonder why it builds here, very odd.
->>>
->>> Dan, care to send me a patch to fix this?
->>
->>>> drivers/staging/ramster/zcache-main.c:40:64: fatal error: ../zram/xvmalloc.h: No such
->>
->> Hmmm... it appears that Seth's zsmalloc patch for drivers/staging/zcache
->> removed xvmalloc.[ch] from drivers/staging/zram while drivers/staging/ramster
->> is still depending on it. :-(  I hadn't planned for both ramster
->> and zsmalloc-replacing-xvmalloc to be merged at the same time... I guess
->> this is exactly the kind of problem linux-next is designed to wring out!
->>
->> Greg, FOR NOW, PLEASE JUST REVERT the ramster patchset from staging-next.
->> I am working on a v5 anyway and will roll in a copy of the xvmalloc.[ch]
->> code into it for now and, since Seth's patch should be in linux-next
->> by the time I am done (hopefully next week), I can test build ramster v5
->> with linux-next to ensure all the above problems are resolved before
->> resubmitting.
->>
->> (Seth, I could also switch ramster v5 to depend on zsmalloc instead of
->> xvmalloc, but since I've done all my ramster testing on xvmalloc,
->> I think I would prefer to make that transition later.)
->>
->> Sorry, Stephen and Greg, for the hassle!
-> 
-> Ok, now reverted, what a mess...
+Hi Stephen,
 
-Sounds like the ramster has been reverted already, but the removal
-of xvmalloc was done in its own commit (from staging-next):
+Our patches with DMA-mapping framework redesign proposal have been
+hanging for over a month with just a few comments. We would like to go
+further in the development, but first I would like to ask You to give
+them a try in the linux-next kernel.
 
-b154ff05e1b0d749231a71896c90e38657f8e675 staging: zram: remove xvmalloc
+For everyone interested in this patch series, here is the relevant
+thread: https://lkml.org/lkml/2011/12/23/97
 
-If you revert just this commit, that should restore the xvmalloc files.
+If there are any problems with our git tree, please contact Marek 
+Szyprowski <m.szyprowski@samsung.com> or alternatively Kyungmin Park
+<kyungmin.park@samsung.com>.
 
-Of course this doesn't resolve the "implicit declaration of function"
-errors.
+The following changes since commit 62aa2b537c6f5957afd98e29f96897419ed5ebab:
 
---
-Seth
+  Linux 3.3-rc2 (2012-01-31 13:31:54 -0800)
+
+are available in the git repository at:
+  git://git.infradead.org/users/kmpark/linux-samsung dma-mapping-next
+
+Andrzej Pietrasiewicz (9):
+      X86: adapt for dma_map_ops changes
+      MIPS: adapt for dma_map_ops changes
+      PowerPC: adapt for dma_map_ops changes
+      IA64: adapt for dma_map_ops changes
+      SPARC: adapt for dma_map_ops changes
+      Alpha: adapt for dma_map_ops changes
+      SH: adapt for dma_map_ops changes
+      Microblaze: adapt for dma_map_ops changes
+      Unicore32: adapt for dma_map_ops changes
+
+Marek Szyprowski (5):
+      common: dma-mapping: introduce alloc_attrs and free_attrs methods
+      common: dma-mapping: remove old alloc_coherent and free_coherent methods
+      common: dma-mapping: introduce mmap method
+      common: DMA-mapping: add WRITE_COMBINE attribute
+      common: DMA-mapping: add NON-CONSISTENT attribute
+
+ Documentation/DMA-attributes.txt          |   19 +++++++++++++++++++
+ arch/alpha/include/asm/dma-mapping.h      |   18 ++++++++++++------
+ arch/alpha/kernel/pci-noop.c              |   10 ++++++----
+ arch/alpha/kernel/pci_iommu.c             |   10 ++++++----
+ arch/ia64/hp/common/sba_iommu.c           |   11 ++++++-----
+ arch/ia64/include/asm/dma-mapping.h       |   18 ++++++++++++------
+ arch/ia64/kernel/pci-swiotlb.c            |    9 +++++----
+ arch/ia64/sn/pci/pci_dma.c                |    9 +++++----
+ arch/microblaze/include/asm/dma-mapping.h |   18 ++++++++++++------
+ arch/microblaze/kernel/dma.c              |   10 ++++++----
+ arch/mips/include/asm/dma-mapping.h       |   18 ++++++++++++------
+ arch/mips/mm/dma-default.c                |    8 ++++----
+ arch/powerpc/include/asm/dma-mapping.h    |   24 ++++++++++++++++--------
+ arch/powerpc/kernel/dma-iommu.c           |   10 ++++++----
+ arch/powerpc/kernel/dma-swiotlb.c         |    4 ++--
+ arch/powerpc/kernel/dma.c                 |   10 ++++++----
+ arch/powerpc/kernel/ibmebus.c             |   10 ++++++----
+ arch/powerpc/platforms/cell/iommu.c       |   16 +++++++++-------
+ arch/powerpc/platforms/ps3/system-bus.c   |   13 +++++++------
+ arch/sh/include/asm/dma-mapping.h         |   28 ++++++++++++++++++----------
+ arch/sh/kernel/dma-nommu.c                |    4 ++--
+ arch/sh/mm/consistent.c                   |    6 ++++--
+ arch/sparc/include/asm/dma-mapping.h      |   18 ++++++++++++------
+ arch/sparc/kernel/iommu.c                 |   10 ++++++----
+ arch/sparc/kernel/ioport.c                |   18 ++++++++++--------
+ arch/sparc/kernel/pci_sun4v.c             |    9 +++++----
+ arch/unicore32/include/asm/dma-mapping.h  |   18 ++++++++++++------
+ arch/unicore32/mm/dma-swiotlb.c           |    4 ++--
+ arch/x86/include/asm/dma-mapping.h        |   26 ++++++++++++++++----------
+ arch/x86/kernel/amd_gart_64.c             |   11 ++++++-----
+ arch/x86/kernel/pci-calgary_64.c          |    9 +++++----
+ arch/x86/kernel/pci-dma.c                 |    3 ++-
+ arch/x86/kernel/pci-nommu.c               |    6 +++---
+ arch/x86/kernel/pci-swiotlb.c             |   12 +++++++-----
+ arch/x86/xen/pci-swiotlb-xen.c            |    4 ++--
+ drivers/iommu/amd_iommu.c                 |   10 ++++++----
+ drivers/iommu/intel-iommu.c               |    9 +++++----
+ drivers/xen/swiotlb-xen.c                 |    5 +++--
+ include/linux/dma-attrs.h                 |    2 ++
+ include/linux/dma-mapping.h               |   13 +++++++++----
+ include/linux/swiotlb.h                   |    6 ++++--
+ include/xen/swiotlb-xen.h                 |    6 ++++--
+ lib/swiotlb.c                             |    5 +++--
+ 43 files changed, 305 insertions(+), 182 deletions(-)
+
+Best regards
+Marek Szyprowski
+Samsung Poland R&D Center
+
