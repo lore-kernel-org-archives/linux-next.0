@@ -1,35 +1,68 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Thu, 9 Feb 2012 16:25:22 -0800
-Message-ID: <20120210002522.GA15718@quad.lixom.net>
-References: <20120210105026.0075dcf9eba39eb98e7b44ef@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the target-updates tree
+Date: Fri, 10 Feb 2012 11:50:05 +1100
+Message-ID: <20120210115005.b828eca7065d1fbed82c80c6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__10_Feb_2012_11_50_05_+1100_i5fW57mgW=C5/8NM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:55245 "EHLO
-	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1758658Ab2BJAZZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Feb 2012 19:25:25 -0500
-Content-Disposition: inline
-In-Reply-To: <20120210105026.0075dcf9eba39eb98e7b44ef@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45259 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754479Ab2BJAuQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Feb 2012 19:50:16 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
 
-On Fri, Feb 10, 2012 at 10:50:26AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/mach-at91/at91cap9.c between commit fa23e771d863 ("Merge branch
-> 'fixes' into for-next") from the arm tree and commit 9918ceafd4a9 ("ARM:
-> at91: code removal of CAP9 SoC") from the arm-soc tree.
-> 
-> The latter removes the file, so I did that.
+--Signature=_Fri__10_Feb_2012_11_50_05_+1100_i5fW57mgW=C5/8NM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yep, that's the correct fixup.
+Hi Nicholas,
 
+After merging the target-updates tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Thanks,
+drivers/infiniband/ulp/srpt/ib_srpt.c: In function 'srpt_abort_cmd':
+drivers/infiniband/ulp/srpt/ib_srpt.c:1381:25: error: 'struct se_cmd' has n=
+o member named 'transport_lun_stop'
+drivers/infiniband/ulp/srpt/ib_srpt.c:1390:25: error: 'struct se_cmd' has n=
+o member named 'transport_lun_stop'
+drivers/infiniband/ulp/srpt/ib_srpt.c: In function 'srpt_handle_rdma_err_co=
+mp':
+drivers/infiniband/ulp/srpt/ib_srpt.c:1516:25: error: 'struct se_cmd' has n=
+o member named 'transport_lun_stop'
 
--Olof
+Caused by commit 3f1d120476c5 ("target: replace various cmd flags with a
+transport state").
+
+I have used the target-updates tree from next-20120209 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__10_Feb_2012_11_50_05_+1100_i5fW57mgW=C5/8NM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPNGm9AAoJEECxmPOUX5FEqn0QAJuGe3uJ/O3w567NZ2+UIrsu
+WxZNImJJq0iHRFXA2BzCL9v821VB/EelJ9B5kANOafmhyZOQ0d0gbwXBletiSVAP
+tSgjVPjqmDWAA3JdbMWgZIZDByaStfU54PzkABM1yM/s8aLN8t6Mb2a+eLWLWplA
+Tci/R85I005nX5tYgn7zyaFBhoxmH9eNzv061Szt+RnPe6JN+3FckPLiNKCSQktl
+b/l0ymzOH0sgbfE0bK27JFosmUCwsROFbB6FRREc0ysQ4o9ZFVHX2lulLZOiUMIz
+fFMz8ebBO7IlW9hm859x0U/YuQ/+m/98oLJyJ2HYcEb/oA1C3w120OHh1P8QLj5b
+Ue4qqXIpVBx0yf1CV1fKRpVkRJi5rZLMmPE4QddQWx5zBIYQRFT1LuNxHuW8Dt/B
+yeC2p4boVlUNi/MJBQX95O3A2LquE9F9TJ5O+FnX88m8OTJF+lNrplQhmp+W9OIT
+dh6lp223gFvGgsHI/jDhWcfMICsxXy6SABvSntiDgaK/G+uyJgYRiRQLGBlFIRpm
++XKRpCkXcieDin9eveOvVX9SJN8WulFS5WukKQNmYm35N1QrqItAHSmUd+f+S9yz
+FcNC+D1ue02x3JIWTf6I6adVGkMoIVNbDH7mJBfvpkP8gT/aIPfwDpOnUZ+ecBW+
+s4rR8fCTsSQulnVyoTbB
+=VzM5
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__10_Feb_2012_11_50_05_+1100_i5fW57mgW=C5/8NM--
