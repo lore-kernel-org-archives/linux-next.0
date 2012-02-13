@@ -1,36 +1,36 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: linux-next: build failure after merge of the dma-mapping tree
-Date: Mon, 13 Feb 2012 16:05:26 +0100
-Message-ID: <00dc01ccea60$ead06e30$c0714a90$%szyprowski@samsung.com>
-References: <20120213164000.da84dfec7723af3a9eb3e13f@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Feb 13 (staging/zsmalloc)
+Date: Mon, 13 Feb 2012 09:46:01 -0800
+Message-ID: <4F394C59.2000604@xenotime.net>
+References: <20120213172613.be7258c4c34431ff31dcbbef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:43726 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751967Ab2BMPFc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 10:05:32 -0500
-In-reply-to: <20120213164000.da84dfec7723af3a9eb3e13f@canb.auug.org.au>
-Content-language: pl
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:55268 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755652Ab2BMRqg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 12:46:36 -0500
+In-Reply-To: <20120213172613.be7258c4c34431ff31dcbbef@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Kyungmin Park' <kyungmin.park@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Nitin Gupta <ngupta@vflare.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
 
-Hi Stephen,
+On 02/12/2012 10:26 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20120210:
 
-On Monday, February 13, 2012 6:40 AM Stephen Rothwell wrote:
- 
-> After merging the dma-mapping tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
 
-(snipped)
+zsmalloc-main.c should #include <linux/mmzone.h> to fix this build error:
 
-I'm sorry for the problems. I've updated patches to fix these issues, as 
-well as similar problems with MIPS and Hexagon architecture.
 
-Best regards
+drivers/staging/zsmalloc/zsmalloc-main.c: In function 'obj_location_to_handle':
+drivers/staging/zsmalloc/zsmalloc-main.c:254:32: error: 'MAX_PHYSMEM_BITS' undeclared (first use in this function)
+drivers/staging/zsmalloc/zsmalloc-main.c: In function 'obj_handle_to_location':
+drivers/staging/zsmalloc/zsmalloc-main.c:266:10: error: 'MAX_PHYSMEM_BITS' undeclared (first use in this function)
+
 -- 
-Marek Szyprowski
-Samsung Poland R&D Center
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
