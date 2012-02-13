@@ -1,60 +1,36 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- tree related)
-Date: Mon, 13 Feb 2012 07:03:09 -0800
-Message-ID: <20120213150309.GA10009@kroah.com>
-References: <20120213171949.262e0c12e8d8883e90216df1@canb.auug.org.au>
- <20120213064508.GD28617@kroah.com>
- <4F3922A5.5030502@linux.vnet.ibm.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: linux-next: build failure after merge of the dma-mapping tree
+Date: Mon, 13 Feb 2012 16:05:26 +0100
+Message-ID: <00dc01ccea60$ead06e30$c0714a90$%szyprowski@samsung.com>
+References: <20120213164000.da84dfec7723af3a9eb3e13f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:59411 "EHLO
-	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752516Ab2BMPDd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Feb 2012 10:03:33 -0500
-Received: from compute5.internal (compute5.nyi.mail.srv.osa [10.202.2.45])
-	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id BE84120AB4
-	for <linux-next@vger.kernel.org>; Mon, 13 Feb 2012 10:03:32 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <4F3922A5.5030502@linux.vnet.ibm.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:43726 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751967Ab2BMPFc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 10:05:32 -0500
+In-reply-to: <20120213164000.da84dfec7723af3a9eb3e13f@canb.auug.org.au>
+Content-language: pl
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Seth Jennings <sjenning@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Kyungmin Park' <kyungmin.park@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 13, 2012 at 08:48:05AM -0600, Seth Jennings wrote:
-> On 02/13/2012 12:45 AM, Greg KH wrote:
-> > On Mon, Feb 13, 2012 at 05:19:49PM +1100, Stephen Rothwell wrote:
-> >> Hi ,
-> >>
-> >> After merging the final tree, today's linux-next build (powerpc allyesconfig)
-> >> failed like this:
-> >>
-> >> drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_cpu_notifier':
-> >> drivers/staging/zsmalloc/zsmalloc-main.c:451:3: error: implicit declaration of function 'alloc_vm_area' [-Werror=implicit-function-declaration]
-> >> drivers/staging/zsmalloc/zsmalloc-main.c:451:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-> >> drivers/staging/zsmalloc/zsmalloc-main.c:459:4: error: implicit declaration of function 'free_vm_area' [-Werror=implicit-function-declaration]
-> >> drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_map_object':
-> >> drivers/staging/zsmalloc/zsmalloc-main.c:705:3: error: implicit declaration of function 'set_pte' [-Werror=implicit-function-declaration]
-> >> drivers/staging/zsmalloc/zsmalloc-main.c:709:27: error: dereferencing pointer to incomplete type
-> >> drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_unmap_object':
-> >> drivers/staging/zsmalloc/zsmalloc-main.c:739:3: error: implicit declaration of function '__flush_tlb_one' [-Werror=implicit-function-declaration]
-> >>
-> >> Caused by commit 61989a80fb3a ("staging: zsmalloc: zsmalloc memory
-> >> allocation library").  This needs to include linux/vmalloc.h at least.  I
-> >> couldn't find set_pte at all or __flush_tlb_one for powerpc.
-> >>
-> >> This was too hard to revert, so I have left powerpc allyesconfig broken
-> >> for today.  I may revert it (and some dependent commits) tomorrow.
-> > 
-> > Nitin, please send me a patch to fix this as soon as possible.
-> 
-> Sending a patch now.  Adds linux/vmalloc.h to zsmalloc-main.c. On a less ideal
-> note, it also adds an X86 dependency since set_pte and __flush_tlb_one are
-> x86 only.  I'm working to find portable replacements for these functions.
+Hi Stephen,
 
-Thanks for the patch, I'll queue it up.
+On Monday, February 13, 2012 6:40 AM Stephen Rothwell wrote:
+ 
+> After merging the dma-mapping tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 
-greg k-h
+(snipped)
+
+I'm sorry for the problems. I've updated patches to fix these issues, as 
+well as similar problems with MIPS and Hexagon architecture.
+
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
