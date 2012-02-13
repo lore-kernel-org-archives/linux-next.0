@@ -1,19 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the kmap_atomic tree with the staging
  tree
-Date: Mon, 13 Feb 2012 16:08:21 +1100
-Message-ID: <20120213160821.e223fac74fb6fa53315f3dbe@canb.auug.org.au>
+Date: Mon, 13 Feb 2012 16:15:37 +1100
+Message-ID: <20120213161537.3cf109d3f9c4c577f8fcb789@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__13_Feb_2012_16_08_21_+1100_aY5V3xlsLoj83A1S"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Mon__13_Feb_2012_16_15_37_+1100_mf5F4fl04_uQgKHx"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45146 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750757Ab2BMFPp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 00:15:45 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Cong Wang <amwang@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>, Greg KH <greg@kroah.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Jennings <sjenning@linux.vnet.ibm.com>, Dan Magenheimer <dan.magenheimer@oracle.com>, Greg KH <greg@kroah.com>
 
---Signature=_Mon__13_Feb_2012_16_08_21_+1100_aY5V3xlsLoj83A1S
+--Signature=_Mon__13_Feb_2012_16_15_37_+1100_mf5F4fl04_uQgKHx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -21,484 +25,116 @@ Content-Transfer-Encoding: quoted-printable
 Hi Cong,
 
 Today's linux-next merge of the kmap_atomic tree got a conflict in
-drivers/staging/hv/storvsc_drv.c between various commits from the staging
-tree and commit c41a603a7235 ("hv: remove the second argument of k
-[un]map_atomic()") from the kmap_atomic tree.
+drivers/staging/zcache/zcache-main.c between commit a49aeb1de585
+("staging: zcache: replace xvmalloc with zsmalloc") (and mayb others)
+from the staging tree and commit 1edbcaee3bbe ("zcache: remove the second
+argument of k [un]map_atomic()") from the kmap_atomic tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/hv/storvsc_drv.c
-index 695ffc3,ddbdec8..0000000
---- a/drivers/staging/hv/storvsc_drv.c
-+++ b/drivers/staging/hv/storvsc_drv.c
-@@@ -408,339 -398,113 +408,335 @@@ get_in_err
- =20
+diff --cc drivers/staging/zcache/zcache-main.c
+index ccfa854,f0843e8a..0000000
+--- a/drivers/staging/zcache/zcache-main.c
++++ b/drivers/staging/zcache/zcache-main.c
+@@@ -455,14 -421,13 +455,14 @@@ static int zbud_decompress(struct page=20
+  	}
+  	ASSERT_SENTINEL(zh, ZBH);
+  	BUG_ON(zh->size =3D=3D 0 || zh->size > zbud_max_buddy_size());
+- 	to_va =3D kmap_atomic(page, KM_USER0);
++ 	to_va =3D kmap_atomic(page);
+  	size =3D zh->size;
+  	from_va =3D zbud_data(zh, size);
+ -	ret =3D lzo1x_decompress_safe(from_va, size, to_va, &out_len);
+ -	BUG_ON(ret !=3D LZO_E_OK);
+ +	ret =3D zcache_comp_op(ZCACHE_COMPOP_DECOMPRESS, from_va, size,
+ +				to_va, &out_len);
+ +	BUG_ON(ret);
+  	BUG_ON(out_len !=3D PAGE_SIZE);
+- 	kunmap_atomic(to_va, KM_USER0);
++ 	kunmap_atomic(to_va);
+  out:
+  	spin_unlock(&zbpg->lock);
+  	return ret;
+@@@ -745,22 -708,21 +745,22 @@@ static void zv_free(struct zs_pool *poo
+  	local_irq_restore(flags);
   }
  =20
- -static int storvsc_channel_init(struct hv_device *device)
- +static void destroy_bounce_buffer(struct scatterlist *sgl,
- +				  unsigned int sg_count)
+ -static void zv_decompress(struct page *page, struct zv_hdr *zv)
+ +static void zv_decompress(struct page *page, void *handle)
   {
- -	struct storvsc_device *stor_device;
- -	struct hv_storvsc_request *request;
- -	struct vstor_packet *vstor_packet;
- -	int ret, t;
- +	int i;
- +	struct page *page_buf;
+ -	size_t clen =3D PAGE_SIZE;
+ +	unsigned int clen =3D PAGE_SIZE;
+  	char *to_va;
+ -	unsigned size;
+  	int ret;
+ +	struct zv_hdr *zv;
  =20
- -	stor_device =3D get_out_stor_device(device);
- -	if (!stor_device)
- -		return -ENODEV;
- +	for (i =3D 0; i < sg_count; i++) {
- +		page_buf =3D sg_page((&sgl[i]));
- +		if (page_buf !=3D NULL)
- +			__free_page(page_buf);
- +	}
+ +	zv =3D zs_map_object(zcache_host.zspool, handle);
+ +	BUG_ON(zv->size =3D=3D 0);
+  	ASSERT_SENTINEL(zv, ZVH);
+- 	to_va =3D kmap_atomic(page, KM_USER0);
+ -	size =3D xv_get_object_size(zv) - sizeof(*zv);
+ -	BUG_ON(size =3D=3D 0);
++ 	to_va =3D kmap_atomic(page);
+ -	ret =3D lzo1x_decompress_safe((char *)zv + sizeof(*zv),
+ -					size, to_va, &clen);
+ +	ret =3D zcache_comp_op(ZCACHE_COMPOP_DECOMPRESS, (char *)zv + sizeof(*zv=
+),
+ +				zv->size, to_va, &clen);
+- 	kunmap_atomic(to_va, KM_USER0);
++ 	kunmap_atomic(to_va);
+ -	BUG_ON(ret !=3D LZO_E_OK);
+ +	zs_unmap_object(zcache_host.zspool, handle);
+ +	BUG_ON(ret);
+  	BUG_ON(clen !=3D PAGE_SIZE);
+  }
  =20
- -	request =3D &stor_device->init_request;
- -	vstor_packet =3D &request->vstor_packet;
- +	kfree(sgl);
- +}
+@@@ -1333,16 -1297,15 +1333,16 @@@ static int zcache_compress(struct page=20
+  	char *from_va;
  =20
- -	/*
- -	 * Now, initiate the vsc/vsp initialization protocol on the open
- -	 * channel
- -	 */
- -	memset(request, 0, sizeof(struct hv_storvsc_request));
- -	init_completion(&request->wait_event);
- -	vstor_packet->operation =3D VSTOR_OPERATION_BEGIN_INITIALIZATION;
- -	vstor_packet->flags =3D REQUEST_COMPLETION_FLAG;
- +static int do_bounce_buffer(struct scatterlist *sgl, unsigned int sg_coun=
-t)
- +{
- +	int i;
- =20
- -	ret =3D vmbus_sendpacket(device->channel, vstor_packet,
- -			       sizeof(struct vstor_packet),
- -			       (unsigned long)request,
- -			       VM_PKT_DATA_INBAND,
- -			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- -	if (ret !=3D 0)
- -		goto cleanup;
- +	/* No need to check */
- +	if (sg_count < 2)
- +		return -1;
- =20
- -	t =3D wait_for_completion_timeout(&request->wait_event, 5*HZ);
- -	if (t =3D=3D 0) {
- -		ret =3D -ETIMEDOUT;
- -		goto cleanup;
- +	/* We have at least 2 sg entries */
- +	for (i =3D 0; i < sg_count; i++) {
- +		if (i =3D=3D 0) {
- +			/* make sure 1st one does not have hole */
- +			if (sgl[i].offset + sgl[i].length !=3D PAGE_SIZE)
- +				return i;
- +		} else if (i =3D=3D sg_count - 1) {
- +			/* make sure last one does not have hole */
- +			if (sgl[i].offset !=3D 0)
- +				return i;
- +		} else {
- +			/* make sure no hole in the middle */
- +			if (sgl[i].length !=3D PAGE_SIZE || sgl[i].offset !=3D 0)
- +				return i;
- +		}
-  	}
- +	return -1;
- +}
- =20
- -	if (vstor_packet->operation !=3D VSTOR_OPERATION_COMPLETE_IO ||
- -	    vstor_packet->status !=3D 0)
- -		goto cleanup;
- -
- -
- -	/* reuse the packet for version range supported */
- -	memset(vstor_packet, 0, sizeof(struct vstor_packet));
- -	vstor_packet->operation =3D VSTOR_OPERATION_QUERY_PROTOCOL_VERSION;
- -	vstor_packet->flags =3D REQUEST_COMPLETION_FLAG;
- +static struct scatterlist *create_bounce_buffer(struct scatterlist *sgl,
- +						unsigned int sg_count,
- +						unsigned int len,
- +						int write)
- +{
- +	int i;
- +	int num_pages;
- +	struct scatterlist *bounce_sgl;
- +	struct page *page_buf;
- +	unsigned int buf_len =3D ((write =3D=3D WRITE_TYPE) ? 0 : PAGE_SIZE);
- =20
- -	vstor_packet->version.major_minor =3D VMSTOR_PROTOCOL_VERSION_CURRENT;
- -	FILL_VMSTOR_REVISION(vstor_packet->version.revision);
- +	num_pages =3D ALIGN(len, PAGE_SIZE) >> PAGE_SHIFT;
- =20
- -	ret =3D vmbus_sendpacket(device->channel, vstor_packet,
- -			       sizeof(struct vstor_packet),
- -			       (unsigned long)request,
- -			       VM_PKT_DATA_INBAND,
- -			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- -	if (ret !=3D 0)
- -		goto cleanup;
- +	bounce_sgl =3D kcalloc(num_pages, sizeof(struct scatterlist), GFP_ATOMIC=
-);
- +	if (!bounce_sgl)
- +		return NULL;
- =20
- -	t =3D wait_for_completion_timeout(&request->wait_event, 5*HZ);
- -	if (t =3D=3D 0) {
- -		ret =3D -ETIMEDOUT;
- -		goto cleanup;
- +	for (i =3D 0; i < num_pages; i++) {
- +		page_buf =3D alloc_page(GFP_ATOMIC);
- +		if (!page_buf)
- +			goto cleanup;
- +		sg_set_page(&bounce_sgl[i], page_buf, buf_len, 0);
-  	}
- =20
- -	if (vstor_packet->operation !=3D VSTOR_OPERATION_COMPLETE_IO ||
- -	    vstor_packet->status !=3D 0)
- -		goto cleanup;
- +	return bounce_sgl;
- =20
- +cleanup:
- +	destroy_bounce_buffer(bounce_sgl, num_pages);
- +	return NULL;
- +}
- =20
- -	memset(vstor_packet, 0, sizeof(struct vstor_packet));
- -	vstor_packet->operation =3D VSTOR_OPERATION_QUERY_PROPERTIES;
- -	vstor_packet->flags =3D REQUEST_COMPLETION_FLAG;
- -	vstor_packet->storage_channel_properties.port_number =3D
- -					stor_device->port_number;
- +/* Assume the original sgl has enough room */
- +static unsigned int copy_from_bounce_buffer(struct scatterlist *orig_sgl,
- +					    struct scatterlist *bounce_sgl,
- +					    unsigned int orig_sgl_count,
- +					    unsigned int bounce_sgl_count)
- +{
- +	int i;
- +	int j =3D 0;
- +	unsigned long src, dest;
- +	unsigned int srclen, destlen, copylen;
- +	unsigned int total_copied =3D 0;
- +	unsigned long bounce_addr =3D 0;
- +	unsigned long dest_addr =3D 0;
- +	unsigned long flags;
- =20
- -	ret =3D vmbus_sendpacket(device->channel, vstor_packet,
- -			       sizeof(struct vstor_packet),
- -			       (unsigned long)request,
- -			       VM_PKT_DATA_INBAND,
- -			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- +	local_irq_save(flags);
- =20
- -	if (ret !=3D 0)
- -		goto cleanup;
- +	for (i =3D 0; i < orig_sgl_count; i++) {
-- 		dest_addr =3D (unsigned long)kmap_atomic(sg_page((&orig_sgl[i])),
-- 					KM_IRQ0) + orig_sgl[i].offset;
-++		dest_addr =3D (unsigned long)kmap_atomic(sg_page((&orig_sgl[i])))
-++					+ orig_sgl[i].offset;
- +		dest =3D dest_addr;
- +		destlen =3D orig_sgl[i].length;
- =20
- -	t =3D wait_for_completion_timeout(&request->wait_event, 5*HZ);
- -	if (t =3D=3D 0) {
- -		ret =3D -ETIMEDOUT;
- -		goto cleanup;
- -	}
- +		if (bounce_addr =3D=3D 0)
- +			bounce_addr =3D
-- 			(unsigned long)kmap_atomic(sg_page((&bounce_sgl[j])),
-- 							KM_IRQ0);
-++			(unsigned long)kmap_atomic(sg_page((&bounce_sgl[j])));
- =20
- -	if (vstor_packet->operation !=3D VSTOR_OPERATION_COMPLETE_IO ||
- -	    vstor_packet->status !=3D 0)
- -		goto cleanup;
- +		while (destlen) {
- +			src =3D bounce_addr + bounce_sgl[j].offset;
- +			srclen =3D bounce_sgl[j].length - bounce_sgl[j].offset;
- =20
- -	stor_device->path_id =3D vstor_packet->storage_channel_properties.path_i=
-d;
- -	stor_device->target_id
- -		=3D vstor_packet->storage_channel_properties.target_id;
- +			copylen =3D min(srclen, destlen);
- +			memcpy((void *)dest, (void *)src, copylen);
- =20
- -	memset(vstor_packet, 0, sizeof(struct vstor_packet));
- -	vstor_packet->operation =3D VSTOR_OPERATION_END_INITIALIZATION;
- -	vstor_packet->flags =3D REQUEST_COMPLETION_FLAG;
- +			total_copied +=3D copylen;
- +			bounce_sgl[j].offset +=3D copylen;
- +			destlen -=3D copylen;
- +			dest +=3D copylen;
- =20
- -	ret =3D vmbus_sendpacket(device->channel, vstor_packet,
- -			       sizeof(struct vstor_packet),
- -			       (unsigned long)request,
- -			       VM_PKT_DATA_INBAND,
- -			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- +			if (bounce_sgl[j].offset =3D=3D bounce_sgl[j].length) {
- +				/* full */
-- 				kunmap_atomic((void *)bounce_addr, KM_IRQ0);
-++				kunmap_atomic((void *)bounce_addr);
- +				j++;
- +
- +				/*
- +				 * It is possible that the number of elements
- +				 * in the bounce buffer may not be equal to
- +				 * the number of elements in the original
- +				 * scatter list. Handle this correctly.
- +				 */
- +
- +				if (j =3D=3D bounce_sgl_count) {
- +					/*
- +					 * We are done; cleanup and return.
- +					 */
- +					kunmap_atomic((void *)(dest_addr -
-- 							orig_sgl[i].offset),
-- 							KM_IRQ0);
-++							orig_sgl[i].offset));
- +					local_irq_restore(flags);
- +					return total_copied;
- +				}
- +
- +				/* if we need to use another bounce buffer */
- +				if (destlen || i !=3D orig_sgl_count - 1)
- +					bounce_addr =3D
- +					(unsigned long)kmap_atomic(
-- 					sg_page((&bounce_sgl[j])), KM_IRQ0);
-++					sg_page((&bounce_sgl[j])));
- +			} else if (destlen =3D=3D 0 && i =3D=3D orig_sgl_count - 1) {
- +				/* unmap the last bounce that is < PAGE_SIZE */
-- 				kunmap_atomic((void *)bounce_addr, KM_IRQ0);
-++				kunmap_atomic((void *)bounce_addr);
- +			}
- +		}
- +
-- 		kunmap_atomic((void *)(dest_addr - orig_sgl[i].offset),
-- 			      KM_IRQ0);
-++		kunmap_atomic((void *)(dest_addr - orig_sgl[i].offset));
- +	}
- +
- +	local_irq_restore(flags);
- +
- +	return total_copied;
- +}
- +
- +/* Assume the bounce_sgl has enough room ie using the create_bounce_buffe=
-r() */
- +static unsigned int copy_to_bounce_buffer(struct scatterlist *orig_sgl,
- +					  struct scatterlist *bounce_sgl,
- +					  unsigned int orig_sgl_count)
- +{
- +	int i;
- +	int j =3D 0;
- +	unsigned long src, dest;
- +	unsigned int srclen, destlen, copylen;
- +	unsigned int total_copied =3D 0;
- +	unsigned long bounce_addr =3D 0;
- +	unsigned long src_addr =3D 0;
- +	unsigned long flags;
- +
- +	local_irq_save(flags);
- +
- +	for (i =3D 0; i < orig_sgl_count; i++) {
-- 		src_addr =3D (unsigned long)kmap_atomic(sg_page((&orig_sgl[i])),
-- 				KM_IRQ0) + orig_sgl[i].offset;
-++		src_addr =3D (unsigned long)kmap_atomic(sg_page((&orig_sgl[i])))
-++				+ orig_sgl[i].offset;
- +		src =3D src_addr;
- +		srclen =3D orig_sgl[i].length;
- +
- +		if (bounce_addr =3D=3D 0)
- +			bounce_addr =3D
-- 			(unsigned long)kmap_atomic(sg_page((&bounce_sgl[j])),
-- 						KM_IRQ0);
-++			(unsigned long)kmap_atomic(sg_page((&bounce_sgl[j])));
- +
- +		while (srclen) {
- +			/* assume bounce offset always =3D=3D 0 */
- +			dest =3D bounce_addr + bounce_sgl[j].length;
- +			destlen =3D PAGE_SIZE - bounce_sgl[j].length;
- +
- +			copylen =3D min(srclen, destlen);
- +			memcpy((void *)dest, (void *)src, copylen);
- +
- +			total_copied +=3D copylen;
- +			bounce_sgl[j].length +=3D copylen;
- +			srclen -=3D copylen;
- +			src +=3D copylen;
- +
- +			if (bounce_sgl[j].length =3D=3D PAGE_SIZE) {
- +				/* full..move to next entry */
-- 				kunmap_atomic((void *)bounce_addr, KM_IRQ0);
-++				kunmap_atomic((void *)bounce_addr);
- +				j++;
- +
- +				/* if we need to use another bounce buffer */
- +				if (srclen || i !=3D orig_sgl_count - 1)
- +					bounce_addr =3D
- +					(unsigned long)kmap_atomic(
-- 					sg_page((&bounce_sgl[j])), KM_IRQ0);
-++					sg_page((&bounce_sgl[j])));
- +
- +			} else if (srclen =3D=3D 0 && i =3D=3D orig_sgl_count - 1) {
- +				/* unmap the last bounce that is < PAGE_SIZE */
-- 				kunmap_atomic((void *)bounce_addr, KM_IRQ0);
-++				kunmap_atomic((void *)bounce_addr);
- +			}
- +		}
- +
-- 		kunmap_atomic((void *)(src_addr - orig_sgl[i].offset), KM_IRQ0);
-++		kunmap_atomic((void *)(src_addr - orig_sgl[i].offset));
- +	}
- +
- +	local_irq_restore(flags);
- +
- +	return total_copied;
- +}
- +
- +static int storvsc_channel_init(struct hv_device *device)
- +{
- +	struct storvsc_device *stor_device;
- +	struct storvsc_cmd_request *request;
- +	struct vstor_packet *vstor_packet;
- +	int ret, t;
- +
- +	stor_device =3D get_out_stor_device(device);
- +	if (!stor_device)
- +		return -ENODEV;
- +
- +	request =3D &stor_device->init_request;
- +	vstor_packet =3D &request->vstor_packet;
- +
- +	/*
- +	 * Now, initiate the vsc/vsp initialization protocol on the open
- +	 * channel
- +	 */
- +	memset(request, 0, sizeof(struct storvsc_cmd_request));
- +	init_completion(&request->wait_event);
- +	vstor_packet->operation =3D VSTOR_OPERATION_BEGIN_INITIALIZATION;
- +	vstor_packet->flags =3D REQUEST_COMPLETION_FLAG;
- +
- +	ret =3D vmbus_sendpacket(device->channel, vstor_packet,
- +			       sizeof(struct vstor_packet),
- +			       (unsigned long)request,
- +			       VM_PKT_DATA_INBAND,
- +			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- +	if (ret !=3D 0)
- +		goto cleanup;
- +
- +	t =3D wait_for_completion_timeout(&request->wait_event, 5*HZ);
- +	if (t =3D=3D 0) {
- +		ret =3D -ETIMEDOUT;
- +		goto cleanup;
- +	}
- +
- +	if (vstor_packet->operation !=3D VSTOR_OPERATION_COMPLETE_IO ||
- +	    vstor_packet->status !=3D 0)
- +		goto cleanup;
- +
- +
- +	/* reuse the packet for version range supported */
- +	memset(vstor_packet, 0, sizeof(struct vstor_packet));
- +	vstor_packet->operation =3D VSTOR_OPERATION_QUERY_PROTOCOL_VERSION;
- +	vstor_packet->flags =3D REQUEST_COMPLETION_FLAG;
- +
- +	vstor_packet->version.major_minor =3D
- +		storvsc_get_version(VMSTOR_CURRENT_MAJOR, VMSTOR_CURRENT_MINOR);
- +
- +	/*
- +	 * The revision number is only used in Windows; set it to 0.
- +	 */
- +	vstor_packet->version.revision =3D 0;
- +
- +	ret =3D vmbus_sendpacket(device->channel, vstor_packet,
- +			       sizeof(struct vstor_packet),
- +			       (unsigned long)request,
- +			       VM_PKT_DATA_INBAND,
- +			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- +	if (ret !=3D 0)
- +		goto cleanup;
- +
- +	t =3D wait_for_completion_timeout(&request->wait_event, 5*HZ);
- +	if (t =3D=3D 0) {
- +		ret =3D -ETIMEDOUT;
- +		goto cleanup;
- +	}
- +
- +	if (vstor_packet->operation !=3D VSTOR_OPERATION_COMPLETE_IO ||
- +	    vstor_packet->status !=3D 0)
- +		goto cleanup;
- +
- +
- +	memset(vstor_packet, 0, sizeof(struct vstor_packet));
- +	vstor_packet->operation =3D VSTOR_OPERATION_QUERY_PROPERTIES;
- +	vstor_packet->flags =3D REQUEST_COMPLETION_FLAG;
- +	vstor_packet->storage_channel_properties.port_number =3D
- +					stor_device->port_number;
- +
- +	ret =3D vmbus_sendpacket(device->channel, vstor_packet,
- +			       sizeof(struct vstor_packet),
- +			       (unsigned long)request,
- +			       VM_PKT_DATA_INBAND,
- +			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- +
- +	if (ret !=3D 0)
- +		goto cleanup;
- +
- +	t =3D wait_for_completion_timeout(&request->wait_event, 5*HZ);
- +	if (t =3D=3D 0) {
- +		ret =3D -ETIMEDOUT;
- +		goto cleanup;
- +	}
- +
- +	if (vstor_packet->operation !=3D VSTOR_OPERATION_COMPLETE_IO ||
- +	    vstor_packet->status !=3D 0)
- +		goto cleanup;
- +
- +	stor_device->path_id =3D vstor_packet->storage_channel_properties.path_i=
-d;
- +	stor_device->target_id
- +		=3D vstor_packet->storage_channel_properties.target_id;
- +
- +	memset(vstor_packet, 0, sizeof(struct vstor_packet));
- +	vstor_packet->operation =3D VSTOR_OPERATION_END_INITIALIZATION;
- +	vstor_packet->flags =3D REQUEST_COMPLETION_FLAG;
- +
- +	ret =3D vmbus_sendpacket(device->channel, vstor_packet,
- +			       sizeof(struct vstor_packet),
- +			       (unsigned long)request,
- +			       VM_PKT_DATA_INBAND,
- +			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- =20
-  	if (ret !=3D 0)
-  		goto cleanup;
+  	BUG_ON(!irqs_disabled());
+ -	if (unlikely(dmem =3D=3D NULL || wmem =3D=3D NULL))
+ -		goto out;  /* no buffer, so can't compress */
+ +	if (unlikely(dmem =3D=3D NULL))
+ +		goto out;  /* no buffer or no compressor so can't compress */
+ +	*out_len =3D PAGE_SIZE << ZCACHE_DSTMEM_ORDER;
+- 	from_va =3D kmap_atomic(from, KM_USER0);
++ 	from_va =3D kmap_atomic(from);
+  	mb();
+ -	ret =3D lzo1x_1_compress(from_va, PAGE_SIZE, dmem, out_len, wmem);
+ -	BUG_ON(ret !=3D LZO_E_OK);
+ +	ret =3D zcache_comp_op(ZCACHE_COMPOP_COMPRESS, from_va, PAGE_SIZE, dmem,
+ +				(unsigned int *)out_len);
+ +	BUG_ON(ret);
+  	*out_va =3D dmem;
+- 	kunmap_atomic(from_va, KM_USER0);
++ 	kunmap_atomic(from_va);
+  	ret =3D 1;
+  out:
+  	return ret;
 
---Signature=_Mon__13_Feb_2012_16_08_21_+1100_aY5V3xlsLoj83A1S
+--Signature=_Mon__13_Feb_2012_16_15_37_+1100_mf5F4fl04_uQgKHx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPOJrFAAoJEECxmPOUX5FE3lEQAIebqIDM4NihRlYS4FHsxQ3y
-toHM1LEbsBDlnSjWqTq4Ell8DcW2MZnojZPCCWe1Fvc/3NRe4KF57/z2lWl5G41l
-VDoXmWRWMHeQbmgmAareeOtF29J4K+oDihb2yI8rWSkUQMNFQy3XaI8xdz3/1lq4
-gVlaQ2x3E7GwxNVvTfGSMy6Bn7/cJdAf/v+6hEZRHQe2f8oSi9bapJBiy25q+vbx
-aMtFL70IVbf6Bd+bUQRA6gEvV/lN8Ua6CC4glbQLsHdwScrUsWZ3wHSfN6WxxuXM
-3QAKeXSni/OgHDAGD2QbGIuM3LFyihjgrVOQ5qr5W+/qq81p5ZTOjOfXHQn/x25V
-om7I3Yjj9OVxwOvB8sDdGNW+HNnyGp3ABxIWGkFmQ21vPL2ZOuErRO13MV/+lCfl
-cyycEcJ/LCCpz6DJcIrtsImI/S2RFe7Vlru96r9BEismc0ZBDx8D/TAVD8BnpVza
-Na0g5BsGLKul1WgjIizJ55fZ+UENS8eRLhtmNRWGlK3ptJzf7ZwsWMY0EWXlVG/n
-pInP3zXcdQ8kX0iRznLlyEdcr+aDrGlfC5YVKN7SPnHmnz+JjrBeXT42nIGhQYAV
-TB6V5d653qbjapmGGt4ScNIyaaLVdhzR8oS6IRy8Hgw3TCLGcloozC+bYsxnESgS
-LCms1gKSLWwvjneNp+Rm
-=m8wg
+iQIcBAEBCAAGBQJPOJx5AAoJEECxmPOUX5FEEM0P/jhyA8+GOus1owYq2AB0LLcz
+bBL0VlGpofOUbRTC+4/YBQ7T2Hed9hB7WqT3MEnR9N55VLMNVBF2ESb1EbzPjPdw
+nEHnvPh7f4ndlNfRYbnuyV2cDKUQewkyMsP2jwNiSQV9M6xsCGVouUJv6/5ok3I5
+AXQnRsEngKQ1kPqUE1N4mIbdIttzloc0fS6HbiChRj7XNillY80Oytr8yYJX0+TI
+nGkZ/p5zHQZyWdsOH3SNhTNG/zZB32HkycrdkTCjhqvQ+4Um7NzZlNP131J2ik8g
+j14DxEhhcBXOAsYJPq6p7wG3T20OXhixHcMnM1JehJF1bTWqv2H3VczIw9j7tpvw
+HxsRBJZOjhrvm7V3ZXHuSplLPMk0xbmeJLrX3cK2hixb1j3raenUTFm4vEem/fU0
+AcBxnApBG6SMKaDmCDe407mpy59F1SAB5MeHwKzcUbdAjql3MWcm1GpJNX2lqeyH
+EjtmCU/jQzlWe+So7mw1Mv/QnrWiIDqXfscx0P9p3e15kskrq/Qxp1UCk8tSQYrA
+BvAXsJ0wGTSfFJV6ThFqO8CHu52iwn7+D6h+QYQDkvVDLHqZBTPVhDSGA2/m8wxZ
+rQvlYh+7450oLRM90kCp9hpabl0P4UnOvcCg5hP8n5KoJG7RW1Z++Hzf9mKxyG+P
+IzDvX9Ew7MRc/or0V6ag
+=0THF
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__13_Feb_2012_16_08_21_+1100_aY5V3xlsLoj83A1S--
+--Signature=_Mon__13_Feb_2012_16_15_37_+1100_mf5F4fl04_uQgKHx--
