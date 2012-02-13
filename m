@@ -1,42 +1,112 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- tree related)
-Date: Sun, 12 Feb 2012 22:45:08 -0800
-Message-ID: <20120213064508.GD28617@kroah.com>
-References: <20120213171949.262e0c12e8d8883e90216df1@canb.auug.org.au>
+From: Kyungmin Park <kyungmin.park@samsung.com>
+Subject: Re: linux-next: build failure after merge of the dma-mapping tree
+Date: Mon, 13 Feb 2012 16:31:42 +0900
+Message-ID: <CAH9JG2X-X-LqO7_r5yEPOMzJmOik-V5sevy_+3WTL2a984JPJg@mail.gmail.com>
+References: <20120213164000.da84dfec7723af3a9eb3e13f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120213171949.262e0c12e8d8883e90216df1@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:52845 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751366Ab2BMHbm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 02:31:42 -0500
+In-Reply-To: <20120213164000.da84dfec7723af3a9eb3e13f@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>, Seth Jennings <sjenning@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 13, 2012 at 05:19:49PM +1100, Stephen Rothwell wrote:
-> Hi ,
-> 
-> After merging the final tree, today's linux-next build (powerpc allyesconfig)
-> failed like this:
-> 
-> drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_cpu_notifier':
-> drivers/staging/zsmalloc/zsmalloc-main.c:451:3: error: implicit declaration of function 'alloc_vm_area' [-Werror=implicit-function-declaration]
-> drivers/staging/zsmalloc/zsmalloc-main.c:451:12: warning: assignment makes pointer from integer without a cast [enabled by default]
-> drivers/staging/zsmalloc/zsmalloc-main.c:459:4: error: implicit declaration of function 'free_vm_area' [-Werror=implicit-function-declaration]
-> drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_map_object':
-> drivers/staging/zsmalloc/zsmalloc-main.c:705:3: error: implicit declaration of function 'set_pte' [-Werror=implicit-function-declaration]
-> drivers/staging/zsmalloc/zsmalloc-main.c:709:27: error: dereferencing pointer to incomplete type
-> drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_unmap_object':
-> drivers/staging/zsmalloc/zsmalloc-main.c:739:3: error: implicit declaration of function '__flush_tlb_one' [-Werror=implicit-function-declaration]
-> 
-> Caused by commit 61989a80fb3a ("staging: zsmalloc: zsmalloc memory
-> allocation library").  This needs to include linux/vmalloc.h at least.  I
-> couldn't find set_pte at all or __flush_tlb_one for powerpc.
-> 
-> This was too hard to revert, so I have left powerpc allyesconfig broken
-> for today.  I may revert it (and some dependent commits) tomorrow.
+Hi,
 
-Nitin, please send me a patch to fix this as soon as possible.
+It's maybe missing modify arch/powerpc/kernel/vio.c at that time.
 
-greg k-h
+following patch will fix it.
+
+Thank you,
+Kyungmin Park
+
+diff --git a/arch/powerpc/kernel/vio.c b/arch/powerpc/kernel/vio.c
+index 8b08629..b12a77a 100644
+--- a/arch/powerpc/kernel/vio.c
++++ b/arch/powerpc/kernel/vio.c
+@@ -487,7 +487,7 @@ static void vio_cmo_balance(struct work_struct *work)
+ }
+diff --git a/arch/powerpc/kernel/vio.c b/arch/powerpc/kernel/vio.c
+index 8b08629..b12a77a 100644
+--- a/arch/powerpc/kernel/vio.c
++++ b/arch/powerpc/kernel/vio.c
+@@ -487,7 +487,7 @@ static void vio_cmo_balance(struct work_struct *work)
+ }
+
+ static void *vio_dma_iommu_alloc_coherent(struct device *dev, size_t size,
+-                                          dma_addr_t *dma_handle, gfp_t flag)
++               dma_addr_t *dma_handle, gfp_t flag, struct dma_attrs *attrs)
+ {
+        struct vio_dev *viodev = to_vio_dev(dev);
+        void *ret;
+@@ -497,7 +497,7 @@ static void *vio_dma_iommu_alloc_coherent(struct device *dev
+                return NULL;
+        }
+
+-       ret = dma_iommu_ops.alloc_coherent(dev, size, dma_handle, flag);
++       ret = dma_iommu_ops.alloc(dev, size, dma_handle, flag, attrs);
+        if (unlikely(ret == NULL)) {
+                vio_cmo_dealloc(viodev, roundup(size, PAGE_SIZE));
+                atomic_inc(&viodev->cmo.allocs_failed);
+@@ -507,11 +507,11 @@ static void *vio_dma_iommu_alloc_coherent(struct device *d
+ }
+
+ static void vio_dma_iommu_free_coherent(struct device *dev, size_t size,
+-                                        void *vaddr, dma_addr_t dma_handle)
++               void *vaddr, dma_addr_t dma_handle, struct dma_attrs *attrs)
+ {
+        struct vio_dev *viodev = to_vio_dev(dev);
+
+-       dma_iommu_ops.free_coherent(dev, size, vaddr, dma_handle);
++       dma_iommu_ops.free(dev, size, vaddr, dma_handle, attrs);
+
+        vio_cmo_dealloc(viodev, roundup(size, PAGE_SIZE));
+ }
+@@ -612,8 +612,8 @@ static u64 vio_dma_get_required_mask(struct device *dev)
+ }
+
+ struct dma_map_ops vio_dma_mapping_ops = {
+-       .alloc_coherent    = vio_dma_iommu_alloc_coherent,
+-       .free_coherent     = vio_dma_iommu_free_coherent,
++       .alloc             = vio_dma_iommu_alloc_coherent,
++       .free              = vio_dma_iommu_free_coherent,
+        .map_sg            = vio_dma_iommu_map_sg,
+        .unmap_sg          = vio_dma_iommu_unmap_sg,
+        .map_page          = vio_dma_iommu_map_page,
+
+On 2/13/12, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> After merging the dma-mapping tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> arch/powerpc/kernel/vio.c: In function 'vio_dma_iommu_alloc_coherent':
+> arch/powerpc/kernel/vio.c:500:21: error: 'struct dma_map_ops' has no member
+> named 'alloc_coherent'
+> arch/powerpc/kernel/vio.c: In function 'vio_dma_iommu_free_coherent':
+> arch/powerpc/kernel/vio.c:514:15: error: 'struct dma_map_ops' has no member
+> named 'free_coherent'
+> arch/powerpc/kernel/vio.c: At top level:
+> arch/powerpc/kernel/vio.c:615:2: error: unknown field 'alloc_coherent'
+> specified in initializer
+> arch/powerpc/kernel/vio.c:615:2: error: initialization from incompatible
+> pointer type [-Werror]
+> arch/powerpc/kernel/vio.c:615:2: error: (near initialization for
+> 'vio_dma_mapping_ops.alloc') [-Werror]
+> arch/powerpc/kernel/vio.c:616:2: error: unknown field 'free_coherent'
+> specified in initializer
+> arch/powerpc/kernel/vio.c:616:2: error: initialization from incompatible
+> pointer type [-Werror]
+> arch/powerpc/kernel/vio.c:616:2: error: (near initialization for
+> 'vio_dma_mapping_ops.free') [-Werror]
+>
+> I have dropped the dma-mapping tree for today.
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>
