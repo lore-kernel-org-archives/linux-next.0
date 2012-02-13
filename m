@@ -1,82 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the libata tree
-Date: Mon, 13 Feb 2012 16:27:40 +1100
-Message-ID: <20120213162740.9e3cb47a39da19ed89edea49@canb.auug.org.au>
+Subject: linux-next: manual merge of the kmap_atomic tree with the staging
+ tree
+Date: Mon, 13 Feb 2012 16:27:52 +1100
+Message-ID: <20120213162752.b4207f13fb95d7e4db1b5ba2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__13_Feb_2012_16_27_40_+1100_BUpFz8xKW0mBNlsi"
+ boundary="Signature=_Mon__13_Feb_2012_16_27_52_+1100_Y5NEprYJUKZgFg38"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:32925 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:45361 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750775Ab2BMF1r (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 00:27:47 -0500
+	with ESMTP id S1751277Ab2BMF1z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 00:27:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeff Garzik <jeff@garzik.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>
+To: Cong Wang <amwang@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>, Greg KH <greg@kroah.com>
 
---Signature=_Mon__13_Feb_2012_16_27_40_+1100_BUpFz8xKW0mBNlsi
+--Signature=_Mon__13_Feb_2012_16_27_52_+1100_Y5NEprYJUKZgFg38
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jeff,
+Hi Cong,
 
-After merging the libata tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+Today's linux-next merge of the kmap_atomic tree got a conflict in
+drivers/staging/zram/xvmalloc.c between commit b154ff05e1b0 ("staging:
+zram: remove xvmalloc") from the staging tree and commit ea81cfe7d7fb
+("zram: remove the second argument of k[un]map_atomic()") from the
+kmap_atomic tree.
 
-drivers/ata/libata.h:133:13: warning: 'ata_acpi_bind_dock' defined but not =
-used [-Wunused-function]
-drivers/ata/libata.h:134:13: warning: 'ata_acpi_unbind_dock' defined but no=
-t used [-Wunused-function]
-drivers/ata/libata.h:132:13: warning: 'ata_acpi_unregister' defined but not=
- used [-Wunused-function]
-drivers/ata/libata.h:132:13: warning: 'ata_acpi_unregister' defined but not=
- used [-Wunused-function]
-drivers/ata/libata.h:133:13: warning: 'ata_acpi_bind_dock' defined but not =
-used [-Wunused-function]
-drivers/ata/libata.h:134:13: warning: 'ata_acpi_unbind_dock' defined but no=
-t used [-Wunused-function]
-drivers/ata/libata.h:132:13: warning: 'ata_acpi_unregister' defined but not=
- used [-Wunused-function]
-drivers/ata/libata.h:133:13: warning: 'ata_acpi_bind_dock' defined but not =
-used [-Wunused-function]
-drivers/ata/libata.h:134:13: warning: 'ata_acpi_unbind_dock' defined but no=
-t used [-Wunused-function]
-drivers/ata/libata.h:132:13: warning: 'ata_acpi_unregister' defined but not=
- used [-Wunused-function]
-drivers/ata/libata.h:133:13: warning: 'ata_acpi_bind_dock' defined but not =
-used [-Wunused-function]
-drivers/ata/libata.h:134:13: warning: 'ata_acpi_unbind_dock' defined but no=
-t used [-Wunused-function]
-
-Introduced by commits 75d22cd567ca ("libata: Bind the Linux device tree
-to the ACPI device tree") and c9df614ade0e ("libata: Add links between
-removable devices and docks").
+The former removed the file, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__13_Feb_2012_16_27_40_+1100_BUpFz8xKW0mBNlsi
+--Signature=_Mon__13_Feb_2012_16_27_52_+1100_Y5NEprYJUKZgFg38
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPOJ9MAAoJEECxmPOUX5FEOZsP/iJDNNYZ66k50v7kNtYX2bzw
-haWtSz4JFjhSgwh5YoqSTK1CBxHbLqYbGub/cAyLgr01FqfZ4JdnrO4RDgKTUi/h
-MFhQu2pygI8qjjQiGoNbmf0S73HkGJVYUy1QuJJLv/Hhn2ztzmN8sbbQurFFl9fm
-99le/0j8W2ilGABplbAFFft/Hu0Dfe34CHmaQSWE+F0D3JSWDjMcPhc3FMJ0V6Z+
-Lihy4Iddss2u/szXIv0Q7u1MntVWT13nnZyjkQQ48V+H4ZfpGeEaC9879CKEkjOh
-jeODrN4bmWj/v12+D4k87/5QZnd6LMbGYOE725BA+ESi7wP0zXWCDzTGFauPuonP
-ovaAFpRPUpZEuHxIPy5ROxyx7tjtuC39s/1tpu0Qb9Dg82q/cUUlT126xbwRkc53
-v67tMsUArJrB5C4jBrtOIg0B5HDfc8VJZ+tNZxjA2C70gizg0go3HGGq3bEtoovT
-FiN9oT9V1+j3gw3IDKK1BX923MEvsdMbunthKub+QGN/Wuy+mW6+LpiM2wVgUJZk
-H2zPNYp8cAG395q17JDHBHbmv9OwweewlNTvefvpTvknf0JfVquLeHmv46qjyxGs
-WV7YKl+7ehWEbTY0Brfc8iVgWsk0wzPJmi3l8CrCEVAP17hrT+wM4yPG0lnNdTv3
-kzRTNFPVfiT2Ju3WJh3h
-=gbHO
+iQIcBAEBCAAGBQJPOJ9YAAoJEECxmPOUX5FEgR4P+QGnG4KbgKlqoSdDWvYxjFOY
+cnXYvLWg203w3ohnfYvG9XIWQ37u6qUn3fGyuOjOOx19WucO1zjXSsJUJMugS9jT
+VvM+w7yFs2OaTJtvn6I7FOLAdI7L5ihuBMdY9WLXFifYlN0zQyQUcYku4SVtCEuK
+OXNHtXdPqSi5UwO+R8uIgVaF1vK6z/TtlAOGEet0FVOHwpwGESbSaMO8SPnML0x7
+2g1+mCqxyMsNK7Ztg6MBVmuTI8rX48kl3zvzirIk5UjBXrmoLGAuNyXYW0KNzHv8
+tj2HFdghoVDWe+AFcqNoAFHwgwc4xoyFYHycWQMDtjjUt7f38wovDU0s7foaKdHz
+d0i05YKDr+o1O620pHpF/JimGjmk2KUKnHPzZBZW/H5tV0TQ6rEWMqmVyzWly/iE
+0YquSQ9e5cDnBaLpUwTUs/+iDyHRUYr1h6+/vF87ldAsIUjug4iMYn4Vfgy1naT7
+Rl/h5YCsW4M3hQfY0/hDgjIAPMWjwu+r1dLzR2vvI1kFkCluKorwrchvQdVudS8s
+9DJnXM20O1/+VyZ+mwJ2p8HqZkoRLdeVkgQ+0HBCtMxhOBjCN+Tg+L4/0gJ0wX/l
+3F6z3wBwLHRrhzbwtbL1WNY9YW2qx0pejGTYLlFNBywyYyj6T1ZWGU8GD5+/GQNj
+herFsa88EYQxx0FFK8jx
+=8m1w
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__13_Feb_2012_16_27_40_+1100_BUpFz8xKW0mBNlsi--
+--Signature=_Mon__13_Feb_2012_16_27_52_+1100_Y5NEprYJUKZgFg38--
