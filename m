@@ -1,59 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kmap_atomic tree with the staging
- tree
-Date: Mon, 13 Feb 2012 16:27:52 +1100
-Message-ID: <20120213162752.b4207f13fb95d7e4db1b5ba2@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the dma-mapping tree
+Date: Mon, 13 Feb 2012 16:40:00 +1100
+Message-ID: <20120213164000.da84dfec7723af3a9eb3e13f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__13_Feb_2012_16_27_52_+1100_Y5NEprYJUKZgFg38"
+ boundary="Signature=_Mon__13_Feb_2012_16_40_00_+1100_7TBPtlBtNN+/R+Dj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45361 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:47611 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751277Ab2BMF1z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 00:27:55 -0500
+	with ESMTP id S1751170Ab2BMFkM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 00:40:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Cong Wang <amwang@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>, Greg KH <greg@kroah.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__13_Feb_2012_16_27_52_+1100_Y5NEprYJUKZgFg38
+--Signature=_Mon__13_Feb_2012_16_40_00_+1100_7TBPtlBtNN+/R+Dj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Cong,
+Hi all,
 
-Today's linux-next merge of the kmap_atomic tree got a conflict in
-drivers/staging/zram/xvmalloc.c between commit b154ff05e1b0 ("staging:
-zram: remove xvmalloc") from the staging tree and commit ea81cfe7d7fb
-("zram: remove the second argument of k[un]map_atomic()") from the
-kmap_atomic tree.
+After merging the dma-mapping tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-The former removed the file, so I did that.
+arch/powerpc/kernel/vio.c: In function 'vio_dma_iommu_alloc_coherent':
+arch/powerpc/kernel/vio.c:500:21: error: 'struct dma_map_ops' has no member=
+ named 'alloc_coherent'
+arch/powerpc/kernel/vio.c: In function 'vio_dma_iommu_free_coherent':
+arch/powerpc/kernel/vio.c:514:15: error: 'struct dma_map_ops' has no member=
+ named 'free_coherent'
+arch/powerpc/kernel/vio.c: At top level:
+arch/powerpc/kernel/vio.c:615:2: error: unknown field 'alloc_coherent' spec=
+ified in initializer
+arch/powerpc/kernel/vio.c:615:2: error: initialization from incompatible po=
+inter type [-Werror]
+arch/powerpc/kernel/vio.c:615:2: error: (near initialization for 'vio_dma_m=
+apping_ops.alloc') [-Werror]
+arch/powerpc/kernel/vio.c:616:2: error: unknown field 'free_coherent' speci=
+fied in initializer
+arch/powerpc/kernel/vio.c:616:2: error: initialization from incompatible po=
+inter type [-Werror]
+arch/powerpc/kernel/vio.c:616:2: error: (near initialization for 'vio_dma_m=
+apping_ops.free') [-Werror]
+
+I have dropped the dma-mapping tree for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__13_Feb_2012_16_27_52_+1100_Y5NEprYJUKZgFg38
+--Signature=_Mon__13_Feb_2012_16_40_00_+1100_7TBPtlBtNN+/R+Dj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPOJ9YAAoJEECxmPOUX5FEgR4P+QGnG4KbgKlqoSdDWvYxjFOY
-cnXYvLWg203w3ohnfYvG9XIWQ37u6qUn3fGyuOjOOx19WucO1zjXSsJUJMugS9jT
-VvM+w7yFs2OaTJtvn6I7FOLAdI7L5ihuBMdY9WLXFifYlN0zQyQUcYku4SVtCEuK
-OXNHtXdPqSi5UwO+R8uIgVaF1vK6z/TtlAOGEet0FVOHwpwGESbSaMO8SPnML0x7
-2g1+mCqxyMsNK7Ztg6MBVmuTI8rX48kl3zvzirIk5UjBXrmoLGAuNyXYW0KNzHv8
-tj2HFdghoVDWe+AFcqNoAFHwgwc4xoyFYHycWQMDtjjUt7f38wovDU0s7foaKdHz
-d0i05YKDr+o1O620pHpF/JimGjmk2KUKnHPzZBZW/H5tV0TQ6rEWMqmVyzWly/iE
-0YquSQ9e5cDnBaLpUwTUs/+iDyHRUYr1h6+/vF87ldAsIUjug4iMYn4Vfgy1naT7
-Rl/h5YCsW4M3hQfY0/hDgjIAPMWjwu+r1dLzR2vvI1kFkCluKorwrchvQdVudS8s
-9DJnXM20O1/+VyZ+mwJ2p8HqZkoRLdeVkgQ+0HBCtMxhOBjCN+Tg+L4/0gJ0wX/l
-3F6z3wBwLHRrhzbwtbL1WNY9YW2qx0pejGTYLlFNBywyYyj6T1ZWGU8GD5+/GQNj
-herFsa88EYQxx0FFK8jx
-=8m1w
+iQIcBAEBCAAGBQJPOKIwAAoJEECxmPOUX5FEYiwP/i9IykpU3Dw2cYZkWh+yZlwT
+uzwHr+uWNjCaBeDyDYT0m1vh1ksmkmTlnjProU5XZte1lZ5zeEL/0uyWeExnFcBp
+YWoc1AJ3ie32b9IoiPERNqbUpYbOTJ4UjvMq5BS3cmyRd+LA9aNwkzGsLyCWr/wS
+pjlF9MOP3Di2gnVpovz7HPzXl16sn4ftrAh+gtos+iUJ2fwskq9JGEbU8hltUkLD
+8nd0wUSagWRMd10ZwBY+7XaJcWFemayWCZR33/zAeuLuLXjjAw5AUuzWV0G+iFSD
+zUQUTIN0OOn7OHdqyHxMWznIfK8STaBkoVsJ6OqpKo0Pq9F/p1Aj0CNUUcCAxpkZ
+Bhm6KaM8sk+xxxmnAhVzHsOPvXjEYIJCjDsUWI1H0L100H2D1lIRVCL6sIsrxE9z
+5CQw4lVH2bwwEJWEHo3aoKFenEUIWvnRkbwnDV/oT11jmqyx6f94kcjlc+mHWMwN
+fgdA/6+lMTpmyP3AjRck6QR4XEOrdd9v4Onxm3iYMFRunZgrrMfJC6+6MwAdcDeL
+eE6r7CxU3ID4fXDpBr69l4rCSgD5sy08I/IKgVCA1odM88c3nqPohs1cL1UXG2c9
+JL3ss/e6xsemBInJbE5I8Vw6XxwsGoU4udAM8HwrG1NmTIMsofnkU2ixotNccO0J
+ZkyNPEvSfDVUyzl8BRzl
+=lGdy
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__13_Feb_2012_16_27_52_+1100_Y5NEprYJUKZgFg38--
+--Signature=_Mon__13_Feb_2012_16_40_00_+1100_7TBPtlBtNN+/R+Dj--
