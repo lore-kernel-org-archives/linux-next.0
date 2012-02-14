@@ -1,76 +1,25 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Fabio Estevam <festevam@gmail.com>
 Subject: Re: linux-next: Tree for Jan 20 (drivers/media/radio/wl128x/)
-Date: Tue, 14 Feb 2012 20:25:27 +0100
-Message-ID: <CAMuHMdWofPn9gUdPJwUDm0rqWrzKAnc=yqzDwQqrr7ZCDz6VkA@mail.gmail.com>
+Date: Tue, 14 Feb 2012 17:31:58 -0200
+Message-ID: <CAOMZO5BxFi8z-6B4GNLfibHPjBz1viH0tacoUEfVA-pjDhZjdA@mail.gmail.com>
 References: <20120120131243.7c867c7b96c75819b68aec8d@canb.auug.org.au>
 	<4F1A0783.9010501@xenotime.net>
 	<CAMuHMdX8=x-=DQu0SCbqYK00+sP8a-kR=9KrUptAq-gqOXHAhA@mail.gmail.com>
+	<CAMuHMdWofPn9gUdPJwUDm0rqWrzKAnc=yqzDwQqrr7ZCDz6VkA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:45528 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757012Ab2BNTZa convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2012 14:25:30 -0500
-In-Reply-To: <CAMuHMdX8=x-=DQu0SCbqYK00+sP8a-kR=9KrUptAq-gqOXHAhA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>, Fabio Estevam <festevam@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdWofPn9gUdPJwUDm0rqWrzKAnc=yqzDwQqrr7ZCDz6VkA@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 24, 2012 at 22:33, Geert Uytterhoeven <geert@linux-m68k.org=
-> wrote:
-> On Sat, Jan 21, 2012 at 01:32, Randy Dunlap <rdunlap@xenotime.net> wr=
-ote:
->> On 01/19/2012 06:12 PM, Stephen Rothwell wrote:
->>> Changes since 20120119:
->>
->> on x86_64:
->>
->> ERROR: "st_register" [drivers/media/radio/wl128x/fm_drv.ko] undefine=
-d!
->> ERROR: "st_unregister" [drivers/media/radio/wl128x/fm_drv.ko] undefi=
-ned!
+On 2/14/12, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+
+> Ping?
 >
-> Also in m68k allmodconfig since a while:
-> http://kisskb.ellerman.id.au/kisskb/buildresult/5427875/
->
-> config RADIO_WL128X
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0tristate "Texas Instruments WL128x FM Radi=
-o"
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0depends on VIDEO_V4L2 && RFKILL
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select TI_ST if NET && GPIOLIB
->
-> config TI_ST
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0tristate "Shared transport core driver"
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0depends on NET && GPIOLIB
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select FW_LOADER
->
-> On m68k allmodconfig, GPIOLIB is not enabled, hence TI_ST
-> will not be selected, and st_{,un}register() won't be there.
-> Shouldn't the whole RADIO_WL128X depend on NET && GPIOLIB?
-> Or depend on TI_ST, instead of selecting it?
->
-> BTW, shouldn't it be called ti_st_un{,un}register()?
-> At first I thought the link error was related to SCSI tape drives ;-)
+> Build breakage in mainline since at least 3 weeks.
 
-Ping?
-
-Build breakage in mainline since at least 3 weeks.
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+>From what I recall Randy proposed a patch for fixing this issue:
+http://patchwork.linuxtv.org/patch/9750/
