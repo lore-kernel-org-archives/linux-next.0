@@ -1,35 +1,76 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Breakage from ARM when building x86
-Date: Tue, 14 Feb 2012 16:44:53 +0000
-Message-ID: <20120214164453.003d9777@pyramind.ukuu.org.uk>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Tue, 14 Feb 2012 08:45:51 -0800
+Message-ID: <20120214084551.6d6ca6cf@jbarnes-desktop>
+References: <20120213132125.a292c8832d031d5694b62a8c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/D85p6pBGIXgUb49YkicH0TF"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:59308 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751147Ab2BNQnM convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2012 11:43:12 -0500
+Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:58889 "HELO
+	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751383Ab2BNQpy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2012 11:45:54 -0500
+In-Reply-To: <20120213132125.a292c8832d031d5694b62a8c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, rmk@arm.linux.org.uk
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>
 
-Either this needs the headers fixing or should be protected by an ARM
-config, not sure which
+--Sig_/D85p6pBGIXgUb49YkicH0TF
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-drivers/mfd/twl-core.c: In function =E2=80=98twl_probe=E2=80=99:
-drivers/mfd/twl-core.c:1218:2: error: implicit declaration of function
-=E2=80=98irq_alloc_descs=E2=80=99 [-Werror=3Dimplicit-function-declarat=
-ion]
-drivers/mfd/twl-core.c:1226:2: error: implicit declaration of function
-=E2=80=98irq_domain_add_legacy=E2=80=99 [-Werror=3Dimplicit-function-de=
-claration]
-drivers/mfd/twl-core.c:1227:11: error: =E2=80=98irq_domain_simple_ops=E2=
-=80=99 undeclared
-(first use in this function) drivers/mfd/twl-core.c:1227:11: note: each
-undeclared identifier is reported only once for each function it appear=
-s
-in cc1: some warnings being treated as errors
+On Mon, 13 Feb 2012 13:21:25 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-make[2]: *** [drivers/mfd/twl-core.o] Error 1
-make[1]: *** [drivers/mfd] Error 2
+> Hi Jesse,
+>=20
+> After merging the pci tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>=20
+> drivers/pci/quirks.c: In function 'do_one_fixup_debug':
+> drivers/pci/quirks.c:2915:2: error: implicit declaration of function 'tas=
+k_pid_nr' [-Werror=3Dimplicit-function-declaration]
+> drivers/pci/quirks.c:2916:2: error: implicit declaration of function 'kti=
+me_get' [-Werror=3Dimplicit-function-declaration]
+> drivers/pci/quirks.c:2916:11: error: incompatible types when assigning to=
+ type 'ktime_t' from type 'int'
+> drivers/pci/quirks.c:2918:10: error: incompatible types when assigning to=
+ type 'ktime_t' from type 'int'
+>=20
+> Caused by commit 49107584a885 ("PCI: Annotate PCI quirks in
+> initcall_debug style"). Some missing include files ...
+>=20
+> I have used the pci tree from next-20120210 for today.
+
+I pushed a v2 of the patch with the right #includes, hopefully it'll
+build across arches this time.
+
+Thanks,
+--=20
+Jesse Barnes, Intel Open Source Technology Center
+
+--Sig_/D85p6pBGIXgUb49YkicH0TF
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPOo+/AAoJEIEoDkX4Qk9hbFIP/3X94otBvFifiROkDyFiWuOA
+aZMxMmBXpRIuEJ+oSdr6MOwWcwwi7o4SO7LuDOWbKNqCuN4CXF8/6RBJ/gFlQcBA
+29id3wX5wwdkyMiL3sFIulIFTkXuKrWTX3rqwk+F+1ExxqjAPfDPh6Xn3olI0rbH
+GEZrqOwd8/L6Irm4cNMJnI6xQ7vmq05pIR5+B4cT0X6hOUTJ8oNUgP9PwB2OzIkQ
+knDcZZ2wbMdcvETCDnL3zQU+5QlFGHJlZTPXYp84IymgjqfyiSjqBekMGYBSLAgi
+5o3sWGRFx2gUKZlk+LFEr9mKxWOzc3cQl+HsVySZpbw6cATR1MD1BoJif6VICJvl
+s6AYYVItaAetH3mT00vQDyMjho8a/By5EhlK5Rd38Vr9PJ0cuvv17Ja9UY6AV2l1
+NsgWI60kC8RrPGLyfN7xxY6m1ChDUhXWywCwXlU30G1RAT8xxPDjFjfJc6+nFJCq
+hQKqriYYidxhh28dCPkX6vMPJu09pXSvMSUW2J5a8+Fok+q01nIcokbB1UMnbqCP
+bgg/l3mFj+km8cGEJU3gIDbMxWqG7qtXEBzfsUmSexwh3m56Fru+p2kKebokacrQ
+noMEXSwpDXCRddUjlaAvy20rz8iFJvlvBF9MSDy3Zpjt7BvFprZwKlK423aTG//H
+YUJb75P8wPahTXl5OpaV
+=puzd
+-----END PGP SIGNATURE-----
+
+--Sig_/D85p6pBGIXgUb49YkicH0TF--
