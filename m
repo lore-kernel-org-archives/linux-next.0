@@ -1,65 +1,76 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: Breakage from ARM when building x86
-Date: Tue, 14 Feb 2012 10:09:33 -0700
-Message-ID: <CACxGe6u3nLbF4737LE4ZOYZRu0g9LZzJ_kYjGkN97jPMcpX4bg@mail.gmail.com>
-References: <20120214164453.003d9777@pyramind.ukuu.org.uk> <20120214165305.GA6362@flint.arm.linux.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for Jan 20 (drivers/media/radio/wl128x/)
+Date: Tue, 14 Feb 2012 20:25:27 +0100
+Message-ID: <CAMuHMdWofPn9gUdPJwUDm0rqWrzKAnc=yqzDwQqrr7ZCDz6VkA@mail.gmail.com>
+References: <20120120131243.7c867c7b96c75819b68aec8d@canb.auug.org.au>
+	<4F1A0783.9010501@xenotime.net>
+	<CAMuHMdX8=x-=DQu0SCbqYK00+sP8a-kR=9KrUptAq-gqOXHAhA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:48965 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756793Ab2BNRJx convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2012 12:09:53 -0500
-Received: by ghrr11 with SMTP id r11so144142ghr.19
-        for <linux-next@vger.kernel.org>; Tue, 14 Feb 2012 09:09:53 -0800 (PST)
-In-Reply-To: <20120214165305.GA6362@flint.arm.linux.org.uk>
+Received: from mail-we0-f174.google.com ([74.125.82.174]:45528 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757012Ab2BNTZa convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2012 14:25:30 -0500
+In-Reply-To: <CAMuHMdX8=x-=DQu0SCbqYK00+sP8a-kR=9KrUptAq-gqOXHAhA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>, Fabio Estevam <festevam@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
 
-On Tue, Feb 14, 2012 at 9:53 AM, Russell King <rmk@arm.linux.org.uk> wr=
+On Tue, Jan 24, 2012 at 22:33, Geert Uytterhoeven <geert@linux-m68k.org=
+> wrote:
+> On Sat, Jan 21, 2012 at 01:32, Randy Dunlap <rdunlap@xenotime.net> wr=
 ote:
-> On Tue, Feb 14, 2012 at 04:44:53PM +0000, Alan Cox wrote:
->> Either this needs the headers fixing or should be protected by an AR=
-M
->> config, not sure which
+>> On 01/19/2012 06:12 PM, Stephen Rothwell wrote:
+>>> Changes since 20120119:
+>>
+>> on x86_64:
+>>
+>> ERROR: "st_register" [drivers/media/radio/wl128x/fm_drv.ko] undefine=
+d!
+>> ERROR: "st_unregister" [drivers/media/radio/wl128x/fm_drv.ko] undefi=
+ned!
 >
-> At a guess, this is from linux-next ?
+> Also in m68k allmodconfig since a while:
+> http://kisskb.ellerman.id.au/kisskb/buildresult/5427875/
 >
->> drivers/mfd/twl-core.c: In function =91twl_probe=92:
->> drivers/mfd/twl-core.c:1218:2: error: implicit declaration of functi=
-on
->> =91irq_alloc_descs=92 [-Werror=3Dimplicit-function-declaration]
->> drivers/mfd/twl-core.c:1226:2: error: implicit declaration of functi=
-on
->> =91irq_domain_add_legacy=92 [-Werror=3Dimplicit-function-declaration=
-]
->> drivers/mfd/twl-core.c:1227:11: error: =91irq_domain_simple_ops=92 u=
-ndeclared
->> (first use in this function) drivers/mfd/twl-core.c:1227:11: note: e=
-ach
->> undeclared identifier is reported only once for each function it app=
-ears
->> in cc1: some warnings being treated as errors
+> config RADIO_WL128X
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0tristate "Texas Instruments WL128x FM Radi=
+o"
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0depends on VIDEO_V4L2 && RFKILL
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0select TI_ST if NET && GPIOLIB
 >
-> This has nothing to do with me ;) =A0You're not the first to report i=
-t today.
-> I'm told by OMAP people that TWL gets used on x86 as well so it can't=
- be
-> restricted to just ARM.
+> config TI_ST
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0tristate "Shared transport core driver"
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0depends on NET && GPIOLIB
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0select FW_LOADER
 >
-> This is probably due to the irq domain stuff coming out of Grant's tr=
-ee.
+> On m68k allmodconfig, GPIOLIB is not enabled, hence TI_ST
+> will not be selected, and st_{,un}register() won't be there.
+> Shouldn't the whole RADIO_WL128X depend on NET && GPIOLIB?
+> Or depend on TI_ST, instead of selecting it?
 >
-> So no, really not anything to do with ARM.
+> BTW, shouldn't it be called ti_st_un{,un}register()?
+> At first I thought the link error was related to SCSI tape drives ;-)
 
-This is irq_domain related.  It's related to an API change.  I'm
-tracking to get it solved, either by moving the twl commit into the
-irqdomain branch or by deferring the api change to v3.5.
+Ping?
 
-I've also got a patch that converts x86 over to the new api, but I
-don't have sufficient review to put it into the irqdomain tree yet.
+Build breakage in mainline since at least 3 weeks.
 
-g.
+Gr{oetje,eeting}s,
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
