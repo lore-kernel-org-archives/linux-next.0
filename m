@@ -1,33 +1,58 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Tue, 14 Feb 2012 01:43:06 +0000
-Message-ID: <20120214014306.GX23916@ZenIV.linux.org.uk>
-References: <20120214115419.f4b1300a82ef7e94c450ecb1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the irqdomain tree with Linus' tree
+Date: Tue, 14 Feb 2012 15:36:52 +1100
+Message-ID: <20120214153652.7850e2bd7b87e92008c15c4c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__14_Feb_2012_15_36_52_+1100_eGHCoyqCdxn7xMwh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:53847 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751667Ab2BNBnJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 20:43:09 -0500
-Content-Disposition: inline
-In-Reply-To: <20120214115419.f4b1300a82ef7e94c450ecb1@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59001 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754476Ab2BNEhD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 23:37:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Evgeniy Polyakov <zbr@ioremap.net>, Greg KH <greg@kroah.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-On Tue, Feb 14, 2012 at 11:54:19AM +1100, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> Today's linux-next merge of the vfs tree got a conflict in
-> drivers/staging/pohmelfs/inode.c between commit 67435319866f ("staging:
-> pohmelfs: remove drivers/staging/pohmelfs") from Linus' tree and commit
-> 044ff9e29029 ("switch open-coded instances of d_make_root() to new
-> helper") from the vfs tree.
-> 
-> The former just removes this file, so I did that.
+--Signature=_Tue__14_Feb_2012_15_36_52_+1100_eGHCoyqCdxn7xMwh
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-*nod*
+Hi Grant,
 
-I'll rebase it to the current, then this one should go away...
+Today's linux-next merge of the irqdomain tree got a conflict in
+drivers/mfd/twl-core.c between commit 6252547b8a7a ("ARM: omap: fix
+broken twl-core dependencies and ifdefs") from Linus' tree and commit
+7da5a66bbf1f ("irq_domain: Remove 'new' irq_domain in favour of the ppc
+one") from the irqdomain tree.
+
+The latter removes the code modified by the former, so I did that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__14_Feb_2012_15_36_52_+1100_eGHCoyqCdxn7xMwh
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPOeTkAAoJEECxmPOUX5FEA3oP/3RCxOvH4A2g5KL+47gxoP66
+Z8KQWcyLeoIj9Z8EoQTjG0Ylcnl4laVaajqo86egJWEyUsOczm2lqBzgF5j7yp3/
+fjbuEwWpu0/nLp+mktRYqr56pXuzTGjKl/xiK2qqOw2jNSpaEmo8+qOg+Hbgq5Ye
+ul85vo8Uj0KW19zwxFpAHG+qBBS8SYLrY6b145IVry+z3t9/tFF3njBUAMeySnX6
+VKlS9C+qr9d0/Wnk9Qp4q5PnoE0M0oRXYkVw1b3BLmb00j4H3TWDg1OgtGtBObT5
+jDs9UtixB5DavtcqONw/FCKRCAo1Jof3Ak8jXXlXppj7aeXti0pHcZ4Jhh40Z+eP
+9ncF9gDsBpG7qujVeh/TH3Tgfy8DYoj/lHrB1wSjuSWLpyovVRUyM+dXuhXVKIoT
+YCVBcBZMc3WiQA6u+RX/4bL7VdSIjb8stfHQ1zLiRFDfFHnjFbUMgUzG9W5wo52s
+GjrJrPiGloXpIDb1q32EH206ZK0b27zylIke5uBWZO94niLUWXrF49jhAPzFIrH4
+p/SRTperoAWGzRYeKsoB011Vc+BLVLwY63hfu6Qtcklp8wYDVzL/JzVtAiXtcwZo
+mo8298vZpyBXvhrNnInnJUpqyc2rZIS/8M9pw4hp5npNX5hL5d43GhNudyY+1Zrm
+1wLCUTcJJqrqz/w3p8pE
+=rZjT
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__14_Feb_2012_15_36_52_+1100_eGHCoyqCdxn7xMwh--
