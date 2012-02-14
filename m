@@ -1,58 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the irqdomain tree with Linus' tree
-Date: Tue, 14 Feb 2012 15:36:52 +1100
-Message-ID: <20120214153652.7850e2bd7b87e92008c15c4c@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: manual merge of the irqdomain tree with Linus' tree
+Date: Mon, 13 Feb 2012 21:44:18 -0700
+Message-ID: <CACxGe6uvbyT9Jwg3+nzjF36cSAPqSWOdpKeiPT+JtbeEz5h7tw@mail.gmail.com>
+References: <20120214153652.7850e2bd7b87e92008c15c4c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__14_Feb_2012_15_36_52_+1100_eGHCoyqCdxn7xMwh"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59001 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754476Ab2BNEhD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2012 23:37:03 -0500
+Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:40829 "EHLO
+	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1759402Ab2BNEoi convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Feb 2012 23:44:38 -0500
+In-Reply-To: <20120214153652.7850e2bd7b87e92008c15c4c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Tue__14_Feb_2012_15_36_52_+1100_eGHCoyqCdxn7xMwh
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Feb 13, 2012 at 9:36 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Grant,
+>
+> Today's linux-next merge of the irqdomain tree got a conflict in
+> drivers/mfd/twl-core.c between commit 6252547b8a7a ("ARM: omap: fix
+> broken twl-core dependencies and ifdefs") from Linus' tree and commit
+> 7da5a66bbf1f ("irq_domain: Remove 'new' irq_domain in favour of the p=
+pc
+> one") from the irqdomain tree.
+>
+> The latter removes the code modified by the former, so I did that.
 
-Hi Grant,
+Thanks Stephen. I'll respin the tree after the next rc
 
-Today's linux-next merge of the irqdomain tree got a conflict in
-drivers/mfd/twl-core.c between commit 6252547b8a7a ("ARM: omap: fix
-broken twl-core dependencies and ifdefs") from Linus' tree and commit
-7da5a66bbf1f ("irq_domain: Remove 'new' irq_domain in favour of the ppc
-one") from the irqdomain tree.
+g.
 
-The latter removes the code modified by the former, so I did that.
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+
+
+
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__14_Feb_2012_15_36_52_+1100_eGHCoyqCdxn7xMwh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPOeTkAAoJEECxmPOUX5FEA3oP/3RCxOvH4A2g5KL+47gxoP66
-Z8KQWcyLeoIj9Z8EoQTjG0Ylcnl4laVaajqo86egJWEyUsOczm2lqBzgF5j7yp3/
-fjbuEwWpu0/nLp+mktRYqr56pXuzTGjKl/xiK2qqOw2jNSpaEmo8+qOg+Hbgq5Ye
-ul85vo8Uj0KW19zwxFpAHG+qBBS8SYLrY6b145IVry+z3t9/tFF3njBUAMeySnX6
-VKlS9C+qr9d0/Wnk9Qp4q5PnoE0M0oRXYkVw1b3BLmb00j4H3TWDg1OgtGtBObT5
-jDs9UtixB5DavtcqONw/FCKRCAo1Jof3Ak8jXXlXppj7aeXti0pHcZ4Jhh40Z+eP
-9ncF9gDsBpG7qujVeh/TH3Tgfy8DYoj/lHrB1wSjuSWLpyovVRUyM+dXuhXVKIoT
-YCVBcBZMc3WiQA6u+RX/4bL7VdSIjb8stfHQ1zLiRFDfFHnjFbUMgUzG9W5wo52s
-GjrJrPiGloXpIDb1q32EH206ZK0b27zylIke5uBWZO94niLUWXrF49jhAPzFIrH4
-p/SRTperoAWGzRYeKsoB011Vc+BLVLwY63hfu6Qtcklp8wYDVzL/JzVtAiXtcwZo
-mo8298vZpyBXvhrNnInnJUpqyc2rZIS/8M9pw4hp5npNX5hL5d43GhNudyY+1Zrm
-1wLCUTcJJqrqz/w3p8pE
-=rZjT
------END PGP SIGNATURE-----
-
---Signature=_Tue__14_Feb_2012_15_36_52_+1100_eGHCoyqCdxn7xMwh--
+Grant Likely, B.Sc., P.Eng.
+Secret Lab Technologies Ltd.
