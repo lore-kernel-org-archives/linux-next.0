@@ -1,92 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tmem tree
-Date: Wed, 15 Feb 2012 14:41:31 +1100
-Message-ID: <20120215144131.e1c3b7bbe9c30f6b622872c2@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the security tree
+Date: Wed, 15 Feb 2012 15:28:18 +1100
+Message-ID: <20120215152818.58f32cb975a52a28328799a1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__15_Feb_2012_14_41_31_+1100_iKo7WZrM5d//hE1W"
+ boundary="Signature=_Wed__15_Feb_2012_15_28_18_+1100_OPoy1uMYAb3GKpQU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60645 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49184 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751089Ab2BODlm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2012 22:41:42 -0500
+	with ESMTP id S1755211Ab2BOE23 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2012 23:28:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ftp.linux.org.uk>, James Morris <jmorris@namei.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>, Al Viro <viro@ftp.linux.org.uk>, James Morris <jmorris@namei.org>
 
---Signature=_Wed__15_Feb_2012_14_41_31_+1100_iKo7WZrM5d//hE1W
+--Signature=_Wed__15_Feb_2012_15_28_18_+1100_OPoy1uMYAb3GKpQU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Konrad,
+Hi Andrew,
 
-After merging the tmem tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in
+kernel/sysctl.c between commit 404015308747 ("security: trim security.h")
+from the security tree and commit "sysctl: use bitmap library functions"
+from the akpm.
 
-mm/frontswap.c: In function 'frontswap_shrink':
-mm/frontswap.c:217:3: error: implicit declaration of function 'security_vm_=
-enough_memory_kern' [-Werror=3Dimplicit-function-declaration]
-
-Caused by commit 8174e70a6bde ("mm: frontswap: core frontswap
-functionality") interacting with commit 191c542442fd ("mm: collapse
-security_vm_enough_memory() variants into a single function") from the
-security tree.
-
-I applied the following merge fix:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 15 Feb 2012 14:35:31 +1100
-Subject: [PATCH] mm: frontswap: update for security_vm_enough_memory API ch=
-ange
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- mm/frontswap.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/mm/frontswap.c b/mm/frontswap.c
-index d7c91e3..2b80c5a 100644
---- a/mm/frontswap.c
-+++ b/mm/frontswap.c
-@@ -214,7 +214,7 @@ void frontswap_shrink(unsigned long target_pages)
- 			pages_to_unuse =3D 0; /* unuse all */
- 		}
- 		/* ensure there is enough RAM to fetch pages from frontswap */
--		if (security_vm_enough_memory_kern(pages))
-+		if (security_vm_enough_memory_mm(current->mm, pages))
- 			continue;
- 		vm_unacct_memory(pages);
- 		break;
---=20
-1.7.9
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__15_Feb_2012_14_41_31_+1100_iKo7WZrM5d//hE1W
+diff --cc kernel/sysctl.c
+index 62538ee,cfeb1fa..0000000
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@@ -58,7 -58,7 +58,8 @@@
+  #include <linux/oom.h>
+  #include <linux/kmod.h>
+  #include <linux/capability.h>
+ +#include <linux/binfmts.h>
++ #include <linux/bitmap.h>
+ =20
+  #include <asm/uaccess.h>
+  #include <asm/processor.h>
+
+--Signature=_Wed__15_Feb_2012_15_28_18_+1100_OPoy1uMYAb3GKpQU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPOylrAAoJEECxmPOUX5FEinUP/3+wxR+k8TXbSohKmaDKCJCu
-HooBf1sQztgg3TkLibo45ymTCSQ6SFq+Ex7OBpjSNur147VTqFNj6jYDr1mGQ9Ie
-a+ZWMPP49thhkDjjcic/oKrYQQqlKP07JtPJeEw5+Nx2NwZSazZ2xtwrKO/SCT29
-S3Qs5L6nkhN6mpxo6j6xC06Xkcuk5pxe8lh5+OVPbr9iqMKql9doCc12Y6CfGocK
-+Mnt6QQgPB90o8U7MH1bVMoUWjJvakk8QGzrJg9HobG1Zu2NHngSDgajqhESBu3S
-HtePbnxzeOJ1+CY+Atd3ReQK+4pe70tYUohieWXReBuXVaf7FmQJhqrVVDKaIxo5
-h7Tw68JoV+mCp/jZVtsXDmMvIX5TxpCeYTUIvDdNZCFeay7I+dGh/gLMZS0KN2et
-f+gfEEJPky6EEfY0H9y/uZcEFwv8nwnzMGItGfbamA8VR6pA9F1kefJwZAkeMQ9G
-pWDZM20gM1m1viPf0nlUQZ+DN6ybZ1t/7qjoBH016zSpbZkbVobPcCILqxvluX+P
-3tKSieaspFk+xVBrBumwSuSYZAQeS4yxDvjR/hd2o9ixR7T2sTgGABM4bvlrI8P5
-yfDhlKjSXoEWHYoX6uwZFQSyUpCaKRmtlTt7n9UEWQNPO/9ekiXBKOxLW4XtZgt8
-04ekwObboP7mSFz2v6/y
-=w8AH
+iQIcBAEBCAAGBQJPOzRiAAoJEECxmPOUX5FE+VsQAIEhQ6To8ZOejwP7bB4NVVID
+Km3DUBXnCDwB80czg/UB1NHdkgYHb3ePwXnwhcCV5bgnd6q6ki/4jzTfqPeD/tCX
+5eXswZH4tqG7V8+fZt5XyXZ5YKaDoZOq5OvycERS9UxAMdOSdRPsDfVgGOX3G0zE
+s60/ebShAYsJC0MaT1Q90zjnr61kSytrL2ujxhDQ6zdxFugQab7npulr6eOfmj2B
+GbK5F3rLkbe8Qtye/IyDfUMuu5EOOf9spBbn2DHQ7bxh1ly7H/mN9UX5IFNx7Xp7
+j971eANAp+GVRUDYy8Q+HXiVbItonkq9Y6uXJ0sJwoelcRhrpBmZMLJKIzT6iric
+M/L3Ln3Vxqa3z0NNVBig49eSDtuf2HuHWxmFy3SdA/YCz1HWSw9L1hBMhBZ/fgrD
+a9se5/IGGPotiRVe4EYmTX4c/mDiYOPf15npUN3lTuRbWi/jmJTq/diqba1xJcBN
+FTIzVpMPRxH1ZBWju74bA1qK4JmB3ZntvzM59s+4R6lhrlQR1yZVNde115YCwxqo
+qwBcvRz4wghu26v1uvTXiteOAqaU+5pl+u6ynskjxHPf/pabxqGMEj0tM7ou5VA8
+27wckt5eThpzA+2k2Kq5soI+NF2snaxizasgBpsfBXTqAHD2ui3YmLfMji4axOd/
+R8R9dyYfWPUYKarqX2g9
+=SkI1
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__15_Feb_2012_14_41_31_+1100_iKo7WZrM5d//hE1W--
+--Signature=_Wed__15_Feb_2012_15_28_18_+1100_OPoy1uMYAb3GKpQU--
