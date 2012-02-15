@@ -1,54 +1,52 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
 Subject: Re: linux-next: Tree for Jan 20 (drivers/media/radio/wl128x/)
-Date: Wed, 15 Feb 2012 10:47:05 +0100
-Message-ID: <CAMuHMdU-HQsjL-gcdr5XtK8fh+LAa-nY59K2r44hKkxeQ=P04w@mail.gmail.com>
-References: <20120120131243.7c867c7b96c75819b68aec8d@canb.auug.org.au>
-	<4F1A0783.9010501@xenotime.net>
-	<CAMuHMdX8=x-=DQu0SCbqYK00+sP8a-kR=9KrUptAq-gqOXHAhA@mail.gmail.com>
-	<CAMuHMdWofPn9gUdPJwUDm0rqWrzKAnc=yqzDwQqrr7ZCDz6VkA@mail.gmail.com>
-	<CAOMZO5BxFi8z-6B4GNLfibHPjBz1viH0tacoUEfVA-pjDhZjdA@mail.gmail.com>
+Date: Wed, 15 Feb 2012 11:55:26 -0200
+Message-ID: <4F3BB94E.7010204@redhat.com>
+References: <20120120131243.7c867c7b96c75819b68aec8d@canb.auug.org.au> <4F1A0783.9010501@xenotime.net> <CAMuHMdX8=x-=DQu0SCbqYK00+sP8a-kR=9KrUptAq-gqOXHAhA@mail.gmail.com> <CAMuHMdWofPn9gUdPJwUDm0rqWrzKAnc=yqzDwQqrr7ZCDz6VkA@mail.gmail.com> <CAOMZO5BxFi8z-6B4GNLfibHPjBz1viH0tacoUEfVA-pjDhZjdA@mail.gmail.com> <CAMuHMdU-HQsjL-gcdr5XtK8fh+LAa-nY59K2r44hKkxeQ=P04w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:43365 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758170Ab2BOJrH convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Feb 2012 04:47:07 -0500
-In-Reply-To: <CAOMZO5BxFi8z-6B4GNLfibHPjBz1viH0tacoUEfVA-pjDhZjdA@mail.gmail.com>
+Received: from mx1.redhat.com ([209.132.183.28]:61280 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759237Ab2BONzp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Feb 2012 08:55:45 -0500
+In-Reply-To: <CAMuHMdU-HQsjL-gcdr5XtK8fh+LAa-nY59K2r44hKkxeQ=P04w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabio Estevam <festevam@gmail.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
 
-On Tue, Feb 14, 2012 at 20:31, Fabio Estevam <festevam@gmail.com> wrote=
-:
-> On 2/14/12, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
->> Ping?
+Em 15-02-2012 07:47, Geert Uytterhoeven escreveu:
+> On Tue, Feb 14, 2012 at 20:31, Fabio Estevam <festevam@gmail.com> wrote:
+>> On 2/14/12, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >>
->> Build breakage in mainline since at least 3 weeks.
->
-> From what I recall Randy proposed a patch for fixing this issue:
-> http://patchwork.linuxtv.org/patch/9750/
+>>> Ping?
+>>>
+>>> Build breakage in mainline since at least 3 weeks.
+>>
+>> From what I recall Randy proposed a patch for fixing this issue:
+>> http://patchwork.linuxtv.org/patch/9750/
+> 
+> Still, someone (preferably the maintainer) should take the appropriate
+> action(s) to get the patch in mainline.
 
-Still, someone (preferably the maintainer) should take the appropriate
-action(s) to get the patch in mainline.
+I'll be doing it today.
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+> 
+> Thanks!
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
