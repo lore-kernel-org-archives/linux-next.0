@@ -1,69 +1,26 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Feb 15 (decnet)
-Date: Wed, 15 Feb 2012 14:01:12 -0800
-Message-ID: <4F3C2B28.7030802@xenotime.net>
-References: <20120215160352.60be31b78879628be7e446b8@canb.auug.org.au>	<4F3C0CE3.6020708@xenotime.net> <20120215.163801.2243433584488421039.davem@davemloft.net>
+From: Michael Neuling <mikey@neuling.org>
+Subject: Build fail in hugetlbpage.c with linux-next and mpc85xx_defconfig
+Date: Thu, 16 Feb 2012 10:08:41 +1100
+Message-ID: <14174.1329347321@neuling.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:58640 "HELO
-	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753300Ab2BOWBu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Feb 2012 17:01:50 -0500
-In-Reply-To: <20120215.163801.2243433584488421039.davem@davemloft.net>
+Received: from ozlabs.org ([203.10.76.45]:35121 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751498Ab2BOXIn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Feb 2012 18:08:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To: galak@kernel.crashing.org, Becky Bruce <beckyb@kernel.crashing.org>
+Cc: linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org
 
-On 02/15/2012 01:38 PM, David Miller wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> Date: Wed, 15 Feb 2012 11:52:03 -0800
-> 
->> On 02/14/2012 09:03 PM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20120214:
->>
->>
->> on x86_64:
->>
->>   CC      net/decnet/dn_nsp_in.o
->> In file included from /next/linux-next-20120215/net/decnet/dn_nsp_in.c:75:0:
->> /next/linux-next-20120215/include/net/dn.h:195:65: warning: 'struct flowidn' declared inside parameter list
-> 
-> I can't reproduce this in the net-next tree using your config but I can
-> certainly fix it, as follows :-)
+Becky,
 
-Yes, you fixed it.  Thanks.
+This has been broken in linux-next for a while.  Looks like a merge
+issue but you were the last to touch it...
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+arch/powerpc/mm/hugetlbpage.c: In function 'reserve_hugetlb_gpages':
+arch/powerpc/mm/hugetlbpage.c:313: error: passing argument 5 of 'parse_args' makes integer from pointer without a cast
+include/linux/moduleparam.h:317: note: expected 's16' but argument is of type 'int (*)(char *, char *)'
+arch/powerpc/mm/hugetlbpage.c:313: error: too few arguments to function 'parse_args'
 
-
-> --------------------
-> decnet: net/dn.h needs net/flow.h
-> 
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> ---
->  include/net/dn.h |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/include/net/dn.h b/include/net/dn.h
-> index 298521e..814af0b 100644
-> --- a/include/net/dn.h
-> +++ b/include/net/dn.h
-> @@ -3,6 +3,7 @@
->  
->  #include <linux/dn.h>
->  #include <net/sock.h>
-> +#include <net/flow.h>
->  #include <asm/byteorder.h>
->  #include <asm/unaligned.h>
->  
-
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Mikey
