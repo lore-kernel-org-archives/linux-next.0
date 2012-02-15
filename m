@@ -1,78 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sysctl tree with the security tree
-Date: Wed, 15 Feb 2012 13:25:43 +1100
-Message-ID: <20120215132543.27189492ab5e910a0899be85@canb.auug.org.au>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Tue, 14 Feb 2012 18:33:31 -0800
+Message-ID: <20120215023331.GA28786@kroah.com>
+References: <20120210155800.ccef418fd5c2f2b87a5d6315@canb.auug.org.au>
+ <20120210052947.GA2068@kroah.com>
+ <80f07411-179e-4fe9-b591-32fbcaac414b@default>
+ <20120210174359.GB5128@kroah.com>
+ <443c718c-643b-4b48-9dd8-e0424fc0afa9@default>
+ <20120215000358.GA27341@kroah.com>
+ <e0be2242-530b-46cd-ad3a-d49fd60345ab@default>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__15_Feb_2012_13_25_43_+1100_Wlz2D6P_g.F+B6k5"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45830 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755810Ab2BOCZ4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2012 21:25:56 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ftp.linux.org.uk>, James Morris <jmorris@namei.org>
-
---Signature=_Wed__15_Feb_2012_13_25_43_+1100_Wlz2D6P_g.F+B6k5
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e0be2242-530b-46cd-ad3a-d49fd60345ab@default>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Jennings <sjenning@linux.vnet.ibm.com>, Nitin Gupta <ngupta@vflare.org>, Konrad Wilk <konrad.wilk@oracle.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Eric,
+On Tue, Feb 14, 2012 at 04:54:37PM -0800, Dan Magenheimer wrote:
+> > From: Greg KH [mailto:gregkh@linuxfoundation.org]
+> > Subject: Re: linux-next: build failure after merge of the staging tree
+> > 
+> > > > Ok, now reverted, what a mess...
+> > > >
+> > > > greg k-h
+> > >
+> > > OK, I have just posted the ramster v5 patchset which applies against
+> > > linux-3.2.  I've test-built it against linux-next... it only gets
+> > > the normal minor merge conflicts for adding a line to
+> > > drivers/staging/Makefile and Kconfig.
+> > 
+> > Please resend after fixing that conflict, as it would require me to edit
+> > it by hand in order to apply this.  As you have already redone the
+> > patch, there's no reason I should have to do this, right?
+> 
+> OK.  I'm not quite sure how to generate a patchset or a
+> git commit-set that applies cleanly against two different
+> trees (3.2 and linux-next), but I guess common sense should
+> tell me that, since the patches have to go through staging-next
+> first and you are applying patches rather than git-pull'ing,
+> staging-next should be my preferred choice for a base.
 
-Today's linux-next merge of the sysctl tree got a conflict in
-fs/proc/proc_sysctl.c between commit 404015308747 ("security: trim
-security.h") from the security tree and commit 1f87f0b52b1d ("sysctl:
-Move the implementation into fs/proc/proc_sysctl.c") from the sysctl tree.
+Exactly, how could I apply them to two trees?  For that case, how can I
+go back in time and apply them to 3.2?
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+> Do you want me to resend all 6 patches?  The only patch
+> affected is patch 6 of 6.  All others apply cleanly.
+> Let me know and I will resend one or all tomorrow.
 
-BTW, I think this file only needs to include <linux/export.h> not
-module.h ...
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+All would be best, also please thread them properly, 'git send-email'
+will do this for you, please use it.
 
-diff --cc fs/proc/proc_sysctl.c
-index 67bbf6e,a7708b7..0000000
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@@ -6,9 -6,8 +6,10 @@@
-  #include <linux/poll.h>
-  #include <linux/proc_fs.h>
-  #include <linux/security.h>
- +#include <linux/sched.h>
-  #include <linux/namei.h>
- +#include <linux/mm.h>
-+ #include <linux/module.h>
-  #include "internal.h"
- =20
-  static const struct dentry_operations proc_sys_dentry_operations;
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__15_Feb_2012_13_25_43_+1100_Wlz2D6P_g.F+B6k5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPOxenAAoJEECxmPOUX5FEw6AP+wSMJUhrgwEM2YZhDGxPww2q
-D8jrXjs11WTkfXAD/dpJHnkadeBekipxHLKVxNEOanES+BJBPMrdn/MgMgDrPtxo
-mjShxaWNnXE5YxrjCEjAO9S6lV1DSgyKH/qghkGYaEmwVpEGY7aD0YfU1Q/4upOb
-nkWkURgOHyCwFOCzw2GrM8cxDUQA6MLx+1zQs+oCurwTqpXRRfXtfO7qZbPdpKZ/
-YiWfrjVHVoyo4FfExPhqHmMYzZK3sGbaCw6ZdBVXTZsbIN47OJ+y859SfVe2KTW7
-/agHwH8DV32jSSgbJu5RyaRSofSHK3OY4xhyCIyUJtOdA4Zu80KbBaclWePq/6mz
-aI9JP2Qo/mbfbgQFyXNHPYQslbIThjHi5tUl0j8q3+OtrGqToPTYyXwTIVT2e0Pl
-MghLb48fVzE80+GzuwbP6/HDCHpRIPtagawsqEo/7xAS/qKLT8S17Es/a0BpTYl3
-wWM+TDpqJ7/SCC8r134L+Irg1lm09ArGpet8BjlhmvPe64nFfY7077ggAMTiOj7U
-T/c3LDvcYiJpcOH63Tem5Lc6qd1em0rWrui5yqSJCr0vp4mHszJ60RRe3BidGEG3
-nJIXDuz9garhSguWV/Osrzn0bsfEVgh3KjecmVBHHXY4/x8v2ik8twG3VF+V9Ch8
-5/Qc7XeK1kuB/oeQWiN4
-=zki3
------END PGP SIGNATURE-----
-
---Signature=_Wed__15_Feb_2012_13_25_43_+1100_Wlz2D6P_g.F+B6k5--
+greg k-h
