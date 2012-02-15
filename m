@@ -1,67 +1,55 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: build failure after merge of the tmem tree
-Date: Wed, 15 Feb 2012 11:07:07 -0500
-Message-ID: <20120215160707.GB4093@phenom.dumpdata.com>
-References: <20120215144131.e1c3b7bbe9c30f6b622872c2@canb.auug.org.au>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: RE: linux-next: build failure after merge of the staging tree
+Date: Wed, 15 Feb 2012 08:14:52 -0800 (PST)
+Message-ID: <da7c3779-70a7-42f6-908f-f9b283410acd@default>
+References: <20120210155800.ccef418fd5c2f2b87a5d6315@canb.auug.org.au>
+ <20120210052947.GA2068@kroah.com>
+ <80f07411-179e-4fe9-b591-32fbcaac414b@default>
+ <20120210174359.GB5128@kroah.com>
+ <443c718c-643b-4b48-9dd8-e0424fc0afa9@default>
+ <20120215000358.GA27341@kroah.com>
+ <e0be2242-530b-46cd-ad3a-d49fd60345ab@default>
+ <20120215023331.GA28786@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet15.oracle.com ([141.146.126.227]:42711 "EHLO
-	acsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751648Ab2BOQKb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Feb 2012 11:10:31 -0500
-Content-Disposition: inline
-In-Reply-To: <20120215144131.e1c3b7bbe9c30f6b622872c2@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ftp.linux.org.uk>, James Morris <jmorris@namei.org>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120215023331.GA28786@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Jennings <sjenning@linux.vnet.ibm.com>, Nitin Gupta <ngupta@vflare.org>, Konrad Wilk <konrad.wilk@oracle.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 15, 2012 at 02:41:31PM +1100, Stephen Rothwell wrote:
-> Hi Konrad,
+> From: Greg KH [mailto:gregkh@linuxfoundation.org]
 > 
-> After merging the tmem tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> On Tue, Feb 14, 2012 at 04:54:37PM -0800, Dan Magenheimer wrote:
+> > > From: Greg KH [mailto:gregkh@linuxfoundation.org]
+> > > Subject: Re: linux-next: build failure after merge of the staging tree
+> > >
+> > > > OK, I have just posted the ramster v5 patchset which applies against
+> > > > linux-3.2.  I've test-built it against linux-next... it only gets
+> > > > the normal minor merge conflicts for adding a line to
+> > > > drivers/staging/Makefile and Kconfig.
+> > >
+> > > Please resend after fixing that conflict, as it would require me to edit
+> > > it by hand in order to apply this.  As you have already redone the
+> > > patch, there's no reason I should have to do this, right?
+> >
+> > Do you want me to resend all 6 patches?  The only patch
+> > affected is patch 6 of 6.  All others apply cleanly.
+> > Let me know and I will resend one or all tomorrow.
 > 
-> mm/frontswap.c: In function 'frontswap_shrink':
-> mm/frontswap.c:217:3: error: implicit declaration of function 'security_vm_enough_memory_kern' [-Werror=implicit-function-declaration]
-> 
-> Caused by commit 8174e70a6bde ("mm: frontswap: core frontswap
-> functionality") interacting with commit 191c542442fd ("mm: collapse
-> security_vm_enough_memory() variants into a single function") from the
-> security tree.
-> 
-> I applied the following merge fix:
-> 
+> All would be best, also please thread them properly, 'git send-email'
+> will do this for you, please use it.
 
-Sweeet. Thanks!
+OK, posted (*).  BTW, I _was_ using git send-email, just didn't know
+that "git send-email patch0 patch1 patch2 ..." would cause them
+to be threaded.  (I was using git send-email patch0;
+git send-email patch1; git send-email patch2...)
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 15 Feb 2012 14:35:31 +1100
-> Subject: [PATCH] mm: frontswap: update for security_vm_enough_memory API change
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  mm/frontswap.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/mm/frontswap.c b/mm/frontswap.c
-> index d7c91e3..2b80c5a 100644
-> --- a/mm/frontswap.c
-> +++ b/mm/frontswap.c
-> @@ -214,7 +214,7 @@ void frontswap_shrink(unsigned long target_pages)
->  			pages_to_unuse = 0; /* unuse all */
->  		}
->  		/* ensure there is enough RAM to fetch pages from frontswap */
-> -		if (security_vm_enough_memory_kern(pages))
-> +		if (security_vm_enough_memory_mm(current->mm, pages))
->  			continue;
->  		vm_unacct_memory(pages);
->  		break;
-> -- 
-> 1.7.9
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+Thanks again for your patience and help!  I think RAMster
+can now be successfully queued with no linux-next merge issues!
+
+Dan
+
+* http://driverdev.linuxdriverproject.org/pipermail/devel/2012-February/024614.html
