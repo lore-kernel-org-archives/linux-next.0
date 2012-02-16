@@ -1,131 +1,94 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Fri, 17 Feb 2012 08:25:59 +1100
-Message-ID: <20120217082559.6a094265da2d5c203bfc445f@canb.auug.org.au>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: RE: linux-next: build failure after merge of the staging tree
+Date: Thu, 16 Feb 2012 13:49:53 -0800 (PST)
+Message-ID: <be7afe58-43f1-4f69-b0ae-89dd7607355b@default>
 References: <20120216152316.821ac82e04a5ee30327b81c3@canb.auug.org.au>
-	<20120216051552.GA5676@kroah.com>
-	<c6634d7c-b264-4a87-bab1-74408341dab0@default>
+ <20120216051552.GA5676@kroah.com>
+ <c6634d7c-b264-4a87-bab1-74408341dab0@default>
+ <20120217082559.6a094265da2d5c203bfc445f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__17_Feb_2012_08_25_59_+1100_I=ScOEXRp9Elwo+N"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52412 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752728Ab2BPV0Z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 16:26:25 -0500
-In-Reply-To: <c6634d7c-b264-4a87-bab1-74408341dab0@default>
+Received: from rcsinet15.oracle.com ([148.87.113.117]:48206 "EHLO
+	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752249Ab2BPVuK convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 16:50:10 -0500
+In-Reply-To: <20120217082559.6a094265da2d5c203bfc445f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Magenheimer <dan.magenheimer@oracle.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Wilk <konrad.wilk@oracle.com>, Seth Jennings <sjenning@linux.vnet.ibm.com>, Nitin Gupta <ngupta@vflare.org>
 
---Signature=_Fri__17_Feb_2012_08_25_59_+1100_I=ScOEXRp9Elwo+N
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Subject: Re: linux-next: build failure after merge of the staging tree
+> 
+> Hi Dan,
 
-Hi Dan,
+Hi Stephen --
 
-On Thu, 16 Feb 2012 06:39:42 -0800 (PST) Dan Magenheimer <dan.magenheimer@o=
-racle.com> wrote:
->
-> > From: Greg KH [mailto:greg@kroah.com]
-> > Subject: Re: linux-next: build failure after merge of the staging tree
-> >=20
-> > On Thu, Feb 16, 2012 at 03:23:16PM +1100, Stephen Rothwell wrote:
-> > > Hi Greg,
-> > >
-> > > After merging the staging tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > >
-> > > drivers/staging/ramster/zcache-main.c:2969:2: error: unknown field 'i=
-nvalidate_page' specified in
-> > initializer
-> > > drivers/staging/ramster/zcache-main.c:2970:2: error: unknown field 'i=
-nvalidate_inode' specified in
-> > initializer
-> > > drivers/staging/ramster/zcache-main.c:2971:2: error: unknown field 'i=
-nvalidate_fs' specified in
-> > initializer
-> > >
-> > > I do wonder if any of this was build tested with CONFIG_CLEANCACHE en=
-abled ...
->=20
-> Absolutely, against next-20120214, which contained commit
->=20
-> 91c6cc9b5c216bd067f9af2cc64fcbe190755865
->=20
-> which changed the names of those fields from "flush*" to "invalidate*".
-> I am the author of that commit but it is pulled through Konrad Wilk
-> (cc'ed). Perhaps Konrad's pull succeeded in next-20120214 but
-> failed in next-20120215?
+Thanks for the reply and sorry for the hassle.  See below for
+important question.
 
-If a fetch fails for a particular tree on a particular day, I use the
-version of that tree from the day before, so that is not the problem (and
-in any case, the fetch did not fail).
+> > which changed the names of those fields from "flush*" to "invalidate*".
+> > I am the author of that commit but it is pulled through Konrad Wilk
+> > (cc'ed). Perhaps Konrad's pull succeeded in next-20120214 but
+> > failed in next-20120215?
+> 
+> If a fetch fails for a particular tree on a particular day, I use the
+> version of that tree from the day before, so that is not the problem (and
+> in any case, the fetch did not fail).
+> 
+> > Kernel.org seems to be down so I can't see if that commit is
+> > in next-20120215 but if it is not that would likely cause
+> > the above errors.
+> 
+> It is in next-20120215 (and has been since next-20120124).  However, I
+> merge Konrad's (tmem) tree *after* I merge the staging tree, so that commit
+> was not present when I tried to build linux-next after merging the
+> staging tree.
 
-> Kernel.org seems to be down so I can't see if that commit is
-> in next-20120215 but if it is not that would likely cause
-> the above errors.
+Huh?  Do you do allyesconfig/allmodconfig build testing after you pull
+each individual tree or only after all trees are pulled?  (Apparently
+the former, as otherwise the ordering shouldn't matter, right?)
+ 
+> > The good news is that there seems to be an increasing number
+> > of people contributing to and building things on top of
+> > cleancache/frontswap stuff.  The bad news is that it is difficult
+> > to avoid ordering dependencies that affect -next.  My apologies
+> > and if you have any dependency-savvy processes that would solve
+> > this that we are not using, please let me/us know.
+> 
+> Well, if anyone had bothered to tell me, I could have reordered the
+> trees.  However, that does not change the fact that the staging tree is
+> now broken on its own.  Which means that Greg can't even do unit testing
+> on his tree with your code in it. :-(
 
-It is in next-20120215 (and has been since next-20120124).  However, I
-merge Konrad's (tmem) tree *after* I merge the staging tree, so that commit
-was not present when I tried to build linux-next after merging the
-staging tree.
+If you are doing the after-every-individual-tree build testing,
+yes, if you could pull konrad's tmem tree first, that would
+solve this problem I believe.**
 
-> > > Caused by commit 19ee3ef5f4bb ("staging: ramster: local compression +=
- tmem").
-> > >
-> > > I have used the staging tree from next-20120215 for today.
-> >=20
-> > Dan, can you please fix this?
->=20
-> Hmmm... moving target.  I'm trying to get in touch with Konrad
-> to see if we can determine what is going on.
+I suspect unit testing doesn't make much as much sense in staging
+as it does in the core kernel.  I did testing of ramster in my
+public git tree (which includes the tmem patchset coming to you via
+konrad) but, since it is a staging driver, the bits have to go
+through Greg.
 
-See above.
+> One solutions is for Greg to merge Konrad's tree (or a subset of it) into
+> the staging tree.  Another is for this work to become a separate tree
+> (however, I think other stuff in the staging tree depends on this work,
+> right?).
 
-> The good news is that there seems to be an increasing number
-> of people contributing to and building things on top of
-> cleancache/frontswap stuff.  The bad news is that it is difficult
-> to avoid ordering dependencies that affect -next.  My apologies
-> and if you have any dependency-savvy processes that would solve
-> this that we are not using, please let me/us know.
+Yes, there are a number of parts from different companies/timezones
+now flying in close formation.  The name change (flush->invalidate)
+causing this problem was insisted upon by Andrew Morton (and has been
+in linux-next for several months), otherwise it wouldn't have happened
+and wouldn't be causing these issues :-(  But better to work through
+them in -next than in Linus' merge window I guess.
 
-Well, if anyone had bothered to tell me, I could have reordered the
-trees.  However, that does not change the fact that the staging tree is
-now broken on its own.  Which means that Greg can't even do unit testing
-on his tree with your code in it. :-(
+Thanks,
+Dan
 
-One solutions is for Greg to merge Konrad's tree (or a subset of it) into
-the staging tree.  Another is for this work to become a separate tree
-(however, I think other stuff in the staging tree depends on this work,
-right?).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__17_Feb_2012_08_25_59_+1100_I=ScOEXRp9Elwo+N
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPPXRnAAoJEECxmPOUX5FEdioP/1W9Ny82dNQ7QGkphAbTmAGr
-JO7CAT4PZLAYYRWazXB4+5utZgv2tcklvBsE87+xhi5bLQhC43J50AkYr6jwSBy0
-2wAwSdSt0Gf71I2V+MNXlSC4PrTIua2ylMtZgBydP+IsNhWPSBncaSNKnCItnLhy
-f7De6Nb6j9TkozRpiZoCghBmsx2aEQAfPWWsMPHTRGxiBbpymivdSY0WCr+wr3X5
-62gMi6DACXgmqUDa6aXER8GGCbFsxzF3CGVKvde96J13RF8Vo6faH09571WE5SQ8
-FwnyvSLMzLMGuRn9BhG6Dpgq8omFTgxz55yKKpT/z5cUdmce0nmgsxE782xf+rQD
-LwAt63AWpTfA4Sl2V/s1CRycF2CyNs29KFG7ltTik0Wrn6gYEv4Arx3eDjVbtV0B
-+RE/s/Vg89vaabFlOtgKaplBRo5CBWf008wjKtPpOcJA1uxWBAHG6cLD0tZ4Ws2X
-XjreAW4Z6/r0mP6DN1oeHtXBiVy3qz4HCP0m/6OwvntcxNfZSe+f7dr+H7HOfmE1
-I15wI37c0pn0NiRNzp9Mz5SXfBkrc5MfjGNxFwgvvz8JAIaFR4RAIPX/k3Rb+LIH
-TCKqtujAYyLPjARLpJ5kI8mifA13IzLrK7fKdOo8AlpAE5JV8jg0RU8J1mzbnKtd
-/YurmB8RWH8yKxk9tWSs
-=B7yF
------END PGP SIGNATURE-----
-
---Signature=_Fri__17_Feb_2012_08_25_59_+1100_I=ScOEXRp9Elwo+N--
+** I just found another problem that occurs with allmodconfig
+so will be submitting a patch for that to GregKH shortly and
+will cc you.
