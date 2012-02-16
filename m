@@ -1,66 +1,131 @@
-From: Eric Paris <eparis@parisplace.org>
-Subject: Re: linux-next: Tree for Feb 16 (selinux)
-Date: Thu, 16 Feb 2012 14:24:18 -0500
-Message-ID: <CACLa4pt8YjxE0T1ApoFphxiKHCQv3DUQ0D7i_aTotLjw1U-GKw@mail.gmail.com>
-References: <20120216164144.35e98f5ee8f1b1f545406309@canb.auug.org.au>
-	<4F3D27BA.5090001@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Fri, 17 Feb 2012 08:25:59 +1100
+Message-ID: <20120217082559.6a094265da2d5c203bfc445f@canb.auug.org.au>
+References: <20120216152316.821ac82e04a5ee30327b81c3@canb.auug.org.au>
+	<20120216051552.GA5676@kroah.com>
+	<c6634d7c-b264-4a87-bab1-74408341dab0@default>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__17_Feb_2012_08_25_59_+1100_I=ScOEXRp9Elwo+N"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:56283 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751859Ab2BPTYT convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 14:24:19 -0500
-In-Reply-To: <4F3D27BA.5090001@xenotime.net>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52412 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752728Ab2BPV0Z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 16:26:25 -0500
+In-Reply-To: <c6634d7c-b264-4a87-bab1-74408341dab0@default>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Smalley <sds@tycho.nsa.gov>, James Morris <jmorris@namei.org>
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Wilk <konrad.wilk@oracle.com>, Seth Jennings <sjenning@linux.vnet.ibm.com>, Nitin Gupta <ngupta@vflare.org>
 
-It's because # CONFIG_NETFILTER is not set
+--Signature=_Fri__17_Feb_2012_08_25_59_+1100_I=ScOEXRp9Elwo+N
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll include net/flow.h where I use it rather than get it from the
-ridiculous chain:
+Hi Dan,
 
- In file included from include/linux/netfilter.h:340,
-                 from include/net/netns/x_tables.h:5,
-                 from include/net/net_namespace.h:19,
-                 from include/linux/netdevice.h:49,
-                 from include/net/sock.h:50,
-                 from include/net/request_sock.h:23,
-                 from include/net/netlabel.h:40,
-                 from security/selinux/ss/services.c:55:
+On Thu, 16 Feb 2012 06:39:42 -0800 (PST) Dan Magenheimer <dan.magenheimer@o=
+racle.com> wrote:
+>
+> > From: Greg KH [mailto:greg@kroah.com]
+> > Subject: Re: linux-next: build failure after merge of the staging tree
+> >=20
+> > On Thu, Feb 16, 2012 at 03:23:16PM +1100, Stephen Rothwell wrote:
+> > > Hi Greg,
+> > >
+> > > After merging the staging tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > >
+> > > drivers/staging/ramster/zcache-main.c:2969:2: error: unknown field 'i=
+nvalidate_page' specified in
+> > initializer
+> > > drivers/staging/ramster/zcache-main.c:2970:2: error: unknown field 'i=
+nvalidate_inode' specified in
+> > initializer
+> > > drivers/staging/ramster/zcache-main.c:2971:2: error: unknown field 'i=
+nvalidate_fs' specified in
+> > initializer
+> > >
+> > > I do wonder if any of this was build tested with CONFIG_CLEANCACHE en=
+abled ...
+>=20
+> Absolutely, against next-20120214, which contained commit
+>=20
+> 91c6cc9b5c216bd067f9af2cc64fcbe190755865
+>=20
+> which changed the names of those fields from "flush*" to "invalidate*".
+> I am the author of that commit but it is pulled through Konrad Wilk
+> (cc'ed). Perhaps Konrad's pull succeeded in next-20120214 but
+> failed in next-20120215?
 
-WHEW!
+If a fetch fails for a particular tree on a particular day, I use the
+version of that tree from the day before, so that is not the problem (and
+in any case, the fetch did not fail).
 
-On Thu, Feb 16, 2012 at 10:58 AM, Randy Dunlap <rdunlap@xenotime.net> w=
-rote:
-> On 02/15/2012 09:41 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20120215:
->
->
-> on x86_64:
->
-> =A0CC =A0 =A0 =A0security/selinux/ss/services.o
-> In file included from /next/linux-next-20120216/security/selinux/ss/s=
-ervices.c:69:0:
-> /next/linux-next-20120216/security/selinux/include/xfrm.h: In functio=
-n 'selinux_xfrm_notify_policyload':
-> /next/linux-next-20120216/security/selinux/include/xfrm.h:51:14: erro=
-r: 'flow_cache_genid' undeclared (first use in this function)
-> /next/linux-next-20120216/security/selinux/include/xfrm.h:51:14: note=
-: each undeclared identifier is reported only once for each function it=
- appears in
-> make[3]: *** [security/selinux/ss/services.o] Error 1
->
->
-> Full randconfig file is attached.
->
->
-> --
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your c=
-ode ***
+> Kernel.org seems to be down so I can't see if that commit is
+> in next-20120215 but if it is not that would likely cause
+> the above errors.
+
+It is in next-20120215 (and has been since next-20120124).  However, I
+merge Konrad's (tmem) tree *after* I merge the staging tree, so that commit
+was not present when I tried to build linux-next after merging the
+staging tree.
+
+> > > Caused by commit 19ee3ef5f4bb ("staging: ramster: local compression +=
+ tmem").
+> > >
+> > > I have used the staging tree from next-20120215 for today.
+> >=20
+> > Dan, can you please fix this?
+>=20
+> Hmmm... moving target.  I'm trying to get in touch with Konrad
+> to see if we can determine what is going on.
+
+See above.
+
+> The good news is that there seems to be an increasing number
+> of people contributing to and building things on top of
+> cleancache/frontswap stuff.  The bad news is that it is difficult
+> to avoid ordering dependencies that affect -next.  My apologies
+> and if you have any dependency-savvy processes that would solve
+> this that we are not using, please let me/us know.
+
+Well, if anyone had bothered to tell me, I could have reordered the
+trees.  However, that does not change the fact that the staging tree is
+now broken on its own.  Which means that Greg can't even do unit testing
+on his tree with your code in it. :-(
+
+One solutions is for Greg to merge Konrad's tree (or a subset of it) into
+the staging tree.  Another is for this work to become a separate tree
+(however, I think other stuff in the staging tree depends on this work,
+right?).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__17_Feb_2012_08_25_59_+1100_I=ScOEXRp9Elwo+N
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPPXRnAAoJEECxmPOUX5FEdioP/1W9Ny82dNQ7QGkphAbTmAGr
+JO7CAT4PZLAYYRWazXB4+5utZgv2tcklvBsE87+xhi5bLQhC43J50AkYr6jwSBy0
+2wAwSdSt0Gf71I2V+MNXlSC4PrTIua2ylMtZgBydP+IsNhWPSBncaSNKnCItnLhy
+f7De6Nb6j9TkozRpiZoCghBmsx2aEQAfPWWsMPHTRGxiBbpymivdSY0WCr+wr3X5
+62gMi6DACXgmqUDa6aXER8GGCbFsxzF3CGVKvde96J13RF8Vo6faH09571WE5SQ8
+FwnyvSLMzLMGuRn9BhG6Dpgq8omFTgxz55yKKpT/z5cUdmce0nmgsxE782xf+rQD
+LwAt63AWpTfA4Sl2V/s1CRycF2CyNs29KFG7ltTik0Wrn6gYEv4Arx3eDjVbtV0B
++RE/s/Vg89vaabFlOtgKaplBRo5CBWf008wjKtPpOcJA1uxWBAHG6cLD0tZ4Ws2X
+XjreAW4Z6/r0mP6DN1oeHtXBiVy3qz4HCP0m/6OwvntcxNfZSe+f7dr+H7HOfmE1
+I15wI37c0pn0NiRNzp9Mz5SXfBkrc5MfjGNxFwgvvz8JAIaFR4RAIPX/k3Rb+LIH
+TCKqtujAYyLPjARLpJ5kI8mifA13IzLrK7fKdOo8AlpAE5JV8jg0RU8J1mzbnKtd
+/YurmB8RWH8yKxk9tWSs
+=B7yF
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__17_Feb_2012_08_25_59_+1100_I=ScOEXRp9Elwo+N--
