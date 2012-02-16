@@ -1,94 +1,67 @@
-From: Dan Magenheimer <dan.magenheimer@oracle.com>
-Subject: RE: linux-next: build failure after merge of the staging tree
-Date: Thu, 16 Feb 2012 13:49:53 -0800 (PST)
-Message-ID: <be7afe58-43f1-4f69-b0ae-89dd7607355b@default>
-References: <20120216152316.821ac82e04a5ee30327b81c3@canb.auug.org.au>
- <20120216051552.GA5676@kroah.com>
- <c6634d7c-b264-4a87-bab1-74408341dab0@default>
- <20120217082559.6a094265da2d5c203bfc445f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 17 Feb 2012 10:30:11 +1100
+Message-ID: <20120217103011.b2223e28a89839d09a4a4053@canb.auug.org.au>
+References: <20120216123803.8efe3d23eee5c3a80aceef61@canb.auug.org.au>
+	<1329391450.16698.27.camel@lb-tlvb-eilong.il.broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__17_Feb_2012_10_30_11_+1100_qVTHZNImqUhwVK3/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet15.oracle.com ([148.87.113.117]:48206 "EHLO
-	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752249Ab2BPVuK convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 16:50:10 -0500
-In-Reply-To: <20120217082559.6a094265da2d5c203bfc445f@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58976 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755026Ab2BPXaX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 18:30:23 -0500
+In-Reply-To: <1329391450.16698.27.camel@lb-tlvb-eilong.il.broadcom.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Wilk <konrad.wilk@oracle.com>, Seth Jennings <sjenning@linux.vnet.ibm.com>, Nitin Gupta <ngupta@vflare.org>
+To: Yuval Mintz <yuvalmin@broadcom.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, eilong@broadcom.com, eric.dumazet@gmail.com
 
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Subject: Re: linux-next: build failure after merge of the staging tree
-> 
-> Hi Dan,
+--Signature=_Fri__17_Feb_2012_10_30_11_+1100_qVTHZNImqUhwVK3/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen --
+Hi,
 
-Thanks for the reply and sorry for the hassle.  See below for
-important question.
+On Thu, 16 Feb 2012 13:24:10 +0200 "Yuval Mintz" <yuvalmin@broadcom.com> wr=
+ote:
+>
+> I don't fully understand your merge - it seems to create a mash between
+> the "bnx2x: fix bnx2x_storm_stats_update() on big endian" patch in net,
+> and the "bnx2x: consistent statistics after internal driver reload"
+> patch in net-next.
 
-> > which changed the names of those fields from "flush*" to "invalidate*".
-> > I am the author of that commit but it is pulled through Konrad Wilk
-> > (cc'ed). Perhaps Konrad's pull succeeded in next-20120214 but
-> > failed in next-20120215?
-> 
-> If a fetch fails for a particular tree on a particular day, I use the
-> version of that tree from the day before, so that is not the problem (and
-> in any case, the fetch did not fail).
-> 
-> > Kernel.org seems to be down so I can't see if that commit is
-> > in next-20120215 but if it is not that would likely cause
-> > the above errors.
-> 
-> It is in next-20120215 (and has been since next-20120124).  However, I
-> merge Konrad's (tmem) tree *after* I merge the staging tree, so that commit
-> was not present when I tried to build linux-next after merging the
-> staging tree.
+That is exactly what the merge conflict resolution did.  i.e. the patch
+you supplied below is not needed in linux-next because that is
+effectively what I did.  It is the same as Dave will do when he merges
+the net tree into the net-next tree as well, I assume.
 
-Huh?  Do you do allyesconfig/allmodconfig build testing after you pull
-each individual tree or only after all trees are pulled?  (Apparently
-the former, as otherwise the ordering shouldn't matter, right?)
- 
-> > The good news is that there seems to be an increasing number
-> > of people contributing to and building things on top of
-> > cleancache/frontswap stuff.  The bad news is that it is difficult
-> > to avoid ordering dependencies that affect -next.  My apologies
-> > and if you have any dependency-savvy processes that would solve
-> > this that we are not using, please let me/us know.
-> 
-> Well, if anyone had bothered to tell me, I could have reordered the
-> trees.  However, that does not change the fact that the staging tree is
-> now broken on its own.  Which means that Greg can't even do unit testing
-> on his tree with your code in it. :-(
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-If you are doing the after-every-individual-tree build testing,
-yes, if you could pull konrad's tmem tree first, that would
-solve this problem I believe.**
+--Signature=_Fri__17_Feb_2012_10_30_11_+1100_qVTHZNImqUhwVK3/
+Content-Type: application/pgp-signature
 
-I suspect unit testing doesn't make much as much sense in staging
-as it does in the core kernel.  I did testing of ramster in my
-public git tree (which includes the tmem patchset coming to you via
-konrad) but, since it is a staging driver, the bits have to go
-through Greg.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-> One solutions is for Greg to merge Konrad's tree (or a subset of it) into
-> the staging tree.  Another is for this work to become a separate tree
-> (however, I think other stuff in the staging tree depends on this work,
-> right?).
+iQIcBAEBCAAGBQJPPZGDAAoJEECxmPOUX5FELbMP/ji5hCU6x69EkPJpjn8jy7Nx
++hF802yCYxJgdg+dtnm2nWYKtHJbpVhFlov++Gm/U632LkltXhne/stdtXkpfUCy
+huEAr5wYWcRCLScNkQ3Dy3AFN1BQkmUo5L9J/XWyGgK2Sv+poEdchOIXvqgdITJP
+EPtqAACAaFWc130LGZiephxycO9nBj+6SV/N05c345pWPGOUobPWlT3v/cN83ETx
+sH89WYLDyutyMoH3dG43fr77iKze+xVjoxTT/j+nV161QLphf00M+LfZ5RYEWUbS
+FIWHtrzUblBxu3zonZ3IKC76goKsGygXrjL6+jokqASEqGsr77SpHmU7Ee4qlFJ9
+YzJuu8mYXFf9UzrdiCWyJg5fYtHcSqTAdft40wSTWIcojhTXIvJIICHmddlIvLv2
+mv2y0mxiw76M8EYHfXyO3b/fFWfhLlPvIGr9A++e6PJYtSeuoduAn6t4lejIOves
+TyJ9ty3GMYcIpaQ6tT1k3vUEkuc+db8c5srlavTI3GV5/WBPJIXxx1xMePYBYTQX
+SOOI8AMuqQ51zwcF6sxIqI8vRSzTlT1mbw0cnkwyYnZ71fYt0XZLtuwTI7ep4vki
+JVzn8YwdD2BmyPhtTUhMkT8GBA+Aljf8Ha1cddU4kZqmSG4FkDBo3Jrygx7uusVL
+ephc5i/DxLPstpyzKMcI
+=6nhC
+-----END PGP SIGNATURE-----
 
-Yes, there are a number of parts from different companies/timezones
-now flying in close formation.  The name change (flush->invalidate)
-causing this problem was insisted upon by Andrew Morton (and has been
-in linux-next for several months), otherwise it wouldn't have happened
-and wouldn't be causing these issues :-(  But better to work through
-them in -next than in Linus' merge window I guess.
-
-Thanks,
-Dan
-
-** I just found another problem that occurs with allmodconfig
-so will be submitting a patch for that to GregKH shortly and
-will cc you.
+--Signature=_Fri__17_Feb_2012_10_30_11_+1100_qVTHZNImqUhwVK3/--
