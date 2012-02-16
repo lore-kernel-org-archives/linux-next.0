@@ -1,54 +1,84 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: Please add irqdomain branch to linux-next
-Date: Wed, 15 Feb 2012 20:31:08 -0700
-Message-ID: <20120216033108.GL25779@ponder.secretlab.ca>
-References: <CACxGe6sTO_Jy-vecKS9SoVs55ZA8BMc+O0NODLdq6KvkcbPByg@mail.gmail.com>
- <1328492111.30631.24.camel@pasglop>
- <20120206061517.GD21449@ponder.secretlab.ca>
- <CACxGe6tAVW2zCrWFPDgvu8sjd4KXJnfqhT16sYa1UvyRVEVyhQ@mail.gmail.com>
- <1329361898.3772.43.camel@pasglop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging tree
+Date: Thu, 16 Feb 2012 15:23:16 +1100
+Message-ID: <20120216152316.821ac82e04a5ee30327b81c3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__16_Feb_2012_15_23_16_+1100_7a2csSZoc5eXdZ/j"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:35775 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756980Ab2BPDbK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Feb 2012 22:31:10 -0500
-Content-Disposition: inline
-In-Reply-To: <1329361898.3772.43.camel@pasglop>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38689 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752810Ab2BPEX0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Feb 2012 23:23:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 16, 2012 at 02:11:38PM +1100, Benjamin Herrenschmidt wrote:
-> On Wed, 2012-02-15 at 18:32 -0700, Grant Likely wrote:
-> 
-> > Only nomap users will care about this, and of those 5, only iseries
-> > and ps3 actually change it.  How about I add a max_virq parameter to
-> > only be used by the nomap revmap?  That seems to be cleaner than a
-> > global setting.  I've crafted a patch and will post it with v5 of the
-> > series.
-> 
-> Right, I don't see an obvious need elsewhere so it could be a flag
-> specific to nomap, tho it still needs to be taken into account in the
-> main allocation code.
-> 
-> > For now I'll use numa_node_id() at allocation time.  I'll craft a
-> > follow-on patch to change the API since it touches a lot of call
-> > sites.
-> 
-> But which node ? :-)
-> 
-> I'd rather you add a new API, no need to change the call sites:
-> 
-> Add foo_node(xxx,node); and have the existing foo() be implemented
-> as a static inline calling foo_node(xxx,0); or something like that, then
-> I can change the powerpc code to use the later & pass the PCI device
-> node (which should be in the pci_controller structure). We can add more
-> later.
+--Signature=_Thu__16_Feb_2012_15_23_16_+1100_7a2csSZoc5eXdZ/j
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Okay, fair enough.  Instead of changing the series then, adding the new
-api can be the follow on patch.
+Hi Greg,
 
-g.
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/staging/ramster/zcache-main.c:2969:2: error: unknown field 'invalid=
+ate_page' specified in initializer
+drivers/staging/ramster/zcache-main.c:2969:2: warning: initialization from =
+incompatible pointer type [enabled by default]
+drivers/staging/ramster/zcache-main.c:2969:2: warning: (near initialization=
+ for 'zcache_cleancache_ops.put_page') [enabled by default]
+drivers/staging/ramster/zcache-main.c:2970:2: error: unknown field 'invalid=
+ate_inode' specified in initializer
+drivers/staging/ramster/zcache-main.c:2970:2: warning: initialization from =
+incompatible pointer type [enabled by default]
+drivers/staging/ramster/zcache-main.c:2970:2: warning: (near initialization=
+ for 'zcache_cleancache_ops.flush_page') [enabled by default]
+drivers/staging/ramster/zcache-main.c:2971:2: error: unknown field 'invalid=
+ate_fs' specified in initializer
+drivers/staging/ramster/zcache-main.c:2971:2: warning: initialization from =
+incompatible pointer type [enabled by default]
+drivers/staging/ramster/zcache-main.c:2971:2: warning: (near initialization=
+ for 'zcache_cleancache_ops.flush_inode') [enabled by default]
+drivers/staging/ramster/zcache-main.c:913:13: warning: 'zcache_do_remotify_=
+ops' defined but not used [-Wunused-function]
+drivers/staging/ramster/zcache-main.c:1002:13: warning: 'ramster_remotify_i=
+nit' defined but not used [-Wunused-function]
+
+I do wonder if any of this was build tested with CONFIG_CLEANCACHE enabled =
+...
+
+Caused by commit 19ee3ef5f4bb ("staging: ramster: local compression + tmem"=
+).
+
+I have used the staging tree from next-20120215 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__16_Feb_2012_15_23_16_+1100_7a2csSZoc5eXdZ/j
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPPIS0AAoJEECxmPOUX5FEaE4P/0TaIcTAwY4fICzCxIKSWQHE
+W6U3zEXS29E5DdRnkXCAUuM9Gq4eY7SYsSkfGlXaVWDzEoo5zJTVCMmHbbvvHwOa
+a4PJTdoZ01CRxtd9X1XBjkXz8ntRei4zUolc2fQncheKXNVxIjCzbICszr7jd5hi
+vYL/+ttVoeqihCBW29/tF8mIVfnAePKcmhbEZlofrvI+1z6/hUJm4DPTPOW+UYmd
+8FFzIiCm1b5gw76mwd2iNI63g17bwkRvx45Jxjuiinmd7rs9Z33VdPfk8v61BS0E
+WAUhCmGMV2G1hE03TY0h+3HtXIrzCgIn9L4QToHC30wbENi+L+DPU6Cwvcl1Y9v8
++0nw/VduWQQY/hnIr7nNKAz+z7zKscKFrOn+j+M5mDscHID/tVi1+Z3CU8RwyNuu
+rTUqTlvQh19sRxC4+4N7DlorusfkC1Iu4WURhl6FXI2koh0bZVnU32K+DxgiwGIz
+CPCkuEbkwyJe9zC7TMhjaOkqE/o2ALGwoIIMogdYOyMOSX/D4R2xQBLRkS+3k002
+czMvx997PztmHLcTMQfvb97Aw35X2Av0zqvpslE4jmWE/o06oyFx8C5wALfP5A9K
+Z9CUntQ6tVcw9nF8rDAMdrX2qFvnPmFzK/M2gv868CBAake9EyTbHUHwCLQJ+cYJ
+UFaXCTUTPfRXLVDkzM3L
+=oEdT
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__16_Feb_2012_15_23_16_+1100_7a2csSZoc5eXdZ/j--
