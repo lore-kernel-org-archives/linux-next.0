@@ -1,171 +1,85 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: Please add irqdomain branch to linux-next
-Date: Wed, 15 Feb 2012 18:32:03 -0700
-Message-ID: <CACxGe6tAVW2zCrWFPDgvu8sjd4KXJnfqhT16sYa1UvyRVEVyhQ@mail.gmail.com>
-References: <CACxGe6sTO_Jy-vecKS9SoVs55ZA8BMc+O0NODLdq6KvkcbPByg@mail.gmail.com>
- <1328492111.30631.24.camel@pasglop> <20120206061517.GD21449@ponder.secretlab.ca>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the wireless
+ tree
+Date: Thu, 16 Feb 2012 12:37:46 +1100
+Message-ID: <20120216123746.f59cf69ebaefc6d28c90703c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__16_Feb_2012_12_37_46_+1100_dfhJj1CH36ESJ3mo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:44494 "EHLO
-	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756040Ab2BPBcX convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Feb 2012 20:32:23 -0500
-In-Reply-To: <20120206061517.GD21449@ponder.secretlab.ca>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52816 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756712Ab2BPBh6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Feb 2012 20:37:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
 
-On Sun, Feb 5, 2012 at 11:15 PM, Grant Likely <grant.likely@secretlab.c=
-a> wrote:
-> On Mon, Feb 06, 2012 at 12:35:11PM +1100, Benjamin Herrenschmidt wrot=
-e:
->> On Thu, 2012-02-02 at 14:10 -0700, Grant Likely wrote:
->> > Hi Stephen,
->> >
->> > Can you please add the following branch to linux-next? =A0It conta=
-ins
->> > the majority of the irqdomain rework that I've been doing. =A0I'd =
-like
->> > to get it marinating in linux-next early so I'm sure it will be re=
-ady
->> > when the v3.4 merge window rolls around.
->>
->> Ho !
->>
->> I don't have v4 in my mailbox to reply to the individual patches,
->> but I've spotted some issues so here they are in no specific order.
->>
->> @@ -739,31 +712,36 @@ unsigned int irq_create_mapping(struct irq_dom=
-ain *host,
->>
->> =A0 =A0 =A0 /* Get a virtual interrupt number */
->> =A0 =A0 =A0 if (host->revmap_type =3D=3D IRQ_DOMAIN_MAP_LEGACY) {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* Handle legacy */
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 virq =3D (unsigned int)hwirq;
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (virq =3D=3D 0 || virq >=3D NUM_ISA_I=
-NTERRUPTS)
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return NO_IRQ;
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 return virq;
->> =A0 =A0 =A0 } else {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* Allocate a virtual interrupt number *=
-/
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 hint =3D hwirq % irq_virq_count;
->> - =A0 =A0 =A0 =A0 =A0 =A0 virq =3D irq_alloc_virt(host, 1, hint);
->> + =A0 =A0 =A0 =A0 =A0 =A0 virq =3D irq_alloc_desc_from(hint, 0);
->> + =A0 =A0 =A0 =A0 =A0 =A0 if (!virq)
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 virq =3D irq_alloc_desc_fr=
-om(1, 0);
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (virq =3D=3D NO_IRQ) {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pr_debug("irq: -> virq a=
-llocation failed\n");
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return NO_IRQ;
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
->>
->> So first, the way you "avoid" allocating irq 0 seems to be by ...
->> allocating irq 0 and then allocating again once you've done that :-)
->>
->> You should either make sure hint is non-0 to begin with or use
->> irq_reserve_irq() to reserve irq 0 (tho I don't know whether the lat=
-er
->> could be an issue on x86).
->
-> Okay, I'll ensure that hint !=3D 0
+--Signature=_Thu__16_Feb_2012_12_37_46_+1100_dfhJj1CH36ESJ3mo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Now fixed.  Will be in v5
+Hi all,
 
->
->> Also, you no longer honor irq_virq_count. It's a limitation of
->> __irq_alloc_descs() to not be able to get an upper boundary, but you
->> need that for iseries and ps3 at least.
->
-> I'll look at adding an upper limit to __irq_alloc_descs(). =A0If that=
- won't
-> work, then I'll add an explicit test after allocation to make sure it=
- is not
-> over the limit.
->
->> Also the default for irq_virq_count should probably be changed when =
-you
->> move to the core to use IRQ_BITMAP_BITS (so we get the 8192 addition=
-al
->> irqs on SPARSE_IRQ).
->
-> Good catch.
+Today's linux-next merge of the net-next tree got a conflict in
+net/mac80211/debugfs_sta.c between commit 4b5a433ae534 ("mac80211: call
+rate control only after init") from the wireless tree and commit
+83d5cc012441 ("mac80211: station state transition error handling") from
+the net-next tree.
 
-Only nomap users will care about this, and of those 5, only iseries
-and ps3 actually change it.  How about I add a max_virq parameter to
-only be used by the nomap revmap?  That seems to be cleaner than a
-global setting.  I've crafted a patch and will post it with v5 of the
-series.
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
->
->>
->> Another thing I noticed, tho I'm still only half way through the ser=
-ies
->> so you -may- have fixed that, is that you allocate all descs on node=
- 0
->> (not even the current node) and have no way to do otherwise.
->
-> No, I've not fixed that.
->
->> Now, it's a bit of a nasty issue because ideally we should "move" th=
-e
->> descs around as we set the affinity of interrupts and we really can'=
-t do
->> that just yet, but at least having a way to allocate the desc with a
->> node number (adding a node argument to irq_create_mapping) would be
->> useful. For things like PCI we could make that use the node where th=
-e
->> device is, which is better than having everything on node 0.
->
-> okay.
+diff --cc net/mac80211/debugfs_sta.c
+index d86217d,c838371..0000000
+--- a/net/mac80211/debugfs_sta.c
++++ b/net/mac80211/debugfs_sta.c
+@@@ -63,14 -63,15 +63,15 @@@ static ssize_t sta_flags_read(struct fi
+  	test_sta_flag(sta, WLAN_STA_##flg) ? #flg "\n" : ""
+ =20
+  	int res =3D scnprintf(buf, sizeof(buf),
+- 			    "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+ -			    "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+++			    "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+  			    TEST(AUTH), TEST(ASSOC), TEST(PS_STA),
+  			    TEST(PS_DRIVER), TEST(AUTHORIZED),
+  			    TEST(SHORT_PREAMBLE),
+  			    TEST(WME), TEST(WDS), TEST(CLEAR_PS_FILT),
+  			    TEST(MFP), TEST(BLOCK_BA), TEST(PSPOLL),
+  			    TEST(UAPSD), TEST(SP), TEST(TDLS_PEER),
+- 			    TEST(TDLS_PEER_AUTH), TEST(RATE_CONTROL));
+ -			    TEST(TDLS_PEER_AUTH), TEST(4ADDR_EVENT),
+ -			    TEST(INSERTED));
+++			    TEST(TDLS_PEER_AUTH), TEST(RATE_CONTROL),
+++			    TEST(4ADDR_EVENT), TEST(INSERTED));
+  #undef TEST
+  	return simple_read_from_buffer(userbuf, count, ppos, buf, res);
+  }
 
-=46or now I'll use numa_node_id() at allocation time.  I'll craft a
-follow-on patch to change the API since it touches a lot of call
-sites.
+--Signature=_Thu__16_Feb_2012_12_37_46_+1100_dfhJj1CH36ESJ3mo
+Content-Type: application/pgp-signature
 
->
->> Also you should probably make the whole match & xlate business
->> #ifdef CONFIG_OF (especially in the definition of the irq domain). T=
-here
->> is no reason why archs couldn't use the domain mapper without
->> device-tree support.
->
-> It builds and runs fine without the CONFIG_OF wrappers, but I can tri=
-m stuff
-> down.
->
->> +int irq_domain_xlate_pci(struct irq_domain *d, struct device_node *=
-ctrlr,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0const u32 *intspec, uns=
-igned int intsize,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0unsigned long *out_hwir=
-q, unsigned int *out_type)
->> +{
->> + =A0 =A0 if (WARN_ON(intsize !=3D 1))
->> + =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
->> + =A0 =A0 *out_hwirq =3D intspec[0];
->> + =A0 =A0 *out_type =3D IRQ_TYPE_LEVEL_HIGH;
->> + =A0 =A0 return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(irq_domain_xlate_pci);
->>
->> That's bogus. PCI interrupts are level -low-. However some bridges
->> internally invert them on the way to the PIC (this is actually commo=
-n
->> with PCIe bridges where they are generated from messages). So if you=
- are
->> to provide a default helper, make it LEVEL_LOW really.
->
-> Haha, good point. =A0I'll fix that.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-I've dropped irq_domain_xlate_pci()
+iQIcBAEBCAAGBQJPPF3qAAoJEECxmPOUX5FEs2cP/0heT8szvwQzx93At5loYWq+
+NT7nIHkASeug61dz7SEkkJcBPkUZBUj+3LQz8wryW5zQg9c0j5dkHdYdXqthHk+T
+gmYYt9UpbctgN8oo0kBg8WuRjuUF1Tm6arOjPqm7IOXA2PijE4vMfkIdqx3ug3kq
+2pFiaeQUcMKzIZb7PgXtstXG0BKPg4eXtAQWvVsuPY/Dl4JPCZJkNcwUIgFrRgIz
+Rr1HGq/bOL/mvHljnmH6V2oqcaz1F7zklDGZymB9cxbpqEDVT0WScpywqic3+eru
+syB711oDLPRS4wyX+xVxVMvW8e9z0smYPYhgZLE/Eh3+z3D3WPRKQ7KSqvo8lj+9
+67Nada57y0H2iWzNS1X5vuRy6YYiVVL4TzSrEu8BG+jlZXSnUtaFVyXFZ9G00mOl
+dIKnzE6L8w8LdFF9kcoy7GuIqyF0JN4MSRFT1K3zhaSb2WVUpw892vsBPItFya+G
+ql4hJismTd2hKe3CaoCjF5eBd0A6rGqy0cHAk/xE54Qv8UVjxxwhLiQp95VuYEBc
+eUChPCXGugIKryRyOMXQa6mxuEfdyLbRn8KLPVMGMBTcpBmkzqyCoRrtTx7RpNHB
+Oz5Cf57uidyn7U96y9UYIax2NaGDiSQIdMBOGkeBdz6horXmet118+XQmSYE1am0
+A/QLAx/6u0R9OcBO7UoC
+=zrch
+-----END PGP SIGNATURE-----
 
-I think I've addressed all the problems you've brought up.  I'm
-testing now and I'll be posting v5 very shortly.
-
-g.
+--Signature=_Thu__16_Feb_2012_12_37_46_+1100_dfhJj1CH36ESJ3mo--
