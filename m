@@ -1,178 +1,63 @@
-From: McClintock Matthew-B29882 <B29882@freescale.com>
-Subject: Re: Build fail in hugetlbpage.c with linux-next and mpc85xx_defconfig
-Date: Thu, 16 Feb 2012 05:03:13 +0000
-Message-ID: <CAEsOVNcf_1P5Uj2n7Bdb7RjkqT_hSZ2HKiJUZYMrHjcPX0nJ7Q@mail.gmail.com>
-References: <14174.1329347321@neuling.org>
- <CAEsOVNcpBLmsmyZLW2HNe3MDR5cx5oJnPMmGD6Mqz4AjG16=9A@mail.gmail.com>
- <16098.1329349063@neuling.org>
- <CAEsOVNfOcH+oaxSqw6Cy1suY_9zVDOhQe+v_e-zTwc0M5Q_Wgg@mail.gmail.com>
- <8058.1329368488@neuling.org>
-Reply-To: McClintock Matthew-B29882 <B29882@freescale.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (fbdev tree
+ related)
+Date: Thu, 16 Feb 2012 16:29:00 +1100
+Message-ID: <20120216162900.e2dd164732084f48e5b239f0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1882130541053740354=="
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <8058.1329368488@neuling.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-To: Michael Neuling <mikey@neuling.org>
-Cc: McClintock Matthew-B29882 <B29882@freescale.com>, "linuxppc-dev@ozlabs.org" <linuxppc-dev@ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__16_Feb_2012_16_29_00_+1100_xAQJtgvzlUsJ2MKl"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:33342 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750914Ab2BPF3L (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 00:29:11 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>
 
---===============1882130541053740354==
-Content-Language: en-US
-Content-Type: multipart/alternative;
-	boundary="_000_CAEsOVNcf1P5Uj2n7Bdb7RjkqThSZ2HKiJUZYMrHjcPX0nJ7Qmailgm_"
-
---_000_CAEsOVNcf1P5Uj2n7Bdb7RjkqThSZ2HKiJUZYMrHjcPX0nJ7Qmailgm_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-
-On Feb 15, 2012 9:01 PM, "Michael Neuling" <mikey@neuling.org<mailto:mikey@=
-neuling.org>> wrote:
->
-> In message <CAEsOVNfOcH+oaxSqw6Cy1suY_9zVDOhQe+v_e-zTwc0M5Q_Wgg@mail.gmai=
-l.com<mailto:CAEsOVNfOcH%2BoaxSqw6Cy1suY_9zVDOhQe%2Bv_e-zTwc0M5Q_Wgg@mail.g=
-mail.com>>
->  you wrote:
-> > On Wed, Feb 15, 2012 at 11:37 PM, Michael Neuling <mikey@neuling.org<ma=
-ilto:mikey@neuling.org>> wrote:
-> > >> > Becky,
-> > >> >
-> > >> > This has been broken in linux-next for a while. =3D3DA0Looks like =
-a merge
-> > >> > issue but you were the last to touch it...
-> > >> >
-> > >> > arch/powerpc/mm/hugetlbpage.c: In function 'reserve_hugetlb_gpages=
-':
-> > >> > arch/powerpc/mm/hugetlbpage.c:313: error: passing argument 5 of 'p=
-arse=3D
-> > _ar=3D3D
-> > >> gs' makes integer from pointer without a cast
-> > >> > include/linux/moduleparam.h:317: note: expected 's16' but argument=
- is =3D
-> > of =3D3D
-> > >> type 'int (*)(char *, char *)'
-> > >> > arch/powerpc/mm/hugetlbpage.c:313: error: too few arguments to fun=
-ctio=3D
-> > n '=3D3D
-> > >> parse_args'
-> > >>
-> > >> A suggest fix has been submitted.
-> > >
-> > > Do you have a link? =3DA0Which tree is it going in?
-> >
-> > http://lists.ozlabs.org/pipermail/linuxppc-dev/2012-February/095903.htm=
-l
-> >
-> > I just sent it. I'm not sure who would pick this up. Ideally it would
-> > go in the next release.
->
-> I think that's a different problem, as that's already in next.
->
-> sfr posted where problem patch is
->
-
-Ah got it. Thanks.
-
--M
-
-> Mikey
-> _______________________________________________
-> Linuxppc-dev mailing list
-> Linuxppc-dev@lists.ozlabs.org<mailto:Linuxppc-dev@lists.ozlabs.org>
-> https://lists.ozlabs.org/listinfo/linuxppc-dev
-
---_000_CAEsOVNcf1P5Uj2n7Bdb7RjkqThSZ2HKiJUZYMrHjcPX0nJ7Qmailgm_
-Content-Type: text/html; charset="iso-8859-1"
-Content-ID: <C4E681E8FCAA8B448FC6DAD64FCE1693@freescale.net>
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-</head>
-<body>
-<p><br>
-On Feb 15, 2012 9:01 PM, &quot;Michael Neuling&quot; &lt;<a href=3D"mailto:=
-mikey@neuling.org">mikey@neuling.org</a>&gt; wrote:<br>
-&gt;<br>
-&gt; In message &lt;<a href=3D"mailto:CAEsOVNfOcH%2BoaxSqw6Cy1suY_9zVDOhQe%=
-2Bv_e-zTwc0M5Q_Wgg@mail.gmail.com">CAEsOVNfOcH&#43;oaxSqw6Cy1suY_9zVDOhQe&#=
-43;v_e-zTwc0M5Q_Wgg@mail.gmail.com</a>&gt;<br>
-&gt; &nbsp;you wrote:<br>
-&gt; &gt; On Wed, Feb 15, 2012 at 11:37 PM, Michael Neuling &lt;<a href=3D"=
-mailto:mikey@neuling.org">mikey@neuling.org</a>&gt; wrote:<br>
-&gt; &gt; &gt;&gt; &gt; Becky,<br>
-&gt; &gt; &gt;&gt; &gt;<br>
-&gt; &gt; &gt;&gt; &gt; This has been broken in linux-next for a while. =3D=
-3DA0Looks like a merge<br>
-&gt; &gt; &gt;&gt; &gt; issue but you were the last to touch it...<br>
-&gt; &gt; &gt;&gt; &gt;<br>
-&gt; &gt; &gt;&gt; &gt; arch/powerpc/mm/hugetlbpage.c: In function 'reserve=
-_hugetlb_gpages':<br>
-&gt; &gt; &gt;&gt; &gt; arch/powerpc/mm/hugetlbpage.c:313: error: passing a=
-rgument 5 of 'parse=3D<br>
-&gt; &gt; _ar=3D3D<br>
-&gt; &gt; &gt;&gt; gs' makes integer from pointer without a cast<br>
-&gt; &gt; &gt;&gt; &gt; include/linux/moduleparam.h:317: note: expected 's1=
-6' but argument is =3D<br>
-&gt; &gt; of =3D3D<br>
-&gt; &gt; &gt;&gt; type 'int (*)(char *, char *)'<br>
-&gt; &gt; &gt;&gt; &gt; arch/powerpc/mm/hugetlbpage.c:313: error: too few a=
-rguments to functio=3D<br>
-&gt; &gt; n '=3D3D<br>
-&gt; &gt; &gt;&gt; parse_args'<br>
-&gt; &gt; &gt;&gt;<br>
-&gt; &gt; &gt;&gt; A suggest fix has been submitted.<br>
-&gt; &gt; &gt;<br>
-&gt; &gt; &gt; Do you have a link? =3DA0Which tree is it going in?<br>
-&gt; &gt;<br>
-&gt; &gt; <a href=3D"http://lists.ozlabs.org/pipermail/linuxppc-dev/2012-Fe=
-bruary/095903.html">
-http://lists.ozlabs.org/pipermail/linuxppc-dev/2012-February/095903.html</a=
-><br>
-&gt; &gt;<br>
-&gt; &gt; I just sent it. I'm not sure who would pick this up. Ideally it w=
-ould<br>
-&gt; &gt; go in the next release.<br>
-&gt;<br>
-&gt; I think that's a different problem, as that's already in next.<br>
-&gt;<br>
-&gt; sfr posted where problem patch is<br>
-&gt;</p>
-<p>Ah got it. Thanks.</p>
-<p>-M</p>
-<p>&gt; Mikey<br>
-&gt; _______________________________________________<br>
-&gt; Linuxppc-dev mailing list<br>
-&gt; <a href=3D"mailto:Linuxppc-dev@lists.ozlabs.org">Linuxppc-dev@lists.oz=
-labs.org</a><br>
-&gt; <a href=3D"https://lists.ozlabs.org/listinfo/linuxppc-dev">https://lis=
-ts.ozlabs.org/listinfo/linuxppc-dev</a><br>
-</p>
-</body>
-</html>
-
---_000_CAEsOVNcf1P5Uj2n7Bdb7RjkqThSZ2HKiJUZYMrHjcPX0nJ7Qmailgm_--
-
---===============1882130541053740354==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+--Signature=_Thu__16_Feb_2012_16_29_00_+1100_xAQJtgvzlUsJ2MKl
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-_______________________________________________
-Linuxppc-dev mailing list
-Linuxppc-dev@lists.ozlabs.org
-https://lists.ozlabs.org/listinfo/linuxppc-dev
---===============1882130541053740354==--
+Hi all,
+
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+drivers/video/i740fb.c: In function 'i740fb_remove':
+drivers/video/i740fb.c:1192:7: error: 'par' undeclared (first use in this f=
+unction)
+
+Caused by commit 5350c65f4f15 ("Resurrect Intel740 driver: i740fb") from
+the fbdev tree.  CONFIG_MTRR is not defined for this build ...
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__16_Feb_2012_16_29_00_+1100_xAQJtgvzlUsJ2MKl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPPJQcAAoJEECxmPOUX5FEoWUP/35QFVh8eV6jSARbZKmJHXsc
+CQsmKf2GRBd678ZVFTyZfP7q7S2dYn61y1NnGG0cgJMi5Yr8LCbLD9jcU0pnZxB1
+qetP9nQsWRBXK8my8/ICBHJ2C4D2hCv8ZL2X1SsCL14z8EluaAbQ0bItSXMX9gpJ
+Ele/6bCcgrgLQ/a1Dn7iClfnXW0HjDSdK1eZ4T65gIiJX1uV5/GdakJGCbAIXakF
+dVSbI9Tp017j2yPMxcODH82kJ5A6pxzZ6CKPRfE03oR7zqPR4ntiwMzepZ8Mpy0Z
+7pVYY8HuZvDoYFGaPvheC3hlb78V1zTi6EptdXjQfqP6fdrnomZ6ekSSA6D4YX3w
+URSpgMYD1+FfoWmMtid2fBWxAJA8c+D+9eRZ33wEP1rnffyLS+RMwQOx95H6aSC8
+oS39L5qbF+pLrVrIDLP5g1/ecF9owDRHffFtKSe5X1ZRju7XyOwu6BxDIeH4Hjco
+YaDmAJD2Ye+LzELfjxsBmfWZ1brz8dp7fV8YrLopBwULNe8ZiOLg8Aeob8XfQDJi
+BTnWEiY1PRMLpwRYoYlzgiM4jR6FYna6totb0iFS4GKaK9HUP9RVxOnxOIiVDtT7
+dmc39l/L5MuKQuBJ5eWTcFOd9YEoz24snBbs2cucZtUklUsiBFj4XPgfdiRkO79x
+IDW6JTjCZkeHti/8cFjc
+=hKgu
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__16_Feb_2012_16_29_00_+1100_xAQJtgvzlUsJ2MKl--
