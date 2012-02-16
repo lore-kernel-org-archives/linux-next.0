@@ -1,78 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the wireless
- tree
-Date: Thu, 16 Feb 2012 12:40:13 +1100
-Message-ID: <20120216124013.c4bf2842a3da777df184b7d9@canb.auug.org.au>
+Subject: Re: Build fail in hugetlbpage.c with linux-next and
+ mpc85xx_defconfig
+Date: Thu, 16 Feb 2012 13:14:38 +1100
+Message-ID: <20120216131438.12149a2218f8fe4e7e46d83e@canb.auug.org.au>
+References: <14174.1329347321@neuling.org>
+	<20120216111513.918494b07a5331eabe3d32ac@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__16_Feb_2012_12_40_13_+1100_Dw65BnVMIAS+.=Vl"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__16_Feb_2012_13_14_38_+1100_AfalFEsfqRczIY8x"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:49317 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756675Ab2BPCOt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Feb 2012 21:14:49 -0500
+In-Reply-To: <20120216111513.918494b07a5331eabe3d32ac@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Michael Neuling <mikey@neuling.org>, Pawel Moll <pawel.moll@arm.com>, galak@kernel.crashing.org, Becky Bruce <beckyb@kernel.crashing.org>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, McClintock Matthew-B29882 <B29882@freescale.com>
 
---Signature=_Thu__16_Feb_2012_12_40_13_+1100_Dw65BnVMIAS+.=Vl
+--Signature=_Thu__16_Feb_2012_13_14_38_+1100_AfalFEsfqRczIY8x
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Rusty,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/mac80211/sta_info.h between commit 4b5a433ae534 ("mac80211: call rate
-control only after init") from the wireless tree and commit 83d5cc012441
-("mac80211: station state transition error handling") from the net-next
-tree.
+On Thu, 16 Feb 2012 11:15:13 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> This was broken by commit b8076966e8e1 ("params: <level>_initcall-like
+> kernel parameters") from the rr tree which changed the parse_args() API w=
+ithout fixing all
+> the callers ....
 
-I fixed it up (see below) and can carry the fix as necessary.
+I have reverted the above commit (and the following fix one) for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc net/mac80211/sta_info.h
-index bfed851,381de37..0000000
---- a/net/mac80211/sta_info.h
-+++ b/net/mac80211/sta_info.h
-@@@ -52,7 -52,7 +52,8 @@@
-   * @WLAN_STA_SP: Station is in a service period, so don't try to
-   *	reply to other uAPSD trigger frames or PS-Poll.
-   * @WLAN_STA_4ADDR_EVENT: 4-addr event was already sent for this frame.
- + * @WLAN_STA_RATE_CONTROL: rate control was initialized for this station.
-+  * @WLAN_STA_INSERTED: This station is inserted into the hash table.
-   */
-  enum ieee80211_sta_info_flags {
-  	WLAN_STA_AUTH,
-@@@ -72,7 -72,7 +73,8 @@@
-  	WLAN_STA_UAPSD,
-  	WLAN_STA_SP,
-  	WLAN_STA_4ADDR_EVENT,
- +	WLAN_STA_RATE_CONTROL,
-+ 	WLAN_STA_INSERTED,
-  };
- =20
-  enum ieee80211_sta_state {
-
---Signature=_Thu__16_Feb_2012_12_40_13_+1100_Dw65BnVMIAS+.=Vl
+--Signature=_Thu__16_Feb_2012_13_14_38_+1100_AfalFEsfqRczIY8x
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPPF59AAoJEECxmPOUX5FE2qEP/05nkhq7fD87ISOqxRC/3QYA
-yWlCbdSizjPcEdTX0v6qM0xGrnxxgFHHcGmBWU9W+CFxhCnunthX/b4ruMOCN7Wf
-EC/oFQ3As1FVm8qEb6lUCexD0lTh2HFsfK4ClQXhleqRuUlXj56TAlXCELqw4WfV
-J0ONNjuLfg48cSmN7lRCIsame8P1BmyXT8rSAA3c4inlekv4mq+cik4g5gKNWbSX
-O1QUCW4H4fIY5y5eiyWP3QJQid+YqUs7kNAToVKhdbQb0dnWTeD61t0WX4TtDXdM
-gfBuUnh6SvUIpz1PSZ5Q4o8hwbPGY++7bnSLgW8gBsf7xM53pOxB2shJHZDcFwKd
-cIWhE5+lTCU76vWJ9ysJS4C4QytSoF9iHOsZmIKMVUtBix5VvcNXX+bjNfgzu5rA
-HLodAwt4iiqz0yFQa8yrwaPioQWRSNBrpMBQyKYIkWpW9/tX0bzrEN9kc4k1PWJe
-2KKsGYANTWSHFEVcG8PL9FrWIjjEb+Y6KjgAso2oQQGDPXwGq3i8NWhiSgMWPqRs
-9bGgcW4nFwnx012MrgmRFvPt+XdFA1tAhIWBQZtoO/IHarCS1Y8BOciYjkUZTGy1
-BAGM7KkN8HZhuT0m9BJUsOM8vLpyQknrKA+4Ott2mkVPUOaIBKPdD8E4V4B+aszH
-TDmKh25VofYUBYh0F0wv
-=15RM
+iQIcBAEBCAAGBQJPPGaOAAoJEECxmPOUX5FE0gkP/2GHxozEHNP1IwLtOEwrVlYr
+AEICalZIaLbcj8Tm5jZb0CtBmQjZGPgIAUSVlrd9e8yhKQDG37vSN0JnHf/GFpS1
+Xy1YGkLWsrNwn+f0xXNKLFmCqj2CpZRQa5F37Dr2+9ojuX1XmeRq53bCu1dXD6ZE
+WJMEVshXHNpgKgmfybwTcO2vDbm20TQs8wIDvVGeFuauze+1Q9wk1STZiwDLKFAp
+rp3sI4hwal531S0RA5diRBBsqLnZ8xedbCxQarqVhO1UV3tTtfucMsw1zygykCcU
+XmlMD2vLDVbagCkUk2JKYpRPZQwitgLsvtzQAqxK1weKUolfzU9mVhXC2KejgufO
+G8AQTTUzA/X8fSHcQAH7VvdikaI1ML67gMgcuqBuS+ir6By17Kl0/qmQZ6Fzmms1
+xLC28RXjsyaIFXFrSMg7wloZH+fi6yTL+iOuaxlQFhcajt4ATeRoVECgJio580Nl
+4sKrXruuSh4g441sbO35o41D5KozvDdWiw4Gz0m0H5H5ezxqyIFU/VUIEGfnEUqh
+YqVLcRrfzqdEmu0JvpjoASTeh6dHQWgs/lKzgAXKWH0ijUcZbJ+2QmnegIQadEtJ
+/1b/Lv1v8ih91vBV2vlct6Cq08sZC29J23I0nPK/EI8LOorkWTyYKRrYVMlCutnK
+pswQ8MSj5haE3NPVrwQx
+=I1nu
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__16_Feb_2012_12_40_13_+1100_Dw65BnVMIAS+.=Vl--
+--Signature=_Thu__16_Feb_2012_13_14_38_+1100_AfalFEsfqRczIY8x--
