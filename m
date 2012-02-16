@@ -1,63 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (fbdev tree
- related)
-Date: Thu, 16 Feb 2012 16:29:00 +1100
-Message-ID: <20120216162900.e2dd164732084f48e5b239f0@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Wed, 15 Feb 2012 21:15:52 -0800
+Message-ID: <20120216051552.GA5676@kroah.com>
+References: <20120216152316.821ac82e04a5ee30327b81c3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__16_Feb_2012_16_29_00_+1100_xAQJtgvzlUsJ2MKl"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33342 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750914Ab2BPF3L (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 00:29:11 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:34502 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752551Ab2BPFeb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Feb 2012 00:34:31 -0500
+Received: from compute4.internal (compute4.nyi.mail.srv.osa [10.202.2.44])
+	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 9715A20997
+	for <linux-next@vger.kernel.org>; Thu, 16 Feb 2012 00:34:30 -0500 (EST)
+Content-Disposition: inline
+In-Reply-To: <20120216152316.821ac82e04a5ee30327b81c3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>
+To: Dan Magenheimer <dan.magenheimer@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__16_Feb_2012_16_29_00_+1100_xAQJtgvzlUsJ2MKl
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Feb 16, 2012 at 03:23:16PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the staging tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/staging/ramster/zcache-main.c:2969:2: error: unknown field 'invalidate_page' specified in initializer
+> drivers/staging/ramster/zcache-main.c:2969:2: warning: initialization from incompatible pointer type [enabled by default]
+> drivers/staging/ramster/zcache-main.c:2969:2: warning: (near initialization for 'zcache_cleancache_ops.put_page') [enabled by default]
+> drivers/staging/ramster/zcache-main.c:2970:2: error: unknown field 'invalidate_inode' specified in initializer
+> drivers/staging/ramster/zcache-main.c:2970:2: warning: initialization from incompatible pointer type [enabled by default]
+> drivers/staging/ramster/zcache-main.c:2970:2: warning: (near initialization for 'zcache_cleancache_ops.flush_page') [enabled by default]
+> drivers/staging/ramster/zcache-main.c:2971:2: error: unknown field 'invalidate_fs' specified in initializer
+> drivers/staging/ramster/zcache-main.c:2971:2: warning: initialization from incompatible pointer type [enabled by default]
+> drivers/staging/ramster/zcache-main.c:2971:2: warning: (near initialization for 'zcache_cleancache_ops.flush_inode') [enabled by default]
+> drivers/staging/ramster/zcache-main.c:913:13: warning: 'zcache_do_remotify_ops' defined but not used [-Wunused-function]
+> drivers/staging/ramster/zcache-main.c:1002:13: warning: 'ramster_remotify_init' defined but not used [-Wunused-function]
+> 
+> I do wonder if any of this was build tested with CONFIG_CLEANCACHE enabled ...
+> 
+> Caused by commit 19ee3ef5f4bb ("staging: ramster: local compression + tmem").
+> 
+> I have used the staging tree from next-20120215 for today.
 
-Hi all,
+Dan, can you please fix this?
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
-
-drivers/video/i740fb.c: In function 'i740fb_remove':
-drivers/video/i740fb.c:1192:7: error: 'par' undeclared (first use in this f=
-unction)
-
-Caused by commit 5350c65f4f15 ("Resurrect Intel740 driver: i740fb") from
-the fbdev tree.  CONFIG_MTRR is not defined for this build ...
-
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__16_Feb_2012_16_29_00_+1100_xAQJtgvzlUsJ2MKl
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPPJQcAAoJEECxmPOUX5FEoWUP/35QFVh8eV6jSARbZKmJHXsc
-CQsmKf2GRBd678ZVFTyZfP7q7S2dYn61y1NnGG0cgJMi5Yr8LCbLD9jcU0pnZxB1
-qetP9nQsWRBXK8my8/ICBHJ2C4D2hCv8ZL2X1SsCL14z8EluaAbQ0bItSXMX9gpJ
-Ele/6bCcgrgLQ/a1Dn7iClfnXW0HjDSdK1eZ4T65gIiJX1uV5/GdakJGCbAIXakF
-dVSbI9Tp017j2yPMxcODH82kJ5A6pxzZ6CKPRfE03oR7zqPR4ntiwMzepZ8Mpy0Z
-7pVYY8HuZvDoYFGaPvheC3hlb78V1zTi6EptdXjQfqP6fdrnomZ6ekSSA6D4YX3w
-URSpgMYD1+FfoWmMtid2fBWxAJA8c+D+9eRZ33wEP1rnffyLS+RMwQOx95H6aSC8
-oS39L5qbF+pLrVrIDLP5g1/ecF9owDRHffFtKSe5X1ZRju7XyOwu6BxDIeH4Hjco
-YaDmAJD2Ye+LzELfjxsBmfWZ1brz8dp7fV8YrLopBwULNe8ZiOLg8Aeob8XfQDJi
-BTnWEiY1PRMLpwRYoYlzgiM4jR6FYna6totb0iFS4GKaK9HUP9RVxOnxOIiVDtT7
-dmc39l/L5MuKQuBJ5eWTcFOd9YEoz24snBbs2cucZtUklUsiBFj4XPgfdiRkO79x
-IDW6JTjCZkeHti/8cFjc
-=hKgu
------END PGP SIGNATURE-----
-
---Signature=_Thu__16_Feb_2012_16_29_00_+1100_xAQJtgvzlUsJ2MKl--
+greg k-h
