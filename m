@@ -1,56 +1,66 @@
-From: "Yuval Mintz" <yuvalmin@broadcom.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the net
- tree
-Date: Thu, 16 Feb 2012 15:47:04 +0200
-Message-ID: <1329400024.16698.36.camel@lb-tlvb-eilong.il.broadcom.com>
-References: <20120216123803.8efe3d23eee5c3a80aceef61@canb.auug.org.au>
- <1329391450.16698.27.camel@lb-tlvb-eilong.il.broadcom.com>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: RE: linux-next: build failure after merge of the staging tree
+Date: Thu, 16 Feb 2012 06:39:42 -0800 (PST)
+Message-ID: <c6634d7c-b264-4a87-bab1-74408341dab0@default>
+References: <20120216152316.821ac82e04a5ee30327b81c3@canb.auug.org.au>
+ <20120216051552.GA5676@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms3.broadcom.com ([216.31.210.19]:4635 "EHLO MMS3.broadcom.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753033Ab2BPNrU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Feb 2012 08:47:20 -0500
-In-Reply-To: <1329391450.16698.27.camel@lb-tlvb-eilong.il.broadcom.com>
+Received: from rcsinet15.oracle.com ([148.87.113.117]:23183 "EHLO
+	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750877Ab2BPOkW convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 09:40:22 -0500
+In-Reply-To: <20120216051552.GA5676@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, eilong@broadcom.com, eric.dumazet@gmail.com
+To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Wilk <konrad.wilk@oracle.com>, Seth Jennings <sjenning@linux.vnet.ibm.com>, Nitin Gupta <ngupta@vflare.org>
 
-On Thu, 2012-02-16 at 13:24 +0200, Yuval Mintz wrote:
-> On Wed, 2012-02-15 at 17:38 -0800, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the net-next tree got a conflict in
-> > drivers/net/ethernet/broadcom/bnx2x/bnx2x_stats.c between commit
-> > 66d885cba670 ("bnx2x: fix bnx2x_storm_stats_update() on big endian") from
-> > the net tree and commit 1355b704b9ba ("bnx2x: consistent statistics after
-> > internal driver reload") from the net-next tree.
-> > 
-> > I fixed it up (see below) but suspect that there may be more needed.
+> From: Greg KH [mailto:greg@kroah.com]
+> Subject: Re: linux-next: build failure after merge of the staging tree
 > 
-> Hey Stephen,
+> On Thu, Feb 16, 2012 at 03:23:16PM +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> >
+> > After merging the staging tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >
+> > drivers/staging/ramster/zcache-main.c:2969:2: error: unknown field 'invalidate_page' specified in
+> initializer
+> > drivers/staging/ramster/zcache-main.c:2970:2: error: unknown field 'invalidate_inode' specified in
+> initializer
+> > drivers/staging/ramster/zcache-main.c:2971:2: error: unknown field 'invalidate_fs' specified in
+> initializer
+> >
+> > I do wonder if any of this was build tested with CONFIG_CLEANCACHE enabled ...
+
+Absolutely, against next-20120214, which contained commit
+
+91c6cc9b5c216bd067f9af2cc64fcbe190755865
+
+which changed the names of those fields from "flush*" to "invalidate*".
+I am the author of that commit but it is pulled through Konrad Wilk
+(cc'ed). Perhaps Konrad's pull succeeded in next-20120214 but
+failed in next-20120215?
+
+Kernel.org seems to be down so I can't see if that commit is
+in next-20120215 but if it is not that would likely cause
+the above errors.
+
+> > Caused by commit 19ee3ef5f4bb ("staging: ramster: local compression + tmem").
+> >
+> > I have used the staging tree from next-20120215 for today.
 > 
-> I don't fully understand your merge - it seems to create a mash between
-> the "bnx2x: fix bnx2x_storm_stats_update() on big endian" patch in net,
-> and the "bnx2x: consistent statistics after internal driver reload"
-> patch in net-next.
-> 
-> If the purpose of this merge is simply to update net-next tree with the
-> changes from "bnx2x: fix bnx2x_storm_stats_update() on big endian", you
-> might consider the following patch:
-> 
-> Subject: [PATCH 1/1] bnx2x: merge net --> net-next
-> From: Mintz Yuval <yuvalmin@broadcom.com>
-> 
-> This patch applies the changes made in the patch
-> "bnx2x: fix bnx2x_storm_stats_update() on big endian" to net into net-next.
-> 
-> Signed-off-by: Mintz Yuval <yuvalmin@broadcom.com>
-> Signed-off-by: Eilon Greenstein <eilong@broadcom.com>
-> ---
-We need of course to thank Eric Dumazet <eric.dumazet@gmail.com> for the
-original patch.
+> Dan, can you please fix this?
+
+Hmmm... moving target.  I'm trying to get in touch with Konrad
+to see if we can determine what is going on.
+
+The good news is that there seems to be an increasing number
+of people contributing to and building things on top of
+cleancache/frontswap stuff.  The bad news is that it is difficult
+to avoid ordering dependencies that affect -next.  My apologies
+and if you have any dependency-savvy processes that would solve
+this that we are not using, please let me/us know.
