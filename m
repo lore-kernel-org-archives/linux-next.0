@@ -1,49 +1,72 @@
-From: Michael Neuling <mikey@neuling.org>
-Subject: Re: Build fail in hugetlbpage.c with linux-next and mpc85xx_defconfig
-Date: Thu, 16 Feb 2012 16:01:28 +1100
-Message-ID: <8058.1329368488@neuling.org>
-References: <14174.1329347321@neuling.org> <CAEsOVNcpBLmsmyZLW2HNe3MDR5cx5oJnPMmGD6Mqz4AjG16=9A@mail.gmail.com> <16098.1329349063@neuling.org> <CAEsOVNfOcH+oaxSqw6Cy1suY_9zVDOhQe+v_e-zTwc0M5Q_Wgg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the wireless tree
+Date: Thu, 16 Feb 2012 16:05:51 +1100
+Message-ID: <20120216160551.dd41d2675bab32ff23afd712@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__16_Feb_2012_16_05_51_+1100_5uYLSAHwVKqu=uBZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:42854 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750727Ab2BPFBa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Feb 2012 00:01:30 -0500
-In-reply-to: <CAEsOVNfOcH+oaxSqw6Cy1suY_9zVDOhQe+v_e-zTwc0M5Q_Wgg@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58736 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751005Ab2BPFGF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 00:06:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: McClintock Matthew-B29882 <B29882@freescale.com>
-Cc: "linuxppc-dev@ozlabs.org" <linuxppc-dev@ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Manoj Iyer <manoj.iyer@canonical.com>, Johan Hedberg <johan.hedberg@intel.com>, "John W. Linville" <linville@tuxdriver.com>, "James M. Leddy" <james.leddy@canonical.com>
 
-In message <CAEsOVNfOcH+oaxSqw6Cy1suY_9zVDOhQe+v_e-zTwc0M5Q_Wgg@mail.gmail.com>
- you wrote:
-> On Wed, Feb 15, 2012 at 11:37 PM, Michael Neuling <mikey@neuling.org> wrote:
-> >> > Becky,
-> >> >
-> >> > This has been broken in linux-next for a while. =3DA0Looks like a merge
-> >> > issue but you were the last to touch it...
-> >> >
-> >> > arch/powerpc/mm/hugetlbpage.c: In function 'reserve_hugetlb_gpages':
-> >> > arch/powerpc/mm/hugetlbpage.c:313: error: passing argument 5 of 'parse=
-> _ar=3D
-> >> gs' makes integer from pointer without a cast
-> >> > include/linux/moduleparam.h:317: note: expected 's16' but argument is =
-> of =3D
-> >> type 'int (*)(char *, char *)'
-> >> > arch/powerpc/mm/hugetlbpage.c:313: error: too few arguments to functio=
-> n '=3D
-> >> parse_args'
-> >>
-> >> A suggest fix has been submitted.
-> >
-> > Do you have a link? =A0Which tree is it going in?
-> 
-> http://lists.ozlabs.org/pipermail/linuxppc-dev/2012-February/095903.html
-> 
-> I just sent it. I'm not sure who would pick this up. Ideally it would
-> go in the next release.
+--Signature=_Thu__16_Feb_2012_16_05_51_+1100_5uYLSAHwVKqu=uBZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think that's a different problem, as that's already in next.
+Hi Adnrew,
 
-sfr posted where problem patch is
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/bluetooth/btusb.c between commit 403f048a5705 ("Bluetooth: btusb:
+Add vendor specific ID (0a5c 21f3) for BCM20702A0") from the wireless
+tree and commit "bluetooth: add support for BCM20702A0 [0a5c:21e6]" from
+the akpm tree.
 
-Mikey
+I fixed it up (see below) an can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/bluetooth/btusb.c
+index 789c9b5,e618cf1..0000000
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@@ -102,7 -102,7 +102,8 @@@ static struct usb_device_id btusb_table
+ =20
+  	/* Broadcom BCM20702A0 */
+  	{ USB_DEVICE(0x0a5c, 0x21e3) },
++ 	{ USB_DEVICE(0x0a5c, 0x21e6) },
+ +	{ USB_DEVICE(0x0a5c, 0x21f3) },
+  	{ USB_DEVICE(0x413c, 0x8197) },
+ =20
+  	{ }	/* Terminating entry */
+
+--Signature=_Thu__16_Feb_2012_16_05_51_+1100_5uYLSAHwVKqu=uBZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPPI6vAAoJEECxmPOUX5FENSAQAKI3X48I5g7m8Kmtrf4CPnb3
+nJMSQFC/xb8vJrJuFe/l9+Mz3JNi7yL96Hd4GjTqZdAklkerOPDSGcUZjwnkyV2c
+vUc0qh7lwWXFrARl9Q6dxznpNWMNvdroqpZ3ZkMS3ne/5uF1MaORWYQPUFpBIZXh
+Nx2pSnm99Qo9uAYtIw4zPJsErs19exA4JE34cgY2G42Jd/EGSeML2T8Vvw0FoOE7
+jTucktPEwWOTHLzws0NjBSDnjBqu8gqLT7Fj8/LXFeH40HlK8cdMK85BKpMQ0+Ce
+6vNovA6beUJRYtl7QsuC1YYguqyhtwb5kLHnD2R/vd79S7psheiwRBH+EkWptdrD
+7qmqH9EgpS3O6XeQyCnr6wVslrRd8LmyZLIsCp40PfEdzFcsXdLq/RQQ3BXwVCaR
+g8PAEVE/Kph0G+kK+YvD2ugDJC6IdXWyIQCr7y081zKI+ufyDJbAL6aEcQiO8vrV
+6Xr5WKmUhiSgfyYDjOYd4VK7CNLLxkipRNkd0qa5VJRo/h6xCPMh9DEt8mmm8+z1
+Oc26LQHWfKMuFY8FM6KleHSzBMEWbZwr785Xep3TI161Sgdy0uAwaw/Xmi6X8+FO
+0yW7U8O51iIEVU3cGT73mJZ4fm0LWuREwjU9la9IpXzEJaFQl8LHE27jNyXQPrSp
+Moe6qpnQ0kN/v+h776ud
+=Wy2m
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__16_Feb_2012_16_05_51_+1100_5uYLSAHwVKqu=uBZ--
