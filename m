@@ -1,34 +1,61 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm: add config NUMA stub to all architectures
-Date: Fri, 17 Feb 2012 12:30:37 -0800
-Message-ID: <20120217123037.ecfc5dd9.akpm@linux-foundation.org>
-References: <4F3E42E0.4030108@openvz.org>
-	<20120217120815.25909.15632.stgit@zurg>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for Feb 17 (uml)
+Date: Fri, 17 Feb 2012 22:32:40 +0100
+Message-ID: <CAMuHMdUKDFBuWbbCp5maBQHDz7F+=XSUvf=i2nGsgnixUQSSdA@mail.gmail.com>
+References: <20120217165045.2394d944d6efc37104421d2e@canb.auug.org.au>
+	<4F3E9DC8.6090304@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48883 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752125Ab2BQUaj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Feb 2012 15:30:39 -0500
-In-Reply-To: <20120217120815.25909.15632.stgit@zurg>
+Received: from mail-we0-f174.google.com ([74.125.82.174]:44343 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751293Ab2BQVcm convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Feb 2012 16:32:42 -0500
+In-Reply-To: <4F3E9DC8.6090304@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konstantin Khlebnikov <khlebnikov@openvz.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Richard Weinberger <richard@nod.at>, user-mode-linux-devel@lists.sourceforge.net
 
-On Fri, 17 Feb 2012 16:08:15 +0400
-Konstantin Khlebnikov <khlebnikov@openvz.org> wrote:
+On Fri, Feb 17, 2012 at 19:34, Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
+> On 02/16/2012 09:50 PM, Stephen Rothwell wrote:
+>> Changes since 20120216:
+>
+> uml on x86_64 (defconfig):
+>
+> =C2=A0CC =C2=A0 =C2=A0 =C2=A0arch/um/kernel/asm-offsets.s
+> In file included from linux-next-20120217/include/linux/slab.h:12:0,
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 from linux-ne=
+xt-20120217/include/linux/crypto.h:23,
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 from
+> linux-next-20120217/arch/x86/um/shared/sysdep/kernel-offsets.h:4,
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 from linux-ne=
+xt-20120217/arch/um/kernel/asm-offsets.c:1:
+> linux-next-20120217/include/linux/gfp.h: In function 'gfp_zonelist':
+> linux-next-20120217/include/linux/gfp.h:267:1: error:
+> '__enabled_CONFIG_NUMA' undeclared (first use in this function)
+> linux-next-20120217/include/linux/gfp.h:267:1: note: each undeclared
+> identifier is reported only once for each function it appears in
+> linux-next-20120217/include/linux/gfp.h:267:1: error:
+> '__enabled_CONFIG_NUMA_MODULE' undeclared (first use in this function=
+)
 
-> Config NUMA must be defined for all architectures,
-> otherwise IS_ENABLED(CONFIG_NUMA) does not work.
-> Some arch-specific Kconfig already has this stub.
-> This patch adds it to all remaining.
+That's due to the lack of CONFIG_NUMA in various archs (also m68k).
 
-It would be better to teach IS_ENABLED() to handle this situation.  I
-don't think there's a way of doing this with cpp :(
+Gr{oetje,eeting}s,
 
-This limitation makes IS_ENABLED pretty dangerous, doesn't it?  It
-makes it very easy to introduce build breakage with unexpected Kconfig
-combinations.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
