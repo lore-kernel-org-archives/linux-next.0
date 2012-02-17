@@ -1,65 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Feb 17 (kernel/kcmp.c)
-Date: Sat, 18 Feb 2012 10:14:46 +1100
-Message-ID: <20120218101446.64a7ea590b66f337762bfb57@canb.auug.org.au>
-References: <20120217165045.2394d944d6efc37104421d2e@canb.auug.org.au>
-	<4F3E95B7.3010700@xenotime.net>
+Subject: Re: [PATCH] mm: add config NUMA stub to all architectures
+Date: Sat, 18 Feb 2012 10:39:14 +1100
+Message-ID: <20120218103914.39e7e1eb69e1fd29275c4849@canb.auug.org.au>
+References: <4F3E42E0.4030108@openvz.org>
+	<20120217120815.25909.15632.stgit@zurg>
+	<20120217234508.8293a84fb3ebb7fed6d60ec3@canb.auug.org.au>
+	<4F3E56DA.3050203@openvz.org>
+	<20120217134404.GA11353@merkur.ravnborg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sat__18_Feb_2012_10_14_46_+1100_yje1+57JNYgadVaO"
+ boundary="Signature=_Sat__18_Feb_2012_10_39_14_+1100_l9Co54daMOZkqbyW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57241 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:38233 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751714Ab2BQXO6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Feb 2012 18:14:58 -0500
-In-Reply-To: <4F3E95B7.3010700@xenotime.net>
+	with ESMTP id S1751389Ab2BQXjY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Feb 2012 18:39:24 -0500
+In-Reply-To: <20120217134404.GA11353@merkur.ravnborg.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Cyrill Gorcunov <gorcunov@openvz.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Konstantin Khlebnikov <khlebnikov@openvz.org>, Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Sat__18_Feb_2012_10_14_46_+1100_yje1+57JNYgadVaO
+--Signature=_Sat__18_Feb_2012_10_39_14_+1100_l9Co54daMOZkqbyW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Sam,
 
-On Fri, 17 Feb 2012 10:00:23 -0800 Randy Dunlap <rdunlap@xenotime.net> wrot=
-e:
+On Fri, 17 Feb 2012 14:44:04 +0100 Sam Ravnborg <sam@ravnborg.org> wrote:
 >
-> on i386:
->=20
-> kernel/kcmp.c:153:10: error: 'EOPNOTSUP' undeclared (first use in this=20
-> function)
+> > Seems like Kconfig allow config option duplication, but it use default =
+state from first.
+> > If we add "config NUMA\n def_bool n" somewhere in generic Kconfig, defa=
+ult will be n if
+> > Kconfig see this declaration first.
+> Correct.
+> And as n is default there is no need to specify it.
+> But please add a help text that explain the symbol - even if it is not
+> visible in menuconfig.
 
-Caused by commit 0e8a8193207d ("syscalls, x86: add __NR_kcmp syscall")
-from the akpm tree.  Missing include of linux/errno.h ...
+So does that mean that a simple
+
+config NUMA
+	bool
+	help
+		some help text
+
+in mm/Kconfig will have no effect on the defaults and dependencies if
+"config NUMA" is specified elsewhere?  (except to add the needed
+__enabled_CONFIG_NUMA defines, of course).  If that is the case, then
+that is what we should add, right?
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Sat__18_Feb_2012_10_14_46_+1100_yje1+57JNYgadVaO
+--Signature=_Sat__18_Feb_2012_10_39_14_+1100_l9Co54daMOZkqbyW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPPt9mAAoJEECxmPOUX5FEBDoP/Ai/8LiMdIpV1MLgSLjYfYHL
-bRaIPf2Sbmv+1yTmnaHHdpB0LGjT3cpmYJk3h0ridXTMKa4TYlgeWWzrAqxY8ydT
-GbMF5DxYGsEonyULoS1ge897ib5Nmo5q0sP2S50qrDcElqoNcQyZBXqj0BIZEjpE
-Rh+uOkN+u94NznPwlXTWthetPsLZbLYxMrlDqBXQM2Iw+v7Jwr+OFLamJLUbvILF
-DLrznDa1HmhL+va8SszFmn6L1CDJMV7CojYP0vGyGoqbchQrfQzNmkTRCty3d8R0
-1FCmgDlN8wuUILdhR7jIaIx+pef0TS8kZwBSQ6KZ9JnnPrmVAQ0Y7idGMkZrTGkU
-fc0mCUMEmF2sGGkrm3T7r1vZsdHB/0gkVq6uBEsHcpzKQ8VPeqRQwPmj1YZiO1mu
-UgxbLwxWsshOoEswQpX7DxD+nnlq78pgVWtpT8U9YwG6iF4gwXxfH3IRJJ06/DbN
-HED9c3MIhtjAHY4Vk7sguyhEP8Ks5VhHRKe1Cq+KeFJmWp68OIAkRtnqamjDyMRI
-5U0u0SSsAGrS9RWM10ldBtd2znPb9LC08GUxyBv5DHKTqNDCiZRbjMw4d8z7EXtn
-jV7i/Dn07nPgL5uOMSdOxtf8t9/uPDgDqVDOhBGL+ebrgUkTfR4wZ5XsNF/JPMtG
-vZOVKo+CB5TN0SE8lRD0
-=iySb
+iQIcBAEBCAAGBQJPPuUiAAoJEECxmPOUX5FEREcP/RT0vFXyKbNBhuSRfO3QRSG/
+HTf9RLl6+solZU69d5F3lkusTQfIyMV657oClmrvygxsrp6OpqnD8oT/ueMcL+MV
+c384bnRaoBC/7d4E6K1OofaoRnujx9Sxf0ZCWIYuKdWGWj4EHYn8ZAjGU7CObwzX
+ZXLU9ioVpyn4S00xluzIbJdM8yZ//WNtiozrJinH9EIexSCjwXfZ/w4hmzc90lOj
+x3BEHUg33vui8oBy97l2E9LFQIxt+Kb8saBJf44clzMF5vo/OBdWDXPpOJRfE01m
+MDiWl05y+JTxhtFg81LQCv6y6S4YYooq9eJGXvJUF9BstY9e6/hDMVjxN4DKw1FV
+4U1fs3UfNjJ6aM/V8dsZseVBRNVz2o3HAHRBO72sZwBPU8Pwp8EcNwad2EbjuWCe
+eUz8WO4iDJhXdXc7BnWwsd/KtbMWHFLhDMdEtmMhGZ5tZa0JpsAn7+essadadZTE
+u9Ls/c4xmu67SMsW60N/oVgi+v/voHFh/BjJ2YXXKw6MlhigZvmoJA498TMgvk87
+Fd78aqZXWi/i6dz5Jpyy8g2ZS+E/BA0Ds9GFLc9oiKl9ZjutZe70tKTo7LLcVcuZ
+5r7uA2Rnad7ipJeeBLq4CS+psD62C2ehpOwuTL+Mq8l7i+MzG/dR5ynA5iIQH0za
+j/TLhEpYz4GV1nXNSxIX
+=h9RU
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__18_Feb_2012_10_14_46_+1100_yje1+57JNYgadVaO--
+--Signature=_Sat__18_Feb_2012_10_39_14_+1100_l9Co54daMOZkqbyW--
