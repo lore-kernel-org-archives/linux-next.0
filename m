@@ -1,82 +1,104 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Thu, 16 Feb 2012 16:17:28 -0800
-Message-ID: <20120217001728.GA7746@kroah.com>
-References: <20120216152316.821ac82e04a5ee30327b81c3@canb.auug.org.au>
- <20120216051552.GA5676@kroah.com>
- <c6634d7c-b264-4a87-bab1-74408341dab0@default>
- <20120217082559.6a094265da2d5c203bfc445f@canb.auug.org.au>
- <be7afe58-43f1-4f69-b0ae-89dd7607355b@default>
- <20120217103917.36721f3e8f75c35092c2dce2@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging tree
+Date: Fri, 17 Feb 2012 15:10:30 +1100
+Message-ID: <20120217151030.59ce998d4b844faa0023750b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__17_Feb_2012_15_10_30_+1100_l1GRMH5zDlSwE8C6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:42889 "EHLO
-	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753470Ab2BQAVo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Feb 2012 19:21:44 -0500
-Received: from compute4.internal (compute4.nyi.mail.srv.osa [10.202.2.44])
-	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 8911620878
-	for <linux-next@vger.kernel.org>; Thu, 16 Feb 2012 19:21:43 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <20120217103917.36721f3e8f75c35092c2dce2@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:42987 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750822Ab2BQEKq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 23:10:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dan Magenheimer <dan.magenheimer@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Wilk <konrad.wilk@oracle.com>, Seth Jennings <sjenning@linux.vnet.ibm.com>, Nitin Gupta <ngupta@vflare.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Magenheimer <dan.magenheimer@oracle.com>
 
-On Fri, Feb 17, 2012 at 10:39:17AM +1100, Stephen Rothwell wrote:
-> Hi Dan,
-> 
-> On Thu, 16 Feb 2012 13:49:53 -0800 (PST) Dan Magenheimer <dan.magenheimer@oracle.com> wrote:
-> >
-> > Huh?  Do you do allyesconfig/allmodconfig build testing after you pull
-> > each individual tree or only after all trees are pulled?  (Apparently
-> > the former, as otherwise the ordering shouldn't matter, right?)
-> 
-> From my daily release note:
-> 
-> "Between each merge, the tree was built with
-> a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-> final fixups (if any), it is also built with powerpc allnoconfig (32 and
-> 64 bit), ppc44x_defconfig and allyesconfig (minus
-> CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-> and sparc64 defconfig. These builds also have
-> CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-> CONFIG_DEBUG_INFO disabled when necessary."
-> 
-> So yes, I build between each merge.  It allows me to isolate where
-> problems are occurring so that they can be easily fixed in isolation.
-> 
-> > If you are doing the after-every-individual-tree build testing,
-> > yes, if you could pull konrad's tmem tree first, that would
-> > solve this problem I believe.**
-> 
-> Yes, I can do that (and will for today).  However, it does mean that the
-> staging tree now cannot be merged into Linus' tree until after the tmem
-> tree has been merged.   And if Linus decides not to take it, then Greg
-> will have to remove these commits from his tree (or revert them) before
-> he can get all the rest of the staging tree into Linus' tree.
-> 
-> > I suspect unit testing doesn't make much as much sense in staging
-> > as it does in the core kernel.  I did testing of ramster in my
-> 
-> Of course it makes sense - at least at the "make sure it builds" level.
-> 
-> > public git tree (which includes the tmem patchset coming to you via
-> > konrad) but, since it is a staging driver, the bits have to go
-> > through Greg.
-> 
-> Maybe you should seek a dispensation from Greg to allow your ramster tree
-> to exist independently in linux-next and be merged independently by
-> Linus'.  Greg may want to keep watch in your tree, but that should not be
-> much more effort than reviewing and applying your patches to the staging
-> tree.
+--Signature=_Fri__17_Feb_2012_15_10_30_+1100_l1GRMH5zDlSwE8C6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ick, no, I'll just mark this as CONFIG_BROKEN for now, and things can be
-fixed up later, during the 3.4 window as it should all settle down then.
+Hi Greg,
 
-thanks,
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-greg k-h
+drivers/built-in.o: In function `r2hb_hb_group_drop_item':
+heartbeat.c:(.text+0x12cd7a): undefined reference to `config_item_put'
+drivers/built-in.o: In function `r2hb_hb_group_make_item':
+heartbeat.c:(.text+0x12cdc7): undefined reference to `config_item_put'
+drivers/built-in.o: In function `r2hb_alloc_hb_set':
+(.text+0x12cf2f): undefined reference to `config_group_init_type_name'
+drivers/built-in.o: In function `r2nm_cluster_group_drop_item':
+nodemanager.c:(.text+0x12d34f): undefined reference to `config_item_put'
+nodemanager.c:(.text+0x12d378): undefined reference to `config_item_put'
+drivers/built-in.o: In function `r2nm_node_put':
+(.text+0x12d3a0): undefined reference to `config_item_put'
+drivers/built-in.o: In function `r2nm_node_group_drop_item':
+nodemanager.c:(.text+0x12dc4d): undefined reference to `config_item_put'
+drivers/built-in.o: In function `r2nm_node_get':
+(.text+0x12e407): undefined reference to `config_item_get'
+drivers/built-in.o: In function `r2nm_get_node_by_ip':
+(.text+0x12e482): undefined reference to `config_item_get'
+drivers/built-in.o: In function `r2nm_get_node_by_num':
+(.text+0x12e514): undefined reference to `config_item_get'
+drivers/built-in.o: In function `r2nm_node_group_make_item':
+nodemanager.c:(.text+0x12e664): undefined reference to `config_item_init_ty=
+pe_name'
+drivers/built-in.o: In function `r2nm_cluster_group_make_group':
+nodemanager.c:(.text+0x12e762): undefined reference to `config_group_init_t=
+ype_name'
+nodemanager.c:(.text+0x12e77f): undefined reference to `config_group_init_t=
+ype_name'
+drivers/built-in.o: In function `r2nm_depend_item':
+(.text+0x12e878): undefined reference to `configfs_depend_item'
+drivers/built-in.o: In function `r2nm_undepend_item':
+(.text+0x12e8a0): undefined reference to `configfs_undepend_item'
+drivers/built-in.o: In function `r2nm_depend_this_node':
+(.text+0x12e907): undefined reference to `config_item_put'
+drivers/built-in.o: In function `r2nm_undepend_this_node':
+(.text+0x12e973): undefined reference to `config_item_put'
+drivers/built-in.o: In function `init_r2nm':
+nodemanager.c:(.init.text+0xefdb): undefined reference to `config_group_ini=
+t'
+nodemanager.c:(.init.text+0xf00f): undefined reference to `configfs_registe=
+r_subsystem'
+drivers/built-in.o: In function `exit_r2nm':
+nodemanager.c:(.exit.text+0x99b): undefined reference to `configfs_unregist=
+er_subsystem'
+
+This after I moved the tmem tree to before the staging tree to fix
+yesterday's build failure.
+
+I have cherry-picked Greg's patch to disable building of the ramster code
+for today (since it wasn't in his tree when I fetched it this morning).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__17_Feb_2012_15_10_30_+1100_l1GRMH5zDlSwE8C6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPPdM2AAoJEECxmPOUX5FEQN8P/2qRwDUGdbxc30eXOg6SgskF
+5qW+HHjFUR2j8oAXSUuRsfhutOE+yrCySApEal5Fesl33FU1xeX9clsnFt9pYkrf
+vnGEQl2yktjLAjPsroV14EaQiw7j0Mm04MmRO4QJOsX15wdsDRY54UhT293LmlYf
+tydADKwEVynrWQz5IOW63Vi9wRnGh0bIyvQDvSUQ8X9EO75wYoFJ30lPuOKk8FZ1
+pGXCmLihNbh4FXpQBzMsJCt4+9H8pD0B1JbtIOO96TE3CXmav3H/Z0MkmtqPqome
+Y0MIviYNcr+RvosKc4ft6gYBTJH/QwqxF9aXJSKG/Q0MH19GXZJuh6iM63qGIocS
+Fdf6vWWp12uLjy1NwHJ64lJyiG3f0+ELBWuNZbpuWyOLQTlHPUVPWZ9o4/hscM/M
+XkFVt+LEviP/7EiZVeKf0bXIARHC47basoJewcETQgL0b2xNz8mSLNVMkEnOnqMc
+WwxvLXOfmdvihXzXGE+B8DWMjLjjhT1IiSTuzvNC7wCl6f/AkmXBSbIyoxi7YPP5
+qc/I4HX2q68nLJtmGcMwg1rLIXuM17wqQmA1U7oWzLjJ4ZgtQi4jjWI8eF/LYNOo
+256HDYnaBCIY+rcDA7EZ+6tYCrwGBVprsOfWLPfTcOo2CMWKfti5myYAHkMmqunM
+NRNbpD4quTarOyRVkpHu
+=QsGx
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__17_Feb_2012_15_10_30_+1100_l1GRMH5zDlSwE8C6--
