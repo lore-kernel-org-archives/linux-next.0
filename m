@@ -1,42 +1,78 @@
-From: Pawel Moll <pawel.moll@arm.com>
-Subject: [PATCH] params: Fix parse_args() use in PowerPC's reserve_hugetlb_gpages()
-Date: Fri, 17 Feb 2012 16:08:36 +0000
-Message-ID: <1329494916-20575-1-git-send-email-pawel.moll@arm.com>
-References: <20120216111513.918494b07a5331eabe3d32ac@canb.auug.org.au>
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Fri, 17 Feb 2012 09:04:07 -0800
+Message-ID: <20120217170407.GA25775@kroah.com>
+References: <20120217151030.59ce998d4b844faa0023750b@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:48466 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751169Ab2BQQJQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Feb 2012 11:09:16 -0500
-In-Reply-To: <20120216111513.918494b07a5331eabe3d32ac@canb.auug.org.au>
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:59302 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751928Ab2BQRIq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Feb 2012 12:08:46 -0500
+Received: from compute3.internal (compute3.nyi.mail.srv.osa [10.202.2.43])
+	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 2A8862133A
+	for <linux-next@vger.kernel.org>; Fri, 17 Feb 2012 12:08:46 -0500 (EST)
+Content-Disposition: inline
+In-Reply-To: <20120217151030.59ce998d4b844faa0023750b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Michael Neuling <mikey@neuling.org>, galak@kernel.crashing.org, Becky Bruce <beckyb@kernel.crashing.org>, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, McClintock Matthew-B29882 <B29882@freescale.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Pawel Moll <pawel.moll@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Magenheimer <dan.magenheimer@oracle.com>
 
-Commit b8076966e8e1 ("params: <level>_initcall-like kernel parameters")
-changed the parse_args() API without fixing all the callers. Done now.
+On Fri, Feb 17, 2012 at 03:10:30PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the staging tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/built-in.o: In function `r2hb_hb_group_drop_item':
+> heartbeat.c:(.text+0x12cd7a): undefined reference to `config_item_put'
+> drivers/built-in.o: In function `r2hb_hb_group_make_item':
+> heartbeat.c:(.text+0x12cdc7): undefined reference to `config_item_put'
+> drivers/built-in.o: In function `r2hb_alloc_hb_set':
+> (.text+0x12cf2f): undefined reference to `config_group_init_type_name'
+> drivers/built-in.o: In function `r2nm_cluster_group_drop_item':
+> nodemanager.c:(.text+0x12d34f): undefined reference to `config_item_put'
+> nodemanager.c:(.text+0x12d378): undefined reference to `config_item_put'
+> drivers/built-in.o: In function `r2nm_node_put':
+> (.text+0x12d3a0): undefined reference to `config_item_put'
+> drivers/built-in.o: In function `r2nm_node_group_drop_item':
+> nodemanager.c:(.text+0x12dc4d): undefined reference to `config_item_put'
+> drivers/built-in.o: In function `r2nm_node_get':
+> (.text+0x12e407): undefined reference to `config_item_get'
+> drivers/built-in.o: In function `r2nm_get_node_by_ip':
+> (.text+0x12e482): undefined reference to `config_item_get'
+> drivers/built-in.o: In function `r2nm_get_node_by_num':
+> (.text+0x12e514): undefined reference to `config_item_get'
+> drivers/built-in.o: In function `r2nm_node_group_make_item':
+> nodemanager.c:(.text+0x12e664): undefined reference to `config_item_init_type_name'
+> drivers/built-in.o: In function `r2nm_cluster_group_make_group':
+> nodemanager.c:(.text+0x12e762): undefined reference to `config_group_init_type_name'
+> nodemanager.c:(.text+0x12e77f): undefined reference to `config_group_init_type_name'
+> drivers/built-in.o: In function `r2nm_depend_item':
+> (.text+0x12e878): undefined reference to `configfs_depend_item'
+> drivers/built-in.o: In function `r2nm_undepend_item':
+> (.text+0x12e8a0): undefined reference to `configfs_undepend_item'
+> drivers/built-in.o: In function `r2nm_depend_this_node':
+> (.text+0x12e907): undefined reference to `config_item_put'
+> drivers/built-in.o: In function `r2nm_undepend_this_node':
+> (.text+0x12e973): undefined reference to `config_item_put'
+> drivers/built-in.o: In function `init_r2nm':
+> nodemanager.c:(.init.text+0xefdb): undefined reference to `config_group_init'
+> nodemanager.c:(.init.text+0xf00f): undefined reference to `configfs_register_subsystem'
+> drivers/built-in.o: In function `exit_r2nm':
+> nodemanager.c:(.exit.text+0x99b): undefined reference to `configfs_unregister_subsystem'
+> 
+> This after I moved the tmem tree to before the staging tree to fix
+> yesterday's build failure.
+> 
+> I have cherry-picked Greg's patch to disable building of the ramster code
+> for today (since it wasn't in his tree when I fetched it this morning).
 
-Signed-off-by: Pawel Moll <pawel.moll@arm.com>
----
- arch/powerpc/mm/hugetlbpage.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+Thank you for doing that, sorry I didn't get any of these build errors
+on my own.  That's what I get for applying patches while on the road and
+away from my big build systems to verify this :(
 
-diff --git a/arch/powerpc/mm/hugetlbpage.c b/arch/powerpc/mm/hugetlbpage.c
-index 57c7465..a3e6287 100644
---- a/arch/powerpc/mm/hugetlbpage.c
-+++ b/arch/powerpc/mm/hugetlbpage.c
-@@ -310,7 +310,8 @@ void __init reserve_hugetlb_gpages(void)
- =09int i;
-=20
- =09strlcpy(cmdline, boot_command_line, COMMAND_LINE_SIZE);
--=09parse_args("hugetlb gpages", cmdline, NULL, 0, &do_gpage_early_setup);
-+=09parse_args("hugetlb gpages", cmdline, NULL, 0, 0, 0,
-+=09=09=09&do_gpage_early_setup);
-=20
- =09/*
- =09 * Walk gpage list in reverse, allocating larger page sizes first.
---=20
-1.7.5.4
+greg k-h
