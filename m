@@ -1,104 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the staging tree
-Date: Fri, 17 Feb 2012 15:10:30 +1100
-Message-ID: <20120217151030.59ce998d4b844faa0023750b@canb.auug.org.au>
+Subject: linux-next: manual merge of the irqdomain tree with the arm tree
+Date: Fri, 17 Feb 2012 15:37:49 +1100
+Message-ID: <20120217153749.5d77fe6bc877a0f1f4e94855@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__17_Feb_2012_15_10_30_+1100_l1GRMH5zDlSwE8C6"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42987 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750822Ab2BQEKq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2012 23:10:46 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Magenheimer <dan.magenheimer@oracle.com>
+ boundary="Signature=_Fri__17_Feb_2012_15_37_49_+1100_ZtYAXoXnOEoUjJyk"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Russell King <rmk@arm.linux.org.uk>, Mark Salter <msalter@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__17_Feb_2012_15_10_30_+1100_l1GRMH5zDlSwE8C6
+--Signature=_Fri__17_Feb_2012_15_37_49_+1100_ZtYAXoXnOEoUjJyk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Grant,
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the irqdomain tree got a conflict in
+arch/c6x/Kconfig between commit 2ed86b16eabe ("irq: make SPARSE_IRQ an
+optionally hidden option") from the arm tree and commit 0bd761e1b6d9
+("irq_domain/c6x: Convert c6x to use generic irq_domain support") from
+the irqdomain tree.
 
-drivers/built-in.o: In function `r2hb_hb_group_drop_item':
-heartbeat.c:(.text+0x12cd7a): undefined reference to `config_item_put'
-drivers/built-in.o: In function `r2hb_hb_group_make_item':
-heartbeat.c:(.text+0x12cdc7): undefined reference to `config_item_put'
-drivers/built-in.o: In function `r2hb_alloc_hb_set':
-(.text+0x12cf2f): undefined reference to `config_group_init_type_name'
-drivers/built-in.o: In function `r2nm_cluster_group_drop_item':
-nodemanager.c:(.text+0x12d34f): undefined reference to `config_item_put'
-nodemanager.c:(.text+0x12d378): undefined reference to `config_item_put'
-drivers/built-in.o: In function `r2nm_node_put':
-(.text+0x12d3a0): undefined reference to `config_item_put'
-drivers/built-in.o: In function `r2nm_node_group_drop_item':
-nodemanager.c:(.text+0x12dc4d): undefined reference to `config_item_put'
-drivers/built-in.o: In function `r2nm_node_get':
-(.text+0x12e407): undefined reference to `config_item_get'
-drivers/built-in.o: In function `r2nm_get_node_by_ip':
-(.text+0x12e482): undefined reference to `config_item_get'
-drivers/built-in.o: In function `r2nm_get_node_by_num':
-(.text+0x12e514): undefined reference to `config_item_get'
-drivers/built-in.o: In function `r2nm_node_group_make_item':
-nodemanager.c:(.text+0x12e664): undefined reference to `config_item_init_ty=
-pe_name'
-drivers/built-in.o: In function `r2nm_cluster_group_make_group':
-nodemanager.c:(.text+0x12e762): undefined reference to `config_group_init_t=
-ype_name'
-nodemanager.c:(.text+0x12e77f): undefined reference to `config_group_init_t=
-ype_name'
-drivers/built-in.o: In function `r2nm_depend_item':
-(.text+0x12e878): undefined reference to `configfs_depend_item'
-drivers/built-in.o: In function `r2nm_undepend_item':
-(.text+0x12e8a0): undefined reference to `configfs_undepend_item'
-drivers/built-in.o: In function `r2nm_depend_this_node':
-(.text+0x12e907): undefined reference to `config_item_put'
-drivers/built-in.o: In function `r2nm_undepend_this_node':
-(.text+0x12e973): undefined reference to `config_item_put'
-drivers/built-in.o: In function `init_r2nm':
-nodemanager.c:(.init.text+0xefdb): undefined reference to `config_group_ini=
-t'
-nodemanager.c:(.init.text+0xf00f): undefined reference to `configfs_registe=
-r_subsystem'
-drivers/built-in.o: In function `exit_r2nm':
-nodemanager.c:(.exit.text+0x99b): undefined reference to `configfs_unregist=
-er_subsystem'
-
-This after I moved the tmem tree to before the staging tree to fix
-yesterday's build failure.
-
-I have cherry-picked Greg's patch to disable building of the ramster code
-for today (since it wasn't in his tree when I fetched it this morning).
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__17_Feb_2012_15_10_30_+1100_l1GRMH5zDlSwE8C6
+diff --cc arch/c6x/Kconfig
+index 2f58c61,3c64b28..0000000
+--- a/arch/c6x/Kconfig
++++ b/arch/c6x/Kconfig
+@@@ -11,7 -11,8 +11,8 @@@ config TMS320C6
+  	select HAVE_DMA_API_DEBUG
+  	select HAVE_GENERIC_HARDIRQS
+  	select HAVE_MEMBLOCK
+ -	select HAVE_SPARSE_IRQ
+ +	select SPARSE_IRQ
++ 	select IRQ_DOMAIN
+  	select OF
+  	select OF_EARLY_FLATTREE
+ =20
+
+--Signature=_Fri__17_Feb_2012_15_37_49_+1100_ZtYAXoXnOEoUjJyk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPPdM2AAoJEECxmPOUX5FEQN8P/2qRwDUGdbxc30eXOg6SgskF
-5qW+HHjFUR2j8oAXSUuRsfhutOE+yrCySApEal5Fesl33FU1xeX9clsnFt9pYkrf
-vnGEQl2yktjLAjPsroV14EaQiw7j0Mm04MmRO4QJOsX15wdsDRY54UhT293LmlYf
-tydADKwEVynrWQz5IOW63Vi9wRnGh0bIyvQDvSUQ8X9EO75wYoFJ30lPuOKk8FZ1
-pGXCmLihNbh4FXpQBzMsJCt4+9H8pD0B1JbtIOO96TE3CXmav3H/Z0MkmtqPqome
-Y0MIviYNcr+RvosKc4ft6gYBTJH/QwqxF9aXJSKG/Q0MH19GXZJuh6iM63qGIocS
-Fdf6vWWp12uLjy1NwHJ64lJyiG3f0+ELBWuNZbpuWyOLQTlHPUVPWZ9o4/hscM/M
-XkFVt+LEviP/7EiZVeKf0bXIARHC47basoJewcETQgL0b2xNz8mSLNVMkEnOnqMc
-WwxvLXOfmdvihXzXGE+B8DWMjLjjhT1IiSTuzvNC7wCl6f/AkmXBSbIyoxi7YPP5
-qc/I4HX2q68nLJtmGcMwg1rLIXuM17wqQmA1U7oWzLjJ4ZgtQi4jjWI8eF/LYNOo
-256HDYnaBCIY+rcDA7EZ+6tYCrwGBVprsOfWLPfTcOo2CMWKfti5myYAHkMmqunM
-NRNbpD4quTarOyRVkpHu
-=QsGx
+iQIcBAEBCAAGBQJPPdmdAAoJEECxmPOUX5FEfiUP/1Lj60kKU+xbHsKfhwTazfQ+
+bXcYs8MNm94KnM/iZlr6pftcX/FmqvUHW+bwiwuEy9knxX1qcB+JL5U73qbyd2FT
+cVjs1aIa5bnm+b1KwWOv6XLPY6wTPac//JW+wYQWNcobXTq7ZmOweovB3gb0EYXW
+vOpGjuABtLl2svgq0a/+oW0TeOyjsnESVU6chQX7dYzxlOqQhxyF8HLelJfZOx5F
+1t8a4rmZ/AHQMStwclPC4mNuvsvOJRTkPQiCEy1xGFHhsu6yG69rwpRy/wItDFJK
+CA2bNtkqvPDadK6gjgyJyul+rpvfTSGM3hQGP8TrE2HWPRDczdksnoAdXy5tVcM7
+bWVOwVvJDYwPTCK+jM4yy1KB4gk3ZD407PDCld+JXTFwqgEYtOM9SCVu2JOWLUzC
+moXKWfEQrrT+EmQarDnNdM+rwAwZ2Pv8drhT32t/3VQ2p8LBMslHFRNH+3IA6GKv
+c93ZHPjynR0wkbHmHDeioJrXg3gl5AY6Tn8cbpMD3p1UCkjTfSW47taOJMHuT+nG
+vcWw2WCJ90LyiQ6DW4z5rN8PpfTeNy0fQ/w4lYpFejh05QGcaUzKl8XOCUd6xSiN
+pcWArIx7Eo7hO3mMCnYxXnmJcINYnlunlvBhWHE9StOs+eDAUvuLGJRdxD52tGfy
+vhfAF+0cYf6Ccs4LuJDE
+=eqqh
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__17_Feb_2012_15_10_30_+1100_l1GRMH5zDlSwE8C6--
+--Signature=_Fri__17_Feb_2012_15_37_49_+1100_ZtYAXoXnOEoUjJyk--
