@@ -1,46 +1,60 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: [PATCH] mm: add config NUMA stub to all architectures
-Date: Fri, 17 Feb 2012 14:44:04 +0100
-Message-ID: <20120217134404.GA11353@merkur.ravnborg.org>
-References: <4F3E42E0.4030108@openvz.org> <20120217120815.25909.15632.stgit@zurg> <20120217234508.8293a84fb3ebb7fed6d60ec3@canb.auug.org.au> <4F3E56DA.3050203@openvz.org>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Fri, 17 Feb 2012 11:01:20 -0500
+Message-ID: <20120217160120.GE31531@phenom.dumpdata.com>
+References: <20120216152316.821ac82e04a5ee30327b81c3@canb.auug.org.au>
+ <20120216051552.GA5676@kroah.com>
+ <c6634d7c-b264-4a87-bab1-74408341dab0@default>
+ <20120217082559.6a094265da2d5c203bfc445f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.snhosting.dk ([87.238.248.203]:28826 "EHLO
-	smtp.domainteam.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752551Ab2BQNoG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Feb 2012 08:44:06 -0500
+Received: from acsinet15.oracle.com ([141.146.126.227]:41198 "EHLO
+	acsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751462Ab2BQQEl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Feb 2012 11:04:41 -0500
 Content-Disposition: inline
-In-Reply-To: <4F3E56DA.3050203@openvz.org>
+In-Reply-To: <20120217082559.6a094265da2d5c203bfc445f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konstantin Khlebnikov <khlebnikov@openvz.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dan Magenheimer <dan.magenheimer@oracle.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Jennings <sjenning@linux.vnet.ibm.com>, Nitin Gupta <ngupta@vflare.org>
 
-On Fri, Feb 17, 2012 at 05:32:10PM +0400, Konstantin Khlebnikov wrote:
-> Stephen Rothwell wrote:
->> Hi Konstantin,
->>
->> On Fri, 17 Feb 2012 16:08:15 +0400 Konstantin Khlebnikov<khlebnikov@openvz.org>  wrote:
->>>
->>> Config NUMA must be defined for all architectures,
->>> otherwise IS_ENABLED(CONFIG_NUMA) does not work.
->>> Some arch-specific Kconfig already has this stub.
->>> This patch adds it to all remaining.
->>
->> Why not add it somewhere generic (like mm/Kconfig, maybe) and then it can
->> be removed from the architecture specific places over time (if necessary
->> - I am pretty sure it is ok to have it there twice)?
->>
->
-> Different architectures has different dependencies for NUMA.
->
-> Seems like Kconfig allow config option duplication, but it use default state from first.
-> If we add "config NUMA\n def_bool n" somewhere in generic Kconfig, default will be n if
-> Kconfig see this declaration first.
-Correct.
-And as n is default there is no need to specify it.
-But please add a help text that explain the symbol - even if it is not
-visible in menuconfig.
+> It is in next-20120215 (and has been since next-20120124).  However, I
+> merge Konrad's (tmem) tree *after* I merge the staging tree, so that commit
+> was not present when I tried to build linux-next after merging the
+> staging tree.
+> 
+> > > > Caused by commit 19ee3ef5f4bb ("staging: ramster: local compression + tmem").
+> > > >
+> > > > I have used the staging tree from next-20120215 for today.
+> > > 
+> > > Dan, can you please fix this?
+> > 
+> > Hmmm... moving target.  I'm trying to get in touch with Konrad
+> > to see if we can determine what is going on.
+> 
+> See above.
+> 
+> > The good news is that there seems to be an increasing number
+> > of people contributing to and building things on top of
+> > cleancache/frontswap stuff.  The bad news is that it is difficult
+> > to avoid ordering dependencies that affect -next.  My apologies
+> > and if you have any dependency-savvy processes that would solve
+> > this that we are not using, please let me/us know.
+> 
+> Well, if anyone had bothered to tell me, I could have reordered the
+> trees.  However, that does not change the fact that the staging tree is
+> now broken on its own.  Which means that Greg can't even do unit testing
+> on his tree with your code in it. :-(
 
-	Sam
+Yikes. Stephen, if it is not too much trouble could you move my tree up
+just a notch (or a couple) in your awesome build system? I hadn't realized
+this dependency (thought it is obvious in hindsight).
+
+Thanks!
+
+P.S.
+That won't fix Greg building his own linux-tree by itself, and the option of
+using CONFIG_BROKEN should work just fine until 3.4 and which point that can be
+reverted.
