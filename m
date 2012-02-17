@@ -1,73 +1,70 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: build failure after merge of the final tree (akpm
- tree related)
-Date: Fri, 17 Feb 2012 17:07:40 +1100
-Message-ID: <1329458860.2892.57.camel@pasglop>
-References: <20120217163057.8af53b853b36365b7fff203c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (akpm tree
+ related)
+Date: Fri, 17 Feb 2012 21:20:37 +1100
+Message-ID: <20120217212037.0859c427418b73b2cb17428d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__17_Feb_2012_21_20_37_+1100_.F8CEvWcVe.plEaP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:53143 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751006Ab2BQGIA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Feb 2012 01:08:00 -0500
-In-Reply-To: <20120217163057.8af53b853b36365b7fff203c@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43631 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752346Ab2BQKUs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Feb 2012 05:20:48 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Konstantin Khlebnikov <khlebnikov@openvz.org>
 
-On Fri, 2012-02-17 at 16:30 +1100, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
-> 
-> In file included from include/linux/posix_types.h:47:0,
->                  from include/linux/types.h:17,
->                  from include/linux/page-flags.h:8,
->                  from kernel/bounds.c:9:
-> arch/powerpc/include/asm/posix_types.h:15:14: error: conflicting types for '__kernel_size_t'
-> arch/powerpc/include/asm/posix_types.h:14:22: note: previous declaration of '__kernel_size_t' was here
-> In file included from include/linux/page-flags.h:8:0,
->                  from kernel/bounds.c:9:
-> include/linux/types.h:68:1: error: unknown type name '__kernel_ssize_t'
-> 
-> Caused by commit a9dbe86e5995 ("powerpc: use generic posix_types.h").
-> 
-> This think was pointed out a couple of days ago, so maybe Andrew needs a
-> newer version of the patch.
+--Signature=_Fri__17_Feb_2012_21_20_37_+1100_.F8CEvWcVe.plEaP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I pointed that out to Peter a while back, maybe it got lost ...
+Hi Andrew,
 
+Today's linux-next fails to build (s390 allnoconfig) like this:
+
+In file included from arch/s390/mm/maccess.c:15:
+include/linux/gfp.h: In function 'gfp_zonelist':
+include/linux/gfp.h:267: error: '__enabled_CONFIG_NUMA' undeclared (first u=
+se in this function)
+include/linux/gfp.h:267: error: (Each undeclared identifier is reported onl=
+y once
+include/linux/gfp.h:267: error: for each function it appears in.)
+include/linux/gfp.h:267: error: '__enabled_CONFIG_NUMA_MODULE' undeclared (=
+first use in this function)
+
+and many more.  This also happens in other architectures and configs but
+(obviously) not all builds.
+
+Presumably caused by commit 053361e1a072 ("mm: replace NUMA_BUILD with
+IS_ENABLED(CONFIG_NUMA)").
+
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> I added this fix patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 17 Feb 2012 16:25:48 +1100
-> Subject: [PATCH] powerpc: use generic posix_types.h fix
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/powerpc/include/asm/posix_types.h |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/posix_types.h b/arch/powerpc/include/asm/posix_types.h
-> index 1fbe027f..f139325 100644
-> --- a/arch/powerpc/include/asm/posix_types.h
-> +++ b/arch/powerpc/include/asm/posix_types.h
-> @@ -12,7 +12,7 @@ typedef unsigned long	__kernel_old_dev_t;
->  #define __kernel_old_dev_t __kernel_old_dev_t
->  #else
->  typedef unsigned int	__kernel_size_t;
-> -typedef int		__kernel_size_t;
-> +typedef int		__kernel_ssize_t;
->  typedef long		__kernel_ptrdiff_t;
->  #define __kernel_size_t __kernel_size_t
->  
-> -- 
-> 1.7.9
-> 
+--Signature=_Fri__17_Feb_2012_21_20_37_+1100_.F8CEvWcVe.plEaP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPPin1AAoJEECxmPOUX5FEENEP/2vnZNeHkVzoaeDqQ7Kcp+qw
+EjrPMxPzeHyjooOcpPJlHQx7XM8F7wf1dhcrlwdFKA35pk8H9pRDIR3XDjMtMxyO
+mrKoblwQ6kGcHmcA3WK4QJ3nMHI/vAQHHKI9A4KbTyxojW2JHE5t4SDY/IG0OV17
+rZkr8ejuwVfXdNkpBWoc8O6+IYF7PDXJXYyftGerT3Yw/7/g4i5hx9mPFOU9jtSi
+dJSkUHt9zZEubBEQdelhObM1gpuJKSkxxoFwYAfUYygjvw6UI13sVYRaTCA1RHUr
+gcFvFJQBO9XUcnIvcMa7cC1yhMO5Nxlnr4bGW5BLpuwp6QV/2snEkbYm/tP/BV7P
+TinmLCSSLia3TCCI3nhy8RRwC7JpvIZ2eI6P5+bhvWZXvKnFITFjmb7OzEY288Qa
+dUvbWzY8G0W1mrrNCPHxXaIn4m8gMW4KTzcA2GeMttyKckP5kGxu2Tdk98XRtFvj
+inIS/quqSjSQ5h4VLya2dSmK+QfSTbK9mtmEJcUNGhboMU+vZSL/CAyV8HyDW3fp
+RiSVd3KVvrm/DbtuKvmM7HowMLJOnjMGhfvs+hPdAdBy4fWjn2OhPlhIBD/K9X8S
+LfP0eXM6xAAeik3sgVd0fXCv29tGM9yg71dFSqd4mXl8BVdVcFmOWHRjwIRsMutR
+k36QFLwd21JSaKYZB3wL
+=suKi
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__17_Feb_2012_21_20_37_+1100_.F8CEvWcVe.plEaP--
