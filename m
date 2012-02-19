@@ -1,41 +1,32 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH] mm: add config NUMA stub to all architectures
-Date: Sun, 19 Feb 2012 10:12:29 -0800
-Message-ID: <4F413B8D.5080307@xenotime.net>
-References: <4F3E42E0.4030108@openvz.org>	<20120217120815.25909.15632.stgit@zurg>	<20120217123037.ecfc5dd9.akpm@linux-foundation.org> <CAMuHMdUYCGoZoUHWMtMCwAJ2ofweaeLF3U89P5EvrNGcn=6apw@mail.gmail.com>
+From: "Robert Walter" <robertwalter0124@suomi24.fi>
+Subject: (unknown)
+Date: Sun, 19 Feb 2012 15:03:57 +0100
+Message-ID: <201202191344.q1JDir0M005535@mail.snowbee.biz>
+Reply-To: <robertwalter0124@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain;
+	charset="Windows-1251"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdUYCGoZoUHWMtMCwAJ2ofweaeLF3U89P5EvrNGcn=6apw@mail.gmail.com>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Konstantin Khlebnikov <khlebnikov@openvz.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>, Michal Marek <mmarek@suse.cz>, linux-kbuild@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.snowbee.biz ([220.229.57.152]:47977 "EHLO mail.snowbee.biz"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754522Ab2BSSnx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 19 Feb 2012 13:43:53 -0500
+Subject: 
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 
-On 02/19/2012 09:01 AM, Geert Uytterhoeven wrote:
-> On Fri, Feb 17, 2012 at 21:30, Andrew Morton<akpm@linux-foundation.org>  wrote:
->> On Fri, 17 Feb 2012 16:08:15 +0400
->> Konstantin Khlebnikov<khlebnikov@openvz.org>  wrote:
->>
->>> Config NUMA must be defined for all architectures,
->>> otherwise IS_ENABLED(CONFIG_NUMA) does not work.
->>> Some arch-specific Kconfig already has this stub.
->>> This patch adds it to all remaining.
->>
->> It would be better to teach IS_ENABLED() to handle this situation.  I
->> don't think there's a way of doing this with cpp :(
->>
->> This limitation makes IS_ENABLED pretty dangerous, doesn't it?  It
->> makes it very easy to introduce build breakage with unexpected Kconfig
->> combinations.
->
-> Indeed. Recently I discovered IS_ENABLED() and started recommending it
-> to people for new code. But now I've seen the CONFIG_NUMA breakage,
-> I no longer think this is a good recommendation.
+>From Robert Walter (For Trustees)
+Managing Partner (Stevens & Walter)
+London - United Kingdom.
 
+Notification of Bequest
 
-adding Michal & linux-kbuild to cc: list.
+On behalf of Stevens and Walter Chambers, Trustees and Executors of the estate of Late Kaiser Hartmann, I once again try to notify you as my earlier letter was returned undelivered. I hereby attempt to reach you again by this same email address. 
 
--- 
-~Randy
+Please if I reach you, as I am hopeful, endeavor to get back to me as soon as possible for further details. 
+
+I look forward to your prompt response.
+
+Yours sincerely,
+Robert Walter
