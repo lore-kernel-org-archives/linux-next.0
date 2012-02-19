@@ -1,32 +1,38 @@
-From: "Robert Walter" <robertwalter0124@suomi24.fi>
-Subject: (unknown)
-Date: Sun, 19 Feb 2012 15:03:57 +0100
-Message-ID: <201202191344.q1JDir0M005535@mail.snowbee.biz>
-Reply-To: <robertwalter0124@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Subject: [PATCH] i740fb: fix compile error when CONFIG_MTRR is not selected
+Date: Sun, 19 Feb 2012 21:33:31 +0000
+Message-ID: <1329687211-6545-1-git-send-email-FlorianSchandinat@gmx.de>
+References: <20120216162900.e2dd164732084f48e5b239f0@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.snowbee.biz ([220.229.57.152]:47977 "EHLO mail.snowbee.biz"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754522Ab2BSSnx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 19 Feb 2012 13:43:53 -0500
-Subject: 
+Received: from mailout-de.gmx.net ([213.165.64.22]:49523 "HELO
+	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755162Ab2BSVMo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 19 Feb 2012 16:12:44 -0500
+In-Reply-To: <20120216162900.e2dd164732084f48e5b239f0@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
+To: linux-fbdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Ondrej Zary <linux@rainbow-software.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
->From Robert Walter (For Trustees)
-Managing Partner (Stevens & Walter)
-London - United Kingdom.
+Signed-off-by: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+---
+ drivers/video/i740fb.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Notification of Bequest
-
-On behalf of Stevens and Walter Chambers, Trustees and Executors of the estate of Late Kaiser Hartmann, I once again try to notify you as my earlier letter was returned undelivered. I hereby attempt to reach you again by this same email address. 
-
-Please if I reach you, as I am hopeful, endeavor to get back to me as soon as possible for further details. 
-
-I look forward to your prompt response.
-
-Yours sincerely,
-Robert Walter
+diff --git a/drivers/video/i740fb.c b/drivers/video/i740fb.c
+index 8be0302..fe574d8 100644
+--- a/drivers/video/i740fb.c
++++ b/drivers/video/i740fb.c
+@@ -1179,9 +1179,9 @@ static void __devexit i740fb_remove(struct pci_dev *dev)
+ 	struct fb_info *info = pci_get_drvdata(dev);
+ 
+ 	if (info) {
+-#ifdef CONFIG_MTRR
+ 		struct i740fb_par *par = info->par;
+ 
++#ifdef CONFIG_MTRR
+ 		if (par->mtrr_reg >= 0) {
+ 			mtrr_del(par->mtrr_reg, 0, 0);
+ 			par->mtrr_reg = -1;
+-- 
+1.7.2.5
