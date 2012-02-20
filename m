@@ -1,33 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the remoteproc tree with the scsi tree
-Date: Mon, 20 Feb 2012 15:02:15 +1100
-Message-ID: <20120220150215.68e88ae1bf96e5790ecd19fd@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi-post-merge tree with Linus'
+ tree
+Date: Mon, 20 Feb 2012 15:50:24 +1100
+Message-ID: <20120220155024.f627530239322e4ee92c9b9d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__20_Feb_2012_15_02_15_+1100_M5V7eJ59ClSwVIct"
+ boundary="Signature=_Mon__20_Feb_2012_15_50_24_+1100_cSLP_IqeszHFAb6u"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41149 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:36908 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752445Ab2BTECc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 19 Feb 2012 23:02:32 -0500
+	with ESMTP id S1751933Ab2BTEug (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 19 Feb 2012 23:50:36 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Rusty Russell <rusty@rustcorp.com.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
---Signature=_Mon__20_Feb_2012_15_02_15_+1100_M5V7eJ59ClSwVIct
+--Signature=_Mon__20_Feb_2012_15_50_24_+1100_cSLP_IqeszHFAb6u
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ohad,
+Hi Andrew,
 
-Today's linux-next merge of the remoteproc tree got a conflict in
-include/linux/virtio_ids.h between commit 4fe74b1cb051 ("[SCSI]
-virtio-scsi: SCSI driver for QEMU based virtual machines") from the scsi
-tree and commit bcabbccabffe ("rpmsg: add virtio-based remote processor
-messaging bus") from the remoteproc tree.
+Today's linux-next merge of the akpm tree got a conflict in
+arch/x86/kernel/process_32.c between commit 34ddc81a230b ("i387:
+re-introduce FPU state preloading at context switch time") from Linus'
+tree and commit "x86: use this_cpu_xxx to replace percpu_xxx funcs" from
+the akpm tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -35,39 +36,41 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/virtio_ids.h
-index c5d8455,b37c521..0000000
---- a/include/linux/virtio_ids.h
-+++ b/include/linux/virtio_ids.h
-@@@ -34,7 -34,7 +34,8 @@@
-  #define VIRTIO_ID_CONSOLE	3 /* virtio console */
-  #define VIRTIO_ID_RNG		4 /* virtio ring */
-  #define VIRTIO_ID_BALLOON	5 /* virtio balloon */
-+ #define VIRTIO_ID_RPMSG		7 /* virtio remote processor messaging */
- +#define VIRTIO_ID_SCSI		8 /* virtio scsi */
-  #define VIRTIO_ID_9P		9 /* 9p virtio console */
+diff --cc arch/x86/kernel/process_32.c
+index 80bfe1a,6acfb80..0000000
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@@ -358,9 -377,7 +358,9 @@@ __switch_to(struct task_struct *prev_p
+  	if (prev->gs | next->gs)
+  		lazy_load_gs(next->gs);
  =20
-  #endif /* _LINUX_VIRTIO_IDS_H */
+ +	switch_fpu_finish(next_p, fpu);
+ +
+- 	percpu_write(current_task, next_p);
++ 	__this_cpu_write(current_task, next_p);
+ =20
+  	return prev_p;
+  }
 
---Signature=_Mon__20_Feb_2012_15_02_15_+1100_M5V7eJ59ClSwVIct
+--Signature=_Mon__20_Feb_2012_15_50_24_+1100_cSLP_IqeszHFAb6u
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPQcXHAAoJEECxmPOUX5FEgrUP/3UB2jBABH30nX7MLx+CsbSd
-76Odk14DkcaVvUe4eRSSLpnYuypSs9PK882H6aganaSiglBkJA1YMPuSy70Pj1uG
-DhcjCWEVWtPPKAyJt+fsOXroFn33ihB0oa8bboiV9G0dBjNuP31EqIgYMZj/9yx7
-OwoptEAZamz88cWOrbRUDKsbCOZVoyQOdZJACdobQ39DgXJ24Vl9jwkF99hb93kP
-ROUklHW3nYjr3CCyKzuhBAeSyFxy1gTJZQlq6eTz05G2vnT0U+DjcFCwCy6pGd6t
-XR+EPxgoJcK++E1tO15TQrBfzb5dP+l9I/gAUjcFcmSY9moAKxSdvg1h4XQroQ6K
-lFd++ZnWff03tAvPVltCBriv6s+80GbRLnNhqcZsMKnbA7rHDL81iKQP94bggyeC
-WSqUfWImUwwMutt4tC+DzVC+C7jxNS4kL7PUCRpMOrv+f90Mcalw7ig2yKAcuXtz
-fl7G3jbpXMDCxeUMLDL8oG/ctaayameTMIQ7b/a0L9HJt2C4oH0Y80Mg3w2u/ux6
-rGG2W12jgwfGDeJdYbN1/KW2JjkaSJwtWGxhEYzu3Wvie8nZbvX5c8fil3feychk
-s/gTs9URgX+goy9YX6tBxPOv8JqfjU4RM23QMbl/bUDbqcsSoIJlXWU/yh/4SLRE
-ULDIs9dznWMf/InK08op
-=t+fT
+iQIcBAEBCAAGBQJPQdEQAAoJEECxmPOUX5FE3mEP/jK9LY7QeQe0UZEIjsRabbED
+bemAFkwLZiN/iu73SWqwCIZBXJ82rBgo+Q0maTDn5A22PGLcoTXVJBy+UDNiTD2K
+0l1vunO0o6qW2zQw9ksNXGmPZF9PuVIZ7+hRGlaYXFVpL3eKFkf5eCb5KWPGzZ8L
+ocLTbjHcJ1QPhQYjOnUMyjSMjLy2rYazro7HDTcdpowC8mFsuSDV+K4nnWXgcI3/
+W2EI6Zxwv9ed6Ye/sI3VUW+XNVxwrxpihZkaT4RM+8UQMjX1fR1Foj6B3OzehdUr
+atF+CJuj/+yYvNMqGN/fS3DrwojkhaUf41Od4WqQcblHMsvp8ioh39Nelv1eZ9wv
+EAk/BuMkOQ2Z6Crvt8qGqvj5pBeJxhbCnMlNJc9Glz5iPUMvJhoJpP4s7vGUCQ5e
+VUNPnsvCfqQ3STItlsIyIOBMMocDzpDKZQKsKw2FkwcqfKMoj5xyWCHVby7FZce0
+tPsd4HsIFBntCPpHDdZmkv7kcEDa6ZFoRcW6WXFI/G7o2QwAB1frp7RRPZxBVf1s
+tddDfJygigjnmsyd8rL0supX0tViMBb6BqpwKBgNtE5JzAAGd7cse/YF3/J0iIUR
+CWCsSJcypGHLuZRRLdYOcTBy7WRI7JYiPh+QkQjKXohm1e4HNjXIpGdYk5QE130s
+e/CoAUtQ0+J90ZaxScgk
+=ufz9
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__20_Feb_2012_15_02_15_+1100_M5V7eJ59ClSwVIct--
+--Signature=_Mon__20_Feb_2012_15_50_24_+1100_cSLP_IqeszHFAb6u--
