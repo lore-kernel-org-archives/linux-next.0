@@ -1,44 +1,55 @@
-From: Ondrej Zary <linux@rainbow-software.org>
-Subject: Re: [PATCH] i740fb: fix compile error when CONFIG_MTRR is not selected
-Date: Mon, 20 Feb 2012 21:49:47 +0100
-Message-ID: <201202202149.52869.linux@rainbow-software.org>
-References: <20120216162900.e2dd164732084f48e5b239f0@canb.auug.org.au> <1329687211-6545-1-git-send-email-FlorianSchandinat@gmx.de>
-Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1329687211-6545-1-git-send-email-FlorianSchandinat@gmx.de>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Michael Neuling <mikey@neuling.org>
+Subject: Re: [PATCH] powerpc/of: add OF_DYNAMIC for chroma
+Date: Tue, 21 Feb 2012 10:16:10 +1100
+Message-ID: <7970.1329779770@neuling.org>
+References: <5145.1329691681@neuling.org> <5A594805-C5CE-46E7-A15F-DF86E6FE6C42@pobox.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:38807 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753733Ab2BTXQO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Feb 2012 18:16:14 -0500
+In-reply-to: <5A594805-C5CE-46E7-A15F-DF86E6FE6C42@pobox.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jimi Xenidis <jimix@pobox.com>
+Cc: grant.likely@secretlab.ca, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, benh@kernel.crashing.org
 
-On Sunday 19 February 2012 22:33:31 Florian Tobias Schandinat wrote:
-> Signed-off-by: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-> ---
->  drivers/video/i740fb.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/video/i740fb.c b/drivers/video/i740fb.c
-> index 8be0302..fe574d8 100644
-> --- a/drivers/video/i740fb.c
-> +++ b/drivers/video/i740fb.c
-> @@ -1179,9 +1179,9 @@ static void __devexit i740fb_remove(struct pci_dev
-> *dev) struct fb_info *info = pci_get_drvdata(dev);
->
->  	if (info) {
-> -#ifdef CONFIG_MTRR
->  		struct i740fb_par *par = info->par;
->
-> +#ifdef CONFIG_MTRR
->  		if (par->mtrr_reg >= 0) {
->  			mtrr_del(par->mtrr_reg, 0, 0);
->  			par->mtrr_reg = -1;
+Grant, 
 
-Thanks for fixing my stupid bug. I thought that I tested it without 
-CONFIG_MTRR. But obviously didn't.
+This seems to be broken in your tree (since 301b605ff6), so you should
+probably pick up this patch.
 
--- 
-Ondrej Zary
+Mikey
+
+
+In message <5A594805-C5CE-46E7-A15F-DF86E6FE6C42@pobox.com> you wrote:
+> 
+> On Feb 19, 2012, at 4:48 PM, Michael Neuling wrote:
+> 
+> > linux next-20120217 compiling ppc64e_defconfig fails with:
+> >=20
+> > arch/powerpc/platforms/wsp/h8.c: In function 'wsp_h8_getaddr':
+> > arch/powerpc/platforms/wsp/h8.c:116: error: implicit declaration of =
+> function 'of_detach_node'
+> >=20
+> > The below fixes this by selecting the new OF_DYNAMIC when PPC_CHROMA.
+> >=20
+> > Signed-off-by: Michael Neuling <mikey@neuling.org>
+> 
+> Acked-by: Jimi Xenidis <jimix@pobox.com>
+> 
+> >=20
+> > diff --git a/arch/powerpc/platforms/wsp/Kconfig =
+> b/arch/powerpc/platforms/wsp/Kconfig
+> > index 57d22a2..79d2225 100644
+> > --- a/arch/powerpc/platforms/wsp/Kconfig
+> > +++ b/arch/powerpc/platforms/wsp/Kconfig
+> > @@ -25,6 +25,7 @@ config PPC_CHROMA
+> > 	bool "PowerEN PCIe Chroma Card"
+> > 	select EPAPR_BOOT
+> > 	select PPC_WSP
+> > +	select OF_DYNAMIC
+> > 	default y
+> >=20
+> > endmenu
+> 
