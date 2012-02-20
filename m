@@ -1,56 +1,48 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [PATCH -next] ext4: get rid of compile warning
-Date: Mon, 20 Feb 2012 13:56:55 +0100
-Message-ID: <20120220125655.GA2651@osiris.boeblingen.de.ibm.com>
-Mime-Version: 1.0
+From: Jimi Xenidis <jimix@pobox.com>
+Subject: Re: [PATCH] powerpc/of: add OF_DYNAMIC for chroma
+Date: Mon, 20 Feb 2012 08:12:27 -0600
+Message-ID: <5A594805-C5CE-46E7-A15F-DF86E6FE6C42@pobox.com>
+References: <5145.1329691681@neuling.org>
+Mime-Version: 1.0 (Apple Message framework v1084)
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp12.uk.ibm.com ([195.75.94.108]:36666 "EHLO
-	e06smtp12.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751129Ab2BTM5A (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Feb 2012 07:57:00 -0500
-Received: from /spool/local
-	by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-	Mon, 20 Feb 2012 12:56:58 -0000
-Received: from d06av10.portsmouth.uk.ibm.com (d06av10.portsmouth.uk.ibm.com [9.149.37.251])
-	by d06nrmr1507.portsmouth.uk.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id q1KCuuNi2236568
-	for <linux-next@vger.kernel.org>; Mon, 20 Feb 2012 12:56:56 GMT
-Received: from d06av10.portsmouth.uk.ibm.com (loopback [127.0.0.1])
-	by d06av10.portsmouth.uk.ibm.com (8.14.4/8.13.1/NCO v10.0 AVout) with ESMTP id q1JMqgLE010144
-	for <linux-next@vger.kernel.org>; Sun, 19 Feb 2012 17:52:43 -0500
-Content-Disposition: inline
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:55529 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752519Ab2BTOMc convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Feb 2012 09:12:32 -0500
+Received: by ggnh1 with SMTP id h1so2556933ggn.19
+        for <linux-next@vger.kernel.org>; Mon, 20 Feb 2012 06:12:32 -0800 (PST)
+In-Reply-To: <5145.1329691681@neuling.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org
+To: Michael Neuling <mikey@neuling.org>
+Cc: grant.likely@secretlab.ca, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, benh@kernel.crashing.org
 
-Get rid of this one:
 
-fs/ext4/balloc.c: In function 'ext4_wait_block_bitmap':
-fs/ext4/balloc.c:405:3: warning: format '%llu' expects argument of
-  type 'long long unsigned int', but argument 6 has type 'sector_t' [-Wformat]
+On Feb 19, 2012, at 4:48 PM, Michael Neuling wrote:
 
-Happens because sector_t is u64 (unsigned long long) or unsigned long
-dependent on CONFIG_64BIT.
+> linux next-20120217 compiling ppc64e_defconfig fails with:
+> 
+> arch/powerpc/platforms/wsp/h8.c: In function 'wsp_h8_getaddr':
+> arch/powerpc/platforms/wsp/h8.c:116: error: implicit declaration of function 'of_detach_node'
+> 
+> The below fixes this by selecting the new OF_DYNAMIC when PPC_CHROMA.
+> 
+> Signed-off-by: Michael Neuling <mikey@neuling.org>
 
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
----
- fs/ext4/balloc.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Acked-by: Jimi Xenidis <jimix@pobox.com>
 
-diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-index 95c87ab..c355890 100644
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -404,7 +404,7 @@ int ext4_wait_block_bitmap(struct super_block *sb, ext4_group_t block_group,
- 	if (!buffer_uptodate(bh)) {
- 		ext4_error(sb, "Cannot read block bitmap - "
- 			   "block_group = %u, block_bitmap = %llu",
--			   block_group, bh->b_blocknr);
-+			   block_group, (unsigned long long) bh->b_blocknr);
- 		return 1;
- 	}
- 	/* Panic or remount fs read-only if block bitmap is invalid */
--- 
-1.7.9.1
+> 
+> diff --git a/arch/powerpc/platforms/wsp/Kconfig b/arch/powerpc/platforms/wsp/Kconfig
+> index 57d22a2..79d2225 100644
+> --- a/arch/powerpc/platforms/wsp/Kconfig
+> +++ b/arch/powerpc/platforms/wsp/Kconfig
+> @@ -25,6 +25,7 @@ config PPC_CHROMA
+> 	bool "PowerEN PCIe Chroma Card"
+> 	select EPAPR_BOOT
+> 	select PPC_WSP
+> +	select OF_DYNAMIC
+> 	default y
+> 
+> endmenu
