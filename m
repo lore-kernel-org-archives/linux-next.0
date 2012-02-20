@@ -1,58 +1,44 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH -next] ext4: get rid of compile warning
-Date: Mon, 20 Feb 2012 08:00:05 -0800
-Message-ID: <4F426E05.1000600@xenotime.net>
-References: <20120220125655.GA2651@osiris.boeblingen.de.ibm.com>
+From: Ondrej Zary <linux@rainbow-software.org>
+Subject: Re: [PATCH] i740fb: fix compile error when CONFIG_MTRR is not selected
+Date: Mon, 20 Feb 2012 21:49:47 +0100
+Message-ID: <201202202149.52869.linux@rainbow-software.org>
+References: <20120216162900.e2dd164732084f48e5b239f0@canb.auug.org.au> <1329687211-6545-1-git-send-email-FlorianSchandinat@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:40913 "HELO
-	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751301Ab2BTQAL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Feb 2012 11:00:11 -0500
-In-Reply-To: <20120220125655.GA2651@osiris.boeblingen.de.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1329687211-6545-1-git-send-email-FlorianSchandinat@gmx.de>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 02/20/2012 04:56 AM, Heiko Carstens wrote:
-> Get rid of this one:
->
-> fs/ext4/balloc.c: In function 'ext4_wait_block_bitmap':
-> fs/ext4/balloc.c:405:3: warning: format '%llu' expects argument of
->    type 'long long unsigned int', but argument 6 has type 'sector_t' [-Wformat]
->
-> Happens because sector_t is u64 (unsigned long long) or unsigned long
-> dependent on CONFIG_64BIT.
->
-> Signed-off-by: Heiko Carstens<heiko.carstens@de.ibm.com>
-
-I sent the same patch on Jan. 30.  I wonder what happened to it?
-
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-
-Thanks.
-
+On Sunday 19 February 2012 22:33:31 Florian Tobias Schandinat wrote:
+> Signed-off-by: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
 > ---
->   fs/ext4/balloc.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
+>  drivers/video/i740fb.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
 >
-> diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-> index 95c87ab..c355890 100644
-> --- a/fs/ext4/balloc.c
-> +++ b/fs/ext4/balloc.c
-> @@ -404,7 +404,7 @@ int ext4_wait_block_bitmap(struct super_block *sb, ext4_group_t block_group,
->   	if (!buffer_uptodate(bh)) {
->   		ext4_error(sb, "Cannot read block bitmap - "
->   			   "block_group = %u, block_bitmap = %llu",
-> -			   block_group, bh->b_blocknr);
-> +			   block_group, (unsigned long long) bh->b_blocknr);
->   		return 1;
->   	}
->   	/* Panic or remount fs read-only if block bitmap is invalid */
+> diff --git a/drivers/video/i740fb.c b/drivers/video/i740fb.c
+> index 8be0302..fe574d8 100644
+> --- a/drivers/video/i740fb.c
+> +++ b/drivers/video/i740fb.c
+> @@ -1179,9 +1179,9 @@ static void __devexit i740fb_remove(struct pci_dev
+> *dev) struct fb_info *info = pci_get_drvdata(dev);
+>
+>  	if (info) {
+> -#ifdef CONFIG_MTRR
+>  		struct i740fb_par *par = info->par;
+>
+> +#ifdef CONFIG_MTRR
+>  		if (par->mtrr_reg >= 0) {
+>  			mtrr_del(par->mtrr_reg, 0, 0);
+>  			par->mtrr_reg = -1;
 
+Thanks for fixing my stupid bug. I thought that I tested it without 
+CONFIG_MTRR. But obviously didn't.
 
 -- 
-~Randy
+Ondrej Zary
