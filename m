@@ -1,69 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd tree
-Date: Tue, 21 Feb 2012 12:31:17 +1100
-Message-ID: <20120221123117.2301242c47d6c7265263129a@canb.auug.org.au>
+From: Ted Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH -next] ext4: get rid of compile warning
+Date: Mon, 20 Feb 2012 22:13:48 -0500
+Message-ID: <20120221031348.GD25249@thunk.org>
+References: <20120220125655.GA2651@osiris.boeblingen.de.ibm.com>
+ <4F426E05.1000600@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__21_Feb_2012_12_31_17_+1100_0xExhL/ushYzmwsb"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48344 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752390Ab2BUBb2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Feb 2012 20:31:28 -0500
+Received: from li9-11.members.linode.com ([67.18.176.11]:33864 "EHLO
+	test.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750761Ab2BUDNy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Feb 2012 22:13:54 -0500
+Content-Disposition: inline
+In-Reply-To: <4F426E05.1000600@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, linux-next@vger.kernel.org
 
---Signature=_Tue__21_Feb_2012_12_31_17_+1100_0xExhL/ushYzmwsb
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Feb 20, 2012 at 08:00:05AM -0800, Randy Dunlap wrote:
+> On 02/20/2012 04:56 AM, Heiko Carstens wrote:
+> >Get rid of this one:
+> >
+> >fs/ext4/balloc.c: In function 'ext4_wait_block_bitmap':
+> >fs/ext4/balloc.c:405:3: warning: format '%llu' expects argument of
+> >   type 'long long unsigned int', but argument 6 has type 'sector_t' [-Wformat]
+> >
+> >Happens because sector_t is u64 (unsigned long long) or unsigned long
+> >dependent on CONFIG_64BIT.
+> >
+> >Signed-off-by: Heiko Carstens<heiko.carstens@de.ibm.com>
+> 
+> I sent the same patch on Jan. 30.  I wonder what happened to it?
+> 
+> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
-Hi Samuel,
+Applied, thanks.  Sorry, Randy for not getting to your patch before
+this.  I tend to review and apply patches in a fairly bursty fashion.
 
-After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
-
-drivers/built-in.o: In function `twl6040_driver_init':
-twl6040-core.c:(.init.text+0xb147): undefined reference to `i2c_register_dr=
-iver'
-drivers/built-in.o: In function `twl6040_probe':
-twl6040-core.c:(.devinit.text+0x7f22): undefined reference to `regmap_init_=
-i2c'
-drivers/built-in.o: In function `twl6040_driver_exit':
-twl6040-core.c:(.exit.text+0x67a): undefined reference to `i2c_del_driver'
-
-
-Caused by commit ded0df851077 ("mfd: Convert twl6040 to an i2c driver,
-and separate it from twl core").
-
-I have used the mfd tree from next-20120220 for today.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__21_Feb_2012_12_31_17_+1100_0xExhL/ushYzmwsb
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPQvPlAAoJEECxmPOUX5FEh6IP/2ouTJejSruH9AIQgEfdqMm6
-6KOU5nh6d4MXcpIrOAEpAbVRn0vBTVnBOXeGiKcWCGZNi1BRhSTDPWPYAcXYT1Kw
-UDDXCOa2c1VGySdAWTD9kRQ+E9a1E9pP2QF+SfjJOnDKaCMDJWxNdK6EJY9VsVFB
-GDkYgbah76X/MSvCnFzZAcVA+4CfoljOIBULT9PmhN+UenYnYrY8LpITenJJTO6Q
-tt4sdRkcdGbvXrhBWBUAhjGQcqpQmeI5nNul28FdKcmzUq70Yy3J4lXRjE2aHx03
-zkRc2axfOX9Ule6f0+Mv89OgBctYvB0nGUoNUnc33V4j8AHr8fOZUlS0jmWU91Ub
-c7M919P3mMPZE2xxoPZyUoTGOuxe0weh7AwCU4bXIQhnBKvASNK+0qNd1sGbhHAd
-zD101red8VjOvg8OEdZq5eVj/wyzSbWda92GxrM5Ukum4y4ZapOMe4XBWRGq/A/F
-TlL/2m98lY1I00UfX1HwQK9mogQJ741PdDmReCTErQCV4h5kT7K4C4/U7sDtHQK9
-Am3P/BdYw2F7munIPrYpGiF6uX/Wzmh4iBnVSQzER2a5Qb4gLVhLWoaKJaOn0kn2
-zJiLYrOETuzoB4KMGAV/plSycuTtMh1KZdBGo3em7UMH/O3+zyM7Y7Qg8pSXZPWJ
-YwJv8bhEIgFAeo74K/ff
-=4J+9
------END PGP SIGNATURE-----
-
---Signature=_Tue__21_Feb_2012_12_31_17_+1100_0xExhL/ushYzmwsb--
+       	        	      	 	    	  - Ted
