@@ -1,55 +1,69 @@
-From: Michael Neuling <mikey@neuling.org>
-Subject: Re: [PATCH] powerpc/of: add OF_DYNAMIC for chroma
-Date: Tue, 21 Feb 2012 10:16:10 +1100
-Message-ID: <7970.1329779770@neuling.org>
-References: <5145.1329691681@neuling.org> <5A594805-C5CE-46E7-A15F-DF86E6FE6C42@pobox.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Tue, 21 Feb 2012 12:31:17 +1100
+Message-ID: <20120221123117.2301242c47d6c7265263129a@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__21_Feb_2012_12_31_17_+1100_0xExhL/ushYzmwsb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:38807 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753733Ab2BTXQO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Feb 2012 18:16:14 -0500
-In-reply-to: <5A594805-C5CE-46E7-A15F-DF86E6FE6C42@pobox.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48344 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752390Ab2BUBb2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Feb 2012 20:31:28 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jimi Xenidis <jimix@pobox.com>
-Cc: grant.likely@secretlab.ca, linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, benh@kernel.crashing.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-Grant, 
+--Signature=_Tue__21_Feb_2012_12_31_17_+1100_0xExhL/ushYzmwsb
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This seems to be broken in your tree (since 301b605ff6), so you should
-probably pick up this patch.
+Hi Samuel,
 
-Mikey
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+drivers/built-in.o: In function `twl6040_driver_init':
+twl6040-core.c:(.init.text+0xb147): undefined reference to `i2c_register_dr=
+iver'
+drivers/built-in.o: In function `twl6040_probe':
+twl6040-core.c:(.devinit.text+0x7f22): undefined reference to `regmap_init_=
+i2c'
+drivers/built-in.o: In function `twl6040_driver_exit':
+twl6040-core.c:(.exit.text+0x67a): undefined reference to `i2c_del_driver'
 
 
-In message <5A594805-C5CE-46E7-A15F-DF86E6FE6C42@pobox.com> you wrote:
-> 
-> On Feb 19, 2012, at 4:48 PM, Michael Neuling wrote:
-> 
-> > linux next-20120217 compiling ppc64e_defconfig fails with:
-> >=20
-> > arch/powerpc/platforms/wsp/h8.c: In function 'wsp_h8_getaddr':
-> > arch/powerpc/platforms/wsp/h8.c:116: error: implicit declaration of =
-> function 'of_detach_node'
-> >=20
-> > The below fixes this by selecting the new OF_DYNAMIC when PPC_CHROMA.
-> >=20
-> > Signed-off-by: Michael Neuling <mikey@neuling.org>
-> 
-> Acked-by: Jimi Xenidis <jimix@pobox.com>
-> 
-> >=20
-> > diff --git a/arch/powerpc/platforms/wsp/Kconfig =
-> b/arch/powerpc/platforms/wsp/Kconfig
-> > index 57d22a2..79d2225 100644
-> > --- a/arch/powerpc/platforms/wsp/Kconfig
-> > +++ b/arch/powerpc/platforms/wsp/Kconfig
-> > @@ -25,6 +25,7 @@ config PPC_CHROMA
-> > 	bool "PowerEN PCIe Chroma Card"
-> > 	select EPAPR_BOOT
-> > 	select PPC_WSP
-> > +	select OF_DYNAMIC
-> > 	default y
-> >=20
-> > endmenu
-> 
+Caused by commit ded0df851077 ("mfd: Convert twl6040 to an i2c driver,
+and separate it from twl core").
+
+I have used the mfd tree from next-20120220 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__21_Feb_2012_12_31_17_+1100_0xExhL/ushYzmwsb
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPQvPlAAoJEECxmPOUX5FEh6IP/2ouTJejSruH9AIQgEfdqMm6
+6KOU5nh6d4MXcpIrOAEpAbVRn0vBTVnBOXeGiKcWCGZNi1BRhSTDPWPYAcXYT1Kw
+UDDXCOa2c1VGySdAWTD9kRQ+E9a1E9pP2QF+SfjJOnDKaCMDJWxNdK6EJY9VsVFB
+GDkYgbah76X/MSvCnFzZAcVA+4CfoljOIBULT9PmhN+UenYnYrY8LpITenJJTO6Q
+tt4sdRkcdGbvXrhBWBUAhjGQcqpQmeI5nNul28FdKcmzUq70Yy3J4lXRjE2aHx03
+zkRc2axfOX9Ule6f0+Mv89OgBctYvB0nGUoNUnc33V4j8AHr8fOZUlS0jmWU91Ub
+c7M919P3mMPZE2xxoPZyUoTGOuxe0weh7AwCU4bXIQhnBKvASNK+0qNd1sGbhHAd
+zD101red8VjOvg8OEdZq5eVj/wyzSbWda92GxrM5Ukum4y4ZapOMe4XBWRGq/A/F
+TlL/2m98lY1I00UfX1HwQK9mogQJ741PdDmReCTErQCV4h5kT7K4C4/U7sDtHQK9
+Am3P/BdYw2F7munIPrYpGiF6uX/Wzmh4iBnVSQzER2a5Qb4gLVhLWoaKJaOn0kn2
+zJiLYrOETuzoB4KMGAV/plSycuTtMh1KZdBGo3em7UMH/O3+zyM7Y7Qg8pSXZPWJ
+YwJv8bhEIgFAeo74K/ff
+=4J+9
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__21_Feb_2012_12_31_17_+1100_0xExhL/ushYzmwsb--
