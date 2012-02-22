@@ -1,65 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the bluetooth tree
-Date: Wed, 22 Feb 2012 12:21:09 +1100
-Message-ID: <20120222122109.7aef5c672df3bab843214606@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the bluetooth tree
+Date: Tue, 21 Feb 2012 20:29:51 -0500 (EST)
+Message-ID: <20120221.202951.1813857124104871565.davem@davemloft.net>
+References: <20120222122109.7aef5c672df3bab843214606@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__22_Feb_2012_12_21_09_+1100_1ZIOTFP_vI53eugP"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57476 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751853Ab2BVBVZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Feb 2012 20:21:25 -0500
+Received: from shards.monkeyblade.net ([198.137.202.13]:34474 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753546Ab2BVBcE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Feb 2012 20:32:04 -0500
+In-Reply-To: <20120222122109.7aef5c672df3bab843214606@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Gustavo F. Padovan" <padovan@profusion.mobi>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "H. J. Lu" <hjl.tools@gmail.com>, "David S. Miller" <davem@davemloft.net>, Marcel Holtmann <marcel@holtmann.org>, "H. Peter Anvin" <hpa@zytor.com>
+To: sfr@canb.auug.org.au
+Cc: padovan@profusion.mobi, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hjl.tools@gmail.com, marcel@holtmann.org, hpa@zytor.com
 
---Signature=_Wed__22_Feb_2012_12_21_09_+1100_1ZIOTFP_vI53eugP
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 22 Feb 2012 12:21:09 +1100
 
-Hi Gustavo,
+> Hi Gustavo,
+> 
+> After merging the bluetooth tree, today's linux-next build
+> (x86_64_allmodconfig) failed like this:
+> 
+> net/bluetooth/hci_sock.c: In function 'hci_sock_cmsg':
+> net/bluetooth/hci_sock.c:738:8: error: 'COMPAT_USE_64BIT_TIME' undeclared (first use in this function)
+> 
+> Caused by commit aebb77ca6ad1 ("compat: Use COMPAT_USE_64BIT_TIME in the
+> Bluetooth subsystem").  That symbol doesn't exist anywhere in linux-next ...
+> 
+> I have used the bluetooth from next-20120221 for today.
+> 
+> P.S. that commit is supposedly authored by H. J. Lu but does not contain
+> a Signed-off-by from him.
 
-After merging the bluetooth tree, today's linux-next build
-(x86_64_allmodconfig) failed like this:
+That patch series was meant to go in as a group, because all of the
+subsequent patches depend upon patches earlier in the series.
 
-net/bluetooth/hci_sock.c: In function 'hci_sock_cmsg':
-net/bluetooth/hci_sock.c:738:8: error: 'COMPAT_USE_64BIT_TIME' undeclared (=
-first use in this function)
+There is zero reason you should have applied that patch into your
+bluetooth subsystem tree.  The fact that it wasn't adequately build
+tested either I find quite troubling.
 
-Caused by commit aebb77ca6ad1 ("compat: Use COMPAT_USE_64BIT_TIME in the
-Bluetooth subsystem").  That symbol doesn't exist anywhere in linux-next ...
-
-I have used the bluetooth from next-20120221 for today.
-
-P.S. that commit is supposedly authored by H. J. Lu but does not contain
-a Signed-off-by from him.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__22_Feb_2012_12_21_09_+1100_1ZIOTFP_vI53eugP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPREMFAAoJEECxmPOUX5FELwgP+wRcpY4n10je5LFlym02HqsC
-WhELue+U5i3vwZPC4VQmKEVaWqrQqTfZp3fLx4965+4ky1jblApl0eyMpkt5Jc8F
-9/FeO+nBaeNE/SGHSG0bPQAKqXIP61zX9RSvgVylcgyxAmAcNcMHIMY0T/ME6fS8
-qKAoML9O6ULhr4C7iQzqL0pfVhqmGVXLL+GWiqTwWJ8XtBOa9vDp1yjhGexpriQT
-XB7LaBBgIWJh8YqTz3xHI9zlgnaU/+fr36Vp5uk7UnXIRj1HkQ7MC38X+k8ul2i7
-rMTskrG7woUe4C2H9etgUtsHOkvpfE9r6G6p9TBpC8XYd/iFYCcCtkeluGcCuX/Z
-t8+bDQU4wXGxNMjDEgKRB9fM4ji0TUGsE+NclfXs+RcLFEANHb9wgP85edNRtshE
-6Bpe+zvGMJBax2DDNMNA0XSQhbXP5wzX3yuOU+XU1HVjvQBMHP2b6tt7JhJcT41z
-oQTaKsSLV/vHRYDM1Z6EhXF500e1R5NVSgfiIzQtRKfU7j46uW+RMbfAymZ4huCq
-ZxqpfWTYe/TimHkjGf3XuPVrXRZo/BDEDGuXMGVnjhIYVVrpxvAHGWLWGlTArhyg
-egx14MffKSEEz7Y/rBb1VLw+xrwr3vCvfaSUGxl0MnHVFu7tp/j6iSR16do04AJ8
-4ti3KIijjsnnGupyChCk
-=Xt0B
------END PGP SIGNATURE-----
-
---Signature=_Wed__22_Feb_2012_12_21_09_+1100_1ZIOTFP_vI53eugP--
+Lots of red cards for the bluetooth maintainers today.
