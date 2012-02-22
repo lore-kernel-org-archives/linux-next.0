@@ -1,77 +1,65 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: Re: [PATCH - linux-next] ARM: ptrace: Fix audit caused compile error
-Date: Tue, 21 Feb 2012 08:49:22 -0500
-Message-ID: <1329832162.2337.44.camel@localhost>
-References: <1329825855-11902-1-git-send-email-peter.ujfalusi@ti.com>
-	 <20120221131616.GI19696@mudshark.cambridge.arm.com>
-	 <20120221133044.GN22562@n2100.arm.linux.org.uk>
-	 <1329831350.2337.43.camel@localhost>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the bluetooth tree
+Date: Wed, 22 Feb 2012 12:21:09 +1100
+Message-ID: <20120222122109.7aef5c672df3bab843214606@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__22_Feb_2012_12_21_09_+1100_1ZIOTFP_vI53eugP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:23503 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752921Ab2BUNt7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Feb 2012 08:49:59 -0500
-In-Reply-To: <1329831350.2337.43.camel@localhost>
+Received: from haggis.pcug.org.au ([203.10.76.10]:57476 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751853Ab2BVBVZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Feb 2012 20:21:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Will Deacon <will.deacon@arm.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-audit@redhat.com" <linux-audit@redhat.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: "Gustavo F. Padovan" <padovan@profusion.mobi>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "H. J. Lu" <hjl.tools@gmail.com>, "David S. Miller" <davem@davemloft.net>, Marcel Holtmann <marcel@holtmann.org>, "H. Peter Anvin" <hpa@zytor.com>
 
-On Tue, 2012-02-21 at 08:35 -0500, Eric Paris wrote:
-> On Tue, 2012-02-21 at 13:30 +0000, Russell King - ARM Linux wrote:
-> > On Tue, Feb 21, 2012 at 01:16:17PM +0000, Will Deacon wrote:
-> > > On Tue, Feb 21, 2012 at 12:04:15PM +0000, Peter Ujfalusi wrote:
-> > > > While trying to compile the kernel for ARM (omap2plus_defconfig=
-) the kernel
-> > > > build fails with:
-> > > >=20
-> > > > arch/arm/kernel/ptrace.c: In function =E2=80=98syscall_trace=E2=
-=80=99:
-> > > > arch/arm/kernel/ptrace.c:920:3: error: implicit declaration of =
-function =E2=80=98audit_syscall_exit=E2=80=99
-> > > > arch/arm/kernel/ptrace.c:922:3: error: implicit declaration of =
-function =E2=80=98audit_syscall_entry=E2=80=99
-> > > > arch/arm/kernel/ptrace.c:922:23: error: =E2=80=98AUDIT_ARCH_ARM=
-EB=E2=80=99 undeclared (first use in this function)
-> > > > arch/arm/kernel/ptrace.c:922:23: note: each undeclared identifi=
-er is reported only once for each function it appears in
-> > > > make[1]: *** [arch/arm/kernel/ptrace.o] Error 1
-> > > >=20
-> > > > The issue created by commit:
-> > > > 29ef73b7 Kernel: Audit Support For The ARM Platform
-> > > >=20
-> > > > We need to include the linux/audit.h header to the arch/arm/ker=
-nel/ptrace.c
-> > > > file to be able to compile the kernel.
-> > >=20
-> > > This was already reported and I think Russell was going to revert=
- the
-> > > offending commit, since it needed some rework to handle little-en=
-dian
-> > > configurations.
-> > >=20
-> > > I can't see the revert in any of the trees I'm tracking though...
-> >=20
-> > I never pushed that out because I thought someone was going to fix =
-it.
-> > Were any patches produced to fix it?  I can't see anything in the p=
-atch
-> > system and I couldn't see anything on the list.
-> >=20
-> > It seems the previous thread about it just died.  Oh well, I guess =
-a
-> > revert is what's required after all.
->=20
-> http://marc.info/?l=3Dlinux-arm-kernel&m=3D132928424120369&w=3D2
->=20
-> ???
+--Signature=_Wed__22_Feb_2012_12_21_09_+1100_1ZIOTFP_vI53eugP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You probably meant the arch endian bug.  I wrote a patch for it, but
-guess i never sent it.  It was just sitting on my audit arm branch.  So
-I just sent that one as well.
+Hi Gustavo,
 
-Thanks Russell!
--Eric
+After merging the bluetooth tree, today's linux-next build
+(x86_64_allmodconfig) failed like this:
+
+net/bluetooth/hci_sock.c: In function 'hci_sock_cmsg':
+net/bluetooth/hci_sock.c:738:8: error: 'COMPAT_USE_64BIT_TIME' undeclared (=
+first use in this function)
+
+Caused by commit aebb77ca6ad1 ("compat: Use COMPAT_USE_64BIT_TIME in the
+Bluetooth subsystem").  That symbol doesn't exist anywhere in linux-next ...
+
+I have used the bluetooth from next-20120221 for today.
+
+P.S. that commit is supposedly authored by H. J. Lu but does not contain
+a Signed-off-by from him.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__22_Feb_2012_12_21_09_+1100_1ZIOTFP_vI53eugP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPREMFAAoJEECxmPOUX5FELwgP+wRcpY4n10je5LFlym02HqsC
+WhELue+U5i3vwZPC4VQmKEVaWqrQqTfZp3fLx4965+4ky1jblApl0eyMpkt5Jc8F
+9/FeO+nBaeNE/SGHSG0bPQAKqXIP61zX9RSvgVylcgyxAmAcNcMHIMY0T/ME6fS8
+qKAoML9O6ULhr4C7iQzqL0pfVhqmGVXLL+GWiqTwWJ8XtBOa9vDp1yjhGexpriQT
+XB7LaBBgIWJh8YqTz3xHI9zlgnaU/+fr36Vp5uk7UnXIRj1HkQ7MC38X+k8ul2i7
+rMTskrG7woUe4C2H9etgUtsHOkvpfE9r6G6p9TBpC8XYd/iFYCcCtkeluGcCuX/Z
+t8+bDQU4wXGxNMjDEgKRB9fM4ji0TUGsE+NclfXs+RcLFEANHb9wgP85edNRtshE
+6Bpe+zvGMJBax2DDNMNA0XSQhbXP5wzX3yuOU+XU1HVjvQBMHP2b6tt7JhJcT41z
+oQTaKsSLV/vHRYDM1Z6EhXF500e1R5NVSgfiIzQtRKfU7j46uW+RMbfAymZ4huCq
+ZxqpfWTYe/TimHkjGf3XuPVrXRZo/BDEDGuXMGVnjhIYVVrpxvAHGWLWGlTArhyg
+egx14MffKSEEz7Y/rBb1VLw+xrwr3vCvfaSUGxl0MnHVFu7tp/j6iSR16do04AJ8
+4ti3KIijjsnnGupyChCk
+=Xt0B
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__22_Feb_2012_12_21_09_+1100_1ZIOTFP_vI53eugP--
