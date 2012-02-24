@@ -1,61 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the libata tree
-Date: Fri, 24 Feb 2012 15:14:10 +1100
-Message-ID: <20120224151410.e245d7610a597504541858ad@canb.auug.org.au>
-References: <20120213162740.9e3cb47a39da19ed89edea49@canb.auug.org.au>
-	<20120224140814.c134151d30e3f32b36360d5d@canb.auug.org.au>
-	<4F470CB3.2010800@garzik.org>
+Subject: linux-next: manual merge of the irqdomain tree with the powerpc
+ tree
+Date: Fri, 24 Feb 2012 16:25:04 +1100
+Message-ID: <20120224162504.49480de981431c3fd95601a2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__24_Feb_2012_15_14_10_+1100_nxX502.tZ1I3zGwx"
+ boundary="Signature=_Fri__24_Feb_2012_16_25_04_+1100_8Q22evHa1fQA+kVT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37718 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:59312 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755531Ab2BXEOU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Feb 2012 23:14:20 -0500
-In-Reply-To: <4F470CB3.2010800@garzik.org>
+	with ESMTP id S1752142Ab2BXFZT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Feb 2012 00:25:19 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeff Garzik <jeff@garzik.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kyle Moffett <Kyle.D.Moffett@boeing.com>
 
---Signature=_Fri__24_Feb_2012_15_14_10_+1100_nxX502.tZ1I3zGwx
+--Signature=_Fri__24_Feb_2012_16_25_04_+1100_8Q22evHa1fQA+kVT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jeff,
+Hi Grant,
 
-On Thu, 23 Feb 2012 23:06:11 -0500 Jeff Garzik <jeff@garzik.org> wrote:
->
-> A build fix and oops fix were both just pushed out.
+Today's linux-next merge of the irqdomain tree got a conflict in
+arch/powerpc/sysdev/mpic.c between commits 3a7a7176e840 ("powerpc/mpic:
+Fix use of "flags" variable in mpic_alloc()") and c1b8d45db4db
+("powerpc/mpic: Add "last-interrupt-source" property to override
+hardware") from the powerpc tree and commit a8db8cf0d894 ("irq_domain:
+Replace irq_alloc_host() with revmap-specific initializers") from the
+irqdomain tree.
 
-Excellent, thanks.
-
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__24_Feb_2012_15_14_10_+1100_nxX502.tZ1I3zGwx
+diff --cc arch/powerpc/sysdev/mpic.c
+index b9b989d,c83a512..0000000
+--- a/arch/powerpc/sysdev/mpic.c
++++ b/arch/powerpc/sysdev/mpic.c
+@@@ -1351,9 -1345,9 +1351,8 @@@ struct mpic * __init mpic_alloc(struct=20
+  	mpic->isu_shift =3D 1 + __ilog2(mpic->isu_size - 1);
+  	mpic->isu_mask =3D (1 << mpic->isu_shift) - 1;
+ =20
+- 	mpic->irqhost =3D irq_alloc_host(mpic->node, IRQ_HOST_MAP_LINEAR,
+- 				       mpic->isu_size, &mpic_host_ops,
+- 				       intvec_top + 1);
++ 	mpic->irqhost =3D irq_domain_add_linear(mpic->node,
+ -				       isu_size ? isu_size : mpic->num_sources,
+ -				       &mpic_host_ops, mpic);
+++				       mpic->isu_size, &mpic_host_ops, mpic);
+ =20
+  	/*
+  	 * FIXME: The code leaks the MPIC object and mappings here; this
+
+--Signature=_Fri__24_Feb_2012_16_25_04_+1100_8Q22evHa1fQA+kVT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPRw6SAAoJEECxmPOUX5FENCMP/3fHxW94CuBPysX7+OMe7jrh
-CU0EgTFtBFp2doA8fgEmSb2MC7QVV8NsSTKQtf3Wn4kYHBjAYHYdSGYBfpZGZx97
-EeRyfD2ImZoL/lHbXLAMxCo+Y1QEA2oWtXhIfx04iVDHvB4dljWJKVcUx4Gj/W3O
-YP8wpXeraVJrxrDSmndYnEkfs/uJi+bVrMlXHzFmEIDXNlzLAIOTleJOrSa2vKTL
-QHZOwvtx1tI5cyH2h/CdgpY5pEJgP9JOPqkkmEfumkGUrbztkyCEdrrkQk/Tuu/O
-yMMlgYQ6GWn4tYAq3bP5ZcH8UrMvJTfCdBtN3bpGeMJIUZelJVnH4LA3BeEfBZTZ
-LBEe6LDv9SPPOqvd+9QAu+D4UuWgxGHhJA7IQlUAOhJ/y/JDdmy1gyjN76D992jS
-u9UcWIziNJf+wS5ybnT5ueIVXPKhFKocIq/JVgneHUrct/MhFRJbl0VCm52u01zs
-Y06PbFTIWUTykBpARnZy1sJ76B3O5hetUk52NhKxoMIX1vM2UYMAN0Oo8kwc6QBK
-JT1KXdinyBlu26qE4lyDddSTReDx8OJVZun2On1TiwzHJ4yblQB3ok9aSRZ7HwNC
-0SAwyjuibm2ezf5gm5d7XWStM/4Zij6/qNJkqbl8/jTDlUvyHpms9WIhcQ6I9wdK
-d76u/jSppSgKeJ3ECYBv
-=NFfQ
+iQIcBAEBCAAGBQJPRx8wAAoJEECxmPOUX5FE97UP/3iKdDLLhELVMIZPQMigQ9nl
+yoixmEGTZf0DIT8B1JDSIeV+gyE1D7/fFUEZvJ5MrDhS1z/d8Z4DWuTmLMv5frJ0
+Il7aiG9kuObzlBf3ZnRiwQnuZnWSSUKQ0j5mcCgAJt/oqJWD3rAESW1toGdGSyv7
+JHkDeYrIXP3tFzF9F7t9ojZbqN9kRsi2cxcvBa+TccTqNupy+/M6KrzFmM3ERi63
+B41mGcaRIOV/MBTgNUSLoTUueuAs3Oo9GqM4x16ugYqUvqja8AmqlV+rsPyJtSJq
+ZUvZslkCoNkHsei4iScNY1DJJeYB4K5R1nh2dwMbnm7Xwqc9FgGgLYgdmSh2kfxk
+ButjV4LFGOnDrcjt+zhxbN3Cghm6CCo6e1xZMT86Gx1RBka2r9bYeCcbiU7ABjjc
+YhvI+0qwxvRQTUBgeI63NbdmaptOGz+2EYTSght4nIuTy3ypH7aMkFRNN/pI+H+O
+93wl20K+BJ70rPf8hr4vJnX1aLAQl7mNyIDRAqao/pWkesUqnFIpMSlOhtd/6NPc
+hERa348sl1ksHAnuee8pt/ve3N6zVl9XAI40xGafD4zHaE36n+0SxqDofeGC3Oeh
+3hcEo8IkDxELkEUB0NsaAbHrATeTcdp1z0P0By2yBIOjudwP3XA7m2FgEuQSWOQf
+OpMM2wOHat5gtwKzfRw6
+=E/Yy
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__24_Feb_2012_15_14_10_+1100_nxX502.tZ1I3zGwx--
+--Signature=_Fri__24_Feb_2012_16_25_04_+1100_8Q22evHa1fQA+kVT--
