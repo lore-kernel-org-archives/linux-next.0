@@ -1,71 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Jeff Garzik <jeff@garzik.org>
 Subject: Re: linux-next: build warning after merge of the libata tree
-Date: Fri, 24 Feb 2012 23:22:12 +1100
-Message-ID: <20120224232212.caf992ef1200adb2b761890c@canb.auug.org.au>
-References: <20120213162740.9e3cb47a39da19ed89edea49@canb.auug.org.au>
-	<20120224140814.c134151d30e3f32b36360d5d@canb.auug.org.au>
-	<4F470CB3.2010800@garzik.org>
-	<20120224151410.e245d7610a597504541858ad@canb.auug.org.au>
+Date: Fri, 24 Feb 2012 12:01:56 -0500
+Message-ID: <4F47C284.6050703@garzik.org>
+References: <20120213162740.9e3cb47a39da19ed89edea49@canb.auug.org.au> <20120224140814.c134151d30e3f32b36360d5d@canb.auug.org.au> <4F470CB3.2010800@garzik.org> <20120224151410.e245d7610a597504541858ad@canb.auug.org.au> <20120224232212.caf992ef1200adb2b761890c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__24_Feb_2012_23_22_12_+1100_fPLqCSALUqLU5ac."
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33042 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979Ab2BXMWg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Feb 2012 07:22:36 -0500
-In-Reply-To: <20120224151410.e245d7610a597504541858ad@canb.auug.org.au>
+Received: from mail-qw0-f53.google.com ([209.85.216.53]:44795 "EHLO
+	mail-qw0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757331Ab2BXRB7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Feb 2012 12:01:59 -0500
+In-Reply-To: <20120224232212.caf992ef1200adb2b761890c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeff Garzik <jeff@garzik.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>
 
---Signature=_Fri__24_Feb_2012_23_22_12_+1100_fPLqCSALUqLU5ac.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jeff,
-
-On Fri, 24 Feb 2012 15:14:10 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On 02/24/2012 07:22 AM, Stephen Rothwell wrote:
+> Hi Jeff,
 >
-> On Thu, 23 Feb 2012 23:06:11 -0500 Jeff Garzik <jeff@garzik.org> wrote:
-> >
-> > A build fix and oops fix were both just pushed out.
->=20
-> Excellent, thanks.
+> On Fri, 24 Feb 2012 15:14:10 +1100 Stephen Rothwell<sfr@canb.auug.org.au>  wrote:
+>>
+>> On Thu, 23 Feb 2012 23:06:11 -0500 Jeff Garzik<jeff@garzik.org>  wrote:
+>>>
+>>> A build fix and oops fix were both just pushed out.
+>>
+>> Excellent, thanks.
+>
+> Except the commits in the current version of the libata tree destined for
+> linux-next do not fix the warnings I was reporting where the "inline"
+> keyword is missing from several static function definitions in
+> drivers/ata/libata.h ...
 
-Except the commits in the current version of the libata tree destined for
-linux-next do not fix the warnings I was reporting where the "inline"
-keyword is missing from several static function definitions in
-drivers/ata/libata.h ...
+Patchset backed out, and hopefully this will get fixed before it appears 
+again in linux-next.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__24_Feb_2012_23_22_12_+1100_fPLqCSALUqLU5ac.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPR4D0AAoJEECxmPOUX5FEp+UP/1Lgq2qaB+hOUdfKK8bGPSN6
-JW3ypEF4hHB6BuKTYeAga8KjVhhjQAibjafK4Db1X0XmJXsT1YCh+tohO/8HEP91
-L5mBIcDzUR+fdZBR/oCzdeQtoJrEusVCVE9DySh0bcElWECAL8l6G9+9IUua0jxv
-7nyWUFYUTt335C4EBZJeyE+gevnUE/KEsgTT6ILSWszjDedsQZwAnfcM1uh6nDDG
-f1FxrOdeVZDssAO7PItz2HJWXKlTs9BKlQRTIoKgAM7bNcuY5aklgo5i+ZITNE3B
-sKED7n5QUs5dkUTzgQ5s0gGieVG731REieqfn36BF277jTAtlcmGiRUJgutxwAuD
-i7BlwsTS4rvOfSJJMddX3smGBCKg0j+NHwrs4JAN9t/JLehqpIHuWOVIM5nbrA8/
-wP2+qqvpeufGKadsLHjksVkcRPAjy+D2sddQbbBWW2HuaL2mSs4ULKvLcn1Kp+yH
-5B89bfPrEeHFjJMbOV3UY+whSwgahfz8KQX8sjacSXaxdz1OJgN/e30hfUQ8qNGY
-w1Vlv9s4NjnRHzZkbHOYft+krUVShJMf4a6ZDPtfj+IOtlujDCco/Okj6+3pBxNi
-sEBHGso9VhtV0FJLzScYcr3qR4deVQfrGIDmgvnse9Sti4WEjDXGWaWNtpPl9e6U
-wgBdERit9EiLOQRnvx/5
-=WhoN
------END PGP SIGNATURE-----
-
---Signature=_Fri__24_Feb_2012_23_22_12_+1100_fPLqCSALUqLU5ac.--
+	Jeff
