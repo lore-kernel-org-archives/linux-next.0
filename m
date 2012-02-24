@@ -1,45 +1,61 @@
-From: Jeff Garzik <jeff@garzik.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build warning after merge of the libata tree
-Date: Thu, 23 Feb 2012 23:06:11 -0500
-Message-ID: <4F470CB3.2010800@garzik.org>
-References: <20120213162740.9e3cb47a39da19ed89edea49@canb.auug.org.au> <20120224140814.c134151d30e3f32b36360d5d@canb.auug.org.au>
+Date: Fri, 24 Feb 2012 15:14:10 +1100
+Message-ID: <20120224151410.e245d7610a597504541858ad@canb.auug.org.au>
+References: <20120213162740.9e3cb47a39da19ed89edea49@canb.auug.org.au>
+	<20120224140814.c134151d30e3f32b36360d5d@canb.auug.org.au>
+	<4F470CB3.2010800@garzik.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120224140814.c134151d30e3f32b36360d5d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__24_Feb_2012_15_14_10_+1100_nxX502.tZ1I3zGwx"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37718 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755531Ab2BXEOU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Feb 2012 23:14:20 -0500
+In-Reply-To: <4F470CB3.2010800@garzik.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jeff Garzik <jeff@garzik.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>
-List-Id: linux-next.vger.kernel.org
 
-On 02/23/2012 10:08 PM, Stephen Rothwell wrote:
-> Hi Jeff, Matthew,
+--Signature=_Fri__24_Feb_2012_15_14_10_+1100_nxX502.tZ1I3zGwx
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jeff,
+
+On Thu, 23 Feb 2012 23:06:11 -0500 Jeff Garzik <jeff@garzik.org> wrote:
 >
-> On Mon, 13 Feb 2012 16:27:40 +1100 Stephen Rothwell<sfr@canb.auug.org.au>  wrote:
->>
->> After merging the libata tree, today's linux-next build (powerpc
->> ppc64_defconfig) produced this warning:
->>
->> drivers/ata/libata.h:133:13: warning: 'ata_acpi_bind_dock' defined but not used [-Wunused-function]
->> drivers/ata/libata.h:134:13: warning: 'ata_acpi_unbind_dock' defined but not used [-Wunused-function]
->> drivers/ata/libata.h:132:13: warning: 'ata_acpi_unregister' defined but not used [-Wunused-function]
->> drivers/ata/libata.h:132:13: warning: 'ata_acpi_unregister' defined but not used [-Wunused-function]
->> drivers/ata/libata.h:133:13: warning: 'ata_acpi_bind_dock' defined but not used [-Wunused-function]
->> drivers/ata/libata.h:134:13: warning: 'ata_acpi_unbind_dock' defined but not used [-Wunused-function]
->> drivers/ata/libata.h:132:13: warning: 'ata_acpi_unregister' defined but not used [-Wunused-function]
->> drivers/ata/libata.h:133:13: warning: 'ata_acpi_bind_dock' defined but not used [-Wunused-function]
->> drivers/ata/libata.h:134:13: warning: 'ata_acpi_unbind_dock' defined but not used [-Wunused-function]
->> drivers/ata/libata.h:132:13: warning: 'ata_acpi_unregister' defined but not used [-Wunused-function]
->> drivers/ata/libata.h:133:13: warning: 'ata_acpi_bind_dock' defined but not used [-Wunused-function]
->> drivers/ata/libata.h:134:13: warning: 'ata_acpi_unbind_dock' defined but not used [-Wunused-function]
->>
->> Introduced by commits 75d22cd567ca ("libata: Bind the Linux device tree
->> to the ACPI device tree") and c9df614ade0e ("libata: Add links between
->> removable devices and docks").
->
-> Ping?
+> A build fix and oops fix were both just pushed out.
 
-A build fix and oops fix were both just pushed out.
+Excellent, thanks.
 
-	Jeff
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__24_Feb_2012_15_14_10_+1100_nxX502.tZ1I3zGwx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPRw6SAAoJEECxmPOUX5FENCMP/3fHxW94CuBPysX7+OMe7jrh
+CU0EgTFtBFp2doA8fgEmSb2MC7QVV8NsSTKQtf3Wn4kYHBjAYHYdSGYBfpZGZx97
+EeRyfD2ImZoL/lHbXLAMxCo+Y1QEA2oWtXhIfx04iVDHvB4dljWJKVcUx4Gj/W3O
+YP8wpXeraVJrxrDSmndYnEkfs/uJi+bVrMlXHzFmEIDXNlzLAIOTleJOrSa2vKTL
+QHZOwvtx1tI5cyH2h/CdgpY5pEJgP9JOPqkkmEfumkGUrbztkyCEdrrkQk/Tuu/O
+yMMlgYQ6GWn4tYAq3bP5ZcH8UrMvJTfCdBtN3bpGeMJIUZelJVnH4LA3BeEfBZTZ
+LBEe6LDv9SPPOqvd+9QAu+D4UuWgxGHhJA7IQlUAOhJ/y/JDdmy1gyjN76D992jS
+u9UcWIziNJf+wS5ybnT5ueIVXPKhFKocIq/JVgneHUrct/MhFRJbl0VCm52u01zs
+Y06PbFTIWUTykBpARnZy1sJ76B3O5hetUk52NhKxoMIX1vM2UYMAN0Oo8kwc6QBK
+JT1KXdinyBlu26qE4lyDddSTReDx8OJVZun2On1TiwzHJ4yblQB3ok9aSRZ7HwNC
+0SAwyjuibm2ezf5gm5d7XWStM/4Zij6/qNJkqbl8/jTDlUvyHpms9WIhcQ6I9wdK
+d76u/jSppSgKeJ3ECYBv
+=NFfQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__24_Feb_2012_15_14_10_+1100_nxX502.tZ1I3zGwx--
