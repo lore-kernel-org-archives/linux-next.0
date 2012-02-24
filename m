@@ -1,93 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the tip tree
-Date: Fri, 24 Feb 2012 14:34:43 +1100
-Message-ID: <20120224143443.a3e0d14296f20c5facbcfb0b@canb.auug.org.au>
+Date: Fri, 24 Feb 2012 14:47:05 +1100
+Message-ID: <20120224144705.3be6f9367c92340653bafe71@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__24_Feb_2012_14_34_43_+1100_aEf=mY1zmeo9pCYn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Fri__24_Feb_2012_14_47_05_+1100_DrfBf6uMoumnx3Yu"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53418 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754719Ab2BXDrV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Feb 2012 22:47:21 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
 
---Signature=_Fri__24_Feb_2012_14_34_43_+1100_aEf=mY1zmeo9pCYn
+--Signature=_Fri__24_Feb_2012_14_47_05_+1100_DrfBf6uMoumnx3Yu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the tip tree, today's linux-next build (x86_64_allmodconfig)
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
 failed like this:
 
-/opt/cross/gcc-4.6-nolibc/x86_64-linux/bin/x86_64-linux-objcopy:arch/x86/vd=
-so/vdso-note-x32.o: Invalid bfd target
+drivers/staging/android/binder.c: In function 'task_get_unused_fd_flags':
+drivers/staging/android/binder.c:383:39: error: request for member 'fds_bit=
+s' in something not a structure or union
 
-I appears that we need a 2.22 binutils :-(
+Caused by commit 1fd36adcd98c ("Replace the fd_sets in struct fdtable
+with an array of unsigned longs").
 
-$ /opt/cross/gcc-4.6-nolibc/x86_64-linux/bin/x86_64-linux-objcopy --version
-GNU objcopy (GNU Binutils) 2.21
-$ /opt/cross/gcc-4.6-nolibc/x86_64-linux/bin/x86_64-linux-objcopy --help
-	.
-	.
-/opt/cross/gcc-4.6-nolibc/x86_64-linux/bin/x86_64-linux-objcopy: supported =
-targets: elf64-x86-64 elf32-i386 a.out-i386-linux pei-i386 pei-x86-64 elf64=
--l1om elf64-little elf64-big elf32-little elf32-big srec symbolsrec verilog=
- tekhex binary ihex
-
-I have applied the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 24 Feb 2012 14:27:17 +1100
-Subject: [PATCH] x86: mark X86_X32_ABI broken for now until I get a better
- binutils
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 59c5b9c..e63a4dd 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2159,7 +2159,7 @@ config IA32_AOUT
-=20
- config X86_X32_ABI
- 	bool "x32 ABI for 64-bit mode (EXPERIMENTAL)"
--	depends on X86_64 && IA32_EMULATION && EXPERIMENTAL
-+	depends on X86_64 && IA32_EMULATION && EXPERIMENTAL && BROKEN
- 	---help---
- 	  Include code to run binaries for the x32 native 32-bit ABI
- 	  for 64-bit processors.  An x32 process gets access to the
---=20
-1.7.9.1
-
+I have used the tip tree from next-20120223 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__24_Feb_2012_14_34_43_+1100_aEf=mY1zmeo9pCYn
+--Signature=_Fri__24_Feb_2012_14_47_05_+1100_DrfBf6uMoumnx3Yu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPRwVTAAoJEECxmPOUX5FEXUIQAJp15P/bl98TvnmyN2r2V26h
-05H5PqUJqlsZ+wf72Xg4xLpPxmS59GSdjJe+qQ/RWy4YQepKSiGOJkXr3Tg0ZbZK
-aCpPfUhN9GXL/pUievMWNyceDG2LTmjB1sOBo5NTwdg3KWOun73ZKVcvP5KxGy6r
-j3+yNMbJqtiKTDOIyhriLHarVnz80XnBFfKijYdfMRBXOrFkEVGrjMPf1LNcwCHW
-j/+9iW2sKGG1S7K5RU/wg+Otu19pPTWV1O0XRKKA+hB/jucSgIrAj7ULJb6/aZPe
-ctvnbVzMrUG91Ijo7ZIG/wv0ojJoR4RBsSxiZSYUkfBr1P2L+olfXgqvh3bEIbnv
-GiFLCf75/V/Bibp3iepl++Q/K88tPaeTU7ZTNzbWxYI6cxHXnyXpGQF7Q0m0W55c
-hnms+HSkyjmazYNrq/ie3lBqrqnLg9y+HDPv3axQfYJAAAOmOm7dmzj4QpXMNvna
-aHjNseMRKOpb09HzwfJ+RFaOqiOrMFWnyNphkchVmC6kiusmfBTAO39Tw4kahRNg
-ox7H8/G2QHsO2nzWIG9lFFMezwNeYARGOwOUa1OJN1R0/8QeqMhCcOXYifFFPwIJ
-AWxGxwMGlY5xEHh8djYEY3ZHQGe4YublPvRJ/Ny4aKKBKxiRNyy/d8rIvj7u7U9m
-6c8S6XzCBV5Vear1T9vT
-=1wig
+iQIcBAEBCAAGBQJPRwg5AAoJEECxmPOUX5FEgAAQAIe3NgctIWM7ZYhf4n1TrsSe
+4EllR3diI+2xCQPTrp+ubiRSOHblJQY4s7em+2xsvhfmlH1LTOEcj7tn1bo03NoS
+argD1y9wkRBMWRfXHSQGvTedKGOTf11TYP+QqcQjXfREs97ragGrdBtjtTaEotSF
+7dxagvJrfcUlarAz5oS1/1v8fVKSu5XMX7ZyZwfY65lsg03PDyI4Z739n2jGbgYj
+A2MAm6eiST/FbV3JVBGgkafmLCqSOxLGLJv7xy1ve4/Ocaoqf8+GCSnrva85QN3P
+0+TOciEt85HL1Q5+aq+SguN8wNcFfbtvlb6MC5w3jkDSfRHWiaB2KgKxh5/wzVSC
+gctxwLjv3xAHWvr7g4EEZokTGgTkYNBlpfM8foOFm7ROsOnWjZbpaNSJaYcxrKJM
+5y0nR0PvoPYUwWS9OZNRBTRFuBWjRtO4AHdhPohwZMBfojA/jD8TDMlm/JMlXm//
+m8wCN9or0j56upmodMy2iDMssKpES7AQQxbWBsA9NzMZyeLcLtMeWvorAVkP7CM6
+Gjy6oQzW7WrAboWLGYqpcbZgX0xMNm0qsWu5KCtkGiWYXrSoC8TkergiGEwaNMxv
+lUkDxUcFw5Bj1ZgSgSQgjE+2rS3Bd6UXp0X2LPV9jLd5V2XGhrIhqAtE2d/4mP0n
+xV9cUfDHWBqE2VZF0pBO
+=ZW8Z
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__24_Feb_2012_14_34_43_+1100_aEf=mY1zmeo9pCYn--
+--Signature=_Fri__24_Feb_2012_14_47_05_+1100_DrfBf6uMoumnx3Yu--
