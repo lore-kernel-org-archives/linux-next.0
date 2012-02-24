@@ -1,63 +1,75 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Feb 23 (media/radio)
-Date: Thu, 23 Feb 2012 13:14:28 -0800
-Message-ID: <4F46AC34.8090704@xenotime.net>
-References: <20120223143722.d8814b493df968c229da5f20@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the security tree
+Date: Fri, 24 Feb 2012 14:06:16 +1100
+Message-ID: <20120224140616.1b59431e58fe8a719b415eef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__24_Feb_2012_14_06_16_+1100_UcCmqgtgj/UV/DN_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:53988 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1756983Ab2BWVOc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Feb 2012 16:14:32 -0500
-In-Reply-To: <20120223143722.d8814b493df968c229da5f20@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35213 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753026Ab2BXDGi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Feb 2012 22:06:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ftp.linux.org.uk>, James Morris <jmorris@namei.org>, "David S. Miller" <davem@davemloft.net>
 
-On 02/22/2012 07:37 PM, Stephen Rothwell wrote:
-> Hi all,
->
-> Changes since 20120222:
+--Signature=_Fri__24_Feb_2012_14_06_16_+1100_UcCmqgtgj/UV/DN_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-on i386:
+Today's linux-next merge of the tip tree got a conflict in
+include/net/sock.h between commit 404015308747 ("security: trim
+security.h") from the security tree and commit 77a73e5383a9 ("static
+keys: Introduce 'struct static_key', very_[un]likely(), static_key_slow_
+[inc|dec]()") from the tip tree.
 
-Looks like several source files need to #include <linux/slab.h>:
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+diff --cc include/net/sock.h
+index 7b195a8,907bbe0..0000000
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@@ -55,9 -55,7 +55,9 @@@
+  #include <linux/uaccess.h>
+  #include <linux/memcontrol.h>
+  #include <linux/res_counter.h>
+- #include <linux/jump_label.h>
++ #include <linux/static_key.h>
+ +#include <linux/aio.h>
+ +#include <linux/sched.h>
+ =20
+  #include <linux/filter.h>
+  #include <linux/rculist_nulls.h>
 
-drivers/media/radio/radio-isa.c:246:3: error: implicit declaration of 
-function 'kfree'
-drivers/media/radio/radio-aztech.c:72:9: error: implicit declaration of 
-function 'kzalloc'
-drivers/media/radio/radio-aztech.c:72:22: warning: initialization makes 
-pointer from integer without a cast
-drivers/media/radio/radio-typhoon.c:76:9: error: implicit declaration of 
-function 'kzalloc'
-drivers/media/radio/radio-typhoon.c:76:23: warning: initialization makes 
-pointer from integer without a cast
-drivers/media/radio/radio-terratec.c:57:2: error: implicit declaration 
-of function 'kzalloc'
-drivers/media/radio/radio-terratec.c:57:2: warning: return makes pointer 
-from integer without a cast
-drivers/media/radio/radio-aimslab.c:67:9: error: implicit declaration of 
-function 'kzalloc'
-drivers/media/radio/radio-aimslab.c:67:22: warning: initialization makes 
-pointer from integer without a cast
-drivers/media/radio/radio-zoltrix.c:80:9: error: implicit declaration of 
-function 'kzalloc'
-drivers/media/radio/radio-zoltrix.c:80:24: warning: initialization makes 
-pointer from integer without a cast
-drivers/media/radio/radio-gemtek.c:183:9: error: implicit declaration of 
-function 'kzalloc'
-drivers/media/radio/radio-gemtek.c:183:22: warning: initialization makes 
-pointer from integer without a cast
-drivers/media/radio/radio-trust.c:57:9: error: implicit declaration of 
-function 'kzalloc'
-drivers/media/radio/radio-trust.c:57:21: warning: initialization makes 
-pointer from integer without a cast
+--Signature=_Fri__24_Feb_2012_14_06_16_+1100_UcCmqgtgj/UV/DN_
+Content-Type: application/pgp-signature
 
--- 
-~Randy
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPRv6oAAoJEECxmPOUX5FE7HIP+wVrRpjps6wu53LqkzdT8orT
+sP+wYr5Pa03x35D4ulVg7BJM0qcyMXKY2rQvBYgs20yysc77oAIVIL6xliDHl0RN
+zwk2HiH8QnIz/Tx+Vc5/N7QK0+bhNn/g5/hprgXOuOIoQeYTwsygZtqSXmbz+cwG
+oZ25xk+xn5hoRi89gxonH63dzv8oMlgLCNfad4PkRnWEeajn0Gi+fiecqoAr2grP
+/b8koGryeDRvqHxOSBAdmmDtuuLf2+BvP3s1MQCN836BVo/i0LYlTkCfaOwd1YhU
+uupwy/C+4/G3kfJmLTmD5N2QjIbHDyGvbUqNsmQHPjAh1aXi8KFGnI0qrsSBLske
+F4IhJeHlqVMgNCvfyZLAIu8z3mAKzRkJ9QXPRZ7gt8SokJ1PzE0KoEsxArqG3knb
+660x1RDAG+3V1z2umyh4caem/ZTCWMLNWzlvP496DKCwP3nI5knVLxMbylMLbiBO
+cSfbMyyM90MqWkPdfPR2ktnwujs/g8FABQrtinOVmSTd6GuIb2/w32sg1Up8xbXf
+abHha5+U4R5ZeqPFwYvV61Ab1xpAsYt/OzSUzkQ3Y8GcGpJflRVWwpI6yCb3fldL
+bb37EXsLcbeAxzlL7lvdgVn9ImGBk2DNQ3DmEUhQLAXPzgBYCHxkUQgvqLRq5HlQ
+VkWkbXzeq8XbSQ5ObWm+
+=0AMz
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__24_Feb_2012_14_06_16_+1100_UcCmqgtgj/UV/DN_--
