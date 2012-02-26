@@ -1,60 +1,50 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH] pm_domain: delete duplicate stubs for dev_gpd_data
-Date: Sat, 25 Feb 2012 22:47:20 +0100
-Message-ID: <201202252247.20578.rjw@sisk.pl>
-References: <1330192309-25935-1-git-send-email-paul.gortmaker@windriver.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:42293 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751782Ab2BYVn2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 25 Feb 2012 16:43:28 -0500
-In-Reply-To: <1330192309-25935-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: g.liakhovetski@gmx.de, damm@opensource.se, linux-next@vger.kernel.org
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH] ia64: add unwind code for device_register to tiocx.c
+Date: Sun, 26 Feb 2012 13:46:07 -0500
+Message-ID: <1330281967-16361-1-git-send-email-paul.gortmaker@windriver.com>
+Return-path: <linux-ia64-owner@vger.kernel.org>
+Sender: linux-ia64-owner@vger.kernel.org
+To: jes@sgi.com, tony.luck@intel.com, fenghua.yu@intel.com
+Cc: linux-ia64@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+List-Id: linux-next.vger.kernel.org
 
-On Saturday, February 25, 2012, Paul Gortmaker wrote:
-> Two recent commits independently added a stub for this function,
-> causing this build failure:
-> 
->   CC      drivers/sh/pm_runtime.o
-> In file included from drivers/sh/pm_runtime.c:15:0:
-> include/linux/pm_domain.h:216:46: error: redefinition of 'dev_gpd_data'
-> include/linux/pm_domain.h:158:46: note: previous definition of 'dev_gpd_data' was here
-> 
-> Keep the one using ERR_PTR() and delete the other.
-> 
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+The device_register() is declared with must_check, causing this:
 
-Thanks for the heads-up, I fixed up the second patch that hasn't propagated
-anywhere beyond linux-next yet.
+arch/ia64/sn/kernel/tiocx.c: In function 'cx_device_register':
+arch/ia64/sn/kernel/tiocx.c:210:17: warning: ignoring return value of 'device_register', declared with attribute warn_unused_result
 
-Rafael
+Check the return value, and free resources if it fails.
 
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
 
-> ---
-> 
-> [linux-next commits are d57694ca59c0b310a162984a7a6a4efce8ddf815
->  and 9b4f617b1c2004332113b4a2c89dfb6e8029c987 that cause duplicate]
-> 
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 47bb082..5c2bbc2 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -213,10 +213,6 @@ static inline bool default_stop_ok(struct device *dev)
->  }
->  #define simple_qos_governor NULL
->  #define pm_domain_always_on_gov NULL
-> -static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
-> -{
-> -	return NULL;
-> -}
->  #endif
->  
->  static inline int pm_genpd_remove_callbacks(struct device *dev)
-> 
+[seen in linux-next-20120224 tree; probably also happens in mainline]
+
+diff --git a/arch/ia64/sn/kernel/tiocx.c b/arch/ia64/sn/kernel/tiocx.c
+index c1bd1cf..2f406f5 100644
+--- a/arch/ia64/sn/kernel/tiocx.c
++++ b/arch/ia64/sn/kernel/tiocx.c
+@@ -191,6 +191,7 @@ cx_device_register(nasid_t nasid, int part_num, int mfg_num,
+ 		   struct hubdev_info *hubdev, int bt)
+ {
+ 	struct cx_dev *cx_dev;
++	int r;
+ 
+ 	cx_dev = kzalloc(sizeof(struct cx_dev), GFP_KERNEL);
+ 	DBG("cx_dev= 0x%p\n", cx_dev);
+@@ -207,7 +208,11 @@ cx_device_register(nasid_t nasid, int part_num, int mfg_num,
+ 	cx_dev->dev.bus = &tiocx_bus_type;
+ 	cx_dev->dev.release = tiocx_bus_release;
+ 	dev_set_name(&cx_dev->dev, "%d", cx_dev->cx_id.nasid);
+-	device_register(&cx_dev->dev);
++	r = device_register(&cx_dev->dev);
++	if (r) {
++		kfree(cx_dev);
++		return r;
++	}
+ 	get_device(&cx_dev->dev);
+ 
+ 	device_create_file(&cx_dev->dev, &dev_attr_cxdev_control);
+-- 
+1.7.9.1
+
