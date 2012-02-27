@@ -1,75 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Feb 27 (gpio-sodaville.c)
-Date: Tue, 28 Feb 2012 10:40:47 +1100
-Message-ID: <20120228104047.85b5515f3b27c631580f5503@canb.auug.org.au>
-References: <20120227182029.545a7db32550ce94c9faffb4@canb.auug.org.au>
-	<4F4BC3C5.8040802@xenotime.net>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] sound: fix trivial build error in mpc5200_dma.c
+Date: Mon, 27 Feb 2012 23:56:31 +0000
+Message-ID: <20120227235630.GC23230@opensource.wolfsonmicro.com>
+References: <1330204350-386-1-git-send-email-paul.gortmaker@windriver.com>
+ <20120227145926.GK3191@opensource.wolfsonmicro.com>
+ <4F4BFC16.2090602@freescale.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__28_Feb_2012_10_40_47_+1100_z+sVIqtrrUfFTSVJ"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="DSayHWYpDlRfCAAQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40748 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752881Ab2B0XlA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Feb 2012 18:41:00 -0500
-In-Reply-To: <4F4BC3C5.8040802@xenotime.net>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41692 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752745Ab2B0X4e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Feb 2012 18:56:34 -0500
+Content-Disposition: inline
+In-Reply-To: <4F4BFC16.2090602@freescale.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Hans J. Koch" <hjk@linutronix.de>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@stericsson.com>
+To: Timur Tabi <timur@freescale.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, perex@perex.cz, tiwai@suse.de, lrg@ti.com, linux-next@vger.kernel.org
 
---Signature=_Tue__28_Feb_2012_10_40_47_+1100_z+sVIqtrrUfFTSVJ
-Content-Type: text/plain; charset=US-ASCII
+
+--DSayHWYpDlRfCAAQ
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, 27 Feb 2012 09:56:21 -0800 Randy Dunlap <rdunlap@xenotime.net> wrot=
-e:
->
-> on i386:
->=20
-> drivers/gpio/gpio-sodaville.c:130:2: error: unknown field 'dt_translate' =
-specified in initializer
-> drivers/gpio/gpio-sodaville.c:130:2: warning: initialization from incompa=
-tible pointer type
-> drivers/gpio/gpio-sodaville.c: In function 'sdv_register_irqsupport':
-> drivers/gpio/gpio-sodaville.c:152:8: error: 'struct irq_domain' has no me=
-mber named 'irq_base'
-> drivers/gpio/gpio-sodaville.c:182:2: error: implicit declaration of funct=
-ion 'irq_domain_add'
-> drivers/gpio/gpio-sodaville.c: In function 'sdv_gpio_remove':
-> drivers/gpio/gpio-sodaville.c:263:2: error: implicit declaration of funct=
-ion 'irq_domain_del'
+On Mon, Feb 27, 2012 at 03:56:38PM -0600, Timur Tabi wrote:
+> Mark Brown wrote:
 
-These are a conflicts between the gio tree and the irqdomain tree.
-Grant, can you supply me with a merge fix patch?  Or will you merge the
-irqdomain stuff into the gpio tree (making sure that the irqdomain tree
-never rebases again) ...
+> > Please also try to use changelog headers consistent with the subsystem.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> Can you explain what that means?  What are "changelog headers"?
 
---Signature=_Tue__28_Feb_2012_10_40_47_+1100_z+sVIqtrrUfFTSVJ
-Content-Type: application/pgp-signature
+The first line of the changelog which gets treated specially in various
+ways.
+
+--DSayHWYpDlRfCAAQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPTBR/AAoJEECxmPOUX5FEkgYQAKVNkbQTDzgM+8O6ES0JYDfG
-TWwz0OBH+da2sLMDBltzjrgJ5FppLfEa0Frqt/gqJFJcX/OAyUciX7m0GtTcnzt3
-D21WtLxNqO/ZYIIfR7m1rpo8mXSkEGWEUzPgzErMrJVO+IfBgq/6RZSBX30Lduy/
-UGMLAS1Reu5/VEFglVvIr56oWKmte+6GKXhzfQVGXXtJL4PgG6vUZLYiWmLDt0p6
-1fuzq2lSo+1t1xOJXkV4BVpAlaJRI+aVaaYNxviGOma2vJPW2Ano/Msi13KJmQhX
-wJzsYWTjwaRoWI3UAC7T3Auf4f6tJOBgTRJqS6koJq8yJ9SxEw3W6xEkpYCIVLkJ
-4/X/4eqPXUK/AQfZFKeDmK4zDF+5spJmt9NLPhmHJ9KH6OHopMEsg/lNdaOWSYmf
-DhP6GyT1iGddK0+1ioqqAyTtySiqzGcKqfDqZc8vtVL96M0MNRRWfM/cuPbRpmnm
-gH7eZ2/X8BUN/l+gYnSdskjB58QIX5QjGtT1i47cUuUroT3V8Rrc8y0wh4ccLQy+
-NUeI2tz42Z9xK5kXXfJhlhtg9kTT1fz1I3L3xZSwbTLtYB8eIWjf3jjMDH4QCEm2
-7gRJsYezRH1k9ZoGGNucRb6fcHmnxqR7a94tneZuWzD9Wn4UtX7W1wwmSD+crMor
-JhE9yNr3aKxeRhYgwq0u
-=GKcz
+iQIcBAEBAgAGBQJPTBgoAAoJEBus8iNuMP3dtJkP/1GSBSboAByptj8z4h5xcYsR
+t+XW9sk/pHoDq02Rf3YTL0eZZzQX15gjoXcVSTiKQgx0EzMzjPItT5aqkThQBFWO
+6qWW70r4Ieo1bf140wUvwEy2TmCQxc5JvZCfTcEPxnrkWRt+FquFZGnwgKSpDy5f
+E4672DCdaTM7KB5489SrRMxBkvp4oEIlZjqtRSJg9hz88mvX5pBwNPS3gAEYszQy
+sKmWvck7u6zB89O8rRbKzrzCc9cnWRKlcm/RPOsgdAO7Vv5GGUzW26gbK5Y9szRo
+ZclJ4so+Inx1s5PqFyPXK/vQiHz3sthNPAPk0gAyhq7ao94np6H05Z7A3Vcra6ls
+knuBLNjG52mM7sZyY3B4EGwYbFs8MPVdWM5suazcOnhv58kwLFb8uZEiXdLUqPoM
+f3fuHJGlFXmwE0Rjl5zbpQ2o8GtRSVIcInT7KtPit6krYLtQnkx3u/Bd5VcCCPsl
++PWwX3x8r+DvlsEeC6Q7EPpe987VdOKyYfPNSAL5fAv3Vmv/xO7dTAKPkG12qKq0
+EhvZFl3QpFDzcmxyf3e/XxApcNyiNeZ0RL9R3FZ4NCNBuBU9mtDjrFt8CZpItrtu
+72t1efIb9IT0yFYs5yTpOqef/KGjvJQ806YAPcknH/CNBjEKAEBvPIrKSpcI3p3/
+XPCLiNJxNi2OiO8EZuQM
+=gu2U
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__28_Feb_2012_10_40_47_+1100_z+sVIqtrrUfFTSVJ--
+--DSayHWYpDlRfCAAQ--
