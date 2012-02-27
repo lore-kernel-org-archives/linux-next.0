@@ -1,43 +1,46 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] rtc: fix rtc-ds1307 printk format warning
-Date: Mon, 27 Feb 2012 10:25:41 -0800
-Message-ID: <4F4BCAA5.8060308@xenotime.net>
-References: <20120227182029.545a7db32550ce94c9faffb4@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:57236 "HELO
-	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753318Ab2B0SZj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Feb 2012 13:25:39 -0500
-In-Reply-To: <20120227182029.545a7db32550ce94c9faffb4@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, rtc-linux@googlegroups.com, Andrew Morton <akpm@linux-foundation.org>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH v2] parisc: dont unconditionally override CROSS_COMPILE for 64 bit.
+Date: Mon, 27 Feb 2012 15:59:19 -0500
+Message-ID: <1330376359-23731-1-git-send-email-paul.gortmaker@windriver.com>
+References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: JBottomley@parallels.com, jejb@parisc-linux.org, kyle@mcmartin.ca, deller@gmx.de
+Cc: vapier@gentoo.org, dave.anglin@bell.net, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+Using the 64 bit toolchains from kernel.org[1], one finds that
+you can't build the a500_defconfig, because the Makefile will
+stomp whatever value you have in your env. for CROSS_COMPILE.
 
-Fix printk format warning:
+This shows up since the kernel.org toolchains for parisc-64
+do not have the "-gnu" prefix, and so you run into it always
+saying hppa64-linux-gnu-gcc not found, regardless of the fact
+you've not got "-gnu" put anywhere into CROSS_COMPILE.
 
-drivers/rtc/rtc-ds1307.c:915:3: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
+Since you can set CROSS_COMPILE from the environment and/or set
+it in your .config file, there really is no need for it to be
+poked at by the Makefile at all.  So just delete it.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc:	Alessandro Zummo <a.zummo@towertech.it>
-Cc:	rtc-linux@googlegroups.com
+[1] ftp://ftp.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.5.2/
+
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/rtc/rtc-ds1307.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20120227.orig/drivers/rtc/rtc-ds1307.c
-+++ linux-next-20120227/drivers/rtc/rtc-ds1307.c
-@@ -912,7 +912,7 @@ read_rtc:
- 			goto exit_nvram;
- 		}
- 		set_bit(HAS_NVRAM, &ds1307->flags);
--		dev_info(&client->dev, "%d bytes nvram\n", ds1307->nvram->size);
-+		dev_info(&client->dev, "%zu bytes nvram\n", ds1307->nvram->size);
- 	}
- 
- 	return 0;
+[v2: no ifdef/endif -- just delete the offending line.]
+
+diff --git a/arch/parisc/Makefile b/arch/parisc/Makefile
+index 55cca1d..a533367 100644
+--- a/arch/parisc/Makefile
++++ b/arch/parisc/Makefile
+@@ -31,7 +31,6 @@ ifdef CONFIG_64BIT
+ UTS_MACHINE	:= parisc64
+ CHECKFLAGS	+= -D__LP64__=1 -m64
+ WIDTH		:= 64
+-CROSS_COMPILE	:= hppa64-linux-gnu-
+ else # 32-bit
+ WIDTH		:=
+ endif
+-- 
+1.7.9.1
