@@ -1,28 +1,85 @@
-From: Timur Tabi <timur@freescale.com>
-Subject: Re: [PATCH] sound: fix trivial build error in mpc5200_dma.c
-Date: Mon, 27 Feb 2012 15:56:38 -0600
-Message-ID: <4F4BFC16.2090602@freescale.com>
-References: <1330204350-386-1-git-send-email-paul.gortmaker@windriver.com> <20120227145926.GK3191@opensource.wolfsonmicro.com>
+From: James Bottomley <jbottomley@parallels.com>
+Subject: Re: [PATCH v2] parisc: dont unconditionally override CROSS_COMPILE
+ for 64 bit.
+Date: Mon, 27 Feb 2012 22:03:10 +0000
+Message-ID: <1330380189.2822.95.camel@dabdike.int.hansenpartnership.com>
+References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
+	 <1330376359-23731-1-git-send-email-paul.gortmaker@windriver.com>
+	 <1330378864.2822.92.camel@dabdike.int.hansenpartnership.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from va3ehsobe001.messaging.microsoft.com ([216.32.180.11]:38593
-	"EHLO VA3EHSOBE005.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754067Ab2B0V4z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Feb 2012 16:56:55 -0500
-In-Reply-To: <20120227145926.GK3191@opensource.wolfsonmicro.com>
+Received: from mx2.parallels.com ([64.131.90.16]:44223 "EHLO mx2.parallels.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755699Ab2B0WDS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Feb 2012 17:03:18 -0500
+In-Reply-To: <1330378864.2822.92.camel@dabdike.int.hansenpartnership.com>
+Content-Language: en-US
+Content-ID: <496BC6AD6F19124DA3ABACE46EEAE210@sw.swsoft.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, perex@perex.cz, tiwai@suse.de, lrg@ti.com, linux-next@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "kyle@mcmartin.ca" <kyle@mcmartin.ca>, "deller@gmx.de" <deller@gmx.de>, "vapier@gentoo.org" <vapier@gentoo.org>, "dave.anglin@bell.net" <dave.anglin@bell.net>, "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-Mark Brown wrote:
-> Please also try to use changelog headers consistent with the subsystem.
-
-Can you explain what that means?  What are "changelog headers"?
-
--- 
-Timur Tabi
-Linux kernel developer at Freescale
+T24gTW9uLCAyMDEyLTAyLTI3IGF0IDIxOjQxICswMDAwLCBKYW1lcyBCb3R0b21sZXkgd3JvdGU6
+DQo+IE9uIE1vbiwgMjAxMi0wMi0yNyBhdCAxNTo1OSAtMDUwMCwgUGF1bCBHb3J0bWFrZXIgd3Jv
+dGU6DQo+ID4gVXNpbmcgdGhlIDY0IGJpdCB0b29sY2hhaW5zIGZyb20ga2VybmVsLm9yZ1sxXSwg
+b25lIGZpbmRzIHRoYXQNCj4gPiB5b3UgY2FuJ3QgYnVpbGQgdGhlIGE1MDBfZGVmY29uZmlnLCBi
+ZWNhdXNlIHRoZSBNYWtlZmlsZSB3aWxsDQo+ID4gc3RvbXAgd2hhdGV2ZXIgdmFsdWUgeW91IGhh
+dmUgaW4geW91ciBlbnYuIGZvciBDUk9TU19DT01QSUxFLg0KPiA+IA0KPiA+IFRoaXMgc2hvd3Mg
+dXAgc2luY2UgdGhlIGtlcm5lbC5vcmcgdG9vbGNoYWlucyBmb3IgcGFyaXNjLTY0DQo+ID4gZG8g
+bm90IGhhdmUgdGhlICItZ251IiBwcmVmaXgsIGFuZCBzbyB5b3UgcnVuIGludG8gaXQgYWx3YXlz
+DQo+ID4gc2F5aW5nIGhwcGE2NC1saW51eC1nbnUtZ2NjIG5vdCBmb3VuZCwgcmVnYXJkbGVzcyBv
+ZiB0aGUgZmFjdA0KPiA+IHlvdSd2ZSBub3QgZ290ICItZ251IiBwdXQgYW55d2hlcmUgaW50byBD
+Uk9TU19DT01QSUxFLg0KPiA+IA0KPiA+IFNpbmNlIHlvdSBjYW4gc2V0IENST1NTX0NPTVBJTEUg
+ZnJvbSB0aGUgZW52aXJvbm1lbnQgYW5kL29yIHNldA0KPiA+IGl0IGluIHlvdXIgLmNvbmZpZyBm
+aWxlLCB0aGVyZSByZWFsbHkgaXMgbm8gbmVlZCBmb3IgaXQgdG8gYmUNCj4gPiBwb2tlZCBhdCBi
+eSB0aGUgTWFrZWZpbGUgYXQgYWxsLiAgU28ganVzdCBkZWxldGUgaXQuDQo+ID4gDQo+ID4gWzFd
+IGZ0cDovL2Z0cC5rZXJuZWwub3JnL3B1Yi90b29scy9jcm9zc3Rvb2wvZmlsZXMvYmluL3g4Nl82
+NC80LjUuMi8NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBQYXVsIEdvcnRtYWtlciA8cGF1bC5n
+b3J0bWFrZXJAd2luZHJpdmVyLmNvbT4NCj4gPiAtLS0NCj4gPiANCj4gPiBbdjI6IG5vIGlmZGVm
+L2VuZGlmIC0tIGp1c3QgZGVsZXRlIHRoZSBvZmZlbmRpbmcgbGluZS5dDQo+ID4gDQo+ID4gZGlm
+ZiAtLWdpdCBhL2FyY2gvcGFyaXNjL01ha2VmaWxlIGIvYXJjaC9wYXJpc2MvTWFrZWZpbGUNCj4g
+PiBpbmRleCA1NWNjYTFkLi5hNTMzMzY3IDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvcGFyaXNjL01h
+a2VmaWxlDQo+ID4gKysrIGIvYXJjaC9wYXJpc2MvTWFrZWZpbGUNCj4gPiBAQCAtMzEsNyArMzEs
+NiBAQCBpZmRlZiBDT05GSUdfNjRCSVQNCj4gPiAgVVRTX01BQ0hJTkUJOj0gcGFyaXNjNjQNCj4g
+PiAgQ0hFQ0tGTEFHUwkrPSAtRF9fTFA2NF9fPTEgLW02NA0KPiA+ICBXSURUSAkJOj0gNjQNCj4g
+PiAtQ1JPU1NfQ09NUElMRQk6PSBocHBhNjQtbGludXgtZ251LQ0KPiA+ICBlbHNlICMgMzItYml0
+DQo+ID4gIFdJRFRICQk6PQ0KPiA+ICBlbmRpZg0KPiANCj4gV2UgY2FuJ3QgZG8gdGhhdCAuLi4g
+aXQgY3Jhc2hlcyBhIHN0YW5kYXJkIGJ1aWxkIGFsbW9zdCBpbW1lZGlhdGVseQ0KPiBiZWNhdXNl
+IGl0IGRvZXNuJ3QgcGljayB0aGUgNjQgYml0IGNvbXBpbGVyIChhbmQgd2UgaGF2ZSBubyBiaWFy
+Y2gNCj4gc29sdXRpb24pLg0KPiANCj4gV2UgbmVlZCBtYWtlIG9uIGEgNjQgYml0IGNvbmZpZyB0
+byB3b3JrIG91dCBvZiB0aGUgYm94LiAgSXQgYnJlYWtzDQo+IHdpdGggPz0gYXMgSkRBIHBvaW50
+ZWQgb3V0IGJlY2F1c2UgQ1JPU1NfQ09NUElMRSBpcyBhbHdheXMgZGVmaW5lZC4NCj4gRG9lcyB0
+aGlzIHNhdGlzZnkgZXZlcnlvbmU/DQo+IA0KPiBKYW1lcw0KPiANCj4gLS0tDQo+IA0KPiBkaWZm
+IC0tZ2l0IGEvYXJjaC9wYXJpc2MvTWFrZWZpbGUgYi9hcmNoL3BhcmlzYy9NYWtlZmlsZQ0KPiBp
+bmRleCA1NWNjYTFkLi4xOWFiN2IyIDEwMDY0NA0KPiAtLS0gYS9hcmNoL3BhcmlzYy9NYWtlZmls
+ZQ0KPiArKysgYi9hcmNoL3BhcmlzYy9NYWtlZmlsZQ0KPiBAQCAtMzEsNyArMzEsMTEgQEAgaWZk
+ZWYgQ09ORklHXzY0QklUDQo+ICBVVFNfTUFDSElORQk6PSBwYXJpc2M2NA0KPiAgQ0hFQ0tGTEFH
+UwkrPSAtRF9fTFA2NF9fPTEgLW02NA0KPiAgV0lEVEgJCTo9IDY0DQo+ICsNCj4gKyMgRklYTUU6
+IGlmIG5vIGRlZmF1bHQgc2V0LCBzaG91bGQgcmVhbGx5IHRyeSB0byBsb2NhdGUgZHluYW1pY2Fs
+bHkNCj4gK2lmZXEgKCQoQ1JPU1NfQ09NUElMRSksKQ0KPiAgQ1JPU1NfQ09NUElMRQk6PSBocHBh
+NjQtbGludXgtZ251LQ0KPiArZW5kaWYNCj4gIGVsc2UgIyAzMi1iaXQNCj4gIFdJRFRICQk6PQ0K
+PiAgZW5kaWYNCg0KVGhlcmUncyBhbiBhd2Z1bCBsb3QgbW9yZSB0aGFuIGp1c3QgdGhpcyB3cm9u
+ZyB3aXRoIHRoYXQgTWFrZWZpbGUuICBGb3INCmluc3RhbmNlLCBOQVRJVkUgY2FuIG5ldmVyIGJl
+IHNldCBiZWNhdXNlIGlmZXEoKSBpc24ndCBnbG9iYmluZyBpbiBtYWtlDQpzY3JpcHRzIC4uLiAg
+U28gSSB0aGluayBhIGZpbmFsIChhbmQgZHluYW1pY2FsbHkgY2hvb3NpbmcgaWYgdW5zZXQpDQpz
+b2x1dGlvbiBpcyB0aGlzIG9uZS4NCg0KSSdsbCBzdG9wIG5vdyBiZWZvcmUgSSBmaW5kIHNvbWV0
+aGluZyBlbHNlIHdyb25nIC4uLg0KDQpKYW1lcw0KDQotLS0NCg0KZGlmZiAtLWdpdCBhL2FyY2gv
+cGFyaXNjL01ha2VmaWxlIGIvYXJjaC9wYXJpc2MvTWFrZWZpbGUNCmluZGV4IDU1Y2NhMWQuLmM4
+MjNmNGEgMTAwNjQ0DQotLS0gYS9hcmNoL3BhcmlzYy9NYWtlZmlsZQ0KKysrIGIvYXJjaC9wYXJp
+c2MvTWFrZWZpbGUNCkBAIC0yMywyNCArMjMsMjAgQEAgTk0JCT0gc2ggJChzcmN0cmVlKS9hcmNo
+L3BhcmlzYy9ubQ0KIENIRUNLRkxBR1MJKz0gLURfX2hwcGFfXz0xDQogDQogTUFDSElORQkJOj0g
+JChzaGVsbCB1bmFtZSAtbSkNCi1pZmVxICgkKE1BQ0hJTkUpLHBhcmlzYyopDQotTkFUSVZFCQk6
+PSAxDQotZW5kaWYNCiANCiBpZmRlZiBDT05GSUdfNjRCSVQNCiBVVFNfTUFDSElORQk6PSBwYXJp
+c2M2NA0KIENIRUNLRkxBR1MJKz0gLURfX0xQNjRfXz0xIC1tNjQNCiBXSURUSAkJOj0gNjQNCi1D
+Uk9TU19DT01QSUxFCTo9IGhwcGE2NC1saW51eC1nbnUtDQorDQorIyBpZiBubyBkZWZhdWx0IHNl
+dCwgdHJ5IHRvIGZpbmQgdGhlIGNvcnJlc3BvbmRpbmcgNjQgYml0IGNvbXBpbGVyDQoraWZlcSAo
+JChDUk9TU19DT01QSUxFKSwpDQorQ1JPU1NfQ09NUElMRQk6PSAkKHNoZWxsICQoQ0MpIC1kdW1w
+bWFjaGluZSB8IHNlZCBzL2hwcGEtXFxcKC4qXFxcKS9ocHBhNjQtXFwxLS8pDQorZW5kaWYNCiBl
+bHNlICMgMzItYml0DQogV0lEVEgJCTo9DQogZW5kaWYNCiANCi0jIGF0dGVtcHQgdG8gaGVscCBv
+dXQgZm9sa3Mgd2hvIGFyZSBjcm9zcy1jb21waWxpbmcNCi1pZmVxICgkKE5BVElWRSksMSkNCi1D
+Uk9TU19DT01QSUxFCTo9IGhwcGEkKFdJRFRIKS1saW51eC0NCi1lbmRpZg0KLQ0KIE9CSkNPUFlf
+RkxBR1MgPS1PIGJpbmFyeSAtUiAubm90ZSAtUiAuY29tbWVudCAtUw0KIA0KIGNmbGFncy15CTo9
+IC1waXBlDQoNCg0KDQo=
