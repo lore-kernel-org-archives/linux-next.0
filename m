@@ -1,73 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tegra tree with the arm tree
-Date: Mon, 27 Feb 2012 10:40:09 +1100
-Message-ID: <20120227104009.37c86507539fc4f5d1239807@canb.auug.org.au>
+From: Mike Frysinger <vapier@gentoo.org>
+Subject: Re: [PATCH] parisc: dont unconditionally override CROSS_COMPILE for 64 bit.
+Date: Sun, 26 Feb 2012 19:23:12 -0500
+Message-ID: <201202261923.15167.vapier@gentoo.org>
+References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__27_Feb_2012_10_40_09_+1100_G5QkBi5S+5sW7X4J"
+Content-Type: multipart/signed;
+  boundary="nextPart2838396.dFR3c2q4Di";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42109 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752568Ab2BZXkV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 26 Feb 2012 18:40:21 -0500
+Received: from smtp.gentoo.org ([140.211.166.183]:39090 "EHLO smtp.gentoo.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752840Ab2B0AW6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 26 Feb 2012 19:22:58 -0500
+In-Reply-To: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Russell King <rmk@arm.linux.org.uk>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: JBottomley@parallels.com, jejb@parisc-linux.org, kyle@mcmartin.ca, deller@gmx.de, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
---Signature=_Mon__27_Feb_2012_10_40_09_+1100_G5QkBi5S+5sW7X4J
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--nextPart2838396.dFR3c2q4Di
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Sunday 26 February 2012 18:26:53 Paul Gortmaker wrote:
+> --- a/arch/parisc/Makefile
+> +++ b/arch/parisc/Makefile
+>
+> -CROSS_COMPILE	:= hppa64-linux-gnu-
+> +ifndef CROSS_COMPILE
+> + CROSS_COMPILE	:= hppa64-linux-gnu-
+> +endif
 
-Today's linux-next merge of the tegra tree got a conflict in
-arch/arm/mach-tegra/common.c between commit daa14d5e60e0 ("ARM:
-mach-tegra: properly disable CPU idle call") from the arm tree and commit
-65fe31da5ced ("ARM: tegra: support for Tegra30 CPU powerdomains") from
-the tegra tree.
+this should accomplish the same thing in practice:
+	CROSS_COMPILE ?= hppa64-linux-gnu-
+-mike
 
-Just context changes.  I fixed it up (see below) and can carry the fax as
-necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-tegra/common.c
-index 2db20da,09dc37fc..0000000
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@@ -27,6 -27,8 +27,7 @@@
-  #include <asm/hardware/gic.h>
- =20
-  #include <mach/iomap.h>
- -#include <mach/system.h>
-+ #include <mach/powergate.h>
- =20
-  #include "board.h"
-  #include "clock.h"
-
---Signature=_Mon__27_Feb_2012_10_40_09_+1100_G5QkBi5S+5sW7X4J
-Content-Type: application/pgp-signature
+--nextPart2838396.dFR3c2q4Di
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Version: GnuPG v2.0.17 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPSsLZAAoJEECxmPOUX5FEs6kP/3YzumEGSN3/3i2m/584/SbG
-Ul41QIj9WH7KnsfZ3olHCj33YHv1okC2mxjsuUhfMbh5Sw2mM8JqXJsd1e0Fifqx
-fLi4JYu3oh5ZgDhdj9dJpndkbt6jmfssqWyevEYX6Sqi5QVNMTEqIdmPeJK6+ORA
-A68rAoJ4zOjGVDqDdGxgVwZvLZYQI1jOSo52n1Fsu2xxlPv2UvLNaRjk4BgO/z/+
-YQPjrzKfd8CIDMfAJet8YN41Tkx4dV4lXu5GZxnw4H3NIZEc8uKKSxy3UaxQpjEO
-aSnrR2Z6iXW+GJlVYWOeYoUsuQUNlLPUOSSTWpXN5jdcnmyiw2an0dfCmbcCY7D4
-+M5RuS6RkaSZzhn9zPL0lEQfE1kh/PxrrJYx5PFpm32fgnGDNw7y697OAe2MKS75
-L3O9f/eHLBNfCDU2lb4LuTrOdqoS6xoGSmgkIyUP69RvHnoXh9Swfe9gc6pMZOUM
-qrYXG705dbq9ckjKPWRrSaD6W5U48gvfOZScYXDNCF0m+/T/ONNmDdC/MfS9EZnj
-HVCFhim8MYvOiAuOH5ulhzLh3mbnZnT/nryR0h9/YXLrff8k8N50V1Uet1ltMNeo
-Cvq5/7Kbb89yKRsU/DOxiiobELLBhsB/jQmHpi5BIp5ViqYr6oMVulrCpV1e91wP
-ObICrHG+YWg1BIPIiWDq
-=UEyZ
+iQIcBAABAgAGBQJPSszyAAoJEEFjO5/oN/WBQ8MP+gKO+u/03HSZFU7qi0ivEVPT
+XWmWrSEXYJyKG7tQQrczqKcwx1UcW9x+Eo9cSzkTh7YGTN4S+wACaVfIZLBTdKyW
+FPIDumZWFvJQ3r3XXd/ELhHW68ny4yTQgyqT/wNXaWw+cB5rdTvkxKyNkeu371SQ
+NryxZYAEoCLfWF0ZITPN9bNEZjj1KsoaKHBr4ApFuHxV15Bjk3RTEY8UhnZrWgQ2
+GGfZ61U7f/DbX09TTh3TxQrI06I2Cnh2OU0yW48sDDCjefKo3QRz/5HzT9ag+pPs
+P1Fqo+l+VgC4/kiAuBUj533P4S39u/INRXuf0krDYZd5FF/oFcT4X7cDdRV4HpNA
+vrCDohCtZGIpG88mjX87Sqcp3XKg1kA55ceFju51zQczzkDnKIuuQTOPeg1SMNEY
+Qsirs5nppIUXlKiG5HXwSog2O5zqp+YNuO6cEmpJRhedq7VwLfVbmS9SM2D+OBug
+DzIrfZFtm1X/7tlVySl/H5n5/1BelfEGFTm2/Kb7tUOUAbTCxChQBXVLVWlNd9YC
+HbTGXKK2wR2SEF9XrWePo2io8XLZNRskUmJ1edkQRLr6LicebM7NsPmR9fJfGIci
+N0livuklxfzDGxAe8HuwmcjGqyPnL1Ve8gIKFgb5o6hJpaOXINqvwRJdJ0vtXK4U
+jTX3Z4kLJQOSJFfPGvdb
+=KY3Z
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__27_Feb_2012_10_40_09_+1100_G5QkBi5S+5sW7X4J--
+--nextPart2838396.dFR3c2q4Di--
