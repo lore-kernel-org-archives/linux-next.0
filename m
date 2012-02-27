@@ -1,63 +1,54 @@
-From: Mike Frysinger <vapier@gentoo.org>
-Subject: Re: [PATCH] parisc: dont unconditionally override CROSS_COMPILE for 64 bit.
-Date: Sun, 26 Feb 2012 19:23:12 -0500
-Message-ID: <201202261923.15167.vapier@gentoo.org>
-References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with the mips tree
+Date: Mon, 27 Feb 2012 11:31:29 +1100
+Message-ID: <20120227113129.c03c34ff7ea516f155cf0c87@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart2838396.dFR3c2q4Di";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.gentoo.org ([140.211.166.183]:39090 "EHLO smtp.gentoo.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752840Ab2B0AW6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 26 Feb 2012 19:22:58 -0500
-In-Reply-To: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: JBottomley@parallels.com, jejb@parisc-linux.org, kyle@mcmartin.ca, deller@gmx.de, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__27_Feb_2012_11_31_29_+1100_vTujrHiqiO5ZGod5"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Ralf Baechle <ralf@linux-mips.org>
+List-Id: linux-next.vger.kernel.org
 
---nextPart2838396.dFR3c2q4Di
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+--Signature=_Mon__27_Feb_2012_11_31_29_+1100_vTujrHiqiO5ZGod5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sunday 26 February 2012 18:26:53 Paul Gortmaker wrote:
-> --- a/arch/parisc/Makefile
-> +++ b/arch/parisc/Makefile
->
-> -CROSS_COMPILE	:= hppa64-linux-gnu-
-> +ifndef CROSS_COMPILE
-> + CROSS_COMPILE	:= hppa64-linux-gnu-
-> +endif
+Hi Jesse,
 
-this should accomplish the same thing in practice:
-	CROSS_COMPILE ?= hppa64-linux-gnu-
--mike
+Today's linux-next merge of the pci tree got a conflict in
+arch/mips/pci/pci.c between commit f79eaeb10849 ("MIPS: PCI: use
+list_for_each_entry() for bus->devices traversal") from the mips tree and
+commit 96a6b9ad05a2 ("mips/PCI: get rid of device resource fixups") from
+the pci tree.
 
---nextPart2838396.dFR3c2q4Di
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+The latter appears to supersede the former, so I used that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__27_Feb_2012_11_31_29_+1100_vTujrHiqiO5ZGod5
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.17 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAABAgAGBQJPSszyAAoJEEFjO5/oN/WBQ8MP+gKO+u/03HSZFU7qi0ivEVPT
-XWmWrSEXYJyKG7tQQrczqKcwx1UcW9x+Eo9cSzkTh7YGTN4S+wACaVfIZLBTdKyW
-FPIDumZWFvJQ3r3XXd/ELhHW68ny4yTQgyqT/wNXaWw+cB5rdTvkxKyNkeu371SQ
-NryxZYAEoCLfWF0ZITPN9bNEZjj1KsoaKHBr4ApFuHxV15Bjk3RTEY8UhnZrWgQ2
-GGfZ61U7f/DbX09TTh3TxQrI06I2Cnh2OU0yW48sDDCjefKo3QRz/5HzT9ag+pPs
-P1Fqo+l+VgC4/kiAuBUj533P4S39u/INRXuf0krDYZd5FF/oFcT4X7cDdRV4HpNA
-vrCDohCtZGIpG88mjX87Sqcp3XKg1kA55ceFju51zQczzkDnKIuuQTOPeg1SMNEY
-Qsirs5nppIUXlKiG5HXwSog2O5zqp+YNuO6cEmpJRhedq7VwLfVbmS9SM2D+OBug
-DzIrfZFtm1X/7tlVySl/H5n5/1BelfEGFTm2/Kb7tUOUAbTCxChQBXVLVWlNd9YC
-HbTGXKK2wR2SEF9XrWePo2io8XLZNRskUmJ1edkQRLr6LicebM7NsPmR9fJfGIci
-N0livuklxfzDGxAe8HuwmcjGqyPnL1Ve8gIKFgb5o6hJpaOXINqvwRJdJ0vtXK4U
-jTX3Z4kLJQOSJFfPGvdb
-=KY3Z
+iQIcBAEBCAAGBQJPSs7hAAoJEECxmPOUX5FEmOIP/i7+mXVsHo0dgtj2wSVzpFX3
+g0RJovZ6V7OjnRGuGFVQ0c5gNFb8jdBQWZMLbhB9gBQcooK9UfstU93DHTF+CPZP
+ulHHJi1KVGrklD2eh3k3gCh84pJvUBVqti/NJiPi96PyEQaAfRreIcNH85RC0c99
+Q/ij4XIt76PlIl9ONCH2gcY9JrWVre6861BtQ8+9e8kXkn1AeUqikgx6SbmSbdJY
+EQMxQu6OmphEvY3+AZJA0stTRE+v9t9IQKKrwfPIXAgmEudpECgoCoIVs/RieZp2
+NnM7rIKGhO0oH5B7iR5HVKxTkfUvypNUvXFAvDUPDX6HyGGOGE+rhksraVXu5+t1
+H5v1PrSEzqIL8YlPtZB5R2f+NcBS49SJvK8ItfHxBcF12jK8DQtjuqYZns1YVUsn
+ml9nOtUOHpLPIVYesR3O0/7kASN/lKpjRUDTm3X4GQrrQ73xYqTwo5SoTky3fC55
+1sPkGKOVrxiIMTf+K/hrmITIXW9yvAyF5b+H2/FDybK7SJMbRHAcFonF19owTCGp
+aDXLsFEZ+yiEyn0foda26Yakwq/FCTWgkJd+b/3+xTVdoSQsVK2TkTfVTNp/GGI8
+UawYczzs8fN1QnofkqsLuEotY2WMb0l6qOfn2a22rLh9dhK3UpoeaIdMj7pj+dBN
+3v2TPLKjcHUkZaO81ZX2
+=pxnx
 -----END PGP SIGNATURE-----
 
---nextPart2838396.dFR3c2q4Di--
+--Signature=_Mon__27_Feb_2012_11_31_29_+1100_vTujrHiqiO5ZGod5--
