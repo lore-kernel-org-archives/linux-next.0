@@ -1,38 +1,89 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] parisc: dont unconditionally override CROSS_COMPILE for
- 64 bit.
-Date: Sun, 26 Feb 2012 19:30:38 -0500
-Message-ID: <20120227003037.GE21842@windriver.com>
-References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
- <201202261923.15167.vapier@gentoo.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Mon, 27 Feb 2012 12:11:25 +1100
+Message-ID: <20120227121125.007c32f9aa7be2470d9e3356@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__27_Feb_2012_12_11_25_+1100_kvoyOHFIPttzh9C."
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47155 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753336Ab2B0BLf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 26 Feb 2012 20:11:35 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>
+
+--Signature=_Mon__27_Feb_2012_12_11_25_+1100_kvoyOHFIPttzh9C.
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <201202261923.15167.vapier@gentoo.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Frysinger <vapier@gentoo.org>
-Cc: JBottomley@parallels.com, jejb@parisc-linux.org, kyle@mcmartin.ca, deller@gmx.de, linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-[Re: [PATCH] parisc: dont unconditionally override CROSS_COMPILE for 64 bit.] On 26/02/2012 (Sun 19:23) Mike Frysinger wrote:
+Hi all,
 
-> On Sunday 26 February 2012 18:26:53 Paul Gortmaker wrote:
-> > --- a/arch/parisc/Makefile
-> > +++ b/arch/parisc/Makefile
-> >
-> > -CROSS_COMPILE	:= hppa64-linux-gnu-
-> > +ifndef CROSS_COMPILE
-> > + CROSS_COMPILE	:= hppa64-linux-gnu-
-> > +endif
-> 
-> this should accomplish the same thing in practice:
-> 	CROSS_COMPILE ?= hppa64-linux-gnu-
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/sfc/rx.c between commit ff3bc1e75275 ("sfc: Fix
+assignment of ip_summed for pre-allocated skbs") from Linus' tree and
+commit db3395697cad ("sfc: Replace efx_rx_buffer::is_page and other
+booleans with a flags field") from the net-next tree.
 
-Good point, I'll wait for a bit in case I was missing something else
-obvious, and then resend.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-THanks,
-P.
+diff --cc drivers/net/ethernet/sfc/rx.c
+index fc52fca,506d246..0000000
+--- a/drivers/net/ethernet/sfc/rx.c
++++ b/drivers/net/ethernet/sfc/rx.c
+@@@ -156,10 -155,11 +155,10 @@@ static int efx_init_rx_buffers_skb(stru
+  		if (unlikely(!skb))
+  			return -ENOMEM;
+ =20
+ -		/* Adjust the SKB for padding and checksum */
+ +		/* Adjust the SKB for padding */
+  		skb_reserve(skb, NET_IP_ALIGN);
+  		rx_buf->len =3D skb_len - NET_IP_ALIGN;
+- 		rx_buf->is_page =3D false;
++ 		rx_buf->flags =3D 0;
+ -		skb->ip_summed =3D CHECKSUM_UNNECESSARY;
+ =20
+  		rx_buf->dma_addr =3D pci_map_single(efx->pci_dev,
+  						  skb->data, rx_buf->len,
+@@@ -493,9 -494,8 +493,9 @@@ static void efx_rx_packet_gro(struct ef
+  	} else {
+  		struct sk_buff *skb =3D rx_buf->u.skb;
+ =20
+- 		EFX_BUG_ON_PARANOID(!checksummed);
++ 		EFX_BUG_ON_PARANOID(!(rx_buf->flags & EFX_RX_PKT_CSUMMED));
+  		rx_buf->u.skb =3D NULL;
+ +		skb->ip_summed =3D CHECKSUM_UNNECESSARY;
+ =20
+  		gro_result =3D napi_gro_receive(napi, skb);
+  	}
 
-> -mike
+--Signature=_Mon__27_Feb_2012_12_11_25_+1100_kvoyOHFIPttzh9C.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPStg9AAoJEECxmPOUX5FEi6IQAKGamR3N6tjk0ieKIHQS8EvO
+G7b9sjOY82hpOj6nPkgpZOp3+TcLbiS9LE3GAVA8StjAHVAGfSLfKeQP6CsZnKqH
+8GoS7uvFluPksCJU1fBThpizOmF8CZru9GEmtKZP/NE2dItGIjzSTheHvlY4z8ch
+qFZHzyz0xO7gVaSREm5eOQ/QB2sUBeGVnDzgMFVk/I5brM4n8ON019vqIb9IF+i0
+QlTg7uMp+6HrtzigNjPfZZWpJA7o1DcnxiJCdQPbYjVSedy6duI9/q8qqN6C35gh
+rbLKzHGFPeM/gb9xCnm/EIBt6dxfU0gTwSU7k/+LUoMBngKJR6QmB8HYG3oI0s9f
+HUjvI6BxtIMRe7sOF/X2hYO1SPRHUVphpymCna9Ncuql4ISn8FCcNertxUeeeqdJ
+FI5sW35S8UeLi4BS66ex28IkiCq5V2DFVgrAyXDwxp2fwLUTb3J7feJ/MMjp3Uh6
+G7Z/sYM5ByALLotUnMLh6qmWV+eTz7gxvgWRv19PsYtGxeqbLxd68vz/xk5xmlJt
+1zEZwj76/TuHciivDAoFMdOUDyYvQJIoOVBtoaty+juh2649d4FcOvMNB5471iev
+dNBWpjNT2XZv7XVRl1Xz1T61aA5xn4ejC7XUertBr9LLDOUPFpVlqV+sZfZDD7Uc
+QGK9DWwRV9e4pAtwFBFl
+=yX6V
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__27_Feb_2012_12_11_25_+1100_kvoyOHFIPttzh9C.--
