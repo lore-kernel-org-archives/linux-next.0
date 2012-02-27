@@ -1,55 +1,28 @@
-From: James Bottomley <jbottomley@parallels.com>
-Subject: Re: [PATCH v2] parisc: dont unconditionally override CROSS_COMPILE
- for 64 bit.
-Date: Mon, 27 Feb 2012 21:41:05 +0000
-Message-ID: <1330378864.2822.92.camel@dabdike.int.hansenpartnership.com>
-References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
-	 <1330376359-23731-1-git-send-email-paul.gortmaker@windriver.com>
+From: Timur Tabi <timur@freescale.com>
+Subject: Re: [PATCH] sound: fix trivial build error in mpc5200_dma.c
+Date: Mon, 27 Feb 2012 15:56:38 -0600
+Message-ID: <4F4BFC16.2090602@freescale.com>
+References: <1330204350-386-1-git-send-email-paul.gortmaker@windriver.com> <20120227145926.GK3191@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-parisc-owner@vger.kernel.org>
-In-Reply-To: <1330376359-23731-1-git-send-email-paul.gortmaker@windriver.com>
-Content-Language: en-US
-Content-ID: <E90007C2EC5AB745A350BE376E5017D1@sw.swsoft.com>
-Sender: linux-parisc-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "kyle@mcmartin.ca" <kyle@mcmartin.ca>, "deller@gmx.de" <deller@gmx.de>, "vapier@gentoo.org" <vapier@gentoo.org>, "dave.anglin@bell.net" <dave.anglin@bell.net>, "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from va3ehsobe001.messaging.microsoft.com ([216.32.180.11]:38593
+	"EHLO VA3EHSOBE005.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754067Ab2B0V4z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Feb 2012 16:56:55 -0500
+In-Reply-To: <20120227145926.GK3191@opensource.wolfsonmicro.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, perex@perex.cz, tiwai@suse.de, lrg@ti.com, linux-next@vger.kernel.org
 
-T24gTW9uLCAyMDEyLTAyLTI3IGF0IDE1OjU5IC0wNTAwLCBQYXVsIEdvcnRtYWtlciB3cm90ZToN
-Cj4gVXNpbmcgdGhlIDY0IGJpdCB0b29sY2hhaW5zIGZyb20ga2VybmVsLm9yZ1sxXSwgb25lIGZp
-bmRzIHRoYXQNCj4geW91IGNhbid0IGJ1aWxkIHRoZSBhNTAwX2RlZmNvbmZpZywgYmVjYXVzZSB0
-aGUgTWFrZWZpbGUgd2lsbA0KPiBzdG9tcCB3aGF0ZXZlciB2YWx1ZSB5b3UgaGF2ZSBpbiB5b3Vy
-IGVudi4gZm9yIENST1NTX0NPTVBJTEUuDQo+IA0KPiBUaGlzIHNob3dzIHVwIHNpbmNlIHRoZSBr
-ZXJuZWwub3JnIHRvb2xjaGFpbnMgZm9yIHBhcmlzYy02NA0KPiBkbyBub3QgaGF2ZSB0aGUgIi1n
-bnUiIHByZWZpeCwgYW5kIHNvIHlvdSBydW4gaW50byBpdCBhbHdheXMNCj4gc2F5aW5nIGhwcGE2
-NC1saW51eC1nbnUtZ2NjIG5vdCBmb3VuZCwgcmVnYXJkbGVzcyBvZiB0aGUgZmFjdA0KPiB5b3Un
-dmUgbm90IGdvdCAiLWdudSIgcHV0IGFueXdoZXJlIGludG8gQ1JPU1NfQ09NUElMRS4NCj4gDQo+
-IFNpbmNlIHlvdSBjYW4gc2V0IENST1NTX0NPTVBJTEUgZnJvbSB0aGUgZW52aXJvbm1lbnQgYW5k
-L29yIHNldA0KPiBpdCBpbiB5b3VyIC5jb25maWcgZmlsZSwgdGhlcmUgcmVhbGx5IGlzIG5vIG5l
-ZWQgZm9yIGl0IHRvIGJlDQo+IHBva2VkIGF0IGJ5IHRoZSBNYWtlZmlsZSBhdCBhbGwuICBTbyBq
-dXN0IGRlbGV0ZSBpdC4NCj4gDQo+IFsxXSBmdHA6Ly9mdHAua2VybmVsLm9yZy9wdWIvdG9vbHMv
-Y3Jvc3N0b29sL2ZpbGVzL2Jpbi94ODZfNjQvNC41LjIvDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBQ
-YXVsIEdvcnRtYWtlciA8cGF1bC5nb3J0bWFrZXJAd2luZHJpdmVyLmNvbT4NCj4gLS0tDQo+IA0K
-PiBbdjI6IG5vIGlmZGVmL2VuZGlmIC0tIGp1c3QgZGVsZXRlIHRoZSBvZmZlbmRpbmcgbGluZS5d
-DQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9wYXJpc2MvTWFrZWZpbGUgYi9hcmNoL3BhcmlzYy9N
-YWtlZmlsZQ0KPiBpbmRleCA1NWNjYTFkLi5hNTMzMzY3IDEwMDY0NA0KPiAtLS0gYS9hcmNoL3Bh
-cmlzYy9NYWtlZmlsZQ0KPiArKysgYi9hcmNoL3BhcmlzYy9NYWtlZmlsZQ0KPiBAQCAtMzEsNyAr
-MzEsNiBAQCBpZmRlZiBDT05GSUdfNjRCSVQNCj4gIFVUU19NQUNISU5FCTo9IHBhcmlzYzY0DQo+
-ICBDSEVDS0ZMQUdTCSs9IC1EX19MUDY0X189MSAtbTY0DQo+ICBXSURUSAkJOj0gNjQNCj4gLUNS
-T1NTX0NPTVBJTEUJOj0gaHBwYTY0LWxpbnV4LWdudS0NCj4gIGVsc2UgIyAzMi1iaXQNCj4gIFdJ
-RFRICQk6PQ0KPiAgZW5kaWYNCg0KV2UgY2FuJ3QgZG8gdGhhdCAuLi4gaXQgY3Jhc2hlcyBhIHN0
-YW5kYXJkIGJ1aWxkIGFsbW9zdCBpbW1lZGlhdGVseQ0KYmVjYXVzZSBpdCBkb2Vzbid0IHBpY2sg
-dGhlIDY0IGJpdCBjb21waWxlciAoYW5kIHdlIGhhdmUgbm8gYmlhcmNoDQpzb2x1dGlvbikuDQoN
-CldlIG5lZWQgbWFrZSBvbiBhIDY0IGJpdCBjb25maWcgdG8gd29yayBvdXQgb2YgdGhlIGJveC4g
-IEl0IGJyZWFrcw0Kd2l0aCA/PSBhcyBKREEgcG9pbnRlZCBvdXQgYmVjYXVzZSBDUk9TU19DT01Q
-SUxFIGlzIGFsd2F5cyBkZWZpbmVkLg0KRG9lcyB0aGlzIHNhdGlzZnkgZXZlcnlvbmU/DQoNCkph
-bWVzDQoNCi0tLQ0KDQpkaWZmIC0tZ2l0IGEvYXJjaC9wYXJpc2MvTWFrZWZpbGUgYi9hcmNoL3Bh
-cmlzYy9NYWtlZmlsZQ0KaW5kZXggNTVjY2ExZC4uMTlhYjdiMiAxMDA2NDQNCi0tLSBhL2FyY2gv
-cGFyaXNjL01ha2VmaWxlDQorKysgYi9hcmNoL3BhcmlzYy9NYWtlZmlsZQ0KQEAgLTMxLDcgKzMx
-LDExIEBAIGlmZGVmIENPTkZJR182NEJJVA0KIFVUU19NQUNISU5FCTo9IHBhcmlzYzY0DQogQ0hF
-Q0tGTEFHUwkrPSAtRF9fTFA2NF9fPTEgLW02NA0KIFdJRFRICQk6PSA2NA0KKw0KKyMgRklYTUU6
-IGlmIG5vIGRlZmF1bHQgc2V0LCBzaG91bGQgcmVhbGx5IHRyeSB0byBsb2NhdGUgZHluYW1pY2Fs
-bHkNCitpZmVxICgkKENST1NTX0NPTVBJTEUpLCkNCiBDUk9TU19DT01QSUxFCTo9IGhwcGE2NC1s
-aW51eC1nbnUtDQorZW5kaWYNCiBlbHNlICMgMzItYml0DQogV0lEVEgJCTo9DQogZW5kaWYNCg0K
+Mark Brown wrote:
+> Please also try to use changelog headers consistent with the subsystem.
+
+Can you explain what that means?  What are "changelog headers"?
+
+-- 
+Timur Tabi
+Linux kernel developer at Freescale
