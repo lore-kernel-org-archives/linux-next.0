@@ -1,56 +1,75 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Tue, 28 Feb 2012 10:30:24 +1100
-Message-ID: <1330385424.11728.7.camel@pasglop>
-References: <20120227173747.853e7fbe3ce3afab8939720b@canb.auug.org.au>
-	 <1330334360.11728.3.camel@pasglop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Feb 27 (gpio-sodaville.c)
+Date: Tue, 28 Feb 2012 10:40:47 +1100
+Message-ID: <20120228104047.85b5515f3b27c631580f5503@canb.auug.org.au>
+References: <20120227182029.545a7db32550ce94c9faffb4@canb.auug.org.au>
+	<4F4BC3C5.8040802@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__28_Feb_2012_10_40_47_+1100_z+sVIqtrrUfFTSVJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:33684 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756027Ab2B0Xal (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Feb 2012 18:30:41 -0500
-In-Reply-To: <1330334360.11728.3.camel@pasglop>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40748 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752881Ab2B0XlA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Feb 2012 18:41:00 -0500
+In-Reply-To: <4F4BC3C5.8040802@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Hans J. Koch" <hjk@linutronix.de>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@stericsson.com>
 
-On Mon, 2012-02-27 at 20:19 +1100, Benjamin Herrenschmidt wrote:
-> On Mon, 2012-02-27 at 17:37 +1100, Stephen Rothwell wrote:
-> >         pci_add_resource_offset(resources, res,
-> > -                       (resource_size_t) hose->io_base_virt - _IO_BASE);
-> > +                       (resource_size_t)(unsigned long)hose->io_base_virt - _IO_BASE);
-> 
-> We have to be careful here as we do want sign extension to happen (yeah
-> it's odd, but it's the way we do IOs on ppc32 :-) Maybe I should change
-> it one day).
-> 
-> So we probably want to do:
-> 
-> 	 (resource_size_t)(long long)(hose->io_base_virt - _IO_BASE)
+--Signature=_Tue__28_Feb_2012_10_40_47_+1100_z+sVIqtrrUfFTSVJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Oops ... that was meant to read (long) not (long long)... Any ways, I
-more or less convinced myself that even without the sign extension it
-would still work, since the IO port number is eventually cast to an
-unsigned int by the accessors, so as long as the low 32-bits are correct
-(and they'll be with or without the sign extension), we should be fine.
-It's just that something trying to print the resource might end up
-displaying garbage in the top bits.
+On Mon, 27 Feb 2012 09:56:21 -0800 Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
+>
+> on i386:
+>=20
+> drivers/gpio/gpio-sodaville.c:130:2: error: unknown field 'dt_translate' =
+specified in initializer
+> drivers/gpio/gpio-sodaville.c:130:2: warning: initialization from incompa=
+tible pointer type
+> drivers/gpio/gpio-sodaville.c: In function 'sdv_register_irqsupport':
+> drivers/gpio/gpio-sodaville.c:152:8: error: 'struct irq_domain' has no me=
+mber named 'irq_base'
+> drivers/gpio/gpio-sodaville.c:182:2: error: implicit declaration of funct=
+ion 'irq_domain_add'
+> drivers/gpio/gpio-sodaville.c: In function 'sdv_gpio_remove':
+> drivers/gpio/gpio-sodaville.c:263:2: error: implicit declaration of funct=
+ion 'irq_domain_del'
 
+These are a conflicts between the gio tree and the irqdomain tree.
+Grant, can you supply me with a merge fix patch?  Or will you merge the
+irqdomain stuff into the gpio tree (making sure that the irqdomain tree
+never rebases again) ...
+
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Signature=_Tue__28_Feb_2012_10_40_47_+1100_z+sVIqtrrUfFTSVJ
+Content-Type: application/pgp-signature
 
-> Basically, IO resources are relative to _IO_BASE which on ppc32 is
-> basically the virtual address where we map the first PHB IO space.
-> 
-> Subsequent PHB mappings can end up below _IO_BASE, leading to negative
-> resource values for IO BARs on those busses. It all works fine because
-> even an unsigned addition will do the right thing as long as the value
-> is fully sign extended.
-> 
-> Cheers,
-> Ben.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPTBR/AAoJEECxmPOUX5FEkgYQAKVNkbQTDzgM+8O6ES0JYDfG
+TWwz0OBH+da2sLMDBltzjrgJ5FppLfEa0Frqt/gqJFJcX/OAyUciX7m0GtTcnzt3
+D21WtLxNqO/ZYIIfR7m1rpo8mXSkEGWEUzPgzErMrJVO+IfBgq/6RZSBX30Lduy/
+UGMLAS1Reu5/VEFglVvIr56oWKmte+6GKXhzfQVGXXtJL4PgG6vUZLYiWmLDt0p6
+1fuzq2lSo+1t1xOJXkV4BVpAlaJRI+aVaaYNxviGOma2vJPW2Ano/Msi13KJmQhX
+wJzsYWTjwaRoWI3UAC7T3Auf4f6tJOBgTRJqS6koJq8yJ9SxEw3W6xEkpYCIVLkJ
+4/X/4eqPXUK/AQfZFKeDmK4zDF+5spJmt9NLPhmHJ9KH6OHopMEsg/lNdaOWSYmf
+DhP6GyT1iGddK0+1ioqqAyTtySiqzGcKqfDqZc8vtVL96M0MNRRWfM/cuPbRpmnm
+gH7eZ2/X8BUN/l+gYnSdskjB58QIX5QjGtT1i47cUuUroT3V8Rrc8y0wh4ccLQy+
+NUeI2tz42Z9xK5kXXfJhlhtg9kTT1fz1I3L3xZSwbTLtYB8eIWjf3jjMDH4QCEm2
+7gRJsYezRH1k9ZoGGNucRb6fcHmnxqR7a94tneZuWzD9Wn4UtX7W1wwmSD+crMor
+JhE9yNr3aKxeRhYgwq0u
+=GKcz
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__28_Feb_2012_10_40_47_+1100_z+sVIqtrrUfFTSVJ--
