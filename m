@@ -1,93 +1,58 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH/RFC] rapidio: temporarily exclude FSL_RIO from 64 bit
- builds
-Date: Mon, 27 Feb 2012 12:49:56 +1100
-Message-ID: <1330307396.20389.67.camel@pasglop>
-References: <1329865853-17277-1-git-send-email-paul.gortmaker@windriver.com>
-	 <CAP=VYLroaEKncpy7VBobJdXijnDS5UdTV7qPG2A--SicnGvFSg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the uprobes tree with the tip tree
+Date: Mon, 27 Feb 2012 13:58:39 +1100
+Message-ID: <20120227135839.df169a9126ce5a8f2b53c718@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__27_Feb_2012_13_58_39_+1100_YXXBM8TKEBJRDcd="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:38613 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753305Ab2B0BuO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 26 Feb 2012 20:50:14 -0500
-In-Reply-To: <CAP=VYLroaEKncpy7VBobJdXijnDS5UdTV7qPG2A--SicnGvFSg@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53477 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753083Ab2B0C6u (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 26 Feb 2012 21:58:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@gmail.com>
-Cc: linuxppc-dev@lists.ozlabs.org, Gang.Liu@freescale.com, linux-next@vger.kernel.org
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-On Sun, 2012-02-26 at 20:26 -0500, Paul Gortmaker wrote:
-> Hi Ben,
-> 
-> Given a week has passed with the absence of any feedback
-> with respect to SRIO on 64 bit, are you OK with applying the
-> below patch[1] pretty much as-is?
+--Signature=_Mon__27_Feb_2012_13_58_39_+1100_YXXBM8TKEBJRDcd=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It can't hurt, I'll put it in. That's normally Kumar's side of things
-but then with him leaving FSL things are a bit in flux right now.
+Hi Srikar,
 
+Today's linux-next merge of the uprobes tree got a conflicts in various
+files between commits from the tip tree and commits from the uprobes tree.
+
+It looks like a later (and different) version of the uprobes patch set has
+been merged into the tip tree.  So I have dropped the uprobes tree
+changes for today.
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> Thanks,
-> Paul.
-> 
-> [1] http://patchwork.ozlabs.org/patch/142383/
-> 
-> ---
-> 
-> On Tue, Feb 21, 2012 at 6:10 PM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
-> > The following are seen while using the corenet64_smp_defconfig:
-> >
-> > arch/powerpc/sysdev/fsl_rmu.c:315: error: cast from pointer to integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:320: error: cast to pointer from integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:320: error: cast to pointer from integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:320: error: cast to pointer from integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:330: error: cast to pointer from integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:332: error: cast to pointer from integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:339: error: cast to pointer from integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:340: error: cast to pointer from integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:341: error: cast to pointer from integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:348: error: cast to pointer from integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:348: error: cast to pointer from integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:348: error: cast to pointer from integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:659: error: cast from pointer to integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:659: error: format '%8.8x' expects type 'unsigned int', but argument 5 has type 'size_t'
-> > arch/powerpc/sysdev/fsl_rmu.c:985: error: cast from pointer to integer of different size
-> > arch/powerpc/sysdev/fsl_rmu.c:997: error: cast to pointer from integer of different size
-> >
-> > A quick inspection of the code leaves one with the impression
-> > that it was not explicitly written with 64 bit support in mind,
-> > so just block that as a possible config selection for now.
-> >
-> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> >
-> > ---
-> >
-> > [This is seen in linux-next -- not sure if this is the right way to go
-> >  but at least it will give the issue some visibility to the right ppl.]
-> >
-> > diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> > index 75f061e..5ad8013 100644
-> > --- a/arch/powerpc/Kconfig
-> > +++ b/arch/powerpc/Kconfig
-> > @@ -773,7 +773,7 @@ config RAPIDIO
-> >
-> >  config FSL_RIO
-> >        bool "Freescale Embedded SRIO Controller support"
-> > -       depends on RAPIDIO && HAS_RAPIDIO
-> > +       depends on RAPIDIO && HAS_RAPIDIO && (BROKEN || !PPC64)
-> >        default "n"
-> >        ---help---
-> >          Include support for RapidIO controller on Freescale embedded
-> > --
-> > 1.7.9.1
-> >
-> > _______________________________________________
-> > Linuxppc-dev mailing list
-> > Linuxppc-dev@lists.ozlabs.org
-> > https://lists.ozlabs.org/listinfo/linuxppc-dev
+--Signature=_Mon__27_Feb_2012_13_58_39_+1100_YXXBM8TKEBJRDcd=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPSvFfAAoJEECxmPOUX5FEHGwP/RRGZduNKJNDPw/Je58oQgFs
+GkvA3TX8ag1lQVdkPeAwcXCj/2WR1vZn2B40qxM+909xDmE+pCBtgWBVwZxYTHGs
+jRO6pxfEtZPRWPsOeHNpzv/2rk/Gk0bo346kvDFFgs3VFTeei3Cppx+a9I4h66RL
+w+x2Vc9pzeJw0QIzYBJhUfRSh88h0shvaUkioftTSCg5SV3NEjzooLV80l2U9fwh
+nYY0Twfoq9odvixxZZpawWIuPW5HhhGH4hxLKxLLZXRX/ELfSgrX7hJbI7NVuIdo
+GzGftInoCHx19zkQS4+GcywpqbezGL2qPzkZzD0FZxtVrSLAKKWaHfcHXu1xdQ/1
+ipCW8HoCEIBlpLu8sDSMM8kEo+UQE3NChab079GWc5OEzpyhqwaV+jF7ryAfSvDF
+jqcI59bRI0NpfpoCxG+WK5BUEVdnwFcAx0nnov6aXQQlVNggFcno03VowI8ERLwO
+EtUlJYRWkxfI2Ezb4BaLMcjcwp1w3Kj7MdMz7V6K/2TYigUFyO9djNcSchhneg9T
+J+ww+oF9xLtCT5nTybbsgElepaPDLhJ+atksLw0eEMftRMqJZ8sK+cOKVcPOyJEK
+xvcrCnipaw9ACzJS4aocCUfhn2ZxYtoRwOjRE2Pez+XcGP+kiV8VnrrDhGytvwJ/
+3xwpicaaCgTXDaDobI1y
+=QuFf
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__27_Feb_2012_13_58_39_+1100_YXXBM8TKEBJRDcd=--
