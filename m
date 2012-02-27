@@ -1,89 +1,105 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Mon, 27 Feb 2012 12:11:25 +1100
-Message-ID: <20120227121125.007c32f9aa7be2470d9e3356@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@gmail.com>
+Subject: Re: [PATCH/RFC] rapidio: temporarily exclude FSL_RIO from 64 bit builds
+Date: Sun, 26 Feb 2012 20:26:47 -0500
+Message-ID: <CAP=VYLroaEKncpy7VBobJdXijnDS5UdTV7qPG2A--SicnGvFSg@mail.gmail.com>
+References: <1329865853-17277-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__27_Feb_2012_12_11_25_+1100_kvoyOHFIPttzh9C."
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47155 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753336Ab2B0BLf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 26 Feb 2012 20:11:35 -0500
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:48003 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753666Ab2B0B0r convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 26 Feb 2012 20:26:47 -0500
+Received: by daed14 with SMTP id d14so543570dae.19
+        for <linux-next@vger.kernel.org>; Sun, 26 Feb 2012 17:26:47 -0800 (PST)
+In-Reply-To: <1329865853-17277-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>
+To: benh@kernel.crashing.org
+Cc: linuxppc-dev@lists.ozlabs.org, Gang.Liu@freescale.com, linux-next@vger.kernel.org
 
---Signature=_Mon__27_Feb_2012_12_11_25_+1100_kvoyOHFIPttzh9C.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Ben,
 
-Hi all,
+Given a week has passed with the absence of any feedback
+with respect to SRIO on 64 bit, are you OK with applying the
+below patch[1] pretty much as-is?
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/sfc/rx.c between commit ff3bc1e75275 ("sfc: Fix
-assignment of ip_summed for pre-allocated skbs") from Linus' tree and
-commit db3395697cad ("sfc: Replace efx_rx_buffer::is_page and other
-booleans with a flags field") from the net-next tree.
+Thanks,
+Paul.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+[1] http://patchwork.ozlabs.org/patch/142383/
 
-diff --cc drivers/net/ethernet/sfc/rx.c
-index fc52fca,506d246..0000000
---- a/drivers/net/ethernet/sfc/rx.c
-+++ b/drivers/net/ethernet/sfc/rx.c
-@@@ -156,10 -155,11 +155,10 @@@ static int efx_init_rx_buffers_skb(stru
-  		if (unlikely(!skb))
-  			return -ENOMEM;
- =20
- -		/* Adjust the SKB for padding and checksum */
- +		/* Adjust the SKB for padding */
-  		skb_reserve(skb, NET_IP_ALIGN);
-  		rx_buf->len =3D skb_len - NET_IP_ALIGN;
-- 		rx_buf->is_page =3D false;
-+ 		rx_buf->flags =3D 0;
- -		skb->ip_summed =3D CHECKSUM_UNNECESSARY;
- =20
-  		rx_buf->dma_addr =3D pci_map_single(efx->pci_dev,
-  						  skb->data, rx_buf->len,
-@@@ -493,9 -494,8 +493,9 @@@ static void efx_rx_packet_gro(struct ef
-  	} else {
-  		struct sk_buff *skb =3D rx_buf->u.skb;
- =20
-- 		EFX_BUG_ON_PARANOID(!checksummed);
-+ 		EFX_BUG_ON_PARANOID(!(rx_buf->flags & EFX_RX_PKT_CSUMMED));
-  		rx_buf->u.skb =3D NULL;
- +		skb->ip_summed =3D CHECKSUM_UNNECESSARY;
- =20
-  		gro_result =3D napi_gro_receive(napi, skb);
-  	}
+---
 
---Signature=_Mon__27_Feb_2012_12_11_25_+1100_kvoyOHFIPttzh9C.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPStg9AAoJEECxmPOUX5FEi6IQAKGamR3N6tjk0ieKIHQS8EvO
-G7b9sjOY82hpOj6nPkgpZOp3+TcLbiS9LE3GAVA8StjAHVAGfSLfKeQP6CsZnKqH
-8GoS7uvFluPksCJU1fBThpizOmF8CZru9GEmtKZP/NE2dItGIjzSTheHvlY4z8ch
-qFZHzyz0xO7gVaSREm5eOQ/QB2sUBeGVnDzgMFVk/I5brM4n8ON019vqIb9IF+i0
-QlTg7uMp+6HrtzigNjPfZZWpJA7o1DcnxiJCdQPbYjVSedy6duI9/q8qqN6C35gh
-rbLKzHGFPeM/gb9xCnm/EIBt6dxfU0gTwSU7k/+LUoMBngKJR6QmB8HYG3oI0s9f
-HUjvI6BxtIMRe7sOF/X2hYO1SPRHUVphpymCna9Ncuql4ISn8FCcNertxUeeeqdJ
-FI5sW35S8UeLi4BS66ex28IkiCq5V2DFVgrAyXDwxp2fwLUTb3J7feJ/MMjp3Uh6
-G7Z/sYM5ByALLotUnMLh6qmWV+eTz7gxvgWRv19PsYtGxeqbLxd68vz/xk5xmlJt
-1zEZwj76/TuHciivDAoFMdOUDyYvQJIoOVBtoaty+juh2649d4FcOvMNB5471iev
-dNBWpjNT2XZv7XVRl1Xz1T61aA5xn4ejC7XUertBr9LLDOUPFpVlqV+sZfZDD7Uc
-QGK9DWwRV9e4pAtwFBFl
-=yX6V
------END PGP SIGNATURE-----
-
---Signature=_Mon__27_Feb_2012_12_11_25_+1100_kvoyOHFIPttzh9C.--
+On Tue, Feb 21, 2012 at 6:10 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> The following are seen while using the corenet64_smp_defconfig:
+>
+> arch/powerpc/sysdev/fsl_rmu.c:315: error: cast from pointer to intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:320: error: cast to pointer from intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:320: error: cast to pointer from intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:320: error: cast to pointer from intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:330: error: cast to pointer from intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:332: error: cast to pointer from intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:339: error: cast to pointer from intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:340: error: cast to pointer from intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:341: error: cast to pointer from intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:348: error: cast to pointer from intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:348: error: cast to pointer from intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:348: error: cast to pointer from intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:659: error: cast from pointer to intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:659: error: format '%8.8x' expects type=
+ 'unsigned int', but argument 5 has type 'size_t'
+> arch/powerpc/sysdev/fsl_rmu.c:985: error: cast from pointer to intege=
+r of different size
+> arch/powerpc/sysdev/fsl_rmu.c:997: error: cast to pointer from intege=
+r of different size
+>
+> A quick inspection of the code leaves one with the impression
+> that it was not explicitly written with 64 bit support in mind,
+> so just block that as a possible config selection for now.
+>
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+>
+> ---
+>
+> [This is seen in linux-next -- not sure if this is the right way to g=
+o
+> =A0but at least it will give the issue some visibility to the right p=
+pl.]
+>
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 75f061e..5ad8013 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -773,7 +773,7 @@ config RAPIDIO
+>
+> =A0config FSL_RIO
+> =A0 =A0 =A0 =A0bool "Freescale Embedded SRIO Controller support"
+> - =A0 =A0 =A0 depends on RAPIDIO && HAS_RAPIDIO
+> + =A0 =A0 =A0 depends on RAPIDIO && HAS_RAPIDIO && (BROKEN || !PPC64)
+> =A0 =A0 =A0 =A0default "n"
+> =A0 =A0 =A0 =A0---help---
+> =A0 =A0 =A0 =A0 =A0Include support for RapidIO controller on Freescal=
+e embedded
+> --
+> 1.7.9.1
+>
+> _______________________________________________
+> Linuxppc-dev mailing list
+> Linuxppc-dev@lists.ozlabs.org
+> https://lists.ozlabs.org/listinfo/linuxppc-dev
