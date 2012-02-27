@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm tree with the tip tree
-Date: Mon, 27 Feb 2012 16:23:41 +1100
-Message-ID: <20120227162341.87ff40134443747c9d9dd0ab@canb.auug.org.au>
+Date: Mon, 27 Feb 2012 16:33:43 +1100
+Message-ID: <20120227163343.b0c0ff0836f433538ec295f5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__27_Feb_2012_16_23_41_+1100_2_qWy=A=Pz.WvG98"
+ boundary="Signature=_Mon__27_Feb_2012_16_33_43_+1100_omPGVHCD6mKOUA.q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59260 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53530 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750811Ab2B0FXu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Feb 2012 00:23:50 -0500
+	with ESMTP id S1751254Ab2B0Fdw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Feb 2012 00:33:52 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Shi <alex.shi@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linus <torvalds@linux-foundation.org>
 
---Signature=_Mon__27_Feb_2012_16_23_41_+1100_2_qWy=A=Pz.WvG98
+--Signature=_Mon__27_Feb_2012_16_33_43_+1100_omPGVHCD6mKOUA.q
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,35 +24,74 @@ Content-Transfer-Encoding: quoted-printable
 Hi Andrew,
 
 Today's linux-next merge of the akpm tree got a conflict in
-kernel/irq/manage.c between commit b4bc724e82e8 ("genirq: Handle pending
-irqs in irq_startup()") from the tip tree and commit "irqs: fix handling
-of pending IRQs at request time" from the akpm tree.
+arch/x86/include/asm/i387.h between commits 8546c008924d ("i387: Uninline
+the generic FP helpers that we expose to kernel modules") and
+1361b83a13d4 ("i387: Split up <asm/i387.h> into exported and internal
+interfaces") from the tip tree and commit
+"percpu-remove-percpu_xxx-functions-fix" from the akpm tree.
 
-It looks like the former is a superset of the latter, so I dropped the
-latter.
+I applied the appropriate part of the latter patch to
+arch/x86/include/asm/fpu-internal.h and arch/x86/kernel/i387.c (see below).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__27_Feb_2012_16_23_41_+1100_2_qWy=A=Pz.WvG98
+diff --git a/arch/x86/include/asm/fpu-internal.h b/arch/x86/include/asm/fpu=
+-internal.h
+index 5caaf43..e9801b4 100644
+--- a/arch/x86/include/asm/fpu-internal.h
++++ b/arch/x86/include/asm/fpu-internal.h
+@@ -290,14 +290,14 @@ static inline int __thread_has_fpu(struct task_struct=
+ *tsk)
+ static inline void __thread_clear_has_fpu(struct task_struct *tsk)
+ {
+ 	tsk->thread.fpu.has_fpu =3D 0;
+-	percpu_write(fpu_owner_task, NULL);
++	__this_cpu_write(fpu_owner_task, NULL);
+ }
+=20
+ /* Must be paired with a 'clts' before! */
+ static inline void __thread_set_has_fpu(struct task_struct *tsk)
+ {
+ 	tsk->thread.fpu.has_fpu =3D 1;
+-	percpu_write(fpu_owner_task, tsk);
++	__this_cpu_write(fpu_owner_task, tsk);
+ }
+=20
+ /*
+diff --git a/arch/x86/kernel/i387.c b/arch/x86/kernel/i387.c
+index 7734bcb..32c3972 100644
+--- a/arch/x86/kernel/i387.c
++++ b/arch/x86/kernel/i387.c
+@@ -88,7 +88,7 @@ void kernel_fpu_begin(void)
+ 		__thread_clear_has_fpu(me);
+ 		/* We do 'stts()' in kernel_fpu_end() */
+ 	} else {
+-		percpu_write(fpu_owner_task, NULL);
++		__this_cpu_write(fpu_owner_task, NULL);
+ 		clts();
+ 	}
+ }
+
+--Signature=_Mon__27_Feb_2012_16_33_43_+1100_omPGVHCD6mKOUA.q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPSxNdAAoJEECxmPOUX5FEwaEP/05rDaEeCvazZhIoFOtyfbEo
-7tcm9j/gpTaCEaJR3ahnT5V7UZrO4ILN5uMoQTbRF8m/MgfW+/9KIdSN02FpuaYI
-8Kdg3cT5Jmu+L+w1YyE5tUiylQl5kDO7IVT6arBpvTAyp5Rh3TW2YDyyux10dfhP
-Rdqg230wAPNQw1cr/hK5HvVeov7btpxFFQffiJIqGNnN/FaoYkmRmhILWwedWcuR
-RjCFWZioHxbQHoX4wJbD/9pJioj3NZyF1T1EaCPfVZofWzyulbvr1F+QEuMzEf5T
-LxvrYapT1VVBiegNWkEMuhO3ZKjngEYFZc1y8fELva9og5vu7FxNqlwvxN60kh11
-jzQPvZqN+4YBIYww5hxrCLy6N2pAuv0Okk3MlVXOO6CzZz6LR/91mK9EGca0+8ea
-Np1OBD1mTvXVU0EAhWjAxKlasINROGqtBGee5l1JQqta86TfH6AAHKvIgTi+F1tk
-c3fkiza4PGx46ijVJ8JaQ8+iVj1NjbSUBhj7NzHHEjEU4f7mHwbrL3qiPG2XOn+H
-8ySaaRZGAy1DtPdhJNcR92kodgle+MRWxbSfUK6/aXugvbCjh1L1hAeLv1WWxN73
-gxHjQ8PoSG1/5pIXDCMh0AvA//oghUzt4UOLy0SY4xx60uqGF5fPsYV+/kHHkKws
-awd0cvcTuyQumMraDz8n
-=0dd/
+iQIcBAEBCAAGBQJPSxW3AAoJEECxmPOUX5FEMi0QAKCKOgbLA8b0HVURWatWcUfF
+T0aEmfu6C3GppJA4xingcgatOkWZ3tNAbroAR8E3WNkBrhodE+IZsIf6tIt9FINn
+DOUnG8/4Ozju4W79WNGoCOAtzHFiwBLrTkDFgkh6yVTzjyDgrdJLTiGj2CUFhitb
+bnzA+Q7D77dg+pOVJ+OLS0R2iVoiltuEjll1B8grLvY2JCdquF+DyLrB5ggWMgKg
+Zaj7bgDvOcbPriMFVw6hoZGWZI/3FDMhbHzbX08n9jzihRC3a6bPDjaRlagQu+a5
+fIE6VxIgVXfBYmnacipQ+FXIDezFmMZuHwv5sHAMe+Vs4pZTGsh0iTMFZHeKDv9l
+w8FoL0XimAVJWRQU9CPHrWbZD50YGfT52SexdEXGYy3inYm8n8GEFw7z0OmxE1Us
+w6NLAa4jqpv2ItC4UtkPZJjs6I9PIY14Ulz/YgIbtDP5PqPhQShFbBa+6V326POg
+Pd9TnP24JqebCjsKU/J8bzrDRpEeg5yfti19MeMcsW9JReXmRb28Pk/7vT4bsTy1
+WsPDKNguQi9DW/00cm2DF6/oiuE/cARFc8xZ6icn0m6lVSIid5sfg8anMN4eeQej
+cEaef5vxc/k10ZjXCEyjn/3qHzubl8Sj/h0c4c0PaVnOZ0qfVTzympAM4BcEId0D
+BtL7QK/vSvCFqWTI7SF1
+=g9xY
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__27_Feb_2012_16_23_41_+1100_2_qWy=A=Pz.WvG98--
+--Signature=_Mon__27_Feb_2012_16_33_43_+1100_omPGVHCD6mKOUA.q--
