@@ -1,62 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm tree with the tip tree
-Date: Mon, 27 Feb 2012 17:19:29 +1100
-Message-ID: <20120227171929.d3bb057460c0e4fcd7d8d7ff@canb.auug.org.au>
-References: <20120227165356.6119ac92eabd7052fc56c741@canb.auug.org.au>
-	<4F4B1C31.7070808@zytor.com>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Mon, 27 Feb 2012 17:21:39 +1100
+Message-ID: <20120227172139.726ddae85c910cee7b7e3a37@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__27_Feb_2012_17_19_29_+1100_A6Y04Sdc2UVJA6IP"
+ boundary="Signature=_Mon__27_Feb_2012_17_21_39_+1100_mo6.0N.b/4Rw1O9k"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60958 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:39700 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752223Ab2B0GTj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Feb 2012 01:19:39 -0500
-In-Reply-To: <4F4B1C31.7070808@zytor.com>
+	with ESMTP id S1753454Ab2B0GVr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Feb 2012 01:21:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, Cyrill Gorcunov <gorcunov@openvz.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Shi <alex.shi@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Mon__27_Feb_2012_17_19_29_+1100_A6Y04Sdc2UVJA6IP
+--Signature=_Mon__27_Feb_2012_17_21_39_+1100_mo6.0N.b/4Rw1O9k
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Peter,
+Hi Andrew,
 
-On Sun, 26 Feb 2012 22:01:21 -0800 "H. Peter Anvin" <hpa@zytor.com> wrote:
->
-> It should be "common" (otherwise there would need to be an x32 variant
-> which would point to the compat version of the call, but in this case
-> even the i386 entry point goes straight to sys_kcmp.)
+After merging the akpm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Thanks, I will fix up the merge resolution tomorrow.
+In file included from include/linux/compat.h:18:0,
+                 from arch/x86/include/asm/ia32.h:7,
+                 from arch/x86/include/asm/sigframe.h:17,
+                 from arch/x86/kernel/asm-offsets.c:16:
+arch/x86/include/asm/compat.h: In function 'arch_compat_alloc_user_space':
+arch/x86/include/asm/compat.h:232:3: error: implicit declaration of functio=
+n 'percpu_read' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit d1a797f388d6 ("x32: Handle process creation") from the
+tip tree interacting with commit 30999a95d190 ("percpu: remove percpu_xxx()
+functions") from the akpm tree.
+
+I applied the following fix up patch.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 27 Feb 2012 17:12:00 +1100
+Subject: [PATCH] percpu: fix for removal of percpu_xxx function
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/include/asm/compat.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/x86/include/asm/compat.h b/arch/x86/include/asm/compat.h
+index e7f68b4..b6a2a1c 100644
+--- a/arch/x86/include/asm/compat.h
++++ b/arch/x86/include/asm/compat.h
+@@ -229,7 +229,7 @@ static inline void __user *arch_compat_alloc_user_space=
+(long len)
+ 		sp =3D task_pt_regs(current)->sp;
+ 	} else {
+ 		/* -128 for the x32 ABI redzone */
+-		sp =3D percpu_read(old_rsp) - 128;
++		sp =3D __this_cpu_read(old_rsp) - 128;
+ 	}
+=20
+ 	return (void __user *)round_down(sp - len, 16);
+--=20
+1.7.9.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__27_Feb_2012_17_19_29_+1100_A6Y04Sdc2UVJA6IP
+--Signature=_Mon__27_Feb_2012_17_21_39_+1100_mo6.0N.b/4Rw1O9k
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPSyBxAAoJEECxmPOUX5FEApQQAIiqB/1f7J0pjwk8BZWJf+wt
-F1gExUAJgHDD+oH4mk3dPR0Bqg04fLqfFdA1qcKhjSa4z1sBL+cHCd+ySZOPEV+z
-um5U8Sr6o5TAV91sms6w0Sm/sOGg+4F9DmN0dnlL7zj1WHOYA0mu4ufwv9DxmYR0
-E+1LDJslkG+ktYZ/eqC1cm8NbrC35ijnEZXgIcL1gT2DwAnnUVCip+9DXbqzAtfp
-aCPHNtR3JWvePzsCj4ckCzPb7UhMZaQbptoW8aRXN2nbHpPATF4ItT5fXLcOnrlh
-JpPgrnsx4reg82KVSCvRJdMq/ruZX1gpRd5lTWP3kRGx486sDaSfrJUbsS4tMtsa
-xolFCHYcV5XvVQPss/GiifM714V/yqIzOpi95rOmkTHOCQEOchW8N4UA0fZcrNwJ
-xOQAn7cdyQeyNMDiwHO+UOl/ofxvyLdDWd/Lcp4eDzq6IlNEQTEOn8P14fA6lWH3
-z2j+Xxh7rLYB85i5tv9TSI7jWzitkVUedtgt1Xc0NmBtNcbvG+OEl/p2PUVKl8Lu
-HETz+AqvBPP+cOgF3bbdfpo8Z7VlZa2ngsCMs5TR8Yg92u3eZz4Hebx99tCgb5bl
-tnbIdJIB9p0C3knisB7P0UEPwNRCnm9YspYNt9euTFfahLB4v0a2detbJS2KteGx
-gFk9lk7pjTTz7jkzEfao
-=OBmD
+iQIcBAEBCAAGBQJPSyDzAAoJEECxmPOUX5FEWfgP/0HHCe+ItGQtGKdUmT4VQgVF
+pPvmIt9r0IrV7ma8NVSGxi1QjSHP1y+RKtvt7Ja4vSlsecmpQHv5LO+MOWDaYUlm
+kYnYLdMBph5D/L/MRHsYrwxeqxVNqP1B8JXEB8Tq4r/hfi0AuUoqHLLayILAEvEs
+Zt5Qr9knkbyAQtGr+PzOCvRrD6CsdTrHeYsxVGAcvWwdSX7CLfD/aqT1S1kZFDMG
+uVRhaXGxuIG4N1/FOspeVuapww/adWX3SpgVwZ+6G1xmCzZSXjdTmMjd5X4yYX1l
+9TvkZhit4fuapVGH7aZBMljTpG1yE6uSJhkJxslGfHu3QnhgQ6BednUe03gcOYGb
+h62mODrbsVwgpxM/pfkZSlLK7wma73tV4DMRUfN1ucE9DWVUGjEQVXbV6CIdgW9g
+/wP2i4412V/NsESRg/D1gXjX8CTOPxXwN6bv3mtbpZTIXHI3vQL9r5bm6PQ2caAz
+FC4pgbSDsc/pXgNFOUDhYhflbLtQtvfSuN8NvnkYtkfu2OI8UTeDHchJ1P36GEzX
+2pnpLv8LuPXs/qqWXQ1yCwa6ReWaKkFXwMcSCe/qw7hjI6UNQ5W4Tm0C11bfTusF
+/Oivxwu4NuvoKUNpuytE0o9aTpBjn2E6/QMcrbr/2ECNbW42c9u35eKLJIgTfq75
+EJ+UTayFxcdiQMceFYNS
+=SgpS
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__27_Feb_2012_17_19_29_+1100_A6Y04Sdc2UVJA6IP--
+--Signature=_Mon__27_Feb_2012_17_21_39_+1100_mo6.0N.b/4Rw1O9k--
