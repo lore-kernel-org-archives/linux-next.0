@@ -1,64 +1,87 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: Tree for Feb 27 (usbtouchscreen)
-Date: Tue, 28 Feb 2012 01:19:07 -0800
-Message-ID: <20120228091907.GA20034@core.coreip.homeip.net>
-References: <20120227182029.545a7db32550ce94c9faffb4@canb.auug.org.au>
- <4F4BC717.1000304@xenotime.net>
- <4F4BF7E2.3080203@gmx.ch>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] sound: fix trivial build error in mpc5200_dma.c
+Date: Tue, 28 Feb 2012 10:27:29 +0000
+Message-ID: <20120228102728.GB3121@opensource.wolfsonmicro.com>
+References: <1330204350-386-1-git-send-email-paul.gortmaker@windriver.com>
+ <20120227145926.GK3191@opensource.wolfsonmicro.com>
+ <4F4BFC16.2090602@freescale.com>
+ <20120227235630.GC23230@opensource.wolfsonmicro.com>
+ <CAP=VYLrdAqUrn0WERvbM_JqVSPWxU94ZJkF7C0HaJysy6fCy7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kORqDWCi7qDJ0mEj"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38106 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S964940Ab2B1K1c (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Feb 2012 05:27:32 -0500
 Content-Disposition: inline
-In-Reply-To: <4F4BF7E2.3080203@gmx.ch>
-Sender: linux-input-owner@vger.kernel.org
-To: Daniel Ritz <daniel.ritz@gmx.ch>
-Cc: Armando Visconti <armando.visconti@st.com>, Viresh Kumar <viresh.kumar@st.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <CAP=VYLrdAqUrn0WERvbM_JqVSPWxU94ZJkF7C0HaJysy6fCy7A@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Timur Tabi <timur@freescale.com>, perex@perex.cz, tiwai@suse.de, lrg@ti.com, linux-next@vger.kernel.org
 
-On Mon, Feb 27, 2012 at 10:38:42PM +0100, Daniel Ritz wrote:
-> On 2012-02-27 19:10 , Randy Dunlap wrote:
-> > On 02/26/2012 11:20 PM, Stephen Rothwell wrote:
-> > 
-> >> Hi all,
-> >>
-> >> Changes since 20120224:
-> > 
-> > 
-> > 
-> > on x86_64:
-> > 
-> > drivers/input/touchscreen/usbtouchscreen.c:1232:18: error: 'usbtouch_process_multi' undeclared here (not in a function)
-> > 
-> > 
-> > Full randconfig file is attached.
-> > 
-> 
-> Hi
-> 
-> I had a quick look with gitweb. The following change causes the problem, comments inline:
-> 
-> > From: Armando Visconti <armando.visconti@st.com>
-> > Date: Fri, 24 Feb 2012 08:51:37 +0000 (-0800)
-> > Subject: Input: usbtouchscreen - add support for Data Modul EasyTouch TP 72037
-> > X-Git-Tag: next-20120227~55^2~4
-> > X-Git-Url:
-> http://git.kernel.org/gitweb.cgi?p=linux%2Fkernel%2Fgit%2Fnext%2Flinux-next.git;a=commitdiff_plain;h=e6307aa07c5a11022f0ccee19a8ff0ba033eeb93
-> >
-> > Input: usbtouchscreen - add support for Data Modul EasyTouch TP 72037
-> >
-> > The Data Modul TP 72037 EasyTouch controller is derived from EGALAX
-> > controller and is capable of detecting dual contacts. Packets can be 5
-> > bytes or 10 bytes long, depending whether one or two contacts are
-> > detected. Format is same as EGALAX touch controller, but with x and y
-> > coordinates inverted.
-> >
-> > Signed-off-by: Armando Visconti <armando.visconti@st.com>
-> > Signed-off-by: Viresh Kumar <viresh.kumar@st.com>
-> > Signed-off-by: Dmitry Torokhov <dtor@mail.ru>
 
-Sorry about this, I'll drop the patch for now.
+--kORqDWCi7qDJ0mEj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks.
+On Mon, Feb 27, 2012 at 07:43:20PM -0500, Paul Gortmaker wrote:
+> On Mon, Feb 27, 2012 at 6:56 PM, Mark Brown
 
--- 
-Dmitry
+> > The first line of the changelog which gets treated specially in various
+> > ways.
+
+> Automated scripts?  Something else?   I'd be interested to know.
+
+Things that use log summaries like git send-email and request-pull which
+pick out the first line of the changelog and do something different with
+it.
+
+> I have to admit being confused by this as well.  I paged through the
+> git whatchanged info, and guessed that I should have used a prefix
+> like "ASoC: mpc5200_dma" (camelcase sic) but I think that to expect
+> that level of awareness from general contributors is probably expecting
+> a bit much.  I like to think I'm not totally clueless, but I would have
+> never thought of the above in advance...
+
+Well, most people seem to manage to get it right (I expect on the basis
+that they write a log which looks like the other logs for the code).  If
+you're thinking far enough to put a subsystem prefix on the commit log
+in the first place it seems reasonable to expect one that's in use
+rather than just creating one.
+
+> In any case, if I have further fixups I happen across, I will try to feed
+> your bots the correct prefix.
+
+It's nothing custom on my side, I only use the vanilla git porcelain
+(though I do do things like grepping mailing lists visually so when
+things aren't CCed properly I'm less likely to notice the mailing list
+version of them).  I'd expect there are people with subject line based
+filters, though - patchwork might care for example.
+
+--kORqDWCi7qDJ0mEj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPTKwKAAoJEBus8iNuMP3dtmsP/0tkICmJcEcXwpkA6fNDVKJn
+6PdyIauooETPB0vZssRXTei9usa9to0u6HQyNS5XS/kQc6jBhQ82n9jArnu+s5QH
+6ENc9PWI+mfKM4xSvW6C/HzcMJdqQYp6j99tjMSBGPlwPfKLp8Fme8ERuKcoXDpF
+Gu/azTBOe7CwDNB46wF7ojXmXQArUqeHUAeAuTQ3kUsqF1WUdDLrT1lPwz+IHXvN
+tcKClQA5gQZ2Vd4oO6Zjm+x3YoOnKHKl/Wh6szSE2yNeznvQSkTT8TiyJLQn3km2
+t5+91RG25U1SjeKNesLFhA1qU8GNEQK9DXYbPplaj3Om6Pu33ZgIlq0iMXK2Vt82
+CFqH+7ebKMQxtOqGljSTQWlA/hAiFeYTiQy21dH270Toa7Dd/xQ/nVddc6uTPlrP
+82j5VzBdKokIB87cUdzrGx1LfQcJ/E7gQqgqatOBAmIqMK1wicnFTo/pZ+PH/ZrN
+WMzYXCsf2mj2gaw3MvXyfl+XTJ8SRxTfmXznw1m/NeOKzdP+Y2U4c1n14V+6EzlF
+3wmgv/FS3ywlc5mydOsXvuFQHQOSqY7nB6KU51NsHBZC8NBYJwm/d4hdoSoxTFLt
+kgMEkp/YOH6REJXahitnJmZrzSeY15fV2eJws6OZR6e+EBsiGFrENXX9yOEGwrCp
+hL8vNU0WazGqCtmhtuDD
+=nNy+
+-----END PGP SIGNATURE-----
+
+--kORqDWCi7qDJ0mEj--
