@@ -1,36 +1,56 @@
-From: John David Anglin <dave.anglin@bell.net>
-Subject: Re: [PATCH v2] parisc: dont unconditionally override CROSS_COMPILE
- for 64 bit.
-Date: Tue, 28 Feb 2012 10:33:35 -0500
-Message-ID: <4F4CF3CF.5090605@bell.net>
-References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com> <201202280106.23643.vapier@gentoo.org> <1330438245.2822.114.camel@dabdike.int.hansenpartnership.com> <201202281021.05897.vapier@gentoo.org>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Feb 23 (media/radio)
+Date: Tue, 28 Feb 2012 07:54:46 -0800
+Message-ID: <4F4CF8C6.4030305@xenotime.net>
+References: <20120223143722.d8814b493df968c229da5f20@canb.auug.org.au> <4F46AC34.8090704@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail16.primus.ca ([216.254.141.183]:39381 "EHLO
-	mail-09.primus.ca" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752470Ab2B1Pdt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Feb 2012 10:33:49 -0500
-In-Reply-To: <201202281021.05897.vapier@gentoo.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mike Frysinger <vapier@gentoo.org>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, "kyle@mcmartin.ca" <kyle@mcmartin.ca>, "deller@gmx.de" <deller@gmx.de>, "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <4F46AC34.8090704@xenotime.net>
+Sender: linux-media-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 2/28/2012 10:21 AM, Mike Frysinger wrote:
-> we've been using hppa2.0 for years.  gnuconfig certainly recognizes it:
-> $ grep hppa /usr/share/gnuconfig/config.sub
->          | h8300 | h8500 | hppa | hppa1.[01] | hppa2.0 | hppa2.0[nw] | hppa64 \
->          | hppa-* | hppa1.[01]-* | hppa2.0-* | hppa2.0[nw]-* | hppa64-* \
->
-> and i've seen diff projects key off of the hppa2.0* to enable newer features by
-> default.
-Some of the above are specific to HP-UX, but hppa1.1, hppa2.0, hppa and 
-hppa64 are
-valid for Linux based on config.guess.
+On 02/23/2012 01:14 PM, Randy Dunlap wrote:
 
-Dave
+> On 02/22/2012 07:37 PM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20120222:
+> 
+
+
+ping.
+
+These build errors still happen in linux-next 20120228.
+
+
+> 
+> on i386:
+> 
+> Looks like several source files need to #include <linux/slab.h>:
+> 
+> 
+> drivers/media/radio/radio-isa.c:246:3: error: implicit declaration of function 'kfree'
+> drivers/media/radio/radio-aztech.c:72:9: error: implicit declaration of function 'kzalloc'
+> drivers/media/radio/radio-aztech.c:72:22: warning: initialization makes pointer from integer without a cast
+> drivers/media/radio/radio-typhoon.c:76:9: error: implicit declaration of function 'kzalloc'
+> drivers/media/radio/radio-typhoon.c:76:23: warning: initialization makes pointer from integer without a cast
+> drivers/media/radio/radio-terratec.c:57:2: error: implicit declaration of function 'kzalloc'
+> drivers/media/radio/radio-terratec.c:57:2: warning: return makes pointer from integer without a cast
+> drivers/media/radio/radio-aimslab.c:67:9: error: implicit declaration of function 'kzalloc'
+> drivers/media/radio/radio-aimslab.c:67:22: warning: initialization makes pointer from integer without a cast
+> drivers/media/radio/radio-zoltrix.c:80:9: error: implicit declaration of function 'kzalloc'
+> drivers/media/radio/radio-zoltrix.c:80:24: warning: initialization makes pointer from integer without a cast
+> drivers/media/radio/radio-gemtek.c:183:9: error: implicit declaration of function 'kzalloc'
+> drivers/media/radio/radio-gemtek.c:183:22: warning: initialization makes pointer from integer without a cast
+> drivers/media/radio/radio-trust.c:57:9: error: implicit declaration of function 'kzalloc'
+> drivers/media/radio/radio-trust.c:57:21: warning: initialization makes pointer from integer without a cast
+> 
+
+
 
 -- 
-John David Anglin    dave.anglin@bell.net
+~Randy
