@@ -1,52 +1,65 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] sound: fix trivial build error in mpc5200_dma.c
-Date: Mon, 27 Feb 2012 19:43:20 -0500
-Message-ID: <CAP=VYLrdAqUrn0WERvbM_JqVSPWxU94ZJkF7C0HaJysy6fCy7A@mail.gmail.com>
-References: <1330204350-386-1-git-send-email-paul.gortmaker@windriver.com>
-	<20120227145926.GK3191@opensource.wolfsonmicro.com>
-	<4F4BFC16.2090602@freescale.com>
-	<20120227235630.GC23230@opensource.wolfsonmicro.com>
+From: Mike Frysinger <vapier@gentoo.org>
+Subject: Re: [PATCH v2] parisc: dont unconditionally override CROSS_COMPILE for 64 bit.
+Date: Mon, 27 Feb 2012 20:04:52 -0500
+Message-ID: <201202272004.55187.vapier@gentoo.org>
+References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com> <1330378864.2822.92.camel@dabdike.int.hansenpartnership.com> <1330380189.2822.95.camel@dabdike.int.hansenpartnership.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:62820 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753710Ab2B1AnV convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Feb 2012 19:43:21 -0500
-Received: by pbcup15 with SMTP id up15so2652193pbc.19
-        for <linux-next@vger.kernel.org>; Mon, 27 Feb 2012 16:43:20 -0800 (PST)
-In-Reply-To: <20120227235630.GC23230@opensource.wolfsonmicro.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Timur Tabi <timur@freescale.com>, perex@perex.cz, tiwai@suse.de, lrg@ti.com, linux-next@vger.kernel.org
+Content-Type: multipart/signed;
+  boundary="nextPart1709520.v6gKf0jSzM";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-parisc-owner@vger.kernel.org>
+In-Reply-To: <1330380189.2822.95.camel@dabdike.int.hansenpartnership.com>
+Sender: linux-parisc-owner@vger.kernel.org
+To: James Bottomley <jbottomley@parallels.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, "kyle@mcmartin.ca" <kyle@mcmartin.ca>, "deller@gmx.de" <deller@gmx.de>, "dave.anglin@bell.net" <dave.anglin@bell.net>, "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Feb 27, 2012 at 6:56 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Mon, Feb 27, 2012 at 03:56:38PM -0600, Timur Tabi wrote:
->> Mark Brown wrote:
->
->> > Please also try to use changelog headers consistent with the subsy=
-stem.
->
->> Can you explain what that means? =A0What are "changelog headers"?
->
-> The first line of the changelog which gets treated specially in vario=
-us
-> ways.
+--nextPart1709520.v6gKf0jSzM
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Automated scripts?  Something else?   I'd be interested to know.
+On Monday 27 February 2012 17:03:10 James Bottomley wrote:
+> --- a/arch/parisc/Makefile
+> +++ b/arch/parisc/Makefile
+>=20
+> -CROSS_COMPILE	:=3D hppa64-linux-gnu-
+> +
+> +# if no default set, try to find the corresponding 64 bit compiler
+> +ifeq ($(CROSS_COMPILE),)
+> +CROSS_COMPILE	:=3D $(shell $(CC) -dumpmachine | sed s/hppa-\\\(.*\\\)/hp=
+pa64-\\1-/)
+> +endif
 
-I have to admit being confused by this as well.  I paged through the
-git whatchanged info, and guessed that I should have used a prefix
-like "ASoC: mpc5200_dma" (camelcase sic) but I think that to expect
-that level of awareness from general contributors is probably expecting
-a bit much.  I like to think I'm not totally clueless, but I would have
-never thought of the above in advance...
+fails when using "hppa2.0-xxx".  perhaps:
+CROSS_COMPILE ?=3D $(shell $(CC) -dumpmachine | sed 's/^hppa[^-]*-/hppa64-/=
+')
 
-In any case, if I have further fixups I happen across, I will try to fe=
-ed
-your bots the correct prefix.
+don't even need the ifeq check then
+=2Dmike
 
-Paul.
+--nextPart1709520.v6gKf0jSzM
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.17 (GNU/Linux)
+
+iQIcBAABAgAGBQJPTCg2AAoJEEFjO5/oN/WBrVgP/2rbzbuqJmMRAPm7iSzsN6aa
+SMx2jFS44FSt0wq7oh++RwyBTsqxpIqJDvc4Ap9bWCTW5YLlWSXW+B6NkTkTSRiK
+xfGnnP06qT+OlgmaOQbQg+Xunz0S3bY700Nlzm5mJpOxvklf4H+9iUWtGthwz35g
+q10WmGEOKJNwYoVh1YWohj/8eCK9SUUokLlnTnselKdPcxVBY6zGXR/qwXpaIMnx
+cfYbo81GBcq8yiAqZ5ZrjXxg/Nc/jnM/pibTSp9ZKLSHVEUqQlYLH9DPlC6Ko7XV
+/PBrFIVslkW7xbpAuBZO0YJLbmniNYSkNtxlieHJX+PtevdsOx/PWOKfM67csOt4
+Oahj9WT8JzWofcbUmbwYLvhtawXxm5th8fIMzlYR9HysGk5Q8EjqJVceLYmkRR/T
+jzHXEFvkRcHfR9EdOxhajQeTVLNZv5yhfEpt9jDWCt+J0rdd8hNgLdX3kgFg+c71
+CxQPWGMrmiJAsQ9c3kutl+o5rUyFUNeTDoN6iGWdkUofHKyz9SONh7wluMd1Gmk1
+/xx5wH8rl3HBFTSo4fH/TC3sHhm8kFk3vQ+fauASJyFVkij3zHG+5oVT12FtSa2s
+fEzf1e5ivnR2yrdbmMGbdmkSb+F+eDjcoI2vFCFSVNfTaTnBKVXJcGVUUnzJ0zT4
+dIZLSc4mCJnVtFd33Ndy
+=+Bpe
+-----END PGP SIGNATURE-----
+
+--nextPart1709520.v6gKf0jSzM--
