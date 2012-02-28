@@ -1,83 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the pci tree
-Date: Tue, 28 Feb 2012 14:29:09 +1100
-Message-ID: <20120228142909.48fa1eea6980eaffa27abfdc@canb.auug.org.au>
+Subject: linux-next: manual merge of the irqdomain tree with the powerpc tree
+Date: Tue, 28 Feb 2012 15:23:02 +1100
+Message-ID: <20120228152302.fc40b12b9006bd15d2cf682b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__28_Feb_2012_14_29_09_+1100_BPmzFf==W/MQNg4M"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Jesse Barnes <jbarnes@virtuousgeek.org>
+Content-Type: multipart/mixed; boundary="===============5011015900112093132=="
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__28_Feb_2012_14_29_09_+1100_BPmzFf==W/MQNg4M
+--===============5011015900112093132==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__28_Feb_2012_15_23_02_+1100_X=g_1Pk=xU.G0D/W"
+
+--Signature=_Tue__28_Feb_2012_15_23_02_+1100_X=g_1Pk=xU.G0D/W
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Grant,
 
-Today's linux-next merge of the driver-core tree got a conflict in
-include/linux/pci.h between commit 6754b9e9c335 ("PCI: Rename
-pci_remove_behind_bridge to pci_stop_and_remove_behind_bridge") from the
-pci tree and commit aad4f4000cec ("PCI: Add helper macro for
-pci_register_driver boilerplate") from the driver-core tree.
+Today's linux-next merge of the irqdomain tree got a conflict in
+arch/powerpc/sysdev/mpic.c between commit fe83364f0bf1 ("powerpc/mpic:
+Fix allocation of reverse-map for multi-ISU mpics") from the powerpc tree
+and commit a8db8cf0d894 ("irq_domain: Replace irq_alloc_host() with
+revmap-specific initializers") from the irqdomain tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/pci.h
-index 5584aac,d4afd70..0000000
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@@ -947,7 -946,20 +947,20 @@@ int __must_check __pci_register_driver(
-  	__pci_register_driver(driver, THIS_MODULE, KBUILD_MODNAME)
+diff --cc arch/powerpc/sysdev/mpic.c
+index 16eb743,c83a512..0000000
+--- a/arch/powerpc/sysdev/mpic.c
++++ b/arch/powerpc/sysdev/mpic.c
+@@@ -1355,9 -1345,9 +1355,9 @@@ struct mpic * __init mpic_alloc(struct=20
+  	mpic->isu_shift =3D 1 + __ilog2(mpic->isu_size - 1);
+  	mpic->isu_mask =3D (1 << mpic->isu_shift) - 1;
  =20
-  void pci_unregister_driver(struct pci_driver *dev);
-+=20
-+ /**
-+  * module_pci_driver() - Helper macro for registering a PCI driver
-+  * @__pci_driver: pci_driver struct
-+  *
-+  * Helper macro for PCI drivers which do not do anything special in module
-+  * init/exit. This eliminates a lot of boilerplate. Each module may only
-+  * use this macro once, and calling it replaces module_init() and module_=
-exit()
-+  */
-+ #define module_pci_driver(__pci_driver) \
-+ 	module_driver(__pci_driver, pci_register_driver, \
-+ 		       pci_unregister_driver)
-+=20
- -void pci_remove_behind_bridge(struct pci_dev *dev);
- +void pci_stop_and_remove_behind_bridge(struct pci_dev *dev);
-  struct pci_driver *pci_dev_driver(const struct pci_dev *dev);
-  int pci_add_dynid(struct pci_driver *drv,
-  		  unsigned int vendor, unsigned int device,
+- 	mpic->irqhost =3D irq_alloc_host(mpic->node, IRQ_HOST_MAP_LINEAR,
++ 	mpic->irqhost =3D irq_domain_add_linear(mpic->node,
+ -				       isu_size ? isu_size : mpic->num_sources,
+ -				       &mpic_host_ops, mpic);
+ +				       last_irq + 1, &mpic_host_ops,
+- 				       intvec_top + 1);
+++				       mpic);
+ =20
+  	/*
+  	 * FIXME: The code leaks the MPIC object and mappings here; this
 
---Signature=_Tue__28_Feb_2012_14_29_09_+1100_BPmzFf==W/MQNg4M
+--Signature=_Tue__28_Feb_2012_15_23_02_+1100_X=g_1Pk=xU.G0D/W
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPTEoFAAoJEECxmPOUX5FE3b8P/2j2QSwUfAgpJGPeROzfhhw7
-snQT6CCz4FQ9oBdNUINH1g6MdCwrMcw5l7kBPqi2XTX3ZnInijePxN68N+CAkF01
-HFXXEB+age1bYl3gfjDpBYygtsw+W97EvbT8B/7V9tIyVt9gZBNYH/a4qiKH4mBE
-rZRoHFmTROfZhZIBOsYNH4lGsCvvUTcVqlUmFoY2zRYzMx3KnlMII1NZI6Pi9pc8
-WBUvuQ6Z7dyO1IVDgxpf+Jy84xPk8yjSnpmicft/P4pnWltgJrVFPAhK5eaFRIwr
-yYyYdWiFBzsyX8AWhAEzAr2021zb1Jp+FO/3aGogtq6vFsqa6WOyHB+qN75cGvmK
-YiFHFOcHsgaoGAaYDJPe/FidcRF2i8etZRzgXOc0VFZ+a8xu8L8g9FdLD8tgkNc9
-oymqqJNSDRDDVu9MBOLnsRCzIIMbzC+behjvNwY+ZVo/7t0+otxJ1+7H8qvKXo88
-NnMafmLo4qdteGTACYaj81aWlWZ7AeGsxKyvHMXkVwp1liA6ZCEROFmInmJIuFm/
-bXCvJt8XkNiDVLmG1mOi5uNoV8FsCiVhC39Tbdq+bY1lwnAmCzK71ooU/ZpFV6Sz
-S6DfwMZia+dl+MkkYOOOWHO8UeF0NN5ke+F6kBzC77+f5cxtNtA15vrOAVXkIHsc
-E3bG0yjAQBc01EgOLpg3
-=3ckH
+iQIcBAEBCAAGBQJPTFamAAoJEECxmPOUX5FEbHQQAIXcrHAhJIS7+LSX+0MFkBwZ
+kj+e8GTXYY3uVtbsa9pyJFH8J4Jw7ZItjhLzaQFa0/tv8UFZmk0woZ2uhO7Cli/I
+gfytKAoHvnTjxHb8b4mDwVO8FLc6wdGzdMwZ/ZH0CTflEH3ztIopEyIiFB4S52so
+b/iuuN23iEjvsEwyvW+f+YseQc8LrU/mac7zvkBoxJzIucfUEIT04+uQPCK5HOV2
+axect5Jx9NY3oMmNb6SwTWK172DySTP8uiGEeme1NWUCQTjLs9+cnI4KEfrdpHc0
+VpXk1oM4H+TSodueadC1+a7+rpiWHLp12YJ0D1I4TO292Oux+AVHbJGF2QBCBelB
+/6LNrlQv8I+EEPGiHzUXGiuaMR/M3Yh/OvozialD+cjQ+HPRpo3D0jn3kycMgrmQ
+oqBskWsNOglFNSNxTxgFLkYUxwx9DAT413ZsHBqbSXUonSS8O0EndMSNV57J7U7y
+bNL1b+98jD73rdKNpjA97rOiFk9CDd4c8OmZZVIHNx0zUb6kyRR6iiwDlf4ybqmF
+8bibPxLtIG+C538F0LjAfkaKGLajJJ72UBne74nFzye9iRBBhLCY9RcN2MmA2d6j
+PFj4N9mdm8xYCes+A641qqFvgg7OwNRMn6CB+fwNUzawe81hcs1CBOdslzUJ9LOs
+kU8otnraPitnkZwEecuW
+=NIvD
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__28_Feb_2012_14_29_09_+1100_BPmzFf==W/MQNg4M--
+--Signature=_Tue__28_Feb_2012_15_23_02_+1100_X=g_1Pk=xU.G0D/W--
+
+--===============5011015900112093132==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linuxppc-dev mailing list
+Linuxppc-dev@lists.ozlabs.org
+https://lists.ozlabs.org/listinfo/linuxppc-dev
+--===============5011015900112093132==--
