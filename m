@@ -1,26 +1,64 @@
-From: Jason Wessel <jason.wessel@windriver.com>
-Subject: The kgdb/kdb tree has returned to git.kernel.org
-Date: Tue, 28 Feb 2012 14:17:45 -0600
-Message-ID: <4F4D3669.2000000@windriver.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: linux-next: Tree for Feb 23 (media/radio)
+Date: Tue, 28 Feb 2012 19:01:30 -0300
+Message-ID: <4F4D4EBA.6000309@redhat.com>
+References: <20120223143722.d8814b493df968c229da5f20@canb.auug.org.au> <4F46AC34.8090704@xenotime.net> <4F4CF8C6.4030305@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:40624 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755150Ab2B1URw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Feb 2012 15:17:52 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: lkml <linux-kernel@vger.kernel.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <4F4CF8C6.4030305@xenotime.net>
+Sender: linux-media-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+List-Id: linux-next.vger.kernel.org
 
+Em 28-02-2012 12:54, Randy Dunlap escreveu:
+> On 02/23/2012 01:14 PM, Randy Dunlap wrote:
+> 
+>> On 02/22/2012 07:37 PM, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20120222:
+>>
+> 
+> 
+> ping.
+> 
+> These build errors still happen in linux-next 20120228.
 
-Stephen, can you please point the linux-next to pickup the kgdb tree from:
+It is likely due to Hans ISA patch series.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jwessel/kgdb.git kgdb-next
+Hans,
 
-Currently it only has one patch in it for the upcoming merge window, but I imagine there will be a few more.
+Could you please add the proper include file to the ISA radio framework?
 
-Thanks,
-Jason.
+Thanks!
+Mauro
+> 
+> 
+>>
+>> on i386:
+>>
+>> Looks like several source files need to #include <linux/slab.h>:
+>>
+>>
+>> drivers/media/radio/radio-isa.c:246:3: error: implicit declaration of function 'kfree'
+>> drivers/media/radio/radio-aztech.c:72:9: error: implicit declaration of function 'kzalloc'
+>> drivers/media/radio/radio-aztech.c:72:22: warning: initialization makes pointer from integer without a cast
+>> drivers/media/radio/radio-typhoon.c:76:9: error: implicit declaration of function 'kzalloc'
+>> drivers/media/radio/radio-typhoon.c:76:23: warning: initialization makes pointer from integer without a cast
+>> drivers/media/radio/radio-terratec.c:57:2: error: implicit declaration of function 'kzalloc'
+>> drivers/media/radio/radio-terratec.c:57:2: warning: return makes pointer from integer without a cast
+>> drivers/media/radio/radio-aimslab.c:67:9: error: implicit declaration of function 'kzalloc'
+>> drivers/media/radio/radio-aimslab.c:67:22: warning: initialization makes pointer from integer without a cast
+>> drivers/media/radio/radio-zoltrix.c:80:9: error: implicit declaration of function 'kzalloc'
+>> drivers/media/radio/radio-zoltrix.c:80:24: warning: initialization makes pointer from integer without a cast
+>> drivers/media/radio/radio-gemtek.c:183:9: error: implicit declaration of function 'kzalloc'
+>> drivers/media/radio/radio-gemtek.c:183:22: warning: initialization makes pointer from integer without a cast
+>> drivers/media/radio/radio-trust.c:57:9: error: implicit declaration of function 'kzalloc'
+>> drivers/media/radio/radio-trust.c:57:21: warning: initialization makes pointer from integer without a cast
+>>
+> 
+> 
+> 
