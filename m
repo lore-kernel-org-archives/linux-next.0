@@ -1,56 +1,39 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Feb 23 (media/radio)
-Date: Tue, 28 Feb 2012 07:54:46 -0800
-Message-ID: <4F4CF8C6.4030305@xenotime.net>
-References: <20120223143722.d8814b493df968c229da5f20@canb.auug.org.au> <4F46AC34.8090704@xenotime.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the pci
+ tree
+Date: Tue, 28 Feb 2012 08:12:49 -0800
+Message-ID: <20120228161249.GA19433@kroah.com>
+References: <20120228142909.48fa1eea6980eaffa27abfdc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <4F46AC34.8090704@xenotime.net>
-Sender: linux-media-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:40862 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756251Ab2B1QWD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Feb 2012 11:22:03 -0500
+Received: from compute2.internal (compute2.nyi.mail.srv.osa [10.202.2.42])
+	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 4A0F021790
+	for <linux-next@vger.kernel.org>; Tue, 28 Feb 2012 11:22:02 -0500 (EST)
+Content-Disposition: inline
+In-Reply-To: <20120228142909.48fa1eea6980eaffa27abfdc@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Jesse Barnes <jbarnes@virtuousgeek.org>
 
-On 02/23/2012 01:14 PM, Randy Dunlap wrote:
-
-> On 02/22/2012 07:37 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20120222:
+On Tue, Feb 28, 2012 at 02:29:09PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-
-
-ping.
-
-These build errors still happen in linux-next 20120228.
-
-
+> Today's linux-next merge of the driver-core tree got a conflict in
+> include/linux/pci.h between commit 6754b9e9c335 ("PCI: Rename
+> pci_remove_behind_bridge to pci_stop_and_remove_behind_bridge") from the
+> pci tree and commit aad4f4000cec ("PCI: Add helper macro for
+> pci_register_driver boilerplate") from the driver-core tree.
 > 
-> on i386:
-> 
-> Looks like several source files need to #include <linux/slab.h>:
-> 
-> 
-> drivers/media/radio/radio-isa.c:246:3: error: implicit declaration of function 'kfree'
-> drivers/media/radio/radio-aztech.c:72:9: error: implicit declaration of function 'kzalloc'
-> drivers/media/radio/radio-aztech.c:72:22: warning: initialization makes pointer from integer without a cast
-> drivers/media/radio/radio-typhoon.c:76:9: error: implicit declaration of function 'kzalloc'
-> drivers/media/radio/radio-typhoon.c:76:23: warning: initialization makes pointer from integer without a cast
-> drivers/media/radio/radio-terratec.c:57:2: error: implicit declaration of function 'kzalloc'
-> drivers/media/radio/radio-terratec.c:57:2: warning: return makes pointer from integer without a cast
-> drivers/media/radio/radio-aimslab.c:67:9: error: implicit declaration of function 'kzalloc'
-> drivers/media/radio/radio-aimslab.c:67:22: warning: initialization makes pointer from integer without a cast
-> drivers/media/radio/radio-zoltrix.c:80:9: error: implicit declaration of function 'kzalloc'
-> drivers/media/radio/radio-zoltrix.c:80:24: warning: initialization makes pointer from integer without a cast
-> drivers/media/radio/radio-gemtek.c:183:9: error: implicit declaration of function 'kzalloc'
-> drivers/media/radio/radio-gemtek.c:183:22: warning: initialization makes pointer from integer without a cast
-> drivers/media/radio/radio-trust.c:57:9: error: implicit declaration of function 'kzalloc'
-> drivers/media/radio/radio-trust.c:57:21: warning: initialization makes pointer from integer without a cast
-> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
+Looks good to me, thanks for the fixup.
 
-
--- 
-~Randy
+greg k-h
