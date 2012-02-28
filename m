@@ -1,64 +1,31 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: Tree for Feb 23 (media/radio)
-Date: Tue, 28 Feb 2012 19:01:30 -0300
-Message-ID: <4F4D4EBA.6000309@redhat.com>
-References: <20120223143722.d8814b493df968c229da5f20@canb.auug.org.au> <4F46AC34.8090704@xenotime.net> <4F4CF8C6.4030305@xenotime.net>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Tue, 28 Feb 2012 14:08:10 -0800
+Message-ID: <20120228140810.4cf9d477.akpm@linux-foundation.org>
+References: <20120228165857.5abb225e1748d40f9c5d61e8@canb.auug.org.au>
+	<20120228120037.GD3683@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <4F4CF8C6.4030305@xenotime.net>
-Sender: linux-media-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57958 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753734Ab2B1WIM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Feb 2012 17:08:12 -0500
+In-Reply-To: <20120228120037.GD3683@opensource.wolfsonmicro.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>
 
-Em 28-02-2012 12:54, Randy Dunlap escreveu:
-> On 02/23/2012 01:14 PM, Randy Dunlap wrote:
-> 
->> On 02/22/2012 07:37 PM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20120222:
->>
-> 
-> 
-> ping.
-> 
-> These build errors still happen in linux-next 20120228.
+On Tue, 28 Feb 2012 12:00:37 +0000
+Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
 
-It is likely due to Hans ISA patch series.
+> > -	for_each_set_bit_cont(i, lzo_blocks[0]->sync_bmp,
+> > +	for_each_set_bit_from(i, lzo_blocks[0]->sync_bmp,
+> 
+> That looks about right, yes.  Not sure what the best way to handle this
+> is, perhaps maintain _cont() for a while?
 
-Hans,
-
-Could you please add the proper include file to the ISA radio framework?
-
-Thanks!
-Mauro
-> 
-> 
->>
->> on i386:
->>
->> Looks like several source files need to #include <linux/slab.h>:
->>
->>
->> drivers/media/radio/radio-isa.c:246:3: error: implicit declaration of function 'kfree'
->> drivers/media/radio/radio-aztech.c:72:9: error: implicit declaration of function 'kzalloc'
->> drivers/media/radio/radio-aztech.c:72:22: warning: initialization makes pointer from integer without a cast
->> drivers/media/radio/radio-typhoon.c:76:9: error: implicit declaration of function 'kzalloc'
->> drivers/media/radio/radio-typhoon.c:76:23: warning: initialization makes pointer from integer without a cast
->> drivers/media/radio/radio-terratec.c:57:2: error: implicit declaration of function 'kzalloc'
->> drivers/media/radio/radio-terratec.c:57:2: warning: return makes pointer from integer without a cast
->> drivers/media/radio/radio-aimslab.c:67:9: error: implicit declaration of function 'kzalloc'
->> drivers/media/radio/radio-aimslab.c:67:22: warning: initialization makes pointer from integer without a cast
->> drivers/media/radio/radio-zoltrix.c:80:9: error: implicit declaration of function 'kzalloc'
->> drivers/media/radio/radio-zoltrix.c:80:24: warning: initialization makes pointer from integer without a cast
->> drivers/media/radio/radio-gemtek.c:183:9: error: implicit declaration of function 'kzalloc'
->> drivers/media/radio/radio-gemtek.c:183:22: warning: initialization makes pointer from integer without a cast
->> drivers/media/radio/radio-trust.c:57:9: error: implicit declaration of function 'kzalloc'
->> drivers/media/radio/radio-trust.c:57:21: warning: initialization makes pointer from integer without a cast
->>
-> 
-> 
-> 
+I don't think that will be needed - for_each_set_bit_cont() only had
+two callers, both in arch/x86/kernel/cpu/perf_event.c.
