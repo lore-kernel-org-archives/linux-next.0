@@ -1,68 +1,70 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Tue, 28 Feb 2012 12:00:37 +0000
-Message-ID: <20120228120037.GD3683@opensource.wolfsonmicro.com>
-References: <20120228165857.5abb225e1748d40f9c5d61e8@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: [PATCH v2] parisc: dont unconditionally override CROSS_COMPILE
+ for 64 bit.
+Date: Tue, 28 Feb 2012 08:10:45 -0600
+Message-ID: <1330438245.2822.114.camel@dabdike.int.hansenpartnership.com>
+References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
+	 <201202272004.55187.vapier@gentoo.org>
+	 <1330399020.2822.106.camel@dabdike.int.hansenpartnership.com>
+	 <201202280106.23643.vapier@gentoo.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ylS2wUBXLOxYXZFQ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42954 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965502Ab2B1MAk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Feb 2012 07:00:40 -0500
-Content-Disposition: inline
-In-Reply-To: <20120228165857.5abb225e1748d40f9c5d61e8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-parisc-owner@vger.kernel.org>
+In-Reply-To: <201202280106.23643.vapier@gentoo.org>
+Sender: linux-parisc-owner@vger.kernel.org
+To: Mike Frysinger <vapier@gentoo.org>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, "kyle@mcmartin.ca" <kyle@mcmartin.ca>, "deller@gmx.de" <deller@gmx.de>, "dave.anglin@bell.net" <dave.anglin@bell.net>, "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
+
+On Tue, 2012-02-28 at 01:06 -0500, Mike Frysinger wrote:
+> On Monday 27 February 2012 22:17:01 James Bottomley wrote:
+> > On Mon, 2012-02-27 at 20:04 -0500, Mike Frysinger wrote:
+> > > On Monday 27 February 2012 17:03:10 James Bottomley wrote:
+> > > > --- a/arch/parisc/Makefile
+> > > > +++ b/arch/parisc/Makefile
+> > > > 
+> > > > -CROSS_COMPILE	:= hppa64-linux-gnu-
+> > > > +
+> > > > +# if no default set, try to find the corresponding 64 bit compiler
+> > > > +ifeq ($(CROSS_COMPILE),)
+> > > > +CROSS_COMPILE	:= $(shell $(CC) -dumpmachine | sed
+> > > > s/hppa-\\\(.*\\\)/hppa64-\\1-/) +endif
+> > > 
+> > > fails when using "hppa2.0-xxx".  perhaps:
+
+Is that a valid prefix?  I was thinking hppa32 might be, but hppa2.0 is
+supposed to be hppa-xxx with -mpa-risc-2-0.
+
+But anyway, I think being clever and removing unused stuff is likely
+orthogonal to the first patch which is just making it all work.
+
+> > > CROSS_COMPILE ?= $(shell $(CC) -dumpmachine | sed
+> > > 's/^hppa[^-]*-/hppa64-/')
+> > > 
+> > > don't even need the ifeq check then
+> > 
+> > How is that different from Carlos' suggestion?
+> 
+> sorry, but i'm not seeing any e-mails from Carlos in this thread.  what is his 
+> suggestion ?
+
+Actually, I misspoke, it was your suggestion in the first thread.
+
+> > The reason it doesn't work is the same ... CROSS_COMPILE is defined to be
+> > empty.
+> 
+> my suggestion was purely an incremental improvement on the patch you posted.  
+> it improves two things:
+> 	- detection when the default tuple is hppa2.0-xxx rather than hppa-xxx
+> 	- one line for set-variable-only-when-its-unset rather than three lines
+> -mike
+
+It can't be done ... defined but empty is different from not defined in
+makefiles (ifdef or ?= only checks for not defined).  CROSS_COMPILE gets
+automatically defined by the top level Makefile ... that's why we need a
+check for empty not a check for not defined.
+
+James
 
 
---ylS2wUBXLOxYXZFQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Feb 28, 2012 at 04:58:57PM +1100, Stephen Rothwell wrote:
-
-> Caused by commits ac8d91c80190 ("regmap: Supply ranges to the sync
-> operations" and a0941e562e80 ("regmap: Fix x86_64 breakage") from the
-> regmap tree interacting with commits "bitops: rename for_each_set_bit_cont()
-> in favor of analogous list.h function" and "bitops: remove
-> for_each_set_bit_cont()" from the akpm tree.
-
-Oh, that explains what went wrong there!  I had thought that
-for_each_set_bit_from() must be ARM-specific somehow when I saw your
-report and didn't actually reexamime on ARM when fixing up as _cont was
-in the header (admittedly I was in a rush doing the fixup).
-
-> -	for_each_set_bit_cont(i, lzo_blocks[0]->sync_bmp,
-> +	for_each_set_bit_from(i, lzo_blocks[0]->sync_bmp,
-
-That looks about right, yes.  Not sure what the best way to handle this
-is, perhaps maintain _cont() for a while?
-
---ylS2wUBXLOxYXZFQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPTMFxAAoJEBus8iNuMP3d88IP/3CQvvsFhp7n1IbZpWcT8q4j
-ustwqhRtVWC32M39o6n7ARr7m0Az1tbpsefze01nOTOI40kuSbQQU4aAJEHiiGi2
-2JwanQ5PDky70P/duC5L4hjBZB+fl/xCi2m5IlwSzCQ5F0u1XXdAcmyAN+oJ1iEi
-ay/7jnYSjYg4FXTTWcACZnK9I52s89g3RwABL7mJs+RCN+YdtZ5jfOPAJ+2IqweU
-U4F0co5mcnEVwH5f7gN+dvsc7990ock67qAAugFi+/TcQ7qsYOxAEbV8ZPZ4K4mE
-mOF5s5x48BweHUeugpTkE9nvBTclrAWanG7RHGg0PD2yXs+B0cMaNC3fU9IvDjzz
-RenKJHIDMVpCi8OxEnrJuPBCDv2UV154LWm73yLjSsLDUvFDvrUo2L2tlEgR7FZ4
-QLQKVJqzMGSn39BbPI0amdQj/u9BaKcU5PvSAIrl2bWuE+RokCwW0A8iVzMcOdRn
-IoxZ331DUzCNbeMvDVeyaPt7qGteBno6yTHPskub6lMc09jiIScQQfuQh38elcrJ
-/SN1JuHm+v53tH+t8kGsreP8tL9uwx7PpKhDABbrwRkSv4xeeO1fYRGNE+aMsNLF
-aNHYZwm6/pCK53KtXBAG81WhCnYjZ8ooyvmAK35DIleUvfLLi2LKAzNoXmzbHLm5
-KtPFOUnuqX9K/3mGdh0x
-=ZlL0
------END PGP SIGNATURE-----
-
---ylS2wUBXLOxYXZFQ--
