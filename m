@@ -1,73 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the uprobes tree with Linus' tree
-Date: Tue, 28 Feb 2012 13:43:19 +1100
-Message-ID: <20120228134319.033a60df8db2925d91604c18@canb.auug.org.au>
+From: James Bottomley <jbottomley@parallels.com>
+Subject: Re: [PATCH v2] parisc: dont unconditionally override CROSS_COMPILE
+ for 64 bit.
+Date: Tue, 28 Feb 2012 03:17:01 +0000
+Message-ID: <1330399020.2822.106.camel@dabdike.int.hansenpartnership.com>
+References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
+	 <1330378864.2822.92.camel@dabdike.int.hansenpartnership.com>
+	 <1330380189.2822.95.camel@dabdike.int.hansenpartnership.com>
+	 <201202272004.55187.vapier@gentoo.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__28_Feb_2012_13_43_19_+1100_y+uvz=l=xLyNXO=m"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44815 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756368Ab2B1Cn3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Feb 2012 21:43:29 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jim Keniston <jkenisto@us.ibm.com>, Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-parisc-owner@vger.kernel.org>
+In-Reply-To: <201202272004.55187.vapier@gentoo.org>
+Content-Language: en-US
+Content-ID: <407E606600900B499DDE6838030C21F5@sw.swsoft.com>
+Sender: linux-parisc-owner@vger.kernel.org
+To: Mike Frysinger <vapier@gentoo.org>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, "kyle@mcmartin.ca" <kyle@mcmartin.ca>, "deller@gmx.de" <deller@gmx.de>, "dave.anglin@bell.net" <dave.anglin@bell.net>, "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__28_Feb_2012_13_43_19_+1100_y+uvz=l=xLyNXO=m
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Srikar,
-
-Today's linux-next merge of the uprobes tree got a conflict in
-kernel/fork.c between commit d80e731ecab4 ("epoll: introduce POLLFREE to
-flush ->signalfd_wqh before kfree()") from Linus' tree and commit
-1f9eb65410a6 ("uprobes/core: handle breakpoint and signal step
-exception") from the uprobes tree.
-
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc kernel/fork.c
-index 14dac32,df711bb..0000000
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@@ -66,7 -66,7 +66,8 @@@
-  #include <linux/user-return-notifier.h>
-  #include <linux/oom.h>
-  #include <linux/khugepaged.h>
- +#include <linux/signalfd.h>
-+ #include <linux/uprobes.h>
- =20
-  #include <asm/pgtable.h>
-  #include <asm/pgalloc.h>
-
---Signature=_Tue__28_Feb_2012_13_43_19_+1100_y+uvz=l=xLyNXO=m
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPTD9HAAoJEECxmPOUX5FEfl8P/iXu9n/bUI3xWldqwiuF/OXs
-AKre78G6dRQaMxnmylzFD+hL8cOIVwItHgicnlC/Prrjttn8CfjTAi/6xDpCC6rU
-QsadHhiSU076TyP01PHqRt8IPNAsTcvc4hjyIqxWNt1XO6J+NNc/sDxZxR6lpAbK
-ANS8Bq4n//ZLCSTerePgHb5y7II+e67HBzdqlOImXJKuYPYlPx+TQbioPYRCFwfz
-z7FQeQsXIZAvdnU45kcZxt1MRvTBvMJB9yOaqBG5C/4X8pVi3SABloyH3kEXGrbm
-PYdmW89vyLSR+NfxHafGHVc3KTgh9He7XcWSUSWgUCq3diUErlTgDtKX1bYLe3v7
-sD3ULFPB0e9v3uBXHlkbFg6w/h/2PovP40c3jXP3Fs//hPsaGoS550KC2B4yrBfv
-BjGpUmNOLiyj8QxALfGOugB08dOVCenihQ6zat8bGx0L3pWO42Iy7nc1rErQquD6
-Kpd1y84yjeywkDZXZj53qBOQBIXCG03tsnMG8ZilfflfhKVtBDuknkBh1AXRiqj7
-pX90qhK9qQNkIHz5VOHLQRdMI7F72XLwMqehI8Y/kiBu1beRYlj8dMLg46u9c57G
-OIjBjNVllm5pRUfPijc3ls0zpD7GNOPaPHH5HlX585w6LShP1TCRinHi07JEX3mq
-nSp1lCsH45EU5vmVX0RP
-=Njhj
------END PGP SIGNATURE-----
-
---Signature=_Tue__28_Feb_2012_13_43_19_+1100_y+uvz=l=xLyNXO=m--
+T24gTW9uLCAyMDEyLTAyLTI3IGF0IDIwOjA0IC0wNTAwLCBNaWtlIEZyeXNpbmdlciB3cm90ZToN
+Cj4gT24gTW9uZGF5IDI3IEZlYnJ1YXJ5IDIwMTIgMTc6MDM6MTAgSmFtZXMgQm90dG9tbGV5IHdy
+b3RlOg0KPiA+IC0tLSBhL2FyY2gvcGFyaXNjL01ha2VmaWxlDQo+ID4gKysrIGIvYXJjaC9wYXJp
+c2MvTWFrZWZpbGUNCj4gPiANCj4gPiAtQ1JPU1NfQ09NUElMRQk6PSBocHBhNjQtbGludXgtZ251
+LQ0KPiA+ICsNCj4gPiArIyBpZiBubyBkZWZhdWx0IHNldCwgdHJ5IHRvIGZpbmQgdGhlIGNvcnJl
+c3BvbmRpbmcgNjQgYml0IGNvbXBpbGVyDQo+ID4gK2lmZXEgKCQoQ1JPU1NfQ09NUElMRSksKQ0K
+PiA+ICtDUk9TU19DT01QSUxFCTo9ICQoc2hlbGwgJChDQykgLWR1bXBtYWNoaW5lIHwgc2VkIHMv
+aHBwYS1cXFwoLipcXFwpL2hwcGE2NC1cXDEtLykNCj4gPiArZW5kaWYNCj4gDQo+IGZhaWxzIHdo
+ZW4gdXNpbmcgImhwcGEyLjAteHh4Ii4gIHBlcmhhcHM6DQo+IENST1NTX0NPTVBJTEUgPz0gJChz
+aGVsbCAkKENDKSAtZHVtcG1hY2hpbmUgfCBzZWQgJ3MvXmhwcGFbXi1dKi0vaHBwYTY0LS8nKQ0K
+PiANCj4gZG9uJ3QgZXZlbiBuZWVkIHRoZSBpZmVxIGNoZWNrIHRoZW4NCg0KSG93IGlzIHRoYXQg
+ZGlmZmVyZW50IGZyb20gQ2FybG9zJyBzdWdnZXN0aW9uPyAgVGhlIHJlYXNvbiBpdCBkb2Vzbid0
+DQp3b3JrIGlzIHRoZSBzYW1lIC4uLiBDUk9TU19DT01QSUxFIGlzIGRlZmluZWQgdG8gYmUgZW1w
+dHkuDQoNCkphbWVzDQoNCg==
