@@ -1,39 +1,88 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the pci
- tree
-Date: Tue, 28 Feb 2012 08:12:49 -0800
-Message-ID: <20120228161249.GA19433@kroah.com>
-References: <20120228142909.48fa1eea6980eaffa27abfdc@canb.auug.org.au>
+From: Mike Frysinger <vapier@gentoo.org>
+Subject: Re: [PATCH v2] parisc: dont unconditionally override CROSS_COMPILE for 64 bit.
+Date: Tue, 28 Feb 2012 13:37:10 -0500
+Message-ID: <201202281337.14094.vapier@gentoo.org>
+References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com> <4F4CF3CF.5090605@bell.net> <CANEJEGv2Zgtd8TGOzSNO8opMLQT8RsGRP=m2rBPUBBOJ9f+fKQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:40862 "EHLO
-	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756251Ab2B1QWD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Feb 2012 11:22:03 -0500
-Received: from compute2.internal (compute2.nyi.mail.srv.osa [10.202.2.42])
-	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 4A0F021790
-	for <linux-next@vger.kernel.org>; Tue, 28 Feb 2012 11:22:02 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <20120228142909.48fa1eea6980eaffa27abfdc@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Jesse Barnes <jbarnes@virtuousgeek.org>
+Content-Type: multipart/signed;
+  boundary="nextPart1979808.xE6xXEOG8i";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-parisc-owner@vger.kernel.org>
+In-Reply-To: <CANEJEGv2Zgtd8TGOzSNO8opMLQT8RsGRP=m2rBPUBBOJ9f+fKQ@mail.gmail.com>
+Sender: linux-parisc-owner@vger.kernel.org
+To: Grant Grundler <grantgrundler@gmail.com>
+Cc: John David Anglin <dave.anglin@bell.net>, James Bottomley <James.Bottomley@hansenpartnership.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, "kyle@mcmartin.ca" <kyle@mcmartin.ca>, "deller@gmx.de" <deller@gmx.de>, "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Feb 28, 2012 at 02:29:09PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> include/linux/pci.h between commit 6754b9e9c335 ("PCI: Rename
-> pci_remove_behind_bridge to pci_stop_and_remove_behind_bridge") from the
-> pci tree and commit aad4f4000cec ("PCI: Add helper macro for
-> pci_register_driver boilerplate") from the driver-core tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+--nextPart1979808.xE6xXEOG8i
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Looks good to me, thanks for the fixup.
+On Tuesday 28 February 2012 13:22:50 Grant Grundler wrote:
+> On Tue, Feb 28, 2012 at 7:33 AM, John David Anglin wrote:
+> > On 2/28/2012 10:21 AM, Mike Frysinger wrote:
+> >> we've been using hppa2.0 for years.  gnuconfig certainly recognizes it:
+> >> $ grep hppa /usr/share/gnuconfig/config.**sub
+> >>=20
+> >>         | h8300 | h8500 | hppa | hppa1.[01] | hppa2.0 | hppa2.0[nw] |
+> >>=20
+> >> hppa64 \
+> >>=20
+> >>         | hppa-* | hppa1.[01]-* | hppa2.0-* | hppa2.0[nw]-* | hppa64-*=
+ \
+> >>=20
+> >> and i've seen diff projects key off of the hppa2.0* to enable newer
+> >> features by
+> >> default.
+> >=20
+> > Some of the above are specific to HP-UX, but hppa1.1, hppa2.0, hppa and
+> > hppa64 are
+> > valid for Linux based on config.guess.
+>=20
+> Mike, et al,
+> I'd suggest NOT using hppa2.0 as a surrogate for 64-bit build. I'd prefer
+> hppa64 if 64-bit is meant.
+>=20
+> hppa2.0 can also mean PA2.0 compliant binary compiled using ILP32 model.
+> right?
 
-greg k-h
+i don't think that's what the proposed change does.  James' patch runs $(CC=
+)=20
+to find the active tuple, then replaces the first part with "hppa64" to get=
+ a=20
+64bit toolchain automatically.  but that magic only works when the tuple is=
+=20
+"hppa-xxx" and so will fail when the system is using "hppa2.0-xxx".
+
+short story: the proposed change will additionally support turning "hppa2.0-
+linux-gnu" into "hppa64-linux-gnu" rather than the existing "only turns hpp=
+a-
+linux-gnu" into "hppa64-linux-gnu".
+=2Dmike
+
+--nextPart1979808.xE6xXEOG8i
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.17 (GNU/Linux)
+
+iQIcBAABAgAGBQJPTR7ZAAoJEEFjO5/oN/WBuXkP/0q95mFhnAbLaazZUGDiQP6r
+2CtwhKJsC9795qEyYd7onQsiTN0DJprihiI1BV/xdKBCOateoWfrCjgvbt3HupOB
+DaMV8l/bXys6dlgGIe7QrbOod+wDk2RLmkUi5eFa2WM8mwSO/FieX1iHOk4rc017
+UKecJJwZSdfKTkzWgk4ocLAfswtXjloj7zj4dw58Fn+BzwaAXXr33tYHKBVqLS9J
+BF/vJMOduqK4sB3YEc+aJB0ZikNHYyfeK4LTrYcO2xXYAIKxSciV3vIW/QEsmOXv
+RlR/BxhBDbkNUrH4hndMBoDlf5TP7yJFNMsi3IkifVAcgyhNFsuKtZ5sppCb5yHj
+xENWX7pSLeQv3QrmXPe3SMiX0gb30lMtH5aPxcOzfnNaB7526OD+hx0zMdnu0+0J
+iRMAnjNrfsawjpUx607AwMiOzgPEC31xWXrD8XBx44R8yx/r+a4uzPWsw4kSo4ju
+OBqYlggdQSapjxkVMvWy3WmGlMJJmga1ZUIw4kNWQnenZavQElvRz/LMmaL/Eobe
+fzWJ2cQhRL2rkXQ1dt2EEsQLcQpEBkXdBxfWp9hNRtaehQxl6CDSSOyfURWns+yv
+KsbkTg7CKZNyU5hhLOyxwFGzlsakn5f/Qm2e3BpRvT88Nv2x+F1mobQOIALIP7/u
+WnOW3Jl+FpJAk6tSZJ/d
+=Lto8
+-----END PGP SIGNATURE-----
+
+--nextPart1979808.xE6xXEOG8i--
