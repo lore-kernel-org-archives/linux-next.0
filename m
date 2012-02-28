@@ -1,35 +1,83 @@
-From: James Bottomley <jbottomley@parallels.com>
-Subject: Re: [PATCH v2] parisc: dont unconditionally override CROSS_COMPILE
- for 64 bit.
-Date: Tue, 28 Feb 2012 03:17:01 +0000
-Message-ID: <1330399020.2822.106.camel@dabdike.int.hansenpartnership.com>
-References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com>
-	 <1330378864.2822.92.camel@dabdike.int.hansenpartnership.com>
-	 <1330380189.2822.95.camel@dabdike.int.hansenpartnership.com>
-	 <201202272004.55187.vapier@gentoo.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the pci tree
+Date: Tue, 28 Feb 2012 14:29:09 +1100
+Message-ID: <20120228142909.48fa1eea6980eaffa27abfdc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-parisc-owner@vger.kernel.org>
-In-Reply-To: <201202272004.55187.vapier@gentoo.org>
-Content-Language: en-US
-Content-ID: <407E606600900B499DDE6838030C21F5@sw.swsoft.com>
-Sender: linux-parisc-owner@vger.kernel.org
-To: Mike Frysinger <vapier@gentoo.org>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, "kyle@mcmartin.ca" <kyle@mcmartin.ca>, "deller@gmx.de" <deller@gmx.de>, "dave.anglin@bell.net" <dave.anglin@bell.net>, "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__28_Feb_2012_14_29_09_+1100_BPmzFf==W/MQNg4M"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Jesse Barnes <jbarnes@virtuousgeek.org>
 List-Id: linux-next.vger.kernel.org
 
-T24gTW9uLCAyMDEyLTAyLTI3IGF0IDIwOjA0IC0wNTAwLCBNaWtlIEZyeXNpbmdlciB3cm90ZToN
-Cj4gT24gTW9uZGF5IDI3IEZlYnJ1YXJ5IDIwMTIgMTc6MDM6MTAgSmFtZXMgQm90dG9tbGV5IHdy
-b3RlOg0KPiA+IC0tLSBhL2FyY2gvcGFyaXNjL01ha2VmaWxlDQo+ID4gKysrIGIvYXJjaC9wYXJp
-c2MvTWFrZWZpbGUNCj4gPiANCj4gPiAtQ1JPU1NfQ09NUElMRQk6PSBocHBhNjQtbGludXgtZ251
-LQ0KPiA+ICsNCj4gPiArIyBpZiBubyBkZWZhdWx0IHNldCwgdHJ5IHRvIGZpbmQgdGhlIGNvcnJl
-c3BvbmRpbmcgNjQgYml0IGNvbXBpbGVyDQo+ID4gK2lmZXEgKCQoQ1JPU1NfQ09NUElMRSksKQ0K
-PiA+ICtDUk9TU19DT01QSUxFCTo9ICQoc2hlbGwgJChDQykgLWR1bXBtYWNoaW5lIHwgc2VkIHMv
-aHBwYS1cXFwoLipcXFwpL2hwcGE2NC1cXDEtLykNCj4gPiArZW5kaWYNCj4gDQo+IGZhaWxzIHdo
-ZW4gdXNpbmcgImhwcGEyLjAteHh4Ii4gIHBlcmhhcHM6DQo+IENST1NTX0NPTVBJTEUgPz0gJChz
-aGVsbCAkKENDKSAtZHVtcG1hY2hpbmUgfCBzZWQgJ3MvXmhwcGFbXi1dKi0vaHBwYTY0LS8nKQ0K
-PiANCj4gZG9uJ3QgZXZlbiBuZWVkIHRoZSBpZmVxIGNoZWNrIHRoZW4NCg0KSG93IGlzIHRoYXQg
-ZGlmZmVyZW50IGZyb20gQ2FybG9zJyBzdWdnZXN0aW9uPyAgVGhlIHJlYXNvbiBpdCBkb2Vzbid0
-DQp3b3JrIGlzIHRoZSBzYW1lIC4uLiBDUk9TU19DT01QSUxFIGlzIGRlZmluZWQgdG8gYmUgZW1w
-dHkuDQoNCkphbWVzDQoNCg==
+--Signature=_Tue__28_Feb_2012_14_29_09_+1100_BPmzFf==W/MQNg4M
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Greg,
+
+Today's linux-next merge of the driver-core tree got a conflict in
+include/linux/pci.h between commit 6754b9e9c335 ("PCI: Rename
+pci_remove_behind_bridge to pci_stop_and_remove_behind_bridge") from the
+pci tree and commit aad4f4000cec ("PCI: Add helper macro for
+pci_register_driver boilerplate") from the driver-core tree.
+
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/linux/pci.h
+index 5584aac,d4afd70..0000000
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@@ -947,7 -946,20 +947,20 @@@ int __must_check __pci_register_driver(
+  	__pci_register_driver(driver, THIS_MODULE, KBUILD_MODNAME)
+ =20
+  void pci_unregister_driver(struct pci_driver *dev);
++=20
++ /**
++  * module_pci_driver() - Helper macro for registering a PCI driver
++  * @__pci_driver: pci_driver struct
++  *
++  * Helper macro for PCI drivers which do not do anything special in module
++  * init/exit. This eliminates a lot of boilerplate. Each module may only
++  * use this macro once, and calling it replaces module_init() and module_=
+exit()
++  */
++ #define module_pci_driver(__pci_driver) \
++ 	module_driver(__pci_driver, pci_register_driver, \
++ 		       pci_unregister_driver)
++=20
+ -void pci_remove_behind_bridge(struct pci_dev *dev);
+ +void pci_stop_and_remove_behind_bridge(struct pci_dev *dev);
+  struct pci_driver *pci_dev_driver(const struct pci_dev *dev);
+  int pci_add_dynid(struct pci_driver *drv,
+  		  unsigned int vendor, unsigned int device,
+
+--Signature=_Tue__28_Feb_2012_14_29_09_+1100_BPmzFf==W/MQNg4M
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPTEoFAAoJEECxmPOUX5FE3b8P/2j2QSwUfAgpJGPeROzfhhw7
+snQT6CCz4FQ9oBdNUINH1g6MdCwrMcw5l7kBPqi2XTX3ZnInijePxN68N+CAkF01
+HFXXEB+age1bYl3gfjDpBYygtsw+W97EvbT8B/7V9tIyVt9gZBNYH/a4qiKH4mBE
+rZRoHFmTROfZhZIBOsYNH4lGsCvvUTcVqlUmFoY2zRYzMx3KnlMII1NZI6Pi9pc8
+WBUvuQ6Z7dyO1IVDgxpf+Jy84xPk8yjSnpmicft/P4pnWltgJrVFPAhK5eaFRIwr
+yYyYdWiFBzsyX8AWhAEzAr2021zb1Jp+FO/3aGogtq6vFsqa6WOyHB+qN75cGvmK
+YiFHFOcHsgaoGAaYDJPe/FidcRF2i8etZRzgXOc0VFZ+a8xu8L8g9FdLD8tgkNc9
+oymqqJNSDRDDVu9MBOLnsRCzIIMbzC+behjvNwY+ZVo/7t0+otxJ1+7H8qvKXo88
+NnMafmLo4qdteGTACYaj81aWlWZ7AeGsxKyvHMXkVwp1liA6ZCEROFmInmJIuFm/
+bXCvJt8XkNiDVLmG1mOi5uNoV8FsCiVhC39Tbdq+bY1lwnAmCzK71ooU/ZpFV6Sz
+S6DfwMZia+dl+MkkYOOOWHO8UeF0NN5ke+F6kBzC77+f5cxtNtA15vrOAVXkIHsc
+E3bG0yjAQBc01EgOLpg3
+=3ckH
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__28_Feb_2012_14_29_09_+1100_BPmzFf==W/MQNg4M--
