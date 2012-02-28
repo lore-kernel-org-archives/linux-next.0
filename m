@@ -1,65 +1,56 @@
-From: Mike Frysinger <vapier@gentoo.org>
-Subject: Re: [PATCH v2] parisc: dont unconditionally override CROSS_COMPILE for 64 bit.
-Date: Mon, 27 Feb 2012 20:04:52 -0500
-Message-ID: <201202272004.55187.vapier@gentoo.org>
-References: <1330298813-17262-1-git-send-email-paul.gortmaker@windriver.com> <1330378864.2822.92.camel@dabdike.int.hansenpartnership.com> <1330380189.2822.95.camel@dabdike.int.hansenpartnership.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the devicetree tree with the powerpc
+ tree
+Date: Tue, 28 Feb 2012 13:06:34 +1100
+Message-ID: <20120228130634.3c511b096bc78f9b99e804fe@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1709520.v6gKf0jSzM";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-parisc-owner@vger.kernel.org>
-In-Reply-To: <1330380189.2822.95.camel@dabdike.int.hansenpartnership.com>
-Sender: linux-parisc-owner@vger.kernel.org
-To: James Bottomley <jbottomley@parallels.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, "kyle@mcmartin.ca" <kyle@mcmartin.ca>, "deller@gmx.de" <deller@gmx.de>, "dave.anglin@bell.net" <dave.anglin@bell.net>, "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__28_Feb_2012_13_06_34_+1100_zokU8=7auXN9yyRV"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-next.vger.kernel.org
 
---nextPart1709520.v6gKf0jSzM
-Content-Type: Text/Plain;
-  charset="utf-8"
+--Signature=_Tue__28_Feb_2012_13_06_34_+1100_zokU8=7auXN9yyRV
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Monday 27 February 2012 17:03:10 James Bottomley wrote:
-> --- a/arch/parisc/Makefile
-> +++ b/arch/parisc/Makefile
->=20
-> -CROSS_COMPILE	:=3D hppa64-linux-gnu-
-> +
-> +# if no default set, try to find the corresponding 64 bit compiler
-> +ifeq ($(CROSS_COMPILE),)
-> +CROSS_COMPILE	:=3D $(shell $(CC) -dumpmachine | sed s/hppa-\\\(.*\\\)/hp=
-pa64-\\1-/)
-> +endif
+Hi Grant,
 
-fails when using "hppa2.0-xxx".  perhaps:
-CROSS_COMPILE ?=3D $(shell $(CC) -dumpmachine | sed 's/^hppa[^-]*-/hppa64-/=
-')
+Today's linux-next merge of the devicetree tree got a conflict in
+arch/powerpc/platforms/iseries/Kconfig between commit 3d066d77cf46
+("powerpc: remove CONFIG_PPC_ISERIES from the architecture Kconfig
+files") from the powerpc tree and commit 0f22dd395fc4 ("of: Only compile
+OF_DYNAMIC on PowerPC pseries and iseries") from the devicetree tree.
 
-don't even need the ifeq check then
-=2Dmike
+The former commit removes the file (as the legacy iSeries platform is
+being removed), so I did that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---nextPart1709520.v6gKf0jSzM
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+--Signature=_Tue__28_Feb_2012_13_06_34_+1100_zokU8=7auXN9yyRV
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.17 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAABAgAGBQJPTCg2AAoJEEFjO5/oN/WBrVgP/2rbzbuqJmMRAPm7iSzsN6aa
-SMx2jFS44FSt0wq7oh++RwyBTsqxpIqJDvc4Ap9bWCTW5YLlWSXW+B6NkTkTSRiK
-xfGnnP06qT+OlgmaOQbQg+Xunz0S3bY700Nlzm5mJpOxvklf4H+9iUWtGthwz35g
-q10WmGEOKJNwYoVh1YWohj/8eCK9SUUokLlnTnselKdPcxVBY6zGXR/qwXpaIMnx
-cfYbo81GBcq8yiAqZ5ZrjXxg/Nc/jnM/pibTSp9ZKLSHVEUqQlYLH9DPlC6Ko7XV
-/PBrFIVslkW7xbpAuBZO0YJLbmniNYSkNtxlieHJX+PtevdsOx/PWOKfM67csOt4
-Oahj9WT8JzWofcbUmbwYLvhtawXxm5th8fIMzlYR9HysGk5Q8EjqJVceLYmkRR/T
-jzHXEFvkRcHfR9EdOxhajQeTVLNZv5yhfEpt9jDWCt+J0rdd8hNgLdX3kgFg+c71
-CxQPWGMrmiJAsQ9c3kutl+o5rUyFUNeTDoN6iGWdkUofHKyz9SONh7wluMd1Gmk1
-/xx5wH8rl3HBFTSo4fH/TC3sHhm8kFk3vQ+fauASJyFVkij3zHG+5oVT12FtSa2s
-fEzf1e5ivnR2yrdbmMGbdmkSb+F+eDjcoI2vFCFSVNfTaTnBKVXJcGVUUnzJ0zT4
-dIZLSc4mCJnVtFd33Ndy
-=+Bpe
+iQIcBAEBCAAGBQJPTDaqAAoJEECxmPOUX5FEGbAP/3JdMyyxVFac+ddRSktCQKLh
+fQJVx68d4RGVEL7+7feXnsVmokACmSa9Q92s/BDjVIAaDatwTG+mhYxGLb7oKN5L
+dX8Gap3ncFAfTNMfwNz+fYBuIMFu7B1BTaC2cSjYVT4uPMNMCVA63ntjr+KC8Nyp
+b6wXS5L/lJvFlCnlbGaMc+ECwg7GkS7szez1lkuTV5cFI3Xc4YuTeMRREyF2qBcB
+CNqjbjTnvusZtqeTbZIFEicMfveYtukMpC0Y13HXKjqJh6z+y1ZVvcMtUEzyQUUj
++r9XoM099P+zQgCj8vp3TEhpj/4b7CFnKb4PH28BeJ7cbl8wAyQtNz/mQS8wZd+P
+FrstW+xDnxs/OIEPeyhjZ9dC87QcMTBH31yibpfekcwhO0dpSNLa02PlKbgmg5nu
+bvXv2lZvpq2Ek1yqYAH/Vd0NP+KhT+UXgg9MULT/ZNtu3ivV0yo0tfN8URCKvfUM
+SeO8lA/TBP+MPcSAMD29qwKKkGsNgEGXT85mKH55i8iSwUAlpcNjsGwrZJM3VJ9X
+t/debZfDrG3cnIxdK61ED4X4qugeWeyISnjKt9W+UtnQNaVDRwAJnU5sFdmdXfVu
+l0f6OjQgJL0DgvIf1Anza8m5mKFOdhC0OLGeLLzgi5Ewzw1yyVoMKRTi8LPcMMkC
+/tFGkGd77s9YK2RYTSmf
+=bAL0
 -----END PGP SIGNATURE-----
 
---nextPart1709520.v6gKf0jSzM--
+--Signature=_Tue__28_Feb_2012_13_06_34_+1100_zokU8=7auXN9yyRV--
