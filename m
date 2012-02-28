@@ -1,87 +1,243 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] sound: fix trivial build error in mpc5200_dma.c
-Date: Tue, 28 Feb 2012 10:27:29 +0000
-Message-ID: <20120228102728.GB3121@opensource.wolfsonmicro.com>
-References: <1330204350-386-1-git-send-email-paul.gortmaker@windriver.com>
- <20120227145926.GK3191@opensource.wolfsonmicro.com>
- <4F4BFC16.2090602@freescale.com>
- <20120227235630.GC23230@opensource.wolfsonmicro.com>
- <CAP=VYLrdAqUrn0WERvbM_JqVSPWxU94ZJkF7C0HaJysy6fCy7A@mail.gmail.com>
+From: Armando Visconti <armando.visconti@st.com>
+Subject: Re: linux-next: Tree for Feb 27 (usbtouchscreen)
+Date: Tue, 28 Feb 2012 11:48:44 +0100
+Message-ID: <4F4CB10C.2000100@st.com>
+References: <20120227182029.545a7db32550ce94c9faffb4@canb.auug.org.au> <4F4BC717.1000304@xenotime.net> <4F4BF7E2.3080203@gmx.ch>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kORqDWCi7qDJ0mEj"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38106 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S964940Ab2B1K1c (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Feb 2012 05:27:32 -0500
-Content-Disposition: inline
-In-Reply-To: <CAP=VYLrdAqUrn0WERvbM_JqVSPWxU94ZJkF7C0HaJysy6fCy7A@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Timur Tabi <timur@freescale.com>, perex@perex.cz, tiwai@suse.de, lrg@ti.com, linux-next@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <4F4BF7E2.3080203@gmx.ch>
+Sender: linux-input-owner@vger.kernel.org
+To: Daniel Ritz <daniel.ritz@gmx.ch>
+Cc: Viresh KUMAR <viresh.kumar@st.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Dmitry Torokhov <dtor@mail.ru>
+List-Id: linux-next.vger.kernel.org
+
+Hi Daniel,
+
+See my replies inline.
+
+> Hi
+>
+> I had a quick look with gitweb. The following change causes the problem, comments inline:
+>
+>> From: Armando Visconti<armando.visconti@st.com>
+>> Date: Fri, 24 Feb 2012 08:51:37 +0000 (-0800)
+>> Subject: Input: usbtouchscreen - add support for Data Modul EasyTouch TP 72037
+>> X-Git-Tag: next-20120227~55^2~4
+>> X-Git-Url:
+> http://git.kernel.org/gitweb.cgi?p=linux%2Fkernel%2Fgit%2Fnext%2Flinux-next.git;a=commitdiff_plain;h=e6307aa07c5a11022f0ccee19a8ff0ba033eeb93
+>>
+>> Input: usbtouchscreen - add support for Data Modul EasyTouch TP 72037
+>>
+>> The Data Modul TP 72037 EasyTouch controller is derived from EGALAX
+>> controller and is capable of detecting dual contacts. Packets can be 5
+>> bytes or 10 bytes long, depending whether one or two contacts are
+>> detected. Format is same as EGALAX touch controller, but with x and y
+>> coordinates inverted.
+>>
+>> Signed-off-by: Armando Visconti<armando.visconti@st.com>
+>> Signed-off-by: Viresh Kumar<viresh.kumar@st.com>
+>> Signed-off-by: Dmitry Torokhov<dtor@mail.ru>
+>> ---
+>>
+>> diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+>> index 2b21a70..2acf16f 100644
+>> --- a/drivers/input/touchscreen/Kconfig
+>> +++ b/drivers/input/touchscreen/Kconfig
+>> @@ -607,6 +607,7 @@ config TOUCHSCREEN_USB_COMPOSITE
+>>   	  - JASTEC USB Touch Controller/DigiTech DTR-02U
+>>   	  - Zytronic controllers
+>>   	  - Elo TouchSystems 2700 IntelliTouch
+>> +	  - EasyTouch USB Touch Controller from Data Modul
+>>
+>>   	  Have a look at<http://linux.chapter7.ch/touchkit/>  for
+>>   	  a usage description and the required user-space stuff.
+>> @@ -711,6 +712,14 @@ config TOUCHSCREEN_USB_NEXIO
+>>   	bool "NEXIO/iNexio device support" if EXPERT
+>>   	depends on TOUCHSCREEN_USB_COMPOSITE
+>>
+>> +config TOUCHSCREEN_USB_EASYTOUCH
+>> +	default y
+>> +	bool "EasyTouch USB Touch controller device support" if EMBEDDED
+>> +	depends on TOUCHSCREEN_USB_COMPOSITE
+>> +	help
+>> +	  Say Y here if you have a EasyTouch USB Touch controller device support.
+>> +	  If unsure, say N.
+>> +
+>>   config TOUCHSCREEN_TOUCHIT213
+>>   	tristate "Sahara TouchIT-213 touchscreen"
+>>   	select SERIO
+>> diff --git a/drivers/input/touchscreen/usbtouchscreen.c b/drivers/input/touchscreen/usbtouchscreen.c
+>> index 9dbd8b4..5813089 100644
+>> --- a/drivers/input/touchscreen/usbtouchscreen.c
+>> +++ b/drivers/input/touchscreen/usbtouchscreen.c
+>> @@ -17,6 +17,7 @@
+>>    *  - Zytronic capacitive touchscreen
+>>    *  - NEXIO/iNexio
+>>    *  - Elo TouchSystems 2700 IntelliTouch
+>> + *  - EasyTouch USB Dual/Multi touch controller from Data Modul
+>>    *
+>>    * Copyright (C) 2004-2007 by Daniel Ritz<daniel.ritz@gmx.ch>
+>>    * Copyright (C) by Todd E. Johnson (mtouchusb.c)
+>> @@ -140,6 +141,7 @@ enum {
+>>   	DEVTYPE_TC45USB,
+>>   	DEVTYPE_NEXIO,
+>>   	DEVTYPE_ELO,
+>> +	DEVTYPE_ETOUCH,
+>>   };
+>>
+>>   #define USB_DEVICE_HID_CLASS(vend, prod) \
+>> @@ -245,6 +247,10 @@ static const struct usb_device_id usbtouch_devices[] = {
+>>   	{USB_DEVICE(0x04e7, 0x0020), .driver_info = DEVTYPE_ELO},
+>>   #endif
+>>
+>> +#ifdef CONFIG_TOUCHSCREEN_USB_EASYTOUCH
+>> +	{USB_DEVICE(0x7374, 0x0001), .driver_info = DEVTYPE_ETOUCH},
+>> +#endif
+>> +
+>>   	{}
+>>   };
+>>
+>> @@ -326,6 +332,47 @@ static int egalax_get_pkt_len(unsigned char *buf, int len)
+>>   }
+>>   #endif
+>>
+>> +/*****************************************************************************
+>> + * EasyTouch part
+>> + */
+>> +
+>> +#ifdef CONFIG_TOUCHSCREEN_USB_EASYTOUCH
+>
+> here, some lines are missing:
+>    #ifndef MULTI_PACKET
+>    #define MULTI_PACKET
+>    #endif
+> adding these will fix the compile error.
+>
+
+Correct.
+Thanks for pointing out this stupid mistake...
+We'll change it.
+
+>> +
+>> +#define EGALAX_PKT_TYPE_MASK		0xFE
+>> +#define EGALAX_PKT_TYPE_REPT		0x80
+>> +#define EGALAX_PKT_TYPE_REPT2		0xB0
+>> +#define EGALAX_PKT_TYPE_DIAG		0x0A
+>
+> The names here are wrong. The prefix EGALAX_ is only for eGalax controllers and some
+> of them are already defined in the eGalax part of the driver. This will re-define them
+> which is not good. Please use ETOUCH_... instead.
+>
+
+Yes, it makes sense.
+
+>> +
+>> +static int etouch_read_data(struct usbtouch_usb *dev, unsigned char *pkt)
+>> +{
+>> +	if ((pkt[0]&  EGALAX_PKT_TYPE_MASK) != EGALAX_PKT_TYPE_REPT&&
+>> +		(pkt[0]&  EGALAX_PKT_TYPE_MASK) != EGALAX_PKT_TYPE_REPT2)
+>> +		return 0;
+>> +
+>> +	dev->x = ((pkt[1]&  0x1F)<<  7) | (pkt[2]&  0x7F);
+>> +	dev->y = ((pkt[3]&  0x1F)<<  7) | (pkt[4]&  0x7F);
+>> +	dev->touch = pkt[0]&  0x01;
+>> +
+>> +	return 1;
+>> +}
+>> +
+>> +static int etouch_get_pkt_len(unsigned char *buf, int len)
+>> +{
+>> +	switch (buf[0]&  EGALAX_PKT_TYPE_MASK) {
+>> +	case EGALAX_PKT_TYPE_REPT:
+>> +	case EGALAX_PKT_TYPE_REPT2:
+>> +		return 5;
+>
+> The description states that packets can be 10 bytes long, but this case is not
+> handled here. How does the 10 byte packet look like? Is it two five byte packets?
+> How is the format? What is contained in the other 5 bytes?
+>
+
+It is handled by usbtouch_process_multi() calling the packet processing
+twice. The format is '5 bytes' for a single contact and 10 bytes (5 + 5)
+for dual contact.
+
+In the 10 bytes packet the info for first contact starts with 0x80 as
+for a normal EGALAX, while the info for the second contact starts with
+a 0xB0.
+
+So, in case of 10 bytes packet, usbtouch_process_multi() will call the
+processing routines twice.
 
 
---kORqDWCi7qDJ0mEj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Anyway: if it's two 5 byte packets, shouldn't the data from both packets be used
+> for _one_ input event for increased accuracy or something?
+> If it's not two 5 byte packets, the function must return 10 for a 10 byte packet.
+> Otherwise the driver will have to sync for each packet (which works fine but is slower).
+>
 
-On Mon, Feb 27, 2012 at 07:43:20PM -0500, Paul Gortmaker wrote:
-> On Mon, Feb 27, 2012 at 6:56 PM, Mark Brown
+Initially I have done exactly the way you are suggesting.
 
-> > The first line of the changelog which gets treated specially in various
-> > ways.
+But then, it seemed to me more appropriate to reuse the capability of
+the usbtouch_process_multi() to process more data in the same packet.
 
-> Automated scripts?  Something else?   I'd be interested to know.
+And pls note that I'm not using MT protocol to send the info up to the
+input device. The contacts info are sent as separate events.
 
-Things that use log summaries like git send-email and request-pull which
-pick out the first line of the changelog and do something different with
-it.
+So, what to do here?
 
-> I have to admit being confused by this as well.  I paged through the
-> git whatchanged info, and guessed that I should have used a prefix
-> like "ASoC: mpc5200_dma" (camelcase sic) but I think that to expect
-> that level of awareness from general contributors is probably expecting
-> a bit much.  I like to think I'm not totally clueless, but I would have
-> never thought of the above in advance...
 
-Well, most people seem to manage to get it right (I expect on the basis
-that they write a log which looks like the other logs for the code).  If
-you're thinking far enough to put a subsystem prefix on the commit log
-in the first place it seems reasonable to expect one that's in use
-rather than just creating one.
+>> +
+>> +	case EGALAX_PKT_TYPE_DIAG:
+>> +		if (len<  2)
+>> +			return -1;
+>> +
+>> +		return buf[1] + 2;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +#endif
+>>
+>>   /*****************************************************************************
+>>    * PanJit Part
+>> @@ -1175,6 +1222,18 @@ static struct usbtouch_device_info usbtouch_dev_info[] = {
+>>   		.exit		= nexio_exit,
+>>   	},
+>>   #endif
+>> +#ifdef CONFIG_TOUCHSCREEN_USB_EASYTOUCH
+>> +	[DEVTYPE_ETOUCH] = {
+>> +		.min_xc		= 0x0,
+>> +		.max_xc		= 0x07ff,
+>> +		.min_yc		= 0x0,
+>> +		.max_yc		= 0x07ff,
+>> +		.rept_size	= 16,
+>> +		.process_pkt	= usbtouch_process_multi,
+>> +		.get_pkt_len	= etouch_get_pkt_len,
+>> +		.read_data	= etouch_read_data,
+>> +	},
+>> +#endif
+>>   };
+>>
+>>
+>
+> Cheers
+> -daniel
 
-> In any case, if I have further fixups I happen across, I will try to feed
-> your bots the correct prefix.
+Thanks for reviewing.
 
-It's nothing custom on my side, I only use the vanilla git porcelain
-(though I do do things like grepping mailing lists visually so when
-things aren't CCed properly I'm less likely to notice the mailing list
-version of them).  I'd expect there are people with subject line based
-filters, though - patchwork might care for example.
+Rgds,
+Arm
 
---kORqDWCi7qDJ0mEj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+-- 
+-- "Every step appears to be the unavoidable consequence of the
+-- preceding one." (A. Einstein)
+-- 
+Armando Visconti                  Mobile: (+39) 346 8879146
+Senior SW Engineer                Fax:    (+39) 02 93519290
+CPG                               Work:   (+39) 02 93519683
+Computer System Division          e-mail: armando.visconti@st.com
+ST Microelectronics               TINA:   051  4683
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPTKwKAAoJEBus8iNuMP3dtmsP/0tkICmJcEcXwpkA6fNDVKJn
-6PdyIauooETPB0vZssRXTei9usa9to0u6HQyNS5XS/kQc6jBhQ82n9jArnu+s5QH
-6ENc9PWI+mfKM4xSvW6C/HzcMJdqQYp6j99tjMSBGPlwPfKLp8Fme8ERuKcoXDpF
-Gu/azTBOe7CwDNB46wF7ojXmXQArUqeHUAeAuTQ3kUsqF1WUdDLrT1lPwz+IHXvN
-tcKClQA5gQZ2Vd4oO6Zjm+x3YoOnKHKl/Wh6szSE2yNeznvQSkTT8TiyJLQn3km2
-t5+91RG25U1SjeKNesLFhA1qU8GNEQK9DXYbPplaj3Om6Pu33ZgIlq0iMXK2Vt82
-CFqH+7ebKMQxtOqGljSTQWlA/hAiFeYTiQy21dH270Toa7Dd/xQ/nVddc6uTPlrP
-82j5VzBdKokIB87cUdzrGx1LfQcJ/E7gQqgqatOBAmIqMK1wicnFTo/pZ+PH/ZrN
-WMzYXCsf2mj2gaw3MvXyfl+XTJ8SRxTfmXznw1m/NeOKzdP+Y2U4c1n14V+6EzlF
-3wmgv/FS3ywlc5mydOsXvuFQHQOSqY7nB6KU51NsHBZC8NBYJwm/d4hdoSoxTFLt
-kgMEkp/YOH6REJXahitnJmZrzSeY15fV2eJws6OZR6e+EBsiGFrENXX9yOEGwrCp
-hL8vNU0WazGqCtmhtuDD
-=nNy+
------END PGP SIGNATURE-----
-
---kORqDWCi7qDJ0mEj--
