@@ -1,62 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: The kgdb/kdb tree has returned to git.kernel.org
-Date: Wed, 29 Feb 2012 11:20:34 +1100
-Message-ID: <20120229112034.39c8b34f7b00e35cc06a6c33@canb.auug.org.au>
-References: <4F4D3669.2000000@windriver.com>
+Subject: linux-next: manual merge of the rr tree with the arm tree
+Date: Wed, 29 Feb 2012 13:29:46 +1100
+Message-ID: <20120229132946.3683c8a06314a7bd541aaa0c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__29_Feb_2012_11_20_34_+1100_N2nlKXek2Jpl4c2n"
+ boundary="Signature=_Wed__29_Feb_2012_13_29_46_+1100_1iSN4cdoLszLT873"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43242 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55208 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030225Ab2B2AUl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Feb 2012 19:20:41 -0500
-In-Reply-To: <4F4D3669.2000000@windriver.com>
+	with ESMTP id S966056Ab2B2C35 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Feb 2012 21:29:57 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rabin Vincent <rabin@rab.in>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Wed__29_Feb_2012_11_20_34_+1100_N2nlKXek2Jpl4c2n
+--Signature=_Wed__29_Feb_2012_13_29_46_+1100_1iSN4cdoLszLT873
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jason,
+Hi Rusty,
 
-On Tue, 28 Feb 2012 14:17:45 -0600 Jason Wessel <jason.wessel@windriver.com=
-> wrote:
->
-> Stephen, can you please point the linux-next to pickup the kgdb tree from:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/jwessel/kgdb.git kgdb-next
+Today's linux-next merge of the rr tree got a conflict in
+arch/arm/kernel/kprobes.c between commit 214f3e7464bc ("ARM: 7332/1:
+extract out code patch function from kprobes") from the arm tree and
+commit 8dcf0d7856cf ("remove references to cpu_*_map in arch/") from the
+rr tree.
 
-Done.
+The former moved part of the code modified by the latter into another
+file and, in doing so, applied the appropriate fixup.  So I just used the
+arm version of arch_arm_kprobe() - the patch to arch_disarm_kprobe() is
+still required.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__29_Feb_2012_11_20_34_+1100_N2nlKXek2Jpl4c2n
+--Signature=_Wed__29_Feb_2012_13_29_46_+1100_1iSN4cdoLszLT873
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPTW9SAAoJEECxmPOUX5FEidIP/A6ZMR44We0K4G/j3tF/Vrjl
-wGKWjju6ciLOsI2Kekk/c6L7+dxxx7bl+4MSqycP9x66ygji4T0/VW7gwnJIt0Qc
-Jv9pWJ8Ue8RxFUm48MtJAGjBHZICqczapgh1z51djeauG7NxSBeUmC9+4m+pqORI
-da3XCj5sWtYuLk6kJj4zgGR3+zX9JJ9P3+UGZHfAp4WHRTe31SwNeSREWuMZUtys
-aLkPxN7iJhSAgFsFoNFe1WRUD3xq5qrwbVIcaLmiBeCaJt+JNt0ng1zRZ35RCz/T
-ijQHThUUiRdkB6++rOwauXAcoESW9R4madT+K9Ggkk+wsMzQy0uNrbp56rpGapNn
-flv+cubP5nqAokgaPZUjXJbSY5rfLyqrKzyZXkbFgN21brFfEITcgxNmTgtTW/Lu
-Fmardes6Pjf/9ulaUC7L95zDDOCJYNpny8XUKex0n3/kw4RIgXAY/yBzyXMcyCen
-Kty7lzjqacDUJXrK8UxgOkV6PHN02rrOShapJOdmVtOOtk6Kp1XpcsVkJiIDsaX0
-4/TqJ3QE+Y2P1G01oMC30VMugF/Qnbv71g9cbIgnNiOL+fPb6hVVu+OKc30sZJUb
-9Ba0fIFkO2jB8W1dKXsywitnNbQkJMG2tRYDLiTaWEsEUxvhssDu8siJpe77P8uH
-ySsu0e4qEZAp6y16SEN4
-=gi8X
+iQIcBAEBCAAGBQJPTY2aAAoJEECxmPOUX5FErCQP/3Kqpuyq4lkClE+t9cxZkuBq
+kZJkFO7d9vO7kBo243UA5mNA+z9HtSw7NYqFZHnfjr+rYMyM130zGFluajsA0c9i
+71o/3tzSgI2r8pSIXyeQzE0AwkKF5PHHJveZ1DoSSHJwrkV2CuOXrbv1rj2MLWs3
+JJtemYKINmSvgSLp+uOtCD/KE7Zq8hUqiXfDyx2B9x/HU17Sp/9G3gWaocO9qeXH
+QeRokhk4tzLSxLR1YYjgcMnYrn49/DS4mpPJMuev52Dgo01VBCYIrQNUWr2lOU1F
+mPEdoqEvCYa0PDDSxuB+Frq6PQ2I7b1LbQUIOuLBCuDZ1T2F+PpUcYu2LXwJxf3o
+hwqKCDQXDmTSytNOfoJ751TpVVMKql282O23Z6YWliIO7t00bAy9MI/NogkAkwuO
+e1AQDOxauRpobfwQtn47TcQQSZmpAyN2XkMWWDHFqOHf0OuQ8FNZ66ns9hCZUGji
+R1koHfyFWsyd8fvMGv/Knu/DVWdeRzOdn0s73hZ7NMjtZ0mIuv1XCGfjqRJ5BQum
+JQMxbjRWM0Xlcw0W4EVKJgkozAoPuRAU0JlcdrRNbJ4dgYiPnsTA7tKlhZLMPtZ7
+pGVE+ud9AC3v0X3xtJqpPdL9ZZUT8kcqNQCi0cbNs0moIZ0vCwZLHzjffAHAkdSj
+5qJ/3G7EmwWPJFoyev/x
+=8bob
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__29_Feb_2012_11_20_34_+1100_N2nlKXek2Jpl4c2n--
+--Signature=_Wed__29_Feb_2012_13_29_46_+1100_1iSN4cdoLszLT873--
