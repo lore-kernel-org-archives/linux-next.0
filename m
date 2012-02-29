@@ -1,59 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the v4l-dvb tree
-Date: Wed, 29 Feb 2012 14:33:59 +1100
-Message-ID: <20120229143359.e983bed880aded7b8f99b6bf@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Wed, 29 Feb 2012 16:16:27 +1100
+Message-ID: <20120229161627.b8dd92287d066cd7c0a0284e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__29_Feb_2012_14_33_59_+1100_TIHsBR_Mos_URQsq"
+ boundary="Signature=_Wed__29_Feb_2012_16_16_27_+1100_ekT5a9DE0=NCutiU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47281 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48830 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030660Ab2B2DeI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Feb 2012 22:34:08 -0500
+	with ESMTP id S1751243Ab2B2FQl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Feb 2012 00:16:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Jett.Zhou" <jtzhou@marvell.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Marc Zyngier <marc.zyngier@arm.com>, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Wed__29_Feb_2012_14_33_59_+1100_TIHsBR_Mos_URQsq
+--Signature=_Wed__29_Feb_2012_16_16_27_+1100_ekT5a9DE0=NCutiU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi all,
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/media/video/s5p-tv/hdmi_drv.c due to commit 382d19f197f9 ("media:
-Fix typo in mixer_drv.c and hdmi_drv.c") from the trivial tree also
-already existing in the v4l-dvb tree (same patch different commit) (and
-there are further changes in that tree to this file).
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/Kconfig between commit 6905a65879b5 ("ARM: Make the sched_clock
+framework mandatory") from the arm tree and commit 4a8f83409da6 ("ARM:
+sa1100: clean up clock support") from the arm-soc tree.
 
-I just the used the version from the v4l-dvb tree.
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__29_Feb_2012_14_33_59_+1100_TIHsBR_Mos_URQsq
+diff --cc arch/arm/Kconfig
+index 5130989,9f134c4..0000000
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@@ -753,7 -760,8 +753,7 @@@ config ARCH_SA110
+  	select ARCH_HAS_CPUFREQ
+  	select CPU_FREQ
+  	select GENERIC_CLOCKEVENTS
+- 	select HAVE_CLK
++ 	select CLKDEV_LOOKUP
+ -	select HAVE_SCHED_CLOCK
+  	select TICK_ONESHOT
+  	select ARCH_REQUIRE_GPIOLIB
+  	select HAVE_IDE
+
+--Signature=_Wed__29_Feb_2012_16_16_27_+1100_ekT5a9DE0=NCutiU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPTZynAAoJEECxmPOUX5FEpEYP/1XwI3uLGt1fQDwTWFpUaTld
-iSEruOr/4l5c+3AETGS4NX1Dn69yRMXmCM3o/g406Pbh2QtEd56J1Nr4WEjdX3wo
-L+WSilP3znFEIqp50msl4momvysKargzlHknUBd7t3G3ULolqEJcWsZzTR8eyhZ7
-CyO31esHbM2YNAPXPLqAMDuHK7wabDD1XNR6R15G6LZLKjuEbgvRDJeGB41rw47+
-79q0HPoXMFkix/X9247f+fbxP8j8j9d+NU5d1f1aSUb06SuQm3+G0Pe5RIxuzW69
-fyxx9NswrA0vK1cZzIc30+bP3V8MOIBQUmOcSlAnXtmZNK2uZLHjGlR6S93yNvZm
-k/iYvUVtDx2+CbweNiWlQ/X7PDiHEV75Kv7eZxwb3804VEqA0AgrpE5jhrmMLQRn
-dq2BQ7IyPg5MTuPF7oAETKnuLCVd8O+3Y2LHC77xJGZRkpgUX3imImxHH7pfO3//
-mx4kYGfupZapy7KapA6Ezr5JFJ6HxaomJ9djw4mZ6F5l8Be40S5KOoGZqpzhh/y3
-6T0R2o77ySrREfQMp8ZFh4FDqUUkUKVFQJ162Wm2SIDbolHZS8OyygA19SK4HXR7
-s9IN73x13AEt9Auom0d709PtFscQydD/y1xcfDvPEB63wBfRJXHu0PPvM3bZknoY
-QSIk10VtPNbflj39g+so
-=czyc
+iQIcBAEBCAAGBQJPTbSrAAoJEECxmPOUX5FEniMP/025VYYl6+0YIq/jHVkg+MsH
+uoizLxi/p50hbgPeJcCAMqVV+s3XCgDdprk3KUmRfX38UIAm008lwIwBhhD1vm0m
+7gojfa2b+j2erUwO4P7q83vK3nxhI4A3lI3oY/iKnD2kvAp0hJySBEgd+d5d8/3z
+V4NsDi2zjt0yzYW+MibpiOomYLZbTcK5ZiwKYwV4ya0vllbRSxjGKQC4GVxbA1c/
+1dXJ0LCPmQqLpECajAmLDxM+th03Zy80uFzFfOiyGq2L728hwRhrQc0m5I05VTbP
+Io3/+BF9RBEb1/Mnj+cj7TsQ9aqehKjLBFjOUookDpWFXHb9ICmoHA/OTV2nv7MB
+G7k+XgeCPE0A+jigOgVsk9U5yGcAdaZ1wgDPke16PgJlv5oMByxqOq+FSw8Cu6mn
+e8wyiAo5E/b1BnkQlXzFNlOsptpOXMSXp0r7GFW1aoYW0PHJmVD48htlLnKZPN3w
+/7oXUDqNn+48MNabYHgIBneAxpwR1P12pSFCgolxiQ/nNV/pETNCu4RUNQGLrgO7
+dptJcLnUUw056c5ix+IK9S8ErFZ6FwKptWK5U13a3zWcnIeiiz8gDKsliOnC7hx+
+SH1y1Q3x1m6h9X3ig8/gyfsMEW3fk8pB30QAk7yhEh6aHkSuk8JvDvdwzCFdaEjR
+3u6mleTdEyvc4NeBwC0q
+=od4M
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__29_Feb_2012_14_33_59_+1100_TIHsBR_Mos_URQsq--
+--Signature=_Wed__29_Feb_2012_16_16_27_+1100_ekT5a9DE0=NCutiU--
