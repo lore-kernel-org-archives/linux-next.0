@@ -1,66 +1,52 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Wed, 29 Feb 2012 10:13:13 +0000
-Message-ID: <20120229101313.GB3182@opensource.wolfsonmicro.com>
-References: <20120228165857.5abb225e1748d40f9c5d61e8@canb.auug.org.au>
- <20120228120037.GD3683@opensource.wolfsonmicro.com>
- <20120228140810.4cf9d477.akpm@linux-foundation.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IiVenqGWf+H9Y6IX"
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [PATCH] thermal: add missing HAS_IOMEM dependency for SPEAr13x thermal sensor driver
+Date: Wed, 29 Feb 2012 13:40:12 +0100
+Message-ID: <1330519212-7046-1-git-send-email-heiko.carstens@de.ibm.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54391 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1030553Ab2B2KNQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Feb 2012 05:13:16 -0500
-Content-Disposition: inline
-In-Reply-To: <20120228140810.4cf9d477.akpm@linux-foundation.org>
+Received: from e06smtp14.uk.ibm.com ([195.75.94.110]:52817 "EHLO
+	e06smtp14.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757306Ab2B2MkV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Feb 2012 07:40:21 -0500
+Received: from /spool/local
+	by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+	Wed, 29 Feb 2012 12:40:18 -0000
+Received: from d06av03.portsmouth.uk.ibm.com (d06av03.portsmouth.uk.ibm.com [9.149.37.213])
+	by d06nrmr1507.portsmouth.uk.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id q1TCeGkc2306234
+	for <linux-next@vger.kernel.org>; Wed, 29 Feb 2012 12:40:16 GMT
+Received: from d06av03.portsmouth.uk.ibm.com (localhost.localdomain [127.0.0.1])
+	by d06av03.portsmouth.uk.ibm.com (8.14.4/8.13.1/NCO v10.0 AVout) with ESMTP id q1TCeFNv023812
+	for <linux-next@vger.kernel.org>; Wed, 29 Feb 2012 05:40:16 -0700
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>
+Cc: linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Vincenzo Frascino <vincenzo.frascino@st.com>, Viresh Kumar <viresh.kumar@st.com>
 
+Fix this build error on s390:
 
---IiVenqGWf+H9Y6IX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+drivers/thermal/spear_thermal.c: In function 'thermal_get_temp':
+drivers/thermal/spear_thermal.c:49:2: error:
+   implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
 
-On Tue, Feb 28, 2012 at 02:08:10PM -0800, Andrew Morton wrote:
-> Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
+Cc: Vincenzo Frascino <vincenzo.frascino@st.com>
+Cc: Viresh Kumar <viresh.kumar@st.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+---
+ drivers/thermal/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> > > -	for_each_set_bit_cont(i, lzo_blocks[0]->sync_bmp,
-> > > +	for_each_set_bit_from(i, lzo_blocks[0]->sync_bmp,
-
-> > That looks about right, yes.  Not sure what the best way to handle this
-> > is, perhaps maintain _cont() for a while?
-
-> I don't think that will be needed - for_each_set_bit_cont() only had
-> two callers, both in arch/x86/kernel/cpu/perf_event.c.
-
-Well, by "a while" I mostly mean "until after the merge window when the
-new API is available".
-
---IiVenqGWf+H9Y6IX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPTfoyAAoJEBus8iNuMP3dOvoP/0KYp+/zcGvpV1vJRGm3H0US
-r3u3gqU9ozrgR/Rab9FWIdYcwMxVkEHrsfkdTVtyUNi0B/GyUR4Fa8v0IN+gZcko
-cCXvfFjjVs2MbjyQ+mw3dvGdw7mLc164qV3jajyCbybk/yADE+rN6fwBoZoa+nij
-oLQ7OINXJJDs+MnOGaYH0L7rlPn2+2ko2ATjZWSQijY2Tu7K1SctpIVYF2ovWa1T
-B7u4HreCYNNiLDa9v57iX9JdVwkHFT7nHFgLx95Tu17sJxU/3oWZmPhEt8R+2xPK
-J8uQQl8hu32ZOw+UkE4ubIihAxrd33pcz4snchw+oLolduFNeEQD9s2SgQkVqaKp
-Da3QDbvE8bDAK6fVOm2NgxLRrfkLPSEHMY0RyWigO+2+EgotI7dkKCSG69AZsIxW
-2M2gudEiukrVhTGFdVhOcNTajixPaE8T0O5yI1QLfetIt2y9dNZt436bB535BqiX
-IY3Cs1wyvqIxvJ53A/sF8WcRhaxknYks9iLAhlpqk+IQpZyf/4ObGF+pX7VSxu3+
-wKOBNIojY7rrSKC9U4dwB7/tt8OrhMS47HanO3Hz8g8hYJ3rsNDUkMSINmF9v7Qw
-X9JD1NqD4db0blPr0Jwjmln2UM6aydVf5lo4KDIQFXG0enD6NbyaM97vMvLOBpPZ
-HELWIHF48aL2hUxUKwNQ
-=5Zlh
------END PGP SIGNATURE-----
-
---IiVenqGWf+H9Y6IX--
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index 2633fe0..06101a7 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -21,7 +21,7 @@ config THERMAL_HWMON
+ 
+ config SPEAR_THERMAL
+ 	bool "SPEAr thermal sensor driver"
+-	depends on THERMAL
++	depends on THERMAL && HAS_IOMEM
+ 	help
+ 	  Enable this to plug the SPEAr thermal sensor driver into the Linux
+ 	  thermal framework
+-- 
+1.7.9
