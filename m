@@ -1,87 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (staging tree related)
-Date: Wed, 29 Feb 2012 18:52:27 +1100
-Message-ID: <20120229185227.7f14b1863c7a5d16220bac3f@canb.auug.org.au>
-References: <20120227181303.9aa93b8a8ed02428e9310c5e@canb.auug.org.au>
-	<20120227211630.GA18418@kroah.com>
-	<57C28D85C66F5C49B9E212CBFAFDAC1F23010F80@CH1PRD0802MB120.namprd08.prod.outlook.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Wed, 29 Feb 2012 10:13:13 +0000
+Message-ID: <20120229101313.GB3182@opensource.wolfsonmicro.com>
+References: <20120228165857.5abb225e1748d40f9c5d61e8@canb.auug.org.au>
+ <20120228120037.GD3683@opensource.wolfsonmicro.com>
+ <20120228140810.4cf9d477.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__29_Feb_2012_18_52_27_+1100_Ir80ll8LsjUAqTBl"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IiVenqGWf+H9Y6IX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37061 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030366Ab2B2Hwx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Feb 2012 02:52:53 -0500
-In-Reply-To: <57C28D85C66F5C49B9E212CBFAFDAC1F23010F80@CH1PRD0802MB120.namprd08.prod.outlook.com>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54391 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1030553Ab2B2KNQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Feb 2012 05:13:16 -0500
+Content-Disposition: inline
+In-Reply-To: <20120228140810.4cf9d477.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Kelly <ckelly@ozmodevices.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>
 
---Signature=_Wed__29_Feb_2012_18_52_27_+1100_Ir80ll8LsjUAqTBl
-Content-Type: text/plain; charset=US-ASCII
+
+--IiVenqGWf+H9Y6IX
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+On Tue, Feb 28, 2012 at 02:08:10PM -0800, Andrew Morton wrote:
+> Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
 
-On Wed, 29 Feb 2012 07:35:35 +0000 Chris Kelly <ckelly@ozmodevices.com> wro=
-te:
->
-> Hi Greg,
->=20
-> I believe I understand the cause of the problem and would like to submit
-> a patch to fix it. However, I am unclear on what the starting point is gi=
-ven
-> that the final patch was reverted from linux-next. Do I assume that patch
-> will be reapplied before the applying the new patch or should I provide
-> another patch to reapply the reverted patch? Is it acceptable to submit
-> patches generated against the head of linux-next?
+> > > -	for_each_set_bit_cont(i, lzo_blocks[0]->sync_bmp,
+> > > +	for_each_set_bit_from(i, lzo_blocks[0]->sync_bmp,
 
-Your patches are all still in Greg's tree which I merge into linux-next
-every day.  I have then been reverting that last patch each day.  Your
-patch should be against Greg's tree (or your last patch) and then when
-the fix is in Greg's tree, I will get it in linux-next and stop reverting
-the other patch.
+> > That looks about right, yes.  Not sure what the best way to handle this
+> > is, perhaps maintain _cont() for a while?
 
-> Before submitting the patch, I would like to test that the patch really
-> does fix the issue found by Stephen. Since it doesn't occur when building
-> for x32 or x64 then I need to setup a PowerPC cross-compile tool chain. Do
-> you have any suggestions as to where I can pull a prebuilt tool chain or
-> do I need to build directly from the GNU sources.
+> I don't think that will be needed - for_each_set_bit_cont() only had
+> two callers, both in arch/x86/kernel/cpu/perf_event.c.
 
-http://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.6.0/x86_64-gcc=
--4.6.0-nolibc_powerpc64-linux.tar.xz
+Well, by "a while" I mostly mean "until after the merge window when the
+new API is available".
 
-That is am x86_64 hosted powerpc64 compiler suitable for building the
-kernel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__29_Feb_2012_18_52_27_+1100_Ir80ll8LsjUAqTBl
-Content-Type: application/pgp-signature
+--IiVenqGWf+H9Y6IX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPTdk7AAoJEECxmPOUX5FEJjEP/0B5u2CevOE8zSzHroYPh/Y2
-OS5CupYclrzi9hlN+8WqRZMhvNgToZkaEcrRBEfxrhwU2kcZG0ChPAjO/t9rNxB9
-qedv35SMkC03foOjA/k/g3SUC97gLlF/jub+zKIs/WGMoNrtfa+2rxBhzTHXhKWz
-dfNtMZn6O+xTJKAInnQ35G60z4ddxTb7qjE5ByAYQJRTZUHmVb8iNT31gzMoCth7
-7YFhVv0mLVIjRO8wMcJHXO5lHTsrifseBoT+L6MAraWD2c1ZQXUa/hMzleAHm01o
-QqO5fvVuJb8Swyw/U//GMzyPc9QIiXb4nZnWT20htnQEKx5nMYDJ+V2bKfEHmoci
-Jp3HE3yyECchqY6jauLFyxw+JztFHeVcsleTqIlnfV87HQv0bKXoBliIwQpzogtI
-m+sv8ikV6z81YOW2AhCWqaPjE0KWq1aZqDnBYAztlZzCGC7nIgwPdCZxpVGpKzng
-Bw3B8opxFZL/n39YoA0mn2JtWhQ9uR85jZV5FcuSZATSOco3TyRWROuNbeolXKex
-sp6KPVWga3VmmD4ORZHXIXNrKEs50iIH06vFiU17iA1E2p8oT8XCtcYTV9pduktd
-HhdkOx/9mlMTm0Y6TkrSulq0qhA6GTv6kV+0xLVrLpEsFf+5alAMnlJBtRbaSw1y
-eOMLmxquAeMk8o+LjJnl
-=W9Gl
+iQIcBAEBAgAGBQJPTfoyAAoJEBus8iNuMP3dOvoP/0KYp+/zcGvpV1vJRGm3H0US
+r3u3gqU9ozrgR/Rab9FWIdYcwMxVkEHrsfkdTVtyUNi0B/GyUR4Fa8v0IN+gZcko
+cCXvfFjjVs2MbjyQ+mw3dvGdw7mLc164qV3jajyCbybk/yADE+rN6fwBoZoa+nij
+oLQ7OINXJJDs+MnOGaYH0L7rlPn2+2ko2ATjZWSQijY2Tu7K1SctpIVYF2ovWa1T
+B7u4HreCYNNiLDa9v57iX9JdVwkHFT7nHFgLx95Tu17sJxU/3oWZmPhEt8R+2xPK
+J8uQQl8hu32ZOw+UkE4ubIihAxrd33pcz4snchw+oLolduFNeEQD9s2SgQkVqaKp
+Da3QDbvE8bDAK6fVOm2NgxLRrfkLPSEHMY0RyWigO+2+EgotI7dkKCSG69AZsIxW
+2M2gudEiukrVhTGFdVhOcNTajixPaE8T0O5yI1QLfetIt2y9dNZt436bB535BqiX
+IY3Cs1wyvqIxvJ53A/sF8WcRhaxknYks9iLAhlpqk+IQpZyf/4ObGF+pX7VSxu3+
+wKOBNIojY7rrSKC9U4dwB7/tt8OrhMS47HanO3Hz8g8hYJ3rsNDUkMSINmF9v7Qw
+X9JD1NqD4db0blPr0Jwjmln2UM6aydVf5lo4KDIQFXG0enD6NbyaM97vMvLOBpPZ
+HELWIHF48aL2hUxUKwNQ
+=5Zlh
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__29_Feb_2012_18_52_27_+1100_Ir80ll8LsjUAqTBl--
+--IiVenqGWf+H9Y6IX--
