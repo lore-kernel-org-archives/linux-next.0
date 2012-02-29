@@ -1,73 +1,76 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the tip tree
-Date: Wed, 29 Feb 2012 17:27:22 +1100
-Message-ID: <20120229172722.af9a7c25887a5b9a4106d78d@canb.auug.org.au>
+From: Yong Zhang <yong.zhang0@gmail.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the arm-soc tree
+Date: Wed, 29 Feb 2012 14:32:17 +0800
+Message-ID: <20120229063217.GA13386@zhy>
+References: <20120229172127.7b430cecc7ab2350d4e4a1b8@canb.auug.org.au>
+Reply-To: Yong Zhang <yong.zhang0@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__29_Feb_2012_17_27_22_+1100_26Nt=RdS9qezKnZT"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38184 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753961Ab2B2G1m (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Feb 2012 01:27:42 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Chris Metcalf <cmetcalf@tilera.com>
-
---Signature=_Wed__29_Feb_2012_17_27_22_+1100_26Nt=RdS9qezKnZT
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20120229172127.7b430cecc7ab2350d4e4a1b8@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@marvell.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+On Wed, Feb 29, 2012 at 05:21:27PM +1100, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm tree got a conflict in
+> drivers/rtc/rtc-sa1100.c between commit 3888c09074db ("rtc: sa1100:
+> declare irq in resource") from the arm-soc tree and commit "drivers/rtc:
+> remove IRQF_DISABLED" from the akpm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Today's linux-next merge of the akpm tree got a conflict in arch/x86/Kconfi=
-g between commit 0bf6276392e9 ("x32: Warn and disable rather than error if =
-binutils too old") from the tip tree and commit "ipc: provide generic compa=
-t versions of IPC syscalls" from the akpm tree.
+Your fix looks good to me.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary,
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks,
+Yong
 
-diff --cc arch/x86/Kconfig
-index 3ccd69a,f50b52a..0000000
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@@ -2221,7 -2221,8 +2221,8 @@@ config X86_X3
- =20
-  config COMPAT
-  	def_bool y
- -	depends on IA32_EMULATION || X86_X32_ABI
- +	depends on IA32_EMULATION || X86_X32
-+ 	select ARCH_WANT_OLD_COMPAT_IPC
- =20
-  config COMPAT_FOR_U64_ALIGNMENT
-  	def_bool COMPAT
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/rtc/rtc-sa1100.c
+> index c105774,e70b4e6..0000000
+> --- a/drivers/rtc/rtc-sa1100.c
+> +++ b/drivers/rtc/rtc-sa1100.c
+> @@@ -102,23 -156,20 +102,23 @@@ static irqreturn_t sa1100_rtc_interrupt
+>   
+>   static int sa1100_rtc_open(struct device *dev)
+>   {
+>  +	struct sa1100_rtc *info = dev_get_drvdata(dev);
+>  +	struct rtc_device *rtc = info->rtc;
+>   	int ret;
+>  -	struct platform_device *plat_dev = to_platform_device(dev);
+>  -	struct rtc_device *rtc = platform_get_drvdata(plat_dev);
+>   
+>  -	ret = request_irq(IRQ_RTC1Hz, sa1100_rtc_interrupt, 0,
+>  +	ret = clk_prepare_enable(info->clk);
+>  +	if (ret)
+>  +		goto fail_clk;
+> - 	ret = request_irq(info->irq_1hz, sa1100_rtc_interrupt, IRQF_DISABLED,
+> ++	ret = request_irq(info->irq_1hz, sa1100_rtc_interrupt, 0,
+>   		"rtc 1Hz", dev);
+>   	if (ret) {
+>  -		dev_err(dev, "IRQ %d already in use.\n", IRQ_RTC1Hz);
+>  +		dev_err(dev, "IRQ %d already in use.\n", info->irq_1hz);
+>   		goto fail_ui;
+>   	}
+> - 	ret = request_irq(info->irq_alarm, sa1100_rtc_interrupt, IRQF_DISABLED,
+>  -	ret = request_irq(IRQ_RTCAlrm, sa1100_rtc_interrupt, 0,
+> ++	ret = request_irq(info->irq_alarm, sa1100_rtc_interrupt, 0,
+>   		"rtc Alrm", dev);
+>   	if (ret) {
+>  -		dev_err(dev, "IRQ %d already in use.\n", IRQ_RTCAlrm);
+>  +		dev_err(dev, "IRQ %d already in use.\n", info->irq_alarm);
+>   		goto fail_ai;
+>   	}
+>   	rtc->max_user_freq = RTC_FREQ;
 
---Signature=_Wed__29_Feb_2012_17_27_22_+1100_26Nt=RdS9qezKnZT
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPTcVKAAoJEECxmPOUX5FEZPEP/irkn78XTVZlU7oPaMLVTvpj
-HUUHIsw7FSjUBZMEdYpvKDlAkaQXvIrFC1sQTB/eTOV9K8pzlwymIlKdvxecrL1l
-hm6rrYRY9nIwYE+DcvMk51w8wZ0HeNQl5J01ntSYLJHij194G/uR2d4xlk+QTwd3
-bz3ETZIJdjBJeXav17Xh1zOkg6u2m+JsBk/Z4T0MHrpeE0nkf+o3qufkrHPidXna
-SoiQvC9nyWHeUYWenR5MJlp7f0/2oDzemlteurUd9WyVLaKTiqPltF3GYmr/PtWG
-8nfJtHF28tnkX9nLKoG9FUtGPKhRFhxjcLXAxYLRT/au0ZOynZmChrDNINPkZnZw
-wH9bfPqyVLT7u4vatzSApLT3m0hgHuWp0rlhzUubA9Xh2qdtiT86DJLNY3RVy5dS
-tXdoa5CoTKvPheTPqyAhBjJxrB7mQQhFIL7RdFHTow6Y+Vd9HS8gkwB2gvQ0eu3C
-iL37fCe+rfKOzEvWTgEbSlQaEDbzmAJXO7QeEYQCUMgQ5Rmb8PVqkTeE6DA3HQrh
-kLbF87o+7EAlSe87y6wkIQ3MaFKutsF9bMz4PH59wZQV+pHfzIggHWtZgdAOD8co
-Pel5I00KCW2a3kmIuwdqXehjheknXUNHgwFJydrE8QP/e3nKOBxAeepHBvc6KqH0
-xrMLJUTOnilwxvLLjzhj
-=mw9k
------END PGP SIGNATURE-----
-
---Signature=_Wed__29_Feb_2012_17_27_22_+1100_26Nt=RdS9qezKnZT--
+-- 
+Only stand for myself
