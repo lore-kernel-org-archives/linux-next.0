@@ -1,94 +1,65 @@
-From: Haojian Zhuang <hzhuang1@marvell.com>
-Subject: RE: linux-next: manual merge of the akpm tree with the arm-soc tree
-Date: Tue, 28 Feb 2012 22:54:06 -0800
-Message-ID: <25B60CDC2F704E4E9D88FFD52780CB4C060A87D777@SC-VEXCH1.marvell.com>
-References: <20120229172127.7b430cecc7ab2350d4e4a1b8@canb.auug.org.au>,<20120229063217.GA13386@zhy>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the akpm tree with the arm-soc tree
+Date: Wed, 29 Feb 2012 18:11:03 +1100
+Message-ID: <20120229181103.e05c55bafd959f739d6a336b@canb.auug.org.au>
+References: <20120229172127.7b430cecc7ab2350d4e4a1b8@canb.auug.org.au>
+	<20120229063217.GA13386@zhy>
+	<25B60CDC2F704E4E9D88FFD52780CB4C060A87D777@SC-VEXCH1.marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__29_Feb_2012_18_11_03_+1100_uawUsS+VYPcxO7v."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog115.obsmtp.com ([74.125.149.238]:44789 "EHLO
-	na3sys009aog115.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752810Ab2B2G5E convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Feb 2012 01:57:04 -0500
-In-Reply-To: <20120229063217.GA13386@zhy>
-Content-Language: en-US
+Received: from haggis.pcug.org.au ([203.10.76.10]:53133 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030462Ab2B2HLN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Feb 2012 02:11:13 -0500
+In-Reply-To: <25B60CDC2F704E4E9D88FFD52780CB4C060A87D777@SC-VEXCH1.marvell.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Yong Zhang <yong.zhang0@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Haojian Zhuang <hzhuang1@marvell.com>
+Cc: Yong Zhang <yong.zhang0@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Stephen & Arnd,
+--Signature=_Wed__29_Feb_2012_18_11_03_+1100_uawUsS+VYPcxO7v.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Since there's the conflict on code. Does it mean that I need to re-submit those patches in arm-soc that should be based on commit "drivers/rtc: remove IRQF_DISABLED" from the akpm tree?
+Hi,
 
-Best Regards
-Haojian
-________________________________________
-From: Yong Zhang [yong.zhang0@gmail.com]
-Sent: Wednesday, February 29, 2012 2:32 PM
-To: Stephen Rothwell
-Cc: Andrew Morton; linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Haojian Zhuang; Olof Johansson; Arnd Bergmann; linux-arm-kernel@lists.infradead.org
-Subject: Re: linux-next: manual merge of the akpm tree with the arm-soc tree
-
-On Wed, Feb 29, 2012 at 05:21:27PM +1100, Stephen Rothwell wrote:
-> Hi Andrew,
+On Tue, 28 Feb 2012 22:54:06 -0800 Haojian Zhuang <hzhuang1@marvell.com> wr=
+ote:
 >
-> Today's linux-next merge of the akpm tree got a conflict in
-> drivers/rtc/rtc-sa1100.c between commit 3888c09074db ("rtc: sa1100:
-> declare irq in resource") from the arm-soc tree and commit "drivers/rtc:
-> remove IRQF_DISABLED" from the akpm tree.
->
-> I fixed it up (see below) and can carry the fix as necessary.
+> Since there's the conflict on code. Does it mean that I need to re-submit
+> those patches in arm-soc that should be based on commit "drivers/rtc:
+> remove IRQF_DISABLED" from the akpm tree?
 
-Your fix looks good to me.
+No, that conflict can be resolved by Linus during the next merge window
+(unless someone else wants to do something about it).
 
-Thanks,
-Yong
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->
-> diff --cc drivers/rtc/rtc-sa1100.c
-> index c105774,e70b4e6..0000000
-> --- a/drivers/rtc/rtc-sa1100.c
-> +++ b/drivers/rtc/rtc-sa1100.c
-> @@@ -102,23 -156,20 +102,23 @@@ static irqreturn_t sa1100_rtc_interrupt
->
->   static int sa1100_rtc_open(struct device *dev)
->   {
->  +    struct sa1100_rtc *info = dev_get_drvdata(dev);
->  +    struct rtc_device *rtc = info->rtc;
->       int ret;
->  -    struct platform_device *plat_dev = to_platform_device(dev);
->  -    struct rtc_device *rtc = platform_get_drvdata(plat_dev);
->
->  -    ret = request_irq(IRQ_RTC1Hz, sa1100_rtc_interrupt, 0,
->  +    ret = clk_prepare_enable(info->clk);
->  +    if (ret)
->  +            goto fail_clk;
-> -     ret = request_irq(info->irq_1hz, sa1100_rtc_interrupt, IRQF_DISABLED,
-> ++    ret = request_irq(info->irq_1hz, sa1100_rtc_interrupt, 0,
->               "rtc 1Hz", dev);
->       if (ret) {
->  -            dev_err(dev, "IRQ %d already in use.\n", IRQ_RTC1Hz);
->  +            dev_err(dev, "IRQ %d already in use.\n", info->irq_1hz);
->               goto fail_ui;
->       }
-> -     ret = request_irq(info->irq_alarm, sa1100_rtc_interrupt, IRQF_DISABLED,
->  -    ret = request_irq(IRQ_RTCAlrm, sa1100_rtc_interrupt, 0,
-> ++    ret = request_irq(info->irq_alarm, sa1100_rtc_interrupt, 0,
->               "rtc Alrm", dev);
->       if (ret) {
->  -            dev_err(dev, "IRQ %d already in use.\n", IRQ_RTCAlrm);
->  +            dev_err(dev, "IRQ %d already in use.\n", info->irq_alarm);
->               goto fail_ai;
->       }
->       rtc->max_user_freq = RTC_FREQ;
+--Signature=_Wed__29_Feb_2012_18_11_03_+1100_uawUsS+VYPcxO7v.
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
+iQIcBAEBCAAGBQJPTc+HAAoJEECxmPOUX5FE+ssP/3EN5OjJzfNGj4QuUXd26Kuk
+ESTvGORCj8Rabt3xPFfpFCiCh49XhgHCBFkI+j3QWn4/n9pLw+y5DchuhgbRfXGO
+7KH9IZ167ixTB1HiMbrQj0CbxM2atWKe7tK6CG/Pv7+OLBnIQmZH/J/OM7xts6aP
+9A3vInoSA/hoqiwfpNrjlEOW5EVhf63AWg9BVqRr82fkP/7XiZdc5betDkrErEmg
+HPG2raIjqh8eI21Y1K73JJ0Ty0oajYwUAeQljocSBem/3ctb7BEaw/BfE0OkEKJh
+0r+osif061SQ/uwbZXab53ZOiyDTQx7Di3ELPfrSgmIQisxr8+8CxN0IWvaBVK7F
+YcoFxRnYj1Wrktq9g9lYLq/Jzc6duNZ7QHSX9Tg+hS4y5Uh8Sx4wbC5mLNY0YHvT
+fuojoQ3ODr/DLxU0typYZ/z6ebBsvr48RkxuhLiFMDMIHzxtDb1c7TykEUd+7+Rq
+0ETCP9FzFeG9cAOEQBB/znKZmIl0fbAxZA/zdgGDI65mFosuVCxYZJlyabv04mYD
+Sv5HE52Jk4RSfc628bUVEP0Ws5W1TmCUTw4d97mF8zLr2KqdNUjCKZnESnrZ5gyC
+aOMvJ8m3jZnlQT7ZenKiXWHYrvJm6KPrAgy3g38lVtkg9YbrYSWzsJlhxBfED0rS
+EFeJWRIKDaY7HIoDj+cC
+=O+fv
+-----END PGP SIGNATURE-----
 
---
-Only stand for myself
+--Signature=_Wed__29_Feb_2012_18_11_03_+1100_uawUsS+VYPcxO7v.--
