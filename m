@@ -1,62 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the arm tree
-Date: Wed, 29 Feb 2012 13:29:46 +1100
-Message-ID: <20120229132946.3683c8a06314a7bd541aaa0c@canb.auug.org.au>
+From: Ben Hutchings <bhutchings@solarflare.com>
+Subject: Re: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Wed, 29 Feb 2012 03:21:42 +0000
+Message-ID: <1330485702.2512.22.camel@bwh-desktop>
+References: <20120227121125.007c32f9aa7be2470d9e3356@canb.auug.org.au>
+	 <20120226.230523.1906949835561978402.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__29_Feb_2012_13_29_46_+1100_1iSN4cdoLszLT873"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55208 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966056Ab2B2C35 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Feb 2012 21:29:57 -0500
+Received: from exchange.solarflare.com ([216.237.3.220]:9954 "EHLO
+	ocex02.SolarFlarecom.com" rhost-flags-OK-FAIL-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1755192Ab2B2DVq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Feb 2012 22:21:46 -0500
+In-Reply-To: <20120226.230523.1906949835561978402.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rabin Vincent <rabin@rab.in>, Russell King <rmk@arm.linux.org.uk>
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__29_Feb_2012_13_29_46_+1100_1iSN4cdoLszLT873
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, 2012-02-26 at 23:05 -0500, David Miller wrote:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 27 Feb 2012 12:11:25 +1100
+> 
+> > Today's linux-next merge of the net-next tree got a conflict in
+> > drivers/net/ethernet/sfc/rx.c between commit ff3bc1e75275 ("sfc: Fix
+> > assignment of ip_summed for pre-allocated skbs") from Linus' tree and
+> > commit db3395697cad ("sfc: Replace efx_rx_buffer::is_page and other
+> > booleans with a flags field") from the net-next tree.
+> > 
+> > Just context changes.  I fixed it up (see below) and can carry the fix as
+> > necessary.
+> 
+> I just merged net into net-next and resolved this conflict.
 
-Hi Rusty,
+Thank you both.  I should have flagged this when sending the change for
+the net tree.
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/arm/kernel/kprobes.c between commit 214f3e7464bc ("ARM: 7332/1:
-extract out code patch function from kprobes") from the arm tree and
-commit 8dcf0d7856cf ("remove references to cpu_*_map in arch/") from the
-rr tree.
+Ben.
 
-The former moved part of the code modified by the latter into another
-file and, in doing so, applied the appropriate fixup.  So I just used the
-arm version of arch_arm_kprobe() - the patch to arch_disarm_kprobe() is
-still required.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__29_Feb_2012_13_29_46_+1100_1iSN4cdoLszLT873
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPTY2aAAoJEECxmPOUX5FErCQP/3Kqpuyq4lkClE+t9cxZkuBq
-kZJkFO7d9vO7kBo243UA5mNA+z9HtSw7NYqFZHnfjr+rYMyM130zGFluajsA0c9i
-71o/3tzSgI2r8pSIXyeQzE0AwkKF5PHHJveZ1DoSSHJwrkV2CuOXrbv1rj2MLWs3
-JJtemYKINmSvgSLp+uOtCD/KE7Zq8hUqiXfDyx2B9x/HU17Sp/9G3gWaocO9qeXH
-QeRokhk4tzLSxLR1YYjgcMnYrn49/DS4mpPJMuev52Dgo01VBCYIrQNUWr2lOU1F
-mPEdoqEvCYa0PDDSxuB+Frq6PQ2I7b1LbQUIOuLBCuDZ1T2F+PpUcYu2LXwJxf3o
-hwqKCDQXDmTSytNOfoJ751TpVVMKql282O23Z6YWliIO7t00bAy9MI/NogkAkwuO
-e1AQDOxauRpobfwQtn47TcQQSZmpAyN2XkMWWDHFqOHf0OuQ8FNZ66ns9hCZUGji
-R1koHfyFWsyd8fvMGv/Knu/DVWdeRzOdn0s73hZ7NMjtZ0mIuv1XCGfjqRJ5BQum
-JQMxbjRWM0Xlcw0W4EVKJgkozAoPuRAU0JlcdrRNbJ4dgYiPnsTA7tKlhZLMPtZ7
-pGVE+ud9AC3v0X3xtJqpPdL9ZZUT8kcqNQCi0cbNs0moIZ0vCwZLHzjffAHAkdSj
-5qJ/3G7EmwWPJFoyev/x
-=8bob
------END PGP SIGNATURE-----
-
---Signature=_Wed__29_Feb_2012_13_29_46_+1100_1iSN4cdoLszLT873--
+-- 
+Ben Hutchings, Staff Engineer, Solarflare
+Not speaking for my employer; that's the marketing department's job.
+They asked us to note that Solarflare product names are trademarked.
