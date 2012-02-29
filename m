@@ -1,45 +1,59 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Subject: Re: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Wed, 29 Feb 2012 03:21:42 +0000
-Message-ID: <1330485702.2512.22.camel@bwh-desktop>
-References: <20120227121125.007c32f9aa7be2470d9e3356@canb.auug.org.au>
-	 <20120226.230523.1906949835561978402.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the v4l-dvb tree
+Date: Wed, 29 Feb 2012 14:33:59 +1100
+Message-ID: <20120229143359.e983bed880aded7b8f99b6bf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__29_Feb_2012_14_33_59_+1100_TIHsBR_Mos_URQsq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from exchange.solarflare.com ([216.237.3.220]:9954 "EHLO
-	ocex02.SolarFlarecom.com" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755192Ab2B2DVq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Feb 2012 22:21:46 -0500
-In-Reply-To: <20120226.230523.1906949835561978402.davem@davemloft.net>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47281 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030660Ab2B2DeI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Feb 2012 22:34:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
 
-On Sun, 2012-02-26 at 23:05 -0500, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 27 Feb 2012 12:11:25 +1100
-> 
-> > Today's linux-next merge of the net-next tree got a conflict in
-> > drivers/net/ethernet/sfc/rx.c between commit ff3bc1e75275 ("sfc: Fix
-> > assignment of ip_summed for pre-allocated skbs") from Linus' tree and
-> > commit db3395697cad ("sfc: Replace efx_rx_buffer::is_page and other
-> > booleans with a flags field") from the net-next tree.
-> > 
-> > Just context changes.  I fixed it up (see below) and can carry the fix as
-> > necessary.
-> 
-> I just merged net into net-next and resolved this conflict.
+--Signature=_Wed__29_Feb_2012_14_33_59_+1100_TIHsBR_Mos_URQsq
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you both.  I should have flagged this when sending the change for
-the net tree.
+Hi Jiri,
 
-Ben.
+Today's linux-next merge of the trivial tree got a conflict in
+drivers/media/video/s5p-tv/hdmi_drv.c due to commit 382d19f197f9 ("media:
+Fix typo in mixer_drv.c and hdmi_drv.c") from the trivial tree also
+already existing in the v4l-dvb tree (same patch different commit) (and
+there are further changes in that tree to this file).
 
--- 
-Ben Hutchings, Staff Engineer, Solarflare
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+I just the used the version from the v4l-dvb tree.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__29_Feb_2012_14_33_59_+1100_TIHsBR_Mos_URQsq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPTZynAAoJEECxmPOUX5FEpEYP/1XwI3uLGt1fQDwTWFpUaTld
+iSEruOr/4l5c+3AETGS4NX1Dn69yRMXmCM3o/g406Pbh2QtEd56J1Nr4WEjdX3wo
+L+WSilP3znFEIqp50msl4momvysKargzlHknUBd7t3G3ULolqEJcWsZzTR8eyhZ7
+CyO31esHbM2YNAPXPLqAMDuHK7wabDD1XNR6R15G6LZLKjuEbgvRDJeGB41rw47+
+79q0HPoXMFkix/X9247f+fbxP8j8j9d+NU5d1f1aSUb06SuQm3+G0Pe5RIxuzW69
+fyxx9NswrA0vK1cZzIc30+bP3V8MOIBQUmOcSlAnXtmZNK2uZLHjGlR6S93yNvZm
+k/iYvUVtDx2+CbweNiWlQ/X7PDiHEV75Kv7eZxwb3804VEqA0AgrpE5jhrmMLQRn
+dq2BQ7IyPg5MTuPF7oAETKnuLCVd8O+3Y2LHC77xJGZRkpgUX3imImxHH7pfO3//
+mx4kYGfupZapy7KapA6Ezr5JFJ6HxaomJ9djw4mZ6F5l8Be40S5KOoGZqpzhh/y3
+6T0R2o77ySrREfQMp8ZFh4FDqUUkUKVFQJ162Wm2SIDbolHZS8OyygA19SK4HXR7
+s9IN73x13AEt9Auom0d709PtFscQydD/y1xcfDvPEB63wBfRJXHu0PPvM3bZknoY
+QSIk10VtPNbflj39g+so
+=czyc
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__29_Feb_2012_14_33_59_+1100_TIHsBR_Mos_URQsq--
