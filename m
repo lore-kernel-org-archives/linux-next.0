@@ -1,77 +1,41 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] thermal: add missing HAS_IOMEM dependency for SPEAr13x
- thermal sensor driver
-Date: Wed, 29 Feb 2012 13:53:42 -0500
-Message-ID: <CAP=VYLphmvMfYAoo5RJHR8FNzfd7NFcBNORxdW4BnoCKWqHLGw@mail.gmail.com>
-References: <1330519212-7046-1-git-send-email-heiko.carstens@de.ibm.com>
-	<4F4E336A.8050602@st.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] backlight: fix ot200_bl build
+Date: Wed, 29 Feb 2012 11:06:55 -0800
+Message-ID: <4F4E774F.4010502@xenotime.net>
+References: <20120229175205.d165fa5266f400bc080253a0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:48832 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756683Ab2B2Sxn convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Feb 2012 13:53:43 -0500
-Received: by pbcup15 with SMTP id up15so4907973pbc.19
-        for <linux-next@vger.kernel.org>; Wed, 29 Feb 2012 10:53:42 -0800 (PST)
-In-Reply-To: <4F4E336A.8050602@st.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vincenzo Frascino <vincenzo.frascino@st.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Viresh KUMAR <viresh.kumar@st.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120229175205.d165fa5266f400bc080253a0@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Christian Gmeiner <christian.gmeiner@gmail.com>, Richard Purdie <rpurdie@rpsys.net>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 29, 2012 at 9:17 AM, Vincenzo Frascino
-<vincenzo.frascino@st.com> wrote:
-> Thanks Heiko,
->
-> Il 29/02/2012 13:40, Heiko Carstens ha scritto:
->> Fix this build error on s390:
->>
->> drivers/thermal/spear_thermal.c: In function 'thermal_get_temp':
->> drivers/thermal/spear_thermal.c:49:2: error:
->> =A0 =A0implicit declaration of function 'readl' [-Werror=3Dimplicit-=
-function-declaration]
->>
->> Cc: Vincenzo Frascino <vincenzo.frascino@st.com>
->> Cc: Viresh Kumar <viresh.kumar@st.com>
->> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
->> ---
->> =A0drivers/thermal/Kconfig | =A0 =A02 +-
->> =A01 files changed, 1 insertions(+), 1 deletions(-)
->>
->> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
->> index 2633fe0..06101a7 100644
->> --- a/drivers/thermal/Kconfig
->> +++ b/drivers/thermal/Kconfig
->> @@ -21,7 +21,7 @@ config THERMAL_HWMON
->>
->> =A0config SPEAR_THERMAL
->> =A0 =A0 =A0 bool "SPEAr thermal sensor driver"
->> - =A0 =A0 depends on THERMAL
->> + =A0 =A0 depends on THERMAL && HAS_IOMEM
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-No, we dont need this.  The better patch was already posted:
+Fix build error when GPIO_CS5535 is not enabled:
 
-   https://lkml.org/lkml/2012/2/26/155
+drivers/built-in.o: In function `ot200_backlight_probe':
+ot200_bl.c:(.text+0x205bf): undefined reference to `cs5535_gpio_set'
+ot200_bl.c:(.text+0x205d1): undefined reference to `cs5535_gpio_set'
 
-I've tested the above "depends on PLAT_SPEAR" patch and
-confirmed it fixes the s390 build failures that just appeared in
-linux-next.  This is the patch we need in the akpm queue.
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+---
+ drivers/video/backlight/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Paul.
---
-
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Enable this to plug the SPEAr thermal sensor driver =
-into the Linux
->> =A0 =A0 =A0 =A0 thermal framework
-> Reviewed-by: Vincenzo Frascino <vincenzo.frascino@st.com>
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+--- linux-next-20120229.orig/drivers/video/backlight/Kconfig
++++ linux-next-20120229/drivers/video/backlight/Kconfig
+@@ -343,7 +343,7 @@ config BACKLIGHT_LP855X
+ 
+ config BACKLIGHT_OT200
+ 	tristate "Backlight driver for ot200 visualisation device"
+-	depends on BACKLIGHT_CLASS_DEVICE && CS5535_MFGPT
++	depends on BACKLIGHT_CLASS_DEVICE && CS5535_MFGPT && GPIO_CS5535
+ 	help
+ 	  To compile this driver as a module, choose M here: the module will be
+ 	  called ot200_bl.
