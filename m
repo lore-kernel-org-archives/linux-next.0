@@ -1,59 +1,56 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: bad commit in the regmap tree
-Date: Thu, 1 Mar 2012 16:17:52 +0000
-Message-ID: <20120301161752.GB10915@opensource.wolfsonmicro.com>
-References: <20120301105425.ef188f8724204c55ec805929@canb.auug.org.au>
+From: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+Subject: Re: build failure in linux-next
+Date: Thu, 1 Mar 2012 22:32:43 +0530
+Message-ID: <CAAHN_R1br+QU+DhZ5rxOjjovTtjsgEAn4Yz1wE3-J9Djd-DxFw@mail.gmail.com>
+References: <1330618302.2453.7.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PmA2V3Z32TCmWXqI"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44897 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755028Ab2CAQRz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Mar 2012 11:17:55 -0500
-Content-Disposition: inline
-In-Reply-To: <20120301105425.ef188f8724204c55ec805929@canb.auug.org.au>
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:34229 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756944Ab2CARCn convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Mar 2012 12:02:43 -0500
+In-Reply-To: <1330618302.2453.7.camel@deneb.redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Salter <msalter@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+
+On Thu, Mar 1, 2012 at 9:41 PM, Mark Salter <msalter@redhat.com> wrote:
+> In linux-next, this breaks nommu builds:
+>
+> commit b8665bd461ecdc561e7c95d039567d0a79208226
+> Author: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+> Date: =A0 Sat Feb 25 12:28:09 2012 +1100
+>
+> =A0 =A0procfs: mark thread stack correctly in proc/<pid>/maps
+>
+> I think this was merged into linux-next from the -mm tree.
+>
+> There are unbalanced parens in fs/proc/task_nommu.c which leads to th=
+is
+> when building:
+>
+> fs/proc/task_nommu.c: In function 'nommu_vma_show':
+> fs/proc/task_nommu.c:177:2: warning: no return statement in function =
+returning non-void
+> fs/proc/task_nommu.c: At top level:
+> fs/proc/task_nommu.c:179:14: error: expected ')' before '\xa'
+> fs/proc/task_nommu.c:180:2: error: expected identifier or '(' before =
+'return'
+> fs/proc/task_nommu.c:181:1: error: expected identifier or '(' before =
+'}' token
+>
+
+Sorry about that. My latest patch submission to procfs happens to fix t=
+his:
+
+https://lkml.org/lkml/2012/3/1/4
+
+Do you need a separate submission that fixes just this build failure?
 
 
---PmA2V3Z32TCmWXqI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Mar 01, 2012 at 10:54:25AM +1100, Stephen Rothwell wrote:
-
-> I noticed that commit 0308333a9987 ("regmap: Add stub for
-> regcache_sync_region()") is the same as its parent commit 868d3fdeaae9
-> ("regmap: Add stub for regcache_sync_region()").  So the function
-> regcache_sync_region() has been added to include/linux/regmap.h twice
-> (the context is not sufficient to stop the patch applying twice).
-
-Oh, I had thought I'd pushed it out already but was just trusting rebase
-that I hadn't.  Fixed now.
-
---PmA2V3Z32TCmWXqI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPT6EUAAoJEBus8iNuMP3dhMEQAJCo1ZCQOU27guB/BvFFq9t0
-61nTyLzIMOJPTj6tPqNOGt5p+6HXasYm8JZm8r4RLfyc0666mup9XUvwBJp5aqO3
-0o8GwjykJyfWb1ULTsg1lnet986oCOytQ/f9r4TW1xZO6tIis3dMAn/zdN9k0LC4
-qT6MJkJ5rRj8d6zy98Z84UttRLpWd8aTkfJYabsDCXcK7KskcpPi0ytyjC239d+g
-bpkl/ekLpq6eCMMGMBJb5Ax72JIIMeHLNvUJKbM1r0LV2SPxaKqEzEbsvkfNSxH1
-umdz9WHh2e2o7YgLt4FI3r7qR3QR0cYdtZPNXWjwkHNokaekLCNS04Fhg6x98KTn
-RI8gROvDCvwBbq3N+3NWjDw00J1Aopp4cpiBbPzBzfFZ9FdQgnK9q47LXOVaayep
-Xhu/qR/mgVYyEYLAnnQU/qjrU/56CLQzWeHJHIbge9KJsEAAWGKelrrXtZgbR5bg
-ZSbOhpRx81CCEh3pA3bC7vBOEheTkSckXhMF+CwZazlBielOt9KMAp4Tas9dLEYh
-eIyCvQ0mpNeqlBzWgxDJssC6r8dFpxr74/8CL4LilTd8gimJEQ/qzUXcJDW88DNJ
-sL7d3VzfGmcgJhNZzJXMkTksbt6DygG+Oe70q0GLVkL+S/P/r4Gn+rkXjbF+CMy1
-YI+NlzCyI3S77BJUrlSG
-=rmY8
------END PGP SIGNATURE-----
-
---PmA2V3Z32TCmWXqI--
+--=20
+Siddhesh Poyarekar
+http://siddhesh.in
