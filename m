@@ -1,56 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: bad commit in the regmap tree
-Date: Thu, 1 Mar 2012 10:54:25 +1100
-Message-ID: <20120301105425.ef188f8724204c55ec805929@canb.auug.org.au>
+Subject: Re: [tip:x86/asm] bitops: Optimise get_order()
+Date: Thu, 1 Mar 2012 11:31:06 +1100
+Message-ID: <20120301113106.020c3ad0560425970c9de34e@canb.auug.org.au>
+References: <20120220223928.16199.29548.stgit@warthog.procyon.org.uk>
+	<tip-d66acc39c7cee323733c8503b9de1821a56dff7e@git.kernel.org>
+	<CAP=VYLr5id0TrsQFbaKOi6FoK7=_zW-Q9dwH+rAEbnmYunHvNQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__1_Mar_2012_10_54_25_+1100_8rT4aQgG.FD8qx8u"
+ boundary="Signature=_Thu__1_Mar_2012_11_31_06_+1100__R.pU2sRX8cSNR2C"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49783 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50707 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756522Ab2B2Xyf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Feb 2012 18:54:35 -0500
+	with ESMTP id S1755478Ab2CAAbQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Feb 2012 19:31:16 -0500
+In-Reply-To: <CAP=VYLr5id0TrsQFbaKOi6FoK7=_zW-Q9dwH+rAEbnmYunHvNQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: mingo@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org, arnd@arndb.de, dhowells@redhat.com, tglx@linutronix.de, linux-tip-commits@vger.kernel.org, linux-next@vger.kernel.org
 
---Signature=_Thu__1_Mar_2012_10_54_25_+1100_8rT4aQgG.FD8qx8u
-Content-Type: text/plain; charset=US-ASCII
+--Signature=_Thu__1_Mar_2012_11_31_06_+1100__R.pU2sRX8cSNR2C
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+On Wed, 29 Feb 2012 15:29:04 -0500 Paul Gortmaker <paul.gortmaker@windriver=
+.com> wrote:
+>
+> On Mon, Feb 20, 2012 at 6:20 PM, tip-bot for David Howells
+> <dhowells@redhat.com> wrote:
+> > Commit-ID: =C2=A0d66acc39c7cee323733c8503b9de1821a56dff7e
+> > Gitweb: =C2=A0 =C2=A0 http://git.kernel.org/tip/d66acc39c7cee323733c850=
+3b9de1821a56dff7e
+> > Author: =C2=A0 =C2=A0 David Howells <dhowells@redhat.com>
+> > AuthorDate: Mon, 20 Feb 2012 22:39:29 +0000
+> > Committer: =C2=A0H. Peter Anvin <hpa@zytor.com>
+> > CommitDate: Mon, 20 Feb 2012 14:47:02 -0800
+> >
+> > bitops: Optimise get_order()
+>=20
+> This is causing build failures on non-x86 in linux next according to git =
+bisect.
 
-I noticed that commit 0308333a9987 ("regmap: Add stub for
-regcache_sync_region()") is the same as its parent commit 868d3fdeaae9
-("regmap: Add stub for regcache_sync_region()").  So the function
-regcache_sync_region() has been added to include/linux/regmap.h twice
-(the context is not sufficient to stop the patch applying twice).
+Presumably it needs to include linux/bitops.h (and see below).
+
+> > +static inline __attribute_const__
+> > +int __get_order(unsigned long size)
+> > +{
+> > + =C2=A0 =C2=A0 =C2=A0 int order;
+> > +
+> > + =C2=A0 =C2=A0 =C2=A0 size--;
+> > + =C2=A0 =C2=A0 =C2=A0 size >>=3D PAGE_SHIFT;
+> > +#if BITS_PER_LONG =3D=3D 32
+> > + =C2=A0 =C2=A0 =C2=A0 order =3D fls(size);
+> > +#else
+> > + =C2=A0 =C2=A0 =C2=A0 order =3D fls64(size);
+> > +#endif
+
+linux/bitops.h has fls_long() that does this size test and calls the right =
+thing.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__1_Mar_2012_10_54_25_+1100_8rT4aQgG.FD8qx8u
+--Signature=_Thu__1_Mar_2012_11_31_06_+1100__R.pU2sRX8cSNR2C
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPTrqxAAoJEECxmPOUX5FEpXgP/RjSLO+Xp187kULQc0B5s2rf
-NUdv1g88BW6UxswfGqCxfUWGl4TakUCi92RMC026XPhtKWzSZztv5rmXHQoIZRTh
-d63HaBnsb/mXItpCspc4twVYnuEejIP3G+KgUwDnQc5itG4mmKr/dmirbt3DMCQS
-qGgYsflHCRd61bcv5D2wryu++nw3uV8cWipTG3KHA3frHkg++3/odkOKpeMv2e7R
-lI9i64oUluhxTsqjttIT1vNDwL+ohX1hzhmDJLZw+rqZmX9g1vxtNja1KxLIPksO
-mOw4Na0/B+9QbDtxM2cMQXvzwRQ8cjQj0YtCxwP0b786L7DD6jLDkl8HBqwh+aYt
-jgagBe90Lwc7wlVXcyQYa9LVwKKCOkNJj7zob/8veaw3P4mMc1csjfVRT59Dz/2Y
-miwFkng6jqblHc9xdc5PwuXcher7xxZN4Xb4vwjV8Ksg0c34iJB+DNiEWMU8wIyy
-F8w/UltvOzKHHxFChf0oSyT7HVcN0XrByEWL308wQ8CBE1A/PiW/C/0VVRa8FOqM
-+o91Bv3Q+Y1tz6BEQwx7zoRWnt3K7baYqBoHOetjw4c5BPL56oYYDmmAqneiFcq3
-9lFJH3+iQFVKAyNkkb0LLeOWL0KMbTxvjT3KMMmrTR2N1ar8dKroEeuDrA+3vAYR
-4wDdOEZXQ4HCRZdvyBW4
-=GZXq
+iQIcBAEBCAAGBQJPTsNKAAoJEECxmPOUX5FEZREP/07NgZai+MjUkXd7K4UX4gAd
+q40AEDmhQQNBvJ5Eq3jE0GgZx69eZ8RgChDwOZ16pGgxKfffZ8NTRqGszG2wB9f7
+TMWNe4ECUs3TZRWVNmI+p1gzQetoTkJde8o6IfINP4RIhbLup7IIO0pHMBjkXfeq
+q8NtoeNo2O6jUiA1P8asSnkIW3hnbER79Sfp28YPpP1RuPYpWTykM5CeGnqaGkd3
+CkuqiDe63PeymlAa/CGUWVd+8ZObRSiM6+NZQBcYfj+bsJTPAeRtjT42Z5xhF72w
+juddpSSRAj51zvyxuKRpJdXOCkBYU/R0terdt8guw4zYbVNivclxtIMassI3YZbz
+5EsjQNhAzX5ytawiCFDVv3sq3S5SBJ1835O0d41tIkqtlAizcn9vWwwEjkztMMBp
+lAdxQ6ixQQteBP4J8wvq10KBl2AjGzt8o/ks4pe3xQiPYsIwqrjeeE2ZpkCDxWTU
+wfbY0Ui82Sxq6HZCjq1GN5bCQT7VcwGCRF6SdUeox5zm6S6ApQ74ESS+hpkwctX6
+8eGV3dZ0eKm4uBwsQLHGCWqAv64ipPWOIqZ4lRqoo9Khcxxbv8Ghg3b5v7uf+Cd7
+7WJ7w1my8PAiAjlLH9QiWg23ahuXDnzua2wudAb0qqh2jCZoSxvdEfJF1Qvb4/gW
+tJOXlGChUfVWuNNuKuEU
+=SjUv
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__1_Mar_2012_10_54_25_+1100_8rT4aQgG.FD8qx8u--
+--Signature=_Thu__1_Mar_2012_11_31_06_+1100__R.pU2sRX8cSNR2C--
