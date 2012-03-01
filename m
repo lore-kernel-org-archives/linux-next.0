@@ -1,38 +1,63 @@
-From: Dave Jones <davej@redhat.com>
-Subject: Re: linux-next: build failure after merge of the cpufreq tree
-Date: Wed, 29 Feb 2012 22:01:25 -0500
-Message-ID: <20120301030125.GA27070@redhat.com>
-References: <20120301135601.a164a12e2bd4aee871ff60db@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the gpio tree
+Date: Thu, 1 Mar 2012 16:40:01 +1100
+Message-ID: <20120301164001.77a063ceed2deaf37cf68e3c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__1_Mar_2012_16_40_01_+1100__NlsNF0lVyww3oiO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:35597 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932442Ab2CADBj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Feb 2012 22:01:39 -0500
-Content-Disposition: inline
-In-Reply-To: <20120301135601.a164a12e2bd4aee871ff60db@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47954 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753247Ab2CAFkQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Mar 2012 00:40:16 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Tarun Kanti DebBarma <tarun.kanti@ti.com>, Grant Likely <grant.likely@secretlab.ca>
 
-On Thu, Mar 01, 2012 at 01:56:01PM +1100, Stephen Rothwell wrote:
- > Hi Dave,
- > 
- > After merging the cpufreq tree, today's linux-next build (x86_64
- > allmodconfig) failed like this:
- > 
- > drivers/cpufreq/cpufreq_ondemand.c: In function 'cpufreq_gov_dbs_init':
- > drivers/cpufreq/cpufreq_ondemand.c:880:28: error: 'PM_QOS_DVFS_RESPONSE_LATENCY' undeclared (first use in this function)
- > drivers/cpufreq/cpufreq_ondemand.c: In function 'cpufreq_gov_dbs_exit':
- > drivers/cpufreq/cpufreq_ondemand.c:896:25: error: 'PM_QOS_DVFS_RESPONSE_LATENCY' undeclared (first use in this function)
- > 
- > Caused by commit 500e8ca39c56 ("[CPUFREQ] ondemand: handle QoS request on
- > DVFS response latency").
- > 
- > I have used the cpufreq tree fomr next-20120229 for today.
+--Signature=_Thu__1_Mar_2012_16_40_01_+1100__NlsNF0lVyww3oiO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-gah, this patch was dependant upon another that didn't apply cleanly.
+Hi all,
 
-	Dave
+Today's linux-next merge of the arm-soc tree got conflicts in
+arch/arm/mach-omap1/gpio16xx.c between commit ab985f0f7c2c ("gpio/omap:
+cleanup omap_gpio_mod_init function") from the gpio tree and commit
+63325ff235de ("ARM: OMAP1: Move 16xx GPIO system clock to platform init
+code") from the arm-soc tree.
+
+OK, I can't decide which is correct here - the former adds this code
+inside the loop (even though it seems to not depend on anything in the
+loop) and the latter adds it before.  I have used the former (but am
+happy to be corrected).  And both commits remove the code in
+drivers/gpio/gpio-omap.c.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__1_Mar_2012_16_40_01_+1100__NlsNF0lVyww3oiO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPTwuxAAoJEECxmPOUX5FEjGsP/2J72evCuAZQ4xO3CAgBtG6j
+Q+06bVPyE7nLPK0Hndsza2b3q61tl2WihLyPywrIwh5VoASkp2JOag12o41ISQFJ
+CQddKsag18vjAsC8dfo1w5aZSps836d988jUQssqeXpVWfxc/dVnbqcT1r+9/RTL
+B8xzorhfx7tnnEjKuuIp57K+0OY3XXA+baNLPMvXT4sx+SysFFkbxZ8EUugKaC/I
+psv9Gq1WjwX9yHQipgTlqd9hbHnyVVwR67nyWePstl5Y/KPBQz7pa9P2mprNl3iN
+hQmHUlgkmuAH+wN5/JaI4URSM8/4cvTFi0GrctKdmMRZs/3QS1iWnnIPbYCA4tWo
+ueLmu6OO8gi/JytYJsMRpLpXm/ykVDYjLS1v+KTEoPeHUPWfqKYfdu5K51mNjoxR
+No7pvG7cDri0cY+FGHdEqx5GHr7+9mWel/avQahPuIIaAL+4Bm0vOC12Q8Q92QFn
+CSQ1j78FVCZbwDGi7Ru7AVET+EROFQissSFlfAhZ/u/41OxTlB9ovlgrJ0FqiOlL
+LEnhulIAbW6lUBBtF2dEQypcP79dMz2zK67C0mcKxqjouADyj7ZDC8PohXVcBtpL
+NSB1kwMh+Q3kF7iH8gwMTSkrn4n38rWBaaUF4HAwxa/ocgzZP9zDGuaiCpY/MHRc
+z5xJGIbjXwNuePMQRVxR
+=vxJ+
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__1_Mar_2012_16_40_01_+1100__NlsNF0lVyww3oiO--
