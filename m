@@ -1,29 +1,31 @@
-From: Mark Salter <msalter@redhat.com>
-Subject: Re: build failure in linux-next
-Date: Thu, 01 Mar 2012 17:01:55 -0500
-Message-ID: <1330639316.2453.8.camel@deneb.redhat.com>
-References: <1330618302.2453.7.camel@deneb.redhat.com>
-	 <CAAHN_R1br+QU+DhZ5rxOjjovTtjsgEAn4Yz1wE3-J9Djd-DxFw@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 01 Mar 2012 17:24:27 -0500 (EST)
+Message-ID: <20120301.172427.782491081561180393.davem@davemloft.net>
+References: <20120301133333.b8297fbd964c1d7aaf8c9f0b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:14447 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755970Ab2CAWB6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 1 Mar 2012 17:01:58 -0500
-In-Reply-To: <CAAHN_R1br+QU+DhZ5rxOjjovTtjsgEAn4Yz1wE3-J9Djd-DxFw@mail.gmail.com>
+Received: from shards.monkeyblade.net ([198.137.202.13]:47795 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965243Ab2CAW0e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Mar 2012 17:26:34 -0500
+In-Reply-To: <20120301133333.b8297fbd964c1d7aaf8c9f0b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mcarlson@broadcom.com, mchan@broadcom.com
 
-On Thu, 2012-03-01 at 22:32 +0530, Siddhesh Poyarekar wrote:
-> Sorry about that. My latest patch submission to procfs happens to fix this:
-> 
-> https://lkml.org/lkml/2012/3/1/4
-> 
-> Do you need a separate submission that fixes just this build failure?
-> 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 1 Mar 2012 13:33:33 +1100
 
-Thanks. No.
+> Today's linux-next merge of the net-next tree got a conflict in
+> drivers/net/ethernet/broadcom/tg3.c between commit 65ec698d1368 ("tg3:
+> Fix tg3_get_stats64 for 5700 / 5701 devs") from the net tree and various
+> commits from the net-next tree.
+> 
+> I just used the version from the net-next tree for today (assuming that
+> this conflict will be fixed shortly).
+
+I'll try to take care of this now, thanks Stephen.
