@@ -1,56 +1,29 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [tip:x86/asm] bitops: Optimise get_order()
-Date: Thu, 01 Mar 2012 13:02:47 -0800
-Message-ID: <4F4FE3F7.5030508@zytor.com>
-References: <20120220223928.16199.29548.stgit@warthog.procyon.org.uk> <tip-d66acc39c7cee323733c8503b9de1821a56dff7e@git.kernel.org> <CAP=VYLr5id0TrsQFbaKOi6FoK7=_zW-Q9dwH+rAEbnmYunHvNQ@mail.gmail.com> <20120301113106.020c3ad0560425970c9de34e@canb.auug.org.au>
+From: Mark Salter <msalter@redhat.com>
+Subject: Re: build failure in linux-next
+Date: Thu, 01 Mar 2012 17:01:55 -0500
+Message-ID: <1330639316.2453.8.camel@deneb.redhat.com>
+References: <1330618302.2453.7.camel@deneb.redhat.com>
+	 <CAAHN_R1br+QU+DhZ5rxOjjovTtjsgEAn4Yz1wE3-J9Djd-DxFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:40294 "EHLO mail.zytor.com"
+Received: from mx1.redhat.com ([209.132.183.28]:14447 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932534Ab2CAVDK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 1 Mar 2012 16:03:10 -0500
-In-Reply-To: <20120301113106.020c3ad0560425970c9de34e@canb.auug.org.au>
+	id S1755970Ab2CAWB6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 1 Mar 2012 17:01:58 -0500
+In-Reply-To: <CAAHN_R1br+QU+DhZ5rxOjjovTtjsgEAn4Yz1wE3-J9Djd-DxFw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, mingo@redhat.com, linux-kernel@vger.kernel.org, arnd@arndb.de, dhowells@redhat.com, tglx@linutronix.de, linux-tip-commits@vger.kernel.org, linux-next@vger.kernel.org
+To: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-David, could you make a fix for this?
+On Thu, 2012-03-01 at 22:32 +0530, Siddhesh Poyarekar wrote:
+> Sorry about that. My latest patch submission to procfs happens to fix this:
+> 
+> https://lkml.org/lkml/2012/3/1/4
+> 
+> Do you need a separate submission that fixes just this build failure?
+> 
 
-	-hpa
-
-On 02/29/2012 04:31 PM, Stephen Rothwell wrote:
-> On Wed, 29 Feb 2012 15:29:04 -0500 Paul Gortmaker<paul.gortmaker@windriver.com>  wrote:
->>
->> On Mon, Feb 20, 2012 at 6:20 PM, tip-bot for David Howells
->> <dhowells@redhat.com>  wrote:
->>> Commit-ID:  d66acc39c7cee323733c8503b9de1821a56dff7e
->>> Gitweb:     http://git.kernel.org/tip/d66acc39c7cee323733c8503b9de1821a56dff7e
->>> Author:     David Howells<dhowells@redhat.com>
->>> AuthorDate: Mon, 20 Feb 2012 22:39:29 +0000
->>> Committer:  H. Peter Anvin<hpa@zytor.com>
->>> CommitDate: Mon, 20 Feb 2012 14:47:02 -0800
->>>
->>> bitops: Optimise get_order()
->>
->> This is causing build failures on non-x86 in linux next according to git bisect.
->
-> Presumably it needs to include linux/bitops.h (and see below).
->
->>> +static inline __attribute_const__
->>> +int __get_order(unsigned long size)
->>> +{
->>> +       int order;
->>> +
->>> +       size--;
->>> +       size>>= PAGE_SHIFT;
->>> +#if BITS_PER_LONG == 32
->>> +       order = fls(size);
->>> +#else
->>> +       order = fls64(size);
->>> +#endif
->
-> linux/bitops.h has fls_long() that does this size test and calls the right thing.
->
+Thanks. No.
