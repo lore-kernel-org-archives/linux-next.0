@@ -1,66 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the cpufreq tree
-Date: Thu, 1 Mar 2012 13:56:01 +1100
-Message-ID: <20120301135601.a164a12e2bd4aee871ff60db@canb.auug.org.au>
+From: Dave Jones <davej@redhat.com>
+Subject: Re: linux-next: build failure after merge of the cpufreq tree
+Date: Wed, 29 Feb 2012 22:01:25 -0500
+Message-ID: <20120301030125.GA27070@redhat.com>
+References: <20120301135601.a164a12e2bd4aee871ff60db@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__1_Mar_2012_13_56_01_+1100_xnmvDPfHlmP+sEiN"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35905 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758256Ab2CAC4L (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Feb 2012 21:56:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35597 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932442Ab2CADBj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Feb 2012 22:01:39 -0500
+Content-Disposition: inline
+In-Reply-To: <20120301135601.a164a12e2bd4aee871ff60db@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Jones <davej@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
---Signature=_Thu__1_Mar_2012_13_56_01_+1100_xnmvDPfHlmP+sEiN
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 01, 2012 at 01:56:01PM +1100, Stephen Rothwell wrote:
+ > Hi Dave,
+ > 
+ > After merging the cpufreq tree, today's linux-next build (x86_64
+ > allmodconfig) failed like this:
+ > 
+ > drivers/cpufreq/cpufreq_ondemand.c: In function 'cpufreq_gov_dbs_init':
+ > drivers/cpufreq/cpufreq_ondemand.c:880:28: error: 'PM_QOS_DVFS_RESPONSE_LATENCY' undeclared (first use in this function)
+ > drivers/cpufreq/cpufreq_ondemand.c: In function 'cpufreq_gov_dbs_exit':
+ > drivers/cpufreq/cpufreq_ondemand.c:896:25: error: 'PM_QOS_DVFS_RESPONSE_LATENCY' undeclared (first use in this function)
+ > 
+ > Caused by commit 500e8ca39c56 ("[CPUFREQ] ondemand: handle QoS request on
+ > DVFS response latency").
+ > 
+ > I have used the cpufreq tree fomr next-20120229 for today.
 
-Hi Dave,
+gah, this patch was dependant upon another that didn't apply cleanly.
 
-After merging the cpufreq tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/cpufreq/cpufreq_ondemand.c: In function 'cpufreq_gov_dbs_init':
-drivers/cpufreq/cpufreq_ondemand.c:880:28: error: 'PM_QOS_DVFS_RESPONSE_LAT=
-ENCY' undeclared (first use in this function)
-drivers/cpufreq/cpufreq_ondemand.c: In function 'cpufreq_gov_dbs_exit':
-drivers/cpufreq/cpufreq_ondemand.c:896:25: error: 'PM_QOS_DVFS_RESPONSE_LAT=
-ENCY' undeclared (first use in this function)
-
-Caused by commit 500e8ca39c56 ("[CPUFREQ] ondemand: handle QoS request on
-DVFS response latency").
-
-I have used the cpufreq tree fomr next-20120229 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__1_Mar_2012_13_56_01_+1100_xnmvDPfHlmP+sEiN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPTuVBAAoJEECxmPOUX5FE0KoQAJN10wJOK9G7jeRbsErHIgs5
-lLMs/Z7ThIgkG/lNVPiDwg52DusqqiCemHH0J5rzzq2vTv0XKyEFzoc+aRgx6p7g
-zqXx+0m/9by9Oy/MDLWOL6hIXp8bFz92APqcThV/NP40uCClVydrgWyLEdd+zthz
-uUOrdjMQI0r4J13fG/OUpbVWARcQUNDFH3NfTjH0w55ImFIexKanx8LM3hmDZgoV
-TbzbFOI4etwRWcGhqwVIWzSHG5waDacJ8Tew/jUUoP1ESjx9dMg4VtVxcHazSPpk
-mbJT/OlcnbCcV27P2HWg35dVRjf2qPZTkdorPXHVIm8zQ/AaIvSRj/68Dqsd+Xth
-FOf9m2z60AkhNGXsERNipiB1feqIqbFVeuvi1f2LvSGDtPBg1qwqrBheGqfr3ZQi
-8+ce5GvSWl98e5kHiiAGF8OCdGD0oT0vjSYeUdnYHbmQbb5Lu5bK30GNZbugx8h7
-wo1V43ew9IR01By18jZROKhDPta3rEwFXqMvsDpjtU2DCVyRR5HJSgeOQ1/oN7G8
-YV2Laj04+mr5XVuab1VNAbuAl3likw3nvnV8kGz0okj8RhOt2VxxclOC7rdPi5WC
-F7KsZt8QKmCZSY39mUTuqvMrvlJaeEt2l9bkCigFspwJ5Ig6Yeok57JAcBo8VV/J
-uwrpeX/96FwRBJ9ccGY7
-=KF+1
------END PGP SIGNATURE-----
-
---Signature=_Thu__1_Mar_2012_13_56_01_+1100_xnmvDPfHlmP+sEiN--
+	Dave
