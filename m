@@ -1,85 +1,36 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the gpio tree
-Date: Thu, 1 Mar 2012 12:28:33 +0000
-Message-ID: <201203011228.33983.arnd@arndb.de>
-References: <20120301164001.77a063ceed2deaf37cf68e3c@canb.auug.org.au>
+From: Mark Salter <msalter@redhat.com>
+Subject: build failure in linux-next
+Date: Thu, 01 Mar 2012 11:11:41 -0500
+Message-ID: <1330618302.2453.7.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120301164001.77a063ceed2deaf37cf68e3c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Tarun Kanti DebBarma <tarun.kanti@ti.com>, Grant Likely <grant.likely@secretlab.ca>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:38743 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753959Ab2CAQLp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 1 Mar 2012 11:11:45 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, siddhesh.poyarekar@gmail.com, Andrew Morton <akpm@linux-foundation.org>
 
-On Thursday 01 March 2012, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm-soc tree got conflicts in
-> arch/arm/mach-omap1/gpio16xx.c between commit ab985f0f7c2c ("gpio/omap:
-> cleanup omap_gpio_mod_init function") from the gpio tree and commit
-> 63325ff235de ("ARM: OMAP1: Move 16xx GPIO system clock to platform init
-> code") from the arm-soc tree.
-> 
-> OK, I can't decide which is correct here - the former adds this code
-> inside the loop (even though it seems to not depend on anything in the
-> loop) and the latter adds it before.  I have used the former (but am
-> happy to be corrected).  And both commits remove the code in
-> drivers/gpio/gpio-omap.c.
+In linux-next, this breaks nommu builds:
 
-Right, having the code outside of the loop seems correct to me, too.
+commit b8665bd461ecdc561e7c95d039567d0a79208226
+Author: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+Date:   Sat Feb 25 12:28:09 2012 +1100
 
-Grant, I would suggest that I resolve this by merging the the
-omap/gpio/runtime-pm-cleanup branch (f86bcc3) that is in your
-tree into the arm-soc tree as a dependency for the omap1 stuff,
-with the resolution below.
+    procfs: mark thread stack correctly in proc/<pid>/maps
+    
+I think this was merged into linux-next from the -mm tree.
 
-	Arnd
+There are unbalanced parens in fs/proc/task_nommu.c which leads to this
+when building:
 
---- a/arch/arm/mach-omap1/gpio16xx.c
-+++ b/arch/arm/mach-omap1/gpio16xx.c
-@@@ -218,17 -225,34 +225,34 @@@ static int __init omap16xx_gpio_init(vo
-  	if (!cpu_is_omap16xx())
-  		return -EINVAL;
-  
- +	/*
- +	 * Enable system clock for GPIO module.
- +	 * The CAM_CLK_CTRL *is* really the right place.
- +	 */
- +	omap_writel(omap_readl(ULPD_CAM_CLK_CTRL) | 0x04,
- +					ULPD_CAM_CLK_CTRL);
- +
-- 	for (i = 0; i < ARRAY_SIZE(omap16xx_gpio_dev); i++)
-- 		platform_device_register(omap16xx_gpio_dev[i]);
-+ 	for (i = 0; i < ARRAY_SIZE(omap16xx_gpio_dev); i++) {
-+ 		pdev = omap16xx_gpio_dev[i];
-+ 		pdata = pdev->dev.platform_data;
-+ 
-+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+ 		if (unlikely(!res)) {
-+ 			dev_err(&pdev->dev, "Invalid mem resource.\n");
-+ 			return -ENODEV;
-+ 		}
-  
-- 	gpio_bank_count = ARRAY_SIZE(omap16xx_gpio_dev);
-+ 		base = ioremap(res->start, resource_size(res));
-+ 		if (unlikely(!base)) {
-+ 			dev_err(&pdev->dev, "ioremap failed.\n");
-+ 			return -ENOMEM;
-+ 		}
-+ 
-+ 		__raw_writel(SYSCONFIG_WORD, base + OMAP1610_GPIO_SYSCONFIG);
-+ 		iounmap(base);
-+ 
- -		/*
- -		 * Enable system clock for GPIO module.
- -		 * The CAM_CLK_CTRL *is* really the right place.
- -		 */
- -		omap_writel(omap_readl(ULPD_CAM_CLK_CTRL) | 0x04,
- -					ULPD_CAM_CLK_CTRL);
- -
-+ 		platform_device_register(omap16xx_gpio_dev[i]);
-+ 	}
-  
-  	return 0;
-  }
+fs/proc/task_nommu.c: In function 'nommu_vma_show':
+fs/proc/task_nommu.c:177:2: warning: no return statement in function returning non-void
+fs/proc/task_nommu.c: At top level:
+fs/proc/task_nommu.c:179:14: error: expected ')' before '\xa'
+fs/proc/task_nommu.c:180:2: error: expected identifier or '(' before 'return'
+fs/proc/task_nommu.c:181:1: error: expected identifier or '(' before '}' token
