@@ -1,32 +1,83 @@
-From: Dave Jones <davej@redhat.com>
-Subject: Re: linux-next: error fetching the cpufreq-current tree
-Date: Thu, 1 Mar 2012 17:55:12 -0500
-Message-ID: <20120301225512.GA24758@redhat.com>
-References: <20120302094542.270f421effd7a241d10a3852@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the m68knommu tree
+Date: Fri, 2 Mar 2012 13:49:03 +1100
+Message-ID: <20120302134903.7992cf17cb0c50b9a2b3842c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:7763 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758356Ab2CAWzS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 1 Mar 2012 17:55:18 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__2_Mar_2012_13_49_03_+1100_8cA_RSmfIifkY1pm"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@snapgear.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Fri__2_Mar_2012_13_49_03_+1100_8cA_RSmfIifkY1pm
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20120302094542.270f421effd7a241d10a3852@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 02, 2012 at 09:45:42AM +1100, Stephen Rothwell wrote:
- > Hi Dave,
- > 
- > Fetching the cpufreq-current tree produces this warning:
- > 
- > fatal: Couldn't find remote ref refs/heads/fixes
+Hi all,
 
-Forgot to push the empty branch. Should be fixed now.
+Today's linux-next merge of the tip tree got conflicts in
+arch/m68k/kernel/process_no.c and arch/m68k/kernel/process_mm.c between
+commit 8d8b74c955fd ("m68k: merge the MMU and non-MMU versions of
+process.c") from the m68knommu tree and commit bd2f55361f18 ("sched/rt:
+Use schedule_preempt_disabled()") from the tip tree.
 
-thanks,
+The former merged these two files into a single process.c, so I removed
+them.  I then applied the following merge fix patch.
 
-	Dave
- 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 2 Mar 2012 13:43:03 +1100
+Subject: [PATCH] sched/rt: Use schedule_preempt_disabled() in m68k
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/m68k/kernel/process.c |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
+
+diff --git a/arch/m68k/kernel/process.c b/arch/m68k/kernel/process.c
+index f053e24..c54ef927 100644
+--- a/arch/m68k/kernel/process.c
++++ b/arch/m68k/kernel/process.c
+@@ -78,9 +78,7 @@ void cpu_idle(void)
+ 	while (1) {
+ 		while (!need_resched())
+ 			idle();
+-		preempt_enable_no_resched();
+-		schedule();
+-		preempt_disable();
++		schedule_preempt_disabled();
+ 	}
+ }
+=20
+--=20
+1.7.9.1
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__2_Mar_2012_13_49_03_+1100_8cA_RSmfIifkY1pm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPUDUfAAoJEECxmPOUX5FEZqAP/RsgsBD7iZ/ulk44vUu9GqyK
+6gNWFCAl3sfNX9u0ow30jE2RXRHVdrhI9dwse5JO36FPVPajGfRyLWJU8ptq5TNl
+yP1XLCTjfXt6HOLE05jzPxqQfdS8MutQJ/mGnKvKMjXhcze9NjOE528UqDynDh56
+O+3Xsk90JPuMKvtidsmu4RGm1AxvPMwTJXayAs/KEoY5yUZnqmG97cQFzkgBx9s/
+G0RnmOdfnA3rV1ltUgTItj8NwrLiA5JJ6yzxOjh8hrbwNKOxQHy6mfaMOHqs0w24
+r4SOpmqWcpuJuAZsUz8wJ0UJo7PoQ5bR4o6VJalk7TB4c0uSYaw28mK8dqy57Atn
+KCZPB7DRLxJEQkqZbUwRaKai5FMlcqhkGSL+2YSyfJ1uRNMZCcTT2bvN6D7V1XnS
+uq+DmAKUaTCDhJca8Ni5Xw8uM0S+vnafDvS/jSNtXiy1q1BHIGOSlaP7aJO+743d
+nwcBjtDhYOV+8oVWVtq0g2RQHNvxADy472ZNmN6PnOwkH4eUaTfMR/tFGIb/wmJ2
+1VbXysgkJDBW1C0+eJ0xT7Qnj3+2c6IiQ/XgaZEllWgmdgXO4jzkrcg41KeKPNTz
+BizwiUm0mRC1Y24KWm/oRrQpIL2qD33j8VEFM8tybqxeu5bMKLT8ODqc4Q/zCKr8
+DXSvv7EOfWNIz0sJpCCK
+=DQHg
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__2_Mar_2012_13_49_03_+1100_8cA_RSmfIifkY1pm--
