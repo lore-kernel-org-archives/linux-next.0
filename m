@@ -1,54 +1,73 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: "usb: gadget: pch_udc: Detecting VBUS through GPIO with interrupt"
- breaks sparc
-Date: Fri, 2 Mar 2012 17:01:16 -0500
-Message-ID: <4F51432C.8020204@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: boot failure for next-20120227 and later (pci tree
+ related)
+Date: Sat, 3 Mar 2012 09:26:20 +1100
+Message-ID: <20120303092620.ab0f7379afac65413ef5264e@canb.auug.org.au>
+References: <20120302170638.3d172369d04335d9b921a28c@canb.auug.org.au>
+	<CAErSpo6xQa4Rnv+RkkXCRjQ2HDZdBhorRv2c6pmWyXqRzhM4Vw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:64814 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754720Ab2CBWBe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Mar 2012 17:01:34 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: tomoya.rohm@gmail.com, Felipe Balbi <balbi@ti.com>
-Cc: linux-next@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sat__3_Mar_2012_09_26_20_+1100_hRmsrGX2SL+pqi1b"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAErSpo6xQa4Rnv+RkkXCRjQ2HDZdBhorRv2c6pmWyXqRzhM4Vw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+List-Id: linux-next.vger.kernel.org
 
-This commit:
+--Signature=_Sat__3_Mar_2012_09_26_20_+1100_hRmsrGX2SL+pqi1b
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----------------
-commit 637b78eb31e0b167ed913f1750bb645dfeda38f0
-Author: Tomoya MORINAGA <tomoya.rohm@gmail.com>
-Date:   Fri Feb 3 16:14:18 2012 +0900
+Hi Bjorn,
 
-    usb: gadget: pch_udc: Detecting VBUS through GPIO with interrupt
-    
-    Problem:
-     pch_udc continues operation even if VBUS becomes Low.
-     pch_udc performs D+ pulling up before VBUS becomes High.
-     USB device should be controlled according to VBUS state.
-    
-    Root cause:
-     The current pch_udc is not always monitoring VBUS.
-    
-    Solution:
-     The change of VBUS is detected using an interrupt of GPIO.
-     If VBUS became Low, pch_udc handles 'disconnect'.
-     After VBUS became High, a pull improves D+, and pch_udc
-     handles 'connect'.
-    
-    [ balbi@ti.com : make it actually compile ]
-    
-    Signed-off-by: Tomoya MORINAGA <tomoya.rohm@gmail.com>
-    Signed-off-by: Felipe Balbi <balbi@ti.com>
----------------
+On Fri, 2 Mar 2012 10:10:02 -0700 Bjorn Helgaas <bhelgaas@google.com> wrote:
+>
+> Thanks a lot for the test report and the bisection.  I wish I had a
+> machine to test on so I wouldn't have to bother you about it.
 
-breaks the sparc builds in next:
+That's OK.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/5771890/
-http://kisskb.ellerman.id.au/kisskb/buildresult/5771905/
+> Any chance you could point me at the complete before/after dmesg logs?
+>  There should be information about the PCI host bridge apertures and
+> offsets in the "after" log.
 
-Thanks,
-Paul.
+I have put the logs up at http://ozlabs.org/~sfr/console-bad.log and
+console-good.log.  They have been editted to set the initcall return
+timings to "x" usecs just for ease of diffing, otherwise verbatim.
+
+>  If that's not enough, we might need to
+> collect new before/after logs with something like this
+> (whitespace-mangled):
+
+I'll defer to Ben as to whether that would help as I don't have easy
+access to the machine until Monday anyway.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Sat__3_Mar_2012_09_26_20_+1100_hRmsrGX2SL+pqi1b
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPUUkMAAoJEECxmPOUX5FEEA4P/R8hQpYip0koii300ZCcuonq
+3eg4ex1dCQg7hj/Bl+oVk+hEEiH/gnmz4Oqrhpl0fsmtAf9jt+MfguyR9gVCyvXJ
+2ap2/XInpiMjj62LLLqHQ+orcfxIGnWuT5Wuh68TT81W6d536IdWWMhHHl/LJb/q
+aR9ohvEv0Q4re5lPJeYuFL5wO0rCcdpdB3ZQP7S+u75xgMvDXZ/IrTE7TFUGmEwU
+Egqm+kkiylNR+TtemaCa5YYiLcKFWHaK3oLGqaguCUPd7rAO2qKWrQDIvJiUTaAr
+upl51Vycc2b7/46kS0LzVah6poNQmSiHnEIC2cq2PAMPui46x8ZqgE3OkpnFX3j2
+xhM7pCVlBONH53NNsQhzmwFjUvdwAYqFVHSchpx7oF+5cWp7o7Z0PowbleQYa2Ps
+iPvgNp23YUbw0B80B3YnIsOqWC7PVJVDEksWLBPJdRZXPHDM2ZMf0BIm75hW5CSD
+mqaCS/pOLfRT9ghs1eGtfWnjxi0/msdGijsJdCR7GqB61XHKoAyWsDBR5RDwN8cd
+n4ypm6mzBJzbRVXMdZGPR9Ki4dVvEOF4k8mGLOBEb/tB7Ege1fTS/svQXUqtCus5
++ZOFS8btoIJ/tFlCKkJNRYUb15hQRT+ki6lDz2MeG6eKMsLOxKDtfOZkXQ13fFn9
+pY1pabiPsEIb+/aUOVue
+=0TEB
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__3_Mar_2012_09_26_20_+1100_hRmsrGX2SL+pqi1b--
