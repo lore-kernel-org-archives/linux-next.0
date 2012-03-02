@@ -1,73 +1,95 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: boot failure for next-20120227 and later (pci tree
- related)
-Date: Sat, 3 Mar 2012 09:26:20 +1100
-Message-ID: <20120303092620.ab0f7379afac65413ef5264e@canb.auug.org.au>
-References: <20120302170638.3d172369d04335d9b921a28c@canb.auug.org.au>
-	<CAErSpo6xQa4Rnv+RkkXCRjQ2HDZdBhorRv2c6pmWyXqRzhM4Vw@mail.gmail.com>
+Subject: Re:
+ "usb: gadget: pch_udc: Detecting VBUS through GPIO with interrupt" breaks
+ sparc
+Date: Sat, 3 Mar 2012 10:41:42 +1100
+Message-ID: <20120303104142.9615e7a2d9330a5443e0e027@canb.auug.org.au>
+References: <4F51432C.8020204@windriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sat__3_Mar_2012_09_26_20_+1100_hRmsrGX2SL+pqi1b"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAErSpo6xQa4Rnv+RkkXCRjQ2HDZdBhorRv2c6pmWyXqRzhM4Vw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Sat__3_Mar_2012_10_41_42_+1100_Fw63Za_/B7u=91rX"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:42434 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755873Ab2CBXl4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Mar 2012 18:41:56 -0500
+In-Reply-To: <4F51432C.8020204@windriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: tomoya.rohm@gmail.com, Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, Greg KH <greg@kroah.com>
 
---Signature=_Sat__3_Mar_2012_09_26_20_+1100_hRmsrGX2SL+pqi1b
+--Signature=_Sat__3_Mar_2012_10_41_42_+1100_Fw63Za_/B7u=91rX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bjorn,
+[Just cc'ing Greg as this commit is in the usb tree]
 
-On Fri, 2 Mar 2012 10:10:02 -0700 Bjorn Helgaas <bhelgaas@google.com> wrote:
+On Fri, 2 Mar 2012 17:01:16 -0500 Paul Gortmaker <paul.gortmaker@windriver.=
+com> wrote:
 >
-> Thanks a lot for the test report and the bisection.  I wish I had a
-> machine to test on so I wouldn't have to bother you about it.
-
-That's OK.
-
-> Any chance you could point me at the complete before/after dmesg logs?
->  There should be information about the PCI host bridge apertures and
-> offsets in the "after" log.
-
-I have put the logs up at http://ozlabs.org/~sfr/console-bad.log and
-console-good.log.  They have been editted to set the initcall return
-timings to "x" usecs just for ease of diffing, otherwise verbatim.
-
->  If that's not enough, we might need to
-> collect new before/after logs with something like this
-> (whitespace-mangled):
-
-I'll defer to Ben as to whether that would help as I don't have easy
-access to the machine until Monday anyway.
+> This commit:
+>=20
+> ---------------
+> commit 637b78eb31e0b167ed913f1750bb645dfeda38f0
+> Author: Tomoya MORINAGA <tomoya.rohm@gmail.com>
+> Date:   Fri Feb 3 16:14:18 2012 +0900
+>=20
+>     usb: gadget: pch_udc: Detecting VBUS through GPIO with interrupt
+>    =20
+>     Problem:
+>      pch_udc continues operation even if VBUS becomes Low.
+>      pch_udc performs D+ pulling up before VBUS becomes High.
+>      USB device should be controlled according to VBUS state.
+>    =20
+>     Root cause:
+>      The current pch_udc is not always monitoring VBUS.
+>    =20
+>     Solution:
+>      The change of VBUS is detected using an interrupt of GPIO.
+>      If VBUS became Low, pch_udc handles 'disconnect'.
+>      After VBUS became High, a pull improves D+, and pch_udc
+>      handles 'connect'.
+>    =20
+>     [ balbi@ti.com : make it actually compile ]
+>    =20
+>     Signed-off-by: Tomoya MORINAGA <tomoya.rohm@gmail.com>
+>     Signed-off-by: Felipe Balbi <balbi@ti.com>
+> ---------------
+>=20
+> breaks the sparc builds in next:
+>=20
+> http://kisskb.ellerman.id.au/kisskb/buildresult/5771890/
+> http://kisskb.ellerman.id.au/kisskb/buildresult/5771905/
+>=20
+> Thanks,
+> Paul.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Sat__3_Mar_2012_09_26_20_+1100_hRmsrGX2SL+pqi1b
+--Signature=_Sat__3_Mar_2012_10_41_42_+1100_Fw63Za_/B7u=91rX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPUUkMAAoJEECxmPOUX5FEEA4P/R8hQpYip0koii300ZCcuonq
-3eg4ex1dCQg7hj/Bl+oVk+hEEiH/gnmz4Oqrhpl0fsmtAf9jt+MfguyR9gVCyvXJ
-2ap2/XInpiMjj62LLLqHQ+orcfxIGnWuT5Wuh68TT81W6d536IdWWMhHHl/LJb/q
-aR9ohvEv0Q4re5lPJeYuFL5wO0rCcdpdB3ZQP7S+u75xgMvDXZ/IrTE7TFUGmEwU
-Egqm+kkiylNR+TtemaCa5YYiLcKFWHaK3oLGqaguCUPd7rAO2qKWrQDIvJiUTaAr
-upl51Vycc2b7/46kS0LzVah6poNQmSiHnEIC2cq2PAMPui46x8ZqgE3OkpnFX3j2
-xhM7pCVlBONH53NNsQhzmwFjUvdwAYqFVHSchpx7oF+5cWp7o7Z0PowbleQYa2Ps
-iPvgNp23YUbw0B80B3YnIsOqWC7PVJVDEksWLBPJdRZXPHDM2ZMf0BIm75hW5CSD
-mqaCS/pOLfRT9ghs1eGtfWnjxi0/msdGijsJdCR7GqB61XHKoAyWsDBR5RDwN8cd
-n4ypm6mzBJzbRVXMdZGPR9Ki4dVvEOF4k8mGLOBEb/tB7Ege1fTS/svQXUqtCus5
-+ZOFS8btoIJ/tFlCKkJNRYUb15hQRT+ki6lDz2MeG6eKMsLOxKDtfOZkXQ13fFn9
-pY1pabiPsEIb+/aUOVue
-=0TEB
+iQIcBAEBCAAGBQJPUVq2AAoJEECxmPOUX5FEMw8P/iLaVY/dxKzytRSnWMOP4R1G
+/IQBZYgcjOLTRJR+DMWbzBZ07dvC8J3zEv/IokfM04n58gqvCYYEv3C0R7WdOGvd
+H7I9KUNF2DJsXhk7jqVKPAcg4pReBrHdaR8hBhOs5FPr5if/vpGLHQkRb2juR8D8
+T0NJOtK6iQ0pEveNj/sE/9+BeNIMklNxUgWkfCt7HtNLfAMRGmcMY/fPOj8mT1kw
+2iN3HC8V8peHSRkUEUALztx8a3UujceDxzn5NP/WjKq4S9E47FxTy3xjRrTWg5s6
+AkIh/jV+JJp6s76+5FJY2RKCuPEIKT5T3uBvZyhEWrNItkt41ejYy65VX/AsC8/x
+GSx+FnJBEBs4sfZGfdMMuZqDz5rogdfJDWOM7jLQAg5bTMwyX8lNPWqMND1pKW5p
+NUL8hWTB3pIEH3sCZby8/W8DXO2T/4SqVOJ0RFlZ0d1QIHGxuvBIT1DxeiMo0H32
+JHqzxVr+4FAQz2SiiMJzzjrNNA6ijzEQcOaqENFER5joZIstQM6+/z0gUfL2N0bF
+mGXdAb0C5CeZX8JIJmrGYItyHj+S/3jxWNUCz0RT3PnnntmoghohotpJA3+nekDW
+LBPysH1Nz+BKfSlRXxNI0uD+Qomz9E0aVqo3inegMsym/BYiW6nVpu/gign3fY2K
+ZtOLjpxSgnkCLK09+lmL
+=/gsm
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__3_Mar_2012_09_26_20_+1100_hRmsrGX2SL+pqi1b--
+--Signature=_Sat__3_Mar_2012_10_41_42_+1100_Fw63Za_/B7u=91rX--
