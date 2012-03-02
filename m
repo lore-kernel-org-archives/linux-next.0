@@ -1,91 +1,272 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the gpio tree
-Date: Fri, 02 Mar 2012 00:48:43 -0700
-Message-ID: <20120302074843.2E45A3E2DAC@localhost>
-References: <20120301164001.77a063ceed2deaf37cf68e3c@canb.auug.org.au> <201203011228.33983.arnd@arndb.de>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: boot failure for next-20120227 and later (pci tree related)
+Date: Fri, 2 Mar 2012 10:10:02 -0700
+Message-ID: <CAErSpo6xQa4Rnv+RkkXCRjQ2HDZdBhorRv2c6pmWyXqRzhM4Vw@mail.gmail.com>
+References: <20120302170638.3d172369d04335d9b921a28c@canb.auug.org.au>
 Mime-Version: 1.0
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201203011228.33983.arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Tarun Kanti DebBarma <tarun.kanti@ti.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:53050 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755128Ab2CBRKY convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Mar 2012 12:10:24 -0500
+Received: by lahj13 with SMTP id j13so2258704lah.19
+        for <linux-next@vger.kernel.org>; Fri, 02 Mar 2012 09:10:22 -0800 (PST)
+In-Reply-To: <20120302170638.3d172369d04335d9b921a28c@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-On Thu, 1 Mar 2012 12:28:33 +0000, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thursday 01 March 2012, Stephen Rothwell wrote:
-> > Today's linux-next merge of the arm-soc tree got conflicts in
-> > arch/arm/mach-omap1/gpio16xx.c between commit ab985f0f7c2c ("gpio/omap:
-> > cleanup omap_gpio_mod_init function") from the gpio tree and commit
-> > 63325ff235de ("ARM: OMAP1: Move 16xx GPIO system clock to platform init
-> > code") from the arm-soc tree.
-> > 
-> > OK, I can't decide which is correct here - the former adds this code
-> > inside the loop (even though it seems to not depend on anything in the
-> > loop) and the latter adds it before.  I have used the former (but am
-> > happy to be corrected).  And both commits remove the code in
-> > drivers/gpio/gpio-omap.c.
-> 
-> Right, having the code outside of the loop seems correct to me, too.
-> 
-> Grant, I would suggest that I resolve this by merging the the
-> omap/gpio/runtime-pm-cleanup branch (f86bcc3) that is in your
-> tree into the arm-soc tree as a dependency for the omap1 stuff,
-> with the resolution below.
+On Thu, Mar 1, 2012 at 11:06 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Jesse,
+>
+> Staring with next-20120227, one of my boot tests is failing like this=
+:
 
-Okay by me.
+Hi Stephen,
 
-g.
+Thanks a lot for the test report and the bisection.  I wish I had a
+machine to test on so I wouldn't have to bother you about it.
 
-> 
-> 	Arnd
-> 
-> --- a/arch/arm/mach-omap1/gpio16xx.c
-> +++ b/arch/arm/mach-omap1/gpio16xx.c
-> @@@ -218,17 -225,34 +225,34 @@@ static int __init omap16xx_gpio_init(vo
->   	if (!cpu_is_omap16xx())
->   		return -EINVAL;
->   
->  +	/*
->  +	 * Enable system clock for GPIO module.
->  +	 * The CAM_CLK_CTRL *is* really the right place.
->  +	 */
->  +	omap_writel(omap_readl(ULPD_CAM_CLK_CTRL) | 0x04,
->  +					ULPD_CAM_CLK_CTRL);
->  +
-> - 	for (i = 0; i < ARRAY_SIZE(omap16xx_gpio_dev); i++)
-> - 		platform_device_register(omap16xx_gpio_dev[i]);
-> + 	for (i = 0; i < ARRAY_SIZE(omap16xx_gpio_dev); i++) {
-> + 		pdev = omap16xx_gpio_dev[i];
-> + 		pdata = pdev->dev.platform_data;
-> + 
-> + 		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> + 		if (unlikely(!res)) {
-> + 			dev_err(&pdev->dev, "Invalid mem resource.\n");
-> + 			return -ENODEV;
-> + 		}
->   
-> - 	gpio_bank_count = ARRAY_SIZE(omap16xx_gpio_dev);
-> + 		base = ioremap(res->start, resource_size(res));
-> + 		if (unlikely(!base)) {
-> + 			dev_err(&pdev->dev, "ioremap failed.\n");
-> + 			return -ENOMEM;
-> + 		}
-> + 
-> + 		__raw_writel(SYSCONFIG_WORD, base + OMAP1610_GPIO_SYSCONFIG);
-> + 		iounmap(base);
-> + 
->  -		/*
->  -		 * Enable system clock for GPIO module.
->  -		 * The CAM_CLK_CTRL *is* really the right place.
->  -		 */
->  -		omap_writel(omap_readl(ULPD_CAM_CLK_CTRL) | 0x04,
->  -					ULPD_CAM_CLK_CTRL);
->  -
-> + 		platform_device_register(omap16xx_gpio_dev[i]);
-> + 	}
->   
->   	return 0;
->   }
+Any chance you could point me at the complete before/after dmesg logs?
+ There should be information about the PCI host bridge apertures and
+offsets in the "after" log.  If that's not enough, we might need to
+collect new before/after logs with something like this
+(whitespace-mangled):
 
--- 
-email sent from notmuch.vim plugin
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -71,7 +71,7 @@ CFLAGS-$(CONFIG_PPC64)        :=3D -mminimal-toc
+-mtraceback=3Dno -mcall-aixdesc
+ CFLAGS-$(CONFIG_PPC32) :=3D -ffixed-r2 -mmultiple
+ KBUILD_CPPFLAGS        +=3D -Iarch/$(ARCH)
+ KBUILD_AFLAGS  +=3D -Iarch/$(ARCH)
+-KBUILD_CFLAGS  +=3D -msoft-float -pipe -Iarch/$(ARCH) $(CFLAGS-y)
++KBUILD_CFLAGS  +=3D -msoft-float -pipe -Iarch/$(ARCH) $(CFLAGS-y) -DDE=
+BUG
+ CPP            =3D $(CC) -E $(KBUILD_CFLAGS)
+
+ CHECKFLAGS     +=3D -m$(CONFIG_WORD_SIZE) -D__powerpc__
+-D__powerpc$(CONFIG_WORD_SIZE)__
+
+
+> Freeing unused kernel memory: 488k freed
+> modprobe used greatest stack depth: 10624 bytes left
+> dracut: dracut-004-32.el6
+> udev: starting version 147
+> udevd (1161): /proc/1161/oom_adj is deprecated, please use /proc/1161=
+/oom_score_adj instead.
+> setfont used greatest stack depth: 10528 bytes left
+> dracut: Starting plymouth daemon
+> calling =A0.wait_scan_init+0x0/0xc4 [scsi_wait_scan] @ 2689
+> initcall .wait_scan_init+0x0/0xc4 [scsi_wait_scan] returned 0 after 9=
+ usecs
+> calling =A0.wait_scan_init+0x0/0xc4 [scsi_wait_scan] @ 2701
+> initcall .wait_scan_init+0x0/0xc4 [scsi_wait_scan] returned 0 after 2=
+0 usecs
+> calling =A0.wait_scan_init+0x0/0xc4 [scsi_wait_scan] @ 2713
+> initcall .wait_scan_init+0x0/0xc4 [scsi_wait_scan] returned 0 after 8=
+ usecs
+> calling =A0.wait_scan_init+0x0/0xc4 [scsi_wait_scan] @ 2725
+> initcall .wait_scan_init+0x0/0xc4 [scsi_wait_scan] returned 0 after 8=
+ usecs
+> calling =A0.wait_scan_init+0x0/0xc4 [scsi_wait_scan] @ 2737
+> initcall .wait_scan_init+0x0/0xc4 [scsi_wait_scan] returned 0 after 8=
+ usecs
+> calling =A0.wait_scan_init+0x0/0xc4 [scsi_wait_scan] @ 2749
+> initcall .wait_scan_init+0x0/0xc4 [scsi_wait_scan] returned 0 after 8=
+ usecs
+> calling =A0.wait_scan_init+0x0/0xc4 [scsi_wait_scan] @ 2761
+> initcall .wait_scan_init+0x0/0xc4 [scsi_wait_scan] returned 0 after 7=
+ usecs
+> calling =A0.wait_scan_init+0x0/0xc4 [scsi_wait_scan] @ 2773
+> initcall .wait_scan_init+0x0/0xc4 [scsi_wait_scan] returned 0 after 7=
+ usecs
+> calling =A0.wait_scan_init+0x0/0xc4 [scsi_wait_scan] @ 2785
+> initcall .wait_scan_init+0x0/0xc4 [scsi_wait_scan] returned 0 after 8=
+ usecs
+> calling =A0.wait_scan_init+0x0/0xc4 [scsi_wait_scan] @ 2797
+> initcall .wait_scan_init+0x0/0xc4 [scsi_wait_scan] returned 0 after 8=
+ usecs
+> calling =A0.wait_scan_init+0x0/0xc4 [scsi_wait_scan] @ 2809
+>
+> and eventually our test system decides the machine is dead. =A0This i=
+s a
+> PowerPC 970 based blade system =A0(several other PowerPC based system=
+s to
+> not fail). =A0A "normal" boot only shows .wait_scan_init being called
+> once. =A0(I have "initcall_debug=3Dy debug" on the command line).
+>
+> I bisected this down to:
+>
+> commit 6c5705fec63d83eeb165fe61e34adc92ecc2ce75
+> Author: Bjorn Helgaas <bhelgaas@google.com>
+> Date: =A0 Thu Feb 23 20:19:03 2012 -0700
+>
+> =A0 =A0powerpc/PCI: get rid of device resource fixups
+>
+> =A0 =A0Tell the PCI core about host bridge address translation so it =
+can take
+> =A0 =A0care of bus-to-resource conversion for us.
+>
+> =A0 =A0CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> =A0 =A0Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+>
+> The only seemingly relevant differences in the boot logs (good to bad=
+) are:
+>
+> =A0pci 0000:03:02.0: supports D1 D2
+> +PCI: Cannot allocate resource region 0 of PCI bridge 1, will remap
+> +PCI: Cannot allocate resource region 1 of PCI bridge 1, will remap
+> +PCI: Cannot allocate resource region 0 of PCI bridge 6, will remap
+> +PCI: Cannot allocate resource region 1 of PCI bridge 6, will remap
+> +PCI: Cannot allocate resource region 0 of PCI bridge 3, will remap
+> +PCI: Cannot allocate resource region 1 of PCI bridge 3, will remap
+> +PCI: Cannot allocate resource region 0 of device 0000:01:01.0, will =
+remap
+> +PCI: Cannot allocate resource region 2 of device 0000:01:01.0, will =
+remap
+> +PCI: Cannot allocate resource region 6 of device 0000:01:01.0, will =
+remap
+> +PCI: Cannot allocate resource region 0 of device 0000:03:00.0, will =
+remap
+> +PCI: Cannot allocate resource region 0 of device 0000:03:00.1, will =
+remap
+> +PCI: Cannot allocate resource region 0 of device 0000:03:02.0, will =
+remap
+> +PCI: Cannot allocate resource region 1 of device 0000:03:02.0, will =
+remap
+> +PCI: Cannot allocate resource region 2 of device 0000:03:02.0, will =
+remap
+> +PCI: Cannot allocate resource region 6 of device 0000:03:02.0, will =
+remap
+> +PCI: Cannot allocate resource region 0 of device 0000:06:04.0, will =
+remap
+> +PCI: Cannot allocate resource region 2 of device 0000:06:04.0, will =
+remap
+> +PCI: Cannot allocate resource region 0 of device 0000:06:04.1, will =
+remap
+> +PCI: Cannot allocate resource region 2 of device 0000:06:04.1, will =
+remap
+> =A0PCI: Probing PCI hardware done
+> =A0 =A0 =A0 =A0.
+> =A0 =A0 =A0 =A0.
+> =A0 =A0 =A0 =A0.
+> =A0calling =A0.radeonfb_init+0x0/0x248 @ 1
+> -radeonfb 0000:03:02.0: Invalid ROM contents
+> -radeonfb (0000:03:02.0): Invalid ROM signature 7272 should be 0xaa55
+> -radeonfb: No ATY,RefCLK property !
+> -xtal calculation failed: 26550
+> -radeonfb: Used default PLL infos
+> -radeonfb: Reference=3D27.00 MHz (RefDiv=3D60) Memory=3D166.00 Mhz, S=
+ystem=3D166.00 MHz
+> -radeonfb: PLL min 12000 max 35000
+> -i2c i2c-1: unable to read EDID block.
+> -i2c i2c-1: unable to read EDID block.
+> -i2c i2c-1: unable to read EDID block.
+> -i2c i2c-3: unable to read EDID block.
+> -i2c i2c-3: unable to read EDID block.
+> -i2c i2c-3: unable to read EDID block.
+> -i2c i2c-2: unable to read EDID block.
+> -i2c i2c-2: unable to read EDID block.
+> -i2c i2c-2: unable to read EDID block.
+> -i2c i2c-3: unable to read EDID block.
+> -i2c i2c-3: unable to read EDID block.
+> -i2c i2c-3: unable to read EDID block.
+> -radeonfb: Monitor 1 type CRT found
+> -radeonfb: Monitor 2 type no found
+> -Console: switching to colour frame buffer device 80x30
+> -radeonfb (0000:03:02.0): ATI Radeon 515e "Q^"
+> +radeonfb 0000:03:02.0: device not available (can't reserve [mem 0x00=
+000000-0x07ffffff])
+> +radeonfb (0000:03:02.0): Cannot enable PCI device
+> +radeonfb: probe of 0000:03:02.0 failed with error -22
+> =A0initcall .radeonfb_init+0x0/0x248 returned 0 after x usecs
+> =A0 =A0 =A0 =A0.
+> =A0 =A0 =A0 =A0.
+> =A0 =A0 =A0 =A0.
+> =A0ipr: IBM Power RAID SCSI Device Driver version: 2.5.2 (April 27, 2=
+011)
+> -ipr 0000:01:01.0: Found IOA with IRQ: 26
+> -ipr 0000:01:01.0: Starting IOA initialization sequence.
+> -ipr 0000:01:01.0: Adapter firmware version: 06160039
+> -ipr 0000:01:01.0: IOA initialized.
+> -scsi0 : IBM 572E Storage Adapter
+> -scsi 0:0:1:0: Direct-Access =A0 =A0 IBM-ESXS MAY2036RC =A0 =A0 =A0 =A0=
+T106 PQ: 0 ANSI: 5
+> -scsi: unknown device type 31
+> -scsi 0:255:255:255: No Device =A0 =A0 =A0 =A0 IBM =A0 =A0 =A0572E001=
+ =A0 =A0 =A0 =A0 =A00150 PQ: 0 ANSI: 0
+> +ipr 0000:01:01.0: device not available (can't reserve [mem 0x0000000=
+0-0x0003ffff])
+> +ipr 0000:01:01.0: Cannot enable adapter
+> +ipr: probe of 0000:01:01.0 failed with error -22
+> =A0initcall .ipr_init+0x0/0x68 returned 0 after x usecs
+> =A0 =A0 =A0 =A0.
+> =A0 =A0 =A0 =A0.
+> =A0 =A0 =A0 =A0.
+> =A0calling =A0.tg3_init+0x0/0x3c @ 1
+> =A0tg3.c:v3.122 (December 7, 2011)
+> -tg3 0000:06:04.0: enabling device (0140 -> 0142)
+> -sd 0:0:1:0: [sda] 71096640 512-byte logical blocks: (36.4 GB/33.9 Gi=
+B)
+> -sd 0:0:1:0: [sda] Write Protect is off
+> -sd 0:0:1:0: [sda] Mode Sense: d7 00 00 08
+> -sd 0:0:1:0: [sda] Write cache: disabled, read cache: enabled, doesn'=
+t support DPO or FUA
+> - sda: sda1 sda2 sda3 sda4 < sda5 sda6 sda7 sda8 >
+> -sd 0:0:1:0: [sda] Attached SCSI disk
+> -initcall 1_.sd_probe_async+0x0/0x1d0 returned 0 after x usecs
+> -tg3 0000:06:04.0: eth0: Tigon3 [partno(none) rev 8100] (PCIX:133MHz:=
+64-bit) MAC address 00:14:5e:9c:21:e2
+> -tg3 0000:06:04.0: eth0: attached PHY is 5780 (1000Base-SX Ethernet) =
+(WireSpeed[0], EEE[0])
+> -tg3 0000:06:04.0: eth0: RXcsums[1] LinkChgREG[0] MIirq[0] ASF[1] TSO=
+cap[1]
+> -tg3 0000:06:04.0: eth0: dma_rwctrl[76144000] dma_mask[40-bit]
+> -tg3 0000:06:04.1: enabling device (0140 -> 0142)
+> -tg3 0000:06:04.1: eth1: Tigon3 [partno(none) rev 8100] (PCIX:133MHz:=
+64-bit) MAC address 00:14:5e:9c:21:e3
+> -tg3 0000:06:04.1: eth1: attached PHY is 5780 (1000Base-SX Ethernet) =
+(WireSpeed[0], EEE[0])
+> -tg3 0000:06:04.1: eth1: RXcsums[1] LinkChgREG[0] MIirq[0] ASF[0] TSO=
+cap[1]
+> -tg3 0000:06:04.1: eth1: dma_rwctrl[76144000] dma_mask[40-bit]
+> +tg3 0000:06:04.0: device not available (can't reserve [mem 0x0000000=
+0-0x0000ffff])
+> +tg3 0000:06:04.0: Cannot enable PCI device, aborting
+> +tg3: probe of 0000:06:04.0 failed with error -22
+> +tg3 0000:06:04.1: device not available (can't reserve [mem 0x0000000=
+0-0x0000ffff])
+> +tg3 0000:06:04.1: Cannot enable PCI device, aborting
+> +tg3: probe of 0000:06:04.1 failed with error -22
+> =A0initcall .tg3_init+0x0/0x3c returned 0 after x usecs
+> =A0 =A0 =A0 =A0.
+> =A0 =A0 =A0 =A0.
+> =A0 =A0 =A0 =A0.
+> =A0calling =A0.ohci_hcd_mod_init+0x0/0xfc @ 1
+> =A0ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+> -ohci_hcd 0000:03:00.0: OHCI Host Controller
+> -ohci_hcd 0000:03:00.0: new USB bus registered, assigned bus number 1
+> -ohci_hcd 0000:03:00.0: irq 19, io mem 0x100a1001000
+> -hub 1-0:1.0: USB hub found
+> -hub 1-0:1.0: 3 ports detected
+> -ohci_hcd 0000:03:00.1: OHCI Host Controller
+> -ohci_hcd 0000:03:00.1: new USB bus registered, assigned bus number 2
+> -ohci_hcd 0000:03:00.1: irq 19, io mem 0x100a1000000
+> -hub 2-0:1.0: USB hub found
+> -hub 2-0:1.0: 3 ports detected
+> +ohci_hcd 0000:03:00.0: device not available (can't reserve [mem 0x00=
+000000-0x00000fff])
+> +ohci_hcd 0000:03:00.1: device not available (can't reserve [mem 0x00=
+000000-0x00000fff])
+> =A0initcall .ohci_hcd_mod_init+0x0/0xfc returned 0 after x usecs
+>
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
