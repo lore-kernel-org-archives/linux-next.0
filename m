@@ -1,42 +1,54 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: boot failure for next-20120227 and later (pci tree
- related)
-Date: Sat, 03 Mar 2012 08:52:12 +1100
-Message-ID: <1330725132.11728.52.camel@pasglop>
-References: <20120302170638.3d172369d04335d9b921a28c@canb.auug.org.au>
-	 <CAErSpo6xQa4Rnv+RkkXCRjQ2HDZdBhorRv2c6pmWyXqRzhM4Vw@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: "usb: gadget: pch_udc: Detecting VBUS through GPIO with interrupt"
+ breaks sparc
+Date: Fri, 2 Mar 2012 17:01:16 -0500
+Message-ID: <4F51432C.8020204@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:35025 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751519Ab2CBVwa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Mar 2012 16:52:30 -0500
-In-Reply-To: <CAErSpo6xQa4Rnv+RkkXCRjQ2HDZdBhorRv2c6pmWyXqRzhM4Vw@mail.gmail.com>
+Received: from mail1.windriver.com ([147.11.146.13]:64814 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754720Ab2CBWBe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Mar 2012 17:01:34 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: tomoya.rohm@gmail.com, Felipe Balbi <balbi@ti.com>
+Cc: linux-next@vger.kernel.org
 
-On Fri, 2012-03-02 at 10:10 -0700, Bjorn Helgaas wrote:
-> On Thu, Mar 1, 2012 at 11:06 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi Jesse,
-> >
-> > Staring with next-20120227, one of my boot tests is failing like this:
-> 
-> Hi Stephen,
-> 
-> Thanks a lot for the test report and the bisection.  I wish I had a
-> machine to test on so I wouldn't have to bother you about it.
-> 
-> Any chance you could point me at the complete before/after dmesg logs?
->  There should be information about the PCI host bridge apertures and
-> offsets in the "after" log.  If that's not enough, we might need to
-> collect new before/after logs with something like this
-> (whitespace-mangled):
+This commit:
 
-Or give me a chance to dig :-) I'll have a look next week.
+---------------
+commit 637b78eb31e0b167ed913f1750bb645dfeda38f0
+Author: Tomoya MORINAGA <tomoya.rohm@gmail.com>
+Date:   Fri Feb 3 16:14:18 2012 +0900
 
-Cheers,
-Ben.
+    usb: gadget: pch_udc: Detecting VBUS through GPIO with interrupt
+    
+    Problem:
+     pch_udc continues operation even if VBUS becomes Low.
+     pch_udc performs D+ pulling up before VBUS becomes High.
+     USB device should be controlled according to VBUS state.
+    
+    Root cause:
+     The current pch_udc is not always monitoring VBUS.
+    
+    Solution:
+     The change of VBUS is detected using an interrupt of GPIO.
+     If VBUS became Low, pch_udc handles 'disconnect'.
+     After VBUS became High, a pull improves D+, and pch_udc
+     handles 'connect'.
+    
+    [ balbi@ti.com : make it actually compile ]
+    
+    Signed-off-by: Tomoya MORINAGA <tomoya.rohm@gmail.com>
+    Signed-off-by: Felipe Balbi <balbi@ti.com>
+---------------
+
+breaks the sparc builds in next:
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/5771890/
+http://kisskb.ellerman.id.au/kisskb/buildresult/5771905/
+
+Thanks,
+Paul.
