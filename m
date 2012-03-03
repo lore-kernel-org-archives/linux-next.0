@@ -1,69 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: iseries config in linux-next coverage
-Date: Sat, 3 Mar 2012 14:17:53 +1100
-Message-ID: <20120303141753.5f4a7dd9c2e1129bff396da0@canb.auug.org.au>
-References: <4F512C1F.5070903@windriver.com>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: re-adding pcmcia and cpupowerutils trees
+Date: Sat, 3 Mar 2012 14:54:58 +0100
+Message-ID: <20120303135457.GA6669@comet.dominikbrodowski.net>
+References: <20120120114016.995d4f1af74eee173bef79d9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sat__3_Mar_2012_14_17_53_+1100_HBzJYSFLK42ZWP/M"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50896 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751259Ab2CCDSG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Mar 2012 22:18:06 -0500
-In-Reply-To: <4F512C1F.5070903@windriver.com>
+Received: from isilmar-3.linta.de ([188.40.101.200]:42410 "EHLO linta.de"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752091Ab2CCOCP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 3 Mar 2012 09:02:15 -0500
+Content-Disposition: inline
+In-Reply-To: <20120120114016.995d4f1af74eee173bef79d9@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org
 
---Signature=_Sat__3_Mar_2012_14_17_53_+1100_HBzJYSFLK42ZWP/M
-Content-Type: text/plain; charset=US-ASCII
+
+--RnlQjJ0d97Da+TV1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hey Stephen,
 
-On Fri, 2 Mar 2012 15:22:55 -0500 Paul Gortmaker <paul.gortmaker@windriver.=
-com> wrote:
->
-> Is there someone to contact for getting the iSeries coverage
-> removed from the kisskb builds?
+as my kernel.org account has just been re-activated, it would be great if
+you could re-activate the following trees in your list of trees to fetch for
+linux-next:
 
-Yeah, me.
+git://git.kernel.org/pub/scm/linux/kernel/git/brodo/pcmcia.git master
 
-> http://kisskb.ellerman.id.au/kisskb/target/2569/
->=20
-> They don't work so well after the below commit.  :)
+git://git.kernel.org/pub/scm/linux/kernel/git/brodo/cpupowerutils.git master
 
-I knew I forgot something :-)
+Many thanks,
 
-I will fix it up on Monday.
+	Dominik
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Sat__3_Mar_2012_14_17_53_+1100_HBzJYSFLK42ZWP/M
-Content-Type: application/pgp-signature
+--RnlQjJ0d97Da+TV1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPUY1hAAoJEECxmPOUX5FESTAQAIkhaxbrQx5v1kZtyBrMv0oI
-XqJ/78VRHe86VMLOiKJx/jncYN+tNa80dZ2H8G4TmkwpmJbR6t0D8werfcxKgu2f
-qV9XgI5T95pPUXiHdzzt6brEyjLQYDkziz4D+OyXYyn4ayDTL249LNxQ1VOE0AIq
-ylHPh+PS/sAxqvGcos+h7WSZHCBY3Y5pmP0VGBVrNpFord4LsGVrRhTDXHDeBich
-Ap4xDyFoZtfqnmO7AgZ8eGCbHevSyGklxcuneeI66byDlQbosErJOWjtDX0y3Lxm
-aAxsqK50/nrZOO4lq3ch9P4n6CBGi1WtvR+tdHReNpbOYbZgxhw8IFhkyvipbtf7
-d1Bry2+FDXMMu2nb2VtM8NDBC5dK37VIX8isd06d1VlCPPmEhjoVZ3KtgsmD/OYO
-7lxmus/VfyPtyFgEx0wLUXD8psZCwc+rLDpKadOIvGTB2bYylUawUwrbRQM1+Shv
-XrUgd8mz4I6v9DhIGUJYCXdtRqmKsne196LjX5VfxJau0tJDswSnKnOsPsmQMCoO
-hnYbuYa57QftWuZeuWxa47bP3+hJtmujabrU4vYx8hbeeITGgnwLMXbYZk+ulfCn
-rPynFHiw9xdORzCmeHt1Egh37eb5nqW85VZqWEYrtn2vDPbQAHy8iIqG61xJS5YC
-4wTMEc6vd1cI8/oA8N4X
-=r3en
+iQIcBAEBAgAGBQJPUiKxAAoJEJqXYIlMjaMNggoP/A1wNqrToqiQHML5ogrZ0TPP
+N8TuxQpOK1AkZEDASugrHJ9xHe2plwmcvZXAieYZTPf01wNqtAV71FyunjmjsOlz
+ga+IPaBljDDeFZ8VOz1d9nnN6abqob4g/LKPnYyWCnXUaL1/ydmw3gPK2SopXJRK
+0HkQ/LKzsSfoHT2u/uwgF0ylw5tyPykX++k8nwo7EDBk9t6nJZ2L/p2R+QZdYbC1
+miKGu1Wp1ViICAlW5Tnge8aZ7lk4ZpwNWQOcVGMSxef2rO7mn4wJC4F/uhI3ScFv
+FhK0y8XJ3VGv1naJOVENMwoZ8BghNgX/o//FEmd4qcof4cMoSKemxDXJy+2N78dU
+e590pS/vNz1UiB22WIT+DuNm7MDx1AFE5HSVUldFKGYE7wcIFsTbdXat85qnx6mD
+mxeXxvPc5GQSYU0u5bUpp80O0Fwm3XFjYQ3KgOWEY1AC6BMKz8Y6JafV4Po5GOvu
+Xf1KKBoavAnqCDEM3zEDIgO9JSU/wsDbfuk9KymPuR5FZ3yDOCsLB7SelZGhfc3m
+8xLCo9vSQ1X4gMWnVSF8dZTRQe9jWCbIDQhxsRA6Z0/VkLDrVdOTs3k5vo/bZx6v
++VKyNDc7lCKP7YaLRu8DSNR4pPOoRkHz0oV6/g29PhCrL8qLfgcvW3StBdxky1YC
+zPkEBrmOxmgUkfeM7ZGw
+=qe4W
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__3_Mar_2012_14_17_53_+1100_HBzJYSFLK42ZWP/M--
+--RnlQjJ0d97Da+TV1--
