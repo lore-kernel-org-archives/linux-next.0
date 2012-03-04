@@ -1,68 +1,72 @@
-From: Gianluca Gennari <gennarone@gmail.com>
-Subject: Re: rtl2830: __udivdi3 undefined
-Date: Sun, 04 Mar 2012 23:19:41 +0100
-Message-ID: <4F53EA7D.4090402@gmail.com>
-References: <CAMuHMdVmiqY9uh574_uTK76+28bvhEL0BPnzjDF-bf-0mgj4gg@mail.gmail.com>
-Reply-To: gennarone@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: re-adding pcmcia and cpupowerutils trees
+Date: Mon, 5 Mar 2012 10:18:38 +1100
+Message-ID: <20120305101838.0ce778b0ed4f6b73a3d7da85@canb.auug.org.au>
+References: <20120120114016.995d4f1af74eee173bef79d9@canb.auug.org.au>
+	<20120303135457.GA6669@comet.dominikbrodowski.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__5_Mar_2012_10_18_38_+1100_cGv+fwueh=08AWn3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:55129 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751212Ab2CDWTq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Mar 2012 17:19:46 -0500
-In-Reply-To: <CAMuHMdVmiqY9uh574_uTK76+28bvhEL0BPnzjDF-bf-0mgj4gg@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48523 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751216Ab2CDXSx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Mar 2012 18:18:53 -0500
+In-Reply-To: <20120303135457.GA6669@comet.dominikbrodowski.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, linux-media@vger.kernel.org
-Cc: Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@redhat.com>, Linux-Next <linux-next@vger.kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-next@vger.kernel.org, Thomas Renninger <trenn@suse.de>, cpufreq@vger.kernel.org
 
-Il 29/02/2012 22:30, Geert Uytterhoeven ha scritto:
-> http://kisskb.ellerman.id.au/kisskb/buildresult/5759200/ ERROR:
-> "__udivdi3" [drivers/media/dvb/frontends/rtl2830.ko] undefined!
-> 
-> I didn't look too deeply into it, but I think it's caused by the
-> "num /= priv->cfg.xtal" in rtl2830_init() (with num being u64).
-> 
-> Can't it use do_div() instead?
-> 
-> Gr{oetje,eeting}s,
-> 
-> Geert
-> 
-> -- Geert Uytterhoeven -- There's lots of Linux beyond ia32 --
-> geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a
-> hacker. But when I'm talking to journalists I just say "programmer"
-> or something like that. -- Linus Torvalds -- To unsubscribe from this
-> list: send the line "unsubscribe linux-media" in the body of a
-> message to majordomo@vger.kernel.org More majordomo info at
-> http://vger.kernel.org/majordomo-info.html
-> 
+--Signature=_Mon__5_Mar_2012_10_18_38_+1100_cGv+fwueh=08AWn3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Probably the best solution is to use div_u64.
-The following patch fixed the warning on my 32 bit system.
+Hi Dominik,
 
-Signed-off-by: Gianluca Gennari <gennarone@gmail.com>
----
- drivers/media/dvb/frontends/rtl2830.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+On Sat, 3 Mar 2012 14:54:58 +0100 Dominik Brodowski <linux@dominikbrodowski=
+.net> wrote:
+>
+> as my kernel.org account has just been re-activated, it would be great if
+> you could re-activate the following trees in your list of trees to fetch =
+for
+> linux-next:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/brodo/pcmcia.git master
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/brodo/cpupowerutils.git mas=
+ter
 
-diff --git a/drivers/media/dvb/frontends/rtl2830.c
-b/drivers/media/dvb/frontends/rtl2830.c
-index f971d94..45196c5 100644
---- a/drivers/media/dvb/frontends/rtl2830.c
-+++ b/drivers/media/dvb/frontends/rtl2830.c
-@@ -244,7 +244,7 @@ static int rtl2830_init(struct dvb_frontend *fe)
+I have readded both those.  I had Thomas Renninger and the cpufreq
+mailing list (both cc'd) listed as contacts for the cpupowerutils tree
+previously and have now added you as well.  You are the sole contact for
+the pcmcia tree.  Please let me know of any changes to that.
 
- 	num = priv->cfg.if_dvbt % priv->cfg.xtal;
- 	num *= 0x400000;
--	num /= priv->cfg.xtal;
-+	num = div_u64(num, priv->cfg.xtal);
- 	num = -num;
- 	if_ctl = num & 0x3fffff;
- 	dbg("%s: if_ctl=%08x", __func__, if_ctl);
--- 
-1.7.0.4
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__5_Mar_2012_10_18_38_+1100_cGv+fwueh=08AWn3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPU/hOAAoJEECxmPOUX5FEA3gP/R/CUKSljqZ5J8Y0ux4d5DjM
+NynR/lOHAyM0NmZJHbX/WTkiEsfFWWVtjae6cgb58HropQD9Jw+6FQYYpWOalxvu
+n0whu/MVMk5P/zb+ZGSnwKGNwasuOdQ8pqeHnQeI9FvSfXtMMvqN9+fdmTciiToL
+S2acKOuEcuGOsRd+duN8MKrTTxXZ49bbn5sRwXX9sKhpLBmD0IJyXEwgwOT/cpm/
+6IhbXuwXOE0XsvU/H+97r1kkXaYGNWjpbGO+1pKbiDXv28rGeKpobgDLuV79zrz9
+AXZO3KV2CL8hb332PnkTxw1K/yee2cOZxajPV3D40oVpPFa5CW2QGcGNjDeeJUE8
+pCGPOVtRquhKnC4OTlJemqvsTOlNhjNZcSkLj4x8kcYd9/XPeD8dM1ArrDdKCEY3
+lMZIV3JiHLxUvhj/UEpkk+vGLRezt4ILuXTYjWO9xkrWeIk6zfAY/x3YNvz/jus3
+B1wHO3AJ0M2XRTIq1wBMeJ02OIXHZ7EI7SyRROB4T3oRQYxu0l7JfgLjBD66IcRT
+THPhpBBpHA+aGWh7aE5BG8sVogYYWa+hjuu+ZBqfbXRyh/62Q3zDEvbXFVmU/5VR
+5mc9x9daEgXBTofFzq91XdyBaUxkTFWTS4j2E0JJAVy36c3Y93ZzOrU2rbKHae5i
+Z15kpbovwtqgY9EoMl0F
+=IPQO
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__5_Mar_2012_10_18_38_+1100_cGv+fwueh=08AWn3--
