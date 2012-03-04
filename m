@@ -1,62 +1,68 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: re-adding pcmcia and cpupowerutils trees
-Date: Sat, 3 Mar 2012 14:54:58 +0100
-Message-ID: <20120303135457.GA6669@comet.dominikbrodowski.net>
-References: <20120120114016.995d4f1af74eee173bef79d9@canb.auug.org.au>
+From: Gianluca Gennari <gennarone@gmail.com>
+Subject: Re: rtl2830: __udivdi3 undefined
+Date: Sun, 04 Mar 2012 23:19:41 +0100
+Message-ID: <4F53EA7D.4090402@gmail.com>
+References: <CAMuHMdVmiqY9uh574_uTK76+28bvhEL0BPnzjDF-bf-0mgj4gg@mail.gmail.com>
+Reply-To: gennarone@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from isilmar-3.linta.de ([188.40.101.200]:42410 "EHLO linta.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752091Ab2CCOCP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 3 Mar 2012 09:02:15 -0500
-Content-Disposition: inline
-In-Reply-To: <20120120114016.995d4f1af74eee173bef79d9@canb.auug.org.au>
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:55129 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751212Ab2CDWTq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Mar 2012 17:19:46 -0500
+In-Reply-To: <CAMuHMdVmiqY9uh574_uTK76+28bvhEL0BPnzjDF-bf-0mgj4gg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, linux-media@vger.kernel.org
+Cc: Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@redhat.com>, Linux-Next <linux-next@vger.kernel.org>
 
+Il 29/02/2012 22:30, Geert Uytterhoeven ha scritto:
+> http://kisskb.ellerman.id.au/kisskb/buildresult/5759200/ ERROR:
+> "__udivdi3" [drivers/media/dvb/frontends/rtl2830.ko] undefined!
+> 
+> I didn't look too deeply into it, but I think it's caused by the
+> "num /= priv->cfg.xtal" in rtl2830_init() (with num being u64).
+> 
+> Can't it use do_div() instead?
+> 
+> Gr{oetje,eeting}s,
+> 
+> Geert
+> 
+> -- Geert Uytterhoeven -- There's lots of Linux beyond ia32 --
+> geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a
+> hacker. But when I'm talking to journalists I just say "programmer"
+> or something like that. -- Linus Torvalds -- To unsubscribe from this
+> list: send the line "unsubscribe linux-media" in the body of a
+> message to majordomo@vger.kernel.org More majordomo info at
+> http://vger.kernel.org/majordomo-info.html
+> 
 
---RnlQjJ0d97Da+TV1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Probably the best solution is to use div_u64.
+The following patch fixed the warning on my 32 bit system.
 
-Hey Stephen,
+Signed-off-by: Gianluca Gennari <gennarone@gmail.com>
+---
+ drivers/media/dvb/frontends/rtl2830.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-as my kernel.org account has just been re-activated, it would be great if
-you could re-activate the following trees in your list of trees to fetch for
-linux-next:
+diff --git a/drivers/media/dvb/frontends/rtl2830.c
+b/drivers/media/dvb/frontends/rtl2830.c
+index f971d94..45196c5 100644
+--- a/drivers/media/dvb/frontends/rtl2830.c
++++ b/drivers/media/dvb/frontends/rtl2830.c
+@@ -244,7 +244,7 @@ static int rtl2830_init(struct dvb_frontend *fe)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/brodo/pcmcia.git master
-
-git://git.kernel.org/pub/scm/linux/kernel/git/brodo/cpupowerutils.git master
-
-Many thanks,
-
-	Dominik
-
---RnlQjJ0d97Da+TV1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPUiKxAAoJEJqXYIlMjaMNggoP/A1wNqrToqiQHML5ogrZ0TPP
-N8TuxQpOK1AkZEDASugrHJ9xHe2plwmcvZXAieYZTPf01wNqtAV71FyunjmjsOlz
-ga+IPaBljDDeFZ8VOz1d9nnN6abqob4g/LKPnYyWCnXUaL1/ydmw3gPK2SopXJRK
-0HkQ/LKzsSfoHT2u/uwgF0ylw5tyPykX++k8nwo7EDBk9t6nJZ2L/p2R+QZdYbC1
-miKGu1Wp1ViICAlW5Tnge8aZ7lk4ZpwNWQOcVGMSxef2rO7mn4wJC4F/uhI3ScFv
-FhK0y8XJ3VGv1naJOVENMwoZ8BghNgX/o//FEmd4qcof4cMoSKemxDXJy+2N78dU
-e590pS/vNz1UiB22WIT+DuNm7MDx1AFE5HSVUldFKGYE7wcIFsTbdXat85qnx6mD
-mxeXxvPc5GQSYU0u5bUpp80O0Fwm3XFjYQ3KgOWEY1AC6BMKz8Y6JafV4Po5GOvu
-Xf1KKBoavAnqCDEM3zEDIgO9JSU/wsDbfuk9KymPuR5FZ3yDOCsLB7SelZGhfc3m
-8xLCo9vSQ1X4gMWnVSF8dZTRQe9jWCbIDQhxsRA6Z0/VkLDrVdOTs3k5vo/bZx6v
-+VKyNDc7lCKP7YaLRu8DSNR4pPOoRkHz0oV6/g29PhCrL8qLfgcvW3StBdxky1YC
-zPkEBrmOxmgUkfeM7ZGw
-=qe4W
------END PGP SIGNATURE-----
-
---RnlQjJ0d97Da+TV1--
+ 	num = priv->cfg.if_dvbt % priv->cfg.xtal;
+ 	num *= 0x400000;
+-	num /= priv->cfg.xtal;
++	num = div_u64(num, priv->cfg.xtal);
+ 	num = -num;
+ 	if_ctl = num & 0x3fffff;
+ 	dbg("%s: if_ctl=%08x", __func__, if_ctl);
+-- 
+1.7.0.4
