@@ -1,44 +1,47 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: Tree for Mar 5 (of/irqs)
-Date: Mon, 5 Mar 2012 13:57:33 -0700
-Message-ID: <CACxGe6vPnFcUQ0mNF4CU5LLLJj=F5A2=1m8u=v1KJDHZnXS4Tw@mail.gmail.com>
-References: <20120305181024.d396adb4fefdf6d269657606@canb.auug.org.au> <4F54FBBC.5060809@xenotime.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4F54FBBC.5060809@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 0/3] arm: fix build breakage in omap2plus_defconfig (linux-next)
+Date: Mon,  5 Mar 2012 17:41:47 -0500
+Message-ID: <1330987310-8108-1-git-send-email-paul.gortmaker@windriver.com>
+Return-path: <linux-omap-owner@vger.kernel.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: tony@atomide.com
+Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Mar 5, 2012 at 10:45 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On 03/04/2012 11:10 PM, Stephen Rothwell wrote:
->
->> Hi all,
->>
->> Changes since 20120302:
->
->
->
-> Still have both of these build errors (on i386/X86_32;
-> 2 different builds):
->
->
-> drivers/mfd/twl-core.c:1262:2: error: implicit declaration of function 'irq_alloc_descs'
-> drivers/mfd/twl-core.c:1357:3: error: implicit declaration of function 'of_platform_populate'
+I decided to look at why this thing was dying in linux-next for
+over two weeks now:
 
-The fix didn't get pushed out until I received an ack from Benoit this
-morning.  It will be fixed in tomorrow's linux-next.
+http://kisskb.ellerman.id.au/kisskb/target/5581/
 
-> and:
->
-> drivers/gpio/gpio-sodaville.c:130:2: error: unknown field 'dt_translate' specified in initializer
-> drivers/gpio/gpio-sodaville.c:130:2: warning: initialization from incompatible pointer type
-> drivers/gpio/gpio-sodaville.c:152:8: error: 'struct irq_domain' has no member named 'irq_base'
-> drivers/gpio/gpio-sodaville.c:182:2: error: implicit declaration of function 'irq_domain_add'
-> drivers/gpio/gpio-sodaville.c:263:2: error: implicit declaration of function 'irq_domain_del'
+The git bisect led me to sfr's merge (661a40a5c8 in March5th tree)
+of 'arm-soc/for-next' but there was nothing suspicious there, and
+the fix (commit #1) was reasonably obvious, so I didn't investigate
+the root cause further.  But that wasn't where the breakage ended...
 
-I don't have the fix ready yet.  It is coming.
+Commit #2, and especially commit #3 need to be looked at by those
+who know the platform.  It looks like some sort of conversion to
+better share code was done, but the omap4panda part didn't get
+the full attention it needed.  I did what I think looks right,
+based on what was done for the other board, but I've no knowledge
+of the platform whatsoever, and hence no confidence it would
+work as desired.  I've hopefully put the right people on the CC
+list for those.
 
-g.
+Paul.
+---
+
+Paul Gortmaker (3):
+  arm: anticipate build breakages due in pending merge
+  arm: fix compile error in mach-omap2/board-omap4panda.c
+  arm: more fallout from i2c conversions in board-omap4panda.c
+
+ arch/arm/mach-omap2/board-omap4panda.c |    7 +++----
+ arch/arm/mach-omap2/cm2xxx_3xxx.c      |    2 ++
+ arch/arm/mach-omap2/common.c           |    1 +
+ arch/arm/mach-omap2/control.c          |    1 +
+ arch/arm/mach-omap2/sdrc2xxx.c         |    1 +
+ 5 files changed, 8 insertions(+), 4 deletions(-)
+
+-- 
+1.7.9.1
+
