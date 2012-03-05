@@ -1,58 +1,85 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pcmcia tree with the arm tree
-Date: Mon, 5 Mar 2012 14:22:48 +1100
-Message-ID: <20120305142248.56e1a4719f16c246c3095cf3@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: boot failure for next-20120227 and later (pci tree
+ related)
+Date: Mon, 05 Mar 2012 14:34:00 +1100
+Message-ID: <1330918440.11728.87.camel@pasglop>
+References: <20120302170638.3d172369d04335d9b921a28c@canb.auug.org.au>
+ <CAErSpo6xQa4Rnv+RkkXCRjQ2HDZdBhorRv2c6pmWyXqRzhM4Vw@mail.gmail.com>
+ <1330725132.11728.52.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_Mar_2012_14_22_48_+1100_GD7vNyT47qlsyT5b"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45313 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755074Ab2CEDXA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Mar 2012 22:23:00 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yong Zhang <yong.zhang0@gmail.com>, Russell King <rmk@arm.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <1330725132.11728.52.camel@pasglop>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__5_Mar_2012_14_22_48_+1100_GD7vNyT47qlsyT5b
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, 2012-03-03 at 08:52 +1100, Benjamin Herrenschmidt wrote:
 
-Hi Dominik,
+> Or give me a chance to dig :-) I'll have a look next week.
 
-Today's linux-next merge of the pcmcia tree got a conflict in
-drivers/pcmcia/soc_common.c between commit a7670151a48c ("PCMCIA:
-soc_common: remove soc_pcmcia_*_irqs functions") from the arm tree and
-commit d571c79e86fa ("pcmcia: irq: Remove IRQF_DISABLED") from the pcmcia
-tree.
+This is indeed what bjorn suspected on irc, this patch fixes it:
 
-The former removed the code modified by the latter, so I did that.
---=20
+(Bjorn, please fold it in the original offending patch)
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Ben.
 
---Signature=_Mon__5_Mar_2012_14_22_48_+1100_GD7vNyT47qlsyT5b
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPVDGIAAoJEECxmPOUX5FEhkIP/Rkf4FsL1BkWIxLDEGoe2k5h
-Wgzozvg7cEsvsADdmiIYG9qFdg+y6D7aJQgLkB+nV+C0XsEHdJa7kHeeQPCmZE2t
-pZMNoK7MqmI2+58CREiopv7p+PzK+BTnEed6+s8nIROAzDQnjZ8UlsDsJEgImlDs
-ZzxAWpU8OSo6su72I33ytoFCNZRoLfL/P3JD1DKSOWiGTRycy5m8IBYhgZBuBMxV
-r+VelISKicWsT1Kn3VMMVvpEgc2SmSOeIAXea7eIBT+Hz3TezD0c5SMTWHpmJ2S8
-waoSW2A8o+HZ9or17EcE2zbcFy/nvV4EZEkW/bYdw2WlQwfG9hYcRkkH64gJvG1A
-2cVGtWrBueYz324aaxfNR1mG+kc3DX2BaLYJRcQGGozEOKjVh5+hyxIzdSGo+qzn
-uXSIidKvP3Xhge0ttQM/8brRje66e/BgKcANj14uztKjQzKbb66z2p4dzsUia91K
-X+r0MkgikJF/h8PT6VXgls3nmqdcHpcywwwwVjrQFjNGM+KWEWSdYBr4diSc+TkD
-DFsOSOfgI9dZWXKgbOSXdKDUxfx9x611ZZ1+mw0zRH6UIUTdul6VBcoR5xSXR1ii
-Y+4sCqdN/TkbGw57K9iy5JzqSGiq6QPaPX0Vcr5pvgC8HhihcSdisvM1TTCqP6n+
-WyMXNy6O+YIXGlbfFrlN
-=HBly
------END PGP SIGNATURE-----
-
---Signature=_Mon__5_Mar_2012_14_22_48_+1100_GD7vNyT47qlsyT5b--
+diff --git a/arch/powerpc/kernel/pci_of_scan.c b/arch/powerpc/kernel/pci_of_scan.c
+index b37d0b5..5dd63f1 100644
+--- a/arch/powerpc/kernel/pci_of_scan.c
++++ b/arch/powerpc/kernel/pci_of_scan.c
+@@ -75,6 +75,7 @@ static void of_pci_parse_addrs(struct device_node *node, struct pci_dev *dev)
+ {
+ 	u64 base, size;
+ 	unsigned int flags;
++	struct pci_bus_region region;
+ 	struct resource *res;
+ 	const u32 *addrs;
+ 	u32 i;
+@@ -106,10 +107,12 @@ static void of_pci_parse_addrs(struct device_node *node, struct pci_dev *dev)
+ 			printk(KERN_ERR "PCI: bad cfg reg num 0x%x\n", i);
+ 			continue;
+ 		}
+-		res->start = base;
+-		res->end = base + size - 1;
++
+ 		res->flags = flags;
+ 		res->name = pci_name(dev);
++		region.start = base;
++		region.end = base + size - 1;
++		pcibios_bus_to_resource(dev, res, &region);
+ 	}
+ }
+ 
+@@ -209,6 +212,7 @@ void __devinit of_scan_pci_bridge(struct pci_dev *dev)
+ 	struct pci_bus *bus;
+ 	const u32 *busrange, *ranges;
+ 	int len, i, mode;
++	struct pci_bus_region region;
+ 	struct resource *res;
+ 	unsigned int flags;
+ 	u64 size;
+@@ -270,9 +274,10 @@ void __devinit of_scan_pci_bridge(struct pci_dev *dev)
+ 			res = bus->resource[i];
+ 			++i;
+ 		}
+-		res->start = of_read_number(&ranges[1], 2);
+-		res->end = res->start + size - 1;
+ 		res->flags = flags;
++		region.start = of_read_number(&ranges[1], 2);
++		region.end = region.start + size - 1;		
++		pcibios_bus_to_resource(dev, res, &region);
+ 	}
+ 	sprintf(bus->name, "PCI Bus %04x:%02x", pci_domain_nr(bus),
+ 		bus->number);
