@@ -1,58 +1,38 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] mm: fix task_nommu build regressions
-Date: Mon,  5 Mar 2012 11:37:53 -0500
-Message-ID: <1330965473-5401-1-git-send-email-paul.gortmaker@windriver.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: linux-next: manual merge of the usb tree with the usb.current
+ tree
+Date: Mon, 5 Mar 2012 08:42:16 -0800
+Message-ID: <20120305164216.GD2459@kroah.com>
+References: <20120305170004.9c81f2d148cc179f42a39ade@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:45277 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751378Ab2CEQiH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Mar 2012 11:38:07 -0500
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:46907 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756940Ab2CEQxn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Mar 2012 11:53:43 -0500
+Received: by mail-pw0-f46.google.com with SMTP id un15so2970293pbc.19
+        for <linux-next@vger.kernel.org>; Mon, 05 Mar 2012 08:53:43 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20120305170004.9c81f2d148cc179f42a39ade@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: siddhesh.poyarekar@gmail.com, akpm@linux-foundation.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shengzhou Liu <Shengzhou.Liu@freescale.com>
 
-Commit a69b756788619171e65c4d7081e9e3b8fbc4646a (linux-next)
+On Mon, Mar 05, 2012 at 05:00:04PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/usb/host/ehci-fsl.h between commit 71919403dc86 ("Revert
+> "powerpc/usb: fix issue of CPU halt when missing USB PHY clock"") from
+> the usb.current tree and commit 28c56ea14314 ("powerpc/usb: fix bug of
+> kernel hang when initializing usb") from the usb tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-  "procfs: mark thread stack correctly in proc/<pid>/maps"
+Looks good, thanks for this, I'll handle the merge when Linus takes my
+usb-linus tree in a few days.
 
-introduced this failure on ARM's at91x40_defconfig:
-
-In file included from fs/proc/task_nommu.c:3:
-include/linux/mm.h: In function 'vm_is_stack_for_task':
-include/linux/mm.h:1048: error: implicit declaration of function 'task_stack_page'
-fs/proc/task_nommu.c: In function 'nommu_vma_show':
-fs/proc/task_nommu.c:178: warning: no return statement in function returning non-void
-fs/proc/task_nommu.c: At top level:
-fs/proc/task_nommu.c:180: error: expected ')' before '\xa'
-fs/proc/task_nommu.c:181: error: expected identifier or '(' before 'return'
-fs/proc/task_nommu.c:182: error: expected identifier or '(' before '}' token
-
-There are two reasons for the failure.  1) sched.h is needed for
-task_stack_page, which is used by the newly added KSTK_ESP calls.
-2) The above commit clearly left off an opening "{" in the line
-"if (...) {" that it was altering.
-
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-
-diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
-index bdfff69..239fbd4 100644
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -1,4 +1,5 @@
- 
-+#include <linux/sched.h>
- #include <linux/mm.h>
- #include <linux/file.h>
- #include <linux/fdtable.h>
-@@ -170,7 +171,7 @@ static int nommu_vma_show(struct seq_file *m, struct vm_area_struct *vma,
- 		pad_len_spaces(m, len);
- 		seq_path(m, &file->f_path, "");
- 	} else if (mm) {
--		if (vm_is_stack(priv->task, vma, is_pid))
-+		if (vm_is_stack(priv->task, vma, is_pid)) {
- 			pad_len_spaces(m, len);
- 			seq_puts(m, "[stack]");
- 		}
--- 
-1.7.9.1
+greg k-h
