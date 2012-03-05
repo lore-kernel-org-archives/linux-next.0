@@ -1,68 +1,58 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 2/3] arm: fix compile error in
- mach-omap2/board-omap4panda.c
-Date: Mon, 5 Mar 2012 14:46:28 -0800
-Message-ID: <20120305224628.GH12083@atomide.com>
-References: <1330987310-8108-1-git-send-email-paul.gortmaker@windriver.com>
- <1330987310-8108-3-git-send-email-paul.gortmaker@windriver.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH] ARM: pxa: fix build failure for regulator consumer in em-x270.c
+Date: Mon,  5 Mar 2012 18:12:02 -0500
+Message-ID: <1330989122-6323-1-git-send-email-paul.gortmaker@windriver.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:47212 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754385Ab2CEWqa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Mar 2012 17:46:30 -0500
-Content-Disposition: inline
-In-Reply-To: <1330987310-8108-3-git-send-email-paul.gortmaker@windriver.com>
+Received: from mail.windriver.com ([147.11.1.11]:51535 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756978Ab2CEXMW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Mar 2012 18:12:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-* Paul Gortmaker <paul.gortmaker@windriver.com> [120305 14:10]:
-> The commit 3c90c98a1ebbb08d95700ce8a3b7bce6286607bd (linux-next)
-> 
->     "OMAP4: omap4panda: Enable audio support"
-> 
-> introduced population of a new struct, but chose the wrong (but
-> similarly named) struct that has none of the named fields.
-> 
-> Change it to the struct with those fields, to fix:
-> 
-> arch/arm/mach-omap2/board-omap4panda.c:284: error: unknown field 'hs_left_step' specified in initializer
-> arch/arm/mach-omap2/board-omap4panda.c:285: error: unknown field 'hs_right_step' specified in initializer
-> arch/arm/mach-omap2/board-omap4panda.c:286: error: unknown field 'hf_left_step' specified in initializer
-> arch/arm/mach-omap2/board-omap4panda.c:287: error: unknown field 'hf_right_step' specified in initializer
-> arch/arm/mach-omap2/board-omap4panda.c:287: warning: large integer implicitly truncated to unsigned type
+Commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
 
-Thanks, this mis-merge is something Peter should take a look at
-as it seems there's few other parts that got left out.
+  "regulator: Remove support for supplies specified by struct device"
 
-Regards,
+caused this file to break, since it was still relying on the
+device field to be present.  Strip them out here too.
 
-Tony
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
+
+diff --git a/arch/arm/mach-pxa/em-x270.c b/arch/arm/mach-pxa/em-x270.c
+index d80c0ba..c8f3293 100644
+--- a/arch/arm/mach-pxa/em-x270.c
++++ b/arch/arm/mach-pxa/em-x270.c
+@@ -1083,20 +1083,19 @@ static void __init em_x270_userspace_consumers_init(void)
+ }
  
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> CC: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> CC: Santosh Shilimkar <santosh.shilimkar@ti.com>
-> CC: Tony Lindgren <tony@atomide.com>
-> ---
->  arch/arm/mach-omap2/board-omap4panda.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/mach-omap2/board-omap4panda.c b/arch/arm/mach-omap2/board-omap4panda.c
-> index c1a852d..e919153 100644
-> --- a/arch/arm/mach-omap2/board-omap4panda.c
-> +++ b/arch/arm/mach-omap2/board-omap4panda.c
-> @@ -279,7 +279,7 @@ static int __init omap4_twl6030_hsmmc_init(struct omap2_hsmmc_info *controllers)
->  	return 0;
->  }
->  
-> -static struct twl4030_codec_data twl6040_codec = {
-> +static struct twl6040_codec_data twl6040_codec = {
->  	/* single-step ramp for headset and handsfree */
->  	.hs_left_step	= 0x0f,
->  	.hs_right_step	= 0x0f,
-> -- 
-> 1.7.9.1
-> 
+ /* DA9030 related initializations */
+-#define REGULATOR_CONSUMER(_name, _dev, _supply)			       \
++#define REGULATOR_CONSUMER(_name, _supply)			       \
+ 	static struct regulator_consumer_supply _name##_consumers[] = {	\
+ 		{							\
+-			.dev = _dev,					\
+ 			.supply = _supply,				\
+ 		},							\
+ 	}
+ 
+-REGULATOR_CONSUMER(ldo3, &em_x270_gps_userspace_consumer.dev, "vcc gps");
+-REGULATOR_CONSUMER(ldo5, NULL, "vcc cam");
+-REGULATOR_CONSUMER(ldo10, &pxa_device_mci.dev, "vcc sdio");
+-REGULATOR_CONSUMER(ldo12, NULL, "vcc usb");
+-REGULATOR_CONSUMER(ldo19, &em_x270_gprs_userspace_consumer.dev, "vcc gprs");
+-REGULATOR_CONSUMER(buck2, NULL, "vcc_core");
++REGULATOR_CONSUMER(ldo3, "vcc gps");
++REGULATOR_CONSUMER(ldo5, "vcc cam");
++REGULATOR_CONSUMER(ldo10, "vcc sdio");
++REGULATOR_CONSUMER(ldo12, "vcc usb");
++REGULATOR_CONSUMER(ldo19, "vcc gprs");
++REGULATOR_CONSUMER(buck2, "vcc_core");
+ 
+ #define REGULATOR_INIT(_ldo, _min_uV, _max_uV, _ops_mask)		\
+ 	static struct regulator_init_data _ldo##_data = {		\
+-- 
+1.7.9.1
