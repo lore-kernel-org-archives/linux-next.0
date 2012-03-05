@@ -1,50 +1,30 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: linux-next: build failure after merge of the cpufreq tree
-Date: Mon, 05 Mar 2012 01:46:07 +0000 (GMT)
-Message-ID: <13197479.540821330911965933.JavaMail.weblogic@epv6ml06>
-Reply-To: myungjoo.ham@samsung.com
+From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Subject: Re: linux-next: build failure after merge of the nfs tree
+Date: Mon, 5 Mar 2012 01:58:33 +0000
+Message-ID: <1330912712.14357.15.camel@lade.trondhjem.org>
+References: <20120305114513.547822059ca10e329c1bccb0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37430 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755065Ab2CEBqO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Mar 2012 20:46:14 -0500
-Received: from epcpsbge5.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0M0E009PD290Y220@mailout1.samsung.com> for
- linux-next@vger.kernel.org; Mon, 05 Mar 2012 10:46:13 +0900 (KST)
-MIME-version: 1.0
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?euc-kr?Q?=B9=DA=B0=E6=B9=CE?= <kyungmin.park@samsung.com>, "RafaelJ.Wysocki<rjw"@sisk.pl, linux-pm@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120305114513.547822059ca10e329c1bccb0@canb.auug.org.au>
+Content-Language: en-US
+Content-ID: <03316338BC49C04BB98E646001873D6B@tahoe.netapp.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-SGVsbG8sDQoNClRoZSBwYXRjaCAiQ1BVZnJlcSBvbmRlbWFuZDogaGFuZGxlIFFvUyByZXF1ZXN0
-IG9uIERWRlMgcmVzcG9uc2UgbGF0ZW5jeSIgdGhhdCBpbnRyb2R1Y2VkIHRoZSBtZW50aW9uZWQg
-ZXJyb3JzIHJlcXVpcmVzIHRoZSBwYXRjaCAiUE0gLyBRb1M6IEludHJvZHVjZSBuZXcgY2xhc3Nl
-czogRE1BLVRocm91Z2hwdXQgYW5kIERWRlMtTGF0ZW5jeSIgZ2V0IG1lcmdlZCwgdG9vLiBJIGd1
-ZXNzIHRoYXQgcGF0Y2ggd2lsbCBiZSBhdCBwbS1xb3MgdHJlZSBpZiBnZXQgbWVyZ2VkICh2MiBw
-YXRjaCBoYXMgYmVlbiByZWxlYXNlZCA3IGRheXMgYWdvKS4NCg0KDQpDaGVlcnMhDQpNeXVuZ0pv
-by4NCg0KLS0tLS0tLSBPcmlnaW5hbCBNZXNzYWdlIC0tLS0tLS0NClNlbmRlciA6IFN0ZXBoZW4g
-Um90aHdlbGw8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQpEYXRlIDogMjAxMi0wMy0wMSAxMTo1NiAo
-R01UKzA5OjAwKQ0KVGl0bGUgOiBsaW51eC1uZXh0OiBidWlsZCBmYWlsdXJlIGFmdGVyIG1lcmdl
-IG9mIHRoZSBjcHVmcmVxIHRyZWUNCg0KSGkgRGF2ZSwNCg0KQWZ0ZXIgbWVyZ2luZyB0aGUgY3B1
-ZnJlcSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKHg4Nl82NA0KYWxsbW9kY29uZmln
-KSBmYWlsZWQgbGlrZSB0aGlzOg0KDQpkcml2ZXJzL2NwdWZyZXEvY3B1ZnJlcV9vbmRlbWFuZC5j
-OiBJbiBmdW5jdGlvbiAnY3B1ZnJlcV9nb3ZfZGJzX2luaXQnOg0KZHJpdmVycy9jcHVmcmVxL2Nw
-dWZyZXFfb25kZW1hbmQuYzo4ODA6Mjg6IGVycm9yOiAnUE1fUU9TX0RWRlNfUkVTUE9OU0VfTEFU
-RU5DWScgdW5kZWNsYXJlZCAoZmlyc3QgdXNlIGluIHRoaXMgZnVuY3Rpb24pDQpkcml2ZXJzL2Nw
-dWZyZXEvY3B1ZnJlcV9vbmRlbWFuZC5jOiBJbiBmdW5jdGlvbiAnY3B1ZnJlcV9nb3ZfZGJzX2V4
-aXQnOg0KZHJpdmVycy9jcHVmcmVxL2NwdWZyZXFfb25kZW1hbmQuYzo4OTY6MjU6IGVycm9yOiAn
-UE1fUU9TX0RWRlNfUkVTUE9OU0VfTEFURU5DWScgdW5kZWNsYXJlZCAoZmlyc3QgdXNlIGluIHRo
-aXMgZnVuY3Rpb24pDQoNCkNhdXNlZCBieSBjb21taXQgNTAwZThjYTM5YzU2ICgiW0NQVUZSRVFd
-IG9uZGVtYW5kOiBoYW5kbGUgUW9TIHJlcXVlc3Qgb24NCkRWRlMgcmVzcG9uc2UgbGF0ZW5jeSIp
-Lg0KDQpJIGhhdmUgdXNlZCB0aGUgY3B1ZnJlcSB0cmVlIGZvbXIgbmV4dC0yMDEyMDIyOSBmb3Ig
-dG9kYXkuDQotLSANCkNoZWVycywNClN0ZXBoZW4gUm90aHdlbGwgICAgICAgICAgICAgICAgICAg
-IHNmckBjYW5iLmF1dWcub3JnLmF1DQpodHRwOi8vd3d3LmNhbmIuYXV1Zy5vcmcuYXUvfnNmci8N
-Cg0KDQoNCi0tDQpNeXVuZ0pvbyBIYW0gKMfUuO3B1iksIFBIRA0KU3lzdGVtIFMvVyBMYWIsIFMv
-VyBQbGF0Zm9ybSBUZWFtLCBTb2Z0d2FyZSBDZW50ZXINClNhbXN1bmcgRWxlY3Ryb25pY3MNCkNl
-bGw6ICs4Mi0xMC02NzE0LTI4NTg=
+T24gTW9uLCAyMDEyLTAzLTA1IGF0IDExOjQ1ICsxMTAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
+Og0KPiBIaSBUcm9uZCwNCj4gDQo+IEFmdGVyIG1lcmdpbmcgdGhlIG5mcyB0cmVlLCB0b2RheSdz
+IGxpbnV4LW5leHQgYnVpbGQNCj4gKHBvd2VycGNfcHBjNjRfZGVmY29uZmlnKSBmYWlsZWQgbGlr
+ZSB0aGlzOg0KPiANCj4gZnMvbmZzL2NhbGxiYWNrX3hkci5jOiBJbiBmdW5jdGlvbiAnZGVjb2Rl
+X3N0YXRlaWQnOg0KPiBmcy9uZnMvY2FsbGJhY2tfeGRyLmM6MTQ0OjE2OiBlcnJvcjogJ25mczRf
+c3RhdGVpZCcgaGFzIG5vIG1lbWJlciBuYW1lZCAnZGF0YScNCj4gDQo+IENhdXNlZCBieSBjb21t
+aXQgNGFmMmRiNmQ5NDgwICgiTkZTdjQ6IFNpbXBsaWZ5IHRoZSBzdHJ1Y3QgbmZzNF9zdGF0ZWlk
+IikuDQo+IA0KPiBJIGhhdmUgdXNlZCB0aGUgbmZzIHRyZWUgZnJvbSBuZXh0LTIwMTIwMzAyIGZv
+ciB0b2RheS4NCg0KSGkgU3RlcGhlbiwNCg0KVGhhbmtzISBUaGlzIGJ1ZyBzaG91bGQgbm93IGJl
+IGZpeGVkIHVwIGluIHRoZSBuZXcgY29tbWl0DQpkYzllYTg5MmJhYTEwZGY1MjMzN2M5ZDRlODMx
+NDZmZTk3OThjNWRmLg0KDQpDaGVlcnMNCiBUcm9uZA0KLS0gDQpUcm9uZCBNeWtsZWJ1c3QNCkxp
+bnV4IE5GUyBjbGllbnQgbWFpbnRhaW5lcg0KDQpOZXRBcHANClRyb25kLk15a2xlYnVzdEBuZXRh
+cHAuY29tDQp3d3cubmV0YXBwLmNvbQ0KDQo=
