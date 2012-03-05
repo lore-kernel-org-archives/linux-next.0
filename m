@@ -1,72 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: re-adding pcmcia and cpupowerutils trees
-Date: Mon, 5 Mar 2012 10:18:38 +1100
-Message-ID: <20120305101838.0ce778b0ed4f6b73a3d7da85@canb.auug.org.au>
-References: <20120120114016.995d4f1af74eee173bef79d9@canb.auug.org.au>
-	<20120303135457.GA6669@comet.dominikbrodowski.net>
+Subject: linux-next: build failure after merge of the nfs tree
+Date: Mon, 5 Mar 2012 11:45:13 +1100
+Message-ID: <20120305114513.547822059ca10e329c1bccb0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__5_Mar_2012_10_18_38_+1100_cGv+fwueh=08AWn3"
+ boundary="Signature=_Mon__5_Mar_2012_11_45_13_+1100_J7THJLyrDdTTkD.D"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48523 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:46315 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751216Ab2CDXSx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Mar 2012 18:18:53 -0500
-In-Reply-To: <20120303135457.GA6669@comet.dominikbrodowski.net>
+	with ESMTP id S1754964Ab2CEAp0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 4 Mar 2012 19:45:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-next@vger.kernel.org, Thomas Renninger <trenn@suse.de>, cpufreq@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__5_Mar_2012_10_18_38_+1100_cGv+fwueh=08AWn3
+--Signature=_Mon__5_Mar_2012_11_45_13_+1100_J7THJLyrDdTTkD.D
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dominik,
+Hi Trond,
 
-On Sat, 3 Mar 2012 14:54:58 +0100 Dominik Brodowski <linux@dominikbrodowski=
-.net> wrote:
->
-> as my kernel.org account has just been re-activated, it would be great if
-> you could re-activate the following trees in your list of trees to fetch =
-for
-> linux-next:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/brodo/pcmcia.git master
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/brodo/cpupowerutils.git mas=
-ter
+After merging the nfs tree, today's linux-next build
+(powerpc_ppc64_defconfig) failed like this:
 
-I have readded both those.  I had Thomas Renninger and the cpufreq
-mailing list (both cc'd) listed as contacts for the cpupowerutils tree
-previously and have now added you as well.  You are the sole contact for
-the pcmcia tree.  Please let me know of any changes to that.
+fs/nfs/callback_xdr.c: In function 'decode_stateid':
+fs/nfs/callback_xdr.c:144:16: error: 'nfs4_stateid' has no member named 'da=
+ta'
 
+Caused by commit 4af2db6d9480 ("NFSv4: Simplify the struct nfs4_stateid").
+
+I have used the nfs tree from next-20120302 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__5_Mar_2012_10_18_38_+1100_cGv+fwueh=08AWn3
+--Signature=_Mon__5_Mar_2012_11_45_13_+1100_J7THJLyrDdTTkD.D
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPU/hOAAoJEECxmPOUX5FEA3gP/R/CUKSljqZ5J8Y0ux4d5DjM
-NynR/lOHAyM0NmZJHbX/WTkiEsfFWWVtjae6cgb58HropQD9Jw+6FQYYpWOalxvu
-n0whu/MVMk5P/zb+ZGSnwKGNwasuOdQ8pqeHnQeI9FvSfXtMMvqN9+fdmTciiToL
-S2acKOuEcuGOsRd+duN8MKrTTxXZ49bbn5sRwXX9sKhpLBmD0IJyXEwgwOT/cpm/
-6IhbXuwXOE0XsvU/H+97r1kkXaYGNWjpbGO+1pKbiDXv28rGeKpobgDLuV79zrz9
-AXZO3KV2CL8hb332PnkTxw1K/yee2cOZxajPV3D40oVpPFa5CW2QGcGNjDeeJUE8
-pCGPOVtRquhKnC4OTlJemqvsTOlNhjNZcSkLj4x8kcYd9/XPeD8dM1ArrDdKCEY3
-lMZIV3JiHLxUvhj/UEpkk+vGLRezt4ILuXTYjWO9xkrWeIk6zfAY/x3YNvz/jus3
-B1wHO3AJ0M2XRTIq1wBMeJ02OIXHZ7EI7SyRROB4T3oRQYxu0l7JfgLjBD66IcRT
-THPhpBBpHA+aGWh7aE5BG8sVogYYWa+hjuu+ZBqfbXRyh/62Q3zDEvbXFVmU/5VR
-5mc9x9daEgXBTofFzq91XdyBaUxkTFWTS4j2E0JJAVy36c3Y93ZzOrU2rbKHae5i
-Z15kpbovwtqgY9EoMl0F
-=IPQO
+iQIcBAEBCAAGBQJPVAyZAAoJEECxmPOUX5FEJ08P/RUOHX6v+ZbK4aemqs/TYLjc
+GjdJ5BpotRUbaAoYkT+mu77QklYd6imlUF0XI9p40RQRW6MApZSLEcTbCPHhYVfq
+AlK+aX4hAy/r1Y9RgkTsxTnPflDEh9AwjdzI75Tc1xsuQsAuotTUKarFD+YWETxm
+tYYGTRAGXPWDmh+/Zp/7Le4dHe9qqX0V8D1rAzD29bgXbIb7BQEcEV6NorIBSj2o
+6g1QMp5KBA2q1ip9o/B3jT1Yz7CXELlLApb5vNuLUporwg8lsQ6VQ7L+FrEhGGn7
+keKv4+eqC7jiX3OgXgYqWkpGkJU5ipqtYY1vAAEPzpHifTg0CfzxIiWaBJ6bdr7K
+MbYbABUuCgznj66ljnnpx6TkyDOVImGXkfw9QoZtoqvk5C3XwD5jY0Ag6TmeGku4
+N+TcrEmasCR5vno/OnnAZU9dB6PUCwpoOag8iEnwFndSLijXbO+4zHgG8E0HQEbf
+x7FH1jEWVNgbWfr6wgKmh3/UUjjxr0NHx5hdjBecG0x9+TUOyaqZHDRI69gzma/c
+XyzECiqi53YEfj7a54dUoFNjYHmozwMNTrUnJEXu7COwiA2TH3gOy/qOZUXedJMo
+kejd5cuCpFQcDpYEaL4qF3Lwa/jgLx5rl6Sdp11/V+0Hx+bg4szHriLNGpJF+0NN
+OkGKK8PuPyFHn49YNjoL
+=q9pW
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__5_Mar_2012_10_18_38_+1100_cGv+fwueh=08AWn3--
+--Signature=_Mon__5_Mar_2012_11_45_13_+1100_J7THJLyrDdTTkD.D--
