@@ -1,69 +1,47 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: "usb: gadget: pch_udc: Detecting VBUS through GPIO with
- interrupt" breaks sparc
-Date: Mon, 5 Mar 2012 08:43:08 -0800
-Message-ID: <20120305164308.GE2459@kroah.com>
-References: <4F51432C.8020204@windriver.com>
- <20120303104142.9615e7a2d9330a5443e0e027@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Mar 5 (of/irqs)
+Date: Mon, 05 Mar 2012 09:45:32 -0800
+Message-ID: <4F54FBBC.5060809@xenotime.net>
+References: <20120305181024.d396adb4fefdf6d269657606@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:46907 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757028Ab2CEQxp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Mar 2012 11:53:45 -0500
-Received: by mail-pw0-f46.google.com with SMTP id un15so2970293pbc.19
-        for <linux-next@vger.kernel.org>; Mon, 05 Mar 2012 08:53:45 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <20120303104142.9615e7a2d9330a5443e0e027@canb.auug.org.au>
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:45798 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1757213Ab2CERpW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Mar 2012 12:45:22 -0500
+In-Reply-To: <20120305181024.d396adb4fefdf6d269657606@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, tomoya.rohm@gmail.com
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>
 
-On Sat, Mar 03, 2012 at 10:41:42AM +1100, Stephen Rothwell wrote:
-> [Just cc'ing Greg as this commit is in the usb tree]
+On 03/04/2012 11:10 PM, Stephen Rothwell wrote:
+
+> Hi all,
 > 
-> On Fri, 2 Mar 2012 17:01:16 -0500 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
-> >
-> > This commit:
-> > 
-> > ---------------
-> > commit 637b78eb31e0b167ed913f1750bb645dfeda38f0
-> > Author: Tomoya MORINAGA <tomoya.rohm@gmail.com>
-> > Date:   Fri Feb 3 16:14:18 2012 +0900
-> > 
-> >     usb: gadget: pch_udc: Detecting VBUS through GPIO with interrupt
-> >     
-> >     Problem:
-> >      pch_udc continues operation even if VBUS becomes Low.
-> >      pch_udc performs D+ pulling up before VBUS becomes High.
-> >      USB device should be controlled according to VBUS state.
-> >     
-> >     Root cause:
-> >      The current pch_udc is not always monitoring VBUS.
-> >     
-> >     Solution:
-> >      The change of VBUS is detected using an interrupt of GPIO.
-> >      If VBUS became Low, pch_udc handles 'disconnect'.
-> >      After VBUS became High, a pull improves D+, and pch_udc
-> >      handles 'connect'.
-> >     
-> >     [ balbi@ti.com : make it actually compile ]
-> >     
-> >     Signed-off-by: Tomoya MORINAGA <tomoya.rohm@gmail.com>
-> >     Signed-off-by: Felipe Balbi <balbi@ti.com>
-> > ---------------
-> > 
-> > breaks the sparc builds in next:
-> > 
-> > http://kisskb.ellerman.id.au/kisskb/buildresult/5771890/
-> > http://kisskb.ellerman.id.au/kisskb/buildresult/5771905/
-
-Ick, not good.
-
-Tomoya, can you please send me a patch to fix this?  Felipe is off-line
-for a few days and can't do this himself.
+> Changes since 20120302:
 
 
-greg k-h
+
+Still have both of these build errors (on i386/X86_32;
+2 different builds):
+
+
+drivers/mfd/twl-core.c:1262:2: error: implicit declaration of function 'irq_alloc_descs'
+drivers/mfd/twl-core.c:1357:3: error: implicit declaration of function 'of_platform_populate'
+
+
+and:
+
+drivers/gpio/gpio-sodaville.c:130:2: error: unknown field 'dt_translate' specified in initializer
+drivers/gpio/gpio-sodaville.c:130:2: warning: initialization from incompatible pointer type
+drivers/gpio/gpio-sodaville.c:152:8: error: 'struct irq_domain' has no member named 'irq_base'
+drivers/gpio/gpio-sodaville.c:182:2: error: implicit declaration of function 'irq_domain_add'
+drivers/gpio/gpio-sodaville.c:263:2: error: implicit declaration of function 'irq_domain_del'
+
+
+
+
+~Randy
