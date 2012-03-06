@@ -1,75 +1,59 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: lib/string.h build failure in linux-next
-Date: Tue, 6 Mar 2012 14:55:40 -0500
-Message-ID: <CAP=VYLpwBth3YyHQ17Gs_GbfQHBWfcJO+VHLNnD=oBXgtCK0wQ@mail.gmail.com>
-References: <1331048540.17099.9.camel@deneb.redhat.com>
-	<201203061602.23512.arnd@arndb.de>
-	<1331050578.17099.13.camel@deneb.redhat.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ARM: pxa: fix regulator related build fail in
+ magician_defconfig
+Date: Tue, 6 Mar 2012 20:01:57 +0000
+Message-ID: <20120306200156.GA19635@opensource.wolfsonmicro.com>
+References: <1331063203-21188-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <1331050578.17099.13.camel@deneb.redhat.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Mark Salter <msalter@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mFM6r0jQWo48NPCK"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:55860 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S965199Ab2CFUB6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 15:01:58 -0500
+Content-Disposition: inline
+In-Reply-To: <1331063203-21188-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: haojian.zhuang@gmail.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
 
-On Tue, Mar 6, 2012 at 11:16 AM, Mark Salter <msalter@redhat.com> wrote=
-:
-> On Tue, 2012-03-06 at 16:02 +0000, Arnd Bergmann wrote:
->> On Tuesday 06 March 2012, Mark Salter wrote:
->> > I'm seeing a build failure in lib/string.h in linux-next:
->> >
->> > /es/linux/linux-next/lib/string.c: In function 'strlcat':
->> > /es/linux/linux-next/lib/string.c:225:2: error: implicit declarati=
-on of function 'printk'
->> > /es/linux/linux-next/lib/string.c:225:2: error: implicit declarati=
-on of function 'panic'
->> >
->> > Commit e2950c2b6ecb928bfd3a13dd237df1f29f712704 removed an include=
- of
->> > linux/module.h which triggered the problem for arch/c6x and probab=
-ly
->> > other architectures using the asm-generic BUG macro.
->> >
->> > I think this needs fixing in asm-generic/bug.h which should includ=
-e
->> > linux/kernel.h for panic and linux/printk.h for printk.
->>
->> I think you cannot do that as long as linux/kernel.h includes asm/bu=
-g.h,
->> or you will get a lot of other build failures.
->
-> It didn't for my build, but to tell the truth, I really wasn't too ke=
-en
-> on adding an include of kernel.h to asm/bug.h since kernel.h pulls in=
- so
-> much other stuff.
->
->>
->> The safer option is probably to add the two missing headers separate=
-ly
->> to string.c.
->
-> Okay, I can put together a patch that does that.
 
-I can deal with this, since it is interaction between my bug commits an=
-d my
-module commits that trigger it.  Can you tell me what config you are us=
-ing, so
-I can double check I have it sorted properly?
+--mFM6r0jQWo48NPCK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks.
-Paul.
+On Tue, Mar 06, 2012 at 02:46:43PM -0500, Paul Gortmaker wrote:
 
->
-> --Mark
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at =A0http://www.tux.org/lkml/
+>  static struct regulator_consumer_supply bq24022_consumers[] = {
+>  	{
+> -		.dev = &gpio_vbus.dev,
+>  		.supply = "vbus_draw",
+
+No, this isn't a good fix - it will break the user.  You need to replace
+dev with the equivalent dev_name.
+
+--mFM6r0jQWo48NPCK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPVm0tAAoJEBus8iNuMP3dbZ8P/13ICZmy0FV8/Cv14DZyOvhg
+A6yZtZWXsyhO73AFC3+rajr2vYen4lx1mCd8S96AWANd8N7LZFd7e85QPFuIx6z5
+yevuxfwyvcvlF5K+DsfnD/FNj3TeXU+Qb4xkcrgo0JGvPwncULPBigXfJkRoIMZf
+8Afn7pjvMWJtmXmX5jXZbVxhL7H0kZYQy0UQtU7YNj7qoDT9Uwn7fD0TzlwHl3En
+AKF/pL7yg2mcvV1Zowuc7//4uXoEG1I5wGgmUNcx5uLTenHcHpbFDH7MX9e4MVmv
+mpEBkC4RbSqY/X5pySzYWnGut8hxKmixy5YfMHUtmGelxmMvrk6ERmNfIbG+xCk7
+/8mJe3WZrh20VfkfUgdxmwGuJ9gLgnSMeErES1vmHO2iF6rhHoDrF2JTC1N0yYsZ
+/SkJfVgOcXP5J0pTUaXw1dYoSskSTWteZ8tlLor9Ku/y0tUX+hjjjR6FH8sQYuRA
+xAvTetKc+2IV5qvNOqf30XyH43r1BdJWVj1/aUL7JABMKy4ZVF1AqyvTHlTVU6Gl
+m/3nuYXWRLuH3j6kd4l+kw6xb2AyziZGoR4uteVisuuGgpQDSD0iYVeCwWKXQLts
+/Av7LQ+aQuHtzYHHvoerWWUHeK+hemDSqyc5oLz+cJn6ZCry41iQyIvhSzfKAnZp
+S2ejQO3Agi6CXJfXLlAL
+=mTHg
+-----END PGP SIGNATURE-----
+
+--mFM6r0jQWo48NPCK--
