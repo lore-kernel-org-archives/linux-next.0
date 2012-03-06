@@ -1,44 +1,27 @@
-From: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-Subject: Re: nommu build failure in linux-next
-Date: Tue, 6 Mar 2012 20:49:57 +0530
-Message-ID: <CAAHN_R2++cosPPdEsO=7ztfKJt9+Fi+iTje6o34EVvZ9kD1EtQ@mail.gmail.com>
-References: <1331045377.17099.2.camel@deneb.redhat.com>
+From: Mark Salter <msalter@redhat.com>
+Subject: lib/string.h build failure in linux-next
+Date: Tue, 06 Mar 2012 10:42:18 -0500
+Message-ID: <1331048540.17099.9.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:38128 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965153Ab2CFPT6 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 10:19:58 -0500
-In-Reply-To: <1331045377.17099.2.camel@deneb.redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Salter <msalter@redhat.com>
-Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+Sender: linux-arch-owner@vger.kernel.org
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Cc: linux-next <linux-next@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 6, 2012 at 8:19 PM, Mark Salter <msalter@redhat.com> wrote:
-> commit b7b2a0afacada237005068294cb0ccc49d32889e
-> Author: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-> Date: =A0 Tue Mar 6 11:17:12 2012 +1100
->
-> =A0 =A0procfs: mark thread stack correctly in proc/<pid>/maps
->
->
-> This patch still breaks nommu builds. The previous syntax issue has b=
-een
-> resolved, but now I see a link error:
->
-> fs/built-in.o: In function `nommu_vma_show':
-> task_nommu.c:(.text+0x564a0): undefined reference to `vm_is_stack'
-> make[1]: *** [.tmp_vmlinux1] Error 1
->
+I'm seeing a build failure in lib/string.h in linux-next:
 
-The function is defined in mm/memory.c and I realized now that it is
-not built when !CONFIG_MMU. There needs to be a copy of these
-functions in nommu.c as well. I'll test the build and send a patch.
+/es/linux/linux-next/lib/string.c: In function 'strlcat':
+/es/linux/linux-next/lib/string.c:225:2: error: implicit declaration of function 'printk'
+/es/linux/linux-next/lib/string.c:225:2: error: implicit declaration of function 'panic'
 
+Commit e2950c2b6ecb928bfd3a13dd237df1f29f712704 removed an include of
+linux/module.h which triggered the problem for arch/c6x and probably
+other architectures using the asm-generic BUG macro.
 
---=20
-Siddhesh Poyarekar
-http://siddhesh.in
+I think this needs fixing in asm-generic/bug.h which should include
+linux/kernel.h for panic and linux/printk.h for printk.
+
+--Mark
