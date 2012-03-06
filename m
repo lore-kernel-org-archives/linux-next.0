@@ -1,30 +1,32 @@
-From: Mark Salter <msalter@redhat.com>
-Subject: nommu build failure in linux-next
-Date: Tue, 06 Mar 2012 09:49:36 -0500
-Message-ID: <1331045377.17099.2.camel@deneb.redhat.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: manual merge of the moduleh tree with the usb tree
+Date: Tue, 6 Mar 2012 09:56:51 -0500
+Message-ID: <4F5625B3.9020400@windriver.com>
+References: <20120306165053.c42cdb7ff8e6772a0a8ebbd5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:41243 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759273Ab2CFOti (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Mar 2012 09:49:38 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: siddhesh.poyarekar@gmail.com
-Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120306165053.c42cdb7ff8e6772a0a8ebbd5@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
+List-Id: linux-next.vger.kernel.org
 
-commit b7b2a0afacada237005068294cb0ccc49d32889e
-Author: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-Date:   Tue Mar 6 11:17:12 2012 +1100
+On 12-03-06 12:50 AM, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> Today's linux-next merge of the moduleh tree got a conflict in
+> drivers/usb/dwc3/dwc3-omap.c between commit 45b3cd4ad79b ("usb: dwc3:
+> omap: convert pdata to of property") from the usb tree and commit
+> 13ae246db4a0 ("includecheck: delete any duplicate instances of module.h")
+> from the moduleh tree.
+> 
+> Just context changes.  I fixed it up and can carry the fix as necessary.
 
-    procfs: mark thread stack correctly in proc/<pid>/maps
+Thanks Stephen,
 
+I had a look and the instance being deleted is really the right
+one to delete, so this conflict will have to stay carried it seems.
 
-This patch still breaks nommu builds. The previous syntax issue has been
-resolved, but now I see a link error:
-
-fs/built-in.o: In function `nommu_vma_show':
-task_nommu.c:(.text+0x564a0): undefined reference to `vm_is_stack'
-make[1]: *** [.tmp_vmlinux1] Error 1
+Paul.
