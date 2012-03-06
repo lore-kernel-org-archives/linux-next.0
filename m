@@ -1,101 +1,54 @@
 From: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-Subject: [PATCH 1/2] mm: Fix task_nommu build regression in linux-next
-Date: Wed,  7 Mar 2012 01:46:33 +0530
-Message-ID: <1331064994-6693-1-git-send-email-siddhesh.poyarekar@gmail.com>
+Subject: [PATCH 2/2] mm/linux-next: Fix rcu locking in vm_is_stack
+Date: Wed,  7 Mar 2012 01:46:34 +0530
+Message-ID: <1331064994-6693-2-git-send-email-siddhesh.poyarekar@gmail.com>
 References: <1331045377.17099.2.camel@deneb.redhat.com>
+ <1331064994-6693-1-git-send-email-siddhesh.poyarekar@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1331045377.17099.2.camel@deneb.redhat.com>
+In-Reply-To: <1331064994-6693-1-git-send-email-siddhesh.poyarekar@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mark Salter <msalter@redhat.com>
 Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Oleg Nesterov <oleg@redhat.com>, Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Commit b7b2a0afacada237005068294cb0ccc49d32889e resulted in a build
-failure for nommu builds:
-
-fs/built-in.o: In function `nommu_vma_show':
-task_nommu.c:(.text+0x564a0): undefined reference to `vm_is_stack'
-make[1]: *** [.tmp_vmlinux1] Error 1
-
-Fix is to provide definitions of vm_is_stack() and
-vm_is_stack_for_task() for nommu as well. This patch also adds an
-explicit include of sched.h based on observations and patch submission
-by Paul Gortmaker <paul.gortmaker@windriver.com>:
-
-https://lkml.org/lkml/2012/3/5/326
+Take rcu read lock before we do anything at all with the threadgroup
+list. Also use list_first_entry_rcu to safely get the reference to the
+first task in the list.
 
 Signed-off-by: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
 ---
- mm/memory.c |    1 +
- mm/nommu.c  |   40 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 41 insertions(+), 0 deletions(-)
+ mm/memory.c |   12 +++++++-----
+ 1 files changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/mm/memory.c b/mm/memory.c
-index 2533d9f..0ca7fe6 100644
+index 0ca7fe6..1d5830c 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -57,6 +57,7 @@
- #include <linux/swapops.h>
- #include <linux/elf.h>
- #include <linux/gfp.h>
-+#include <linux/sched.h>
+@@ -3932,18 +3932,20 @@ pid_t vm_is_stack(struct task_struct *task,
+ 		return task->pid;
  
- #include <asm/io.h>
- #include <asm/pgalloc.h>
-diff --git a/mm/nommu.c b/mm/nommu.c
-index b982290..5a5c3fc 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -29,6 +29,7 @@
- #include <linux/security.h>
- #include <linux/syscalls.h>
- #include <linux/audit.h>
-+#include <linux/sched.h>
- 
- #include <asm/uaccess.h>
- #include <asm/tlb.h>
-@@ -2089,3 +2090,42 @@ int nommu_shrink_inode_mappings(struct inode *inode, size_t size,
- 	up_write(&nommu_region_sem);
- 	return 0;
- }
-+
-+/* Check if the vma is being used as a stack by this task */
-+static int vm_is_stack_for_task(struct task_struct *t,
-+				struct vm_area_struct *vma)
-+{
-+	return (vma->vm_start <= KSTK_ESP(t) && vma->vm_end >= KSTK_ESP(t));
-+}
-+
-+/*
-+ * Check if the vma is being used as a stack.
-+ * If is_group is non-zero, check in the entire thread group or else
-+ * just check in the current task. Returns the pid of the task that
-+ * the vma is stack for.
-+ */
-+pid_t vm_is_stack(struct task_struct *task,
-+		  struct vm_area_struct *vma, int in_group)
-+{
-+	pid_t ret = 0;
-+
-+	if (vm_is_stack_for_task(task, vma))
-+		return task->pid;
-+
-+	if (in_group) {
+ 	if (in_group) {
+-		struct task_struct *t = task;
 +		struct task_struct *t;
-+		rcu_read_lock();
+ 		rcu_read_lock();
+-		while_each_thread(task, t) {
 +		t = list_first_entry_rcu(&task->thread_group,
 +					 struct task_struct, thread_group);
 +		do {
-+			if (vm_is_stack_for_task(t, vma)) {
-+				ret = t->pid;
-+				goto done;
-+			}
+ 			if (vm_is_stack_for_task(t, vma)) {
+ 				ret = t->pid;
+ 				goto done;
+ 			}
+-		}
 +		} while_each_thread(task, t);
 +done:
 +		rcu_read_unlock();
-+	}
-+
-+	return ret;
-+}
+ 	}
+ 
+-done:
+-	rcu_read_unlock();
+ 	return ret;
+ }
+ 
 -- 
 1.7.7.4
