@@ -1,65 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the kvm tree
-Date: Tue, 6 Mar 2012 15:53:32 +1100
-Message-ID: <20120306155332.42d5094876089c8b7bb36bb0@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the usb tree
+Date: Tue, 6 Mar 2012 16:50:53 +1100
+Message-ID: <20120306165053.c42cdb7ff8e6772a0a8ebbd5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__6_Mar_2012_15_53_32_+1100_T12f_9UMn8.X62m."
+ boundary="Signature=_Tue__6_Mar_2012_16_50_53_+1100_bVMR93QPV.7OSj/7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43616 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:59869 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030363Ab2CFExm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Mar 2012 23:53:42 -0500
+	with ESMTP id S1751672Ab2CFFvF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 00:51:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Ellerman <michael@ellerman.id.au>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
 
---Signature=_Tue__6_Mar_2012_15_53_32_+1100_T12f_9UMn8.X62m.
+--Signature=_Tue__6_Mar_2012_16_50_53_+1100_bVMR93QPV.7OSj/7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Paul,
 
-After merging the kvm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the moduleh tree got a conflict in
+drivers/usb/dwc3/dwc3-omap.c between commit 45b3cd4ad79b ("usb: dwc3:
+omap: convert pdata to of property") from the usb tree and commit
+13ae246db4a0 ("includecheck: delete any duplicate instances of module.h")
+from the moduleh tree.
 
-include/linux/kvm_host.h:813:13: error: 'kvm_vcpu_compatible' defined but n=
-ot used [-Werror=3Dunused-function]
-cc1: all warnings being treated as errors
-
-Caused by commit ab0bd7dfdaa5 ("KVM: Ensure all vcpus are consistent with
-in-kernel irqchip settings").
-
-This function presumably need to be "static inline bool" in the !
-CONFIG_KVM_APIC_ARCHITECTURE case.
-
-I have used the kvm tree from next-20120305 for today.
+Just context changes.  I fixed it up and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__6_Mar_2012_15_53_32_+1100_T12f_9UMn8.X62m.
+--Signature=_Tue__6_Mar_2012_16_50_53_+1100_bVMR93QPV.7OSj/7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPVZhMAAoJEECxmPOUX5FEnRsP/jWmgxiplN8ECqvV7WjRvA0N
-j6TU+RJaYe9Pde22C7plJyWjR45NMk7tUwwcEEXJnMo+U/HCQ7EoV6/LGgjiY7+s
-CIDOSQyUtsiXgGxsQYxTtd8Gfj0Ak0n9m70XicIQsmtcBj1xF14NkNC+/+MRTxb2
-VE33YSyfC7iIYxgrQfEqXl0F8DGroHmr2z/wdj0iH5jueunwf/roPJ4QUsy4Zuab
-ooZ19rtZBZSKdzo8DH2fZFJfPS+ERNsIq4R0eftHTIgSr3eALS0waY7vGd0ipXpL
-ddzQqKPoyhHscPTraKzSo1US6oy1KQHkV5cWC28UXfSWwae5yV80VsdXRoyM13c4
-3WPL60XIIdXJnEDTFdtFuR5doSqiam7/plc68QhI5ha8MFR4INwKmV+plEftfsMs
-JqWXyCTR6laX1UAhk0AzBzXo28FYew6qQzvdgxVnNFGaM9eb1brWyZTYZp6ZqjrR
-0eRcva7M9zz3VDNvFTIQflQ6kGh/o7feNa08ZzKIPNmLOQkP5QJIkX6RM/JJBz8g
-MQTRd4vt087EQ8/J8bthWs5uBg7wcT+lxpNxpRdNSucWy59B4HUmt+8LahwvM+hc
-rQmnzwMMooKRgoARDK3EVmPM+uk9QZxyOU5pKaUMVh9vPbwPWvlG6pcqXqgRoW9q
-6z2KB6ExMimfLf9cfmge
-=KyEH
+iQIcBAEBCAAGBQJPVaW9AAoJEECxmPOUX5FEBoUQAJrAQ3BH/Iop3nmyO4VubOWw
+ErkDGQe82FzEd8hn/a5Nb/Bi3jZ4zcipsy2hw4UrC/L5EVzSvifD+P20FCBUTQgF
+/Tghm3Z34F402kucz/5Rsapy6VIoJjp46O7Sp8MTafV8ejda3M18qnIte8xloYyu
+VG4EK2u6DXVg5x/7nAvlzJVijhaaRw1V7Pwy/POoroiiWlm7rwSEYKkSIWEZUm8G
+XzpZ65dzFAELD6UIGNWSCVEJq0euLRbda/YSnkZfqR4amP6CU4I/B/KTX2oOXiB4
+ecOyxoJ2GuxonwlebedF39VSA+i1OK+niGSPZUvJGrlNd7tgdRjxhrYwueDsk3yb
+kYZdzP2E83x/mkKOUKCvLMxDzpthPsTDttUR23hnI4/tOlIQ8bb0II6u9+VvyEFC
+A5s/929AHaPjIa3SQQocKwP2qo0ovCii5zwF8JfBPINzlCT6xdEReKMJgy4uDx7v
+Wxgi982goDFkdQlz38x4AuMxx+MjlBYezXnPf3Y6DSmZqC7te25tx4GYNG+pqmE5
+vMSWbWdpYVI7FT8oKMltPAw9aE/ATpXsdWWZ5h9UI4/hsIW9M0t/9QQHNeF4XDti
+o6DicaJCTE+W1sRwpGXv6/33QpeDIuxSSs4b85QyDxWahrVkzB0i/X3zXF0UzYZD
+bKAqttNGncURfbwkq5/B
+=zBbn
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__6_Mar_2012_15_53_32_+1100_T12f_9UMn8.X62m.--
+--Signature=_Tue__6_Mar_2012_16_50_53_+1100_bVMR93QPV.7OSj/7--
