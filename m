@@ -1,55 +1,38 @@
-From: Haojian Zhuang <haojian.zhuang@gmail.com>
-Subject: Re: [PATCH] ARM: pxa: fix build failure for regulator consumer in em-x270.c
-Date: Tue, 6 Mar 2012 17:12:18 +0800
-Message-ID: <CAN1soZxdT=N1BtK5Jf4+Qu3GGCHPuKK1BqgfEV-D7QorjnsLpg@mail.gmail.com>
-References: <1330989122-6323-1-git-send-email-paul.gortmaker@windriver.com>
-	<4F55CEDB.90909@compulab.co.il>
+From: Avi Kivity <avi@redhat.com>
+Subject: Re: linux-next: build failure after merge of the kvm tree
+Date: Tue, 06 Mar 2012 12:34:23 +0200
+Message-ID: <4F55E82F.5020008@redhat.com>
+References: <20120306155332.42d5094876089c8b7bb36bb0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:47023 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751173Ab2CFJMT convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 04:12:19 -0500
-Received: by vbbff1 with SMTP id ff1so4266428vbb.19
-        for <linux-next@vger.kernel.org>; Tue, 06 Mar 2012 01:12:19 -0800 (PST)
-In-Reply-To: <4F55CEDB.90909@compulab.co.il>
+Received: from mx1.redhat.com ([209.132.183.28]:61605 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S964997Ab2CFKem (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Mar 2012 05:34:42 -0500
+In-Reply-To: <20120306155332.42d5094876089c8b7bb36bb0@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Igor Grinberg <grinberg@compulab.co.il>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Haojian Zhuang <haojian.zhuang@marvell.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Marcelo Tosatti <mtosatti@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Ellerman <michael@ellerman.id.au>
 
-On Tue, Mar 6, 2012 at 4:46 PM, Igor Grinberg <grinberg@compulab.co.il>=
- wrote:
-> Also Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
+On 03/06/2012 06:53 AM, Stephen Rothwell wrote:
+> Hi all,
 >
-> On 03/06/12 01:12, Paul Gortmaker wrote:
->> Commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
->>
->> =A0 "regulator: Remove support for supplies specified by struct devi=
-ce"
->>
->> caused this file to break, since it was still relying on the
->> device field to be present. =A0Strip them out here too.
->>
->> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
->> CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> After merging the kvm tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 >
-> You've missed the scissors line:
-> ---
+> include/linux/kvm_host.h:813:13: error: 'kvm_vcpu_compatible' defined but not used [-Werror=unused-function]
+> cc1: all warnings being treated as errors
 >
-> The patch itself:
+> Caused by commit ab0bd7dfdaa5 ("KVM: Ensure all vcpus are consistent with
+> in-kernel irqchip settings").
 >
-> Acked-by: Igor Grinberg <grinberg@compulab.co.il>
->
-> Thanks
->
+> This function presumably need to be "static inline bool" in the !
+> CONFIG_KVM_APIC_ARCHITECTURE case.
 
-Mark,
+Thanks for the report; fixed.
 
-Could you pick up this patch since it's depend on latest change on regu=
-lator?
-
-Best Regards
-Haojian
+-- 
+error compiling committee.c: too many arguments to function
