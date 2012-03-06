@@ -1,84 +1,36 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] ARM: fix lcd power build failure in collie_defconfig
-Date: Tue,  6 Mar 2012 11:31:42 -0500
-Message-ID: <1331051502-22361-1-git-send-email-paul.gortmaker@windriver.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: [PATCH 0/5] MFD: Reverting twl6040 patches going for 3.4
+Date: Tue, 6 Mar 2012 18:42:13 +0100
+Message-ID: <20120306174213.GY9008@sortiz-mobl>
+References: <1331037316-7375-1-git-send-email-peter.ujfalusi@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:41668 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755294Ab2CFQcQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 11:32:16 -0500
+Received: from mga09.intel.com ([134.134.136.24]:26858 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755640Ab2CFRm2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Mar 2012 12:42:28 -0500
+Content-Disposition: inline
+In-Reply-To: <1331037316-7375-1-git-send-email-peter.ujfalusi@ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux@arm.linux.org.uk
-Cc: rpurdie@rpsys.net, FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>, Liam Girdwood <lrg@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-next@vger.kernel.org, paul.gortmaker@windriver.com
 
-Commit 086ada54abaa4316e8603f02410fe8ebc9ba2de1 (linux-next)
+Hi Peter,
 
-  "FB: sa1100: remove global sa1100fb_.*_power function pointers"
+On Tue, Mar 06, 2012 at 02:35:11PM +0200, Peter Ujfalusi wrote:
+> Hello Samuel,
+> 
+> this series reverts the twl6040 related patches aimed for 3.4 merge window from
+> MFD for-next branch.
+> As we already discussed the relevant patches will be going through audio since
+> we have some dependencies going via that route.
+I removed all 5 patches from my for-next branch.
 
-got rid of all instances but one in locomolcd.c -- which was
-conditional on CONFIG_SA1100_COLLIE.  The associated .power
-field which replaces the global is populated in mach-sa1100/collie.c
-so move the assignment there, but make it conditional on the
-locomolcd support, so use CONFIG_BACKLIGHT_LOCOMO in that file.
+Cheers,
+Samuel.
 
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-
-diff --git a/arch/arm/mach-sa1100/collie.c b/arch/arm/mach-sa1100/collie.c
-index 48885b7..c7f418b 100644
---- a/arch/arm/mach-sa1100/collie.c
-+++ b/arch/arm/mach-sa1100/collie.c
-@@ -313,6 +313,10 @@ static struct sa1100fb_mach_info collie_lcd_info = {
- 
- 	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
- 	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
-+
-+#ifdef CONFIG_BACKLIGHT_LOCOMO
-+	.lcd_power	= locomolcd_power
-+#endif
- };
- 
- static void __init collie_init(void)
-diff --git a/arch/arm/mach-sa1100/include/mach/collie.h b/arch/arm/mach-sa1100/include/mach/collie.h
-index 52acda7..f33679d 100644
---- a/arch/arm/mach-sa1100/include/mach/collie.h
-+++ b/arch/arm/mach-sa1100/include/mach/collie.h
-@@ -1,7 +1,7 @@
- /*
-  * arch/arm/mach-sa1100/include/mach/collie.h
-  *
-- * This file contains the hardware specific definitions for Assabet
-+ * This file contains the hardware specific definitions for Collie
-  * Only include this file from SA1100-specific files.
-  *
-  * ChangeLog:
-@@ -13,6 +13,7 @@
- #ifndef __ASM_ARCH_COLLIE_H
- #define __ASM_ARCH_COLLIE_H
- 
-+extern void locomolcd_power(int on);
- 
- #define COLLIE_SCOOP_GPIO_BASE	(GPIO_MAX + 1)
- #define COLLIE_GPIO_CHARGE_ON	(COLLIE_SCOOP_GPIO_BASE + 0)
-diff --git a/drivers/video/backlight/locomolcd.c b/drivers/video/backlight/locomolcd.c
-index be20b5c..3a6d541 100644
---- a/drivers/video/backlight/locomolcd.c
-+++ b/drivers/video/backlight/locomolcd.c
-@@ -229,14 +229,7 @@ static struct locomo_driver poodle_lcd_driver = {
- 
- static int __init locomolcd_init(void)
- {
--	int ret = locomo_driver_register(&poodle_lcd_driver);
--	if (ret)
--		return ret;
--
--#ifdef CONFIG_SA1100_COLLIE
--	sa1100fb_lcd_power = locomolcd_power;
--#endif
--	return 0;
-+	return locomo_driver_register(&poodle_lcd_driver);
- }
- 
- static void __exit locomolcd_exit(void)
 -- 
-1.7.9.1
+Intel Open Source Technology Centre
+http://oss.intel.com/
