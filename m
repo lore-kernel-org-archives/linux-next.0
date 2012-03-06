@@ -1,59 +1,118 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ARM: pxa: fix regulator related build fail in
- magician_defconfig
-Date: Tue, 6 Mar 2012 20:01:57 +0000
-Message-ID: <20120306200156.GA19635@opensource.wolfsonmicro.com>
-References: <1331063203-21188-1-git-send-email-paul.gortmaker@windriver.com>
+From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH] staging:iio: Fix compile error without CONFIG_DEBUG_FS
+Date: Tue, 06 Mar 2012 12:03:06 -0800
+Message-ID: <4F566D7A.1030400@xenotime.net>
+References: <4F565CB0.8070301@xenotime.net> <1331063025-25242-1-git-send-email-lars@metafoo.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mFM6r0jQWo48NPCK"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:55860 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965199Ab2CFUB6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 15:01:58 -0500
-Content-Disposition: inline
-In-Reply-To: <1331063203-21188-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: haojian.zhuang@gmail.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1331063025-25242-1-git-send-email-lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
+
+On 03/06/2012 11:43 AM, Lars-Peter Clausen wrote:
+
+> commit e553f182d ("staging: iio: core: Introduce debugfs support, add support
+> for direct register access") added a '#if defined(CONFIG_DEBUG_FS)' around
+> iio_read_channel_ext_info and iio_write_channel_ext_info causing the following
+> compile error if CONFIG_DEBUG_FS is not defined.
+> 
+> 	drivers/staging/iio/industrialio-core.c:621:11: error: 'iio_read_channel_ext_info' undeclared (first use in this function)
+> 	drivers/staging/iio/industrialio-core.c:623:11: error: 'iio_write_channel_ext_info' undeclared (first use in this function)
+> 
+> This patch fixes the issue by moving the functions out of the '#if
+> defined(CONFIG_DEBUG_FS)' section again.
+> 
+> Reported-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+> Signed-off-by: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
 
 
---mFM6r0jQWo48NPCK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Acked-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
 
-On Tue, Mar 06, 2012 at 02:46:43PM -0500, Paul Gortmaker wrote:
+Thanks.
 
->  static struct regulator_consumer_supply bq24022_consumers[] = {
->  	{
-> -		.dev = &gpio_vbus.dev,
->  		.supply = "vbus_draw",
 
-No, this isn't a good fix - it will break the user.  You need to replace
-dev with the equivalent dev_name.
+> ---
+>  drivers/staging/iio/industrialio-core.c |   54 +++++++++++++++---------------
+>  1 files changed, 27 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/industrialio-core.c b/drivers/staging/iio/industrialio-core.c
+> index 27695df..d303bfb 100644
+> --- a/drivers/staging/iio/industrialio-core.c
+> +++ b/drivers/staging/iio/industrialio-core.c
+> @@ -227,33 +227,6 @@ static void iio_device_unregister_debugfs(struct iio_dev *indio_dev)
+>  	debugfs_remove_recursive(indio_dev->debugfs_dentry);
+>  }
+>  
+> -static ssize_t iio_read_channel_ext_info(struct device *dev,
+> -				     struct device_attribute *attr,
+> -				     char *buf)
+> -{
+> -	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> -	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+> -	const struct iio_chan_spec_ext_info *ext_info;
+> -
+> -	ext_info = &this_attr->c->ext_info[this_attr->address];
+> -
+> -	return ext_info->read(indio_dev, this_attr->c, buf);
+> -}
+> -
+> -static ssize_t iio_write_channel_ext_info(struct device *dev,
+> -				     struct device_attribute *attr,
+> -				     const char *buf,
+> -					 size_t len)
+> -{
+> -	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> -	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+> -	const struct iio_chan_spec_ext_info *ext_info;
+> -
+> -	ext_info = &this_attr->c->ext_info[this_attr->address];
+> -
+> -	return ext_info->write(indio_dev, this_attr->c, buf, len);
+> -}
+> -
+>  static int iio_device_register_debugfs(struct iio_dev *indio_dev)
+>  {
+>  	struct dentry *d;
+> @@ -297,6 +270,33 @@ static void iio_device_unregister_debugfs(struct iio_dev *indio_dev)
+>  }
+>  #endif /* CONFIG_DEBUG_FS */
+>  
+> +static ssize_t iio_read_channel_ext_info(struct device *dev,
+> +				     struct device_attribute *attr,
+> +				     char *buf)
+> +{
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> +	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+> +	const struct iio_chan_spec_ext_info *ext_info;
+> +
+> +	ext_info = &this_attr->c->ext_info[this_attr->address];
+> +
+> +	return ext_info->read(indio_dev, this_attr->c, buf);
+> +}
+> +
+> +static ssize_t iio_write_channel_ext_info(struct device *dev,
+> +				     struct device_attribute *attr,
+> +				     const char *buf,
+> +					 size_t len)
+> +{
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> +	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
+> +	const struct iio_chan_spec_ext_info *ext_info;
+> +
+> +	ext_info = &this_attr->c->ext_info[this_attr->address];
+> +
+> +	return ext_info->write(indio_dev, this_attr->c, buf, len);
+> +}
+> +
+>  static ssize_t iio_read_channel_info(struct device *dev,
+>  				     struct device_attribute *attr,
+>  				     char *buf)
 
---mFM6r0jQWo48NPCK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPVm0tAAoJEBus8iNuMP3dbZ8P/13ICZmy0FV8/Cv14DZyOvhg
-A6yZtZWXsyhO73AFC3+rajr2vYen4lx1mCd8S96AWANd8N7LZFd7e85QPFuIx6z5
-yevuxfwyvcvlF5K+DsfnD/FNj3TeXU+Qb4xkcrgo0JGvPwncULPBigXfJkRoIMZf
-8Afn7pjvMWJtmXmX5jXZbVxhL7H0kZYQy0UQtU7YNj7qoDT9Uwn7fD0TzlwHl3En
-AKF/pL7yg2mcvV1Zowuc7//4uXoEG1I5wGgmUNcx5uLTenHcHpbFDH7MX9e4MVmv
-mpEBkC4RbSqY/X5pySzYWnGut8hxKmixy5YfMHUtmGelxmMvrk6ERmNfIbG+xCk7
-/8mJe3WZrh20VfkfUgdxmwGuJ9gLgnSMeErES1vmHO2iF6rhHoDrF2JTC1N0yYsZ
-/SkJfVgOcXP5J0pTUaXw1dYoSskSTWteZ8tlLor9Ku/y0tUX+hjjjR6FH8sQYuRA
-xAvTetKc+2IV5qvNOqf30XyH43r1BdJWVj1/aUL7JABMKy4ZVF1AqyvTHlTVU6Gl
-m/3nuYXWRLuH3j6kd4l+kw6xb2AyziZGoR4uteVisuuGgpQDSD0iYVeCwWKXQLts
-/Av7LQ+aQuHtzYHHvoerWWUHeK+hemDSqyc5oLz+cJn6ZCry41iQyIvhSzfKAnZp
-S2ejQO3Agi6CXJfXLlAL
-=mTHg
------END PGP SIGNATURE-----
-
---mFM6r0jQWo48NPCK--
+-- 
+~Randy
