@@ -1,36 +1,67 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: [PATCH 0/5] MFD: Reverting twl6040 patches going for 3.4
-Date: Tue, 6 Mar 2012 18:42:13 +0100
-Message-ID: <20120306174213.GY9008@sortiz-mobl>
-References: <1331037316-7375-1-git-send-email-peter.ujfalusi@ti.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: rtl2830: __udivdi3 undefined
+Date: Tue, 6 Mar 2012 19:02:02 +0100
+Message-ID: <CAMuHMdVE2m-Q+ikyEE5V9dd9cbqCbCC2+CtnkDhq=UTQg2detQ@mail.gmail.com>
+References: <CAMuHMdVmiqY9uh574_uTK76+28bvhEL0BPnzjDF-bf-0mgj4gg@mail.gmail.com>
+	<4F53EA7D.4090402@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:26858 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755640Ab2CFRm2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Mar 2012 12:42:28 -0500
-Content-Disposition: inline
-In-Reply-To: <1331037316-7375-1-git-send-email-peter.ujfalusi@ti.com>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:55958 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752592Ab2CFSCE convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 13:02:04 -0500
+In-Reply-To: <4F53EA7D.4090402@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, Liam Girdwood <lrg@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-next@vger.kernel.org, paul.gortmaker@windriver.com
+To: gennarone@gmail.com
+Cc: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@redhat.com>, Linux-Next <linux-next@vger.kernel.org>
 
-Hi Peter,
+On Sun, Mar 4, 2012 at 23:19, Gianluca Gennari <gennarone@gmail.com> wr=
+ote:
+> Probably the best solution is to use div_u64.
+> The following patch fixed the warning on my 32 bit system.
+>
+> Signed-off-by: Gianluca Gennari <gennarone@gmail.com>
 
-On Tue, Mar 06, 2012 at 02:35:11PM +0200, Peter Ujfalusi wrote:
-> Hello Samuel,
-> 
-> this series reverts the twl6040 related patches aimed for 3.4 merge window from
-> MFD for-next branch.
-> As we already discussed the relevant patches will be going through audio since
-> we have some dependencies going via that route.
-I removed all 5 patches from my for-next branch.
+Thanks, that fixes it (div_u64() is do_div() on 32-bit).
 
-Cheers,
-Samuel.
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+> ---
+> =C2=A0drivers/media/dvb/frontends/rtl2830.c | =C2=A0 =C2=A02 +-
+> =C2=A01 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/media/dvb/frontends/rtl2830.c
+> b/drivers/media/dvb/frontends/rtl2830.c
+> index f971d94..45196c5 100644
+> --- a/drivers/media/dvb/frontends/rtl2830.c
+> +++ b/drivers/media/dvb/frontends/rtl2830.c
+> @@ -244,7 +244,7 @@ static int rtl2830_init(struct dvb_frontend *fe)
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0num =3D priv->cfg.if_dvbt % priv->cfg.xtal=
+;
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0num *=3D 0x400000;
+> - =C2=A0 =C2=A0 =C2=A0 num /=3D priv->cfg.xtal;
+> + =C2=A0 =C2=A0 =C2=A0 num =3D div_u64(num, priv->cfg.xtal);
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0num =3D -num;
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0if_ctl =3D num & 0x3fffff;
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0dbg("%s: if_ctl=3D%08x", __func__, if_ctl)=
+;
+
+Gr{oetje,eeting}s,
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
