@@ -1,103 +1,67 @@
-From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Subject: [PATCH] staging:iio: Fix compile error without CONFIG_DEBUG_FS
-Date: Tue,  6 Mar 2012 20:43:45 +0100
-Message-ID: <1331063025-25242-1-git-send-email-lars@metafoo.de>
-References: <4F565CB0.8070301@xenotime.net>
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F565CB0.8070301-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Jonathan Cameron <jic23-KWPb1pKIrIJaa/9Udqfwiw@public.gmane.org>, Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH] ARM: pxa: fix regulator related build fail in magician_defconfig
+Date: Tue,  6 Mar 2012 14:46:43 -0500
+Message-ID: <1331063203-21188-1-git-send-email-paul.gortmaker@windriver.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:43611 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965176Ab2CFTq6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 14:46:58 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: broonie@opensource.wolfsonmicro.com, haojian.zhuang@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-commit e553f182d ("staging: iio: core: Introduce debugfs support, add support
-for direct register access") added a '#if defined(CONFIG_DEBUG_FS)' around
-iio_read_channel_ext_info and iio_write_channel_ext_info causing the following
-compile error if CONFIG_DEBUG_FS is not defined.
+commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
 
-	drivers/staging/iio/industrialio-core.c:621:11: error: 'iio_read_channel_ext_info' undeclared (first use in this function)
-	drivers/staging/iio/industrialio-core.c:623:11: error: 'iio_write_channel_ext_info' undeclared (first use in this function)
+  "regulator: Remove support for supplies specified by struct device"
 
-This patch fixes the issue by moving the functions out of the '#if
-defined(CONFIG_DEBUG_FS)' section again.
+deletes the field from the struct, but this platform was still trying
+to set those fields.  Delete the assignments.
 
-Reported-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Signed-off-by: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
----
- drivers/staging/iio/industrialio-core.c |   54 +++++++++++++++---------------
- 1 files changed, 27 insertions(+), 27 deletions(-)
+arch/arm/mach-pxa/magician.c:581: error: unknown field 'dev' specified in initializer
+arch/arm/mach-pxa/magician.c:581: warning: initialization from incompatible pointer type
+arch/arm/mach-pxa/magician.c:585: error: unknown field 'dev' specified in initializer
+arch/arm/mach-pxa/magician.c:585: warning: initialization from incompatible pointer type
 
-diff --git a/drivers/staging/iio/industrialio-core.c b/drivers/staging/iio/industrialio-core.c
-index 27695df..d303bfb 100644
---- a/drivers/staging/iio/industrialio-core.c
-+++ b/drivers/staging/iio/industrialio-core.c
-@@ -227,33 +227,6 @@ static void iio_device_unregister_debugfs(struct iio_dev *indio_dev)
- 	debugfs_remove_recursive(indio_dev->debugfs_dentry);
- }
+arch/arm/mach-pxa/hx4700.c:683: error: unknown field 'dev' specified in initializer
+arch/arm/mach-pxa/hx4700.c:683: warning: initialization from incompatible pointer type
+arch/arm/mach-pxa/hx4700.c:687: error: unknown field 'dev' specified in initializer
+arch/arm/mach-pxa/hx4700.c:687: warning: initialization from incompatible pointer type
+
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index f2c23ea..76de30c 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -680,11 +680,9 @@ static struct platform_device power_supply = {
  
--static ssize_t iio_read_channel_ext_info(struct device *dev,
--				     struct device_attribute *attr,
--				     char *buf)
--{
--	struct iio_dev *indio_dev = dev_get_drvdata(dev);
--	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
--	const struct iio_chan_spec_ext_info *ext_info;
--
--	ext_info = &this_attr->c->ext_info[this_attr->address];
--
--	return ext_info->read(indio_dev, this_attr->c, buf);
--}
--
--static ssize_t iio_write_channel_ext_info(struct device *dev,
--				     struct device_attribute *attr,
--				     const char *buf,
--					 size_t len)
--{
--	struct iio_dev *indio_dev = dev_get_drvdata(dev);
--	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
--	const struct iio_chan_spec_ext_info *ext_info;
--
--	ext_info = &this_attr->c->ext_info[this_attr->address];
--
--	return ext_info->write(indio_dev, this_attr->c, buf, len);
--}
--
- static int iio_device_register_debugfs(struct iio_dev *indio_dev)
- {
- 	struct dentry *d;
-@@ -297,6 +270,33 @@ static void iio_device_unregister_debugfs(struct iio_dev *indio_dev)
- }
- #endif /* CONFIG_DEBUG_FS */
+ static struct regulator_consumer_supply bq24022_consumers[] = {
+ 	{
+-		.dev = &gpio_vbus.dev,
+ 		.supply = "vbus_draw",
+ 	},
+ 	{
+-		.dev = &power_supply.dev,
+ 		.supply = "ac_draw",
+ 	},
+ };
+diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+index 3d6baf9..bd0f86a 100644
+--- a/arch/arm/mach-pxa/magician.c
++++ b/arch/arm/mach-pxa/magician.c
+@@ -578,11 +578,9 @@ static struct platform_device power_supply = {
  
-+static ssize_t iio_read_channel_ext_info(struct device *dev,
-+				     struct device_attribute *attr,
-+				     char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
-+	const struct iio_chan_spec_ext_info *ext_info;
-+
-+	ext_info = &this_attr->c->ext_info[this_attr->address];
-+
-+	return ext_info->read(indio_dev, this_attr->c, buf);
-+}
-+
-+static ssize_t iio_write_channel_ext_info(struct device *dev,
-+				     struct device_attribute *attr,
-+				     const char *buf,
-+					 size_t len)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
-+	const struct iio_chan_spec_ext_info *ext_info;
-+
-+	ext_info = &this_attr->c->ext_info[this_attr->address];
-+
-+	return ext_info->write(indio_dev, this_attr->c, buf, len);
-+}
-+
- static ssize_t iio_read_channel_info(struct device *dev,
- 				     struct device_attribute *attr,
- 				     char *buf)
+ static struct regulator_consumer_supply bq24022_consumers[] = {
+ 	{
+-		.dev = &gpio_vbus.dev,
+ 		.supply = "vbus_draw",
+ 	},
+ 	{
+-		.dev = &power_supply.dev,
+ 		.supply = "ac_draw",
+ 	},
+ };
 -- 
-1.7.2.5
+1.7.9.1
