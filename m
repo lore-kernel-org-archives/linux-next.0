@@ -1,59 +1,101 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the sound-asoc
- tree
-Date: Tue, 6 Mar 2012 17:24:45 +1100
-Message-ID: <20120306172445.81a8461cb8e3b764ce148932@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+ (moduleh/trivial trees related)
+Date: Tue, 6 Mar 2012 17:58:44 +1100
+Message-ID: <20120306175844.9c97ac3bcc5579fba377fbd8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__6_Mar_2012_17_24_45_+1100_.L8H9bdVMECIsDak"
+ boundary="Signature=_Tue__6_Mar_2012_17_58_44_+1100_yIbUTb7VfX_abN4w"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43816 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48410 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751251Ab2CFGYw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 01:24:52 -0500
+	with ESMTP id S1753427Ab2CFG64 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 01:58:56 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Fabio Estevam <festevam@gmail.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesper Juhl <jj@chaosbits.net>
 
---Signature=_Tue__6_Mar_2012_17_24_45_+1100_.L8H9bdVMECIsDak
+--Signature=_Tue__6_Mar_2012_17_58_44_+1100_yIbUTb7VfX_abN4w
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/plat-mxc/audmux-v1.c between commit 2405fc9728a3 ("ARM: imx:
-merge audmux-v1 and audmux-v2") from the sound-asoc tree and commit
-48d795616c73 ("ARM: plat-mxc: audmux-v1: Remove unneeded ifdef's") from
-the arm-soc tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-The former removed this file, so I did that.
+drivers/power/max8998_charger.c:198:12: error: 'THIS_MODULE' undeclared her=
+e (not in a function)
+drivers/power/max8998_charger.c:207:20: error: expected declaration specifi=
+ers or '...' before string constant
+drivers/power/max8998_charger.c:208:15: error: expected declaration specifi=
+ers or '...' before string constant
+drivers/power/max8998_charger.c:209:16: error: expected declaration specifi=
+ers or '...' before string constant
+drivers/power/max8998_charger.c:210:14: error: expected declaration specifi=
+ers or '...' before string constant
+
+Caused by commit 13ae246db4a0 ("includecheck: delete any duplicate
+instances of module.h") from the moduleh tree interacting with commit
+ce64b8d85de9 ("power, max8998: Include linux/module.h just once in
+drivers/power/max8998_charger.c") from the trivial tree.
+
+They both removed different includes of module.h leaving none.
+
+I have applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 6 Mar 2012 17:56:45 +1100
+Subject: [PATCH] power, max8998: we need at least one include of module.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/power/max8998_charger.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/power/max8998_charger.c b/drivers/power/max8998_charge=
+r.c
+index d6a8c16..5c5f281 100644
+--- a/drivers/power/max8998_charger.c
++++ b/drivers/power/max8998_charger.c
+@@ -19,6 +19,7 @@
+  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  U=
+SA
+  */
+=20
++#include <linux/module.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
+--=20
+1.7.9.1
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__6_Mar_2012_17_24_45_+1100_.L8H9bdVMECIsDak
+--Signature=_Tue__6_Mar_2012_17_58_44_+1100_yIbUTb7VfX_abN4w
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPVa2tAAoJEECxmPOUX5FEVDgP/A1ZI+6VO5/LAPQGX2oYIOIC
-XBuJnsCTSOgqhFLrjzMTmP3+++dTmWiVdym5LO7J7rEe1+sRX4eKB3qxZIqbqJRd
-nKp5/hoXIpI7ZqwtYledwWBFUDzXxk53Ytuc5xoZ2/HPGM0kpY/TyIyXGxiZebSt
-00wQlLk20xn1NX8L/WIDOonhw3rgPSOO2Iuw4r+WjPcEOWRTB6O10Tpw32ubesUP
-JG8OUQQIhPU/wRbhkyrn3Gl51cHd2zcStEvmfaKVjKDORJdVL3S4Lrla0z6ZRSPw
-grjzcbN0duAN3LrbVBZqwR2Ta6YDAGn3HJBzCN3pwq9mpvbNHGHgytG+X1whdcyi
-hiANbz0SALyboXNtiIxxupGkSAVJrIayr4cMq1fkIYsRd+J9ZJsd4uGxc/LWuYKC
-6l6TWR/qeXqmshoqUpTwAofGqlcAJJ/f9fJ09AFTtlQZQijsYEnt608y9Mv7Hoom
-BdUg1pd0TQVXCzlbkghYe3vdFP2nNnal72DKxwXlMT+wkxhxYjtq0qSIY0De1wio
-PZEkpPRvZ8K13YlitUjTN7KfJE+MZRV3ggia4l/TnZHs+2wHFFixM6ePfmZm1hCR
-W2AyoybMUcUwqts/S/jyoJC1qxoiM6nPvic7W+kjh5lG9Hr5tvipZgKCltTnMRI2
-ekj1bmUz2JVllHtbN1e4
-=0tHB
+iQIcBAEBCAAGBQJPVbWkAAoJEECxmPOUX5FEbMcP/3W4NvCfqcP4vBjEFNf8r1Cf
+ebm0RD5d2LCRe42F8el37TILpwHluPgnoIIfOD88jOvy8DqkfxA2XNx9dB/1F1Wx
+QWazR0j/ArebnIXBucCchHuXtySJ8FkOEmEexR9zNhyEWZcNHZLRmYpzbgQxchpJ
+ocGbW12epO6U8zrExv7qlnNff5+FBarm1RQXaYOf5OvqPVF8iXTAYPpKMIic0o0I
+3xIinW/fSaJUox4sBDXZq75GP7i+d+406Jwd6U0/rBozLpu3HtyLgMOPALiQ3cZO
+MPYG4zbUWYr/lBg4RK7RuDGjPuqjrUbjxjU004gYRv9fhJBqjLH4bMvCrRL15TZQ
+fEOd0oJ2KSCfSGzgbdd2g2qXd3575tjw7wdNK9RjMeMRa11Ks+2RWYfjp3yBgPy+
+8t/hVCV9nVxzFbBQW5RixtPwFnx8kI8r6ijcWl9Ln1oF4ZSF5Q3cPZNuFVDZbekw
+bJ13UhDvjQZ3JeNrJB3LB+L/SSigpSoLWKb+7Idr5DUZ4zG/Sj8Gm23gwutQOBeg
+9zU2yAYRzUy/byOKOenFqtGH7jvYD1CdWhSQXWSPa4qtgNL2Qw4O1stcr0N/GaVO
++gownXsA6r4HjD48XmRj3uSo/+7iShkkONyZNtiZx8nQ1NUaeefzs/Yi92RUdlSh
+/nHn3yr2fsx6Dn+mCB1I
+=accg
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__6_Mar_2012_17_24_45_+1100_.L8H9bdVMECIsDak--
+--Signature=_Tue__6_Mar_2012_17_58_44_+1100_yIbUTb7VfX_abN4w--
