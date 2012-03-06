@@ -1,30 +1,65 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 05 Mar 2012 21:17:23 -0500 (EST)
-Message-ID: <20120305.211723.1982594845858465817.davem@davemloft.net>
-References: <20120305131103.71d87f250accd238b7d7630e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kvm tree
+Date: Tue, 6 Mar 2012 15:53:32 +1100
+Message-ID: <20120306155332.42d5094876089c8b7bb36bb0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__6_Mar_2012_15_53_32_+1100_T12f_9UMn8.X62m."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:58693 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758118Ab2CFCTb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Mar 2012 21:19:31 -0500
-In-Reply-To: <20120305131103.71d87f250accd238b7d7630e@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43616 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030363Ab2CFExm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Mar 2012 23:53:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sbhatewara@vmware.com, eric.dumazet@gmail.com
+To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Ellerman <michael@ellerman.id.au>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 5 Mar 2012 13:11:03 +1100
+--Signature=_Tue__6_Mar_2012_15_53_32_+1100_T12f_9UMn8.X62m.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the net-next tree got a conflict in
-> drivers/net/vmxnet3/vmxnet3_drv.c between commit efead8710aad ("vmxnet3:
-> Fix transport header size") from the net tree and commit 8bca5d1ebb8b
-> ("vmxnet3: cleanup tso headers manipulation") from the net-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+Hi all,
 
-I'm taking care of this right now, thanks Stephen.
+After merging the kvm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+include/linux/kvm_host.h:813:13: error: 'kvm_vcpu_compatible' defined but n=
+ot used [-Werror=3Dunused-function]
+cc1: all warnings being treated as errors
+
+Caused by commit ab0bd7dfdaa5 ("KVM: Ensure all vcpus are consistent with
+in-kernel irqchip settings").
+
+This function presumably need to be "static inline bool" in the !
+CONFIG_KVM_APIC_ARCHITECTURE case.
+
+I have used the kvm tree from next-20120305 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__6_Mar_2012_15_53_32_+1100_T12f_9UMn8.X62m.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPVZhMAAoJEECxmPOUX5FEnRsP/jWmgxiplN8ECqvV7WjRvA0N
+j6TU+RJaYe9Pde22C7plJyWjR45NMk7tUwwcEEXJnMo+U/HCQ7EoV6/LGgjiY7+s
+CIDOSQyUtsiXgGxsQYxTtd8Gfj0Ak0n9m70XicIQsmtcBj1xF14NkNC+/+MRTxb2
+VE33YSyfC7iIYxgrQfEqXl0F8DGroHmr2z/wdj0iH5jueunwf/roPJ4QUsy4Zuab
+ooZ19rtZBZSKdzo8DH2fZFJfPS+ERNsIq4R0eftHTIgSr3eALS0waY7vGd0ipXpL
+ddzQqKPoyhHscPTraKzSo1US6oy1KQHkV5cWC28UXfSWwae5yV80VsdXRoyM13c4
+3WPL60XIIdXJnEDTFdtFuR5doSqiam7/plc68QhI5ha8MFR4INwKmV+plEftfsMs
+JqWXyCTR6laX1UAhk0AzBzXo28FYew6qQzvdgxVnNFGaM9eb1brWyZTYZp6ZqjrR
+0eRcva7M9zz3VDNvFTIQflQ6kGh/o7feNa08ZzKIPNmLOQkP5QJIkX6RM/JJBz8g
+MQTRd4vt087EQ8/J8bthWs5uBg7wcT+lxpNxpRdNSucWy59B4HUmt+8LahwvM+hc
+rQmnzwMMooKRgoARDK3EVmPM+uk9QZxyOU5pKaUMVh9vPbwPWvlG6pcqXqgRoW9q
+6z2KB6ExMimfLf9cfmge
+=KyEH
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__6_Mar_2012_15_53_32_+1100_T12f_9UMn8.X62m.--
