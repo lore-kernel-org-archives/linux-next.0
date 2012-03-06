@@ -1,67 +1,36 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: rtl2830: __udivdi3 undefined
-Date: Tue, 6 Mar 2012 19:02:02 +0100
-Message-ID: <CAMuHMdVE2m-Q+ikyEE5V9dd9cbqCbCC2+CtnkDhq=UTQg2detQ@mail.gmail.com>
-References: <CAMuHMdVmiqY9uh574_uTK76+28bvhEL0BPnzjDF-bf-0mgj4gg@mail.gmail.com>
-	<4F53EA7D.4090402@gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Mar 6 (staging/iio)
+Date: Tue, 06 Mar 2012 10:51:28 -0800
+Message-ID: <4F565CB0.8070301@xenotime.net>
+References: <20120306180746.25c595babf8b5072366cdbec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:55958 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752592Ab2CFSCE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 13:02:04 -0500
-In-Reply-To: <4F53EA7D.4090402@gmail.com>
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:53674 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S965012Ab2CFSvU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 13:51:20 -0500
+In-Reply-To: <20120306180746.25c595babf8b5072366cdbec@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: gennarone@gmail.com
-Cc: linux-media@vger.kernel.org, Antti Palosaari <crope@iki.fi>, Mauro Carvalho Chehab <mchehab@redhat.com>, Linux-Next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jonathan Cameron <jic23@cam.ac.uk>, linux-iio@vger.kernel.org
 
-On Sun, Mar 4, 2012 at 23:19, Gianluca Gennari <gennarone@gmail.com> wr=
-ote:
-> Probably the best solution is to use div_u64.
-> The following patch fixed the warning on my 32 bit system.
->
-> Signed-off-by: Gianluca Gennari <gennarone@gmail.com>
+On 03/05/2012 11:07 PM, Stephen Rothwell wrote:
 
-Thanks, that fixes it (div_u64() is do_div() on 32-bit).
+> Hi all,
+> 
+> Changes since 20120305:
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-> ---
-> =C2=A0drivers/media/dvb/frontends/rtl2830.c | =C2=A0 =C2=A02 +-
-> =C2=A01 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/media/dvb/frontends/rtl2830.c
-> b/drivers/media/dvb/frontends/rtl2830.c
-> index f971d94..45196c5 100644
-> --- a/drivers/media/dvb/frontends/rtl2830.c
-> +++ b/drivers/media/dvb/frontends/rtl2830.c
-> @@ -244,7 +244,7 @@ static int rtl2830_init(struct dvb_frontend *fe)
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0num =3D priv->cfg.if_dvbt % priv->cfg.xtal=
-;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0num *=3D 0x400000;
-> - =C2=A0 =C2=A0 =C2=A0 num /=3D priv->cfg.xtal;
-> + =C2=A0 =C2=A0 =C2=A0 num =3D div_u64(num, priv->cfg.xtal);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0num =3D -num;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0if_ctl =3D num & 0x3fffff;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0dbg("%s: if_ctl=3D%08x", __func__, if_ctl)=
-;
+When CONFIG_DEBUG_FS is not enabled:
 
-Gr{oetje,eeting}s,
+drivers/staging/iio/industrialio-core.c:621:11: error: 'iio_read_channel_ext_info' undeclared (first use in this function)
+drivers/staging/iio/industrialio-core.c:623:11: error: 'iio_write_channel_ext_info' undeclared (first use in this function)
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+
+-- 
+~Randy
