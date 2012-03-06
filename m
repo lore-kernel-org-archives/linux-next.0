@@ -1,54 +1,31 @@
-From: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-Subject: [PATCH 2/2] mm/linux-next: Fix rcu locking in vm_is_stack
-Date: Wed,  7 Mar 2012 01:46:34 +0530
-Message-ID: <1331064994-6693-2-git-send-email-siddhesh.poyarekar@gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 1/2] mm: Fix task_nommu build regression in linux-next
+Date: Tue, 6 Mar 2012 12:39:59 -0800
+Message-ID: <20120306123959.1921bcca.akpm@linux-foundation.org>
 References: <1331045377.17099.2.camel@deneb.redhat.com>
- <1331064994-6693-1-git-send-email-siddhesh.poyarekar@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	<1331064994-6693-1-git-send-email-siddhesh.poyarekar@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42340 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031036Ab2CFUkA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 15:40:00 -0500
 In-Reply-To: <1331064994-6693-1-git-send-email-siddhesh.poyarekar@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Salter <msalter@redhat.com>
-Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Oleg Nesterov <oleg@redhat.com>, Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+Cc: Mark Salter <msalter@redhat.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Oleg Nesterov <oleg@redhat.com>
 
-Take rcu read lock before we do anything at all with the threadgroup
-list. Also use list_first_entry_rcu to safely get the reference to the
-first task in the list.
+On Wed,  7 Mar 2012 01:46:33 +0530
+Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com> wrote:
 
-Signed-off-by: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
----
- mm/memory.c |   12 +++++++-----
- 1 files changed, 7 insertions(+), 5 deletions(-)
+> Commit b7b2a0afacada237005068294cb0ccc49d32889e resulted in a build
+> failure for nommu builds:
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 0ca7fe6..1d5830c 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3932,18 +3932,20 @@ pid_t vm_is_stack(struct task_struct *task,
- 		return task->pid;
- 
- 	if (in_group) {
--		struct task_struct *t = task;
-+		struct task_struct *t;
- 		rcu_read_lock();
--		while_each_thread(task, t) {
-+		t = list_first_entry_rcu(&task->thread_group,
-+					 struct task_struct, thread_group);
-+		do {
- 			if (vm_is_stack_for_task(t, vma)) {
- 				ret = t->pid;
- 				goto done;
- 			}
--		}
-+		} while_each_thread(task, t);
-+done:
-+		rcu_read_unlock();
- 	}
- 
--done:
--	rcu_read_unlock();
- 	return ret;
- }
- 
--- 
-1.7.7.4
+Bare git commit IDs aren't very useful, because the ID of a patch can
+be different in different trees.  And in linux-next, the ID of a patch
+can change over time.  This is why we like to refer to commits using the
+formulation b7b2a0afacad ("procfs: mark thread stack correctly in
+proc/<pid>/maps").
