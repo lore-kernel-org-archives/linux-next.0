@@ -1,58 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the moduleh tree with the usb tree
-Date: Tue, 6 Mar 2012 16:50:53 +1100
-Message-ID: <20120306165053.c42cdb7ff8e6772a0a8ebbd5@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the sound-asoc
+ tree
+Date: Tue, 6 Mar 2012 17:21:30 +1100
+Message-ID: <20120306172130.f5b7aae24600cbbbaf7e84e9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__6_Mar_2012_16_50_53_+1100_bVMR93QPV.7OSj/7"
+ boundary="Signature=_Tue__6_Mar_2012_17_21_30_+1100_lNZaOT1JT9_gRtme"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59869 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33404 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751672Ab2CFFvF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 00:51:05 -0500
+	with ESMTP id S1750930Ab2CFGVp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 01:21:45 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Zhao <richard.zhao@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Fabio Estevam <festevam@gmail.com>
 
---Signature=_Tue__6_Mar_2012_16_50_53_+1100_bVMR93QPV.7OSj/7
+--Signature=_Tue__6_Mar_2012_17_21_30_+1100_lNZaOT1JT9_gRtme
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi all,
 
-Today's linux-next merge of the moduleh tree got a conflict in
-drivers/usb/dwc3/dwc3-omap.c between commit 45b3cd4ad79b ("usb: dwc3:
-omap: convert pdata to of property") from the usb tree and commit
-13ae246db4a0 ("includecheck: delete any duplicate instances of module.h")
-from the moduleh tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-imx/mm-imx3.c between commit 3bc34a614335 ("ARM: imx:
+convert audmux to a platform driver") from the sound-asoc tree and commit
+bb07d7511e08 ("ARM: mx3: Setup AIPS registers") from the arm-soc tree.
 
-Just context changes.  I fixed it up and can carry the fix as necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__6_Mar_2012_16_50_53_+1100_bVMR93QPV.7OSj/7
+diff --cc arch/arm/mach-imx/mm-imx3.c
+index 9c9b7f9,17963e0..0000000
+--- a/arch/arm/mach-imx/mm-imx3.c
++++ b/arch/arm/mach-imx/mm-imx3.c
+@@@ -177,8 -175,9 +179,12 @@@ void __init imx31_soc_init(void
+  	}
+ =20
+  	imx_add_imx_sdma("imx31-sdma", MX31_SDMA_BASE_ADDR, MX31_INT_SDMA, &imx3=
+1_sdma_pdata);
++=20
++ 	imx_set_aips(MX31_IO_ADDRESS(MX31_AIPS1_BASE_ADDR));
++ 	imx_set_aips(MX31_IO_ADDRESS(MX31_AIPS2_BASE_ADDR));
+++
+ +	platform_device_register_simple("imx31-audmux", 0, imx31_audmux_res,
+ +					ARRAY_SIZE(imx31_audmux_res));
+  }
+  #endif /* ifdef CONFIG_SOC_IMX31 */
+ =20
+
+--Signature=_Tue__6_Mar_2012_17_21_30_+1100_lNZaOT1JT9_gRtme
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPVaW9AAoJEECxmPOUX5FEBoUQAJrAQ3BH/Iop3nmyO4VubOWw
-ErkDGQe82FzEd8hn/a5Nb/Bi3jZ4zcipsy2hw4UrC/L5EVzSvifD+P20FCBUTQgF
-/Tghm3Z34F402kucz/5Rsapy6VIoJjp46O7Sp8MTafV8ejda3M18qnIte8xloYyu
-VG4EK2u6DXVg5x/7nAvlzJVijhaaRw1V7Pwy/POoroiiWlm7rwSEYKkSIWEZUm8G
-XzpZ65dzFAELD6UIGNWSCVEJq0euLRbda/YSnkZfqR4amP6CU4I/B/KTX2oOXiB4
-ecOyxoJ2GuxonwlebedF39VSA+i1OK+niGSPZUvJGrlNd7tgdRjxhrYwueDsk3yb
-kYZdzP2E83x/mkKOUKCvLMxDzpthPsTDttUR23hnI4/tOlIQ8bb0II6u9+VvyEFC
-A5s/929AHaPjIa3SQQocKwP2qo0ovCii5zwF8JfBPINzlCT6xdEReKMJgy4uDx7v
-Wxgi982goDFkdQlz38x4AuMxx+MjlBYezXnPf3Y6DSmZqC7te25tx4GYNG+pqmE5
-vMSWbWdpYVI7FT8oKMltPAw9aE/ATpXsdWWZ5h9UI4/hsIW9M0t/9QQHNeF4XDti
-o6DicaJCTE+W1sRwpGXv6/33QpeDIuxSSs4b85QyDxWahrVkzB0i/X3zXF0UzYZD
-bKAqttNGncURfbwkq5/B
-=zBbn
+iQIcBAEBCAAGBQJPVazqAAoJEECxmPOUX5FEVggP/RknKrC99ouqe/XJMD4vCR20
+GORc2vQXnpxZTHAAvASV3qIezECMwlkpBQNQro2IPtxBl2LyA5DeeKOzNaI8AlJ2
+c4+lTHekMeMOOJItyjQpnb2kyc/psI5E62fIybfqVDiRt+RVViRF9aVlqNrUxFRr
+igg9Or1gLX5OyI/xPFAcTNx+KSiU7d0412ruIn418ui5rrcIOsc5CGMYi3qlVSaT
+TKQ3aJFv8x89U8OyIcQrhLNQPd6y56T2D5HHz8bhhB6InKZ48bSnNw/silXiNXsg
+zhXoxiLDnSgv3O21sM7Pq1uK798pofdPEbPre56vpcO7zFzKeqq9dFd2tqtqyhaB
+6xEQGBquPcEl6RxHf5xC3rwWj5gRpiK+ixZqT9Tl3QMvneMTgVTexzfHGbAcrqzo
+Xi7X15CIOBQCz07VxwPv5NbMfLiOtmqnOrsJ/Nbz4cFBEHzAJNSbAWCKpw01ykeE
+/x6MKEeO5drfmlaTDOCD0whikkdEOy37+Dy7bhg/k7CQ9AGpnJt0H2+olcvIpg+6
+l0Iog8ojfZx/pPnuNCUik0oRwG0JgZ7hYvx7wcrrIAHZ1Qyy3JHaZdRrUPPpsf9P
+I0r04PBPjCrAQf19TEtJvPf51IZMNsutCtonlnvZx6WVG45IG/ZM+4+pOKQf83M7
+dFDK+PRc4p/ede5RvYYi
+=RhP/
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__6_Mar_2012_16_50_53_+1100_bVMR93QPV.7OSj/7--
+--Signature=_Tue__6_Mar_2012_17_21_30_+1100_lNZaOT1JT9_gRtme--
