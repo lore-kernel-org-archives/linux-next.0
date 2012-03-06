@@ -1,45 +1,84 @@
-From: Mark Salter <msalter@redhat.com>
-Subject: Re: lib/string.h build failure in linux-next
-Date: Tue, 06 Mar 2012 11:16:17 -0500
-Message-ID: <1331050578.17099.13.camel@deneb.redhat.com>
-References: <1331048540.17099.9.camel@deneb.redhat.com>
-	 <201203061602.23512.arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <201203061602.23512.arnd@arndb.de>
-Sender: linux-arch-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH] ARM: fix lcd power build failure in collie_defconfig
+Date: Tue,  6 Mar 2012 11:31:42 -0500
+Message-ID: <1331051502-22361-1-git-send-email-paul.gortmaker@windriver.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:41668 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755294Ab2CFQcQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 11:32:16 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux@arm.linux.org.uk
+Cc: rpurdie@rpsys.net, FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On Tue, 2012-03-06 at 16:02 +0000, Arnd Bergmann wrote:
-> On Tuesday 06 March 2012, Mark Salter wrote:
-> > I'm seeing a build failure in lib/string.h in linux-next:
-> > 
-> > /es/linux/linux-next/lib/string.c: In function 'strlcat':
-> > /es/linux/linux-next/lib/string.c:225:2: error: implicit declaration of function 'printk'
-> > /es/linux/linux-next/lib/string.c:225:2: error: implicit declaration of function 'panic'
-> > 
-> > Commit e2950c2b6ecb928bfd3a13dd237df1f29f712704 removed an include of
-> > linux/module.h which triggered the problem for arch/c6x and probably
-> > other architectures using the asm-generic BUG macro.
-> > 
-> > I think this needs fixing in asm-generic/bug.h which should include
-> > linux/kernel.h for panic and linux/printk.h for printk.
-> 
-> I think you cannot do that as long as linux/kernel.h includes asm/bug.h,
-> or you will get a lot of other build failures.
+Commit 086ada54abaa4316e8603f02410fe8ebc9ba2de1 (linux-next)
 
-It didn't for my build, but to tell the truth, I really wasn't too keen
-on adding an include of kernel.h to asm/bug.h since kernel.h pulls in so
-much other stuff.
+  "FB: sa1100: remove global sa1100fb_.*_power function pointers"
 
-> 
-> The safer option is probably to add the two missing headers separately
-> to string.c.
+got rid of all instances but one in locomolcd.c -- which was
+conditional on CONFIG_SA1100_COLLIE.  The associated .power
+field which replaces the global is populated in mach-sa1100/collie.c
+so move the assignment there, but make it conditional on the
+locomolcd support, so use CONFIG_BACKLIGHT_LOCOMO in that file.
 
-Okay, I can put together a patch that does that.
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
---Mark
+diff --git a/arch/arm/mach-sa1100/collie.c b/arch/arm/mach-sa1100/collie.c
+index 48885b7..c7f418b 100644
+--- a/arch/arm/mach-sa1100/collie.c
++++ b/arch/arm/mach-sa1100/collie.c
+@@ -313,6 +313,10 @@ static struct sa1100fb_mach_info collie_lcd_info = {
+ 
+ 	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
+ 	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
++
++#ifdef CONFIG_BACKLIGHT_LOCOMO
++	.lcd_power	= locomolcd_power
++#endif
+ };
+ 
+ static void __init collie_init(void)
+diff --git a/arch/arm/mach-sa1100/include/mach/collie.h b/arch/arm/mach-sa1100/include/mach/collie.h
+index 52acda7..f33679d 100644
+--- a/arch/arm/mach-sa1100/include/mach/collie.h
++++ b/arch/arm/mach-sa1100/include/mach/collie.h
+@@ -1,7 +1,7 @@
+ /*
+  * arch/arm/mach-sa1100/include/mach/collie.h
+  *
+- * This file contains the hardware specific definitions for Assabet
++ * This file contains the hardware specific definitions for Collie
+  * Only include this file from SA1100-specific files.
+  *
+  * ChangeLog:
+@@ -13,6 +13,7 @@
+ #ifndef __ASM_ARCH_COLLIE_H
+ #define __ASM_ARCH_COLLIE_H
+ 
++extern void locomolcd_power(int on);
+ 
+ #define COLLIE_SCOOP_GPIO_BASE	(GPIO_MAX + 1)
+ #define COLLIE_GPIO_CHARGE_ON	(COLLIE_SCOOP_GPIO_BASE + 0)
+diff --git a/drivers/video/backlight/locomolcd.c b/drivers/video/backlight/locomolcd.c
+index be20b5c..3a6d541 100644
+--- a/drivers/video/backlight/locomolcd.c
++++ b/drivers/video/backlight/locomolcd.c
+@@ -229,14 +229,7 @@ static struct locomo_driver poodle_lcd_driver = {
+ 
+ static int __init locomolcd_init(void)
+ {
+-	int ret = locomo_driver_register(&poodle_lcd_driver);
+-	if (ret)
+-		return ret;
+-
+-#ifdef CONFIG_SA1100_COLLIE
+-	sa1100fb_lcd_power = locomolcd_power;
+-#endif
+-	return 0;
++	return locomo_driver_register(&poodle_lcd_driver);
+ }
+ 
+ static void __exit locomolcd_exit(void)
+-- 
+1.7.9.1
