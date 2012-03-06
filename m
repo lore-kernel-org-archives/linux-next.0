@@ -1,32 +1,44 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: manual merge of the moduleh tree with the usb tree
-Date: Tue, 6 Mar 2012 09:56:51 -0500
-Message-ID: <4F5625B3.9020400@windriver.com>
-References: <20120306165053.c42cdb7ff8e6772a0a8ebbd5@canb.auug.org.au>
+From: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+Subject: Re: nommu build failure in linux-next
+Date: Tue, 6 Mar 2012 20:49:57 +0530
+Message-ID: <CAAHN_R2++cosPPdEsO=7ztfKJt9+Fi+iTje6o34EVvZ9kD1EtQ@mail.gmail.com>
+References: <1331045377.17099.2.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120306165053.c42cdb7ff8e6772a0a8ebbd5@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Greg KH <greg@kroah.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:38128 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965153Ab2CFPT6 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 10:19:58 -0500
+In-Reply-To: <1331045377.17099.2.camel@deneb.redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Salter <msalter@redhat.com>
+Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On 12-03-06 12:50 AM, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> Today's linux-next merge of the moduleh tree got a conflict in
-> drivers/usb/dwc3/dwc3-omap.c between commit 45b3cd4ad79b ("usb: dwc3:
-> omap: convert pdata to of property") from the usb tree and commit
-> 13ae246db4a0 ("includecheck: delete any duplicate instances of module.h")
-> from the moduleh tree.
-> 
-> Just context changes.  I fixed it up and can carry the fix as necessary.
+On Tue, Mar 6, 2012 at 8:19 PM, Mark Salter <msalter@redhat.com> wrote:
+> commit b7b2a0afacada237005068294cb0ccc49d32889e
+> Author: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+> Date: =A0 Tue Mar 6 11:17:12 2012 +1100
+>
+> =A0 =A0procfs: mark thread stack correctly in proc/<pid>/maps
+>
+>
+> This patch still breaks nommu builds. The previous syntax issue has b=
+een
+> resolved, but now I see a link error:
+>
+> fs/built-in.o: In function `nommu_vma_show':
+> task_nommu.c:(.text+0x564a0): undefined reference to `vm_is_stack'
+> make[1]: *** [.tmp_vmlinux1] Error 1
+>
 
-Thanks Stephen,
+The function is defined in mm/memory.c and I realized now that it is
+not built when !CONFIG_MMU. There needs to be a copy of these
+functions in nommu.c as well. I'll test the build and send a patch.
 
-I had a look and the instance being deleted is really the right
-one to delete, so this conflict will have to stay carried it seems.
 
-Paul.
+--=20
+Siddhesh Poyarekar
+http://siddhesh.in
