@@ -1,67 +1,75 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] ARM: pxa: fix regulator related build fail in magician_defconfig
-Date: Tue,  6 Mar 2012 14:46:43 -0500
-Message-ID: <1331063203-21188-1-git-send-email-paul.gortmaker@windriver.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:43611 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965176Ab2CFTq6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 14:46:58 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: broonie@opensource.wolfsonmicro.com, haojian.zhuang@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: lib/string.h build failure in linux-next
+Date: Tue, 6 Mar 2012 14:55:40 -0500
+Message-ID: <CAP=VYLpwBth3YyHQ17Gs_GbfQHBWfcJO+VHLNnD=oBXgtCK0wQ@mail.gmail.com>
+References: <1331048540.17099.9.camel@deneb.redhat.com>
+	<201203061602.23512.arnd@arndb.de>
+	<1331050578.17099.13.camel@deneb.redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <1331050578.17099.13.camel@deneb.redhat.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Mark Salter <msalter@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
+On Tue, Mar 6, 2012 at 11:16 AM, Mark Salter <msalter@redhat.com> wrote=
+:
+> On Tue, 2012-03-06 at 16:02 +0000, Arnd Bergmann wrote:
+>> On Tuesday 06 March 2012, Mark Salter wrote:
+>> > I'm seeing a build failure in lib/string.h in linux-next:
+>> >
+>> > /es/linux/linux-next/lib/string.c: In function 'strlcat':
+>> > /es/linux/linux-next/lib/string.c:225:2: error: implicit declarati=
+on of function 'printk'
+>> > /es/linux/linux-next/lib/string.c:225:2: error: implicit declarati=
+on of function 'panic'
+>> >
+>> > Commit e2950c2b6ecb928bfd3a13dd237df1f29f712704 removed an include=
+ of
+>> > linux/module.h which triggered the problem for arch/c6x and probab=
+ly
+>> > other architectures using the asm-generic BUG macro.
+>> >
+>> > I think this needs fixing in asm-generic/bug.h which should includ=
+e
+>> > linux/kernel.h for panic and linux/printk.h for printk.
+>>
+>> I think you cannot do that as long as linux/kernel.h includes asm/bu=
+g.h,
+>> or you will get a lot of other build failures.
+>
+> It didn't for my build, but to tell the truth, I really wasn't too ke=
+en
+> on adding an include of kernel.h to asm/bug.h since kernel.h pulls in=
+ so
+> much other stuff.
+>
+>>
+>> The safer option is probably to add the two missing headers separate=
+ly
+>> to string.c.
+>
+> Okay, I can put together a patch that does that.
 
-  "regulator: Remove support for supplies specified by struct device"
+I can deal with this, since it is interaction between my bug commits an=
+d my
+module commits that trigger it.  Can you tell me what config you are us=
+ing, so
+I can double check I have it sorted properly?
 
-deletes the field from the struct, but this platform was still trying
-to set those fields.  Delete the assignments.
+Thanks.
+Paul.
 
-arch/arm/mach-pxa/magician.c:581: error: unknown field 'dev' specified in initializer
-arch/arm/mach-pxa/magician.c:581: warning: initialization from incompatible pointer type
-arch/arm/mach-pxa/magician.c:585: error: unknown field 'dev' specified in initializer
-arch/arm/mach-pxa/magician.c:585: warning: initialization from incompatible pointer type
-
-arch/arm/mach-pxa/hx4700.c:683: error: unknown field 'dev' specified in initializer
-arch/arm/mach-pxa/hx4700.c:683: warning: initialization from incompatible pointer type
-arch/arm/mach-pxa/hx4700.c:687: error: unknown field 'dev' specified in initializer
-arch/arm/mach-pxa/hx4700.c:687: warning: initialization from incompatible pointer type
-
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-
-diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
-index f2c23ea..76de30c 100644
---- a/arch/arm/mach-pxa/hx4700.c
-+++ b/arch/arm/mach-pxa/hx4700.c
-@@ -680,11 +680,9 @@ static struct platform_device power_supply = {
- 
- static struct regulator_consumer_supply bq24022_consumers[] = {
- 	{
--		.dev = &gpio_vbus.dev,
- 		.supply = "vbus_draw",
- 	},
- 	{
--		.dev = &power_supply.dev,
- 		.supply = "ac_draw",
- 	},
- };
-diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
-index 3d6baf9..bd0f86a 100644
---- a/arch/arm/mach-pxa/magician.c
-+++ b/arch/arm/mach-pxa/magician.c
-@@ -578,11 +578,9 @@ static struct platform_device power_supply = {
- 
- static struct regulator_consumer_supply bq24022_consumers[] = {
- 	{
--		.dev = &gpio_vbus.dev,
- 		.supply = "vbus_draw",
- 	},
- 	{
--		.dev = &power_supply.dev,
- 		.supply = "ac_draw",
- 	},
- };
--- 
-1.7.9.1
+>
+> --Mark
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at =A0http://www.tux.org/lkml/
