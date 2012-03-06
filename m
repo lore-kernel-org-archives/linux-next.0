@@ -1,42 +1,86 @@
-From: Haojian Zhuang <haojian.zhuang@gmail.com>
-Subject: Re: [PATCH] ARM: pxa: fix build failure for regulator consumer in em-x270.c
-Date: Tue, 6 Mar 2012 20:22:29 +0800
-Message-ID: <CAN1soZyZwi5O089WedOzX-1h4SFKHF9kf=cBxM+3J08FA1RBvA@mail.gmail.com>
-References: <1330989122-6323-1-git-send-email-paul.gortmaker@windriver.com>
-	<4F55CEDB.90909@compulab.co.il>
-	<CAN1soZxdT=N1BtK5Jf4+Qu3GGCHPuKK1BqgfEV-D7QorjnsLpg@mail.gmail.com>
-	<20120306121627.GM19635@opensource.wolfsonmicro.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH 3/3] arm: more fallout from i2c conversions in board-omap4panda.c
+Date: Tue, 06 Mar 2012 14:27:24 +0200
+Message-ID: <4F5602AC.3060107@ti.com>
+References: <1330987310-8108-1-git-send-email-paul.gortmaker@windriver.com> <1330987310-8108-4-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:37757 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030501Ab2CFMW3 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 07:22:29 -0500
-Received: by vbbff1 with SMTP id ff1so4371792vbb.19
-        for <linux-next@vger.kernel.org>; Tue, 06 Mar 2012 04:22:29 -0800 (PST)
-In-Reply-To: <20120306121627.GM19635@opensource.wolfsonmicro.com>
+Received: from na3sys009aog109.obsmtp.com ([74.125.149.201]:51523 "EHLO
+	na3sys009aog109.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1030531Ab2CFM1b (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 07:27:31 -0500
+Received: by laap9 with SMTP id p9so6152928laa.38
+        for <linux-next@vger.kernel.org>; Tue, 06 Mar 2012 04:27:28 -0800 (PST)
+In-Reply-To: <1330987310-8108-4-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Igor Grinberg <grinberg@compulab.co.il>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Haojian Zhuang <haojian.zhuang@marvell.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: tony@atomide.com, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonicro.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-On Tue, Mar 6, 2012 at 8:16 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Tue, Mar 06, 2012 at 05:12:18PM +0800, Haojian Zhuang wrote:
->
->> Could you pick up this patch since it's depend on latest change on r=
-egulator?
->
-> There's no direct dependency, there's been no need to use that struct
-> member for years - should be safe to just apply via the PXA tree. =A0=
-If
-> you do want it to go via regulator please resend, I didn't keep a cop=
-y
-> of the patch.
+Hi,
 
-OK. Let me merge this patch.
+On 03/06/2012 12:41 AM, Paul Gortmaker wrote:
+> Commit ded0df8510778a03a2f182a0cbfe3c25788e8852 (linux-next)
+>=20
+>    "mfd: Convert twl6040 to an i2c driver, and separate it from twl c=
+ore"
+>=20
+> appears to have done an incomplete conversion on the board-omap4panda=
+=2Ec
+> file, leaving it with more build failures.  Comparing the changes tha=
+t
+> were done for board-4430sdp.c it is possible for me to whack it with =
+a
+> stick until it stops twitching, but someone who really understands th=
+is
+> code needs to take a look at the conversion, and check it is done
+> completely and in a way that will actually work on hardware.
 
-Best Regards
-Haojian
+This is true.
+I'm sending a revert series for the twl6040 patches causing this
+breakage for Samuel.
+The same feature will go via audio tree because the dependencies are
+queued in that feature tree.
+
+--=20
+P=E9ter
+
+PS: this might fix the compile breakage with omap2_defconfig, but the
+audio will not work if you enable the support for it on OMAP4.
+
+>=20
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> CC: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> CC: Mark Brown <broonie@opensource.wolfsonicro.com>
+> CC: Samuel Ortiz <sameo@linux.intel.com>
+> ---
+>  arch/arm/mach-omap2/board-omap4panda.c |    5 ++---
+>  1 files changed, 2 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-omap2/board-omap4panda.c b/arch/arm/mach-o=
+map2/board-omap4panda.c
+> index e919153..16a1814 100644
+> --- a/arch/arm/mach-omap2/board-omap4panda.c
+> +++ b/arch/arm/mach-omap2/board-omap4panda.c
+> @@ -287,16 +287,15 @@ static struct twl6040_codec_data twl6040_codec =
+=3D {
+>  	.hf_right_step	=3D 0x1d,
+>  };
+> =20
+> -static struct twl4030_audio_data twl6040_audio =3D {
+> +static struct twl6040_platform_data twl6040_data =3D {
+>  	.codec		=3D &twl6040_codec,
+>  	.audpwron_gpio	=3D 127,
+> -	.naudint_irq	=3D OMAP44XX_IRQ_SYS_2N,
+>  	.irq_base	=3D TWL6040_CODEC_IRQ_BASE,
+>  };
+> =20
+>  /* Panda board uses the common PMIC configuration */
+>  static struct twl4030_platform_data omap4_panda_twldata =3D {
+> -	.audio		=3D &twl6040_audio,
+> +   /*	.audio		=3D &twl6040_audio,	*/
+>  };
+> =20
+>  /*
