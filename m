@@ -1,44 +1,36 @@
-From: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-Subject: Re: [PATCH 1/2] mm: Fix task_nommu build regression in linux-next
-Date: Wed, 7 Mar 2012 22:13:41 +0530
-Message-ID: <CAAHN_R36vR3cnAVjXnoWfe9o46KuSMQcp92be1DKXmpLSVLVDg@mail.gmail.com>
-References: <1331045377.17099.2.camel@deneb.redhat.com>
-	<1331064994-6693-1-git-send-email-siddhesh.poyarekar@gmail.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: manual merge of the cgroup tree with the block tree
+Date: Wed, 7 Mar 2012 11:17:42 -0800
+Message-ID: <20120307191742.GB30676@google.com>
+References: <20120307160516.53086e588a8246edd87c41fc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:60991 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751827Ab2CGQnm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 11:43:42 -0500
-In-Reply-To: <1331064994-6693-1-git-send-email-siddhesh.poyarekar@gmail.com>
+Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:44964 "EHLO
+	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1759799Ab2CGTRr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 14:17:47 -0500
+Content-Disposition: inline
+In-Reply-To: <20120307160516.53086e588a8246edd87c41fc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Salter <msalter@redhat.com>
-Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Oleg Nesterov <oleg@redhat.com>, Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizf@cn.fujitsu.com>, Jens Axboe <axboe@kernel.dk>
 
-On Wed, Mar 7, 2012 at 1:46 AM, Siddhesh Poyarekar
-<siddhesh.poyarekar@gmail.com> wrote:
-> Commit b7b2a0afacada237005068294cb0ccc49d32889e resulted in a build
-> failure for nommu builds:
->
-> fs/built-in.o: In function `nommu_vma_show':
-> task_nommu.c:(.text+0x564a0): undefined reference to `vm_is_stack'
-> make[1]: *** [.tmp_vmlinux1] Error 1
->
-> Fix is to provide definitions of vm_is_stack() and
-> vm_is_stack_for_task() for nommu as well. This patch also adds an
-> explicit include of sched.h based on observations and patch submission
-> by Paul Gortmaker <paul.gortmaker@windriver.com>:
->
-> https://lkml.org/lkml/2012/3/5/326
->
-> Signed-off-by: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+On Wed, Mar 07, 2012 at 04:05:16PM +1100, Stephen Rothwell wrote:
+> Hi Tejun,
+> 
+> Today's linux-next merge of the cgroup tree got a conflict in
+> block/blk-cgroup.c between commit 7ee9c5620504 ("blkcg: let blkio_group
+> point to blkio_cgroup directly") from the block tree and commit
+> 761b3ef50e1c ("cgroup: remove cgroup_subsys argument from callbacks")
+> from the cgroup tree.
+> 
+> I fixed it up (I hope - see below) and can carry the fix as necessary.
 
-Tested-by: Mark Salter <msalter@redhat.com>
+Yeap, looks correct to me.
 
-for c6x (nommu).
+Thank you very much.
 
 -- 
-Siddhesh Poyarekar
-http://siddhesh.in
+tejun
