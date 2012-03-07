@@ -1,168 +1,245 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
 Subject: Re: [PATCH v3] PM / QoS: Introduce new classes: DMA-Throughput and DVFS-Latency
-Date: Wed, 7 Mar 2012 10:02:40 +0100
-Message-ID: <201203071002.40296.rjw@sisk.pl>
-References: <13197479.540821330911965933.JavaMail.weblogic@epv6ml06> <1331096521-26026-1-git-send-email-myungjoo.ham@samsung.com>
+Date: Wed, 7 Mar 2012 18:36:00 +0900
+Message-ID: <CAJ0PZbQSuG2sJngV+MzaveWvvQZM=bm_GxB_725PNv0zAx+H5A@mail.gmail.com>
+References: <13197479.540821330911965933.JavaMail.weblogic@epv6ml06>
+	<1331096521-26026-1-git-send-email-myungjoo.ham@samsung.com>
+	<201203071002.40296.rjw@sisk.pl>
+Reply-To: myungjoo.ham@gmail.com
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:59497 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751536Ab2CGI6e (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 7 Mar 2012 03:58:34 -0500
-In-Reply-To: <1331096521-26026-1-git-send-email-myungjoo.ham@samsung.com>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:57517 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751034Ab2CGJgB convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 04:36:01 -0500
+In-Reply-To: <201203071002.40296.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <mavej@redhat.com>, linux-pm@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@ti.com>, Jean Pihet <j-pihet@ti.com>, markgross <markgross@thegnar.org>, kyungmin.park@samsung.com, myungjoo.ham@gmail.com, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, linux-pm@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@ti.com>, Jean Pihet <j-pihet@ti.com>, markgross <markgross@thegnar.org>, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org
 
-Hi,
+2012/3/7 Rafael J. Wysocki <rjw@sisk.pl>:
+> Hi,
+>
+> Can you please post all of your outstanding PM-related patches that
+> you want me to look at in one series, so that they appear in context?
+>
+> I'm struggling to understand what you need all those changes for.
+>
 
-Can you please post all of your outstanding PM-related patches that
-you want me to look at in one series, so that they appear in context?
-
-I'm struggling to understand what you need all those changes for.
-
-Thanks,
-Rafael
+Hello Rafael,
 
 
-On Wednesday, March 07, 2012, MyungJoo Ham wrote:
-> 1. CPU_DMA_THROUGHPUT
-> 
-> This might look simliar to CPU_DMA_LATENCY. However, there are H/W
-> blocks that creates QoS requirement based on DMA throughput, not
-> latency, while their (those QoS requester H/W blocks) services are
-> short-term bursts that cannot be effectively responsed by DVFS
-> mechanisms (CPUFreq and Devfreq).
-> 
-> In the Exynos4412 systems that are being tested, such H/W blocks include
-> MFC (multi-function codec)'s decoding and enconding features, TV-out
-> (including HDMI), and Cameras. When the display is operated at 60Hz,
-> each chunk of task should be done within 16ms and the workload on DMA is
-> not well spread and fluctuates between frames; some frame requires more
-> and some do not and within a frame, the workload also fluctuates
-> heavily and the tasks within a frame are usually not parallelized; they
-> are processed through specific H/W blocks, not CPU cores. They often
-> have PPMU capabilities; however, they need to be polled very frequently
-> in order to let DVFS mechanisms react properly. (less than 5ms).
-> 
-> For such specific tasks, allowing them to request QoS requirements seems
-> adequete because DVFS mechanisms (as long as the polling rate is 5ms or
-> longer) cannot follow up with them. Besides, the device drivers know
-> when to request and cancel QoS exactly.
-> 
-> 2. DVFS_LATENCY
-> 
-> Both CPUFreq and Devfreq have response latency to a sudden workload
-> increase. With near-100% (e.g., 95%) up-threshold, the average response
-> latency is approximately 1.5 x polling-rate.
-> 
-> A specific polling rate (e.g., 100ms) may generally fit for its system;
-> however, there could be exceptions for that. For example,
-> - When a user input suddenly starts: typing, clicking, moving cursors, and
->   such, the user might need the full performance immediately. However,
->   we do not know whether the full performance is actually needed or not
->   until we calculate the utilization; thus, we need to calculate it
->   faster with user inputs or any similar events. Specifying QoS on CPU
->   processing power or Memory bandwidth at every user input is an
->   overkill because there are many cases where such speed-up isn't
->   necessary.
-> - When a device driver needs a faster performance response from DVFS
->   mechanism. This could be addressed by simply putting QoS requests.
->   However, such QoS requests may keep the system running fast
->   unnecessary in some cases, especially if a) the device's resource
->   usage bursts with some duration (e.g., 100ms-long bursts) and
->   b) the driver doesn't know when such burst come. MMC/WiFi often had
->   such behaviors although there are possibilities that part (b) might
->   be addressed with further efforts.
-> 
-> The cases shown above can be tackled with putting QoS requests on the
-> response time or latency of DVFS mechanism, which is directly related to
-> its polling interval (if the DVFS mechanism is polling based).
-> 
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> --
-> Changes from v2
-> - Rebased on the recent PM QoS patches, resolving the merge conflict.
-> 
-> Changes from RFC(v1)
-> - Added omitted part (registering new classes)
-> ---
->  include/linux/pm_qos.h |    4 ++++
->  kernel/power/qos.c     |   31 ++++++++++++++++++++++++++++++-
->  2 files changed, 34 insertions(+), 1 deletions(-)
-> 
-> diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
-> index c8a541e..0ee7caa 100644
-> --- a/include/linux/pm_qos.h
-> +++ b/include/linux/pm_qos.h
-> @@ -14,6 +14,8 @@ enum {
->  	PM_QOS_CPU_DMA_LATENCY,
->  	PM_QOS_NETWORK_LATENCY,
->  	PM_QOS_NETWORK_THROUGHPUT,
-> +	PM_QOS_CPU_DMA_THROUGHPUT,
-> +	PM_QOS_DVFS_RESPONSE_LATENCY,
->  
->  	/* insert new class ID */
->  	PM_QOS_NUM_CLASSES,
-> @@ -24,6 +26,8 @@ enum {
->  #define PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
->  #define PM_QOS_NETWORK_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
->  #define PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE	0
-> +#define PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE	0
-> +#define PM_QOS_DVFS_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
->  #define PM_QOS_DEV_LAT_DEFAULT_VALUE		0
->  
->  struct pm_qos_request {
-> diff --git a/kernel/power/qos.c b/kernel/power/qos.c
-> index d6d6dbd..3e122db 100644
-> --- a/kernel/power/qos.c
-> +++ b/kernel/power/qos.c
-> @@ -101,11 +101,40 @@ static struct pm_qos_object network_throughput_pm_qos = {
->  };
->  
->  
-> +static BLOCKING_NOTIFIER_HEAD(cpu_dma_throughput_notifier);
-> +static struct pm_qos_constraints cpu_dma_tput_constraints = {
-> +	.list = PLIST_HEAD_INIT(cpu_dma_tput_constraints.list),
-> +	.target_value = PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE,
-> +	.default_value = PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE,
-> +	.type = PM_QOS_MAX,
-> +	.notifiers = &cpu_dma_throughput_notifier,
-> +};
-> +static struct pm_qos_object cpu_dma_throughput_pm_qos = {
-> +	.constraints = &cpu_dma_tput_constraints,
-> +	.name = "cpu_dma_throughput",
-> +};
-> +
-> +
-> +static BLOCKING_NOTIFIER_HEAD(dvfs_lat_notifier);
-> +static struct pm_qos_constraints dvfs_lat_constraints = {
-> +	.list = PLIST_HEAD_INIT(dvfs_lat_constraints.list),
-> +	.target_value = PM_QOS_DVFS_LAT_DEFAULT_VALUE,
-> +	.default_value = PM_QOS_DVFS_LAT_DEFAULT_VALUE,
-> +	.type = PM_QOS_MIN,
-> +	.notifiers = &dvfs_lat_notifier,
-> +};
-> +static struct pm_qos_object dvfs_lat_pm_qos = {
-> +	.constraints = &dvfs_lat_constraints,
-> +	.name = "dvfs_latency",
-> +};
-> +
->  static struct pm_qos_object *pm_qos_array[] = {
->  	&null_pm_qos,
->  	&cpu_dma_pm_qos,
->  	&network_lat_pm_qos,
-> -	&network_throughput_pm_qos
-> +	&network_throughput_pm_qos,
-> +	&cpu_dma_throughput_pm_qos,
-> +	&dvfs_lat_pm_qos,
->  };
->  
->  static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
-> 
+I've put the patches at
+
+- devfreq patches (based on your pm-devfreq branch)
+http://git.infradead.org/users/kmpark/linux-samsung/shortlog/refs/heads=
+/devfreq-for-next
+
+- pm-qos patches (based on your pm-qos branch)
+http://git.infradead.org/users/kmpark/linux-samsung/shortlog/refs/heads=
+/pm_qos-for-next
+
+
+- In order to help understand, all related patches are at (do not pull
+from here, please)
+http://git.infradead.org/users/kmpark/linux-samsung/shortlog/refs/heads=
+/devfreq
+devfreq patches + pm-qos patches + cpufreq patches combined. (based on
+Linux 3.3-rc6 + some test patches.)
+However, it does not include recent PM-QoS patches in pm-qos branch,
+so the patches are not recent and different from the above. So please
+do not pull from here to your branches.
+
+
+Anyway, we are synching our local repositories with infradead.org now;
+so there could be some lag; infradead.org is not showing the current
+version, yet.
+(.... it even seems that the server is down now. I'll retry sync if it
+resurrects)
+
+
+Thank you.
+
+
+Cheers!
+MyungJoo.
+
+> Thanks,
+> Rafael
+>
+>
+> On Wednesday, March 07, 2012, MyungJoo Ham wrote:
+>> 1. CPU_DMA_THROUGHPUT
+>>
+>> This might look simliar to CPU_DMA_LATENCY. However, there are H/W
+>> blocks that creates QoS requirement based on DMA throughput, not
+>> latency, while their (those QoS requester H/W blocks) services are
+>> short-term bursts that cannot be effectively responsed by DVFS
+>> mechanisms (CPUFreq and Devfreq).
+>>
+>> In the Exynos4412 systems that are being tested, such H/W blocks inc=
+lude
+>> MFC (multi-function codec)'s decoding and enconding features, TV-out
+>> (including HDMI), and Cameras. When the display is operated at 60Hz,
+>> each chunk of task should be done within 16ms and the workload on DM=
+A is
+>> not well spread and fluctuates between frames; some frame requires m=
+ore
+>> and some do not and within a frame, the workload also fluctuates
+>> heavily and the tasks within a frame are usually not parallelized; t=
+hey
+>> are processed through specific H/W blocks, not CPU cores. They often
+>> have PPMU capabilities; however, they need to be polled very frequen=
+tly
+>> in order to let DVFS mechanisms react properly. (less than 5ms).
+>>
+>> For such specific tasks, allowing them to request QoS requirements s=
+eems
+>> adequete because DVFS mechanisms (as long as the polling rate is 5ms=
+ or
+>> longer) cannot follow up with them. Besides, the device drivers know
+>> when to request and cancel QoS exactly.
+>>
+>> 2. DVFS_LATENCY
+>>
+>> Both CPUFreq and Devfreq have response latency to a sudden workload
+>> increase. With near-100% (e.g., 95%) up-threshold, the average respo=
+nse
+>> latency is approximately 1.5 x polling-rate.
+>>
+>> A specific polling rate (e.g., 100ms) may generally fit for its syst=
+em;
+>> however, there could be exceptions for that. For example,
+>> - When a user input suddenly starts: typing, clicking, moving cursor=
+s, and
+>> =A0 such, the user might need the full performance immediately. Howe=
+ver,
+>> =A0 we do not know whether the full performance is actually needed o=
+r not
+>> =A0 until we calculate the utilization; thus, we need to calculate i=
+t
+>> =A0 faster with user inputs or any similar events. Specifying QoS on=
+ CPU
+>> =A0 processing power or Memory bandwidth at every user input is an
+>> =A0 overkill because there are many cases where such speed-up isn't
+>> =A0 necessary.
+>> - When a device driver needs a faster performance response from DVFS
+>> =A0 mechanism. This could be addressed by simply putting QoS request=
+s.
+>> =A0 However, such QoS requests may keep the system running fast
+>> =A0 unnecessary in some cases, especially if a) the device's resourc=
+e
+>> =A0 usage bursts with some duration (e.g., 100ms-long bursts) and
+>> =A0 b) the driver doesn't know when such burst come. MMC/WiFi often =
+had
+>> =A0 such behaviors although there are possibilities that part (b) mi=
+ght
+>> =A0 be addressed with further efforts.
+>>
+>> The cases shown above can be tackled with putting QoS requests on th=
+e
+>> response time or latency of DVFS mechanism, which is directly relate=
+d to
+>> its polling interval (if the DVFS mechanism is polling based).
+>>
+>> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>
+>> --
+>> Changes from v2
+>> - Rebased on the recent PM QoS patches, resolving the merge conflict=
+=2E
+>>
+>> Changes from RFC(v1)
+>> - Added omitted part (registering new classes)
+>> ---
+>> =A0include/linux/pm_qos.h | =A0 =A04 ++++
+>> =A0kernel/power/qos.c =A0 =A0 | =A0 31 +++++++++++++++++++++++++++++=
++-
+>> =A02 files changed, 34 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
+>> index c8a541e..0ee7caa 100644
+>> --- a/include/linux/pm_qos.h
+>> +++ b/include/linux/pm_qos.h
+>> @@ -14,6 +14,8 @@ enum {
+>> =A0 =A0 =A0 PM_QOS_CPU_DMA_LATENCY,
+>> =A0 =A0 =A0 PM_QOS_NETWORK_LATENCY,
+>> =A0 =A0 =A0 PM_QOS_NETWORK_THROUGHPUT,
+>> + =A0 =A0 PM_QOS_CPU_DMA_THROUGHPUT,
+>> + =A0 =A0 PM_QOS_DVFS_RESPONSE_LATENCY,
+>>
+>> =A0 =A0 =A0 /* insert new class ID */
+>> =A0 =A0 =A0 PM_QOS_NUM_CLASSES,
+>> @@ -24,6 +26,8 @@ enum {
+>> =A0#define PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE =A0 =A0 (2000 * USEC_PER=
+_SEC)
+>> =A0#define PM_QOS_NETWORK_LAT_DEFAULT_VALUE =A0 =A0 (2000 * USEC_PER=
+_SEC)
+>> =A0#define PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE =A0 =A0 =A00
+>> +#define PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE =A0 =A0 =A00
+>> +#define PM_QOS_DVFS_LAT_DEFAULT_VALUE =A0 =A0 =A0 =A0(2000 * USEC_P=
+ER_SEC)
+>> =A0#define PM_QOS_DEV_LAT_DEFAULT_VALUE =A0 =A0 =A0 =A0 0
+>>
+>> =A0struct pm_qos_request {
+>> diff --git a/kernel/power/qos.c b/kernel/power/qos.c
+>> index d6d6dbd..3e122db 100644
+>> --- a/kernel/power/qos.c
+>> +++ b/kernel/power/qos.c
+>> @@ -101,11 +101,40 @@ static struct pm_qos_object network_throughput=
+_pm_qos =3D {
+>> =A0};
+>>
+>>
+>> +static BLOCKING_NOTIFIER_HEAD(cpu_dma_throughput_notifier);
+>> +static struct pm_qos_constraints cpu_dma_tput_constraints =3D {
+>> + =A0 =A0 .list =3D PLIST_HEAD_INIT(cpu_dma_tput_constraints.list),
+>> + =A0 =A0 .target_value =3D PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE,
+>> + =A0 =A0 .default_value =3D PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE=
+,
+>> + =A0 =A0 .type =3D PM_QOS_MAX,
+>> + =A0 =A0 .notifiers =3D &cpu_dma_throughput_notifier,
+>> +};
+>> +static struct pm_qos_object cpu_dma_throughput_pm_qos =3D {
+>> + =A0 =A0 .constraints =3D &cpu_dma_tput_constraints,
+>> + =A0 =A0 .name =3D "cpu_dma_throughput",
+>> +};
+>> +
+>> +
+>> +static BLOCKING_NOTIFIER_HEAD(dvfs_lat_notifier);
+>> +static struct pm_qos_constraints dvfs_lat_constraints =3D {
+>> + =A0 =A0 .list =3D PLIST_HEAD_INIT(dvfs_lat_constraints.list),
+>> + =A0 =A0 .target_value =3D PM_QOS_DVFS_LAT_DEFAULT_VALUE,
+>> + =A0 =A0 .default_value =3D PM_QOS_DVFS_LAT_DEFAULT_VALUE,
+>> + =A0 =A0 .type =3D PM_QOS_MIN,
+>> + =A0 =A0 .notifiers =3D &dvfs_lat_notifier,
+>> +};
+>> +static struct pm_qos_object dvfs_lat_pm_qos =3D {
+>> + =A0 =A0 .constraints =3D &dvfs_lat_constraints,
+>> + =A0 =A0 .name =3D "dvfs_latency",
+>> +};
+>> +
+>> =A0static struct pm_qos_object *pm_qos_array[] =3D {
+>> =A0 =A0 =A0 &null_pm_qos,
+>> =A0 =A0 =A0 &cpu_dma_pm_qos,
+>> =A0 =A0 =A0 &network_lat_pm_qos,
+>> - =A0 =A0 &network_throughput_pm_qos
+>> + =A0 =A0 &network_throughput_pm_qos,
+>> + =A0 =A0 &cpu_dma_throughput_pm_qos,
+>> + =A0 =A0 &dvfs_lat_pm_qos,
+>> =A0};
+>>
+>> =A0static ssize_t pm_qos_power_write(struct file *filp, const char _=
+_user *buf,
+>>
+>
+
+
+
+--=20
+MyungJoo Ham, Ph.D.
+Mobile Software Platform Lab, DMC Business, Samsung Electronics
