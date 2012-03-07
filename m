@@ -1,109 +1,58 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH v2] ARM: pxa: fix regulator related build fail in magician_defconfig
-Date: Wed, 7 Mar 2012 09:46:08 -0500
-Message-ID: <4F5774B0.1030209@windriver.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2] ARM: pxa: fix regulator related build fail in
+ magician_defconfig
+Date: Wed, 7 Mar 2012 14:57:17 +0000
+Message-ID: <20120307145717.GN3107@opensource.wolfsonmicro.com>
 References: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
+ <4F5774B0.1030209@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="keoAwTxaagou87Dg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:50409 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758474Ab2CGOqT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 09:46:19 -0500
-In-Reply-To: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41000 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757211Ab2CGO5U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 09:57:20 -0500
+Content-Disposition: inline
+In-Reply-To: <4F5774B0.1030209@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Parsons <lost.distance@yahoo.com>
-Cc: broonie@opensource.wolfsonmicro.com, haojian.zhuang@gmail.com, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Paul Parsons <lost.distance@yahoo.com>, haojian.zhuang@gmail.com, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 12-03-06 08:46 PM, Paul Parsons wrote:
-> --- On Tue, 6/3/12, Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
->> commit
->> 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
->>
->>   "regulator: Remove support for supplies specified by
->> struct device"
->>
->> deletes the field from the struct, but this platform was
->> still trying
->> to set those fields.  Convert them to use the
->> REGULATOR_SUPPLY macro
->> so as to fix this failure:
->>
->> arch/arm/mach-pxa/magician.c:581: error: unknown field 'dev'
->> specified in initializer
->> arch/arm/mach-pxa/magician.c:581: warning: initialization
->> from incompatible pointer type
->> arch/arm/mach-pxa/magician.c:585: error: unknown field 'dev'
->> specified in initializer
->> arch/arm/mach-pxa/magician.c:585: warning: initialization
->> from incompatible pointer type
->>
->> arch/arm/mach-pxa/hx4700.c:683: error: unknown field 'dev'
->> specified in initializer
->> arch/arm/mach-pxa/hx4700.c:683: warning: initialization from
->> incompatible pointer type
->> arch/arm/mach-pxa/hx4700.c:687: error: unknown field 'dev'
->> specified in initializer
->> arch/arm/mach-pxa/hx4700.c:687: warning: initialization from
->> incompatible pointer type
->>
->> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
->> ---
->>
->> [v2: convert to using REGULATOR_SUPPLY instead of just
->> deleting the
->>  instances of setting the .dev field ]
->>
->> diff --git a/arch/arm/mach-pxa/hx4700.c
->> b/arch/arm/mach-pxa/hx4700.c
->> index f2c23ea..53c3366 100644
->> --- a/arch/arm/mach-pxa/hx4700.c
->> +++ b/arch/arm/mach-pxa/hx4700.c
->> @@ -679,14 +679,8 @@ static struct platform_device
->> power_supply = {
->>   */
->>  
->>  static struct regulator_consumer_supply bq24022_consumers[]
->> = {
->> -    {
->> -        .dev =
->> &gpio_vbus.dev,
->> -        .supply =
->> "vbus_draw",
->> -    },
->> -    {
->> -        .dev =
->> &power_supply.dev,
->> -        .supply = "ac_draw",
->> -    },
->> +    REGULATOR_SUPPLY("vbus_draw",
->> "gpio_vbus"),
->> +    REGULATOR_SUPPLY("ac_draw",
->> "power_supply"),
->>  };
-> 
-> The above hx4700 patch yields the following warnings:
-> 
-> _regulator_get: gpio-vbus supply vbus_draw not found, using dummy regulator
-> _regulator_get: pda-power supply ac_draw not found, using dummy regulator
-> 
-> I suggest the following lines instead:
-> 
-> 	REGULATOR_SUPPLY("vbus_draw", "gpio-vbus"),
-> 	REGULATOR_SUPPLY("ac_draw", "pda-power"),
 
-Thanks for the report.  The regulator code is rather foreign
-to me, but I think I figured out the expectations on the names
-last night when looking at a similar patch here:
+--keoAwTxaagou87Dg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-http://www.spinics.net/lists/arm-kernel/msg163418.html
+On Wed, Mar 07, 2012 at 09:46:08AM -0500, Paul Gortmaker wrote:
 
-I'll fix these two patches up, but next time I'll just report
-the regulator regressions and let the sub-system maintainer
-or the platform maintainer sort them out.
+> Thanks for the report.  The regulator code is rather foreign
+> to me, but I think I figured out the expectations on the names
+> last night when looking at a similar patch here:
 
-Paul.
+All it's looking for is the output of dev_name() for the device.
 
-> 
+--keoAwTxaagou87Dg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPV3dGAAoJEBus8iNuMP3d3E0P/066NtalqWq8yKPCJfJpHBKn
+t35PXBUX/2df9p1P5vYz2KPJbNMq9Eoj4zrk38juI1YoU8LLdUWrin/p7bBKbV42
+M+bz5NEM2HHfcx+0O1HR971TfF5nC7eMSusP2bDRAFcBjpDXg8fPzPNSYvBH1+vT
+tJ3Rsgft9eTobKpX48RwusNI7bPuwisMMSPO3k6cNVr03IRzgi3uQh88mohD3Gte
+AOSPtQbUiQyHvLuetqSq41jdUjGFoWwFEFqF1v61YBj2MGP1IdBUYXTYQ4medd1Z
+0rUuX75+VM3uSDcoX449Vy217VVkpj0u4S1unCNNtarXK9QhrPm3UeAmWwkDrp1i
+b128Nk2FYeImr/pTbxObYnRZop4LZfbqmt/8EBhotopx/ibjkVlKJSeVmHSe5v+Z
+xq8R4iQTcdJoK1VjQrE9f2pssP1M+D3RKOSQCJArpyDFKeP2Fw12lAqXhkjiITJi
+pzVpMnjstrJ4BP9T/Rlq50oj9yS+IdK60TUc22vYJZXrk9AE3hnocu+g7nUvKa/j
+ueWt7kFNGm2MpbBfjMQL8SqDlSc+ERjAwGoLCRG5LV9FMmHgX4xZdqU86UMd1UfD
+jF1LK/OfuSYKNYcFxpMj3uDzxHMx6GCBsdr8y+NuIdwG3/NQT2v4qs2AP5r+C7te
+iKl6uy7iLljYfc9FIsnM
+=KY2T
+-----END PGP SIGNATURE-----
+
+--keoAwTxaagou87Dg--
