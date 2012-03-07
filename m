@@ -1,80 +1,85 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] ARM: pxa: fix build failure for regulator consumer in em-x270.c
-Date: Tue, 6 Mar 2012 19:10:23 -0500
-Message-ID: <CAP=VYLp-weNj35OHtmZ6pf5-t7OUxWREeu8r5sSOLhFYu0CppQ@mail.gmail.com>
-References: <1330989122-6323-1-git-send-email-paul.gortmaker@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the s5p tree with Linus' tree
+Date: Wed, 7 Mar 2012 11:29:26 +1100
+Message-ID: <20120307112926.84043e2f2db878026ebfd72a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__7_Mar_2012_11_29_26_+1100_3c_Li9oD24oapfyI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:54312 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758988Ab2CGAKX convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 19:10:23 -0500
-Received: by pbcun15 with SMTP id un15so16864pbc.19
-        for <linux-next@vger.kernel.org>; Tue, 06 Mar 2012 16:10:23 -0800 (PST)
-In-Reply-To: <1330989122-6323-1-git-send-email-paul.gortmaker@windriver.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34014 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756654Ab2CGA3f (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 19:29:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
 
-On Mon, Mar 5, 2012 at 6:12 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+--Signature=_Wed__7_Mar_2012_11_29_26_+1100_3c_Li9oD24oapfyI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+Hi Kukjin,
 
-> -REGULATOR_CONSUMER(ldo3, &em_x270_gps_userspace_consumer.dev, "vcc g=
-ps");
-> -REGULATOR_CONSUMER(ldo5, NULL, "vcc cam");
-> -REGULATOR_CONSUMER(ldo10, &pxa_device_mci.dev, "vcc sdio");
-> -REGULATOR_CONSUMER(ldo12, NULL, "vcc usb");
-> -REGULATOR_CONSUMER(ldo19, &em_x270_gprs_userspace_consumer.dev, "vcc=
- gprs");
-> -REGULATOR_CONSUMER(buck2, NULL, "vcc_core");
-> +REGULATOR_CONSUMER(ldo3, "vcc gps");
-> +REGULATOR_CONSUMER(ldo5, "vcc cam");
-> +REGULATOR_CONSUMER(ldo10, "vcc sdio");
-> +REGULATOR_CONSUMER(ldo12, "vcc usb");
-> +REGULATOR_CONSUMER(ldo19, "vcc gprs");
-> +REGULATOR_CONSUMER(buck2, "vcc_core");
+Today's linux-next merge of the s5p tree got a conflict in
+arch/arm/mach-s3c2440/common.h between commit c1ba544f8154 ("ARM:
+S3C24XX: Fix restart on S3C2442") from Linus' tree and commit
+dd6f01b5ccba ("ARM: S3C2440: move mach-s3c2440/* into mach-s3c24xx/")
+from the s5p tree.
 
-Based on today's discussions, I'm no longer convinced the above
-is right.  If I understand correctly, for the case of say the top one:
+The latter removed the file so I did that.  I also added this fix up
+patch:
 
-      em_x270_gps_userspace_consumer
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 7 Mar 2012 11:26:40 +1100
+Subject: [PATCH] ARM: S3C24XX: fix for Fix restart on S3C2442
 
-I need to go find that struct, determine that it has a .name entry like=
-:
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/mach-s3c24xx/common.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-        .name           =3D "reg-userspace-consumer",
+diff --git a/arch/arm/mach-s3c24xx/common.h b/arch/arm/mach-s3c24xx/common.h
+index 62a2e19..39f5394 100644
+--- a/arch/arm/mach-s3c24xx/common.h
++++ b/arch/arm/mach-s3c24xx/common.h
+@@ -17,7 +17,7 @@ void s3c2410_restart(char mode, const char *cmd);
+ #endif
+=20
+ #ifdef CONFIG_CPU_S3C2440
+-void s3c2440_restart(char mode, const char *cmd);
++void s3c244x_restart(char mode, const char *cmd);
+ #endif
+=20
+ #endif /* __ARCH_ARM_MACH_S3C2410_COMMON_H */
+--=20
+1.7.9.1
 
-and then use (for each case) something like:
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-      REGULATOR_SUPPLY("vcc gps", "reg-userspace-consumer")
+--Signature=_Wed__7_Mar_2012_11_29_26_+1100_3c_Li9oD24oapfyI
+Content-Type: application/pgp-signature
 
-The above wrapper for REGULATOR_CONSUMER would have
-to be changed to either use or inline the REGULATOR_SUPPLY.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Let me know if I'm on the right track here.  This code is completely
-foreign to me.   As such, the naming in the magician_defconfig
-patch is also probably needing rework (i.e. it needs the corresponding
-value for .name, and not the name of the parent struct itself.)
+iQIcBAEBCAAGBQJPVqvmAAoJEECxmPOUX5FEfcoP/2b1R6tiJ5UrgxcCg6SFsicG
+hAJCw0Gvm5J8hC2tqMU3KFQ5u5ZyYekxgxrpYN4T7xKcJ0viOqfcHqHiyMeMQMVB
+16rnvJdLP9aSZEBTm8Ji+YyT1tIdpQtksp7Gfiw1CvCsyuOO3l3th6K+TNfE+VEZ
+9sJ3+a4jvSbFG3QtC+JsKBlPx7kSFSK1JVJc8wwfCykx2JhqKvzGiCgOjisC3H6E
+6Y+Ahs5yYW9N9ZLkkS2wFlp/QD2Cx+KmrbT+XXgBqH8Epba9aWTK2TSbszXOraYF
+kjck6lG2/7nVh47ovKuFSHC7114a0xKIHAhF627wl62korX3rb0Z8KUK8eXEEW5k
+ij2WVULTxp8Yy57QmKlXeUiZS4YWgAmp8bsnUxDkwYwrNAKMibeZyTKJvEhnEGQF
+LmyAcloMiNDJLuADNk6iTPoegdniTyhLFeXyj+8fYDRrLRDod2fLSrlyGdCStnLj
+NufjV9hhtqTw3DxinLkehKKBXeEbNoCwD6bITbV0SfbNen29PBLIEiqA+g/CvM/A
+Z2PimpTkqVF7tUS+zwxkGAWcNO9tuafsDl5l29XDSvm+Tx17nB76x2MxWpGPMkh2
+2uh/78nDcBe4e92Lz5Y+94qE5xmVB6ezhRzg6iTc/mjm6EuZ1+/DJzKuzAsBXT26
+7irtDECjuenGg754n6m5
+=UbSX
+-----END PGP SIGNATURE-----
 
-THanks,
-Paul.
---
-
->
-> =A0#define REGULATOR_INIT(_ldo, _min_uV, _max_uV, _ops_mask) =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0\
-> =A0 =A0 =A0 =A0static struct regulator_init_data _ldo##_data =3D { =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 \
-> --
-> 1.7.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+--Signature=_Wed__7_Mar_2012_11_29_26_+1100_3c_Li9oD24oapfyI--
