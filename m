@@ -1,32 +1,37 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: staging: zsmalloc appears to break linux-next
-Date: Tue, 6 Mar 2012 20:06:41 -0500
-Message-ID: <CAP=VYLoSR2ygm98jhiVJ8FYTU-cjHvXpJRoNSUPeGdb515tSwQ@mail.gmail.com>
+Subject: parisc: fix lib/bitmap.c in linux-next
+Date: Tue, 6 Mar 2012 20:44:27 -0500
+Message-ID: <CAP=VYLqRj3tJCMyiJy-Sq0cnSGrSWUsuGqdjqYQGfs77ONYhFw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:41486 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1031743Ab2CGBGm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Mar 2012 20:06:42 -0500
-Received: by dadp12 with SMTP id p12so7255536dad.11
-        for <linux-next@vger.kernel.org>; Tue, 06 Mar 2012 17:06:41 -0800 (PST)
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: gregkh@linuxfoundation.org, linux-next@vger.kernel.org
+Return-path: <linux-parisc-owner@vger.kernel.org>
+Sender: linux-parisc-owner@vger.kernel.org
+To: linux-next@vger.kernel.org, Parisc List <linux-parisc@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+I'm glad I pushed to fix parisc in linux-next, since now I can tell
+when I've broken it.  :)  [but hey it was a good five days while it
+lasted though!]
 
-The allmodconfig in linux-next is failing on zsmalloc as follows:
+For those of you following parisc in linux-next, as per here:
 
-drivers/staging/zsmalloc/zsmalloc-main.c:255: error:
-'MAX_PHYSMEM_BITS' undeclared (first use in this function)
+    http://kisskb.ellerman.id.au/kisskb/target/2059/
 
-At 1st glance, it looks to be missing an include of asm/sparsemem.h
+the fix is a trivial include that seems specific to parisc:
 
-Fail log is here:
+diff --git a/lib/bitmap.c b/lib/bitmap.c
+index e255bfb..0b39614 100644
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -11,6 +11,8 @@
+ #include <linux/bitmap.h>
+ #include <linux/bitops.h>
+ #include <linux/bug.h>
++#include <linux/thread_info.h>
++
+ #include <asm/uaccess.h>
 
-   http://kisskb.ellerman.id.au/kisskb/buildresult/5806748/
+and I'll have this in the module-3.4 tree in linux-next tomorrow.
 
-Apologies if this is something you are aware of already.
+Thanks,
 Paul.
