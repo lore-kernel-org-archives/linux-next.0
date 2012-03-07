@@ -1,36 +1,45 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: manual merge of the cgroup tree with the block tree
-Date: Wed, 7 Mar 2012 11:17:42 -0800
-Message-ID: <20120307191742.GB30676@google.com>
-References: <20120307160516.53086e588a8246edd87c41fc@canb.auug.org.au>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: staging: zsmalloc appears to break linux-next
+Date: Wed, 7 Mar 2012 13:33:39 -0800
+Message-ID: <20120307213339.GA30036@kroah.com>
+References: <CAP=VYLoSR2ygm98jhiVJ8FYTU-cjHvXpJRoNSUPeGdb515tSwQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:44964 "EHLO
-	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1759799Ab2CGTRr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 14:17:47 -0500
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:60415 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758483Ab2CGVeM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 16:34:12 -0500
+Received: by yhmm54 with SMTP id m54so3233859yhm.19
+        for <linux-next@vger.kernel.org>; Wed, 07 Mar 2012 13:34:12 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20120307160516.53086e588a8246edd87c41fc@canb.auug.org.au>
+In-Reply-To: <CAP=VYLoSR2ygm98jhiVJ8FYTU-cjHvXpJRoNSUPeGdb515tSwQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizf@cn.fujitsu.com>, Jens Axboe <axboe@kernel.dk>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org
 
-On Wed, Mar 07, 2012 at 04:05:16PM +1100, Stephen Rothwell wrote:
-> Hi Tejun,
+On Tue, Mar 06, 2012 at 08:06:41PM -0500, Paul Gortmaker wrote:
+> Hi Greg,
 > 
-> Today's linux-next merge of the cgroup tree got a conflict in
-> block/blk-cgroup.c between commit 7ee9c5620504 ("blkcg: let blkio_group
-> point to blkio_cgroup directly") from the block tree and commit
-> 761b3ef50e1c ("cgroup: remove cgroup_subsys argument from callbacks")
-> from the cgroup tree.
+> The allmodconfig in linux-next is failing on zsmalloc as follows:
 > 
-> I fixed it up (I hope - see below) and can carry the fix as necessary.
+> drivers/staging/zsmalloc/zsmalloc-main.c:255: error:
+> 'MAX_PHYSMEM_BITS' undeclared (first use in this function)
+> 
+> At 1st glance, it looks to be missing an include of asm/sparsemem.h
+> 
+> Fail log is here:
+> 
+>    http://kisskb.ellerman.id.au/kisskb/buildresult/5806748/
+> 
+> Apologies if this is something you are aware of already.
 
-Yeap, looks correct to me.
+No problem, this should be fixed up in the next linux-next release, I
+just added some patches that should fix it.
 
-Thank you very much.
+If not, please let me know.
 
--- 
-tejun
+thanks,
+
+greg k-h
