@@ -1,154 +1,176 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH v3] PM / QoS: Introduce new classes: DMA-Throughput and
- DVFS-Latency
-Date: Wed, 07 Mar 2012 14:02:01 +0900
-Message-ID: <1331096521-26026-1-git-send-email-myungjoo.ham@samsung.com>
-References: <13197479.540821330911965933.JavaMail.weblogic@epv6ml06>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cgroup tree with the block tree
+Date: Wed, 7 Mar 2012 16:05:16 +1100
+Message-ID: <20120307160516.53086e588a8246edd87c41fc@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__7_Mar_2012_16_05_16_+1100_T59mLzJHFwpnTOgo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:25078 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750699Ab2CGFCF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 00:02:05 -0500
-In-reply-to: <13197479.540821330911965933.JavaMail.weblogic@epv6ml06>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48820 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751071Ab2CGFFi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 00:05:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <mavej@redhat.com>
-Cc: linux-pm@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@ti.com>, Jean Pihet <j-pihet@ti.com>, markgross <markgross@thegnar.org>, kyungmin.park@samsung.com, myungjoo.ham@gmail.com, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizf@cn.fujitsu.com>, Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>
 
-1. CPU_DMA_THROUGHPUT
+--Signature=_Wed__7_Mar_2012_16_05_16_+1100_T59mLzJHFwpnTOgo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This might look simliar to CPU_DMA_LATENCY. However, there are H/W
-blocks that creates QoS requirement based on DMA throughput, not
-latency, while their (those QoS requester H/W blocks) services are
-short-term bursts that cannot be effectively responsed by DVFS
-mechanisms (CPUFreq and Devfreq).
+Hi Tejun,
 
-In the Exynos4412 systems that are being tested, such H/W blocks include
-MFC (multi-function codec)'s decoding and enconding features, TV-out
-(including HDMI), and Cameras. When the display is operated at 60Hz,
-each chunk of task should be done within 16ms and the workload on DMA is
-not well spread and fluctuates between frames; some frame requires more
-and some do not and within a frame, the workload also fluctuates
-heavily and the tasks within a frame are usually not parallelized; they
-are processed through specific H/W blocks, not CPU cores. They often
-have PPMU capabilities; however, they need to be polled very frequently
-in order to let DVFS mechanisms react properly. (less than 5ms).
+Today's linux-next merge of the cgroup tree got a conflict in
+block/blk-cgroup.c between commit 7ee9c5620504 ("blkcg: let blkio_group
+point to blkio_cgroup directly") from the block tree and commit
+761b3ef50e1c ("cgroup: remove cgroup_subsys argument from callbacks")
+from the cgroup tree.
 
-For such specific tasks, allowing them to request QoS requirements seems
-adequete because DVFS mechanisms (as long as the polling rate is 5ms or
-longer) cannot follow up with them. Besides, the device drivers know
-when to request and cancel QoS exactly.
+I fixed it up (I hope - see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-2. DVFS_LATENCY
+diff --cc block/blk-cgroup.c
+index ee962f3,1359d63..0000000
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@@ -33,16 -28,10 +33,13 @@@ static LIST_HEAD(all_q_list)
+  struct blkio_cgroup blkio_root_cgroup =3D { .weight =3D 2*BLKIO_WEIGHT_DE=
+FAULT };
+  EXPORT_SYMBOL_GPL(blkio_root_cgroup);
+ =20
+ +static struct blkio_policy_type *blkio_policy[BLKIO_NR_POLICIES];
+ +
+- static struct cgroup_subsys_state *blkiocg_create(struct cgroup_subsys *,
+- 						  struct cgroup *);
+- static int blkiocg_can_attach(struct cgroup_subsys *, struct cgroup *,
+- 			      struct cgroup_taskset *);
+- static void blkiocg_attach(struct cgroup_subsys *, struct cgroup *,
+- 			   struct cgroup_taskset *);
+- static int blkiocg_pre_destroy(struct cgroup_subsys *, struct cgroup *);
+- static void blkiocg_destroy(struct cgroup_subsys *, struct cgroup *);
++ static struct cgroup_subsys_state *blkiocg_create(struct cgroup *);
++ static int blkiocg_can_attach(struct cgroup *, struct cgroup_taskset *);
++ static void blkiocg_attach(struct cgroup *, struct cgroup_taskset *);
+++static int blkiocg_pre_destroy(struct cgroup *);
++ static void blkiocg_destroy(struct cgroup *);
+  static int blkiocg_populate(struct cgroup_subsys *, struct cgroup *);
+ =20
+  /* for encoding cft->private value on file */
+@@@ -1571,48 -1545,52 +1568,46 @@@ static int blkiocg_populate(struct cgro
+  				ARRAY_SIZE(blkio_files));
+  }
+ =20
+ -static void blkiocg_destroy(struct cgroup *cgroup)
+ +/**
+ + * blkiocg_pre_destroy - cgroup pre_destroy callback
+-  * @subsys: cgroup subsys
+ + * @cgroup: cgroup of interest
+ + *
+ + * This function is called when @cgroup is about to go away and responsib=
+le
+ + * for shooting down all blkgs associated with @cgroup.  blkgs should be
+ + * removed while holding both q and blkcg locks.  As blkcg lock is nested
+ + * inside q lock, this function performs reverse double lock dancing.
+ + *
+ + * This is the blkcg counterpart of ioc_release_fn().
+ + */
+- static int blkiocg_pre_destroy(struct cgroup_subsys *subsys,
+- 			       struct cgroup *cgroup)
+++static int blkiocg_pre_destroy(struct cgroup *cgroup)
+  {
+  	struct blkio_cgroup *blkcg =3D cgroup_to_blkio_cgroup(cgroup);
+ -	unsigned long flags;
+ -	struct blkio_group *blkg;
+ -	void *key;
+ -	struct blkio_policy_type *blkiop;
+ -	struct blkio_policy_node *pn, *pntmp;
+ =20
+ -	rcu_read_lock();
+ -	do {
+ -		spin_lock_irqsave(&blkcg->lock, flags);
+ +	spin_lock_irq(&blkcg->lock);
+ =20
+ -		if (hlist_empty(&blkcg->blkg_list)) {
+ -			spin_unlock_irqrestore(&blkcg->lock, flags);
+ -			break;
+ +	while (!hlist_empty(&blkcg->blkg_list)) {
+ +		struct blkio_group *blkg =3D hlist_entry(blkcg->blkg_list.first,
+ +						struct blkio_group, blkcg_node);
+ +		struct request_queue *q =3D blkg->q;
+ +
+ +		if (spin_trylock(q->queue_lock)) {
+ +			blkg_destroy(blkg);
+ +			spin_unlock(q->queue_lock);
+ +		} else {
+ +			spin_unlock_irq(&blkcg->lock);
+ +			cpu_relax();
+ +			spin_lock(&blkcg->lock);
+  		}
+ +	}
+ =20
+ -		blkg =3D hlist_entry(blkcg->blkg_list.first, struct blkio_group,
+ -					blkcg_node);
+ -		key =3D rcu_dereference(blkg->key);
+ -		__blkiocg_del_blkio_group(blkg);
+ -
+ -		spin_unlock_irqrestore(&blkcg->lock, flags);
+ -
+ -		/*
+ -		 * This blkio_group is being unlinked as associated cgroup is
+ -		 * going away. Let all the IO controlling policies know about
+ -		 * this event.
+ -		 */
+ -		spin_lock(&blkio_list_lock);
+ -		list_for_each_entry(blkiop, &blkio_list, list) {
+ -			if (blkiop->plid !=3D blkg->plid)
+ -				continue;
+ -			blkiop->ops.blkio_unlink_group_fn(key, blkg);
+ -		}
+ -		spin_unlock(&blkio_list_lock);
+ -	} while (1);
+ +	spin_unlock_irq(&blkcg->lock);
+ +	return 0;
+ +}
+ =20
+- static void blkiocg_destroy(struct cgroup_subsys *subsys, struct cgroup *=
+cgroup)
+ -	list_for_each_entry_safe(pn, pntmp, &blkcg->policy_list, node) {
+ -		blkio_policy_delete_node(pn);
+ -		kfree(pn);
+ -	}
+++static void blkiocg_destroy(struct cgroup *cgroup)
+ +{
+ +	struct blkio_cgroup *blkcg =3D cgroup_to_blkio_cgroup(cgroup);
+ =20
+ -	free_css_id(&blkio_subsys, &blkcg->css);
+ -	rcu_read_unlock();
+  	if (blkcg !=3D &blkio_root_cgroup)
+  		kfree(blkcg);
+  }
 
-Both CPUFreq and Devfreq have response latency to a sudden workload
-increase. With near-100% (e.g., 95%) up-threshold, the average response
-latency is approximately 1.5 x polling-rate.
+--Signature=_Wed__7_Mar_2012_16_05_16_+1100_T59mLzJHFwpnTOgo
+Content-Type: application/pgp-signature
 
-A specific polling rate (e.g., 100ms) may generally fit for its system;
-however, there could be exceptions for that. For example,
-- When a user input suddenly starts: typing, clicking, moving cursors, and
-  such, the user might need the full performance immediately. However,
-  we do not know whether the full performance is actually needed or not
-  until we calculate the utilization; thus, we need to calculate it
-  faster with user inputs or any similar events. Specifying QoS on CPU
-  processing power or Memory bandwidth at every user input is an
-  overkill because there are many cases where such speed-up isn't
-  necessary.
-- When a device driver needs a faster performance response from DVFS
-  mechanism. This could be addressed by simply putting QoS requests.
-  However, such QoS requests may keep the system running fast
-  unnecessary in some cases, especially if a) the device's resource
-  usage bursts with some duration (e.g., 100ms-long bursts) and
-  b) the driver doesn't know when such burst come. MMC/WiFi often had
-  such behaviors although there are possibilities that part (b) might
-  be addressed with further efforts.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-The cases shown above can be tackled with putting QoS requests on the
-response time or latency of DVFS mechanism, which is directly related to
-its polling interval (if the DVFS mechanism is polling based).
+iQIcBAEBCAAGBQJPVuyMAAoJEECxmPOUX5FE4HsP/2njCLg/Fri8jOEI2ZrdxHKz
+3gkWO29AcZ+Ti2pH3Vm2JHWaKlRZ8uPg3Lf53RIqHUAdjHzZJUiLw2Gge3kq/pg0
+rXCXwzcg6DEQlfpUBLwFiVVNzPQAV5X0FyR/fW3KApTAu++oBUybySqFPX19JU2Y
+c7v/ZN1FFiRpc8f+SsJeXdVuAwkqynL2iYDjzVHaet54XOs2Nalv1YfBIySD5gJe
+/eSz2pQ8D6E0JtSJ1JtBxWlxVe2c0otIjndp1g/odf0rrkkVrkyfYYp76a4nRUh2
+JjImBqq3lEDPPKN8rrpmO+bULz4q+jTXgnSjECXSfhcH/FdkFXQ5Cdr6WnKySkoI
+96/lujmpF6xtfaOD+QS0Gp9pjRZrTqi9Asy9enVZdGSnqYNSrMoAP48ywWGUv7Q6
+gQguPDuqEejxWpHIZzSFenm6S0qeCFuCihjk3wgs+WvKL0pdTFRLJVoZj7gN/SYx
+LNVdt9LJXfxFpVzr0mQLFJOhFm01qP3T5Om9WXDw3pdEQ4n61Fcf+6MmlwpSf8q1
+mUn8XMBw8170XAE2i+5utx4YQAb3zsxsCCKIsFuT06p6zsk5c/pU8ABYwJLZRKIP
+pZf1pVqAyBA2Ogj5b//cblA5aUzi0K2xFJe3fCbqr4HVQuzpvk95R3YmSln89jha
+iNd1mlYqRS372aNjvvc8
+=IXnN
+-----END PGP SIGNATURE-----
 
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-
---
-Changes from v2
-- Rebased on the recent PM QoS patches, resolving the merge conflict.
-
-Changes from RFC(v1)
-- Added omitted part (registering new classes)
----
- include/linux/pm_qos.h |    4 ++++
- kernel/power/qos.c     |   31 ++++++++++++++++++++++++++++++-
- 2 files changed, 34 insertions(+), 1 deletions(-)
-
-diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
-index c8a541e..0ee7caa 100644
---- a/include/linux/pm_qos.h
-+++ b/include/linux/pm_qos.h
-@@ -14,6 +14,8 @@ enum {
- 	PM_QOS_CPU_DMA_LATENCY,
- 	PM_QOS_NETWORK_LATENCY,
- 	PM_QOS_NETWORK_THROUGHPUT,
-+	PM_QOS_CPU_DMA_THROUGHPUT,
-+	PM_QOS_DVFS_RESPONSE_LATENCY,
- 
- 	/* insert new class ID */
- 	PM_QOS_NUM_CLASSES,
-@@ -24,6 +26,8 @@ enum {
- #define PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
- #define PM_QOS_NETWORK_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
- #define PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE	0
-+#define PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE	0
-+#define PM_QOS_DVFS_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
- #define PM_QOS_DEV_LAT_DEFAULT_VALUE		0
- 
- struct pm_qos_request {
-diff --git a/kernel/power/qos.c b/kernel/power/qos.c
-index d6d6dbd..3e122db 100644
---- a/kernel/power/qos.c
-+++ b/kernel/power/qos.c
-@@ -101,11 +101,40 @@ static struct pm_qos_object network_throughput_pm_qos = {
- };
- 
- 
-+static BLOCKING_NOTIFIER_HEAD(cpu_dma_throughput_notifier);
-+static struct pm_qos_constraints cpu_dma_tput_constraints = {
-+	.list = PLIST_HEAD_INIT(cpu_dma_tput_constraints.list),
-+	.target_value = PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE,
-+	.default_value = PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE,
-+	.type = PM_QOS_MAX,
-+	.notifiers = &cpu_dma_throughput_notifier,
-+};
-+static struct pm_qos_object cpu_dma_throughput_pm_qos = {
-+	.constraints = &cpu_dma_tput_constraints,
-+	.name = "cpu_dma_throughput",
-+};
-+
-+
-+static BLOCKING_NOTIFIER_HEAD(dvfs_lat_notifier);
-+static struct pm_qos_constraints dvfs_lat_constraints = {
-+	.list = PLIST_HEAD_INIT(dvfs_lat_constraints.list),
-+	.target_value = PM_QOS_DVFS_LAT_DEFAULT_VALUE,
-+	.default_value = PM_QOS_DVFS_LAT_DEFAULT_VALUE,
-+	.type = PM_QOS_MIN,
-+	.notifiers = &dvfs_lat_notifier,
-+};
-+static struct pm_qos_object dvfs_lat_pm_qos = {
-+	.constraints = &dvfs_lat_constraints,
-+	.name = "dvfs_latency",
-+};
-+
- static struct pm_qos_object *pm_qos_array[] = {
- 	&null_pm_qos,
- 	&cpu_dma_pm_qos,
- 	&network_lat_pm_qos,
--	&network_throughput_pm_qos
-+	&network_throughput_pm_qos,
-+	&cpu_dma_throughput_pm_qos,
-+	&dvfs_lat_pm_qos,
- };
- 
- static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
--- 
-1.7.4.1
+--Signature=_Wed__7_Mar_2012_16_05_16_+1100_T59mLzJHFwpnTOgo--
