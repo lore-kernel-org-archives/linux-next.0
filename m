@@ -1,58 +1,72 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2] ARM: pxa: fix regulator related build fail in
- magician_defconfig
-Date: Wed, 7 Mar 2012 14:57:17 +0000
-Message-ID: <20120307145717.GN3107@opensource.wolfsonmicro.com>
-References: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
- <4F5774B0.1030209@windriver.com>
+From: Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 2/2] mm/linux-next: Fix rcu locking in vm_is_stack
+Date: Wed, 7 Mar 2012 16:38:49 +0100
+Message-ID: <20120307153849.GA18879@redhat.com>
+References: <1331045377.17099.2.camel@deneb.redhat.com> <1331064994-6693-1-git-send-email-siddhesh.poyarekar@gmail.com> <1331064994-6693-2-git-send-email-siddhesh.poyarekar@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="keoAwTxaagou87Dg"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41000 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757211Ab2CGO5U (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 09:57:20 -0500
-Content-Disposition: inline
-In-Reply-To: <4F5774B0.1030209@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Paul Parsons <lost.distance@yahoo.com>, haojian.zhuang@gmail.com, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-
-
---keoAwTxaagou87Dg
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <1331064994-6693-2-git-send-email-siddhesh.poyarekar@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+Cc: Mark Salter <msalter@redhat.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Mar 07, 2012 at 09:46:08AM -0500, Paul Gortmaker wrote:
+On 03/07, Siddhesh Poyarekar wrote:
+>
+> Take rcu read lock before we do anything at all with the threadgroup
+> list. Also use list_first_entry_rcu to safely get the reference to the
+> first task in the list.
 
-> Thanks for the report.  The regulator code is rather foreign
-> to me, but I think I figured out the expectations on the names
-> last night when looking at a similar patch here:
+Sorry, but both patches are absolutely wrong, afaics. This change fixes
+nothing, just obfuscates the code.
 
-All it's looking for is the output of dev_name() for the device.
+Probably my explanation was not clear, let me try again.
 
---keoAwTxaagou87Dg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+rcu_read_lock() can not help without the additional checks. By the
+time you take it, task->thread_group->next can point to nowhere.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+So,
 
-iQIcBAEBAgAGBQJPV3dGAAoJEBus8iNuMP3d3E0P/066NtalqWq8yKPCJfJpHBKn
-t35PXBUX/2df9p1P5vYz2KPJbNMq9Eoj4zrk38juI1YoU8LLdUWrin/p7bBKbV42
-M+bz5NEM2HHfcx+0O1HR971TfF5nC7eMSusP2bDRAFcBjpDXg8fPzPNSYvBH1+vT
-tJ3Rsgft9eTobKpX48RwusNI7bPuwisMMSPO3k6cNVr03IRzgi3uQh88mohD3Gte
-AOSPtQbUiQyHvLuetqSq41jdUjGFoWwFEFqF1v61YBj2MGP1IdBUYXTYQ4medd1Z
-0rUuX75+VM3uSDcoX449Vy217VVkpj0u4S1unCNNtarXK9QhrPm3UeAmWwkDrp1i
-b128Nk2FYeImr/pTbxObYnRZop4LZfbqmt/8EBhotopx/ibjkVlKJSeVmHSe5v+Z
-xq8R4iQTcdJoK1VjQrE9f2pssP1M+D3RKOSQCJArpyDFKeP2Fw12lAqXhkjiITJi
-pzVpMnjstrJ4BP9T/Rlq50oj9yS+IdK60TUc22vYJZXrk9AE3hnocu+g7nUvKa/j
-ueWt7kFNGm2MpbBfjMQL8SqDlSc+ERjAwGoLCRG5LV9FMmHgX4xZdqU86UMd1UfD
-jF1LK/OfuSYKNYcFxpMj3uDzxHMx6GCBsdr8y+NuIdwG3/NQT2v4qs2AP5r+C7te
-iKl6uy7iLljYfc9FIsnM
-=KY2T
------END PGP SIGNATURE-----
+> @@ -3932,18 +3932,20 @@ pid_t vm_is_stack(struct task_struct *task,
+>  		return task->pid;
+>
+>  	if (in_group) {
+> -		struct task_struct *t = task;
+> +		struct task_struct *t;
+>  		rcu_read_lock();
+> -		while_each_thread(task, t) {
+> +		t = list_first_entry_rcu(&task->thread_group,
+> +					 struct task_struct, thread_group);
 
---keoAwTxaagou87Dg--
+It is not safe to dereference this pointer.
+
+Once again. You have the task_struct *task. It exits,
+but task->thread_group->next still points to another thread T. Now suppose
+that T exits too. But task->thread_group->next was not changed, it still
+points to T. RCU grace period passes, T is freed.
+
+After that you take rcu_read_lock(), but it is too late! >next points to
+the already freed/reused memory. How can list_first_entry_rcu() help?
+
+What you need is something like
+
+		rcu_read_lock();
+		if (!pid_alive(task))
+			goto done;
+
+		t = task;
+		do {
+			...
+		} while_each(task, t);
+
+	done:
+		rcu_read_unlock();
+
+
+And. Imho it is not good to have the (afaics exactly?) same code in
+mm/nommu.c, even with the same names. Why it is not possible to make
+a single definition?
+
+Oleg.
