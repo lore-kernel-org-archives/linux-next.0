@@ -1,47 +1,109 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: triage for March 6, 2012
-Date: Wed, 7 Mar 2012 10:46:37 +0100
-Message-ID: <CAMuHMdXMqb17fSFoqu7BTGMGHBpy4xLAy2PjmrKd1pCKnsx+-Q@mail.gmail.com>
-References: <20120307024306.GA18493@windriver.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH v2] ARM: pxa: fix regulator related build fail in magician_defconfig
+Date: Wed, 7 Mar 2012 09:46:08 -0500
+Message-ID: <4F5774B0.1030209@windriver.com>
+References: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120307024306.GA18493@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:50409 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758474Ab2CGOqT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 09:46:19 -0500
+In-Reply-To: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Parsons <lost.distance@yahoo.com>
+Cc: broonie@opensource.wolfsonmicro.com, haojian.zhuang@gmail.com, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Mar 7, 2012 at 03:43, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> Due to the nature of the commits I've been making lately, when I see
-> a fail in linux-next, I have to wonder if I somehow caused it by a
-> header shuffle. =C2=A0After pouring over the kisskb linux-next result=
-s,
-> I realized that I can't be the only one doing this, and that a triage
-> summary of the linux-next fails should in theory be useful to a
-> bunch of people doing similar to what I do.
+On 12-03-06 08:46 PM, Paul Parsons wrote:
+> --- On Tue, 6/3/12, Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+>> commit
+>> 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
+>>
+>>   "regulator: Remove support for supplies specified by
+>> struct device"
+>>
+>> deletes the field from the struct, but this platform was
+>> still trying
+>> to set those fields.  Convert them to use the
+>> REGULATOR_SUPPLY macro
+>> so as to fix this failure:
+>>
+>> arch/arm/mach-pxa/magician.c:581: error: unknown field 'dev'
+>> specified in initializer
+>> arch/arm/mach-pxa/magician.c:581: warning: initialization
+>> from incompatible pointer type
+>> arch/arm/mach-pxa/magician.c:585: error: unknown field 'dev'
+>> specified in initializer
+>> arch/arm/mach-pxa/magician.c:585: warning: initialization
+>> from incompatible pointer type
+>>
+>> arch/arm/mach-pxa/hx4700.c:683: error: unknown field 'dev'
+>> specified in initializer
+>> arch/arm/mach-pxa/hx4700.c:683: warning: initialization from
+>> incompatible pointer type
+>> arch/arm/mach-pxa/hx4700.c:687: error: unknown field 'dev'
+>> specified in initializer
+>> arch/arm/mach-pxa/hx4700.c:687: warning: initialization from
+>> incompatible pointer type
+>>
+>> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+>> ---
+>>
+>> [v2: convert to using REGULATOR_SUPPLY instead of just
+>> deleting the
+>>  instances of setting the .dev field ]
+>>
+>> diff --git a/arch/arm/mach-pxa/hx4700.c
+>> b/arch/arm/mach-pxa/hx4700.c
+>> index f2c23ea..53c3366 100644
+>> --- a/arch/arm/mach-pxa/hx4700.c
+>> +++ b/arch/arm/mach-pxa/hx4700.c
+>> @@ -679,14 +679,8 @@ static struct platform_device
+>> power_supply = {
+>>   */
+>>  
+>>  static struct regulator_consumer_supply bq24022_consumers[]
+>> = {
+>> -    {
+>> -        .dev =
+>> &gpio_vbus.dev,
+>> -        .supply =
+>> "vbus_draw",
+>> -    },
+>> -    {
+>> -        .dev =
+>> &power_supply.dev,
+>> -        .supply = "ac_draw",
+>> -    },
+>> +    REGULATOR_SUPPLY("vbus_draw",
+>> "gpio_vbus"),
+>> +    REGULATOR_SUPPLY("ac_draw",
+>> "power_supply"),
+>>  };
+> 
+> The above hx4700 patch yields the following warnings:
+> 
+> _regulator_get: gpio-vbus supply vbus_draw not found, using dummy regulator
+> _regulator_get: pda-power supply ac_draw not found, using dummy regulator
+> 
+> I suggest the following lines instead:
+> 
+> 	REGULATOR_SUPPLY("vbus_draw", "gpio-vbus"),
+> 	REGULATOR_SUPPLY("ac_draw", "pda-power"),
 
-Indeed. Unfortunately I don't have the bandwidth to do daily regression
-summaries for linux-next, like I do for Linus' releases.
+Thanks for the report.  The regulator code is rather foreign
+to me, but I think I figured out the expectations on the names
+last night when looking at a similar patch here:
 
-I haven't uploaded my scripts to kernel.org after the resurrection,
-but you may be able to get linux-log-diff.pl and linux-log-summary.pl
-from an old mirror.
+http://www.spinics.net/lists/arm-kernel/msg163418.html
 
-Gr{oetje,eeting}s,
+I'll fix these two patches up, but next time I'll just report
+the regulator regressions and let the sub-system maintainer
+or the platform maintainer sort them out.
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+Paul.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+> 
