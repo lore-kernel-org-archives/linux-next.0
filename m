@@ -1,41 +1,63 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Thu, 8 Mar 2012 10:00:48 -0800
-Message-ID: <20120308180048.GC26516@kroah.com>
-References: <20120308152110.12c805f59c45251d79bcb24b@canb.auug.org.au>
+From: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+Subject: Re: [PATCH 2/2] mm/linux-next: Fix rcu locking in vm_is_stack
+Date: Fri, 9 Mar 2012 00:05:56 +0530
+Message-ID: <CAAHN_R190Dv1Viyjz7dkdq=Ju3zwn9cDGeFg+L++5Jmr77ZQPA@mail.gmail.com>
+References: <1331045377.17099.2.camel@deneb.redhat.com>
+	<1331064994-6693-1-git-send-email-siddhesh.poyarekar@gmail.com>
+	<1331064994-6693-2-git-send-email-siddhesh.poyarekar@gmail.com>
+	<20120307153849.GA18879@redhat.com>
+	<CAAHN_R3JW=7VUSOEkiZMctz8zq_njAdJgngMoRF_EDZ4krVbTg@mail.gmail.com>
+	<20120308174023.GA13424@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:36927 "EHLO
-	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753868Ab2CHSAu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 13:00:50 -0500
-Received: from compute5.internal (compute5.nyi.mail.srv.osa [10.202.2.45])
-	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id D370D21182
-	for <linux-next@vger.kernel.org>; Thu,  8 Mar 2012 13:00:49 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <20120308152110.12c805f59c45251d79bcb24b@canb.auug.org.au>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:50067 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755458Ab2CHSf5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 13:35:57 -0500
+In-Reply-To: <20120308174023.GA13424@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Mark Salter <msalter@redhat.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On Thu, Mar 08, 2012 at 03:21:10PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> drivers/staging/sep/sep_driver.c:55:32: fatal error: linux/rar_register.h: No such file or directory
-> 
-> Caused by commit 33e9970add94 ("x86/mid: Kill off Moorestown").
-> 
-> Following previous instructions, I have disabled the staging tree driver
-> using this patch (pending a fix in the tip tree):
+On Thu, Mar 8, 2012 at 11:10 PM, Oleg Nesterov <oleg@redhat.com> wrote:
+> Not in this case. see __unhash_process(p)->list_del_rcu(p->thread_group).
+>
+> You missed the fact that ->thread_group differs from the "usual" rcu
+> protected list. The _head_ of the list can be list_del_rcu'd. Not the
+> first/last/any entry, even the head.
+>
+> Or IOW, we do not really have the head. Every task is the list entry,
+> but it also can be be used as a head by while_each_thread().
 
-Looks good to me.  Alan, care to send me an update that fixes this
-driver for real?
+Ahh ok, I did not notice this. That's an interesting quirk. The more I
+think I understand rcu the more I realize there are gaps in my
+understanding.
 
-thanks,
+>> In that case too, before this
+>> happens, the proc entry is removed
+>
+> I guess you meant proc_flush_task()... Not sure I really understand,
+> it can't "remove" the opened entry. This is just optimization which
+> tries to shrink the cache.
 
-greg k-h
+Yes, and I was obviously wrong, now that I read the whole thing again,
+including the unmounting of the namespace. I misread the unmounting of
+proc as being an unmount of the thread/thread group namespace (the nr
+== 1 check).
+
+> Yes, yes, yes, but this "next element" can exit too before you take
+> rcu_read_lock, and in this case the deleted entry won't be updated.
+> That is the problem.
+
+I will post the entire, consolidated patch once again next week with
+changes for this as well as some other things (*not* marking the
+process stack with the TID to maintain backward compatibility and some
+code cleanup). Thanks for not giving up trying to explain the same
+thing over and over again ;)
+
+
+-- 
+Siddhesh Poyarekar
+http://siddhesh.in
