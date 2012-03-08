@@ -1,23 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the arm-soc tree with the omap_dss2
  tree
-Date: Thu, 8 Mar 2012 16:55:39 +1100
-Message-ID: <20120308165539.8a3b718be677de97a8767cd5@canb.auug.org.au>
+Date: Thu, 8 Mar 2012 16:58:38 +1100
+Message-ID: <20120308165838.c22b95e78c0ae3dd0ab1fea3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__8_Mar_2012_16_55_39_+1100_r+CVUrMNoJ2P=hBP"
+ boundary="Signature=_Thu__8_Mar_2012_16_58_38_+1100_wcj+mgPEKevrdPZi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41024 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:57436 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752673Ab2CHFzp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 00:55:45 -0500
+	with ESMTP id S1751376Ab2CHF6o (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 00:58:44 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Tony Lindgren <tony@atomide.com>
 
---Signature=_Thu__8_Mar_2012_16_55_39_+1100_r+CVUrMNoJ2P=hBP
+--Signature=_Thu__8_Mar_2012_16_58_38_+1100_wcj+mgPEKevrdPZi
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -25,49 +25,49 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-omap1/board-nokia770.c between commit 58e0d6ab02eb ("OMAP:
-N770: remove HWA742 platform data") from the omap_dss2 tree and commit
-2e3ee9f45b3c ("ARM: OMAP1: Move most of plat/io.h into local iomap.h")
-from the arm-soc tree.
+arch/arm/mach-omap1/board-osk.c between commit ddba6c7f7ec6 ("OMAP1: pass
+LCD config with omapfb_set_lcd_config()") from the omap_dss2 tree and
+commit 2e3ee9f45b3c ("ARM: OMAP1: Move most of plat/io.h into local
+iomap.h") from the arm-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-omap1/board-nokia770.c
-index 9b6332a,abdbdb0..0000000
---- a/arch/arm/mach-omap1/board-nokia770.c
-+++ b/arch/arm/mach-omap1/board-nokia770.c
-@@@ -30,7 -29,7 +29,6 @@@
-  #include <plat/usb.h>
-  #include <plat/board.h>
-  #include <plat/keypad.h>
-- #include "common.h"
- -#include <plat/hwa742.h>
-  #include <plat/lcd_mipid.h>
-  #include <plat/mmc.h>
-  #include <plat/clock.h>
+diff --cc arch/arm/mach-omap1/board-osk.c
+index ef87465,e2d7ae4..0000000
+--- a/arch/arm/mach-omap1/board-osk.c
++++ b/arch/arm/mach-omap1/board-osk.c
+@@@ -34,8 -34,6 +34,7 @@@
+  #include <linux/i2c.h>
+  #include <linux/leds.h>
+  #include <linux/smc91x.h>
+ +#include <linux/omapfb.h>
+-=20
+  #include <linux/mtd/mtd.h>
+  #include <linux/mtd/partitions.h>
+  #include <linux/mtd/physmap.h>
 
---Signature=_Thu__8_Mar_2012_16_55_39_+1100_r+CVUrMNoJ2P=hBP
+--Signature=_Thu__8_Mar_2012_16_58_38_+1100_wcj+mgPEKevrdPZi
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPWEnbAAoJEECxmPOUX5FE/lIP+wSIKyn7EFKDRkK0LH/rm9Ga
-QySNT63cJv58WFDQS+3+BnAO6fRFVXt7lVFJbbRVq2Oq6PbzJ0rei1u0hCRcMsa/
-Vr4sFMU4Te29YU4rM/vgl7yDf1gv0xSa4QGvFQwAHp5I6GroH6cebs0E0XNoWTQt
-rVBUW9/cTnxALnDjZdzGaKM5D58AOWW2PJOonRsEGB8+CE1UgxmXZXHeks+9D2rf
-eqEP20ynUPDA64M4E1m/syex4Wa5HIRxkODxl7mnwVOXPnKzWpNDpH9qZBmx1uTG
-FgflkBj7xGkJ/UvCEghrNZorI1mL5TpRZr8M3dCiB1seKNJ1OmvpmMW/BZnf2u9N
-wqoQ/ClIN4RNUpo/+khOfywa/Fg70t0djvUGENkLCEIE0ynHyoLISZpMOcfuqqyD
-iiRPoqA74SHFYEUT5pRKzTZl5Zeb3vW8y2tmfiUHiFiHxPOB+eiOEZk5VProwKzu
-TEGy0nUckU4+RjX71EL28jMJbQfRRabY/Grsn1i6iudbM5F+3f5NEgjcRLckVVBW
-/pofuaF3Xmd6BJEPKprQUDbN3jSAdrd7K4nVHF2Ynxopy2MmsOocI6qR4gtj0GGR
-2uuMgnTsmubRQBpFTRqfv2LzxUfiCpSU3vI+9gKWhbFMG7XiVEGzf8T9f7Ip+gwT
-MbuUIR/SAyWMBMqC0PCy
-=3wBG
+iQIcBAEBCAAGBQJPWEqOAAoJEECxmPOUX5FE4DAP/iZ1hl8tpkGSaDlgrXvMa5gh
+1B6j/j1ZjH5Tvzsy8L/2wHLMvbSj5mx0p3FHuL6YHA8AiZW92IdXFkNoFrR//UGH
+kWzR6NVkMygTocqIO0+lC0DySDULIc8E9hJph+QZBZmwKFZQ4V9JiODKKs+mlgSH
+iXdZmIAONBboAK2tCkswAy0wGwZ/2aMMDx/b645JkbLqbOp+6qVx5bHR0+fr8yvi
+oDZIUZQuA2Jv0jOsEpqmVOE8IDLdZHi43vEypUcs1rhqtT2jN26iMj50QlO8gm0x
+gy+dY/OvzlR97Yk9qcDJFIASWFi+xZTkZjZQ9as39QPbqHUFMl6zI0ynYPabHNkB
+fGtVPC4pA62awstHHR++7yu0jbaOUt9soDKvvquS5oJGjOJLHuIwJePZr0dTBC1H
+xsJHolcZojpybPIDqXSda5/HNjhthBNoM5Dl+sEstIRebO7bU7tmc1LrbIxjbkDG
+dTNF5f0SlHaS4pyt4FDZ7bFrsRowhTEHSN2R/9lzzR5vWg6ED61sFaOW0oiIRWZB
+lmYG9DGJC2XUGRPYvN5xqhq51HEkOXYUxdOoZNYQDJfD7phiZYl38wIFPLwawZd2
+/li35CrjIXHrL14Xx9izF7r/syNF3i0BpBorXXB8at75wJBGLNP9uVJ5N7Oi2TyL
+zl/uwhyaiByuaCs27zeR
+=ZG9b
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__8_Mar_2012_16_55_39_+1100_r+CVUrMNoJ2P=hBP--
+--Signature=_Thu__8_Mar_2012_16_58_38_+1100_wcj+mgPEKevrdPZi--
