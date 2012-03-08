@@ -1,86 +1,192 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tip tree
-Date: Thu, 8 Mar 2012 15:21:10 +1100
-Message-ID: <20120308152110.12c805f59c45251d79bcb24b@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the omap_dss2
+ tree
+Date: Thu, 8 Mar 2012 16:51:16 +1100
+Message-ID: <20120308165116.d400947f35e40a923e9c6ad0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__8_Mar_2012_15_21_10_+1100_B+njd011uXjCRhbj"
+ boundary="Signature=_Thu__8_Mar_2012_16_51_16_+1100_CrEm+_emwTAwSeus"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50111 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:37533 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752271Ab2CHEVi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 23:21:38 -0500
+	with ESMTP id S1751062Ab2CHFv2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 00:51:28 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>, Tony Lindgren <tony@atomide.com>
 
---Signature=_Thu__8_Mar_2012_15_21_10_+1100_B+njd011uXjCRhbj
+--Signature=_Thu__8_Mar_2012_16_51_16_+1100_CrEm+_emwTAwSeus
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-omap1/board-ams-delta.c between commit ddba6c7f7ec6
+("OMAP1: pass LCD config with omapfb_set_lcd_config()") from the
+omap_dss2 tree and commits 5ca6180fa6d7 ("ARM: OMAP1: ams-delta:
+supersede custom led device by leds-gpio") and 2e3ee9f45b3c ("ARM: OMAP1:
+Move most of plat/io.h into local iomap.h") from the arm-soc tree.
 
-drivers/staging/sep/sep_driver.c:55:32: fatal error: linux/rar_register.h: =
-No such file or directory
-
-Caused by commit 33e9970add94 ("x86/mid: Kill off Moorestown").
-
-Following previous instructions, I have disabled the staging tree driver
-using this patch (pending a fix in the tip tree):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 8 Mar 2012 15:15:44 +1100
-Subject: [PATCH] staging: disable the sep driver due to breakage
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/sep/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/sep/Kconfig b/drivers/staging/sep/Kconfig
-index 92bf166..cd95ca2 100644
---- a/drivers/staging/sep/Kconfig
-+++ b/drivers/staging/sep/Kconfig
-@@ -1,6 +1,6 @@
- config DX_SEP
- 	tristate "Discretix SEP driver"
--	depends on PCI
-+	depends on PCI && BROKEN
- 	help
- 	  Discretix SEP driver; used for the security processor subsystem
- 	  on bard the Intel Mobile Internet Device.
---=20
-1.7.9.1
-
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__8_Mar_2012_15_21_10_+1100_B+njd011uXjCRhbj
+diff --cc arch/arm/mach-omap1/board-ams-delta.c
+index e0e8245,c847597..0000000
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@@ -20,7 -21,7 +21,8 @@@
+  #include <linux/platform_device.h>
+  #include <linux/serial_8250.h>
+  #include <linux/export.h>
+ +#include <linux/omapfb.h>
++ #include <linux/io.h>
+ =20
+  #include <media/soc_camera.h>
+ =20
+@@@ -170,6 -162,117 +163,113 @@@ static struct omap_usb_config ams_delta
+  	.pins[0]	=3D 2,
+  };
+ =20
+ -static struct omap_board_config_kernel ams_delta_config[] __initdata =3D {
+ -	{ OMAP_TAG_LCD,		&ams_delta_lcd_config },
+ -};
+ -
++ #define LATCH1_GPIO_BASE	232
++ #define LATCH1_NGPIO		8
++=20
++ static struct resource latch1_resources[] __initconst =3D {
++ 	[0] =3D {
++ 		.name	=3D "dat",
++ 		.start	=3D LATCH1_PHYS,
++ 		.end	=3D LATCH1_PHYS + (LATCH1_NGPIO - 1) / 8,
++ 		.flags	=3D IORESOURCE_MEM,
++ 	},
++ };
++=20
++ static struct bgpio_pdata latch1_pdata __initconst =3D {
++ 	.base	=3D LATCH1_GPIO_BASE,
++ 	.ngpio	=3D LATCH1_NGPIO,
++ };
++=20
++ static struct platform_device latch1_gpio_device =3D {
++ 	.name		=3D "basic-mmio-gpio",
++ 	.id		=3D 0,
++ 	.resource	=3D latch1_resources,
++ 	.num_resources	=3D ARRAY_SIZE(latch1_resources),
++ 	.dev		=3D {
++ 		.platform_data	=3D &latch1_pdata,
++ 	},
++ };
++=20
++ static struct resource latch2_resources[] __initconst =3D {
++ 	[0] =3D {
++ 		.name	=3D "dat",
++ 		.start	=3D LATCH2_PHYS,
++ 		.end	=3D LATCH2_PHYS + (AMS_DELTA_LATCH2_NGPIO - 1) / 8,
++ 		.flags	=3D IORESOURCE_MEM,
++ 	},
++ };
++=20
++ static struct bgpio_pdata latch2_pdata __initconst =3D {
++ 	.base	=3D AMS_DELTA_LATCH2_GPIO_BASE,
++ 	.ngpio	=3D AMS_DELTA_LATCH2_NGPIO,
++ };
++=20
++ static struct platform_device latch2_gpio_device =3D {
++ 	.name		=3D "basic-mmio-gpio",
++ 	.id		=3D 1,
++ 	.resource	=3D latch2_resources,
++ 	.num_resources	=3D ARRAY_SIZE(latch2_resources),
++ 	.dev		=3D {
++ 		.platform_data	=3D &latch2_pdata,
++ 	},
++ };
++=20
++ static struct gpio latch_gpios[] __initconst =3D {
++ 	{
++ 		.gpio	=3D LATCH1_GPIO_BASE + 6,
++ 		.flags	=3D GPIOF_OUT_INIT_LOW,
++ 		.label	=3D "dockit1",
++ 	},
++ 	{
++ 		.gpio	=3D LATCH1_GPIO_BASE + 7,
++ 		.flags	=3D GPIOF_OUT_INIT_LOW,
++ 		.label	=3D "dockit2",
++ 	},
++ 	{
++ 		.gpio	=3D AMS_DELTA_GPIO_PIN_SCARD_RSTIN,
++ 		.flags	=3D GPIOF_OUT_INIT_LOW,
++ 		.label	=3D "scard_rstin",
++ 	},
++ 	{
++ 		.gpio	=3D AMS_DELTA_GPIO_PIN_SCARD_CMDVCC,
++ 		.flags	=3D GPIOF_OUT_INIT_LOW,
++ 		.label	=3D "scard_cmdvcc",
++ 	},
++ 	{
++ 		.gpio	=3D AMS_DELTA_GPIO_PIN_MODEM_NRESET,
++ 		.flags	=3D GPIOF_OUT_INIT_LOW,
++ 		.label	=3D "modem_nreset",
++ 	},
++ 	{
++ 		.gpio	=3D AMS_DELTA_GPIO_PIN_MODEM_CODEC,
++ 		.flags	=3D GPIOF_OUT_INIT_LOW,
++ 		.label	=3D "modem_codec",
++ 	},
++ 	{
++ 		.gpio	=3D AMS_DELTA_LATCH2_GPIO_BASE + 14,
++ 		.flags	=3D GPIOF_OUT_INIT_LOW,
++ 		.label	=3D "hookflash1",
++ 	},
++ 	{
++ 		.gpio	=3D AMS_DELTA_LATCH2_GPIO_BASE + 15,
++ 		.flags	=3D GPIOF_OUT_INIT_LOW,
++ 		.label	=3D "hookflash2",
++ 	},
++ };
++=20
++ void ams_delta_latch_write(int base, int ngpio, u16 mask, u16 value)
++ {
++ 	int bit =3D 0;
++ 	u16 bitpos =3D 1 << bit;
++=20
++ 	for (; bit < ngpio; bit++, bitpos =3D bitpos << 1) {
++ 		if (!(mask & bitpos))
++ 			continue;
++ 		gpio_set_value(base + bit, (value & bitpos) !=3D 0);
++ 	}
++ }
++ EXPORT_SYMBOL(ams_delta_latch_write);
++=20
+  static struct resource ams_delta_nand_resources[] =3D {
+  	[0] =3D {
+  		.start	=3D OMAP1_MPUIO_BASE,
+
+--Signature=_Thu__8_Mar_2012_16_51_16_+1100_CrEm+_emwTAwSeus
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPWDO2AAoJEECxmPOUX5FEPzAP/iMpLDf0cwQpAJT4q93e5iKj
-nynK5CNa3Vip7sBIJRwRWx4SXx79t4r6gYLLGr2ms2WZEd/V43d98mgdJdWGD4lY
-hI+JbnElTs5AhiFzJPT6RWC+BoBowdKzDD7zxh9PUwB7ZY7pv/oAa48bhr5yfsXc
-UVzN94OwfQY47E18MPcd2ARPbt2ZMV6IzSmo9htgEjnJKybo2H6zYT4U8l6a1AdP
-W9YJ4pQktIbPUrFualleYZfzp9viGeBfzWRagA7xZFG1PrICh3VbseJJq7AX/owD
-rxAkOIm3hT24Il5yYxJFGB1mdfVmo8bstVhy1Y2xzSC1nnygeRnwH8WMz9+P3/ea
-PAw+81vxzsSy16Mj74Jf2LlzhZ1vQmAGWcB9NYV8EaZqSexMA+jdi3ktCxz4q0yD
-hdKg/kiSbdD07layMX9xfw3gG7afIi87xyFn9F7tG4FUHbCCRGomdRyHzYPEZMRd
-bd/yHsQqqNND8CZg8RMlWixkWVjO68VafDnX8wDKqUjZ9cmo/dl1xxIs+rEtRqGL
-avx+0Ud/+98YhFyJF/CPTyWwnUMH24/HCJt7962eriE29TFxlW9e4Y3eMxP/v3Hr
-4u7ZJAWUvNemsAHNpknvE8B+n2oN5YrqBloS0nOp+xTIS+BlCObAcoTQEpAN+ffU
-h6LaLefJSDQJ4+p/PAEN
-=TQyi
+iQIcBAEBCAAGBQJPWEjUAAoJEECxmPOUX5FEVcAQAI1w2+dYENTtncxmKot/evcZ
+0mjVrM4P4C4wkXr9hfm4Zb9A6Ts0GpUPQozd0e5pnu9pIwFY8qgurQHzjTu4UqCv
+uwKnf3rVZ1JRFR/he2874tltWJPcW8/fWT1FHnW/j71aDGhfk3sNBGLaczg0Txm1
+1zHYaoZxAyD3SZidvWPieQ9B/6RaAv73Y2LhJ75rWopv9s5vo2PKFy8LtqzEqx7i
+jwGmNi7HJImGdWDC5uIyWDwhDdCXxs+HGkX0ygaLNBXmhMp821an+Btcgg9ghwUP
+niC058zoVE/rSM/Ct7rdCnH8gWKds+WhpHO9a3Voqfjb7MexOLle6/exky30dBdk
+XAy4rtcq44T9/4vxQtQyS2me63fBrg6ihbQvgRiOCnA7JPC3z/lqNju97lM4pFXl
+hWZRotfHozDYUMyZ3IxUMfj4K+r/O7u/xY0rba0gy2kuLc88th6vVmqicRsCDhRP
+Q29DFixYUfcnjjEBjDwVfGpDg22IxfSZ9VyS81F8JBDSaC+vWrTYNBxOcmcL/Q5Z
+yAa8q4izfKNsDDNd25nm1nj2+4C5NzhPrP6DZQjvS4N6po8qavzNI0eU802DyfsZ
+tdBB2VsCY+156TRgegMU4wju5amSxTDa5Q7M571iVbv//wZJ+Gjz8D3eGs71s/ZR
+hpcgpjvJjCj3L8BVOFeC
+=dwnc
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__8_Mar_2012_15_21_10_+1100_B+njd011uXjCRhbj--
+--Signature=_Thu__8_Mar_2012_16_51_16_+1100_CrEm+_emwTAwSeus--
