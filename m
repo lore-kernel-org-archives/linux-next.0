@@ -1,62 +1,46 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] ARM: pxa: fix build failure for regulator consumer in em-x270.c
-Date: Thu,  8 Mar 2012 17:06:06 -0500
-Message-ID: <1331244366-6147-1-git-send-email-paul.gortmaker@windriver.com>
-References: <CAP=VYLp-weNj35OHtmZ6pf5-t7OUxWREeu8r5sSOLhFYu0CppQ@mail.gmail.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: manual merge of the powerpc tree with the arm tree
+Date: Fri, 09 Mar 2012 10:35:46 +1100
+Message-ID: <1331249746.3105.40.camel@pasglop>
+References: <20120308120422.e071cba36425eacbee1f8d98@canb.auug.org.au>
+	 <25744.1331174036@neuling.org>
+	 <20120308145131.fad50bbc79c36f0b0b12d101@canb.auug.org.au>
+	 <1331185951.3105.29.camel@pasglop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:61364 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757993Ab2CHWHA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 17:07:00 -0500
-In-Reply-To: <CAP=VYLp-weNj35OHtmZ6pf5-t7OUxWREeu8r5sSOLhFYu0CppQ@mail.gmail.com>
+Received: from gate.crashing.org ([63.228.1.57]:35248 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758691Ab2CHXgO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Mar 2012 18:36:14 -0500
+In-Reply-To: <1331185951.3105.29.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: broonie@opensource.wolfsonmicro.com, haojian.zhuang@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, grinberg@compulab.co.il, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michael Neuling <mikey@neuling.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>
 
-Commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
+On Thu, 2012-03-08 at 16:52 +1100, Benjamin Herrenschmidt wrote:
+> On Thu, 2012-03-08 at 14:51 +1100, Stephen Rothwell wrote:
+> > Hi Mikey,
+> > 
+> > On Thu, 08 Mar 2012 13:33:56 +1100 Michael Neuling <mikey@neuling.org> wrote:
+> > >
+> > > Surely we only need SPARSE_IRQ now and not MAY_HAVE_SPARSE_IRQ.  
+> > > 
+> > > In fact, keeping MAY_HAVE_SPARSE_IRQ seems to make SPARSE_IRQ user
+> > > selectable, which we don't want anymore since ad5b7f1350c2.
+> > 
+> > Yes, indeed. I will fix up the merge resolution for tomorrow.
+> 
+> This is my fault. Grant's patch had a collision and I manually fixed it
+> up. While doing that, I put back MAY_HAVE_SPARSE_IRQ which the patch
+> originally took out.
 
-  "regulator: Remove support for supplies specified by struct device"
+Actually, I didn't keep MAY_HAVE_SPARSE_IRQ, I kept HAVE_SPARSE_IRQ. If
+I remove it, then I get Kconfig warnings:
 
-caused this file to break, since it was still relying on the
-device field to be present.  Update them to use the new dev_name
-entries instead.
+warning: (PPC) selects SPARSE_IRQ which has unmet direct dependencies (HAVE_GENERIC_HARDIRQS && HAVE_SPARSE_IRQ)
 
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
-
-[v2: replace dev with dev_name instead of just deleting dev.
- Note however there is dev_name overlap; not sure if that matters? ]
-
-diff --git a/arch/arm/mach-pxa/em-x270.c b/arch/arm/mach-pxa/em-x270.c
-index c1b65da..0ffc100 100644
---- a/arch/arm/mach-pxa/em-x270.c
-+++ b/arch/arm/mach-pxa/em-x270.c
-@@ -1083,19 +1083,19 @@ static void __init em_x270_userspace_consumers_init(void)
- }
- 
- /* DA9030 related initializations */
--#define REGULATOR_CONSUMER(_name, _dev, _supply)			       \
-+#define REGULATOR_CONSUMER(_name, _dev_name, _supply)		        \
- 	static struct regulator_consumer_supply _name##_consumers[] = {	\
- 		{							\
--			.dev = _dev,					\
-+			.dev_name = _dev_name,				\
- 			.supply = _supply,				\
- 		},							\
- 	}
- 
--REGULATOR_CONSUMER(ldo3, &em_x270_gps_userspace_consumer.dev, "vcc gps");
-+REGULATOR_CONSUMER(ldo3, "reg-userspace-consumer", "vcc gps");
- REGULATOR_CONSUMER(ldo5, NULL, "vcc cam");
--REGULATOR_CONSUMER(ldo10, &pxa_device_mci.dev, "vcc sdio");
-+REGULATOR_CONSUMER(ldo10, "pxa2xx-mci", "vcc sdio");
- REGULATOR_CONSUMER(ldo12, NULL, "vcc usb");
--REGULATOR_CONSUMER(ldo19, &em_x270_gprs_userspace_consumer.dev, "vcc gprs");
-+REGULATOR_CONSUMER(ldo19, "reg-userspace-consumer", "vcc gprs");
- REGULATOR_CONSUMER(buck2, NULL, "vcc_core");
- 
- #define REGULATOR_INIT(_ldo, _min_uV, _max_uV, _ops_mask)		\
--- 
-1.7.9.1
+Cheers,
+Ben.
