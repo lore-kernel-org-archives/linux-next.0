@@ -1,64 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the powerpc tree with the arm tree
-Date: Thu, 8 Mar 2012 14:51:31 +1100
-Message-ID: <20120308145131.fad50bbc79c36f0b0b12d101@canb.auug.org.au>
-References: <20120308120422.e071cba36425eacbee1f8d98@canb.auug.org.au>
-	<25744.1331174036@neuling.org>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Thu, 8 Mar 2012 15:21:10 +1100
+Message-ID: <20120308152110.12c805f59c45251d79bcb24b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__8_Mar_2012_14_51_31_+1100_qb3nrSWB2o1L7.Z="
+ boundary="Signature=_Thu__8_Mar_2012_15_21_10_+1100_B+njd011uXjCRhbj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58345 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50111 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754811Ab2CHDvy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 22:51:54 -0500
-In-Reply-To: <25744.1331174036@neuling.org>
+	with ESMTP id S1752271Ab2CHEVi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Mar 2012 23:21:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Neuling <mikey@neuling.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Thu__8_Mar_2012_14_51_31_+1100_qb3nrSWB2o1L7.Z=
+--Signature=_Thu__8_Mar_2012_15_21_10_+1100_B+njd011uXjCRhbj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mikey,
+Hi all,
 
-On Thu, 08 Mar 2012 13:33:56 +1100 Michael Neuling <mikey@neuling.org> wrot=
-e:
->
-> Surely we only need SPARSE_IRQ now and not MAY_HAVE_SPARSE_IRQ. =20
->=20
-> In fact, keeping MAY_HAVE_SPARSE_IRQ seems to make SPARSE_IRQ user
-> selectable, which we don't want anymore since ad5b7f1350c2.
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Yes, indeed. I will fix up the merge resolution for tomorrow.
+drivers/staging/sep/sep_driver.c:55:32: fatal error: linux/rar_register.h: =
+No such file or directory
+
+Caused by commit 33e9970add94 ("x86/mid: Kill off Moorestown").
+
+Following previous instructions, I have disabled the staging tree driver
+using this patch (pending a fix in the tip tree):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 8 Mar 2012 15:15:44 +1100
+Subject: [PATCH] staging: disable the sep driver due to breakage
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/sep/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/sep/Kconfig b/drivers/staging/sep/Kconfig
+index 92bf166..cd95ca2 100644
+--- a/drivers/staging/sep/Kconfig
++++ b/drivers/staging/sep/Kconfig
+@@ -1,6 +1,6 @@
+ config DX_SEP
+ 	tristate "Discretix SEP driver"
+-	depends on PCI
++	depends on PCI && BROKEN
+ 	help
+ 	  Discretix SEP driver; used for the security processor subsystem
+ 	  on bard the Intel Mobile Internet Device.
+--=20
+1.7.9.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__8_Mar_2012_14_51_31_+1100_qb3nrSWB2o1L7.Z=
+--Signature=_Thu__8_Mar_2012_15_21_10_+1100_B+njd011uXjCRhbj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPWCzDAAoJEECxmPOUX5FER+oP/26BkUtVgGjB9+/Oqv737c0x
-6MzRh+6SpOoQe7E6SsBKIBMCL57FUqZIRZ2ATnZ4d0PllPiobcZgSJB/4GTpOc9y
-gLAA1lWrtrpeWhZqQLegmQ7fDz7jRjiAaIkXPiVuAtib0QFK7POK0r4mrUbdeHKx
-i0wYQn6xfQ7bN1c3gGTkpFZuwmf+zbOcGYPM6IcsCOAX3tb56w3oPbDyw9x9C8rf
-rFgAzMDKOq+6ey8SKnIixGRzeNASDVWhkguFAA6CRD89OMKshRpvfBfLWngQu8HW
-BIIEoWmlSRjNtQsWPI0cQyBW7yp9Q04FmsBeReJdYp2+uZNx61tKWW/vvy3Nli/9
-yv6w3ngc6Wc0Tw+56fOHmnSPjHTe5aQsUkTND7co1fZ7YdCdo2E9L7/49zk2FG35
-d1qYiAAw5p3i54W9OoK2hSn6P9XZ52yhFmNrr3GGSb0+xCKINTitpPx7vr8UPepi
-BE2Q7E6O3pLeO9NI58iF4nM6KG3laJv4DupfBJWUVtC2NJCsYOW5io5Vwe6b7vG0
-WDzCBFtp92tK+r6rIkkQ1mu1+JyVZv79lTysaDgL3fp56CdIyOHhomagWZRvL2cv
-DlLX5jr3WCLaVTkwBxdZ6yKLxzvvFEBNa99TT5gH1e6wFGag33VQuTiwz7JTbx1z
-82gEp+Zy9fiNpkBHgAsC
-=etEQ
+iQIcBAEBCAAGBQJPWDO2AAoJEECxmPOUX5FEPzAP/iMpLDf0cwQpAJT4q93e5iKj
+nynK5CNa3Vip7sBIJRwRWx4SXx79t4r6gYLLGr2ms2WZEd/V43d98mgdJdWGD4lY
+hI+JbnElTs5AhiFzJPT6RWC+BoBowdKzDD7zxh9PUwB7ZY7pv/oAa48bhr5yfsXc
+UVzN94OwfQY47E18MPcd2ARPbt2ZMV6IzSmo9htgEjnJKybo2H6zYT4U8l6a1AdP
+W9YJ4pQktIbPUrFualleYZfzp9viGeBfzWRagA7xZFG1PrICh3VbseJJq7AX/owD
+rxAkOIm3hT24Il5yYxJFGB1mdfVmo8bstVhy1Y2xzSC1nnygeRnwH8WMz9+P3/ea
+PAw+81vxzsSy16Mj74Jf2LlzhZ1vQmAGWcB9NYV8EaZqSexMA+jdi3ktCxz4q0yD
+hdKg/kiSbdD07layMX9xfw3gG7afIi87xyFn9F7tG4FUHbCCRGomdRyHzYPEZMRd
+bd/yHsQqqNND8CZg8RMlWixkWVjO68VafDnX8wDKqUjZ9cmo/dl1xxIs+rEtRqGL
+avx+0Ud/+98YhFyJF/CPTyWwnUMH24/HCJt7962eriE29TFxlW9e4Y3eMxP/v3Hr
+4u7ZJAWUvNemsAHNpknvE8B+n2oN5YrqBloS0nOp+xTIS+BlCObAcoTQEpAN+ffU
+h6LaLefJSDQJ4+p/PAEN
+=TQyi
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__8_Mar_2012_14_51_31_+1100_qb3nrSWB2o1L7.Z=--
+--Signature=_Thu__8_Mar_2012_15_21_10_+1100_B+njd011uXjCRhbj--
