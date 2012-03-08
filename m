@@ -1,101 +1,82 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Thu, 8 Mar 2012 13:24:15 -0800
-Message-ID: <20120308132415.15359fc7.akpm@linux-foundation.org>
-References: <20120308175307.b295b1013728a5666fe4571a@canb.auug.org.au>
-	<20120307233220.5a76aa3c.akpm@linux-foundation.org>
-	<20120308184105.5b03ec90bcddf90562181277@canb.auug.org.au>
-	<20120307235012.847af577.akpm@linux-foundation.org>
-	<4F5882E6.8080202@linux.vnet.ibm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH] ARM: pxa: fix regulator related build fail in magician_defconfig
+Date: Thu,  8 Mar 2012 16:34:54 -0500
+Message-ID: <1331242494-3157-1-git-send-email-paul.gortmaker@windriver.com>
+References: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60965 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752701Ab2CHVYQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 16:24:16 -0500
-In-Reply-To: <4F5882E6.8080202@linux.vnet.ibm.com>
+Received: from mail.windriver.com ([147.11.1.11]:56298 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755756Ab2CHVfT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 16:35:19 -0500
+In-Reply-To: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: broonie@opensource.wolfsonmicro.com, haojian.zhuang@gmail.com, lost.distance@yahoo.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On Thu, 08 Mar 2012 17:59:02 +0800
-Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com> wrote:
+commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
 
-> Andrew, the patch has been reworked.
-> 
-> Subject: [PATCH] hugetlb: drop prev_vma in hugetlb_get_unmapped_area_topdown()
-> 
-> After the call find_vma_prev(mm, addr, &prev_vma), the following condition
-> is always true:
-> 
-> 	!prev_vma || (addr >= prev_vma->vm_end)
-> 
-> it can happily drop prev_vma and use find_vma() instead of find_vma_prev().
-> 
+  "regulator: Remove support for supplies specified by struct device"
 
-Well OK, but the changelog is wrong - we don't call find_vma_prev()
-here any more.
+deletes the field from the struct, but this platform was still trying
+to set those fields.  Convert them to use the REGULATOR_SUPPLY macro.
 
-How does this look?
+arch/arm/mach-pxa/magician.c:581: error: unknown field 'dev' specified in initializer
+arch/arm/mach-pxa/magician.c:581: warning: initialization from incompatible pointer type
+arch/arm/mach-pxa/magician.c:585: error: unknown field 'dev' specified in initializer
+arch/arm/mach-pxa/magician.c:585: warning: initialization from incompatible pointer type
 
+arch/arm/mach-pxa/hx4700.c:683: error: unknown field 'dev' specified in initializer
+arch/arm/mach-pxa/hx4700.c:683: warning: initialization from incompatible pointer type
+arch/arm/mach-pxa/hx4700.c:687: error: unknown field 'dev' specified in initializer
+arch/arm/mach-pxa/hx4700.c:687: warning: initialization from incompatible pointer type
 
-From: Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com>
-Subject: hugetlb: remove prev_vma from hugetlb_get_unmapped_area_topdown()
-
-After looking up the vma which covers or follows the cached search
-address, the following condition is always true:
-
-	!prev_vma || (addr >= prev_vma->vm_end)
-
-so we can stop checking the previous VMA altogether.
-
-Signed-off-by: Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
 
- arch/x86/mm/hugetlbpage.c |   18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
+[v3: fix arg2 in REGULATOR_SUPPLY to have correct names ]
 
-diff -puN arch/x86/mm/hugetlbpage.c~hugetlb-drop-prev_vma-in-hugetlb_get_unmapped_area_topdown arch/x86/mm/hugetlbpage.c
---- a/arch/x86/mm/hugetlbpage.c~hugetlb-drop-prev_vma-in-hugetlb_get_unmapped_area_topdown
-+++ a/arch/x86/mm/hugetlbpage.c
-@@ -308,7 +308,7 @@ static unsigned long hugetlb_get_unmappe
- {
- 	struct hstate *h = hstate_file(file);
- 	struct mm_struct *mm = current->mm;
--	struct vm_area_struct *vma, *prev_vma;
-+	struct vm_area_struct *vma;
- 	unsigned long base = mm->mmap_base;
- 	unsigned long addr = addr0;
- 	unsigned long largest_hole = mm->cached_hole_size;
-@@ -340,22 +340,14 @@ try_again:
- 		if (!vma)
- 			return addr;
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index f2c23ea..b6a338b 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -679,14 +679,8 @@ static struct platform_device power_supply = {
+  */
  
--		/*
--		 * new region fits between prev_vma->vm_end and
--		 * vma->vm_start, use it:
--		 */
--		prev_vma = vma->vm_prev;
--		if (addr + len <= vma->vm_start &&
--		            (!prev_vma || (addr >= prev_vma->vm_end))) {
-+		if (addr + len <= vma->vm_start) {
- 			/* remember the address as a hint for next time */
- 		        mm->cached_hole_size = largest_hole;
- 		        return (mm->free_area_cache = addr);
--		} else {
-+		} else if (mm->free_area_cache == vma->vm_end) {
- 			/* pull free_area_cache down to the first hole */
--		        if (mm->free_area_cache == vma->vm_end) {
--				mm->free_area_cache = vma->vm_start;
--				mm->cached_hole_size = largest_hole;
--			}
-+			mm->free_area_cache = vma->vm_start;
-+			mm->cached_hole_size = largest_hole;
- 		}
+ static struct regulator_consumer_supply bq24022_consumers[] = {
+-	{
+-		.dev = &gpio_vbus.dev,
+-		.supply = "vbus_draw",
+-	},
+-	{
+-		.dev = &power_supply.dev,
+-		.supply = "ac_draw",
+-	},
++	REGULATOR_SUPPLY("vbus_draw", "gpio-vbus"),
++	REGULATOR_SUPPLY("ac_draw", "pda-power"),
+ };
  
- 		/* remember the largest hole we saw so far */
-_
+ static struct regulator_init_data bq24022_init_data = {
+diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+index 3d6baf9..1a18e63 100644
+--- a/arch/arm/mach-pxa/magician.c
++++ b/arch/arm/mach-pxa/magician.c
+@@ -577,14 +577,8 @@ static struct platform_device power_supply = {
+  */
+ 
+ static struct regulator_consumer_supply bq24022_consumers[] = {
+-	{
+-		.dev = &gpio_vbus.dev,
+-		.supply = "vbus_draw",
+-	},
+-	{
+-		.dev = &power_supply.dev,
+-		.supply = "ac_draw",
+-	},
++	REGULATOR_SUPPLY("vbus_draw", "gpio-vbus"),
++	REGULATOR_SUPPLY("ac_draw", "pda-power"),
+ };
+ 
+ static struct regulator_init_data bq24022_init_data = {
+-- 
+1.7.9.1
