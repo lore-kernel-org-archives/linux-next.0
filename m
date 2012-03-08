@@ -1,82 +1,62 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] ARM: pxa: fix regulator related build fail in magician_defconfig
-Date: Thu,  8 Mar 2012 16:34:54 -0500
-Message-ID: <1331242494-3157-1-git-send-email-paul.gortmaker@windriver.com>
-References: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
+Subject: [PATCH] ARM: pxa: fix build failure for regulator consumer in em-x270.c
+Date: Thu,  8 Mar 2012 17:06:06 -0500
+Message-ID: <1331244366-6147-1-git-send-email-paul.gortmaker@windriver.com>
+References: <CAP=VYLp-weNj35OHtmZ6pf5-t7OUxWREeu8r5sSOLhFYu0CppQ@mail.gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:56298 "EHLO
+Received: from mail.windriver.com ([147.11.1.11]:61364 "EHLO
 	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755756Ab2CHVfT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 16:35:19 -0500
-In-Reply-To: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
+	with ESMTP id S1757993Ab2CHWHA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 17:07:00 -0500
+In-Reply-To: <CAP=VYLp-weNj35OHtmZ6pf5-t7OUxWREeu8r5sSOLhFYu0CppQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: broonie@opensource.wolfsonmicro.com, haojian.zhuang@gmail.com, lost.distance@yahoo.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: broonie@opensource.wolfsonmicro.com, haojian.zhuang@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, grinberg@compulab.co.il, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
+Commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
 
   "regulator: Remove support for supplies specified by struct device"
 
-deletes the field from the struct, but this platform was still trying
-to set those fields.  Convert them to use the REGULATOR_SUPPLY macro.
-
-arch/arm/mach-pxa/magician.c:581: error: unknown field 'dev' specified in initializer
-arch/arm/mach-pxa/magician.c:581: warning: initialization from incompatible pointer type
-arch/arm/mach-pxa/magician.c:585: error: unknown field 'dev' specified in initializer
-arch/arm/mach-pxa/magician.c:585: warning: initialization from incompatible pointer type
-
-arch/arm/mach-pxa/hx4700.c:683: error: unknown field 'dev' specified in initializer
-arch/arm/mach-pxa/hx4700.c:683: warning: initialization from incompatible pointer type
-arch/arm/mach-pxa/hx4700.c:687: error: unknown field 'dev' specified in initializer
-arch/arm/mach-pxa/hx4700.c:687: warning: initialization from incompatible pointer type
+caused this file to break, since it was still relying on the
+device field to be present.  Update them to use the new dev_name
+entries instead.
 
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
 ---
 
-[v3: fix arg2 in REGULATOR_SUPPLY to have correct names ]
+[v2: replace dev with dev_name instead of just deleting dev.
+ Note however there is dev_name overlap; not sure if that matters? ]
 
-diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
-index f2c23ea..b6a338b 100644
---- a/arch/arm/mach-pxa/hx4700.c
-+++ b/arch/arm/mach-pxa/hx4700.c
-@@ -679,14 +679,8 @@ static struct platform_device power_supply = {
-  */
+diff --git a/arch/arm/mach-pxa/em-x270.c b/arch/arm/mach-pxa/em-x270.c
+index c1b65da..0ffc100 100644
+--- a/arch/arm/mach-pxa/em-x270.c
++++ b/arch/arm/mach-pxa/em-x270.c
+@@ -1083,19 +1083,19 @@ static void __init em_x270_userspace_consumers_init(void)
+ }
  
- static struct regulator_consumer_supply bq24022_consumers[] = {
--	{
--		.dev = &gpio_vbus.dev,
--		.supply = "vbus_draw",
--	},
--	{
--		.dev = &power_supply.dev,
--		.supply = "ac_draw",
--	},
-+	REGULATOR_SUPPLY("vbus_draw", "gpio-vbus"),
-+	REGULATOR_SUPPLY("ac_draw", "pda-power"),
- };
+ /* DA9030 related initializations */
+-#define REGULATOR_CONSUMER(_name, _dev, _supply)			       \
++#define REGULATOR_CONSUMER(_name, _dev_name, _supply)		        \
+ 	static struct regulator_consumer_supply _name##_consumers[] = {	\
+ 		{							\
+-			.dev = _dev,					\
++			.dev_name = _dev_name,				\
+ 			.supply = _supply,				\
+ 		},							\
+ 	}
  
- static struct regulator_init_data bq24022_init_data = {
-diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
-index 3d6baf9..1a18e63 100644
---- a/arch/arm/mach-pxa/magician.c
-+++ b/arch/arm/mach-pxa/magician.c
-@@ -577,14 +577,8 @@ static struct platform_device power_supply = {
-  */
+-REGULATOR_CONSUMER(ldo3, &em_x270_gps_userspace_consumer.dev, "vcc gps");
++REGULATOR_CONSUMER(ldo3, "reg-userspace-consumer", "vcc gps");
+ REGULATOR_CONSUMER(ldo5, NULL, "vcc cam");
+-REGULATOR_CONSUMER(ldo10, &pxa_device_mci.dev, "vcc sdio");
++REGULATOR_CONSUMER(ldo10, "pxa2xx-mci", "vcc sdio");
+ REGULATOR_CONSUMER(ldo12, NULL, "vcc usb");
+-REGULATOR_CONSUMER(ldo19, &em_x270_gprs_userspace_consumer.dev, "vcc gprs");
++REGULATOR_CONSUMER(ldo19, "reg-userspace-consumer", "vcc gprs");
+ REGULATOR_CONSUMER(buck2, NULL, "vcc_core");
  
- static struct regulator_consumer_supply bq24022_consumers[] = {
--	{
--		.dev = &gpio_vbus.dev,
--		.supply = "vbus_draw",
--	},
--	{
--		.dev = &power_supply.dev,
--		.supply = "ac_draw",
--	},
-+	REGULATOR_SUPPLY("vbus_draw", "gpio-vbus"),
-+	REGULATOR_SUPPLY("ac_draw", "pda-power"),
- };
- 
- static struct regulator_init_data bq24022_init_data = {
+ #define REGULATOR_INIT(_ldo, _min_uV, _max_uV, _ops_mask)		\
 -- 
 1.7.9.1
