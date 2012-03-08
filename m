@@ -1,58 +1,101 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: linux-next broken by "ARM: S3C2440: move mach-s3c2440/* into mach-s3c24xx/"
-Date: Thu, 8 Mar 2012 21:44:53 +0100
-Message-ID: <201203082144.54156.heiko@sntech.de>
-References: <20120308162326.GA30941@windriver.com> <20120308191207.GC7557@sirena.org.uk> <4F590F74.2030007@windriver.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Thu, 8 Mar 2012 13:24:15 -0800
+Message-ID: <20120308132415.15359fc7.akpm@linux-foundation.org>
+References: <20120308175307.b295b1013728a5666fe4571a@canb.auug.org.au>
+	<20120307233220.5a76aa3c.akpm@linux-foundation.org>
+	<20120308184105.5b03ec90bcddf90562181277@canb.auug.org.au>
+	<20120307235012.847af577.akpm@linux-foundation.org>
+	<4F5882E6.8080202@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:40865 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751169Ab2CHUpN convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Mar 2012 15:45:13 -0500
-In-Reply-To: <4F590F74.2030007@windriver.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60965 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752701Ab2CHVYQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 16:24:16 -0500
+In-Reply-To: <4F5882E6.8080202@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, kgene.kim@samsung.com, ben-linux@fluff.org, tiwai@suse.de, linux-next@vger.kernel.org
+To: Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-Am Donnerstag 08 M=E4rz 2012, 20:58:44 schrieb Paul Gortmaker:
-> On 12-03-08 02:12 PM, Mark Brown wrote:
-> > On Thu, Mar 08, 2012 at 11:23:26AM -0500, Paul Gortmaker wrote:
-> >> Something bad happened in this commit (dd6f01b5cc).  It looks like
-> >> the moved file is truncated, causing this failure:
-> >>=20
-> >> http://kisskb.ellerman.id.au/kisskb/buildresult/5818815/
-> >>=20
-> >> I believe it came in via the fix/asoc tree.
-> >=20
-> > Hrm?  What is "it" in this context, and what was your analysis here=
-?
-> > Nothing in the page you're linking to above suggests something audi=
-o
-> > related...
->=20
-> The "it" was the commit in the subject, and the ID in the above text.
-> That was the last commit to have touched this file (via moving it).
->=20
-> What I took as a relation to fix/asoc was shown in the text you've
-> gone and deleted here in the follow up.
->=20
-> In any case, it does appear the file was broken before it was moved.
-> The offending commit is actually c1ba544f81544ed9613ad5d058968533dbce=
-f4b2
->=20
-> 	"ARM: S3C24XX: Fix restart on S3C2442"
->=20
-> It appears that a closing brace was dropped when it was integrated.
+On Thu, 08 Mar 2012 17:59:02 +0800
+Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com> wrote:
 
-kgene wrote in "[PATCH] ARM: S3C2440: Fixed build error for s3c244x":
-> This happened when I applied Heiko's 'Fix restart on S3C2442'.
-> It was my fault :( and this should be sent before release v3.3.
+> Andrew, the patch has been reworked.
+> 
+> Subject: [PATCH] hugetlb: drop prev_vma in hugetlb_get_unmapped_area_topdown()
+> 
+> After the call find_vma_prev(mm, addr, &prev_vma), the following condition
+> is always true:
+> 
+> 	!prev_vma || (addr >= prev_vma->vm_end)
+> 
+> it can happily drop prev_vma and use find_vma() instead of find_vma_prev().
+> 
 
-and was applied by Olof today.
+Well OK, but the changelog is wrong - we don't call find_vma_prev()
+here any more.
+
+How does this look?
 
 
-Heiko
+From: Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com>
+Subject: hugetlb: remove prev_vma from hugetlb_get_unmapped_area_topdown()
+
+After looking up the vma which covers or follows the cached search
+address, the following condition is always true:
+
+	!prev_vma || (addr >= prev_vma->vm_end)
+
+so we can stop checking the previous VMA altogether.
+
+Signed-off-by: Xiao Guangrong <xiaoguangrong@linux.vnet.ibm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ arch/x86/mm/hugetlbpage.c |   18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
+
+diff -puN arch/x86/mm/hugetlbpage.c~hugetlb-drop-prev_vma-in-hugetlb_get_unmapped_area_topdown arch/x86/mm/hugetlbpage.c
+--- a/arch/x86/mm/hugetlbpage.c~hugetlb-drop-prev_vma-in-hugetlb_get_unmapped_area_topdown
++++ a/arch/x86/mm/hugetlbpage.c
+@@ -308,7 +308,7 @@ static unsigned long hugetlb_get_unmappe
+ {
+ 	struct hstate *h = hstate_file(file);
+ 	struct mm_struct *mm = current->mm;
+-	struct vm_area_struct *vma, *prev_vma;
++	struct vm_area_struct *vma;
+ 	unsigned long base = mm->mmap_base;
+ 	unsigned long addr = addr0;
+ 	unsigned long largest_hole = mm->cached_hole_size;
+@@ -340,22 +340,14 @@ try_again:
+ 		if (!vma)
+ 			return addr;
+ 
+-		/*
+-		 * new region fits between prev_vma->vm_end and
+-		 * vma->vm_start, use it:
+-		 */
+-		prev_vma = vma->vm_prev;
+-		if (addr + len <= vma->vm_start &&
+-		            (!prev_vma || (addr >= prev_vma->vm_end))) {
++		if (addr + len <= vma->vm_start) {
+ 			/* remember the address as a hint for next time */
+ 		        mm->cached_hole_size = largest_hole;
+ 		        return (mm->free_area_cache = addr);
+-		} else {
++		} else if (mm->free_area_cache == vma->vm_end) {
+ 			/* pull free_area_cache down to the first hole */
+-		        if (mm->free_area_cache == vma->vm_end) {
+-				mm->free_area_cache = vma->vm_start;
+-				mm->cached_hole_size = largest_hole;
+-			}
++			mm->free_area_cache = vma->vm_start;
++			mm->cached_hole_size = largest_hole;
+ 		}
+ 
+ 		/* remember the largest hole we saw so far */
+_
