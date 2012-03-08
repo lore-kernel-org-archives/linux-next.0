@@ -1,93 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the  tree
-Date: Thu, 8 Mar 2012 17:17:16 +1100
-Message-ID: <20120308171716.67ef72a3b195ef25f1d781d6@canb.auug.org.au>
-References: <20120308170303.c113c6c34b8a7ae95caeb592@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Thu, 8 Mar 2012 17:28:08 +1100
+Message-ID: <20120308172808.6b611b842fba4e77fb8271bb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__8_Mar_2012_17_17_16_+1100_3nz4HUxYWJpr2pc7"
+ boundary="Signature=_Thu__8_Mar_2012_17_28_08_+1100_MIR6rtEzPDTLAdYT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45649 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:39199 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753034Ab2CHGRY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 01:17:24 -0500
-In-Reply-To: <20120308170303.c113c6c34b8a7ae95caeb592@canb.auug.org.au>
+	with ESMTP id S1751114Ab2CHG2X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 01:28:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Tony Lindgren <tony@atomide.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Drake <dsd@laptop.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Thu__8_Mar_2012_17_17_16_+1100_3nz4HUxYWJpr2pc7
+--Signature=_Thu__8_Mar_2012_17_28_08_+1100_MIR6rtEzPDTLAdYT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi guys,
+Hi Andrew,
 
-Sorry for the cut and paste mess ... :-(
+Today's linux-next merge of the akpm tree got a conflict in
+arch/x86/platform/olpc/olpc-xo15-sci.c between commit d1f42e314c9c
+("x86/olpc/xo15/sci: Enable lid close wakeup control") from the tip tree
+and commit "x86, olpc-xo15-sci: enable lid close wakeup control through
+sysfs" from the akpm tree.
 
-On Thu, 8 Mar 2012 17:03:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Hi all,
->=20
-> Today's linux-next merge of the arm-soc tree got a conflict in arch/arm/m=
-ach-omap1/board-palmz71.c between commit  ("") from the  tree and commit  (=
-"") from the arm-soc tree.
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/mach-omap1/board-palmz71.c between commit ddba6c7f7ec6 ("OMAP1:
-> pass LCD config with omapfb_set_lcd_config()") from the omap_dss2 tree
-> and commit 2e3ee9f45b3c ("ARM: OMAP1: Move most of plat/io.h into local
-> iomap.h") from the arm-soc tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc arch/arm/mach-omap1/board-palmz71.c
-> index 9924c70,c1cd0f2..0000000
-> --- a/arch/arm/mach-omap1/board-palmz71.c
-> +++ b/arch/arm/mach-omap1/board-palmz71.c
-> @@@ -27,9 -27,9 +27,10 @@@
->   #include <linux/mtd/mtd.h>
->   #include <linux/mtd/partitions.h>
->   #include <linux/mtd/physmap.h>
->  +#include <linux/omapfb.h>
-> + #include <linux/spi/spi.h>
-> + #include <linux/spi/ads7846.h>
->  =20
-> - #include <mach/hardware.h>
->   #include <asm/mach-types.h>
->   #include <asm/mach/arch.h>
->   #include <asm/mach/map.h>
-
-
+I assume that these were meant to be the same patch, so I dropped the one
+from the akpm tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__8_Mar_2012_17_17_16_+1100_3nz4HUxYWJpr2pc7
+--Signature=_Thu__8_Mar_2012_17_28_08_+1100_MIR6rtEzPDTLAdYT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPWE7sAAoJEECxmPOUX5FEVzkP/3t5wP4AQfj4c653Q4r/CHzB
-u/fO0m0Qt+YaNDYh5iWeJYZv/hL7rAvbI/0Hzq2TQdVBRM/JuBM36HhlKKsSU3nN
-uauLXRmU8zNL6N9hF8n5t9KG2I3riPNKmGXDGrI2AnBvk1BfbdqnWwdTaROKuJJn
-Qz/YBbBA99/xoqn8cXOnOyZ3H0iYi7I4LbXNSp/3diJCTPc7QT6odTXadPlvQpqb
-oMd3PtClOvoIMnPX+UklUdEGPih5M1nWA5wL1nEAAHz8JM0vgNpGQz9L496YBYey
-LN7nU+/ILsG/GBgVrVMVNqYcnlSk5Sor+QxNEUg9V9d9yMeWXDTu1CWMBKzl5dQB
-G09e3Mfu8qOw3aDvOWOPa1DGRJoLfV9Sbb5DK5JczVfSgolVZVzoMWaBFX+cnCsx
-x28hiH1obiqj5EIynPA0A4HLbHbfINOo2Ogm88/WGQLwROM/DWloyFu3LhI0URBQ
-2lL44OKRHr9NLDkovYIZYMNDzEM6tGLSaEKLiRQ+SwOqgGjS+Epoij7fnGdzWOuf
-8FcAwVwsZSwJ0lpo7OQdRbOtPRORhU9SC28n0dUbud9rQ/xF4L1DqZ6sVRCTmKaO
-KEC9KgU0ntVh5m2o7N1ZpzyZrsDJrlZkyF3310hI6upIkOyr6EDP0yt2Nqh/ns46
-o5KjszWequtavXnrOLlC
-=6713
+iQIcBAEBCAAGBQJPWFF4AAoJEECxmPOUX5FEHwEP/i7R3rtEBT7IxuIgkXwEG4oJ
+1MnzVbCoBxZBBk/nH4JCxB8ntaqDcrW6LQgAAuG2UCb6gZOk4m5crTt0xi1RWEDJ
+s6TdlgoBA80L+vxWUnt8mKYfmwbzLqKjD2FSPH21b4RsfausZwKtr5cNy1r61hCC
+h18FL0ehi5JFcab1EVO0Yqu63unKzbMsPBmh2kBq69KByMoy7ZKmVkQCyk0kEJSz
+wyQPwxLdtdLSHgiAL4unwL32gtzysi8i5a6G1ZvLlEsNxtoDJE18sNlpHarGEDLQ
+2/LEpJWiY1DTxQGSD2peYrPJe59UBS+WPQNkhKQxFYwASybAo4SsTZGVqE8iAUgg
+rEs/0syKkqscyZHnwCeC6huYiFnX2zCzF+sh4f4ueWIBUGTjjuM71EmCHmcSnm+h
+yS19mx6kU/jqOs7fHyUtjfh+GgHLluEP8rOUwyHAqRda9QKHadiDTCY0oCuK73uq
+CgjZSFUsXtJuv631QKGe6eFLm8mu9RsDRSuzrZcTF3onjjQCXinjp9LJnI+7/wOE
+5McRDwH2YBieRJ6LgYTm/RyKUWdT9ZN4y/fqmQWSNbio+sIe0p8IhwHzurjSZpYd
+Js2Z4aT7gA9EjrEey/AtvqbZwvsNtp+128L84qileDrzWPYIx7i2ywilxPseENBC
+ApXWUUxw0qPU6jzHd5Fn
+=1KQz
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__8_Mar_2012_17_17_16_+1100_3nz4HUxYWJpr2pc7--
+--Signature=_Thu__8_Mar_2012_17_28_08_+1100_MIR6rtEzPDTLAdYT--
