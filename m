@@ -1,84 +1,70 @@
-From: Rob Lee <rob.lee@linaro.org>
-Subject: Re: linux-next: manual merge of the cpuidle-cons tree with the
- arm-soc tree
-Date: Fri, 9 Mar 2012 16:26:00 -0600
-Message-ID: <CAMXH7KE5En7U-2zydT3MfJ7C7B164-zsQuBoHMUqzD-Kb_nh1w@mail.gmail.com>
-References: <20120309183732.512d3676599da324f4747219@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: toolchain version for mips builds, esp. cavium
+Date: Sat, 10 Mar 2012 09:38:00 +1100
+Message-ID: <20120310093800.de6112c535519c0e53109ff7@canb.auug.org.au>
+References: <CAP=VYLpk9RonUUWmnC2-7wPi7Oqra_y7K4qQNLfMYqNKMo8QMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120309183732.512d3676599da324f4747219@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sat__10_Mar_2012_09_38_00_+1100_p=y09dqIApq4Jd9E"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:42292 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030266Ab2CIWiP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 17:38:15 -0500
+In-Reply-To: <CAP=VYLpk9RonUUWmnC2-7wPi7Oqra_y7K4qQNLfMYqNKMo8QMg@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: david.daney@cavium.com, ralf@linux-mips.org, linux-next@vger.kernel.org, tony@bakeyournoodle.com
 
-Hello Stephen,
+--Signature=_Sat__10_Mar_2012_09_38_00_+1100_p=y09dqIApq4Jd9E
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, your resolution looks correct to me.
+Hi Paul,
 
-Thanks,
-Rob Lee
+On Fri, 9 Mar 2012 17:01:07 -0500 Paul Gortmaker <paul.gortmaker@windriver.=
+com> wrote:
+>
+> The linux-next builds for cavium defconfig have been failing for
+> quite some time now, since it tries to use gcc-4.2 and the option
+> for the octeon didn't appear until gcc-4.4 ("-march=3Docteon")
 
+Thanks for working that out.
 
-On Fri, Mar 9, 2012 at 1:37 AM, Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> Hi Rob,
->
-> Today's linux-next merge of the cpuidle-cons tree got a conflict in
-> arch/arm/mach-at91/cpuidle.c between commit 00482a4078f4 ("ARM: at91:
-> implement the standby function for pm/cpuidle") from the arm-soc tree=
- and
-> commit 7a1f6e72dce1 ("ARM: at91: Consolidate time keeping and irq
-> enable") from the cpuidle-cons tree.
->
-> I fixed it up (I think - see below) and can carry the fix as necessar=
-y.
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
->
-> diff --cc arch/arm/mach-at91/cpuidle.c
-> index 555d956,d40b3f3..0000000
-> --- a/arch/arm/mach-at91/cpuidle.c
-> +++ b/arch/arm/mach-at91/cpuidle.c
-> @@@ -37,23 -33,15 +33,8 @@@ static int at91_enter_idle(struct cpuid
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct cpuidle_driver =
-*drv,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 int index=
-)
-> =A0{
-> - =A0 =A0 =A0 struct timeval before, after;
-> - =A0 =A0 =A0 int idle_time;
-> -
-> - =A0 =A0 =A0 local_irq_disable();
-> - =A0 =A0 =A0 do_gettimeofday(&before);
-> - =A0 =A0 =A0 if (index =3D=3D 0)
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* Wait for interrupt state */
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 cpu_do_idle();
-> - =A0 =A0 =A0 else if (index =3D=3D 1)
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 at91_standby();
-> =A0- =A0 =A0 =A0u32 saved_lpr;
-> =A0-
-> =A0- =A0 =A0 =A0__asm__("b 1f; .align 5; 1:\n"
-> =A0- =A0 =A0 =A0" =A0 =A0 =A0 mcr p15, 0, r0, c7, c10, 4"); =A0 /* dr=
-ain write buffer */
-> =A0-
-> =A0- =A0 =A0 =A0saved_lpr =3D sdram_selfrefresh_enable();
-> =A0- =A0 =A0 =A0cpu_do_idle();
-> =A0- =A0 =A0 =A0sdram_selfrefresh_disable(saved_lpr);
-> ++ =A0 =A0 =A0at91_standby();
->
-> - =A0 =A0 =A0 do_gettimeofday(&after);
-> - =A0 =A0 =A0 local_irq_enable();
-> - =A0 =A0 =A0 idle_time =3D (after.tv_sec - before.tv_sec) * USEC_PER=
-_SEC +
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (after.tv_usec - before=
-=2Etv_usec);
-> -
-> - =A0 =A0 =A0 dev->last_residency =3D idle_time;
-> =A0 =A0 =A0 =A0return index;
-> =A0}
->
+> What is the process for getting a different toolchain building the
+> cavium in linux-next?
+
+We are actually in the process of replacing all our toolchains with newer
+ones, but it just takes a bit of time between our "real" work.  (The
+tricky part is that the current kisskb build server is PowerPC based.)
+Hopefully we will have this sorted out soon.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Sat__10_Mar_2012_09_38_00_+1100_p=y09dqIApq4Jd9E
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPWoZIAAoJEECxmPOUX5FEnjIP+wevk9CJpN9phEDL6kLuhwjP
+rK2fhhwljo/M4ynBgXyVuRxG5hddsPfmgDkvGfhEeGmqx+xAkvQil62XdaNbi1p3
+HNc+q3ddnsmR/sINMpax9zYk8YQU4ZMsJWfOaf8dBUiUQj91z7lKGE1Gq8g827n6
+lncpFJy3XSL9CZ9HLIoTmaqRdd8UirwI+ozzwjvO2kCaKo8jAI8iVQzDILuBtmMZ
+0ekGYu9fjajn2L/boif2cz5k4FeJq/O1T4FlTrr96S49GIRaRutpKgOLtLzXfmtH
+XaSd6ZG72oCReVzmsFuoldUZhI+vlzpjX5I6g1BRQbsgbt5RkdCLzaDuKNKqEAYU
+eGp10968WQtGXgAbSAuqn38Dwnaap42G3FCoC5Vqd6cJiafYYbiAH0GAvDkcqVt8
+vUIlC1py8hGY0vVmg/mK4A7jZxsDaZvHze9MA6NwSukb+0k6Wus0UsqWlGQ9M4mg
+HjXj4ioCOjamAABclrgq22RkHhUtDF0Qeufc2phi/XzMlvnawVZKR1cCuBbuJ5Hw
+zpYjMALmVJ1oZK6balkMk36ZleFaJo+4xMSPDZT2EEMOg1dX1AcU7fvGESXRO/ao
+I/36ofVknnPihpAJuoXjP+BYxZfzE+mzdy5P48i6ZX1QJ2UY93wUkQGGE2adnmBy
+567ZG4ma9U66bEr6Fq3q
+=ulqF
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__10_Mar_2012_09_38_00_+1100_p=y09dqIApq4Jd9E--
