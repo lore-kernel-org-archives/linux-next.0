@@ -1,52 +1,47 @@
-From: Steven Rostedt <srostedt@redhat.com>
-Subject: Re: linux-next: manual merge of the cpuidle-cons tree with the tip
- tree
-Date: Fri, 09 Mar 2012 08:35:09 -0500
-Message-ID: <1331300109.1149.17.camel@fedora>
-References: <20120309184041.bd10edffa51dcd43ce069487@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: fix for "error: implicit declaration of function 'devres_alloc'"
+ in Mar9 tree
+Date: Fri, 9 Mar 2012 10:11:56 -0500
+Message-ID: <4F5A1DBC.3090701@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120309184041.bd10edffa51dcd43ce069487@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rob Lee <rob.lee@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail1.windriver.com ([147.11.146.13]:54067 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753703Ab2CIPL6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 10:11:58 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca [147.11.189.40])
+	by mail1.windriver.com (8.14.3/8.14.3) with ESMTP id q29FBvk4003848
+	(version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=FAIL)
+	for <linux-next@vger.kernel.org>; Fri, 9 Mar 2012 07:11:57 -0800 (PST)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
 
-On Fri, 2012-03-09 at 18:40 +1100, Stephen Rothwell wrote:
-> diff --cc drivers/cpuidle/cpuidle.c
-> index 6588f43,56de5f7..0000000
-> --- a/drivers/cpuidle/cpuidle.c
-> +++ b/drivers/cpuidle/cpuidle.c
-> @@@ -92,15 -109,13 +109,13 @@@ int cpuidle_idle_call(void
->                 return 0;
->         }
->   
-> -       target_state = &drv->states[next_state];
-> - 
->  -      trace_power_start(POWER_CSTATE, next_state, dev->cpu);
->  -      trace_cpu_idle(next_state, dev->cpu);
->  +      trace_power_start_rcuidle(POWER_CSTATE, next_state, dev->cpu);
->  +      trace_cpu_idle_rcuidle(next_state, dev->cpu);
->   
-> -       entered_state = target_state->enter(dev, drv, next_state);
-> +       entered_state = cpuidle_enter_ops(dev, drv, next_state);
->   
->  -      trace_power_end(dev->cpu);
->  -      trace_cpu_idle(PWR_EVENT_EXIT, dev->cpu);
->  +      trace_power_end_rcuidle(dev->cpu);
->  +      trace_cpu_idle_rcuidle(PWR_EVENT_EXIT, dev->cpu);
->   
+There are a couple builds showing:
 
-Looks good. My change was just a rename of trace_power_* and
-trace_cpu_*, and it looks like another change was the clean up of
-target_state. This is a trivial conflict, and there should be no
-surprises here.
+drivers/base/regmap/regmap.c:331: error: implicit declaration of function 'devres_alloc'
+drivers/base/regmap/regmap.c:338: error: implicit declaration of function 'devres_add'
+drivers/base/regmap/regmap.c:340: error: implicit declaration of function 'devres_free'
+drivers/base/regmap/regmap.c:421: error: implicit declaration of function 'dev_err'
+make[4]: *** [drivers/base/regmap/regmap.o] Error 1
 
--- Steve
+This is caused by commit 19694b5ea1d3 which just appeared in today's next
+tree exposing another implicit device.h user.  Just a quick note that I'll
+take care of it by adding regmap.c to the below commit.
 
+Paul.
 
+---
 
->         if (entered_state >= 0) {
->                 /* Update cpuidle counters */ 
+commit 6382876888313b6c9e2002247d9fa24f02835651
+Author: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date:   Sun Jan 22 11:23:42 2012 -0500
+
+    device.h: cleanup users outside of linux/include (C files)
+    
+    For files that are actively using linux/device.h, make sure
+    that they call it out.  This will allow us to clean up some
+    of the implicit uses of linux/device.h within include/*
+    without introducing build regressions.
