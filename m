@@ -1,38 +1,87 @@
-From: Vinod Koul <vinod.koul@linux.intel.com>
-Subject: Re: slave-dma/next - please drop "drivers/dma: linux/module.h
- included twice"
-Date: Fri, 09 Mar 2012 14:57:28 +0530
-Message-ID: <1331285248.4657.70.camel@vkoul-udesk3>
-References: <20120309023643.GA1796@windriver.com>
-	 <20120309190829.a6259f5e98d8379dcf88ba98@canb.auug.org.au>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the
+ omap_dss2 tree
+Date: Fri, 09 Mar 2012 11:35:51 +0200
+Message-ID: <1331285751.1927.20.camel@deskari>
+References: <20120308170048.f1a992bca2ca2d93fa9747bf@canb.auug.org.au>
+	 <201203081616.12510.arnd@arndb.de>
 Mime-Version: 1.0
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-KXNJ+UUi1kqhm09Jig4v"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <201203081616.12510.arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+List-Id: linux-next.vger.kernel.org
+
+
+--=-KXNJ+UUi1kqhm09Jig4v
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:10035 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751151Ab2CIJWY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 9 Mar 2012 04:22:24 -0500
-In-Reply-To: <20120309190829.a6259f5e98d8379dcf88ba98@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2012-03-09 at 19:08 +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Thu, 8 Mar 2012 21:36:44 -0500 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
-> >
-> > Please drop commit 865d9438eb1f7670d2e88849f059db551b320887 from your
-> > tree.  There is a commit to delete all the duplicate module.h includes
-> > tree-wide, and since your commit deletes one, and my commit deletes
-> > the other, the final tree has no module.h which causes this fail:
-> > 
-> > http://kisskb.ellerman.id.au/kisskb/buildresult/5819464/
-> 
-> I have fixed this up in my tree for today.
-Thanks, I have reverted this commit now
+Hi,
 
--- 
-~Vinod
+On Thu, 2012-03-08 at 16:16 +0000, Arnd Bergmann wrote:
+> On Thursday 08 March 2012, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Today's linux-next merge of the arm-soc tree got a conflict in
+> > arch/arm/mach-omap1/board-palmtt.c between commit ddba6c7f7ec6 ("OMAP1:
+> > pass LCD config with omapfb_set_lcd_config()") from the omap_dss2 tree
+> > and commit 2e3ee9f45b3c ("ARM: OMAP1: Move most of plat/io.h into local
+> > iomap.h") from the arm-soc tree.
+> >=20
+> > I fixed it up (see below) and can carry the fix as necessary.
+>=20
+> Hi Stephen,
+>=20
+> Thanks for fixing up all the conflicts between arm-soc and omap_dss2.
+> I think we should make sure they are resolved in one of the trees before
+> the merge window.
+
+Do we need to? The conflicts seemed to be trivial ones, like arm-soc
+adds/removes something that just happens to be next to something else
+that I add/remove.
+
+My understanding is that it's better to leave those conflicts than to do
+"trickery" to avoid them.
+
+> Tomi, what are your plans for the omap_dss2 branch to get merged?
+
+Normally my tree goes via fbdev-tree (Florian's tree) to mainline.
+
+> Do you think you should send it to Linus first and we merge it into
+> arm-soc to resolve the conflicts?
+> Or do you want to merge it through the arm-soc tree?
+> Or should we go first and you fix up the conflicts by pulling in the
+> necessary topic branches from arm-soc into your tree?
+
+If we want to resolve the conflicts, perhaps it's simplest if the dss
+tree is merged to arm-soc.
+
+ Tomi
+
+
+--=-KXNJ+UUi1kqhm09Jig4v
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAABAgAGBQJPWc73AAoJEPo9qoy8lh71We4P/119Va7GDm09S1ocK861kNdn
+OhpSdW4MxJzSIiJ5I0aufw0Kg5FqAsOt/iknxZoXzANrl5x+kO9r2n2WMDDb3qjt
+GIbTac+2J9gShVuo/5dPsXY+vWR8PonBlJtiL4yun8l4dEfIvzoa3GyXGdFGWmwd
+2EdWgU6HRNBjRsgLHna8j+z6ZYXJViC9BumPIbXOGXi1nvIh1AZEbN8PcuVjzxu1
+osfKCXBaG88xnOx3VjXIabaNFOvz7UkBFhvKhnJp0jerD9vuKV5fHImDC5tvS6Vm
+OXF13r/G8eDqck8quuNTqunk2DbJuy3uXskw+blaLwZ9uQTP0Lt3eCljt3Hp0jy2
+w7XlnkAUpWFsSht7FCPHKfZnyQJ25a9HO/qXXMalWYS0J4f0idp0Xc40r2Vy+l6U
+rkVWtW4Er4C18wvYYqJ8g9fz3uiU5+0eBPoucmFVMFKEG9tnBTCwQRJctCpc2pp7
+cuve+id8Vorw2Bs1pyK6aIrlfRoqr5at5a3QycAZc2Wqn1898F1PG1kyfo0aR6Ei
+W9G4SAD03ZF5smvjCTRBY7CMA4ycwSDjkS7SIFWalv0YYTTt9BXf6NLMFd0uP14m
+KyyuPEoAJBDI4HyCP69l6QMieywECalD1IMi6FZGA816eAs+kRn0ZHZeRat1WOdi
+cwCsyAxE3f+nWYP1SEzG
+=Hyu4
+-----END PGP SIGNATURE-----
+
+--=-KXNJ+UUi1kqhm09Jig4v--
