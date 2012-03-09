@@ -1,85 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cpuidle-cons tree with the tip tree
-Date: Fri, 9 Mar 2012 18:40:41 +1100
-Message-ID: <20120309184041.bd10edffa51dcd43ce069487@canb.auug.org.au>
+Subject: Re: slave-dma/next - please drop
+ "drivers/dma: linux/module.h included twice"
+Date: Fri, 9 Mar 2012 19:08:29 +1100
+Message-ID: <20120309190829.a6259f5e98d8379dcf88ba98@canb.auug.org.au>
+References: <20120309023643.GA1796@windriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Mar_2012_18_40_41_+1100_wPPm71vScCkQuqtX"
+ boundary="Signature=_Fri__9_Mar_2012_19_08_29_+1100_pho1GGBkRJs.vGr+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36494 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:39925 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752974Ab2CIHks (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 02:40:48 -0500
+	with ESMTP id S1752010Ab2CIIIn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 03:08:43 -0500
+In-Reply-To: <20120309023643.GA1796@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rob Lee <rob.lee@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: vinod.koul@linux.intel.com, linux-next@vger.kernel.org
 
---Signature=_Fri__9_Mar_2012_18_40_41_+1100_wPPm71vScCkQuqtX
+--Signature=_Fri__9_Mar_2012_19_08_29_+1100_pho1GGBkRJs.vGr+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+Hi all,
 
-Today's linux-next merge of the cpuidle-cons tree got a conflict in
-drivers/cpuidle/cpuidle.c between commit 76027ea863fc ("cpuidle/tracing:
-Denote the tracepoints as being in rcu_idle_exit() section") from the tip
-tree and commit 9adbc67f6ecf ("cpuidle: Add common time keeping and irq
-enabling") from the cpuidle-cons tree.
+On Thu, 8 Mar 2012 21:36:44 -0500 Paul Gortmaker <paul.gortmaker@windriver.=
+com> wrote:
+>
+> Please drop commit 865d9438eb1f7670d2e88849f059db551b320887 from your
+> tree.  There is a commit to delete all the duplicate module.h includes
+> tree-wide, and since your commit deletes one, and my commit deletes
+> the other, the final tree has no module.h which causes this fail:
+>=20
+> http://kisskb.ellerman.id.au/kisskb/buildresult/5819464/
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I have fixed this up in my tree for today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/cpuidle/cpuidle.c
-index 6588f43,56de5f7..0000000
---- a/drivers/cpuidle/cpuidle.c
-+++ b/drivers/cpuidle/cpuidle.c
-@@@ -92,15 -109,13 +109,13 @@@ int cpuidle_idle_call(void
-  		return 0;
-  	}
- =20
-- 	target_state =3D &drv->states[next_state];
--=20
- -	trace_power_start(POWER_CSTATE, next_state, dev->cpu);
- -	trace_cpu_idle(next_state, dev->cpu);
- +	trace_power_start_rcuidle(POWER_CSTATE, next_state, dev->cpu);
- +	trace_cpu_idle_rcuidle(next_state, dev->cpu);
- =20
-- 	entered_state =3D target_state->enter(dev, drv, next_state);
-+ 	entered_state =3D cpuidle_enter_ops(dev, drv, next_state);
- =20
- -	trace_power_end(dev->cpu);
- -	trace_cpu_idle(PWR_EVENT_EXIT, dev->cpu);
- +	trace_power_end_rcuidle(dev->cpu);
- +	trace_cpu_idle_rcuidle(PWR_EVENT_EXIT, dev->cpu);
- =20
-  	if (entered_state >=3D 0) {
-  		/* Update cpuidle counters */
-
---Signature=_Fri__9_Mar_2012_18_40_41_+1100_wPPm71vScCkQuqtX
+--Signature=_Fri__9_Mar_2012_19_08_29_+1100_pho1GGBkRJs.vGr+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPWbP5AAoJEECxmPOUX5FEMH8P/iNNw7ZbILnnNBwBGOo3QV7+
-AVeUla19wawrg+0P/X8MYl61MVq5a8sO/YLXBIq06XFPsIYXRaEoDajO8vwzGs7I
-ZCHepC0XwgT9YmjAAgUGGLtxbjpI4T6G2m7i+br04vYebROiGGExcy8G10De63MD
-fpTzFXIFdFCAm+39Zf/n5rYGq7DGwYgELl+jqE1aoNWAwZ30oUuuqNBso5cLn69b
-KNFSNZr7uF1RseJj5rfeOmkxIMhUJqhR/5EHn6gS7YuR/px81DrJAaaCTfhmnBcA
-O3sFvyHe6j/BC9cdntb5IiqwZ384STdxoxbS5ImBf2jogpk7Dgs5uwLWV95QYcaY
-2Qu4wX3F63UFTGDLID/8Kiwl6fFnvXUUPPH43qYmNdqfNRQTsnMYnBJVaVZcoOQ4
-FE1667YDsb0/7A0bl3Mmc2iwGNmEYa21x+fU+b3T+dXkkEDXFDBQx2jH4YqRQkQ+
-+n9vuWgY2oMEZnGA1OPWQxA2DVHFaxYOgSLxXfXxf88IJkjMvtWD8g7I+K/NhIsr
-k3yUbWnxg5rJSGiijcnOAna468+EF8NXjlOVtxENVooGg/vxNXQGTyKKzGg7RlQ4
-0Yeq2Kxizekoe5+Fvw4xRq7MauOAGA5bqCPT8jFxCIHGKC0jDZevgHwe+42Pcubh
-gczOswDXiuObve8dsJtk
-=b7FB
+iQIcBAEBCAAGBQJPWbp9AAoJEECxmPOUX5FEt7cP/2FpxTxqctWQatzrKwknlpt4
+3pzgdiA9WAH4UkNQyKIAa5Bg0NYLOC+9JSAYLpRdvslVpmRLVvI7wujtFqTqQnoC
+sCjgsAPuvMXko2mRwh3lZqbziaWzQlEHZNq3CsPvpzSz2XHn/uTl1EwyK2AfiWdn
+AtmHVR2DXeLns0BVM5JDEdVUU9m6896dR/j8hByZh++kEORxpwxY6n3uz4Eb5jwY
+Lxv5xv1zqeQPzSSASJMbJRllUOmb20hM3bGRUTdj8n0QdCk2gLImjmaBLTVpHrhs
+kMl/pg4kDjPSrkzJu5aEhEg7X2kNfaIuEx3YEWRbUAaxIln8iSOguNuKAkbsGYBH
+JNZ1yuqZ2nmr86OJtGa965MWhxEmO8QfwIIWbeeT5M0IQB+W3RjvchIkm4OgBwe9
+Ki48zei+RcqcjFhRePuHKUgZ7P9xnn9V2L/1FON8dINww1/7n24/f8xNpT0LBS80
+6GUYlr2uwizIWgygQ4+atT2u+wRh13JwSV0sfnvwoLiPtTs6clq+K0jT385QFwRx
+8WsiuhdqPtktew889Zpj2kGCB7ekak9phS/hLbSGe4YyG1751+lolDpffpsRE3NN
+CNTwnXVNjJQ3X/CY58TAtjetiBSTkt2D/udnEOy2sTE/0Hpv4C+WJyBf7zGq5h1r
+ik4BZVmYxnFwpTNp1JV+
+=PTx+
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__9_Mar_2012_18_40_41_+1100_wPPm71vScCkQuqtX--
+--Signature=_Fri__9_Mar_2012_19_08_29_+1100_pho1GGBkRJs.vGr+--
