@@ -1,79 +1,71 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH v3] PM / QoS: Introduce new classes: DMA-Throughput and DVFS-Latency
-Date: Fri, 9 Mar 2012 14:53:43 +0900
-Message-ID: <CAJ0PZbTfw1U8raiwiNX14x+jnaWa7ptAgpaaTJgCCZKZU24TDg@mail.gmail.com>
-References: <13197479.540821330911965933.JavaMail.weblogic@epv6ml06>
-	<1331096521-26026-1-git-send-email-myungjoo.ham@samsung.com>
-	<20120308034722.GA10286@envy17>
-Reply-To: myungjoo.ham@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the net-next tree
+Date: Fri, 9 Mar 2012 17:02:01 +1100
+Message-ID: <20120309170201.93eec7e1108165c02ba2311c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120308034722.GA10286@envy17>
-Sender: linux-kernel-owner@vger.kernel.org
-To: markgross@thegnar.org
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <mavej@redhat.com>, linux-pm@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@ti.com>, Jean Pihet <j-pihet@ti.com>, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__9_Mar_2012_17_02_01_+1100_qdMZ3G.=3ir6u07Z"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Mar 8, 2012 at 12:47 PM, mark gross <markgross@thegnar.org> wro=
-te:
-> On Wed, Mar 07, 2012 at 02:02:01PM +0900, MyungJoo Ham wrote:
->> 1. CPU_DMA_THROUGHPUT
-=2E..
->> 2. DVFS_LATENCY
->
-> The cpu_dma_throughput looks ok to me. =A0I do however; wonder about =
-the
-> dvfs_lat_pm_qos. =A0Should that knob be exposed to user mode? =A0Does=
- that
-> matter so much? =A0why can't dvfs_lat use the cpu_dma_lat?
->
-> BTW I'll be out of town for the next 10 days and probably will not ge=
-t
-> to this email account until I get home.
->
-> --mark
->
+--Signature=_Fri__9_Mar_2012_17_02_01_+1100_qdMZ3G.=3ir6u07Z
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-1. Should DVFS Latency be exposed to user mode?
+Hi Greg,
 
-It would depend on the policy of the given system; however, yes, there
-are systems that require a user interface for DVFS Latency.
-With the example of user input response (response to user click,
-typing, touching, and etc), a user program (probably platform s/w or
-middleware) may input QoS requests. Besides, when a new "application"
-is starting, such "middleware" may want faster responses from DVFS
-mechanisms.
+Today's linux-next merge of the tty tree got a conflict in
+drivers/isdn/gigaset/interface.c between commit 5bd49735db39 ("gigaset:
+Use semicolons to terminate statements") from the net-next tree and
+commit 2f16669d322e ("TTY: remove re-assignments to tty_driver members")
+from the tty tree.
 
-
-2. Does DVFS Latency matter?
-
-Yes, in our experimental sets w/ Exynos4210 (those slapped in Galaxy
-S2 equivalent; not exactly as I'm not conducted in Android systems,
-but Tizen), we could see noticable difference w/ bare eyes for
-user-input responses. When we shortened DVFS polling interval with
-touches, the touch responses were greatly improved; e.g., losing 10
-frames into losing 0 or 1 frame for a sudden input rush.
-
-3. Why not replace DVFS Latency w/ CPU-DMA-Latency/Throughput?
-
-When we implement the user-input response enhancement with CPU-DMA QoS
-requests, the PM-QoS will unconditionally increase CPU and BUS
-frequencies/voltages with user inputs. However, with many cases it is
-unnecessary; i.e., a user input means that there will be unexpected
-changes soon; however, the change does not mean that the load will
-increase. Thus, allowing DVFS mechanism to evolve faster was enough to
-shorten the response time and not to increase frequencies and voltages
-when not needed. There were significant difference in power
-consumption with this changes if the user inputs were not involving
-drastic graphics jobs; e.g., typing a text message.
-
-
-
-Cheers!
-MyungJoo.
-
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
-MyungJoo Ham, Ph.D.
-Mobile Software Platform Lab, DMC Business, Samsung Electronics
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/isdn/gigaset/interface.c
+index b826dac,8f8814a..0000000
+--- a/drivers/isdn/gigaset/interface.c
++++ b/drivers/isdn/gigaset/interface.c
+@@@ -679,9 -593,8 +593,8 @@@ void gigaset_if_initdriver(struct gigas
+  	if (tty =3D=3D NULL)
+  		goto enomem;
+ =20
+- 	tty->magic =3D		TTY_DRIVER_MAGIC;
+ -	tty->type =3D		TTY_DRIVER_TYPE_SERIAL,
+ -	tty->subtype =3D		SERIAL_TYPE_NORMAL,
+ +	tty->type =3D		TTY_DRIVER_TYPE_SERIAL;
+ +	tty->subtype =3D		SERIAL_TYPE_NORMAL;
+  	tty->flags =3D		TTY_DRIVER_REAL_RAW | TTY_DRIVER_DYNAMIC_DEV;
+ =20
+  	tty->driver_name =3D	procname;
+
+--Signature=_Fri__9_Mar_2012_17_02_01_+1100_qdMZ3G.=3ir6u07Z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPWZzZAAoJEECxmPOUX5FErNMP/3+T+1zQ7refcekItmt/nfEq
+h8MBwXsCMQxW77CkJZoNK6M18Ie3R1cYcyJ9XKaHRU12d//smZIqgkwHZhlfsNc7
+wo6b4tKCLDHlds9O658hwCDG8ijlyqEX5IFLeS5Js/v5k4LUSCcWGogCl2ucNFlD
+sJuhmOCshrmObgllNwZGNpNjrX3EeTtBYlKr7GqcmcNYScn1rN91srvhDhzJcqH5
+1pMhS7eo1RoukSpM0Kl36KYArjF8CihzbXrhN033TRxy2wyBeVnUiJzonfufey9L
+RQpHW1mWT7Y/nbgisTnnlRvYH+eaF3uVf5RuYwYOtbPlXZLIY0+k90qMlRSurcDW
+vVuR/EdZm69b/RK/KM4jLaejH2kG1ZBJaLWsxQj+6ptfILSKi+p4nhSBi4LQJusM
++iqRwHCcRnV7BEPMeWRIsJXgkrCu0WaFAWLtoBUVkmSjjH3fCvQd9cvjEhwWg08R
+fYwt5Pn0v2amZuluHdifSHFXKnSWPtrpXiRc9iLTPt2T9PJqIrrzW+Gc9OBS6/mt
+Z0ctPHnOB3NhS/lhcHpGvxHZO3XwIQPXRgh9G9K579VKoo975yN6+SG6WfBXywGQ
+QSXR38v10Gshh88u10C40SuLQk6ICsySdatHaD0e2UhZo9rpM1FsHbSzE/sE/gdz
++QHGxccNYEH07x4yEMRu
+=MTsI
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__9_Mar_2012_17_02_01_+1100_qdMZ3G.=3ir6u07Z--
