@@ -1,73 +1,59 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next broken by "ARM: S3C2440: move mach-s3c2440/* into
- mach-s3c24xx/"
-Date: Fri, 9 Mar 2012 12:16:22 +0000
-Message-ID: <20120309121621.GH3273@opensource.wolfsonmicro.com>
-References: <20120308162326.GA30941@windriver.com>
- <20120308191207.GC7557@sirena.org.uk>
- <4F590F74.2030007@windriver.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the regulator
+ tree
+Date: Fri, 9 Mar 2012 12:23:59 +0000
+Message-ID: <20120309122358.GM3273@opensource.wolfsonmicro.com>
+References: <20120309181755.256b898808bd14726de0e977@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="U3BNvdZEnlJXqmh+"
+	protocol="application/pgp-signature"; boundary="EOHJn1TVIJfeVXv2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42187 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60140 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754796Ab2CIMQY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 07:16:24 -0500
+	by vger.kernel.org with ESMTP id S1753349Ab2CIMYB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 07:24:01 -0500
 Content-Disposition: inline
-In-Reply-To: <4F590F74.2030007@windriver.com>
+In-Reply-To: <20120309181755.256b898808bd14726de0e977@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: kgene.kim@samsung.com, heiko@sntech.de, ben-linux@fluff.org, tiwai@suse.de, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?iso-8859-1?B?IkhlaWtvIFN0/GJuZXIi?= <heiko@sntech.de>, Haojian Zhuang <haojian.zhuang@gmail.com>, Axel Lin <axel.lin@gmail.com>, Liam Girdwood <lrg@ti.com>
 
 
---U3BNvdZEnlJXqmh+
+--EOHJn1TVIJfeVXv2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Mar 08, 2012 at 02:58:44PM -0500, Paul Gortmaker wrote:
+On Fri, Mar 09, 2012 at 06:17:55PM +1100, Stephen Rothwell wrote:
 
-> The "it" was the commit in the subject, and the ID in the above text.
-> That was the last commit to have touched this file (via moving it).
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> drivers/regulator/Makefile between commit 8aa1ab9219e7 ("regulator: Sort
+> Kconfig and Makefile entries") from the regulator tree and commit
+> 8a16a701ad78 ("regulator: Remove bq24022 regulator driver") from the
+> arm-soc tree.
 
-> What I took as a relation to fix/asoc was shown in the text you've
-> gone and deleted here in the follow up.
+Both fixups look good, thanks.
 
-You'd written some text but the text wasn't teribly clear - nothing
-about the code looks at all audio bug fix related.  Are you sure the
-error wasn't just in Linus' tree?
-
-> In any case, it does appear the file was broken before it was moved.
-> The offending commit is actually c1ba544f81544ed9613ad5d058968533dbcef4b2
-
-> 	"ARM: S3C24XX: Fix restart on S3C2442"
-
-> It appears that a closing brace was dropped when it was integrated.
-
-Right, and that commit doesn't appear to be in the ASoC bugfix branch
-which is why I was mystified.
-
---U3BNvdZEnlJXqmh+
+--EOHJn1TVIJfeVXv2
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPWfSPAAoJEBus8iNuMP3dIYMP/RZmUqu727jfKFX14wtAHVCU
-wMqBoItFqlapBdlbFPsTdayjK1WqttSkaJMC7YSVttYFt5PimpHc1cC/kQRBRUcD
-r/CrWXMO1IpVuS3fET1UC4S1PETzUCPkZAl9VAiPhDEZKyoD6iYqLQGnFaOxr4EC
-OccBRuZheiXnRC0dGXsC4juxxfgdOSKmXFJOSrtMiLKb0hnJwe934q3p7n0jxj+i
-/hBxM5ahQPohDWWEn2dSlB+TxdYgfd9eoIxg4VO8apunjuFaQOHJVnmJ0eER1vjn
-PWlfVhuIy+VwDqifhWEb5PbFc/9c35aBzxS+ZOoLyoB9Jkm7nbPz7kFCQCdSLKEP
-cf37i9aA9T/myIiPeWMd/g90/lqHVHsNiacdyH0He/TJpnaS/A183FxTQ/MDZyAR
-KpyoUqViz6VykLFAgja30mQ3l4VykP8/Q+WYHdvfiJWExkTkn2avA2++9x3G38Tj
-88agxue7s67Okt4CAVkduk3xE4drYhWtzrOS6Ni3Oe0aT6eDpUxan+Y7x01L9Vl6
-8Xu5S9fjJSVtNZmPMkmdgpAQvIIvqFKUITtzob4jwjYpCC7JssDcvy0FPzYnmDx5
-X5IbLDm3BX+alfQN2lFsk6sSkEhoKqZpxd4kDy3xWK++Baf0nd6XF6XZjQXTmxpr
-i3oDc0FuYQfh3TvtamXa
-=9uJW
+iQIcBAEBAgAGBQJPWfYkAAoJEBus8iNuMP3d14oP/A/ctZDBOIY0Etp7TrqHNdS/
+HWoB/uwM6vcpfmxwxMEeyJkjBDvyzRhg8+HQd3OCK7i9JEDNEmYsbcsEs1fPI/Y+
+0cdt/ErIasz6VRqnPlY9TbJxGzqSDswytuFBPRV4ltxykeVpdEcJfjr4Ha472xsQ
+SStsZngBDKXTIy+wCz7YZDm76j4vunxhpZM1ulGRA8c/8YFLlCig99YLX289Eq/q
+RP9d5lUtRAAj74DB87yIDe0Yfga9KFe9l3HcjFxvlsWukq2NmW8pIQ+w9eRQ/xK+
+e4TAboBoubMhMnpWdYKLZ3G9AMfh95JauIQBCfJHPWCq9RMgdCIrCwRjnWCf4N3a
+R8qmvTJemtUGUgyxY7zPasQiiAEOIAQw0MPmRSnQGMFTZv7F/Ez0uyORwW1aGc8d
+FFYfAhXeBpVgnWKNaT3fsJ1LBspM5ZmBKX03kN4//rYuDObeBJoHkMwtuGBJ9ZtO
+hU94nOSONa4HKnQWhlA/Em7JyjZUd7xGI7unplkZK1WPRbsqJOQYXNDKb4jAI13O
+5Z3HY5p0B+OH6u7I58nZKZSxWSSlthJ7EkcmaooAGzSOthifJP0xjgXuddRST7cq
+SwiD3oze7DRO20+5jBDrMfYWCXZfy4/5DFlU/64B+mth+t7L3NTt28+IqxNmJ5Wh
+2XEnhQj/bvPEZQ9FBLdu
+=4mEX
 -----END PGP SIGNATURE-----
 
---U3BNvdZEnlJXqmh+--
+--EOHJn1TVIJfeVXv2--
