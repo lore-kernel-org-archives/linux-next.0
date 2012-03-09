@@ -1,59 +1,103 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with the powerpc tree
-Date: Fri, 9 Mar 2012 12:32:16 +1100
-Message-ID: <20120309123216.82d231febae9ce73bc59f9b2@canb.auug.org.au>
+Subject: linux-next: manual merge of the slave-dma tree with Linus' tree
+Date: Fri, 9 Mar 2012 13:25:54 +1100
+Message-ID: <20120309132554.a82c72a8f2dab11c9104a596@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Mar_2012_12_32_16_+1100_3B0z1Ne=Q0.3qtL8"
+ boundary="Signature=_Fri__9_Mar_2012_13_25_54_+1100_jPa9Yi.b48IL2NwT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58038 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:39484 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754206Ab2CIBcZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 20:32:25 -0500
+	with ESMTP id S1752166Ab2CIC0F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 21:26:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javi Merino <javi.merino@arm.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
---Signature=_Fri__9_Mar_2012_12_32_16_+1100_3B0z1Ne=Q0.3qtL8
+--Signature=_Fri__9_Mar_2012_13_25_54_+1100_jPa9Yi.b48IL2NwT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jesse,
+Hi Vinod,
 
-Today's linux-next merge of the pci tree got a conflict in
-arch/powerpc/platforms/iseries/pci.c between commit 8ee3e0d69623
-("powerpc: Remove the main legacy iSerie platform code") from the powerpc
-tree and commit 673c97562489 ("powerpc/PCI: replace pci_probe_only with
-pci_flags") from the pci tree.
+Today's linux-next merge of the slave-dma tree got conflicts in
+arch/arm/include/asm/hardware/pl330.h and arch/arm/common/pl330.c between
+commits 4272f98a1ae8 ("ARM: 7164/3: PL330: Fix the size of the
+dst_cache_ctrl field") and 46e33c606af8 ("ARM: 7326/2: PL330: fix null
+pointer dereference in pl330_chan_ctrl()") from Linus' tree and commit
+b7d861d93945 ("DMA: PL330: Merge PL330 driver into drivers/dma/") from
+the slave-dma tree.
 
-The former removed the file, so I did that.
+I removed the files and then applied changes from the patchs in Linus'
+tree to drivers/dma/pl330.c.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 9 Mar 2012 13:21:55 +1100
+Subject: [PATCH] DMA: PL330: update for code movement
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/dma/pl330.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 7253d17..41ec06d 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -48,7 +48,7 @@ enum pl330_dstcachectrl {
+ 	DCCTRL1,	/* Bufferable only */
+ 	DCCTRL2,	/* Cacheable, but do not allocate */
+ 	DCCTRL3,	/* Cacheable and bufferable, but do not allocate */
+-	DINVALID1 =3D 8,
++	DINVALID1,		/* AWCACHE =3D 0x1000 */
+ 	DINVALID2,
+ 	DCCTRL6,	/* Cacheable write-through, allocate on writes only */
+ 	DCCTRL7,	/* Cacheable write-back, allocate on writes only */
+@@ -1799,12 +1799,13 @@ static int pl330_chan_ctrl(void *ch_id, enum pl330_=
+chan_op op)
+ 	struct pl330_thread *thrd =3D ch_id;
+ 	struct pl330_dmac *pl330;
+ 	unsigned long flags;
+-	int ret =3D 0, active =3D thrd->req_running;
++	int ret =3D 0, active;
+=20
+ 	if (!thrd || thrd->free || thrd->dmac->state =3D=3D DYING)
+ 		return -EINVAL;
+=20
+ 	pl330 =3D thrd->dmac;
++	active =3D thrd->req_running;
+=20
+ 	spin_lock_irqsave(&pl330->lock, flags);
+=20
+--=20
+1.7.9.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__9_Mar_2012_12_32_16_+1100_3B0z1Ne=Q0.3qtL8
+--Signature=_Fri__9_Mar_2012_13_25_54_+1100_jPa9Yi.b48IL2NwT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPWV2gAAoJEECxmPOUX5FEfOkQAJaKjqvQy+NIHbavLw2+Oqgv
-MMV/Txj3SqTKAD/8d0jOuPiJZzf9oKJy2J3997XVsUc7AInGcyFQDCRNpvIMoCqT
-3if91plX4k3vMnbCmfPNRL1/Ykiq6tEkv1V0Yriq35ynv6gcgHrPAV8IRclA6/89
-zQYbFMHveDqJCbiIDFhMqTVSwVrXvAigg+dNYbYxeXYxxZ2SaaJvJbVXURfl4zyP
-lIMqK/Vjd4gKFuSLD7gmKReduTt6XIpwHxXsKkPlr3q5m5shXhERi9s0LG1gFUYe
-AJDxS2LtS45ZXFvri+Xx2d2EyiCF80APmEZ8hu/v/SLZ6e7FyqKG6luE5QX+svbE
-wL2Lkc6x3EC9XrOqjeXtxt86L1pwg7XnSTA9CoQqPbDj0hwK+ILQhI/yrgNnwVTd
-fzOk9m+vL0YPGUxTSPee+2E8Iu9FUWXillmbZjTGA+5lzjVtL0gqfOo2epPIQnc2
-Ln5bLDdwj2JLfl9th8OMNg1NZyLngaxaePGedngzo7JqwIDklVkNIly4FxURqPTS
-1E6uf/3lXBYt+2r8Ja2L9s0vowlIEqfn2XjGKzDu4Gn5LouvOXDhMV0cGziA14C8
-09f+DGLXfcOuOiM7pkWKoCsLPAJ//eyhg65nPgz+opp+tjQTKXI+4yz/pcEfhJ68
-KWg3sHdQD2t4R4NZj6YC
-=iUuf
+iQIcBAEBCAAGBQJPWWoyAAoJEECxmPOUX5FEf8kQAKJpe2KmYr58YwfSTqgQZzuF
+hotWJ5FPKGxM70ecUtwQYT+uJ+E/AaFWIuVmIHz4sf+JxeSjeDZCZiUlyCNvbNgD
+C8vFYx72oG6YhWKnhF4SAWPGuC7iHrAGNn+LIOOmiMTjxDq5OKCyAZob73V+/Dpv
+ifeGhKOXkyTpLB1P3Lbv9jnWtRiRXN4VTv5uq0RY9wtjtqG6RV1R59T4dO2+CBAd
+sJCj1R59+rob9DFNxqqTCezWBMFrhTcCwFY3LSWXjvaNx77BwcHrb4n1neWrlGbW
+JM7SdMCjbN2BqzYuhhRj2agWTFbPNFsQmMJpjRsSamN7j1lUzx0PaJuAyzbpCjLN
+OjKa2jVhM9OTbfc9nkCCvP/98OOlCX2F3IuCR4mY3CHVpz/zJg9gD8G+7pbWKPwW
+Nh5ocSRBBf6j2aECmZ05do066r5y9ep0Gi3Cgqj7Tfi0dB9/IoFI9UWB5t6CiO7l
+XFWUXs13FDtg7fqsvXcZBxYOfQX7AOhq9z2yWqEylJOl4aMvZwZROpeAAafYixmT
+JMOoyBJZa3WV5gLaRe1MRN7qvsgPkRomzgjXwoATOxcEO8wtJ6d2wsJBGybKn7NM
+J7DwmDgXXWqOL5WE0BBFJN/vY0476DK+MmB6QYTFpUgLRL59uO+Xnu2NpliAQY2n
+QWlAzRa/2kE23+Ysc04q
+=Q2sN
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__9_Mar_2012_12_32_16_+1100_3B0z1Ne=Q0.3qtL8--
+--Signature=_Fri__9_Mar_2012_13_25_54_+1100_jPa9Yi.b48IL2NwT--
