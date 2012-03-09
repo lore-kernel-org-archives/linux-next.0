@@ -1,82 +1,111 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the regulator
- tree
-Date: Fri, 9 Mar 2012 18:17:55 +1100
-Message-ID: <20120309181755.256b898808bd14726de0e977@canb.auug.org.au>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the sound tree
+Date: Fri, 9 Mar 2012 08:23:50 +0100
+Message-ID: <20120309072350.GV3852@pengutronix.de>
+References: <20120309180647.a27cc03a8997f9b38eb8ad0e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Mar_2012_18_17_55_+1100_9OB_I=WObLQD6rJ4"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60170 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751673Ab2CIHSC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 02:18:02 -0500
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:47763 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752514Ab2CIHYt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 02:24:49 -0500
+Content-Disposition: inline
+In-Reply-To: <20120309180647.a27cc03a8997f9b38eb8ad0e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkhlaWtvIFN0w7xibmVyIg==?= <heiko@sntech.de>, Haojian Zhuang <haojian.zhuang@gmail.com>, Axel Lin <axel.lin@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Zhao <richard.zhao@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Takashi Iwai <tiwai@suse.de>, Fabio Estevam <festevam@gmail.com>
 
---Signature=_Fri__9_Mar_2012_18_17_55_+1100_9OB_I=WObLQD6rJ4
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 09, 2012 at 06:06:47PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the arm-soc tree got conflicts in
+> arch/arm/mach-imx/mm-imx3.c and arch/arm/mach-imx/mm-imx5.c between
+> commit 3bc34a614335 ("ARM: imx: convert audmux to a platform driver")
+> from the sound tree and commits 38bb3630bcba ("ARM: mx35: Setup the AIPS
+> registers") and aa6a9fa1f274 ("ARM: mx5: Use common function for
+> configuring AIPS") from the arm-soc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Hi all,
+Looks good, thanks
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/regulator/Makefile between commit 8aa1ab9219e7 ("regulator: Sort
-Kconfig and Makefile entries") from the regulator tree and commit
-8a16a701ad78 ("regulator: Remove bq24022 regulator driver") from the
-arm-soc tree.
+Sascha
 
-I fixed it up (see below) and can carry the fix as necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/regulator/Makefile
-index 2b09c81,f53cf80..0000000
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@@ -10,17 -10,7 +10,16 @@@ obj-$(CONFIG_REGULATOR_VIRTUAL_CONSUMER
-  obj-$(CONFIG_REGULATOR_USERSPACE_CONSUMER) +=3D userspace-consumer.o
- =20
-  obj-$(CONFIG_REGULATOR_GPIO) +=3D gpio-regulator.o
- +obj-$(CONFIG_REGULATOR_88PM8607) +=3D 88pm8607.o
- +obj-$(CONFIG_REGULATOR_AAT2870) +=3D aat2870-regulator.o
- +obj-$(CONFIG_REGULATOR_AB3100) +=3D ab3100.o
- +obj-$(CONFIG_REGULATOR_AB8500)	+=3D ab8500.o
-  obj-$(CONFIG_REGULATOR_AD5398) +=3D ad5398.o
-- obj-$(CONFIG_REGULATOR_BQ24022) +=3D bq24022.o
- +obj-$(CONFIG_REGULATOR_DA903X)	+=3D da903x.o
- +obj-$(CONFIG_REGULATOR_DA9052)	+=3D da9052-regulator.o
- +obj-$(CONFIG_REGULATOR_DBX500_PRCMU) +=3D dbx500-prcmu.o
- +obj-$(CONFIG_REGULATOR_DB8500_PRCMU) +=3D db8500-prcmu.o
- +obj-$(CONFIG_REGULATOR_ISL6271A) +=3D isl6271a-regulator.o
-  obj-$(CONFIG_REGULATOR_LP3971) +=3D lp3971.o
-  obj-$(CONFIG_REGULATOR_LP3972) +=3D lp3972.o
-  obj-$(CONFIG_REGULATOR_MAX1586) +=3D max1586.o
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/mach-imx/mm-imx3.c
+> index 9c9b7f9,1646991..0000000
+> --- a/arch/arm/mach-imx/mm-imx3.c
+> +++ b/arch/arm/mach-imx/mm-imx3.c
+> @@@ -177,8 -175,9 +179,12 @@@ void __init imx31_soc_init(void
+>   	}
+>   
+>   	imx_add_imx_sdma("imx31-sdma", MX31_SDMA_BASE_ADDR, MX31_INT_SDMA, &imx31_sdma_pdata);
+> + 
+> + 	imx_set_aips(MX31_IO_ADDRESS(MX31_AIPS1_BASE_ADDR));
+> + 	imx_set_aips(MX31_IO_ADDRESS(MX31_AIPS2_BASE_ADDR));
+> ++
+>  +	platform_device_register_simple("imx31-audmux", 0, imx31_audmux_res,
+>  +					ARRAY_SIZE(imx31_audmux_res));
+>   }
+>   #endif /* ifdef CONFIG_SOC_IMX31 */
+>   
+> @@@ -267,8 -262,9 +273,13 @@@ void __init imx35_soc_init(void
+>   	}
+>   
+>   	imx_add_imx_sdma("imx35-sdma", MX35_SDMA_BASE_ADDR, MX35_INT_SDMA, &imx35_sdma_pdata);
+> + 
+> + 	/* Setup AIPS registers */
+> + 	imx_set_aips(MX35_IO_ADDRESS(MX35_AIPS1_BASE_ADDR));
+> + 	imx_set_aips(MX35_IO_ADDRESS(MX35_AIPS2_BASE_ADDR));
+> ++
+>  +	/* i.mx35 has the i.mx31 type audmux */
+>  +	platform_device_register_simple("imx31-audmux", 0, imx35_audmux_res,
+>  +					ARRAY_SIZE(imx35_audmux_res));
+>   }
+>   #endif /* ifdef CONFIG_SOC_IMX35 */
+> diff --cc arch/arm/mach-imx/mm-imx5.c
+> index dc7c4ed,92efece..0000000
+> --- a/arch/arm/mach-imx/mm-imx5.c
+> +++ b/arch/arm/mach-imx/mm-imx5.c
+> @@@ -201,9 -185,10 +201,14 @@@ void __init imx51_soc_init(void
+>   
+>   	/* i.mx51 has the i.mx35 type sdma */
+>   	imx_add_imx_sdma("imx35-sdma", MX51_SDMA_BASE_ADDR, MX51_INT_SDMA, &imx51_sdma_pdata);
+> + 
+> + 	/* Setup AIPS registers */
+> + 	imx_set_aips(MX51_IO_ADDRESS(MX51_AIPS1_BASE_ADDR));
+> + 	imx_set_aips(MX51_IO_ADDRESS(MX51_AIPS2_BASE_ADDR));
+> ++
+>  +	/* i.mx51 has the i.mx31 type audmux */
+>  +	platform_device_register_simple("imx31-audmux", 0, imx51_audmux_res,
+>  +					ARRAY_SIZE(imx51_audmux_res));
+>   }
+>   
+>   void __init imx53_soc_init(void)
+> @@@ -219,7 -204,8 +224,12 @@@
+>   
+>   	/* i.mx53 has the i.mx35 type sdma */
+>   	imx_add_imx_sdma("imx35-sdma", MX53_SDMA_BASE_ADDR, MX53_INT_SDMA, &imx53_sdma_pdata);
+> + 
+> + 	/* Setup AIPS registers */
+> + 	imx_set_aips(MX53_IO_ADDRESS(MX53_AIPS1_BASE_ADDR));
+> + 	imx_set_aips(MX53_IO_ADDRESS(MX53_AIPS2_BASE_ADDR));
+> ++
+>  +	/* i.mx53 has the i.mx31 type audmux */
+>  +	platform_device_register_simple("imx31-audmux", 0, imx53_audmux_res,
+>  +					ARRAY_SIZE(imx53_audmux_res));
+>   }
 
---Signature=_Fri__9_Mar_2012_18_17_55_+1100_9OB_I=WObLQD6rJ4
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPWa6jAAoJEECxmPOUX5FETOYP/2NwA1zwSCisshf/WCbfpXAT
-yNEPVmqRk8qRF8P8fFk7WUKT+A3ItdSnqm4BMYdfFCSFBX9ETJL2jvXRkzDefZp0
-USf00jFfaIPB4S6k3UYWWPKwm+u/A/B2qOs6OflyfxpB+dspseimmZgAwXv2DPmB
-G8hk9NcprbhmX5VVq8xCWbTg1qN1qd5Ctu9wSGWw/qPKabIhsbXYMg0vr/PyDCzs
-dtj9L6+wxlBjZKEmnNUdotrqeGNe19Dutv6h7xzmW9qnQvIJKpf7TBHsoFN/fT25
-BmWEhtYwsQGtTkKmzglOv5m9TeKYMUtzi8AG6+ZKPmLzrfGVwduempXLUYr/ebqJ
-4XzpLFKEjH5HtEbZtNLG5nDLgnuFYd0TFpbyucN10Zjs2hnFhoozo51pB0giV/Km
-JCTkpMxJCQ6w+xP4Xhfu51kw2URHGkeL8BInqizXuD4ydi6sJFcYE+2msQppHSax
-mXbJw1re9/hfB6kkMr2aD3p/z1QSCR38TT7hQZu0EPbkaH6jUgwjE5tGJlWo6f9R
-OoaWzx+kPEWLpNyK5fcnVDHmsLofgalS2YA2p/EdQMTAnw5Z66Pxzkf6EdmiZ5tf
-ujE/SEOoE/NHVcrFaFtGcYJ/TokViPlwqtvImayqXEcjW63lsOhhInEO+gL26Uvk
-/KL/OzdMIjnsPXskxTzy
-=NRbP
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Mar_2012_18_17_55_+1100_9OB_I=WObLQD6rJ4--
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
