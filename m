@@ -1,60 +1,100 @@
-From: David Daney <david.daney@cavium.com>
-Subject: Re: linux-next: toolchain version for mips builds, esp. cavium
-Date: Fri, 09 Mar 2012 14:44:34 -0800
-Message-ID: <4F5A87D2.5010100@cavium.com>
-References: <CAP=VYLpk9RonUUWmnC2-7wPi7Oqra_y7K4qQNLfMYqNKMo8QMg@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: linux-next: manual merge of the cpuidle-cons tree with the arm-soc
+ tree
+Date: Fri, 09 Mar 2012 23:45:19 +0100
+Message-ID: <4F5A87FF.8060606@linaro.org>
+References: <20120309183732.512d3676599da324f4747219@canb.auug.org.au> <CAMXH7KE5En7U-2zydT3MfJ7C7B164-zsQuBoHMUqzD-Kb_nh1w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail3.caviumnetworks.com ([12.108.191.235]:12747 "EHLO
-	mail3.caviumnetworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755803Ab2CIWof (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 17:44:35 -0500
-In-Reply-To: <CAP=VYLpk9RonUUWmnC2-7wPi7Oqra_y7K4qQNLfMYqNKMo8QMg@mail.gmail.com>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:51999 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757745Ab2CIWpX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 17:45:23 -0500
+Received: by wibhq7 with SMTP id hq7so1030942wib.1
+        for <linux-next@vger.kernel.org>; Fri, 09 Mar 2012 14:45:21 -0800 (PST)
+In-Reply-To: <CAMXH7KE5En7U-2zydT3MfJ7C7B164-zsQuBoHMUqzD-Kb_nh1w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "ralf@linux-mips.org" <ralf@linux-mips.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Rob Lee <rob.lee@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
-On 03/09/2012 02:01 PM, Paul Gortmaker wrote:
-> Hi Stephen,
+On 03/09/2012 11:26 PM, Rob Lee wrote:
+> Hello Stephen,
 >
-> The linux-next builds for cavium defconfig have been failing for
-> quite some time now, since it tries to use gcc-4.2 and the option
-> for the octeon didn't appear until gcc-4.4 ("-march=octeon")
->
-> http://kisskb.ellerman.id.au/kisskb/target/5509/
->
-> I'm not sure there is any real "best" choice (hence I cc'd David
-> and Ralf) but I just tested by grabbing the toolchain from here:
+> Yes, your resolution looks correct to me.
 
-As you note, The OCTEON kernel build currently requires -march=octeon, 
-this is not gratuitous.  There is some asm code in there that requires 
-OCTEON support in the toolchain.  So currently an attempt to use a 
-toolchain that doesn't support -march=octeon will fail.
+=46or me too.
 
-So there are a couple of choices:
+Thanks
+   -- Daniel
 
-1) Use a modern toolchain.
 
-2) Figure out how to patch the kernel such that a modern toolchain is 
-not needed.
+> On Fri, Mar 9, 2012 at 1:37 AM, Stephen Rothwell<sfr@canb.auug.org.au=
+>  wrote:
+>> Hi Rob,
+>>
+>> Today's linux-next merge of the cpuidle-cons tree got a conflict in
+>> arch/arm/mach-at91/cpuidle.c between commit 00482a4078f4 ("ARM: at91=
+:
+>> implement the standby function for pm/cpuidle") from the arm-soc tre=
+e and
+>> commit 7a1f6e72dce1 ("ARM: at91: Consolidate time keeping and irq
+>> enable") from the cpuidle-cons tree.
+>>
+>> I fixed it up (I think - see below) and can carry the fix as necessa=
+ry.
+>> --
+>> Cheers,
+>> Stephen Rothwell                    sfr@canb.auug.org.au
+>>
+>> diff --cc arch/arm/mach-at91/cpuidle.c
+>> index 555d956,d40b3f3..0000000
+>> --- a/arch/arm/mach-at91/cpuidle.c
+>> +++ b/arch/arm/mach-at91/cpuidle.c
+>> @@@ -37,23 -33,15 +33,8 @@@ static int at91_enter_idle(struct cpuid
+>>                         struct cpuidle_driver *drv,
+>>                                int index)
+>>   {
+>> -       struct timeval before, after;
+>> -       int idle_time;
+>> -
+>> -       local_irq_disable();
+>> -       do_gettimeofday(&before);
+>> -       if (index =3D=3D 0)
+>> -               /* Wait for interrupt state */
+>> -               cpu_do_idle();
+>> -       else if (index =3D=3D 1)
+>> -               at91_standby();
+>>   -      u32 saved_lpr;
+>>   -
+>>   -      __asm__("b 1f; .align 5; 1:\n"
+>>   -      "       mcr p15, 0, r0, c7, c10, 4");   /* drain write buff=
+er */
+>>   -
+>>   -      saved_lpr =3D sdram_selfrefresh_enable();
+>>   -      cpu_do_idle();
+>>   -      sdram_selfrefresh_disable(saved_lpr);
+>> ++      at91_standby();
+>>
+>> -       do_gettimeofday(&after);
+>> -       local_irq_enable();
+>> -       idle_time =3D (after.tv_sec - before.tv_sec) * USEC_PER_SEC =
++
+>> -                       (after.tv_usec - before.tv_usec);
+>> -
+>> -       dev->last_residency =3D idle_time;
+>>         return index;
+>>   }
+>>
 
-I don't really plan on working on #2.
 
-David Daney
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
 
->
-> ftp://ftp.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.5.2/
->
-> and it seems fine with building the cavium.  I'm not sure if the
-> kisskb does per-target toolchain, or needs it per-arch, but I would
-> suspect that the above is fine for all of mips anyway.
->
-> What is the process for getting a different toolchain building the
-> cavium in linux-next?
->
-> Thanks,
-> Paul.
->
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
