@@ -1,87 +1,70 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the
- omap_dss2 tree
-Date: Fri, 09 Mar 2012 11:35:51 +0200
-Message-ID: <1331285751.1927.20.camel@deskari>
-References: <20120308170048.f1a992bca2ca2d93fa9747bf@canb.auug.org.au>
-	 <201203081616.12510.arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the omap_dss2 tree
+Date: Fri, 9 Mar 2012 11:50:11 +0000
+Message-ID: <201203091150.11294.arnd@arndb.de>
+References: <20120308170048.f1a992bca2ca2d93fa9747bf@canb.auug.org.au> <201203081616.12510.arnd@arndb.de> <1331285751.1927.20.camel@deskari>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-KXNJ+UUi1kqhm09Jig4v"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201203081616.12510.arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.171]:51192 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751590Ab2CILua (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 06:50:30 -0500
+In-Reply-To: <1331285751.1927.20.camel@deskari>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-List-Id: linux-next.vger.kernel.org
 
+On Friday 09 March 2012, Tomi Valkeinen wrote:
+> On Thu, 2012-03-08 at 16:16 +0000, Arnd Bergmann wrote:
+> > On Thursday 08 March 2012, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Today's linux-next merge of the arm-soc tree got a conflict in
+> > > arch/arm/mach-omap1/board-palmtt.c between commit ddba6c7f7ec6 ("OMAP1:
+> > > pass LCD config with omapfb_set_lcd_config()") from the omap_dss2 tree
+> > > and commit 2e3ee9f45b3c ("ARM: OMAP1: Move most of plat/io.h into local
+> > > iomap.h") from the arm-soc tree.
+> > > 
+> > > I fixed it up (see below) and can carry the fix as necessary.
+> > 
+> > Hi Stephen,
+> > 
+> > Thanks for fixing up all the conflicts between arm-soc and omap_dss2.
+> > I think we should make sure they are resolved in one of the trees before
+> > the merge window.
+> 
+> Do we need to? The conflicts seemed to be trivial ones, like arm-soc
+> adds/removes something that just happens to be next to something else
+> that I add/remove.
+> 
+> My understanding is that it's better to leave those conflicts than to do
+> "trickery" to avoid them.
 
---=-KXNJ+UUi1kqhm09Jig4v
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Each of the conflicts is simple enough, but I feel it's worth resolving
+them in this case because there are a number of them. Looking at them
+again now, it's probably ok either way -- resolving them now or letting
+Linus take care of them.
 
-Hi,
+> > Tomi, what are your plans for the omap_dss2 branch to get merged?
+> 
+> Normally my tree goes via fbdev-tree (Florian's tree) to mainline.
 
-On Thu, 2012-03-08 at 16:16 +0000, Arnd Bergmann wrote:
-> On Thursday 08 March 2012, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > Today's linux-next merge of the arm-soc tree got a conflict in
-> > arch/arm/mach-omap1/board-palmtt.c between commit ddba6c7f7ec6 ("OMAP1:
-> > pass LCD config with omapfb_set_lcd_config()") from the omap_dss2 tree
-> > and commit 2e3ee9f45b3c ("ARM: OMAP1: Move most of plat/io.h into local
-> > iomap.h") from the arm-soc tree.
-> >=20
-> > I fixed it up (see below) and can carry the fix as necessary.
->=20
-> Hi Stephen,
->=20
-> Thanks for fixing up all the conflicts between arm-soc and omap_dss2.
-> I think we should make sure they are resolved in one of the trees before
-> the merge window.
+ok.
 
-Do we need to? The conflicts seemed to be trivial ones, like arm-soc
-adds/removes something that just happens to be next to something else
-that I add/remove.
+> > Do you think you should send it to Linus first and we merge it into
+> > arm-soc to resolve the conflicts?
+> > Or do you want to merge it through the arm-soc tree?
+> > Or should we go first and you fix up the conflicts by pulling in the
+> > necessary topic branches from arm-soc into your tree?
+> 
+> If we want to resolve the conflicts, perhaps it's simplest if the dss
+> tree is merged to arm-soc.
 
-My understanding is that it's better to leave those conflicts than to do
-"trickery" to avoid them.
+Ok. Maybe we'll just merge them in case Florian is upstream faster and
+not merge them otherwise.
 
-> Tomi, what are your plans for the omap_dss2 branch to get merged?
-
-Normally my tree goes via fbdev-tree (Florian's tree) to mainline.
-
-> Do you think you should send it to Linus first and we merge it into
-> arm-soc to resolve the conflicts?
-> Or do you want to merge it through the arm-soc tree?
-> Or should we go first and you fix up the conflicts by pulling in the
-> necessary topic branches from arm-soc into your tree?
-
-If we want to resolve the conflicts, perhaps it's simplest if the dss
-tree is merged to arm-soc.
-
- Tomi
-
-
---=-KXNJ+UUi1kqhm09Jig4v
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAABAgAGBQJPWc73AAoJEPo9qoy8lh71We4P/119Va7GDm09S1ocK861kNdn
-OhpSdW4MxJzSIiJ5I0aufw0Kg5FqAsOt/iknxZoXzANrl5x+kO9r2n2WMDDb3qjt
-GIbTac+2J9gShVuo/5dPsXY+vWR8PonBlJtiL4yun8l4dEfIvzoa3GyXGdFGWmwd
-2EdWgU6HRNBjRsgLHna8j+z6ZYXJViC9BumPIbXOGXi1nvIh1AZEbN8PcuVjzxu1
-osfKCXBaG88xnOx3VjXIabaNFOvz7UkBFhvKhnJp0jerD9vuKV5fHImDC5tvS6Vm
-OXF13r/G8eDqck8quuNTqunk2DbJuy3uXskw+blaLwZ9uQTP0Lt3eCljt3Hp0jy2
-w7XlnkAUpWFsSht7FCPHKfZnyQJ25a9HO/qXXMalWYS0J4f0idp0Xc40r2Vy+l6U
-rkVWtW4Er4C18wvYYqJ8g9fz3uiU5+0eBPoucmFVMFKEG9tnBTCwQRJctCpc2pp7
-cuve+id8Vorw2Bs1pyK6aIrlfRoqr5at5a3QycAZc2Wqn1898F1PG1kyfo0aR6Ei
-W9G4SAD03ZF5smvjCTRBY7CMA4ycwSDjkS7SIFWalv0YYTTt9BXf6NLMFd0uP14m
-KyyuPEoAJBDI4HyCP69l6QMieywECalD1IMi6FZGA816eAs+kRn0ZHZeRat1WOdi
-cwCsyAxE3f+nWYP1SEzG
-=Hyu4
------END PGP SIGNATURE-----
-
---=-KXNJ+UUi1kqhm09Jig4v--
+	Arnd
