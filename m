@@ -1,37 +1,58 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: manual merge of the powerpc tree with the arm tree
-Date: Fri, 09 Mar 2012 14:13:41 +1100
-Message-ID: <1331262821.3105.47.camel@pasglop>
-References: <20120308120422.e071cba36425eacbee1f8d98@canb.auug.org.au>
-	 <25744.1331174036@neuling.org>
-	 <20120308145131.fad50bbc79c36f0b0b12d101@canb.auug.org.au>
-	 <1331185951.3105.29.camel@pasglop> <1331249746.3105.40.camel@pasglop>
-	 <20120309003937.GC8680@flint.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the powerpc tree
+Date: Fri, 9 Mar 2012 15:40:50 +1100
+Message-ID: <20120309154050.6c7921999366c42cd1d15446@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__9_Mar_2012_15_40_50_+1100_k_kpnCoKBhx6fCBX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:39429 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753575Ab2CIDOJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Mar 2012 22:14:09 -0500
-In-Reply-To: <20120309003937.GC8680@flint.arm.linux.org.uk>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52041 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756586Ab2CIElI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 23:41:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Michael Neuling <mikey@neuling.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-On Fri, 2012-03-09 at 00:39 +0000, Russell King wrote:
-> On Fri, Mar 09, 2012 at 10:35:46AM +1100, Benjamin Herrenschmidt wrote:
-> > Actually, I didn't keep MAY_HAVE_SPARSE_IRQ, I kept HAVE_SPARSE_IRQ. If
-> > I remove it, then I get Kconfig warnings:
-> > 
-> > warning: (PPC) selects SPARSE_IRQ which has unmet direct dependencies
-> > (HAVE_GENERIC_HARDIRQS && HAVE_SPARSE_IRQ)
-> 
-> Do you have commit 2ed86b16eabe4efbf80cc725a8cbb5310746a2fc ?
+--Signature=_Fri__9_Mar_2012_15_40_50_+1100_k_kpnCoKBhx6fCBX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Nope, Grant patch didn't mention a dependency.
+Hi all,
 
+Today's linux-next merge of the tip tree got a conflict in
+arch/powerpc/platforms/iseries/setup.c between commit 8ee3e0d69623
+("powerpc: Remove the main legacy iSerie platform code") from the powerpc
+tree and commit bd2f55361f18 ("sched/rt: Use schedule_preempt_disabled()")
+from the tip tree.
+
+The former removed the file, so I did that.
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__9_Mar_2012_15_40_50_+1100_k_kpnCoKBhx6fCBX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPWYnSAAoJEECxmPOUX5FEQEUP/0FpHjy6Wsr79Vu38PHSw72N
+iqZSobTXGyprfZePCBWKP6/+kcVSPYvoz0+yJVqA1XPI7U4evJqlmnt82+ujK28a
+W1XbOzPCp82OLpVyR7llJ98+TXF8nzV8brG5ZUekOnYN9K5mGE2B5K5paETd+eVu
+6+9ThpZAClNW/U/nV/c48Hno1/jWQ9wCDSMAtayli9sNMLzVkO2GK4+uar4khnzI
+Q5iU6hyZfjYi9QnPse8XsBxOgJeSwyIgSYF3h8au9ue2Dhti3rlBj/83lNAa7lZ9
++Z40l7373a6/M3RSoY7BYNAZc4qjjwiBggV8whfcrPSn2Y46HCF3p84L4NfV/sEP
+7NIAxUSOtsNFh4M6alTaWAe5iqSb9nBajnFb/ymDlB5bNyZIjElJVuRxMFpkvtAj
+1aYhXa0V0VLXeEQJDOaDB5s3lFZcnPRsIEMCIS1QZLccBkwjEL7Nbdui+FmvCPFm
+xzN08h3xK3l7SlGDqMQ30wtptnIQpHdJQMfnQKVXmMacINK+BOyaicMM6r6lZTUX
+Ixaey5nh4b0wb7DuqU09ZW41f5E/u/VglroeIXM2PBzSoqFbbwQW3jfl1ETxU9KG
+AYYp6x87FJTkJPP8CKi2YrJd8jNrJAx27irpWcwC7ExfXLqChI/sHSzOPsZ4m0SN
+BbU+uZv9eLg90SGaZK+a
+=UZMA
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__9_Mar_2012_15_40_50_+1100_k_kpnCoKBhx6fCBX--
