@@ -1,91 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: for-next inclusion request: dma-buf buffer sharing framework
-Date: Fri, 9 Mar 2012 10:45:29 +1100
-Message-ID: <20120309104529.f2c21557c14b07ba493f0353@canb.auug.org.au>
-References: <CAO_48GHdCfyqoytN-8Vki9u6VCgn3R=T8LUR0Xs0B7KWEMzxWw@mail.gmail.com>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the powerpc tree with the arm tree
+Date: Fri, 9 Mar 2012 00:39:37 +0000
+Message-ID: <20120309003937.GC8680@flint.arm.linux.org.uk>
+References: <20120308120422.e071cba36425eacbee1f8d98@canb.auug.org.au> <25744.1331174036@neuling.org> <20120308145131.fad50bbc79c36f0b0b12d101@canb.auug.org.au> <1331185951.3105.29.camel@pasglop> <1331249746.3105.40.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Mar_2012_10_45_29_+1100_pOdpAonZSGB69XVw"
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <CAO_48GHdCfyqoytN-8Vki9u6VCgn3R=T8LUR0Xs0B7KWEMzxWw@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, DRI mailing list <dri-devel@lists.freedesktop.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__9_Mar_2012_10_45_29_+1100_pOdpAonZSGB69XVw
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:49969 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753473Ab2CIAk1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 19:40:27 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1331249746.3105.40.camel@pasglop>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Michael Neuling <mikey@neuling.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>
 
-Hi,
+On Fri, Mar 09, 2012 at 10:35:46AM +1100, Benjamin Herrenschmidt wrote:
+> Actually, I didn't keep MAY_HAVE_SPARSE_IRQ, I kept HAVE_SPARSE_IRQ. If
+> I remove it, then I get Kconfig warnings:
+> 
+> warning: (PPC) selects SPARSE_IRQ which has unmet direct dependencies
+> (HAVE_GENERIC_HARDIRQS && HAVE_SPARSE_IRQ)
 
-On Thu, 8 Mar 2012 14:28:39 +0530 Sumit Semwal <sumit.semwal@linaro.org> wr=
-ote:
->
-> May I request you to please add the dma-buf buffer sharing framework
-> tree to linux-next?
->=20
-> It is hosted here
-> git://git.linaro.org/people/sumitsemwal/linux-dma-buf.git
-> branch: for-next
+Do you have commit 2ed86b16eabe4efbf80cc725a8cbb5310746a2fc ?
 
-I have added that from today.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Fri__9_Mar_2012_10_45_29_+1100_pOdpAonZSGB69XVw
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPWUSZAAoJEECxmPOUX5FERpgP/iZVHZdQHsSkXkFRcENCR5ba
-yxealuwW6xbLoY9n7y3jMopP5nEN+scZ/VBVq8RxJ6VHIKWiW/sr6HQv0IrXt7vO
-pnqZKvKONGR8L1/ajXhtq2OSHIOl//vTiQVMTjAk/fe4hdG2EPVd1WLz0n9sJ2j+
-HFX33PBJOCgXxTrfibdLDJFGBkLaMYT2uBppV5JFc/lk3KcWU8ZsJPncsbqX4har
-fPf6TEekOBfcC+sw3IYKOZoz+qwRqSBPCtU+pHk0ZICI3jq5wYL5qDivo02ea51N
-uz1pJSrR7XT44E75WeJuNzRL5isUmKww9HC2GRKj8IL2S5/1wZkl84dIFlCYtCo+
-cl+MijfsetBJ0vvvX5Vp2CLrub3v50jGwX6RXCxAafR/vW25/3CZLuzoXV9iXbnw
-wugAzSpAoKW2CuyvaafcUztc6SeZHXoOCln2CsI4mVxquAZWmygPdx1he+UC8aFE
-ekSZd3xrDxSTlNKJ9a+KXp6UJJnjQKvtI09WZvoBeQHEBd4dnX8zGMXhP0CysroV
-gmVJjWI4t1pzSC4F18hWSDEFHQBaH14XXPK4mVkNvlmFsbTX2e23oJWI8+/6MKNP
-2Uk8hT5sG4S0M7XAc7+oZCRPhdIjSr4cHmFIO4GGS9+Ku+xJu2bwgK+DR0vd0nVE
-gawCm9xCu6xz/XpoWG16
-=LtPN
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Mar_2012_10_45_29_+1100_pOdpAonZSGB69XVw--
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
