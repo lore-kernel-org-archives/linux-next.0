@@ -1,58 +1,125 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the powerpc tree
-Date: Fri, 9 Mar 2012 13:36:46 +1100
-Message-ID: <20120309133646.fb8cc30d8c2fd0ef7784d72c@canb.auug.org.au>
+From: Paul Parsons <lost.distance@yahoo.com>
+Subject: Re: [PATCH] ARM: pxa: fix regulator related build fail in magician_defconfig
+Date: Fri, 9 Mar 2012 02:47:24 +0000 (GMT)
+Message-ID: <1331261244.65321.YahooMailClassic@web29007.mail.ird.yahoo.com>
+References: <1331242494-3157-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__9_Mar_2012_13_36_46_+1100_o.kx23tJ_UeCCL5P"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45152 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751225Ab2CICg5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Mar 2012 21:36:57 -0500
+Received: from nm14.bullet.mail.ird.yahoo.com ([77.238.189.67]:31918 "HELO
+	nm14.bullet.mail.ird.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1751526Ab2CICr0 convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Mar 2012 21:47:26 -0500
+In-Reply-To: <1331242494-3157-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Joe Perches <joe@perches.com>
+To: broonie@opensource.wolfsonmicro.com, haojian.zhuang@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
---Signature=_Fri__9_Mar_2012_13_36_46_+1100_o.kx23tJ_UeCCL5P
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks Paul.
 
-Hi all,
+The hx4700 patch works for me on linux-3.3.0-rc6.
+I'm not able to test the magician patch.
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/ibm/iseries_veth.c between commit e92a665949f6
-("net: powerpc: remove the legacy iSeries ethernet driver") from the
-powerpc tree and commit 41de8d4cff21 ("drivers/net: Remove alloc_etherdev
-error messages") from the net-next tree.
+Tested-by: Paul Parsons <lost.distance@yahoo.com>
 
-I just removed the file.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__9_Mar_2012_13_36_46_+1100_o.kx23tJ_UeCCL5P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPWWy+AAoJEECxmPOUX5FEdH4P/ifnYy1RxHVPjCgoKvc/4uzo
-IbDU9QiuiCs3XZKqhxuMUP5+OQONJEL9xYDbu8ymmdGqML0iiASlZXhtUUbeVNBK
-2DFcu7a+gWz9yDjZrLiRrJ7EENQXSMYQe5dBXWJ6ZdmLeUL8ILfbznkS3APV+U2q
-LFGZ42Zb6Lpv3Bjs9wHnfmzHh1HtqXiLgPn0JYtaYG0Qs6IKVEtT3oQj3pKV8QyB
-Wir9UjoiFTI6dEdSqDad4uPhfeuQznLIpzfOZD3+ZQztXsFq7/HpRYj3LMYjjvOF
-jxd/TVyjVenSg12EwmcjW+75L+WDgPKjIi443pvelkCDHrThbrhpLXeTIW50o+dG
-T8HVzjPLEKIDlj417wxYGyUSwXXxft2+yG6pepAolw3blLd1DLpGZjJVRvsv9ylM
-0LRBIOQHn7EPo1vn+dNMQjKMWvbTIVtzShiGa2pfg8sZzNV9qWqrSItyCwBJV1GK
-udMikVHd0H144elXgkARzPmK+nbhvbEIWos6NDeD6+8oFBLeVjix7U3JB5YZNVUa
-vD55XiFAalVXlGPLoTMxPbBz1GEQ6A3o4Ndb6m1vq+dIGotvXlsrtKBOh9bF9lsl
-WvCFTYOHj6hUVeoxold72Kg9J/y2r8Oo4eG0ItOyzSfZsx8HIUSuddkgoO/qEf9f
-1u5oqD8hVemCFG7ZMpsK
-=GHW+
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Mar_2012_13_36_46_+1100_o.kx23tJ_UeCCL5P--
+--- On Thu, 8/3/12, Paul Gortmaker <paul.gortmaker@windriver.com> wrote=
+:
+> commit
+> 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
+>=20
+> =A0 "regulator: Remove support for supplies specified by
+> struct device"
+>=20
+> deletes the field from the struct, but this platform was
+> still trying
+> to set those fields.=A0 Convert them to use the
+> REGULATOR_SUPPLY macro.
+>=20
+> arch/arm/mach-pxa/magician.c:581: error: unknown field 'dev'
+> specified in initializer
+> arch/arm/mach-pxa/magician.c:581: warning: initialization
+> from incompatible pointer type
+> arch/arm/mach-pxa/magician.c:585: error: unknown field 'dev'
+> specified in initializer
+> arch/arm/mach-pxa/magician.c:585: warning: initialization
+> from incompatible pointer type
+>=20
+> arch/arm/mach-pxa/hx4700.c:683: error: unknown field 'dev'
+> specified in initializer
+> arch/arm/mach-pxa/hx4700.c:683: warning: initialization from
+> incompatible pointer type
+> arch/arm/mach-pxa/hx4700.c:687: error: unknown field 'dev'
+> specified in initializer
+> arch/arm/mach-pxa/hx4700.c:687: warning: initialization from
+> incompatible pointer type
+>=20
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+>=20
+> [v3: fix arg2 in REGULATOR_SUPPLY to have correct names ]
+>=20
+> diff --git a/arch/arm/mach-pxa/hx4700.c
+> b/arch/arm/mach-pxa/hx4700.c
+> index f2c23ea..b6a338b 100644
+> --- a/arch/arm/mach-pxa/hx4700.c
+> +++ b/arch/arm/mach-pxa/hx4700.c
+> @@ -679,14 +679,8 @@ static struct platform_device
+> power_supply =3D {
+> =A0 */
+> =20
+>  static struct regulator_consumer_supply bq24022_consumers[]
+> =3D {
+> -=A0=A0=A0 {
+> -=A0=A0=A0 =A0=A0=A0 .dev =3D
+> &gpio_vbus.dev,
+> -=A0=A0=A0 =A0=A0=A0 .supply =3D
+> "vbus_draw",
+> -=A0=A0=A0 },
+> -=A0=A0=A0 {
+> -=A0=A0=A0 =A0=A0=A0 .dev =3D
+> &power_supply.dev,
+> -=A0=A0=A0 =A0=A0=A0 .supply =3D "ac_draw",
+> -=A0=A0=A0 },
+> +=A0=A0=A0 REGULATOR_SUPPLY("vbus_draw",
+> "gpio-vbus"),
+> +=A0=A0=A0 REGULATOR_SUPPLY("ac_draw",
+> "pda-power"),
+>  };
+> =20
+>  static struct regulator_init_data bq24022_init_data =3D {
+> diff --git a/arch/arm/mach-pxa/magician.c
+> b/arch/arm/mach-pxa/magician.c
+> index 3d6baf9..1a18e63 100644
+> --- a/arch/arm/mach-pxa/magician.c
+> +++ b/arch/arm/mach-pxa/magician.c
+> @@ -577,14 +577,8 @@ static struct platform_device
+> power_supply =3D {
+> =A0 */
+> =20
+>  static struct regulator_consumer_supply bq24022_consumers[]
+> =3D {
+> -=A0=A0=A0 {
+> -=A0=A0=A0 =A0=A0=A0 .dev =3D
+> &gpio_vbus.dev,
+> -=A0=A0=A0 =A0=A0=A0 .supply =3D
+> "vbus_draw",
+> -=A0=A0=A0 },
+> -=A0=A0=A0 {
+> -=A0=A0=A0 =A0=A0=A0 .dev =3D
+> &power_supply.dev,
+> -=A0=A0=A0 =A0=A0=A0 .supply =3D "ac_draw",
+> -=A0=A0=A0 },
+> +=A0=A0=A0 REGULATOR_SUPPLY("vbus_draw",
+> "gpio-vbus"),
+> +=A0=A0=A0 REGULATOR_SUPPLY("ac_draw",
+> "pda-power"),
+>  };
+> =20
+>  static struct regulator_init_data bq24022_init_data =3D {
+> --=20
+> 1.7.9.1
+>=20
+>=20
