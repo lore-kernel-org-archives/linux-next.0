@@ -1,37 +1,38 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- powerpc tree
-Date: Fri, 9 Mar 2012 07:18:57 -0800
-Message-ID: <20120309151857.GA12578@kroah.com>
-References: <20120309164025.dc16cfacaa2ee35cbeea14a8@canb.auug.org.au>
+From: Rob Herring <rob.herring@calxeda.com>
+Subject: Re: linux-next: manual merge of the powerpc tree with the arm tree
+Date: Fri, 09 Mar 2012 10:51:27 -0600
+Message-ID: <4F5A350F.3090905@calxeda.com>
+References: <20120308120422.e071cba36425eacbee1f8d98@canb.auug.org.au>  <25744.1331174036@neuling.org>  <20120308145131.fad50bbc79c36f0b0b12d101@canb.auug.org.au>  <1331185951.3105.29.camel@pasglop> <1331249746.3105.40.camel@pasglop>  <20120309003937.GC8680@flint.arm.linux.org.uk> <1331262821.3105.47.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:45364 "EHLO
-	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757172Ab2CIPTA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 10:19:00 -0500
-Received: from compute1.internal (compute1.nyi.mail.srv.osa [10.202.2.41])
-	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id B4392211EE
-	for <linux-next@vger.kernel.org>; Fri,  9 Mar 2012 10:18:59 -0500 (EST)
-Content-Disposition: inline
-In-Reply-To: <20120309164025.dc16cfacaa2ee35cbeea14a8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Alan Stern <stern@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1331262821.3105.47.camel@pasglop>
+Sender: linux-sh-owner@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, Michael Neuling <mikey@neuling.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Paul Mundt <lethal@linux-sh.org>, linux-sh@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Mar 09, 2012 at 04:40:25PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+On 03/08/2012 09:13 PM, Benjamin Herrenschmidt wrote:
+> On Fri, 2012-03-09 at 00:39 +0000, Russell King wrote:
+>> On Fri, Mar 09, 2012 at 10:35:46AM +1100, Benjamin Herrenschmidt wrote:
+>>> Actually, I didn't keep MAY_HAVE_SPARSE_IRQ, I kept HAVE_SPARSE_IRQ. If
+>>> I remove it, then I get Kconfig warnings:
+>>>
+>>> warning: (PPC) selects SPARSE_IRQ which has unmet direct dependencies
+>>> (HAVE_GENERIC_HARDIRQS && HAVE_SPARSE_IRQ)
+>>
+>> Do you have commit 2ed86b16eabe4efbf80cc725a8cbb5310746a2fc ?
 > 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> drivers/base/driver.c between commit fcd6f7620202 ("driver-core: remove
-> legacy iSeries hack") from the powerpc tree and commit 9875bb480cc8
-> ("Eliminate get_driver() and put_driver()") from the driver-core tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+> Nope, Grant patch didn't mention a dependency.
 
-Looks good to me, thanks for doing this.
+My opinion is that SPARSE_IRQ shouldn't be user visible option, and the
+simple solution was to just make it hidden. It wasn't clear if this was
+desired or not for other arches at the time. There is a mixture of
+settings in powerpc defconfigs. SuperH selects it for 32-bit and leaves
+it user selectable for 64-bit.
 
-greg k-h
+I'm happy to revert adding MAY_HAVE_SPARSE_IRQ and just make SPARSE_IRQ
+a hidden option. It really just needs the okay from SuperH folks.
+
+Rob
