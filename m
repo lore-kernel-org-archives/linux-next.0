@@ -1,165 +1,108 @@
 From: "Rafael J. Wysocki" <rjw@sisk.pl>
 Subject: Re: [PATCH v3] PM / QoS: Introduce new classes: DMA-Throughput and DVFS-Latency
-Date: Sat, 10 Mar 2012 23:25:57 +0100
-Message-ID: <201203102325.57743.rjw@sisk.pl>
-References: <13197479.540821330911965933.JavaMail.weblogic@epv6ml06> <1331096521-26026-1-git-send-email-myungjoo.ham@samsung.com> <20120308034722.GA10286@envy17>
+Date: Sat, 10 Mar 2012 23:53:23 +0100
+Message-ID: <201203102353.24218.rjw@sisk.pl>
+References: <13197479.540821330911965933.JavaMail.weblogic@epv6ml06> <20120308034722.GA10286@envy17> <CAJ0PZbTfw1U8raiwiNX14x+jnaWa7ptAgpaaTJgCCZKZU24TDg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:37545 "EHLO ogre.sisk.pl"
+Received: from ogre.sisk.pl ([217.79.144.158]:37570 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752619Ab2CJWVv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 10 Mar 2012 17:21:51 -0500
-In-Reply-To: <20120308034722.GA10286@envy17>
+	id S1752031Ab2CJWtQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 10 Mar 2012 17:49:16 -0500
+In-Reply-To: <CAJ0PZbTfw1U8raiwiNX14x+jnaWa7ptAgpaaTJgCCZKZU24TDg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: markgross@thegnar.org, MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <mavej@redhat.com>, linux-pm@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@ti.com>, Jean Pihet <j-pihet@ti.com>, kyungmin.park@samsung.com, myungjoo.ham@gmail.com, linux-kernel@vger.kernel.org
+To: myungjoo.ham@gmail.com
+Cc: markgross@thegnar.org, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <mavej@redhat.com>, linux-pm@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@ti.com>, Jean Pihet <j-pihet@ti.com>, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org
 
-On Thursday, March 08, 2012, mark gross wrote:
-> On Wed, Mar 07, 2012 at 02:02:01PM +0900, MyungJoo Ham wrote:
-> > 1. CPU_DMA_THROUGHPUT
-> > 
-> > This might look simliar to CPU_DMA_LATENCY. However, there are H/W
-> > blocks that creates QoS requirement based on DMA throughput, not
-> > latency, while their (those QoS requester H/W blocks) services are
-> > short-term bursts that cannot be effectively responsed by DVFS
-> > mechanisms (CPUFreq and Devfreq).
-> > 
-> > In the Exynos4412 systems that are being tested, such H/W blocks include
-> > MFC (multi-function codec)'s decoding and enconding features, TV-out
-> > (including HDMI), and Cameras. When the display is operated at 60Hz,
-> > each chunk of task should be done within 16ms and the workload on DMA is
-> > not well spread and fluctuates between frames; some frame requires more
-> > and some do not and within a frame, the workload also fluctuates
-> > heavily and the tasks within a frame are usually not parallelized; they
-> > are processed through specific H/W blocks, not CPU cores. They often
-> > have PPMU capabilities; however, they need to be polled very frequently
-> > in order to let DVFS mechanisms react properly. (less than 5ms).
-> > 
-> > For such specific tasks, allowing them to request QoS requirements seems
-> > adequete because DVFS mechanisms (as long as the polling rate is 5ms or
-> > longer) cannot follow up with them. Besides, the device drivers know
-> > when to request and cancel QoS exactly.
-> > 
-> > 2. DVFS_LATENCY
-> > 
-> > Both CPUFreq and Devfreq have response latency to a sudden workload
-> > increase. With near-100% (e.g., 95%) up-threshold, the average response
-> > latency is approximately 1.5 x polling-rate.
-> > 
-> > A specific polling rate (e.g., 100ms) may generally fit for its system;
-> > however, there could be exceptions for that. For example,
-> > - When a user input suddenly starts: typing, clicking, moving cursors, and
-> >   such, the user might need the full performance immediately. However,
-> >   we do not know whether the full performance is actually needed or not
-> >   until we calculate the utilization; thus, we need to calculate it
-> >   faster with user inputs or any similar events. Specifying QoS on CPU
-> >   processing power or Memory bandwidth at every user input is an
-> >   overkill because there are many cases where such speed-up isn't
-> >   necessary.
-> > - When a device driver needs a faster performance response from DVFS
-> >   mechanism. This could be addressed by simply putting QoS requests.
-> >   However, such QoS requests may keep the system running fast
-> >   unnecessary in some cases, especially if a) the device's resource
-> >   usage bursts with some duration (e.g., 100ms-long bursts) and
-> >   b) the driver doesn't know when such burst come. MMC/WiFi often had
-> >   such behaviors although there are possibilities that part (b) might
-> >   be addressed with further efforts.
-> > 
-> > The cases shown above can be tackled with putting QoS requests on the
-> > response time or latency of DVFS mechanism, which is directly related to
-> > its polling interval (if the DVFS mechanism is polling based).
-> > 
-> > Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > 
-> > --
-> > Changes from v2
-> > - Rebased on the recent PM QoS patches, resolving the merge conflict.
-> > 
-> > Changes from RFC(v1)
-> > - Added omitted part (registering new classes)
-> > ---
-> >  include/linux/pm_qos.h |    4 ++++
-> >  kernel/power/qos.c     |   31 ++++++++++++++++++++++++++++++-
-> >  2 files changed, 34 insertions(+), 1 deletions(-)
-> > 
-> > diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
-> > index c8a541e..0ee7caa 100644
-> > --- a/include/linux/pm_qos.h
-> > +++ b/include/linux/pm_qos.h
-> > @@ -14,6 +14,8 @@ enum {
-> >  	PM_QOS_CPU_DMA_LATENCY,
-> >  	PM_QOS_NETWORK_LATENCY,
-> >  	PM_QOS_NETWORK_THROUGHPUT,
-> > +	PM_QOS_CPU_DMA_THROUGHPUT,
-> > +	PM_QOS_DVFS_RESPONSE_LATENCY,
-> >  
-> >  	/* insert new class ID */
-> >  	PM_QOS_NUM_CLASSES,
-> > @@ -24,6 +26,8 @@ enum {
-> >  #define PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
-> >  #define PM_QOS_NETWORK_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
-> >  #define PM_QOS_NETWORK_THROUGHPUT_DEFAULT_VALUE	0
-> > +#define PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE	0
-> > +#define PM_QOS_DVFS_LAT_DEFAULT_VALUE	(2000 * USEC_PER_SEC)
-> >  #define PM_QOS_DEV_LAT_DEFAULT_VALUE		0
-> >  
-> >  struct pm_qos_request {
-> > diff --git a/kernel/power/qos.c b/kernel/power/qos.c
-> > index d6d6dbd..3e122db 100644
-> > --- a/kernel/power/qos.c
-> > +++ b/kernel/power/qos.c
-> > @@ -101,11 +101,40 @@ static struct pm_qos_object network_throughput_pm_qos = {
-> >  };
-> >  
-> >  
-> > +static BLOCKING_NOTIFIER_HEAD(cpu_dma_throughput_notifier);
-> > +static struct pm_qos_constraints cpu_dma_tput_constraints = {
-> > +	.list = PLIST_HEAD_INIT(cpu_dma_tput_constraints.list),
-> > +	.target_value = PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE,
-> > +	.default_value = PM_QOS_CPU_DMA_THROUGHPUT_DEFAULT_VALUE,
-> > +	.type = PM_QOS_MAX,
-> > +	.notifiers = &cpu_dma_throughput_notifier,
-> > +};
-> > +static struct pm_qos_object cpu_dma_throughput_pm_qos = {
-> > +	.constraints = &cpu_dma_tput_constraints,
-> > +	.name = "cpu_dma_throughput",
-> > +};
-> > +
-> > +
-> > +static BLOCKING_NOTIFIER_HEAD(dvfs_lat_notifier);
-> > +static struct pm_qos_constraints dvfs_lat_constraints = {
-> > +	.list = PLIST_HEAD_INIT(dvfs_lat_constraints.list),
-> > +	.target_value = PM_QOS_DVFS_LAT_DEFAULT_VALUE,
-> > +	.default_value = PM_QOS_DVFS_LAT_DEFAULT_VALUE,
-> > +	.type = PM_QOS_MIN,
-> > +	.notifiers = &dvfs_lat_notifier,
-> > +};
-> > +static struct pm_qos_object dvfs_lat_pm_qos = {
-> > +	.constraints = &dvfs_lat_constraints,
-> > +	.name = "dvfs_latency",
-> > +};
-> > +
-> >  static struct pm_qos_object *pm_qos_array[] = {
-> >  	&null_pm_qos,
-> >  	&cpu_dma_pm_qos,
-> >  	&network_lat_pm_qos,
-> > -	&network_throughput_pm_qos
-> > +	&network_throughput_pm_qos,
-> > +	&cpu_dma_throughput_pm_qos,
-> > +	&dvfs_lat_pm_qos,
-> >  };
-> >  
-> >  static ssize_t pm_qos_power_write(struct file *filp, const char __user *buf,
+On Friday, March 09, 2012, MyungJoo Ham wrote:
+> On Thu, Mar 8, 2012 at 12:47 PM, mark gross <markgross@thegnar.org> wrote:
+> > On Wed, Mar 07, 2012 at 02:02:01PM +0900, MyungJoo Ham wrote:
+> >> 1. CPU_DMA_THROUGHPUT
+> ...
+> >> 2. DVFS_LATENCY
+> >
+> > The cpu_dma_throughput looks ok to me.  I do however; wonder about the
+> > dvfs_lat_pm_qos.  Should that knob be exposed to user mode?  Does that
+> > matter so much?  why can't dvfs_lat use the cpu_dma_lat?
+> >
+> > BTW I'll be out of town for the next 10 days and probably will not get
+> > to this email account until I get home.
+> >
+> > --mark
 > >
 > 
-> The cpu_dma_throughput looks ok to me.
+> 1. Should DVFS Latency be exposed to user mode?
+> 
+> It would depend on the policy of the given system; however, yes, there
+> are systems that require a user interface for DVFS Latency.
+> With the example of user input response (response to user click,
+> typing, touching, and etc), a user program (probably platform s/w or
+> middleware) may input QoS requests. Besides, when a new "application"
+> is starting, such "middleware" may want faster responses from DVFS
+> mechanisms.
 
-I agree with Mark, but I'm not sure about the name.  Specifically, I'm not sure
-what the CPU has to do with that?
+But this is a global knob, isn't it?  And it seems that a per-device one
+is needed rather than that?
 
+It also applies to your CPU_DMA_THROUGHPUT thing, doesn't it?
+
+> 2. Does DVFS Latency matter?
+> 
+> Yes, in our experimental sets w/ Exynos4210 (those slapped in Galaxy
+> S2 equivalent; not exactly as I'm not conducted in Android systems,
+> but Tizen), we could see noticable difference w/ bare eyes for
+> user-input responses. When we shortened DVFS polling interval with
+> touches, the touch responses were greatly improved; e.g., losing 10
+> frames into losing 0 or 1 frame for a sudden input rush.
+
+Well, this basically means PM QoS matters, which is kind of obvious.
+It doesn't mean that it can't be implemented in a better way, though.
+
+> 3. Why not replace DVFS Latency w/ CPU-DMA-Latency/Throughput?
+> 
+> When we implement the user-input response enhancement with CPU-DMA QoS
+> requests, the PM-QoS will unconditionally increase CPU and BUS
+> frequencies/voltages with user inputs. However, with many cases it is
+> unnecessary; i.e., a user input means that there will be unexpected
+> changes soon; however, the change does not mean that the load will
+> increase. Thus, allowing DVFS mechanism to evolve faster was enough to
+> shorten the response time and not to increase frequencies and voltages
+> when not needed. There were significant difference in power
+> consumption with this changes if the user inputs were not involving
+> drastic graphics jobs; e.g., typing a text message.
+
+Again, you're arguing for having PM QoS rather than not having it.  You don't
+have to do that. :-)
+
+Generally speaking, I don't think we should add any more PM QoS "classes"
+as defined in pm_qos.h, since they are global and there's only one
+list of requests per class.  While that may be good for CPU power
+management (in an SMP system all CPUs are identical, so the same list of
+requests may be applied to all of them), it generally isn't for I/O
+devices (some of them work in different time scales, for example).
+
+So, for example, most likely, a list of PM QoS requests for storage devices
+shouldn't be applied to input devices (keyboards and mice to be precise) and
+vice versa.
+
+On the other hand, I don't think that applications should access PM QoS
+interfaces associated with individual devices directly, because they may
+not have enough information about the relationships between devices in the
+system.  So, perhaps, there needs to be an interface allowing applications
+to specify their PM QoS expectations in a general way (e.g. "I want <number>
+disk I/O throughput") and a code layer between that interface and device
+drivers translating those expecataions into PM QoS requests for specific
+devices.  However, that would require support from subsystems throughout
+the kernel (e.g. if an application wants specific disk I/O throughput,
+we need to figure out what disks are used by that application and apply
+appropriate PM QoS requests to them on behalf of it and that may require
+support from the VFS and the block layer).
+
+I don't really think we have sufficiently understood the problem area yet.
+
+Thanks,
 Rafael
