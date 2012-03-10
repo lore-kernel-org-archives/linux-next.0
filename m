@@ -1,100 +1,30 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: linux-next: manual merge of the cpuidle-cons tree with the arm-soc
- tree
-Date: Fri, 09 Mar 2012 23:45:19 +0100
-Message-ID: <4F5A87FF.8060606@linaro.org>
-References: <20120309183732.512d3676599da324f4747219@canb.auug.org.au> <CAMXH7KE5En7U-2zydT3MfJ7C7B164-zsQuBoHMUqzD-Kb_nh1w@mail.gmail.com>
+From: Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the omap_dss2 tree
+Date: Sat, 10 Mar 2012 10:55:04 +0100
+Message-ID: <1678557.FviZqEVemH@vclass>
+References: <20120308165116.d400947f35e40a923e9c6ad0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:51999 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757745Ab2CIWpX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Mar 2012 17:45:23 -0500
-Received: by wibhq7 with SMTP id hq7so1030942wib.1
-        for <linux-next@vger.kernel.org>; Fri, 09 Mar 2012 14:45:21 -0800 (PST)
-In-Reply-To: <CAMXH7KE5En7U-2zydT3MfJ7C7B164-zsQuBoHMUqzD-Kb_nh1w@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rob Lee <rob.lee@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120308165116.d400947f35e40a923e9c6ad0@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Tony Lindgren <tony@atomide.com>
+List-Id: linux-next.vger.kernel.org
 
-On 03/09/2012 11:26 PM, Rob Lee wrote:
-> Hello Stephen,
->
-> Yes, your resolution looks correct to me.
+On Thursday 08 of March 2012 16:51:16 Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/mach-omap1/board-ams-delta.c between commit ddba6c7f7ec6
+> ("OMAP1: pass LCD config with omapfb_set_lcd_config()") from the
+> omap_dss2 tree and commits 5ca6180fa6d7 ("ARM: OMAP1: ams-delta:
+> supersede custom led device by leds-gpio") and 2e3ee9f45b3c ("ARM: OMAP1:
+> Move most of plat/io.h into local iomap.h") from the arm-soc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-=46or me too.
-
-Thanks
-   -- Daniel
-
-
-> On Fri, Mar 9, 2012 at 1:37 AM, Stephen Rothwell<sfr@canb.auug.org.au=
->  wrote:
->> Hi Rob,
->>
->> Today's linux-next merge of the cpuidle-cons tree got a conflict in
->> arch/arm/mach-at91/cpuidle.c between commit 00482a4078f4 ("ARM: at91=
-:
->> implement the standby function for pm/cpuidle") from the arm-soc tre=
-e and
->> commit 7a1f6e72dce1 ("ARM: at91: Consolidate time keeping and irq
->> enable") from the cpuidle-cons tree.
->>
->> I fixed it up (I think - see below) and can carry the fix as necessa=
-ry.
->> --
->> Cheers,
->> Stephen Rothwell                    sfr@canb.auug.org.au
->>
->> diff --cc arch/arm/mach-at91/cpuidle.c
->> index 555d956,d40b3f3..0000000
->> --- a/arch/arm/mach-at91/cpuidle.c
->> +++ b/arch/arm/mach-at91/cpuidle.c
->> @@@ -37,23 -33,15 +33,8 @@@ static int at91_enter_idle(struct cpuid
->>                         struct cpuidle_driver *drv,
->>                                int index)
->>   {
->> -       struct timeval before, after;
->> -       int idle_time;
->> -
->> -       local_irq_disable();
->> -       do_gettimeofday(&before);
->> -       if (index =3D=3D 0)
->> -               /* Wait for interrupt state */
->> -               cpu_do_idle();
->> -       else if (index =3D=3D 1)
->> -               at91_standby();
->>   -      u32 saved_lpr;
->>   -
->>   -      __asm__("b 1f; .align 5; 1:\n"
->>   -      "       mcr p15, 0, r0, c7, c10, 4");   /* drain write buff=
-er */
->>   -
->>   -      saved_lpr =3D sdram_selfrefresh_enable();
->>   -      cpu_do_idle();
->>   -      sdram_selfrefresh_disable(saved_lpr);
->> ++      at91_standby();
->>
->> -       do_gettimeofday(&after);
->> -       local_irq_enable();
->> -       idle_time =3D (after.tv_sec - before.tv_sec) * USEC_PER_SEC =
-+
->> -                       (after.tv_usec - before.tv_usec);
->> -
->> -       dev->last_residency =3D idle_time;
->>         return index;
->>   }
->>
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Hi,
+Your resolution looks good to me, thanks!
+Janusz
