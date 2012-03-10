@@ -1,44 +1,86 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Mar 9 (netfilter)
-Date: Sat, 10 Mar 2012 08:45:22 -0800
-Message-ID: <4F5B8522.8050707@xenotime.net>
-References: <20120309191101.8634973f7d9988c602143f7c@canb.auug.org.au> <4F5A6872.3050502@xenotime.net> <20120310112154.GA22478@1984>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH v3] PM / QoS: Introduce new classes: DMA-Throughput and DVFS-Latency
+Date: Sat, 10 Mar 2012 23:22:19 +0100
+Message-ID: <201203102322.19875.rjw@sisk.pl>
+References: <13197479.540821330911965933.JavaMail.weblogic@epv6ml06> <CAJ0PZbQSuG2sJngV+MzaveWvvQZM=bm_GxB_725PNv0zAx+H5A@mail.gmail.com> <CAJ0PZbRGv2kAMZfTSzt-zjNeN6WBQ195ktXbUfmwFGOTBVobCA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:49206 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753135Ab2CJQpS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 10 Mar 2012 11:45:18 -0500
-In-Reply-To: <20120310112154.GA22478@1984>
+Received: from ogre.sisk.pl ([217.79.144.158]:37517 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752673Ab2CJWSP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 10 Mar 2012 17:18:15 -0500
+In-Reply-To: <CAJ0PZbRGv2kAMZfTSzt-zjNeN6WBQ195ktXbUfmwFGOTBVobCA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
+To: myungjoo.ham@gmail.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, linux-pm@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@ti.com>, Jean Pihet <j-pihet@ti.com>, markgross <markgross@thegnar.org>, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org
 
-On 03/10/2012 03:21 AM, Pablo Neira Ayuso wrote:
+Hi,
 
-> On Fri, Mar 09, 2012 at 12:30:42PM -0800, Randy Dunlap wrote:
->> On 03/09/2012 12:11 AM, Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> There will be no linux-next release on March 12 due to a public holiday.
->>>
->>> Changes since 20120308:
->>
->>
->> xt_LOG.c:(.text+0x789b1): undefined reference to `ip6t_ext_hdr'
->>
->> Full randconfig file is attached.
+On Friday, March 09, 2012, MyungJoo Ham wrote:
+> On Wed, Mar 7, 2012 at 6:36 PM, MyungJoo Ham <myungjoo.ham@samsung.com> wrote:
+> > 2012/3/7 Rafael J. Wysocki <rjw@sisk.pl>:
+[...]
+> Hi Rafael,
 > 
-> The patch attached fixes this problem, thanks!
+> 
+> Here goes to-be-pulled branches for linux-pm.git of yours (pm-devfreq,
+> pm-qos); they have some updates since last submissions (like those
+> mentioned by Mike)
+> Please use the following addresses if you feel fine for them to be pulled.
+> 
+> 
+> Cheers!
+> MyungJoo.
+> 
+> -------- PM / devfreq (fitted for pm-devfreq branch) ----------
+> The following changes since commit e4c9d8efe6bdc844071d68960dfa2003c5cf6449:
+> 
+>   Merge branch 'devfreq-for-next' of
+> git://git.infradead.org/users/kmpark/linux-samsung into pm-devfreq
+> (2012-01-25 00:02:08 +0100)
+> 
+> are available in the git repository at:
+> 
+>   git://git.infradead.org/users/kmpark/linux-samsung devfreq-for-next
+> 
+> GITWEB: http://git.infradead.org/users/kmpark/linux-samsung/shortlog/refs/heads/devfreq-for-next
+> 
+> MyungJoo Ham (2):
+>       PM / devfreq: add PM QoS support
+>       PM / devfreq: add relation of recommended frequency.
 
+This patch I'm fine whith and I can either take it as a standalone patch
+or pull it from your tree if you put it into a separate branch for me.
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+The previous one, however, I'm not entirely comfortable with and I'd like
+to discuss it in more detail.  Can you please post it for discussion?
 
-Thanks.
+>  drivers/devfreq/devfreq.c     |  193 +++++++++++++++++++++++++++++++++++++++--
+>  drivers/devfreq/exynos4_bus.c |   14 ++-
+>  include/linux/devfreq.h       |   53 +++++++++++-
+>  3 files changed, 245 insertions(+), 15 deletions(-)
+> 
+> 
+> 
+> -------- PM / QoS (fitted for pm-qos branch) ----------
+> The following changes since commit a9b542ee607a8afafa9447292394959fc84ea650:
+> 
+>   PM / QoS: unconditionally build the feature (2012-02-13 16:23:42 +0100)
+> 
+> are available in the git repository at:
+>   git://git.infradead.org/users/kmpark/linux-samsung pm_qos-for-next
+> 
+> GITWEB: http://git.infradead.org/users/kmpark/linux-samsung/shortlog/refs/heads/pm_qos-for-next
+> 
+> MyungJoo Ham (2):
+>       PM / QoS: Introduce new classes: DMA-Throughput and DVFS-Latency
+>       PM / QoS: add pm_qos_update_request_timeout API
 
--- 
-~Randy
+I'd prefer all discussions to settle down before pulling these two.
+
+Thanks,
+Rafael
