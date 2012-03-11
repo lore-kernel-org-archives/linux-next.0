@@ -1,73 +1,53 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: fix for "error: implicit declaration of function 'devres_alloc'"
- in Mar9 tree
-Date: Sun, 11 Mar 2012 12:48:47 +0000
-Message-ID: <20120311124846.GA6081@opensource.wolfsonmicro.com>
-References: <4F5A1DBC.3090701@windriver.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: linux-next: Tree for Mar 9 (netfilter)
+Date: Sun, 11 Mar 2012 16:52:41 +0100
+Message-ID: <20120311155241.GA27058@1984>
+References: <giupeu1.ee21a87813f836d9f587ea0b0e19a695@obelix.schillstrom.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44879 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751965Ab2CKMst (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 Mar 2012 08:48:49 -0400
+Received: from mail.us.es ([193.147.175.20]:42072 "EHLO mail.us.es"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752915Ab2CKPwp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 11 Mar 2012 11:52:45 -0400
 Content-Disposition: inline
-In-Reply-To: <4F5A1DBC.3090701@windriver.com>
+In-Reply-To: <giupeu1.ee21a87813f836d9f587ea0b0e19a695@obelix.schillstrom.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org
+To: Hans Schillstrom <hans@schillstrom.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
 
+Hi Hans,
 
---mYCpIKhGyMATD0i+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Sun, Mar 11, 2012 at 01:37:25PM +0100, Hans Schillstrom wrote:
+> Hello
+> >On Fri, Mar 09, 2012 at 12:30:42PM -0800, Randy Dunlap wrote:
+> >> On 03/09/2012 12:11 AM, Stephen Rothwell wrote:
+> >>
+> >> > Hi all,
+> >> >
+> >> > There will be no linux-next release on March 12 due to a public holiday.
+> >> >
+> >> > Changes since 20120308:
+> >>
+> >>
+> >> xt_LOG.c:(.text+0x789b1): undefined reference to `ip6t_ext_hdr'
+> >>
+> >> Full randconfig file is attached.
+> >
+> >The patch attached fixes this problem, thanks!
+> 
+> 
+> This one is needed as well,
+> 
+> To force xt_LOG  to be configured as a module if ipv6 is a module,
+> otherwise you end up in the same linking problem
 
-On Fri, Mar 09, 2012 at 10:11:56AM -0500, Paul Gortmaker wrote:
+Perhaps I'm missing anything but either way (IPv6 as module or
+built-in) the symbol is still defined. With my patch applied, xt_LOG
+now depends on IP6_NF_IPTABLES, which depends on IPV6.
 
-> drivers/base/regmap/regmap.c:421: error: implicit declaration of function 'dev_err'
-> make[4]: *** [drivers/base/regmap/regmap.o] Error 1
+Moreover we've got other xt_ target and matches that contain both IPv4
+and IPv6 support that don't require this.
 
-> This is caused by commit 19694b5ea1d3 which just appeared in today's next
-> tree exposing another implicit device.h user.  Just a quick note that I'll
-> take care of it by adding regmap.c to the below commit.
-
-No, it's not caused by that - in the subsystem tree there's an explicit
-inclusion of linux/device.h in the public header which is what is being
-relied on here.  You've gone and deleted that inclusion without CCing
-the patch to the subsystem and now you're sending a fix again without a
-CC to either me or the relevant list, and without even a mention in the
-subject line.
-
-In order to avoid bisection breakage I've applied one of the several
-fixes for this that were sent to me today, please drop your change.
-
-This stuff would go a lot more smoothly if you were to at least let
-people know when you make changes, especially when issues introduced by
-your changes get noticed.
-
---mYCpIKhGyMATD0i+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPXJ8mAAoJEBus8iNuMP3dKWEP/ArMAGq097+3PMIkLK8CS9Aq
-21S5DBEHn6M+eTr4Ha1VPZMqaVtK9aDJdSXZFK1pUqblQ0gW0L19u3tqFVf3vcUB
-UkUa/QooUzIYwCbZec9/EJZ1szq1yvNrFh4wM9iAhGir3oazMq1zAmojgefzB4Fn
-QdULzrPaBl6kqVXZjJZ7IHJTCPSWMpp4nZteD3ghWU09CZ8vNQ2dSddrBhX764OZ
-6k8F+B7BqtfombYsrBKI1wN865JGD9kn7iDqZw7D5qEpzR3giztY+zPgR39Zj7Z3
-cWVMsdjh2hKaAZir03YzPdlz0dyVwvA1C6aSEeHZ8eGeAsF+p+2TAcuLGTGW/9df
-SfThudSpxqL3zcsE0I+SzpqFfprzEgUZMSNxtggHqtFuGlfvX9BkbAHGUgUk7eEn
-KHab9Xty1JB0IqnA1IcgXUurCU4qodQUdRLyau19E+qG9wQhNDqFR4Hg/J7NpZso
-j047xZnEBgC3FCWcyAlVm137J+HlD7f5tMP6gLTwbzs/hkqRj3pQHy+/jBwFcVpo
-iXCo7hGk35QalZZUsLiUXoQH+I2ePB2FWM4iE9J7o43GQrU12aHpChQvxyyXPqaU
-xDdPI8iGhYUz3lKC+tfuzZ6Wp4By7eH+Tnzp5dgMwyHLSRHb/jwgT4Ep+tq3mfxf
-3nP0AEn8TQ53tlI7mAo/
-=nu8v
------END PGP SIGNATURE-----
-
---mYCpIKhGyMATD0i+--
+Let me know.
