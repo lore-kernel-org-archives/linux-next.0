@@ -1,43 +1,66 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: linux-next: manual merge of the powerpc tree with the arm tree
-Date: Mon, 12 Mar 2012 10:12:25 +0900
-Message-ID: <20120312011224.GA9503@linux-sh.org>
-References: <20120308120422.e071cba36425eacbee1f8d98@canb.auug.org.au> <25744.1331174036@neuling.org> <20120308145131.fad50bbc79c36f0b0b12d101@canb.auug.org.au> <1331185951.3105.29.camel@pasglop> <1331249746.3105.40.camel@pasglop> <20120309003937.GC8680@flint.arm.linux.org.uk> <1331262821.3105.47.camel@pasglop> <4F5A350F.3090905@calxeda.com>
+From: Jason <jason@lakedaemon.net>
+Subject: Re: [PATCH] crypto: fix build failure in mv_cesa.c (missing of
+ header)
+Date: Sun, 11 Mar 2012 22:32:44 -0400
+Message-ID: <20120312023244.GV5050@titan.lakedaemon.net>
+References: <1331323105-21034-1-git-send-email-paul.gortmaker@windriver.com>
+ <20120311014226.GU5050@titan.lakedaemon.net>
+ <CAP=VYLpm9B7i9MSGTc4ogVPACmC3J1SVtNDugoYop5mJ8gLb9g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-crypto-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4F5A350F.3090905@calxeda.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <rob.herring@calxeda.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, Michael Neuling <mikey@neuling.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-sh@vger.kernel.org
+In-Reply-To: <CAP=VYLpm9B7i9MSGTc4ogVPACmC3J1SVtNDugoYop5mJ8gLb9g@mail.gmail.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: michael@walle.cc, linux-crypto@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Mar 09, 2012 at 10:51:27AM -0600, Rob Herring wrote:
-> On 03/08/2012 09:13 PM, Benjamin Herrenschmidt wrote:
-> > On Fri, 2012-03-09 at 00:39 +0000, Russell King wrote:
-> >> On Fri, Mar 09, 2012 at 10:35:46AM +1100, Benjamin Herrenschmidt wrote:
-> >>> Actually, I didn't keep MAY_HAVE_SPARSE_IRQ, I kept HAVE_SPARSE_IRQ. If
-> >>> I remove it, then I get Kconfig warnings:
-> >>>
-> >>> warning: (PPC) selects SPARSE_IRQ which has unmet direct dependencies
-> >>> (HAVE_GENERIC_HARDIRQS && HAVE_SPARSE_IRQ)
+On Sun, Mar 11, 2012 at 12:17:29PM -0400, Paul Gortmaker wrote:
+> On Sat, Mar 10, 2012 at 8:42 PM, Jason Cooper <jason@lakedaemon.net> =
+wrote:
+> > On Fri, Mar 09, 2012 at 02:58:25PM -0500, Paul Gortmaker wrote:
+> >> Commit 737b75872487f560397ba34846a19823b1addf88 (linux-next)
 > >>
-> >> Do you have commit 2ed86b16eabe4efbf80cc725a8cbb5310746a2fc ?
-> > 
-> > Nope, Grant patch didn't mention a dependency.
-> 
-> My opinion is that SPARSE_IRQ shouldn't be user visible option, and the
-> simple solution was to just make it hidden. It wasn't clear if this was
-> desired or not for other arches at the time. There is a mixture of
-> settings in powerpc defconfigs. SuperH selects it for 32-bit and leaves
-> it user selectable for 64-bit.
-> 
-> I'm happy to revert adding MAY_HAVE_SPARSE_IRQ and just make SPARSE_IRQ
-> a hidden option. It really just needs the okay from SuperH folks.
-> 
-We basically want it always-enabled for 32-bit and it doesn't matter much
-about 64-bit. In the future I'll probably fix up the 64-bit stuff to use
-it too and then we'll just leave it on all the time, but it's not such a
-big deal if it's not visible for enabling on 64-bit at the moment given
-that it's probably broken there at the moment.
+> >> =A0 =A0 "ARM: kirkwood: mv_cesa devicetree bindings"
+> >>
+> >> fails to compile as follows:
+> >>
+> >> =A0CC =A0 =A0 =A0drivers/crypto/mv_cesa.o
+> >> =A0drivers/crypto/mv_cesa.c:1139: error: implicit declaration of f=
+unction 'of_match_ptr'
+> >> =A0drivers/crypto/mv_cesa.c:1139: error: 'mv_cesa_dt_ids' undeclar=
+ed here (not in a function)
+> >> =A0drivers/crypto/mv_cesa.c:1139: error: initializer element is no=
+t constant
+> >> =A0drivers/crypto/mv_cesa.c:1139: error: (near initialization for =
+'marvell_crypto.driver.of_match_table')
+> >>
+> >> because it is missing the linux/of.h header file.
+> >>
+> >> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> >
+> > Paul,
+> >
+> > Thanks for the patch. =A0Unfortunately, I'm not learning fast enoug=
+h. =A0;-)
+> > This series has been in a lot of flux lately, as you've experienced=
+=2E
+> >
+> > The good news is, after talking with Olaf and Arnd, I think I have =
+a
+> > good workflow figured out. =A0Hopefully, failures like this won't h=
+appen
+> > in the future.
+>=20
+> Sounds good -- don't be too hard on yourself wrt. a minor breakage.
+> Feel free to just squish the above patch into whatever updates you
+> have going.  I don't see it needing to exist as a standalone commit.
+
+Thanks, it's definitely better that it be squashed into the existing
+commit.  I wouldn't want a bisect to land in between it down the road.
+
+thx,
+
+Jason.
