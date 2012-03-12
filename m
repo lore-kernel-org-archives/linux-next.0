@@ -1,66 +1,83 @@
-From: Jason <jason@lakedaemon.net>
-Subject: Re: [PATCH] crypto: fix build failure in mv_cesa.c (missing of
- header)
-Date: Sun, 11 Mar 2012 22:32:44 -0400
-Message-ID: <20120312023244.GV5050@titan.lakedaemon.net>
-References: <1331323105-21034-1-git-send-email-paul.gortmaker@windriver.com>
- <20120311014226.GU5050@titan.lakedaemon.net>
- <CAP=VYLpm9B7i9MSGTc4ogVPACmC3J1SVtNDugoYop5mJ8gLb9g@mail.gmail.com>
+From: Seth Jennings <sjenning@linux.vnet.ibm.com>
+Subject: Re: [PATCH] staging: fix powerpc linux-next break on zsmalloc
+Date: Mon, 12 Mar 2012 09:34:35 -0500
+Message-ID: <4F5E097B.4070605@linux.vnet.ibm.com>
+References: <1329144469-8575-1-git-send-email-sjenning@linux.vnet.ibm.com> <4F3A480C.9090407@gmx.de> <4F3A7121.9010803@linux.vnet.ibm.com> <5736714.Unq6oKkpjO@ax5200p>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAP=VYLpm9B7i9MSGTc4ogVPACmC3J1SVtNDugoYop5mJ8gLb9g@mail.gmail.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: michael@walle.cc, linux-crypto@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e9.ny.us.ibm.com ([32.97.182.139]:55143 "EHLO e9.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751662Ab2CLOeq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Mar 2012 10:34:46 -0400
+Received: from /spool/local
+	by e9.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <sjenning@linux.vnet.ibm.com>;
+	Mon, 12 Mar 2012 10:34:45 -0400
+In-Reply-To: <5736714.Unq6oKkpjO@ax5200p>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Marc Dietrich <marvin24@gmx.de>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>, Robert Jennings <rcj@linux.vnet.ibm.com>
 
-On Sun, Mar 11, 2012 at 12:17:29PM -0400, Paul Gortmaker wrote:
-> On Sat, Mar 10, 2012 at 8:42 PM, Jason Cooper <jason@lakedaemon.net> =
-wrote:
-> > On Fri, Mar 09, 2012 at 02:58:25PM -0500, Paul Gortmaker wrote:
-> >> Commit 737b75872487f560397ba34846a19823b1addf88 (linux-next)
-> >>
-> >> =A0 =A0 "ARM: kirkwood: mv_cesa devicetree bindings"
-> >>
-> >> fails to compile as follows:
-> >>
-> >> =A0CC =A0 =A0 =A0drivers/crypto/mv_cesa.o
-> >> =A0drivers/crypto/mv_cesa.c:1139: error: implicit declaration of f=
-unction 'of_match_ptr'
-> >> =A0drivers/crypto/mv_cesa.c:1139: error: 'mv_cesa_dt_ids' undeclar=
-ed here (not in a function)
-> >> =A0drivers/crypto/mv_cesa.c:1139: error: initializer element is no=
-t constant
-> >> =A0drivers/crypto/mv_cesa.c:1139: error: (near initialization for =
-'marvell_crypto.driver.of_match_table')
-> >>
-> >> because it is missing the linux/of.h header file.
-> >>
-> >> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> >
-> > Paul,
-> >
-> > Thanks for the patch. =A0Unfortunately, I'm not learning fast enoug=
-h. =A0;-)
-> > This series has been in a lot of flux lately, as you've experienced=
-=2E
-> >
-> > The good news is, after talking with Olaf and Arnd, I think I have =
-a
-> > good workflow figured out. =A0Hopefully, failures like this won't h=
-appen
-> > in the future.
->=20
-> Sounds good -- don't be too hard on yourself wrt. a minor breakage.
-> Feel free to just squish the above patch into whatever updates you
-> have going.  I don't see it needing to exist as a standalone commit.
+Hey Marc,
 
-Thanks, it's definitely better that it be squashed into the existing
-commit.  I wouldn't want a bisect to land in between it down the road.
+On 02/14/2012 10:21 AM, Marc Dietrich wrote:
+> Hi Seth,
+> 
+> On Tuesday 14 February 2012 08:35:13 Seth Jennings wrote:
+>> On 02/14/2012 05:39 AM, Marc Dietrich wrote:
+>>> Am 14.02.2012 12:22, schrieb Marc Dietrich:
+>>>> Am 13.02.2012 15:47, schrieb Seth Jennings:
+>>>>> linux/vmalloc.h added to zsmalloc-main.c to resolve implicit
+>>>>> declaration errors.
+>>>>>
+>>>>> X86 dependency added to zsmalloc and dependent drivers zcache and
+>>>>> zram.
+>>>>>
+>>>>> This X86 only requirement is not ideal.  Working to find portable
+>>>>> functions for __flush_tlb_one and set_pte.
+>>>>
+>>>> sorry, zcache/zram works fine one ARM here. Why not depend on
+>>>> !POWERPC?
+>>>
+>>> ups, sorry again, I tested an older version only. flush_tlb_one and
+>>> set_pte is only used with the new allocator as it seems.
+>>
+>> It would seem that the cpu-local tlb page flushing function for ARM
+>> is local_flush_tlb_kernel_page(), by look at the kmap_atomic() code
+>> in arch/arm/mm/highmem.c.
+>>
+>> So each arch is using a slightly different approach here.
+>>
+>> A simple #define per-arch could make a it a common call.  I think
+>> I'm going to code it up and see how it goes.
+> 
+> ... and I'm happy to test it ;-)
 
-thx,
+So I have a branch ready for you to test if your are willing
 
-Jason.
+git://github.com/spartacus06/linux.git -b portable
+
+The branch is based on Greg's staging-next, since my
+patches that remove the sparsemem dependency are in there.
+The frontswap_v11 patches are in that branch as well.
+
+I did a simple make test with my ARM cross compiler and it
+builds cleanly.  Now I just need to know if it _works_.
+
+I'm not sure if you have been experimenting with frontswap
+since it's not in mainline yet, but you can enable/disable
+it in:
+
+Kernel Features -> Enable frontswap to cache swap pages if tmem is present
+
+Only the frontswap paths use zsmalloc right now. We are looking
+to use it for the cleancache paths too soon (I'm working on
+that now).
+
+I'd appreciate any feedback you can provide!
+
+Thanks,
+Seth
