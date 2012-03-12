@@ -1,83 +1,54 @@
-From: Seth Jennings <sjenning@linux.vnet.ibm.com>
-Subject: Re: [PATCH] staging: fix powerpc linux-next break on zsmalloc
-Date: Mon, 12 Mar 2012 09:34:35 -0500
-Message-ID: <4F5E097B.4070605@linux.vnet.ibm.com>
-References: <1329144469-8575-1-git-send-email-sjenning@linux.vnet.ibm.com> <4F3A480C.9090407@gmx.de> <4F3A7121.9010803@linux.vnet.ibm.com> <5736714.Unq6oKkpjO@ax5200p>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: linux-next: manual merge of the cpuidle-cons tree with the arm-soc
+ tree
+Date: Mon, 12 Mar 2012 17:05:32 +0100
+Message-ID: <4F5E1ECC.1040605@atmel.com>
+References: <20120309183732.512d3676599da324f4747219@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e9.ny.us.ibm.com ([32.97.182.139]:55143 "EHLO e9.ny.us.ibm.com"
+Received: from newsmtp5.atmel.com ([204.2.163.5]:4545 "EHLO sjogate2.atmel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751662Ab2CLOeq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Mar 2012 10:34:46 -0400
-Received: from /spool/local
-	by e9.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <sjenning@linux.vnet.ibm.com>;
-	Mon, 12 Mar 2012 10:34:45 -0400
-In-Reply-To: <5736714.Unq6oKkpjO@ax5200p>
+	id S1751239Ab2CLQGB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Mar 2012 12:06:01 -0400
+In-Reply-To: <20120309183732.512d3676599da324f4747219@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Marc Dietrich <marvin24@gmx.de>
-Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>, Robert Jennings <rcj@linux.vnet.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Rob Lee <rob.lee@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 
-Hey Marc,
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-On 02/14/2012 10:21 AM, Marc Dietrich wrote:
-> Hi Seth,
+On 03/09/2012 08:37 AM, Stephen Rothwell :
+> Hi Rob,
 > 
-> On Tuesday 14 February 2012 08:35:13 Seth Jennings wrote:
->> On 02/14/2012 05:39 AM, Marc Dietrich wrote:
->>> Am 14.02.2012 12:22, schrieb Marc Dietrich:
->>>> Am 13.02.2012 15:47, schrieb Seth Jennings:
->>>>> linux/vmalloc.h added to zsmalloc-main.c to resolve implicit
->>>>> declaration errors.
->>>>>
->>>>> X86 dependency added to zsmalloc and dependent drivers zcache and
->>>>> zram.
->>>>>
->>>>> This X86 only requirement is not ideal.  Working to find portable
->>>>> functions for __flush_tlb_one and set_pte.
->>>>
->>>> sorry, zcache/zram works fine one ARM here. Why not depend on
->>>> !POWERPC?
->>>
->>> ups, sorry again, I tested an older version only. flush_tlb_one and
->>> set_pte is only used with the new allocator as it seems.
->>
->> It would seem that the cpu-local tlb page flushing function for ARM
->> is local_flush_tlb_kernel_page(), by look at the kmap_atomic() code
->> in arch/arm/mm/highmem.c.
->>
->> So each arch is using a slightly different approach here.
->>
->> A simple #define per-arch could make a it a common call.  I think
->> I'm going to code it up and see how it goes.
+> Today's linux-next merge of the cpuidle-cons tree got a conflict
+> in arch/arm/mach-at91/cpuidle.c between commit 00482a4078f4 ("ARM:
+> at91: implement the standby function for pm/cpuidle") from the
+> arm-soc tree and commit 7a1f6e72dce1 ("ARM: at91: Consolidate time
+> keeping and irq enable") from the cpuidle-cons tree.
 > 
-> ... and I'm happy to test it ;-)
+> I fixed it up (I think - see below) and can carry the fix as
+> necessary.
 
-So I have a branch ready for you to test if your are willing
+Yes: resolution correct. Please carry it.
 
-git://github.com/spartacus06/linux.git -b portable
+Thanks to Rob and Daniel for their answers.
 
-The branch is based on Greg's staging-next, since my
-patches that remove the sparsemem dependency are in there.
-The frontswap_v11 patches are in that branch as well.
+Best regards,
+- -- 
+Nicolas Ferre
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
 
-I did a simple make test with my ARM cross compiler and it
-builds cleanly.  Now I just need to know if it _works_.
-
-I'm not sure if you have been experimenting with frontswap
-since it's not in mainline yet, but you can enable/disable
-it in:
-
-Kernel Features -> Enable frontswap to cache swap pages if tmem is present
-
-Only the frontswap paths use zsmalloc right now. We are looking
-to use it for the cleancache paths too soon (I'm working on
-that now).
-
-I'd appreciate any feedback you can provide!
-
-Thanks,
-Seth
+iQEcBAEBAgAGBQJPXh7HAAoJEAf03oE53VmQSQwH/15D3okPxJSEiH0k8IFt6Df0
+RDY/CdaGYDllGMq7Yc1LiQAPrlHkv+gFNAJkhH8aJvC603pYBFGIa5IPLeZEE+XD
+MkXiO7pQAOdGtojqSrZI8Sp0kxtfdR6QlNu5o518yvlKIkxbWJoXdVty9+MuciOv
+GOR+164hJtlr4fLLg7bTzsdnxquDVBBbks9qLhSYEQBEuNkgXKgNfdMouwVI/Zuj
+sX9DSKnVVm5LS/rrq888JRPPtBf8/HkmOeFRWKktq7Q8WldQbBI79vj01osH++jf
+rwDiM/CSC0nhXY0IWEof+Hz1mSinM07XGZglDYwqI1ca7HId2C/txaFI3NtcC7A=
+=rZpG
+-----END PGP SIGNATURE-----
