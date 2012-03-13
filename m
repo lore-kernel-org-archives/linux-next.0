@@ -1,65 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the isci tree with the scsi tree
-Date: Tue, 13 Mar 2012 14:41:52 +1100
-Message-ID: <20120313144152.5bd633a5ea6e496c059a9465@canb.auug.org.au>
-References: <20120313134512.848baf17f46729fa0fac195d@canb.auug.org.au>
-	<CABE8wwtNcA4QcJyLC6zipjygjAYa6o=bwPyz6xS9A=PLiU+2kg@mail.gmail.com>
+Subject: linux-next: manual merge of the mmc tree with the s5p tree
+Date: Tue, 13 Mar 2012 14:59:07 +1100
+Message-ID: <20120313145907.8b549d741fef217899f971a4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Mar_2012_14_41_52_+1100_aMV7ePo/lkQFtABA"
+ boundary="Signature=_Tue__13_Mar_2012_14_59_07_+1100_=YDyDqQ=3JW_C/uu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53405 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:50412 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759496Ab2CMDmB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Mar 2012 23:42:01 -0400
-In-Reply-To: <CABE8wwtNcA4QcJyLC6zipjygjAYa6o=bwPyz6xS9A=PLiU+2kg@mail.gmail.com>
+	with ESMTP id S1759616Ab2CMD7S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Mar 2012 23:59:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Williams, Dan J" <dan.j.williams@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@hansenpartnership.com>
+To: Chris Ball <cjb@laptop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Tue__13_Mar_2012_14_41_52_+1100_aMV7ePo/lkQFtABA
+--Signature=_Tue__13_Mar_2012_14_59_07_+1100_=YDyDqQ=3JW_C/uu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
+Hi Chris,
 
-On Mon, 12 Mar 2012 19:50:33 -0700 "Williams, Dan J" <dan.j.williams@intel.=
-com> wrote:
->
-> I was wondering why it had not happened prior to this point...  in any
+Today's linux-next merge of the mmc tree got a conflict in
+drivers/mmc/host/sdhci-s3c.c between commit c1c4b66dc010 ("mmc:
+sdhci-s3c: add platform data for the second capability") from the s5p
+tree and commit 1c352c37ee23 ("mmc: sdhci-s3c: Enable runtime power
+management") from the mmc tree.
 
-It had, I just put up with it the first time :-)
-
-> event I'll get my tree rebased on top scsi-misc so that isci.git#all
-> will just be the pending delta.
-
-Thanks.
+Just context changes (I think).  I fixed it up (see below) and can carry
+the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__13_Mar_2012_14_41_52_+1100_aMV7ePo/lkQFtABA
+diff --cc drivers/mmc/host/sdhci-s3c.c
+index a2bfbe0,312aaf4..0000000
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@@ -714,9 -706,11 +703,14 @@@ static int __devinit sdhci_s3c_probe(st
+  	if (pdata->host_caps)
+  		host->mmc->caps |=3D pdata->host_caps;
+ =20
+ +	if (pdata->host_caps2)
+ +		host->mmc->caps2 |=3D pdata->host_caps2;
+ +
++ 	pm_runtime_enable(&pdev->dev);
++ 	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
++ 	pm_runtime_use_autosuspend(&pdev->dev);
++ 	pm_suspend_ignore_children(&pdev->dev, 1);
++=20
+  	ret =3D sdhci_add_host(host);
+  	if (ret) {
+  		dev_err(dev, "sdhci_add_host() failed\n");
+
+--Signature=_Tue__13_Mar_2012_14_59_07_+1100_=YDyDqQ=3JW_C/uu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPXsIAAAoJEECxmPOUX5FEmf4P/11yLwCsZvBza4RpxSVq3W9s
-Z9GgcmDbiCyUs1+d+T2vcrLz1LNdqxgS4sHLd6ZCkipsGfkK+QTdxjduZWudtfx4
-VKTv1N0axTUXueXsahLoqU1lDXraEdUAhoffyRjmt65KTY1/7S5oFctoZaasvY/F
-HZtIWad0iFby2esv9txiY54PmER0YLaWyFqaotjfl8CagT6eUKnEFD5A5vD4YG/t
-N5j0lIFINJ792izxhqUtj/aFzGki+enaALvq+1y9bzN8waC16Kw7hI+RyeWwx7WW
-/hLfZyHhrEq0LtjqIGsFpDDcYeoh9qacsVn97aI24HnEs995czVfWvLK5wh9RmEC
-oRNM9SEs7vZipEOG/PSDLmxqsrWFXhbg92VH5xWGWFhAu09nxQLVbJoQ7h/XpoIs
-a33VG78xXf6BGmBIiSwm102mb/H3FXSRcsyUBAzqwg/sbS1gBcoV7uED100FFinh
-JGo/bXElkPjGQQhO4KQNWGtNT1iW05f5EseQdJypWtAz27posvS1WmDgnxQippkE
-ikjUAT/P54XV6MbpeNwYtkcIGbcKwdsVIS3MkujYJ3ZwaausthUinAVGPDvmwcMv
-tud5k9OGZAmHZCmlJX5ROMW4thHdgRW5Fd95Ex+vjKdyJRVrrhpmSFzK4E2irWzE
-7ZIgEulcoH0ug0ujG7yr
-=4l3p
+iQIcBAEBCAAGBQJPXsYLAAoJEECxmPOUX5FEnKoQAIIZE63mo0oVNgF7SbgDJoON
+R5QK8kcDP7KcTONQC2CCPlYL69ndyCk7WdYMxdhy9Oa8VXWADWoLL5GdbJ/+a0ui
+Cmnne8a+cfin50WrITN3sqWxstJ+60Ynjx9iOBgPz7IqwtUtEhiuDoXKp/e5rXQm
+lzH3hjunJaoVADeSp521ry7j0KbZE0XpfO2xFMhUIYA/ilfVoF2PtPjVWs5AmeBk
+QCWv17nvV5/WabZiyP+279XsZ86cpiFfJh8hm56+gbLXTfckDwQzk3ww9H2ysy4H
+/vApIuhE/OhU5/THtLCxrDYFkNJrKiH5vyuk5IrE513Umda6BYAoW6FXTTdqzhfB
+1WzZFNKYiv85DuUah796n4AE43UoDPhDMG2e+N0OjdwjngkPWKs4uYOSYySTiO8k
+RCmZAUYBRQ1lboWs/4PlHNgcRn3cOApjyvPpsFspe+SJnYbVxDpcp+4toxfBtbqR
+9TPfAfEVtb6FHCwgPUJFHmzkb9LDhpn8v635Xir3bTbgArSdluqGosFvanVxhdA0
+k9qu3QYf6ZpjdqkNV5LvWb6wG5lBM90DFbBMakDe+nh6vSzcscfiayoVK4C6Ii4/
++F0yGPn2+x9qbdACjIJeePl4F7h+emR20ah7UeyAGIAGo8z3tKrL7QDmDjMSeeGk
+G+SviRmRvc4uYmIplN2c
+=OzBI
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Mar_2012_14_41_52_+1100_aMV7ePo/lkQFtABA--
+--Signature=_Tue__13_Mar_2012_14_59_07_+1100_=YDyDqQ=3JW_C/uu--
