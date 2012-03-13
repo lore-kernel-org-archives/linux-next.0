@@ -1,73 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm tree with Linus' tree
-Date: Tue, 13 Mar 2012 11:08:40 +1100
-Message-ID: <20120313110840.7b444deb6b1bb902c15f3cdf@canb.auug.org.au>
+Subject: linux-next: manual merge of the tegra tree with the arm tree
+Date: Tue, 13 Mar 2012 11:41:54 +1100
+Message-ID: <20120313114154.53b78acbd2383c1a31d46395@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Mar_2012_11_08_40_+1100_N4JspxvGd9h6W1vq"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36869 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751972Ab2CMAIz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Mar 2012 20:08:55 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Ingo Molnar <mingo@elte.hu>
+ boundary="Signature=_Tue__13_Mar_2012_11_41_54_+1100_FNq.YThISvMOcjp1"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Arnd Bergmann <arnd@arndb.de>, Alan Ott <alan@signal11.us>, Russell King <rmk@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__13_Mar_2012_11_08_40_+1100_N4JspxvGd9h6W1vq
+--Signature=_Tue__13_Mar_2012_11_41_54_+1100_FNq.YThISvMOcjp1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+Hi all,
 
-Today's linux-next merge of the arm tree got a conflict in
-kernel/sched/core.c between commit 8c79a045fd59 ("sched/events: Revert
-trace_sched_stat_sleeptime()") from Linus' tree and commit 1cf00341547a
-("sched: Introduce the finish_arch_post_lock_switch() scheduler hook")
-from the arm tree.
+Today's linux-next merge of the tegra tree got a conflict in
+arch/arm/mach-tegra/Makefile between commit 598695a02180 ("ARM: tegra:
+convert to twd_local_timer_register() interface")from the arm tree and
+commits 249c5172e80a ("ARM: tegra: build localtimer support only when
+needed") and 7ff43eeabd19 ("ARM: tegra: enable tegra30 clock framework")
+from the tegra tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc kernel/sched/core.c
-index b342f57,ea13a09..0000000
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@@ -1932,6 -1932,8 +1932,7 @@@ static void finish_task_switch(struct r
-  	local_irq_enable();
-  #endif /* __ARCH_WANT_INTERRUPTS_ON_CTXSW */
-  	finish_lock_switch(rq, prev);
-+ 	finish_arch_post_lock_switch();
- -	trace_sched_stat_sleeptime(current, rq->clock);
- =20
-  	fire_sched_in_preempt_notifiers(current);
-  	if (mm)
+diff --cc arch/arm/mach-tegra/Makefile
+index f7d0443,7bea5d1..0000000
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@@ -13,9 -17,12 +17,11 @@@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+=3D teg
+  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+=3D pinmux-tegra20-tables.o
+  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+=3D pinmux-tegra30-tables.o
+  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+=3D board-dt-tegra30.o
+ -obj-$(CONFIG_SMP)			+=3D platsmp.o headsmp.o
+ +obj-$(CONFIG_SMP)                       +=3D platsmp.o headsmp.o
++ obj-$(CONFIG_SMP)                       +=3D reset.o
+ -obj-$(CONFIG_LOCAL_TIMERS)		+=3D localtimer.o
++ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+=3D tegra30_clocks.o
+  obj-$(CONFIG_HOTPLUG_CPU)               +=3D hotplug.o
+- obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+=3D dma.o
++ obj-$(CONFIG_TEGRA_SYSTEM_DMA)		+=3D dma.o apbio.o
+  obj-$(CONFIG_CPU_FREQ)                  +=3D cpu-tegra.o
+  obj-$(CONFIG_TEGRA_PCI)			+=3D pcie.o
+  obj-$(CONFIG_USB_SUPPORT)		+=3D usb_phy.o
 
---Signature=_Tue__13_Mar_2012_11_08_40_+1100_N4JspxvGd9h6W1vq
+--Signature=_Tue__13_Mar_2012_11_41_54_+1100_FNq.YThISvMOcjp1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPXpAIAAoJEECxmPOUX5FEgFwQAKVZl4jlO6BQ72O8mCCKNIZO
-oeE1TZUryRXKMtisK/X+CocznS9kxgmPSR9gXl897ZADQaTdTf5eQuz15jL8r0EK
-KKHqduBJ8i0sBWSKNTM1cxm51izAnrm6AGgi9X83m1R8nuJps9XTqk/QyoxtvHm7
-wMJGFkQmk7fgKAO6FUI4gcKh7FG0vgbS7UCPWw3LOkD7NDlAZ7/bK7lT/bb3tsTb
-Jy+KteqB1H4DCZsQmfADf10pSUVmvZSL6fR/rsUm0kWXMCuBeaEtvBtRhL/pQx3p
-BXCsisqxp2Hdrw880wbcGLSx3ErgfMerYDFDlxku61FwMsAHBNS3akJgAV/JxU8/
-v/cxWWQ2pSAB13Aj/2DmTJhQKtFfgM2SH9e5Fdq5is4T5LHjcIE+FG4QLxi9y1KW
-fBJYz2GGf5+/nHpB45Pc7CarucMIFHLZDUlOGZSgt5KO4wf3YYATDSdXf5SdMpTA
-yZRBdsahrxEreyPQBnDnO1s7//cRp27rZxrf8shq76Vga1vA70BVVUiv54TXnLmX
-rgFcNTC+XhGzpG01wYPt2Yp6Nwm+QsE4DPXnpEWb73am4ADb6IymzQ13q3LurkLL
-XYt2131ltI0YQGQTggZu82qButf9qwEY5khOarHM7vUw9YVrkY1ZFUty4LHblPjF
-1aspd/lQC14tg1r+9gf0
-=kF0M
+iQIcBAEBCAAGBQJPXpfSAAoJEECxmPOUX5FEKngP/3fmxvc4Rs0cCLYYIztpsMj5
+kLQNnYZSFWoP85TRObjomK66STmn4/fb5DXRQfp59silaQbPNbBLzTw/EHToKX8C
+PTeeI5vPeOkcKWT7L7lcxKq2iEdAMlUMsv2fAhMDk00CN9kyn2u6HnIZN9JEVpDO
+m8Yx734t1b51VqYmS//MFXdxEe0adrwSsesd+hX6vMWAIQqwyC/I+5j2pPdWNvzr
+l27Fcotw7vqSUT0LU82fWYyBACSbCfOya61q9v19T/iUzXi6B9DJTG1mOdulx7Dg
+UZk76nuS+9PVsODD4WzIvtOBUU4khB00FrqBTt8a4SRPE1/JyA6vdNkGaocOAQwA
+l+Fm5X0B8ZPMTVfQQMzZPMhjvi/glBp6TxHs5BIWTdtjIs/DLkovK94HUcyi2a+5
+zMozg5mfWtrInLA1KIh+KRNl2omBKGy/XbDAim84jexWCYeesnOZvA92EnP/1ZwO
+7Gjn4GPFHE+YWw3SDRn3LSHPqhCGhQ5eiVCz0GuhCoVgEocPitf7VVem6eTigMFy
+s9LfUNlwHzEHDTaYnsXp+Cd/rUHm1xoWM7KkpxZByFbKrxmcdigHA14B1Cpwl++U
+aPLv7vN3ki4wPOQ6DFXHqFxHePf/iNsFT5EJqC5XU0WDVve0bQqsZKyrLcsxNIeg
+oUsb+zDXXZq9YAtCDQjI
+=4xMf
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Mar_2012_11_08_40_+1100_N4JspxvGd9h6W1vq--
+--Signature=_Tue__13_Mar_2012_11_41_54_+1100_FNq.YThISvMOcjp1--
