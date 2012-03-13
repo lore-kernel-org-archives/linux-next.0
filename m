@@ -1,34 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the devicetree tree with the powerpc
- tree
-Date: Tue, 13 Mar 2012 16:01:00 +1100
-Message-ID: <20120313160100.c8cc3fd2b3d1f485ef7e7954@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the drm tree
+Date: Tue, 13 Mar 2012 16:11:24 +1100
+Message-ID: <20120313161124.1d91e04d7507ec249f364270@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Mar_2012_16_01_00_+1100_zyfs5ewjJ2IaWld+"
+ boundary="Signature=_Tue__13_Mar_2012_16_11_24_+1100_hfmzkXmOixJ//OaL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41765 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33084 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752372Ab2CMFBN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 01:01:13 -0400
+	with ESMTP id S1753917Ab2CMFLg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 01:11:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gavin Shan <shangw@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Alan Cox <alan@linux.intel.com>, Dave Airlie <airlied@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
---Signature=_Tue__13_Mar_2012_16_01_00_+1100_zyfs5ewjJ2IaWld+
+--Signature=_Tue__13_Mar_2012_16_11_24_+1100_hfmzkXmOixJ//OaL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
+Hi all,
 
-Today's linux-next merge of the devicetree tree got a conflict in
-include/linux/of.h between commit eb740b5f3e65 ("powerpc/eeh: Introduce
-EEH device") from the powerpc tree and commit 0f22dd395fc4 ("of: Only
-compile OF_DYNAMIC on PowerPC pseries and iseries") from the devicetree
-tree.
+Today's linux-next merge of the tip tree got a conflict in
+arch/x86/platform/mrst/mrst.c between commit 026abc333205 ("gma500:
+initial medfield merge") from the drm tree and commit ecfdb0ac15ba
+("x86/mrst: Add msic_thermal platform support") from the tip tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -36,49 +34,55 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/of.h
-index bdb1c07,533603e..0000000
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@@ -75,14 -72,10 +75,17 @@@ struct of_phandle_args=20
-  	uint32_t args[MAX_PHANDLE_ARGS];
-  };
+diff --cc arch/x86/platform/mrst/mrst.c
+index b930cc4,721e652..0000000
+--- a/arch/x86/platform/mrst/mrst.c
++++ b/arch/x86/platform/mrst/mrst.c
+@@@ -688,19 -670,11 +672,24 @@@ static void *msic_ocd_platform_data(voi
+  	return msic_generic_platform_data(info, INTEL_MSIC_BLOCK_OCD);
+  }
  =20
- +#if defined(CONFIG_EEH)
- +static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
+ +/* tc35876x DSI-LVDS bridge chip and panel platform data */
+ +static void *tc35876x_platform_data(void *data)
  +{
- +	return dn->edev;
- +}
- +#endif
+ +       static struct tc35876x_platform_data pdata;
  +
-- #if defined(CONFIG_SPARC) || !defined(CONFIG_OF)
-+ #ifdef CONFIG_OF_DYNAMIC
-+ extern struct device_node *of_node_get(struct device_node *node);
-+ extern void of_node_put(struct device_node *node);
-+ #else /* CONFIG_OF_DYNAMIC */
-  /* Dummy ref counting routines - to be implemented later */
-  static inline struct device_node *of_node_get(struct device_node *node)
-  {
+ +       /* gpio pins set to -1 will not be used by the driver */
+ +       pdata.gpio_bridge_reset =3D get_gpio_by_name("LCMB_RXEN");
+ +       pdata.gpio_panel_bl_en =3D get_gpio_by_name("6S6P_BL_EN");
+ +       pdata.gpio_panel_vadd =3D get_gpio_by_name("EN_VREG_LCD_V3P3");
+ +
+ +       return &pdata;
+ +}
+ +
++ static void *msic_thermal_platform_data(void *info)
++ {
++ 	return msic_generic_platform_data(info, INTEL_MSIC_BLOCK_THERMAL);
++ }
++=20
+  static const struct devs_id __initconst device_ids[] =3D {
+  	{"bma023", SFI_DEV_TYPE_I2C, 1, &no_platform_data},
+  	{"pmic_gpio", SFI_DEV_TYPE_SPI, 1, &pmic_gpio_platform_data},
 
---Signature=_Tue__13_Mar_2012_16_01_00_+1100_zyfs5ewjJ2IaWld+
+--Signature=_Tue__13_Mar_2012_16_11_24_+1100_hfmzkXmOixJ//OaL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPXtSMAAoJEECxmPOUX5FElNgP/0FT0pYxw7Y7rDxKxfjXPeWz
-3zJ7xzzoUk9tzbIeCVlHaKjtXu1aUiHk3zGEAEYSyu7mKru7BW7SQa4SVXJy1oU5
-NxzzAtqa5cbqmNoM/KvV0E5/4AUnK42WaG3lUCVjUaN0b206RDzLTdOJ4mSzt/TN
-LBZ/eIuV9OhSPNLcIWwnIbdtrwtcNmGcch8Ut56lWnuQpStCFJWj1Z+lL1Fo4x4v
-oJjfG0hYadWuuWZpqT8nJDOW3uvJlGDYcOMbXpu4/luXm/jHqnYc0ZrHf4/48+Gw
-zpl1Hi7lptRAiYYMTEQXvqQC76GJ0V8UUK7yMS3Jmj/Gg6VhAZD9popB6ePnbir0
-TrzjnCxjAA/69cCEN5/bR7jTly1UfbgsbF8CDczpZQBHNRoAsXepKgfdI43VL478
-KlqrUJ+Iw+OxJ6/wT2MazdRNpvyURwlutvfWvqwzI4+heNcS/rnFnFrRho1uM4BP
-gPcqTy+dQZ5V7iywfJrD7NHkrTeED1jIjo8Shh/G3XwZnLkZUu+t+8YBTzhPkyT1
-PyjisHHqBWuzO4M3LVqyloduFRgs6kjAnJMqFaVO+KIEP4Fhx5UvkiPQt2BcxucU
-JIHAXv+FFBHOys0N4W+NhuRp9oEkb+QTTTeR5EUsFYgndcV/rj/gvE5/UrfsvYLR
-0DulTl2+GYR00vx/+lnP
-=is3p
+iQIcBAEBCAAGBQJPXtb8AAoJEECxmPOUX5FE/cQQAI4fCM2dTuo9wuLJWU+rTabM
+Pvs6CccamOXvYWcVj+tsFpcYOOF/hWJuLHEfqwtfHqHfyEVUUn7p0//x616YDBLo
+yV2r5GWkRAcQRLVngwyD4nMtvb2ZUaPN6nMbPx+W0K5SfHZ76mtMaUlElrVZ4v7k
+CWLajiQ2t6rgMs98EJxRCAmXNWVIcxK1EVRHsL//ITpKjTf3Vb2u/Ly9xpzqTfqi
+hVwwSoyR8/xVtZS6FQXPAAzo+SEFP8c20BCaL9bsx2W1HvTcDQ9o6iBCsMcMK9C8
+rSKpnyhFD3L9SWoInrZagvNmOJ0gkjxY/0Nywumc8EW+OLDXXpEkwQLeZglImSmi
+ovjDAxcmMAVmD6rntXRWbk4bqeGp8qyYS+3Nr9foWAvXbIy33+L5mmUdaO6r8PKH
+baQuWXF8mfXSIQ76qP30YoPu75PryLzwhpnSuMiqw4Dow2mEHUVkweRwkAZq3YYJ
+HtnuM6Z6mXI2+Wm3IjFCbENwhw+d+POvw6+Reu84SQZvE0C7nbBQFBydMSJxWFk6
+ZJ8HF9gBLEIfBU9bBfp6XElg2L7cOmWtFtQJzh3DBp9PfpvGpNJExxeK2FSknxCg
+qeNy9jrjcRB+NSBoTcaH9TfYiMMHHVJFdwyIMdZH61+2IUxYRsXCXEK4IRoEaN07
+/5N7voo2LVAqyOfnnaqH
+=zjWD
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Mar_2012_16_01_00_+1100_zyfs5ewjJ2IaWld+--
+--Signature=_Tue__13_Mar_2012_16_11_24_+1100_hfmzkXmOixJ//OaL--
