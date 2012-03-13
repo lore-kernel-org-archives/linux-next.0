@@ -1,46 +1,69 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
+From: Russell King <rmk@arm.linux.org.uk>
 Subject: Re: [GIT PULL/NEXT] sched/arch: Introduce the
- finish_arch_post_lock_switch() scheduler callback
-Date: Tue, 13 Mar 2012 11:11:26 +0000
-Message-ID: <20120313111126.GC26370@arm.com>
-References: <20120313110840.7b444deb6b1bb902c15f3cdf@canb.auug.org.au>
- <20120313061622.GA24357@elte.hu>
- <20120313083310.GA27560@flint.arm.linux.org.uk>
- <20120313083630.GA10131@elte.hu>
- <20120313084713.GB27560@flint.arm.linux.org.uk>
- <20120313085628.GB6991@elte.hu>
- <20120313090040.GE27560@flint.arm.linux.org.uk>
- <20120313092649.GA15406@elte.hu>
+	finish_arch_post_lock_switch() scheduler callback
+Date: Tue, 13 Mar 2012 11:27:29 +0000
+Message-ID: <20120313112729.GA25835@flint.arm.linux.org.uk>
+References: <20120313110840.7b444deb6b1bb902c15f3cdf@canb.auug.org.au> <20120313061622.GA24357@elte.hu> <20120313083310.GA27560@flint.arm.linux.org.uk> <20120313083630.GA10131@elte.hu> <20120313084713.GB27560@flint.arm.linux.org.uk> <20120313085628.GB6991@elte.hu> <20120313090040.GE27560@flint.arm.linux.org.uk> <20120313092649.GA15406@elte.hu> <20120313095020.GA13220@flint.arm.linux.org.uk> <20120313101859.GA2626@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:35535 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753288Ab2CML1z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 07:27:55 -0400
 Content-Disposition: inline
-In-Reply-To: <20120313092649.GA15406@elte.hu>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20120313101859.GA2626@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Ingo Molnar <mingo@elte.hu>
-Cc: Russell King <rmk@arm.linux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
-List-Id: linux-next.vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
-Hi Ingo,
-
-On Tue, Mar 13, 2012 at 09:26:49AM +0000, Ingo Molnar wrote:
-> As I said it in my first mail, doing that is unnecessary - but 
-> if you insist on being difficult then Catalin, feel free to pull 
-> the patch from tip:sched/arch:
+On Tue, Mar 13, 2012 at 11:19:00AM +0100, Ingo Molnar wrote:
 > 
->    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/arch
+> * Russell King <rmk@arm.linux.org.uk> wrote:
 > 
->    HEAD: 01f23e1630 sched/arch: Introduce the finish_arch_post_lock_switch() scheduler callback
+> > On Tue, Mar 13, 2012 at 10:26:49AM +0100, Ingo Molnar wrote:
+> > >
+> > > As I said it in my first mail, doing that is unnecessary - 
+> > > but if you insist on being difficult then Catalin, feel free 
+> > > to pull the patch from tip:sched/arch:
+> > 
+> > Nope, I'm not taking the tree anymore, [...]
 > 
-> it's v3.3-rc7 based so it will generate no conflict with 
-> linux-next. It only contains this commit so you can use it 
-> without pulling in other pending scheduler changes.
+> So instead of saying "sure, lets avoid conflicts next time 
+> around" you are now *refusing* to take technically perfectly 
+> fine patches just because another maintainer asked you to use a 
+> different workflow for future patches? Wow ...
 
-Thanks for merging the scheduler hook.
+No, I'm pissed off at how you're treating me over this trivial issue,
+so I'm taking the easy way out and getting out of the way.  If you want
+to run your bit of the tree with idiotic rules about zero conflicts,
+and "git solutions" then that's your perogative.  Just don't expect
+other people to play with you.
 
-So I'll send Russell another pull request after the 3.4-rc1, containing
-only ARM patches. The only drawback is that the removal of
-__ARCH_WANT_INTERRUPTS_ON_CTXSW will have to wait another release cycle.
+The fact of the matter is that Peter Z. was fully aware of what was
+happening.  He was aware that he'd been asked for his ack for that
+patch (because I'd explicitly asked Peter for it, but not by email) -
+and he provided his ack for that patch to Catalin:
+
+http://lists.arm.linux.org.uk/lurker/message/20120227.144813.5614e7f8.en.html
+
+Catalin sent a pull request to me, copying Peter Z on the 27th Feb:
+
+http://lists.arm.linux.org.uk/lurker/message/20120227.164502.6b58a37e.en.html
+
+I pulled it into my tree for testing, and pushed it out in the last
+couple of days.
+
+Moreover, these kinds of trivial conflicts are the type of things which
+Linus wants to see between trees.  It allows him to get a feel for what's
+going on, and makes Linus feel like he's more on top of things.  Linus
+said that he would like to see these trivial conflicts (he said so to me
+in an email dated 15th Jan 2011).
+
+So please, stop your insistance on this zero conflict crap.
 
 -- 
-Catalin
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
