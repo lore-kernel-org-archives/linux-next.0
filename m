@@ -1,92 +1,69 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [GIT PULL/NEXT] sched/arch: Introduce the
- finish_arch_post_lock_switch() scheduler callback
-Date: Tue, 13 Mar 2012 14:31:15 +0100
-Message-ID: <20120313133115.GA21634@elte.hu>
-References: <20120313085628.GB6991@elte.hu>
- <20120313090040.GE27560@flint.arm.linux.org.uk>
- <20120313092649.GA15406@elte.hu>
- <20120313095020.GA13220@flint.arm.linux.org.uk>
- <20120313101859.GA2626@elte.hu>
- <20120313112729.GA25835@flint.arm.linux.org.uk>
- <20120313115640.GA27378@elte.hu>
- <20120313121707.GA2174@flint.arm.linux.org.uk>
- <20120313124433.GA15333@elte.hu>
- <20120313130427.GC2174@flint.arm.linux.org.uk>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: linux-next: manual merge of the l2-mtd tree with the vfs tree
+Date: Tue, 13 Mar 2012 16:40:33 +0200
+Message-ID: <1331649633.3595.70.camel@sauron.fi.intel.com>
+References: <20120313141859.302878a8e2246979c288440d@canb.auug.org.au>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-fxWckKyBgNztmx2UICJY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:53106 "EHLO mx3.mail.elte.hu"
+Received: from mga03.intel.com ([143.182.124.21]:8965 "EHLO mga03.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753014Ab2CMNbj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Mar 2012 09:31:39 -0400
-Content-Disposition: inline
-In-Reply-To: <20120313130427.GC2174@flint.arm.linux.org.uk>
+	id S1751380Ab2CMOik (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Mar 2012 10:38:40 -0400
+In-Reply-To: <20120313141859.302878a8e2246979c288440d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Stefan Roese <sr@denx.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Joe Perches <joe@perches.com>
 
 
-* Russell King <rmk@arm.linux.org.uk> wrote:
+--=-fxWckKyBgNztmx2UICJY
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > Instead you first pushed back on *me*, then you claimed that 
-> > you are not responsible for what you pull, then you started 
-> > zapping
-> 
-> No I did not.  What I said was that I'm not responsible for 
-> the points at which people choose to base their patches, which 
-> is something entirely different. [...]
+On Tue, 2012-03-13 at 14:18 +1100, Stephen Rothwell wrote:
+> Hi Artem,
+>=20
+> Today's linux-next merge of the l2-mtd tree got a conflict in
+> fs/jffs2/fs.c between commit de071e1a7466 ("switch open-coded instances
+> of d_make_root() to new helper") from the vfs tree and commit
+> ab9b393d6ee8 ("jffs2: Convert most D1/D2 macros to jffs2_dbg") from the
+> l2-mtd tree.
+>=20
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-What are you talking about?
+Thanks. Although I do not see the latest l2-mtd.git tree in the master
+branch of linux-next, I see some old version of it. E.g., the jffs2
+changes are not there.
 
-Firstly, in general *every single bit* of what you pull, 
-including the base, the patch titles, the commit logs, the 
-signoff chain, etc. is all part of the picture and you 
-absolutely should require your contributors and submaintainers 
-to do a fine job with all that.
+--=20
+Best Regards,
+Artem Bityutskiy
 
-No ifs and whens about that - it all becomes your responsibility 
-as well when you decide to pull from people.
+--=-fxWckKyBgNztmx2UICJY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Instead you are now teaching them the exact *opposite*: for 
-example you have just declared that you don't feel responsible 
-for the base kernel ...
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Using a sane base is IMHO part of Git pull 101. Teaching 
-contributors or submaintainers to not use too old base kernels 
-(or too new ones, for example during the merge window) is an 
-important part of the picture.
+iQIcBAABAgAGBQJPX1xhAAoJECmIfjd9wqK0wxcQAJJTlUMM8orZg6pjFKgIXeFZ
+3ikDpLRbCezQNA63erar5eIexrqmgcHlnTDYwwjbMZ3rqMQurnXFXfgtaveAgbXq
+sSA+kEWeAIDlov0ouTgzfVqGBHH/0qvkbh7+YL38Zm4GbRONULjbSgDutXkbl3Oi
+TqQ+snV8wx+3Vz/QSyXmAHtbrl9GY6ezs4o0hn9n2D6i7D/0mtVSThtJ4RvDAAI0
+x3NiHuz2Nz2E8Xyc4hr1YA1TRvj2ESccOy1MZR0hsYa+CxL4E5Rxi4oZX3eYwqLm
+Inlz9vJZ7qQFFn9/KKYj+ELNdY9yqOFd9hAUttUiXNazh8IM7aHaIzLk4yJ1lKrR
+I7H7muJfTNJJTsZdjOkbIP5jUpVugEnJdiCCs7yT93nTlixKgSym+O5wxb/u6XA8
+XHGnCO040jz8uAuAT6zfBNx2sllsKyKeHr8i1zBuwkOaDdNOZmdMZVmqitUmALgF
+J36g805mZLFSbuSLh2xeUyyXzdeyalZ+IW+J4ynagr7NA5JCNJNLN4XNqtXiksLt
+RtsaPS5uIG1xvXvyqoVTDYYnhJZKgqvc48gkX1n7cRIwwmVhKLzNIs6vMOglv0rd
+e+VJc/tUdK9YGXG/t/JXzmMPRTUwpN2SF3SOqEZWXRPG0CdinjB7J8y9ghGJ9yHf
+tZGedkeIAj/Qsoxg5lPm
+=t+Xn
+-----END PGP SIGNATURE-----
 
-A basic rule for bases is to either use the previous stable 
-kernel release, of if that's not possible then use the freshest 
--rc available at the time of the commit - which by my quick look 
-should have been about -rc6, not -rc3.
-
-Secondly, my other problem was that this all surfaced today, at 
--rc8 time, shortly before the merge window, a very busy period 
-of time.
-
-If this was committed a month ago, if you indeed saw the 
-conflict earlier proves *more* workflow breakage IMO: you pushed 
-it upstream despite being aware of it being the result of a 
-slightly suboptimal base, without asking whether the scheduler 
-folks are still fine with all that?
-
-Thirdly, all this totally ignores the issue you still have not 
-answered: why did you leave PeterZ public lkml question about 
-this unanswered:
-
-   http://lkml.org/lkml/2012/2/16/232
-
-PeterZ's request to put this into a separate branch was totally 
-reasonable IMHO - and could have avoided this long thread, 
-amongst other things. Instead you've mixed it with other bits.
-
-Really, my quick impression is that you should learn to push 
-back downstream a bit, especially as I didn't even ask for a 
-rebase, a revert or anything other drastic.
-
-Thanks,
-
-	Ingo
+--=-fxWckKyBgNztmx2UICJY--
