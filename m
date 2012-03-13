@@ -1,38 +1,46 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Inconsistent kallsyms data on ARM.
-Date: Tue, 13 Mar 2012 18:00:49 -0400
-Message-ID: <CAP=VYLoStscdVJretZ-Rkbp7V3Vsm8N0oWcjih7ruHFiDN7CiA@mail.gmail.com>
+Subject: New build failures in sparc.
+Date: Tue, 13 Mar 2012 18:28:18 -0400
+Message-ID: <CAP=VYLpfM0AFWQp7Q=xYHnCd_6vEXKKL1EL5daGcO9gsJZH=7Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:51849 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756046Ab2CMWAv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Mar 2012 18:00:51 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-kbuild@vger.kernel.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Arnd Bergmann <arnd@arndb.de>
+Return-path: <sparclinux-owner@vger.kernel.org>
+Sender: sparclinux-owner@vger.kernel.org
+To: sparclinux@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-This bug(?)  has been seen to float from one ARM build to another since
-I started tracking the day-to-day changes in Stephen's linux-next builds.
+Just a heads up that these turned up today in linux-next:
 
-I see it was discussed earlier:
+------------
+arch/sparc/lib/mul.S:134: Error: Hardware capability "mul32" not
+enabled for "smul".
+make[2]: *** [arch/sparc/lib/mul.o] Error 1
+arch/sparc/lib/rem.S:378: Error: Hardware capability "div32" not
+enabled for "sdivcc".
+arch/sparc/lib/rem.S:381: Error: Hardware capability "mul32" not
+enabled for "smul".
+arch/sparc/lib/sdiv.S:377: Error: Hardware capability "div32" not
+enabled for "sdivcc".
+make[2]: *** [arch/sparc/lib/rem.o] Error 1
+make[2]: *** [arch/sparc/lib/sdiv.o] Error 1
+arch/sparc/lib/udiv.S:356: Error: Hardware capability "div32" not
+enabled for "udiv".
+arch/sparc/lib/umul.S:168: Error: Hardware capability "mul32" not
+enabled for "umul".
+make[2]: *** [arch/sparc/lib/udiv.o] Error 1
+arch/sparc/lib/urem.S:354: Error: Hardware capability "div32" not
+enabled for "udiv".
+arch/sparc/lib/urem.S:355: Error: Hardware capability "mul32" not
+enabled for "umul".
+make[2]: *** [arch/sparc/lib/umul.o] Error 1
+make[2]: *** [arch/sparc/lib/urem.o] Error 1
+make[1]: *** [arch/sparc/lib] Error 2
+make: *** [sub-make] Error 2
+-------------
 
-   https://lkml.org/lkml/2011/8/2/233
-   https://lkml.org/lkml/2011/10/8/70
+http://kisskb.ellerman.id.au/kisskb/buildresult/5869520/
+http://kisskb.ellerman.id.au/kisskb/buildresult/5869567/
 
-but no concrete cause was nailed down.  Can the linux-next build results
-help shed some light on this in any way?  Since it seems sporadic, is
-there value in embedding a diagnostic of some sort in the infrastructure
-so that when the error is detected, that it prints out more detailed info?
-
-I can provide links to failed linux-next builds, but at the moment, all they
-really seem to have is the same repeated error message, like this one:
-
-   http://kisskb.ellerman.id.au/kisskb/buildresult/5869367/
-
-and I don't see that helping folks all that much....
+I've not done any investigation into the root cause (yet).
 
 Paul.
