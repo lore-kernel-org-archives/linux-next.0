@@ -1,75 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the cpuidle-cons tree with the tip
- tree
-Date: Tue, 13 Mar 2012 10:08:04 +1100
-Message-ID: <20120313100804.5534558975eb48c1fd58023c@canb.auug.org.au>
-References: <20120309184041.bd10edffa51dcd43ce069487@canb.auug.org.au>
-	<1331300109.1149.17.camel@fedora>
-	<CAMXH7KHdfzjZCsBMkFOnwYtyaqBztMY99QcZ7VwLP0JASUiVAw@mail.gmail.com>
-	<1331572403.1149.19.camel@fedora>
+Subject: linux-next: manual merge of the arm tree with Linus' tree
+Date: Tue, 13 Mar 2012 11:08:40 +1100
+Message-ID: <20120313110840.7b444deb6b1bb902c15f3cdf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Mar_2012_10_08_04_+1100_cIIP4T82rEcWdei/"
+ boundary="Signature=_Tue__13_Mar_2012_11_08_40_+1100_N4JspxvGd9h6W1vq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47467 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:36869 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755181Ab2CLXIN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Mar 2012 19:08:13 -0400
-In-Reply-To: <1331572403.1149.19.camel@fedora>
+	with ESMTP id S1751972Ab2CMAIz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Mar 2012 20:08:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <srostedt@redhat.com>
-Cc: Rob Lee <rob.lee@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Ingo Molnar <mingo@elte.hu>
 
---Signature=_Tue__13_Mar_2012_10_08_04_+1100_cIIP4T82rEcWdei/
+--Signature=_Tue__13_Mar_2012_11_08_40_+1100_N4JspxvGd9h6W1vq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+Hi Russell,
 
-On Mon, 12 Mar 2012 13:13:23 -0400 Steven Rostedt <srostedt@redhat.com> wro=
-te:
->
-> On Mon, 2012-03-12 at 12:06 -0500, Rob Lee wrote:
->=20
-> >=20
-> > Looks good to me as well.
-> >=20
-> > Who should carry this fixup?
->=20
-> I think it's trivial enough that Linus can handle it. He always said
-> that he likes to fix merge conflicts and has yelled at people who did
-> things to prevent them.
+Today's linux-next merge of the arm tree got a conflict in
+kernel/sched/core.c between commit 8c79a045fd59 ("sched/events: Revert
+trace_sched_stat_sleeptime()") from Linus' tree and commit 1cf00341547a
+("sched: Introduce the finish_arch_post_lock_switch() scheduler hook")
+from the arm tree.
 
-Yeah, I just carry it in my tree and Linus will fix it up when he merges
-the trees in his.
-
-[The assumption is that anything I can figure out so can Linus :-)]
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__13_Mar_2012_10_08_04_+1100_cIIP4T82rEcWdei/
+diff --cc kernel/sched/core.c
+index b342f57,ea13a09..0000000
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@@ -1932,6 -1932,8 +1932,7 @@@ static void finish_task_switch(struct r
+  	local_irq_enable();
+  #endif /* __ARCH_WANT_INTERRUPTS_ON_CTXSW */
+  	finish_lock_switch(rq, prev);
++ 	finish_arch_post_lock_switch();
+ -	trace_sched_stat_sleeptime(current, rq->clock);
+ =20
+  	fire_sched_in_preempt_notifiers(current);
+  	if (mm)
+
+--Signature=_Tue__13_Mar_2012_11_08_40_+1100_N4JspxvGd9h6W1vq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPXoHUAAoJEECxmPOUX5FEqacP/iXDadH4uyNZ1ZXzlkOZLaLS
-hRbziqfZDheBgPoTsIhNqumEDQProQIZ2HwayUS+EbuVxsTXKnJSLoFu8f4yRWU1
-xRXA+VkOOj585czbcnVeDpnqXq3Ur/08vJWEHDL+Vi02mzJUWHxpotswtSZAzNc3
-cPacRXoretNDeA0e5TEgYN/bCByKqCIRUfQ1iU80spwMZzLCQchG2aq0NXO6ZF/k
-zxkGnj+L21rS+rVyz8R1BCeYvVxSQzim407uq/SXTtn1PieKeALZGdhhGmVLJI9/
-WysJTrHYdPqFczQ6rRIXJFBRyKloJ4Q3KIls9euTbk2Uxje4OeXw2zIklDTgKFoT
-L0GjMObRnbwh6wNmJe0zeN2in0wg//cjqVpDHBUgmPs3PvdBdYoa7xyfcDCZ4pn6
-WUUI0HE6VexP1PEKjZ72/Ibk9q6dGIKgBh7AN2SoFV6xBqkXHZR9NU7CZla6f6Sc
-mEbImTvk3SiSAWJIvsHdghQboKPoP3W1WEy1XKvD+8cZNkJH/EtwmWQMPkd58ucf
-wPQD0JM/4TURW2/yBAvRpFir7eNc3ZY/xV3itBarDz1qxl7T861stWJquVTxl3p/
-WOQ/rZDR7xiKyaYtExbBs+mEKuR9c1r/j4Uw6GSKNuIh5d0exIt0BT74AvnKMEFQ
-BjYqaIZvvoVoMXyKNEjS
-=PPhE
+iQIcBAEBCAAGBQJPXpAIAAoJEECxmPOUX5FEgFwQAKVZl4jlO6BQ72O8mCCKNIZO
+oeE1TZUryRXKMtisK/X+CocznS9kxgmPSR9gXl897ZADQaTdTf5eQuz15jL8r0EK
+KKHqduBJ8i0sBWSKNTM1cxm51izAnrm6AGgi9X83m1R8nuJps9XTqk/QyoxtvHm7
+wMJGFkQmk7fgKAO6FUI4gcKh7FG0vgbS7UCPWw3LOkD7NDlAZ7/bK7lT/bb3tsTb
+Jy+KteqB1H4DCZsQmfADf10pSUVmvZSL6fR/rsUm0kWXMCuBeaEtvBtRhL/pQx3p
+BXCsisqxp2Hdrw880wbcGLSx3ErgfMerYDFDlxku61FwMsAHBNS3akJgAV/JxU8/
+v/cxWWQ2pSAB13Aj/2DmTJhQKtFfgM2SH9e5Fdq5is4T5LHjcIE+FG4QLxi9y1KW
+fBJYz2GGf5+/nHpB45Pc7CarucMIFHLZDUlOGZSgt5KO4wf3YYATDSdXf5SdMpTA
+yZRBdsahrxEreyPQBnDnO1s7//cRp27rZxrf8shq76Vga1vA70BVVUiv54TXnLmX
+rgFcNTC+XhGzpG01wYPt2Yp6Nwm+QsE4DPXnpEWb73am4ADb6IymzQ13q3LurkLL
+XYt2131ltI0YQGQTggZu82qButf9qwEY5khOarHM7vUw9YVrkY1ZFUty4LHblPjF
+1aspd/lQC14tg1r+9gf0
+=kF0M
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Mar_2012_10_08_04_+1100_cIIP4T82rEcWdei/--
+--Signature=_Tue__13_Mar_2012_11_08_40_+1100_N4JspxvGd9h6W1vq--
