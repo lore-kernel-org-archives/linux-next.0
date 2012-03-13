@@ -1,63 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the uprobes tree
-Date: Tue, 13 Mar 2012 17:09:01 +1100
-Message-ID: <20120313170901.ba969605b8aba03f3cd92df3@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the arm tree with Linus' tree
+Date: Tue, 13 Mar 2012 07:16:22 +0100
+Message-ID: <20120313061622.GA24357@elte.hu>
+References: <20120313110840.7b444deb6b1bb902c15f3cdf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Mar_2012_17_09_01_+1100_6CvWMf8YlA+9Gdec"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42154 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753713Ab2CMGJK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 02:09:10 -0400
+Received: from mx3.mail.elte.hu ([157.181.1.138]:39898 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750817Ab2CMGQh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Mar 2012 02:16:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20120313110840.7b444deb6b1bb902c15f3cdf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
---Signature=_Tue__13_Mar_2012_17_09_01_+1100_6CvWMf8YlA+9Gdec
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Srikar,
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-After merging the uprobes tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> Hi Russell,
+> 
+> Today's linux-next merge of the arm tree got a conflict in
+> kernel/sched/core.c between commit 8c79a045fd59 ("sched/events: Revert
+> trace_sched_stat_sleeptime()") from Linus' tree and commit 1cf00341547a
+> ("sched: Introduce the finish_arch_post_lock_switch() scheduler hook")
+> from the arm tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-In file included from include/trace/events/syscalls.h:11:0,
-                 from kernel/trace/trace_syscalls.c:2:
-arch/x86/include/asm/syscall.h: In function 'syscall_get_arguments':
-arch/x86/include/asm/syscall.h:98:2: error: implicit declaration of functio=
-n 'is_ia32_compat_task' [-Werror=3Dimplicit-function-declaration]
+This commit seems simple enough and has PeterZ's ack, but if 
+there are more scheduler patches coming in this area then please 
+send it to the scheduler tree first: we can create a pullable, 
+stable topic branch for it which the ARM tree can then use.
 
-Caused by commit 1e1e2cddc33d ("x86/trivial: use is_ia32_compat_task").
+That approach would also avoid conflicts as a side effect.
 
-I have used the uprobes tree from next-20120309 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks,
 
---Signature=_Tue__13_Mar_2012_17_09_01_+1100_6CvWMf8YlA+9Gdec
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPXuR9AAoJEECxmPOUX5FEabMP/36Xcjz+ENAX+hleVRW7cPks
-lGzENYSte/b+hVSKydLPvk2/GkUXqNJezOUJMgUM4FsBayLt1fSoNl5AS0HNnhbY
-a25UVJkhF9S6E6N91+QxvEDuwpAq+8I3mlEknVJzmHMy9xu6qIyJUYh9pPXKtvoO
-lgbCk7T41Kpyr/OuYhfa4LCC1Vw7AXSaGlFwDmTBVEs6KgSYaab+/DtOVNqiSMDf
-NGTtlNHH42sRqZp49NPkslOTMDY4MrsulJuY9eKSVO+nbCI1mDNwD0BnB9ngLkqI
-gLzzEKIczHZfnlquLvsRSnsY7gIdn9fCvfxbqozsGXSBMk7Fv86y1vFhQxbSIjoX
-6+BW0i4gUNx7ytsZsY54NeS9yvrQBvWzkQ9i5EyABOD7XXRpKTRRou2Y5xEHUAhu
-XsEWG5HRuVro9rWR9JrhgT/35vbQN+CC0hauFyyXl9ICbPPbvRV8c57vys6I5npv
-XVg4Ff4B3jOpmFejVnsEoUxk4/wGTgrRC7R8/EhkYAgdRaBbkIV3KSgcDEs1HKxw
-lxJiqehUoLRa8KYi1HVrlVB8ygHMCNJy7upLV8JsTyParT8CEwg+FeNykOu3uk1x
-tZFlxoa8IPFv2E5n0yxSCOZwG1RtUe/zBciZHKHfM0pDMp4MGuYmT7bjsEoh2n+b
-bxPFYbBbBNxRMRmtyb3o
-=ccGH
------END PGP SIGNATURE-----
-
---Signature=_Tue__13_Mar_2012_17_09_01_+1100_6CvWMf8YlA+9Gdec--
+	Ingo
