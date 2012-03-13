@@ -1,60 +1,82 @@
-From: "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: Re: linux-next: manual merge of the isci tree with the scsi tree
-Date: Mon, 12 Mar 2012 19:50:33 -0700
-Message-ID: <CABE8wwtNcA4QcJyLC6zipjygjAYa6o=bwPyz6xS9A=PLiU+2kg@mail.gmail.com>
-References: <20120313134512.848baf17f46729fa0fac195d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the l2-mtd tree with the vfs tree
+Date: Tue, 13 Mar 2012 14:18:59 +1100
+Message-ID: <20120313141859.302878a8e2246979c288440d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120313134512.848baf17f46729fa0fac195d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@hansenpartnership.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__13_Mar_2012_14_18_59_+1100_SuclbATR4GqMGJfj"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45280 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757210Ab2CMDTJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Mar 2012 23:19:09 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Joe Perches <joe@perches.com>
 
-On Mon, Mar 12, 2012 at 7:45 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Dan,
->
-> Today's linux-next merge of the isci tree produced a large number of
-> conflicts against the scsi.
->
-> =A0Merging isci/all
-> +CONFLICT (content): Merge conflict in include/scsi/sas_ata.h
-> =A0CONFLICT (content): Merge conflict in include/scsi/libsas.h
-> +CONFLICT (content): Merge conflict in include/linux/libata.h
-> =A0CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_scsi=
-_host.c
-> +CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_intern=
-al.h
-> =A0CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_init=
-=2Ec
-> =A0CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_expa=
-nder.c
-> +CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_event.=
-c
-> =A0CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_disc=
-over.c
-> +CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_ata.c
-> +CONFLICT (content): Merge conflict in drivers/scsi/isci/request.h
-> =A0CONFLICT (content): Merge conflict in drivers/scsi/isci/registers.=
-h
-> +CONFLICT (content): Merge conflict in drivers/scsi/isci/port.h
-> +CONFLICT (content): Merge conflict in drivers/scsi/isci/port.c
-> +CONFLICT (content): Merge conflict in drivers/scsi/isci/phy.c
-> =A0CONFLICT (content): Merge conflict in drivers/scsi/isci/init.c
->
-> Since you are feeding patches into the scsi tree (instaed of having y=
-ou
-> tree merged into the scsi tree), you should rebase your tree in the s=
-csi
-> tree after your patches have been accepted. =A0The above conflicts ar=
-e
-> (almost completely) caused by having the same patches in both trees w=
-ith
-> additional changes to those files in your tree.
+--Signature=_Tue__13_Mar_2012_14_18_59_+1100_SuclbATR4GqMGJfj
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I was wondering why it had not happened prior to this point...  in any
-event I'll get my tree rebased on top scsi-misc so that isci.git#all
-will just be the pending delta.
+Hi Artem,
+
+Today's linux-next merge of the l2-mtd tree got a conflict in
+fs/jffs2/fs.c between commit de071e1a7466 ("switch open-coded instances
+of d_make_root() to new helper") from the vfs tree and commit
+ab9b393d6ee8 ("jffs2: Convert most D1/D2 macros to jffs2_dbg") from the
+l2-mtd tree.
+
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+
+[Al, I suspect that your patch should have changed the debug print as
+well ...]
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/jffs2/fs.c
+index c0d5c9d,43052fa..0000000
+--- a/fs/jffs2/fs.c
++++ b/fs/jffs2/fs.c
+@@@ -560,10 -572,10 +572,10 @@@ int jffs2_do_fill_super(struct super_bl
+ =20
+  	ret =3D -ENOMEM;
+ =20
+- 	D1(printk(KERN_DEBUG "jffs2_do_fill_super(): d_alloc_root()\n"));
++ 	jffs2_dbg(1, "%s(): d_alloc_root()\n", __func__);
+ -	sb->s_root =3D d_alloc_root(root_i);
+ +	sb->s_root =3D d_make_root(root_i);
+  	if (!sb->s_root)
+ -		goto out_root_i;
+ +		goto out_root;
+ =20
+  	sb->s_maxbytes =3D 0xFFFFFFFF;
+  	sb->s_blocksize =3D PAGE_CACHE_SIZE;
+
+--Signature=_Tue__13_Mar_2012_14_18_59_+1100_SuclbATR4GqMGJfj
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPXryjAAoJEECxmPOUX5FEYa4P/Ap8yQ74ao1Ih1s2B4Y2lznq
+AfmimLg704VO4zE44+tY5virObCXOpM97FYKoxKQb2m5V96lWP60ISKRmQwNyvHg
+WMBKqealAUFZoRIiWqtN+1yK3j5hAf7BGV3BNvcsMXS7zL2Et31I8Id6NVNAmEFH
+G8WxB/05RAhEWFPiuplKwGcvTdkAnJXMVw9kEfSSgT7tWGH7GpgaXbxx+xvVWiVm
+nlVPn2ZREVG0+xhBPrKvHGFX2Wp/gX3eqg+RYoLtI3Fdm3SQI6A1YvEoGxWZ+etz
+wi9zmzSiiao6KQS++U/1x129CRFSzK5OGUZCzmhonAyDx+mfHBlONYnzP6kc/nBF
+kFkosTIkC97pLvF4Z2jNOikH0EstHPOmqOukqZVHBACCU+lt0kYiTwJiAZNg45Q0
+4twSkEDnbgjbir0eM2HnUEnRK5yOybMgt5apqtKjBHf4YLNBq9onq+IbvLPyDKfR
+RokkuV3phsTIiIX22WJQbfXBgQaVwf4U2JgcLtoHf1jT0hPpPjKCMg7p2mIlM7Kw
+/ttuvh3LnXrVzjcfH4jpq0D7RjR1tUwJpO1oYw/fQUK+VXGl3ZIAVu+oIURctuVE
+ftZoIBIwNi9x0AIQUB3L9ObES+yyrHXIF7xfjLq2l1RWoEM6/jj81Pm/oue0BvER
+3bTMUUmgB04fpv9pTvy2
+=e6/O
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__13_Mar_2012_14_18_59_+1100_SuclbATR4GqMGJfj--
