@@ -1,41 +1,41 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [GIT PULL/NEXT] sched/arch: Introduce the
- finish_arch_post_lock_switch() scheduler callback
-Date: Tue, 13 Mar 2012 16:47:16 +0100
-Message-ID: <20120313154716.GA31293@elte.hu>
-References: <20120313090040.GE27560@flint.arm.linux.org.uk>
- <20120313092649.GA15406@elte.hu>
- <20120313095020.GA13220@flint.arm.linux.org.uk>
- <20120313101859.GA2626@elte.hu>
- <20120313112729.GA25835@flint.arm.linux.org.uk>
- <20120313115640.GA27378@elte.hu>
- <20120313121707.GA2174@flint.arm.linux.org.uk>
- <20120313124433.GA15333@elte.hu>
- <20120313130427.GC2174@flint.arm.linux.org.uk>
- <20120313133115.GA21634@elte.hu>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Mar 13 (dlm / gfs2)
+Date: Tue, 13 Mar 2012 10:10:36 -0700
+Message-ID: <4F5F7F8C.6030300@xenotime.net>
+References: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:38603 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753927Ab2CMPrs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Mar 2012 11:47:48 -0400
-Content-Disposition: inline
-In-Reply-To: <20120313133115.GA21634@elte.hu>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:41460 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752724Ab2CMRKf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 13:10:35 -0400
+In-Reply-To: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, cluster-devel@redhat.com
+
+On 03/13/2012 02:41 AM, Stephen Rothwell wrote:
+
+> Hi all,
+> 
+> Changes since 20120309:
 
 
-Anyway - regardless of any differences and flames about workflow 
-details, both you and Catalin should still feel free to use both 
-the original commit (1cf00341547a) or the tip:sched/arch branch 
-I provided (01f23e1630d9).
 
-[ At the end of the merge window I'll try to make sure that at 
-  least one of them got upstream ;-) ]
+on i386:
 
-Thanks,
+ERROR: "sctp_do_peeloff" [fs/dlm/dlm.ko] undefined!
 
-	Ingo
+
+GFS2_FS selects DLM (if GFS2_FS_LOCKING_DLM, which is enabled).
+GFS2_FS selects IP_SCTP if DLM_SCTP, which is not enabled and not
+used anywhere else in the kernel tree AFAICT.
+DLM just always selects IP_SCTP.
+
+
+---
+
+~Randy
