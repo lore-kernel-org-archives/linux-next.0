@@ -1,33 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the oprofile tree with the tip tree
-Date: Tue, 13 Mar 2012 17:37:12 +1100
-Message-ID: <20120313173712.52ecb636a1e3d4330fe8baff@canb.auug.org.au>
+Subject: linux-next: manual merge of the drivers-x86 tree with the tip tree
+Date: Tue, 13 Mar 2012 17:51:41 +1100
+Message-ID: <20120313175141.1cf39f1991bcf776ee8c00ae@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Mar_2012_17_37_12_+1100_A20iJuBGM5sdxh6."
+ boundary="Signature=_Tue__13_Mar_2012_17_51_41_+1100_BVX0W37wWYKXI6wU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53066 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:39612 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751440Ab2CMGhV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 02:37:21 -0400
+	with ESMTP id S1751780Ab2CMGvw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 02:51:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Robert Richter <robert.richter@amd.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephane Eranian <eranian@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Philip A. Prindeville" <philipp@redfish-solutions.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Tue__13_Mar_2012_17_37_12_+1100_A20iJuBGM5sdxh6.
+--Signature=_Tue__13_Mar_2012_17_51_41_+1100_BVX0W37wWYKXI6wU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Robert,
+Hi Matthew,
 
-Today's linux-next merge of the oprofile tree got a conflict in
-tools/perf/util/header.c tools/perf/util/header.h between commit
-330aa675b4f9 ("perf record: Add HEADER_BRANCH_STACK tag") from the tip
-tree and commit c415f577eb32 ("perf tools: Add pmu mappings to header
-information") from the oprofile tree.
+Today's linux-next merge of the drivers-x86 tree got a conflicts in
+arch/x86/Kconfig and arch/x86/platform/geode/Makefile between commit
+da4e3302949f ("x86/geode/net5501: Add platform driver for Soekris
+Engineering net5501") from the tip tree and commit b2a2f19ad3db ("geos:
+Platform driver for Geos and Geos2 single-board computers") from the
+drivers-x86 tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -35,98 +36,58 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc tools/perf/util/header.c
-index 0d9b6da,626eb90..0000000
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@@ -1321,12 -1372,37 +1388,43 @@@ static void print_cpuid(struct perf_hea
-  	free(str);
-  }
+diff --cc arch/x86/Kconfig
+index 36d459e,3a38c4c..0000000
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@@ -2146,12 -2133,13 +2146,19 @@@ config ALI
  =20
- +static void print_branch_stack(struct perf_header *ph __used, int fd __us=
-ed,
- +			       FILE *fp)
- +{
- +	fprintf(fp, "# contains samples with branch stack\n");
- +}
+  	  Note: You have to set alix.force=3D1 for boards with Award BIOS.
+ =20
+ +config NET5501
+ +	bool "Soekris Engineering net5501 System Support (LEDS, GPIO, etc)"
+ +	select GPIOLIB
+ +	---help---
+ +	  This option enables system support for the Soekris Engineering net5501.
  +
-+ static void print_pmu_mappings(struct perf_header *ph, int fd, FILE *fp)
-+ {
-+ 	const char *delimiter =3D "# pmu mappings: ";
-+ 	char *name;
-+ 	int ret;
-+ 	u32 pmu_num;
-+ 	u32 type;
++ config GEOS
++ 	bool "Traverse Technologies GEOS System Support (LEDS, GPIO, etc)"
++ 	select GPIOLIB
++ 	depends on DMI
++ 	---help---
++ 	  This option enables system support for the Traverse Technologies GEOS.
 +=20
-+ 	ret =3D read(fd, &pmu_num, sizeof(pmu_num));
-+ 	if (ret !=3D sizeof(pmu_num))
-+ 		goto error;
-+=20
-+ 	if (!pmu_num)
-+ 		goto error;
-+=20
-+ 	while (pmu_num--) {
-+ 		if (read(fd, &type, sizeof(type)) !=3D sizeof(type))
-+ 			goto error;
-+ 		name =3D do_read_string(fd, ph);
-+ 		fprintf(fp, "%s%s =3D %" PRIu32, delimiter, name, type);
-+ 		free(name);
-+ 		delimiter =3D ", ";
-+ 	}
-+=20
-+ 	fprintf(fp, "\n");
-+=20
-+ 	return;
-+ error:
-+ 	fprintf(fp, "# pmu mappings: not available\n");
-+ }
-+=20
-  static int __event_process_build_id(struct build_id_event *bev,
-  				    char *filename,
-  				    struct perf_session *session)
-@@@ -1531,7 -1607,7 +1629,8 @@@ static const struct feature_ops feat_op
-  	FEAT_OPA(HEADER_CMDLINE,	cmdline),
-  	FEAT_OPF(HEADER_CPU_TOPOLOGY,	cpu_topology),
-  	FEAT_OPF(HEADER_NUMA_TOPOLOGY,	numa_topology),
- +	FEAT_OPA(HEADER_BRANCH_STACK,	branch_stack),
-+ 	FEAT_OPA(HEADER_PMU_MAPPINGS,	pmu_mappings),
-  };
+  endif # X86_32
  =20
-  struct header_print_data {
-diff --cc tools/perf/util/header.h
-index 21a6be0,9b4d407..0000000
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@@ -27,7 -27,8 +27,8 @@@ enum=20
-  	HEADER_EVENT_DESC,
-  	HEADER_CPU_TOPOLOGY,
-  	HEADER_NUMA_TOPOLOGY,
- +	HEADER_BRANCH_STACK,
-+ 	HEADER_PMU_MAPPINGS,
- -
-  	HEADER_LAST_FEATURE,
-  	HEADER_FEAT_BITS	=3D 256,
-  };
+  config AMD_NB
+diff --cc arch/x86/platform/geode/Makefile
+index 246b788,d8ba564..0000000
+--- a/arch/x86/platform/geode/Makefile
++++ b/arch/x86/platform/geode/Makefile
+@@@ -1,2 -1,2 +1,3 @@@
+  obj-$(CONFIG_ALIX)		+=3D alix.o
+ +obj-$(CONFIG_NET5501)		+=3D net5501.o
++ obj-$(CONFIG_GEOS)		+=3D geos.o
 
---Signature=_Tue__13_Mar_2012_17_37_12_+1100_A20iJuBGM5sdxh6.
+--Signature=_Tue__13_Mar_2012_17_51_41_+1100_BVX0W37wWYKXI6wU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPXusYAAoJEECxmPOUX5FEZpIP/RZd/S2mo8kRPMGFuJfBPwmZ
-XwJwRGlC+p8B/5TyUW6WOqkipkQvmqt5hMww5yRbfUO/+ROBuhUgUl5wZb8SijGU
-IZRaBHDpXx9tTjApVBUNbeQMi9Q5qbJ/CywR92IM5FHbSYc/EFPjXryQOP96OJi8
-Lh5vDedD1jKiJqYxGuHFomhbA+p6F8JVCNdrAsMK+LB55epQjLpVd0XJL1y0p/RZ
-zvY9Feg3mK4qsGAnoy4fIDngh+9FuPH4ivy3Zg2Ai8AJocEyWnd3m1qH2y821DLU
-n+pXZDHHW42a0my2yIp5UTJgyS5BbHwIBvQmbe2ucX2Yvz95W2siShDjzLttLjB8
-giSF//ZcM2w0ouSrtHec09yp+UQav12os3JFn5kmgqyeULzvnP3j4UFwdgzNhB7P
-lszpFK473Ftl3YM8r8pqLn+m99aBrMl/keJZxuiedCzSUEv8g3UTAEddFRn2eQM5
-vAc9x2eb2N3BWCcFGRMt3sX0nNxeIlTnkBXOw+ZQShDwTt+Vu+sb/EBdX/gq/Aig
-+cX790dsJoZdrKVGG8oNmjXTItUsgyysjp4qOdrcEy9lphjjU6pJRo8SVEJlx419
-lmlarJlT76Xb3x524g8VzOtXWDqGW4rmgR9sTnV14UiB+nJte6weOIUcdFYrrGM8
-+zrv74KLnJ2TYkYemNFp
-=NpIo
+iQIcBAEBCAAGBQJPXu59AAoJEECxmPOUX5FEkYgP/jem9pmZ/y0h1q95YXZVdTpo
+9y5oA5JTE/bhX+YIxSrs/2viYhK6sXfZwPrZORuiJdihcTL6tgbOgq0SYMgW6DjA
+qCqp8wNvCTLkvCgSDUbzgdK/RVTcZHoOHyUl+Sv5suPEdSLhtiPQlGOmEkOTMyqU
+hAoTtSZfNlA0Q08y5RF0+Mfgs0KEqRZt0qtqzaNMhMbF+73CqPUQB4wH1Ox1zv03
+Dhh6Wg/9ruTb8Zq2ajRT2sawDbPSwLycBnzktTcWjhHN/Xat70j69f8nPK5rpZNo
+K0B0kr7ic1BJPPKM6Fj53HkMZmn5fIY7nl2JKqW9Azi+xy5ZK98lzCrss2IbQSPy
+Rx6xY3ej00zlt4YwnmI9rBQbhI1ChdWyBf1f9gG38sEBJmVcWzW2VCYJbfiOOO59
+cRQ1fMGDMlF8PjEBp0FUp4+zOXqfzAVlqUi9SFJwZWk08X97R9YPOTDSN9KqRyxF
+lNucWwMWsGfS/HnCDaEXXF83plBJ3HizIuzdRznRDcJwzm6DWVsqovxT9W7CvAhT
+BFXxDdkl4ClheUuHVSUPkenlMLkOfAzUvLDtnBKZXOn1IYQIsmIiiJgvidOeplp5
+5mE5R3X1GFZ4wqtw8rLWcT+sFWVfrP6143SVTx4HQWn4WKzJ8Lbm3Cnb8gt+OqZm
+myGL+QXklqceUjN7mCqo
+=EXop
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Mar_2012_17_37_12_+1100_A20iJuBGM5sdxh6.--
+--Signature=_Tue__13_Mar_2012_17_51_41_+1100_BVX0W37wWYKXI6wU--
