@@ -1,79 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mmc tree with the s5p tree
-Date: Tue, 13 Mar 2012 14:59:07 +1100
-Message-ID: <20120313145907.8b549d741fef217899f971a4@canb.auug.org.au>
+Subject: linux-next: manual merge of the devicetree tree with the powerpc
+ tree
+Date: Tue, 13 Mar 2012 16:01:00 +1100
+Message-ID: <20120313160100.c8cc3fd2b3d1f485ef7e7954@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Mar_2012_14_59_07_+1100_=YDyDqQ=3JW_C/uu"
+ boundary="Signature=_Tue__13_Mar_2012_16_01_00_+1100_zyfs5ewjJ2IaWld+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50412 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41765 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759616Ab2CMD7S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Mar 2012 23:59:18 -0400
+	with ESMTP id S1752372Ab2CMFBN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 01:01:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gavin Shan <shangw@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
---Signature=_Tue__13_Mar_2012_14_59_07_+1100_=YDyDqQ=3JW_C/uu
+--Signature=_Tue__13_Mar_2012_16_01_00_+1100_zyfs5ewjJ2IaWld+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+Hi Grant,
 
-Today's linux-next merge of the mmc tree got a conflict in
-drivers/mmc/host/sdhci-s3c.c between commit c1c4b66dc010 ("mmc:
-sdhci-s3c: add platform data for the second capability") from the s5p
-tree and commit 1c352c37ee23 ("mmc: sdhci-s3c: Enable runtime power
-management") from the mmc tree.
+Today's linux-next merge of the devicetree tree got a conflict in
+include/linux/of.h between commit eb740b5f3e65 ("powerpc/eeh: Introduce
+EEH device") from the powerpc tree and commit 0f22dd395fc4 ("of: Only
+compile OF_DYNAMIC on PowerPC pseries and iseries") from the devicetree
+tree.
 
-Just context changes (I think).  I fixed it up (see below) and can carry
-the fix as necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/mmc/host/sdhci-s3c.c
-index a2bfbe0,312aaf4..0000000
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@@ -714,9 -706,11 +703,14 @@@ static int __devinit sdhci_s3c_probe(st
-  	if (pdata->host_caps)
-  		host->mmc->caps |=3D pdata->host_caps;
+diff --cc include/linux/of.h
+index bdb1c07,533603e..0000000
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@@ -75,14 -72,10 +75,17 @@@ struct of_phandle_args=20
+  	uint32_t args[MAX_PHANDLE_ARGS];
+  };
  =20
- +	if (pdata->host_caps2)
- +		host->mmc->caps2 |=3D pdata->host_caps2;
+ +#if defined(CONFIG_EEH)
+ +static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
+ +{
+ +	return dn->edev;
+ +}
+ +#endif
  +
-+ 	pm_runtime_enable(&pdev->dev);
-+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
-+ 	pm_runtime_use_autosuspend(&pdev->dev);
-+ 	pm_suspend_ignore_children(&pdev->dev, 1);
-+=20
-  	ret =3D sdhci_add_host(host);
-  	if (ret) {
-  		dev_err(dev, "sdhci_add_host() failed\n");
+- #if defined(CONFIG_SPARC) || !defined(CONFIG_OF)
++ #ifdef CONFIG_OF_DYNAMIC
++ extern struct device_node *of_node_get(struct device_node *node);
++ extern void of_node_put(struct device_node *node);
++ #else /* CONFIG_OF_DYNAMIC */
+  /* Dummy ref counting routines - to be implemented later */
+  static inline struct device_node *of_node_get(struct device_node *node)
+  {
 
---Signature=_Tue__13_Mar_2012_14_59_07_+1100_=YDyDqQ=3JW_C/uu
+--Signature=_Tue__13_Mar_2012_16_01_00_+1100_zyfs5ewjJ2IaWld+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPXsYLAAoJEECxmPOUX5FEnKoQAIIZE63mo0oVNgF7SbgDJoON
-R5QK8kcDP7KcTONQC2CCPlYL69ndyCk7WdYMxdhy9Oa8VXWADWoLL5GdbJ/+a0ui
-Cmnne8a+cfin50WrITN3sqWxstJ+60Ynjx9iOBgPz7IqwtUtEhiuDoXKp/e5rXQm
-lzH3hjunJaoVADeSp521ry7j0KbZE0XpfO2xFMhUIYA/ilfVoF2PtPjVWs5AmeBk
-QCWv17nvV5/WabZiyP+279XsZ86cpiFfJh8hm56+gbLXTfckDwQzk3ww9H2ysy4H
-/vApIuhE/OhU5/THtLCxrDYFkNJrKiH5vyuk5IrE513Umda6BYAoW6FXTTdqzhfB
-1WzZFNKYiv85DuUah796n4AE43UoDPhDMG2e+N0OjdwjngkPWKs4uYOSYySTiO8k
-RCmZAUYBRQ1lboWs/4PlHNgcRn3cOApjyvPpsFspe+SJnYbVxDpcp+4toxfBtbqR
-9TPfAfEVtb6FHCwgPUJFHmzkb9LDhpn8v635Xir3bTbgArSdluqGosFvanVxhdA0
-k9qu3QYf6ZpjdqkNV5LvWb6wG5lBM90DFbBMakDe+nh6vSzcscfiayoVK4C6Ii4/
-+F0yGPn2+x9qbdACjIJeePl4F7h+emR20ah7UeyAGIAGo8z3tKrL7QDmDjMSeeGk
-G+SviRmRvc4uYmIplN2c
-=OzBI
+iQIcBAEBCAAGBQJPXtSMAAoJEECxmPOUX5FElNgP/0FT0pYxw7Y7rDxKxfjXPeWz
+3zJ7xzzoUk9tzbIeCVlHaKjtXu1aUiHk3zGEAEYSyu7mKru7BW7SQa4SVXJy1oU5
+NxzzAtqa5cbqmNoM/KvV0E5/4AUnK42WaG3lUCVjUaN0b206RDzLTdOJ4mSzt/TN
+LBZ/eIuV9OhSPNLcIWwnIbdtrwtcNmGcch8Ut56lWnuQpStCFJWj1Z+lL1Fo4x4v
+oJjfG0hYadWuuWZpqT8nJDOW3uvJlGDYcOMbXpu4/luXm/jHqnYc0ZrHf4/48+Gw
+zpl1Hi7lptRAiYYMTEQXvqQC76GJ0V8UUK7yMS3Jmj/Gg6VhAZD9popB6ePnbir0
+TrzjnCxjAA/69cCEN5/bR7jTly1UfbgsbF8CDczpZQBHNRoAsXepKgfdI43VL478
+KlqrUJ+Iw+OxJ6/wT2MazdRNpvyURwlutvfWvqwzI4+heNcS/rnFnFrRho1uM4BP
+gPcqTy+dQZ5V7iywfJrD7NHkrTeED1jIjo8Shh/G3XwZnLkZUu+t+8YBTzhPkyT1
+PyjisHHqBWuzO4M3LVqyloduFRgs6kjAnJMqFaVO+KIEP4Fhx5UvkiPQt2BcxucU
+JIHAXv+FFBHOys0N4W+NhuRp9oEkb+QTTTeR5EUsFYgndcV/rj/gvE5/UrfsvYLR
+0DulTl2+GYR00vx/+lnP
+=is3p
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Mar_2012_14_59_07_+1100_=YDyDqQ=3JW_C/uu--
+--Signature=_Tue__13_Mar_2012_16_01_00_+1100_zyfs5ewjJ2IaWld+--
