@@ -1,58 +1,34 @@
 From: Russell King <rmk@arm.linux.org.uk>
 Subject: Re: linux-next: manual merge of the arm tree with Linus' tree
-Date: Tue, 13 Mar 2012 08:58:47 +0000
-Message-ID: <20120313085847.GD27560@flint.arm.linux.org.uk>
-References: <20120313110840.7b444deb6b1bb902c15f3cdf@canb.auug.org.au> <20120313061622.GA24357@elte.hu> <20120313083310.GA27560@flint.arm.linux.org.uk> <20120313084803.GA6991@elte.hu>
+Date: Tue, 13 Mar 2012 09:00:40 +0000
+Message-ID: <20120313090040.GE27560@flint.arm.linux.org.uk>
+References: <20120313110840.7b444deb6b1bb902c15f3cdf@canb.auug.org.au> <20120313061622.GA24357@elte.hu> <20120313083310.GA27560@flint.arm.linux.org.uk> <20120313083630.GA10131@elte.hu> <20120313084713.GB27560@flint.arm.linux.org.uk> <20120313085628.GB6991@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:36834 "EHLO
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:36842 "EHLO
 	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759925Ab2CMI7L (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 04:59:11 -0400
+	with ESMTP id S1754033Ab2CMJBJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 05:01:09 -0400
 Content-Disposition: inline
-In-Reply-To: <20120313084803.GA6991@elte.hu>
+In-Reply-To: <20120313085628.GB6991@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
+To: Ingo Molnar <mingo@elte.hu>, Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
-On Tue, Mar 13, 2012 at 09:48:03AM +0100, Ingo Molnar wrote:
+On Tue, Mar 13, 2012 at 09:56:28AM +0100, Ingo Molnar wrote:
 > 
 > * Russell King <rmk@arm.linux.org.uk> wrote:
 > 
-> > Please check your mailbox:
-> > 
-> > Date: Fri, 20 Jan 2012 17:42:27 +0000
-> > From: Catalin Marinas <catalin.marinas@arm.com>
-> > To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-> > Cc: Russell King <linux@arm.linux.org.uk>, Ingo Molnar <mingo@elte.hu>,
-> >         Peter Zijlstra <peterz@infradead.org>,
-> >         Will Deacon <will.deacon@arm.com>,
-> >         Frank Rowand <frank.rowand@am.sony.com>
-> > Subject: [PATCH v3 1/6] sched: Introduce the finish_arch_post_lock_switch()
-> >         scheduler hook
+> > Sorry, you're blaming the wrong person.  I got the commit via 
+> > a pull, not via a patch.
 > 
-> Btw., are you losing emails? Because the reply from peterz to 
-> those patches, a month ago, was pretty clear:
-> 
-> > > Russell, what's the status of these patches? I'd like to see 
-> > > them land in 3.4 if possible. I'm fine either way, I'll
-> > >
-> > > probably ask Ingo to pull your tree so that I can stack some 
-> > > other patches on top.
-> 
-> You never replied to PeterZ's request, you just ignored this 
-> scheduler maintainer request and you just did it in some random 
-> way that was most convenient to you many weeks after the thread 
-> died down, ignoring everyone else's concerns - a pretty usual 
-> pattern from you I have to say.
+> This is the most idiotic excuse I've ever read.
 
-Sigh.  You know, people communicate via other methods from time to time.
-How the hell do you think PeterZ provided his ack for the patch?
-
-Stop looking for people to blame.  Instead, if you failed to communicate
-about how you wanted to handle the patch, blame yourself instead.
+Sod this crap, I'm dropping Catalin's patches.  Deal with the fucking thing
+yourself.  Catalin, sorry, put some people are just total idiots over
+simple merge conflicts and blow things totally out of proportion.
 
 -- 
 Russell King
