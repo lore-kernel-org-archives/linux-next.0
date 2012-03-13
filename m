@@ -1,40 +1,75 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the oprofile tree with the tip tree
-Date: Tue, 13 Mar 2012 09:31:34 +0100
-Message-ID: <20120313083134.GB1888@elte.hu>
-References: <20120313173712.52ecb636a1e3d4330fe8baff@canb.auug.org.au>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the arm tree with Linus' tree
+Date: Tue, 13 Mar 2012 08:33:10 +0000
+Message-ID: <20120313083310.GA27560@flint.arm.linux.org.uk>
+References: <20120313110840.7b444deb6b1bb902c15f3cdf@canb.auug.org.au> <20120313061622.GA24357@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:45306 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752803Ab2CMIbu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Mar 2012 04:31:50 -0400
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:38329 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757951Ab2CMIdd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 04:33:33 -0400
 Content-Disposition: inline
-In-Reply-To: <20120313173712.52ecb636a1e3d4330fe8baff@canb.auug.org.au>
+In-Reply-To: <20120313061622.GA24357@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Robert Richter <robert.richter@amd.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephane Eranian <eranian@google.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Robert,
+On Tue, Mar 13, 2012 at 07:16:22AM +0100, Ingo Molnar wrote:
 > 
-> Today's linux-next merge of the oprofile tree got a conflict 
-> in tools/perf/util/header.c tools/perf/util/header.h between 
-> commit 330aa675b4f9 ("perf record: Add HEADER_BRANCH_STACK 
-> tag") from the tip tree and commit c415f577eb32 ("perf tools: 
-> Add pmu mappings to header information") from the oprofile 
-> tree.
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > Hi Russell,
+> > 
+> > Today's linux-next merge of the arm tree got a conflict in
+> > kernel/sched/core.c between commit 8c79a045fd59 ("sched/events: Revert
+> > trace_sched_stat_sleeptime()") from Linus' tree and commit 1cf00341547a
+> > ("sched: Introduce the finish_arch_post_lock_switch() scheduler hook")
+> > from the arm tree.
+> > 
+> > Just context changes.  I fixed it up (see below) and can carry the fix as
+> > necessary.
+> 
+> This commit seems simple enough and has PeterZ's ack, but if 
+> there are more scheduler patches coming in this area then please 
+> send it to the scheduler tree first: we can create a pullable, 
+> stable topic branch for it which the ARM tree can then use.
+> 
+> That approach would also avoid conflicts as a side effect.
 
-Robert,
+Please check your mailbox:
 
-Hm, that commit should obviously be processed via the regular 
-perf channels, not via the oprofile tree ... Please resolve 
-this.
+Date: Tue, 29 Nov 2011 12:22:27 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>,
+        Russell King <linux@arm.linux.org.uk>
+Subject: [RFC PATCH 1/6] sched: Introduce the finish_arch_post_lock_switch()
+        scheduler hook
 
-Thanks,
+Date: Mon, 19 Dec 2011 14:57:48 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Russell King <linux@arm.linux.org.uk>, Ingo Molnar <mingo@elte.hu>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Frank Rowand <frank.rowand@am.sony.com>
+Subject: [RFC PATCH v2 1/6] sched: Introduce the finish_arch_post_lock_switch()
+        scheduler hook
 
-	Ingo
+Date: Fri, 20 Jan 2012 17:42:27 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Russell King <linux@arm.linux.org.uk>, Ingo Molnar <mingo@elte.hu>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Frank Rowand <frank.rowand@am.sony.com>
+Subject: [PATCH v3 1/6] sched: Introduce the finish_arch_post_lock_switch()
+        scheduler hook
+
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
