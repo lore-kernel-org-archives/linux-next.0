@@ -1,41 +1,48 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Mar 13 (dlm / gfs2)
-Date: Tue, 13 Mar 2012 10:10:36 -0700
-Message-ID: <4F5F7F8C.6030300@xenotime.net>
-References: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:41460 "HELO
-	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752724Ab2CMRKf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 13:10:35 -0400
-In-Reply-To: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: manual merge of the devicetree tree with the powerpc tree
+Date: Tue, 13 Mar 2012 12:26:11 -0600
+Message-ID: <20120313182612.0546D3E053B@localhost>
+References: <20120313160100.c8cc3fd2b3d1f485ef7e7954@canb.auug.org.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120313160100.c8cc3fd2b3d1f485ef7e7954@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, cluster-devel@redhat.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gavin Shan <shangw@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+List-Id: linux-next.vger.kernel.org
 
-On 03/13/2012 02:41 AM, Stephen Rothwell wrote:
-
-> Hi all,
+On Tue, 13 Mar 2012 16:01:00 +1100, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Grant,
 > 
-> Changes since 20120309:
+> Today's linux-next merge of the devicetree tree got a conflict in
+> include/linux/of.h between commit eb740b5f3e65 ("powerpc/eeh: Introduce
+> EEH device") from the powerpc tree and commit 0f22dd395fc4 ("of: Only
+> compile OF_DYNAMIC on PowerPC pseries and iseries") from the devicetree
+> tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc include/linux/of.h
+> index bdb1c07,533603e..0000000
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@@ -75,14 -72,10 +75,17 @@@ struct of_phandle_args 
+>   	uint32_t args[MAX_PHANDLE_ARGS];
+>   };
+>   
+>  +#if defined(CONFIG_EEH)
+>  +static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
+>  +{
+>  +	return dn->edev;
+>  +}
+>  +#endif
 
+Ben, What is this?  I don't want the eeh_dev pointer in struct device_node.  Up to
+now we've avoided putting any reverse references into device_nodes.  For everything
+else we use a reverse lookup, particularly for devices, to avoid growing the
+device_node for each new type of lookup.
 
-
-on i386:
-
-ERROR: "sctp_do_peeloff" [fs/dlm/dlm.ko] undefined!
-
-
-GFS2_FS selects DLM (if GFS2_FS_LOCKING_DLM, which is enabled).
-GFS2_FS selects IP_SCTP if DLM_SCTP, which is not enabled and not
-used anywhere else in the kernel tree AFAICT.
-DLM just always selects IP_SCTP.
-
-
----
-
-~Randy
+g.
