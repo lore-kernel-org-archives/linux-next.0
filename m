@@ -1,67 +1,55 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the arm tree with Linus' tree
-Date: Tue, 13 Mar 2012 08:47:13 +0000
-Message-ID: <20120313084713.GB27560@flint.arm.linux.org.uk>
-References: <20120313110840.7b444deb6b1bb902c15f3cdf@canb.auug.org.au> <20120313061622.GA24357@elte.hu> <20120313083310.GA27560@flint.arm.linux.org.uk> <20120313083630.GA10131@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Tue, 13 Mar 2012 19:47:27 +1100
+Message-ID: <20120313194727.9d5939c174d54ea1569403f5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:59529 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757207Ab2CMIrh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 04:47:37 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__13_Mar_2012_19_47_27_+1100_Mw6hsGs//UN58C_n"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Marc Zyngier <marc.zyngier@arm.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Tue__13_Mar_2012_19_47_27_+1100_Mw6hsGs//UN58C_n
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20120313083630.GA10131@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 13, 2012 at 09:36:30AM +0100, Ingo Molnar wrote:
-> 
-> * Russell King <rmk@arm.linux.org.uk> wrote:
-> 
-> > On Tue, Mar 13, 2012 at 07:16:22AM +0100, Ingo Molnar wrote:
-> > > 
-> > > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > 
-> > > > Hi Russell,
-> > > > 
-> > > > Today's linux-next merge of the arm tree got a conflict in
-> > > > kernel/sched/core.c between commit 8c79a045fd59 ("sched/events: Revert
-> > > > trace_sched_stat_sleeptime()") from Linus' tree and commit 1cf00341547a
-> > > > ("sched: Introduce the finish_arch_post_lock_switch() scheduler hook")
-> > > > from the arm tree.
-> > > > 
-> > > > Just context changes.  I fixed it up (see below) and can carry the fix as
-> > > > necessary.
-> > > 
-> > > This commit seems simple enough and has PeterZ's ack, but if 
-> > > there are more scheduler patches coming in this area then 
-> > > please send it to the scheduler tree first: we can create a 
-> > > pullable, stable topic branch for it which the ARM tree can 
-> > > then use.
-> > > 
-> > > That approach would also avoid conflicts as a side effect.
-> > 
-> > Please check your mailbox:
-> 
-> I'm aware of that old thread, I'd just prefer to hear about your 
-> plans patching the scheduler *before* you commit it to 
-> linux-next ;-)
-> 
-> Please make sure none of these scheduler patches go to the ARM 
-> tree without a proper Git space solution that involves the 
-> scheduler folks.
+Hi all,
 
-Sorry, you're blaming the wrong person.  I got the commit via a pull,
-not via a patch.
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/plat-versatile/localtimer.c between commit e9f07fbc5f5b ("ARM:
+plat-versatile: convert to twd_local_timer_register() interface") from
+the arm tree and commit e129440af638 ("ARM: versatile: Map local timers
+using Device Tree when possible") from the arm-soc tree.
 
-If that's how you want to run your bit of the kernel, then please be more
-responsive when you're sent patches and say how you want to handle things.
-Don't ignore patches and then blame people when conflicts happen.
+I did the obvious thing and removed the file (as the former does), but
+there is probably more to be fixed up.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+--Signature=_Tue__13_Mar_2012_19_47_27_+1100_Mw6hsGs//UN58C_n
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPXwmfAAoJEECxmPOUX5FEJYYQAJX3qbd/bSVia2/rAkUEpsM0
+d/k/lwT/HuFYlFZOuGr7/PB91dBmOYLkg/5S2LoBZyU9jy5lw56+/n387lWZMF5r
+Aw/zMNlT3dHXZLCe3QdZCf6hPQuoCjufAGrQv3pGdwoaWaw4vCpaRqm2V+o9Tn2h
+D5iCVqVTghLIcQ9d1UV1M8/Bh0+Og6YpT4pEi4YFeZ/8LwnHtKGHDkaRcLlzss3P
+bRRHeG7QMjzbOFR4OYpzBgtUPA6FVyK1iWsgOvno+XAzuC+evXCZJ+YerrTZSOFi
+is5yA/tFab1KnidRMcoA/AXcAjTioBmf0HqIIbvfuYvtow79N5/dr1eH96TaZTVg
+BTvHWFtyX3Otd4wlPVZ8EierAvBb0jAiHy0mfgw7n2PTqUFfsAqPg++Xc4vtLRKq
+eztm8CL3OOikeVHp9FdCC9GYeGoI0l1BoUh0BG8R7mw1d1SwXrnge+lY5nos0p+l
+675ul1KP60CFQXJkEGkhSz351ENAbIUbxv+ZPhzQytlgYvCAZP9rY/byG7pibhwk
+DM4NF7ydgh/4EPkU9WUNA0EFjNiIfYZAGPuktKWb1ngelNy5Fe3+wBr8QLwbvJmo
+WTOYyBhLCLNOgLStb9qS4r+ARLEcAplxfFMu4u7EuKKAznI0vEUdPUxuPKARN0Pw
+uySh5XAQjpooIlQJ6dsz
+=+ozR
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__13_Mar_2012_19_47_27_+1100_Mw6hsGs//UN58C_n--
