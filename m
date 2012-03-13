@@ -1,69 +1,63 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the l2-mtd tree with the vfs tree
-Date: Tue, 13 Mar 2012 16:40:33 +0200
-Message-ID: <1331649633.3595.70.camel@sauron.fi.intel.com>
+Date: Wed, 14 Mar 2012 02:13:12 +1100
+Message-ID: <20120314021312.c15dc02ec501ceb0d98ea755@canb.auug.org.au>
 References: <20120313141859.302878a8e2246979c288440d@canb.auug.org.au>
-Reply-To: dedekind1@gmail.com
+	<1331649633.3595.70.camel@sauron.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-fxWckKyBgNztmx2UICJY"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:8965 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751380Ab2CMOik (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Mar 2012 10:38:40 -0400
-In-Reply-To: <20120313141859.302878a8e2246979c288440d@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__14_Mar_2012_02_13_12_+1100_k4mCqHIMRSSyf8w7"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1331649633.3595.70.camel@sauron.fi.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: dedekind1@gmail.com
 Cc: Stefan Roese <sr@denx.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Joe Perches <joe@perches.com>
+List-Id: linux-next.vger.kernel.org
 
-
---=-fxWckKyBgNztmx2UICJY
-Content-Type: text/plain; charset="UTF-8"
+--Signature=_Wed__14_Mar_2012_02_13_12_+1100_k4mCqHIMRSSyf8w7
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2012-03-13 at 14:18 +1100, Stephen Rothwell wrote:
-> Hi Artem,
->=20
-> Today's linux-next merge of the l2-mtd tree got a conflict in
-> fs/jffs2/fs.c between commit de071e1a7466 ("switch open-coded instances
-> of d_make_root() to new helper") from the vfs tree and commit
-> ab9b393d6ee8 ("jffs2: Convert most D1/D2 macros to jffs2_dbg") from the
-> l2-mtd tree.
->=20
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+Hi Artem,
 
-Thanks. Although I do not see the latest l2-mtd.git tree in the master
-branch of linux-next, I see some old version of it. E.g., the jffs2
-changes are not there.
+On Tue, 13 Mar 2012 16:40:33 +0200 Artem Bityutskiy <dedekind1@gmail.com> w=
+rote:
+>
+> Thanks. Although I do not see the latest l2-mtd.git tree in the master
+> branch of linux-next, I see some old version of it. E.g., the jffs2
+> changes are not there.
+
+I just checked and the master branch on
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git is
+8ca39b0 "Add linux-next specific files for 20120313" as I would expect it
+to be and the top of the l2-mtd tree that was merged into that is
+4331c79c6895 "mtd: do not use plain 0 as NULL".
 
 --=20
-Best Regards,
-Artem Bityutskiy
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---=-fxWckKyBgNztmx2UICJY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+--Signature=_Wed__14_Mar_2012_02_13_12_+1100_k4mCqHIMRSSyf8w7
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAABAgAGBQJPX1xhAAoJECmIfjd9wqK0wxcQAJJTlUMM8orZg6pjFKgIXeFZ
-3ikDpLRbCezQNA63erar5eIexrqmgcHlnTDYwwjbMZ3rqMQurnXFXfgtaveAgbXq
-sSA+kEWeAIDlov0ouTgzfVqGBHH/0qvkbh7+YL38Zm4GbRONULjbSgDutXkbl3Oi
-TqQ+snV8wx+3Vz/QSyXmAHtbrl9GY6ezs4o0hn9n2D6i7D/0mtVSThtJ4RvDAAI0
-x3NiHuz2Nz2E8Xyc4hr1YA1TRvj2ESccOy1MZR0hsYa+CxL4E5Rxi4oZX3eYwqLm
-Inlz9vJZ7qQFFn9/KKYj+ELNdY9yqOFd9hAUttUiXNazh8IM7aHaIzLk4yJ1lKrR
-I7H7muJfTNJJTsZdjOkbIP5jUpVugEnJdiCCs7yT93nTlixKgSym+O5wxb/u6XA8
-XHGnCO040jz8uAuAT6zfBNx2sllsKyKeHr8i1zBuwkOaDdNOZmdMZVmqitUmALgF
-J36g805mZLFSbuSLh2xeUyyXzdeyalZ+IW+J4ynagr7NA5JCNJNLN4XNqtXiksLt
-RtsaPS5uIG1xvXvyqoVTDYYnhJZKgqvc48gkX1n7cRIwwmVhKLzNIs6vMOglv0rd
-e+VJc/tUdK9YGXG/t/JXzmMPRTUwpN2SF3SOqEZWXRPG0CdinjB7J8y9ghGJ9yHf
-tZGedkeIAj/Qsoxg5lPm
-=t+Xn
+iQIcBAEBCAAGBQJPX2QIAAoJEECxmPOUX5FE7pUP/ju0+CrNXU7lShyOk+8xE9xy
+e6TPV2+3iqtKrtWTLP8hHFdfDwmDxuwbeOZv25otsJ8L/pT+9TFzUMevxHKrK1P+
+LI5U9N69+NBcNKmWMVN4FRR2bh5OD95BHOLTgRtYRX19WSa4K3sDt44BMMdArN/D
+oHXBfgKNVlgYCxAkAwGsBP3tfrpjygpM7cJQ72HlMnHzoZ00PAIkfELby/Ly1rbL
+xQN1LjuvG9Tncz+bMrwie7C35QHhUeZMlvZ+fbtYMeXAzwOg9l308CAgInY7YbnQ
+8lTXryqq+VPYrHZ7Xliq9tfZ3tLjae58L9XjrC9bAhbp8UbESk6TpbZ3WO2sjNH3
+7NdH/i/zm+LtQhnuJlIbTWGdWPuO5+E2udQxWT2xUrr+XKA+ZBdVfRKHLVS0VYBU
+dEHCXPpOtJVSm/pzdV3M1h//5E7/Q8CsCZIlrcqF0EYvNuJj/9rvDjLfOMgUeSkT
+YSEMLuxqPsX/hK/ih2MV7wnsCtxQyE1xbTUhUfeD6TwTKHoraD3wT09FjPPWG5aB
+8BLLzqH8iXIvo/ApHw164wXTzX8+7P+mnBvRPb9AIGo+x66gTi7Bm9Z59K1kjs2b
+AERcaSb0xbzwLctTrAx8HcH1SJe03ho07tAuVMBxtkDo3R1aHV3xRcxnmgvjr3fQ
+W7SLt2dOagRRuZSYIU2y
+=5BjG
 -----END PGP SIGNATURE-----
 
---=-fxWckKyBgNztmx2UICJY--
+--Signature=_Wed__14_Mar_2012_02_13_12_+1100_k4mCqHIMRSSyf8w7--
