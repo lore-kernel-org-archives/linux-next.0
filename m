@@ -1,48 +1,69 @@
-From: Russell King <rmk@arm.linux.org.uk>
+From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: [GIT PULL/NEXT] sched/arch: Introduce the
-	finish_arch_post_lock_switch() scheduler callback
-Date: Tue, 13 Mar 2012 12:17:07 +0000
-Message-ID: <20120313121707.GA2174@flint.arm.linux.org.uk>
-References: <20120313083310.GA27560@flint.arm.linux.org.uk> <20120313083630.GA10131@elte.hu> <20120313084713.GB27560@flint.arm.linux.org.uk> <20120313085628.GB6991@elte.hu> <20120313090040.GE27560@flint.arm.linux.org.uk> <20120313092649.GA15406@elte.hu> <20120313095020.GA13220@flint.arm.linux.org.uk> <20120313101859.GA2626@elte.hu> <20120313112729.GA25835@flint.arm.linux.org.uk> <20120313115640.GA27378@elte.hu>
+ finish_arch_post_lock_switch() scheduler callback
+Date: Tue, 13 Mar 2012 13:20:53 +0100
+Message-ID: <20120313122053.GA17549@elte.hu>
+References: <20120313083630.GA10131@elte.hu>
+ <20120313084713.GB27560@flint.arm.linux.org.uk>
+ <20120313085628.GB6991@elte.hu>
+ <20120313090040.GE27560@flint.arm.linux.org.uk>
+ <20120313092649.GA15406@elte.hu>
+ <20120313095020.GA13220@flint.arm.linux.org.uk>
+ <20120313101859.GA2626@elte.hu>
+ <20120313112729.GA25835@flint.arm.linux.org.uk>
+ <20120313115640.GA27378@elte.hu>
+ <20120313120014.GB13220@flint.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:58766 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751665Ab2CMMRa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 08:17:30 -0400
+Received: from mx2.mail.elte.hu ([157.181.151.9]:57890 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750855Ab2CMMVK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Mar 2012 08:21:10 -0400
 Content-Disposition: inline
-In-Reply-To: <20120313115640.GA27378@elte.hu>
+In-Reply-To: <20120313120014.GB13220@flint.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
+To: Russell King <rmk@arm.linux.org.uk>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
-On Tue, Mar 13, 2012 at 12:56:40PM +0100, Ingo Molnar wrote:
-> Look into the fine conflict report Russell: it conflicts with 
-> *Linus's* tree, because it's based off some random 
-> barely-beyond-rc1 development window -rc3 base. Even at the 
-> commit date of Feb 27 we had a more stable base tree available - 
-> and especially when you pulled it, several weeks down the line, 
-> -rc3 was not a defensible base for the integrated result.
 
-I'm not going to ask someone to rebase their patches after they've been
-fully tested on a set of platforms.  It has been stated many times that
-rebasing invalidates the testing that the patches have been subjected
-to, and these have been tested by several different people on a range
-of platforms.
+* Russell King <rmk@arm.linux.org.uk> wrote:
 
-It seems what _you_ care more about is having nice clean git trees and
-proper git flow at the detriment to dealing with tested changes.
+> Why am _I_ responsible for which kernel version _Catalin_ used 
+> for _his_ patches when _he_ committed them?
 
-The fact of the matter is that I took a set of well tested patches into
-my tree which _you_ were copied on multiple times, that Peter Z. was
-aware of what was happening, and which trivially conflict with some other
-change which happened along the way.  Such a trivial conflict does _NOT_
-justify rebasing the patch set, thereby invalidating all the testing that
-has done.
+If you then pull that tree from him and push it out to 
+linux-next? Then *of course* you are responsible, it was your 
+decision to pull it.
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+I frequently reject pulls from subsystem maintainers on similar 
+(and sometimes lesser) grounds - because such mistakes tend to 
+compound with time.
+
+The thing is, if you do Git pulls from someone then you must be 
+absolutely anal about it, because you cannot really fix things 
+up after the fact. The people you pull from must be your 
+extended arms, they must be doing an equal or better job than 
+you. That gives a basis of trust.
+
+Once that is established, you can be permissive about mistakes. 
+
+But arguing that you are not responsible for what you pull is 
+absolutely grotesque and establishes a new low for this 
+discussion really...
+
+Also, as I told you in the very first mail, I am *fine* with 
+this having happened, so you having zapped the commits is 
+indefensible IMO. Mistakes do happen and the patch is fine 
+technically and sfr and Linus could have handled the trivial 
+conflict. What I suggested was to do it a bit better in the 
+future. Is that too much to ask for?
+
+> You're insane.  Totally.
+
+I think you owe me an apology :-(
+
+Thanks,
+
+	Ingo
