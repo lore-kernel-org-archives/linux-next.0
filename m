@@ -1,32 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the drm tree
-Date: Tue, 13 Mar 2012 16:11:24 +1100
-Message-ID: <20120313161124.1d91e04d7507ec249f364270@canb.auug.org.au>
+Subject: linux-next: manual merge of the uprobes tree with the tip tree
+Date: Tue, 13 Mar 2012 16:41:50 +1100
+Message-ID: <20120313164150.6e64d11ee0c3e7aad49c0fbb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Mar_2012_16_11_24_+1100_hfmzkXmOixJ//OaL"
+ boundary="Signature=_Tue__13_Mar_2012_16_41_50_+1100_yL8HT5a5jFy1M7n8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33084 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:54027 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753917Ab2CMFLg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 01:11:36 -0400
+	with ESMTP id S1753398Ab2CMFl6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 01:41:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Alan Cox <alan@linux.intel.com>, Dave Airlie <airlied@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephane Eranian <eranian@google.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Tue__13_Mar_2012_16_11_24_+1100_hfmzkXmOixJ//OaL
+--Signature=_Tue__13_Mar_2012_16_41_50_+1100_yL8HT5a5jFy1M7n8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Srikar,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/platform/mrst/mrst.c between commit 026abc333205 ("gma500:
-initial medfield merge") from the drm tree and commit ecfdb0ac15ba
-("x86/mrst: Add msic_thermal platform support") from the tip tree.
+Today's linux-next merge of the uprobes tree got a conflict in
+arch/x86/kernel/cpu/perf_event_intel_ds.c between commit 3e702ff6d1ea
+("perf/x86: Add LBR software filter support for Intel CPUs") from the tip
+tree and commit 1e1e2cddc33d ("x86/trivial: use is_ia32_compat_task")
+from the uprobes tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -34,55 +35,39 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/platform/mrst/mrst.c
-index b930cc4,721e652..0000000
---- a/arch/x86/platform/mrst/mrst.c
-+++ b/arch/x86/platform/mrst/mrst.c
-@@@ -688,19 -670,11 +672,24 @@@ static void *msic_ocd_platform_data(voi
-  	return msic_generic_platform_data(info, INTEL_MSIC_BLOCK_OCD);
-  }
+diff --cc arch/x86/kernel/cpu/perf_event_intel_ds.c
+index 7f64df1,92e7dee4..0000000
+--- a/arch/x86/kernel/cpu/perf_event_intel_ds.c
++++ b/arch/x86/kernel/cpu/perf_event_intel_ds.c
+@@@ -3,7 -3,7 +3,8 @@@
+  #include <linux/slab.h>
  =20
- +/* tc35876x DSI-LVDS bridge chip and panel platform data */
- +static void *tc35876x_platform_data(void *data)
- +{
- +       static struct tc35876x_platform_data pdata;
- +
- +       /* gpio pins set to -1 will not be used by the driver */
- +       pdata.gpio_bridge_reset =3D get_gpio_by_name("LCMB_RXEN");
- +       pdata.gpio_panel_bl_en =3D get_gpio_by_name("6S6P_BL_EN");
- +       pdata.gpio_panel_vadd =3D get_gpio_by_name("EN_VREG_LCD_V3P3");
- +
- +       return &pdata;
- +}
- +
-+ static void *msic_thermal_platform_data(void *info)
-+ {
-+ 	return msic_generic_platform_data(info, INTEL_MSIC_BLOCK_THERMAL);
-+ }
-+=20
-  static const struct devs_id __initconst device_ids[] =3D {
-  	{"bma023", SFI_DEV_TYPE_I2C, 1, &no_platform_data},
-  	{"pmic_gpio", SFI_DEV_TYPE_SPI, 1, &pmic_gpio_platform_data},
+  #include <asm/perf_event.h>
+ +#include <asm/insn.h>
++ #include <asm/compat.h>
+ =20
+  #include "perf_event.h"
+ =20
 
---Signature=_Tue__13_Mar_2012_16_11_24_+1100_hfmzkXmOixJ//OaL
+--Signature=_Tue__13_Mar_2012_16_41_50_+1100_yL8HT5a5jFy1M7n8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPXtb8AAoJEECxmPOUX5FE/cQQAI4fCM2dTuo9wuLJWU+rTabM
-Pvs6CccamOXvYWcVj+tsFpcYOOF/hWJuLHEfqwtfHqHfyEVUUn7p0//x616YDBLo
-yV2r5GWkRAcQRLVngwyD4nMtvb2ZUaPN6nMbPx+W0K5SfHZ76mtMaUlElrVZ4v7k
-CWLajiQ2t6rgMs98EJxRCAmXNWVIcxK1EVRHsL//ITpKjTf3Vb2u/Ly9xpzqTfqi
-hVwwSoyR8/xVtZS6FQXPAAzo+SEFP8c20BCaL9bsx2W1HvTcDQ9o6iBCsMcMK9C8
-rSKpnyhFD3L9SWoInrZagvNmOJ0gkjxY/0Nywumc8EW+OLDXXpEkwQLeZglImSmi
-ovjDAxcmMAVmD6rntXRWbk4bqeGp8qyYS+3Nr9foWAvXbIy33+L5mmUdaO6r8PKH
-baQuWXF8mfXSIQ76qP30YoPu75PryLzwhpnSuMiqw4Dow2mEHUVkweRwkAZq3YYJ
-HtnuM6Z6mXI2+Wm3IjFCbENwhw+d+POvw6+Reu84SQZvE0C7nbBQFBydMSJxWFk6
-ZJ8HF9gBLEIfBU9bBfp6XElg2L7cOmWtFtQJzh3DBp9PfpvGpNJExxeK2FSknxCg
-qeNy9jrjcRB+NSBoTcaH9TfYiMMHHVJFdwyIMdZH61+2IUxYRsXCXEK4IRoEaN07
-/5N7voo2LVAqyOfnnaqH
-=zjWD
+iQIcBAEBCAAGBQJPXt4eAAoJEECxmPOUX5FEkQ4P/2BgYiv0lxczJLsBKIiTs2mp
+XjBeAVURWhye5DZ24CCS6KABk8Gm96y2Dd9gE6kcJ3P9B9JNy0mcGYGv78SiiwEs
+nmiVfu6lf+EgRx/37CphH/fUMPx1q/w6pcF2wlHy3u9IzMrIQZINJNcFbb8e0/To
+Ku3h0UXkKnZvQqAkijnYagkmL6WnXRxGfmb555lQ8fyrooxUIDL7gE9PnN/S3S1n
+NGUbDQKiXmWkKQByvNtnUJIqFvz4WJIv6pfg9qg9r1a+/KgsNJqtlgBLWXV1WQUw
+juxFb26V3Vq0ViQyH4N4BKNyYKEoEUQM1d1IU7rAou8t1uG61ofwtO0uDqHsvIVq
+BB2vorpSgfXWMNCf7NPtgtlaeg7YvCBU0DGNMjxq2pYeOkQG9C1GL7mSlskp1MTn
+Ou7E7IbEWVFWPlEOVmPhpcMAop89UGXOw6O5UX01dmaGE8+qziEbDcWAPBMwkBPF
+t5M2Gxn1p3CuReUZ+sEyrbcktNbA7LOHG/54XDcBp8IvyjWESnfsDc2rdOqL2pBK
+ay/LULxFwsR94NEwcpBmrVuXgaIrqpHN8lAZEBDXvOOufg0Nq/fVAHD5nY/iy+7A
+fILVH/0hoX7b6GNVfpUl8IyXItO0Cw5zT4efc721Zp+96nPI+mVW76+0cYAr8sYJ
+EnB1b1PcD6C3Ak/Wgr2N
+=FwJL
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Mar_2012_16_11_24_+1100_hfmzkXmOixJ//OaL--
+--Signature=_Tue__13_Mar_2012_16_41_50_+1100_yL8HT5a5jFy1M7n8--
