@@ -1,55 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Tue, 13 Mar 2012 19:47:27 +1100
-Message-ID: <20120313194727.9d5939c174d54ea1569403f5@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the arm tree with Linus' tree
+Date: Tue, 13 Mar 2012 09:48:03 +0100
+Message-ID: <20120313084803.GA6991@elte.hu>
+References: <20120313110840.7b444deb6b1bb902c15f3cdf@canb.auug.org.au>
+ <20120313061622.GA24357@elte.hu>
+ <20120313083310.GA27560@flint.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__13_Mar_2012_19_47_27_+1100_Mw6hsGs//UN58C_n"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120313083310.GA27560@flint.arm.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Marc Zyngier <marc.zyngier@arm.com>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__13_Mar_2012_19_47_27_+1100_Mw6hsGs//UN58C_n
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Russell King <rmk@arm.linux.org.uk> wrote:
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/plat-versatile/localtimer.c between commit e9f07fbc5f5b ("ARM:
-plat-versatile: convert to twd_local_timer_register() interface") from
-the arm tree and commit e129440af638 ("ARM: versatile: Map local timers
-using Device Tree when possible") from the arm-soc tree.
+> Please check your mailbox:
+> 
+> Date: Fri, 20 Jan 2012 17:42:27 +0000
+> From: Catalin Marinas <catalin.marinas@arm.com>
+> To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+> Cc: Russell King <linux@arm.linux.org.uk>, Ingo Molnar <mingo@elte.hu>,
+>         Peter Zijlstra <peterz@infradead.org>,
+>         Will Deacon <will.deacon@arm.com>,
+>         Frank Rowand <frank.rowand@am.sony.com>
+> Subject: [PATCH v3 1/6] sched: Introduce the finish_arch_post_lock_switch()
+>         scheduler hook
 
-I did the obvious thing and removed the file (as the former does), but
-there is probably more to be fixed up.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Btw., are you losing emails? Because the reply from peterz to 
+those patches, a month ago, was pretty clear:
 
---Signature=_Tue__13_Mar_2012_19_47_27_+1100_Mw6hsGs//UN58C_n
-Content-Type: application/pgp-signature
+> > Russell, what's the status of these patches? I'd like to see 
+> > them land in 3.4 if possible. I'm fine either way, I'll
+> >
+> > probably ask Ingo to pull your tree so that I can stack some 
+> > other patches on top.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+You never replied to PeterZ's request, you just ignored this 
+scheduler maintainer request and you just did it in some random 
+way that was most convenient to you many weeks after the thread 
+died down, ignoring everyone else's concerns - a pretty usual 
+pattern from you I have to say.
 
-iQIcBAEBCAAGBQJPXwmfAAoJEECxmPOUX5FEJYYQAJX3qbd/bSVia2/rAkUEpsM0
-d/k/lwT/HuFYlFZOuGr7/PB91dBmOYLkg/5S2LoBZyU9jy5lw56+/n387lWZMF5r
-Aw/zMNlT3dHXZLCe3QdZCf6hPQuoCjufAGrQv3pGdwoaWaw4vCpaRqm2V+o9Tn2h
-D5iCVqVTghLIcQ9d1UV1M8/Bh0+Og6YpT4pEi4YFeZ/8LwnHtKGHDkaRcLlzss3P
-bRRHeG7QMjzbOFR4OYpzBgtUPA6FVyK1iWsgOvno+XAzuC+evXCZJ+YerrTZSOFi
-is5yA/tFab1KnidRMcoA/AXcAjTioBmf0HqIIbvfuYvtow79N5/dr1eH96TaZTVg
-BTvHWFtyX3Otd4wlPVZ8EierAvBb0jAiHy0mfgw7n2PTqUFfsAqPg++Xc4vtLRKq
-eztm8CL3OOikeVHp9FdCC9GYeGoI0l1BoUh0BG8R7mw1d1SwXrnge+lY5nos0p+l
-675ul1KP60CFQXJkEGkhSz351ENAbIUbxv+ZPhzQytlgYvCAZP9rY/byG7pibhwk
-DM4NF7ydgh/4EPkU9WUNA0EFjNiIfYZAGPuktKWb1ngelNy5Fe3+wBr8QLwbvJmo
-WTOYyBhLCLNOgLStb9qS4r+ARLEcAplxfFMu4u7EuKKAznI0vEUdPUxuPKARN0Pw
-uySh5XAQjpooIlQJ6dsz
-=+ozR
------END PGP SIGNATURE-----
+Had you followed PeterZ's request this conflict in linux-next 
+could have been avoided, amongst other things.
 
---Signature=_Tue__13_Mar_2012_19_47_27_+1100_Mw6hsGs//UN58C_n--
+Given that the merge window is close I doubt there will be 
+other, more difficult to resolve conflicts, but this incident 
+again demonstrates your inability to communicate efficiently and 
+amicably, forcing me to highlight it in this trivial case 
+because it's a sadly reoccuring pattern.
+
+Thanks,
+
+	Ingo
