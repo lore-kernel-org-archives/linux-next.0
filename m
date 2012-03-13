@@ -1,60 +1,38 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH -next] vgaarb.h: fix build warnings
-Date: Tue, 13 Mar 2012 14:25:15 -0700
-Message-ID: <4F5FBB3B.1090800@xenotime.net>
-References: <20120130144102.8d202c7d8eccd503a86b3053@canb.auug.org.au> <4F26F2F8.30505@xenotime.net>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Inconsistent kallsyms data on ARM.
+Date: Tue, 13 Mar 2012 18:00:49 -0400
+Message-ID: <CAP=VYLoStscdVJretZ-Rkbp7V3Vsm8N0oWcjih7ruHFiDN7CiA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:39598 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753878Ab2CMVZR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 17:25:17 -0400
-In-Reply-To: <4F26F2F8.30505@xenotime.net>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:51849 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756046Ab2CMWAv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Mar 2012 18:00:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Andrew Morton <akpm@linux-foundation.org>
+To: linux-kbuild@vger.kernel.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Arnd Bergmann <arnd@arndb.de>
 
-On 01/30/2012 11:43 AM, Randy Dunlap wrote:
+This bug(?)  has been seen to float from one ARM build to another since
+I started tracking the day-to-day changes in Stephen's linux-next builds.
 
-This patch is still needed in linux-next of 20120313.
+I see it was discussed earlier:
 
+   https://lkml.org/lkml/2011/8/2/233
+   https://lkml.org/lkml/2011/10/8/70
 
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> Fix build warnings by providing a struct stub since no fields of
-> the struct are used:
-> 
-> include/linux/vgaarb.h:66:9: warning: 'struct pci_dev' declared inside parameter list
-> include/linux/vgaarb.h:66:9: warning: its scope is only this definition or declaration, which is probably not what you want
-> include/linux/vgaarb.h:99:34: warning: 'struct pci_dev' declared inside parameter list
-> include/linux/vgaarb.h:109:6: warning: 'struct pci_dev' declared inside parameter list
-> include/linux/vgaarb.h:121:8: warning: 'struct pci_dev' declared inside parameter list
-> include/linux/vgaarb.h:140:37: warning: 'struct pci_dev' declared inside parameter list
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> Cc:	David Airlie <airlied@linux.ie>
-> Cc:	dri-devel@lists.freedesktop.org
-> ---
->  include/linux/vgaarb.h |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> --- linux-next-20120130.orig/include/linux/vgaarb.h
-> +++ linux-next-20120130/include/linux/vgaarb.h
-> @@ -47,6 +47,8 @@
->   */
->  #define VGA_DEFAULT_DEVICE     (NULL)
->  
-> +struct pci_dev;
-> +
->  /* For use by clients */
->  
->  /**
-> 
+but no concrete cause was nailed down.  Can the linux-next build results
+help shed some light on this in any way?  Since it seems sporadic, is
+there value in embedding a diagnostic of some sort in the infrastructure
+so that when the error is detected, that it prints out more detailed info?
 
+I can provide links to failed linux-next builds, but at the moment, all they
+really seem to have is the same repeated error message, like this one:
 
+   http://kisskb.ellerman.id.au/kisskb/buildresult/5869367/
 
--- 
-~Randy
+and I don't see that helping folks all that much....
+
+Paul.
