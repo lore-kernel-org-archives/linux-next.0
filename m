@@ -1,76 +1,77 @@
-From: Rob Lee <rob.lee@linaro.org>
-Subject: Re: linux-next: manual merge of the cpuidle-cons tree with the
- arm-soc tree
-Date: Mon, 12 Mar 2012 20:50:14 -0500
-Message-ID: <CAMXH7KFw703n3UyXFj0cGZ_scpvHR8c+iguuUQPuEQgfswnaRw@mail.gmail.com>
-References: <20120309183732.512d3676599da324f4747219@canb.auug.org.au>
-	<4F5E1ECC.1040605@atmel.com>
-	<CAMXH7KH_vgri3EPRvkXR+LddRUc=0ve=4u7yr51utBfgV5bF3w@mail.gmail.com>
-	<20120313100625.b500f0efb546a9f4ceeb12ba@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the isci tree with the scsi tree
+Date: Tue, 13 Mar 2012 13:45:12 +1100
+Message-ID: <20120313134512.848baf17f46729fa0fac195d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__13_Mar_2012_13_45_12_+1100_CjpdzR./uO+3k_.F"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:50887 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759354Ab2CMBuO convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Mar 2012 21:50:14 -0400
-Received: by yhmm54 with SMTP id m54so32629yhm.19
-        for <linux-next@vger.kernel.org>; Mon, 12 Mar 2012 18:50:14 -0700 (PDT)
-In-Reply-To: <20120313100625.b500f0efb546a9f4ceeb12ba@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44146 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752506Ab2CMCp0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Mar 2012 22:45:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>
 
-On Mon, Mar 12, 2012 at 6:06 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Rob,
->
-> On Mon, 12 Mar 2012 12:03:48 -0500 Rob Lee <rob.lee@linaro.org> wrote=
-:
->>
->> On Mon, Mar 12, 2012 at 11:05 AM, Nicolas Ferre <nicolas.ferre@atmel=
-=2Ecom> wrote:
->> > -----BEGIN PGP SIGNED MESSAGE-----
->> > Hash: SHA1
->> >
->> > On 03/09/2012 08:37 AM, Stephen Rothwell :
->> >>
->> >> Today's linux-next merge of the cpuidle-cons tree got a conflict
->> >> in arch/arm/mach-at91/cpuidle.c between commit 00482a4078f4 ("ARM=
-:
->> >> at91: implement the standby function for pm/cpuidle") from the
->> >> arm-soc tree and commit 7a1f6e72dce1 ("ARM: at91: Consolidate tim=
-e
->> >> keeping and irq enable") from the cpuidle-cons tree.
->> >>
->> >> I fixed it up (I think - see below) and can carry the fix as
->> >> necessary.
->> >
->> > Yes: resolution correct. Please carry it.
->>
->> Who should carry this fixup and related necessary at91 changes? =A0M=
-e?
->> FYI, my at91 changes are dependent on my core cpuidle change, but my
->> core cpuidle changes do not require any at91 changes as the at91 and
->> other platform changes were only made to consolidate duplicate code.
->
-> I will carry the fixup and Linus will presumably do the same fix when=
- he
-> merges these trees in his tree. =A0I am not sure what you mean by "re=
-lated
-> at91 changes".
->
+--Signature=_Tue__13_Mar_2012_13_45_12_+1100_CjpdzR./uO+3k_.F
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Stephen.  By "related changes" I just meant that if I were to
-make a branch to carry the fixup, I'd need to all merge in the at91
-related changes that are on linux-next but not on an rc tag yet.  But
-please ignore this statement if it doesn't make sense.  I'm not yet
-knowledgeable on the workflow once submitted patchsets reach this
-level.
+Hi Dan,
 
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
+Today's linux-next merge of the isci tree produced a large number of
+conflicts against the scsi.
+
+ Merging isci/all
++CONFLICT (content): Merge conflict in include/scsi/sas_ata.h
+ CONFLICT (content): Merge conflict in include/scsi/libsas.h
++CONFLICT (content): Merge conflict in include/linux/libata.h
+ CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_scsi_host.c
++CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_internal.h
+ CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_init.c
+ CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_expander.c
++CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_event.c
+ CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_discover.c
++CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_ata.c
++CONFLICT (content): Merge conflict in drivers/scsi/isci/request.h
+ CONFLICT (content): Merge conflict in drivers/scsi/isci/registers.h
++CONFLICT (content): Merge conflict in drivers/scsi/isci/port.h
++CONFLICT (content): Merge conflict in drivers/scsi/isci/port.c
++CONFLICT (content): Merge conflict in drivers/scsi/isci/phy.c
+ CONFLICT (content): Merge conflict in drivers/scsi/isci/init.c
+
+Since you are feeding patches into the scsi tree (instaed of having you
+tree merged into the scsi tree), you should rebase your tree in the scsi
+tree after your patches have been accepted.  The above conflicts are
+(almost completely) caused by having the same patches in both trees with
+additional changes to those files in your tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__13_Mar_2012_13_45_12_+1100_CjpdzR./uO+3k_.F
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPXrS4AAoJEECxmPOUX5FEZZMP/1j90zc8wCsFFsXXs8rCkfjd
+munvgrWBLhNClhVoFVu5Az2wiruoOFpVRwgMpfqlh9cOLKsKmaOgvpeSBm4HgQik
+c+xZNpHyniEiMfSVy/RF4p6v6X7lXMAvEPmn1O3ETSLg4jLZnPshyHEFHbZ+fWFI
+xb8oDWC1M1R/+p/J0BJ0E4GwhxaGZHIeSsU5RbO8u0Nd/SiMqrJPxBtiaYw4zNfr
+dAzVnF8DgL1pUJafON7xGY4czeLzU+fe0mZPyBFhlH69Kcjqlj1HzY3OeLiaHAI7
+f03AMQEw1IEfzaovcb+ifVUdQ/S6M0t/zFzpQmBYot7SAScZFfsV2M8sWgvlfpCh
+hBhWqIPBl+CN6x74BZwg0m3+OLyPKhIrQ6BIJt7EjofNkam1R4Xhp+0hiFEwJtXL
+vBYD24dLkdUw7jMzdrAKeOmW8FSL2hG52AIra6/qY+CTylDSZt/N1aG9Sgw02jjX
+/pOFfuRaafqHeXXyQFoTID6JxnZO/pM0cuXi0B6YUq9enN9D6YBxYXF5fPH4cPaI
+6plB9zH8lE9PG4Z6h9pIgaz3BjgQyYeUoeDNn7Wj7cXZdt+P09BfJpwaFtuK3DN+
+mjPxCavny6ks1f4PE5cmgkgaZhtKvAdCE8aqqtZqrYjPW5eQdrWn62qDHOiCrvtL
+llvyF86FLqaLGZjS6UBm
+=fxzU
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__13_Mar_2012_13_45_12_+1100_CjpdzR./uO+3k_.F--
