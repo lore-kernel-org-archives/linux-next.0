@@ -1,63 +1,86 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the uprobes tree with the tip tree
-Date: Wed, 14 Mar 2012 15:14:44 +1100
-Message-ID: <20120314151444.a34eef495739e13506ac5b1a@canb.auug.org.au>
+From: Tony Breeds <tony@bakeyournoodle.com>
+Subject: Re: arm build failures (Was: linux-next: triage for March 13, 2012)
+Date: Wed, 14 Mar 2012 15:29:44 +1100
+Message-ID: <20120314042944.GB26084@thor.bakeyournoodle.com>
+References: <20120313234707.GB7050@windriver.com>
+ <20120314114115.24e59318bdac705fec61bd89@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__14_Mar_2012_15_14_44_+1100_ZivQB+cPZ3KTEjIn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="TakKZr9L6Hm6aLOc"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:33389 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750860Ab2CNE3t (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Mar 2012 00:29:49 -0400
+Content-Disposition: inline
+In-Reply-To: <20120314114115.24e59318bdac705fec61bd89@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Wed__14_Mar_2012_15_14_44_+1100_ZivQB+cPZ3KTEjIn
-Content-Type: text/plain; charset=US-ASCII
+
+--TakKZr9L6Hm6aLOc
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Srikar,
+On Wed, Mar 14, 2012 at 11:41:15AM +1100, Stephen Rothwell wrote:
+> On Tue, 13 Mar 2012 19:47:07 -0400 Paul Gortmaker <paul.gortmaker@windriv=
+er.com> wrote:
+> >
+> > ARM:netx_defconfig,pnx4008_defconfig=20
+> > 	when:	Mar 14, 02:43
+> > 	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
+> > 	status:=09
+> > 	fix:=09
+> > 	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
+>=20
+> This is this:
+>=20
+> net/core/pktgen.c:682:2775: error: can't find a register in class 'GENERA=
+L_REGS' while reloading 'asm'
+> net/core/pktgen.c:682:3153: error: can't find a register in class 'GENERA=
+L_REGS' while reloading 'asm'
+> net/core/pktgen.c:682:2775: error: 'asm' operand has impossible constrain=
+ts
+> net/core/pktgen.c:682:3153: error: 'asm' operand has impossible constrain=
+ts
+>=20
+> Which is a do_div() call.  The relevant code does not appear to have
+> changed, so this may well be a result of our toolchain changing from
+> "arm-linux-gcc (GCC) 4.4.0, GNU ld (GNU Binutils) 2.19.1" to
+> "arm-unknown-linux-gnueabi-gcc (GCC) 4.6.3, GNU ld (GNU Binutils) 2.22".
 
-The linux-next merge of the uprobes tree gets several conflicts against
-the tip tree because the same patches appear in both threes and there are
-further changes to some files in the uprobes tree.
+Just for reference I build that code with:
+arm-unknown-linux-gnueabi-gcc (GCC) 4.5.2, GNU ld (GNU Binutils) 2.21
+and it was fine so I don't think it's to do with the switch from=20
+arm-linux-gcc to arm-unknown-linux-gnueabi-gcc[1]
 
-Merging uprobes/for-next (1fe509b uprobes/core: Handle breakpoint and singl=
-estep exception.)
-CONFLICT (add/add): Merge conflict in kernel/events/uprobes.c
-CONFLICT (content): Merge conflict in kernel/events/Makefile
-CONFLICT (add/add): Merge conflict in include/linux/uprobes.h
-CONFLICT (add/add): Merge conflict in arch/x86/kernel/uprobes.c
-CONFLICT (add/add): Merge conflict in arch/x86/include/asm/uprobes.h
+Yours Tony
 
-The easiest way to remove these conflicts would be for you to rebase the
-uprobes tree onto the perl/uprobes branch of the tip tree (I assume that
-all the uprobes code will eventually be merged to Linus via the tip tree)
-or a subset of that branch that is the common set of patches.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+[1] This switchwas done as a result off the discussion at: http://lists.inf=
+radead.org/pipermail/linux-arm-kernel/2010-November/030627.html
 
---Signature=_Wed__14_Mar_2012_15_14_44_+1100_ZivQB+cPZ3KTEjIn
+--TakKZr9L6Hm6aLOc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPYBs0AAoJEECxmPOUX5FEbvUP/2K2TCk6qeWTfjtvmne+DVUp
-Teab0R8Ja0riHD5k2BIN8gUlootSIywV5Fy6ekvmZaF+3EtZaLGlMg1o51Tm3oiX
-RaBqfdmeATE9/H/Mxj4ZdMudwzHmc8Iruz/plIPh2BRtIb3auUtDtBtRvjGCyiZe
-ZoBephATvL6n+TRy8h24Qex/7macgkN/QFoImLe29gZ32xBXEISc7mw14Rx+YWy/
-IF6ddXLGjIuXWvAAgn2drGsDqm7Ugo4IDsSXfPmh7nwbav2Urhp/j25Ps3E0cgn7
-fffUceT1QTzeJoQVTua5xUi1brhiW7aNdXV7vGDEOAiM615654CiL87SUBZvZWmJ
-Pdv//sOl+g3o4KJObOWoBqauyPi3YF+/pBidgX+TIxWzuFST7zDLYre74aFvGk4r
-vSt9eGYq+lUAwZDHWLu5Ma4y1GpMgNISGQ7t7ah8vh5Bt33V9HwwwSAjh0c0tagD
-jw90YFz0kV1MQhLxW13OhUnJnpOaRUsuDWesr+/iK3JBzigAn+Adq5SrGDAnwgZJ
-dfl3xUx27QuH9e6w+UmdIEsNv6vhvSWHEm65wbzAzwYkAVTbWroOr0rhxu7RZlfk
-fl5ao7eOu6uCSCX+PZ0u1Nybg7F0KC8wCD4xIIXwK+UeWFnI668f2Tfta/Ys4G9L
-ywcb5lsVk8jvPA5020vW
-=SuYb
+iQIcBAEBCAAGBQJPYB64AAoJEEsCiJRY75GKWloQAKdMFZKdAHMesGvhdNuPTJsV
++a43EiT6q6Azu5Y4B1OIfj5cxtvTPkjh/17jZS8wziIEFVhbX4dlqQtxVPeNZcga
+46hxsZ1XbAAbGwwKWyXKJ1XfHuTNzo7omDTABO1jWUZ9Mk78clYy97VjqkYKTWka
+zs+Y2nnwPYs1cmjqnWoct1pzPhanCf4XjhzT3ETZ6otd0B1eVUhLqumQ0bMepNA7
+apUI3fD9G9NTjcihQs9GuocYnmDHMLw41uAbVN3UpRLnumGUkf+K0dZ9gwwwA+br
+yVoPjlxHUrrMxldAaHxkqnFSKQQ5u1w9b3O4jiPjRBj4HwKXEqYiJAyth+1TcNDT
+cK8Bkj8I2AYJ/fHI/48aeeuvs+Pah/WuWFjG3sSvCC1ba8d2y21PGyFgveH5mIf6
+W1mp0qwE8W/IUloNhnd/3vRt/RbbjJNwgXv/45hfIVXP+i9ZX7JqA186NW6/bkam
+o5D/DoO8ID+u2RVuHPM0lhSFuf7tqZ1F6uRIyIAdo2UThyhfQDo2HwWoy7gqz9ZR
+YkGKzXr2hr50n0vL6mp2qeJaE5IE5JjuBVvB/bGScVS4k5bPQ4IcmodbGSZY6bqx
+VaMN4ZrUEjFlMCFpeQXXgOWW9veAXM/xMUYstUXNd5Fvsz1oe8IlLVJpE9QZYWCp
+k8mXQFp/qBus9oLZREQy
+=qtr7
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__14_Mar_2012_15_14_44_+1100_ZivQB+cPZ3KTEjIn--
+--TakKZr9L6Hm6aLOc--
