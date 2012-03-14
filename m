@@ -1,103 +1,64 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: next-20120313 cpuidle freezes when booting
-Date: Wed, 14 Mar 2012 20:46:57 +0100
-Message-ID: <4F60F5B1.8070302@linaro.org>
-References: <alpine.LSU.2.00.1203131454500.1335@eggly.anvils> <4F608116.80508@linaro.org> <alpine.LSU.2.00.1203141156490.3826@eggly.anvils>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Mar 14 (printk)
+Date: Thu, 15 Mar 2012 07:19:34 +1100
+Message-ID: <20120315071934.77f0af64a4c633c545d68ea4@canb.auug.org.au>
+References: <20120314181921.59451eca117c276461f7dc28@canb.auug.org.au>
+	<4F60BFA6.2030804@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:51302 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030443Ab2CNTrB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 15:47:01 -0400
-Received: by eekc41 with SMTP id c41so1266664eek.19
-        for <linux-next@vger.kernel.org>; Wed, 14 Mar 2012 12:46:59 -0700 (PDT)
-In-Reply-To: <alpine.LSU.2.00.1203141156490.3826@eggly.anvils>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Robert Lee <rob.lee@linaro.org>, Jean Pihet <j-pihet@ti.com>, Kevin Hilman <khilman@ti.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__15_Mar_2012_07_19_34_+1100_fhMTTBxpi6gmRjqP"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4F60BFA6.2030804@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On 03/14/2012 08:03 PM, Hugh Dickins wrote:
-> On Wed, 14 Mar 2012, Daniel Lezcano wrote:
->> On 03/13/2012 11:29 PM, Hugh Dickins wrote:
->>> Hi Stephen,
->>>
->>> Yesterday's 3.3.0-rc7-next-20120313 gives me unpredictable freezes
->>> on x86_64, on a ThinkPad T420s - I've not dared it on more machines=
-=2E
->>>
->>> Usually when booting up (sometimes just after Freeing unused kernel
->>> memory, sometimes random places elsewhere), but occasionally it man=
-ages
->>> to get as far as X; doesn't usually manage to complete suspend+resu=
-me.
->>>
->>> 3.3.0-rc6-nex-20120309 behaved similarly; the last I tried before
->>> that was 3.3.0-rc5-next20120227, which was okay.
->>>
->>> Bisection led me to "cpuidle: Add common time keeping and irq enabl=
-ing",
->>> (from the cpuidle-cons tree I think), and reverting that has so far
->>> given me a working system (it's a success if I complete this mail).
->>>
->>> Below is the patch I've used to revert it (for other people having
->>> problems with recent linux-next to try); but it's not quite correct=
-,
->>> because you did a merge on conflicting trees there, and I didn't sp=
-end
->>> time to unravel all that, just get a working x86 system - since I'v=
-e
->>> left out some of your merge (in arch/arm/kernel/Makefile and arch/a=
-rm/
->>> mach-at91/cpuidle.c), this reversion probably breaks arm as is.
->>
->> Hi Hugh,
->>
->> is it possible you give the cpuidle driver your host is using ?
+--Signature=_Thu__15_Mar_2012_07_19_34_+1100_fhMTTBxpi6gmRjqP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 14 Mar 2012 08:56:22 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
 >
-> "grep IDLE .config" tells me:
->
-> CONFIG_ARCH_HAS_CPU_IDLE_WAIT=3Dy
-> CONFIG_ARCH_HAS_DEFAULT_IDLE=3Dy
-> CONFIG_CPU_IDLE=3Dy
-> CONFIG_CPU_IDLE_GOV_LADDER=3Dy
-> CONFIG_CPU_IDLE_GOV_MENU=3Dy
-> CONFIG_INTEL_IDLE=3Dy
-> # CONFIG_I7300_IDLE is not set
->
-> but I've a feeling that isn't what you need to know.
+> on x86_64:
+>=20
+> kernel/printk.c:1230:5: error: redefinition of 'printk_sched'
+> include/linux/printk.h:136:5: note: previous definition of 'printk_sched'=
+ was here
 
-Thanks for these informations, I forgot to ask you for them.
-By the way, do you have CONFIG_ARCH_HAS_CPU_RELAX  ?
-
-> Is there some /proc or /sys file I can read to tell you?
-
-Yes, the content of /sys/devices/system/cpu/cpuidle/current_driver
-and /sys/devices/system/cpu/cpuidle/current_governor_ro
-
-
-> Though if it's something that changes dynamically, then what
-> I read now might not be what it would say when things go wrong.
-
-No, that won't change, so the information should be enough for me to=20
-find the code path where the regression is.
-
-> I expect you've realized by now, I haven't a clue about cpuidle
-> drivers: I hadn't even realized that idleness needs a driver.
-
-No problem, thanks for git bisecting and find the culprit :)
-
-   -- Daniel
-
-
+Caused by commit 3ccf3e830615 ("printk/sched: Introduce special
+printk_sched() for those awkward moments") from the tip tree.  The
+declaration in include/linux/printk.h has alternatives determined by
+CONFIG_PRINTK, but the definition in kernel/printk.c is not so
+protected ...
 
 --=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+\
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--Signature=_Thu__15_Mar_2012_07_19_34_+1100_fhMTTBxpi6gmRjqP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPYP1WAAoJEECxmPOUX5FEqBIP/iu2tO45UnLFm04wfqII5NcT
+yjc72hhQmQRlhko/n2dOMcfdgMYrSj2s2u6Zh6FGPDibEmYxUcZU/8kxnV4m9p72
+IBCMSG9bQ0gvmmy3QqguMErHkkSepWolfKKbM0pKkKjpdD+6fHO9KdI4S7QJlbbO
+JWhXvIu4vjuanlJq0XGW3vyFNMaCMqiApmbW7wnscdrgvW7lstQIJf+0FuTJ2gUX
+kRlVjTCfgGs8O7Sk9N0ZtiF73Xo8taKGrw1y3u9ruCiOFe8b+Gedt1ogbETfI7GF
+C0BlP7HuVQfNunWR8iXClxIwyrWfrawf3YvSePqrcbN1xOwnRed0cJEq+P+opweN
+bxgJZT0Q8rHeOOonS5D7HCV9tk8uj6WoT4rjMpBwblOuZCOPoSBuSo3LKOA2U4gO
+e2XKNM2VGFwxt0xn2UkqWBV7EyniYGhoghvv4q6Y5AXu7VJeyNf20iCdTUKEsCuP
+dglFzRN+OLd72n2ZXQ3G18yjQxU/UeTl9BXzR+518Y56N6ZNCTh2jHGglYMa4UCJ
+jgsMkTLOivRg3CcdvAGxrDRBqFVsj2y+szsKpl1V8JFQfCgK6xylpL88wdP5Z8sy
+mdp5OsBvTT4+26IbZpBb8sY66yUMfQlfeb5GxdMRJ8+blO0DSC6zPvTh9+u16T5n
+QY4UmKdfRegElH50BGSo
+=9Aei
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__15_Mar_2012_07_19_34_+1100_fhMTTBxpi6gmRjqP--
