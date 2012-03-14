@@ -1,76 +1,26 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: arm build failures (Was: linux-next: triage for March 13, 2012)
-Date: Wed, 14 Mar 2012 11:41:15 +1100
-Message-ID: <20120314114115.24e59318bdac705fec61bd89@canb.auug.org.au>
-References: <20120313234707.GB7050@windriver.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: New build failures in sparc.
+Date: Tue, 13 Mar 2012 17:37:41 -0700 (PDT)
+Message-ID: <20120313.173741.18086192847996966.davem@davemloft.net>
+References: <CAP=VYLpfM0AFWQp7Q=xYHnCd_6vEXKKL1EL5daGcO9gsJZH=7Q@mail.gmail.com>
+	<20120313.154848.265971549311147422.davem@davemloft.net>
+	<20120314102830.aa7b1139bff158d30ac57505@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__14_Mar_2012_11_41_15_+1100_JnO3hluRsRA_3lPc"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59320 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757591Ab2CNAl0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 20:41:26 -0400
-In-Reply-To: <20120313234707.GB7050@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, tony@bakeyournoodle.com
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <sparclinux-owner@vger.kernel.org>
+In-Reply-To: <20120314102830.aa7b1139bff158d30ac57505@canb.auug.org.au>
+Sender: sparclinux-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: paul.gortmaker@windriver.com, sparclinux@vger.kernel.org, linux-next@vger.kernel.org, tony@bakeyournoodle.com
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__14_Mar_2012_11_41_15_+1100_JnO3hluRsRA_3lPc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 14 Mar 2012 10:28:30 +1100
 
-On Tue, 13 Mar 2012 19:47:07 -0400 Paul Gortmaker <paul.gortmaker@windriver=
-.com> wrote:
->
-> ARM:netx_defconfig,pnx4008_defconfig=20
-> 	when:	Mar 14, 02:43
-> 	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
-> 	status:=09
-> 	fix:=09
-> 	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
+> Yeah, we updated our sparc64 toolchain yesterday ... Tony says he
+> will try applying the patch(es) from the bugzilla.
 
-This is this:
-
-net/core/pktgen.c:682:2775: error: can't find a register in class 'GENERAL_=
-REGS' while reloading 'asm'
-net/core/pktgen.c:682:3153: error: can't find a register in class 'GENERAL_=
-REGS' while reloading 'asm'
-net/core/pktgen.c:682:2775: error: 'asm' operand has impossible constraints
-net/core/pktgen.c:682:3153: error: 'asm' operand has impossible constraints
-
-Which is a do_div() call.  The relevant code does not appear to have
-changed, so this may well be a result of our toolchain changing from
-"arm-linux-gcc (GCC) 4.4.0, GNU ld (GNU Binutils) 2.19.1" to
-"arm-unknown-linux-gnueabi-gcc (GCC) 4.6.3, GNU ld (GNU Binutils) 2.22".
-
-Anyone have any thoughts?
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__14_Mar_2012_11_41_15_+1100_JnO3hluRsRA_3lPc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPX+krAAoJEECxmPOUX5FEaFQP/1boh7xygAj7fKtExKPRcnWG
-3Hp+6XHOXyvAVVxu6U19vSCnuzTCoi8nnSykT6m8LGGZeNUIzQF2boBUR0XNnyxt
-3Exrdfd8hpdrKpaoBvqEpR0FvbrHa5XU9yjkSdX1kMp7jRLs8TWq0dqbkse8VM1o
-LuFsXE4sAiNnTLMWF0lpA6oKbrr5Q3eWx5/96UVmObemomPP8Nkel8mbymHlYn7Q
-e9HtRIMYlUFJ/NKKCZH+9MYMOCRizg9+il2/4mUQ6mRyWZekktnlvH503XkfGZv2
-E8K+P077VavqZZHfiPtsJ0yocHhz94TkbHzt3l9aGh6DbJsG7rti3WiovxstCJsA
-g2wltyYLOU1U1KKh8C3bwXDS7F/mXepluRYmrqQdNEiHgsVTK5oQmv8miA56XdYY
-B4q4UmBs2ykusbUxd9IEka6o5w7ONp2dy7fdzypqKGqSvscFXSedpckQq8+Ase7K
-JEHrBz8c7bbCEBpHfdne97uO7ld/njuxAxjYlXjugy3P5g6rFinpuQiDTjI9K4Hu
-uG3Ei7sM8WniOqLhNKZaqNJ0XrCTjTuOLRLm5gH9xE880u9ac3o4PTa+XOd74fBI
-YGqD7I1crlb0/D+TwHYrPQzjcSA5P98tUtsDjlHHwpM01KIbfTzA0QIMUqLh6GQq
-tu6jGUgpunZOIQcgTvzR
-=GcG4
------END PGP SIGNATURE-----
-
---Signature=_Wed__14_Mar_2012_11_41_15_+1100_JnO3hluRsRA_3lPc--
+Meanwhile I'll add a workaround to the sparc makefiles, and
+push that to Linus.  This way it will work no matter what
+combination of tools someone has.
