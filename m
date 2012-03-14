@@ -1,76 +1,82 @@
-From: Gavin Shan <shangw@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the devicetree tree with the powerpc
- tree
-Date: Wed, 14 Mar 2012 09:53:56 +0800
-Message-ID: <20120314015356.GA4028@shangw>
-References: <20120313160100.c8cc3fd2b3d1f485ef7e7954@canb.auug.org.au>
- <20120313182612.0546D3E053B@localhost>
-Reply-To: Gavin Shan <shangw@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the s390 tree
+Date: Wed, 14 Mar 2012 14:46:33 +1100
+Message-ID: <20120314144633.947d650e8b2904625df53416@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__14_Mar_2012_14_46_33_+1100_Bg0ow0f52Y7+54xT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp08.au.ibm.com ([202.81.31.141]:42617 "EHLO
-	e23smtp08.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965036Ab2CNByH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 21:54:07 -0400
-Received: from /spool/local
-	by e23smtp08.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <shangw@linux.vnet.ibm.com>;
-	Wed, 14 Mar 2012 01:51:41 +1000
-Content-Disposition: inline
-In-Reply-To: <20120313182612.0546D3E053B@localhost>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45570 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752174Ab2CNDqn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 23:46:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>, benh@kernel.crashing.org
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-Hi Grant,
+--Signature=_Wed__14_Mar_2012_14_46_33_+1100_Bg0ow0f52Y7+54xT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > 
-> > Today's linux-next merge of the devicetree tree got a conflict in
-> > include/linux/of.h between commit eb740b5f3e65 ("powerpc/eeh: Introduce
-> > EEH device") from the powerpc tree and commit 0f22dd395fc4 ("of: Only
-> > compile OF_DYNAMIC on PowerPC pseries and iseries") from the devicetree
-> > tree.
-> > 
-> > Just context changes.  I fixed it up (see below) and can carry the fix as
-> > necessary.
-> > -- 
-> > Cheers,
-> > Stephen Rothwell                    sfr@canb.auug.org.au
-> > 
-> > diff --cc include/linux/of.h
-> > index bdb1c07,533603e..0000000
-> > --- a/include/linux/of.h
-> > +++ b/include/linux/of.h
-> > @@@ -75,14 -72,10 +75,17 @@@ struct of_phandle_args 
-> >   	uint32_t args[MAX_PHANDLE_ARGS];
-> >   };
-> >   
-> >  +#if defined(CONFIG_EEH)
-> >  +static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
-> >  +{
-> >  +	return dn->edev;
-> >  +}
-> >  +#endif
-> 
-> Ben, What is this?  I don't want the eeh_dev pointer in struct device_node.  Up to
-> now we've avoided putting any reverse references into device_nodes.  For everything
-> else we use a reverse lookup, particularly for devices, to avoid growing the
-> device_node for each new type of lookup.
-> 
+Hi all,
 
-It's used to trace the EEH device. When EEH (Enhanced Error Hanlding) is enabled,
-EEH device will be created against PCI sensitive OF node to trace the EEH state
-accordingly. Since you don't want see this in struct device_node, we have to change
-struct eeh_dev for a little bit to so that all struct eeh_dev instances will form
-a global list and we can search eeh_dev according to the given device_node through
-the global list. 
+Today's linux-next merge of the tip tree got a conflict in
+arch/s390/kernel/smp.c between commit 8b646bd75908 ("[S390] rework smp
+code") from the s390 tree and commit 5fbd036b552f ("sched: Cleanup
+cpu_active madness") from the tip tree.
 
-I don't know the policy or rule here for much. I think we can have 2 options.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-1. Keep the code as being, and fix it later.
-2. Fix it now.
+diff --cc arch/s390/kernel/smp.c
+index 64ebbcb,b0e28c4..0000000
+--- a/arch/s390/kernel/smp.c
++++ b/arch/s390/kernel/smp.c
+@@@ -714,12 -544,12 +714,6 @@@ static void __cpuinit smp_start_seconda
+  	ipi_call_lock();
+  	set_cpu_online(smp_processor_id(), true);
+  	ipi_call_unlock();
+- 	/*
+- 	 * Wait until the cpu which brought this one up marked it
+- 	 * active before enabling interrupts.
+- 	 */
+- 	while (!cpumask_test_cpu(smp_processor_id(), cpu_active_mask))
+- 		cpu_relax();
+ -	__ctl_clear_bit(0, 28); /* Disable lowcore protection */
+ -	S390_lowcore.restart_psw.mask =3D
+ -		PSW_DEFAULT_KEY | PSW_MASK_BASE | PSW_MASK_EA | PSW_MASK_BA;
+ -	S390_lowcore.restart_psw.addr =3D
+ -		PSW_ADDR_AMODE | (unsigned long) psw_restart_int_handler;
+ -	__ctl_set_bit(0, 28); /* Enable lowcore protection */
+  	local_irq_enable();
+  	/* cpu_idle will call schedule for us */
+  	cpu_idle();
 
-Thanks,
-Gavin
+--Signature=_Wed__14_Mar_2012_14_46_33_+1100_Bg0ow0f52Y7+54xT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPYBSZAAoJEECxmPOUX5FENpoP/Ar0QIYNOoNxnDpmWw1emPJW
+qn3DjbSQN84xXtdopyjS59dlfJahvCm1PkbkrJygiJCu8CN8KdAaWxlQAoVIhPOs
+sS6QqN5X0ySxbSgUaG4r7/fkOlETIAfyc019qvWmDMmy/1uc6dnbPBUojjyLiFLB
+yDfCP1iV3wanZsXfN3klwkAP7gUSzkCKaUJArzNYm3dlaz/h5yhtmDU+EsRvaQKm
+PTlRTGwbvdDX2aBP+0wMqVXnhU8tPzU4M3fvJNLbJnNWl8a0Fjhrs6sScA8nFM90
+hyhyxeUUT7DiCdThhjEg4yUfIJcV3vaI3AeZKzA+vFpXNrTeSAjlSl7r5V9YI4g3
+WwechzPmO9tQrWxIDtIvsISHrUq8LWSrOz5aD5pprsE1QMNXDNjxNfXmS/DpH5Tr
+gizRbTACcLsXEDd6Rhqh1AUQGqSDOEHJvF3spmu9k65yoHYE7a1Knmy83sBWZZHF
+yT1xVr3bgtdiZNx1C5ahzV1qci+bd3ZX9V8GY9jqnWa46t5YCa0KTz9vT0MTWDYG
+/XZ+S0Y+rr3WieDksRpoZIc7PUn1q5Ed6Z6hknkBOnZoN0w92BTtf1gLWIqbrPNq
+z0yLNs7nsMYp6TJPMMB7NVC+p7Kqe5r2xEmJtiR9ujvSS0XRrF0DbJsdOtmYrpd3
+rWDkPALSCySgFqw37xd8
+=/3s/
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__14_Mar_2012_14_46_33_+1100_Bg0ow0f52Y7+54xT--
