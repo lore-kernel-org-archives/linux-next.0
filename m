@@ -1,76 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the isci tree with the scsi tree
-Date: Wed, 14 Mar 2012 18:38:45 +1100
-Message-ID: <20120314183845.252d1cc2d01e30ceaff47848@canb.auug.org.au>
-References: <20120313134512.848baf17f46729fa0fac195d@canb.auug.org.au>
-	<CABE8wwtNcA4QcJyLC6zipjygjAYa6o=bwPyz6xS9A=PLiU+2kg@mail.gmail.com>
-	<20120313144152.5bd633a5ea6e496c059a9465@canb.auug.org.au>
-	<CABE8wwsET4BaS39r-+5_cshQ_WJDQMHWCcUsQjmcsqGU6a+R-A@mail.gmail.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: manual merge of the devicetree tree with the
+ powerpc tree
+Date: Wed, 14 Mar 2012 19:29:22 +1100
+Message-ID: <1331713762.3105.121.camel@pasglop>
+References: <20120313160100.c8cc3fd2b3d1f485ef7e7954@canb.auug.org.au>
+	 <20120313182612.0546D3E053B@localhost> <20120314015356.GA4028@shangw>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__14_Mar_2012_18_38_45_+1100_5A.TC/T+q=iJQBxD"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56737 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754961Ab2CNHjH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 03:39:07 -0400
-In-Reply-To: <CABE8wwsET4BaS39r-+5_cshQ_WJDQMHWCcUsQjmcsqGU6a+R-A@mail.gmail.com>
+Received: from gate.crashing.org ([63.228.1.57]:38348 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932102Ab2CNI37 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Mar 2012 04:29:59 -0400
+In-Reply-To: <20120314015356.GA4028@shangw>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Williams, Dan J" <dan.j.williams@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@hansenpartnership.com>
+To: Gavin Shan <shangw@linux.vnet.ibm.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
---Signature=_Wed__14_Mar_2012_18_38_45_+1100_5A.TC/T+q=iJQBxD
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2012-03-14 at 09:53 +0800, Gavin Shan wrote:
+> >  +#if defined(CONFIG_EEH)
+> > >  +static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
+> > >  +{
+> > >  +  return dn->edev;
+> > >  +}
+> > >  +#endif
+> > 
+> > Ben, What is this?  I don't want the eeh_dev pointer in struct device_node.  Up to
+> > now we've avoided putting any reverse references into device_nodes.  For everything
+> > else we use a reverse lookup, particularly for devices, to avoid growing the
+> > device_node for each new type of lookup.
+> > 
+> 
+> It's used to trace the EEH device. When EEH (Enhanced Error Hanlding) is enabled,
+> EEH device will be created against PCI sensitive OF node to trace the EEH state
+> accordingly. Since you don't want see this in struct device_node, we have to change
+> struct eeh_dev for a little bit to so that all struct eeh_dev instances will form
+> a global list and we can search eeh_dev according to the given device_node through
+> the global list. 
+> 
+> I don't know the policy or rule here for much. I think we can have 2 options.
+> 
+> 1. Keep the code as being, and fix it later.
+> 2. Fix it now. 
 
-hi Dan,
+My bad, it's a mis-review, I thought it was still in pci_dn, I din't
+catch Gavin moving it to device-node.
 
-On Wed, 14 Mar 2012 00:13:06 -0700 "Williams, Dan J" <dan.j.williams@intel.=
-com> wrote:
->
-> On Mon, Mar 12, 2012 at 8:41 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> > Hi Dan,
-> >
-> > On Mon, 12 Mar 2012 19:50:33 -0700 "Williams, Dan J" <dan.j.williams@in=
-tel.com> wrote:
-> >>
-> >> I was wondering why it had not happened prior to this point... =C2=A0i=
-n any
-> >
-> > It had, I just put up with it the first time :-)
->=20
-> Ok, all fixed up now, and I'll be quicker to respin when scsi-misc
-> picks up the next round of patches.
+Yes, Gavin, we need to do something else, a chained list we walk or
+something like that. For the "fast path" which is when we have a pci_dev
+around, we can either add it to dev_archdata or hijack the pci-dev
+platform_data (I don't think anything uses it, Grant, do you know of
+anything ?)
 
-Great, thanks.
+The patches are already in -next and I won't rebase, so we need to fix
+it on top of the existing patches. Gavin, can you make a patch that puts
+it back into pci_dn to begin with, then we can contemplate what better
+long term solution we have ?
 
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__14_Mar_2012_18_38_45_+1100_5A.TC/T+q=iJQBxD
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPYEsFAAoJEECxmPOUX5FEeyQQAIOKnAtxWTLUHZ0APyyDB+2m
-OS1vMGYJo8XMKU26PD/44nNA1OlD3fflhCALzXQqfJWKtfd2cRMfxqR7MCx1k6WX
-CoR++9Gz+SdqadkDyKlXGuL+l1pJ9khxKZr+6WfC4CkfN8O2aQfD+9hkNNWm3KXQ
-7CeH2lENyb9+CJIyjaFeNyMt56Jb4UNgMPuJTQ3g+PJt2zlRWTPZ1KYbSY3HMFIj
-+i51LQVC8GkcM0aqNbIj2Ea95vclJi9p3NkcDxJPk/mUaYk8HUohXipPn7qXNsU3
-mtgwcIqxD5gU4urZCLvLz+66btGdPKKgYVjF0+WBw/w2rB9TcxijeNgh2BVcLThY
-pqVRlV6xO+CV3ZShz85Eqr5yTczPRYBWmhwGtA0/qhMz8clJYDzCYD7yH+P9dgoL
-PIupuFoUiNCNlZ+yeyi1oPzQ+aGWNO7xyxwEUu60jXsCUE2YIstoBqZsQ8UN/iGX
-RHJi7OE9g+DSJB5hrFiJ8wynT/a0QWT4Fdoi+ke6USzT6nzJ26gFMkyKf2GgfNoP
-4B5EqunLJLTOCMZ3pewsH0My+YQrFUhRACoGtU/ULt3PSLvT+I7ZHb4JT06SkJyi
-HaB2w7SrgOshx0osy63P/gzxUacTPCH2zooGA9hYbGnIDhjEoK+DdiDRMX+10cOD
-3fgUWF54w8TWJd1lz8Sj
-=gE3+
------END PGP SIGNATURE-----
-
---Signature=_Wed__14_Mar_2012_18_38_45_+1100_5A.TC/T+q=iJQBxD--
+Ben.
