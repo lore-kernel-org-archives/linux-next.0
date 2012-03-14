@@ -1,33 +1,71 @@
-From: Chris Metcalf <cmetcalf@tilera.com>
-Subject: Re: linux-next: manual merge of the tile tree with Linus' tree
-Date: Tue, 13 Mar 2012 20:56:21 -0400
-Message-ID: <4F5FECB5.3090806@tilera.com>
-References: <20120314111057.499d4901f51264c2012fd2b1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: New build failures in sparc.
+Date: Wed, 14 Mar 2012 11:58:51 +1100
+Message-ID: <20120314115851.445b68161ae51a02c1965617@canb.auug.org.au>
+References: <CAP=VYLpfM0AFWQp7Q=xYHnCd_6vEXKKL1EL5daGcO9gsJZH=7Q@mail.gmail.com>
+	<20120313.154848.265971549311147422.davem@davemloft.net>
+	<20120314102830.aa7b1139bff158d30ac57505@canb.auug.org.au>
+	<20120313.173741.18086192847996966.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120314111057.499d4901f51264c2012fd2b1@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__14_Mar_2012_11_58_51_+1100_Zz6TNQghwCHMqE6z"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54521 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759869Ab2CNA7D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 20:59:03 -0400
+In-Reply-To: <20120313.173741.18086192847996966.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: paul.gortmaker@windriver.com, sparclinux@vger.kernel.org, linux-next@vger.kernel.org, tony@bakeyournoodle.com
 
-On 3/13/2012 8:10 PM, Stephen Rothwell wrote:
-> Hi Chris,
+--Signature=_Wed__14_Mar_2012_11_58_51_+1100_Zz6TNQghwCHMqE6z
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dave,
+
+On Tue, 13 Mar 2012 17:37:41 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
 >
-> Today's linux-next merge of the tile tree got a conflict in arch/Kconfig
-> between commit 43570fd2f47b ("mm,slub,x86: decouple size of struct page
-> from CONFIG_CMPXCHG_LOCAL") (and a couple after) from Linus' tree and
-> commit ca3a3d347e23 ("ipc: provide generic compat versions of IPC
-> syscalls") from the tile tree.
->
-> Just context changes. I fixed it up (see below) and can carry the fix as
-> necessary.
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 14 Mar 2012 10:28:30 +1100
+>=20
+> > Yeah, we updated our sparc64 toolchain yesterday ... Tony says he
+> > will try applying the patch(es) from the bugzilla.
+>=20
+> Meanwhile I'll add a workaround to the sparc makefiles, and
+> push that to Linus.  This way it will work no matter what
+> combination of tools someone has.
 
-Thanks!  I'll sync up that tree over the next couple of days as I start
-pushing out some more changes to get ready for 3.4 merge window.
+Excellent, thanks.
 
--- 
-Chris Metcalf, Tilera Corp.
-http://www.tilera.com
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__14_Mar_2012_11_58_51_+1100_Zz6TNQghwCHMqE6z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPX+1LAAoJEECxmPOUX5FENAsP/ijmHCzEi3/KOeUIvrWCiFQx
++9/1aSxvJNxxtH01a3a6fJQimjGN/iOswAEsNienIwjsDhJF27do2cholASOhFnl
+yGhi9DWHhuPEIgi2+/jOCpwKj3oCHx7FGoAu44dtT5hCnIdIwpc5M+T0FIPNMhPV
+18/++B//YfzlHyNA4HoxBIZ5gSg8muY+qNXd5petq33vt50LR4LB+JOYMx9avA7H
+DBQAKenWSC3fEvgDiTycbWzfbHDEhp+15Bfh3uH1pu+mN5jiWW4u+KlyazOGsVik
+xgJZZpW+E97vU9Sp3Q38IXBZwqcgiuruB2zOBUOaTC9LuwIxcoF0cep/5BPOif4w
+mvNakRvCf03SzdKgYwLQzvocP0CqXk1wWO87GNdAEOfIE2cHcBzOoxCPgATlRm+p
+Z+x2LkrYIBEJj9iKP/c3mrTe/dsuwbXhjIcjGLC2p+HqWP8InJvdX2Xy1tek5ZiM
+lS67Q0aNMuFE031RYNUstrSpjmxEsL8f/BbY+F0oxbsB0JezOZcsvozzHSIzZtdI
+gd6Dyun3K+NDZ5zHvufek1myFBpmKuVVaPudPyG66l35sX+5UlMn6+7ZKnInJJji
+AaXSSYhGP1SOEYr/ilYGlBXLlLgDk6AVnMqarMcbkotbPabseNDiT7zlgDh7X9B+
+5XCtyfB4qb9ZDT5OdwWt
+=h3P/
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__14_Mar_2012_11_58_51_+1100_Zz6TNQghwCHMqE6z--
