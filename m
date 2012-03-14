@@ -1,47 +1,63 @@
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the uprobes tree with the tip tree
-Date: Wed, 14 Mar 2012 10:25:44 +0530
-Message-ID: <20120314045544.GA4644@linux.vnet.ibm.com>
-References: <20120314151444.a34eef495739e13506ac5b1a@canb.auug.org.au>
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: New build failures in sparc.
+Date: Wed, 14 Mar 2012 16:02:46 +1100
+Message-ID: <20120314160246.6513bd6b963fc37de4f35d1c@canb.auug.org.au>
+References: <20120314102830.aa7b1139bff158d30ac57505@canb.auug.org.au>
+	<20120313.173741.18086192847996966.davem@davemloft.net>
+	<20120314040102.GA26084@thor.bakeyournoodle.com>
+	<20120313.214609.1139946570476396180.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e5.ny.us.ibm.com ([32.97.182.145]:38666 "EHLO e5.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752191Ab2CNE7C (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 Mar 2012 00:59:02 -0400
-Received: from /spool/local
-	by e5.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-	Wed, 14 Mar 2012 00:59:01 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__14_Mar_2012_16_02_46_+1100_v/qbiDM90bL2j5wD"
+Return-path: <sparclinux-owner@vger.kernel.org>
+In-Reply-To: <20120313.214609.1139946570476396180.davem@davemloft.net>
+Sender: sparclinux-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: tony@bakeyournoodle.com, paul.gortmaker@windriver.com, sparclinux@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__14_Mar_2012_16_02_46_+1100_v/qbiDM90bL2j5wD
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20120314151444.a34eef495739e13506ac5b1a@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Content-Transfer-Encoding: quoted-printable
 
-> The linux-next merge of the uprobes tree gets several conflicts against
-> the tip tree because the same patches appear in both threes and there are
-> further changes to some files in the uprobes tree.
-> 
-> Merging uprobes/for-next (1fe509b uprobes/core: Handle breakpoint and singlestep exception.)
-> CONFLICT (add/add): Merge conflict in kernel/events/uprobes.c
-> CONFLICT (content): Merge conflict in kernel/events/Makefile
-> CONFLICT (add/add): Merge conflict in include/linux/uprobes.h
-> CONFLICT (add/add): Merge conflict in arch/x86/kernel/uprobes.c
-> CONFLICT (add/add): Merge conflict in arch/x86/include/asm/uprobes.h
-> 
-> The easiest way to remove these conflicts would be for you to rebase the
-> uprobes tree onto the perl/uprobes branch of the tip tree (I assume that
-> all the uprobes code will eventually be merged to Linus via the tip tree)
-> or a subset of that branch that is the common set of patches.
+Hi Dave,
 
+On Tue, 13 Mar 2012 21:46:09 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> See the patch I sent to Linus which landed in his tree an hour or so
+> ago:
+>=20
+> --------------------
+> [PATCH] sparc32: Add -Av8 to assembler command line.
 
-Okay, I will go with this suggestion. Infact this is actually easier for
-me.
+I will cherry-pick that onto the end of linux-next today.
 
--- 
-Thanks and Regards
-Srikar
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__14_Mar_2012_16_02_46_+1100_v/qbiDM90bL2j5wD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPYCZ2AAoJEECxmPOUX5FESfYP+gNzaoUlBMQ8mlTtXGh7+sVG
+tlpw+s4jtc03z9/Cb0eGBDV2uwrgpVFUGokHGRUUSkhMy5Zbo2YTJZteuQdLSUwK
+AK10FFn7YuFqTBe2zz6xUWdqUDSCbwlGFLi/n3v4d+O+Cr0PwXya01Z+HHBdFXPn
+O2MQ8RS1rs08C7ybdqo8D1SXTTrTtnKQXLjB4X4JCJsEgBTnMGClEStaacl8x5im
+alV77QIceWMSmZAs9/hY01PqEe6t1PwISb6BpOZ1tfZU1Pn0BG7ysb39IrkZlctd
+9u+xmOJad6j70rDEkjYaD4s27tL9VFEViCJcMdb1jBjKSFOD2KVH+IByzRagksnF
+fw6cPwxvUz9UI6j1eYCDob5541D+p/9yn2zTb28MdesV90TkP4Sift6A75cEe2CF
+0ZjprltJn43ABwXPxD1/n7nEk6JhnRfiODO2+f/qqj6JHStCeIqS196qY6+msXC8
+kZebnJAmm6pqJX9geQJtEudzX1JC60aB/rUGp6dKMCftGfSyrPJZAz3hCkqwqsYy
+8Oxtl9DJT4Cf17DNF6XLYy9SEaYkZ7XePEgm7z9ctQSrk4/UvdDo0NG6KMLJsr5I
+NjsHfG1tKgsnaEcJbb2sEQJyJcNgmYtswcSdYDdTpe83LFHAEbaz5iDZ2NOjLvtN
+rU6HMNQjmUrKPMEhkLhf
+=bvYh
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__14_Mar_2012_16_02_46_+1100_v/qbiDM90bL2j5wD--
