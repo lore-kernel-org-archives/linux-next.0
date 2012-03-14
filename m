@@ -1,75 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: New build failures in sparc.
-Date: Tue, 13 Mar 2012 21:46:09 -0700 (PDT)
-Message-ID: <20120313.214609.1139946570476396180.davem@davemloft.net>
-References: <20120314102830.aa7b1139bff158d30ac57505@canb.auug.org.au>
-	<20120313.173741.18086192847996966.davem@davemloft.net>
-	<20120314040102.GA26084@thor.bakeyournoodle.com>
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the uprobes tree with the tip tree
+Date: Wed, 14 Mar 2012 10:25:44 +0530
+Message-ID: <20120314045544.GA4644@linux.vnet.ibm.com>
+References: <20120314151444.a34eef495739e13506ac5b1a@canb.auug.org.au>
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:39501 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753710Ab2CNEuW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 00:50:22 -0400
-In-Reply-To: <20120314040102.GA26084@thor.bakeyournoodle.com>
+Received: from e5.ny.us.ibm.com ([32.97.182.145]:38666 "EHLO e5.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752191Ab2CNE7C (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Mar 2012 00:59:02 -0400
+Received: from /spool/local
+	by e5.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+	Wed, 14 Mar 2012 00:59:01 -0400
+Content-Disposition: inline
+In-Reply-To: <20120314151444.a34eef495739e13506ac5b1a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: tony@bakeyournoodle.com
-Cc: sfr@canb.auug.org.au, paul.gortmaker@windriver.com, sparclinux@vger.kernel.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-From: Tony Breeds <tony@bakeyournoodle.com>
-Date: Wed, 14 Mar 2012 15:01:02 +1100
-
-> On Tue, Mar 13, 2012 at 05:37:41PM -0700, David Miller wrote:
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Wed, 14 Mar 2012 10:28:30 +1100
->> 
->> > Yeah, we updated our sparc64 toolchain yesterday ... Tony says he
->> > will try applying the patch(es) from the bugzilla.
->> 
->> Meanwhile I'll add a workaround to the sparc makefiles, and
->> push that to Linus.  This way it will work no matter what
->> combination of tools someone has.
+> The linux-next merge of the uprobes tree gets several conflicts against
+> the tip tree because the same patches appear in both threes and there are
+> further changes to some files in the uprobes tree.
 > 
-> Thanks Dave, we may be hitting a related but different issue as gcc
-> 4.6.3 seems to have that patch already.
+> Merging uprobes/for-next (1fe509b uprobes/core: Handle breakpoint and singlestep exception.)
+> CONFLICT (add/add): Merge conflict in kernel/events/uprobes.c
+> CONFLICT (content): Merge conflict in kernel/events/Makefile
+> CONFLICT (add/add): Merge conflict in include/linux/uprobes.h
+> CONFLICT (add/add): Merge conflict in arch/x86/kernel/uprobes.c
+> CONFLICT (add/add): Merge conflict in arch/x86/include/asm/uprobes.h
+> 
+> The easiest way to remove these conflicts would be for you to rebase the
+> uprobes tree onto the perl/uprobes branch of the tip tree (I assume that
+> all the uprobes code will eventually be merged to Linus via the tip tree)
+> or a subset of that branch that is the common set of patches.
 
-See the patch I sent to Linus which landed in his tree an hour or so
-ago:
 
---------------------
-[PATCH] sparc32: Add -Av8 to assembler command line.
+Okay, I will go with this suggestion. Infact this is actually easier for
+me.
 
-Newer version of binutils are more strict about specifying the
-correct options to enable certain classes of instructions.
-
-The sparc32 build is done for v7 in order to support sun4c systems
-which lack hardware integer multiply and divide instructions.
-
-So we have to pass -Av8 when building the assembler routines that
-use these instructions and get patched into the kernel when we find
-out that we have a v8 capable cpu.
-
-Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- arch/sparc/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/sparc/Makefile b/arch/sparc/Makefile
-index ad1fb5d..eddcfb3 100644
---- a/arch/sparc/Makefile
-+++ b/arch/sparc/Makefile
-@@ -31,7 +31,7 @@ UTS_MACHINE    := sparc
- 
- #KBUILD_CFLAGS += -g -pipe -fcall-used-g5 -fcall-used-g7
- KBUILD_CFLAGS += -m32 -pipe -mno-fpu -fcall-used-g5 -fcall-used-g7
--KBUILD_AFLAGS += -m32
-+KBUILD_AFLAGS += -m32 -Wa,-Av8
- 
- #LDFLAGS_vmlinux = -N -Ttext 0xf0004000
- #  Since 2.5.40, the first stage is left not btfix-ed.
 -- 
-1.7.6.5
+Thanks and Regards
+Srikar
