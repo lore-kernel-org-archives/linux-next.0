@@ -1,71 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the uprobes tree
-Date: Wed, 14 Mar 2012 15:31:06 +1100
-Message-ID: <20120314153106.0090c309e7503a7052f11ad0@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: New build failures in sparc.
+Date: Tue, 13 Mar 2012 21:46:09 -0700 (PDT)
+Message-ID: <20120313.214609.1139946570476396180.davem@davemloft.net>
+References: <20120314102830.aa7b1139bff158d30ac57505@canb.auug.org.au>
+	<20120313.173741.18086192847996966.davem@davemloft.net>
+	<20120314040102.GA26084@thor.bakeyournoodle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__14_Mar_2012_15_31_06_+1100_Myt3BkOAidrm25j="
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55198 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750860Ab2CNEbN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 00:31:13 -0400
+Received: from shards.monkeyblade.net ([198.137.202.13]:39501 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753710Ab2CNEuW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 00:50:22 -0400
+In-Reply-To: <20120314040102.GA26084@thor.bakeyournoodle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: tony@bakeyournoodle.com
+Cc: sfr@canb.auug.org.au, paul.gortmaker@windriver.com, sparclinux@vger.kernel.org, linux-next@vger.kernel.org
 
---Signature=_Wed__14_Mar_2012_15_31_06_+1100_Myt3BkOAidrm25j=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Tony Breeds <tony@bakeyournoodle.com>
+Date: Wed, 14 Mar 2012 15:01:02 +1100
 
-Hi Srikar,
+> On Tue, Mar 13, 2012 at 05:37:41PM -0700, David Miller wrote:
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Wed, 14 Mar 2012 10:28:30 +1100
+>> 
+>> > Yeah, we updated our sparc64 toolchain yesterday ... Tony says he
+>> > will try applying the patch(es) from the bugzilla.
+>> 
+>> Meanwhile I'll add a workaround to the sparc makefiles, and
+>> push that to Linus.  This way it will work no matter what
+>> combination of tools someone has.
+> 
+> Thanks Dave, we may be hitting a related but different issue as gcc
+> 4.6.3 seems to have that patch already.
 
-After merging the uprobes tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+See the patch I sent to Linus which landed in his tree an hour or so
+ago:
 
-In file included from include/linux/compat.h:18:0,
-                 from arch/x86/include/asm/ia32.h:7,
-                 from arch/x86/include/asm/sigframe.h:17,
-                 from arch/x86/kernel/asm-offsets.c:16:
-arch/x86/include/asm/compat.h:238:20: error: redefinition of 'is_ia32_task'
-arch/x86/include/asm/thread_info.h:272:20: note: previous definition of 'is=
-_ia32_task' was here
+--------------------
+[PATCH] sparc32: Add -Av8 to assembler command line.
 
-Caused by commit 081c056eccf3 ("x86: Move is_ia32_task to
-asm/thread_info.h from asm/compat.h") which added the function to
-asm/thread_info.h but did not remove it from asm/compat.h.  The version
-of this patch that is in the tip tree is correct (but that is not in
-tip's auto-latest branch (and hence linux-next) today).
+Newer version of binutils are more strict about specifying the
+correct options to enable certain classes of instructions.
 
-I would have used the uprobes tree from next-20130309, but trying that
-produced a large number of conflicts, so I just dropped the uprobes tree
-for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+The sparc32 build is done for v7 in order to support sun4c systems
+which lack hardware integer multiply and divide instructions.
 
---Signature=_Wed__14_Mar_2012_15_31_06_+1100_Myt3BkOAidrm25j=
-Content-Type: application/pgp-signature
+So we have to pass -Av8 when building the assembler routines that
+use these instructions and get patched into the kernel when we find
+out that we have a v8 capable cpu.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ arch/sparc/Makefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-iQIcBAEBCAAGBQJPYB8KAAoJEECxmPOUX5FETCkP/j9YOkhnF7XlVHBBpyQMBVPB
-C6tzqVBvHtrVQwcioQdKibClrcIIE2anqJDQAJJh5zdqNLcRc66MECcWdOPOMRNF
-6XeqLKTTxc0T7JL4/hXNDWyCp35e2cNXKOh+Yvu+Qqz0N+A6xVGV55DxS8zyC6sp
-lx3YpKIylh//3M62As8oMZTd3C1mGApJJChAOYvZoeQzAvpFfTY/1r5zVLcr/QFH
-G3dlUlWZX6E4olL5zGIA26WjsBDc/zJZGo8/u3Ovq8cbXRgGSZq338a3Fb2Ik9Dv
-vM/RpWKsB0Y55dTmkDuyKV+Tgqv0QltWBV8u0xYesOytbDA1B99EOdQ7dlEDN5Om
-bcHhAAPqIu6rHUB8fausRs53d28A1EZdoK+9SKvQt4K7knHIVAJaA9+NkWYOomw1
-E09EshN9mXHBI2Jv9uk3KcYwMSFc8u2HjSgQ6qf3k8nhcIH7BLcoCsAgyXyzXWUQ
-eTBSGYnz56zx9N/5FcVXbef2DxO5X4PTJqacEj//hDLVt7FhF54dMtssAAuiAGS1
-MQIEMscBz9G1spJr/OoAQm9nlgb3DBgusAKpZQzAiBdEVl9erKThdLLfkrKyK2YU
-7yE7BgPv8pvTAOE8b+I0kRR4lQ06gvkSaRmN6hmwGH3vYodEQjYEgIZSHefGkYkB
-+lR8JGD68AmFlu/lbxpS
-=bdOo
------END PGP SIGNATURE-----
-
---Signature=_Wed__14_Mar_2012_15_31_06_+1100_Myt3BkOAidrm25j=--
+diff --git a/arch/sparc/Makefile b/arch/sparc/Makefile
+index ad1fb5d..eddcfb3 100644
+--- a/arch/sparc/Makefile
++++ b/arch/sparc/Makefile
+@@ -31,7 +31,7 @@ UTS_MACHINE    := sparc
+ 
+ #KBUILD_CFLAGS += -g -pipe -fcall-used-g5 -fcall-used-g7
+ KBUILD_CFLAGS += -m32 -pipe -mno-fpu -fcall-used-g5 -fcall-used-g7
+-KBUILD_AFLAGS += -m32
++KBUILD_AFLAGS += -m32 -Wa,-Av8
+ 
+ #LDFLAGS_vmlinux = -N -Ttext 0xf0004000
+ #  Since 2.5.40, the first stage is left not btfix-ed.
+-- 
+1.7.6.5
