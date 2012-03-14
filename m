@@ -1,63 +1,63 @@
-From: Tony Breeds <tony@bakeyournoodle.com>
-Subject: Re: New build failures in sparc.
-Date: Wed, 14 Mar 2012 15:01:02 +1100
-Message-ID: <20120314040102.GA26084@thor.bakeyournoodle.com>
-References: <CAP=VYLpfM0AFWQp7Q=xYHnCd_6vEXKKL1EL5daGcO9gsJZH=7Q@mail.gmail.com>
- <20120313.154848.265971549311147422.davem@davemloft.net>
- <20120314102830.aa7b1139bff158d30ac57505@canb.auug.org.au>
- <20120313.173741.18086192847996966.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the uprobes tree with the tip tree
+Date: Wed, 14 Mar 2012 15:14:44 +1100
+Message-ID: <20120314151444.a34eef495739e13506ac5b1a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Return-path: <sparclinux-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120313.173741.18086192847996966.davem@davemloft.net>
-Sender: sparclinux-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, paul.gortmaker@windriver.com, sparclinux@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__14_Mar_2012_15_14_44_+1100_ZivQB+cPZ3KTEjIn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=utf-8
+--Signature=_Wed__14_Mar_2012_15_14_44_+1100_ZivQB+cPZ3KTEjIn
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 13, 2012 at 05:37:41PM -0700, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 14 Mar 2012 10:28:30 +1100
->=20
-> > Yeah, we updated our sparc64 toolchain yesterday ... Tony says he
-> > will try applying the patch(es) from the bugzilla.
->=20
-> Meanwhile I'll add a workaround to the sparc makefiles, and
-> push that to Linus.  This way it will work no matter what
-> combination of tools someone has.
+Hi Srikar,
 
-Thanks Dave, we may be hitting a related but different issue as gcc
-4.6.3 seems to have that patch already.
+The linux-next merge of the uprobes tree gets several conflicts against
+the tip tree because the same patches appear in both threes and there are
+further changes to some files in the uprobes tree.
 
-Yours Tony
+Merging uprobes/for-next (1fe509b uprobes/core: Handle breakpoint and singl=
+estep exception.)
+CONFLICT (add/add): Merge conflict in kernel/events/uprobes.c
+CONFLICT (content): Merge conflict in kernel/events/Makefile
+CONFLICT (add/add): Merge conflict in include/linux/uprobes.h
+CONFLICT (add/add): Merge conflict in arch/x86/kernel/uprobes.c
+CONFLICT (add/add): Merge conflict in arch/x86/include/asm/uprobes.h
 
---d6Gm4EdcadzBjdND
+The easiest way to remove these conflicts would be for you to rebase the
+uprobes tree onto the perl/uprobes branch of the tip tree (I assume that
+all the uprobes code will eventually be merged to Linus via the tip tree)
+or a subset of that branch that is the common set of patches.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__14_Mar_2012_15_14_44_+1100_ZivQB+cPZ3KTEjIn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPYBf+AAoJEEsCiJRY75GK4HIQAMl+Pt09j9/OFVaTRHfsfD1Q
-5l6E3k4qNomCNKxa7P3tVZGOeCBP8lJF9WRWwYSGyZMLl1kxJcBsR9Qm6mWcWdAt
-rWIKTAigm3AY2HM3kgXswjwO33DbQRCQXgmx96+EMdyMVConWleqIkl30y/veOrr
-2xbtSS3a+qiDf154EbXYIBrQJtDzYHrmzPE8qq63yrTO7BEDDLQeQl8cLsKq8NUN
-nmYcgDgYVYOOjsJToVVLHeQlY6P5UsvjZ4n4nFSaABdeI/Que8G8Gggdd+O2CZPF
-KBK2Wd0gV3/gbhKDGh0kH1Pb6hVfr/FKR1cWOgs3dIFeUW2X91X5sAPRqOPGrrnn
-ktkvEj9VEMz0LB4Js6uY3yTVm1oTNSP4KXkeAw0ObgBT8zTMX/FS+q2gXqc/eKgn
-nQ5sGs68RWFb0oxTIfDqWePWjgZmtRWC7QiWjBU2HcgkNtRerDlMJUy0I4no7fIs
-dhCfPzoPqAT5Vr6z00Bja/u5wxLoVpAlro+I0rpbK8sMRst5eWLz5KzOJBigZFwm
-EmrT721Q2b3oLiH5s4DSRFkk/ICoEfrifz6i96t2L5tR14VX/6nizp2FAKERO+gV
-aZ6Hy7bfw0VmCnOzcNr/0CN8zzR8hxhbePIHJwQ3Gn/Ppbv4wbWXM0KVHhyoqAxR
-DCGsyLJoGph7ug5573Nw
-=7MJ0
+iQIcBAEBCAAGBQJPYBs0AAoJEECxmPOUX5FEbvUP/2K2TCk6qeWTfjtvmne+DVUp
+Teab0R8Ja0riHD5k2BIN8gUlootSIywV5Fy6ekvmZaF+3EtZaLGlMg1o51Tm3oiX
+RaBqfdmeATE9/H/Mxj4ZdMudwzHmc8Iruz/plIPh2BRtIb3auUtDtBtRvjGCyiZe
+ZoBephATvL6n+TRy8h24Qex/7macgkN/QFoImLe29gZ32xBXEISc7mw14Rx+YWy/
+IF6ddXLGjIuXWvAAgn2drGsDqm7Ugo4IDsSXfPmh7nwbav2Urhp/j25Ps3E0cgn7
+fffUceT1QTzeJoQVTua5xUi1brhiW7aNdXV7vGDEOAiM615654CiL87SUBZvZWmJ
+Pdv//sOl+g3o4KJObOWoBqauyPi3YF+/pBidgX+TIxWzuFST7zDLYre74aFvGk4r
+vSt9eGYq+lUAwZDHWLu5Ma4y1GpMgNISGQ7t7ah8vh5Bt33V9HwwwSAjh0c0tagD
+jw90YFz0kV1MQhLxW13OhUnJnpOaRUsuDWesr+/iK3JBzigAn+Adq5SrGDAnwgZJ
+dfl3xUx27QuH9e6w+UmdIEsNv6vhvSWHEm65wbzAzwYkAVTbWroOr0rhxu7RZlfk
+fl5ao7eOu6uCSCX+PZ0u1Nybg7F0KC8wCD4xIIXwK+UeWFnI668f2Tfta/Ys4G9L
+ywcb5lsVk8jvPA5020vW
+=SuYb
 -----END PGP SIGNATURE-----
 
---d6Gm4EdcadzBjdND--
+--Signature=_Wed__14_Mar_2012_15_14_44_+1100_ZivQB+cPZ3KTEjIn--
