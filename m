@@ -1,65 +1,64 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: next-20120313 cpuidle freezes when booting
-Date: Wed, 14 Mar 2012 12:29:26 +0100
-Message-ID: <4F608116.80508@linaro.org>
-References: <alpine.LSU.2.00.1203131454500.1335@eggly.anvils>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: linux-next: manual merge of the l2-mtd tree with the vfs tree
+Date: Wed, 14 Mar 2012 14:25:39 +0200
+Message-ID: <1331727939.3730.8.camel@sauron.fi.intel.com>
+References: <20120313141859.302878a8e2246979c288440d@canb.auug.org.au>
+	 <1331649633.3595.70.camel@sauron.fi.intel.com>
+	 <20120314021312.c15dc02ec501ceb0d98ea755@canb.auug.org.au>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-haTW18qYd24n+NwlMLyt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:60870 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756084Ab2CNL3a (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 07:29:30 -0400
-Received: by bkcik5 with SMTP id ik5so1172020bkc.19
-        for <linux-next@vger.kernel.org>; Wed, 14 Mar 2012 04:29:29 -0700 (PDT)
-In-Reply-To: <alpine.LSU.2.00.1203131454500.1335@eggly.anvils>
+Received: from mga09.intel.com ([134.134.136.24]:43483 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753589Ab2CNMXF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Mar 2012 08:23:05 -0400
+In-Reply-To: <20120314021312.c15dc02ec501ceb0d98ea755@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Robert Lee <rob.lee@linaro.org>, Jean Pihet <j-pihet@ti.com>, Kevin Hilman <khilman@ti.com>, Deepthi Dharwar <deepthi@linux.vnet.ibm.com>, Dan Carpenter <dan.carpenter@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Stefan Roese <sr@denx.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Joe Perches <joe@perches.com>
 
-On 03/13/2012 11:29 PM, Hugh Dickins wrote:
-> Hi Stephen,
->
-> Yesterday's 3.3.0-rc7-next-20120313 gives me unpredictable freezes
-> on x86_64, on a ThinkPad T420s - I've not dared it on more machines.
->
-> Usually when booting up (sometimes just after Freeing unused kernel
-> memory, sometimes random places elsewhere), but occasionally it manag=
-es
-> to get as far as X; doesn't usually manage to complete suspend+resume=
-=2E
->
-> 3.3.0-rc6-nex-20120309 behaved similarly; the last I tried before
-> that was 3.3.0-rc5-next20120227, which was okay.
->
-> Bisection led me to "cpuidle: Add common time keeping and irq enablin=
-g",
-> (from the cpuidle-cons tree I think), and reverting that has so far
-> given me a working system (it's a success if I complete this mail).
->
-> Below is the patch I've used to revert it (for other people having
-> problems with recent linux-next to try); but it's not quite correct,
-> because you did a merge on conflicting trees there, and I didn't spen=
-d
-> time to unravel all that, just get a working x86 system - since I've
-> left out some of your merge (in arch/arm/kernel/Makefile and arch/arm=
-/
-> mach-at91/cpuidle.c), this reversion probably breaks arm as is.
 
-Hi Hugh,
+--=-haTW18qYd24n+NwlMLyt
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-is it possible you give the cpuidle driver your host is using ?
+On Wed, 2012-03-14 at 02:13 +1100, Stephen Rothwell wrote:
+> I just checked and the master branch on
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git is
+> 8ca39b0 "Add linux-next specific files for 20120313" as I would expect it
+> to be and the top of the l2-mtd tree that was merged into that is
+> 4331c79c6895 "mtd: do not use plain 0 as NULL".
 
-Thanks
-   -- Daniel
+Oh, yes, sorry, you are right - it is there.
 
 --=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+Best Regards,
+Artem Bityutskiy
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--=-haTW18qYd24n+NwlMLyt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAABAgAGBQJPYI5DAAoJECmIfjd9wqK0FucP/15GvjkYD+TLseOXOQdTKwKI
+g26F+H1Npz/NM9FagUueEd1eZwOtoJ0Bqy4KNWFniZDxs8dXyL4Er9Sv/T2nXEcn
+zdCDLVM/im7/HzhoTQBcznjO89+M98NDCs7qrV+4HQk8T1jGzxKmlVEM2JpGY4ZC
+idysy6hz8ZbHqS6yyMWAeOaMFVGYTapIf/M/671n0Gq6zzFWbKoARXlbSXgaSeB9
+t977aoD3FIcfjhKej1p6VR2qW6Xnxslm9MJur+sleaeE3szNdIVgQIcd6rkXM5lC
+MvMa9pSYxqv6FzL0vSVteW8QEOXbg9n3fslD6ss+HkUqJwWGhGGZfWPn+6TFkJm4
+u8qJ3wDw9KF5Ws3NFbsvqrR3+gBHm+ZwIByWsh9TceWJqCEcYhCVyD7cMOV65v8f
+1tAIFg3aARVeID2+Q/LObEvUUE0I+36KHm7wio87wcKlHskQrda3Xf5kKqP77zjw
+VcJSKBCn40GJa3g2QmF1qgRmFG36hAOFCoCNAQ/tap1mwZLQ7zt+LiBwybT8W+Yh
+BlZPcaFprlkfqJ2hmM2na+nk9JC8h7GstQhh7kjBP3WTGUppmLtvpavCA6A8hh+Q
+20PvrCewT0Axf9incmAJoX5e7eaH8b5tqc+lDirLvop60Gd2ljQoWNdLXlvJ1Eyb
+Y7OxouyW5mBYZC0A9rJB
+=7zc8
+-----END PGP SIGNATURE-----
+
+--=-haTW18qYd24n+NwlMLyt--
