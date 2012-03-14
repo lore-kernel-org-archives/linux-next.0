@@ -1,64 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (sound tree
- related)
-Date: Wed, 14 Mar 2012 18:05:08 +1100
-Message-ID: <20120314180508.e0fd932c329317ab078c140f@canb.auug.org.au>
+From: "Williams, Dan J" <dan.j.williams@intel.com>
+Subject: Re: linux-next: manual merge of the isci tree with the scsi tree
+Date: Wed, 14 Mar 2012 00:13:06 -0700
+Message-ID: <CABE8wwsET4BaS39r-+5_cshQ_WJDQMHWCcUsQjmcsqGU6a+R-A@mail.gmail.com>
+References: <20120313134512.848baf17f46729fa0fac195d@canb.auug.org.au>
+	<CABE8wwtNcA4QcJyLC6zipjygjAYa6o=bwPyz6xS9A=PLiU+2kg@mail.gmail.com>
+	<20120313144152.5bd633a5ea6e496c059a9465@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__14_Mar_2012_18_05_08_+1100_p5VJVekR+/KKzG_S"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120313144152.5bd633a5ea6e496c059a9465@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@hansenpartnership.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__14_Mar_2012_18_05_08_+1100_p5VJVekR+/KKzG_S
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Mar 12, 2012 at 8:41 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Dan,
+>
+> On Mon, 12 Mar 2012 19:50:33 -0700 "Williams, Dan J" <dan.j.williams@=
+intel.com> wrote:
+>>
+>> I was wondering why it had not happened prior to this point... =A0in=
+ any
+>
+> It had, I just put up with it the first time :-)
 
-Hi all,
+Ok, all fixed up now, and I'll be quicker to respin when scsi-misc
+picks up the next round of patches.
 
-After merging the final tree, today's linux-next build (i386 defconfig)
-failed like this:
+Thanks for carrying this.
 
-sound/pci/hda/patch_sigmatel.c: In function 'stac92xx_update_led_status':
-sound/pci/hda/patch_sigmatel.c:5075:3: error: implicit declaration of funct=
-ion 'stac_vrefout_set' [-Werror=3Dimplicit-function-declaration]
-
-Caused by commit 2faa3bf15ba6 ("ALSA: hda - Rewrite the mute-LED hook
-with vmaster hook in patch_sigmatel.c").  CONFIG_SND_HDA_POWER_SAVE is
-not set for this build.
-
-I reverted that commit for today (and commits d2f344b5e0a9 "ALSA: hda -
-Add "Mute-LED Mode" enum control" and f29735cbef4e "ALSA: hda - Add
-expose_enum_ctl flag to snd_hda_add_vmaster_hook()" which conflict with
-the revert).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__14_Mar_2012_18_05_08_+1100_p5VJVekR+/KKzG_S
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPYEMkAAoJEECxmPOUX5FEKTAP/AxYHvTgmayMYpSOVGzec51+
-UnLHNTxq1Tq/DU+sAfm0BU0HqhTSPyD/5R9GyUEd9tb2j8fINoK2YHwUo6IkgZDI
-mpqwlCH7HCSf8CuWQAqXDHgnLuVKRKHnDgdZkwPFR1RFlwgGLVrAdBPMRqRWUYpA
-UN+dmIQhFzF7Vhl/OyV8F8tbbCTeTZ4ixnCcl4WD1Ingo/IygEgj+4L/vgxLlJ4N
-2TPckqfzCyIzV4YfiCWIgBH460mOBibEHPr4aStMKPWfi7uG4hwPB67gElTRNPNe
-ePyEwoGFViWOwxQGtUDDsVj/VY6mYknPoqgpqUDccgfjMU3UxvJzLXPWH+LKg/NA
-zb4utYfhC0l3gpCOKWilC5RQrZOADQ9wKKDsw1ySK49p94Y9516toLWi3/LiLCYd
-JvXqB2yFUcQYz+4BIWZm1H3AGkCSteYOyuptDiQzgSEKPiniwC0Q+TZlnwl6oUPr
-obu3HHUjgGRYART+3c7XC4r9769oCjhArspF77VY32uDvYCFRcK3teMvMuYm8P0f
-d+iYlxJ0macEG/QCwAVh1zrDL0PV4Th++uGA+RJlrwFvVRcysj9bOYaz60nRVJah
-1ZqCFASJDo28gZHk/U2c3LkXqZEWtl2+LPoU/6GMP5ovhtUoUNzplxqgPD+7kQvB
-UFbymlqZ7rE7BJiEhMMU
-=Imz+
------END PGP SIGNATURE-----
-
---Signature=_Wed__14_Mar_2012_18_05_08_+1100_p5VJVekR+/KKzG_S--
+--
+Dan
