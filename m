@@ -1,76 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the sound-asoc
- tree
-Date: Wed, 14 Mar 2012 17:06:28 +1100
-Message-ID: <20120314170628.4b0b5688441624a7a080d7cd@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (sound tree
+ related)
+Date: Wed, 14 Mar 2012 18:05:08 +1100
+Message-ID: <20120314180508.e0fd932c329317ab078c140f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__14_Mar_2012_17_06_28_+1100_/ahAiuvDZHceXEW8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45831 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755973Ab2CNGG4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 02:06:56 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Javier Martin <javier.martin@vista-silicon.com>, Sascha Hauer <s.hauer@pengutronix.de>
+ boundary="Signature=_Wed__14_Mar_2012_18_05_08_+1100_p5VJVekR+/KKzG_S"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__14_Mar_2012_17_06_28_+1100_/ahAiuvDZHceXEW8
+--Signature=_Wed__14_Mar_2012_18_05_08_+1100_p5VJVekR+/KKzG_S
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-imx/mach-imx27_visstrim_m10.c between commit 5ec65ee589fd
-("ASoC: mx27vis-aic32x4: Convert it to platform driver") from the
-sound-asoc tree and commit f52f5a5503b5 ("i.MX27: visstrim_m10: Add video
-support") from the arm-soc tree.
+After merging the final tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
+sound/pci/hda/patch_sigmatel.c: In function 'stac92xx_update_led_status':
+sound/pci/hda/patch_sigmatel.c:5075:3: error: implicit declaration of funct=
+ion 'stac_vrefout_set' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 2faa3bf15ba6 ("ALSA: hda - Rewrite the mute-LED hook
+with vmaster hook in patch_sigmatel.c").  CONFIG_SND_HDA_POWER_SAVE is
+not set for this build.
+
+I reverted that commit for today (and commits d2f344b5e0a9 "ALSA: hda -
+Add "Mute-LED Mode" enum control" and f29735cbef4e "ALSA: hda - Add
+expose_enum_ctl flag to snd_hda_add_vmaster_hook()" which conflict with
+the revert).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-imx/mach-imx27_visstrim_m10.c
-index 428459f,0a1643c..0000000
---- a/arch/arm/mach-imx/mach-imx27_visstrim_m10.c
-+++ b/arch/arm/mach-imx/mach-imx27_visstrim_m10.c
-@@@ -263,7 -393,10 +393,11 @@@ static void __init visstrim_m10_board_i
-  	imx27_add_fec(NULL);
-  	imx_add_gpio_keys(&visstrim_gpio_keys_platform_data);
-  	platform_add_devices(platform_devices, ARRAY_SIZE(platform_devices));
-+ 	platform_device_register_resndata(NULL, "soc-camera-pdrv", 0, NULL, 0,
-+ 				      &iclink_tvp5150, sizeof(iclink_tvp5150));
-+ 	gpio_led_register_device(0, &visstrim_m10_led_data);
-+ 	visstrim_camera_init();
- +	imx_add_platform_device("mx27vis", 0, NULL, 0, NULL, 0);
-  }
- =20
-  static void __init visstrim_m10_timer_init(void)
-
---Signature=_Wed__14_Mar_2012_17_06_28_+1100_/ahAiuvDZHceXEW8
+--Signature=_Wed__14_Mar_2012_18_05_08_+1100_p5VJVekR+/KKzG_S
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPYDVkAAoJEECxmPOUX5FEvF0P/0bpOC1/spoAUfIFoU8nVo80
-1J54VhhQMOeUcQQePiw39avtAHzcEmamORkZe80EhW0yXnPDxIffvOKHN9zRvI6E
-pElcksa4lW7DgPLC6fkRzLOsQza8SMsviIQ8Rk6VROJBq0e9qRK/+YzrIjEhNIpE
-cG8DdzEviX5x4nU3GONYcrQOQnY0TF0UcftI6IvJx8r19N513KVDQv58X4hi2jCV
-USpbDx3WufjikdPUxCGvBJ8j/pR/VY+wCE7dOT3EOSEDGZ1SYRu/06nCdiIP6RBq
-0YNShY2SThh7/n1rmlFJaE7ub3wFhaeop7puCcLLf/2tgXtT/sYw+l7gO9EGs2qG
-mJDqR2otLCKGiW/H376NCITRkWLhu8NwxgPPgYN5WHnlY3YWx5nctZ6uPDq1gkXw
-CsfcIQcQKpjufKelear5g3f0pXOZu8efIUixCptuN8mX3q/EvexVRpGS0cCW3mY8
-t/SMtR2JuQXLhEy2SaNbgL6Wtog1O0cAY6JpRdle4OTmYU9XPrvJ5VynxUvMIdBD
-vlATdzNeXZ2o6s06chS/oeU3WXZ7lzAbSpIak2FF4xB91ZLJiDlhZ3PWcGZoNR2w
-hW3OS0MLNpliidp0tXY01Z8SCM72IlT56G9GCedwwSEB6W9lO+gCx9+r9AerSRE5
-fI1k02h8XzWfZ0Cd9mFE
-=5dty
+iQIcBAEBCAAGBQJPYEMkAAoJEECxmPOUX5FEKTAP/AxYHvTgmayMYpSOVGzec51+
+UnLHNTxq1Tq/DU+sAfm0BU0HqhTSPyD/5R9GyUEd9tb2j8fINoK2YHwUo6IkgZDI
+mpqwlCH7HCSf8CuWQAqXDHgnLuVKRKHnDgdZkwPFR1RFlwgGLVrAdBPMRqRWUYpA
+UN+dmIQhFzF7Vhl/OyV8F8tbbCTeTZ4ixnCcl4WD1Ingo/IygEgj+4L/vgxLlJ4N
+2TPckqfzCyIzV4YfiCWIgBH460mOBibEHPr4aStMKPWfi7uG4hwPB67gElTRNPNe
+ePyEwoGFViWOwxQGtUDDsVj/VY6mYknPoqgpqUDccgfjMU3UxvJzLXPWH+LKg/NA
+zb4utYfhC0l3gpCOKWilC5RQrZOADQ9wKKDsw1ySK49p94Y9516toLWi3/LiLCYd
+JvXqB2yFUcQYz+4BIWZm1H3AGkCSteYOyuptDiQzgSEKPiniwC0Q+TZlnwl6oUPr
+obu3HHUjgGRYART+3c7XC4r9769oCjhArspF77VY32uDvYCFRcK3teMvMuYm8P0f
+d+iYlxJ0macEG/QCwAVh1zrDL0PV4Th++uGA+RJlrwFvVRcysj9bOYaz60nRVJah
+1ZqCFASJDo28gZHk/U2c3LkXqZEWtl2+LPoU/6GMP5ovhtUoUNzplxqgPD+7kQvB
+UFbymlqZ7rE7BJiEhMMU
+=Imz+
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__14_Mar_2012_17_06_28_+1100_/ahAiuvDZHceXEW8--
+--Signature=_Wed__14_Mar_2012_18_05_08_+1100_p5VJVekR+/KKzG_S--
