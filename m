@@ -1,71 +1,76 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: New build failures in sparc.
-Date: Wed, 14 Mar 2012 11:58:51 +1100
-Message-ID: <20120314115851.445b68161ae51a02c1965617@canb.auug.org.au>
-References: <CAP=VYLpfM0AFWQp7Q=xYHnCd_6vEXKKL1EL5daGcO9gsJZH=7Q@mail.gmail.com>
-	<20120313.154848.265971549311147422.davem@davemloft.net>
-	<20120314102830.aa7b1139bff158d30ac57505@canb.auug.org.au>
-	<20120313.173741.18086192847996966.davem@davemloft.net>
+From: Gavin Shan <shangw@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the devicetree tree with the powerpc
+ tree
+Date: Wed, 14 Mar 2012 09:53:56 +0800
+Message-ID: <20120314015356.GA4028@shangw>
+References: <20120313160100.c8cc3fd2b3d1f485ef7e7954@canb.auug.org.au>
+ <20120313182612.0546D3E053B@localhost>
+Reply-To: Gavin Shan <shangw@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__14_Mar_2012_11_58_51_+1100_Zz6TNQghwCHMqE6z"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54521 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759869Ab2CNA7D (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 20:59:03 -0400
-In-Reply-To: <20120313.173741.18086192847996966.davem@davemloft.net>
+Received: from e23smtp08.au.ibm.com ([202.81.31.141]:42617 "EHLO
+	e23smtp08.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965036Ab2CNByH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Mar 2012 21:54:07 -0400
+Received: from /spool/local
+	by e23smtp08.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <shangw@linux.vnet.ibm.com>;
+	Wed, 14 Mar 2012 01:51:41 +1000
+Content-Disposition: inline
+In-Reply-To: <20120313182612.0546D3E053B@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: paul.gortmaker@windriver.com, sparclinux@vger.kernel.org, linux-next@vger.kernel.org, tony@bakeyournoodle.com
+To: Grant Likely <grant.likely@secretlab.ca>, benh@kernel.crashing.org
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
---Signature=_Wed__14_Mar_2012_11_58_51_+1100_Zz6TNQghwCHMqE6z
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Grant,
 
-Hi Dave,
+> > 
+> > Today's linux-next merge of the devicetree tree got a conflict in
+> > include/linux/of.h between commit eb740b5f3e65 ("powerpc/eeh: Introduce
+> > EEH device") from the powerpc tree and commit 0f22dd395fc4 ("of: Only
+> > compile OF_DYNAMIC on PowerPC pseries and iseries") from the devicetree
+> > tree.
+> > 
+> > Just context changes.  I fixed it up (see below) and can carry the fix as
+> > necessary.
+> > -- 
+> > Cheers,
+> > Stephen Rothwell                    sfr@canb.auug.org.au
+> > 
+> > diff --cc include/linux/of.h
+> > index bdb1c07,533603e..0000000
+> > --- a/include/linux/of.h
+> > +++ b/include/linux/of.h
+> > @@@ -75,14 -72,10 +75,17 @@@ struct of_phandle_args 
+> >   	uint32_t args[MAX_PHANDLE_ARGS];
+> >   };
+> >   
+> >  +#if defined(CONFIG_EEH)
+> >  +static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
+> >  +{
+> >  +	return dn->edev;
+> >  +}
+> >  +#endif
+> 
+> Ben, What is this?  I don't want the eeh_dev pointer in struct device_node.  Up to
+> now we've avoided putting any reverse references into device_nodes.  For everything
+> else we use a reverse lookup, particularly for devices, to avoid growing the
+> device_node for each new type of lookup.
+> 
 
-On Tue, 13 Mar 2012 17:37:41 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 14 Mar 2012 10:28:30 +1100
->=20
-> > Yeah, we updated our sparc64 toolchain yesterday ... Tony says he
-> > will try applying the patch(es) from the bugzilla.
->=20
-> Meanwhile I'll add a workaround to the sparc makefiles, and
-> push that to Linus.  This way it will work no matter what
-> combination of tools someone has.
+It's used to trace the EEH device. When EEH (Enhanced Error Hanlding) is enabled,
+EEH device will be created against PCI sensitive OF node to trace the EEH state
+accordingly. Since you don't want see this in struct device_node, we have to change
+struct eeh_dev for a little bit to so that all struct eeh_dev instances will form
+a global list and we can search eeh_dev according to the given device_node through
+the global list. 
 
-Excellent, thanks.
+I don't know the policy or rule here for much. I think we can have 2 options.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+1. Keep the code as being, and fix it later.
+2. Fix it now.
 
---Signature=_Wed__14_Mar_2012_11_58_51_+1100_Zz6TNQghwCHMqE6z
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPX+1LAAoJEECxmPOUX5FENAsP/ijmHCzEi3/KOeUIvrWCiFQx
-+9/1aSxvJNxxtH01a3a6fJQimjGN/iOswAEsNienIwjsDhJF27do2cholASOhFnl
-yGhi9DWHhuPEIgi2+/jOCpwKj3oCHx7FGoAu44dtT5hCnIdIwpc5M+T0FIPNMhPV
-18/++B//YfzlHyNA4HoxBIZ5gSg8muY+qNXd5petq33vt50LR4LB+JOYMx9avA7H
-DBQAKenWSC3fEvgDiTycbWzfbHDEhp+15Bfh3uH1pu+mN5jiWW4u+KlyazOGsVik
-xgJZZpW+E97vU9Sp3Q38IXBZwqcgiuruB2zOBUOaTC9LuwIxcoF0cep/5BPOif4w
-mvNakRvCf03SzdKgYwLQzvocP0CqXk1wWO87GNdAEOfIE2cHcBzOoxCPgATlRm+p
-Z+x2LkrYIBEJj9iKP/c3mrTe/dsuwbXhjIcjGLC2p+HqWP8InJvdX2Xy1tek5ZiM
-lS67Q0aNMuFE031RYNUstrSpjmxEsL8f/BbY+F0oxbsB0JezOZcsvozzHSIzZtdI
-gd6Dyun3K+NDZ5zHvufek1myFBpmKuVVaPudPyG66l35sX+5UlMn6+7ZKnInJJji
-AaXSSYhGP1SOEYr/ilYGlBXLlLgDk6AVnMqarMcbkotbPabseNDiT7zlgDh7X9B+
-5XCtyfB4qb9ZDT5OdwWt
-=h3P/
------END PGP SIGNATURE-----
-
---Signature=_Wed__14_Mar_2012_11_58_51_+1100_Zz6TNQghwCHMqE6z--
+Thanks,
+Gavin
