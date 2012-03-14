@@ -1,56 +1,46 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the sound-asoc
- tree
-Date: Wed, 14 Mar 2012 12:36:35 +0000
-Message-ID: <20120314123635.GG3133@opensource.wolfsonmicro.com>
-References: <20120314170628.4b0b5688441624a7a080d7cd@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: Inconsistent kallsyms data on ARM.
+Date: Wed, 14 Mar 2012 13:21:46 +0000
+Message-ID: <201203141321.47010.arnd@arndb.de>
+References: <CAP=VYLoStscdVJretZ-Rkbp7V3Vsm8N0oWcjih7ruHFiDN7CiA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zGQnqpIoxlsbsOfg"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:34111 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1760910Ab2CNMgh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 Mar 2012 08:36:37 -0400
-Content-Disposition: inline
-In-Reply-To: <20120314170628.4b0b5688441624a7a080d7cd@canb.auug.org.au>
+Received: from moutng.kundenserver.de ([212.227.17.8]:52854 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030816Ab2CNNVw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 09:21:52 -0400
+In-Reply-To: <CAP=VYLoStscdVJretZ-Rkbp7V3Vsm8N0oWcjih7ruHFiDN7CiA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, Liam Girdwood <lrg@ti.com>, Javier Martin <javier.martin@vista-silicon.com>, Sascha Hauer <s.hauer@pengutronix.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kbuild@vger.kernel.org, linux-next@vger.kernel.org
 
+On Tuesday 13 March 2012, Paul Gortmaker wrote:
+> This bug(?)  has been seen to float from one ARM build to another since
+> I started tracking the day-to-day changes in Stephen's linux-next builds.
+> 
+> I see it was discussed earlier:
+> 
+>    https://lkml.org/lkml/2011/8/2/233
+>    https://lkml.org/lkml/2011/10/8/70
+> 
+> but no concrete cause was nailed down.  Can the linux-next build results
+> help shed some light on this in any way?  Since it seems sporadic, is
+> there value in embedding a diagnostic of some sort in the infrastructure
+> so that when the error is detected, that it prints out more detailed info?
+> 
+> I can provide links to failed linux-next builds, but at the moment, all they
+> really seem to have is the same repeated error message, like this one:
+> 
+>    http://kisskb.ellerman.id.au/kisskb/buildresult/5869367/
+> 
+> and I don't see that helping folks all that much....
+> 
 
---zGQnqpIoxlsbsOfg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I'm sure I can reproduce it if necessary, but I need to know what to
+look for to find out what the problem is.
 
-On Wed, Mar 14, 2012 at 05:06:28PM +1100, Stephen Rothwell wrote:
-
-> I fixed it up (see below) and can carry the fix as necessary.
-
-Looks good, thanks.
-
---zGQnqpIoxlsbsOfg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPYJDMAAoJEBus8iNuMP3daF0P/0zWEC1LvXaoSQ9+fSh5V2uW
-DOgnrSfAqk1cUZf8a5a8IpnBIIjHSfSicFGPCMUi+ctuMfezCOoUmFLT1czWdLY0
-IW65HlTeKgDvFuR6O7e3eWBmiazYRrl4c0meuxy1ZMzJTpn2Es3xDa1mrx6h0EFz
-r50Cr/+hJPUSruh/IP5mD4Zw+4ipQo1UC+tPIaMkChoMZoI3fRia3qdl/hCX580B
-YX1TYOrqS6LgvSydjM25FBI9c1a+kT/BaB6PCsjaFRSXqUzLv/toFGe24bszlVYF
-5oK5Osoe0tGP6A6sTPVdQ7HHz0u8T79GvKe5Qr3iUxuMwo0JRZT8YEY2p7PPch31
-7fBjhPrmly7bINVqD4JgDbrGcKqCMn7bxYtVeBFfea+dTOuo2f0joqE485XK7hz8
-EU8BL3LuGMRcQbMBQinaVrddt6VnNMio8GplA59mdYGEV57gvty7iPHmeVQX3EBR
-i4Tm/vZYPzIRe5ytIq0c+Xxc1457/wQ98WaH73Dib2nmkF3S/10a778FliFibmoh
-q1Y8jY5SvO6Tur2k+3UWzh5xqrw4N/O7AQmqD6dtujW5B7kx91oGvhv+PmAEPqFZ
-9G0jkAaMHMocFJu3cDVXnd4DyslmwPB0aonrxCBn7ABrD9fuxsKvLWgRk1nrEtgy
-/a1HXh808JgGIde0ZzvN
-=DOgD
------END PGP SIGNATURE-----
-
---zGQnqpIoxlsbsOfg--
+	Arnd
