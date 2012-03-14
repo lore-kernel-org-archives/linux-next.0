@@ -1,153 +1,43 @@
-From: Gavin Shan <shangw@linux.vnet.ibm.com>
-Subject: [PATCH] EEH: remove eeh device from OF node
-Date: Wed, 14 Mar 2012 18:31:26 +0800
-Message-ID: <1331721086-4314-1-git-send-email-shangw@linux.vnet.ibm.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp04.au.ibm.com ([202.81.31.146]:48759 "EHLO
-	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030744Ab2CNKbm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 06:31:42 -0400
-Received: from /spool/local
-	by e23smtp04.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <shangw@linux.vnet.ibm.com>;
-	Wed, 14 Mar 2012 10:14:52 +1000
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au, grant.likely@secretlab.ca, benh@kernel.crashing.org
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, linuxppc-dev@lists.ozlabs.org, Gavin Shan <shangw@linux.vnet.ibm.com>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Subject: Re: [PATCH] x86: export 'pcibios_enabled'
+Date: Wed, 14 Mar 2012 10:59:36 +0000
+Message-ID: <4F607A18.8080004@gmx.de>
+References: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au>	<4F5FAE63.3090908@xenotime.net>	<4F5FE9AD.7000204@zytor.com> <20120314092955.2250a782@pyramind.ukuu.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120314092955.2250a782@pyramind.ukuu.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michal Januszewski <spock@gentoo.org>, linux-fbdev@vger.kernel.org, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>, Wang YanQing <udknight@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Originally, the PCI sensitive OF node is tracing the eeh device
-through struct device_node::edev. However, it was regarded as
-bad idea.
+[CC'ing Wang YanQing, the author of the patch requiring it]
 
-The patch removes struct device_node::edev. In addition, the
-global list of eeh devices is introduced, and do retrival of
-eeh device according to the given OF node through the global
-list.
+On 03/14/2012 09:29 AM, Alan Cox wrote:
+>>>  
+>>>  int pcibios_enabled;
+>>> +EXPORT_SYMBOL(pcibios_enabled);
+>>>  
+>>>  /* According to the BIOS specification at:
+>>>   * http://members.datafast.net.au/dft0802/specs/bios21.pdf, we could
+>>
+>> I would think this should be EXPORT_SYMBOL_GPL()... this seems like a
+>> symbol with a very high likelihood to be abused in strange ways.
+> 
+> We don't need to expose it anyway
+> 
+> uvesafb could look for any PCI vga class device - which I suspect is
+> what it *should* be doing ?
 
-Signed-off-by: Gavin Shan <shangw@linux.vnet.ibm.com>
----
- arch/powerpc/include/asm/eeh.h           |    7 +++++++
- arch/powerpc/platforms/pseries/eeh_dev.c |   29 ++++++++++++++++++++++++++++-
- include/linux/of.h                       |   10 ----------
- 3 files changed, 35 insertions(+), 11 deletions(-)
+Would this really change depending on whether the page is NX-protected
+or not?
+Your suggestion sounds like it is about detecting whether there is any
+graphic chip present or not while the patch is about fixing an oops
+caused by NX-protection of the BIOS.
 
-diff --git a/arch/powerpc/include/asm/eeh.h b/arch/powerpc/include/asm/eeh.h
-index d60f998..591e0a1 100644
---- a/arch/powerpc/include/asm/eeh.h
-+++ b/arch/powerpc/include/asm/eeh.h
-@@ -56,6 +56,7 @@ struct eeh_dev {
- 	struct pci_controller *phb;	/* Associated PHB		*/
- 	struct device_node *dn;		/* Associated device node	*/
- 	struct pci_dev *pdev;		/* Associated PCI device	*/
-+	struct list_head list;		/* Form the global link list	*/
- };
- 
- static inline struct device_node *eeh_dev_to_of_node(struct eeh_dev *edev)
-@@ -115,6 +116,7 @@ extern int eeh_subsystem_enabled;
-  */
- #define EEH_MAX_ALLOWED_FREEZES 5
- 
-+struct eeh_dev *eeh_dev_from_of_node(struct device_node *dn);
- void * __devinit eeh_dev_init(struct device_node *dn, void *data);
- void __devinit eeh_dev_phb_init_dynamic(struct pci_controller *phb);
- void __init eeh_dev_phb_init(void);
-@@ -132,6 +134,11 @@ void eeh_add_device_tree_early(struct device_node *);
- void eeh_add_device_tree_late(struct pci_bus *);
- void eeh_remove_bus_device(struct pci_dev *);
- 
-+static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
-+{
-+	return eeh_dev_from_of_node(dn);
-+}
-+
- /**
-  * EEH_POSSIBLE_ERROR() -- test for possible MMIO failure.
-  *
-diff --git a/arch/powerpc/platforms/pseries/eeh_dev.c b/arch/powerpc/platforms/pseries/eeh_dev.c
-index f3aed7d..925d3a3 100644
---- a/arch/powerpc/platforms/pseries/eeh_dev.c
-+++ b/arch/powerpc/platforms/pseries/eeh_dev.c
-@@ -34,6 +34,7 @@
- #include <linux/export.h>
- #include <linux/gfp.h>
- #include <linux/init.h>
-+#include <linux/list.h>
- #include <linux/kernel.h>
- #include <linux/pci.h>
- #include <linux/string.h>
-@@ -41,6 +42,30 @@
- #include <asm/pci-bridge.h>
- #include <asm/ppc-pci.h>
- 
-+/* eeh device list */
-+static LIST_HEAD(eeh_dev_list);
-+
-+/**
-+ * eeh_dev_from_of_node - Retrieve EEH device according to OF node
-+ * @dn: OF node
-+ *
-+ * All existing eeh devices have been put into the global list.
-+ * In addition, the eeh device is tracing the corresponding
-+ * OF node. The function is used to retrieve the corresponding
-+ * eeh device according to the given OF node.
-+ */
-+struct eeh_dev *eeh_dev_from_of_node(struct device_node *dn)
-+{
-+	struct eeh_dev *edev = NULL;
-+
-+	list_for_each_entry(edev, &eeh_dev_list, list) {
-+		if (edev->dn && edev->dn == dn)
-+			return edev;
-+	}
-+
-+	return NULL;
-+}
-+
- /**
-  * eeh_dev_init - Create EEH device according to OF node
-  * @dn: device node
-@@ -62,10 +87,12 @@ void * __devinit eeh_dev_init(struct device_node *dn, void *data)
- 	}
- 
- 	/* Associate EEH device with OF node */
--	dn->edev  = edev;
- 	edev->dn  = dn;
- 	edev->phb = phb;
- 
-+	/* Add to global list */
-+	list_add_tail(&edev->list, &eeh_dev_list);
-+
- 	return NULL;
- }
- 
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 3e710d8..a75a831 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -58,9 +58,6 @@ struct device_node {
- 	struct	kref kref;
- 	unsigned long _flags;
- 	void	*data;
--#if defined(CONFIG_EEH)
--	struct eeh_dev *edev;
--#endif
- #if defined(CONFIG_SPARC)
- 	char	*path_component_name;
- 	unsigned int unique_id;
-@@ -75,13 +72,6 @@ struct of_phandle_args {
- 	uint32_t args[MAX_PHANDLE_ARGS];
- };
- 
--#if defined(CONFIG_EEH)
--static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
--{
--	return dn->edev;
--}
--#endif
--
- #if defined(CONFIG_SPARC) || !defined(CONFIG_OF)
- /* Dummy ref counting routines - to be implemented later */
- static inline struct device_node *of_node_get(struct device_node *node)
--- 
-1.7.5.4
+
+Best regards,
+
+Florian Tobias Schandinat
