@@ -1,64 +1,103 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: linux-next: manual merge of the l2-mtd tree with the vfs tree
-Date: Wed, 14 Mar 2012 14:25:39 +0200
-Message-ID: <1331727939.3730.8.camel@sauron.fi.intel.com>
-References: <20120313141859.302878a8e2246979c288440d@canb.auug.org.au>
-	 <1331649633.3595.70.camel@sauron.fi.intel.com>
-	 <20120314021312.c15dc02ec501ceb0d98ea755@canb.auug.org.au>
-Reply-To: dedekind1@gmail.com
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] ARM: pxa: fix regulator related build fail in magician_defconfig
+Date: Wed, 14 Mar 2012 08:30:07 -0400
+Message-ID: <4F608F4F.8020106@windriver.com>
+References: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>	<1331242494-3157-1-git-send-email-paul.gortmaker@windriver.com> <CAN1soZzDRR4XQ34WDL48=j+Ff8t5fsCFaccqZAKOQ1OAPeDXcA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-haTW18qYd24n+NwlMLyt"
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:43483 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753589Ab2CNMXF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 Mar 2012 08:23:05 -0400
-In-Reply-To: <20120314021312.c15dc02ec501ceb0d98ea755@canb.auug.org.au>
+Received: from mail.windriver.com ([147.11.1.11]:57714 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759230Ab2CNMaT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 08:30:19 -0400
+In-Reply-To: <CAN1soZzDRR4XQ34WDL48=j+Ff8t5fsCFaccqZAKOQ1OAPeDXcA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Stefan Roese <sr@denx.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Joe Perches <joe@perches.com>
+To: Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: broonie@opensource.wolfsonmicro.com, lost.distance@yahoo.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+
+On 12-03-14 04:38 AM, Haojian Zhuang wrote:
+> On Fri, Mar 9, 2012 at 5:34 AM, Paul Gortmaker
+> <paul.gortmaker@windriver.com> wrote:
+>> commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
+>>
+>>  "regulator: Remove support for supplies specified by struct device"
+>>
+>> deletes the field from the struct, but this platform was still trying
+>> to set those fields.  Convert them to use the REGULATOR_SUPPLY macro.
+>>
+>> arch/arm/mach-pxa/magician.c:581: error: unknown field 'dev' specified in initializer
+>> arch/arm/mach-pxa/magician.c:581: warning: initialization from incompatible pointer type
+>> arch/arm/mach-pxa/magician.c:585: error: unknown field 'dev' specified in initializer
+>> arch/arm/mach-pxa/magician.c:585: warning: initialization from incompatible pointer type
+>>
+>> arch/arm/mach-pxa/hx4700.c:683: error: unknown field 'dev' specified in initializer
+>> arch/arm/mach-pxa/hx4700.c:683: warning: initialization from incompatible pointer type
+>> arch/arm/mach-pxa/hx4700.c:687: error: unknown field 'dev' specified in initializer
+>> arch/arm/mach-pxa/hx4700.c:687: warning: initialization from incompatible pointer type
+>>
+>> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+>> ---
+>>
+>> [v3: fix arg2 in REGULATOR_SUPPLY to have correct names ]
+>>
+>> diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+>> index f2c23ea..b6a338b 100644
+>> --- a/arch/arm/mach-pxa/hx4700.c
+>> +++ b/arch/arm/mach-pxa/hx4700.c
+>> @@ -679,14 +679,8 @@ static struct platform_device power_supply = {
+>>  */
+>>
+>>  static struct regulator_consumer_supply bq24022_consumers[] = {
+>> -       {
+>> -               .dev = &gpio_vbus.dev,
+>> -               .supply = "vbus_draw",
+>> -       },
+>> -       {
+>> -               .dev = &power_supply.dev,
+>> -               .supply = "ac_draw",
+>> -       },
+>> +       REGULATOR_SUPPLY("vbus_draw", "gpio-vbus"),
+>> +       REGULATOR_SUPPLY("ac_draw", "pda-power"),
+> 
+> How do you think about Mark's comments? Use dev_name() at here.
+
+Hi Haojian,
+
+I'm not sure I quite understand you.  I'd looked up the
+structs and got their respective value that would be
+returned by dev_name(), which is what I thought was
+requested of me.
+
+Thanks,
+Paul.
 
 
---=-haTW18qYd24n+NwlMLyt
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 2012-03-14 at 02:13 +1100, Stephen Rothwell wrote:
-> I just checked and the master branch on
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git is
-> 8ca39b0 "Add linux-next specific files for 20120313" as I would expect it
-> to be and the top of the l2-mtd tree that was merged into that is
-> 4331c79c6895 "mtd: do not use plain 0 as NULL".
-
-Oh, yes, sorry, you are right - it is there.
-
---=20
-Best Regards,
-Artem Bityutskiy
-
---=-haTW18qYd24n+NwlMLyt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAABAgAGBQJPYI5DAAoJECmIfjd9wqK0FucP/15GvjkYD+TLseOXOQdTKwKI
-g26F+H1Npz/NM9FagUueEd1eZwOtoJ0Bqy4KNWFniZDxs8dXyL4Er9Sv/T2nXEcn
-zdCDLVM/im7/HzhoTQBcznjO89+M98NDCs7qrV+4HQk8T1jGzxKmlVEM2JpGY4ZC
-idysy6hz8ZbHqS6yyMWAeOaMFVGYTapIf/M/671n0Gq6zzFWbKoARXlbSXgaSeB9
-t977aoD3FIcfjhKej1p6VR2qW6Xnxslm9MJur+sleaeE3szNdIVgQIcd6rkXM5lC
-MvMa9pSYxqv6FzL0vSVteW8QEOXbg9n3fslD6ss+HkUqJwWGhGGZfWPn+6TFkJm4
-u8qJ3wDw9KF5Ws3NFbsvqrR3+gBHm+ZwIByWsh9TceWJqCEcYhCVyD7cMOV65v8f
-1tAIFg3aARVeID2+Q/LObEvUUE0I+36KHm7wio87wcKlHskQrda3Xf5kKqP77zjw
-VcJSKBCn40GJa3g2QmF1qgRmFG36hAOFCoCNAQ/tap1mwZLQ7zt+LiBwybT8W+Yh
-BlZPcaFprlkfqJ2hmM2na+nk9JC8h7GstQhh7kjBP3WTGUppmLtvpavCA6A8hh+Q
-20PvrCewT0Axf9incmAJoX5e7eaH8b5tqc+lDirLvop60Gd2ljQoWNdLXlvJ1Eyb
-Y7OxouyW5mBYZC0A9rJB
-=7zc8
------END PGP SIGNATURE-----
-
---=-haTW18qYd24n+NwlMLyt--
+>>  };
+>>
+>>  static struct regulator_init_data bq24022_init_data = {
+>> diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+>> index 3d6baf9..1a18e63 100644
+>> --- a/arch/arm/mach-pxa/magician.c
+>> +++ b/arch/arm/mach-pxa/magician.c
+>> @@ -577,14 +577,8 @@ static struct platform_device power_supply = {
+>>  */
+>>
+>>  static struct regulator_consumer_supply bq24022_consumers[] = {
+>> -       {
+>> -               .dev = &gpio_vbus.dev,
+>> -               .supply = "vbus_draw",
+>> -       },
+>> -       {
+>> -               .dev = &power_supply.dev,
+>> -               .supply = "ac_draw",
+>> -       },
+>> +       REGULATOR_SUPPLY("vbus_draw", "gpio-vbus"),
+>> +       REGULATOR_SUPPLY("ac_draw", "pda-power"),
+>>  };
+>>
+>>  static struct regulator_init_data bq24022_init_data = {
+>> --
+>> 1.7.9.1
+>>
