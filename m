@@ -1,104 +1,79 @@
-From: Haojian Zhuang <haojian.zhuang@gmail.com>
-Subject: Re: [PATCH] ARM: pxa: fix regulator related build fail in magician_defconfig
-Date: Wed, 14 Mar 2012 16:38:20 +0800
-Message-ID: <CAN1soZzDRR4XQ34WDL48=j+Ff8t5fsCFaccqZAKOQ1OAPeDXcA@mail.gmail.com>
-References: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
-	<1331242494-3157-1-git-send-email-paul.gortmaker@windriver.com>
+From: Gavin Shan <shangw@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the devicetree tree with the powerpc
+ tree
+Date: Wed, 14 Mar 2012 17:02:07 +0800
+Message-ID: <20120314090207.GA31112@shangw>
+References: <20120313160100.c8cc3fd2b3d1f485ef7e7954@canb.auug.org.au>
+ <20120313182612.0546D3E053B@localhost>
+ <20120314015356.GA4028@shangw>
+ <1331713762.3105.121.camel@pasglop>
+Reply-To: Gavin Shan <shangw@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:35769 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751907Ab2CNIiV convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 04:38:21 -0400
-Received: by vcqp1 with SMTP id p1so1637529vcq.19
-        for <linux-next@vger.kernel.org>; Wed, 14 Mar 2012 01:38:20 -0700 (PDT)
-In-Reply-To: <1331242494-3157-1-git-send-email-paul.gortmaker@windriver.com>
+Received: from e28smtp09.in.ibm.com ([122.248.162.9]:47069 "EHLO
+	e28smtp09.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759226Ab2CNJCW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 05:02:22 -0400
+Received: from /spool/local
+	by e28smtp09.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <shangw@linux.vnet.ibm.com>;
+	Wed, 14 Mar 2012 14:32:19 +0530
+Content-Disposition: inline
+In-Reply-To: <1331713762.3105.121.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: broonie@opensource.wolfsonmicro.com, lost.distance@yahoo.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Grant Likely <grant.likely@secretlab.ca>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Fri, Mar 9, 2012 at 5:34 AM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
+>> >  +#if defined(CONFIG_EEH)
+>> > >  +static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
+>> > >  +{
+>> > >  +  return dn->edev;
+>> > >  +}
+>> > >  +#endif
+>> > 
+>> > Ben, What is this?  I don't want the eeh_dev pointer in struct device_node.  Up to
+>> > now we've avoided putting any reverse references into device_nodes.  For everything
+>> > else we use a reverse lookup, particularly for devices, to avoid growing the
+>> > device_node for each new type of lookup.
+>> > 
+>> 
+>> It's used to trace the EEH device. When EEH (Enhanced Error Hanlding) is enabled,
+>> EEH device will be created against PCI sensitive OF node to trace the EEH state
+>> accordingly. Since you don't want see this in struct device_node, we have to change
+>> struct eeh_dev for a little bit to so that all struct eeh_dev instances will form
+>> a global list and we can search eeh_dev according to the given device_node through
+>> the global list. 
+>> 
+>> I don't know the policy or rule here for much. I think we can have 2 options.
+>> 
+>> 1. Keep the code as being, and fix it later.
+>> 2. Fix it now. 
 >
-> =A0"regulator: Remove support for supplies specified by struct device=
-"
+>My bad, it's a mis-review, I thought it was still in pci_dn, I din't
+>catch Gavin moving it to device-node.
 >
-> deletes the field from the struct, but this platform was still trying
-> to set those fields. =A0Convert them to use the REGULATOR_SUPPLY macr=
-o.
+>Yes, Gavin, we need to do something else, a chained list we walk or
+>something like that. For the "fast path" which is when we have a pci_dev
+>around, we can either add it to dev_archdata or hijack the pci-dev
+>platform_data (I don't think anything uses it, Grant, do you know of
+>anything ?)
 >
-> arch/arm/mach-pxa/magician.c:581: error: unknown field 'dev' specifie=
-d in initializer
-> arch/arm/mach-pxa/magician.c:581: warning: initialization from incomp=
-atible pointer type
-> arch/arm/mach-pxa/magician.c:585: error: unknown field 'dev' specifie=
-d in initializer
-> arch/arm/mach-pxa/magician.c:585: warning: initialization from incomp=
-atible pointer type
->
-> arch/arm/mach-pxa/hx4700.c:683: error: unknown field 'dev' specified =
-in initializer
-> arch/arm/mach-pxa/hx4700.c:683: warning: initialization from incompat=
-ible pointer type
-> arch/arm/mach-pxa/hx4700.c:687: error: unknown field 'dev' specified =
-in initializer
-> arch/arm/mach-pxa/hx4700.c:687: warning: initialization from incompat=
-ible pointer type
->
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
->
-> [v3: fix arg2 in REGULATOR_SUPPLY to have correct names ]
->
-> diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
-> index f2c23ea..b6a338b 100644
-> --- a/arch/arm/mach-pxa/hx4700.c
-> +++ b/arch/arm/mach-pxa/hx4700.c
-> @@ -679,14 +679,8 @@ static struct platform_device power_supply =3D {
-> =A0*/
->
-> =A0static struct regulator_consumer_supply bq24022_consumers[] =3D {
-> - =A0 =A0 =A0 {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .dev =3D &gpio_vbus.dev,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .supply =3D "vbus_draw",
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .dev =3D &power_supply.dev,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .supply =3D "ac_draw",
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 REGULATOR_SUPPLY("vbus_draw", "gpio-vbus"),
-> + =A0 =A0 =A0 REGULATOR_SUPPLY("ac_draw", "pda-power"),
 
-How do you think about Mark's comments? Use dev_name() at here.
-> =A0};
+Yes, Ben. I'll come up another patch on top of -next. It's supposed
+to introduce global list for newly created eeh_dev and retrieve
+the corresponding eeh_dev according to the given device_node through
+it.
+
+>The patches are already in -next and I won't rebase, so we need to fix
+>it on top of the existing patches. Gavin, can you make a patch that puts
+>it back into pci_dn to begin with, then we can contemplate what better
+>long term solution we have ?
 >
-> =A0static struct regulator_init_data bq24022_init_data =3D {
-> diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magicia=
-n.c
-> index 3d6baf9..1a18e63 100644
-> --- a/arch/arm/mach-pxa/magician.c
-> +++ b/arch/arm/mach-pxa/magician.c
-> @@ -577,14 +577,8 @@ static struct platform_device power_supply =3D {
-> =A0*/
->
-> =A0static struct regulator_consumer_supply bq24022_consumers[] =3D {
-> - =A0 =A0 =A0 {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .dev =3D &gpio_vbus.dev,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .supply =3D "vbus_draw",
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .dev =3D &power_supply.dev,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .supply =3D "ac_draw",
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 REGULATOR_SUPPLY("vbus_draw", "gpio-vbus"),
-> + =A0 =A0 =A0 REGULATOR_SUPPLY("ac_draw", "pda-power"),
-> =A0};
->
-> =A0static struct regulator_init_data bq24022_init_data =3D {
-> --
-> 1.7.9.1
->
+
+I've had something more in my private git tree regarding this. I'll
+talk with you for your comments ;-)
+
+Thanks,
+Gavin
