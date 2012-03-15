@@ -1,61 +1,66 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH] cpuidle : fix random hangs with intel_idle
-Date: Thu, 15 Mar 2012 01:09:41 +0100
-Message-ID: <1331770181-800-1-git-send-email-daniel.lezcano@linaro.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] cpuidle : fix random hangs with intel_idle
+Date: Thu, 15 Mar 2012 11:14:15 +1100
+Message-ID: <20120315111415.cd119171ac86967aebe85545@canb.auug.org.au>
 References: <alpine.LSU.2.00.1203131454500.1335@eggly.anvils>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LSU.2.00.1203131454500.1335@eggly.anvils>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
+	<1331770181-800-1-git-send-email-daniel.lezcano@linaro.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__15_Mar_2012_11_14_15_+1100_0+_eXdBPP6Wa/e+I"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43338 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760903Ab2COAOb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 20:14:31 -0400
+In-Reply-To: <1331770181-800-1-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: akpm@linux-foundation.org, rob.lee@linaro.org, j-pihet@ti.com, khilman@ti.com, deepthi@linux.vnet.ibm.com, dan.carpenter@oracle.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hughd@google.com, amit.kucheria@linaro.org
-List-Id: linux-next.vger.kernel.org
 
-The cpuidle consolidation inverts the local_irq_enable for
-the poll_idle function with CPU_RELAX.
+--Signature=_Thu__15_Mar_2012_11_14_15_+1100_0+_eXdBPP6Wa/e+I
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reported-by: Hugh Dickins <hughd@google.com>
----
- drivers/cpuidle/cpuidle.c |   21 +++++++++++++--------
- 1 files changed, 13 insertions(+), 8 deletions(-)
+Hi Daniel,
 
-diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-index 56de5f7..4869b55 100644
---- a/drivers/cpuidle/cpuidle.c
-+++ b/drivers/cpuidle/cpuidle.c
-@@ -213,20 +213,25 @@ int cpuidle_wrap_enter(struct cpuidle_device *dev,
- }
- 
- #ifdef CONFIG_ARCH_HAS_CPU_RELAX
--static inline int __poll_idle(struct cpuidle_device *dev,
-+static int poll_idle(struct cpuidle_device *dev,
- 		struct cpuidle_driver *drv, int index)
- {
-+	ktime_t	t1, t2;
-+	s64 diff;
-+
-+	t1 = ktime_get();
-+	local_irq_enable();
- 	while (!need_resched())
- 		cpu_relax();
- 
--	return index;
--}
-+	t2 = ktime_get();
-+	diff = ktime_to_us(ktime_sub(t2, t1));
-+	if (diff > INT_MAX)
-+		diff = INT_MAX;
- 
--static int poll_idle(struct cpuidle_device *dev,
--		struct cpuidle_driver *drv, int index)
--{
--	return cpuidle_wrap_enter(dev,	drv, index,
--				__poll_idle);
-+	dev->last_residency = (int) diff;
-+
-+	return index;
- }
- 
- static void poll_idle_init(struct cpuidle_driver *drv)
--- 
-1.7.5.4
+On Thu, 15 Mar 2012 01:09:41 +0100 Daniel Lezcano <daniel.lezcano@linaro.or=
+g> wrote:
+>
+> The cpuidle consolidation inverts the local_irq_enable for
+> the poll_idle function with CPU_RELAX.
+>=20
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Reported-by: Hugh Dickins <hughd@google.com>
+
+So this needs to go into Rob's tree.  Maybe after Hugh verifies that it
+fixes his problem.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__15_Mar_2012_11_14_15_+1100_0+_eXdBPP6Wa/e+I
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPYTRXAAoJEECxmPOUX5FEE2EQAKf2ZI6e/WnSOU+jQulIHOI4
+ZF6glVtXlsh+ueQWNNnTwTApP/kz6S0w+/fKVKr+h5a1O4JkmJX/EcjjG/dx5gAA
+15+Sgqx2k2gQU2WHtaKHqYSqHoKLUYYEtD8seU1VhpvuXYBOxwkyH4w1JtDvQzuz
+w/wMQbnC5fsvMNeZ3o7S1F5v0nuJt3epGovmN+a1adWyLl7NDJAtZ6KxTnSa0d1F
+XyuSO060pmlpV8rXm+S+u7NkJKgwbVQI5U1kCU0/k1i29jRVq0UTikvGFaUdUxHd
+d1roy430ivBwxGfRd8rJ3aiHnP0xyiyjjf4gd7MnhTs5MLR19kp7n0W57EH91YgR
+dS2O8hSWgbdQmUROy3IhC9ex8XkuzC0iAZHTnasi7rBHLFxqrrwgj0wwM2yESAjO
++RK1Y6sLxfXBGJtEFs6XAb08IZ4ym5dfv4WV5CaxYWb+dnaHHREjfj2mTvvvLj9k
+16PMLYF7xETsPQ78CFlRbl1ECsOm0plRnJ6dNlRv3g0sGsXBTy7EvmWOQwTSxTI4
+wTyeuPlDg4zS7kiR/juyejGb+8NJvHV3VplYo9Bn5SoLM3foNHyM9fsvYa54IWiQ
+aPHxZ/ueLJn5jWdIw0Tprn7CrnvDISOyd1tEfjSBTztM265eN8E+6ABzHYCKLUoZ
+MNEkQOabEMbFaqIaMuX2
+=aEc+
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__15_Mar_2012_11_14_15_+1100_0+_eXdBPP6Wa/e+I--
