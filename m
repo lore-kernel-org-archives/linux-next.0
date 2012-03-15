@@ -1,68 +1,61 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Mar 15 (staging/android/ram_console.c)
-Date: Thu, 15 Mar 2012 14:39:56 -0700
-Message-ID: <4F6261AC.7030903@xenotime.net>
-References: <20120315185935.a0c475a30b2836765273a1e5@canb.auug.org.au> <4F62118A.2070403@xenotime.net> <20120315210333.GA6647@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Change of the linux-watchdog-next tree location
+Date: Fri, 16 Mar 2012 09:06:18 +1100
+Message-ID: <20120316090618.6918db3e7073cc8c87818300@canb.auug.org.au>
+References: <20111025185229.GY11844@infomag.iguana.be>
+	<20120315203004.GA4824@infomag>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__16_Mar_2012_09_06_18_+1100_C2R9+FS35fqKnbuK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:54323 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S932420Ab2COVj5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 17:39:57 -0400
-In-Reply-To: <20120315210333.GA6647@kroah.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44786 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755240Ab2COWGb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 18:06:31 -0400
+In-Reply-To: <20120315203004.GA4824@infomag>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org, Brian Swetland <swetland@google.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On 03/15/2012 02:03 PM, Greg Kroah-Hartman wrote:
+--Signature=_Fri__16_Mar_2012_09_06_18_+1100_C2R9+FS35fqKnbuK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Thu, Mar 15, 2012 at 08:58:02AM -0700, Randy Dunlap wrote:
->> On 03/15/2012 12:59 AM, Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> News: the build system (see below) has had its toolchains for most
->>> architectures updated to gcc 4.6.3.  People might like to check the build
->>> results and consider if this change has caused any problems.  There are
->>> also a number of architectures that are building today for the first
->>> time.  Thanks to Tony Breeds for his efforts in providing toolchains.
->>>
->>> Changes since 20120314:
->>
->>
->>
->> on x86_64 when CONFIG_PRINTK is not enabled:
->>
->>
->> drivers/staging/android/ram_console.c:99:6: error: 'dmesg_restrict' undeclared (first use in this function)
-> 
-> This patch should solve this, right?
-> 
-> 
-> diff --git a/drivers/staging/android/ram_console.c b/drivers/staging/android/ram_console.c
-> index 2918bc1..ce140ff 100644
-> --- a/drivers/staging/android/ram_console.c
-> +++ b/drivers/staging/android/ram_console.c
-> @@ -85,6 +85,10 @@ static int __init ram_console_module_init(void)
->  	return platform_driver_probe(&ram_console_driver, ram_console_probe);
->  }
->  
-> +#ifndef CONFIG_PRINTK
-> +#define dmesg_restrict	0
-> +#endif
-> +
->  static ssize_t ram_console_read_old(struct file *file, char __user *buf,
->  				    size_t len, loff_t *offset)
->  {
+Hi Win,
 
+On Thu, 15 Mar 2012 21:32:36 +0100 Wim Van Sebroeck <wim@iguana.be> wrote:
+>
+> Could you change the location of the linux-watchdog-next tree to the foll=
+owing tree and branch:
+> git://www.linux-watchdog.org/linux-watchdog-next.git master
 
-Yes, thanks.
+Done.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Fri__16_Mar_2012_09_06_18_+1100_C2R9+FS35fqKnbuK
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
--- 
-~Randy
+iQIcBAEBCAAGBQJPYmfaAAoJEECxmPOUX5FE5qEP/2l2rm3c0HXloeKWEtU3lbP9
+U6k95xOYycKECE2t5Er0XMC98f/Ew/f8IeDwWkWx4tkFn1GJKwk4ELGCMxBcK+l+
+palhzgh9f1x3gM+Thy7AFTkqjhGf3KP7yRcQGU6yyTEwbzc5tSwif+5xCEa4GWoU
+XU+GxxGVo4MyuL2xnx7cPTR2HfFmFqqto9+iKud1JW/TcbGH60Us+M/kxkgdbBCK
+5DigBiZRiyyVNmUj8KBOFPclabKl0LP4uvJGNxRvnLm9z34iWEh89NCBNKXl4C+B
+8K3N70Tqk57sbf5YkbJlOjnGKj7f3i3kel9kw2YoTfZv65a1LNDVxVbMFd9Ga03V
+/qACaKu+gxupqbpfKLFbEL36eZcVffzWwSt+EZKGNvJLmFGvaTxBhwzHY4f04WMd
+IkvdswpR5czKLPEO9thpdmAXXLI+xBdWSShnMyvPXS/UIGr6u0MF6lSEOXiglM76
+SzdG85LZ/CAYz9s2N8h16NTJNrxkej9I0osljVxaA7eWOemmpSjXN3BNx2gCDwNt
+rlnPmSiaIsqo0pbRKn5zsAsPKrIZJ3dbCFTH0Vl4dxuRnBwnv3jKNob9SXrAVC35
+2x4q+3HdHDYN1ki6eCvAnhfIMpDV8RmAG/YSqv734is2HkSGsTfZC1CpFhbGORIq
+6jS7f6Vj+vmYfHqw7Dy1
+=tgiO
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__16_Mar_2012_09_06_18_+1100_C2R9+FS35fqKnbuK--
