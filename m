@@ -1,80 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the final tree
  (arm-soc tree related)
-Date: Thu, 15 Mar 2012 13:05:41 +1100
-Message-ID: <20120315130541.d0d8c98d132a32dfe369ee19@canb.auug.org.au>
+Date: Thu, 15 Mar 2012 13:08:49 +1100
+Message-ID: <20120315130849.9274a279aed2b10eb90d5c2f@canb.auug.org.au>
 References: <20120315105901.7b10c9f4de9374a613436988@canb.auug.org.au>
-	<CAP=VYLosYNbhGeUYyLr=0xa1UgK=fL-GOafySixFyQjy4GrdgA@mail.gmail.com>
+	<20120315002020.GA16189@titan.lakedaemon.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Mar_2012_13_05_41_+1100_GRpqV_fK518ZNxD2"
+ boundary="Signature=_Thu__15_Mar_2012_13_08_49_+1100_l4E9qFC9srUYHKDl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40730 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40095 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753986Ab2COCFv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 22:05:51 -0400
-In-Reply-To: <CAP=VYLosYNbhGeUYyLr=0xa1UgK=fL-GOafySixFyQjy4GrdgA@mail.gmail.com>
+	with ESMTP id S1755284Ab2COCIz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 22:08:55 -0400
+In-Reply-To: <20120315002020.GA16189@titan.lakedaemon.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Walle <michael@walle.cc>
+To: Jason Cooper <jason@lakedaemon.net>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Michael Walle <michael@walle.cc>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
---Signature=_Thu__15_Mar_2012_13_05_41_+1100_GRpqV_fK518ZNxD2
+--Signature=_Thu__15_Mar_2012_13_08_49_+1100_l4E9qFC9srUYHKDl
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi all,
 
-On Wed, 14 Mar 2012 21:53:39 -0400 Paul Gortmaker <paul.gortmaker@windriver=
-.com> wrote:
+On Wed, 14 Mar 2012 20:20:20 -0400 Jason Cooper <jason@lakedaemon.net> wrot=
+e:
 >
-> On Wed, Mar 14, 2012 at 7:59 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> >
+> On Thu, Mar 15, 2012 at 10:59:01AM +1100, Stephen Rothwell wrote:
+> >=20
 > > After merging the final tree, today's linux-next build (powerpc
 > > allmodconfig) failed like this:
-> >
+> >=20
 > > drivers/ata/sata_mv.c:4185:1: error: '__mod_of_device_table' aliased to=
  undefined symbol 'mvsdio_dt_ids'
-> >
+> >=20
 > > Caused by commit f1e1e148c5cb ("ARM: kirkwood: sata_mv: add device tree
 > > binding").
 >=20
-> Looks like the same thing I reported in yesterday's triage that was
-> screwing sparc:
->=20
-> http://www.spinics.net/lists/sparclinux/msg09199.html
->=20
-> Odd that it only started screwing powerpc today though.
+> That's my mistake.  I did a pull request for the wrong branch.  Olof,
+> could you please drop the offending branch and I'll submit a new pull
+> request once I have a chance to test Arnd's irq patch?
 
-It started affecting PowerPC with next-20120309, but I don't read the
-build logs every day :-(
+I will revert that commit today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__15_Mar_2012_13_05_41_+1100_GRpqV_fK518ZNxD2
+--Signature=_Thu__15_Mar_2012_13_08_49_+1100_l4E9qFC9srUYHKDl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPYU51AAoJEECxmPOUX5FEzucP/i1C1bmMEVQA1O7y2SskyxZJ
-cam4R87x9pqVTdYbXMXmhnERIv0MitO93yn14ermGnosm2ZnzAt2xsz6zoAu7tz9
-xKHF7s0KmK5aCJJ3mGEjuCo9hyy9hQdRpdSrC0O9+yKjZ5bbZgvffi8x5/9dKt06
-K4GmqdxkbQLsNl2JZvNW46HGGMOwPKd+/bP0cNDiCjD1iWwjTkGIx6iqdxK0S8JA
-dffnIs1iPuNjx0hB9GetZK8+bzeYMcyz0YnHmo/xifPkmnhTEEI+anq5zAyNPQtK
-vGFhhFjxaVzV/XyNtbca4LMq8t9kyDeJYILED/JwFhO10xz4xICGoQzG0YU784Cp
-nSBEskjd9KMiDzKqw8mZhbfc9iFxYVauCgjot9RO3/v+XW+f/7F20GZXMdpVrYq7
-LMeioLrC9UCYdJsvrip5dK9NkzP5/jSBi54BeZQcQa1cYGIOu02aOaGY9DAYUUfA
-yqUBKTvJifmO63JwvRxLO59w6/mmfIzILg+h+lvsMzyijBVB4xSoF93yaSc+5Vej
-596NxJomjkaj9WhDCKCQjH6N35llg8PAe6X8a0Ycm00kLzQWxn7gENzOop4+KChT
-exmhl74mxvlr5P+ok/ITIgHiAnNO0AI3V9pXXbEXnWPfLktMR45W72jIK0umvrXa
-yQQXHkT1WdG4pN5JQ/Aw
-=ulsn
+iQIcBAEBCAAGBQJPYU8xAAoJEECxmPOUX5FEeKcP/jRgpuaCbUGZL6RYn5wqBUoB
+VbtUuMp17D3vfU9vpI7mZQU+m21kTTEj9zEViROJMAcALR2aMackctfQpOpKqOIE
+UhJdWsFqVlQw54O1k556OJFOcTUNFKUBIpb0vdiW3kVlnGSqX9G4aelLzaFr2YQp
+Ip4jTyL3PfzkkflBbPooxBWItykY6WNqwSL20CpVx7yJ11wcDYHFkkq38RJEUdfo
+ZO1LbxiIMi6yPEwuziIayECYeBCy4Zy93O77OZ5iVRc0ik/SHxZfZSigud47ISn6
+yDfTy8BIKQTipSxSc86QIfHqk1Srzhfp3l+GWA7N89Toeh9ImOgABWykgBqiV3Ku
+JFK32eiafFpkv4u5Z8w6ua27TfhKA04e1eQgeKzX8RJyT0vTgc6K59rC5weV924+
+V0cRE6TfsLLcAUqHtRbFS4LqdwtG92pZdF48RoOwEdAF8c4s9JMcCvkS/M7o5SLS
+FWyyJqX9ApSd/PKWBue0oG0k2SUF6yo2PbowE1FrAkbt7mRXBXjjdQDaC8VlSwr8
+lSQTHVPkMxYkJG04qBQIzHXWrMMOB6fksroKjWonpKLKOCyBDOBNgpKlTY95q6+s
+mL6kaU7nmysADCdd2U5MTt92w3blACOReEBWRn8IdzPsaZtqYzeDu8HTDtLT8R9V
+qa60GzJogu2qc9fL/UJi
+=5bRR
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__15_Mar_2012_13_05_41_+1100_GRpqV_fK518ZNxD2--
+--Signature=_Thu__15_Mar_2012_13_08_49_+1100_l4E9qFC9srUYHKDl--
