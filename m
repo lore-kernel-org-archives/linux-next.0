@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
-Date: Thu, 15 Mar 2012 17:50:00 +1100
-Message-ID: <20120315175000.897f1172c296d4a687be0537@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Thu, 15 Mar 2012 17:56:28 +1100
+Message-ID: <20120315175628.ca8afd4482712e1043212416@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Mar_2012_17_50_00_+1100_PIrwKDEQ5CZdHgqx"
+ boundary="Signature=_Thu__15_Mar_2012_17_56_28_+1100_FNkYoAc1rgJKe1c="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57202 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:34490 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755434Ab2COGuX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 02:50:23 -0400
+	with ESMTP id S1756395Ab2COG4q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 02:56:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <damm@opensource.se>, "Rafael J. Wysocki" <rjw@sisk.pl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Paul Mundt <lethal@linux-sh.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Russell King <rmk@arm.linux.org.uk>, Magnus Damm <damm@opensource.se>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
---Signature=_Thu__15_Mar_2012_17_50_00_+1100_PIrwKDEQ5CZdHgqx
+--Signature=_Thu__15_Mar_2012_17_56_28_+1100_FNkYoAc1rgJKe1c=
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,38 +24,84 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-shmobile/board-mackerel.c between commit 1740d3448012
-("ARM: mach-shmobile: mackerel: Reserve DMA memory for the frame buffer")
-from Linus' tree and commit 5d7220ec000f ("ARM: mach-shmobile: sh7372
-map_io and init_early update") from the arm-soc tree.
+arch/arm/mach-shmobile/setup-r8a7740.c between commit 250a27237e0e ("ARM:
+shmobile: remove NR_IRQS") from the arm tree and commit d3ab7221489f
+("ARM: mach-shmobile: r8a7740 map_io and init_early update") from the
+arm-soc tree.
 
-The latter moved the code to another file
-arch/arm/mach-shmobile/setup-sh7372.c and I have no idea how to fix this
-up, so I just removed the change done by the former.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__15_Mar_2012_17_50_00_+1100_PIrwKDEQ5CZdHgqx
+diff --cc arch/arm/mach-shmobile/setup-r8a7740.c
+index fa15d81,74e5234..0000000
+--- a/arch/arm/mach-shmobile/setup-r8a7740.c
++++ b/arch/arm/mach-shmobile/setup-r8a7740.c
+@@@ -25,9 -25,41 +25,42 @@@
+  #include <linux/serial_sci.h>
+  #include <linux/sh_timer.h>
+  #include <mach/r8a7740.h>
+ +#include <mach/irqs.h>
++ #include <mach/common.h>
+  #include <asm/mach-types.h>
++ #include <asm/mach/map.h>
+  #include <asm/mach/arch.h>
++ #include <asm/mach/time.h>
++=20
++ static struct map_desc r8a7740_io_desc[] __initdata =3D {
++ 	 /*
++ 	  * for CPGA/INTC/PFC
++ 	  * 0xe6000000-0xefffffff -> 0xe6000000-0xefffffff
++ 	  */
++ 	{
++ 		.virtual	=3D 0xe6000000,
++ 		.pfn		=3D __phys_to_pfn(0xe6000000),
++ 		.length		=3D 160 << 20,
++ 		.type		=3D MT_DEVICE_NONSHARED
++ 	},
++ #ifdef CONFIG_CACHE_L2X0
++ 	/*
++ 	 * for l2x0_init()
++ 	 * 0xf0100000-0xf0101000 -> 0xf0002000-0xf0003000
++ 	 */
++ 	{
++ 		.virtual	=3D 0xf0002000,
++ 		.pfn		=3D __phys_to_pfn(0xf0100000),
++ 		.length		=3D PAGE_SIZE,
++ 		.type		=3D MT_DEVICE_NONSHARED
++ 	},
++ #endif
++ };
++=20
++ void __init r8a7740_map_io(void)
++ {
++ 	iotable_init(r8a7740_io_desc, ARRAY_SIZE(r8a7740_io_desc));
++ }
+ =20
+  /* SCIFA0 */
+  static struct plat_sci_port scif0_platform_data =3D {
+
+--Signature=_Thu__15_Mar_2012_17_56_28_+1100_FNkYoAc1rgJKe1c=
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPYZEYAAoJEECxmPOUX5FE5foP/3fxDWdMRLbw/TsNPHKrs+U1
-FxhXP5MnaFPKJWa8FE/+iUQ0BryJCN0evOHYTRJ1wx1FvuY0zTijMA5YibICBIBz
-rfKYh7RuG7tZU5x14ZWWW56qCI7DSHLhqx+KTupfzljnOXnMmjEMGJiIK5g5+kXK
-pAWHGRj/HizCVXz+C4zTbj54D+/q0uuBKCpvQ7tLcTXGx+1GP802Qi5gIfxV9+E7
-++aG6SZoEnXGJjrsrCfVa8dXorMr1hL82f3D1al+BIdblMt7wmGqf8iInv7QwLhA
-e/+hk0kFV/g+z+I8LEq2rxZddd0DBOEksGcuUSA/uZQHg+BvjB7SyMNorC7FBAN6
-32vhxVkOqL+DGDD1B2xNHbhJhJ9jYirqsBf4kWRi01NuCATeArwhV5rlojgJm927
-4FRFISZkZSbBVCB8ikuggngsPEFHyqkSm1yMaXC8ylfNLkdhTTC0wYUeTLODdHhA
-a2A9pzDP/Nw6YI4KNw3t+c85DUu9PqjGeELeTckHx4bGup70bu46ivZOvSmjv9IT
-g+pcZkX0PINuqnZHhtieZc3Tugvx5Q2/XPq6LuNGnM9TBynStW0HEE2IGUzmnW38
-cHcoVbING3XJxZiY9K/LnUy/6tY3A5daCpCvUMkd+mWQamaY8mZXBdHbOUriRVdH
-3pzxkyMfc/nPdof5R6Ak
-=kbYc
+iQIcBAEBCAAGBQJPYZKcAAoJEECxmPOUX5FExQcQAIm7sd5Q1egQMPKyI6ysyhhc
+N8ZPDWj5GCrA7MfeXhAJXUyxB8bYNZ3IEtV3MzoiijDt//hdM9jtLphrN3nsjENn
+U55cBopd6WpVZI0KXBJb2Lh8CludlRE3MjSrcCcy9AWFhCIK1S6Z9FEsbvwo85iP
+TW5igSp4rZv/zhKXRK3IKjlh5t2U8IxBMXcE9/ioMxYK0kVVJYILllUzRrlGSFzi
+Grgk5OIvJ9l873Fk0Pm5ju1pjczO5cMqAmDEHHMfqSjmJirStogdYx5USmUtueZA
+bqhZo+yk24rZ8ArHXEe0LWU16ocn9wOxr9R47W88AHHNqvA+MHulLoDrzdzVKw/e
+fGfehQ+jcFZZNUNGUPVsbmjT9gUfMqF/jyjhNuqaQSGyfZBhwwypddMUN3odeUj/
+QFTnuDzrPeS+PNSSwLxTONEiwAAV6uKGUtUJTpwVUvvr8gK5Z3EdRf48fJe4woJo
+z4wMDxjg2k0JH4U6swW5+zLxdvFZoGNpe+h9gwMyCJsFiNozLuPxd5BS4uo6Q7Wb
+lZfwtDgz4a77BZ/dEFGe9n6fqwcK3EY9D73x3WrJKECUulVucDN/L4AGn3bVUDtI
+FUcntFkWmuephrwosJdmH1DOv8pk7LaxqPrmeuOvCa6l2UEviQFPh3TXigHmTQsk
+6rVqjWEO+kWx86GGmhen
+=EYVt
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__15_Mar_2012_17_50_00_+1100_PIrwKDEQ5CZdHgqx--
+--Signature=_Thu__15_Mar_2012_17_56_28_+1100_FNkYoAc1rgJKe1c=--
