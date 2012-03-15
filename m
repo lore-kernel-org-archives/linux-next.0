@@ -1,61 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Change of the linux-watchdog-next tree location
-Date: Fri, 16 Mar 2012 09:06:18 +1100
-Message-ID: <20120316090618.6918db3e7073cc8c87818300@canb.auug.org.au>
-References: <20111025185229.GY11844@infomag.iguana.be>
-	<20120315203004.GA4824@infomag>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: [PATCH 1/2] crypto: camellia-x86_64 - module init/exit functions
+ should be static
+Date: Thu, 15 Mar 2012 15:49:37 -0700
+Message-ID: <4F627201.3080100@xenotime.net>
+References: <4F620F37.4070404@xenotime.net> <20120315201151.11667.63183.stgit@localhost6.localdomain6>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__16_Mar_2012_09_06_18_+1100_C2R9+FS35fqKnbuK"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44786 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755240Ab2COWGb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 18:06:31 -0400
-In-Reply-To: <20120315203004.GA4824@infomag>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <20120315201151.11667.63183.stgit@localhost6.localdomain6>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__16_Mar_2012_09_06_18_+1100_C2R9+FS35fqKnbuK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03/15/2012 01:11 PM, Jussi Kivilinna wrote:
 
-Hi Win,
+> This caused conflict with twofish-x86_64-3way when compiled into kernel,
+> same function names and not static.
+> 
+> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+> Signed-off-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
 
-On Thu, 15 Mar 2012 21:32:36 +0100 Wim Van Sebroeck <wim@iguana.be> wrote:
->
-> Could you change the location of the linux-watchdog-next tree to the foll=
-owing tree and branch:
-> git://www.linux-watchdog.org/linux-watchdog-next.git master
 
-Done.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
---Signature=_Fri__16_Mar_2012_09_06_18_+1100_C2R9+FS35fqKnbuK
-Content-Type: application/pgp-signature
+Thanks.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+> ---
+>  arch/x86/crypto/camellia_glue.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/crypto/camellia_glue.c b/arch/x86/crypto/camellia_glue.c
+> index 1ca36a9..3306dc0 100644
+> --- a/arch/x86/crypto/camellia_glue.c
+> +++ b/arch/x86/crypto/camellia_glue.c
+> @@ -1925,7 +1925,7 @@ static int force;
+>  module_param(force, int, 0);
+>  MODULE_PARM_DESC(force, "Force module load, ignore CPU blacklist");
+>  
+> -int __init init(void)
+> +static int __init init(void)
+>  {
+>  	if (!force && is_blacklisted_cpu()) {
+>  		printk(KERN_INFO
+> @@ -1938,7 +1938,7 @@ int __init init(void)
+>  	return crypto_register_algs(camellia_algs, ARRAY_SIZE(camellia_algs));
+>  }
+>  
+> -void __exit fini(void)
+> +static void __exit fini(void)
+>  {
+>  	crypto_unregister_algs(camellia_algs, ARRAY_SIZE(camellia_algs));
+>  }
+> 
 
-iQIcBAEBCAAGBQJPYmfaAAoJEECxmPOUX5FE5qEP/2l2rm3c0HXloeKWEtU3lbP9
-U6k95xOYycKECE2t5Er0XMC98f/Ew/f8IeDwWkWx4tkFn1GJKwk4ELGCMxBcK+l+
-palhzgh9f1x3gM+Thy7AFTkqjhGf3KP7yRcQGU6yyTEwbzc5tSwif+5xCEa4GWoU
-XU+GxxGVo4MyuL2xnx7cPTR2HfFmFqqto9+iKud1JW/TcbGH60Us+M/kxkgdbBCK
-5DigBiZRiyyVNmUj8KBOFPclabKl0LP4uvJGNxRvnLm9z34iWEh89NCBNKXl4C+B
-8K3N70Tqk57sbf5YkbJlOjnGKj7f3i3kel9kw2YoTfZv65a1LNDVxVbMFd9Ga03V
-/qACaKu+gxupqbpfKLFbEL36eZcVffzWwSt+EZKGNvJLmFGvaTxBhwzHY4f04WMd
-IkvdswpR5czKLPEO9thpdmAXXLI+xBdWSShnMyvPXS/UIGr6u0MF6lSEOXiglM76
-SzdG85LZ/CAYz9s2N8h16NTJNrxkej9I0osljVxaA7eWOemmpSjXN3BNx2gCDwNt
-rlnPmSiaIsqo0pbRKn5zsAsPKrIZJ3dbCFTH0Vl4dxuRnBwnv3jKNob9SXrAVC35
-2x4q+3HdHDYN1ki6eCvAnhfIMpDV8RmAG/YSqv734is2HkSGsTfZC1CpFhbGORIq
-6jS7f6Vj+vmYfHqw7Dy1
-=tgiO
------END PGP SIGNATURE-----
 
---Signature=_Fri__16_Mar_2012_09_06_18_+1100_C2R9+FS35fqKnbuK--
+
+-- 
+~Randy
