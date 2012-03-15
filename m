@@ -1,108 +1,60 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH] printk: Make it compile with !CONFIG_PRINTK
-Date: Thu, 15 Mar 2012 12:35:37 +0100
-Message-ID: <1331811337.18960.179.camel@twins>
-References: <20120314181921.59451eca117c276461f7dc28@canb.auug.org.au>
-	 <4F60BFA6.2030804@xenotime.net>
-	 <20120315071934.77f0af64a4c633c545d68ea4@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: triage for March 14, 2012
+Date: Thu, 15 Mar 2012 10:34:15 -0400
+Message-ID: <4F61FDE7.7040003@windriver.com>
+References: <20120314233926.GA22887@windriver.com> <CAMuHMdV45SBg+cm0+x07SfvY-xpjqb_ZVznn-vD=70G1YZXnFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:43808 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751434Ab2COLfz convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 07:35:55 -0400
-In-Reply-To: <20120315071934.77f0af64a4c633c545d68ea4@canb.auug.org.au>
+Received: from mail1.windriver.com ([147.11.146.13]:43838 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760319Ab2COOeW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 10:34:22 -0400
+In-Reply-To: <CAMuHMdV45SBg+cm0+x07SfvY-xpjqb_ZVznn-vD=70G1YZXnFw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2012-03-15 at 07:19 +1100, Stephen Rothwell wrote:
-> On Wed, 14 Mar 2012 08:56:22 -0700 Randy Dunlap <rdunlap@xenotime.net> wrote:
-> >
-> > on x86_64:
-> > 
-> > kernel/printk.c:1230:5: error: redefinition of 'printk_sched'
-> > include/linux/printk.h:136:5: note: previous definition of 'printk_sched' was here
+On 12-03-15 04:00 AM, Geert Uytterhoeven wrote:
+> On Thu, Mar 15, 2012 at 00:39, Paul Gortmaker
+> <paul.gortmaker@windriver.com> wrote:
+>> New breakage since last report:
 > 
-> Caused by commit 3ccf3e830615 ("printk/sched: Introduce special
-> printk_sched() for those awkward moments") from the tip tree.  The
-> declaration in include/linux/printk.h has alternatives determined by
-> CONFIG_PRINTK, but the definition in kernel/printk.c is not so
-> protected ...
+> Seems you missed two new failures for m68k/allmodconfig:
+> 
+> include/linux/mmc/core.h:128:20: error: field 'completion' has incomplete type
+> make[4]: *** [drivers/mmc/card/mmc_test.o] Error 1
 
-Ingo, could you stick this on top.. ?
+Thanks -- at some point, if this seems worthwhile, I'll have to
+automate things a bit more (need to go look at that pointer you'd
+sent me earlier).  At the moment, I'm not 100% apt to notice when
+an old failure is replaced with a new failure on the same target
+on the same day.
 
----
-Subject: printk: Make it compile with !CONFIG_PRINTK
+Paul.
 
-Commit 3ccf3e830615 ("printk/sched: Introduce special printk_sched() for
-those awkward moments") overlooked an #ifdef, so move code around to
-respect these directives.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
----
- kernel/printk.c |   40 ++++++++++++++++++++--------------------
- 1 files changed, 20 insertions(+), 20 deletions(-)
-
-diff --git a/kernel/printk.c b/kernel/printk.c
-index 8b6981e..b663c2c 100644
---- a/kernel/printk.c
-+++ b/kernel/printk.c
-@@ -1227,26 +1227,6 @@ int is_console_locked(void)
- static DEFINE_PER_CPU(int, printk_pending);
- static DEFINE_PER_CPU(char [PRINTK_BUF_SIZE], printk_sched_buf);
- 
--int printk_sched(const char *fmt, ...)
--{
--	unsigned long flags;
--	va_list args;
--	char *buf;
--	int r;
--
--	local_irq_save(flags);
--	buf = __get_cpu_var(printk_sched_buf);
--
--	va_start(args, fmt);
--	r = vsnprintf(buf, PRINTK_BUF_SIZE, fmt, args);
--	va_end(args);
--
--	__this_cpu_or(printk_pending, PRINTK_PENDING_SCHED);
--	local_irq_restore(flags);
--
--	return r;
--}
--
- void printk_tick(void)
- {
- 	if (__this_cpu_read(printk_pending)) {
-@@ -1663,6 +1643,26 @@ late_initcall(printk_late_init);
- 
- #if defined CONFIG_PRINTK
- 
-+int printk_sched(const char *fmt, ...)
-+{
-+	unsigned long flags;
-+	va_list args;
-+	char *buf;
-+	int r;
-+
-+	local_irq_save(flags);
-+	buf = __get_cpu_var(printk_sched_buf);
-+
-+	va_start(args, fmt);
-+	r = vsnprintf(buf, PRINTK_BUF_SIZE, fmt, args);
-+	va_end(args);
-+
-+	__this_cpu_or(printk_pending, PRINTK_PENDING_SCHED);
-+	local_irq_restore(flags);
-+
-+	return r;
-+}
-+
- /*
-  * printk rate limiting, lifted from the networking subsystem.
-  *
+> 
+> drivers/staging/android/persistent_ram.c:457:2: error: implicit
+> declaration of function 'memblock_reserve'
+> [-Werror=implicit-function-declaration]
+> cc1: some warnings being treated as errors
+> make[4]: *** [drivers/staging/android/persistent_ram.o] Error 1
+> 
+>> m68k:allmodconfig
+>>       when:   Mar 9, 00:38
+>>       why:    ERROR: "__udivdi3" [drivers/media/dvb/frontends/rtl2830.ko] undefined!
+> 
+> This seems to be fixed, unless it doesn't get that far anymore.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
