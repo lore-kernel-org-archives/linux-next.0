@@ -1,73 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cpufreq tree with the
- cpufreq-current tree
-Date: Thu, 15 Mar 2012 13:23:52 +1100
-Message-ID: <20120315132352.b8c8bbf0242c1f3b31333675@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the battery tree
+Date: Thu, 15 Mar 2012 13:56:09 +1100
+Message-ID: <20120315135609.2f9a2a030866c476dc736b9c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Mar_2012_13_23_52_+1100_9s.b80lUciam_sVZ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Jones <davej@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Kevin Hilman <khilman@ti.com>, Jaecheol Lee <jc.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__15_Mar_2012_13_56_09_+1100_0Gq5sP4k=yosvrZ2"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:42733 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752950Ab2COC4S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 22:56:18 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Anton Vorontsov <avorontsov@ru.mvista.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Thu__15_Mar_2012_13_23_52_+1100_9s.b80lUciam_sVZ
+--Signature=_Thu__15_Mar_2012_13_56_09_+1100_0Gq5sP4k=yosvrZ2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Anton,
 
-Today's linux-next merge of the cpufreq tree got a conflict in
-drivers/cpufreq/Makefile between commit b09db45c56c2 ("cpufreq: OMAP
-driver depends CPUfreq tables") from the cpufreq-current tree and commit
-a35c50510dd4 ("EXYNOS4X12: Add support cpufreq for EXYNOS4X12") from the
-cpufreq tree.
+After merging the battery tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+drivers/power/ab8500_btemp.c: In function 'ab8500_btemp_batctrl_volt_to_res=
+':
+drivers/power/ab8500_btemp.c:142:2: error: implicit declaration of function=
+ 'is_ab8500_1p1_or_earlier' [-Werror=3Dimplicit-function-declaration]
+drivers/power/ab8500_btemp.c: In function 'ab8500_btemp_templow_handler':
+drivers/power/ab8500_btemp.c:619:2: error: implicit declaration of function=
+ 'is_ab8500_2p0_or_earlier' [-Werror=3Dimplicit-function-declaration]
+drivers/power/ab8500_charger.c: In function 'ab8500_charger_ac_en':
+drivers/power/ab8500_charger.c:1126:3: error: implicit declaration of funct=
+ion 'is_ab8500_1p1_or_earlier' [-Werror=3Dimplicit-function-declaration]
+drivers/power/ab8500_charger.c: In function 'ab8500_charger_remove':
+drivers/power/ab8500_charger.c:2519:2: error: implicit declaration of funct=
+ion 'usb_unregister_notifier' [-Werror=3Dimplicit-function-declaration]
+drivers/power/ab8500_charger.c:2520:2: error: implicit declaration of funct=
+ion 'usb_put_transceiver' [-Werror=3Dimplicit-function-declaration]
+drivers/power/ab8500_charger.c: In function 'ab8500_charger_probe':
+drivers/power/ab8500_charger.c:2688:2: error: implicit declaration of funct=
+ion 'usb_get_transceiver' [-Werror=3Dimplicit-function-declaration]
+drivers/power/ab8500_charger.c:2688:14: warning: assignment makes pointer f=
+rom integer without a cast [enabled by default]
+drivers/power/ab8500_charger.c:2695:2: error: implicit declaration of funct=
+ion 'usb_register_notifier' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commits 89449ac8d6d2 ("ab8500-charger: AB8500 charger driver")
+and 20ac1aed6206 ("ab8500-btemp: AB8500 battery temperature driver").
+
+I have used the battery tree form next-20120314 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/cpufreq/Makefile
-index fda94c7,3cbbcd0..0000000
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@@ -44,7 -45,9 +45,9 @@@ obj-$(CONFIG_ARM_S3C64XX_CPUFREQ)	+=3D s3
-  obj-$(CONFIG_ARM_S5PV210_CPUFREQ)	+=3D s5pv210-cpufreq.o
-  obj-$(CONFIG_ARM_EXYNOS_CPUFREQ)	+=3D exynos-cpufreq.o
-  obj-$(CONFIG_ARM_EXYNOS4210_CPUFREQ)	+=3D exynos4210-cpufreq.o
-+ obj-$(CONFIG_ARM_EXYNOS4X12_CPUFREQ)	+=3D exynos4x12-cpufreq.o
-+ obj-$(CONFIG_ARM_EXYNOS5250_CPUFREQ)	+=3D exynos5250-cpufreq.o
- -obj-$(CONFIG_ARCH_OMAP2PLUS)            +=3D omap-cpufreq.o
- +obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)     +=3D omap-cpufreq.o
- =20
-  #########################################################################=
-#########
-  # PowerPC platform drivers
-
---Signature=_Thu__15_Mar_2012_13_23_52_+1100_9s.b80lUciam_sVZ
+--Signature=_Thu__15_Mar_2012_13_56_09_+1100_0Gq5sP4k=yosvrZ2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPYVK4AAoJEECxmPOUX5FEGTAP/2+ZYK0MEdgV0b4YjkqF9MVL
-jgneot+kg/9dDE2nJzu2M5tqG6vZrR5+bmT09g8Z9/+9gCV6ZaClaRmqefbZ5/vC
-9fDKbRRBOLHKfdlrYf0qsXRQLrI5qvUeEL31oCTXISNTpUGTfLMub753+RX/d7Rb
-G24frYnQZ6hmQdM5ogBg03Th5qTsGEJ7+OgjyMU4YFPBfAXRJZUl1NjO+qpsRTWF
-3teP+SDPrqIsC0Xo4kVCCa0MRxd76V8Pesd0xHbtDgdZBU/1lvr6bC6Rvmn/a3w0
-anwXUPjxDv4VrqGPJPRbSke35DA3bbLrp5i0uBqCmngsDPjEINOefo1REPG+qpbz
-36VG7jR1+85cj8P63+lIQvRgFvompZu4pyUrgtvzMcVq3JOUZqT4+j59sNujWdCl
-1pG1FgxL1GQ2gl5rMnIozMWYGtXnFIHXaIYXfoT4Olov6S7iGPj1qDDC4YJMVyyv
-0jxxDmyA26i6ghmH727+dkTofXjIoMwyhYOUuynJYD8ixqtQ8MI6zjbCeSPZp7dx
-GfUPzPQQ962U7pPJ+L53OzbFqqvek2r+xfs8JfzQYRKFMUYN9Cbby8+YWp4nHaLo
-MQYuEvYt044yoEOnq7npd8CQdl86vfFayvTeWw/tbWhojSf0psQ0AqIWAVQOQV/f
-H1HicqZBwY/DSkyn2f1K
-=qLer
+iQIcBAEBCAAGBQJPYVpJAAoJEECxmPOUX5FEe+MP/iBpwTxh/rjNmZTfHGrEEUjp
+aBwPDKLGeyaNhMigVCiIaj2C9QIMR0eidNbTN0A2hoNpGm/xwM6IKJdy5Z4wFOwy
+AXmTAH8iLXpM1H2Vy0MWefPyybXYfE1xb/Z/+zRc2k1t1uvhyb0bghkZ754NuiqD
+ect1XL0QDBWUjYLFeUwawm3hwRBXL/sxpqws4G3UPUZ498W9bmrDQ5KbueGoDglw
+/aZ8nAELGHXZpdyNRwjE78tkRpqRLobZP3QKZ3QSwOb+ON00TduYdHY/ub5l+VIG
+Xii8KUOPinFTxlcK3seLL86ct3f04j4O1+b1x2C0SqMeKAJCMYjq+pF5DqH3eytU
+mTWWfZiYWokjZyWOeqS31VU6nuQb/4y0wHinMIBspXP6FKf+IFCmGmOcuAluWNek
+Kc6wwAvvpSRfQlDyAKpQsBZzxX0eaXqwWh8tfwOJ5BmQztgjE5ixvNydd9TXPWxh
+hZBv3DofYFQP+9SLMudc45GHvdrxiM1rmmt1H+xw7nc3eRJ/AFmDy2flkRmE6nCc
+Gkg4Snk/v98DuT1UV+q9BtztgXB83KSE5Pg324pABGMmDpmqpJvIvpuYcFaextvj
+WITp5GbZpcOcik5n+1AlgjF7XS40lGW/VpoT2LFCU/HPFwv8J74Swbc5XsPnL/xG
+SIuDEVfVBm5ghq7V7XpV
+=HwYk
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__15_Mar_2012_13_23_52_+1100_9s.b80lUciam_sVZ--
+--Signature=_Thu__15_Mar_2012_13_56_09_+1100_0Gq5sP4k=yosvrZ2--
