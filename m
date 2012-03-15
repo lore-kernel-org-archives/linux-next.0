@@ -1,330 +1,115 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the xen-two tree
-Date: Thu, 15 Mar 2012 16:37:40 +1100
-Message-ID: <20120315163740.c51aed0e3c10234fa3f37a46@canb.auug.org.au>
+Subject: linux-next: manual merge of the kmap_atomic tree with the md tree
+Date: Thu, 15 Mar 2012 17:09:43 +1100
+Message-ID: <20120315170943.378ed2719af547d5b4419e6f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Mar_2012_16_37_40_+1100_k6Qqg1G4myzOx3RS"
+ boundary="Signature=_Thu__15_Mar_2012_17_09_43_+1100_EB+O9LecOUAXFvow"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34716 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44116 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751944Ab2COFhv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 01:37:51 -0400
+	with ESMTP id S1752111Ab2COGKE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 02:10:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Cong Wang <amwang@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
 
---Signature=_Thu__15_Mar_2012_16_37_40_+1100_k6Qqg1G4myzOx3RS
+--Signature=_Thu__15_Mar_2012_17_09_43_+1100_EB+O9LecOUAXFvow
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Cong,
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/tty/hvc/hvc_xen.c between commits 02e19f9c7cac ("hvc_xen:
-implement multiconsole support") and cf8e019b523a ("hvc_xen: introduce
-HVC_XEN_FRONTEND") from the xen-two tree and commit d4e33fac2408
-("serial: Kill off NO_IRQ") from the tty tree.
+Today's linux-next merge of the kmap_atomic tree got a conflict in
+drivers/md/bitmap.c between commit 83a191d7b09d ("md/bitmap: remove some
+pointless locking") from the md tree and commit 63716d51774d ("md: remove
+the second argument of k[un]map_atomic()") from the kmap_atomic tree.
 
-The code was moved around.  I fixed it up (see below) and can carry the
-fix as necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/tty/hvc/hvc_xen.c
-index 83d5c88,a1b0a75..0000000
---- a/drivers/tty/hvc/hvc_xen.c
-+++ b/drivers/tty/hvc/hvc_xen.c
-@@@ -299,262 -193,8 +299,262 @@@ static int xen_initial_domain_console_i
- =20
-  void xen_console_resume(void)
+diff --cc drivers/md/bitmap.c
+index cf5863c,045e086..0000000
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@@ -426,9 -451,13 +426,9 @@@ void bitmap_update_sb(struct bitmap *bi
+  		return;
+  	if (bitmap->mddev->bitmap_info.external)
+  		return;
+ -	spin_lock_irqsave(&bitmap->lock, flags);
+ -	if (!bitmap->sb_page) { /* no superblock */
+ -		spin_unlock_irqrestore(&bitmap->lock, flags);
+ +	if (!bitmap->sb_page) /* no superblock */
+  		return;
+- 	sb =3D kmap_atomic(bitmap->sb_page, KM_USER0);
+ -	}
+ -	spin_unlock_irqrestore(&bitmap->lock, flags);
++ 	sb =3D kmap_atomic(bitmap->sb_page);
+  	sb->events =3D cpu_to_le64(bitmap->mddev->events);
+  	if (bitmap->mddev->events < bitmap->events_cleared)
+  		/* rocking back to read-only */
+@@@ -653,11 -680,16 +653,11 @@@ static int bitmap_mask_state(struct bit
+  			     enum bitmap_mask_op op)
   {
- -	if (xencons_irq)
- -		rebind_evtchn_irq(xen_start_info->console.domU.evtchn, xencons_irq);
- +	struct xencons_info *info =3D vtermno_to_xencons(HVC_COOKIE);
- +	if (info !=3D NULL && info->irq)
- +		rebind_evtchn_irq(info->evtchn, info->irq);
- +}
- +
- +static void xencons_disconnect_backend(struct xencons_info *info)
- +{
- +	if (info->irq > 0)
- +		unbind_from_irqhandler(info->irq, NULL);
- +	info->irq =3D 0;
- +	if (info->evtchn > 0)
- +		xenbus_free_evtchn(info->xbdev, info->evtchn);
- +	info->evtchn =3D 0;
- +	if (info->gntref > 0)
- +		gnttab_free_grant_references(info->gntref);
- +	info->gntref =3D 0;
- +	if (info->hvc !=3D NULL)
- +		hvc_remove(info->hvc);
- +	info->hvc =3D NULL;
- +}
- +
- +static void xencons_free(struct xencons_info *info)
- +{
- +	free_page((unsigned long)info->intf);
- +	info->intf =3D NULL;
- +	info->vtermno =3D 0;
- +	kfree(info);
- +}
- +
- +static int xen_console_remove(struct xencons_info *info)
- +{
- +	xencons_disconnect_backend(info);
- +	spin_lock(&xencons_lock);
- +	list_del(&info->list);
- +	spin_unlock(&xencons_lock);
- +	if (info->xbdev !=3D NULL)
- +		xencons_free(info);
- +	else {
- +		if (xen_hvm_domain())
- +			iounmap(info->intf);
- +		kfree(info);
- +	}
- +	return 0;
- +}
- +
- +#ifdef CONFIG_HVC_XEN_FRONTEND
- +static struct xenbus_driver xencons_driver;
- +
- +static int xencons_remove(struct xenbus_device *dev)
- +{
- +	return xen_console_remove(dev_get_drvdata(&dev->dev));
- +}
- +
- +static int xencons_connect_backend(struct xenbus_device *dev,
- +				  struct xencons_info *info)
- +{
- +	int ret, evtchn, devid, ref, irq;
- +	struct xenbus_transaction xbt;
- +	grant_ref_t gref_head;
- +	unsigned long mfn;
- +
- +	ret =3D xenbus_alloc_evtchn(dev, &evtchn);
- +	if (ret)
- +		return ret;
- +	info->evtchn =3D evtchn;
- +	irq =3D bind_evtchn_to_irq(evtchn);
- +	if (irq < 0)
- +		return irq;
- +	info->irq =3D irq;
- +	devid =3D dev->nodename[strlen(dev->nodename) - 1] - '0';
- +	info->hvc =3D hvc_alloc(xenbus_devid_to_vtermno(devid),
- +			irq, &domU_hvc_ops, 256);
- +	if (IS_ERR(info->hvc))
- +		return PTR_ERR(info->hvc);
- +	if (xen_pv_domain())
- +		mfn =3D virt_to_mfn(info->intf);
- +	else
- +		mfn =3D __pa(info->intf) >> PAGE_SHIFT;
- +	ret =3D gnttab_alloc_grant_references(1, &gref_head);
- +	if (ret < 0)
- +		return ret;
- +	info->gntref =3D gref_head;
- +	ref =3D gnttab_claim_grant_reference(&gref_head);
- +	if (ref < 0)
- +		return ref;
- +	gnttab_grant_foreign_access_ref(ref, info->xbdev->otherend_id,
- +			mfn, 0);
- +
- + again:
- +	ret =3D xenbus_transaction_start(&xbt);
- +	if (ret) {
- +		xenbus_dev_fatal(dev, ret, "starting transaction");
- +		return ret;
- +	}
- +	ret =3D xenbus_printf(xbt, dev->nodename, "ring-ref", "%d", ref);
- +	if (ret)
- +		goto error_xenbus;
- +	ret =3D xenbus_printf(xbt, dev->nodename, "port", "%u",
- +			    evtchn);
- +	if (ret)
- +		goto error_xenbus;
- +	ret =3D xenbus_printf(xbt, dev->nodename, "type", "ioemu");
- +	if (ret)
- +		goto error_xenbus;
- +	ret =3D xenbus_transaction_end(xbt, 0);
- +	if (ret) {
- +		if (ret =3D=3D -EAGAIN)
- +			goto again;
- +		xenbus_dev_fatal(dev, ret, "completing transaction");
- +		return ret;
- +	}
- +
- +	xenbus_switch_state(dev, XenbusStateInitialised);
- +	return 0;
- +
- + error_xenbus:
- +	xenbus_transaction_end(xbt, 1);
- +	xenbus_dev_fatal(dev, ret, "writing xenstore");
- +	return ret;
- +}
- +
- +static int __devinit xencons_probe(struct xenbus_device *dev,
- +				  const struct xenbus_device_id *id)
- +{
- +	int ret, devid;
- +	struct xencons_info *info;
- +
- +	devid =3D dev->nodename[strlen(dev->nodename) - 1] - '0';
- +	if (devid =3D=3D 0)
- +		return -ENODEV;
- +
- +	info =3D kzalloc(sizeof(struct xencons_info), GFP_KERNEL | __GFP_ZERO);
- +	if (!info)
- +		goto error_nomem;
- +	dev_set_drvdata(&dev->dev, info);
- +	info->xbdev =3D dev;
- +	info->vtermno =3D xenbus_devid_to_vtermno(devid);
- +	info->intf =3D (void *)__get_free_page(GFP_KERNEL | __GFP_ZERO);
- +	if (!info->intf)
- +		goto error_nomem;
- +
- +	ret =3D xencons_connect_backend(dev, info);
- +	if (ret < 0)
- +		goto error;
- +	spin_lock(&xencons_lock);
- +	list_add_tail(&info->list, &xenconsoles);
- +	spin_unlock(&xencons_lock);
- +
- +	return 0;
- +
- + error_nomem:
- +	ret =3D -ENOMEM;
- +	xenbus_dev_fatal(dev, ret, "allocating device memory");
- + error:
- +	xencons_disconnect_backend(info);
- +	xencons_free(info);
- +	return ret;
- +}
- +
- +static int xencons_resume(struct xenbus_device *dev)
- +{
- +	struct xencons_info *info =3D dev_get_drvdata(&dev->dev);
- +
- +	xencons_disconnect_backend(info);
- +	memset(info->intf, 0, PAGE_SIZE);
- +	return xencons_connect_backend(dev, info);
- +}
- +
- +static void xencons_backend_changed(struct xenbus_device *dev,
- +				   enum xenbus_state backend_state)
- +{
- +	switch (backend_state) {
- +	case XenbusStateReconfiguring:
- +	case XenbusStateReconfigured:
- +	case XenbusStateInitialising:
- +	case XenbusStateInitialised:
- +	case XenbusStateUnknown:
- +	case XenbusStateClosed:
- +		break;
- +
- +	case XenbusStateInitWait:
- +		break;
- +
- +	case XenbusStateConnected:
- +		xenbus_switch_state(dev, XenbusStateConnected);
- +		break;
- +
- +	case XenbusStateClosing:
- +		xenbus_frontend_closed(dev);
- +		break;
- +	}
- +}
- +
- +static const struct xenbus_device_id xencons_ids[] =3D {
- +	{ "console" },
- +	{ "" }
- +};
- +
- +
- +static DEFINE_XENBUS_DRIVER(xencons, "xenconsole",
- +	.probe =3D xencons_probe,
- +	.remove =3D xencons_remove,
- +	.resume =3D xencons_resume,
- +	.otherend_changed =3D xencons_backend_changed,
- +);
- +#endif /* CONFIG_HVC_XEN_FRONTEND */
- +
- +static int __init xen_hvc_init(void)
- +{
- +	int r;
- +	struct xencons_info *info;
- +	const struct hv_ops *ops;
- +
- +	if (!xen_domain())
- +		return -ENODEV;
- +
- +	if (xen_initial_domain()) {
- +		ops =3D &dom0_hvc_ops;
- +		r =3D xen_initial_domain_console_init();
- +		if (r < 0)
- +			return r;
- +		info =3D vtermno_to_xencons(HVC_COOKIE);
- +	} else {
- +		ops =3D &domU_hvc_ops;
- +		if (xen_hvm_domain())
- +			r =3D xen_hvm_console_init();
- +		else
- +			r =3D xen_pv_console_init();
- +		if (r < 0)
- +			return r;
- +
- +		info =3D vtermno_to_xencons(HVC_COOKIE);
- +		info->irq =3D bind_evtchn_to_irq(info->evtchn);
- +	}
- +	if (info->irq < 0)
-- 		info->irq =3D 0; /* NO_IRQ */
-++		info->irq =3D 0;
- +	else
- +		irq_set_noprobe(info->irq);
- +
- +	info->hvc =3D hvc_alloc(HVC_COOKIE, info->irq, ops, 256);
- +	if (IS_ERR(info->hvc)) {
- +		r =3D PTR_ERR(info->hvc);
- +		spin_lock(&xencons_lock);
- +		list_del(&info->list);
- +		spin_unlock(&xencons_lock);
- +		if (info->irq)
- +			unbind_from_irqhandler(info->irq, NULL);
- +		kfree(info);
- +		return r;
- +	}
- +
- +	r =3D 0;
- +#ifdef CONFIG_HVC_XEN_FRONTEND
- +	r =3D xenbus_register_frontend(&xencons_driver);
- +#endif
- +	return r;
-  }
+  	bitmap_super_t *sb;
+ -	unsigned long flags;
+  	int old;
  =20
-  static void __exit xen_hvc_fini(void)
+ -	spin_lock_irqsave(&bitmap->lock, flags);
+ -	if (!bitmap->sb_page) { /* can't set the state */
+ -		spin_unlock_irqrestore(&bitmap->lock, flags);
+ +	if (!bitmap->sb_page) /* can't set the state */
+  		return 0;
+- 	sb =3D kmap_atomic(bitmap->sb_page, KM_USER0);
+ -	}
+ -	spin_unlock_irqrestore(&bitmap->lock, flags);
++ 	sb =3D kmap_atomic(bitmap->sb_page);
+  	old =3D le32_to_cpu(sb->state) & bits;
+  	switch (op) {
+  	case MASK_SET:
+@@@ -1034,13 -1066,13 +1034,13 @@@ static int bitmap_init_from_disk(struc
+  			b =3D test_bit(bit, paddr);
+  		else
+  			b =3D test_bit_le(bit, paddr);
+- 		kunmap_atomic(paddr, KM_USER0);
++ 		kunmap_atomic(paddr);
+  		if (b) {
+  			/* if the disk bit is set, set the memory bit */
+ -			int needed =3D ((sector_t)(i+1) << (CHUNK_BLOCK_SHIFT(bitmap))
+ +			int needed =3D ((sector_t)(i+1) << bitmap->chunkshift
+  				      >=3D start);
+  			bitmap_set_memory_bits(bitmap,
+ -					       (sector_t)i << CHUNK_BLOCK_SHIFT(bitmap),
+ +					       (sector_t)i << bitmap->chunkshift,
+  					       needed);
+  			bit_cnt++;
+  		}
 
---Signature=_Thu__15_Mar_2012_16_37_40_+1100_k6Qqg1G4myzOx3RS
+--Signature=_Thu__15_Mar_2012_17_09_43_+1100_EB+O9LecOUAXFvow
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPYYAkAAoJEECxmPOUX5FEEugP/R4Val93bddIounQhMZgXv/l
-Q6tSTiDG0D+PSfM85ArBXjv/y84Cu5pBaUEOBDiidzNbmFPeirfcBVV7vZoD5hHx
-F92lTlzbYdt/B67XPt6SHUyTnpWZA9AGZsU0FUJAUihQUUufjzRYqOScrin4dhKm
-9QQHKyA27loy60jveqoAgBcsuUxciNl0/yKFi5alR/8/ulqc/rvNxgfeEoN0qZ30
-u1H+v3lxlI/3mSitDoWZRs4PYH9vatFxtB1XRoldqwqjD14Df8rXK47k2TqdQxG5
-RXbv6VnQqa7e6UgfYAKuwO2drVYVKuKGfZufqc9EI7nXsyqgFeE5cYdPvcxbzzkA
-CMF+xRcUVGFaUU08Uzzmz3Fe7neFqZR4gAw7/oidE/kGNbhwOCdhQ05+lke0mIRZ
-j5QKdA9pgtX5wzARjC1ZSZzTvFU1OpqTxLtPPejuO1fM0PwWvfchEFsaAJSqqnJv
-ic3L6v9dnGene7CQn1jvMyoehyk784eEVBWpVlYPNtCz+WpsdnhG1uzTTQsLW4U+
-t0Gl73Ytq3XWPrRXAT3WrgXDIUNiljiRFl4TCgCh/deXkKzXft1x0UwAkVIb6hWW
-WMt4HjGfnZic9Z0oBYbazN02tBdAmPMdmJedhTaeWIZhqLhKYd7DBT2tgHPNwAjw
-4U5GbkK1cSzMMBv7A5mo
-=mJTN
+iQIcBAEBCAAGBQJPYYenAAoJEECxmPOUX5FEsNMP/2XIW/Vg2YJRVgQarOht4Cb8
+eXCzMT8r7d4ZKx0fdbG5JWPPF//3mfGNLWTmvna3qJUP5YVcDD+0KewVs/aZfNvG
+WZJkqeNo96GH40wo2lT5YF356PAx5CU884LIHIGZKMWfHBQ3sMiReRtQ6gJR8YJ/
+yuy7Q/F0xKR5cu2g6IZlMU+sZvXhg/e5VMJGKggtbOIfpXgMSkQ/E3pyu7ITL9AY
+TFlpcA0RTdn2en4D5lX457vZ8VPr2b8VagBLhxDo39HVoHMZUjqjrJzVatv+nqrG
+yRN+Z8iOIifOBG2xXtx69FgA7DkCHsEGhP/BqWQ0xLXgoYHscl5g1MO4piDlCuTf
+WJ8OQHQumAGZpZy0OSdNhzU3D3ygw4kLItwYE6oBMR1rr9oMxc2uC7l8OlFby575
+TA9/NM821FwLtOUTQOoyKda4MUJSREXG7P7uyWY2NXoRuFX6CWMb4ktrF52l60vJ
+wM6HtQCwTcb2YeaX5ik1sF9cL+mtlQ2YFmeH0xTzgRzMYFxsvxSlcfTHxGtKQffd
+W0YN0HdPeHLpGKfYAIiK4taWxRvwBfDfXlV8hMX1sS/njQABojWJKEhzj8Nf6sf4
+i7cqWX9Rd40a8oW2Rck6/gsgXsI5KrO2THqFnaRXLid6GFK/xiGOy6NBi13iWiOH
+dp01osvEa6TYjJMw3znH
+=7fWM
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__15_Mar_2012_16_37_40_+1100_k6Qqg1G4myzOx3RS--
+--Signature=_Thu__15_Mar_2012_17_09_43_+1100_EB+O9LecOUAXFvow--
