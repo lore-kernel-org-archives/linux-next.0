@@ -1,45 +1,52 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build failure after merge of the final tree (arm-soc tree related)
-Date: Thu, 15 Mar 2012 17:32:12 +0000
-Message-ID: <201203151732.12852.arnd@arndb.de>
-References: <20120315105901.7b10c9f4de9374a613436988@canb.auug.org.au> <201203151639.38223.arnd@arndb.de> <20120315172213.GC20243@titan.lakedaemon.net>
+Subject: Re: linux-next: manual merge of the arm-soc tree with Linus' tree
+Date: Thu, 15 Mar 2012 20:01:12 +0000
+Message-ID: <201203152001.12353.arnd@arndb.de>
+References: <20120315175000.897f1172c296d4a687be0537@canb.auug.org.au> <1362815.uO65s14ojU@avalon>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:59671 "EHLO
+Received: from moutng.kundenserver.de ([212.227.126.171]:59958 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932396Ab2CORcT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 13:32:19 -0400
-In-Reply-To: <20120315172213.GC20243@titan.lakedaemon.net>
+	with ESMTP id S1032245Ab2COUB3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 16:01:29 -0400
+In-Reply-To: <1362815.uO65s14ojU@avalon>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Michael Walle <michael@walle.cc>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <damm@opensource.se>, "Rafael J. Wysocki" <rjw@sisk.pl>, Paul Mundt <lethal@linux-sh.org>
 
-On Thursday 15 March 2012, Jason Cooper wrote:
-> On Thu, Mar 15, 2012 at 04:39:38PM +0000, Arnd Bergmann wrote:
-> > On Thursday 15 March 2012, Jason Cooper wrote:
-> > > That's my mistake.  I did a pull request for the wrong branch.  Olof,
-> > > could you please drop the offending branch and I'll submit a new pull
-> > > request once I have a chance to test Arnd's irq patch?
-> > 
-> > I reverted this in the for-next branch for now. The two initial patches
-> > from the kirkwood/board branch are still present.
+On Thursday 15 March 2012, Laurent Pinchart wrote:
+> The following patch (5d7220ec000f rebased on top of 1740d3448012) shows the
+> correct conflict resolution in my opinion.
 > 
-> Okay, thanks.  I've rebased onto next/boards and merged the
-> depends/irqdomain branch.  I'm making progress, but not finished yet.
+> From f040ba69632a54c86767974768d68b308901061c Mon Sep 17 00:00:00 2001
+> From: Magnus Damm <damm@opensource.se>
+> Date: Wed, 29 Feb 2012 12:37:19 +0900
+> Subject: [PATCH] ARM: mach-shmobile: sh7372 map_io and init_early update
+> 
+> ARM: mach-shmobile: sh7372 map_io and init_early update
+> 
+> Update the sh7372 SoC and the AP4EVB and Mackerel boards to make use
+> of the functions sh7372_map_io() and sh7372_add_early_devices().
+> 
+> Signed-off-by: Magnus Damm <damm@opensource.se>
+> Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Ok. I hope we can still make it for v3.4, but I think it won't be
-much of a problem if not -- it will get merged into linux-next
-just after v3.4-rc1 in case we don't make it, and then you have
-plenty of time to improve it further.
+Hi Laurent,
 
-> How is a pull-request done in the above scenario?  is my merge commit
-> included in the series?  what is the pull-request based on?
-> next/boards, or depends/irqdomain?
+I've merged Paul's branch into my renesas/soc branch, because I don't
+rebase the branches once they are merged into arm-soc. Thanks a lot
+for the resolution you suggested, I used the same resulting code
+in the merge commit.
 
-You should base it on depends/irqdomain.
+I'm not particularly happy about how we got here. Obviously, the bug
+fixes that Paul sent should have gone through the arm-soc tree to
+avoid this situation, and they should have been based on a -rc release
+rather than some random commit after -rc6. It's not a big issue
+because the next/soc branch already contains -rc7 though.
 
 	Arnd
