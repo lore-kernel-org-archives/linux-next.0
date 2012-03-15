@@ -1,35 +1,49 @@
-From: Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH] cpuidle : fix random hangs with intel_idle
-Date: Wed, 14 Mar 2012 17:23:26 -0700 (PDT)
-Message-ID: <alpine.LSU.2.00.1203141720360.2003@eggly.anvils>
-References: <alpine.LSU.2.00.1203131454500.1335@eggly.anvils> <1331770181-800-1-git-send-email-daniel.lezcano@linaro.org> <20120315111415.cd119171ac86967aebe85545@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: build failure after merge of the final tree (arm-soc
+ tree related)
+Date: Wed, 14 Mar 2012 21:53:39 -0400
+Message-ID: <CAP=VYLosYNbhGeUYyLr=0xa1UgK=fL-GOafySixFyQjy4GrdgA@mail.gmail.com>
+References: <20120315105901.7b10c9f4de9374a613436988@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120315111415.cd119171ac86967aebe85545@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:35988 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1759659Ab2COBxk convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Mar 2012 21:53:40 -0400
+In-Reply-To: <20120315105901.7b10c9f4de9374a613436988@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, akpm@linux-foundation.org, rob.lee@linaro.org, j-pihet@ti.com, khilman@ti.com, deepthi@linux.vnet.ibm.com, dan.carpenter@oracle.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org
-List-Id: linux-next.vger.kernel.org
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Walle <michael@walle.cc>
 
-On Thu, 15 Mar 2012, Stephen Rothwell wrote:
-> On Thu, 15 Mar 2012 01:09:41 +0100 Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-> >
-> > The cpuidle consolidation inverts the local_irq_enable for
-> > the poll_idle function with CPU_RELAX.
-> > 
-> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> > Reported-by: Hugh Dickins <hughd@google.com>
-> 
-> So this needs to go into Rob's tree.  Maybe after Hugh verifies that it
-> fixes his problem.
+On Wed, Mar 14, 2012 at 7:59 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi all,
+>
+> After merging the final tree, today's linux-next build (powerpc
+> allmodconfig) failed like this:
+>
+> drivers/ata/sata_mv.c:4185:1: error: '__mod_of_device_table' aliased =
+to undefined symbol 'mvsdio_dt_ids'
+>
+> Caused by commit f1e1e148c5cb ("ARM: kirkwood: sata_mv: add device tr=
+ee
+> binding").
 
-Yes, Daniel got me to try it offline before he posted it.
+Looks like the same thing I reported in yesterday's triage that was
+screwing sparc:
 
-Tested-by: Hugh Dickins <hughd@google.com>
+http://www.spinics.net/lists/sparclinux/msg09199.html
 
-Personally, I'd recommend including it even before it gets into Rob's
-tree (where it may well be improved upon first): it does a lot to
-improve the usability of linux-next.
+Odd that it only started screwing powerpc today though.
 
-Hugh
+Paul.
+--
+
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
