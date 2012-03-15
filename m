@@ -1,77 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] cpuidle : fix random hangs with intel_idle
-Date: Thu, 15 Mar 2012 13:58:41 +1100
-Message-ID: <20120315135841.affff2d75681451d9ddd1a58@canb.auug.org.au>
-References: <alpine.LSU.2.00.1203131454500.1335@eggly.anvils>
-	<1331770181-800-1-git-send-email-daniel.lezcano@linaro.org>
-	<20120315111415.cd119171ac86967aebe85545@canb.auug.org.au>
-	<alpine.LSU.2.00.1203141720360.2003@eggly.anvils>
+Subject: linux-next: manual merge of the md tree with the device-mapper tree
+Date: Thu, 15 Mar 2012 14:07:30 +1100
+Message-ID: <20120315140730.760e0eb9842d0cccb834b95b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Mar_2012_13_58_41_+1100_NzEer013tQ8qAe_i"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38199 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752953Ab2COC6t (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 22:58:49 -0400
-In-Reply-To: <alpine.LSU.2.00.1203141720360.2003@eggly.anvils>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, akpm@linux-foundation.org, rob.lee@linaro.org, j-pihet@ti.com, khilman@ti.com, deepthi@linux.vnet.ibm.com, dan.carpenter@oracle.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kucheria@linaro.org
+ boundary="Signature=_Thu__15_Mar_2012_14_07_30_+1100_KqK_BWGjkVmaGBB4"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Neil Brown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan E Brassow <jbrassow@redhat.com>, Alasdair G Kergon <agk@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__15_Mar_2012_13_58_41_+1100_NzEer013tQ8qAe_i
+--Signature=_Thu__15_Mar_2012_14_07_30_+1100_KqK_BWGjkVmaGBB4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Hugh,
+Hi Neil,
 
-On Wed, 14 Mar 2012 17:23:26 -0700 (PDT) Hugh Dickins <hughd@google.com> wr=
-ote:
->
-> On Thu, 15 Mar 2012, Stephen Rothwell wrote:
-> >=20
-> > So this needs to go into Rob's tree.  Maybe after Hugh verifies that it
-> > fixes his problem.
->=20
-> Yes, Daniel got me to try it offline before he posted it.
->=20
-> Tested-by: Hugh Dickins <hughd@google.com>
+Today's linux-next merge of the md tree got a conflict in
+drivers/md/dm-raid.c between commit 43390ddd7f36 ("The dm-raid code
+currently fails to create a RAID array if any of the") from the
+device-mapper tree and commit 760e35d7e573 ("md: tidy up rdev_for_each
+usage") from the md tree.
 
-Excellent.
-
-> Personally, I'd recommend including it even before it gets into Rob's
-> tree (where it may well be improved upon first): it does a lot to
-> improve the usability of linux-next.
-
-OK, so I will add this patch to today's tree (on the assumption that it,
-or something better, will be added to Rob's tree soon).
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__15_Mar_2012_13_58_41_+1100_NzEer013tQ8qAe_i
+diff --cc drivers/md/dm-raid.c
+index f03e423,c5a875d..0000000
+--- a/drivers/md/dm-raid.c
++++ b/drivers/md/dm-raid.c
+@@@ -857,27 -855,11 +857,27 @@@ static int super_validate(struct mddev=20
+  static int analyse_superblocks(struct dm_target *ti, struct raid_set *rs)
+  {
+  	int ret;
+ +	unsigned redundancy =3D 0;
+ +	struct raid_dev *dev;
+- 	struct md_rdev *rdev, *freshest, *tmp;
++ 	struct md_rdev *rdev, *freshest;
+  	struct mddev *mddev =3D &rs->md;
+ =20
+ +	switch (rs->raid_type->level) {
+ +	case 1:
+ +		redundancy =3D rs->md.raid_disks - 1;
+ +		break;
+ +	case 4:
+ +	case 5:
+ +	case 6:
+ +		redundancy =3D rs->raid_type->parity_devs;
+ +		break;
+ +	default:
+ +		ti->error =3D "Unknown RAID type";
+ +		return -EINVAL;
+ +	}
+ +
+  	freshest =3D NULL;
+- 	rdev_for_each(rdev, tmp, mddev) {
++ 	rdev_for_each(rdev, mddev) {
+  		if (!rdev->meta_bdev)
+  			continue;
+ =20
+
+--Signature=_Thu__15_Mar_2012_14_07_30_+1100_KqK_BWGjkVmaGBB4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPYVrhAAoJEECxmPOUX5FEJx0P/399KGKIvXTRKmCo0reZxUjl
-jhL2SR1/1/olupaco8aZbkMXrSlpTyj3Ps9NOMzosKVf6kVRSp2sAaJO1tsr62xs
-sXm5sY85rK4e/XntHu5GquEZVDqvYJzTI1VPArZ4npOsC8DWDIn6a/WuZQsqJ2JL
-6oEh/kwDQLKB/QFHqJFTStydc+tG5sNpJZwpHiu61a0ZE1veoA+I5FAoNJkf65AE
-6hD1jUBtdl+vyA1ByTzMS1sLC/g3a3Vj+cOpJavLGQ+CU0KiStc0e79TLQf7kY1p
-WNdeFNtloKiIRA4BstYfM3tfMX+Ka0C3myrYzeX20+YaTsYVgGLPvgwAstqiOPm2
-ujUzIcviOx3I2oYJ0ClO2MORefxRJYScnWJi+MsjneY/7+J0IIYb8AlJtPiwoU5B
-hk6zQ4uy35gDhaTCo7nw1wa2Ttq0MU+pXVnYbRyIn7367UEFyR7JwczfvFr9H86X
-fdOaW78u0fAqCF58nCaCb9f8J3XrVqLF/Cg1/HySMCA1XGPisr0GzEKW5Ny/E5JI
-CbHL7/oLnQ791XvSJgG34Fi/SmrSjG9CkRaYWnk2MLx4lVn7HHCXmlyRqcVwTAPC
-MRxIahCoOLpD9V1ipV0dA6SqhEejls9tsusGFYRWvaNLrAHl254cu1V8V7KUAk5H
-U41wfATtqngZFamjoN9s
-=g2rM
+iQIcBAEBCAAGBQJPYVzyAAoJEECxmPOUX5FE2QQQAIYHq5H9SFPcFu3rjtmTibrt
+OTc+VIxMpwDKyTTty3IOh4eSpYXHXk20jMkbDJj0tJQKb6inOiSRYBZDa8rKEoyH
+B/RhB7QFQo7dW71dkxhmbn5XlslrzXeS+9uP1nWSn/DXbiWpm5KDQ5EaWczTW6rM
+1ZNK8+/Nuzc3Jyn5qdhClIbNmCSwRjNaPd7IYSmOq3LWkyF9qF6PGKXaCUPVa4XZ
+u8430ugk9BhZSPhPlc+CaUDsC4F7N/+dTUK1NTH1ZxAwL9IUYXI6aMA26Rf3DJhc
+0o6yKsw1Q0BfXKHpuqH0Op4RDo6xD16ZwsraIRH2nR6pt9cTFlbJbht/+Z7h/21w
+EQl9ECt4l7ax8oA2OD8e7Af3latdrqLs/k9tj25Dmbt5KD1wO13OzUNChk3VmSjb
+bTrxPyblob5tmrBDWBZqQJabx8wfb8uwF3Bf6krYxoUXMscoOgFG1Luj02gvxkLt
+9PUxBMnnpsvNeDCL1akUgv9V1B7VkVP4fJ/V51yaLtOUp4G++FONI6CGkQO/KM2f
+q8awygCr2vxxyI2DWqD5lHRDgKFJs+i8QeO0X9kGLEyY6p+yV7z6ZMG53EPvL7BH
+w5k6XF3h5flXE/bun4uQtbczny15rXNRnRdFKtIDvoRg3lmZx9ij++ebuWGAmxgr
+9AtTv9DbyH7EDU6TXXLC
+=ALzl
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__15_Mar_2012_13_58_41_+1100_NzEer013tQ8qAe_i--
+--Signature=_Thu__15_Mar_2012_14_07_30_+1100_KqK_BWGjkVmaGBB4--
