@@ -1,75 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (arm-soc tree related)
-Date: Thu, 15 Mar 2012 13:08:49 +1100
-Message-ID: <20120315130849.9274a279aed2b10eb90d5c2f@canb.auug.org.au>
-References: <20120315105901.7b10c9f4de9374a613436988@canb.auug.org.au>
-	<20120315002020.GA16189@titan.lakedaemon.net>
+Subject: linux-next: manual merge of the cpufreq tree with the
+ cpufreq-current tree
+Date: Thu, 15 Mar 2012 13:23:52 +1100
+Message-ID: <20120315132352.b8c8bbf0242c1f3b31333675@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__15_Mar_2012_13_08_49_+1100_l4E9qFC9srUYHKDl"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40095 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755284Ab2COCIz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Mar 2012 22:08:55 -0400
-In-Reply-To: <20120315002020.GA16189@titan.lakedaemon.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Michael Walle <michael@walle.cc>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+ boundary="Signature=_Thu__15_Mar_2012_13_23_52_+1100_9s.b80lUciam_sVZ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Jones <davej@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Kevin Hilman <khilman@ti.com>, Jaecheol Lee <jc.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__15_Mar_2012_13_08_49_+1100_l4E9qFC9srUYHKDl
+--Signature=_Thu__15_Mar_2012_13_23_52_+1100_9s.b80lUciam_sVZ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Dave,
 
-On Wed, 14 Mar 2012 20:20:20 -0400 Jason Cooper <jason@lakedaemon.net> wrot=
-e:
->
-> On Thu, Mar 15, 2012 at 10:59:01AM +1100, Stephen Rothwell wrote:
-> >=20
-> > After merging the final tree, today's linux-next build (powerpc
-> > allmodconfig) failed like this:
-> >=20
-> > drivers/ata/sata_mv.c:4185:1: error: '__mod_of_device_table' aliased to=
- undefined symbol 'mvsdio_dt_ids'
-> >=20
-> > Caused by commit f1e1e148c5cb ("ARM: kirkwood: sata_mv: add device tree
-> > binding").
->=20
-> That's my mistake.  I did a pull request for the wrong branch.  Olof,
-> could you please drop the offending branch and I'll submit a new pull
-> request once I have a chance to test Arnd's irq patch?
+Today's linux-next merge of the cpufreq tree got a conflict in
+drivers/cpufreq/Makefile between commit b09db45c56c2 ("cpufreq: OMAP
+driver depends CPUfreq tables") from the cpufreq-current tree and commit
+a35c50510dd4 ("EXYNOS4X12: Add support cpufreq for EXYNOS4X12") from the
+cpufreq tree.
 
-I will revert that commit today.
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__15_Mar_2012_13_08_49_+1100_l4E9qFC9srUYHKDl
+diff --cc drivers/cpufreq/Makefile
+index fda94c7,3cbbcd0..0000000
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@@ -44,7 -45,9 +45,9 @@@ obj-$(CONFIG_ARM_S3C64XX_CPUFREQ)	+=3D s3
+  obj-$(CONFIG_ARM_S5PV210_CPUFREQ)	+=3D s5pv210-cpufreq.o
+  obj-$(CONFIG_ARM_EXYNOS_CPUFREQ)	+=3D exynos-cpufreq.o
+  obj-$(CONFIG_ARM_EXYNOS4210_CPUFREQ)	+=3D exynos4210-cpufreq.o
++ obj-$(CONFIG_ARM_EXYNOS4X12_CPUFREQ)	+=3D exynos4x12-cpufreq.o
++ obj-$(CONFIG_ARM_EXYNOS5250_CPUFREQ)	+=3D exynos5250-cpufreq.o
+ -obj-$(CONFIG_ARCH_OMAP2PLUS)            +=3D omap-cpufreq.o
+ +obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)     +=3D omap-cpufreq.o
+ =20
+  #########################################################################=
+#########
+  # PowerPC platform drivers
+
+--Signature=_Thu__15_Mar_2012_13_23_52_+1100_9s.b80lUciam_sVZ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPYU8xAAoJEECxmPOUX5FEeKcP/jRgpuaCbUGZL6RYn5wqBUoB
-VbtUuMp17D3vfU9vpI7mZQU+m21kTTEj9zEViROJMAcALR2aMackctfQpOpKqOIE
-UhJdWsFqVlQw54O1k556OJFOcTUNFKUBIpb0vdiW3kVlnGSqX9G4aelLzaFr2YQp
-Ip4jTyL3PfzkkflBbPooxBWItykY6WNqwSL20CpVx7yJ11wcDYHFkkq38RJEUdfo
-ZO1LbxiIMi6yPEwuziIayECYeBCy4Zy93O77OZ5iVRc0ik/SHxZfZSigud47ISn6
-yDfTy8BIKQTipSxSc86QIfHqk1Srzhfp3l+GWA7N89Toeh9ImOgABWykgBqiV3Ku
-JFK32eiafFpkv4u5Z8w6ua27TfhKA04e1eQgeKzX8RJyT0vTgc6K59rC5weV924+
-V0cRE6TfsLLcAUqHtRbFS4LqdwtG92pZdF48RoOwEdAF8c4s9JMcCvkS/M7o5SLS
-FWyyJqX9ApSd/PKWBue0oG0k2SUF6yo2PbowE1FrAkbt7mRXBXjjdQDaC8VlSwr8
-lSQTHVPkMxYkJG04qBQIzHXWrMMOB6fksroKjWonpKLKOCyBDOBNgpKlTY95q6+s
-mL6kaU7nmysADCdd2U5MTt92w3blACOReEBWRn8IdzPsaZtqYzeDu8HTDtLT8R9V
-qa60GzJogu2qc9fL/UJi
-=5bRR
+iQIcBAEBCAAGBQJPYVK4AAoJEECxmPOUX5FEGTAP/2+ZYK0MEdgV0b4YjkqF9MVL
+jgneot+kg/9dDE2nJzu2M5tqG6vZrR5+bmT09g8Z9/+9gCV6ZaClaRmqefbZ5/vC
+9fDKbRRBOLHKfdlrYf0qsXRQLrI5qvUeEL31oCTXISNTpUGTfLMub753+RX/d7Rb
+G24frYnQZ6hmQdM5ogBg03Th5qTsGEJ7+OgjyMU4YFPBfAXRJZUl1NjO+qpsRTWF
+3teP+SDPrqIsC0Xo4kVCCa0MRxd76V8Pesd0xHbtDgdZBU/1lvr6bC6Rvmn/a3w0
+anwXUPjxDv4VrqGPJPRbSke35DA3bbLrp5i0uBqCmngsDPjEINOefo1REPG+qpbz
+36VG7jR1+85cj8P63+lIQvRgFvompZu4pyUrgtvzMcVq3JOUZqT4+j59sNujWdCl
+1pG1FgxL1GQ2gl5rMnIozMWYGtXnFIHXaIYXfoT4Olov6S7iGPj1qDDC4YJMVyyv
+0jxxDmyA26i6ghmH727+dkTofXjIoMwyhYOUuynJYD8ixqtQ8MI6zjbCeSPZp7dx
+GfUPzPQQ962U7pPJ+L53OzbFqqvek2r+xfs8JfzQYRKFMUYN9Cbby8+YWp4nHaLo
+MQYuEvYt044yoEOnq7npd8CQdl86vfFayvTeWw/tbWhojSf0psQ0AqIWAVQOQV/f
+H1HicqZBwY/DSkyn2f1K
+=qLer
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__15_Mar_2012_13_08_49_+1100_l4E9qFC9srUYHKDl--
+--Signature=_Thu__15_Mar_2012_13_23_52_+1100_9s.b80lUciam_sVZ--
