@@ -1,65 +1,59 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH 2/2] crypto: twofish-x86_64-3way - module init/exit functions
- should be static
-Date: Thu, 15 Mar 2012 15:49:41 -0700
-Message-ID: <4F627205.4070606@xenotime.net>
-References: <4F620F37.4070404@xenotime.net> <20120315201157.11667.30754.stgit@localhost6.localdomain6>
+From: Wang YanQing <udknight@gmail.com>
+Subject: Re: [PATCH] x86: export 'pcibios_enabled'
+Date: Fri, 16 Mar 2012 08:41:42 +0800
+Message-ID: <20120316004142.GA3897@udknight>
+References: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au>
+ <4F5FAE63.3090908@xenotime.net>
+ <4F5FE9AD.7000204@zytor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:45402 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1031170Ab2COWtm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 18:49:42 -0400
-In-Reply-To: <20120315201157.11667.30754.stgit@localhost6.localdomain6>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4F5FE9AD.7000204@zytor.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michal Januszewski <spock@gentoo.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On 03/15/2012 01:11 PM, Jussi Kivilinna wrote:
-
-> This caused conflict with camellia-x86_64 when compiled into kernel, same
-> function names and not static.
+On Tue, Mar 13, 2012 at 05:43:25PM -0700, H. Peter Anvin wrote:
+> On 03/13/2012 01:30 PM, Randy Dunlap wrote:
+> > From: Randy Dunlap <rdunlap@xenotime.net>
+> > 
+> > Export 'pcibios_enabled' so that when uvesafb is built as a
+> > loadable module (on X86_32), the build will succeed.
+> > 
+> > ERROR: "pcibios_enabled" [drivers/video/uvesafb.ko] undefined!
+> > 
+> > Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> > Cc:	Michal Januszewski <spock@gentoo.org>
+> > Cc:	Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+> > Cc:	linux-fbdev@vger.kernel.org
+> > Cc:	x86@kernel.org
+> > ---
+> > Applies to mainline; found in linux-next.
+> > 
+> >  arch/x86/pci/pcbios.c |    1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > --- linux-next-20120313.orig/arch/x86/pci/pcbios.c
+> > +++ linux-next-20120313/arch/x86/pci/pcbios.c
+> > @@ -27,6 +27,7 @@
+> >  #define PCIBIOS_HW_TYPE2_SPEC		0x20
+> >  
+> >  int pcibios_enabled;
+> > +EXPORT_SYMBOL(pcibios_enabled);
+> >  
+> >  /* According to the BIOS specification at:
+> >   * http://members.datafast.net.au/dft0802/specs/bios21.pdf, we could
 > 
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-
-
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-
-Thanks.
-
-> ---
->  arch/x86/crypto/twofish_glue_3way.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> I would think this should be EXPORT_SYMBOL_GPL()... this seems like a
+> symbol with a very high likelihood to be abused in strange ways.
 > 
-> diff --git a/arch/x86/crypto/twofish_glue_3way.c b/arch/x86/crypto/twofish_glue_3way.c
-> index 408fc0c..922ab24 100644
-> --- a/arch/x86/crypto/twofish_glue_3way.c
-> +++ b/arch/x86/crypto/twofish_glue_3way.c
-> @@ -668,7 +668,7 @@ static int force;
->  module_param(force, int, 0);
->  MODULE_PARM_DESC(force, "Force module load, ignore CPU blacklist");
->  
-> -int __init init(void)
-> +static int __init init(void)
->  {
->  	if (!force && is_blacklisted_cpu()) {
->  		printk(KERN_INFO
-> @@ -681,7 +681,7 @@ int __init init(void)
->  	return crypto_register_algs(tf_algs, ARRAY_SIZE(tf_algs));
->  }
->  
-> -void __exit fini(void)
-> +static void __exit fini(void)
->  {
->  	crypto_unregister_algs(tf_algs, ARRAY_SIZE(tf_algs));
->  }
+> 	-hpa
 > 
-
-
-
--- 
-~Randy
+Yes, I think EXPORT_SYMBOL_GPL is better. Indeed, there is another issue I 
+meet about the pcibios NX protection code.
+If I set "pcibios_enable = 1" forcely no matter whether set_bios_x had been executed, then
+the BIOS code is not NX. The problem is,  if set_bios_x had not been executed, of course set_memory_x 
+for the bios code page has no chance to execute, then why the BIOS code is not NX? Any comment?
+Or because the default set for the BIOS range is X, if so we should set_memory_nx if pcibios_enable == 0.
