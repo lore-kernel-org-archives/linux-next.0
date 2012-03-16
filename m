@@ -1,59 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the char-misc tree with the powerpc
- tree
-Date: Fri, 16 Mar 2012 16:52:07 +1100
-Message-ID: <20120316165207.5a4f0985863b5ae7c50bdd81@canb.auug.org.au>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH] watchdog: fix compiler error for missing parenthesis
+Date: Fri, 16 Mar 2012 15:27:21 +0900
+Message-ID: <4F62DD49.1040909@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__16_Mar_2012_16_52_07_+1100_pZRK/URh1E+iqQ6N"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55230 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751841Ab2CPFwR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Mar 2012 01:52:17 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:41864 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965212Ab2CPG1c (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Mar 2012 02:27:32 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0M0Y00G4ASHC1A70@mailout2.samsung.com> for
+ linux-next@vger.kernel.org; Fri, 16 Mar 2012 15:27:30 +0900 (KST)
+Received: from [165.213.219.108] by mmp1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTPA id <0M0Y009HLSLW9020@mmp1.samsung.com> for
+ linux-next@vger.kernel.org; Fri, 16 Mar 2012 15:27:32 +0900 (KST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: linux-next@vger.kernel.org
+Cc: sfr@canb.auug.org.au, joe@perches.com, Kyungmin Park <kyungmin.park@samsung.com>
 
---Signature=_Fri__16_Mar_2012_16_52_07_+1100_pZRK/URh1E+iqQ6N
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen.
 
-Hi all,
+Joe's patch(watchdog: Use pr_<fmt> and pr_<level>) is missed the parenthesis in s3c2410_wdt.c.
+(based-on latest linux-next repository)
+It's fixed with this patch.
 
-Today's linux-next merge of the char-misc tree got a conflict in
-drivers/char/viotape.c between commit ba7a4822b48f ("powerpc: Remove some
-of the legacy iSeries specific device drivers") from the powerpc tree and
-commit 5fb15db4376f ("char: Fix typo in viotape.c") from the char-misc
-tree.
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/watchdog/s3c2410_wdt.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-The former removed this file, so I did that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Fri__16_Mar_2012_16_52_07_+1100_pZRK/URh1E+iqQ6N
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPYtUHAAoJEECxmPOUX5FEIbMQAI7+lm2VCotsYT3Ac2hqKxZk
-AQ/hFemsdWgbvl9hgF7OO0lFHjA9A5VX7+bMyFirTjxdkE06IyPRP+vvx7edwEJt
-3h/ETOyDDlfZk2Y/oF7Z888t4KXPg9Ln4KJGaz1ZDCfHIeDNn/Ub31Aj30bvpcX+
-bcJYzmd+EiRXAQcls4oay3pt3u7gZwmEZOx7L462+GF3ATpyqpgfCbMtRFU4XkdD
-bSZ+Yn2ar5ObO2SGROvcetCXtKFl+/etJz4u96f6MhdSw92EU/C0yMLSLAbAnUBh
-5D9XVNTSDwMcOxNV+7jyUuPkkyixfm3CIRqUo8B5ZznKPgKdeTySNO3KviNIdx9C
-67qt9gGcXIB8G5TXVWqYx98HWTo5d9IL1X67j9QDK1mmG4R8KJrzoggdL4HIeiao
-3EZHgtWWP21S//rjVwQAicbeqweU38DeD2hBxw/jUv7j5DsY2ozSZYF9eVRERBce
-phC06cg1/Tnvha7SH2aghdp9f8p15IAyVpLitUqJ5hUYtz6apu0lF6VDp+j3l13o
-QfdWAU+k6eXjmawSQd1Wmw1Hbsmy6M+6tjToe18M77cxydoyyxYGNfqpoLx/u/QF
-QDHSJX4asD8GsMZpnnbc4Qacb/CdQlbo8+Q8RmrDW+JtKmFHuoUl7AXmbQ9lGV2t
-Q12qtB5lHzyojqgtNNkc
-=IPdg
------END PGP SIGNATURE-----
-
---Signature=_Fri__16_Mar_2012_16_52_07_+1100_pZRK/URh1E+iqQ6N--
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 46c251d..04e5a6d 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -523,7 +523,7 @@ static struct platform_driver s3c2410wdt_driver = {
+ 
+ static int __init watchdog_init(void)
+ {
+-	pr_info("S3C2410 Watchdog Timer, (c) 2004 Simtec Electronics\n";
++	pr_info("S3C2410 Watchdog Timer, (c) 2004 Simtec Electronics\n");
+ 
+ 	return platform_driver_register(&s3c2410wdt_driver);
+ }
