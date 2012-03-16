@@ -1,59 +1,60 @@
-From: Wang YanQing <udknight@gmail.com>
-Subject: Re: [PATCH] x86: export 'pcibios_enabled'
-Date: Fri, 16 Mar 2012 08:41:42 +0800
-Message-ID: <20120316004142.GA3897@udknight>
-References: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au>
- <4F5FAE63.3090908@xenotime.net>
- <4F5FE9AD.7000204@zytor.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ net-next tree
+Date: Fri, 16 Mar 2012 12:58:02 +1100
+Message-ID: <20120316125802.195a7ffcbcb0c3fd666d3257@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4F5FE9AD.7000204@zytor.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michal Januszewski <spock@gentoo.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__16_Mar_2012_12_58_02_+1100_dtx+VDHKtpYrPzhP"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59598 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750750Ab2CPB6N (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 21:58:13 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Sujith Manoharan <c_manoha@qca.qualcomm.com>
 
-On Tue, Mar 13, 2012 at 05:43:25PM -0700, H. Peter Anvin wrote:
-> On 03/13/2012 01:30 PM, Randy Dunlap wrote:
-> > From: Randy Dunlap <rdunlap@xenotime.net>
-> > 
-> > Export 'pcibios_enabled' so that when uvesafb is built as a
-> > loadable module (on X86_32), the build will succeed.
-> > 
-> > ERROR: "pcibios_enabled" [drivers/video/uvesafb.ko] undefined!
-> > 
-> > Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> > Cc:	Michal Januszewski <spock@gentoo.org>
-> > Cc:	Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-> > Cc:	linux-fbdev@vger.kernel.org
-> > Cc:	x86@kernel.org
-> > ---
-> > Applies to mainline; found in linux-next.
-> > 
-> >  arch/x86/pci/pcbios.c |    1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > --- linux-next-20120313.orig/arch/x86/pci/pcbios.c
-> > +++ linux-next-20120313/arch/x86/pci/pcbios.c
-> > @@ -27,6 +27,7 @@
-> >  #define PCIBIOS_HW_TYPE2_SPEC		0x20
-> >  
-> >  int pcibios_enabled;
-> > +EXPORT_SYMBOL(pcibios_enabled);
-> >  
-> >  /* According to the BIOS specification at:
-> >   * http://members.datafast.net.au/dft0802/specs/bios21.pdf, we could
-> 
-> I would think this should be EXPORT_SYMBOL_GPL()... this seems like a
-> symbol with a very high likelihood to be abused in strange ways.
-> 
-> 	-hpa
-> 
-Yes, I think EXPORT_SYMBOL_GPL is better. Indeed, there is another issue I 
-meet about the pcibios NX protection code.
-If I set "pcibios_enable = 1" forcely no matter whether set_bios_x had been executed, then
-the BIOS code is not NX. The problem is,  if set_bios_x had not been executed, of course set_memory_x 
-for the bios code page has no chance to execute, then why the BIOS code is not NX? Any comment?
-Or because the default set for the BIOS range is X, if so we should set_memory_nx if pcibios_enable == 0.
+--Signature=_Fri__16_Mar_2012_12_58_02_+1100_dtx+VDHKtpYrPzhP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi John,
+
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/wireless/ath/ath9k/hw.c between commit 23677ce3172f
+("drivers/net: Remove boolean comparisons to true/false") from the
+net-next tree and commit caed6579c2f9 ("ath9k_hw: Cleanup
+FastChannelChange") from the wireless-next tree.
+
+The latter commit included the fix from the former, so I just used the
+latter.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__16_Mar_2012_12_58_02_+1100_dtx+VDHKtpYrPzhP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPYp4qAAoJEECxmPOUX5FETuYQAKIrk21qqOlkinZBYj4HnVZr
+eMpy525zdXpP5IjlXKac7By5QJ9m2rq3l0JLfP6oj4PDMwoIIzCIVKw310lFhyxh
+HSk2qDDmOai1d+2BqizCgPitEWWfmH5rzO3s59F8kN2rrsi95K5thczmqh6yBp93
+xV21FHdbXWsccFb5RKwp/BuMnH9+3u5DeaW+hRqZEVBcJ4bvPlY+Oe0UjGccseJd
++2QsJI54Od1huKVWm8dMdflF6GQcLWyZDFCSjF1Ncjy1C81HoCi6NiIabnFImth5
+aim/3Nohnlr0kFQGEWWx6yKtaBryHFkWp5KJO8Bh1KD7TtF5bbZuMYZNq+d6Y9nF
+maz+cENC28h8knA7qvJJUoQNni/3arzFJT3gO7jhNHMH2BJ+Wudx/ggiFagZNeAV
+QB8SVjnyMQEiZMUWFrR2HZIfrdsxWGFhACHM7DuGrFu1oVFYW0YoCP43BUuLp0hD
+ddz8kMTh2BkENI511ub4bii8kIrPxpwGq9qMLpk34HE2+V5ZeRirGapS8qdMqMGq
+KlZSgEi7DgTi0+bmxZ/KfgbCdJ0aG0PKXZqt56alzK9AjCW+iNxBTf3WoTv8Pnsm
+8BSimen7pyDW5AtS3BX+pVg3Dgm+gSnNohORzGN7UQeC3CZcZ1iURCoZFuKHmSS/
+I64ywwcC6CXjGoZ97weB
+=52PI
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__16_Mar_2012_12_58_02_+1100_dtx+VDHKtpYrPzhP--
