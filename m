@@ -1,40 +1,64 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Commit "mmc: tmio_mmc: do not enable card hotplug interrupts, if
- unused" breaks linux-next
-Date: Fri, 16 Mar 2012 14:08:51 -0400
-Message-ID: <4F6381B3.1010806@windriver.com>
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: Re: Commit "mmc: tmio_mmc: do not enable card hotplug interrupts,
+ if unused" breaks linux-next
+Date: Fri, 16 Mar 2012 22:02:45 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.1203162201270.13465@axis700.grange>
+References: <4F6381B3.1010806@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: g.liakhovetski@gmx.de, Chris Ball <cjb@laptop.org>
-Cc: linux-next@vger.kernel.org, linux-mmc@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.187]:52443 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753114Ab2CPVCu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Mar 2012 17:02:50 -0400
+In-Reply-To: <4F6381B3.1010806@windriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, linux-mmc@vger.kernel.org
 
-Just a heads up that the commit below is causing build failures in linux-next:
+On Fri, 16 Mar 2012, Paul Gortmaker wrote:
 
-drivers/mmc/host/tmio_mmc_pio.c:343:11: error: 'struct tmio_mmc_host' has no member named 'native_hotplug'
-drivers/mmc/host/tmio_mmc_pio.c:969:12: error: 'struct tmio_mmc_host' has no member named 'native_hotplug'
-make[4]: *** [drivers/mmc/host/tmio_mmc_pio.o] Error 1
+> Just a heads up that the commit below is causing build failures in linux-next:
+> 
+> drivers/mmc/host/tmio_mmc_pio.c:343:11: error: 'struct tmio_mmc_host' has no member named 'native_hotplug'
+> drivers/mmc/host/tmio_mmc_pio.c:969:12: error: 'struct tmio_mmc_host' has no member named 'native_hotplug'
+> make[4]: *** [drivers/mmc/host/tmio_mmc_pio.o] Error 1
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/5878512/
+Looks like the merge order wasn't quite correct somewhere. This field is 
+defined in
 
-Paul.
---
+http://www.spinics.net/lists/linux-sh/msg10170.html
 
-commit 6c34d289dcc6675da8c130c5d5cdc5e8f15ec7d7
-Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Date:   Wed Feb 22 13:16:09 2012 +0100
+and it is now in mmc-next, but doesn't seem to be in next yet. So, AFAIU, 
+it will be fixed with the next merge of mmc-next into next.
 
-    mmc: tmio_mmc: do not enable card hotplug interrupts, if unused
-    
-    If TMIO MMC is used in polling mode, or the card is non-removable, or
-    card-detection is performed, using an external interrupt, there is no
-    need to enable controller native card hotplug interrupts.
-    
-    Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-    Signed-off-by: Chris Ball <cjb@laptop.org>
+Thanks
+Guennadi
 
+> 
+> http://kisskb.ellerman.id.au/kisskb/buildresult/5878512/
+> 
+> Paul.
+> --
+> 
+> commit 6c34d289dcc6675da8c130c5d5cdc5e8f15ec7d7
+> Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+> Date:   Wed Feb 22 13:16:09 2012 +0100
+> 
+>     mmc: tmio_mmc: do not enable card hotplug interrupts, if unused
+>     
+>     If TMIO MMC is used in polling mode, or the card is non-removable, or
+>     card-detection is performed, using an external interrupt, there is no
+>     need to enable controller native card hotplug interrupts.
+>     
+>     Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+>     Signed-off-by: Chris Ball <cjb@laptop.org>
+> 
+> 
+> 
 
-
+---
+Guennadi Liakhovetski, Ph.D.
+Freelance Open-Source Software Developer
+http://www.open-technology.de/
