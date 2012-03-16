@@ -1,159 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Fri, 16 Mar 2012 17:49:41 +1100
-Message-ID: <20120316174941.40421ba160741a0f6aab6611@canb.auug.org.au>
+Subject: Re: [PATCH] watchdog: fix compiler error for missing parenthesis
+Date: Fri, 16 Mar 2012 18:03:37 +1100
+Message-ID: <20120316180337.e11fdb36acc6a248c9cc04b6@canb.auug.org.au>
+References: <4F62DD49.1040909@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__16_Mar_2012_17_49_41_+1100_54VYpWMxodL+OC9x"
+ boundary="Signature=_Fri__16_Mar_2012_18_03_37_+1100_/5Fn80pNJx1FKAqQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51094 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56185 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030370Ab2CPGtv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Mar 2012 02:49:51 -0400
+	with ESMTP id S1030278Ab2CPHDx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Mar 2012 03:03:53 -0400
+In-Reply-To: <4F62DD49.1040909@samsung.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Marc Zyngier <marc.zyngier@arm.com>, Russell King <rmk@arm.linux.org.uk>
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-next@vger.kernel.org, joe@perches.com, Kyungmin Park <kyungmin.park@samsung.com>, Wim Van Sebroeck <wim@iguana.be>
 
---Signature=_Fri__16_Mar_2012_17_49_41_+1100_54VYpWMxodL+OC9x
+--Signature=_Fri__16_Mar_2012_18_03_37_+1100_/5Fn80pNJx1FKAqQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+[Cc'ing the watchdog maintainer]
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/mach-msm/timer.c between commit f8e56c42e4e3 ("msm: timer:
-Support sched_clock()") from the arm tree and commit 5ca709c16d0f ("ARM:
-local timers: convert MSM to runtime registration interface") from the
-arm-soc tree.
+On Fri, 16 Mar 2012 15:27:21 +0900 Jaehoon Chung <jh80.chung@samsung.com> w=
+rote:
+>
+> Hi Stephen.
+>=20
+> Joe's patch(watchdog: Use pr_<fmt> and pr_<level>) is missed the parenthe=
+sis in s3c2410_wdt.c.
+> (based-on latest linux-next repository)
+> It's fixed with this patch.
+>=20
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/watchdog/s3c2410_wdt.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+>=20
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
+t.c
+> index 46c251d..04e5a6d 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -523,7 +523,7 @@ static struct platform_driver s3c2410wdt_driver =3D {
+> =20
+>  static int __init watchdog_init(void)
+>  {
+> -	pr_info("S3C2410 Watchdog Timer, (c) 2004 Simtec Electronics\n";
+> +	pr_info("S3C2410 Watchdog Timer, (c) 2004 Simtec Electronics\n");
+> =20
+>  	return platform_driver_register(&s3c2410wdt_driver);
+>  }
+>=20
 
-I fixed it up (see below) and can carry the fax as necessary.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-msm/timer.c
-index 61983da,75f4be4..0000000
---- a/arch/arm/mach-msm/timer.c
-+++ b/arch/arm/mach-msm/timer.c
-@@@ -128,11 -127,45 +128,50 @@@ static struct clocksource msm_clocksour
-  	.flags	=3D CLOCK_SOURCE_IS_CONTINUOUS,
-  };
- =20
- +static notrace u32 msm_sched_clock_read(void)
- +{
- +	return msm_clocksource.read(&msm_clocksource);
- +}
- +
-+ #ifdef CONFIG_LOCAL_TIMERS
-+ static int __cpuinit msm_local_timer_setup(struct clock_event_device *evt)
-+ {
-+ 	/* Use existing clock_event for cpu 0 */
-+ 	if (!smp_processor_id())
-+ 		return 0;
-+=20
-+ 	writel_relaxed(0, event_base + TIMER_ENABLE);
-+ 	writel_relaxed(0, event_base + TIMER_CLEAR);
-+ 	writel_relaxed(~0, event_base + TIMER_MATCH_VAL);
-+ 	evt->irq =3D msm_clockevent.irq;
-+ 	evt->name =3D "local_timer";
-+ 	evt->features =3D msm_clockevent.features;
-+ 	evt->rating =3D msm_clockevent.rating;
-+ 	evt->set_mode =3D msm_timer_set_mode;
-+ 	evt->set_next_event =3D msm_timer_set_next_event;
-+ 	evt->shift =3D msm_clockevent.shift;
-+ 	evt->mult =3D div_sc(GPT_HZ, NSEC_PER_SEC, evt->shift);
-+ 	evt->max_delta_ns =3D clockevent_delta2ns(0xf0000000, evt);
-+ 	evt->min_delta_ns =3D clockevent_delta2ns(4, evt);
-+=20
-+ 	*__this_cpu_ptr(msm_evt.percpu_evt) =3D evt;
-+ 	clockevents_register_device(evt);
-+ 	enable_percpu_irq(evt->irq, 0);
-+ 	return 0;
-+ }
-+=20
-+ static void msm_local_timer_stop(struct clock_event_device *evt)
-+ {
-+ 	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
-+ 	disable_percpu_irq(evt->irq);
-+ }
-+=20
-+ static struct local_timer_ops msm_local_timer_ops __cpuinitdata =3D {
-+ 	.setup	=3D msm_local_timer_setup,
-+ 	.stop	=3D msm_local_timer_stop,
-+ };
-+ #endif /* CONFIG_LOCAL_TIMERS */
-+=20
-  static void __init msm_timer_init(void)
-  {
-  	struct clock_event_device *ce =3D &msm_clockevent;
-@@@ -195,44 -232,8 +238,10 @@@ err
-  	res =3D clocksource_register_hz(cs, dgt_hz);
-  	if (res)
-  		pr_err("clocksource_register failed\n");
- +	setup_sched_clock(msm_sched_clock_read,
- +			cpu_is_msm7x01() ? 32 - MSM_DGT_SHIFT : 32, dgt_hz);
-  }
- =20
-- #ifdef CONFIG_LOCAL_TIMERS
-- int __cpuinit local_timer_setup(struct clock_event_device *evt)
-- {
-- 	/* Use existing clock_event for cpu 0 */
-- 	if (!smp_processor_id())
-- 		return 0;
--=20
-- 	writel_relaxed(0, event_base + TIMER_ENABLE);
-- 	writel_relaxed(0, event_base + TIMER_CLEAR);
-- 	writel_relaxed(~0, event_base + TIMER_MATCH_VAL);
-- 	evt->irq =3D msm_clockevent.irq;
-- 	evt->name =3D "local_timer";
-- 	evt->features =3D msm_clockevent.features;
-- 	evt->rating =3D msm_clockevent.rating;
-- 	evt->set_mode =3D msm_timer_set_mode;
-- 	evt->set_next_event =3D msm_timer_set_next_event;
-- 	evt->shift =3D msm_clockevent.shift;
-- 	evt->mult =3D div_sc(GPT_HZ, NSEC_PER_SEC, evt->shift);
-- 	evt->max_delta_ns =3D clockevent_delta2ns(0xf0000000, evt);
-- 	evt->min_delta_ns =3D clockevent_delta2ns(4, evt);
--=20
-- 	*__this_cpu_ptr(msm_evt.percpu_evt) =3D evt;
-- 	clockevents_register_device(evt);
-- 	enable_percpu_irq(evt->irq, 0);
-- 	return 0;
-- }
--=20
-- void local_timer_stop(struct clock_event_device *evt)
-- {
-- 	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
-- 	disable_percpu_irq(evt->irq);
-- }
-- #endif /* CONFIG_LOCAL_TIMERS */
--=20
-  struct sys_timer msm_timer =3D {
-  	.init =3D msm_timer_init
-  };
-
---Signature=_Fri__16_Mar_2012_17_49_41_+1100_54VYpWMxodL+OC9x
+--Signature=_Fri__16_Mar_2012_18_03_37_+1100_/5Fn80pNJx1FKAqQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPYuKFAAoJEECxmPOUX5FE4v0QAKdmD5VCcRamgtKKM8Z1Vzsb
-+6lOMLo+N9mAto6MB6RFWwALHwq1iMytVcZ+Hk71dwy6jRdJYZOlDUI6WqvZ1uOE
-V4j1FtOqfBwONkZipCwkCr3ipVcUD7ZLHTrpy8keKTsmGfFISe6X28XYIJ8ETfvW
-2Lje3Ohgp84tw/Muopx4IH9tdixbfG2qOuL0akLfxGbltfzOqVl3Z7yx02USKlc6
-078ve80FoPgN1KCXWVg0DHzXJ03XVwAh3fJzsPndFhhD+Ovhj9f6hDWd89nsYMy3
-jq52dbmbRxQ0KNtSBBOTHTCobpKwlrNh/msnAqG/BEVLhly7GiYcGOeYbW+k0rhv
-9qc3wZ5DlRKGhujlgI2bMQQ7VIhTIfACv9X0WCDvirYr0OLzwFNUmtRTp7z5scG0
-70SbPEG+gcR76mt27tErgnsuIwwzWQzomN/Bz7zsmaLASiIM9o3/pd8xWNRPLCjm
-LjR5D4kxsS0HBocOzZpPXydC5+hFK9slskZAObIsOU8zCp3uobpLdqflqDheUIM8
-Gifns9QhfKtvaClpCTKIDk/1ykJwnqxvKOR52GGmWbVzhNdSAjtXJiaOsdXgKzOi
-Nf3jsEoqjD1xV/77wKNJaNji7GagtfyGAX/xyV4t2g1M65jDf7hg3kppyqnUbYne
-cuqbPopcc8ie2o8DEaUb
-=Imfj
+iQIcBAEBCAAGBQJPYuXKAAoJEECxmPOUX5FEA1MQAIKB5Ynu/ELV/rXFNHjQbQ+q
+vmE0BjR7BlPspP9pghsisEzFW5gH2mcPg5d5Hz5rFN4Gf3x6nyu59D85IW5KmHEg
+5xjp+KfdjuoNU18bz8DZ51H9HTfZUdpXW/e5dKZxe8p4BFLcLzP7VhFNC37eDzry
+Bkay+/Luo4lbU7AtzUN7eWy5PovF0cNYCXtyxuLVTYL9ll8nq1H84hGq/dyVWkbW
+IiRt8j/VS1yR40zeT5y7hSfH9Xk0IkyEfnVJufU0rObgE5r95COOYipTHaXpaXX9
+P/i6MlWsNSGPSnUvceJPrusQXtlwr27Mx9Ssb1zzDMtgixJI7ZShAm0GULIxHVoi
+3JrxZYmI0YmSRvDoeQAZ9P0hyn85vbLKoYs6H5X+iRpIstO/n8BDbEV+ilDvy2LM
+lB5exI+u+v7V5lVJO5zbkfLNxfdFJ8Ckk/DF3v7XBC/0oZOvFXVeOJv/Neketl4q
+lL/c5q3le+pn/8e5bOdQiWapv8SOD87srgZ9tgsKmvKBUrEZLkNrGQsW+e+bNq7+
+ADVf/1/Ud6u0d0e+o4jVL9kP447rNRvdG+qo5dlBiyVzSsuvMH/4+UsE67p3WLY3
+DRQAvYTIEJLlCH8UmIgU8r7NXMPaKNlB0Q9t3z7PlKUiFDoyXVjHSy6j6lHxpwqp
+tV49SebUXEJe7XuBzNcd
+=6JAk
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__16_Mar_2012_17_49_41_+1100_54VYpWMxodL+OC9x--
+--Signature=_Fri__16_Mar_2012_18_03_37_+1100_/5Fn80pNJx1FKAqQ--
