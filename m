@@ -1,57 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the powerpc tree
-Date: Fri, 16 Mar 2012 14:56:58 +1100
-Message-ID: <20120316145658.3fb06c5213dbca29d6898c4b@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the powerpc
+ tree
+Date: Fri, 16 Mar 2012 16:52:07 +1100
+Message-ID: <20120316165207.5a4f0985863b5ae7c50bdd81@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__16_Mar_2012_14_56_58_+1100_sAZwT9CG=3DUQa0t"
+ boundary="Signature=_Fri__16_Mar_2012_16_52_07_+1100_pZRK/URh1E+iqQ6N"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53109 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55230 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758648Ab2CPD5O (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Mar 2012 23:57:14 -0400
+	with ESMTP id S1751841Ab2CPFwR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Mar 2012 01:52:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
---Signature=_Fri__16_Mar_2012_14_56_58_+1100_sAZwT9CG=3DUQa0t
+--Signature=_Fri__16_Mar_2012_16_52_07_+1100_pZRK/URh1E+iqQ6N
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi all,
 
-Today's linux-next merge of the trivial tree got a conflict in
+Today's linux-next merge of the char-misc tree got a conflict in
 drivers/char/viotape.c between commit ba7a4822b48f ("powerpc: Remove some
 of the legacy iSeries specific device drivers") from the powerpc tree and
-commit a7ccf3775219 ("char: Fix typo in viotape.c") from the trivial tree.
+commit 5fb15db4376f ("char: Fix typo in viotape.c") from the char-misc
+tree.
 
-The former commit removed the file, so I did that.
+The former removed this file, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__16_Mar_2012_14_56_58_+1100_sAZwT9CG=3DUQa0t
+--Signature=_Fri__16_Mar_2012_16_52_07_+1100_pZRK/URh1E+iqQ6N
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPYroKAAoJEECxmPOUX5FEfWkP+QFOKeYx+wB+r0l46uJSglSL
-SjsDyYh/LiPOP7/fZ0TVHp+5hA76ZIZQv1nYKpjyJf3He7nH/Nm6ho9gd0y87KGm
-Y+x6rDS35JULF2tMlwSgmR5P0JEhXyDKGlC8fM9MZa9TQjsev2gCOd9CUhGr1PWS
-/rx0p3ig1+mD3rPJKvpk0pQP2KJx7zN8BWCIlKm9jukaR7PcLL1ImTfAP5UxjtDZ
-6Rl9WZEf3hHjsDJXbfGvnrLsav+gImC3e1zVJrmg0t83E1u0mWMuZnONGPflqMKF
-VxWqDULsGmzeaoEQ032sncjCzmNnDRaBBSmvKeziTMpTLBIfVYEKO6cNaNGPPdGr
-mJ5gVrXJnzpN2/jOHzLMfjd96gUeZraM7JEwotDFvxvg+9ZQaoQcvcbvqrK3h0fE
-oYC04b+Zrr5jWgXmQ/rAOPvcGM/Fm7tZSHxJUtmg3FPmELOcLGk63D6XTuioNFwG
-PfrFv7LWn2tvRdMTrRvoz+XOiFruYJGNmtGls5u9/inKsVXvxtO0Pg817Hf0e1Ug
-/iy7LfWUTfDagBHJsFOhIPOUZHbMIlmXJrBG5Zv4q7svZkygsdWU1qsRvsdVIPuF
-ZVw/LrHJPQhRhrcENDviMXnDpzS7tdUeylCzn3Lo3LwRk6cccQXGC3Ybu/WC2cbZ
-bxArC0m4hCZ/1LIhuKBJ
-=8cHa
+iQIcBAEBCAAGBQJPYtUHAAoJEECxmPOUX5FEIbMQAI7+lm2VCotsYT3Ac2hqKxZk
+AQ/hFemsdWgbvl9hgF7OO0lFHjA9A5VX7+bMyFirTjxdkE06IyPRP+vvx7edwEJt
+3h/ETOyDDlfZk2Y/oF7Z888t4KXPg9Ln4KJGaz1ZDCfHIeDNn/Ub31Aj30bvpcX+
+bcJYzmd+EiRXAQcls4oay3pt3u7gZwmEZOx7L462+GF3ATpyqpgfCbMtRFU4XkdD
+bSZ+Yn2ar5ObO2SGROvcetCXtKFl+/etJz4u96f6MhdSw92EU/C0yMLSLAbAnUBh
+5D9XVNTSDwMcOxNV+7jyUuPkkyixfm3CIRqUo8B5ZznKPgKdeTySNO3KviNIdx9C
+67qt9gGcXIB8G5TXVWqYx98HWTo5d9IL1X67j9QDK1mmG4R8KJrzoggdL4HIeiao
+3EZHgtWWP21S//rjVwQAicbeqweU38DeD2hBxw/jUv7j5DsY2ozSZYF9eVRERBce
+phC06cg1/Tnvha7SH2aghdp9f8p15IAyVpLitUqJ5hUYtz6apu0lF6VDp+j3l13o
+QfdWAU+k6eXjmawSQd1Wmw1Hbsmy6M+6tjToe18M77cxydoyyxYGNfqpoLx/u/QF
+QDHSJX4asD8GsMZpnnbc4Qacb/CdQlbo8+Q8RmrDW+JtKmFHuoUl7AXmbQ9lGV2t
+Q12qtB5lHzyojqgtNNkc
+=IPdg
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__16_Mar_2012_14_56_58_+1100_sAZwT9CG=3DUQa0t--
+--Signature=_Fri__16_Mar_2012_16_52_07_+1100_pZRK/URh1E+iqQ6N--
