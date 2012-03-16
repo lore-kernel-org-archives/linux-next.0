@@ -1,31 +1,79 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH] watchdog: fix compiler error for missing parenthesis
-Date: Thu, 15 Mar 2012 23:35:20 -0700
-Message-ID: <1331879720.5406.27.camel@joe2Laptop>
-References: <4F62DD49.1040909@samsung.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the s5p tree
+Date: Fri, 16 Mar 2012 17:45:46 +1100
+Message-ID: <20120316174546.5121be30a86c2937579bd3f5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__16_Mar_2012_17_45_46_+1100_HyhwGTXh6bqEvy5="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from perches-mx.perches.com ([206.117.179.246]:58048 "EHLO
-	labridge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755882Ab2CPGfX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 16 Mar 2012 02:35:23 -0400
-In-Reply-To: <4F62DD49.1040909@samsung.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45826 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753032Ab2CPGp5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Mar 2012 02:45:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jaehoon Chung <jh80.chung@samsung.com>, Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, sfr@canb.auug.org.au, Kyungmin Park <kyungmin.park@samsung.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On Fri, 2012-03-16 at 15:27 +0900, Jaehoon Chung wrote:
-> Joe's patch(watchdog: Use pr_<fmt> and pr_<level>) is missed the parenthesis in s3c2410_wdt.c.
-> (based-on latest linux-next repository)
-> It's fixed with this patch.
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-[]
->  static int __init watchdog_init(void)
->  {
-> -	pr_info("S3C2410 Watchdog Timer, (c) 2004 Simtec Electronics\n";
-> +	pr_info("S3C2410 Watchdog Timer, (c) 2004 Simtec Electronics\n");
+--Signature=_Fri__16_Mar_2012_17_45_46_+1100_HyhwGTXh6bqEvy5=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
+Hi all,
+
+Today's linux-next merge of the arm-soc tree got a conflict in
+arch/arm/mach-exynos/common.c between commit 1d7233ac478a ("Merge branch
+'next/soc-exynos5250-arch-gpio' into for-next") from the s5p tree and
+commit 853a0231e057 ("Merge branch 'samsung/soc' into next/soc2") from
+the arm-soc tree.
+
+These merge commits both looks suspect, but I fixed it up as best I could
+(see below).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-exynos/common.c
+index 4e1d0b7,e6cc50e..0000000
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@@ -593,6 -586,14 +593,13 @@@ static int __init exynos4_l2x0_cache_in
+  	if (soc_is_exynos5250())
+  		return 0;
+ =20
+ -	int ret;
++ 	ret =3D l2x0_of_init(L2_AUX_VAL, L2_AUX_MASK);
++ 	if (!ret) {
++ 		l2x0_regs_phys =3D virt_to_phys(&l2x0_saved_regs);
++ 		clean_dcache_area(&l2x0_regs_phys, sizeof(unsigned long));
++ 		return 0;
++ 	}
++=20
+  	if (!(__raw_readl(S5P_VA_L2CC + L2X0_CTRL) & 0x1)) {
+  		l2x0_saved_regs.phy_base =3D EXYNOS4_PA_L2CC;
+  		/* TAG, Data Latency Control: 2 cycles */
+
+--Signature=_Fri__16_Mar_2012_17_45_46_+1100_HyhwGTXh6bqEvy5=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPYuGaAAoJEECxmPOUX5FE+YMP+gOkwptMErpznr7+0Euu0h1K
+ylJU+jgfpPLanJrfcS/wzFRjLOGCy6V4+f8zK5DxEnnGi6FG1JnAToSOsa1Lf8bs
+fqCiC2UaFfYj8S/q3UXpb0VEF18fuH+usWB94DTZ+godzE6TAfYGnuq1N0/VquzA
+wVDzrESy62pzybyxruwjXW+kEuUB7zWQC2+OteARYhczXJBsSCkPo0JwayoD4+z1
+goiAjELtMjINzcJnlpx/opae/U9pzwlbzQxFc1lnXUZcOBS/rOFSKVEULrEM8Ztq
+r1wTl0L8EAva1J4wbSEVYAyLEFHd+TELGx3scKRl+EaK5++LC29f6GwkOvTR4Psp
+Fmxg0ve3iIoKHeqRyEM0/GO8dPrgdcwijZRew2C7ziEf0FcsW6wAkUE73dgBqa5q
+7yeOox5Fbx4ANYQI3+XPJDMqPbJBqnI4/k4bgVS6RrpD+zkCs/Q4EAs+HQuS2uj/
+VfCwn0ycVlnKJBvfpeyjVCLcdN7Tv9x0c8CKrotIosuXZILDCEO0xsjm5zrLxkRo
+tIsqGaoW44E1zxVHRzCD06c/Ujc4ZwcgHmuUhMWH1RX7wlErTXz13DKIU8JhElKz
+ttPvrCqw/VwcL+pBtX33tUrzTcC7JkcLxsC31JKaoP83vr2RWbZPw1RNzFYD02J6
+sITk/BKJJCvNRoHtSRNi
+=RL4u
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__16_Mar_2012_17_45_46_+1100_HyhwGTXh6bqEvy5=--
