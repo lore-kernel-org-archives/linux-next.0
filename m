@@ -1,93 +1,194 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: ARM: fix build failure on ux500 in linux-next
-Date: Fri, 16 Mar 2012 17:18:00 -0400
-Message-ID: <20120316211759.GA18829@windriver.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH v3] PM / QoS: Introduce new classes: DMA-Throughput and DVFS-Latency
+Date: Sat, 17 Mar 2012 01:01:39 +0100
+Message-ID: <201203170101.40131.rjw@sisk.pl>
+References: <13197479.540821330911965933.JavaMail.weblogic@epv6ml06> <201203102353.24218.rjw@sisk.pl> <CAJ0PZbQ0itn68PCK9aYQZRT5VabvDChJm-+h1pDfkiO_afB1QA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:32914 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757697Ab2CPVSW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Mar 2012 17:18:22 -0400
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linus.walleij@stericsson.com, srinidhi.kasagar@stericsson.com
-Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, arnd@arndb.de
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAJ0PZbQ0itn68PCK9aYQZRT5VabvDChJm-+h1pDfkiO_afB1QA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@gmail.com>
+Cc: markgross@thegnar.org, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <mavej@redhat.com>, linux-pm@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@ti.com>, Jean Pihet <j-pihet@ti.com>, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-When I 1st saw this build failure, I thought it was me, because of the
-BUG() stuff.  But git bisect claims it comes from the arm-soc tree?
+On Friday, March 16, 2012, MyungJoo Ham wrote:
+> On Sun, Mar 11, 2012 at 7:53 AM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
+> > On Friday, March 09, 2012, MyungJoo Ham wrote:
+> >> On Thu, Mar 8, 2012 at 12:47 PM, mark gross <markgross@thegnar.org> wrote:
+> >> > On Wed, Mar 07, 2012 at 02:02:01PM +0900, MyungJoo Ham wrote:
+> >> >> 1. CPU_DMA_THROUGHPUT
+> >> ...
+> >> >> 2. DVFS_LATENCY
+> >> >
+> >> > The cpu_dma_throughput looks ok to me.  I do however; wonder about the
+> >> > dvfs_lat_pm_qos.  Should that knob be exposed to user mode?  Does that
+> >> > matter so much?  why can't dvfs_lat use the cpu_dma_lat?
+> >> >
+> >> > BTW I'll be out of town for the next 10 days and probably will not get
+> >> > to this email account until I get home.
+> >> >
+> >> > --mark
+> >> >
+> >>
+> >> 1. Should DVFS Latency be exposed to user mode?
+> >>
+> >> It would depend on the policy of the given system; however, yes, there
+> >> are systems that require a user interface for DVFS Latency.
+> >> With the example of user input response (response to user click,
+> >> typing, touching, and etc), a user program (probably platform s/w or
+> >> middleware) may input QoS requests. Besides, when a new "application"
+> >> is starting, such "middleware" may want faster responses from DVFS
+> >> mechanisms.
+> >
+> > But this is a global knob, isn't it?  And it seems that a per-device one
+> > is needed rather than that?
+> >
+> > It also applies to your CPU_DMA_THROUGHPUT thing, doesn't it?
+> 
+> 
+> Yes, the two are global knobs. And both the two control multiple
+> devices simultaneously, not just a single device. I suppose per-device
+> QoS is appropriate for QoS requests directed to a single device. Am I
+> right about this one?
+> 
+> 
+> Let's assume that, in an example system, we have devfreq on GPU,
+> memory-Interface, and main bus and CPUfreq (Exynos5 will have them all
+> seperated).
+> 
+> If we use per-device QoS for DVFS LATENCY, in order to control the
+> DVFS response latency, we will need to make QoS requests to all the
+> four devices independently, not to the global DVFS LATENCY QOS CLASS.
+> There, we could have a shared single QoS request list for these four
+> DVFS devices, saying that the DVFS response should be done in "50ms"
+> after a sudden utilization increase.
 
-In any case, the fix is trivial and self evident, regardless of where
-it came from.  I can carry it in my bug-3.4 cleanup tree if need be.
-Let me know if you want me to do that.
+I think that the fact that you use the same value for all of those things
+is a policy decision.  You might as well use different values for different
+things and the decision whether or not to do that should be left to user
+space, IMO.
+
+> We may be able to use "dev_pm_qos_add_notifier()" for a virtual device
+> representing "DVFS Latency" or "DMA Throughput" and let the GPU, CPU,
+> main-bus, and memory-interface listen to the events from the virtual
+> device. Hmm..., do you recommend this approach? creating a device
+> representing "DVFS" as a whole (both CPUFreq and device drivers of
+> devfreq).
+
+While there may be an interface representing a "global" or "default"
+setting, I don't think it really should be a device.  Just a separate
+interface with well defined purpose.
+
+> CPU_DMA_THROUGHPUT is quite similar as CPU_DMA_LATENCY. However, we
+> think it is addtionally needed because many IPs (in-SoC devices) need
+> to specify its DMA usage in "kbytes/sec", not "usecs/ops". For
+> example, a video-decoding chip device driver may say it requires
+> "750000kbytes/sec" for 1080p60, "300000kbytes/sec" for 720p60, and so
+> on, which affects CPUfreq, memory-interface, and main-bus at the same
+> time.
+
+That depends on what you want to use that for.  I'd really prefer to
+see it in one patch along with the user.
+
+> >> 2. Does DVFS Latency matter?
+> >>
+> >> Yes, in our experimental sets w/ Exynos4210 (those slapped in Galaxy
+> >> S2 equivalent; not exactly as I'm not conducted in Android systems,
+> >> but Tizen), we could see noticable difference w/ bare eyes for
+> >> user-input responses. When we shortened DVFS polling interval with
+> >> touches, the touch responses were greatly improved; e.g., losing 10
+> >> frames into losing 0 or 1 frame for a sudden input rush.
+> >
+> > Well, this basically means PM QoS matters, which is kind of obvious.
+> > It doesn't mean that it can't be implemented in a better way, though.
+> 
+> For DVFS-Latency and DMA-Throughput, I think a normal pm-qos-dev (one
+> device per one qos knob) isn't appropriate because there are multiple
+> devices that are required to react simultaneously.
+> 
+> It is possible to let multiple devices react by adding notifiers with
+> dev_pm_qos_add_notifier(). However, I felt that it wasn't the purpose
+> of this one and it might get things ugly.
+
+I agree with that.
+
+> Anyway, was allowing multiple devices to change their
+> frequencies/voltages for a single per-device QoS list the purpose of
+> dev_pm_qos_add_notifier()?
+
+Well, please first tell me why exactly those devices are _required_ to
+react simultaneously.
+
+> Just throwing an idea and suggestion if it was the purpose,
+> I speculate that If we are going to do this (supporting multiple
+> devices per one qos knob without adding QoS class), we'd better create
+> "qos class device" in /drivers/qos/ and let those qos class handle
+> multiple devices depending on a single "qos class". Probably, this
+> will transform "global PM-QoS class" that notifies related devices
+> into "QoS class device" that notifies related devices.
+
+At a general level, it would make sense to use a single PM QoS "knob"
+for multiple devices at the same time, with an in-kernel API to
+add/remove devices to/from such a "class".  The details depend on the
+implementation, though.
+
+> >
+> >> 3. Why not replace DVFS Latency w/ CPU-DMA-Latency/Throughput?
+> >>
+> >> When we implement the user-input response enhancement with CPU-DMA QoS
+> >> requests, the PM-QoS will unconditionally increase CPU and BUS
+> >> frequencies/voltages with user inputs. However, with many cases it is
+> >> unnecessary; i.e., a user input means that there will be unexpected
+> >> changes soon; however, the change does not mean that the load will
+> >> increase. Thus, allowing DVFS mechanism to evolve faster was enough to
+> >> shorten the response time and not to increase frequencies and voltages
+> >> when not needed. There were significant difference in power
+> >> consumption with this changes if the user inputs were not involving
+> >> drastic graphics jobs; e.g., typing a text message.
+> >
+> > Again, you're arguing for having PM QoS rather than not having it.  You don't
+> > have to do that. :-)
+> >
+> > Generally speaking, I don't think we should add any more PM QoS "classes"
+> > as defined in pm_qos.h, since they are global and there's only one
+> > list of requests per class.  While that may be good for CPU power
+> > management (in an SMP system all CPUs are identical, so the same list of
+> > requests may be applied to all of them), it generally isn't for I/O
+> > devices (some of them work in different time scales, for example).
+> >
+> > So, for example, most likely, a list of PM QoS requests for storage devices
+> > shouldn't be applied to input devices (keyboards and mice to be precise) and
+> > vice versa.
+> >
+> > On the other hand, I don't think that applications should access PM QoS
+> > interfaces associated with individual devices directly, because they may
+> > not have enough information about the relationships between devices in the
+> > system.  So, perhaps, there needs to be an interface allowing applications
+> > to specify their PM QoS expectations in a general way (e.g. "I want <number>
+> > disk I/O throughput") and a code layer between that interface and device
+> > drivers translating those expecataions into PM QoS requests for specific
+> > devices.
+> 
+> With DVFS Latency PM QoS Class, we can say "I want the system to react
+> in 50ms for any sudden utilization increases.". Without it, we should
+> say, for example, "CPUFreq/Ondemand should set interval at 25ms,
+> Devfreq/Bus should set interval at 25ms, and Devfreq/GPU should set
+> interval at 10ms."
+> 
+> And with CPU Throughput PM QoS Class, we can say "I want 1000000
+> kbytes/sec DMA transfer". Without it, we should say "Memory-Interface
+> at 1000000 kbytes/sec, Exynos4412 core should be at least 500MHz, and
+> Bus should be at least 166MHz".
+
+That really depends on the design of the user space "management" layer.
+Ideally, it should translate global requirements (like "I want the system to
+react in 50ms for any sudden utilization increases") into specific PM QoS
+settings (presumably with some user or platform designer configuration
+input).  If we try to do that in the kernel, we'll end up with a quite
+inflexible system.
 
 Thanks,
-Paul.
----
-
-git bisect start
-# good: [fde7d9049e55ab85a390be7f415d74c9f62dd0f9] Linux 3.3-rc7
-git bisect good fde7d9049e55ab85a390be7f415d74c9f62dd0f9
-# bad: [e9ae4cb7dce90c006b25783f431100c1aebe8249] Add linux-next specific files for 20120316
-git bisect bad e9ae4cb7dce90c006b25783f431100c1aebe8249
-# good: [04e2934e35128af6772c6e7582a2a70e9bfa6e39] Merge remote-tracking branch 'sound/for-next'
-git bisect good 04e2934e35128af6772c6e7582a2a70e9bfa6e39
-# good: [83e256edcb2f8886786b1bba59992c90391e162a] Merge remote-tracking branch 'tip/auto-latest'
-git bisect good 83e256edcb2f8886786b1bba59992c90391e162a
-# good: [e047bb4623cb69a162fe3b6dffb6b6719e5ed36b] Merge remote-tracking branch 'tmem/linux-next'
-git bisect good e047bb4623cb69a162fe3b6dffb6b6719e5ed36b
-# good: [4d879eaf577c4f1a84a9cad4445e388f3fa3751b] Merge branch 'next/timer' into for-next
-git bisect good 4d879eaf577c4f1a84a9cad4445e388f3fa3751b
-# bad: [11f98c49d6bbedf80ebd3b477cf9283c6a3e9b1a] xtensa: use set_current_blocked() and block_sigmask()
-git bisect bad 11f98c49d6bbedf80ebd3b477cf9283c6a3e9b1a
-# good: [50cfadc1b7ae56c5062401018df8fe16114de29a] Merge remote-tracking branch 'gpio/gpio/next'
-git bisect good 50cfadc1b7ae56c5062401018df8fe16114de29a
-# bad: [befe1aab92393bd4106d78f5610958dc37dce074] Merge remote-tracking branch 'dma-mapping/dma-mapping-next'
-git bisect bad befe1aab92393bd4106d78f5610958dc37dce074
-# good: [7ae1cd4e9625311fbada74513a69044f66b5eff9] Merge branch 'next/boards' into for-next
-git bisect good 7ae1cd4e9625311fbada74513a69044f66b5eff9
-# good: [268b190b02965250cb5080beb755f25a2631cceb] Merge branch 'next/drivers' into for-next
-git bisect good 268b190b02965250cb5080beb755f25a2631cceb
-# good: [b908eddffb98f4106068e132b6a05888cea59fd0] Hexagon: adapt for dma_map_ops changes
-git bisect good b908eddffb98f4106068e132b6a05888cea59fd0
-# good: [62d02641854bc02534c32e2c20f0d403cde32f24] Merge branch 'next/soc2' into for-next
-git bisect good 62d02641854bc02534c32e2c20f0d403cde32f24
-# good: [c4715f1e814e05beb5f99ec18ddb0e2e934a8b3d] common: DMA-mapping: add WRITE_COMBINE attribute
-git bisect good c4715f1e814e05beb5f99ec18ddb0e2e934a8b3d
-# good: [6cc2bf1ab405a7085c92fefbad610b35ec60d3e0] common: DMA-mapping: add NON-CONSISTENT attribute
-git bisect good 6cc2bf1ab405a7085c92fefbad610b35ec60d3e0
-# bad: [c4aa47a2a1665e8d5ea62dcbfba9a54a86003190] Merge remote-tracking branch 'arm-soc/for-next'
-git bisect bad c4aa47a2a1665e8d5ea62dcbfba9a54a86003190
-
----
-
->From 79a97eb612706ee3428ae7909503079c6fd3cf68 Mon Sep 17 00:00:00 2001
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Date: Fri, 16 Mar 2012 16:45:32 -0400
-Subject: [PATCH] ARM: fix trivial build failures on ux500
-
-Seen in linux-next builds:
-
-arch/arm/mach-ux500/timer.c: In function 'ux500_twd_init':
-arch/arm/mach-ux500/timer.c:35: error: implicit declaration of function 'pr_err'
-arch/arm/mach-ux500/timer.c: In function 'ux500_timer_init':
-arch/arm/mach-ux500/timer.c:53: error: implicit declaration of function 'BUG'
-
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-
-diff --git a/arch/arm/mach-ux500/timer.c b/arch/arm/mach-ux500/timer.c
-index e9d5807..90cf3f0 100644
---- a/arch/arm/mach-ux500/timer.c
-+++ b/arch/arm/mach-ux500/timer.c
-@@ -5,6 +5,8 @@
-  * Author: Mattias Wallin <mattias.wallin@stericsson.com> for ST-Ericsson
-  */
- #include <linux/io.h>
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
- #include <linux/errno.h>
- #include <linux/clksrc-dbx500-prcmu.h>
- 
--- 
-1.7.9.1
+Rafael
