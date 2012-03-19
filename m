@@ -1,66 +1,55 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: linux-next: triage for March 18, 2012
-Date: Mon, 19 Mar 2012 13:23:46 -0400
-Message-ID: <161084.1332177826@turing-police.cc.vt.edu>
-References: <1121.1332169437@redhat.com> <20120318235114.GA30497@thor.bakeyournoodle.com> <20120318184105.GC2095@windriver.com>
-            <9942.1332170491@redhat.com>
+From: =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
+Subject: [PATCH] net: qmi_wwan: fix build error due to cdc-wdm dependecy
+Date: Mon, 19 Mar 2012 18:48:29 +0100
+Message-ID: <1332179309-4163-1-git-send-email-bjorn@mork.no>
+References: <20120319184830.fce597a16eaf7206195a7a45@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1332177826_2016P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lennier.cc.vt.edu ([198.82.162.213]:39161 "EHLO
-	lennier.cc.vt.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755643Ab2CSRY4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Mar 2012 13:24:56 -0400
-In-Reply-To: Your message of "Mon, 19 Mar 2012 15:21:31 -0000."
-             <9942.1332170491@redhat.com>
+Received: from canardo.mork.no ([148.122.252.1]:42651 "EHLO canardo.mork.no"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1030417Ab2CSRtO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 Mar 2012 13:49:14 -0400
+In-Reply-To: <20120319184830.fce597a16eaf7206195a7a45@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Tony Breeds <tony@bakeyournoodle.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
 
---==_Exmh_1332177826_2016P
-Content-Type: text/plain; charset=us-ascii
+=46ixes:
 
-On Mon, 19 Mar 2012 15:21:31 -0000, David Howells said:
+drivers/built-in.o: In function `qmi_wwan_bind_shared':
+qmi_wwan.c:(.text+0x25b686): undefined reference to `usb_cdc_wdm_regist=
+er'
+make[1]: *** [.tmp_vmlinux1] Error 1
 
-> Here's a patch I got from Nick Clifton to fix 64-bit binutils to handle
-> representing things like 0xfffffff1 as a 32-bit negative immediate argument.
-> It has been applied upstream.
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Bj=C3=B8rn Mork <bjorn@mork.no>
+---
+Thanks for noticing.
 
-> ! #if 1
-> !       /* Handle the case where a hex value is parsed on a 64-bit host.
-> ! 	 A value like 0xffffe000 is clearly intended to be a negative
-> ! 	 16-bit value, but on a 64-bit host it will be parsed by gas
-> ! 	 as 0x00000000ffffe000.
+This should have been in commit c3ecb08a
+ net: qmi_wwan: support devices having a shared QMI/wwan interface
 
-Umm.. it's not clear to *me* that it's intended to be a negative 16 bit?  Or am I just
-missing context not present in the patch?
 
-(I have no idea if the rest of the patch is OK or not, but that comment didn't give
-me warm fuzzies....)
+Bj=C3=B8rn
 
---==_Exmh_1332177826_2016P
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
+ drivers/net/usb/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-iQIVAwUBT2drogdmEQWDXROgAQJ3+Q/+ONWQ21FC6TFhSooAMh+yuI1H7E5aFSe9
-gzivKeuBgNewkp187z9AY5JVLAckY7FtKf3Lvhfm2hnlVD6SETI5QRRq905v5rwr
-wlyw+vLxaJi8uCwdw4NiEOFcXYAAB2DjZgNPt1Lps4K+6JTs+9aIJebxh/pl/Fgw
-2+Nguhs1as4AOcZ3OTXvQI/tUakCXZtWy54xjSVZ6sR5+vaJnt8rs8ztQMU5CfM/
-ISZ98ATaKXZ+2rj10+jUo9XdGN/dqXzQVZJYaWqv86f5crPXT1T/DAdNjr1UdepL
-wlAtaAQ2XvXLmhLjeHLpnK0vnzCPvsCB4LYWVcBSIVv2r1OEAxf0nvKOFpxV0Ao0
-tC3RUrA6LMSSBAUYJDOljLQMbTzSqiotMmdQwYgqNxY9ppw9GFeHi7C+jiYKAPH2
-EBdfdGAjJINA2sKaIMwqg7c7HN7krCEEDd/b+XNblmTBgXtjYnkf5xUGLvP2+i4C
-ZG09/kKwJXVPyiRjLuaiqGK3UKWQ0EL5wqkIJFhGUaewJlMoWVebq2OxMJRInDu2
-6SRJx3XT54/wpOjLW1Hsa1YIlW9YfuitcULR1Bv2ASe3gpg7qSeAALnf3moyNZNc
-vgrJEXEb/YYVtxSp2jnKw6gDE57xjqT/OBH/l2U4kuvyB1khMguI6Ksek+Q+pBLI
-402x7/3NlGw=
-=yYHT
------END PGP SIGNATURE-----
-
---==_Exmh_1332177826_2016P--
+diff --git a/drivers/net/usb/Kconfig b/drivers/net/usb/Kconfig
+index 4bad899..833e32f 100644
+--- a/drivers/net/usb/Kconfig
++++ b/drivers/net/usb/Kconfig
+@@ -401,6 +401,7 @@ config USB_NET_KALMIA
+ config USB_NET_QMI_WWAN
+ 	tristate "QMI WWAN driver for Qualcomm MSM based 3G and LTE modems"
+ 	depends on USB_USBNET
++	select USB_WDM
+ 	help
+ 	  Support WWAN LTE/3G devices based on Qualcomm Mobile Data Modem
+ 	  (MDM) chipsets.  Examples of such devices are
+--=20
+1.7.9.1
