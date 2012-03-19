@@ -1,61 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd tree
-Date: Mon, 19 Mar 2012 13:13:45 +1100
-Message-ID: <20120319131345.a2f5b9983538d25c2974d344@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the drm tree
+Date: Mon, 19 Mar 2012 13:45:58 +1100
+Message-ID: <20120319134558.92dd67a87a2fc0cae5de6a4b@canb.auug.org.au>
+References: <20120316135303.7ad016ef3e29eac06027658e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__19_Mar_2012_13_13_45_+1100_k9B49Hv5tPUREkEp"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__19_Mar_2012_13_45_58_+1100_X9xSu0AuVsc0jU8n"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35229 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964825Ab2CSCqI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Mar 2012 22:46:08 -0400
+In-Reply-To: <20120316135303.7ad016ef3e29eac06027658e@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__19_Mar_2012_13_13_45_+1100_k9B49Hv5tPUREkEp
+--Signature=_Mon__19_Mar_2012_13_45_58_+1100_X9xSu0AuVsc0jU8n
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi Dave,
 
-After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+On Fri, 16 Mar 2012 13:53:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>=20
+> ERROR: "drm_usb_init" [drivers/gpu/drm/udl/udl.ko] undefined!
+> ERROR: "drm_get_usb_dev" [drivers/gpu/drm/udl/udl.ko] undefined!
+> ERROR: "drm_usb_exit" [drivers/gpu/drm/udl/udl.ko] undefined!
+>=20
+> Caused by commit 5320918b9a87 ("drm/udl: initial UDL driver (v4)").
+>=20
+> I have used the drm tree from next-20120315 for today.
 
-drivers/built-in.o: In function `rc5t583_i2c_init':
-rc5t583.c:(.init.text+0xb3db): undefined reference to `i2c_register_driver'
-drivers/built-in.o: In function `rc5t583_i2c_probe':
-rc5t583.c:(.devinit.text+0x8fa0): undefined reference to `regmap_init_i2c'
-drivers/built-in.o: In function `rc5t583_i2c_exit':
-rc5t583.c:(.exit.text+0x708): undefined reference to `i2c_del_driver'
+Your attempted fix (commit 2de6d4a9e46c "drm: fix build with UDL if USB
+is a module") hasn't worked as I still get the same errors ...
 
-Caused by commit 1b1247dd75aa ("mfd: Add support for RICOH PMIC
-RC5T583"). Presumably some missing Kconfig dependency.
-
-I have ued the version of the mfd tree from next-20120316 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__19_Mar_2012_13_13_45_+1100_k9B49Hv5tPUREkEp
+--Signature=_Mon__19_Mar_2012_13_45_58_+1100_X9xSu0AuVsc0jU8n
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIbBAEBCAAGBQJPZpZZAAoJEECxmPOUX5FEXPgP+PJSb+DIoGoq5dn9S1l/stFm
-tsPjR68Qu5ReHyugwy2xoEaRy9FbpsU3gCAwkDlxZvDlykeX9BnFYCS+2/DTk4f4
-kouxIGG0JU7Vuq6RGb/3EK8F51oM8/p9MYa28Twuu4AK6fhLxNYxGGVtFa2Ndxr4
-5P+EWREMDIqO0Pp6I2OlvrxkDBztcDSfrxgE56ntgz2TAy1Zu4n13jZDck5rPboY
-PzBbqTqRTjAt7fcJwZY4dVOHD1Nny1ZxmTVRXd/pkDAxu+QpJYvzfiUY/Bg8T1xx
-EaSQA72jRv7c29foOyBEdNwn/l7lFPdwrjLLQgISJAlRXfY8j+vKO/PVI/zLbFq+
-9WSJPYBPSWhzUBbcYizrGAAHbXP+zl5UIlC45/egINjS4ydkefyCYGtCn7zpSSeS
-Fh00gvdMpTjNoQ+SGcxvs5d89JGiOsTWyqTUK30TtNMK7Vu1SCHlM7SuARroJkKl
-kFqt7JEEDPDTaM6bmR5QWKG3x5F9seg23Q3OQ8I4+iPhUl/OxbL4qvmIUWQlgVV2
-2S317wDzEe8ByO/Lkwhagprt8q3NngY0khHjgKYx6bIKuaDUr64YiZS8Fw/6UzLW
-oC7wMsrHGBer3tF5WVHF0ur6IEj0q8G9MxYN2Ncg9tnehmmxYFVIEHbz0b+/ZWaz
-OsXoRgOjXk+py0head0=
-=jrKT
+iQIcBAEBCAAGBQJPZp3mAAoJEECxmPOUX5FEtFIP/0cKMKPB+iy6TJucbXu/XIDo
+XHLT/UCztp91nilvUYDmoznOYunqUbMqwU/WYcZravDfb/Ccw8nwZf+QugyQiof+
+DqDx8qug6JOmc0fdfOhmM9QToR0rkK0oOP+UxUOAXur3GaB7rDUiPzFu6nam2bB5
+Nu8g7/n7SLqAfLIHZr9EazVDmKo5/AYVi1fSkbeJPQjKCzd7sjIfnje896PXqCqi
+weAoCqtcKAKeK6BxFHZpfJ6LDMZ+ULLo3EToDluRp4KFgWY6+uz6QwrOM9MB+5d/
+096fNihyC038QxKf3oBqtqKFaLXylt2L15Rf+B10zQrEAlfMQHVk0l0PshDNWP6L
+vg1Bu+rAaSJ3gGPGiOo7cPAntJIN9go4+E4kJuAjDXyBXgQvwQ/P4Na67ReEyW4t
+X2HYE+aVNkySdsY8iiCiETQxkRMsgE3/OhBLzItMVYZ/46o7xLXz/6sThz+lYE8Y
+WAamVIB0U03I8ivuhIahcp7UyrI9Y+3Zo6hO6AoQESMQ73n4WmCm9EZLajpMuJlH
+w/32UQ3BFWykv5i3u6vsmwlg1jr5ENiekX1Ri+3QzVzgqRsk9C5fHS9pZJjhqLgP
+MYmIzWfD7qd621zBp2B/0Gg1xMbWxVF2BVOcY2Uvd83C3jMjrD5cHv4lSGFSoXNl
+u0nerwnpaV/o4na/TUQW
+=xRrR
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Mar_2012_13_13_45_+1100_k9B49Hv5tPUREkEp--
+--Signature=_Mon__19_Mar_2012_13_45_58_+1100_X9xSu0AuVsc0jU8n--
