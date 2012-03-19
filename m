@@ -1,40 +1,51 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: triage for March 18, 2012
-Date: Mon, 19 Mar 2012 19:41:44 +0000
-Message-ID: <8010.1332186104@redhat.com>
-References: <161084.1332177826@turing-police.cc.vt.edu> <1121.1332169437@redhat.com> <20120318235114.GA30497@thor.bakeyournoodle.com> <20120318184105.GC2095@windriver.com> <9942.1332170491@redhat.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Mar 19 (uml)
+Date: Mon, 19 Mar 2012 13:16:31 -0700
+Message-ID: <4F67941F.4090302@xenotime.net>
+References: <20120319184830.fce597a16eaf7206195a7a45@canb.auug.org.au> <4F674A2D.5080504@xenotime.net> <4F675B78.8060300@nod.at> <20120319164451.GI6589@ZenIV.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:64630 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759297Ab2CSTlw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 Mar 2012 15:41:52 -0400
-In-Reply-To: <161084.1332177826@turing-police.cc.vt.edu>
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:46662 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932279Ab2CSUQc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Mar 2012 16:16:32 -0400
+In-Reply-To: <20120319164451.GI6589@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Valdis.Kletnieks@vt.edu
-Cc: dhowells@redhat.com, Tony Breeds <tony@bakeyournoodle.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Richard Weinberger <richard@nod.at>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Valdis.Kletnieks@vt.edu wrote:
+On 03/19/2012 09:44 AM, Al Viro wrote:
 
-> Umm.. it's not clear to *me* that it's intended to be a negative 16 bit?  Or
-> am I just missing context not present in the patch?
+> On Mon, Mar 19, 2012 at 05:14:48PM +0100, Richard Weinberger wrote:
+>> Looks like this commit introduced the issue:
+>>
+>> commit 1ed71e0439cba3609d3c69bf04795e0389cd35e4
+>> Author: Al Viro <viro@zeniv.linux.org.uk>
+>> Date:   Thu Feb 23 01:33:19 2012 -0500
+>>
+>>     um: embed ->stub_pages[] into mmu_context
+>>
+>>     seriously, kmalloc() for two-element array of pointers?
+>>
+>>     Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+>>
+>> The size of struct page is not known to all users of asm/mmu.h
 > 
-> (I have no idea if the rest of the patch is OK or not, but that comment
-> didn't give me warm fuzzies....)
+> Aaargh...  Dumb braino, fixed in the local queue back in Feb 25, fix
+> not folded into commit and missed on cherry-pick ;-/
+> 
+> It's
+>         struct page *stub_pages[2];
+> of course...
+> 
+> OK, fix properly folded into that sucker, for-next repushed.
+> --
 
-Sorry, I haven't explained it well.
 
-The patch permits a 64-bit hosted assembler to represent a large 32-bit
-unsigned integer (such as 0xfffffff1) as a negative integer where the
-instruction being assembled has a signed immediate operand.
+Thanks, that works.
 
-For instance, the ANDI instruction on FRV takes a small signed integer (10
-bits IIRC) that it sign-extends to 32-bits before using - so to clear a single
-low-order bit, I pass in, say, ~0x2 and the assembler represents this as a
-negative value.
-
-The problem was that in a 64-bit hosted assembler, the unsigned 32-bit integer
-gets converted to an unsigned 64-bit integer - which doesn't then appear
-negative (whereas in a 32-bit hosted assembler it does).
-
-David
+-- 
+~Randy
