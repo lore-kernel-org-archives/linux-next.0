@@ -1,50 +1,88 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the l2-mtd
- tree
-Date: Mon, 19 Mar 2012 10:00:27 +0100
-Message-ID: <4F66F5AB.7020600@atmel.com>
-References: <20120319174743.aff001d4f84e82cf4042277a@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: build warning after merge of the arm-soc tree
+Date: Mon, 19 Mar 2012 09:40:01 +0000
+Message-ID: <201203190940.02329.arnd@arndb.de>
+References: <20120319183911.0cd46df560c714ee71184242@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from newsmtp5.atmel.com ([204.2.163.5]:3148 "EHLO sjogate2.atmel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757744Ab2CSJA5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 Mar 2012 05:00:57 -0400
-In-Reply-To: <20120319174743.aff001d4f84e82cf4042277a@canb.auug.org.au>
+Received: from moutng.kundenserver.de ([212.227.17.9]:56541 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752605Ab2CSKAp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Mar 2012 06:00:45 -0400
+In-Reply-To: <20120319183911.0cd46df560c714ee71184242@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-kernel@vger.kernel.org, Artem Bityutskiy <dedekind1@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Turquette, Mike" <mturquette@ti.com>
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-On 03/19/2012 07:47 AM, Stephen Rothwell :
+On Monday 19 March 2012, Stephen Rothwell wrote:
 > Hi all,
 > 
-> Today's linux-next merge of the arm-soc tree got a conflict in 
-> drivers/mtd/nand/atmel_nand.c between commit 4331c79c6895 ("mtd: do
-> not use plain 0 as NULL") from the l2-mtd tree and commit
-> d6a016616ba8 ("atmel/nand: add DT support") from the arm-soc tree.
+> After merging the arm-soc tree, today's linux-next build (all)
+> produced this warning:
 > 
-> The latter superceded the former, so I used that.
+> drivers/clk/Kconfig:22: warning: menuconfig statement without prompt
+> 
+> Introduced by commit c173033d154e ("clk: make CONFIG_COMMON_CLK invisible").
 
-That is definitively the proper fix. Thanks Stephen.
+Thanks for the report. This is clearly my fault for not testing the last
+minute patch.
+I have now replaced it with the one below and tested that it works
+as intended.
 
-Best regards,
-- -- 
-Nicolas Ferre
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+	Arnd
 
-iQEcBAEBAgAGBQJPZvWlAAoJEAf03oE53VmQd0EIAKV1xC3F+fd6lvu3rKNyzUl0
-yfcvNtc9cFbwuR9A3cbeoCo6FbfdSpsT2eT8v+DZ5LDvPmJ9ln9jgqyldq+QfblU
-2KpyOWSLeLpG6ILky7Hlo4tjm1NA3GNZGLpyQ2Yln5r17zeTHqaCBeL+xHXOdgcM
-Uvrrix67AmnL91nF4QNPdOfKYnv2h+J2OWW6ukFBajQOMBIiVeddVL62qKYOvq0K
-QrgTa5D4cygvD0NUMTrrJ5GXjR+afAL7K5pk0Aab9C6pzgKGVredD5qSu/Zpbn8n
-+aHXNyfqLQ9+7++a+hm6VNMTrMZxFo/MZoQZsigu7JkJ8lDTNhsaWkm3QqWl4c4=
-=6Y0V
------END PGP SIGNATURE-----
+
+commit 8fb61e33507e5d76b69467b4f96290338e96b733
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Sat Mar 17 21:10:51 2012 +0000
+
+    clk: make CONFIG_COMMON_CLK invisible
+    
+    All platforms that use the common clk infrastructure should select
+    COMMON_CLK from platform code, and on all other platforms, it must
+    not be enabled, so there is no point making the option visible to
+    users, and when it is visible, we break randconfig builds.
+    
+    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 2eaf17e..165e1fe 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -9,21 +9,18 @@ config HAVE_CLK_PREPARE
+ config HAVE_MACH_CLKDEV
+ 	bool
+ 
+-menuconfig COMMON_CLK
+-	bool "Common Clock Framework"
++config COMMON_CLK
++	bool
+ 	select HAVE_CLK_PREPARE
+ 	---help---
+ 	  The common clock framework is a single definition of struct
+ 	  clk, useful across many platforms, as well as an
+ 	  implementation of the clock API in include/linux/clk.h.
+ 	  Architectures utilizing the common struct clk should select
+-	  this automatically, but it may be necessary to manually select
+-	  this option for loadable modules requiring the common clock
+-	  framework.
+-
+-	  If in doubt, say "N".
++	  this option.
+ 
+-if COMMON_CLK
++menu "Common Clock Framework"
++	depends on COMMON_CLK
+ 
+ config COMMON_CLK_DISABLE_UNUSED
+ 	bool "Disabled unused clocks at boot"
+@@ -47,4 +44,4 @@ config COMMON_CLK_DEBUG
+ 	  clk_flags, clk_prepare_count, clk_enable_count &
+ 	  clk_notifier_count.
+ 
+-endif
++endmenu
