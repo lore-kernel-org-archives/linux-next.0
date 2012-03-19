@@ -1,57 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the l2-mtd tree
-Date: Mon, 19 Mar 2012 17:47:43 +1100
-Message-ID: <20120319174743.aff001d4f84e82cf4042277a@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the arm-soc tree
+Date: Mon, 19 Mar 2012 18:39:11 +1100
+Message-ID: <20120319183911.0cd46df560c714ee71184242@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__19_Mar_2012_17_47_43_+1100_3XFqHJ_=PE=pS8cF"
+ boundary="Signature=_Mon__19_Mar_2012_18_39_11_+1100_HGvPfZyBByRP.6v6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36624 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:60210 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751920Ab2CSGsB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Mar 2012 02:48:01 -0400
+	with ESMTP id S1752271Ab2CSHjT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Mar 2012 03:39:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Artem Bityutskiy <dedekind1@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__19_Mar_2012_17_47_43_+1100_3XFqHJ_=PE=pS8cF
+--Signature=_Mon__19_Mar_2012_18_39_11_+1100_HGvPfZyBByRP.6v6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/mtd/nand/atmel_nand.c between commit 4331c79c6895 ("mtd: do not
-use plain 0 as NULL") from the l2-mtd tree and commit d6a016616ba8
-("atmel/nand: add DT support") from the arm-soc tree.
+After merging the arm-soc tree, today's linux-next build (all)
+produced this warning:
 
-The latter superceded the former, so I used that.
+drivers/clk/Kconfig:22: warning: menuconfig statement without prompt
+
+Introduced by commit c173033d154e ("clk: make CONFIG_COMMON_CLK invisible").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__19_Mar_2012_17_47_43_+1100_3XFqHJ_=PE=pS8cF
+--Signature=_Mon__19_Mar_2012_18_39_11_+1100_HGvPfZyBByRP.6v6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPZtaPAAoJEECxmPOUX5FEOMAP/1R3KfZ0BnrVmHcV4q5PrnTK
-TVCGblEAHTe02808bfdnuD6ISWiyFFBARKEOM91feOo870YO9pS9TWO39suxem7I
-Oa56mfBIiwGlbDpj9qWlfLeEkxYiyZRhrnvBWoLGZPmvlBqCu+t2qs2prbnTFnut
-ad7SPY78543LTdQrh6nluuBLLdGdLFcX+HCtEQAmslu34WNKkc0FD5w9XP+/kcJa
-pVfU2zf6ZqN4SsJz97KKbG8BvdRKo8yI1g1XsFlw81LVvpHCi70QhHxuJXInvb2Y
-BiU2ZobDrO/6yOQCHca0UF2/9RjZU9PALl0Io718jQr38jI9eoBnpI/xuPHUj8so
-tk3FhCH2MO9f1JvgjDSFmlMim0+ezo3rBYG5XYKT3ROLDxXSk7FL44Ov6xu09qBk
-rMebPuRg6+RUOA/R1+wUiaJpi9ebunVveGKrxjmtJbWBUAZDlVOFbtZK4e6lPMy1
-3GChoXsmvvcVnmPl4Y0MH7n1RrPzxDT6WizDLZKT93YrbICFCuYo4WV9L9L9CKEY
-latBsCFrYyYGr7I9NXRqu89axfVXusgBEoaoi8hcDGX5tVFBx79tsnI3zv04QWOU
-VqS0F1WRtQ1GCGl8LfMdHuQLzFo8SYpK30FQI66CjgEcVHfQBfZqWhOoRdaw6UVK
-ESXkw8rVcU68KkJepMzV
-=YW2C
+iQIcBAEBCAAGBQJPZuKfAAoJEECxmPOUX5FEiEwP/1gU/qpGpgQTEwA2dOX0nLob
+d25bJxWe47v4FZBwDneGmymyULfWxE9K64sDGig9yNbNfrpB+/Fo9zjS2gbA2gI1
+j2DT9tqeT71d53fRAlI7mwFPylxUUzg6G1TUhs+3htIniTkzEwp73m4+1zX9oRNZ
+mT0dcItKcI+2jRkq4N0pxeFkbrx/Rcf1yokkLsX/V4zYGZqQLvlvqD7BGPn655eP
+ON7R5vzPyoj1kpaQobbg7Qi70J0Q3cWH++IlYAUvBWmMQ4SLktPcCxn/a/qO4PZe
+1PgsxXSmvPPp9lvuOy9/M+CQmnHg2bLvPvRQyHawH0YHtbEWhsx2g7i+JaMvZXqO
+MLpAzXHya86qOxMoQK2fi00EuiZGSzgpvc/Nqxg7XBd6HcA/4Qy8BCNVSXJB+eFH
+udIKpeDM59p8Oe+cZh4UopmkxAPIFhu7bLxmNZiFOAv1t9um3O7I6T/l2aS0POoy
+Y1T7A37Vs632EyAyz9tNL5fF5ACsV4zZ2h9gqwHCqtWiLC9IrBLWdnVDzbjPHIW7
+6rIa1IaP7OjY7TnK2M5IgVrCTVkkWKgMG3bl+WZFh+xvmYbI5R1UMk7oX4k87cmn
+rxVN2mYrq/LPb5GmFNTpuR9CKUTb4HSpxpACV3RPUz8N/kOh+IuElpOghD/HLzLd
+6VhfOmSTe8o9QQzABmeK
+=lynW
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Mar_2012_17_47_43_+1100_3XFqHJ_=PE=pS8cF--
+--Signature=_Mon__19_Mar_2012_18_39_11_+1100_HGvPfZyBByRP.6v6--
