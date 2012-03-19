@@ -1,43 +1,50 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: ARM: fix build failure on ux500 in linux-next
-Date: Mon, 19 Mar 2012 08:57:23 +0000
-Message-ID: <201203190857.23489.arnd@arndb.de>
-References: <20120316211759.GA18829@windriver.com> <CACRpkdYzS=wkfUU4gJLTp7djd6J20zVCC_6XhrjwoVpAoSe8iA@mail.gmail.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the l2-mtd
+ tree
+Date: Mon, 19 Mar 2012 10:00:27 +0100
+Message-ID: <4F66F5AB.7020600@atmel.com>
+References: <20120319174743.aff001d4f84e82cf4042277a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.171]:62131 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754326Ab2CSI5o (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Mar 2012 04:57:44 -0400
-In-Reply-To: <CACRpkdYzS=wkfUU4gJLTp7djd6J20zVCC_6XhrjwoVpAoSe8iA@mail.gmail.com>
+Received: from newsmtp5.atmel.com ([204.2.163.5]:3148 "EHLO sjogate2.atmel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757744Ab2CSJA5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 Mar 2012 05:00:57 -0400
+In-Reply-To: <20120319174743.aff001d4f84e82cf4042277a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linus.walleij@stericsson.com, srinidhi.kasagar@stericsson.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, arm@kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-kernel@vger.kernel.org, Artem Bityutskiy <dedekind1@gmail.com>
 
-On Sunday 18 March 2012, Linus Walleij wrote:
-> On Fri, Mar 16, 2012 at 10:18 PM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
-> 
-> > When I 1st saw this build failure, I thought it was me, because of the
-> > BUG() stuff.  But git bisect claims it comes from the arm-soc tree?
-> 
-> Hm yeah looks like that, but we cannot see which commit
-> I guess, just that it's the merge from ARM SoC?
-> 
-> > In any case, the fix is trivial and self evident, regardless of where
-> > it came from.  I can carry it in my bug-3.4 cleanup tree if need be.
-> > Let me know if you want me to do that.
-> 
-> Any way that solves the issue is fine with me, maybe Arnd/Olof
-> wants to apply it to the ARM SoC tree rather? If they don't say
-> anything, by all means please keep it in cleanup.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-As Lee commented, it should be fixed already with Marc's fixup patch.
-Paul, if you still see it in some configuration on the today's linux-next,
-please let us know.
+On 03/19/2012 07:47 AM, Stephen Rothwell :
+> Hi all,
+> 
+> Today's linux-next merge of the arm-soc tree got a conflict in 
+> drivers/mtd/nand/atmel_nand.c between commit 4331c79c6895 ("mtd: do
+> not use plain 0 as NULL") from the l2-mtd tree and commit
+> d6a016616ba8 ("atmel/nand: add DT support") from the arm-soc tree.
+> 
+> The latter superceded the former, so I used that.
 
-	Arnd
+That is definitively the proper fix. Thanks Stephen.
+
+Best regards,
+- -- 
+Nicolas Ferre
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iQEcBAEBAgAGBQJPZvWlAAoJEAf03oE53VmQd0EIAKV1xC3F+fd6lvu3rKNyzUl0
+yfcvNtc9cFbwuR9A3cbeoCo6FbfdSpsT2eT8v+DZ5LDvPmJ9ln9jgqyldq+QfblU
+2KpyOWSLeLpG6ILky7Hlo4tjm1NA3GNZGLpyQ2Yln5r17zeTHqaCBeL+xHXOdgcM
+Uvrrix67AmnL91nF4QNPdOfKYnv2h+J2OWW6ukFBajQOMBIiVeddVL62qKYOvq0K
+QrgTa5D4cygvD0NUMTrrJ5GXjR+afAL7K5pk0Aab9C6pzgKGVredD5qSu/Zpbn8n
++aHXNyfqLQ9+7++a+hm6VNMTrMZxFo/MZoQZsigu7JkJ8lDTNhsaWkm3QqWl4c4=
+=6Y0V
+-----END PGP SIGNATURE-----
