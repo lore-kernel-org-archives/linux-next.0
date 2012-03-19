@@ -1,67 +1,36 @@
-From: Tony Breeds <tony@bakeyournoodle.com>
-Subject: Re: linux-next: triage for March 18, 2012
-Date: Tue, 20 Mar 2012 09:20:23 +1100
-Message-ID: <20120319222023.GA15781@thor.bakeyournoodle.com>
-References: <20120318235114.GA30497@thor.bakeyournoodle.com>
- <20120318184105.GC2095@windriver.com>
- <1121.1332169437@redhat.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] net: qmi_wwan: fix build error due to cdc-wdm dependecy
+Date: Mon, 19 Mar 2012 18:17:29 -0400 (EDT)
+Message-ID: <20120319.181729.1955474261915960216.davem@davemloft.net>
+References: <20120319184830.fce597a16eaf7206195a7a45@canb.auug.org.au>
+	<1332179309-4163-1-git-send-email-bjorn@mork.no>
+	<4F679437.8030201@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:59974 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754381Ab2CSWU2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 Mar 2012 18:20:28 -0400
-Content-Disposition: inline
-In-Reply-To: <1121.1332169437@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4F679437.8030201@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rdunlap@xenotime.net
+Cc: bjorn@mork.no, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-usb@vger.kernel.org, gregkh@linuxfoundation.org
+List-Id: linux-next.vger.kernel.org
 
+=46rom: Randy Dunlap <rdunlap@xenotime.net>
+Date: Mon, 19 Mar 2012 13:16:55 -0700
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Mar 19, 2012 at 03:03:57PM +0000, David Howells wrote:
-> Tony Breeds <tony@bakeyournoodle.com> wrote:
+> On 03/19/2012 10:48 AM, Bj=F8rn Mork wrote:
 >=20
-> > > 	frv:defconfig  (arch/frv/kernel/head.S operand out of range)
+>> Fixes:
+>>=20
+>> drivers/built-in.o: In function `qmi_wwan_bind_shared':
+>> qmi_wwan.c:(.text+0x25b686): undefined reference to `usb_cdc_wdm_reg=
+ister'
+>> make[1]: *** [.tmp_vmlinux1] Error 1
+>>=20
+>> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+>> Signed-off-by: Bj=F8rn Mork <bjorn@mork.no>
 >=20
-> What binutils are you using?  I suspect this is fixed by a patch that only
-> went upstream very recently.  Are you using a 64-bit machine to do your
-> compilation?
+>=20
+> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
-I'm using binutils 2.22 on a 64-bit machine. So the patch you supplied
-probably wasn't applied.  I'll rebuilf the frv toolchain with that patch
-today.
-
-Thanks David.
-
-Yours Tony
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPZ7EnAAoJEEsCiJRY75GKMIMP/isTLmpMDSwc33ydDEVvKjK6
-IsnRhW63NkYP6Q7MLlsgMn1ss/nbL8juc9LrTTNDqdNO1lwYJD5nxfr95xEwU0XO
-HpZghRLzWNrKfynEXh318pMVWP7kEb3OKdf0DfWudJbOXJ5DsMQuQfrmSq6FZaEw
-Y6HLr1yBtvVEgoMDMdQ/WawrPxOKGu7Yn7T9kfc+WxBNNnrw6eiFGupsAaYyRRB+
-fNuJpSPFTYoWLIM5+fJi8wQtGObX4mLz2M/rIy+HEr+Is5nzussSqO23wDKE7mnR
-cow0izwjHPKfrcCYTg2FLBckJd8z67oqielCTGPPSVzeupTN6QHhvpAxBN0FGtbm
-5LYVnv4wns8Td0ZTN3c4ShUk3/oB/Rrqxnzs01iP+90UUFE9Mtu39vZk0pH7iLQt
-QambuAyfb+id0rdXbSfgPAL8K5HiE7Up+u34cbF55PNJ4daxhYI4IrWDb4841UM0
-CYpotaBdJK2ITFZrQ8i35aTnia27rOChItIslr68NDy+f/zBcMP3TZ6FxNOC+nnh
-qNYPQifhfNkeuJLv+6/YI0DTU+ZWN8nvfIscGYvdt1GOxHafa5SszjA+SI0ecJfb
-GM7tJ3wxk7WxnRdwLHO8Ia+3vetN2dyu5AhZ6AS8kN2Xnu6wkzjMoXqWz+1CG/tK
-awQmqQ/gOIr/Pyoh2kZW
-=QnRJ
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
+Applied.
