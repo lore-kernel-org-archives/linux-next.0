@@ -1,63 +1,68 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH] net: qmi_wwan: fix build error due to cdc-wdm dependecy
-Date: Mon, 19 Mar 2012 13:16:55 -0700
-Message-ID: <4F679437.8030201@xenotime.net>
-References: <20120319184830.fce597a16eaf7206195a7a45@canb.auug.org.au> <1332179309-4163-1-git-send-email-bjorn@mork.no>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: linux-next: triage for March 18, 2012
+Date: Mon, 19 Mar 2012 17:56:53 -0400
+Message-ID: <184427.1332194213@turing-police.cc.vt.edu>
+References: <161084.1332177826@turing-police.cc.vt.edu> <1121.1332169437@redhat.com> <20120318235114.GA30497@thor.bakeyournoodle.com> <20120318184105.GC2095@windriver.com> <9942.1332170491@redhat.com>
+            <8010.1332186104@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1332179309-4163-1-git-send-email-bjorn@mork.no>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?QmrDuHJuIE1vcms=?= <bjorn@mork.no>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; boundary="==_Exmh_1332194213_2016P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from lennier.cc.vt.edu ([198.82.162.213]:34848 "EHLO
+	lennier.cc.vt.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756559Ab2CSV6E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Mar 2012 17:58:04 -0400
+In-Reply-To: Your message of "Mon, 19 Mar 2012 19:41:44 -0000."
+             <8010.1332186104@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Tony Breeds <tony@bakeyournoodle.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/19/2012 10:48 AM, Bj=C3=B8rn Mork wrote:
+--==_Exmh_1332194213_2016P
+Content-Type: text/plain; charset=us-ascii
 
-> Fixes:
->=20
-> drivers/built-in.o: In function `qmi_wwan_bind_shared':
-> qmi_wwan.c:(.text+0x25b686): undefined reference to `usb_cdc_wdm_regi=
-ster'
-> make[1]: *** [.tmp_vmlinux1] Error 1
->=20
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: Bj=C3=B8rn Mork <bjorn@mork.no>
+On Mon, 19 Mar 2012 19:41:44 -0000, David Howells said:
+> Valdis.Kletnieks@vt.edu wrote:
+>
+> > Umm.. it's not clear to *me* that it's intended to be a negative 16 bit?  Or
+> > am I just missing context not present in the patch?
+> >
+> > (I have no idea if the rest of the patch is OK or not, but that comment
+> > didn't give me warm fuzzies....)
 
+> The patch permits a 64-bit hosted assembler to represent a large 32-bit
+> unsigned integer (such as 0xfffffff1) as a negative integer where the
+> instruction being assembled has a signed immediate operand.
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+Oh, I understood the gist of the patch.  My question was specifically
+regarding the comment saying:
 
-Thanks.
+"0xffffe000 is clearly intended to be a negative 16-bit value"
 
+I'd guess it was a negative *32* bit value, unless there's context constraining it to 16....
 
-> ---
-> Thanks for noticing.
->=20
-> This should have been in commit c3ecb08a
->  net: qmi_wwan: support devices having a shared QMI/wwan interface
->=20
->=20
-> Bj=C3=B8rn
->=20
->=20
->  drivers/net/usb/Kconfig |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
->=20
-> diff --git a/drivers/net/usb/Kconfig b/drivers/net/usb/Kconfig
-> index 4bad899..833e32f 100644
-> --- a/drivers/net/usb/Kconfig
-> +++ b/drivers/net/usb/Kconfig
-> @@ -401,6 +401,7 @@ config USB_NET_KALMIA
->  config USB_NET_QMI_WWAN
->  	tristate "QMI WWAN driver for Qualcomm MSM based 3G and LTE modems"
->  	depends on USB_USBNET
-> +	select USB_WDM
->  	help
->  	  Support WWAN LTE/3G devices based on Qualcomm Mobile Data Modem
->  	  (MDM) chipsets.  Examples of such devices are
+--==_Exmh_1332194213_2016P
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
+iQIVAwUBT2erpQdmEQWDXROgAQL02A//Q7sZVwekabyqskRqnFU/4cFZEn6bEzaw
+JutLQ6EPwPdJtms1aq5yyzbPX8mIbWO+3QMwqt5sqSTthTKch1/8+oQJRHg5AS/a
+GxrVEMVDmQZXsBugARk6HEpPXIcdodH0UgaxLXMt3JXN7qdbeNa7+Q+Hzd+Gm7xr
+A2H0S1O1zSvRHYGroDUDUaoUyE77C2W7tEOIvYjaSjIrVpmLgqCtXc1lEw+vQGVa
+wn+2FlDm9qtxjLfeEj2jvXciUyu32cAcLGIMI03HpC34SjxUCFqimyfPxj9bbI6e
+3SybbJMm1d426y0xkT4gUx+Xq6HYGoyTbbizf9p/YOO+Fyx0pt0QFczGufIRGyBD
+xqxQ2rZv/SzhfQScx104iFkcKzdKN/4hjPPDv9Q/Xxz52LSHMvNf6pRr68kEcHFc
+6gJXmsa/OUvkh3b0Ad/mx/Bzgpl71DfX3s1KvTZFcM+wLHvx+nHiqhuCLw5T0WSE
+Nj0uoxaEjqpsw4M7XDBx2ors3KDza0KggEoqSLPF72NqYWpjRp7amjxIi0oWGdM4
+PbtVW3OgrBUYzaaNVj6VaDa95r9ppaKv09ipRa/JUY+IkDVb99DJq1JmA9E4iYwd
+I7RQY1ce0Ix3ysg0fH4mWVBtLIAIjoIXeuxtmK3EtSdvPNW3wmo4U2LFcQ8g7K2f
+lgU2zrksYTQ=
+=EKTq
+-----END PGP SIGNATURE-----
 
---=20
-~Randy
+--==_Exmh_1332194213_2016P--
