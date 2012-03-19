@@ -1,44 +1,66 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: Tree for Mar 19 (uml)
-Date: Mon, 19 Mar 2012 16:44:51 +0000
-Message-ID: <20120319164451.GI6589@ZenIV.linux.org.uk>
-References: <20120319184830.fce597a16eaf7206195a7a45@canb.auug.org.au>
- <4F674A2D.5080504@xenotime.net>
- <4F675B78.8060300@nod.at>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: linux-next: triage for March 18, 2012
+Date: Mon, 19 Mar 2012 13:23:46 -0400
+Message-ID: <161084.1332177826@turing-police.cc.vt.edu>
+References: <1121.1332169437@redhat.com> <20120318235114.GA30497@thor.bakeyournoodle.com> <20120318184105.GC2095@windriver.com>
+            <9942.1332170491@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; boundary="==_Exmh_1332177826_2016P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:33306 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030659Ab2CSQo5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Mar 2012 12:44:57 -0400
-Content-Disposition: inline
-In-Reply-To: <4F675B78.8060300@nod.at>
+Received: from lennier.cc.vt.edu ([198.82.162.213]:39161 "EHLO
+	lennier.cc.vt.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755643Ab2CSRY4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Mar 2012 13:24:56 -0400
+In-Reply-To: Your message of "Mon, 19 Mar 2012 15:21:31 -0000."
+             <9942.1332170491@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Richard Weinberger <richard@nod.at>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Tony Breeds <tony@bakeyournoodle.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2012 at 05:14:48PM +0100, Richard Weinberger wrote:
-> Looks like this commit introduced the issue:
-> 
-> commit 1ed71e0439cba3609d3c69bf04795e0389cd35e4
-> Author: Al Viro <viro@zeniv.linux.org.uk>
-> Date:   Thu Feb 23 01:33:19 2012 -0500
-> 
->     um: embed ->stub_pages[] into mmu_context
-> 
->     seriously, kmalloc() for two-element array of pointers?
-> 
->     Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> 
-> The size of struct page is not known to all users of asm/mmu.h
+--==_Exmh_1332177826_2016P
+Content-Type: text/plain; charset=us-ascii
 
-Aaargh...  Dumb braino, fixed in the local queue back in Feb 25, fix
-not folded into commit and missed on cherry-pick ;-/
+On Mon, 19 Mar 2012 15:21:31 -0000, David Howells said:
 
-It's
-        struct page *stub_pages[2];
-of course...
+> Here's a patch I got from Nick Clifton to fix 64-bit binutils to handle
+> representing things like 0xfffffff1 as a 32-bit negative immediate argument.
+> It has been applied upstream.
 
-OK, fix properly folded into that sucker, for-next repushed.
+> ! #if 1
+> !       /* Handle the case where a hex value is parsed on a 64-bit host.
+> ! 	 A value like 0xffffe000 is clearly intended to be a negative
+> ! 	 16-bit value, but on a 64-bit host it will be parsed by gas
+> ! 	 as 0x00000000ffffe000.
+
+Umm.. it's not clear to *me* that it's intended to be a negative 16 bit?  Or am I just
+missing context not present in the patch?
+
+(I have no idea if the rest of the patch is OK or not, but that comment didn't give
+me warm fuzzies....)
+
+--==_Exmh_1332177826_2016P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
+
+iQIVAwUBT2drogdmEQWDXROgAQJ3+Q/+ONWQ21FC6TFhSooAMh+yuI1H7E5aFSe9
+gzivKeuBgNewkp187z9AY5JVLAckY7FtKf3Lvhfm2hnlVD6SETI5QRRq905v5rwr
+wlyw+vLxaJi8uCwdw4NiEOFcXYAAB2DjZgNPt1Lps4K+6JTs+9aIJebxh/pl/Fgw
+2+Nguhs1as4AOcZ3OTXvQI/tUakCXZtWy54xjSVZ6sR5+vaJnt8rs8ztQMU5CfM/
+ISZ98ATaKXZ+2rj10+jUo9XdGN/dqXzQVZJYaWqv86f5crPXT1T/DAdNjr1UdepL
+wlAtaAQ2XvXLmhLjeHLpnK0vnzCPvsCB4LYWVcBSIVv2r1OEAxf0nvKOFpxV0Ao0
+tC3RUrA6LMSSBAUYJDOljLQMbTzSqiotMmdQwYgqNxY9ppw9GFeHi7C+jiYKAPH2
+EBdfdGAjJINA2sKaIMwqg7c7HN7krCEEDd/b+XNblmTBgXtjYnkf5xUGLvP2+i4C
+ZG09/kKwJXVPyiRjLuaiqGK3UKWQ0EL5wqkIJFhGUaewJlMoWVebq2OxMJRInDu2
+6SRJx3XT54/wpOjLW1Hsa1YIlW9YfuitcULR1Bv2ASe3gpg7qSeAALnf3moyNZNc
+vgrJEXEb/YYVtxSp2jnKw6gDE57xjqT/OBH/l2U4kuvyB1khMguI6Ksek+Q+pBLI
+402x7/3NlGw=
+=yYHT
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1332177826_2016P--
