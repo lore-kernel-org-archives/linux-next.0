@@ -1,106 +1,72 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: triage for March 18, 2012
-Date: Mon, 19 Mar 2012 15:21:31 +0000
-Message-ID: <9942.1332170491@redhat.com>
-References: <1121.1332169437@redhat.com> <20120318235114.GA30497@thor.bakeyournoodle.com> <20120318184105.GC2095@windriver.com>
+From: Richard Weinberger <richard@nod.at>
+Subject: Re: linux-next: Tree for Mar 19 (uml)
+Date: Mon, 19 Mar 2012 17:14:48 +0100
+Message-ID: <4F675B78.8060300@nod.at>
+References: <20120319184830.fce597a16eaf7206195a7a45@canb.auug.org.au> <4F674A2D.5080504@xenotime.net>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enig1AFB6C47EA9010465AAAFDF0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:58550 "EHLO mx1.redhat.com"
+Received: from a.ns.miles-group.at ([95.130.255.143]:47834 "EHLO radon.swed.at"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752591Ab2CSPVi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 Mar 2012 11:21:38 -0400
-In-Reply-To: <1121.1332169437@redhat.com>
+	id S1161563Ab2CSQOx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 Mar 2012 12:14:53 -0400
+In-Reply-To: <4F674A2D.5080504@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tony Breeds <tony@bakeyournoodle.com>
-Cc: dhowells@redhat.com, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enig1AFB6C47EA9010465AAAFDF0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Am 19.03.2012 16:01, schrieb Randy Dunlap:
+>   CC      arch/um/kernel/asm-offsets.s
+> In file included from include/linux/mm_types.h:16:0,
+>                  from include/linux/sched.h:64,
+>                  from arch/x86/um/shared/sysdep/kernel-offsets.h:2,
+>                  from arch/um/kernel/asm-offsets.c:1:
+> arch/um/include/asm/mmu.h:15:14: error: array type has incomplete eleme=
+nt type
+> make[2]: *** [arch/um/kernel/asm-offsets.s] Error 1
+>=20
+
+Looks like this commit introduced the issue:
+
+commit 1ed71e0439cba3609d3c69bf04795e0389cd35e4
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Thu Feb 23 01:33:19 2012 -0500
+
+    um: embed ->stub_pages[] into mmu_context
+
+    seriously, kmalloc() for two-element array of pointers?
+
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+The size of struct page is not known to all users of asm/mmu.h
+
+Thanks,
+//richard
 
 
-David Howells <dhowells@redhat.com> wrote:
+--------------enig1AFB6C47EA9010465AAAFDF0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-> Tony Breeds <tony@bakeyournoodle.com> wrote:
-> 
-> > > 	frv:defconfig  (arch/frv/kernel/head.S operand out of range)
-> 
-> What binutils are you using?  I suspect this is fixed by a patch that only
-> went upstream very recently.  Are you using a 64-bit machine to do your
-> compilation?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.18 (GNU/Linux)
 
-Here's a patch I got from Nick Clifton to fix 64-bit binutils to handle
-representing things like 0xfffffff1 as a 32-bit negative immediate argument.
-It has been applied upstream.
+iQEcBAEBAgAGBQJPZ1t4AAoJEN9758yqZn9edrMH+wSybdchj06DsFSDEHSMm15P
+ELjN88FGu0R8J3g/ny6FKjmOSyeER5Fmn3d3wJgPVYADaHEmgcvVu/BZRnzu6gsd
+oIYxL+NS+HwHUec3IEH/h7/yMgfs9VKtJZbk5rDyMI13tGYpRWkZy01LxTGoNhRo
+H3IbeMcgHzyDlxmASRTteWt635n6VREBCiAwKaNVEdSTvpS6Yt24Qq4XDC6hRmXx
+nDWtEh0hZiMNeDRD99ohNK8Lo6OlTMd2ysLnksTKy9UeH7bOIEutbQCyTu2O8r8p
+aw+Rj8/7nzTMDXty+Ga1O4AikDB8bcaewhiw6t4LEuM5vd6gg3z3mzJk8YxG6aw=
+=ejaE
+-----END PGP SIGNATURE-----
 
-David
----
-Index: opcodes/cgen-asm.c
-===================================================================
-RCS file: /cvs/src/src/opcodes/cgen-asm.c,v
-retrieving revision 1.14
-diff -c -3 -p -r1.14 cgen-asm.c
-*** opcodes/cgen-asm.c	2 Sep 2009 07:20:29 -0000	1.14
---- opcodes/cgen-asm.c	15 Dec 2011 08:27:02 -0000
-*************** cgen_parse_signed_integer (CGEN_CPU_DESC
-*** 268,274 ****
-       &result, &value);
-    /* FIXME: Examine `result'.  */
-    if (!errmsg)
-!     *valuep = value;
-    return errmsg;
-  }
-  
---- 268,291 ----
-       &result, &value);
-    /* FIXME: Examine `result'.  */
-    if (!errmsg)
-!     {
-! #if 1
-!       /* Handle the case where a hex value is parsed on a 64-bit host.
-! 	 A value like 0xffffe000 is clearly intended to be a negative
-! 	 16-bit value, but on a 64-bit host it will be parsed by gas
-! 	 as 0x00000000ffffe000.
-! 
-! 	 The shifts below are designed not to produce compile time
-! 	 warnings when compiled on a 32-bit host.  */
-!       if (sizeof (value) > 4
-! 	  && result == CGEN_PARSE_OPERAND_RESULT_NUMBER
-! 	  && value > 0
-! 	  && (value & 0x80000000)
-! 	  && ((value >> 31) == 1))
-! 	value |= -1 << 31;
-! #endif
-!       *valuep = value;
-!     }
-    return errmsg;
-  }
-  
-Index: opcodes/frv-asm.c
-===================================================================
-RCS file: /cvs/src/src/opcodes/frv-asm.c,v
-retrieving revision 1.19
-diff -c -3 -p -r1.19 frv-asm.c
-*** opcodes/frv-asm.c	27 Jun 2010 04:07:55 -0000	1.19
---- opcodes/frv-asm.c	15 Dec 2011 08:27:02 -0000
-*************** parse_uhi16 (CGEN_CPU_DESC cd,
-*** 465,475 ****
-  	  if (errmsg == NULL
-  	      && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-  	    {
-! 	      /* If bfd_vma is wider than 32 bits, but we have a sign-
-! 		 or zero-extension, truncate it.  */
-! 	      if (value >= - ((bfd_vma)1 << 31)
-! 		  || value <= ((bfd_vma)1 << 31) - (bfd_vma)1)
-  		value &= (((bfd_vma)1 << 16) << 16) - 1;
-  	      value >>= 16;
-  	    }
-  	  *valuep = value;
---- 465,475 ----
-  	  if (errmsg == NULL
-  	      && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-  	    {
-! 	      /* If value is wider than 32 bits then be
-! 		 careful about how we extract bits 16-31.  */
-! 	      if (sizeof (value) > 4)
-  		value &= (((bfd_vma)1 << 16) << 16) - 1;
-+ 
-  	      value >>= 16;
-  	    }
-  	  *valuep = value;
+--------------enig1AFB6C47EA9010465AAAFDF0--
