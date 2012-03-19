@@ -1,55 +1,40 @@
-From: =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
-Subject: [PATCH] net: qmi_wwan: fix build error due to cdc-wdm dependecy
-Date: Mon, 19 Mar 2012 18:48:29 +0100
-Message-ID: <1332179309-4163-1-git-send-email-bjorn@mork.no>
-References: <20120319184830.fce597a16eaf7206195a7a45@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: triage for March 18, 2012
+Date: Mon, 19 Mar 2012 19:41:44 +0000
+Message-ID: <8010.1332186104@redhat.com>
+References: <161084.1332177826@turing-police.cc.vt.edu> <1121.1332169437@redhat.com> <20120318235114.GA30497@thor.bakeyournoodle.com> <20120318184105.GC2095@windriver.com> <9942.1332170491@redhat.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from canardo.mork.no ([148.122.252.1]:42651 "EHLO canardo.mork.no"
+Received: from mx1.redhat.com ([209.132.183.28]:64630 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1030417Ab2CSRtO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 19 Mar 2012 13:49:14 -0400
-In-Reply-To: <20120319184830.fce597a16eaf7206195a7a45@canb.auug.org.au>
+	id S1759297Ab2CSTlw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 Mar 2012 15:41:52 -0400
+In-Reply-To: <161084.1332177826@turing-police.cc.vt.edu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
+To: Valdis.Kletnieks@vt.edu
+Cc: dhowells@redhat.com, Tony Breeds <tony@bakeyournoodle.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-=46ixes:
+Valdis.Kletnieks@vt.edu wrote:
 
-drivers/built-in.o: In function `qmi_wwan_bind_shared':
-qmi_wwan.c:(.text+0x25b686): undefined reference to `usb_cdc_wdm_regist=
-er'
-make[1]: *** [.tmp_vmlinux1] Error 1
+> Umm.. it's not clear to *me* that it's intended to be a negative 16 bit?  Or
+> am I just missing context not present in the patch?
+> 
+> (I have no idea if the rest of the patch is OK or not, but that comment
+> didn't give me warm fuzzies....)
 
-Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: Bj=C3=B8rn Mork <bjorn@mork.no>
----
-Thanks for noticing.
+Sorry, I haven't explained it well.
 
-This should have been in commit c3ecb08a
- net: qmi_wwan: support devices having a shared QMI/wwan interface
+The patch permits a 64-bit hosted assembler to represent a large 32-bit
+unsigned integer (such as 0xfffffff1) as a negative integer where the
+instruction being assembled has a signed immediate operand.
 
+For instance, the ANDI instruction on FRV takes a small signed integer (10
+bits IIRC) that it sign-extends to 32-bits before using - so to clear a single
+low-order bit, I pass in, say, ~0x2 and the assembler represents this as a
+negative value.
 
-Bj=C3=B8rn
+The problem was that in a 64-bit hosted assembler, the unsigned 32-bit integer
+gets converted to an unsigned 64-bit integer - which doesn't then appear
+negative (whereas in a 32-bit hosted assembler it does).
 
-
- drivers/net/usb/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/net/usb/Kconfig b/drivers/net/usb/Kconfig
-index 4bad899..833e32f 100644
---- a/drivers/net/usb/Kconfig
-+++ b/drivers/net/usb/Kconfig
-@@ -401,6 +401,7 @@ config USB_NET_KALMIA
- config USB_NET_QMI_WWAN
- 	tristate "QMI WWAN driver for Qualcomm MSM based 3G and LTE modems"
- 	depends on USB_USBNET
-+	select USB_WDM
- 	help
- 	  Support WWAN LTE/3G devices based on Qualcomm Mobile Data Modem
- 	  (MDM) chipsets.  Examples of such devices are
---=20
-1.7.9.1
+David
