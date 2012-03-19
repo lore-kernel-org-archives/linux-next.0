@@ -1,95 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with the mmc tree
-Date: Mon, 19 Mar 2012 14:33:35 +1100
-Message-ID: <20120319143335.8b31091f03de60e41987efde@canb.auug.org.au>
+Subject: linux-next: manual merge of the moduleh tree with the vfs tree
+Date: Mon, 19 Mar 2012 16:42:26 +1100
+Message-ID: <20120319164226.47a03eac5ab3ff9365714208@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__19_Mar_2012_14_33_35_+1100_0dpypry1YMU0rzV8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Chris Ball <cjb@laptop.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__19_Mar_2012_16_42_26_+1100_=jSW.98qObSeO9h6"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54604 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757813Ab2CSFmk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Mar 2012 01:42:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
 
---Signature=_Mon__19_Mar_2012_14_33_35_+1100_0dpypry1YMU0rzV8
+--Signature=_Mon__19_Mar_2012_16_42_26_+1100_=jSW.98qObSeO9h6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Paul,
 
-Today's linux-next merge of the pm tree got a conflict in
-drivers/mmc/host/tmio_mmc_pio.c between commit 4d741159c282 ("mmc:
-tmio_mmc: support the generic MMC GPIO card hotplug helper") from the mmc
-tree and commit c419e611c3c5 ("tmio_mmc / PM: Use PM QoS latency
-constraint") from the pm tree.
+Today's linux-next merge of the moduleh tree got a conflict in fs/inode.c
+between commit 8bf58c2aaafb ("trim includes in inode.c") from the vfs
+tree and commit 630d9c47274a ("fs: reduce the use of module.h wherever
+possible") from the moduleh tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+The former makes the latter patch unneeded (it also replaces module.h
+with export.h).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/mmc/host/tmio_mmc_pio.c
-index e476baf1,e219889..0000000
---- a/drivers/mmc/host/tmio_mmc_pio.c
-+++ b/drivers/mmc/host/tmio_mmc_pio.c
-@@@ -996,20 -983,22 +999,22 @@@ EXPORT_SYMBOL(tmio_mmc_host_probe)
-  void tmio_mmc_host_remove(struct tmio_mmc_host *host)
-  {
-  	struct platform_device *pdev =3D host->pdev;
- +	struct tmio_mmc_data *pdata =3D host->pdata;
- +	struct mmc_host *mmc =3D host->mmc;
- =20
- -	/*
- -	 * We don't have to manipulate pdata->power here: if there is a card in
- -	 * the slot, the runtime PM is active and our .runtime_resume() will not
- -	 * be run. If there is no card in the slot and the platform can suspend
- -	 * the controller, the runtime PM is suspended and pdata->power =3D=3D f=
-alse,
- -	 * so, our .runtime_resume() will not try to detect a card in the slot.
- -	 */
- -	if (host->pdata->flags & TMIO_MMC_HAS_COLD_CD
- -		|| host->mmc->caps & MMC_CAP_NEEDS_POLL
- -		|| host->mmc->caps & MMC_CAP_NONREMOVABLE)
- +	if (pdata->flags & TMIO_MMC_USE_GPIO_CD)
- +		/*
- +		 * This means we can miss a card-eject, but this is anyway
- +		 * possible, because of delayed processing of hotplug events.
- +		 */
- +		mmc_cd_gpio_free(mmc);
- +
- +	if (!host->native_hotplug)
-  		pm_runtime_get_sync(&pdev->dev);
- =20
-+ 	dev_pm_qos_hide_latency_limit(&pdev->dev);
-+=20
- -	mmc_remove_host(host->mmc);
- +	mmc_remove_host(mmc);
-  	cancel_work_sync(&host->done);
-  	cancel_delayed_work_sync(&host->delayed_reset_work);
-  	tmio_mmc_release_dma(host);
-
---Signature=_Mon__19_Mar_2012_14_33_35_+1100_0dpypry1YMU0rzV8
+--Signature=_Mon__19_Mar_2012_16_42_26_+1100_=jSW.98qObSeO9h6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPZqkPAAoJEECxmPOUX5FElskP/R1h9PSl/b9g+FZkKci5tscJ
-ojnuvdTmuORZ0dV9SPVPT7JZLjCdGwT9bzpe+fce5zMN+STXZiGRc83/UuZu/NLX
-+zRkCpM64plGFquHKBixOhVgyG3rps1VcnCrR0ZPDUHukCZqLpgmUqZ0BJCMrTiF
-7px6bc+B/YvsDExwF3yzUkn/jiYLnbY5N7QLvtAcIM+AG7yTLY561D5IKqWgUcjH
-axpLab9YxRHDo4bsfDfROC9dz12FbcbgqV4Alo94/CLj3r1EMkfLhW+ua2UGGdn/
-UeasFY6WHHn1yWYn0AAi9pFwNbBCuDJ/4vpKFYlhDshFWsS2j9du++Np726m2oef
-sdUOtI5/5z5tKGOfwo7Cbwls4YTuICbLz0mnZWj1zplhHH4vdMVhTTJqUQvDLWv1
-CJroDxSz9NykKGDBu1asHzxhy0kcEtJRZGTWaqqWQh1C25eD5rQd0Vjpo7A9aApb
-k1MXUeqphXMj0uHDmjhlzWXgXoW85IneCroWmX2R3ytS9/W48/dloHji4sDJmbEJ
-qGhU8SVnTDgoSOHfnX+rse1+vJuVG7rf99r77wxFv2HnAh4eK+aL6dKDUerst/d5
-QDlUpnFGvKwbCv8ruWzNQXC1Xj62twNlrQLb+D9oUS4MyFg5dGhALokQVNS8R41J
-FYjg8M061RDmxwuy2SfI
-=IKg+
+iQIcBAEBCAAGBQJPZsdCAAoJEECxmPOUX5FEtZQP/0wNxXNcO85OdkxfgRJWmf8o
+OkfPVXXtjsLbQX4n4StmiKTnodsI2Ws2ZHvJ1N6LRegvWFgf9XGat0JlmjqtUDns
+Fjf79MuhFlMm0FyW2CfQJzYdCcef7A3GhosVTwzggBxOtoeGL7xgkAhD9dqgaO/3
+/h37YfhOi/QySO2iDLp/9lU8uTOTXB4u65N9OQOS3bYIv9pyPCec0uyRu0jz4aVL
+pyQfHiCFa5d2izPxpcINmUp9qBNDPeV+KCvb+msJPU4tFodoA4v15sKujRR0Nz/9
+/TYZATq2WMcoI6PMqweCwKucvXhq3WRhsjFbcbMAAa5m5NSlaaIdbhxmQmYPjnDm
+27vCyGWTVsXmV3v58Z2WhIEuJ75+AH/xTMI6c+6RqOia5ws4Fixn6cTLHMk5r6YB
+Io4ZC9NVWNEn7Xz01ND0fVDkmSdJ26Kln2hl6silUreKkkdmENUgifJsooOJeixM
+CWz9kEa8R4dthYqgSPFTTmkxqSePefiUxCfAbl1mgVUKdEPANdzD7SLdkjZ5I+1p
+YRx+KNiyCFNc1E27W92Djb03ygjDYvEACFgWDCgRbLYJIdSpz+xDPw/aoUiXJrqq
+JWor217zyTyTWo2Y+CNG63O8qiF8P2rn3HqqxjCO9AmP92Vie4MSHOEjBS5K3qst
+SLlpXWErSGxL4P3vLtbk
+=5kuq
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__19_Mar_2012_14_33_35_+1100_0dpypry1YMU0rzV8--
+--Signature=_Mon__19_Mar_2012_16_42_26_+1100_=jSW.98qObSeO9h6--
