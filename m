@@ -1,62 +1,46 @@
-From: Wang YanQing <udknight@gmail.com>
-Subject: Re: [PATCH] x86: export 'pcibios_enabled'
-Date: Mon, 19 Mar 2012 08:30:44 +0800
-Message-ID: <20120319003044.GA3744@udknight>
-References: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au>
- <4F5FAE63.3090908@xenotime.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH v2] x86: export 'pcibios_enabled' as GPL
+Date: Sun, 18 Mar 2012 18:03:41 -0700
+Message-ID: <4F6685ED.7040000@xenotime.net>
+References: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au> <4F5FAE63.3090908@xenotime.net> <20120319003044.GA3744@udknight>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:43419 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756036Ab2CSAa5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Mar 2012 20:30:57 -0400
-Content-Disposition: inline
-In-Reply-To: <4F5FAE63.3090908@xenotime.net>
+Received: from oproxy4-pub.bluehost.com ([69.89.21.11]:44375 "HELO
+	oproxy4-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755088Ab2CSBDn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 18 Mar 2012 21:03:43 -0400
+In-Reply-To: <20120319003044.GA3744@udknight>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michal Januszewski <spock@gentoo.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Wang YanQing <Udknight@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michal Januszewski <spock@gentoo.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Tue, Mar 13, 2012 at 01:30:27PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> Export 'pcibios_enabled' so that when uvesafb is built as a
-> loadable module (on X86_32), the build will succeed.
-> 
-> ERROR: "pcibios_enabled" [drivers/video/uvesafb.ko] undefined!
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> Cc:	Michal Januszewski <spock@gentoo.org>
-> Cc:	Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-> Cc:	linux-fbdev@vger.kernel.org
-> Cc:	x86@kernel.org
-> ---
-> Applies to mainline; found in linux-next.
-> 
->  arch/x86/pci/pcbios.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-next-20120313.orig/arch/x86/pci/pcbios.c
-> +++ linux-next-20120313/arch/x86/pci/pcbios.c
-> @@ -27,6 +27,7 @@
->  #define PCIBIOS_HW_TYPE2_SPEC		0x20
->  
->  int pcibios_enabled;
-> +EXPORT_SYMBOL(pcibios_enabled);
->  
->  /* According to the BIOS specification at:
->   * http://members.datafast.net.au/dft0802/specs/bios21.pdf, we could
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-Hi, could you resend this patch as EXPORT_SYMBOL_GPL to x86 architecture maintainer?
-Looks at the MAINTAINERS for the below:
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-X86 ARCHITECTURE (32-BIT AND 64-BIT)
-M:	Thomas Gleixner <tglx@linutronix.de>
-M:	Ingo Molnar <mingo@redhat.com>
-M:	"H. Peter Anvin" <hpa@zytor.com>
-M:	x86@kernel.org
+Export 'pcibios_enabled' so that when uvesafb is built as a
+loadable module (on X86_32), the build will succeed.
+
+ERROR: "pcibios_enabled" [drivers/video/uvesafb.ko] undefined!
+
+Patch v2 uses EXPORT_SYMBOL_GPL() as requested.
+
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc:	Michal Januszewski <spock@gentoo.org>
+Cc:	Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc:	linux-fbdev@vger.kernel.org
+Cc:	x86@kernel.org
+---
+ arch/x86/pci/pcbios.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20120313.orig/arch/x86/pci/pcbios.c
++++ linux-next-20120313/arch/x86/pci/pcbios.c
+@@ -27,6 +27,7 @@
+ #define PCIBIOS_HW_TYPE2_SPEC		0x20
+ 
+ int pcibios_enabled;
++EXPORT_SYMBOL_GPL(pcibios_enabled);
+ 
+ /* According to the BIOS specification at:
+  * http://members.datafast.net.au/dft0802/specs/bios21.pdf, we could
