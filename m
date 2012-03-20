@@ -1,89 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the battery tree
-Date: Tue, 20 Mar 2012 15:39:12 +1100
-Message-ID: <20120320153912.b97107ca4128d0692de17799@canb.auug.org.au>
-References: <20120315135609.2f9a2a030866c476dc736b9c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (nfs tree
+ related)
+Date: Tue, 20 Mar 2012 19:29:52 +1100
+Message-ID: <20120320192952.ed82031eec8a49cf7da40a8e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__20_Mar_2012_15_39_12_+1100_kksWIIHFcyV6yQvQ"
+ boundary="Signature=_Tue__20_Mar_2012_19_29_52_+1100_7/cSXJIYlkE2DBlq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58775 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43541 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751049Ab2CTEjW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 00:39:22 -0400
-In-Reply-To: <20120315135609.2f9a2a030866c476dc736b9c@canb.auug.org.au>
+	with ESMTP id S1757244Ab2CTIaH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 04:30:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <avorontsov@ru.mvista.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Weston Andros Adamson <dros@netapp.com>
 
---Signature=_Tue__20_Mar_2012_15_39_12_+1100_kksWIIHFcyV6yQvQ
+--Signature=_Tue__20_Mar_2012_19_29_52_+1100_7/cSXJIYlkE2DBlq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Anton,
+Hi Trond,
 
-On Thu, 15 Mar 2012 13:56:09 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the battery tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> drivers/power/ab8500_btemp.c: In function 'ab8500_btemp_batctrl_volt_to_r=
-es':
-> drivers/power/ab8500_btemp.c:142:2: error: implicit declaration of functi=
-on 'is_ab8500_1p1_or_earlier' [-Werror=3Dimplicit-function-declaration]
-> drivers/power/ab8500_btemp.c: In function 'ab8500_btemp_templow_handler':
-> drivers/power/ab8500_btemp.c:619:2: error: implicit declaration of functi=
-on 'is_ab8500_2p0_or_earlier' [-Werror=3Dimplicit-function-declaration]
-> drivers/power/ab8500_charger.c: In function 'ab8500_charger_ac_en':
-> drivers/power/ab8500_charger.c:1126:3: error: implicit declaration of fun=
-ction 'is_ab8500_1p1_or_earlier' [-Werror=3Dimplicit-function-declaration]
-> drivers/power/ab8500_charger.c: In function 'ab8500_charger_remove':
-> drivers/power/ab8500_charger.c:2519:2: error: implicit declaration of fun=
-ction 'usb_unregister_notifier' [-Werror=3Dimplicit-function-declaration]
-> drivers/power/ab8500_charger.c:2520:2: error: implicit declaration of fun=
-ction 'usb_put_transceiver' [-Werror=3Dimplicit-function-declaration]
-> drivers/power/ab8500_charger.c: In function 'ab8500_charger_probe':
-> drivers/power/ab8500_charger.c:2688:2: error: implicit declaration of fun=
-ction 'usb_get_transceiver' [-Werror=3Dimplicit-function-declaration]
-> drivers/power/ab8500_charger.c:2688:14: warning: assignment makes pointer=
- from integer without a cast [enabled by default]
-> drivers/power/ab8500_charger.c:2695:2: error: implicit declaration of fun=
-ction 'usb_register_notifier' [-Werror=3Dimplicit-function-declaration]
->=20
-> Caused by commits 89449ac8d6d2 ("ab8500-charger: AB8500 charger driver")
-> and 20ac1aed6206 ("ab8500-btemp: AB8500 battery temperature driver").
->=20
-> I have used the battery tree form next-20120314 for today.
+[This was previously reported as a warning ... but sparc uses -Werr in
+more places]
 
-Still getting this build failure.
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
+
+In file included from arch/sparc/kernel/sys_sparc32.c:24:0:
+include/linux/nfs_fs.h: In function 'nfs_display_fhandle_hash':
+include/linux/nfs_fs.h:416:1: error: no return statement in function return=
+ing non-void [-Werror=3Dreturn-type]
+
+Caused by commit d8e0539ebdff ("NFS: add filehandle crc for debug display").
+
+I added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 20 Mar 2012 19:26:42 +1100
+Subject: [PATCH] nfs: non void functions must return a value
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/nfs_fs.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
+index 8f27c2e..69ec9cb 100644
+--- a/include/linux/nfs_fs.h
++++ b/include/linux/nfs_fs.h
+@@ -413,6 +413,7 @@ extern void _nfs_display_fhandle(const struct nfs_fh *f=
+h, const char *caption);
+ #else
+ static inline u32 nfs_display_fhandle_hash(const struct nfs_fh *fh)
+ {
++	return 0;
+ }
+ static inline void nfs_display_fhandle(const struct nfs_fh *fh,
+ 				       const char *caption)
+--=20
+1.7.9.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__20_Mar_2012_15_39_12_+1100_kksWIIHFcyV6yQvQ
+--Signature=_Tue__20_Mar_2012_19_29_52_+1100_7/cSXJIYlkE2DBlq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPaAnwAAoJEECxmPOUX5FEThIQAI9ztS5zF5+X8wbFmPrWhxH+
-PrkLINLxe3YmGF5JAfD2jz5vxVqT8pg+FC8f1UypexM79aB4B3R+4gAqYWKzii8x
-pckXJ19/cRY9uuUvmsXaeQl9N1PVciJSSJzWvUYE3k4+jn9ldFACM1H/1nTZPHj8
-P2ZDGV/MZ936nAr/Jg3T3uznCcuScuqC/Jhw9Rgj+Y1oX3S537NMIPGJOpT8jUlk
-2OF9ka2YycyrUv2L1e7qSpQIVS8uawVWneiaeVdUC2Qi0UmPgax7B3d/ENLWW51c
-CArpU1wcyxBZ3w+D0ZMLqT2QaFtICyX+1h5O5LIPpJy/eroviLMHdRl4f2LP36Df
-ZSYyGTXs3bH12Mz38FCitqxODzKHqgWRqyFvFEwBHdE7DusU9uPsg9P07SkmAMPe
-7gFiCr63TsRbzcYjV4fI1RzgmEJEpedYGQqPdRbpWaVCwX0DA0IseBnEfin5lPDy
-NBuGKFak6ffkPFlr3BCWGicDhcjjA8LEhojcxJgW95ceiSPXgLzifFV1kW1sHGdE
-+13nKqXkE8Ka6kodQmWqBU9zxB2JCU6zefVjYudqiBgvQcNRw4cPXR7z6yWw9HzQ
-Hq1HQyaK8d+zWjKdG9+vo1ORkfNrjf9i/SH3dfCcHsQvDzW6EcGyTw0oOXpw/M+l
-HBqV+PoeYu+guwaR5P9i
-=L1er
+iQIcBAEBCAAGBQJPaEAAAAoJEECxmPOUX5FEox0P/1iSg2SBPoyuj41RNWsRXqDQ
+V9QT9kNEb6Q9W3n7L8IF0FvlYJqcNwCU4UIPoFMlEsKi0oi4KLZ2VlF4jJwCJENn
+lK1enaDzy/yzHV1h40u3MXGhXr18uzS1c5ZJD1coBMIcqG4+DKknmoo0F6cSPBkz
+BScljwRA/rhOXHuVbYmQzN/pU7nMW715FUnObGJAWjQqvLIvhjk/gkMuduXYXfOZ
+kSRvWzfOannZg4m80CjPTI2JUy/GHws8cVdAOT9QvY91gwTTB1YLp/YCtEvddwhY
+szHPDCBsQg/v5HC7B3WPb6l9ofY2/Bo4JnC1BfE6+jwplneM4c/4Hbf4O1pESpbk
+AgV4c6W96xWfvZsQOq38OIsr6tisOvA7b7wo/8ud8CZe6vBZPWv6uqynibmFn/CR
+bFSnzLC9BGrSa6dPrDFyMQHhfP/1lv6gDu/JNgc65mbItzMFPtB02PJw9mW4oSa9
+AzLtuUcvYQJOOJoU9bDDZi5BFMLO0m/YF+Xi3EoIFCZtMnxSD2xbwxx4XY2WC4Hc
+h/qDLcgeujFyLI7XJDjDz3KAAkyCKY+1n45Vgx/UOTMB6qLbdV1A2iiR0cwPOGMt
+89d3uy4HIBXlHrGTg6T3Stlb9qP/P6GCB8RPY2ZCU6/ol0NXxxlq6cRZwkG6YW1C
+pW37pWqnAw4avsdHcnWh
+=kg8h
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__20_Mar_2012_15_39_12_+1100_kksWIIHFcyV6yQvQ--
+--Signature=_Tue__20_Mar_2012_19_29_52_+1100_7/cSXJIYlkE2DBlq--
