@@ -1,46 +1,51 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Tue, 20 Mar 2012 13:40:41 +0100
-Message-ID: <20120320124041.GB21753@sortiz-mobl>
-References: <20120319131345.a2f5b9983538d25c2974d344@canb.auug.org.au>
+From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Subject: Re: linux-next: build failure after merge of the final tree (nfs
+ tree related)
+Date: Tue, 20 Mar 2012 13:25:29 +0000
+Message-ID: <1332249929.2963.4.camel@lade.trondhjem.org>
+References: <20120320192952.ed82031eec8a49cf7da40a8e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:10794 "EHLO mga11.intel.com"
+Received: from mx2.netapp.com ([216.240.18.37]:9640 "EHLO mx2.netapp.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754672Ab2CTMch (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 20 Mar 2012 08:32:37 -0400
-Content-Disposition: inline
-In-Reply-To: <20120319131345.a2f5b9983538d25c2974d344@canb.auug.org.au>
+	id S1758590Ab2CTNZt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Mar 2012 09:25:49 -0400
+In-Reply-To: <20120320192952.ed82031eec8a49cf7da40a8e@canb.auug.org.au>
+Content-Language: en-US
+Content-ID: <85F8EDDF7A38454D8A30D8DEEADC6B4D@tahoe.netapp.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Adamson, Dros" <Weston.Adamson@netapp.com>
 
-Hi Stephen,
-
-On Mon, Mar 19, 2012 at 01:13:45PM +1100, Stephen Rothwell wrote:
-> Hi Samuel,
-> 
-> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> drivers/built-in.o: In function `rc5t583_i2c_init':
-> rc5t583.c:(.init.text+0xb3db): undefined reference to `i2c_register_driver'
-> drivers/built-in.o: In function `rc5t583_i2c_probe':
-> rc5t583.c:(.devinit.text+0x8fa0): undefined reference to `regmap_init_i2c'
-> drivers/built-in.o: In function `rc5t583_i2c_exit':
-> rc5t583.c:(.exit.text+0x708): undefined reference to `i2c_del_driver'
-> 
-> Caused by commit 1b1247dd75aa ("mfd: Add support for RICOH PMIC
-> RC5T583"). Presumably some missing Kconfig dependency.
-> 
-> I have ued the version of the mfd tree from next-20120316 for today.
-This should be fixed now, thanks for the heads up.
-
-Cheers,
-Samuel.
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+T24gVHVlLCAyMDEyLTAzLTIwIGF0IDE5OjI5ICsxMTAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
+Og0KPiBIaSBUcm9uZCwNCj4gDQo+IFtUaGlzIHdhcyBwcmV2aW91c2x5IHJlcG9ydGVkIGFzIGEg
+d2FybmluZyAuLi4gYnV0IHNwYXJjIHVzZXMgLVdlcnIgaW4NCj4gbW9yZSBwbGFjZXNdDQo+IA0K
+PiBBZnRlciBtZXJnaW5nIHRoZSBmaW5hbCB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQg
+KHNwYXJjNjQgZGVmY29uZmlnKQ0KPiBmYWlsZWQgbGlrZSB0aGlzOg0KPiANCj4gSW4gZmlsZSBp
+bmNsdWRlZCBmcm9tIGFyY2gvc3BhcmMva2VybmVsL3N5c19zcGFyYzMyLmM6MjQ6MDoNCj4gaW5j
+bHVkZS9saW51eC9uZnNfZnMuaDogSW4gZnVuY3Rpb24gJ25mc19kaXNwbGF5X2ZoYW5kbGVfaGFz
+aCc6DQo+IGluY2x1ZGUvbGludXgvbmZzX2ZzLmg6NDE2OjE6IGVycm9yOiBubyByZXR1cm4gc3Rh
+dGVtZW50IGluIGZ1bmN0aW9uIHJldHVybmluZyBub24tdm9pZCBbLVdlcnJvcj1yZXR1cm4tdHlw
+ZV0NCj4gDQo+IENhdXNlZCBieSBjb21taXQgZDhlMDUzOWViZGZmICgiTkZTOiBhZGQgZmlsZWhh
+bmRsZSBjcmMgZm9yIGRlYnVnIGRpc3BsYXkiKS4NCj4gDQo+IEkgYWRkZWQgdGhlIGZvbGxvd2lu
+ZyBwYXRjaCBmb3IgdG9kYXk6DQo+IA0KPiBGcm9tOiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2Fu
+Yi5hdXVnLm9yZy5hdT4NCj4gRGF0ZTogVHVlLCAyMCBNYXIgMjAxMiAxOToyNjo0MiArMTEwMA0K
+PiBTdWJqZWN0OiBbUEFUQ0hdIG5mczogbm9uIHZvaWQgZnVuY3Rpb25zIG11c3QgcmV0dXJuIGEg
+dmFsdWUNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1
+dWcub3JnLmF1Pg0KPiAtLS0NCj4gIGluY2x1ZGUvbGludXgvbmZzX2ZzLmggfCAgICAxICsNCj4g
+IDEgZmlsZXMgY2hhbmdlZCwgMSBpbnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKQ0KPiANCj4g
+ZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvbmZzX2ZzLmggYi9pbmNsdWRlL2xpbnV4L25mc19m
+cy5oDQo+IGluZGV4IDhmMjdjMmUuLjY5ZWM5Y2IgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGlu
+dXgvbmZzX2ZzLmgNCj4gKysrIGIvaW5jbHVkZS9saW51eC9uZnNfZnMuaA0KPiBAQCAtNDEzLDYg
+KzQxMyw3IEBAIGV4dGVybiB2b2lkIF9uZnNfZGlzcGxheV9maGFuZGxlKGNvbnN0IHN0cnVjdCBu
+ZnNfZmggKmZoLCBjb25zdCBjaGFyICpjYXB0aW9uKTsNCj4gICNlbHNlDQo+ICBzdGF0aWMgaW5s
+aW5lIHUzMiBuZnNfZGlzcGxheV9maGFuZGxlX2hhc2goY29uc3Qgc3RydWN0IG5mc19maCAqZmgp
+DQo+ICB7DQo+ICsJcmV0dXJuIDA7DQo+ICB9DQo+ICBzdGF0aWMgaW5saW5lIHZvaWQgbmZzX2Rp
+c3BsYXlfZmhhbmRsZShjb25zdCBzdHJ1Y3QgbmZzX2ZoICpmaCwNCj4gIAkJCQkgICAgICAgY29u
+c3QgY2hhciAqY2FwdGlvbikNCg0KVGhhbmtzIFN0ZXBoZW4hIEkndmUgYXBwbGllZCB0aGUgYWJv
+dmUgcGF0Y2ggdG8gbXkgdHJlZS4NCg0KQ2hlZXJzDQogIFRyb25kDQoNCi0tIA0KVHJvbmQgTXlr
+bGVidXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWluZXINCg0KTmV0QXBwDQpUcm9uZC5NeWts
+ZWJ1c3RAbmV0YXBwLmNvbQ0Kd3d3Lm5ldGFwcC5jb20NCg0K
