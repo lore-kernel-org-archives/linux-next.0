@@ -1,48 +1,48 @@
-From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Subject: Re: linux-next: build warning after merge of the nfs tree
-Date: Tue, 20 Mar 2012 13:28:59 +0000
-Message-ID: <1332250139.2963.7.camel@lade.trondhjem.org>
-References: <20120320193443.ac26a6f22feacc00e59d3467@canb.auug.org.au>
+From: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+Subject: Re: [PATCH] -mm/linux-next: procfs: Mark thread stack correctly in proc/<pid>/maps
+Date: Tue, 20 Mar 2012 19:08:39 +0530
+Message-ID: <CAAHN_R3mFzmtCey_0JEHp=EAGh1sb87szpsKD_JkFwwYLCnKug@mail.gmail.com>
+References: <4F57A3EC.7070101@gmail.com>
+	<1331660076-32766-1-git-send-email-siddhesh.poyarekar@gmail.com>
+	<20120313131616.f66dbdad.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.netapp.com ([216.240.18.37]:49170 "EHLO mx2.netapp.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758671Ab2CTN3B (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 20 Mar 2012 09:29:01 -0400
-In-Reply-To: <20120320193443.ac26a6f22feacc00e59d3467@canb.auug.org.au>
-Content-Language: en-US
-Content-ID: <58A283697BB97C4F96030429F844D348@tahoe.netapp.com>
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:44059 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755638Ab2CTNim convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 09:38:42 -0400
+In-Reply-To: <20120313131616.f66dbdad.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Jamie Lokier <jamie@shareable.org>, KOSAKI Motohiro <kosaki.motohiro@gmail.com>, Matt Mackall <mpm@selenic.com>, Mike Frysinger <vapier@gentoo.org>, Oleg Nesterov <oleg@redhat.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Mark Salter <msalter@redhat.com>
 
-T24gVHVlLCAyMDEyLTAzLTIwIGF0IDE5OjM0ICsxMTAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
-Og0KPiBIaSBUcm9uZCwNCj4gDQo+IEFmdGVyIG1lcmdpbmcgdGhlIG5mcyB0cmVlLCB0b2RheSdz
-IGxpbnV4LW5leHQgYnVpbGQgKHNwYXJjMzIgZGVmY29uZmlnKQ0KPiBwcm9kdWNlZCB0aGlzIHdh
-cm5pbmc6DQo+IA0KPiBuZXQvc3VucnBjL3JwY2JfY2xudC5jOiBJbiBmdW5jdGlvbiAncnBjYl9l
-bmNfbWFwcGluZyc6DQo+IG5ldC9zdW5ycGMvcnBjYl9jbG50LmM6ODIwOjE5OiB3YXJuaW5nOiB1
-bnVzZWQgdmFyaWFibGUgJ3Rhc2snIFstV3VudXNlZC12YXJpYWJsZV0NCj4gbmV0L3N1bnJwYy9y
-cGNiX2NsbnQuYzogSW4gZnVuY3Rpb24gJ3JwY2JfZGVjX2dldHBvcnQnOg0KPiBuZXQvc3VucnBj
-L3JwY2JfY2xudC5jOjgzNzoxOTogd2FybmluZzogdW51c2VkIHZhcmlhYmxlICd0YXNrJyBbLVd1
-bnVzZWQtdmFyaWFibGVdDQo+IG5ldC9zdW5ycGMvcnBjYl9jbG50LmM6IEluIGZ1bmN0aW9uICdy
-cGNiX2RlY19zZXQnOg0KPiBuZXQvc3VucnBjL3JwY2JfY2xudC5jOjg2MDoxOTogd2FybmluZzog
-dW51c2VkIHZhcmlhYmxlICd0YXNrJyBbLVd1bnVzZWQtdmFyaWFibGVdDQo+IG5ldC9zdW5ycGMv
-cnBjYl9jbG50LmM6IEluIGZ1bmN0aW9uICdycGNiX2VuY19nZXRhZGRyJzoNCj4gbmV0L3N1bnJw
-Yy9ycGNiX2NsbnQuYzo4OTI6MTk6IHdhcm5pbmc6IHVudXNlZCB2YXJpYWJsZSAndGFzaycgWy1X
-dW51c2VkLXZhcmlhYmxlXQ0KPiBuZXQvc3VucnBjL3JwY2JfY2xudC5jOiBJbiBmdW5jdGlvbiAn
-cnBjYl9kZWNfZ2V0YWRkcic6DQo+IG5ldC9zdW5ycGMvcnBjYl9jbG50LmM6OTE0OjE5OiB3YXJu
-aW5nOiB1bnVzZWQgdmFyaWFibGUgJ3Rhc2snIFstV3VudXNlZC12YXJpYWJsZV0NCj4gZnMvbG9j
-a2Qvc3ZjbG9jay5jOjQ5OjIwOiB3YXJuaW5nOiAnbmxtZGJnX2Nvb2tpZTJhJyBkZWNsYXJlZCAn
-c3RhdGljJyBidXQgbmV2ZXIgZGVmaW5lZCBbLVd1bnVzZWQtZnVuY3Rpb25dDQo+IA0KPiANCj4g
-UHJvYmFibHkgY2F1c2VkIGJ5IHNvbWUgZGVidWdnaW5nIGJlaW5nIHR1cm5lZCBvZmYuDQoNClll
-cywgdGhpcyBpcyBkdWUgdG8gdGhlIG5ldyBDT05GSUdfU1VOUlBDX0RFQlVHIGJlaW5nIHR1cm5l
-ZCBvZmYuIFRoZQ0KaXNzdWUgaGFzIGluIGZhY3QgYmVlbiBpbiB0aGUgdHJlZSBmb3IgcXVpdGUg
-YSB3aGlsZSwgYnV0IGJlZm9yZSB3ZQ0KYWRkZWQgdGhlIGV4cGxpY2l0IEtidWlsZCBzd2l0Y2gs
-IHlvdSBoYWQgdG8gaGF2ZSBTVU5SUEMgZW5hYmxlZCwgd2hpbGUNCmRpc2FibGluZyBTWVNDVEwg
-aW4gb3JkZXIgdG8gc2VlIGl0Lg0KDQpBbnlob3csIEkndmUgYWRkZWQgYSBmaXguIFRoYW5rcyBm
-b3IgdGhlIHJlcG9ydCENCg0KQ2hlZXJzDQogIFRyb25kDQotLSANClRyb25kIE15a2xlYnVzdA0K
-TGludXggTkZTIGNsaWVudCBtYWludGFpbmVyDQoNCk5ldEFwcA0KVHJvbmQuTXlrbGVidXN0QG5l
-dGFwcC5jb20NCnd3dy5uZXRhcHAuY29tDQoNCg==
+On Wed, Mar 14, 2012 at 1:46 AM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Tue, 13 Mar 2012 23:04:36 +0530
+> Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com> wrote:
+>
+>> Following is the updated patch with requested changes incorporated.
+>
+> Boy, that's a lot of changes (below). =A0What does it all do?
+>
+
+Hi,
+
+Since this patch was included in the -mm tree on March 14th, I assumed
+that linux-next would get the patch in today's merge, but it hasn't.
+Is there something I am missing? Does the patch need additional
+review/acks that I need to request for?
+
+Thanks,
+Siddhesh
+
+Thanks,
+Siddhesh
+
+
+--=20
+Siddhesh Poyarekar
+http://siddhesh.in
