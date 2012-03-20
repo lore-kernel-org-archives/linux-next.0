@@ -1,92 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (nfs tree
- related)
-Date: Tue, 20 Mar 2012 19:29:52 +1100
-Message-ID: <20120320192952.ed82031eec8a49cf7da40a8e@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the nfs tree
+Date: Tue, 20 Mar 2012 19:34:43 +1100
+Message-ID: <20120320193443.ac26a6f22feacc00e59d3467@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__20_Mar_2012_19_29_52_+1100_7/cSXJIYlkE2DBlq"
+ boundary="Signature=_Tue__20_Mar_2012_19_34_43_+1100_KqY0h9lEXn28Dwm7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43541 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:52539 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757244Ab2CTIaH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 04:30:07 -0400
+	with ESMTP id S1759167Ab2CTIex (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 04:34:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Weston Andros Adamson <dros@netapp.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__20_Mar_2012_19_29_52_+1100_7/cSXJIYlkE2DBlq
+--Signature=_Tue__20_Mar_2012_19_34_43_+1100_KqY0h9lEXn28Dwm7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Trond,
 
-[This was previously reported as a warning ... but sparc uses -Werr in
-more places]
+After merging the nfs tree, today's linux-next build (sparc32 defconfig)
+produced this warning:
 
-After merging the final tree, today's linux-next build (sparc64 defconfig)
-failed like this:
+net/sunrpc/rpcb_clnt.c: In function 'rpcb_enc_mapping':
+net/sunrpc/rpcb_clnt.c:820:19: warning: unused variable 'task' [-Wunused-va=
+riable]
+net/sunrpc/rpcb_clnt.c: In function 'rpcb_dec_getport':
+net/sunrpc/rpcb_clnt.c:837:19: warning: unused variable 'task' [-Wunused-va=
+riable]
+net/sunrpc/rpcb_clnt.c: In function 'rpcb_dec_set':
+net/sunrpc/rpcb_clnt.c:860:19: warning: unused variable 'task' [-Wunused-va=
+riable]
+net/sunrpc/rpcb_clnt.c: In function 'rpcb_enc_getaddr':
+net/sunrpc/rpcb_clnt.c:892:19: warning: unused variable 'task' [-Wunused-va=
+riable]
+net/sunrpc/rpcb_clnt.c: In function 'rpcb_dec_getaddr':
+net/sunrpc/rpcb_clnt.c:914:19: warning: unused variable 'task' [-Wunused-va=
+riable]
+fs/lockd/svclock.c:49:20: warning: 'nlmdbg_cookie2a' declared 'static' but =
+never defined [-Wunused-function]
 
-In file included from arch/sparc/kernel/sys_sparc32.c:24:0:
-include/linux/nfs_fs.h: In function 'nfs_display_fhandle_hash':
-include/linux/nfs_fs.h:416:1: error: no return statement in function return=
-ing non-void [-Werror=3Dreturn-type]
 
-Caused by commit d8e0539ebdff ("NFS: add filehandle crc for debug display").
-
-I added the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 20 Mar 2012 19:26:42 +1100
-Subject: [PATCH] nfs: non void functions must return a value
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/nfs_fs.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
-index 8f27c2e..69ec9cb 100644
---- a/include/linux/nfs_fs.h
-+++ b/include/linux/nfs_fs.h
-@@ -413,6 +413,7 @@ extern void _nfs_display_fhandle(const struct nfs_fh *f=
-h, const char *caption);
- #else
- static inline u32 nfs_display_fhandle_hash(const struct nfs_fh *fh)
- {
-+	return 0;
- }
- static inline void nfs_display_fhandle(const struct nfs_fh *fh,
- 				       const char *caption)
---=20
-1.7.9.1
+Probably caused by some debugging being turned off.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__20_Mar_2012_19_29_52_+1100_7/cSXJIYlkE2DBlq
+--Signature=_Tue__20_Mar_2012_19_34_43_+1100_KqY0h9lEXn28Dwm7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPaEAAAAoJEECxmPOUX5FEox0P/1iSg2SBPoyuj41RNWsRXqDQ
-V9QT9kNEb6Q9W3n7L8IF0FvlYJqcNwCU4UIPoFMlEsKi0oi4KLZ2VlF4jJwCJENn
-lK1enaDzy/yzHV1h40u3MXGhXr18uzS1c5ZJD1coBMIcqG4+DKknmoo0F6cSPBkz
-BScljwRA/rhOXHuVbYmQzN/pU7nMW715FUnObGJAWjQqvLIvhjk/gkMuduXYXfOZ
-kSRvWzfOannZg4m80CjPTI2JUy/GHws8cVdAOT9QvY91gwTTB1YLp/YCtEvddwhY
-szHPDCBsQg/v5HC7B3WPb6l9ofY2/Bo4JnC1BfE6+jwplneM4c/4Hbf4O1pESpbk
-AgV4c6W96xWfvZsQOq38OIsr6tisOvA7b7wo/8ud8CZe6vBZPWv6uqynibmFn/CR
-bFSnzLC9BGrSa6dPrDFyMQHhfP/1lv6gDu/JNgc65mbItzMFPtB02PJw9mW4oSa9
-AzLtuUcvYQJOOJoU9bDDZi5BFMLO0m/YF+Xi3EoIFCZtMnxSD2xbwxx4XY2WC4Hc
-h/qDLcgeujFyLI7XJDjDz3KAAkyCKY+1n45Vgx/UOTMB6qLbdV1A2iiR0cwPOGMt
-89d3uy4HIBXlHrGTg6T3Stlb9qP/P6GCB8RPY2ZCU6/ol0NXxxlq6cRZwkG6YW1C
-pW37pWqnAw4avsdHcnWh
-=kg8h
+iQIcBAEBCAAGBQJPaEEjAAoJEECxmPOUX5FEBpsQAJnSTmj6cPYzRfEin5D/7TMA
+dGoeVFXegrKtjX9DTrxlJ1uxCmJHyjlFjQ5qYqEBC8MEib2Xw0+NBDEQBeoG+QQH
+zTZkMDbXThVYIS75U+0f8Vm1fyMnmapkCnX9lElOmfZV7q6RFSOOnB710UDiCtSt
+pB1Y2A4Kqkha89arYvBn3eWgSzjZjL6uqV2cE/CbKvjwiz0Kl6Z8yYZBKdY1R2K3
+/6DwDmiElmR73ynzBwDugXNTtbOLionz+22tFyjTdRwx+sc7lFxDPKsTk296gQOf
+QnFKMfZMN7KTC2/WEHm8gtCgv7c7nwN3bIjPQPIJzRIuXidi+w1V3zLrMm7rIPDw
+4W5hVdyrp9Rj7GUHmBpw4OEpSzbWiw/uYJZogEo9z1v8u1g1Vpw42PRaOXIAR62w
+ohHkyqgjN9Q0k/FrOFM9on13ornkEmuHPdqU6zmF5FeutKTy7iMgC8KVRTKrF+fK
+1jhydEJxopLQk3Vo4K1m1rqm8Gy2RHEy3hdEMk+WAD51z+hJJApS9EzCKVBQlj/T
+TR8hu6W3JcpV0P+EQsLl+VtZmDheqHb9PX9HV2zYevaCux4quI9c/7rsG5Hj6poZ
+hyReS8/Dj/YpsWGVjes3dz8CF/MbXv3o03J1WyZuSseJk5uKHIhpr9E4QemMCGCi
+PzldA8zgD/i2TUGu9gWU
+=JvJA
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__20_Mar_2012_19_29_52_+1100_7/cSXJIYlkE2DBlq--
+--Signature=_Tue__20_Mar_2012_19_34_43_+1100_KqY0h9lEXn28Dwm7--
