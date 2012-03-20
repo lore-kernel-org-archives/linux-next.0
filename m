@@ -1,54 +1,70 @@
-From: Rob Lee <rob.lee@linaro.org>
-Subject: Re: [PATCH] cpuidle : fix random hangs with intel_idle
-Date: Tue, 20 Mar 2012 11:27:47 -0500
-Message-ID: <CAMXH7KH5HWyQwombjDYXHsPanHBHU5h69X7r9k2gFhy5p6JqnQ@mail.gmail.com>
-References: <alpine.LSU.2.00.1203131454500.1335@eggly.anvils>
-	<1331770181-800-1-git-send-email-daniel.lezcano@linaro.org>
-	<20120315111415.cd119171ac86967aebe85545@canb.auug.org.au>
-	<alpine.LSU.2.00.1203141720360.2003@eggly.anvils>
-	<20120315135841.affff2d75681451d9ddd1a58@canb.auug.org.au>
-	<CAHLCerOeSHvFXb9ZnBDc1RjETbMLoMNYWqtrM=ipp_iX9XZ1cQ@mail.gmail.com>
-	<20120317012628.4239343e48d748af2514b5b2@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next: "ARM: make mach/io.h include optional" commit breaks
+ cm_x2xx_defconfig
+Date: Tue, 20 Mar 2012 14:34:04 -0400
+Message-ID: <4F68CD9C.3090001@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120317012628.4239343e48d748af2514b5b2@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Amit Kucheria <amit.kucheria@linaro.org>, Hugh Dickins <hughd@google.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, akpm@linux-foundation.org, j-pihet@ti.com, khilman@ti.com, deepthi@linux.vnet.ibm.com, dan.carpenter@oracle.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail1.windriver.com ([147.11.146.13]:44655 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755192Ab2CTSeP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 14:34:15 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: rob.herring@calxeda.com
+Cc: hsweeten@visionengravers.com, nico@linaro.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org
 
-Hello Stephen,
+Hi Rob,
 
-I am back in town and have reviewed and applied Daniel's fix to my
-tree.  Also, I updated my tree to v3.3.
+If you have a moment can you check this build failure?
 
-git://git.linaro.org/people/rob_lee/linux.git cpuidle_consol_pull
+http://kisskb.ellerman.id.au/kisskb/buildresult/5923845/
 
-Daniel, thank you for investigating and providing the fix in my absence=
-=2E
+A git bisect seems to want to blame your commit for it.
 
-Best Regards,
-Rob
+Thanks,
+Paul.
+
+---
+
+c334bc150524f833db3c76a0aaf55fb5044444e1 is the first bad commit
+commit c334bc150524f833db3c76a0aaf55fb5044444e1
+Author: Rob Herring <rob.herring@calxeda.com>
+Date:   Sun Mar 4 22:03:33 2012 -0600
+
+    ARM: make mach/io.h include optional
 
 
-On Fri, Mar 16, 2012 at 9:26 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Amit,
->
-> On Fri, 16 Mar 2012 15:37:07 +0200 Amit Kucheria <amit.kucheria@linar=
-o.org> wrote:
->>
->> A slight glitch: Rob is away until Tuesday. Should Daniel create a n=
-ew
->> branch to carry this?
->
-> I can keep applying it to linux-next, it just needs to be added to Ro=
-b's
-> tree before Linus is asked to merge it.
->
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
+git bisect start
+# good: [fde7d9049e55ab85a390be7f415d74c9f62dd0f9] Linux 3.3-rc7
+git bisect good fde7d9049e55ab85a390be7f415d74c9f62dd0f9
+# bad: [f355e8684f7e8e7077ca6d3988f24e01047804b6] Add linux-next specific files for 20120320
+git bisect bad f355e8684f7e8e7077ca6d3988f24e01047804b6
+# good: [5fe35ba6690ea0136d649cb2a07ac3f64a4c3cfb] Merge remote-tracking branch 'sound/for-next'
+git bisect good 5fe35ba6690ea0136d649cb2a07ac3f64a4c3cfb
+# good: [5260d60f170ebd381538dd56f6f6b765cbf9db29] Merge remote-tracking branch 'tip/auto-latest'
+git bisect good 5260d60f170ebd381538dd56f6f6b765cbf9db29
+# good: [2eb0aaa70022cbd3cdac7bdb610ed79a3b0c60a7] Merge remote-tracking branch 'writeback/writeback-for-next'
+git bisect good 2eb0aaa70022cbd3cdac7bdb610ed79a3b0c60a7
+# bad: [da7499ed07635785926c4a12915f54c61dc44170] Merge branch 'next/clk' into for-next
+git bisect bad da7499ed07635785926c4a12915f54c61dc44170
+# good: [eae71abd0e6d466105c66a40115907335a3e20fa] Merge branch 'next/boards' into for-next
+git bisect good eae71abd0e6d466105c66a40115907335a3e20fa
+# good: [cdc3df6f44f72c5924a16a47e1663c3fb0e57820] Merge branch 'dt-part2' of git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap into next/dt
+git bisect good cdc3df6f44f72c5924a16a47e1663c3fb0e57820
+# good: [f66f9bdf6d2c2b540f73bb57bd24b886b39beb14] Merge branch 'lpc32xx/drivers' into next/drivers
+git bisect good f66f9bdf6d2c2b540f73bb57bd24b886b39beb14
+# good: [e5412a49eceeab5b9ecb761b536ad7ac829e1c45] Merge branch 'next/dt' into for-next
+git bisect good e5412a49eceeab5b9ecb761b536ad7ac829e1c45
+# good: [efa497b9ec8cc534f8883a2d1d42f52174070f38] ARM: dove: add explicit include of dove.h to addr-map.c
+git bisect good efa497b9ec8cc534f8883a2d1d42f52174070f38
+# bad: [accf709b39a9cdbeaf6233000ccb9af966fd691e] Merge branch 'io-cleanup-for-3.4' of git://sources.calxeda.com/kernel/linux into next/cleanup2
+git bisect bad accf709b39a9cdbeaf6233000ccb9af966fd691e
+# bad: [708795cd975579ba7115666f585c428f8cebd572] Merge branch 'io-cleanup-for-3.4' of git://sources.calxeda.com/kernel/linux into next/cleanup2
+git bisect bad 708795cd975579ba7115666f585c428f8cebd572
+# bad: [c334bc150524f833db3c76a0aaf55fb5044444e1] ARM: make mach/io.h include optional
+git bisect bad c334bc150524f833db3c76a0aaf55fb5044444e1
+# good: [41e32c906054be3a600cdeb69eb70350066e0a91] ARM: clps711x: remove unneeded include of mach/io.h
+git bisect good 41e32c906054be3a600cdeb69eb70350066e0a91
