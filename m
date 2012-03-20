@@ -1,48 +1,54 @@
-From: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-Subject: Re: [PATCH] -mm/linux-next: procfs: Mark thread stack correctly in proc/<pid>/maps
-Date: Tue, 20 Mar 2012 19:08:39 +0530
-Message-ID: <CAAHN_R3mFzmtCey_0JEHp=EAGh1sb87szpsKD_JkFwwYLCnKug@mail.gmail.com>
-References: <4F57A3EC.7070101@gmail.com>
-	<1331660076-32766-1-git-send-email-siddhesh.poyarekar@gmail.com>
-	<20120313131616.f66dbdad.akpm@linux-foundation.org>
+From: Rob Lee <rob.lee@linaro.org>
+Subject: Re: [PATCH] cpuidle : fix random hangs with intel_idle
+Date: Tue, 20 Mar 2012 11:27:47 -0500
+Message-ID: <CAMXH7KH5HWyQwombjDYXHsPanHBHU5h69X7r9k2gFhy5p6JqnQ@mail.gmail.com>
+References: <alpine.LSU.2.00.1203131454500.1335@eggly.anvils>
+	<1331770181-800-1-git-send-email-daniel.lezcano@linaro.org>
+	<20120315111415.cd119171ac86967aebe85545@canb.auug.org.au>
+	<alpine.LSU.2.00.1203141720360.2003@eggly.anvils>
+	<20120315135841.affff2d75681451d9ddd1a58@canb.auug.org.au>
+	<CAHLCerOeSHvFXb9ZnBDc1RjETbMLoMNYWqtrM=ipp_iX9XZ1cQ@mail.gmail.com>
+	<20120317012628.4239343e48d748af2514b5b2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:44059 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755638Ab2CTNim convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 09:38:42 -0400
-In-Reply-To: <20120313131616.f66dbdad.akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Jamie Lokier <jamie@shareable.org>, KOSAKI Motohiro <kosaki.motohiro@gmail.com>, Matt Mackall <mpm@selenic.com>, Mike Frysinger <vapier@gentoo.org>, Oleg Nesterov <oleg@redhat.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Mark Salter <msalter@redhat.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120317012628.4239343e48d748af2514b5b2@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Amit Kucheria <amit.kucheria@linaro.org>, Hugh Dickins <hughd@google.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, akpm@linux-foundation.org, j-pihet@ti.com, khilman@ti.com, deepthi@linux.vnet.ibm.com, dan.carpenter@oracle.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Mar 14, 2012 at 1:46 AM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Tue, 13 Mar 2012 23:04:36 +0530
-> Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com> wrote:
+Hello Stephen,
+
+I am back in town and have reviewed and applied Daniel's fix to my
+tree.  Also, I updated my tree to v3.3.
+
+git://git.linaro.org/people/rob_lee/linux.git cpuidle_consol_pull
+
+Daniel, thank you for investigating and providing the fix in my absence=
+=2E
+
+Best Regards,
+Rob
+
+
+On Fri, Mar 16, 2012 at 9:26 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Amit,
 >
->> Following is the updated patch with requested changes incorporated.
+> On Fri, 16 Mar 2012 15:37:07 +0200 Amit Kucheria <amit.kucheria@linar=
+o.org> wrote:
+>>
+>> A slight glitch: Rob is away until Tuesday. Should Daniel create a n=
+ew
+>> branch to carry this?
 >
-> Boy, that's a lot of changes (below). =A0What does it all do?
+> I can keep applying it to linux-next, it just needs to be added to Ro=
+b's
+> tree before Linus is asked to merge it.
 >
-
-Hi,
-
-Since this patch was included in the -mm tree on March 14th, I assumed
-that linux-next would get the patch in today's merge, but it hasn't.
-Is there something I am missing? Does the patch need additional
-review/acks that I need to request for?
-
-Thanks,
-Siddhesh
-
-Thanks,
-Siddhesh
-
-
---=20
-Siddhesh Poyarekar
-http://siddhesh.in
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
