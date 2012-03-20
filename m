@@ -1,62 +1,133 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the nfs tree
-Date: Tue, 20 Mar 2012 13:14:27 +1100
-Message-ID: <20120320131427.b166ba88d4ea86cea3ec8d7f@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci tree (actually
+ powerpc tree related)
+Date: Tue, 20 Mar 2012 14:28:08 +1100
+Message-ID: <20120320142808.dbc31fedf291bb3cc8cdecaa@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__20_Mar_2012_13_14_27_+1100_lDFFRlPUlSWdYknZ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55317 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759384Ab2CTCOg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Mar 2012 22:14:36 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Weston Andros Adamson <dros@netapp.com>
+ boundary="Signature=_Tue__20_Mar_2012_14_28_08_+1100_FnJYFwK0dpcQ69xV"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suzuki Poulose <suzuki@in.ibm.com>, tony@bakeyournoodle.com, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__20_Mar_2012_13_14_27_+1100_lDFFRlPUlSWdYknZ
+--Signature=_Tue__20_Mar_2012_14_28_08_+1100_FnJYFwK0dpcQ69xV
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Trond,
+Hi Ben,
 
-After merging the nfs tree, today's linux-next build (powerpc
-ppc64_defconfig) produced lots of this warning:
+After merging the pci tree, today's linux-next build (powerpc ppc64_defconf=
+ig)
+failed like this:
 
-include/linux/nfs_fs.h: In function 'nfs_display_fhandle_hash':
-include/linux/nfs_fs.h:416:1: warning: no return statement in function retu=
-rning non-void [-Wreturn-type]
+powerpc64-linux-ld: section .text loaded at [0000000000e00000,0000000000e07=
+21b] overlaps section .kernel:dtb loaded at [0000000000e00000,0000000000e00=
+66f]
 
-Introduced by commit d8e0539ebdff ("NFS: add filehandle crc for debug
-display").  But made obvious by commit 855fa894a2b2 ("SUNRPC/NFS: Add
-Kbuild dependencies for NFS_DEBUG/RPC_DEBUG").
+I have applied this patch for today (thanks to Tony Breeds and David
+Gibson):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 20 Mar 2012 14:13:51 +1100
+Subject: [PATCH] powerpc: do not adjust the load address for ps3
+
+Commit c55aef0e5bc6 "powerpc/boot: Change the load address for the wrapper
+to fit the kernel" adjusted the laod address if the uncompressed kernel
+was too large.  Ps3 does not compress the kernel and uses a different
+linker script, so do not adjust the load address in that case.
+
+fixes this build error:
+
+powerpc64-linux-ld: section .text loaded at [0000000000e00000,0000000000e07=
+21b] overlaps section .kernel:dtb loaded at [0000000000e00000,0000000000e00=
+66f]
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/boot/wrapper |   22 +++++++++++++---------
+ 1 files changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
+index f090e6d..6761c74 100755
+--- a/arch/powerpc/boot/wrapper
++++ b/arch/powerpc/boot/wrapper
+@@ -144,6 +144,7 @@ tmp=3D$tmpdir/zImage.$$.o
+ ksection=3D.kernel:vmlinux.strip
+ isection=3D.kernel:initrd
+ link_address=3D'0x400000'
++make_space=3Dy
+=20
+ case "$platform" in
+ pseries)
+@@ -210,6 +211,7 @@ ps3)
+     ksection=3D.kernel:vmlinux.bin
+     isection=3D.kernel:initrd
+     link_address=3D''
++    make_space=3Dn
+     pie=3D
+     ;;
+ ep88xc|ep405|ep8248e)
+@@ -278,17 +280,19 @@ else
+     rm -f $vmz.$$
+ fi
+=20
+-# Round the size to next higher MB limit
+-round_size=3D$(((strip_size + 0xfffff) & 0xfff00000))
++if [ "$make_space" =3D "y" ]; then
++	# Round the size to next higher MB limit
++	round_size=3D$(((strip_size + 0xfffff) & 0xfff00000))
+=20
+-round_size=3D0x$(printf "%x" $round_size)
+-link_addr=3D$(printf "%d" $link_address)
++	round_size=3D0x$(printf "%x" $round_size)
++	link_addr=3D$(printf "%d" $link_address)
+=20
+-if [ $link_addr -lt $strip_size ]; then
+-    echo "INFO: Uncompressed kernel (size 0x$(printf "%x\n" $strip_size))"=
+ \
+-		"overlaps the address of the wrapper($link_address)"
+-    echo "INFO: Fixing the link_address of wrapper to ($round_size)"
+-    link_address=3D$round_size
++	if [ $link_addr -lt $strip_size ]; then
++	    echo "INFO: Uncompressed kernel (size 0x$(printf "%x\n" $strip_size))=
+" \
++			"overlaps the address of the wrapper($link_address)"
++	    echo "INFO: Fixing the link_address of wrapper to ($round_size)"
++	    link_address=3D$round_size
++	fi
+ fi
+=20
+ vmz=3D"$vmz$gzip"
+--=20
+1.7.9.1
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__20_Mar_2012_13_14_27_+1100_lDFFRlPUlSWdYknZ
+--Signature=_Tue__20_Mar_2012_14_28_08_+1100_FnJYFwK0dpcQ69xV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPZ+gDAAoJEECxmPOUX5FEbwwP/11bpEdNujL/IORj2uOEuZwJ
-JenRgENzKBYhNAkZjOL9fJ3173cyBMWJnuDDdE60Z8NNHBmonw6hhXEQRfyk0rZe
-ywGdTjI/3eRTlr2D6N/el94Sg9gD3m/2Fnh533xF8roo4xqDoQ+UeXmFlSIQ20qA
-HNVAh0J79W0G2QfRoLkMITGwYzVW9UXhFLNwRWVVKrnnkKp+xzGDhGJqdkX+ZEqe
-d+uPaW69yRtQuOzQeSNolyfDxmJUm8/DZYm1TXUPMFEZC8JfFTGkaxJMgh8dW+5j
-kaHHOFnRMCF6MEMTs/ws0d1Kqro3oRERSJqCp7wsB1Bus2ht+hAn2TtON0Mv9O49
-ef22dbBza31iykKtgCf+zfbcKuU/daT80Kgk5/66Yp3I45FOokqEZWLMYxKvSgqj
-GowAsQ4P4owfGMdx2/cwQ3TtFftLAxXa2gpyzB+Ir0yQdCiIfd2McGCPyoxRAD3I
-YEa1g+8gvXZia0HqxbLZ+4qp2EiLvGNXfxHWBFK8K8F+IzzJwcpKdhjcs1vkOBJp
-q04r8TCZp6cS0Bj1WY3ES433fXhieWzae+HrzQUrfgo1K+zUXlK+SicnpID83kHp
-5IsC0MQhvLHI4NOgijLkMH6RV1i1sQE2xpgPBgTpGsn7qcPVEOjy60p/j1CPFyEL
-YhzASI+E8yvtH6sj2Zdh
-=+/iJ
+iQIcBAEBCAAGBQJPZ/lIAAoJEECxmPOUX5FEhksP/RV7htc5S61w9acxVSFNmNJg
+J1a5QYZqQJg5QmC7EjrKGXomMmW63EQ4om9qC4g/vVbthKH1N72S3VlJAi50IJVH
+3KOQtCVKE3D/2QUeYBh5ZixTsOgDKqsddmbIdqgT6SmjAWjFflNaJxtV+geYhce3
+F4LLCU5k+wBCDgOzf5e7zaWLvwp1n/m+4lTcW6TIW0Hvaxep/JLrj3ApJ75Du7E1
+T5vulllPpMDUm9G5qIAGS4fgSfzjnily0qCbZHX3J+gm4VOHH3KpQLvA65IAw7ti
+eUG///w4JhFjoST4dKh+iURaA63lQYUTssBjqEJOfs1RI/6NBuz0CQLUrtAyRPVX
+WOSBDpPWl8VtnCYTym4Fec/+IdyWKZL1mkb5XHLyg0I829mOKru6yffQjmkkNmV1
+9htpExEYe9gr3H83WefHrGVcpSzCZwBxT8JUTUPQ93H8Iv9t8TLgYcryzWhfOPyR
+m426OCm4oAwb6Mzsr+a7sZGQ7i4jwnG4DM3RqXrZ7OI+/VA+LfwP9BJ3+7EkgkDL
+4Yh7cocWZn7ARJOkpVBMaNpb04VFAPMGGdFooXPwNUXerSUm2wsUOtRTS0kZLPKu
+AIIg7aFarx0crVsM4DmVjw3Lvy4oP5iuUB8CUd35xUb1tSZ0y2BZTvQ0uLkTVptN
+tcsIsTepiBP6Z22YVy2u
+=T6EO
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__20_Mar_2012_13_14_27_+1100_lDFFRlPUlSWdYknZ--
+--Signature=_Tue__20_Mar_2012_14_28_08_+1100_FnJYFwK0dpcQ69xV--
