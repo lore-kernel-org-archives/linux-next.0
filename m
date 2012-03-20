@@ -1,70 +1,297 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: "ARM: make mach/io.h include optional" commit breaks
- cm_x2xx_defconfig
-Date: Tue, 20 Mar 2012 14:34:04 -0400
-Message-ID: <4F68CD9C.3090001@windriver.com>
+Subject: linux-next: triage for March 20, 2012
+Date: Tue, 20 Mar 2012 15:58:58 -0400
+Message-ID: <20120320195857.GA23137@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:44655 "EHLO
+Received: from mail1.windriver.com ([147.11.146.13]:45809 "EHLO
 	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755192Ab2CTSeP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 14:34:15 -0400
+	with ESMTP id S1757053Ab2CTT7E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 15:59:04 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: rob.herring@calxeda.com
-Cc: hsweeten@visionengravers.com, nico@linaro.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Hi Rob,
+New breakage since last report:
+	arm:cm_x2xx_defconfig (it8152.c: redefinition of 'dma_set_coherent_mask')
+	AVR32:defconfig (board.h: atmel_nand.h: No such file or directory)
+	tilegx:defconfig (`xfs_qm_exit' defined in discarded section `.exit.text')
 
-If you have a moment can you check this build failure?
+Randconfig fails that may or may not be new (by their very nature):
+	i386: samsung-laptop.c: implicit declaration of function 'isalnum'
+		(http://kisskb.ellerman.id.au/kisskb/buildresult/5923709/)
+	powerpc: fadump.c: 'crashing_cpu' undeclared
+		(http://kisskb.ellerman.id.au/kisskb/buildresult/5923831/)
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/5923845/
-
-A git bisect seems to want to blame your commit for it.
-
-Thanks,
-Paul.
-
----
-
-c334bc150524f833db3c76a0aaf55fb5044444e1 is the first bad commit
-commit c334bc150524f833db3c76a0aaf55fb5044444e1
-Author: Rob Herring <rob.herring@calxeda.com>
-Date:   Sun Mar 4 22:03:33 2012 -0600
-
-    ARM: make mach/io.h include optional
+Builds that are fixed since last report:
+	ARM:eseries_pxa_defconfig
+	ARM:u8500_defconfig
+	ARM:imx_v4_v5_defconfig
+	powerpc:mpc885_ads_defconfig
+	sparc[64]:allmodconfig
 
 
-git bisect start
-# good: [fde7d9049e55ab85a390be7f415d74c9f62dd0f9] Linux 3.3-rc7
-git bisect good fde7d9049e55ab85a390be7f415d74c9f62dd0f9
-# bad: [f355e8684f7e8e7077ca6d3988f24e01047804b6] Add linux-next specific files for 20120320
-git bisect bad f355e8684f7e8e7077ca6d3988f24e01047804b6
-# good: [5fe35ba6690ea0136d649cb2a07ac3f64a4c3cfb] Merge remote-tracking branch 'sound/for-next'
-git bisect good 5fe35ba6690ea0136d649cb2a07ac3f64a4c3cfb
-# good: [5260d60f170ebd381538dd56f6f6b765cbf9db29] Merge remote-tracking branch 'tip/auto-latest'
-git bisect good 5260d60f170ebd381538dd56f6f6b765cbf9db29
-# good: [2eb0aaa70022cbd3cdac7bdb610ed79a3b0c60a7] Merge remote-tracking branch 'writeback/writeback-for-next'
-git bisect good 2eb0aaa70022cbd3cdac7bdb610ed79a3b0c60a7
-# bad: [da7499ed07635785926c4a12915f54c61dc44170] Merge branch 'next/clk' into for-next
-git bisect bad da7499ed07635785926c4a12915f54c61dc44170
-# good: [eae71abd0e6d466105c66a40115907335a3e20fa] Merge branch 'next/boards' into for-next
-git bisect good eae71abd0e6d466105c66a40115907335a3e20fa
-# good: [cdc3df6f44f72c5924a16a47e1663c3fb0e57820] Merge branch 'dt-part2' of git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap into next/dt
-git bisect good cdc3df6f44f72c5924a16a47e1663c3fb0e57820
-# good: [f66f9bdf6d2c2b540f73bb57bd24b886b39beb14] Merge branch 'lpc32xx/drivers' into next/drivers
-git bisect good f66f9bdf6d2c2b540f73bb57bd24b886b39beb14
-# good: [e5412a49eceeab5b9ecb761b536ad7ac829e1c45] Merge branch 'next/dt' into for-next
-git bisect good e5412a49eceeab5b9ecb761b536ad7ac829e1c45
-# good: [efa497b9ec8cc534f8883a2d1d42f52174070f38] ARM: dove: add explicit include of dove.h to addr-map.c
-git bisect good efa497b9ec8cc534f8883a2d1d42f52174070f38
-# bad: [accf709b39a9cdbeaf6233000ccb9af966fd691e] Merge branch 'io-cleanup-for-3.4' of git://sources.calxeda.com/kernel/linux into next/cleanup2
-git bisect bad accf709b39a9cdbeaf6233000ccb9af966fd691e
-# bad: [708795cd975579ba7115666f585c428f8cebd572] Merge branch 'io-cleanup-for-3.4' of git://sources.calxeda.com/kernel/linux into next/cleanup2
-git bisect bad 708795cd975579ba7115666f585c428f8cebd572
-# bad: [c334bc150524f833db3c76a0aaf55fb5044444e1] ARM: make mach/io.h include optional
-git bisect bad c334bc150524f833db3c76a0aaf55fb5044444e1
-# good: [41e32c906054be3a600cdeb69eb70350066e0a91] ARM: clps711x: remove unneeded include of mach/io.h
-git bisect good 41e32c906054be3a600cdeb69eb70350066e0a91
+Note: The randconfig fails are only listed once and not tracked
+in the below listing.
+
+            ------------------------------------------------
+
+Latest results at:
+	http://kisskb.ellerman.id.au/kisskb/branch/9/
+
+Failures as of March 20th, 2012:
+===============================
+
+AM33:asb2303_defconfig,asb2364_defconfig
+	when:	Mar 15
+	why:	cc1: error: unrecognized command line option '-mmem-funcs'
+	status:	Possible fix from TonyB sent for review.
+	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
+----------------
+
+ARM:cm_x2xx_defconfig
+	when:	Mar 19
+	why:	it8152.c: redefinition of 'dma_set_coherent_mask'
+	status:	bisected and reported (PaulG)
+	fix:
+	ref:	http://marc.info/?l=linux-next&m=133226851818586&w=2
+
+ARM:mxs_defconfig
+	when:	Mar 14
+	why:	Inconsistent kallsyms data This is a bug - please report
+	status: UFO bug keeps appearing at random
+	fix:	
+	ref:	https://lkml.org/lkml/2011/8/2/233
+	ref:	https://lkml.org/lkml/2011/10/8/70
+
+ARM:netx_defconfig,pnx4008_defconfig 
+	when:	Mar 14
+	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
+	ref:	https://lkml.org/lkml/2012/3/13/670
+
+ARM:cam60_defconfig
+	when:	Feb 23
+	why:	trace_entries.h: 'perf_ftrace_event_register' undeclared
+	status:	S. Rostedt has a patch somewhere.
+	fix:	
+	ref:	irc (#linux-rt)
+
+ARM:collie_defconfig
+	when:	Feb 14
+	why:	locomolcd.c: error: 'sa1100fb_lcd_power' undeclared
+	status:	fixed (PaulG) - pending integration
+	fix:	http://marc.info/?l=linux-next&m=133105157730749&w=2
+	ref:
+
+ARM:iop32x_defconfig,iop33x_defconfig
+	when:	Nov 23
+	why:	restart.c: implicit declaration of function 'soft_restart'
+	status:	fixed (PaulG) - pending integration
+	fix:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081461.html
+	fix:	https://lkml.org/lkml/2012/3/14/253
+	ref:
+
+ARM:ixp4xx_defconfig
+	when:	Oct 26
+	why:	gpio.h: implicit declaration of function '__gpio_get_value'
+	status:	fixed (Imre Kaloz) - but possibly needs rework?
+	fix:	https://lkml.org/lkml/2012/2/8/288
+	ref:	https://lkml.org/lkml/2012/2/8/287
+
+ARM:magician_defconfig
+	when:	Feb 13
+	why:	magician.c: unknown field 'dev' specified in initializer
+	status:	fixed (PaulG) - pending integration
+	fix:
+	ref:	http://marc.info/?l=linux-next&m=133106325903524&w=2
+
+ARM:em_x270_defconfig
+	when:	Feb 14
+	why:	em-x270.c: unknown field 'dev' specified in initializer
+	status:	 fixed (PaulG) - pending integration
+	fix:	http://www.spinics.net/lists/arm-kernel/msg164012.html
+	ref:	http://www.spinics.net/lists/arm-kernel/msg163135.html
+
+ARM:raumfeld_defconfig
+	when:	Nov 23
+	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
+	status:	perhaps broken since 2010?  See ref below.
+	fix:	
+	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
+
+ARM:omap2plus_defconfig
+	when:	Feb 16, 00:23
+	why:	control.c:238: error: 'OMAP343X_CTRL_BASE' undeclared
+	status:	PaulG did hack-n-slash, but at best a WIP, needs additonal reverts
+	fix:	http://www.spinics.net/lists/arm-kernel/msg163120.html
+	ref:	http://www.spinics.net/lists/arm-kernel/msg163262.html
+
+ARM:at91x40_defconfig
+	when:	Feb 28, 07:38 	
+	why:	super.c:(.text+0x3ffd8): undefined reference to `vm_is_stack'
+	status:	WIP, fix from PaulG + follow on from 
+	fix:	http://marc.info/?l=linux-next&m=133096554131691&w=2
+	ref:	http://marc.info/?l=linux-next&m=133104723928617&w=2
+
+ARM:s3c2410_defconfig 
+	when:	Mar 7, 22:59
+	why:	s3c244x.c: expected declaration or statement at end of input
+	status:	bad commit introduces truncated file; pending integration.
+	fix:
+	ref:	http://marc.info/?l=linux-next&m=133123680904853&w=2
+
+ARM:arm-allnoconfig
+	when:	forever
+	why:	not supported
+	status:	nothing pending, but patches accepted
+	fix:	n/a
+	ref:	https://lkml.org/lkml/2009/4/30/105
+	ref:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081218.html
+----------------
+
+AVR32:defconfig
+	when:	Mar 18
+	why:	board.h: atmel_nand.h: No such file or directory
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5917107/
+
+AVR32:allnoconfig
+	when:	May 26 2010, 20:49
+	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
+	status:
+	fix:
+	ref:
+---------------
+
+bfin:***all-builds***
+	when:	Jan 20, 22:13
+	why:	undefined reference to `vm_is_stack'
+	status:	WIP, fix from Siddhesh Poyarekar
+	fix:	http://marc.info/?l=linux-next&m=133096554131691&w=2
+	ref:	http://marc.info/?l=linux-next&m=133104723928617&w=2
+---------------
+
+cris:***all-builds***
+	when:	Mar 25, 22:05
+	why:	include/linux/types.h:25: error expected ... before 'ino_t'
+	status:	
+	fix:	
+	ref:	
+----------------
+
+crisv32:***all-builds***
+	when:	Mar 25, 22:05
+	why:	include/linux/types.h:25: error expected ... before 'ino_t'
+	status:	
+	fix:	
+	ref:	
+----------------
+
+frv:defconfig
+	when:	Mar 15
+	why:	arch/frv/kernel/head.S operand out of range
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884666/
+----------------
+
+h8300:defconfig
+	when:	Mar 15
+	why:	time.c: implicit declaration of function 'get_irq_regs'
+	why:	also seems gcc suffers an ICE
+	status:	ICE bug lodged with gcc folks (TonyB)
+	fix:
+	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
+----------------
+
+i386:allmodconfig
+	when:	Mar 8, 20:41
+	why:	ERROR: "pcibios_enabled" [drivers/video/uvesafb.ko] undefined!
+	why:	ERROR: "mdfld_set_brightness" [drivers/gpu/drm/gma500/gma500_gfx.ko] undefined!
+	status:	
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878506/
+----------------
+
+m32r:m32700ut.smp_defconfig
+	when:	Mar 15
+	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
+----------------
+
+m68k:allmodconfig
+	when:	Mar 16
+	why:	persistent_ram.c: implicit declaration of 'memblock_reserve'
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884324/
+	ref:	http://www.spinics.net/lists/linux-next/msg19343.html
+----------------
+
+mips:allmodconfig
+	when:
+	why:	driver_pci_host.c: implicit declaration of function 'pcibios_enable_device'
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5807000/
+----------------
+
+parisc:allmodconfig
+	when:
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	fix:
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+
+parisc64:a500_defconfig 
+	when:
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	fix:
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+------------------
+
+powerpc:allyesconfig
+	when:	May 18 2009, 22:11
+	why:	fat ass kernel with everything simply won't link
+	status:	need to fix build config to ignore the final link
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5806793/
+------------------
+
+sh4:***all-builds***
+	when:	Feb 24, 17:38
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	fix:
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+------------------
+
+tilegx:defconfig
+	when:	Mar 19
+	why:	`xfs_qm_exit' defined in discarded section `.exit.text' of fs/built-in.o
+	status:	
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5924094/
+------------------
+
+um:um-defconfig
+	when:	Sep 16 2010, 01:28
+	why:	os-Linux/start_up.c: error: 'PTRACE_SETOPTIONS' undeclared
+	status:	clearly broken forever, so does anyone care?
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/target/2979/
