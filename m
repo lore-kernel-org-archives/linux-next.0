@@ -1,85 +1,75 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: linux-next: "ARM: make mach/io.h include optional" commit breaks
- cm_x2xx_defconfig
-Date: Tue, 20 Mar 2012 16:33:38 -0500
-Message-ID: <4F68F7B2.4000002@gmail.com>
-References: <4F68CD9C.3090001@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Wed, 21 Mar 2012 09:00:38 +1100
+Message-ID: <20120321090038.06c65f50bd0329df8705f2cd@canb.auug.org.au>
+References: <20120308152110.12c805f59c45251d79bcb24b@canb.auug.org.au>
+	<20120308180048.GC26516@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__21_Mar_2012_09_00_38_+1100_7v7Jho74cPLZ/qBH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:55981 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754889Ab2CTVdm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 17:33:42 -0400
-Received: by ghrr11 with SMTP id r11so537066ghr.19
-        for <linux-next@vger.kernel.org>; Tue, 20 Mar 2012 14:33:42 -0700 (PDT)
-In-Reply-To: <4F68CD9C.3090001@windriver.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34616 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755525Ab2CTWAz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 18:00:55 -0400
+In-Reply-To: <20120308180048.GC26516@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: hsweeten@visionengravers.com, linux-next@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, nico@linaro.org
+To: Greg KH <greg@kroah.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
 
-On 03/20/2012 01:34 PM, Paul Gortmaker wrote:
-> Hi Rob,
-> 
-> If you have a moment can you check this build failure?
-> 
-> http://kisskb.ellerman.id.au/kisskb/buildresult/5923845/
-> 
-> A git bisect seems to want to blame your commit for it.
-> 
+--Signature=_Wed__21_Mar_2012_09_00_38_+1100_7v7Jho74cPLZ/qBH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks. I've got a fix done and am running some builds.
+Hi all,
 
-Rob
+On Thu, 8 Mar 2012 10:00:48 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> On Thu, Mar 08, 2012 at 03:21:10PM +1100, Stephen Rothwell wrote:
+> >=20
+> > After merging the tip tree, today's linux-next build (x86_64 allmodconf=
+ig)
+> > failed like this:
+> >=20
+> > drivers/staging/sep/sep_driver.c:55:32: fatal error: linux/rar_register=
+.h: No such file or directory
+> >=20
+> > Caused by commit 33e9970add94 ("x86/mid: Kill off Moorestown").
+> >=20
+> > Following previous instructions, I have disabled the staging tree driver
+> > using this patch (pending a fix in the tip tree):
+>=20
+> Looks good to me.  Alan, care to send me an update that fixes this
+> driver for real?
 
-> Thanks,
-> Paul.
-> 
-> ---
-> 
-> c334bc150524f833db3c76a0aaf55fb5044444e1 is the first bad commit
-> commit c334bc150524f833db3c76a0aaf55fb5044444e1
-> Author: Rob Herring <rob.herring@calxeda.com>
-> Date:   Sun Mar 4 22:03:33 2012 -0600
-> 
->     ARM: make mach/io.h include optional
-> 
-> 
-> git bisect start
-> # good: [fde7d9049e55ab85a390be7f415d74c9f62dd0f9] Linux 3.3-rc7
-> git bisect good fde7d9049e55ab85a390be7f415d74c9f62dd0f9
-> # bad: [f355e8684f7e8e7077ca6d3988f24e01047804b6] Add linux-next specific files for 20120320
-> git bisect bad f355e8684f7e8e7077ca6d3988f24e01047804b6
-> # good: [5fe35ba6690ea0136d649cb2a07ac3f64a4c3cfb] Merge remote-tracking branch 'sound/for-next'
-> git bisect good 5fe35ba6690ea0136d649cb2a07ac3f64a4c3cfb
-> # good: [5260d60f170ebd381538dd56f6f6b765cbf9db29] Merge remote-tracking branch 'tip/auto-latest'
-> git bisect good 5260d60f170ebd381538dd56f6f6b765cbf9db29
-> # good: [2eb0aaa70022cbd3cdac7bdb610ed79a3b0c60a7] Merge remote-tracking branch 'writeback/writeback-for-next'
-> git bisect good 2eb0aaa70022cbd3cdac7bdb610ed79a3b0c60a7
-> # bad: [da7499ed07635785926c4a12915f54c61dc44170] Merge branch 'next/clk' into for-next
-> git bisect bad da7499ed07635785926c4a12915f54c61dc44170
-> # good: [eae71abd0e6d466105c66a40115907335a3e20fa] Merge branch 'next/boards' into for-next
-> git bisect good eae71abd0e6d466105c66a40115907335a3e20fa
-> # good: [cdc3df6f44f72c5924a16a47e1663c3fb0e57820] Merge branch 'dt-part2' of git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap into next/dt
-> git bisect good cdc3df6f44f72c5924a16a47e1663c3fb0e57820
-> # good: [f66f9bdf6d2c2b540f73bb57bd24b886b39beb14] Merge branch 'lpc32xx/drivers' into next/drivers
-> git bisect good f66f9bdf6d2c2b540f73bb57bd24b886b39beb14
-> # good: [e5412a49eceeab5b9ecb761b536ad7ac829e1c45] Merge branch 'next/dt' into for-next
-> git bisect good e5412a49eceeab5b9ecb761b536ad7ac829e1c45
-> # good: [efa497b9ec8cc534f8883a2d1d42f52174070f38] ARM: dove: add explicit include of dove.h to addr-map.c
-> git bisect good efa497b9ec8cc534f8883a2d1d42f52174070f38
-> # bad: [accf709b39a9cdbeaf6233000ccb9af966fd691e] Merge branch 'io-cleanup-for-3.4' of git://sources.calxeda.com/kernel/linux into next/cleanup2
-> git bisect bad accf709b39a9cdbeaf6233000ccb9af966fd691e
-> # bad: [708795cd975579ba7115666f585c428f8cebd572] Merge branch 'io-cleanup-for-3.4' of git://sources.calxeda.com/kernel/linux into next/cleanup2
-> git bisect bad 708795cd975579ba7115666f585c428f8cebd572
-> # bad: [c334bc150524f833db3c76a0aaf55fb5044444e1] ARM: make mach/io.h include optional
-> git bisect bad c334bc150524f833db3c76a0aaf55fb5044444e1
-> # good: [41e32c906054be3a600cdeb69eb70350066e0a91] ARM: clps711x: remove unneeded include of mach/io.h
-> git bisect good 41e32c906054be3a600cdeb69eb70350066e0a91
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Was this ever fixed?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__21_Mar_2012_09_00_38_+1100_7v7Jho74cPLZ/qBH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPaP4GAAoJEECxmPOUX5FEspsP/0vamxq9HO1wZG1yu7KSiWwJ
+NP5PAq6Tz8mBtNsQCki8k1/uFD9/grkxmMiPlTEwwbfktycUix6rQQYvn7pi1Q23
+av6ae4/M2SbcxIRYdo3OyvSEZ4iIlecsVKJZdj59LiL2Ewtdr4aCr14XGDwRHbb9
+/Jl82uK8AFTarknfnG2DqhyfFAJ2VjUvIvV91J5xNN5mwnFqj6lU3HVFUFgNeCrk
+FF8onZNODsIblWKDRknT0OmtpJ4t7YyT7Gg3WLjt7deRY5MXaj7WjHo9alhaZpFf
+GPzRXStY/bB+SW79UD80sRzPTntIg73k489MB91VfIzCDj2ntJEOnldRx9MryRsq
+1DbpybIAlclGHNz2LGYzJ8A/JyfnD7zIBXAkF0RKfyfEyCKdmPutDhCEnT0UeWDI
+Qi7eXfMdVs3BqbAgWssZN0z9d6v7LorKHEFhf7OCUaGrhJf7f74tLFKh8eEAwtYw
+VDAXdmzD+bhjxFKqKinn5aoCLCRE6qsyAJGcRqAqPzn9BeVr+VBHyjLt7ECEjfwt
+OxWe2qUyeOHHm+0T8KJO9mQcddZcqb6kHmAEaQCERgrLM/Jg7PWeb3U8Gm1De0Sf
+j09HHJca+lsP+IxudBLjH3cYYrrHH6Uictc5E9EQzdKs8e9YZVNND+IB58pxPr7n
+jFA4BavxOKmDMwHFtYhR
+=qw8a
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__21_Mar_2012_09_00_38_+1100_7v7Jho74cPLZ/qBH--
