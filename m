@@ -1,133 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pci tree (actually
- powerpc tree related)
-Date: Tue, 20 Mar 2012 14:28:08 +1100
-Message-ID: <20120320142808.dbc31fedf291bb3cc8cdecaa@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the battery tree
+Date: Tue, 20 Mar 2012 15:39:12 +1100
+Message-ID: <20120320153912.b97107ca4128d0692de17799@canb.auug.org.au>
+References: <20120315135609.2f9a2a030866c476dc736b9c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__20_Mar_2012_14_28_08_+1100_FnJYFwK0dpcQ69xV"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suzuki Poulose <suzuki@in.ibm.com>, tony@bakeyournoodle.com, ppc-dev <linuxppc-dev@lists.ozlabs.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__20_Mar_2012_15_39_12_+1100_kksWIIHFcyV6yQvQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58775 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751049Ab2CTEjW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 00:39:22 -0400
+In-Reply-To: <20120315135609.2f9a2a030866c476dc736b9c@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Anton Vorontsov <avorontsov@ru.mvista.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Tue__20_Mar_2012_14_28_08_+1100_FnJYFwK0dpcQ69xV
+--Signature=_Tue__20_Mar_2012_15_39_12_+1100_kksWIIHFcyV6yQvQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ben,
+Hi Anton,
 
-After merging the pci tree, today's linux-next build (powerpc ppc64_defconf=
-ig)
-failed like this:
+On Thu, 15 Mar 2012 13:56:09 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the battery tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/power/ab8500_btemp.c: In function 'ab8500_btemp_batctrl_volt_to_r=
+es':
+> drivers/power/ab8500_btemp.c:142:2: error: implicit declaration of functi=
+on 'is_ab8500_1p1_or_earlier' [-Werror=3Dimplicit-function-declaration]
+> drivers/power/ab8500_btemp.c: In function 'ab8500_btemp_templow_handler':
+> drivers/power/ab8500_btemp.c:619:2: error: implicit declaration of functi=
+on 'is_ab8500_2p0_or_earlier' [-Werror=3Dimplicit-function-declaration]
+> drivers/power/ab8500_charger.c: In function 'ab8500_charger_ac_en':
+> drivers/power/ab8500_charger.c:1126:3: error: implicit declaration of fun=
+ction 'is_ab8500_1p1_or_earlier' [-Werror=3Dimplicit-function-declaration]
+> drivers/power/ab8500_charger.c: In function 'ab8500_charger_remove':
+> drivers/power/ab8500_charger.c:2519:2: error: implicit declaration of fun=
+ction 'usb_unregister_notifier' [-Werror=3Dimplicit-function-declaration]
+> drivers/power/ab8500_charger.c:2520:2: error: implicit declaration of fun=
+ction 'usb_put_transceiver' [-Werror=3Dimplicit-function-declaration]
+> drivers/power/ab8500_charger.c: In function 'ab8500_charger_probe':
+> drivers/power/ab8500_charger.c:2688:2: error: implicit declaration of fun=
+ction 'usb_get_transceiver' [-Werror=3Dimplicit-function-declaration]
+> drivers/power/ab8500_charger.c:2688:14: warning: assignment makes pointer=
+ from integer without a cast [enabled by default]
+> drivers/power/ab8500_charger.c:2695:2: error: implicit declaration of fun=
+ction 'usb_register_notifier' [-Werror=3Dimplicit-function-declaration]
+>=20
+> Caused by commits 89449ac8d6d2 ("ab8500-charger: AB8500 charger driver")
+> and 20ac1aed6206 ("ab8500-btemp: AB8500 battery temperature driver").
+>=20
+> I have used the battery tree form next-20120314 for today.
 
-powerpc64-linux-ld: section .text loaded at [0000000000e00000,0000000000e07=
-21b] overlaps section .kernel:dtb loaded at [0000000000e00000,0000000000e00=
-66f]
-
-I have applied this patch for today (thanks to Tony Breeds and David
-Gibson):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 20 Mar 2012 14:13:51 +1100
-Subject: [PATCH] powerpc: do not adjust the load address for ps3
-
-Commit c55aef0e5bc6 "powerpc/boot: Change the load address for the wrapper
-to fit the kernel" adjusted the laod address if the uncompressed kernel
-was too large.  Ps3 does not compress the kernel and uses a different
-linker script, so do not adjust the load address in that case.
-
-fixes this build error:
-
-powerpc64-linux-ld: section .text loaded at [0000000000e00000,0000000000e07=
-21b] overlaps section .kernel:dtb loaded at [0000000000e00000,0000000000e00=
-66f]
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/boot/wrapper |   22 +++++++++++++---------
- 1 files changed, 13 insertions(+), 9 deletions(-)
-
-diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
-index f090e6d..6761c74 100755
---- a/arch/powerpc/boot/wrapper
-+++ b/arch/powerpc/boot/wrapper
-@@ -144,6 +144,7 @@ tmp=3D$tmpdir/zImage.$$.o
- ksection=3D.kernel:vmlinux.strip
- isection=3D.kernel:initrd
- link_address=3D'0x400000'
-+make_space=3Dy
-=20
- case "$platform" in
- pseries)
-@@ -210,6 +211,7 @@ ps3)
-     ksection=3D.kernel:vmlinux.bin
-     isection=3D.kernel:initrd
-     link_address=3D''
-+    make_space=3Dn
-     pie=3D
-     ;;
- ep88xc|ep405|ep8248e)
-@@ -278,17 +280,19 @@ else
-     rm -f $vmz.$$
- fi
-=20
--# Round the size to next higher MB limit
--round_size=3D$(((strip_size + 0xfffff) & 0xfff00000))
-+if [ "$make_space" =3D "y" ]; then
-+	# Round the size to next higher MB limit
-+	round_size=3D$(((strip_size + 0xfffff) & 0xfff00000))
-=20
--round_size=3D0x$(printf "%x" $round_size)
--link_addr=3D$(printf "%d" $link_address)
-+	round_size=3D0x$(printf "%x" $round_size)
-+	link_addr=3D$(printf "%d" $link_address)
-=20
--if [ $link_addr -lt $strip_size ]; then
--    echo "INFO: Uncompressed kernel (size 0x$(printf "%x\n" $strip_size))"=
- \
--		"overlaps the address of the wrapper($link_address)"
--    echo "INFO: Fixing the link_address of wrapper to ($round_size)"
--    link_address=3D$round_size
-+	if [ $link_addr -lt $strip_size ]; then
-+	    echo "INFO: Uncompressed kernel (size 0x$(printf "%x\n" $strip_size))=
-" \
-+			"overlaps the address of the wrapper($link_address)"
-+	    echo "INFO: Fixing the link_address of wrapper to ($round_size)"
-+	    link_address=3D$round_size
-+	fi
- fi
-=20
- vmz=3D"$vmz$gzip"
---=20
-1.7.9.1
+Still getting this build failure.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__20_Mar_2012_14_28_08_+1100_FnJYFwK0dpcQ69xV
+--Signature=_Tue__20_Mar_2012_15_39_12_+1100_kksWIIHFcyV6yQvQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPZ/lIAAoJEECxmPOUX5FEhksP/RV7htc5S61w9acxVSFNmNJg
-J1a5QYZqQJg5QmC7EjrKGXomMmW63EQ4om9qC4g/vVbthKH1N72S3VlJAi50IJVH
-3KOQtCVKE3D/2QUeYBh5ZixTsOgDKqsddmbIdqgT6SmjAWjFflNaJxtV+geYhce3
-F4LLCU5k+wBCDgOzf5e7zaWLvwp1n/m+4lTcW6TIW0Hvaxep/JLrj3ApJ75Du7E1
-T5vulllPpMDUm9G5qIAGS4fgSfzjnily0qCbZHX3J+gm4VOHH3KpQLvA65IAw7ti
-eUG///w4JhFjoST4dKh+iURaA63lQYUTssBjqEJOfs1RI/6NBuz0CQLUrtAyRPVX
-WOSBDpPWl8VtnCYTym4Fec/+IdyWKZL1mkb5XHLyg0I829mOKru6yffQjmkkNmV1
-9htpExEYe9gr3H83WefHrGVcpSzCZwBxT8JUTUPQ93H8Iv9t8TLgYcryzWhfOPyR
-m426OCm4oAwb6Mzsr+a7sZGQ7i4jwnG4DM3RqXrZ7OI+/VA+LfwP9BJ3+7EkgkDL
-4Yh7cocWZn7ARJOkpVBMaNpb04VFAPMGGdFooXPwNUXerSUm2wsUOtRTS0kZLPKu
-AIIg7aFarx0crVsM4DmVjw3Lvy4oP5iuUB8CUd35xUb1tSZ0y2BZTvQ0uLkTVptN
-tcsIsTepiBP6Z22YVy2u
-=T6EO
+iQIcBAEBCAAGBQJPaAnwAAoJEECxmPOUX5FEThIQAI9ztS5zF5+X8wbFmPrWhxH+
+PrkLINLxe3YmGF5JAfD2jz5vxVqT8pg+FC8f1UypexM79aB4B3R+4gAqYWKzii8x
+pckXJ19/cRY9uuUvmsXaeQl9N1PVciJSSJzWvUYE3k4+jn9ldFACM1H/1nTZPHj8
+P2ZDGV/MZ936nAr/Jg3T3uznCcuScuqC/Jhw9Rgj+Y1oX3S537NMIPGJOpT8jUlk
+2OF9ka2YycyrUv2L1e7qSpQIVS8uawVWneiaeVdUC2Qi0UmPgax7B3d/ENLWW51c
+CArpU1wcyxBZ3w+D0ZMLqT2QaFtICyX+1h5O5LIPpJy/eroviLMHdRl4f2LP36Df
+ZSYyGTXs3bH12Mz38FCitqxODzKHqgWRqyFvFEwBHdE7DusU9uPsg9P07SkmAMPe
+7gFiCr63TsRbzcYjV4fI1RzgmEJEpedYGQqPdRbpWaVCwX0DA0IseBnEfin5lPDy
+NBuGKFak6ffkPFlr3BCWGicDhcjjA8LEhojcxJgW95ceiSPXgLzifFV1kW1sHGdE
++13nKqXkE8Ka6kodQmWqBU9zxB2JCU6zefVjYudqiBgvQcNRw4cPXR7z6yWw9HzQ
+Hq1HQyaK8d+zWjKdG9+vo1ORkfNrjf9i/SH3dfCcHsQvDzW6EcGyTw0oOXpw/M+l
+HBqV+PoeYu+guwaR5P9i
+=L1er
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__20_Mar_2012_14_28_08_+1100_FnJYFwK0dpcQ69xV--
+--Signature=_Tue__20_Mar_2012_15_39_12_+1100_kksWIIHFcyV6yQvQ--
