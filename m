@@ -1,68 +1,56 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree (mfd and
- input trees related)
-Date: Wed, 21 Mar 2012 01:03:13 -0700
-Message-ID: <20120321080313.GA12410@core.coreip.homeip.net>
-References: <20120321182930.6f75199b7406044669891a14@canb.auug.org.au>
+From: Haojian Zhuang <haojian.zhuang@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dma-mapping: convert ARCH_HAS_DMA_SET_COHERENT_MASK
+ to kconfig symbol
+Date: Wed, 21 Mar 2012 16:15:55 +0800
+Message-ID: <CAN1soZwXh6DviO5CHcj_ogM1VK23V2c4CKZf+iMmeP43rwtW9w@mail.gmail.com>
+References: <4F68CD9C.3090001@windriver.com>
+	<1332296149-28110-1-git-send-email-robherring2@gmail.com>
+	<alpine.LFD.2.02.1203202230230.24151@xanadu.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:38972 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750879Ab2CUIDT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 04:03:19 -0400
-Content-Disposition: inline
-In-Reply-To: <20120321182930.6f75199b7406044669891a14@canb.auug.org.au>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:52063 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752120Ab2CUIP5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 04:15:57 -0400
+Received: by bkcik5 with SMTP id ik5so665264bkc.19
+        for <linux-next@vger.kernel.org>; Wed, 21 Mar 2012 01:15:56 -0700 (PDT)
+In-Reply-To: <alpine.LFD.2.02.1203202230230.24151@xanadu.home>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Donggeun Kim <dg77.kim@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Nicolas Pitre <nico@fluxnic.net>
+Cc: Rob Herring <robherring2@gmail.com>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Rob Herring <rob.herring@calxeda.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, Eric Miao <eric.y.miao@gmail.com>, Dan Williams <dan.j.williams@intel.com>, Imre Kaloz <kaloz@openwrt.org>, linux-arm-kernel@lists.infradead.org, Krzysztof Halasa <khc@pm.waw.pl>
 
-Hi Stephen,
+On Wed, Mar 21, 2012 at 10:30 AM, Nicolas Pitre <nico@fluxnic.net> wrote:
+> On Tue, 20 Mar 2012, Rob Herring wrote:
+>
+>> From: Rob Herring <rob.herring@calxeda.com>
+>>
+>> The only users of ARCH_HAS_DMA_SET_COHERENT_MASK are 2 ARM platforms:
+>> ixp4xx and pxa cm_x2xx. We've been getting lucky that the define is
+>> implicitly included before dma-mapping.h, but the removal of io.h broke
+>> things (c334bc1 ARM: make mach/io.h include optional). Since memory.h
+>> is the correct place, but no longer exists, convert the define to a
+>> kconfig entry.
+>>
+>> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+>> Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+>> Cc: Russell King <linux@arm.linux.org.uk>
+>> Cc: Imre Kaloz <kaloz@openwrt.org>
+>> Cc: Krzysztof Halasa <khc@pm.waw.pl>
+>> Cc: Eric Miao <eric.y.miao@gmail.com>
+>> Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
+>> Cc: Vinod Koul <vinod.koul@intel.com>
+>> Cc: Dan Williams <dan.j.williams@intel.com>
+>
+> Acked-by: Nicolas Pitre <nico@linaro.org>
+>
+Acked.
 
-On Wed, Mar 21, 2012 at 06:29:30PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> In file included from drivers/leds/leds-max8997.c:18:0:
-> include/linux/mfd/max8997.h:205:6: error: nested redefinition of 'enum max8997_haptic_motor_type'
-> include/linux/mfd/max8997.h:205:6: error: redeclaration of 'enum max8997_haptic_motor_type'
-> include/linux/mfd/max8997.h:134:6: note: originally defined here
-> include/linux/mfd/max8997.h:206:2: error: redeclaration of enumerator 'MAX8997_HAPTIC_ERM'
-> include/linux/mfd/max8997.h:135:2: note: previous definition of 'MAX8997_HAPTIC_ERM' was here
-> include/linux/mfd/max8997.h:207:2: error: redeclaration of enumerator 'MAX8997_HAPTIC_LRA'
-> include/linux/mfd/max8997.h:136:2: note: previous definition of 'MAX8997_HAPTIC_LRA' was here
-> include/linux/mfd/max8997.h:210:6: error: nested redefinition of 'enum max8997_haptic_pulse_mode'
-> include/linux/mfd/max8997.h:210:6: error: redeclaration of 'enum max8997_haptic_pulse_mode'
-> include/linux/mfd/max8997.h:139:6: note: originally defined here
-> include/linux/mfd/max8997.h:211:2: error: redeclaration of enumerator 'MAX8997_EXTERNAL_MODE'
-> include/linux/mfd/max8997.h:140:2: note: previous definition of 'MAX8997_EXTERNAL_MODE' was here
-> include/linux/mfd/max8997.h:212:2: error: redeclaration of enumerator 'MAX8997_INTERNAL_MODE'
-> include/linux/mfd/max8997.h:141:2: note: previous definition of 'MAX8997_INTERNAL_MODE' was here
-> include/linux/mfd/max8997.h:215:6: error: nested redefinition of 'enum max8997_haptic_pwm_divisor'
-> include/linux/mfd/max8997.h:215:6: error: redeclaration of 'enum max8997_haptic_pwm_divisor'
-> include/linux/mfd/max8997.h:144:6: note: originally defined here
-> include/linux/mfd/max8997.h:216:2: error: redeclaration of enumerator 'MAX8997_PWM_DIVISOR_32'
-> include/linux/mfd/max8997.h:145:2: note: previous definition of 'MAX8997_PWM_DIVISOR_32' was here
-> include/linux/mfd/max8997.h:217:2: error: redeclaration of enumerator 'MAX8997_PWM_DIVISOR_64'
-> include/linux/mfd/max8997.h:146:2: note: previous definition of 'MAX8997_PWM_DIVISOR_64' was here
-> include/linux/mfd/max8997.h:218:2: error: redeclaration of enumerator 'MAX8997_PWM_DIVISOR_128'
-> include/linux/mfd/max8997.h:147:2: note: previous definition of 'MAX8997_PWM_DIVISOR_128' was here
-> include/linux/mfd/max8997.h:219:2: error: redeclaration of enumerator 'MAX8997_PWM_DIVISOR_256'
-> include/linux/mfd/max8997.h:148:2: note: previous definition of 'MAX8997_PWM_DIVISOR_256' was here
-> include/linux/mfd/max8997.h:241:8: error: redefinition of 'struct max8997_haptic_platform_data'
-> include/linux/mfd/max8997.h:170:8: note: originally defined here
-> 
-> Caused by a bad merge of commits 104594b01ce7 ("Input: add driver support
-> for MAX8997-haptic") from the input tree and 02b09703e7a4 ("mfd: Add
-> platform data for MAX8997 haptic driver") from the mfd tree.
+Imre & Krzysztof,
 
-Sorry about this. I thought Samuel was going to revert the platform data
-from his tree as he OKed applying the combined patch...
+Do you mind that I merge these patches into arch-pxa git tree? Since a
+lot of files in arch-pxa are changed.
 
-Thanks.
-
--- 
-Dmitry
+Best Regards
+Haojian
