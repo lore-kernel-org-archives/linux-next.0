@@ -1,46 +1,58 @@
-From: Colin Cross <ccross@android.com>
-Subject: [PATCH] android: make persistent_ram based drivers depend on HAVE_MEMBLOCK
-Date: Wed, 21 Mar 2012 10:18:33 -0700
-Message-ID: <1332350313-2501-1-git-send-email-ccross@android.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, John Stultz <john.stultz@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Android Kernel Team <kernel-team@android.com>, gregkh@linuxfoundation.org, Linus Torvalds <torvalds@linux-foundation.org>, Colin Cross <ccross@android.com>
-List-Id: linux-next.vger.kernel.org
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dma-mapping: convert ARCH_HAS_DMA_SET_COHERENT_MASK
+ to kconfig symbol
+Date: Wed, 21 Mar 2012 15:13:49 -0500
+Message-ID: <4F6A367D.9090102@gmail.com>
+References: <4F68CD9C.3090001@windriver.com> <1332296149-28110-1-git-send-email-robherring2@gmail.com> <alpine.LFD.2.02.1203202230230.24151@xanadu.home> <CAN1soZwXh6DviO5CHcj_ogM1VK23V2c4CKZf+iMmeP43rwtW9w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:61987 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758977Ab2CUUNx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 16:13:53 -0400
+Received: by gghe5 with SMTP id e5so1315337ggh.19
+        for <linux-next@vger.kernel.org>; Wed, 21 Mar 2012 13:13:52 -0700 (PDT)
+In-Reply-To: <CAN1soZwXh6DviO5CHcj_ogM1VK23V2c4CKZf+iMmeP43rwtW9w@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Nicolas Pitre <nico@fluxnic.net>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Rob Herring <rob.herring@calxeda.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, Eric Miao <eric.y.miao@gmail.com>, Dan Williams <dan.j.williams@intel.com>, Imre Kaloz <kaloz@openwrt.org>, linux-arm-kernel@lists.infradead.org, Krzysztof Halasa <khc@pm.waw.pl>
 
-m68k doesn't have memblock_reserve, which causes a build failure
-with allmodconfig.  Make PERSISTENT_RAM and RAM_CONSOLE depend on
-HAVE_MEMBLOCK.
+On 03/21/2012 03:15 AM, Haojian Zhuang wrote:
+> On Wed, Mar 21, 2012 at 10:30 AM, Nicolas Pitre <nico@fluxnic.net> wrote:
+>> On Tue, 20 Mar 2012, Rob Herring wrote:
+>>
+>>> From: Rob Herring <rob.herring@calxeda.com>
+>>>
+>>> The only users of ARCH_HAS_DMA_SET_COHERENT_MASK are 2 ARM platforms:
+>>> ixp4xx and pxa cm_x2xx. We've been getting lucky that the define is
+>>> implicitly included before dma-mapping.h, but the removal of io.h broke
+>>> things (c334bc1 ARM: make mach/io.h include optional). Since memory.h
+>>> is the correct place, but no longer exists, convert the define to a
+>>> kconfig entry.
+>>>
+>>> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+>>> Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+>>> Cc: Russell King <linux@arm.linux.org.uk>
+>>> Cc: Imre Kaloz <kaloz@openwrt.org>
+>>> Cc: Krzysztof Halasa <khc@pm.waw.pl>
+>>> Cc: Eric Miao <eric.y.miao@gmail.com>
+>>> Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
+>>> Cc: Vinod Koul <vinod.koul@intel.com>
+>>> Cc: Dan Williams <dan.j.williams@intel.com>
+>>
+>> Acked-by: Nicolas Pitre <nico@linaro.org>
+>>
+> Acked.
+> 
+> Imre & Krzysztof,
+> 
+> Do you mind that I merge these patches into arch-pxa git tree? Since a
+> lot of files in arch-pxa are changed.
+> 
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Signed-off-by: Colin Cross <ccross@android.com>
----
- drivers/staging/android/Kconfig |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+I plan to send these 2 along with another fix to arm-soc if that's okay.
 
-I can't test on m68k, but this disables the options if I remove
-HAVE_MEMBLOCK from arm.
-
-diff --git a/drivers/staging/android/Kconfig b/drivers/staging/android/Kconfig
-index 08a3b11..eb1dee2 100644
---- a/drivers/staging/android/Kconfig
-+++ b/drivers/staging/android/Kconfig
-@@ -27,13 +27,14 @@ config ANDROID_LOGGER
- 
- config ANDROID_PERSISTENT_RAM
- 	bool
-+	depends on HAVE_MEMBLOCK
- 	select REED_SOLOMON
- 	select REED_SOLOMON_ENC8
- 	select REED_SOLOMON_DEC8
- 
- config ANDROID_RAM_CONSOLE
- 	bool "Android RAM buffer console"
--	depends on !S390 && !UML
-+	depends on !S390 && !UML && HAVE_MEMBLOCK
- 	select ANDROID_PERSISTENT_RAM
- 	default n
- 
--- 
-1.7.7.3
+Rob
