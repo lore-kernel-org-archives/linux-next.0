@@ -1,38 +1,38 @@
-From: Nicolas Pitre <nico@fluxnic.net>
-Subject: Re: [PATCH 2/2] ARM: pxa: use commom IOMEM definiton
-Date: Tue, 20 Mar 2012 22:33:07 -0400 (EDT)
-Message-ID: <alpine.LFD.2.02.1203202231420.24151@xanadu.home>
-References: <4F68CD9C.3090001@windriver.com>
- <1332296149-28110-1-git-send-email-robherring2@gmail.com>
- <1332296149-28110-2-git-send-email-robherring2@gmail.com>
+From: Alex Elder <elder@dreamhost.com>
+Subject: Re: linux-next: build failure after merge of the ceph tree
+Date: Tue, 20 Mar 2012 23:24:11 -0500
+Message-ID: <4F6957EB.5030309@dreamhost.com>
+References: <20120321124007.e879c834619c7bb9298d5694@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; CHARSET=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relais.videotron.ca ([24.201.245.36]:61711 "EHLO
-	relais.videotron.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759180Ab2CUCdI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 22:33:08 -0400
-Received: from xanadu.home ([66.130.28.92]) by VL-VM-MR002.ip.videotron.ca
- (Oracle Communications Messaging Exchange Server 7u4-22.01 64bit (built Apr 21
- 2011)) with ESMTP id <0M1700AAYR37AA30@VL-VM-MR002.ip.videotron.ca> for
- linux-next@vger.kernel.org; Tue, 20 Mar 2012 22:33:08 -0400 (EDT)
-In-reply-to: <1332296149-28110-2-git-send-email-robherring2@gmail.com>
+Received: from mail.hq.newdream.net ([66.33.206.127]:34961 "EHLO
+	mail.hq.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751299Ab2CUEYJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 00:24:09 -0400
+In-Reply-To: <20120321124007.e879c834619c7bb9298d5694@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rob Herring <robherring2@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@marvell.com>, Alessandro Zummo <a.zummo@towertech.it>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, rtc-linux@googlegroups.com, alsa-devel@alsa-project.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sage Weil <sage@newdream.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Durgin <josh.durgin@dreamhost.com>
 
-On Tue, 20 Mar 2012, Rob Herring wrote:
+On 03/20/2012 08:40 PM, Stephen Rothwell wrote:
+> Hi Sage,
+>
+> After merging the ceph tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/block/rbd.c: In function 'rbd_add':
+> drivers/block/rbd.c:2384:2: error: 'struct rbd_image_header' has no member named 'snap_rwsem'
+>
+> Caused by commit dd2a081fb58f ("rbd: move snap_rwsem to the device,
+> rename to header_rwsem") interacting with commit 0e805a1d8577 ("rbd:
+> initialize snap_rwsem in rbd_add()") from Linus' tree.
+>
+> I used the ceph tree from next-20120320 for today.
 
-> From: Rob Herring <rob.herring@calxeda.com>
-> 
-> pxa was missed in the moving of IOMEM to a common defintion, so lots of
-> IOMEM redefined warnings were introduced. So remove pxa IOMEM definition
-> and fix all the fallout.
+I'll take a look at this tomorrow.  I'm sorry my earlier
+suggestion didn't address this.
 
-You've got at least 3 typos in the above, with 2 of them in the subject 
-line alone.  ;-)
-
-
-Nicolas
+					-Alex
