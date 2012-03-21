@@ -1,192 +1,96 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH] EEH: remove eeh device from OF node
-Date: Wed, 21 Mar 2012 11:14:26 +1100
-Message-ID: <1332288866.2982.33.camel@pasglop>
-References: <1331721086-4314-1-git-send-email-shangw@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the m68knommu
+ tree
+Date: Wed, 21 Mar 2012 11:38:52 +1100
+Message-ID: <20120321113852.93618d6fa5977e9a71caa298@canb.auug.org.au>
+References: <20120302134903.7992cf17cb0c50b9a2b3842c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__21_Mar_2012_11_38_52_+1100_Ybw/a6oOP4kupOgk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:46039 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758540Ab2CUAOq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 20 Mar 2012 20:14:46 -0400
-In-Reply-To: <1331721086-4314-1-git-send-email-shangw@linux.vnet.ibm.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54850 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754066Ab2CUAjF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 20:39:05 -0400
+In-Reply-To: <20120302134903.7992cf17cb0c50b9a2b3842c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gavin Shan <shangw@linux.vnet.ibm.com>
-Cc: sfr@canb.auug.org.au, grant.likely@secretlab.ca, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, linuxppc-dev@lists.ozlabs.org
+To: Greg Ungerer <gerg@snapgear.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-On Wed, 2012-03-14 at 18:31 +0800, Gavin Shan wrote:
-> Originally, the PCI sensitive OF node is tracing the eeh device
-> through struct device_node::edev. However, it was regarded as
-> bad idea.
-> 
-> The patch removes struct device_node::edev. In addition, the
-> global list of eeh devices is introduced, and do retrival of
-> eeh device according to the given OF node through the global
-> list.
+--Signature=_Wed__21_Mar_2012_11_38_52_+1100_Ybw/a6oOP4kupOgk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So I'm not too happy with that. The main problem I see is that
-the code -constantly- calls of_node_to_eeh_dev.
+Hi Greg, Geert,
 
-IE. On any MMIO that happens to return all 1's, we'll call
-eeh_check_failure() for example, which does that. In fact for a hot path
-it's pretty horrid, it will:
+On Fri, 2 Mar 2012 13:49:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the tip tree got conflicts in
+> arch/m68k/kernel/process_no.c and arch/m68k/kernel/process_mm.c between
+> commit 8d8b74c955fd ("m68k: merge the MMU and non-MMU versions of
+> process.c") from the m68knommu tree and commit bd2f55361f18 ("sched/rt:
+> Use schedule_preempt_disabled()") from the tip tree.
 
- - Do an address cache lookup to get the pci_dev
- - Get the device-node frokm the pci_dev
- - Lookup your list to get the eeh_dev
+That tip tree commit is now in Linus' tree, so I am now applying the
+patch below after merging the m68knommu tree.
 
-Shouldn't we instead change the address cache to contain eeh_dev
-instead ? And if you prefer keeping pci_dev, then it shouldn't be hard
-to stick a pointer to the eeh_dev in there via either struct archdata or
-maybe platform_data.
-
-The EEH code still, even after your rework, constantly pass "dn"'s as
-argument to functions just to convert it back to a struct eeh_dev rather
-than trying to pass the eeh_dev.
-
-So turning that into a list lookup will slow things down to a crawl.
-Also your patch never seems to remove anything from your list, which
-doesn't look right vs. hotplug.
-
-I suggest we fix that with a two phase approach:
-
- 1- ASAP so we can still get that into 3.4, move the eeh_dev pointer to
-struct pci_dn instead of struct device_node. This structure is
-accessible directly via dn->data and is ppc specific, that will be a
-better temporary solution and and adding stuff to the generic struct
-device_node.
-
- 2- Then, what we need to do is generalize the use of eeh_dev rather
-than device_node as the main object being worked on in the eeh layer and
-thus as the argument to most functions.
-
-Cheers,
-Ben.
-
-> Signed-off-by: Gavin Shan <shangw@linux.vnet.ibm.com>
+> The former merged these two files into a single process.c, so I removed
+> them.  I then applied the following merge fix patch.
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 2 Mar 2012 13:43:03 +1100
+> Subject: [PATCH] sched/rt: Use schedule_preempt_disabled() in m68k
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  arch/powerpc/include/asm/eeh.h           |    7 +++++++
->  arch/powerpc/platforms/pseries/eeh_dev.c |   29 ++++++++++++++++++++++++++++-
->  include/linux/of.h                       |   10 ----------
->  3 files changed, 35 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/eeh.h b/arch/powerpc/include/asm/eeh.h
-> index d60f998..591e0a1 100644
-> --- a/arch/powerpc/include/asm/eeh.h
-> +++ b/arch/powerpc/include/asm/eeh.h
-> @@ -56,6 +56,7 @@ struct eeh_dev {
->  	struct pci_controller *phb;	/* Associated PHB		*/
->  	struct device_node *dn;		/* Associated device node	*/
->  	struct pci_dev *pdev;		/* Associated PCI device	*/
-> +	struct list_head list;		/* Form the global link list	*/
->  };
->  
->  static inline struct device_node *eeh_dev_to_of_node(struct eeh_dev *edev)
-> @@ -115,6 +116,7 @@ extern int eeh_subsystem_enabled;
->   */
->  #define EEH_MAX_ALLOWED_FREEZES 5
->  
-> +struct eeh_dev *eeh_dev_from_of_node(struct device_node *dn);
->  void * __devinit eeh_dev_init(struct device_node *dn, void *data);
->  void __devinit eeh_dev_phb_init_dynamic(struct pci_controller *phb);
->  void __init eeh_dev_phb_init(void);
-> @@ -132,6 +134,11 @@ void eeh_add_device_tree_early(struct device_node *);
->  void eeh_add_device_tree_late(struct pci_bus *);
->  void eeh_remove_bus_device(struct pci_dev *);
->  
-> +static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
-> +{
-> +	return eeh_dev_from_of_node(dn);
-> +}
-> +
->  /**
->   * EEH_POSSIBLE_ERROR() -- test for possible MMIO failure.
->   *
-> diff --git a/arch/powerpc/platforms/pseries/eeh_dev.c b/arch/powerpc/platforms/pseries/eeh_dev.c
-> index f3aed7d..925d3a3 100644
-> --- a/arch/powerpc/platforms/pseries/eeh_dev.c
-> +++ b/arch/powerpc/platforms/pseries/eeh_dev.c
-> @@ -34,6 +34,7 @@
->  #include <linux/export.h>
->  #include <linux/gfp.h>
->  #include <linux/init.h>
-> +#include <linux/list.h>
->  #include <linux/kernel.h>
->  #include <linux/pci.h>
->  #include <linux/string.h>
-> @@ -41,6 +42,30 @@
->  #include <asm/pci-bridge.h>
->  #include <asm/ppc-pci.h>
->  
-> +/* eeh device list */
-> +static LIST_HEAD(eeh_dev_list);
-> +
-> +/**
-> + * eeh_dev_from_of_node - Retrieve EEH device according to OF node
-> + * @dn: OF node
-> + *
-> + * All existing eeh devices have been put into the global list.
-> + * In addition, the eeh device is tracing the corresponding
-> + * OF node. The function is used to retrieve the corresponding
-> + * eeh device according to the given OF node.
-> + */
-> +struct eeh_dev *eeh_dev_from_of_node(struct device_node *dn)
-> +{
-> +	struct eeh_dev *edev = NULL;
-> +
-> +	list_for_each_entry(edev, &eeh_dev_list, list) {
-> +		if (edev->dn && edev->dn == dn)
-> +			return edev;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  /**
->   * eeh_dev_init - Create EEH device according to OF node
->   * @dn: device node
-> @@ -62,10 +87,12 @@ void * __devinit eeh_dev_init(struct device_node *dn, void *data)
+>  arch/m68k/kernel/process.c |    4 +---
+>  1 files changed, 1 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/m68k/kernel/process.c b/arch/m68k/kernel/process.c
+> index f053e24..c54ef927 100644
+> --- a/arch/m68k/kernel/process.c
+> +++ b/arch/m68k/kernel/process.c
+> @@ -78,9 +78,7 @@ void cpu_idle(void)
+>  	while (1) {
+>  		while (!need_resched())
+>  			idle();
+> -		preempt_enable_no_resched();
+> -		schedule();
+> -		preempt_disable();
+> +		schedule_preempt_disabled();
 >  	}
->  
->  	/* Associate EEH device with OF node */
-> -	dn->edev  = edev;
->  	edev->dn  = dn;
->  	edev->phb = phb;
->  
-> +	/* Add to global list */
-> +	list_add_tail(&edev->list, &eeh_dev_list);
-> +
->  	return NULL;
 >  }
->  
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index 3e710d8..a75a831 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -58,9 +58,6 @@ struct device_node {
->  	struct	kref kref;
->  	unsigned long _flags;
->  	void	*data;
-> -#if defined(CONFIG_EEH)
-> -	struct eeh_dev *edev;
-> -#endif
->  #if defined(CONFIG_SPARC)
->  	char	*path_component_name;
->  	unsigned int unique_id;
-> @@ -75,13 +72,6 @@ struct of_phandle_args {
->  	uint32_t args[MAX_PHANDLE_ARGS];
->  };
->  
-> -#if defined(CONFIG_EEH)
-> -static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
-> -{
-> -	return dn->edev;
-> -}
-> -#endif
-> -
->  #if defined(CONFIG_SPARC) || !defined(CONFIG_OF)
->  /* Dummy ref counting routines - to be implemented later */
->  static inline struct device_node *of_node_get(struct device_node *node)
+> =20
+> --=20
+> 1.7.9.1
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__21_Mar_2012_11_38_52_+1100_Ybw/a6oOP4kupOgk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPaSMcAAoJEECxmPOUX5FEn/EQAKZLebHgOFAUxQniXOTcWy9U
+74YkVtWAPXKq0IMLVJr0CJNPaLv5yS6a/8cm2pZq8Duxh3BDqzyC/UyYUR7YhT3z
+GIQ/tR4QtiqDyUsHrWFLBLKDH/maWRWmeICMt/FYBStBn0OgpjRDMwsscadkSirh
+PSJ69LfZM+Zv1N7aBGG1BsW4UUQ1r9ilyOBwRXTt/J+wKvacLwUGe/dwKbxcl0LS
+TBgx5U/CPb6bUH4JDGGRB/ecrbKBOAkRaoooAYTozqSccvGHf9v0fTZYKOr92FMh
+A53Imkpo/fQ/U/2A99d040WulGfn3TRmsnCe+GvlBkK2+2PLN/QLxGD2TlpEpPcG
+EqwvjJGpcT4YOTXd/K52kf1qmKbwnROXTQCJiDpMa8yJJNIdGv6KxeD06cfXtnyX
+ej3NOQ26naKOSF6+/PuCey61DcupV05cW69fqK6Y8DEcCdP9B6g9XkrVq+VLroZc
++86qCOpYzG/u0Rzr3Gr7tpCMgdLoBK1wSU3IrA4/GkdFBdII1vNp7eigNM9xnLnq
+kFAEAjZB3KfObfnc9XtSDwANpdkJ0oSf9iPFLmkBKXlLuA8PvNXB8OJnAT1QOvvr
+5XzHUASImPczau6jIybUotMWqPtAiSYvuQBjt2ZEKkJq5+8TriDms5JRYNgfkPHy
+kNdKPOx6Ck3WqZciKhCT
+=Cb9/
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__21_Mar_2012_11_38_52_+1100_Ybw/a6oOP4kupOgk--
