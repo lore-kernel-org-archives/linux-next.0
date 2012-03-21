@@ -1,97 +1,190 @@
-From: Hans-Christian Egtvedt <egtvedt@samfundet.no>
-Subject: Re: [PATCH] avr32: fix build failures from mis-naming of atmel_nand.h
-Date: Wed, 21 Mar 2012 08:26:32 +0100
-Message-ID: <20120321072632.GA15703@samfundet.no>
-References: <1332296128-16262-1-git-send-email-paul.gortmaker@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (mfd and
+ input trees related)
+Date: Wed, 21 Mar 2012 18:29:30 +1100
+Message-ID: <20120321182930.6f75199b7406044669891a14@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__21_Mar_2012_18_29_30_+1100_HNfHShh=B.lskx=f"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53061 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752615Ab2CUH3w (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 03:29:52 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Donggeun Kim <dg77.kim@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+
+--Signature=_Wed__21_Mar_2012_18_29_30_+1100_HNfHShh=B.lskx=f
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <1332296128-16262-1-git-send-email-paul.gortmaker@windriver.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, nicolas.ferre@atmel.com, linux-next@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux@maxim.org.za, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Around Tue 20 Mar 2012 22:15:28 -0400 or thereabout, Paul Gortmaker wrote:
-> Commit bf4289cba02b8cf770ecd7959ca70839f0dd9d3c (linux-next)
-> 
->     "ATMEL: fix nand ecc support"
-> 
-> indicated that it wanted to "Move platform data to a common
-> header include/linux/platform_data/atmel_nand.h" and the new
-> header even had re-include protectors with:
-> 
->     #ifndef __ATMEL_NAND_H__
-> 
-> However, the file that was added was simply called atmel.h
-> and this caused avr32 defconfig to fail with:
-> 
->   In file included from arch/avr32/boards/atstk1000/setup.c:22:
->   arch/avr32/mach-at32ap/include/mach/board.h:10:44: error: linux/platform_data/atmel_nand.h: No such file or directory
->   In file included from arch/avr32/boards/atstk1000/setup.c:22:
->   arch/avr32/mach-at32ap/include/mach/board.h:121: warning: 'struct atmel_nand_data' declared inside parameter list
->   arch/avr32/mach-at32ap/include/mach/board.h:121: warning: its scope is only this definition or declaration, which is probably not what you want
->   make[2]: *** [arch/avr32/boards/atstk1000/setup.o] Error 1
-> 
-> Rename the file to match the original intention, and fix up the
-> users who reference the bad name without the _nand suffix.
+Hi all,
 
-Thanks fixing this.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> CC: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-> CC: Hans-Christian Egtvedt <egtvedt@samfundet.no>
-> CC: David Woodhouse <dwmw2@infradead.org>
+In file included from drivers/leds/leds-max8997.c:18:0:
+include/linux/mfd/max8997.h:205:6: error: nested redefinition of 'enum max8=
+997_haptic_motor_type'
+include/linux/mfd/max8997.h:205:6: error: redeclaration of 'enum max8997_ha=
+ptic_motor_type'
+include/linux/mfd/max8997.h:134:6: note: originally defined here
+include/linux/mfd/max8997.h:206:2: error: redeclaration of enumerator 'MAX8=
+997_HAPTIC_ERM'
+include/linux/mfd/max8997.h:135:2: note: previous definition of 'MAX8997_HA=
+PTIC_ERM' was here
+include/linux/mfd/max8997.h:207:2: error: redeclaration of enumerator 'MAX8=
+997_HAPTIC_LRA'
+include/linux/mfd/max8997.h:136:2: note: previous definition of 'MAX8997_HA=
+PTIC_LRA' was here
+include/linux/mfd/max8997.h:210:6: error: nested redefinition of 'enum max8=
+997_haptic_pulse_mode'
+include/linux/mfd/max8997.h:210:6: error: redeclaration of 'enum max8997_ha=
+ptic_pulse_mode'
+include/linux/mfd/max8997.h:139:6: note: originally defined here
+include/linux/mfd/max8997.h:211:2: error: redeclaration of enumerator 'MAX8=
+997_EXTERNAL_MODE'
+include/linux/mfd/max8997.h:140:2: note: previous definition of 'MAX8997_EX=
+TERNAL_MODE' was here
+include/linux/mfd/max8997.h:212:2: error: redeclaration of enumerator 'MAX8=
+997_INTERNAL_MODE'
+include/linux/mfd/max8997.h:141:2: note: previous definition of 'MAX8997_IN=
+TERNAL_MODE' was here
+include/linux/mfd/max8997.h:215:6: error: nested redefinition of 'enum max8=
+997_haptic_pwm_divisor'
+include/linux/mfd/max8997.h:215:6: error: redeclaration of 'enum max8997_ha=
+ptic_pwm_divisor'
+include/linux/mfd/max8997.h:144:6: note: originally defined here
+include/linux/mfd/max8997.h:216:2: error: redeclaration of enumerator 'MAX8=
+997_PWM_DIVISOR_32'
+include/linux/mfd/max8997.h:145:2: note: previous definition of 'MAX8997_PW=
+M_DIVISOR_32' was here
+include/linux/mfd/max8997.h:217:2: error: redeclaration of enumerator 'MAX8=
+997_PWM_DIVISOR_64'
+include/linux/mfd/max8997.h:146:2: note: previous definition of 'MAX8997_PW=
+M_DIVISOR_64' was here
+include/linux/mfd/max8997.h:218:2: error: redeclaration of enumerator 'MAX8=
+997_PWM_DIVISOR_128'
+include/linux/mfd/max8997.h:147:2: note: previous definition of 'MAX8997_PW=
+M_DIVISOR_128' was here
+include/linux/mfd/max8997.h:219:2: error: redeclaration of enumerator 'MAX8=
+997_PWM_DIVISOR_256'
+include/linux/mfd/max8997.h:148:2: note: previous definition of 'MAX8997_PW=
+M_DIVISOR_256' was here
+include/linux/mfd/max8997.h:241:8: error: redefinition of 'struct max8997_h=
+aptic_platform_data'
+include/linux/mfd/max8997.h:170:8: note: originally defined here
 
-Acked-by: Hans-Christian Egtvedt <egtvedt@samfundet.no>
+Caused by a bad merge of commits 104594b01ce7 ("Input: add driver support
+for MAX8997-haptic") from the input tree and 02b09703e7a4 ("mfd: Add
+platform data for MAX8997 haptic driver") from the mfd tree.
 
-> ---
->  arch/arm/mach-at91/include/mach/board.h            |    2 +-
->  drivers/mtd/nand/atmel_nand.c                      |    2 +-
->  .../linux/platform_data/{atmel.h => atmel_nand.h}  |    0
->  3 files changed, 2 insertions(+), 2 deletions(-)
->  rename include/linux/platform_data/{atmel.h => atmel_nand.h} (100%)
-> 
-> diff --git a/arch/arm/mach-at91/include/mach/board.h b/arch/arm/mach-at91/include/mach/board.h
-> index 544a5d5..aa0e083 100644
-> --- a/arch/arm/mach-at91/include/mach/board.h
-> +++ b/arch/arm/mach-at91/include/mach/board.h
-> @@ -41,7 +41,7 @@
->  #include <sound/atmel-ac97c.h>
->  #include <linux/serial.h>
->  #include <linux/platform_data/macb.h>
-> -#include <linux/platform_data/atmel.h>
-> +#include <linux/platform_data/atmel_nand.h>
->  
->   /* USB Device */
->  struct at91_udc_data {
-> diff --git a/drivers/mtd/nand/atmel_nand.c b/drivers/mtd/nand/atmel_nand.c
-> index 2165576..7b599a9 100644
-> --- a/drivers/mtd/nand/atmel_nand.c
-> +++ b/drivers/mtd/nand/atmel_nand.c
-> @@ -38,7 +38,7 @@
->  #include <linux/dmaengine.h>
->  #include <linux/gpio.h>
->  #include <linux/io.h>
-> -#include <linux/platform_data/atmel.h>
-> +#include <linux/platform_data/atmel_nand.h>
->  
->  #include <mach/cpu.h>
->  
-> diff --git a/include/linux/platform_data/atmel.h b/include/linux/platform_data/atmel_nand.h
-> similarity index 100%
-> rename from include/linux/platform_data/atmel.h
-> rename to include/linux/platform_data/atmel_nand.h
--- 
-mvh
-Hans-Christian Egtvedt
+I applied this patch for today (which effectively removes the mfd tree
+patch above):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 21 Mar 2012 18:25:30 +1100
+Subject: [PATCH] fix up merge of include/linux/mfd/max8997.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/mfd/max8997.h |   49 ---------------------------------------=
+----
+ 1 files changed, 0 insertions(+), 49 deletions(-)
+
+diff --git a/include/linux/mfd/max8997.h b/include/linux/mfd/max8997.h
+index 4ec373e..28726dd 100644
+--- a/include/linux/mfd/max8997.h
++++ b/include/linux/mfd/max8997.h
+@@ -202,55 +202,6 @@ struct max8997_led_platform_data {
+ 	u8 brightness[2];
+ };
+=20
+-enum max8997_haptic_motor_type {
+-	MAX8997_HAPTIC_ERM,
+-	MAX8997_HAPTIC_LRA,
+-};
+-
+-enum max8997_haptic_pulse_mode {
+-	MAX8997_EXTERNAL_MODE,
+-	MAX8997_INTERNAL_MODE,
+-};
+-
+-enum max8997_haptic_pwm_divisor {
+-	MAX8997_PWM_DIVISOR_32,
+-	MAX8997_PWM_DIVISOR_64,
+-	MAX8997_PWM_DIVISOR_128,
+-	MAX8997_PWM_DIVISOR_256,
+-};
+-
+-/*
+- * max8997_haptic_platform_data
+- * @pwm_channel_id: channel number of PWM device
+- *		    valid for MAX8997_EXTERNAL_MODE
+- * @pwm_period: period in nano second for PWM device
+- *		valid for MAX8997_EXTERNAL_MODE
+- * @type: motor type
+- * @mode: pulse mode
+- *     MAX8997_EXTERNAL_MODE: external PWM device is used to control motor
+- *     MAX8997_INTERNAL_MODE: internal pulse generator is used to control =
+motor
+- * @pwm_divisor: divisor for external PWM device
+- * @internal_mode_pattern: internal mode pattern for internal mode
+- *     [0 - 3]: valid pattern number
+- * @pattern_cycle: the number of cycles of the waveform
+- *		   for the internal mode pattern
+- *     [0 - 15]: available cycles
+- * @pattern_signal_period: period of the waveform for the internal mode pa=
+ttern
+- *     [0 - 255]: available period
+- */
+-struct max8997_haptic_platform_data {
+-	int pwm_channel_id;
+-	int pwm_period;
+-
+-	enum max8997_haptic_motor_type type;
+-	enum max8997_haptic_pulse_mode mode;
+-	enum max8997_haptic_pwm_divisor pwm_divisor;
+-
+-	int internal_mode_pattern;
+-	int pattern_cycle;
+-	int pattern_signal_period;
+-};
+-
+ struct max8997_platform_data {
+ 	/* IRQ */
+ 	int irq_base;
+--=20
+1.7.9.1
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__21_Mar_2012_18_29_30_+1100_HNfHShh=B.lskx=f
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPaYNaAAoJEECxmPOUX5FE0nEP/RDTteZWL4rg5M3szvqpKz+O
+SWLxjT7p/XvQUfJdZwnCVLjD/fg0LUIy0kfkYMWQLsaCdoOC2ptity+M2CUIC47k
+abhIxO3uqZpbDjNRL6Kh1eAKS+L4cTdnB0PZxWNGfT1rObFajRY3Rj2QQs9+T/wy
+d+WUeWdM2kiEQdt+Q517JDUkVaMCnzhYKRQ+bPBLnRpyzXtju7/mA8LXjsa9FT5T
+NsgWkwaZi6lNOhP5sTz+nhKshSac5ii1hSCANSOrIY8ivV3GNYMDvpLXKTsK2dkX
+WEV+qOIKpzF8V3LviQ02QbAYBjvKUAWQQaDOnK7itCzudujSj1gzwwuVO0J913VH
+u0ljSS862HNpDGcm6ryS3fzycsp3LKwVuGYhMld9E9VDWgTR3VQMyXQOtqdR5H0j
+QOPs6KkGANKnp0gZNWYETdehBC/g0cVNIY2q5MioFrwCZBi7/jQwqME+3d5HiL09
+Cdi2kLnJwAyid2hiMwJJ9sN2r3CXIizHMCCwJkIZwQdm5RPksyg6aSOgJ00ISEn5
+Gc6YA0zVq83QMGdCWoD4C9I1tBU80Y7fJfZ183X/TQuSey24gIJ0YZDZTfyyYL65
+OyVvy7afQTd/Uyvjheuv330A6B8dDbw0K+83naIlCyMYtD3LN76vS9M4kj1CbXpa
+ZRfww11OTVPDMf9k6Lq6
+=kwF4
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__21_Mar_2012_18_29_30_+1100_HNfHShh=B.lskx=f--
