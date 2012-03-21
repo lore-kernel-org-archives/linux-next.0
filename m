@@ -1,80 +1,132 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] avr32: fix build failures from mis-naming of atmel_nand.h
-Date: Tue, 20 Mar 2012 22:15:28 -0400
-Message-ID: <1332296128-16262-1-git-send-email-paul.gortmaker@windriver.com>
+From: Nicolas Pitre <nico@fluxnic.net>
+Subject: Re: [PATCH 1/2] ARM: dma-mapping: convert
+ ARCH_HAS_DMA_SET_COHERENT_MASK to kconfig symbol
+Date: Tue, 20 Mar 2012 22:30:53 -0400 (EDT)
+Message-ID: <alpine.LFD.2.02.1203202230230.24151@xanadu.home>
+References: <4F68CD9C.3090001@windriver.com>
+ <1332296149-28110-1-git-send-email-robherring2@gmail.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; CHARSET=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:54504 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759180Ab2CUCQt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 22:16:49 -0400
+Received: from relais.videotron.ca ([24.201.245.36]:8720 "EHLO
+	relais.videotron.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030531Ab2CUCay (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 22:30:54 -0400
+Received: from xanadu.home ([66.130.28.92]) by VL-VM-MR002.ip.videotron.ca
+ (Oracle Communications Messaging Exchange Server 7u4-22.01 64bit (built Apr 21
+ 2011)) with ESMTP id <0M1700A1YQZHAA30@VL-VM-MR002.ip.videotron.ca> for
+ linux-next@vger.kernel.org; Tue, 20 Mar 2012 22:30:53 -0400 (EDT)
+In-reply-to: <1332296149-28110-1-git-send-email-robherring2@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, nicolas.ferre@atmel.com, linux@maxim.org.za, Paul Gortmaker <paul.gortmaker@windriver.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, David Woodhouse <dwmw2@infradead.org>
+To: Rob Herring <robherring2@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>
 
-Commit bf4289cba02b8cf770ecd7959ca70839f0dd9d3c (linux-next)
+On Tue, 20 Mar 2012, Rob Herring wrote:
 
-    "ATMEL: fix nand ecc support"
+> From: Rob Herring <rob.herring@calxeda.com>
+> 
+> The only users of ARCH_HAS_DMA_SET_COHERENT_MASK are 2 ARM platforms:
+> ixp4xx and pxa cm_x2xx. We've been getting lucky that the define is
+> implicitly included before dma-mapping.h, but the removal of io.h broke
+> things (c334bc1 ARM: make mach/io.h include optional). Since memory.h
+> is the correct place, but no longer exists, convert the define to a
+> kconfig entry.
+> 
+> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Imre Kaloz <kaloz@openwrt.org>
+> Cc: Krzysztof Halasa <khc@pm.waw.pl>
+> Cc: Eric Miao <eric.y.miao@gmail.com>
+> Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
+> Cc: Vinod Koul <vinod.koul@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
 
-indicated that it wanted to "Move platform data to a common
-header include/linux/platform_data/atmel_nand.h" and the new
-header even had re-include protectors with:
+Acked-by: Nicolas Pitre <nico@linaro.org>
 
-    #ifndef __ATMEL_NAND_H__
-
-However, the file that was added was simply called atmel.h
-and this caused avr32 defconfig to fail with:
-
-  In file included from arch/avr32/boards/atstk1000/setup.c:22:
-  arch/avr32/mach-at32ap/include/mach/board.h:10:44: error: linux/platform_data/atmel_nand.h: No such file or directory
-  In file included from arch/avr32/boards/atstk1000/setup.c:22:
-  arch/avr32/mach-at32ap/include/mach/board.h:121: warning: 'struct atmel_nand_data' declared inside parameter list
-  arch/avr32/mach-at32ap/include/mach/board.h:121: warning: its scope is only this definition or declaration, which is probably not what you want
-  make[2]: *** [arch/avr32/boards/atstk1000/setup.o] Error 1
-
-Rename the file to match the original intention, and fix up the
-users who reference the bad name without the _nand suffix.
-
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-CC: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-CC: Hans-Christian Egtvedt <egtvedt@samfundet.no>
-CC: David Woodhouse <dwmw2@infradead.org>
----
- arch/arm/mach-at91/include/mach/board.h            |    2 +-
- drivers/mtd/nand/atmel_nand.c                      |    2 +-
- .../linux/platform_data/{atmel.h => atmel_nand.h}  |    0
- 3 files changed, 2 insertions(+), 2 deletions(-)
- rename include/linux/platform_data/{atmel.h => atmel_nand.h} (100%)
-
-diff --git a/arch/arm/mach-at91/include/mach/board.h b/arch/arm/mach-at91/include/mach/board.h
-index 544a5d5..aa0e083 100644
---- a/arch/arm/mach-at91/include/mach/board.h
-+++ b/arch/arm/mach-at91/include/mach/board.h
-@@ -41,7 +41,7 @@
- #include <sound/atmel-ac97c.h>
- #include <linux/serial.h>
- #include <linux/platform_data/macb.h>
--#include <linux/platform_data/atmel.h>
-+#include <linux/platform_data/atmel_nand.h>
- 
-  /* USB Device */
- struct at91_udc_data {
-diff --git a/drivers/mtd/nand/atmel_nand.c b/drivers/mtd/nand/atmel_nand.c
-index 2165576..7b599a9 100644
---- a/drivers/mtd/nand/atmel_nand.c
-+++ b/drivers/mtd/nand/atmel_nand.c
-@@ -38,7 +38,7 @@
- #include <linux/dmaengine.h>
- #include <linux/gpio.h>
- #include <linux/io.h>
--#include <linux/platform_data/atmel.h>
-+#include <linux/platform_data/atmel_nand.h>
- 
- #include <mach/cpu.h>
- 
-diff --git a/include/linux/platform_data/atmel.h b/include/linux/platform_data/atmel_nand.h
-similarity index 100%
-rename from include/linux/platform_data/atmel.h
-rename to include/linux/platform_data/atmel_nand.h
--- 
-1.7.9.1
+> ---
+>  arch/arm/Kconfig                             |    4 ++++
+>  arch/arm/mach-ixp4xx/include/mach/hardware.h |    2 --
+>  arch/arm/mach-pxa/Kconfig                    |    1 +
+>  arch/arm/mach-pxa/include/mach/hardware.h    |    4 ----
+>  include/linux/dma-mapping.h                  |    2 +-
+>  5 files changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 31a2ddc..d3999a5 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -180,6 +180,9 @@ config ZONE_DMA
+>  config NEED_DMA_MAP_STATE
+>         def_bool y
+>  
+> +config ARCH_HAS_DMA_SET_COHERENT_MASK
+> +	bool
+> +
+>  config GENERIC_ISA_DMA
+>  	bool
+>  
+> @@ -547,6 +550,7 @@ config ARCH_IXP2000
+>  config ARCH_IXP4XX
+>  	bool "IXP4xx-based"
+>  	depends on MMU
+> +	select ARCH_HAS_DMA_SET_COHERENT_MASK
+>  	select CLKSRC_MMIO
+>  	select CPU_XSCALE
+>  	select GENERIC_GPIO
+> diff --git a/arch/arm/mach-ixp4xx/include/mach/hardware.h b/arch/arm/mach-ixp4xx/include/mach/hardware.h
+> index c30e7e9..034bb2a 100644
+> --- a/arch/arm/mach-ixp4xx/include/mach/hardware.h
+> +++ b/arch/arm/mach-ixp4xx/include/mach/hardware.h
+> @@ -23,8 +23,6 @@
+>  #define PCIBIOS_MAX_MEM		0x4BFFFFFF
+>  #endif
+>  
+> -#define ARCH_HAS_DMA_SET_COHERENT_MASK
+> -
+>  /* Register locations and bits */
+>  #include "ixp4xx-regs.h"
+>  
+> diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
+> index 61d3c72..109ccd2 100644
+> --- a/arch/arm/mach-pxa/Kconfig
+> +++ b/arch/arm/mach-pxa/Kconfig
+> @@ -108,6 +108,7 @@ config CSB726_CSB701
+>  
+>  config MACH_ARMCORE
+>  	bool "CompuLab CM-X255/CM-X270 modules"
+> +	select ARCH_HAS_DMA_SET_COHERENT_MASK if PCI
+>  	select PXA27x
+>  	select IWMMXT
+>  	select PXA25x
+> diff --git a/arch/arm/mach-pxa/include/mach/hardware.h b/arch/arm/mach-pxa/include/mach/hardware.h
+> index 8184669..54b64ea 100644
+> --- a/arch/arm/mach-pxa/include/mach/hardware.h
+> +++ b/arch/arm/mach-pxa/include/mach/hardware.h
+> @@ -337,8 +337,4 @@ extern unsigned int get_memclk_frequency_10khz(void);
+>  extern unsigned long get_clock_tick_rate(void);
+>  #endif
+>  
+> -#if defined(CONFIG_MACH_ARMCORE) && defined(CONFIG_PCI)
+> -#define ARCH_HAS_DMA_SET_COHERENT_MASK
+> -#endif
+> -
+>  #endif  /* _ASM_ARCH_HARDWARE_H */
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index e13117c..5a736af 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -77,7 +77,7 @@ static inline u64 dma_get_mask(struct device *dev)
+>  	return DMA_BIT_MASK(32);
+>  }
+>  
+> -#ifdef ARCH_HAS_DMA_SET_COHERENT_MASK
+> +#ifdef CONFIG_ARCH_HAS_DMA_SET_COHERENT_MASK
+>  int dma_set_coherent_mask(struct device *dev, u64 mask);
+>  #else
+>  static inline int dma_set_coherent_mask(struct device *dev, u64 mask)
+> -- 
+> 1.7.5.4
+> 
