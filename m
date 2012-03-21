@@ -1,115 +1,175 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] ARM: fix lcd power build failure in collie_defconfig
-Date: Wed, 21 Mar 2012 10:02:44 -0400
-Message-ID: <4F69DF84.8050605@windriver.com>
-References: <1331051502-22361-1-git-send-email-paul.gortmaker@windriver.com> <4F69CDF2.3020609@gmx.de>
+From: Mark Salter <msalter@redhat.com>
+Subject: build failure in linux-next
+Date: Wed, 21 Mar 2012 10:36:14 -0400
+Message-ID: <1332340575.12353.55.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:60476 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1031021Ab2CUODP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 10:03:15 -0400
-In-Reply-To: <4F69CDF2.3020609@gmx.de>
+Received: from mx1.redhat.com ([209.132.183.28]:8721 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1030742Ab2CUOgR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Mar 2012 10:36:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Cc: linux@arm.linux.org.uk, rpurdie@rpsys.net, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+To: aarcange@redhat.com
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
-On 12-03-21 08:47 AM, Florian Tobias Schandinat wrote:
-> On 03/06/2012 04:31 PM, Paul Gortmaker wrote:
->> Commit 086ada54abaa4316e8603f02410fe8ebc9ba2de1 (linux-next)
->>
->>   "FB: sa1100: remove global sa1100fb_.*_power function pointers"
->>
->> got rid of all instances but one in locomolcd.c -- which was
->> conditional on CONFIG_SA1100_COLLIE.  The associated .power
->> field which replaces the global is populated in mach-sa1100/collie.c
->> so move the assignment there, but make it conditional on the
->> locomolcd support, so use CONFIG_BACKLIGHT_LOCOMO in that file.
->>
->> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> 
-> What about this patch?
-> I assumed Russel would pick it up as the commit referenced is also in
-> his tree but it looks like this patch is still not in -next. Any reasons
-> for this?
+I'm seeing a build failure in linux-next:
 
-Not that I'm aware of.  I didn't get any negative feedback or change
-requests asking for a v2.   There are probably about a half dozen
-linux-next build failures in my triage list that I've fixed but
-the commits have not yet looped back around through the various
-maintainers for one reason or another.
+  CC      init/main.o
+In file included from /es/linux/linux-next/arch/c6x/include/asm/pgtable.h:76:0,
+                 from /es/linux/linux-next/include/linux/mm.h:44,
+                 from /es/linux/linux-next/include/linux/ring_buffer.h:5,
+                 from /es/linux/linux-next/include/linux/ftrace_event.h:4,
+                 from /es/linux/linux-next/include/trace/syscall.h:6,
+                 from /es/linux/linux-next/include/linux/syscalls.h:78,
+                 from /es/linux/linux-next/init/main.c:16:
+/es/linux/linux-next/include/asm-generic/pgtable.h: In function 'pmd_none_or_trans_huge_or_clear_bad':
+/es/linux/linux-next/include/asm-generic/pgtable.h:476:4: error: implicit declaration of function 'pmd_clear_bad' [-Werror=implicit-function-declaration]
 
-http://marc.info/?l=linux-next&m=133227360822405&w=2
 
-It would be nice to have them all crossed off...
+This patch added some functions to asm-generic/pgtable.h which should
+have been placed in the CONFIG_MMU conditional block:
 
-Paul.
----
+  Author: Andrea Arcangeli <aarcange@redhat.com>
+  Date:   Wed Mar 21 10:48:00 2012 +1100
 
-> 
-> 
-> Best regards,
-> 
-> Florian Tobias Schandinat
-> 
->>
->> diff --git a/arch/arm/mach-sa1100/collie.c b/arch/arm/mach-sa1100/collie.c
->> index 48885b7..c7f418b 100644
->> --- a/arch/arm/mach-sa1100/collie.c
->> +++ b/arch/arm/mach-sa1100/collie.c
->> @@ -313,6 +313,10 @@ static struct sa1100fb_mach_info collie_lcd_info = {
->>  
->>  	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
->>  	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
->> +
->> +#ifdef CONFIG_BACKLIGHT_LOCOMO
->> +	.lcd_power	= locomolcd_power
->> +#endif
->>  };
->>  
->>  static void __init collie_init(void)
->> diff --git a/arch/arm/mach-sa1100/include/mach/collie.h b/arch/arm/mach-sa1100/include/mach/collie.h
->> index 52acda7..f33679d 100644
->> --- a/arch/arm/mach-sa1100/include/mach/collie.h
->> +++ b/arch/arm/mach-sa1100/include/mach/collie.h
->> @@ -1,7 +1,7 @@
->>  /*
->>   * arch/arm/mach-sa1100/include/mach/collie.h
->>   *
->> - * This file contains the hardware specific definitions for Assabet
->> + * This file contains the hardware specific definitions for Collie
->>   * Only include this file from SA1100-specific files.
->>   *
->>   * ChangeLog:
->> @@ -13,6 +13,7 @@
->>  #ifndef __ASM_ARCH_COLLIE_H
->>  #define __ASM_ARCH_COLLIE_H
->>  
->> +extern void locomolcd_power(int on);
->>  
->>  #define COLLIE_SCOOP_GPIO_BASE	(GPIO_MAX + 1)
->>  #define COLLIE_GPIO_CHARGE_ON	(COLLIE_SCOOP_GPIO_BASE + 0)
->> diff --git a/drivers/video/backlight/locomolcd.c b/drivers/video/backlight/locomolcd.c
->> index be20b5c..3a6d541 100644
->> --- a/drivers/video/backlight/locomolcd.c
->> +++ b/drivers/video/backlight/locomolcd.c
->> @@ -229,14 +229,7 @@ static struct locomo_driver poodle_lcd_driver = {
->>  
->>  static int __init locomolcd_init(void)
->>  {
->> -	int ret = locomo_driver_register(&poodle_lcd_driver);
->> -	if (ret)
->> -		return ret;
->> -
->> -#ifdef CONFIG_SA1100_COLLIE
->> -	sa1100fb_lcd_power = locomolcd_power;
->> -#endif
->> -	return 0;
->> +	return locomo_driver_register(&poodle_lcd_driver);
->>  }
->>  
->>  static void __exit locomolcd_exit(void)
-> 
+      mm: thp: fix pmd_bad() triggering in code paths holding mmap_sem read mode
+
+
+The following patch fixes the build problem for me:
+
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 202c010..8ba3ba5 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -342,6 +342,64 @@ static inline void ptep_modify_prot_commit(struct mm_struct *mm,
+ 	__ptep_modify_prot_commit(mm, addr, ptep, pte);
+ }
+ #endif /* __HAVE_ARCH_PTEP_MODIFY_PROT_TRANSACTION */
++
++/*
++ * This function is meant to be used by sites walking pagetables with
++ * the mmap_sem hold in read mode to protect against MADV_DONTNEED and
++ * transhuge page faults. MADV_DONTNEED can convert a transhuge pmd
++ * into a null pmd and the transhuge page fault can convert a null pmd
++ * into an hugepmd or into a regular pmd (if the hugepage allocation
++ * fails). While holding the mmap_sem in read mode the pmd becomes
++ * stable and stops changing under us only if it's not null and not a
++ * transhuge pmd. When those races occurs and this function makes a
++ * difference vs the standard pmd_none_or_clear_bad, the result is
++ * undefined so behaving like if the pmd was none is safe (because it
++ * can return none anyway). The compiler level barrier() is critically
++ * important to compute the two checks atomically on the same pmdval.
++ */
++static inline int pmd_none_or_trans_huge_or_clear_bad(pmd_t *pmd)
++{
++	/* depend on compiler for an atomic pmd read */
++	pmd_t pmdval = *pmd;
++	/*
++	 * The barrier will stabilize the pmdval in a register or on
++	 * the stack so that it will stop changing under the code.
++	 */
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	barrier();
++#endif
++	if (pmd_none(pmdval))
++		return 1;
++	if (unlikely(pmd_bad(pmdval))) {
++		if (!pmd_trans_huge(pmdval))
++			pmd_clear_bad(pmd);
++		return 1;
++	}
++	return 0;
++}
++
++/*
++ * This is a noop if Transparent Hugepage Support is not built into
++ * the kernel. Otherwise it is equivalent to
++ * pmd_none_or_trans_huge_or_clear_bad(), and shall only be called in
++ * places that already verified the pmd is not none and they want to
++ * walk ptes while holding the mmap sem in read mode (write mode don't
++ * need this). If THP is not enabled, the pmd can't go away under the
++ * code even if MADV_DONTNEED runs, but if THP is enabled we need to
++ * run a pmd_trans_unstable before walking the ptes after
++ * split_huge_page_pmd returns (because it may have run when the pmd
++ * become null, but then a page fault can map in a THP and not a
++ * regular page).
++ */
++static inline int pmd_trans_unstable(pmd_t *pmd)
++{
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	return pmd_none_or_trans_huge_or_clear_bad(pmd);
++#else
++	return 0;
++#endif
++}
++
+ #endif /* CONFIG_MMU */
+ 
+ /*
+@@ -444,63 +502,6 @@ static inline int pmd_write(pmd_t pmd)
+ #endif /* __HAVE_ARCH_PMD_WRITE */
+ #endif
+ 
+-/*
+- * This function is meant to be used by sites walking pagetables with
+- * the mmap_sem hold in read mode to protect against MADV_DONTNEED and
+- * transhuge page faults. MADV_DONTNEED can convert a transhuge pmd
+- * into a null pmd and the transhuge page fault can convert a null pmd
+- * into an hugepmd or into a regular pmd (if the hugepage allocation
+- * fails). While holding the mmap_sem in read mode the pmd becomes
+- * stable and stops changing under us only if it's not null and not a
+- * transhuge pmd. When those races occurs and this function makes a
+- * difference vs the standard pmd_none_or_clear_bad, the result is
+- * undefined so behaving like if the pmd was none is safe (because it
+- * can return none anyway). The compiler level barrier() is critically
+- * important to compute the two checks atomically on the same pmdval.
+- */
+-static inline int pmd_none_or_trans_huge_or_clear_bad(pmd_t *pmd)
+-{
+-	/* depend on compiler for an atomic pmd read */
+-	pmd_t pmdval = *pmd;
+-	/*
+-	 * The barrier will stabilize the pmdval in a register or on
+-	 * the stack so that it will stop changing under the code.
+-	 */
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	barrier();
+-#endif
+-	if (pmd_none(pmdval))
+-		return 1;
+-	if (unlikely(pmd_bad(pmdval))) {
+-		if (!pmd_trans_huge(pmdval))
+-			pmd_clear_bad(pmd);
+-		return 1;
+-	}
+-	return 0;
+-}
+-
+-/*
+- * This is a noop if Transparent Hugepage Support is not built into
+- * the kernel. Otherwise it is equivalent to
+- * pmd_none_or_trans_huge_or_clear_bad(), and shall only be called in
+- * places that already verified the pmd is not none and they want to
+- * walk ptes while holding the mmap sem in read mode (write mode don't
+- * need this). If THP is not enabled, the pmd can't go away under the
+- * code even if MADV_DONTNEED runs, but if THP is enabled we need to
+- * run a pmd_trans_unstable before walking the ptes after
+- * split_huge_page_pmd returns (because it may have run when the pmd
+- * become null, but then a page fault can map in a THP and not a
+- * regular page).
+- */
+-static inline int pmd_trans_unstable(pmd_t *pmd)
+-{
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	return pmd_none_or_trans_huge_or_clear_bad(pmd);
+-#else
+-	return 0;
+-#endif
+-}
+-
+ #endif /* !__ASSEMBLY__ */
+ 
+ #endif /* _ASM_GENERIC_PGTABLE_H */
