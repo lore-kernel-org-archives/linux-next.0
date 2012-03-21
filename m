@@ -1,63 +1,80 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ceph tree
-Date: Wed, 21 Mar 2012 12:40:07 +1100
-Message-ID: <20120321124007.e879c834619c7bb9298d5694@canb.auug.org.au>
+From: Greg Ungerer <gerg@snapgear.com>
+Subject: Re: linux-next: manual merge of the tip tree with the m68knommu tree
+Date: Wed, 21 Mar 2012 11:35:48 +1000
+Message-ID: <4F693074.3010002@snapgear.com>
+References: <20120302134903.7992cf17cb0c50b9a2b3842c@canb.auug.org.au> <20120321113852.93618d6fa5977e9a71caa298@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Mar_2012_12_40_07_+1100_PI/b3PfWS986Rpiz"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47155 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754499Ab2CUBkR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 21:40:17 -0400
+Received: from dalsmrelay2.nai.com ([205.227.136.216]:11979 "EHLO
+	dalsmrelay2.nai.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932108Ab2CUBlT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 21:41:19 -0400
+In-Reply-To: <20120321113852.93618d6fa5977e9a71caa298@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sage Weil <sage@newdream.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Durgin <josh.durgin@dreamhost.com>, Alex Elder <elder@dreamhost.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Wed__21_Mar_2012_12_40_07_+1100_PI/b3PfWS986Rpiz
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Sage,
+On 21/03/12 10:38, Stephen Rothwell wrote:
+> Hi Greg, Geert,
+>
+> On Fri, 2 Mar 2012 13:49:03 +1100 Stephen Rothwell<sfr@canb.auug.org.au>  wrote:
+>>
+>> Today's linux-next merge of the tip tree got conflicts in
+>> arch/m68k/kernel/process_no.c and arch/m68k/kernel/process_mm.c between
+>> commit 8d8b74c955fd ("m68k: merge the MMU and non-MMU versions of
+>> process.c") from the m68knommu tree and commit bd2f55361f18 ("sched/rt:
+>> Use schedule_preempt_disabled()") from the tip tree.
+>
+> That tip tree commit is now in Linus' tree, so I am now applying the
+> patch below after merging the m68knommu tree.
 
-After merging the ceph tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Looks good, thanks.
 
-drivers/block/rbd.c: In function 'rbd_add':
-drivers/block/rbd.c:2384:2: error: 'struct rbd_image_header' has no member =
-named 'snap_rwsem'
+Regards
+Greg
 
-Caused by commit dd2a081fb58f ("rbd: move snap_rwsem to the device,
-rename to header_rwsem") interacting with commit 0e805a1d8577 ("rbd:
-initialize snap_rwsem in rbd_add()") from Linus' tree.
 
-I used the ceph tree from next-20120320 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__21_Mar_2012_12_40_07_+1100_PI/b3PfWS986Rpiz
-Content-Type: application/pgp-signature
+>> The former merged these two files into a single process.c, so I removed
+>> them.  I then applied the following merge fix patch.
+>>
+>> From: Stephen Rothwell<sfr@canb.auug.org.au>
+>> Date: Fri, 2 Mar 2012 13:43:03 +1100
+>> Subject: [PATCH] sched/rt: Use schedule_preempt_disabled() in m68k
+>>
+>> Signed-off-by: Stephen Rothwell<sfr@canb.auug.org.au>
+>> ---
+>>   arch/m68k/kernel/process.c |    4 +---
+>>   1 files changed, 1 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/m68k/kernel/process.c b/arch/m68k/kernel/process.c
+>> index f053e24..c54ef927 100644
+>> --- a/arch/m68k/kernel/process.c
+>> +++ b/arch/m68k/kernel/process.c
+>> @@ -78,9 +78,7 @@ void cpu_idle(void)
+>>   	while (1) {
+>>   		while (!need_resched())
+>>   			idle();
+>> -		preempt_enable_no_resched();
+>> -		schedule();
+>> -		preempt_disable();
+>> +		schedule_preempt_disabled();
+>>   	}
+>>   }
+>>
+>> --
+>> 1.7.9.1
+>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPaTF3AAoJEECxmPOUX5FEo8cP/0tAyD815UX3gg90B34tubfJ
-qq7DPnZiW9gPw7hlgN/ZKcN2eQDjpocj9PQWNvf6gihlleYulTJvqPFBSLR71VlI
-URLi0VD9c4VIRhxPVXmY0hp5vzJqrGquYwgxesYkcJ65vfT26VJjP1AK48p6YLQd
-KQME7kfqtKPSzc9vk7vEGF4xPRTQmVQNIb6CS3AODw5bv9n5pfYWihgGWWAXq5+i
-qrdsu/fdkzr+yVXtE6gRE1IWgwLcuYZ29JN6YC3+wVMPALAp6NbYMsJq1exxTi0q
-13NEXMuKc6bxxN0duM/R7TLFBb+lRqoxYbAR/ti5QVQeejU0shS+mD5OlfniXkE0
-gMPndZQrnxR44nQiW0FyIN7uQVdcbJ0giIBU88dZlpgr7yqwZcpoZw1TDZYgZxJ5
-hNNbPuo8ok8pJTr6OWjnROVtP6HI87NpSQK1niWcYfhCq9P2dfefbClHlIWZDec0
-xAHhevJ2VCHX9emUz7gfsVp9ZL1BvaiTTfwsFVtKGzB9zwiBDeETM2JfmrbJrHCK
-uFCw0Vb0hlc4PKwP5ooWFxSmfqiGzqtDNjoQ86WQUyKQaF4TzpViQZp2ocO8GOO4
-ZVGuMVKkMWEM0gA9v64vEJv9lOfqt+75bprXXLRPAYd9sgcM7H7uJ0fkf+C1l+Kr
-hATlp1RUXvna7xAr505Z
-=TOIM
------END PGP SIGNATURE-----
-
---Signature=_Wed__21_Mar_2012_12_40_07_+1100_PI/b3PfWS986Rpiz--
+-- 
+------------------------------------------------------------------------
+Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
+SnapGear Group, McAfee                      PHONE:       +61 7 3435 2888
+8 Gardner Close                             FAX:         +61 7 3217 5323
+Milton, QLD, 4064, Australia                WEB: http://www.SnapGear.com
