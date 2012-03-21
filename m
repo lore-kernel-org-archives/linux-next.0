@@ -1,99 +1,67 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Subject: Re: [PATCH] ARM: fix lcd power build failure in collie_defconfig
-Date: Wed, 21 Mar 2012 12:47:46 +0000
-Message-ID: <4F69CDF2.3020609@gmx.de>
-References: <1331051502-22361-1-git-send-email-paul.gortmaker@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the oprofile tree with the tip tree
+Date: Thu, 22 Mar 2012 00:52:59 +1100
+Message-ID: <20120322005259.633e2ab7b27e646fe3d03937@canb.auug.org.au>
+References: <20120321163151.83cad17d5524424938f7576c@canb.auug.org.au>
+	<20120321123348.GJ16322@erda.amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__22_Mar_2012_00_52_59_+1100_g6dcvKQ91j1kLVJI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout-de.gmx.net ([213.165.64.22]:37728 "HELO
-	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755491Ab2CUMsL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 08:48:11 -0400
-In-Reply-To: <1331051502-22361-1-git-send-email-paul.gortmaker@windriver.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40403 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965124Ab2CUNxM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 09:53:12 -0400
+In-Reply-To: <20120321123348.GJ16322@erda.amd.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux@arm.linux.org.uk
-Cc: rpurdie@rpsys.net, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+To: Robert Richter <robert.richter@amd.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lin Ming <ming.m.lin@intel.com>, Jiri Olsa <jolsa@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-On 03/06/2012 04:31 PM, Paul Gortmaker wrote:
-> Commit 086ada54abaa4316e8603f02410fe8ebc9ba2de1 (linux-next)
-> 
->   "FB: sa1100: remove global sa1100fb_.*_power function pointers"
-> 
-> got rid of all instances but one in locomolcd.c -- which was
-> conditional on CONFIG_SA1100_COLLIE.  The associated .power
-> field which replaces the global is populated in mach-sa1100/collie.c
-> so move the assignment there, but make it conditional on the
-> locomolcd support, so use CONFIG_BACKLIGHT_LOCOMO in that file.
-> 
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+--Signature=_Thu__22_Mar_2012_00_52_59_+1100_g6dcvKQ91j1kLVJI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What about this patch?
-I assumed Russel would pick it up as the commit referenced is also in
-his tree but it looks like this patch is still not in -next. Any reasons
-for this?
+Hi Robert,
 
+On Wed, 21 Mar 2012 13:33:48 +0100 Robert Richter <robert.richter@amd.com> =
+wrote:
+>
+> Yeah, the trees are totally different now. Removed my tree from
+> for-next.
 
-Best regards,
+OK, thanks.
 
-Florian Tobias Schandinat
+> Btw, please switch my for-next tree back to kernel.org:
+>=20
+>  git://git.kernel.org/pub/scm/linux/kernel/git/rric/oprofile.git for-next
 
-> 
-> diff --git a/arch/arm/mach-sa1100/collie.c b/arch/arm/mach-sa1100/collie.c
-> index 48885b7..c7f418b 100644
-> --- a/arch/arm/mach-sa1100/collie.c
-> +++ b/arch/arm/mach-sa1100/collie.c
-> @@ -313,6 +313,10 @@ static struct sa1100fb_mach_info collie_lcd_info = {
->  
->  	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
->  	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
-> +
-> +#ifdef CONFIG_BACKLIGHT_LOCOMO
-> +	.lcd_power	= locomolcd_power
-> +#endif
->  };
->  
->  static void __init collie_init(void)
-> diff --git a/arch/arm/mach-sa1100/include/mach/collie.h b/arch/arm/mach-sa1100/include/mach/collie.h
-> index 52acda7..f33679d 100644
-> --- a/arch/arm/mach-sa1100/include/mach/collie.h
-> +++ b/arch/arm/mach-sa1100/include/mach/collie.h
-> @@ -1,7 +1,7 @@
->  /*
->   * arch/arm/mach-sa1100/include/mach/collie.h
->   *
-> - * This file contains the hardware specific definitions for Assabet
-> + * This file contains the hardware specific definitions for Collie
->   * Only include this file from SA1100-specific files.
->   *
->   * ChangeLog:
-> @@ -13,6 +13,7 @@
->  #ifndef __ASM_ARCH_COLLIE_H
->  #define __ASM_ARCH_COLLIE_H
->  
-> +extern void locomolcd_power(int on);
->  
->  #define COLLIE_SCOOP_GPIO_BASE	(GPIO_MAX + 1)
->  #define COLLIE_GPIO_CHARGE_ON	(COLLIE_SCOOP_GPIO_BASE + 0)
-> diff --git a/drivers/video/backlight/locomolcd.c b/drivers/video/backlight/locomolcd.c
-> index be20b5c..3a6d541 100644
-> --- a/drivers/video/backlight/locomolcd.c
-> +++ b/drivers/video/backlight/locomolcd.c
-> @@ -229,14 +229,7 @@ static struct locomo_driver poodle_lcd_driver = {
->  
->  static int __init locomolcd_init(void)
->  {
-> -	int ret = locomo_driver_register(&poodle_lcd_driver);
-> -	if (ret)
-> -		return ret;
-> -
-> -#ifdef CONFIG_SA1100_COLLIE
-> -	sa1100fb_lcd_power = locomolcd_power;
-> -#endif
-> -	return 0;
-> +	return locomo_driver_register(&poodle_lcd_driver);
->  }
->  
->  static void __exit locomolcd_exit(void)
+Done.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__22_Mar_2012_00_52_59_+1100_g6dcvKQ91j1kLVJI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPad07AAoJEECxmPOUX5FEq40QAJ4cpN3NvLPNhqo/LgnhKJA9
+aigJLAc+juXKFjKFG7NdWnlO337EtPv7K4qiW7g+jt/iHodoDS6bWTIrRuED3h9i
+vW+64TfYDzANBsV+/NoLqhUxfau+CAT5pVumB0go9IK2/hWQzDb4Z9BuMAccEfwa
+30M3ow7h1tV9YFlV2ZQP+FyKgt1siz4iZG9Ka8leBI8WmqiBzlNsQKllhJ6jpLop
+BDYsf3hdFKFVGjNeowzaynGY+rYuBNikuoQ3pKra5KL5O/0JQXABA+0NMnya6gnT
+92W/YyuHDX68XC/D/5n5CRg1O7gkIZ6P7wX2pWBnm8WjrRFCl/1niHIAUsKH0+Pj
++FCcR1dVRjPBgQtctNJqTs+jsw3OdJfk/5Tw6oywI+Zn5Nh29TXJGKPCOwW6a7nN
+p0AEzbDRr3s8quMG/NrqI/CfpOxJ3631T8HfudyxS9dcHL2NNX6fA8YAJaeElFpB
+al+jIPK9uMNRoPxmWWMwNF5/Z6lqlWH0JIG5ud1SB8qIUgjeCtZxzB5wwC05WPKr
+glgOk80HnwAzjU9u0OrPD04TlBw/AjRuAiRYi8pKimlpZEM3RuN1raVkfjaJBoZM
+7ooWSbOsTokilzL6e1yzkclMKv1FTOo+do10gIjT/MDQggZM+qesf/LyQBNr0r5a
+OzGo0ex8qRuyLxtet5Ni
+=Sjt8
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__22_Mar_2012_00_52_59_+1100_g6dcvKQ91j1kLVJI--
