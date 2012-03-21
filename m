@@ -1,44 +1,99 @@
-From: Robert Richter <robert.richter@amd.com>
-Subject: Re: linux-next: manual merge of the oprofile tree with the tip tree
-Date: Wed, 21 Mar 2012 13:33:48 +0100
-Message-ID: <20120321123348.GJ16322@erda.amd.com>
-References: <20120321163151.83cad17d5524424938f7576c@canb.auug.org.au>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Subject: Re: [PATCH] ARM: fix lcd power build failure in collie_defconfig
+Date: Wed, 21 Mar 2012 12:47:46 +0000
+Message-ID: <4F69CDF2.3020609@gmx.de>
+References: <1331051502-22361-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ch1ehsobe005.messaging.microsoft.com ([216.32.181.185]:44381
-	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755914Ab2CUMd7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Mar 2012 08:33:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20120321163151.83cad17d5524424938f7576c@canb.auug.org.au>
+Received: from mailout-de.gmx.net ([213.165.64.22]:37728 "HELO
+	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755491Ab2CUMsL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 08:48:11 -0400
+In-Reply-To: <1331051502-22361-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lin Ming <ming.m.lin@intel.com>, Jiri Olsa <jolsa@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux@arm.linux.org.uk
+Cc: rpurdie@rpsys.net, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
 
-On 21.03.12 16:31:51, Stephen Rothwell wrote:
-> Today's linux-next merge of the oprofile tree got a conflict in
-> tools/perf/util/parse-events.c between commit 89812fc81f8d ("perf tools:
-> Add parser generator for events parsing") from the tip tree and commit
-> 1e48600d2388 ("perf tool: Parse general/raw events from sysfs") from the
-> oprofile tree.
+On 03/06/2012 04:31 PM, Paul Gortmaker wrote:
+> Commit 086ada54abaa4316e8603f02410fe8ebc9ba2de1 (linux-next)
 > 
-> I have no idea how to fix this up, so I effectively dropped this patch
-> from the oprofile tree.
+>   "FB: sa1100: remove global sa1100fb_.*_power function pointers"
+> 
+> got rid of all instances but one in locomolcd.c -- which was
+> conditional on CONFIG_SA1100_COLLIE.  The associated .power
+> field which replaces the global is populated in mach-sa1100/collie.c
+> so move the assignment there, but make it conditional on the
+> locomolcd support, so use CONFIG_BACKLIGHT_LOCOMO in that file.
+> 
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-Yeah, the trees are totally different now. Removed my tree from
-for-next.
+What about this patch?
+I assumed Russel would pick it up as the commit referenced is also in
+his tree but it looks like this patch is still not in -next. Any reasons
+for this?
 
-Btw, please switch my for-next tree back to kernel.org:
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rric/oprofile.git for-next
+Best regards,
 
-Thanks.
+Florian Tobias Schandinat
 
--Robert
-
--- 
-Advanced Micro Devices, Inc.
-Operating System Research Center
+> 
+> diff --git a/arch/arm/mach-sa1100/collie.c b/arch/arm/mach-sa1100/collie.c
+> index 48885b7..c7f418b 100644
+> --- a/arch/arm/mach-sa1100/collie.c
+> +++ b/arch/arm/mach-sa1100/collie.c
+> @@ -313,6 +313,10 @@ static struct sa1100fb_mach_info collie_lcd_info = {
+>  
+>  	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
+>  	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
+> +
+> +#ifdef CONFIG_BACKLIGHT_LOCOMO
+> +	.lcd_power	= locomolcd_power
+> +#endif
+>  };
+>  
+>  static void __init collie_init(void)
+> diff --git a/arch/arm/mach-sa1100/include/mach/collie.h b/arch/arm/mach-sa1100/include/mach/collie.h
+> index 52acda7..f33679d 100644
+> --- a/arch/arm/mach-sa1100/include/mach/collie.h
+> +++ b/arch/arm/mach-sa1100/include/mach/collie.h
+> @@ -1,7 +1,7 @@
+>  /*
+>   * arch/arm/mach-sa1100/include/mach/collie.h
+>   *
+> - * This file contains the hardware specific definitions for Assabet
+> + * This file contains the hardware specific definitions for Collie
+>   * Only include this file from SA1100-specific files.
+>   *
+>   * ChangeLog:
+> @@ -13,6 +13,7 @@
+>  #ifndef __ASM_ARCH_COLLIE_H
+>  #define __ASM_ARCH_COLLIE_H
+>  
+> +extern void locomolcd_power(int on);
+>  
+>  #define COLLIE_SCOOP_GPIO_BASE	(GPIO_MAX + 1)
+>  #define COLLIE_GPIO_CHARGE_ON	(COLLIE_SCOOP_GPIO_BASE + 0)
+> diff --git a/drivers/video/backlight/locomolcd.c b/drivers/video/backlight/locomolcd.c
+> index be20b5c..3a6d541 100644
+> --- a/drivers/video/backlight/locomolcd.c
+> +++ b/drivers/video/backlight/locomolcd.c
+> @@ -229,14 +229,7 @@ static struct locomo_driver poodle_lcd_driver = {
+>  
+>  static int __init locomolcd_init(void)
+>  {
+> -	int ret = locomo_driver_register(&poodle_lcd_driver);
+> -	if (ret)
+> -		return ret;
+> -
+> -#ifdef CONFIG_SA1100_COLLIE
+> -	sa1100fb_lcd_power = locomolcd_power;
+> -#endif
+> -	return 0;
+> +	return locomo_driver_register(&poodle_lcd_driver);
+>  }
+>  
+>  static void __exit locomolcd_exit(void)
