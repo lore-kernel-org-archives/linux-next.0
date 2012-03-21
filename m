@@ -1,73 +1,97 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drivers-x86 tree
-Date: Wed, 21 Mar 2012 16:52:04 +1100
-Message-ID: <20120321165204.3b9e1995dc363b685d8018dc@canb.auug.org.au>
+From: Hans-Christian Egtvedt <egtvedt@samfundet.no>
+Subject: Re: [PATCH] avr32: fix build failures from mis-naming of atmel_nand.h
+Date: Wed, 21 Mar 2012 08:26:32 +0100
+Message-ID: <20120321072632.GA15703@samfundet.no>
+References: <1332296128-16262-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Mar_2012_16_52_04_+1100_nO+2m1wjTc5QHH7r"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Forshee <seth.forshee@canonical.com>, Azael Avalos <coproscefalo@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1332296128-16262-1-git-send-email-paul.gortmaker@windriver.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, nicolas.ferre@atmel.com, linux-next@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux@maxim.org.za, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__21_Mar_2012_16_52_04_+1100_nO+2m1wjTc5QHH7r
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Around Tue 20 Mar 2012 22:15:28 -0400 or thereabout, Paul Gortmaker wrote:
+> Commit bf4289cba02b8cf770ecd7959ca70839f0dd9d3c (linux-next)
+> 
+>     "ATMEL: fix nand ecc support"
+> 
+> indicated that it wanted to "Move platform data to a common
+> header include/linux/platform_data/atmel_nand.h" and the new
+> header even had re-include protectors with:
+> 
+>     #ifndef __ATMEL_NAND_H__
+> 
+> However, the file that was added was simply called atmel.h
+> and this caused avr32 defconfig to fail with:
+> 
+>   In file included from arch/avr32/boards/atstk1000/setup.c:22:
+>   arch/avr32/mach-at32ap/include/mach/board.h:10:44: error: linux/platform_data/atmel_nand.h: No such file or directory
+>   In file included from arch/avr32/boards/atstk1000/setup.c:22:
+>   arch/avr32/mach-at32ap/include/mach/board.h:121: warning: 'struct atmel_nand_data' declared inside parameter list
+>   arch/avr32/mach-at32ap/include/mach/board.h:121: warning: its scope is only this definition or declaration, which is probably not what you want
+>   make[2]: *** [arch/avr32/boards/atstk1000/setup.o] Error 1
+> 
+> Rename the file to match the original intention, and fix up the
+> users who reference the bad name without the _nand suffix.
 
-Hi Matthew,
+Thanks fixing this.
 
-After merging the drivers-x86 tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> CC: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+> CC: Hans-Christian Egtvedt <egtvedt@samfundet.no>
+> CC: David Woodhouse <dwmw2@infradead.org>
 
-drivers/platform/x86/toshiba_acpi.c:141:1: error: unknown type name 'sturct'
-drivers/platform/x86/toshiba_acpi.c:141:32: error: expected '=3D', ',', ';'=
-, 'asm' or '__attribute__' before '*' token
-drivers/platform/x86/toshiba_acpi.c: In function 'toshiba_acpi_i8042_filter=
-':
-drivers/platform/x86/toshiba_acpi.c:877:18: error: 'toshiba_acpi' undeclare=
-d (first use in this function)
-drivers/platform/x86/toshiba_acpi.c:877:18: note: each undeclared identifie=
-r is reported only once for each function it appears in
-drivers/platform/x86/toshiba_acpi.c: In function 'toshiba_acpi_remove':
-drivers/platform/x86/toshiba_acpi.c:1050:6: error: 'toshiba_acpi' undeclare=
-d (first use in this function)
-drivers/platform/x86/toshiba_acpi.c: In function 'toshiba_acpi_add':
-drivers/platform/x86/toshiba_acpi.c:1083:6: error: 'toshiba_acpi' undeclare=
-d (first use in this function)
+Acked-by: Hans-Christian Egtvedt <egtvedt@samfundet.no>
 
-Caused by commit 5ea3879c8e16 ("toshiba_acpi: Support alternate hotkey inte=
-rfaces").
-
-Please build test this stuff :-(
-
-I have used the drivers-x86 tree from next-20120320 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__21_Mar_2012_16_52_04_+1100_nO+2m1wjTc5QHH7r
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPaWyEAAoJEECxmPOUX5FEqb0QAIdqfmCoSS2zwIBC4dNdOJbx
-v13lizZFBPmR9EaWbbGI3hyPG64s5pZoKEqmlMtIl7h1r5yWLWbmlNvey+ZsiNfh
-/s0WGdwJyEiX/nYAdYsznAnbcILAUbPZR6sid5+7FPJdqrS9Kq8JxPDwT4zU9BTM
-Sgs2AY45o+mEu3AsYcLx3b/lG0s6g4KtaIGp7/HYZNQC+aPlIJ33R1Dp/uziB0Vg
-00CvNnOnjnaPQlD2tEkGBnW7hIWY5l1eUm6jh+wgbqIzSl4iS6cxgkjT/wmu+kVq
-7nTTxReD/VUngxALcu65xUACK4dT9bIr2NImb/sGeAQ1q9QjuhURSYD2eqlRrC1O
-syMbf+Ytn8S/JwbEgnJ/jM41tILgd8ELyHafICk3anVth/hmyqBVLg31p8ROW1/X
-9R2kCBnkyw1bdqGITcSGf+tS0Sdox30Lkd08kfxFD/sbCWYVd20sTtO9tn2gA5A1
-ho7YVmBmvY93B4nmfLJY0O40UlKRTXFOX91kN55syW9q6vpUTM5k6UZtdUSjMdij
-cyy/Fj8v6l6mu9gz1NiQry6NEoflQaN97SDWSPoXW9pKlQJEp/yLPyEXES5Kcwrf
-owPlADeQST3l3iYWq54kj8tE3PCZajTYHbwElqW650TsbcFw3sO7EKanvOtCgQ0k
-gAsz/gpkyJPegNMpKx/8
-=/poY
------END PGP SIGNATURE-----
-
---Signature=_Wed__21_Mar_2012_16_52_04_+1100_nO+2m1wjTc5QHH7r--
+> ---
+>  arch/arm/mach-at91/include/mach/board.h            |    2 +-
+>  drivers/mtd/nand/atmel_nand.c                      |    2 +-
+>  .../linux/platform_data/{atmel.h => atmel_nand.h}  |    0
+>  3 files changed, 2 insertions(+), 2 deletions(-)
+>  rename include/linux/platform_data/{atmel.h => atmel_nand.h} (100%)
+> 
+> diff --git a/arch/arm/mach-at91/include/mach/board.h b/arch/arm/mach-at91/include/mach/board.h
+> index 544a5d5..aa0e083 100644
+> --- a/arch/arm/mach-at91/include/mach/board.h
+> +++ b/arch/arm/mach-at91/include/mach/board.h
+> @@ -41,7 +41,7 @@
+>  #include <sound/atmel-ac97c.h>
+>  #include <linux/serial.h>
+>  #include <linux/platform_data/macb.h>
+> -#include <linux/platform_data/atmel.h>
+> +#include <linux/platform_data/atmel_nand.h>
+>  
+>   /* USB Device */
+>  struct at91_udc_data {
+> diff --git a/drivers/mtd/nand/atmel_nand.c b/drivers/mtd/nand/atmel_nand.c
+> index 2165576..7b599a9 100644
+> --- a/drivers/mtd/nand/atmel_nand.c
+> +++ b/drivers/mtd/nand/atmel_nand.c
+> @@ -38,7 +38,7 @@
+>  #include <linux/dmaengine.h>
+>  #include <linux/gpio.h>
+>  #include <linux/io.h>
+> -#include <linux/platform_data/atmel.h>
+> +#include <linux/platform_data/atmel_nand.h>
+>  
+>  #include <mach/cpu.h>
+>  
+> diff --git a/include/linux/platform_data/atmel.h b/include/linux/platform_data/atmel_nand.h
+> similarity index 100%
+> rename from include/linux/platform_data/atmel.h
+> rename to include/linux/platform_data/atmel_nand.h
+-- 
+mvh
+Hans-Christian Egtvedt
