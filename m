@@ -1,54 +1,65 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: triage for March 14, 2012
-Date: Wed, 21 Mar 2012 09:33:45 +0100
-Message-ID: <CAMuHMdWU2TcU=LPMQZD35Ssbfah5tuhykcfQPPkEtF_RRdjTyw@mail.gmail.com>
-References: <20120314233926.GA22887@windriver.com>
-	<CAMuHMdV45SBg+cm0+x07SfvY-xpjqb_ZVznn-vD=70G1YZXnFw@mail.gmail.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH v2] x86: export 'pcibios_enabled' as GPL
+Date: Wed, 21 Mar 2012 09:29:50 +0000
+Message-ID: <20120321092950.7fc07d84@pyramind.ukuu.org.uk>
+References: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au>
+	<4F5FAE63.3090908@xenotime.net>
+	<20120319003044.GA3744@udknight>
+	<4F6685ED.7040000@xenotime.net>
+	<20120321043721.GA927@udknight>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdV45SBg+cm0+x07SfvY-xpjqb_ZVznn-vD=70G1YZXnFw@mail.gmail.com>
+In-Reply-To: <20120321043721.GA927@udknight>
 Sender: linux-kernel-owner@vger.kernel.org
-To: John Stultz <john.stultz@linaro.org>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Colin Cross <ccross@android.com>, Android Kernel Team <kernel-team@android.com>, gregkh@linuxfoundation.org, Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wang YanQing <udknight@gmail.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michal Januszewski <spock@gentoo.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Mar 15, 2012 at 09:00, Geert Uytterhoeven <geert@linux-m68k.org=
-> wrote:
-> On Thu, Mar 15, 2012 at 00:39, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
->> New breakage since last report:
->
-> Seems you missed two new failures for m68k/allmodconfig:
->
-> include/linux/mmc/core.h:128:20: error: field 'completion' has incomp=
-lete type
-> make[4]: *** [drivers/mmc/card/mmc_test.o] Error 1
->
-> drivers/staging/android/persistent_ram.c:457:2: error: implicit
-> declaration of function 'memblock_reserve'
-> [-Werror=3Dimplicit-function-declaration]
-> cc1: some warnings being treated as errors
-> make[4]: *** [drivers/staging/android/persistent_ram.o] Error 1
+On Wed, 21 Mar 2012 12:37:21 +0800
+Wang YanQing <udknight@gmail.com> wrote:
 
-This build failure is now in Linus' tree :-(
-http://kisskb.ellerman.id.au/kisskb/buildresult/5926105/
+> On Sun, Mar 18, 2012 at 06:03:41PM -0700, Randy Dunlap wrote:
+> > From: Randy Dunlap <rdunlap@xenotime.net>
+> > 
+> > Export 'pcibios_enabled' so that when uvesafb is built as a
+> > loadable module (on X86_32), the build will succeed.
+> > 
+> > ERROR: "pcibios_enabled" [drivers/video/uvesafb.ko] undefined!
+> > 
+> > Patch v2 uses EXPORT_SYMBOL_GPL() as requested.
+> > 
+> > Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> > Cc:	Michal Januszewski <spock@gentoo.org>
+> > Cc:	Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+> > Cc:	linux-fbdev@vger.kernel.org
+> > Cc:	x86@kernel.org
+> > ---
+> >  arch/x86/pci/pcbios.c |    1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > --- linux-next-20120313.orig/arch/x86/pci/pcbios.c
+> > +++ linux-next-20120313/arch/x86/pci/pcbios.c
+> > @@ -27,6 +27,7 @@
+> >  #define PCIBIOS_HW_TYPE2_SPEC		0x20
+> >  
+> >  int pcibios_enabled;
+> > +EXPORT_SYMBOL_GPL(pcibios_enabled);
+> >  
+> >  /* According to the BIOS specification at:
+> >   * http://members.datafast.net.au/dft0802/specs/bios21.pdf, we could
+> Acked-by: Wang YanQing <udknight@gmail.com>
 
-Please fix it. Thx!
+NAKked again by Alan Cox <alan@linux.intel.com>
 
-Gr{oetje,eeting}s,
+The fb code shouldn't be playing guessing games with thsi variable.
+I've pointed out both how to check if NX is enabled and how to set pages
+NX/non-NX.
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+Even if you wanted to check the pci bios state we should export a helper
+method.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+So NAK.
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+Alan
