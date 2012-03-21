@@ -1,80 +1,119 @@
-From: Greg Ungerer <gerg@snapgear.com>
-Subject: Re: linux-next: manual merge of the tip tree with the m68knommu tree
-Date: Wed, 21 Mar 2012 11:35:48 +1000
-Message-ID: <4F693074.3010002@snapgear.com>
-References: <20120302134903.7992cf17cb0c50b9a2b3842c@canb.auug.org.au> <20120321113852.93618d6fa5977e9a71caa298@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Rob Herring <robherring2@gmail.com>
+Subject: [PATCH 1/2] ARM: dma-mapping: convert ARCH_HAS_DMA_SET_COHERENT_MASK to kconfig symbol
+Date: Tue, 20 Mar 2012 21:15:48 -0500
+Message-ID: <1332296149-28110-1-git-send-email-robherring2@gmail.com>
+References: <4F68CD9C.3090001@windriver.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from dalsmrelay2.nai.com ([205.227.136.216]:11979 "EHLO
-	dalsmrelay2.nai.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932108Ab2CUBlT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 21:41:19 -0400
-In-Reply-To: <20120321113852.93618d6fa5977e9a71caa298@canb.auug.org.au>
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:56049 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754559Ab2CUCQN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Mar 2012 22:16:13 -0400
+Received: by ghrr11 with SMTP id r11so651962ghr.19
+        for <linux-next@vger.kernel.org>; Tue, 20 Mar 2012 19:16:13 -0700 (PDT)
+In-Reply-To: <4F68CD9C.3090001@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Nicolas Pitre <nico@fluxnic.net>, linux-next@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khc@pm.waw.pl>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>
 
-Hi Stephen,
+From: Rob Herring <rob.herring@calxeda.com>
 
-On 21/03/12 10:38, Stephen Rothwell wrote:
-> Hi Greg, Geert,
->
-> On Fri, 2 Mar 2012 13:49:03 +1100 Stephen Rothwell<sfr@canb.auug.org.au>  wrote:
->>
->> Today's linux-next merge of the tip tree got conflicts in
->> arch/m68k/kernel/process_no.c and arch/m68k/kernel/process_mm.c between
->> commit 8d8b74c955fd ("m68k: merge the MMU and non-MMU versions of
->> process.c") from the m68knommu tree and commit bd2f55361f18 ("sched/rt:
->> Use schedule_preempt_disabled()") from the tip tree.
->
-> That tip tree commit is now in Linus' tree, so I am now applying the
-> patch below after merging the m68knommu tree.
+The only users of ARCH_HAS_DMA_SET_COHERENT_MASK are 2 ARM platforms:
+ixp4xx and pxa cm_x2xx. We've been getting lucky that the define is
+implicitly included before dma-mapping.h, but the removal of io.h broke
+things (c334bc1 ARM: make mach/io.h include optional). Since memory.h
+is the correct place, but no longer exists, convert the define to a
+kconfig entry.
 
-Looks good, thanks.
+Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Imre Kaloz <kaloz@openwrt.org>
+Cc: Krzysztof Halasa <khc@pm.waw.pl>
+Cc: Eric Miao <eric.y.miao@gmail.com>
+Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
+Cc: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+---
+ arch/arm/Kconfig                             |    4 ++++
+ arch/arm/mach-ixp4xx/include/mach/hardware.h |    2 --
+ arch/arm/mach-pxa/Kconfig                    |    1 +
+ arch/arm/mach-pxa/include/mach/hardware.h    |    4 ----
+ include/linux/dma-mapping.h                  |    2 +-
+ 5 files changed, 6 insertions(+), 7 deletions(-)
 
-Regards
-Greg
-
-
-
->> The former merged these two files into a single process.c, so I removed
->> them.  I then applied the following merge fix patch.
->>
->> From: Stephen Rothwell<sfr@canb.auug.org.au>
->> Date: Fri, 2 Mar 2012 13:43:03 +1100
->> Subject: [PATCH] sched/rt: Use schedule_preempt_disabled() in m68k
->>
->> Signed-off-by: Stephen Rothwell<sfr@canb.auug.org.au>
->> ---
->>   arch/m68k/kernel/process.c |    4 +---
->>   1 files changed, 1 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/m68k/kernel/process.c b/arch/m68k/kernel/process.c
->> index f053e24..c54ef927 100644
->> --- a/arch/m68k/kernel/process.c
->> +++ b/arch/m68k/kernel/process.c
->> @@ -78,9 +78,7 @@ void cpu_idle(void)
->>   	while (1) {
->>   		while (!need_resched())
->>   			idle();
->> -		preempt_enable_no_resched();
->> -		schedule();
->> -		preempt_disable();
->> +		schedule_preempt_disabled();
->>   	}
->>   }
->>
->> --
->> 1.7.9.1
->
-
-
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 31a2ddc..d3999a5 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -180,6 +180,9 @@ config ZONE_DMA
+ config NEED_DMA_MAP_STATE
+        def_bool y
+ 
++config ARCH_HAS_DMA_SET_COHERENT_MASK
++	bool
++
+ config GENERIC_ISA_DMA
+ 	bool
+ 
+@@ -547,6 +550,7 @@ config ARCH_IXP2000
+ config ARCH_IXP4XX
+ 	bool "IXP4xx-based"
+ 	depends on MMU
++	select ARCH_HAS_DMA_SET_COHERENT_MASK
+ 	select CLKSRC_MMIO
+ 	select CPU_XSCALE
+ 	select GENERIC_GPIO
+diff --git a/arch/arm/mach-ixp4xx/include/mach/hardware.h b/arch/arm/mach-ixp4xx/include/mach/hardware.h
+index c30e7e9..034bb2a 100644
+--- a/arch/arm/mach-ixp4xx/include/mach/hardware.h
++++ b/arch/arm/mach-ixp4xx/include/mach/hardware.h
+@@ -23,8 +23,6 @@
+ #define PCIBIOS_MAX_MEM		0x4BFFFFFF
+ #endif
+ 
+-#define ARCH_HAS_DMA_SET_COHERENT_MASK
+-
+ /* Register locations and bits */
+ #include "ixp4xx-regs.h"
+ 
+diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
+index 61d3c72..109ccd2 100644
+--- a/arch/arm/mach-pxa/Kconfig
++++ b/arch/arm/mach-pxa/Kconfig
+@@ -108,6 +108,7 @@ config CSB726_CSB701
+ 
+ config MACH_ARMCORE
+ 	bool "CompuLab CM-X255/CM-X270 modules"
++	select ARCH_HAS_DMA_SET_COHERENT_MASK if PCI
+ 	select PXA27x
+ 	select IWMMXT
+ 	select PXA25x
+diff --git a/arch/arm/mach-pxa/include/mach/hardware.h b/arch/arm/mach-pxa/include/mach/hardware.h
+index 8184669..54b64ea 100644
+--- a/arch/arm/mach-pxa/include/mach/hardware.h
++++ b/arch/arm/mach-pxa/include/mach/hardware.h
+@@ -337,8 +337,4 @@ extern unsigned int get_memclk_frequency_10khz(void);
+ extern unsigned long get_clock_tick_rate(void);
+ #endif
+ 
+-#if defined(CONFIG_MACH_ARMCORE) && defined(CONFIG_PCI)
+-#define ARCH_HAS_DMA_SET_COHERENT_MASK
+-#endif
+-
+ #endif  /* _ASM_ARCH_HARDWARE_H */
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index e13117c..5a736af 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -77,7 +77,7 @@ static inline u64 dma_get_mask(struct device *dev)
+ 	return DMA_BIT_MASK(32);
+ }
+ 
+-#ifdef ARCH_HAS_DMA_SET_COHERENT_MASK
++#ifdef CONFIG_ARCH_HAS_DMA_SET_COHERENT_MASK
+ int dma_set_coherent_mask(struct device *dev, u64 mask);
+ #else
+ static inline int dma_set_coherent_mask(struct device *dev, u64 mask)
 -- 
-------------------------------------------------------------------------
-Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
-SnapGear Group, McAfee                      PHONE:       +61 7 3435 2888
-8 Gardner Close                             FAX:         +61 7 3217 5323
-Milton, QLD, 4064, Australia                WEB: http://www.SnapGear.com
+1.7.5.4
