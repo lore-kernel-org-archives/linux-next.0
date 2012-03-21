@@ -1,65 +1,50 @@
 From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH v2] x86: export 'pcibios_enabled' as GPL
-Date: Wed, 21 Mar 2012 09:29:50 +0000
-Message-ID: <20120321092950.7fc07d84@pyramind.ukuu.org.uk>
-References: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au>
-	<4F5FAE63.3090908@xenotime.net>
-	<20120319003044.GA3744@udknight>
-	<4F6685ED.7040000@xenotime.net>
-	<20120321043721.GA927@udknight>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Wed, 21 Mar 2012 09:53:17 +0000
+Message-ID: <20120321095317.0c142913@pyramind.ukuu.org.uk>
+References: <20120308152110.12c805f59c45251d79bcb24b@canb.auug.org.au>
+	<20120308180048.GC26516@kroah.com>
+	<20120321090038.06c65f50bd0329df8705f2cd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120321043721.GA927@udknight>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wang YanQing <udknight@gmail.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michal Januszewski <spock@gentoo.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:47270 "EHLO
+	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752892Ab2CUJvR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 05:51:17 -0400
+In-Reply-To: <20120321090038.06c65f50bd0329df8705f2cd@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
 
-On Wed, 21 Mar 2012 12:37:21 +0800
-Wang YanQing <udknight@gmail.com> wrote:
+On Wed, 21 Mar 2012 09:00:38 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> On Sun, Mar 18, 2012 at 06:03:41PM -0700, Randy Dunlap wrote:
-> > From: Randy Dunlap <rdunlap@xenotime.net>
+> Hi all,
+> 
+> On Thu, 8 Mar 2012 10:00:48 -0800 Greg KH <greg@kroah.com> wrote:
+> >
+> > On Thu, Mar 08, 2012 at 03:21:10PM +1100, Stephen Rothwell wrote:
+> > > 
+> > > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> > > failed like this:
+> > > 
+> > > drivers/staging/sep/sep_driver.c:55:32: fatal error: linux/rar_register.h: No such file or directory
+> > > 
+> > > Caused by commit 33e9970add94 ("x86/mid: Kill off Moorestown").
+> > > 
+> > > Following previous instructions, I have disabled the staging tree driver
+> > > using this patch (pending a fix in the tip tree):
 > > 
-> > Export 'pcibios_enabled' so that when uvesafb is built as a
-> > loadable module (on X86_32), the build will succeed.
-> > 
-> > ERROR: "pcibios_enabled" [drivers/video/uvesafb.ko] undefined!
-> > 
-> > Patch v2 uses EXPORT_SYMBOL_GPL() as requested.
-> > 
-> > Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> > Cc:	Michal Januszewski <spock@gentoo.org>
-> > Cc:	Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-> > Cc:	linux-fbdev@vger.kernel.org
-> > Cc:	x86@kernel.org
-> > ---
-> >  arch/x86/pci/pcbios.c |    1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > --- linux-next-20120313.orig/arch/x86/pci/pcbios.c
-> > +++ linux-next-20120313/arch/x86/pci/pcbios.c
-> > @@ -27,6 +27,7 @@
-> >  #define PCIBIOS_HW_TYPE2_SPEC		0x20
-> >  
-> >  int pcibios_enabled;
-> > +EXPORT_SYMBOL_GPL(pcibios_enabled);
-> >  
-> >  /* According to the BIOS specification at:
-> >   * http://members.datafast.net.au/dft0802/specs/bios21.pdf, we could
-> Acked-by: Wang YanQing <udknight@gmail.com>
+> > Looks good to me.  Alan, care to send me an update that fixes this
+> > driver for real?
+> 
+> Was this ever fixed?
 
-NAKked again by Alan Cox <alan@linux.intel.com>
-
-The fb code shouldn't be playing guessing games with thsi variable.
-I've pointed out both how to check if NX is enabled and how to set pages
-NX/non-NX.
-
-Even if you wanted to check the pci bios state we should export a helper
-method.
-
-So NAK.
+I thought it was but apparently it got lost or I dropped the ball. I'll
+sort it once git.kernel.org is back and I can pull a currentish -next
+tree.
 
 Alan
