@@ -1,151 +1,291 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH v4 2/3] thp: add HPAGE_PMD_* definitions for !CONFIG_TRANSPARENT_HUGEPAGE
-Date: Wed, 21 Mar 2012 18:07:41 -0400
-Message-ID: <CAP=VYLoGSckJH+2GytZN0V0P3Uuv-PiVneKbFsVb5kQa3kcTCQ@mail.gmail.com>
-References: <1331591456-20769-1-git-send-email-n-horiguchi@ah.jp.nec.com>
-	<1331591456-20769-2-git-send-email-n-horiguchi@ah.jp.nec.com>
+Subject: linux-next: triage for March 21, 2012
+Date: Wed, 21 Mar 2012 18:16:22 -0400
+Message-ID: <20120321221622.GA30957@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:34563 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754593Ab2CUWHo convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 18:07:44 -0400
-In-Reply-To: <1331591456-20769-2-git-send-email-n-horiguchi@ah.jp.nec.com>
+Received: from mail.windriver.com ([147.11.1.11]:53385 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757990Ab2CUWQY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 18:16:24 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Andrea Arcangeli <aarcange@redhat.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Daisuke Nishimura <nishimura@mxp.nes.nec.co.jp>, Hillf Danton <dhillf@gmail.com>, David Rientjes <rientjes@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2012 at 6:30 PM, Naoya Horiguchi
-<n-horiguchi@ah.jp.nec.com> wrote:
-> These macros will be used in later patch, where all usage are expecte=
-d
-> to be optimized away without #ifdef CONFIG_TRANSPARENT_HUGEPAGE.
-> But to detect unexpected usages, we convert existing BUG() to BUILD_B=
-UG().
+New breakage since last report:
+	ARM:tct_hammer_defconfig (pgtable-generic.c: call to '__build_bug_failed')
 
-Just a heads up that this showed up in linux-next today as the
-cause of a new build failure for an ARM board:
+Randconfig fails that may or may not be new (by their very nature):
+	powerpc: pseries/iommu.c: 'struct pci_dn' has no member named 'eeh_config_addr'
+		(http://kisskb.ellerman.id.au/kisskb/buildresult/5930424/)
+	x86_64: No rule to make scsi/aic7xxx/aicasm/*.[chyl]
+                (http://kisskb.ellerman.id.au/kisskb/buildresult/5930300/)
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/5930053/
-
-Paul.
---
-
-git bisect start
-# good: [fde7d9049e55ab85a390be7f415d74c9f62dd0f9] Linux 3.3-rc7
-git bisect good fde7d9049e55ab85a390be7f415d74c9f62dd0f9
-# bad: [9166d6581d1ca6795bcd38506c7d29bf39402a7d] Add linux-next
-specific files for 20120321
-git bisect bad 9166d6581d1ca6795bcd38506c7d29bf39402a7d
-# good: [e863be5cac0a857302ccc0129326ca3634c1136a] Merge
-remote-tracking branch 'net-next/master'
-git bisect good e863be5cac0a857302ccc0129326ca3634c1136a
-# good: [2ac4846c531fc33783999e8819a66d0f3e36058f] Merge
-remote-tracking branch 'spi/spi/next'
-git bisect good 2ac4846c531fc33783999e8819a66d0f3e36058f
-# good: [a3ebef77540d27811aab7514b9aeaab13c573b46] Merge
-remote-tracking branch 'oprofile/for-next'
-git bisect good a3ebef77540d27811aab7514b9aeaab13c573b46
-# good: [3ee174051be0246173ba8a386bb7a2d20d9e27c3] [arm-soc internal]
-add back contents file
-git bisect good 3ee174051be0246173ba8a386bb7a2d20d9e27c3
-# good: [cc61a2762110efb0868bc326be52f3ecd22c4e99] Merge
-remote-tracking branch 'dma-buf/for-next'
-git bisect good cc61a2762110efb0868bc326be52f3ecd22c4e99
-# bad: [dd09ea75ddb4d712abe5ec8a9b37619a99d4554c] kernel/watchdog.c:
-add comment to watchdog() exit path
-git bisect bad dd09ea75ddb4d712abe5ec8a9b37619a99d4554c
-# good: [a80d01212507a57d48912f08ca22de039f4470b8] rmap: remove
-__anon_vma_link() declaration
-git bisect good a80d01212507a57d48912f08ca22de039f4470b8
-# good: [dfac39f6a2daa212de0eb80bf14c76a2bee23dc4] memcg: remove
-PCG_CACHE page_cgroup flag
-git bisect good dfac39f6a2daa212de0eb80bf14c76a2bee23dc4
-# bad: [8887892fd3354617e63be2399e286a86d0f9279c] alpha: use
-set_current_blocked() and block_sigmask()
-git bisect bad 8887892fd3354617e63be2399e286a86d0f9279c
-# good: [0d7a67d6525414f8541f4a61084d783b4b53b8ec] memcg: remove
-PCG_FILE_MAPPED fix cosmetic fix
-git bisect good 0d7a67d6525414f8541f4a61084d783b4b53b8ec
-# good: [ea20bf604adaab3a4ffb887083e62e7d76eb5d53] memcg: clean up
-existing move charge code
-git bisect good ea20bf604adaab3a4ffb887083e62e7d76eb5d53
-# bad: [0709378dc1d716112e10de7f687af4993e69df7b] frv: use
-set_current_blocked() and block_sigmask()
-git bisect bad 0709378dc1d716112e10de7f687af4993e69df7b
-# bad: [3135be0275c89f28c352554a0ec1874ea7cd3c3a] memcg: avoid THP
-split in task migration
-git bisect bad 3135be0275c89f28c352554a0ec1874ea7cd3c3a
-# bad: [92c36300cf69f6ea1267d0bba7af708560c116d7] thp: add HPAGE_PMD_*
-definitions for !CONFIG_TRANSPARENT_HUGEPAGE
-git bisect bad 92c36300cf69f6ea1267d0bba7af708560c116d7
-paul@yow-lpgnfs-02:~/git/linux-head$
+Builds that are fixed since last report:
+	ARM:s3c2410_defconfig 
 
 
+Note: The randconfig fails are only listed once and not tracked
+in the below listing.
 
->
-> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Acked-by: Hillf Danton <dhillf@gmail.com>
-> Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
-> Reviewed-by: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-> Acked-by: David Rientjes <rientjes@google.com>
-> ---
-> =A0include/linux/huge_mm.h | =A0 11 ++++++-----
-> =A01 files changed, 6 insertions(+), 5 deletions(-)
->
-> diff --git linux-next-20120307.orig/include/linux/huge_mm.h linux-nex=
-t-20120307/include/linux/huge_mm.h
-> index f56cacb..c8af7a2 100644
-> --- linux-next-20120307.orig/include/linux/huge_mm.h
-> +++ linux-next-20120307/include/linux/huge_mm.h
-> @@ -51,6 +51,9 @@ extern pmd_t *page_check_address_pmd(struct page *p=
-age,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- unsigned long address,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- enum page_check_address_pmd_flag flag);
->
-> +#define HPAGE_PMD_ORDER (HPAGE_PMD_SHIFT-PAGE_SHIFT)
-> +#define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
-> +
-> =A0#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> =A0#define HPAGE_PMD_SHIFT HPAGE_SHIFT
-> =A0#define HPAGE_PMD_MASK HPAGE_MASK
-> @@ -102,8 +105,6 @@ extern void __split_huge_page_pmd(struct mm_struc=
-t *mm, pmd_t *pmd);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0BUG_ON(pmd_trans_splitting(*____pmd) |=
-| =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pmd_trans_huge(*____pmd))=
-; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
-> =A0 =A0 =A0 =A0} while (0)
-> -#define HPAGE_PMD_ORDER (HPAGE_PMD_SHIFT-PAGE_SHIFT)
-> -#define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
-> =A0#if HPAGE_PMD_ORDER > MAX_ORDER
-> =A0#error "hugepages can't be allocated by the buddy allocator"
-> =A0#endif
-> @@ -158,9 +159,9 @@ static inline struct page *compound_trans_head(st=
-ruct page *page)
-> =A0 =A0 =A0 =A0return page;
-> =A0}
-> =A0#else /* CONFIG_TRANSPARENT_HUGEPAGE */
-> -#define HPAGE_PMD_SHIFT ({ BUG(); 0; })
-> -#define HPAGE_PMD_MASK ({ BUG(); 0; })
-> -#define HPAGE_PMD_SIZE ({ BUG(); 0; })
-> +#define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
-> +#define HPAGE_PMD_MASK ({ BUILD_BUG(); 0; })
-> +#define HPAGE_PMD_SIZE ({ BUILD_BUG(); 0; })
->
-> =A0#define hpage_nr_pages(x) 1
->
-> --
-> 1.7.7.6
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at =A0http://www.tux.org/lkml/
+            ------------------------------------------------
+
+Latest results at:
+	http://kisskb.ellerman.id.au/kisskb/branch/9/
+
+Failures as of March 21th, 2012:
+===============================
+
+AM33:asb2303_defconfig,asb2364_defconfig
+	when:	Mar 15
+	why:	cc1: error: unrecognized command line option '-mmem-funcs'
+	status:	Possible fix from TonyB sent for review.
+	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
+----------------
+
+ARM:cm_x2xx_defconfig
+	when:	Mar 19
+	why:	it8152.c: redefinition of 'dma_set_coherent_mask'
+	status:	bisected and reported (PaulG)
+	fix:
+	ref:	http://marc.info/?l=linux-next&m=133226851818586&w=2
+
+ARM:mxs_defconfig
+	when:	Mar 14
+	why:	Inconsistent kallsyms data This is a bug - please report
+	status: UFO bug keeps appearing at random
+	fix:	
+	ref:	https://lkml.org/lkml/2011/8/2/233
+	ref:	https://lkml.org/lkml/2011/10/8/70
+
+ARM:netx_defconfig,pnx4008_defconfig 
+	when:	Mar 14
+	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
+	ref:	https://lkml.org/lkml/2012/3/13/670
+
+ARM:cam60_defconfig
+	when:	Feb 23
+	why:	trace_entries.h: 'perf_ftrace_event_register' undeclared
+	status:	S. Rostedt has a patch somewhere.
+	fix:	
+	ref:	irc (#linux-rt)
+
+ARM:collie_defconfig
+	when:	Feb 14
+	why:	locomolcd.c: error: 'sa1100fb_lcd_power' undeclared
+	status:	fixed (PaulG) - pending integration
+	fix:	http://marc.info/?l=linux-next&m=133105157730749&w=2
+	ref:
+
+ARM:iop32x_defconfig,iop33x_defconfig
+	when:	Nov 23
+	why:	restart.c: implicit declaration of function 'soft_restart'
+	status:	fixed (PaulG) - pending integration
+	fix:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081461.html
+	fix:	https://lkml.org/lkml/2012/3/14/253
+	ref:
+
+ARM:ixp4xx_defconfig
+	when:	Oct 26
+	why:	gpio.h: implicit declaration of function '__gpio_get_value'
+	status:	fixed (Imre Kaloz) - but possibly needs rework?
+	fix:	https://lkml.org/lkml/2012/2/8/288
+	ref:	https://lkml.org/lkml/2012/2/8/287
+
+ARM:magician_defconfig
+	when:	Feb 13
+	why:	magician.c: unknown field 'dev' specified in initializer
+	status:	fixed (PaulG) - pending integration
+	fix:
+	ref:	http://marc.info/?l=linux-next&m=133106325903524&w=2
+
+ARM:em_x270_defconfig
+	when:	Feb 14
+	why:	em-x270.c: unknown field 'dev' specified in initializer
+	status:	 fixed (PaulG) - pending integration
+	fix:	http://www.spinics.net/lists/arm-kernel/msg164012.html
+	ref:	http://www.spinics.net/lists/arm-kernel/msg163135.html
+
+ARM:raumfeld_defconfig
+	when:	Nov 23
+	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
+	status:	perhaps broken since 2010?  See ref below.
+	fix:	
+	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
+
+ARM:omap2plus_defconfig
+	when:	Feb 16, 00:23
+	why:	control.c:238: error: 'OMAP343X_CTRL_BASE' undeclared
+	status:	PaulG did hack-n-slash, but at best a WIP, needs additonal reverts
+	fix:	http://www.spinics.net/lists/arm-kernel/msg163120.html
+	ref:	http://www.spinics.net/lists/arm-kernel/msg163262.html
+
+ARM:at91x40_defconfig
+	when:	Feb 28, 07:38 	
+	why:	super.c:(.text+0x3ffd8): undefined reference to `vm_is_stack'
+	status:	WIP, fix from PaulG + follow on from 
+	fix:	http://marc.info/?l=linux-next&m=133096554131691&w=2
+	ref:	http://marc.info/?l=linux-next&m=133104723928617&w=2
+
+ARM:tct_hammer_defconfig
+	when:	Mar 21
+	why:	pgtable-generic.c: call to '__build_bug_failed' attribute error
+	status:	bisected and reported (PaulG)
+	fix:
+	ref:	http://marc.info/?l=linux-next&m=133236772927262&w=2
+
+ARM:arm-allnoconfig
+	when:	forever
+	why:	not supported
+	status:	nothing pending, but patches accepted
+	fix:	n/a
+	ref:	https://lkml.org/lkml/2009/4/30/105
+	ref:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081218.html
+----------------
+
+AVR32:defconfig
+	when:	Mar 18
+	why:	board.h: atmel_nand.h: No such file or directory
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5917107/
+
+AVR32:allnoconfig
+	when:	May 26 2010, 20:49
+	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
+	status:
+	fix:
+	ref:
+---------------
+
+bfin:***all-builds***
+	when:	Jan 20, 22:13
+	why:	undefined reference to `vm_is_stack'
+	status:	WIP, fix from Siddhesh Poyarekar
+	fix:	http://marc.info/?l=linux-next&m=133096554131691&w=2
+	ref:	http://marc.info/?l=linux-next&m=133104723928617&w=2
+---------------
+
+cris:***all-builds***
+	when:	Mar 25, 22:05
+	why:	include/linux/types.h:25: error expected ... before 'ino_t'
+	status:	
+	fix:	
+	ref:	
+----------------
+
+crisv32:***all-builds***
+	when:	Mar 25, 22:05
+	why:	include/linux/types.h:25: error expected ... before 'ino_t'
+	status:	
+	fix:	
+	ref:	
+----------------
+
+frv:defconfig
+	when:	Mar 15
+	why:	arch/frv/kernel/head.S operand out of range
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884666/
+----------------
+
+h8300:defconfig
+	when:	Mar 15
+	why:	time.c: implicit declaration of function 'get_irq_regs'
+	why:	also seems gcc suffers an ICE
+	status:	ICE bug lodged with gcc folks (TonyB)
+	fix:
+	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
+----------------
+
+i386:allmodconfig
+	when:	Mar 8, 20:41
+	why:	ERROR: "pcibios_enabled" [drivers/video/uvesafb.ko] undefined!
+	why:	ERROR: "mdfld_set_brightness" [drivers/gpu/drm/gma500/gma500_gfx.ko] undefined!
+	status:	
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878506/
+----------------
+
+m32r:m32700ut.smp_defconfig
+	when:	Mar 15
+	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
+----------------
+
+m68k:allmodconfig
+	when:	Mar 16
+	why:	persistent_ram.c: implicit declaration of 'memblock_reserve'
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884324/
+	ref:	http://www.spinics.net/lists/linux-next/msg19343.html
+----------------
+
+mips:allmodconfig
+	when:
+	why:	driver_pci_host.c: implicit declaration of function 'pcibios_enable_device'
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5807000/
+----------------
+
+parisc:allmodconfig
+	when:
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	fix:
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+
+parisc64:a500_defconfig 
+	when:
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	fix:
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+------------------
+
+powerpc:allyesconfig
+	when:	May 18 2009, 22:11
+	why:	fat ass kernel with everything simply won't link
+	status:	need to fix build config to ignore the final link
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5806793/
+------------------
+
+sh4:***all-builds***
+	when:	Feb 24, 17:38
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	fix:
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+------------------
+
+tilegx:defconfig
+	when:	Mar 19
+	why:	`xfs_qm_exit' defined in discarded section `.exit.text' of fs/built-in.o
+	status:	
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5924094/
+------------------
+
+um:um-defconfig
+	when:	Sep 16 2010, 01:28
+	why:	os-Linux/start_up.c: error: 'PTRACE_SETOPTIONS' undeclared
+	status:	clearly broken forever, so does anyone care?
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/target/2979/
