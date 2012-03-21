@@ -1,59 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the oprofile tree with the tip tree
-Date: Wed, 21 Mar 2012 16:31:51 +1100
-Message-ID: <20120321163151.83cad17d5524424938f7576c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drivers-x86 tree
+Date: Wed, 21 Mar 2012 16:52:04 +1100
+Message-ID: <20120321165204.3b9e1995dc363b685d8018dc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__21_Mar_2012_16_31_51_+1100_m+REZc=KQ6MDBYux"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33659 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755355Ab2CUFcd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 01:32:33 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Robert Richter <robert.richter@amd.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lin Ming <ming.m.lin@intel.com>, Jiri Olsa <jolsa@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
+ boundary="Signature=_Wed__21_Mar_2012_16_52_04_+1100_nO+2m1wjTc5QHH7r"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Forshee <seth.forshee@canonical.com>, Azael Avalos <coproscefalo@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__21_Mar_2012_16_31_51_+1100_m+REZc=KQ6MDBYux
+--Signature=_Wed__21_Mar_2012_16_52_04_+1100_nO+2m1wjTc5QHH7r
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Robert,
+Hi Matthew,
 
-Today's linux-next merge of the oprofile tree got a conflict in
-tools/perf/util/parse-events.c between commit 89812fc81f8d ("perf tools:
-Add parser generator for events parsing") from the tip tree and commit
-1e48600d2388 ("perf tool: Parse general/raw events from sysfs") from the
-oprofile tree.
+After merging the drivers-x86 tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I have no idea how to fix this up, so I effectively dropped this patch
-from the oprofile tree.
+drivers/platform/x86/toshiba_acpi.c:141:1: error: unknown type name 'sturct'
+drivers/platform/x86/toshiba_acpi.c:141:32: error: expected '=3D', ',', ';'=
+, 'asm' or '__attribute__' before '*' token
+drivers/platform/x86/toshiba_acpi.c: In function 'toshiba_acpi_i8042_filter=
+':
+drivers/platform/x86/toshiba_acpi.c:877:18: error: 'toshiba_acpi' undeclare=
+d (first use in this function)
+drivers/platform/x86/toshiba_acpi.c:877:18: note: each undeclared identifie=
+r is reported only once for each function it appears in
+drivers/platform/x86/toshiba_acpi.c: In function 'toshiba_acpi_remove':
+drivers/platform/x86/toshiba_acpi.c:1050:6: error: 'toshiba_acpi' undeclare=
+d (first use in this function)
+drivers/platform/x86/toshiba_acpi.c: In function 'toshiba_acpi_add':
+drivers/platform/x86/toshiba_acpi.c:1083:6: error: 'toshiba_acpi' undeclare=
+d (first use in this function)
+
+Caused by commit 5ea3879c8e16 ("toshiba_acpi: Support alternate hotkey inte=
+rfaces").
+
+Please build test this stuff :-(
+
+I have used the drivers-x86 tree from next-20120320 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__21_Mar_2012_16_31_51_+1100_m+REZc=KQ6MDBYux
+--Signature=_Wed__21_Mar_2012_16_52_04_+1100_nO+2m1wjTc5QHH7r
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPaWfHAAoJEECxmPOUX5FE9uIP/0nFM4HQFgm/Y01A+YXRUDGQ
-+mBvWUXAXF52Oru+ao2kLX8DROTLhrS0WkcyXA21eag+Ez1drghZ7c+juyRuqtCR
-CCq0fLWeNDKDOOqc7SkCuq+ThWoL89RpwBu8ZrcNJD0itLFn6Wi27DBwaaFh99dY
-D3pxWIIBPlpiAVJP6RJIRp2GxGB1Nw0Pp2GbHm5+0a9GB9yl9S/qNaJA75lDqwYE
-OJ8K8x5LE0zE15ljylLwj8A+x550yoaVnLRCN+C9vJHazLoLfx0CiseksaPBQYwB
-a0GOwAUJBGhNwXMSUo1MhxnuUh647uKjLcAfIy5Vn05VQzegQPIqe5A9J3ZRIgAh
-VCAGHQ0aehwPDSsbRgyKSHyB/alORSe9hbiOjAZZxJJ671GcP8dWhOYzYjMU4XeF
-CV7W4H0DrdonnHgmtoazDbF5+KfxpKXeu6S316Puk3oOMr3qw++onMfp1XmQp3vk
-VTt3Z6YHpX9Yxz+HSVWNgTpJZ4JK0wJWo1FuaOGJUB0LSDoPmiUUppZOv1v7iPUX
-WKuwnXkysQlfMw8O9evpIPWrI6yJkvrXj029kIpIG7CU1Eb1zM6jH5HDLS2erEX9
-2t1e/EF6f1axBNtCJwxqq+ncMPMpKcaDAWCQoLmK1eJDD85m1n7092boKN64viWy
-8joJmZB9VmE4U4zubjhT
-=xNex
+iQIcBAEBCAAGBQJPaWyEAAoJEECxmPOUX5FEqb0QAIdqfmCoSS2zwIBC4dNdOJbx
+v13lizZFBPmR9EaWbbGI3hyPG64s5pZoKEqmlMtIl7h1r5yWLWbmlNvey+ZsiNfh
+/s0WGdwJyEiX/nYAdYsznAnbcILAUbPZR6sid5+7FPJdqrS9Kq8JxPDwT4zU9BTM
+Sgs2AY45o+mEu3AsYcLx3b/lG0s6g4KtaIGp7/HYZNQC+aPlIJ33R1Dp/uziB0Vg
+00CvNnOnjnaPQlD2tEkGBnW7hIWY5l1eUm6jh+wgbqIzSl4iS6cxgkjT/wmu+kVq
+7nTTxReD/VUngxALcu65xUACK4dT9bIr2NImb/sGeAQ1q9QjuhURSYD2eqlRrC1O
+syMbf+Ytn8S/JwbEgnJ/jM41tILgd8ELyHafICk3anVth/hmyqBVLg31p8ROW1/X
+9R2kCBnkyw1bdqGITcSGf+tS0Sdox30Lkd08kfxFD/sbCWYVd20sTtO9tn2gA5A1
+ho7YVmBmvY93B4nmfLJY0O40UlKRTXFOX91kN55syW9q6vpUTM5k6UZtdUSjMdij
+cyy/Fj8v6l6mu9gz1NiQry6NEoflQaN97SDWSPoXW9pKlQJEp/yLPyEXES5Kcwrf
+owPlADeQST3l3iYWq54kj8tE3PCZajTYHbwElqW650TsbcFw3sO7EKanvOtCgQ0k
+gAsz/gpkyJPegNMpKx/8
+=/poY
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__21_Mar_2012_16_31_51_+1100_m+REZc=KQ6MDBYux--
+--Signature=_Wed__21_Mar_2012_16_52_04_+1100_nO+2m1wjTc5QHH7r--
