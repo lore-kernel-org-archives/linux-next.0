@@ -1,38 +1,52 @@
-From: Alex Elder <elder@dreamhost.com>
-Subject: Re: linux-next: build failure after merge of the ceph tree
-Date: Tue, 20 Mar 2012 23:24:11 -0500
-Message-ID: <4F6957EB.5030309@dreamhost.com>
-References: <20120321124007.e879c834619c7bb9298d5694@canb.auug.org.au>
+From: Wang YanQing <udknight@gmail.com>
+Subject: Re: [PATCH v2] x86: export 'pcibios_enabled' as GPL
+Date: Wed, 21 Mar 2012 12:37:21 +0800
+Message-ID: <20120321043721.GA927@udknight>
+References: <20120313204114.e160849af7dbe5a4b4e5c0ad@canb.auug.org.au>
+ <4F5FAE63.3090908@xenotime.net>
+ <20120319003044.GA3744@udknight>
+ <4F6685ED.7040000@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.hq.newdream.net ([66.33.206.127]:34961 "EHLO
-	mail.hq.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751299Ab2CUEYJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 00:24:09 -0400
-In-Reply-To: <20120321124007.e879c834619c7bb9298d5694@canb.auug.org.au>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:48560 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752764Ab2CUEhg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 00:37:36 -0400
+Content-Disposition: inline
+In-Reply-To: <4F6685ED.7040000@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sage Weil <sage@newdream.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Durgin <josh.durgin@dreamhost.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michal Januszewski <spock@gentoo.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-fbdev@vger.kernel.org, x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
 
-On 03/20/2012 08:40 PM, Stephen Rothwell wrote:
-> Hi Sage,
->
-> After merging the ceph tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/block/rbd.c: In function 'rbd_add':
-> drivers/block/rbd.c:2384:2: error: 'struct rbd_image_header' has no member named 'snap_rwsem'
->
-> Caused by commit dd2a081fb58f ("rbd: move snap_rwsem to the device,
-> rename to header_rwsem") interacting with commit 0e805a1d8577 ("rbd:
-> initialize snap_rwsem in rbd_add()") from Linus' tree.
->
-> I used the ceph tree from next-20120320 for today.
-
-I'll take a look at this tomorrow.  I'm sorry my earlier
-suggestion didn't address this.
-
-					-Alex
+On Sun, Mar 18, 2012 at 06:03:41PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+> 
+> Export 'pcibios_enabled' so that when uvesafb is built as a
+> loadable module (on X86_32), the build will succeed.
+> 
+> ERROR: "pcibios_enabled" [drivers/video/uvesafb.ko] undefined!
+> 
+> Patch v2 uses EXPORT_SYMBOL_GPL() as requested.
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> Cc:	Michal Januszewski <spock@gentoo.org>
+> Cc:	Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+> Cc:	linux-fbdev@vger.kernel.org
+> Cc:	x86@kernel.org
+> ---
+>  arch/x86/pci/pcbios.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20120313.orig/arch/x86/pci/pcbios.c
+> +++ linux-next-20120313/arch/x86/pci/pcbios.c
+> @@ -27,6 +27,7 @@
+>  #define PCIBIOS_HW_TYPE2_SPEC		0x20
+>  
+>  int pcibios_enabled;
+> +EXPORT_SYMBOL_GPL(pcibios_enabled);
+>  
+>  /* According to the BIOS specification at:
+>   * http://members.datafast.net.au/dft0802/specs/bios21.pdf, we could
+Acked-by: Wang YanQing <udknight@gmail.com>
