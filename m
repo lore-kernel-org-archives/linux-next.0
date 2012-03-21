@@ -1,40 +1,192 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 20 Mar 2012 15:32:54 -0700
-Message-ID: <20120320223254.GA24068@kroah.com>
-References: <20120308152110.12c805f59c45251d79bcb24b@canb.auug.org.au>
- <20120308180048.GC26516@kroah.com>
- <20120321090038.06c65f50bd0329df8705f2cd@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH] EEH: remove eeh device from OF node
+Date: Wed, 21 Mar 2012 11:14:26 +1100
+Message-ID: <1332288866.2982.33.camel@pasglop>
+References: <1331721086-4314-1-git-send-email-shangw@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120321090038.06c65f50bd0329df8705f2cd@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:46039 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758540Ab2CUAOq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Mar 2012 20:14:46 -0400
+In-Reply-To: <1331721086-4314-1-git-send-email-shangw@linux.vnet.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Gavin Shan <shangw@linux.vnet.ibm.com>
+Cc: sfr@canb.auug.org.au, grant.likely@secretlab.ca, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, linuxppc-dev@lists.ozlabs.org
 
-On Wed, Mar 21, 2012 at 09:00:38AM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Wed, 2012-03-14 at 18:31 +0800, Gavin Shan wrote:
+> Originally, the PCI sensitive OF node is tracing the eeh device
+> through struct device_node::edev. However, it was regarded as
+> bad idea.
 > 
-> On Thu, 8 Mar 2012 10:00:48 -0800 Greg KH <greg@kroah.com> wrote:
-> >
-> > On Thu, Mar 08, 2012 at 03:21:10PM +1100, Stephen Rothwell wrote:
-> > > 
-> > > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> > > failed like this:
-> > > 
-> > > drivers/staging/sep/sep_driver.c:55:32: fatal error: linux/rar_register.h: No such file or directory
-> > > 
-> > > Caused by commit 33e9970add94 ("x86/mid: Kill off Moorestown").
-> > > 
-> > > Following previous instructions, I have disabled the staging tree driver
-> > > using this patch (pending a fix in the tip tree):
-> > 
-> > Looks good to me.  Alan, care to send me an update that fixes this
-> > driver for real?
-> 
-> Was this ever fixed?
+> The patch removes struct device_node::edev. In addition, the
+> global list of eeh devices is introduced, and do retrival of
+> eeh device according to the given OF node through the global
+> list.
 
-I never got a patch from Alan or anyone else to do this :(
+So I'm not too happy with that. The main problem I see is that
+the code -constantly- calls of_node_to_eeh_dev.
+
+IE. On any MMIO that happens to return all 1's, we'll call
+eeh_check_failure() for example, which does that. In fact for a hot path
+it's pretty horrid, it will:
+
+ - Do an address cache lookup to get the pci_dev
+ - Get the device-node frokm the pci_dev
+ - Lookup your list to get the eeh_dev
+
+Shouldn't we instead change the address cache to contain eeh_dev
+instead ? And if you prefer keeping pci_dev, then it shouldn't be hard
+to stick a pointer to the eeh_dev in there via either struct archdata or
+maybe platform_data.
+
+The EEH code still, even after your rework, constantly pass "dn"'s as
+argument to functions just to convert it back to a struct eeh_dev rather
+than trying to pass the eeh_dev.
+
+So turning that into a list lookup will slow things down to a crawl.
+Also your patch never seems to remove anything from your list, which
+doesn't look right vs. hotplug.
+
+I suggest we fix that with a two phase approach:
+
+ 1- ASAP so we can still get that into 3.4, move the eeh_dev pointer to
+struct pci_dn instead of struct device_node. This structure is
+accessible directly via dn->data and is ppc specific, that will be a
+better temporary solution and and adding stuff to the generic struct
+device_node.
+
+ 2- Then, what we need to do is generalize the use of eeh_dev rather
+than device_node as the main object being worked on in the eeh layer and
+thus as the argument to most functions.
+
+Cheers,
+Ben.
+
+> Signed-off-by: Gavin Shan <shangw@linux.vnet.ibm.com>
+> ---
+>  arch/powerpc/include/asm/eeh.h           |    7 +++++++
+>  arch/powerpc/platforms/pseries/eeh_dev.c |   29 ++++++++++++++++++++++++++++-
+>  include/linux/of.h                       |   10 ----------
+>  3 files changed, 35 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/eeh.h b/arch/powerpc/include/asm/eeh.h
+> index d60f998..591e0a1 100644
+> --- a/arch/powerpc/include/asm/eeh.h
+> +++ b/arch/powerpc/include/asm/eeh.h
+> @@ -56,6 +56,7 @@ struct eeh_dev {
+>  	struct pci_controller *phb;	/* Associated PHB		*/
+>  	struct device_node *dn;		/* Associated device node	*/
+>  	struct pci_dev *pdev;		/* Associated PCI device	*/
+> +	struct list_head list;		/* Form the global link list	*/
+>  };
+>  
+>  static inline struct device_node *eeh_dev_to_of_node(struct eeh_dev *edev)
+> @@ -115,6 +116,7 @@ extern int eeh_subsystem_enabled;
+>   */
+>  #define EEH_MAX_ALLOWED_FREEZES 5
+>  
+> +struct eeh_dev *eeh_dev_from_of_node(struct device_node *dn);
+>  void * __devinit eeh_dev_init(struct device_node *dn, void *data);
+>  void __devinit eeh_dev_phb_init_dynamic(struct pci_controller *phb);
+>  void __init eeh_dev_phb_init(void);
+> @@ -132,6 +134,11 @@ void eeh_add_device_tree_early(struct device_node *);
+>  void eeh_add_device_tree_late(struct pci_bus *);
+>  void eeh_remove_bus_device(struct pci_dev *);
+>  
+> +static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
+> +{
+> +	return eeh_dev_from_of_node(dn);
+> +}
+> +
+>  /**
+>   * EEH_POSSIBLE_ERROR() -- test for possible MMIO failure.
+>   *
+> diff --git a/arch/powerpc/platforms/pseries/eeh_dev.c b/arch/powerpc/platforms/pseries/eeh_dev.c
+> index f3aed7d..925d3a3 100644
+> --- a/arch/powerpc/platforms/pseries/eeh_dev.c
+> +++ b/arch/powerpc/platforms/pseries/eeh_dev.c
+> @@ -34,6 +34,7 @@
+>  #include <linux/export.h>
+>  #include <linux/gfp.h>
+>  #include <linux/init.h>
+> +#include <linux/list.h>
+>  #include <linux/kernel.h>
+>  #include <linux/pci.h>
+>  #include <linux/string.h>
+> @@ -41,6 +42,30 @@
+>  #include <asm/pci-bridge.h>
+>  #include <asm/ppc-pci.h>
+>  
+> +/* eeh device list */
+> +static LIST_HEAD(eeh_dev_list);
+> +
+> +/**
+> + * eeh_dev_from_of_node - Retrieve EEH device according to OF node
+> + * @dn: OF node
+> + *
+> + * All existing eeh devices have been put into the global list.
+> + * In addition, the eeh device is tracing the corresponding
+> + * OF node. The function is used to retrieve the corresponding
+> + * eeh device according to the given OF node.
+> + */
+> +struct eeh_dev *eeh_dev_from_of_node(struct device_node *dn)
+> +{
+> +	struct eeh_dev *edev = NULL;
+> +
+> +	list_for_each_entry(edev, &eeh_dev_list, list) {
+> +		if (edev->dn && edev->dn == dn)
+> +			return edev;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+>  /**
+>   * eeh_dev_init - Create EEH device according to OF node
+>   * @dn: device node
+> @@ -62,10 +87,12 @@ void * __devinit eeh_dev_init(struct device_node *dn, void *data)
+>  	}
+>  
+>  	/* Associate EEH device with OF node */
+> -	dn->edev  = edev;
+>  	edev->dn  = dn;
+>  	edev->phb = phb;
+>  
+> +	/* Add to global list */
+> +	list_add_tail(&edev->list, &eeh_dev_list);
+> +
+>  	return NULL;
+>  }
+>  
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index 3e710d8..a75a831 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -58,9 +58,6 @@ struct device_node {
+>  	struct	kref kref;
+>  	unsigned long _flags;
+>  	void	*data;
+> -#if defined(CONFIG_EEH)
+> -	struct eeh_dev *edev;
+> -#endif
+>  #if defined(CONFIG_SPARC)
+>  	char	*path_component_name;
+>  	unsigned int unique_id;
+> @@ -75,13 +72,6 @@ struct of_phandle_args {
+>  	uint32_t args[MAX_PHANDLE_ARGS];
+>  };
+>  
+> -#if defined(CONFIG_EEH)
+> -static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
+> -{
+> -	return dn->edev;
+> -}
+> -#endif
+> -
+>  #if defined(CONFIG_SPARC) || !defined(CONFIG_OF)
+>  /* Dummy ref counting routines - to be implemented later */
+>  static inline struct device_node *of_node_get(struct device_node *node)
