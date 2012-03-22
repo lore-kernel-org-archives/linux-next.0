@@ -1,65 +1,138 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drivers-x86 tree
-Date: Thu, 22 Mar 2012 15:33:06 +1100
-Message-ID: <20120322153306.904d471b973e0c9f7f38aa38@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] avr32: fix build failures from mis-naming of atmel_nand.h
+Date: Thu, 22 Mar 2012 01:18:40 -0400
+Message-ID: <20120322051840.GC923@windriver.com>
+References: <1332296128-16262-1-git-send-email-paul.gortmaker@windriver.com>
+ <20120321072632.GA15703@samfundet.no>
+ <4F6990AF.2000004@atmel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__22_Mar_2012_15_33_06_+1100_jfkLdFlux=q4sqvo"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46991 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751283Ab2CVEdQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Mar 2012 00:33:16 -0400
+Received: from mail1.windriver.com ([147.11.146.13]:37375 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754183Ab2CVFT1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Mar 2012 01:19:27 -0400
+Content-Disposition: inline
+In-Reply-To: <4F6990AF.2000004@atmel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Forshee <seth.forshee@canonical.com>, Azael Avalos <coproscefalo@gmail.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: Hans-Christian Egtvedt <egtvedt@samfundet.no>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux@maxim.org.za, David Woodhouse <dwmw2@infradead.org>
 
---Signature=_Thu__22_Mar_2012_15_33_06_+1100_jfkLdFlux=q4sqvo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[Re: [PATCH] avr32: fix build failures from mis-naming of atmel_nand.h] On 21/03/2012 (Wed 09:26) Nicolas Ferre wrote:
 
-Hi Matthew,
+> On 03/21/2012 08:26 AM, Hans-Christian Egtvedt :
+> > Around Tue 20 Mar 2012 22:15:28 -0400 or thereabout, Paul Gortmaker wrote:
+> >> Commit bf4289cba02b8cf770ecd7959ca70839f0dd9d3c (linux-next)
+> >>
+> >>     "ATMEL: fix nand ecc support"
+> >>
+> >> indicated that it wanted to "Move platform data to a common
+> >> header include/linux/platform_data/atmel_nand.h" and the new
+> >> header even had re-include protectors with:
+> >>
+> >>     #ifndef __ATMEL_NAND_H__
+> >>
+> >> However, the file that was added was simply called atmel.h
+> >> and this caused avr32 defconfig to fail with:
+> >>
+> >>   In file included from arch/avr32/boards/atstk1000/setup.c:22:
+> >>   arch/avr32/mach-at32ap/include/mach/board.h:10:44: error: linux/platform_data/atmel_nand.h: No such file or directory
+> >>   In file included from arch/avr32/boards/atstk1000/setup.c:22:
+> >>   arch/avr32/mach-at32ap/include/mach/board.h:121: warning: 'struct atmel_nand_data' declared inside parameter list
+> >>   arch/avr32/mach-at32ap/include/mach/board.h:121: warning: its scope is only this definition or declaration, which is probably not what you want
+> >>   make[2]: *** [arch/avr32/boards/atstk1000/setup.o] Error 1
+> >>
+> >> Rename the file to match the original intention, and fix up the
+> >> users who reference the bad name without the _nand suffix.
+> > 
+> > Thanks fixing this.
+> 
+> 
+> Yes, we need to fix this. But I would not like to see this
+> "platform_data/atmel.h" renamed: I think that this file was designed to
+> collect several common platform data (ie: not just NAND related).
+> 
+> So maybe we should just rename the entry that exists in
+> mach-at32ap/include/mach/board.h
+> and remove all occurrences of platform_data/atmel_nand.h
 
-After merging the drivers-x86 tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Funny, since this is what I did 1st before I re-read the original commit
+log in more detail. :)  Oh well.  Here is the alternate solution.  You
+guys can pick whichever one you like best.  I compile tested this one
+as well.
 
-drivers/platform/x86/toshiba_acpi.c: In function 'toshiba_acpi_i8042_filter=
-':
-drivers/platform/x86/toshiba_acpi.c:877:30: error: dereferencing pointer to=
- incomplete type
+Thanks,
+Paul.
+---
 
-Caused by commit b2a7ad1dd939 ("toshiba_acpi: Support alternate hotkey
-interfaces").
+>From 73c01b7ed8fd2732661fa1ca726c48096f4651f2 Mon Sep 17 00:00:00 2001
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date: Tue, 20 Mar 2012 21:55:46 -0400
+Subject: [PATCH] avr32: fix build failures from mis-naming of atmel_nand.h
 
-Please at least build test this! :-(
+Commit bf4289cba02b8cf770ecd7959ca70839f0dd9d3c (linux-next)
 
-I have used the drivers-x86 from next-20120320 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+    "ATMEL: fix nand ecc support"
 
---Signature=_Thu__22_Mar_2012_15_33_06_+1100_jfkLdFlux=q4sqvo
-Content-Type: application/pgp-signature
+indicated that it wanted to "Move platform data to a common
+header include/linux/platform_data/atmel_nand.h" and the new
+header even had re-include protectors with:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+    #ifndef __ATMEL_NAND_H__
 
-iQIcBAEBCAAGBQJPaquCAAoJEECxmPOUX5FECQwP/R8oIVUn7x60UAoIy0bg4iB8
-3TqpQDEEvOUBNyzsdlurQl6gSondfiLdNsqJAOpxoj7pOIMEEa7GQ4+AJWX1e9fZ
-E70xhaubzqVglZs9fHPFKY8FSN+bPg3BtHTcOdUQMM2viiiZ4oZ6E0giCjKmuW7F
-LP8Phsca9lFfB9a8qjmDSYOUMgWW1pyrJv5UxKNrUkfyzCGhmgSQB4T0wBl+mv1N
-fMf9sCWqeqHkxm+RW9RZtYLXIeROfqa09KY4CB+QgejV42q5rGew+/UA5Vto7PtS
-qWQYbvPqYe6/NFw2WfCVCpXpPz4jKxL99gJkQ+uIbz4eBhCG0pb+sRhMx9zftBr8
-CnjPUJPIVwy6iM3Ejzlrq7Rro/7BUuauSua3dIRQ+eqMnl1TXcYXXEmlEq040w5U
-PLjb3ePl57iiftapqztaki3bZvjJeBfqI3w12+p2nMcl3t/ctjDcZSSbZ7shWoXp
-8Tsm+iGL7SNoBIVGra9gea1f5UzCWk7InNON8C9tiH+iStJQiBBx08LNsPUM+XYz
-OHu0Wgl17BX6HAlEJBkc07MdvdRhNQw6uWWrIKs4LFXG7ybcPZLNzWc1HhDWTKyH
-T14WFLGa/pUAY5XXsk+/xVGfF1zwN3Q1N3zWcKWTXB9mEPcGPyyAMJV+3kFpH17c
-gyxg90zHOwWUY+XdkDS9
-=DPqv
------END PGP SIGNATURE-----
+However, the file that was added was simply called atmel.h
+and this caused avr32 defconfig to fail with:
 
---Signature=_Thu__22_Mar_2012_15_33_06_+1100_jfkLdFlux=q4sqvo--
+  In file included from arch/avr32/boards/atstk1000/setup.c:22:
+  arch/avr32/mach-at32ap/include/mach/board.h:10:44: error: linux/platform_data/atmel_nand.h: No such file or directory
+  In file included from arch/avr32/boards/atstk1000/setup.c:22:
+  arch/avr32/mach-at32ap/include/mach/board.h:121: warning: 'struct atmel_nand_data' declared inside parameter list
+  arch/avr32/mach-at32ap/include/mach/board.h:121: warning: its scope is only this definition or declaration, which is probably not what you want
+  make[2]: *** [arch/avr32/boards/atstk1000/setup.o] Error 1
+
+It seems the scope of the file contents will expand beyond
+just nand, so ignore the original intention, and fix up the
+users who reference the bad name with the _nand suffix.
+
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+CC: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+CC: Hans-Christian Egtvedt <egtvedt@samfundet.no>
+CC: David Woodhouse <dwmw2@infradead.org>
+
+diff --git a/arch/avr32/mach-at32ap/include/mach/board.h b/arch/avr32/mach-at32ap/include/mach/board.h
+index 7173386..70742ec 100644
+--- a/arch/avr32/mach-at32ap/include/mach/board.h
++++ b/arch/avr32/mach-at32ap/include/mach/board.h
+@@ -7,7 +7,7 @@
+ #include <linux/types.h>
+ #include <linux/serial.h>
+ #include <linux/platform_data/macb.h>
+-#include <linux/platform_data/atmel_nand.h>
++#include <linux/platform_data/atmel.h>
+ 
+ #define GPIO_PIN_NONE	(-1)
+ 
+diff --git a/include/linux/platform_data/atmel.h b/include/linux/platform_data/atmel.h
+index d056263..b0f2c56 100644
+--- a/include/linux/platform_data/atmel.h
++++ b/include/linux/platform_data/atmel.h
+@@ -4,8 +4,8 @@
+  * GPL v2 Only
+  */
+ 
+-#ifndef __ATMEL_NAND_H__
+-#define __ATMEL_NAND_H__
++#ifndef __ATMEL_H__
++#define __ATMEL_H__
+ 
+ #include <linux/mtd/nand.h>
+ 
+@@ -24,4 +24,4 @@ struct atmel_nand_data {
+ 	unsigned int	num_parts;
+ };
+ 
+-#endif /* __ATMEL_NAND_H__ */
++#endif /* __ATMEL_H__ */
+-- 
+1.7.9.1
