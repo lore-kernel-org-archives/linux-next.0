@@ -1,215 +1,65 @@
-From: Gavin Shan <shangw@linux.vnet.ibm.com>
-Subject: Re: [PATCH] EEH: remove eeh device from OF node
-Date: Thu, 22 Mar 2012 11:28:19 +0800
-Message-ID: <20120322032819.GA4689@shangw>
-References: <1331721086-4314-1-git-send-email-shangw@linux.vnet.ibm.com>
- <1332288866.2982.33.camel@pasglop>
-Reply-To: Gavin Shan <shangw@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drivers-x86 tree
+Date: Thu, 22 Mar 2012 15:33:06 +1100
+Message-ID: <20120322153306.904d471b973e0c9f7f38aa38@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__22_Mar_2012_15_33_06_+1100_jfkLdFlux=q4sqvo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp08.in.ibm.com ([122.248.162.8]:57481 "EHLO
-	e28smtp08.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755825Ab2CVD2a (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 23:28:30 -0400
-Received: from /spool/local
-	by e28smtp08.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <shangw@linux.vnet.ibm.com>;
-	Thu, 22 Mar 2012 08:58:28 +0530
-Content-Disposition: inline
-In-Reply-To: <1332288866.2982.33.camel@pasglop>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46991 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751283Ab2CVEdQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Mar 2012 00:33:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: sfr@canb.auug.org.au, grant.likely@secretlab.ca, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paulus@samba.org, linuxppc-dev@lists.ozlabs.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Forshee <seth.forshee@canonical.com>, Azael Avalos <coproscefalo@gmail.com>
 
->> Originally, the PCI sensitive OF node is tracing the eeh device
->> through struct device_node::edev. However, it was regarded as
->> bad idea.
->> 
->> The patch removes struct device_node::edev. In addition, the
->> global list of eeh devices is introduced, and do retrival of
->> eeh device according to the given OF node through the global
->> list.
->
->So I'm not too happy with that. The main problem I see is that
->the code -constantly- calls of_node_to_eeh_dev.
->
+--Signature=_Thu__22_Mar_2012_15_33_06_+1100_jfkLdFlux=q4sqvo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, it's somewhat expensive.
+Hi Matthew,
 
->IE. On any MMIO that happens to return all 1's, we'll call
->eeh_check_failure() for example, which does that. In fact for a hot path
->it's pretty horrid, it will:
->
-> - Do an address cache lookup to get the pci_dev
-> - Get the device-node frokm the pci_dev
-> - Lookup your list to get the eeh_dev
->
->Shouldn't we instead change the address cache to contain eeh_dev
->instead ? And if you prefer keeping pci_dev, then it shouldn't be hard
->to stick a pointer to the eeh_dev in there via either struct archdata or
->maybe platform_data.
->
->The EEH code still, even after your rework, constantly pass "dn"'s as
->argument to functions just to convert it back to a struct eeh_dev rather
->than trying to pass the eeh_dev.
->
+After merging the drivers-x86 tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I'm working on explicit PE support and hopefully, I can send out
-the code next week for review. The basic idea is to introuce
-struct eeh_pe and attached eeh_dev to the corresponding PE. In turn,
-eeh core will use PE as parameter instead of current eeh_dev ;-)
+drivers/platform/x86/toshiba_acpi.c: In function 'toshiba_acpi_i8042_filter=
+':
+drivers/platform/x86/toshiba_acpi.c:877:30: error: dereferencing pointer to=
+ incomplete type
 
->So turning that into a list lookup will slow things down to a crawl.
->Also your patch never seems to remove anything from your list, which
->doesn't look right vs. hotplug.
->
->I suggest we fix that with a two phase approach:
->
-> 1- ASAP so we can still get that into 3.4, move the eeh_dev pointer to
->struct pci_dn instead of struct device_node. This structure is
->accessible directly via dn->data and is ppc specific, that will be a
->better temporary solution and and adding stuff to the generic struct
->device_node.
->
+Caused by commit b2a7ad1dd939 ("toshiba_acpi: Support alternate hotkey
+interfaces").
 
-I've sent patch again it and please take a look when you have time.
+Please at least build test this! :-(
 
-> 2- Then, what we need to do is generalize the use of eeh_dev rather
->than device_node as the main object being worked on in the eeh layer and
->thus as the argument to most functions.
->
->Cheers,
->Ben.
->
+I have used the drivers-x86 from next-20120320 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks,
-Gavin
+--Signature=_Thu__22_Mar_2012_15_33_06_+1100_jfkLdFlux=q4sqvo
+Content-Type: application/pgp-signature
 
->> Signed-off-by: Gavin Shan <shangw@linux.vnet.ibm.com>
->> ---
->>  arch/powerpc/include/asm/eeh.h           |    7 +++++++
->>  arch/powerpc/platforms/pseries/eeh_dev.c |   29 ++++++++++++++++++++++++++++-
->>  include/linux/of.h                       |   10 ----------
->>  3 files changed, 35 insertions(+), 11 deletions(-)
->> 
->> diff --git a/arch/powerpc/include/asm/eeh.h b/arch/powerpc/include/asm/eeh.h
->> index d60f998..591e0a1 100644
->> --- a/arch/powerpc/include/asm/eeh.h
->> +++ b/arch/powerpc/include/asm/eeh.h
->> @@ -56,6 +56,7 @@ struct eeh_dev {
->>  	struct pci_controller *phb;	/* Associated PHB		*/
->>  	struct device_node *dn;		/* Associated device node	*/
->>  	struct pci_dev *pdev;		/* Associated PCI device	*/
->> +	struct list_head list;		/* Form the global link list	*/
->>  };
->>  
->>  static inline struct device_node *eeh_dev_to_of_node(struct eeh_dev *edev)
->> @@ -115,6 +116,7 @@ extern int eeh_subsystem_enabled;
->>   */
->>  #define EEH_MAX_ALLOWED_FREEZES 5
->>  
->> +struct eeh_dev *eeh_dev_from_of_node(struct device_node *dn);
->>  void * __devinit eeh_dev_init(struct device_node *dn, void *data);
->>  void __devinit eeh_dev_phb_init_dynamic(struct pci_controller *phb);
->>  void __init eeh_dev_phb_init(void);
->> @@ -132,6 +134,11 @@ void eeh_add_device_tree_early(struct device_node *);
->>  void eeh_add_device_tree_late(struct pci_bus *);
->>  void eeh_remove_bus_device(struct pci_dev *);
->>  
->> +static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
->> +{
->> +	return eeh_dev_from_of_node(dn);
->> +}
->> +
->>  /**
->>   * EEH_POSSIBLE_ERROR() -- test for possible MMIO failure.
->>   *
->> diff --git a/arch/powerpc/platforms/pseries/eeh_dev.c b/arch/powerpc/platforms/pseries/eeh_dev.c
->> index f3aed7d..925d3a3 100644
->> --- a/arch/powerpc/platforms/pseries/eeh_dev.c
->> +++ b/arch/powerpc/platforms/pseries/eeh_dev.c
->> @@ -34,6 +34,7 @@
->>  #include <linux/export.h>
->>  #include <linux/gfp.h>
->>  #include <linux/init.h>
->> +#include <linux/list.h>
->>  #include <linux/kernel.h>
->>  #include <linux/pci.h>
->>  #include <linux/string.h>
->> @@ -41,6 +42,30 @@
->>  #include <asm/pci-bridge.h>
->>  #include <asm/ppc-pci.h>
->>  
->> +/* eeh device list */
->> +static LIST_HEAD(eeh_dev_list);
->> +
->> +/**
->> + * eeh_dev_from_of_node - Retrieve EEH device according to OF node
->> + * @dn: OF node
->> + *
->> + * All existing eeh devices have been put into the global list.
->> + * In addition, the eeh device is tracing the corresponding
->> + * OF node. The function is used to retrieve the corresponding
->> + * eeh device according to the given OF node.
->> + */
->> +struct eeh_dev *eeh_dev_from_of_node(struct device_node *dn)
->> +{
->> +	struct eeh_dev *edev = NULL;
->> +
->> +	list_for_each_entry(edev, &eeh_dev_list, list) {
->> +		if (edev->dn && edev->dn == dn)
->> +			return edev;
->> +	}
->> +
->> +	return NULL;
->> +}
->> +
->>  /**
->>   * eeh_dev_init - Create EEH device according to OF node
->>   * @dn: device node
->> @@ -62,10 +87,12 @@ void * __devinit eeh_dev_init(struct device_node *dn, void *data)
->>  	}
->>  
->>  	/* Associate EEH device with OF node */
->> -	dn->edev  = edev;
->>  	edev->dn  = dn;
->>  	edev->phb = phb;
->>  
->> +	/* Add to global list */
->> +	list_add_tail(&edev->list, &eeh_dev_list);
->> +
->>  	return NULL;
->>  }
->>  
->> diff --git a/include/linux/of.h b/include/linux/of.h
->> index 3e710d8..a75a831 100644
->> --- a/include/linux/of.h
->> +++ b/include/linux/of.h
->> @@ -58,9 +58,6 @@ struct device_node {
->>  	struct	kref kref;
->>  	unsigned long _flags;
->>  	void	*data;
->> -#if defined(CONFIG_EEH)
->> -	struct eeh_dev *edev;
->> -#endif
->>  #if defined(CONFIG_SPARC)
->>  	char	*path_component_name;
->>  	unsigned int unique_id;
->> @@ -75,13 +72,6 @@ struct of_phandle_args {
->>  	uint32_t args[MAX_PHANDLE_ARGS];
->>  };
->>  
->> -#if defined(CONFIG_EEH)
->> -static inline struct eeh_dev *of_node_to_eeh_dev(struct device_node *dn)
->> -{
->> -	return dn->edev;
->> -}
->> -#endif
->> -
->>  #if defined(CONFIG_SPARC) || !defined(CONFIG_OF)
->>  /* Dummy ref counting routines - to be implemented later */
->>  static inline struct device_node *of_node_get(struct device_node *node)
->
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPaquCAAoJEECxmPOUX5FECQwP/R8oIVUn7x60UAoIy0bg4iB8
+3TqpQDEEvOUBNyzsdlurQl6gSondfiLdNsqJAOpxoj7pOIMEEa7GQ4+AJWX1e9fZ
+E70xhaubzqVglZs9fHPFKY8FSN+bPg3BtHTcOdUQMM2viiiZ4oZ6E0giCjKmuW7F
+LP8Phsca9lFfB9a8qjmDSYOUMgWW1pyrJv5UxKNrUkfyzCGhmgSQB4T0wBl+mv1N
+fMf9sCWqeqHkxm+RW9RZtYLXIeROfqa09KY4CB+QgejV42q5rGew+/UA5Vto7PtS
+qWQYbvPqYe6/NFw2WfCVCpXpPz4jKxL99gJkQ+uIbz4eBhCG0pb+sRhMx9zftBr8
+CnjPUJPIVwy6iM3Ejzlrq7Rro/7BUuauSua3dIRQ+eqMnl1TXcYXXEmlEq040w5U
+PLjb3ePl57iiftapqztaki3bZvjJeBfqI3w12+p2nMcl3t/ctjDcZSSbZ7shWoXp
+8Tsm+iGL7SNoBIVGra9gea1f5UzCWk7InNON8C9tiH+iStJQiBBx08LNsPUM+XYz
+OHu0Wgl17BX6HAlEJBkc07MdvdRhNQw6uWWrIKs4LFXG7ybcPZLNzWc1HhDWTKyH
+T14WFLGa/pUAY5XXsk+/xVGfF1zwN3Q1N3zWcKWTXB9mEPcGPyyAMJV+3kFpH17c
+gyxg90zHOwWUY+XdkDS9
+=DPqv
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__22_Mar_2012_15_33_06_+1100_jfkLdFlux=q4sqvo--
