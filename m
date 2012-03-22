@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the l2-mtd tree with the slave-dma tree
-Date: Thu, 22 Mar 2012 13:53:09 +1100
-Message-ID: <20120322135309.c27700c17c78d7c93de3d7db@canb.auug.org.au>
+Subject: linux-next: manual merge of the l2-mtd tree with theslave-dma tree
+Date: Thu, 22 Mar 2012 13:56:29 +1100
+Message-ID: <20120322135629.65b2377c86d6605957086587@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__22_Mar_2012_13_53_09_+1100_2vhV1cYZ_o11R=3u"
+ boundary="Signature=_Thu__22_Mar_2012_13_56_29_+1100_vcA=PV29BuBjZTr4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33284 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:36876 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751665Ab2CVCxS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 22:53:18 -0400
+	with ESMTP id S1752263Ab2CVC4g (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Mar 2012 22:56:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Artem Bityutskiy <dedekind1@gmail.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, Vinod Koul <vinod.koul@intel.com>, Huang Shijie <b32955@freescale.com>
 
---Signature=_Thu__22_Mar_2012_13_53_09_+1100_2vhV1cYZ_o11R=3u
+--Signature=_Thu__22_Mar_2012_13_56_29_+1100_vcA=PV29BuBjZTr4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,62 +24,51 @@ Content-Transfer-Encoding: quoted-printable
 Hi Artem,
 
 Today's linux-next merge of the l2-mtd tree got a conflict in
-drivers/dma/mxs-dma.c between commit 185ecb5f4fd4 ("dmaengine: add
-context parameter to prep_slave_sg and prep_dma_cyclic") from the
-slave-dma tree and commit c790d78c631f ("mxs-dma : rewrite the last
-parameter of mxs_dma_prep_slave_sg()") from the l2-mtd tree.
+drivers/mmc/host/mxs-mmc.c between commit 16052827d98f
+("dmaengine/dma_slave: introduce inline wrappers") from the slave-dma
+tree and commit c790d78c631f ("mxs-dma : rewrite the last parameter of
+mxs_dma_prep_slave_sg()") from the l2-mtd tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/dma/mxs-dma.c
-index 65334c4,0ddfd30..0000000
---- a/drivers/dma/mxs-dma.c
-+++ b/drivers/dma/mxs-dma.c
-@@@ -25,11 -26,8 +26,10 @@@
+diff --cc drivers/mmc/host/mxs-mmc.c
+index 65f36cf,4062812..0000000
+--- a/drivers/mmc/host/mxs-mmc.c
++++ b/drivers/mmc/host/mxs-mmc.c
+@@@ -324,8 -324,8 +324,8 @@@ static struct dma_async_tx_descriptor *
+  		sg_len =3D SSP_PIO_NUM;
+  	}
  =20
-  #include <asm/irq.h>
-  #include <mach/mxs.h>
-- #include <mach/dma.h>
-  #include <mach/common.h>
- =20
- +#include "dmaengine.h"
- +
-  /*
-   * NOTE: The term "PIO" throughout the mxs-dma implementation means
-   * PIO mode of mxs apbh-dma and apbx-dma.  With this working mode,
-@@@ -340,7 -374,7 +362,7 @@@ static void mxs_dma_free_chan_resources
-  static struct dma_async_tx_descriptor *mxs_dma_prep_slave_sg(
-  		struct dma_chan *chan, struct scatterlist *sgl,
-  		unsigned int sg_len, enum dma_transfer_direction direction,
-- 		unsigned long append, void *context)
- -		unsigned long flags)
-++		unsigned long flags, void *context)
-  {
-  	struct mxs_dma_chan *mxs_chan =3D to_mxs_dma_chan(chan);
-  	struct mxs_dma_engine *mxs_dma =3D mxs_chan->mxs_dma;
+ -	desc =3D host->dmach->device->device_prep_slave_sg(host->dmach,
+ +	desc =3D dmaengine_prep_slave_sg(host->dmach,
+- 				sgl, sg_len, host->slave_dirn, append);
++ 				sgl, sg_len, host->slave_dirn, flags);
+  	if (desc) {
+  		desc->callback =3D mxs_mmc_dma_irq_callback;
+  		desc->callback_param =3D host;
 
---Signature=_Thu__22_Mar_2012_13_53_09_+1100_2vhV1cYZ_o11R=3u
+--Signature=_Thu__22_Mar_2012_13_56_29_+1100_vcA=PV29BuBjZTr4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPapQVAAoJEECxmPOUX5FEEXYP/3oow1aVLqmSE78nGbMdopx8
-MvM90sFcPsuP34se5JzMBrhdosXvmyrVgOUsbpxRplL3KkWnuNPW92LLikKOgU+H
-ZBtXiICeLMrZYd666jMsXT7XXTALDPmDeFcII57m1JaQZywiTZPHeUOQeLDZr9Vz
-L8kgVTzs2ON5VHhMWyPffUUh1zcHjvmljVuMpoTiQKqRAaIy9v0RGocKNV2q60PE
-E44BzqcIQuoxzDJJ91n5dkAzZl5TUz5FG/e3gHc86WxnNO4X6brVU5hSzV92Eaa4
-NhE3vrXUTuy2ASre0WZV6kzsxRYrRDKvlXypUNSNtRxfai3xhH0wsuC6M3oXSdVT
-wuMUd8wwmpLq5wt11n5HijhN4+GW+H31wrfky/+uJAJ3yLD/8pFRieLKtirz/hVN
-Oc0nqb9tzaQSA+tvkce7V/wOBge7nLGL/+dBD5nFufdB51gDDdA1idTMUMbUqhrU
-24Zu1C9Bd+/mpc2mIDlJIEPmVzEu10mj8FN1a3RC57VpLarCB5RII5Tyrfb3mWNT
-GM6czYjZDhSp+EYhkAomRtGjDwnrMozcMSHnSraXuM0CsRpHOtUUon96dkPp0nUy
-gMVc5xlcj9RmplhPVTzCepjezQXlJVtIAkKhOUjZu/Z4CcRJPe8EF4pm/8iIirwC
-v99pHf4E3XDZd+8LmAsl
-=HE2h
+iQIcBAEBCAAGBQJPapTdAAoJEECxmPOUX5FEt6MP/2zPsswX6tbc/CZ6w6lDqvBc
+d2VE4nIrXUGKIM9xJitXj0Ukstg5j5h1h0qv/sJMUAWRDhj2zGefd8JENCb92xs1
+kLASDZ6+aH+EnjVjP47a2XpWGK/o0ube/O3pbzglXSj6SERij8ad29awcUsMH8Ik
+1Clkblrfhj9pf2yX0942UZtBadH06cfpXmhp6F0jdi48djpZMVBVCqB8ZjbEjs1S
+1sguH4YSdJSLgRw94odnA6cx+8/OnviMPk5TYiiMZnDiok6Sgki6H/OjTxdtbIqx
+hke++LrddU/DnBIsG9j9vWMI1IixgnJOUrohKFlKHdmmiZNZfFRHSR05ngL4F3wn
+4Mrh6fXriI417l7dST8B1EnOozHn+zpVHXhYAujQGiC0BmcjWG8Cd9UG3D0DBqM/
+JWGjhIp2HvuxzDU8bAHiwtmGXx+ezpvmdqZOXRwR5LLcYDFdnisn07HrTycoouIW
+EN40c0us1UL42AYzj9GceFHM+qu0JsmkWumaIuNsIFTiyeqPP+8827d/2jI3nfgx
+A5eBNTdlWjGYuJ+y46hfi+3lhMWE1yeR5noLJC5zVIhs2GrCCAxHr23u+44QaOb7
+np9ZbhdmAKOdT76bgwUVDgsRAKOSPlweYpLkmI1T0tqfpepbxT1bVLjwO7iW2BJA
+HjQAn7hXsQPsXE2uReGc
+=kk8P
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__22_Mar_2012_13_53_09_+1100_2vhV1cYZ_o11R=3u--
+--Signature=_Thu__22_Mar_2012_13_56_29_+1100_vcA=PV29BuBjZTr4--
