@@ -1,52 +1,60 @@
-From: Arjan van de Ven <arjan@linux.intel.com>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Subject: Re: Boot failure with next-20120208
-Date: Fri, 23 Mar 2012 12:24:12 -0700
-Message-ID: <4F6CCDDC.5000802@linux.intel.com>
-References: <20120212113805.c7e5d902c95a9d0f4037e12c@canb.auug.org.au> <16788.1329102254@neuling.org> <4F391BBA.5020506@linux.intel.com> <20120213120549.eab7e2b9.akpm@linux-foundation.org> <4F396FA9.90606@linux.intel.com> <20120323122244.132198e3.akpm@linux-foundation.org>
+Date: Sat, 24 Mar 2012 09:18:10 +1100
+Message-ID: <1332541090.2882.14.camel@pasglop>
+References: <20120212113805.c7e5d902c95a9d0f4037e12c@canb.auug.org.au>
+	 <16788.1329102254@neuling.org> <4F391BBA.5020506@linux.intel.com>
+	 <20120213120549.eab7e2b9.akpm@linux-foundation.org>
+	 <4F396FA9.90606@linux.intel.com>
+	 <20120323122244.132198e3.akpm@linux-foundation.org>
+	 <4F6CCDDC.5000802@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:12065 "EHLO mga09.intel.com"
+Received: from gate.crashing.org ([63.228.1.57]:43666 "EHLO gate.crashing.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759604Ab2CWTYN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 23 Mar 2012 15:24:13 -0400
-In-Reply-To: <20120323122244.132198e3.akpm@linux-foundation.org>
+	id S1751972Ab2CWWSn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 23 Mar 2012 18:18:43 -0400
+In-Reply-To: <4F6CCDDC.5000802@linux.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michael Neuling <mikey@neuling.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, gregkh@linuxfoundation.org, linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, Milton Miller <miltonm@bga.com>
+To: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Michael Neuling <mikey@neuling.org>, gregkh@linuxfoundation.org, LKML <linux-kernel@vger.kernel.org>, Milton Miller <miltonm@bga.com>, linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
-On 3/23/2012 12:22 PM, Andrew Morton wrote:
-> On Mon, 13 Feb 2012 12:16:41 -0800
-> Arjan van de Ven <arjan@linux.intel.com> wrote:
+On Fri, 2012-03-23 at 12:24 -0700, Arjan van de Ven wrote:
+> well yeah, PPC is throwing things in the spanner
 > 
->> -----BEGIN PGP SIGNED MESSAGE-----
->> Hash: SHA1
->>
->>> The bug looks pretty generic, nothing very PPC-specific there.  It 
->>> might affect other architectures - we won't know until we find out
->>> wht caused it.
->>
->> well one half of the race looks pretty generic...
->> ..... doesn't mean the other half of the race is though....
->>
->>
->>>
->>> Ho hum, I suppose I should pull the patch out of linux-next, to
->>> avoid disrupting other testing.  This means it's going to be hard
->>> to get the bug fixed.
->>
->> it means losing this one big PPC machine indeed.... until they hit
->> that same race some other way with regular real cpu hotplug ;-(
+> we're now working on an x86-only patch with basically the same
+> improvement, but done in a way that does not touch the other
+> architectures
 > 
-> So we're kinda stuck with this.  As I can't merge it, I guess I'll make
-> smp-start-up-non-boot-cpus-asynchronously.patch disappear.
+> so by all means drop the patch
 
+Or maybe make an arch flag to enable the behaviour ? I can have a look
+at the problem & maybe even fix it next week (it's been under my radar
+for some reason so far), but I know at least of a few places where we
+have that sort of assumptions about the bringup of boot CPUs.
 
-well yeah, PPC is throwing things in the spanner
+For example, on Apple G5s, we don't support real hotplug, so the hot
+unplug path just puts them in a linux-controlled sleep loop. So the
+early boot time bringup is different from the hotplug path. 
 
-we're now working on an x86-only patch with basically the same
-improvement, but done in a way that does not touch the other architectures
+Among others, it needs access to things like i2c to synchronize the time
+bases of the CPUs being brought up and we "release" that resource at the
+end of the bringup.
 
-so by all means drop the patch
+So that needs fixing a way or another (and it's non trivial as other
+drivers might try to get a lock on that i2c bus).
+
+I'm sure I have a few other places with similar assumptions. And I
+wouldn't be surprised if other architectures do as well :-)
+
+So while your patch is a good / worthwhile idea, I think we need a bit
+more time to sort things out before it can be applied.
+
+(BTW. Arjan, can you send me privately your latest version of that
+patch, for some reason I don't seem to be able to put my hand on it).
+
+Cheers,
+Ben.
