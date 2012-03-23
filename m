@@ -1,64 +1,40 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Fri, 23 Mar 2012 11:30:09 -0400
-Message-ID: <4F6C9701.50103@pobox.com>
-References: <20120323130031.c097ca3755de5ff5879504e1@canb.auug.org.au> <1332478202.2882.2.camel@pasglop> <CACVxJT-MgLO5aLiRuSR=61nea47V27vsXJB9St20J6G6hSe8xw@mail.gmail.com>
+From: "Williams, Dan J" <dan.j.williams@intel.com>
+Subject: Re: linux-next: build failure after merge of the isci tree
+Date: Fri, 23 Mar 2012 10:08:32 -0700
+Message-ID: <CABE8wwtBLGezYYi65_ZkrCZbt2f_t3LmvyCv3QLDGtTg4c3sJA@mail.gmail.com>
+References: <20120323132646.9e258a9cf41be00e8a839065@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:59246 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758682Ab2CWPaM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Mar 2012 11:30:12 -0400
-In-Reply-To: <CACVxJT-MgLO5aLiRuSR=61nea47V27vsXJB9St20J6G6hSe8xw@mail.gmail.com>
+Received: from mga10.intel.com ([192.55.52.92]:64323 "EHLO
+	fmsmga102.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755513Ab2CWRId (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Mar 2012 13:08:33 -0400
+Received: by yhpp61 with SMTP id p61so5017615yhp.25
+        for <linux-next@vger.kernel.org>; Fri, 23 Mar 2012 10:08:32 -0700 (PDT)
+In-Reply-To: <20120323132646.9e258a9cf41be00e8a839065@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, James Bottomley <James.Bottomley@hansenpartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/23/2012 06:26 AM, Alexey Dobriyan wrote:
-> On Fri, Mar 23, 2012 at 7:50 AM, Benjamin Herrenschmidt
-> <benh@kernel.crashing.org>  wrote:
->> On Fri, 2012-03-23 at 13:00 +1100, Stephen Rothwell wrote:
->>> Hi James,
->>>
->>> After merging the scsi tree, today's linux-next build (powerpc
->>> ppc64_defconfig) failed like this:
->>>
->>> drivers/ata/sata_svw.c: In function 'k2_sata_proc_open':
->>> drivers/ata/sata_svw.c:327:2: error: implicit declaration of function 'PDE' [-Werror=implicit-function-declaration]
->>> drivers/ata/sata_svw.c:327:56: error: invalid type argument of '->' (have 'int')
->>> drivers/ata/sata_svw.c:328:1: warning: control reaches end of non-void function [-Wreturn-type]
->>>
->>> Caused by commit 343ac4b031a7 ("[SCSI] sata_svw: convert to scsi proc_ops").
->>>
->>> I have used the scsi tree from next-20120322 for today.
->>
->> Additionally, I am the author and maintainer of that driver and I don't
->> remember ever being CCed on that patch ... or did I miss it ?
+On Thu, Mar 22, 2012 at 7:26 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Dan,
 >
-> Your email was not mentioned in changelogs for 6 years nor the driver
-> has specific MAINTAINERS entry.
+> After merging the isci tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> drivers/scsi/ipr.c: In function 'ipr_ata_slave_alloc':
+> drivers/scsi/ipr.c:4552:28: error: 'ap' undeclared (first use in this function)
+>
+> Caused by commit 837f52ee7a86 ("libsas, libata: fix start of life for a
+> sas ata_port").
+>
+> I have used the isci tree from next-20120322 for today.
 
+/me kicks himself for overlooking CONFIG_IPR=n in his .config
 
-At the top of drivers/ata/sata_svw.c, we find:
+Fixed up and pushed out.
 
-  *  Maintained by: Benjamin Herrenschmidt <benh@kernel.crashing.org> and
-  *                 Jeff Garzik <jgarzik@pobox.com>
-  *                  Please ALWAYS copy linux-ide@vger.kernel.org
-  *                  on emails.
-
-and in MAINTAINERS we also find
-
-SERIAL ATA (SATA) SUBSYSTEM
-M:      Jeff Garzik <jgarzik@pobox.com>
-L:      linux-ide@vger.kernel.org
-T:      git 
-git://git.kernel.org/pub/scm/linux/kernel/git/jgarzik/libata-dev.git
-S:      Supported
-F:      drivers/ata/
-
-None of these addresses, nor LKML, were copied.  Please do so in the future.
-
-	Jeff
+--
+Dan
