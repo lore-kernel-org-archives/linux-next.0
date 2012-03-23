@@ -1,30 +1,61 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH 1/2] crypto: camellia-x86_64 - module init/exit
-	functions should be static
-Date: Fri, 23 Mar 2012 08:42:10 +0800
-Message-ID: <20120323004209.GA20518@gondor.apana.org.au>
-References: <4F620F37.4070404@xenotime.net> <20120315201151.11667.63183.stgit@localhost6.localdomain6> <4F6A74E3.7080901@xenotime.net> <20120322004646.GA8489@gondor.apana.org.au> <4F6B9709.1040701@zytor.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the scsi tree
+Date: Fri, 23 Mar 2012 13:00:31 +1100
+Message-ID: <20120323130031.c097ca3755de5ff5879504e1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4F6B9709.1040701@zytor.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__23_Mar_2012_13_00_31_+1100_Z+8t24Txhi5xoWgY"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeff Garzik <jgarzik@pobox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Mar 22, 2012 at 02:18:01PM -0700, H. Peter Anvin wrote:
->
-> > Thanks for the reminder, I'll push these through today.
-> 
-> Please push these to Linus ASAP, it is breaking the x86-64 allyesconfig
-> build upstream right now.
+--Signature=_Fri__23_Mar_2012_13_00_31_+1100_Z+8t24Txhi5xoWgY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've pushed them through.
+Hi James,
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+After merging the scsi tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+drivers/ata/sata_svw.c: In function 'k2_sata_proc_open':
+drivers/ata/sata_svw.c:327:2: error: implicit declaration of function 'PDE'=
+ [-Werror=3Dimplicit-function-declaration]
+drivers/ata/sata_svw.c:327:56: error: invalid type argument of '->' (have '=
+int')
+drivers/ata/sata_svw.c:328:1: warning: control reaches end of non-void func=
+tion [-Wreturn-type]
+
+Caused by commit 343ac4b031a7 ("[SCSI] sata_svw: convert to scsi proc_ops").
+
+I have used the scsi tree from next-20120322 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__23_Mar_2012_13_00_31_+1100_Z+8t24Txhi5xoWgY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPa9k/AAoJEECxmPOUX5FEHnUP/2EJTKhrci3W6EaNe7lttaof
+3lvmJ9hGbRYNHQQDvHDM5o3gJJbw+r2UXCprQdyNTknVdtH539azs5Dm0s0rksEH
+HacHUHv9/1EJBSIRpJevWApnlsDsPdQC0PaIxfciBE9DxDXOSTSscWRy8dd5pCNW
+0nh9IXbTFDruL5aK1P1t9AE9dTe78sUotup24rSwetYP1qBWyWoRVyzpHt6PNXKQ
+V2RCR7u1GBIcNbgMj/513rNMfhbcWK2Ab1J6Tu6O8ogAQ54VLxlFGmjX+XyI9o3b
+YbAHX0/6e8td17iHa3CpIwBTaxDS9PR2QVKIoHYpgQlaIrLmK/SHvAZGHYHktoBC
+wMzK/rm5ti04rhy8RrqkJ60MbzZRwUzZRmBuXmNxsJGxzErakKa6AStXZi/+iDZC
+xSJ5xvn05nxRgkkhqz5UOuHzMu2c1l3CV+v/VUIu3WIiXI8YFKDebdWoxMQb62PX
+OZlAdT5FXdx4DlkN2zn5Yj+hGgpcL6p1URyaR8vqg3QQs/eWe8g0n6fIEvX2kfS9
+8pO4Y+Oo/H3cggrunXU3Wypm6F748no86nQ8wgLpJ7R76Jq9Syq1OC4shzFXucvQ
+T+iCTUaNBpdgs82V+IcHQjR7pO03OloxLVGSENEj/Yy0if0Sv41/x+9PwIaDesGp
+unIqCiqJ1nc1VJAVVbgU
+=72oQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__23_Mar_2012_13_00_31_+1100_Z+8t24Txhi5xoWgY--
