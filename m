@@ -1,41 +1,57 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Fri, 23 Mar 2012 12:26:38 +0200
-Message-ID: <CACVxJT-MgLO5aLiRuSR=61nea47V27vsXJB9St20J6G6hSe8xw@mail.gmail.com>
-References: <20120323130031.c097ca3755de5ff5879504e1@canb.auug.org.au>
-	<1332478202.2882.2.camel@pasglop>
+From: Hugh Dickins <hughd@google.com>
+Subject: linux-next: Tree for Mar 23: doubled patch in vmscan.c
+Date: Fri, 23 Mar 2012 03:29:26 -0700 (PDT)
+Message-ID: <alpine.LSU.2.00.1203230303260.31362@eggly.anvils>
+References: <20120323172333.9af9b678fcde0e6e75b5f6dd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:57798 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756211Ab2CWK0i (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Mar 2012 06:26:38 -0400
-In-Reply-To: <1332478202.2882.2.camel@pasglop>
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:37541 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755575Ab2CWK3v (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Mar 2012 06:29:51 -0400
+Received: by gghe5 with SMTP id e5so2583271ggh.19
+        for <linux-next@vger.kernel.org>; Fri, 23 Mar 2012 03:29:51 -0700 (PDT)
+In-Reply-To: <20120323172333.9af9b678fcde0e6e75b5f6dd@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, James Bottomley <James.Bottomley@hansenpartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Garzik <jgarzik@pobox.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mel@csn.ul.ie>, Mel Gorman <mgorman@suse.de>, Konstantin Khlebnikov <khlebnikov@openvz.org>
 
-On Fri, Mar 23, 2012 at 7:50 AM, Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
-> On Fri, 2012-03-23 at 13:00 +1100, Stephen Rothwell wrote:
->> Hi James,
->>
->> After merging the scsi tree, today's linux-next build (powerpc
->> ppc64_defconfig) failed like this:
->>
->> drivers/ata/sata_svw.c: In function 'k2_sata_proc_open':
->> drivers/ata/sata_svw.c:327:2: error: implicit declaration of function 'PDE' [-Werror=implicit-function-declaration]
->> drivers/ata/sata_svw.c:327:56: error: invalid type argument of '->' (have 'int')
->> drivers/ata/sata_svw.c:328:1: warning: control reaches end of non-void function [-Wreturn-type]
->>
->> Caused by commit 343ac4b031a7 ("[SCSI] sata_svw: convert to scsi proc_ops").
->>
->> I have used the scsi tree from next-20120322 for today.
->
-> Additionally, I am the author and maintainer of that driver and I don't
-> remember ever being CCed on that patch ... or did I miss it ?
+On Fri, 23 Mar 2012, Stephen Rothwell wrote:
+> 
+> Changes since 20120322:
+> 
+> The akpm tree lost lots of patches that turned up elsewhere (mostly in
+> Linus' tree).
 
-Your email was not mentioned in changelogs for 6 years nor the driver
-has specific MAINTAINERS entry.
+I'm amused to notice that your merging process is as impatient as akpm,
+and just cannot wait for Mel to remove lumpy reclaim from mm/vmscan.c.
+
+It has chosen to do so itself, by duplicating Konstantin's "mm: forbid
+lumpy-reclaim in shrink_active_list()" (we had expected that to be held
+back, but it's gone in anyway, oh well) into shrink_inactive_list(),
+overriding the set_reclaim_mode() a few lines above with a spurious
+reset_reclaim_mode(sc).
+
+I expect that will sort itself out automatically once you get an update
+from akpm, but something to beware of meanwhile (probably just a matter
+of deleting Konstantin's patch from your trove now it's in Linus's tree).
+
+Corrective patch below for illustration, but would need to be applied
+with care: I wouldn't be surprised if it chose to do exactly the wrong
+thing when applied automatically.
+
+Hugh
+
+--- linux-next/mm/vmscan.c.orig	2012-03-23 01:29:33.312011679 -0700
++++ linux-next/mm/vmscan.c	2012-03-23 03:00:08.688142469 -0700
+@@ -1528,8 +1528,6 @@ shrink_inactive_list(unsigned long nr_to
+ 
+ 	lru_add_drain();
+ 
+-	reset_reclaim_mode(sc);
+-
+ 	if (!sc->may_unmap)
+ 		isolate_mode |= ISOLATE_UNMAPPED;
+ 	if (!sc->may_writepage)
