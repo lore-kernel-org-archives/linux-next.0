@@ -1,57 +1,78 @@
-From: Hugh Dickins <hughd@google.com>
-Subject: linux-next: Tree for Mar 23: doubled patch in vmscan.c
-Date: Fri, 23 Mar 2012 03:29:26 -0700 (PDT)
-Message-ID: <alpine.LSU.2.00.1203230303260.31362@eggly.anvils>
-References: <20120323172333.9af9b678fcde0e6e75b5f6dd@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: build failure after merge of the moduleh tree
+Date: Fri, 23 Mar 2012 08:49:31 -0400
+Message-ID: <4F6C715B.2080104@windriver.com>
+References: <20120323155114.a1779aa050fa05f6191b7dae@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:37541 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755575Ab2CWK3v (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Mar 2012 06:29:51 -0400
-Received: by gghe5 with SMTP id e5so2583271ggh.19
-        for <linux-next@vger.kernel.org>; Fri, 23 Mar 2012 03:29:51 -0700 (PDT)
-In-Reply-To: <20120323172333.9af9b678fcde0e6e75b5f6dd@canb.auug.org.au>
+Received: from mail.windriver.com ([147.11.1.11]:51277 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751802Ab2CWMuA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Mar 2012 08:50:00 -0400
+In-Reply-To: <20120323155114.a1779aa050fa05f6191b7dae@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mel@csn.ul.ie>, Mel Gorman <mgorman@suse.de>, Konstantin Khlebnikov <khlebnikov@openvz.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>, Dave Airlie <airlied@redhat.com>, Linus <torvalds@linux-foundation.org>
 
-On Fri, 23 Mar 2012, Stephen Rothwell wrote:
+On 12-03-23 12:51 AM, Stephen Rothwell wrote:
+> Hi Paul,
 > 
-> Changes since 20120322:
+> After merging the moduleh tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> The akpm tree lost lots of patches that turned up elsewhere (mostly in
-> Linus' tree).
+> drivers/gpu/drm/radeon/si_blit_shaders.c:252:1: error: implicit declaration of function 'BUILD_BUG_ON_ZERO' [-Werror=implicit-function-declaration]
+> drivers/gpu/drm/radeon/si_blit_shaders.c:252:1: error: initializer element is not constant
+> 
+> Caused by commit 48c0c902e2e6 ("drm/radeon/kms: add support for CP setup
+> on SI") from Linus' tree interacting with commit 6c03438edeb5 ("kernel.h:
+> doesn't explicitly use bug.h, so don't include it").
 
-I'm amused to notice that your merging process is as impatient as akpm,
-and just cannot wait for Mel to remove lumpy reclaim from mm/vmscan.c.
+Thanks Stephen,
 
-It has chosen to do so itself, by duplicating Konstantin's "mm: forbid
-lumpy-reclaim in shrink_active_list()" (we had expected that to be held
-back, but it's gone in anyway, oh well) into shrink_inactive_list(),
-overriding the set_reclaim_mode() a few lines above with a spurious
-reset_reclaim_mode(sc).
+Too bad the radeon commits weren't in linux-next, then we'd not
+have to be fixing these in the merge window...
 
-I expect that will sort itself out automatically once you get an update
-from akpm, but something to beware of meanwhile (probably just a matter
-of deleting Konstantin's patch from your trove now it's in Linus's tree).
+I think it makes sense for me to fold this into:
 
-Corrective patch below for illustration, but would need to be applied
-with care: I wouldn't be surprised if it chose to do exactly the wrong
-thing when applied automatically.
+commit 50af5ead3b44ccf8bd2b4d2a50c1b610f557c480
+Author: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date:   Fri Jan 20 18:35:53 2012 -0500
 
-Hugh
+    bug.h: add include of it to various implicit C users
 
---- linux-next/mm/vmscan.c.orig	2012-03-23 01:29:33.312011679 -0700
-+++ linux-next/mm/vmscan.c	2012-03-23 03:00:08.688142469 -0700
-@@ -1528,8 +1528,6 @@ shrink_inactive_list(unsigned long nr_to
- 
- 	lru_add_drain();
- 
--	reset_reclaim_mode(sc);
--
- 	if (!sc->may_unmap)
- 		isolate_mode |= ISOLATE_UNMAPPED;
- 	if (!sc->may_writepage)
+in the bug-3.4 tree before requesting it to be pulled.
+
+Paul.
+--
+
+> 
+> ARRAY_SIZE in kernel.h uses __must_be_array from compiler{-ggc,-intel}.h
+> which uses BUILD_BUG_ON_ZERO ...  I don;t know if we want to include
+> bug.h in compiler.h ...
+> 
+> So, for today, I have added the following patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 23 Mar 2012 15:47:07 +1100
+> Subject: [PATCH] kernel.h: using ARRAY_SIZE needs to include bug.h
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/gpu/drm/radeon/si_blit_shaders.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/radeon/si_blit_shaders.c b/drivers/gpu/drm/radeon/si_blit_shaders.c
+> index a7124b4..ec415e7 100644
+> --- a/drivers/gpu/drm/radeon/si_blit_shaders.c
+> +++ b/drivers/gpu/drm/radeon/si_blit_shaders.c
+> @@ -25,6 +25,7 @@
+>   */
+>  
+>  #include <linux/types.h>
+> +#include <linux/bug.h>
+>  #include <linux/kernel.h>
+>  
+>  const u32 si_default_state[] =
