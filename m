@@ -1,70 +1,83 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Fri, 23 Mar 2012 09:01:31 +0000
-Message-ID: <1332493291.2801.14.camel@dabdike.int.hansenpartnership.com>
+Date: Fri, 23 Mar 2012 20:24:14 +1100
+Message-ID: <20120323202414.12bc2529aa4cb5b8e781878d@canb.auug.org.au>
 References: <20120323130031.c097ca3755de5ff5879504e1@canb.auug.org.au>
-	 <1332478202.2882.2.camel@pasglop>
-	 <1332490486.2801.1.camel@dabdike.int.hansenpartnership.com>
-	 <1332492832.2882.4.camel@pasglop>
+	<1332490809.2801.2.camel@dabdike.int.hansenpartnership.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__23_Mar_2012_20_24_14_+1100_J_++NLvz/_IYE2IK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33147 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757835Ab2CWJBg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 23 Mar 2012 05:01:36 -0400
-In-Reply-To: <1332492832.2882.4.camel@pasglop>
+Received: from haggis.pcug.org.au ([203.10.76.10]:41975 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757060Ab2CWJY2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Mar 2012 05:24:28 -0400
+In-Reply-To: <1332490809.2801.2.camel@dabdike.int.hansenpartnership.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Jeff Garzik <jgarzik@pobox.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeff Garzik <jgarzik@pobox.com>
 
-On Fri, 2012-03-23 at 19:53 +1100, Benjamin Herrenschmidt wrote:
-> On Fri, 2012-03-23 at 08:14 +0000, James Bottomley wrote:
-> > > Additionally, I am the author and maintainer of that driver and I
-> > don't
-> > > remember ever being CCed on that patch ... or did I miss it ?
-> > 
-> > You missed it ... I added you and Jeff for automatic cc's when the
-> > commit hit the scsi tree.
-> > 
-> > This is the mail log:
-> > 
-> > Mar 22 07:53:17 bedivere postfix/smtp[14322]: C3A1F8EE136:
-> > to=<benh@kernel.crashing.org>,
-> > relay=gate.crashing.org[63.228.1.57]:25, delay=2.7,
-> > delays=0.13/0.12/1.3/1.2, dsn=2.0.0, status=sent (250 2.0.0
-> > q2MErGNT019145 Message accepted for delivery)
-> 
-> Allright, Mar 22, that's yesterday (.au time)... that's a short time
-> between notifying the maintainer and going into -next :-) No biggie,
-> I'll have a look next week, it's just annoying to get build failure
-> reports from Stephen about drivers I own for patches I never heard
-> about ...
+--Signature=_Fri__23_Mar_2012_20_24_14_+1100_J_++NLvz/_IYE2IK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, sorry ... it's one of those large all or nothing type series that
-touches about 33 different drivers (about 75% of which are
-unmaintained).
+Hi James,
 
-I would have checked the ppc compile if I still had a working ppc
-machine.  Having looked through the code, I think this is the fix ...
-could someone check?
+On Fri, 23 Mar 2012 08:20:09 +0000 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> On Fri, 2012-03-23 at 13:00 +1100, Stephen Rothwell wrote:
+> >=20
+> > After merging the scsi tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >=20
+> > drivers/ata/sata_svw.c: In function 'k2_sata_proc_open':
+> > drivers/ata/sata_svw.c:327:2: error: implicit declaration of function '=
+PDE' [-Werror=3Dimplicit-function-declaration]
+> > drivers/ata/sata_svw.c:327:56: error: invalid type argument of '->' (ha=
+ve 'int')
+> > drivers/ata/sata_svw.c:328:1: warning: control reaches end of non-void =
+function [-Wreturn-type]
+>=20
+> That's defined in linux/proc_fs.h
+>=20
+> What was the config?  Was it a no-PROCFS config, or is this just
+> something that needs to be explicitly included?
 
-James
+See above, that was a powerpc ppc64_defconfig.  It certainly has PROCFS
+enabled.  Almost everything needs to be explicitly included - see Rule 1
+in Documentation/SubmitChecklist ...
 
----
+Implicit includes are vulnerable to CONFIG changes and
+architecture/platform differences in the include files.  I have seen lots
+of these.  :-(
 
-diff --git a/drivers/ata/sata_svw.c b/drivers/ata/sata_svw.c
-index 05838bf..0bbd0cb 100644
---- a/drivers/ata/sata_svw.c
-+++ b/drivers/ata/sata_svw.c
-@@ -42,6 +42,7 @@
- #include <linux/init.h>
- #include <linux/blkdev.h>
- #include <linux/delay.h>
-+#include <linux/proc_fs.h>
- #include <linux/interrupt.h>
- #include <linux/device.h>
- #include <scsi/scsi_host.h>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__23_Mar_2012_20_24_14_+1100_J_++NLvz/_IYE2IK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPbEE+AAoJEECxmPOUX5FELPQP/2OL8VLYrdMgdVcXUISbxetx
+ly7QVHtp8cZ0w191zOVhkwZRgsCps9iim321j172h14hjUP2pU+CwEAFNw2rgh3p
+LvA4eHnVuo2n5vbgrXgJe3gX6ooVLv/FMm31ZYEJMPYiWMqVJjd/MNA+pQmd/zaz
+B+PWxxENpvalgrBHin2F3tXx68sdeysg17gqqn2DTBrLVgMUcrhqQ8lcs9UCKK0l
+di1Ng4+LC9wt97VeDr8HuNjfIf5ZQHhrfZe+gAiGcjIm6kKhQH5bNIGgKrnkAozn
+mi9LKC/gY3x97glgBvPil/y3eIgMWm+9lccztWC9lUuWmYd4vpMMeiobpNwAfZI6
+5HZEsVgTAnZT/+oi1bzEPsyIMq34DALhjg2H0cdPdQA9zE/AWFhOmruXv8PniSv+
+KivjF4MCaC+E3H/2cY/QCBiiS2/CaAr2XQZaoVVl4MkUV5MOdOPg/jAQdK74RbXI
+dGWzOgdZbNf63antoQBCosi/+Lg7Qo3QCO6hoJ99CGrLjo9kmDBTjRLzvZND75W/
+IjAGWVXVuxIis/9UUZSjGOzsTDhmDiJHuspkg95zGeNHAVcOWIETbv+D3CLH8UWB
+dMsCHfu+OSnqgXg4q/2gSVEAlnaevEPpaOmzs84Altc/o7icdyDP0u5cv8178LMw
+na0yFuhVUajf9Akoc/7I
+=YYSX
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__23_Mar_2012_20_24_14_+1100_J_++NLvz/_IYE2IK--
