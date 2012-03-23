@@ -1,61 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi tree
-Date: Fri, 23 Mar 2012 13:00:31 +1100
-Message-ID: <20120323130031.c097ca3755de5ff5879504e1@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the isci tree
+Date: Fri, 23 Mar 2012 13:26:46 +1100
+Message-ID: <20120323132646.9e258a9cf41be00e8a839065@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__23_Mar_2012_13_00_31_+1100_Z+8t24Txhi5xoWgY"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeff Garzik <jgarzik@pobox.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__23_Mar_2012_13_26_46_+1100_N144SH7hC9mu6vsb"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52659 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753899Ab2CWC0z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Mar 2012 22:26:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__23_Mar_2012_13_00_31_+1100_Z+8t24Txhi5xoWgY
+--Signature=_Fri__23_Mar_2012_13_26_46_+1100_N144SH7hC9mu6vsb
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi Dan,
 
-After merging the scsi tree, today's linux-next build (powerpc
+After merging the isci tree, today's linux-next build (powerpc
 ppc64_defconfig) failed like this:
 
-drivers/ata/sata_svw.c: In function 'k2_sata_proc_open':
-drivers/ata/sata_svw.c:327:2: error: implicit declaration of function 'PDE'=
- [-Werror=3Dimplicit-function-declaration]
-drivers/ata/sata_svw.c:327:56: error: invalid type argument of '->' (have '=
-int')
-drivers/ata/sata_svw.c:328:1: warning: control reaches end of non-void func=
-tion [-Wreturn-type]
+drivers/scsi/ipr.c: In function 'ipr_ata_slave_alloc':
+drivers/scsi/ipr.c:4552:28: error: 'ap' undeclared (first use in this funct=
+ion)
 
-Caused by commit 343ac4b031a7 ("[SCSI] sata_svw: convert to scsi proc_ops").
+Caused by commit 837f52ee7a86 ("libsas, libata: fix start of life for a
+sas ata_port").
 
-I have used the scsi tree from next-20120322 for today.
+I have used the isci tree from next-20120322 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__23_Mar_2012_13_00_31_+1100_Z+8t24Txhi5xoWgY
+--Signature=_Fri__23_Mar_2012_13_26_46_+1100_N144SH7hC9mu6vsb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPa9k/AAoJEECxmPOUX5FEHnUP/2EJTKhrci3W6EaNe7lttaof
-3lvmJ9hGbRYNHQQDvHDM5o3gJJbw+r2UXCprQdyNTknVdtH539azs5Dm0s0rksEH
-HacHUHv9/1EJBSIRpJevWApnlsDsPdQC0PaIxfciBE9DxDXOSTSscWRy8dd5pCNW
-0nh9IXbTFDruL5aK1P1t9AE9dTe78sUotup24rSwetYP1qBWyWoRVyzpHt6PNXKQ
-V2RCR7u1GBIcNbgMj/513rNMfhbcWK2Ab1J6Tu6O8ogAQ54VLxlFGmjX+XyI9o3b
-YbAHX0/6e8td17iHa3CpIwBTaxDS9PR2QVKIoHYpgQlaIrLmK/SHvAZGHYHktoBC
-wMzK/rm5ti04rhy8RrqkJ60MbzZRwUzZRmBuXmNxsJGxzErakKa6AStXZi/+iDZC
-xSJ5xvn05nxRgkkhqz5UOuHzMu2c1l3CV+v/VUIu3WIiXI8YFKDebdWoxMQb62PX
-OZlAdT5FXdx4DlkN2zn5Yj+hGgpcL6p1URyaR8vqg3QQs/eWe8g0n6fIEvX2kfS9
-8pO4Y+Oo/H3cggrunXU3Wypm6F748no86nQ8wgLpJ7R76Jq9Syq1OC4shzFXucvQ
-T+iCTUaNBpdgs82V+IcHQjR7pO03OloxLVGSENEj/Yy0if0Sv41/x+9PwIaDesGp
-unIqCiqJ1nc1VJAVVbgU
-=72oQ
+iQIcBAEBCAAGBQJPa99mAAoJEECxmPOUX5FENd4P/A6jcvA5mOeP9uLxTmOKJLaR
+tyo2Dhn0Y+DcIjszNC9hbBwUzD6VAIZZgUjz4VWaugDTfEyZ8DJMxCJ/cq31Twk8
+rlf6LEDlKfO1vnRUXILrShDiQ/yuhvZeUgWd6FTPQIqimL34rW6YHUNMSjdMGD5z
+vVa2cLJjx2p4pUhISSQqZO7roktnAP/PfXwD1r2gQEHczwxUxa4HcoV/XvQ7Zxlg
++5b71Q9oWklhFPEw16gZMsdABbjVqo7E8Wrr7mYsgmpamR6FtvoCingwUmoOUn8a
+zw1D4URb4xXL415ybZ5eq+AF9+avDvEHUUEnhp9dZFlfTMQJL//C3DO8d06Kozkk
+huYRUp/1T/Wh0iSoNnRtZXge8yKSJUpwMYuaqU3iT4sVRrBMTJ3TvJPtW6ZxFjAN
+sgx05Xs2xxLNnl4erJxsmxSaiVZwojbtQBdRv57HpCEUzs/4T/6uPbWTs68FOtYg
+OOUPz2V2LfPOWhVZc/KXgZs5hXGCxUJiuFNVSp1zQPCmCmcEzTSXZjO87DcIxTkq
+2qKh8LWE1UgNMULozI/U21tIogH3iacIj3k2kyYoFlCKBoZ40Mkpu6Cna+TeTI1V
+RPslAsiTkpVfpTAck1mZEhiyW+Fq9jGsGuLItXltWWqzvSWld/sdtVBs+GYUe5pR
+T/vEmwRVJsA+3qFrMFnz
+=YtrY
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__23_Mar_2012_13_00_31_+1100_Z+8t24Txhi5xoWgY--
+--Signature=_Fri__23_Mar_2012_13_26_46_+1100_N144SH7hC9mu6vsb--
