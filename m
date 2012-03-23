@@ -1,57 +1,48 @@
-From: Hans-Christian Egtvedt <egtvedt@samfundet.no>
-Subject: Re: [PATCH] avr32: fix build failures from mis-naming of
- atmel_nand.h
-Date: Fri, 23 Mar 2012 08:38:50 +0100
-Message-ID: <20120323073850.GB31010@samfundet.no>
-References: <1332296128-16262-1-git-send-email-paul.gortmaker@windriver.com>
- <20120321072632.GA15703@samfundet.no>
- <4F6990AF.2000004@atmel.com>
- <20120322051840.GC923@windriver.com>
- <20120322123327.GA14690@samfundet.no>
- <4F6B316F.5080307@atmel.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Fri, 23 Mar 2012 08:14:46 +0000
+Message-ID: <1332490486.2801.1.camel@dabdike.int.hansenpartnership.com>
+References: <20120323130031.c097ca3755de5ff5879504e1@canb.auug.org.au>
+	 <1332478202.2882.2.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassarossa.samfundet.no ([129.241.93.19]:37556 "EHLO
-	cassarossa.samfundet.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755604Ab2CWHjF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Mar 2012 03:39:05 -0400
-Content-Disposition: inline
-In-Reply-To: <4F6B316F.5080307@atmel.com>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33017 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756335Ab2CWIOu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 23 Mar 2012 04:14:50 -0400
+In-Reply-To: <1332478202.2882.2.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux@maxim.org.za, David Woodhouse <dwmw2@infradead.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Jeff Garzik <jgarzik@pobox.com>
 
-Around Thu 22 Mar 2012 15:04:31 +0100 or thereabout, Nicolas Ferre wrote:
-> On 03/22/2012 01:33 PM, Hans-Christian Egtvedt :
->> Around Thu 22 Mar 2012 01:18:40 -0400 or thereabout, Paul Gortmaker wrote:
-
-<snipp Atmel NAND cleanup>
-
->>>> Yes, we need to fix this. But I would not like to see this
->>>> "platform_data/atmel.h" renamed: I think that this file was designed to
->>>> collect several common platform data (ie: not just NAND related).
->>>>
->>>> So maybe we should just rename the entry that exists in
->>>> mach-at32ap/include/mach/board.h
->>>> and remove all occurrences of platform_data/atmel_nand.h
->>>
->>> Funny, since this is what I did 1st before I re-read the original commit
->>> log in more detail. :)  Oh well.  Here is the alternate solution.  You
->>> guys can pick whichever one you like best.  I compile tested this one
->>> as well.
->> 
->> I'll leave it to Nicolas to sign-off on this, but the changes look fine for
->> me.
+On Fri, 2012-03-23 at 15:50 +1100, Benjamin Herrenschmidt wrote:
+> On Fri, 2012-03-23 at 13:00 +1100, Stephen Rothwell wrote:
+> > Hi James,
+> > 
+> > After merging the scsi tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> > 
+> > drivers/ata/sata_svw.c: In function 'k2_sata_proc_open':
+> > drivers/ata/sata_svw.c:327:2: error: implicit declaration of function 'PDE' [-Werror=implicit-function-declaration]
+> > drivers/ata/sata_svw.c:327:56: error: invalid type argument of '->' (have 'int')
+> > drivers/ata/sata_svw.c:328:1: warning: control reaches end of non-void function [-Wreturn-type]
+> > 
+> > Caused by commit 343ac4b031a7 ("[SCSI] sata_svw: convert to scsi proc_ops").
+> > 
+> > I have used the scsi tree from next-20120322 for today.
 > 
-> Ok, which way do you want to follow for inclusion in mainline? I take it
-> through arm-soc?
+> Additionally, I am the author and maintainer of that driver and I don't
+> remember ever being CCed on that patch ... or did I miss it ?
 
-I have not gotten my key signed by any kernel developers yet, so typically
-I've asked people to take it through Andrew's tree.
+You missed it ... I added you and Jeff for automatic cc's when the
+commit hit the scsi tree.
 
-<snipp>
+This is the mail log:
 
--- 
-HcE
+Mar 22 07:53:17 bedivere postfix/smtp[14322]: C3A1F8EE136: to=<benh@kernel.crashing.org>, relay=gate.crashing.org[63.228.1.57]:25, delay=2.7, delays=0.13/0.12/1.3/1.2, dsn=2.0.0, status=sent (250 2.0.0 q2MErGNT019145 Message accepted for delivery)
+
+James
