@@ -1,47 +1,30 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: Tree for Mar 22
-Date: Thu, 22 Mar 2012 21:03:52 -0300
-Message-ID: <4F6BBDE8.5020609@redhat.com>
-References: <20120322170829.38a649b3f84d225d94808648@canb.auug.org.au> <4F6B88D2.5060500@redhat.com> <20120323091900.d3c007d76b49d4053457906e@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH 1/2] crypto: camellia-x86_64 - module init/exit
+	functions should be static
+Date: Fri, 23 Mar 2012 08:42:10 +0800
+Message-ID: <20120323004209.GA20518@gondor.apana.org.au>
+References: <4F620F37.4070404@xenotime.net> <20120315201151.11667.63183.stgit@localhost6.localdomain6> <4F6A74E3.7080901@xenotime.net> <20120322004646.GA8489@gondor.apana.org.au> <4F6B9709.1040701@zytor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:15969 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760233Ab2CWAEA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 Mar 2012 20:04:00 -0400
-In-Reply-To: <20120323091900.d3c007d76b49d4053457906e@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4F6B9709.1040701@zytor.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Jussi Kivilinna <jussi.kivilinna@mbnet.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Em 22-03-2012 19:19, Stephen Rothwell escreveu:
-> Hi Mauro,
+On Thu, Mar 22, 2012 at 02:18:01PM -0700, H. Peter Anvin wrote:
+>
+> > Thanks for the reminder, I'll push these through today.
 > 
-> On Thu, 22 Mar 2012 17:17:22 -0300 Mauro Carvalho Chehab <mchehab@redhat.com> wrote:
->>
->> Em 22-03-2012 03:08, Stephen Rothwell escreveu:
->>> Merging edac/linux_next (4d096ca MAINTAINERS: add an entry for Edac Sandy Bridge driver)
->>
->> Not sure what's happening, but I've updated my EDAC tree a few days ago,
->> and I've added more stuff yesterday, but you're still pointing to an
->> old changeset.
->>
->> Could you please check if it is pointing to the right tree/branch? It should be:
->>
->> 	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-edac.git linux-next
-> 
-> Well, I am still using the infradead.org repo.  I will start using the
-> above today.
+> Please push these to Linus ASAP, it is breaking the x86-64 allyesconfig
+> build upstream right now.
 
-Ah! that explains why the patches aren't at -next ;)
+I've pushed them through.
 
-
-> (and it looks like the branch is actually linux_next)
-
-Yes, it is linux_next.
-
-Thanks!
-Mauro
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
