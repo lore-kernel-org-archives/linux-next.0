@@ -1,38 +1,59 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: bad merge in "Merge branch 'rmobile-fixes-for-linus'" ?
-Date: Sat, 24 Mar 2012 18:28:00 +0000
-Message-ID: <201203241828.00436.arnd@arndb.de>
-References: <20120324173732.GA7509@windriver.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
+Date: Sat, 24 Mar 2012 17:31:52 +0000
+Message-ID: <20120324173152.494DA3E0A26@localhost>
+References: <20120323143237.9b5917955cb42951f0368ec4@canb.auug.org.au> <20120323094139.GA7231@sortiz-mobl>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:51447 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751470Ab2CXS2D (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 24 Mar 2012 14:28:03 -0400
-In-Reply-To: <20120324173732.GA7509@windriver.com>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:63036 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752406Ab2CYAas (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 24 Mar 2012 20:30:48 -0400
+Received: by pbcun15 with SMTP id un15so4098244pbc.19
+        for <linux-next@vger.kernel.org>; Sat, 24 Mar 2012 17:30:47 -0700 (PDT)
+In-Reply-To: <20120323094139.GA7231@sortiz-mobl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benoit Cousson <b-cousson@ti.com>, Felipe Balbi <balbi@ti.com>
 
-On Saturday 24 March 2012, Paul Gortmaker wrote:
-> Hi Arnd,
+On Fri, 23 Mar 2012 10:41:39 +0100, Samuel Ortiz <sameo@linux.intel.com> wrote:
+> Hi Stephen,
 > 
-> I fed this failure to git bisect:
+> On Fri, Mar 23, 2012 at 02:32:37PM +1100, Stephen Rothwell wrote:
+> > Hi Samuel,
+> > 
+> > Today's linux-next merge of the mfd tree got a conflict in
+> > drivers/mfd/twl-core.c between commits 5769089ac725 ("mfd: twl-core.c:
+> > Fix the number of interrupts managed by twl4030"), 75294957be1d
+> > ("irq_domain: Remove 'new' irq_domain in favour of the ppc one") and
+> > 964dba283439 ("devicetree: Add empty of_platform_populate() for !
+> > CONFIG_OF_ADDRESS (sparc)") from Linus' tree and commits 9e1786202704
+> > ("mfd: Make twl-core not depend on pdata->irq_base/end") and 78518ffa08fc
+> > ("mfd: Move twl-core IRQ allocation into twl[4030|6030]-irq files") from
+> > the mfd tree.
+> > 
+> > I *think* that the right thing to do is to use the version from the mfd
+> > tree ...
+> That's correct.
+> I have a for-next-merge branch where I usually have the merge conflicts with
+> Linus tree fixed, in case you're interested.
 > 
-> arch/arm/mach-shmobile/setup-sh7372.c:63:2: error: implicit declaration
-> of function 'init_consistent_dma_size' 
 > 
-> http://kisskb.ellerman.id.au/kisskb/buildresult/5941296/
-> 
-> and it came back with your merge below.  Can you have a look and see if
-> that makes sense?
-> 
+> > I do wonder why I only got this now (in the merge window) ...
+> I got a pull request from Benoit a couple days before the merge window opened.
+> Then I realized part of the pull request contained a merge of one of Grant's
+> branch. So I wanted to wait for Grant's code to get in before picking the mfd
+> work on top of it. I didn't want to send a pull request to Linus with a merge
+> point for something that would have been already merged. Maybe I was wrong,
+> you tell me.
 
-Thanks a lot for the report, this was indeed my mistake when merging
-the patch. Fixed now.
+It should have gone into linux-next before then.  Waiting for my tree
+to hit linus' tree defeats the purpose of linux-next.  Now you're
+branch hasn't had any testing and therefore is a risky merge.
 
-	Arnd
+If you've got a branch you intend to send to Linus, then it really
+needs to be in linux-next.  If that branch depends on another branch,
+that's fine; you can still hold off actually sending the pull req to
+Linus until the dependency makes it in.  Better yet, *ask*.
+
+g.
