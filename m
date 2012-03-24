@@ -1,60 +1,74 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: Boot failure with next-20120208
-Date: Sat, 24 Mar 2012 09:18:10 +1100
-Message-ID: <1332541090.2882.14.camel@pasglop>
-References: <20120212113805.c7e5d902c95a9d0f4037e12c@canb.auug.org.au>
-	 <16788.1329102254@neuling.org> <4F391BBA.5020506@linux.intel.com>
-	 <20120213120549.eab7e2b9.akpm@linux-foundation.org>
-	 <4F396FA9.90606@linux.intel.com>
-	 <20120323122244.132198e3.akpm@linux-foundation.org>
-	 <4F6CCDDC.5000802@linux.intel.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH linux-next] dmaengine: add context
+	parameter fixups
+Date: Sat, 24 Mar 2012 00:53:20 +0000
+Message-ID: <20120324005320.GB3190@opensource.wolfsonmicro.com>
+References: <1332511242-30241-1-git-send-email-alexandre.bounine@idt.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="===============4441734946561899614=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1332511242-30241-1-git-send-email-alexandre.bounine@idt.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Alexandre Bounine <alexandre.bounine@idt.com>
+Cc: fabio.estevam@freescale.com, alsa-devel@alsa-project.org, samuel@sortiz.org, vinod.koul@intel.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, paul.gortmaker@windriver.com, linux-next@vger.kernel.org, tiwai@suse.de, dan.j.williams@intel.com, lrg@ti.com
+List-Id: linux-next.vger.kernel.org
+
+
+--===============4441734946561899614==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
+Content-Disposition: inline
+
+
+--gKMricLos+KVdGMg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Mar 23, 2012 at 10:00:42AM -0400, Alexandre Bounine wrote:
+> This patch fixes drivers that use device_prep_slave_sg() and
+> device_prep_dma_cyclic() interfaces and have been missed during the initial
+> release of interface changing patches.
+
+Can you please send a separate patch for the ASoC (sound/soc) bits of
+this?
+
+--gKMricLos+KVdGMg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPbRr2AAoJEBus8iNuMP3d4BcP/RpL0AxKVsJNqh9SMqEmiC+1
+TL67nLDRzfaSIVHHB5Yop94htNAw04YcjtEbkH6e5CbA05nCl1tCsOiQSbjtaqXY
+9qiKYCz3CA7YP7uv4KanMYI+2hSGlmgsRBJbr0Q7BGXb8mO2hX/qbh5lYf+RQInr
+/RFQsH5f/eV7HXdDJeKyZtYaaU8XB6oCQ/CgOj6rGcb9Qm2f4Di6eH8ugD7/aPxV
+dYqMuBwxGbDJHd+B1CoNQOzwEChemHzcP1Bwfj/dTdbiyqmhLUtTsjFV8ukb03uH
+czahRelRMBEn+MSua78dOpR+KlVCO8kQiiPSYcXyu/jvEIk7JvmoYCJM99HxwYqq
+kKhoLvitK7buq6saku/GfRIZP++GFlvvXhl/i5bHIjy/xmHRXLE+87IIqt1FtiVm
+sq1OPT+p0qKvYFGRzEBwHPfE0Sr90TLk79unzx1ec3pLGGMZHwVX8OzbhkJ0wQ4J
+c0UHS2Z0QcMcASmQ5yjJmfV7ZmT7d8KfyfZkB1AxGynZs4YO7Gf6ek9+g/CQV+wf
+AiiDsPzo8WQbc0yphfC5lQLRIb9XqO9xwTQStOAcJcelahOrP+JgI/c89/HlXjSw
+mru6IHCa6rsqOF8UHGXs3ty876dfYwG/IjqB5Xui5Hg4eITIeQmgPYHpH37VVwPp
+27z2KTXSictKNvlinuLY
+=4ghL
+-----END PGP SIGNATURE-----
+
+--gKMricLos+KVdGMg--
+
+--===============4441734946561899614==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:43666 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751972Ab2CWWSn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 23 Mar 2012 18:18:43 -0400
-In-Reply-To: <4F6CCDDC.5000802@linux.intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Michael Neuling <mikey@neuling.org>, gregkh@linuxfoundation.org, LKML <linux-kernel@vger.kernel.org>, Milton Miller <miltonm@bga.com>, linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Disposition: inline
 
-On Fri, 2012-03-23 at 12:24 -0700, Arjan van de Ven wrote:
-> well yeah, PPC is throwing things in the spanner
-> 
-> we're now working on an x86-only patch with basically the same
-> improvement, but done in a way that does not touch the other
-> architectures
-> 
-> so by all means drop the patch
 
-Or maybe make an arch flag to enable the behaviour ? I can have a look
-at the problem & maybe even fix it next week (it's been under my radar
-for some reason so far), but I know at least of a few places where we
-have that sort of assumptions about the bringup of boot CPUs.
-
-For example, on Apple G5s, we don't support real hotplug, so the hot
-unplug path just puts them in a linux-controlled sleep loop. So the
-early boot time bringup is different from the hotplug path. 
-
-Among others, it needs access to things like i2c to synchronize the time
-bases of the CPUs being brought up and we "release" that resource at the
-end of the bringup.
-
-So that needs fixing a way or another (and it's non trivial as other
-drivers might try to get a lock on that i2c bus).
-
-I'm sure I have a few other places with similar assumptions. And I
-wouldn't be surprised if other architectures do as well :-)
-
-So while your patch is a good / worthwhile idea, I think we need a bit
-more time to sort things out before it can be applied.
-
-(BTW. Arjan, can you send me privately your latest version of that
-patch, for some reason I don't seem to be able to put my hand on it).
-
-Cheers,
-Ben.
+--===============4441734946561899614==--
