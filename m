@@ -1,41 +1,42 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: Tree for Mar 23 (xen-acpi)
-Date: Sat, 24 Mar 2012 09:22:44 -0400
-Message-ID: <20120324132243.GA17787@phenom.dumpdata.com>
-References: <20120323172333.9af9b678fcde0e6e75b5f6dd@canb.auug.org.au>
- <4F6CB32A.3000309@xenotime.net>
- <20120324125311.GA15144@phenom.dumpdata.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Commit "watchdog: coh901327_wdt.c: fix timeout" breaks linux-next
+Date: Sat, 24 Mar 2012 10:32:07 -0400
+Message-ID: <CAP=VYLr4MfkBpgg-QeMRw9oDswtrySBEb6ZUKa8_CLOHh+pF2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120324125311.GA15144@phenom.dumpdata.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeremy Fitzhardinge <jeremy@goop.org>, xen-devel@lists.xensource.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:58115 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752705Ab2CXOcJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sat, 24 Mar 2012 10:32:09 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: wim@iguana.be, linus.walleij@stericsson.com
+Cc: linux-watchdog@vger.kernel.org, linux-next@vger.kernel.org
 
-On Sat, Mar 24, 2012 at 08:53:11AM -0400, Konrad Rzeszutek Wilk wrote:
-> On Fri, Mar 23, 2012 at 10:30:18AM -0700, Randy Dunlap wrote:
-> > On 03/22/2012 11:23 PM, Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > Reminder: please do not add stuff destined for v3.5 to linux-next
-> > > included trees/branches until after v3.4-rc1 has been released.
-> > > 
-> > > Changes since 20120322:
-> > 
-> > 
-> > on x86_64:
-> > 
-> > ERROR: "acpi_processor_unregister_performance" [drivers/xen/xen-acpi-processor.ko] undefined!
-> > ERROR: "acpi_processor_notify_smm" [drivers/xen/xen-acpi-processor.ko] undefined!
-> > ERROR: "acpi_processor_register_performance" [drivers/xen/xen-acpi-processor.ko] undefined!
-> > ERROR: "acpi_processor_preregister_performance" [drivers/xen/xen-acpi-processor.ko] undefined!
-> > 
-> > 
-> > Full randconfig file is attached.
-> 
-> Thanks. Working on a fix. 
-Fixed. Patch going to show in #linux-next shortly.
+Hi Wim,
+
+Can you please re-check this commit?  It has two instances of
+the typo "timout" and one of them is causing a build failure
+in linux-next.
+
+Thanks,
+Paul.
+--
+
+drivers/watchdog/coh901327_wdt.c:358:15: error: 'struct
+watchdog_device' has no member named 'timout'
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/5940810/
+
+commit 884f1a12c8b39721452f0dfedf1f82de3d696cf1
+Author: Wim Van Sebroeck <wim@iguana.be>
+Date:   Thu Mar 22 20:42:16 2012 +0100
+
+    watchdog: coh901327_wdt.c: fix timeout
+
+    Set the timeout value properly so that we don't get faulty values
+    for the WDIOC_GETTIMEOUT iotcl. 'margin' should be an unsigned int.
+    Also add a check to see if margin is a valid parameter after it is
+    loaded as a module.
