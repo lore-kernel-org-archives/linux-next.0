@@ -1,309 +1,200 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: triage for March 25th, 2012
-Date: Sun, 25 Mar 2012 14:48:55 -0400
-Message-ID: <20120325184854.GE12203@windriver.com>
+From: Jon Masters <jonathan@jonmasters.org>
+Subject: Re: Inconsistent kallsyms data on ARM.
+Date: Sun, 25 Mar 2012 19:59:44 -0400
+Message-ID: <4F6FB170.1040109@jonmasters.org>
+References: <CAP=VYLoStscdVJretZ-Rkbp7V3Vsm8N0oWcjih7ruHFiDN7CiA@mail.gmail.com>
+ <201203141321.47010.arnd@arndb.de>
+ <20120325112035.GE5611@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:38048 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756791Ab2CYSs5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Mar 2012 14:48:57 -0400
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20120325112035.GE5611@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-This represents the state of things as of Friday since I didn't
-get a report out then (and there are no builds on the weekend). 
+On 03/25/2012 07:20 AM, Russell King - ARM Linux wrote:
+> On Wed, Mar 14, 2012 at 01:21:46PM +0000, Arnd Bergmann wrote:
+>> On Tuesday 13 March 2012, Paul Gortmaker wrote:
+>>> This bug(?)  has been seen to float from one ARM build to another since
+>>> I started tracking the day-to-day changes in Stephen's linux-next builds.
+>>>
+>>> I see it was discussed earlier:
+>>>
+>>>    https://lkml.org/lkml/2011/8/2/233
+>>>    https://lkml.org/lkml/2011/10/8/70
+>>>
+>>> but no concrete cause was nailed down.  Can the linux-next build results
+>>> help shed some light on this in any way?  Since it seems sporadic, is
+>>> there value in embedding a diagnostic of some sort in the infrastructure
+>>> so that when the error is detected, that it prints out more detailed info?
+>>>
+>>> I can provide links to failed linux-next builds, but at the moment, all they
+>>> really seem to have is the same repeated error message, like this one:
+>>>
+>>>    http://kisskb.ellerman.id.au/kisskb/buildresult/5869367/
+>>>
+>>> and I don't see that helping folks all that much....
+>>>
+>>
+>> I'm sure I can reproduce it if necessary, but I need to know what to
+>> look for to find out what the problem is.
+> 
+> Right, last night's omap3430ldp build failed because of this, so I've
+> re-run the build and taken a look at what's happened:
+> 
+> $ arm-linux-nm -n .tmp_vmlinux1 > vm1.syms
+> $ arm-linux-nm -n .tmp_vmlinux2 > vm2.syms
+> $ arm-linux-nm -n vmlinux > vm3.syms
+> $ diff -u <(sed s,^...........,, vm2.syms) <(sed s,^...........,, vm3.syms) 
+> $
+> 
+> .tmp_vmlinux1 is the vmlinux file with no kallsyms data.  .tmp_vmlinux2 is
+> the vmlinux file with kallsyms data generated from the first image.
+> vmlinux is the vmlinux file with kallsyms data generated from the second
+> image.
+> 
+> What the above shows is that we have the same symbols in the same order
+> in the second and third stage.  However:
+> 
+> $ diff -u vm2.syms vm3.syms
+> ...
+>  c0352900 R kallsyms_names
+> -c03acd00 R kallsyms_markers
+> -c03acf10 R kallsyms_token_table
+> -c03ad290 R kallsyms_token_index
+> ...
+> +c03accf0 R kallsyms_markers
+> +c03acf00 R kallsyms_token_table
+> +c03ad280 R kallsyms_token_index
+> 
+> So, the size of the kallsyms names has changed.
+> 
+> Now, looking at the differences between stage 1 and stage 2:
+> 
+> @@ -1,9 +1,3 @@
+> -kallsyms_addresses
+> -kallsyms_markers
+> -kallsyms_names
+> -kallsyms_num_syms
+> -kallsyms_token_index
+> -kallsyms_token_table
+>  syscalls_padding
+>  cpu_v7_suspend_size
+>  NR_syscalls
+> @@ -17151,6 +17145,12 @@
+>  rpc_info_operations
+>  svc_pool_stats_seq_ops
+>  rpc_proc_fops
+> +kallsyms_addresses
+> +kallsyms_num_syms
+> +kallsyms_names
+> +kallsyms_markers
+> +kallsyms_token_table
+> +kallsyms_token_index
+>  __end_builtin_fw
+>  __end_pci_fixups_early
+>  __end_pci_fixups_enable
+> @@ -28372,11 +28372,11 @@
+>  __security_initcall_start
+>  __initramfs_size
+>  __irf_end
+> -__data_loc
+>  __init_end
+>  __per_cpu_end
+>  __per_cpu_load
+>  __per_cpu_start
+> +__data_loc
+>  _data
+>  _sdata
+>  init_thread_union
+> 
+> 
+> The difference in placement for the kallsyms symbols is more or less
+> expected, because these appear as weak symbols in stage 1.  However,
+> notice that __data_loc has moved in relative position.
+> 
+> As the names are compressed, this causes the size of the kallsyms name
+> data to change size (because we end up with a different compression)
+> which then causes the subsequent kallsyms data and other read-only data
+> to move.  This then causes 'inconsistent kallsyms data' error.
+> 
+> Now, looking at the __data_loc values in these files:
+> 
+> vm1.syms-c03bd408 t __irf_start
+> vm1.syms-c03bd408 T __security_initcall_end
+> vm1.syms-c03bd408 T __security_initcall_start
+> vm1.syms-c03bd608 T __initramfs_size
+> vm1.syms-c03bd608 t __irf_end
+> vm1.syms:c03be000 A __data_loc
+> vm1.syms-c03be000 A __init_end
+> vm1.syms-c03be000 D __per_cpu_end
+> vm1.syms-c03be000 D __per_cpu_load
+> vm1.syms-c03be000 D __per_cpu_start
+> vm1.syms-c03be000 D _data
+> --
+> vm2.syms-c0438608 t __irf_end
+> vm2.syms-c0439000 A __init_end
+> vm2.syms-c0439000 T __per_cpu_end
+> vm2.syms-c0439000 T __per_cpu_load
+> vm2.syms-c0439000 T __per_cpu_start
+> vm2.syms:c043a000 A __data_loc
+> vm2.syms-c043a000 D _data
+> vm2.syms-c043a000 D _sdata
+> vm2.syms-c043a000 D init_thread_union
+> vm2.syms-c043c000 D __nosave_begin
+> vm2.syms-c043c000 D __nosave_end
+> 
+> What we see here is the start of the data section aligned to 8K as
+> required for the init task data.  The per-cpu data is aligned to a 4K
+> boundary immediately before it.  However, as it is an empty section,
+> it can be aligned to the same 8K boundary as the data section depending
+> on the size and placement of the previous sections which include the
+> kallsyms data.
+> 
+> The solution?  We could artificially increase the alignment of the
+> per-cpu data, or waste a byte after the per-cpu data to ensure that we
+> don't align both together.  That could mean wasting up to 12K of space
+> for no reason other than to avoid this error which is exceedingly silly.
+> 
+> I'm not sure whether the kallsyms name data generation could be
+> changed so that this kind of thing doesn't matter but I suspect
+> that's an exceedingly difficult problem to crack.
+> 
+> In the mean time, I'd suggest building with the additional kallsyms pass
+> when it's required.
 
-New breakage since last report:
-	ARM:ap4evb_defconfig (implicit 'init_consistent_dma_size'; already fixed)
-	ARM:u300_defconfig (coh901327_wdt.c: 'struct watchdog_device' no member 'timout')
-	ARM:mxs_defconfig (kallsyms UFO again. But rmk managed to diagnose it!)
-	ARM:at91x40_defconfig (briefly fixed then broke on vm_is_stack *again*)
+We've been hitting this in Fedora on particularly UP kernel builds. I
+also came to the same conclusions that you did (see Google+) and had a
+chat with Arnd about it. A test build with the __per_cpu_* data removed
+from the linker vmlinux.lds succeeds in building for the reasons cited.
+That's not to say that was the intended fix, just an experiment to
+confirm that this is the problem we've been hitting on some builds.
 
-Randconfig fails that may or may not be new (by their very nature):
-	powerpc: mpic_msgr.h: implicit declaration of function 'get_hard_smp_processor_id'
-		(http://kisskb.ellerman.id.au/kisskb/buildresult/5941030/)
+The "problem" is that kallsyms uses a "compression" algorithm that
+derives the name compressed from the type+symbol_name so
+"T__per_cpu_start" becomes "D__per_cpu_start". The compression is very
+trivial in that unused characters in the set of input symbols are used
+to represent popular character pairs, etc. So when the symbol changes
+type according to nm output (as you explain), the size of kallsyms_names
+will likely change, changing all the offsets. I was going to report this
+either this evening or in the morning, but I have been waiting for some
+tests to complete. Glad you found it.
 
-Builds that are fixed since last report:
-	ARM:tct_hammer_defconfig
-	ARM:mxs_defconfig,imx_v4_v5_defconfig (the dma error, not kallsyms)
+As to longer term, I am happy to work up something that will spot this
+particular kind of failure (symbol changes type) and output something
+more useful during the kallsyms generation if you would like.
 
-The following have fixes posted for quite some time now, but the fixes
-haven't yet been integrated.  Please have a look at these, as it would
-be nice to have them in tree before wk2 of the merge window closes.
-	ARM:magician_defconfig
-	ARM:collie_defconfig
-	ARM:iop32x_defconfig,iop33x_defconfig
-	ARM:em_x270_defconfig
-	AVR32:defconfig
+Are you planning to pull in either of the fixes you mention?
 
-
-Note: The randconfig fails are only listed once and not tracked
-in the below listing.
-
-            ------------------------------------------------
-
-Latest results at:
-	http://kisskb.ellerman.id.au/kisskb/branch/9/
-
-Failures as of March 25th, 2012:
-================================
-
-AM33:asb2303_defconfig,asb2364_defconfig
-	when:	Mar 15
-	why:	cc1: error: unrecognized command line option '-mmem-funcs'
-	status:	Possible fix from TonyB sent for review.
-	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
-----------------
-
-ARM:ap4evb_defconfig
-	when:	Mar 24
-	why:	implicit declaration of function 'init_consistent_dma_size'
-	status:	bisected & reported (PaulG)
-	fix:	pending from Arnd
-	ref:	http://marc.info/?l=linux-next&m=133261375527303&w=2
-
-ARM:u300_defconfig
-	when:	Mar 24
-	why:	coh901327_wdt.c: 'struct watchdog_device' has no member named 'timout'
-	status:	reported (PaulG)
-	fix:
-	ref:	http://marc.info/?l=linux-next&m=133259959823119&w=2
-
-ARM:cm_x2xx_defconfig
-	when:	Mar 19
-	why:	it8152.c: redefinition of 'dma_set_coherent_mask'
-	status:	bisected and reported (PaulG)
-	fix:
-	ref:	http://marc.info/?l=linux-next&m=133226851818586&w=2
-
-ARM:mxs_defconfig
-	when:	Mar 14
-	why:	Inconsistent kallsyms data This is a bug - please report
-	status: UFO bug keeps appearing at random; diagnosed by rmk
-	fix:	
-	ref:	http://marc.info/?l=linux-next&m=133267456809502&w=2
-	ref:	https://lkml.org/lkml/2011/8/2/233
-	ref:	https://lkml.org/lkml/2011/10/8/70
-
-ARM:netx_defconfig,pnx4008_defconfig 
-	when:	Mar 14
-	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
-	ref:	https://lkml.org/lkml/2012/3/13/670
-
-ARM:cam60_defconfig
-	when:	Feb 23
-	why:	trace_entries.h: 'perf_ftrace_event_register' undeclared
-	status:	S. Rostedt has a patch somewhere.
-	fix:	
-	ref:	irc (#linux-rt)
-
-ARM:collie_defconfig
-	when:	Feb 14
-	why:	locomolcd.c: error: 'sa1100fb_lcd_power' undeclared
-	status:	fixed (PaulG) - pending integration
-	fix:	http://marc.info/?l=linux-next&m=133105157730749&w=2
-	ref:
-
-ARM:iop32x_defconfig,iop33x_defconfig
-	when:	Nov 23
-	why:	restart.c: implicit declaration of function 'soft_restart'
-	status:	fixed (PaulG) - pending integration
-	fix:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081461.html
-	fix:	https://lkml.org/lkml/2012/3/14/253
-	ref:
-
-ARM:ixp4xx_defconfig
-	when:	Oct 26
-	why:	gpio.h: implicit declaration of function '__gpio_get_value'
-	status:	fixed (Imre Kaloz) - but possibly needs rework?
-	fix:	https://lkml.org/lkml/2012/2/8/288
-	ref:	https://lkml.org/lkml/2012/2/8/287
-
-ARM:magician_defconfig
-	when:	Feb 13
-	why:	magician.c: unknown field 'dev' specified in initializer
-	status:	fixed (PaulG) - pending integration
-	fix:	http://marc.info/?l=linux-arm-kernel&m=133124258707457&w=2
-	ref:	http://marc.info/?l=linux-next&m=133106325903524&w=2
-
-ARM:em_x270_defconfig
-	when:	Feb 14
-	why:	em-x270.c: unknown field 'dev' specified in initializer
-	status:	 fixed (PaulG) - pending integration
-	fix:	http://www.spinics.net/lists/arm-kernel/msg164012.html
-	ref:	http://www.spinics.net/lists/arm-kernel/msg163135.html
-
-ARM:raumfeld_defconfig
-	when:	Nov 23
-	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
-	status:	perhaps broken since 2010?  See ref below.
-	fix:	
-	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
-
-ARM:at91x40_defconfig
-	when:	Mar 24
-	why:	mm/nommu.o: multiple definition of `vm_is_stack' (mm/util.o)
-	status:	WIP
-	fix:	
-	ref:	http://marc.info/?l=linux-next&m=133269881015828&w=2
-	ref:	http://marc.info/?l=linux-next&m=133104723928617&w=2
-
-ARM:arm-allnoconfig
-	when:	forever
-	why:	not supported
-	status:	nothing pending, but patches accepted
-	fix:	n/a
-	ref:	https://lkml.org/lkml/2009/4/30/105
-	ref:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081218.html
-----------------
-
-AVR32:defconfig
-	when:	Mar 18
-	why:	board.h: atmel_nand.h: No such file or directory
-	status:	reported/fixed (PaulG)
-	fix:	http://marc.info/?l=linux-arm-kernel&m=133239363802517&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5917107/
-
-AVR32:allnoconfig
-	when:	May 26 2010, 20:49
-	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
-	status:
-	fix:
-	ref:
----------------
-
-bfin:***all-builds***
-	when:	Jan 20, 22:13
-	why:	undefined reference to [now multiple definition of] `vm_is_stack'
-	status:	WIP, fix from Siddhesh Poyarekar
-	fix:
-	ref:	http://marc.info/?l=linux-next&m=133269881015828&w=2
-	ref:	http://marc.info/?l=linux-next&m=133104723928617&w=2
----------------
-
-cris:***all-builds***
-	when:	Mar 25, 22:05
-	why:	include/linux/types.h:25: error expected ... before 'ino_t'
-	status:	
-	fix:	
-	ref:	
-----------------
-
-crisv32:***all-builds***
-	when:	Mar 25, 22:05
-	why:	include/linux/types.h:25: error expected ... before 'ino_t'
-	status:	
-	fix:	
-	ref:	
-----------------
-
-frv:defconfig
-	when:	Mar 15
-	why:	arch/frv/kernel/head.S operand out of range
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884666/
-----------------
-
-h8300:defconfig
-	when:	Mar 15
-	why:	time.c: implicit declaration of function 'get_irq_regs'
-	why:	also seems gcc suffers an ICE
-	status:	ICE bug lodged with gcc folks (TonyB)
-	fix:
-	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
-----------------
-
-i386:allmodconfig
-	when:	Mar 8, 20:41
-	why:	ERROR: "mdfld_set_brightness" [drivers/gpu/drm/gma500/gma500_gfx.ko] undefined!
-	status:	
-	fix:
-	ref:	https://lkml.org/lkml/2012/3/24/122
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878506/
-----------------
-
-m32r:m32700ut.smp_defconfig
-	when:	Mar 15
-	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
-----------------
-
-m68k:allmodconfig
-	when:	Mar 16
-	why:	persistent_ram.c: implicit declaration of 'memblock_reserve'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884324/
-	ref:	http://www.spinics.net/lists/linux-next/msg19343.html
-----------------
-
-mips:allmodconfig
-	when:
-	why:	driver_pci_host.c: implicit declaration of function 'pcibios_enable_device'
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5807000/
-----------------
-
-parisc:allmodconfig
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-
-parisc64:a500_defconfig 
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-powerpc:allyesconfig
-	when:	May 18 2009, 22:11
-	why:	fat ass kernel with everything simply won't link
-	status:	need to fix build config to ignore the final link
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5806793/
-------------------
-
-sh4:***all-builds***
-	when:	Feb 24, 17:38
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-tilegx:defconfig
-	when:	Mar 19
-	why:	`xfs_qm_exit' defined in discarded section `.exit.text' of fs/built-in.o
-	status:	
-	fix:
-	ref:	http://marc.info/?l=linux-next&m=133269971616104&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5924094/
-------------------
-
-um:um-defconfig
-	when:	Sep 16 2010, 01:28
-	why:	os-Linux/start_up.c: error: 'PTRACE_SETOPTIONS' undeclared
-	status:	clearly broken forever, so does anyone care?
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/target/2979/
+Jon.
