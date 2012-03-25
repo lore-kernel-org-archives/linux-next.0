@@ -1,59 +1,250 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
-Date: Sat, 24 Mar 2012 17:31:52 +0000
-Message-ID: <20120324173152.494DA3E0A26@localhost>
-References: <20120323143237.9b5917955cb42951f0368ec4@canb.auug.org.au> <20120323094139.GA7231@sortiz-mobl>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:63036 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752406Ab2CYAas (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 24 Mar 2012 20:30:48 -0400
-Received: by pbcun15 with SMTP id un15so4098244pbc.19
-        for <linux-next@vger.kernel.org>; Sat, 24 Mar 2012 17:30:47 -0700 (PDT)
-In-Reply-To: <20120323094139.GA7231@sortiz-mobl>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benoit Cousson <b-cousson@ti.com>, Felipe Balbi <balbi@ti.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v2] ARM: pxa: use common IOMEM definition
+Date: Sun, 25 Mar 2012 08:47:44 +0100
+Message-ID: <20120325074744.GB5611@n2100.arm.linux.org.uk>
+References: <1332296149-28110-2-git-send-email-robherring2@gmail.com>
+ <1332423761-27205-1-git-send-email-robherring2@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1332423761-27205-1-git-send-email-robherring2@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, alsa-devel@alsa-project.org, Eric Miao <eric.y.miao@gmail.com>, rtc-linux@googlegroups.com, Nicolas Pitre <nico@fluxnic.net>, Takashi Iwai <tiwai@suse.de>, Haojian Zhuang <haojian.zhuang@marvell.com>, Rob Herring <rob.herring@calxeda.com>, Jaroslav Kysela <perex@perex.cz>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 23 Mar 2012 10:41:39 +0100, Samuel Ortiz <sameo@linux.intel.com> wrote:
-> Hi Stephen,
+What's happening about this and your other patch for PXA?  PXA is
+currently broken in arm-soc, and has been for the past week.  See
+http://www.arm.linux.org.uk/developer/build/
+
+On Thu, Mar 22, 2012 at 08:42:41AM -0500, Rob Herring wrote:
+> From: Rob Herring <rob.herring@calxeda.com>
 > 
-> On Fri, Mar 23, 2012 at 02:32:37PM +1100, Stephen Rothwell wrote:
-> > Hi Samuel,
-> > 
-> > Today's linux-next merge of the mfd tree got a conflict in
-> > drivers/mfd/twl-core.c between commits 5769089ac725 ("mfd: twl-core.c:
-> > Fix the number of interrupts managed by twl4030"), 75294957be1d
-> > ("irq_domain: Remove 'new' irq_domain in favour of the ppc one") and
-> > 964dba283439 ("devicetree: Add empty of_platform_populate() for !
-> > CONFIG_OF_ADDRESS (sparc)") from Linus' tree and commits 9e1786202704
-> > ("mfd: Make twl-core not depend on pdata->irq_base/end") and 78518ffa08fc
-> > ("mfd: Move twl-core IRQ allocation into twl[4030|6030]-irq files") from
-> > the mfd tree.
-> > 
-> > I *think* that the right thing to do is to use the version from the mfd
-> > tree ...
-> That's correct.
-> I have a for-next-merge branch where I usually have the merge conflicts with
-> Linus tree fixed, in case you're interested.
+> pxa was missed in the moving of IOMEM to a common definition, so lots of
+> IOMEM redefined warnings were introduced. So remove pxa IOMEM definition
+> and fix all the fallout.
 > 
+> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Rob Herring <rob.herring@calxeda.com>
+> Cc: Eric Miao <eric.y.miao@gmail.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Jaroslav Kysela <perex@perex.cz>
+> Cc: Takashi Iwai <tiwai@suse.de>
+> Cc: rtc-linux@googlegroups.com
+> Cc: alsa-devel@alsa-project.org
+> ---
+> v2:
+> - fix my commit msg typos
+> - add fix for sa1100_wdt.c
 > 
-> > I do wonder why I only got this now (in the merge window) ...
-> I got a pull request from Benoit a couple days before the merge window opened.
-> Then I realized part of the pull request contained a merge of one of Grant's
-> branch. So I wanted to wait for Grant's code to get in before picking the mfd
-> work on top of it. I didn't want to send a pull request to Linus with a merge
-> point for something that would have been already merged. Maybe I was wrong,
-> you tell me.
-
-It should have gone into linux-next before then.  Waiting for my tree
-to hit linus' tree defeats the purpose of linux-next.  Now you're
-branch hasn't had any testing and therefore is a risky merge.
-
-If you've got a branch you intend to send to Linus, then it really
-needs to be in linux-next.  If that branch depends on another branch,
-that's fine; you can still hold off actually sending the pull req to
-Linus until the dependency makes it in.  Better yet, *ask*.
-
-g.
+> I plan to send this fix thru the arm-soc tree.
+> 
+> Rob
+> 
+>  arch/arm/mach-pxa/clock-pxa2xx.c          |    1 +
+>  arch/arm/mach-pxa/corgi_pm.c              |    1 +
+>  arch/arm/mach-pxa/cpufreq-pxa3xx.c        |    1 +
+>  arch/arm/mach-pxa/include/mach/hardware.h |    2 --
+>  arch/arm/mach-pxa/mfp-pxa2xx.c            |    1 +
+>  arch/arm/mach-pxa/pxa2xx.c                |    1 +
+>  arch/arm/mach-pxa/pxa300.c                |    1 +
+>  arch/arm/mach-pxa/pxa320.c                |    1 +
+>  arch/arm/mach-pxa/sharpsl_pm.c            |    1 +
+>  drivers/rtc/rtc-sa1100.c                  |    1 +
+>  drivers/watchdog/sa1100_wdt.c             |    1 +
+>  sound/arm/pxa2xx-ac97-lib.c               |    1 +
+>  sound/arm/pxa2xx-ac97.c                   |    1 +
+>  sound/soc/pxa/pxa2xx-ac97.c               |    1 +
+>  14 files changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-pxa/clock-pxa2xx.c b/arch/arm/mach-pxa/clock-pxa2xx.c
+> index 1d5859d..9ee2ad6 100644
+> --- a/arch/arm/mach-pxa/clock-pxa2xx.c
+> +++ b/arch/arm/mach-pxa/clock-pxa2xx.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+> +#include <linux/io.h>
+>  #include <linux/syscore_ops.h>
+>  
+>  #include <mach/pxa2xx-regs.h>
+> diff --git a/arch/arm/mach-pxa/corgi_pm.c b/arch/arm/mach-pxa/corgi_pm.c
+> index 39e265c..048c429 100644
+> --- a/arch/arm/mach-pxa/corgi_pm.c
+> +++ b/arch/arm/mach-pxa/corgi_pm.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/apm-emulation.h>
+> +#include <linux/io.h>
+>  
+>  #include <asm/irq.h>
+>  #include <asm/mach-types.h>
+> diff --git a/arch/arm/mach-pxa/cpufreq-pxa3xx.c b/arch/arm/mach-pxa/cpufreq-pxa3xx.c
+> index 88fbec0..b85b4ab 100644
+> --- a/arch/arm/mach-pxa/cpufreq-pxa3xx.c
+> +++ b/arch/arm/mach-pxa/cpufreq-pxa3xx.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/init.h>
+>  #include <linux/cpufreq.h>
+>  #include <linux/slab.h>
+> +#include <linux/io.h>
+>  
+>  #include <mach/pxa3xx-regs.h>
+>  
+> diff --git a/arch/arm/mach-pxa/include/mach/hardware.h b/arch/arm/mach-pxa/include/mach/hardware.h
+> index 54b64ea..56d92e5 100644
+> --- a/arch/arm/mach-pxa/include/mach/hardware.h
+> +++ b/arch/arm/mach-pxa/include/mach/hardware.h
+> @@ -40,7 +40,6 @@
+>  #define io_p2v(x) IOMEM(0xf2000000 + ((x) & 0x01ffffff) + (((x) & 0x1c000000) >> 1))
+>  
+>  #ifndef __ASSEMBLY__
+> -# define IOMEM(x) ((void __iomem *)(x))
+>  # define __REG(x)	(*((volatile u32 __iomem *)io_p2v(x)))
+>  
+>  /* With indexed regs we don't want to feed the index through io_p2v()
+> @@ -52,7 +51,6 @@
+>  
+>  #else
+>  
+> -# define IOMEM(x)	x 
+>  # define __REG(x)	io_p2v(x)
+>  # define __PREG(x)	io_v2p(x)
+>  
+> diff --git a/arch/arm/mach-pxa/mfp-pxa2xx.c b/arch/arm/mach-pxa/mfp-pxa2xx.c
+> index f147755..b029562 100644
+> --- a/arch/arm/mach-pxa/mfp-pxa2xx.c
+> +++ b/arch/arm/mach-pxa/mfp-pxa2xx.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+> +#include <linux/io.h>
+>  #include <linux/syscore_ops.h>
+>  
+>  #include <mach/pxa2xx-regs.h>
+> diff --git a/arch/arm/mach-pxa/pxa2xx.c b/arch/arm/mach-pxa/pxa2xx.c
+> index 8682704..f8ec854 100644
+> --- a/arch/arm/mach-pxa/pxa2xx.c
+> +++ b/arch/arm/mach-pxa/pxa2xx.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+>  #include <linux/device.h>
+> +#include <linux/io.h>
+>  
+>  #include <mach/hardware.h>
+>  #include <mach/pxa2xx-regs.h>
+> diff --git a/arch/arm/mach-pxa/pxa300.c b/arch/arm/mach-pxa/pxa300.c
+> index 40bb165..17cbc0c 100644
+> --- a/arch/arm/mach-pxa/pxa300.c
+> +++ b/arch/arm/mach-pxa/pxa300.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/io.h>
+>  
+>  #include <mach/pxa300.h>
+>  
+> diff --git a/arch/arm/mach-pxa/pxa320.c b/arch/arm/mach-pxa/pxa320.c
+> index 8d614ec..6dc99d4 100644
+> --- a/arch/arm/mach-pxa/pxa320.c
+> +++ b/arch/arm/mach-pxa/pxa320.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/io.h>
+>  
+>  #include <mach/pxa320.h>
+>  
+> diff --git a/arch/arm/mach-pxa/sharpsl_pm.c b/arch/arm/mach-pxa/sharpsl_pm.c
+> index 8d5168d..6d3b39f 100644
+> --- a/arch/arm/mach-pxa/sharpsl_pm.c
+> +++ b/arch/arm/mach-pxa/sharpsl_pm.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/leds.h>
+>  #include <linux/suspend.h>
+>  #include <linux/gpio.h>
+> +#include <linux/io.h>
+>  
+>  #include <asm/mach-types.h>
+>  #include <mach/pm.h>
+> diff --git a/drivers/rtc/rtc-sa1100.c b/drivers/rtc/rtc-sa1100.c
+> index cb9a585..398ab7a 100644
+> --- a/drivers/rtc/rtc-sa1100.c
+> +++ b/drivers/rtc/rtc-sa1100.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/string.h>
+>  #include <linux/pm.h>
+>  #include <linux/bitops.h>
+> +#include <linux/io.h>
+>  
+>  #include <mach/hardware.h>
+>  #include <asm/irq.h>
+> diff --git a/drivers/watchdog/sa1100_wdt.c b/drivers/watchdog/sa1100_wdt.c
+> index 0162454..a3ff321 100644
+> --- a/drivers/watchdog/sa1100_wdt.c
+> +++ b/drivers/watchdog/sa1100_wdt.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/miscdevice.h>
+>  #include <linux/watchdog.h>
+>  #include <linux/init.h>
+> +#include <linux/io.h>
+>  #include <linux/bitops.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/timex.h>
+> diff --git a/sound/arm/pxa2xx-ac97-lib.c b/sound/arm/pxa2xx-ac97-lib.c
+> index d1aa421..d760371 100644
+> --- a/sound/arm/pxa2xx-ac97-lib.c
+> +++ b/sound/arm/pxa2xx-ac97-lib.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+>  #include <linux/module.h>
+> +#include <linux/io.h>
+>  
+>  #include <sound/ac97_codec.h>
+>  #include <sound/pxa2xx-lib.h>
+> diff --git a/sound/arm/pxa2xx-ac97.c b/sound/arm/pxa2xx-ac97.c
+> index 3a39626..afef72c 100644
+> --- a/sound/arm/pxa2xx-ac97.c
+> +++ b/sound/arm/pxa2xx-ac97.c
+> @@ -11,6 +11,7 @@
+>   */
+>  
+>  #include <linux/init.h>
+> +#include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  
+> diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
+> index 837ff34..b4bfd97 100644
+> --- a/sound/soc/pxa/pxa2xx-ac97.c
+> +++ b/sound/soc/pxa/pxa2xx-ac97.c
+> @@ -11,6 +11,7 @@
+>   */
+>  
+>  #include <linux/init.h>
+> +#include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  
+> -- 
+> 1.7.5.4
+> 
