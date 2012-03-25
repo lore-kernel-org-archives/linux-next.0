@@ -1,250 +1,168 @@
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v2] ARM: pxa: use common IOMEM definition
-Date: Sun, 25 Mar 2012 08:47:44 +0100
-Message-ID: <20120325074744.GB5611@n2100.arm.linux.org.uk>
-References: <1332296149-28110-2-git-send-email-robherring2@gmail.com>
- <1332423761-27205-1-git-send-email-robherring2@gmail.com>
+Subject: Re: Inconsistent kallsyms data on ARM.
+Date: Sun, 25 Mar 2012 12:20:35 +0100
+Message-ID: <20120325112035.GE5611@n2100.arm.linux.org.uk>
+References: <CAP=VYLoStscdVJretZ-Rkbp7V3Vsm8N0oWcjih7ruHFiDN7CiA@mail.gmail.com> <201203141321.47010.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:38199 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755496Ab2CYLV3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Mar 2012 07:21:29 -0400
 Content-Disposition: inline
-In-Reply-To: <1332423761-27205-1-git-send-email-robherring2@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, alsa-devel@alsa-project.org, Eric Miao <eric.y.miao@gmail.com>, rtc-linux@googlegroups.com, Nicolas Pitre <nico@fluxnic.net>, Takashi Iwai <tiwai@suse.de>, Haojian Zhuang <haojian.zhuang@marvell.com>, Rob Herring <rob.herring@calxeda.com>, Jaroslav Kysela <perex@perex.cz>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <201203141321.47010.arnd@arndb.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kbuild@vger.kernel.org
 
-What's happening about this and your other patch for PXA?  PXA is
-currently broken in arm-soc, and has been for the past week.  See
-http://www.arm.linux.org.uk/developer/build/
+On Wed, Mar 14, 2012 at 01:21:46PM +0000, Arnd Bergmann wrote:
+> On Tuesday 13 March 2012, Paul Gortmaker wrote:
+> > This bug(?)  has been seen to float from one ARM build to another since
+> > I started tracking the day-to-day changes in Stephen's linux-next builds.
+> > 
+> > I see it was discussed earlier:
+> > 
+> >    https://lkml.org/lkml/2011/8/2/233
+> >    https://lkml.org/lkml/2011/10/8/70
+> > 
+> > but no concrete cause was nailed down.  Can the linux-next build results
+> > help shed some light on this in any way?  Since it seems sporadic, is
+> > there value in embedding a diagnostic of some sort in the infrastructure
+> > so that when the error is detected, that it prints out more detailed info?
+> > 
+> > I can provide links to failed linux-next builds, but at the moment, all they
+> > really seem to have is the same repeated error message, like this one:
+> > 
+> >    http://kisskb.ellerman.id.au/kisskb/buildresult/5869367/
+> > 
+> > and I don't see that helping folks all that much....
+> > 
+> 
+> I'm sure I can reproduce it if necessary, but I need to know what to
+> look for to find out what the problem is.
 
-On Thu, Mar 22, 2012 at 08:42:41AM -0500, Rob Herring wrote:
-> From: Rob Herring <rob.herring@calxeda.com>
-> 
-> pxa was missed in the moving of IOMEM to a common definition, so lots of
-> IOMEM redefined warnings were introduced. So remove pxa IOMEM definition
-> and fix all the fallout.
-> 
-> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Signed-off-by: Rob Herring <rob.herring@calxeda.com>
-> Cc: Eric Miao <eric.y.miao@gmail.com>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
-> Cc: Alessandro Zummo <a.zummo@towertech.it>
-> Cc: Jaroslav Kysela <perex@perex.cz>
-> Cc: Takashi Iwai <tiwai@suse.de>
-> Cc: rtc-linux@googlegroups.com
-> Cc: alsa-devel@alsa-project.org
-> ---
-> v2:
-> - fix my commit msg typos
-> - add fix for sa1100_wdt.c
-> 
-> I plan to send this fix thru the arm-soc tree.
-> 
-> Rob
-> 
->  arch/arm/mach-pxa/clock-pxa2xx.c          |    1 +
->  arch/arm/mach-pxa/corgi_pm.c              |    1 +
->  arch/arm/mach-pxa/cpufreq-pxa3xx.c        |    1 +
->  arch/arm/mach-pxa/include/mach/hardware.h |    2 --
->  arch/arm/mach-pxa/mfp-pxa2xx.c            |    1 +
->  arch/arm/mach-pxa/pxa2xx.c                |    1 +
->  arch/arm/mach-pxa/pxa300.c                |    1 +
->  arch/arm/mach-pxa/pxa320.c                |    1 +
->  arch/arm/mach-pxa/sharpsl_pm.c            |    1 +
->  drivers/rtc/rtc-sa1100.c                  |    1 +
->  drivers/watchdog/sa1100_wdt.c             |    1 +
->  sound/arm/pxa2xx-ac97-lib.c               |    1 +
->  sound/arm/pxa2xx-ac97.c                   |    1 +
->  sound/soc/pxa/pxa2xx-ac97.c               |    1 +
->  14 files changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-pxa/clock-pxa2xx.c b/arch/arm/mach-pxa/clock-pxa2xx.c
-> index 1d5859d..9ee2ad6 100644
-> --- a/arch/arm/mach-pxa/clock-pxa2xx.c
-> +++ b/arch/arm/mach-pxa/clock-pxa2xx.c
-> @@ -9,6 +9,7 @@
->  #include <linux/module.h>
->  #include <linux/kernel.h>
->  #include <linux/init.h>
-> +#include <linux/io.h>
->  #include <linux/syscore_ops.h>
->  
->  #include <mach/pxa2xx-regs.h>
-> diff --git a/arch/arm/mach-pxa/corgi_pm.c b/arch/arm/mach-pxa/corgi_pm.c
-> index 39e265c..048c429 100644
-> --- a/arch/arm/mach-pxa/corgi_pm.c
-> +++ b/arch/arm/mach-pxa/corgi_pm.c
-> @@ -19,6 +19,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/platform_device.h>
->  #include <linux/apm-emulation.h>
-> +#include <linux/io.h>
->  
->  #include <asm/irq.h>
->  #include <asm/mach-types.h>
-> diff --git a/arch/arm/mach-pxa/cpufreq-pxa3xx.c b/arch/arm/mach-pxa/cpufreq-pxa3xx.c
-> index 88fbec0..b85b4ab 100644
-> --- a/arch/arm/mach-pxa/cpufreq-pxa3xx.c
-> +++ b/arch/arm/mach-pxa/cpufreq-pxa3xx.c
-> @@ -15,6 +15,7 @@
->  #include <linux/init.h>
->  #include <linux/cpufreq.h>
->  #include <linux/slab.h>
-> +#include <linux/io.h>
->  
->  #include <mach/pxa3xx-regs.h>
->  
-> diff --git a/arch/arm/mach-pxa/include/mach/hardware.h b/arch/arm/mach-pxa/include/mach/hardware.h
-> index 54b64ea..56d92e5 100644
-> --- a/arch/arm/mach-pxa/include/mach/hardware.h
-> +++ b/arch/arm/mach-pxa/include/mach/hardware.h
-> @@ -40,7 +40,6 @@
->  #define io_p2v(x) IOMEM(0xf2000000 + ((x) & 0x01ffffff) + (((x) & 0x1c000000) >> 1))
->  
->  #ifndef __ASSEMBLY__
-> -# define IOMEM(x) ((void __iomem *)(x))
->  # define __REG(x)	(*((volatile u32 __iomem *)io_p2v(x)))
->  
->  /* With indexed regs we don't want to feed the index through io_p2v()
-> @@ -52,7 +51,6 @@
->  
->  #else
->  
-> -# define IOMEM(x)	x 
->  # define __REG(x)	io_p2v(x)
->  # define __PREG(x)	io_v2p(x)
->  
-> diff --git a/arch/arm/mach-pxa/mfp-pxa2xx.c b/arch/arm/mach-pxa/mfp-pxa2xx.c
-> index f147755..b029562 100644
-> --- a/arch/arm/mach-pxa/mfp-pxa2xx.c
-> +++ b/arch/arm/mach-pxa/mfp-pxa2xx.c
-> @@ -17,6 +17,7 @@
->  #include <linux/module.h>
->  #include <linux/kernel.h>
->  #include <linux/init.h>
-> +#include <linux/io.h>
->  #include <linux/syscore_ops.h>
->  
->  #include <mach/pxa2xx-regs.h>
-> diff --git a/arch/arm/mach-pxa/pxa2xx.c b/arch/arm/mach-pxa/pxa2xx.c
-> index 8682704..f8ec854 100644
-> --- a/arch/arm/mach-pxa/pxa2xx.c
-> +++ b/arch/arm/mach-pxa/pxa2xx.c
-> @@ -13,6 +13,7 @@
->  #include <linux/module.h>
->  #include <linux/kernel.h>
->  #include <linux/device.h>
-> +#include <linux/io.h>
->  
->  #include <mach/hardware.h>
->  #include <mach/pxa2xx-regs.h>
-> diff --git a/arch/arm/mach-pxa/pxa300.c b/arch/arm/mach-pxa/pxa300.c
-> index 40bb165..17cbc0c 100644
-> --- a/arch/arm/mach-pxa/pxa300.c
-> +++ b/arch/arm/mach-pxa/pxa300.c
-> @@ -16,6 +16,7 @@
->  #include <linux/module.h>
->  #include <linux/kernel.h>
->  #include <linux/platform_device.h>
-> +#include <linux/io.h>
->  
->  #include <mach/pxa300.h>
->  
-> diff --git a/arch/arm/mach-pxa/pxa320.c b/arch/arm/mach-pxa/pxa320.c
-> index 8d614ec..6dc99d4 100644
-> --- a/arch/arm/mach-pxa/pxa320.c
-> +++ b/arch/arm/mach-pxa/pxa320.c
-> @@ -16,6 +16,7 @@
->  #include <linux/module.h>
->  #include <linux/kernel.h>
->  #include <linux/platform_device.h>
-> +#include <linux/io.h>
->  
->  #include <mach/pxa320.h>
->  
-> diff --git a/arch/arm/mach-pxa/sharpsl_pm.c b/arch/arm/mach-pxa/sharpsl_pm.c
-> index 8d5168d..6d3b39f 100644
-> --- a/arch/arm/mach-pxa/sharpsl_pm.c
-> +++ b/arch/arm/mach-pxa/sharpsl_pm.c
-> @@ -24,6 +24,7 @@
->  #include <linux/leds.h>
->  #include <linux/suspend.h>
->  #include <linux/gpio.h>
-> +#include <linux/io.h>
->  
->  #include <asm/mach-types.h>
->  #include <mach/pm.h>
-> diff --git a/drivers/rtc/rtc-sa1100.c b/drivers/rtc/rtc-sa1100.c
-> index cb9a585..398ab7a 100644
-> --- a/drivers/rtc/rtc-sa1100.c
-> +++ b/drivers/rtc/rtc-sa1100.c
-> @@ -30,6 +30,7 @@
->  #include <linux/string.h>
->  #include <linux/pm.h>
->  #include <linux/bitops.h>
-> +#include <linux/io.h>
->  
->  #include <mach/hardware.h>
->  #include <asm/irq.h>
-> diff --git a/drivers/watchdog/sa1100_wdt.c b/drivers/watchdog/sa1100_wdt.c
-> index 0162454..a3ff321 100644
-> --- a/drivers/watchdog/sa1100_wdt.c
-> +++ b/drivers/watchdog/sa1100_wdt.c
-> @@ -25,6 +25,7 @@
->  #include <linux/miscdevice.h>
->  #include <linux/watchdog.h>
->  #include <linux/init.h>
-> +#include <linux/io.h>
->  #include <linux/bitops.h>
->  #include <linux/uaccess.h>
->  #include <linux/timex.h>
-> diff --git a/sound/arm/pxa2xx-ac97-lib.c b/sound/arm/pxa2xx-ac97-lib.c
-> index d1aa421..d760371 100644
-> --- a/sound/arm/pxa2xx-ac97-lib.c
-> +++ b/sound/arm/pxa2xx-ac97-lib.c
-> @@ -17,6 +17,7 @@
->  #include <linux/clk.h>
->  #include <linux/delay.h>
->  #include <linux/module.h>
-> +#include <linux/io.h>
->  
->  #include <sound/ac97_codec.h>
->  #include <sound/pxa2xx-lib.h>
-> diff --git a/sound/arm/pxa2xx-ac97.c b/sound/arm/pxa2xx-ac97.c
-> index 3a39626..afef72c 100644
-> --- a/sound/arm/pxa2xx-ac97.c
-> +++ b/sound/arm/pxa2xx-ac97.c
-> @@ -11,6 +11,7 @@
->   */
->  
->  #include <linux/init.h>
-> +#include <linux/io.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  
-> diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
-> index 837ff34..b4bfd97 100644
-> --- a/sound/soc/pxa/pxa2xx-ac97.c
-> +++ b/sound/soc/pxa/pxa2xx-ac97.c
-> @@ -11,6 +11,7 @@
->   */
->  
->  #include <linux/init.h>
-> +#include <linux/io.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  
-> -- 
-> 1.7.5.4
-> 
+Right, last night's omap3430ldp build failed because of this, so I've
+re-run the build and taken a look at what's happened:
+
+$ arm-linux-nm -n .tmp_vmlinux1 > vm1.syms
+$ arm-linux-nm -n .tmp_vmlinux2 > vm2.syms
+$ arm-linux-nm -n vmlinux > vm3.syms
+$ diff -u <(sed s,^...........,, vm2.syms) <(sed s,^...........,, vm3.syms) 
+$
+
+.tmp_vmlinux1 is the vmlinux file with no kallsyms data.  .tmp_vmlinux2 is
+the vmlinux file with kallsyms data generated from the first image.
+vmlinux is the vmlinux file with kallsyms data generated from the second
+image.
+
+What the above shows is that we have the same symbols in the same order
+in the second and third stage.  However:
+
+$ diff -u vm2.syms vm3.syms
+...
+ c0352900 R kallsyms_names
+-c03acd00 R kallsyms_markers
+-c03acf10 R kallsyms_token_table
+-c03ad290 R kallsyms_token_index
+...
++c03accf0 R kallsyms_markers
++c03acf00 R kallsyms_token_table
++c03ad280 R kallsyms_token_index
+
+So, the size of the kallsyms names has changed.
+
+Now, looking at the differences between stage 1 and stage 2:
+
+@@ -1,9 +1,3 @@
+-kallsyms_addresses
+-kallsyms_markers
+-kallsyms_names
+-kallsyms_num_syms
+-kallsyms_token_index
+-kallsyms_token_table
+ syscalls_padding
+ cpu_v7_suspend_size
+ NR_syscalls
+@@ -17151,6 +17145,12 @@
+ rpc_info_operations
+ svc_pool_stats_seq_ops
+ rpc_proc_fops
++kallsyms_addresses
++kallsyms_num_syms
++kallsyms_names
++kallsyms_markers
++kallsyms_token_table
++kallsyms_token_index
+ __end_builtin_fw
+ __end_pci_fixups_early
+ __end_pci_fixups_enable
+@@ -28372,11 +28372,11 @@
+ __security_initcall_start
+ __initramfs_size
+ __irf_end
+-__data_loc
+ __init_end
+ __per_cpu_end
+ __per_cpu_load
+ __per_cpu_start
++__data_loc
+ _data
+ _sdata
+ init_thread_union
+
+
+The difference in placement for the kallsyms symbols is more or less
+expected, because these appear as weak symbols in stage 1.  However,
+notice that __data_loc has moved in relative position.
+
+As the names are compressed, this causes the size of the kallsyms name
+data to change size (because we end up with a different compression)
+which then causes the subsequent kallsyms data and other read-only data
+to move.  This then causes 'inconsistent kallsyms data' error.
+
+Now, looking at the __data_loc values in these files:
+
+vm1.syms-c03bd408 t __irf_start
+vm1.syms-c03bd408 T __security_initcall_end
+vm1.syms-c03bd408 T __security_initcall_start
+vm1.syms-c03bd608 T __initramfs_size
+vm1.syms-c03bd608 t __irf_end
+vm1.syms:c03be000 A __data_loc
+vm1.syms-c03be000 A __init_end
+vm1.syms-c03be000 D __per_cpu_end
+vm1.syms-c03be000 D __per_cpu_load
+vm1.syms-c03be000 D __per_cpu_start
+vm1.syms-c03be000 D _data
+--
+vm2.syms-c0438608 t __irf_end
+vm2.syms-c0439000 A __init_end
+vm2.syms-c0439000 T __per_cpu_end
+vm2.syms-c0439000 T __per_cpu_load
+vm2.syms-c0439000 T __per_cpu_start
+vm2.syms:c043a000 A __data_loc
+vm2.syms-c043a000 D _data
+vm2.syms-c043a000 D _sdata
+vm2.syms-c043a000 D init_thread_union
+vm2.syms-c043c000 D __nosave_begin
+vm2.syms-c043c000 D __nosave_end
+
+What we see here is the start of the data section aligned to 8K as
+required for the init task data.  The per-cpu data is aligned to a 4K
+boundary immediately before it.  However, as it is an empty section,
+it can be aligned to the same 8K boundary as the data section depending
+on the size and placement of the previous sections which include the
+kallsyms data.
+
+The solution?  We could artificially increase the alignment of the
+per-cpu data, or waste a byte after the per-cpu data to ensure that we
+don't align both together.  That could mean wasting up to 12K of space
+for no reason other than to avoid this error which is exceedingly silly.
+
+I'm not sure whether the kallsyms name data generation could be
+changed so that this kind of thing doesn't matter but I suspect
+that's an exceedingly difficult problem to crack.
+
+In the mean time, I'd suggest building with the additional kallsyms pass
+when it's required.
