@@ -1,51 +1,64 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: Inconsistent kallsyms data on ARM.
-Date: Mon, 26 Mar 2012 08:39:46 +0000
-Message-ID: <201203260839.46858.arnd@arndb.de>
-References: <CAP=VYLoStscdVJretZ-Rkbp7V3Vsm8N0oWcjih7ruHFiDN7CiA@mail.gmail.com> <20120326073704.GH5611@n2100.arm.linux.org.uk> <20120326074533.GL15647@pengutronix.de>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH linux-next] dmaengine: add context parameter fixups
+Date: Mon, 26 Mar 2012 10:42:01 +0100
+Message-ID: <20120326094200.GA3098@opensource.wolfsonmicro.com>
+References: <1332511242-30241-1-git-send-email-alexandre.bounine@idt.com>
+ <CAOMZO5B-Zutv-xwqLCAgNMO8A3Kyg4uWqS41koo-yoS4mGB1TQ@mail.gmail.com>
+ <1332740082.19804.15.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20120326074533.GL15647@pengutronix.de>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Uwe =?iso-8859-1?q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Jon Masters <jonathan@jonmasters.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kbuild@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50052 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755935Ab2CZJmE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Mar 2012 05:42:04 -0400
+Content-Disposition: inline
+In-Reply-To: <1332740082.19804.15.camel@vkoul-udesk3>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Vinod Koul <vinod.koul@linux.intel.com>
+Cc: Fabio Estevam <festevam@gmail.com>, Alexandre Bounine <alexandre.bounine@idt.com>, paul.gortmaker@windriver.com, dan.j.williams@intel.com, samuel@sortiz.org, lrg@ti.com, perex@perex.cz, tiwai@suse.de, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, fabio.estevam@freescale.com, alsa-devel@alsa-project.org
 
-On Monday 26 March 2012, Uwe Kleine-K=F6nig wrote:
-> On Mon, Mar 26, 2012 at 08:37:04AM +0100, Russell King - ARM Linux wr=
-ote:
-> > On Sun, Mar 25, 2012 at 07:59:44PM -0400, Jon Masters wrote:
-> > > As to longer term, I am happy to work up something that will spot=
- this
-> > > particular kind of failure (symbol changes type) and output somet=
-hing
-> > > more useful during the kallsyms generation if you would like.
-> > >=20
-> > > Are you planning to pull in either of the fixes you mention?
-> >=20
-> > I'm not, because those are all sub-optimal - I don't see why we sho=
-uld
-> > bloat the kernel image just for the sake of working around kallsyms=
-=2E
-> >=20
-> > The best I've come up with so far which avoids that is to force
-> > KALLSYMS_EXTRA_PASS to always be set on ARM.
-> Just to let you know: I even saw failures with KALLSYMS_EXTRA_PASS se=
-t.
-> Not so in the recent past and sometimes not even reproducible IIRC.
-> I will save the build results next time it happens now that I saw wha=
-t
-> to look for.
 
-Yes, I saw these too in my randconfig builds some time ago. Maybe a han=
-dful
-of builds among 50000 configurations.
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	Arnd
---
-To unsubscribe from this list: send the line "unsubscribe linux-kbuild"=
- in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Mon, Mar 26, 2012 at 11:04:42AM +0530, Vinod Koul wrote:
+> On Sat, 2012-03-24 at 12:23 -0300, Fabio Estevam wrote:
+
+> > http://permalink.gmane.org/gmane.linux.alsa.devel/96215
+
+> And this seems to be linux-next.
+
+> Mark, Is this part of the sound updates that went to Linus?
+
+No, not yet - it was only sent after the merge window.  Quite why nobody
+managed to notice it before then I don't know.  It'll go to him soon, or
+at least to Takashi, but don't know if it'll make -rc1 or not.
+
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPcDnfAAoJEBus8iNuMP3dXY4QAJrg3zNc+uF7lg//SBvDus1G
+OjRrNx7rVxe1Ot0KYNvDY9q7iH7/lVJi28pBjHftfKN0RoTpEiCGkWmmOD2SnnGT
+bWSm6qt7Iv2JO5lWViBvwQLPoNRuAyRYJkHbxPMkCKca9mZzuBVXHX1anuvRkvzh
+A3lHlBvDS6YUZsxEJ1J/L/twyxOA9Jub9lE5djcceLQflBRc5vwyIbkySj4terhk
+nkA1UTCqp7kKVxq4XJXIwWeJfIgbKl4heetWh8EWib+KZcPCh/7SKK48rUrcrU9u
+DxUGK+hLiUU+icVvs4YaT/IJe0ipsOOp5SXpv3BJE78McJePDp+doLnMBHosdwMx
+ITBtZMb98ijtdtj7DwcBUOsLaFK3+GzaGAk7oF1SeOmyWEM5VQQnj/TAapmmadRn
+yfoL4mkZaUl0q5PPBwmtjG0KLUiD6XlxsnZwRiZgfMq3WFHn8WtyPaI9zUWQ0OLu
+BRFocGVLqZnorB/TwGyTCnWZNBpR9/FnW/kO87IT8a5zL1XJZBQAwiARXy2vO6YU
+uHhTGQ1VOnylOO3rZK8xYuVFALebvxyCDuVsuRGGgAXoW65rC3/f0d5F5ko4GD3v
+P7cqhWoXE1su5VXpuAS+ItVEvavepf4m5RE/dQZYUsweWoDoeN5RvMVYU8zBn1qR
+pc9+KSCCMi55EluTGRN7
+=/Am0
+-----END PGP SIGNATURE-----
+
+--d6Gm4EdcadzBjdND--
