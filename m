@@ -1,133 +1,95 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi tree
-Date: Mon, 26 Mar 2012 12:17:19 +1100
-Message-ID: <20120326121719.dc4c2b1faca5cf12c8d76d93@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the battery tree
+Date: Mon, 26 Mar 2012 13:13:16 +1100
+Message-ID: <20120326131316.b791ebefd94d8cbcac5bccfa@canb.auug.org.au>
+References: <20120315135609.2f9a2a030866c476dc736b9c@canb.auug.org.au>
+	<20120320153912.b97107ca4128d0692de17799@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__26_Mar_2012_12_17_19_+1100_OILfI=tkKPPBzt6X"
+ boundary="Signature=_Mon__26_Mar_2012_13_13_16_+1100_pljozaNH=EjXs5E8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55284 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:54641 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754022Ab2CZBRb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Mar 2012 21:17:31 -0400
+	with ESMTP id S1754995Ab2CZCNb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Mar 2012 22:13:31 -0400
+In-Reply-To: <20120320153912.b97107ca4128d0692de17799@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Greg KH <greg@kroah.com>
+To: Anton Vorontsov <avorontsov@ru.mvista.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Mon__26_Mar_2012_12_17_19_+1100_OILfI=tkKPPBzt6X
+--Signature=_Mon__26_Mar_2012_13_13_16_+1100_pljozaNH=EjXs5E8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi Anton,
 
-After merging the scsi tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+On Tue, 20 Mar 2012 15:39:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Thu, 15 Mar 2012 13:56:09 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > After merging the battery tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > drivers/power/ab8500_btemp.c: In function 'ab8500_btemp_batctrl_volt_to=
+_res':
+> > drivers/power/ab8500_btemp.c:142:2: error: implicit declaration of func=
+tion 'is_ab8500_1p1_or_earlier' [-Werror=3Dimplicit-function-declaration]
+> > drivers/power/ab8500_btemp.c: In function 'ab8500_btemp_templow_handler=
+':
+> > drivers/power/ab8500_btemp.c:619:2: error: implicit declaration of func=
+tion 'is_ab8500_2p0_or_earlier' [-Werror=3Dimplicit-function-declaration]
+> > drivers/power/ab8500_charger.c: In function 'ab8500_charger_ac_en':
+> > drivers/power/ab8500_charger.c:1126:3: error: implicit declaration of f=
+unction 'is_ab8500_1p1_or_earlier' [-Werror=3Dimplicit-function-declaration]
+> > drivers/power/ab8500_charger.c: In function 'ab8500_charger_remove':
+> > drivers/power/ab8500_charger.c:2519:2: error: implicit declaration of f=
+unction 'usb_unregister_notifier' [-Werror=3Dimplicit-function-declaration]
+> > drivers/power/ab8500_charger.c:2520:2: error: implicit declaration of f=
+unction 'usb_put_transceiver' [-Werror=3Dimplicit-function-declaration]
+> > drivers/power/ab8500_charger.c: In function 'ab8500_charger_probe':
+> > drivers/power/ab8500_charger.c:2688:2: error: implicit declaration of f=
+unction 'usb_get_transceiver' [-Werror=3Dimplicit-function-declaration]
+> > drivers/power/ab8500_charger.c:2688:14: warning: assignment makes point=
+er from integer without a cast [enabled by default]
+> > drivers/power/ab8500_charger.c:2695:2: error: implicit declaration of f=
+unction 'usb_register_notifier' [-Werror=3Dimplicit-function-declaration]
+> >=20
+> > Caused by commits 89449ac8d6d2 ("ab8500-charger: AB8500 charger driver")
+> > and 20ac1aed6206 ("ab8500-btemp: AB8500 battery temperature driver").
+> >=20
+> > I have used the battery tree form next-20120314 for today.
+>=20
+> Still getting this build failure.
 
-drivers/staging/keucr/scsiglue.c:349:2: error: unknown field 'proc_info' sp=
-ecified in initializer
-drivers/staging/rts_pstor/rtsx.c:258:2: error: unknown field 'proc_info' sp=
-ecified in initializer
-drivers/staging/rts5139/rts51x_scsi.c:2190:2: error: unknown field 'proc_in=
-fo' specified in initializer
-
-Caused by commit 104c4fe25dc9 ("[SCSI] remove scsi_host_template::proc_info=
-").
-
-Since this is a staging driver, I applied these following patches:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 26 Mar 2012 12:07:35 +1100
-Subject: [PATCH] scsi: disable broken staging driver
-
-This driver is broken by commit 104c4fe25dc9 ("[SCSI] remove
-scsi_host_template::proc_info") from the scsi tree.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/keucr/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/staging/keucr/Kconfig b/drivers/staging/keucr/Kconfig
-index ba756bf..aef4858 100644
---- a/drivers/staging/keucr/Kconfig
-+++ b/drivers/staging/keucr/Kconfig
-@@ -1,6 +1,6 @@
- config USB_ENESTORAGE
- 	tristate "USB ENE SM card reader support"
--	depends on USB && SCSI && m
-+	depends on USB && SCSI && m && BROKEN
- 	---help---
- 	  Say Y here if you wish to control a ENE SM Card reader.
- 	  To use SD/MS card, please build driver/usb/storage/ums-eneub6250.ko
---=20
-1.7.9.1
-
-=46rom 4c836f9935ea1d2b2bc365aa1af70afbb2545311 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 26 Mar 2012 12:13:34 +1100
-Subject: [PATCH] scsi: disable more staging drivers due to scsi breakage
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/rts5139/Kconfig   |    2 +-
- drivers/staging/rts_pstor/Kconfig |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/rts5139/Kconfig b/drivers/staging/rts5139/Kcon=
-fig
-index afd526b..56bff83 100644
---- a/drivers/staging/rts5139/Kconfig
-+++ b/drivers/staging/rts5139/Kconfig
-@@ -1,6 +1,6 @@
- config RTS5139
- 	tristate "Realtek RTS5139 USB card reader support"
--	depends on USB && SCSI
-+	depends on USB && SCSI && BROKEN
- 	help
- 	  Say Y here to include driver code to support the Realtek
- 	  RTS5139 USB card readers.
-diff --git a/drivers/staging/rts_pstor/Kconfig b/drivers/staging/rts_pstor/=
-Kconfig
-index 4d66a99..1980a49 100644
---- a/drivers/staging/rts_pstor/Kconfig
-+++ b/drivers/staging/rts_pstor/Kconfig
-@@ -1,6 +1,6 @@
- config RTS_PSTOR
- 	tristate "RealTek PCI-E Card Reader support"
--	depends on PCI && SCSI
-+	depends on PCI && SCSI && BROKEN
- 	help
- 	  Say Y here to include driver code to support the Realtek
- 	  PCI-E card readers.
---=20
-1.7.9.1
-
+Ping?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__26_Mar_2012_12_17_19_+1100_OILfI=tkKPPBzt6X
+--Signature=_Mon__26_Mar_2012_13_13_16_+1100_pljozaNH=EjXs5E8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPb8OfAAoJEECxmPOUX5FEmmkP/RLlaNXyx63L7JIyUoraNdyb
-YrZrwkFwPggL0ICPt0w6+l2TtxcZuavwA6KAW4zkr4FLZ1KWjh3ZgUkuW5yd4O/R
-i6sB/uoaVvxTEZLxNJawQzBrxKfY+ToIuac7JThrjFIcu+5cSNFqEItIRo4G0bA/
-K5Kh0AZ9ZMBWA784elHg1XemK8L5Zush7gNGAOmK4csMjzJLPSF4SFSsKLPcAviv
-BzPFGrVeY4xU7x4H4gCXUJwIbYGGWoQalYb+ZUbEOSrfyDo+n3eE3TQ9n1Q5lA7J
-OkKXCA9YMJs4jn5BIjuW3h2EYCD4u0ojMXgmHZZwVjKUvBUGBTIEcFPbKsA4BT0Q
-r+hJvTktKq+YrKWMevBr5nMBaFFYzwpydO0RvE/fEdQEHiM06TJDa7+jPKOdAhDI
-Pc1GDk1hpc2OBJ/aeM8agLd8dGnvNVJsqzVk+JeXjGR0I71JWvMy+WbyZ/JcY2UJ
-xu1FpBkUuydRE7iV9jGGUvqWrrYxeTzHaIhhn5MaBQkkhb6ydBKVVJGQS7KnlmJu
-SDj9IHFw1IgFnueFn4oMvXyQpGcYk0JdXJuYfcd6do99xY1/LNb2Q4pULMY39308
-We3CYMe0aGOsXFuUQOpEqAbe4t84EthyEkDTxXKJWxpo57K6MzpJ+nRrERN+HAH0
-ceJpujRUNVOaCIo0zmTu
-=kfdh
+iQIcBAEBCAAGBQJPb9C8AAoJEECxmPOUX5FE3zwP/15EbuOCK4ypBBmIRkCtibth
+YlMhKA+B1m1Oq4Y0UPhBA8yz1GYIGHxsmsyWmxTAiVdHje2PSAv5UJH2acG4+I7T
+MKtqdI8CPUaWhf4IqitCkjURyrD/D/h01B/B0It70P1GhFtgjfzoduPYVh1hCgEj
+lYo0Eh9f4zkqRJGKm0Wza4l7H2Y9zOq1VP7vof+ZhFdkkr8dfka1yCUkWeIVpHAz
+sSjvFAyHG1V/KiDVEGXldbsPXT30lRArS/Urz391YYZpGwnQWdHw1hXO/Yn1hEjU
+Z9+SmOoNj2YmA+nFCgMAbjcC1YfBdevuTYIVvwY9epdekOUsa/3Qd8yaIxZATB4F
+d8WzXDZxeI65/bXksNWJnzBQajqY9u4NcFZAHmk/dYCtjHBfuYBTVIvGK3y0TNVT
+AZuj5l/C2Dcc7ySixc8XjigckzYmUixFF/8C8XU+nOP7IyhDdG45XkTq27FSZ+G6
+Nty1etVeP9alUO62H2JmOgIN3V19/WRMOprE3AX+5pny4G5MRWUzvoHosIdcRRii
+eg/zWQFp7jV3veaIxCtpS+NztW3mR3D0zor7ixEj+1WLfmW2mi1Vm9BP7ahS6h0m
+RJq//QPV1XKpaSAtB9dhxTMcaeGsMEJTuD/0IAHJ1P3erfrb7DprRw2oGoxFaXE/
+qhkHNEKaY/YhcRnOfBl6
+=brVt
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__26_Mar_2012_12_17_19_+1100_OILfI=tkKPPBzt6X--
+--Signature=_Mon__26_Mar_2012_13_13_16_+1100_pljozaNH=EjXs5E8--
