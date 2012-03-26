@@ -1,58 +1,39 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: Inconsistent kallsyms data on ARM.
-Date: Mon, 26 Mar 2012 09:45:33 +0200
-Message-ID: <20120326074533.GL15647@pengutronix.de>
-References: <CAP=VYLoStscdVJretZ-Rkbp7V3Vsm8N0oWcjih7ruHFiDN7CiA@mail.gmail.com>
- <201203141321.47010.arnd@arndb.de>
- <20120325112035.GE5611@n2100.arm.linux.org.uk>
- <4F6FB170.1040109@jonmasters.org>
- <20120326073704.GH5611@n2100.arm.linux.org.uk>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Mon, 26 Mar 2012 08:57:21 +0100
+Message-ID: <1332748641.2836.8.camel@dabdike>
+References: <20120326121719.dc4c2b1faca5cf12c8d76d93@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120326073704.GH5611@n2100.arm.linux.org.uk>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Jon Masters <jonathan@jonmasters.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35791 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753895Ab2CZH5Z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Mar 2012 03:57:25 -0400
+In-Reply-To: <20120326121719.dc4c2b1faca5cf12c8d76d93@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Greg KH <greg@kroah.com>
 
-Hello,
+On Mon, 2012-03-26 at 12:17 +1100, Stephen Rothwell wrote:
+> Hi James,
+> 
+> After merging the scsi tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/staging/keucr/scsiglue.c:349:2: error: unknown field 'proc_info' specified in initializer
+> drivers/staging/rts_pstor/rtsx.c:258:2: error: unknown field 'proc_info' specified in initializer
+> drivers/staging/rts5139/rts51x_scsi.c:2190:2: error: unknown field 'proc_info' specified in initializer
+> 
+> Caused by commit 104c4fe25dc9 ("[SCSI] remove scsi_host_template::proc_info").
+> 
+> Since this is a staging driver, I applied these following patches:
 
-On Mon, Mar 26, 2012 at 08:37:04AM +0100, Russell King - ARM Linux wrot=
-e:
-> On Sun, Mar 25, 2012 at 07:59:44PM -0400, Jon Masters wrote:
-> > As to longer term, I am happy to work up something that will spot t=
-his
-> > particular kind of failure (symbol changes type) and output somethi=
-ng
-> > more useful during the kallsyms generation if you would like.
-> >=20
-> > Are you planning to pull in either of the fixes you mention?
->=20
-> I'm not, because those are all sub-optimal - I don't see why we shoul=
-d
-> bloat the kernel image just for the sake of working around kallsyms.
->=20
-> The best I've come up with so far which avoids that is to force
-> KALLSYMS_EXTRA_PASS to always be set on ARM.
-Just to let you know: I even saw failures with KALLSYMS_EXTRA_PASS set.
-Not so in the recent past and sometimes not even reproducible IIRC.
-I will save the build results next time it happens now that I saw what
-to look for.
+Yes, that looks about right, thanks.  We haven't seen anything about
+these drivers on the SCSI list, so I've no idea where they are in
+development.
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
---
-To unsubscribe from this list: send the line "unsubscribe linux-kbuild"=
- in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+James
