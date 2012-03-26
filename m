@@ -1,73 +1,71 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Mar 26 (usbcore)
-Date: Mon, 26 Mar 2012 13:38:52 -0700
-Message-ID: <4F70D3DC.6070004@xenotime.net>
-References: <Pine.LNX.4.44L0.1203261550290.1179-100000@iolanthe.rowland.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the battery tree
+Date: Tue, 27 Mar 2012 08:44:14 +1100
+Message-ID: <20120327084414.dacbf074e0f4ddd65ff3ecfb@canb.auug.org.au>
+References: <20120315135609.2f9a2a030866c476dc736b9c@canb.auug.org.au>
+	<20120326161132.GA6430@lizard>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44L0.1203261550290.1179-100000@iolanthe.rowland.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__27_Mar_2012_08_44_14_+1100_BMU5Ak/X.pQ+qRby"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:54985 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756894Ab2CZVo3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Mar 2012 17:44:29 -0400
+In-Reply-To: <20120326161132.GA6430@lizard>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Anton Vorontsov <cbouatmailru@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-On 03/26/2012 01:06 PM, Alan Stern wrote:
+--Signature=_Tue__27_Mar_2012_08_44_14_+1100_BMU5Ak/X.pQ+qRby
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, 26 Mar 2012, Greg KH wrote:
-> 
->> On Mon, Mar 26, 2012 at 09:58:36AM -0700, Randy Dunlap wrote:
->>> On 03/25/2012 09:28 PM, Stephen Rothwell wrote:
->>>
->>>> Hi all,
->>>>
->>>> Reminder: please do not add stuff destined for v3.5 to linux-next
->>>> included trees/branches until after v3.4-rc1 has been released.
->>>>
->>>> Changes since 20120323:
->>>
->>>
->>>
->>> on x86_64:
->>>
->>> ERROR: "utf16s_to_utf8s" [drivers/usb/core/usbcore.ko] undefined!
->>> ERROR: "usb_speed_string" [drivers/usb/core/usbcore.ko] undefined!
->>>
->>> Full randconfig file is attached.
->>
->> Odd, nothing in the usb core has changed in a while in this area,
->> although we might have gotten some core dependancies mixed up for random
->> configurations like this.
-> 
-> This is puzzling.
-> 
-> 	utf16s_to_utf8s is defined in fs/nls/nls_base.c,
-> 	which is built according to CONFIG_NLS (in fs/nls/Makefile),
-> 	which is selected by CONFIG_USB (in drivers/usb/Kconfig).
-> 
-> But the config that Randy attached had CONFIG_USB set to M and 
-> CONFIG_NLS not set.  How is that possible?
-> 
-> 	usb_speed_string is defined in drivers/usb/usb-common.c,
-> 	which is built according to CONFIG_USB_COMMON (in
-> 		drivers/usb/Makefile),
-> 	which defaults to Y if CONFIG_USB_SUPPORT and either
-> 		CONFIG_USB or CONFIG_USB_GADGET is set (in 
-> 		drivers/usb/Kconfig).
-> 
-> The problem here was that CONFIG_USB_SUPPORT isn't set but CONFIG_USB
-> is set to M.  This used not to be possible, since CONFIG_USB was
-> defined inside an "if USB_SUPPORT" section.  Maybe that got changed and
-> needs to be fixed (but
-> https://git.kernel.org/?p=linux/kernel/git/next/linux-next.git thinks
-> it's still not possible).  Or maybe Randy's tree is a little out of 
-> date.
+Hi Anton,
 
+On Mon, 26 Mar 2012 20:11:32 +0400 Anton Vorontsov <cbouatmailru@gmail.com>=
+ wrote:
+>
+> I pulled my current battery tree into next-20120326, and I can't reproduce
+> the issue (using allmodconfig on x86_64).
 
-My tree is just linux-next to Mar. 26.
+I have moved the battery tree to after the mfd tree in my merge sequence
+so we will see if that helps.  I really hate having ordering dependencies
+in linux-next (since they change over time and people have to remember to
+tell me and to send stuff to Linus in the right order).  Also, it means
+that you are not testing exactly what you are sending to me - I assume
+that your testing must be including the mfd tree somehow.
 
-I'll look into it.
+These sort of things should be fixed by having the common code in a
+separate (stable) branch that is merged into both trees.  Or in some
+cases by merely cherry-picking a very small number of commits from one
+tree to the other.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-~Randy
+--Signature=_Tue__27_Mar_2012_08_44_14_+1100_BMU5Ak/X.pQ+qRby
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPcOMuAAoJEECxmPOUX5FEZ04QAKVaiJMxkYW/Kki/P+axrMYk
+pQB6jF+nEtmS+BBoZad/REu9uKrT3UV6CRHg/dereMXp8fcQ1eCh3Yek39z3KcIT
+GXietXiD7xKCdtsWwCxqBTeoZOz9ySQgKH2gOfpEKnvGYWbqZhx+1oMSelH6praI
+EHEZp/nV9YY6zE1Fi9GSR9BQTEzcT2Av31WbXmIoeTX9jj9tkiKx+3gNyBqufUL6
+2UgWu9q8blJ04m1rtvANkL8pXmkQaayvTafagULzVocWgRkGZOYkqAys3ob5xfc6
+5il8TgGOn+oWIVjusbCk97f1Uiz/PsndOPX4o+nhfAq2Z4RHda/p3AVaLEmr6/Je
+knlkReoRWlgnsOG8YohP5jjeMk/+MkjKXzN4JiTZ5/V8LX9NpY20Wa4bc7m0cErW
+6gJSt1+1oo00Uooz3l3liU66A1jy6KQwlb2moJCRUyW9gDXBthTj1jO4QV33xKSo
+1jUF4Jgt9Cl5mQCgaRsoZyOD6Vb5bUldA4HdkCJ7Z3NxV15UXer14tiifG/ZqJlB
+hv0/Yi268NcqxcwI19A/UBLiNYT4aMn5MkUjt+BgBGyN7ci6v76AhGCSX7e0eQVo
+OFc1eQ58VF73i7VHaXLoRXuRdvi52rV9dh/CqLJ5FmHEdqbMip4V6CFXkcKkBH1B
+SZk8BNlmWpj1SlOUBcd+
+=gf/u
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Mar_2012_08_44_14_+1100_BMU5Ak/X.pQ+qRby--
