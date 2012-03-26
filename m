@@ -1,200 +1,109 @@
-From: Jon Masters <jonathan@jonmasters.org>
-Subject: Re: Inconsistent kallsyms data on ARM.
-Date: Sun, 25 Mar 2012 19:59:44 -0400
-Message-ID: <4F6FB170.1040109@jonmasters.org>
-References: <CAP=VYLoStscdVJretZ-Rkbp7V3Vsm8N0oWcjih7ruHFiDN7CiA@mail.gmail.com>
- <201203141321.47010.arnd@arndb.de>
- <20120325112035.GE5611@n2100.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm tree with Linus' tree
+Date: Mon, 26 Mar 2012 11:05:50 +1100
+Message-ID: <20120326110550.5029ac4c49c2be2e2e0381cf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20120325112035.GE5611@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__26_Mar_2012_11_05_50_+1100_hKMFaWFe7P94N02z"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40613 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751018Ab2CZAGI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Mar 2012 20:06:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Jason Baron <jbaron@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
 
-On 03/25/2012 07:20 AM, Russell King - ARM Linux wrote:
-> On Wed, Mar 14, 2012 at 01:21:46PM +0000, Arnd Bergmann wrote:
->> On Tuesday 13 March 2012, Paul Gortmaker wrote:
->>> This bug(?)  has been seen to float from one ARM build to another since
->>> I started tracking the day-to-day changes in Stephen's linux-next builds.
->>>
->>> I see it was discussed earlier:
->>>
->>>    https://lkml.org/lkml/2011/8/2/233
->>>    https://lkml.org/lkml/2011/10/8/70
->>>
->>> but no concrete cause was nailed down.  Can the linux-next build results
->>> help shed some light on this in any way?  Since it seems sporadic, is
->>> there value in embedding a diagnostic of some sort in the infrastructure
->>> so that when the error is detected, that it prints out more detailed info?
->>>
->>> I can provide links to failed linux-next builds, but at the moment, all they
->>> really seem to have is the same repeated error message, like this one:
->>>
->>>    http://kisskb.ellerman.id.au/kisskb/buildresult/5869367/
->>>
->>> and I don't see that helping folks all that much....
->>>
->>
->> I'm sure I can reproduce it if necessary, but I need to know what to
->> look for to find out what the problem is.
-> 
-> Right, last night's omap3430ldp build failed because of this, so I've
-> re-run the build and taken a look at what's happened:
-> 
-> $ arm-linux-nm -n .tmp_vmlinux1 > vm1.syms
-> $ arm-linux-nm -n .tmp_vmlinux2 > vm2.syms
-> $ arm-linux-nm -n vmlinux > vm3.syms
-> $ diff -u <(sed s,^...........,, vm2.syms) <(sed s,^...........,, vm3.syms) 
-> $
-> 
-> .tmp_vmlinux1 is the vmlinux file with no kallsyms data.  .tmp_vmlinux2 is
-> the vmlinux file with kallsyms data generated from the first image.
-> vmlinux is the vmlinux file with kallsyms data generated from the second
-> image.
-> 
-> What the above shows is that we have the same symbols in the same order
-> in the second and third stage.  However:
-> 
-> $ diff -u vm2.syms vm3.syms
-> ...
->  c0352900 R kallsyms_names
-> -c03acd00 R kallsyms_markers
-> -c03acf10 R kallsyms_token_table
-> -c03ad290 R kallsyms_token_index
-> ...
-> +c03accf0 R kallsyms_markers
-> +c03acf00 R kallsyms_token_table
-> +c03ad280 R kallsyms_token_index
-> 
-> So, the size of the kallsyms names has changed.
-> 
-> Now, looking at the differences between stage 1 and stage 2:
-> 
-> @@ -1,9 +1,3 @@
-> -kallsyms_addresses
-> -kallsyms_markers
-> -kallsyms_names
-> -kallsyms_num_syms
-> -kallsyms_token_index
-> -kallsyms_token_table
->  syscalls_padding
->  cpu_v7_suspend_size
->  NR_syscalls
-> @@ -17151,6 +17145,12 @@
->  rpc_info_operations
->  svc_pool_stats_seq_ops
->  rpc_proc_fops
-> +kallsyms_addresses
-> +kallsyms_num_syms
-> +kallsyms_names
-> +kallsyms_markers
-> +kallsyms_token_table
-> +kallsyms_token_index
->  __end_builtin_fw
->  __end_pci_fixups_early
->  __end_pci_fixups_enable
-> @@ -28372,11 +28372,11 @@
->  __security_initcall_start
->  __initramfs_size
->  __irf_end
-> -__data_loc
->  __init_end
->  __per_cpu_end
->  __per_cpu_load
->  __per_cpu_start
-> +__data_loc
->  _data
->  _sdata
->  init_thread_union
-> 
-> 
-> The difference in placement for the kallsyms symbols is more or less
-> expected, because these appear as weak symbols in stage 1.  However,
-> notice that __data_loc has moved in relative position.
-> 
-> As the names are compressed, this causes the size of the kallsyms name
-> data to change size (because we end up with a different compression)
-> which then causes the subsequent kallsyms data and other read-only data
-> to move.  This then causes 'inconsistent kallsyms data' error.
-> 
-> Now, looking at the __data_loc values in these files:
-> 
-> vm1.syms-c03bd408 t __irf_start
-> vm1.syms-c03bd408 T __security_initcall_end
-> vm1.syms-c03bd408 T __security_initcall_start
-> vm1.syms-c03bd608 T __initramfs_size
-> vm1.syms-c03bd608 t __irf_end
-> vm1.syms:c03be000 A __data_loc
-> vm1.syms-c03be000 A __init_end
-> vm1.syms-c03be000 D __per_cpu_end
-> vm1.syms-c03be000 D __per_cpu_load
-> vm1.syms-c03be000 D __per_cpu_start
-> vm1.syms-c03be000 D _data
-> --
-> vm2.syms-c0438608 t __irf_end
-> vm2.syms-c0439000 A __init_end
-> vm2.syms-c0439000 T __per_cpu_end
-> vm2.syms-c0439000 T __per_cpu_load
-> vm2.syms-c0439000 T __per_cpu_start
-> vm2.syms:c043a000 A __data_loc
-> vm2.syms-c043a000 D _data
-> vm2.syms-c043a000 D _sdata
-> vm2.syms-c043a000 D init_thread_union
-> vm2.syms-c043c000 D __nosave_begin
-> vm2.syms-c043c000 D __nosave_end
-> 
-> What we see here is the start of the data section aligned to 8K as
-> required for the init task data.  The per-cpu data is aligned to a 4K
-> boundary immediately before it.  However, as it is an empty section,
-> it can be aligned to the same 8K boundary as the data section depending
-> on the size and placement of the previous sections which include the
-> kallsyms data.
-> 
-> The solution?  We could artificially increase the alignment of the
-> per-cpu data, or waste a byte after the per-cpu data to ensure that we
-> don't align both together.  That could mean wasting up to 12K of space
-> for no reason other than to avoid this error which is exceedingly silly.
-> 
-> I'm not sure whether the kallsyms name data generation could be
-> changed so that this kind of thing doesn't matter but I suspect
-> that's an exceedingly difficult problem to crack.
-> 
-> In the mean time, I'd suggest building with the additional kallsyms pass
-> when it's required.
+--Signature=_Mon__26_Mar_2012_11_05_50_+1100_hKMFaWFe7P94N02z
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We've been hitting this in Fedora on particularly UP kernel builds. I
-also came to the same conclusions that you did (see Google+) and had a
-chat with Arnd about it. A test build with the __per_cpu_* data removed
-from the linker vmlinux.lds succeeds in building for the reasons cited.
-That's not to say that was the intended fix, just an experiment to
-confirm that this is the problem we've been hitting on some builds.
+Hi Russell,
 
-The "problem" is that kallsyms uses a "compression" algorithm that
-derives the name compressed from the type+symbol_name so
-"T__per_cpu_start" becomes "D__per_cpu_start". The compression is very
-trivial in that unused characters in the set of input symbols are used
-to represent popular character pairs, etc. So when the symbol changes
-type according to nm output (as you explain), the size of kallsyms_names
-will likely change, changing all the offsets. I was going to report this
-either this evening or in the morning, but I have been waiting for some
-tests to complete. Glad you found it.
+Today's linux-next merge of the arm tree got a conflict in
+arch/arm/kernel/process.c between commit 909af768e888 ("coredump: remove
+VM_ALWAYSDUMP flag") from the  tree and commit e19d478e808e ("ARM:
+7294/1: vectors: use gate_vma for vectors user mapping") from the arm
+tree.
 
-As to longer term, I am happy to work up something that will spot this
-particular kind of failure (symbol changes type) and output something
-more useful during the kallsyms generation if you would like.
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Are you planning to pull in either of the fixes you mention?
+diff --cc arch/arm/kernel/process.c
+index d3eca45,1531480..0000000
+--- a/arch/arm/kernel/process.c
++++ b/arch/arm/kernel/process.c
+@@@ -529,17 -531,36 +529,35 @@@ unsigned long arch_randomize_brk(struc
+  #ifdef CONFIG_MMU
+  /*
+   * The vectors page is always readable from user space for the
+-  * atomic helpers and the signal restart code.  Let's declare a mapping
+-  * for it so it is visible through ptrace and /proc/<pid>/mem.
++  * atomic helpers and the signal restart code. Insert it into the
++  * gate_vma so that it is visible through ptrace and /proc/<pid>/mem.
+   */
++ static struct vm_area_struct gate_vma;
+ =20
+- int vectors_user_mapping(void)
++ static int __init gate_vma_init(void)
+  {
+- 	struct mm_struct *mm =3D current->mm;
+- 	return install_special_mapping(mm, 0xffff0000, PAGE_SIZE,
+- 				       VM_READ | VM_EXEC |
+- 				       VM_MAYREAD | VM_MAYEXEC | VM_RESERVED,
+- 				       NULL);
++ 	gate_vma.vm_start	=3D 0xffff0000;
++ 	gate_vma.vm_end		=3D 0xffff0000 + PAGE_SIZE;
++ 	gate_vma.vm_page_prot	=3D PAGE_READONLY_EXEC;
++ 	gate_vma.vm_flags	=3D VM_READ | VM_EXEC |
+ -				  VM_MAYREAD | VM_MAYEXEC |
+ -				  VM_ALWAYSDUMP;
+++				  VM_MAYREAD | VM_MAYEXEC;
++ 	return 0;
++ }
++ arch_initcall(gate_vma_init);
++=20
++ struct vm_area_struct *get_gate_vma(struct mm_struct *mm)
++ {
++ 	return &gate_vma;
++ }
++=20
++ int in_gate_area(struct mm_struct *mm, unsigned long addr)
++ {
++ 	return (addr >=3D gate_vma.vm_start) && (addr < gate_vma.vm_end);
++ }
++=20
++ int in_gate_area_no_mm(unsigned long addr)
++ {
++ 	return in_gate_area(NULL, addr);
+  }
+ =20
+  const char *arch_vma_name(struct vm_area_struct *vma)
 
-Jon.
+--Signature=_Mon__26_Mar_2012_11_05_50_+1100_hKMFaWFe7P94N02z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPb7LeAAoJEECxmPOUX5FEgCQP/A03Vf2JQ2DJMm62fu7y+imO
+294QWlMBZviWpYOc+mlWo+8OTR1n4XU6OAnEHNhGVdBSRgitoBPIuo/yzfSBnueL
+VZiwKro/aNeOtZdQtgLL1VAhd9JJ92Ak7kWbq7Dje4265DSsgrvTe3qhd6DY9+h8
+i4HDEfLI5CbssUHJf51FQQk+9/bXeI4yVILtAhOjOUD/WBIoB0xiYCHO41a+AaTK
+BEtYOQnsRuaQLmR5Dp/2ee0Fv9/9VDDS0QwJydEuPGArv7d1ppmh8uVppFw/kxJk
+oqVCGCQdZHcQtydSWrSM/dASMAA50s1NW4526j4wFMHHpuWtMjZoq7Fbkhjm2HNh
+FyWTjGmvN9Mh2i7E6b1lPtEdvwAlX5/SzIH9/4d5XbonJTYhlCDb0cPvBPPRvMcF
+13Y4R1Tv8TO5NF7SdVW7Wi/AtYi43S/2HRrfE2ppml++OBqwi9rsntSMNMNT/h5h
+xQgZ9eeznyVJQOY45wKSe1mq8zVHL9Qw6CtIpeM46qO+QFxmRtIkrjRA6nNV/T2P
+Zv+lB+N/KUqDUSIg3S41NjsSmL7Bk6cQOeeiG2nCSOrLNqjujDNMWpVkdPpn8hrq
++S1J2vdk/YlcGznPW1aRE2d46ZJUep/5Y/0wdxzddXbK+WZBmnqJackceBSGSEBl
+IPecyDmO42Y9mG0jv+y9
+=tWgl
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__26_Mar_2012_11_05_50_+1100_hKMFaWFe7P94N02z--
