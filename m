@@ -1,46 +1,82 @@
-From: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-Subject: Re: [PATCH] -mm/linux-next: procfs: Mark thread stack correctly in proc/<pid>/maps
-Date: Mon, 26 Mar 2012 08:32:35 +0530
-Message-ID: <CAAHN_R1_DordNLDjBfWMHyMJ1yhgwiuQfPvtwQzUKpGMkrJ0jw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] -mm/linux-next: procfs: Mark thread stack correctly in
+ proc/<pid>/maps
+Date: Mon, 26 Mar 2012 14:21:41 +1100
+Message-ID: <20120326142141.57f76bc005cdb4c1656df83a@canb.auug.org.au>
 References: <4F57A3EC.7070101@gmail.com>
 	<1331660076-32766-1-git-send-email-siddhesh.poyarekar@gmail.com>
 	<20120313131616.f66dbdad.akpm@linux-foundation.org>
 	<CAAHN_R3mFzmtCey_0JEHp=EAGh1sb87szpsKD_JkFwwYLCnKug@mail.gmail.com>
 	<CAP=VYLpUzuom-HUS-LYSuQmMZSRvC_Qjgyy9hnKqBowh-95YPQ@mail.gmail.com>
+	<CAAHN_R1_DordNLDjBfWMHyMJ1yhgwiuQfPvtwQzUKpGMkrJ0jw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAP=VYLpUzuom-HUS-LYSuQmMZSRvC_Qjgyy9hnKqBowh-95YPQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Jamie Lokier <jamie@shareable.org>, KOSAKI Motohiro <kosaki.motohiro@gmail.com>, Matt Mackall <mpm@selenic.com>, Mike Frysinger <vapier@gentoo.org>, Oleg Nesterov <oleg@redhat.com>, Mark Salter <msalter@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__26_Mar_2012_14_21_41_+1100_/O3qS8hLz6qvR.=i"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:33637 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756996Ab2CZDWH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Mar 2012 23:22:07 -0400
+In-Reply-To: <CAAHN_R1_DordNLDjBfWMHyMJ1yhgwiuQfPvtwQzUKpGMkrJ0jw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Jamie Lokier <jamie@shareable.org>, KOSAKI Motohiro <kosaki.motohiro@gmail.com>, Matt Mackall <mpm@selenic.com>, Mike Frysinger <vapier@gentoo.org>, Oleg Nesterov <oleg@redhat.com>, Mark Salter <msalter@redhat.com>
 
-On Sun, Mar 25, 2012 at 11:35 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> Now it is:
+--Signature=_Mon__26_Mar_2012_14_21_41_+1100_/O3qS8hLz6qvR.=i
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Siddhesh,
+
+On Mon, 26 Mar 2012 08:32:35 +0530 Siddhesh Poyarekar <siddhesh.poyarekar@g=
+mail.com> wrote:
 >
-> mm/nommu.o: In function `vm_is_stack':
-> nommu.c:(.text+0x2178): multiple definition of `vm_is_stack'
-> mm/util.o:util.c:(.text+0x2bc): first defined here
-> make[2]: *** [mm/built-in.o] Error 1
->
-> http://kisskb.ellerman.id.au/kisskb/buildresult/5941188/
+> On Sun, Mar 25, 2012 at 11:35 PM, Paul Gortmaker
+> <paul.gortmaker@windriver.com> wrote:
+> > Now it is:
+> >
+> > mm/nommu.o: In function `vm_is_stack':
+> > nommu.c:(.text+0x2178): multiple definition of `vm_is_stack'
+> > mm/util.o:util.c:(.text+0x2bc): first defined here
+> > make[2]: *** [mm/built-in.o] Error 1
+> >
+> > http://kisskb.ellerman.id.au/kisskb/buildresult/5941188/
+>=20
+> Looks like the problem is because this patch got included in
+> linux-next 2 days ago:
+>=20
+> http://git.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;a=3Dcommi=
+tdiff;h=3D47d1ab583408e5b8e900c5080aec9bbcf210df22
 
-Looks like the problem is because this patch got included in
-linux-next 2 days ago:
+I will remove that patch today.
 
-http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=commitdiff;h=47d1ab583408e5b8e900c5080aec9bbcf210df22
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-When I had consolidated all of these changes into what Andrew got the
-v3 patch from, this patch should have been removed since I moved this
-function definition from memory.c and nommu.c into util.c, but it
-looks like the patch got merged in once again, causing the build error
-above. Dropping this patch should be sufficient to fix the build
-problem. This is also the reason why the March 22 build was successful
-(with my final changes) and the March 24 build wasn't (with this
-additional patch).
+--Signature=_Mon__26_Mar_2012_14_21_41_+1100_/O3qS8hLz6qvR.=i
+Content-Type: application/pgp-signature
 
--- 
-Siddhesh Poyarekar
-http://siddhesh.in
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPb+DFAAoJEECxmPOUX5FEa9wP/2LmAYwomiwL/+YGLqHmxcZi
+IR4lbRBXY5jheMtxC2J1KdyddHc1KJ1VeHUiSGwa7uDgPi5ap6m6X4BNd+C0QRSA
+HGCcu2VqDv9L2mBMPLiTE3y0ZRey7Krw9rIyvD3at+Fw+arncscfu6CoiD5Nv32q
+g6YiVexmKFVs9rRBGWmB2JdNC6/nQNuyyfvIplw8nb49HzMMS0m+Vx0onMEeCYlF
+N0LgrJI81hk8+eANyPihM9aNwZ56qox0OEl2Li9v880p2JyIYt2E3TAJQFLW6DUR
+GW1uof4Yd2xO1JK83/puZZbHyPYe/q1m6Ahj9J6aOKZ1SNIypIYPhkVOu+ZeNB6T
+RtNz5xRbTw/D4mTpeHYAAp23uJfRRs0rXKMGPIwf1MTd4BeP9Nbx7r11Eoi+yqng
+/dKPX2cIMorkTIzAKRgsxYy7foK4w8SX6q2iDOZciaMeq0SusCdpBCVL5k/sx9jP
+CZ52NtBwDjuK1l57DONhAwdmGs2LrNxxBXGdblWfryTas7wXIIz5Qj1s9O03qWuH
+pYcOdX0jvPp2vgEC1wtvXe0g7ajr8DAjC3e+k4zFJlThBQrE+fj4PZbDkU9leFDL
+y0gJUjixwnntNQFpoCwH76cr5u7KXqRYKxnBaiRwqk/OMESrFGmYCoYEhsEIyCh4
+VpFa+qLndV9V3CxB2kVU
+=0gXA
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__26_Mar_2012_14_21_41_+1100_/O3qS8hLz6qvR.=i--
