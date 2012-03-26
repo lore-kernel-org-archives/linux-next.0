@@ -1,55 +1,42 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ASoC: dmaengine_pcm: use dmaengine cyclic wrapper
-Date: Mon, 26 Mar 2012 18:28:37 +0100
-Message-ID: <20120326172837.GA3789@opensource.wolfsonmicro.com>
-References: <1332763088-18964-1-git-send-email-vinod.koul@linux.intel.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: linux-next: Tree for Mar 26 (usbcore)
+Date: Mon, 26 Mar 2012 11:07:36 -0700
+Message-ID: <20120326180736.GA2893@kroah.com>
+References: <20120326152807.debdb1ec426b3c370c121178@canb.auug.org.au>
+ <4F70A03C.2070400@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60785 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932649Ab2CZR2k (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Mar 2012 13:28:40 -0400
-Content-Disposition: inline
-In-Reply-To: <1332763088-18964-1-git-send-email-vinod.koul@linux.intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vinod Koul <vinod.koul@linux.intel.com>
-Cc: alsa-devel@alsa-project.org, linux-next@vger.kernel.org, paul.gortmaker@windriver.com, fabio.estevam@freescale.com, Alexandre.Bounine@idt.com
-
-
---tKW2IUtsqtDRztdT
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <4F70A03C.2070400@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Mar 26, 2012 at 05:28:08PM +0530, Vinod Koul wrote:
-> commit 4a163c82 added extra parameter to device_prep_dma_cyclic
-> this is not required if we use the wrapper over cyclic API.
+On Mon, Mar 26, 2012 at 09:58:36AM -0700, Randy Dunlap wrote:
+> On 03/25/2012 09:28 PM, Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > Reminder: please do not add stuff destined for v3.5 to linux-next
+> > included trees/branches until after v3.4-rc1 has been released.
+> > 
+> > Changes since 20120323:
+> 
+> 
+> 
+> on x86_64:
+> 
+> ERROR: "utf16s_to_utf8s" [drivers/usb/core/usbcore.ko] undefined!
+> ERROR: "usb_speed_string" [drivers/usb/core/usbcore.ko] undefined!
+> 
+> Full randconfig file is attached.
 
-Applied, thanks.
+Odd, nothing in the usb core has changed in a while in this area,
+although we might have gotten some core dependancies mixed up for random
+configurations like this.
 
---tKW2IUtsqtDRztdT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Any patches would be greatly appreciated...
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPcKcxAAoJEBus8iNuMP3dAa4P/jqM6NOROyX/Xmo2pNUZTytA
-XoVrPsN9HA+yeIg0KgeZAoCyVPVIZduwLiD8FEMVaBavzl3FD4VmkGTXzPGwyyCd
-Cq7Y5iHhSE4nlUQHO/3xq/QnCR3OqwO0fvUOg3dR/gY4T7Y+e23nnbhEsz3/EehY
-yyycCa2cwrQo3RNetOepkAzcnApYKe1D4W8fL3gfg896yk6IEGWv8B8XDk03nae0
-ZembhYIAc1bnVRE1OMP17wi28p3Ugk+W0tu18nAem3CCP/f3VaZsysHGVCjenWe1
-qmC8GDhIEoMMijRz1bGiSsyrogSxqeDhvHOyCmd1zmAoWO7gLk+6Bkd68LmW3KTZ
-EJPyz1xWIAGMXMIZb/vl59zvcmtcHc1NmM4/ocd58AT8V/1gKUm4FxTFk8Wvzzy7
-2Uu2qt0MVM6fMNALm9u/1EmIyrVv5kObtDhopBCwGtmOVRIzglavAcboOFRyHVoa
-w3reAAELccv7AgLcXx/82LaiYBbkpFlapqxcPCw+eHcQASP+yS5jHvIrzUcWALu2
-fBt3HICu9kwDNR1INmslrNhe/MLl82RxROWHjeSc/ub2gzgvjVC0Izua1DzfIKvh
-CabiTWNuHyuC4MxyUkx8v7QeJeylKwloOPTXjcR+qs9Mk6qyGM40B5SE6bPvK8Al
-3vXGfjJbL3VVD2E/VmqC
-=k1rk
------END PGP SIGNATURE-----
-
---tKW2IUtsqtDRztdT--
+greg k-h
