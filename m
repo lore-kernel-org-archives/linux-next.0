@@ -1,47 +1,37 @@
 From: Vinod Koul <vinod.koul@linux.intel.com>
-Subject: Re: [PATCH linux-next] dmaengine: add context parameter fixups
-Date: Mon, 26 Mar 2012 11:04:42 +0530
-Message-ID: <1332740082.19804.15.camel@vkoul-udesk3>
-References: <1332511242-30241-1-git-send-email-alexandre.bounine@idt.com>
-	 <CAOMZO5B-Zutv-xwqLCAgNMO8A3Kyg4uWqS41koo-yoS4mGB1TQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the slave-dma tree with the sound
+ tree
+Date: Mon, 26 Mar 2012 11:47:35 +0530
+Message-ID: <1332742655.19804.19.camel@vkoul-udesk3>
+References: <20120322133930.b75bb87714ef197d22d56cf3@canb.auug.org.au>
+	 <20120322134101.e2342db0ae13a4ed79cfebfd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:44593 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752179Ab2CZFbu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Mar 2012 01:31:50 -0400
-In-Reply-To: <CAOMZO5B-Zutv-xwqLCAgNMO8A3Kyg4uWqS41koo-yoS4mGB1TQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Fabio Estevam <festevam@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Alexandre Bounine <alexandre.bounine@idt.com>, paul.gortmaker@windriver.com, dan.j.williams@intel.com, samuel@sortiz.org, lrg@ti.com, perex@perex.cz, tiwai@suse.de, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, fabio.estevam@freescale.com, alsa-devel@alsa-project.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120322134101.e2342db0ae13a4ed79cfebfd@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, Lars-Peter Clausen <lars@metafoo.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Takashi Iwai <tiwai@suse.de>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, 2012-03-24 at 12:23 -0300, Fabio Estevam wrote:
-> On Fri, Mar 23, 2012 at 11:00 AM, Alexandre Bounine
-> <alexandre.bounine@idt.com> wrote:
-> > This patch fixes drivers that use device_prep_slave_sg() and
-> > device_prep_dma_cyclic() interfaces and have been missed during the initial
-> > release of interface changing patches.
+On Thu, 2012-03-22 at 13:41 +1100, Stephen Rothwell wrote:
+> On Thu, 22 Mar 2012 13:39:30 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> > This patch is based on linux-next-20120322 code tree.
-> > See https://lkml.org/lkml/2012/3/22/339 for build failure report.
-> >
-> > Signed-off-by: Alexandre Bounine <alexandre.bounine@idt.com>
-> > Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> > ---
-> >  drivers/dma/sa11x0-dma.c      |    2 +-
-> >  drivers/net/irda/sa1100_ir.c  |    2 +-
-> >  sound/soc/sh/fsi.c            |    7 +++----
-> >  sound/soc/soc-dmaengine-pcm.c |    2 +-
+> > Today's linux-next merge of the slave-dma tree got a conflict in
+> > sound/soc/imx/imx-pcm-dma-mx2.c between commit c307e8e32e11 ("ASoC:
+> > imx-pcm-dma: Use dmaengine PCM helper functions") from the sound tree and
+> > commit 16052827d98f ("dmaengine/dma_slave: introduce inline wrappers")
+> > from the slave-dma tree.
+> > 
+> > I just use dthe version from the sound tree.
 > 
-> I have already taken care of sound/soc/soc-dmaengine-pcm.c:
-> http://permalink.gmane.org/gmane.linux.alsa.devel/96215
-And this seems to be linux-next.
+> The same with sound/soc/mxs/mxs-pcm.c .
+Thanks Stephan, and sorry for delay in responding was away for the
+weekend.
 
-Mark, Is this part of the sound updates that went to Linus?
-
+This should be fixed now with MArk applying the fix from Fabio Estevam.
+I see this is in asoc-next.
 
 -- 
 ~Vinod
