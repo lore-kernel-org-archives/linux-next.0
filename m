@@ -1,82 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] -mm/linux-next: procfs: Mark thread stack correctly in
- proc/<pid>/maps
-Date: Mon, 26 Mar 2012 14:21:41 +1100
-Message-ID: <20120326142141.57f76bc005cdb4c1656df83a@canb.auug.org.au>
-References: <4F57A3EC.7070101@gmail.com>
-	<1331660076-32766-1-git-send-email-siddhesh.poyarekar@gmail.com>
-	<20120313131616.f66dbdad.akpm@linux-foundation.org>
-	<CAAHN_R3mFzmtCey_0JEHp=EAGh1sb87szpsKD_JkFwwYLCnKug@mail.gmail.com>
-	<CAP=VYLpUzuom-HUS-LYSuQmMZSRvC_Qjgyy9hnKqBowh-95YPQ@mail.gmail.com>
-	<CAAHN_R1_DordNLDjBfWMHyMJ1yhgwiuQfPvtwQzUKpGMkrJ0jw@mail.gmail.com>
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Mon, 26 Mar 2012 15:01:07 +1100
+Message-ID: <20120326150107.392bc3a7e0175b5009bcfeff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__26_Mar_2012_14_21_41_+1100_/O3qS8hLz6qvR.=i"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33637 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756996Ab2CZDWH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Mar 2012 23:22:07 -0400
-In-Reply-To: <CAAHN_R1_DordNLDjBfWMHyMJ1yhgwiuQfPvtwQzUKpGMkrJ0jw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Jamie Lokier <jamie@shareable.org>, KOSAKI Motohiro <kosaki.motohiro@gmail.com>, Matt Mackall <mpm@selenic.com>, Mike Frysinger <vapier@gentoo.org>, Oleg Nesterov <oleg@redhat.com>, Mark Salter <msalter@redhat.com>
+ boundary="Signature=_Mon__26_Mar_2012_15_01_07_+1100_GLoWKR.bhUOdDRTg"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Suresh Siddha <suresh.b.siddha@intel.com>, Alex Shi <alex.shi@intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__26_Mar_2012_14_21_41_+1100_/O3qS8hLz6qvR.=i
+--Signature=_Mon__26_Mar_2012_15_01_07_+1100_GLoWKR.bhUOdDRTg
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Siddhesh,
+Hi all,
 
-On Mon, 26 Mar 2012 08:32:35 +0530 Siddhesh Poyarekar <siddhesh.poyarekar@g=
-mail.com> wrote:
->
-> On Sun, Mar 25, 2012 at 11:35 PM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
-> > Now it is:
-> >
-> > mm/nommu.o: In function `vm_is_stack':
-> > nommu.c:(.text+0x2178): multiple definition of `vm_is_stack'
-> > mm/util.o:util.c:(.text+0x2bc): first defined here
-> > make[2]: *** [mm/built-in.o] Error 1
-> >
-> > http://kisskb.ellerman.id.au/kisskb/buildresult/5941188/
->=20
-> Looks like the problem is because this patch got included in
-> linux-next 2 days ago:
->=20
-> http://git.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;a=3Dcommi=
-tdiff;h=3D47d1ab583408e5b8e900c5080aec9bbcf210df22
+Today's linux-next merge of the akpm tree got a conflict in  between
+commit a6fca40f1d7f ("x86, tlb: Switch cr3 in leave_mm() only when
+needed") from the tip tree and commit "x86: use this_cpu_xxx to replace
+percpu_xxx funcs" from the akpm tree.
 
-I will remove that patch today.
-
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__26_Mar_2012_14_21_41_+1100_/O3qS8hLz6qvR.=i
+diff --cc arch/x86/mm/tlb.c
+index 125bcad,e931db0..0000000
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@@ -61,13 -61,11 +61,13 @@@ static DEFINE_PER_CPU_READ_MOSTLY(int,=20
+   */
+  void leave_mm(int cpu)
+  {
+- 	struct mm_struct *active_mm =3D percpu_read(cpu_tlbstate.active_mm);
+- 	if (percpu_read(cpu_tlbstate.state) =3D=3D TLBSTATE_OK)
+++	struct mm_struct *active_mm =3D __this_cpu_read(cpu_tlbstate.active_mm);
++ 	if (__this_cpu_read(cpu_tlbstate.state) =3D=3D TLBSTATE_OK)
+  		BUG();
+ -	cpumask_clear_cpu(cpu,
+ -			  mm_cpumask(__this_cpu_read(cpu_tlbstate.active_mm)));
+ -	load_cr3(swapper_pg_dir);
+ +	if (cpumask_test_cpu(cpu, mm_cpumask(active_mm))) {
+ +		cpumask_clear_cpu(cpu, mm_cpumask(active_mm));
+ +		load_cr3(swapper_pg_dir);
+ +	}
+  }
+  EXPORT_SYMBOL_GPL(leave_mm);
+ =20
+
+--Signature=_Mon__26_Mar_2012_15_01_07_+1100_GLoWKR.bhUOdDRTg
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPb+DFAAoJEECxmPOUX5FEa9wP/2LmAYwomiwL/+YGLqHmxcZi
-IR4lbRBXY5jheMtxC2J1KdyddHc1KJ1VeHUiSGwa7uDgPi5ap6m6X4BNd+C0QRSA
-HGCcu2VqDv9L2mBMPLiTE3y0ZRey7Krw9rIyvD3at+Fw+arncscfu6CoiD5Nv32q
-g6YiVexmKFVs9rRBGWmB2JdNC6/nQNuyyfvIplw8nb49HzMMS0m+Vx0onMEeCYlF
-N0LgrJI81hk8+eANyPihM9aNwZ56qox0OEl2Li9v880p2JyIYt2E3TAJQFLW6DUR
-GW1uof4Yd2xO1JK83/puZZbHyPYe/q1m6Ahj9J6aOKZ1SNIypIYPhkVOu+ZeNB6T
-RtNz5xRbTw/D4mTpeHYAAp23uJfRRs0rXKMGPIwf1MTd4BeP9Nbx7r11Eoi+yqng
-/dKPX2cIMorkTIzAKRgsxYy7foK4w8SX6q2iDOZciaMeq0SusCdpBCVL5k/sx9jP
-CZ52NtBwDjuK1l57DONhAwdmGs2LrNxxBXGdblWfryTas7wXIIz5Qj1s9O03qWuH
-pYcOdX0jvPp2vgEC1wtvXe0g7ajr8DAjC3e+k4zFJlThBQrE+fj4PZbDkU9leFDL
-y0gJUjixwnntNQFpoCwH76cr5u7KXqRYKxnBaiRwqk/OMESrFGmYCoYEhsEIyCh4
-VpFa+qLndV9V3CxB2kVU
-=0gXA
+iQIcBAEBCAAGBQJPb+oDAAoJEECxmPOUX5FEly4P/iRwK8x9g8WJiW9UbSaqGTsg
+vtwUwGsasrZgVft1wSQKgHQhqTzm/ApJu/BdR14AWndsyK5om1iCrQCJn2Dzgd1u
+LtgYPXgbBeMVPmCqdLPJRKw/nYH65hE4SNxJgH3dq/3z4nPLrBtMnqVtyY6A8NA5
+asuLAdccbiABQByYSTWtmJLYoaXApyOjv4A3N3W/5Ngvjcc+yw1COuTqONARzhTH
+wGOLFGjqcnq/ZYD+wJfhU1ZBjYZObjTcvIXs+hjW8CUWdhmxxoagcoB6bFN0ZLwE
+Jnldq6Vc6nwE8BDJx0OAUfTLjw5b8LCQDvLqVaMXHn/Pm2KJime98488CGIPEUQi
+TlSchj3q9Qa9Vu5WhNoXqUNQfARm0HlshzGtQcW5yiIPLRqNyTtANSY+EnIzWvzf
+j33qc01MNHGpYJErYx8Ic9sTzqDkGd/M+q4SJITvQaTlolYfYSCbDsDhvXZd3rD+
+fQ3LUhknpqP3RuUDHbrH5QKjEGzC3aJhCGaAjV30WfMZPkvomOTTQlum2z5AsM/U
+fE/jVNZdgWBzY2fipMRT2Wf7gI4vjEhHJNIOp3mBDQFdnr+mqNgBizf4LWDB42Lz
+wOzsUK58WDeY77d53DtwI41v1ovUuLAKD2NYVq63dOjYr2+W55aZ1uwvWV7WU5j4
+spfRLwMgm0X3V/Ayo5Aj
+=J790
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__26_Mar_2012_14_21_41_+1100_/O3qS8hLz6qvR.=i--
+--Signature=_Mon__26_Mar_2012_15_01_07_+1100_GLoWKR.bhUOdDRTg--
