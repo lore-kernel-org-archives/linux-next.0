@@ -1,77 +1,68 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [-next] m68k proc_ops breakage
-Date: Mon, 26 Mar 2012 22:06:14 +0200
-Message-ID: <CAMuHMdVQ9pxfRz899KVdAHhcspnhYU_H5DRCwRcsQY8cpZUqZw@mail.gmail.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: linux-next: Tree for Mar 26 (usbcore)
+Date: Mon, 26 Mar 2012 16:06:59 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1203261550290.1179-100000@iolanthe.rowland.org>
+References: <20120326180736.GA2893@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:38146 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754242Ab2CZUGQ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Mar 2012 16:06:16 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:45475 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754268Ab2CZUHB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Mar 2012 16:07:01 -0400
+In-Reply-To: <20120326180736.GA2893@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>, James Bottomley <JBottomley@Parallels.com>
-Cc: scsi <linux-scsi@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
 
-m68k/defconfig:
+On Mon, 26 Mar 2012, Greg KH wrote:
 
-In file included from drivers/scsi/atari_scsi.c:1091:
-drivers/scsi/atari_NCR5380.c: In function =E2=80=98NCR5380_print_status=
-=E2=80=99:
-drivers/scsi/atari_NCR5380.c:736: error: implicit declaration of
-function =E2=80=98NCR5380_proc_info=E2=80=99
-drivers/scsi/atari_NCR5380.c: At top level:
-drivers/scsi/atari_NCR5380.c:767: error: static declaration of
-=E2=80=98NCR5380_proc_info=E2=80=99 follows non-static declaration
-drivers/scsi/atari_NCR5380.c:736: error: previous implicit declaration
-of =E2=80=98NCR5380_proc_info=E2=80=99 was here
-make[1]: *** [drivers/scsi/atari_scsi.o] Error 1
+> On Mon, Mar 26, 2012 at 09:58:36AM -0700, Randy Dunlap wrote:
+> > On 03/25/2012 09:28 PM, Stephen Rothwell wrote:
+> > 
+> > > Hi all,
+> > > 
+> > > Reminder: please do not add stuff destined for v3.5 to linux-next
+> > > included trees/branches until after v3.4-rc1 has been released.
+> > > 
+> > > Changes since 20120323:
+> > 
+> > 
+> > 
+> > on x86_64:
+> > 
+> > ERROR: "utf16s_to_utf8s" [drivers/usb/core/usbcore.ko] undefined!
+> > ERROR: "usb_speed_string" [drivers/usb/core/usbcore.ko] undefined!
+> > 
+> > Full randconfig file is attached.
+> 
+> Odd, nothing in the usb core has changed in a while in this area,
+> although we might have gotten some core dependancies mixed up for random
+> configurations like this.
 
+This is puzzling.
 
-m68k/sun3_defconfig:
+	utf16s_to_utf8s is defined in fs/nls/nls_base.c,
+	which is built according to CONFIG_NLS (in fs/nls/Makefile),
+	which is selected by CONFIG_USB (in drivers/usb/Kconfig).
 
-In file included from drivers/scsi/sun3_scsi.c:628:
-drivers/scsi/sun3_NCR5380.c: In function =E2=80=98NCR5380_print_status=E2=
-=80=99:
-drivers/scsi/sun3_NCR5380.c:678: error: implicit declaration of
-function =E2=80=98sun3scsi_proc_info=E2=80=99
-drivers/scsi/sun3_NCR5380.c: At top level:
-drivers/scsi/sun3_NCR5380.c:709: error: static declaration of
-=E2=80=98sun3scsi_proc_info=E2=80=99 follows non-static declaration
-drivers/scsi/sun3_NCR5380.c:678: error: previous implicit declaration
-of =E2=80=98sun3scsi_proc_info=E2=80=99 was here
-make[1]: *** [drivers/scsi/sun3_scsi.o] Error 1
+But the config that Randy attached had CONFIG_USB set to M and 
+CONFIG_NLS not set.  How is that possible?
 
-In file included from drivers/scsi/sun3_scsi_vme.c:571:
-drivers/scsi/sun3_NCR5380.c: In function =E2=80=98NCR5380_print_status=E2=
-=80=99:
-drivers/scsi/sun3_NCR5380.c:678: error: implicit declaration of
-function =E2=80=98sun3scsi_proc_info=E2=80=99
-drivers/scsi/sun3_NCR5380.c: At top level:
-drivers/scsi/sun3_NCR5380.c:709: error: static declaration of
-=E2=80=98sun3scsi_proc_info=E2=80=99 follows non-static declaration
-drivers/scsi/sun3_NCR5380.c:678: error: previous implicit declaration
-of =E2=80=98sun3scsi_proc_info=E2=80=99 was here
-make[1]: *** [drivers/scsi/sun3_scsi_vme.o] Error 1
+	usb_speed_string is defined in drivers/usb/usb-common.c,
+	which is built according to CONFIG_USB_COMMON (in
+		drivers/usb/Makefile),
+	which defaults to Y if CONFIG_USB_SUPPORT and either
+		CONFIG_USB or CONFIG_USB_GADGET is set (in 
+		drivers/usb/Kconfig).
 
+The problem here was that CONFIG_USB_SUPPORT isn't set but CONFIG_USB
+is set to M.  This used not to be possible, since CONFIG_USB was
+defined inside an "if USB_SUPPORT" section.  Maybe that got changed and
+needs to be fixed (but
+https://git.kernel.org/?p=linux/kernel/git/next/linux-next.git thinks
+it's still not possible).  Or maybe Randy's tree is a little out of 
+date.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/5967959/
-http://kisskb.ellerman.id.au/kisskb/buildresult/5967969/
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+Alan Stern
