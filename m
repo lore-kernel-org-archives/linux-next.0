@@ -1,47 +1,43 @@
 From: Vinod Koul <vinod.koul@linux.intel.com>
-Subject: Re: [PATCH linux-next] dmaengine: add context
-	parameter fixups
-Date: Mon, 26 Mar 2012 16:37:57 +0530
-Message-ID: <1332760077.19804.98.camel@vkoul-udesk3>
-References: <1332511242-30241-1-git-send-email-alexandre.bounine@idt.com>
-	<CAOMZO5B-Zutv-xwqLCAgNMO8A3Kyg4uWqS41koo-yoS4mGB1TQ@mail.gmail.com>
-	<1332740082.19804.15.camel@vkoul-udesk3>
-	<20120326094200.GA3098@opensource.wolfsonmicro.com>
-	<1332755670.19804.91.camel@vkoul-udesk3>
-	<20120326103354.GD3098@opensource.wolfsonmicro.com>
-	<1332758906.19804.97.camel@vkoul-udesk3>
-	<20120326110149.GL3098@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20120326110149.GL3098@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: fabio.estevam@freescale.com, alsa-devel@alsa-project.org, samuel@sortiz.org, paul.gortmaker@windriver.com, tiwai@suse.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, linux-next@vger.kernel.org, dan.j.williams@intel.com, Fabio Estevam <festevam@gmail.com>, lrg@ti.com
-List-Id: linux-next.vger.kernel.org
+Subject: [PATCH] ASoC: dmaengine_pcm: use dmaengine cyclic wrapper
+Date: Mon, 26 Mar 2012 17:28:08 +0530
+Message-ID: <1332763088-18964-1-git-send-email-vinod.koul@linux.intel.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:32655 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932429Ab2CZLza (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Mar 2012 07:55:30 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: alsa-devel@alsa-project.org, linux-next@vger.kernel.org
+Cc: broonie@opensource.wolfsonmicro.com, paul.gortmaker@windriver.com, fabio.estevam@freescale.com, Alexandre.Bounine@idt.com, Vinod Koul <vinod.koul@linux.intel.com>
 
-On Mon, 2012-03-26 at 12:01 +0100, Mark Brown wrote:
-> On Mon, Mar 26, 2012 at 04:18:26PM +0530, Vinod Koul wrote:
-> 
-> > But we don't want the clients to use this additional parameter or be
-> > exposed to it if not required. Every client is expected to use the
-> > dmaengine wrappers for prepare and not invoke .device_ callbacks.
-> 
-> Are those wrappers present in what's gone to Linus' tree, and can
-> someone please send a patch to convert to using them?
+commit 4a163c82 added extra parameter to device_prep_dma_cyclic
+this is not required if we use the wrapper over cyclic API.
 
-Yes that are already there :-)
+This is split from Alexedre's patch
 
-I will send sound specific update now
+Signed-off-by: Vinod Koul <vinod.koul@linux.intel.com>
+---
+ sound/soc/soc-dmaengine-pcm.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/sound/soc/soc-dmaengine-pcm.c b/sound/soc/soc-dmaengine-pcm.c
+index 76c038b..4756952 100644
+--- a/sound/soc/soc-dmaengine-pcm.c
++++ b/sound/soc/soc-dmaengine-pcm.c
+@@ -143,10 +143,10 @@ static int dmaengine_pcm_prepare_and_submit(struct snd_pcm_substream *substream)
+ 	direction = snd_pcm_substream_to_dma_direction(substream);
+ 
+ 	prtd->pos = 0;
+-	desc = chan->device->device_prep_dma_cyclic(chan,
++	desc = dmaengine_prep_dma_cyclic(chan,
+ 		substream->runtime->dma_addr,
+ 		snd_pcm_lib_buffer_bytes(substream),
+-		snd_pcm_lib_period_bytes(substream), direction, NULL);
++		snd_pcm_lib_period_bytes(substream), direction);
+ 
+ 	if (!desc)
+ 		return -ENOMEM;
 -- 
-~Vinod
+1.7.0.4
