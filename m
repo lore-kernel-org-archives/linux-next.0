@@ -1,15 +1,16 @@
-From: Ben Myers <bpm@sgi.com>
+From: Dave Chinner <david@fromorbit.com>
 Subject: Re: Building tilegx defconfig gets init/exit section errors in xfs.
-Date: Mon, 26 Mar 2012 16:53:44 -0500
-Message-ID: <20120326215344.GX7762@sgi.com>
+Date: Tue, 27 Mar 2012 08:59:19 +1100
+Message-ID: <20120326215919.GN5091@dastard>
 References: <4F6F61F3.40903@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay2.sgi.com ([192.48.179.30]:49311 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1757364Ab2CZVxg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Mar 2012 17:53:36 -0400
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:50391 "EHLO
+	ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757584Ab2CZV7i (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Mar 2012 17:59:38 -0400
 Content-Disposition: inline
 In-Reply-To: <4F6F61F3.40903@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
@@ -17,9 +18,9 @@ List-ID: <linux-next.vger.kernel.org>
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
 Cc: xfs@oss.sgi.com, linux-next@vger.kernel.org, cmetcalf@tilera.com
 
-Hey Paul,
-
 On Sun, Mar 25, 2012 at 02:20:35PM -0400, Paul Gortmaker wrote:
+> Hi All,
+> 
 > Recently the tilegx defconfig was added to the linux-next build
 > coverage, which exposed this.
 >  
@@ -34,8 +35,14 @@ On Sun, Mar 25, 2012 at 02:20:35PM -0400, Paul Gortmaker wrote:
 > specific in the init/exit sectioning, so I thought I'd mention it
 > here, just in case it hasn't been brought up before.
 
-Yep, this is fixed in the xfs master branch, and we'll be requesting a pull
-ASAP.  Thanks for reporting it!  ;)
+Already been reported, a patch has been provided, too. So the fix
+is underway.
 
-Regards,
-	Ben
+Thanks for reporting the problem anyway, Paul.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
