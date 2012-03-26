@@ -1,71 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the battery tree
-Date: Tue, 27 Mar 2012 08:44:14 +1100
-Message-ID: <20120327084414.dacbf074e0f4ddd65ff3ecfb@canb.auug.org.au>
+Date: Tue, 27 Mar 2012 08:47:00 +1100
+Message-ID: <20120327084700.3f32dcbf3bba4319944a726b@canb.auug.org.au>
 References: <20120315135609.2f9a2a030866c476dc736b9c@canb.auug.org.au>
 	<20120326161132.GA6430@lizard>
+	<20120327084414.dacbf074e0f4ddd65ff3ecfb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Mar_2012_08_44_14_+1100_BMU5Ak/X.pQ+qRby"
+ boundary="Signature=_Tue__27_Mar_2012_08_47_00_+1100_=7M1LX9bmF8saFK5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54985 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:38360 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756894Ab2CZVo3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Mar 2012 17:44:29 -0400
-In-Reply-To: <20120326161132.GA6430@lizard>
+	with ESMTP id S1757360Ab2CZVrV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Mar 2012 17:47:21 -0400
+In-Reply-To: <20120327084414.dacbf074e0f4ddd65ff3ecfb@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Anton Vorontsov <cbouatmailru@gmail.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>
 
---Signature=_Tue__27_Mar_2012_08_44_14_+1100_BMU5Ak/X.pQ+qRby
+--Signature=_Tue__27_Mar_2012_08_47_00_+1100_=7M1LX9bmF8saFK5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Anton,
-
-On Mon, 26 Mar 2012 20:11:32 +0400 Anton Vorontsov <cbouatmailru@gmail.com>=
- wrote:
+On Tue, 27 Mar 2012 08:44:14 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> I pulled my current battery tree into next-20120326, and I can't reproduce
-> the issue (using allmodconfig on x86_64).
+> I have moved the battery tree to after the mfd tree in my merge sequence
+> so we will see if that helps.  I really hate having ordering dependencies
+> in linux-next (since they change over time and people have to remember to
+> tell me and to send stuff to Linus in the right order).  Also, it means
+> that you are not testing exactly what you are sending to me - I assume
+> that your testing must be including the mfd tree somehow.
 
-I have moved the battery tree to after the mfd tree in my merge sequence
-so we will see if that helps.  I really hate having ordering dependencies
-in linux-next (since they change over time and people have to remember to
-tell me and to send stuff to Linus in the right order).  Also, it means
-that you are not testing exactly what you are sending to me - I assume
-that your testing must be including the mfd tree somehow.
+And, if anyone else is using your tree as a base for development, they
+must also know about this dependency ...
 
-These sort of things should be fixed by having the common code in a
-separate (stable) branch that is merged into both trees.  Or in some
-cases by merely cherry-picking a very small number of commits from one
-tree to the other.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__27_Mar_2012_08_44_14_+1100_BMU5Ak/X.pQ+qRby
+--Signature=_Tue__27_Mar_2012_08_47_00_+1100_=7M1LX9bmF8saFK5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPcOMuAAoJEECxmPOUX5FEZ04QAKVaiJMxkYW/Kki/P+axrMYk
-pQB6jF+nEtmS+BBoZad/REu9uKrT3UV6CRHg/dereMXp8fcQ1eCh3Yek39z3KcIT
-GXietXiD7xKCdtsWwCxqBTeoZOz9ySQgKH2gOfpEKnvGYWbqZhx+1oMSelH6praI
-EHEZp/nV9YY6zE1Fi9GSR9BQTEzcT2Av31WbXmIoeTX9jj9tkiKx+3gNyBqufUL6
-2UgWu9q8blJ04m1rtvANkL8pXmkQaayvTafagULzVocWgRkGZOYkqAys3ob5xfc6
-5il8TgGOn+oWIVjusbCk97f1Uiz/PsndOPX4o+nhfAq2Z4RHda/p3AVaLEmr6/Je
-knlkReoRWlgnsOG8YohP5jjeMk/+MkjKXzN4JiTZ5/V8LX9NpY20Wa4bc7m0cErW
-6gJSt1+1oo00Uooz3l3liU66A1jy6KQwlb2moJCRUyW9gDXBthTj1jO4QV33xKSo
-1jUF4Jgt9Cl5mQCgaRsoZyOD6Vb5bUldA4HdkCJ7Z3NxV15UXer14tiifG/ZqJlB
-hv0/Yi268NcqxcwI19A/UBLiNYT4aMn5MkUjt+BgBGyN7ci6v76AhGCSX7e0eQVo
-OFc1eQ58VF73i7VHaXLoRXuRdvi52rV9dh/CqLJ5FmHEdqbMip4V6CFXkcKkBH1B
-SZk8BNlmWpj1SlOUBcd+
-=gf/u
+iQIcBAEBCAAGBQJPcOPUAAoJEECxmPOUX5FEkCIP/3k+LhEwj1CTUCW52gYng3CK
+NCBIXwcIjpn7zFi7VIKvx3FKq8ZL0EZXKIBkRlsTFRX5UiRydlFuB55gY57+8qjJ
+Ags6HSS4tzJjaTM6tKRXKBqntjKXkkvdjkOBZ6GEcpM+tRayLT7wwGse3wnbgxNo
+aOSQwjlt6ZSu3YIX31rv0k2RmAGbnRY8UWmYKTSd0hhmz+zGRcd6mB2BJYT9Lmkb
+HHxO0wAdTuei8zScuz1k6FPB0AR+FXiIxr1UZUZmVGeYOhkMiDC+5fhepFJmuUrk
+mJriFcJiyo+CHZYhE/8K3IBWk6vs35KcbZ8gjr8iHSuhgH+AZzZb1h6OHwP8cNbX
+eAYAB6M3bPjyFQev4og93q3euHo2EoZ/nraxfTIXO3UP23TDnM6nCL0zrIU+sfim
+LjpdeyQlvnVRfPepjLZvKjNjLiRhuNHozNQ5QSfFqS5paMiceyks7ml6Y++fJ0Gh
+KiH2PWDSwkINS9XfJ0cvV9jBHdjA2pYs2tmcG3aMqR9t6nnyJj1DvsAKz0TXVxXA
+sYwebcTOd3jH/UcjEouuh/hgp5zFlzp7hKqLub9YxJbGmhUF5xQ5P1eKyuZRLM1o
+pZ57tEhSYvJ2Be62IEN5V4iTH0Ere85wgcpDJWNUes4ir4lP5lbTug1hBCXKsuMg
+DcRb64Cbp2rvxH3Kzuz+
+=IAdN
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_Mar_2012_08_44_14_+1100_BMU5Ak/X.pQ+qRby--
+--Signature=_Tue__27_Mar_2012_08_47_00_+1100_=7M1LX9bmF8saFK5--
