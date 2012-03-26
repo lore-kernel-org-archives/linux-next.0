@@ -1,20 +1,24 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: Tree for Mar 26 (usbcore)
-Date: Mon, 26 Mar 2012 11:07:36 -0700
-Message-ID: <20120326180736.GA2893@kroah.com>
+From: Seth Forshee <seth.forshee@canonical.com>
+Subject: Re: linux-next: Tree for Mar 26 (platform/x86/apple-gmux)
+Date: Mon, 26 Mar 2012 13:59:12 -0500
+Message-ID: <20120326185912.GD17126@thinkpad-t410>
 References: <20120326152807.debdb1ec426b3c370c121178@canb.auug.org.au>
- <4F70A03C.2070400@xenotime.net>
+ <4F70A27D.9000706@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:42141 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933188Ab2CZS7U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Mar 2012 14:59:20 -0400
 Content-Disposition: inline
-In-Reply-To: <4F70A03C.2070400@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <4F70A27D.9000706@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>, Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
 
-On Mon, Mar 26, 2012 at 09:58:36AM -0700, Randy Dunlap wrote:
+On Mon, Mar 26, 2012 at 10:08:13AM -0700, Randy Dunlap wrote:
 > On 03/25/2012 09:28 PM, Stephen Rothwell wrote:
 > 
 > > Hi all,
@@ -25,18 +29,27 @@ On Mon, Mar 26, 2012 at 09:58:36AM -0700, Randy Dunlap wrote:
 > > Changes since 20120323:
 > 
 > 
+> on i386:
 > 
-> on x86_64:
+>   CC      drivers/platform/x86/apple-gmux.o
+> drivers/platform/x86/apple-gmux.c: In function 'gmux_read8':
+> drivers/platform/x86/apple-gmux.c:62:2: error: implicit declaration of function 'inb'
+> drivers/platform/x86/apple-gmux.c: In function 'gmux_write8':
+> drivers/platform/x86/apple-gmux.c:68:2: error: implicit declaration of function 'outb'
+> drivers/platform/x86/apple-gmux.c: In function 'gmux_read32':
+> drivers/platform/x86/apple-gmux.c:73:2: error: implicit declaration of function 'inl'
+> drivers/platform/x86/apple-gmux.c: In function 'gmux_probe':
+> drivers/platform/x86/apple-gmux.c:117:2: error: implicit declaration of function 'kzalloc'
+> drivers/platform/x86/apple-gmux.c:117:12: warning: assignment makes pointer from integer without a cast
+> drivers/platform/x86/apple-gmux.c:198:2: error: implicit declaration of function 'kfree'
 > 
-> ERROR: "utf16s_to_utf8s" [drivers/usb/core/usbcore.ko] undefined!
-> ERROR: "usb_speed_string" [drivers/usb/core/usbcore.ko] undefined!
 > 
 > Full randconfig file is attached.
 
-Odd, nothing in the usb core has changed in a while in this area,
-although we might have gotten some core dependancies mixed up for random
-configurations like this.
+I get the same thing with that config. Sorry about that.
 
-Any patches would be greatly appreciated...
+Matthew: Adding includes for linux/slab.h and asm/io.h fixes the build
+for me. Do you want to fix it up in your tree, or do you want me to send
+a replacement patch?
 
-greg k-h
+Seth
