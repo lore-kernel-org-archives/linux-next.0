@@ -1,95 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the battery tree
-Date: Mon, 26 Mar 2012 13:13:16 +1100
-Message-ID: <20120326131316.b791ebefd94d8cbcac5bccfa@canb.auug.org.au>
-References: <20120315135609.2f9a2a030866c476dc736b9c@canb.auug.org.au>
-	<20120320153912.b97107ca4128d0692de17799@canb.auug.org.au>
+From: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+Subject: Re: [PATCH] -mm/linux-next: procfs: Mark thread stack correctly in proc/<pid>/maps
+Date: Mon, 26 Mar 2012 08:32:35 +0530
+Message-ID: <CAAHN_R1_DordNLDjBfWMHyMJ1yhgwiuQfPvtwQzUKpGMkrJ0jw@mail.gmail.com>
+References: <4F57A3EC.7070101@gmail.com>
+	<1331660076-32766-1-git-send-email-siddhesh.poyarekar@gmail.com>
+	<20120313131616.f66dbdad.akpm@linux-foundation.org>
+	<CAAHN_R3mFzmtCey_0JEHp=EAGh1sb87szpsKD_JkFwwYLCnKug@mail.gmail.com>
+	<CAP=VYLpUzuom-HUS-LYSuQmMZSRvC_Qjgyy9hnKqBowh-95YPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__26_Mar_2012_13_13_16_+1100_pljozaNH=EjXs5E8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54641 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754995Ab2CZCNb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Mar 2012 22:13:31 -0400
-In-Reply-To: <20120320153912.b97107ca4128d0692de17799@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <avorontsov@ru.mvista.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAP=VYLpUzuom-HUS-LYSuQmMZSRvC_Qjgyy9hnKqBowh-95YPQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Jamie Lokier <jamie@shareable.org>, KOSAKI Motohiro <kosaki.motohiro@gmail.com>, Matt Mackall <mpm@selenic.com>, Mike Frysinger <vapier@gentoo.org>, Oleg Nesterov <oleg@redhat.com>, Mark Salter <msalter@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__26_Mar_2012_13_13_16_+1100_pljozaNH=EjXs5E8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Anton,
-
-On Tue, 20 Mar 2012 15:39:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Sun, Mar 25, 2012 at 11:35 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> Now it is:
 >
-> On Thu, 15 Mar 2012 13:56:09 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > After merging the battery tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >=20
-> > drivers/power/ab8500_btemp.c: In function 'ab8500_btemp_batctrl_volt_to=
-_res':
-> > drivers/power/ab8500_btemp.c:142:2: error: implicit declaration of func=
-tion 'is_ab8500_1p1_or_earlier' [-Werror=3Dimplicit-function-declaration]
-> > drivers/power/ab8500_btemp.c: In function 'ab8500_btemp_templow_handler=
-':
-> > drivers/power/ab8500_btemp.c:619:2: error: implicit declaration of func=
-tion 'is_ab8500_2p0_or_earlier' [-Werror=3Dimplicit-function-declaration]
-> > drivers/power/ab8500_charger.c: In function 'ab8500_charger_ac_en':
-> > drivers/power/ab8500_charger.c:1126:3: error: implicit declaration of f=
-unction 'is_ab8500_1p1_or_earlier' [-Werror=3Dimplicit-function-declaration]
-> > drivers/power/ab8500_charger.c: In function 'ab8500_charger_remove':
-> > drivers/power/ab8500_charger.c:2519:2: error: implicit declaration of f=
-unction 'usb_unregister_notifier' [-Werror=3Dimplicit-function-declaration]
-> > drivers/power/ab8500_charger.c:2520:2: error: implicit declaration of f=
-unction 'usb_put_transceiver' [-Werror=3Dimplicit-function-declaration]
-> > drivers/power/ab8500_charger.c: In function 'ab8500_charger_probe':
-> > drivers/power/ab8500_charger.c:2688:2: error: implicit declaration of f=
-unction 'usb_get_transceiver' [-Werror=3Dimplicit-function-declaration]
-> > drivers/power/ab8500_charger.c:2688:14: warning: assignment makes point=
-er from integer without a cast [enabled by default]
-> > drivers/power/ab8500_charger.c:2695:2: error: implicit declaration of f=
-unction 'usb_register_notifier' [-Werror=3Dimplicit-function-declaration]
-> >=20
-> > Caused by commits 89449ac8d6d2 ("ab8500-charger: AB8500 charger driver")
-> > and 20ac1aed6206 ("ab8500-btemp: AB8500 battery temperature driver").
-> >=20
-> > I have used the battery tree form next-20120314 for today.
->=20
-> Still getting this build failure.
+> mm/nommu.o: In function `vm_is_stack':
+> nommu.c:(.text+0x2178): multiple definition of `vm_is_stack'
+> mm/util.o:util.c:(.text+0x2bc): first defined here
+> make[2]: *** [mm/built-in.o] Error 1
+>
+> http://kisskb.ellerman.id.au/kisskb/buildresult/5941188/
 
-Ping?
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Looks like the problem is because this patch got included in
+linux-next 2 days ago:
 
---Signature=_Mon__26_Mar_2012_13_13_16_+1100_pljozaNH=EjXs5E8
-Content-Type: application/pgp-signature
+http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=commitdiff;h=47d1ab583408e5b8e900c5080aec9bbcf210df22
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+When I had consolidated all of these changes into what Andrew got the
+v3 patch from, this patch should have been removed since I moved this
+function definition from memory.c and nommu.c into util.c, but it
+looks like the patch got merged in once again, causing the build error
+above. Dropping this patch should be sufficient to fix the build
+problem. This is also the reason why the March 22 build was successful
+(with my final changes) and the March 24 build wasn't (with this
+additional patch).
 
-iQIcBAEBCAAGBQJPb9C8AAoJEECxmPOUX5FE3zwP/15EbuOCK4ypBBmIRkCtibth
-YlMhKA+B1m1Oq4Y0UPhBA8yz1GYIGHxsmsyWmxTAiVdHje2PSAv5UJH2acG4+I7T
-MKtqdI8CPUaWhf4IqitCkjURyrD/D/h01B/B0It70P1GhFtgjfzoduPYVh1hCgEj
-lYo0Eh9f4zkqRJGKm0Wza4l7H2Y9zOq1VP7vof+ZhFdkkr8dfka1yCUkWeIVpHAz
-sSjvFAyHG1V/KiDVEGXldbsPXT30lRArS/Urz391YYZpGwnQWdHw1hXO/Yn1hEjU
-Z9+SmOoNj2YmA+nFCgMAbjcC1YfBdevuTYIVvwY9epdekOUsa/3Qd8yaIxZATB4F
-d8WzXDZxeI65/bXksNWJnzBQajqY9u4NcFZAHmk/dYCtjHBfuYBTVIvGK3y0TNVT
-AZuj5l/C2Dcc7ySixc8XjigckzYmUixFF/8C8XU+nOP7IyhDdG45XkTq27FSZ+G6
-Nty1etVeP9alUO62H2JmOgIN3V19/WRMOprE3AX+5pny4G5MRWUzvoHosIdcRRii
-eg/zWQFp7jV3veaIxCtpS+NztW3mR3D0zor7ixEj+1WLfmW2mi1Vm9BP7ahS6h0m
-RJq//QPV1XKpaSAtB9dhxTMcaeGsMEJTuD/0IAHJ1P3erfrb7DprRw2oGoxFaXE/
-qhkHNEKaY/YhcRnOfBl6
-=brVt
------END PGP SIGNATURE-----
-
---Signature=_Mon__26_Mar_2012_13_13_16_+1100_pljozaNH=EjXs5E8--
+-- 
+Siddhesh Poyarekar
+http://siddhesh.in
