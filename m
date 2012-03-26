@@ -1,49 +1,55 @@
-From: "Bounine, Alexandre" <Alexandre.Bounine@idt.com>
-Subject: RE: [PATCH linux-next] dmaengine: add context parameter fixups
-Date: Mon, 26 Mar 2012 13:14:09 +0000
-Message-ID: <8D983423E7EDF846BB3056827B8CC5D101384B@corpmail1.na.ads.idt.com>
-References: <1332511242-30241-1-git-send-email-alexandre.bounine@idt.com>
-	 <CAOMZO5B-Zutv-xwqLCAgNMO8A3Kyg4uWqS41koo-yoS4mGB1TQ@mail.gmail.com>
-	 <1332740082.19804.15.camel@vkoul-udesk3>
-	 <20120326094200.GA3098@opensource.wolfsonmicro.com>
- <1332755670.19804.91.camel@vkoul-udesk3>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Mon, 26 Mar 2012 07:07:21 -0700
+Message-ID: <20120326140721.GA19827@kroah.com>
+References: <20120326121719.dc4c2b1faca5cf12c8d76d93@canb.auug.org.au>
+ <1332748641.2836.8.camel@dabdike>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1332755670.19804.91.camel@vkoul-udesk3>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@linux.intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Fabio Estevam <festevam@gmail.com>, "paul.gortmaker@windriver.com" <paul.gortmaker@windriver.com>, "dan.j.williams@intel.com" <dan.j.williams@intel.com>, "samuel@sortiz.org" <samuel@sortiz.org>, "lrg@ti.com" <lrg@ti.com>, "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.de" <tiwai@suse.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "fabio.estevam@freescale.com" <fabio.estevam@freescale.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:34503 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757330Ab2CZOHZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Mar 2012 10:07:25 -0400
+Received: by pbcun15 with SMTP id un15so6032930pbc.19
+        for <linux-next@vger.kernel.org>; Mon, 26 Mar 2012 07:07:25 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1332748641.2836.8.camel@dabdike>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
 
-T24gTW9uLCBNYXJjaCAyNiwgMjAxMiBhdCA1OjU1IEFNLCBWaW5vZCBLb3VsIHdyb3RlOg0KPiBT
-dWJqZWN0OiBSZTogW1BBVENIIGxpbnV4LW5leHRdIGRtYWVuZ2luZTogYWRkIGNvbnRleHQgcGFy
-YW1ldGVyIGZpeHVwcw0KPiANCj4gT24gTW9uLCAyMDEyLTAzLTI2IGF0IDEwOjQyICswMTAwLCBN
-YXJrIEJyb3duIHdyb3RlOg0KPiA+IE9uIE1vbiwgTWFyIDI2LCAyMDEyIGF0IDExOjA0OjQyQU0g
-KzA1MzAsIFZpbm9kIEtvdWwgd3JvdGU6DQo+ID4gPiBPbiBTYXQsIDIwMTItMDMtMjQgYXQgMTI6
-MjMgLTAzMDAsIEZhYmlvIEVzdGV2YW0gd3JvdGU6DQo+ID4NCj4gPiA+ID4gaHR0cDovL3Blcm1h
-bGluay5nbWFuZS5vcmcvZ21hbmUubGludXguYWxzYS5kZXZlbC85NjIxNQ0KPiA+DQo+ID4gPiBB
-bmQgdGhpcyBzZWVtcyB0byBiZSBsaW51eC1uZXh0Lg0KPiA+DQo+ID4gPiBNYXJrLCBJcyB0aGlz
-IHBhcnQgb2YgdGhlIHNvdW5kIHVwZGF0ZXMgdGhhdCB3ZW50IHRvIExpbnVzPw0KPiA+DQo+ID4g
-Tm8sIG5vdCB5ZXQgLSBpdCB3YXMgb25seSBzZW50IGFmdGVyIHRoZSBtZXJnZSB3aW5kb3cuICBR
-dWl0ZSB3aHkNCj4gbm9ib2R5DQo+ID4gbWFuYWdlZCB0byBub3RpY2UgaXQgYmVmb3JlIHRoZW4g
-SSBkb24ndCBrbm93LiAgSXQnbGwgZ28gdG8gaGltIHNvb24sDQo+IG9yDQo+ID4gYXQgbGVhc3Qg
-dG8gVGFrYXNoaSwgYnV0IGRvbid0IGtub3cgaWYgaXQnbGwgbWFrZSAtcmMxIG9yIG5vdC4NCj4g
-SSBzaG91bGQgaGF2ZSBub3RpY2VkIHRoYXQgc291bmQgbmVlZHMgdXBkYXRlIGFzIHdlbGwgIDoo
-DQo+IA0KPiBOb3cgZWl0aGVyIEkgZHJvcCB0aGVzZSBmcm9tIDMuNCBvciBtZXJnZSBMaW51cydz
-IHRyZWUgYW5kIGFwcGx5DQo+IEFsZXhhbmRyZSdzIGZpeCAoYXMgdGhhdCBpcyB0aGUgcmlnaHQg
-Zml4IHJhdGhlciB0aGFuIG9uZSBpbiBhc29jIHRyZWUpDQo+IEFuZCBzaW5jZSB0aGlzIHdhcyBy
-ZXF1aXJlZCBmb3IgUklPIHBhdGNoZXMgd2hpY2ggYXJlIHN0aWxsIFdJUCwgSQ0KPiB0aGluaw0K
-PiBJIGFtIGxlYW5pbmcgdG93YXJkcyBmb3JtZXIuDQo+IA0KDQpJIGRvIG5vdCBzZWUgYW55IHNl
-bnNlIGluIGRyb3BwaW5nIHRoZXNlIEFQSSBjaGFuZ2VzIG5vdy4NClNvbWUgYXVkaW8gZmlsZXMg
-aGF2ZSBiZWVuIG1pc3NlZCBmb3JtIHRoZSBvcmlnaW5hbCBwYXRjaCBiZWNhdXNlIEkgZGlkDQpu
-b3QgaGF2ZSB0aGVtIGluIHRoZSBjb2RlIHRyZWUgd2hlbiBwYXRjaCB3YXMgYnVpbHQuDQpGb3Ig
-dGhvc2Ugd2hvIHdhcyBub3QgaW4gdGhlIGxpc3QgZm9yIG9yaWdpbmFsIHBhdGNoZXMgaGVyZSBp
-cyBhIGxpbmsgdG8NCnRoZSBwYXRjaCBkZXRhaWxzOiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAx
-Mi8zLzgvMzczDQoNCklmIHdlIGRyb3AgdGhlIEFQSSBjaGFuZ2VzIG5vdyB3ZSB3aWxsIG5lZWQg
-cmVkbyB0aGVzZSBjaGFuZ2VzIGFnYWluIGxhdGVyLg0KV2UgYWxyZWFkeSBkcmFnZ2VkIHRoZXNl
-IGNoYW5nZXMgbG9uZyBlbm91Z2ggc2luY2Ugb3JpZ2luYWwgZGlzY3Vzc2lvbiBpbiBPY3RvYmVy
-Lg0KSSB3aWxsIHNlbmQgbmV3IGlubGluZSB3cmFwcGVyIGZvciBSYXBpZElPIHRvZGF5LiANCg0K
-QWxleC4NCg0KDQo=
+On Mon, Mar 26, 2012 at 08:57:21AM +0100, James Bottomley wrote:
+> On Mon, 2012-03-26 at 12:17 +1100, Stephen Rothwell wrote:
+> > Hi James,
+> > 
+> > After merging the scsi tree, today's linux-next build (x86_64 allmodconfig)
+> > failed like this:
+> > 
+> > drivers/staging/keucr/scsiglue.c:349:2: error: unknown field 'proc_info' specified in initializer
+> > drivers/staging/rts_pstor/rtsx.c:258:2: error: unknown field 'proc_info' specified in initializer
+> > drivers/staging/rts5139/rts51x_scsi.c:2190:2: error: unknown field 'proc_info' specified in initializer
+> > 
+> > Caused by commit 104c4fe25dc9 ("[SCSI] remove scsi_host_template::proc_info").
+> > 
+> > Since this is a staging driver, I applied these following patches:
+> 
+> Yes, that looks about right, thanks.  We haven't seen anything about
+> these drivers on the SCSI list, so I've no idea where they are in
+> development.
+
+Why is new patches going into your tree right now, during the 3.4 merge
+window?  API changes should have happened weeks ago, to let others fix
+up things like this.
+
+As for the "where they are in development", they vary, but, a simple
+grep should have shown you that these in-kernel drivers should also be
+fixed up, or at the least, give me the heads up to let me do it for you.
+
+Care to send me the patch that causes this problem so I can create a fix
+for this?
+
+thanks,
+
+greg k-h
