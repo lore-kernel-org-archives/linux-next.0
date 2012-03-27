@@ -1,49 +1,39 @@
-From: James Bottomley <jbottomley@parallels.com>
-Subject: Re: Commit "arm: convert drivers to scsi proc_ops" breaks linux-next
-Date: Tue, 27 Mar 2012 08:51:25 +0000
-Message-ID: <1332838284.2883.22.camel@dabdike>
-References: <20120327025100.GD26825@windriver.com>
+From: Pekka Enberg <penberg@kernel.org>
+Subject: Re: linux-next: Tree for Feb 2 (kvmtool)
+Date: Tue, 27 Mar 2012 13:19:09 +0300 (EEST)
+Message-ID: <alpine.LFD.2.02.1203271318470.19093@tux.localdomain>
+References: <20120202144516.11b33e667a7cbb8d85d96226@canb.auug.org.au> <4F2B1C1B.1040700@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.parallels.com ([64.131.90.16]:37274 "EHLO mx2.parallels.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754030Ab2C0Iv3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Mar 2012 04:51:29 -0400
-In-Reply-To: <20120327025100.GD26825@windriver.com>
-Content-Language: en-US
-Content-ID: <CA6D621FD429EA4FBBAD3844D8D9A65D@sw.swsoft.com>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:39946 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757992Ab2C0KTS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Mar 2012 06:19:18 -0400
+In-Reply-To: <4F2B1C1B.1040700@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "adobriyan@gmail.com" <adobriyan@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sasha Levin <levinsasha928@gmail.com>, Asias He <asias.hejun@gmail.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, mingo@elte.hu
 
-T24gTW9uLCAyMDEyLTAzLTI2IGF0IDIyOjUxIC0wNDAwLCBQYXVsIEdvcnRtYWtlciB3cm90ZToN
-Cj4gSGkgQWxleGV5LA0KPiANCj4gVGhpcyBlcnJvciBzaG93ZWQgdXAgaW4gbGludXgtbmV4dCB0
-b2RheToNCj4gDQo+ICBDQyAgICAgIGRyaXZlcnMvc2NzaS9hcm0vcG93ZXJ0ZWMubw0KPiBkcml2
-ZXJzL3Njc2kvYXJtL3Bvd2VydGVjLmM6IEluIGZ1bmN0aW9uICdwb3dlcnRlY3Njc2lfcHJvY19z
-aG93JzoNCj4gZHJpdmVycy9zY3NpL2FybS9wb3dlcnRlYy5jOjE5OTogZXJyb3I6IGRlcmVmZXJl
-bmNpbmcgcG9pbnRlciB0byBpbmNvbXBsZXRlIHR5cGUNCj4gZHJpdmVycy9zY3NpL2FybS9wb3dl
-cnRlYy5jOjIwMjogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdzZXFf
-cHJpbnRmJw0KPiBkcml2ZXJzL3Njc2kvYXJtL3Bvd2VydGVjLmM6IEluIGZ1bmN0aW9uICdwb3dl
-cnRlY3Njc2lfcHJvY19vcGVuJzoNCj4gZHJpdmVycy9zY3NpL2FybS9wb3dlcnRlYy5jOjIxNDog
-ZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdzaW5nbGVfb3BlbicNCj4g
-ZHJpdmVycy9zY3NpL2FybS9wb3dlcnRlYy5jOiBBdCB0b3AgbGV2ZWw6DQo+IGRyaXZlcnMvc2Nz
-aS9hcm0vcG93ZXJ0ZWMuYzoyNTA6IGVycm9yOiAnc2VxX3JlYWQnIHVuZGVjbGFyZWQgaGVyZSAo
-bm90IGluIGEgZnVuY3Rpb24pDQo+IGRyaXZlcnMvc2NzaS9hcm0vcG93ZXJ0ZWMuYzoyNTE6IGVy
-cm9yOiAnc2VxX2xzZWVrJyB1bmRlY2xhcmVkIGhlcmUgKG5vdCBpbiBhIGZ1bmN0aW9uKQ0KPiBk
-cml2ZXJzL3Njc2kvYXJtL3Bvd2VydGVjLmM6MjUyOiBlcnJvcjogJ3NpbmdsZV9yZWxlYXNlJyB1
-bmRlY2xhcmVkIGhlcmUgKG5vdCBpbiBhIGZ1bmN0aW9uKQ0KPiANCj4gYW5kIGEgYmlzZWN0IGxl
-YWRzIHRvIHRoaXM6DQo+IA0KPiAtLS0tLS0tLS0tLS0tLQ0KPiBjb21taXQgYmI2YzIwNDQ1YzFi
-ZGQxYzQ5YWM1ZTc2ODAxMjExMTE2Njk0ZTNiOQ0KPiBBdXRob3I6IEFsZXhleSBEb2JyaXlhbiA8
-YWRvYnJpeWFuQGdtYWlsLmNvbT4NCj4gRGF0ZTogICBXZWQgRmViIDIyIDIyOjQ2OjIzIDIwMTIg
-KzAzMDANCj4gDQo+ICAgICBbU0NTSV0gYXJtOiBjb252ZXJ0IGRyaXZlcnMgdG8gc2NzaSBwcm9j
-X29wcw0KPiAgICAgDQo+ICAgICBTaWduZWQtb2ZmLWJ5OiBBbGV4ZXkgRG9icml5YW4gPGFkb2Jy
-aXlhbkBnbWFpbC5jb20+DQo+ICAgICBTaWduZWQtb2ZmLWJ5OiBKYW1lcyBCb3R0b21sZXkgPEpC
-b3R0b21sZXlAUGFyYWxsZWxzLmNvbT4NCj4gLS0tLS0tLS0tLS0tLS0NCg0KQ291bGQgeW91IGRp
-ZyBhIGxpdHRsZSBkZWVwZXIgb24gdGhpcyBvbmU/ICBzZXFfcHJpbnRmIGlzIGRlZmluZWQgaW4N
-CmluY2x1ZGUvbGludXgvc2VxX2ZpbGUuaCB3aGljaCBpcyBpbmNsdWRlZCBieSB0aGlzIGNvbW1p
-dC4gIEkgY2FuJ3Qgc2VlDQp3aHkgdGhlIGZ1bmN0aW9uIHByb3RvdHlwZSBzaG91bGQgZW5kIHVw
-IHVuZGVmaW5lZC4NCg0KQ291bGQgdGhlIGluY2x1ZGUgZ3VhcmRzIGZvciB0aGlzIGZpbGUgYmUg
-Z2V0dGluZyBzZXQgZXJyb25lb3VzbHkNCnNvbWVob3c/DQoNCkphbWVzDQoNCg==
+On Thu, 2 Feb 2012, Randy Dunlap wrote:
+> On 02/01/2012 07:45 PM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20120201:
+> 
+> 
+> On some randconfig i386 builds, I am seeing this:
+> 
+> warning: (KVMTOOL_TEST_ENABLE && AMD_IOMMU) selects PCI_MSI which has unmet direct dependencies (PCI && ARCH_SUPPORTS_MSI)
+> 
+> because ARCH_SUPPORTS_MSI needs both X86_LOCAL_APIC and X86_IO_APIC
+> but configs don't necessarily have both of them enabled.
+> 
+> Do you want to add more selects here?
+> (this mess could continue for quite some time with other kconfig symbols)
+
+Ping? Sasha, Ingo, thoughts?
+
+				Pekka
