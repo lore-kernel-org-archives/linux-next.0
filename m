@@ -1,47 +1,82 @@
-From: Chris Metcalf <cmetcalf@tilera.com>
-Subject: Re: Building tilegx defconfig gets init/exit section errors in xfs.
-Date: Mon, 26 Mar 2012 18:12:58 -0400
-Message-ID: <4F70E9EA.5010207@tilera.com>
-References: <4F6F61F3.40903@windriver.com> <20120326215919.GN5091@dastard> <4F70E951.50009@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the slave-dma tree with Linus' tree
+Date: Tue, 27 Mar 2012 11:45:45 +1100
+Message-ID: <20120327114545.031deecd5fb48267b56b9b2c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__27_Mar_2012_11_45_45_+1100_.x/hlNF9qUB2Vbdh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from usmamail.tilera.com ([206.83.70.75]:40457 "EHLO
-	USMAMAIL.TILERA.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757610Ab2CZWNA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Mar 2012 18:13:00 -0400
-In-Reply-To: <4F70E951.50009@windriver.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52115 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751621Ab2C0Ap4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Mar 2012 20:45:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Dave Chinner <david@fromorbit.com>, xfs@oss.sgi.com, linux-next@vger.kernel.org, bpm@sgi.com
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martin <javier.martin@vista-silicon.com>, Shawn Guo <shawn.guo@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On 12-03-26 05:59 PM, Dave Chinner wrote:
-> On Sun, Mar 25, 2012 at 02:20:35PM -0400, Paul Gortmaker wrote:
->> Hi All,
->>
->> Recently the tilegx defconfig was added to the linux-next build
->> coverage, which exposed this.
->>  
->> LD      .tmp_vmlinux1
->> `xfs_qm_exit' referenced in section `.init.text' of fs/built-in.o:
->>  defined in discarded section `.exit.text' of fs/built-in.o
->> make[1]: *** [.tmp_vmlinux1] Error 1
->>
->> http://kisskb.ellerman.id.au/kisskb/buildresult/5941293/
->>
->> It seemed odd to me, since I didn't think there was anything arch
->> specific in the init/exit sectioning, so I thought I'd mention it
->> here, just in case it hasn't been brought up before.
-> Already been reported, a patch has been provided, too. So the fix
-> is underway.
->
-> Thanks for reporting the problem anyway, Paul.
+--Signature=_Tue__27_Mar_2012_11_45_45_+1100_.x/hlNF9qUB2Vbdh
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And I'll second that with my thanks for adding tilegx to the linux-next
-build coverage!  Please do continue to cc me on any issues that are exposed.
+Hi Vinod,
 
--- 
-Chris Metcalf, Tilera Corp.
-http://www.tilera.com
+Today's linux-next merge of the slave-dma tree got a conflict in
+arch/arm/mach-imx/Kconfig between commit 3c77c29c49c6 ("ASoC: imx: move
+audmux driver into sound/soc/imx") from Linus' tree and commit
+6bd081277ea0 ("dmaengine: imx-dma: merge old dma-v1.c with imx-dma.c")
+from the slave-dma tree.
+
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-imx/Kconfig
+index 3919fba,3da1421..0000000
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@@ -46,7 -30,7 +42,6 @@@ config SOC_IMX2
+  	bool
+  	select MACH_MX21
+  	select CPU_ARM926T
+- 	select IMX_HAVE_DMA_V1
+ -	select ARCH_MXC_AUDMUX_V1
+  	select IMX_HAVE_IOMUX_V1
+  	select MXC_AVIC
+ =20
+@@@ -61,7 -46,7 +56,6 @@@ config SOC_IMX2
+  	bool
+  	select MACH_MX27
+  	select CPU_ARM926T
+- 	select IMX_HAVE_DMA_V1
+ -	select ARCH_MXC_AUDMUX_V1
+  	select IMX_HAVE_IOMUX_V1
+  	select MXC_AVIC
+ =20
+
+--Signature=_Tue__27_Mar_2012_11_45_45_+1100_.x/hlNF9qUB2Vbdh
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPcQ25AAoJEECxmPOUX5FEojcP/1To0BwbZQ1Ak4lwbq+8XN6q
+6x4eLgMQnIqONEkHGnY9P46EZyqTvbS6V0cLk+hK0Ctmu/RK1iWgmOSH8LrLdv+z
+9fzkQ+o53H3Pl2Az7DDfNCBn1g8LPYIpQMD6cBe4sD/1aZh5eaIWfqDqMEOmSLhh
+D38ODxHfNj+ujVVy3YKfcVf9nIigClmjIgqbyvE36+ZJvDMkRQx5Nz8YSMNaW6Va
+xPl9ECM4NsQDKG2jk7vUB4xfLvQ3L5dEFQ4hlDk8Lk0KNlFgqjLzjduQUF/mcNdV
+GUS5aEAkAN+jM01i5xHkjNh+ib2P6PaDW3gEgynJ1yjGhCIWwMKIz0aQM+vGx8lT
+ah8yCZJg9aKXYRjDbqWT+W69QkKlbYRFjLH33vH158v3NsEt5JRRXGJ3Bgj6xkxm
+2sMPSxkdVXfnZ1Pckv6zFp2CCQq9eI3eSTc4pakexgvs4CC/Pg+6rm5FmO/ZFH9n
+pgChJ9033tv8JAWWaBCyrOweyrql20ASt8q/TAr39zgdGXN+nkepoAEJTSCOK3NW
+rDaVLD2x8smBtPL1DLDEVJEQl8tjZeVEyL/mTqhxOgoEu9kP+n7yliEEsMCoghms
+rEDZyOkZazqHDbNz8OG/4ReMBD/beSDYWl148VyYNvvh8EVHEwwHkE7TUhIdlKFR
+tTGx/A8q7nOGi7ebZKMp
+=XfEs
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Mar_2012_11_45_45_+1100_.x/hlNF9qUB2Vbdh--
