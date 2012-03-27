@@ -1,77 +1,49 @@
-From: Vinod Koul <vinod.koul@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the slave-dma tree
-Date: Tue, 27 Mar 2012 14:03:14 +0530
-Message-ID: <1332837194.1820.4.camel@vkoul-udesk3>
-References: <20120327115232.ef58a6f97da2d29ed3c8bdb6@canb.auug.org.au>
+From: James Bottomley <jbottomley@parallels.com>
+Subject: Re: Commit "arm: convert drivers to scsi proc_ops" breaks linux-next
+Date: Tue, 27 Mar 2012 08:51:25 +0000
+Message-ID: <1332838284.2883.22.camel@dabdike>
+References: <20120327025100.GD26825@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:25805 "EHLO mga09.intel.com"
+Received: from mx2.parallels.com ([64.131.90.16]:37274 "EHLO mx2.parallels.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756268Ab2C0Iad (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Mar 2012 04:30:33 -0400
-In-Reply-To: <20120327115232.ef58a6f97da2d29ed3c8bdb6@canb.auug.org.au>
+	id S1754030Ab2C0Iv3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Mar 2012 04:51:29 -0400
+In-Reply-To: <20120327025100.GD26825@windriver.com>
+Content-Language: en-US
+Content-ID: <CA6D621FD429EA4FBBAD3844D8D9A65D@sw.swsoft.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martin <javier.martin@vista-silicon.com>, Sascha Hauer <s.hauer@pengutronix.de>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "adobriyan@gmail.com" <adobriyan@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
 
-On Tue, 2012-03-27 at 11:52 +1100, Stephen Rothwell wrote:
-> Hi Vinod,
-> 
-> After merging the slave-dma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/dma/imx-dma.c:31:22: fatal error: mach/dma.h: No such file or directory
-> 
-> Caused by commit 6bd081277ea0 ("dmaengine: imx-dma: merge old dma-v1.c
-> with imx-dma.c").
-Thanks Stephen,
-
-This should have depends on ARCH_MXS at least and should not have built
-for x86_64. Below patch should fix it and I will apply this.
-
-> 
-> I have used the slave-dma tree from next-20120326 for today.
-> 
-> I was wondering why this new work appeared during the merge window ...
-I had this series pending and wanted to get this merged but it didn't
-apply for me last week and I was out for the long weekend :(
-So merged on first chance I got back.
-
-Tree is frozen now, barring any other hiccups. Sorry for the issue
---------------------------------x-------------------x----------------------
-
->From 9da98b21787488f9d99b7f93b42aee95bfd07c49 Mon Sep 17 00:00:00 2001
-From: Vinod Koul <vinod.koul@linux.intel.com>
-Date: Tue, 27 Mar 2012 13:53:00 +0530
-Subject: [PATCH] dmaengine: imx: fix the build failure on x64
-
-commit 6bd081277ea0 "dmaengine: imx-dma: merge old dma-v1.c with
-imx-dma.c" removed the dependency in config for the imx dma driver,
-whereas it should depend on ARCH_MXS
-
-Signed-off-by: Vinod Koul <vinod.koul@linux.intel.com>
----
- drivers/dma/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index b4a53a0..34e48d9 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -230,6 +230,7 @@ config IMX_SDMA
- 
- config IMX_DMA
- 	tristate "i.MX DMA support"
-+	depends on ARCH_MXC
- 	select DMA_ENGINE
- 	help
- 	  Support the i.MX DMA engine. This engine is integrated into
--- 
-1.7.0.4
-
-
--- 
-~Vinod
+T24gTW9uLCAyMDEyLTAzLTI2IGF0IDIyOjUxIC0wNDAwLCBQYXVsIEdvcnRtYWtlciB3cm90ZToN
+Cj4gSGkgQWxleGV5LA0KPiANCj4gVGhpcyBlcnJvciBzaG93ZWQgdXAgaW4gbGludXgtbmV4dCB0
+b2RheToNCj4gDQo+ICBDQyAgICAgIGRyaXZlcnMvc2NzaS9hcm0vcG93ZXJ0ZWMubw0KPiBkcml2
+ZXJzL3Njc2kvYXJtL3Bvd2VydGVjLmM6IEluIGZ1bmN0aW9uICdwb3dlcnRlY3Njc2lfcHJvY19z
+aG93JzoNCj4gZHJpdmVycy9zY3NpL2FybS9wb3dlcnRlYy5jOjE5OTogZXJyb3I6IGRlcmVmZXJl
+bmNpbmcgcG9pbnRlciB0byBpbmNvbXBsZXRlIHR5cGUNCj4gZHJpdmVycy9zY3NpL2FybS9wb3dl
+cnRlYy5jOjIwMjogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdzZXFf
+cHJpbnRmJw0KPiBkcml2ZXJzL3Njc2kvYXJtL3Bvd2VydGVjLmM6IEluIGZ1bmN0aW9uICdwb3dl
+cnRlY3Njc2lfcHJvY19vcGVuJzoNCj4gZHJpdmVycy9zY3NpL2FybS9wb3dlcnRlYy5jOjIxNDog
+ZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdzaW5nbGVfb3BlbicNCj4g
+ZHJpdmVycy9zY3NpL2FybS9wb3dlcnRlYy5jOiBBdCB0b3AgbGV2ZWw6DQo+IGRyaXZlcnMvc2Nz
+aS9hcm0vcG93ZXJ0ZWMuYzoyNTA6IGVycm9yOiAnc2VxX3JlYWQnIHVuZGVjbGFyZWQgaGVyZSAo
+bm90IGluIGEgZnVuY3Rpb24pDQo+IGRyaXZlcnMvc2NzaS9hcm0vcG93ZXJ0ZWMuYzoyNTE6IGVy
+cm9yOiAnc2VxX2xzZWVrJyB1bmRlY2xhcmVkIGhlcmUgKG5vdCBpbiBhIGZ1bmN0aW9uKQ0KPiBk
+cml2ZXJzL3Njc2kvYXJtL3Bvd2VydGVjLmM6MjUyOiBlcnJvcjogJ3NpbmdsZV9yZWxlYXNlJyB1
+bmRlY2xhcmVkIGhlcmUgKG5vdCBpbiBhIGZ1bmN0aW9uKQ0KPiANCj4gYW5kIGEgYmlzZWN0IGxl
+YWRzIHRvIHRoaXM6DQo+IA0KPiAtLS0tLS0tLS0tLS0tLQ0KPiBjb21taXQgYmI2YzIwNDQ1YzFi
+ZGQxYzQ5YWM1ZTc2ODAxMjExMTE2Njk0ZTNiOQ0KPiBBdXRob3I6IEFsZXhleSBEb2JyaXlhbiA8
+YWRvYnJpeWFuQGdtYWlsLmNvbT4NCj4gRGF0ZTogICBXZWQgRmViIDIyIDIyOjQ2OjIzIDIwMTIg
+KzAzMDANCj4gDQo+ICAgICBbU0NTSV0gYXJtOiBjb252ZXJ0IGRyaXZlcnMgdG8gc2NzaSBwcm9j
+X29wcw0KPiAgICAgDQo+ICAgICBTaWduZWQtb2ZmLWJ5OiBBbGV4ZXkgRG9icml5YW4gPGFkb2Jy
+aXlhbkBnbWFpbC5jb20+DQo+ICAgICBTaWduZWQtb2ZmLWJ5OiBKYW1lcyBCb3R0b21sZXkgPEpC
+b3R0b21sZXlAUGFyYWxsZWxzLmNvbT4NCj4gLS0tLS0tLS0tLS0tLS0NCg0KQ291bGQgeW91IGRp
+ZyBhIGxpdHRsZSBkZWVwZXIgb24gdGhpcyBvbmU/ICBzZXFfcHJpbnRmIGlzIGRlZmluZWQgaW4N
+CmluY2x1ZGUvbGludXgvc2VxX2ZpbGUuaCB3aGljaCBpcyBpbmNsdWRlZCBieSB0aGlzIGNvbW1p
+dC4gIEkgY2FuJ3Qgc2VlDQp3aHkgdGhlIGZ1bmN0aW9uIHByb3RvdHlwZSBzaG91bGQgZW5kIHVw
+IHVuZGVmaW5lZC4NCg0KQ291bGQgdGhlIGluY2x1ZGUgZ3VhcmRzIGZvciB0aGlzIGZpbGUgYmUg
+Z2V0dGluZyBzZXQgZXJyb25lb3VzbHkNCnNvbWVob3c/DQoNCkphbWVzDQoNCg==
