@@ -1,52 +1,59 @@
-From: James Bottomley <jbottomley@parallels.com>
-Subject: Re: [-next] m68k proc_ops breakage
-Date: Tue, 27 Mar 2012 07:22:26 +0000
-Message-ID: <1332832945.2883.5.camel@dabdike>
-References: <CAMuHMdVQ9pxfRz899KVdAHhcspnhYU_H5DRCwRcsQY8cpZUqZw@mail.gmail.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Tue, 27 Mar 2012 08:29:29 +0100
+Message-ID: <1332833369.2883.6.camel@dabdike>
+References: <20120326121719.dc4c2b1faca5cf12c8d76d93@canb.auug.org.au>
+	 <1332748641.2836.8.camel@dabdike> <20120326140721.GA19827@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdVQ9pxfRz899KVdAHhcspnhYU_H5DRCwRcsQY8cpZUqZw@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <66E0E34C9A795140993F57872D23A0A5@sw.swsoft.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, scsi <linux-scsi@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:38460 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751649Ab2C0H3d (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Mar 2012 03:29:33 -0400
+In-Reply-To: <20120326140721.GA19827@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
 
-IE9uIE1vbiwgMjAxMi0wMy0yNiBhdCAyMjowNiArMDIwMCwgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
-b3RlOg0KPiBtNjhrL2RlZmNvbmZpZzoNCj4gDQo+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBkcml2
-ZXJzL3Njc2kvYXRhcmlfc2NzaS5jOjEwOTE6DQo+IGRyaXZlcnMvc2NzaS9hdGFyaV9OQ1I1Mzgw
-LmM6IEluIGZ1bmN0aW9uIOKAmE5DUjUzODBfcHJpbnRfc3RhdHVz4oCZOg0KPiBkcml2ZXJzL3Nj
-c2kvYXRhcmlfTkNSNTM4MC5jOjczNjogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mDQo+
-IGZ1bmN0aW9uIOKAmE5DUjUzODBfcHJvY19pbmZv4oCZDQo+IGRyaXZlcnMvc2NzaS9hdGFyaV9O
-Q1I1MzgwLmM6IEF0IHRvcCBsZXZlbDoNCj4gZHJpdmVycy9zY3NpL2F0YXJpX05DUjUzODAuYzo3
-Njc6IGVycm9yOiBzdGF0aWMgZGVjbGFyYXRpb24gb2YNCj4g4oCYTkNSNTM4MF9wcm9jX2luZm/i
-gJkgZm9sbG93cyBub24tc3RhdGljIGRlY2xhcmF0aW9uDQo+IGRyaXZlcnMvc2NzaS9hdGFyaV9O
-Q1I1MzgwLmM6NzM2OiBlcnJvcjogcHJldmlvdXMgaW1wbGljaXQgZGVjbGFyYXRpb24NCj4gb2Yg
-4oCYTkNSNTM4MF9wcm9jX2luZm/igJkgd2FzIGhlcmUNCj4gbWFrZVsxXTogKioqIFtkcml2ZXJz
-L3Njc2kvYXRhcmlfc2NzaS5vXSBFcnJvciAxDQo+IA0KPiANCj4gbTY4ay9zdW4zX2RlZmNvbmZp
-ZzoNCj4gDQo+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBkcml2ZXJzL3Njc2kvc3VuM19zY3NpLmM6
-NjI4Og0KPiBkcml2ZXJzL3Njc2kvc3VuM19OQ1I1MzgwLmM6IEluIGZ1bmN0aW9uIOKAmE5DUjUz
-ODBfcHJpbnRfc3RhdHVz4oCZOg0KPiBkcml2ZXJzL3Njc2kvc3VuM19OQ1I1MzgwLmM6Njc4OiBl
-cnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YNCj4gZnVuY3Rpb24g4oCYc3VuM3Njc2lfcHJv
-Y19pbmZv4oCZDQo+IGRyaXZlcnMvc2NzaS9zdW4zX05DUjUzODAuYzogQXQgdG9wIGxldmVsOg0K
-PiBkcml2ZXJzL3Njc2kvc3VuM19OQ1I1MzgwLmM6NzA5OiBlcnJvcjogc3RhdGljIGRlY2xhcmF0
-aW9uIG9mDQo+IOKAmHN1bjNzY3NpX3Byb2NfaW5mb+KAmSBmb2xsb3dzIG5vbi1zdGF0aWMgZGVj
-bGFyYXRpb24NCj4gZHJpdmVycy9zY3NpL3N1bjNfTkNSNTM4MC5jOjY3ODogZXJyb3I6IHByZXZp
-b3VzIGltcGxpY2l0IGRlY2xhcmF0aW9uDQo+IG9mIOKAmHN1bjNzY3NpX3Byb2NfaW5mb+KAmSB3
-YXMgaGVyZQ0KPiBtYWtlWzFdOiAqKiogW2RyaXZlcnMvc2NzaS9zdW4zX3Njc2kub10gRXJyb3Ig
-MQ0KPiANCj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGRyaXZlcnMvc2NzaS9zdW4zX3Njc2lfdm1l
-LmM6NTcxOg0KPiBkcml2ZXJzL3Njc2kvc3VuM19OQ1I1MzgwLmM6IEluIGZ1bmN0aW9uIOKAmE5D
-UjUzODBfcHJpbnRfc3RhdHVz4oCZOg0KPiBkcml2ZXJzL3Njc2kvc3VuM19OQ1I1MzgwLmM6Njc4
-OiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YNCj4gZnVuY3Rpb24g4oCYc3VuM3Njc2lf
-cHJvY19pbmZv4oCZDQo+IGRyaXZlcnMvc2NzaS9zdW4zX05DUjUzODAuYzogQXQgdG9wIGxldmVs
-Og0KPiBkcml2ZXJzL3Njc2kvc3VuM19OQ1I1MzgwLmM6NzA5OiBlcnJvcjogc3RhdGljIGRlY2xh
-cmF0aW9uIG9mDQo+IOKAmHN1bjNzY3NpX3Byb2NfaW5mb+KAmSBmb2xsb3dzIG5vbi1zdGF0aWMg
-ZGVjbGFyYXRpb24NCj4gZHJpdmVycy9zY3NpL3N1bjNfTkNSNTM4MC5jOjY3ODogZXJyb3I6IHBy
-ZXZpb3VzIGltcGxpY2l0IGRlY2xhcmF0aW9uDQo+IG9mIOKAmHN1bjNzY3NpX3Byb2NfaW5mb+KA
-mSB3YXMgaGVyZQ0KPiBtYWtlWzFdOiAqKiogW2RyaXZlcnMvc2NzaS9zdW4zX3Njc2lfdm1lLm9d
-IEVycm9yIDENCg0KWWVzLCB0aGUgcHJvY19vcHMgY29udmVyc2lvbiBpc24ndCBxdWl0ZSByZWFk
-eS4gIEknbGwgaG9sZCBpdCBvdmVyIHRvDQp0aGUgbmV4dCBtZXJnZSB3aW5kb3cgc28gd2UgY2Fu
-IGZpeCBzdHVmZiBsaWtlIHRoaXMuDQoNCkphbWVzDQoNCg==
+On Mon, 2012-03-26 at 07:07 -0700, Greg KH wrote:
+> On Mon, Mar 26, 2012 at 08:57:21AM +0100, James Bottomley wrote:
+> > On Mon, 2012-03-26 at 12:17 +1100, Stephen Rothwell wrote:
+> > > Hi James,
+> > > 
+> > > After merging the scsi tree, today's linux-next build (x86_64 allmodconfig)
+> > > failed like this:
+> > > 
+> > > drivers/staging/keucr/scsiglue.c:349:2: error: unknown field 'proc_info' specified in initializer
+> > > drivers/staging/rts_pstor/rtsx.c:258:2: error: unknown field 'proc_info' specified in initializer
+> > > drivers/staging/rts5139/rts51x_scsi.c:2190:2: error: unknown field 'proc_info' specified in initializer
+> > > 
+> > > Caused by commit 104c4fe25dc9 ("[SCSI] remove scsi_host_template::proc_info").
+> > > 
+> > > Since this is a staging driver, I applied these following patches:
+> > 
+> > Yes, that looks about right, thanks.  We haven't seen anything about
+> > these drivers on the SCSI list, so I've no idea where they are in
+> > development.
+> 
+> Why is new patches going into your tree right now, during the 3.4 merge
+> window?  API changes should have happened weeks ago, to let others fix
+> up things like this.
+
+Yes, I'll defer this change to the next merge window.
+
+James
+
+> As for the "where they are in development", they vary, but, a simple
+> grep should have shown you that these in-kernel drivers should also be
+> fixed up, or at the least, give me the heads up to let me do it for you.
+> 
+> Care to send me the patch that causes this problem so I can create a fix
+> for this?
+> 
+> thanks,
+> 
+> greg k-h
