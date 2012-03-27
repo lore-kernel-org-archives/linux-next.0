@@ -1,41 +1,60 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: linux-next: manual merge of the mmc tree with the s5p tree
-Date: Mon, 26 Mar 2012 23:29:47 -0400
-Message-ID: <87haxayb4k.fsf@laptop.org>
-References: <20120327141033.352dfd5cc4ee937ee7371860@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Tue, 27 Mar 2012 15:57:17 +1100
+Message-ID: <20120327155717.b940b29403ec5d1c1fa54360@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__27_Mar_2012_15_57_17_+1100_+kvb0dkst_JsrZvi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:57473 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757609Ab2C0D3z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Mar 2012 23:29:55 -0400
-In-Reply-To: <20120327141033.352dfd5cc4ee937ee7371860@canb.auug.org.au>
-	(Stephen Rothwell's message of "Tue, 27 Mar 2012 14:10:33 +1100")
+Received: from haggis.pcug.org.au ([203.10.76.10]:42986 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751251Ab2C0E5b (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Mar 2012 00:57:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Linus <torvalds@linux-foundation.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Shi <alex.shi@intel.com>, Richard Weinberger <richard@nod.at>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-Hi,
+--Signature=_Tue__27_Mar_2012_15_57_17_+1100_+kvb0dkst_JsrZvi
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 26 2012, Stephen Rothwell wrote:
-> This conflict has been caused in part because you rebased your tree and
-> copied some commits that used to be merged into your tree from a shared
-> branch.   Do *not* do that ... BTW, when you rebased those commits into
-> your tree, you did not sign them either.  This is exactly what Linus has
-> just berated one of the other maintainers for ...
+Hi all,
 
-Ugh, I'm sorry for screwing this up.
+Today's linux-next merge of the akpm tree got a conflict in
+arch/x86/kernel/process_64.c between commit 90e240142bd3 ("x86: Merge the
+x86_32 and x86_64 cpu_idle() functions") from the tip tree and commit
+54d16004d978 ("x86: use this_cpu_xxx to replace percpu_xxx funcs") from
+the akpm tree.
 
-> I am not fixing this conflict, I am just using the version of your tree
-> that I have from next-20120326.  Please fix your tree up properly.
+The former moved the code to another file, so I did this change from the
+latter (in enter_idle) to arch/x86/kernel/process.c.
 
-I've reverted to the version in next-20120326 too, and will avoid rebasing.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks,
+--Signature=_Tue__27_Mar_2012_15_57_17_+1100_+kvb0dkst_JsrZvi
+Content-Type: application/pgp-signature
 
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPcUitAAoJEECxmPOUX5FEu5gP/1O5i0aK14AJmwzkzILxuI7P
+KSRx38GLCBL6OR5AScySw591YeJVOZ8GOxITVx3v/rJZsUNcQhd9RBJieVHTwzKA
+0mHjRjj/cx3mC44Jd8ekTBBF/X9PjOxOY6p31KYxkYGNbrruhT7eDHEc4QZAUccA
+znUTWi6AGuiNfrTndxGR/7RGAQi62cZx6naoc9VuK8S1pCqv7ZBUZ7GB8xQ7/t7B
+Tews8Tzyu8DdPmBF64VjY7epguX+3ccGGHYgzZr9ToY9e9K85e0iE64Sfh7s4D3y
+hgahF0Z8d/Vwtkjq+m8Q2B2ZNCviltW+zqHTOmDsHDVXTZIUeli4f9ysMRVxtNSx
+4HVYBPv2aVYOOFUvGpmjcKQ8hsKnmtVazw/UE7Y2Oy1Ede82Ywtt7fNYWRsUoab2
+jn/55VQPdXbFvFUs07cjWwY+9vzoEOXLhXd1jGvnF4sS6b6N7q5eN64Rj3mCTRbH
+mKd18Isdu0h7ULNvfKdE3zou9tNz4xkCK5TMchtLj5m729hMEmG+0O/bbwjvFTgd
+e99UCW8HLh9iFLhcDlT6jqQfcA1FEoG6b8TTQlfyEjIyWaM1ZnQs0yGD9wp1CN5r
+nhBmwWTOLAzGwqjfyC30eI1zVgaLwTcKYv7VlYA1bkZyM8H69xrZUROw0rVzs8Ph
+jVCduy7onPOz1p1vs3s1
+=ZUX8
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Mar_2012_15_57_17_+1100_+kvb0dkst_JsrZvi--
