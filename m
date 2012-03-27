@@ -1,54 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the input tree with Linus' tree
-Date: Tue, 27 Mar 2012 12:16:10 +1100
-Message-ID: <20120327121610.e39e648811d5b00ae328077b@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next: bad merge of asoc-3.4
+Date: Mon, 26 Mar 2012 22:19:11 -0400
+Message-ID: <20120327021910.GC26825@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__27_Mar_2012_12_16_10_+1100_32vQm3OtyoPEBItL"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Gerecke <killertofu@gmail.com>, Chris Bagwell <chris@cnpbagwell.com>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Tue__27_Mar_2012_12_16_10_+1100_32vQm3OtyoPEBItL
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail1.windriver.com ([147.11.146.13]:37418 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756999Ab2C0CTh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Mar 2012 22:19:37 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: arnd@arndb.de
+Cc: linux-next@vger.kernel.org, broonie@opensource.wolfsonmicro.com
 
-Hi Dmitry,
+Hi Arnd,
 
-Today's linux-next merge of the input tree got a conflict in
-drivers/input/tablet/wacom_sys.c between commit 24e3e5ae1e4c ("Input:
-wacom - fix physical size calculation for 3rd-gen Bamboo") from Linus'
-tree and commit 16bf288c4be6 ("Input: wacom - create inputs when wireless
-connect") from the input tree.
+Can you recheck the merge below?  I think it needs this fix,
+because a bisect on this failure led to your merge.
 
-The latter seems to incorporate the former, so I used that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+http://kisskb.ellerman.id.au/kisskb/buildresult/5968352/
 
---Signature=_Tue__27_Mar_2012_12_16_10_+1100_32vQm3OtyoPEBItL
-Content-Type: application/pgp-signature
+Thanks,
+Paul.
+---
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+diff --git a/arch/arm/mach-omap2/board-omap4panda.c b/arch/arm/mach-omap2/board-omap4panda.c
+index 331f7cb..8bf8e99 100644
+--- a/arch/arm/mach-omap2/board-omap4panda.c
++++ b/arch/arm/mach-omap2/board-omap4panda.c
+@@ -114,7 +114,7 @@ static struct platform_device panda_abe_audio = {
+ 	.dev = {
+ 		.platform_data = &panda_abe_audio_data,
+ 	},
+-}
++};
+ 
+ static struct platform_device btwilink_device = {
+ 	.name	= "btwilink",
 
-iQIcBAEBCAAGBQJPcRTaAAoJEECxmPOUX5FE5aUP/0GCRAO2trsUrtjFO5Uv+ApI
-LZaU61tJ4emaBo8vleTjZuBSN+2jb6K1xdntn7tzW8QCTLWuLxvjW3eDP59WK4sv
-TD8dIjyMbSGNuhZ+5ZCjUgQukJwPSs55quydL0kVLfeCLQYVsoDHhdq7uFSCMPO4
-vm887XkuCC7Uo5QPygcxDgx7sfmaQfeOyRrWi1A1ZaQsuNq5uwi++VEmv6R+Ldo/
-7KavbZ8WQYWjtgww+DNTACPRhOTnVa5On/oOXOhMfyXrZZYeATjOoye/A4Z+SUG4
-k05iqCJavru+fxfhRSG2l7wCqI6O8mCHSshJXThMVDSnWXhCUaSw44M4Yi+kBTQS
-pi7gk+8P0dpQT0g2psnV6Ks5l2hsaFkui4j/2JZtUR1jaVPUDf7EtL3FNzYnenMF
-rfVrMxXoSVZtgQo5yupxhSCCPJSxYnC4n5CygOGQZCWde0HGvy4p7wxNs0qGq3DC
-xZUQiQKT50O11118hfM7iQM0Yep7Y5h4RTlCWibPBK4qQdspDiHHWyFk/J8xvCnj
-fcJ6G3hV9dyAvKCWUC3JbMW97b5CIxC6GUJzT/jTEoM8/Ra0Yccug0rt+LlfUgQN
-2Pupjz3zT1Vaa5tOfamLZsrASbIXCNXSVrKO9J2JJauaXh+c3Vi9gR8ZfSvOXU7p
-OxZExqfijZSXQd5X0p5d
-=QV5M
------END PGP SIGNATURE-----
+commit b9e1122c88996c20165b62e5be43cee644567ac4
+Merge: 7068805 22f8d05
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Sat Mar 24 11:33:59 2012 +0000
 
---Signature=_Tue__27_Mar_2012_12_16_10_+1100_32vQm3OtyoPEBItL--
+    Merge tag 'asoc-3.4' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound into next/boards
+    
+    The asoc branch that was already merged into v3.4 contains some
+    board-level changes that conflict with patches we already have
+    here, so pull in that branch to resolve the conflicts.
+    
+    Conflicts:
+        arch/arm/mach-imx/mach-imx27_visstrim_m10.c
+        arch/arm/mach-omap2/board-omap4panda.c
