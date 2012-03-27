@@ -1,94 +1,66 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Wed, 28 Mar 2012 01:39:39 +0300
-Message-ID: <20120327223939.GC3233@p183.telecom.by>
-References: <20120326121719.dc4c2b1faca5cf12c8d76d93@canb.auug.org.au>
- <1332748641.2836.8.camel@dabdike>
- <20120326140721.GA19827@kroah.com>
- <20120327221721.GA3233@p183.telecom.by>
- <20120327222216.GB469@kroah.com>
- <20120327223510.GB3233@p183.telecom.by>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: new location of the bluetooth tree
+Date: Wed, 28 Mar 2012 10:24:45 +1100
+Message-ID: <20120328102445.9c5ddd1c568ccf0cea7e07f1@canb.auug.org.au>
+References: <20120327171222.GG9856@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__28_Mar_2012_10_24_45_+1100_JjjG9UnK.y2BtsiI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:32968 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755670Ab2C0Wjp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Mar 2012 18:39:45 -0400
-Content-Disposition: inline
-In-Reply-To: <20120327223510.GB3233@p183.telecom.by>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58169 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755736Ab2C0XZC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Mar 2012 19:25:02 -0400
+In-Reply-To: <20120327171222.GG9856@joana>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-next@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, davem@davemloft.net, linville@tuxdriver.com
 
-On Wed, Mar 28, 2012 at 01:35:10AM +0300, Alexey Dobriyan wrote:
-> On Tue, Mar 27, 2012 at 03:22:16PM -0700, Greg KH wrote:
+--Signature=_Wed__28_Mar_2012_10_24_45_+1100_JjjG9UnK.y2BtsiI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > > The amount of code once removed from staging prevented me from doing
-> > > any work on them.
-> > > 
-> > > Looking at staging ->read_proc users this is going to be a problem for
-> > > its removal. :-(
-> > 
-> > Why?
-> 
-> Because if staging does count, I can't remove the interface
-> without breaking allmodconfig and it would take forever to convert
-> staging stuff. I don't have energy to do it anymore.
-> Mainline still have several _hard_ ->read_proc conversions.
-> I've tried several times and failed.
-> 
-> If staging doesn't count, I will break allmodconfig and all those nasty
-> emails will show up anyway implying that staging does count.
+Hi Gustavo,
 
-It's comparable to what mainline has besides staging.
-I'm talking about this.
+On Tue, 27 Mar 2012 14:12:22 -0300 Gustavo Padovan <gustavo@padovan.org> wr=
+ote:
+>
+> We have just updated the address of the bluetooth-next tree, we now have a
+> shared tree where all maintainers can commit to. The new address is:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git
+>=20
+> The old tree will be deleted and is not valid anymore.
 
-$ grep -e read_proc -w -n -r drivers/staging/
-drivers/staging/comedi/proc.c:92:               comedi_proc->read_proc = comedi_read;
-drivers/staging/rtl8192u/ieee80211/ieee80211_module.c:298:      e->read_proc = show_debug_level;
-drivers/staging/serial/68360serial.c:2428:      /* .read_proc = rs_360_read_proc, */
-drivers/staging/rtl8192e/rtllib_module.c:262:   e->read_proc = show_debug_level;
+I have changed to using the new tree (I assume I should still fetch the
+master branch).
 
-$ grep -e create_proc_read_entry -w -n -r drivers/staging/
-drivers/staging/telephony/ixj.c:7763:   create_proc_read_entry ("ixj", 0, NULL, ixj_read_proc, NULL);
-drivers/staging/ft1000/ft1000-usb/ft1000_proc.c:189:            ft1000_proc_file = create_proc_read_entry(dev->name, 0644,
-drivers/staging/ft1000/ft1000-usb/ft1000_proc.c:221:            create_proc_read_entry(dev->name, 0644,
-drivers/staging/ft1000/ft1000-pcmcia/ft1000_proc.c:181:         create_proc_read_entry(dev->name, 0644, info->proc_ft1000,
-drivers/staging/ft1000/ft1000-pcmcia/ft1000_proc.c:200: create_proc_read_entry(dev->name, 0644, info->proc_ft1000,
-drivers/staging/rtl8192u/r8192U_core.c:714:     e = create_proc_read_entry("stats-rx", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192u/r8192U_core.c:724:     e = create_proc_read_entry("stats-tx", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192u/r8192U_core.c:733:     e = create_proc_read_entry("stats-ap", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192u/r8192U_core.c:742:     e = create_proc_read_entry("registers", S_IFREG | S_IRUGO,
-drivers/staging/cxt1e1/sbeproc.c:325:    e = create_proc_read_entry ("info", S_IFREG | S_IRUGO,
-drivers/staging/rtl8187se/r8180_core.c:343:     e = create_proc_read_entry("stats-hw", S_IFREG | S_IRUGO,
-drivers/staging/rtl8187se/r8180_core.c:351:     e = create_proc_read_entry("stats-rx", S_IFREG | S_IRUGO,
-drivers/staging/rtl8187se/r8180_core.c:360:     e = create_proc_read_entry("stats-tx", S_IFREG | S_IRUGO,
-drivers/staging/rtl8187se/r8180_core.c:368:     e = create_proc_read_entry("registers", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:873:      e = create_proc_read_entry("stats-rx", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:881:      e = create_proc_read_entry("stats-tx", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:889:      e = create_proc_read_entry("stats-ap", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:897:      e = create_proc_read_entry("registers-0", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:903:      e = create_proc_read_entry("registers-1", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:909:      e = create_proc_read_entry("registers-2", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:915:      e = create_proc_read_entry("registers-3", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:921:      e = create_proc_read_entry("registers-4", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:927:      e = create_proc_read_entry("registers-5", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:933:      e = create_proc_read_entry("registers-6", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:939:      e = create_proc_read_entry("registers-7", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:945:      e = create_proc_read_entry("registers-8", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:951:      e = create_proc_read_entry("registers-9", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:957:      e = create_proc_read_entry("registers-a", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:963:      e = create_proc_read_entry("registers-b", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:969:      e = create_proc_read_entry("registers-c", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:975:      e = create_proc_read_entry("registers-d", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:981:      e = create_proc_read_entry("registers-e", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:987:      e = create_proc_read_entry("RF-A", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:993:      e = create_proc_read_entry("RF-B", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:999:      e = create_proc_read_entry("RF-C", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:1005:     e = create_proc_read_entry("RF-D", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:1011:     e = create_proc_read_entry("SEC-CAM-1", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:1017:     e = create_proc_read_entry("SEC-CAM-2", S_IFREG | S_IRUGO,
-drivers/staging/rtl8192e/rtl8192e/rtl_debug.c:1023:     e = create_proc_read_entry("SEC-CAM-3", S_IFREG | S_IRUGO,
-drivers/staging/wlags49_h2/wl_main.c:912:       create_proc_read_entry( "wlags", 0, NULL, scull_read_procmem, dev );
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__28_Mar_2012_10_24_45_+1100_JjjG9UnK.y2BtsiI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPckw9AAoJEECxmPOUX5FEoOoP/jPLqI684NmAVxPDUzfUcCcm
+ouu7DFBrXzk9kQZ6XxH5wf7bUIs0Z2l43DgIV7GAFXNifdRYWR1jntjxvCnUF2NP
+ECbXPNDDvIt1Ur7MSEODCKmOXR/+HrT7gZSVAQveiuSTt6TshEaenyl1VQ9WHsUi
+PKr9STZhJybQW1qU3EKZ9t1AI63+tn3qWagbp0XWL7u04FlX7fa3LYZu8xSpjNrw
+BvhjpJuE8KTPqkFNbv9gD0nEALCeAREkmMeTQR4w/SD4vc8qOpg4DX7YBzUn6y+Q
+oJ6GrIFDDX3dIkly8knK9vM3DgrwF4sva31z91Mx/gs5VnMUHbNXI7wSK2diTjv8
+KTg59RjOF255noCBSFR2c4Z9Cc7fVcPAXMDMiG/4daF4myM6O13miY4+gJiRCJc8
+EVhQRgZnM88c1dg9as9qDC9FRFzgXsA6rPELeItH/3Gyfw1nd2SkejIu5G+LS/xb
+bN7zqI5BG+WYwNCFU70HU6oT39kPuo6U4RIoQQ2ZW+f8j0ZDT3mpt1GF4r6Yu5Cm
+567+6kZZwiy0/pFQHmSZqJmE0Sb78Ko73eOeQ660Ov6v6SSnTAhJZmelY8xAwQjE
+hwYmcOOJTKOb022CxWt2xeIOIrdTDruhOQalgiUO4iBKNQ3YcY4qdXwWlxdXa97u
+ibO2Wp2s7sS4IBKRjFha
+=rYxc
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__28_Mar_2012_10_24_45_+1100_JjjG9UnK.y2BtsiI--
