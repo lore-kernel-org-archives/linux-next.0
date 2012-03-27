@@ -1,289 +1,63 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: triage for March 27, 2012
-Date: Tue, 27 Mar 2012 17:36:27 -0400
-Message-ID: <20120327213626.GA10022@windriver.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Wed, 28 Mar 2012 01:17:21 +0300
+Message-ID: <20120327221721.GA3233@p183.telecom.by>
+References: <20120326121719.dc4c2b1faca5cf12c8d76d93@canb.auug.org.au>
+ <1332748641.2836.8.camel@dabdike>
+ <20120326140721.GA19827@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:51927 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754191Ab2C0Vg2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Mar 2012 17:36:28 -0400
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:55292 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754986Ab2C0WR0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Mar 2012 18:17:26 -0400
 Content-Disposition: inline
+In-Reply-To: <20120326140721.GA19827@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-New breakage since last report:
-	<none> 
+On Mon, Mar 26, 2012 at 07:07:21AM -0700, Greg KH wrote:
+> On Mon, Mar 26, 2012 at 08:57:21AM +0100, James Bottomley wrote:
+> > On Mon, 2012-03-26 at 12:17 +1100, Stephen Rothwell wrote:
+> > > Hi James,
+> > > 
+> > > After merging the scsi tree, today's linux-next build (x86_64 allmodconfig)
+> > > failed like this:
+> > > 
+> > > drivers/staging/keucr/scsiglue.c:349:2: error: unknown field 'proc_info' specified in initializer
+> > > drivers/staging/rts_pstor/rtsx.c:258:2: error: unknown field 'proc_info' specified in initializer
+> > > drivers/staging/rts5139/rts51x_scsi.c:2190:2: error: unknown field 'proc_info' specified in initializer
+> > > 
+> > > Caused by commit 104c4fe25dc9 ("[SCSI] remove scsi_host_template::proc_info").
+> > > 
+> > > Since this is a staging driver, I applied these following patches:
+> > 
+> > Yes, that looks about right, thanks.  We haven't seen anything about
+> > these drivers on the SCSI list, so I've no idea where they are in
+> > development.
+> 
+> Why is new patches going into your tree right now, during the 3.4 merge
+> window?  API changes should have happened weeks ago, to let others fix
+> up things like this.
+> 
+> As for the "where they are in development", they vary, but, a simple
+> grep should have shown you that these in-kernel drivers should also be
+> fixed up, or at the least, give me the heads up to let me do it for you.
+> 
+> Care to send me the patch that causes this problem so I can create a fix
+> for this?
 
-Randconfig fails that may or may not be new (by their very nature):
-	x86_64: No rule to make scsi/aic7xxx/aicasm/*.[chyl]
-                (http://kisskb.ellerman.id.au/kisskb/buildresult/5981187/)
+See commits 422f07001d6638fdde28f1909cc9162bc7f571d3..104c4fe25dc9bde823ba4591e910a77071b98ab5
+Especially the first one.
 
-Builds that are fixed since last report:
-	ARM:u300_defconfig
-	tilegx:defconfig
+Probably the best course of action is to remove proc_info code from
+these drivers because the interface was deprecated for a long time.
 
-The blackfin builds are no longer failing on vm_is_stack but instead
-are all failing with "L1 data A overflow!" at final link, which smells
-like some kind of binutils/toolchain issue.
+The amount of code once removed from staging prevented me from doing
+any work on them.
 
-The following have fixes posted for quite some time now, but the fixes
-haven't yet been integrated.  Please have a look at these, as it would
-be nice to have them in tree before wk2 of the merge window closes.
-	ARM:magician_defconfig
-	ARM:collie_defconfig
-	ARM:iop32x_defconfig,iop33x_defconfig
-	ARM:em_x270_defconfig
-	AVR32:defconfig
-
-
-Note: The randconfig fails are only listed once and not tracked
-in the below listing.
-
-            ------------------------------------------------
-
-Latest results at:
-	http://kisskb.ellerman.id.au/kisskb/branch/9/
-
-Failures as of March 27th, 2012:
-================================
-
-AM33:asb2303_defconfig,asb2364_defconfig
-	when:	Mar 15
-	why:	cc1: error: unrecognized command line option '-mmem-funcs'
-	status:	Possible fix from TonyB sent for review.
-	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
-----------------
-
-ARM:omap2plus_defconfig
-	when:	Mar 26
-	why:	board-omap4panda.c: 'btwilink_device' undeclared
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5968352/
-
-ARM:rpc_defconfig
-	when:	Mar 26
-	why:	scsi/arm/powertec.c: implicit declaration 'seq_printf'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5967948/
-
-ARM:cm_x2xx_defconfig
-	when:	Mar 19
-	why:	it8152.c: redefinition of 'dma_set_coherent_mask'
-	status:	bisected and reported (PaulG)
-	fix:
-	ref:	http://marc.info/?l=linux-next&m=133226851818586&w=2
-
-ARM:netx_defconfig,pnx4008_defconfig 
-	when:	Mar 14
-	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
-	ref:	https://lkml.org/lkml/2012/3/13/670
-
-ARM:collie_defconfig
-	when:	Feb 14
-	why:	locomolcd.c: error: 'sa1100fb_lcd_power' undeclared
-	status:	fixed (PaulG) - pending integration
-	fix:	http://marc.info/?l=linux-next&m=133105157730749&w=2
-	ref:
-
-ARM:iop32x_defconfig,iop33x_defconfig
-	when:	Nov 23
-	why:	restart.c: implicit declaration of function 'soft_restart'
-	status:	fixed (PaulG) - pending integration
-	fix:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081461.html
-	fix:	https://lkml.org/lkml/2012/3/14/253
-	ref:
-
-ARM:ixp4xx_defconfig
-	when:	Oct 26
-	why:	gpio.h: implicit declaration of function '__gpio_get_value'
-	status:	fixed (Imre Kaloz) - but possibly needs rework?
-	fix:	https://lkml.org/lkml/2012/2/8/288
-	ref:	https://lkml.org/lkml/2012/2/8/287
-
-ARM:magician_defconfig
-	when:	Feb 13
-	why:	magician.c: unknown field 'dev' specified in initializer
-	status:	fixed (PaulG) - pending integration
-	fix:	http://marc.info/?l=linux-arm-kernel&m=133124258707457&w=2
-	ref:	http://marc.info/?l=linux-next&m=133106325903524&w=2
-
-ARM:em_x270_defconfig
-	when:	Feb 14
-	why:	em-x270.c: unknown field 'dev' specified in initializer
-	status:	 fixed (PaulG) - pending integration
-	fix:	http://www.spinics.net/lists/arm-kernel/msg164012.html
-	ref:	http://www.spinics.net/lists/arm-kernel/msg163135.html
-
-ARM:raumfeld_defconfig
-	when:	Nov 23
-	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
-	status:	perhaps broken since 2010?  See ref below.
-	fix:	
-	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
-
-ARM:arm-allnoconfig
-	when:	forever
-	why:	not supported
-	status:	nothing pending, but patches accepted
-	fix:	n/a
-	ref:	https://lkml.org/lkml/2009/4/30/105
-	ref:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081218.html
-----------------
-
-AVR32:defconfig
-	when:	Mar 18
-	why:	board.h: atmel_nand.h: No such file or directory
-	status:	reported/fixed (PaulG)
-	fix:	http://marc.info/?l=linux-arm-kernel&m=133239363802517&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5917107/
-
-AVR32:allnoconfig
-	when:	May 26 2010, 20:49
-	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
-	status:
-	fix:
-	ref:
----------------
-
-bfin:***all-builds***
-	when:	Mar 26
-	why:	bfin-uclinux-ld: L1 data A overflow!
-	status:	unknown, binutils issue?
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5981475/
----------------
-
-cris:***all-builds***
-	when:	Mar 25, 22:05
-	why:	include/linux/types.h:25: error expected ... before 'ino_t'
-	status:	
-	fix:	
-	ref:	
-----------------
-
-crisv32:***all-builds***
-	when:	Mar 25, 22:05
-	why:	include/linux/types.h:25: error expected ... before 'ino_t'
-	status:	
-	fix:	
-	ref:	
-----------------
-
-frv:defconfig
-	when:	Mar 15
-	why:	arch/frv/kernel/head.S operand out of range
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884666/
-----------------
-
-h8300:defconfig
-	when:	Mar 15
-	why:	time.c: implicit declaration of function 'get_irq_regs'
-	why:	also seems gcc suffers an ICE
-	status:	ICE bug lodged with gcc folks (TonyB)
-	fix:
-	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
-----------------
-
-ia64:defconfig
-	when:	Mar 26
-	why:	asm-offsets.c:322: unterminated arg list invoking macro "DEFINE"
-	status:	trivial typo, missing ")"
-	fix:	
-	ref:	https://lkml.org/lkml/2012/3/26/496
-----------------
-
-i386:allmodconfig
-	when:	Mar 8, 20:41
-	why:	ERROR: "mdfld_set_brightness" [drivers/gpu/drm/gma500/gma500_gfx.ko] undefined!
-	status:	
-	fix:
-	ref:	https://lkml.org/lkml/2012/3/24/122
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878506/
-----------------
-
-m32r:m32700ut.smp_defconfig
-	when:	Mar 15
-	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
-----------------
-
-m68k:sun3_defconfig,m68k_defconfig
-	when:	Mar 26
-	why:	sun3_NCR5380.c: static decl of 'sun3scsi_proc_info' follows non-static
-	status:	
-	fix:	
-	ref:	http://marc.info/?l=linux-next&m=133279244817422&w=2
-
-m68k:allmodconfig
-	when:	Mar 16
-	why:	persistent_ram.c: implicit declaration of 'memblock_reserve'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884324/
-	ref:	http://www.spinics.net/lists/linux-next/msg19343.html
-----------------
-
-mips:allmodconfig
-	when:
-	why:	driver_pci_host.c: implicit declaration of function 'pcibios_enable_device'
-	status: one of many fixes mips needs...
-	fix:	http://marc.info/?l=linux-wireless&m=133272031621916&w=2
-	ref:	http://patchwork.ozlabs.org/patch/148614/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5807000/
-----------------
-
-parisc:allmodconfig
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-
-parisc64:a500_defconfig 
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-powerpc:allyesconfig
-	when:	May 18 2009, 22:11
-	why:	fat ass kernel with everything simply won't link
-	status:	need to fix build config to ignore the final link
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5806793/
-------------------
-
-sh4:***all-builds***
-	when:	Feb 24, 17:38
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-um:um-defconfig
-	when:	Sep 16 2010, 01:28
-	why:	os-Linux/start_up.c: error: 'PTRACE_SETOPTIONS' undeclared
-	status:	clearly broken forever, so does anyone care?
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/target/2979/
+Looking at staging ->read_proc users this is going to be a problem for
+its removal. :-(
