@@ -1,66 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: new location of the bluetooth tree
-Date: Wed, 28 Mar 2012 10:24:45 +1100
-Message-ID: <20120328102445.9c5ddd1c568ccf0cea7e07f1@canb.auug.org.au>
-References: <20120327171222.GG9856@joana>
+From: Tony Breeds <tony@bakeyournoodle.com>
+Subject: Re: linux-next: triage for March 18, 2012
+Date: Wed, 28 Mar 2012 10:59:56 +1100
+Message-ID: <20120327235955.GA1394@thor.bakeyournoodle.com>
+References: <20120318184105.GC2095@windriver.com>
+ <20120318235114.GA30497@thor.bakeyournoodle.com>
+ <20120319145125.GA12142@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Mar_2012_10_24_45_+1100_JjjG9UnK.y2BtsiI"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58169 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755736Ab2C0XZC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Mar 2012 19:25:02 -0400
-In-Reply-To: <20120327171222.GG9856@joana>
+Received: from ozlabs.org ([203.10.76.45]:39381 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753040Ab2C1AAD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Mar 2012 20:00:03 -0400
+Content-Disposition: inline
+In-Reply-To: <20120319145125.GA12142@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-next@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, davem@davemloft.net, linville@tuxdriver.com
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
 
---Signature=_Wed__28_Mar_2012_10_24_45_+1100_JjjG9UnK.y2BtsiI
-Content-Type: text/plain; charset=US-ASCII
+
+--X1bOJ3K7DJ5YkBrT
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Gustavo,
+On Mon, Mar 19, 2012 at 10:51:25AM -0400, Paul Gortmaker wrote:
 
-On Tue, 27 Mar 2012 14:12:22 -0300 Gustavo Padovan <gustavo@padovan.org> wr=
-ote:
->
-> We have just updated the address of the bluetooth-next tree, we now have a
-> shared tree where all maintainers can commit to. The new address is:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git
->=20
-> The old tree will be deleted and is not valid anymore.
+> Thanks for the updates.  I've added the am33 and h8300 info.  I don't
+> know what to advise wrt. the frv platform...  there doesn't even appear
+> to be an x86_64 cross that I can steal to try and reproduce it with.
+> ( http://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.6.0/ )
 
-I have changed to using the new tree (I assume I should still fetch the
-master branch).
+Look again now: http://kernel.org/pub/tools/crosstool/files/bin/x86_64/4.6.3/
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Yours Tony
 
---Signature=_Wed__28_Mar_2012_10_24_45_+1100_JjjG9UnK.y2BtsiI
+--X1bOJ3K7DJ5YkBrT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPckw9AAoJEECxmPOUX5FEoOoP/jPLqI684NmAVxPDUzfUcCcm
-ouu7DFBrXzk9kQZ6XxH5wf7bUIs0Z2l43DgIV7GAFXNifdRYWR1jntjxvCnUF2NP
-ECbXPNDDvIt1Ur7MSEODCKmOXR/+HrT7gZSVAQveiuSTt6TshEaenyl1VQ9WHsUi
-PKr9STZhJybQW1qU3EKZ9t1AI63+tn3qWagbp0XWL7u04FlX7fa3LYZu8xSpjNrw
-BvhjpJuE8KTPqkFNbv9gD0nEALCeAREkmMeTQR4w/SD4vc8qOpg4DX7YBzUn6y+Q
-oJ6GrIFDDX3dIkly8knK9vM3DgrwF4sva31z91Mx/gs5VnMUHbNXI7wSK2diTjv8
-KTg59RjOF255noCBSFR2c4Z9Cc7fVcPAXMDMiG/4daF4myM6O13miY4+gJiRCJc8
-EVhQRgZnM88c1dg9as9qDC9FRFzgXsA6rPELeItH/3Gyfw1nd2SkejIu5G+LS/xb
-bN7zqI5BG+WYwNCFU70HU6oT39kPuo6U4RIoQQ2ZW+f8j0ZDT3mpt1GF4r6Yu5Cm
-567+6kZZwiy0/pFQHmSZqJmE0Sb78Ko73eOeQ660Ov6v6SSnTAhJZmelY8xAwQjE
-hwYmcOOJTKOb022CxWt2xeIOIrdTDruhOQalgiUO4iBKNQ3YcY4qdXwWlxdXa97u
-ibO2Wp2s7sS4IBKRjFha
-=rYxc
+iQIcBAEBCAAGBQJPclR7AAoJEEsCiJRY75GKqSUP/AiEwgF2xqM1G+e242/ckK3n
+LxmxWqDgy6hg0WxSEM7wU8T2aoCEJAmIjJArgWccSxk2dnWmE0pnYzm5VdpkU7KX
+YQgBb1U5xx/mgIKKGBP3HaEETSerFp5qZ/5YWKlpDWa01og9nZ/3pFpoDRjzWx5q
+DDb7YqC7Ya/p3t43c7xgr/8PU4WCHbqadN67FpmSVsLbKJ3b4JAZAi8sfU86wBPH
+VeQrVaj9HoHs8YCZccTWq+WZqlVugJNXQBpROXH2+cHy+RjbC2UPWoQLxhmAjfsQ
+cE3ajNXKWD9KAJUSjlf/d97+1j1zrUbCHyqzVcimViqMhqwAL7veFoMy++cSN6ZM
+W/i/y9fbbn6Rox/KNgB2MQ7rzLbz/1uRRtzW6oBM8Omkuty+OMpZRzdIq+KjbN+J
+TtZB8A43mvJM6NJnLLQ6ENXVQsxqH6DtoXiLv4FKTGXuYVBHd2w/vq/1qHL59lw0
+cnnISLFqxCRxRVgsNtKhLNFE0eGP4iNlrHJXmCC2JU5yINoy9iFk6Mbx+4iDCiIC
+Ndx/iTkuQvsXehyJMu0CIDrd3iSL6Gr6qThoTAifr07PDHlYrz3l/8SMZp7Lgksy
+fCt0t5nnZmb2xXHdVKX+l91TgacIBjXaX4Aqyesdi4pjCGgg5W+EHAbGLqYhZ2MJ
+c/9LgnSQK9LXidGv0KCu
+=rH7x
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Mar_2012_10_24_45_+1100_JjjG9UnK.y2BtsiI--
+--X1bOJ3K7DJ5YkBrT--
