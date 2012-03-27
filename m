@@ -1,39 +1,77 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: manual merge of the input tree with Linus' tree
-Date: Tue, 27 Mar 2012 00:33:58 -0700
-Message-ID: <20120327073358.GD1521@core.coreip.homeip.net>
-References: <20120327121610.e39e648811d5b00ae328077b@canb.auug.org.au>
+From: Vinod Koul <vinod.koul@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the slave-dma tree
+Date: Tue, 27 Mar 2012 14:03:14 +0530
+Message-ID: <1332837194.1820.4.camel@vkoul-udesk3>
+References: <20120327115232.ef58a6f97da2d29ed3c8bdb6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:59791 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752999Ab2C0HeG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Mar 2012 03:34:06 -0400
-Content-Disposition: inline
-In-Reply-To: <20120327121610.e39e648811d5b00ae328077b@canb.auug.org.au>
+Received: from mga09.intel.com ([134.134.136.24]:25805 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756268Ab2C0Iad (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Mar 2012 04:30:33 -0400
+In-Reply-To: <20120327115232.ef58a6f97da2d29ed3c8bdb6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Gerecke <killertofu@gmail.com>, Chris Bagwell <chris@cnpbagwell.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martin <javier.martin@vista-silicon.com>, Sascha Hauer <s.hauer@pengutronix.de>
 
-Hi Stephen,
-
-On Tue, Mar 27, 2012 at 12:16:10PM +1100, Stephen Rothwell wrote:
-> Hi Dmitry,
+On Tue, 2012-03-27 at 11:52 +1100, Stephen Rothwell wrote:
+> Hi Vinod,
 > 
-> Today's linux-next merge of the input tree got a conflict in
-> drivers/input/tablet/wacom_sys.c between commit 24e3e5ae1e4c ("Input:
-> wacom - fix physical size calculation for 3rd-gen Bamboo") from Linus'
-> tree and commit 16bf288c4be6 ("Input: wacom - create inputs when wireless
-> connect") from the input tree.
+> After merging the slave-dma tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> The latter seems to incorporate the former, so I used that.
+> drivers/dma/imx-dma.c:31:22: fatal error: mach/dma.h: No such file or directory
+> 
+> Caused by commit 6bd081277ea0 ("dmaengine: imx-dma: merge old dma-v1.c
+> with imx-dma.c").
+Thanks Stephen,
 
-Thank you. I merged the branches and resolved conflict so you should not
-see it anymore.
+This should have depends on ARCH_MXS at least and should not have built
+for x86_64. Below patch should fix it and I will apply this.
 
-Thanks.
+> 
+> I have used the slave-dma tree from next-20120326 for today.
+> 
+> I was wondering why this new work appeared during the merge window ...
+I had this series pending and wanted to get this merged but it didn't
+apply for me last week and I was out for the long weekend :(
+So merged on first chance I got back.
+
+Tree is frozen now, barring any other hiccups. Sorry for the issue
+--------------------------------x-------------------x----------------------
+
+>From 9da98b21787488f9d99b7f93b42aee95bfd07c49 Mon Sep 17 00:00:00 2001
+From: Vinod Koul <vinod.koul@linux.intel.com>
+Date: Tue, 27 Mar 2012 13:53:00 +0530
+Subject: [PATCH] dmaengine: imx: fix the build failure on x64
+
+commit 6bd081277ea0 "dmaengine: imx-dma: merge old dma-v1.c with
+imx-dma.c" removed the dependency in config for the imx dma driver,
+whereas it should depend on ARCH_MXS
+
+Signed-off-by: Vinod Koul <vinod.koul@linux.intel.com>
+---
+ drivers/dma/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+index b4a53a0..34e48d9 100644
+--- a/drivers/dma/Kconfig
++++ b/drivers/dma/Kconfig
+@@ -230,6 +230,7 @@ config IMX_SDMA
+ 
+ config IMX_DMA
+ 	tristate "i.MX DMA support"
++	depends on ARCH_MXC
+ 	select DMA_ENGINE
+ 	help
+ 	  Support the i.MX DMA engine. This engine is integrated into
+-- 
+1.7.0.4
+
 
 -- 
-Dmitry
+~Vinod
