@@ -1,40 +1,75 @@
-From: "Williams, Dan J" <dan.j.williams@intel.com>
-Subject: Re: linux-next: build warning after merge of the final tree
-Date: Wed, 28 Mar 2012 00:59:36 -0700
-Message-ID: <CABE8wwtqSC01O+DsjQp5U0shQh99e0vctHqRRY8e4OfxD+TaxA@mail.gmail.com>
-References: <20120326151147.30727745f5a3410d87f391dc@canb.auug.org.au>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PULL REQUEST] DMA-mapping framework redesign preparation patches
+Date: Wed, 28 Mar 2012 10:04:08 +0200
+Message-ID: <00b701cd0cb9$5a4ea900$0eebfb00$%szyprowski@samsung.com>
+References: <1328898737-15854-1-git-send-email-m.szyprowski@samsung.com>
+ <20120213112145.4b8990c739d297cd30714d52@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga10.intel.com ([192.55.52.92]:12981 "EHLO
-	fmsmga102.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751683Ab2C1H7h (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 03:59:37 -0400
-Received: by iage36 with SMTP id e36so1488273iag.25
-        for <linux-next@vger.kernel.org>; Wed, 28 Mar 2012 00:59:36 -0700 (PDT)
-In-Reply-To: <20120326151147.30727745f5a3410d87f391dc@canb.auug.org.au>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:16753 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751075Ab2C1IEP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 04:04:15 -0400
+In-reply-to: <20120213112145.4b8990c739d297cd30714d52@canb.auug.org.au>
+Content-language: pl
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On Sun, Mar 25, 2012 at 9:11 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> After merging the final tree, today's linux-next build (sparc32 defconfig)
-> produced these warnings (and many similar):
->
-> In file included from drivers/scsi/hosts.c:41:0:
-> drivers/scsi/scsi_priv.h:166:1: warning: "__enabled_CONFIG_PM" is not defined [-Wundef]
-> drivers/scsi/scsi_priv.h:166:1: warning: "__enabled_CONFIG_PM_MODULE" is not defined [-Wundef]
->
-> Introduced by commit a6a95fad44f1 ("scsi, sd: limit the scope of the
-> async probe domain").
+Hi Stephen,
 
-So, sparc does not source kernel/power/Kconfig or define config PM
-locally.  Compiling out this list_head (scsi_sd_probe_domain) in the
-!PM && !BLK_DEV_SD case may be more trouble then it is worth.  I'll
-re-spin the patch without the IS_ENABLED conditionals.
+On Monday, February 13, 2012 1:22 AM Stephen Rothwell wrote:
 
---
-Dan
+> On Fri, 10 Feb 2012 19:32:17 +0100 Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> >
+> > Our patches with DMA-mapping framework redesign proposal have been
+> > hanging for over a month with just a few comments. We would like to go
+> > further in the development, but first I would like to ask You to give
+> > them a try in the linux-next kernel.
+> >
+> > For everyone interested in this patch series, here is the relevant
+> > thread: https://lkml.org/lkml/2011/12/23/97
+> >
+> > If there are any problems with our git tree, please contact Marek
+> > Szyprowski <m.szyprowski@samsung.com> or alternatively Kyungmin Park
+> > <kyungmin.park@samsung.com>.
+> >
+> > The following changes since commit 62aa2b537c6f5957afd98e29f96897419ed5ebab:
+> >
+> >   Linux 3.3-rc2 (2012-01-31 13:31:54 -0800)
+> >
+> > are available in the git repository at:
+> >   git://git.infradead.org/users/kmpark/linux-samsung dma-mapping-next
+> 
+> I have added this from today.
+> 
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgment of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window.
+> 
+> You will need to ensure that the patches/commits in your tree/series have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
+> 	Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and
+>      * destined for the current or next Linux merge window.
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
+
+I've prepared a separate git repository for all our dma-mapping related works. 
+Could you update your database with the new entry? From now the dma-mapping 
+updates will be available at:
+
+git://git.linaro.org/people/mszyprowski/linux-dma-mapping.git dma-mapping-next
+
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
