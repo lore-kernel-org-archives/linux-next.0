@@ -1,71 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Blackfin link issue (Was: linux-next: triage for March 27, 2012)
-Date: Wed, 28 Mar 2012 11:03:50 +1100
-Message-ID: <20120328110350.e2d44e1f66b6ac7f9fd82843@canb.auug.org.au>
-References: <20120327213626.GA10022@windriver.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: triage for March 18, 2012
+Date: Tue, 27 Mar 2012 20:08:32 -0400
+Message-ID: <CAP=VYLryjxC=9e9ehmX-RHbkEeEthkYj0Knb3OJcQcC488FkPA@mail.gmail.com>
+References: <20120318184105.GC2095@windriver.com>
+	<20120318235114.GA30497@thor.bakeyournoodle.com>
+	<20120319145125.GA12142@windriver.com>
+	<20120327235955.GA1394@thor.bakeyournoodle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Mar_2012_11_03_50_+1100_ayDTQFfciXQhULn8"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34854 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753529Ab2C1AEG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Mar 2012 20:04:06 -0400
-In-Reply-To: <20120327213626.GA10022@windriver.com>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:52620 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756175Ab2C1AIe convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Mar 2012 20:08:34 -0400
+In-Reply-To: <20120327235955.GA1394@thor.bakeyournoodle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Frysinger <vapier.adi@gmail.com>, Bob Liu <lliubbo@gmail.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
 
---Signature=_Wed__28_Mar_2012_11_03_50_+1100_ayDTQFfciXQhULn8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Paul,
-
-On Tue, 27 Mar 2012 17:36:27 -0400 Paul Gortmaker <paul.gortmaker@windriver=
-.com> wrote:
+On Tue, Mar 27, 2012 at 7:59 PM, Tony Breeds <tony@bakeyournoodle.com> =
+wrote:
+> On Mon, Mar 19, 2012 at 10:51:25AM -0400, Paul Gortmaker wrote:
 >
-> The blackfin builds are no longer failing on vm_is_stack but instead
-> are all failing with "L1 data A overflow!" at final link, which smells
-> like some kind of binutils/toolchain issue.
->=20
->=20
-> bfin:***all-builds***
-> 	when:	Mar 26
-> 	why:	bfin-uclinux-ld: L1 data A overflow!
-> 	status:	unknown, binutils issue?
-> 	fix:
-> 	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5981475/
+>> Thanks for the updates. =A0I've added the am33 and h8300 info. =A0I =
+don't
+>> know what to advise wrt. the frv platform... =A0there doesn't even a=
+ppear
+>> to be an x86_64 cross that I can steal to try and reproduce it with.
+>> ( http://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.6.0/ =
+)
+>
+> Look again now: http://kernel.org/pub/tools/crosstool/files/bin/x86_6=
+4/4.6.3/
 
-It actually looks like this comes from an ASSERT in the blackfin
-vmlinux.lds.S ... looks like some sections overflowed.
+Cool.  I'll give that a spin tomorrow and see what happens.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+P.
 
---Signature=_Wed__28_Mar_2012_11_03_50_+1100_ayDTQFfciXQhULn8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPclVmAAoJEECxmPOUX5FE31MP/0SidMrl68xVGnf5sIiB2HVO
-K4/Gry5s3mX6ITnQzSHjdrHP8Za6+lSxwP9HA48g3gSGshC0V9CriwJY0eFGbhbr
-j2auzt3C9bRAjEz+UGfAz51qq58mqRFUYIw7FIeIRETgWC/vwLjjKDbvMF4HxVTo
-7QGjSoEP4YDKN0AwmVhHx0laO1ZBXM7QexiURNMNXJDD0SxOeVPvvSGBk2vGJ5M8
-yOgIODxC97rVzbbcQWHBDq9Ts0NNjLy/uMSw5AXF9cXa/aCRPLxGLwNgRarWxjmI
-vL0Ul7GvXNRIxFeYSVKPnsSXWOdZmyP6mCvRuEcqovk8vWh/zCPmr84CHwXqsQLU
-YFIzqIkRpQiHFhwCbKViNaml8CEoEVf46SqFslRArmTlDSyjfdC0UMP1Hzf4llP8
-VazwxH1INI1L1BpVgW4bSyN6lcilCD9b5Q3R6EpGvGe9nHLMZyNtboZpnLNoVkoF
-0SKABceWIwM9TiFKqyP5ckNasdk0z3B+n6IuYdBNZneiWTchH8hiIvlnlrA6q4SL
-YlDtK/fR3e9AusaLLaPgh36oAInu4SNcm4H8lweJjloA5XOfhe0D6tTqnACojGjm
-n3qXT1jtPJxER+QY+5rGpzYo9oGyipTy02ELToQYqmsVVLBqMtdDmYJdUjm3atrP
-Z4jkFTfdBpQbj71+HHmV
-=4wXA
------END PGP SIGNATURE-----
-
---Signature=_Wed__28_Mar_2012_11_03_50_+1100_ayDTQFfciXQhULn8--
+>
+> Yours Tony
