@@ -1,75 +1,39 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PULL REQUEST] DMA-mapping framework redesign preparation patches
-Date: Wed, 28 Mar 2012 10:04:08 +0200
-Message-ID: <00b701cd0cb9$5a4ea900$0eebfb00$%szyprowski@samsung.com>
-References: <1328898737-15854-1-git-send-email-m.szyprowski@samsung.com>
- <20120213112145.4b8990c739d297cd30714d52@canb.auug.org.au>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] ARM: pxa: fix regulator related build fail in
+	magician_defconfig
+Date: Wed, 28 Mar 2012 10:43:51 +0100
+Message-ID: <20120328094351.GB22414@n2100.arm.linux.org.uk>
+References: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com> <1331242494-3157-1-git-send-email-paul.gortmaker@windriver.com> <CAN1soZzDRR4XQ34WDL48=j+Ff8t5fsCFaccqZAKOQ1OAPeDXcA@mail.gmail.com> <4F608F4F.8020106@windriver.com> <20120314123236.GE3133@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:16753 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751075Ab2C1IEP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 04:04:15 -0400
-In-reply-to: <20120213112145.4b8990c739d297cd30714d52@canb.auug.org.au>
-Content-language: pl
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:55214 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751377Ab2C1Joc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 05:44:32 -0400
+Content-Disposition: inline
+In-Reply-To: <20120314123236.GE3133@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Haojian Zhuang <haojian.zhuang@gmail.com>, lost.distance@yahoo.com
 
-Hi Stephen,
-
-On Monday, February 13, 2012 1:22 AM Stephen Rothwell wrote:
-
-> On Fri, 10 Feb 2012 19:32:17 +0100 Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> >
-> > Our patches with DMA-mapping framework redesign proposal have been
-> > hanging for over a month with just a few comments. We would like to go
-> > further in the development, but first I would like to ask You to give
-> > them a try in the linux-next kernel.
-> >
-> > For everyone interested in this patch series, here is the relevant
-> > thread: https://lkml.org/lkml/2011/12/23/97
-> >
-> > If there are any problems with our git tree, please contact Marek
-> > Szyprowski <m.szyprowski@samsung.com> or alternatively Kyungmin Park
-> > <kyungmin.park@samsung.com>.
-> >
-> > The following changes since commit 62aa2b537c6f5957afd98e29f96897419ed5ebab:
-> >
-> >   Linux 3.3-rc2 (2012-01-31 13:31:54 -0800)
-> >
-> > are available in the git repository at:
-> >   git://git.infradead.org/users/kmpark/linux-samsung dma-mapping-next
+On Wed, Mar 14, 2012 at 12:32:36PM +0000, Mark Brown wrote:
+> On Wed, Mar 14, 2012 at 08:30:07AM -0400, Paul Gortmaker wrote:
+> > On 12-03-14 04:38 AM, Haojian Zhuang wrote:
 > 
-> I have added this from today.
+> > > How do you think about Mark's comments? Use dev_name() at here.
 > 
-> Thanks for adding your subsystem tree as a participant of linux-next.  As
-> you may know, this is not a judgment of your code.  The purpose of
-> linux-next is for integration testing and to lower the impact of
-> conflicts between subsystems in the next merge window.
+> > I'm not sure I quite understand you.  I'd looked up the
+> > structs and got their respective value that would be
+> > returned by dev_name(), which is what I thought was
+> > requested of me.
 > 
-> You will need to ensure that the patches/commits in your tree/series have
-> been:
->      * submitted under GPL v2 (or later) and include the Contributor's
-> 	Signed-off-by,
->      * posted to the relevant mailing list,
->      * reviewed by you (or another maintainer of your subsystem tree),
->      * successfully unit tested, and
->      * destined for the current or next Linux merge window.
-> 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
+> Yes, that's what you should do.  Calling dev_name() is only possible if
+> you have the struct device and removing the need for the struct device
+> is exactly what we're trying to avoid here.
 
-I've prepared a separate git repository for all our dma-mapping related works. 
-Could you update your database with the new entry? From now the dma-mapping 
-updates will be available at:
-
-git://git.linaro.org/people/mszyprowski/linux-dma-mapping.git dma-mapping-next
-
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+So what the hell is happening here to fix the breakage which the
+regulator tree caused in mainline?  From this thread, it looks like
+it's been known about since 8th March which is now twenty days ago,
+and it's still broken.
