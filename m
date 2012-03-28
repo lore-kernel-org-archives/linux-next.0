@@ -1,70 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PULL REQUEST] DMA-mapping framework redesign preparation
- patches
-Date: Wed, 28 Mar 2012 23:19:10 +1100
-Message-ID: <20120328231910.759801b2f9173ea0a1247fbb@canb.auug.org.au>
-References: <1328898737-15854-1-git-send-email-m.szyprowski@samsung.com>
-	<20120213112145.4b8990c739d297cd30714d52@canb.auug.org.au>
-	<00b701cd0cb9$5a4ea900$0eebfb00$%szyprowski@samsung.com>
+From: Haojian Zhuang <haojian.zhuang@gmail.com>
+Subject: Re: [PATCH] ARM: pxa: fix regulator related build fail in magician_defconfig
+Date: Wed, 28 Mar 2012 21:36:05 +0800
+Message-ID: <CAN1soZzypFA_EsmF5AHzjwHNom2-nY2io=6R8qPyBbn5m3aa0Q@mail.gmail.com>
+References: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
+	<1331242494-3157-1-git-send-email-paul.gortmaker@windriver.com>
+	<CAN1soZzDRR4XQ34WDL48=j+Ff8t5fsCFaccqZAKOQ1OAPeDXcA@mail.gmail.com>
+	<4F608F4F.8020106@windriver.com>
+	<20120314123236.GE3133@opensource.wolfsonmicro.com>
+	<20120328094351.GB22414@n2100.arm.linux.org.uk>
+	<20120328101852.GE3232@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__28_Mar_2012_23_19_10_+1100_3wK5ySiHIExxtj7z"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54671 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751227Ab2C1MTY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 08:19:24 -0400
-In-Reply-To: <00b701cd0cb9$5a4ea900$0eebfb00$%szyprowski@samsung.com>
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:40100 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751082Ab2C1NgG convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 09:36:06 -0400
+Received: by vbbff1 with SMTP id ff1so689327vbb.19
+        for <linux-next@vger.kernel.org>; Wed, 28 Mar 2012 06:36:05 -0700 (PDT)
+In-Reply-To: <20120328101852.GE3232@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lost.distance@yahoo.com, Bergmann Arnd <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
---Signature=_Wed__28_Mar_2012_23_19_10_+1100_3wK5ySiHIExxtj7z
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Marek,
-
-On Wed, 28 Mar 2012 10:04:08 +0200 Marek Szyprowski <m.szyprowski@samsung.c=
-om> wrote:
+On Wed, Mar 28, 2012 at 6:18 PM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> On Wed, Mar 28, 2012 at 10:43:51AM +0100, Russell King - ARM Linux wr=
+ote:
+>> On Wed, Mar 14, 2012 at 12:32:36PM +0000, Mark Brown wrote:
 >
-> I've prepared a separate git repository for all our dma-mapping related w=
-orks.=20
-> Could you update your database with the new entry? From now the dma-mappi=
-ng=20
-> updates will be available at:
->=20
-> git://git.linaro.org/people/mszyprowski/linux-dma-mapping.git dma-mapping=
--next
+>> > Yes, that's what you should do. =A0Calling dev_name() is only poss=
+ible if
+>> > you have the struct device and removing the need for the struct de=
+vice
+>> > is exactly what we're trying to avoid here.
+>
+>> So what the hell is happening here to fix the breakage which the
+>> regulator tree caused in mainline? =A0From this thread, it looks lik=
+e
+>> it's been known about since 8th March which is now twenty days ago,
+>> and it's still broken.
+>
+> Yes, please at least apply Paul's patches - honestly, given how old
+> these boards are and the general lack of activity I'd rather expect t=
+hat
+> the only thing anyone's doing with them these days is build tests.
 
-I have changed to use that new tree.
+Applied. I'll submit this fix to Arnd and Olof.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__28_Mar_2012_23_19_10_+1100_3wK5ySiHIExxtj7z
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPcwG+AAoJEECxmPOUX5FEN6YP/jg1Xk2guXfoYfwPKHUQmqjL
-dyvLzxbicmCYxo2dcpToNzmAfmhfHerEEFzglAW+CTscE+qOxHeFojN5ePopxvYw
-WgW8Fccz8oI44g1D5ysgyud/W9YtsobXCCpDp4CBbvA7v1mALnO119hOnJIiixiV
-nKo4fZ7UT1VFC15BEpSnm1ImQlWDKtgcoMAD0jBp6XHfpKzjzKPTArClveUK4pf4
-XOM8fDeEM65GGid9PLSCRMxrKEsLg+6VLWGNw/05d92inun9FND/R75NxqL/I9BX
-yJwMfbsKTmSCA5sa+Ukf4PuwQ0WJ+O5tvv+8USNxxnK5jHAxMRBI19BLCg9wQ9MM
-jQH7ebB0eBBtZWab3aLqFNTVfjVvEr8Hu32xhD+mtEHARS8LeXCImFIySEHlzSG3
-4IYiTjizH4exzPUfjE9WZj/dbsWMNzxRBv65QKzCsUFGd6Es/RtvHvxzgJlVk++l
-Z46w3Bg5iWPr/ON420SHEoPjAeeDQnxhswuY93tlUsBZvPTHe9vlK7QPzACbuNLU
-SxpIlAukOmMyrwFq59UYOmm/rWpxt/gxmpr/oVEZNsTLUTvpy2mqJoOyJNgDUJKT
-HOpu9iZdRgrIDE6/WoCoHw5Jw2YBbpAyCjApoFjXQY53fw3ow2SgyZUuDLYRcHnp
-nBdpAOZFD+nHxosbKoLB
-=Fc7s
------END PGP SIGNATURE-----
-
---Signature=_Wed__28_Mar_2012_23_19_10_+1100_3wK5ySiHIExxtj7z--
+Best Regards
+Haojian
