@@ -1,54 +1,94 @@
-From: Haojian Zhuang <haojian.zhuang@gmail.com>
-Subject: Re: [PATCH] ARM: pxa: fix regulator related build fail in magician_defconfig
-Date: Wed, 28 Mar 2012 21:36:05 +0800
-Message-ID: <CAN1soZzypFA_EsmF5AHzjwHNom2-nY2io=6R8qPyBbn5m3aa0Q@mail.gmail.com>
-References: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
-	<1331242494-3157-1-git-send-email-paul.gortmaker@windriver.com>
-	<CAN1soZzDRR4XQ34WDL48=j+Ff8t5fsCFaccqZAKOQ1OAPeDXcA@mail.gmail.com>
-	<4F608F4F.8020106@windriver.com>
-	<20120314123236.GE3133@opensource.wolfsonmicro.com>
-	<20120328094351.GB22414@n2100.arm.linux.org.uk>
-	<20120328101852.GE3232@opensource.wolfsonmicro.com>
+From: Igor Grinberg <grinberg@compulab.co.il>
+Subject: Re: [PATCH] ARM: pxa: fix build failure for regulator consumer in
+ em-x270.c
+Date: Wed, 28 Mar 2012 17:21:59 +0200
+Message-ID: <4F732C97.2030804@compulab.co.il>
+References: <CAP=VYLp-weNj35OHtmZ6pf5-t7OUxWREeu8r5sSOLhFYu0CppQ@mail.gmail.com> <1331244366-6147-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:40100 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751082Ab2C1NgG convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 09:36:06 -0400
-Received: by vbbff1 with SMTP id ff1so689327vbb.19
-        for <linux-next@vger.kernel.org>; Wed, 28 Mar 2012 06:36:05 -0700 (PDT)
-In-Reply-To: <20120328101852.GE3232@opensource.wolfsonmicro.com>
+Received: from 50.23.254.54-static.reverse.softlayer.com ([50.23.254.54]:47153
+	"EHLO softlayer.compulab.co.il" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1758021Ab2C1PWN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Mar 2012 11:22:13 -0400
+In-Reply-To: <1331244366-6147-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lost.distance@yahoo.com, Bergmann Arnd <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: broonie@opensource.wolfsonmicro.com, haojian.zhuang@gmail.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
 
-On Wed, Mar 28, 2012 at 6:18 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Wed, Mar 28, 2012 at 10:43:51AM +0100, Russell King - ARM Linux wr=
-ote:
->> On Wed, Mar 14, 2012 at 12:32:36PM +0000, Mark Brown wrote:
->
->> > Yes, that's what you should do. =A0Calling dev_name() is only poss=
-ible if
->> > you have the struct device and removing the need for the struct de=
-vice
->> > is exactly what we're trying to avoid here.
->
->> So what the hell is happening here to fix the breakage which the
->> regulator tree caused in mainline? =A0From this thread, it looks lik=
-e
->> it's been known about since 8th March which is now twenty days ago,
->> and it's still broken.
->
-> Yes, please at least apply Paul's patches - honestly, given how old
-> these boards are and the general lack of activity I'd rather expect t=
-hat
-> the only thing anyone's doing with them these days is build tests.
+Hi Paul,
 
-Applied. I'll submit this fix to Arnd and Olof.
+I've finally found one of em-x270 to test on...
 
-Best Regards
-Haojian
+On 03/09/12 00:06, Paul Gortmaker wrote:
+> Commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
+> 
+>   "regulator: Remove support for supplies specified by struct device"
+> 
+> caused this file to break, since it was still relying on the
+> device field to be present.  Update them to use the new dev_name
+> entries instead.
+> 
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> ---
+> 
+> [v2: replace dev with dev_name instead of just deleting dev.
+>  Note however there is dev_name overlap; not sure if that matters? ]
+> 
+> diff --git a/arch/arm/mach-pxa/em-x270.c b/arch/arm/mach-pxa/em-x270.c
+> index c1b65da..0ffc100 100644
+> --- a/arch/arm/mach-pxa/em-x270.c
+> +++ b/arch/arm/mach-pxa/em-x270.c
+> @@ -1083,19 +1083,19 @@ static void __init em_x270_userspace_consumers_init(void)
+>  }
+>  
+>  /* DA9030 related initializations */
+> -#define REGULATOR_CONSUMER(_name, _dev, _supply)			       \
+> +#define REGULATOR_CONSUMER(_name, _dev_name, _supply)		        \
+>  	static struct regulator_consumer_supply _name##_consumers[] = {	\
+>  		{							\
+> -			.dev = _dev,					\
+> +			.dev_name = _dev_name,				\
+>  			.supply = _supply,				\
+>  		},							\
+>  	}
+>  
+> -REGULATOR_CONSUMER(ldo3, &em_x270_gps_userspace_consumer.dev, "vcc gps");
+> +REGULATOR_CONSUMER(ldo3, "reg-userspace-consumer", "vcc gps");
+
+If you make this:
+REGULATOR_CONSUMER(ldo3, NULL, "vcc gps");
+
+>  REGULATOR_CONSUMER(ldo5, NULL, "vcc cam");
+> -REGULATOR_CONSUMER(ldo10, &pxa_device_mci.dev, "vcc sdio");
+> +REGULATOR_CONSUMER(ldo10, "pxa2xx-mci", "vcc sdio");
+>  REGULATOR_CONSUMER(ldo12, NULL, "vcc usb");
+> -REGULATOR_CONSUMER(ldo19, &em_x270_gprs_userspace_consumer.dev, "vcc gprs");
+> +REGULATOR_CONSUMER(ldo19, "reg-userspace-consumer", "vcc gprs");
+
+and this:
+REGULATOR_CONSUMER(ldo19, NULL, "vcc gprs");
+
+the device even boots...
+
+>  REGULATOR_CONSUMER(buck2, NULL, "vcc_core");
+>  
+>  #define REGULATOR_INIT(_ldo, _min_uV, _max_uV, _ops_mask)		\
+
+
+Thanks for the patch, with the changes above:
+Tested-by: Igor Grinberg <grinberg@compulab.co.il>
+
+Haojian, can this patch be included in your pull request (or another one)?
+It fixes the build for em_x270_defconfig and with the updates above
+gets the board to boot.
+
+Thanks.
+
+-- 
+Regards,
+Igor.
