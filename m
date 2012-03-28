@@ -1,71 +1,31 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ARM: pxa: fix regulator related build fail in
- magician_defconfig
-Date: Wed, 28 Mar 2012 11:18:52 +0100
-Message-ID: <20120328101852.GE3232@opensource.wolfsonmicro.com>
-References: <1331084814.11802.YahooMailClassic@web29012.mail.ird.yahoo.com>
- <1331242494-3157-1-git-send-email-paul.gortmaker@windriver.com>
- <CAN1soZzDRR4XQ34WDL48=j+Ff8t5fsCFaccqZAKOQ1OAPeDXcA@mail.gmail.com>
- <4F608F4F.8020106@windriver.com>
- <20120314123236.GE3133@opensource.wolfsonmicro.com>
- <20120328094351.GB22414@n2100.arm.linux.org.uk>
+Subject: Re: linux-next: build failure after merge of the battery tree
+Date: Wed, 28 Mar 2012 12:38:08 +0100
+Message-ID: <20120328113808.GB23005@sirena.org.uk>
+References: <20120315135609.2f9a2a030866c476dc736b9c@canb.auug.org.au>
+ <20120326161132.GA6430@lizard>
+ <20120327084414.dacbf074e0f4ddd65ff3ecfb@canb.auug.org.au>
+ <20120327130350.GB7972@lizard>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ytoMbUMiTKPMT3hY"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:33118 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757656Ab2C1KTS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Mar 2012 06:19:18 -0400
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:34423 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932285Ab2C1LiM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 07:38:12 -0400
 Content-Disposition: inline
-In-Reply-To: <20120328094351.GB22414@n2100.arm.linux.org.uk>
+In-Reply-To: <20120327130350.GB7972@lizard>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Haojian Zhuang <haojian.zhuang@gmail.com>, lost.distance@yahoo.com
+To: Anton Vorontsov <cbouatmailru@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>, Linus Walleij <linus.walleij@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>
 
+On Tue, Mar 27, 2012 at 05:03:50PM +0400, Anton Vorontsov wrote:
 
---ytoMbUMiTKPMT3hY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> But for such drivers I usually give my 'Acked-by' so that
+> patches could be merged via single tree (i.e. mfd). But nobody
+> asked me in this case.
 
-On Wed, Mar 28, 2012 at 10:43:51AM +0100, Russell King - ARM Linux wrote:
-> On Wed, Mar 14, 2012 at 12:32:36PM +0000, Mark Brown wrote:
-
-> > Yes, that's what you should do.  Calling dev_name() is only possible if
-> > you have the struct device and removing the need for the struct device
-> > is exactly what we're trying to avoid here.
-
-> So what the hell is happening here to fix the breakage which the
-> regulator tree caused in mainline?  From this thread, it looks like
-> it's been known about since 8th March which is now twenty days ago,
-> and it's still broken.
-
-Yes, please at least apply Paul's patches - honestly, given how old
-these boards are and the general lack of activity I'd rather expect that
-the only thing anyone's doing with them these days is build tests.
-
---ytoMbUMiTKPMT3hY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPcuVAAAoJEBus8iNuMP3dl60QAI2ubNFAOyJJlMOnuqNfs/7J
-XKs4D7C5oJXpYlVIl7dUCoVYoPPgJSw9uI0+gciGv4Q3JVihryBw0WvGnsVkU7kk
-GqrUa+RG5gF14z5oF+W21YkwR+I0nCYoHAlDSDssRzHWJWVmi3C9BrFP0+sLVtg1
-HXr9uKff/0BMVLtC8sqGVQin4NgccO2gvA8PkzpF82KZ381xDcm8MkI34R9opg+3
-y53BGXhE6wBRoaoVWHzFIX+U3QIasSorxXJ8xFldHw+XGGZrzcs4B4WvzRJLWXpE
-sILTYoJRIEBOQd9WTS794TcU0bUFJZiso8Zddlq5FNha9lcgP++cvc4QrycnuNY+
-2aAxgCs5rTIqeDCAibWgmf1+QjEWla0/aWXhJUbO38d7azquJzB0sAsnj5MzAdd2
-hsUFJrwZ/6CwE0bFnJH4VHgJQEqU3Sfj86neScN4527pd3Qmhs2gQm0dM0SbRbPk
-rtmcwXpqe4a1WQbGpo6jg8Pcf8sm3pscOz3cBN3F6ipe8FjyWt2LRrO6XIUzXbMx
-wBQoJTZ+wzUNofjFpPOToPPbkPzLJ+y7vBnthTjg9gPgTz4K5cwDqmbfQAeufynI
-fJPdmzLq5c+Tdscx8kF/gUq/9yCGhg83uDIReIHjyjCMGLYykzQXtWrDUYVuQGA0
-KgPsbymeizu/Oy/1aIVp
-=N0iS
------END PGP SIGNATURE-----
-
---ytoMbUMiTKPMT3hY--
+Well, for completely new MFDs there's no need as the dependency on the
+core will generally sort everything out.  It's only adding things to an
+existing MFD that might have some issues.
