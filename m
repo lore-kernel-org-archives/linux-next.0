@@ -1,94 +1,70 @@
-From: Igor Grinberg <grinberg@compulab.co.il>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: [PATCH] ARM: pxa: fix build failure for regulator consumer in
  em-x270.c
-Date: Wed, 28 Mar 2012 17:21:59 +0200
-Message-ID: <4F732C97.2030804@compulab.co.il>
-References: <CAP=VYLp-weNj35OHtmZ6pf5-t7OUxWREeu8r5sSOLhFYu0CppQ@mail.gmail.com> <1331244366-6147-1-git-send-email-paul.gortmaker@windriver.com>
+Date: Wed, 28 Mar 2012 16:27:44 +0100
+Message-ID: <20120328152743.GW3232@opensource.wolfsonmicro.com>
+References: <CAP=VYLp-weNj35OHtmZ6pf5-t7OUxWREeu8r5sSOLhFYu0CppQ@mail.gmail.com>
+ <1331244366-6147-1-git-send-email-paul.gortmaker@windriver.com>
+ <4F732C97.2030804@compulab.co.il>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="w3FC1ngOohd+pYSp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 50.23.254.54-static.reverse.softlayer.com ([50.23.254.54]:47153
-	"EHLO softlayer.compulab.co.il" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1758021Ab2C1PWN (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:51605 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756518Ab2C1P1t (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Mar 2012 11:22:13 -0400
-In-Reply-To: <1331244366-6147-1-git-send-email-paul.gortmaker@windriver.com>
+	Wed, 28 Mar 2012 11:27:49 -0400
+Content-Disposition: inline
+In-Reply-To: <4F732C97.2030804@compulab.co.il>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: broonie@opensource.wolfsonmicro.com, haojian.zhuang@gmail.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
-
-Hi Paul,
-
-I've finally found one of em-x270 to test on...
-
-On 03/09/12 00:06, Paul Gortmaker wrote:
-> Commit 737f360d5bef5e01c6cfa755dca0b449a154c1e0 (linux-next)
-> 
->   "regulator: Remove support for supplies specified by struct device"
-> 
-> caused this file to break, since it was still relying on the
-> device field to be present.  Update them to use the new dev_name
-> entries instead.
-> 
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> ---
-> 
-> [v2: replace dev with dev_name instead of just deleting dev.
->  Note however there is dev_name overlap; not sure if that matters? ]
-> 
-> diff --git a/arch/arm/mach-pxa/em-x270.c b/arch/arm/mach-pxa/em-x270.c
-> index c1b65da..0ffc100 100644
-> --- a/arch/arm/mach-pxa/em-x270.c
-> +++ b/arch/arm/mach-pxa/em-x270.c
-> @@ -1083,19 +1083,19 @@ static void __init em_x270_userspace_consumers_init(void)
->  }
->  
->  /* DA9030 related initializations */
-> -#define REGULATOR_CONSUMER(_name, _dev, _supply)			       \
-> +#define REGULATOR_CONSUMER(_name, _dev_name, _supply)		        \
->  	static struct regulator_consumer_supply _name##_consumers[] = {	\
->  		{							\
-> -			.dev = _dev,					\
-> +			.dev_name = _dev_name,				\
->  			.supply = _supply,				\
->  		},							\
->  	}
->  
-> -REGULATOR_CONSUMER(ldo3, &em_x270_gps_userspace_consumer.dev, "vcc gps");
-> +REGULATOR_CONSUMER(ldo3, "reg-userspace-consumer", "vcc gps");
-
-If you make this:
-REGULATOR_CONSUMER(ldo3, NULL, "vcc gps");
-
->  REGULATOR_CONSUMER(ldo5, NULL, "vcc cam");
-> -REGULATOR_CONSUMER(ldo10, &pxa_device_mci.dev, "vcc sdio");
-> +REGULATOR_CONSUMER(ldo10, "pxa2xx-mci", "vcc sdio");
->  REGULATOR_CONSUMER(ldo12, NULL, "vcc usb");
-> -REGULATOR_CONSUMER(ldo19, &em_x270_gprs_userspace_consumer.dev, "vcc gprs");
-> +REGULATOR_CONSUMER(ldo19, "reg-userspace-consumer", "vcc gprs");
-
-and this:
-REGULATOR_CONSUMER(ldo19, NULL, "vcc gprs");
-
-the device even boots...
-
->  REGULATOR_CONSUMER(buck2, NULL, "vcc_core");
->  
->  #define REGULATOR_INIT(_ldo, _min_uV, _max_uV, _ops_mask)		\
+To: Igor Grinberg <grinberg@compulab.co.il>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, haojian.zhuang@gmail.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
 
 
-Thanks for the patch, with the changes above:
-Tested-by: Igor Grinberg <grinberg@compulab.co.il>
+--w3FC1ngOohd+pYSp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Haojian, can this patch be included in your pull request (or another one)?
-It fixes the build for em_x270_defconfig and with the updates above
-gets the board to boot.
+On Wed, Mar 28, 2012 at 05:21:59PM +0200, Igor Grinberg wrote:
+> On 03/09/12 00:06, Paul Gortmaker wrote:
 
-Thanks.
+> > +REGULATOR_CONSUMER(ldo3, "reg-userspace-consumer", "vcc gps");
 
--- 
-Regards,
-Igor.
+> If you make this:
+> REGULATOR_CONSUMER(ldo3, NULL, "vcc gps");
+
+> > +REGULATOR_CONSUMER(ldo19, "reg-userspace-consumer", "vcc gprs");
+>=20
+> and this:
+> REGULATOR_CONSUMER(ldo19, NULL, "vcc gprs");
+
+These don't look like good fixes, you should be specifying the
+dev_name() for the consumer device?  Presumably it's two separate
+consumers and should be .0 and .1 or something?
+
+--w3FC1ngOohd+pYSp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPcy2fAAoJEBus8iNuMP3dY8MP/3UzQyoZe+rtc+/zVu0JjPeI
+RElvgRN4a4k4XUKgiVKpy6I4HKLzRC+xxaCtLOGaZMqBcwzn699oNDAZCLMsOw8R
+zxGydBSpykHVCltfyw1SUnkYWF9LLlZWiXiQnFL/x8JAsbGr3Ns7/C5Tbvcm05i5
+FheymQB929lnzw38uoyq+VhsAza9zJkQv6sgN5QiG3AcSw5zvvU0Gav7lrrUkxdR
+ceqHujB6XBMiUm/QRKt+0MHeK9Jhq3cROyasJt5lWRu2nH9vkXUsPTQhvSBzEmlU
+F1VhA+CYZroJ8wQc8p4atGQmfkTrW+rkBiMp7UHESaJNYAlL5oWiJFVnk/L4SIHi
+71SgZgfs6BDVrYaS4thzmrMj3XI+Dlkhpb60Oh0KzqDoIaNMtm51FP3NMtdu6luc
+x67WVle0w7frqkTRdnTiD3eEJSxQaJmEGUbc+PtpBC1RXTX4i7sHgsGlM+t+K6mx
+J5vSI6J+702euYMSa44PvLqtDHidEL+ep/1jsqe3pP/e+U649a3XuCy+lzA5Yos7
+0HE4WIYDLyGb3wCewo3/iu/9L+x8i/Q2e+rV2DOsX3yadSDT616ys4GG74tu6oja
+I7V1C5hVXc2y9uCYXvxVOqz6/qDRS2S7Ssi2NORL8pa9Q+zcADkPipU0acr+JA2p
+qlSoYdV3AB9oKF/zBeXf
+=qlbA
+-----END PGP SIGNATURE-----
+
+--w3FC1ngOohd+pYSp--
