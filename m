@@ -1,111 +1,95 @@
 From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: Tree for Mar 26 (usbcore)
-Date: Wed, 28 Mar 2012 16:11:09 -0700
-Message-ID: <20120328231109.GA14945@kroah.com>
-References: <20120326180736.GA2893@kroah.com>
- <Pine.LNX.4.44L0.1203261550290.1179-100000@iolanthe.rowland.org>
- <20120326201622.GA29228@kroah.com>
- <4F7342D0.1010706@xenotime.net>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Wed, 28 Mar 2012 16:52:17 -0700
+Message-ID: <20120328235217.GA17212@kroah.com>
+References: <20120326121719.dc4c2b1faca5cf12c8d76d93@canb.auug.org.au>
+ <1332748641.2836.8.camel@dabdike>
+ <20120326140721.GA19827@kroah.com>
+ <20120327221721.GA3233@p183.telecom.by>
+ <20120327222216.GB469@kroah.com>
+ <20120327223510.GB3233@p183.telecom.by>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:53088 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:56253 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933295Ab2C1XLM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 19:11:12 -0400
-Received: by mail-pb0-f46.google.com with SMTP id un15so2423661pbc.19
-        for <linux-next@vger.kernel.org>; Wed, 28 Mar 2012 16:11:12 -0700 (PDT)
+	with ESMTP id S1758782Ab2C1XwV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 19:52:21 -0400
+Received: by pbcun15 with SMTP id un15so2474558pbc.19
+        for <linux-next@vger.kernel.org>; Wed, 28 Mar 2012 16:52:21 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <4F7342D0.1010706@xenotime.net>
+In-Reply-To: <20120327223510.GB3233@p183.telecom.by>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2012 at 09:56:48AM -0700, Randy Dunlap wrote:
-> On 03/26/2012 01:16 PM, Greg KH wrote:
-> 
-> > On Mon, Mar 26, 2012 at 04:06:59PM -0400, Alan Stern wrote:
-> >> On Mon, 26 Mar 2012, Greg KH wrote:
-> >>
-> >>> On Mon, Mar 26, 2012 at 09:58:36AM -0700, Randy Dunlap wrote:
-> >>>> On 03/25/2012 09:28 PM, Stephen Rothwell wrote:
-> >>>>
-> >>>>> Hi all,
-> >>>>>
-> >>>>> Reminder: please do not add stuff destined for v3.5 to linux-next
-> >>>>> included trees/branches until after v3.4-rc1 has been released.
-> >>>>>
-> >>>>> Changes since 20120323:
-> >>>>
-> >>>>
-> >>>>
-> >>>> on x86_64:
-> >>>>
-> >>>> ERROR: "utf16s_to_utf8s" [drivers/usb/core/usbcore.ko] undefined!
-> >>>> ERROR: "usb_speed_string" [drivers/usb/core/usbcore.ko] undefined!
-> >>>>
-> >>>> Full randconfig file is attached.
-> >>>
-> >>> Odd, nothing in the usb core has changed in a while in this area,
-> >>> although we might have gotten some core dependancies mixed up for random
-> >>> configurations like this.
-> >>
-> >> This is puzzling.
-> >>
-> >> 	utf16s_to_utf8s is defined in fs/nls/nls_base.c,
-> >> 	which is built according to CONFIG_NLS (in fs/nls/Makefile),
-> >> 	which is selected by CONFIG_USB (in drivers/usb/Kconfig).
-> >>
-> >> But the config that Randy attached had CONFIG_USB set to M and 
-> >> CONFIG_NLS not set.  How is that possible?
-> >>
-> >> 	usb_speed_string is defined in drivers/usb/usb-common.c,
-> >> 	which is built according to CONFIG_USB_COMMON (in
-> >> 		drivers/usb/Makefile),
-> >> 	which defaults to Y if CONFIG_USB_SUPPORT and either
-> >> 		CONFIG_USB or CONFIG_USB_GADGET is set (in 
-> >> 		drivers/usb/Kconfig).
-> >>
-> >> The problem here was that CONFIG_USB_SUPPORT isn't set but CONFIG_USB
-> >> is set to M.  This used not to be possible, since CONFIG_USB was
-> >> defined inside an "if USB_SUPPORT" section.  Maybe that got changed and
-> >> needs to be fixed (but
-> >> https://git.kernel.org/?p=linux/kernel/git/next/linux-next.git thinks
-> >> it's still not possible).  Or maybe Randy's tree is a little out of 
-> >> date.
-> > 
-> > Yeah, that is strange, thanks for looking into it.
-> > 
-> > Randy, any thoughts?
-> 
-> 
-> It's weird.  The same config file builds successfully on
-> linux-next of Mar. 27.
-> 
-> I looked more at linux-next of Mar. 26 and found one problem:
-> in drivers/gpu/drm/Kconfig, there is a "select USB" that should be
-> protected by "depends on USB_ARCH_HAS_HCD".  I did that and then
-> kconfig complained about unmet dependencies in drivers/gpu/drm/udl/Kconfig,
-> so I added the same "depends on" there.  That led into an awful mess:
-> 
-> drivers/video/Kconfig:36:error: recursive dependency detected!
-> drivers/video/Kconfig:36:	symbol FB is selected by DRM_KMS_HELPER
-> drivers/gpu/drm/Kconfig:26:	symbol DRM_KMS_HELPER is selected by DRM_UDL
-> drivers/gpu/drm/udl/Kconfig:1:	symbol DRM_UDL depends on USB_ARCH_HAS_HCD
-> drivers/usb/Kconfig:78:	symbol USB_ARCH_HAS_HCD depends on USB_ARCH_HAS_OHCI
-> drivers/usb/Kconfig:24:	symbol USB_ARCH_HAS_OHCI depends on I2C
-> drivers/i2c/Kconfig:5:	symbol I2C is selected by FB_DDC
-> drivers/video/Kconfig:86:	symbol FB_DDC is selected by FB_CYBER2000_DDC
-> drivers/video/Kconfig:385:	symbol FB_CYBER2000_DDC depends on FB_CYBER2000
-> drivers/video/Kconfig:373:	symbol FB_CYBER2000 depends on FB
-> 
-> and I don't know what to do with this.
-> 
-> Anyway, I do think that the problem is in drivers/gpu/drm/Kconfig
-> and drivers/gpu/drm/udl/Kconfig.
+On Wed, Mar 28, 2012 at 01:35:10AM +0300, Alexey Dobriyan wrote:
+> On Tue, Mar 27, 2012 at 03:22:16PM -0700, Greg KH wrote:
+> > On Wed, Mar 28, 2012 at 01:17:21AM +0300, Alexey Dobriyan wrote:
+> > > On Mon, Mar 26, 2012 at 07:07:21AM -0700, Greg KH wrote:
+> > > > On Mon, Mar 26, 2012 at 08:57:21AM +0100, James Bottomley wrote:
+> > > > > On Mon, 2012-03-26 at 12:17 +1100, Stephen Rothwell wrote:
+> > > > > > Hi James,
+> > > > > > 
+> > > > > > After merging the scsi tree, today's linux-next build (x86_64 allmodconfig)
+> > > > > > failed like this:
+> > > > > > 
+> > > > > > drivers/staging/keucr/scsiglue.c:349:2: error: unknown field 'proc_info' specified in initializer
+> > > > > > drivers/staging/rts_pstor/rtsx.c:258:2: error: unknown field 'proc_info' specified in initializer
+> > > > > > drivers/staging/rts5139/rts51x_scsi.c:2190:2: error: unknown field 'proc_info' specified in initializer
+> > > > > > 
+> > > > > > Caused by commit 104c4fe25dc9 ("[SCSI] remove scsi_host_template::proc_info").
+> > > > > > 
+> > > > > > Since this is a staging driver, I applied these following patches:
+> > > > > 
+> > > > > Yes, that looks about right, thanks.  We haven't seen anything about
+> > > > > these drivers on the SCSI list, so I've no idea where they are in
+> > > > > development.
+> > > > 
+> > > > Why is new patches going into your tree right now, during the 3.4 merge
+> > > > window?  API changes should have happened weeks ago, to let others fix
+> > > > up things like this.
+> > > > 
+> > > > As for the "where they are in development", they vary, but, a simple
+> > > > grep should have shown you that these in-kernel drivers should also be
+> > > > fixed up, or at the least, give me the heads up to let me do it for you.
+> > > > 
+> > > > Care to send me the patch that causes this problem so I can create a fix
+> > > > for this?
+> > > 
+> > > See commits 422f07001d6638fdde28f1909cc9162bc7f571d3..104c4fe25dc9bde823ba4591e910a77071b98ab5
+> > > Especially the first one.
 
-Ok, thanks for looking.  I'm worried why DRM would care about USB, but
-maybe I don't want to know...
+I don't know where to find these patches, care to send them to me, or
+point me at a link with them?
+
+> > > Probably the best course of action is to remove proc_info code from
+> > > these drivers because the interface was deprecated for a long time.
+> > 
+> > If the interface is depreciated, yes, I can remove it now, just let me
+> > know and I will do so.
+> > 
+> > > The amount of code once removed from staging prevented me from doing
+> > > any work on them.
+> > > 
+> > > Looking at staging ->read_proc users this is going to be a problem for
+> > > its removal. :-(
+> > 
+> > Why?
+> 
+> Because if staging does count, I can't remove the interface
+> without breaking allmodconfig and it would take forever to convert
+> staging stuff. I don't have energy to do it anymore.
+> Mainline still have several _hard_ ->read_proc conversions.
+> I've tried several times and failed.
+> 
+> If staging doesn't count, I will break allmodconfig and all those nasty
+> emails will show up anyway implying that staging does count.
+
+I don't understand, if read_proc is depreciated, why can't I just remove
+it from the staging drivers and then all will be fine, right?
+
+confused,
 
 greg k-h
