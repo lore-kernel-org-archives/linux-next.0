@@ -1,50 +1,105 @@
-From: Vinod Koul <vinod.koul@linux.intel.com>
-Subject: Re: [PATCH linux-next] dmaengine: add context
-	parameter fixups
-Date: Thu, 29 Mar 2012 16:29:45 +0530
-Message-ID: <1333018785.1820.48.camel@vkoul-udesk3>
-References: <1332511242-30241-1-git-send-email-alexandre.bounine@idt.com>
-	<CAOMZO5B-Zutv-xwqLCAgNMO8A3Kyg4uWqS41koo-yoS4mGB1TQ@mail.gmail.com>
-	<1332740082.19804.15.camel@vkoul-udesk3>
-	<20120326094200.GA3098@opensource.wolfsonmicro.com>
-	<s5hwr64wx0p.wl%tiwai@suse.de>
-	<20120328155106.GY3232@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20120328155106.GY3232@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: fabio.estevam@freescale.com, alsa-devel@alsa-project.org, samuel@sortiz.org, paul.gortmaker@windriver.com, Takashi Iwai <tiwai@suse.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Bounine <alexandre.bounine@idt.com>, linux-next@vger.kernel.org, dan.j.williams@intel.com, Fabio Estevam <festevam@gmail.com>, lrg@ti.com
-List-Id: linux-next.vger.kernel.org
+From: Jeff Layton <jlayton@redhat.com>
+Subject: [PATCH] nfsd: only register cld pipe notifier when CONFIG_NFSD_V4 is enabled
+Date: Thu, 29 Mar 2012 07:41:51 -0400
+Message-ID: <1333021311-8774-1-git-send-email-jlayton@redhat.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:48560 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753761Ab2C2Ll5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Mar 2012 07:41:57 -0400
+Received: by yenl12 with SMTP id l12so1346902yen.19
+        for <linux-next@vger.kernel.org>; Thu, 29 Mar 2012 04:41:56 -0700 (PDT)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: bfields@fieldses.org
+Cc: Trond.Myklebust@netapp.com, linux-nfs@vger.kernel.org, linux-next@vger.kernel.org, paul.gortmaker@windriver.com
 
-On Wed, 2012-03-28 at 16:51 +0100, Mark Brown wrote:
-> On Wed, Mar 28, 2012 at 05:44:22PM +0200, Takashi Iwai wrote:
-> > Mark Brown wrote:
-> 
-> > > No, not yet - it was only sent after the merge window.  Quite why nobody
-> > > managed to notice it before then I don't know.  It'll go to him soon, or
-> > > at least to Takashi, but don't know if it'll make -rc1 or not.
-> 
-> > How is the situation now?
-> 
-> > FYI, I'm going to send a pull request to Linus tomorrow or on Friday.
-> > If anything needed to be merged in rc1, it must be there in time.
-> 
-> It's in my tree, I didn't see an enormous rush to get it in TBH.
-I should be sending the pull request for slave-dma to Linus this
-evening.
-Can you please include the fix I did in your tree in your pull request.
+Otherwise, we get a warning or error similar to this when building with
+CONFIG_NFSD_V4 disabled:
 
+    ERROR: "nfsd4_cld_block" [fs/nfsd/nfsd.ko] undefined!
 
+Fix this by wrapping the calls to rpc_pipefs_notifier_register and
+..._unregister in another function and providing no-op replacements
+when CONFIG_NFSD_V4 is disabled.
+
+Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+---
+ fs/nfsd/netns.h       |   10 +++++++++-
+ fs/nfsd/nfs4recover.c |   12 ++++++++++++
+ fs/nfsd/nfsctl.c      |    6 +++---
+ 3 files changed, 24 insertions(+), 4 deletions(-)
+
+diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
+index 66eac33..e87ba91 100644
+--- a/fs/nfsd/netns.h
++++ b/fs/nfsd/netns.h
+@@ -31,5 +31,13 @@ struct nfsd_net {
+ };
+ 
+ extern int nfsd_net_id;
+-extern struct notifier_block nfsd4_cld_block;
++
++#if IS_ENABLED(CONFIG_NFSD_V4)
++extern int register_cld_notifier(void);
++extern void unregister_cld_notifier(void);
++#else /* IS_ENABLED(CONFIG_NFSD_V4) */
++#define register_cld_notifier() 0
++#define unregister_cld_notifier() do { } while(0)
++#endif /* IS_ENABLED(CONFIG_NFSD_V4) */
++
+ #endif /* __NFSD_NETNS_H__ */
+diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+index eaaf948..4767429 100644
+--- a/fs/nfsd/nfs4recover.c
++++ b/fs/nfsd/nfs4recover.c
+@@ -1032,3 +1032,15 @@ rpc_pipefs_event(struct notifier_block *nb, unsigned long event, void *ptr)
+ struct notifier_block nfsd4_cld_block = {
+ 	.notifier_call = rpc_pipefs_event,
+ };
++
++int
++register_cld_notifier(void)
++{
++	return rpc_pipefs_notifier_register(&nfsd4_cld_block);
++}
++
++void
++unregister_cld_notifier(void)
++{
++	rpc_pipefs_notifier_unregister(&nfsd4_cld_block);
++}
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index dee6c1b..2c53be6 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -1137,7 +1137,7 @@ static int __init init_nfsd(void)
+ 	int retval;
+ 	printk(KERN_INFO "Installing knfsd (copyright (C) 1996 okir@monad.swb.de).\n");
+ 
+-	retval = rpc_pipefs_notifier_register(&nfsd4_cld_block);
++	retval = register_cld_notifier();
+ 	if (retval)
+ 		return retval;
+ 	retval = register_pernet_subsys(&nfsd_net_ops);
+@@ -1186,7 +1186,7 @@ out_free_slabs:
+ out_unregister_pernet:
+ 	unregister_pernet_subsys(&nfsd_net_ops);
+ out_unregister_notifier:
+-	rpc_pipefs_notifier_unregister(&nfsd4_cld_block);
++	unregister_cld_notifier();
+ 	return retval;
+ }
+ 
+@@ -1203,7 +1203,7 @@ static void __exit exit_nfsd(void)
+ 	nfsd_fault_inject_cleanup();
+ 	unregister_filesystem(&nfsd_fs_type);
+ 	unregister_pernet_subsys(&nfsd_net_ops);
+-	rpc_pipefs_notifier_unregister(&nfsd4_cld_block);
++	unregister_cld_notifier();
+ }
+ 
+ MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
 -- 
-~Vinod
+1.7.7.6
