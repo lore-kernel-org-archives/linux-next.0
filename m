@@ -1,138 +1,114 @@
 From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: [PATCH] nfsd: only register cld pipe notifier when
- CONFIG_NFSD_V4 is enabled
-Date: Thu, 29 Mar 2012 07:52:57 -0400
-Message-ID: <20120329115257.GD16938@fieldses.org>
-References: <1333021311-8774-1-git-send-email-jlayton@redhat.com>
- <20120329114755.GC16938@fieldses.org>
- <20120329074944.0ec8d301@tlielax.poochiereds.net>
+Subject: Re: linux-next: breakage on undefined reference to
+ `nfsd4_cld_block'
+Date: Thu, 29 Mar 2012 09:59:49 -0400
+Message-ID: <20120329135949.GG16938@fieldses.org>
+References: <CAP=VYLr9CL33ZbEVUhVNXsKOCcDWmwmP268jggzWJEBaMa_W0w@mail.gmail.com>
+ <20120329142455.dbad3778ced27db683d06a6a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fieldses.org ([174.143.236.118]:53036 "EHLO fieldses.org"
+Received: from fieldses.org ([174.143.236.118]:35780 "EHLO fieldses.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751432Ab2C2LxA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 Mar 2012 07:53:00 -0400
+	id S1759344Ab2C2N7y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 29 Mar 2012 09:59:54 -0400
 Content-Disposition: inline
-In-Reply-To: <20120329074944.0ec8d301@tlielax.poochiereds.net>
+In-Reply-To: <20120329142455.dbad3778ced27db683d06a6a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeff Layton <jlayton@redhat.com>
-Cc: Trond.Myklebust@netapp.com, linux-nfs@vger.kernel.org, linux-next@vger.kernel.org, paul.gortmaker@windriver.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, jlayton@redhat.com, bfields@redhat.com, Trond.Myklebust@netapp.com, linux-nfs@vger.kernel.org, linux-next@vger.kernel.org
 
-On Thu, Mar 29, 2012 at 07:49:44AM -0400, Jeff Layton wrote:
-> On Thu, 29 Mar 2012 07:47:55 -0400
-> "J. Bruce Fields" <bfields@fieldses.org> wrote:
+On Thu, Mar 29, 2012 at 02:24:55PM +1100, Stephen Rothwell wrote:
+> [cc of nfsd tree contact added]
+
+The nfsd tree should have a fix now.  Thanks for the report.--b.
+
 > 
-> > On Thu, Mar 29, 2012 at 07:41:51AM -0400, Jeff Layton wrote:
-> > > Otherwise, we get a warning or error similar to this when building with
-> > > CONFIG_NFSD_V4 disabled:
-> > > 
-> > >     ERROR: "nfsd4_cld_block" [fs/nfsd/nfsd.ko] undefined!
-> > > 
-> > > Fix this by wrapping the calls to rpc_pipefs_notifier_register and
-> > > ..._unregister in another function and providing no-op replacements
-> > > when CONFIG_NFSD_V4 is disabled.
+> On Wed, 28 Mar 2012 20:31:36 -0400 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+> >
+> > Hi all,
 > > 
-> > Thanks to you and Paul, applying.--b.
+> > The linux-next tree got about ten new failures today, spanning all arch.
+> > They all shared this in common, it seems.
 > > 
-> 
-> Actually...now that I look at it, I think netns.h is probably not the
-> right place for these definitions. They should probably go into nfsd.h.
-> I'll send a respin in a bit once I test it.
-
-OK, I haven't pushed this out yet, so a replacement patch is fine.
-
---b.
-
-> 
-> > > 
-> > > Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> > > Signed-off-by: Jeff Layton <jlayton@redhat.com>
-> > > ---
-> > >  fs/nfsd/netns.h       |   10 +++++++++-
-> > >  fs/nfsd/nfs4recover.c |   12 ++++++++++++
-> > >  fs/nfsd/nfsctl.c      |    6 +++---
-> > >  3 files changed, 24 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
-> > > index 66eac33..e87ba91 100644
-> > > --- a/fs/nfsd/netns.h
-> > > +++ b/fs/nfsd/netns.h
-> > > @@ -31,5 +31,13 @@ struct nfsd_net {
-> > >  };
-> > >  
-> > >  extern int nfsd_net_id;
-> > > -extern struct notifier_block nfsd4_cld_block;
-> > > +
-> > > +#if IS_ENABLED(CONFIG_NFSD_V4)
-> > > +extern int register_cld_notifier(void);
-> > > +extern void unregister_cld_notifier(void);
-> > > +#else /* IS_ENABLED(CONFIG_NFSD_V4) */
-> > > +#define register_cld_notifier() 0
-> > > +#define unregister_cld_notifier() do { } while(0)
-> > > +#endif /* IS_ENABLED(CONFIG_NFSD_V4) */
-> > > +
-> > >  #endif /* __NFSD_NETNS_H__ */
-> > > diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-> > > index eaaf948..4767429 100644
-> > > --- a/fs/nfsd/nfs4recover.c
-> > > +++ b/fs/nfsd/nfs4recover.c
-> > > @@ -1032,3 +1032,15 @@ rpc_pipefs_event(struct notifier_block *nb, unsigned long event, void *ptr)
-> > >  struct notifier_block nfsd4_cld_block = {
-> > >  	.notifier_call = rpc_pipefs_event,
-> > >  };
-> > > +
-> > > +int
-> > > +register_cld_notifier(void)
-> > > +{
-> > > +	return rpc_pipefs_notifier_register(&nfsd4_cld_block);
-> > > +}
-> > > +
-> > > +void
-> > > +unregister_cld_notifier(void)
-> > > +{
-> > > +	rpc_pipefs_notifier_unregister(&nfsd4_cld_block);
-> > > +}
-> > > diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-> > > index dee6c1b..2c53be6 100644
-> > > --- a/fs/nfsd/nfsctl.c
-> > > +++ b/fs/nfsd/nfsctl.c
-> > > @@ -1137,7 +1137,7 @@ static int __init init_nfsd(void)
-> > >  	int retval;
-> > >  	printk(KERN_INFO "Installing knfsd (copyright (C) 1996 okir@monad.swb.de).\n");
-> > >  
-> > > -	retval = rpc_pipefs_notifier_register(&nfsd4_cld_block);
-> > > +	retval = register_cld_notifier();
-> > >  	if (retval)
-> > >  		return retval;
-> > >  	retval = register_pernet_subsys(&nfsd_net_ops);
-> > > @@ -1186,7 +1186,7 @@ out_free_slabs:
-> > >  out_unregister_pernet:
-> > >  	unregister_pernet_subsys(&nfsd_net_ops);
-> > >  out_unregister_notifier:
-> > > -	rpc_pipefs_notifier_unregister(&nfsd4_cld_block);
-> > > +	unregister_cld_notifier();
-> > >  	return retval;
-> > >  }
-> > >  
-> > > @@ -1203,7 +1203,7 @@ static void __exit exit_nfsd(void)
-> > >  	nfsd_fault_inject_cleanup();
-> > >  	unregister_filesystem(&nfsd_fs_type);
-> > >  	unregister_pernet_subsys(&nfsd_net_ops);
-> > > -	rpc_pipefs_notifier_unregister(&nfsd4_cld_block);
-> > > +	unregister_cld_notifier();
-> > >  }
-> > >  
-> > >  MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
-> > > -- 
-> > > 1.7.7.6
-> > > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> > ERROR: "nfsd4_cld_block" [fs/nfsd/nfsd.ko] undefined!
+> > make[2]: *** [__modpost] Error 1
+> > 
+> > I chose alpha (since it was the 1st I saw alphabetically) and did a bisect,
+> > and it came up with the below commit.  I've also included the bisect log.
+> > 
+> > Can someone please take a look at this?  Too late to fix for the Thursday
+> > build, but Friday might be the last for 3.4 content and it would be nice to
+> > have all these builds green again in that one.
+> > 
+> > Thanks,
+> > Paul.
+> > 
+> > --------------
+> > commit 813fd320c16691eac508fe350b4ee7362c6c4a56
+> > Author: Jeff Layton <jlayton@redhat.com>
+> > Date:   Wed Mar 21 09:52:08 2012 -0400
+> > 
+> >     nfsd: add notifier to handle mount/unmount of rpc_pipefs sb
+> > 
+> >     In the event that rpc_pipefs isn't mounted when nfsd starts, we
+> >     must register a notifier to handle creating the dentry once it
+> >     is mounted, and to remove the dentry on unmount.
+> > 
+> >     Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> >     Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+> > -------------------
+> > 
+> > git bisect start
+> > # good: [c16fa4f2ad19908a47c63d8fa436a1178438c7e7] Linux 3.3
+> > git bisect good c16fa4f2ad19908a47c63d8fa436a1178438c7e7
+> > # bad: [7734592ef4a5d14bba15cf2df7fcac8c39d6bdb4] Add linux-next
+> > specific files for 20120328
+> > git bisect bad 7734592ef4a5d14bba15cf2df7fcac8c39d6bdb4
+> > # good: [50953e0640b3473dcb409d5d0d938c2742c93b0d] Merge branch 'poll'
+> > into staging/for_v3.4
+> > git bisect good 50953e0640b3473dcb409d5d0d938c2742c93b0d
+> > # bad: [ecc717668be52fe7b3b29e922b96700067767f05] Merge
+> > remote-tracking branch 'l2-mtd/master'
+> > git bisect bad ecc717668be52fe7b3b29e922b96700067767f05
+> > # good: [d0f6867abfb505b191e31a87dbcdeed65241243a] Merge
+> > remote-tracking branch 'arm/for-next'
+> > git bisect good d0f6867abfb505b191e31a87dbcdeed65241243a
+> > # bad: [2dddaf865e0c13448518abbabd0ad462a7a2d3dd] Merge
+> > remote-tracking branch 'kbuild/for-next'
+> > git bisect bad 2dddaf865e0c13448518abbabd0ad462a7a2d3dd
+> > # bad: [7be8f9ff0749f5d8a0a508b071c206cb68decf04] Merge
+> > remote-tracking branch 'nfsd/nfsd-next'
+> > git bisect bad 7be8f9ff0749f5d8a0a508b071c206cb68decf04
+> > # good: [5537f6f1d690270d388987d543de2cc1e7be40e6] Merge
+> > remote-tracking branch 'ceph/master'
+> > git bisect good 5537f6f1d690270d388987d543de2cc1e7be40e6
+> > # good: [9d547c35799a4ddd235f1565cec2fff6c9263504] vfs: remove unused
+> > superblock helpers
+> > git bisect good 9d547c35799a4ddd235f1565cec2fff6c9263504
+> > # bad: [cc27e0d407021a278d08c1952f5af4ab38c49eda] nfsd: don't allow
+> > legacy client tracker init for anything but init_net
+> > git bisect bad cc27e0d407021a278d08c1952f5af4ab38c49eda
+> > # good: [1255a8f36cb16a02540bdad91c0bc0971b9fb429] nfsd4: don't set
+> > cl_firststate on first reclaim in 4.1 case
+> > git bisect good 1255a8f36cb16a02540bdad91c0bc0971b9fb429
+> > # good: [62b9510cb373d5722fdaba71d961d8f695acfcd5] nfsd: merge cookie
+> > collision fixes from ext4 tree
+> > git bisect good 62b9510cb373d5722fdaba71d961d8f695acfcd5
+> > # good: [2a4317c55438d8589a015d42912454ede12031f0] nfsd: add
+> > nfsd4_client_tracking_ops struct and a way to set it
+> > git bisect good 2a4317c55438d8589a015d42912454ede12031f0
+> > # good: [0ab628d856a63d63b47307b09851d1e955c706ac] nfsd: add a header
+> > describing upcall to nfsdcld
+> > git bisect good 0ab628d856a63d63b47307b09851d1e955c706ac
+> > # bad: [813fd320c16691eac508fe350b4ee7362c6c4a56] nfsd: add notifier
+> > to handle mount/unmount of rpc_pipefs sb
+> > git bisect bad 813fd320c16691eac508fe350b4ee7362c6c4a56
+> > # good: [f3f8014862d813cca81a597c83bd1dbf0fb2b8f6] nfsd: add the
+> > infrastructure to handle the cld upcall
+> > git bisect good f3f8014862d813cca81a597c83bd1dbf0fb2b8f6
 > 
 > -- 
-> Jeff Layton <jlayton@redhat.com>
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
