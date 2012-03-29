@@ -1,7 +1,7 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH] sound: fix oss/msnd_pinnacle module param type
-Date: Wed, 28 Mar 2012 18:26:13 -0700
-Message-ID: <4F73BA35.7010009@xenotime.net>
+Subject: [PATCH] sound: fix isa/opti9xx module param type
+Date: Wed, 28 Mar 2012 18:26:17 -0700
+Message-ID: <4F73BA39.5020509@xenotime.net>
 References: <20120328171401.354ddb56727a26fe64b35ddf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,23 +23,24 @@ List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <rdunlap@xenotime.net>
 
-Fix module parameter data type to eliminate build warning.
+Fix module parameter data type to eliminate build warnings.
 
-sound/oss/msnd_pinnacle.c:1727:1: warning: return from incompatible pointer type
+sound/isa/opti9xx/opti92x-ad1848.c:87:1: warning: return from incompatible pointer type
+sound/isa/opti9xx/opti92x-ad1848.c:87:1: warning: return from incompatible pointer type
 
 Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 ---
- sound/oss/msnd_pinnacle.c |    2 +-
+ sound/isa/opti9xx/opti92x-ad1848.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20120328.orig/sound/oss/msnd_pinnacle.c
-+++ linux-next-20120328/sound/oss/msnd_pinnacle.c
-@@ -1631,7 +1631,7 @@ static int ide_irq __initdata = 0;
- static int joystick_io __initdata = 0;
- 
- /* If we have the digital daugherboard... */
--static int digital __initdata = 0;
-+static bool digital __initdata = false;
+--- linux-next-20120328.orig/sound/isa/opti9xx/opti92x-ad1848.c
++++ linux-next-20120328/sound/isa/opti9xx/opti92x-ad1848.c
+@@ -65,7 +65,7 @@ static int index = SNDRV_DEFAULT_IDX1;	/
+ static char *id = SNDRV_DEFAULT_STR1;		/* ID for this card */
+ //static bool enable = SNDRV_DEFAULT_ENABLE1;	/* Enable this card */
+ #ifdef CONFIG_PNP
+-static int isapnp = 1;			/* Enable ISA PnP detection */
++static bool isapnp = true;			/* Enable ISA PnP detection */
  #endif
- 
- static int fifosize __initdata =	DEFFIFOSIZE;
+ static long port = SNDRV_DEFAULT_PORT1; 	/* 0x530,0xe80,0xf40,0x604 */
+ static long mpu_port = SNDRV_DEFAULT_PORT1;	/* 0x300,0x310,0x320,0x330 */
