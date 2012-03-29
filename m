@@ -1,61 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the hid tree
-Date: Thu, 29 Mar 2012 11:51:17 +1100
-Message-ID: <20120329115117.70e8660dbd0c73354486eba9@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: bpf_slow_path: sibling call to `skb_copy_bits' not allowed multiple
+ TOCs (ppc)
+Date: Wed, 28 Mar 2012 20:54:56 -0400
+Message-ID: <CAP=VYLqwbjNDQ-TTbs_6cH4X2MMzy=MAFy4=R116zGL8a6qUag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__29_Mar_2012_11_51_17_+1100_pSTJ.lilrThePGqA"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53710 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758210Ab2C2Ava (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 20:51:30 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@jikos.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Przemo Firszt <przemo@firszt.eu>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: netdev <netdev@vger.kernel.org>
+Cc: linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__29_Mar_2012_11_51_17_+1100_pSTJ.lilrThePGqA
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Jiri,
+Wondering if anyone has researched this, before I waste more time on it.
 
-After merging the hid tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+The linux-next build of powerpc-allyesconfig has for quite some time shown this:
 
-drivers/hid/Kconfig:595:error: recursive dependency detected!
-drivers/hid/Kconfig:595:	symbol HID_WACOM depends on HID_WACOM
+  LD      .tmp_vmlinux1
+powerpc-linux-ld: arch/powerpc/net/built-in.o: In function `bpf_slow_path_word':
+(.text+0x90): sibling call optimization to `skb_copy_bits' does not
+allow automatic
+multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or
+make `skb_copy_bits' extern
 
-Caused (very obviously) by commit 224b321b312e ("HID: wacom: Remove
-CONFIG_HID_WACOM_POWER_SUPPLY option").
+We get the same error for s/word/half/ and s/word/byte/ and s/word/msh/
 
-Please test this stuff.  And don't rush stuff in during the merge window ...
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Visually "bisecting" the linux-next builds shows the following:
 
---Signature=_Thu__29_Mar_2012_11_51_17_+1100_pSTJ.lilrThePGqA
-Content-Type: application/pgp-signature
+good: Dec 7th, 2011:  http://kisskb.ellerman.id.au/kisskb/buildresult/5059024/
+bad:   Dec 8th, 2011:  http://kisskb.ellerman.id.au/kisskb/buildresult/5062069/
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+I wouldn't be surprised if this was some kind of size thing that doesn't matter
+in the real world, as the powerpc-allyesconfig is really only of value for build
+coverage.   Even in the absence of the skb error, it still fails to link with:
 
-iQIcBAEBCAAGBQJPc7IFAAoJEECxmPOUX5FE6SwQAKi+SWrXD+14HqmJ7d4ax/Va
-nim6zHdX72LxxKOiJpz85Wb98brDFTPoi9mNLyQ+LZBBUDYOyc2W8dc8vPP76toy
-up8MeZwQq2hY4KeSYuXLyriNRsYhYYDYryRO61fmc2H6/C4kwIdT17dRobf/lLY8
-Rm0ZrFFWfQJULEZXAIbS4n0zIqscJr9yOiEIT/ZFMd6yWWm/j5dD7E4yetLS5lJ7
-cI7wsiWTooWM4zWUykxiwarJrlfGP/IYwkstvKLqi3reUHIzZ2dYmTXFIORya5hX
-bkNjLWOlzYubojsa32Z+0mfyVgT4kgm/tjY4+U9afm+R4q0LaqtdCPpCe8kFMo+4
-3WPK3vOfj0oPqK2VMerTvXAW1tX732Ui+50b+2koLFHjkIc9W0OASH36HiZWqizF
-3a6a9Xw9T6qX8ZepAWWIiG+7CM+K8/31w2WU1zfFmLTXIGu+sZppyKKQZFLLCsa3
-ZiFIbu830uIG/9KP6Gsl/x40+383iLSck8tFMa4GLMh0EZKG7yDgngAyRthLrxoB
-btdyS/0hJ9Z1mX5Xx0GUO3T+yrJOYf/t7tjlMdlyqfu8CMfJbZV0oRBLzc9Z6zTP
-xAweamhn3WKuz8qf0R6E90Phn1YOqz+3Er3ljHaYRQScqicLMy6c3si+jduBzSGa
-/idHLx9Ntct3UkxOcWHb
-=Tp2x
------END PGP SIGNATURE-----
+    "powerpc-linux-ld: TOC section size exceeds 64k"
 
---Signature=_Thu__29_Mar_2012_11_51_17_+1100_pSTJ.lilrThePGqA--
+i.e. it never links into anything a person could actually try and boot anyway.
+
+So, just knowing "yes that is bogus because you've got a giant kernel
+with multiple TOC" would be useful information here.
+
+Thanks,
+Paul.
