@@ -1,71 +1,45 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
-Date: Wed, 28 Mar 2012 16:47:18 -0600
-Message-ID: <20120328224718.8C7B33E0E4D@localhost>
-References: <20120323143237.9b5917955cb42951f0368ec4@canb.auug.org.au> <20120323094139.GA7231@sortiz-mobl> <20120324173152.494DA3E0A26@localhost> <20120326082515.GB20638@sortiz-mobl>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:58293 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758285Ab2C2BZW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Mar 2012 21:25:22 -0400
-Received: by pbcun15 with SMTP id un15so2591496pbc.19
-        for <linux-next@vger.kernel.org>; Wed, 28 Mar 2012 18:25:22 -0700 (PDT)
-In-Reply-To: <20120326082515.GB20638@sortiz-mobl>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benoit Cousson <b-cousson@ti.com>, Felipe Balbi <balbi@ti.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH] sound: fix oss/msnd_pinnacle module param type
+Date: Wed, 28 Mar 2012 18:26:13 -0700
+Message-ID: <4F73BA35.7010009@xenotime.net>
+References: <20120328171401.354ddb56727a26fe64b35ddf@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20120328171401.354ddb56727a26fe64b35ddf@canb.auug.org.au>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 26 Mar 2012 10:25:15 +0200, Samuel Ortiz <sameo@linux.intel.com> wrote:
-> On Sat, Mar 24, 2012 at 05:31:52PM +0000, Grant Likely wrote:
-> > On Fri, 23 Mar 2012 10:41:39 +0100, Samuel Ortiz <sameo@linux.intel.com> wrote:
-> > > Hi Stephen,
-> > > 
-> > > On Fri, Mar 23, 2012 at 02:32:37PM +1100, Stephen Rothwell wrote:
-> > > > Hi Samuel,
-> > > > 
-> > > > Today's linux-next merge of the mfd tree got a conflict in
-> > > > drivers/mfd/twl-core.c between commits 5769089ac725 ("mfd: twl-core.c:
-> > > > Fix the number of interrupts managed by twl4030"), 75294957be1d
-> > > > ("irq_domain: Remove 'new' irq_domain in favour of the ppc one") and
-> > > > 964dba283439 ("devicetree: Add empty of_platform_populate() for !
-> > > > CONFIG_OF_ADDRESS (sparc)") from Linus' tree and commits 9e1786202704
-> > > > ("mfd: Make twl-core not depend on pdata->irq_base/end") and 78518ffa08fc
-> > > > ("mfd: Move twl-core IRQ allocation into twl[4030|6030]-irq files") from
-> > > > the mfd tree.
-> > > > 
-> > > > I *think* that the right thing to do is to use the version from the mfd
-> > > > tree ...
-> > > That's correct.
-> > > I have a for-next-merge branch where I usually have the merge conflicts with
-> > > Linus tree fixed, in case you're interested.
-> > > 
-> > > 
-> > > > I do wonder why I only got this now (in the merge window) ...
-> > > I got a pull request from Benoit a couple days before the merge window opened.
-> > > Then I realized part of the pull request contained a merge of one of Grant's
-> > > branch. So I wanted to wait for Grant's code to get in before picking the mfd
-> > > work on top of it. I didn't want to send a pull request to Linus with a merge
-> > > point for something that would have been already merged. Maybe I was wrong,
-> > > you tell me.
-> > 
-> > It should have gone into linux-next before then.  Waiting for my tree
-> > to hit linus' tree defeats the purpose of linux-next.  Now you're
-> > branch hasn't had any testing and therefore is a risky merge.
-> The branch has been tested by TI folks, on 3 different TI platforms. And the
-> patches we're talking about are all TI's twl related ones.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-...hasn't had any integration testing.  It isn't the risk to your
-platform that is the concern (indeed, I'd expect it to be tested on
-the TI platforms).  It's the risk of breakage to other users that is
-the issue.  That's why linux-next exists, to catch post-merge breakage
-before the merge window opens, and that is why it is important to get
-the branches in before the window opens.
+Fix module parameter data type to eliminate build warning.
 
-In fact, this exact driver caused problems in linux-next before the
-merge window opened that affected Randy Dunlap and Andrew Morton.
-The irq_domain changes caused twl build failures on allmodconfig.  So,
-even though it is "only" driver code being touched here, it still
-affects the larger kernel community.
+sound/oss/msnd_pinnacle.c:1727:1: warning: return from incompatible pointer type
 
-g.
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
+ sound/oss/msnd_pinnacle.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20120328.orig/sound/oss/msnd_pinnacle.c
++++ linux-next-20120328/sound/oss/msnd_pinnacle.c
+@@ -1631,7 +1631,7 @@ static int ide_irq __initdata = 0;
+ static int joystick_io __initdata = 0;
+ 
+ /* If we have the digital daugherboard... */
+-static int digital __initdata = 0;
++static bool digital __initdata = false;
+ #endif
+ 
+ static int fifosize __initdata =	DEFFIFOSIZE;
