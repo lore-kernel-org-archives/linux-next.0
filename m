@@ -1,78 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (Linus'
- tree related)
-Date: Fri, 30 Mar 2012 17:31:16 +1100
-Message-ID: <20120330173116.ef39d9bdda2ad96ab7e57f16@canb.auug.org.au>
-References: <20120330143156.6c55bd32d207a074f65d1b16@canb.auug.org.au>
-	<20120329.233937.885408108371285308.davem@davemloft.net>
-	<20120330.014500.609615234139434409.davem@davemloft.net>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: build warning after merge of the hid tree
+Date: Fri, 30 Mar 2012 10:45:18 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1203301043180.25526@pobox.suse.cz>
+References: <20120329115117.70e8660dbd0c73354486eba9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__30_Mar_2012_17_31_16_+1100_hjVd/VvPRUWJRxl."
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55026 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751001Ab2C3Gbe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Mar 2012 02:31:34 -0400
-In-Reply-To: <20120330.014500.609615234139434409.davem@davemloft.net>
+Received: from cantor2.suse.de ([195.135.220.15]:37367 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759611Ab2C3IpU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 30 Mar 2012 04:45:20 -0400
+In-Reply-To: <20120329115117.70e8660dbd0c73354486eba9@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: dhowells@redhat.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jiri Kosina <jikos@jikos.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Przemo Firszt <przemo@firszt.eu>
 
---Signature=_Fri__30_Mar_2012_17_31_16_+1100_hjVd/VvPRUWJRxl.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 29 Mar 2012, Stephen Rothwell wrote:
 
-Hi Dave,
+> After merging the hid tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+> 
+> drivers/hid/Kconfig:595:error: recursive dependency detected!
+> drivers/hid/Kconfig:595:	symbol HID_WACOM depends on HID_WACOM
+> 
+> Caused (very obviously) by commit 224b321b312e ("HID: wacom: Remove
+> CONFIG_HID_WACOM_POWER_SUPPLY option").
 
-On Fri, 30 Mar 2012 01:45:00 -0400 (EDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> From: David Miller <davem@davemloft.net>
-> Date: Thu, 29 Mar 2012 23:39:37 -0400 (EDT)
->=20
-> >> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> >> Date: Fri, 30 Mar 2012 14:26:24 +1100
-> >> Subject: [PATCH] sparc: fix fallout from system.h split
-> >>=20
-> >> Fixes this build error:
-> >>=20
-> >> kernel/signal.c: In function 'ptrace_stop':
-> >> kernel/signal.c:1860:3: error: implicit declaration of function 'synch=
-ronize_user_stack' [-Werror=3Dimplicit-function-declaration]
-> >>=20
-> >> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->=20
-> Unfortunately there's more changes needed to fix the allmodconfig
-> build on sparc64 completely, I'll push it all to Linus.
+Yeah, it has been already fixed in my tree a few hours after the first 
+commit, but I raced with you snapshotting the tree. It should be gone now.
 
-Thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> Please test this stuff.  And don't rush stuff in during the merge window ...
 
---Signature=_Fri__30_Mar_2012_17_31_16_+1100_hjVd/VvPRUWJRxl.
-Content-Type: application/pgp-signature
+Hm, I accidentally pushed it out to for-next, even though it's not 
+destined for current merge window. Will flush the for-next branch now, 
+sorry for that. I don't have anything pending for this merge window at the 
+moment, so the for-next queue definitely should be empty.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Thanks,
 
-iQIcBAEBCAAGBQJPdVM0AAoJEECxmPOUX5FEUT4QAIDvqsvI3p1v/M4CrNAh0Ql3
-5JQ7rOUzyScgxXiSykPg4Xv3x8or69eMnIfIJ6LYRS+8oBHHgnOPvJDXLL32ljv2
-QGqVEcQNIkafB/VkKpQCdSbDkSSl7AMxh+a+WayM9T+kUovIN+P7eIcvnuluuax7
-5BuHsTY+/eANyvC52SHT55HuC4/i6044n21t6LslqvT4UMo4L9yo02DxmvWEa2uO
-2U48jg3weO6+vExEU/3KLCnvruKuIDtmVaE5OprCLqip2fQmy2nOpPye3hnTo/gr
-oh5mzm5TLICqvVE+/5yWHEiShzylMDUeFZfYzo26U3nJmMhekZkErsYk4+gNU0tC
-6ipRy6UDmrMyblibpkCu7aIBTdXG8NpFm4uHRc6RQ2JeagBDK6dDy77ITsVsHctL
-s9Q19LTJQ95RDvlro4TnXfVTli0DJ+tKCW+WBJljFOhtK6FZ0zHQ82s5LYxzVBo1
-9UGYfiVX4lp1jBLA5ivUgbBMMBblsYwPLiBoMY1fP7dOn/4ufON7rBTi9hGjNwVS
-79eGy7ehWpKiVUa28GFZUlNRQjOkWjOauf/hP7FFJVxG3tLsyJZsT31Hgm0GlbYp
-pv0FB+DzX64ezLas0cnVZYCXL3s1MsHomOizmbsUeH1KA71whRNN4AAtBGq6oxP+
-YXM6KMD9IPCgsdIB2jNm
-=Wxwv
------END PGP SIGNATURE-----
-
---Signature=_Fri__30_Mar_2012_17_31_16_+1100_hjVd/VvPRUWJRxl.--
+-- 
+Jiri Kosina
+SUSE Labs
