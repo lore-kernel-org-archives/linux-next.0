@@ -1,277 +1,88 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: triage for March 29, 2012
-Date: Thu, 29 Mar 2012 19:04:38 -0400
-Message-ID: <20120329230438.GA25565@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm tree with Linus' tree
+Date: Fri, 30 Mar 2012 11:11:23 +1100
+Message-ID: <20120330111123.300bf9558ee25ac9f46a7ebe@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__30_Mar_2012_11_11_23_+1100_MbaMWvT=xMvRkiwd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:38384 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760128Ab2C2XEo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Mar 2012 19:04:44 -0400
-Content-Disposition: inline
+Received: from haggis.pcug.org.au ([203.10.76.10]:48665 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753054Ab2C3ALg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Mar 2012 20:11:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, David Howells <dhowells@redhat.com>, Linus <torvalds@linux-foundation.org>
 
-NFS breakage was still present in this build set. But a fix is
-in for the build starting in a few hours.  See the linux-nfs
-list for details.
-	http://www.spinics.net/lists/linux-nfs/msg28812.html
+--Signature=_Fri__30_Mar_2012_11_11_23_+1100_MbaMWvT=xMvRkiwd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The circular WACOM depends on WACOM should also be fixed in the
-last build set this week starting shortly.
-	http://marc.info/?l=linux-next&m=133305158619609&w=2
+Hi Russell,
 
-Finally, the blackfin failure, of trying to put 10lbs of stuff
-in a 5lb bag should also be fixed on this last build.  Thanks to
-MikeF for digging into this. So hopefully the last day for all
-orange on blackfin.
-	http://git.kernel.org/?p=linux/kernel/git/lliubbo/blackfin.git;a=commit;h=410d50a1dd8ff8298b5c27d1f1877c8018ddd817
+Today's linux-next merge of the arm tree got conflicts in
+arch/arm/mach-integrator/core.c and arch/arm/mach-integrator/pci.c
+between commit 9f97da78bf01 ("Disintegrate asm/system.h for ARM") from
+Linus' tree and commit 695436e3738e ("ARM: 7349/1: integrator: convert to
+sparse irqs") from the arm tree.
 
-With Friday's build underway in a matter of hours, we are possibly
-looking at the last 3.4 based linux-next build.
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-New breakage since last report:
-	<none>
+diff --cc arch/arm/mach-integrator/core.c
+index 1a65d77,304dfb2..0000000
+--- a/arch/arm/mach-integrator/core.c
++++ b/arch/arm/mach-integrator/core.c
+@@@ -25,8 -25,10 +25,9 @@@
+ =20
+  #include <mach/hardware.h>
+  #include <mach/platform.h>
+- #include <asm/irq.h>
+  #include <mach/cm.h>
++ #include <mach/irqs.h>
++=20
+ -#include <asm/system.h>
+  #include <asm/leds.h>
+  #include <asm/mach-types.h>
+  #include <asm/mach/time.h>
+diff --cc arch/arm/mach-integrator/pci.c
+index 36068f4,e15aa43..0000000
+--- a/arch/arm/mach-integrator/pci.c
++++ b/arch/arm/mach-integrator/pci.c
+@@@ -26,7 -26,7 +26,6 @@@
+  #include <linux/interrupt.h>
+  #include <linux/init.h>
+ =20
+- #include <asm/irq.h>
+ -#include <asm/system.h>
+  #include <asm/mach/pci.h>
+  #include <asm/mach-types.h>
+ =20
 
-Randconfig fails that may or may not be new (by their very nature):
-   i386: pktgen.c: call to 'copy_from_user_overflow' declared with
-	 attribute error: copy_from_user() buffer size is not provably correct
-	(http://kisskb.ellerman.id.au/kisskb/buildresult/5993284/)
-	Note - this has been discussed on netdev in the past [non-error].
-   powerpc: of_platform.c: undefined ref to `.pcibios_claim_one_bus'
-	(http://kisskb.ellerman.id.au/kisskb/buildresult/5993405/)
+--Signature=_Fri__30_Mar_2012_11_11_23_+1100_MbaMWvT=xMvRkiwd
+Content-Type: application/pgp-signature
 
-Builds that are fixed since last report:
-	ARM:cm_x2xx_defconfig
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-The following have fixes posted for quite some time now, but the fixes
-haven't yet been integrated.  Please have a look at these, as it would
-be nice to have them in tree before wk2 of the merge window closes.
-	ARM:magician_defconfig
-	ARM:collie_defconfig
-	ARM:iop32x_defconfig,iop33x_defconfig
-	ARM:em_x270_defconfig
-	AVR32:defconfig
+iQIcBAEBCAAGBQJPdPorAAoJEECxmPOUX5FEqpoQAKT2bvqEnwGjlGsLHwRYlVu+
+Z8cAyRTI4OSgFRxwi8Pic4J745NEHf9ApHCVN9J9iN8k/xFzZBCr4zn4jVcn0mNK
+B3abexUXbiM4pPIM5qvQaWV9hqdkBLx+GGF/jOc4CtBC4gCpFrwR+ZKMKYkk+OK3
+DDxl04MksZL6KYn0kibgODXAv5weBAR6yEqIUcTM1DVvvG6XLgz/4hvPUGNc3le+
+PzlggTWZLuNwPEWNKsqXwa25lRnWiaObUqbIvep/leJCMJh3ArM+Sk56bTYNuBdk
+Tp+p5G2YIE6yIooQUlDEJVbfGvg5pH/4PTezKK3B1xia+MWeFVZRZTTJdJlIMr2j
+AosOeIBI0OWTIChB3Wky3HVJgk84oysewafxl2nnOQh2O+tZNRd280aiI1QLAVUl
+akWEfM+VBg/HFZt625U8IGbgPUu3UFxEyH6njZa6gvASwCyDT5pO2RffzEIhvfQM
+ZEJGTc7tLWXbmGF1xP6Gnz/EQQOUdfUl/zVpeecKc54e2bZUeFhZO3Ra9oQRvBFZ
+GoTM3DAVL1YTJtjoljPV4rrM863heLXn2bjH9DqYZ9oCfWcpgjzFuQ6jY2ijM+gX
+kQealiZBsOk5Ja9m3qqn/pVUOl8oRdtgwLcHJKIEc/sZ4jMsERBJ2IMmrHCKTjTl
+06joHl7QcouezUVFfIjg
+=hLUg
+-----END PGP SIGNATURE-----
 
-
-Note: The randconfig fails are only listed once and not tracked
-in the below listing.
-
-            ------------------------------------------------
-
-Latest results at:
-	http://kisskb.ellerman.id.au/kisskb/branch/9/
-
-Failures as of March 29th, 2012:
-================================
-
-AM33:asb2303_defconfig,asb2364_defconfig
-	when:	Mar 15
-	why:	cc1: error: unrecognized command line option '-mmem-funcs'
-	status:	Possible fix from TonyB sent for review.
-	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
-----------------
-
-ARM:netx_defconfig,pnx4008_defconfig 
-	when:	Mar 14
-	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
-	ref:	https://lkml.org/lkml/2012/3/13/670
-
-ARM:collie_defconfig
-	when:	Feb 14
-	why:	locomolcd.c: error: 'sa1100fb_lcd_power' undeclared
-	status:	fixed (PaulG) - pending integration
-	fix:	http://marc.info/?l=linux-next&m=133105157730749&w=2
-	ref:
-
-ARM:iop32x_defconfig,iop33x_defconfig
-	when:	Nov 23
-	why:	restart.c: implicit declaration of function 'soft_restart'
-	status:	fixed (PaulG) - pending integration
-	fix:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081461.html
-	fix:	https://lkml.org/lkml/2012/3/14/253
-	ref:
-
-ARM:ixp4xx_defconfig
-	when:	Oct 26
-	why:	gpio.h: implicit declaration of function '__gpio_get_value'
-	status:	fixed (Imre Kaloz) - but possibly needs rework?
-	fix:	https://lkml.org/lkml/2012/2/8/288
-	ref:	https://lkml.org/lkml/2012/2/8/287
-
-ARM:magician_defconfig
-	when:	Feb 13
-	why:	magician.c: unknown field 'dev' specified in initializer
-	status:	fixed (PaulG) - pending integration
-	fix:	http://marc.info/?l=linux-arm-kernel&m=133124258707457&w=2
-	ref:	http://marc.info/?l=linux-next&m=133106325903524&w=2
-
-ARM:em_x270_defconfig
-	when:	Feb 14
-	why:	em-x270.c: unknown field 'dev' specified in initializer
-	status:	 fixed (PaulG) - pending integration
-	fix:	http://www.spinics.net/lists/arm-kernel/msg164012.html
-	ref:	http://www.spinics.net/lists/arm-kernel/msg163135.html
-
-ARM:raumfeld_defconfig
-	when:	Nov 23
-	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
-	status:	perhaps broken since 2010?  See ref below.
-	fix:	
-	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
-
-ARM:arm-allnoconfig
-	when:	forever
-	why:	not supported
-	status:	nothing pending, but patches accepted
-	fix:	n/a
-	ref:	https://lkml.org/lkml/2009/4/30/105
-	ref:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081218.html
-----------------
-
-AVR32:defconfig
-	when:	Mar 18
-	why:	board.h: atmel_nand.h: No such file or directory
-	status:	reported/fixed (PaulG)
-	fix:	http://marc.info/?l=linux-arm-kernel&m=133239363802517&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5917107/
-
-AVR32:allnoconfig
-	when:	May 26 2010, 20:49
-	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
-	status:
-	fix:
-	ref:
----------------
-
-bfin:***all-builds***
-	when:	Mar 26
-	why:	bfin-uclinux-ld: L1 data A overflow!
-	status:	unknown, binutils issue?
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5981475/
----------------
-
-cris:***all-builds***
-	when:	Mar 25, 22:05
-	why:	include/linux/types.h:25: error expected ... before 'ino_t'
-	status:	
-	fix:	
-	ref:	
-----------------
-
-crisv32:***all-builds***
-	when:	Mar 25, 22:05
-	why:	include/linux/types.h:25: error expected ... before 'ino_t'
-	status:	
-	fix:	
-	ref:	
-----------------
-
-frv:defconfig
-	when:	Mar 15
-	why:	arch/frv/kernel/head.S operand out of range
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884666/
-----------------
-
-h8300:defconfig
-	when:	Mar 15
-	why:	time.c: implicit declaration of function 'get_irq_regs'
-	why:	also seems gcc suffers an ICE
-	status:	ICE bug lodged with gcc folks (TonyB)
-	fix:
-	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
-----------------
-
-i386:allmodconfig
-	when:	Mar 8, 20:41
-	why:	ERROR: "mdfld_set_brightness" [drivers/gpu/drm/gma500/gma500_gfx.ko] undefined!
-	status:	
-	fix:
-	ref:	https://lkml.org/lkml/2012/3/24/122
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878506/
-----------------
-
-m32r:m32700ut.smp_defconfig
-	when:	Mar 15
-	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
-----------------
-
-m68k:sun3_defconfig,m68k_defconfig
-	when:	Mar 26
-	why:	sun3_NCR5380.c: static decl of 'sun3scsi_proc_info' follows non-static
-	status:	
-	fix:	
-	ref:	http://marc.info/?l=linux-next&m=133279244817422&w=2
-
-m68k:allmodconfig
-	when:	Mar 16
-	why:	persistent_ram.c: implicit declaration of 'memblock_reserve'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884324/
-	ref:	http://www.spinics.net/lists/linux-next/msg19343.html
-----------------
-
-mips:allmodconfig
-	when:
-	why:	driver_pci_host.c: implicit declaration of function 'pcibios_enable_device'
-	status: one of many fixes mips needs...
-	fix:	http://marc.info/?l=linux-wireless&m=133272031621916&w=2
-	ref:	http://patchwork.ozlabs.org/patch/148614/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5807000/
-----------------
-
-parisc:allmodconfig
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-
-parisc64:a500_defconfig 
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-powerpc:allyesconfig
-	when:	May 18 2009, 22:11
-	why:	fat ass kernel with everything simply won't link
-	status:	need to fix build config to ignore the final link
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5806793/
-------------------
-
-sh4:***all-builds***
-	when:	Feb 24, 17:38
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-um:um-defconfig
-	when:	Sep 16 2010, 01:28
-	why:	os-Linux/start_up.c: error: 'PTRACE_SETOPTIONS' undeclared
-	status:	clearly broken forever, so does anyone care?
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/target/2979/
+--Signature=_Fri__30_Mar_2012_11_11_23_+1100_MbaMWvT=xMvRkiwd--
