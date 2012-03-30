@@ -1,56 +1,50 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [GIT PULL/NEXT] sched/arch: Introduce the
- finish_arch_post_lock_switch() scheduler callback
-Date: Fri, 30 Mar 2012 18:21:24 +0100
-Message-ID: <20120330172124.GA28178@arm.com>
-References: <20120313101859.GA2626@elte.hu>
- <20120313112729.GA25835@flint.arm.linux.org.uk>
- <20120313115640.GA27378@elte.hu>
- <20120313121707.GA2174@flint.arm.linux.org.uk>
- <20120313124433.GA15333@elte.hu>
- <20120313130427.GC2174@flint.arm.linux.org.uk>
- <20120313133115.GA21634@elte.hu>
- <20120313154716.GA31293@elte.hu>
- <20120330135255.GC23295@arm.com>
- <20120330142544.GA13966@gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] staging: fix android persistent_ram printk formats
+Date: Fri, 30 Mar 2012 10:31:32 -0700
+Message-ID: <4F75EDF4.8020900@xenotime.net>
+References: <20120330144443.4f9c6fdbd7f877e00b79b6da@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:42512 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1758946Ab2C3RVv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Mar 2012 13:21:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20120330142544.GA13966@gmail.com>
+Received: from oproxy3-pub.bluehost.com ([69.89.21.8]:60552 "HELO
+	oproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756560Ab2C3Rbg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Mar 2012 13:31:36 -0400
+In-Reply-To: <20120330144443.4f9c6fdbd7f877e00b79b6da@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Russell King <rmk@arm.linux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Brian Swetland <swetland@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org
 
-On Fri, Mar 30, 2012 at 03:25:44PM +0100, Ingo Molnar wrote:
-> 
-> * Catalin Marinas <catalin.marinas@arm.com> wrote:
-> 
-> > Hi Ingo,
-> > 
-> > On Tue, Mar 13, 2012 at 03:47:16PM +0000, Ingo Molnar wrote:
-> > > Anyway - regardless of any differences and flames about workflow 
-> > > details, both you and Catalin should still feel free to use both 
-> > > the original commit (1cf00341547a) or the tip:sched/arch branch 
-> > > I provided (01f23e1630d9).
-> > 
-> > About the scheduler hook patch, would it go into mainline via 
-> > the sched/urgent or the sched/arch branch? I would like to 
-> > rebase the ARM-specific patches on top of one of these 
-> > branches and send you a pull request (with Russell's ack).
-> 
-> I've merged it into sched/urgent yesterday, which I'll send to 
-> Linus - so you can base it on that.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Thanks.
+Fix printk format warnings in android/persistent_ram.c:
 
-Russell, are you happy for me to add your acked-by to the ARM patches?
+drivers/staging/android/persistent_ram.c:426:4: warning: format '%ld' expects type 'long int', but argument 2 has type 'size_t'
+drivers/staging/android/persistent_ram.c:426:4: warning: format '%ld' expects type 'long int', but argument 3 has type 'size_t'
+drivers/staging/android/persistent_ram.c:430:4: warning: format '%ld' expects type 'long int', but argument 2 has type 'size_t'
+drivers/staging/android/persistent_ram.c:430:4: warning: format '%ld' expects type 'long int', but argument 3 has type 'size_t'
 
--- 
-Catalin
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Brian Swetland <swetland@google.com>
+---
+ drivers/staging/android/persistent_ram.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- linux-next-20120330.orig/drivers/staging/android/persistent_ram.c
++++ linux-next-20120330/drivers/staging/android/persistent_ram.c
+@@ -424,11 +424,11 @@ struct persistent_ram_zone *__persistent
+ 		if (buffer_size(prz) > prz->buffer_size ||
+ 		    buffer_start(prz) > buffer_size(prz))
+ 			pr_info("persistent_ram: found existing invalid buffer,"
+-				" size %ld, start %ld\n",
++				" size %zu, start %zu\n",
+ 			       buffer_size(prz), buffer_start(prz));
+ 		else {
+ 			pr_info("persistent_ram: found existing buffer,"
+-				" size %ld, start %ld\n",
++				" size %zu, start %zu\n",
+ 			       buffer_size(prz), buffer_start(prz));
+ 			persistent_ram_save_old(prz);
+ 		}
