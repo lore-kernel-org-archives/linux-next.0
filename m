@@ -1,56 +1,38 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 09/11] firewire: restore the device.h include in linux/firewire.h
-Date: Sun,  1 Apr 2012 16:38:45 -0400
-Message-ID: <1333312727-11428-10-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 08/11] frv: fix warnings in mb93090-mb00/pci-dma.c about implicit EXPORT_SYMBOL
+Date: Sun,  1 Apr 2012 16:38:44 -0400
+Message-ID: <1333312727-11428-9-git-send-email-paul.gortmaker@windriver.com>
 References: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:54142 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752343Ab2DAUjH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Apr 2012 16:39:07 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: dhowells@redhat.com
 Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+List-Id: linux-next.vger.kernel.org
 
-Commit 313162d0b83836e2f57e51b9b8650fb4b9c396ea
+To fix:
 
-    "device.h: audit and cleanup users in main include dir"
+arch/frv/mb93090-mb00/pci-dma.c:31:1: warning: data definition has no type or storage class [enabled by default]
+arch/frv/mb93090-mb00/pci-dma.c:31:1: warning: type defaults to 'int' in declaration of 'EXPORT_SYMBOL' [-Wimplicit-int]
+arch/frv/mb93090-mb00/pci-dma.c:31:1: warning: parameter names (without types) in function declaration [enabled by default]
+arch/frv/mb93090-mb00/pci-dma.c:38:1: warning: data definition has no type or storage class [enabled by default]
 
-exchanged an include <linux/device.h> for a struct *device
-but in actuality I misread this file when creating 313162d
-and it should have remained an include.
-
-There were no build regressions since all consumers were
-already getting device.h anyway, but make it right regardless.
-
-Reported-by: Stefan Richter <stefanr@s5r6.in-berlin.de>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- include/linux/firewire.h |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+ arch/frv/mb93090-mb00/pci-dma.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/include/linux/firewire.h b/include/linux/firewire.h
-index 4db7b68..cdc9b71 100644
---- a/include/linux/firewire.h
-+++ b/include/linux/firewire.h
-@@ -2,6 +2,7 @@
- #define _LINUX_FIREWIRE_H
- 
- #include <linux/completion.h>
-+#include <linux/device.h>
+diff --git a/arch/frv/mb93090-mb00/pci-dma.c b/arch/frv/mb93090-mb00/pci-dma.c
+index 41098a3..4f8d8bc 100644
+--- a/arch/frv/mb93090-mb00/pci-dma.c
++++ b/arch/frv/mb93090-mb00/pci-dma.c
+@@ -13,6 +13,7 @@
  #include <linux/dma-mapping.h>
- #include <linux/kernel.h>
- #include <linux/kref.h>
-@@ -64,8 +65,6 @@
- #define CSR_MODEL		0x17
- #define CSR_DIRECTORY_ID	0x20
- 
--struct device;
--
- struct fw_csr_iterator {
- 	const u32 *p;
- 	const u32 *end;
+ #include <linux/list.h>
+ #include <linux/pci.h>
++#include <linux/export.h>
+ #include <linux/highmem.h>
+ #include <linux/scatterlist.h>
+ #include <asm/io.h>
 -- 
 1.7.9.1
