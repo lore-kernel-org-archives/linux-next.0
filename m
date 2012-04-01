@@ -1,84 +1,49 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 00/11] Fix up more asm/system.h fallout
-Date: Sun,  1 Apr 2012 16:38:36 -0400
-Message-ID: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 11/11] asm-generic: add linux/types.h to cmpxchg.h
+Date: Sun,  1 Apr 2012 16:38:47 -0400
+Message-ID: <1333312727-11428-12-git-send-email-paul.gortmaker@windriver.com>
+References: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: dhowells@redhat.com
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Arnd Bergmann <arnd@arndb.de>, Jonas Bonn <jonas@southpole.se>
 List-Id: linux-next.vger.kernel.org
 
-Like others, I was surprised it didn't get a soak in linux-next
-before being merged, but I guess what is done is done, so lets
-try and limit the fallout from having any wider of a commit range
-than it already does.
+Builds of the openrisc or1ksim_defconfig show the following:
 
-It is all system.h stuff except for three things.
+  In file included from arch/openrisc/include/generated/asm/cmpxchg.h:1:0,
+                   from include/asm-generic/atomic.h:18,
+                   from arch/openrisc/include/generated/asm/atomic.h:1,
+                   from include/linux/atomic.h:4,
+                   from include/linux/dcache.h:4,
+                   from fs/notify/fsnotify.c:19:
+  include/asm-generic/cmpxchg.h: In function '__xchg':
+  include/asm-generic/cmpxchg.h:34:20: error: expected ')' before 'u8'
+  include/asm-generic/cmpxchg.h:34:20: warning: type defaults to 'int' in type name
 
- 1) an avr32 patch I'd created but the avr32 guys hadn't got
-    signed keys yet, so I might as well get it in here along
-    with other similar build fail fixes (the atmel one).
+and many more lines of similar errors.  It seems specific to the or32
+because most other platforms have an arch specific component that would
+have already included types.h ahead of time, but the o32 does not.
 
- 2) A cosmetic fix to the device.h changeset from me earlier.
-
- 3) A trivial warning fix to an arch/frv specific file.
-
-I'm going to queue this up in my feed branch to linux-next
-so we can start reducing the number of build failures from what
-we had on Friday.
-
-Paul.
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Jonas Bonn <jonas@southpole.se>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
+ include/asm-generic/cmpxchg.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-The following changes since commit dd775ae2549217d3ae09363e3edb305d0fa19928:
-
-  Linux 3.4-rc1 (2012-03-31 16:24:09 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulg/linux.git buildfixes
-
-for you to fetch changes up to af901116760f93297ad53cc3a0cc5e370e9ccb5a:
-
-  asm-generic: add linux/types.h to cmpxchg.h (2012-04-01 15:59:54 -0400)
-
-----------------------------------------------------------------
-
-Paul Gortmaker (11):
-  irq_work: fix compile failure on MIPS from system.h split
-  ARM: mach-msm: fix compile fail from system.h fallout
-  avr32: fix nop compile fails from system.h split up
-  avr32: fix build failures from mis-naming of atmel_nand.h
-  blackfin: fix cmpxchg build fails from system.h fallout
-  parisc: fix missing cmpxchg file error from system.h split
-  sh: fix several build failures from system.h fallout
-  frv: fix warnings in mb93090-mb00/pci-dma.c about implicit EXPORT_SYMBOL
-  firewire: restore the device.h include in linux/firewire.h
-  tile: fix multiple build failures from system.h dismantle
-  asm-generic: add linux/types.h to cmpxchg.h
-
- arch/arm/mach-msm/include/mach/uncompress.h |    1 +
- arch/avr32/include/asm/mmu_context.h        |    1 +
- arch/avr32/mach-at32ap/include/mach/board.h |    2 +-
- arch/blackfin/include/asm/cmpxchg.h         |    3 +-
- arch/frv/mb93090-mb00/pci-dma.c             |    1 +
- arch/parisc/include/asm/atomic.h            |  107 +------------------------
- arch/parisc/include/asm/cmpxchg.h           |  116 +++++++++++++++++++++++++++
- arch/sh/kernel/cpu/fpu.c                    |    1 +
- arch/sh/kernel/cpu/sh4/fpu.c                |    1 +
- arch/sh/mm/cache-sh4.c                      |    1 +
- arch/sh/mm/flush-sh4.c                      |    1 +
- arch/tile/include/asm/atomic.h              |   50 +-----------
- arch/tile/include/asm/cmpxchg.h             |   73 +++++++++++++++++
- arch/tile/kernel/process.c                  |    1 +
- arch/tile/kernel/stack.c                    |    1 +
- include/asm-generic/cmpxchg.h               |    1 +
- include/linux/firewire.h                    |    3 +-
- include/linux/platform_data/atmel.h         |    6 +-
- kernel/irq_work.c                           |    1 +
- 19 files changed, 210 insertions(+), 161 deletions(-)
- create mode 100644 arch/parisc/include/asm/cmpxchg.h
- create mode 100644 arch/tile/include/asm/cmpxchg.h
-
+diff --git a/include/asm-generic/cmpxchg.h b/include/asm-generic/cmpxchg.h
+index 8a36183..1488302 100644
+--- a/include/asm-generic/cmpxchg.h
++++ b/include/asm-generic/cmpxchg.h
+@@ -10,6 +10,7 @@
+ #error "Cannot use generic cmpxchg on SMP"
+ #endif
+ 
++#include <linux/types.h>
+ #include <linux/irqflags.h>
+ 
+ #ifndef xchg
 -- 
 1.7.9.1
