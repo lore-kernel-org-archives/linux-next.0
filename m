@@ -1,210 +1,100 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 10/11] tile: fix multiple build failures from system.h dismantle
-Date: Sun,  1 Apr 2012 16:38:46 -0400
-Message-ID: <1333312727-11428-11-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 07/11] sh: fix several build failures from system.h fallout
+Date: Sun,  1 Apr 2012 16:38:43 -0400
+Message-ID: <1333312727-11428-8-git-send-email-paul.gortmaker@windriver.com>
 References: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: dhowells@redhat.com
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Chris Metcalf <cmetcalf@tilera.com>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Paul Mundt <lethal@linux-sh.org>
 List-Id: linux-next.vger.kernel.org
 
-Commit bd119c69239322caafdb64517a806037d0d0c70a
+commit e839ca528718e68cad32a307dc9aabf01ef3eb05
 
-    "Disintegrate asm/system.h for Tile"
+    "Disintegrate asm/system.h for SH"
 
-created the asm/switch_to.h file, but did not add an include
-of it to all its users.
+created the new file asm/cache_insns.h but it didn't add
+an include for all the users of it.
 
-Also, commit b4816afa3986704d1404fc48e931da5135820472
+The failure on fpu.c (also seen below) showed up roughly
+at the same time, and since the fix is trivial (include traps.h)
+I did not bother to bisect to 100% confirm it was caused by
+the system.h disintegration.
 
-        "Move the asm-generic/system.h xchg() implementation to asm-generic/cmpxchg.h"
+arch/sh/mm/flush-sh4.c:16:2: error: implicit declaration of function 'register_align' [-Werror=implicit-function-declaration]
+arch/sh/mm/flush-sh4.c:23:3: error: implicit declaration of function '__ocbwb' [-Werror=implicit-function-declaration]
+arch/sh/mm/flush-sh4.c:57:3: error: implicit declaration of function '__ocbp' [-Werror=implicit-function-declaration]
+arch/sh/mm/flush-sh4.c:87:3: error: implicit declaration of function '__ocbi' [-Werror=implicit-function-declaration]
+cc1: all warnings being treated as errors
+make[2]: *** [arch/sh/mm/flush-sh4.o] Error 1
+arch/sh/mm/cache-sh4.c:70:3: error: implicit declaration of function '__ocbwb' [-Werror=implicit-function-declaration]
+cc1: all warnings being treated as errors
+make[2]: *** [arch/sh/mm/cache-sh4.o] Error 1
+arch/sh/kernel/cpu/fpu.c:81:2: error: 'TRAP_HANDLER_DECL' undeclared (first use in this function)
+arch/sh/kernel/cpu/fpu.c:83:20: error: 'regs' undeclared (first use in this function)
+arch/sh/kernel/cpu/fpu.c:83:19: error: called object 'fpu_state_restore' is not a function
+make[3]: *** [arch/sh/kernel/cpu/fpu.o] Error 1
+arch/sh/kernel/cpu/sh4/fpu.c:407:2: error: 'TRAP_HANDLER_DECL' undeclared (first use in this function)
+arch/sh/kernel/cpu/sh4/fpu.c:409:20: error: 'regs' undeclared (first use in this function)
+make[4]: *** [arch/sh/kernel/cpu/sh4/fpu.o] Error 1
 
-introduced the concept of asm/cmpxchg.h but the tile arch
-never got one.  Fork the cmpxchg content out of the asm/atomic.h
-file to create one.
-
-Cc: Chris Metcalf <cmetcalf@tilera.com>
+Cc: Paul Mundt <lethal@linux-sh.org>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- arch/tile/include/asm/atomic.h  |   50 +-------------------------
- arch/tile/include/asm/cmpxchg.h |   73 +++++++++++++++++++++++++++++++++++++++
- arch/tile/kernel/process.c      |    1 +
- arch/tile/kernel/stack.c        |    1 +
- 4 files changed, 77 insertions(+), 48 deletions(-)
- create mode 100644 arch/tile/include/asm/cmpxchg.h
+ arch/sh/kernel/cpu/fpu.c     |    1 +
+ arch/sh/kernel/cpu/sh4/fpu.c |    1 +
+ arch/sh/mm/cache-sh4.c       |    1 +
+ arch/sh/mm/flush-sh4.c       |    1 +
+ 4 files changed, 4 insertions(+), 0 deletions(-)
 
-diff --git a/arch/tile/include/asm/atomic.h b/arch/tile/include/asm/atomic.h
-index bb696da..f246142 100644
---- a/arch/tile/include/asm/atomic.h
-+++ b/arch/tile/include/asm/atomic.h
-@@ -17,6 +17,8 @@
- #ifndef _ASM_TILE_ATOMIC_H
- #define _ASM_TILE_ATOMIC_H
+diff --git a/arch/sh/kernel/cpu/fpu.c b/arch/sh/kernel/cpu/fpu.c
+index 7f1b70c..07fb02f 100644
+--- a/arch/sh/kernel/cpu/fpu.c
++++ b/arch/sh/kernel/cpu/fpu.c
+@@ -1,6 +1,7 @@
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <asm/processor.h>
++#include <asm/traps.h>
+ #include <asm/fpu.h>
  
-+#include <asm/cmpxchg.h>
-+
- #ifndef __ASSEMBLY__
+ int init_fpu(struct task_struct *tsk)
+diff --git a/arch/sh/kernel/cpu/sh4/fpu.c b/arch/sh/kernel/cpu/sh4/fpu.c
+index e74cd6c..36538ff 100644
+--- a/arch/sh/kernel/cpu/sh4/fpu.c
++++ b/arch/sh/kernel/cpu/sh4/fpu.c
+@@ -15,6 +15,7 @@
+ #include <linux/io.h>
+ #include <cpu/fpu.h>
+ #include <asm/processor.h>
++#include <asm/traps.h>
+ #include <asm/fpu.h>
  
- #include <linux/compiler.h>
-@@ -121,54 +123,6 @@ static inline int atomic_read(const atomic_t *v)
-  */
- #define atomic_add_negative(i, v)	(atomic_add_return((i), (v)) < 0)
+ /* The PR (precision) bit in the FP Status Register must be clear when
+diff --git a/arch/sh/mm/cache-sh4.c b/arch/sh/mm/cache-sh4.c
+index 112fea1..c9667d9 100644
+--- a/arch/sh/mm/cache-sh4.c
++++ b/arch/sh/mm/cache-sh4.c
+@@ -19,6 +19,7 @@
+ #include <asm/pgtable.h>
+ #include <asm/mmu_context.h>
+ #include <asm/cacheflush.h>
++#include <asm/cache_insns.h>
  
--/* Nonexistent functions intended to cause link errors. */
--extern unsigned long __xchg_called_with_bad_pointer(void);
--extern unsigned long __cmpxchg_called_with_bad_pointer(void);
--
--#define xchg(ptr, x)							\
--	({								\
--		typeof(*(ptr)) __x;					\
--		switch (sizeof(*(ptr))) {				\
--		case 4:							\
--			__x = (typeof(__x))(typeof(__x-__x))atomic_xchg( \
--				(atomic_t *)(ptr),			\
--				(u32)(typeof((x)-(x)))(x));		\
--			break;						\
--		case 8:							\
--			__x = (typeof(__x))(typeof(__x-__x))atomic64_xchg( \
--				(atomic64_t *)(ptr),			\
--				(u64)(typeof((x)-(x)))(x));		\
--			break;						\
--		default:						\
--			__xchg_called_with_bad_pointer();		\
--		}							\
--		__x;							\
--	})
--
--#define cmpxchg(ptr, o, n)						\
--	({								\
--		typeof(*(ptr)) __x;					\
--		switch (sizeof(*(ptr))) {				\
--		case 4:							\
--			__x = (typeof(__x))(typeof(__x-__x))atomic_cmpxchg( \
--				(atomic_t *)(ptr),			\
--				(u32)(typeof((o)-(o)))(o),		\
--				(u32)(typeof((n)-(n)))(n));		\
--			break;						\
--		case 8:							\
--			__x = (typeof(__x))(typeof(__x-__x))atomic64_cmpxchg( \
--				(atomic64_t *)(ptr),			\
--				(u64)(typeof((o)-(o)))(o),		\
--				(u64)(typeof((n)-(n)))(n));		\
--			break;						\
--		default:						\
--			__cmpxchg_called_with_bad_pointer();		\
--		}							\
--		__x;							\
--	})
--
--#define tas(ptr) (xchg((ptr), 1))
--
- #endif /* __ASSEMBLY__ */
- 
- #ifndef __tilegx__
-diff --git a/arch/tile/include/asm/cmpxchg.h b/arch/tile/include/asm/cmpxchg.h
-new file mode 100644
-index 0000000..276f067
---- /dev/null
-+++ b/arch/tile/include/asm/cmpxchg.h
-@@ -0,0 +1,73 @@
-+/*
-+ * cmpxchg.h -- forked from asm/atomic.h with this copyright:
-+ *
-+ * Copyright 2010 Tilera Corporation. All Rights Reserved.
-+ *
-+ *   This program is free software; you can redistribute it and/or
-+ *   modify it under the terms of the GNU General Public License
-+ *   as published by the Free Software Foundation, version 2.
-+ *
-+ *   This program is distributed in the hope that it will be useful, but
-+ *   WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
-+ *   NON INFRINGEMENT.  See the GNU General Public License for
-+ *   more details.
-+ *
-+ */
-+
-+#ifndef _ASM_TILE_CMPXCHG_H
-+#define _ASM_TILE_CMPXCHG_H
-+
-+#ifndef __ASSEMBLY__
-+
-+/* Nonexistent functions intended to cause link errors. */
-+extern unsigned long __xchg_called_with_bad_pointer(void);
-+extern unsigned long __cmpxchg_called_with_bad_pointer(void);
-+
-+#define xchg(ptr, x)							\
-+	({								\
-+		typeof(*(ptr)) __x;					\
-+		switch (sizeof(*(ptr))) {				\
-+		case 4:							\
-+			__x = (typeof(__x))(typeof(__x-__x))atomic_xchg( \
-+				(atomic_t *)(ptr),			\
-+				(u32)(typeof((x)-(x)))(x));		\
-+			break;						\
-+		case 8:							\
-+			__x = (typeof(__x))(typeof(__x-__x))atomic64_xchg( \
-+				(atomic64_t *)(ptr),			\
-+				(u64)(typeof((x)-(x)))(x));		\
-+			break;						\
-+		default:						\
-+			__xchg_called_with_bad_pointer();		\
-+		}							\
-+		__x;							\
-+	})
-+
-+#define cmpxchg(ptr, o, n)						\
-+	({								\
-+		typeof(*(ptr)) __x;					\
-+		switch (sizeof(*(ptr))) {				\
-+		case 4:							\
-+			__x = (typeof(__x))(typeof(__x-__x))atomic_cmpxchg( \
-+				(atomic_t *)(ptr),			\
-+				(u32)(typeof((o)-(o)))(o),		\
-+				(u32)(typeof((n)-(n)))(n));		\
-+			break;						\
-+		case 8:							\
-+			__x = (typeof(__x))(typeof(__x-__x))atomic64_cmpxchg( \
-+				(atomic64_t *)(ptr),			\
-+				(u64)(typeof((o)-(o)))(o),		\
-+				(u64)(typeof((n)-(n)))(n));		\
-+			break;						\
-+		default:						\
-+			__cmpxchg_called_with_bad_pointer();		\
-+		}							\
-+		__x;							\
-+	})
-+
-+#define tas(ptr) (xchg((ptr), 1))
-+
-+#endif /* __ASSEMBLY__ */
-+
-+#endif /* _ASM_TILE_CMPXCHG_H */
-diff --git a/arch/tile/kernel/process.c b/arch/tile/kernel/process.c
-index 30caeca..ee01b1c 100644
---- a/arch/tile/kernel/process.c
-+++ b/arch/tile/kernel/process.c
-@@ -28,6 +28,7 @@
- #include <linux/tracehook.h>
- #include <linux/signal.h>
- #include <asm/stack.h>
-+#include <asm/switch_to.h>
- #include <asm/homecache.h>
- #include <asm/syscalls.h>
+ /*
+  * The maximum number of pages we support up to when doing ranged dcache
+diff --git a/arch/sh/mm/flush-sh4.c b/arch/sh/mm/flush-sh4.c
+index 75a17f5..59acd8a 100644
+--- a/arch/sh/mm/flush-sh4.c
++++ b/arch/sh/mm/flush-sh4.c
+@@ -1,6 +1,7 @@
+ #include <linux/mm.h>
+ #include <asm/mmu_context.h>
+ #include <asm/cacheflush.h>
++#include <asm/cache_insns.h>
  #include <asm/traps.h>
-diff --git a/arch/tile/kernel/stack.c b/arch/tile/kernel/stack.c
-index 37ee4d0..0be6b01 100644
---- a/arch/tile/kernel/stack.c
-+++ b/arch/tile/kernel/stack.c
-@@ -25,6 +25,7 @@
- #include <asm/page.h>
- #include <asm/tlbflush.h>
- #include <asm/ucontext.h>
-+#include <asm/switch_to.h>
- #include <asm/sigframe.h>
- #include <asm/stack.h>
- #include <arch/abi.h>
+ 
+ /*
 -- 
 1.7.9.1
