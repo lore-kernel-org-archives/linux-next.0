@@ -1,63 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next stats (Was: Linux 3.4-rc1)
-Date: Sun, 1 Apr 2012 23:14:54 +1000
-Message-ID: <20120401231454.c06bf099eff31002e1b02f58@canb.auug.org.au>
-References: <CA+55aFy4aFGRLUrF+rYN3dskTepBtC+=x3B3bc_rzf1OaN_5pw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Sun__1_Apr_2012_23_14_54_+1000_0_zxHSrRzwtLs8.C"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+55aFy4aFGRLUrF+rYN3dskTepBtC+=x3B3bc_rzf1OaN_5pw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 03/11] avr32: fix nop compile fails from system.h split up
+Date: Sun,  1 Apr 2012 16:38:39 -0400
+Message-ID: <1333312727-11428-4-git-send-email-paul.gortmaker@windriver.com>
+References: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:54115 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752343Ab2DAUjB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Apr 2012 16:39:01 -0400
+In-Reply-To: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: dhowells@redhat.com
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
---Signature=_Sun__1_Apr_2012_23_14_54_+1000_0_zxHSrRzwtLs8.C
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To fix:
 
-All these stats are relative to next-20120319 (the last before v3.3).
-Also merge commits are excluded.
+  In file included from kernel/exit.c:61:
+  arch/avr32/include/asm/mmu_context.h: In function 'enable_mmu':
+  arch/avr32/include/asm/mmu_context.h:135: error: implicit
+  declaration of function 'nop'
 
-Commits in next-20120319 (relative to v3.3):	9444
-Commits in v3.4-rc1 (relative to v3.3):		9248
-Commits in v3.4-rc1 common with next-20120319:	6847	74.03%
-Further commits with the same patch_id:		 935	10.11%	(1)
-Further commits with the same subject:		  63	 0.68%	(2)
-Total (close to) common patches:		7845	84.82%
+It needs an include of the new file created in:
 
-Non common patches:				1403	15.17%
+commit ae473946586680b01c13975a3b674de23ad7c93e
 
-(1) would include quilt trees and rebased git trees.
-(2) would include some patches that have been fixed up (in Andrew's case
-some of these fixes have been in linux-next as follow up patches).
+    "Disintegrate asm/system.h for AVR32"
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ arch/avr32/include/asm/mmu_context.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
---Signature=_Sun__1_Apr_2012_23_14_54_+1000_0_zxHSrRzwtLs8.C
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPeFTOAAoJEECxmPOUX5FE1gUP/10n7RO3/EBi+c2adRZ2f93h
-dhJQhsrSd+hkzCK/i2NbIuiTXrWXxBcDegekdYHS09HuX1O7F0tftgrihpUXMIM7
-N8ajGyCrMUJwIrP10EFlrsWWmepyzk9JZoj8SMasXGwv/zbvFFBRfceFJ3jtFPzO
-98No8ZSLOmHc7z5P30TtP6+g51TK2ihUGwK3KhjF/aYZfK4+UL09dn1VRzIJb37D
-qakA3jJZH1NbFW3wo3DF+POZYL1KAIhWAytKseLqzlNR5Vta8Lbnb3GWbi8yqo73
-Bc+TGSFoAPEFzyJrKqSbw0a3CIiuKAefG8DrsSgdSC6udvoYeemOuSLIvaObX0D+
-mlHaP8hKSeDr3Rqp15P8Mt6beXvScFLm5o469ebFLUsl48WSE4oEEYVqjyL2VNib
-I//PiZ04LjfzDeoTvX9KAgRnZoIjHjcFrywMx/nvt2DhndPVTiQ/prcb/0aft3cg
-wRz/bagsBIydWFmlV5dgWaVsncO2Bm6EarRGBeyB/cca48xE83+pM5yPtKpwNtVR
-F6iUWN+W9nBK0z3oP9q71Pg59sMT6PlwnMsopjpX6YRtcotjYrc8mQcr4M9rBCno
-WGrEWxNcfyVE0/mRpxNRv1gFn9EAROsMBxP169iz75GKo+0UvavkcGwvGCuNvRa2
-pFs/NlMa+2a1utdgAzB2
-=suDp
------END PGP SIGNATURE-----
-
---Signature=_Sun__1_Apr_2012_23_14_54_+1000_0_zxHSrRzwtLs8.C--
+diff --git a/arch/avr32/include/asm/mmu_context.h b/arch/avr32/include/asm/mmu_context.h
+index 27ff234..f1b2fec 100644
+--- a/arch/avr32/include/asm/mmu_context.h
++++ b/arch/avr32/include/asm/mmu_context.h
+@@ -14,6 +14,7 @@
+ 
+ #include <asm/tlbflush.h>
+ #include <asm/sysreg.h>
++#include <asm/special_insns.h>
+ #include <asm-generic/mm_hooks.h>
+ 
+ /*
+-- 
+1.7.9.1
