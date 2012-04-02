@@ -1,54 +1,35 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 10/11] tile: fix multiple build failures from system.h
- dismantle
-Date: Mon, 2 Apr 2012 14:05:24 -0400
-Message-ID: <4F79EA64.3000100@windriver.com>
-References: <1333312727-11428-11-git-send-email-paul.gortmaker@windriver.com> <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com> <30198.1333345969@redhat.com> <4F79CCD4.4040606@tilera.com>
+Subject: Re: [PATCH 07/11] sh: fix several build failures from system.h fallout
+Date: Mon, 2 Apr 2012 14:15:53 -0400
+Message-ID: <4F79ECD9.6000108@windriver.com>
+References: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com> <1333312727-11428-8-git-send-email-paul.gortmaker@windriver.com> <20120402010048.GA21647@linux-sh.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:35613 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753273Ab2DBSFj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Apr 2012 14:05:39 -0400
-In-Reply-To: <4F79CCD4.4040606@tilera.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Chris Metcalf <cmetcalf@tilera.com>
-Cc: David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120402010048.GA21647@linux-sh.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: dhowells@redhat.com, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 12-04-02 11:59 AM, Chris Metcalf wrote:
-> On 4/2/2012 1:52 AM, David Howells wrote:
->> Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+On 12-04-01 09:00 PM, Paul Mundt wrote:
+> On Sun, Apr 01, 2012 at 04:38:43PM -0400, Paul Gortmaker wrote:
+>> commit e839ca528718e68cad32a307dc9aabf01ef3eb05
 >>
->>> Commit bd119c69239322caafdb64517a806037d0d0c70a
->>>
->>>     "Disintegrate asm/system.h for Tile"
->>>
->>> created the asm/switch_to.h file, but did not add an include
->>> of it to all its users.
->>>
->>> Also, commit b4816afa3986704d1404fc48e931da5135820472
->>>
->>>         "Move the asm-generic/system.h xchg() implementation to asm-generic/cmpxchg.h"
->>>
->>> introduced the concept of asm/cmpxchg.h but the tile arch
->>> never got one.  Fork the cmpxchg content out of the asm/atomic.h
->>> file to create one.
->>>
->>> Cc: Chris Metcalf <cmetcalf@tilera.com>
->>> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
->> Acked-by: David Howells <dhowells@redhat.com>
-> 
-> Thanks!  I can push this through the tile tree along with some other
-> bug-fix changes for -rc2.
+>>     "Disintegrate asm/system.h for SH"
+>>
+>> created the new file asm/cache_insns.h but it didn't add
+>> an include for all the users of it.
+>>
+>> The failure on fpu.c (also seen below) showed up roughly
+>> at the same time, and since the fix is trivial (include traps.h)
+>> I did not bother to bisect to 100% confirm it was caused by
+>> the system.h disintegration.
+>>
+> There's still more, but they've alreadly all been fixed up in my tree.
 
-Perfect.  I see you have a tree in linux-next, so I'll drop it
-from my series here without having to worry about reintroducing
-the build failure.
+OK, I can drop this one.  Is that tree part of linux-next?
 
-Thanks.
+Thanks,
 Paul.
-
-> 
