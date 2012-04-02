@@ -1,44 +1,89 @@
-From: Matt Turner <mattst88@gmail.com>
-Subject: Re: [PATCH] alpha: fix build failures from system.h dismemberment
-Date: Mon, 2 Apr 2012 17:23:50 -0400
-Message-ID: <CAEdQ38G=uwPuN1fmZca1w+1q0HGiLzLYP8DkZ-AFiRQcPJT+JA@mail.gmail.com>
-References: <1333401674-26007-1-git-send-email-paul.gortmaker@windriver.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH] ARM: fix lcd power build failure in collie_defconfig
+Date: Mon,  2 Apr 2012 18:17:17 -0400
+Message-ID: <1333405037-3053-1-git-send-email-paul.gortmaker@windriver.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:44932 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752348Ab2DBVYL convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Apr 2012 17:24:11 -0400
-In-Reply-To: <1333401674-26007-1-git-send-email-paul.gortmaker@windriver.com>
+Received: from mail.windriver.com ([147.11.1.11]:50250 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752534Ab2DBWTF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Apr 2012 18:19:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Richard Henderson <rth@twiddle.net>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, David Howells <dhowells@redhat.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, arm@kernel.org
 
-On Mon, Apr 2, 2012 at 5:21 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> commit ec2212088c42ff7d1362629ec26dda4f3e8bdad3
->
-> =A0 =A0"Disintegrate asm/system.h for Alpha"
->
-> combined with commit b4816afa3986704d1404fc48e931da5135820472
->
-> =A0 =A0"Move the asm-generic/system.h xchg() implementation to asm-ge=
-neric/cmpxchg.h"
->
-> introduced the concept of asm/cmpxchg.h but the alpha arch
-> never got one. =A0Fork the cmpxchg content out of the asm/atomic.h
-> file to create one.
->
-> Some minor whitespace fixups were done on the block of code that
-> created the new file.
->
-> Cc: Richard Henderson <rth@twiddle.net>
-> Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-> Cc: Matt Turner <mattst88@gmail.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Commit 086ada54abaa4316e8603f02410fe8ebc9ba2de1
 
-Acked-by: Matt Turner <mattst88@gmail.com>
+  "FB: sa1100: remove global sa1100fb_.*_power function pointers"
+
+got rid of all instances but one in locomolcd.c -- which was
+conditional on CONFIG_SA1100_COLLIE.  The associated .power
+field which replaces the global is populated in mach-sa1100/collie.c
+so move the assignment there, but make it conditional on the
+locomolcd support, so use CONFIG_BACKLIGHT_LOCOMO in that file.
+
+Cc: arm@kernel.org
+Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+
+[ unchanged from original Mar6 send, just adding rmk ack ]
+
+diff --git a/arch/arm/mach-sa1100/collie.c b/arch/arm/mach-sa1100/collie.c
+index 48885b7..c7f418b 100644
+--- a/arch/arm/mach-sa1100/collie.c
++++ b/arch/arm/mach-sa1100/collie.c
+@@ -313,6 +313,10 @@ static struct sa1100fb_mach_info collie_lcd_info = {
+ 
+ 	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
+ 	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
++
++#ifdef CONFIG_BACKLIGHT_LOCOMO
++	.lcd_power	= locomolcd_power
++#endif
+ };
+ 
+ static void __init collie_init(void)
+diff --git a/arch/arm/mach-sa1100/include/mach/collie.h b/arch/arm/mach-sa1100/include/mach/collie.h
+index 52acda7..f33679d 100644
+--- a/arch/arm/mach-sa1100/include/mach/collie.h
++++ b/arch/arm/mach-sa1100/include/mach/collie.h
+@@ -1,7 +1,7 @@
+ /*
+  * arch/arm/mach-sa1100/include/mach/collie.h
+  *
+- * This file contains the hardware specific definitions for Assabet
++ * This file contains the hardware specific definitions for Collie
+  * Only include this file from SA1100-specific files.
+  *
+  * ChangeLog:
+@@ -13,6 +13,7 @@
+ #ifndef __ASM_ARCH_COLLIE_H
+ #define __ASM_ARCH_COLLIE_H
+ 
++extern void locomolcd_power(int on);
+ 
+ #define COLLIE_SCOOP_GPIO_BASE	(GPIO_MAX + 1)
+ #define COLLIE_GPIO_CHARGE_ON	(COLLIE_SCOOP_GPIO_BASE + 0)
+diff --git a/drivers/video/backlight/locomolcd.c b/drivers/video/backlight/locomolcd.c
+index be20b5c..3a6d541 100644
+--- a/drivers/video/backlight/locomolcd.c
++++ b/drivers/video/backlight/locomolcd.c
+@@ -229,14 +229,7 @@ static struct locomo_driver poodle_lcd_driver = {
+ 
+ static int __init locomolcd_init(void)
+ {
+-	int ret = locomo_driver_register(&poodle_lcd_driver);
+-	if (ret)
+-		return ret;
+-
+-#ifdef CONFIG_SA1100_COLLIE
+-	sa1100fb_lcd_power = locomolcd_power;
+-#endif
+-	return 0;
++	return locomo_driver_register(&poodle_lcd_driver);
+ }
+ 
+ static void __exit locomolcd_exit(void)
+-- 
+1.7.9.1
