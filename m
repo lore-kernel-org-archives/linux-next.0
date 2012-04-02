@@ -1,81 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 00/11] Fix up more asm/system.h fallout
-Date: Mon, 2 Apr 2012 10:03:41 +1000
-Message-ID: <20120402100341.1b231afd6aa7efb1cb0c8af0@canb.auug.org.au>
-References: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
+Subject: linux-next: manual merge of the tile tree with Linus' tree
+Date: Mon, 2 Apr 2012 10:37:19 +1000
+Message-ID: <20120402103719.c65942de252fc39af503acf4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__2_Apr_2012_10_03_41_+1000_GnJ5yR0QtSzz2yBC"
+ boundary="Signature=_Mon__2_Apr_2012_10_37_19_+1000_9CHuYFvz76nZOYK6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53858 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55199 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753734Ab2DBADy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Apr 2012 20:03:54 -0400
-In-Reply-To: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
+	with ESMTP id S1752933Ab2DBAh3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Apr 2012 20:37:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: dhowells@redhat.com, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Chris Metcalf <cmetcalf@tilera.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Linus <torvalds@linux-foundation.org>
 
---Signature=_Mon__2_Apr_2012_10_03_41_+1000_GnJ5yR0QtSzz2yBC
+--Signature=_Mon__2_Apr_2012_10_37_19_+1000_9CHuYFvz76nZOYK6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi Chris,
 
-On Sun,  1 Apr 2012 16:38:36 -0400 Paul Gortmaker <paul.gortmaker@windriver=
-.com> wrote:
->
-> Like others, I was surprised it didn't get a soak in linux-next
-> before being merged, but I guess what is done is done, so lets
-> try and limit the fallout from having any wider of a commit range
-> than it already does.
->=20
-> It is all system.h stuff except for three things.
->=20
->  1) an avr32 patch I'd created but the avr32 guys hadn't got
->     signed keys yet, so I might as well get it in here along
->     with other similar build fail fixes (the atmel one).
->=20
->  2) A cosmetic fix to the device.h changeset from me earlier.
->=20
->  3) A trivial warning fix to an arch/frv specific file.
->=20
-> I'm going to queue this up in my feed branch to linux-next
-> so we can start reducing the number of build failures from what
-> we had on Friday.
+Today's linux-next merge of the tile tree got a conflict in
+arch/tile/include/asm/pgtable.h between commit bd119c692393
+("Disintegrate asm/system.h for Tile") from Linus' tree and commit
+7dc0069e58f6 ("arch/tile: Allow tilegx to build with either 16K or 64K
+page size") from the tile tree.
 
-Thanks for all this.  Please feed them to Linus as soon as sensible i.e.
-after you get some feedback from the affected arch maintainers etc.
-Maybe you should repost some of these with more cc's on them.
+Just context changes. I fixed it up (see below) and can carry the fix as
+necessary.
 
-I look forward to less blood on the ground in today's linux-next
-builds :-)
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__2_Apr_2012_10_03_41_+1000_GnJ5yR0QtSzz2yBC
+diff --cc arch/tile/include/asm/pgtable.h
+index 6749091,ff01704..0000000
+--- a/arch/tile/include/asm/pgtable.h
++++ b/arch/tile/include/asm/pgtable.h
+@@@ -27,8 -27,11 +27,10 @@@
+  #include <linux/slab.h>
+  #include <linux/list.h>
+  #include <linux/spinlock.h>
++ #include <linux/pfn.h>
+  #include <asm/processor.h>
+  #include <asm/fixmap.h>
+ -#include <asm/system.h>
++ #include <asm/page.h>
+ =20
+  struct mm_struct;
+  struct vm_area_struct;
+
+--Signature=_Mon__2_Apr_2012_10_37_19_+1000_9CHuYFvz76nZOYK6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPeOzdAAoJEECxmPOUX5FEivEP/0SgGQvo1PSCjF7ASM0vRXNi
-KIMu0jvnG889WPslxmpDuk/kf67+LSEXy77gBIMC4hib4KifErCjSJ1/7t8QjRTM
-nOJETEGZtaH//OYhqd8MlTwqQF12qO8TN/ztEZM00suD7hZS0tLcpAcexQPcoB3k
-IRvONEr6SRdEl3B+YTrVhavAdymC9+fSRDIT9kP8VbYN1Gm6omV/lo1gAA/1/sso
-sxUyBDRZU8g2ykvU8qcqUyIZuOFsNs6jUUelK1/ZI74qiJ1AC9EkSAEfpCGPp4dh
-/Mxp9tCMmlTvdf+VQdWqLAuYnRwQOaLcWNFsjgvhWBkW9HS5xWzYlnTnAiuc4Wph
-8jWMgSWwyKkRrxVSyVVHl46SkGDM5eaO79JdNMgZoyPAgJV/KMfc34oG2sA3tIIs
-7DuqGvQ7cN1Rin0s/Q0K4qcw5+NKNuvera5k4WGLjutWAAqUFp/unHNrIQLw8+Fs
-eAojEJBBPMBqRx5JkR3mSLy0YcwZuKpY85Uc7gdTekOXrDAXJAKoDrx+vdyRsoxI
-npXAZXmS3meupaxCYE+uUm7SWiLS6FZFgw4vUvRDMFuDKLm2TwVq61VTyNkE2ljg
-Buv1+R22ep6t6aapNIwrZUz1mgwd3BMzdQoTenxn3JHQ0I31Zi6xapgHAyylJo5+
-0qyk46Cv76NdPsbuXIpJ
-=45+X
+iQIcBAEBCAAGBQJPePS/AAoJEECxmPOUX5FEAvQQAJ2iimowTopOreYgzH9WZdBm
+Aaa6Be6ATClOUMTgWLDjPXArBUzGOOYI06GMH17YmT9RkHZ9N6c6/Gdgk+0Qoih4
+nLQOyfTqMJN9cHkln7PIbKUfCWp9GFo2/T9o86WelDmXnGSHbq2Vp9wSLtHxFY+1
+PofVqaijh5UX3myn17xq58vbN6Q/+CEI+tfUHykd6Qk0db25xCzpgIT3M8Z4uhts
+Xcs8G+7wBFr7Kt4gLppF81W2uCdXOuQ2R5vWcDXfI4y8oNyw69bjwcit41Uhq/wC
+Xf88ggQ/gUKu39ArwMMfYN3MjpoOR+eyjQiPbn0l7DFV5wvMIDtaPEG15YaSq2Zf
+8eaYqlNug3EQqphqfpkjGGrS//iglixMbzQ8ms/FgoFBlS0zm9Op2IGrz+j9ec88
+SJXvp+aTNjRyQPixCzqcjfmnXICCZqsw6iWdMgqcDqKMiOsUcAPfCUQH9sGYbPDi
+oK56NU/tr4wAIvCjU0Zd1Set/oLlgmcuE77VCIiWCb+yZ8JaJ++vIK2Sp0z1ylkn
+n7S7K3OaDNOyhGdZkXRNHLUtvQ2G8QNvyILTw2jvqHLHgzaqm97Tw9S6JOs3F3Di
+1/WIcxJukC5OvhlLgpNPED0t7oyDiAip7im/8cEFly3evgEsrv/1SDyfHmz0dyNN
+rCJI3NlSSXpEfnoroP1t
+=KV+r
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__2_Apr_2012_10_03_41_+1000_GnJ5yR0QtSzz2yBC--
+--Signature=_Mon__2_Apr_2012_10_37_19_+1000_9CHuYFvz76nZOYK6--
