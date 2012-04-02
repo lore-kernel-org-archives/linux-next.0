@@ -1,61 +1,30 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 03/11] avr32: fix nop compile fails from system.h split
- up
-Date: Mon, 2 Apr 2012 15:11:25 -0400
-Message-ID: <4F79F9DD.9050203@windriver.com>
-References: <1333312727-11428-4-git-send-email-paul.gortmaker@windriver.com> <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com> <30076.1333345656@redhat.com>
+From: David Brown <davidb@codeaurora.org>
+Subject: Re: [PATCH 02/11] ARM: mach-msm: fix compile fail from system.h
+ fallout
+Date: Mon, 2 Apr 2012 14:16:01 -0700
+Message-ID: <20120402211601.GA28311@codeaurora.org>
+References: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
+ <1333312727-11428-3-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:57646 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752624Ab2DBTLd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Apr 2012 15:11:33 -0400
-In-Reply-To: <30076.1333345656@redhat.com>
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:59547 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751916Ab2DBVQE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Apr 2012 17:16:04 -0400
+Content-Disposition: inline
+In-Reply-To: <1333312727-11428-3-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: dhowells@redhat.com, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On 12-04-02 01:47 AM, David Howells wrote:
-> Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
-> 
->> To fix:
->>
->>   In file included from kernel/exit.c:61:
->>   arch/avr32/include/asm/mmu_context.h: In function 'enable_mmu':
->>   arch/avr32/include/asm/mmu_context.h:135: error: implicit
->>   declaration of function 'nop'
-> 
-> Better would be to move the definition of nop() into asm/barrier.h to be
-> consistent with other arches.
+On Sun, Apr 01, 2012 at 04:38:38PM -0400, Paul Gortmaker wrote:
 
-That does seem to make sense.  But just to confirm, then I'd end up
-deleting the new file, arch/avr32/include/asm/special_insns.h
+> diff --git a/arch/arm/mach-msm/include/mach/uncompress.h b/arch/arm/mach-msm/include/mach/uncompress.h
 
-------------
-commit ae473946586680b01c13975a3b674de23ad7c93e
-Author: David Howells <dhowells@redhat.com>
-Date:   Wed Mar 28 18:30:01 2012 +0100
+Acked-by: David Brown <davidb@codeaurora.org>
 
-    Disintegrate asm/system.h for AVR32
-    
-    Disintegrate asm/system.h for AVR32.  This has not been compiled at all.
-    
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    cc: Haavard Skinnemoen <hskinnemoen@gmail.com>
-
-:000000 100644 0000000... f922218... A  arch/avr32/include/asm/special_insns.h
-------------
-
-...since it only contains the nop definition.
-
-Is that what you had in mind, or is some other content going to
-be moved there at a later time?
-
-Thanks,
-Paul.
-
-> 
-> David
+-- 
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
