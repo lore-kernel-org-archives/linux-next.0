@@ -1,49 +1,81 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 01/11] irq_work: fix compile failure on MIPS from system.h split
-Date: Sun,  1 Apr 2012 16:38:37 -0400
-Message-ID: <1333312727-11428-2-git-send-email-paul.gortmaker@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH 00/11] Fix up more asm/system.h fallout
+Date: Mon, 2 Apr 2012 10:03:41 +1000
+Message-ID: <20120402100341.1b231afd6aa7efb1cb0c8af0@canb.auug.org.au>
 References: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__2_Apr_2012_10_03_41_+1000_GnJ5yR0QtSzz2yBC"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:53858 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753734Ab2DBADy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Apr 2012 20:03:54 -0400
 In-Reply-To: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: dhowells@redhat.com
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: dhowells@redhat.com, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-Builds of the MIPS platform ip32_defconfig fails as of
-commit 0195c00244dc2e9f522475868fa278c473ba7339
+--Signature=_Mon__2_Apr_2012_10_03_41_+1000_GnJ5yR0QtSzz2yBC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    "Merge tag 'split-asm_system_h-for-linus-20120328' ..."
+Hi Paul,
 
-because MIPS xchg() macro uses BUILD_BUG_ON and it was moved
-in commit b81947c646bfefdf98e2fde5d7d39cbbda8525d4
+On Sun,  1 Apr 2012 16:38:36 -0400 Paul Gortmaker <paul.gortmaker@windriver=
+.com> wrote:
+>
+> Like others, I was surprised it didn't get a soak in linux-next
+> before being merged, but I guess what is done is done, so lets
+> try and limit the fallout from having any wider of a commit range
+> than it already does.
+>=20
+> It is all system.h stuff except for three things.
+>=20
+>  1) an avr32 patch I'd created but the avr32 guys hadn't got
+>     signed keys yet, so I might as well get it in here along
+>     with other similar build fail fixes (the atmel one).
+>=20
+>  2) A cosmetic fix to the device.h changeset from me earlier.
+>=20
+>  3) A trivial warning fix to an arch/frv specific file.
+>=20
+> I'm going to queue this up in my feed branch to linux-next
+> so we can start reducing the number of build failures from what
+> we had on Friday.
 
-    "Disintegrate asm/system.h for MIPS"
+Thanks for all this.  Please feed them to Linus as soon as sensible i.e.
+after you get some feedback from the affected arch maintainers etc.
+Maybe you should repost some of these with more cc's on them.
 
-The root cause is that the system.h split wasn't tested on
-a baseline with commit 6c03438edeb5c359af35f060ea016ca65671c269
+I look forward to less blood on the ground in today's linux-next
+builds :-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-    "kernel.h: doesn't explicitly use bug.h, so don't include it."
+--Signature=_Mon__2_Apr_2012_10_03_41_+1000_GnJ5yR0QtSzz2yBC
+Content-Type: application/pgp-signature
 
-Since this file uses BUG code in several other places besides
-the xchg call, simply make the inclusion explicit.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- kernel/irq_work.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+iQIcBAEBCAAGBQJPeOzdAAoJEECxmPOUX5FEivEP/0SgGQvo1PSCjF7ASM0vRXNi
+KIMu0jvnG889WPslxmpDuk/kf67+LSEXy77gBIMC4hib4KifErCjSJ1/7t8QjRTM
+nOJETEGZtaH//OYhqd8MlTwqQF12qO8TN/ztEZM00suD7hZS0tLcpAcexQPcoB3k
+IRvONEr6SRdEl3B+YTrVhavAdymC9+fSRDIT9kP8VbYN1Gm6omV/lo1gAA/1/sso
+sxUyBDRZU8g2ykvU8qcqUyIZuOFsNs6jUUelK1/ZI74qiJ1AC9EkSAEfpCGPp4dh
+/Mxp9tCMmlTvdf+VQdWqLAuYnRwQOaLcWNFsjgvhWBkW9HS5xWzYlnTnAiuc4Wph
+8jWMgSWwyKkRrxVSyVVHl46SkGDM5eaO79JdNMgZoyPAgJV/KMfc34oG2sA3tIIs
+7DuqGvQ7cN1Rin0s/Q0K4qcw5+NKNuvera5k4WGLjutWAAqUFp/unHNrIQLw8+Fs
+eAojEJBBPMBqRx5JkR3mSLy0YcwZuKpY85Uc7gdTekOXrDAXJAKoDrx+vdyRsoxI
+npXAZXmS3meupaxCYE+uUm7SWiLS6FZFgw4vUvRDMFuDKLm2TwVq61VTyNkE2ljg
+Buv1+R22ep6t6aapNIwrZUz1mgwd3BMzdQoTenxn3JHQ0I31Zi6xapgHAyylJo5+
+0qyk46Cv76NdPsbuXIpJ
+=45+X
+-----END PGP SIGNATURE-----
 
-diff --git a/kernel/irq_work.c b/kernel/irq_work.c
-index c3c46c7..0c56d44 100644
---- a/kernel/irq_work.c
-+++ b/kernel/irq_work.c
-@@ -5,6 +5,7 @@
-  * context. The enqueueing is NMI-safe.
-  */
- 
-+#include <linux/bug.h>
- #include <linux/kernel.h>
- #include <linux/export.h>
- #include <linux/irq_work.h>
--- 
-1.7.9.1
+--Signature=_Mon__2_Apr_2012_10_03_41_+1000_GnJ5yR0QtSzz2yBC--
