@@ -1,89 +1,73 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] ARM: fix lcd power build failure in collie_defconfig
-Date: Mon,  2 Apr 2012 18:17:17 -0400
-Message-ID: <1333405037-3053-1-git-send-email-paul.gortmaker@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH 07/11] sh: fix several build failures from system.h
+ fallout
+Date: Tue, 3 Apr 2012 09:57:54 +1000
+Message-ID: <20120403095754.a70f38eb70766580843debc7@canb.auug.org.au>
+References: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
+	<1333312727-11428-8-git-send-email-paul.gortmaker@windriver.com>
+	<20120402010048.GA21647@linux-sh.org>
+	<4F79ECD9.6000108@windriver.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__3_Apr_2012_09_57_54_+1000_7YwivoXNtPZ2HaJV"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:50250 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752534Ab2DBWTF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Apr 2012 18:19:05 -0400
+Received: from haggis.pcug.org.au ([203.10.76.10]:37896 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751704Ab2DBX6J (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Apr 2012 19:58:09 -0400
+In-Reply-To: <4F79ECD9.6000108@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, arm@kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Paul Mundt <lethal@linux-sh.org>, dhowells@redhat.com, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-Commit 086ada54abaa4316e8603f02410fe8ebc9ba2de1
+--Signature=_Tue__3_Apr_2012_09_57_54_+1000_7YwivoXNtPZ2HaJV
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  "FB: sa1100: remove global sa1100fb_.*_power function pointers"
+On Mon, 2 Apr 2012 14:15:53 -0400 Paul Gortmaker <paul.gortmaker@windriver.=
+com> wrote:
+>
+> On 12-04-01 09:00 PM, Paul Mundt wrote:
+>
+> > There's still more, but they've alreadly all been fixed up in my tree.
+>=20
+> OK, I can drop this one.  Is that tree part of linux-next?
 
-got rid of all instances but one in locomolcd.c -- which was
-conditional on CONFIG_SA1100_COLLIE.  The associated .power
-field which replaces the global is populated in mach-sa1100/collie.c
-so move the assignment there, but make it conditional on the
-locomolcd support, so use CONFIG_BACKLIGHT_LOCOMO in that file.
+I used to have sh-current and sh trees (and rmobile-current and rmobile)
+trees in linux-next, but they have not been resurrected since the
+kernel.org problems last year ...
 
-Cc: arm@kernel.org
-Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
+They were all branches of
+git://git.kernel.org/pub/scm/linux/kernel/git/lethal/sh-2.6.git which is
+still listed in MAINTAINERS but does not exist :-(
 
-[ unchanged from original Mar6 send, just adding rmk ack ]
+Paul M, to you have an alternate place I can fetch from?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --git a/arch/arm/mach-sa1100/collie.c b/arch/arm/mach-sa1100/collie.c
-index 48885b7..c7f418b 100644
---- a/arch/arm/mach-sa1100/collie.c
-+++ b/arch/arm/mach-sa1100/collie.c
-@@ -313,6 +313,10 @@ static struct sa1100fb_mach_info collie_lcd_info = {
- 
- 	.lccr0		= LCCR0_Color | LCCR0_Sngl | LCCR0_Act,
- 	.lccr3		= LCCR3_OutEnH | LCCR3_PixRsEdg | LCCR3_ACBsDiv(2),
-+
-+#ifdef CONFIG_BACKLIGHT_LOCOMO
-+	.lcd_power	= locomolcd_power
-+#endif
- };
- 
- static void __init collie_init(void)
-diff --git a/arch/arm/mach-sa1100/include/mach/collie.h b/arch/arm/mach-sa1100/include/mach/collie.h
-index 52acda7..f33679d 100644
---- a/arch/arm/mach-sa1100/include/mach/collie.h
-+++ b/arch/arm/mach-sa1100/include/mach/collie.h
-@@ -1,7 +1,7 @@
- /*
-  * arch/arm/mach-sa1100/include/mach/collie.h
-  *
-- * This file contains the hardware specific definitions for Assabet
-+ * This file contains the hardware specific definitions for Collie
-  * Only include this file from SA1100-specific files.
-  *
-  * ChangeLog:
-@@ -13,6 +13,7 @@
- #ifndef __ASM_ARCH_COLLIE_H
- #define __ASM_ARCH_COLLIE_H
- 
-+extern void locomolcd_power(int on);
- 
- #define COLLIE_SCOOP_GPIO_BASE	(GPIO_MAX + 1)
- #define COLLIE_GPIO_CHARGE_ON	(COLLIE_SCOOP_GPIO_BASE + 0)
-diff --git a/drivers/video/backlight/locomolcd.c b/drivers/video/backlight/locomolcd.c
-index be20b5c..3a6d541 100644
---- a/drivers/video/backlight/locomolcd.c
-+++ b/drivers/video/backlight/locomolcd.c
-@@ -229,14 +229,7 @@ static struct locomo_driver poodle_lcd_driver = {
- 
- static int __init locomolcd_init(void)
- {
--	int ret = locomo_driver_register(&poodle_lcd_driver);
--	if (ret)
--		return ret;
--
--#ifdef CONFIG_SA1100_COLLIE
--	sa1100fb_lcd_power = locomolcd_power;
--#endif
--	return 0;
-+	return locomo_driver_register(&poodle_lcd_driver);
- }
- 
- static void __exit locomolcd_exit(void)
--- 
-1.7.9.1
+--Signature=_Tue__3_Apr_2012_09_57_54_+1000_7YwivoXNtPZ2HaJV
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPej0CAAoJEECxmPOUX5FEN1YP/j/nNDBlh9ocYsMXC/KSTGQv
+xbsKzFEuiEFOlFUND6hZeOpPpd+74fdBkD/hodEta9NMjmzdwJiL93k6Ptyz5D6x
+aykQ/PW/WEtUuECV6V4Q/b/W73BrYZMSJHBFWuofONK2a1/0zlIZ9eRnG9rvCvvN
+QHvwdGgX2I85jdU4FVLYc8aBS+uVRCoD7asa2/EJWo5NnhwPw1Sm1iSX4iJrJUJ8
+++LqUXEYepzvneGP0ET8JxeZd/eH+F1AVwSjp2eZu2PekVIL+lcA2pxqPaCCpKnS
+LyE4fddh64iHa34CXwwaFLA0YSXM1aE+VSa2irq1Cbl5WlOXhPzPZ7N6Mavd2Mi5
+4Y0oQM6PwS2Mxr52V5VhnfUwNCMksZvq3x0S5i1ch7n09RNneocHSK8zF2i1PQ5y
+Y5K9kv6G6J7FK8+vReBipr9B5JjmNn/WI1pe0X7ypBk6F8QAXGFhUH3RRpxETNCw
+xDTYngGjeaqKAen8ZScaQ3yeo9+YrBiDWMr6w/5N9LKIeawAo2dZv7wu59KnaZLA
+7RBIyd01Ih2a+QMl+bf2Of1RF5/YydLWngpabSRmT448XClGYSQHMRjVb/7ERJg7
+t68882KaGfTUMAmpQefSV5I6AVSBblL2hpyxI752BEoj6RPItrdDKduA2d3AWGc/
+1peos+tYZGcAgqHVinQ9
+=bDA1
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__3_Apr_2012_09_57_54_+1000_7YwivoXNtPZ2HaJV--
