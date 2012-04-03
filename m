@@ -1,51 +1,78 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Apr 2 (uml)
-Date: Tue, 03 Apr 2012 08:28:13 -0700
-Message-ID: <4F7B170D.7070800@xenotime.net>
-References: <20120402135538.502e6c73f0cb3e6ae0b3436f@canb.auug.org.au> <4F79C68C.1070100@xenotime.net> <4F79CCE1.4040709@nod.at>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] ARM: S3C24XX: fix missing common.h in mach-s3c24xx/
+Date: Tue, 3 Apr 2012 18:33:28 -0400
+Message-ID: <CAP=VYLp-FwEu2AY9wWY7vygmjtZ30AMD=0h8+VtuNVZF2xtTYw@mail.gmail.com>
+References: <1332980074-4614-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:44387 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753031Ab2DCP2U (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Apr 2012 11:28:20 -0400
-In-Reply-To: <4F79CCE1.4040709@nod.at>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Richard Weinberger <richard@nod.at>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1332980074-4614-1-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 04/02/2012 08:59 AM, Richard Weinberger wrote:
+Hi,
 
-> On 02.04.2012 17:32, Randy Dunlap wrote:
->> On 04/01/2012 08:55 PM, Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> The merge window has closed, so -next is open for busniess.
->>>
->>> Changes since 20120330:
->>
->>
->>
->> uml defconfig on x86_64:
->>
->>    CC      arch/um/drivers/mconsole_kern.o
->> arch/um/drivers/mconsole_kern.c: In function 'stack_proc':
->> arch/um/drivers/mconsole_kern.c:707:2: error: implicit declaration of function 'switch_to'
->> make[2]: *** [arch/um/drivers/mconsole_kern.o] Error 1
->>
->>
-> 
-> Already fixed:
-> http://comments.gmane.org/gmane.linux.kernel/1274493
+On Wed, Mar 28, 2012 at 8:14 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> This patch fixes missing mach-s3c24xx/common.h which has been
+> lost when regarding s3c24xx directories merged.
 
+Just checking that the updated version of this patch is headed
+in for 3.4 -- we are still seeing the failure in linux-next builds
+and it would be nice to close out the build regressions in there
+as quickly as possible, since they tend to mask other regressions
+from being seen.
 
-and linux-next still has this build error.
+Thanks,
+Paul.
+--
 
-Can that patch show up in linux-next, please?
-
--- 
-~Randy
+>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> =A0arch/arm/mach-s3c24xx/common.h | =A0 23 +++++++++++++++++++++++
+> =A01 files changed, 23 insertions(+), 0 deletions(-)
+> =A0create mode 100644 arch/arm/mach-s3c24xx/common.h
+>
+> diff --git a/arch/arm/mach-s3c24xx/common.h b/arch/arm/mach-s3c24xx/c=
+ommon.h
+> new file mode 100644
+> index 0000000..a7cd62f
+> --- /dev/null
+> +++ b/arch/arm/mach-s3c24xx/common.h
+> @@ -0,0 +1,23 @@
+> +/*
+> + * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+> + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
+> + *
+> + * Common Header for S3C24XX SoCs
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef __ARCH_ARM_MACH_S3C24XX_COMMON_H
+> +#define __ARCH_ARM_MACH_S3C24XX_COMMON_H
+> +
+> +#ifdef CONFIG_CPU_S3C2410
+> +void s3c2410_restart(char mode, const char *cmd);
+> +#endif
+> +
+> +#ifdef CONFIG_CPU_S3C244X
+> +void s3c244x_restart(char mode, const char *cmd);
+> +#endif
+> +
+> +#endif /* __ARCH_ARM_MACH_S3C24XX_COMMON_H */
+> --
+> 1.7.2.3
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
