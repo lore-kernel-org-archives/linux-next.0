@@ -1,62 +1,287 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 3 Apr 2012 11:26:16 +1000
-Message-ID: <20120403112616.9078a733b60bbdada036167f@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next: triage for April 2, 2012
+Date: Mon, 2 Apr 2012 22:38:36 -0400
+Message-ID: <20120403023835.GB31196@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__3_Apr_2012_11_26_16_+1000_s7pk8On5aGcWVwze"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58671 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752097Ab2DCB00 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Apr 2012 21:26:26 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Tue__3_Apr_2012_11_26_16_+1000_s7pk8On5aGcWVwze
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+This represents the state of the builds as of Monday.  Note that
+we are now also possibly looking at some queued 3.5 content.
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Continuing from the prev. report, I'll just give an arch summary
+with respect to the system.h status vs. repeating a bunch of
+data for each defconfig.
 
-ERROR: "regcache_sync_region" [sound/soc/codecs/snd-soc-wm8962.ko] undefine=
-d!
+Fixes were in for sparc, s390, ppc, m68k via their maintainers.
 
-Caused by commit 26b427a701f8 ("ASoC: wm8962: Implement DSP2
-configuration initialisation").  regcache_sync_region() is not exported
-to modules.
+I expanded the patch queue I did Sunday to include alpha, so these
+should be now sorted out:
 
-I have used the sound-asoc tree from next-20120330 again for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+   alpha: include/linux/llist.h: asm/cmpxchg.h: No such file or directory
+	http://kisskb.ellerman.id.au/kisskb/buildresult/6000253/
 
---Signature=_Tue__3_Apr_2012_11_26_16_+1000_s7pk8On5aGcWVwze
-Content-Type: application/pgp-signature
+   or32: include/asm-generic/cmpxchg.h: error: expected ')' before 'u8'
+	http://kisskb.ellerman.id.au/kisskb/buildresult/6000411/
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+   parisc: include/linux/llist.h: fatal: asm/cmpxchg.h: No such file or directory
+	http://kisskb.ellerman.id.au/kisskb/buildresult/6000168/
 
-iQIcBAEBCAAGBQJPelG4AAoJEECxmPOUX5FE7FgQAKGH+DaI2Ts9oOtHX+OHYwjK
-47HT0o04g0B1gRusblhCSLJcSiGuQY4amtDcI6yQw6Nrh46qVkVbO3ySr+9cKG30
-TqqFJM/ejjAlCphdkswfFgDhmEoiZ6uKCxuzfuvVVBLQk48ECGaa7P3be12PukD0
-NrI02BtdxpgDVVOZ3pq75aRrLBEk3A7tmpWLi7N+OTcQM1LdIAJ8PVOqBVMwO9ZZ
-J4UeUb9wlOaHlxUHhhFVB5JAloQYhW+EQbp4j2STy57HtMTM6gulr3rr82B/A6tz
-/V7wGSSCAVBcqiE0l8JUfoxDpkBR/y8l0dWA/JT3pOu3eVLhRgbuvpheXiQZyHMq
-EEpVwyVZ2qJW1oF+k0IbtyLv44wHE/hILZlPXYFvlVcsxEEukOuMNwBUGdlh6Tzg
-8WZEtHzizeNlvj/lyumdTN7xX60CTfzexlsq4K9Gd0mn5BFVerOgPEV6W5Hp6hJH
-1Fo2nKIX9EFiq7BZ0LuRpYE3CZrHEuOGYbe0c+uSD6PDjXZy9T+wnP7ObLAPoLSA
-xM8vFWWLzXqMVUv9+PS7o7MQka2eW+Vb3Eppg3SGmPuibRMtpMH0N9rvn7EVA1JT
-UNTc+sAZB2RkowNtPpIfy++Bm+o5AVYZmf7/B9xMC6rKxZNzpun7XOki7qShHu8a
-XnDtINJk1i/FzXRoD5t5
-=Hbyq
------END PGP SIGNATURE-----
+   bfin: include/asm-generic/cmpxchg.h: error: redefinition of '__xchg'
+	http://kisskb.ellerman.id.au/kisskb/buildresult/6000322/
 
---Signature=_Tue__3_Apr_2012_11_26_16_+1000_s7pk8On5aGcWVwze--
+   MIPS: system.h breakup wasn't tested on master with bug.h change.
+	http://kisskb.ellerman.id.au/kisskb/buildresult/6000165/
+
+I added some Acked-by and dropped the sh/tile fixes in that series.
+The avr32 nop fix I've left as is until I've got more info, but it
+is at the end of the series now for ease of modification if needed.
+
+Remaining arch:
+
+ ARM:   looks a lot better. There are still some new fails that were
+	not there a couple of days ago, such as s3c2410_defconfig
+	and tct_hammer_defconfig -- to be fair, I don't know for
+	sure if these are system.h related since I've not yet
+	researched them in any detail.  And the kallsyms extra
+	pass continues to appear at random due to alignment.
+
+ tile:	This failure may briefly return as the fix is moving from my
+	tree to the tile tree:
+	http://kisskb.ellerman.id.au/kisskb/buildresult/6000412/
+
+ parisc[64]: The system.h dismantle was supposed to fix the error
+	implicit declaration of function 'fls' -- relating to an
+	include loop.  But it still shows up in allmodconfig:
+	http://kisskb.ellerman.id.au/kisskb/buildresult/6029862/
+
+ SH4:	We got about 50% pass on builds which was a win vs. the
+	100% fail we've had for a long time.  It may briefly go back
+	to 100% fail as I've dropped my sh4 patch and Stephen is getting
+	the tree info from PaulM who has a more complete fix series.
+
+Note wrt. the blackfin (Not specific to system.h):
+	We've gone from 100% fail to about 60% fail.  It seems that 
+	hiding behind other regressions was a "Error: pcrel too far
+	BFD_RELOC_BFIN_10" from kernel/time/timekeeping.c -- I see
+	that sfr & MikeF discussed this earlier; maybe needs revisit?
+	http://www.spinics.net/lists/linux-next/msg16154.html
+
+
+ ==============================================
+	
+New breakage since last report:
+	ARM:pxa3xx_defconfig (ignore it; kallsyms extra pass)
+	ia64: processor_idle.c: implicit declaration of function 'halt'
+
+Randconfig fails that may or may not be new (by their very nature):
+	i386: fs/binfmt_misc.o: copy_from_user_overflow' not provably correct
+		http://kisskb.ellerman.id.au/kisskb/buildresult/6029837/
+        powerpc: mpc512x_shared.c: parameter 1 ('port') has incomplete type
+		http://kisskb.ellerman.id.au/kisskb/buildresult/6029918/
+
+Builds that are fixed since last report:
+	ARM:magician_defconfig
+	ARM:iop32x_defconfig,iop33x_defconfig
+	ARM:em_x270_defconfig
+	AVR32:defconfig
+
+Note: The randconfig fails are only listed once and not tracked
+in the below listing.
+
+            ------------------------------------------------
+
+Latest results at:
+	http://kisskb.ellerman.id.au/kisskb/branch/9/
+
+Failures as of April 2nd, 2012:
+===============================
+
+AM33:asb2303_defconfig,asb2364_defconfig
+	when:	Mar 15
+	why:	cc1: error: unrecognized command line option '-mmem-funcs'
+	status:	Possible fix from TonyB sent for review.
+	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
+----------------
+
+ARM:netx_defconfig,pnx4008_defconfig 
+	when:	Mar 14
+	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
+	ref:	https://lkml.org/lkml/2012/3/13/670
+
+ARM:collie_defconfig
+	when:	Feb 14
+	why:	locomolcd.c: error: 'sa1100fb_lcd_power' undeclared
+	status:	fixed (PaulG) - pending integration
+	fix:	http://marc.info/?l=linux-next&m=133105157730749&w=2
+	ref:
+
+ARM:ixp4xx_defconfig
+	when:	Oct 26
+	why:	gpio.h: implicit declaration of function '__gpio_get_value'
+	status:	fixed (Imre Kaloz) - but possibly needs rework?
+	fix:	https://lkml.org/lkml/2012/2/8/288
+	ref:	https://lkml.org/lkml/2012/2/8/287
+
+ARM:raumfeld_defconfig
+	when:	Nov 23
+	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
+	status:	perhaps broken since 2010?  See ref below.
+	fix:	
+	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
+
+ARM:arm-allnoconfig
+	when:	forever
+	why:	not supported
+	status:	nothing pending, but patches accepted
+	fix:	n/a
+	ref:	https://lkml.org/lkml/2009/4/30/105
+	ref:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081218.html
+----------------
+
+AVR32:allnoconfig
+	when:	May 26 2010, 20:49
+	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
+	status:
+	fix:
+	ref:
+---------------
+
+bfin: 50% of builds
+	when:	Mar 31
+	why:	"Error: pcrel too far BFD_RELOC_BFIN_10" from kernel/time/timekeeping.c
+	status:	unknown, binutils issue?
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5981475/
+---------------
+
+cris:***all-builds***
+	when:	Mar 25, 22:05
+	why:	include/linux/types.h:25: error expected ... before 'ino_t'
+	status:	
+	fix:	
+	ref:	
+----------------
+
+crisv32:***all-builds***
+	when:	Mar 25, 22:05
+	why:	include/linux/types.h:25: error expected ... before 'ino_t'
+	status:	
+	fix:	
+	ref:	
+----------------
+
+frv:defconfig
+	when:	Mar 15
+	why:	undefined reference to `pci_cardbus_resource_alignment'
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6030067/
+----------------
+
+ia64:defconfig
+	when:	Apr 2
+	why:	processor_idle.c: implicit declaration of function 'halt'
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6029643/
+----------------
+
+h8300:defconfig
+	when:	Mar 15
+	why:	time.c: implicit declaration of function 'get_irq_regs'
+	why:	also seems gcc suffers an ICE
+	status:	ICE bug lodged with gcc folks (TonyB)
+	fix:
+	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
+----------------
+
+i386:allmodconfig
+	when:	Mar 8, 20:41
+	why:	ERROR: "mdfld_set_brightness" [drivers/gpu/drm/gma500/gma500_gfx.ko] undefined!
+	status:	
+	fix:
+	ref:	https://lkml.org/lkml/2012/3/24/122
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878506/
+----------------
+
+m32r:m32700ut.smp_defconfig
+	when:	Mar 15
+	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
+----------------
+
+m68k:allmodconfig
+	when:	Mar 16
+	why:	persistent_ram.c: implicit declaration of 'memblock_reserve'
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884324/
+	ref:	http://www.spinics.net/lists/linux-next/msg19343.html
+----------------
+
+mips:allmodconfig
+	when:
+	why:	driver_pci_host.c: implicit declaration of function 'pcibios_enable_device'
+	status: one of many fixes mips needs...
+	fix:	http://marc.info/?l=linux-wireless&m=133272031621916&w=2
+	ref:	http://patchwork.ozlabs.org/patch/148614/
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5807000/
+----------------
+
+parisc:allmodconfig
+	when:
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	fix:
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+
+parisc64:a500_defconfig 
+	when:
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	fix:
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+------------------
+
+powerpc:allyesconfig
+	when:	May 18 2009, 22:11
+	why:	fat ass kernel with everything simply won't link
+	status:	need to fix build config to ignore the final link
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5806793/
+------------------
+
+sh4:***all-builds***
+	when:	Feb 24, 17:38
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	fix:
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+------------------
+
+um:um-defconfig
+	when:	Sep 16 2010, 01:28
+	why:	os-Linux/start_up.c: error: 'PTRACE_SETOPTIONS' undeclared
+	status:	clearly broken forever, so does anyone care?
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/target/2979/
+Cc: 
+Bcc: 
+Subject: sdf
+Reply-To: 
