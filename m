@@ -1,40 +1,51 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: fix lcd power build failure in collie_defconfig
-Date: Mon, 2 Apr 2012 21:55:20 -0700
-Message-ID: <20120403045520.GA21904@quad.lixom.net>
-References: <1333405037-3053-1-git-send-email-paul.gortmaker@windriver.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Apr 2 (uml)
+Date: Tue, 03 Apr 2012 08:28:13 -0700
+Message-ID: <4F7B170D.7070800@xenotime.net>
+References: <20120402135538.502e6c73f0cb3e6ae0b3436f@canb.auug.org.au> <4F79C68C.1070100@xenotime.net> <4F79CCE1.4040709@nod.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:51831 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751643Ab2DCEzV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Apr 2012 00:55:21 -0400
-Received: by dake40 with SMTP id e40so3240039dak.11
-        for <linux-next@vger.kernel.org>; Mon, 02 Apr 2012 21:55:21 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1333405037-3053-1-git-send-email-paul.gortmaker@windriver.com>
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:44387 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753031Ab2DCP2U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Apr 2012 11:28:20 -0400
+In-Reply-To: <4F79CCE1.4040709@nod.at>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, arm@kernel.org
+To: Richard Weinberger <richard@nod.at>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Apr 02, 2012 at 06:17:17PM -0400, Paul Gortmaker wrote:
-> Commit 086ada54abaa4316e8603f02410fe8ebc9ba2de1
+On 04/02/2012 08:59 AM, Richard Weinberger wrote:
+
+> On 02.04.2012 17:32, Randy Dunlap wrote:
+>> On 04/01/2012 08:55 PM, Stephen Rothwell wrote:
+>>
+>>> Hi all,
+>>>
+>>> The merge window has closed, so -next is open for busniess.
+>>>
+>>> Changes since 20120330:
+>>
+>>
+>>
+>> uml defconfig on x86_64:
+>>
+>>    CC      arch/um/drivers/mconsole_kern.o
+>> arch/um/drivers/mconsole_kern.c: In function 'stack_proc':
+>> arch/um/drivers/mconsole_kern.c:707:2: error: implicit declaration of function 'switch_to'
+>> make[2]: *** [arch/um/drivers/mconsole_kern.o] Error 1
+>>
+>>
 > 
->   "FB: sa1100: remove global sa1100fb_.*_power function pointers"
-> 
-> got rid of all instances but one in locomolcd.c -- which was
-> conditional on CONFIG_SA1100_COLLIE.  The associated .power
-> field which replaces the global is populated in mach-sa1100/collie.c
-> so move the assignment there, but make it conditional on the
-> locomolcd support, so use CONFIG_BACKLIGHT_LOCOMO in that file.
-> 
-> Cc: arm@kernel.org
-> Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-
-Thanks, applied to fixes.
+> Already fixed:
+> http://comments.gmane.org/gmane.linux.kernel/1274493
 
 
--Olof
+and linux-next still has this build error.
+
+Can that patch show up in linux-next, please?
+
+-- 
+~Randy
