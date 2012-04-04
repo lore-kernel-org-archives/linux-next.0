@@ -1,71 +1,116 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pinctrl tree
-Date: Wed, 4 Apr 2012 12:44:37 +1000
-Message-ID: <20120404124437.ff05ebcc4db98109d5fcee22@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the m68knommu tree
+Date: Wed, 4 Apr 2012 13:23:35 +1000
+Message-ID: <20120404132335.d8d55177a608396c9270dc74@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__4_Apr_2012_12_44_37_+1000_w6N=Ai0_oFhAYyQX"
+ boundary="Signature=_Wed__4_Apr_2012_13_23_35_+1000_OVtsOrOK=sT806Mj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57610 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49196 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755530Ab2DDCo7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Apr 2012 22:44:59 -0400
+	with ESMTP id S1755406Ab2DDDXp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Apr 2012 23:23:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@snapgear.com>, Matt Fleming <matt.fleming@intel.com>
 
---Signature=_Wed__4_Apr_2012_12_44_37_+1000_w6N=Ai0_oFhAYyQX
+--Signature=_Wed__4_Apr_2012_13_23_35_+1000_OVtsOrOK=sT806Mj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Andrew,
 
-After merging the pinctrl tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in
+arch/m68k/kernel/signal_no.c between commit de6bd4f40385 ("m68k: merge
+the MMU and non-MMU signal.c code") from the m68knommu tree and commit
+"m68k: use set_current_blocked() and block_sigmask()" from the akpm tree.
 
-drivers/pinctrl/devicetree.c: In function 'dt_free_map':
-drivers/pinctrl/devicetree.c:44:42: error: dereferencing pointer to incompl=
-ete type
-drivers/pinctrl/devicetree.c:45:6: error: dereferencing pointer to incomple=
-te type
-drivers/pinctrl/devicetree.c: In function 'dt_to_map_one_config':
-drivers/pinctrl/devicetree.c:140:21: error: dereferencing pointer to incomp=
-lete type
-drivers/pinctrl/devicetree.c:141:10: error: dereferencing pointer to incomp=
-lete type
-drivers/pinctrl/devicetree.c:146:11: error: dereferencing pointer to incomp=
-lete type
-
-Caused by commit 23289e6ecc6d ("pinctrl: core device tree mapping table
-parsing support").  Missing includes?
-
-I have used the version of the pinctrl tree from next-20120403 for today.
+The former merged this file into arch/m68k/kernel/signal.c, git applied
+the changes for arch/m68k/kernel/signal_mm.c in the akpm tree commit
+there.  The whole patch is now as below.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__4_Apr_2012_12_44_37_+1000_w6N=Ai0_oFhAYyQX
+diff --git a/arch/m68k/kernel/signal.c b/arch/m68k/kernel/signal.c
+index 1747c70..c9f519f 100644
+--- a/arch/m68k/kernel/signal.c
++++ b/arch/m68k/kernel/signal.c
+@@ -230,12 +230,13 @@ static inline void push_cache(unsigned long vaddr)
+ asmlinkage int
+ sys_sigsuspend(int unused0, int unused1, old_sigset_t mask)
+ {
+-	mask &=3D _BLOCKABLE;
+-	spin_lock_irq(&current->sighand->siglock);
++	sigset_t blocked;
++
+ 	current->saved_sigmask =3D current->blocked;
+-	siginitset(&current->blocked, mask);
+-	recalc_sigpending();
+-	spin_unlock_irq(&current->sighand->siglock);
++
++	mask &=3D _BLOCKABLE;
++	siginitset(&blocked, mask);
++	set_current_blocked(&blocked);
+=20
+ 	current->state =3D TASK_INTERRUPTIBLE;
+ 	schedule();
+@@ -804,8 +805,7 @@ asmlinkage int do_sigreturn(unsigned long __unused)
+ 		goto badframe;
+=20
+ 	sigdelsetmask(&set, ~_BLOCKABLE);
+-	current->blocked =3D set;
+-	recalc_sigpending();
++	set_current_blocked(&set);
+=20
+ 	if (restore_sigcontext(regs, &frame->sc, frame + 1))
+ 		goto badframe;
+@@ -830,8 +830,7 @@ asmlinkage int do_rt_sigreturn(unsigned long __unused)
+ 		goto badframe;
+=20
+ 	sigdelsetmask(&set, ~_BLOCKABLE);
+-	current->blocked =3D set;
+-	recalc_sigpending();
++	set_current_blocked(&set);
+=20
+ 	if (rt_restore_ucontext(regs, sw, &frame->uc))
+ 		goto badframe;
+@@ -1150,10 +1149,7 @@ handle_signal(int sig, struct k_sigaction *ka, sigin=
+fo_t *info,
+ 	if (err)
+ 		return;
+=20
+-	sigorsets(&current->blocked,&current->blocked,&ka->sa.sa_mask);
+-	if (!(ka->sa.sa_flags & SA_NODEFER))
+-		sigaddset(&current->blocked,sig);
+-	recalc_sigpending();
++	block_sigmask(ka, sig);
+=20
+ 	if (test_thread_flag(TIF_DELAYED_TRACE)) {
+ 		regs->sr &=3D ~0x8000;
+
+--Signature=_Wed__4_Apr_2012_13_23_35_+1000_OVtsOrOK=sT806Mj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPe7WVAAoJEECxmPOUX5FEt1EP/2EK0x04zqioCK/nT5u3x70h
-mOgXNiu8vY372sKZs3WuspSTNvdHD7vASKrAhJAc15ZmA67aDa8c1rHpGnICOwNT
-haG51oq2C+u6FVii1cVgRCYfLBpLbmlat+7ZoJz41BM3svxYGcW86WMo53KtdztT
-W4xxCZAvsNDE46Z+usBPhEFVbLbY7x6tv6ULVyf74ovNsEuuKz/7BNuMiMpj2IKv
-5p4F0uVUNWL2wMQPWck3SpbCggyWKkNitHtXZtsV/DY2iM08VXVLqmPqTi30ZU1p
-X1OpbahpoDG+k9wZJI+u93Y/6W43BWd5UdPXpsBOdcIc2oiAfqrtSo8sit9IM0OU
-iFZL5ZdoMgIWW00ONPCZsIs7x2Mvgdso10H6aLaSdHduy2y39sT0ORPTVco5PD/F
-2lwW78xkY8yorZplDXh14QijCct3zQnRo+pdi//KA6Htvbyp8hjgDoiqlsHGsrLs
-yZwmbD/Stf6AmEFD/WSS8YTPqYdIzAVhA99ds3N0WRFcn7xUK6/ipF0h+4rCfzLZ
-r9XY6wsj6PBtwvndo4w2XXhZIUA9fkm0UEjeXJyEBGXHbrSsqNOvHTuXIcQA6LmV
-1rEIMwI/SjnM+Sx6PolQYtprMU2UZESWPGSvKYIEhAoWfObFUG6RsfkCtCNl5im+
-eFEtFjMGs9SsRdSVwrER
-=mQjp
+iQIcBAEBCAAGBQJPe763AAoJEECxmPOUX5FEY5YP/jFVciIcibIhPDjNSg7DRxHv
+4ml4xJ3oRU2+8hell/vqsAp4ANVNImHAGcXxHNHYeyDEf/1oPXTPcg9MiBXb3UCI
+Rwrtx/oUajZBULxJ7kdCUCa8DsVysQEgbxQAEFbg+MNvH0Gs+CnrXLmuGtFS2fU3
+mRtueKxoIzMk+sC18j6mgnuIvtSrtf1zZ/r9Sq7VQcJ7EYveSguGZWyg0hr2SuGZ
+jBzotBPbaYKd3flZHB4YywEVZKPPFL8uSrboQRZ39NALd3oLCMK537e2ChtrKiio
+6GybHz9PTCRxhPOOML9ifHyTjX2INItES8A/Xe7VfQQfV8chWMb/uKyiMGavKGLo
+29R1eWJv+03hr0WLHC796txmsv5jCY18m/0xcVDXqZe/q4+NqgxarcD6gVtaRLUE
+Z/v7w69C1Om0VVd9xJ/fOxzEIYwXm92cTFHHz3JP/EPKh95FJvNDpgxpwmn6H7N+
+mSoPojXyCMvflBzZDkNUV10a+iCnzHMaZp2KhS4yD2V134wdCXdMf8J1/oa/MQTv
+M84OQsG49uZq2UxZ65Z4As9fsKFufv2HQaL/KnRlJZyWRAAVI9tPTEoT8ZMsxcSI
+vRjd/vWzW8YBnDY1yVVzz7zbVjwE/dcXzwHgJKROKUiHHnmLWCpe6dwARb9UGNTw
+VYN5fC7o0WKqJ4t7bS+s
+=MDaP
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__4_Apr_2012_12_44_37_+1000_w6N=Ai0_oFhAYyQX--
+--Signature=_Wed__4_Apr_2012_13_23_35_+1000_OVtsOrOK=sT806Mj--
