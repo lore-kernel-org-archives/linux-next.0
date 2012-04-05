@@ -1,43 +1,45 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: S3C24XX: fix missing common.h in mach-s3c24xx/
-Date: Thu, 05 Apr 2012 08:10:17 -0700
-Message-ID: <4F7DB5D9.4080106@samsung.com>
-References: <1332980074-4614-1-git-send-email-kgene.kim@samsung.com> <CAP=VYLp-FwEu2AY9wWY7vygmjtZ30AMD=0h8+VtuNVZF2xtTYw@mail.gmail.com>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: [PATCH 07/11] sh: fix several build failures from system.h fallout
+Date: Fri, 6 Apr 2012 00:15:59 +0900
+Message-ID: <20120405151558.GD23761@linux-sh.org>
+References: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com> <1333312727-11428-8-git-send-email-paul.gortmaker@windriver.com> <20120402010048.GA21647@linux-sh.org> <4F79ECD9.6000108@windriver.com> <20120403095754.a70f38eb70766580843debc7@canb.auug.org.au> <CAP=VYLpxEvcQv=AOZCU46PQrVn04MC7_Jhodba9z-mmj9XamSw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:47251 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752169Ab2DEPKW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Apr 2012 11:10:22 -0400
-In-Reply-To: <CAP=VYLp-FwEu2AY9wWY7vygmjtZ30AMD=0h8+VtuNVZF2xtTYw@mail.gmail.com>
+Received: from linux-sh.org ([111.68.239.195]:56002 "EHLO linux-sh.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752226Ab2DEPQN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Apr 2012 11:16:13 -0400
+Content-Disposition: inline
+In-Reply-To: <CAP=VYLpxEvcQv=AOZCU46PQrVn04MC7_Jhodba9z-mmj9XamSw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, dhowells@redhat.com, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On 04/03/12 15:33, Paul Gortmaker wrote:
-> Hi,
->
-> On Wed, Mar 28, 2012 at 8:14 PM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
->> This patch fixes missing mach-s3c24xx/common.h which has been
->> lost when regarding s3c24xx directories merged.
->
-> Just checking that the updated version of this patch is headed
-> in for 3.4 -- we are still seeing the failure in linux-next builds
-> and it would be nice to close out the build regressions in there
-> as quickly as possible, since they tend to mask other regressions
-> from being seen.
->
-Hi Paul,
-
-Yeah right and I updated it in my -next.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+On Wed, Apr 04, 2012 at 10:49:30PM -0400, Paul Gortmaker wrote:
+> [sorry for empty mail, pilot error]
+> 
+> On Mon, Apr 2, 2012 at 7:57 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> >
+> > I used to have sh-current and sh trees (and rmobile-current and rmobile)
+> > trees in linux-next, but they have not been resurrected since the
+> > kernel.org problems last year ...
+> >
+> > They were all branches of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/lethal/sh-2.6.git which is
+> > still listed in MAINTAINERS but does not exist :-(
+> >
+> > Paul M, to you have an alternate place I can fetch from?
+> 
+> Hi Paul M.
+> 
+> Is this the tree Stephen should be using in linux-next?
+> 
+>         git://github.com/pmundt/linux-sh.git sh-latest
+> 
+Yes, that's the current one for sh stuff for now. The rmobile stuff is
+going through the ARM SoC tree nowadays, so that shouldn't matter.  I
+haven't bothered getting the trees back on kernel.org yet, so I haven't
+updated the MAINTAINERS entry, but will probably do so in the future.
