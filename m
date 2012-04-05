@@ -1,63 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the sound-asoc tree
-Date: Thu, 5 Apr 2012 11:03:39 +1000
-Message-ID: <20120405110339.4f83ac849d3bce2893c2ccf8@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@gmail.com>
+Subject: Re: [PATCH 07/11] sh: fix several build failures from system.h fallout
+Date: Wed, 4 Apr 2012 22:46:45 -0400
+Message-ID: <CAP=VYLr5jEzxee_QQk463YNZGAr_gwr2N9RWwZRbTu4iaMK2vg@mail.gmail.com>
+References: <1333312727-11428-1-git-send-email-paul.gortmaker@windriver.com>
+	<1333312727-11428-8-git-send-email-paul.gortmaker@windriver.com>
+	<20120402010048.GA21647@linux-sh.org>
+	<4F79ECD9.6000108@windriver.com>
+	<20120403095754.a70f38eb70766580843debc7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__5_Apr_2012_11_03_39_+1000_30CR2wXHg6I/y8pU"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40422 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751912Ab2DEBD4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Apr 2012 21:03:56 -0400
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:35792 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752488Ab2DECqr convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Apr 2012 22:46:47 -0400
+In-Reply-To: <20120403095754.a70f38eb70766580843debc7@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, M R Swami Reddy <mr.swami.reddy@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Mundt <lethal@linux-sh.org>, dhowells@redhat.com, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
---Signature=_Thu__5_Apr_2012_11_03_39_+1000_30CR2wXHg6I/y8pU
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
-
-sound/soc/codecs/lm49453.c: In function 'lm49453_set_dai_fmt':
-sound/soc/codecs/lm49453.c:1189:4: warning: overflow in implicit constant c=
-onversion [-Woverflow]
-sound/soc/codecs/lm49453.c:1193:4: warning: overflow in implicit constant c=
-onversion [-Woverflow]
-sound/soc/codecs/lm49453.c:1197:4: warning: overflow in implicit constant c=
-onversion [-Woverflow]
-
-Introduced by commit dbf7a733f5fb (ASoC: Support TI LM49453 Audio driver"").
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__5_Apr_2012_11_03_39_+1000_30CR2wXHg6I/y8pU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPfO9rAAoJEECxmPOUX5FE8X4QAKcZrUI3q9XK3M/8OMc0Om9M
-q2DKlmkVPE08CjxK6Xux+H2Wk3Kj4rVrnMQu3vpg7zLxo0qQ9Xm56ijJSABAbDYE
-iLLOg1XSS7UvD0xwWIU6EgMXPGzGoAnmkmp1bTsfGMJSDM0LlNZ+PvwqMWUUi1uB
-mlxdJ3MhLQbv8/CNMqZgHbzJhHaz3ZsdeXV3SN1Fau/A/akc1lyMr1LSJdhWtYJ8
-mocuRrtsSnSBJcES43xkMkjmXOsrOxzfffZW5SSVbTuBbaPqsbNWeV9z3peVccZL
-95H5H06C3i5KflQ+XVzLTcQvK+o0NiYTi4t9NKfHn1+dtHqjsZt40EvdRkpt+nna
-5fr+SphGlRkdCzh6ff1HN1EKi6ZMFbGHSlU7WJ2l5DBIomtPanmP2vidXsFlFlSw
-EDAFoyaxJ4N/0htlZelUuBEaxA1fFbVkxJAoHKIh0OpicVGb2d3hr0hgDGolnNvB
-8PnrmvOw9SvY52seRj7Ae5/3q+CcnlRFcYrfNplAyDWOkQ3GK9baCGio2FcpETdS
-h0ihkdaJW6smzgr8CBj7lCiGyGRF2bKVMThuGR+a+yrIBpiDMO7v/ACeUOw5CkRG
-QElNof66fKhPrWpniPp8AmBNncXEs6s0LMQw3s9xWNngVvUla71slDQfDPVJrYhf
-nF8nTAl1rS2WsU4PTRoP
-=IWKz
------END PGP SIGNATURE-----
-
---Signature=_Thu__5_Apr_2012_11_03_39_+1000_30CR2wXHg6I/y8pU--
+On Mon, Apr 2, 2012 at 7:57 PM, Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> On Mon, 2 Apr 2012 14:15:53 -0400 Paul Gortmaker <paul.gortmaker@wind=
+river.com> wrote:
+>>
+>> On 12-04-01 09:00 PM, Paul Mundt wrote:
+>>
+>> > There's still more, but they've alreadly all been fixed up in my t=
+ree.
+>>
+>> OK, I can drop this one. =A0Is that tree part of linux-next?
+>
+> I used to have sh-current and sh trees (and rmobile-current and rmobi=
+le)
+> trees in linux-next, but they have not been resurrected since the
+> kernel.org problems last year ...
+>
+> They were all branches of
+> git://git.kernel.org/pub/scm/linux/kernel/git/lethal/sh-2.6.git which=
+ is
+> still listed in MAINTAINERS but does not exist :-(
+>
+> Paul M, to you have an alternate place I can fetch from?
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
