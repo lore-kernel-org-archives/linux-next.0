@@ -1,225 +1,95 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: triage for April 4, 2012
-Date: Wed, 4 Apr 2012 22:53:20 -0400
-Message-ID: <20120405025320.GA12153@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Thu, 5 Apr 2012 13:25:15 +1000
+Message-ID: <20120405132515.e61465875407a452c1a6f78e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__5_Apr_2012_13_25_15_+1000_S0_mNpNGK6m/5R5r"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:40299 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752619Ab2DECx0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Apr 2012 22:53:26 -0400
-Content-Disposition: inline
+Received: from haggis.pcug.org.au ([203.10.76.10]:50993 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752949Ab2DEDZ0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Apr 2012 23:25:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, lethal@linux-sh.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Deepak SIKRI <deepak.sikri@st.com>, Shiraz Hashim <shiraz.hashim@st.com>, Vikas Manocha <vikas.manocha@st.com>, Giuseppe Cavallaro <peppe.cavallaro@st.com>
 
-Seems arch=cris got revitalized; all the defconfigs are OK now.
+--Signature=_Thu__5_Apr_2012_13_25_15_+1000_S0_mNpNGK6m/5R5r
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	http://marc.info/?l=linux-kernel&m=133345265304853&w=2
+Hi all,
 
-Looking at the error spew from allyes/modconfig it may be
-unreasonable for these to ever work on cris.  Going back to Jan
-2009 shows nothing but fails.  But there might be stuff in there
-that can be fixed -- e.g. the kgdb error looks fixable.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-------------
+drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c: In function 'stmmac_=
+probe_config_dt':
+drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:53:7: error: 'struct =
+plat_stmmacenet_data' has no member named 'pbl'
 
-New breakage since last report:
-	<none>
+Caused by commit 8327eb65e795 ("stmmac: re-work the internal GMAC DMA
+platf parameters").  Clearly I am missing something, because I can't see
+how that patch is correct since nothing ever assigns to the new dma_cfg
+pointer but it is dereferenced.
 
-Randconfig fails that may or may not be new (by their very nature):
-	i386: hpet.c: undefined ref to `arch_setup_hpet_msi' `destroy_irq'
-		http://kisskb.ellerman.id.au/kisskb/buildresult/6035160/
-	powerpc: asm/mpic_msgr.h: implicit decl 'get_hard_smp_processor_id'
-		http://kisskb.ellerman.id.au/kisskb/buildresult/6035238/
+I have added this patch to make it build today, but it is obviously not
+correct.
 
-Builds that are fixed since last report:
-	ARM:collie_defconfig
-	cris: all fixed, but yesconfig allmodconfig.
-	
-Note: The randconfig fails are only listed once and not tracked
-in the below listing.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 5 Apr 2012 13:19:21 +1000
+Subject: [PATCH] stmmac: hack to make it build
 
-I'm also not tracking the kallsyms extra pass stuff on ARM on
-a per board basis anymore.  It has nothing to do with the board.
-Why? See:  http://marc.info/?l=linux-next&m=133267456809502
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-            ------------------------------------------------
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/driver=
+s/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index 116529a..1e4d12d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -50,7 +50,7 @@ static int __devinit stmmac_probe_config_dt(struct platfo=
+rm_device *pdev,
+ 	 * once needed on other platforms.
+ 	 */
+ 	if (of_device_is_compatible(np, "st,spear600-gmac")) {
+-		plat->pbl =3D 8;
++/*		plat->pbl =3D 8; */
+ 		plat->has_gmac =3D 1;
+ 		plat->pmt =3D 1;
+ 	}
+--=20
+1.7.10.rc3
 
-Latest results at:
-	http://kisskb.ellerman.id.au/kisskb/branch/9/
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Failures as of April 4th, 2012:
-===============================
+--Signature=_Thu__5_Apr_2012_13_25_15_+1000_S0_mNpNGK6m/5R5r
+Content-Type: application/pgp-signature
 
-AM33:asb2303_defconfig,asb2364_defconfig
-	when:	Mar 15
-	why:	cc1: error: unrecognized command line option '-mmem-funcs'
-	status:	Possible fix from TonyB sent for review.
-	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
-----------------
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-ARM:tct_hammer_defconfig,s3c2410_defconfig
-	when:	Apr 1
-	why:	missing "common.h"
-	status:	fix pending, borkage probably masked by other global borkage.
-	fix:
-	ref:	http://marc.info/?l=linux-next&m=133349249421262&w=2
+iQIcBAEBCAAGBQJPfRCbAAoJEECxmPOUX5FEkIQP/iztn+Uo115joDNVN1H+6j3x
+MI0U8ywdPmgVsXVI8Xz0lsYQAYim5iixU2qIqKNs90wLXN5zd+vZgkxCcaLgqWnx
+tQM33C0nbcv0tgOxcuH2wg9jibD0kk6nqBhb47tMrsdR5eab4caBqP3VuZWYgaDZ
+YAuYBOB0yVszl2fTaLd8bSXPLV0C5IgGxpOJ7h8Gf2gmexhXQUkyB9J6xx4ocmmH
+AJAkaCaHtapQPEpDKJ5hOsonD/0y+BUtbtWCmUjp8V4bNgpXSujqmAPYlTrLhMxv
+8RnQZhOdlPz9Fta8wPybZHwZeyGtYMR8iE+zNCURx7mC02RSKjMSwLqeyJJTi0ma
+tB7LPj/2VjBZyjWOb95ml/NKqBDeECuKILT47MHNfNrma/jpodaZqYUmpteu5/kY
+VEko3ve6puqC4iZOGxvxZ/98g0wKt3nkM/Hof0MOBgr0cCMx0if2/nDAiFAsWaXo
+kHgAP0M8g2OuzlDhiv98KuTPyvSQ73LnHJzcTdS814Z4qbuWSQ3KRt3GBnFKnrf2
+8U8yBytV9y6N0k6LE+vWz2ef5iV6zfiiCUOPzHj7Au0wvP3BTTLFHGV696/lLDx+
+pJ0HyfUZt0EfhNBsPjiorxE+S6YgSJPQuogWUFzBh8k0HLwHBSYwxqAI9/KtFCyk
+wd6HmfjgO75npY3WsX87
+=OXcA
+-----END PGP SIGNATURE-----
 
-ARM:netx_defconfig,pnx4008_defconfig 
-	when:	Mar 14
-	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
-	ref:	https://lkml.org/lkml/2012/3/13/670
-
-ARM:ixp4xx_defconfig
-	when:	Oct 26
-	why:	gpio.h: implicit declaration of function '__gpio_get_value'
-	status:	fixed (Imre Kaloz) - but possibly needs rework?
-	fix:	https://lkml.org/lkml/2012/2/8/288
-	ref:	https://lkml.org/lkml/2012/2/8/287
-
-ARM:raumfeld_defconfig
-	when:	Nov 23
-	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
-	status:	perhaps broken since 2010?  See ref below.
-	fix:	
-	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
-
-ARM:arm-allnoconfig
-	when:	forever
-	why:	not supported
-	status:	nothing pending, but patches accepted
-	fix:	n/a
-	ref:	https://lkml.org/lkml/2009/4/30/105
-	ref:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081218.html
-----------------
-
-AVR32:allnoconfig
-	when:	May 26 2010, 20:49
-	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
-	status:
-	fix:
-	ref:
----------------
-
-bfin: 50% of builds
-	when:	Mar 31
-	why:	"Error: pcrel too far BFD_RELOC_BFIN_10" from kernel/time/timekeeping.c
-	status:	unknown, binutils issue?
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5981475/
----------------
-
-cris:allyesconfig,allmodconfig
-	when:	Apr 3
-	why:	too many to list here
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035250/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035249/
-----------------
-
-frv:defconfig
-	when:	Mar 15
-	why:	undefined reference to `pci_cardbus_resource_alignment'
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6030067/
-----------------
-
-ia64:defconfig
-	when:	Apr 2
-	why:	processor_idle.c: implicit declaration of function 'halt'
-	status:	bisected (PaulG) - fix pending from Len
-	fix:	
-	ref:	http://marc.info/?l=linux-ia64&m=133346998813009&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6029643/
-----------------
-
-h8300:defconfig
-	when:	Mar 15
-	why:	time.c: implicit declaration of function 'get_irq_regs'
-	why:	also seems gcc suffers an ICE
-	status:	ICE bug lodged with gcc folks (TonyB)
-	fix:
-	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
-----------------
-
-m32r:m32700ut.smp_defconfig
-	when:	Mar 15
-	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
-----------------
-
-m68k:allmodconfig
-	when:	Mar 16
-	why:	persistent_ram.c: implicit declaration of 'memblock_reserve'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884324/
-	ref:	http://www.spinics.net/lists/linux-next/msg19343.html
-----------------
-
-mips:allmodconfig
-	when:
-	why:	driver_pci_host.c: implicit declaration of function 'pcibios_enable_device'
-	status: one of many fixes mips needs...
-	fix:	http://marc.info/?l=linux-wireless&m=133272031621916&w=2
-	ref:	http://patchwork.ozlabs.org/patch/148614/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5807000/
-----------------
-
-parisc:allmodconfig
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-
-parisc64:a500_defconfig 
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-powerpc:allyesconfig
-	when:	May 18 2009, 22:11
-	why:	fat ass kernel with everything simply won't link
-	status:	need to fix build config to ignore the final link
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5806793/
-------------------
-
-sh4:***all-builds***
-	when:	Feb 24, 17:38
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	fixes apparently in sh tree; needed in linux-next
-	fix:
-	ref:	http://marc.info/?l=linux-next&m=133341117224552&w=2
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-um:um-defconfig
-	when:	Sep 16 2010, 01:28
-	why:	os-Linux/start_up.c: error: 'PTRACE_SETOPTIONS' undeclared
-	status:	clearly broken forever, so does anyone care?
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/target/2979/
-Cc: 
-Bcc: 
-Subject: sdf
-Reply-To: 
+--Signature=_Thu__5_Apr_2012_13_25_15_+1000_S0_mNpNGK6m/5R5r--
