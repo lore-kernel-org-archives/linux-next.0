@@ -1,77 +1,54 @@
-From: Giuseppe CAVALLARO <peppe.cavallaro@st.com>
-Subject: Re: linux-next: build failure after merge of the final tree (net-next
- tree related)
-Date: Fri, 06 Apr 2012 09:30:02 +0200
-Message-ID: <4F7E9B7A.2080807@st.com>
-References: <20120405132515.e61465875407a452c1a6f78e@canb.auug.org.au> <20120404.235933.350585244341009071.davem@davemloft.net> <4F7E96B9.9060907@st.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] regmap: fix compilation when !CONFIG_DEBUG_FS
+Date: Fri, 6 Apr 2012 10:18:06 +0100
+Message-ID: <20120406091805.GG3172@opensource.wolfsonmicro.com>
+References: <1333688960-24402-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eu1sys200aog107.obsmtp.com ([207.126.144.123]:46277 "EHLO
-	eu1sys200aog107.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752008Ab2DFHbY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Apr 2012 03:31:24 -0400
-In-Reply-To: <4F7E96B9.9060907@st.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Giuseppe CAVALLARO <peppe.cavallaro@st.com>
-Cc: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, deepak.sikri@st.com, shiraz.hashim@st.com, vikas.manocha@st.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2NLGdgz3UMHa/lqP"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1333688960-24402-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-kernel@vger.kernel.org, paul.gortmaker@windriver.com, linux-next@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+List-Id: linux-next.vger.kernel.org
 
-On 4/6/2012 9:09 AM, Giuseppe CAVALLARO wrote:
-> On 4/5/2012 5:59 AM, David Miller wrote:
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Thu, 5 Apr 2012 13:25:15 +1000
->>
->>> After merging the final tree, today's linux-next build (powerpc
->>> allyesconfig) failed like this:
->>>
->>> drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c: In function 'stmmac_probe_config_dt':
->>> drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:53:7: error: 'struct plat_stmmacenet_data' has no member named 'pbl'
->>>
->>> Caused by commit 8327eb65e795 ("stmmac: re-work the internal GMAC DMA
->>> platf parameters").  Clearly I am missing something, because I can't see
->>> how that patch is correct since nothing ever assigns to the new dma_cfg
->>> pointer but it is dereferenced.
->>>
->>> I have added this patch to make it build today, but it is obviously not
->>> correct.
->>
->> Sorry Stephen.
->>
->> Giuseppe don't submit patches to me that don't even compile.
->>
->> Please submit a proper fix to me for this _now_.
-> 
-> Sorry Dave!
-> I don't know what happened (I believed to test all).
-> I'm sending you the patches soon!!!
 
-Please Stephen,
-can you test it on your kernel. I didn't build when CONFIG_OF is enable.
-I tested on ARM/SH/x86 but never with CONFIG_OF on.
-The problem was due to the hard-coded values adding with devicetree support.
+--2NLGdgz3UMHa/lqP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for this problem, next time I'll build also on OF.
+On Thu, Apr 05, 2012 at 11:09:20PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+>=20
+> Commit 79c64d5 "regmap: allow regmap instances to be named" changed the
+> prototype of regmap_debugfs_init, but didn't update the dummy inline used
+> when !CONFIG_DEBUGFS. Fix this.
 
-I had also done a grep in all the arch to verify the ARCH that used the
-pbl/fixed_burst/burst_len fields :-(. These have been moved in a
-separate structure.
+Applied, thanks.
 
-Let me know if the patch is ok.
-Peppe
+--2NLGdgz3UMHa/lqP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> 
-> Peppe
-> 
->> --
->> To unsubscribe from this list: send the line "unsubscribe netdev" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPfrNUAAoJEBus8iNuMP3dnIUP/iL/pwld7iEV1c4/KgY/kdsJ
+MjOlZjuxvrSYgx6xV0d4PfXeyJJVSJMFMOGSBGwdz0gSpeoFbNhx2IKJeyARsrXs
+Jj+Y1jC7PQi6KKDUSf6zytpeuBPzQPw4+eR2ia44Jk2NutkBoQ2wRRlSn/OLq8Bf
+DDU27C02YYZqC5n8oRpee4mfVrPFURs7ZGWEADfcCVeHuDZmH47CgHeGDPor5EG5
+JhrY6rLNviq2gl+XXVm9viK4TtFsDGJECwvjeCIw/h6irFtnOzbpJqCUKiBzAv2n
+CImIsPHmv/NJ8hvpux1RqGtJ+nf1Z3tOUx9vkTtVfZLYgcCT0NxLZiNQGWQkqD18
+aLcAzNB551i6x1NubeurZymtdrpWuxJ1aSx7I4tzi4R6TYSjS8Q8gg1Ho2LxxtbY
+FMgnzp0KiIXXgrLBGCwn1H8Nyv9mZA262bph5r5TV0fxzeIw7/KoPKT6bLLKgVKP
+hne/9K7K5Crh0jj5B5arbUjufH8hpp72hDgPlZQingEtcbJHsAASmCVbhHZViwby
+uI2gq2ZScJzXjHLXoKjbeXAMlmXti0OJSuHDd6TrDvkIiprC/+CBqDoalZDRW+r0
+1/jOIOV8yGuy09uTi1+X4f9k8X7QjkZB8l57WyKhqI1FVNA+FSbo0NVCx1QPFE2C
+NJiq6ZuJBgue2tlAP6L0
+=GeAP
+-----END PGP SIGNATURE-----
+
+--2NLGdgz3UMHa/lqP--
