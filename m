@@ -1,184 +1,91 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 2/6] regmap: allow regmap instances to be named
-Date: Thu, 5 Apr 2012 23:44:43 -0400
-Message-ID: <CAP=VYLpfssjmREbEcGMQ8P4N7wpKgv=vC++ho+UugtOsx5SxOQ@mail.gmail.com>
-References: <1333576113-13196-1-git-send-email-swarren@wwwdotorg.org> <1333576113-13196-2-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH V4 net-next 05/26] bfin_mac: Support the get_ts_info
+ ethtool method.
+Date: Fri, 6 Apr 2012 00:08:52 -0400
+Message-ID: <CAP=VYLq1kCqLxi31HcGavKk8e3ydX43Xz-7rwayLJPWAnfk28Q@mail.gmail.com>
+References: <cover.1333529504.git.richardcochran@gmail.com> <88e5b2cfcabda03826bb576b21e2e1d990f07117.1333529506.git.richardcochran@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:64245 "EHLO
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:53692 "EHLO
 	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752775Ab2DFDpQ convert rfc822-to-8bit
+	by vger.kernel.org with ESMTP id S1750926Ab2DFEJY convert rfc822-to-8bit
 	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Apr 2012 23:45:16 -0400
-In-Reply-To: <1333576113-13196-2-git-send-email-swarren@wwwdotorg.org>
+	Fri, 6 Apr 2012 00:09:24 -0400
+In-Reply-To: <88e5b2cfcabda03826bb576b21e2e1d990f07117.1333529506.git.richardcochran@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-next@vger.kernel.org
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: netdev@vger.kernel.org, David Miller <davem@davemloft.net>, Ben Hutchings <bhutchings@solarflare.com>, Martin Porter <mporter@solarflare.com>, Jacob Keller <jacob.e.keller@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, John Ronciak <john.ronciak@intel.com>, e1000-devel@lists.sourceforge.net, linux-next@vger.kernel.org
 
-On Wed, Apr 4, 2012 at 5:48 PM, Stephen Warren <swarren@wwwdotorg.org> =
-wrote:
-> From: Stephen Warren <swarren@nvidia.com>
->
-> Some devices have multiple separate register regions. Logically, one
-> regmap would be created per region. One issue that prevents this is t=
-hat
-> each instance will attempt to create the same debugfs files. Avoid th=
-is
-> by allowing regmaps to be named, and use the name to construct the
-> debugfs directory name.
->
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+On Wed, Apr 4, 2012 at 4:59 AM, Richard Cochran
+<richardcochran@gmail.com> wrote:
+> Signed-off-by: Richard Cochran <richardcochran@gmail.com>
 > ---
-> =A0drivers/base/regmap/internal.h =A0 =A0 =A0 | =A0 =A03 ++-
-> =A0drivers/base/regmap/regmap-debugfs.c | =A0 14 +++++++++++---
-> =A0drivers/base/regmap/regmap.c =A0 =A0 =A0 =A0 | =A0 =A04 ++--
-> =A0include/linux/regmap.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A05 ++++=
-+
-> =A04 files changed, 20 insertions(+), 6 deletions(-)
+> =A0drivers/net/ethernet/adi/bfin_mac.c | =A0 20 ++++++++++++++++++++
+> =A01 files changed, 20 insertions(+), 0 deletions(-)
 >
-> diff --git a/drivers/base/regmap/internal.h b/drivers/base/regmap/int=
-ernal.h
-> index 6ee4dc5..d9ea8f5 100644
-> --- a/drivers/base/regmap/internal.h
-> +++ b/drivers/base/regmap/internal.h
-> @@ -47,6 +47,7 @@ struct regmap {
->
-> =A0#ifdef CONFIG_DEBUG_FS
-> =A0 =A0 =A0 =A0struct dentry *debugfs;
-> + =A0 =A0 =A0 const char *debugfs_name;
-> =A0#endif
->
-> =A0 =A0 =A0 =A0unsigned int max_register;
-> @@ -110,7 +111,7 @@ int _regmap_write(struct regmap *map, unsigned in=
-t reg,
->
-> =A0#ifdef CONFIG_DEBUG_FS
-> =A0extern void regmap_debugfs_initcall(void);
-> -extern void regmap_debugfs_init(struct regmap *map);
-> +extern void regmap_debugfs_init(struct regmap *map, const char *name=
-);
-
-Hi Stephen,
-
-Can you take a look at these linux-next fails?
-
-drivers/base/regmap/regmap.c:349:2: error: too many arguments to
-function 'regmap_debugfs_init'
-drivers/base/regmap/regmap.c:434:2: error: too many arguments to
-function 'regmap_debugfs_init'
-make[4]: *** [drivers/base/regmap/regmap.o] Error 1
-
-I'm assuming it is somehow related to the above commit (or family
-of commits) -- since it complains about arg #s and you are changing
-the arg #.  (I didn't bisect to 100% confirm this.)
-
-http://kisskb.ellerman.id.au/kisskb/buildresult/6039717/
-http://kisskb.ellerman.id.au/kisskb/buildresult/6040074/
-http://kisskb.ellerman.id.au/kisskb/buildresult/6040070/
-
-
-Thanks,
-Paul.
-> =A0extern void regmap_debugfs_exit(struct regmap *map);
-> =A0#else
-> =A0static inline void regmap_debugfs_initcall(void) { }
-> diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regm=
-ap/regmap-debugfs.c
-> index 251eb70..df97c93 100644
-> --- a/drivers/base/regmap/regmap-debugfs.c
-> +++ b/drivers/base/regmap/regmap-debugfs.c
-> @@ -242,10 +242,17 @@ static const struct file_operations regmap_acce=
-ss_fops =3D {
-> =A0 =A0 =A0 =A0.llseek =3D default_llseek,
-> =A0};
->
-> -void regmap_debugfs_init(struct regmap *map)
-> +void regmap_debugfs_init(struct regmap *map, const char *name)
-> =A0{
-> - =A0 =A0 =A0 map->debugfs =3D debugfs_create_dir(dev_name(map->dev),
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 regmap_debugfs_root);
-> + =A0 =A0 =A0 if (name) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 map->debugfs_name =3D kasprintf(GFP_KER=
-NEL, "%s-%s",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 dev_name(map->dev), name);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 name =3D map->debugfs_name;
-> + =A0 =A0 =A0 } else {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 name =3D dev_name(map->dev);
-> + =A0 =A0 =A0 }
-> +
-> + =A0 =A0 =A0 map->debugfs =3D debugfs_create_dir(name, regmap_debugf=
-s_root);
-> =A0 =A0 =A0 =A0if (!map->debugfs) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_warn(map->dev, "Failed to create d=
-ebugfs directory\n");
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return;
-> @@ -274,6 +281,7 @@ void regmap_debugfs_init(struct regmap *map)
-> =A0void regmap_debugfs_exit(struct regmap *map)
-> =A0{
-> =A0 =A0 =A0 =A0debugfs_remove_recursive(map->debugfs);
-> + =A0 =A0 =A0 kfree(map->debugfs_name);
+> diff --git a/drivers/net/ethernet/adi/bfin_mac.c b/drivers/net/ethern=
+et/adi/bfin_mac.c
+> index ab4daec..db22278 100644
+> --- a/drivers/net/ethernet/adi/bfin_mac.c
+> +++ b/drivers/net/ethernet/adi/bfin_mac.c
+> @@ -548,6 +548,25 @@ static int bfin_mac_ethtool_setwol(struct net_de=
+vice *dev,
+> =A0 =A0 =A0 =A0return 0;
 > =A0}
 >
-> =A0void regmap_debugfs_initcall(void)
-> diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regma=
-p.c
-> index 831ec42..339b2c8 100644
-> --- a/drivers/base/regmap/regmap.c
-> +++ b/drivers/base/regmap/regmap.c
-> @@ -343,7 +343,7 @@ struct regmap *regmap_init(struct device *dev,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto err_map;
-> =A0 =A0 =A0 =A0}
->
-> - =A0 =A0 =A0 regmap_debugfs_init(map);
-> + =A0 =A0 =A0 regmap_debugfs_init(map, config->name);
->
-> =A0 =A0 =A0 =A0ret =3D regcache_init(map, config);
-> =A0 =A0 =A0 =A0if (ret < 0)
-> @@ -426,7 +426,7 @@ int regmap_reinit_cache(struct regmap *map, const=
- struct regmap_config *config)
-> =A0 =A0 =A0 =A0map->precious_reg =3D config->precious_reg;
-> =A0 =A0 =A0 =A0map->cache_type =3D config->cache_type;
->
-> - =A0 =A0 =A0 regmap_debugfs_init(map);
-> + =A0 =A0 =A0 regmap_debugfs_init(map, config->name);
->
-> =A0 =A0 =A0 =A0map->cache_bypass =3D false;
-> =A0 =A0 =A0 =A0map->cache_only =3D false;
-> diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-> index 48e9b86..2fd41e3 100644
-> --- a/include/linux/regmap.h
-> +++ b/include/linux/regmap.h
-> @@ -46,6 +46,9 @@ struct reg_default {
-> =A0/**
-> =A0* Configuration for the register map of a device.
-> =A0*
-> + * @name: Optional name of the regmap. Useful when a device has mult=
-iple
-> + * =A0 =A0 =A0 =A0register regions.
-> + *
-> =A0* @reg_bits: Number of bits in a register address, mandatory.
-> =A0* @pad_bits: Number of bits of padding between register and value.
-> =A0* @val_bits: Number of bits in a register value, mandatory.
-> @@ -77,6 +80,8 @@ struct reg_default {
-> =A0* @num_reg_defaults_raw: Number of elements in reg_defaults_raw.
-> =A0*/
-> =A0struct regmap_config {
-> + =A0 =A0 =A0 const char *name;
+> +static int bfin_mac_ethtool_get_ts_info(struct net_device *dev,
+> + =A0 =A0 =A0 struct ethtool_ts_info *info);
+
+   ----------------------------------->  ^^^^^^^
+
+Trailing semicolon.  Compile fail in linux-next due to a85bbddd.
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/6040086/
+http://kisskb.ellerman.id.au/kisskb/buildresult/6040080/
+http://kisskb.ellerman.id.au/kisskb/buildresult/6040087/
+
+Thanks.
+Paul.
+
+> +{
+> + =A0 =A0 =A0 info->so_timestamping =3D
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 SOF_TIMESTAMPING_TX_HARDWARE |
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 SOF_TIMESTAMPING_RX_HARDWARE |
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 SOF_TIMESTAMPING_SYS_HARDWARE;
+> + =A0 =A0 =A0 info->phc_index =3D -1;
+> + =A0 =A0 =A0 info->tx_types =3D
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 << HWTSTAMP_TX_OFF) |
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 << HWTSTAMP_TX_ON);
+> + =A0 =A0 =A0 info->rx_filters =3D
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 << HWTSTAMP_FILTER_NONE) |
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 << HWTSTAMP_FILTER_PTP_V1_L4_EVENT) =
+|
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 << HWTSTAMP_FILTER_PTP_V2_L2_EVENT) =
+|
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 << HWTSTAMP_FILTER_PTP_V2_L4_EVENT);
+> + =A0 =A0 =A0 return 0;
+> +}
 > +
-> =A0 =A0 =A0 =A0int reg_bits;
-> =A0 =A0 =A0 =A0int pad_bits;
-> =A0 =A0 =A0 =A0int val_bits;
+> =A0static const struct ethtool_ops bfin_mac_ethtool_ops =3D {
+> =A0 =A0 =A0 =A0.get_settings =3D bfin_mac_ethtool_getsettings,
+> =A0 =A0 =A0 =A0.set_settings =3D bfin_mac_ethtool_setsettings,
+> @@ -555,6 +574,7 @@ static const struct ethtool_ops bfin_mac_ethtool_=
+ops =3D {
+> =A0 =A0 =A0 =A0.get_drvinfo =3D bfin_mac_ethtool_getdrvinfo,
+> =A0 =A0 =A0 =A0.get_wol =3D bfin_mac_ethtool_getwol,
+> =A0 =A0 =A0 =A0.set_wol =3D bfin_mac_ethtool_setwol,
+> + =A0 =A0 =A0 .get_ts_info =3D bfin_mac_ethtool_get_ts_info,
+> =A0};
+>
+> =A0/*****************************************************************=
+*********/
 > --
-> 1.7.0.4
+> 1.7.2.5
 >
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
+> To unsubscribe from this list: send the line "unsubscribe netdev" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at =A0http://www.tux.org/lkml/
