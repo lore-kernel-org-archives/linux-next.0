@@ -1,51 +1,70 @@
-From: Hans-Christian Egtvedt <egtvedt@samfundet.no>
-Subject: Re: [PATCH v2] avr32: fix nop compile fails from system.h split up
-Date: Sat, 7 Apr 2012 12:10:39 +0200
-Message-ID: <20120407101039.GA10112@samfundet.no>
-References: <1333494844-3802-1-git-send-email-paul.gortmaker@windriver.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] android: make persistent_ram based drivers depend on HAVE_MEMBLOCK
+Date: Sun, 8 Apr 2012 10:43:48 +0200
+Message-ID: <CAMuHMdXM9bcmNdet4XAvtWuwPAr9KZS_pbm1TzKCM8UW2hcZmw@mail.gmail.com>
+References: <1332350313-2501-1-git-send-email-ccross@android.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassarossa.samfundet.no ([129.241.93.19]:57556 "EHLO
-	cassarossa.samfundet.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752463Ab2DGKKv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 7 Apr 2012 06:10:51 -0400
-Content-Disposition: inline
-In-Reply-To: <1333494844-3802-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: dhowells@redhat.com, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Haavard Skinnemoen <hskinnemoen@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1332350313-2501-1-git-send-email-ccross@android.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Colin Cross <ccross@android.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Android Kernel Team <kernel-team@android.com>, gregkh@linuxfoundation.org, Linus Torvalds <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Around Tue 03 Apr 2012 19:14:04 -0400 or thereabout, Paul Gortmaker wrote:
-> To fix:
-> 
->   In file included from kernel/exit.c:61:
->   arch/avr32/include/asm/mmu_context.h: In function 'enable_mmu':
->   arch/avr32/include/asm/mmu_context.h:135: error: implicit
->   declaration of function 'nop'
-> 
-> It needs an include of the new file created in:
-> 
-> commit ae473946586680b01c13975a3b674de23ad7c93e
-> 
->     "Disintegrate asm/system.h for AVR32"
-> 
-> But since that file only contains "nop", and since other
-> arch already have precedent of putting nop in asm/barrier.h
-> we should just delete the new file and put nop in barrier.h
+On Wed, Mar 21, 2012 at 18:18, Colin Cross <ccross@android.com> wrote:
+> m68k doesn't have memblock_reserve, which causes a build failure
+> with allmodconfig. =C2=A0Make PERSISTENT_RAM and RAM_CONSOLE depend o=
+n
+> HAVE_MEMBLOCK.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Colin Cross <ccross@android.com>
 
-Sounds fine by me, thanks for the fix.
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-> Suggested-by: David Howells <dhowells@redhat.com>
-> Cc: Haavard Skinnemoen <hskinnemoen@gmail.com>
-> Cc: Hans-Christian Egtvedt <egtvedt@samfundet.no>
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+> =C2=A0drivers/staging/android/Kconfig | =C2=A0 =C2=A03 ++-
+> =C2=A01 files changed, 2 insertions(+), 1 deletions(-)
+>
+> I can't test on m68k, but this disables the options if I remove
+> HAVE_MEMBLOCK from arm.
+>
+> diff --git a/drivers/staging/android/Kconfig b/drivers/staging/androi=
+d/Kconfig
+> index 08a3b11..eb1dee2 100644
+> --- a/drivers/staging/android/Kconfig
+> +++ b/drivers/staging/android/Kconfig
+> @@ -27,13 +27,14 @@ config ANDROID_LOGGER
+>
+> =C2=A0config ANDROID_PERSISTENT_RAM
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0bool
+> + =C2=A0 =C2=A0 =C2=A0 depends on HAVE_MEMBLOCK
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0select REED_SOLOMON
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0select REED_SOLOMON_ENC8
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0select REED_SOLOMON_DEC8
+>
+> =C2=A0config ANDROID_RAM_CONSOLE
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0bool "Android RAM buffer console"
+> - =C2=A0 =C2=A0 =C2=A0 depends on !S390 && !UML
+> + =C2=A0 =C2=A0 =C2=A0 depends on !S390 && !UML && HAVE_MEMBLOCK
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0select ANDROID_PERSISTENT_RAM
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0default n
 
-Acked-by: Hans-Christian Egtvedt <egtvedt@samfundet.no>
+Gr{oetje,eeting}s,
 
-<snipp diff>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
 
--- 
-mvh
-Hans-Christian Egtvedt
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
