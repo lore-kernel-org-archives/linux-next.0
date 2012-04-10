@@ -1,65 +1,84 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: linux-next: build failure after merge of the pinctrl tree
-Date: Tue, 10 Apr 2012 09:12:54 -0600
-Message-ID: <4F844DF6.9010809@wwwdotorg.org>
-References: <20120404124437.ff05ebcc4db98109d5fcee22@canb.auug.org.au>	<4F7BC36E.4070000@wwwdotorg.org> <CACRpkdY57hQOvpqxaaYyJoH0ewfOAj9RqzWtC=aOWQyNMoG6fg@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next:  commit "Remove rtd->codec usage from CODEC drivers"
+ breakage.
+Date: Tue, 10 Apr 2012 17:39:15 -0400
+Message-ID: <4F84A883.3040308@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:33376 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759089Ab2DJPM5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Apr 2012 11:12:57 -0400
-In-Reply-To: <CACRpkdY57hQOvpqxaaYyJoH0ewfOAj9RqzWtC=aOWQyNMoG6fg@mail.gmail.com>
+Received: from mail.windriver.com ([147.11.1.11]:34828 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755624Ab2DJVjU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Apr 2012 17:39:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org
 
-On 04/10/2012 01:42 AM, Linus Walleij wrote:
-> On Wed, Apr 4, 2012 at 5:43 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->> On 04/03/2012 08:44 PM, Stephen Rothwell wrote:
->>> Hi Linus,
->>>
->>> After merging the pinctrl tree, today's linux-next build (powerpc
->>> ppc64_defconfig) failed like this:
->>>
->>> drivers/pinctrl/devicetree.c: In function 'dt_free_map':
->>> drivers/pinctrl/devicetree.c:44:42: error: dereferencing pointer to
->>> incomplete type drivers/pinctrl/devicetree.c:45:6: error:
->>> dereferencing pointer to incomplete type
->>> drivers/pinctrl/devicetree.c: In function 'dt_to_map_one_config':
->>> drivers/pinctrl/devicetree.c:140:21: error: dereferencing pointer
->>> to incomplete type drivers/pinctrl/devicetree.c:141:10: error:
->>> dereferencing pointer to incomplete type
->>> drivers/pinctrl/devicetree.c:146:11: error: dereferencing pointer
->>> to incomplete type
->>
->> This doesn't repro for me with tegra_defconfig, which has both
->> CONFIG_PINCTRL and CONFIG_OF enabled.
->>
->> I believe this happens because of the following in
->> drivers/pinctrl/Makefile:
->>
->> obj-$(CONFIG_OF)                += devicetree.o
->>
->> On ppc64, CONFIG_OF is probably true, yet the rest of PINCTRL isn't
->> enabled, hence the headers that are included probably don't declare
->> all the types needed to compile that file.
->>
->> In fact, the file shouldn't be compiled, since it's not needed if
->> !CONFIG_PINCTRL. So perhaps the Makefile should be more like:
->>
->> ifeq ($(CONFIG_OF),y)
->> obj-$(CONFIG_PINCTRL)           += devicetree.o
->> endif
-> 
-> Easiest fixed with a new Kconfig like CONFIG_PINCTRL_OF that
-> depend on both right?
-> 
-> I'll cook a patch.
+Hi Mark,
 
-I don't think so; why wouldn't pinctrl automatically have DT support
-when both pinctrl and OF are enabled. BTW, I already posted a patch to
-fix this last week.
+Can you have a look at this build failure?
+
+sound/soc/codecs/wm9712.c:482:32: error: 'runtime' undeclared (first use in this function)
+sound/soc/codecs/wm9712.c:499:33: error: 'runtime' undeclared (first use in this function)
+make[4]: *** [sound/soc/codecs/wm9712.o] Error 1
+
+Full log is here:
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/6087177/
+
+It breaks eseries_pxa_defconfig,em_x270_defconfig
+
+A bisect leads to this commit in linux-next:
+
+--------------------
+commit e6968a1719a88afa4708ff43696d6615f0be90be
+Author: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Date:   Wed Apr 4 15:58:16 2012 +0100
+
+    ASoC: codecs: Remove rtd->codec usage from CODEC drivers
+    
+    In order to support CODEC<->CODEC links remove the assumption that there
+    is only a single CODEC on a DAI link by removing the use of the CODEC
+    pointer in the rtd from the CODEC drivers. They are already being passed
+    their DAI whenever they are passed an rtd and can get the CODEC from
+    there.
+    
+    Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+--------------------
+
+Thanks,
+Paul.
+
+git bisect start
+# good: [0034102808e0dbbf3a2394b82b1bb40b5778de9e] Linux 3.4-rc2
+git bisect good 0034102808e0dbbf3a2394b82b1bb40b5778de9e
+# bad: [ef1f1fecd5e7fa274229cd4f30653b4a66a76df4] Add linux-next specific files for 20120410
+git bisect bad ef1f1fecd5e7fa274229cd4f30653b4a66a76df4
+# good: [25cfb83003f369b9c153eefea97be39085d55936] Merge remote-tracking branch 'sound/for-next'
+git bisect good 25cfb83003f369b9c153eefea97be39085d55936
+# good: [b62eb966bd66c78a8fc36e566fe0448f879dad60] kvm tools: Move arch-specific cmdline init into kvm__arch_set_cmdline()
+git bisect good b62eb966bd66c78a8fc36e566fe0448f879dad60
+# good: [911bcb25143c2cbe3daac8785285d8daf03cf9fc] Merge branch 'linus'
+git bisect good 911bcb25143c2cbe3daac8785285d8daf03cf9fc
+# bad: [5fc4bef34f121f77405c7b4e5aaa485187e8011a] Merge remote-tracking branch 'trivial/for-next'
+git bisect bad 5fc4bef34f121f77405c7b4e5aaa485187e8011a
+# bad: [c946ebd47232bba219aff0ee2d31bd62c502696a] Merge branch 'quilt/device-mapper'
+git bisect bad c946ebd47232bba219aff0ee2d31bd62c502696a
+# bad: [c2f6702d318e43bf841da9c0ba5b6f1695661bbc] ASoC: tegra: utils: add support for Tegra30 devices
+git bisect bad c2f6702d318e43bf841da9c0ba5b6f1695661bbc
+# good: [b46b373f4084cc02d4d41a5a42199fe8462c2f13] ASoC: fsl: assign dma peripheral type according to bus topology
+git bisect good b46b373f4084cc02d4d41a5a42199fe8462c2f13
+# good: [1d99f2436d0d1c7741d6dfd9d27b5376cdbbca40] ASoC: core: Rework SOC_DOUBLE_R_SX_TLV add SOC_SINGLE_SX_TLV
+git bisect good 1d99f2436d0d1c7741d6dfd9d27b5376cdbbca40
+# bad: [063dd9d4488184f35c4598fb68f46fbba959d58e] ASoC: tegra: drop Kconfig description for SND_SOC_TEGRA_DAS
+git bisect bad 063dd9d4488184f35c4598fb68f46fbba959d58e
+# good: [149c53b514d0a42abbb2c9611ffc9fa2d94857e8] ASoC: wm8994: Don't bother updating the jackdet mode needlessly
+git bisect good 149c53b514d0a42abbb2c9611ffc9fa2d94857e8
+# good: [5c7b4a08b7f3ce49756b79386dcdad5a2a21ccb6] ASoC: fsl: remove redundant Kconfig dependency on SND_SOC_POWERPC_DMA
+git bisect good 5c7b4a08b7f3ce49756b79386dcdad5a2a21ccb6
+# bad: [e6968a1719a88afa4708ff43696d6615f0be90be] ASoC: codecs: Remove rtd->codec usage from CODEC drivers
+git bisect bad e6968a1719a88afa4708ff43696d6615f0be90be
+# good: [fc9a30e85e4a9df7e692eda45b8484fc028238f0] ASoC: tlv320aic23: Remove driver-specific version number
+git bisect good fc9a30e85e4a9df7e692eda45b8484fc028238f0
