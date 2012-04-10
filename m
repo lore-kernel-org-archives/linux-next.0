@@ -1,58 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tile tree with Linus' tree
-Date: Tue, 10 Apr 2012 10:38:50 +1000
-Message-ID: <20120410103850.db4e6c388d09253d914b442b@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ net-next tree
+Date: Tue, 10 Apr 2012 11:32:09 +1000
+Message-ID: <20120410113209.1fb17bdc05e5995a4821cf46@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Apr_2012_10_38_50_+1000_VlN4GGOzURsVVjsl"
+ boundary="Signature=_Tue__10_Apr_2012_11_32_09_+1000_SdudSJy2oqGhwwA4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33128 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53355 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758281Ab2DJAi5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Apr 2012 20:38:57 -0400
+	with ESMTP id S1752277Ab2DJBcU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Apr 2012 21:32:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Metcalf <cmetcalf@tilera.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Meenakshi Venkataraman <meenakshi.venkataraman@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>
 
---Signature=_Tue__10_Apr_2012_10_38_50_+1000_VlN4GGOzURsVVjsl
+--Signature=_Tue__10_Apr_2012_11_32_09_+1000_SdudSJy2oqGhwwA4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+Hi John,
 
-Today's linux-next merge of the tile tree got a conflict in
-arch/tile/kernel/stack.c between commit 5f639fdcd8c1 (arch/tile: various
-bugs in stack backtracer"") from Linus' tree and commit aa127c855d1e
-("arch/tile: Allow tilegx to build with either 16K or 64K page size")
-from the tile tree.
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-testmode.c between commit d33e152e1edd
+("iwlwifi: Stop using NLA_PUT*()") from the net-next tree and commit
+a42506eb27aa ("iwlwifi: move ucode_type from shared to op_mode") from the
+wireless-next tree.
 
-The former removed the code modified by the latter, so I did that.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__10_Apr_2012_10_38_50_+1000_VlN4GGOzURsVVjsl
+diff --cc drivers/net/wireless/iwlwifi/iwl-testmode.c
+index a54e20e,d65dac8..0000000
+--- a/drivers/net/wireless/iwlwifi/iwl-testmode.c
++++ b/drivers/net/wireless/iwlwifi/iwl-testmode.c
+@@@ -609,10 -605,9 +612,10 @@@ static int iwl_testmode_driver(struct i
+  			inst_size =3D img->sec[IWL_UCODE_SECTION_INST].len;
+  			data_size =3D img->sec[IWL_UCODE_SECTION_DATA].len;
+  		}
+- 		if (nla_put_u32(skb, IWL_TM_ATTR_FW_TYPE, priv->shrd->ucode_type) ||
+ -		NLA_PUT_U32(skb, IWL_TM_ATTR_FW_TYPE, priv->cur_ucode);
+ -		NLA_PUT_U32(skb, IWL_TM_ATTR_FW_INST_SIZE, inst_size);
+ -		NLA_PUT_U32(skb, IWL_TM_ATTR_FW_DATA_SIZE, data_size);
+++		if (nla_put_u32(skb, IWL_TM_ATTR_FW_TYPE, priv->cur_ucode) ||
+ +		    nla_put_u32(skb, IWL_TM_ATTR_FW_INST_SIZE, inst_size) ||
+ +		    nla_put_u32(skb, IWL_TM_ATTR_FW_DATA_SIZE, data_size))
+ +			goto nla_put_failure;
+  		status =3D cfg80211_testmode_reply(skb);
+  		if (status < 0)
+  			IWL_ERR(priv, "Error sending msg : %d\n", status);
+
+--Signature=_Tue__10_Apr_2012_11_32_09_+1000_SdudSJy2oqGhwwA4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPg4EaAAoJEECxmPOUX5FE+FcP/AliM3c9CREWfMxP5lPtFE/u
-HsfJSKYhMlUwa+TnYqKUfpmhnos5S+v8Ctq/5ARk0S3ozzbQClZ7AOvsenhZEAIR
-kll245u/dCTo1AN5xY8OpCKT6H1VAuv+aRH420LyXxHAAQXXwxH1wJxIaJTYKm0D
-f95FhaOBfwth82U3YXSNWJLHTXYFi8c54FOGaZ0DbCHBl7FzrXOxAVeWE/XX4Yny
-KpXk03So+It+M9rmlfLDn7Iail/pPBT41tIf5PWmIke2mKdGxS4sKLlPHWIbyRch
-9Wg2QP44oywT2+E9syxeslkLuQAvHgFV6Fvk76qbtjFkm3FtbXO9e8vuOdDPXp1d
-3fvNsr07GoNqdB6HSIlvuekqKhoSsBXSuNNoPU+ktfMiTtHh/v17bQd0IiV79RFs
-9g2jBTNTCImwWEr7u2cKKwvBF0MeJfnbvn7mGcA6VPXYPWaoVPT01FAKiHMCG4i8
-jATgq/Qvh3eo1utrsmL6KOGHn/j8muJnG/ZkRTENlhMEP0XzIRCxJkT6ZYP1MT2L
-moGE93+/qr6dM51K+/6oV/i2aAc5vMsZCTsC+9J4C0Y5k5SQP4Uf0ZJMT4gjtuYx
-WkwBOuizlVl0Tczxfaaeq3KVANVXsN4dkWX015pmeLIB/JwMTUJhSVZTBOxyw3u6
-est7C0V73FzEDPDXlocx
-=wxn6
+iQIcBAEBCAAGBQJPg42ZAAoJEECxmPOUX5FEgt4P/0WiIo1LuvhyCLpfZ6xxDujQ
+Y/a/SWb8W0KEapXzuSok21N5JW42dtWyxD8YIzbSVEZdWGPUWgOFjvJ64HF+Gm0O
+5TiO7a391gUzFH12vFjc6yaHAWiMUKs0oiMF8m8m6Sclyse1m4uj9orxqfA1ztRo
+uSUAJaxAehRHBylBTx/sHchIzcGGW27TuSOf5VUKh6kjTBZsC9Bl2yTmNu7n8FdM
+08Quk4nEKjMb+PWqRcrHs8EEB94/8N50afVEfSbxOel02uBvwTfaoUpSMFtioHn6
+X4b5j0r7bfvfbhEfoMXLZqwlfwGW4Mq9j0oK7nMGARIjDnrJF3vIT2vdsWnBWWXN
+v9snTjZreQTNQXMrTBoeIzUYca2bCvbWn4nc+oG9VsHU1kxA6UoSim5Y6TSb/Z3p
+rCLqxTZ3N0/wAh1TSpbHzk5w6jtRGbx+BSMkjFpcHoKsplkMO3ot8EKrB00IPzR+
+I+PgHMbzVZCyS+yIhJ3dBsRj4Re3a4Ffho+wzVYzq78iQC0JMJtfA5wbe7qX2Yla
+qnn3XtmfX8outQTjE8+413K+QC6j/GUOh2FBrsaiWYZv92tVGjozIB+xqcwtfd8Z
+DEpGjQOku137vU6aC2+/4lejwS2qhdBpKYws4DNYuUBqabNUXN/UomG96pVtNr16
+XgnphierwkKIx/k7sSsx
+=EIvQ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Apr_2012_10_38_50_+1000_VlN4GGOzURsVVjsl--
+--Signature=_Tue__10_Apr_2012_11_32_09_+1000_SdudSJy2oqGhwwA4--
