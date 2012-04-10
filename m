@@ -1,82 +1,65 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-next tree related)
-Date: Tue, 10 Apr 2012 09:26:23 -0400 (EDT)
-Message-ID: <20120410.092623.821622563087500166.davem@davemloft.net>
-References: <20120410152923.15aee4df478d819f167cd4af@canb.auug.org.au>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: linux-next: build failure after merge of the pinctrl tree
+Date: Tue, 10 Apr 2012 09:12:54 -0600
+Message-ID: <4F844DF6.9010809@wwwdotorg.org>
+References: <20120404124437.ff05ebcc4db98109d5fcee22@canb.auug.org.au>	<4F7BC36E.4070000@wwwdotorg.org> <CACRpkdY57hQOvpqxaaYyJoH0ewfOAj9RqzWtC=aOWQyNMoG6fg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:43347 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752840Ab2DJN3B (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Apr 2012 09:29:01 -0400
-In-Reply-To: <20120410152923.15aee4df478d819f167cd4af@canb.auug.org.au>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:33376 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759089Ab2DJPM5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Apr 2012 11:12:57 -0400
+In-Reply-To: <CACRpkdY57hQOvpqxaaYyJoH0ewfOAj9RqzWtC=aOWQyNMoG6fg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, msink@permonline.ru, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 10 Apr 2012 15:29:23 +1000
+On 04/10/2012 01:42 AM, Linus Walleij wrote:
+> On Wed, Apr 4, 2012 at 5:43 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>> On 04/03/2012 08:44 PM, Stephen Rothwell wrote:
+>>> Hi Linus,
+>>>
+>>> After merging the pinctrl tree, today's linux-next build (powerpc
+>>> ppc64_defconfig) failed like this:
+>>>
+>>> drivers/pinctrl/devicetree.c: In function 'dt_free_map':
+>>> drivers/pinctrl/devicetree.c:44:42: error: dereferencing pointer to
+>>> incomplete type drivers/pinctrl/devicetree.c:45:6: error:
+>>> dereferencing pointer to incomplete type
+>>> drivers/pinctrl/devicetree.c: In function 'dt_to_map_one_config':
+>>> drivers/pinctrl/devicetree.c:140:21: error: dereferencing pointer
+>>> to incomplete type drivers/pinctrl/devicetree.c:141:10: error:
+>>> dereferencing pointer to incomplete type
+>>> drivers/pinctrl/devicetree.c:146:11: error: dereferencing pointer
+>>> to incomplete type
+>>
+>> This doesn't repro for me with tegra_defconfig, which has both
+>> CONFIG_PINCTRL and CONFIG_OF enabled.
+>>
+>> I believe this happens because of the following in
+>> drivers/pinctrl/Makefile:
+>>
+>> obj-$(CONFIG_OF)                += devicetree.o
+>>
+>> On ppc64, CONFIG_OF is probably true, yet the rest of PINCTRL isn't
+>> enabled, hence the headers that are included probably don't declare
+>> all the types needed to compile that file.
+>>
+>> In fact, the file shouldn't be compiled, since it's not needed if
+>> !CONFIG_PINCTRL. So perhaps the Makefile should be more like:
+>>
+>> ifeq ($(CONFIG_OF),y)
+>> obj-$(CONFIG_PINCTRL)           += devicetree.o
+>> endif
+> 
+> Easiest fixed with a new Kconfig like CONFIG_PINCTRL_OF that
+> depend on both right?
+> 
+> I'll cook a patch.
 
-> After merging the final tree, today's linux-next build (s390 allmodconfig)
-> failed like this:
-
-I just checked in the following which will hopefully cure this,
-thanks:
-
---------------------
-wiznet: Fix Kconfig dependencies.
-
-Both drivers need to depend upon HAS_IOMEM, otherwise we
-get a build failure on platforms like S390.
-
-All the driver specific config options need to depend upon
-the drivers themselves.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- drivers/net/ethernet/wiznet/Kconfig |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/net/ethernet/wiznet/Kconfig b/drivers/net/ethernet/wiznet/Kconfig
-index 2bb383c..c8291bf 100644
---- a/drivers/net/ethernet/wiznet/Kconfig
-+++ b/drivers/net/ethernet/wiznet/Kconfig
-@@ -19,6 +19,7 @@ if NET_VENDOR_WIZNET
- 
- config WIZNET_W5100
- 	tristate "WIZnet W5100 Ethernet support"
-+	depends on HAS_IOMEM
- 	---help---
- 	  Support for WIZnet W5100 chips.
- 
-@@ -31,6 +32,7 @@ config WIZNET_W5100
- 
- config WIZNET_W5300
- 	tristate "WIZnet W5300 Ethernet support"
-+	depends on HAS_IOMEM
- 	---help---
- 	  Support for WIZnet W5300 chips.
- 
-@@ -43,6 +45,7 @@ config WIZNET_W5300
- 
- choice
- 	prompt "WIZnet interface mode"
-+	depends on WIZNET_W5100 || WIZNET_W5300
- 	default WIZNET_BUS_ANY
- 
- config WIZNET_BUS_DIRECT
-@@ -69,6 +72,7 @@ endchoice
- 
- config WIZNET_TX_FLOW
- 	bool "Use transmit flow control"
-+	depends on WIZNET_W5100 || WIZNET_W5300
- 	default y
- 	help
- 	  This enables transmit flow control for WIZnet chips.
--- 
-1.7.7.6
+I don't think so; why wouldn't pinctrl automatically have DT support
+when both pinctrl and OF are enabled. BTW, I already posted a patch to
+fix this last week.
