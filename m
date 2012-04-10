@@ -1,37 +1,82 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: fix build when CONFIG_OF && !CONFIG_PINCTRL
-Date: Tue, 10 Apr 2012 10:53:34 +0200
-Message-ID: <CACRpkdbceDUOj4GoAH6FXpMQt6QQopRQsXbfKW9PDTkgk+gZkQ@mail.gmail.com>
-References: <1333511636-9987-1-git-send-email-swarren@wwwdotorg.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (net-next tree related)
+Date: Tue, 10 Apr 2012 09:26:23 -0400 (EDT)
+Message-ID: <20120410.092623.821622563087500166.davem@davemloft.net>
+References: <20120410152923.15aee4df478d819f167cd4af@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:39722 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753153Ab2DJIxe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Apr 2012 04:53:34 -0400
-Received: by yhmm54 with SMTP id m54so2171983yhm.19
-        for <linux-next@vger.kernel.org>; Tue, 10 Apr 2012 01:53:34 -0700 (PDT)
-In-Reply-To: <1333511636-9987-1-git-send-email-swarren@wwwdotorg.org>
+Received: from shards.monkeyblade.net ([198.137.202.13]:43347 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752840Ab2DJN3B (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Apr 2012 09:29:01 -0400
+In-Reply-To: <20120410152923.15aee4df478d819f167cd4af@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, msink@permonline.ru, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
 
-On Wed, Apr 4, 2012 at 5:53 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 10 Apr 2012 15:29:23 +1000
 
-> From: Stephen Warren <swarren@nvidia.com>
->
-> pinctrl/devicetree.c won't compile when !CONFIG_PINCTRL, since the
-> pinctrl headers don't declare some types when !PINCTRL. Make sure
-> pinctrl/Makefile only attempts to compile devicetree.c when OF &&
-> PINCTRL.
->
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> After merging the final tree, today's linux-next build (s390 allmodconfig)
+> failed like this:
 
-I fixed this other Kconfig patch to address the same problem.
+I just checked in the following which will hopefully cure this,
+thanks:
 
-If you think this approach is better let me know...
+--------------------
+wiznet: Fix Kconfig dependencies.
 
-Yours,
-Linus Walleij
+Both drivers need to depend upon HAS_IOMEM, otherwise we
+get a build failure on platforms like S390.
+
+All the driver specific config options need to depend upon
+the drivers themselves.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/ethernet/wiznet/Kconfig |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/ethernet/wiznet/Kconfig b/drivers/net/ethernet/wiznet/Kconfig
+index 2bb383c..c8291bf 100644
+--- a/drivers/net/ethernet/wiznet/Kconfig
++++ b/drivers/net/ethernet/wiznet/Kconfig
+@@ -19,6 +19,7 @@ if NET_VENDOR_WIZNET
+ 
+ config WIZNET_W5100
+ 	tristate "WIZnet W5100 Ethernet support"
++	depends on HAS_IOMEM
+ 	---help---
+ 	  Support for WIZnet W5100 chips.
+ 
+@@ -31,6 +32,7 @@ config WIZNET_W5100
+ 
+ config WIZNET_W5300
+ 	tristate "WIZnet W5300 Ethernet support"
++	depends on HAS_IOMEM
+ 	---help---
+ 	  Support for WIZnet W5300 chips.
+ 
+@@ -43,6 +45,7 @@ config WIZNET_W5300
+ 
+ choice
+ 	prompt "WIZnet interface mode"
++	depends on WIZNET_W5100 || WIZNET_W5300
+ 	default WIZNET_BUS_ANY
+ 
+ config WIZNET_BUS_DIRECT
+@@ -69,6 +72,7 @@ endchoice
+ 
+ config WIZNET_TX_FLOW
+ 	bool "Use transmit flow control"
++	depends on WIZNET_W5100 || WIZNET_W5300
+ 	default y
+ 	help
+ 	  This enables transmit flow control for WIZnet chips.
+-- 
+1.7.7.6
