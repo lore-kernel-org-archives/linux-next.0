@@ -1,61 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tty tree
-Date: Tue, 10 Apr 2012 13:06:37 +1000
-Message-ID: <20120410130637.d9aff141830a3eb71ff21440@canb.auug.org.au>
+From: Michael Neuling <mikey@neuling.org>
+Subject: [PATCH] gianfar: add missing include
+Date: Tue, 10 Apr 2012 14:18:47 +1000
+Message-ID: <25411.1334031527@neuling.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Apr_2012_13_06_37_+1000_bUPyR=PBGOomClEe"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44320 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753319Ab2DJDGw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Apr 2012 23:06:52 -0400
+Received: from ozlabs.org ([203.10.76.45]:49047 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750991Ab2DJESt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Apr 2012 00:18:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Karsten Keil <isdn@linux-pingi.de>
+To: "David S. Miller" <davem@davemloft.net>, Richard Cochran <richardcochran@gmail.com>
+Cc: linuxppc-dev@ozlabs.org, netdev@vger.kernel.org, linux-next@vger.kernel.org
 
---Signature=_Tue__10_Apr_2012_13_06_37_+1000_bUPyR=PBGOomClEe
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+next-20120405 compiled with mpc85xx_defconfig gives the following:
 
-Hi Greg,
+  CC      drivers/net/ethernet/freescale/gianfar_ethtool.o
+drivers/net/ethernet/freescale/gianfar_ethtool.c: In function 'gfar_get_ts_info':
+drivers/net/ethernet/freescale/gianfar_ethtool.c:1751:4: error: 'SOF_TIMESTAMPING_RX_SOFTWARE' undeclared (first use in this function)
+drivers/net/ethernet/freescale/gianfar_ethtool.c:1751:4: note: each undeclared identifier is reported only once for each function it appears in
+drivers/net/ethernet/freescale/gianfar_ethtool.c:1752:4: error: 'SOF_TIMESTAMPING_SOFTWARE' undeclared (first use in this function)
+drivers/net/ethernet/freescale/gianfar_ethtool.c:1757:3: error: 'SOF_TIMESTAMPING_TX_HARDWARE' undeclared (first use in this function)
+drivers/net/ethernet/freescale/gianfar_ethtool.c:1758:3: error: 'SOF_TIMESTAMPING_RX_HARDWARE' undeclared (first use in this function)
+drivers/net/ethernet/freescale/gianfar_ethtool.c:1759:3: error: 'SOF_TIMESTAMPING_RAW_HARDWARE' undeclared (first use in this function)
+drivers/net/ethernet/freescale/gianfar_ethtool.c:1762:9: error: 'HWTSTAMP_TX_OFF' undeclared (first use in this function)
+drivers/net/ethernet/freescale/gianfar_ethtool.c:1763:9: error: 'HWTSTAMP_TX_ON' undeclared (first use in this function)
+drivers/net/ethernet/freescale/gianfar_ethtool.c:1765:9: error: 'HWTSTAMP_FILTER_NONE' undeclared (first use in this function)
+drivers/net/ethernet/freescale/gianfar_ethtool.c:1766:9: error: 'HWTSTAMP_FILTER_ALL' undeclared (first use in this function)
 
-After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+This is because of a missing include file from:
+  6663628 gianfar: Support the get_ts_info ethtool method.
 
-ERROR: "isdn_tty_revision" [drivers/isdn/i4l/isdn.ko] undefined!
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+CC: Richard Cochran <richardcochran@gmail.com>
+CC: David S. Miller <davem@davemloft.net>
 
-Presumably caused by commit 1ca6711ec001 ("ISDN: i4l, remove cvs crap").
-That variable is still referenced in drivers/isdn/i4l/isdn_common.c.  Grep
-is your friend.
-
-I have used the tty tree from next-20120405 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__10_Apr_2012_13_06_37_+1000_bUPyR=PBGOomClEe
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPg6O9AAoJEECxmPOUX5FE7zgP/irmd/hN/6l2KW8QmUpuaCQI
-PdkilCkZH4+maPhZlBFai0z5xkJE5UM2IzAvp4lbhNQMYs4qJRIVimLIJ8JHyBmM
-VVWFZWmlOE7BN1eibeGIbQQvW2pi7XdbqzOOgdLHbuJtlMwaLfTGII1W2rv8tHy6
-4lSvMEGMRrR/nrTwO+iIGKfercx1ZVHeUy/gVzL5NGEezGzjl5D6mXuDmjra72FC
-rzS/pa7/BHHXEj5VdbtIpt0oC95v9QW+KWYITRAYsfceSxUf+sWj/8EDVprmZwu9
-CJTAiwpkGi6Z2YudPksmMrOVb1qTj4aYhcY3ld54u5vmeJ+axcJxPGOYpYNMVS9i
-L6LjpPSYCTAfHAvimVoz7mir+R1Oi0lDgCnTwP23WJr8xG1K2LSw0p4+KHEN/cbe
-6NfqsHlDSSNc7wd1GnRgiWwKVdSDxW1rGINsNLaoWxJlv672IG0N6Y+gfBZmoOM8
-J0wur6WXkY0mc6yN6nsGxNcdAPxb6uXT1+UzvFkpBghHdnIGmg9+xOiNh8fUvYVX
-X3Ymq26iJG9g5TATCiCcvE4Up8PTiGxKrRhJoqNemw4BkUqxU/KUTxCrN0/DSg3w
-sfFaOyda2q6DHEFnmy8per+lN0NGmrqIP1ep8TaQZ0SDcUxuTGKcRCv0nfaHSTnI
-ovq6ftcLAw84XDJzhde8
-=3haH
------END PGP SIGNATURE-----
-
---Signature=_Tue__10_Apr_2012_13_06_37_+1000_bUPyR=PBGOomClEe--
+diff --git a/drivers/net/ethernet/freescale/gianfar_ethtool.c b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+index 27f49c7..3c34b32b 100644
+--- a/drivers/net/ethernet/freescale/gianfar_ethtool.c
++++ b/drivers/net/ethernet/freescale/gianfar_ethtool.c
+@@ -29,6 +29,7 @@
+ #include <linux/skbuff.h>
+ #include <linux/spinlock.h>
+ #include <linux/mm.h>
++#include <linux/net_tstamp.h>
+ 
+ #include <asm/io.h>
+ #include <asm/irq.h>
