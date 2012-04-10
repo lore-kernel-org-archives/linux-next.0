@@ -1,79 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-next tree with the
- net-next tree
-Date: Tue, 10 Apr 2012 11:32:09 +1000
-Message-ID: <20120410113209.1fb17bdc05e5995a4821cf46@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Tue, 10 Apr 2012 13:06:37 +1000
+Message-ID: <20120410130637.d9aff141830a3eb71ff21440@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Apr_2012_11_32_09_+1000_SdudSJy2oqGhwwA4"
+ boundary="Signature=_Tue__10_Apr_2012_13_06_37_+1000_bUPyR=PBGOomClEe"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53355 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44320 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752277Ab2DJBcU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Apr 2012 21:32:20 -0400
+	with ESMTP id S1753319Ab2DJDGw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Apr 2012 23:06:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Meenakshi Venkataraman <meenakshi.venkataraman@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Karsten Keil <isdn@linux-pingi.de>
 
---Signature=_Tue__10_Apr_2012_11_32_09_+1000_SdudSJy2oqGhwwA4
+--Signature=_Tue__10_Apr_2012_13_06_37_+1000_bUPyR=PBGOomClEe
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi Greg,
 
-Today's linux-next merge of the wireless-next tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-testmode.c between commit d33e152e1edd
-("iwlwifi: Stop using NLA_PUT*()") from the net-next tree and commit
-a42506eb27aa ("iwlwifi: move ucode_type from shared to op_mode") from the
-wireless-next tree.
+After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
+ERROR: "isdn_tty_revision" [drivers/isdn/i4l/isdn.ko] undefined!
+
+Presumably caused by commit 1ca6711ec001 ("ISDN: i4l, remove cvs crap").
+That variable is still referenced in drivers/isdn/i4l/isdn_common.c.  Grep
+is your friend.
+
+I have used the tty tree from next-20120405 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/iwlwifi/iwl-testmode.c
-index a54e20e,d65dac8..0000000
---- a/drivers/net/wireless/iwlwifi/iwl-testmode.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-testmode.c
-@@@ -609,10 -605,9 +612,10 @@@ static int iwl_testmode_driver(struct i
-  			inst_size =3D img->sec[IWL_UCODE_SECTION_INST].len;
-  			data_size =3D img->sec[IWL_UCODE_SECTION_DATA].len;
-  		}
-- 		if (nla_put_u32(skb, IWL_TM_ATTR_FW_TYPE, priv->shrd->ucode_type) ||
- -		NLA_PUT_U32(skb, IWL_TM_ATTR_FW_TYPE, priv->cur_ucode);
- -		NLA_PUT_U32(skb, IWL_TM_ATTR_FW_INST_SIZE, inst_size);
- -		NLA_PUT_U32(skb, IWL_TM_ATTR_FW_DATA_SIZE, data_size);
-++		if (nla_put_u32(skb, IWL_TM_ATTR_FW_TYPE, priv->cur_ucode) ||
- +		    nla_put_u32(skb, IWL_TM_ATTR_FW_INST_SIZE, inst_size) ||
- +		    nla_put_u32(skb, IWL_TM_ATTR_FW_DATA_SIZE, data_size))
- +			goto nla_put_failure;
-  		status =3D cfg80211_testmode_reply(skb);
-  		if (status < 0)
-  			IWL_ERR(priv, "Error sending msg : %d\n", status);
-
---Signature=_Tue__10_Apr_2012_11_32_09_+1000_SdudSJy2oqGhwwA4
+--Signature=_Tue__10_Apr_2012_13_06_37_+1000_bUPyR=PBGOomClEe
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPg42ZAAoJEECxmPOUX5FEgt4P/0WiIo1LuvhyCLpfZ6xxDujQ
-Y/a/SWb8W0KEapXzuSok21N5JW42dtWyxD8YIzbSVEZdWGPUWgOFjvJ64HF+Gm0O
-5TiO7a391gUzFH12vFjc6yaHAWiMUKs0oiMF8m8m6Sclyse1m4uj9orxqfA1ztRo
-uSUAJaxAehRHBylBTx/sHchIzcGGW27TuSOf5VUKh6kjTBZsC9Bl2yTmNu7n8FdM
-08Quk4nEKjMb+PWqRcrHs8EEB94/8N50afVEfSbxOel02uBvwTfaoUpSMFtioHn6
-X4b5j0r7bfvfbhEfoMXLZqwlfwGW4Mq9j0oK7nMGARIjDnrJF3vIT2vdsWnBWWXN
-v9snTjZreQTNQXMrTBoeIzUYca2bCvbWn4nc+oG9VsHU1kxA6UoSim5Y6TSb/Z3p
-rCLqxTZ3N0/wAh1TSpbHzk5w6jtRGbx+BSMkjFpcHoKsplkMO3ot8EKrB00IPzR+
-I+PgHMbzVZCyS+yIhJ3dBsRj4Re3a4Ffho+wzVYzq78iQC0JMJtfA5wbe7qX2Yla
-qnn3XtmfX8outQTjE8+413K+QC6j/GUOh2FBrsaiWYZv92tVGjozIB+xqcwtfd8Z
-DEpGjQOku137vU6aC2+/4lejwS2qhdBpKYws4DNYuUBqabNUXN/UomG96pVtNr16
-XgnphierwkKIx/k7sSsx
-=EIvQ
+iQIcBAEBCAAGBQJPg6O9AAoJEECxmPOUX5FE7zgP/irmd/hN/6l2KW8QmUpuaCQI
+PdkilCkZH4+maPhZlBFai0z5xkJE5UM2IzAvp4lbhNQMYs4qJRIVimLIJ8JHyBmM
+VVWFZWmlOE7BN1eibeGIbQQvW2pi7XdbqzOOgdLHbuJtlMwaLfTGII1W2rv8tHy6
+4lSvMEGMRrR/nrTwO+iIGKfercx1ZVHeUy/gVzL5NGEezGzjl5D6mXuDmjra72FC
+rzS/pa7/BHHXEj5VdbtIpt0oC95v9QW+KWYITRAYsfceSxUf+sWj/8EDVprmZwu9
+CJTAiwpkGi6Z2YudPksmMrOVb1qTj4aYhcY3ld54u5vmeJ+axcJxPGOYpYNMVS9i
+L6LjpPSYCTAfHAvimVoz7mir+R1Oi0lDgCnTwP23WJr8xG1K2LSw0p4+KHEN/cbe
+6NfqsHlDSSNc7wd1GnRgiWwKVdSDxW1rGINsNLaoWxJlv672IG0N6Y+gfBZmoOM8
+J0wur6WXkY0mc6yN6nsGxNcdAPxb6uXT1+UzvFkpBghHdnIGmg9+xOiNh8fUvYVX
+X3Ymq26iJG9g5TATCiCcvE4Up8PTiGxKrRhJoqNemw4BkUqxU/KUTxCrN0/DSg3w
+sfFaOyda2q6DHEFnmy8per+lN0NGmrqIP1ep8TaQZ0SDcUxuTGKcRCv0nfaHSTnI
+ovq6ftcLAw84XDJzhde8
+=3haH
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Apr_2012_11_32_09_+1000_SdudSJy2oqGhwwA4--
+--Signature=_Tue__10_Apr_2012_13_06_37_+1000_bUPyR=PBGOomClEe--
