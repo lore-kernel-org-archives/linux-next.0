@@ -1,70 +1,94 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] android: make persistent_ram based drivers depend on HAVE_MEMBLOCK
-Date: Sun, 8 Apr 2012 10:43:48 +0200
-Message-ID: <CAMuHMdXM9bcmNdet4XAvtWuwPAr9KZS_pbm1TzKCM8UW2hcZmw@mail.gmail.com>
-References: <1332350313-2501-1-git-send-email-ccross@android.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tile tree with Linus' tree
+Date: Tue, 10 Apr 2012 10:34:52 +1000
+Message-ID: <20120410103452.0783213f251d0c8302b4eec2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1332350313-2501-1-git-send-email-ccross@android.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin Cross <ccross@android.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Android Kernel Team <kernel-team@android.com>, gregkh@linuxfoundation.org, Linus Torvalds <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__10_Apr_2012_10_34_52_+1000_ke9l4GIul9VKMv=p"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44685 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753320Ab2DJAfE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Apr 2012 20:35:04 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Chris Metcalf <cmetcalf@tilera.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2012 at 18:18, Colin Cross <ccross@android.com> wrote:
-> m68k doesn't have memblock_reserve, which causes a build failure
-> with allmodconfig. =C2=A0Make PERSISTENT_RAM and RAM_CONSOLE depend o=
-n
-> HAVE_MEMBLOCK.
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Signed-off-by: Colin Cross <ccross@android.com>
+--Signature=_Tue__10_Apr_2012_10_34_52_+1000_ke9l4GIul9VKMv=p
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Hi Chris,
 
-> ---
-> =C2=A0drivers/staging/android/Kconfig | =C2=A0 =C2=A03 ++-
-> =C2=A01 files changed, 2 insertions(+), 1 deletions(-)
->
-> I can't test on m68k, but this disables the options if I remove
-> HAVE_MEMBLOCK from arm.
->
-> diff --git a/drivers/staging/android/Kconfig b/drivers/staging/androi=
-d/Kconfig
-> index 08a3b11..eb1dee2 100644
-> --- a/drivers/staging/android/Kconfig
-> +++ b/drivers/staging/android/Kconfig
-> @@ -27,13 +27,14 @@ config ANDROID_LOGGER
->
-> =C2=A0config ANDROID_PERSISTENT_RAM
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0bool
-> + =C2=A0 =C2=A0 =C2=A0 depends on HAVE_MEMBLOCK
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select REED_SOLOMON
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select REED_SOLOMON_ENC8
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select REED_SOLOMON_DEC8
->
-> =C2=A0config ANDROID_RAM_CONSOLE
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0bool "Android RAM buffer console"
-> - =C2=A0 =C2=A0 =C2=A0 depends on !S390 && !UML
-> + =C2=A0 =C2=A0 =C2=A0 depends on !S390 && !UML && HAVE_MEMBLOCK
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select ANDROID_PERSISTENT_RAM
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0default n
+Today's linux-next merge of the tile tree got a conflict in
+arch/tile/kernel/single_step.c between commit cdd8e16feba8 ("arch/tile:
+return SIGBUS for addresses that are unaligned AND invalid") from Linus'
+tree and commit 25c5acbdcc06 ("arch/tile: support building big-endian
+kernel") from the tile tree.
 
-Gr{oetje,eeting}s,
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+diff --cc arch/tile/kernel/single_step.c
+index 9efbc13,8935deb..0000000
+--- a/arch/tile/kernel/single_step.c
++++ b/arch/tile/kernel/single_step.c
+@@@ -153,28 -153,6 +153,25 @@@ static tile_bundle_bits rewrite_load_st
+  	if (((unsigned long)addr % size) =3D=3D 0)
+  		return bundle;
+ =20
+ +	/*
+ +	 * Return SIGBUS with the unaligned address, if requested.
+ +	 * Note that we return SIGBUS even for completely invalid addresses
+ +	 * as long as they are in fact unaligned; this matches what the
+ +	 * tilepro hardware would be doing, if it could provide us with the
+ +	 * actual bad address in an SPR, which it doesn't.
+ +	 */
+ +	if (unaligned_fixup =3D=3D 0) {
+ +		siginfo_t info =3D {
+ +			.si_signo =3D SIGBUS,
+ +			.si_code =3D BUS_ADRALN,
+ +			.si_addr =3D addr
+ +		};
+ +		trace_unhandled_signal("unaligned trap", regs,
+ +				       (unsigned long)addr, SIGBUS);
+ +		force_sig_info(info.si_signo, &info, current);
+ +		return (tilepro_bundle_bits) 0;
+ +	}
+ +
+- #ifndef __LITTLE_ENDIAN
+- # error We assume little-endian representation with copy_xx_user size 2 h=
+ere
+- #endif
+  	/* Handle unaligned load/store */
+  	if (mem_op =3D=3D MEMOP_LOAD || mem_op =3D=3D MEMOP_LOAD_POSTINCR) {
+  		unsigned short val_16;
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+--Signature=_Tue__10_Apr_2012_10_34_52_+1000_ke9l4GIul9VKMv=p
+Content-Type: application/pgp-signature
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPg4AsAAoJEECxmPOUX5FEIAYP/RxYnp8J59OXoFpxQlaVgOvi
++s4IIvCRzbNZsJrqzNcEMF4gFyBnvdOfn5zYen2ECP5kdXwrxOmrhlWUMywTYPA8
+b/WzA1QPvu6IpuL+ojekHz2bYiFWWZJ/valggX5+wcJnUzCZZi8Ijb9bHPSDJmjV
+R2xUdSC/YPCTo0YU58qn+rog92qMNokhrBHeViSYLyQZmnFNic0jVJePNw7mZj4/
+qUk5+gdAULxhIp7Z/JUJt4uTgOIYS49bQFeJxWNN6zZVd/wbR8/ObMr4SHsbKlW6
+N/6g/rJbKV3vXz3vzNfRV4Uj7Ejta2Y5QyCxT1EwecKmCnutFsl28nMJWY4i6pwh
+lcJpnjvpK/SqEKopvjP15sVEeT3p82UXSSv1fdqhBaD5HIe9wpmJN8qKb6YtVGGD
+20WCIHv6ItRJU6K/iDm88NCuCyz0Kr6jZehLZkzX+6SIETfLH90uKEhH7N3RaHKn
+97tTL+VevHRaFmiYnAv3vkTWs+9Gy3AmmOsYw6Ux7F/OycIJ47B7x3TY/p0SgyBA
+GyjAHqqV764Sj99azHtSABKj2UdFKC8Mvapv2HXDVilQM9WWLfkNCiIVp3RBS8v6
+QjViR7Gji0ZCaEgVjpVgdgefo9KtPZgYQDBX48oxFuatjCsDOp57825G+ZaKm/RB
+pNhH1QXmM+I3l8Ab45st
+=RkSf
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Apr_2012_10_34_52_+1000_ke9l4GIul9VKMv=p--
