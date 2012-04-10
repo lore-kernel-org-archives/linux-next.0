@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the tile tree with Linus' tree
-Date: Tue, 10 Apr 2012 10:34:52 +1000
-Message-ID: <20120410103452.0783213f251d0c8302b4eec2@canb.auug.org.au>
+Date: Tue, 10 Apr 2012 10:38:50 +1000
+Message-ID: <20120410103850.db4e6c388d09253d914b442b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__10_Apr_2012_10_34_52_+1000_ke9l4GIul9VKMv=p"
+ boundary="Signature=_Tue__10_Apr_2012_10_38_50_+1000_VlN4GGOzURsVVjsl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44685 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33128 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753320Ab2DJAfE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Apr 2012 20:35:04 -0400
+	with ESMTP id S1758281Ab2DJAi5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Apr 2012 20:38:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Chris Metcalf <cmetcalf@tilera.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__10_Apr_2012_10_34_52_+1000_ke9l4GIul9VKMv=p
+--Signature=_Tue__10_Apr_2012_10_38_50_+1000_VlN4GGOzURsVVjsl
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,71 +24,35 @@ Content-Transfer-Encoding: quoted-printable
 Hi Chris,
 
 Today's linux-next merge of the tile tree got a conflict in
-arch/tile/kernel/single_step.c between commit cdd8e16feba8 ("arch/tile:
-return SIGBUS for addresses that are unaligned AND invalid") from Linus'
-tree and commit 25c5acbdcc06 ("arch/tile: support building big-endian
-kernel") from the tile tree.
+arch/tile/kernel/stack.c between commit 5f639fdcd8c1 (arch/tile: various
+bugs in stack backtracer"") from Linus' tree and commit aa127c855d1e
+("arch/tile: Allow tilegx to build with either 16K or 64K page size")
+from the tile tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+The former removed the code modified by the latter, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/tile/kernel/single_step.c
-index 9efbc13,8935deb..0000000
---- a/arch/tile/kernel/single_step.c
-+++ b/arch/tile/kernel/single_step.c
-@@@ -153,28 -153,6 +153,25 @@@ static tile_bundle_bits rewrite_load_st
-  	if (((unsigned long)addr % size) =3D=3D 0)
-  		return bundle;
- =20
- +	/*
- +	 * Return SIGBUS with the unaligned address, if requested.
- +	 * Note that we return SIGBUS even for completely invalid addresses
- +	 * as long as they are in fact unaligned; this matches what the
- +	 * tilepro hardware would be doing, if it could provide us with the
- +	 * actual bad address in an SPR, which it doesn't.
- +	 */
- +	if (unaligned_fixup =3D=3D 0) {
- +		siginfo_t info =3D {
- +			.si_signo =3D SIGBUS,
- +			.si_code =3D BUS_ADRALN,
- +			.si_addr =3D addr
- +		};
- +		trace_unhandled_signal("unaligned trap", regs,
- +				       (unsigned long)addr, SIGBUS);
- +		force_sig_info(info.si_signo, &info, current);
- +		return (tilepro_bundle_bits) 0;
- +	}
- +
-- #ifndef __LITTLE_ENDIAN
-- # error We assume little-endian representation with copy_xx_user size 2 h=
-ere
-- #endif
-  	/* Handle unaligned load/store */
-  	if (mem_op =3D=3D MEMOP_LOAD || mem_op =3D=3D MEMOP_LOAD_POSTINCR) {
-  		unsigned short val_16;
-
---Signature=_Tue__10_Apr_2012_10_34_52_+1000_ke9l4GIul9VKMv=p
+--Signature=_Tue__10_Apr_2012_10_38_50_+1000_VlN4GGOzURsVVjsl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPg4AsAAoJEECxmPOUX5FEIAYP/RxYnp8J59OXoFpxQlaVgOvi
-+s4IIvCRzbNZsJrqzNcEMF4gFyBnvdOfn5zYen2ECP5kdXwrxOmrhlWUMywTYPA8
-b/WzA1QPvu6IpuL+ojekHz2bYiFWWZJ/valggX5+wcJnUzCZZi8Ijb9bHPSDJmjV
-R2xUdSC/YPCTo0YU58qn+rog92qMNokhrBHeViSYLyQZmnFNic0jVJePNw7mZj4/
-qUk5+gdAULxhIp7Z/JUJt4uTgOIYS49bQFeJxWNN6zZVd/wbR8/ObMr4SHsbKlW6
-N/6g/rJbKV3vXz3vzNfRV4Uj7Ejta2Y5QyCxT1EwecKmCnutFsl28nMJWY4i6pwh
-lcJpnjvpK/SqEKopvjP15sVEeT3p82UXSSv1fdqhBaD5HIe9wpmJN8qKb6YtVGGD
-20WCIHv6ItRJU6K/iDm88NCuCyz0Kr6jZehLZkzX+6SIETfLH90uKEhH7N3RaHKn
-97tTL+VevHRaFmiYnAv3vkTWs+9Gy3AmmOsYw6Ux7F/OycIJ47B7x3TY/p0SgyBA
-GyjAHqqV764Sj99azHtSABKj2UdFKC8Mvapv2HXDVilQM9WWLfkNCiIVp3RBS8v6
-QjViR7Gji0ZCaEgVjpVgdgefo9KtPZgYQDBX48oxFuatjCsDOp57825G+ZaKm/RB
-pNhH1QXmM+I3l8Ab45st
-=RkSf
+iQIcBAEBCAAGBQJPg4EaAAoJEECxmPOUX5FE+FcP/AliM3c9CREWfMxP5lPtFE/u
+HsfJSKYhMlUwa+TnYqKUfpmhnos5S+v8Ctq/5ARk0S3ozzbQClZ7AOvsenhZEAIR
+kll245u/dCTo1AN5xY8OpCKT6H1VAuv+aRH420LyXxHAAQXXwxH1wJxIaJTYKm0D
+f95FhaOBfwth82U3YXSNWJLHTXYFi8c54FOGaZ0DbCHBl7FzrXOxAVeWE/XX4Yny
+KpXk03So+It+M9rmlfLDn7Iail/pPBT41tIf5PWmIke2mKdGxS4sKLlPHWIbyRch
+9Wg2QP44oywT2+E9syxeslkLuQAvHgFV6Fvk76qbtjFkm3FtbXO9e8vuOdDPXp1d
+3fvNsr07GoNqdB6HSIlvuekqKhoSsBXSuNNoPU+ktfMiTtHh/v17bQd0IiV79RFs
+9g2jBTNTCImwWEr7u2cKKwvBF0MeJfnbvn7mGcA6VPXYPWaoVPT01FAKiHMCG4i8
+jATgq/Qvh3eo1utrsmL6KOGHn/j8muJnG/ZkRTENlhMEP0XzIRCxJkT6ZYP1MT2L
+moGE93+/qr6dM51K+/6oV/i2aAc5vMsZCTsC+9J4C0Y5k5SQP4Uf0ZJMT4gjtuYx
+WkwBOuizlVl0Tczxfaaeq3KVANVXsN4dkWX015pmeLIB/JwMTUJhSVZTBOxyw3u6
+est7C0V73FzEDPDXlocx
+=wxn6
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__10_Apr_2012_10_34_52_+1000_ke9l4GIul9VKMv=p--
+--Signature=_Tue__10_Apr_2012_10_38_50_+1000_VlN4GGOzURsVVjsl--
