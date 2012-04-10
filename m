@@ -1,84 +1,63 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next:  commit "Remove rtd->codec usage from CODEC drivers"
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next:  commit "Remove rtd->codec usage from CODEC drivers"
  breakage.
-Date: Tue, 10 Apr 2012 17:39:15 -0400
-Message-ID: <4F84A883.3040308@windriver.com>
+Date: Tue, 10 Apr 2012 23:05:49 +0100
+Message-ID: <20120410220548.GX7499@opensource.wolfsonmicro.com>
+References: <4F84A883.3040308@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yKmnPmKxJBqIz68t"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:34828 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755624Ab2DJVjU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Apr 2012 17:39:20 -0400
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:51853 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1759478Ab2DJWFw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Apr 2012 18:05:52 -0400
+Content-Disposition: inline
+In-Reply-To: <4F84A883.3040308@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
 Cc: linux-next@vger.kernel.org
 
-Hi Mark,
 
-Can you have a look at this build failure?
+--yKmnPmKxJBqIz68t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-sound/soc/codecs/wm9712.c:482:32: error: 'runtime' undeclared (first use in this function)
-sound/soc/codecs/wm9712.c:499:33: error: 'runtime' undeclared (first use in this function)
-make[4]: *** [sound/soc/codecs/wm9712.o] Error 1
+On Tue, Apr 10, 2012 at 05:39:15PM -0400, Paul Gortmaker wrote:
+> Hi Mark,
+>=20
+> Can you have a look at this build failure?
+>=20
+> sound/soc/codecs/wm9712.c:482:32: error: 'runtime' undeclared (first use =
+in this function)
+> sound/soc/codecs/wm9712.c:499:33: error: 'runtime' undeclared (first use =
+in this function)
 
-Full log is here:
+Already resolved.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/6087177/
+--yKmnPmKxJBqIz68t
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-It breaks eseries_pxa_defconfig,em_x270_defconfig
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-A bisect leads to this commit in linux-next:
+iQIbBAEBAgAGBQJPhK61AAoJEBus8iNuMP3dij8P+Pfu65A2WPuIgegTbv+Cuq8d
+T1M/e7PCC7E06w5HObXuXI9wjBa2+PKBbrfE26jjBmk++/zPLL9suMMNkBQKhkza
+vkNG6Ns3SwiUhcL93ddr5Fca3Xlf9dt5OCC+XJCXIOooCj9xisXvt9yfyjYP2yiY
+WFnEl1b27M5J/nRBEshw9d9b/eLCucxPZrgf40HHBqegLW0Wfv+q621ujE4RQOxG
+1HOog4s5ZBo2YX0aAwQYYGen5dfngLv4hPSTy6NN821ows0A0E2aAJfvMg3J23+I
+cARw+TjMSzCEg9pQbURJEsogIvLEb2PwzLqqAjjsA7d/Bhg1/jXFnBIKqmqMsCam
+K7uwnJ72qSHxzqFjVMBDHd2YYrAO1izw9abArubN02wIfhZyE8pKF7O3KeD0MVWJ
+Q9Z6cBnnY8GRznUGVrB61+h4N5APYXrCi2sarbGQkucrZUxHiKu0dN17XOMT5XfM
+Eot16Ld9Iv6oowtz3lzYNASOAlDB/qPsHEFGjx6kKDOZ2PGFooWtFkKAPQBL7bCp
+hnzpi7DlrETal/GPm53sfka7gQr7mwWT6bsuF+zBjpiBj/ZXhsw/DUG6UP68dxfM
+mwDjVUP7uepUVON+d8MJIQvtrrqbcVNckdN2Zh524T+LMEXvAaqGNtax9tjclA/r
+NU8ZQDglje3SJXayNkk=
+=3l+x
+-----END PGP SIGNATURE-----
 
---------------------
-commit e6968a1719a88afa4708ff43696d6615f0be90be
-Author: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Date:   Wed Apr 4 15:58:16 2012 +0100
-
-    ASoC: codecs: Remove rtd->codec usage from CODEC drivers
-    
-    In order to support CODEC<->CODEC links remove the assumption that there
-    is only a single CODEC on a DAI link by removing the use of the CODEC
-    pointer in the rtd from the CODEC drivers. They are already being passed
-    their DAI whenever they are passed an rtd and can get the CODEC from
-    there.
-    
-    Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
---------------------
-
-Thanks,
-Paul.
-
-git bisect start
-# good: [0034102808e0dbbf3a2394b82b1bb40b5778de9e] Linux 3.4-rc2
-git bisect good 0034102808e0dbbf3a2394b82b1bb40b5778de9e
-# bad: [ef1f1fecd5e7fa274229cd4f30653b4a66a76df4] Add linux-next specific files for 20120410
-git bisect bad ef1f1fecd5e7fa274229cd4f30653b4a66a76df4
-# good: [25cfb83003f369b9c153eefea97be39085d55936] Merge remote-tracking branch 'sound/for-next'
-git bisect good 25cfb83003f369b9c153eefea97be39085d55936
-# good: [b62eb966bd66c78a8fc36e566fe0448f879dad60] kvm tools: Move arch-specific cmdline init into kvm__arch_set_cmdline()
-git bisect good b62eb966bd66c78a8fc36e566fe0448f879dad60
-# good: [911bcb25143c2cbe3daac8785285d8daf03cf9fc] Merge branch 'linus'
-git bisect good 911bcb25143c2cbe3daac8785285d8daf03cf9fc
-# bad: [5fc4bef34f121f77405c7b4e5aaa485187e8011a] Merge remote-tracking branch 'trivial/for-next'
-git bisect bad 5fc4bef34f121f77405c7b4e5aaa485187e8011a
-# bad: [c946ebd47232bba219aff0ee2d31bd62c502696a] Merge branch 'quilt/device-mapper'
-git bisect bad c946ebd47232bba219aff0ee2d31bd62c502696a
-# bad: [c2f6702d318e43bf841da9c0ba5b6f1695661bbc] ASoC: tegra: utils: add support for Tegra30 devices
-git bisect bad c2f6702d318e43bf841da9c0ba5b6f1695661bbc
-# good: [b46b373f4084cc02d4d41a5a42199fe8462c2f13] ASoC: fsl: assign dma peripheral type according to bus topology
-git bisect good b46b373f4084cc02d4d41a5a42199fe8462c2f13
-# good: [1d99f2436d0d1c7741d6dfd9d27b5376cdbbca40] ASoC: core: Rework SOC_DOUBLE_R_SX_TLV add SOC_SINGLE_SX_TLV
-git bisect good 1d99f2436d0d1c7741d6dfd9d27b5376cdbbca40
-# bad: [063dd9d4488184f35c4598fb68f46fbba959d58e] ASoC: tegra: drop Kconfig description for SND_SOC_TEGRA_DAS
-git bisect bad 063dd9d4488184f35c4598fb68f46fbba959d58e
-# good: [149c53b514d0a42abbb2c9611ffc9fa2d94857e8] ASoC: wm8994: Don't bother updating the jackdet mode needlessly
-git bisect good 149c53b514d0a42abbb2c9611ffc9fa2d94857e8
-# good: [5c7b4a08b7f3ce49756b79386dcdad5a2a21ccb6] ASoC: fsl: remove redundant Kconfig dependency on SND_SOC_POWERPC_DMA
-git bisect good 5c7b4a08b7f3ce49756b79386dcdad5a2a21ccb6
-# bad: [e6968a1719a88afa4708ff43696d6615f0be90be] ASoC: codecs: Remove rtd->codec usage from CODEC drivers
-git bisect bad e6968a1719a88afa4708ff43696d6615f0be90be
-# good: [fc9a30e85e4a9df7e692eda45b8484fc028238f0] ASoC: tlv320aic23: Remove driver-specific version number
-git bisect good fc9a30e85e4a9df7e692eda45b8484fc028238f0
+--yKmnPmKxJBqIz68t--
