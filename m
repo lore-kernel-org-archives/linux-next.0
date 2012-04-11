@@ -1,75 +1,49 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
+From: Mike Frysinger <vapier.adi@gmail.com>
 Subject: Re: linux-next: triage for April 10, 2012
-Date: Tue, 10 Apr 2012 23:09:51 -0400
-Message-ID: <CAP=VYLrzvXCTD4J3sdhMCjnsPKvf-tobkE0G6OgTvc4mnEiw7A@mail.gmail.com>
+Date: Tue, 10 Apr 2012 23:37:24 -0400
+Message-ID: <CAMjpGUeKvP-fJG1sUPRtFDUWCwBg-19JFiFOAKJGmR8Pn4-XUA@mail.gmail.com>
 References: <20120410224543.GA11433@windriver.com> <CAMjpGUetfGQxqTKVfLBtOdthxFtFv-knuXSWoNx0BKxJd=829Q@mail.gmail.com>
+ <CAP=VYLrzvXCTD4J3sdhMCjnsPKvf-tobkE0G6OgTvc4mnEiw7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:35594 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756018Ab2DKDKY convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Apr 2012 23:10:24 -0400
-In-Reply-To: <CAMjpGUetfGQxqTKVfLBtOdthxFtFv-knuXSWoNx0BKxJd=829Q@mail.gmail.com>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:58590 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756084Ab2DKDhq convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Apr 2012 23:37:46 -0400
+In-Reply-To: <CAP=VYLrzvXCTD4J3sdhMCjnsPKvf-tobkE0G6OgTvc4mnEiw7A@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Frysinger <vapier.adi@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org, Sonic Zhang <Sonic.Zhang@analog.com>, Bob Liu <lliubbo@gmail.com>
 
-On Tue, Apr 10, 2012 at 10:50 PM, Mike Frysinger <vapier.adi@gmail.com>=
- wrote:
-> On Tue, Apr 10, 2012 at 18:45, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
->> bfin: 50% of builds
->> =A0 =A0 =A0 =A0when: =A0 Mar 31
->> =A0 =A0 =A0 =A0why: =A0 =A0"Error: pcrel too far BFD_RELOC_BFIN_10" =
-from kernel/time/timekeeping.c
->> =A0 =A0 =A0 =A0status: unknown, binutils issue?
->> =A0 =A0 =A0 =A0fix:
->> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/build=
-result/5981475/
+On Tue, Apr 10, 2012 at 23:09, Paul Gortmaker wrote:
+> Thanks Mike, I'll fix the stale link. =C2=A0Here is a RELOC_BFIN_10 f=
+ail:
 >
-> that log file doesn't say anything about "BFD_RELOC_BFIN_10"
+> http://kisskb.ellerman.id.au/kisskb/buildresult/6087324/
 
-Thanks Mike, I'll fix the stale link.  Here is a RELOC_BFIN_10 fail:
+hrm, i'm not seeing that here, but i'm using binutils-2.21.  we prob
+should file a bug for the Blackfin toolchain guys to investigate.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/6087324/
+what version of binutils are you using ?
 
-Looks like I should go over the bfin fails and check each one, since
-they are somewhat unique -- e.g.
-
-arch/blackfin/mach-bf537/boards/dnp5370.c:392:17: error:
-'bfin_spi_board_info' undeclared (first use in this function)
-
-in DNP5370_defconfig
-
-and
-
-arch/blackfin/mach-bf533/boards/ip0x.c:299:26: error:
-'bfin_spi_board_info' undeclared (first use in this function)
-
-in IP0X_defconfig
-
-http://kisskb.ellerman.id.au/kisskb/buildresult/6087345/
-
-are not related to the RELOC_BFIN_10
-
-Paul.
---
-
+> Looks like I should go over the bfin fails and check each one, since
+> they are somewhat unique -- e.g.
 >
-> it does show the old L1 data overflow though ...
+> arch/blackfin/mach-bf537/boards/dnp5370.c:392:17: error:
+> 'bfin_spi_board_info' undeclared (first use in this function)
 >
-> on a side note, the warning:
-> arch/blackfin/mm/init.c:79:9: warning: array subscript is above array
-> bounds [-Warray-bounds]
-> is a bad thing, but i've just pushed a fix for that ...
-> -mike
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at =A0http://www.tux.org/lkml/
+> in DNP5370_defconfig
+
+blah, looks like something got renamed, but not all the way
+
+commit 7d157fb02bc3f4dc74e6830725864ba501d92da7
+blackfin: config: update macro SPI_BFIN in board file
+
+that renamed SPI_BFIN to SPI_BFIN5XX in the board files
+
+but the commit in drivers/spi/ hasn't been merged yet, so it's still
+SPI_BFIN there
+-mike
