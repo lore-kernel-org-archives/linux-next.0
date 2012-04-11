@@ -1,50 +1,68 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: linux-next: build failure after merge of the md tree
-Date: Tue, 10 Apr 2012 20:54:25 -0700
-Message-ID: <4F850071.6030906@zytor.com>
-References: <20120411134259.61f755a90055b23a6876687b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the regmap tree
+Date: Wed, 11 Apr 2012 14:13:46 +1000
+Message-ID: <20120411141346.3c4dd8e481d052b583ac95b6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__11_Apr_2012_14_13_46_+1000_=626Z7bRjxVNK7k6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:53550 "EHLO mail.zytor.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755980Ab2DKDyj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Apr 2012 23:54:39 -0400
-In-Reply-To: <20120411134259.61f755a90055b23a6876687b@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48038 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750924Ab2DKEN4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Apr 2012 00:13:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Neil Brown <neilb@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jim Kukunas <james.t.kukunas@linux.intel.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 
-On 04/10/2012 08:42 PM, Stephen Rothwell wrote:
-> Hi Neil,
-> 
-> After merging the md tree, today's linux-next build (powerpc 
-> ppc64_defconfig) failed like this:
-> 
-> lib/raid6/recov.c: In function 'raid6_has_ssse3': 
-> lib/raid6/recov.c:27:2: error: implicit declaration of function
-> 'boot_cpu_has' [-Werror=implicit-function-declaration] 
-> lib/raid6/recov.c:27:22: error: 'X86_FEATURE_XMM' undeclared (first
-> use in this function) lib/raid6/recov.c:27:22: note: each
-> undeclared identifier is reported only once for each function it
-> appears in lib/raid6/recov.c:28:16: error: 'X86_FEATURE_XMM2'
-> undeclared (first use in this function) lib/raid6/recov.c:29:16:
-> error: 'X86_FEATURE_SSSE3' undeclared (first use in this function) 
-> lib/raid6/recov.c: At top level: lib/raid6/recov.c:25:12: warning:
-> 'raid6_has_ssse3' defined but not used [-Wunused-function]
-> 
-> Caused by commit 56d3ac7ef905 ("lib/raid6: Add SSSE3 optimized
-> recovery functions").  All the world is not X86 :-)
-> 
-> I have used the md tree from next-20120410 for today.
+--Signature=_Wed__11_Apr_2012_14_13_46_+1000_=626Z7bRjxVNK7k6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-While on the subject it would be nice to factor this out into a
-separate file.
+Hi Mark,
 
-	-hpa
+After merging the regmap tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
--- 
-H. Peter Anvin, Intel Open Source Technology Center
-I work for Intel.  I don't speak on their behalf.
+drivers/base/regmap/regmap-irq.c: In function 'regmap_irq_sync_unlock':
+drivers/base/regmap/regmap-irq.c:62:12: error: 'map' undeclared (first use =
+in this function)
+drivers/base/regmap/regmap-irq.c: In function 'regmap_irq_enable':
+drivers/base/regmap/regmap-irq.c:77:37: error: 'map' undeclared (first use =
+in this function)
+drivers/base/regmap/regmap-irq.c: In function 'regmap_irq_disable':
+drivers/base/regmap/regmap-irq.c:85:37: error: 'map' undeclared (first use =
+in this function)
+
+Caused by commit f01ee60fffa4 ("regmap: implement register striding").
+Please build test ...
+
+I have used the regmap tree from next-20120410 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__11_Apr_2012_14_13_46_+1000_=626Z7bRjxVNK7k6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPhQT6AAoJEECxmPOUX5FEccMP/38lNwLyngQ6EYYOO/b5tXXw
+HcMr7jyInvwEzNLQKWQ/gi8ZCNq17j3sudhkWxWq8fk96mgp0Mdca44NDRKR41t9
+MzdmCQCNtnkmcmjYXZ31UsnCf2OQqR8Ea032hp7cOiFBM6TLs6Tjc6dDJm9bCzOY
+SP3uBGGn93EHnHo351bpR+ScmLBdqhwZafvTjsQytQc3eazAy7o0K5i1eUSYpWiq
+OU7BQsJpSAKQGNJrJCmRI0Dh9+jUktuvlvOrkxZ+FUjovBBfUBjc8QEFNfrR5giT
+VZAwWJgVET8H7UKeZ+Fyu4oyquZ6QZIyZsKbNIvhyBx8CT1lgnmkyJxJffQHx+pr
+nSoR+NlpjREdw20bD+5Ceag9RCf/OoYQmcUY2hxRs9KCpu5TQ4CfRGMjWoNuqgMK
+41GKWT66RbwGm9tYQnBZs+Shapwj/4ng/9XSexGg6hfdZVLIwWxVDPekyk1aCRW4
+XsXfr5fcfa06vp3qBGiw48wpn7Q/KMsC/160h0jwsDvHlncU7dLOVbpITfBbLM4m
+Dax9kwpBxC1zoDcdA0PpwSu42+J+lQdxlK9p5VUnCaBDDfMdbZNaowTKK66Yf9oO
+TEJ5NsUg1zRYI0HfnYfh2t/OYWfYaNlJjPKWBTrkewARnuBmom6WdWSS1WK4lCIv
+XkMyni2zgcZqexLZ0W4i
+=yexU
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__11_Apr_2012_14_13_46_+1000_=626Z7bRjxVNK7k6--
