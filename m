@@ -1,81 +1,63 @@
-From: NeilBrown <neilb@suse.de>
-Subject: Re: linux-next: build failure after merge of the md tree
-Date: Wed, 11 Apr 2012 14:48:06 +1000
-Message-ID: <20120411144806.7664d38b@notabene.brown>
-References: <20120411134259.61f755a90055b23a6876687b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (devicetree
+ tree related)
+Date: Wed, 11 Apr 2012 15:11:55 +1000
+Message-ID: <20120411151155.b1a614f174442a592d1c1561@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_//zSAz9FQY5pWkpGQyz.Abta"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__11_Apr_2012_15_11_55_+1000_/5lwMDzloiumeSrR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:60148 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750929Ab2DKEsQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Apr 2012 00:48:16 -0400
-In-Reply-To: <20120411134259.61f755a90055b23a6876687b@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43193 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751165Ab2DKFMI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Apr 2012 01:12:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jim Kukunas <james.t.kukunas@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
 
---Sig_//zSAz9FQY5pWkpGQyz.Abta
+--Signature=_Wed__11_Apr_2012_15_11_55_+1000_/5lwMDzloiumeSrR
 Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 11 Apr 2012 13:42:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au>
-wrote:
+Hi all,
 
-> Hi Neil,
->=20
-> After merging the md tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->=20
-> lib/raid6/recov.c: In function 'raid6_has_ssse3':
-> lib/raid6/recov.c:27:2: error: implicit declaration of function 'boot_cpu=
-_has' [-Werror=3Dimplicit-function-declaration]
-> lib/raid6/recov.c:27:22: error: 'X86_FEATURE_XMM' undeclared (first use i=
-n this function)
-> lib/raid6/recov.c:27:22: note: each undeclared identifier is reported onl=
-y once for each function it appears in
-> lib/raid6/recov.c:28:16: error: 'X86_FEATURE_XMM2' undeclared (first use =
-in this function)
-> lib/raid6/recov.c:29:16: error: 'X86_FEATURE_SSSE3' undeclared (first use=
- in this function)
-> lib/raid6/recov.c: At top level:
-> lib/raid6/recov.c:25:12: warning: 'raid6_has_ssse3' defined but not used =
-[-Wunused-function]
->=20
-> Caused by commit 56d3ac7ef905 ("lib/raid6: Add SSSE3 optimized recovery
-> functions").  All the world is not X86 :-)
->=20
-> I have used the md tree from next-20120410 for today.
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-Thanks Stephen,
-I've removed that set of patches from my for-next pending further review and
-revision.
+drivers/of/of_mdio.c: In function 'of_mdiobus_register':
+drivers/of/of_mdio.c:75:4: error: implicit declaration of function 'irq_of_=
+parse_and_map' [-Werror=3Dimplicit-function-declaration]
 
-Thanks,
-NeilBrown
+Caused by commit e46c11b94787 ("of/irq: add empty irq_of_parse_and_map()
+for non-dt builds").  SPARC has CONFIG_OF but not CONFIG_OF_IRQ ...
 
---Sig_//zSAz9FQY5pWkpGQyz.Abta
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__11_Apr_2012_15_11_55_+1000_/5lwMDzloiumeSrR
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.18 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIVAwUBT4UNBjnsnt1WYoG5AQIu5Q//fozzyiSS+Uo0qcUU664Ux0igMWbMQ0JA
-p7q5U8r6If2Hwbid4JaV33uyu3Fs9sd1QYydlDNu7V+u8oKoxORZQeuom15J1aww
-cTlR/NbMtD390Dt6m1isfrhd706b5CwuLV19NXtQpo8o4Nxzw5QTEs+GfU2qn4lx
-NrLoaWVRE+PxJ1Ohml+rUnpBmXV+vMcvPQBkarYWjoO3+f3//WqgVWtdoo4Rr8dM
-ZgLT8wWpONExrbrpsFgKvDKa7UQH8pNxdIohy8ZZyUDwHb5X520ReBfNDCX2NbXX
-wV3q4mn3KuBdX1pDDc6vVAYFmGldUiVNtAvt1Tk+JLG8ZceQwfesc1a16sDs/F93
-tJ1VVnltUvnOtWJA8H1IyDbnjtdndIt0r9VRxiiItKu9roOzWAccOMCgzi4ujkHX
-3nOEFA/e56/UzfyaLKXaKNEk0nKk1GNBQMZ5akrfPzw4pmIN6tSeZrdotl4Gng7c
-YQifa/EjyFAxnyNRXfZtKdg9cCbKQOxTcNU4VtC4cwtx38wCXz8SBDpDhExHVVmA
-bYILMjOdXhrDpnB5wBj5HgZUdamEJT63N5d0JU7gz2YNwc84U0ZMg9Isab5iPq0f
-9NsF+l1HIyr4vo4PRSNSVEnoIgYBx+rIrJUuKQWDm/eYV8YLie8f6hPKyFwzBTjQ
-oQp1DZyNNkc=
-=o7yP
+iQIcBAEBCAAGBQJPhRKbAAoJEECxmPOUX5FEdW0P/1r+3uPcPIuiYgvE28K34M46
+YHFyFVX438KLrQGzRHRBg9E4Edj9Sp5idtM6haWaLC7vKvFvlY3aCZu2QWaRHvLG
+0PSUfkyptK9smAm9dvf/jQlEjD7CucGy0Svd6BI5xRVgFIe+V2srFAHDRfDYpmjn
+d+yKAxiwxCYkSSeOW+s7/pB1nO5A6M6aYMfV6B3oqLomf+bQnssS0EBBeoOtjMcy
+WuKu25Egf7H0zxcE4uF4ZdDykjlA9CvllDGJggK0NdOwOTVLHiDfCnFCA1oAhXkA
+pswb7rt/0MWzcMObPkUIVifOl3CMMkQIYiSkVgF/1qlkfjb5blImy2S5kDsDUAy+
+XJq8H+F7sSz7FI9wk9ZBdh6wEFuOkTbytMsHLmPlrv1oSJ7YHyKWonI8nhaSEZSp
+eyWS1PN1e0O4XR9/uTWm9OjUpDlAw976YSdqXuZD5iirc6ghBRpnteAVYMIRzyJA
+36ROZ/udZmszXfJL9/6nID8AALjI3dIybbxpirsrR1ia28KS5e55oiTFfL1eTU/S
+UrLttX6hEiYYO+B6TIHQ60MdF4952NYOH/q++jf4dt6cC4j1oxZEXalLq+Y2RsGG
+3RLxMrklQFxvpiul4kMQwnYJ929Xr7udBk3JBxH5M3ZyX9a8RvO6FLe0z7yTnArA
+2an2RDOc6TBdJM9BcJMT
+=jiaP
 -----END PGP SIGNATURE-----
 
---Sig_//zSAz9FQY5pWkpGQyz.Abta--
+--Signature=_Wed__11_Apr_2012_15_11_55_+1000_/5lwMDzloiumeSrR--
