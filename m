@@ -1,36 +1,66 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree
- (devicetree tree related)
-Date: Wed, 11 Apr 2012 09:35:40 -0400 (EDT)
-Message-ID: <20120411.093540.1313049193929998.davem@davemloft.net>
-References: <20120411151155.b1a614f174442a592d1c1561@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: mainline build failure (Was: Re: linux-next: build failure after
+ merge of the regmap tree)
+Date: Thu, 12 Apr 2012 08:07:14 +1000
+Message-ID: <20120412080714.1b9fe574b18adebcc8af0ff1@canb.auug.org.au>
+References: <20120411141346.3c4dd8e481d052b583ac95b6@canb.auug.org.au>
+	<20120411081711.GB3163@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__12_Apr_2012_08_07_14_+1000_l6Mor5dmPWE2a_hG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:54129 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755111Ab2DKNhv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Apr 2012 09:37:51 -0400
-In-Reply-To: <20120411151155.b1a614f174442a592d1c1561@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56629 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933444Ab2DKWH0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Apr 2012 18:07:26 -0400
+In-Reply-To: <20120411081711.GB3163@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: grant.likely@secretlab.ca, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, thomas.abraham@linaro.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 11 Apr 2012 15:11:55 +1000
+--Signature=_Thu__12_Apr_2012_08_07_14_+1000_l6Mor5dmPWE2a_hG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
-> 
-> drivers/of/of_mdio.c: In function 'of_mdiobus_register':
-> drivers/of/of_mdio.c:75:4: error: implicit declaration of function 'irq_of_parse_and_map' [-Werror=implicit-function-declaration]
-> 
-> Caused by commit e46c11b94787 ("of/irq: add empty irq_of_parse_and_map()
-> for non-dt builds").  SPARC has CONFIG_OF but not CONFIG_OF_IRQ ...
+On Wed, 11 Apr 2012 09:17:11 +0100 Mark Brown <broonie@opensource.wolfsonmi=
+cro.com> wrote:
+>
+> On Wed, Apr 11, 2012 at 02:13:46PM +1000, Stephen Rothwell wrote:
+>=20
+> > Caused by commit f01ee60fffa4 ("regmap: implement register striding").
+> > Please build test ...
+>=20
+> Mainline *still* doesn't build with the .configs I routinely use.
 
-If I had a nickel for every time an implicit dependency on CONFIG_OF_IRQ
-was added to the tree... :-)
+So, what is this failure and what configs do you build?  And has a fix
+been submitted?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__12_Apr_2012_08_07_14_+1000_l6Mor5dmPWE2a_hG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPhgCSAAoJEECxmPOUX5FELt0P/i5hwH/pI/+4KOoiN9sAnFSH
+usJbNFbPX8VufwD5oTPRbndY/mMxKb09HYOSi+eoCNXHCxSUEEInkCMWWlfF3QAb
+TWWL/zolaznq8dY+ztEj4dSBVxZ3prpsCSwFzCDYGAKJFTFKgEPoEV8AOMS611EO
+/LXKHZ7PNqYCg0XSuYlYNVl5rFRbNqHeHaEb1k8jUQL/TKWD+VU+1BXuibGl7KTC
+vVK02DB5V5M5+/+gc96bJT0mgla3YHVWJkUvyAWQpwkLIEppKpDX5JkwsLnkZ8mh
+DmGcXb8CBu+cmJ18+bX9+6vQqFOAwV4weMNpxHFPcBcAZtT6gqyX104j5lvfyD4n
+6YEl0QB2mHsa2L06SAMDCKphj/zYdV1uVdmrwW2tV78aCKLBb8h4AF4lmu3n80Bw
+exR+b/pGE3U1iNCdjQY/ldxDBHtZzQvzh7Dzd4y61ZT/7Y5heo90gFyerwP7nSLE
+oo82sAX8ZyMYAUT2jF9//YY15+QjwOU7EZGbZSKHX9NgKaNhINKATePC9L21ef3h
+M8VQoVVMmmbwPm4HhlaS9Mq92jrcGav5qOWbsYunjAkiuMdlZWRihXjLPwb0yzT8
+7m+jjytltIYMQAxbKMjU210yMhkH6Qrlmzjeo3z/U+4WZN+/+eRivyvA040YSu/P
+EisvUO1JsS0cncAa0aoz
+=MGrg
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__12_Apr_2012_08_07_14_+1000_l6Mor5dmPWE2a_hG--
