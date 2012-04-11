@@ -1,38 +1,56 @@
-From: Srinivas KANDAGATLA <srinivas.kandagatla@st.com>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Wed, 11 Apr 2012 08:32:12 +0100
-Message-ID: <4F85337C.7080806@st.com>
-References: <20120411121058.088008039d669521e9afdfeb@canb.auug.org.au>
-Reply-To: srinivas.kandagatla@st.com
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the regmap tree
+Date: Wed, 11 Apr 2012 09:17:11 +0100
+Message-ID: <20120411081711.GB3163@opensource.wolfsonmicro.com>
+References: <20120411141346.3c4dd8e481d052b583ac95b6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eu1sys200aog113.obsmtp.com ([207.126.144.135]:39936 "EHLO
-	eu1sys200aog113.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750854Ab2DKHgH (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44097 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753718Ab2DKIRO (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Apr 2012 03:36:07 -0400
-In-Reply-To: <20120411121058.088008039d669521e9afdfeb@canb.auug.org.au>
+	Wed, 11 Apr 2012 04:17:14 -0400
+Content-Disposition: inline
+In-Reply-To: <20120411141346.3c4dd8e481d052b583ac95b6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, stable@kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 
-I see no reason why __kfifo_max_r should not be exported to modules.
-All the __kfifo_* functions in kfifo.h are already exported except this one.
-Am happy to generate a patch.
 
-On 11/04/12 03:10, Stephen Rothwell wrote:
-> Hi Mauro,
->
-> After merging the v4l-dvb tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> ERROR: "__kfifo_max_r" [drivers/media/rc/rc-core.ko] undefined!
->
-> Caused by commit 24a19bcbceda ("[media] ir-raw: Check available elements
-> in kfifo before adding").  kfifo_avail expands to a call to __kfifo_max_r
-> which is not exported to modules.
->
-> I have used the v4l-dvb tree from next-20120410 for today.
+--jho1yZJdad60DJr+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Apr 11, 2012 at 02:13:46PM +1000, Stephen Rothwell wrote:
+
+> Caused by commit f01ee60fffa4 ("regmap: implement register striding").
+> Please build test ...
+
+Mainline *still* doesn't build with the .configs I routinely use.
+
+--jho1yZJdad60DJr+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPhT3dAAoJEBus8iNuMP3dG4MQAIK4i+3zfcZkpnWYiGEVaB8e
+X6GgmJGF5GSEEzCKzgss51Xm76YKjR6zpamGam55VRR3if95MP98d4ReLjnBTNES
+g5Uiyja4alom6Uax+rQCmdfgYqgVPacXRgiu7IkYNV456KK2SzC3msbZbyeyc8XS
+sGDHqSZCoRVnS4g+eaR3Bbk0HE1dcwVzJlzieuseZ0pWWAozEDpTOyxbK6m+MKEL
+eG1r5E6VdELi2ZgvkGU637No+b1grUXbREqzCF2t9O23u7LLF0PRhiLHEM5d9+QV
+9aoJ2/K4Mql6KWEw+QkFQhcCJEtqZjCyPlFD/Fzj4CqRaP3ZpTBkl/eDufNx4pry
+Hvmht6gjU6XyR/jtXUmv42FIjeKE3/CMwYY3Xk6PBhPSkydmPVuoWyP9o6WYDOFh
+DZ2RUEgeJAnLf6bpjKEB6sIhwpSWy1EAp8OQ0OC372vfSQ/8BqjItGCm+LxO95wN
+3Y3MaBWoYUyu5rP5hlVjiBSuLCQtE+qvkWDLIcKXEyywz+FscJUsBmqgMAhuKkC6
+jPIfBmH9CaVYoB1xLPyXkv16djHQJWCrxwOMz6mY/+zm3n2w/iGrENIFm6XHB2oP
+ian1EkwERXz8tvNtQXWD9vNfmNEwWannMD3ajq7BXIx+x6bLekQqNxCEivfIDyvw
+bXKkt85vxmfSl/lYUbFl
+=7luu
+-----END PGP SIGNATURE-----
+
+--jho1yZJdad60DJr+--
