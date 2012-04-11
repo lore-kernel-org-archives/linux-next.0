@@ -1,49 +1,69 @@
-From: Mike Frysinger <vapier.adi@gmail.com>
-Subject: Re: linux-next: triage for April 10, 2012
-Date: Tue, 10 Apr 2012 23:37:24 -0400
-Message-ID: <CAMjpGUeKvP-fJG1sUPRtFDUWCwBg-19JFiFOAKJGmR8Pn4-XUA@mail.gmail.com>
-References: <20120410224543.GA11433@windriver.com> <CAMjpGUetfGQxqTKVfLBtOdthxFtFv-knuXSWoNx0BKxJd=829Q@mail.gmail.com>
- <CAP=VYLrzvXCTD4J3sdhMCjnsPKvf-tobkE0G6OgTvc4mnEiw7A@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the md tree
+Date: Wed, 11 Apr 2012 13:42:59 +1000
+Message-ID: <20120411134259.61f755a90055b23a6876687b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:58590 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756084Ab2DKDhq convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Apr 2012 23:37:46 -0400
-In-Reply-To: <CAP=VYLrzvXCTD4J3sdhMCjnsPKvf-tobkE0G6OgTvc4mnEiw7A@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org, Sonic Zhang <Sonic.Zhang@analog.com>, Bob Liu <lliubbo@gmail.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__11_Apr_2012_13_42_59_+1000_Ws9vxMzv_hf=8ZJg"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Neil Brown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jim Kukunas <james.t.kukunas@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 10, 2012 at 23:09, Paul Gortmaker wrote:
-> Thanks Mike, I'll fix the stale link. =C2=A0Here is a RELOC_BFIN_10 f=
-ail:
->
-> http://kisskb.ellerman.id.au/kisskb/buildresult/6087324/
+--Signature=_Wed__11_Apr_2012_13_42_59_+1000_Ws9vxMzv_hf=8ZJg
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-hrm, i'm not seeing that here, but i'm using binutils-2.21.  we prob
-should file a bug for the Blackfin toolchain guys to investigate.
+Hi Neil,
 
-what version of binutils are you using ?
+After merging the md tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-> Looks like I should go over the bfin fails and check each one, since
-> they are somewhat unique -- e.g.
->
-> arch/blackfin/mach-bf537/boards/dnp5370.c:392:17: error:
-> 'bfin_spi_board_info' undeclared (first use in this function)
->
-> in DNP5370_defconfig
+lib/raid6/recov.c: In function 'raid6_has_ssse3':
+lib/raid6/recov.c:27:2: error: implicit declaration of function 'boot_cpu_h=
+as' [-Werror=3Dimplicit-function-declaration]
+lib/raid6/recov.c:27:22: error: 'X86_FEATURE_XMM' undeclared (first use in =
+this function)
+lib/raid6/recov.c:27:22: note: each undeclared identifier is reported only =
+once for each function it appears in
+lib/raid6/recov.c:28:16: error: 'X86_FEATURE_XMM2' undeclared (first use in=
+ this function)
+lib/raid6/recov.c:29:16: error: 'X86_FEATURE_SSSE3' undeclared (first use i=
+n this function)
+lib/raid6/recov.c: At top level:
+lib/raid6/recov.c:25:12: warning: 'raid6_has_ssse3' defined but not used [-=
+Wunused-function]
 
-blah, looks like something got renamed, but not all the way
+Caused by commit 56d3ac7ef905 ("lib/raid6: Add SSSE3 optimized recovery
+functions").  All the world is not X86 :-)
 
-commit 7d157fb02bc3f4dc74e6830725864ba501d92da7
-blackfin: config: update macro SPI_BFIN in board file
+I have used the md tree from next-20120410 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-that renamed SPI_BFIN to SPI_BFIN5XX in the board files
+--Signature=_Wed__11_Apr_2012_13_42_59_+1000_Ws9vxMzv_hf=8ZJg
+Content-Type: application/pgp-signature
 
-but the commit in drivers/spi/ hasn't been merged yet, so it's still
-SPI_BFIN there
--mike
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPhP3DAAoJEECxmPOUX5FE8P8P/3fPobKQCtkJJicS2wf7Jehu
+GWbIEuOFIswmOtA1I7JJ4WXkb2Pmwif3iNLcFRgAU+18wMENd6DhK6Htn9OPoqKj
+QYv7FuPJ77mC9ry0RZUcOSgA0jCFdkcI78BDGv6V6Pfxa6bCPyu+0vswXdKLNAZd
+ywYxpNs8fbUqZa5u9FBwtJfxajpAcotAQXg3zItx1iUF61uqAMChqkmi6+hoGs6P
+ga8NHTvQW4EbAymQG5sf/MwImVFyuzrfDIvfl9bD+m/pHAUsXYBh2soLpr42E1M/
+J/9atKFgy02tEk9aIXqnuVKswZaUKRWjRtQltaDSytzsd5yag3jJZgzG4ZhwdnDj
+xn6okS7wjKQQJqBplvazPDIk1o/RhDgo509Yca0wuVloHERnPtfHJwx/E13BvUzi
+bBtbGZCiLOjca52XpOStCkLCephpgZG974hESDJYc0WLFkbBN3phDpF6ONJiVEZa
+Mtuf0XdCtxjb68IWi4RNxiMsbJWTgw6Z6i7cakOrJFuOxoZ/Z8ybR2mNatLzmVVj
+puEO5O+OqYBb8ROePd23ONOUcN6NcadvO0yluT9V97dpO0GnYJkUCfQUlTpsThQB
+aJGh6hRbSsDgrBtu2o3EforRxWxs8obXlTsnRe6TzDkdzGN61j7r+D/tSsc6lu+4
++UJ4aXU1qbn4WvfFhQaa
+=kZkL
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__11_Apr_2012_13_42_59_+1000_Ws9vxMzv_hf=8ZJg--
