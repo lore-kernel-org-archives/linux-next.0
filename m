@@ -1,74 +1,38 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] regmap: fix compile errors in regmap-irq.c due to stride changes
-Date: Tue, 10 Apr 2012 23:37:22 -0600
-Message-ID: <1334122642-14864-1-git-send-email-swarren@wwwdotorg.org>
+From: Srinivas KANDAGATLA <srinivas.kandagatla@st.com>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Wed, 11 Apr 2012 08:32:12 +0100
+Message-ID: <4F85337C.7080806@st.com>
+References: <20120411121058.088008039d669521e9afdfeb@canb.auug.org.au>
+Reply-To: srinivas.kandagatla@st.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:60505 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752120Ab2DKFhg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Apr 2012 01:37:36 -0400
+Received: from eu1sys200aog113.obsmtp.com ([207.126.144.135]:39936 "EHLO
+	eu1sys200aog113.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750854Ab2DKHgH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Apr 2012 03:36:07 -0400
+In-Reply-To: <20120411121058.088008039d669521e9afdfeb@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, stable@kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+I see no reason why __kfifo_max_r should not be exported to modules.
+All the __kfifo_* functions in kfifo.h are already exported except this one.
+Am happy to generate a patch.
 
-Commit f01ee60fffa4 ("regmap: implement register striding") caused the
-compile errors below. Fix them.
-
-drivers/base/regmap/regmap-irq.c: In function 'regmap_irq_sync_unlock':
-drivers/base/regmap/regmap-irq.c:62:12: error: 'map' undeclared (first use in this function)
-drivers/base/regmap/regmap-irq.c:62:12: note: each undeclared identifier is reported only once for each function it appears in
-drivers/base/regmap/regmap-irq.c: In function 'regmap_irq_enable':
-drivers/base/regmap/regmap-irq.c:77:37: error: 'map' undeclared (first use in this function)
-drivers/base/regmap/regmap-irq.c: In function 'regmap_irq_disable':
-drivers/base/regmap/regmap-irq.c:85:37: error: 'map' undeclared (first use in this function)
-
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
-I apologize for the lame patches. I didn't notice that regmap-irq.c had a
-separate config option that wasn't enabled.
-
- drivers/base/regmap/regmap-irq.c |    5 ++++-
- 1 files changed, 4 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index 56b8136..fc69d29 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -50,6 +50,7 @@ static void regmap_irq_lock(struct irq_data *data)
- static void regmap_irq_sync_unlock(struct irq_data *data)
- {
- 	struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
-+	struct regmap *map = d->map;
- 	int i, ret;
- 
- 	/*
-@@ -59,7 +60,7 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
- 	 */
- 	for (i = 0; i < d->chip->num_regs; i++) {
- 		ret = regmap_update_bits(d->map, d->chip->mask_base +
--						(i * map->map->reg_stride),
-+						(i * map->reg_stride),
- 					 d->mask_buf_def[i], d->mask_buf[i]);
- 		if (ret != 0)
- 			dev_err(d->map->dev, "Failed to sync masks in %x\n",
-@@ -72,6 +73,7 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
- static void regmap_irq_enable(struct irq_data *data)
- {
- 	struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
-+	struct regmap *map = d->map;
- 	const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->irq);
- 
- 	d->mask_buf[irq_data->reg_offset / map->reg_stride] &= ~irq_data->mask;
-@@ -80,6 +82,7 @@ static void regmap_irq_enable(struct irq_data *data)
- static void regmap_irq_disable(struct irq_data *data)
- {
- 	struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
-+	struct regmap *map = d->map;
- 	const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->irq);
- 
- 	d->mask_buf[irq_data->reg_offset / map->reg_stride] |= irq_data->mask;
--- 
-1.7.0.4
+On 11/04/12 03:10, Stephen Rothwell wrote:
+> Hi Mauro,
+>
+> After merging the v4l-dvb tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> ERROR: "__kfifo_max_r" [drivers/media/rc/rc-core.ko] undefined!
+>
+> Caused by commit 24a19bcbceda ("[media] ir-raw: Check available elements
+> in kfifo before adding").  kfifo_avail expands to a call to __kfifo_max_r
+> which is not exported to modules.
+>
+> I have used the v4l-dvb tree from next-20120410 for today.
