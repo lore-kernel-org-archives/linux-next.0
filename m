@@ -1,71 +1,63 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: mainline build failure (Was: Re: linux-next: build failure after
- merge of the regmap tree)
-Date: Thu, 12 Apr 2012 16:46:50 +0100
-Message-ID: <20120412154649.GA3195@opensource.wolfsonmicro.com>
-References: <20120411141346.3c4dd8e481d052b583ac95b6@canb.auug.org.au>
- <20120411081711.GB3163@opensource.wolfsonmicro.com>
- <20120412080714.1b9fe574b18adebcc8af0ff1@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for Apr 12
+Date: Thu, 12 Apr 2012 14:24:15 -0700
+Message-ID: <20120412142415.564710b8.akpm@linux-foundation.org>
+References: <20120412145931.9ec6f2b51655071795d60d1d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:55488 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756677Ab2DLPqy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Apr 2012 11:46:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20120412080714.1b9fe574b18adebcc8af0ff1@canb.auug.org.au>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50727 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755202Ab2DLVYR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Apr 2012 17:24:17 -0400
+In-Reply-To: <20120412145931.9ec6f2b51655071795d60d1d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
+
+On Thu, 12 Apr 2012 14:59:31 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
+This isn't working for me.  Some time between April 3 and April 12
+someone merged something into the non-mm part of linux-next which broke
+ssh.
+
+I boot the box and everything seems to come up OK, but attemtps to ssh
+into the machine fail with
+
+X11 forwarding request failed on channel 0
+Last login: Thu Apr 12 13:04:35 2012 from akpm.corp.google.com
+Connection to akpm2 closed.
+
+I took a peek in the `strace ssh' output.
+
+Good:
+
+17815 write(5, "Last login: Thu Apr 12 13:27:23 "..., 65) = 65
+17815 select(7, [3 4], [], NULL, {120, 0}) = 1 (in [3], left {119, 770798})
+17815 read(3, "\21O\200\366Mv\343\222\332\251\2403L\376Y18\2047\336\244\226p-+X\2%\2119\314\255"..., 8192) = 80
+17815 select(7, [3 4], [5], NULL, {120, 0}) = 1 (out [5], left {119, 999987})
+17815 write(5, "\r\33[m\17\33[27m\33[24m\33[Jakpm2:/home/ak"..., 39) = 39
+17815 select(7, [3 4], [], NULL, {120, 0}) = 1 (in [4], left {118, 801111})
+17815 read(4, "\4", 16384)              = 1
+17815 select(7, [3 4], [3], NULL, {120, 0}) = 1 (out [3], left {119, 999991})
+17815 write(3, "\235J\5\340\234\21\266\207\26e\362\327\2\332\1\267\272\200\364\267?/\320L\341\35\350{+M:\222"..., 48) = 48
 
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Bad:
 
-On Thu, Apr 12, 2012 at 08:07:14AM +1000, Stephen Rothwell wrote:
+9305  write(5, "Last login: Thu Apr 12 13:02:54 "..., 65) = 65
+9305  select(7, [3 4], [], NULL, {120, 0}) = 1 (in [3], left {119, 945541})
+9305  read(3, "f\357\250~\260i\2259\320\3258\262)O\364;_\251\360-\314\31\374]\326\300\356\364\370S\3105"..., 8192) = 128
+9305  close(5)                          = 0
+9305  close(4)                          = 0
 
-> So, what is this failure and what configs do you build?  And has a fix
-> been submitted?
+That read() is returning a lot more data.
 
-It's a build failure in the trace subsystem when perf isn't enabled; I
-submitted a patch as soon as I noticed the issue which was either during
-the merge window or just after -rc1 came out and resubmitted it again
-this week.  In response to the reposting Steven Rostedt said he'd pick
-the fix up but I'm not sure when that'll happen or how long it'll take
-to propagate to mainline, this appears to be one of those areas where
-things get processed in batch mode.
-
-I mainly build an ARM config that I can run usefully on my development
-boards which is mostly built in and a modular x86 config since x86 seems
-to have lots of issues with modular stuff.  I should be able to adjust
-the ARM config to build, I didn't yet mostly because I wasn't expecting
-the issue to be ignored for so long.
-
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPhvilAAoJEBus8iNuMP3dXV8P/AnGkqfNAAa518rqX/cYxpLK
-y33EA5J2MrkvzTdtj18nBxKSEr5ZsH6S9TE9Q4BLjHP72DiW9bOkwDd3aAYu/he1
-L/ZzX/whiwXKFdsCNbT+BdI0fTNXpDfYQQ7CJGHdop10NgjpBn63QTmdvjt0J8eE
-Ex9Ug4uLNgpSlqoXChIzJ3vdGiCrQhLUNkZ/dzLuQRFQxfmnM70u8lO7XqX9027f
-V26vO896LfyyeFXSqPw8MqPQrQIV/ptcpJBst9Bfq3Al1xIeTQAlf9zrg4MQI5yS
-q+sgmwb9tbu19Ri8sEjbx5gUg5Y8tRjH6LqQgJBSHTPBhe/KX3bzsIhY6AvkJQis
-VdMTzj1qm03gF/TnAChAWQLmtxOyo4jeNDOQ31Y+F7uYpV4lms3zffibyvsl0GFi
-sqz0FIYNjZA/F0YNjiIqZnL3nIWsYDYQgq13naZxOWaLEsZJRMRo2XAaZ4jD8pCr
-7xfIogNnBlTJ7FQtq674037gDaUBBR9orJqFatiQ0AlTqk5Z7xQzmgQWxdsHWrc5
-xoAk96LSgAdtY5/ybgKqiiQcOv62O2TJnaFl0iZcrlRNhL745LQl8ZBryyU46inj
-25Svc+rwWZnJQ6V3PhZng0zc9KmPZHLrNAudfxWLty6GWl1OD7IRGhT8yr9xP3FH
-4OLl27HdCPa100VcTbWy
-=ls7p
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+It appears that we've done something which breaks X forwarding.  I
+won't be able to look any further into this until Monday.
