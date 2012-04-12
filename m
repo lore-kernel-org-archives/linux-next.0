@@ -1,66 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (devicetree tree related)
-Date: Thu, 12 Apr 2012 10:44:36 +1000
-Message-ID: <20120412104436.0aae78ca24cd9604d667f495@canb.auug.org.au>
-References: <20120411151155.b1a614f174442a592d1c1561@canb.auug.org.au>
-	<20120412103157.70669ff82b81d5d926c36d4d@canb.auug.org.au>
-	<CACxGe6tDa+AzK0O=E+EPZ90Ek_C-rM-G4fHSnsdL0S+fNcmzmw@mail.gmail.com>
+Subject: linux-next: build failure after merge of the wireless-next tree
+Date: Thu, 12 Apr 2012 12:24:24 +1000
+Message-ID: <20120412122424.fc3ee3b77a69ad7f84cc358f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__12_Apr_2012_10_44_36_+1000_UThdy.2t3U.1WYR5"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53872 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753551Ab2DLAoq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Apr 2012 20:44:46 -0400
-In-Reply-To: <CACxGe6tDa+AzK0O=E+EPZ90Ek_C-rM-G4fHSnsdL0S+fNcmzmw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
+ boundary="Signature=_Thu__12_Apr_2012_12_24_24_+1000_xWkHsW9gOMWt2WGk"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Pedersen <c_tpeder@qca.qualcomm.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__12_Apr_2012_10_44_36_+1000_UThdy.2t3U.1WYR5
+--Signature=_Thu__12_Apr_2012_12_24_24_+1000_xWkHsW9gOMWt2WGk
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Grant,
+Hi John,
 
-On Wed, 11 Apr 2012 18:35:34 -0600 Grant Likely <grant.likely@secretlab.ca>=
- wrote:
->
-> Yes, drop that tree or revert that commit.  There's nothing else in
-> there and I didn't have time to pull it back today before you started
-> linux-next for the day.  The change is bogus and I'll spin a proper
-> fixup for tomorrow.
+After merging the wireless-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Done (I used the tree from next-20120410 - which was empty).
+net/wireless/nl80211.c: In function 'nl80211_ch_switch_notify':
+net/wireless/nl80211.c:8060:2: error: implicit declaration of function 'NLA=
+_PUT_U32' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 5314526b1743 ("cfg80211: add channel switch notify
+event") interacting with commit 9360ffd18597 ("wireless: Stop using
+NLA_PUT*()") from the net-next tree.
+
+I added the following merge fix patch.
+
+John, you may like to cherry-pick that commit from Dave's tree (or back
+merge that part of Dave's tree or get Dave to merge you tree and start
+further work on top of the merge).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 12 Apr 2012 12:21:01 +1000
+Subject: [PATCH] cfg80211: NLA_PUT_U32 api change merge fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/wireless/nl80211.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+index f727a1f..f7d2ebb 100644
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -8057,9 +8057,12 @@ void nl80211_ch_switch_notify(struct cfg80211_regist=
+ered_device *rdev,
+ 		return;
+ 	}
+=20
+-	NLA_PUT_U32(msg, NL80211_ATTR_IFINDEX, netdev->ifindex);
+-	NLA_PUT_U32(msg, NL80211_ATTR_WIPHY_FREQ, freq);
+-	NLA_PUT_U32(msg, NL80211_ATTR_WIPHY_CHANNEL_TYPE, type);
++	if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, netdev->ifindex))
++		goto nla_put_failure;
++	if (nla_put_u32(msg, NL80211_ATTR_WIPHY_FREQ, freq))
++		goto nla_put_failure;
++	if (nla_put_u32(msg, NL80211_ATTR_WIPHY_CHANNEL_TYPE, type))
++		goto nla_put_failure;
+=20
+ 	genlmsg_end(msg, hdr);
+=20
+--=20
+1.7.10.rc3
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__12_Apr_2012_10_44_36_+1000_UThdy.2t3U.1WYR5
+--Signature=_Thu__12_Apr_2012_12_24_24_+1000_xWkHsW9gOMWt2WGk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPhiV0AAoJEECxmPOUX5FEr9gP/j1pV4KZRmBvZHoCrmWEsN7a
-tdNSnzH0+ae/t9lK+3WQPTFfeXSRL0tcp4Uj0dbPvxuRPp4gI3OZNvwV2hphyWsz
-b9NHinHGOh/2iQYj4Bpq2ryD2MhMUkrbUEx4pvlSWQHJYwSXaMpQqbVMrWVciTHS
-v/jME6aW2/AImD3GKx8cZsxuYGNqb9KG9nfIy04m18YRahIyudIXBT3TjhxLJMCX
-cylKUxz1wfo6gRrEF++1ZGyqoKJHoqYvVVa1+OHr3NSJAMPMAT6sLliwi9r+mjjH
-WcrvOvYJfqvYU0hNihzzew8+YpQcb4cg5v6+PK1Y/TlfcPcYTy4rRHQav4AfIeA1
-p6rQ11ztRZOUNcv+7++XnzgZveUsb9bKXm/NCL8BISCR8aeqVIfsptfN3gel8ETo
-O3d6mdtmPUFFXPKSm5lbejU1at4r4sbqPFJ4W43Loif/i7Wlyyut9nTl41l76OD8
-+uBM543EpNreIvoxb8CXcpBlh5rtnrcCuqFieSktQ87s8tVvP8p6kioLv+tBZAd5
-lgwGcC+2fHWQAThb9xzcX8JY5aZLJ8VjFW77NmKR66wDh0uW6k96LkMyO85Xwmgm
-TxAoAGFvVNb9CdOSykWpyX57xtyPz4uvihmjR6bqVFgxCxA9ZV0/PRh+WE6lRW7U
-sMo0sx1PX4fsly11Rcf9
-=k8Q4
+iQIcBAEBCAAGBQJPhjzYAAoJEECxmPOUX5FExMgP/2V9LN3guzq7SNmAbTo6EBSn
+UAkoi0xPug/vb2gCMdW/ThqVjN7Old9ICRg4AQMc/LwLpT4Bbh81ZjcLHVNQPGH8
+8f30oaKicudVucnhMA6zMCfR9vG8p3ffWyjXK2xs0nyztGBRnLK8JjZfTf9kJdPZ
+/sb9HrFugEjI62OXiY+FD0Z5Smd6rAcCpThyqlZOjvsfn1gkEip0df6wIti3m8Z2
+dk42Nm/Xnw4eoUK199glV0F9I955LINfpWWQd9GBv67hCu97LSgrpWzETZh0ipsv
+/BbR06nPgagVhqfa3N7oXDW9A/DLCE9kyHb94u1dRXzdGrnPxcu7LGljYHC1JERh
+UIjwCELTuEL88YWMJPZD7GxVI1uRBH2iIsbhpgOegHiJx1OE8s0PMuIsPzPn68S3
+XKZtAThq7ZHvttO8f+/Xq3mG47fXWIkH6ehnT/HGJ/2YodHMCK7QnxfoX/nj+5xz
+4HWFePb52BLmE4S3RKxh5UttqBtPZWnKoJ7QL8bTSE6XM864OiB1a6cpxb1vppes
+H8ymF2U1KBvREXn2MW/uoOkkHp2aYJircsa+6i0smknxPtTqM7ySbh9a8l55sYWo
+eIug7fPLvc48m01XFZQWlbXvXAOY8SnVBIFNo0U/v5Z1K2lrOBGcmAb+sImG6d2x
+IXdXn6tnhURgwSTiEzvt
+=jqbf
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__12_Apr_2012_10_44_36_+1000_UThdy.2t3U.1WYR5--
+--Signature=_Thu__12_Apr_2012_12_24_24_+1000_xWkHsW9gOMWt2WGk--
