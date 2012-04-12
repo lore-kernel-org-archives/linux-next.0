@@ -1,97 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the wireless-next tree
-Date: Thu, 12 Apr 2012 12:24:24 +1000
-Message-ID: <20120412122424.fc3ee3b77a69ad7f84cc358f@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the mmc tree
+Date: Thu, 12 Apr 2012 14:02:06 +1000
+Message-ID: <20120412140206.704731281bf2ee7d93d582bf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__12_Apr_2012_12_24_24_+1000_xWkHsW9gOMWt2WGk"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Pedersen <c_tpeder@qca.qualcomm.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__12_Apr_2012_14_02_06_+1000_IEfsyftxLM7A2z8R"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56937 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750812Ab2DLECZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Apr 2012 00:02:25 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Ball <cjb@laptop.org>, Sascha Hauer <s.hauer@pengutronix.de>, Nicolas Ferre <nicolas.ferre@atmel.com>
 
---Signature=_Thu__12_Apr_2012_12_24_24_+1000_xWkHsW9gOMWt2WGk
+--Signature=_Thu__12_Apr_2012_14_02_06_+1000_IEfsyftxLM7A2z8R
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi all,
 
-After merging the wireless-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/mmc/host/Kconfig between commit a334b9550294 ("mmc: remove imxmmc
+driver") from the mmc tree and commits a21a92c0c787 ("mmc: Kconfig: remove
+choice between at91_mci and atmel-mci") and 62080f06de6b ("mmc:
+atmel-mci: remove the need for CONFIG_MMC_ATMELMCI_DMA") from the arm-soc
+tree.
 
-net/wireless/nl80211.c: In function 'nl80211_ch_switch_notify':
-net/wireless/nl80211.c:8060:2: error: implicit declaration of function 'NLA=
-_PUT_U32' [-Werror=3Dimplicit-function-declaration]
-
-Caused by commit 5314526b1743 ("cfg80211: add channel switch notify
-event") interacting with commit 9360ffd18597 ("wireless: Stop using
-NLA_PUT*()") from the net-next tree.
-
-I added the following merge fix patch.
-
-John, you may like to cherry-pick that commit from Dave's tree (or back
-merge that part of Dave's tree or get Dave to merge you tree and start
-further work on top of the merge).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 12 Apr 2012 12:21:01 +1000
-Subject: [PATCH] cfg80211: NLA_PUT_U32 api change merge fix
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/wireless/nl80211.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index f727a1f..f7d2ebb 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -8057,9 +8057,12 @@ void nl80211_ch_switch_notify(struct cfg80211_regist=
-ered_device *rdev,
- 		return;
- 	}
-=20
--	NLA_PUT_U32(msg, NL80211_ATTR_IFINDEX, netdev->ifindex);
--	NLA_PUT_U32(msg, NL80211_ATTR_WIPHY_FREQ, freq);
--	NLA_PUT_U32(msg, NL80211_ATTR_WIPHY_CHANNEL_TYPE, type);
-+	if (nla_put_u32(msg, NL80211_ATTR_IFINDEX, netdev->ifindex))
-+		goto nla_put_failure;
-+	if (nla_put_u32(msg, NL80211_ATTR_WIPHY_FREQ, freq))
-+		goto nla_put_failure;
-+	if (nla_put_u32(msg, NL80211_ATTR_WIPHY_CHANNEL_TYPE, type))
-+		goto nla_put_failure;
-=20
- 	genlmsg_end(msg, hdr);
-=20
---=20
-1.7.10.rc3
-
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__12_Apr_2012_12_24_24_+1000_xWkHsW9gOMWt2WGk
+diff --cc drivers/mmc/host/Kconfig
+index 9f1f5e2,4d15dff..0000000
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@@ -295,18 -288,16 +288,6 @@@ config MMC_ATMELMC
+ =20
+  	  If unsure, say N.
+ =20
+- endchoice
+-=20
+- config MMC_ATMELMCI_DMA
+- 	bool "Atmel MCI DMA support"
+- 	depends on MMC_ATMELMCI && (AVR32 || ARCH_AT91SAM9G45) && DMA_ENGINE
+- 	help
+- 	  Say Y here to have the Atmel MCI driver use a DMA engine to
+- 	  do data transfers and thus increase the throughput and
+- 	  reduce the CPU utilization.
+-=20
+- 	  If unsure, say N.
+-=20
+ -config MMC_IMX
+ -	tristate "Motorola i.MX Multimedia Card Interface support"
+ -	depends on ARCH_MX1
+ -	help
+ -	  This selects the Motorola i.MX Multimedia card Interface.
+ -	  If you have a i.MX platform with a Multimedia Card slot,
+ -	  say Y or M here.
+ -
+ -	  If unsure, say N.
+ -
+  config MMC_MSM
+  	tristate "Qualcomm SDCC Controller Support"
+  	depends on MMC && ARCH_MSM
+
+--Signature=_Thu__12_Apr_2012_14_02_06_+1000_IEfsyftxLM7A2z8R
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPhjzYAAoJEECxmPOUX5FExMgP/2V9LN3guzq7SNmAbTo6EBSn
-UAkoi0xPug/vb2gCMdW/ThqVjN7Old9ICRg4AQMc/LwLpT4Bbh81ZjcLHVNQPGH8
-8f30oaKicudVucnhMA6zMCfR9vG8p3ffWyjXK2xs0nyztGBRnLK8JjZfTf9kJdPZ
-/sb9HrFugEjI62OXiY+FD0Z5Smd6rAcCpThyqlZOjvsfn1gkEip0df6wIti3m8Z2
-dk42Nm/Xnw4eoUK199glV0F9I955LINfpWWQd9GBv67hCu97LSgrpWzETZh0ipsv
-/BbR06nPgagVhqfa3N7oXDW9A/DLCE9kyHb94u1dRXzdGrnPxcu7LGljYHC1JERh
-UIjwCELTuEL88YWMJPZD7GxVI1uRBH2iIsbhpgOegHiJx1OE8s0PMuIsPzPn68S3
-XKZtAThq7ZHvttO8f+/Xq3mG47fXWIkH6ehnT/HGJ/2YodHMCK7QnxfoX/nj+5xz
-4HWFePb52BLmE4S3RKxh5UttqBtPZWnKoJ7QL8bTSE6XM864OiB1a6cpxb1vppes
-H8ymF2U1KBvREXn2MW/uoOkkHp2aYJircsa+6i0smknxPtTqM7ySbh9a8l55sYWo
-eIug7fPLvc48m01XFZQWlbXvXAOY8SnVBIFNo0U/v5Z1K2lrOBGcmAb+sImG6d2x
-IXdXn6tnhURgwSTiEzvt
-=jqbf
+iQIcBAEBCAAGBQJPhlO+AAoJEECxmPOUX5FEkogQAIwzdu2ZnmLycpnFwyXTy09q
+bEwrFwdTKnvlN9Oq6/PaWgau640/IWtosG0Hx1g5J+tFpRLAOB1YLXxRTkpkaZOm
+DHF1Vrp9DQXw4wEY8w+LDa0S1Wq1a0cal+w6Zd6BOti629GVSSPQvMffFIHogFhd
+Er94AuCSaDLU9bSjmdH3/jt3wV9p62nPGn2BNKdPntn8K972Lyw1/srHV7vF3GJP
+7+8urryjDyQ23Uj4eYcIfDORQLT9RwL1igb+Q5EMzy99boRsLQC+Q0IIIBbhAoT/
+IWyjz3+JoNC38OkaEg/2ej/De6hFXBHWNKQ9s6L+I3BgJ5Vi6mzHqjgpGWKBrggJ
+v1i13rEYZ9QQJfAFc9mBXajwwUz8NbDM2rBM0ua9hZqYpuqu125RaRnmvmpd7kMv
+6nN0sYPQT0g6LMWSSegMWo5wgCv3ZuT1d0cMYXkz2s1hTBmeREAPJXap16tMI+do
+PYwVFtR8SQOxNLqiO30xckJLEpQdigvViJhgjcT1fpA1d7FfdcWKq+Py7C02AwqO
+hBSds8bCfXphYQtruNhkttLeZ45k1DaPuVyOOnygy/864AYURaitbOnDkXzftWfw
+vL+pLtELojMFC0v0vhGfe3ENFPs/ViKWOi1fHep99Jn86CPu+YndmvVqRRHqPPUb
+eehmg9ilmPHeJ/x2q3Gg
+=jSNa
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__12_Apr_2012_12_24_24_+1000_xWkHsW9gOMWt2WGk--
+--Signature=_Thu__12_Apr_2012_14_02_06_+1000_IEfsyftxLM7A2z8R--
