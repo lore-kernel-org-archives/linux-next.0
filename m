@@ -1,59 +1,72 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: linux-next: "amba: Remove AMBA level regulator support" commit.
-Date: Fri, 13 Apr 2012 11:32:07 +0100
-Message-ID: <20120413103207.GL24211@n2100.arm.linux.org.uk>
-References: <20120413012230.GA30438@windriver.com> <CAAQ0ZWReL=+bm9UOnt2=Dfy0zeWbJe3=y3pPzUKRzm2y277kFQ@mail.gmail.com>
+Date: Fri, 13 Apr 2012 11:44:52 +0100
+Message-ID: <20120413104452.GR3168@opensource.wolfsonmicro.com>
+References: <20120413012230.GA30438@windriver.com>
+ <CAAQ0ZWReL=+bm9UOnt2=Dfy0zeWbJe3=y3pPzUKRzm2y277kFQ@mail.gmail.com>
+ <20120413103207.GL24211@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="eyYj78xbwv+yMvU1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:44554 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932961Ab2DMKcY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Apr 2012 06:32:24 -0400
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:49446 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754933Ab2DMKo4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Apr 2012 06:44:56 -0400
 Content-Disposition: inline
-In-Reply-To: <CAAQ0ZWReL=+bm9UOnt2=Dfy0zeWbJe3=y3pPzUKRzm2y277kFQ@mail.gmail.com>
+In-Reply-To: <20120413103207.GL24211@n2100.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, broonie@opensource.wolfsonmicro.com, linus.walleij@linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Shawn Guo <shawn.guo@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, linus.walleij@linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, Apr 13, 2012 at 10:01:52AM +0800, Shawn Guo wrote:
-> On 13 April 2012 09:22, Paul Gortmaker <paul.gortmaker@windriver.com>=
- wrote:
-> > Hi Mark,
-> >
-> > The commit in linux-next:
-> >
-> > -----------------
-> > commit b2bc9e0ee349db84035d8141e85babc7986594d7
-> > Author: Mark Brown <broonie@sirena.org.uk>
-> > Date: =A0 Mon Apr 2 12:30:35 2012 +0100
-> >
-> > =A0 =A0ARM: 7366/1: amba: Remove AMBA level regulator support
-> > -----------------
-> >
-> > is pointed at by git bisect for the u8500_defconfig build failure:
-> >
-> > drivers/dma/ste_dma40.c:2708:3: error: implicit declaration of func=
-tion
-> > 'regulator_disable' [-Werror=3Dimplicit-function-declaration]
-> > drivers/dma/ste_dma40.c:2747:3: error: implicit declaration of func=
-tion
-> > 'regulator_enable' [-Werror=3Dimplicit-function-declaration]
-> > drivers/dma/ste_dma40.c:3260:3: error: implicit declaration of func=
-tion
-> > 'regulator_get' [-Werror=3Dimplicit-function-declaration]
-> > drivers/dma/ste_dma40.c:3271:4: error: implicit declaration of func=
-tion
-> > 'regulator_put' [-Werror=3Dimplicit-function-declaration]
-> >
-> That's because Mark's patch removes "#include
-> <linux/regulator/consumer.h>" included indirectly by
-> drivers/dma/ste_dma40.c from linux/amba/bus.h.  The ste_dma40.c shoul=
-d
-> really directly includes consumer.h.
 
-Okay, I'll drop this patch because it's causing regressions, so it can'=
-t
-be pushed as a 'fix' during -rc.
+--eyYj78xbwv+yMvU1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Apr 13, 2012 at 11:32:07AM +0100, Russell King - ARM Linux wrote:
+> On Fri, Apr 13, 2012 at 10:01:52AM +0800, Shawn Guo wrote:
+
+> > That's because Mark's patch removes "#include
+> > <linux/regulator/consumer.h>" included indirectly by
+> > drivers/dma/ste_dma40.c from linux/amba/bus.h.  The ste_dma40.c should
+> > really directly includes consumer.h.
+
+> Okay, I'll drop this patch because it's causing regressions, so it can't
+> be pushed as a 'fix' during -rc.
+
+I did say we should've been pushing Shawn's patch in as a minimal fix
+for 3.4...  Alternatively if you're happy with the code just keeping the
+header in place should avoid any issues, the one regression was just an
+implicit header dependency.
+
+Regardless of what happens for 3.4 we should keep the removal for -next,
+it's clear that we don't want the bus doing this and it's causing
+breakage for the non-ST platforms.  Do I need to resend the patch to the
+patch system or will the existing copy be OK?
+
+--eyYj78xbwv+yMvU1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPiAObAAoJEBus8iNuMP3dLo8P/Rw9M7V9DrfMeNuLsLfBGqJW
+9X/z5OZvoog6HlRbQulAc0eFZlA73vU4OtPea1ddf4U9DzCWW6zYPGvbmAivIBt7
+IyRpSaxt40yaOW55Qwe/gLlZf+1DCon488KBR9w5456HJ1e0LdOu7iBpqzyfYQPj
+Hs0jajJU7b6D8X3aB6oA2G746YAUz3K/TBRqXQdmfJY1eFGmSvDe24cMKiovc54L
+61sLUkC46rtEcDTTDpqE1/ixeRFsB5GuBeY+/NaLEvVDXbUIz8XutMAgTttirQbS
+VlLq1C0MauNtRmDZUIwE1yIpOCx0Bxs/X6mAdeMfSGq6GYGHXvzP1CGKFshcmJYe
+OURHiaDLmQz6Ge8Fe0IB1T01U2oDI1b52CzA0oavcZ1r7cA4ZN2mfqszk0XXmIJZ
+zm//Fp9yLUNppgkuZQ/mANO0dCYazMADRhoAEZs/Pg+cWC6udfuV8ndN0QEZMq+G
+HK/13LUv9lPf5RsmZbH1YizUm17gYuTUCqYpBv8KjTkEMFAHSvo/3sfARcqeGyzQ
+v7U16AJqWaaCH9QNe2+KHoktA+/hdWyU1DKdOUhEyXh9Wtj6QvnYqEbsHBKBKl/j
+5X2B+VmvYQmwLD+DGi1CJlXqmI0tJux14cdlEkn6agRJ5g2EI4hfrjxKFwjlv9xL
+XRe9gBh0k4NgO7Op/pVf
+=9nQm
+-----END PGP SIGNATURE-----
+
+--eyYj78xbwv+yMvU1--
