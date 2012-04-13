@@ -1,44 +1,59 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
-Date: Fri, 13 Apr 2012 10:59:56 +0200
-Message-ID: <20120413085955.GA4525@phenom.ffwll.local>
-References: <20120413133817.f8bbf0f6d95ada9f86b93800@canb.auug.org.au>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: linux-next: "amba: Remove AMBA level regulator support" commit.
+Date: Fri, 13 Apr 2012 11:32:07 +0100
+Message-ID: <20120413103207.GL24211@n2100.arm.linux.org.uk>
+References: <20120413012230.GA30438@windriver.com> <CAAQ0ZWReL=+bm9UOnt2=Dfy0zeWbJe3=y3pPzUKRzm2y277kFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:53020 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932722Ab2DMI7K (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Apr 2012 04:59:10 -0400
-Received: by wibhj6 with SMTP id hj6so6282096wib.1
-        for <linux-next@vger.kernel.org>; Fri, 13 Apr 2012 01:59:09 -0700 (PDT)
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:44554 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932961Ab2DMKcY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Apr 2012 06:32:24 -0400
 Content-Disposition: inline
-In-Reply-To: <20120413133817.f8bbf0f6d95ada9f86b93800@canb.auug.org.au>
+In-Reply-To: <CAAQ0ZWReL=+bm9UOnt2=Dfy0zeWbJe3=y3pPzUKRzm2y277kFQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Daniel Kurtz <djkurtz@chromium.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, broonie@opensource.wolfsonmicro.com, linus.walleij@linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, Apr 13, 2012 at 01:38:17PM +1000, Stephen Rothwell wrote:
-> Hi Dave,
-> 
-> Today's linux-next merge of the drm tree got a conflict in
-> drivers/gpu/drm/i915/intel_i2c.c between commit 6a562e3daee2 ("Revert
-> "drm/i915: reenable gmbus on gen3+ again"") from Linus' tree and commits
-> 0fb3f969c868 ("drm/i915: enable gmbus on gen2") and 2ed06c93a1fc
-> ("drm/i915/intel_i2c: gmbus disabled and reserved ports are invalid")
-> from the drm tree.
-> 
-> I just used the drm tree version.
+On Fri, Apr 13, 2012 at 10:01:52AM +0800, Shawn Guo wrote:
+> On 13 April 2012 09:22, Paul Gortmaker <paul.gortmaker@windriver.com>=
+ wrote:
+> > Hi Mark,
+> >
+> > The commit in linux-next:
+> >
+> > -----------------
+> > commit b2bc9e0ee349db84035d8141e85babc7986594d7
+> > Author: Mark Brown <broonie@sirena.org.uk>
+> > Date: =A0 Mon Apr 2 12:30:35 2012 +0100
+> >
+> > =A0 =A0ARM: 7366/1: amba: Remove AMBA level regulator support
+> > -----------------
+> >
+> > is pointed at by git bisect for the u8500_defconfig build failure:
+> >
+> > drivers/dma/ste_dma40.c:2708:3: error: implicit declaration of func=
+tion
+> > 'regulator_disable' [-Werror=3Dimplicit-function-declaration]
+> > drivers/dma/ste_dma40.c:2747:3: error: implicit declaration of func=
+tion
+> > 'regulator_enable' [-Werror=3Dimplicit-function-declaration]
+> > drivers/dma/ste_dma40.c:3260:3: error: implicit declaration of func=
+tion
+> > 'regulator_get' [-Werror=3Dimplicit-function-declaration]
+> > drivers/dma/ste_dma40.c:3271:4: error: implicit declaration of func=
+tion
+> > 'regulator_put' [-Werror=3Dimplicit-function-declaration]
+> >
+> That's because Mark's patch removes "#include
+> <linux/regulator/consumer.h>" included indirectly by
+> drivers/dma/ste_dma40.c from linux/amba/bus.h.  The ste_dma40.c shoul=
+d
+> really directly includes consumer.h.
 
-That's correct, gmbus is too broken for 3.4, but we already have quite a
-few fixes for known issues queued for 3.5, so leaving it enabled there is
-the right thing for -next. I plan to do a backmerge as soon as -rc3 is out
-there, I have a few more patches for drm-intel-next that depend/conflict
-with new patches merged to Linus' tree.
-
-Thanks, Daniel
--- 
-Daniel Vetter
-Mail: daniel@ffwll.ch
-Mobile: +41 (0)79 365 57 48
+Okay, I'll drop this patch because it's causing regressions, so it can'=
+t
+be pushed as a 'fix' during -rc.
