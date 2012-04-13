@@ -1,43 +1,41 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: linux-next: "amba: Remove AMBA level regulator support" commit.
-Date: Fri, 13 Apr 2012 13:19:14 +0100
-Message-ID: <20120413121914.GN24211@n2100.arm.linux.org.uk>
-References: <20120413012230.GA30438@windriver.com> <CAAQ0ZWReL=+bm9UOnt2=Dfy0zeWbJe3=y3pPzUKRzm2y277kFQ@mail.gmail.com> <20120413103207.GL24211@n2100.arm.linux.org.uk> <20120413104452.GR3168@opensource.wolfsonmicro.com> <20120413104900.GM24211@n2100.arm.linux.org.uk> <20120413120706.GT3168@opensource.wolfsonmicro.com>
+Date: Fri, 13 Apr 2012 14:26:04 +0200
+Message-ID: <CACRpkdYkTHcppMtEy94cRiaHApeeohiiaCaA0SuyG52n1s+Yag@mail.gmail.com>
+References: <20120413012230.GA30438@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:39635 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754418Ab2DMMTc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Apr 2012 08:19:32 -0400
-Content-Disposition: inline
-In-Reply-To: <20120413120706.GT3168@opensource.wolfsonmicro.com>
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:36112 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932074Ab2DMM0F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Apr 2012 08:26:05 -0400
+Received: by ghrr11 with SMTP id r11so1552025ghr.19
+        for <linux-next@vger.kernel.org>; Fri, 13 Apr 2012 05:26:04 -0700 (PDT)
+In-Reply-To: <20120413012230.GA30438@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Shawn Guo <shawn.guo@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, linus.walleij@linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: broonie@opensource.wolfsonmicro.com, linux-next@vger.kernel.org, shawn.guo@linaro.org, rmk+kernel@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
 
-On Fri, Apr 13, 2012 at 01:07:07PM +0100, Mark Brown wrote:
-> On Fri, Apr 13, 2012 at 11:49:00AM +0100, Russell King - ARM Linux wrote:
-> 
-> > What I want is something that doesn't cause a regression for 3.4.
-> 
-> Oh, and note that there's already a fix for the missing header although
-> with all the git trees I've no idea what the process is for getting it
-> into mainline.
+On Fri, Apr 13, 2012 at 3:22 AM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-That really doesn't make any difference about whether I can push 7366/1
-as is or not.  If the fix for the missing header is going through some
-other git tree, I can't push 7366/1 until that fix has gone in - and
-I'm not going to be tracking when that happens.
+> is pointed at by git bisect for the u8500_defconfig build failure:
+>
+> drivers/dma/ste_dma40.c:2708:3: error: implicit declaration of function
+> 'regulator_disable' [-Werror=implicit-function-declaration]
+> drivers/dma/ste_dma40.c:2747:3: error: implicit declaration of function
+> 'regulator_enable' [-Werror=implicit-function-declaration]
+> drivers/dma/ste_dma40.c:3260:3: error: implicit declaration of function
+> 'regulator_get' [-Werror=implicit-function-declaration]
+> drivers/dma/ste_dma40.c:3271:4: error: implicit declaration of function
+> 'regulator_put' [-Werror=implicit-function-declaration]
 
-TBH, its something that _you_ need to manage - you created this regression
-in the first place by changing the regulator API without first reviewing
-all the callsites.  Grep is a wonderful tool for finding those.  So I'll
-leave it entirely up to you to figure out how to fix the AMBA regression
-you caused in a sane way in -rc - and without causing any additional
-regressions by doing so.
+I've already sent a patch to the DMA maintainer to fix this.
+It was a bug in the DMA driver actually - it did not include the proper
+headers - so it just got triggered by this patch.
+http://marc.info/?l=linux-kernel&m=133424730706377&w=2
 
-If you want me to apply 7367/1 instead, then please say so directly.  If
-you want 7366/1 plus the header file fixed, then that needs to be figured
-out.
+Yours,
+Linus Walleij
