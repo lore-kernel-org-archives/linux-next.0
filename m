@@ -1,290 +1,87 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: triage for April 12, 2012
-Date: Thu, 12 Apr 2012 22:02:24 -0400
-Message-ID: <CAP=VYLpq2BUcNEBKJ9bruZb5FAK2fHFPTdUC7=dnJgRU1MMFuQ@mail.gmail.com>
-References: <20120413014505.GC30438@windriver.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Michael Neuling <mikey@neuling.org>
+Subject: Re: linux-next: boot failures with next-20120411
+Date: Fri, 13 Apr 2012 12:30:11 +1000
+Message-ID: <16710.1334284211@neuling.org>
+References: <20120411165835.415e546374a54ea94669b0c6@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:37096 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750819Ab2DMCC4 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Apr 2012 22:02:56 -0400
-In-Reply-To: <20120413014505.GC30438@windriver.com>
+Received: from ozlabs.org ([203.10.76.45]:48863 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755880Ab2DMCaO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Apr 2012 22:30:14 -0400
+In-reply-to: <20120411165835.415e546374a54ea94669b0c6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jiri Slaby <jslaby@suse.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next@vger.kernel.org
 
-On Thu, Apr 12, 2012 at 9:45 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> This is kind of a "two days in one" report. =A0Remember that this
-> report lags sfr's treegen by ~24h so that kisskb builds can run.
->
-> The i386 allmodconfig lost its rc5t583-regulator license typo fail
-> but picked up two more new fails (one still via rc5t583-regulator).
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-I forgot to mention that the m86k builds lost their android/persistent_=
-ram.c
-issue, but got fetched up on wiznet (reported by Geert and fix already
-applied by DaveM) --  https://lkml.org/lkml/2012/4/12/369
+> Hi all,
+> 
+> Some (not all) of my PowerPC boot tests have failed like this after
+> getting into user mode (this one was just after udev started, but others
+> are after other processes getting going):
+> 
+> Unable to handle kernel paging request for data at address 0xc0000003f9d550
+> Faulting instruction address: 0xc0000000001b7f40
+> Oops: Kernel access of bad area, sig: 11 [#1]
+> SMP NR_CPUS=32 NUMA pSeries
+> Modules linked in: ehea
+> NIP: c0000000001b7f40 LR: c0000000001b7f14 CTR: c0000000000e04f0
+> REGS: c0000003f68bf6b0 TRAP: 0300   Not tainted  (3.4.0-rc2-autokern1)
+> MSR: 800000000280b032 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI>  CR: 24422424  XER: 20000001
+> SOFTE: 1
+> CFAR: 000000000000562c
+> DAR: 00c0000003f9d550, DSISR: 40000000
+> TASK = c0000003f8818000[3192] 'kdump' THREAD: c0000003f68bc000 CPU: 5
+> GPR00: 0000000000000000 c0000003f68bf930 c000000000ce1d40 c0000003fe00ec00 
+> GPR04: 00000000000002d0 0000000000000038 c0000003f8f935e8 c000000000e55280 
+> GPR08: 0000000000000011 c000000000bcb280 c000000000bcb1e8 000000000028a000 
+> GPR12: 0000000024422424 c00000000f33bc80 00000fffdd90a770 0000000000081000 
+> GPR16: c0000003f846c000 000000000de4f7a0 f00000000de4f7a0 0000000000000000 
+> GPR20: c0000003f8365408 c0000003f8365480 c0000003f8e5d110 0000000000000000 
+> GPR24: 0000000000000100 c0000003f8365400 c0000000001e5424 00000000000002d0 
+> GPR28: 0000000000000800 00c0000003f9d550 c000000000c5b718 c0000003fe00ec00 
+> NIP [c0000000001b7f40] .__kmalloc+0x70/0x230
+> LR [c0000000001b7f14] .__kmalloc+0x44/0x230
+> Call Trace:
+> [c0000003f68bf930] [c0000003f68bf9b0] 0xc0000003f68bf9b0 (unreliable)
+> [c0000003f68bf9e0] [c0000000001e5424] .alloc_fdmem+0x24/0x70
+> [c0000003f68bfa60] [c0000000001e54f8] .alloc_fdtable+0x88/0x130
+> [c0000003f68bfaf0] [c0000000001e5924] .dup_fd+0x384/0x450
+> [c0000003f68bfbd0] [c00000000009a310] .copy_process+0x880/0x11d0
+> [c0000003f68bfcd0] [c00000000009aee0] .do_fork+0x70/0x400
+> [c0000003f68bfdc0] [c0000000000141c4] .sys_clone+0x54/0x70
+> [c0000003f68bfe30] [c000000000009aa0] .ppc_clone+0x8/0xc
+> Instruction dump:
+> 4bff9281 2ba30010 7c7f1b78 40dd00f4 e96d0040 e93f0000 7ce95a14 e9070008 
+> 7fa9582a 2fbd0000 41de0054 e81f0022 <7f3d002a> 38000000 886d01f2 980d01f2 
+> ---[ end trace 366fe6c7ced3bfb0 ]---
+> 
+> This did not happen yesterday.  Just wondering if anyone can think of
+> anything obvious.  Full console log at
+> http://ozlabs.org/~sfr/next-20120411.log.bz2
 
-P.
+I managed to bisect this down using pseries_defconfig with next-20120412
+to this patch:
 
->
-> ----------------------
->
-> New breakage since last report:
-> =A0 =A0 =A0 =A0i386:allmodconfig
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0("rc5t583_ext_power_req_config" undefi=
-ned)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0("__udivdi3" [ethernet/mellanox/mlx4/m=
-lx4_en.ko] undefined)
-> =A0 =A0 =A0 =A0ARM:u8500_defconfig
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(implicit declaration of function 'reg=
-ulator_disable')
-> =A0 =A0 =A0 =A0powerpc:mpc85xx_defconfig
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(spi-fsl-lib.c:68 dereferencing pointe=
-r to incomplete type)
->
-> Randconfig fails that may or may not be new (by their very nature):
-> =A0 =A0 =A0 =A0powerpc: iommu.c: implicit decl of function 'pci_dev_t=
-o_eeh_dev'
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0( http://kisskb.ellerman.id.au/kisskb/=
-buildresult/6095808/ )
->
-> Builds that are fixed since last report:
-> =A0 =A0 =A0 =A0ARM:eseries_pxa_defconfig,em_x270_defconfig,imx_v4_v5_=
-defconfig
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(sound/soc/codecs/wm9712.c: error: 'ru=
-ntime' undeclared)
-> =A0 =A0 =A0 =A0ARM/MIPS:magician_defconfig,omap1_defconfig,ip27_defco=
-nfig,s3c2410_defconfig
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(regmap.c: too few arg to 'regmap_debu=
-gfs_init')
-> =A0 =A0 =A0 =A0s390/sparc:allmodconfig,allyesconfig
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(wiznet Kconfig fallout)
-> =A0 =A0 =A0 =A0i386:allmodconfig
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(GPL-incompatible module rc5t583-regul=
-ator.ko uses GPL-only symbol)
->
-> Note: The randconfig fails are only listed once and not tracked
-> in the below listing.
->
-> I'm also not tracking the kallsyms extra pass stuff on ARM on
-> a per board basis anymore. =A0It has nothing to do with the board.
-> Why? See: =A0http://marc.info/?l=3Dlinux-next&m=3D133267456809502
->
-> =A0 =A0 =A0 =A0 =A0 =A0----------------------------------------------=
---
->
-> Latest results at:
-> =A0 =A0 =A0 =A0http://kisskb.ellerman.id.au/kisskb/branch/9/
->
-> Failures as of April 12th, 2012:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
->
-> AM33:asb2303_defconfig,asb2364_defconfig
-> =A0 =A0 =A0 =A0when: =A0 Mar 15
-> =A0 =A0 =A0 =A0why: =A0 =A0cc1: error: unrecognized command line opti=
-on '-mmem-funcs'
-> =A0 =A0 =A0 =A0status: Possible fix from TonyB sent for review.
-> =A0 =A0 =A0 =A0fix: =A0 =A0http://marc.info/?l=3Dlinux-kernel&m=3D133=
-185020313818&w=3D2
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/5878400/
-> ----------------
->
-> ARM:u8500_defconfig
-> =A0 =A0 =A0 =A0when: =A0 Apr 11
-> =A0 =A0 =A0 =A0why: =A0 =A0ste_dma40.c: implicit declaration of funct=
-ion 'regulator_disable'
-> =A0 =A0 =A0 =A0status: reported
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://marc.info/?l=3Dlinux-next&m=3D13342=
-8028418892&w=3D2
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/6091624/
->
-> ARM:netx_defconfig,pnx4008_defconfig
-> =A0 =A0 =A0 =A0when: =A0 Mar 14
-> =A0 =A0 =A0 =A0why: =A0 =A0net/core/pktgen.c: can't find a register i=
-n class 'GENERAL_REGS'
-> =A0 =A0 =A0 =A0status:
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/5869486/
-> =A0 =A0 =A0 =A0ref: =A0 =A0https://lkml.org/lkml/2012/3/13/670
->
-> ARM:ixp4xx_defconfig
-> =A0 =A0 =A0 =A0when: =A0 Oct 26
-> =A0 =A0 =A0 =A0why: =A0 =A0gpio.h: implicit declaration of function '=
-__gpio_get_value'
-> =A0 =A0 =A0 =A0status: fixed (Imre Kaloz) - but possibly needs rework=
-?
-> =A0 =A0 =A0 =A0fix: =A0 =A0https://lkml.org/lkml/2012/2/8/288
-> =A0 =A0 =A0 =A0ref: =A0 =A0https://lkml.org/lkml/2012/2/8/287
->
-> ARM:raumfeld_defconfig
-> =A0 =A0 =A0 =A0when: =A0 Nov 23
-> =A0 =A0 =A0 =A0why: =A0 =A0eeti_ts.c: implicit declaration of functio=
-n 'irq_to_gpio'
-> =A0 =A0 =A0 =A0status: perhaps broken since 2010? =A0See ref below.
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://www.gossamer-threads.com/lists/linu=
-x/kernel/1291618?do=3Dpost_view_threaded#1291618
->
-> ARM:arm-allnoconfig
-> =A0 =A0 =A0 =A0when: =A0 forever
-> =A0 =A0 =A0 =A0why: =A0 =A0not supported
-> =A0 =A0 =A0 =A0status: nothing pending, but patches accepted
-> =A0 =A0 =A0 =A0fix: =A0 =A0n/a
-> =A0 =A0 =A0 =A0ref: =A0 =A0https://lkml.org/lkml/2009/4/30/105
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://lists.infradead.org/pipermail/linux=
--arm-kernel/2012-January/081218.html
-> ----------------
->
-> AVR32:allnoconfig
-> =A0 =A0 =A0 =A0when: =A0 May 26 2010, 20:49
-> =A0 =A0 =A0 =A0why: =A0 =A0at32_map_usart: undefined reference to `at=
-mel_default_console_device'
-> =A0 =A0 =A0 =A0status:
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref:
-> ---------------
->
-> bfin: 50% of builds
-> =A0 =A0 =A0 =A0when: =A0 Mar 31
-> =A0 =A0 =A0 =A0why: =A0 =A0"Error: pcrel too far BFD_RELOC_BFIN_10" f=
-rom kernel/time/timekeeping.c
-> =A0 =A0 =A0 =A0status: unknown, binutils issue?
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/6087324/
-> ---------------
->
-> cris:allyesconfig,allmodconfig
-> =A0 =A0 =A0 =A0when: =A0 Apr 3
-> =A0 =A0 =A0 =A0why: =A0 =A0too many to list here
-> =A0 =A0 =A0 =A0status:
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/6035250/
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/6035249/
-> ----------------
->
-> frv:defconfig
-> =A0 =A0 =A0 =A0when: =A0 Mar 15
-> =A0 =A0 =A0 =A0why: =A0 =A0undefined reference to `pci_cardbus_resour=
-ce_alignment'
-> =A0 =A0 =A0 =A0status:
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/6030067/
-> ----------------
->
-> i386:allmodconfig
-> =A0 =A0 =A0 =A0when: =A0 Apr 11
-> =A0 =A0 =A0 =A0why: =A0 =A0"rc5t583_ext_power_req_config" [drivers/re=
-gulator/rc5t583-regulator.ko] undefined!
-> =A0 =A0 =A0 =A0why: =A0 =A0"__udivdi3" [drivers/net/ethernet/mellanox=
-/mlx4/mlx4_en.ko] undefined!
-> =A0 =A0 =A0 =A0status:
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/6091475/
-> ----------------
->
-> h8300:defconfig
-> =A0 =A0 =A0 =A0when: =A0 Mar 15
-> =A0 =A0 =A0 =A0why: =A0 =A0time.c: implicit declaration of function '=
-get_irq_regs'
-> =A0 =A0 =A0 =A0why: =A0 =A0also seems gcc suffers an ICE
-> =A0 =A0 =A0 =A0status: ICE bug lodged with gcc folks (TonyB)
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://gcc.gnu.org/bugzilla/show_bug.cgi?i=
-d=3D52598
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/5884668/
-> ----------------
->
-> m32r:m32700ut.smp_defconfig
-> =A0 =A0 =A0 =A0when: =A0 Mar 15
-> =A0 =A0 =A0 =A0why: =A0 =A0No rule to make target `arch/m32r/boot/com=
-pressed/vmlinux.bin
-> =A0 =A0 =A0 =A0status:
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/5884670/
-> ----------------
->
-> m68k:allmodconfig
-> =A0 =A0 =A0 =A0when: =A0 Mar 16
-> =A0 =A0 =A0 =A0why: =A0 =A0persistent_ram.c: implicit declaration of =
-'memblock_reserve'
-> =A0 =A0 =A0 =A0status:
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/5884324/
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://www.spinics.net/lists/linux-next/ms=
-g19343.html
-> ----------------
->
-> mips:allmodconfig
-> =A0 =A0 =A0 =A0when:
-> =A0 =A0 =A0 =A0why: =A0 =A0driver_pci_host.c: implicit declaration of=
- function 'pcibios_enable_device'
-> =A0 =A0 =A0 =A0status: one of many fixes mips needs...
-> =A0 =A0 =A0 =A0fix: =A0 =A0http://marc.info/?l=3Dlinux-wireless&m=3D1=
-33272031621916&w=3D2
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://patchwork.ozlabs.org/patch/148614/
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/5807000/
-> ----------------
->
-> parisc:allmodconfig
-> =A0 =A0 =A0 =A0when:
-> =A0 =A0 =A0 =A0why: =A0 =A0include/linux/log2.h: implicit declaration=
- of function 'fls'
-> =A0 =A0 =A0 =A0status: reported by PaulG, WIP by David Howells
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0https://lkml.org/lkml/2012/2/29/409
-> =A0 =A0 =A0 =A0ref: =A0 =A0https://lkml.org/lkml/2012/3/6/228
->
-> parisc64:a500_defconfig
-> =A0 =A0 =A0 =A0when:
-> =A0 =A0 =A0 =A0why: =A0 =A0include/linux/log2.h: implicit declaration=
- of function 'fls'
-> =A0 =A0 =A0 =A0status: reported by PaulG, WIP by David Howells
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0https://lkml.org/lkml/2012/2/29/409
-> =A0 =A0 =A0 =A0ref: =A0 =A0https://lkml.org/lkml/2012/3/6/228
-> ------------------
->
-> powerpc:allyesconfig
-> =A0 =A0 =A0 =A0when: =A0 May 18 2009, 22:11
-> =A0 =A0 =A0 =A0why: =A0 =A0fat ass kernel with everything simply won'=
-t link
-> =A0 =A0 =A0 =A0status: need to fix build config to ignore the final l=
-ink
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/5806793/
-> ------------------
->
-> um:um-defconfig
-> =A0 =A0 =A0 =A0when: =A0 Sep 16 2010, 01:28
-> =A0 =A0 =A0 =A0why: =A0 =A0os-Linux/start_up.c: error: 'PTRACE_SETOPT=
-IONS' undeclared
-> =A0 =A0 =A0 =A0status: clearly broken forever, so does anyone care?
-> =A0 =A0 =A0 =A0fix:
-> =A0 =A0 =A0 =A0ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/target=
-/2979/
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+  commit 85bbc003b24335e253a392f6a9874103b77abb36
+  Author: Jiri Slaby <jslaby@suse.cz>
+  Date:   Mon Apr 2 13:54:22 2012 +0200
+
+      TTY: HVC, use tty from tty_port
+
+      The driver already used refcounting. So we just switch it to tty_port
+      helpers. And switch to tty_port->lock for tty.
+
+      Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+      Cc: linuxppc-dev@lists.ozlabs.org
+      Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+Reverting this commit (and 0146b6939074ebe14ece3604fd00e7be128a3812
+otherwise git barfs) fixes the problem on next-20120412.  
+
+I'm assuming we got the ref count changes wrong somewhere in the patch
+but the tty code is beyond me.  Jiri, can you take a look?
+
+Mikey
