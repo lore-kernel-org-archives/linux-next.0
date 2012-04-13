@@ -1,59 +1,88 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: "spi/devicetree: Move devicetree support code into spi directory" commit
-Date: Fri, 13 Apr 2012 10:23:14 -0600
-Message-ID: <20120413162314.868773E0791@localhost>
-References: <20120413145623.GA3898@windriver.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:45462 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751024Ab2DMQXS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Apr 2012 12:23:18 -0400
-Received: by dake40 with SMTP id e40so4107534dak.11
-        for <linux-next@vger.kernel.org>; Fri, 13 Apr 2012 09:23:17 -0700 (PDT)
-In-Reply-To: <20120413145623.GA3898@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: rob.herring@calxeda.com, linux-next@vger.kernel.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] mm: extend prefault helpers to fault in more than PAGE_SIZE
+Date: Fri, 13 Apr 2012 21:12:21 +0200
+Message-ID: <CAMuHMdXBEiDGyJQ+szoBKxo0pS=n3xKfpb=F+rNkMQUv4SdTQA@mail.gmail.com>
+References: <20120229153216.8c3ae31d.akpm@linux-foundation.org>
+	<1330629779-1449-1-git-send-email-daniel.vetter@ffwll.ch>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <1330629779-1449-1-git-send-email-daniel.vetter@ffwll.ch>
+Sender: owner-linux-mm@kvack.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, DRI Development <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Linux-Next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 13 Apr 2012 10:56:23 -0400, Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
-> Hi Grant,
-> 
-> Can you take a look at this failure?
+On Thu, Mar 1, 2012 at 20:22, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> +/* Multipage variants of the above prefault helpers, useful if more than
+> + * PAGE_SIZE of date needs to be prefaulted. These are separate from the=
+ above
+> + * functions (which only handle up to PAGE_SIZE) to avoid clobbering the
+> + * filemap.c hotpaths. */
+> +static inline int fault_in_multipages_writeable(char __user *uaddr, int =
+size)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 int ret;
+> + =C2=A0 =C2=A0 =C2=A0 const char __user *end =3D uaddr + size - 1;
 
-Hi Paul,
+Please drop the const.
 
-Thanks for telling me about this.  It's fixed in my tree now.
+> +
+> + =C2=A0 =C2=A0 =C2=A0 if (unlikely(size =3D=3D 0))
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return 0;
+> +
+> + =C2=A0 =C2=A0 =C2=A0 /*
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0* Writing zeroes into userspace here is OK, =
+because we know that if
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0* the zero gets there, we'll be overwriting =
+it.
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0*/
+> + =C2=A0 =C2=A0 =C2=A0 while (uaddr <=3D end) {
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ret =3D __put_user(0, =
+uaddr);
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (ret !=3D 0)
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 return ret;
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 uaddr +=3D PAGE_SIZE;
+> + =C2=A0 =C2=A0 =C2=A0 }
+> +
+> + =C2=A0 =C2=A0 =C2=A0 /* Check whether the range spilled into the next p=
+age. */
+> + =C2=A0 =C2=A0 =C2=A0 if (((unsigned long)uaddr & PAGE_MASK) =3D=3D
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 ((unsigned long)end & PAGE_MASK))
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ret =3D __put_user(0, =
+end);
 
-g.
+include/linux/pagemap.h:483:3: error: read-only location '*end' used
+as 'asm' output
 
-> 
-> drivers/spi/spi-fsl-lib.h:56:33: warning: 'struct spi_message' declared inside parameter list
-> drivers/spi/spi-fsl-lib.h:56:33: warning: its scope is only this definition or declaration, which is probably not what you want
-> drivers/spi/spi-fsl-lib.h:115:64: warning: 'struct spi_message' declared inside parameter list
-> drivers/spi/spi-fsl-lib.c: In function 'mpc8xxx_spi_work':
-> drivers/spi/spi-fsl-lib.c:68:27: error: dereferencing pointer to incomplete type
-> 
-> Bisect leads me to:
-> 
-> ------------
-> 6810d770847c0f24555c13dd80b64fcc30c47ad8 is the first bad commit
-> commit 6810d770847c0f24555c13dd80b64fcc30c47ad8
-> Author: Grant Likely <grant.likely@secretlab.ca>
-> Date:   Sat Apr 7 14:16:53 2012 -0600
-> 
->     spi/devicetree: Move devicetree support code into spi directory
-> ------------
-> 
-> Failure is in mpc85xx_defconfig.
-> 
-> http://kisskb.ellerman.id.au/kisskb/buildresult/6100610/
-> 
-> Thanks,
-> Paul.
-> 
-> 
+Now in -next:
 
--- 
-Grant Likely, B.Sc, P.Eng.
-Secret Lab Technologies,Ltd.
+http://kisskb.ellerman.id.au/kisskb/buildresult/6100650/
+http://kisskb.ellerman.id.au/kisskb/buildresult/6100673/
+http://kisskb.ellerman.id.au/kisskb/buildresult/6100860/
+
+Gr{oetje,eeting}s,
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
