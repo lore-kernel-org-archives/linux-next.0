@@ -1,63 +1,79 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for Apr 12
-Date: Thu, 12 Apr 2012 14:24:15 -0700
-Message-ID: <20120412142415.564710b8.akpm@linux-foundation.org>
-References: <20120412145931.9ec6f2b51655071795d60d1d@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next: "amba: Remove AMBA level regulator support" commit.
+Date: Thu, 12 Apr 2012 21:22:31 -0400
+Message-ID: <20120413012230.GA30438@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50727 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755202Ab2DLVYR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Apr 2012 17:24:17 -0400
-In-Reply-To: <20120412145931.9ec6f2b51655071795d60d1d@canb.auug.org.au>
+Received: from mail.windriver.com ([147.11.1.11]:38671 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751789Ab2DMBW4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Apr 2012 21:22:56 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
+To: broonie@opensource.wolfsonmicro.com
+Cc: linus.walleij@linaro.org, linux-next@vger.kernel.org, shawn.guo@linaro.org, rmk+kernel@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
 
-On Thu, 12 Apr 2012 14:59:31 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Mark,
 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+The commit in linux-next:
 
-This isn't working for me.  Some time between April 3 and April 12
-someone merged something into the non-mm part of linux-next which broke
-ssh.
+-----------------
+commit b2bc9e0ee349db84035d8141e85babc7986594d7
+Author: Mark Brown <broonie@sirena.org.uk>
+Date:   Mon Apr 2 12:30:35 2012 +0100
 
-I boot the box and everything seems to come up OK, but attemtps to ssh
-into the machine fail with
+    ARM: 7366/1: amba: Remove AMBA level regulator support
+-----------------
 
-X11 forwarding request failed on channel 0
-Last login: Thu Apr 12 13:04:35 2012 from akpm.corp.google.com
-Connection to akpm2 closed.
+is pointed at by git bisect for the u8500_defconfig build failure:
 
-I took a peek in the `strace ssh' output.
+drivers/dma/ste_dma40.c:2708:3: error: implicit declaration of function
+'regulator_disable' [-Werror=implicit-function-declaration]
+drivers/dma/ste_dma40.c:2747:3: error: implicit declaration of function
+'regulator_enable' [-Werror=implicit-function-declaration]
+drivers/dma/ste_dma40.c:3260:3: error: implicit declaration of function
+'regulator_get' [-Werror=implicit-function-declaration]
+drivers/dma/ste_dma40.c:3271:4: error: implicit declaration of function
+'regulator_put' [-Werror=implicit-function-declaration]
 
-Good:
+http://kisskb.ellerman.id.au/kisskb/buildresult/6095691/
 
-17815 write(5, "Last login: Thu Apr 12 13:27:23 "..., 65) = 65
-17815 select(7, [3 4], [], NULL, {120, 0}) = 1 (in [3], left {119, 770798})
-17815 read(3, "\21O\200\366Mv\343\222\332\251\2403L\376Y18\2047\336\244\226p-+X\2%\2119\314\255"..., 8192) = 80
-17815 select(7, [3 4], [5], NULL, {120, 0}) = 1 (out [5], left {119, 999987})
-17815 write(5, "\r\33[m\17\33[27m\33[24m\33[Jakpm2:/home/ak"..., 39) = 39
-17815 select(7, [3 4], [], NULL, {120, 0}) = 1 (in [4], left {118, 801111})
-17815 read(4, "\4", 16384)              = 1
-17815 select(7, [3 4], [3], NULL, {120, 0}) = 1 (out [3], left {119, 999991})
-17815 write(3, "\235J\5\340\234\21\266\207\26e\362\327\2\332\1\267\272\200\364\267?/\320L\341\35\350{+M:\222"..., 48) = 48
+If, like my earlier mail this week, this is something you've already
+fixed, then please provide me a link, and I'll gladly include that in
+the triage report, so you don't get needless extra mails about it.
 
+Thanks,
+Paul.
+--
 
-Bad:
-
-9305  write(5, "Last login: Thu Apr 12 13:02:54 "..., 65) = 65
-9305  select(7, [3 4], [], NULL, {120, 0}) = 1 (in [3], left {119, 945541})
-9305  read(3, "f\357\250~\260i\2259\320\3258\262)O\364;_\251\360-\314\31\374]\326\300\356\364\370S\3105"..., 8192) = 128
-9305  close(5)                          = 0
-9305  close(4)                          = 0
-
-That read() is returning a lot more data.
-
-It appears that we've done something which breaks X forwarding.  I
-won't be able to look any further into this until Monday.
+git bisect start
+# good: [0034102808e0dbbf3a2394b82b1bb40b5778de9e] Linux 3.4-rc2
+git bisect good 0034102808e0dbbf3a2394b82b1bb40b5778de9e
+# bad: [87487c4514a94892ce478dc012da6d12a98ae360] Add linux-next specific files for 20120412
+git bisect bad 87487c4514a94892ce478dc012da6d12a98ae360
+# bad: [45701d47f211d6ce72ee2c1725904d2e173eb29f] Merge remote-tracking branch 'sound/for-next'
+git bisect bad 45701d47f211d6ce72ee2c1725904d2e173eb29f
+# good: [5d2acf8cc7515129a5d3aed7b0e0be18dbcf524f] Merge branch 'topic/misc' into for-next
+git bisect good 5d2acf8cc7515129a5d3aed7b0e0be18dbcf524f
+# bad: [846c4b315b6faae8f5ede661d80c222d669adbda] Merge remote-tracking branch 'target-merge/for-next-merge'
+git bisect bad 846c4b315b6faae8f5ede661d80c222d669adbda
+# bad: [9235a323f99492120565935040b6be61e687d0c6] Merge remote-tracking branch 'gfs2/master'
+git bisect bad 9235a323f99492120565935040b6be61e687d0c6
+# bad: [6c944bb0c84fa1a03af503e926d7bd3a4a7e7376] Merge remote-tracking branch 'usb.current/usb-linus'
+git bisect bad 6c944bb0c84fa1a03af503e926d7bd3a4a7e7376
+# bad: [ef75674b6700ad96cac1e1c377cf9809cea6a369] Merge remote-tracking branch 'net/master'
+git bisect bad ef75674b6700ad96cac1e1c377cf9809cea6a369
+# good: [39f86a608a3e0f0164bd1540acf87696cfdfb5bb] Merge branch 'v4l_for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
+git bisect good 39f86a608a3e0f0164bd1540acf87696cfdfb5bb
+# good: [a1ada086062101533eb0f841d3884137688091ec] Merge tag 'sound-3.4' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+git bisect good a1ada086062101533eb0f841d3884137688091ec
+# good: [87151b8689d890dfb495081f7be9b9e257f7a2df] net: allow pskb_expand_head() to get maximum tailroom
+git bisect good 87151b8689d890dfb495081f7be9b9e257f7a2df
+# good: [f549e088b806f44b6ab6eeef0cb71ced1d2488dd] Merge tag 'rdma-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/roland/infiniband
+git bisect good f549e088b806f44b6ab6eeef0cb71ced1d2488dd
+# bad: [b2bc9e0ee349db84035d8141e85babc7986594d7] ARM: 7366/1: amba: Remove AMBA level regulator support
+git bisect bad b2bc9e0ee349db84035d8141e85babc7986594d7
+# good: [34af657916332e89564566bc8d35e3e06cc0c236] ARM: 7377/1: vic: re-read status register before dispatching each IRQ handler
+git bisect good 34af657916332e89564566bc8d35e3e06cc0c236
