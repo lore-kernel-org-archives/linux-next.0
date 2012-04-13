@@ -1,62 +1,44 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: "amba: Remove AMBA level regulator support" commit.
-Date: Fri, 13 Apr 2012 09:37:01 +0100
-Message-ID: <20120413083700.GB3168@opensource.wolfsonmicro.com>
-References: <20120413012230.GA30438@windriver.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
+Date: Fri, 13 Apr 2012 10:59:56 +0200
+Message-ID: <20120413085955.GA4525@phenom.ffwll.local>
+References: <20120413133817.f8bbf0f6d95ada9f86b93800@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="K8nIJk4ghYZn606h"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:49463 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754645Ab2DMIhb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Apr 2012 04:37:31 -0400
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:53020 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932722Ab2DMI7K (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Apr 2012 04:59:10 -0400
+Received: by wibhj6 with SMTP id hj6so6282096wib.1
+        for <linux-next@vger.kernel.org>; Fri, 13 Apr 2012 01:59:09 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20120413012230.GA30438@windriver.com>
+In-Reply-To: <20120413133817.f8bbf0f6d95ada9f86b93800@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linus.walleij@linaro.org, linux-next@vger.kernel.org, shawn.guo@linaro.org, rmk+kernel@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Daniel Kurtz <djkurtz@chromium.org>
 
+On Fri, Apr 13, 2012 at 01:38:17PM +1000, Stephen Rothwell wrote:
+> Hi Dave,
+> 
+> Today's linux-next merge of the drm tree got a conflict in
+> drivers/gpu/drm/i915/intel_i2c.c between commit 6a562e3daee2 ("Revert
+> "drm/i915: reenable gmbus on gen3+ again"") from Linus' tree and commits
+> 0fb3f969c868 ("drm/i915: enable gmbus on gen2") and 2ed06c93a1fc
+> ("drm/i915/intel_i2c: gmbus disabled and reserved ports are invalid")
+> from the drm tree.
+> 
+> I just used the drm tree version.
 
---K8nIJk4ghYZn606h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+That's correct, gmbus is too broken for 3.4, but we already have quite a
+few fixes for known issues queued for 3.5, so leaving it enabled there is
+the right thing for -next. I plan to do a backmerge as soon as -rc3 is out
+there, I have a few more patches for drm-intel-next that depend/conflict
+with new patches merged to Linus' tree.
 
-On Thu, Apr 12, 2012 at 09:22:31PM -0400, Paul Gortmaker wrote:
-
-> is pointed at by git bisect for the u8500_defconfig build failure:
-
-> If, like my earlier mail this week, this is something you've already
-> fixed, then please provide me a link, and I'll gladly include that in
-> the triage report, so you don't get needless extra mails about it.
-
-Not me, but Linus W has a patch.  No idea about a link off the top of my
-head, google should turn something up I guess.  It's exactly the same
-sort of implicit header dependency issue that your cleanups keep
-triggering.
-
---K8nIJk4ghYZn606h
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPh+WQAAoJEBus8iNuMP3dfUAP/2Nfled86mZW1HgnXKchxWvG
-lQcCP7NKxcFTOa3E+aXoP/9UGwVgg0drvwdO1/llqI7hNtFK8+wgR1baUgx5tkmW
-THVtJdEZuc3dOVREIVkpfVn8/fumSkyEj95Rsy1kMoeuwIlnhu53LR5iXs7SB9ZH
-h+x1FPBNx0izuBvRpVEAYF299bPE3uhr9i9Ni4iNr1iILag+1OgYuivgmYPtbKOO
-iR+yjUcoJE5e17o/Vi/v4EUWLi6LRuYzDeZyfKgtkrsqbW7AgCPcJMiWH1mrnx3k
-q+qX+4Anms5ApYDK4m5p2CGylDUJ1tiPIqcgRgUWJelSQTWzq2fdw/8kbPMpSMee
-CitW+11Q0wdtFGb5zAh+b9/aGWXwZVknZyNmhtuBUE9oZQaZAAkpfWWNywlovGVE
-qKUEWiSyScHnUNnjAxrVqb+DyRGX6sGhoLajOeO2hy9l+wL8j1ZbnZ4O7uJqnPrJ
-fi+Yk+7PBYUNPLnAv0QUbpW7Zo6Pf8dlwC42NNcb82MAvAjN5rCHhJ8D0Uza5HGx
-ZjL6RkcZXI98J4oor+QObdr0NDs1ib6CHKmbTD13cD9jCAlNOVYpFm6k6UYSaZkb
-AjO6g/kPg+JqrTirysgY2zJmUksHteZetxDN+5hVvi6hHX+TCsssSpTsGUqMMg3N
-mo9GfWF1233Cw/e8kjS9
-=7Aos
------END PGP SIGNATURE-----
-
---K8nIJk4ghYZn606h--
+Thanks, Daniel
+-- 
+Daniel Vetter
+Mail: daniel@ffwll.ch
+Mobile: +41 (0)79 365 57 48
