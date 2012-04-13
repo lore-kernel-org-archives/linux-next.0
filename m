@@ -1,46 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: "amba: Remove AMBA level regulator support" commit.
-Date: Fri, 13 Apr 2012 14:30:57 +0200
-Message-ID: <CACRpkdYfRVkUqhuNw3iwHNFZJwG=2MAqtzZyK6qytFOzqUrosQ@mail.gmail.com>
-References: <20120413012230.GA30438@windriver.com>
-	<CAAQ0ZWReL=+bm9UOnt2=Dfy0zeWbJe3=y3pPzUKRzm2y277kFQ@mail.gmail.com>
-	<20120413103207.GL24211@n2100.arm.linux.org.uk>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the mmc tree
+Date: Fri, 13 Apr 2012 14:46:59 +0200
+Message-ID: <4F882043.1090006@atmel.com>
+References: <20120412140206.704731281bf2ee7d93d582bf@canb.auug.org.au> <87pqbdr1md.fsf@laptop.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:33213 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751677Ab2DMMa6 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Apr 2012 08:30:58 -0400
-Received: by ghrr11 with SMTP id r11so1554382ghr.19
-        for <linux-next@vger.kernel.org>; Fri, 13 Apr 2012 05:30:57 -0700 (PDT)
-In-Reply-To: <20120413103207.GL24211@n2100.arm.linux.org.uk>
+Received: from newsmtp5.atmel.com ([204.2.163.5]:12430 "EHLO
+	sjogate2.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752972Ab2DMMrm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Apr 2012 08:47:42 -0400
+In-Reply-To: <87pqbdr1md.fsf@laptop.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Shawn Guo <shawn.guo@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, broonie@opensource.wolfsonmicro.com, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vinod Koul <vinod.koul@intel.com>
+To: Chris Ball <cjb@laptop.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
 
-On Fri, Apr 13, 2012 at 12:32 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Fri, Apr 13, 2012 at 10:01:52AM +0800, Shawn Guo wrote:
->> That's because Mark's patch removes "#include
->> <linux/regulator/consumer.h>" included indirectly by
->> drivers/dma/ste_dma40.c from linux/amba/bus.h. =A0The ste_dma40.c sh=
-ould
->> really directly includes consumer.h.
->
-> Okay, I'll drop this patch because it's causing regressions, so it ca=
-n't
-> be pushed as a 'fix' during -rc.
+On 04/12/2012 06:54 AM, Chris Ball :
+> Hi,
+> 
+> On Thu, Apr 12 2012, Stephen Rothwell wrote:
+>> Today's linux-next merge of the arm-soc tree got a conflict in
+>> drivers/mmc/host/Kconfig between commit a334b9550294 ("mmc: remove imxmmc
+>> driver") from the mmc tree and commits a21a92c0c787 ("mmc: Kconfig: remove
+>> choice between at91_mci and atmel-mci") and 62080f06de6b ("mmc:
+>> atmel-mci: remove the need for CONFIG_MMC_ATMELMCI_DMA") from the arm-soc
+>> tree.
+>>
+>> I fixed it up (see below) and can carry the fix as necessary.
+> 
+> Thanks, Stephen.
+> 
+> Nicolas and Arnd, these MMC Kconfig patches weren't sent to me or
+> linux-mmc@ for review, so I haven't seen them before.  They look
+> fine, but I'd like to be in the loop directly to avoid surprises.
 
-Actually *not* having Marks patch also causes a regression on Ux500,
-albeit not at compile time, but at runtime.
+Yes Chris, my fault here, it is true that I should have send those
+patches to you and linux-mmc.
 
-So for me as ux500 maintainer it's perfectly OK to have compilation
-broken until that DMA patch arrives (should just be an issue of the
-DMA maintainer picking it up), but if others feel differently
-by all means hold it off until the other one arrives.
+> Do these MMC patches have any dependency on other work?  It doesn't
+> look like it.  If that's so, I'd rather carry them in the MMC tree
+> to save Stephen and Linus from dealing with the merge conflict.
 
-Yours,
-Linus Walleij
+Indeed, and in the meantime, it seems that these Kconfig modifications
+are not as harmless as the others in the series.
+
+I propose to redo a pull request without those two patches. We will
+resend them directly through the MMC subsystem together with other
+mmc-related fixes. Moreover, all this will probably make more sense as
+3.5 modifications...
+
+Best regards,
+-- 
+Nicolas Ferre
