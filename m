@@ -1,88 +1,226 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] mm: extend prefault helpers to fault in more than PAGE_SIZE
-Date: Fri, 13 Apr 2012 21:12:21 +0200
-Message-ID: <CAMuHMdXBEiDGyJQ+szoBKxo0pS=n3xKfpb=F+rNkMQUv4SdTQA@mail.gmail.com>
-References: <20120229153216.8c3ae31d.akpm@linux-foundation.org>
-	<1330629779-1449-1-git-send-email-daniel.vetter@ffwll.ch>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next: triage for April 15, 2012
+Date: Sun, 15 Apr 2012 18:30:49 -0400
+Message-ID: <20120415223049.GA17089@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <1330629779-1449-1-git-send-email-daniel.vetter@ffwll.ch>
-Sender: owner-linux-mm@kvack.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Intel Graphics Development <intel-gfx@lists.freedesktop.org>, DRI Development <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Linux-Next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail1.windriver.com ([147.11.146.13]:52176 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751830Ab2DOWa4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 15 Apr 2012 18:30:56 -0400
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, daniel.vetter@ffwll.ch
 
-On Thu, Mar 1, 2012 at 20:22, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> +/* Multipage variants of the above prefault helpers, useful if more than
-> + * PAGE_SIZE of date needs to be prefaulted. These are separate from the=
- above
-> + * functions (which only handle up to PAGE_SIZE) to avoid clobbering the
-> + * filemap.c hotpaths. */
-> +static inline int fault_in_multipages_writeable(char __user *uaddr, int =
-size)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 int ret;
-> + =C2=A0 =C2=A0 =C2=A0 const char __user *end =3D uaddr + size - 1;
+This represents the state of the builds as of Friday, as there
+are no builds over the weekend.
 
-Please drop the const.
+All new breakage is in pagemap.h ; it seems a fix has been
+posted already.
 
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (unlikely(size =3D=3D 0))
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return 0;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 /*
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0* Writing zeroes into userspace here is OK, =
-because we know that if
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0* the zero gets there, we'll be overwriting =
-it.
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0*/
-> + =C2=A0 =C2=A0 =C2=A0 while (uaddr <=3D end) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ret =3D __put_user(0, =
-uaddr);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (ret !=3D 0)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 return ret;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 uaddr +=3D PAGE_SIZE;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 /* Check whether the range spilled into the next p=
-age. */
-> + =C2=A0 =C2=A0 =C2=A0 if (((unsigned long)uaddr & PAGE_MASK) =3D=3D
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 ((unsigned long)end & PAGE_MASK))
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ret =3D __put_user(0, =
-end);
+	http://marc.info/?l=linux-kernel&m=133441945530527&w=2
 
-include/linux/pagemap.h:483:3: error: read-only location '*end' used
-as 'asm' output
+----------------------
 
-Now in -next:
+New breakage since last report:
+	avr32:defconfig
+		(pagemap.h:483: error: assignment of read-only variable '__pu_val')
+	m68k:defconfig,sun3_defconfig
+		(pagemap.h:483:3: error: read-only location '*end' used as 'asm' output)
+	mips:(all builds)
+		(pagemap.h:483:3: error: assignment of read-only variable '__pu_val')
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/6100650/
-http://kisskb.ellerman.id.au/kisskb/buildresult/6100673/
-http://kisskb.ellerman.id.au/kisskb/buildresult/6100860/
+Randconfig fails that may or may not be new (by their very nature):
+	<none>
 
-Gr{oetje,eeting}s,
+Builds that are fixed since last report:
+	sparc[64]:allmodconfig
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+Note: The randconfig fails are only listed once and not tracked
+in the below listing.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+I'm also not tracking the kallsyms extra pass stuff on ARM on
+a per board basis anymore.  It has nothing to do with the board.
+Why? See:  http://marc.info/?l=linux-next&m=133267456809502
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+            ------------------------------------------------
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Latest results at:
+	http://kisskb.ellerman.id.au/kisskb/branch/9/
+
+Failures as of April 15th, 2012:
+===============================
+
+AM33:asb2303_defconfig,asb2364_defconfig
+	when:	Mar 15
+	why:	cc1: error: unrecognized command line option '-mmem-funcs'
+	status:	Possible fix from TonyB sent for review.
+	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
+----------------
+
+ARM:u8500_defconfig
+	when:	Apr 11
+	why:	ste_dma40.c: implicit declaration of function 'regulator_disable'
+	status:	reported
+	fix:	
+	ref:	http://marc.info/?l=linux-next&m=133428028418892&w=2
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6091624/
+
+ARM:netx_defconfig,pnx4008_defconfig 
+	when:	Mar 14
+	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
+	ref:	https://lkml.org/lkml/2012/3/13/670
+
+ARM:ixp4xx_defconfig
+	when:	Oct 26
+	why:	gpio.h: implicit declaration of function '__gpio_get_value'
+	status:	fixed (Imre Kaloz) - but possibly needs rework?
+	fix:	https://lkml.org/lkml/2012/2/8/288
+	ref:	https://lkml.org/lkml/2012/2/8/287
+
+ARM:raumfeld_defconfig
+	when:	Nov 23
+	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
+	status:	perhaps broken since 2010?  See ref below.
+	fix:	
+	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
+
+ARM:arm-allnoconfig
+	when:	forever
+	why:	not supported
+	status:	nothing pending, but patches accepted
+	fix:	n/a
+	ref:	https://lkml.org/lkml/2009/4/30/105
+	ref:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081218.html
+----------------
+
+AVR32:defconfig
+	when:	Apr 13
+	why:	pagemap.h:483: error: assignment of read-only variable '__pu_val'
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6100592/
+
+AVR32:allnoconfig
+	when:	May 26 2010, 20:49
+	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
+	status:
+	fix:
+	ref:
+---------------
+
+bfin: 50% of builds
+	when:	Mar 31
+	why:	"Error: pcrel too far BFD_RELOC_BFIN_10" from kernel/time/timekeeping.c
+	status:	unknown, binutils issue?
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6087324/
+---------------
+
+cris:allyesconfig,allmodconfig
+	when:	Apr 3
+	why:	too many to list here
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035250/
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035249/
+----------------
+
+frv:defconfig
+	when:	Mar 15
+	why:	undefined reference to `pci_cardbus_resource_alignment'
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6030067/
+----------------
+
+i386:allmodconfig
+	when:	Apr 11
+	why:	"rc5t583_ext_power_req_config" [drivers/regulator/rc5t583-regulator.ko] undefined!
+	why:	"__udivdi3" [drivers/net/ethernet/mellanox/mlx4/mlx4_en.ko] undefined!
+	status:	
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6091475/
+----------------
+
+h8300:defconfig
+	when:	Mar 15
+	why:	time.c: implicit declaration of function 'get_irq_regs'
+	why:	also seems gcc suffers an ICE
+	status:	ICE bug lodged with gcc folks (TonyB)
+	fix:
+	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
+----------------
+
+m32r:m32700ut.smp_defconfig
+	when:	Mar 15
+	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
+	status:
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
+----------------
+
+m68k:allmodconfig
+	when:	Mar 16
+	why:	persistent_ram.c: implicit declaration of 'memblock_reserve'
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884324/
+	ref:	http://www.spinics.net/lists/linux-next/msg19343.html
+----------------
+
+mips:allmodconfig
+	when:
+	why:	driver_pci_host.c: implicit declaration of function 'pcibios_enable_device'
+	status: one of many fixes mips needs...
+	fix:	http://marc.info/?l=linux-wireless&m=133272031621916&w=2
+	ref:	http://patchwork.ozlabs.org/patch/148614/
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5807000/
+----------------
+
+parisc:allmodconfig
+	when:
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	fix:
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+
+parisc64:a500_defconfig 
+	when:
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	fix:
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+------------------
+
+powerpc:mpc85xx_defconfig
+	when: Apr 12
+	why:	spi-fsl-lib.c: dereferencing pointer to incomplete type
+	status:	bisected and reported, fix apparently in Grant's tree.
+	fix:
+	ref:	http://marc.info/?l=linux-next&m=133433429605483&w=2
+	
+powerpc:allyesconfig
+	when:	May 18 2009, 22:11
+	why:	fat ass kernel with everything simply won't link
+	status:	need to fix build config to ignore the final link
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5806793/
+------------------
+
+um:um-defconfig
+	when:	Sep 16 2010, 01:28
+	why:	os-Linux/start_up.c: error: 'PTRACE_SETOPTIONS' undeclared
+	status:	clearly broken forever, so does anyone care?
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/target/2979/
