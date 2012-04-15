@@ -1,226 +1,70 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: triage for April 15, 2012
-Date: Sun, 15 Apr 2012 18:30:49 -0400
-Message-ID: <20120415223049.GA17089@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: triage for April 15, 2012
+Date: Mon, 16 Apr 2012 09:58:29 +1000
+Message-ID: <20120416095829.b9b1c9fcede7bc0c86a999f4@canb.auug.org.au>
+References: <20120415223049.GA17089@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:52176 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751830Ab2DOWa4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 15 Apr 2012 18:30:56 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__16_Apr_2012_09_58_29_+1000_Rbs.PPXtf=0s4UV/"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120415223049.GA17089@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, daniel.vetter@ffwll.ch
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Mon__16_Apr_2012_09_58_29_+1000_Rbs.PPXtf=0s4UV/
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, daniel.vetter@ffwll.ch
+Content-Transfer-Encoding: quoted-printable
 
-This represents the state of the builds as of Friday, as there
-are no builds over the weekend.
+Hi Paul,
 
-All new breakage is in pagemap.h ; it seems a fix has been
-posted already.
+On Sun, 15 Apr 2012 18:30:49 -0400 Paul Gortmaker <paul.gortmaker@windriver=
+.com> wrote:
+>
+> All new breakage is in pagemap.h ; it seems a fix has been
+> posted already.
+>=20
+> 	http://marc.info/?l=3Dlinux-kernel&m=3D133441945530527&w=3D2
 
-	http://marc.info/?l=linux-kernel&m=133441945530527&w=2
+And that patch has been added to the drm tree and so will be in today's
+linux-next.
 
-----------------------
+> powerpc:allyesconfig
+> 	when:	May 18 2009, 22:11
+> 	why:	fat ass kernel with everything simply won't link
+> 	status:	need to fix build config to ignore the final link
+> 	fix:=09
+> 	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5806793/
 
-New breakage since last report:
-	avr32:defconfig
-		(pagemap.h:483: error: assignment of read-only variable '__pu_val')
-	m68k:defconfig,sun3_defconfig
-		(pagemap.h:483:3: error: read-only location '*end' used as 'asm' output)
-	mips:(all builds)
-		(pagemap.h:483:3: error: assignment of read-only variable '__pu_val')
+This is well known, so is probably not worth reporting any more.  I am
+having a (slow) look at fixing it properly, but that is a long term goal.
 
-Randconfig fails that may or may not be new (by their very nature):
-	<none>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Builds that are fixed since last report:
-	sparc[64]:allmodconfig
+--Signature=_Mon__16_Apr_2012_09_58_29_+1000_Rbs.PPXtf=0s4UV/
+Content-Type: application/pgp-signature
 
-Note: The randconfig fails are only listed once and not tracked
-in the below listing.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-I'm also not tracking the kallsyms extra pass stuff on ARM on
-a per board basis anymore.  It has nothing to do with the board.
-Why? See:  http://marc.info/?l=linux-next&m=133267456809502
+iQIcBAEBCAAGBQJPi2ClAAoJEECxmPOUX5FE8VgP/Rtb35jOVuHTZFzETlIIGUPb
+Ov6z5uFGS9I0fIizxCtfPjGf1zeMH/+Yi4StEK0XjOzhZS5xo7i0PAgMh16o1Z0e
+tvG8xd8nKJFGivQMRcvuwtTx3ROWf9cxjjgT0n3oPpvh+DEWh9um7Anv+lYVTPUr
+PCy8OuKnNlDsJLKTCM1xhgAF1Ixg0Ln3U1CTk8R07ffdVCjRF4V0rAVukFR9qmxw
+FhvRoT8/srfbHgBLCQueC7Sx8SyEsF6Wmw5ZcmkgXirNMzOfaYT4sbLM7EV/tAMO
++evPoEk8d5byrrksz6MhjjJ1L9bC7uA6lZb7wsCn5zvyKkw5F2whQUNLqLs5aRJE
+pmzHDOsuLkrlLDhUCYGWX3xDn79EIVXj3yxeWg78W0qpO2tlB/YNnpG6zpYZVUPq
+IIsZw8ftKGmDYYNzKAETZykk+qxQC6g30M731KAUoI7lTALEvkRo7+KGO1NQN5l2
+gvVdZKIWUqid8nEZQK53N8SJ5dC+QqZggJAKM5iTs1j5FsouqB3/TRTmUrVe6KbJ
+59npp9aKWyS0JeyeeBO4xhnVciM/S+nTlY274QcsczNsCcakGThktRd/w1SJCv4A
+C0cD7gwdhTEAfFl/g6KEKSIrcBPOpHHu6KPHSodeHUkcrw6mLxPOvo7dPZf+jwNB
+EuHobOn230X8IXy45Nnp
+=Y+EP
+-----END PGP SIGNATURE-----
 
-            ------------------------------------------------
-
-Latest results at:
-	http://kisskb.ellerman.id.au/kisskb/branch/9/
-
-Failures as of April 15th, 2012:
-===============================
-
-AM33:asb2303_defconfig,asb2364_defconfig
-	when:	Mar 15
-	why:	cc1: error: unrecognized command line option '-mmem-funcs'
-	status:	Possible fix from TonyB sent for review.
-	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
-----------------
-
-ARM:u8500_defconfig
-	when:	Apr 11
-	why:	ste_dma40.c: implicit declaration of function 'regulator_disable'
-	status:	reported
-	fix:	
-	ref:	http://marc.info/?l=linux-next&m=133428028418892&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6091624/
-
-ARM:netx_defconfig,pnx4008_defconfig 
-	when:	Mar 14
-	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
-	ref:	https://lkml.org/lkml/2012/3/13/670
-
-ARM:ixp4xx_defconfig
-	when:	Oct 26
-	why:	gpio.h: implicit declaration of function '__gpio_get_value'
-	status:	fixed (Imre Kaloz) - but possibly needs rework?
-	fix:	https://lkml.org/lkml/2012/2/8/288
-	ref:	https://lkml.org/lkml/2012/2/8/287
-
-ARM:raumfeld_defconfig
-	when:	Nov 23
-	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
-	status:	perhaps broken since 2010?  See ref below.
-	fix:	
-	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
-
-ARM:arm-allnoconfig
-	when:	forever
-	why:	not supported
-	status:	nothing pending, but patches accepted
-	fix:	n/a
-	ref:	https://lkml.org/lkml/2009/4/30/105
-	ref:	http://lists.infradead.org/pipermail/linux-arm-kernel/2012-January/081218.html
-----------------
-
-AVR32:defconfig
-	when:	Apr 13
-	why:	pagemap.h:483: error: assignment of read-only variable '__pu_val'
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6100592/
-
-AVR32:allnoconfig
-	when:	May 26 2010, 20:49
-	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
-	status:
-	fix:
-	ref:
----------------
-
-bfin: 50% of builds
-	when:	Mar 31
-	why:	"Error: pcrel too far BFD_RELOC_BFIN_10" from kernel/time/timekeeping.c
-	status:	unknown, binutils issue?
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6087324/
----------------
-
-cris:allyesconfig,allmodconfig
-	when:	Apr 3
-	why:	too many to list here
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035250/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035249/
-----------------
-
-frv:defconfig
-	when:	Mar 15
-	why:	undefined reference to `pci_cardbus_resource_alignment'
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6030067/
-----------------
-
-i386:allmodconfig
-	when:	Apr 11
-	why:	"rc5t583_ext_power_req_config" [drivers/regulator/rc5t583-regulator.ko] undefined!
-	why:	"__udivdi3" [drivers/net/ethernet/mellanox/mlx4/mlx4_en.ko] undefined!
-	status:	
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6091475/
-----------------
-
-h8300:defconfig
-	when:	Mar 15
-	why:	time.c: implicit declaration of function 'get_irq_regs'
-	why:	also seems gcc suffers an ICE
-	status:	ICE bug lodged with gcc folks (TonyB)
-	fix:
-	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
-----------------
-
-m32r:m32700ut.smp_defconfig
-	when:	Mar 15
-	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
-----------------
-
-m68k:allmodconfig
-	when:	Mar 16
-	why:	persistent_ram.c: implicit declaration of 'memblock_reserve'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884324/
-	ref:	http://www.spinics.net/lists/linux-next/msg19343.html
-----------------
-
-mips:allmodconfig
-	when:
-	why:	driver_pci_host.c: implicit declaration of function 'pcibios_enable_device'
-	status: one of many fixes mips needs...
-	fix:	http://marc.info/?l=linux-wireless&m=133272031621916&w=2
-	ref:	http://patchwork.ozlabs.org/patch/148614/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5807000/
-----------------
-
-parisc:allmodconfig
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-
-parisc64:a500_defconfig 
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-powerpc:mpc85xx_defconfig
-	when: Apr 12
-	why:	spi-fsl-lib.c: dereferencing pointer to incomplete type
-	status:	bisected and reported, fix apparently in Grant's tree.
-	fix:
-	ref:	http://marc.info/?l=linux-next&m=133433429605483&w=2
-	
-powerpc:allyesconfig
-	when:	May 18 2009, 22:11
-	why:	fat ass kernel with everything simply won't link
-	status:	need to fix build config to ignore the final link
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5806793/
-------------------
-
-um:um-defconfig
-	when:	Sep 16 2010, 01:28
-	why:	os-Linux/start_up.c: error: 'PTRACE_SETOPTIONS' undeclared
-	status:	clearly broken forever, so does anyone care?
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/target/2979/
+--Signature=_Mon__16_Apr_2012_09_58_29_+1000_Rbs.PPXtf=0s4UV/--
