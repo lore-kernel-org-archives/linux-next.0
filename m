@@ -1,79 +1,64 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V1] mfd: rc5t583: Fix build error
-Date: Mon, 16 Apr 2012 12:22:59 +0530
-Message-ID: <1334559179-30341-1-git-send-email-ldewangan@nvidia.com>
+From: Kirill Tkhai <tkhai@yandex.ru>
+Subject: Re: linux-next: build failure after merge of the final tree (sparc-next tree related)
+Date: Mon, 16 Apr 2012 11:45:55 +0400
+Message-ID: <273521334562355@web29.yandex.ru>
+References: <20120416155907.32c0041caa002f72da4635b7@canb.auug.org.au> <20120416.021613.606704342231219042.davem@davemloft.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=koi8-r
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hqemgate03.nvidia.com ([216.228.121.140]:9726 "EHLO
-	hqemgate03.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751052Ab2DPHGs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 03:06:48 -0400
+Received: from forward19.mail.yandex.net ([95.108.253.144]:50379 "EHLO
+	forward19.mail.yandex.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751225Ab2DPHwZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 03:52:25 -0400
+In-Reply-To: <20120416.021613.606704342231219042.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sameo@linux.intel.com, broonie@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paul.gortmaker@windriver.com
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
+To: David Miller <davem@davemloft.net>
+Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "sam@ravnborg.org" <sam@ravnborg.org>, Tkhai Kirill <tkhai@yandex.ru>
 
-Fixing following build error:
-ERROR: "rc5t583_ext_power_req_config" [drivers/regulator/rc5t583-regulator.ko] undefined!
-ERROR: "rc5t583_update" [drivers/regulator/rc5t583-regulator.ko] undefined!
-ERROR: "rc5t583_set_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
-ERROR: "rc5t583_clear_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
-ERROR: "rc5t583_read" [drivers/regulator/rc5t583-regulator.ko] undefined!
-make[1]: *** [__modpost] Error 1
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+
+16.04.2012, 10:16, "David Miller" <davem@davemloft.net>:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 16 Apr 2012 15:59:07 +1000
+>
+>> =9AAfter merging the final tree, today's linux-next build (sparc32 d=
+efconfig)
+>> =9Afailed like this:
+>>
+>> =9Aarch/sparc/kernel/pcic.c: In function 'pci_time_init':
+>> =9Aarch/sparc/kernel/pcic.c:741:2: error: 'timer_cs_period' undeclar=
+ed (first use in this function)
+>>
+>> =9ACaused by commit 62f082830d63 ("sparc32: generic clockevent suppo=
+rt").
+>>
+>> =9AI have reverted that commit for today.
+>
+> Sam, Tkhai, please fix this.
+
+Hi! This place is a mix from two last patches. The fix is below.
+
+Regards,
+KT
+
+P.S. I'm sending the message from a web mail client to answer faster. I=
+ hope, it won't be problems.
+
 ---
-The above build error is reported by Paul.
-The error is appearing when MFD_RC5T583 is selcted as y and
-REGULATOR_RC5T583 is selected as module.
-in this case, mfd driver should actually export the public API.
-
- drivers/mfd/rc5t583.c |    6 ++++++
- 1 files changed, 6 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/mfd/rc5t583.c b/drivers/mfd/rc5t583.c
-index 99ef944..a2aa6d9 100644
---- a/drivers/mfd/rc5t583.c
-+++ b/drivers/mfd/rc5t583.c
-@@ -96,6 +96,7 @@ int rc5t583_read(struct device *dev, uint8_t reg, uint8_t *val)
- 		*val = (uint8_t)ival;
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(rc5t583_read);
- 
- int rc5t583_set_bits(struct device *dev, unsigned int reg,
- 			unsigned int bit_mask)
-@@ -103,6 +104,8 @@ int rc5t583_set_bits(struct device *dev, unsigned int reg,
- 	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
- 	return regmap_update_bits(rc5t583->regmap, reg, bit_mask, bit_mask);
- }
-+EXPORT_SYMBOL_GPL(rc5t583_set_bits);
-+
- 
- int rc5t583_clear_bits(struct device *dev, unsigned int reg,
- 			unsigned int bit_mask)
-@@ -110,6 +113,7 @@ int rc5t583_clear_bits(struct device *dev, unsigned int reg,
- 	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
- 	return regmap_update_bits(rc5t583->regmap, reg, bit_mask, 0);
- }
-+EXPORT_SYMBOL_GPL(rc5t583_clear_bits);
- 
- int rc5t583_update(struct device *dev, unsigned int reg,
- 		unsigned int val, unsigned int mask)
-@@ -117,6 +121,7 @@ int rc5t583_update(struct device *dev, unsigned int reg,
- 	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
- 	return regmap_update_bits(rc5t583->regmap, reg, mask, val);
- }
-+EXPORT_SYMBOL_GPL(rc5t583_update);
- 
- static int __rc5t583_set_ext_pwrreq1_control(struct device *dev,
- 	int id, int ext_pwr, int slots)
-@@ -197,6 +202,7 @@ int rc5t583_ext_power_req_config(struct device *dev, int ds_id,
- 			ds_id, ext_pwr_req);
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(rc5t583_ext_power_req_config);
- 
- static int rc5t583_clear_ext_power_req(struct rc5t583 *rc5t583,
- 	struct rc5t583_platform_data *pdata)
--- 
-1.7.1.1
+ arch/sparc/kernel/pcic.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+diff --git a/arch/sparc/kernel/pcic.c b/arch/sparc/kernel/pcic.c
+index 118a3f5..866aa34 100644
+--- a/arch/sparc/kernel/pcic.c
++++ b/arch/sparc/kernel/pcic.c
+@@ -738,7 +738,7 @@ void __init pci_time_init(void)
+ 	 * It's in SBUS dimension, because timer_cs is in this dimension.
+ 	 * We take into account this in pcic_cycles_offset()
+ 	 */
+-	timer_cs_period =3D SBUS_CLOCK_RATE / HZ;
++	sparc_config.cs_period =3D SBUS_CLOCK_RATE / HZ;
+ 	sparc_config.features |=3D FEAT_L10_CLOCKEVENT;
+ #endif
+ 	sparc_config.features |=3D FEAT_L10_CLOCKSOURCE;
