@@ -1,64 +1,64 @@
-From: Kirill Tkhai <tkhai@yandex.ru>
-Subject: Re: linux-next: build failure after merge of the final tree (sparc-next tree related)
-Date: Mon, 16 Apr 2012 11:45:55 +0400
-Message-ID: <273521334562355@web29.yandex.ru>
-References: <20120416155907.32c0041caa002f72da4635b7@canb.auug.org.au> <20120416.021613.606704342231219042.davem@davemloft.net>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] mfd: fix modular builds of rc5t583 regulator support
+Date: Mon, 16 Apr 2012 10:12:21 -0400
+Message-ID: <4F8C28C5.9070308@windriver.com>
+References: <1334549301-32114-1-git-send-email-paul.gortmaker@windriver.com> <4F8BC20A.2090105@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from forward19.mail.yandex.net ([95.108.253.144]:50379 "EHLO
-	forward19.mail.yandex.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751225Ab2DPHwZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 03:52:25 -0400
-In-Reply-To: <20120416.021613.606704342231219042.davem@davemloft.net>
+Received: from mail1.windriver.com ([147.11.146.13]:59584 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753498Ab2DPOMb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 10:12:31 -0400
+In-Reply-To: <4F8BC20A.2090105@nvidia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "sam@ravnborg.org" <sam@ravnborg.org>, Tkhai Kirill <tkhai@yandex.ru>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "sameo@linux.intel.com" <sameo@linux.intel.com>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-
-
-16.04.2012, 10:16, "David Miller" <davem@davemloft.net>:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 16 Apr 2012 15:59:07 +1000
->
->> =9AAfter merging the final tree, today's linux-next build (sparc32 d=
-efconfig)
->> =9Afailed like this:
+On 12-04-16 02:54 AM, Laxman Dewangan wrote:
+> On Monday 16 April 2012 09:38 AM, Paul Gortmaker wrote:
+>> The combination of commit 1b1247dd75aa5cf5fae54a3bec7280046e9c7957
 >>
->> =9Aarch/sparc/kernel/pcic.c: In function 'pci_time_init':
->> =9Aarch/sparc/kernel/pcic.c:741:2: error: 'timer_cs_period' undeclar=
-ed (first use in this function)
+>>      "mfd: Add support for RICOH PMIC RC5T583"
 >>
->> =9ACaused by commit 62f082830d63 ("sparc32: generic clockevent suppo=
-rt").
+>> and commit 6ffc3270210efa2bea526953a142ffc908f5bd86
 >>
->> =9AI have reverted that commit for today.
->
-> Sam, Tkhai, please fix this.
+>>      "regulator: Add support for RICOH PMIC RC5T583 regulator"
+>>
+>> are causing the i386 allmodconfig builds to fail with this:
+>>
+>>    ERROR: "rc5t583_update" [drivers/regulator/rc5t583-regulator.ko] undefined!
+>>    ERROR: "rc5t583_set_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
+>>    ERROR: "rc5t583_clear_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
+>>    ERROR: "rc5t583_read" [drivers/regulator/rc5t583-regulator.ko] undefined!
+>>
+>> and this:
+>>
+>>    ERROR: "rc5t583_ext_power_req_config" [drivers/regulator/rc5t583-regulator.ko] undefined!
+>>
+>> For the 1st four, make the simple ops static inline, instead of
+>> polluting the namespace with trivial exports.  For the last one,
+>> add an EXPORT_SYMBOL.
+>>
+>> Signed-off-by: Paul Gortmaker<paul.gortmaker@windriver.com>
+>> ---
+>>
+>> [ alternately, make REGULATOR_RC5T583 bool instead of tristate? ]
+> 
+> Why not export all require symbol from mfd core.
+> I am sending the patch to exporting all required apis. Please review.
 
-Hi! This place is a mix from two last patches. The fix is below.
+As I said in the commit log, it doesn't seem to make sense to export
+them when they are trivial enough to be static inline, since it
+avoids having them pollute the /proc/kallsyms namespace.
 
-Regards,
-KT
+It is almost like having basic inb/outb as functions vs inline; it
+just doesn't make sense to me.
 
-P.S. I'm sending the message from a web mail client to answer faster. I=
- hope, it won't be problems.
+However, if you are determined to rewrite the patch in another way,
+please add the customary reported-by line.
 
----
- arch/sparc/kernel/pcic.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-diff --git a/arch/sparc/kernel/pcic.c b/arch/sparc/kernel/pcic.c
-index 118a3f5..866aa34 100644
---- a/arch/sparc/kernel/pcic.c
-+++ b/arch/sparc/kernel/pcic.c
-@@ -738,7 +738,7 @@ void __init pci_time_init(void)
- 	 * It's in SBUS dimension, because timer_cs is in this dimension.
- 	 * We take into account this in pcic_cycles_offset()
- 	 */
--	timer_cs_period =3D SBUS_CLOCK_RATE / HZ;
-+	sparc_config.cs_period =3D SBUS_CLOCK_RATE / HZ;
- 	sparc_config.features |=3D FEAT_L10_CLOCKEVENT;
- #endif
- 	sparc_config.features |=3D FEAT_L10_CLOCKSOURCE;
+Thanks,
+Paul.
