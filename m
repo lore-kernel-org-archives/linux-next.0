@@ -1,52 +1,79 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: triage for April 15, 2012
-Date: Sun, 15 Apr 2012 21:25:52 -0400
-Message-ID: <20120416012551.GA23010@windriver.com>
-References: <20120415223049.GA17089@windriver.com>
- <20120416095829.b9b1c9fcede7bc0c86a999f4@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ net-next tree
+Date: Mon, 16 Apr 2012 12:48:51 +1000
+Message-ID: <20120416124851.a581885c87bbe627b11e50ff@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:53071 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752545Ab2DPB0C (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 15 Apr 2012 21:26:02 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__16_Apr_2012_12_48_51_+1000_ZAr9oA.Ha+ja2lN9"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Mon__16_Apr_2012_12_48_51_+1000_ZAr9oA.Ha+ja2lN9
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20120416095829.b9b1c9fcede7bc0c86a999f4@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, daniel.vetter@ffwll.ch
+Content-Transfer-Encoding: quoted-printable
 
-[Re: linux-next: triage for April 15, 2012] On 16/04/2012 (Mon 09:58) Stephen Rothwell wrote:
+Hi John,
 
-> Hi Paul,
-> 
-> On Sun, 15 Apr 2012 18:30:49 -0400 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
-> >
-> > All new breakage is in pagemap.h ; it seems a fix has been
-> > posted already.
-> > 
-> > 	http://marc.info/?l=linux-kernel&m=133441945530527&w=2
-> 
-> And that patch has been added to the drm tree and so will be in today's
-> linux-next.
-> 
-> > powerpc:allyesconfig
-> > 	when:	May 18 2009, 22:11
-> > 	why:	fat ass kernel with everything simply won't link
-> > 	status:	need to fix build config to ignore the final link
-> > 	fix:	
-> > 	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5806793/
-> 
-> This is well known, so is probably not worth reporting any more.  I am
-> having a (slow) look at fixing it properly, but that is a long term goal.
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-testmode.c between commit d33e152e1edd
+("iwlwifi: Stop using NLA_PUT*()") from the net-next tree and commit
+11483b5c2296 ("iwlwifi: move eeprom into priv") from the wireless-next
+tree.
 
-True.  Maybe I should shove all failures that are >6mo old off the pier.
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Paul.
+diff --cc drivers/net/wireless/iwlwifi/iwl-testmode.c
+index f31a062,c8e89ca..0000000
+--- a/drivers/net/wireless/iwlwifi/iwl-testmode.c
++++ b/drivers/net/wireless/iwlwifi/iwl-testmode.c
+@@@ -543,12 -539,11 +543,12 @@@ static int iwl_testmode_driver(struct i
+  				IWL_ERR(priv, "Memory allocation fail\n");
+  				return -ENOMEM;
+  			}
+ -			NLA_PUT_U32(skb, IWL_TM_ATTR_COMMAND,
+ -				IWL_TM_CMD_DEV2APP_EEPROM_RSP);
+ -			NLA_PUT(skb, IWL_TM_ATTR_EEPROM,
+ -				cfg(priv)->base_params->eeprom_size,
+ -				priv->eeprom);
+ +			if (nla_put_u32(skb, IWL_TM_ATTR_COMMAND,
+ +					IWL_TM_CMD_DEV2APP_EEPROM_RSP) ||
+ +			    nla_put(skb, IWL_TM_ATTR_EEPROM,
+ +				    cfg(priv)->base_params->eeprom_size,
+- 				    priv->shrd->eeprom))
+++				    priv->eeprom))
+ +				goto nla_put_failure;
+  			status =3D cfg80211_testmode_reply(skb);
+  			if (status < 0)
+  				IWL_ERR(priv, "Error sending msg : %d\n",
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+--Signature=_Mon__16_Apr_2012_12_48_51_+1000_ZAr9oA.Ha+ja2lN9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPi4iTAAoJEECxmPOUX5FEwZEP/3V/pNhINVAZJnCtsv8+kOrh
+dqoS8nimZw4EHcGm4icRxjk5X9F+nQHSoKUPFtR5Clc+8TJAkkVvg+utZRUuvyQh
+lsEpcY9rYgzhbvkr/H3DnMu5107XmjROlRpYObr/KQIf9L1OCHcWtj9pwCH9Z/J2
+IxiB18wwQ+0sn7H5GnDeYdmIf+szHIGUr3qRr8dzMdv6FOxlu9a2sP6uuuMuc81d
+ryPAn8T0shMB2zL9f4j68T/mLZrXUCliba0luAcr4Zgoma2yVE08Sq6vlo805dim
+P2q7M3kuj0iShVjK3fmqmRwe7382lzNSpI0qzHBqSsOjjPgmHEWNaGNhoIRJpumF
+jE7o/nEYZS7/k13QXz7Cr7otF6X04JV+h/LgUhhsIib8bLhIX+IEODXxQ9wt5RSa
+JSQ4l2rFN3lw2GrmCXuC/q3pKosgAWxbgFbn8Sb8d/CWRCSwhQTONbHyOjTeU1LW
+06qyNx9Jb8WGrb4dT7eb2xmhcI2jyvGrai2iaCn5EANP1DFxSVzpDGx7/0K8Cxs2
+114MPneLHnmyE475Lz4vOJC9hyoYLwaY7XuuwzF5u0NLpNye+ddGq9lfMjtSYrY1
+8u59zZlFJoIptExVG+arr1OvevsoqVMns1XG6+h39buOHKRWO6wZV5nLcyujZpRw
+cuK/7TGu0VEzEFBCwyIq
+=ygvT
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__16_Apr_2012_12_48_51_+1000_ZAr9oA.Ha+ja2lN9--
