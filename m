@@ -1,50 +1,79 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH] mfd: fix modular builds of rc5t583 regulator support
-Date: Mon, 16 Apr 2012 12:24:02 +0530
-Message-ID: <4F8BC20A.2090105@nvidia.com>
-References: <1334549301-32114-1-git-send-email-paul.gortmaker@windriver.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH V1] mfd: rc5t583: Fix build error
+Date: Mon, 16 Apr 2012 12:22:59 +0530
+Message-ID: <1334559179-30341-1-git-send-email-ldewangan@nvidia.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hqemgate03.nvidia.com ([216.228.121.140]:9665 "EHLO
+Received: from hqemgate03.nvidia.com ([216.228.121.140]:9726 "EHLO
 	hqemgate03.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750993Ab2DPHG3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 03:06:29 -0400
-In-Reply-To: <1334549301-32114-1-git-send-email-paul.gortmaker@windriver.com>
+	with ESMTP id S1751052Ab2DPHGs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 03:06:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "sameo@linux.intel.com" <sameo@linux.intel.com>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: sameo@linux.intel.com, broonie@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, paul.gortmaker@windriver.com
+Cc: Laxman Dewangan <ldewangan@nvidia.com>
 
-On Monday 16 April 2012 09:38 AM, Paul Gortmaker wrote:
-> The combination of commit 1b1247dd75aa5cf5fae54a3bec7280046e9c7957
->
->      "mfd: Add support for RICOH PMIC RC5T583"
->
-> and commit 6ffc3270210efa2bea526953a142ffc908f5bd86
->
->      "regulator: Add support for RICOH PMIC RC5T583 regulator"
->
-> are causing the i386 allmodconfig builds to fail with this:
->
->    ERROR: "rc5t583_update" [drivers/regulator/rc5t583-regulator.ko] undefined!
->    ERROR: "rc5t583_set_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
->    ERROR: "rc5t583_clear_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
->    ERROR: "rc5t583_read" [drivers/regulator/rc5t583-regulator.ko] undefined!
->
-> and this:
->
->    ERROR: "rc5t583_ext_power_req_config" [drivers/regulator/rc5t583-regulator.ko] undefined!
->
-> For the 1st four, make the simple ops static inline, instead of
-> polluting the namespace with trivial exports.  For the last one,
-> add an EXPORT_SYMBOL.
->
-> Signed-off-by: Paul Gortmaker<paul.gortmaker@windriver.com>
-> ---
->
-> [ alternately, make REGULATOR_RC5T583 bool instead of tristate? ]
+Fixing following build error:
+ERROR: "rc5t583_ext_power_req_config" [drivers/regulator/rc5t583-regulator.ko] undefined!
+ERROR: "rc5t583_update" [drivers/regulator/rc5t583-regulator.ko] undefined!
+ERROR: "rc5t583_set_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
+ERROR: "rc5t583_clear_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
+ERROR: "rc5t583_read" [drivers/regulator/rc5t583-regulator.ko] undefined!
+make[1]: *** [__modpost] Error 1
 
-Why not export all require symbol from mfd core.
-I am sending the patch to exporting all required apis. Please review.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+The above build error is reported by Paul.
+The error is appearing when MFD_RC5T583 is selcted as y and
+REGULATOR_RC5T583 is selected as module.
+in this case, mfd driver should actually export the public API.
+
+ drivers/mfd/rc5t583.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/mfd/rc5t583.c b/drivers/mfd/rc5t583.c
+index 99ef944..a2aa6d9 100644
+--- a/drivers/mfd/rc5t583.c
++++ b/drivers/mfd/rc5t583.c
+@@ -96,6 +96,7 @@ int rc5t583_read(struct device *dev, uint8_t reg, uint8_t *val)
+ 		*val = (uint8_t)ival;
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(rc5t583_read);
+ 
+ int rc5t583_set_bits(struct device *dev, unsigned int reg,
+ 			unsigned int bit_mask)
+@@ -103,6 +104,8 @@ int rc5t583_set_bits(struct device *dev, unsigned int reg,
+ 	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
+ 	return regmap_update_bits(rc5t583->regmap, reg, bit_mask, bit_mask);
+ }
++EXPORT_SYMBOL_GPL(rc5t583_set_bits);
++
+ 
+ int rc5t583_clear_bits(struct device *dev, unsigned int reg,
+ 			unsigned int bit_mask)
+@@ -110,6 +113,7 @@ int rc5t583_clear_bits(struct device *dev, unsigned int reg,
+ 	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
+ 	return regmap_update_bits(rc5t583->regmap, reg, bit_mask, 0);
+ }
++EXPORT_SYMBOL_GPL(rc5t583_clear_bits);
+ 
+ int rc5t583_update(struct device *dev, unsigned int reg,
+ 		unsigned int val, unsigned int mask)
+@@ -117,6 +121,7 @@ int rc5t583_update(struct device *dev, unsigned int reg,
+ 	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
+ 	return regmap_update_bits(rc5t583->regmap, reg, mask, val);
+ }
++EXPORT_SYMBOL_GPL(rc5t583_update);
+ 
+ static int __rc5t583_set_ext_pwrreq1_control(struct device *dev,
+ 	int id, int ext_pwr, int slots)
+@@ -197,6 +202,7 @@ int rc5t583_ext_power_req_config(struct device *dev, int ds_id,
+ 			ds_id, ext_pwr_req);
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(rc5t583_ext_power_req_config);
+ 
+ static int rc5t583_clear_ext_power_req(struct rc5t583 *rc5t583,
+ 	struct rc5t583_platform_data *pdata)
+-- 
+1.7.1.1
