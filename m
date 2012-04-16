@@ -1,85 +1,46 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] wireless: TI wlxxx depends on MAC80211
-Date: Mon, 16 Apr 2012 12:51:39 -0700
-Message-ID: <4F8C784B.2040402@xenotime.net>
-References: <20120416161121.261ba4e7e38989173accfb16@canb.auug.org.au>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Mon, 16 Apr 2012 10:02:30 -0700
+Message-ID: <20120416170230.GB2448@linux.vnet.ibm.com>
+References: <20120416141117.6dfcc5931400fede4e8cbe58@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120416161121.261ba4e7e38989173accfb16@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e39.co.us.ibm.com ([32.97.110.160]:34095 "EHLO
+	e39.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752415Ab2DPRC4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 13:02:56 -0400
+Received: from /spool/local
+	by e39.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Mon, 16 Apr 2012 11:02:55 -0600
+Content-Disposition: inline
+In-Reply-To: <20120416141117.6dfcc5931400fede4e8cbe58@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Luciano Coelho <coelho@ti.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, "Paul E. McKenney" <paul.mckenney@linaro.org>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+On Mon, Apr 16, 2012 at 02:11:17PM +1000, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> After merging the rcu tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> fs/binfmt_misc.c: In function 'create_entry':
+> fs/binfmt_misc.c:314:2: error: implicit declaration of function '_copy_from_user' [-Werror=implicit-function-declaration]
+> 
+> Caused by commit d17faaa53e2e ("fs: Silence bogus copy_to_user() build
+> errors").  _copy_from_user() appears to only exist for the x86 and tile
+> architectures ...
+> 
+> I have used the rcu tree from next-20120413 for today.
 
-wl12xx build fails with many undefined symbol errors when MAC80211
-and CFG80211 are not enabled, so make WLCORE and WL12XX depend
-on MAC80211 (which already depends on CFG80211).
+<red face>
 
-Here are a few of the many build errors:
+It turns out that bug that commit d17faaa53e2e was working around has
+been fixed in 3.4-rc2, so I have dropped that patch and reposted the
+series.  Please accept my apologies for the hassle!
 
-drivers/built-in.o: In function `wl1271_register_hw':
-main.c:(.text+0x4197cd): undefined reference to `ieee80211_register_hw'
-drivers/built-in.o: In function `wl1271_rx_streaming_timer':
-main.c:(.text+0x419818): undefined reference to `ieee80211_queue_work'
-drivers/built-in.o: In function `wl1271_flush_deferred_work':
-main.c:(.text+0x419910): undefined reference to `ieee80211_rx'
-main.c:(.text+0x419938): undefined reference to `ieee80211_tx_status'
-drivers/built-in.o: In function `wl12xx_op_channel_switch':
-main.c:(.text+0x419afc): undefined reference to `ieee80211_chswitch_done'
-drivers/built-in.o: In function `wl1271_ssid_set':
-drivers/built-in.o: In function `wl1271_event_process':
-event.c:(.text+0x41fec4): undefined reference to `ieee80211_sched_scan_stopped'
-event.c:(.text+0x41ff88): undefined reference to `ieee80211_cqm_rssi_notify'
-event.c:(.text+0x42000d): undefined reference to `ieee80211_stop_rx_ba_session'
-event.c:(.text+0x420048): undefined reference to `ieee80211_stop_rx_ba_session'
-event.c:(.text+0x4200b8): undefined reference to `ieee80211_chswitch_done'
-event.c:(.text+0x4201ae): undefined reference to `ieee80211_find_sta'
-event.c:(.text+0x4201ba): undefined reference to `ieee80211_report_low_ack'
-event.c:(.text+0x42021b): undefined reference to `ieee80211_connection_loss'
-drivers/built-in.o: In function `wl1271_tx_complete_packet':
-tx.c:(.text+0x4206a6): undefined reference to `ieee80211_get_hdrlen_from_skb'
-drivers/built-in.o: In function `wl1271_tx_fill_hdr':
-tx.c:(.text+0x4208ca): undefined reference to `ieee80211_hdrlen'
-drivers/built-in.o: In function `wl1271_handle_tx_low_watermark':
-(.text+0x420e25): undefined reference to `ieee80211_wake_queue'
-drivers/built-in.o: In function `wl12xx_rearm_rx_streaming':
-(.text+0x420ed9): undefined reference to `ieee80211_queue_work'
-drivers/built-in.o: In function `wl1271_tx_work_locked':
-(.text+0x421008): undefined reference to `ieee80211_free_txskb'
-drivers/built-in.o: In function `wl1271_rx_status.clone.2':
-rx.c:(.text+0x421593): undefined reference to `ieee80211_channel_to_frequency'
-drivers/built-in.o: In function `wl1271_ps_filter_frames':
-ps.c:(.text+0x421a41): undefined reference to `ieee80211_tx_status'
-
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc:	Luciano Coelho <coelho@ti.com>
-Cc:	linux-wireless@vger.kernel.org
-Cc:	"John W. Linville" <linville@tuxdriver.com>
----
- drivers/net/wireless/ti/wl12xx/Kconfig |    1 +
- drivers/net/wireless/ti/wlcore/Kconfig |    2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
---- linux-next-20120416.orig/drivers/net/wireless/ti/wl12xx/Kconfig
-+++ linux-next-20120416/drivers/net/wireless/ti/wl12xx/Kconfig
-@@ -1,5 +1,6 @@
- config WL12XX
-        tristate "TI wl12xx support"
-+	depends on MAC80211
-        select WLCORE
-        ---help---
- 	  This module adds support for wireless adapters based on TI wl1271,
---- linux-next-20120416.orig/drivers/net/wireless/ti/wlcore/Kconfig
-+++ linux-next-20120416/drivers/net/wireless/ti/wlcore/Kconfig
-@@ -1,6 +1,6 @@
- config WLCORE
- 	tristate "TI wlcore support"
--	depends on WL_TI && GENERIC_HARDIRQS
-+	depends on WL_TI && GENERIC_HARDIRQS && MAC80211
- 	depends on INET
- 	select FW_LOADER
- 	---help---
+							Thanx, Paul
