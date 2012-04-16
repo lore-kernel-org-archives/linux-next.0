@@ -1,46 +1,68 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Mon, 16 Apr 2012 10:02:30 -0700
-Message-ID: <20120416170230.GB2448@linux.vnet.ibm.com>
-References: <20120416141117.6dfcc5931400fede4e8cbe58@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: [PATCH] mfd: fix modular builds of rc5t583 regulator support
+Date: Mon, 16 Apr 2012 21:26:41 +0200
+Message-ID: <20120416192641.GB24130@sortiz-mobl>
+References: <1334549301-32114-1-git-send-email-paul.gortmaker@windriver.com>
+ <4F8BC20A.2090105@nvidia.com>
+ <4F8C28C5.9070308@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e39.co.us.ibm.com ([32.97.110.160]:34095 "EHLO
-	e39.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752415Ab2DPRC4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 13:02:56 -0400
-Received: from /spool/local
-	by e39.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Mon, 16 Apr 2012 11:02:55 -0600
+Received: from mga11.intel.com ([192.55.52.93]:7458 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754126Ab2DPTRs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Apr 2012 15:17:48 -0400
 Content-Disposition: inline
-In-Reply-To: <20120416141117.6dfcc5931400fede4e8cbe58@canb.auug.org.au>
+In-Reply-To: <4F8C28C5.9070308@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, "Paul E. McKenney" <paul.mckenney@linaro.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Mon, Apr 16, 2012 at 02:11:17PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> After merging the rcu tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/binfmt_misc.c: In function 'create_entry':
-> fs/binfmt_misc.c:314:2: error: implicit declaration of function '_copy_from_user' [-Werror=implicit-function-declaration]
-> 
-> Caused by commit d17faaa53e2e ("fs: Silence bogus copy_to_user() build
-> errors").  _copy_from_user() appears to only exist for the x86 and tile
-> architectures ...
-> 
-> I have used the rcu tree from next-20120413 for today.
+Hi Paul, Laxman,
 
-<red face>
+On Mon, Apr 16, 2012 at 10:12:21AM -0400, Paul Gortmaker wrote:
+> On 12-04-16 02:54 AM, Laxman Dewangan wrote:
+> > On Monday 16 April 2012 09:38 AM, Paul Gortmaker wrote:
+> >> The combination of commit 1b1247dd75aa5cf5fae54a3bec7280046e9c7957
+> >>
+> >>      "mfd: Add support for RICOH PMIC RC5T583"
+> >>
+> >> and commit 6ffc3270210efa2bea526953a142ffc908f5bd86
+> >>
+> >>      "regulator: Add support for RICOH PMIC RC5T583 regulator"
+> >>
+> >> are causing the i386 allmodconfig builds to fail with this:
+> >>
+> >>    ERROR: "rc5t583_update" [drivers/regulator/rc5t583-regulator.ko] undefined!
+> >>    ERROR: "rc5t583_set_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
+> >>    ERROR: "rc5t583_clear_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
+> >>    ERROR: "rc5t583_read" [drivers/regulator/rc5t583-regulator.ko] undefined!
+> >>
+> >> and this:
+> >>
+> >>    ERROR: "rc5t583_ext_power_req_config" [drivers/regulator/rc5t583-regulator.ko] undefined!
+> >>
+> >> For the 1st four, make the simple ops static inline, instead of
+> >> polluting the namespace with trivial exports.  For the last one,
+> >> add an EXPORT_SYMBOL.
+> >>
+> >> Signed-off-by: Paul Gortmaker<paul.gortmaker@windriver.com>
+> >> ---
+> >>
+> >> [ alternately, make REGULATOR_RC5T583 bool instead of tristate? ]
+> > 
+> > Why not export all require symbol from mfd core.
+> > I am sending the patch to exporting all required apis. Please review.
+> 
+> As I said in the commit log, it doesn't seem to make sense to export
+> them when they are trivial enough to be static inline, since it
+> avoids having them pollute the /proc/kallsyms namespace.
+I'm applying Paul's patch to my for-linus branch, thanks guys.
 
-It turns out that bug that commit d17faaa53e2e was working around has
-been fixed in 3.4-rc2, so I have dropped that patch and reposted the
-series.  Please accept my apologies for the hassle!
+Cheers,
+Samuel.
 
-							Thanx, Paul
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
