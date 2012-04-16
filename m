@@ -1,73 +1,162 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the security tree with the net-next
- tree
-Date: Mon, 16 Apr 2012 13:29:04 +1000
-Message-ID: <20120416132904.85e0f40b3e509f42c3f3284c@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__16_Apr_2012_13_29_04_+1000_+opk4LkRiaad2SzE"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:48566 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751123Ab2DPD3S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 15 Apr 2012 23:29:18 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Jiri Pirko <jpirko@redhat.com>, Will Drewry <wad@chromium.org>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH] mfd: fix modular builds of rc5t583 regulator support
+Date: Mon, 16 Apr 2012 00:08:21 -0400
+Message-ID: <1334549301-32114-1-git-send-email-paul.gortmaker@windriver.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: ldewangan@nvidia.com
+Cc: sameo@linux.intel.com, broonie@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__16_Apr_2012_13_29_04_+1000_+opk4LkRiaad2SzE
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The combination of commit 1b1247dd75aa5cf5fae54a3bec7280046e9c7957
 
-Hi James,
+    "mfd: Add support for RICOH PMIC RC5T583"
 
-Today's linux-next merge of the security tree got a conflict in
-include/linux/filter.h between commit ffe06c17afbb ("filter: add XOR
-operation") from the net-next tree and commit 46b325c7eb01
-("sk_run_filter: add BPF_S_ANC_SECCOMP_LD_W") from the security tree.
+and commit 6ffc3270210efa2bea526953a142ffc908f5bd86
 
-Just context changes.  I fixed it up (see below) and can carry the fax as
-necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+    "regulator: Add support for RICOH PMIC RC5T583 regulator"
 
-diff --cc include/linux/filter.h
-index 7209099,f2e5315..0000000
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@@ -232,7 -239,7 +243,8 @@@ enum=20
-  	BPF_S_ANC_HATYPE,
-  	BPF_S_ANC_RXHASH,
-  	BPF_S_ANC_CPU,
- +	BPF_S_ANC_ALU_XOR_X,
-+ 	BPF_S_ANC_SECCOMP_LD_W,
-  };
- =20
-  #endif /* __KERNEL__ */
+are causing the i386 allmodconfig builds to fail with this:
 
---Signature=_Mon__16_Apr_2012_13_29_04_+1000_+opk4LkRiaad2SzE
-Content-Type: application/pgp-signature
+  ERROR: "rc5t583_update" [drivers/regulator/rc5t583-regulator.ko] undefined!
+  ERROR: "rc5t583_set_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
+  ERROR: "rc5t583_clear_bits" [drivers/regulator/rc5t583-regulator.ko] undefined!
+  ERROR: "rc5t583_read" [drivers/regulator/rc5t583-regulator.ko] undefined!
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+and this:
 
-iQIcBAEBCAAGBQJPi5IAAAoJEECxmPOUX5FEIIIQAJEPizRReIZYjMGafUwd+GWa
-7r6RNyNhYoM0+D7nl2DybWupqVzOkkNoTtLR545hXa8iHg7crKiY0lhIGA2DtxYQ
-rnZ3ZdGT8AAJTHh8MT9t9cGl7r3g7yJDV2RPmetW0bAjBpTGaG/hacpZ9TRi1PFq
-XMphsmvkLKGYb2SMy7frvp8Lh3NO+hMMdmeQfuBzLx13belYjiK/J1kccJAPet74
-PWE/zWgZGzQAq3doX/3dJqVNQ9P8E9xh9b7b0jOPchRYW0oxGoy041RZcvndKXxG
-37OKycxnlgERt+OUJpoksJu7K9azKOPDrMkNv3wrPY1C4t6aiXjmjNKjfM9U2DOY
-yIOq+AxJ30JAXEhn73Y2QtZ6AscVzKO81EdAUH3vkM4qMJCeHsLNpFy7bv2kJ12z
-JbImIjqOKVqL6KCIQO16BrzmKFSe//tmzvsum4r7+GwsNYhT7n9wdH5RCAlyUhjn
-ypkYR095CxOv4JvmmKX4pVXAXxykmKgs+aG+SbeyRZCg1ph5+Zyq51fpOIB3Py72
-o8+CE0cfLlv4oGK7Aq1v6xylgYThoVffOiHcCHdcL94UmQxUPuecfnooHNduUX7P
-+VofWDQ+d9xF1BTArlM3m0X8AptxzdlVkDCXTnnrswLiFShvmktmcBI3+P83QOqY
-RYr0cnJy2DkIHpydkfoo
-=gK7b
------END PGP SIGNATURE-----
+  ERROR: "rc5t583_ext_power_req_config" [drivers/regulator/rc5t583-regulator.ko] undefined!
 
---Signature=_Mon__16_Apr_2012_13_29_04_+1000_+opk4LkRiaad2SzE--
+For the 1st four, make the simple ops static inline, instead of
+polluting the namespace with trivial exports.  For the last one,
+add an EXPORT_SYMBOL.
+
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+
+[ alternately, make REGULATOR_RC5T583 bool instead of tristate? ]
+
+diff --git a/drivers/mfd/rc5t583.c b/drivers/mfd/rc5t583.c
+index 99ef944..44afae0 100644
+--- a/drivers/mfd/rc5t583.c
++++ b/drivers/mfd/rc5t583.c
+@@ -80,44 +80,6 @@ static struct mfd_cell rc5t583_subdevs[] = {
+ 	{.name = "rc5t583-key",      }
+ };
+ 
+-int rc5t583_write(struct device *dev, uint8_t reg, uint8_t val)
+-{
+-	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
+-	return regmap_write(rc5t583->regmap, reg, val);
+-}
+-
+-int rc5t583_read(struct device *dev, uint8_t reg, uint8_t *val)
+-{
+-	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
+-	unsigned int ival;
+-	int ret;
+-	ret = regmap_read(rc5t583->regmap, reg, &ival);
+-	if (!ret)
+-		*val = (uint8_t)ival;
+-	return ret;
+-}
+-
+-int rc5t583_set_bits(struct device *dev, unsigned int reg,
+-			unsigned int bit_mask)
+-{
+-	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
+-	return regmap_update_bits(rc5t583->regmap, reg, bit_mask, bit_mask);
+-}
+-
+-int rc5t583_clear_bits(struct device *dev, unsigned int reg,
+-			unsigned int bit_mask)
+-{
+-	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
+-	return regmap_update_bits(rc5t583->regmap, reg, bit_mask, 0);
+-}
+-
+-int rc5t583_update(struct device *dev, unsigned int reg,
+-		unsigned int val, unsigned int mask)
+-{
+-	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
+-	return regmap_update_bits(rc5t583->regmap, reg, mask, val);
+-}
+-
+ static int __rc5t583_set_ext_pwrreq1_control(struct device *dev,
+ 	int id, int ext_pwr, int slots)
+ {
+@@ -197,6 +159,7 @@ int rc5t583_ext_power_req_config(struct device *dev, int ds_id,
+ 			ds_id, ext_pwr_req);
+ 	return 0;
+ }
++EXPORT_SYMBOL(rc5t583_ext_power_req_config);
+ 
+ static int rc5t583_clear_ext_power_req(struct rc5t583 *rc5t583,
+ 	struct rc5t583_platform_data *pdata)
+diff --git a/include/linux/mfd/rc5t583.h b/include/linux/mfd/rc5t583.h
+index b2c1f44..c42fe92 100644
+--- a/include/linux/mfd/rc5t583.h
++++ b/include/linux/mfd/rc5t583.h
+@@ -26,6 +26,7 @@
+ 
+ #include <linux/mutex.h>
+ #include <linux/types.h>
++#include <linux/regmap.h>
+ 
+ #define RC5T583_MAX_REGS		0xF8
+ 
+@@ -308,14 +309,44 @@ struct rc5t583_platform_data {
+ 	struct regulator_init_data *reg_init_data[RC5T583_REGULATOR_MAX];
+ };
+ 
+-int rc5t583_write(struct device *dev, u8 reg, uint8_t val);
+-int rc5t583_read(struct device *dev, uint8_t reg, uint8_t *val);
+-int rc5t583_set_bits(struct device *dev, unsigned int reg,
+-		unsigned int bit_mask);
+-int rc5t583_clear_bits(struct device *dev, unsigned int reg,
+-		unsigned int bit_mask);
+-int rc5t583_update(struct device *dev, unsigned int reg,
+-		unsigned int val, unsigned int mask);
++static inline int rc5t583_write(struct device *dev, uint8_t reg, uint8_t val)
++{
++	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
++	return regmap_write(rc5t583->regmap, reg, val);
++}
++
++static inline int rc5t583_read(struct device *dev, uint8_t reg, uint8_t *val)
++{
++	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
++	unsigned int ival;
++	int ret;
++	ret = regmap_read(rc5t583->regmap, reg, &ival);
++	if (!ret)
++		*val = (uint8_t)ival;
++	return ret;
++}
++
++static inline int rc5t583_set_bits(struct device *dev, unsigned int reg,
++			unsigned int bit_mask)
++{
++	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
++	return regmap_update_bits(rc5t583->regmap, reg, bit_mask, bit_mask);
++}
++
++static inline int rc5t583_clear_bits(struct device *dev, unsigned int reg,
++			unsigned int bit_mask)
++{
++	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
++	return regmap_update_bits(rc5t583->regmap, reg, bit_mask, 0);
++}
++
++static inline int rc5t583_update(struct device *dev, unsigned int reg,
++		unsigned int val, unsigned int mask)
++{
++	struct rc5t583 *rc5t583 = dev_get_drvdata(dev);
++	return regmap_update_bits(rc5t583->regmap, reg, mask, val);
++}
++
+ int rc5t583_ext_power_req_config(struct device *dev, int deepsleep_id,
+ 	int ext_pwr_req, int deepsleep_slot_nr);
+ int rc5t583_irq_init(struct rc5t583 *rc5t583, int irq, int irq_base);
+-- 
+1.7.9.1
