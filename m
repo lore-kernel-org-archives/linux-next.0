@@ -1,110 +1,181 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm with the security tree
-Date: Mon, 16 Apr 2012 15:02:58 +1000
-Message-ID: <20120416150258.273e076e2d6e3b847d3dd9ca@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (security
+ tree related)
+Date: Mon, 16 Apr 2012 15:46:07 +1000
+Message-ID: <20120416154607.302f7ae245472e1e917dacef@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__16_Apr_2012_15_02_58_+1000_f8Y0j_ITuQS3NWC9"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, James Morris <jmorris@namei.org>, Cyrill Gorcunov <gorcunov@openvz.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__16_Apr_2012_15_46_07_+1000_WQqOeLFStaGEdfqD"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:55075 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750937Ab2DPFqR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 01:46:17 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Drewry <wad@chromium.org>, "H. Peter Anvin" <hpa@zytor.com>, Eric Paris <eparis@redhat.com>, Kees Cook <keescook@chromium.org>
 
---Signature=_Mon__16_Apr_2012_15_02_58_+1000_f8Y0j_ITuQS3NWC9
+--Signature=_Mon__16_Apr_2012_15_46_07_+1000_WQqOeLFStaGEdfqD
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-Today's linux-next merge of the akpm tree got conflicts in kernel/sys.c
-and include/linux/prctl.h between commit 259e5e6c75a9 ("Add PR_{GET,SET}
-_NO_NEW_PRIVS to prevent execve from granting privs") from the security
-tree and patch "c/r: prctl: add ability to get clear_tid_address" from
-the akpm tree.
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig) failed like this:
 
-I fixed them up (see below) and can carry the fix as necessary.
+arch/powerpc/kernel/ptrace.c: In function 'do_syscall_trace_enter':
+arch/powerpc/kernel/ptrace.c:1713:2: error: statement with no effect [-Werr=
+or=3Dunused-value]
+cc1: all warnings being treated as errors
+
+Introduced by commit acf3b2c71ed2 ("seccomp: add SECCOMP_RET_ERRNO").  I
+have applied the following hack fix that fixes the build, but the other
+seven call sites of secure_computing() should be fixed up properly.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 16 Apr 2012 15:39:49 +1000
+Subject: [PATCH] seccomp: hack fix for build failures with secure_computing
+ return value change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/microblaze/kernel/ptrace.c |    2 +-
+ arch/mips/kernel/ptrace.c       |    2 +-
+ arch/powerpc/kernel/ptrace.c    |    2 +-
+ arch/s390/kernel/ptrace.c       |    2 +-
+ arch/sh/kernel/ptrace_32.c      |    2 +-
+ arch/sh/kernel/ptrace_64.c      |    2 +-
+ arch/sparc/kernel/ptrace_64.c   |    2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/arch/microblaze/kernel/ptrace.c b/arch/microblaze/kernel/ptrac=
+e.c
+index 6eb2aa9..9e3ffc9 100644
+--- a/arch/microblaze/kernel/ptrace.c
++++ b/arch/microblaze/kernel/ptrace.c
+@@ -136,7 +136,7 @@ asmlinkage long do_syscall_trace_enter(struct pt_regs *=
+regs)
+ {
+ 	long ret =3D 0;
+=20
+-	secure_computing(regs->r12);
++	(void)secure_computing(regs->r12);
+=20
+ 	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
+ 	    tracehook_report_syscall_entry(regs))
+diff --git a/arch/mips/kernel/ptrace.c b/arch/mips/kernel/ptrace.c
+index 7c24c29..4f83d73 100644
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -535,7 +535,7 @@ static inline int audit_arch(void)
+ asmlinkage void syscall_trace_enter(struct pt_regs *regs)
+ {
+ 	/* do the secure computing check first */
+-	secure_computing(regs->regs[2]);
++	(void)secure_computing(regs->regs[2]);
+=20
+ 	if (!(current->ptrace & PT_PTRACED))
+ 		goto out;
+diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
+index 8d8e028..53cebc4 100644
+--- a/arch/powerpc/kernel/ptrace.c
++++ b/arch/powerpc/kernel/ptrace.c
+@@ -1710,7 +1710,7 @@ long do_syscall_trace_enter(struct pt_regs *regs)
+ {
+ 	long ret =3D 0;
+=20
+-	secure_computing(regs->gpr[0]);
++	(void)secure_computing(regs->gpr[0]);
+=20
+ 	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
+ 	    tracehook_report_syscall_entry(regs))
+diff --git a/arch/s390/kernel/ptrace.c b/arch/s390/kernel/ptrace.c
+index 02f300f..96e0dea 100644
+--- a/arch/s390/kernel/ptrace.c
++++ b/arch/s390/kernel/ptrace.c
+@@ -719,7 +719,7 @@ asmlinkage long do_syscall_trace_enter(struct pt_regs *=
+regs)
+ 	long ret =3D 0;
+=20
+ 	/* Do the secure computing check first. */
+-	secure_computing(regs->gprs[2]);
++	(void)secure_computing(regs->gprs[2]);
+=20
+ 	/*
+ 	 * The sysc_tracesys code in entry.S stored the system
+diff --git a/arch/sh/kernel/ptrace_32.c b/arch/sh/kernel/ptrace_32.c
+index 9698671..cf55945 100644
+--- a/arch/sh/kernel/ptrace_32.c
++++ b/arch/sh/kernel/ptrace_32.c
+@@ -503,7 +503,7 @@ asmlinkage long do_syscall_trace_enter(struct pt_regs *=
+regs)
+ {
+ 	long ret =3D 0;
+=20
+-	secure_computing(regs->regs[0]);
++	(void)secure_computing(regs->regs[0]);
+=20
+ 	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
+ 	    tracehook_report_syscall_entry(regs))
+diff --git a/arch/sh/kernel/ptrace_64.c b/arch/sh/kernel/ptrace_64.c
+index bc81e07..3d3600f 100644
+--- a/arch/sh/kernel/ptrace_64.c
++++ b/arch/sh/kernel/ptrace_64.c
+@@ -522,7 +522,7 @@ asmlinkage long long do_syscall_trace_enter(struct pt_r=
+egs *regs)
+ {
+ 	long long ret =3D 0;
+=20
+-	secure_computing(regs->regs[9]);
++	(void)secure_computing(regs->regs[9]);
+=20
+ 	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
+ 	    tracehook_report_syscall_entry(regs))
+diff --git a/arch/sparc/kernel/ptrace_64.c b/arch/sparc/kernel/ptrace_64.c
+index 6f97c07..6ddec1f 100644
+--- a/arch/sparc/kernel/ptrace_64.c
++++ b/arch/sparc/kernel/ptrace_64.c
+@@ -1062,7 +1062,7 @@ asmlinkage int syscall_trace_enter(struct pt_regs *re=
+gs)
+ 	int ret =3D 0;
+=20
+ 	/* do the secure computing check first */
+-	secure_computing(regs->u_regs[UREG_G1]);
++	(void)secure_computing(regs->u_regs[UREG_G1]);
+=20
+ 	if (test_thread_flag(TIF_SYSCALL_TRACE))
+ 		ret =3D tracehook_report_syscall_entry(regs);
+--=20
+1.7.10.rc3
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc include/linux/prctl.h
-index 711e0a3,ecbe30e..0000000
---- a/include/linux/prctl.h
-+++ b/include/linux/prctl.h
-@@@ -130,19 -130,6 +130,21 @@@
-  #define PR_SET_CHILD_SUBREAPER 36
-  #define PR_GET_CHILD_SUBREAPER 37
- =20
- -#define PR_GET_TID_ADDRESS     38
- +/*
- + * If no_new_privs is set, then operations that grant new privileges (i.e.
- + * execve) will either fail or not grant them.  This affects suid/sgid,
- + * file capabilities, and LSMs.
- + *
- + * Operations that merely manipulate or drop existing privileges (setresu=
-id,
- + * capset, etc.) will still work.  Drop those privileges if you want them=
- gone.
- + *
- + * Changing LSM security domain is considered a new privilege.  So, for e=
-xample,
- + * asking selinux for a specific new context (e.g. with runcon) will resu=
-lt
- + * in execve returning -EPERM.
- + */
- +#define PR_SET_NO_NEW_PRIVS 38
- +#define PR_GET_NO_NEW_PRIVS 39
- +
-++#define PR_GET_TID_ADDRESS     40
-+=20
-  #endif /* _LINUX_PRCTL_H */
-diff --cc kernel/sys.c
-index 500c885,1d57adf..0000000
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@@ -2082,16 -2092,9 +2092,19 @@@ SYSCALL_DEFINE5(prctl, int, option, uns
-  			error =3D put_user(me->signal->is_child_subreaper,
-  					 (int __user *) arg2);
-  			break;
- +		case PR_SET_NO_NEW_PRIVS:
- +			if (arg2 !=3D 1 || arg3 || arg4 || arg5)
- +				return -EINVAL;
- +
- +			current->no_new_privs =3D 1;
- +			break;
- +		case PR_GET_NO_NEW_PRIVS:
- +			if (arg2 || arg3 || arg4 || arg5)
- +				return -EINVAL;
- +			return current->no_new_privs ? 1 : 0;
-+ 		case PR_GET_TID_ADDRESS:
-+ 			error =3D prctl_get_tid_address(me, (int __user **)arg2);
-+ 			break;
-  		default:
-  			error =3D -EINVAL;
-  			break;
-
---Signature=_Mon__16_Apr_2012_15_02_58_+1000_f8Y0j_ITuQS3NWC9
+--Signature=_Mon__16_Apr_2012_15_46_07_+1000_WQqOeLFStaGEdfqD
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPi6gCAAoJEECxmPOUX5FEAQoQAKpsIgUw4gpKGjGGAWbkBkP4
-oFzI5J5rvPhT33RsZDSt7tEPJhp8e7fOPriKq9eyLNWLg7pYGxJCt7o24CXFJvzz
-99vf8RrAPCxD7lgk7mL6dnaWwFn9TJ4UNoGpr81UXvheztnsxW6DuODtuRRVK8/r
-GOuh73VbAAedZmHW9tAugCv3vB5jiiRdfZCZRlXS0rcv2HRzno62g9KwoUKAu1Wq
-eSve9S0duqI1oC4FRBhb6NT1IhP8GuXPqxd/oVtqMTaHDygeNxIZvm55lmnaASSG
-atnPkPyOYzXV+oy7qIaJoJhcW7r/WdSYArK4HkBgAMp2spDL16gOOMkJWFEa1NhR
-gZHZS9MS/7DVhE2PoHbaDtohYnQDp4/ntaiXuepbhTa9yQBBaUdLdgdmUk5EHBLm
-RytH4w4LGiElGnNwy1efUk/enJqVwNsHUGF90I8uA8mQ1fzjCt+3HbOVcGrQeLO0
-Gk07y9/9ehJVUMGwBnFay9p9e4zxwFGvqfVrVaGB8AhAxX5hBg/OyDIt58KF4cPF
-RT0E3Ddud0z97nR3pD9s+aVp/tNd4TTNRD+fcyfRZQw4/Cyoffb27IgpcypLcwBd
-iCXBKz4NCm5YyjJZcmwMX4On2s4AEvFzUsvYdh+a8SVsZvmHy1cZU6Cbw2GZTfVW
-Wawv3cin0xF0DNcPQBtc
-=pcq3
+iQIcBAEBCAAGBQJPi7IfAAoJEECxmPOUX5FEVeMP/1LstePWxJizbSKF2HFfVOKO
+iUAtaM7SjlLjyxjq/aaAQm/waD+JniEFLuSaIB6JLOSuxMlQS9Zqbg7NZwu7C5ew
+wMG+sYW7NZ/UO+F+pm6p3I8ZQMZEEX/pbvmeGaoQJqB0MKMBSsCeJTeGNCobVXwv
+5dza0SyrBfymETfpU+FJZ5JCIyYKnLgkMEV8a6crzk8AbRiR7OiHayn2X0foQfXc
+ypIi2i+94jb7K9rpcJ1c4Bwz/FtqQGHKPGwEbPR58fhctXNpqcRW1qSbwhsGE4bU
+kvO9GIbzV3jP8n7QbThzy/EmF3vg5MwvizWZ93L1I2rdkZhotYgSEQQMmEqQ4l34
+ACSU2itbuZBFxMUB6j3Srimqw/8+p88aqeNvqgaUpJsojNK7SmeBZdhan/AZLHFt
+tGq3xNPOqtUazM/Kfhi313UcMDWlE74v+7AxE7xLKJ43zydpS8yDrdV9d8zMXfyV
+ty0/rR+zd0okr9HPGCmasu9Cn6AdvsD9SqKZIKylsxVZXwnAW69PBchZJHRESfze
+mR05WugseoUDjvyXpf1tveTQX6zz5e7wcgeXoutdIWZdgFC6smNC/PQmGKjqbrDe
+gqNVxARPaIluR7fEJGx2JnCIili5xPHlbiEm/CsP+3bgg/gOi7E3ZfS7MJFdMXs/
+XRurHkGhXds5qv6hMz1X
+=y4S1
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__16_Apr_2012_15_02_58_+1000_f8Y0j_ITuQS3NWC9--
+--Signature=_Mon__16_Apr_2012_15_46_07_+1000_WQqOeLFStaGEdfqD--
