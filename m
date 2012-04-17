@@ -1,80 +1,44 @@
-From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH -next] wireless: TI wlxxx depends on MAC80211
-Date: Tue, 17 Apr 2012 11:29:27 -0700
-Message-ID: <4F8DB687.2090701@xenotime.net>
-References: <20120416161121.261ba4e7e38989173accfb16@canb.auug.org.au>	 <4F8C784B.2040402@xenotime.net> <1334640620.27247.7.camel@cumari>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Apr 17 (pci-sysfs.c and vga_switcheroo.c)
+Date: Tue, 17 Apr 2012 11:40:10 -0700
+Message-ID: <4F8DB90A.8050504@xenotime.net>
+References: <20120417144241.0d7dc5fde56b2a37ff0dcaba@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1334640620.27247.7.camel@cumari>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Luciano Coelho <coelho-l0cyMroinI0@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:50438 "HELO
+	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754663Ab2DQPkI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Apr 2012 11:40:08 -0400
+In-Reply-To: <20120417144241.0d7dc5fde56b2a37ff0dcaba@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 04/16/2012 10:30 PM, Luciano Coelho wrote:
+On 04/16/2012 09:42 PM, Stephen Rothwell wrote:
 
-> Hi Randy,
+> Hi all,
 > 
-> On Mon, 2012-04-16 at 12:51 -0700, Randy Dunlap wrote: 
->> From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
->>
->> wl12xx build fails with many undefined symbol errors when MAC80211
->> and CFG80211 are not enabled, so make WLCORE and WL12XX depend
->> on MAC80211 (which already depends on CFG80211).
->>
->> Here are a few of the many build errors:
->>
-> 
-> [...]
-> 
->> Signed-off-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
->> Cc:	Luciano Coelho <coelho-l0cyMroinI0@public.gmane.org>
->> Cc:	linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> Cc:	"John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
->> ---
-> 
-> Thanks for the patch!
-> 
-> 
->> --- linux-next-20120416.orig/drivers/net/wireless/ti/wl12xx/Kconfig
->> +++ linux-next-20120416/drivers/net/wireless/ti/wl12xx/Kconfig
->> @@ -1,5 +1,6 @@
->>  config WL12XX
->>         tristate "TI wl12xx support"
->> +	depends on MAC80211
->>         select WLCORE
-> 
-> Do we really need this one? wl12xx selects WLCORE which in turn depends
-> on MAC80211 (with your change below).  Maybe we don't need this?
-
-Hi,
-
-[testing...]
-
-The build fails if either one of these "depends" is omitted.
+> Changes since 20120416:
 
 
->> ---help---
->>  	  This module adds support for wireless adapters based on TI wl1271,
->> --- linux-next-20120416.orig/drivers/net/wireless/ti/wlcore/Kconfig
->> +++ linux-next-20120416/drivers/net/wireless/ti/wlcore/Kconfig
->> @@ -1,6 +1,6 @@
->>  config WLCORE
->>  	tristate "TI wlcore support"
->> -	depends on WL_TI && GENERIC_HARDIRQS
->> +	depends on WL_TI && GENERIC_HARDIRQS && MAC80211
->>  	depends on INET
->>  	select FW_LOADER
->>  	---help---
-> 
+When CONFIG_VGA_ARB is not enabled:
 
+drivers/built-in.o: In function `boot_vga_show':
+pci-sysfs.c:(.text+0x1060f): undefined reference to `vga_default_device'
+
+
+and
+
+drivers/built-in.o: In function `boot_vga_show':
+pci-sysfs.c:(.text+0x8cc2): undefined reference to `vga_default_device'
+drivers/built-in.o: In function `vga_switcheroo_register_client':
+(.text+0x76671): undefined reference to `vga_default_device'
+drivers/built-in.o: In function `vga_switchto_stage1':
+vga_switcheroo.c:(.text+0x767f4): undefined reference to `vga_set_default_device'
 
 
 -- 
 ~Randy
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
