@@ -1,66 +1,70 @@
-From: Jiri Slaby <jslaby@suse.cz>
-Subject: Re: [PATCH -next] tty: add missing tty_port_tty_get() call to raw3215_wakeup
-Date: Tue, 17 Apr 2012 14:35:32 +0200
-Message-ID: <4F8D6394.7070905@suse.cz>
-References: <20120417111634.GA4382@osiris.boeblingen.de.ibm.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (regulator tree related)
+Date: Tue, 17 Apr 2012 14:55:16 +0100
+Message-ID: <20120417135516.GF6652@opensource.wolfsonmicro.com>
+References: <20120417142748.d42daa09958086a6e2ab4878@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="GLp9dJVi+aaipsRk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:59614 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932155Ab2DQMfj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Apr 2012 08:35:39 -0400
-Received: by wibhj6 with SMTP id hj6so516201wib.1
-        for <linux-next@vger.kernel.org>; Tue, 17 Apr 2012 05:35:38 -0700 (PDT)
-In-Reply-To: <20120417111634.GA4382@osiris.boeblingen.de.ibm.com>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60964 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932243Ab2DQNzU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Apr 2012 09:55:20 -0400
+Content-Disposition: inline
+In-Reply-To: <20120417142748.d42daa09958086a6e2ab4878@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
 
-On 04/17/2012 01:16 PM, Heiko Carstens wrote:
-> Fix compile error caused by "TTY: con3215, use tty from tty_port":
-> 
->  CC      drivers/s390/char/con3215.o
-> drivers/s390/char/con3215.c: In function 'raw3215_wakeup':
-> drivers/s390/char/con3215.c:339:16: error: 'struct raw3215_info' has no member named 'tty'
-> make[1]: *** [drivers/s390/char/con3215.o] Error 1
-> make: *** [drivers/s390/char/] Error 2
 
-Aha, that's because I rebased the tasklet removal patch on the top of
-the other two patches so I don't see the error in my local tree.
+--GLp9dJVi+aaipsRk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Cc: Jiri Slaby <jslaby@suse.cz>
+On Tue, Apr 17, 2012 at 02:27:48PM +1000, Stephen Rothwell wrote:
 
-Acked-by: Jiri Slaby <jslaby@suse.cz>
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 
-and thanks.
+> drivers/misc/max8997-muic.c: In function 'max8997_muic_irq_work':
+> drivers/misc/max8997-muic.c:313:34: error: 'struct max8997_platform_data' has no member named 'irq_base'
+> drivers/misc/max8997-muic.c: In function 'max8997_muic_probe':
+> drivers/misc/max8997-muic.c:434:35: error: 'struct max8997_platform_data' has no member named 'irq_base'
+> drivers/misc/max8997-muic.c: In function 'max8997_muic_remove':
+> drivers/misc/max8997-muic.c:474:17: error: 'struct max8997_platform_data' has no member named 'irq_base'
 
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-> ---
->  drivers/s390/char/con3215.c |    6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/s390/char/con3215.c b/drivers/s390/char/con3215.c
-> index e928e04..6c0116d 100644
-> --- a/drivers/s390/char/con3215.c
-> +++ b/drivers/s390/char/con3215.c
-> @@ -336,7 +336,11 @@ static inline void raw3215_try_io(struct raw3215_info *raw)
->  static void raw3215_wakeup(unsigned long data)
->  {
->  	struct raw3215_info *raw = (struct raw3215_info *) data;
-> -	tty_wakeup(raw->tty);
-> +	struct tty_struct *tty;
-> +
-> +	tty = tty_port_tty_get(&raw->port);
-> +	tty_wakeup(tty);
-> +	tty_kref_put(tty);
->  }
->  
->  /*
-> 
--- 
-js
-suse labs
+> Caused by commit 98d8618af377 ("mfd: add irq domain support for max8997
+> interrupts").
+
+> I have reverted that commit for today.
+
+I've just reverted it, Thomas please submit a fixed version along with
+the regulator patch.
+
+--GLp9dJVi+aaipsRk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPjXYjAAoJEBus8iNuMP3dRKwQAIsoH8mL4C+HvA0dPym3zTIJ
+hVslN8+DK40/kHlPAJQbsLH2JHq/P7od2nw4talo/U0Mb83O2wGN/Cpg+UgHMDFv
+zLaAJClk4uRpRcsj3NElqRkYvmBftw/RAKAjDE0v+OLjTJEF01HM7Xrqn3HRfFDV
+Gz4xdQN5XrAU1qIr9wF/pdhwAjioATe3IoFGfFQd4egsFnTKiiDWK8FIplNk1Cwh
+mryHYyKxC4sXm84lUVkB104r1C5KXs0SQ+EMAi9OhgxyrJCfXlcNUyTT8tFXvhc1
+0zCzJOFk3QAGa9MnezTH4j5kK/iBWYMEAJb+TsYNL0aUUxxtE8k21dzK+KPOzAyG
+ZzYAtMElAdLPRpaEGxs2E1Wx7w5oW+swT3W5+SVnnScGh6aXW/ER/PRSqXA6ywrI
+SB5SFZMdPcAgdo08X/7GTwKvMvqeeHWl52Ms0WcbFIJ2ICsNcCO+TLn9xxsjfXrK
+qwM+mK4C+9oyRgNedv6hSqBE5keMXbP4mNdAfkfTFisKK8N7PryRgNm/JrfdBJHx
+t2Vfc6uaz1P6NX7HAJ+egfNwXQSDCpXt0jmnQeh1Zp/lbvtgD5jgymCosQUyQfwX
+tlFIBj0gIwDMpWUYueC5YWSEzTG433Fw6+zxGpEWDFjLEQJQLzbUDDV494ZSyN40
+17q3Y3f6Llbd/RW9wPZz
+=rA/h
+-----END PGP SIGNATURE-----
+
+--GLp9dJVi+aaipsRk--
