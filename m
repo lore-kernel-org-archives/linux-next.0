@@ -1,49 +1,48 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] staging: fix android alarm.c printk format warnings
-Date: Mon, 16 Apr 2012 18:01:24 -0700
-Message-ID: <4F8CC0E4.5030706@xenotime.net>
+Subject: [PATCH -next] soc: fix printk format in soc-dapm.c
+Date: Mon, 16 Apr 2012 18:01:29 -0700
+Message-ID: <4F8CC0E9.3010407@xenotime.net>
 References: <20120416161121.261ba4e7e38989173accfb16@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
 In-Reply-To: <20120416161121.261ba4e7e38989173accfb16@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>, Brian Swetland <swetland@google.com>, Andrew Morton <akpm@linux-foundation.org>, devel@driverdev.osuosl.org
+Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Liam Girdwood <lrg@ti.com>
 List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <rdunlap@xenotime.net>
 
-Fix printk format warnings by using 't' modifier for ptrdiff_t.
+Fix printk format warning for 'formats':
 
-drivers/staging/android/alarm.c:344:2: warning: format '%ld' expects type 'long int', but argument 2 has type 'int'
-drivers/staging/android/alarm.c:367:3: warning: format '%ld' expects type 'long int', but argument 2 has type 'int'
+sound/soc/soc-dapm.c:2913:5: warning: format '%lx' expects type 'long unsigned int', but argument 3 has type 'u64'
 
 Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Greg KH <greg@kroah.com>
-Cc: Brian Swetland <swetland@google.com>
+Cc:	Liam Girdwood <lrg@ti.com>
+Cc:	Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc:	alsa-devel@alsa-project.org
 ---
- drivers/staging/android/alarm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/soc-dapm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20120416.orig/drivers/staging/android/alarm.c
-+++ linux-next-20120416/drivers/staging/android/alarm.c
-@@ -341,7 +341,7 @@ static enum hrtimer_restart alarm_timer_
- 	now = base->stopped ? base->stopped_time : hrtimer_cb_get_time(timer);
- 	now = ktime_sub(now, base->delta);
- 
--	pr_alarm(INT, "alarm_timer_triggered type %ld at %lld\n",
-+	pr_alarm(INT, "alarm_timer_triggered type %td at %lld\n",
- 		base - alarms, ktime_to_ns(now));
- 
- 	while (base->first) {
-@@ -364,7 +364,7 @@ static enum hrtimer_restart alarm_timer_
- 		spin_lock_irqsave(&alarm_slock, flags);
+--- linux-next-20120416.orig/sound/soc/soc-dapm.c
++++ linux-next-20120416/sound/soc/soc-dapm.c
+@@ -2909,7 +2909,7 @@ static int snd_soc_dai_link_event(struct
+ 	if (config->formats) {
+ 		fmt = ffs(config->formats) - 1;
+ 	} else {
+-		dev_warn(w->dapm->dev, "Invalid format %lx specified\n",
++		dev_warn(w->dapm->dev, "Invalid format %llx specified\n",
+ 			 config->formats);
+ 		fmt = 0;
  	}
- 	if (!base->first)
--		pr_alarm(FLOW, "no more alarms of type %ld\n", base - alarms);
-+		pr_alarm(FLOW, "no more alarms of type %td\n", base - alarms);
- 	update_timer_locked(base, true);
- 	spin_unlock_irqrestore(&alarm_slock, flags);
- 	return HRTIMER_NORESTART;
