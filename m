@@ -1,64 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning in Linus' tree
-Date: Tue, 17 Apr 2012 10:44:30 +1000
-Message-ID: <20120417104430.d1844b17e4c7d5ffb132f816@canb.auug.org.au>
+From: James Morris <jmorris@namei.org>
+Subject: Re: linux-next: build failure after merge of the final tree (security
+ tree related)
+Date: Tue, 17 Apr 2012 11:33:26 +1000 (EST)
+Message-ID: <alpine.LRH.2.02.1204171127130.14814@tundra.namei.org>
+References: <20120416154607.302f7ae245472e1e917dacef@canb.auug.org.au> <CABqD9hauxzd4vVbxyC5M1p9e6mLt1cjYP7wbhzTKPi3iMpc0kg@mail.gmail.com> <CABqD9hYhC3dNX3CVSbsuJaG=zBUC4VMyMVYYmyOTN+Xfb=uC8w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__17_Apr_2012_10_44_30_+1000_sP/FiC5lyVPXHy0b"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51477 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755197Ab2DQAoj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 20:44:39 -0400
+Received: from tundra.namei.org ([65.99.196.166]:57963 "EHLO tundra.namei.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750892Ab2DQBdn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Apr 2012 21:33:43 -0400
+In-Reply-To: <CABqD9hYhC3dNX3CVSbsuJaG=zBUC4VMyMVYYmyOTN+Xfb=uC8w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Will Drewry <wad@chromium.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Eric Paris <eparis@redhat.com>, Kees Cook <keescook@chromium.org>
 
---Signature=_Tue__17_Apr_2012_10_44_30_+1000_sP/FiC5lyVPXHy0b
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 16 Apr 2012, Will Drewry wrote:
 
-Hi Konrad,
+> >> arch/powerpc/kernel/ptrace.c: In function 'do_syscall_trace_enter':
+> >> arch/powerpc/kernel/ptrace.c:1713:2: error: statement with no effect [-Werror=unused-value]
+> >> cc1: all warnings being treated as errors
 
-Building Linus' tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+Is this happening because of
 
-drivers/block/xen-blkback/xenbus.c: In function 'xen_blkbk_discard':
-drivers/block/xen-blkback/xenbus.c:419:4: warning: passing argument 1 of 'd=
-ev_warn' makes pointer from integer without a cast [enabled by default]
-include/linux/device.h:894:5: note: expected 'const struct device *' but ar=
-gument is of type 'long int'
+	#define secure_computing(x) 0
 
-Introduced by commit 3389bb8bf761 ("xen/blkback: Make optional features
-be really optional").  Passing "dev-dev" to dev_warn() was hopefully not
-intended ...
+?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+In any case, that should probably be a static inline.
 
---Signature=_Tue__17_Apr_2012_10_44_30_+1000_sP/FiC5lyVPXHy0b
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPjLzuAAoJEECxmPOUX5FEgo0P/1W0Pm9ttDteS9m9dohzQsj/
-pKbJbYqec5ntAbDAY24BTOoxTqN48EETXJ5uO/SI2OZ5scw5hZ5qs9he2kaQq/CT
-7uEPkYTv4W7M9YIu0Ty/PRSmQJseau9+che2Z6C4ZgnIreWSF/UQ3oiaI8TwYRv0
-rsdB4j8JOU6hngkTiWMyeQDk0zgLtiEjgYH/pDy05+rRlJ0/YpfTF/R9G+g98QXJ
-Nxk8b6aLewsNp7lcunqVTppPz4V7oKX+FMmgK/VFCF6fzmZofs/c6Z5/Phuf7afj
-MyM4YNkK0XzYOmTtyE29hzHfGYTWTTEeoPsAfYelXDW2PzAuH5eJLt+2LHx75c7t
-axLo8RLCyN3MHVwKODsdxwgYqgyvAkvXMu14npj2IiieMYNIO2rqO7mloC5ODN+B
-DBrHKCPYDbkQ5csYbH/T+Dsu8JUMiMaWUnnBqyIyFs+J1QKplJPUje/ROZ9mL7yY
-NGKKWdQdeXYAueXOSOHXE09kno6UbZXAIvCAQgDLMqhRXHX7BKEGPNKB1n7+ZqMX
-LpHRbGC/K6jMF0Jt94jNpF3dLirvuVbigM6+mfCrXx5UakKVnNA7VtuePxU5e41B
-6wvmA3Bzldt2UWft6VAp+XZhypdnEIpL4S4uLRB7DD/BawrWhuAL0niIYs9M/ubN
-cEkBKzapjSADuDCk5Alk
-=eAGe
------END PGP SIGNATURE-----
-
---Signature=_Tue__17_Apr_2012_10_44_30_+1000_sP/FiC5lyVPXHy0b--
+- James
+-- 
+James Morris
+<jmorris@namei.org>
