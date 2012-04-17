@@ -1,44 +1,69 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Apr 17 (pci-sysfs.c and vga_switcheroo.c)
-Date: Tue, 17 Apr 2012 11:40:10 -0700
-Message-ID: <4F8DB90A.8050504@xenotime.net>
-References: <20120417144241.0d7dc5fde56b2a37ff0dcaba@canb.auug.org.au>
+From: Luciano Coelho <coelho@ti.com>
+Subject: Re: [PATCH -next] wireless: TI wlxxx depends on MAC80211
+Date: Tue, 17 Apr 2012 18:52:16 +0300
+Message-ID: <1334677936.4965.13.camel@cumari>
+References: <20120416161121.261ba4e7e38989173accfb16@canb.auug.org.au>
+		 <4F8C784B.2040402@xenotime.net> <1334640620.27247.7.camel@cumari>
+	 <4F8DB687.2090701@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:50438 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754663Ab2DQPkI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Apr 2012 11:40:08 -0400
-In-Reply-To: <20120417144241.0d7dc5fde56b2a37ff0dcaba@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4F8DB687.2090701@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>, johannes@sipsolutions.net
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+List-Id: linux-next.vger.kernel.org
 
-On 04/16/2012 09:42 PM, Stephen Rothwell wrote:
-
-> Hi all,
+On Tue, 2012-04-17 at 11:29 -0700, Randy Dunlap wrote: 
+> On 04/16/2012 10:30 PM, Luciano Coelho wrote:
 > 
-> Changes since 20120416:
+> > Hi Randy,
+> > 
+> > On Mon, 2012-04-16 at 12:51 -0700, Randy Dunlap wrote: 
+> >> From: Randy Dunlap <rdunlap@xenotime.net>
+> >>
+> >> wl12xx build fails with many undefined symbol errors when MAC80211
+> >> and CFG80211 are not enabled, so make WLCORE and WL12XX depend
+> >> on MAC80211 (which already depends on CFG80211).
+> >>
+> >> Here are a few of the many build errors:
+> >>
+> > 
+> > [...]
+> > 
+> >> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> >> Cc:	Luciano Coelho <coelho@ti.com>
+> >> Cc:	linux-wireless@vger.kernel.org
+> >> Cc:	"John W. Linville" <linville@tuxdriver.com>
+> >> ---
+> > 
+> > Thanks for the patch!
+> > 
+> > 
+> >> --- linux-next-20120416.orig/drivers/net/wireless/ti/wl12xx/Kconfig
+> >> +++ linux-next-20120416/drivers/net/wireless/ti/wl12xx/Kconfig
+> >> @@ -1,5 +1,6 @@
+> >>  config WL12XX
+> >>         tristate "TI wl12xx support"
+> >> +	depends on MAC80211
+> >>         select WLCORE
+> > 
+> > Do we really need this one? wl12xx selects WLCORE which in turn depends
+> > on MAC80211 (with your change below).  Maybe we don't need this?
+> 
+> Hi,
+> 
+> [testing...]
+> 
+> The build fails if either one of these "depends" is omitted.
 
+Yeah, thanks for testing.  I guess it's because, as Johannes said,
+select doesn't check the dependencies of the selected module.
 
-When CONFIG_VGA_ARB is not enabled:
-
-drivers/built-in.o: In function `boot_vga_show':
-pci-sysfs.c:(.text+0x1060f): undefined reference to `vga_default_device'
-
-
-and
-
-drivers/built-in.o: In function `boot_vga_show':
-pci-sysfs.c:(.text+0x8cc2): undefined reference to `vga_default_device'
-drivers/built-in.o: In function `vga_switcheroo_register_client':
-(.text+0x76671): undefined reference to `vga_default_device'
-drivers/built-in.o: In function `vga_switchto_stage1':
-vga_switcheroo.c:(.text+0x767f4): undefined reference to `vga_set_default_device'
+Johannes, thanks for the explanation.
 
 
 -- 
-~Randy
+Cheers,
+Luca.
