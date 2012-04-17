@@ -1,28 +1,64 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] hippi: fix printk format in rrunner.c
-Date: Mon, 16 Apr 2012 23:48:27 -0400 (EDT)
-Message-ID: <20120416.234827.1041224459359020201.davem@davemloft.net>
-References: <20120416161121.261ba4e7e38989173accfb16@canb.auug.org.au>
-	<4F8CC0ED.2000006@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (security
+ tree related)
+Date: Tue, 17 Apr 2012 14:10:23 +1000
+Message-ID: <20120417141023.40aefc2ff17c29b2edf51762@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4F8CC0ED.2000006@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rdunlap@xenotime.net
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-hippi@sunsite.dk, jes@trained-monkey.org, akpm@linux-foundation.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__17_Apr_2012_14_10_23_+1000_8Q0O88w=KhKpINNI"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45285 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750731Ab2DQEKb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Apr 2012 00:10:31 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Drewry <wad@chromium.org>, Kees Cook <keescook@chromium.org>, Eric Paris <eparis@redhat.com>, Serge Hallyn <serge.hallyn@canonical.com>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Mon, 16 Apr 2012 18:01:33 -0700
+--Signature=_Tue__17_Apr_2012_14_10_23_+1000_8Q0O88w=KhKpINNI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> Fix printk format warning (from i386 build):
-> 
-> drivers/net/hippi/rrunner.c:146:9: warning: format '%08llx' expects type 'long long unsigned int', but argument 3 has type 'resource_size_t'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Hi all,
 
-I'll apply this, thanks Randy.
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+produced this warning:
+
+kernel/seccomp.c: In function '__secure_computing':
+kernel/seccomp.c:445:1: warning: label 'skip' defined but not used [-Wunuse=
+d-label]
+kernel/seccomp.c:381:6: warning: unused variable 'data' [-Wunused-variable]
+kernel/seccomp.c:380:6: warning: unused variable 'ret' [-Wunused-variable]
+
+Introduced by commit acf3b2c71ed2 ("seccomp: add SECCOMP_RET_ERRNO").
+This build has CONFIG_SECCOMP_FILTER turned off.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__17_Apr_2012_14_10_23_+1000_8Q0O88w=KhKpINNI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPjO0vAAoJEECxmPOUX5FEf2kP/1V/VJuAA4t/el0hWTW7j4KP
+Ce6PXFQN1tZZ09STZk27G/Gu/W7K6Owtk+IJhc+YuiuGHIbofOIz/LNJ3h/WoyuD
+qLCzvcE8EmOr8BR+jlivLkChLjvDxzoeNLba7BBmLX1cczkJXa6b7mKWI01uP2MC
+6Sc9RG2JMgB6adQSlZfUBlfG+TMEeAXAr584ejjqNSKzIWlp13hY9zMqOkZT6h30
+F1UrdcUK6bc29XzsuBsldL2GCYzjNuejj+LAErXRoGNa9NGpzG9Xqr1hu+Bk77LH
+utEoKTXY/r7fINxEPh4/V0BullV6NilVqkFkWuF6h+6qLQYsVBHZTuguztQ0PLcX
+iUnumi3cHZUJa2mQDfaWnr1jgHzObKljytqWTwFzDvz5wE0ZNJXG5HhDXsxNqcAP
+Du/FJVqeg9T5s07s/jmxxDtkmHHR2BPKxgmSZiaAGdOJ9yq/6WhG9//wIKNwz987
+5CjpNDvhVB3cFJs+tQ+oR/sIh7XX4wfkLbPAXDVJjFhRYFmQQPqaKC9ATLANU9lW
+awE4bX+k40TPVr/jL2x11NwfzVwyQAGFNRiKcJYkd9KnW3LP237uAqkHaYqBFXbi
+FwFpv/dFSnrOejxkAHQvXpkOlH8n0OWz5G46ivvuCRCoQC/Rl/1FMYjPk5++okmY
+KikMquSTNxidf7fQ0Wvo
+=NQx5
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_Apr_2012_14_10_23_+1000_8Q0O88w=KhKpINNI--
