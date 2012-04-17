@@ -1,79 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] seccomp: use a static inline for a function stub
-Date: Tue, 17 Apr 2012 12:08:48 +1000
-Message-ID: <20120417120848.e7f3eabfbf79dc609318ea1e@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (devicetree tree related)
+Date: Tue, 17 Apr 2012 13:23:57 +1000
+Message-ID: <20120417132357.b38685ea31582e638623961c@canb.auug.org.au>
+References: <20120411151155.b1a614f174442a592d1c1561@canb.auug.org.au>
+	<20120412103157.70669ff82b81d5d926c36d4d@canb.auug.org.au>
+	<CACxGe6tDa+AzK0O=E+EPZ90Ek_C-rM-G4fHSnsdL0S+fNcmzmw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__17_Apr_2012_12_08_48_+1000_LCPVam8Xvpn0Whj7"
+ boundary="Signature=_Tue__17_Apr_2012_13_23_57_+1000_M.zjKQy2Yq6oCASo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56293 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:52806 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751523Ab2DQCJA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 22:09:00 -0400
+	with ESMTP id S1752586Ab2DQDYK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 23:24:10 -0400
+In-Reply-To: <CACxGe6tDa+AzK0O=E+EPZ90Ek_C-rM-G4fHSnsdL0S+fNcmzmw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: Will Drewry <wad@chromium.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Eric Paris <eparis@redhat.com>, Kees Cook <keescook@chromium.org>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
 
---Signature=_Tue__17_Apr_2012_12_08_48_+1000_LCPVam8Xvpn0Whj7
-Content-Type: text/plain; charset=US-ASCII
+--Signature=_Tue__17_Apr_2012_13_23_57_+1000_M.zjKQy2Yq6oCASo
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Fixes this error message when CONFIG_SECCOMP is not set:
+Hi Grant,
 
-arch/powerpc/kernel/ptrace.c: In function 'do_syscall_trace_enter':
-arch/powerpc/kernel/ptrace.c:1713:2: error: statement with no effect [-Werr=
-or=3Dunused-value]
+On Wed, 11 Apr 2012 18:35:34 -0600 Grant Likely <grant.likely@secretlab.ca>=
+ wrote:
+>
+> On Wed, Apr 11, 2012 at 6:31 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> > Hi Grant,
+> >
+> > On Wed, 11 Apr 2012 15:11:55 +1000 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+> >>
+> >> After merging the final tree, today's linux-next build (sparc64 defcon=
+fig)
+> >> failed like this:
+> >>
+> >> drivers/of/of_mdio.c: In function 'of_mdiobus_register':
+> >> drivers/of/of_mdio.c:75:4: error: implicit declaration of function 'ir=
+q_of_parse_and_map' [-Werror=3Dimplicit-function-declaration]
+> >>
+> >> Caused by commit e46c11b94787 ("of/irq: add empty irq_of_parse_and_map=
+()
+> >> for non-dt builds"). =C2=A0SPARC has CONFIG_OF but not CONFIG_OF_IRQ .=
+..
+> >>
+> >> I have reverted that commit for today.
+> >
+> > That commit is actually in the devicetree-current tree.
+>=20
+> Yes, drop that tree or revert that commit.  There's nothing else in
+> there and I didn't have time to pull it back today before you started
+> linux-next for the day.  The change is bogus and I'll spin a proper
+> fixup for tomorrow.
 
-Signed-off-by: Stephen Rothwell <sfr@ozlabs.au.ibm.com>
----
- include/linux/seccomp.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
-index 5818e86..60f2b35 100644
---- a/include/linux/seccomp.h
-+++ b/include/linux/seccomp.h
-@@ -90,7 +90,7 @@ static inline int seccomp_mode(struct seccomp *s)
- struct seccomp { };
- struct seccomp_filter { };
-=20
--#define secure_computing(x) 0
-+static inline int secure_computing(int this_syscall) { return 0; }
-=20
- static inline long prctl_get_seccomp(void)
- {
---=20
-1.7.8.3
-
-
-
+Ping?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__17_Apr_2012_12_08_48_+1000_LCPVam8Xvpn0Whj7
+--Signature=_Tue__17_Apr_2012_13_23_57_+1000_M.zjKQy2Yq6oCASo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPjNCwAAoJEECxmPOUX5FEaEIQAIny0tCow9vM3W3NeHsw27Ar
-7+jmsLCVLBHKS+vdevN472pIBwl+0fOnPZutCfpEtX8WSjmnNmkWKta7WY3UpgIz
-fXhmJX7ZohvCzdzEw4y+02MALRtk+5rxEtRDaMQzCSHX66ZC+Mpf+FMwoavOgaiA
-iUpYxJ29tq9tg8QH77U33uMKJ9CE10dZ58Z3IFMYlWIi2cVmakrCdGf8Yak9JqAz
-Of95urF/ZeT5KKiDgnkHcUpIH3/8HZVgN1iaEepgXprMPFEKcU7WX9cSEeTMWXTA
-JQfevKrHgOVAqOymP1/XLmtcWMu6XXiiJw1VDpI9vhIvyA/1YWsh9C2L9crKx9XF
-zFao3z2weDIQTo6F0Efjt5i0so2mr5dF3B0j/9U4tbM27MAmffcNLEwL1H6lY8+u
-2a+gt62+5Muoy/ifDMYCKiRewe+Wa8eQm2OEBwhqSUljj3IESfBqFHVIw2SsFxGV
-bVnGwzbVn/CMk6SCBIuqrx4z4Gu7rwOoi8buMnIBw0OdgeRCSDbrSXRYJShrh3I+
-xS98+rZq4EGgT9OqziN+lPmBoVoBlCEdx0hZ6FLjQxBuJietyxfspxAkXqDVwB4D
-hcR0zW4m+ITyax+J5Pl7SRoIg5yxRIxYsdagnrpwMS80iVP0BuzjkEk67P3+jBdW
-ipxjTG9r3BRg/AxNqZ18
-=ZVmM
+iQIcBAEBCAAGBQJPjOJNAAoJEECxmPOUX5FEz6oP/RT3j3VTeUJqMPwt3/0tdusn
+NbgL+9y6h6BFLAfh53ewNKq6Pmpr8+VjM6o1v0L39xEma+6YUmldELi2i+m995BX
+w2Zfil3TymHVjnGnP1NxctYu/ZzqCDWxFz2NWuQcuG6lZSWrMsu6g1tvreA9tbDA
+beOoTHR1C7crL1eAZKOhaqV6B+mirpbWr5UXphwlWqwrZrlYG6EFegnzASY60lG7
+MOTjjcdtLKnGVrD6eVMfyT/Y1B6vPX5kIDgupJL3/wRV3h5wPhkbWqPJxVRvGiLX
+FSZmGh5uKFV9mrBIr2Jc6BkFw+NETjKiICXVxP+ujD2fukCJXRKIdVbButAyn317
+UdhNUPVeJ0d8KzROtwdNys/TQGA2kI2wm3eu/JBn0qTuwnLCBW06VO+UkbaZHM7r
+Yem2bFItvhlZZbcX+bFcH967FX/2tIkZzC0Nh4/sd9XBnLCxvUGa87VypRhBNxU9
+ThvU8KyZT2rLm1EE++Kg+FMuDfCbeXPECOqvw0U80WyyZb8keUGMsJPWC2avnmus
+SlMOOHe4B+KaWHS1CEne9qRRDvXVnjv6+id1wumBOckyobeFgxZBo9IeUokQaMnw
+L//rgVwv528uOfN2ysy5yB177+AbMNT2xj/6GhiA4nMnrQ1egLDceIa1IMj6ZJF3
+Eklx+JTxmM/fWO3TQlQ1
+=hwoi
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__17_Apr_2012_12_08_48_+1000_LCPVam8Xvpn0Whj7--
+--Signature=_Tue__17_Apr_2012_13_23_57_+1000_M.zjKQy2Yq6oCASo--
