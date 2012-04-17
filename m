@@ -1,110 +1,73 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Apr 17 (rcu)
-Date: Tue, 17 Apr 2012 13:14:31 -0700
-Message-ID: <4F8DCF27.4060106@xenotime.net>
-References: <20120417144241.0d7dc5fde56b2a37ff0dcaba@canb.auug.org.au> <4F8DBD14.5000100@xenotime.net> <20120417163232.GG2404@linux.vnet.ibm.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (devicetree tree related)
+Date: Tue, 17 Apr 2012 16:39:16 -0600
+Message-ID: <CACxGe6ua4ev7-8Mvmvu4UKfGY12g0mTY-uAmRqcZnpFZnA_70w@mail.gmail.com>
+References: <20120411151155.b1a614f174442a592d1c1561@canb.auug.org.au>
+ <20120412103157.70669ff82b81d5d926c36d4d@canb.auug.org.au>
+ <CACxGe6tDa+AzK0O=E+EPZ90Ek_C-rM-G4fHSnsdL0S+fNcmzmw@mail.gmail.com>
+ <20120417132357.b38685ea31582e638623961c@canb.auug.org.au> <CACxGe6ugOsCNRD2Jqyv-gf8X4Dvd012Gn5RyBq4TQBBb86W1qg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:58305 "HELO
-	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752066Ab2DQRO3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Apr 2012 13:14:29 -0400
-In-Reply-To: <20120417163232.GG2404@linux.vnet.ibm.com>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:35252 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751046Ab2DQWji convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Apr 2012 18:39:38 -0400
+Received: by obbta14 with SMTP id ta14so5721556obb.19
+        for <linux-next@vger.kernel.org>; Tue, 17 Apr 2012 15:39:38 -0700 (PDT)
+In-Reply-To: <CACxGe6ugOsCNRD2Jqyv-gf8X4Dvd012Gn5RyBq4TQBBb86W1qg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, paul.gortmaker@windriver.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
 
-On 04/17/2012 09:32 AM, Paul E. McKenney wrote:
-
-> On Tue, Apr 17, 2012 at 11:57:24AM -0700, Randy Dunlap wrote:
->> On 04/16/2012 09:42 PM, Stephen Rothwell wrote:
+On Mon, Apr 16, 2012 at 9:39 PM, Grant Likely <grant.likely@secretlab.c=
+a> wrote:
+> On Mon, Apr 16, 2012 at 9:23 PM, Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+>> Hi Grant,
 >>
->>> Hi all,
+>> On Wed, 11 Apr 2012 18:35:34 -0600 Grant Likely <grant.likely@secret=
+lab.ca> wrote:
 >>>
->>> Changes since 20120416:
+>>> On Wed, Apr 11, 2012 at 6:31 PM, Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote:
+>>> > Hi Grant,
+>>> >
+>>> > On Wed, 11 Apr 2012 15:11:55 +1000 Stephen Rothwell <sfr@canb.auu=
+g.org.au> wrote:
+>>> >>
+>>> >> After merging the final tree, today's linux-next build (sparc64 =
+defconfig)
+>>> >> failed like this:
+>>> >>
+>>> >> drivers/of/of_mdio.c: In function 'of_mdiobus_register':
+>>> >> drivers/of/of_mdio.c:75:4: error: implicit declaration of functi=
+on 'irq_of_parse_and_map' [-Werror=3Dimplicit-function-declaration]
+>>> >>
+>>> >> Caused by commit e46c11b94787 ("of/irq: add empty irq_of_parse_a=
+nd_map()
+>>> >> for non-dt builds"). =A0SPARC has CONFIG_OF but not CONFIG_OF_IR=
+Q ...
+>>> >>
+>>> >> I have reverted that commit for today.
+>>> >
+>>> > That commit is actually in the devicetree-current tree.
 >>>
->>> The rcu tree lost its build failure.
+>>> Yes, drop that tree or revert that commit. =A0There's nothing else =
+in
+>>> there and I didn't have time to pull it back today before you start=
+ed
+>>> linux-next for the day. =A0The change is bogus and I'll spin a prop=
+er
+>>> fixup for tomorrow.
 >>
->>
->> ERROR: "rcu_read_lock_nesting" [net/sctp/sctp.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/rds/rds.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/phonet/phonet.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/openvswitch/openvswitch.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/netfilter/xt_TCPMSS.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/netfilter/nfnetlink.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/netfilter/nf_conntrack.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/netfilter/ipset/ip_set.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/llc/llc2.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/l2tp/l2tp_ip.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/l2tp/l2tp_core.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/key/af_key.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/ipv4/ipip.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/decnet/decnet.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/core/netprio_cgroup.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/can/can.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/can/can-bcm.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/bridge/bridge.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/bluetooth/bluetooth.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/batman-adv/batman-adv.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [net/atm/atm.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [fs/gfs2/gfs2.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [drivers/net/vmxnet3/vmxnet3.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [drivers/input/joydev.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [drivers/char/tpm/tpm.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [drivers/char/ipmi/ipmi_msghandler.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [block/cfq-iosched.ko] undefined!
->> ERROR: "rcu_read_lock_nesting" [block/blk-cgroup.ko] undefined!
->>
->> on i386.
->>
->> Full randconfig file is attached.
-> 
-> Sigh!  I failed to add the exports.  Please see the following
-> not-yet-tested patch.
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> rcu: Add exports for per-CPU variables used for inlining
-> 
-> The new rcu_read_lock_nesting and rcu_read_unlock_special per-CPU
-> variables need to be accessible from modules to allow rcu_read_lock()
-> and rcu_read_unlock() to continue to be used from modules.  This
-> commit therefore adds the needed EXPORT_PER_CPU_SYMBOL_GPL()s.
-> 
-> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: Paul E. McKenney <paul.mckenney@linaro.org>
-> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>> Ping?
+>
+> Haven't got it done yet. =A0It's still safe to ignore that tree.
 
+Should be fixed now.
 
-Works for me.  Thanks.
-
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-
-
-> 
-> diff --git a/kernel/rcupdate.c b/kernel/rcupdate.c
-> index d52c68e..ef83774 100644
-> --- a/kernel/rcupdate.c
-> +++ b/kernel/rcupdate.c
-> @@ -53,7 +53,9 @@
->  
->  #ifdef CONFIG_PREEMPT_RCU
->  DEFINE_PER_CPU(int, rcu_read_lock_nesting);
-> +EXPORT_PER_CPU_SYMBOL_GPL(rcu_read_lock_nesting);
->  DEFINE_PER_CPU(int, rcu_read_unlock_special);
-> +EXPORT_PER_CPU_SYMBOL_GPL(rcu_read_unlock_special);
->  #ifdef CONFIG_PROVE_RCU
->  DEFINE_PER_CPU(struct task_struct *, rcu_current_task);
->  #endif /* #ifdef CONFIG_PROVE_RCU */
-> 
-
-
-
--- 
-~Randy
+g.
