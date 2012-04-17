@@ -1,39 +1,80 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: build warning in Linus' tree
-Date: Mon, 16 Apr 2012 21:45:03 -0400
-Message-ID: <20120417014503.GA1151@phenom.dumpdata.com>
-References: <20120417104430.d1844b17e4c7d5ffb132f816@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (security tree related)
+Date: Tue, 17 Apr 2012 12:02:33 +1000
+Message-ID: <20120417120233.5be055e2821d71b3eadd0149@canb.auug.org.au>
+References: <20120416154607.302f7ae245472e1e917dacef@canb.auug.org.au>
+	<CABqD9hauxzd4vVbxyC5M1p9e6mLt1cjYP7wbhzTKPi3iMpc0kg@mail.gmail.com>
+	<CABqD9hYhC3dNX3CVSbsuJaG=zBUC4VMyMVYYmyOTN+Xfb=uC8w@mail.gmail.com>
+	<alpine.LRH.2.02.1204171127130.14814@tundra.namei.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet15.oracle.com ([141.146.126.227]:25897 "EHLO
-	acsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754624Ab2DQBuK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Apr 2012 21:50:10 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__17_Apr_2012_12_02_33_+1000_GcEHLSP.GHGS3Z0v"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.LRH.2.02.1204171127130.14814@tundra.namei.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: James Morris <jmorris@namei.org>
+Cc: Will Drewry <wad@chromium.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Eric Paris <eparis@redhat.com>, Kees Cook <keescook@chromium.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Tue__17_Apr_2012_12_02_33_+1000_GcEHLSP.GHGS3Z0v
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20120417104430.d1844b17e4c7d5ffb132f816@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 17, 2012 at 10:44:30AM +1000, Stephen Rothwell wrote:
-> Hi Konrad,
-> 
-> Building Linus' tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> drivers/block/xen-blkback/xenbus.c: In function 'xen_blkbk_discard':
-> drivers/block/xen-blkback/xenbus.c:419:4: warning: passing argument 1 of 'dev_warn' makes pointer from integer without a cast [enabled by default]
-> include/linux/device.h:894:5: note: expected 'const struct device *' but argument is of type 'long int'
-> 
-> Introduced by commit 3389bb8bf761 ("xen/blkback: Make optional features
-> be really optional").  Passing "dev-dev" to dev_warn() was hopefully not
-> intended ...
+Hi James,
 
-No it was not. Not even sure how that mistake passed my compile test.
+On Tue, 17 Apr 2012 11:33:26 +1000 (EST) James Morris <jmorris@namei.org> w=
+rote:
+>
+> On Mon, 16 Apr 2012, Will Drewry wrote:
+>=20
+> > >> arch/powerpc/kernel/ptrace.c: In function 'do_syscall_trace_enter':
+> > >> arch/powerpc/kernel/ptrace.c:1713:2: error: statement with no effect=
+ [-Werror=3Dunused-value]
+> > >> cc1: all warnings being treated as errors
+>=20
+> Is this happening because of
+>=20
+> 	#define secure_computing(x) 0
+>=20
+> ?
+>
+> In any case, that should probably be a static inline.
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+That could well be so - sorry I missed that.  The failure was in an
+allnoconfig build, so CONFIG_SECCOMP was off.
+
+And yes, changing that to:
+
+static inline int secure_computing(int this_syscall) { return 0; }
+
+fixes the build problem.  So that is a better fix.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__17_Apr_2012_12_02_33_+1000_GcEHLSP.GHGS3Z0v
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPjM85AAoJEECxmPOUX5FEGE4P/2pcZF7iaiI7bil1p44ikEDi
+jRRG+EYE4X/5D1WV8DWH/Rm5OrvbZPOqe+qy5VIOIcpOvDm/1bO5yckf2eoweQuz
+jCcY79OceABxZZdACmVdQa+5VIvDosb7USPOWjLXIqOehgb8g1IqL8ThE1GTGRs6
+qUr75dxf2p8huAGq2zB7Pqylj+tJcwv2Pb7EUXRdC2zp2vplbhQbcywkCwTfuieX
+WISInGXkrJp/pMXM/8mbGX4Sn7/Kt3Y44YQfnByX0ZcCuedTC8wChTTVW41EuBPg
+uo9X6CSrTofyk4xCy0d2+KHdv+w6TGShUDxRJzxm07sbcJIII4K10KYmUGffS4Xb
+bc6bZF2oyqOz10wSZJfipVE4aTGIa6hqQFJ2Liaov5cPmd+pIExSFL4PPBkHp8e7
+5oLbL+8nfIK/8qm6ZRbjwYhhTN+3HnzPn7eZVcz3aUYZ0ZLOGbkKmtdeRwErXzkQ
+l8CuSkIPdrzB3tmYL2C6ZfK4eZNcacXNrptuZAUf9/4H/YKJYtOM3nImPC+qfQ1+
+HxdkAGeU4I0ov9J+geQyL14aWzWYsYPMiqkqm5+eiGqfZp1UqseSnyN/r6cAD3W0
+yazgNFFkJ2suhVy2qQk61eD7jdq3m/5Qd2/KwHuXKI5vsCyDjOBoLElA6Zbg4rmO
+qP9rC+7Lf22uLI8oA+Rf
+=1U/p
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_Apr_2012_12_02_33_+1000_GcEHLSP.GHGS3Z0v--
