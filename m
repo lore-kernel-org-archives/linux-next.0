@@ -1,37 +1,48 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] w1: fix ds28e04 build, select CRC16
-Date: Wed, 18 Apr 2012 08:06:33 -0700
-Message-ID: <4F8ED879.9090606@xenotime.net>
-References: <20120418150056.0c6057320a29b3b482a63cc7@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120418150056.0c6057320a29b3b482a63cc7@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Evgeniy Polyakov <zbr@ioremap.net>
-List-Id: linux-next.vger.kernel.org
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH] cris: Remove old legacy "-traditional" flag from arch-v10/lib/Makefile
+Date: Wed, 18 Apr 2012 15:58:43 -0400
+Message-ID: <1334779123-21957-1-git-send-email-paul.gortmaker@windriver.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:59962 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751238Ab2DRT7A (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Apr 2012 15:59:00 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: jesper.nilsson@axis.com
+Cc: starvik@axis.com, linux-cris-kernel@axis.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+Most of these have been purged years ago.  This one silently lived
+on until commit 69349c2dc01c489eccaa4c472542c08e370c6d7e
 
-Fix build error by selecting CRC16:
+    "kconfig: fix IS_ENABLED to not require all options to be defined"
 
-ERROR: "crc16" [drivers/w1/slaves/w1_ds28e04.ko] undefined!
+In the above, we use some macro trickery to create a conditional that
+is valid in CPP and in C usage.  However that trickery doesn't sit
+well if you have the legacy "-traditional" flag enabled.  You'll get:
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc:	Evgeniy Polyakov <zbr@ioremap.net>
----
- drivers/w1/slaves/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+  AS      arch/cris/arch-v10/lib/checksum.o
+In file included from <command-line>:4:0:
+include/linux/kconfig.h:23:0: error: syntax error in macro parameter list
+make[2]: *** [arch/cris/arch-v10/lib/checksum.o] Error 1
 
---- linux-next-20120418.orig/drivers/w1/slaves/Kconfig
-+++ linux-next-20120418/drivers/w1/slaves/Kconfig
-@@ -97,6 +97,7 @@ config W1_SLAVE_DS2781
- config W1_SLAVE_DS28E04
- 	tristate "4096-Bit Addressable 1-Wire EEPROM with PIO (DS28E04-100)"
- 	depends on W1
-+	select CRC16
- 	help
- 	  Say Y here if you want to use a 1-wire
- 	  4kb EEPROM with PIO family device (DS28E04).
+Everything builds fine w/o "-traditional" so simply drop it from this
+location as well.
+
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+diff --git a/arch/cris/arch-v10/lib/Makefile b/arch/cris/arch-v10/lib/Makefile
+index 36e9a9c..725153e 100644
+--- a/arch/cris/arch-v10/lib/Makefile
++++ b/arch/cris/arch-v10/lib/Makefile
+@@ -2,8 +2,5 @@
+ # Makefile for Etrax-specific library files..
+ #
+ 
+-
+-EXTRA_AFLAGS := -traditional
+-
+ lib-y  = checksum.o checksumcopy.o string.o usercopy.o memset.o csumcpfruser.o
+ 
+-- 
+1.7.9.1
