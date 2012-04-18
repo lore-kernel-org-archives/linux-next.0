@@ -1,227 +1,111 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: triage for April 17, 2012
-Date: Tue, 17 Apr 2012 23:05:24 -0400
-Message-ID: <20120418030524.GD21302@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: triage for April 17, 2012
+Date: Wed, 18 Apr 2012 14:55:52 +1000
+Message-ID: <20120418145552.3272a0b2f4da1440dd097f75@canb.auug.org.au>
+References: <20120418030524.GD21302@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:51775 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751577Ab2DRDFa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Apr 2012 23:05:30 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__18_Apr_2012_14_55_52_+1000_FqxmkU6A8.nVJSQr"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120418030524.GD21302@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__18_Apr_2012_14_55_52_+1000_FqxmkU6A8.nVJSQr
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-There was some RCU fallout due to a missing symbol export; that is
-already fixed, and so not listed in anything below.  It used to fail
-with:  ERROR: "rcu_read_lock_nesting" [somemodule.ko] undefined!
-[ http://marc.info/?l=linux-kernel&m=133468298118423&w=2 ]
+Hi Paul,
 
-The s390 got stabbed by some tty ref counting patches, but these
-appear to be reported and fixed as well (by me and others).  So
-they aren't listed below either.
-[ http://marc.info/?l=linux-next&m=133466627810965&w=2 ]
+On Tue, 17 Apr 2012 23:05:24 -0400 Paul Gortmaker <paul.gortmaker@windriver=
+.com> wrote:
+>
+> We've got fails in a couple ARM platforms, since those platforms
+> were deleted.  Perhaps we can slot in new ARM boards like the vexpress
+> into those slots? [ixp2000_defconfig, ixp23xx_defconfig now dead]
 
-We've got fails in a couple ARM platforms, since those platforms
-were deleted.  Perhaps we can slot in new ARM boards like the vexpress
-into those slots? [ixp2000_defconfig, ixp23xx_defconfig now dead]
+I have disabled building those configs and added the following:
 
-The i386 allmodconfig lost the fails from rc5t583 and mellanox
-via my patches, but picked up a new issue in seccomp/bpf-direct.c
-[ http://marc.info/?l=linux-kernel&m=133471624530782&w=2 ]
+acs5k_defconfig
+acs5k_tiny_defconfig
+afeb9260_defconfig
+ag5evm_defconfig
+at91sam9260_defconfig
+at91sam9g20_defconfig
+at91sam9g45_defconfig
+at91sam9rl_defconfig
+bcmring_defconfig
+bonito_defconfig
+cm_x300_defconfig
+cns3420vb_defconfig
+colibri_pxa270_defconfig
+colibri_pxa300_defconfig
+cpu9260_defconfig
+cpu9g20_defconfig
+da8xx_omapl_defconfig
+dove_defconfig
+edb7211_defconfig
+exynos4_defconfig
+ezx_defconfig
+h5000_defconfig
+imote2_defconfig
+kirkwood_defconfig
+kota2_defconfig
+lpc32xx_defconfig
+mackerel_defconfig
+marzen_defconfig
+mini2440_defconfig
+mmp2_defconfig
+mv78xx0_defconfig
+nhk8815_defconfig
+nuc910_defconfig
+nuc950_defconfig
+nuc960_defconfig
+palmz72_defconfig
+pxa168_defconfig
+pxa910_defconfig
+qil-a9260_defconfig
+s3c6400_defconfig
+s5p64x0_defconfig
+s5pc100_defconfig
+s5pv210_defconfig
+spear3xx_defconfig
+spear6xx_defconfig
+stamp9g20_defconfig
+tegra_defconfig
+usb-a9260_defconfig
+viper_defconfig
+xcep_defconfig
+zeus_defconfig
 
-For ARCH=cris, we are seeing a kooky error triggered by the G+
-crowdsourcing macro foo.  I need to look into how that happens,
-since I was the sap who got delegated to doing the implementation.
-Looks specific to files fed to gas vs. gcc at 1st glance.  Whee.
+Hopefully they will mostly build :-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-The pagemap.h fixes are in, but that reveals that mips allmodconfig
-still has various (longstanding?) issues hiding behind that.
+--Signature=_Wed__18_Apr_2012_14_55_52_+1000_FqxmkU6A8.nVJSQr
+Content-Type: application/pgp-signature
 
-I've deleted info about the ppc allyesconfig, ARM allnoconfig,
-and UML fails, since they may be broken indefinitely.  See new
-Note2 below.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-----------------------
+iQIcBAEBCAAGBQJPjklYAAoJEECxmPOUX5FE5doP/jZS8DmoCXweGjJA9QHGtJ7h
+xSqQSRgh8eaAaYAzksHTWmzulB5fxahIi9j9RO7dHitKmZmGH2Sy3G3VKsCUDP3J
+2ed1d9immdgke8Kez9HymnnLo/ql2ykSPHPOLiZo+Boxf7yFsc5LZZ3K9BJlCQyd
+42SMmWKT3D4hlBNdSNT9mv0PpFCRPlOG3Y7XD5+y/jRs4s37AVEdjrVSJVwtsicb
+EeB6gSObH8E+l9jSjDQWgICFn8QDpaZNiVSUnMsikpVBku9L9HjVdoulaxj6W+zA
+Jpm01PabV3nO42NGNxJqmoy9TVI2hdZGRcu1eVlU+kRVAdYA5hTDmpzg1pg96qYB
+iAP9DtnzioitXJDFTxGAo07jdQ2F2ifaIlnFD9fJu3s6u0EynqdUOEabm8gD3kM9
+qciVI2awBL2YtPXAoudbz2merJSuHqHBf+7XNmCS3NLFFFn8UpJJ6oPM2bNlUxPE
+9vDE1exz2lmneYzB9+muzW00wQyEoFR77QZgZGLVm4xe/WjssIUl364Hh7ilW8wa
+N6w8rEgm7swwrR9CUT4+f9mD+4EYwUAeWrRrOS9asesFntwT8tVWE5ECq1NRREMG
+Aih963mI/TDR5hmtnXY7SXTirp5MdiOmjoqv6SAWzey7XrWbGtR1p5xFXDck9PIj
+wSLSspBOkw9f6ScxRwJc
+=ei1i
+-----END PGP SIGNATURE-----
 
-New breakage since last report:
-	i386:allmodconfig
-		(samples/seccomp/bpf-direct.c: #error Unsupported platform)
-	cris:various_defconfigs
-		(kconfig.h:23 syntax error in macro parameter list)
-
-Randconfig fails that may or may not be new (by their very nature):
-	powerpc: drivers/i2c/busses/i2c-designware-pci.o
-		(In function `i2c_dw_clear_int': mult def of `i2c_dw_clear_int'
-		 drivers/i2c/busses/i2c-designware-platform.o: first def here
-
-Builds that are fixed since last report:
-	ARM:u8500_defconfig
-		(ste_dma40.c: implicit decl of function 'regulator_disable')
-	AVR32:defconfig
-		(pagemap.h: assignment of read-only variable '__pu_val')
-	m68k:various
-		(pagemap.h: read-only location '*end' used as 'asm' output)
-	powerpc:mpc85xx_defconfig
-		(spi-fsl-lib.c: dereferencing pointer to incomplete type)
-
-----------------------
-
-Note1: The randconfig fails are only listed once and not tracked
-in the below listing.
-
-Note2: Build fails that are perpetual and/or unlikely to ever
-get fixed are not tracked here.
-
-Note3: Issues that Stephen finds and reverts/avoids before kicking
-off the all-arch/all-config builds are also not tracked here.
-
-Note4: I'm also not tracking the kallsyms extra pass on ARM on
-a per board basis anymore.  It has nothing to do with the board.
-Why? See:  http://marc.info/?l=linux-next&m=133267456809502
-
-----------------------
-
-Latest results at:
-	http://kisskb.ellerman.id.au/kisskb/branch/9/
-
-Failures as of April 17th, 2012:
-===============================
-
-AM33:asb2303_defconfig,asb2364_defconfig
-	when:	Mar 15
-	why:	cc1: error: unrecognized command line option '-mmem-funcs'
-	status:	Possible fix from TonyB sent for review.
-	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
-----------------
-
-ARM:netx_defconfig,pnx4008_defconfig 
-	when:	Mar 14
-	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
-	ref:	https://lkml.org/lkml/2012/3/13/670
-
-ARM:ixp4xx_defconfig
-	when:	Oct 26
-	why:	gpio.h: implicit declaration of function '__gpio_get_value'
-	status:	fixed (Imre Kaloz) - but possibly needs rework?
-	fix:	https://lkml.org/lkml/2012/2/8/288
-	ref:	https://lkml.org/lkml/2012/2/8/287
-
-ARM:raumfeld_defconfig
-	when:	Nov 23
-	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
-	status:	perhaps broken since 2010?  See ref below.
-	fix:	
-	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
-
-----------------
-
-AVR32:allnoconfig
-	when:	May 26 2010, 20:49
-	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
-	status:
-	fix:
-	ref:
----------------
-
-bfin: 50% of builds
-	when:	Mar 31
-	why:	"Error: pcrel too far BFD_RELOC_BFIN_10" from kernel/time/timekeeping.c
-	status:	unknown, binutils issue?
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6087324/
----------------
-
-cris:various_defconfigs
-	when:	Apr 16
-	why:	AS      arch/cris/arch-v10/lib/checksumcopy.o
-	why:	In file included from <command-line>:4:0:
-	why:	include/linux/kconfig.h:23:0: error: syntax error in macro parameter list
-	why:	[macro magic for config_enabled]
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6123623/
-	ref:	commit 69349c2dc01c489eccaa4c472542c08e370c6d7e
-
-cris:allyesconfig,allmodconfig
-	when:	Apr 3
-	why:	too many to list here
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035250/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035249/
-----------------
-
-frv:defconfig
-	when:	Mar 15
-	why:	undefined reference to `pci_cardbus_resource_alignment'
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6030067/
-----------------
-
-i386:allmodconfig
-	when:	Apr 17
-	why:	samples/seccomp/bpf-direct.c:47:2: error: #error Unsupported platform
-	status:	reported
-	fix:
-	ref:	http://marc.info/?l=linux-kernel&m=133471624530782&w=2
-----------------
-
-h8300:defconfig
-	when:	Mar 15
-	why:	time.c: implicit declaration of function 'get_irq_regs'
-	why:	also seems gcc suffers an ICE
-	status:	ICE bug lodged with gcc folks (TonyB)
-	fix:
-	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
-----------------
-
-m32r:m32700ut.smp_defconfig
-	when:	Mar 15
-	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
-	status:
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
-----------------
-
-m68k:allmodconfig
-	when:	Mar 16
-	why:	persistent_ram.c: implicit declaration of 'memblock_reserve'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884324/
-	ref:	http://www.spinics.net/lists/linux-next/msg19343.html
-----------------
-
-mips:allmodconfig
-	when:
-	why:	sound/oss/soundcard.c: 'MAX_DMA_CHANNELS' undeclared
-	status: one of many fixes mips needs...
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6091660/
-----------------
-
-parisc:allmodconfig
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-
-parisc64:a500_defconfig 
-	when:
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	fix:
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
+--Signature=_Wed__18_Apr_2012_14_55_52_+1000_FqxmkU6A8.nVJSQr--
