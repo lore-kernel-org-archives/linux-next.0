@@ -1,61 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the md tree
-Date: Thu, 19 Apr 2012 12:55:02 +1000
-Message-ID: <20120419125502.bd9b7dcbe9497c8319035793@canb.auug.org.au>
+From: NeilBrown <neilb@suse.de>
+Subject: Re: linux-next: build failure after merge of the md tree
+Date: Thu, 19 Apr 2012 13:15:24 +1000
+Message-ID: <20120419131524.019346fd@notabene.brown>
+References: <20120419125502.bd9b7dcbe9497c8319035793@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__19_Apr_2012_12_55_02_+1000_0wwqVnHmEFZIXi=j"
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/sMwB8IHQ95T=L_m=NAoZoKt"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52885 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752665Ab2DSCzO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Apr 2012 22:55:14 -0400
+Received: from cantor2.suse.de ([195.135.220.15]:53605 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751388Ab2DSDPc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Apr 2012 23:15:32 -0400
+In-Reply-To: <20120419125502.bd9b7dcbe9497c8319035793@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__19_Apr_2012_12_55_02_+1000_0wwqVnHmEFZIXi=j
+--Sig_/sMwB8IHQ95T=L_m=NAoZoKt
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Neil,
+On Thu, 19 Apr 2012 12:55:02 +1000 Stephen Rothwell <sfr@canb.auug.org.au>
+wrote:
 
-After merging the md tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+> Hi Neil,
+>=20
+> After merging the md tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>=20
+> ERROR: ".bitmap_resize" [drivers/md/raid456.ko] undefined!
+> ERROR: ".bitmap_resize" [drivers/md/raid10.ko] undefined!
+>=20
+> Caused by commit 89efe2ab3a8c ("md/bitmap: add bitmap_resize function to
+> allow bitmap resizing") and followups.
+>=20
+> I have used the md tree form next-20120418 for today.
 
-ERROR: ".bitmap_resize" [drivers/md/raid456.ko] undefined!
-ERROR: ".bitmap_resize" [drivers/md/raid10.ko] undefined!
+Thanks a lot Stephen.
 
-Caused by commit 89efe2ab3a8c ("md/bitmap: add bitmap_resize function to
-allow bitmap resizing") and followups.
+I've add the missing EXPORT_SYMBOL_GPL(), so should be fine for next time
+round.
 
-I have used the md tree form next-20120418 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+NeilBrown
 
---Signature=_Thu__19_Apr_2012_12_55_02_+1000_0wwqVnHmEFZIXi=j
-Content-Type: application/pgp-signature
+--Sig_/sMwB8IHQ95T=L_m=NAoZoKt
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v2.0.18 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPj36GAAoJEECxmPOUX5FEgL4P/02w25JF4R8lA/tld7O7Y1Ot
-q3xHuaSUMw2fY1Z42Ke25Fqxj6hwfDbsFIo3RLLDJrV0Yd5XodMxoGEGbqIbtrWX
-v0UkcrYR1B5MGhP3CjzsD8E+Wt8n11Iejcb8eSQ2jchTgfzw5UPoq0LQ99K4QUXi
-NVBBlXNGbeoBRzNXPtsbwJLwN7PlxZq0A9eU+49ExXrQSrC2wc1ZXTIV5D2J7Wa5
-LciFmRKDZhOgs62wJBO6n7vg532ZbZO0iXkos5KkjDnh+9BJh8q6/lUROIZE92yQ
-oSf9ZGIEpTDC6l8NiexzL3lb8tqmP33vsX4z+3hA65TRdxAz3+Bwa7BRPcd94nT1
-WX8idg/Sp936I7GPMzzgzsdcDTeYOjAOyenU8Yk1bnC1mn9aMBzsaO7A4gThhjbt
-XCWXwf8KE0pKW5bt+FEhrdanEfAbVyLvv+LAjyFFh/wSIucIvaxAJHaDGl823rv2
-zp4C/BcbE+cUDdiW12kdw4dxrOToSTgM/EcyuJtAT85NHQQ7Fp65qXIWj6BR+EAU
-d7l5WF+A5LP3AnfnsLetn0u6RrbWyLtxE+OIDKoE23I3sR8bRi8gtO2wDp2tVZSm
-TLctuQz47VBglZwJHk3I/AUqdcXP2kmN+/rZSYSKmXSA30RKpDEFQIaRQP8O0AjZ
-Vpj0K3TG+Km37yXsNFNw
-=MSbR
+iQIVAwUBT4+DTDnsnt1WYoG5AQJeoA//SmVxOPIlsQafmRM7XVSyrXBziyHlZL/v
+fFJAU7voBfD/XfISxaUdNhqRYcYvxVkWgWxPxkO5pHNUAouGnHyhj9XuqvkE59rP
+H//lmydalw/WKFIDWghuqiIUM2lb46ZBM6ADwyScfjegLcmvsEGF9kF18qhm7UQL
+dZsFTf5lKvSB9KxZT1v93/MUq8HTtYA0SvKFd61bexluooZCCS3ijdEA9sJAOeNZ
+BpWTcP0jWi5/KUyOUoR0gmRUuIbaZuIJxp4um/vvz5dXJOAw7teZ3jQDY8/A9L4v
+cbumxcPStKLeeYuqtMjZWci8pJlrfCOuDmUo89JPf138SObu34uKx0U0ciPFO56c
+hFdC5WpeGYiTrMvTCGGpzpWV1hMAj5JJDIBC/ulN5PcZZKcHI1E8LhwMsa9M+mE2
+L+X2V0WNdpflqi/Ya6LaJBCBq/ArWfTWXsVKfx22vA8ZfKDh1u9QDB7PdmjDqRcZ
+nu4+zKKk8eCwHXoHX+/4N++Vq1gONmaQyHRCIAMWpaHjZJfFcS5xi9uZ+m1RjvOB
+DAICblzFeL9OQMPOS53rbvw7GZKTArFxNu35SKSfwYLktT2trpwS4HIb/1/gcgAP
+u70nvZs7dlvPnQHUhd8jVbXOHcHyWefhb9VdVWZgjrHKbVVUJuNiB/Lyp6k8Ks2O
+Gp2OzqbHg0I=
+=kH0w
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__19_Apr_2012_12_55_02_+1000_0wwqVnHmEFZIXi=j--
+--Sig_/sMwB8IHQ95T=L_m=NAoZoKt--
