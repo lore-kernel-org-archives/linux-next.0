@@ -1,56 +1,31 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: Tree for Apr 19 (media/video/mt9m032.c)
-Date: Thu, 19 Apr 2012 20:20:51 -0300
-Message-ID: <4F909DD3.6000403@redhat.com>
-References: <20120419164643.d9f918d44c890722b7707508@canb.auug.org.au> <4F909111.9020708@xenotime.net>
+From: Seth Jennings <sjenning@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for Apr 19 (zcache)
+Date: Thu, 19 Apr 2012 18:49:40 -0500
+Message-ID: <4F90A494.1080906@linux.vnet.ibm.com>
+References: <20120419164643.d9f918d44c890722b7707508@canb.auug.org.au> <4F909200.6070104@xenotime.net> <0b74f96b-8450-4dfb-8798-36edd0e06a64@default>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:36451 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754533Ab2DSXU6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Apr 2012 19:20:58 -0400
-In-Reply-To: <4F909111.9020708@xenotime.net>
+Received: from e33.co.us.ibm.com ([32.97.110.151]:51129 "EHLO
+	e33.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754151Ab2DSXtt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 19:49:49 -0400
+Received: from /spool/local
+	by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <sjenning@linux.vnet.ibm.com>;
+	Thu, 19 Apr 2012 17:49:48 -0600
+In-Reply-To: <0b74f96b-8450-4dfb-8798-36edd0e06a64@default>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: Nitin Gupta <nitingupta910@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Wilk <konrad.wilk@oracle.com>
 
-Em 19-04-2012 19:26, Randy Dunlap escreveu:
-> On 04/18/2012 11:46 PM, Stephen Rothwell wrote:
-> 
->> Hi all,
+On 04/19/2012 05:36 PM, Dan Magenheimer wrote:
+>> From: Randy Dunlap [mailto:rdunlap@xenotime.net]
 >>
->> Changes since 20120418:
-> 
-> 
-> 
-> on x86_64:
-> 
->   CC      drivers/media/video/mt9m032.o
-> drivers/media/video/mt9m032.c: In function '__mt9m032_get_pad_crop':
-> drivers/media/video/mt9m032.c:337:3: error: implicit declaration of function 'v4l2_subdev_get_try_crop'
-> drivers/media/video/mt9m032.c:337:3: warning: return makes pointer from integer without a cast
-> drivers/media/video/mt9m032.c: In function '__mt9m032_get_pad_format':
-> drivers/media/video/mt9m032.c:359:3: error: implicit declaration of function 'v4l2_subdev_get_try_format'
-> drivers/media/video/mt9m032.c:359:3: warning: return makes pointer from integer without a cast
-> drivers/media/video/mt9m032.c: In function 'mt9m032_probe':
-> drivers/media/video/mt9m032.c:767:41: error: 'struct v4l2_subdev' has no member named 'entity'
-> drivers/media/video/mt9m032.c:826:38: error: 'struct v4l2_subdev' has no member named 'entity'
-> drivers/media/video/mt9m032.c: In function 'mt9m032_remove':
-> drivers/media/video/mt9m032.c:842:38: error: 'struct v4l2_subdev' has no member named 'entity'
-> make[4]: *** [drivers/media/video/mt9m032.o] Error 1
-> 
-> Full randconfig file is attached.
-> 
+>> Full randconfig file is attached.
 
-This patch should fix it:
+Lost the attached randconfig file.  Please forward.
 
-	http://git.linuxtv.org/mchehab/media-next.git/commit/18311c5395ca4d0c3fefa406da87a9d16efaca46
-
-It is on my linux-next tree so, if no new conflicts/problems arise, it should be available
-on tomorrow's next ;)
-
-Regards,
-Mauro
+Seth
