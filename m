@@ -1,64 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (kvm-ppc
- tree related)
-Date: Thu, 19 Apr 2012 16:35:35 +1000
-Message-ID: <20120419163535.52c99a34e2664063d654ac4d@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (net-next tree related)
+Date: Thu, 19 Apr 2012 02:40:34 -0400 (EDT)
+Message-ID: <20120419.024034.1013342902483709669.davem@davemloft.net>
+References: <20120419162859.904574e2518c5a904802efbc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__19_Apr_2012_16_35_35_+1000_/2qZTjoJlpczuqUM"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40684 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751242Ab2DSGfn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 02:35:43 -0400
+Received: from shards.monkeyblade.net ([198.137.202.13]:45874 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751918Ab2DSGmo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 02:42:44 -0400
+In-Reply-To: <20120419162859.904574e2518c5a904802efbc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Graf <agraf@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric B Munson <emunson@mgebm.net>, Marcelo Tosatti <mtosatti@redhat.com>, Avi Kivity <avi@redhat.com>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, majianpeng@gmail.com
 
---Signature=_Thu__19_Apr_2012_16_35_35_+1000_/2qZTjoJlpczuqUM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 19 Apr 2012 16:28:59 +1000
 
-Hi all,
+> After merging the final tree, today's linux-next build (sparc64 defconfig)
+> failed like this:
+> 
+> net/ipv4/route.c: In function 'ip_static_sysctl_init':
+> net/ipv4/route.c:3517:2: error: implicit declaration of function 'kmemleak_not_leak' [-Werror=implicit-function-declaration]
+...
+> net/core/sysctl_net_core.c: In function 'sysctl_core_init':
+> net/core/sysctl_net_core.c:259:2: error: implicit declaration of function 'kmemleak_not_leak' [-Werror=implicit-function-declaration]
+...
 
-After merging the final tree, today's linux-next build (sparc64 defconfig)
-failed like this:
-
-In file included from kernel/watchdog.c:27:0:
-include/linux/kvm_para.h: In function 'kvm_para_has_feature':
-include/linux/kvm_para.h:32:2: error: implicit declaration of function 'kvm=
-_arch_para_features' [-Werror=3Dimplicit-function-declaration]
-
-Caused by commit 5d1c0f4a80a6 ("watchdog: add check for suspended vm in
-softlockup detector").  This build has no KVM related CONFIG options set.
-
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__19_Apr_2012_16_35_35_+1000_/2qZTjoJlpczuqUM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPj7I3AAoJEECxmPOUX5FEjDAQAIrqabJ8YPUifZwuPhNlkB+J
-I6DMOiYAg7JI9AZjEPM5NiYmXM+RTixpLDoJUzNKjonuOBH/uUVauNH0voyc98GX
-v2zBfA9yud/Y50Umr/VJNSDd/y5DW/OHaCsc+Sx0oTh95iKcSzkJoX3AAjhejwLy
-8Vy1NiBQxsvtfGd2yTl/9D2paKtq6Ll6fjhU07szI24fMkJWGmxRke6+NsIT+wFf
-s9bHkBlWAxVEeozWX6TL9f5XxmhtDtHgidwst+AEbTmkhq5Oa0BPsF6G7iFOucwD
-pKMjB4zP2wbEjzrSSmM/VOF7GFgMNwepw6qvVMypBIi44ZIq+Ml5CBJTgz5lq75H
-5ikFe/rEVzb7DHev9NiZ/moJs9t21DkvF1hpMR5GGhn6t1FHvqVz2L9DURno/ozJ
-t456HapGHJRCLSSnhtk0jyLAJ9FfZ+7wEg9/bDFVuoqqPANlL3m+bbhgG3eae/cO
-ftkhBWueCCy3v8X+PCPaiD6/jOpdDKfaGA6m63VOcYz9pVQYUM3gHLYuf7olg4M/
-d3yRST83WeV8Ny0AVHKzC9aHLZ+GmzY0IQJWw7EkgZsYLlDsziQRISvj9RmtPkZN
-/Yfndim3vxR1+jWDbEKoiGiyHNSfUoWlrmUJcIHvF8mwNA5iywZFCLXz/0Q1nWvd
-F3ShTw/Se0pxu2cgyQZf
-=n5vH
------END PGP SIGNATURE-----
-
---Signature=_Thu__19_Apr_2012_16_35_35_+1000_/2qZTjoJlpczuqUM--
+I already checked in a fix for this, thanks Stephen.
