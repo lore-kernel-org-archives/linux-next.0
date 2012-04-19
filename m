@@ -1,48 +1,94 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] cris: Remove old legacy "-traditional" flag from arch-v10/lib/Makefile
-Date: Wed, 18 Apr 2012 15:58:43 -0400
-Message-ID: <1334779123-21957-1-git-send-email-paul.gortmaker@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Thu, 19 Apr 2012 10:41:45 +1000
+Message-ID: <20120419104145.2b8ffe08e9982048f5c0f5f1@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__19_Apr_2012_10_41_45_+1000_Ec.uz/DAbIGGI1Gc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:59962 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751238Ab2DRT7A (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Apr 2012 15:59:00 -0400
+Received: from haggis.pcug.org.au ([203.10.76.10]:49994 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751125Ab2DSAly (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Apr 2012 20:41:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: jesper.nilsson@axis.com
-Cc: starvik@axis.com, linux-cris-kernel@axis.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>, James Morris <james.l.morris@oracle.com>
 
-Most of these have been purged years ago.  This one silently lived
-on until commit 69349c2dc01c489eccaa4c472542c08e370c6d7e
+--Signature=_Thu__19_Apr_2012_10_41_45_+1000_Ec.uz/DAbIGGI1Gc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    "kconfig: fix IS_ENABLED to not require all options to be defined"
+Hi Linus,
 
-In the above, we use some macro trickery to create a conditional that
-is valid in CPP and in C usage.  However that trickery doesn't sit
-well if you have the legacy "-traditional" flag enabled.  You'll get:
+While building Linus' tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  AS      arch/cris/arch-v10/lib/checksum.o
-In file included from <command-line>:4:0:
-include/linux/kconfig.h:23:0: error: syntax error in macro parameter list
-make[2]: *** [arch/cris/arch-v10/lib/checksum.o] Error 1
+security/commoncap.c: In function 'cap_bprm_set_creds':
+security/commoncap.c:510:22: error: 'PER_CLEAR_ON_SETID' undeclared (first =
+use in this function)
 
-Everything builds fine w/o "-traditional" so simply drop it from this
-location as well.
+Caused by commit d52fc5dde171 ("fcaps: clear the same personality flags as =
+suid when fcaps are used").
 
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+I added this patch for today:
 
-diff --git a/arch/cris/arch-v10/lib/Makefile b/arch/cris/arch-v10/lib/Makefile
-index 36e9a9c..725153e 100644
---- a/arch/cris/arch-v10/lib/Makefile
-+++ b/arch/cris/arch-v10/lib/Makefile
-@@ -2,8 +2,5 @@
- # Makefile for Etrax-specific library files..
- #
- 
--
--EXTRA_AFLAGS := -traditional
--
- lib-y  = checksum.o checksumcopy.o string.o usercopy.o memset.o csumcpfruser.o
- 
--- 
-1.7.9.1
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 19 Apr 2012 10:38:26 +1000
+Subject: [PATCH] security: commoncap.c needs to include personality.h
+
+fixes this build error on PowerPC:
+
+security/commoncap.c: In function 'cap_bprm_set_creds':
+security/commoncap.c:510:22: error: 'PER_CLEAR_ON_SETID' undeclared (first =
+use in this function)
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ security/commoncap.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 0ecf4ba..71a166a 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -29,6 +29,7 @@
+ #include <linux/securebits.h>
+ #include <linux/user_namespace.h>
+ #include <linux/binfmts.h>
++#include <linux/personality.h>
+=20
+ /*
+  * If a non-root user executes a setuid-root binary in
+--=20
+1.7.10.rc3
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__19_Apr_2012_10_41_45_+1000_Ec.uz/DAbIGGI1Gc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPj19JAAoJEECxmPOUX5FEP9wP/iry6lTlH2X7lcK16ax8cPgS
+Ml07oVQqPQ5txKCkcwpjmaIJtvCOaCjiDYpJXaSpDyqn+YTi/GrBI+3ZuVIn+mix
+tj+W1NIN29NrC7NpczU1X9rFZfcWRSmIjNR85zTWmTn4IaGVRVX0zz70kcbzb3ka
+9ny3+Nnk3IB09xacBvv3rqdWQWWifFliQ3+MVnRUCRL5sKjVZDAdKcAWudXtMthy
+4RzK/kA49smrXHhiuu5xBxM0pcaZnVd8f1/2Zmc72w4dWA/z+GJqh1sTyt58Ek84
+c94P47neuuLhHHPoE7cuyVvQJ8L/tbUNCr+LzlTwT8OEYTTXoQ7pvmYifkJUAtcI
+dZvN+PnagDA77YaySHaAdzUmGEJBaHrdnRP0y+S7Dg1KD1hGcA3/aVhUb6Tew0EG
+Z5wM0VtAbjFvK8fLCezzgShCDnI/RpBR7j3ZEQmbosA0Fm+VK4Qhb/7XAGi/1iNW
+A+/M80x14QKD4A4flgrNDyautk9QLsrNLyQmEbsikTU2AFQoIQtt/jd3BGJoI7oN
+lpI3OCJUfsGAqzhNforhH9yJT8xLnDlsGQL9hCYJBdlhpckNabbO7BsOisfRawjo
+5KgT8f6L1fCPZ6VVRG/Tf5Y97WLdvYm3lqDoERqtZknqEJ7RpeQ+kMIlu/STSMJf
+hMsR7DUz8xpZddUDWSuL
+=W/Ry
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__19_Apr_2012_10_41_45_+1000_Ec.uz/DAbIGGI1Gc--
