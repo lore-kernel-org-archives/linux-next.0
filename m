@@ -1,45 +1,56 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] nfsd: fix nfs4recover.f printk format warning
-Date: Thu, 19 Apr 2012 16:15:04 -0700
-Message-ID: <4F909C78.7000008@xenotime.net>
-References: <20120419164643.d9f918d44c890722b7707508@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: linux-next: Tree for Apr 19 (media/video/mt9m032.c)
+Date: Thu, 19 Apr 2012 20:20:51 -0300
+Message-ID: <4F909DD3.6000403@redhat.com>
+References: <20120419164643.d9f918d44c890722b7707508@canb.auug.org.au> <4F909111.9020708@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:60092 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751577Ab2DSXOa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 19:14:30 -0400
-In-Reply-To: <20120419164643.d9f918d44c890722b7707508@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:36451 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754533Ab2DSXU6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Apr 2012 19:20:58 -0400
+In-Reply-To: <4F909111.9020708@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "J. Bruce Fields" <bfields@fieldses.org>, linux-nfs@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+Em 19-04-2012 19:26, Randy Dunlap escreveu:
+> On 04/18/2012 11:46 PM, Stephen Rothwell wrote:
+> 
+>> Hi all,
+>>
+>> Changes since 20120418:
+> 
+> 
+> 
+> on x86_64:
+> 
+>   CC      drivers/media/video/mt9m032.o
+> drivers/media/video/mt9m032.c: In function '__mt9m032_get_pad_crop':
+> drivers/media/video/mt9m032.c:337:3: error: implicit declaration of function 'v4l2_subdev_get_try_crop'
+> drivers/media/video/mt9m032.c:337:3: warning: return makes pointer from integer without a cast
+> drivers/media/video/mt9m032.c: In function '__mt9m032_get_pad_format':
+> drivers/media/video/mt9m032.c:359:3: error: implicit declaration of function 'v4l2_subdev_get_try_format'
+> drivers/media/video/mt9m032.c:359:3: warning: return makes pointer from integer without a cast
+> drivers/media/video/mt9m032.c: In function 'mt9m032_probe':
+> drivers/media/video/mt9m032.c:767:41: error: 'struct v4l2_subdev' has no member named 'entity'
+> drivers/media/video/mt9m032.c:826:38: error: 'struct v4l2_subdev' has no member named 'entity'
+> drivers/media/video/mt9m032.c: In function 'mt9m032_remove':
+> drivers/media/video/mt9m032.c:842:38: error: 'struct v4l2_subdev' has no member named 'entity'
+> make[4]: *** [drivers/media/video/mt9m032.o] Error 1
+> 
+> Full randconfig file is attached.
+> 
 
-Fix printk format warnings -- both items are size_t,
-so use %zu to print them.
+This patch should fix it:
 
-fs/nfsd/nfs4recover.c:580:3: warning: format '%lu' expects type 'long unsigned int', but argument 3 has type 'size_t'
-fs/nfsd/nfs4recover.c:580:3: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
+	http://git.linuxtv.org/mchehab/media-next.git/commit/18311c5395ca4d0c3fefa406da87a9d16efaca46
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc:	"J. Bruce Fields" <bfields@fieldses.org>
-Cc:	linux-nfs@vger.kernel.org
----
- fs/nfsd/nfs4recover.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It is on my linux-next tree so, if no new conflicts/problems arise, it should be available
+on tomorrow's next ;)
 
---- linux-next-20120419.orig/fs/nfsd/nfs4recover.c
-+++ linux-next-20120419/fs/nfsd/nfs4recover.c
-@@ -577,7 +577,7 @@ cld_pipe_downcall(struct file *filp, con
- 	struct cld_net *cn = nn->cld_net;
- 
- 	if (mlen != sizeof(*cmsg)) {
--		dprintk("%s: got %lu bytes, expected %lu\n", __func__, mlen,
-+		dprintk("%s: got %zu bytes, expected %zu\n", __func__, mlen,
- 			sizeof(*cmsg));
- 		return -EINVAL;
- 	}
+Regards,
+Mauro
