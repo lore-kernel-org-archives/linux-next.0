@@ -1,50 +1,37 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] cris: Remove old legacy "-traditional" flag from arch-v10/lib/Makefile
-Date: Thu, 19 Apr 2012 08:40:07 -0400
-Message-ID: <4F9007A7.9070504@windriver.com>
-References: <1334779123-21957-1-git-send-email-paul.gortmaker@windriver.com> <20120419091450.GF16861@axis.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the usb.current
+ tree
+Date: Thu, 19 Apr 2012 13:07:21 -0700
+Message-ID: <20120419200721.GB10059@kroah.com>
+References: <20120419151402.6f958fabc6bd96696b4cde3c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:39718 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751726Ab2DSMkQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 08:40:16 -0400
-In-Reply-To: <20120419091450.GF16861@axis.com>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35550 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932246Ab2DSUHX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Apr 2012 16:07:23 -0400
+Content-Disposition: inline
+In-Reply-To: <20120419151402.6f958fabc6bd96696b4cde3c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Mikael Starvik <starvik@axis.com>, linux-cris-kernel <linux-cris-kernel@axis.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anatolij Gustschin <agust@denx.de>, Ramneek Mehresh <ramneek.mehresh@freescale.com>
 
-On 12-04-19 05:14 AM, Jesper Nilsson wrote:
-> On Wed, Apr 18, 2012 at 09:58:43PM +0200, Paul Gortmaker wrote:
->> Most of these have been purged years ago.  This one silently lived
->> on until commit 69349c2dc01c489eccaa4c472542c08e370c6d7e
->>
->>     "kconfig: fix IS_ENABLED to not require all options to be defined"
->>
->> In the above, we use some macro trickery to create a conditional that
->> is valid in CPP and in C usage.  However that trickery doesn't sit
->> well if you have the legacy "-traditional" flag enabled.  You'll get:
->>
->>   AS      arch/cris/arch-v10/lib/checksum.o
->> In file included from <command-line>:4:0:
->> include/linux/kconfig.h:23:0: error: syntax error in macro parameter list
->> make[2]: *** [arch/cris/arch-v10/lib/checksum.o] Error 1
->>
->> Everything builds fine w/o "-traditional" so simply drop it from this
->> location as well.
->>
->> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+On Thu, Apr 19, 2012 at 03:14:02PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Agreed, I'll push this to the CRIS-tree. Thanks!
-
-Thanks, Please make sure it goes on your "for-3.4" branch,
-since Linus took the kconfig change directly into 3.4 (i.e. it
-is not specific to linux-next).
-
-Paul.
-
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/usb/host/ehci-fsl.c between commit f941f6922533 ("USB: ehci-fsl:
+> Fix kernel crash on mpc5121e") from the usb.current tree and commit
+> 58c559e6509f ("fsl/usb: Add controller version based ULPI and UTMI phy
+> support") from the usb tree.
 > 
-> /^JN - Jesper Nilsson
+> I fixed it up (using the pdata assignment from the latter commit) and
+> can carry the fix as necessary.
+
+Thanks, that sounds correct, I'll fix this up when the patches in
+usb.current get pushed to Linus.
+
+greg k-h
