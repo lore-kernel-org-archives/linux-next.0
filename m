@@ -1,60 +1,45 @@
-From: Dan Magenheimer <dan.magenheimer@oracle.com>
-Subject: RE: linux-next: Tree for Apr 19 (zcache)
-Date: Thu, 19 Apr 2012 15:36:29 -0700 (PDT)
-Message-ID: <0b74f96b-8450-4dfb-8798-36edd0e06a64@default>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] nfsd: fix nfs4recover.f printk format warning
+Date: Thu, 19 Apr 2012 16:15:04 -0700
+Message-ID: <4F909C78.7000008@xenotime.net>
 References: <20120419164643.d9f918d44c890722b7707508@canb.auug.org.au>
- <4F909200.6070104@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet15.oracle.com ([148.87.113.117]:18797 "EHLO
-	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753957Ab2DSWgm convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 18:36:42 -0400
-In-Reply-To: <4F909200.6070104@xenotime.net>
+Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:60092 "HELO
+	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751577Ab2DSXOa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 19:14:30 -0400
+In-Reply-To: <20120419164643.d9f918d44c890722b7707508@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Seth Jennings <sjenning@linux.vnet.ibm.com>, Nitin Gupta <nitingupta910@gmail.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Wilk <konrad.wilk@oracle.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "J. Bruce Fields" <bfields@fieldses.org>, linux-nfs@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-> From: Randy Dunlap [mailto:rdunlap@xenotime.net]
-> Sent: Thursday, April 19, 2012 4:30 PM
-> To: Stephen Rothwell
-> Cc: linux-next@vger.kernel.org; LKML; Dan Magenheimer
-> Subject: Re: linux-next: Tree for Apr 19 (zcache)
-> 
-> On 04/18/2012 11:46 PM, Stephen Rothwell wrote:
-> 
-> > Hi all,
-> >
-> > Changes since 20120418:
-> 
-> 
-> on x86_64:
-> 
-> drivers/built-in.o: In function `zv_free':
-> zcache-main.c:(.text+0x5e1c9): undefined reference to `zs_map_object'
-> zcache-main.c:(.text+0x5e238): undefined reference to `zs_unmap_object'
-> zcache-main.c:(.text+0x5e29a): undefined reference to `zs_free'
-> drivers/built-in.o: In function `zv_create':
-> zcache-main.c:(.text+0x5e6b3): undefined reference to `zs_malloc'
-> zcache-main.c:(.text+0x5e6f0): undefined reference to `zs_map_object'
-> zcache-main.c:(.text+0x5e72c): undefined reference to `zs_unmap_object'
-> drivers/built-in.o: In function `zcache_comp_init':
-> zcache-main.c:(.text+0x5e831): undefined reference to `crypto_has_alg'
-> zcache-main.c:(.text+0x5e8a5): undefined reference to `crypto_has_alg'
-> drivers/built-in.o: In function `zcache_cpu_notifier':
-> zcache-main.c:(.text+0x5e94f): undefined reference to `crypto_alloc_base'
-> zcache-main.c:(.text+0x5e9f2): undefined reference to `crypto_destroy_tfm'
-> drivers/built-in.o: In function `zv_decompress':
-> zcache-main.c:(.text+0x5ee40): undefined reference to `zs_map_object'
-> zcache-main.c:(.text+0x5ef06): undefined reference to `zs_unmap_object'
-> drivers/built-in.o: In function `zcache_pampd_create':
-> zcache-main.c:(.text+0x5f614): undefined reference to `zs_get_total_size_bytes'
-> make[1]: *** [.tmp_vmlinux1] Error 1
-> 
-> Full randconfig file is attached.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-This looks like issues with the zsmalloc code (http://lwn.net/Articles/474880/)
-so forwarding to Seth/Nitin (cc Konrad).
+Fix printk format warnings -- both items are size_t,
+so use %zu to print them.
+
+fs/nfsd/nfs4recover.c:580:3: warning: format '%lu' expects type 'long unsigned int', but argument 3 has type 'size_t'
+fs/nfsd/nfs4recover.c:580:3: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'unsigned int'
+
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc:	"J. Bruce Fields" <bfields@fieldses.org>
+Cc:	linux-nfs@vger.kernel.org
+---
+ fs/nfsd/nfs4recover.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20120419.orig/fs/nfsd/nfs4recover.c
++++ linux-next-20120419/fs/nfsd/nfs4recover.c
+@@ -577,7 +577,7 @@ cld_pipe_downcall(struct file *filp, con
+ 	struct cld_net *cn = nn->cld_net;
+ 
+ 	if (mlen != sizeof(*cmsg)) {
+-		dprintk("%s: got %lu bytes, expected %lu\n", __func__, mlen,
++		dprintk("%s: got %zu bytes, expected %zu\n", __func__, mlen,
+ 			sizeof(*cmsg));
+ 		return -EINVAL;
+ 	}
