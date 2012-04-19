@@ -1,47 +1,59 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: [PATCH] samples/seccomp: fix dependencies on arch macros
-Date: Thu, 19 Apr 2012 13:44:44 +1000 (EST)
-Message-ID: <alpine.LRH.2.02.1204191344290.563@tundra.namei.org>
-References: <1334796625-26830-1-git-send-email-wad@chromium.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the sound-asoc
+ tree
+Date: Thu, 19 Apr 2012 13:58:43 +1000
+Message-ID: <20120419135843.80ae7f770cb0b2bc426a2c62@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__19_Apr_2012_13_58_43_+1000_1X_l_BxlW3htDKcg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:44839 "EHLO tundra.namei.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751388Ab2DSDo6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Apr 2012 23:44:58 -0400
-In-Reply-To: <1334796625-26830-1-git-send-email-wad@chromium.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:42768 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753427Ab2DSD6z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Apr 2012 23:58:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Will Drewry <wad@chromium.org>
-Cc: james@namei.org, paul.gortmaker@windriver.com, eparis@redhat.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, linux-security-module@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Masanari Iida <standby24x7@gmail.com>
 
-On Wed, 18 Apr 2012, Will Drewry wrote:
+--Signature=_Thu__19_Apr_2012_13_58_43_+1000_1X_l_BxlW3htDKcg
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> This change fixes the compilation error triggered here for
-> i386 allmodconfig in linux-next:
->   http://kisskb.ellerman.id.au/kisskb/buildresult/6123842/
-> 
-> Logic attempting to predict the host architecture has been
-> removed from the Makefile.  Instead, the bpf-direct sample
-> should now compile on any architecture, but if the architecture
-> is not supported, it will compile a minimal main() function.
-> 
-> This change also ensures the samples are not compiled when
-> there is no seccomp filter support.
-> 
-> (Note, I wasn't able to reproduce the error locally, but
->  the existing approach was clearly flawed.  This tweak
->  should resolve your issue and avoid other future weirdness.)
-> 
-> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Suggested-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Will Drewry <wad@chromium.org>
+Hi Jiri,
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
+Today's linux-next merge of the trivial tree got a conflict in
+sound/soc/imx/Kconfig between commit a23dc694828e ("ASoC: imx: merge
+sound/soc/imx into sound/soc/fsl") from the sound-asoc tree and commit
+59bf89640647 ("Fix "the the" in various Kconfig") from the trivial tree.
 
+The former merged the file into sound/soc/fsl/Kconfig (where the "the
+the" now needs fixing).  I have just removed sound/soc/imx/Kconfig.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-James Morris
-<jmorris@namei.org>
+--Signature=_Thu__19_Apr_2012_13_58_43_+1000_1X_l_BxlW3htDKcg
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPj41zAAoJEECxmPOUX5FEYTkP/3sJaZm8deP/ne9AOpajWmHe
+JHLzw69K5PllIqCR2KnJmPRuBEooTrqgBGWe4S5fAOX4xlOWpuVZk01DiFIKfp8C
+tmwvLVXi7p1mVOU58KFEwiC19lOHgEMoa5SF2UkJ5RpdTZOpNVWUB1BCo3fo1spz
+s6wBLa0HkRym7bH6XRGFlig+0ozA1QhiS2suHBHWioVYXg/s7pAVl7xS3x/zQS4d
+IA4/ZLgyX/2EJQDGSa/T8M4ab+lc2V8gTFdnTP988R7i0WGSAHHow+2ZR/KxG0CY
+nrFKx0Lb37BbyJYWfEP0X7O1fKM/Np+KQeu75VC5kSxaH9oiIQCxtc8n1XyGnhK7
+oyX2ouDSchU1GgJ4Z6kAYs3dhlMa/+O84kmEp+u/bj4lPOGceCAf/pTMOcOujtE4
+ZGXzM6SL0Xk2Hkls9UGyClU2Yexn0W1JoDGu024b2eFTeFWPDRxBE0kCDb2+uB2x
+3UTyogKgvF6oTY7PT3flPzphjMRD+YVF01IJk/NrOaFLIHphsq5Y/G/4faNY9O5Q
+Kza7+/3ZiKkec/FaRscjoIfetp5n8VDSOb/0yjF5Aza1kR0VEGNAx6K4rObl4LJl
+3yagTTh5CjwqiGlF9CVugdcScxGLUD1n9g/eBFjeGAdcJQYi+qftJK2SHxZR7R8z
+EuwOxjFQezJh8dxpQ7d4
+=AZc9
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__19_Apr_2012_13_58_43_+1000_1X_l_BxlW3htDKcg--
