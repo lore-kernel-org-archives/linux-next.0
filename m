@@ -1,59 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the sound-asoc
- tree
-Date: Thu, 19 Apr 2012 13:58:43 +1000
-Message-ID: <20120419135843.80ae7f770cb0b2bc426a2c62@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Thu, 19 Apr 2012 14:48:15 +1000
+Message-ID: <20120419144815.50f7c3d30d88e6259665313d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__19_Apr_2012_13_58_43_+1000_1X_l_BxlW3htDKcg"
+ boundary="Signature=_Thu__19_Apr_2012_14_48_15_+1000_2kCm4KdWNc+vYxBB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42768 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41467 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753427Ab2DSD6z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Apr 2012 23:58:55 -0400
+	with ESMTP id S1750850Ab2DSEs2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 00:48:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Masanari Iida <standby24x7@gmail.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>
 
---Signature=_Thu__19_Apr_2012_13_58_43_+1000_1X_l_BxlW3htDKcg
+--Signature=_Thu__19_Apr_2012_14_48_15_+1000_2kCm4KdWNc+vYxBB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Greg,
 
-Today's linux-next merge of the trivial tree got a conflict in
-sound/soc/imx/Kconfig between commit a23dc694828e ("ASoC: imx: merge
-sound/soc/imx into sound/soc/fsl") from the sound-asoc tree and commit
-59bf89640647 ("Fix "the the" in various Kconfig") from the trivial tree.
+After merging the driver-core tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-The former merged the file into sound/soc/fsl/Kconfig (where the "the
-the" now needs fixing).  I have just removed sound/soc/imx/Kconfig.
+lib/klist.c: In function 'klist_iter_init_node':
+lib/klist.c:287:4: error: too few arguments to function 'kref_put'
+include/linux/kref.h:92:19: note: declared here
+
+Caused by commit a15d49fd3094 ("driver core: check start node in
+klist_iter_init_node").  That really hasn't been build tested, has it?
+
+I have used the driver-core tree from next-20120418 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__19_Apr_2012_13_58_43_+1000_1X_l_BxlW3htDKcg
+--Signature=_Thu__19_Apr_2012_14_48_15_+1000_2kCm4KdWNc+vYxBB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPj41zAAoJEECxmPOUX5FEYTkP/3sJaZm8deP/ne9AOpajWmHe
-JHLzw69K5PllIqCR2KnJmPRuBEooTrqgBGWe4S5fAOX4xlOWpuVZk01DiFIKfp8C
-tmwvLVXi7p1mVOU58KFEwiC19lOHgEMoa5SF2UkJ5RpdTZOpNVWUB1BCo3fo1spz
-s6wBLa0HkRym7bH6XRGFlig+0ozA1QhiS2suHBHWioVYXg/s7pAVl7xS3x/zQS4d
-IA4/ZLgyX/2EJQDGSa/T8M4ab+lc2V8gTFdnTP988R7i0WGSAHHow+2ZR/KxG0CY
-nrFKx0Lb37BbyJYWfEP0X7O1fKM/Np+KQeu75VC5kSxaH9oiIQCxtc8n1XyGnhK7
-oyX2ouDSchU1GgJ4Z6kAYs3dhlMa/+O84kmEp+u/bj4lPOGceCAf/pTMOcOujtE4
-ZGXzM6SL0Xk2Hkls9UGyClU2Yexn0W1JoDGu024b2eFTeFWPDRxBE0kCDb2+uB2x
-3UTyogKgvF6oTY7PT3flPzphjMRD+YVF01IJk/NrOaFLIHphsq5Y/G/4faNY9O5Q
-Kza7+/3ZiKkec/FaRscjoIfetp5n8VDSOb/0yjF5Aza1kR0VEGNAx6K4rObl4LJl
-3yagTTh5CjwqiGlF9CVugdcScxGLUD1n9g/eBFjeGAdcJQYi+qftJK2SHxZR7R8z
-EuwOxjFQezJh8dxpQ7d4
-=AZc9
+iQIcBAEBCAAGBQJPj5kPAAoJEECxmPOUX5FEJT8P/iUuTU8eGDpBxh1DoRIPYSiL
+wC8c0Md/PwSVzPmvgsx/FIa35FJsV79vRvYbfGRBNQ/XTsbq8X3f7ys+gjeQjZlm
+VlxazM497woK3U1HRi94E/g/M3pAp1dJK15+kftPgBRXimgmUyqZR5WGoVW50YVt
+1KSzUzW6SJb0aLDqkECcLb1o0GoWVjt2EY+uAPITH79v6saYA4+3JyhoPHJn93pE
+o0M4tKezkpwP0SzcCJ8vSiSqz6c+oqMplOZNmhT69AEtrGiU9LZTZX4bimmhyoX/
+Z7DtlPLz2AmashyAIjRNBB/evJR37rXcPb6KCu8EzkriY8Ocmj6bCITYMI/PUbCI
+T/NtAdbytXw4Hmb7JvUOGpvHsMTubLWzWoyXSN5pI/JN9mM+ZLCsDjnlGOuZ4Uma
+uZiVzkmI/UZOJS5scrNmCthtMTv6GPhP7IZmeXBHqSZPW43+rYzXOupeI2pVtMea
+swiwiLh0g6LjNgYKqbogkZSlB+Ff8MMQexDdO+iFmkZ8kj1tBeuc7XlOUuWd1E8C
+U5a4wjakJasSkw5eMb0RHA1tOA6PRM4hDPmMIkgM+8R+pj2wkpSsbAZMZoWUAs0+
+2xKLAv7T685WUPG2F2Ozg9m6FGhhNzpbhcOjNyNiyi7O5IQRHDSeB/x4h18uhJmw
+F5y9DAYiKLKuv3+xG8xw
+=BGht
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__19_Apr_2012_13_58_43_+1000_1X_l_BxlW3htDKcg--
+--Signature=_Thu__19_Apr_2012_14_48_15_+1000_2kCm4KdWNc+vYxBB--
