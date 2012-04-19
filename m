@@ -1,69 +1,47 @@
-From: NeilBrown <neilb@suse.de>
-Subject: Re: linux-next: build failure after merge of the md tree
-Date: Thu, 19 Apr 2012 13:15:24 +1000
-Message-ID: <20120419131524.019346fd@notabene.brown>
-References: <20120419125502.bd9b7dcbe9497c8319035793@canb.auug.org.au>
+From: James Morris <jmorris@namei.org>
+Subject: Re: [PATCH] samples/seccomp: fix dependencies on arch macros
+Date: Thu, 19 Apr 2012 13:44:44 +1000 (EST)
+Message-ID: <alpine.LRH.2.02.1204191344290.563@tundra.namei.org>
+References: <1334796625-26830-1-git-send-email-wad@chromium.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/sMwB8IHQ95T=L_m=NAoZoKt"; protocol="application/pgp-signature"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:53605 "EHLO mx2.suse.de"
+Received: from tundra.namei.org ([65.99.196.166]:44839 "EHLO tundra.namei.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751388Ab2DSDPc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Apr 2012 23:15:32 -0400
-In-Reply-To: <20120419125502.bd9b7dcbe9497c8319035793@canb.auug.org.au>
+	id S1751388Ab2DSDo6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Apr 2012 23:44:58 -0400
+In-Reply-To: <1334796625-26830-1-git-send-email-wad@chromium.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Will Drewry <wad@chromium.org>
+Cc: james@namei.org, paul.gortmaker@windriver.com, eparis@redhat.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, keescook@chromium.org, linux-security-module@vger.kernel.org
 
---Sig_/sMwB8IHQ95T=L_m=NAoZoKt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, 18 Apr 2012, Will Drewry wrote:
 
-On Thu, 19 Apr 2012 12:55:02 +1000 Stephen Rothwell <sfr@canb.auug.org.au>
-wrote:
+> This change fixes the compilation error triggered here for
+> i386 allmodconfig in linux-next:
+>   http://kisskb.ellerman.id.au/kisskb/buildresult/6123842/
+> 
+> Logic attempting to predict the host architecture has been
+> removed from the Makefile.  Instead, the bpf-direct sample
+> should now compile on any architecture, but if the architecture
+> is not supported, it will compile a minimal main() function.
+> 
+> This change also ensures the samples are not compiled when
+> there is no seccomp filter support.
+> 
+> (Note, I wasn't able to reproduce the error locally, but
+>  the existing approach was clearly flawed.  This tweak
+>  should resolve your issue and avoid other future weirdness.)
+> 
+> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Suggested-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Will Drewry <wad@chromium.org>
 
-> Hi Neil,
->=20
-> After merging the md tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->=20
-> ERROR: ".bitmap_resize" [drivers/md/raid456.ko] undefined!
-> ERROR: ".bitmap_resize" [drivers/md/raid10.ko] undefined!
->=20
-> Caused by commit 89efe2ab3a8c ("md/bitmap: add bitmap_resize function to
-> allow bitmap resizing") and followups.
->=20
-> I have used the md tree form next-20120418 for today.
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
 
-Thanks a lot Stephen.
 
-I've add the missing EXPORT_SYMBOL_GPL(), so should be fine for next time
-round.
-
-NeilBrown
-
---Sig_/sMwB8IHQ95T=L_m=NAoZoKt
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.18 (GNU/Linux)
-
-iQIVAwUBT4+DTDnsnt1WYoG5AQJeoA//SmVxOPIlsQafmRM7XVSyrXBziyHlZL/v
-fFJAU7voBfD/XfISxaUdNhqRYcYvxVkWgWxPxkO5pHNUAouGnHyhj9XuqvkE59rP
-H//lmydalw/WKFIDWghuqiIUM2lb46ZBM6ADwyScfjegLcmvsEGF9kF18qhm7UQL
-dZsFTf5lKvSB9KxZT1v93/MUq8HTtYA0SvKFd61bexluooZCCS3ijdEA9sJAOeNZ
-BpWTcP0jWi5/KUyOUoR0gmRUuIbaZuIJxp4um/vvz5dXJOAw7teZ3jQDY8/A9L4v
-cbumxcPStKLeeYuqtMjZWci8pJlrfCOuDmUo89JPf138SObu34uKx0U0ciPFO56c
-hFdC5WpeGYiTrMvTCGGpzpWV1hMAj5JJDIBC/ulN5PcZZKcHI1E8LhwMsa9M+mE2
-L+X2V0WNdpflqi/Ya6LaJBCBq/ArWfTWXsVKfx22vA8ZfKDh1u9QDB7PdmjDqRcZ
-nu4+zKKk8eCwHXoHX+/4N++Vq1gONmaQyHRCIAMWpaHjZJfFcS5xi9uZ+m1RjvOB
-DAICblzFeL9OQMPOS53rbvw7GZKTArFxNu35SKSfwYLktT2trpwS4HIb/1/gcgAP
-u70nvZs7dlvPnQHUhd8jVbXOHcHyWefhb9VdVWZgjrHKbVVUJuNiB/Lyp6k8Ks2O
-Gp2OzqbHg0I=
-=kH0w
------END PGP SIGNATURE-----
-
---Sig_/sMwB8IHQ95T=L_m=NAoZoKt--
+-- 
+James Morris
+<jmorris@namei.org>
