@@ -1,59 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the usb.current tree
-Date: Thu, 19 Apr 2012 15:14:02 +1000
-Message-ID: <20120419151402.6f958fabc6bd96696b4cde3c@canb.auug.org.au>
+Subject: linux-next: manual merge of the vhost tree with the net-next tree
+Date: Thu, 19 Apr 2012 15:35:47 +1000
+Message-ID: <20120419153547.c9e4cf4865b28c61668a2be1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__19_Apr_2012_15_14_02_+1000_2v_KOquA2/S8ZqVp"
+ boundary="Signature=_Thu__19_Apr_2012_15_35_47_+1000_Q5il6qlTH2XQdyBJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58740 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33812 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751085Ab2DSFOP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 01:14:15 -0400
+	with ESMTP id S1751242Ab2DSFgA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 01:36:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anatolij Gustschin <agust@denx.de>, Ramneek Mehresh <ramneek.mehresh@freescale.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
---Signature=_Thu__19_Apr_2012_15_14_02_+1000_2v_KOquA2/S8ZqVp
+--Signature=_Thu__19_Apr_2012_15_35_47_+1000_Q5il6qlTH2XQdyBJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Michael,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/host/ehci-fsl.c between commit f941f6922533 ("USB: ehci-fsl:
-Fix kernel crash on mpc5121e") from the usb.current tree and commit
-58c559e6509f ("fsl/usb: Add controller version based ULPI and UTMI phy
-support") from the usb tree.
+Today's linux-next merge of the vhost tree got a conflict in
+drivers/net/virtio_net.c between commit 586d17c5a01b ("virtio-net: send
+gratuitous packets when needed") from the net-next tree and commit
+66fdfb7bc203 ("virtio-net: remove useless disable on freeze") from the
+vhost tree.
 
-I fixed it up (using the pdata assignment from the latter commit) and
-can carry the fix as necessary.
+Just context changes.  I fixed it up (I think - see below) and can carry
+the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__19_Apr_2012_15_14_02_+1000_2v_KOquA2/S8ZqVp
+diff --cc drivers/net/virtio_net.c
+index fa58c78,3e4767f..0000000
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@@ -1224,16 -1183,6 +1224,11 @@@ static int virtnet_freeze(struct virtio
+  {
+  	struct virtnet_info *vi =3D vdev->priv;
+ =20
+ +	/* Prevent config work handler from accessing the device */
+ +	mutex_lock(&vi->config_lock);
+ +	vi->config_enable =3D false;
+ +	mutex_unlock(&vi->config_lock);
+ +
+- 	virtqueue_disable_cb(vi->rvq);
+- 	virtqueue_disable_cb(vi->svq);
+- 	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_CTRL_VQ))
+- 		virtqueue_disable_cb(vi->cvq);
+-=20
+  	netif_device_detach(vi->dev);
+  	cancel_delayed_work_sync(&vi->refill);
+ =20
+
+--Signature=_Thu__19_Apr_2012_15_35_47_+1000_Q5il6qlTH2XQdyBJ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPj58aAAoJEECxmPOUX5FERc8QAILFDgUcy3RHSlvzzqMkLTs4
-xG6dXfUGHo2xzttTGUOi2TuEJqRR3XzQIkITbio7yooBhCAlb5AFM0/peoOTX9Fk
-VPmtk9jilAGxeD5Ib0EC6Tw+gOWYCiZiRKWkUrxa71i/1jTG5Zr10CKfJACjwai5
-iFkPXLR59tFAmAAMJjIc3HpghqhG+wvbmMitg/3h/OmBTsrqpS7GP/TuSUTU1wXt
-e625YpyhyHftSk8xACUn8EDmQC1ekXAey/S7Ox7DQqrEwi4NRtKukFPW/KOt9p+K
-Mrn1p7HA8gUIB20wogjhSPEwQFIpofgRWfcE6ThzZEXjiP2fVi15zNI7INin4FZ/
-jwnj4hrXhdiGSUUoWebnStMi1VajvKv7OResg2ZvGWK8Chb0hBGG9v1o3o3l3QDG
-ZVBh3y2hA+Fh6+vBVypH40i2ObdSI+rz7yP1OJDRYxbaHAfR/1YBygkxwOhKqUiq
-8z7NzRgNFpC025fxYDi6i7v0YTkF6+OAVlYc1Db1SItu4296F0txvUemt8XyP2Hp
-STyhmfqbVYuoQjIcQsWH2Sjz8Uq/Nt8uLU1V6v/HFa2U+EiR7qQTEmEm6A9suKh3
-DPx09Hy/d94TcFr7e1ZRQmn0LjsvJEs4z4isNIQOHvYQrxpEt66D82BvrunYuur2
-gMKoODN4tE4qr2qiQ0sH
-=OGLd
+iQIcBAEBCAAGBQJPj6QzAAoJEECxmPOUX5FENJQP/izC2AzzEJFPf4Zr2GY+1nxA
+Qa3SlpZO96xvQmHR5scjuvAuNgZF5M27/Nu9UmZ95Een7JoGU/fBhi+F8woTYqn+
+Vv//49n0yCQC/zQuyEFiI6NJr6PoBvhcpVHXZu803l4Vk1Uk5uOwg7ywNXB9Csp2
+aT27l1s/gVM24wp1iWzcsTZCVf/HQB79GuSbuwQ9+KPcY4Ma1Hg0e63lah5DZgKT
+5GleaqI+vPZsQr4Hn/O4xodHyMfSaDtSMAdsHP6Z7NrqT4On+jqRC+ejwdxV2c46
+XdyM/8ANypIP3GtNoMW/BTcW/PFjSXKNHmy80mKpSqUxuvSGEMdPyXPmCVr9341X
+HNlH1wgyYzwcI1jxLYmXxch4xK54OaGoF3LZzdIaNjnoF1KgJXOi9ALMYghUKQkt
+OwtIg4sBEkEpKhGB+HKernQBxkTHMvqEwon90yrXynp/Y1c4XnS4TQAEIOAfnnjq
+OwX+49ELlCvjz78r9C7g0UCpeOYJ/TvWkBRhNonfRG/HjAYr+lVYERNjldZ5YI8d
+gjh73FjRDPrj4VNfivreXAmuj3Zdym9PBGcsxP+SjAf3RVTf7xBfdD13Ew2NrtGH
+3SbJmDA13NfMkowt62av2Pnnp5jdZX5U7GYaT6M/PO0aSB6Bzp+L0nhi5PX0KbOk
+/7CRa1SFm5hnIsVC7zqS
+=jFs7
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__19_Apr_2012_15_14_02_+1000_2v_KOquA2/S8ZqVp--
+--Signature=_Thu__19_Apr_2012_15_35_47_+1000_Q5il6qlTH2XQdyBJ--
