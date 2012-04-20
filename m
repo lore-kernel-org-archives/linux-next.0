@@ -1,71 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (kvm-ppc tree related)
-Date: Fri, 20 Apr 2012 13:35:55 +1000
-Message-ID: <20120420133555.4343c7fc785ed6132a37a9df@canb.auug.org.au>
-References: <20120419163535.52c99a34e2664063d654ac4d@canb.auug.org.au>
-	<20120420101012.591b5e64a8939135bf5cd167@canb.auug.org.au>
-	<20120420011413.GA12235@amt.cnet>
+Subject: linux-next: build warnings after merge of the sound-asoc tree
+Date: Fri, 20 Apr 2012 14:28:50 +1000
+Message-ID: <20120420142850.b276b5fa80e857f8c997e99b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__20_Apr_2012_13_35_55_+1000_.N/o/ZyfcFIRSK1f"
+ boundary="Signature=_Fri__20_Apr_2012_14_28_50_+1000_oB_/Iw3GBj+hZo1J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50166 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53821 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752599Ab2DTDgI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 23:36:08 -0400
-In-Reply-To: <20120420011413.GA12235@amt.cnet>
+	with ESMTP id S1751187Ab2DTE3A (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Apr 2012 00:29:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Marcelo Tosatti <mtosatti@redhat.com>
-Cc: Avi Kivity <avi@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric B Munson <emunson@mgebm.net>, Alexander Graf <agraf@suse.de>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__20_Apr_2012_13_35_55_+1000_.N/o/ZyfcFIRSK1f
+--Signature=_Fri__20_Apr_2012_14_28_50_+1000_oB_/Iw3GBj+hZo1J
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Marcelo,
+Hi all,
 
-On Thu, 19 Apr 2012 22:14:13 -0300 Marcelo Tosatti <mtosatti@redhat.com> wr=
-ote:
->
-> Can you try the patch below please?
->=20
-> KVM: add kvm_arch_para_features stub to asm-generic/kvm_para.h
->=20
-> Needed by kvm_para_has_feature().
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-That fixes the compilation for me
-
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+In file included from include/trace/ftrace.h:567:0,
+                 from include/trace/define_trace.h:86,
+                 from include/trace/events/asoc.h:410,
+                 from sound/soc/soc-core.c:45:
+include/trace/events/asoc.h: In function 'ftrace_raw_event_snd_soc_dapm_out=
+put_path':
+include/trace/events/asoc.h:246:1: warning: cast from pointer to integer of=
+ different size [-Wpointer-to-int-cast]
+include/trace/events/asoc.h: In function 'ftrace_raw_event_snd_soc_dapm_inp=
+ut_path':
+include/trace/events/asoc.h:275:1: warning: cast from pointer to integer of=
+ different size [-Wpointer-to-int-cast]
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__20_Apr_2012_13_35_55_+1000_.N/o/ZyfcFIRSK1f
+--Signature=_Fri__20_Apr_2012_14_28_50_+1000_oB_/Iw3GBj+hZo1J
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPkNmbAAoJEECxmPOUX5FEeGMP+wf34rBQAPcEq57b0GResF59
-7QZ7cLN/IO8Ukia1RTPlBvFf9zG52bsY5d0e9tWeOhsr6OTuFnquDhxAlJQOm3Pv
-poonPzlh4hqs6PdyHupUGdxgQzr4DupXLHyqqffL38otlh6dgK089FVbif85S58a
-KSZkf/DF9GF3xpvOfOsmeAtbhM6cVnDw2rmXK7xVoo73Wp+PCRPioI6Z0qCgJes0
-IZnfiv1qxNF6FRAmHrG820+13KKQtiFuaWNVT2dx1VDbDmIv/5kb/3mPOb6+IjM2
-qC5xszEKDRdNq9YTnYJuPX0cWPjWjxnZ5YxbgXnhvXXgSo4x5ecE6zUE30p76WPn
-zxx31qwWCwXaaiLVjFqeApYgzaAHWytY9F/k8tcch1PQQWjRVqf5SS4mgroH6eGe
-0VzIZydeEicA75rcSG+QAcG6M8n1vUY6s0LkoTzmr/AwtFsLzG2XWe4Ez6lxUrpv
-9OJHC+0nqg/LZZhPhzpQS/LPunnb0kxuNUttsQOk1Ie74XutIMAQFj3Q2388EOIs
-wA/IbyzR3gEzsH9GpP/OvG4JT2sPMi8jK321PWpCsuQWneSzxh275nEp/OzrkR9p
-EJaW6noz6eOqHEb+n3+IUnzC/82XRHf8vH2iVMqpiGhpjZfjgYeE8riSlst+V6B/
-RogTT9vEcLTxzZ2IFwMS
-=9Pq/
+iQIcBAEBCAAGBQJPkOYCAAoJEECxmPOUX5FEqzUP/jBwXqkn75lhEAuTsxX2umvZ
+0nayJhiMsbrC8S4Egj3ievRsdWs8Jy2Uv6xE+m7I1NkUE9QkaOs6pVKvg8w1O9Gq
+ezpN45cizYktCLGk4FgSRjkql9eHnrrQl6+swMwsHONDYgR1+ca30yFwlVR2QXyF
+TesYBLbuHeQddCj+YWzKXje4fDOugJvU9nmgd+OpBtcp8TVY2II2ER81wq3EXok3
+wFvcAe4B/61HMwVErZOuY5rMU5f19YRzyfdc0UDIySycSvFGRqBv64aPBlUFEiv8
+wF4Uf9sji9vfMQCrNiCEEnsP/v87eA9LDfvh7rXG6b4RhTkq+bTir5y91vC8KDz6
+NxDQ5XM2aKOlLfFIxGMmr/ugDj10WKQV0y/4JNgPAlcTiNw7JggzD9eV6hX5jW+S
+8hiOUcN5TBxMPZv7LHQ6WCbKKvBK/4jObCtSRDcqV1B/9R/GwZkagduXhTJ3rwZq
+sdm9WKxdHLvKUalZRTNG4XTL3SYE234tEbgLAUhZgYnCxKVNCkEsMMzXk0G90Aar
+WffqYI3Xj10210x31KF2860hxTx/XPmUvsHssZT+7CjszNjzZtR2MUkQKUohdvQ3
+1pFGEIpSRR7ZufhzuPgLxafoqHFF+xFSftj6ZpyUDNYm52qhORgp8Xb0d48dOtU9
+PS924fXqsJx22vQ6pomm
+=BPtV
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__20_Apr_2012_13_35_55_+1000_.N/o/ZyfcFIRSK1f--
+--Signature=_Fri__20_Apr_2012_14_28_50_+1000_oB_/Iw3GBj+hZo1J--
