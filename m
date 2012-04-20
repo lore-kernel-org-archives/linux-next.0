@@ -1,60 +1,67 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: triage for April 18, 2012
-Date: Thu, 19 Apr 2012 20:21:15 -0400
-Message-ID: <CAP=VYLpQ7zMReYn-6OoZUnok7dGKS5C+Fdb2BU2FHZTM5wvpBg@mail.gmail.com>
-References: <20120419020136.GB3443@windriver.com> <878vhrjs6x.fsf@laptop.org> <Pine.LNX.4.64.1204200023500.2110@axis700.grange>
+From: Marcelo Tosatti <mtosatti@redhat.com>
+Subject: Re: linux-next: build failure after merge of the final tree (kvm-ppc
+ tree related)
+Date: Thu, 19 Apr 2012 22:14:13 -0300
+Message-ID: <20120420011413.GA12235@amt.cnet>
+References: <20120419163535.52c99a34e2664063d654ac4d@canb.auug.org.au>
+ <20120420101012.591b5e64a8939135bf5cd167@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.64.1204200023500.2110@axis700.grange>
+Content-Disposition: inline
+In-Reply-To: <20120420101012.591b5e64a8939135bf5cd167@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Avi Kivity <avi@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric B Munson <emunson@mgebm.net>, Alexander Graf <agraf@suse.de>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Apr 19, 2012 at 6:24 PM, Guennadi Liakhovetski
-<g.liakhovetski@gmx.de> wrote:
-> On Thu, 19 Apr 2012, Chris Ball wrote:
->
->> Hi,
->>
->> On Wed, Apr 18 2012, Paul Gortmaker wrote:
->> > ARM:mackerel_defconfig,ag5evm_defconfig
->> > =A0 =A0 when: =A0 Apr 19 (possibly earlier?)
->> > =A0 =A0 why: =A0 =A0pfc-sh7372.c: undefined reference to `mmc_dete=
-ct_change'
->> > =A0 =A0 why: =A0 =A0pfc-sh73a0.c: undefined reference to `mmc_dete=
-ct_change'
->> > =A0 =A0 status:
->> > =A0 =A0 fix:
->> > =A0 =A0 ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildresul=
-t/6131930/
->> > =A0 =A0 ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildresul=
-t/6131908/
->>
->> Adding Guennadi and Magnus to CC for this error (which is coming fro=
-m
->> tmio_mmc_cd_wakeup).
->
-> ...waiting for these patches to make it in:
+On Fri, Apr 20, 2012 at 10:10:12AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Thu, 19 Apr 2012 16:35:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the final tree, today's linux-next build (sparc64 defconfig)
+> > failed like this:
+> > 
+> > In file included from kernel/watchdog.c:27:0:
+> > include/linux/kvm_para.h: In function 'kvm_para_has_feature':
+> > include/linux/kvm_para.h:32:2: error: implicit declaration of function 'kvm_arch_para_features' [-Werror=implicit-function-declaration]
+> > 
+> > Caused by commit 5d1c0f4a80a6 ("watchdog: add check for suspended vm in
+> > softlockup detector").  This build has no KVM related CONFIG options set.
+> > 
+> > I have reverted that commit for today.
+> 
+> This build failure now belongs to the kvm tree ...
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks for the update, I'll add those links while we are waiting.
 
-P.
+Stephen,
 
->
-> http://article.gmane.org/gmane.linux.ports.sh.devel/14412
-> http://article.gmane.org/gmane.linux.ports.sh.devel/14413
->
-> Thanks
-> Guennadi
-> ---
-> Guennadi Liakhovetski, Ph.D.
-> Freelance Open-Source Software Developer
-> http://www.open-technology.de/
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+Can you try the patch below please?
+
+
+
+KVM: add kvm_arch_para_features stub to asm-generic/kvm_para.h
+
+Needed by kvm_para_has_feature().
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+diff --git a/include/asm-generic/kvm_para.h b/include/asm-generic/kvm_para.h
+index 05ef7e7..9a7bbad 100644
+--- a/include/asm-generic/kvm_para.h
++++ b/include/asm-generic/kvm_para.h
+@@ -11,4 +11,9 @@ static inline bool kvm_check_and_clear_guest_paused(void)
+ 	return false;
+ }
+ 
++static inline unsigned int kvm_arch_para_features(void)
++{
++	return 0;
++}
++
+ #endif
