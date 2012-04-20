@@ -1,43 +1,71 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Thu, 19 Apr 2012 19:19:18 -0700
-Message-ID: <20120420021918.GA16697@kroah.com>
-References: <20120419144815.50f7c3d30d88e6259665313d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (kvm-ppc tree related)
+Date: Fri, 20 Apr 2012 13:35:55 +1000
+Message-ID: <20120420133555.4343c7fc785ed6132a37a9df@canb.auug.org.au>
+References: <20120419163535.52c99a34e2664063d654ac4d@canb.auug.org.au>
+	<20120420101012.591b5e64a8939135bf5cd167@canb.auug.org.au>
+	<20120420011413.GA12235@amt.cnet>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__20_Apr_2012_13_35_55_+1000_.N/o/ZyfcFIRSK1f"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:41865 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751372Ab2DTCTV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Apr 2012 22:19:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20120419144815.50f7c3d30d88e6259665313d@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50166 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752599Ab2DTDgI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 23:36:08 -0400
+In-Reply-To: <20120420011413.GA12235@amt.cnet>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>
+To: Marcelo Tosatti <mtosatti@redhat.com>
+Cc: Avi Kivity <avi@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric B Munson <emunson@mgebm.net>, Alexander Graf <agraf@suse.de>
 
-On Thu, Apr 19, 2012 at 02:48:15PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the driver-core tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> lib/klist.c: In function 'klist_iter_init_node':
-> lib/klist.c:287:4: error: too few arguments to function 'kref_put'
-> include/linux/kref.h:92:19: note: declared here
-> 
-> Caused by commit a15d49fd3094 ("driver core: check start node in
-> klist_iter_init_node").  That really hasn't been build tested, has it?
-> 
-> I have used the driver-core tree from next-20120418 for today.
+--Signature=_Fri__20_Apr_2012_13_35_55_+1000_.N/o/ZyfcFIRSK1f
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, that was just totally obviously broken, I have no idea how that
-passed my testing, as it just failed right now.  So I've reverted it.
+Hi Marcelo,
 
-Hannes, care to fix this up and resend when it works?
+On Thu, 19 Apr 2012 22:14:13 -0300 Marcelo Tosatti <mtosatti@redhat.com> wr=
+ote:
+>
+> Can you try the patch below please?
+>=20
+> KVM: add kvm_arch_para_features stub to asm-generic/kvm_para.h
+>=20
+> Needed by kvm_para_has_feature().
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-thanks,
+That fixes the compilation for me
 
-greg k-h
+Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__20_Apr_2012_13_35_55_+1000_.N/o/ZyfcFIRSK1f
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPkNmbAAoJEECxmPOUX5FEeGMP+wf34rBQAPcEq57b0GResF59
+7QZ7cLN/IO8Ukia1RTPlBvFf9zG52bsY5d0e9tWeOhsr6OTuFnquDhxAlJQOm3Pv
+poonPzlh4hqs6PdyHupUGdxgQzr4DupXLHyqqffL38otlh6dgK089FVbif85S58a
+KSZkf/DF9GF3xpvOfOsmeAtbhM6cVnDw2rmXK7xVoo73Wp+PCRPioI6Z0qCgJes0
+IZnfiv1qxNF6FRAmHrG820+13KKQtiFuaWNVT2dx1VDbDmIv/5kb/3mPOb6+IjM2
+qC5xszEKDRdNq9YTnYJuPX0cWPjWjxnZ5YxbgXnhvXXgSo4x5ecE6zUE30p76WPn
+zxx31qwWCwXaaiLVjFqeApYgzaAHWytY9F/k8tcch1PQQWjRVqf5SS4mgroH6eGe
+0VzIZydeEicA75rcSG+QAcG6M8n1vUY6s0LkoTzmr/AwtFsLzG2XWe4Ez6lxUrpv
+9OJHC+0nqg/LZZhPhzpQS/LPunnb0kxuNUttsQOk1Ie74XutIMAQFj3Q2388EOIs
+wA/IbyzR3gEzsH9GpP/OvG4JT2sPMi8jK321PWpCsuQWneSzxh275nEp/OzrkR9p
+EJaW6noz6eOqHEb+n3+IUnzC/82XRHf8vH2iVMqpiGhpjZfjgYeE8riSlst+V6B/
+RogTT9vEcLTxzZ2IFwMS
+=9Pq/
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__20_Apr_2012_13_35_55_+1000_.N/o/ZyfcFIRSK1f--
