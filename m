@@ -1,31 +1,68 @@
-From: Seth Jennings <sjenning@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for Apr 19 (zcache)
-Date: Thu, 19 Apr 2012 18:49:40 -0500
-Message-ID: <4F90A494.1080906@linux.vnet.ibm.com>
-References: <20120419164643.d9f918d44c890722b7707508@canb.auug.org.au> <4F909200.6070104@xenotime.net> <0b74f96b-8450-4dfb-8798-36edd0e06a64@default>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (kvm-ppc tree related)
+Date: Fri, 20 Apr 2012 10:10:12 +1000
+Message-ID: <20120420101012.591b5e64a8939135bf5cd167@canb.auug.org.au>
+References: <20120419163535.52c99a34e2664063d654ac4d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e33.co.us.ibm.com ([32.97.110.151]:51129 "EHLO
-	e33.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754151Ab2DSXtt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Apr 2012 19:49:49 -0400
-Received: from /spool/local
-	by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <sjenning@linux.vnet.ibm.com>;
-	Thu, 19 Apr 2012 17:49:48 -0600
-In-Reply-To: <0b74f96b-8450-4dfb-8798-36edd0e06a64@default>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dan Magenheimer <dan.magenheimer@oracle.com>
-Cc: Nitin Gupta <nitingupta910@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Wilk <konrad.wilk@oracle.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__20_Apr_2012_10_10_12_+1000_4ZkXsWyQ0E4yIiVc"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120419163535.52c99a34e2664063d654ac4d@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcelo Tosatti <mtosatti@redhat.com>, Avi Kivity <avi@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric B Munson <emunson@mgebm.net>, Alexander Graf <agraf@suse.de>
+List-Id: linux-next.vger.kernel.org
 
-On 04/19/2012 05:36 PM, Dan Magenheimer wrote:
->> From: Randy Dunlap [mailto:rdunlap@xenotime.net]
->>
->> Full randconfig file is attached.
+--Signature=_Fri__20_Apr_2012_10_10_12_+1000_4ZkXsWyQ0E4yIiVc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Lost the attached randconfig file.  Please forward.
+Hi all,
 
-Seth
+On Thu, 19 Apr 2012 16:35:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the final tree, today's linux-next build (sparc64 defconfig)
+> failed like this:
+>=20
+> In file included from kernel/watchdog.c:27:0:
+> include/linux/kvm_para.h: In function 'kvm_para_has_feature':
+> include/linux/kvm_para.h:32:2: error: implicit declaration of function 'k=
+vm_arch_para_features' [-Werror=3Dimplicit-function-declaration]
+>=20
+> Caused by commit 5d1c0f4a80a6 ("watchdog: add check for suspended vm in
+> softlockup detector").  This build has no KVM related CONFIG options set.
+>=20
+> I have reverted that commit for today.
+
+This build failure now belongs to the kvm tree ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__20_Apr_2012_10_10_12_+1000_4ZkXsWyQ0E4yIiVc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPkKlkAAoJEECxmPOUX5FEj7YP/3/VGzL/3yGKxoFgGniNsGUD
+fPoRCF/Zq0QMPYaawziTWQstXp9Jw/vgbx8L5hTk/m7KCK4ZONWJ29gejMvkdb2y
+HoU8KHRrXrigFUdsFem7qSb+/EzeGSLAqpJjYtSPldjB3gXepfO/tghy4v0X11t9
+3Wck161Ntb2F5AWlaMpMCRsfeSWU5Gu7ci7Ml940qJ6gyJEeFtVFN5CbwrtPDd2A
+MB2/1XBXQmTpznU7nLq0ftmYHwMV/CA68av3bl9smq7rv3zCOZ0nMo96RfJsA2HE
+yM4tpVxNnim6WHGvr7vLf3RbEOKKEeGVn0hG/D8j6OIqO+a1aJtgyqT/9JLI6NwL
+kW5kFGldilVxihzj5ElXLtUGbJOE6HF10CeD1VxYneNuwW+waqmS7u13pQDFTNIY
++sWdZr2qOzkPGgXdlg/lBfuzGX0UQe39DYTy0xDMu6XgETwRFfScCSzPBpoFeL6H
+g2LVwZ0vxT8yuDt1WbvSOsynU5kkUYuKYXkv815pHZNSszEZXpay71qA2c0fIs4e
+nWqG4kXaGtj5r80MLzckb8VBP8sK75UgT0aqBKLJU9q7dWsmuDbJ6GOqSbaAFkKy
+ZV0eoMINXYS0AlqFGwQNNQGiOm4A8qIMqnv0c6R2G88j/rdnTlOnbwFjPQ9aPfiM
+yxKauexRjK70IHMSpnoV
+=9KWV
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__20_Apr_2012_10_10_12_+1000_4ZkXsWyQ0E4yIiVc--
