@@ -1,106 +1,131 @@
-From: Seth Jennings <sjenning@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for Apr 19 (zcache)
-Date: Thu, 19 Apr 2012 23:36:26 -0500
-Message-ID: <4F90E7CA.6080201@linux.vnet.ibm.com>
-References: <20120419164643.d9f918d44c890722b7707508@canb.auug.org.au> <4F909200.6070104@xenotime.net> <0b74f96b-8450-4dfb-8798-36edd0e06a64@default>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (md tree
+ related)
+Date: Fri, 20 Apr 2012 15:34:48 +1000
+Message-ID: <20120420153448.2257c33126add9118757791a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__20_Apr_2012_15_34_48_+1000_Z9j4NruFnl86Xk9F"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e36.co.us.ibm.com ([32.97.110.154]:44431 "EHLO
-	e36.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751103Ab2DTEge (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Apr 2012 00:36:34 -0400
-Received: from /spool/local
-	by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <sjenning@linux.vnet.ibm.com>;
-	Thu, 19 Apr 2012 22:36:33 -0600
-In-Reply-To: <0b74f96b-8450-4dfb-8798-36edd0e06a64@default>
+Received: from haggis.pcug.org.au ([203.10.76.10]:56214 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751628Ab2DTFe5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Apr 2012 01:34:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Magenheimer <dan.magenheimer@oracle.com>
-Cc: Nitin Gupta <nitingupta910@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Wilk <konrad.wilk@oracle.com>
+To: Neil Brown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/19/2012 05:36 PM, Dan Magenheimer wrote:
->> From: Randy Dunlap [mailto:rdunlap@xenotime.net]
->> Sent: Thursday, April 19, 2012 4:30 PM
->> To: Stephen Rothwell
->> Cc: linux-next@vger.kernel.org; LKML; Dan Magenheimer
->> Subject: Re: linux-next: Tree for Apr 19 (zcache)
->>
->> On 04/18/2012 11:46 PM, Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> Changes since 20120418:
->>
->>
->> on x86_64:
->>
->> drivers/built-in.o: In function `zv_free':
->> zcache-main.c:(.text+0x5e1c9): undefined reference to `zs_map_object'
->> zcache-main.c:(.text+0x5e238): undefined reference to `zs_unmap_object'
->> zcache-main.c:(.text+0x5e29a): undefined reference to `zs_free'
->> drivers/built-in.o: In function `zv_create':
->> zcache-main.c:(.text+0x5e6b3): undefined reference to `zs_malloc'
->> zcache-main.c:(.text+0x5e6f0): undefined reference to `zs_map_object'
->> zcache-main.c:(.text+0x5e72c): undefined reference to `zs_unmap_object'
->> drivers/built-in.o: In function `zcache_comp_init':
->> zcache-main.c:(.text+0x5e831): undefined reference to `crypto_has_alg'
->> zcache-main.c:(.text+0x5e8a5): undefined reference to `crypto_has_alg'
->> drivers/built-in.o: In function `zcache_cpu_notifier':
->> zcache-main.c:(.text+0x5e94f): undefined reference to `crypto_alloc_base'
->> zcache-main.c:(.text+0x5e9f2): undefined reference to `crypto_destroy_tfm'
->> drivers/built-in.o: In function `zv_decompress':
->> zcache-main.c:(.text+0x5ee40): undefined reference to `zs_map_object'
->> zcache-main.c:(.text+0x5ef06): undefined reference to `zs_unmap_object'
->> drivers/built-in.o: In function `zcache_pampd_create':
->> zcache-main.c:(.text+0x5f614): undefined reference to `zs_get_total_size_bytes'
->> make[1]: *** [.tmp_vmlinux1] Error 1
+--Signature=_Fri__20_Apr_2012_15_34_48_+1000_Z9j4NruFnl86Xk9F
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The problem is that zsmalloc is being built as a module and zcache is
-builtin.  It seems that because CRYPTO=m, kbuild is forcing zsmalloc
-to be built, just not forcing it to be builtin.
+Hi Neil,
 
-The zcache Kconfig has:
-	bool "Dynamic compression of swap pages and clean pagecache pages"
-	depends on (CLEANCACHE || FRONTSWAP) && CRYPTO && X86
-	select ZSMALLOC
-	select CRYPTO_LZO
+After merging the final tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-Seems to be a nuance of kbuild I didn't know before.  If a
-"selected by" (sub)condition is met, if any of the conditionals are
-built as modules, then the entry can be built as a module.
+drivers/built-in.o: In function `bitmap_resize':
+(.text+0x202b76): undefined reference to `__udivdi3'
+drivers/built-in.o: In function `bitmap_resize':
+(.text+0x202bac): undefined reference to `__udivdi3'
 
-For example, if zsmalloc is selected by:
-...(CLEANCACHE [=y] || FRONTSWAP [=n]) && CRYPTO [=m] && X86 [=y]
-then it can be built as a module or builtin.
+Caused by commit 6c5cb1922cca ("md/bitmap: add bitmap_resize function to
+allow bitmap resizing").
 
-If zsmalloc is selected by:
-...(CLEANCACHE [=y] || FRONTSWAP [=n]) && CRYPTO [=y] && X86 [=y]
-then it must be builtin.
+I also get these warnings:
 
-One fix is this:
+drivers/md/bitmap.c: In function 'bitmap_resize':
+drivers/md/bitmap.c:1878:11: warning: comparison of distinct pointer types =
+lacks a cast [enabled by default]
+drivers/md/bitmap.c:1887:11: warning: passing argument 3 of 'bitmap_get_cou=
+nter' from incompatible pointer type [enabled by default]
+drivers/md/bitmap.c:1225:26: note: expected 'sector_t *' but argument is of=
+ type 'long int *'
+drivers/md/bitmap.c:1892:12: warning: passing argument 3 of 'bitmap_get_cou=
+nter' from incompatible pointer type [enabled by default]
+drivers/md/bitmap.c:1225:26: note: expected 'sector_t *' but argument is of=
+ type 'long int *'
+drivers/md/bitmap.c:1920:8: warning: passing argument 3 of 'bitmap_get_coun=
+ter' from incompatible pointer type [enabled by default]
+drivers/md/bitmap.c:1225:26: note: expected 'sector_t *' but argument is of=
+ type 'long int *'
 
-diff --git a/drivers/staging/zcache/Kconfig b/drivers/staging/zcache/Kconfig
-index 3ed2c8f..7048e01 100644
---- a/drivers/staging/zcache/Kconfig
-+++ b/drivers/staging/zcache/Kconfig
-@@ -2,7 +2,7 @@ config ZCACHE
-        bool "Dynamic compression of swap pages and clean pagecache pages"
-        # X86 dependency is because zsmalloc uses non-portable pte/tlb
-        # functions
--       depends on (CLEANCACHE || FRONTSWAP) && CRYPTO && X86
-+       depends on (CLEANCACHE || FRONTSWAP) && CRYPTO=y && X86
-        select ZSMALLOC
-        select CRYPTO_LZO
-        default n
+I applied the patch below for the link failure, but the above warnings
+should be addressed as well.
 
-I think this is the best way since ZCACHE is a bool and CRYPTO is the only
-one of the dependencies that is a tristate.  This forces both ZSMALLOC and
-CRYPTO_LZO to be builtin if ZCACHE is selected.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 20 Apr 2012 15:26:52 +1000
+Subject: [PATCH] md/bitmap: use DIV_ROUND_UP_SECTOR_T
 
-Any other suggestions?
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/md/bitmap.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thanks,
-Seth
+diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
+index 47d5c8d..a780407 100644
+--- a/drivers/md/bitmap.c
++++ b/drivers/md/bitmap.c
+@@ -1828,15 +1828,15 @@ int bitmap_resize(struct bitmap *bitmap, sector_t b=
+locks,
+ 		do {
+ 			/* 'chunkshift' is shift from block size to chunk size */
+ 			chunkshift++;
+-			chunks =3D DIV_ROUND_UP(blocks, 1 << chunkshift);
+-			bytes =3D DIV_ROUND_UP(chunks, 8);
++			chunks =3D DIV_ROUND_UP_SECTOR_T(blocks, 1 << chunkshift);
++			bytes =3D DIV_ROUND_UP_SECTOR_T(chunks, 8);
+ 			if (!bitmap->mddev->bitmap_info.external)
+ 				bytes +=3D sizeof(bitmap_super_t);
+ 		} while (bytes > (space << 9));
+ 	} else
+ 		chunkshift =3D ffz(~chunksize) - BITMAP_BLOCK_SHIFT;
+=20
+-	chunks =3D DIV_ROUND_UP(blocks, 1 << chunkshift);
++	chunks =3D DIV_ROUND_UP_SECTOR_T(blocks, 1 << chunkshift);
+ 	memset(&store, 0, sizeof(store));
+ 	if (bitmap->mddev->bitmap_info.offset || bitmap->mddev->bitmap_info.file)
+ 		ret =3D bitmap_storage_alloc(&store, chunks,
+@@ -1844,7 +1844,7 @@ int bitmap_resize(struct bitmap *bitmap, sector_t blo=
+cks,
+ 	if (ret)
+ 		goto err;
+=20
+-	pages =3D DIV_ROUND_UP(chunks, PAGE_COUNTER_RATIO);
++	pages =3D DIV_ROUND_UP_SECTOR_T(chunks, PAGE_COUNTER_RATIO);
+=20
+ 	new_bp =3D kzalloc(pages * sizeof(*new_bp), GFP_KERNEL);
+ 	ret =3D -ENOMEM;
+--=20
+1.7.10.rc3
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__20_Apr_2012_15_34_48_+1000_Z9j4NruFnl86Xk9F
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPkPV4AAoJEECxmPOUX5FEP/gQAKCCdrscCuzWGlviNltzfAMk
+2zihhbuIYwccPsD76o/IkJyammDpX2vPiWcg0VXHBzMbAxK7qWq1HXDGyaWFOrVr
+8Pe7NYkznoZ8BXiiaFjkgrrT+J7m4g85rhnHTjJ56e7BYaJ5fXmL0UUH6D/OSTbu
+CkKUWQTthikDl8sPayWkc+r2PckaAdZruCkl73oJt4gORh3sbEI1byJyr9C3Lsh2
+DB23lmK+4UWM1+IAlg4tM5pnOBr73IdWbj6YTxio8u/JVSbDUi5sh+sCooFSq45F
+I9NsbDBNMnGVX/XWdlnP7o8u3Lqj0fkcMPR0sShn/tXtihGnl0OR1PMFbdHFop1Q
+8ZMdSisPYswUjF4GOmZuwBdF1USFdj+PYBaByF5PsV7r/uSoWCNtK3PrHztnzNmA
+w+fW17KhZd82pKy1r2G12WHx54P+yjZVbK9gh/scYcBVtqTVTJMAsCcOJFxiIF68
+wfJzb5KWFd/kAAhUSObBbJXgQL73xYz5GFusfE6690cFDqhsYfbtkb5BRMgGhW5k
+q7ZUWzxVWfM9U5AnsYogDhhPEiCyPYMwxCdLHFhex7g6NTiSMIqlteRm5yTGQVNa
+D++PuHwmcB6K2JamDPJIwB4/uYMd5573AxWUelxbQLWc5fxzQvK6m86Vjjrs/pdC
+8kNZtJNjU7jNY8mF47Ad
+=9r/m
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__20_Apr_2012_15_34_48_+1000_Z9j4NruFnl86Xk9F--
