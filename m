@@ -1,68 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (kvm-ppc tree related)
-Date: Fri, 20 Apr 2012 10:10:12 +1000
-Message-ID: <20120420101012.591b5e64a8939135bf5cd167@canb.auug.org.au>
-References: <20120419163535.52c99a34e2664063d654ac4d@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: triage for April 18, 2012
+Date: Thu, 19 Apr 2012 20:21:15 -0400
+Message-ID: <CAP=VYLpQ7zMReYn-6OoZUnok7dGKS5C+Fdb2BU2FHZTM5wvpBg@mail.gmail.com>
+References: <20120419020136.GB3443@windriver.com> <878vhrjs6x.fsf@laptop.org> <Pine.LNX.4.64.1204200023500.2110@axis700.grange>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__20_Apr_2012_10_10_12_+1000_4ZkXsWyQ0E4yIiVc"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120419163535.52c99a34e2664063d654ac4d@canb.auug.org.au>
+In-Reply-To: <Pine.LNX.4.64.1204200023500.2110@axis700.grange>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcelo Tosatti <mtosatti@redhat.com>, Avi Kivity <avi@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric B Munson <emunson@mgebm.net>, Alexander Graf <agraf@suse.de>
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__20_Apr_2012_10_10_12_+1000_4ZkXsWyQ0E4yIiVc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Thu, 19 Apr 2012 16:35:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Thu, Apr 19, 2012 at 6:24 PM, Guennadi Liakhovetski
+<g.liakhovetski@gmx.de> wrote:
+> On Thu, 19 Apr 2012, Chris Ball wrote:
 >
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
->=20
-> In file included from kernel/watchdog.c:27:0:
-> include/linux/kvm_para.h: In function 'kvm_para_has_feature':
-> include/linux/kvm_para.h:32:2: error: implicit declaration of function 'k=
-vm_arch_para_features' [-Werror=3Dimplicit-function-declaration]
->=20
-> Caused by commit 5d1c0f4a80a6 ("watchdog: add check for suspended vm in
-> softlockup detector").  This build has no KVM related CONFIG options set.
->=20
-> I have reverted that commit for today.
+>> Hi,
+>>
+>> On Wed, Apr 18 2012, Paul Gortmaker wrote:
+>> > ARM:mackerel_defconfig,ag5evm_defconfig
+>> > =A0 =A0 when: =A0 Apr 19 (possibly earlier?)
+>> > =A0 =A0 why: =A0 =A0pfc-sh7372.c: undefined reference to `mmc_dete=
+ct_change'
+>> > =A0 =A0 why: =A0 =A0pfc-sh73a0.c: undefined reference to `mmc_dete=
+ct_change'
+>> > =A0 =A0 status:
+>> > =A0 =A0 fix:
+>> > =A0 =A0 ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildresul=
+t/6131930/
+>> > =A0 =A0 ref: =A0 =A0http://kisskb.ellerman.id.au/kisskb/buildresul=
+t/6131908/
+>>
+>> Adding Guennadi and Magnus to CC for this error (which is coming fro=
+m
+>> tmio_mmc_cd_wakeup).
+>
+> ...waiting for these patches to make it in:
 
-This build failure now belongs to the kvm tree ...
+Thanks for the update, I'll add those links while we are waiting.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+P.
 
---Signature=_Fri__20_Apr_2012_10_10_12_+1000_4ZkXsWyQ0E4yIiVc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPkKlkAAoJEECxmPOUX5FEj7YP/3/VGzL/3yGKxoFgGniNsGUD
-fPoRCF/Zq0QMPYaawziTWQstXp9Jw/vgbx8L5hTk/m7KCK4ZONWJ29gejMvkdb2y
-HoU8KHRrXrigFUdsFem7qSb+/EzeGSLAqpJjYtSPldjB3gXepfO/tghy4v0X11t9
-3Wck161Ntb2F5AWlaMpMCRsfeSWU5Gu7ci7Ml940qJ6gyJEeFtVFN5CbwrtPDd2A
-MB2/1XBXQmTpznU7nLq0ftmYHwMV/CA68av3bl9smq7rv3zCOZ0nMo96RfJsA2HE
-yM4tpVxNnim6WHGvr7vLf3RbEOKKEeGVn0hG/D8j6OIqO+a1aJtgyqT/9JLI6NwL
-kW5kFGldilVxihzj5ElXLtUGbJOE6HF10CeD1VxYneNuwW+waqmS7u13pQDFTNIY
-+sWdZr2qOzkPGgXdlg/lBfuzGX0UQe39DYTy0xDMu6XgETwRFfScCSzPBpoFeL6H
-g2LVwZ0vxT8yuDt1WbvSOsynU5kkUYuKYXkv815pHZNSszEZXpay71qA2c0fIs4e
-nWqG4kXaGtj5r80MLzckb8VBP8sK75UgT0aqBKLJU9q7dWsmuDbJ6GOqSbaAFkKy
-ZV0eoMINXYS0AlqFGwQNNQGiOm4A8qIMqnv0c6R2G88j/rdnTlOnbwFjPQ9aPfiM
-yxKauexRjK70IHMSpnoV
-=9KWV
------END PGP SIGNATURE-----
-
---Signature=_Fri__20_Apr_2012_10_10_12_+1000_4ZkXsWyQ0E4yIiVc--
+>
+> http://article.gmane.org/gmane.linux.ports.sh.devel/14412
+> http://article.gmane.org/gmane.linux.ports.sh.devel/14413
+>
+> Thanks
+> Guennadi
+> ---
+> Guennadi Liakhovetski, Ph.D.
+> Freelance Open-Source Software Developer
+> http://www.open-technology.de/
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next"=
+ in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
