@@ -1,21 +1,22 @@
 From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: New ARM build coverage (was: linux-next: triage for April 18, 2012)
-Date: Fri, 20 Apr 2012 17:37:58 +0000
-Message-ID: <201204201737.58922.arnd@arndb.de>
+Date: Fri, 20 Apr 2012 17:59:52 +0000
+Message-ID: <201204201759.52271.arnd@arndb.de>
 References: <CAP=VYLrNpskLQDAw3Udnq7grddi-uD6TDjQQoZUd+FVg2rXPnA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:54856 "EHLO
+Received: from moutng.kundenserver.de ([212.227.17.9]:57918 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757276Ab2DTRiP convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Apr 2012 13:38:15 -0400
+	with ESMTP id S1754050Ab2DTR77 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Apr 2012 13:59:59 -0400
 In-Reply-To: <CAP=VYLrNpskLQDAw3Udnq7grddi-uD6TDjQQoZUd+FVg2rXPnA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-arm-kernel@lists.infradead.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, Viresh Kumar <viresh.kumar@st.com>, Stefan Roese <sr@denx.de>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
 
 On Thursday 19 April 2012, Paul Gortmaker wrote:
 > ARM folks,
@@ -28,51 +29,22 @@ On Thursday 19 April 2012, Paul Gortmaker wrote:
 > ARM:mackerel_defconfig,ag5evm_defconfig
 > ARM:ezx_defconfig
 > ARM:mini2440_defconfig
-> ARM:spear6xx_defconfig
 
-This is what I've come up with for the latter one. CONFIG_MACH_SPEAR600
-was not getting selected in spear6xx_defconfig, and we should not really
-allow it to be deselected.
-
----
->From d06bce2084e946c3ae4dc3011032d0c23b7cd815 Mon Sep 17 00:00:00 2001
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 20 Apr 2012 19:33:55 +0200
-Subject: [PATCH] ARM: spear6xx: remove board selection options
-
-There are no board specific configurations that need user
-intervention, so just make MACH_SPEAR600 the silent default
-for ARCH_SPEAR6XX to prevent users from turning it off, which
-would result in a build error.
+I think this is needed to fix mini2440_defconfig after the platform
+files have been moved around.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/arch/arm/mach-spear6xx/Kconfig b/arch/arm/mach-spear6xx/Kconfig
-index fbe298b..339f397 100644
---- a/arch/arm/mach-spear6xx/Kconfig
-+++ b/arch/arm/mach-spear6xx/Kconfig
-@@ -2,21 +2,9 @@
- # SPEAr6XX Machine configuration file
- #
- 
--if ARCH_SPEAR6XX
--
--menu "SPEAr6xx Implementations"
--config BOARD_SPEAR600_DT
--	bool "SPEAr600 generic board configured via device-tree"
--	select MACH_SPEAR600
-+config MACH_SPEAR600
-+	def_bool y
-+	depends on ARCH_SPEAR6XX
- 	select USE_OF
- 	help
- 	  Supports ST SPEAr600 boards configured via the device-tree
--
--endmenu
--
--config MACH_SPEAR600
--	bool "SPEAr600"
--	help
--	  Supports ST SPEAr600 Machine
--
--endif #ARCH_SPEAR6XX
+diff --git a/arch/arm/configs/mini2440_defconfig b/arch/arm/configs/mini2440_defconfig
+index 42da918..082175c 100644
+--- a/arch/arm/configs/mini2440_defconfig
++++ b/arch/arm/configs/mini2440_defconfig
+@@ -14,6 +14,8 @@ CONFIG_MODULE_FORCE_UNLOAD=y
+ # CONFIG_BLK_DEV_BSG is not set
+ CONFIG_BLK_DEV_INTEGRITY=y
+ CONFIG_ARCH_S3C24XX=y
++# CONFIG_CPU_S3C2410 is not set
++CONFIG_CPU_S3C2440=y
+ CONFIG_S3C_ADC=y
+ CONFIG_S3C24XX_PWM=y
+ CONFIG_MACH_MINI2440=y
