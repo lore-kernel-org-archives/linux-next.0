@@ -1,50 +1,51 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: New ARM build coverage (was: linux-next: triage for April 18, 2012)
-Date: Fri, 20 Apr 2012 17:59:52 +0000
-Message-ID: <201204201759.52271.arnd@arndb.de>
-References: <CAP=VYLrNpskLQDAw3Udnq7grddi-uD6TDjQQoZUd+FVg2rXPnA@mail.gmail.com>
+From: Seth Jennings <sjenning@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for Apr 19 (zcache)
+Date: Fri, 20 Apr 2012 14:06:41 -0500
+Message-ID: <4F91B3C1.5080507@linux.vnet.ibm.com>
+References: <20120419164643.d9f918d44c890722b7707508@canb.auug.org.au> <4F909200.6070104@xenotime.net> <0b74f96b-8450-4dfb-8798-36edd0e06a64@default> <4F90E7CA.6080201@linux.vnet.ibm.com> <20120420163745.GB31062@phenom.dumpdata.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:57918 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754050Ab2DTR77 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Apr 2012 13:59:59 -0400
-In-Reply-To: <CAP=VYLrNpskLQDAw3Udnq7grddi-uD6TDjQQoZUd+FVg2rXPnA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120420163745.GB31062@phenom.dumpdata.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Dan Magenheimer <dan.magenheimer@oracle.com>, Nitin Gupta <nitingupta910@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
-On Thursday 19 April 2012, Paul Gortmaker wrote:
-> ARM folks,
+On 04/20/2012 11:37 AM, Konrad Rzeszutek Wilk wrote:
+> On Thu, Apr 19, 2012 at 11:36:26PM -0500, Seth Jennings wrote:
+>> One fix is this:
+>>
+>> diff --git a/drivers/staging/zcache/Kconfig b/drivers/staging/zcache/Kconfig
+>> index 3ed2c8f..7048e01 100644
+>> --- a/drivers/staging/zcache/Kconfig
+>> +++ b/drivers/staging/zcache/Kconfig
+>> @@ -2,7 +2,7 @@ config ZCACHE
+>>         bool "Dynamic compression of swap pages and clean pagecache pages"
+>>         # X86 dependency is because zsmalloc uses non-portable pte/tlb
+>>         # functions
+>> -       depends on (CLEANCACHE || FRONTSWAP) && CRYPTO && X86
+>> +       depends on (CLEANCACHE || FRONTSWAP) && CRYPTO=y && X86
+>>         select ZSMALLOC
+>>         select CRYPTO_LZO
+>>         default n
+>>
+>> I think this is the best way since ZCACHE is a bool and CRYPTO is the only
+>> one of the dependencies that is a tristate.  This forces both ZSMALLOC and
+>> CRYPTO_LZO to be builtin if ZCACHE is selected.
+>>
+>> Any other suggestions?
 > 
-> Just a heads up that Stephen expanded the linux-next ARM coverage
-> today to add a whole bunch more builds.
+> Could you do:
 > 
-> Possibly "new" build fails were detected in these configs:
-> 
-> ARM:mackerel_defconfig,ag5evm_defconfig
-> ARM:ezx_defconfig
-> ARM:mini2440_defconfig
+> default y if (CRYPTO=y || ZSMALLOC=m)
+> default m if (CRYPTO=m || ZSMALLOC=y)
 
-I think this is needed to fix mini2440_defconfig after the platform
-files have been moved around.
+ZCACHE is a bool and can't be built as a module.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The requirement is the if ZCACHE=y, then ZSMALLOC and
+CRYPTO must also =y.
 
-diff --git a/arch/arm/configs/mini2440_defconfig b/arch/arm/configs/mini2440_defconfig
-index 42da918..082175c 100644
---- a/arch/arm/configs/mini2440_defconfig
-+++ b/arch/arm/configs/mini2440_defconfig
-@@ -14,6 +14,8 @@ CONFIG_MODULE_FORCE_UNLOAD=y
- # CONFIG_BLK_DEV_BSG is not set
- CONFIG_BLK_DEV_INTEGRITY=y
- CONFIG_ARCH_S3C24XX=y
-+# CONFIG_CPU_S3C2410 is not set
-+CONFIG_CPU_S3C2440=y
- CONFIG_S3C_ADC=y
- CONFIG_S3C24XX_PWM=y
- CONFIG_MACH_MINI2440=y
+Thanks,
+Seth
