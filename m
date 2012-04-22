@@ -1,60 +1,38 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: linux-next: Tree for Apr 20 (usb & target)
-Date: Sun, 22 Apr 2012 21:01:36 +0200
-Message-ID: <20120422190136.GA31242@linutronix.de>
-References: <20120420155151.3fcac4c2d1002ade5ccf44ac@canb.auug.org.au>
- <4F91D9D9.6020609@xenotime.net>
- <1334999263.30707.129.camel@haakon2.linux-iscsi.org>
- <20120421153402.GA22953@kroah.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the usb.current
+ tree
+Date: Sun, 22 Apr 2012 15:27:57 -0700
+Message-ID: <20120422222757.GA26593@kroah.com>
+References: <20120419151402.6f958fabc6bd96696b4cde3c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:53043 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751580Ab2DVTBp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Apr 2012 15:01:45 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:34965 "EHLO
+	out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752623Ab2DVWgV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 22 Apr 2012 18:36:21 -0400
 Content-Disposition: inline
-In-Reply-To: <20120421153402.GA22953@kroah.com>
+In-Reply-To: <20120419151402.6f958fabc6bd96696b4cde3c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, target-devel@vger.kernel.org, Felipe Balbi <balbi@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anatolij Gustschin <agust@denx.de>, Ramneek Mehresh <ramneek.mehresh@freescale.com>
 
-* Greg KH | 2012-04-21 08:34:02 [-0700]:
+On Thu, Apr 19, 2012 at 03:14:02PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/usb/host/ehci-fsl.c between commit f941f6922533 ("USB: ehci-fsl:
+> Fix kernel crash on mpc5121e") from the usb.current tree and commit
+> 58c559e6509f ("fsl/usb: Add controller version based ULPI and UTMI phy
+> support") from the usb tree.
+> 
+> I fixed it up (using the pdata assignment from the latter commit) and
+> can carry the fix as necessary.
 
->> > CONFIG_MODULES is not enabled.
->> > CONFIG_TCM_USB_GADGET=y
->> > CONFIG_USB_GADGET=y
->> 
->> Sebastian + Greg-KH (Cc'ed), any ideas why this is the case here..?
->
->I have no idea, sorry.
+This should now be resolved in my tree.
 
-The short version:
-in order to fix this either move the usb-target-gadget to
-drivers/usb/gadget/Kconfig and make sure only one gadget can be compiled
-at a time or add some kind of depends.
+thanks,
 
-The longer version:
-This is a short comming of the gadget framework. We are able to build
-multiple UDCs at a time and we can build multiple gadgets _as_ modules.
-Since we can not bind & configure via an interface the whole thing works
-right now via "modprobe $gadget. There is some infrastructure to accept
-multiple UDCs/gadget but the *whole* thing is not complete.
-In non-modules mode you can only select one gadget at a time. With the
-target gadget living outside of usb/gadget selection it is possible to
-select both at the same time which causes the duplicate symbols here.
-A "quick" fix is not to define all the functions static and put
-maybe_unsued on each function to avoid warnings. This is only duct tape
-on top and I would prefer that nobody is sending such a patch. The
-result is hardly usefull by a user.
-A real fix would to get rid of the "#includes foo.c" and use a helper
-module/library instead.
-I tried this once and notice that the whole thing relies on
-static/global variables which are initialized once on modprobe. So
-with the second module loaded (read as rmmod $mod1 && modprobe $mod2)
-the gadget framework explodes. Once I noticed that, the patches got out
-of Felipe's tree before anyone noticed something. That means we should
-first get rid of the global variables and then maybe try again :)
-
-Sebastian
+greg k-h
