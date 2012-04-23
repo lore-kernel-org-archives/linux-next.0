@@ -1,74 +1,51 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: [-next] m68k proc_ops breakage
-Date: Mon, 23 Apr 2012 19:22:02 +0100
-Message-ID: <1335205322.4191.27.camel@dabdike.lan>
-References: <CAMuHMdVQ9pxfRz899KVdAHhcspnhYU_H5DRCwRcsQY8cpZUqZw@mail.gmail.com>
-	 <1332832945.2883.5.camel@dabdike>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 2/2] usb/ssb: Add missing #include <linux/slab.h>
+Date: Mon, 23 Apr 2012 21:55:32 +0200
+Message-ID: <1335210932-9565-2-git-send-email-geert@linux-m68k.org>
+References: <1335210932-9565-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:53033 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753239Ab2DWSWJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Apr 2012 14:22:09 -0400
-In-Reply-To: <1332832945.2883.5.camel@dabdike>
+Received: from gerard.telenet-ops.be ([195.130.132.48]:49163 "EHLO
+	gerard.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753395Ab2DWTzu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 15:55:50 -0400
+In-Reply-To: <1335210932-9565-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, scsi <linux-scsi@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Tue, 2012-03-27 at 07:22 +0000, James Bottomley wrote:
-> On Mon, 2012-03-26 at 22:06 +0200, Geert Uytterhoeven wrote:
-> > m68k/defconfig:
-> >=20
-> > In file included from drivers/scsi/atari_scsi.c:1091:
-> > drivers/scsi/atari_NCR5380.c: In function =E2=80=98NCR5380_print_st=
-atus=E2=80=99:
-> > drivers/scsi/atari_NCR5380.c:736: error: implicit declaration of
-> > function =E2=80=98NCR5380_proc_info=E2=80=99
-> > drivers/scsi/atari_NCR5380.c: At top level:
-> > drivers/scsi/atari_NCR5380.c:767: error: static declaration of
-> > =E2=80=98NCR5380_proc_info=E2=80=99 follows non-static declaration
-> > drivers/scsi/atari_NCR5380.c:736: error: previous implicit declarat=
-ion
-> > of =E2=80=98NCR5380_proc_info=E2=80=99 was here
-> > make[1]: *** [drivers/scsi/atari_scsi.o] Error 1
-> >=20
-> >=20
-> > m68k/sun3_defconfig:
-> >=20
-> > In file included from drivers/scsi/sun3_scsi.c:628:
-> > drivers/scsi/sun3_NCR5380.c: In function =E2=80=98NCR5380_print_sta=
-tus=E2=80=99:
-> > drivers/scsi/sun3_NCR5380.c:678: error: implicit declaration of
-> > function =E2=80=98sun3scsi_proc_info=E2=80=99
-> > drivers/scsi/sun3_NCR5380.c: At top level:
-> > drivers/scsi/sun3_NCR5380.c:709: error: static declaration of
-> > =E2=80=98sun3scsi_proc_info=E2=80=99 follows non-static declaration
-> > drivers/scsi/sun3_NCR5380.c:678: error: previous implicit declarati=
-on
-> > of =E2=80=98sun3scsi_proc_info=E2=80=99 was here
-> > make[1]: *** [drivers/scsi/sun3_scsi.o] Error 1
-> >=20
-> > In file included from drivers/scsi/sun3_scsi_vme.c:571:
-> > drivers/scsi/sun3_NCR5380.c: In function =E2=80=98NCR5380_print_sta=
-tus=E2=80=99:
-> > drivers/scsi/sun3_NCR5380.c:678: error: implicit declaration of
-> > function =E2=80=98sun3scsi_proc_info=E2=80=99
-> > drivers/scsi/sun3_NCR5380.c: At top level:
-> > drivers/scsi/sun3_NCR5380.c:709: error: static declaration of
-> > =E2=80=98sun3scsi_proc_info=E2=80=99 follows non-static declaration
-> > drivers/scsi/sun3_NCR5380.c:678: error: previous implicit declarati=
-on
-> > of =E2=80=98sun3scsi_proc_info=E2=80=99 was here
-> > make[1]: *** [drivers/scsi/sun3_scsi_vme.o] Error 1
->=20
-> Yes, the proc_ops conversion isn't quite ready.  I'll hold it over to
-> the next merge window so we can fix stuff like this.
+m68k/allmodconfig:
 
-OK, so I'd like to try pushing the proc-ops fixes for the next merge
-window, but I think I'm still missing the fix for this.
+drivers/usb/host/ssb-hcd.c: In function =E2=80=98ssb_hcd_probe=E2=80=99=
+:
+drivers/usb/host/ssb-hcd.c:170: error: implicit declaration of function=
+ =E2=80=98kzalloc=E2=80=99
+drivers/usb/host/ssb-hcd.c:170: warning: assignment makes pointer from =
+integer without a cast
+drivers/usb/host/ssb-hcd.c:205: error: implicit declaration of function=
+ =E2=80=98kfree=E2=80=99
 
-James
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+http://kisskb.ellerman.id.au/kisskb/buildresult/6167030/
+---
+ drivers/usb/host/ssb-hcd.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/usb/host/ssb-hcd.c b/drivers/usb/host/ssb-hcd.c
+index c2e7343..c2a29fa 100644
+--- a/drivers/usb/host/ssb-hcd.c
++++ b/drivers/usb/host/ssb-hcd.c
+@@ -22,6 +22,7 @@
+ #include <linux/delay.h>
+ #include <linux/platform_device.h>
+ #include <linux/module.h>
++#include <linux/slab.h>
+ #include <linux/usb/ehci_pdriver.h>
+ #include <linux/usb/ohci_pdriver.h>
+=20
+--=20
+1.7.0.4
