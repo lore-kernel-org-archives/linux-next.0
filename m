@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the modem-shm tree with the driver-core
- tree
-Date: Mon, 23 Apr 2012 15:44:20 +1000
-Message-ID: <20120423154420.09f149266ae36bb8e08b4207@canb.auug.org.au>
+Subject: linux-next: manual merge of the dma-mapping tree with the tip tree
+Date: Mon, 23 Apr 2012 16:03:09 +1000
+Message-ID: <20120423160309.59622ba2cc2139dd50f742e9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Apr_2012_15_44_20_+1000_JO9A3/RW7+Yd21FN"
+ boundary="Signature=_Mon__23_Apr_2012_16_03_09_+1000_th8pjFweVXpQiYT0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55502 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:57074 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751218Ab2DWFoe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 01:44:34 -0400
+	with ESMTP id S1751400Ab2DWGDV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 02:03:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?B?IlNqdXIgQnLDpm5k?= =?UTF-8?B?ZWxhbmQi?= <sjur.brandeland@stericsson.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Greg KH <greg@kroah.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Mon__23_Apr_2012_15_44_20_+1000_JO9A3/RW7+Yd21FN
+--Signature=_Mon__23_Apr_2012_16_03_09_+1000_th8pjFweVXpQiYT0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the modem-shm tree got a conflict in
-drivers/Kconfig between commit de55d8716ac5  ("Extcon (external
-connector): import Android's switch class and modify") from the
-driver-core tree and commit 021fd6178bcd ("modem_shm: Makefile and
-Kconfig for M7400 Shared Memory Drivers") from the modem-shm tree.
+Today's linux-next merge of the dma-mapping tree got a conflict in
+arch/x86/include/asm/dma-mapping.h between commit f7219a5300ba ("x86:
+Introduce CONFIG_X86_DMA_REMAP") from the tip tree and commit
+cfe29d4b429b ("X86: integrate CMA with DMA-mapping subsystem") from the
+dma-mapping tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -36,39 +35,49 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/Kconfig
-index 0233ad9,918e943..0000000
---- a/drivers/Kconfig
-+++ b/drivers/Kconfig
-@@@ -140,6 -136,6 +140,8 @@@ source "drivers/virt/Kconfig
+diff --cc arch/x86/include/asm/dma-mapping.h
+index 61c0bd2,7b9227b..0000000
+--- a/arch/x86/include/asm/dma-mapping.h
++++ b/arch/x86/include/asm/dma-mapping.h
+@@@ -62,12 -63,10 +63,16 @@@ extern void *dma_generic_alloc_coherent
+  					dma_addr_t *dma_addr, gfp_t flag,
+  					struct dma_attrs *attrs);
  =20
-  source "drivers/devfreq/Kconfig"
- =20
- +source "drivers/extcon/Kconfig"
- +
-+ source "drivers/modem_shm/Kconfig"
++ extern void dma_generic_free_coherent(struct device *dev, size_t size,
++ 				      void *vaddr, dma_addr_t dma_addr,
++ 				      struct dma_attrs *attrs);
 +=20
-  endmenu
+ +#ifdef CONFIG_X86_DMA_REMAP /* Platform code defines bridge-specific code=
+ */
+ +extern bool dma_capable(struct device *dev, dma_addr_t addr, size_t size);
+ +extern dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr);
+ +extern phys_addr_t dma_to_phys(struct device *dev, dma_addr_t daddr);
+ +#else
+ +
+  static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_=
+t size)
+  {
+  	if (!dev->dma_mask)
 
---Signature=_Mon__23_Apr_2012_15_44_20_+1000_JO9A3/RW7+Yd21FN
+--Signature=_Mon__23_Apr_2012_16_03_09_+1000_th8pjFweVXpQiYT0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPlOw0AAoJEECxmPOUX5FEb68QAJAOvqTfCD5eqXwUI9jjd43J
-NN2Qfz1htHKGHJ53A9JK5lt+DjrrGziB7fXaqtpkNjJsaKJXjx3JGmToyJTwQE5x
-OgkmOfvLbWmYFGipMWEZhBAfS/QPrmey17nB5vPepA3UqPmXWMGPYSvkyoMBtofy
-eX9PAEF1e+ZW3ivST041poyPsc+l0eh2uTsU8T0hHRxO1b9eOsGT4CA6h/w+P/g7
-bGJeCs6VBryVAyrFS2kZMmQiZTQSjg8M3T6z8EHTMishdJchDVsTxg15vN3mS+M3
-jA8RhTdRkwbtQ8KpwoJ11gO1cfIkG3jQsgd2AB1W9CaQscEbKI5igBlf7tawLlGM
-A1SwnagKRyFioaSLft6OMOa934Zy8+1IT0mEzz3COo6kapvQ2hCoBpkkobDFq7gk
-xYnaFPfapY3v5Rz3an/NdMCIvSyAkpCb9Fib0ujRSmXITNC8VF+k7luAsd8TMV0M
-gTRNy8NQRw//gyAufPbnYhkd4OsAwhUCMyJNprydBh853NDqDfKiuF8rQNpxWoa3
-an5LNjEMzSwu8I/qm5rTWwtShe/TCiTiHqwxrtBKGSQcZd+VphYfYE3Jfz/m0b7F
-/CPp+Hmhe2T5bq9UcuIyNkhvPrqMzdAuDMr9oPpVQHj4ZdG8Mn8+iGAV/53FyQe/
-/dX6Dot9RQrSYguRicGv
-=dX0b
+iQIcBAEBCAAGBQJPlPCdAAoJEECxmPOUX5FE4XUP/1RG9Vlt6lxYPVjqkZXGPucQ
+cCTvFW2/Kq8bEbqnDSKbNQxMRv4tJDlD40fGbrBCcBXT6OFDuUYivVL8p93NW/83
+3eClQid4WKx9UsUfJWB2b1mlxpxXpQAPEId2/AKzyHrg6moCEvMW+5AZgRrYMfIy
+SWalCNOPXovvWXbUf7RdrKmZdXghedCVfF2LnP9qX8SExPmmmg2TFuToflBVjmnY
+4Cc07PVtc576VrbCOyYOpmFnSycEIOJD6iOqh80BnrjrfhTa4OAtu//PvaseFH9K
+cwphdTeRBoLI8uKDWKsbPS10tkAxpGdbI30T6fJFhLElTlJuf2yS1L1TXOTuK+6s
+47W2rCcqDKyhGz9ubugSqohhjA/xPGgwhcvLbxsVHPXo4epSwVPUNcwqaijHjsMX
+yXwWGWGW1YFRXhseqyOQJU4k5IeVi1fnkFNn2Bf6kkitIyB4GkD2FDWIkZ/elyx+
+qVeMDCnCFGOHMLCvUgu0VJH/fjsqOQqSEBEY2BWzF8D0SgxlFRp1uzmt5NnX+YfD
+E+zrPn1MJ+BgGwhiIXYmy665ec2Ohx4tjPUFT63g1Vx9iPUpB3o+8t1ITE4LPq+c
+t7Oj5r8m6O13TAAmctk1C9aD+R+cPtfT05ck5jifwEgwlazOTRDwOqm/t1SiPyOX
+6nBTEn/jN3xzz9siNvRf
+=ANZS
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_Apr_2012_15_44_20_+1000_JO9A3/RW7+Yd21FN--
+--Signature=_Mon__23_Apr_2012_16_03_09_+1000_th8pjFweVXpQiYT0--
