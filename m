@@ -1,35 +1,73 @@
-From: Hauke Mehrtens <hauke-5/S+JYg5SzeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH 2/2] usb/ssb: Add missing #include <linux/slab.h>
-Date: Tue, 24 Apr 2012 00:04:13 +0200
-Message-ID: <4F95D1DD.70309@hauke-m.de>
-References: <1335210932-9565-1-git-send-email-geert@linux-m68k.org> <1335210932-9565-2-git-send-email-geert@linux-m68k.org>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: [PATCH] net sysctl: Add place holder functions for when sysctl support is compiled out of the kernel.
+Date: Mon, 23 Apr 2012 15:13:02 -0700
+Message-ID: <m1lilmt7v5.fsf_-_@fess.ebiederm.org>
+References: <20120423170701.c96e402234b1387dece11dda@canb.auug.org.au>
+	<4F958598.6080305@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1335210932-9565-2-git-send-email-geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out03.mta.xmission.com ([166.70.13.233]:56893 "EHLO
+	out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752967Ab2DWWJB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 18:09:01 -0400
+In-Reply-To: <4F958598.6080305@xenotime.net> (Randy Dunlap's message of "Mon,
+	23 Apr 2012 09:38:48 -0700")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>
 
-On 04/23/2012 09:55 PM, Geert Uytterhoeven wrote:
-> m68k/allmodconfig:
->=20
-> drivers/usb/host/ssb-hcd.c: In function =E2=80=98ssb_hcd_probe=E2=80=99=
-:
-> drivers/usb/host/ssb-hcd.c:170: error: implicit declaration of functi=
-on =E2=80=98kzalloc=E2=80=99
-> drivers/usb/host/ssb-hcd.c:170: warning: assignment makes pointer fro=
-m integer without a cast
-> drivers/usb/host/ssb-hcd.c:205: error: implicit declaration of functi=
-on =E2=80=98kfree=E2=80=99
->=20
-> Signed-off-by: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Acked-by: Hauke Mehrtens <hauke-5/S+JYg5SzeELgA04lAiVw@public.gmane.org>
 
-Hauke
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Randy Dunlap <rdunlap@xenotime.net> reported:
+> On 04/23/2012 12:07 AM, Stephen Rothwell wrote:
+>
+>> Hi all,
+>>
+>> Changes since 20120420:
+>
+>
+>
+> ERROR: "unregister_net_sysctl_table" [net/phonet/phonet.ko] undefined!
+> ERROR: "register_net_sysctl" [net/phonet/phonet.ko] undefined!
+>
+> when CONFIG_SYSCTL is not enabled.
+
+Add static inline stub functions to gracefully handle the case when sysctl
+support is not present.
+
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+---
+ include/net/net_namespace.h |   15 ++++++++++++---
+ 1 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+index 3ee4a3d..ac9195e 100644
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -284,11 +284,20 @@ struct ctl_table_header;
+ 
+ #ifdef CONFIG_SYSCTL
+ extern int net_sysctl_init(void);
+-#else
+-static inline int net_sysctl_init(void) { return 0; }
+-#endif
+ extern struct ctl_table_header *register_net_sysctl(struct net *net,
+ 	const char *path, struct ctl_table *table);
+ extern void unregister_net_sysctl_table(struct ctl_table_header *header);
++#else
++static inline int net_sysctl_init(void) { return 0; }
++static inline struct ctl_table_header *register_net_sysctl(struct net *net,
++	const char *path, struct ctl_table *table)
++{
++	return NULL;
++}
++static inline void unregister_net_sysctl_table(struct ctl_table_header *header)
++{
++}
++#endif
++
+ 
+ #endif /* __NET_NET_NAMESPACE_H */
+-- 
+1.7.2.5
