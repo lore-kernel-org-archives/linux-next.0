@@ -1,83 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the dma-mapping tree with the tip tree
-Date: Mon, 23 Apr 2012 16:03:09 +1000
-Message-ID: <20120423160309.59622ba2cc2139dd50f742e9@canb.auug.org.au>
+Subject: Re: linux-next: clean up time
+Date: Mon, 23 Apr 2012 16:48:59 +1000
+Message-ID: <20120423164859.082b5c53b5d9bd9a524ec864@canb.auug.org.au>
+References: <20120402112009.3477dad7deff0f4d87f49b29@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Apr_2012_16_03_09_+1000_th8pjFweVXpQiYT0"
+ boundary="Signature=_Mon__23_Apr_2012_16_48_59_+1000_gS5ke6Py16BsgN4J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57074 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:42427 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751400Ab2DWGDV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 02:03:21 -0400
+	with ESMTP id S1753748Ab2DWGtJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 02:49:09 -0400
+In-Reply-To: <20120402112009.3477dad7deff0f4d87f49b29@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, Sumit Semwal <sumit.semwal@linaro.org>, Rob Lee <rob.lee@linaro.org>
 
---Signature=_Mon__23_Apr_2012_16_03_09_+1000_th8pjFweVXpQiYT0
+--Signature=_Mon__23_Apr_2012_16_48_59_+1000_gS5ke6Py16BsgN4J
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the dma-mapping tree got a conflict in
-arch/x86/include/asm/dma-mapping.h between commit f7219a5300ba ("x86:
-Introduce CONFIG_X86_DMA_REMAP") from the tip tree and commit
-cfe29d4b429b ("X86: integrate CMA with DMA-mapping subsystem") from the
-dma-mapping tree.
+On Mon, 2 Apr 2012 11:20:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Can people please clean up stuff in their trees that has been merged by
+> their upstream.   This is especially useful where the upstream merged (or
+> applied) a slightly different version of their tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+There is still much cruft in the linux-next included trees ... The
+following trees appear empty (relative to Linus' tree) but cause conflicts:
+
+bjdooks-i2c
+xen
+dma-buf
+cpuidle-cons
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/include/asm/dma-mapping.h
-index 61c0bd2,7b9227b..0000000
---- a/arch/x86/include/asm/dma-mapping.h
-+++ b/arch/x86/include/asm/dma-mapping.h
-@@@ -62,12 -63,10 +63,16 @@@ extern void *dma_generic_alloc_coherent
-  					dma_addr_t *dma_addr, gfp_t flag,
-  					struct dma_attrs *attrs);
- =20
-+ extern void dma_generic_free_coherent(struct device *dev, size_t size,
-+ 				      void *vaddr, dma_addr_t dma_addr,
-+ 				      struct dma_attrs *attrs);
-+=20
- +#ifdef CONFIG_X86_DMA_REMAP /* Platform code defines bridge-specific code=
- */
- +extern bool dma_capable(struct device *dev, dma_addr_t addr, size_t size);
- +extern dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr);
- +extern phys_addr_t dma_to_phys(struct device *dev, dma_addr_t daddr);
- +#else
- +
-  static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_=
-t size)
-  {
-  	if (!dev->dma_mask)
-
---Signature=_Mon__23_Apr_2012_16_03_09_+1000_th8pjFweVXpQiYT0
+--Signature=_Mon__23_Apr_2012_16_48_59_+1000_gS5ke6Py16BsgN4J
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPlPCdAAoJEECxmPOUX5FE4XUP/1RG9Vlt6lxYPVjqkZXGPucQ
-cCTvFW2/Kq8bEbqnDSKbNQxMRv4tJDlD40fGbrBCcBXT6OFDuUYivVL8p93NW/83
-3eClQid4WKx9UsUfJWB2b1mlxpxXpQAPEId2/AKzyHrg6moCEvMW+5AZgRrYMfIy
-SWalCNOPXovvWXbUf7RdrKmZdXghedCVfF2LnP9qX8SExPmmmg2TFuToflBVjmnY
-4Cc07PVtc576VrbCOyYOpmFnSycEIOJD6iOqh80BnrjrfhTa4OAtu//PvaseFH9K
-cwphdTeRBoLI8uKDWKsbPS10tkAxpGdbI30T6fJFhLElTlJuf2yS1L1TXOTuK+6s
-47W2rCcqDKyhGz9ubugSqohhjA/xPGgwhcvLbxsVHPXo4epSwVPUNcwqaijHjsMX
-yXwWGWGW1YFRXhseqyOQJU4k5IeVi1fnkFNn2Bf6kkitIyB4GkD2FDWIkZ/elyx+
-qVeMDCnCFGOHMLCvUgu0VJH/fjsqOQqSEBEY2BWzF8D0SgxlFRp1uzmt5NnX+YfD
-E+zrPn1MJ+BgGwhiIXYmy665ec2Ohx4tjPUFT63g1Vx9iPUpB3o+8t1ITE4LPq+c
-t7Oj5r8m6O13TAAmctk1C9aD+R+cPtfT05ck5jifwEgwlazOTRDwOqm/t1SiPyOX
-6nBTEn/jN3xzz9siNvRf
-=ANZS
+iQIcBAEBCAAGBQJPlPtbAAoJEECxmPOUX5FEoCsQAKT6k2HQFywvsFfXeOJcDKWb
+uWGyArrjRt8RKSPbCVQuGrzkQkC7AFHINAigm/8YQ3hwJX7++z5MPmUhNgIjzdFN
+ZFN5+FbMBDERI7yuiYXMapUjx/13nSntbanAlCT2+9Na3RKFdzXi2gz+VEbzOiYs
+UmYuXIRgsuhBYiclG68wI+eotRv8GU5qbje06GrlRwBIGOgsBywtvRwc2pzfwGTT
+Uc2xmb5+EIy3XLgmp/d03I9nuxoLihNdSPoOR228/LCgdIILBFb2D+ZihMa5yU6a
+l9S4wMRI+E1dsLbmAHCHgEanoTxtXCfnjdRTKmFBtAzBV+eaAG4RB1BOCvqdFsRN
+NDLFIcDC/WvbLymk31l1nx4rAFE9IiE1H0cyFy3lEKpTBlT9EVYc9H4/l7p0Q3JH
+tKaAc9kDQCDCK1Fne/SMknEpvzcHRyjvjjvstNpMyfP4+9dhTeS3wprjWC7tvfoa
+Kt5NyWvDf5Lll118xrXXEBQpGoys03orll1Fi3ki7i7kzPu+NdwTYqKQGVu2HxAi
+P5WSvNVntJrp1vgHHsHGoujzMmj3o2jjXHuFwYwlcDTtQws6BsIaPW785FtoHGQ+
+gEiQeykb0h/HRq7jEuzsfUtd+u6yLr5gwos1TBrnX13yA/1Qbe7R7WUidgwxy4E9
+6kMnejc7wy0pTyJ0HGVD
+=pV7+
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_Apr_2012_16_03_09_+1000_th8pjFweVXpQiYT0--
+--Signature=_Mon__23_Apr_2012_16_48_59_+1000_gS5ke6Py16BsgN4J--
