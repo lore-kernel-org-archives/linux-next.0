@@ -1,90 +1,87 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build warning after merge of the net-next tree
-Date: Mon, 23 Apr 2012 03:22:24 -0400 (EDT)
-Message-ID: <20120423.032224.814734981507451327.davem@davemloft.net>
-References: <20120423165409.d424daced95611012d151aa6@canb.auug.org.au>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: linux-next: manual merge of the akpm tree with the dma-mapping tree
+Date: Mon, 23 Apr 2012 09:50:53 +0200
+Message-ID: <056601cd2125$cf4737b0$6dd5a710$%szyprowski@samsung.com>
+References: <20120423164953.1095c9ccbf81a33641947cd3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120423165409.d424daced95611012d151aa6@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ncardwell@google.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:20756 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752310Ab2DWHu7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 03:50:59 -0400
+In-reply-to: <20120423164953.1095c9ccbf81a33641947cd3@canb.auug.org.au>
+Content-language: pl
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Andrew Morton' <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 23 Apr 2012 16:54:09 +1000
+Hi Stephen,
 
-> Hi all,
+On Monday, April 23, 2012 8:50 AM Stephen Rothwell wrote:
+
+> Today's linux-next merge of the scsi-post-merge tree got a conflict in
+> mm/page_alloc.c between commit ac77c4123661 ("mm: trigger page reclaim in
+> alloc_contig_range() to stabilise watermarks") from the dma-mapping tree
+> and commit "mm: add extra free kbytes tunable" from the akpm tree.
 > 
-> After merging the net-next tree, today's linux-next build (powerpc
-> ppc44x_defconfig) produced these warnings:
+> Just context changes.  I fixed it up (I think - see below) and can carry
+> the fixes as necessary.
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 > 
-> net/ipv4/tcp_ipv4.c: In function 'tcp_v4_init_sock':
-> net/ipv4/tcp_ipv4.c:1891:19: warning: unused variable 'tp' [-Wunused-variable]
-> net/ipv6/tcp_ipv6.c: In function 'tcp_v6_init_sock':
-> net/ipv6/tcp_ipv6.c:1836:19: warning: unused variable 'tp' [-Wunused-variable]
+> diff --cc mm/page_alloc.c
+> index 0e1c6f5,decfbf0..0000000
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@@ -5032,9 -4988,17 +5044,10 @@@ static void setup_per_zone_lowmem_reser
+>   	calculate_totalreserve_pages();
+>   }
 > 
-> Introduced by commit 900f65d361d3 ("tcp: move duplicate code from
-> tcp_v4_init_sock()/tcp_v6_init_sock()").
+>  -/**
+>  - * setup_per_zone_wmarks - called when min_free_kbytes changes
+>  - * or when memory is hot-{added|removed}
+>  - *
+>  - * Ensures that the watermark[min,low,high] values for each zone are set
+>  - * correctly with respect to min_free_kbytes.
+>  - */
+>  -void setup_per_zone_wmarks(void)
+>  +static void __setup_per_zone_wmarks(void)
+>   {
+>   	unsigned long pages_min = min_free_kbytes >> (PAGE_SHIFT - 10);
+> + 	unsigned long pages_low = extra_free_kbytes >> (PAGE_SHIFT - 10);
+>   	unsigned long lowmem_pages = 0;
+>   	struct zone *zone;
+>   	unsigned long flags;
+> @@@ -5074,16 -5041,13 +5090,18 @@@
+>   			 * If it's a lowmem zone, reserve a number of pages
+>   			 * proportionate to the zone's size.
+>   			 */
+> - 			zone->watermark[WMARK_MIN] = tmp;
+> + 			zone->watermark[WMARK_MIN] = min;
+>   		}
+> 
+> - 		zone->watermark[WMARK_LOW]  = min_wmark_pages(zone) + (tmp >> 2);
+> - 		zone->watermark[WMARK_HIGH] = min_wmark_pages(zone) + (tmp >> 1);
+> + 		zone->watermark[WMARK_LOW]  = min_wmark_pages(zone) +
+> + 					low + (min >> 2);
+> + 		zone->watermark[WMARK_HIGH] = min_wmark_pages(zone) +
+> + 					low + (min >> 1);
+>  +
+>  +		zone->watermark[WMARK_MIN] += cma_wmark_pages(zone);
+>  +		zone->watermark[WMARK_LOW] += cma_wmark_pages(zone);
+>  +		zone->watermark[WMARK_HIGH] += cma_wmark_pages(zone);
+>  +
+>   		setup_zone_migrate_reserve(zone);
+>   		spin_unlock_irqrestore(&zone->lock, flags);
+>   	}
 
-Thanks, I just pushed the following:
+The fix looks fine, thanks for merging those patches.
 
---------------------
-tcp: Fix build warning after tcp_{v4,v6}_init_sock consolidation.
-
-net/ipv4/tcp_ipv4.c: In function 'tcp_v4_init_sock':
-net/ipv4/tcp_ipv4.c:1891:19: warning: unused variable 'tp' [-Wunused-variable]
-net/ipv6/tcp_ipv6.c: In function 'tcp_v6_init_sock':
-net/ipv6/tcp_ipv6.c:1836:19: warning: unused variable 'tp' [-Wunused-variable]
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- net/ipv4/tcp_ipv4.c |    3 +--
- net/ipv6/tcp_ipv6.c |    3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-index 5b07ea1..0883921 100644
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -1888,14 +1888,13 @@ static const struct tcp_sock_af_ops tcp_sock_ipv4_specific = {
- static int tcp_v4_init_sock(struct sock *sk)
- {
- 	struct inet_connection_sock *icsk = inet_csk(sk);
--	struct tcp_sock *tp = tcp_sk(sk);
- 
- 	tcp_init_sock(sk);
- 
- 	icsk->icsk_af_ops = &ipv4_specific;
- 
- #ifdef CONFIG_TCP_MD5SIG
--	tp->af_specific = &tcp_sock_ipv4_specific;
-+	tcp_sk(sk)->af_specific = &tcp_sock_ipv4_specific;
- #endif
- 
- 	return 0;
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 24dac6b..8044f6a 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -1829,14 +1829,13 @@ static const struct tcp_sock_af_ops tcp_sock_ipv6_mapped_specific = {
- static int tcp_v6_init_sock(struct sock *sk)
- {
- 	struct inet_connection_sock *icsk = inet_csk(sk);
--	struct tcp_sock *tp = tcp_sk(sk);
- 
- 	tcp_init_sock(sk);
- 
- 	icsk->icsk_af_ops = &ipv6_specific;
- 
- #ifdef CONFIG_TCP_MD5SIG
--	tp->af_specific = &tcp_sock_ipv6_specific;
-+	tcp_sk(sk)->af_specific = &tcp_sock_ipv6_specific;
- #endif
- 
- 	return 0;
+Best regards
 -- 
-1.7.10
+Marek Szyprowski
+Samsung Poland R&D Center
