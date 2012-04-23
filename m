@@ -1,60 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm tree
-Date: Mon, 23 Apr 2012 13:42:11 +1000
-Message-ID: <20120423134211.3456f8acf83dfb3d38d44905@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Mon, 23 Apr 2012 00:25:20 -0400 (EDT)
+Message-ID: <20120423.002520.995859309070448490.davem@davemloft.net>
+References: <20120423121451.c88c9bfaaf4d79313f7219f3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Apr_2012_13_42_11_+1000_3mNhX1g.A42QCeez"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45628 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753121Ab2DWDmV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Apr 2012 23:42:21 -0400
+Received: from shards.monkeyblade.net ([198.137.202.13]:52522 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750962Ab2DWE13 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 00:27:29 -0400
+In-Reply-To: <20120423121451.c88c9bfaaf4d79313f7219f3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ebiederm@xmission.com
 
---Signature=_Mon__23_Apr_2012_13_42_11_+1000_3mNhX1g.A42QCeez
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 23 Apr 2012 12:14:51 +1000
 
-Hi Dave,
+> After merging the net-next tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> net/ax25/af_ax25.c: In function 'ax25_exit':
+> net/ax25/af_ax25.c:2015:2: error: implicit declaration of function 'ax25_unregister_sysctl' [-Werror=implicit-function-declaration]
+> 
+> Caused by a mismerge between commit 3adadc08cc1e ("net ax25: Reorder
+> ax25_exit to remove races") from the net tree and commit 0ca7a4c87d27
+> ("net ax25: Simplify and cleanup the ax25 sysctl handling") from the
+> net-next tree.
+> 
+> I have applied the following merge fix patch:
 
-After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Looks correct, and I'll resolve this the next time I pull
+net into net-next.
 
-ERROR: "vga_default_device" [arch/x86/video/fbdev.ko] undefined!
-
-Caused by commit 49c33b97c5f4 ("x86: Use vga_default_device() when
-determining whether an fb is primary").
-
-I have used the drm tree from next-20120420 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__23_Apr_2012_13_42_11_+1000_3mNhX1g.A42QCeez
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPlM+TAAoJEECxmPOUX5FE6IsP/3Nr5KyV0OC+ze15XkhyWqQ9
-g2e+fQWjQCNkKg0vN8FYk1vi17RCWRleI0fEqts2KYhiLJK2tfaGvzrVqDPspR/8
-hr3MlHCF4xM+rrpy44rkuH98Pb2U61VcQyxM8HocjYWoqSZhZrrQRseJf794DDyH
-L+RGlxQcHpNCeTnOr/A6PgyX9+nt1LkEBFenAhqUk+cjFoPgzL9NOTqEkYayXo9w
-FuorZ/ZSXEZfOO/l4L7EXnHY83qBGM61V+SJtZjTewg5oNSEZ3JaiOjnfLvR904h
-Qo8fHJ6FngVE7ZrU9CD1lVt53QZ35GSQr0j67VwERf4eKAoqOTdBC1og4UJclQUn
-Y4WTk2diIo2zFb9qJ/mar7oCJt9cuvxCk+1tnxvcS2GZ9195S9PsACxdGd/7Jxab
-GEt1qzVr8pTDNMTLjPLjo+fmwfwT+vqgN1H65oKip0n3n+AhLYaQazgtmeaTAiI2
-BXjYIS3F93gXyNgtCCTuvv0ILyfa4r0KGB6N1K/cbUI30eycWZc2yg0ENuLBUkcn
-gX85dH+jKAlXhr/HV0exryivfFc1OwbWYmvWVL3CExPT+s4ktDwWlm8LKPksn7yZ
-tAr4+ZjeSSRrcF+9vSNNYDHRNSGishKLU4Lf3iTpwR8SXLDi0xF1hDQualnxhorf
-jiD3iM0B80T+eGGdD/am
-=Sj0f
------END PGP SIGNATURE-----
-
---Signature=_Mon__23_Apr_2012_13_42_11_+1000_3mNhX1g.A42QCeez--
+Thanks!
