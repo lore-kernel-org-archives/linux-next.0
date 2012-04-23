@@ -1,86 +1,53 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
+From: David Miller <davem@davemloft.net>
 Subject: Re: [PATCH] net sysctl: Add place holder functions for when sysctl
  support is compiled out of the kernel.
-Date: Mon, 23 Apr 2012 15:38:45 -0700
-Message-ID: <4F95D9F5.3040407@xenotime.net>
-References: <20120423170701.c96e402234b1387dece11dda@canb.auug.org.au>	<4F958598.6080305@xenotime.net> <m1lilmt7v5.fsf_-_@fess.ebiederm.org>
+Date: Mon, 23 Apr 2012 19:24:42 -0400 (EDT)
+Message-ID: <20120423.192442.379812896211622385.davem@davemloft.net>
+References: <4F958598.6080305@xenotime.net>
+	<m1lilmt7v5.fsf_-_@fess.ebiederm.org>
+	<4F95D9F5.3040407@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:55779 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753421Ab2DWWiP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 18:38:15 -0400
-In-Reply-To: <m1lilmt7v5.fsf_-_@fess.ebiederm.org>
+Received: from shards.monkeyblade.net ([198.137.202.13]:33332 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754573Ab2DWX0u (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 19:26:50 -0400
+In-Reply-To: <4F95D9F5.3040407@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: David Miller <davem@davemloft.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
+To: rdunlap@xenotime.net
+Cc: ebiederm@xmission.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
-On 04/23/2012 03:13 PM, Eric W. Biederman wrote:
+From: Randy Dunlap <rdunlap@xenotime.net>
+Date: Mon, 23 Apr 2012 15:38:45 -0700
 
+> On 04/23/2012 03:13 PM, Eric W. Biederman wrote:
 > 
-> Randy Dunlap <rdunlap@xenotime.net> reported:
->> On 04/23/2012 12:07 AM, Stephen Rothwell wrote:
->>
->>> Hi all,
+>> 
+>> Randy Dunlap <rdunlap@xenotime.net> reported:
+>>> On 04/23/2012 12:07 AM, Stephen Rothwell wrote:
 >>>
->>> Changes since 20120420:
->>
->>
->>
->> ERROR: "unregister_net_sysctl_table" [net/phonet/phonet.ko] undefined!
->> ERROR: "register_net_sysctl" [net/phonet/phonet.ko] undefined!
->>
->> when CONFIG_SYSCTL is not enabled.
+>>>> Hi all,
+>>>>
+>>>> Changes since 20120420:
+>>>
+>>>
+>>>
+>>> ERROR: "unregister_net_sysctl_table" [net/phonet/phonet.ko] undefined!
+>>> ERROR: "register_net_sysctl" [net/phonet/phonet.ko] undefined!
+>>>
+>>> when CONFIG_SYSCTL is not enabled.
+>> 
+>> Add static inline stub functions to gracefully handle the case when sysctl
+>> support is not present.
+>> 
+>> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 > 
-> Add static inline stub functions to gracefully handle the case when sysctl
-> support is not present.
 > 
-> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-
-
-Yep, that works.
-
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-
-Thanks.
-
-> ---
->  include/net/net_namespace.h |   15 ++++++++++++---
->  1 files changed, 12 insertions(+), 3 deletions(-)
+> Yep, that works.
 > 
-> diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
-> index 3ee4a3d..ac9195e 100644
-> --- a/include/net/net_namespace.h
-> +++ b/include/net/net_namespace.h
-> @@ -284,11 +284,20 @@ struct ctl_table_header;
->  
->  #ifdef CONFIG_SYSCTL
->  extern int net_sysctl_init(void);
-> -#else
-> -static inline int net_sysctl_init(void) { return 0; }
-> -#endif
->  extern struct ctl_table_header *register_net_sysctl(struct net *net,
->  	const char *path, struct ctl_table *table);
->  extern void unregister_net_sysctl_table(struct ctl_table_header *header);
-> +#else
-> +static inline int net_sysctl_init(void) { return 0; }
-> +static inline struct ctl_table_header *register_net_sysctl(struct net *net,
-> +	const char *path, struct ctl_table *table)
-> +{
-> +	return NULL;
-> +}
-> +static inline void unregister_net_sysctl_table(struct ctl_table_header *header)
-> +{
-> +}
-> +#endif
-> +
->  
->  #endif /* __NET_NET_NAMESPACE_H */
+> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
-
-
--- 
-~Randy
+Applied, thanks everyone.
