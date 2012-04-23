@@ -1,222 +1,60 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: triage for April 22, 2012
-Date: Sun, 22 Apr 2012 21:45:39 -0400
-Message-ID: <20120423014539.GB15171@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Mon, 23 Apr 2012 13:42:11 +1000
+Message-ID: <20120423134211.3456f8acf83dfb3d38d44905@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__23_Apr_2012_13_42_11_+1000_3mNhX1g.A42QCeez"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:60375 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753062Ab2DWBpl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Apr 2012 21:45:41 -0400
-Content-Disposition: inline
+Received: from haggis.pcug.org.au ([203.10.76.10]:45628 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753121Ab2DWDmV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 22 Apr 2012 23:42:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>
 
-Two recent, but AFAIK yet unresolved problems:
+--Signature=_Mon__23_Apr_2012_13_42_11_+1000_3mNhX1g.A42QCeez
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  The "undefined reference to `vga_default_device'" stuff
-  [ https://lkml.org/lkml/2012/4/18/157 ]
+Hi Dave,
 
-  Sparc/parisc got borked by some kvm header shuffle it seems.
-  Complaining about "file 'asm-generic/kvm_para.h' is not exported"
-  [ http://kisskb.ellerman.id.au/kisskb/buildresult/6141443/ ]
-  [ http://kisskb.ellerman.id.au/kisskb/buildresult/6137786/ ]
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-I guess I'll have to look at these tomorrow to get more info,
-so they don't linger any further (unless they are fixed ASAP).
+ERROR: "vga_default_device" [arch/x86/video/fbdev.ko] undefined!
 
-The samples/seccomp/bpf-direct.c stuff and the gfs2 stuff
-seem to be fixed.
+Caused by commit 49c33b97c5f4 ("x86: Use vga_default_device() when
+determining whether an fb is primary").
 
-Arnd went after a couple of the new ARM fails; mini2440_defconfig and
-spear6xx_defconfig status updated accordingly. (Thanks!).
+I have used the drm tree from next-20120420 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
----------------------
+--Signature=_Mon__23_Apr_2012_13_42_11_+1000_3mNhX1g.A42QCeez
+Content-Type: application/pgp-signature
 
-New breakage since last report:
-	<none>
-			
-Randconfig fails that may or may not be new (by their very nature):
-	<none>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Builds that are fixed since last report:
-	*:allmodconfig -- failing on seccomp/bpf-direct.c 
+iQIcBAEBCAAGBQJPlM+TAAoJEECxmPOUX5FE6IsP/3Nr5KyV0OC+ze15XkhyWqQ9
+g2e+fQWjQCNkKg0vN8FYk1vi17RCWRleI0fEqts2KYhiLJK2tfaGvzrVqDPspR/8
+hr3MlHCF4xM+rrpy44rkuH98Pb2U61VcQyxM8HocjYWoqSZhZrrQRseJf794DDyH
+L+RGlxQcHpNCeTnOr/A6PgyX9+nt1LkEBFenAhqUk+cjFoPgzL9NOTqEkYayXo9w
+FuorZ/ZSXEZfOO/l4L7EXnHY83qBGM61V+SJtZjTewg5oNSEZ3JaiOjnfLvR904h
+Qo8fHJ6FngVE7ZrU9CD1lVt53QZ35GSQr0j67VwERf4eKAoqOTdBC1og4UJclQUn
+Y4WTk2diIo2zFb9qJ/mar7oCJt9cuvxCk+1tnxvcS2GZ9195S9PsACxdGd/7Jxab
+GEt1qzVr8pTDNMTLjPLjo+fmwfwT+vqgN1H65oKip0n3n+AhLYaQazgtmeaTAiI2
+BXjYIS3F93gXyNgtCCTuvv0ILyfa4r0KGB6N1K/cbUI30eycWZc2yg0ENuLBUkcn
+gX85dH+jKAlXhr/HV0exryivfFc1OwbWYmvWVL3CExPT+s4ktDwWlm8LKPksn7yZ
+tAr4+ZjeSSRrcF+9vSNNYDHRNSGishKLU4Lf3iTpwR8SXLDi0xF1hDQualnxhorf
+jiD3iM0B80T+eGGdD/am
+=Sj0f
+-----END PGP SIGNATURE-----
 
-----------------------
-
-Note1: The randconfig fails are only listed once and not tracked
-in the below listing.
-
-Note2: Build fails that are perpetual and/or unlikely to ever
-get fixed are not tracked here.
-
-Note3: Issues that Stephen finds and reverts/avoids before kicking
-off the all-arch/all-config builds are also not tracked here.
-
-Note4: I'm also not tracking the kallsyms extra pass on ARM on
-a per board basis anymore.  It has nothing to do with the board.
-Why? See:  http://marc.info/?l=linux-next&m=133267456809502
-
-----------------------
-
-Latest results at:
-	http://kisskb.ellerman.id.au/kisskb/branch/9/
-
-Failures as of April 22th, 2012:
-===============================
-
-AM33:asb2303_defconfig,asb2364_defconfig
-	when:	Mar 15
-	why:	cc1: error: unrecognized command line option '-mmem-funcs'
-	status:	Possible fix from TonyB sent for review.
-	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
-----------------
-
-ARM:mackerel_defconfig,ag5evm_defconfig
-	when:	Apr 19 (possibly earlier?)
-	why:	pfc-sh7372.c: undefined reference to `mmc_detect_change'
-	why:	pfc-sh73a0.c: undefined reference to `mmc_detect_change'
-	status:	
-	fix:	
-	ref:	http://article.gmane.org/gmane.linux.ports.sh.devel/14412
-	ref:	http://article.gmane.org/gmane.linux.ports.sh.devel/14413
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131930/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131908/
-
-ARM:bcmring_defconfig
-	when:	Apr 19 (possibly earlier?)
-	why:	core.c: macro "AMBA_APB_DEVICE" requires 6 args, but only 5 given
-	status:	fixed, pending feed into linux next.
-	fix:
-	ref:	http://www.spinics.net/lists/arm-kernel/msg169724.html
-
-ARM:ezx_defconfig
-	when:	Apr 19 (possibly earlier?)
-	why:	ezx-pcap.c: implicit declaration of function 'irq_to_gpio'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131924/
-
-ARM:mini2440_defconfig
-	when:	Apr 19 (possibly earlier?)
-	why:	arm-unknown-linux-gnueabi-ld: no machine record defined
-	status:
-	fix:	http://marc.info/?l=linux-next&m=133494490918950&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131932/
-
-ARM:spear6xx_defconfig
-	when:	Apr 19 (possibly earlier?)
-	why:	asm/timex.h: fatal error: mach/timex.h: No such file
-	status:
-	fix:	http://marc.info/?l=linux-arm-kernel&m=133494361818349&w=2
-	ref:	http://marc.info/?l=linux-arm-kernel&m=133480180430812&w=2
-
-ARM:netx_defconfig,pnx4008_defconfig 
-	when:	Mar 14
-	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
-	ref:	https://lkml.org/lkml/2012/3/13/670
-
-ARM:ixp4xx_defconfig
-	when:	Oct 26
-	why:	gpio.h: implicit declaration of function '__gpio_get_value'
-	status:	fixed (Imre Kaloz) - but possibly needs rework?
-	fix:	https://lkml.org/lkml/2012/2/8/288
-	ref:	https://lkml.org/lkml/2012/2/8/287
-
-ARM:raumfeld_defconfig
-	when:	Nov 23
-	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
-	status:	perhaps broken since 2010?  See ref below.
-	fix:	
-	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
-
-----------------
-
-AVR32:allnoconfig
-	when:	May 26 2010, 20:49
-	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
-	status:
-	fix:
-	ref:
----------------
-
-bfin: 50% of builds
-	when:	Mar 31
-	why:	"Error: pcrel too far BFD_RELOC_BFIN_10" from kernel/time/timekeeping.c
-	status:	unknown, binutils issue?
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6087324/
----------------
-
-cris:allyesconfig,allmodconfig
-	when:	Apr 3
-	why:	too many to list here
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035250/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035249/
-----------------
-
-h8300:defconfig
-	when:	Mar 15
-	why:	time.c: implicit declaration of function 'get_irq_regs'
-	why:	also seems gcc suffers an ICE
-	status:	ICE bug lodged with gcc folks (TonyB)
-	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
-----------------
-
-m32r:m32700ut.smp_defconfig
-	when:	Mar 15
-	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
-----------------
-
-mips:ip27_defconfig
-	when:	Apr 18
-	why: iwlwifi/iwl-core.h: static decl of 'iwl_alloc_traffic_mem' follows non-static
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131791/
-
-mips:allmodconfig
-	when:	Apr 17
-	why:	sound/oss/soundcard.c: 'MAX_DMA_CHANNELS' undeclared
-	status: one of many fixes mips needs...
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6091660/
-----------------
-
-parisc:defconfig
-	when:	Apr 20
-	why:	file 'asm-generic/kvm_para.h' is not exported
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6137786/
-
-parisc:allmodconfig
-	when:	?
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-
-parisc64:a500_defconfig 
-	when:	?
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-sparc/m68k:all
-	when:	Apr 18
-	why:	fs/gfs2/lops.c:379:42: error: request for member 'virtual' in something not a structure or union
-	status:	reported/bisected by PaulG
-	ref:	http://marc.info/?l=linux-next&m=133479890929994&w=2
-------------------
-
-xtensa:defconfig
-	when:	Apr 20
-	why:	kallsyms.c:(.text+0x1eb44): undefined reference to `ack_bad_irq'
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6138090/
+--Signature=_Mon__23_Apr_2012_13_42_11_+1000_3mNhX1g.A42QCeez--
