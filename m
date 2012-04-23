@@ -1,104 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the dma-mapping tree
-Date: Mon, 23 Apr 2012 16:49:53 +1000
-Message-ID: <20120423164953.1095c9ccbf81a33641947cd3@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the net-next tree
+Date: Mon, 23 Apr 2012 16:54:09 +1000
+Message-ID: <20120423165409.d424daced95611012d151aa6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Apr_2012_16_49_53_+1000_R++im79mKf=ya8VK"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:45070 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753748Ab2DWGt4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 02:49:56 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+ boundary="Signature=_Mon__23_Apr_2012_16_54_09_+1000_HUWtHaC8wXxhQHv+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neal Cardwell <ncardwell@google.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__23_Apr_2012_16_49_53_+1000_R++im79mKf=ya8VK
+--Signature=_Mon__23_Apr_2012_16_54_09_+1000_HUWtHaC8wXxhQHv+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the scsi-post-merge tree got a conflict in
-mm/page_alloc.c between commit ac77c4123661 ("mm: trigger page reclaim in
-alloc_contig_range() to stabilise watermarks") from the dma-mapping tree
-and commit "mm: add extra free kbytes tunable" from the akpm tree.
+After merging the net-next tree, today's linux-next build (powerpc
+ppc44x_defconfig) produced these warnings:
 
-Just context changes.  I fixed it up (I think - see below) and can carry
-the fixes as necessary.
+net/ipv4/tcp_ipv4.c: In function 'tcp_v4_init_sock':
+net/ipv4/tcp_ipv4.c:1891:19: warning: unused variable 'tp' [-Wunused-variab=
+le]
+net/ipv6/tcp_ipv6.c: In function 'tcp_v6_init_sock':
+net/ipv6/tcp_ipv6.c:1836:19: warning: unused variable 'tp' [-Wunused-variab=
+le]
+
+Introduced by commit 900f65d361d3 ("tcp: move duplicate code from
+tcp_v4_init_sock()/tcp_v6_init_sock()").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc mm/page_alloc.c
-index 0e1c6f5,decfbf0..0000000
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@@ -5032,9 -4988,17 +5044,10 @@@ static void setup_per_zone_lowmem_reser
-  	calculate_totalreserve_pages();
-  }
- =20
- -/**
- - * setup_per_zone_wmarks - called when min_free_kbytes changes
- - * or when memory is hot-{added|removed}
- - *
- - * Ensures that the watermark[min,low,high] values for each zone are set
- - * correctly with respect to min_free_kbytes.
- - */
- -void setup_per_zone_wmarks(void)
- +static void __setup_per_zone_wmarks(void)
-  {
-  	unsigned long pages_min =3D min_free_kbytes >> (PAGE_SHIFT - 10);
-+ 	unsigned long pages_low =3D extra_free_kbytes >> (PAGE_SHIFT - 10);
-  	unsigned long lowmem_pages =3D 0;
-  	struct zone *zone;
-  	unsigned long flags;
-@@@ -5074,16 -5041,13 +5090,18 @@@
-  			 * If it's a lowmem zone, reserve a number of pages
-  			 * proportionate to the zone's size.
-  			 */
-- 			zone->watermark[WMARK_MIN] =3D tmp;
-+ 			zone->watermark[WMARK_MIN] =3D min;
-  		}
- =20
-- 		zone->watermark[WMARK_LOW]  =3D min_wmark_pages(zone) + (tmp >> 2);
-- 		zone->watermark[WMARK_HIGH] =3D min_wmark_pages(zone) + (tmp >> 1);
-+ 		zone->watermark[WMARK_LOW]  =3D min_wmark_pages(zone) +
-+ 					low + (min >> 2);
-+ 		zone->watermark[WMARK_HIGH] =3D min_wmark_pages(zone) +
-+ 					low + (min >> 1);
- +
- +		zone->watermark[WMARK_MIN] +=3D cma_wmark_pages(zone);
- +		zone->watermark[WMARK_LOW] +=3D cma_wmark_pages(zone);
- +		zone->watermark[WMARK_HIGH] +=3D cma_wmark_pages(zone);
- +
-  		setup_zone_migrate_reserve(zone);
-  		spin_unlock_irqrestore(&zone->lock, flags);
-  	}
-
---Signature=_Mon__23_Apr_2012_16_49_53_+1000_R++im79mKf=ya8VK
+--Signature=_Mon__23_Apr_2012_16_54_09_+1000_HUWtHaC8wXxhQHv+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPlPuRAAoJEECxmPOUX5FEv+MP/RDO8mShnCOLuWfno36ABkeC
-3Je63jxi3cTopGiuswf3aKhuZt2/WrDdnBOdOiYRquuWsJvSIjC/8qO7JO2xfjJE
-1Vthj6vsPFk4buWjUwMWmyzwgmF3yyM+tzdR3ShDOLxllYVi6BsXYwI1OBHV5NcV
-2zwIE5SIw19sqHCsQsxEv0Zr/X6R7AjWkYgKCrnCL6kWml6/vXU+kEcj1FSf36bs
-Ug9CNhG6EN6Igt+oTMozjqxaK/UW/O6qy82ncSoiHpo2FHdzyVbE2t2iPRIRzPZ9
-tOgKu2k0tMP8zMynJhKsP4WfNY/xg85F6C7depzF5qCrkAzJd4msqlSrPJhay8AL
-/Feu7QiC9S3xikzGGxrCV9U8egroigIqEoyprL1wXgthxKpBkpTkujDYnKNXR/kA
-goFE41MIsUVqJkI4nlvBs/n+Od+ImS6Zs/LFz8GgJ7NbIr+B5mq4VoeJMzPGkwQk
-b0b6dfGrIwloSfa0s54iUzbwYrSF76qO6ZU5ReWjCw4Cx4Uo7WDCNKi1YKrG+lgD
-ntKGw8NWkQh0GYEZ6ionQiEYfo7JfarkOrKjvk2OtDggtR+StmZIXyIhry9HL2Z0
-Q0LZJNesw248+W72PV6xYXkNstEUhkjkgYBftQ30srmWArjZss589Hy4yp2OD8Av
-Eo1W/1XaLOx9ORYdquYO
-=dBZu
+iQIcBAEBCAAGBQJPlPyRAAoJEECxmPOUX5FE+FsQAJiexwxIEC6Owvq46O8Hafqx
+kIGXubjiuvsGo0BXk4Q1smUbsrTsEMYhFcOYpkEbC4dADV4yXnUMSBhnqXTZYuD+
+gaNxGJKObviWGOe79GLr90ckmFQRs0/GcGbzYPTD+giErCaVNAcXHZU8hyoMnmcd
+ndIl0OZfDRu8Sp7PnOvJhx8iaAsvwdyORxO139bM84wYtnvBQhRhzmAopvN3P1Z4
+OAbloQipSST4yi6uqyea4DAgZN7OYLanv8tSyh7r+1TS0qfi3dqwDcnCJppbnxdJ
+Db1oPjDOIWAegJxRBCMsXannbZx1cQZXshy8jg7myUMlLTY2rljqAWIS0DmcuJYB
+yH6UKfWqnKmOR7PPACNghuWu9dAqAn/mAJELB2L6XH1mETlVe7GXeBnZltgfU2fb
+xwZXFIClMAQSAHUzvT1oWUyDp9qAEtBQxbI1eaerz/FrPHgw+IHMTfgqN6+W3aQK
+UUnnNL2IKxtddJH/T/dNvAvcx79aw1/6idMLe6VkNCqQJXMxg/xdqqp39YukBmty
+3mMAvRKXqaEdNeX2RNQwlZWEGY54R6AR1gMEDSvFqZn+sdnPlHUZZ55u8VgMKlFV
+kZYUj+Ri5eAYMW5h7QrgD/xXUlY4jFfM4Cb+4v7hAcsC6LjmVr+EbfdNURtO+Hke
+r30/4BAx6BVhYj3KJTNI
+=L1B2
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_Apr_2012_16_49_53_+1000_R++im79mKf=ya8VK--
+--Signature=_Mon__23_Apr_2012_16_54_09_+1000_HUWtHaC8wXxhQHv+--
