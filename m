@@ -1,60 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the net-next tree
-Date: Mon, 23 Apr 2012 16:54:09 +1000
-Message-ID: <20120423165409.d424daced95611012d151aa6@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the security tree
+Date: Mon, 23 Apr 2012 16:56:30 +1000
+Message-ID: <20120423165630.b412159ec0e5412ba41e0a98@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__23_Apr_2012_16_54_09_+1000_HUWtHaC8wXxhQHv+"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neal Cardwell <ncardwell@google.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__23_Apr_2012_16_56_30_+1000_6iZnn_qIkR4fvWAg"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:57494 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753780Ab2DWG4i (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 02:56:38 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
 
---Signature=_Mon__23_Apr_2012_16_54_09_+1000_HUWtHaC8wXxhQHv+
+--Signature=_Mon__23_Apr_2012_16_56_30_+1000_6iZnn_qIkR4fvWAg
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi James,
 
-After merging the net-next tree, today's linux-next build (powerpc
-ppc44x_defconfig) produced these warnings:
+After merging the security tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
 
-net/ipv4/tcp_ipv4.c: In function 'tcp_v4_init_sock':
-net/ipv4/tcp_ipv4.c:1891:19: warning: unused variable 'tp' [-Wunused-variab=
-le]
-net/ipv6/tcp_ipv6.c: In function 'tcp_v6_init_sock':
-net/ipv6/tcp_ipv6.c:1836:19: warning: unused variable 'tp' [-Wunused-variab=
-le]
+security/yama/yama_lsm.c:322:12: warning: 'one' defined but not used [-Wunu=
+sed-variable]
 
-Introduced by commit 900f65d361d3 ("tcp: move duplicate code from
-tcp_v4_init_sock()/tcp_v6_init_sock()").
-
+Introduced by commit 389da25f93ee ("Yama: add additional ptrace scopes").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__23_Apr_2012_16_54_09_+1000_HUWtHaC8wXxhQHv+
+--Signature=_Mon__23_Apr_2012_16_56_30_+1000_6iZnn_qIkR4fvWAg
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPlPyRAAoJEECxmPOUX5FE+FsQAJiexwxIEC6Owvq46O8Hafqx
-kIGXubjiuvsGo0BXk4Q1smUbsrTsEMYhFcOYpkEbC4dADV4yXnUMSBhnqXTZYuD+
-gaNxGJKObviWGOe79GLr90ckmFQRs0/GcGbzYPTD+giErCaVNAcXHZU8hyoMnmcd
-ndIl0OZfDRu8Sp7PnOvJhx8iaAsvwdyORxO139bM84wYtnvBQhRhzmAopvN3P1Z4
-OAbloQipSST4yi6uqyea4DAgZN7OYLanv8tSyh7r+1TS0qfi3dqwDcnCJppbnxdJ
-Db1oPjDOIWAegJxRBCMsXannbZx1cQZXshy8jg7myUMlLTY2rljqAWIS0DmcuJYB
-yH6UKfWqnKmOR7PPACNghuWu9dAqAn/mAJELB2L6XH1mETlVe7GXeBnZltgfU2fb
-xwZXFIClMAQSAHUzvT1oWUyDp9qAEtBQxbI1eaerz/FrPHgw+IHMTfgqN6+W3aQK
-UUnnNL2IKxtddJH/T/dNvAvcx79aw1/6idMLe6VkNCqQJXMxg/xdqqp39YukBmty
-3mMAvRKXqaEdNeX2RNQwlZWEGY54R6AR1gMEDSvFqZn+sdnPlHUZZ55u8VgMKlFV
-kZYUj+Ri5eAYMW5h7QrgD/xXUlY4jFfM4Cb+4v7hAcsC6LjmVr+EbfdNURtO+Hke
-r30/4BAx6BVhYj3KJTNI
-=L1B2
+iQIcBAEBCAAGBQJPlP0eAAoJEECxmPOUX5FEHVEP/RVM5CTtNvOWq35Bobu1YK/7
+RIgxuLpMpnqdvR0n97RQO8K3lU2jhNyVRySMq/BDYC1Hba/xrfWn7DSoN3h4Eh6X
+/+lUEyk2C9LRjqzpa7SoK6FgwW7kvi+T/AsoihCi4XoDDZIME196nX48siD+4c9p
+4UPvyA5n7hNBQ0hJyLVYT142JryVZz1mVUifu9R1zJqptmFQNGllQC1kFAoc2aZ4
+iD5KpLaecwBbP6RcJ5nE3HUGWZuMfiftCBYgWzzgWHHsvVN7htSabC0rExPGpSn+
+Zr5DHFiD160oA0snuTABAPUTuXKGzs4ei3IJlNj57f2EE/hX3pUsr0iWUDYnyk/Y
+0VBFmhBDPOtI7Jv8VAr+VW+GuXtjOZGcfnM2DNoEIplO69kFfVM7dw7RlvpmxDX+
+1wuFuxMScz15hHtZPRAauPV+NHrRuyBE060Oj4eVt04LNnG3tY+dzIbJ7ty0s81E
+8G1028BwwMFhVOf5xj/q43sgAN4D7pWcy/ndoXxlt2+czhoQ+kAjHzvpODhEvigU
+HZZLFdPTo/c5NqkXD9C8TBlpm9oEpvDRbwqW00fXM+FDw+Zuk1RxJnKNNW/27cXs
+CkQYBvHNPy797nZph87/l2AYqmyf1zdAMui+qNUjLYUJlx2xgiNqIKK3EP87QkIT
+wLvoQVibEIORheAdhF1k
+=87Gl
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__23_Apr_2012_16_54_09_+1000_HUWtHaC8wXxhQHv+--
+--Signature=_Mon__23_Apr_2012_16_56_30_+1000_6iZnn_qIkR4fvWAg--
