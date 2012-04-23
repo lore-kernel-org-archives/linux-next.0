@@ -1,39 +1,58 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Mon, 23 Apr 2012 00:25:20 -0400 (EDT)
-Message-ID: <20120423.002520.995859309070448490.davem@davemloft.net>
-References: <20120423121451.c88c9bfaaf4d79313f7219f3@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the usb tree
+Date: Mon, 23 Apr 2012 15:11:46 +1000
+Message-ID: <20120423151146.8c5687c65c4eab16f063954c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__23_Apr_2012_15_11_46_+1000_QF+S.g.P2bMayYjm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:52522 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750962Ab2DWE13 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 00:27:29 -0400
-In-Reply-To: <20120423121451.c88c9bfaaf4d79313f7219f3@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50732 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751901Ab2DWFLz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 01:11:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ebiederm@xmission.com
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 23 Apr 2012 12:14:51 +1000
+--Signature=_Mon__23_Apr_2012_15_11_46_+1000_QF+S.g.P2bMayYjm
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> After merging the net-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> net/ax25/af_ax25.c: In function 'ax25_exit':
-> net/ax25/af_ax25.c:2015:2: error: implicit declaration of function 'ax25_unregister_sysctl' [-Werror=implicit-function-declaration]
-> 
-> Caused by a mismerge between commit 3adadc08cc1e ("net ax25: Reorder
-> ax25_exit to remove races") from the net tree and commit 0ca7a4c87d27
-> ("net ax25: Simplify and cleanup the ax25 sysctl handling") from the
-> net-next tree.
-> 
-> I have applied the following merge fix patch:
+Hi Greg,
 
-Looks correct, and I'll resolve this the next time I pull
-net into net-next.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/comedi/drivers/dt9812.c between commit de15fe3ed9c3
+("USB: dt9812.c: remove err() usage") from the usb tree and commit
+73e2918990c0 ("staging: Fix typo in multiple files") from the staging
+tree.
 
-Thanks!
+The former supercedes the latter, so I used that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__23_Apr_2012_15_11_46_+1000_QF+S.g.P2bMayYjm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPlOSSAAoJEECxmPOUX5FEdRQP/RnBYkT3U6Wej90CILTuL2pZ
+GPEqs/xOjaWq8/0UPC4VnreGN1x/Mz7oZPO7w+Go6EVP0tEvUb3EQO6TRHYP/P64
+kzGBFAGTE+Jn5f42voS/OrfJ2YulLVWssmK5O6YyD6Tyr6zYVaaXDVaatDgmXK81
+C3ijUjEghgO1aXNJGfw6LW21jqwotiW+WwAuC0IoUDMh5hfoMdn69j2iCkUp5bH2
+1AQKg0X8ilvKwmFXazhQVeshqJDNUYIHssLEaAma3/S3+bPqvI7H13QGAFZl24eS
+alwbL0vd4IY9sPFwn2ZfSce4ccFJjR9xNtQN8B6G64vDOZxy3T/eDQFLUs2aCQRj
+DCIjT1EmWILMbBk1Hk7GAjIuGrhHMdKwYs4VS6yL4ggFLKLCZPPL8F9bsuwsQ9cu
+A5MrxosLKE1bmW0+Gp1zFarLK/xd8TCFoOzpEEWuHw1e+x25Q91m/lJ9Mzw5Jeb0
+z8t/0mVM4WoA8wUFrjr/u9z399NUXLtlJHtorv/7UHtF1ewvU2xAklpSXxMXuvtT
+HPRvGW5dnI3yBaXGKRzUnoVKV7WKcuExWlDUkR9Scx/EiP0+e92mSHKFJVzxQAKd
+xyILx5WWRXvAbGYnkOyXtttSQx2H4/LWSnMRSLCm7yZVssoZwYmATCHel9C9oosK
+Crh1l2qLwAtbfMi/qsSF
+=ivUT
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__23_Apr_2012_15_11_46_+1000_QF+S.g.P2bMayYjm--
