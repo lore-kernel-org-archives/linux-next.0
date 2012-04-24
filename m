@@ -1,49 +1,86 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] net ax25: Fix the build when sysctl support is
- disabled.
-Date: Mon, 23 Apr 2012 22:15:52 -0400 (EDT)
-Message-ID: <20120423.221552.1200047689249251213.davem@davemloft.net>
-References: <4F95828A.8050403@xenotime.net>
-	<m1obqirn5e.fsf_-_@fess.ebiederm.org>
-	<4F9601CD.2070000@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ net-next tree
+Date: Tue, 24 Apr 2012 12:48:03 +1000
+Message-ID: <20120424124803.f4dc75ea96a875c3f35db615@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-hams-owner@vger.kernel.org>
-In-Reply-To: <4F9601CD.2070000@xenotime.net>
-Sender: linux-hams-owner@vger.kernel.org
-To: rdunlap@xenotime.net
-Cc: ebiederm@xmission.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-hams@vger.kernel.org, ralf@linux-mips.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__24_Apr_2012_12_48_03_+1000_RYx7J0P8wXf47REW"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50170 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756264Ab2DXCsP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 22:48:15 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Mon, 23 Apr 2012 18:28:45 -0700
+--Signature=_Tue__24_Apr_2012_12_48_03_+1000_RYx7J0P8wXf47REW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 04/23/2012 05:25 PM, Eric W. Biederman wrote:
-> 
->> 
->> Randy Dunlap <rdunlap@xenotime.net> reported:
->> 
->>> On 04/23/2012 12:07 AM, Stephen Rothwell wrote:
->>>
->>>> Hi all,
->>>>
->>>> Changes since 20120420:
->>>
->>>
->>> include/net/ax25.h:447:75: error: expected ';' before '}' token
->>>
->>> static inline int ax25_register_dev_sysctl(ax25_dev *ax25_dev) { return 0 };
->>> static inline void ax25_unregister_dev_sysctl(ax25_dev *ax25_dev) {};
->>>
->>> First function:  move ';' inside braces.
->>> Second function:  drop the ';'.
->> 
->> Put the semicolons where it makes sense.
->> 
->> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-> 
-> 
-> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+Hi John,
 
-Applied, thanks guys.
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-testmode.c between commit d33e152e1edd
+("iwlwifi: Stop using NLA_PUT*()") from the net-next tree and commit
+2152268ff911 ("iwlwifi: op_mode holds its pointer to the config") from
+the wireless-next tree.
+
+I was hoping that we were done with these ... :-(
+
+I fixed it up (see below) and can carry the fix as necessary.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/wireless/iwlwifi/iwl-testmode.c
+index bb27509,a6b16aa..0000000
+--- a/drivers/net/wireless/iwlwifi/iwl-testmode.c
++++ b/drivers/net/wireless/iwlwifi/iwl-testmode.c
+@@@ -543,12 -539,11 +543,12 @@@ static int iwl_testmode_driver(struct i
+  				IWL_ERR(priv, "Memory allocation fail\n");
+  				return -ENOMEM;
+  			}
+ -			NLA_PUT_U32(skb, IWL_TM_ATTR_COMMAND,
+ -				IWL_TM_CMD_DEV2APP_EEPROM_RSP);
+ -			NLA_PUT(skb, IWL_TM_ATTR_EEPROM,
+ -				priv->cfg->base_params->eeprom_size,
+ -				priv->eeprom);
+ +			if (nla_put_u32(skb, IWL_TM_ATTR_COMMAND,
+ +					IWL_TM_CMD_DEV2APP_EEPROM_RSP) ||
+ +			    nla_put(skb, IWL_TM_ATTR_EEPROM,
+- 				    cfg(priv)->base_params->eeprom_size,
+++				    priv->cfg->base_params->eeprom_size,
+ +				    priv->eeprom))
+ +				goto nla_put_failure;
+  			status =3D cfg80211_testmode_reply(skb);
+  			if (status < 0)
+  				IWL_ERR(priv, "Error sending msg : %d\n",
+
+--Signature=_Tue__24_Apr_2012_12_48_03_+1000_RYx7J0P8wXf47REW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPlhRjAAoJEECxmPOUX5FEI5MP/0+2Wqq8cAzuPhh882ISOHkG
+Vv8nSfAKY7giDI5RAG7TwvzdqGybV6RGgbr/ljeSrfFJBgYynmAitw+iYOUU6nb/
+GjjDol0J3u3xNLpCeEfLEB/lwEkmlcPme6klAAg4E+Ni5gfKBeejYBdidgWNfKRX
+9ZgfBMZboYKbM6sclQxNkP6MA1behIDC1XoeTPrzOuwv1Fs/DT2n78NKcbzREUPw
+tmUJIBHx2NW/ihuX0SldZdFFRSSidSkMWPaO3Ovh4c61tmcpHTacGlzClN81qqJD
+C6r10myMGLKfK8Rg4YstlGYkLjM+zZ6Pwns66v09nNndCsn0b+ZnK2QZYGQ+UamO
+aa5t5zVWaInWFB2c2WEqoIXvmEms+F0d1/AGypROFsH7kXZk9Vy30QvI/SuGJ46y
+GxTSCUmPkNPvj+7VtiOo6fI1YtCjxJeeAvMV/ifOAoNLs0dHc4EkfuoxC9FeOKSK
+Y0dycOQYzhMtlpXrk9wmOdZ5ZOe3bMnXHNthcIh5YLtslBP7QchbvrqvmDhsIGiQ
+xMrqzmnPBTscyFSAB8W0zt09KUAZSClKyIlbWkDoAn1cmPoL/RywMRZyodDkAuWE
+lGrUzTx9cO7jNvhQ1B7EEhDx63mfkcXWVhMyGwW+UprxuiZ8+IRWUDe/EQK0a7eO
+ZojfOxeoovg2gmzoc8I/
+=5L06
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__24_Apr_2012_12_48_03_+1000_RYx7J0P8wXf47REW--
