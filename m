@@ -1,71 +1,58 @@
-From: Viresh Kumar <viresh.kumar@st.com>
-Subject: Re: New ARM build coverage
-Date: Tue, 24 Apr 2012 08:58:54 +0530
-Message-ID: <4F961DF6.9030504@st.com>
-References: <CAP=VYLrNpskLQDAw3Udnq7grddi-uD6TDjQQoZUd+FVg2rXPnA@mail.gmail.com>
- <201204201737.58922.arnd@arndb.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the usb tree
+Date: Tue, 24 Apr 2012 14:48:20 +1000
+Message-ID: <20120424144820.326e86452826927b86aaf0f5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <201204201737.58922.arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stefan Roese <sr@denx.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__24_Apr_2012_14_48_20_+1000_ybw9=jnn63HMg1CB"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:55472 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751818Ab2DXEs3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Apr 2012 00:48:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 4/20/2012 11:07 PM, Arnd Bergmann wrote:
->>From d06bce2084e946c3ae4dc3011032d0c23b7cd815 Mon Sep 17 00:00:00 2001
-> From: Arnd Bergmann <arnd@arndb.de>
-> Date: Fri, 20 Apr 2012 19:33:55 +0200
-> Subject: [PATCH] ARM: spear6xx: remove board selection options
-> 
-> There are no board specific configurations that need user
-> intervention, so just make MACH_SPEAR600 the silent default
-> for ARCH_SPEAR6XX to prevent users from turning it off, which
-> would result in a build error.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> diff --git a/arch/arm/mach-spear6xx/Kconfig b/arch/arm/mach-spear6xx/Kconfig
-> index fbe298b..339f397 100644
-> --- a/arch/arm/mach-spear6xx/Kconfig
-> +++ b/arch/arm/mach-spear6xx/Kconfig
-> @@ -2,21 +2,9 @@
->  # SPEAr6XX Machine configuration file
->  #
->  
-> -if ARCH_SPEAR6XX
-> -
-> -menu "SPEAr6xx Implementations"
-> -config BOARD_SPEAR600_DT
-> -	bool "SPEAr600 generic board configured via device-tree"
-> -	select MACH_SPEAR600
-> +config MACH_SPEAR600
-> +	def_bool y
-> +	depends on ARCH_SPEAR6XX
->  	select USE_OF
->  	help
->  	  Supports ST SPEAr600 boards configured via the device-tree
-> -
-> -endmenu
-> -
-> -config MACH_SPEAR600
-> -	bool "SPEAr600"
-> -	help
-> -	  Supports ST SPEAr600 Machine
-> -
-> -endif #ARCH_SPEAR6XX
+--Signature=_Tue__24_Apr_2012_14_48_20_+1000_ybw9=jnn63HMg1CB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Viresh Kumar <viresh.kumar@st.com>
+Hi Greg,
 
--- 
-viresh
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/line6/driver.c between commit 2b8dec323d34 ("USB:
+driver.c: remove err() usage") from the usb tree and commit c46b8a6567fb
+("Staging: line6: only allocate a buffer if it is needed") (and later)
+from the staging tree.
+
+The latter supercedes the former, so I used that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__24_Apr_2012_14_48_20_+1000_ybw9=jnn63HMg1CB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPljCUAAoJEECxmPOUX5FEMMUQAIopPbNg9vAn5EZM+YYR260o
+0p6Wrym6WKdI3Ck5m7BLcUm2quyP5ePblpTIuo+HPc2F/kv8jts84VOQ4xk1WoI5
+VQZvA/fqDrcxp3ZTl9KhPOoOu8K37HQH7F41scChL49YNIQJFHlQsJDN8JKLkBDk
+lH8c3xUlgeyX5jlOB2B1jw/cXvXfRET5NxAlYAGKi13jtTwCq+tcLc8/Md3SEEMM
+ic0qV3XDr1g7aT79pURYtz0z8WHubmvUtqH1NSNgPVyW/kx7o13/h61PnwXl4nql
+qKg9keH+pLdSgGuEH4lbe9JXPYIrobeurIeBLeD+lV5//QTE3zWonatuo/6SSK2y
+r35N6oGGiRYltPRun5YSuhpazFoeKSljlTJpDX+Zk8rBbM/84h58F/8dJQJ9eWDV
+q9mPZyx0sQDkgdI09SeqjqXmsIfrphrFeRqeSrOU9Mu5YCf6/tIfeZabA6JZJMUm
+EWEo87yuMimafzd4pEPgRZ3w3AAf8P1/UBfTdFPDd6YUqa0+boA60f02OC0ISFM/
+e4j7vbPFqSDALqOpmSjWHodXsaOf+WKON29qqaY7+NQ5i0lyvRLD+48fi7RTU3rv
+oBJw3fahyE+qCbQD9jRk9EgH9TnnNB7ThuqbWdGfMJRl8EdkYpdAn9tOO3Nfx1aQ
+wIbRMtuRlrh1adIu0nFQ
+=Gmu5
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__24_Apr_2012_14_48_20_+1000_ybw9=jnn63HMg1CB--
