@@ -1,86 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-next tree with the
- net-next tree
-Date: Tue, 24 Apr 2012 12:48:03 +1000
-Message-ID: <20120424124803.f4dc75ea96a875c3f35db615@canb.auug.org.au>
+From: Viresh Kumar <viresh.kumar@st.com>
+Subject: Re: New ARM build coverage
+Date: Tue, 24 Apr 2012 08:58:54 +0530
+Message-ID: <4F961DF6.9030504@st.com>
+References: <CAP=VYLrNpskLQDAw3Udnq7grddi-uD6TDjQQoZUd+FVg2rXPnA@mail.gmail.com>
+ <201204201737.58922.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__24_Apr_2012_12_48_03_+1000_RYx7J0P8wXf47REW"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50170 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756264Ab2DXCsP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 22:48:15 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <201204201737.58922.arnd@arndb.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stefan Roese <sr@denx.de>, Paul Gortmaker <paul.gortmaker@windriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__24_Apr_2012_12_48_03_+1000_RYx7J0P8wXf47REW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 4/20/2012 11:07 PM, Arnd Bergmann wrote:
+>>From d06bce2084e946c3ae4dc3011032d0c23b7cd815 Mon Sep 17 00:00:00 2001
+> From: Arnd Bergmann <arnd@arndb.de>
+> Date: Fri, 20 Apr 2012 19:33:55 +0200
+> Subject: [PATCH] ARM: spear6xx: remove board selection options
+> 
+> There are no board specific configurations that need user
+> intervention, so just make MACH_SPEAR600 the silent default
+> for ARCH_SPEAR6XX to prevent users from turning it off, which
+> would result in a build error.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> diff --git a/arch/arm/mach-spear6xx/Kconfig b/arch/arm/mach-spear6xx/Kconfig
+> index fbe298b..339f397 100644
+> --- a/arch/arm/mach-spear6xx/Kconfig
+> +++ b/arch/arm/mach-spear6xx/Kconfig
+> @@ -2,21 +2,9 @@
+>  # SPEAr6XX Machine configuration file
+>  #
+>  
+> -if ARCH_SPEAR6XX
+> -
+> -menu "SPEAr6xx Implementations"
+> -config BOARD_SPEAR600_DT
+> -	bool "SPEAr600 generic board configured via device-tree"
+> -	select MACH_SPEAR600
+> +config MACH_SPEAR600
+> +	def_bool y
+> +	depends on ARCH_SPEAR6XX
+>  	select USE_OF
+>  	help
+>  	  Supports ST SPEAr600 boards configured via the device-tree
+> -
+> -endmenu
+> -
+> -config MACH_SPEAR600
+> -	bool "SPEAr600"
+> -	help
+> -	  Supports ST SPEAr600 Machine
+> -
+> -endif #ARCH_SPEAR6XX
 
-Hi John,
+Acked-by: Viresh Kumar <viresh.kumar@st.com>
 
-Today's linux-next merge of the wireless-next tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-testmode.c between commit d33e152e1edd
-("iwlwifi: Stop using NLA_PUT*()") from the net-next tree and commit
-2152268ff911 ("iwlwifi: op_mode holds its pointer to the config") from
-the wireless-next tree.
-
-I was hoping that we were done with these ... :-(
-
-I fixed it up (see below) and can carry the fix as necessary.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/net/wireless/iwlwifi/iwl-testmode.c
-index bb27509,a6b16aa..0000000
---- a/drivers/net/wireless/iwlwifi/iwl-testmode.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-testmode.c
-@@@ -543,12 -539,11 +543,12 @@@ static int iwl_testmode_driver(struct i
-  				IWL_ERR(priv, "Memory allocation fail\n");
-  				return -ENOMEM;
-  			}
- -			NLA_PUT_U32(skb, IWL_TM_ATTR_COMMAND,
- -				IWL_TM_CMD_DEV2APP_EEPROM_RSP);
- -			NLA_PUT(skb, IWL_TM_ATTR_EEPROM,
- -				priv->cfg->base_params->eeprom_size,
- -				priv->eeprom);
- +			if (nla_put_u32(skb, IWL_TM_ATTR_COMMAND,
- +					IWL_TM_CMD_DEV2APP_EEPROM_RSP) ||
- +			    nla_put(skb, IWL_TM_ATTR_EEPROM,
-- 				    cfg(priv)->base_params->eeprom_size,
-++				    priv->cfg->base_params->eeprom_size,
- +				    priv->eeprom))
- +				goto nla_put_failure;
-  			status =3D cfg80211_testmode_reply(skb);
-  			if (status < 0)
-  				IWL_ERR(priv, "Error sending msg : %d\n",
-
---Signature=_Tue__24_Apr_2012_12_48_03_+1000_RYx7J0P8wXf47REW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPlhRjAAoJEECxmPOUX5FEI5MP/0+2Wqq8cAzuPhh882ISOHkG
-Vv8nSfAKY7giDI5RAG7TwvzdqGybV6RGgbr/ljeSrfFJBgYynmAitw+iYOUU6nb/
-GjjDol0J3u3xNLpCeEfLEB/lwEkmlcPme6klAAg4E+Ni5gfKBeejYBdidgWNfKRX
-9ZgfBMZboYKbM6sclQxNkP6MA1behIDC1XoeTPrzOuwv1Fs/DT2n78NKcbzREUPw
-tmUJIBHx2NW/ihuX0SldZdFFRSSidSkMWPaO3Ovh4c61tmcpHTacGlzClN81qqJD
-C6r10myMGLKfK8Rg4YstlGYkLjM+zZ6Pwns66v09nNndCsn0b+ZnK2QZYGQ+UamO
-aa5t5zVWaInWFB2c2WEqoIXvmEms+F0d1/AGypROFsH7kXZk9Vy30QvI/SuGJ46y
-GxTSCUmPkNPvj+7VtiOo6fI1YtCjxJeeAvMV/ifOAoNLs0dHc4EkfuoxC9FeOKSK
-Y0dycOQYzhMtlpXrk9wmOdZ5ZOe3bMnXHNthcIh5YLtslBP7QchbvrqvmDhsIGiQ
-xMrqzmnPBTscyFSAB8W0zt09KUAZSClKyIlbWkDoAn1cmPoL/RywMRZyodDkAuWE
-lGrUzTx9cO7jNvhQ1B7EEhDx63mfkcXWVhMyGwW+UprxuiZ8+IRWUDe/EQK0a7eO
-ZojfOxeoovg2gmzoc8I/
-=5L06
------END PGP SIGNATURE-----
-
---Signature=_Tue__24_Apr_2012_12_48_03_+1000_RYx7J0P8wXf47REW--
+-- 
+viresh
