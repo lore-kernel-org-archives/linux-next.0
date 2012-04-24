@@ -1,38 +1,35 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Apr 24 (kvm)
-Date: Tue, 24 Apr 2012 09:25:30 -0700
-Message-ID: <4F96D3FA.1010909@xenotime.net>
-References: <20120424154354.7feba600beac616833d034de@canb.auug.org.au>
+From: Ted Ts'o <tytso@mit.edu>
+Subject: Re: linux-next: build warning in Linus' tree
+Date: Tue, 24 Apr 2012 13:09:43 -0400
+Message-ID: <20120424170943.GD18865@thunk.org>
+References: <20120424112049.45955d7025fdfb3ce182ed2e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy1-pub.bluehost.com ([66.147.249.253]:45998 "HELO
-	oproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755782Ab2DXQZB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Apr 2012 12:25:01 -0400
-In-Reply-To: <20120424154354.7feba600beac616833d034de@canb.auug.org.au>
+Received: from li9-11.members.linode.com ([67.18.176.11]:47438 "EHLO
+	test.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756633Ab2DXRJr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Apr 2012 13:09:47 -0400
+Content-Disposition: inline
+In-Reply-To: <20120424112049.45955d7025fdfb3ce182ed2e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/23/2012 10:43 PM, Stephen Rothwell wrote:
-
-> Hi all,
+On Tue, Apr 24, 2012 at 11:20:49AM +1000, Stephen Rothwell wrote:
 > 
-> There will probably be no linux-next release until April 30 as I am
-> taking a break.
+> Using Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
+> produced this warning:
 > 
-> Changes since 20120423:
+> fs/ext4/super.c: In function 'parse_options':
+> fs/ext4/super.c:1600:23: warning: unused variable 'sbi' [-Wunused-variable]
+> 
+> Introduced by commit 26092bf52478 ("ext4: use a table-driven handler for
+> mount options").  This build has CONFIG_QUOTA not set.
 
+This should be fixed in mainline now.
 
-on i386:
+Regards,
 
-  CC [M]  arch/x86/kvm/emulate.o
-arch/x86/kvm/emulate.c: Assembler messages:
-arch/x86/kvm/emulate.c:4122: Error: bad register name `%bpl'
-
-
--- 
-~Randy
+					- Ted
