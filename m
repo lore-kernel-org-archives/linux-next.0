@@ -1,35 +1,38 @@
-From: Ted Ts'o <tytso@mit.edu>
-Subject: Re: linux-next: build warning in Linus' tree
-Date: Tue, 24 Apr 2012 13:09:43 -0400
-Message-ID: <20120424170943.GD18865@thunk.org>
-References: <20120424112049.45955d7025fdfb3ce182ed2e@canb.auug.org.au>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: clean up time
+Date: Tue, 24 Apr 2012 15:01:46 -0700
+Message-ID: <4F9722CA.80403@goop.org>
+References: <20120402112009.3477dad7deff0f4d87f49b29@canb.auug.org.au> <20120423164859.082b5c53b5d9bd9a524ec864@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from li9-11.members.linode.com ([67.18.176.11]:47438 "EHLO
-	test.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756633Ab2DXRJr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Apr 2012 13:09:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20120424112049.45955d7025fdfb3ce182ed2e@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120423164859.082b5c53b5d9bd9a524ec864@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Xen Devel <Xen-devel@lists.xensource.com>, Sumit Semwal <sumit.semwal@linaro.org>, Rob Lee <rob.lee@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 24, 2012 at 11:20:49AM +1000, Stephen Rothwell wrote:
-> 
-> Using Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
-> produced this warning:
-> 
-> fs/ext4/super.c: In function 'parse_options':
-> fs/ext4/super.c:1600:23: warning: unused variable 'sbi' [-Wunused-variable]
-> 
-> Introduced by commit 26092bf52478 ("ext4: use a table-driven handler for
-> mount options").  This build has CONFIG_QUOTA not set.
+On 04/22/2012 11:48 PM, Stephen Rothwell wrote:
+> Hi all,
+>
+> On Mon, 2 Apr 2012 11:20:09 +1000 Stephen Rothwell
+<sfr@canb.auug.org.au> wrote:
+>>
+>> Can people please clean up stuff in their trees that has been merged by
+>> their upstream. This is especially useful where the upstream merged (or
+>> applied) a slightly different version of their tree.
+>
+> There is still much cruft in the linux-next included trees ... The
+> following trees appear empty (relative to Linus' tree) but cause conflicts:
+>
+> bjdooks-i2c
+> xen
+> dma-buf
+> cpuidle-cons
 
-This should be fixed in mainline now.
+Are you pulling from xen.git upstream/xen?  I just updated it to be
+current Linus master, so it shouldn't conflict any more.
 
-Regards,
-
-					- Ted
+Thanks,
+    J
