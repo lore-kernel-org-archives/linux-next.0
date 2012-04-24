@@ -1,53 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] net sysctl: Add place holder functions for when sysctl
- support is compiled out of the kernel.
-Date: Mon, 23 Apr 2012 19:24:42 -0400 (EDT)
-Message-ID: <20120423.192442.379812896211622385.davem@davemloft.net>
-References: <4F958598.6080305@xenotime.net>
-	<m1lilmt7v5.fsf_-_@fess.ebiederm.org>
-	<4F95D9F5.3040407@xenotime.net>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: Tree for Apr 23 (ax.25 sysctl)
+Date: Mon, 23 Apr 2012 17:16:56 -0700
+Message-ID: <m1vckqrnk7.fsf@fess.ebiederm.org>
+References: <20120423170701.c96e402234b1387dece11dda@canb.auug.org.au>
+	<4F95828A.8050403@xenotime.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:33332 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754573Ab2DWX0u (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Apr 2012 19:26:50 -0400
-In-Reply-To: <4F95D9F5.3040407@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: rdunlap@xenotime.net
-Cc: ebiederm@xmission.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4F95828A.8050403@xenotime.net> (Randy Dunlap's message of "Mon,
+	23 Apr 2012 09:25:46 -0700")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, linux-hams@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Mon, 23 Apr 2012 15:38:45 -0700
+Randy Dunlap <rdunlap@xenotime.net> writes:
 
-> On 04/23/2012 03:13 PM, Eric W. Biederman wrote:
-> 
+> On 04/23/2012 12:07 AM, Stephen Rothwell wrote:
+>
+>> Hi all,
 >> 
->> Randy Dunlap <rdunlap@xenotime.net> reported:
->>> On 04/23/2012 12:07 AM, Stephen Rothwell wrote:
->>>
->>>> Hi all,
->>>>
->>>> Changes since 20120420:
->>>
->>>
->>>
->>> ERROR: "unregister_net_sysctl_table" [net/phonet/phonet.ko] undefined!
->>> ERROR: "register_net_sysctl" [net/phonet/phonet.ko] undefined!
->>>
->>> when CONFIG_SYSCTL is not enabled.
->> 
->> Add static inline stub functions to gracefully handle the case when sysctl
->> support is not present.
->> 
->> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-> 
-> 
-> Yep, that works.
-> 
-> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+>> Changes since 20120420:
+>
+>
+>
+> include/net/ax25.h:447:75: error: expected ';' before '}' token
+>
+>
+> static inline int ax25_register_dev_sysctl(ax25_dev *ax25_dev) { return 0 };
+> static inline void ax25_unregister_dev_sysctl(ax25_dev *ax25_dev) {};
+>
+> Is this from Eric B.'s sysctl patches?
 
-Applied, thanks everyone.
+Sort of.  I made the function per device and return 0.
+
+I missed the inner ';' when I made the change.  The outer '};' has
+been there for years and has been weird but harmless.
+
+Patch to fix it in a moment.
+
+Eric
+
+
+> First function:  move ';' inside braces.
+> Second function:  drop the ';'.
