@@ -1,84 +1,67 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the driver-core
- tree
-Date: Tue, 24 Apr 2012 14:48:37 +1000
-Message-ID: <20120424144837.67a84b1e4e5905de7fd03e67@canb.auug.org.au>
+From: "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
+Subject: RE: linux-next: manual merge of the wireless-next tree with the
+ net-next tree
+Date: Tue, 24 Apr 2012 05:07:25 +0000
+Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB3103432@HASMSX103.ger.corp.intel.com>
+References: <20120424124803.f4dc75ea96a875c3f35db615@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__24_Apr_2012_14_48_37_+1000_ULsPxZ+28n6h_da+"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120424124803.f4dc75ea96a875c3f35db615@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, John Stultz <john.stultz@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Guy, Wey-Yi W" <wey-yi.w.guy@intel.com>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__24_Apr_2012_14_48_37_+1000_ULsPxZ+28n6h_da+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> 
+> Hi John,
+> 
+> Today's linux-next merge of the wireless-next tree got a conflict in
+> drivers/net/wireless/iwlwifi/iwl-testmode.c between commit d33e152e1edd
+> ("iwlwifi: Stop using NLA_PUT*()") from the net-next tree and commit
+> 2152268ff911 ("iwlwifi: op_mode holds its pointer to the config") from the
+> wireless-next tree.
+> 
+> I was hoping that we were done with these ... :-(
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Hi Greg,
+Thanks Stephen, your fix seems right. In this case, there are only two choices: it is right or it doesn't even compile.
 
-Today's linux-next merge of the staging tree got conflicts in
-drivers/staging/android/Kconfig and drivers/staging/android/Makefile
-between commit 449a2bf5e881 ("Remove "switch" class in
-drivers/staging/android/switch") from the driver-core tree and commit
-ef2353d26bdc ("android-alarm: Remove unused android alarm in-kernel
-interfaces") from the staging tree.
+> 
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/net/wireless/iwlwifi/iwl-testmode.c
+> index bb27509,a6b16aa..0000000
+> --- a/drivers/net/wireless/iwlwifi/iwl-testmode.c
+> +++ b/drivers/net/wireless/iwlwifi/iwl-testmode.c
+> @@@ -543,12 -539,11 +543,12 @@@ static int iwl_testmode_driver(struct i
+>   				IWL_ERR(priv, "Memory allocation fail\n");
+>   				return -ENOMEM;
+>   			}
+>  -			NLA_PUT_U32(skb, IWL_TM_ATTR_COMMAND,
+>  -				IWL_TM_CMD_DEV2APP_EEPROM_RSP);
+>  -			NLA_PUT(skb, IWL_TM_ATTR_EEPROM,
+>  -				priv->cfg->base_params->eeprom_size,
+>  -				priv->eeprom);
+>  +			if (nla_put_u32(skb, IWL_TM_ATTR_COMMAND,
+>  +					IWL_TM_CMD_DEV2APP_EEPROM_RSP) ||
+>  +			    nla_put(skb, IWL_TM_ATTR_EEPROM,
+> - 				    cfg(priv)->base_params->eeprom_size,
+> ++				    priv->cfg->base_params->eeprom_size,
+>  +				    priv->eeprom))
+>  +				goto nla_put_failure;
+>   			status = cfg80211_testmode_reply(skb);
+>   			if (status < 0)
+>   				IWL_ERR(priv, "Error sending msg : %d\n",
+---------------------------------------------------------------------
+Intel Israel (74) Limited
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/staging/android/Kconfig
-index c706635,84ac619..0000000
---- a/drivers/staging/android/Kconfig
-+++ b/drivers/staging/android/Kconfig
-@@@ -53,7 -52,9 +53,7 @@@ config ANDROID_LOW_MEMORY_KILLE
-  	---help---
-  	  Register processes to be killed when memory is low
- =20
-- config ANDROID_INTF_ALARM
- -source "drivers/staging/android/switch/Kconfig"
- -
-+ config ANDROID_INTF_ALARM_DEV
-  	bool "Android alarm driver"
-  	depends on RTC_CLASS
-  	default n
-diff --cc drivers/staging/android/Makefile
-index 045d17b,b4be69f..0000000
---- a/drivers/staging/android/Makefile
-+++ b/drivers/staging/android/Makefile
-@@@ -6,5 -6,5 +6,4 @@@ obj-$(CONFIG_ANDROID_RAM_CONSOLE)	+=3D ra
-  obj-$(CONFIG_ANDROID_TIMED_OUTPUT)	+=3D timed_output.o
-  obj-$(CONFIG_ANDROID_TIMED_GPIO)	+=3D timed_gpio.o
-  obj-$(CONFIG_ANDROID_LOW_MEMORY_KILLER)	+=3D lowmemorykiller.o
-- obj-$(CONFIG_ANDROID_INTF_ALARM)	+=3D alarm.o
- -obj-$(CONFIG_ANDROID_SWITCH)		+=3D switch/
-  obj-$(CONFIG_ANDROID_INTF_ALARM_DEV)	+=3D alarm-dev.o
-
---Signature=_Tue__24_Apr_2012_14_48_37_+1000_ULsPxZ+28n6h_da+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPljClAAoJEECxmPOUX5FEEpIP/1FWsWdUgu2RlJnHIos33MN2
-4dowPTI6Q8yOKhl99hnlLEIH9SLPMCgFZ/ROrRPmcPz4iNYJvKwtH27zH/+vEQel
-JzQT9DNAcXoGK4bInkIYZyrvvxzg8i4BGgqzCF5/fowHLFl2EVPTW4tODNOpMFf8
-mF1gYxrcLAvKQ4+DRcyh4RRbGa+8as9JfbglAYGjco9YQa8EjsyTevGi1wG++kSJ
-Elvyp8dqIFc9vsZwQLd24LJncji1kwo9WaKM8cArxtbufHrn83TxgkmDi+G/+Td5
-1OGXrEVLlbk9t3Z1dLsu9oJ+8ZuLdCQtN+xGydjKbegV4tsV+fuLZOyHdIv1c7WX
-7OScJ8XEd52BDvjYh4dA0zPPMnI82WOTAXkT+ipKHsI3U+A/y08zfwBpjiTzeJQW
-5AQ93IonyAsytEVh120igS2rOWHdkCXnryujwsCRjPwW5dpXQ0ChsChfnRAbd23Z
-Bl9PXomTr1Uk8+5fR0JLirr9wc90e1trKuGAt92VUL5I7ie1xdtBTJVpjbhog3xp
-GSOz3zL8pE0os8ZRdp0WsL2XNCyazuen6sunS2zKXWULb/xXsfPT7wF2YdY7EO1y
-W8W9VrzIa9ONmAqvc+E30PacyZ7CKloI0i+nA0k0VyNFpH296zlhIg6D05TH92r5
-WKTsNEzME+U9utrvYprT
-=2eOc
------END PGP SIGNATURE-----
-
---Signature=_Tue__24_Apr_2012_14_48_37_+1000_ULsPxZ+28n6h_da+--
+This e-mail and any attachments may contain confidential material for
+the sole use of the intended recipient(s). Any review or distribution
+by others is strictly prohibited. If you are not the intended
+recipient, please contact the sender and delete all copies.
