@@ -1,54 +1,67 @@
-From: Mark Asselstine <mark.asselstine@windriver.com>
-Subject: [PATCH] ARM:mfd: fix ezx-pcap build failure
-Date: Wed, 25 Apr 2012 11:02:43 -0400
-Message-ID: <1335366163-12920-1-git-send-email-mark.asselstine@windriver.com>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: [PATCH -next] mtd: fix sbc2_flash build when PCI is not enabled
+Date: Wed, 25 Apr 2012 18:33:02 +0300
+Message-ID: <1335367986.6356.12.camel@koala>
+References: <20120416161121.261ba4e7e38989173accfb16@canb.auug.org.au>
+	 <4F8C780D.9010702@xenotime.net>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-JuECyCsuI5LDt9lG4JKJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:35289 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751767Ab2DYPCn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Apr 2012 11:02:43 -0400
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:65129 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755258Ab2DYPdJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Apr 2012 11:33:09 -0400
+In-Reply-To: <4F8C780D.9010702@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, sameo@linux.intel.com, haojian.zhuang@marvell.com, openezx-devel@lists.openezx.org, mark.asselstine@windriver.com
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org, Tim Hockin <thockin@sun.com>
 
-Attempting to build the ezx_defconfig we get a build failure:
 
-drivers/mfd/ezx-pcap.c: In function 'pcap_isr_work':
-drivers/mfd/ezx-pcap.c:205: error: implicit declaration of function 'irq_to_gpio'
+--=-JuECyCsuI5LDt9lG4JKJ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Looking at this failure we can find that commit 4929f5a8a99f
-[ARM:pxa: rename gpio_to_irq and irq_to_gpio] renamed irq_to_gpio()
-to pxa_irq_to_gpio() but this change was not made in the ezx-pcap
-driver.
+On Mon, 2012-04-16 at 12:50 -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+>=20
+> sbc2_flash.c is a PCI driver, but its build fails when CONFIG_PCI
+> is not enabled, so make it depend on PCI.
+>=20
+> drivers/mtd/maps/scb2_flash.c:237:1: warning: data definition has no type=
+ or storage class
+> drivers/mtd/maps/scb2_flash.c:237:1: warning: type defaults to 'int' in d=
+eclaration of 'module_pci_driver'
+> drivers/mtd/maps/scb2_flash.c:237:1: warning: parameter names (without ty=
+pes) in function declaration
+>=20
+> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
 
-Signed-off-by: Mark Asselstine <mark.asselstine@windriver.com>
----
- drivers/mfd/ezx-pcap.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+Pushed to l2-mtd.git, thanks!
 
-diff --git a/drivers/mfd/ezx-pcap.c b/drivers/mfd/ezx-pcap.c
-index 43a76c4..c49c52a 100644
---- a/drivers/mfd/ezx-pcap.c
-+++ b/drivers/mfd/ezx-pcap.c
-@@ -19,6 +19,7 @@
- #include <linux/spi/spi.h>
- #include <linux/gpio.h>
- #include <linux/slab.h>
-+#include <linux/gpio-pxa.h>
- 
- #define PCAP_ADC_MAXQ		8
- struct pcap_adc_request {
-@@ -202,7 +203,7 @@ static void pcap_isr_work(struct work_struct *work)
- 		}
- 		local_irq_enable();
- 		ezx_pcap_write(pcap, PCAP_REG_MSR, pcap->msr);
--	} while (gpio_get_value(irq_to_gpio(pcap->spi->irq)));
-+	} while (gpio_get_value(pxa_irq_to_gpio(pcap->spi->irq)));
- }
- 
- static void pcap_irq_handler(unsigned int irq, struct irq_desc *desc)
--- 
-1.7.5.4
+--=20
+Best Regards,
+Artem Bityutskiy
+
+
+--=-JuECyCsuI5LDt9lG4JKJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAABAgAGBQJPmBkuAAoJEJtuLFy+q7feiIgIALof73CXbgSHfMUNoGAFrBRJ
+ngSktsu+8fR32v5EUadpPYYtgHL1wEg+BuRDWsPaEH1mLsSVEHp8VKRDiKRMrbjP
+gqk5o8sxtv0WSdhL6gJJyKv0Sk4ac0RRGLZU/ql1ehO90K+kmy8Euzq8t0PJ1D+o
+gtCSft8lG+GzhSTi2s5xeZIQzEhJF8strXtYqjmKSlaLS8JAPmKT99kJUVmA7p0W
+7SKmpJEyduPEWo6droAJmI3klQN9gP6w6PaOGrhgmdJLmBY+7IYcMgU4WjCHpOWi
+OZgwotr+bKL21DCOCa+8wuWtzUD0iAiIf6B3kyNzmp5SAYqwSL65RBAprI0TDyc=
+=apWk
+-----END PGP SIGNATURE-----
+
+--=-JuECyCsuI5LDt9lG4JKJ--
