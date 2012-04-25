@@ -1,65 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: clean up time
-Date: Wed, 25 Apr 2012 10:00:02 +1000
-Message-ID: <20120425100002.a288b8b25dee6cecf813a69c@canb.auug.org.au>
-References: <20120402112009.3477dad7deff0f4d87f49b29@canb.auug.org.au>
-	<20120423164859.082b5c53b5d9bd9a524ec864@canb.auug.org.au>
-	<4F9722CA.80403@goop.org>
+From: Avi Kivity <avi@redhat.com>
+Subject: Re: linux-next: Tree for Apr 24 (kvm)
+Date: Wed, 25 Apr 2012 12:35:01 +0300
+Message-ID: <4F97C545.4030304@redhat.com>
+References: <20120424154354.7feba600beac616833d034de@canb.auug.org.au> <4F96D3FA.1010909@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__25_Apr_2012_10_00_02_+1000_r6sxjq7e5PnFLL1."
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55086 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755956Ab2DYAAR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Apr 2012 20:00:17 -0400
-In-Reply-To: <4F9722CA.80403@goop.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Xen Devel <Xen-devel@lists.xensource.com>, Sumit Semwal <sumit.semwal@linaro.org>, Rob Lee <rob.lee@linaro.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <kvm-owner@vger.kernel.org>
+In-Reply-To: <4F96D3FA.1010909@xenotime.net>
+Sender: kvm-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__25_Apr_2012_10_00_02_+1000_r6sxjq7e5PnFLL1.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jeremy,
-
-On Tue, 24 Apr 2012 15:01:46 -0700 Jeremy Fitzhardinge <jeremy@goop.org> wr=
-ote:
+On 04/24/2012 07:25 PM, Randy Dunlap wrote:
+> On 04/23/2012 10:43 PM, Stephen Rothwell wrote:
 >
-> Are you pulling from xen.git upstream/xen?  I just updated it to be
-> current Linus master, so it shouldn't conflict any more.
+> > Hi all,
+> > 
+> > There will probably be no linux-next release until April 30 as I am
+> > taking a break.
+> > 
+> > Changes since 20120423:
+>
+>
+> on i386:
+>
+>   CC [M]  arch/x86/kvm/emulate.o
+> arch/x86/kvm/emulate.c: Assembler messages:
+> arch/x86/kvm/emulate.c:4122: Error: bad register name `%bpl'
+>
+>
 
-Yes, I fetch branch upstream/xen from
-git://git.kernel.org/pub/scm/linux/kernel/git/jeremy/xen.git and, yes, it
-is empty now, thanks.
+Fix already committed, will be pushed later today.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+-- 
+I have a truly marvellous patch that fixes the bug which this
+signature is too narrow to contain.
 
---Signature=_Wed__25_Apr_2012_10_00_02_+1000_r6sxjq7e5PnFLL1.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPlz6CAAoJEECxmPOUX5FEDCMP/2MEVG7K8zd0nCqsDaH/fD/f
-RBjLDe5JwSPEDkY9mFJAiS4qhIVNItefqaZO9RzcODT+4nfJAVyp48TXgTB+WS98
-AFUYKHM6cFanPlLbUMIzxV5ZVZgDGiN2apbg4fcn9vfkCYBJNzm0ozaABm3xQpDQ
-J0LyLiRHmzxDHamgqV5rvKTTJakghV7g37B7X6uq5LawYaF6CRk0jH8/JI0nwO9D
-Wb4p22DqkxihG11JrCmpFH0SAozMO+x8h3QaUJ0H7XJyjt9tP6IO9xaNYpapEd65
-gqIrSE4OoxmBPsoLZcx1q14IJVb81ccY8WWkKjlxckxUTziETU7itX6cFCF5ehZ/
-W8Yr4OeePr61FoEC+Q7EXyYjXjDiScCqXphCbdGDjX/yPRxB4D8ERabFUBMxL21j
-+ZCEHQYBZ8rhX5/mbN4m6KEK3a/akT1ZTOHzlqn0oSac4Vpic0KFwEAL7xzmwD7C
-XVQilu4PGwJJFvpPA/s5nPaIM1D5j+SS2iWt4/EKTNFsU54RJHGTn05Le+R+sIdB
-x5KeGhkGjKNLm3IsZmt6ZE5D6kEVD3814K4/KzMiHeMjNfvqm/DX9UDBkiWub8uo
-7T8cT+NbdDAS41IBIjYIC9rEzj8M4NXJ7tpldjaXJn4QKle9Xxd7rePl9ABJz66n
-88Ky7oUiCaDbUvirvBh0
-=aDPw
------END PGP SIGNATURE-----
-
---Signature=_Wed__25_Apr_2012_10_00_02_+1000_r6sxjq7e5PnFLL1.--
