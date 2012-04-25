@@ -1,62 +1,65 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: New ARM build coverage (was: linux-next: triage for April 18,
- 2012)
-Date: Tue, 24 Apr 2012 16:50:58 -0700
-Message-ID: <4F973C62.6070102@samsung.com>
-References: <CAP=VYLrNpskLQDAw3Udnq7grddi-uD6TDjQQoZUd+FVg2rXPnA@mail.gmail.com> <201204201759.52271.arnd@arndb.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: clean up time
+Date: Wed, 25 Apr 2012 10:00:02 +1000
+Message-ID: <20120425100002.a288b8b25dee6cecf813a69c@canb.auug.org.au>
+References: <20120402112009.3477dad7deff0f4d87f49b29@canb.auug.org.au>
+	<20120423164859.082b5c53b5d9bd9a524ec864@canb.auug.org.au>
+	<4F9722CA.80403@goop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__25_Apr_2012_10_00_02_+1000_r6sxjq7e5PnFLL1."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:55714 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753907Ab2DXXvE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Apr 2012 19:51:04 -0400
-Received: by pbbro12 with SMTP id ro12so715187pbb.19
-        for <linux-next@vger.kernel.org>; Tue, 24 Apr 2012 16:51:03 -0700 (PDT)
-In-Reply-To: <201204201759.52271.arnd@arndb.de>
+Received: from haggis.pcug.org.au ([203.10.76.10]:55086 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755956Ab2DYAAR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Apr 2012 20:00:17 -0400
+In-Reply-To: <4F9722CA.80403@goop.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+To: Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Xen Devel <Xen-devel@lists.xensource.com>, Sumit Semwal <sumit.semwal@linaro.org>, Rob Lee <rob.lee@linaro.org>
 
-Arnd Bergmann wrote:
-> On Thursday 19 April 2012, Paul Gortmaker wrote:
->> ARM folks,
->>
->> Just a heads up that Stephen expanded the linux-next ARM coverage
->> today to add a whole bunch more builds.
->>
->> Possibly "new" build fails were detected in these configs:
->>
->> ARM:mackerel_defconfig,ag5evm_defconfig
->> ARM:ezx_defconfig
->> ARM:mini2440_defconfig
->
-> I think this is needed to fix mini2440_defconfig after the platform
-> files have been moved around.
->
-> Signed-off-by: Arnd Bergmann<arnd@arndb.de>
->
-> diff --git a/arch/arm/configs/mini2440_defconfig b/arch/arm/configs/mini2440_defconfig
-> index 42da918..082175c 100644
-> --- a/arch/arm/configs/mini2440_defconfig
-> +++ b/arch/arm/configs/mini2440_defconfig
-> @@ -14,6 +14,8 @@ CONFIG_MODULE_FORCE_UNLOAD=y
->   # CONFIG_BLK_DEV_BSG is not set
->   CONFIG_BLK_DEV_INTEGRITY=y
->   CONFIG_ARCH_S3C24XX=y
-> +# CONFIG_CPU_S3C2410 is not set
-> +CONFIG_CPU_S3C2440=y
->   CONFIG_S3C_ADC=y
->   CONFIG_S3C24XX_PWM=y
->   CONFIG_MACH_MINI2440=y
+--Signature=_Wed__25_Apr_2012_10_00_02_+1000_r6sxjq7e5PnFLL1.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I tested and it's ok to me.
-Thanks, Will apply.
+Hi Jeremy,
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+On Tue, 24 Apr 2012 15:01:46 -0700 Jeremy Fitzhardinge <jeremy@goop.org> wr=
+ote:
+>
+> Are you pulling from xen.git upstream/xen?  I just updated it to be
+> current Linus master, so it shouldn't conflict any more.
+
+Yes, I fetch branch upstream/xen from
+git://git.kernel.org/pub/scm/linux/kernel/git/jeremy/xen.git and, yes, it
+is empty now, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__25_Apr_2012_10_00_02_+1000_r6sxjq7e5PnFLL1.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPlz6CAAoJEECxmPOUX5FEDCMP/2MEVG7K8zd0nCqsDaH/fD/f
+RBjLDe5JwSPEDkY9mFJAiS4qhIVNItefqaZO9RzcODT+4nfJAVyp48TXgTB+WS98
+AFUYKHM6cFanPlLbUMIzxV5ZVZgDGiN2apbg4fcn9vfkCYBJNzm0ozaABm3xQpDQ
+J0LyLiRHmzxDHamgqV5rvKTTJakghV7g37B7X6uq5LawYaF6CRk0jH8/JI0nwO9D
+Wb4p22DqkxihG11JrCmpFH0SAozMO+x8h3QaUJ0H7XJyjt9tP6IO9xaNYpapEd65
+gqIrSE4OoxmBPsoLZcx1q14IJVb81ccY8WWkKjlxckxUTziETU7itX6cFCF5ehZ/
+W8Yr4OeePr61FoEC+Q7EXyYjXjDiScCqXphCbdGDjX/yPRxB4D8ERabFUBMxL21j
++ZCEHQYBZ8rhX5/mbN4m6KEK3a/akT1ZTOHzlqn0oSac4Vpic0KFwEAL7xzmwD7C
+XVQilu4PGwJJFvpPA/s5nPaIM1D5j+SS2iWt4/EKTNFsU54RJHGTn05Le+R+sIdB
+x5KeGhkGjKNLm3IsZmt6ZE5D6kEVD3814K4/KzMiHeMjNfvqm/DX9UDBkiWub8uo
+7T8cT+NbdDAS41IBIjYIC9rEzj8M4NXJ7tpldjaXJn4QKle9Xxd7rePl9ABJz66n
+88Ky7oUiCaDbUvirvBh0
+=aDPw
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Apr_2012_10_00_02_+1000_r6sxjq7e5PnFLL1.--
