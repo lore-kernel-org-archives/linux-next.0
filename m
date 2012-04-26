@@ -1,27 +1,51 @@
-From: Matthew Garrett <mjg@redhat.com>
-Subject: Re: linux-next: Tree for Apr 17 (pci-sysfs.c and vga_switcheroo.c)
-Date: Wed, 25 Apr 2012 17:45:48 +0100
-Message-ID: <20120425164548.GB17905@srcf.ucam.org>
-References: <20120417144241.0d7dc5fde56b2a37ff0dcaba@canb.auug.org.au>
- <4F8DB90A.8050504@xenotime.net>
- <CAErSpo56ddRZCG=5yqcEUBPZ1_x76=33xkv5x-46gcNgQCA0Qg@mail.gmail.com>
+From: Dan Williams <dan.j.williams@gmail.com>
+Subject: Re: Update to SCSI trees for Linux Next
+Date: Thu, 26 Apr 2012 13:21:09 -0700
+Message-ID: <CAA9_cmcWz3uWJTHs1Efe4NWpD9KQaxXzpWHVuG6G5uoyMwEA5g@mail.gmail.com>
+References: <1335177821.4191.17.camel@dabdike.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAErSpo56ddRZCG=5yqcEUBPZ1_x76=33xkv5x-46gcNgQCA0Qg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:43911 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758898Ab2DZUVK convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Apr 2012 16:21:10 -0400
+In-Reply-To: <1335177821.4191.17.camel@dabdike.lan>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>
 
-On Wed, Apr 25, 2012 at 10:37:26AM -0600, Bjorn Helgaas wrote:
-> I assume this is related to 77b267c7549e3629ea55cf780aa3d474da7bc2d5
-> ("vgaarb: Add support for setting the default video device") and that
-> Matthew will take care of whatever needs to be done (if it's not fixed
-> already).
+On Mon, Apr 23, 2012 at 3:43 AM, James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+> Hi Stephen
+>
+> Just to let you know that SCSI is moving on to a single tree model fr=
+om
+> now on. =A0The new tree is
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git
+>
+> And the branch for next is for-next.
+>
+> Could you drop both the scsi-misc-2.6 and scsi-rc-fixes-2.6 tree, ple=
+ase
+> because I'll send everything through this for-next branch.
+>
+> For the time being, could you keep the scsi-post-merge-2.6 tree? =A0I=
+t's
+> easier when resolving conflicts amongst other trees to use a separate
+> git tree (although we haven't actually had to use this one for a whil=
+e).
 
-Dave has patches.
+Speaking of resolving conflicts, are you looking to resolve conflicts
+between scsi/fixes and development branches targeted at the next merge
+window?  Or, would you rather ask the development branch to rebase on
+top of latest Linus once scsi/fixes lands upstream?
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+My libsas development branch, if I base it on current Linus, will
+conflict with the bits queued in scsi/fixes.
+
+--
+Dan
