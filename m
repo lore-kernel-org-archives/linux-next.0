@@ -1,54 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 27 Apr 2012 12:02:05 +1000
-Message-ID: <20120427120205.3860dd924261ee7a7c42eda4@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Fri, 27 Apr 2012 15:38:06 +1000
+Message-ID: <20120427153806.65f5cd168dfc0ea18a954080@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Apr_2012_12_02_05_+1000_0+kj1ht.5khjefHK"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Bruce Allan <bruce.w.allan@intel.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__27_Apr_2012_15_38_06_+1000_py7jc9K=2_qXm7dN"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43287 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756137Ab2D0F7Z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Apr 2012 01:59:25 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Ledford <dledford@redhat.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
 
---Signature=_Fri__27_Apr_2012_12_02_05_+1000_0+kj1ht.5khjefHK
+--Signature=_Fri__27_Apr_2012_15_38_06_+1000_py7jc9K=2_qXm7dN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/ethernet/intel/e1000e/param.c between commit 727c356f4d79
-("e1000e: Fix default interrupt throttle rate not set in NIC HW") from
-the net tree and commit 6ad651456e3c ("e1000e: cleanup remaining strings
-split across multiple lines") from the net-next tree.
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-The former included the change from the latter, so I used that.
+ipc/mqueue.c: In function 'mqueue_get_inode':
+ipc/mqueue.c:155:4: error: implicit declaration of function 'vmalloc' [-Wer=
+ror=3Dimplicit-function-declaration]
+ipc/mqueue.c:155:19: warning: assignment makes pointer from integer without=
+ a cast [enabled by default]
+ipc/mqueue.c: In function 'mqueue_evict_inode':
+ipc/mqueue.c:268:3: error: implicit declaration of function 'vfree' [-Werro=
+r=3Dimplicit-function-declaration]
+
+Caused by commit 5d644d9d3d8f ("ipc/mqueue: update maximums for the
+mqueue subsystem").  See Rule 1 from Documentation/SubmitChecklist.
+
+I have added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 27 Apr 2012 15:35:14 +1000
+Subject: [PATCH] ipc/mqueue: using vmalloc requires including vmalloc.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ ipc/mqueue.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 04cc77e..279051c 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -34,6 +34,7 @@
+ #include <linux/ipc_namespace.h>
+ #include <linux/user_namespace.h>
+ #include <linux/slab.h>
++#include <linux/vmalloc.h>
+=20
+ #include <net/sock.h>
+ #include "util.h"
+--=20
+1.7.10.280.gaa39
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__27_Apr_2012_12_02_05_+1000_0+kj1ht.5khjefHK
+--Signature=_Fri__27_Apr_2012_15_38_06_+1000_py7jc9K=2_qXm7dN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPmf4dAAoJEECxmPOUX5FEflkP/1jeHrlFOLJE21sat9zSfDmm
-Olhc3cUQM5HXoAKhei2npS4IGU5IjPJ9rl10RBxhAGb8VxWin/Vc4JkbtMa6EhEi
-toAEEgtx/WRzG7U76RkAf6dCs16ocXuok41NuVMrb6aTd1+hy4/UHjlWC32ql4Ah
-y00cjG1/P0zXeUbQhJR1btr6UoKVoL7PJcuO77US8FFGOA2PqAUA6UfDuNw3SEGr
-IXSexeEhvFayE4iITjXRtfxA+Ok7bb4Rmg8Z0QJbYlR+MpAprsQ+jP/eKXXeDm6H
-rpQbMeho4bUdiXtU9QyeiJIALFChl7V7jNhDF+cAPlrgmq2MRX6XIlsOj846cxz6
-/wxP+GWsJm6XxVdlVZ3wDcB4Es4Ylp7v4738SIo/51Vn2vnsRYIkctfdUYSUNQoe
-C9WA2Kfc3wY8lxVDc14VL1iA0GOiTMs4xE9rsgQBv/+u46GUcgOhjoBFWJ/v7R4N
-lgz4kdKvlUq5FoD2KKyOGyfNRlM9N3LW8W0f9lyb5ga/a+ZeqnduYHHhzeC8udrO
-IUHYs4WBv/sfvlsgPZITyIHll9s9bHrHSMUnktrGGUnyLUg1yWK0kxzGGk/NhZrb
-14TVEAK9C2z4hLew+aENEZRFV6bz334TlcgKoRWfYZl/TY2LhEX0nyap+RwVTSGe
-sstA2PmlujhXIw7tO5ji
-=PFYo
+iQIcBAEBCAAGBQJPmjC+AAoJEECxmPOUX5FErqEQAJlRlnxKHB1uV4jSq/+7p6km
+bLcw8ue3RaitLj9rXft6emH8SPY413krN24C9Apzg0OP8AG2/DVqogdBwxgO6bEu
+O6mg7/3EjuQQCDttcVRmgHkPZV8uE9u73Y/2V1kTfR8qBXo1QGZh3uAf3glsRPn3
+QOXbc3DkvJkKOB2VvBYVBDLDvT+OSxUXz5S4Jv1Bpx4GkfKIMbLczyECEhgRprir
+NHNkWb8hUskfomMXddh8+R/l7Sds9BuuSyl6JPMXE4PEHId+j2yW22Z4FZUCiO4V
+YzdE7N9fAHXi+8Bv0NVnV8AlqYXCmhwDEpdsPD1FfaeQt355OAx09FOCn7eRZWaQ
+U5siROUW9Ar4XDN8YlEjZHFlXD0kEpZljUlNX5r7QPt7RTPInd6w7trPKgss/VvS
+vhJDFYTlqd8w8oTfG3bVJLQ+e6/28Ap4iJ//douCeyld2TdXbCuuM+j18d/gsc6G
+aYzpeUBdBYBUuzQxr3UiYPQURk2pn79Lg+pi0lB6Z8Q8pXiNmTVsUIcYtTT1eSQ8
+q8CsUM3vMG03pUtz/KXdq5b46AixsYi7Eoc+Aus0R/QcApFpEpKjbEYzPJJDNuYd
+qIJtoX5jGOrY+CTCIPFvxeRzoK8DPUbiLFvdte2Il/YJKw4tItQaQXRfAMe9NU2u
+g2PmrCp+Fz+vk6QXKVjZ
+=tfzm
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Apr_2012_12_02_05_+1000_0+kj1ht.5khjefHK--
+--Signature=_Fri__27_Apr_2012_15_38_06_+1000_py7jc9K=2_qXm7dN--
