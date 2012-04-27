@@ -1,72 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with Linus' tree
-Date: Fri, 27 Apr 2012 14:37:03 +1000
-Message-ID: <20120427143703.f6946999cbca5509e22820a6@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the usb tree
+Date: Fri, 27 Apr 2012 14:12:34 +1000
+Message-ID: <20120427141234.242d7f7abb4b5453255d7544@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Apr_2012_14_37_03_+1000_swpchh510WVI0/na"
+ boundary="Signature=_Fri__27_Apr_2012_14_12_34_+1000_YM1ULneld6caNbzp"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesper Juhl <jj@chaosbits.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__27_Apr_2012_14_37_03_+1000_swpchh510WVI0/na
+--Signature=_Fri__27_Apr_2012_14_12_34_+1000_YM1ULneld6caNbzp
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/vt6656/ioctl.c between commit 17b7e1ba1e2e ("staging:
-vt6656: Don't leak memory in drivers/staging/vt6656/ioctl.c::private_ioctl
-()") from Linus' tree and commit 62ef30b5781d ("staging: vt6656: Remove
-redundant casts from ioctl.c") from the staging tree.
+After merging the usb tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
+In file included from drivers/usb/host/ohci-hcd.c:1079:0:
+drivers/usb/host/ohci-ps3.c: In function 'ps3_ohci_hc_start':
+drivers/usb/host/ohci-ps3.c:48:3: error: implicit declaration of function '=
+err' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit af4e1ee04026 ("USB: remove err() macro").
+
+I have used the usb tree from next-20120424 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/vt6656/ioctl.c
-index d59456c,cc7357d..0000000
---- a/drivers/staging/vt6656/ioctl.c
-+++ b/drivers/staging/vt6656/ioctl.c
-@@@ -565,7 -565,7 +565,7 @@@ int private_ioctl(PSDevice pDevice, str
-  			result =3D -ENOMEM;
-  			break;
-  		}
-- 		pNodeList =3D kmalloc(sizeof(SNodeList) + (sNodeList.uItem * sizeof(SNo=
-deItem)), (int)GFP_ATOMIC);
- -		pNodeList =3D (PSNodeList)kmalloc(sizeof(SNodeList) + (sNodeList.uItem =
-* sizeof(SNodeItem)), GFP_ATOMIC);
-++		pNodeList =3D kmalloc(sizeof(SNodeList) + (sNodeList.uItem * sizeof(SNo=
-deItem)), GFP_ATOMIC);
-  		if (pNodeList =3D=3D NULL) {
-  			result =3D -ENOMEM;
-  			break;
-
---Signature=_Fri__27_Apr_2012_14_37_03_+1000_swpchh510WVI0/na
+--Signature=_Fri__27_Apr_2012_14_12_34_+1000_YM1ULneld6caNbzp
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPmiJvAAoJEECxmPOUX5FEU24P/3Qa0A5yU6GzcJ85UfKFRRdF
-I018jFEbnq3ftZTuiRWFgHuOHhRJK/qgQvQjXa7igAR5eG6Px4ODfXM0CFB8R0bi
-0f4s2HToJbkriN5fNZJvxzOtAWK8F6njbq+HnpHOXNUUx/szHeFhQTO6ZEyeb5Fn
-VQkppm4bwbbLT47X5GkGOyPihZDe+KSsYtrFaVov/imfCnXQOsc6Z/LTHMOsvCgD
-dXFhRLS0QU3JJKUdssFG48OGy/+hnoy7XBzIse4FZzSJKIHW/Xfnmh6L99kfggGr
-F1G5lVK5CJdEJdJTa7O7Fp0GPCYFPR2NbPlYkAqkXXd+C7pEQUi3PGK2T26KuCYt
-ZQvLhM/dHB3xyeLUnCpAVQOCa21AO97ctgtr68GhSj+3Y0VqwnhuWNHkHzj0jbLZ
-xE+eoWjRj3n2zDkL87w9S4T7HKrDBVoKF7i36rlWPUYjgiF2aRA6ihIHx/bGkhA/
-cgzcQn3rEo3ZRgPIqhrtdpvUyTJmonQRJHpINZls2yk29naCS0Zvr7LwFtun+WBx
-si8gVB9UBgva5tAq6wBfCO1H5WLWnP0QHBTudxwLfBtuicjE7Dvqvewb9ThhlRox
-rRgBLBmRG39+wHDixrq8y0EtR/JrGvLyWeTuDVTt2rTBYximXqpYAi/UWwanSYNV
-fx6dNFG8NMN1lOY3crYF
-=NFgK
+iQIcBAEBCAAGBQJPmhyyAAoJEECxmPOUX5FEfskP/1qm7f02mfYMsKyWTKEcE9F7
+rPlo4uhr8d2JQPNOLd3eK5hZ20tridtDLLRR5I+D+I5+YZ1G5LiMbaP0iaEYx0FR
+v8Tr0tXPA9Mr6t0BwvMG+j2Jo9Vl6E4uGHdjJVCoQccokr0ePIrJ07EBVGIXyu0F
+Lm5d/v6lPzQsuMVcoJx06RiFPYSNZ+VUkkjolRh/8IoestOoOOPvALvv9HqNGwVV
+YvbRYwNjjHrjN7RxBv46mQuywCnBY/J9WSqdxoik08pCY+8WY0ydKAIiR1LcfERW
+qtMd1nZ8HRbPQF8Vke9IIwZN9xy7Qv6h4t0jn9zCgGLx/0YOwLoxzZ4FCuKTep+j
+TsNixdJuO3r3J+BS7VjxsBvzal8wLkS3OiGLxNWEo5+ujQgnZ7HFp4m5wcltxIs3
+Ul9ujHfsXfBnZmbzIOpRXkcOtXk7g5EDeMp3qD6uLUC/1bBEtjtrB3lG8PnWvS2x
+5J4AJgIs7i06h0Z3pog37k/32RrXTiDyEvjagb0y3RtEMvBblLXYh6t+KyvPL2ee
+7Lzzc7RN+s+1rLBQQMG+BMRmUdS92liuYynE6SjHF3pf0IdWGQD70uXYvO6bllzW
+LQGfy3qH8FQKZP1BZw6XPxOWLzUfHPnwiYqmqr0cG7DrVP4dGvx8/9lKqxPpoBtz
+kR7XXSZTM3Eji+xrU9JC
+=TFZ+
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Apr_2012_14_37_03_+1000_swpchh510WVI0/na--
+--Signature=_Fri__27_Apr_2012_14_12_34_+1000_YM1ULneld6caNbzp--
