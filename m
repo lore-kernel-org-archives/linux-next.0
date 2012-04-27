@@ -1,88 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (kvm-ppc
- tree related)
-Date: Fri, 27 Apr 2012 15:54:53 +1000
-Message-ID: <20120427155453.dc0b61315798677ceb3b59a2@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the driver-core
+ tree
+Date: Fri, 27 Apr 2012 14:31:14 +1000
+Message-ID: <20120427143114.d141038158ea4923399d1d1a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Apr_2012_15_54_53_+1000_xExPF3=b5GwVWaPO"
+ boundary="Signature=_Fri__27_Apr_2012_14_31_14_+1000_fd_HQX._5YADc/9r"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexander Graf <agraf@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__27_Apr_2012_15_54_53_+1000_xExPF3=b5GwVWaPO
+--Signature=_Fri__27_Apr_2012_14_31_14_+1000_fd_HQX._5YADc/9r
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-After merging the final tree, today's linux-next build (powerpc
-ppc44x_defconfig) failed like this:
+Today's linux-next merge of the staging tree got a conflict in
+drivers/Kconfig drivers/Makefile between commit de55d8716ac5 ("Extcon
+(external connector): import Android's switch class and modify") from the
+driver-core tree and commits a980e046098b ("IIO: Move the core files to
+drivers/iio") and db3b9e990e75 ("Staging: VME: move VME drivers out of
+staging") from the staging tree.
 
-arch/powerpc/kernel/ppc_ksyms.c:194:1: error: redefinition of '__kstrtab_do=
-_IRQ'
-arch/powerpc/kernel/ppc_ksyms.c:62:1: note: previous definition of '__kstrt=
-ab_do_IRQ' was here
-
-Caused by commit f4601ff93980 ("PPC: Export some interrupt handlers").
-
-I applied the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 27 Apr 2012 15:52:54 +1000
-Subject: [PATCH] KVM/PPC: do not export things twice
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/kernel/ppc_ksyms.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/kernel/ppc_ksyms.c b/arch/powerpc/kernel/ppc_ksym=
-s.c
-index f6484f2..cace146 100644
---- a/arch/powerpc/kernel/ppc_ksyms.c
-+++ b/arch/powerpc/kernel/ppc_ksyms.c
-@@ -191,6 +191,8 @@ EXPORT_SYMBOL(__arch_hweight32);
- EXPORT_SYMBOL(__arch_hweight64);
- #endif
-=20
--EXPORT_SYMBOL_GPL(do_IRQ);
--EXPORT_SYMBOL_GPL(timer_interrupt);
-+#ifndef CONFIG_PPC32
-+EXPORT_SYMBOL(do_IRQ);
-+EXPORT_SYMBOL(timer_interrupt);
-+#endif
- EXPORT_SYMBOL_GPL(performance_monitor_exception);
---=20
-1.7.10.280.gaa39
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__27_Apr_2012_15_54_53_+1000_xExPF3=b5GwVWaPO
+diff --cc drivers/Kconfig
+index 0233ad9,e245779..0000000
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@@ -140,6 -140,8 +140,10 @@@ source "drivers/virt/Kconfig
+ =20
+  source "drivers/devfreq/Kconfig"
+ =20
+ +source "drivers/extcon/Kconfig"
+ +
++ source "drivers/iio/Kconfig"
++=20
++ source "drivers/vme/Kconfig"
++=20
+  endmenu
+diff --cc drivers/Makefile
+index c41dfa9,08b78e0..0000000
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@@ -134,4 -134,5 +134,6 @@@ obj-$(CONFIG_VIRT_DRIVERS)	+=3D virt
+  obj-$(CONFIG_HYPERV)		+=3D hv/
+ =20
+  obj-$(CONFIG_PM_DEVFREQ)	+=3D devfreq/
+ +obj-$(CONFIG_EXTCON)		+=3D extcon/
++ obj-$(CONFIG_IIO)		+=3D iio/
++ obj-$(CONFIG_VME_BUS)		+=3D vme/
+
+--Signature=_Fri__27_Apr_2012_14_31_14_+1000_fd_HQX._5YADc/9r
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPmjStAAoJEECxmPOUX5FEBusP/1Qjt1wWI/APjNtxf62+2puo
-5eMMSLPBJVagnDsNYtQq9uuY7DEzpY7rBn1qq0ZLzQwIInFM5uWFaN0Vc0r6Aaim
-6rpcvKTGLO+MbjQU6uPmPGgWIHYmekFRxGmQ8HONw5RPa7LNWx2RjC7bbB3CWOhm
-uQVkK9vGtWe4yzpb/j7OTXKV2fYUXZrwGKxjxsAkVebKZPhirEc+U2vwNUv6MUC9
-YJgd58Ac50k6nNEgyyEu3IDKTSs3mqrDsCbRfX3QY/bIPOjtukeYMcxAghd0/PeT
-jCh0MsmmA/pd3voNh54mY/PlAfWCeYSaamLluD24pOgpknAx6VlMiOpe0asvGV+O
-5Oq/o562RSVRt4fQO0aNUcXgFJSb4lqshrvROjWgdV9G6Wc9soqme1q9Ax7ufxNh
-Ha6aUziUH601CMu/TNpuU5/85aplZJbw2OpZ9xEVTirYnhm2rQ/mqnKTvlicZV0U
-gapXlJ46QOkpFRjOPfV2yAjPywSLzGsxLZZQVVFMQGSr8qFWgNtKyCoVH32IVSIL
-H9xYYGl70da0HA3cvFG47Tw4btJz3UHKUJb9MQj8S7YXaG2BCjAQMjuqErgtvb87
-1+0MSvRH6R/EZQFDCvWc2B+jYGXQfa3PllXiPu95RDFGId2KHVzdWONgh5lAZVua
-S0XhWEYMMr/K5H3grXYj
-=ub9I
+iQIcBAEBCAAGBQJPmiESAAoJEECxmPOUX5FEDckP/j8vbTDs1btSim37rZziYzQt
+YYFy2JMoDSeZuO+PYrj2cXlB85/U9oZTcIGD596LPY5T+k2VWkePxLkTkjiNXDQF
+gFix1ofDg/1ixsPHOGRLR62F5v43J3WjRI9fdSyT6PkIL/QqwC31JN3p06ZJEHVy
+ZCGPjrDRXD6bM9b9KvsHn5uCZdDTRBO8b7O8KbcmCWoiKLTy6EuhBEDsFGdtsNJ7
+q97gRkbHmPbhzBuMuOuwec+PGjw6eAP5hpBJRMhAIOTXqPkmaOp6JJXUKfDBK1NA
+towIr30k/7DrMpy49dbyvTI2oit5TG3E08VJnBrjzABlGFDvBHlTPHDdO3CZxxsY
+1dp7SkPFBkuo2ySeF/F2N4J6I16nWonFANk30aPTApuwV00qRymup+76ZdJ5zU3G
+UMVAjGpGbrlBy23cyZ45YEEoleRhSJXvLBZ1XrMXBKVG5qpkX/dXHrGSmgeWS+Cz
+cWmJ/aY4yrejRdAaHKrdsSs63zkMTM8GOGHgW7PlwlAowc5QQEG2WKfgCmfuBhD7
+PXslTkOa/QBPciLHXvMqxge9o7Tye3ueQYNHuiqv18SBpbTIUqYc20PwGAgiWv/V
+uLgfhvvWDvtD5G0t+BPhj6Lqdi4LHrPEFFbDM6MG7Wdzm7Kn+qC9eDRxrP6Jh0DM
+yrqx8tdVNM4DAbCHSp61
+=3Mgs
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Apr_2012_15_54_53_+1000_xExPF3=b5GwVWaPO--
+--Signature=_Fri__27_Apr_2012_14_31_14_+1000_fd_HQX._5YADc/9r--
