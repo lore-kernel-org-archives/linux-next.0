@@ -1,84 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the driver-core
- tree
-Date: Fri, 27 Apr 2012 14:31:14 +1000
-Message-ID: <20120427143114.d141038158ea4923399d1d1a@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 27 Apr 2012 12:02:05 +1000
+Message-ID: <20120427120205.3860dd924261ee7a7c42eda4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Apr_2012_14_31_14_+1000_fd_HQX._5YADc/9r"
+ boundary="Signature=_Fri__27_Apr_2012_12_02_05_+1000_0+kj1ht.5khjefHK"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Bruce Allan <bruce.w.allan@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__27_Apr_2012_14_31_14_+1000_fd_HQX._5YADc/9r
+--Signature=_Fri__27_Apr_2012_12_02_05_+1000_0+kj1ht.5khjefHK
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/Kconfig drivers/Makefile between commit de55d8716ac5 ("Extcon
-(external connector): import Android's switch class and modify") from the
-driver-core tree and commits a980e046098b ("IIO: Move the core files to
-drivers/iio") and db3b9e990e75 ("Staging: VME: move VME drivers out of
-staging") from the staging tree.
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/intel/e1000e/param.c between commit 727c356f4d79
+("e1000e: Fix default interrupt throttle rate not set in NIC HW") from
+the net tree and commit 6ad651456e3c ("e1000e: cleanup remaining strings
+split across multiple lines") from the net-next tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+The former included the change from the latter, so I used that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/Kconfig
-index 0233ad9,e245779..0000000
---- a/drivers/Kconfig
-+++ b/drivers/Kconfig
-@@@ -140,6 -140,8 +140,10 @@@ source "drivers/virt/Kconfig
- =20
-  source "drivers/devfreq/Kconfig"
- =20
- +source "drivers/extcon/Kconfig"
- +
-+ source "drivers/iio/Kconfig"
-+=20
-+ source "drivers/vme/Kconfig"
-+=20
-  endmenu
-diff --cc drivers/Makefile
-index c41dfa9,08b78e0..0000000
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@@ -134,4 -134,5 +134,6 @@@ obj-$(CONFIG_VIRT_DRIVERS)	+=3D virt
-  obj-$(CONFIG_HYPERV)		+=3D hv/
- =20
-  obj-$(CONFIG_PM_DEVFREQ)	+=3D devfreq/
- +obj-$(CONFIG_EXTCON)		+=3D extcon/
-+ obj-$(CONFIG_IIO)		+=3D iio/
-+ obj-$(CONFIG_VME_BUS)		+=3D vme/
-
---Signature=_Fri__27_Apr_2012_14_31_14_+1000_fd_HQX._5YADc/9r
+--Signature=_Fri__27_Apr_2012_12_02_05_+1000_0+kj1ht.5khjefHK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPmiESAAoJEECxmPOUX5FEDckP/j8vbTDs1btSim37rZziYzQt
-YYFy2JMoDSeZuO+PYrj2cXlB85/U9oZTcIGD596LPY5T+k2VWkePxLkTkjiNXDQF
-gFix1ofDg/1ixsPHOGRLR62F5v43J3WjRI9fdSyT6PkIL/QqwC31JN3p06ZJEHVy
-ZCGPjrDRXD6bM9b9KvsHn5uCZdDTRBO8b7O8KbcmCWoiKLTy6EuhBEDsFGdtsNJ7
-q97gRkbHmPbhzBuMuOuwec+PGjw6eAP5hpBJRMhAIOTXqPkmaOp6JJXUKfDBK1NA
-towIr30k/7DrMpy49dbyvTI2oit5TG3E08VJnBrjzABlGFDvBHlTPHDdO3CZxxsY
-1dp7SkPFBkuo2ySeF/F2N4J6I16nWonFANk30aPTApuwV00qRymup+76ZdJ5zU3G
-UMVAjGpGbrlBy23cyZ45YEEoleRhSJXvLBZ1XrMXBKVG5qpkX/dXHrGSmgeWS+Cz
-cWmJ/aY4yrejRdAaHKrdsSs63zkMTM8GOGHgW7PlwlAowc5QQEG2WKfgCmfuBhD7
-PXslTkOa/QBPciLHXvMqxge9o7Tye3ueQYNHuiqv18SBpbTIUqYc20PwGAgiWv/V
-uLgfhvvWDvtD5G0t+BPhj6Lqdi4LHrPEFFbDM6MG7Wdzm7Kn+qC9eDRxrP6Jh0DM
-yrqx8tdVNM4DAbCHSp61
-=3Mgs
+iQIcBAEBCAAGBQJPmf4dAAoJEECxmPOUX5FEflkP/1jeHrlFOLJE21sat9zSfDmm
+Olhc3cUQM5HXoAKhei2npS4IGU5IjPJ9rl10RBxhAGb8VxWin/Vc4JkbtMa6EhEi
+toAEEgtx/WRzG7U76RkAf6dCs16ocXuok41NuVMrb6aTd1+hy4/UHjlWC32ql4Ah
+y00cjG1/P0zXeUbQhJR1btr6UoKVoL7PJcuO77US8FFGOA2PqAUA6UfDuNw3SEGr
+IXSexeEhvFayE4iITjXRtfxA+Ok7bb4Rmg8Z0QJbYlR+MpAprsQ+jP/eKXXeDm6H
+rpQbMeho4bUdiXtU9QyeiJIALFChl7V7jNhDF+cAPlrgmq2MRX6XIlsOj846cxz6
+/wxP+GWsJm6XxVdlVZ3wDcB4Es4Ylp7v4738SIo/51Vn2vnsRYIkctfdUYSUNQoe
+C9WA2Kfc3wY8lxVDc14VL1iA0GOiTMs4xE9rsgQBv/+u46GUcgOhjoBFWJ/v7R4N
+lgz4kdKvlUq5FoD2KKyOGyfNRlM9N3LW8W0f9lyb5ga/a+ZeqnduYHHhzeC8udrO
+IUHYs4WBv/sfvlsgPZITyIHll9s9bHrHSMUnktrGGUnyLUg1yWK0kxzGGk/NhZrb
+14TVEAK9C2z4hLew+aENEZRFV6bz334TlcgKoRWfYZl/TY2LhEX0nyap+RwVTSGe
+sstA2PmlujhXIw7tO5ji
+=PFYo
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Apr_2012_14_31_14_+1000_fd_HQX._5YADc/9r--
+--Signature=_Fri__27_Apr_2012_12_02_05_+1000_0+kj1ht.5khjefHK--
