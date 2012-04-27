@@ -1,59 +1,37 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] ARM:mfd: fix ezx-pcap build failure
-Date: Fri, 27 Apr 2012 10:09:13 -0600
-Message-ID: <20120427160913.87CE93E1290@localhost>
-References: <1335366163-12920-1-git-send-email-mark.asselstine@windriver.com> <20120426215258.GG24211@n2100.arm.linux.org.uk>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f51.google.com ([209.85.210.51]:59060 "EHLO
-	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759098Ab2D0QJQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Apr 2012 12:09:16 -0400
-Received: by dadz8 with SMTP id z8so1199269dad.10
-        for <linux-next@vger.kernel.org>; Fri, 27 Apr 2012 09:09:16 -0700 (PDT)
-In-Reply-To: <20120426215258.GG24211@n2100.arm.linux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Mark Asselstine <mark.asselstine@windriver.com>
-Cc: linux-next@vger.kernel.org, openezx-devel@lists.openezx.org, sameo@linux.intel.com, linux-arm-kernel@lists.infradead.org, haojian.zhuang@marvell.com
+From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: inux-next: Tree for Apr 27 (infiniband/hw/ocrdma)
+Date: Fri, 27 Apr 2012 09:56:36 -0700
+Message-ID: <4F9ACFC4.6010002@xenotime.net>
+References: <20120427161146.95422142968526faaff615d4@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120427161146.95422142968526faaff615d4-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 26 Apr 2012 22:52:58 +0100, Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-> On Wed, Apr 25, 2012 at 11:02:43AM -0400, Mark Asselstine wrote:
-> > Attempting to build the ezx_defconfig we get a build failure:
-> > 
-> > drivers/mfd/ezx-pcap.c: In function 'pcap_isr_work':
-> > drivers/mfd/ezx-pcap.c:205: error: implicit declaration of function 'irq_to_gpio'
-> > 
-> > Looking at this failure we can find that commit 4929f5a8a99f
-> > [ARM:pxa: rename gpio_to_irq and irq_to_gpio] renamed irq_to_gpio()
-> > to pxa_irq_to_gpio() but this change was not made in the ezx-pcap
-> > driver.
-> 
-> That's because drivers shouldn't have knowledge about the SoC they're
-> running on.  This driver is not restricted to only being built for PXA,
-> and so with your change, this will cause a link error should this be
-> built on non-PXA.
-> 
-> However, there's a big problem with code using irq_to_gpio() or any
-> variant of that in this manner:
-> 
->         } while (gpio_get_value(irq_to_gpio(pcap->spi->irq)));
-> 
-> What is the effect when the supplied IRQ does not have a mapping to a
-> GPIO - or it _does_ by way of a badly coded irq_to_gpio() function
-> but that GPIO is not the correct one.
+On 04/26/2012 11:11 PM, Stephen Rothwell wrote:
 
-... like if multiple gpios map to the same IRQ.
-
-> There is no prevention against endlessly looping, so it could cause a
-> system lockup.
+> Hi all,
 > 
-> The real answer is to fix SPI et.al. so that its possible to pass the
-> _GPIO_ number into this driver (that's what the driver wants for its
-> interrupt line after all).  To fix that, SPI folk need to get involved
-> (added Grant as a first step.)
+> Changes since 20120424:
 
-This doesn't look like a core SPI problem to me.  This specific driver
-needs a gpio connection to work and therefore it should be passed in
-via either the DT binding or platform_data as Mark suggests.
 
-g.
+
+when IPV6 is not enabled:
+
+ERROR: "register_inet6addr_notifier" [drivers/infiniband/hw/ocrdma/ocrdma.ko] undefined!
+ERROR: "unregister_inet6addr_notifier" [drivers/infiniband/hw/ocrdma/ocrdma.ko] undefined!
+
+
+
+
+~Randy
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
