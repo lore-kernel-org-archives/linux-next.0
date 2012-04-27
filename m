@@ -1,37 +1,34 @@
-From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: inux-next: Tree for Apr 27 (infiniband/hw/ocrdma)
-Date: Fri, 27 Apr 2012 09:56:36 -0700
-Message-ID: <4F9ACFC4.6010002@xenotime.net>
-References: <20120427161146.95422142968526faaff615d4@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with Linus' tree
+Date: Fri, 27 Apr 2012 10:05:36 -0700
+Message-ID: <20120427170536.GA2789@kroah.com>
+References: <20120427143703.f6946999cbca5509e22820a6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120427161146.95422142968526faaff615d4-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:55242 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758624Ab2D0RFi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Apr 2012 13:05:38 -0400
+Content-Disposition: inline
+In-Reply-To: <20120427143703.f6946999cbca5509e22820a6@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesper Juhl <jj@chaosbits.net>
 
-On 04/26/2012 11:11 PM, Stephen Rothwell wrote:
-
-> Hi all,
+On Fri, Apr 27, 2012 at 02:37:03PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Changes since 20120424:
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/vt6656/ioctl.c between commit 17b7e1ba1e2e ("staging:
+> vt6656: Don't leak memory in drivers/staging/vt6656/ioctl.c::private_ioctl
+> ()") from Linus' tree and commit 62ef30b5781d ("staging: vt6656: Remove
+> redundant casts from ioctl.c") from the staging tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
+Thanks, that looks correct.
 
-
-when IPV6 is not enabled:
-
-ERROR: "register_inet6addr_notifier" [drivers/infiniband/hw/ocrdma/ocrdma.ko] undefined!
-ERROR: "unregister_inet6addr_notifier" [drivers/infiniband/hw/ocrdma/ocrdma.ko] undefined!
-
-
-
-
-~Randy
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+greg k-h
