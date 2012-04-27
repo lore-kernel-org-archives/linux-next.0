@@ -1,29 +1,88 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ARM:mfd: fix ezx-pcap build failure
-Date: Thu, 26 Apr 2012 23:04:38 +0100
-Message-ID: <20120426220437.GC9415@sirena.org.uk>
-References: <1335366163-12920-1-git-send-email-mark.asselstine@windriver.com>
- <20120426215258.GG24211@n2100.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (kvm-ppc
+ tree related)
+Date: Fri, 27 Apr 2012 15:54:53 +1000
+Message-ID: <20120427155453.dc0b61315798677ceb3b59a2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:58500 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757554Ab2DZWEp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Apr 2012 18:04:45 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__27_Apr_2012_15_54_53_+1000_xExPF3=b5GwVWaPO"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexander Graf <agraf@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Fri__27_Apr_2012_15_54_53_+1000_xExPF3=b5GwVWaPO
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20120426215258.GG24211@n2100.arm.linux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Mark Asselstine <mark.asselstine@windriver.com>, Grant Likely <grant.likely@secretlab.ca>, openezx-devel@lists.openezx.org, linux-next@vger.kernel.org, sameo@linux.intel.com, linux-arm-kernel@lists.infradead.org, haojian.zhuang@marvell.com
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 26, 2012 at 10:52:58PM +0100, Russell King - ARM Linux wrote:
+Hi all,
 
-> The real answer is to fix SPI et.al. so that its possible to pass the
-> _GPIO_ number into this driver (that's what the driver wants for its
-> interrupt line after all).  To fix that, SPI folk need to get involved
-> (added Grant as a first step.)
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-Or, in the short term, add platform data to pass in a GPIO and ignore
-any IRQ that might get passed in.
+arch/powerpc/kernel/ppc_ksyms.c:194:1: error: redefinition of '__kstrtab_do=
+_IRQ'
+arch/powerpc/kernel/ppc_ksyms.c:62:1: note: previous definition of '__kstrt=
+ab_do_IRQ' was here
+
+Caused by commit f4601ff93980 ("PPC: Export some interrupt handlers").
+
+I applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 27 Apr 2012 15:52:54 +1000
+Subject: [PATCH] KVM/PPC: do not export things twice
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/kernel/ppc_ksyms.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/kernel/ppc_ksyms.c b/arch/powerpc/kernel/ppc_ksym=
+s.c
+index f6484f2..cace146 100644
+--- a/arch/powerpc/kernel/ppc_ksyms.c
++++ b/arch/powerpc/kernel/ppc_ksyms.c
+@@ -191,6 +191,8 @@ EXPORT_SYMBOL(__arch_hweight32);
+ EXPORT_SYMBOL(__arch_hweight64);
+ #endif
+=20
+-EXPORT_SYMBOL_GPL(do_IRQ);
+-EXPORT_SYMBOL_GPL(timer_interrupt);
++#ifndef CONFIG_PPC32
++EXPORT_SYMBOL(do_IRQ);
++EXPORT_SYMBOL(timer_interrupt);
++#endif
+ EXPORT_SYMBOL_GPL(performance_monitor_exception);
+--=20
+1.7.10.280.gaa39
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__27_Apr_2012_15_54_53_+1000_xExPF3=b5GwVWaPO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPmjStAAoJEECxmPOUX5FEBusP/1Qjt1wWI/APjNtxf62+2puo
+5eMMSLPBJVagnDsNYtQq9uuY7DEzpY7rBn1qq0ZLzQwIInFM5uWFaN0Vc0r6Aaim
+6rpcvKTGLO+MbjQU6uPmPGgWIHYmekFRxGmQ8HONw5RPa7LNWx2RjC7bbB3CWOhm
+uQVkK9vGtWe4yzpb/j7OTXKV2fYUXZrwGKxjxsAkVebKZPhirEc+U2vwNUv6MUC9
+YJgd58Ac50k6nNEgyyEu3IDKTSs3mqrDsCbRfX3QY/bIPOjtukeYMcxAghd0/PeT
+jCh0MsmmA/pd3voNh54mY/PlAfWCeYSaamLluD24pOgpknAx6VlMiOpe0asvGV+O
+5Oq/o562RSVRt4fQO0aNUcXgFJSb4lqshrvROjWgdV9G6Wc9soqme1q9Ax7ufxNh
+Ha6aUziUH601CMu/TNpuU5/85aplZJbw2OpZ9xEVTirYnhm2rQ/mqnKTvlicZV0U
+gapXlJ46QOkpFRjOPfV2yAjPywSLzGsxLZZQVVFMQGSr8qFWgNtKyCoVH32IVSIL
+H9xYYGl70da0HA3cvFG47Tw4btJz3UHKUJb9MQj8S7YXaG2BCjAQMjuqErgtvb87
+1+0MSvRH6R/EZQFDCvWc2B+jYGXQfa3PllXiPu95RDFGId2KHVzdWONgh5lAZVua
+S0XhWEYMMr/K5H3grXYj
+=ub9I
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__27_Apr_2012_15_54_53_+1000_xExPF3=b5GwVWaPO--
