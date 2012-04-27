@@ -1,93 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm tree
-Date: Fri, 27 Apr 2012 15:38:06 +1000
-Message-ID: <20120427153806.65f5cd168dfc0ea18a954080@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the security tree
+Date: Fri, 27 Apr 2012 13:29:34 +1000
+Message-ID: <20120427132934.1b8417677987f817797485be@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__27_Apr_2012_15_38_06_+1000_py7jc9K=2_qXm7dN"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43287 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756137Ab2D0F7Z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Apr 2012 01:59:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Ledford <dledford@redhat.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+ boundary="Signature=_Fri__27_Apr_2012_13_29_34_+1000_0vXJVwHi8EBXZogR"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <ddaney@caviumnetworks.com>, Will Drewry <wad@chromium.org>, James Morris <jmorris@namei.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__27_Apr_2012_15_38_06_+1000_py7jc9K=2_qXm7dN
+--Signature=_Fri__27_Apr_2012_13_29_34_+1000_0vXJVwHi8EBXZogR
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-After merging the akpm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the tip tree got a conflict in
+arch/x86/Kconfig between commit c6cfbeb40296 ("x86: Enable
+HAVE_ARCH_SECCOMP_FILTER") from the security tree and commit 8b5ad4729917
+("Revert "x86, extable: Disable presorted exception table for now"") from
+the tip tree.
 
-ipc/mqueue.c: In function 'mqueue_get_inode':
-ipc/mqueue.c:155:4: error: implicit declaration of function 'vmalloc' [-Wer=
-ror=3Dimplicit-function-declaration]
-ipc/mqueue.c:155:19: warning: assignment makes pointer from integer without=
- a cast [enabled by default]
-ipc/mqueue.c: In function 'mqueue_evict_inode':
-ipc/mqueue.c:268:3: error: implicit declaration of function 'vfree' [-Werro=
-r=3Dimplicit-function-declaration]
-
-Caused by commit 5d644d9d3d8f ("ipc/mqueue: update maximums for the
-mqueue subsystem").  See Rule 1 from Documentation/SubmitChecklist.
-
-I have added the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 27 Apr 2012 15:35:14 +1000
-Subject: [PATCH] ipc/mqueue: using vmalloc requires including vmalloc.h
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- ipc/mqueue.c |    1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index 04cc77e..279051c 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -34,6 +34,7 @@
- #include <linux/ipc_namespace.h>
- #include <linux/user_namespace.h>
- #include <linux/slab.h>
-+#include <linux/vmalloc.h>
-=20
- #include <net/sock.h>
- #include "util.h"
---=20
-1.7.10.280.gaa39
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__27_Apr_2012_15_38_06_+1000_py7jc9K=2_qXm7dN
+diff --cc arch/x86/Kconfig
+index 3a41c44,83db6b9..0000000
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@@ -82,10 -83,10 +83,11 @@@ config X8
+  	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+  	select GENERIC_IOMAP
+  	select DCACHE_WORD_ACCESS if !DEBUG_PAGEALLOC
+ +	select HAVE_ARCH_SECCOMP_FILTER
++ 	select BUILDTIME_EXTABLE_SORT
+ =20
+  config INSTRUCTION_DECODER
+- 	def_bool (KPROBES || PERF_EVENTS)
++ 	def_bool (KPROBES || PERF_EVENTS || UPROBES)
+ =20
+  config OUTPUT_FORMAT
+  	string
+
+--Signature=_Fri__27_Apr_2012_13_29_34_+1000_0vXJVwHi8EBXZogR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPmjC+AAoJEECxmPOUX5FErqEQAJlRlnxKHB1uV4jSq/+7p6km
-bLcw8ue3RaitLj9rXft6emH8SPY413krN24C9Apzg0OP8AG2/DVqogdBwxgO6bEu
-O6mg7/3EjuQQCDttcVRmgHkPZV8uE9u73Y/2V1kTfR8qBXo1QGZh3uAf3glsRPn3
-QOXbc3DkvJkKOB2VvBYVBDLDvT+OSxUXz5S4Jv1Bpx4GkfKIMbLczyECEhgRprir
-NHNkWb8hUskfomMXddh8+R/l7Sds9BuuSyl6JPMXE4PEHId+j2yW22Z4FZUCiO4V
-YzdE7N9fAHXi+8Bv0NVnV8AlqYXCmhwDEpdsPD1FfaeQt355OAx09FOCn7eRZWaQ
-U5siROUW9Ar4XDN8YlEjZHFlXD0kEpZljUlNX5r7QPt7RTPInd6w7trPKgss/VvS
-vhJDFYTlqd8w8oTfG3bVJLQ+e6/28Ap4iJ//douCeyld2TdXbCuuM+j18d/gsc6G
-aYzpeUBdBYBUuzQxr3UiYPQURk2pn79Lg+pi0lB6Z8Q8pXiNmTVsUIcYtTT1eSQ8
-q8CsUM3vMG03pUtz/KXdq5b46AixsYi7Eoc+Aus0R/QcApFpEpKjbEYzPJJDNuYd
-qIJtoX5jGOrY+CTCIPFvxeRzoK8DPUbiLFvdte2Il/YJKw4tItQaQXRfAMe9NU2u
-g2PmrCp+Fz+vk6QXKVjZ
-=tfzm
+iQIcBAEBCAAGBQJPmhKeAAoJEECxmPOUX5FEKJsP/jcuIKm/zYFDx4hdZSHQqwbB
+5vMdBF1Fam4i3mEo3E3Kg1/9EIGVv32Nt+EHD3eTSEiLBuglN9wO4C4SjZUgN78+
+NYBMG7qmMCI3bIzaKpUcyaXSP90YH9JUYn7Y9/PeLEwWGQeAV+XDGdTnX+94dfG1
+6b9WC/loxGeUpm7TcFKhA0f5uzpULi2pyzP5vmiTxY7kPD0GOLubGYJmj2UgTXWn
+URgwrAUghuwr19caV9YB1sXx92UwDyNIX3hyp9pn7IWvhvDsuQR0gtIls6t5Wr3B
+iZSPpD8pRkNOo6EwHca9T7IWjJZ2fYsG69AL1vI/qsEJPFuh0yWQYH3oc/HtMFcO
+vnYBBiqBhTLFbywu+9qRpR+nMWNBYOoQ0OQJS9m6xsBzKql/4e990RFcj9vGlNN9
+O+NzDDnbV6es7bOfAgyVDl9oNUUatRBO5GBdnD7/jSOYCSy8u9BWNpzp6t+6PnKR
+F74FCMkuUuiSWXq1tMjP76dsR/t1N/8nvU+12WORL6BOUA1iFk4F05FyypxqH0fq
+pWpZNwMXouabzUGqeOfSi5AkHj27paU8svJA2oGGNRVNGQarQgQPqNszgeeG7e3W
+IXT262uJeHiHGIxiC5vuyrapSmoULsSXkMqFw6pmmzraOq2gYZw2qS3tyzeC5gyW
+so1U1uMDiXIJEWwNUJWs
+=zdIp
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Apr_2012_15_38_06_+1000_py7jc9K=2_qXm7dN--
+--Signature=_Fri__27_Apr_2012_13_29_34_+1000_0vXJVwHi8EBXZogR--
