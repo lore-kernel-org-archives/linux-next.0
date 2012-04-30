@@ -1,61 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the hid tree
-Date: Mon, 30 Apr 2012 14:05:23 +1000
-Message-ID: <20120430140523.bdb69a1c0e7d23522a5759d7@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net-next
+ tree related)
+Date: Mon, 30 Apr 2012 15:58:36 +1000
+Message-ID: <20120430155836.44bcf3846c80cf686bb9cb77@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__30_Apr_2012_14_05_23_+1000_pTZoXsZ08AjHoak2"
+ boundary="Signature=_Mon__30_Apr_2012_15_58_36_+1000_0DNPLrMHO_FxEYW8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59306 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41347 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750772Ab2D3EFg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Apr 2012 00:05:36 -0400
+	with ESMTP id S1751927Ab2D3F6v (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Apr 2012 01:58:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@jikos.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin LaHaise <bcrl@kvack.org>
 
---Signature=_Mon__30_Apr_2012_14_05_23_+1000_pTZoXsZ08AjHoak2
+--Signature=_Mon__30_Apr_2012_15_58_36_+1000_0DNPLrMHO_FxEYW8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi all,
 
-After merging the hid tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-In file included from drivers/hid/hid-core.c:37:0:
-include/linux/hidraw.h: In function 'hidraw_report_event':
-include/linux/hidraw.h:85:46: warning: no return statement in function retu=
-rning non-void [-Wreturn-type]
+net/l2tp/l2tp_core.c: In function 'l2tp_verify_udp_checksum':
+net/l2tp/l2tp_core.c:464:7: error: implicit declaration of function 'csum_i=
+pv6_magic' [-Werror=3Dimplicit-function-declaration]
 
-Introduced by commit b6787242f327 ("HID: hidraw: add proper error
-handling to raw event reporting").
+Caused by commit d2cf3361677e ("net/l2tp: add support for L2TP over IPv6
+UDP").  Include file missing.
+
+I have reverted that commit for today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__30_Apr_2012_14_05_23_+1000_pTZoXsZ08AjHoak2
+--Signature=_Mon__30_Apr_2012_15_58_36_+1000_0DNPLrMHO_FxEYW8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPng+DAAoJEECxmPOUX5FEYMkP/1PyelvRsrJ60VeqFopVZai9
-pK3q7R9Go7abZPhGsL5J7uqkQrF0KhoQCLA73MwDS/JsN/oPcxaVb1m6SOXZZgkc
-GNLyofmBkaqu3cpfiefpSNldJ8W3+R2ojIHpDpNeljTwVwkOMoFs8MXmMlsp1Sos
-3w/EPEuD9IiuFQ1MLmCN+byLCs8VHpmEyzH+GRncABJwVf+D2By2KFaMKQ7bFd20
-OFrTarxOJZpBKq70JpIK1b06EWClQVutF/jDtqc4J2YDtFz06fY1KZk7uPoMtroU
-4TiODuEWp9jOuPSTzSDVyX938E5UOz/Owsij+WXUD32k4+clcbZcBYokgaYpId+n
-2MtAB0FyjEKnRPqq+YT4lQzBGr0iZYsnN+sx/8jcko8O4BMZ8IGbTc2PK3qHqpKj
-su1xrlbgh88M9zuqKcpUrQGNLl663K3u+mSvhbePO468THY++zrIeHa9NnjHYYxr
-8Q4rrhR9djnRbNwl0Kg0zoC1/6uU7m5UeKvaqb/DE4BsyiBdJqcEv76SUXefIHEF
-1M0IYmwSvWOfGLTWHfGTx+viTeQICUp96KmuHQY2NPbcXb/BZlxlysbVqj4hw9TL
-3UMZEhpShtSZghfAAEVC8bApvYXKSMrCOOl0cxeTfyYdF+fFpgwfzljTmQJGF7t/
-BoEKsLA4F5uDLrXTYjTq
-=sEKr
+iQIcBAEBCAAGBQJPnioMAAoJEECxmPOUX5FEtLgP/iJ+VneztJSwWoM4+YLUIcxG
+qG8QhVHbkb35aO2nH1fdIExCIV0MXxKJvQiNe9+0OLVnScfAofrSW2+3yscR8dzC
+0YgHLddOJL7Njgg6JzTUDtQXH9d0ibK2Wppz27K5EITsCrfF8L2M75q961mM1xUy
+J+IxLJk9743y/dXhovjD4Or2zJKYZGptT3E3VdSyvFTMA0Ug2PDS1wPMi3BNFWid
+dyavUJD1HA9OZnIoeMG0azT3YuJElhNmmwvfCZF/Al0Jhp4S6lkY9Fvqu50K2gFA
+rHlusDjPJ/Sl/bhem4TjOFp5I+DTC1rNmgQ6/HJq2DxdPwfYCiB4I/aHqIkEp9OL
+x5wfXIuOjQmRAOB/fl0hXL9VkhyiTSk76hYWmlfgVL0XdUz722fV1xJ+SslLUJRC
+kWRZspn/BdRjHC8Pwsh3ViHlPoOhNzlbCl0MOEPAxL1fO+xenQQDfXzZutTDtPMV
+cWonDFn/9SiFh3DOAtE2qQduEyQtkY947fWOKgnP6j0iM+Elw/4277Fzf98+5mGZ
+fSSjOP7QUfofMFo2FK/YtQCjSHy+h/L2SxuxIcHZMioQ1ACKyRw8X2h9HBEv7OSm
+lZ+n+3ppsVRl2PP2Ok5yRi++X0xC6IfCky8OWx+HjIkfewJPg24UKKKDWfY9LoqW
+uHEOYAdvtZHuRsNSndvw
+=tMh/
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__30_Apr_2012_14_05_23_+1000_pTZoXsZ08AjHoak2--
+--Signature=_Mon__30_Apr_2012_15_58_36_+1000_0DNPLrMHO_FxEYW8--
