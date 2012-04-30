@@ -1,63 +1,56 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-next tree related)
-Date: Mon, 30 Apr 2012 13:22:03 -0400 (EDT)
-Message-ID: <20120430.132203.912342595853741106.davem@davemloft.net>
-References: <20120430155836.44bcf3846c80cf686bb9cb77@canb.auug.org.au>
+From: Mark Asselstine <mark.asselstine@windriver.com>
+Subject: Re: [PATCH] ARM:mfd: fix ezx-pcap build failure
+Date: Mon, 30 Apr 2012 13:26:22 -0400
+Message-ID: <2435660.8EsSVMd2ha@yow-masselst-d1>
+References: <1335366163-12920-1-git-send-email-mark.asselstine@windriver.com> <2732324.Os5djSkuuZ@yow-masselst-d1> <20120427180235.GA19778@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:40807 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756355Ab2D3RYM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Apr 2012 13:24:12 -0400
-In-Reply-To: <20120430155836.44bcf3846c80cf686bb9cb77@canb.auug.org.au>
+Received: from mail1.windriver.com ([147.11.146.13]:41318 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756340Ab2D3R0e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Apr 2012 13:26:34 -0400
+In-Reply-To: <20120427180235.GA19778@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, bcrl@kvack.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, openezx-devel@lists.openezx.org, sameo@linux.intel.com, haojian.zhuang@marvell.com, Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 30 Apr 2012 15:58:36 +1000
-
-> Hi all,
+On April 27, 2012 19:02:35 Mark Brown wrote:
+> On Fri, Apr 27, 2012 at 11:28:28AM -0400, Mark Asselstine wrote:
+> > On April 26, 2012 22:52:58 Russell King - ARM Linux wrote:
+> > > What is the effect when the supplied IRQ does not have a mapping to
+> > > a
+> > > GPIO - or it _does_ by way of a badly coded irq_to_gpio() function
+> > > but that GPIO is not the correct one.
+> > > 
+> > > There is no prevention against endlessly looping, so it could cause
+> > > a
+> > > system lockup.
+> > 
+> > Unfortunately the commit [b1148fd4 mfd: fix pcap irq bottom handler
+> > ] which modified things to loop as long as the interrupt is asserted
+> > didn't supply much information regarding the behavior they were trying
+> > to achieve/fix nor what would be the consequence of bailing earlier.
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> net/l2tp/l2tp_core.c: In function 'l2tp_verify_udp_checksum':
-> net/l2tp/l2tp_core.c:464:7: error: implicit declaration of function 'csum_ipv6_magic' [-Werror=implicit-function-declaration]
-> 
-> Caused by commit d2cf3361677e ("net/l2tp: add support for L2TP over IPv6
-> UDP").  Include file missing.
-> 
-> I have reverted that commit for today.
+> The usual reason for this pattern is to simulate level triggered IRQs on
+> an edge triggered interrupt controller.
 
-The fix is less work than the revert on this one isn't it? :-)
+Makes sense. OK. I want to help here with a complete fix but it has been a 
+while since I have waded into SPI and ARM initialization so here are some 
+stumbling blocks for me.
 
-Pushed to net-next, thanks Stephen:
+If I first fix the build issue by adding 'int gpio_num' to the 
+pcap_platform_data and made use of pdata->gpio_num in place of irq_to_gpio() 
+in pcap_isr_work().  Now to set gpio_num.
 
---------------------
-l2tp: Add missing net/net/ip6_checksum.h include.
+In the board .c file I would assume the goal would be to create the necessary 
+structs to set gpio_num for "ezx-pcap" and pass them to 
+spi_register_board_info(). Right? But should I expect to already see some of 
+this infrastructure in place already? Doesn't the "ezx-pcap" device already 
+have to be defined somewhere, to have irq_base set for example? Or is this 
+coming from firmware?
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- net/l2tp/l2tp_core.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
-index e91d559..0ca9bc3 100644
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -56,6 +56,7 @@
- #include <net/inet6_connection_sock.h>
- #include <net/inet_ecn.h>
- #include <net/ip6_route.h>
-+#include <net/ip6_checksum.h>
- 
- #include <asm/byteorder.h>
- #include <linux/atomic.h>
--- 
-1.7.7.6
+Thanks,
+Mark A.
