@@ -1,62 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm tree
-Date: Mon, 30 Apr 2012 13:22:41 +1000
-Message-ID: <20120430132241.0877fdec735a4e42701a4612@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the hid tree
+Date: Mon, 30 Apr 2012 14:05:23 +1000
+Message-ID: <20120430140523.bdb69a1c0e7d23522a5759d7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__30_Apr_2012_13_22_41_+1000_/VX_wN6ZUDNCcKqM"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adam Jackson <ajax@redhat.com>, Alex Deucher <alexdeucher@gmail.com>, Chris Wilson <chris@chris-wilson.co.uk>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__30_Apr_2012_14_05_23_+1000_pTZoXsZ08AjHoak2"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59306 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750772Ab2D3EFg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Apr 2012 00:05:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__30_Apr_2012_13_22_41_+1000_/VX_wN6ZUDNCcKqM
+--Signature=_Mon__30_Apr_2012_14_05_23_+1000_pTZoXsZ08AjHoak2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Jiri,
 
-After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+After merging the hid tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-drivers/gpu/drm/drm_edid_load.c: In function 'edid_load':
-drivers/gpu/drm/drm_edid_load.c:176:2: error: too few arguments to function=
- 'drm_edid_block_valid'
-include/drm/drm_crtc.h:1015:13: note: declared here
-drivers/gpu/drm/drm_edid_load.c:188:3: error: too few arguments to function=
- 'drm_edid_block_valid'
+In file included from drivers/hid/hid-core.c:37:0:
+include/linux/hidraw.h: In function 'hidraw_report_event':
+include/linux/hidraw.h:85:46: warning: no return statement in function retu=
+rning non-void [-Wreturn-type]
 
-Caused by commit f89ec8a456dd ("drm/edid: Try harder to fix up base EDID
-blocks"). drivers/gpu/drm/drm_edid_load.c was added before v3.4-rc1 ...
-grep is your friend.
-
-I have used the drm tree from next-20120427 for today.
-
+Introduced by commit b6787242f327 ("HID: hidraw: add proper error
+handling to raw event reporting").
 --=20
-Stephen Rothwell <sfr@canb.auug.org.au>
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__30_Apr_2012_13_22_41_+1000_/VX_wN6ZUDNCcKqM
+--Signature=_Mon__30_Apr_2012_14_05_23_+1000_pTZoXsZ08AjHoak2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPngWBAAoJEECxmPOUX5FENCgQAIQoj4wR5RdHguSDXj+t9XXG
-ErWKAZ1kPn4++9kVkON/iF7E0mjK9jRkEAiozG+QCw2tJe1GbRvkRGKL4z3ZsBm6
-Gwll31h5YlZAutNWP1IwTwnW91QuHuBmkGzmArUqJKh7Gu/+kme1RLbGcX0IDSHf
-01rEb82YflND8nx2jCYzPyqpWKG5V+zZHfmU4jA+tQjni3azAo2EjpPA9thgksGu
-NeT/n0VA9ki09QDjUQ55YqLEdlyRa4tBc0pOXNnOV6IDLX3lR3tY2LUXvxfTlLhP
-kSk1m8Bvm6lIxDdL/B+fDtxZ5yhgin92dtRu0ZF8g+jW5A5ePe0wzdiqIGE2ZDi9
-DANoqGJXVq4AMsKHYnMtKg6r0UPkOeu7hCMElA17U5dYbtOjaqA2SJgz3vKdoiLJ
-lHZLoD8wgyoM+RmHeoXsDrAqJMrWZvP4yU+lTqaOiIeUczu0pxolpmSfmPTIMbcn
-Mmm2j8pjIZtQm1UmhmxWs70wnZpQSQcJNiVqXCEo/q+3VctjAIiiytcDK7akC8/n
-Fx7jUQGmRW39Gp6uG3vWpcpFWylp5z4ajbXiDtCMAVFsFvUyicEgtAB2z3Chj0Bi
-U+kbxNRpw6aYxAcXtHzxzfkW9xjASkdfAd4i/A++4fVCHlehpkYbzLyJf1nA6+UG
-6NKktEHfQS2DpOqqiSi/
-=nqRD
+iQIcBAEBCAAGBQJPng+DAAoJEECxmPOUX5FEYMkP/1PyelvRsrJ60VeqFopVZai9
+pK3q7R9Go7abZPhGsL5J7uqkQrF0KhoQCLA73MwDS/JsN/oPcxaVb1m6SOXZZgkc
+GNLyofmBkaqu3cpfiefpSNldJ8W3+R2ojIHpDpNeljTwVwkOMoFs8MXmMlsp1Sos
+3w/EPEuD9IiuFQ1MLmCN+byLCs8VHpmEyzH+GRncABJwVf+D2By2KFaMKQ7bFd20
+OFrTarxOJZpBKq70JpIK1b06EWClQVutF/jDtqc4J2YDtFz06fY1KZk7uPoMtroU
+4TiODuEWp9jOuPSTzSDVyX938E5UOz/Owsij+WXUD32k4+clcbZcBYokgaYpId+n
+2MtAB0FyjEKnRPqq+YT4lQzBGr0iZYsnN+sx/8jcko8O4BMZ8IGbTc2PK3qHqpKj
+su1xrlbgh88M9zuqKcpUrQGNLl663K3u+mSvhbePO468THY++zrIeHa9NnjHYYxr
+8Q4rrhR9djnRbNwl0Kg0zoC1/6uU7m5UeKvaqb/DE4BsyiBdJqcEv76SUXefIHEF
+1M0IYmwSvWOfGLTWHfGTx+viTeQICUp96KmuHQY2NPbcXb/BZlxlysbVqj4hw9TL
+3UMZEhpShtSZghfAAEVC8bApvYXKSMrCOOl0cxeTfyYdF+fFpgwfzljTmQJGF7t/
+BoEKsLA4F5uDLrXTYjTq
+=sEKr
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__30_Apr_2012_13_22_41_+1000_/VX_wN6ZUDNCcKqM--
+--Signature=_Mon__30_Apr_2012_14_05_23_+1000_pTZoXsZ08AjHoak2--
