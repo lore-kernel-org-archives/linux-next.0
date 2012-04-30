@@ -1,68 +1,62 @@
-From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Subject: Re: inux-next: Tree for Apr 27 (uml + mm/memcontrol.c)
-Date: Sat, 28 Apr 2012 23:31:45 +0530
-Message-ID: <87fwbnag6u.fsf@skywalker.in.ibm.com>
-References: <20120427161146.95422142968526faaff615d4@canb.auug.org.au> <4F9ABF9C.2070707@xenotime.net> <alpine.DEB.2.00.1204271141040.28516@chino.kir.corp.google.com> <20120427132343.fbb443b9.akpm@linux-foundation.org> <alpine.DEB.2.00.1204271420350.4631@chino.kir.corp.google.com> <20120427143646.8209627e.akpm@linux-foundation.org>User-Agent: Notmuch/0.11.1+346~g13d19c3 (http://notmuchmail.org) Emacs/23.3.1 (x86_64-pc-linux-gnu)
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Mon, 30 Apr 2012 13:22:41 +1000
+Message-ID: <20120430132241.0877fdec735a4e42701a4612@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__30_Apr_2012_13_22_41_+1000_/VX_wN6ZUDNCcKqM"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120427143646.8209627e.akpm@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adam Jackson <ajax@redhat.com>, Alex Deucher <alexdeucher@gmail.com>, Chris Wilson <chris@chris-wilson.co.uk>
 List-Id: linux-next.vger.kernel.org
 
-Andrew Morton <akpm@linux-foundation.org> writes:
+--Signature=_Mon__30_Apr_2012_13_22_41_+1000_/VX_wN6ZUDNCcKqM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri, 27 Apr 2012 14:27:13 -0700 (PDT)
-> David Rientjes <rientjes@google.com> wrote:
->
->> On Fri, 27 Apr 2012, Andrew Morton wrote:
->> 
->> > Seems reasonable.  But the CONFIG_HUGETLB_PAGE=y,
->> > CONFIG_MEM_RES_CTLR_HUGETLB=n combination will cause unneeded code
->> > generation and space consumption in memcontrol.c.
->> > 
->> > I wonder if we can additionally do, within memcontrol.c:
->> > 
->> > /*
->> >  * Nice comment goes here
->> >  */
->> > #ifdef CONFIG_MEM_RES_CTLR_HUGETLB
->> > #define HUGE_MAX_HSTATE_FOO HUGE_MAX_HSTATE
->> > #else
->> > #define HUGE_MAX_HSTATE_FOO 0
->> > #endif
->> > 
->> > and s/HUGE_MAX_HSTATE/HUGE_MAX_HSTATE_FOO/ in that file.
->> > 
->> 
->> I haven't looked at the hugetlb memcg controller in-depth (yet), but I 
->> really think we should start considering breaking things like this off 
->> into its own cgroup.  The hugetlb extension seems like something that 
->> could be easily separtated, but perhaps I'm saying "easily" because I 
->> haven't looked at the implementation.
->> 
->> mm/memcontrol.c in linux-next is 5877 lines and, if history is any guide, 
->> it's going to continue growing.
->> 
->> If the hugetlb usage isn't charged against the memcg's 
->> memory.usage_in_bytes like thp is, then I really think it should be its 
->> own cgroup.  From the hugetlb perspective absent any cgroups, things like 
->> hstates (since we're talking about HUGE_MAX_HSTATE) are global resources 
->> and so you'd need to preallocate these on the command line or via sysfs 
->> before you could mmap them.  So if my assumption that the hugetlb memcg 
->> controller is only governing these global resources and charging a set of 
->> tasks for what they use, then it really has no business in mm/memcontrol.c 
->> to begin with, in my opinion.
->
+Hi Dave,
 
-My first version was to do it as a seperate controller 
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-http://thread.gmane.org/gmane.linux.kernel.mm/73826
+drivers/gpu/drm/drm_edid_load.c: In function 'edid_load':
+drivers/gpu/drm/drm_edid_load.c:176:2: error: too few arguments to function=
+ 'drm_edid_block_valid'
+include/drm/drm_crtc.h:1015:13: note: declared here
+drivers/gpu/drm/drm_edid_load.c:188:3: error: too few arguments to function=
+ 'drm_edid_block_valid'
 
-But the feedback I received was to do it as a part of memcg extension,
-because what the controller is limiting is memory albeit a different
-type. AFAIU there is also this goal of avoiding controller proliferation.
+Caused by commit f89ec8a456dd ("drm/edid: Try harder to fix up base EDID
+blocks"). drivers/gpu/drm/drm_edid_load.c was added before v3.4-rc1 ...
+grep is your friend.
 
--aneesh
+I have used the drm tree from next-20120427 for today.
+
+--=20
+Stephen Rothwell <sfr@canb.auug.org.au>
+
+--Signature=_Mon__30_Apr_2012_13_22_41_+1000_/VX_wN6ZUDNCcKqM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPngWBAAoJEECxmPOUX5FENCgQAIQoj4wR5RdHguSDXj+t9XXG
+ErWKAZ1kPn4++9kVkON/iF7E0mjK9jRkEAiozG+QCw2tJe1GbRvkRGKL4z3ZsBm6
+Gwll31h5YlZAutNWP1IwTwnW91QuHuBmkGzmArUqJKh7Gu/+kme1RLbGcX0IDSHf
+01rEb82YflND8nx2jCYzPyqpWKG5V+zZHfmU4jA+tQjni3azAo2EjpPA9thgksGu
+NeT/n0VA9ki09QDjUQ55YqLEdlyRa4tBc0pOXNnOV6IDLX3lR3tY2LUXvxfTlLhP
+kSk1m8Bvm6lIxDdL/B+fDtxZ5yhgin92dtRu0ZF8g+jW5A5ePe0wzdiqIGE2ZDi9
+DANoqGJXVq4AMsKHYnMtKg6r0UPkOeu7hCMElA17U5dYbtOjaqA2SJgz3vKdoiLJ
+lHZLoD8wgyoM+RmHeoXsDrAqJMrWZvP4yU+lTqaOiIeUczu0pxolpmSfmPTIMbcn
+Mmm2j8pjIZtQm1UmhmxWs70wnZpQSQcJNiVqXCEo/q+3VctjAIiiytcDK7akC8/n
+Fx7jUQGmRW39Gp6uG3vWpcpFWylp5z4ajbXiDtCMAVFsFvUyicEgtAB2z3Chj0Bi
+U+kbxNRpw6aYxAcXtHzxzfkW9xjASkdfAd4i/A++4fVCHlehpkYbzLyJf1nA6+UG
+6NKktEHfQS2DpOqqiSi/
+=nqRD
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__30_Apr_2012_13_22_41_+1000_/VX_wN6ZUDNCcKqM--
