@@ -1,37 +1,39 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: build warning after merge of the hid tree
-Date: Mon, 30 Apr 2012 10:42:39 +0200 (CEST)
-Message-ID: <alpine.LRH.2.00.1204301042090.4912@twin.jikos.cz>
-References: <20120430140523.bdb69a1c0e7d23522a5759d7@canb.auug.org.au>
+From: Benjamin LaHaise <bcrl@kvack.org>
+Subject: [PATCH net-next] net/l2tp: fix build error in l2tp from missing ipv6 checksum include
+Date: Mon, 30 Apr 2012 13:24:02 -0400
+Message-ID: <20120430172402.GL17021@kvack.org>
+References: <20120430155836.44bcf3846c80cf686bb9cb77@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:53172 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754968Ab2D3Imn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Apr 2012 04:42:43 -0400
-In-Reply-To: <20120430140523.bdb69a1c0e7d23522a5759d7@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120430155836.44bcf3846c80cf686bb9cb77@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 30 Apr 2012, Stephen Rothwell wrote:
+Hi Stephen,
 
-> Hi Jiri,
-> 
-> After merging the hid tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> In file included from drivers/hid/hid-core.c:37:0:
-> include/linux/hidraw.h: In function 'hidraw_report_event':
-> include/linux/hidraw.h:85:46: warning: no return statement in function returning non-void [-Wreturn-type]
-> 
-> Introduced by commit b6787242f327 ("HID: hidraw: add proper error
-> handling to raw event reporting").
+Can you please verify if the patch below fixes the issue?  Thanks.
 
-Now fixed by d6d7c87352, thanks a lot for the report.
+		-ben
+----
+net/l2tp: fix build error in l2tp from missing ipv6 checksum include
 
--- 
-Jiri Kosina
-SUSE Labs
+L2TP needs to ensure the IPv6 checksum helpers are included.
+
+Signed-off-by: Benjamin LaHaise <bcrl@kvack.org>
+---
+diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
+index e91d559..0ca9bc3 100644
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -56,6 +56,7 @@
+ #include <net/inet6_connection_sock.h>
+ #include <net/inet_ecn.h>
+ #include <net/ip6_route.h>
++#include <net/ip6_checksum.h>
+ 
+ #include <asm/byteorder.h>
+ #include <linux/atomic.h>
