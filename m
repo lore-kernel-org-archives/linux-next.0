@@ -1,58 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the vfs tree
-Date: Tue, 1 May 2012 15:04:16 +1000
-Message-ID: <20120501150416.3b900d70af5f5173908aca00@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the mfd tree
+Date: Tue, 1 May 2012 15:34:41 +1000
+Message-ID: <20120501153441.5e101139fb096ef262ff1d2b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__1_May_2012_15_04_16_+1000_Nag2g8LXr_ORqG1R"
+ boundary="Signature=_Tue__1_May_2012_15_34_41_+1000_cQY+nc9pdSogI7su"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36755 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40152 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751881Ab2EAFEZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 May 2012 01:04:25 -0400
+	with ESMTP id S1752652Ab2EAFev (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 May 2012 01:34:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Samuel Ortiz <sameo@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
 
---Signature=_Tue__1_May_2012_15_04_16_+1000_Nag2g8LXr_ORqG1R
+--Signature=_Tue__1_May_2012_15_34_41_+1000_cQY+nc9pdSogI7su
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/core/inode.c between commit eaf5fb5977e0 ("switch usbfs to
-use of simple_{unlink,rmdir}") from the  tree and commit fb28d58b72aa
-("USB: remove CONFIG_USB_DEVICEFS") from the usb tree.
+Today's linux-next merge of the arm-soc tree got a conflict in
+drivers/mfd/ab5500-core.c between commit 9ea969f0d79d ("mfd: Mark const
+init data with __initconst instead of __initdata for ab5500") from the
+mfd tree and commit f76facc2354b ("mfd/ab5500: delete AB5500 support")
+from the arm-soc tree.
 
-The latter removes the file modified by the former, so I just removed the
-file.
+The latter removes the file, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_May_2012_15_04_16_+1000_Nag2g8LXr_ORqG1R
+--Signature=_Tue__1_May_2012_15_34_41_+1000_cQY+nc9pdSogI7su
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPn27QAAoJEECxmPOUX5FEqAoP/2hqTxn0RKKyWwOwXIzEepPR
-36vxRv5wa38AWQQ64fYYGK5mWgA06C/+7n5k0EZg6cXm0SUN2Xb1XIUuk4ANodsy
-p+MlV+sXFr9lelaqQX66nFzXyvXu6Oj4RvSup2MOV1sVBfrIzw0UjlUi4Nwb0/22
-/haKsqcfP/3W3k8NG8AbZWPQtczLffPxzyc3ET6EOZm4Y+ccYXJ/0aBSviiyVj2O
-/p6/jDfAnR3ubc9ZcddCvlZ4wJoBwbZsYMVN0ewM23/2VboIkqihK5DBJSvvq7UB
-0JJ4ZnZJQEf70px4mVo89FBd7HkIuMPK4p3dEOGj+BxKCWZ67mrmb4O3XhDK2iVu
-ldnlfaTMbCc9fBQqri698CXat/hX7yfVMn0hCEroBNxb4znSLwLOBzsxE6Mfxjxd
-x0eeVma5vrx8vghB159Fx/qUbYPrxTyAL27qzsAdgQQq1/V4uvMUHRbmjxZN9V6u
-dmTQDlKBO2Ln8w9d6kLR5cRAux3WUeMhGLfhVfubZ9+ZrvYMgQAX14McOal+ELwU
-BO3ScPaq/NN90Lg7lC1Gd88GjSnREcIp3jKI6SurwIoCRnOji02Y5uPj3Bc8xvZ1
-0z6fAzumDFbYlEBo+f6moJHa1N6zTZ9OwtM2rgtE084NAPtVMgPI2zwtukWQcG2Y
-gfVBMj5JPsHxORsb5Hds
-=B2hR
+iQIcBAEBCAAGBQJPn3XxAAoJEECxmPOUX5FEXigQAIDw3LyRP9znN1tV+a8Mv+5m
+Ft95qTgcvcPNDgVdzo+fzDgWJ27gYzfe23jVzBMEjExKYD8nEqFc8vKl9KdNxRRM
+HkgpFwOAo1znSsf6gtZXiWrFbg+S7yVAQHQBhHmGdezCn/sbgSNdMX/l5I9+P2rU
+XIios0rrp9xoA+icWmd6QSEr/m0kVsLJjDmJNwqP2qGJHzI1Ej3sy1uQHsTpmmwh
+s1t02pJtL278FoMD/qfEvooVXcSHut7Ud++OGryfsr4MfxtBpqH0FcBPu2CqKy4p
+a0pVxABbrFfhWUMa32A+mBdE2x2bJBkgjLox8mcnwwhV+vuDHmK4VUeDbm3nplyT
+pmd0WknfkfQh9aDfZe/VbafLv25R7n4VLa44d9OlIQM1mux2UWJDt+kAr6W8QUkm
+Ctty+8+pN3LHU1M5HFuXXHFB98FlU+Fhkx117WagrGZEfDM2O4oWLrvHEyP5J6xK
+q2e0bMORaEtnM5+z4Dop9nyzULUoL0sxcykNwSY6FBk0iu6UI7Rv8ggI9fqSOmVJ
+qH0WDWVv+7WnM9Y15K9PrOZ5dwFEv1yHrszdFynk2dIrY1o3zGq+ZnJwzlL98eU/
+amHjgJHHj6uBXX95L/k6FMKu5FbF3xrF06A//y0uOlyGqEIsXYy+zsd2t+8S9z8x
+HckNEWdYdvbTgSAiIMam
+=WzXM
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_May_2012_15_04_16_+1000_Nag2g8LXr_ORqG1R--
+--Signature=_Tue__1_May_2012_15_34_41_+1000_cQY+nc9pdSogI7su--
