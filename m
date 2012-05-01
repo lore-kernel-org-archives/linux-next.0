@@ -1,47 +1,47 @@
-From: Alexander Graf <agraf@suse.de>
-Subject: Re: linux-next: build failure after merge of the kvm-ppc tree
-Date: Tue, 1 May 2012 10:37:22 +0200
-Message-ID: <580A368D-C0EA-4DC3-9F89-131AF961309E@suse.de>
-References: <20120501135549.5c865717b33650002f083d4a@canb.auug.org.au> <1335848120.3621.13.camel@pasglop>
-Mime-Version: 1.0 (1.0)
-Content-Type: text/plain;
-	charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:58407 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752424Ab2EAIfo convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 May 2012 04:35:44 -0400
-In-Reply-To: <1335848120.3621.13.camel@pasglop>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: Request for inclusion of ep93xx tree in linux-next
+Date: Tue, 1 May 2012 08:36:28 +0000
+Message-ID: <201205010836.28365.arnd@arndb.de>
+References: <4F9F16A9.9090108@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4F9F16A9.9090108@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ryan Mallon <rmallon@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, arm@kernel.org, Mika Westerberg <mika.westerberg@iki.fi>, linux-next@vger.kernel.org, H Hartley Sweeten <hartleys@visionengravers.com>, "'linux-arm-kernel@lists.infradead.org'" <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-
-
-On 01.05.2012, at 06:55, Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
-
-> On Tue, 2012-05-01 at 13:55 +1000, Stephen Rothwell wrote:
->> After merging the kvm-ppc tree, today's linux-next build
->> (powerpc_ppc64_defconfig) failed like this:
->> 
->> arch/powerpc/kvm/built-in.o: In function `.kvm_spapr_tce_release':
->> book3s_64_vio.c:(.text+0x374c): undefined reference to `.kvm_put_kvm'
->> arch/powerpc/kvm/built-in.o: In function
->> `.kvm_vm_ioctl_create_spapr_tce':
->> (.text+0x3ae8): undefined reference to `.kvm_get_kvm'
->> 
->> Presumably caused by commit 969f70395d6d ("kvm/book3s: Make kernel
->> emulated H_PUT_TCE available for "PR" KVM").
->> 
->> I have used the kvm-ppc tree from next-20120430 for today. 
+On Monday 30 April 2012, Ryan Mallon wrote:
+> Hi Stephen,
 > 
-> Hrm, I wrote that patch :-) It used to work... Alex, probably just a
-> missing #include no ?
+> Can you please add the following branches:
+> 
+>   ep93xx-cleanup
+>   ep93xx-fixes
+> 
+> from the ep93xx git tree:
+> 
+>   git://github.com/RyanMallon/linux-ep93xx.git
+> 
+> To linux-next. Both branches are stable and based on v3.4-rc2. Testing
+> for the tree is covered by the arm ep93xx_defconfig.
+> 
 
-Well, in fact it even compiled just fine for me with my config.
+Hi Ryan,
 
-Ben, I'm out today (labor day). Could you please try make defconfog and check why it fails?
+just for your convenience, it helps if you have only one branch that
+you get included into linux-next and that combines various branches
+which you intend to send to arm-soc. That frees you from the need to
+notify Stephen every time you want to have another branch included.
 
-Alex
+	Arnd
