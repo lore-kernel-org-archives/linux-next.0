@@ -1,59 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the mfd tree
-Date: Tue, 1 May 2012 15:34:41 +1000
-Message-ID: <20120501153441.5e101139fb096ef262ff1d2b@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the pci tree
+Date: Tue, 1 May 2012 16:08:38 +1000
+Message-ID: <20120501160838.0bc75873705d84625d1fb98b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__1_May_2012_15_34_41_+1000_cQY+nc9pdSogI7su"
+ boundary="Signature=_Tue__1_May_2012_16_08_38_+1000_8r4oZJLvVnx_VC8k"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40152 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56313 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752652Ab2EAFev (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 May 2012 01:34:51 -0400
+	with ESMTP id S1751136Ab2EAGIr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 May 2012 02:08:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Samuel Ortiz <sameo@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
 
---Signature=_Tue__1_May_2012_15_34_41_+1000_cQY+nc9pdSogI7su
+--Signature=_Tue__1_May_2012_16_08_38_+1000_8r4oZJLvVnx_VC8k
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Bjorn,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/mfd/ab5500-core.c between commit 9ea969f0d79d ("mfd: Mark const
-init data with __initconst instead of __initdata for ab5500") from the
-mfd tree and commit f76facc2354b ("mfd/ab5500: delete AB5500 support")
-from the arm-soc tree.
+After merging the pci tree, today's linux-next build (i386 defconfig)
+produced this warning:
 
-The latter removes the file, so I did that.
+arch/x86/pci/amd_bus.c: In function 'early_fill_mp_bus_info':
+arch/x86/pci/amd_bus.c:56:6: warning: unused variable 'j' [-Wunused-variabl=
+e]
+
+Introduced by commit d28e5ac2a07e ("x86/PCI: dynamically allocate
+pci_root_info for native host bridge drivers").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_May_2012_15_34_41_+1000_cQY+nc9pdSogI7su
+--Signature=_Tue__1_May_2012_16_08_38_+1000_8r4oZJLvVnx_VC8k
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPn3XxAAoJEECxmPOUX5FEXigQAIDw3LyRP9znN1tV+a8Mv+5m
-Ft95qTgcvcPNDgVdzo+fzDgWJ27gYzfe23jVzBMEjExKYD8nEqFc8vKl9KdNxRRM
-HkgpFwOAo1znSsf6gtZXiWrFbg+S7yVAQHQBhHmGdezCn/sbgSNdMX/l5I9+P2rU
-XIios0rrp9xoA+icWmd6QSEr/m0kVsLJjDmJNwqP2qGJHzI1Ej3sy1uQHsTpmmwh
-s1t02pJtL278FoMD/qfEvooVXcSHut7Ud++OGryfsr4MfxtBpqH0FcBPu2CqKy4p
-a0pVxABbrFfhWUMa32A+mBdE2x2bJBkgjLox8mcnwwhV+vuDHmK4VUeDbm3nplyT
-pmd0WknfkfQh9aDfZe/VbafLv25R7n4VLa44d9OlIQM1mux2UWJDt+kAr6W8QUkm
-Ctty+8+pN3LHU1M5HFuXXHFB98FlU+Fhkx117WagrGZEfDM2O4oWLrvHEyP5J6xK
-q2e0bMORaEtnM5+z4Dop9nyzULUoL0sxcykNwSY6FBk0iu6UI7Rv8ggI9fqSOmVJ
-qH0WDWVv+7WnM9Y15K9PrOZ5dwFEv1yHrszdFynk2dIrY1o3zGq+ZnJwzlL98eU/
-amHjgJHHj6uBXX95L/k6FMKu5FbF3xrF06A//y0uOlyGqEIsXYy+zsd2t+8S9z8x
-HckNEWdYdvbTgSAiIMam
-=WzXM
+iQIcBAEBCAAGBQJPn33mAAoJEECxmPOUX5FEJn0P/1g101ZlYFqWOF4uPUERfeot
+yO38Mwb4+0MX4EEUgqgnoFLHVhUxJq3NUQlAENzi6q9XHUHpOyvXSc8qebPZx0li
+dIyTowdFKuGv87MSA6/XuX/Qz6TjR3f1zZwOqOoe5lrHYyRa9jMc0wnNx3jTQ4EQ
++vxuOBe0VMBZASoP9eByIUS1GNg7e1HGJ7cMbqj106FLnuz0/YIxd81jisSHkfL7
+u5XdTYdyrTEE3E4fiig1JD61yB5U7sQif4H3wegVnTNIHfUhzRnBGcR+aRJC7YEn
+jEizgvrjagdWnwHiqF179oKm1Igk87vXgxv0DT2MFjhC22LQ8vWiR8hRPV/JH/qB
+AKhyDKgzu8edPIuFvD2zb+ydCoJWF0X4bDrDSvEFWCjWbtNeoeGp8EQ6WdLwKHLf
+q6T5Tms4RL8dGofUEG0gGxzeLXkpuIfJonTFqGOYGDHt+DKwWGzls9XE4adaAzfk
+9NEJrRXhKMtieXPGbi3XUqKzgWfS8XX92F+NrLwRdYiHUu9Wh7QW/CC33Dbh3S9z
+38h2dpMBXqw+jlFPkeZuyV8YtZBiNDotUAc+HBUEw0TiM3WRnUYOQxg6MfOv5/Vo
+DcNrVQfM0I0bzJvc5Ku6866V5Vg7tr8Rd3/uePzrjASYVpncFZH6SgXuZmmIYeFS
+5Dj9gyyg+6TTbIsrV0n3
+=9lcs
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_May_2012_15_34_41_+1000_cQY+nc9pdSogI7su--
+--Signature=_Tue__1_May_2012_16_08_38_+1000_8r4oZJLvVnx_VC8k--
