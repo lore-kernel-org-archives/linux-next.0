@@ -1,392 +1,239 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH -V6 07/14] memcg: Add HugeTLB extension
-Date: Tue, 1 May 2012 20:20:42 -0400
-Message-ID: <CAP=VYLqgaCabQGDVgUXnCwKCZHtz0nWxpm_a6Cgz_ciMzGe9gQ@mail.gmail.com>
-References: <1334573091-18602-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
- <1334573091-18602-8-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
+Subject: linux-next: triage for May 1, 2012
+Date: Tue, 1 May 2012 21:10:23 -0400
+Message-ID: <20120502011022.GA24681@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <1334573091-18602-8-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
-Sender: owner-linux-mm@kvack.org
-To: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Cc: linux-mm@kvack.org, mgorman@suse.de, kamezawa.hiroyu@jp.fujitsu.com, dhillf@gmail.com, aarcange@redhat.com, mhocko@suse.cz, akpm@linux-foundation.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:62034 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757397Ab2EBBKZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 May 2012 21:10:25 -0400
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2012 at 6:44 AM, Aneesh Kumar K.V
-<aneesh.kumar@linux.vnet.ibm.com> wrote:
-> From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
->
-> This patch implements a memcg extension that allows us to control HugeTLB
-> allocations via memory controller. The extension allows to limit the
+Recent problems seen in linux-next:
 
-Hi Aneesh,
+  The "undefined reference to `vga_default_device'" stuff still lingers
+  in a couple arch (arm/mips).  I gave mjg a heads up on IRC and he'll be
+  looking into fixing it ASAP.
+  [ http://kisskb.ellerman.id.au/kisskb/buildresult/6228428/ ]
+  [ http://kisskb.ellerman.id.au/kisskb/buildresult/6229055/ ]
+  [ http://kisskb.ellerman.id.au/kisskb/buildresult/6228983/ ]
 
-This breaks linux-next on some arch because they don't have any
-HUGE_MAX_HSTATE in scope with the current #ifdef layout.
+  Some ARM and MIPS failed because the USB deleted err() - I've given
+  gregKH fixes for these, so they should be short lived.  So I've not
+  listed them below in the board specific breakage.
+  [ http://marc.info/?l=linux-usb&m=133591198425099&w=2 ]
 
-The breakage is in sh4, m68k, s390, and possibly others.
+  Several arch failed on a hugeTLB define; I've given a heads up,
+  and also skipped listing them below.
+  [ http://marc.info/?l=linux-next&m=133591821627008&w=2 ]
+  [ http://kisskb.ellerman.id.au/kisskb/buildresult/6228484/ ]
+  [ http://kisskb.ellerman.id.au/kisskb/buildresult/6228672/ ]
+  
+  Sparc/parisc is still borked by kvm header shuffle it seems.
+  Complaining about "file 'asm-generic/kvm_para.h' is not exported"
+  [ http://kisskb.ellerman.id.au/kisskb/buildresult/6141443/ ]
+  [ http://kisskb.ellerman.id.au/kisskb/buildresult/6137786/ ]
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/6228689/
-http://kisskb.ellerman.id.au/kisskb/buildresult/6228670/
-http://kisskb.ellerman.id.au/kisskb/buildresult/6228484/
+---------------------
 
-This is a commit in akpm's mmotm queue, which used to be here:
+New breakage since last report:
+	See above.
+			
+Randconfig fails that may or may not be new (by their very nature):
+	x86_64: also dies on vga_default_device -- see above.
 
-http://userweb.kernel.org/~akpm/mmotm
+Builds that are fixed since last report:
+	Several, given the week away from linux-next.
 
-Of course the above is invalid since userweb.kernel.org is dead.
-I don't have a post-kernel.org break-in link handy and a quick
-search didn't give me one, but I'm sure you'll recognize the change.
+----------------------
 
-Thanks,
-Paul.
---
+Note1: The randconfig fails are only listed once and not tracked
+in the below listing.
 
-> HugeTLB usage per control group and enforces the controller limit during
-> page fault. Since HugeTLB doesn't support page reclaim, enforcing the lim=
-it
-> at page fault time implies that, the application will get SIGBUS signal i=
-f it
-> tries to access HugeTLB pages beyond its limit. This requires the applica=
-tion
-> to know beforehand how much HugeTLB pages it would require for its use.
->
-> The charge/uncharge calls will be added to HugeTLB code in later patch.
-> Support for memcg removal will be added in later patches.
->
-> Acked-by: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-> ---
-> =A0include/linux/hugetlb.h =A0 =A0| =A0 =A01 +
-> =A0include/linux/memcontrol.h | =A0 42 ++++++++++++++
-> =A0init/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A08 +++
-> =A0mm/hugetlb.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A02 +-
-> =A0mm/memcontrol.c =A0 =A0 =A0 =A0 =A0 =A0| =A0132 ++++++++++++++++++++++=
-++++++++++++++++++++++
-> =A05 files changed, 184 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index 46c6cbd..995c238 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -226,6 +226,7 @@ struct hstate *size_to_hstate(unsigned long size);
-> =A0#define HUGE_MAX_HSTATE 1
-> =A0#endif
->
-> +extern int hugetlb_max_hstate;
-> =A0extern struct hstate hstates[HUGE_MAX_HSTATE];
-> =A0extern unsigned int default_hstate_idx;
->
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index f94efd2..1d07e14 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -448,5 +448,47 @@ static inline void sock_release_memcg(struct sock *s=
-k)
-> =A0{
-> =A0}
-> =A0#endif /* CONFIG_CGROUP_MEM_RES_CTLR_KMEM */
-> +
-> +#ifdef CONFIG_MEM_RES_CTLR_HUGETLB
-> +extern int mem_cgroup_hugetlb_charge_page(int idx, unsigned long nr_page=
-s,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 struct mem_cgroup **ptr);
-> +extern void mem_cgroup_hugetlb_commit_charge(int idx, unsigned long nr_p=
-ages,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0struct mem_cgroup *memcg,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0struct page *page);
-> +extern void mem_cgroup_hugetlb_uncharge_page(int idx, unsigned long nr_p=
-ages,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0struct page *page);
-> +extern void mem_cgroup_hugetlb_uncharge_memcg(int idx, unsigned long nr_=
-pages,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 struct mem_cgroup *memcg);
-> +
-> +#else
-> +static inline int
-> +mem_cgroup_hugetlb_charge_page(int idx, unsigned long nr_pages,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0struct mem_cgroup **ptr)
-> +{
-> + =A0 =A0 =A0 return 0;
-> +}
-> +
-> +static inline void
-> +mem_cgroup_hugetlb_commit_charge(int idx, unsigned long nr_pages,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct m=
-em_cgroup *memcg,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct p=
-age *page)
-> +{
-> + =A0 =A0 =A0 return;
-> +}
-> +
-> +static inline void
-> +mem_cgroup_hugetlb_uncharge_page(int idx, unsigned long nr_pages,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct p=
-age *page)
-> +{
-> + =A0 =A0 =A0 return;
-> +}
-> +
-> +static inline void
-> +mem_cgroup_hugetlb_uncharge_memcg(int idx, unsigned long nr_pages,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct =
-mem_cgroup *memcg)
-> +{
-> + =A0 =A0 =A0 return;
-> +}
-> +#endif =A0/* CONFIG_MEM_RES_CTLR_HUGETLB */
-> =A0#endif /* _LINUX_MEMCONTROL_H */
->
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 72f33fa..a3b5665 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -716,6 +716,14 @@ config CGROUP_PERF
->
-> =A0 =A0 =A0 =A0 =A0Say N if unsure.
->
-> +config MEM_RES_CTLR_HUGETLB
-> + =A0 =A0 =A0 bool "Memory Resource Controller HugeTLB Extension (EXPERIM=
-ENTAL)"
-> + =A0 =A0 =A0 depends on CGROUP_MEM_RES_CTLR && HUGETLB_PAGE && EXPERIMEN=
-TAL
-> + =A0 =A0 =A0 default n
-> + =A0 =A0 =A0 help
-> + =A0 =A0 =A0 =A0 Add HugeTLB management to memory resource controller. W=
-hen you
-> + =A0 =A0 =A0 =A0 enable this, you can put a per cgroup limit on HugeTLB =
-usage.
-> +
-> =A0menuconfig CGROUP_SCHED
-> =A0 =A0 =A0 =A0bool "Group CPU scheduler"
-> =A0 =A0 =A0 =A0default n
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index a3ac624..8cd89b4 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -35,7 +35,7 @@ const unsigned long hugetlb_zero =3D 0, hugetlb_infinit=
-y =3D ~0UL;
-> =A0static gfp_t htlb_alloc_mask =3D GFP_HIGHUSER;
-> =A0unsigned long hugepages_treat_as_movable;
->
-> -static int hugetlb_max_hstate;
-> +int hugetlb_max_hstate;
-> =A0unsigned int default_hstate_idx;
-> =A0struct hstate hstates[HUGE_MAX_HSTATE];
->
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 901bb03..884f479 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -252,6 +252,10 @@ struct mem_cgroup {
-> =A0 =A0 =A0 =A0};
->
-> =A0 =A0 =A0 =A0/*
-> + =A0 =A0 =A0 =A0* the counter to account for hugepages from hugetlb.
-> + =A0 =A0 =A0 =A0*/
-> + =A0 =A0 =A0 struct res_counter hugepage[HUGE_MAX_HSTATE];
-> + =A0 =A0 =A0 /*
-> =A0 =A0 =A0 =A0 * Per cgroup active and inactive list, similar to the
-> =A0 =A0 =A0 =A0 * per zone LRU lists.
-> =A0 =A0 =A0 =A0 */
-> @@ -3213,6 +3217,114 @@ static inline int mem_cgroup_move_swap_account(sw=
-p_entry_t entry,
-> =A0}
-> =A0#endif
->
-> +#ifdef CONFIG_MEM_RES_CTLR_HUGETLB
-> +static bool mem_cgroup_have_hugetlb_usage(struct mem_cgroup *memcg)
-> +{
-> + =A0 =A0 =A0 int idx;
-> + =A0 =A0 =A0 for (idx =3D 0; idx < hugetlb_max_hstate; idx++) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if ((res_counter_read_u64(&memcg->hugepage[=
-idx], RES_USAGE)) > 0)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 1;
-> + =A0 =A0 =A0 }
-> + =A0 =A0 =A0 return 0;
-> +}
-> +
-> +int mem_cgroup_hugetlb_charge_page(int idx, unsigned long nr_pages,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0stru=
-ct mem_cgroup **ptr)
-> +{
-> + =A0 =A0 =A0 int ret =3D 0;
-> + =A0 =A0 =A0 struct mem_cgroup *memcg =3D NULL;
-> + =A0 =A0 =A0 struct res_counter *fail_res;
-> + =A0 =A0 =A0 unsigned long csize =3D nr_pages * PAGE_SIZE;
-> +
-> + =A0 =A0 =A0 if (mem_cgroup_disabled())
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto done;
-> +again:
-> + =A0 =A0 =A0 rcu_read_lock();
-> + =A0 =A0 =A0 memcg =3D mem_cgroup_from_task(current);
-> + =A0 =A0 =A0 if (!memcg)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 memcg =3D root_mem_cgroup;
-> +
-> + =A0 =A0 =A0 if (!css_tryget(&memcg->css)) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 rcu_read_unlock();
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto again;
-> + =A0 =A0 =A0 }
-> + =A0 =A0 =A0 rcu_read_unlock();
-> +
-> + =A0 =A0 =A0 ret =3D res_counter_charge(&memcg->hugepage[idx], csize, &f=
-ail_res);
-> + =A0 =A0 =A0 css_put(&memcg->css);
-> +done:
-> + =A0 =A0 =A0 *ptr =3D memcg;
-> + =A0 =A0 =A0 return ret;
-> +}
-> +
-> +void mem_cgroup_hugetlb_commit_charge(int idx, unsigned long nr_pages,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- struct mem_cgroup *memcg,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- struct page *page)
-> +{
-> + =A0 =A0 =A0 struct page_cgroup *pc;
-> +
-> + =A0 =A0 =A0 if (mem_cgroup_disabled())
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return;
-> +
-> + =A0 =A0 =A0 pc =3D lookup_page_cgroup(page);
-> + =A0 =A0 =A0 lock_page_cgroup(pc);
-> + =A0 =A0 =A0 if (unlikely(PageCgroupUsed(pc))) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 unlock_page_cgroup(pc);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mem_cgroup_hugetlb_uncharge_memcg(idx, nr_p=
-ages, memcg);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return;
-> + =A0 =A0 =A0 }
-> + =A0 =A0 =A0 pc->mem_cgroup =3D memcg;
-> + =A0 =A0 =A0 SetPageCgroupUsed(pc);
-> + =A0 =A0 =A0 unlock_page_cgroup(pc);
-> + =A0 =A0 =A0 return;
-> +}
-> +
-> +void mem_cgroup_hugetlb_uncharge_page(int idx, unsigned long nr_pages,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- struct page *page)
-> +{
-> + =A0 =A0 =A0 struct page_cgroup *pc;
-> + =A0 =A0 =A0 struct mem_cgroup *memcg;
-> + =A0 =A0 =A0 unsigned long csize =3D nr_pages * PAGE_SIZE;
-> +
-> + =A0 =A0 =A0 if (mem_cgroup_disabled())
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return;
-> +
-> + =A0 =A0 =A0 pc =3D lookup_page_cgroup(page);
-> + =A0 =A0 =A0 if (unlikely(!PageCgroupUsed(pc)))
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return;
-> +
-> + =A0 =A0 =A0 lock_page_cgroup(pc);
-> + =A0 =A0 =A0 if (!PageCgroupUsed(pc)) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 unlock_page_cgroup(pc);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return;
-> + =A0 =A0 =A0 }
-> + =A0 =A0 =A0 memcg =3D pc->mem_cgroup;
-> + =A0 =A0 =A0 pc->mem_cgroup =3D root_mem_cgroup;
-> + =A0 =A0 =A0 ClearPageCgroupUsed(pc);
-> + =A0 =A0 =A0 unlock_page_cgroup(pc);
-> +
-> + =A0 =A0 =A0 res_counter_uncharge(&memcg->hugepage[idx], csize);
-> + =A0 =A0 =A0 return;
-> +}
-> +
-> +void mem_cgroup_hugetlb_uncharge_memcg(int idx, unsigned long nr_pages,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0struct mem_cgroup *memcg)
-> +{
-> + =A0 =A0 =A0 unsigned long csize =3D nr_pages * PAGE_SIZE;
-> +
-> + =A0 =A0 =A0 if (mem_cgroup_disabled())
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return;
-> +
-> + =A0 =A0 =A0 res_counter_uncharge(&memcg->hugepage[idx], csize);
-> + =A0 =A0 =A0 return;
-> +}
-> +#else
-> +static bool mem_cgroup_have_hugetlb_usage(struct mem_cgroup *memcg)
-> +{
-> + =A0 =A0 =A0 return 0;
-> +}
-> +#endif /* CONFIG_MEM_RES_CTLR_HUGETLB */
-> +
-> =A0/*
-> =A0* Before starting migration, account PAGE_SIZE to mem_cgroup that the =
-old
-> =A0* page belongs to.
-> @@ -4955,6 +5067,7 @@ err_cleanup:
-> =A0static struct cgroup_subsys_state * __ref
-> =A0mem_cgroup_create(struct cgroup *cont)
-> =A0{
-> + =A0 =A0 =A0 int idx;
-> =A0 =A0 =A0 =A0struct mem_cgroup *memcg, *parent;
-> =A0 =A0 =A0 =A0long error =3D -ENOMEM;
-> =A0 =A0 =A0 =A0int node;
-> @@ -4997,9 +5110,22 @@ mem_cgroup_create(struct cgroup *cont)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 * mem_cgroup(see mem_cgroup_put).
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 */
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0mem_cgroup_get(parent);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 /*
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* We could get called before hugetlb ini=
-t is called.
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* Use HUGE_MAX_HSTATE as the max index.
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0*/
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 for (idx =3D 0; idx < HUGE_MAX_HSTATE; idx+=
-+)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 res_counter_init(&memcg->hu=
-gepage[idx],
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0&parent->hugepage[idx]);
-> =A0 =A0 =A0 =A0} else {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0res_counter_init(&memcg->res, NULL);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0res_counter_init(&memcg->memsw, NULL);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 /*
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* We could get called before hugetlb ini=
-t is called.
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* Use HUGE_MAX_HSTATE as the max index.
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0*/
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 for (idx =3D 0; idx < HUGE_MAX_HSTATE; idx+=
-+)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 res_counter_init(&memcg->hu=
-gepage[idx], NULL);
-> =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0memcg->last_scanned_node =3D MAX_NUMNODES;
-> =A0 =A0 =A0 =A0INIT_LIST_HEAD(&memcg->oom_notify);
-> @@ -5030,6 +5156,12 @@ free_out:
-> =A0static int mem_cgroup_pre_destroy(struct cgroup *cont)
-> =A0{
-> =A0 =A0 =A0 =A0struct mem_cgroup *memcg =3D mem_cgroup_from_cont(cont);
-> + =A0 =A0 =A0 /*
-> + =A0 =A0 =A0 =A0* Don't allow memcg removal if we have HugeTLB resource
-> + =A0 =A0 =A0 =A0* usage.
-> + =A0 =A0 =A0 =A0*/
-> + =A0 =A0 =A0 if (mem_cgroup_have_hugetlb_usage(memcg))
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EBUSY;
->
-> =A0 =A0 =A0 =A0return mem_cgroup_force_empty(memcg, false);
-> =A0}
-> --
-> 1.7.10
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" i=
-n
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at =A0http://www.tux.org/lkml/
+Note2: Build fails that are perpetual and/or unlikely to ever
+get fixed are not tracked here.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Note3: Issues that Stephen finds and reverts/avoids before kicking
+off the all-arch/all-config builds are also not tracked here.
+
+Note4: I'm also not tracking the kallsyms extra pass on ARM on
+a per board basis anymore.  It has nothing to do with the board.
+Why? See:  http://marc.info/?l=linux-next&m=133267456809502
+
+----------------------
+
+Latest results at:
+	http://kisskb.ellerman.id.au/kisskb/branch/9/
+
+Failures as of May 1st, 2012:
+===============================
+
+AM33:asb2303_defconfig,asb2364_defconfig
+	when:	Mar 15
+	why:	cc1: error: unrecognized command line option '-mmem-funcs'
+	status:	Possible fix from TonyB sent for review.
+	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
+----------------
+
+ARM:mackerel_defconfig,ag5evm_defconfig
+	when:	Apr 19 (possibly earlier?)
+	why:	pfc-sh7372.c: undefined reference to `mmc_detect_change'
+	why:	pfc-sh73a0.c: undefined reference to `mmc_detect_change'
+	status:	
+	fix:	
+	ref:	http://article.gmane.org/gmane.linux.ports.sh.devel/14412
+	ref:	http://article.gmane.org/gmane.linux.ports.sh.devel/14413
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131930/
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131908/
+
+ARM:bcmring_defconfig
+	when:	Apr 19 (possibly earlier?)
+	why:	core.c: macro "AMBA_APB_DEVICE" requires 6 args, but only 5 given
+	status:	fixed, pending feed into linux next.
+	fix:
+	ref:	http://www.spinics.net/lists/arm-kernel/msg169724.html
+
+ARM:ezx_defconfig
+	when:	Apr 19 (possibly earlier?)
+	why:	ezx-pcap.c: implicit declaration of function 'irq_to_gpio'
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131924/
+
+ARM:mini2440_defconfig
+	when:	Apr 19 (possibly earlier?)
+	why:	arm-unknown-linux-gnueabi-ld: no machine record defined
+	status:
+	fix:	http://marc.info/?l=linux-next&m=133494490918950&w=2
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131932/
+
+ARM:spear6xx_defconfig
+	when:	Apr 19 (possibly earlier?)
+	why:	asm/timex.h: fatal error: mach/timex.h: No such file
+	status:
+	fix:	http://marc.info/?l=linux-arm-kernel&m=133494361818349&w=2
+	ref:	http://marc.info/?l=linux-arm-kernel&m=133480180430812&w=2
+
+ARM:netx_defconfig,pnx4008_defconfig 
+	when:	Mar 14
+	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
+	status:	
+	fix:	
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
+	ref:	https://lkml.org/lkml/2012/3/13/670
+
+ARM:ixp4xx_defconfig
+	when:	Oct 26
+	why:	gpio.h: implicit declaration of function '__gpio_get_value'
+	status:	fixed (Imre Kaloz) - but possibly needs rework?
+	fix:	https://lkml.org/lkml/2012/2/8/288
+	ref:	https://lkml.org/lkml/2012/2/8/287
+
+ARM:raumfeld_defconfig
+	when:	Nov 23
+	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
+	status:	perhaps broken since 2010?  See ref below.
+	fix:	
+	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
+
+----------------
+
+AVR32:allnoconfig
+	when:	May 26 2010, 20:49
+	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
+	status:
+	fix:
+	ref:
+---------------
+
+bfin: 50% of builds
+	when:	Mar 31
+	why:	"Error: pcrel too far BFD_RELOC_BFIN_10" from kernel/time/timekeeping.c
+	status:	unknown, binutils issue?
+	fix:
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6087324/
+---------------
+
+cris:allyesconfig,allmodconfig
+	when:	Apr 3
+	why:	too many to list here
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035250/
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035249/
+----------------
+
+i386:allmodconfig
+	when:	Apr 17
+	why:	samples/seccomp/bpf-direct.c:47:2: error: #error Unsupported platform
+	status:	reported
+	ref:	http://marc.info/?l=linux-kernel&m=133471624530782&w=2
+----------------
+
+h8300:defconfig
+	when:	Mar 15
+	why:	time.c: implicit declaration of function 'get_irq_regs'
+	why:	also seems gcc suffers an ICE
+	status:	ICE bug lodged with gcc folks (TonyB)
+	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
+----------------
+
+m32r:m32700ut.smp_defconfig
+	when:	Mar 15
+	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
+----------------
+
+mips:ip27_defconfig
+	when:	Apr 18
+	why: iwlwifi/iwl-core.h: static decl of 'iwl_alloc_traffic_mem' follows non-static
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131791/
+
+mips:allmodconfig
+	when:	Apr 17
+	why:	sound/oss/soundcard.c: 'MAX_DMA_CHANNELS' undeclared
+	status: one of many fixes mips needs...
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6091660/
+----------------
+
+parisc:defconfig
+	when:	Apr 20
+	why:	file 'asm-generic/kvm_para.h' is not exported
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6137786/
+
+parisc:allmodconfig
+	when:	?
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+
+parisc64:a500_defconfig 
+	when:	?
+	why:	include/linux/log2.h: implicit declaration of function 'fls'
+	status:	reported by PaulG, WIP by David Howells 
+	ref:	https://lkml.org/lkml/2012/2/29/409
+	ref:	https://lkml.org/lkml/2012/3/6/228
+------------------
+
+sparc/m68k:all
+	when:	Apr 18
+	why:	fs/gfs2/lops.c:379:42: error: request for member 'virtual' in something not a structure or union
+	status:	reported/bisected by PaulG
+	ref:	http://marc.info/?l=linux-next&m=133479890929994&w=2
+------------------
+
+xtensa:defconfig
+	when:	Apr 20
+	why:	kallsyms.c:(.text+0x1eb44): undefined reference to `ack_bad_irq'
+	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6138090/
+Cc: 
+Bcc: 
+Subject: sdf
+Reply-To: 
