@@ -1,29 +1,41 @@
-From: Alexander Graf <agraf@suse.de>
-Subject: Re: linux-next: build failure after merge of the kvm-ppc tree
-Date: Wed, 02 May 2012 15:16:40 +0200
-Message-ID: <4FA133B8.8080201@suse.de>
-References: <20120501135549.5c865717b33650002f083d4a@canb.auug.org.au>
+From: "Mrs Jennifer james" <jenniferjames@aol.com>
+Subject: cheque
+Date: Wed, 02 May 2012 13:29:19 -0400
+Message-ID: <201205021729.q42HTHtG010877@isuela.unizar.es>
+Reply-To: dhldeliveryhouse@filipinos.ca
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:50881 "EHLO mx2.suse.de"
+Received: from isuela.unizar.es ([155.210.1.53]:46868 "EHLO isuela.unizar.es"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752591Ab2EBNQm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 May 2012 09:16:42 -0400
-In-Reply-To: <20120501135549.5c865717b33650002f083d4a@canb.auug.org.au>
+	id S1754749Ab2EBR5i convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 May 2012 13:57:38 -0400
+Received: from sbs2003.MWA.local (mail.menearlaw.com [216.191.177.50])
+	(authenticated bits=0)
+	by isuela.unizar.es (8.13.8/8.13.8/Debian-3) with ESMTP id q42HTHtG010877
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT)
+	for <linux-next@vger.kernel.org>; Wed, 2 May 2012 19:29:20 +0200
+Content-Description: Mail message body
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: linux-next@vger.kernel.org
 
-On 05/01/2012 05:55 AM, Stephen Rothwell wrote:
-> Hi Alex,
->
-> After merging the kvm-ppc tree, today's linux-next build
-> (powerpc_ppc64_defconfig) failed like this:
+Attention
 
-Hmm - do you have that .config available somewhere? :)
+I am Mrs. Jennifer James, I have a package (Bank Draft) of 2,000,000,00Pounds  in your name, the Cheque was won by your email, is the 2012 British National Lottery, you did not contact us since we notify you, so i have to take your Cheque to the DHL courier Service Here in United Kingdom, and at the moment i am at Spain on a program, and i will be here for 1month, you will have to contact the DHL Courier Service London United kingdom with 
 
+Your Full Name, 
+Contact Address, 
+Phone number 
 
-Alex
+for immediate delivery.
+
+Contact Details of the DHL Courier Service 
+Disparch officer: Mr Ken Derrick
+Email:  dhldeliveryservice2@filipinos.ca
+
+I alread paid for the delivery fee, Vat, insurance fee,security keeping fee, but the only money you have to pay to the DHL Courier Service is 200Pounds for the Custom Clearance fee, i would have pay the Custom Clearance fee, but i was told by the DHL Courier Officer not to pay, because they dont know when you will be contacting them incase of due morrage, so contact the DHL courier service, and follow their instruction, and they will deliver the cheque to you as soon as possible contact DHL Courier via dhldeliveryservice2@filipinos.ca
+
+Best Regards
+Mrs Jennifer James
