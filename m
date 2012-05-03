@@ -1,59 +1,58 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: drivers/watchdog/s3c2410_wdt patch is missing an include
-Date: Thu, 3 May 2012 07:03:30 +0200
-Message-ID: <20120503050330.GA18558@spo001.leaseweb.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the driver-core tree
+Date: Thu, 3 May 2012 15:53:16 +1000
+Message-ID: <20120503155316.ac90cdfa900e1d19461f42ef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__3_May_2012_15_53_16_+1000__2y75BN75QI4wY=T"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:55410 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751467Ab2ECFtS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 May 2012 01:49:18 -0400
-Content-Disposition: inline
+Received: from haggis.pcug.org.au ([203.10.76.10]:39615 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752374Ab2ECFxm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 May 2012 01:53:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@xenotime.net>, Greg KH <greg@kroah.com>
 
-Hi Stephen,
+--Signature=_Thu__3_May_2012_15_53_16_+1000__2y75BN75QI4wY=T
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Just a quick e-mail to let you know that the below patch is missing an:
-#include <linux/of.h>
+Hi Andrew,
 
-I will fix this in my tree today.
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/w1/slaves/Kconfig between commit c0a6720977f8 ("Revert "w1: Add
+1-wire slave device driver for DS28E04-100"") from the driver-core tree
+and commit "w1: fix ds28e04 build, select CRC16" from the akpm tree.
 
-Sorry,
-Wim.
----
-commit 4c1134cc961f825370dd9f84ce0169bd0ed97957
-Author: Wim Van Sebroeck <wim@iguana.be>
-Date:   Wed May 2 14:42:22 2012 +0200
+The former removes the text that the latter is fixing, so I just dropped
+this patch from the akpm tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-    watchdog: s3c2410-wdt: Use of_match_ptr().
-    
-    Use of_match_ptr definition for the of_match_table.
-    
-    Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+--Signature=_Thu__3_May_2012_15_53_16_+1000__2y75BN75QI4wY=T
+Content-Type: application/pgp-signature
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 04e5a6d..686c8fc 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -503,8 +503,6 @@ static const struct of_device_id s3c2410_wdt_match[] = {
- 	{},
- };
- MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
--#else
--#define s3c2410_wdt_match NULL
- #endif
- 
- static struct platform_driver s3c2410wdt_driver = {
-@@ -516,7 +514,7 @@ static struct platform_driver s3c2410wdt_driver = {
- 	.driver		= {
- 		.owner	= THIS_MODULE,
- 		.name	= "s3c2410-wdt",
--		.of_match_table	= s3c2410_wdt_match,
-+		.of_match_table	= of_match_ptr(s3c2410_wdt_match),
- 	},
- };
- 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPoh1NAAoJEECxmPOUX5FEwNAP/R9bKQxb6R9Du8+0IOUt7mQX
+vQPihBpdYIh6B1KhTrdfE0ePFcFJ75oT8GqKjowi5f8ajKg11dLqPZtIIVUxofHK
+nYJfb8k7tetmCttorgIcxc51/y/d44iqgJ9Rq3d4XW+iSeqnxDskgWbCCeY25LQO
+54gatMYg9yogqTOeVaaJ9eFbCOxN8IiSrmfm8XfJTxDLa74TBlRfjkPZvZqZYyCl
+w+alWCctZQBNMtdYNkc7SdFY6MDLV1wKycSN7HIDcu1kiIYiorW0BxTFT5c/pp+n
+TV3neMFz0SmnM67p/3solZ8mqWkUcFeTTHVkTz9PHGaxh3bRoNJ/EfFN8xOFEg/k
+Ackd2Wuhp3q4th2Yle/98YBSx1LfhYw5vjCE9b/2/Z5qIWIXZk+i3MpLrMIQxV1T
+f9CuFAGsMybjuk7YHKIfY5RpPWithccsdmszzoORarKSIEMK953z9SENMKUY6y+4
+OftjLFtk/XiYIDAhwYrKdRD+QHsZhqjE75jTCSrjPnCdWMdvy+xHYzSmfw7+JrN6
+cBO7WTemr06taDNeyRlSXdSq8V46KrkcYcsytm1W2sSb940OCOh9UYqHkHFgy4Px
+d7F5QJVDYau4+GO98SxhUQO35ZVKmV+7UCWUubEhcwst4yFDy3gsoS/u/m5Z6TK/
+xJ3Qrr4CIJ7+OYcwTPFc
+=qMoQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_May_2012_15_53_16_+1000__2y75BN75QI4wY=T--
