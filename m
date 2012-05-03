@@ -1,50 +1,128 @@
-From: "Aneesh Kumar K.V" <aneesh.kumar-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH -V6 07/14] memcg: Add HugeTLB extension
-Date: Thu, 03 May 2012 10:07:59 +0530
-Message-ID: <87pqalhobc.fsf@skywalker.in.ibm.com>
-References: <1334573091-18602-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com> <1334573091-18602-8-git-send-email-aneesh.kumar@linux.vnet.ibm.com> <CAP=VYLqgaCabQGDVgUXnCwKCZHtz0nWxpm_a6Cgz_ciMzGe9gQ@mail.gmail.com>User-Agent: Notmuch/0.11.1+346~g13d19c3 (http://notmuchmail.org) Emacs/23.3.1 (x86_64-pc-linux-gnu)
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Date: Thu, 3 May 2012 14:44:10 +1000
+Message-ID: <20120503144410.3aab6165a98e4f36bf50fcf5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <cgroups-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAP=VYLqgaCabQGDVgUXnCwKCZHtz0nWxpm_a6Cgz_ciMzGe9gQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: cgroups-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Cc: linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, mgorman-l3A5Bk7waGM@public.gmane.org, kamezawa.hiroyu-+CUm20s59erQFUHtdCDX3A@public.gmane.org, dhillf-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, aarcange-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, mhocko-AlSwsSmVLrQ@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, hannes-druUgvl0LCNAfugRpC6u6w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cgroups-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__3_May_2012_14_44_10_+1000_RxQTlBB6OJu27XbT"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46599 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751301Ab2ECEoV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 May 2012 00:44:21 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Stephen Warren <swarren@wwwdotorg.org>, Venu Byravarasu <vbyravarasu@nvidia.com>
 
-Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org> writes:
+--Signature=_Thu__3_May_2012_14_44_10_+1000_RxQTlBB6OJu27XbT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, Apr 16, 2012 at 6:44 AM, Aneesh Kumar K.V
-> <aneesh.kumar-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org> wrote:
->> From: "Aneesh Kumar K.V" <aneesh.kumar-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
->>
->> This patch implements a memcg extension that allows us to control HugeTLB
->> allocations via memory controller. The extension allows to limit the
->
-> Hi Aneesh,
->
-> This breaks linux-next on some arch because they don't have any
-> HUGE_MAX_HSTATE in scope with the current #ifdef layout.
->
-> The breakage is in sh4, m68k, s390, and possibly others.
->
-> http://kisskb.ellerman.id.au/kisskb/buildresult/6228689/
-> http://kisskb.ellerman.id.au/kisskb/buildresult/6228670/
-> http://kisskb.ellerman.id.au/kisskb/buildresult/6228484/
->
-> This is a commit in akpm's mmotm queue, which used to be here:
->
-> http://userweb.kernel.org/~akpm/mmotm
->
-> Of course the above is invalid since userweb.kernel.org is dead.
-> I don't have a post-kernel.org break-in link handy and a quick
-> search didn't give me one, but I'm sure you'll recognize the change.
->
+Hi Greg,
 
-Andrew have the below patch 
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/host/ehci-tegra.c between commit ebf20de45304 ("EHCI: update
+PM methods in ehci-tegra.c") from the usb.current tree and commit
+fe375774bd88 ("usb: host: tegra: code clean up") from the usb tree.
 
-http://article.gmane.org/gmane.linux.kernel.commits.mm/71649
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Does that fix the error ?
+diff --cc drivers/usb/host/ehci-tegra.c
+index f214a80,4c1eb61..0000000
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@@ -319,7 -423,37 +308,7 @@@ static int tegra_ehci_setup(struct usb_
+  	return retval;
+  }
+ =20
+- struct temp_buffer {
+ -#ifdef CONFIG_PM
+ -static int tegra_ehci_bus_suspend(struct usb_hcd *hcd)
+ -{
+ -	struct tegra_ehci_hcd *tegra =3D dev_get_drvdata(hcd->self.controller);
+ -	int error_status =3D 0;
+ -
+ -	error_status =3D ehci_bus_suspend(hcd);
+ -	if (!error_status && tegra->power_down_on_bus_suspend) {
+ -		tegra_usb_suspend(hcd);
+ -		tegra->bus_suspended =3D 1;
+ -	}
+ -
+ -	return error_status;
+ -}
+ -
+ -static int tegra_ehci_bus_resume(struct usb_hcd *hcd)
+ -{
+ -	struct tegra_ehci_hcd *tegra =3D dev_get_drvdata(hcd->self.controller);
+ -
+ -	if (tegra->bus_suspended && tegra->power_down_on_bus_suspend) {
+ -		tegra_usb_resume(hcd);
+ -		tegra->bus_suspended =3D 0;
+ -	}
+ -
+ -	tegra_usb_phy_preresume(tegra->phy);
+ -	tegra->port_resuming =3D 1;
+ -	return ehci_bus_resume(hcd);
+ -}
+ -#endif
+ -
++ struct dma_aligned_buffer {
+  	void *kmalloc_ptr;
+  	void *old_xfer_buffer;
+  	u8 data[0];
+@@@ -426,14 -548,20 +403,20 @@@ static const struct hc_driver tegra_ehc
+  	.endpoint_reset		=3D ehci_endpoint_reset,
+  	.get_frame_number	=3D ehci_get_frame,
+  	.hub_status_data	=3D ehci_hub_status_data,
+- 	.hub_control		=3D tegra_ehci_hub_control,
+  	.clear_tt_buffer_complete =3D ehci_clear_tt_buffer_complete,
++ 	.relinquish_port	=3D ehci_relinquish_port,
++ 	.port_handed_over	=3D ehci_port_handed_over,
++=20
++ 	/* modified ehci functions for tegra */
++ 	.reset			=3D tegra_ehci_setup,
++ 	.shutdown		=3D tegra_ehci_shutdown,
++ 	.map_urb_for_dma	=3D tegra_ehci_map_urb_for_dma,
++ 	.unmap_urb_for_dma	=3D tegra_ehci_unmap_urb_for_dma,
++ 	.hub_control		=3D tegra_ehci_hub_control,
+  #ifdef CONFIG_PM
+ -	.bus_suspend		=3D tegra_ehci_bus_suspend,
+ -	.bus_resume		=3D tegra_ehci_bus_resume,
+ +	.bus_suspend		=3D ehci_bus_suspend,
+ +	.bus_resume		=3D ehci_bus_resume,
+  #endif
+- 	.relinquish_port	=3D ehci_relinquish_port,
+- 	.port_handed_over	=3D ehci_port_handed_over,
+  };
+ =20
+  static int setup_vbus_gpio(struct platform_device *pdev)
 
--aneesh
+--Signature=_Thu__3_May_2012_14_44_10_+1000_RxQTlBB6OJu27XbT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPog0aAAoJEECxmPOUX5FETE8P/0s9fIq5U8976G+BvlV5Zupv
+KguunRV+kuqnywPTVo/pKiWHmW+H0FIJnF2LgWUBcRB74G2L2RcOcQIsYhC7HFay
+CW/k8INybcDP+vN9oyiUucvrKqDnox+cqBqE2iNdzHG3HQfdpaxq+5b0x8INtIli
+56FshKd43sInTN6rmYCns0QN2r+rtTiffiwmeBdyC9tc0xiSjPvJKeGKprDVFbk2
+Y3eSg3ThTJ/ByYEJNgy0XByCRMmJZ6zdb981gXIRkccflb4wpKCvni6ddJnQVaA9
+UsGhd/BYOe30zU2wh8lJbly9H350yynAvSW8+zoodjYTy2ANqOMQ7yd9rVjriuF/
+sWb9xXTggl3G+j1+GxHHKvC0A4fKTd2Mep82fgnZvwjyagGiuvzUPpmSeZiKP901
+qFMAQMYw224Kf5erR1pFh2SWlDixquRtArUXNVA/ixiXHrQveSkW+C5tlUrzQkXh
+WCaXBfsgab4TUQbVVRKwpvB527LZjSotk3P0Jx60VmypFk4J6p0UkbM5eFF97BzS
+GJtJNpYx6uHYvTvf3/UZP0hR/iLAgxXFuqwWNPy6ZsH0P60i1Q6bVf9otdFy8ncQ
+u9jm/xbpeJWdsKIIk6l3Prfjfy6rhzO+3OdFxM1Ga8XGOpJoUaAUavFk7RMK58pZ
+qkYMBuVl0fZjYW/A9SIq
+=FefH
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_May_2012_14_44_10_+1000_RxQTlBB6OJu27XbT--
