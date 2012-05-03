@@ -1,64 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Thu, 3 May 2012 13:07:25 +1000
-Message-ID: <20120503130725.5064b8c0fe9c072a8763d30e@canb.auug.org.au>
+From: "Aneesh Kumar K.V" <aneesh.kumar-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH -V6 07/14] memcg: Add HugeTLB extension
+Date: Thu, 03 May 2012 10:07:59 +0530
+Message-ID: <87pqalhobc.fsf@skywalker.in.ibm.com>
+References: <1334573091-18602-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com> <1334573091-18602-8-git-send-email-aneesh.kumar@linux.vnet.ibm.com> <CAP=VYLqgaCabQGDVgUXnCwKCZHtz0nWxpm_a6Cgz_ciMzGe9gQ@mail.gmail.com>User-Agent: Notmuch/0.11.1+346~g13d19c3 (http://notmuchmail.org) Emacs/23.3.1 (x86_64-pc-linux-gnu)
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__3_May_2012_13_07_25_+1000_Mq8fJy0H_P5vaHwU"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60638 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752187Ab2ECDHl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 May 2012 23:07:41 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <cgroups-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAP=VYLqgaCabQGDVgUXnCwKCZHtz0nWxpm_a6Cgz_ciMzGe9gQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: cgroups-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Cc: linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, mgorman-l3A5Bk7waGM@public.gmane.org, kamezawa.hiroyu-+CUm20s59erQFUHtdCDX3A@public.gmane.org, dhillf-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, aarcange-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, mhocko-AlSwsSmVLrQ@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, hannes-druUgvl0LCNAfugRpC6u6w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cgroups-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__3_May_2012_13_07_25_+1000_Mq8fJy0H_P5vaHwU
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org> writes:
 
-Hi Dave,
+> On Mon, Apr 16, 2012 at 6:44 AM, Aneesh Kumar K.V
+> <aneesh.kumar-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org> wrote:
+>> From: "Aneesh Kumar K.V" <aneesh.kumar-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
+>>
+>> This patch implements a memcg extension that allows us to control HugeTLB
+>> allocations via memory controller. The extension allows to limit the
+>
+> Hi Aneesh,
+>
+> This breaks linux-next on some arch because they don't have any
+> HUGE_MAX_HSTATE in scope with the current #ifdef layout.
+>
+> The breakage is in sh4, m68k, s390, and possibly others.
+>
+> http://kisskb.ellerman.id.au/kisskb/buildresult/6228689/
+> http://kisskb.ellerman.id.au/kisskb/buildresult/6228670/
+> http://kisskb.ellerman.id.au/kisskb/buildresult/6228484/
+>
+> This is a commit in akpm's mmotm queue, which used to be here:
+>
+> http://userweb.kernel.org/~akpm/mmotm
+>
+> Of course the above is invalid since userweb.kernel.org is dead.
+> I don't have a post-kernel.org break-in link handy and a quick
+> search didn't give me one, but I'm sure you'll recognize the change.
+>
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/i915/intel_display.c between commit 99d9acdd0c5c
-("drm/i915: Do not set "Enable Panel Fitter" on SNB pageflips") from
-Linus' tree and (I am not sure which) commits from the drm tree.
+Andrew have the below patch 
 
-I fixed it up (the former patch got applied in completely the wrong place
-by git merge).  This file looks like it was massively rewritten in the
-drm tree :-(.  I have not included the merge diff because it was >2000
-lines.
+http://article.gmane.org/gmane.linux.kernel.commits.mm/71649
 
-Dave, as an experiment, you might like to pull that former patch into
-your tree and see if that fixes the merge with Linus' tree.
+Does that fix the error ?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__3_May_2012_13_07_25_+1000_Mq8fJy0H_P5vaHwU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPofZtAAoJEECxmPOUX5FETagP/3M95R1NJJ+3T9M1EnxYDKLT
-Go2NDkHU/eJ1DF82T+9isp/AhvI6rlLUsMscCC12ZxF2bq1QJSRJg7X/fkKWsWsP
-i9YfbHvFg9so5141u8J0Y5juBAW/VgXkg8l5cctN8+gCrJrUYzbSheUbTbFeY0HT
-wvK8dWquzOs/x7K+tiL4RPe8nrpJ+e8cTh2qiWwbKB6Vrx12knIp3cQ7nrGPhn/N
-Uo1wrz7gP7ew6liwkZEkRte0iNoIudQdfNC3HeadTPKX6NWdfABrmUEhueN51Kaq
-6qDc58XU8xvzcV9P+DJ0nIh1z0P8Z13lPu/rSIBxWh3bPe++jB09vRfHfj/2l+hE
-PocaKpDrQBdseOn1sSQSZle+HI+uVPgoZ4bhLnqlpeBA9/FJF8XscCXRkjl8tzgY
-vpm7tvMvzTtRkjcV1kS+89ou84squ3fNlHCBQ/HB+vQXbejqbrBGi81abaihJrhh
-7TO8EHPzlFh4+oBDPe8Q+lYB4t8TaR+z4I1L1XqhRoJOGLXvqgPrknqskh1sYz7i
-kW6sLqRJe7mxMgPYGbp6En1mvjy2fM42RrwMAIqhR3Lt3CQrrefd8o7pn+thJkF3
-LjwIqPSFHGVy6Bbww65EBoYM6Cko/ZBk4/IhKPoerKuIOQu/gVKxTyJu+L95IVDb
-E7g9C3DFXJKleClHQ+dg
-=pNwv
------END PGP SIGNATURE-----
-
---Signature=_Thu__3_May_2012_13_07_25_+1000_Mq8fJy0H_P5vaHwU--
+-aneesh
