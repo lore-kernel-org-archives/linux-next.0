@@ -1,55 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the input tree
-Date: Thu, 3 May 2012 14:44:21 +1000
-Message-ID: <20120503144421.bce525fdec4a9b2d3b7557d5@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Thu, 3 May 2012 15:35:10 +1000
+Message-ID: <20120503153510.ce4453a236d89250fb8dacde@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__3_May_2012_14_44_21_+1000_sfomwIAOppHfWH=Y"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Chris Bagwell <chris@cnpbagwell.com>
+Content-Type: multipart/mixed; boundary="===============0764319034492404597=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__3_May_2012_14_44_21_+1000_sfomwIAOppHfWH=Y
+--===============0764319034492404597==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__3_May_2012_15_35_10_+1000_3anisiSgjMcOf=EQ"
+
+--Signature=_Thu__3_May_2012_15_35_10_+1000_3anisiSgjMcOf=EQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/input/tablet/wacom_wac.c between commit eb71d1bb270e ("Input:
-wacom - use dev_xxx() instead of naked printk()s and dbg()s") from the
-input tree and commit 3b6aee237e88 ("USB: wacom: remove dbg() usage")
-from the usb tree.
+Today's linux-next merge of the arm-soc tree got conflicts in
+arch/arm/mach-ixp2000 and arch/arm/mach-ixp23xx between commits from the
+arm tree and commits from the arm-soc tree.
 
-I just used the input tree's version (which used "input->dev.parent"
-instead of "&input->dev").
+On Russell's advise, I just removed those two directories completely.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__3_May_2012_14_44_21_+1000_sfomwIAOppHfWH=Y
+--Signature=_Thu__3_May_2012_15_35_10_+1000_3anisiSgjMcOf=EQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPog0lAAoJEECxmPOUX5FEQykP/0gjfYU6vrTc/ujsW3Er67nN
-jVa/WydV725yXPERVbIvTUg9LV72zc3mqBSX3+xGrLxTpDCu+KMj3KtGaahHpWmT
-L0J7EPl/5V0gCLeXqjwn1u015AuZmobIathTse8XXjYxQUxsi7pTb53hA+pieOhZ
-wKDkJoxkH4+hSSFofX6HSa2jwRcMVNNKzq7bNWOVXr5vBAx0zARCuXGskR7crT3X
-3j9cySm4RgBkLQw3Ek1v0OaVHiEsXVerMrHD2C3gf7vASuFHi7Cddg0u4uaN3HMj
-blMjxi4iKbGOP+2DoDAhAVKzyYdFfxJhCWZo5VvHaZ41xGSB/moID/Z383Bm+A9f
-TKOfxpAojPoffgEZ3x2rEohNsj26Ms4RXG1MVUQjZcaVtT3qyg2DL6FUVgBo69Q6
-oALDqYEHHL0A2naPq9VYabhDzWwNK3ADxbAeELv8FtE14r8HZaKIJDZw5hXgFhD4
-FhCw0S+IpOFgtRuzdil8kPzP2D1ZfabpPtSZs2yKoPVxThu86NN63+BKOEoYaP5n
-mR6PM7ygR/VpieLKgdSxo7vy5C4HYFdMH35Lp3S5BDceAm6UwskKhFF9PDUbQhNk
-Xa6TRkgXha5GtdrNVcyCkGq9NIuXVUohdqyooxbsTRopEJAnZJNgwM5sAWV0poH8
-fPWf7yfFTKX+TS82TSah
-=lKa6
+iQIcBAEBCAAGBQJPohkOAAoJEECxmPOUX5FEGm8P/0GkLwnByoCKyL3+iYzAtt1d
+J5JN7a7DflsrfazivLgcMjqqc2YJKnfUCCX12D4/cEvXq1EtZavn4/+rvv/mhlzS
+TbzpQJU6bVGarxClnLAw0XmLL6DG55TR2F1gQJEzWkv3DlmKdoZ+GA+wix/hMwOu
+cvPrEK7NJ5Mzr8x2U6cnl845xZzv6SR8S5kb2x1TBtXR5Op285ztSaHlvhtymYfF
+W9scZYVFplv+RJXdgku9HYK0icfVIV9qidc+dv+mxT9TaJZ5yad9QL9HynW0dN2q
+HWTATnwwK6P26Eksp0dwG4HxugGLer2tWhYTnwAV0CaJIo2oKE/sCmLLNvpd/BoU
+7iBA4B9kpCXS1TT6hxDKY/b0H2CWOjfsM+y0HOW4r+Ac10YTNZJccsPcrPOS47Fm
+fnrPkezsucaZhNK/n324jZX1uPuA0e45etD47QrYSOyk8VD7AV4Ncp0J5l5Egkcs
+ldGf8EaILMHIybAGdP7POgGTg420BC1/Tpm2MF0/wxIDn9cgqeqJj1DyU+HEDP2G
+54Ac2rtDcGifQrpadLg8sLeNICGWfzAIm13kdZIH1J5PCursekZA2u6r7IA3nPxO
+wvoRlj9WsU5ZAbTKbfmfCJ/kzUSCtW4YsFO66W9wJl8feUlwUEcRQrFTTUrX9Ld2
++qy6TL2YWwTsSRhUPvK8
+=YC2m
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__3_May_2012_14_44_21_+1000_sfomwIAOppHfWH=Y--
+--Signature=_Thu__3_May_2012_15_35_10_+1000_3anisiSgjMcOf=EQ--
+
+
+--===============0764319034492404597==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0764319034492404597==--
