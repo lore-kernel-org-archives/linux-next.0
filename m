@@ -1,57 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: strange commits in the drivers-x86 tree
-Date: Fri, 4 May 2012 10:14:39 +1000
-Message-ID: <20120504101439.edb8133fe986fc4cca94b969@canb.auug.org.au>
+Subject: linux-next: failure to fetch samsung and bjdooks-i2c trees
+Date: Fri, 4 May 2012 10:27:44 +1000
+Message-ID: <20120504102744.d5b6fbcdfa8c70c709ed4759@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__4_May_2012_10_14_39_+1000_cr0+PaN876nXjq_z"
+ boundary="Signature=_Fri__4_May_2012_10_27_44_+1000_qPNW_cnrGB3F._L8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42866 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44394 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755455Ab2EDAOs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 May 2012 20:14:48 -0400
+	with ESMTP id S1757008Ab2EDA1x (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 May 2012 20:27:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Fri__4_May_2012_10_14_39_+1000_cr0+PaN876nXjq_z
+--Signature=_Fri__4_May_2012_10_27_44_+1000_qPNW_cnrGB3F._L8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Matthew,
+Hi Ben,
 
-I have no idea what you have done to your tree, but it now contains scsi,
-nfs and arm commits (at least) that don't appear to be at all relevant to
-x86 drivers ... it looks like you may have rebased part of Linus' tree
-onto yours.
+I have been getting:
 
-I will use the drivers-x86 tree from next-20120503 for today.
+fatal: unable to connect to git.fluff.org:
+git.fluff.org[0: 89.16.178.74]: errno=3DConnection refused
+
+for the last couple of days ...
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__4_May_2012_10_14_39_+1000_cr0+PaN876nXjq_z
+--Signature=_Fri__4_May_2012_10_27_44_+1000_qPNW_cnrGB3F._L8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPox9vAAoJEECxmPOUX5FEbdoP/0hqFJneOvyrB5ZL5boXGZlJ
-Qxz2LQuQLYzYgg8imCwTqzYLef5EFEM8N90uusilGjdgHan+jigqxZ+rWnQLHKEo
-X/Db0qdg47gFaZ5UkeoZVZ16R/xlCEKEcv+TE/hH04Z7yBiaswZiFS2bbJnoFs7H
-6pcYjpM+l817/LTkovAaqprI7n8P8YmvUOVP3K5Jjc7N2KwbY/IOKnySDoCLDtDW
-e/6arStngL34niQy7ywGGyLm5Tz3fPdtPhDigWdmF8nk3CW4R4+eLI53KDtJryBp
-lSyuhHdzGc3YKsjwLlwKWvnFo8XUz6DawA0re6PQaSiW6SfaSxQmbXYaj1e6E6bo
-kRh73kP85bg7NaS/mbBJuhKle/9PGXPx1k3PN/J3EKkmScH+tAbW3C3UThHYyEHA
-8FXgEY3NRlrC+7iUQHKfpw2xUOKepdS4mQHyB1u7wUjCKlsZQUFFbetg7FxtCxiY
-7uLJiptaNZ1oR9EqfBWw8tjmP9rd0S6MzfQi/zCcNsNU9c6pmpXzg90BxfsbHvOS
-d3QaKcbIFW0RpQB2V0jMnDz9P6L6u+5vLjvh6h4Hz7MJCOjGdd79+PGlzR9KwCVI
-KXFWMs6Ru4MRu1zuco6+ssj3EuDa/TfVQdv9npgXL4A7AkIk4SvmiA67t5Hbenpg
-BbIg5ZBw7ARdUDMFHq8r
-=nQz/
+iQIbBAEBCAAGBQJPoyKAAAoJEECxmPOUX5FEFkMP9j4/5o7zprZob/pUcrteenze
+ronHz4DDMOFMwGqQNAPRQXALvsLBwDaX7etmTGgVbdhMNvbhj9K1KTXaZG4V/Y8k
+b1z9ACVxiF4BDsPoDXidk2OTf7bL6b8E2IWsSO5f9cLl+dCGOjNnQOxggrFXeU+A
+5nAwPK99nwbUlSnQ40iYBEckjTQPS+H+ovoeOwnAJZCWXtKUjwoKUupJCvaAbfT4
+dl6ICSoho+YP+9kywCi1GuUBHIW3P735mvh2/W2IAE8IQOmHVoXu27KKs5aHWhmU
+6YWeyzmFPwNlLFqHI2kjm0sscWMBAyzPbWy7Z+TfoIwnY9Oj3/eTLG/OshazfH2w
+OC0XoZh/t8BQdmF19/bKkMY2hBiNjyU53uzcYiIKGsFrmTNEgowZQRJexZYKvzIX
+j+1AstWuoKCTXrbWXBX+xJyXQIkzRU7OBkKPCsX4KnBRdwCWhLn7LemQYz/1AwWm
+G1WxMpQLoYj892W2q/TLU6C6aUt8gWekQurXIh1ZWENeu0+uqc3RsCUxB4H1ajRC
+WZqzqofMca0XiKgJ+LY/QJVtp19Pd7F5u+4bpH+RhJvUhRtWa9NOB/DtSynm77ep
+k2yDV3DWMNJkXCBhGqej+P1HCzEP2Zq6FW7djh6iLqmYxeonnmb+g2XOnUCEIa9H
+G4CR+B1LdSn7bFZPtic=
+=xvR4
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__4_May_2012_10_14_39_+1000_cr0+PaN876nXjq_z--
+--Signature=_Fri__4_May_2012_10_27_44_+1000_qPNW_cnrGB3F._L8--
