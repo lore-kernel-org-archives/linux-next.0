@@ -1,66 +1,41 @@
-From: Tejun Heo <tj@kernel.org>
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
 Subject: Re: inux-next: Tree for Apr 27 (uml + mm/memcontrol.c)
-Date: Fri, 4 May 2012 10:24:20 -0700
-Message-ID: <20120504172420.GF24639@google.com>
-References: <4F9ABF9C.2070707@xenotime.net>
- <alpine.DEB.2.00.1204271141040.28516@chino.kir.corp.google.com>
- <20120427132343.fbb443b9.akpm@linux-foundation.org>
- <alpine.DEB.2.00.1204271420350.4631@chino.kir.corp.google.com>
- <20120427143646.8209627e.akpm@linux-foundation.org>
- <87fwbnag6u.fsf@skywalker.in.ibm.com>
- <alpine.DEB.2.00.1205030208120.21476@chino.kir.corp.google.com>
- <CABEgKgqWo=b=o7PwOLc=QqCWXQxUaYvMX99GP9cR_Y-RoTEW3g@mail.gmail.com>
- <alpine.DEB.2.00.1205031343300.1631@chino.kir.corp.google.com>
- <CABEgKgoNaWtoNN_DOH+KTg7VHYDxVCyekcUC3TBfA313TR0jCw@mail.gmail.com>
+Date: Fri, 04 May 2012 23:59:02 +0530
+Message-ID: <877gwryf4h.fsf@skywalker.in.ibm.com>
+References: <20120427161146.95422142968526faaff615d4@canb.auug.org.au> <4F9ABF9C.2070707@xenotime.net> <alpine.DEB.2.00.1204271141040.28516@chino.kir.corp.google.com> <20120427132343.fbb443b9.akpm@linux-foundation.org> <alpine.DEB.2.00.1204271420350.4631@chino.kir.corp.google.com> <20120427143646.8209627e.akpm@linux-foundation.org> <87fwbnag6u.fsf@skywalker.in.ibm.com> <alpine.DEB.2.00.1205030208120.21476@chino.kir.corp.google.com> <CABEgKgqWo=b=o7PwOLc=QqCWXQxUaYvMX99GP9cR_Y-RoTEW3g@mail.gmail.com> <alpine.DEB.2.00.1205031343300.1631@chino.kir.corp.google.com> <alpine.DEB.2.00.1205031454400.1631@chino.kir.corp.google.com>User-Agent: Notmuch/0.11.1+346~g13d19c3 (http://notmuchmail.org) Emacs/23.3.1 (x86_64-pc-linux-gnu)
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CABEgKgoNaWtoNN_DOH+KTg7VHYDxVCyekcUC3TBfA313TR0jCw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hiroyuki Kamezawa <kamezawa.hiroyuki@gmail.com>
-Cc: David Rientjes <rientjes@google.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.cz>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e28smtp07.in.ibm.com ([122.248.162.7]:54240 "EHLO
+	e28smtp07.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752730Ab2EDS3P (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 May 2012 14:29:15 -0400
+Received: from /spool/local
+	by e28smtp07.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <aneesh.kumar@linux.vnet.ibm.com>;
+	Fri, 4 May 2012 23:59:12 +0530
+In-Reply-To: <alpine.DEB.2.00.1205031454400.1631@chino.kir.corp.google.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Rientjes <rientjes@google.com>, Hiroyuki Kamezawa <kamezawa.hiroyuki@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
 
-Hello,
+David Rientjes <rientjes@google.com> writes:
 
-(cc'ing Johannes and Michal, hi guys)
+>> Is this a claim that memory-intensive workloads will have the exact same 
+>> performance with and without memcg enabled?
 
-On Fri, May 04, 2012 at 08:17:11AM +0900, Hiroyuki Kamezawa wrote:
-> > Cgroups is moving to a single hierarchy for simplification, this is=
-n't the
-> > only example of where this is currently suboptimal and it would be
-> > disappointing to solidify hugetlb control as part of memcg because =
-of this
-> > current limitation that will be addressed by generic cgroups develo=
-pment.
-> >
-> > Folks, once these things are merged they become an API that can't e=
-asily
-> > be shifted around and seperated out later. =A0The decision now is e=
-ither to
-> > join hugetlb control with memcg forever when they act in very diffe=
-rent
-> > ways or to seperate them so they can be used and configured individ=
-ually.
->=20
-> How do other guys think ? Tejun ?
+> I've just run specjbb2005 three times on my system both with and without 
+> cgroup_disable=memory on the command line and it is consistently 1% faster 
+> without memcg.  If I add XX:+UseLargePages to the command line to use 
+> hugepages it's even larger.  So why must I incur this performance 
+> degradation if I simply want to control who may mmap hugepages out of the 
+> global pool?
 
-I don't know.  hugetlbfs already is this franken thing which is
-separate from the usual memory management.  It needing cgroup type
-resource limitation feels a bit weird to me.  Isn't this supposed to
-be used in more-or-less tightly controlled setups?  The whole thing
-needs to have its memory cut out from boot after all.
+Even if we end up having a seperate controller for hugetlb, we would need
+some bits of memcg, like tracking page cgroup, moving page cgroup on
+page offline. We will also be duplicating some amount of framework for
+supporting cgroup removal etc, because all those code deal with struct
+page (actually compound page )
 
-If someone really has to add cgroup support to hugetlbfs, I'm more
-inclined to say let them play in their own corner unless incorporating
-it into memcg makes it inherently better.
-
-That said, I really don't know that much about mm.  Johannes, Michal,
-what do you guys think?
-
-Thanks.
-
---=20
-tejun
+-aneesh
