@@ -1,59 +1,66 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: Tree for Apr 20 (usb & target)
-Date: Fri, 04 May 2012 09:56:39 -0700
-Message-ID: <1336150599.22393.298.camel@haakon2.linux-iscsi.org>
-References: <20120420155151.3fcac4c2d1002ade5ccf44ac@canb.auug.org.au>
-	 <4F91D9D9.6020609@xenotime.net>
-	 <1334999263.30707.129.camel@haakon2.linux-iscsi.org>
-	 <20120421153402.GA22953@kroah.com> <20120422190136.GA31242@linutronix.de>
-	 <1336102463.22393.121.camel@haakon2.linux-iscsi.org>
-	 <20120504094141.GC1156@arwen.pp.htv.fi>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: inux-next: Tree for Apr 27 (uml + mm/memcontrol.c)
+Date: Fri, 4 May 2012 10:24:20 -0700
+Message-ID: <20120504172420.GF24639@google.com>
+References: <4F9ABF9C.2070707@xenotime.net>
+ <alpine.DEB.2.00.1204271141040.28516@chino.kir.corp.google.com>
+ <20120427132343.fbb443b9.akpm@linux-foundation.org>
+ <alpine.DEB.2.00.1204271420350.4631@chino.kir.corp.google.com>
+ <20120427143646.8209627e.akpm@linux-foundation.org>
+ <87fwbnag6u.fsf@skywalker.in.ibm.com>
+ <alpine.DEB.2.00.1205030208120.21476@chino.kir.corp.google.com>
+ <CABEgKgqWo=b=o7PwOLc=QqCWXQxUaYvMX99GP9cR_Y-RoTEW3g@mail.gmail.com>
+ <alpine.DEB.2.00.1205031343300.1631@chino.kir.corp.google.com>
+ <CABEgKgoNaWtoNN_DOH+KTg7VHYDxVCyekcUC3TBfA313TR0jCw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linux-iscsi.org ([67.23.28.174]:41864 "EHLO
-	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752026Ab2EDQ4m (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 May 2012 12:56:42 -0400
-In-Reply-To: <20120504094141.GC1156@arwen.pp.htv.fi>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: balbi@ti.com
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Greg KH <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, target-devel@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CABEgKgoNaWtoNN_DOH+KTg7VHYDxVCyekcUC3TBfA313TR0jCw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hiroyuki Kamezawa <kamezawa.hiroyuki@gmail.com>
+Cc: David Rientjes <rientjes@google.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.cz>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 2012-05-04 at 12:41 +0300, Felipe Balbi wrote:
-> Hi,
-> 
+Hello,
 
-<SNIP>
+(cc'ing Johannes and Michal, hi guys)
 
-> > 
-> > After the recommended change, the in-kernel config using a single gadget
-> > driver (the target) are able to build.  Thanks for the detailed
-> > explanation btw.. ;)
-> > 
-> > I've made the same change for tcm_usb_gadget in lio-core, and updated
-> > for-next-merge with the following merge patch:
-> > 
-> > http://git.kernel.org/?p=linux/kernel/git/nab/target-pending.git;a=commit;h=0c41520201bc0933d65b8644173802778f426234
-> > 
-> > Please let me know if you have any other changes that should go into
-> > sunday's linux-next build.
-> 
-> It looks ok to me. You can add my Acked-by: Felipe Balbi <balbi@ti.com>
-> 
+On Fri, May 04, 2012 at 08:17:11AM +0900, Hiroyuki Kamezawa wrote:
+> > Cgroups is moving to a single hierarchy for simplification, this is=
+n't the
+> > only example of where this is currently suboptimal and it would be
+> > disappointing to solidify hugetlb control as part of memcg because =
+of this
+> > current limitation that will be addressed by generic cgroups develo=
+pment.
+> >
+> > Folks, once these things are merged they become an API that can't e=
+asily
+> > be shifted around and seperated out later. =A0The decision now is e=
+ither to
+> > join hugetlb control with memcg forever when they act in very diffe=
+rent
+> > ways or to seperate them so they can be used and configured individ=
+ually.
+>=20
+> How do other guys think ? Tejun ?
 
-Thanks Felipe!
+I don't know.  hugetlbfs already is this franken thing which is
+separate from the usual memory management.  It needing cgroup type
+resource limitation feels a bit weird to me.  Isn't this supposed to
+be used in more-or-less tightly controlled setups?  The whole thing
+needs to have its memory cut out from boot after all.
 
-So with your Ack in place and if there are no more objections, the plan
-is now to take tcm_usb_gadget through target-pending/for-next-merge
-(along with sbp-target) for an initial upstream merge.
+If someone really has to add cgroup support to hugetlbfs, I'm more
+inclined to say let them play in their own corner unless incorporating
+it into memcg makes it inherently better.
 
-Also, I'm fine if USB folks would prefer to take this via their tree
-now that the gadget target is residing within drivers/usb/gadget/, but
-AFAICT this looks harmless enough to merge directly via the target tree.
+That said, I really don't know that much about mm.  Johannes, Michal,
+what do you guys think?
 
-Thanks again for your review,
+Thanks.
 
---nab
+--=20
+tejun
