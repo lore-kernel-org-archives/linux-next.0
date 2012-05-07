@@ -1,244 +1,63 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: triage for May 6, 2012
-Date: Sun, 6 May 2012 22:42:51 -0400
-Message-ID: <20120507024250.GA2892@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 7 May 2012 13:45:13 +1000
+Message-ID: <20120507134513.bffe9dbda0fac21e472215b5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__7_May_2012_13_45_13_+1000_wy93F7ilMicfe33N"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58567 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752874Ab2EGDp1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 6 May 2012 23:45:27 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Daniel Vetter <daniel.vetter@ffwll.ch>
+
+--Signature=_Mon__7_May_2012_13_45_13_+1000_wy93F7ilMicfe33N
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-This is for the state of the tree as of Friday, as there are
-no weekend builds.  The vga_default_device fails are finally
-gone, and so tilegx has traded that fail for the kvm export
-header check fail to keep sparc and parisc company.
+Hi Dave,
 
-New breakage since last report:
-  ARM:mv78xx0_defconfig (mach-mv78xx0/pcie.c:256: error: 'bus' undeclared)
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/intel_display.c between commit 074b5e1a99fb
+("drm/i915: Do not read non-existent DPLL registers on PCH hardware")
+from Linus' tree and I have no idea which commits from the drm tree.
 
-Randconfig fails that may or may not be new (by their very nature):
-  i386,x86_64: hub.c:(.text+0x11a646): undefined ref to `usb_speed_string'
-	http://kisskb.ellerman.id.au/kisskb/buildresult/6248259/
-	http://kisskb.ellerman.id.au/kisskb/buildresult/6248258/
+I fixed it up (I think), but, again, the merge diff is way to log to
+post ...
 
-Builds that are fixed since last report:
-  arm:orion5x_defconfig (undef `vga_default_device')
-  mips:ip27_defconfig (undef `vga_default_device')
-  sh:sh7785lcr_32bit_defconfig (undef `vga_default_device')
-  arm:s3c2410_defconfig (implicit of_match_ptr)
-  arm:mini2440_defconfig (implicit of_match_ptr)
-  arm:spear[36]xx_defconfig (implicit decl of func 'clk_register_clkdev')
+Again, Dave, can you cherry-pick or merge the commits that affect the drm
+tree from Linus' tree, please?  Surely those fixes are needed in the drm
+tree as well - or if they are not, then let me know and I will just use
+the drm tree's version of this file.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-----------------------
+--Signature=_Mon__7_May_2012_13_45_13_+1000_wy93F7ilMicfe33N
+Content-Type: application/pgp-signature
 
-Note1: The randconfig fails are only listed once and not tracked
-in the below listing.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Note2: Build fails that are perpetual and/or unlikely to ever
-get fixed are not tracked here.
+iQIcBAEBCAAGBQJPp0VJAAoJEECxmPOUX5FE0LcP/R5m5cDq6gTP2b97x8c01XwU
+2TBjw9lp+9FhELVQayYdX0Hxj5y0yKMht8cQSVRNm9+tsV6qrC+RSW2e8sZGZZG+
+wTc1Fp9K/DTOGQY0EafN+5BOj2ipfUpZB0swe1a9iqb+G3QX8ZgBS6myN7jkiDPb
+2c/fPHcQrH1TPgvKosP19nlEMVG0ahB7MGUsBFXNMyb+x0+DCkPq1adRe+BZVn53
+SjhuvZ6jlQKaRK2mew+iFS6aMnjdOFxI/bERIrRvJ2a/cIAoPE64EuxeHbZhXV/u
+3sC9nvU3SixkDBL8Jxi5va4gAErfbV8nHadIDKPpLsrIiaAb3Y2ZaKnQIMDmEf1p
+6ZfGSGhnCjXZXCUkVcFU0jKKxbCgtsJP+IGSR/+4Z1QW3Yhcmf2nj3iHYZki4SZr
+EmEDk8xTVgaxkLSIs/ierH4Fc+iQe7zVgyufBQk+xjtg2GV7fElRzk1P2dfeF1uD
+QX6MY75Q1dr9V0y/wP+bbKBD4DeNXmNUHnTTXbuV4lhExAv3UzW0ZTE2jloLfw5R
+r0FsGySTClOxJy6A13udssVLC3Di4b28scbdENlZ9Htwp2nqKa6GNz7CM4mIGled
+h80OnN26r+4VKONBplXd/58GLZlDCjk3b/IhJnvPZnncBTxGOf5vl605jZUSs4Nv
+6G5B7D3UCEmbqLITery/
+=cLZo
+-----END PGP SIGNATURE-----
 
-Note3: Issues that Stephen finds and reverts/avoids before kicking
-off the all-arch/all-config builds are also not tracked here.
-
-Note4: I'm also not tracking the kallsyms extra pass on ARM on
-a per board basis anymore.  It has nothing to do with the board.
-Why? See:  http://marc.info/?l=linux-next&m=133267456809502
-
-----------------------
-
-Latest results at:
-	http://kisskb.ellerman.id.au/kisskb/branch/9/
-
-Failures as of May 6th, 2012:
-===============================
-
-AM33:asb2303_defconfig,asb2364_defconfig
-	when:	Mar 15
-	why:	cc1: error: unrecognized command line option '-mmem-funcs'
-	status:	Possible fix from TonyB sent for review.
-	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
-----------------
-
-ARM:mv78xx0_defconfig
-	when:	May 4
-	why:	mach-mv78xx0/pcie.c:256:29: error: 'bus' undeclared
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6243629/
-
-ARM:integrator_defconfig
-	when:	May 3
-	why:	pci_std_swizzle was deleted
-	status:	fix sent to arm kernel ML.
-
-ARM:nhk8815_defconfig
-	when:	May 3
-	why:	gpio-nomadik.c: 'struct gpio_chip' has no member named 'of_node'
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6229016/
-
-ARM:mackerel_defconfig,ag5evm_defconfig
-	when:	Apr 19 (possibly earlier?)
-	why:	pfc-sh7372.c: undefined reference to `mmc_detect_change'
-	why:	pfc-sh73a0.c: undefined reference to `mmc_detect_change'
-	status:	
-	fix:	
-	ref:	http://article.gmane.org/gmane.linux.ports.sh.devel/14412
-	ref:	http://article.gmane.org/gmane.linux.ports.sh.devel/14413
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131930/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131908/
-
-ARM:bcmring_defconfig
-	when:	Apr 20ish
-	why:	usr/include/asm/kvm_para.h:1: included file 'asm-generic/kvm_para.h' is not exported
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6228994/
-
-ARM:ezx_defconfig
-	when:	Apr 19 (possibly earlier?)
-	why:	ezx-pcap.c: implicit declaration of function 'irq_to_gpio'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131924/
-
-ARM:netx_defconfig,pnx4008_defconfig 
-	when:	Mar 14
-	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
-	status:	
-	fix:	
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
-	ref:	https://lkml.org/lkml/2012/3/13/670
-
-ARM:ixp4xx_defconfig
-	when:	Oct 26
-	why:	gpio.h: implicit declaration of function '__gpio_get_value'
-	status:	fixed (Imre Kaloz) - but possibly needs rework?
-	fix:	https://lkml.org/lkml/2012/2/8/288
-	ref:	https://lkml.org/lkml/2012/2/8/287
-
-ARM:raumfeld_defconfig
-	when:	Nov 23
-	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
-	status:	perhaps broken since 2010?  See ref below.
-	fix:	
-	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
-
-----------------
-
-AVR32:allnoconfig
-	when:	May 26 2010, 20:49
-	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
-	status:
-	fix:
-	ref:
----------------
-
-bfin: 50% of builds
-	when:	Mar 31
-	why:	"Error: pcrel too far BFD_RELOC_BFIN_10" from kernel/time/timekeeping.c
-	status:	unknown, binutils issue?
-	fix:
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6087324/
-
-bfin:SMP
-	when	May 1
-	why:	kernel/smp.c:724: undefined reference to `smp_call_function_many'
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6228892/
----------------
-
-cris:allyesconfig,allmodconfig
-	when:	Apr 3
-	why:	too many to list here
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035250/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035249/
-----------------
-
-i386:allmodconfig
-	when:	Apr 17
-	why:	samples/seccomp/bpf-direct.c:47:2: error: #error Unsupported platform
-	status:	reported
-	ref:	http://marc.info/?l=linux-kernel&m=133471624530782&w=2
-----------------
-
-h8300:defconfig
-	when:	Mar 15
-	why:	time.c: implicit declaration of function 'get_irq_regs'
-	why:	also seems gcc suffers an ICE
-	status:	ICE bug lodged with gcc folks (TonyB)
-	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
-----------------
-
-m32r:m32700ut.smp_defconfig
-	when:	Mar 15
-	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
-----------------
-
-mips:allmodconfig
-	when:	Apr 17
-	why:	sound/oss/soundcard.c: 'MAX_DMA_CHANNELS' undeclared
-	status: one of many fixes mips needs...
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6091660/
-----------------
-
-parisc:defconfig
-	when:	Apr 20
-	why:	file 'asm-generic/kvm_para.h' is not exported
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6137786/
-
-parisc:allmodconfig
-	when:	?
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	ref:	http://www.spinics.net/lists/linux-parisc/msg04100.html
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-
-parisc64:a500_defconfig 
-	when:	?
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-powerpc:mpc85xx_defconfig
-	when:	May 3
-	why:	powerpc/mm/hugetlbpage.c: passing argument 7 of 'parse_args' from incompatible pointer type
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6243069/
-
-powerpc:ppc40x_defconfig
-	when:	May 3
-	why:	sysdev/ppc4xx_msi.c:178:2: error: right shift count >= width of type
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6243038/
-------------------
-
-sparc[64]:allyesconfig,allmodconfig
-	when:	Apr 18
-	why:	usr/include/asm/kvm_para.h: included file 'asm-generic/kvm_para.h' is not exported
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6243021/
-
-sparc:allnoconfig
-	when:	Apr 20ish
-	why:	arch/sparc/mm/init_64.c: unused variable 'paddr' 'node'
-	why:	arch/sparc/mm/init_64.c: 'memblock_nid_range' defined but not used
-------------------
-
-s390:allyesconfig,allmodconfig
-	when:	May 3
-	why:	drivers/memory/emif.c: error: implicit declaration of function 'readl'
-	status:	reported
-	ref:	https://lkml.org/lkml/2012/5/3/478
-------------------
-
-tile:defconfig
-	when:	May 5
-	why:	usr/include/asm/kvm_para.h: included file 'asm-generic/kvm_para.h' is not exported
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6248599/
-------------------
-
-xtensa:defconfig
-	when:	Apr 20
-	why:	undefined reference to `_sdata'
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6228970/
+--Signature=_Mon__7_May_2012_13_45_13_+1000_wy93F7ilMicfe33N--
