@@ -1,46 +1,33 @@
 From: Michal Marek <mmarek@suse.cz>
-Subject: Re: [PATCH] kbuild: all{no,yes,mod,def,rand}config only read files
- when instructed to.
-Date: Mon, 07 May 2012 21:04:11 +0200
-Message-ID: <4FA81CAB.1040405@suse.cz>
-References: <20120507170319.03aa2fe980a39669c393a956@canb.auug.org.au> <m11umwjheu.fsf@fess.ebiederm.org>
+Subject: Re: linux-next: manual merge of the tip tree with the kbuild tree
+Date: Mon, 07 May 2012 21:25:54 +0200
+Message-ID: <4FA821C2.4070107@suse.cz>
+References: <20120507151054.3fa8df4599e81cc6ae87ca7a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:44654 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757499Ab2EGS7I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 May 2012 14:59:08 -0400
-In-Reply-To: <m11umwjheu.fsf@fess.ebiederm.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120507151054.3fa8df4599e81cc6ae87ca7a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>, Sam Ravnborg <sam@ravnborg.org>
+List-Id: linux-next.vger.kernel.org
 
-Dne 7.5.2012 14:37, Eric W. Biederman napsal(a):
+Dne 7.5.2012 07:10, Stephen Rothwell napsal(a):
+> Hi all,
 > 
-> Prevent subtle surprises to both people working on the kconfig code
-> and people using make allnoconfig allyesconfig allmoconfig and
-> randconfig by only attempting to read a config file if
-> KCONFIG_ALLCONFIG is set.
+> Today's linux-next merge of the tip tree got a conflict in Makefile
+> between commit 1f2bfbd00e46 ("kbuild: link of vmlinux moved to a script")
+> from the kbuild tree and commit 1dbdc6f177c6 ("kbuild/extable: Hook up
+> sortextable into the build system") from the tip tree.
 > 
-> Common sense suggests attempting to read the extra config files does
-> not make sense unless requested.  The documentation says the code
-> won't attempt to read the extra config files unless requested.
-> Current usage does not appear to include people depending on the code
-> reading the config files without the variable being set
+> I used the Makefile bits from the kbuild tree and added the following
+> patch as a merge fixup.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 7 May 2012 15:00:04 +1000
+> Subject: [PATCH] kbuild: merge fix for sorting exceptions tables at build time
 
-It's true that this bug/feature has been there since the introduction of
-KCONFIG_ALLCONFIG, but I doubt anyone relies on it.
-
-
-> So do the
-> simple thing and stop reading config files when passed
-> all{no,yes,mod,def,rand}config unless KCONFIG_ALLCONFIG environment
-> variable is set.
-
-Yes! I applied to kbuild.git#kconfig, with Reported-by: Stephen. Thanks
-to both of you.
+Looks correct, thanks.
 
 Michal
