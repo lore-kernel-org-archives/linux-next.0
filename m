@@ -1,38 +1,101 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: manual merge of the crypto tree with Linus' tree
-Date: Mon, 7 May 2012 14:20:17 +1000
-Message-ID: <20120507042017.GC25039@gondor.apana.org.au>
-References: <20120507123100.09a614d4f4eb1bfc14e64351@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the kbuild tree
+Date: Mon, 7 May 2012 15:10:54 +1000
+Message-ID: <20120507151054.3fa8df4599e81cc6ae87ca7a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__7_May_2012_15_10_54_+1000_P2B03Er+WGLtv0IA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sting.hengli.com.au ([178.18.18.71]:53642 "EHLO
-	fornost.hengli.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751038Ab2EGEUT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 00:20:19 -0400
-Content-Disposition: inline
-In-Reply-To: <20120507123100.09a614d4f4eb1bfc14e64351@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52866 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752176Ab2EGFLL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 01:11:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Andreas Westin <andreas.westin@stericsson.com>, Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>, Sam Ravnborg <sam@ravnborg.org>, Michal Marek <mmarek@suse.cz>
 
-On Mon, May 07, 2012 at 12:31:00PM +1000, Stephen Rothwell wrote:
-> Hi Herbert,
-> 
-> Today's linux-next merge of the crypto tree got a conflict in
-> arch/arm/mach-ux500/devices-common.c between commit 3510ec672319 ("ARM:
-> ux500: remove intermediary add_platform_device* functions") from Linus'
-> tree and commit 3ba812f4d0be ("mach-ux500: crypto - core support for
-> CRYP/HASH module") from the crypto tree.
-> 
-> I can't easily resolve this, sorry.  This crypto patch needs to be
-> revised on top of v3.4-rc1.
-> 
-> I have use the crypto tree from next-20120504 for today.
+--Signature=_Mon__7_May_2012_15_10_54_+1000_P2B03Er+WGLtv0IA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK I'll fix it up.  Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Hi all,
+
+Today's linux-next merge of the tip tree got a conflict in Makefile
+between commit 1f2bfbd00e46 ("kbuild: link of vmlinux moved to a script")
+from the kbuild tree and commit 1dbdc6f177c6 ("kbuild/extable: Hook up
+sortextable into the build system") from the tip tree.
+
+I used the Makefile bits from the kbuild tree and added the following
+patch as a merge fixup.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 7 May 2012 15:00:04 +1000
+Subject: [PATCH] kbuild: merge fix for sorting exceptions tables at build t=
+ime
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ scripts/link-vmlinux.sh |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+index 26c5b65..7d31f61 100644
+--- a/scripts/link-vmlinux.sh
++++ b/scripts/link-vmlinux.sh
+@@ -93,6 +93,11 @@ mksysmap()
+ 	${CONFIG_SHELL} "${srctree}/scripts/mksysmap" ${1} ${2}
+ }
+=20
++sortextable()
++{
++	${objtree}/scripts/sortextable ${1}
++}
++
+ # Delete output files in case of error
+ trap cleanup SIGHUP SIGINT SIGQUIT SIGTERM ERR
+ cleanup()
+@@ -192,6 +197,11 @@ fi
+ info LD vmlinux
+ vmlinux_link "${kallsymso}" vmlinux
+=20
++if [ -n "${CONFIG_BUILDTIME_EXTABLE_SORT}" ]; then
++	info SORTEX vmlinux
++	sortextable vmlinux
++fi
++
+ info SYSMAP System.map
+ mksysmap vmlinux System.map
+=20
+--=20
+1.7.10.280.gaa39
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__7_May_2012_15_10_54_+1000_P2B03Er+WGLtv0IA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPp1leAAoJEECxmPOUX5FEFBYQAJLS5R2yCnrM9iNOnRePdL/J
+e8u16rKzNxSSIAQJsofgupa9ptV5rZ8hyXhmk/KzZCaSyr1NQK/9bNm4XwIGxTK2
+svkdVVPXkmJ2L0LmNC0zEIA9puAKMZEVbOJAvp28q7lAIh5aTtBRflozcLfIbcoJ
+hkkmm1/GGTRB5eJ8EnIS2BOIqi8/jUSj9Ja9VhYLSTY4EBThwlK41WIzPfqBNCV9
+BCrW+3hwe21R4sSNOQpdSnV6UXjJUvZ6f3ujTHe2aDpdKWHzujCnTxF+FGHCc15y
+iuM83TcrydWiEYe6J/MROkGvHNWq1VMLy8iBMWeyYK/BXksh8cBtpkl8T8y8V3YW
+rGDB2m1K7u5QZrD6TvMUEipsG2u4PpHeOlgnePOwTFwxHIigoVTrsS+zZj2CeUq9
+eqlhgMxXvf34S0EX1UkUtIEJsNqDh16B7ROi6oe77RSUFLt3qRRZj7J0M2ZhiaWU
+/+JofH2qxYsUpdSoI3Bq13PMUjSw9Y2bi1vdc0EQlBZjGu7t9TdVlnPCSjXhvPjV
+i5cqcw7Zn7abtjizLNu3iP9Ii7dVO9ctTP9+VPuM4v9Ut/VhWEYu1jdEcC7Iq9Lq
+/k+6z2tm3MUSwYbuToQaAY/B7dQWFisNfZvNVvOC9Seok0TneDlQxi8EpWraCtnQ
+g4ajx3kY+3b0V8vUfARI
+=S4Zx
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_May_2012_15_10_54_+1000_P2B03Er+WGLtv0IA--
