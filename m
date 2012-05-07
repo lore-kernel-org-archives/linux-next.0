@@ -1,33 +1,50 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: linux-next: manual merge of the tip tree with the kbuild tree
-Date: Mon, 07 May 2012 21:25:54 +0200
-Message-ID: <4FA821C2.4070107@suse.cz>
-References: <20120507151054.3fa8df4599e81cc6ae87ca7a@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH -next] tty/amiserial: Add missing argument for tty_unlock()
+Date: Mon,  7 May 2012 21:36:06 +0200
+Message-ID: <1336419366-23555-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120507151054.3fa8df4599e81cc6ae87ca7a@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>, Sam Ravnborg <sam@ravnborg.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gerard.telenet-ops.be ([195.130.132.48]:41386 "EHLO
+	gerard.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757352Ab2EGTgS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 15:36:18 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alan Cox <alan@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-Dne 7.5.2012 07:10, Stephen Rothwell napsal(a):
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in Makefile
-> between commit 1f2bfbd00e46 ("kbuild: link of vmlinux moved to a script")
-> from the kbuild tree and commit 1dbdc6f177c6 ("kbuild/extable: Hook up
-> sortextable into the build system") from the tip tree.
-> 
-> I used the Makefile bits from the kbuild tree and added the following
-> patch as a merge fixup.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 7 May 2012 15:00:04 +1000
-> Subject: [PATCH] kbuild: merge fix for sorting exceptions tables at build time
+commit d29f3ef39be4eec0362b985305fc526d9be318cf ("tty_lock: Localise th=
+e lock")
+missed that d3a7b83f865b46bb7b5e1ed18a129ce1af349db4 ("drivers/tty/amis=
+erial.c:
+add missing tty_unlock") just added a new caller of tty_unlock():
 
-Looks correct, thanks.
+drivers/tty/amiserial.c: In function =E2=80=98set_serial_info=E2=80=99:
+drivers/tty/amiserial.c:1077: error: too few arguments to function =E2=80=
+=98tty_unlock=E2=80=99
 
-Michal
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+http://kisskb.ellerman.id.au/kisskb/buildresult/6271985/
+
+ drivers/tty/amiserial.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/tty/amiserial.c b/drivers/tty/amiserial.c
+index b88a65c..35819e3 100644
+--- a/drivers/tty/amiserial.c
++++ b/drivers/tty/amiserial.c
+@@ -1074,7 +1074,7 @@ static int set_serial_info(struct tty_struct *tty=
+, struct serial_state *state,
+ 		    (new_serial.xmit_fifo_size !=3D state->xmit_fifo_size) ||
+ 		    ((new_serial.flags & ~ASYNC_USR_MASK) !=3D
+ 		     (port->flags & ~ASYNC_USR_MASK))) {
+-			tty_unlock();
++			tty_unlock(tty);
+ 			return -EPERM;
+ 		}
+ 		port->flags =3D ((port->flags & ~ASYNC_USR_MASK) |
+--=20
+1.7.0.4
