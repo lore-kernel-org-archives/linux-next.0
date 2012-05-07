@@ -1,51 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: manual merge of the crypto tree with Linus' tree
-Date: Mon, 7 May 2012 13:02:48 +0200
-Message-ID: <CACRpkdar8OLHcBmm5cDT7S_V1dbLG0L5FXuvw0=bhEjkjz88Pw@mail.gmail.com>
-References: <20120507121137.bdfc96ed31649040506d9c75@canb.auug.org.au>
-	<201205070809.21709.arnd@arndb.de>
-	<20120507090427.GA26654@gondor.apana.org.au>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: [PATCH] kbuild: all{no,yes,mod,def,rand}config only read files when instructed to.
+Date: Mon, 07 May 2012 05:37:45 -0700
+Message-ID: <m11umwjheu.fsf@fess.ebiederm.org>
+References: <20120507170319.03aa2fe980a39669c393a956@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gg0-f174.google.com ([209.85.161.174]:49796 "EHLO
-	mail-gg0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755418Ab2EGLCt convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 07:02:49 -0400
-Received: by gglu4 with SMTP id u4so223994ggl.19
-        for <linux-next@vger.kernel.org>; Mon, 07 May 2012 04:02:48 -0700 (PDT)
-In-Reply-To: <20120507090427.GA26654@gondor.apana.org.au>
+Received: from out02.mta.xmission.com ([166.70.13.232]:43771 "EHLO
+	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756268Ab2EGMdd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 08:33:33 -0400
+In-Reply-To: <20120507170319.03aa2fe980a39669c393a956@canb.auug.org.au>
+	(Stephen Rothwell's message of "Mon, 7 May 2012 17:03:19 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Westin <andreas.westin@stericsson.com>, Lee Jones <lee.jones@linaro.org>
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Mon, May 7, 2012 at 11:04 AM, Herbert Xu <herbert@gondor.apana.org.a=
-u> wrote:
-> On Mon, May 07, 2012 at 08:09:21AM +0000, Arnd Bergmann wrote:
->> On Monday 07 May 2012, Stephen Rothwell wrote:
->> > + static void __init u8500_cryp1_hash1_init(void)
->> > + {
->> > + =A0 =A0 =A0 db8500_add_cryp1(&u8500_cryp1_platform_data);
->> > + =A0 =A0 =A0 db8500_add_hash1(&u8500_hash1_platform_data);
->> > + }
->>
->> This is actually not correct any more because of the
->> other changes: each device addition should also pass the parent
->> pointer so the device is created in the right position.
->>
->> Stephen, your fix is ok for linux-next and I expect everything
->> to still work, but we should not merge it into v3.5 this way.
->>
->> Thanks for the fixup.
->
-> OK, I'll drop the last patch
->
-> =A0 =A0 =A0 =A0mach-ux500: crypto - core support for CRYP/HASH module
 
-OK we need to revisit this and we can drop the U5500 hunks at
-the same time.
+Prevent subtle surprises to both people working on the kconfig code
+and people using make allnoconfig allyesconfig allmoconfig and
+randconfig by only attempting to read a config file if
+KCONFIG_ALLCONFIG is set.
 
-Yours,
-Linus Walleij
+Common sense suggests attempting to read the extra config files does
+not make sense unless requested.  The documentation says the code
+won't attempt to read the extra config files unless requested.
+Current usage does not appear to include people depending on the code
+reading the config files without the variable being set So do the
+simple thing and stop reading config files when passed
+all{no,yes,mod,def,rand}config unless KCONFIG_ALLCONFIG environment
+variable is set.
+
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+---
+ scripts/kconfig/conf.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+index 0fdda91..0dc4a2c 100644
+--- a/scripts/kconfig/conf.c
++++ b/scripts/kconfig/conf.c
+@@ -574,7 +574,9 @@ int main(int ac, char **av)
+ 	case alldefconfig:
+ 	case randconfig:
+ 		name = getenv("KCONFIG_ALLCONFIG");
+-		if (name && (strcmp(name, "") != 0) && (strcmp(name, "1") != 0)) {
++		if (!name)
++			break;
++		if ((strcmp(name, "") != 0) && (strcmp(name, "1") != 0)) {
+ 			if (conf_read_simple(name, S_DEF_USER)) {
+ 				fprintf(stderr,
+ 					_("*** Can't read seed configuration \"%s\"!\n"),
+-- 
+1.7.2.5
