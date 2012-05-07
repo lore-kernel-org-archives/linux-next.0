@@ -1,101 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the kbuild tree
-Date: Mon, 7 May 2012 15:10:54 +1000
-Message-ID: <20120507151054.3fa8df4599e81cc6ae87ca7a@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the tty tree
+Date: Mon, 7 May 2012 15:58:31 +1000
+Message-ID: <20120507155831.a84a079857b24b7772333a37@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__7_May_2012_15_10_54_+1000_P2B03Er+WGLtv0IA"
+ boundary="Signature=_Mon__7_May_2012_15_58_31_+1000_APjPxDLS=kppp7P5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52866 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:53951 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752176Ab2EGFLL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 01:11:11 -0400
+	with ESMTP id S1751307Ab2EGF6l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 01:58:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>, Sam Ravnborg <sam@ravnborg.org>, Michal Marek <mmarek@suse.cz>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
 
---Signature=_Mon__7_May_2012_15_10_54_+1000_P2B03Er+WGLtv0IA
+--Signature=_Mon__7_May_2012_15_58_31_+1000_APjPxDLS=kppp7P5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the tip tree got a conflict in Makefile
-between commit 1f2bfbd00e46 ("kbuild: link of vmlinux moved to a script")
-from the kbuild tree and commit 1dbdc6f177c6 ("kbuild/extable: Hook up
-sortextable into the build system") from the tip tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/serial/68360serial.c between commit d29f3ef39be4
+("tty_lock: Localise the lock") from the tty tree and commit 60e6d2689c2a
+("staging: evict abandoned 68360serial.c driver from the kernel") from
+the staging tree.
 
-I used the Makefile bits from the kbuild tree and added the following
-patch as a merge fixup.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 7 May 2012 15:00:04 +1000
-Subject: [PATCH] kbuild: merge fix for sorting exceptions tables at build t=
-ime
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- scripts/link-vmlinux.sh |   10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 26c5b65..7d31f61 100644
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -93,6 +93,11 @@ mksysmap()
- 	${CONFIG_SHELL} "${srctree}/scripts/mksysmap" ${1} ${2}
- }
-=20
-+sortextable()
-+{
-+	${objtree}/scripts/sortextable ${1}
-+}
-+
- # Delete output files in case of error
- trap cleanup SIGHUP SIGINT SIGQUIT SIGTERM ERR
- cleanup()
-@@ -192,6 +197,11 @@ fi
- info LD vmlinux
- vmlinux_link "${kallsymso}" vmlinux
-=20
-+if [ -n "${CONFIG_BUILDTIME_EXTABLE_SORT}" ]; then
-+	info SORTEX vmlinux
-+	sortextable vmlinux
-+fi
-+
- info SYSMAP System.map
- mksysmap vmlinux System.map
-=20
---=20
-1.7.10.280.gaa39
-
+The latter removed the file, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__7_May_2012_15_10_54_+1000_P2B03Er+WGLtv0IA
+--Signature=_Mon__7_May_2012_15_58_31_+1000_APjPxDLS=kppp7P5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPp1leAAoJEECxmPOUX5FEFBYQAJLS5R2yCnrM9iNOnRePdL/J
-e8u16rKzNxSSIAQJsofgupa9ptV5rZ8hyXhmk/KzZCaSyr1NQK/9bNm4XwIGxTK2
-svkdVVPXkmJ2L0LmNC0zEIA9puAKMZEVbOJAvp28q7lAIh5aTtBRflozcLfIbcoJ
-hkkmm1/GGTRB5eJ8EnIS2BOIqi8/jUSj9Ja9VhYLSTY4EBThwlK41WIzPfqBNCV9
-BCrW+3hwe21R4sSNOQpdSnV6UXjJUvZ6f3ujTHe2aDpdKWHzujCnTxF+FGHCc15y
-iuM83TcrydWiEYe6J/MROkGvHNWq1VMLy8iBMWeyYK/BXksh8cBtpkl8T8y8V3YW
-rGDB2m1K7u5QZrD6TvMUEipsG2u4PpHeOlgnePOwTFwxHIigoVTrsS+zZj2CeUq9
-eqlhgMxXvf34S0EX1UkUtIEJsNqDh16B7ROi6oe77RSUFLt3qRRZj7J0M2ZhiaWU
-/+JofH2qxYsUpdSoI3Bq13PMUjSw9Y2bi1vdc0EQlBZjGu7t9TdVlnPCSjXhvPjV
-i5cqcw7Zn7abtjizLNu3iP9Ii7dVO9ctTP9+VPuM4v9Ut/VhWEYu1jdEcC7Iq9Lq
-/k+6z2tm3MUSwYbuToQaAY/B7dQWFisNfZvNVvOC9Seok0TneDlQxi8EpWraCtnQ
-g4ajx3kY+3b0V8vUfARI
-=S4Zx
+iQIcBAEBCAAGBQJPp2SHAAoJEECxmPOUX5FEA3kP+QHPA9hci30b30WG9lgIuriR
+iHEa40u2GVYZs/zGcfioLuSZbl9txlu0o5dz7H4TLQQkVH/EDf9q7wQJOminWQK7
+1igoLE78PrAm+XNBDTArZbFQxY3pSoH4+gcK9+N5bnNTvyLPPU8fc+kUWDPiAj5D
+YlW5iQRa+igd5+jsDHriFMZIAIuDSlxxnaLZhzig01MvAcujVxpXg5HnaBadhYIe
+n36naTYAaJJoHYzUGCy/vqLKdL0ku5fIXH483PUz9ropF0cF8lXmY+eUTUOFNq6U
+jUlL0Tzfiyx589f5XmL68bSGIau+9eJ2kEO8atxhZXbLBqcBrN6KyH8CyTxHgQRc
+5DcYivMMWemB4fgAtaJCSw9O5X1LjWolgj85RQ1eZ7HUX2NuXKNN0FdQZZAzlpUn
+LVnVJiByhCO+zGFneY9KReOInjzEOsbfYcNeywDkoPj75L4UFSGHlgNUv7pheeEa
+3JRor/5NqZl1JLX+VSIimSVxcIstnfOAMzOlfmc4QNTCjA4aAe7RZeF5Sz3ViP8A
+c0kmcFwLQb62npxZTW9w2RGmjj6X13NhEGuu+7URVNmmFzyBWBI6Ws1yURYbMP0+
+12UgnadAjqfnW2KjL8PQ1CZYPcYK1N0IFZMPrT9fGB3IY5UZf9ctZCYA/MTROqCW
+SkqYxeaHoJ6K1G9IewC3
+=7I1P
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__7_May_2012_15_10_54_+1000_P2B03Er+WGLtv0IA--
+--Signature=_Mon__7_May_2012_15_58_31_+1000_APjPxDLS=kppp7P5--
