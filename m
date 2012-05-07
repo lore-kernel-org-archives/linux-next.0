@@ -1,50 +1,46 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: inux-next: Tree for Apr 27 (uml + mm/memcontrol.c)
-Date: Mon, 7 May 2012 10:08:40 -0700
-Message-ID: <20120507170840.GA19417@google.com>
-References: <20120427132343.fbb443b9.akpm@linux-foundation.org>
- <alpine.DEB.2.00.1204271420350.4631@chino.kir.corp.google.com>
- <20120427143646.8209627e.akpm@linux-foundation.org>
- <87fwbnag6u.fsf@skywalker.in.ibm.com>
- <alpine.DEB.2.00.1205030208120.21476@chino.kir.corp.google.com>
- <CABEgKgqWo=b=o7PwOLc=QqCWXQxUaYvMX99GP9cR_Y-RoTEW3g@mail.gmail.com>
- <alpine.DEB.2.00.1205031343300.1631@chino.kir.corp.google.com>
- <CABEgKgoNaWtoNN_DOH+KTg7VHYDxVCyekcUC3TBfA313TR0jCw@mail.gmail.com>
- <20120504172420.GF24639@google.com>
- <20120507140103.GA4251@tiehlicka.suse.cz>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: [PATCH] kbuild: all{no,yes,mod,def,rand}config only read files
+ when instructed to.
+Date: Mon, 07 May 2012 21:04:11 +0200
+Message-ID: <4FA81CAB.1040405@suse.cz>
+References: <20120507170319.03aa2fe980a39669c393a956@canb.auug.org.au> <m11umwjheu.fsf@fess.ebiederm.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:51987 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756571Ab2EGRIr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 13:08:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20120507140103.GA4251@tiehlicka.suse.cz>
+Received: from cantor2.suse.de ([195.135.220.15]:44654 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757499Ab2EGS7I (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 May 2012 14:59:08 -0400
+In-Reply-To: <m11umwjheu.fsf@fess.ebiederm.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Hocko <mhocko@suse.cz>
-Cc: Hiroyuki Kamezawa <kamezawa.hiroyuki@gmail.com>, David Rientjes <rientjes@google.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Johannes Weiner <hannes@cmpxchg.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Hello,
-
-On Mon, May 07, 2012 at 04:01:04PM +0200, Michal Hocko wrote:
-> > If someone really has to add cgroup support to hugetlbfs, I'm more
-> > inclined to say let them play in their own corner unless incorporating
-> > it into memcg makes it inherently better.
+Dne 7.5.2012 14:37, Eric W. Biederman napsal(a):
 > 
-> I would agree with you but my impression from the previous (hugetlb)
-> implementation was that it is much harder to implement the charge moving
-> if we do not use page_cgroup.
-> Also the range tracking is rather ugly and clumsy.
+> Prevent subtle surprises to both people working on the kconfig code
+> and people using make allnoconfig allyesconfig allmoconfig and
+> randconfig by only attempting to read a config file if
+> KCONFIG_ALLCONFIG is set.
+> 
+> Common sense suggests attempting to read the extra config files does
+> not make sense unless requested.  The documentation says the code
+> won't attempt to read the extra config files unless requested.
+> Current usage does not appear to include people depending on the code
+> reading the config files without the variable being set
 
-Understood.  I haven't looked at the code, so my opinion was based on
-the assumption that the whole thing is completely separate (in design
-and implementation) from memcg as hugtlbfs is from the usual mm.  If
-it's better / easier implemented together with memcg, I have no
-objection to making it part of memcg.
+It's true that this bug/feature has been there since the introduction of
+KCONFIG_ALLCONFIG, but I doubt anyone relies on it.
 
-Thanks.
 
--- 
-tejun
+> So do the
+> simple thing and stop reading config files when passed
+> all{no,yes,mod,def,rand}config unless KCONFIG_ALLCONFIG environment
+> variable is set.
+
+Yes! I applied to kbuild.git#kconfig, with Reported-by: Stephen. Thanks
+to both of you.
+
+Michal
