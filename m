@@ -1,33 +1,59 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with Linus' tree
-Date: Fri, 4 May 2012 16:19:12 -0700
-Message-ID: <20120504231912.GB9720@kroah.com>
-References: <20120501150109.753d67c17e5beead1600c7ac@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Mon, 7 May 2012 10:08:56 +1000
+Message-ID: <20120507100856.a54d45c94b395de81dd2b207@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__7_May_2012_10_08_56_+1000_kgpDBL=6JPuDMGrD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:44165 "EHLO
-	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755767Ab2EDXTO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 May 2012 19:19:14 -0400
-Content-Disposition: inline
-In-Reply-To: <20120501150109.753d67c17e5beead1600c7ac@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38196 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754477Ab2EGAJI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 6 May 2012 20:09:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jim Cromie <jim.cromie@gmail.com>, Rusty Russell <rusty@rustcorp.com.au>, Chris Metcalf <cmetcalf@tilera.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
 
-On Tue, May 01, 2012 at 03:01:09PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> init/main.c between commit a99cd1125189 ("init: fix bug where environment
-> vars can't be passed via boot args") from Linus' tree and commit
-> 9fb48c744ba6 ("params: add 3rd arg to option handler callback signature")
-> from the driver-core tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+--Signature=_Mon__7_May_2012_10_08_56_+1000_kgpDBL=6JPuDMGrD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, this should now be resolved in my tree.
+Hi Linus,
 
-greg k-h
+While building your tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+ERROR: "set_personality_ia32" [arch/x86/ia32/ia32_aout.ko] undefined!
+
+Caused by commit ce7e5d2d19bc ("x86: fix broken TASK_SIZE for ia32_aout").
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__7_May_2012_10_08_56_+1000_kgpDBL=6JPuDMGrD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPpxKYAAoJEECxmPOUX5FETz0P/j+LXU0ML+Oa9xJiX3MbDbHW
+auXRW8DMHJw+eBUDebUt06Hb0lGbfBkRk8o72dHMEOWJ/zbzJqjMkdqR+I9G/VPI
+KveFYi7Ii0UQZRT+O9UewpP6bWz2nCg8+mk0YnxxeWlAnL9Kb713Q77F6I53u/vs
+ePfnatVOrkA4MSbubg03PiJ+x2XkJVYkvDNFjM3nI2kWXjWB3bfRUCrMqW10GlcK
+dGcmxSemes5SHonAQXcxJ8MgbAshfAoD6SbJ9Qpg21yqLGE6DPsSNN4RlgO+OxpT
+5qt09DO9Nl0QWAiZ+60HSEHZuHmpjufqa5OSuB0umqHNqQSSlarih0s2uYknQQMU
+BubWnwt3kpFe1KUMgf1KQ9sNQT9w29Uy6HthSSzbNGhz7hRNSDizdOy8Fjnii/tj
+L17rJt1teRwj4qMbtvwGL0vYrzDNki+7Io/3f2q0J0Y9z3bS6mcitboxKqcwc0Ob
+Lg5ZlKPflcz84Q9I1kvayRBB/GeK5sXPBv1xpNZRIb2Qpd847NrvoP62vHR6fzTF
+e8XnjjKWGUYf+ppJXV3ovqK/Dum6eBR5riFxtRijXCgGyAUMYtTOmsu5AiBOMruY
+MGUObtrRmo7HtdgFxZjvhkWcL2oo7NQOfSEoFedADpQJFWFLIJHLLD4xwutXyARz
++ISWmlkFz5n8uOpMxXq4
+=2Q69
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_May_2012_10_08_56_+1000_kgpDBL=6JPuDMGrD--
