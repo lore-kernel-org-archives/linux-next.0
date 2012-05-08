@@ -1,75 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: failed import of rr tree
-Date: Tue, 8 May 2012 10:59:04 +1000
-Message-ID: <20120508105904.1709f6f2b7da99e86327e3e2@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the ceph tree
+Date: Tue, 8 May 2012 13:09:48 +1000
+Message-ID: <20120508130948.066bcfb7f7742d039c2db5d3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__8_May_2012_10_59_04_+1000_7ZEP2dN.KiJ4j_ym"
+ boundary="Signature=_Tue__8_May_2012_13_09_48_+1000_OTCCoMbxcU_QKdOx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40607 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:37769 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754377Ab2EHA7M (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 20:59:12 -0400
+	with ESMTP id S1758045Ab2EHDKB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 23:10:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, Sage Weil <sage@newdream.net>, Sage Weil <sage@inktank.com>
 
---Signature=_Tue__8_May_2012_10_59_04_+1000_7ZEP2dN.KiJ4j_ym
+--Signature=_Tue__8_May_2012_13_09_48_+1000_OTCCoMbxcU_QKdOx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi all,
 
-Importing the rr tree today produced this:
+Today's linux-next merge of the net-next tree got a conflict in
+net/ceph/osdmap.c between commit 8b3932690084 ("crush: warn on do_rule
+failure") from the ceph tree and commit 95c961747284 ("net: cleanup
+unsigned to unsigned int") from the net-next tree.
 
-$ git am ../quilt/rr/virtio:balloon_separate_out_common_code_between_remove=
-_and_freeze_functions.patch
-Applying: virtio: balloon: separate out common code between remove and free=
-ze functions
-error: patch failed: drivers/virtio/virtio_balloon.c:381
-error: drivers/virtio/virtio_balloon.c: patch does not apply
-Patch failed at 0001 virtio: balloon: separate out common code between remo=
-ve and freeze functions
-
-so I tried applying the patch with patch(1):
-
-$ patch -p1 -E <.git/rebase-apply/0001
-patching file drivers/virtio/virtio_balloon.c
-Hunk #1 FAILED at 381.
-Hunk #2 succeeded at 408 (offset -1 lines).
-1 out of 2 hunks FAILED -- saving rejects to file drivers/virtio/virtio_bal=
-loon.c.rej
-
-Did you use the wrong base (v3.4-rc6)?
-
-I will use the rr tree from next-20120507 for today.
-
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__8_May_2012_10_59_04_+1000_7ZEP2dN.KiJ4j_ym
+diff --cc net/ceph/osdmap.c
+index 2592f3c,56e561a..0000000
+--- a/net/ceph/osdmap.c
++++ b/net/ceph/osdmap.c
+@@@ -991,11 -998,12 +991,11 @@@ int ceph_calc_object_layout(struct ceph
+  			    struct ceph_file_layout *fl,
+  			    struct ceph_osdmap *osdmap)
+  {
+- 	unsigned num, num_mask;
++ 	unsigned int num, num_mask;
+  	struct ceph_pg pgid;
+ -	s32 preferred =3D (s32)le32_to_cpu(fl->fl_pg_preferred);
+  	int poolid =3D le32_to_cpu(fl->fl_pg_pool);
+  	struct ceph_pg_pool_info *pool;
+- 	unsigned ps;
++ 	unsigned int ps;
+ =20
+  	BUG_ON(!osdmap);
+ =20
+@@@ -1027,7 -1045,8 +1027,7 @@@ static int *calc_pg_raw(struct ceph_osd
+  	struct ceph_pg_mapping *pg;
+  	struct ceph_pg_pool_info *pool;
+  	int ruleno;
+- 	unsigned poolid, ps, pps, t, r;
+ -	unsigned int poolid, ps, pps, t;
+ -	int preferred;
+++	unsigned int poolid, ps, pps, t, r;
+ =20
+  	poolid =3D le32_to_cpu(pgid.pool);
+  	ps =3D le16_to_cpu(pgid.ps);
+
+--Signature=_Tue__8_May_2012_13_09_48_+1000_OTCCoMbxcU_QKdOx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPqG/YAAoJEECxmPOUX5FE7rkP/1NhZyNULNn1WGPYCyz9oUx2
-46Nf63x4BGBL6xWrrFYxSM0Wh7gxbuq9/z0NUguCO1x8XDFN69HxO6pHhFJKz1gl
-vlKj9mkc4MztSKjXPRjzxeqqhlhDMtPCwEK2nrDdOPuRogJ6/vxtfnjfRTyDR111
-cSb5SsMW+3di50rc4imoleiUzAYs/CL6H157TIqRegO97nVnyn4Q03Mc5N65rgEA
-vypVcAN7WdLO0qu5iCksi/C/TrjXhAuTShmdrw0nwcN6iCfjF+4INlYr8GTmAzYR
-Qh4gVJWk2hESV6r7WBHgAu5mWTSE3QKdrof3jTlYUOKKiN19QJojm6W47Vgg6G3m
-KLAXafu26Ar5EvsN8YdU8Rxcf49mMLAgUW8fo2w9bMcqDx1dcN4kxFUOodFzo53s
-c7OYSGWQqsKtidnJL5mz6OqZUm4A4/+taXvXr0X7shlWjh14r9HY9AFsXvJWMfTu
-/8gIWyRHB+q3MtLFqoBZ6W0XwstUeBgl+Zqv4/AlC0R1rFYE0UE8Q9l9eXT/vfhP
-hWZXjdPeIa2urwWrGhTAWjMm9SOZrN8LPdGjAJJZcuOvLFWNtoEuA6U1HQZEexjD
-qeGGo2lGGs+NIVokr52uHifyppCSX2+8tXuHIpIcubN3VjIf/L1vc18qCtXok2zj
-JkuRGRweK1u0NGAOgMJl
-=kV3t
+iQIcBAEBCAAGBQJPqI58AAoJEECxmPOUX5FEYDUP/Ru1IO148hWw6W2/8o+1JfD6
+bV3J1sr0N7ZVAkQ+JV8Tk8fo2SV0Wnhop7vqFq6rmW4hh5mrvmEPOPCzIOh5Kpoi
+797Xd7/gi6Y76Ir06RH2Bhzg6s1NMKUdrXhFSgGm3xlv0PUwctY/8Wv2UFYr3dTN
+As6OfCApWzMv5g5Uu4tni2W4wHxLAgAWaeaa2m7tjoPYR4xRmSJo2kUtpO11+5Qt
+/DZ2VEBy5oOvGtWem16Njaj3WPzU0evBQIlegZAvChzCfPHkgOP3aXVWvrDgzKaZ
+Jk1pAs/EE6Zh7Eh+N/3HzKSWXdhG9BMyw9phZw4liO5qCUkzw+af969ffVWYD1rY
+YaDER7BOxIkXxO214rOOkdujPEolbNG1SWEp92MzFmraGiVsdF11VkBA27AqGAyD
+3RCzpu9Nu7RoR3cYqP7pQ1rbjmCVJkkZ09hWZFLa9xYBMj5JEoDdbehMDXFIbChz
+IBKalcSbRG9j60OacdGNjCAc3g/HOj9AyDYy3PuaKVH/dWa/tzsR0D+te9dCCCla
+kYF+bxaQTV5mVUqzCaSB7juCLfQvOTY8tGYorekSqv3TSCE76ZsnwDg3fcKnxXmy
+dqLQC5mf4HvE99yz+5GBBQB+pQI6ZrR+w5JJ4mcpcFvTiUwIiS5mg1wgoWbw0pbM
+cth225k2JA3Fkt9NAN9z
+=HlS9
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__8_May_2012_10_59_04_+1000_7ZEP2dN.KiJ4j_ym--
+--Signature=_Tue__8_May_2012_13_09_48_+1000_OTCCoMbxcU_QKdOx--
