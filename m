@@ -1,88 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the ceph tree
-Date: Tue, 8 May 2012 13:09:48 +1000
-Message-ID: <20120508130948.066bcfb7f7742d039c2db5d3@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH] powerpc: fix compile fail in hugetlb cmdline parsing
+Date: Tue, 08 May 2012 13:53:24 +0930
+Message-ID: <878vh3cncz.fsf@rustcorp.com.au>
+References: <1336401142-18733-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__8_May_2012_13_09_48_+1000_OTCCoMbxcU_QKdOx"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:37769 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758045Ab2EHDKB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 23:10:01 -0400
+Received: from ozlabs.org ([203.10.76.45]:50586 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751826Ab2EHEpR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 May 2012 00:45:17 -0400
+In-Reply-To: <1336401142-18733-1-git-send-email-paul.gortmaker@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, Sage Weil <sage@newdream.net>, Sage Weil <sage@inktank.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Jim Cromie <jim.cromie@gmail.com>, Jason Baron <jbaron@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Becky Bruce <beckyb@kernel.crashing.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
---Signature=_Tue__8_May_2012_13_09_48_+1000_OTCCoMbxcU_QKdOx
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon,  7 May 2012 10:32:22 -0400, Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+> Commit 9fb48c744ba6a4bf58b666f4e6fdac3008ea1bd4
+> 
+>     "params: add 3rd arg to option handler callback signature"
+> 
+> added an extra arg to the function, but didn't catch all the use
+> cases needing it, causing this compile fail in mpc85xx_defconfig:
+> 
+>  arch/powerpc/mm/hugetlbpage.c:316:4: error: passing argument 7 of
+>  'parse_args' from incompatible pointer type [-Werror]
+> 
+>  include/linux/moduleparam.h:317:12: note: expected
+> 	 'int (*)(char *, char *, const char *)' but argument is of type
+> 	 'int (*)(char *, char *)'
+> 
+> This function has no need to printk out the "doing" value, so
+> just add the arg as an "unused".
+> 
+> Cc: Rusty Russell <rusty@rustcorp.com.au>
+> Cc: Jim Cromie <jim.cromie@gmail.com>
+> Cc: Jason Baron <jbaron@redhat.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Becky Bruce <beckyb@kernel.crashing.org>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-Hi all,
+Acked-by: Rusty Russell <rusty@rustcorp.com.au>
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/ceph/osdmap.c between commit 8b3932690084 ("crush: warn on do_rule
-failure") from the ceph tree and commit 95c961747284 ("net: cleanup
-unsigned to unsigned int") from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc net/ceph/osdmap.c
-index 2592f3c,56e561a..0000000
---- a/net/ceph/osdmap.c
-+++ b/net/ceph/osdmap.c
-@@@ -991,11 -998,12 +991,11 @@@ int ceph_calc_object_layout(struct ceph
-  			    struct ceph_file_layout *fl,
-  			    struct ceph_osdmap *osdmap)
-  {
-- 	unsigned num, num_mask;
-+ 	unsigned int num, num_mask;
-  	struct ceph_pg pgid;
- -	s32 preferred =3D (s32)le32_to_cpu(fl->fl_pg_preferred);
-  	int poolid =3D le32_to_cpu(fl->fl_pg_pool);
-  	struct ceph_pg_pool_info *pool;
-- 	unsigned ps;
-+ 	unsigned int ps;
- =20
-  	BUG_ON(!osdmap);
- =20
-@@@ -1027,7 -1045,8 +1027,7 @@@ static int *calc_pg_raw(struct ceph_osd
-  	struct ceph_pg_mapping *pg;
-  	struct ceph_pg_pool_info *pool;
-  	int ruleno;
-- 	unsigned poolid, ps, pps, t, r;
- -	unsigned int poolid, ps, pps, t;
- -	int preferred;
-++	unsigned int poolid, ps, pps, t, r;
- =20
-  	poolid =3D le32_to_cpu(pgid.pool);
-  	ps =3D le16_to_cpu(pgid.ps);
-
---Signature=_Tue__8_May_2012_13_09_48_+1000_OTCCoMbxcU_QKdOx
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPqI58AAoJEECxmPOUX5FEYDUP/Ru1IO148hWw6W2/8o+1JfD6
-bV3J1sr0N7ZVAkQ+JV8Tk8fo2SV0Wnhop7vqFq6rmW4hh5mrvmEPOPCzIOh5Kpoi
-797Xd7/gi6Y76Ir06RH2Bhzg6s1NMKUdrXhFSgGm3xlv0PUwctY/8Wv2UFYr3dTN
-As6OfCApWzMv5g5Uu4tni2W4wHxLAgAWaeaa2m7tjoPYR4xRmSJo2kUtpO11+5Qt
-/DZ2VEBy5oOvGtWem16Njaj3WPzU0evBQIlegZAvChzCfPHkgOP3aXVWvrDgzKaZ
-Jk1pAs/EE6Zh7Eh+N/3HzKSWXdhG9BMyw9phZw4liO5qCUkzw+af969ffVWYD1rY
-YaDER7BOxIkXxO214rOOkdujPEolbNG1SWEp92MzFmraGiVsdF11VkBA27AqGAyD
-3RCzpu9Nu7RoR3cYqP7pQ1rbjmCVJkkZ09hWZFLa9xYBMj5JEoDdbehMDXFIbChz
-IBKalcSbRG9j60OacdGNjCAc3g/HOj9AyDYy3PuaKVH/dWa/tzsR0D+te9dCCCla
-kYF+bxaQTV5mVUqzCaSB7juCLfQvOTY8tGYorekSqv3TSCE76ZsnwDg3fcKnxXmy
-dqLQC5mf4HvE99yz+5GBBQB+pQI6ZrR+w5JJ4mcpcFvTiUwIiS5mg1wgoWbw0pbM
-cth225k2JA3Fkt9NAN9z
-=HlS9
------END PGP SIGNATURE-----
-
---Signature=_Tue__8_May_2012_13_09_48_+1000_OTCCoMbxcU_QKdOx--
+Thanks,
+Rusty.
