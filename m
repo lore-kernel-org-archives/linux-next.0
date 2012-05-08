@@ -1,263 +1,75 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: triage for May 7, 2012
-Date: Mon, 7 May 2012 19:04:40 -0400
-Message-ID: <20120507230439.GA19428@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: failed import of rr tree
+Date: Tue, 8 May 2012 10:59:04 +1000
+Message-ID: <20120508105904.1709f6f2b7da99e86327e3e2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__8_May_2012_10_59_04_+1000_7ZEP2dN.KiJ4j_ym"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:35240 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757451Ab2EGXEl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 19:04:41 -0400
-Content-Disposition: inline
+Received: from haggis.pcug.org.au ([203.10.76.10]:40607 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754377Ab2EHA7M (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 May 2012 20:59:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org
 
-Lots of new fires burning today, let me try to summarize.
+--Signature=_Tue__8_May_2012_10_59_04_+1000_7ZEP2dN.KiJ4j_ym
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks like the "old" mmc fails got replaced by new ones on some
-different boards.  I've reported the new fail on arm-kernel with
-the cause of the fail.
-  [ http://marc.info/?l=linux-arm-kernel&m=133642820330185&w=2 ]
+Hi Rusty,
 
-Something evil vandalized all mips builds.  At a glance it looks
-like a kbuild thing -- it fails with:
-  LD      init/built-in.o
-  KSYM    .tmp_kallsyms1.o
-  <command-line>:0:1: error: macro names must be identifiers
+Importing the rr tree today produced this:
 
-The itanic blew up with some new kooky ld error I've not seen
-before ("ia64-linux-ld: .tmp_kallsyms1.o: linking constant-gp
-files with non-constant-gp files)
+$ git am ../quilt/rr/virtio:balloon_separate_out_common_code_between_remove=
+_and_freeze_functions.patch
+Applying: virtio: balloon: separate out common code between remove and free=
+ze functions
+error: patch failed: drivers/virtio/virtio_balloon.c:381
+error: drivers/virtio/virtio_balloon.c: patch does not apply
+Patch failed at 0001 virtio: balloon: separate out common code between remo=
+ve and freeze functions
 
-For arch=cris,m68k -- some new tty related fallout appeared.
-Geert has a m68k patch posted 3pm EST today.
+so I tried applying the patch with patch(1):
 
-The parisc blew up on a basic gcc config option (WTF?)
+$ patch -p1 -E <.git/rebase-apply/0001
+patching file drivers/virtio/virtio_balloon.c
+Hunk #1 FAILED at 381.
+Hunk #2 succeeded at 408 (offset -1 lines).
+1 out of 2 hunks FAILED -- saving rejects to file drivers/virtio/virtio_bal=
+loon.c.rej
 
-I've triaged and fixed the ppc mpc85xx_defconfig fail; it is
-in my linux-next feed temporarily. 
+Did you use the wrong base (v3.4-rc6)?
 
-The kvm export annoyance [sparc/parisc,etc] continues to linger.
+I will use the rr tree from next-20120507 for today.
 
-The kallsyms nonsense on ARM continues to muddy the waters on the
-pass/fail triage as it shifts around from board to board.  :(
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
----------------------
+--Signature=_Tue__8_May_2012_10_59_04_+1000_7ZEP2dN.KiJ4j_ym
+Content-Type: application/pgp-signature
 
-New breakage since last report:
-	arm:versatile_defconfig,realview_defconfig,realview-smp_defconfig,
-	u300_defconfig,vexpress_defconfig
-	   drivers/mmc/host/mmci.c: implicit decl mmci_dt_populate_generic_pdata
-	   http://marc.info/?l=linux-arm-kernel&m=133642820330185&w=2
-	mips:<everything>
-	   <command-line>:0:1: error: macro names must be identifiers
-	   http://kisskb.ellerman.id.au/kisskb/buildresult/6271954/
-	m68k:defconfig
-	   drivers/tty/amiserial.c: too few args to function 'tty_unlock'
-	   http://kisskb.ellerman.id.au/kisskb/buildresult/6272350/
-	parisc:allnoconfig
-	   ld: unrecognized option '-print-libgcc-file-name`
-	cris:etrax-100lx_defconfig 
-	   tty/serial/crisv10.c: blows up with two new errors.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Randconfig fails that may or may not be new (by their very nature):
-	i386: drivers/gpu/drm/radeon/radeon_state.o and
-	      drivers/isdn/icn/icn.o
-	  arch/x86/include/asm/uaccess_32.h:211:26: error: call to
-	  'copy_from_user_overflow' declared with attribute error:
-	  copy_from_user() buffer size is not provably correct
-	  [ http://kisskb.ellerman.id.au/kisskb/buildresult/6271958/ ]
+iQIcBAEBCAAGBQJPqG/YAAoJEECxmPOUX5FE7rkP/1NhZyNULNn1WGPYCyz9oUx2
+46Nf63x4BGBL6xWrrFYxSM0Wh7gxbuq9/z0NUguCO1x8XDFN69HxO6pHhFJKz1gl
+vlKj9mkc4MztSKjXPRjzxeqqhlhDMtPCwEK2nrDdOPuRogJ6/vxtfnjfRTyDR111
+cSb5SsMW+3di50rc4imoleiUzAYs/CL6H157TIqRegO97nVnyn4Q03Mc5N65rgEA
+vypVcAN7WdLO0qu5iCksi/C/TrjXhAuTShmdrw0nwcN6iCfjF+4INlYr8GTmAzYR
+Qh4gVJWk2hESV6r7WBHgAu5mWTSE3QKdrof3jTlYUOKKiN19QJojm6W47Vgg6G3m
+KLAXafu26Ar5EvsN8YdU8Rxcf49mMLAgUW8fo2w9bMcqDx1dcN4kxFUOodFzo53s
+c7OYSGWQqsKtidnJL5mz6OqZUm4A4/+taXvXr0X7shlWjh14r9HY9AFsXvJWMfTu
+/8gIWyRHB+q3MtLFqoBZ6W0XwstUeBgl+Zqv4/AlC0R1rFYE0UE8Q9l9eXT/vfhP
+hWZXjdPeIa2urwWrGhTAWjMm9SOZrN8LPdGjAJJZcuOvLFWNtoEuA6U1HQZEexjD
+qeGGo2lGGs+NIVokr52uHifyppCSX2+8tXuHIpIcubN3VjIf/L1vc18qCtXok2zj
+JkuRGRweK1u0NGAOgMJl
+=kV3t
+-----END PGP SIGNATURE-----
 
-Builds that are fixed since last report:
-	ARM:mackerel_defconfig,ag5evm_defconfig
-	powerpc:ppc40x_defconfig  (ppc4xx_msi.c:right shift >= width of type)
-	s390:allyesconfig,allmodconfig (via ARM emif kconfig dependency)
-
-----------------------
-
-Note1: The randconfig fails are only listed once and not tracked
-in the below listing.
-
-Note2: Build fails that are perpetual and/or unlikely to ever
-get fixed are not tracked here.
-
-Note3: Issues that Stephen finds and reverts/avoids before kicking
-off the all-arch/all-config builds are also not tracked here.
-
-Note4: I'm also not tracking the kallsyms extra pass on ARM on
-a per board basis anymore.  It has nothing to do with the board.
-Why? See:  http://marc.info/?l=linux-next&m=133267456809502
-
-----------------------
-
-Latest results at:
-	http://kisskb.ellerman.id.au/kisskb/branch/9/
-
-Failures as of May 7th, 2012:
-===============================
-
-AM33:asb2303_defconfig,asb2364_defconfig
-	when:	Mar 15
-	why:	cc1: error: unrecognized command line option '-mmem-funcs'
-	status:	Possible fix from TonyB sent for review.
-	fix:	http://marc.info/?l=linux-kernel&m=133185020313818&w=2
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5878400/
-----------------
-
-ARM:mv78xx0_defconfig
-	when:	May 4
-	why:	mach-mv78xx0/pcie.c:256:29: error: 'bus' undeclared
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6243629/
-
-ARM:integrator_defconfig
-	when:	May 3
-	why:	pci_std_swizzle was deleted
-	status:	fix sent to arm kernel ML.
-
-ARM:nhk8815_defconfig
-	when:	May 3
-	why:	gpio-nomadik.c: 'struct gpio_chip' has no member named 'of_node'
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6229016/
-
-ARM:bcmring_defconfig
-	when:	Apr 20ish
-	why:	usr/include/asm/kvm_para.h:1: included file 'asm-generic/kvm_para.h' is not exported
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6228994/
-
-ARM:ezx_defconfig
-	when:	Apr 19 (possibly earlier?)
-	why:	ezx-pcap.c: implicit declaration of function 'irq_to_gpio'
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6131924/
-
-ARM:netx_defconfig,pnx4008_defconfig 
-	when:	Mar 14
-	why:	net/core/pktgen.c: can't find a register in class 'GENERAL_REGS'
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5869486/
-	ref:	https://lkml.org/lkml/2012/3/13/670
-
-ARM:ixp4xx_defconfig
-	when:	Oct 26
-	why:	gpio.h: implicit declaration of function '__gpio_get_value'
-	status:	fixed (Imre Kaloz) - but possibly needs rework?
-	fix:	https://lkml.org/lkml/2012/2/8/288
-	ref:	https://lkml.org/lkml/2012/2/8/287
-
-ARM:raumfeld_defconfig
-	when:	Nov 23
-	why:	eeti_ts.c: implicit declaration of function 'irq_to_gpio'
-	status:	perhaps broken since 2010?  See ref below.
-	ref:	http://www.gossamer-threads.com/lists/linux/kernel/1291618?do=post_view_threaded#1291618
-
-----------------
-
-AVR32:allnoconfig
-	when:	May 26 2010, 20:49
-	why:	at32_map_usart: undefined reference to `atmel_default_console_device'
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6248032/
----------------
-
-bfin: 50% of builds
-	when:	Mar 31
-	why:	"Error: pcrel too far BFD_RELOC_BFIN_10" from kernel/time/timekeeping.c
-	status:	unknown, binutils issue?
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6087324/
-
-bfin:SMP
-	when	May 1
-	why:	kernel/smp.c:724: undefined reference to `smp_call_function_many'
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6228892/
----------------
-
-cris:etrax-100lx_defconfig
-	when:	May 7
-	why:	drivers/tty/serial/crisv10.c: macro "wait_event_interruptible_tty" requires 3 args,  only 2 given
-	why:	drivers/tty/serial/crisv10.c: 'wait_event_interruptible_tty' undecl
-
-cris:allyesconfig,allmodconfig
-	when:	Apr 3
-	why:	too many to list here
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035250/
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6035249/
-----------------
-
-i386:allmodconfig
-	when:	Apr 17
-	why:	samples/seccomp/bpf-direct.c:47:2: error: #error Unsupported platform
-	status:	reported
-	ref:	http://marc.info/?l=linux-kernel&m=133471624530782&w=2
-----------------
-
-h8300:defconfig
-	when:	Mar 15
-	why:	time.c: implicit declaration of function 'get_irq_regs'
-	why:	also seems gcc suffers an ICE
-	status:	ICE bug lodged with gcc folks (TonyB)
-	ref:	http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52598
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884668/
-----------------
-
-m32r:m32700ut.smp_defconfig
-	when:	Mar 15
-	why:	No rule to make target `arch/m32r/boot/compressed/vmlinux.bin
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/5884670/
-----------------
-
-mips:allmodconfig
-	when:	Apr 17
-	why:	sound/oss/soundcard.c: 'MAX_DMA_CHANNELS' undeclared
-	status: one of many fixes mips needs...
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6091660/
-----------------
-
-parisc:defconfig
-	when:	Apr 20
-	why:	file 'asm-generic/kvm_para.h' is not exported
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6137786/
-
-parisc:allmodconfig
-	when:	?
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	ref:	http://www.spinics.net/lists/linux-parisc/msg04100.html
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-
-parisc64:a500_defconfig 
-	when:	?
-	why:	include/linux/log2.h: implicit declaration of function 'fls'
-	status:	reported by PaulG, WIP by David Howells 
-	ref:	https://lkml.org/lkml/2012/2/29/409
-	ref:	https://lkml.org/lkml/2012/3/6/228
-------------------
-
-powerpc:mpc85xx_defconfig
-	when:	May 3
-	why:	powerpc/mm/hugetlbpage.c: passing argument 7 of 'parse_args' from incompatible pointer type
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6243069/
-
-------------------
-
-sparc[64]:allyesconfig,allmodconfig
-	when:	Apr 18
-	why:	usr/include/asm/kvm_para.h: included file 'asm-generic/kvm_para.h' is not exported
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6243021/
-
-sparc:allnoconfig
-	when:	Apr 20ish
-	why:	arch/sparc/mm/init_64.c: unused variable 'paddr' 'node'
-	why:	arch/sparc/mm/init_64.c: 'memblock_nid_range' defined but not used
-------------------
-
-tile:defconfig
-	when:	May 5
-	why:	usr/include/asm/kvm_para.h: included file 'asm-generic/kvm_para.h' is not exported
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6248599/
-------------------
-
-xtensa:defconfig
-	when:	Apr 20
-	why:	undefined reference to `_sdata'
-	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6228970/
+--Signature=_Tue__8_May_2012_10_59_04_+1000_7ZEP2dN.KiJ4j_ym--
