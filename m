@@ -1,72 +1,55 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 6.2/7] MMC: mmci: Enable Device Tree support for ux500
-Date: Tue, 8 May 2012 20:52:24 -0400
-Message-ID: <20120509005224.GB6681@windriver.com>
-References: <8762cdur7o.fsf@laptop.org>
- <4FA3D720.7010004@linaro.org>
- <87mx5ot6vp.fsf@laptop.org>
- <4FA3DC27.6030204@linaro.org>
- <CAP=VYLoLgLmwWTWrJrMBCRLD_BjupjmfV2me6TDeej=ZS=W7hw@mail.gmail.com>
- <4FA90127.1050107@linaro.org>
- <878vh2rhlh.fsf@laptop.org>
- <4FA918BA.3080303@linaro.org>
- <CAP=VYLoz0o7qh9TNgWPatAsSjtoKoyaBUW7L+3q1w0PsLkOMOQ@mail.gmail.com>
- <87sjfap57x.fsf@laptop.org>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH] powerpc: fix compile fail in hugetlb cmdline parsing
+Date: Wed, 09 May 2012 13:04:18 +1000
+Message-ID: <1336532658.1714.15.camel@pasglop>
+References: <1336401142-18733-1-git-send-email-paul.gortmaker@windriver.com>
+	 <878vh3cncz.fsf@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:64311 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753941Ab2EIAxC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 May 2012 20:53:02 -0400
-Content-Disposition: inline
-In-Reply-To: <87sjfap57x.fsf@laptop.org>
+Received: from gate.crashing.org ([63.228.1.57]:55150 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751766Ab2EIDEj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 May 2012 23:04:39 -0400
+In-Reply-To: <878vh3cncz.fsf@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <cjb@laptop.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, linus.walleij@stericsson.com, arnd@arndb.de, Linus Walleij <linus.walleij@linaro.org>, grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, Jim Cromie <jim.cromie@gmail.com>, Jason Baron <jbaron@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Becky Bruce <beckyb@kernel.crashing.org>
 
-[Re: [PATCH 6.2/7] MMC: mmci: Enable Device Tree support for ux500] On 08/05/2012 (Tue 20:29) Chris Ball wrote:
+On Tue, 2012-05-08 at 13:53 +0930, Rusty Russell wrote:
+> On Mon,  7 May 2012 10:32:22 -0400, Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+> > Commit 9fb48c744ba6a4bf58b666f4e6fdac3008ea1bd4
+> > 
+> >     "params: add 3rd arg to option handler callback signature"
+> > 
+> > added an extra arg to the function, but didn't catch all the use
+> > cases needing it, causing this compile fail in mpc85xx_defconfig:
+> > 
+> >  arch/powerpc/mm/hugetlbpage.c:316:4: error: passing argument 7 of
+> >  'parse_args' from incompatible pointer type [-Werror]
+> > 
+> >  include/linux/moduleparam.h:317:12: note: expected
+> > 	 'int (*)(char *, char *, const char *)' but argument is of type
+> > 	 'int (*)(char *, char *)'
+> > 
+> > This function has no need to printk out the "doing" value, so
+> > just add the arg as an "unused".
+> > 
+> > Cc: Rusty Russell <rusty@rustcorp.com.au>
+> > Cc: Jim Cromie <jim.cromie@gmail.com>
+> > Cc: Jason Baron <jbaron@redhat.com>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Becky Bruce <beckyb@kernel.crashing.org>
+> > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> 
+> Acked-by: Rusty Russell <rusty@rustcorp.com.au>
 
-> Hi Paul,
-> 
-> On Tue, May 08 2012, Paul Gortmaker wrote:
-> > On Tue, May 8, 2012 at 8:59 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> >> Here you go Chris.
-> >>
-> >> From: Lee Jones <lee.jones@linaro.org>
-> >> Date: Tue, 8 May 2012 13:40:02 +0100
-> >> Subject: [PATCH] MMC: mmci: Fix compiler error when CONFIG_OF is not set
-> >>
-> >> error: implicit declaration of function 'mmci_dt_populate_generic_pdata'
-> >>
-> >> This is due to the '#if CONFIG_OF' guards placed around
-> >> mmci_dt_populate_generic_pdata(), but not around the call to it. We
-> >> repair this by inserting a stub which elegantly returns when CONFIG_OF
-> >> is not set.
-> >>
-> >> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> >
-> > Please if possible, do not neglect to add the Reported-by: line when
-> > appropriate.  I've been at this long enough that it really won't change
-> > my life any if it is there or not there, but for someone new to linux, it
-> > might make the difference between an "I'm glad I reported that" vs.
-> > a "Screw them, I'm not reporting anything else in the future."
-> 
-> Agreed -- I added a Reported-by line when I applied the patch:
-> 
-> http://git.kernel.org/?p=linux/kernel/git/cjb/mmc.git;a=commit;h=c0a120a4bc68f5dc5f5238e76013cc18bac0ffed
+This is for -next right ? IE. I don't seem to have the faulty commit
+in my tree so I can't carry the fix for now.... or am I missing
+something ?
 
-Cool, thanks Chris -- you may not hear it, but I'm sure you've
-implicitly helped keep people involved in the triage process.
-
-Paul.
---
-
-> 
-> Thanks,
-> 
-> - Chris.
-> -- 
-> Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-> One Laptop Per Child
+Cheers,
+Ben.
