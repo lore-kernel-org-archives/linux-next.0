@@ -1,37 +1,72 @@
-From: Kay Sievers <kay@vrfy.org>
-Subject: Re: linux-next: Tree for May 8 (printk)
-Date: Wed, 9 May 2012 02:45:41 +0200
-Message-ID: <CAPXgP133n_RL=PfdmTNWcJwFtvDBPey1OF6rKc0DJkHSYW0_Mw@mail.gmail.com>
-References: <20120508181531.072fdc5fefa60d852e784587@canb.auug.org.au>
- <4FA948B9.20600@xenotime.net> <1336518821.728.1.camel@mop>
- <4FA9ABD6.6030006@xenotime.net> <1336520271.728.4.camel@mop> <4FA9B7BF.90502@xenotime.net>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 6.2/7] MMC: mmci: Enable Device Tree support for ux500
+Date: Tue, 8 May 2012 20:52:24 -0400
+Message-ID: <20120509005224.GB6681@windriver.com>
+References: <8762cdur7o.fsf@laptop.org>
+ <4FA3D720.7010004@linaro.org>
+ <87mx5ot6vp.fsf@laptop.org>
+ <4FA3DC27.6030204@linaro.org>
+ <CAP=VYLoLgLmwWTWrJrMBCRLD_BjupjmfV2me6TDeej=ZS=W7hw@mail.gmail.com>
+ <4FA90127.1050107@linaro.org>
+ <878vh2rhlh.fsf@laptop.org>
+ <4FA918BA.3080303@linaro.org>
+ <CAP=VYLoz0o7qh9TNgWPatAsSjtoKoyaBUW7L+3q1w0PsLkOMOQ@mail.gmail.com>
+ <87sjfap57x.fsf@laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:44752 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753945Ab2EIAqE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 May 2012 20:46:04 -0400
-Received: by pbbrp8 with SMTP id rp8so8706265pbb.19
-        for <linux-next@vger.kernel.org>; Tue, 08 May 2012 17:46:04 -0700 (PDT)
-In-Reply-To: <4FA9B7BF.90502@xenotime.net>
+Received: from mail1.windriver.com ([147.11.146.13]:64311 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753941Ab2EIAxC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 May 2012 20:53:02 -0400
+Content-Disposition: inline
+In-Reply-To: <87sjfap57x.fsf@laptop.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Chris Ball <cjb@laptop.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, linus.walleij@stericsson.com, arnd@arndb.de, Linus Walleij <linus.walleij@linaro.org>, grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
 
-On Wed, May 9, 2012 at 2:18 AM, Randy Dunlap <rdunlap@xenotime.net> wro=
-te:
-> On 05/08/2012 04:37 PM, Kay Sievers wrote:
+[Re: [PATCH 6.2/7] MMC: mmci: Enable Device Tree support for ux500] On 08/05/2012 (Tue 20:29) Chris Ball wrote:
 
-> drivers/char/mem.c:858:2: error: implicit declaration of function 'pr=
-intk_emit'
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0printk_emit(facility, level, NULL, 0, "%s"=
-, line);
+> Hi Paul,
+> 
+> On Tue, May 08 2012, Paul Gortmaker wrote:
+> > On Tue, May 8, 2012 at 8:59 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> >> Here you go Chris.
+> >>
+> >> From: Lee Jones <lee.jones@linaro.org>
+> >> Date: Tue, 8 May 2012 13:40:02 +0100
+> >> Subject: [PATCH] MMC: mmci: Fix compiler error when CONFIG_OF is not set
+> >>
+> >> error: implicit declaration of function 'mmci_dt_populate_generic_pdata'
+> >>
+> >> This is due to the '#if CONFIG_OF' guards placed around
+> >> mmci_dt_populate_generic_pdata(), but not around the call to it. We
+> >> repair this by inserting a stub which elegantly returns when CONFIG_OF
+> >> is not set.
+> >>
+> >> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> >
+> > Please if possible, do not neglect to add the Reported-by: line when
+> > appropriate.  I've been at this long enough that it really won't change
+> > my life any if it is there or not there, but for someone new to linux, it
+> > might make the difference between an "I'm glad I reported that" vs.
+> > a "Screw them, I'm not reporting anything else in the future."
+> 
+> Agreed -- I added a Reported-by line when I applied the patch:
+> 
+> http://git.kernel.org/?p=linux/kernel/git/cjb/mmc.git;a=commit;h=c0a120a4bc68f5dc5f5238e76013cc18bac0ffed
 
-You need the whole series, there is no  printk_emit() in that file anym=
-ore.
+Cool, thanks Chris -- you may not hear it, but I'm sure you've
+implicitly helped keep people involved in the triage process.
 
-Kay
+Paul.
+--
+
+> 
+> Thanks,
+> 
+> - Chris.
+> -- 
+> Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+> One Laptop Per Child
