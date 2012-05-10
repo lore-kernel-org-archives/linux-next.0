@@ -1,86 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi-post-merge tree with the
- driver-core tree
-Date: Thu, 10 May 2012 18:57:46 +1000
-Message-ID: <20120510185746.1b7b8e582c0c968633b6e2f1@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the sound-asoc tree with the regmap
+ tree
+Date: Thu, 10 May 2012 19:05:54 +1000
+Message-ID: <20120510190554.6055315139a68ef0b1c48261@canb.auug.org.au>
+References: <20120510142552.35f8e15042053707a2086905@canb.auug.org.au>
+	<20120510085355.GC3908@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__10_May_2012_18_57_46_+1000_5a9xWhWFxJoJS/VJ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38160 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757217Ab2EJI5y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 May 2012 04:57:54 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay@vrfy.org>, Greg KH <greg@kroah.com>, Bjorn Helgaas <bhelgaas@google.com>
+ boundary="Signature=_Thu__10_May_2012_19_05_54_+1000_UFqacnDV5ed4u7YA"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120510085355.GC3908@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__10_May_2012_18_57_46_+1000_5a9xWhWFxJoJS/VJ
+--Signature=_Thu__10_May_2012_19_05_54_+1000_UFqacnDV5ed4u7YA
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+On Thu, 10 May 2012 09:53:55 +0100 Mark Brown <broonie@opensource.wolfsonmi=
+cro.com> wrote:
+>
+> On Thu, May 10, 2012 at 02:25:52PM +1000, Stephen Rothwell wrote:
+>=20
+> > Today's linux-next merge of the sound-asoc tree got a conflict in
+> > drivers/base/regmap/regmap.c between commit 6560ffd1ccd6 ("regmap: fix
+> > possible memory corruption in regmap_bulk_read()") from the regmap tree
+> > and commit edc9ae420f98 ("regmap: implement register striding") from the
+> > sound-asoc tree.
+>=20
+> That's the right fix - it's already included in the regmap tree itself.
 
-Today's linux-next merge of the akpm tree got a conflict in
-mm/page_alloc.c between commit 155cbfc802e4 ("mm: use KERN_CONT in printk()
-continuation lines") from the driver-core tree and commit "mm: print
-physical addresses consistently with other parts of kernel" from the akpm
-tree.
+Yeah, this conflict arises because there a set of patches in the
+sound-asoc tree that are also in the regmap tree.   They really should
+have been in a stable branch of the regmap tree that both trees could
+merge.
 
-I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc mm/page_alloc.c
-index d5a49b6,a98059a..0000000
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@@ -4819,14 -4819,15 +4819,15 @@@ void __init free_area_init_nodes(unsign
-  	for (i =3D 0; i < MAX_NR_ZONES; i++) {
-  		if (i =3D=3D ZONE_MOVABLE)
-  			continue;
- -		printk("  %-8s ", zone_names[i]);
- +		printk(KERN_CONT "  %-8s ", zone_names[i]);
-  		if (arch_zone_lowest_possible_pfn[i] =3D=3D
-  				arch_zone_highest_possible_pfn[i])
- -			printk("empty\n");
- +			printk(KERN_CONT "empty\n");
-  		else
-- 			printk(KERN_CONT "%0#10lx -> %0#10lx\n",
-- 				arch_zone_lowest_possible_pfn[i],
-- 				arch_zone_highest_possible_pfn[i]);
- -			printk("[mem %0#10lx-%0#10lx]\n",
-++			printk(KERN_CONT "[mem %0#10lx-%0#10lx]\n",
-+ 				arch_zone_lowest_possible_pfn[i] << PAGE_SHIFT,
-+ 				(arch_zone_highest_possible_pfn[i]
-+ 					<< PAGE_SHIFT) - 1);
-  	}
- =20
-  	/* Print out the PFNs ZONE_MOVABLE begins at in each node */
-
---Signature=_Thu__10_May_2012_18_57_46_+1000_5a9xWhWFxJoJS/VJ
+--Signature=_Thu__10_May_2012_19_05_54_+1000_UFqacnDV5ed4u7YA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPq4MKAAoJEECxmPOUX5FE9XIP/RaKxvtgzEPMkJlIWHXGWaSr
-Av0QX+tsVoCZ9D+5kskaCxA6NqtCpwUdP5y4r4oIuIvU0iVssUABxpqBapjwVA7H
-xY6evYw90+UBcunDgUylXhq4q60awhGQwvtkmYryQm8k4XbZTyTdvRhccpiVuLet
-hmFdPtaXHCm/90IqmPWwTzvQEmFl1duMaaI46noM9rJvzQHox6OdIJAdchRWkrPX
-fAoVyyre6/tAS/7mJ65weMFPqq43Eo1R+z8GjiNUJXMIYjJOgwMLgG75yB15zw3W
-ejxVKyKRsDdNHNpuKhJ/zygqLRyYv8w6suq31cigaatb9Y4rHvnUnq1JU4C8Sgty
-p/QCYM94CP+uSRGBOCYEgttzmkyIq90pVqMmX9bWezYJRMqEH38vckUPJkJqFNkO
-ZJx4hZRwgH01iZxny6aaG01A59xD9OLPSbIAM5Zi1S1EWUw2Q9JWWBnyrJSWCINw
-yk1KXazIQg90Un0xNpcDKfSUxPIL4G38dw13WxGfWYmQBWBFif0wINHRsCh/wr8p
-kyCwmFeovUIk8xXBkzT38LRc6+6axe588sxyuySuR2olxL1jTzWgY7UnLYcueiHI
-m2lv6QKk5edePcbti5lRB9u3miw5wVVdBxP3opFAIKtCXKXhzP9XHtfPBCABk6g6
-fRHJlPDTms0KRY6e46wG
-=3pRR
+iQIcBAEBCAAGBQJPq4TyAAoJEECxmPOUX5FEnjwP/AupQP52lpEQwmNVGT7qI21+
+/VARBWK79GOf3I39PiDZhKipzHezFl4ussy6X2niWjUb/koahm2liYMoajoDAfAA
+pm2f/c+bGeZWMkv94EZMZ7j+HfFCYYeb/5Q7uFqgKmu7S2KI8I63oswEnG0QTPqh
+Nn0Y48saVoSYm4Ds8/Zy7tFVaTI9xYikZxLRg5gxQBUsHQ8n0DrFZepSeD7S7oFh
+e+Fm+euuLBlnf8t3f/jTL8EjxC9nyHQIcY8IdLSM0FK7ySqF3N/nsHsmL1l88kwq
+nGPHchQOU7KAm4QhD1kE/VzYPOc2zH7deGKj6JbslXeRbYZrrMoz0kFKI+ahiZmj
+OhlXntMg2HSkMd9Ii1dJhyiNZevW8oX5LvfKg+U/heTBP/hxM3SKVMhTElDAGmm4
+TTwxD6Y5ci6weVJImWiDll7UFiOX44DrtjxjYLe87RmhJR7AOF9IXZKqDUClVNiL
+s6kOaXM+rRsJ/jfKRbW+S6sRvW/b/S6OQcgHkloKXPxJwWb0LjTsp9HOPHH13OTT
+YyFP0t3bYCQ0Rx73rwf/rGFblIi0HcJYa0XVXtR5EHqBwDGPEUHyiTEgoy08beTZ
+g2+DQMHbOypIvWc6YATTumgYog4fh9xayo+ii0uYYv/aqOQdsj6R9RhV+ONPGbII
+66kGZ/LQ7eFLVHE3kKwb
+=gzNz
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_May_2012_18_57_46_+1000_5a9xWhWFxJoJS/VJ--
+--Signature=_Thu__10_May_2012_19_05_54_+1000_UFqacnDV5ed4u7YA--
