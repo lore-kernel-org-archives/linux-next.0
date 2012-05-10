@@ -1,58 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the rr tree
-Date: Thu, 10 May 2012 18:51:55 +1000
-Message-ID: <20120510185155.47d24f37951786b64af97868@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the sound-asoc tree with the regmap
+ tree
+Date: Thu, 10 May 2012 09:53:55 +0100
+Message-ID: <20120510085355.GC3908@opensource.wolfsonmicro.com>
+References: <20120510142552.35f8e15042053707a2086905@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__10_May_2012_18_51_55_+1000_ExuL0YBohF4c4v+r"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="adJ1OR3c6QgCpb/j"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35121 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754436Ab2EJIwD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 May 2012 04:52:03 -0400
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:43865 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756428Ab2EJIx6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 May 2012 04:53:58 -0400
+Content-Disposition: inline
+In-Reply-To: <20120510142552.35f8e15042053707a2086905@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Rusty Russell <rusty@rustcorp.com.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>
 
---Signature=_Thu__10_May_2012_18_51_55_+1000_ExuL0YBohF4c4v+r
-Content-Type: text/plain; charset=US-ASCII
+
+--adJ1OR3c6QgCpb/j
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+On Thu, May 10, 2012 at 02:25:52PM +1000, Stephen Rothwell wrote:
 
-Today's linux-next merge of the akpm tree got conflicts in
-kernel/lglock.c, include/linux/lglock.h, fs/namespace.c and fs/internal.h
-between various commits from the rr tree and commit "brlocks/lglocks:
-cleanups" from the akpm tree.
+> Today's linux-next merge of the sound-asoc tree got a conflict in
+> drivers/base/regmap/regmap.c between commit 6560ffd1ccd6 ("regmap: fix
+> possible memory corruption in regmap_bulk_read()") from the regmap tree
+> and commit edc9ae420f98 ("regmap: implement register striding") from the
+> sound-asoc tree.
 
-The akpm tree patch seems to be a merge of the rr tree commits, so I
-dropped the akpm tree patch.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+That's the right fix - it's already included in the regmap tree itself.
 
---Signature=_Thu__10_May_2012_18_51_55_+1000_ExuL0YBohF4c4v+r
-Content-Type: application/pgp-signature
+--adJ1OR3c6QgCpb/j
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPq4GrAAoJEECxmPOUX5FE9IcP/RV1InN3UIPk9dfHdm0W+dWl
-t+oHZfY0+I2pdinfeR6/wpva9tD6Pl/y2NowNjIPbNO1iqTIimV6yHH5hbeDrLIw
-Xih5k7G894wrgF0+P/7I7F7JzyyNoWHWMKB1JynCXTOY1NjySrwwDqHYuCbXn4E7
-SKVizz814Uzmril01HXuHZVg88q/52O2C5/1JeaUDUzg/WdhoMuRU5SliTDlQeVi
-xdHJOwM0qqq1FdUOTeGjI3Kp2zN0yBeZteUSV7khlr9nWfVJqBipAajUqm2rJA81
-ty60/pDm6+JeeUAYxxmHnDMPC5jatrSRRNcBq4L/zdxENj28MAkF5WZ2OCUGTglo
-ki/gLfl4zK9Znh2tjGvFATcRM67hjPZ0BA4Nr0rUJsCoVkk09ZzG7VRGD/Gj6X4k
-pwlsqCMq9g3qus05E5eZBr2r7hhd2WYeSPHabjrbk+F8X5Sa4ze/KP5ZtoAlaKci
-fYXZ+RWAqLXSlZJpJIwTgoVvbUUu4rzazEczkKm0QO6l36nOb9Hsgy1ofvr0J612
-2tztYvmeipvKF3qKWkChjThrfbTaD2BlmHCPvPMP3td+SsibkP3s+qcSFagHSHv8
-AmH21oqt65P2g6PWFk/HQ8LfiJJrwFRqmINTx2siLxVu6jToW/867LxoQUgxURXH
-sMJXZv7OKkD8X9BBWym8
-=gMGS
+iQIcBAEBAgAGBQJPq4IYAAoJEBus8iNuMP3dyS0P/3XrFuG/PUVjRN8ZZ+C0TPno
+Y01mek8qftz+wfgoPOmlKh+oK1vIedPww0yoNd6kjEgJm4IftPSD4uxP4yaSqw3o
+9muDsxBRNjppeLZNa2kd0SaSUSU5tnpWPD6Oo34CCtSVqEXEhqiZ70IHeKS0mCOd
+/vv76StzACvaeEVEsDulPT329Jj4rWaHbA7tomBV0kcj92quspDSmlZKZEiv/Iru
+57Gzw3QzB5Zlgn9df2QnWonoTrP7oFKAjb/Xf3bUh3yLbKtohY1Vmtn7/kKrJIps
+RF8fLj2a0YUwjMbKpbuppsfBDIixORPh3wWd7vL24wgKiArAfYeF2nbSXkVskqyl
+faJYbH8bWIFdKULgy/4oxup9xouHaqjVM+bw2zVa/e+i81dj9oGrDvVwQr4QGRuS
+wfJ0eAPywxjVU7IbRpLdhY0SumUHXoaVvMTWzWIgQipmlHqwf+yzcC3WFCGhi4we
+SRWUi3hxl319x8XYkWd60p06G4VxBOJQ5sSsF0cShnuROVP++s+yCqmqiPP58MzN
+h2EB8kB6pLhI2T8AVAFapGrd/JjjJUWTpCsUPI/7Iq2nySpBiWxzvPNOtA0UUOYt
+Ff9fOMkf9qfpjdGFO1wBgRLsKED2qOS5f0nf92te31vTeMFH+QffU/x3JqCbJBo7
+4lHk8RudfYPz0cgcAHMO
+=o3L8
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_May_2012_18_51_55_+1000_ExuL0YBohF4c4v+r--
+--adJ1OR3c6QgCpb/j--
