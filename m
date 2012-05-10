@@ -1,60 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the xfs tree
-Date: Thu, 10 May 2012 13:01:34 +1000
-Message-ID: <20120510130134.0efffc5ba1f3a80c614e8f29@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound-asoc tree with the regmap
+ tree
+Date: Thu, 10 May 2012 14:25:52 +1000
+Message-ID: <20120510142552.35f8e15042053707a2086905@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__10_May_2012_13_01_34_+1000_FPATsqTDsb/I5Meq"
+ boundary="Signature=_Thu__10_May_2012_14_25_52_+1000_EFVx=7tfgBGmFT+5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34873 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:55137 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753972Ab2EJDBq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 May 2012 23:01:46 -0400
+	with ESMTP id S1750750Ab2EJE0F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 May 2012 00:26:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ben Myers <bpm@sgi.com>, David Chinner <david@fromorbit.com>, xfs@oss.sgi.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>
 
---Signature=_Thu__10_May_2012_13_01_34_+1000_FPATsqTDsb/I5Meq
+--Signature=_Thu__10_May_2012_14_25_52_+1000_EFVx=7tfgBGmFT+5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the xfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the sound-asoc tree got a conflict in
+drivers/base/regmap/regmap.c between commit 6560ffd1ccd6 ("regmap: fix
+possible memory corruption in regmap_bulk_read()") from the regmap tree
+and commit edc9ae420f98 ("regmap: implement register striding") from the
+sound-asoc tree.
 
-ERROR: ".xfs_extent_busy_trim" [fs/xfs/xfs.ko] undefined!
-
-Caused by commit e459df5b5b93 ("xfs: move busy extent handling to it's
-own file") (and aided by 425dcd6c2289 "xfs: clean up busy extent naming").
-
-I have used the xfs tree from next-20120508 for today.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__10_May_2012_13_01_34_+1000_FPATsqTDsb/I5Meq
+diff --cc drivers/base/regmap/regmap.c
+index bb80853,8a25006..0000000
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@@ -775,11 -863,10 +863,12 @@@ int regmap_bulk_read(struct regmap *map
+  			map->format.parse_val(val + i);
+  	} else {
+  		for (i =3D 0; i < val_count; i++) {
+ +			unsigned int ival;
+- 			ret =3D regmap_read(map, reg + i, &ival);
++ 			ret =3D regmap_read(map, reg + (i * map->reg_stride),
+ -					  val + (i * val_bytes));
+++					  &ival);
+  			if (ret !=3D 0)
+  				return ret;
+ +			memcpy(val + (i * val_bytes), &ival, val_bytes);
+  		}
+  	}
+ =20
+
+--Signature=_Thu__10_May_2012_14_25_52_+1000_EFVx=7tfgBGmFT+5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPqy+OAAoJEECxmPOUX5FEg74QAJVF0uhoISzQGp4g9eRqPPNG
-R+FBKOkg0mFwSJz0LoOke7jM+xrvaYm9qGSVXXJkvp1kl0H0Q+H9If1fnaRKrWHh
-ttVWh2RN7FmhvLjDcr+iLJqj4e/sZTfDPlcEb1n1w9P0zV/lIZl3ly6PJT4TbzJ8
-kLUGtUwHIKW4BD0GQ4SVppHp10El5Hdlr5iAH8ZuUM0IL6H6oEsZowD2iNWXJu07
-OThDTpGQd3MutBtJto/ahXSUmDXLVIF/ZtyAWWXrrDEZZrAef0SYoANRUih8tJyd
-HaAFMKW2u22/5tWZxcA5xuSJFYKzWr1i2Y7l7MEiGTS+JW87kgz1XcykLLY1t4zk
-4RtkEEif+Rq9fHtASTPWyep68K1xYJaczH63G3/aiAPqMI5H0QHr81m1rWglE/hy
-9u+kS3tDMJWQmkGJrCwiWsc/zSWXh1rbuJ5j3FWdCPqiiOuPYusLM256H8AO9I+4
-mcUkeGhYT2IjsD5MwFlvSEnOhyELRWIvL6HYwvObZOMtBkhMRRfOByvwasAuw/mV
-rP3l+/MfzL1KHjzCPgD8ZAGd1wcFTr30+PvL6libBi4YWjujrpXocrvrEZe0YYEB
-pFEVUrENqFmq6Irnq9J2JPf/ygLB3nYvLkbqk8i5mJ8taCcEH+SXhAQ4N71BKeQ7
-yhZy1IC1IZwgh2/hWQuh
-=QHex
+iQIcBAEBCAAGBQJPq0NQAAoJEECxmPOUX5FE82YP/i/IRCq3tFURewTneHggvPKE
+0GW2liOdZKUnjjVwh7D+BhQWexQiuf7BxvQ3aZ0aXlzPeCOLo+vUVQzbomwj1E8p
+nzoUOkRLjogAUrcIHoXA9IlvCFIQw5R9AYvymPs74po4Xfmzb23n1qM2ZsvwhsbO
+eSnzrVhSucWrWDFWN74Rz0wjzfLqFeadI9s7OFbcDu/9Tnjg1/X3umZv7PO5XcQv
+ggoPu/s7o7w3g6dEGIqjK7GvPx++lj/SFy/5gSzCkkcNWyLst8FqYSB4r+0pvgPA
+M6zPWqXPSMmxmB32rbhrrSgXPiGJwVYnMQjiEUAfcqbrNVxhjv8fieWhvHVrNh5c
+lybJ52aA5X+FPRzckH+xHEb8LqNQzHd33rI2kWARwsvaw5x0rowsmfAZYFZxaG9C
+NQLCk9kRa7ZL/INu47H6GSP8kzpUH74xWjRwCz+pOVnTgYLhBWNNK1jtdUo+lfDy
+HnBgAxq+xqvJ7jMUsmwEpNnm3KIKw1EhvBxruXj81TvWoqXH7YTZNw2juMu9T+d9
+T6776SB8OPTe+lIdADOZ0bemnuiVYTF2n8zJuSEcpYKW/Zu6V2+wYc2YduIWL0f7
++lNbS+7HO8ak59Njc4v3HMtjhQriJF38I4gRMh6CoSoNztIFR07I7NJl9tfCmMWb
+zqvTvbO0hc9W+dPmOeW+
+=CC4o
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_May_2012_13_01_34_+1000_FPATsqTDsb/I5Meq--
+--Signature=_Thu__10_May_2012_14_25_52_+1000_EFVx=7tfgBGmFT+5--
