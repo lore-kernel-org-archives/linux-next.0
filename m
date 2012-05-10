@@ -1,61 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the  tree
-Date: Thu, 10 May 2012 18:41:39 +1000
-Message-ID: <20120510184139.2d62758d8bc761c4327b9f99@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the rr tree
+Date: Thu, 10 May 2012 18:51:55 +1000
+Message-ID: <20120510185155.47d24f37951786b64af97868@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__10_May_2012_18_41_39_+1000_NTpiR.Hg4bQsddoP"
+ boundary="Signature=_Thu__10_May_2012_18_51_55_+1000_ExuL0YBohF4c4v+r"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43552 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:35121 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753518Ab2EJIlz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 May 2012 04:41:55 -0400
+	with ESMTP id S1754436Ab2EJIwD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 May 2012 04:52:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?Ik3DoXJ0b24gTsOpbWV0aCI=?= <nm127@freemail.hu>, Suresh Siddha <suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Thu__10_May_2012_18_41_39_+1000_NTpiR.Hg4bQsddoP
+--Signature=_Thu__10_May_2012_18_51_55_+1000_ExuL0YBohF4c4v+r
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in
-arch/x86/kernel/apic/io_apic.c between commit d1ecad6eee86 ("x86/apic:
-Only compile local function if used with !CONFIG_GENERIC_PENDING_IRQ")
-from the tip tree and commit "arch/x86/kernel/apic/io_apic.c: move
-io_apic_level_ack_pending() inside CONFIG_GENERIC_PENDING_IRQ" from the
-akpm tree.
+Today's linux-next merge of the akpm tree got conflicts in
+kernel/lglock.c, include/linux/lglock.h, fs/namespace.c and fs/internal.h
+between various commits from the rr tree and commit "brlocks/lglocks:
+cleanups" from the akpm tree.
 
-These are the same patch with different commit messages and authors.  I
-dropped the one from the akpm tree.
-
+The akpm tree patch seems to be a merge of the rr tree commits, so I
+dropped the akpm tree patch.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__10_May_2012_18_41_39_+1000_NTpiR.Hg4bQsddoP
+--Signature=_Thu__10_May_2012_18_51_55_+1000_ExuL0YBohF4c4v+r
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPq39DAAoJEECxmPOUX5FE2CIP/REsX8yZOmf3gQikffXmXKkH
-m608oTjbCr1Lg13DMIyjmhsXQipcN8jj84k+fDJw0T2no+Y56JmvF4ItYlq2Issm
-bGukZofdd+NwUf9WV0hEBj/M29U2GwrtxmPhwnjXd4IJW04dN+0V/8aiMAAIR2ko
-hUFes6A3vBBrh8vkF2ijrRuBrJNHLBPah6wFqp3fYqZq6Z2Q2w76ZKhXHsaHHLYn
-Z/J+b2ZoEXAKOjQhCv0Y4d/1Dad3uSqYoUGzk5b+vDsjAh9WUTHfL1Kuzvk4yAJJ
-4GSIOVIJXmXZSwtDSAU/XW0Zdz4YmS6BsJTrcO8g4Gzc4Q3UnC+IHV7N6E9hQYy3
-b0j1DDduIC0RFnCGkK3RjXURHtaGBHJcFHTJ9Pn1KeC7/smKsyWTJfO6Wqxz7Bkr
-weIvwgk81hDXqHHNkU5N6v/Ukqn5P3gY5DOrGuRPNcGNkl5UNx8Q6XV+lpbcWCiC
-2PtD/zKkBmBasli659WUJLxOkDISJuLdCmUzMh6EtTQWm8UejUERlHaMWISDNpib
-IrvhAjVW5dTfSzKWbozsKo+hT9aqsEGPU3aAp3+9Ii1xqH2ypSDxgkS0J7vMEIso
-hXoDI+NVUBMKI0JoZkxR12Ye6gyntLR5mK3Dg3F2jGkdYgMK3mG3ufTFgY53VBHh
-cHjPJlWk1mdQNBapcd+b
-=MNI6
+iQIcBAEBCAAGBQJPq4GrAAoJEECxmPOUX5FE9IcP/RV1InN3UIPk9dfHdm0W+dWl
+t+oHZfY0+I2pdinfeR6/wpva9tD6Pl/y2NowNjIPbNO1iqTIimV6yHH5hbeDrLIw
+Xih5k7G894wrgF0+P/7I7F7JzyyNoWHWMKB1JynCXTOY1NjySrwwDqHYuCbXn4E7
+SKVizz814Uzmril01HXuHZVg88q/52O2C5/1JeaUDUzg/WdhoMuRU5SliTDlQeVi
+xdHJOwM0qqq1FdUOTeGjI3Kp2zN0yBeZteUSV7khlr9nWfVJqBipAajUqm2rJA81
+ty60/pDm6+JeeUAYxxmHnDMPC5jatrSRRNcBq4L/zdxENj28MAkF5WZ2OCUGTglo
+ki/gLfl4zK9Znh2tjGvFATcRM67hjPZ0BA4Nr0rUJsCoVkk09ZzG7VRGD/Gj6X4k
+pwlsqCMq9g3qus05E5eZBr2r7hhd2WYeSPHabjrbk+F8X5Sa4ze/KP5ZtoAlaKci
+fYXZ+RWAqLXSlZJpJIwTgoVvbUUu4rzazEczkKm0QO6l36nOb9Hsgy1ofvr0J612
+2tztYvmeipvKF3qKWkChjThrfbTaD2BlmHCPvPMP3td+SsibkP3s+qcSFagHSHv8
+AmH21oqt65P2g6PWFk/HQ8LfiJJrwFRqmINTx2siLxVu6jToW/867LxoQUgxURXH
+sMJXZv7OKkD8X9BBWym8
+=gMGS
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_May_2012_18_41_39_+1000_NTpiR.Hg4bQsddoP--
+--Signature=_Thu__10_May_2012_18_51_55_+1000_ExuL0YBohF4c4v+r--
