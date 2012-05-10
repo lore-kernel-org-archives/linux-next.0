@@ -1,69 +1,61 @@
-From: Ola Lilja <ola.o.lilja@stericsson.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Thu, 10 May 2012 10:35:13 +0200
-Message-ID: <4FAB7DC1.5060503@stericsson.com>
-References: <20120510143329.4cef3cd78ce5ea55416b1d93@canb.auug.org.au> <CACRpkdYsHXnWHvBw6Pt1atvwKP6KYjfu-PwQnL_L7-yW1-4_FA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the  tree
+Date: Thu, 10 May 2012 18:41:39 +1000
+Message-ID: <20120510184139.2d62758d8bc761c4327b9f99@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYsHXnWHvBw6Pt1atvwKP6KYjfu-PwQnL_L7-yW1-4_FA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__10_May_2012_18_41_39_+1000_NTpiR.Hg4bQsddoP"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43552 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753518Ab2EJIlz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 May 2012 04:41:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?Ik3DoXJ0b24gTsOpbWV0aCI=?= <nm127@freemail.hu>, Suresh Siddha <suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-On 05/10/2012 10:30 AM, Linus Walleij wrote:
+--Signature=_Thu__10_May_2012_18_41_39_+1000_NTpiR.Hg4bQsddoP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Thu, May 10, 2012 at 6:33 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
->> After merging the sound-asoc tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> In file included from sound/soc/ux500/ux500_msp_dai.c:21:0:
->> include/linux/mfd/dbx500-prcmu.h:614:19: error: redefinition of 'prcmu_abb_read'
->> include/linux/mfd/db8500-prcmu.h:673:19: note: previous definition of 'prcmu_abb_read' was here
->> include/linux/mfd/dbx500-prcmu.h:619:19: error: redefinition of 'prcmu_abb_write'
->> include/linux/mfd/db8500-prcmu.h:678:19: note: previous definition of 'prcmu_abb_write' was here
->> include/linux/mfd/dbx500-prcmu.h:630:19: error: redefinition of 'prcmu_config_clkout'
->> include/linux/mfd/db8500-prcmu.h:643:19: note: previous definition of 'prcmu_config_clkout' was here
->> include/linux/mfd/dbx500-prcmu.h:692:20: error: redefinition of 'prcmu_ac_wake_req'
->> include/linux/mfd/db8500-prcmu.h:683:20: note: previous definition of 'prcmu_ac_wake_req' was here
->> include/linux/mfd/dbx500-prcmu.h:694:20: error: redefinition of 'prcmu_ac_sleep_req'
->> include/linux/mfd/db8500-prcmu.h:685:20: note: previous definition of 'prcmu_ac_sleep_req' was here
->> sound/soc/ux500/ux500_msp_dai.c:23:27: fatal error: mach/hardware.h: No such file or directory
->> sound/soc/ux500/ux500_msp_i2s.c:21:27: fatal error: mach/hardware.h: No such file or directory
->>
->> Possibly caused by commit 3592b7f69a54 ("ASoC: Ux500: Add MSP I2S-driver").
->>
->> I have used the version of the sound-asoc tree from next-20120508 for today.
-> 
-> The PRCMU driver is only available on the UX500 platforms so building
-> on x86_64 does not make sense.
-> 
-> Ola/Mark: a simple patch like this should solve the issue I think?
+Hi Andrew,
 
+Today's linux-next merge of the akpm tree got a conflict in
+arch/x86/kernel/apic/io_apic.c between commit d1ecad6eee86 ("x86/apic:
+Only compile local function if used with !CONFIG_GENERIC_PENDING_IRQ")
+from the tip tree and commit "arch/x86/kernel/apic/io_apic.c: move
+io_apic_level_ack_pending() inside CONFIG_GENERIC_PENDING_IRQ" from the
+akpm tree.
 
-True! I think we should put it in the "config SND_SOC_UX500_PLAT_MSP_I2S", though.
+These are the same patch with different commit messages and authors.  I
+dropped the one from the akpm tree.
 
-> 
-> diff --git a/sound/soc/ux500/Kconfig b/sound/soc/ux500/Kconfig
-> index 9b0ae4e..f454f06 100644
-> --- a/sound/soc/ux500/Kconfig
-> +++ b/sound/soc/ux500/Kconfig
-> @@ -4,6 +4,7 @@
->  menuconfig SND_SOC_UX500
->         tristate "SoC Audio support for Ux500 platform"
->         depends on SND_SOC
-> +       depends on MFD_DB8500_PRCMU
->         help
->                 Say Y if you want to enable ASoC-support for
->                 any of the Ux500 platforms (e.g. U8500).
-> 
-> 
-> But it seems it has a wider dependency on some MOP500 board
-> stuff being merged first, which is more of a problem I think, part
-> of that is pending in the Ux500 tree.
-> 
-> Yours,
-> Linus Walleij
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__10_May_2012_18_41_39_+1000_NTpiR.Hg4bQsddoP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPq39DAAoJEECxmPOUX5FE2CIP/REsX8yZOmf3gQikffXmXKkH
+m608oTjbCr1Lg13DMIyjmhsXQipcN8jj84k+fDJw0T2no+Y56JmvF4ItYlq2Issm
+bGukZofdd+NwUf9WV0hEBj/M29U2GwrtxmPhwnjXd4IJW04dN+0V/8aiMAAIR2ko
+hUFes6A3vBBrh8vkF2ijrRuBrJNHLBPah6wFqp3fYqZq6Z2Q2w76ZKhXHsaHHLYn
+Z/J+b2ZoEXAKOjQhCv0Y4d/1Dad3uSqYoUGzk5b+vDsjAh9WUTHfL1Kuzvk4yAJJ
+4GSIOVIJXmXZSwtDSAU/XW0Zdz4YmS6BsJTrcO8g4Gzc4Q3UnC+IHV7N6E9hQYy3
+b0j1DDduIC0RFnCGkK3RjXURHtaGBHJcFHTJ9Pn1KeC7/smKsyWTJfO6Wqxz7Bkr
+weIvwgk81hDXqHHNkU5N6v/Ukqn5P3gY5DOrGuRPNcGNkl5UNx8Q6XV+lpbcWCiC
+2PtD/zKkBmBasli659WUJLxOkDISJuLdCmUzMh6EtTQWm8UejUERlHaMWISDNpib
+IrvhAjVW5dTfSzKWbozsKo+hT9aqsEGPU3aAp3+9Ii1xqH2ypSDxgkS0J7vMEIso
+hXoDI+NVUBMKI0JoZkxR12Ye6gyntLR5mK3Dg3F2jGkdYgMK3mG3ufTFgY53VBHh
+cHjPJlWk1mdQNBapcd+b
+=MNI6
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_May_2012_18_41_39_+1000_NTpiR.Hg4bQsddoP--
