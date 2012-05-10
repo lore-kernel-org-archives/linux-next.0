@@ -1,60 +1,86 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: manual merge of the sound-asoc tree with the regmap
- tree
-Date: Thu, 10 May 2012 09:53:55 +0100
-Message-ID: <20120510085355.GC3908@opensource.wolfsonmicro.com>
-References: <20120510142552.35f8e15042053707a2086905@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi-post-merge tree with the
+ driver-core tree
+Date: Thu, 10 May 2012 18:57:46 +1000
+Message-ID: <20120510185746.1b7b8e582c0c968633b6e2f1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="adJ1OR3c6QgCpb/j"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__10_May_2012_18_57_46_+1000_5a9xWhWFxJoJS/VJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:43865 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756428Ab2EJIx6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 May 2012 04:53:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20120510142552.35f8e15042053707a2086905@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38160 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757217Ab2EJI5y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 May 2012 04:57:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay@vrfy.org>, Greg KH <greg@kroah.com>, Bjorn Helgaas <bhelgaas@google.com>
 
-
---adJ1OR3c6QgCpb/j
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Thu__10_May_2012_18_57_46_+1000_5a9xWhWFxJoJS/VJ
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 10, 2012 at 02:25:52PM +1000, Stephen Rothwell wrote:
+Hi Andrew,
 
-> Today's linux-next merge of the sound-asoc tree got a conflict in
-> drivers/base/regmap/regmap.c between commit 6560ffd1ccd6 ("regmap: fix
-> possible memory corruption in regmap_bulk_read()") from the regmap tree
-> and commit edc9ae420f98 ("regmap: implement register striding") from the
-> sound-asoc tree.
+Today's linux-next merge of the akpm tree got a conflict in
+mm/page_alloc.c between commit 155cbfc802e4 ("mm: use KERN_CONT in printk()
+continuation lines") from the driver-core tree and commit "mm: print
+physical addresses consistently with other parts of kernel" from the akpm
+tree.
 
-That's the right fix - it's already included in the regmap tree itself.
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---adJ1OR3c6QgCpb/j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --cc mm/page_alloc.c
+index d5a49b6,a98059a..0000000
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@@ -4819,14 -4819,15 +4819,15 @@@ void __init free_area_init_nodes(unsign
+  	for (i =3D 0; i < MAX_NR_ZONES; i++) {
+  		if (i =3D=3D ZONE_MOVABLE)
+  			continue;
+ -		printk("  %-8s ", zone_names[i]);
+ +		printk(KERN_CONT "  %-8s ", zone_names[i]);
+  		if (arch_zone_lowest_possible_pfn[i] =3D=3D
+  				arch_zone_highest_possible_pfn[i])
+ -			printk("empty\n");
+ +			printk(KERN_CONT "empty\n");
+  		else
+- 			printk(KERN_CONT "%0#10lx -> %0#10lx\n",
+- 				arch_zone_lowest_possible_pfn[i],
+- 				arch_zone_highest_possible_pfn[i]);
+ -			printk("[mem %0#10lx-%0#10lx]\n",
+++			printk(KERN_CONT "[mem %0#10lx-%0#10lx]\n",
++ 				arch_zone_lowest_possible_pfn[i] << PAGE_SHIFT,
++ 				(arch_zone_highest_possible_pfn[i]
++ 					<< PAGE_SHIFT) - 1);
+  	}
+ =20
+  	/* Print out the PFNs ZONE_MOVABLE begins at in each node */
+
+--Signature=_Thu__10_May_2012_18_57_46_+1000_5a9xWhWFxJoJS/VJ
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPq4IYAAoJEBus8iNuMP3dyS0P/3XrFuG/PUVjRN8ZZ+C0TPno
-Y01mek8qftz+wfgoPOmlKh+oK1vIedPww0yoNd6kjEgJm4IftPSD4uxP4yaSqw3o
-9muDsxBRNjppeLZNa2kd0SaSUSU5tnpWPD6Oo34CCtSVqEXEhqiZ70IHeKS0mCOd
-/vv76StzACvaeEVEsDulPT329Jj4rWaHbA7tomBV0kcj92quspDSmlZKZEiv/Iru
-57Gzw3QzB5Zlgn9df2QnWonoTrP7oFKAjb/Xf3bUh3yLbKtohY1Vmtn7/kKrJIps
-RF8fLj2a0YUwjMbKpbuppsfBDIixORPh3wWd7vL24wgKiArAfYeF2nbSXkVskqyl
-faJYbH8bWIFdKULgy/4oxup9xouHaqjVM+bw2zVa/e+i81dj9oGrDvVwQr4QGRuS
-wfJ0eAPywxjVU7IbRpLdhY0SumUHXoaVvMTWzWIgQipmlHqwf+yzcC3WFCGhi4we
-SRWUi3hxl319x8XYkWd60p06G4VxBOJQ5sSsF0cShnuROVP++s+yCqmqiPP58MzN
-h2EB8kB6pLhI2T8AVAFapGrd/JjjJUWTpCsUPI/7Iq2nySpBiWxzvPNOtA0UUOYt
-Ff9fOMkf9qfpjdGFO1wBgRLsKED2qOS5f0nf92te31vTeMFH+QffU/x3JqCbJBo7
-4lHk8RudfYPz0cgcAHMO
-=o3L8
+iQIcBAEBCAAGBQJPq4MKAAoJEECxmPOUX5FE9XIP/RaKxvtgzEPMkJlIWHXGWaSr
+Av0QX+tsVoCZ9D+5kskaCxA6NqtCpwUdP5y4r4oIuIvU0iVssUABxpqBapjwVA7H
+xY6evYw90+UBcunDgUylXhq4q60awhGQwvtkmYryQm8k4XbZTyTdvRhccpiVuLet
+hmFdPtaXHCm/90IqmPWwTzvQEmFl1duMaaI46noM9rJvzQHox6OdIJAdchRWkrPX
+fAoVyyre6/tAS/7mJ65weMFPqq43Eo1R+z8GjiNUJXMIYjJOgwMLgG75yB15zw3W
+ejxVKyKRsDdNHNpuKhJ/zygqLRyYv8w6suq31cigaatb9Y4rHvnUnq1JU4C8Sgty
+p/QCYM94CP+uSRGBOCYEgttzmkyIq90pVqMmX9bWezYJRMqEH38vckUPJkJqFNkO
+ZJx4hZRwgH01iZxny6aaG01A59xD9OLPSbIAM5Zi1S1EWUw2Q9JWWBnyrJSWCINw
+yk1KXazIQg90Un0xNpcDKfSUxPIL4G38dw13WxGfWYmQBWBFif0wINHRsCh/wr8p
+kyCwmFeovUIk8xXBkzT38LRc6+6axe588sxyuySuR2olxL1jTzWgY7UnLYcueiHI
+m2lv6QKk5edePcbti5lRB9u3miw5wVVdBxP3opFAIKtCXKXhzP9XHtfPBCABk6g6
+fRHJlPDTms0KRY6e46wG
+=3pRR
 -----END PGP SIGNATURE-----
 
---adJ1OR3c6QgCpb/j--
+--Signature=_Thu__10_May_2012_18_57_46_+1000_5a9xWhWFxJoJS/VJ--
