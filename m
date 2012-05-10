@@ -1,54 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the scsi-post-merge tree with the
- driver-core tree
-Date: Thu, 10 May 2012 19:09:39 +1000
-Message-ID: <20120510190939.27b673b74bc8ba187ba6f552@canb.auug.org.au>
-References: <20120510185746.1b7b8e582c0c968633b6e2f1@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 10 May 2012 10:11:41 +0100
+Message-ID: <20120510091140.GE3908@opensource.wolfsonmicro.com>
+References: <20120510143329.4cef3cd78ce5ea55416b1d93@canb.auug.org.au>
+ <CACRpkdYsHXnWHvBw6Pt1atvwKP6KYjfu-PwQnL_L7-yW1-4_FA@mail.gmail.com>
+ <4FAB7DC1.5060503@stericsson.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__10_May_2012_19_09_39_+1000_kv3EMBnItKjnoLFR"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="orO6xySwJI16pVnm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38504 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753457Ab2EJJJp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 May 2012 05:09:45 -0400
-In-Reply-To: <20120510185746.1b7b8e582c0c968633b6e2f1@canb.auug.org.au>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54023 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755386Ab2EJJLo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 May 2012 05:11:44 -0400
+Content-Disposition: inline
+In-Reply-To: <4FAB7DC1.5060503@stericsson.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay@vrfy.org>, Greg KH <greg@kroah.com>, Bjorn Helgaas <bhelgaas@google.com>
+To: Ola Lilja <ola.o.lilja@stericsson.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lrg@ti.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__10_May_2012_19_09_39_+1000_kv3EMBnItKjnoLFR
-Content-Type: text/plain; charset=US-ASCII
+
+--orO6xySwJI16pVnm
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-This should have said "akpm tree" in the subject.
+On Thu, May 10, 2012 at 10:35:13AM +0200, Ola Lilja wrote:
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> True! I think we should put it in the "config
+> SND_SOC_UX500_PLAT_MSP_I2S", though.
 
---Signature=_Thu__10_May_2012_19_09_39_+1000_kv3EMBnItKjnoLFR
-Content-Type: application/pgp-signature
+That won't work, the machine drivers should be selecting the I2S
+controller driver so the dependency on it will get ignored, and
+presumably any ux500 system is going to have this dependency.
+
+--orO6xySwJI16pVnm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPq4XTAAoJEECxmPOUX5FEb7IP/RduICp5o8ovkbNXcc5OszSJ
-ONAT9WRSrU5oDEuyULQ7s3YTTPGekNPiBj3f768BbgXfz4xswLfU6dQnsSLkVff6
-aVPlZ2WRAtBoAGg8mZyehUdzmZyg4gxhBGUD3xSFU8gSDwWwmqAyIQgF7D6Tl4WE
-+wTtW6+Lkf8eQDxv1vzu0nwQMp/KM3BaA9kO+srpVX36U/SAGBOegf+ocfEOD4o6
-J6RhjqZ0eVVN4Qkr9iCSTbIhcCeJsUbK0hvc0TzwBvM0lpZqLhZqqnOY/+YCk4V+
-FRhRlweoQL0F+EJTi+qEgxakKetv+0sjG4oBqpwSSXYq4LeGapCgb0vltOH4ZX0a
-u4rVk9KvSwfjM5wWCiAnaWL/UYW5f5NewugegHGcI0aACj7R9iv9C59g65T/hu5W
-/+QRvHo+zdMG9JovKL2Hr6GdXpkHgRBN7IZrSY4qsEOiNiCaDvIq4SIZe5oB48N/
-XFC9MSjMlqNmBQ32dDUnHZDZLcO3XEGeVxh+alWWkxXquLdrsdVWSIn0bZhRWnuy
-c7E3QiwgtfCSPzMMfm4ZIaKd2OTuQw/gIIHPVwVeN3eSulZvZl4AYbffeVJs7x/a
-4+uFvLygUs4YZJ7gzpXaagUiGwZXTdN3vTGrpQQ90FlH3Q4qkTmpF81HPhyoD+pA
-zDP1123eH1vv1aK9SRS1
-=4zak
+iQIcBAEBAgAGBQJPq4ZFAAoJEBus8iNuMP3dQxEP/jqkkv+kl6y9VRjQ55Jz2xGQ
+I1T3EMMqUUx+c1eQp7qjMyGq4b6fC3mEWm4LCY+7dBBilDt8qhVpUAF0OIKXWa9I
+Sc6px8cuhQTXpUjRQ09uP2ugTkXHltqj5N6UUuHp3IKGY40Ff7RtKfHyj+nwpePK
+NnTCA3DdbMnPxR8kmQvVREVCIX3iW6w2LL9Rvfhf4MgYYiBfJ9gtg/dmJE0dH0FO
+ANynsOF34PanCTvqoY1GEv0YRx6vvzq/E133o9qzi7PQvlGKQB3hrbO/VZP+6xse
+IAzGPZqSMV3mqfr+IZA8UnFeiWwyNeGlZZFDqioHULQUP6UlzOYNr2z844I5d1Za
+NL4hLEl/AFsHVj/apldXQddKoCNbvWNPkxTqNcyv5F797MPuEh6Wk7I0OCGyzGbp
+z6cBoXFYAT1JwG6rQ79cTFgUsEJa4jw7YwQF8vXqTqFYsKW3L5+w89jHp1iqj79+
+2BdVULleTpsIGJYHLcmkG3EZO5NcbmO5209ieg7nC0UjHFko+5qjcyI51m/kCD7c
+Tr9eAhlV8O5JwyF4pY/dZBgvcrSat1a6Jam9IRUyB9Ql2I3qBATaakDzJ1FVXeMk
+id739Fuono92YALx1KI4vVP6d4ra67LOepYr4+o3R0+sqVUAdb7qsXHgu+gyLU65
++2yP0cX48/3DV8A/o9T0
+=a5BE
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_May_2012_19_09_39_+1000_kv3EMBnItKjnoLFR--
+--orO6xySwJI16pVnm--
