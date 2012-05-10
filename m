@@ -1,97 +1,60 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: Regression due to 7ff9554 "printk: convert byte-buffer to variable-length
- record buffer"
-Date: Thu, 10 May 2012 15:58:53 -0600
-Message-ID: <4FAC3A1D.7050309@wwwdotorg.org>
-References: <4FAAB815.5040001@wwwdotorg.org> <4FAC1D09.1070004@wwwdotorg.org> <CAPXgP11UqAZgfWXUrxi7VsYr_hoDgi=cP4yn5UJ5rdPU8i5_sA@mail.gmail.com> <4FAC2085.7030002@wwwdotorg.org> <4FAC2150.2060804@wwwdotorg.org> <CAPXgP10510MCgro77-sOVjvvooa5J5=0c_FR1-QbuN9smLdBPw@mail.gmail.com> <4FAC2304.7050705@wwwdotorg.org> <CAPXgP12V08MJ3Ja3i10eiTp-QboJozgvY9ah7=NPpmusALq=6A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] printk: correctly align __log_buf
+Date: Thu, 10 May 2012 16:14:33 -0600
+Message-ID: <1336688073-10664-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:38346 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:44594 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761711Ab2EJV64 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 May 2012 17:58:56 -0400
-In-Reply-To: <CAPXgP12V08MJ3Ja3i10eiTp-QboJozgvY9ah7=NPpmusALq=6A@mail.gmail.com>
+	with ESMTP id S1761814Ab2EJWOk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 May 2012 18:14:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kay Sievers <kay@vrfy.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, William Douglas <william.douglas@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kay Sievers <kay@vrfy.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 
-On 05/10/2012 02:26 PM, Kay Sievers wrote:
-> On Thu, May 10, 2012 at 10:20 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->> On 05/10/2012 02:15 PM, Kay Sievers wrote:
->>> On Thu, May 10, 2012 at 10:13 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->>>> On 05/10/2012 02:09 PM, Stephen Warren wrote:
->>>>> On 05/10/2012 02:06 PM, Kay Sievers wrote:
->>>>>> On Thu, May 10, 2012 at 9:54 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->>>>>>> On 05/09/2012 12:31 PM, Stephen Warren wrote:
->>>>>>>> For me, next-20120508 prints nothing when booted, and I think also
->>>>>>>> hangs. To solve this, I reverted:
->>>>>>>>
->>>>>>>> 7ff9554 printk: convert byte-buffer to variable-length record buffer
->>>>>>>>
->>>>>>>> In order to build, I also had to revert:
->>>>>>>>
->>>>>>>> c4e00da driver-core: extend dev_printk() to pass structured data
->>>>>>>>
->>>>>>>> Note: I'm running on an ARM system using a serial console, with
->>>>>>>> earlyprintk enabled.
->>>>>>>
->>>>>>> This issue still occurs in next-20120510.
->>>>>>>
->>>>>>> I've tracked it down to the assignment of msg->ts_nsec near the end of
->>>>>>> log_store(). If I comment this out, everything works. The problem is the
->>>>>>> assignment, not the call to local_clock():
->>>>>>>
->>>>>>> fails:
->>>>>>>        msg->ts_nsec = local_clock();
->>>>>>> fails:
->>>>>>>        msg->ts_nsec = 0;//local_clock();
->>>>>>> works:
->>>>>>>        //msg->ts_nsec = local_clock();
->>>>>>
->>>>>> Weird.
->>>>>>
->>>>>> What happens if you change it to:
->>>>>>   cpu_clock(logbuf_cpu);
->>>>>> ?
->>>>>>
->>>>>> If it works, the timestamps look ok?
->>>>>
->>>>> I doubt that would work - after all, assigning 0 fails, but not
->>>>> performing the assignment at all works. But, I'll go try it...
->>>>
->>>> Calling cpu_clock() instead of local_clock() fails in the same way.
->>>
->>> Ok, didn't really see the assign to 0 you tried, sorry. :)
->>>
->>> And 'dmesg' works when you run the box with the line commented out?
->>>
->>> And 'cat /dev/kmsg'?
->>
->> Yes, both work and produce reasonable output.
-> 
-> Really weird. I have zero ideas at what this could be. The messages in
-> /dev/kmsg have seqnums, you see the 0 as the first?
-> 
-> 5,0,0;Linux version 3.4.0-rc6+ ...
-> 6,1,0;Command line: root=/dev/sda1 ...
-> 
->> "cat /dev/kmsg" does hang
->> at the end of the log until I CTRL-C it - is that expected?
-> 
-> Yeah, 'cat' is a blocking read(), tools would use poll().
+From: Stephen Warren <swarren@nvidia.com>
 
-Found the bug. __log_buf isn't correctly aligned, so the very first
-message gets the struct log written to an unaligned address. Subsequent
-entries would be correctly aligned in log_store(), except the kernel has
-already crashed by then.
+__log_buf must be aligned, because a 64-bit value is written directly
+to it as part of struct log. Alignment of the log entries is typically
+handled by log_store(), but this only triggers for subsequent entries,
+not the very first (or wrapped) entries.
 
-The ts_nsec field is a 64-bit write, which triggers the alignment
-requirement. I'm not quite sure why the previous 16-bit writes for the
-various len fields didn't experience an issue, since __log_buf ended up
-at an odd address for me. Perhaps ARM doesn't have an alignment
-requirement for 16-bit writes, but does for 32-bit and greater.
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+ kernel/printk.c |   13 ++++++-------
+ 1 files changed, 6 insertions(+), 7 deletions(-)
 
-I'll post a patch in a minute.
+diff --git a/kernel/printk.c b/kernel/printk.c
+index 7b43295..7e82fb7 100644
+--- a/kernel/printk.c
++++ b/kernel/printk.c
+@@ -227,8 +227,13 @@ static u32 clear_idx;
+ #define LOG_LINE_MAX 1024
+ 
+ /* record buffer */
++#if !defined(CONFIG_64BIT) || defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
++#define LOG_ALIGN 4
++#else
++#define LOG_ALIGN 8
++#endif
+ #define __LOG_BUF_LEN (1 << CONFIG_LOG_BUF_SHIFT)
+-static char __log_buf[__LOG_BUF_LEN];
++static char __log_buf[__LOG_BUF_LEN] __aligned(LOG_ALIGN);
+ static char *log_buf = __log_buf;
+ static u32 log_buf_len = __LOG_BUF_LEN;
+ 
+@@ -279,12 +284,6 @@ static u32 log_next(u32 idx)
+ 	return idx + msg->len;
+ }
+ 
+-#if !defined(CONFIG_64BIT) || defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
+-#define LOG_ALIGN 4
+-#else
+-#define LOG_ALIGN 8
+-#endif
+-
+ /* insert record into the buffer, discard old ones, update heads */
+ static void log_store(int facility, int level,
+ 		      const char *dict, u16 dict_len,
+-- 
+1.7.0.4
