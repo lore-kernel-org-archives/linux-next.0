@@ -1,68 +1,30 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH] net: of/phy: fix build error when phylib is built as
- a module
-Date: Fri, 11 May 2012 16:50:17 -0700
-Message-ID: <4FADA5B9.1060303@xenotime.net>
-References: <20120510.224352.2149006669429730060.davem@davemloft.net> <1336751221-19127-1-git-send-email-bjorn@mork.no>
+Subject: Re: linux-next: Tree for May 11 (perf_event_amd.c)
+Date: Fri, 11 May 2012 16:52:16 -0700
+Message-ID: <4FADA630.1080806@xenotime.net>
+References: <20120511162738.1d65b6efe099a54841be6313@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:40876 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1759406Ab2EKXuE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 May 2012 19:50:04 -0400
-In-Reply-To: <1336751221-19127-1-git-send-email-bjorn@mork.no>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?QmrDuHJuIE1vcms=?= <bjorn@mork.no>
-Cc: David Miller <davem@davemloft.net>, paul.gortmaker@windriver.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, david.daney@cavium.com
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120511162738.1d65b6efe099a54841be6313@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Paul Mackerras <paulus@samba.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
+List-Id: linux-next.vger.kernel.org
 
-On 05/11/2012 08:47 AM, Bj=C3=B8rn Mork wrote:
+On 05/10/2012 11:27 PM, Stephen Rothwell wrote:
 
-> CONFIG_OF_MDIO is tristate and will be m if PHYLIB is m.  Use
-> IS_ENABLED macro to prevent build error:
->=20
->  ERROR: "of_mdio_find_bus" [drivers/net/phy/mdio-mux.ko] undefined!
->=20
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Cc: David Daney <david.daney@cavium.com>
-> Signed-off-by: Bj=C3=B8rn Mork <bjorn@mork.no>
-
-
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-
-Thanks.
-
-
-> ---
-> I wonder if this could be as banal as this?  Not even build tested...
->=20
-> Should be wrapped into commit 25106022 if it works, to ensure
-> bisectability.
->=20
->=20
->=20
-> Bj=C3=B8rn
->=20
->  drivers/net/phy/mdio_bus.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-> index 83d5c9f..683ef1c 100644
-> --- a/drivers/net/phy/mdio_bus.c
-> +++ b/drivers/net/phy/mdio_bus.c
-> @@ -88,7 +88,7 @@ static struct class mdio_bus_class =3D {
->  	.dev_release	=3D mdiobus_release,
->  };
-> =20
-> -#ifdef CONFIG_OF_MDIO
-> +#if IS_ENABLED(CONFIG_OF_MDIO)
->  /* Helper function for of_mdio_find_bus */
->  static int of_mdio_bus_match(struct device *dev, void *mdio_bus_np)
->  {
+> Hi all,
+> 
+> Changes since 201205010:
 
 
 
---=20
+when CONFIG_LOCAL_APIC is not enabled:
+
+perf_event_amd.c:(.text+0x11530): undefined reference to `get_ibs_caps'
+
+
+-- 
 ~Randy
