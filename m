@@ -1,28 +1,51 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the usb tree
-Date: Fri, 11 May 2012 07:44:02 -0700
-Message-ID: <20120511144402.GB5958@kroah.com>
-References: <20120511151236.c554c07acc0f5809eaeb85b8@canb.auug.org.au>
+From: =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
+Subject: [PATCH] net: of/phy: fix build error when phylib is built as a module
+Date: Fri, 11 May 2012 17:47:01 +0200
+Message-ID: <1336751221-19127-1-git-send-email-bjorn@mork.no>
+References: <20120510.224352.2149006669429730060.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120511151236.c554c07acc0f5809eaeb85b8@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Justin P. Mattock" <justinmattock@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20120510.224352.2149006669429730060.davem@davemloft.net>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: paul.gortmaker@windriver.com, rdunlap@xenotime.net, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, david.daney@cavium.com, =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, May 11, 2012 at 03:12:36PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/quatech_usb2/quatech_usb2.c between commit 38902cf9f6be
-> ("USB: remove staging quatech_usb2 driver") from the usb tree and a
-> couple of commits from the staging tree.
-> 
-> The former removes the file, so I did that.
+CONFIG_OF_MDIO is tristate and will be m if PHYLIB is m.  Use
+IS_ENABLED macro to prevent build error:
 
-Wonderful, thanks for doing that.
+ ERROR: "of_mdio_find_bus" [drivers/net/phy/mdio-mux.ko] undefined!
 
-greg k-h
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc: David Daney <david.daney@cavium.com>
+Signed-off-by: Bj=C3=B8rn Mork <bjorn@mork.no>
+---
+I wonder if this could be as banal as this?  Not even build tested...
+
+Should be wrapped into commit 25106022 if it works, to ensure
+bisectability.
+
+
+
+Bj=C3=B8rn
+
+ drivers/net/phy/mdio_bus.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+index 83d5c9f..683ef1c 100644
+--- a/drivers/net/phy/mdio_bus.c
++++ b/drivers/net/phy/mdio_bus.c
+@@ -88,7 +88,7 @@ static struct class mdio_bus_class =3D {
+ 	.dev_release	=3D mdiobus_release,
+ };
+=20
+-#ifdef CONFIG_OF_MDIO
++#if IS_ENABLED(CONFIG_OF_MDIO)
+ /* Helper function for of_mdio_find_bus */
+ static int of_mdio_bus_match(struct device *dev, void *mdio_bus_np)
+ {
+--=20
+1.7.10
