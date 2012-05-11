@@ -1,54 +1,57 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCHv9 10/10] ARM: dma-mapping: add support for IOMMU mapper
-Date: Fri, 11 May 2012 09:52:53 +0200
-Message-ID: <02e301cd2f4b$11e02f90$35a08eb0$%szyprowski@samsung.com>
-References: <1334756652-30830-1-git-send-email-m.szyprowski@samsung.com>
-	<1334756652-30830-11-git-send-email-m.szyprowski@samsung.com>
-	<CAP=VYLr=NeGvppR4ONpnRh=gjCSPdKxYj1HYh_FvadAeUzcbBQ@mail.gmail.com>
+From: "Arend van Spriel" <arend@broadcom.com>
+Subject: Re: [PATCH -next] wireless: TI wlxxx depends on MAC80211
+Date: Fri, 11 May 2012 13:59:14 +0200
+Message-ID: <4FACFF12.60504@broadcom.com>
+References: <20120416161121.261ba4e7e38989173accfb16@canb.auug.org.au>
+ <4F8C784B.2040402@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain;
+ charset=iso-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <CAP=VYLr=NeGvppR4ONpnRh=gjCSPdKxYj1HYh_FvadAeUzcbBQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-language: pl
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: 'Paul Gortmaker' <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Cc: linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Russell King - ARM Linux' <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, 'Arnd Bergmann' <arnd-r2nGTMty4D4@public.gmane.org>, 'Benjamin Herrenschmidt' <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Subash Patel' <subashrp-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Krishna Reddy' <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'KyongHo Cho' <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Chunsang Jeong' <chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mms2.broadcom.com ([216.31.210.18]:4498 "EHLO mms2.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752689Ab2EKL71 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 May 2012 07:59:27 -0400
+In-Reply-To: <4F8C784B.2040402@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Luciano Coelho <coelho@ti.com>, linux-wireless@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Arik Nemtsov <arik@wizery.com>
 
-Hello,
+On 04/16/2012 09:51 PM, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+> 
+> wl12xx build fails with many undefined symbol errors when MAC80211
+> and CFG80211 are not enabled, so make WLCORE and WL12XX depend
+> on MAC80211 (which already depends on CFG80211).
+> 
+> ---
+>  drivers/net/wireless/ti/wl12xx/Kconfig |    1 +
+>  drivers/net/wireless/ti/wlcore/Kconfig |    2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> --- linux-next-20120416.orig/drivers/net/wireless/ti/wl12xx/Kconfig
+> +++ linux-next-20120416/drivers/net/wireless/ti/wl12xx/Kconfig
+> @@ -1,5 +1,6 @@
+>  config WL12XX
+>         tristate "TI wl12xx support"
+> +	depends on MAC80211
+>         select WLCORE
 
-On Friday, May 11, 2012 4:09 AM Paul Gortmaker wrote:
+Similar patch is probably needed for new wl18xx driver.
 
-> On Wed, Apr 18, 2012 at 9:44 AM, Marek Szyprowski
-> <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> > This patch add a complete implementation of DMA-mapping API for
-> > devices which have IOMMU support.
-> 
-> Hi Marek,
-> 
-> It looks like this patch breaks no-MMU builds on ARM, at least
-> according to git bisect.  Here is a link to a linux-next failure:
-> 
-> http://kisskb.ellerman.id.au/kisskb/buildresult/6291233/
-> 
-> arch/arm/mm/dma-mapping.c:726:42: error: 'pgprot_kernel' undeclared
-> (first use in this function)
-> make[2]: *** [arch/arm/mm/dma-mapping.o] Error 1
-> 
-> Please have a look, thanks.
+>         ---help---
+>  	  This module adds support for wireless adapters based on TI wl1271,
+> --- linux-next-20120416.orig/drivers/net/wireless/ti/wlcore/Kconfig
+> +++ linux-next-20120416/drivers/net/wireless/ti/wlcore/Kconfig
+> @@ -1,6 +1,6 @@
+>  config WLCORE
+>  	tristate "TI wlcore support"
+> -	depends on WL_TI && GENERIC_HARDIRQS
+> +	depends on WL_TI && GENERIC_HARDIRQS && MAC80211
+>  	depends on INET
+>  	select FW_LOADER
+>  	---help---
 
-Thanks for reporting this issue, I will send a fix in a minute.
-
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+Gr. AvS
