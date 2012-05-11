@@ -1,65 +1,94 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: Tree for May 10 (fs/inode.c)
-Date: Thu, 10 May 2012 21:36:16 -0400
-Message-ID: <CAP=VYLrAjGjCHDhxrEypaKcqK1Yx7_XY_TZofsf5V9x7GCGr7g@mail.gmail.com>
-References: <20120510192635.c6f3a55196bbf65f13956e44@canb.auug.org.au> <4FAC31BE.1060505@xenotime.net>
+Subject: Re: [PATCHv9 10/10] ARM: dma-mapping: add support for IOMMU mapper
+Date: Thu, 10 May 2012 22:08:39 -0400
+Message-ID: <CAP=VYLr=NeGvppR4ONpnRh=gjCSPdKxYj1HYh_FvadAeUzcbBQ@mail.gmail.com>
+References: <1334756652-30830-1-git-send-email-m.szyprowski@samsung.com> <1334756652-30830-11-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:42075 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751295Ab2EKBgs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 May 2012 21:36:48 -0400
-In-Reply-To: <4FAC31BE.1060505@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Trond.Myklebust@netapp.com
+Content-Transfer-Encoding: quoted-printable
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <1334756652-30830-11-git-send-email-m.szyprowski@samsung.com>
+Sender: owner-linux-mm@kvack.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, iommu@lists.linux-foundation.org, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <joro@8bytes.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Chunsang Jeong <chunsang.jeong@linaro.org>, Krishna Reddy <vdumpa@nvidia.com>, KyongHo Cho <pullip.cho@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Hiroshi Doyu <hdoyu@nvidia.com>, Subash Patel <subashrp@gmail.com>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, May 10, 2012 at 5:23 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On 05/10/2012 02:26 AM, Stephen Rothwell wrote:
->
->> Hi all,
->>
->> Changes since 20120508:
->
->
-> when CONFIG_BLOCK is not set:
->
-> fs/inode.c:1777:6: error: redefinition of 'inode_dio_wait'
-> include/linux/fs.h:2476:20: note: previous definition of 'inode_dio_wait'
-> was here
+On Wed, Apr 18, 2012 at 9:44 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> This patch add a complete implementation of DMA-mapping API for
+> devices which have IOMMU support.
 
-Also seen on some arm builds:
+Hi Marek,
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/6291357/
-http://kisskb.ellerman.id.au/kisskb/buildresult/6291378/
+It looks like this patch breaks no-MMU builds on ARM, at least
+according to git bisect.  Here is a link to a linux-next failure:
 
-5eff3957ce8d14c2a254844743dfb84e19e7c2ae is the first bad commit
-commit 5eff3957ce8d14c2a254844743dfb84e19e7c2ae
-Author: Trond Myklebust <Trond.Myklebust@netapp.com>
-Date:   Mon May 7 10:44:29 2012 -0400
+http://kisskb.ellerman.id.au/kisskb/buildresult/6291233/
 
-    NFS: Ensure that setattr and getattr wait for O_DIRECT write completion
+arch/arm/mm/dma-mapping.c:726:42: error: 'pgprot_kernel' undeclared
+(first use in this function)
+make[2]: *** [arch/arm/mm/dma-mapping.o] Error 1
 
-    Use the same mechanism as the block devices are using, but move the
-    helper functions from fs/direct-io.c into fs/inode.c to remove the
-    dependency on CONFIG_BLOCK.
+Please have a look, thanks.
 
-    Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
-    Cc: Christoph Hellwig <hch@infradead.org>
-    Cc: Al Viro <viro@zeniv.linux.org.uk>
-    Cc: Fred Isaman <iisaman@netapp.com>
-
-:040000 040000 ae33e2ffd172e4d7e2ad6ed219de32de936548cc
-ef2df66b34559dbc0782add108e24a6ef6e4e2ca M      fs
-bisect run success
-
-P.
+Paul.
 ---
 
+
 >
-> Full randconfig file is attached.
+> This implementation tries to optimize dma address space usage by remappin=
+g
+> all possible physical memory chunks into a single dma address space chunk=
+.
 >
-> --
-> ~Randy
+> DMA address space is managed on top of the bitmap stored in the
+> dma_iommu_mapping structure stored in device->archdata. Platform setup
+> code has to initialize parameters of the dma address space (base address,
+> size, allocation precision order) with arm_iommu_create_mapping()
+> function.
+> To reduce the size of the bitmap, all allocations are aligned to the
+> specified order of base 4 KiB pages.
+>
+> dma_alloc_* functions allocate physical memory in chunks, each with
+> alloc_pages() function to avoid failing if the physical memory gets
+> fragmented. In worst case the allocated buffer is composed of 4 KiB page
+> chunks.
+>
+> dma_map_sg() function minimizes the total number of dma address space
+> chunks by merging of physical memory chunks into one larger dma address
+> space chunk. If requested chunk (scatter list entry) boundaries
+> match physical page boundaries, most calls to dma_map_sg() requests will
+> result in creating only one chunk in dma address space.
+>
+> dma_map_page() simply creates a mapping for the given page(s) in the dma
+> address space.
+>
+> All dma functions also perform required cache operation like their
+> counterparts from the arm linear physical memory mapping version.
+>
+> This patch contains code and fixes kindly provided by:
+> - Krishna Reddy <vdumpa@nvidia.com>,
+> - Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
+> - Hiroshi DOYU <hdoyu@nvidia.com>
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Tested-By: Subash Patel <subash.ramaswamy@linaro.org>
+> ---
+> =A0arch/arm/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A08 +
+> =A0arch/arm/include/asm/device.h =A0 =A0| =A0 =A03 +
+> =A0arch/arm/include/asm/dma-iommu.h | =A0 34 ++
+> =A0arch/arm/mm/dma-mapping.c =A0 =A0 =A0 =A0| =A0727
+> +++++++++++++++++++++++++++++++++++++-
+> =A0arch/arm/mm/vmregion.h =A0 =A0 =A0 =A0 =A0 | =A0 =A02 +-
+> =A05 files changed, 759 insertions(+), 15 deletions(-)
+> =A0create mode 100644 arch/arm/include/asm/dma-iommu.h
+>
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
