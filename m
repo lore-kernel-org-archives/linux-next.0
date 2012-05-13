@@ -1,40 +1,57 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] watchdog: fix ie6xx_wdt.c printk format warning
-Date: Fri, 11 May 2012 18:33:31 -0700
-Message-ID: <4FADBDEB.402@xenotime.net>
-References: <20120511162738.1d65b6efe099a54841be6313@canb.auug.org.au>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: failed to fetch the cifs tree
+Date: Mon, 14 May 2012 09:54:54 +1000
+Message-ID: <20120514095454.39dd3f95eead6d94ea4f554d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120511162738.1d65b6efe099a54841be6313@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__14_May_2012_09_54_54_+1000_K2r4emotbUgJYilO"
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Mon__14_May_2012_09_54_54_+1000_K2r4emotbUgJYilO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix printk format warning; use cast to u64 since resource_size_t can
-be either u32 or u64.
+Hi all,
 
-drivers/watchdog/ie6xx_wdt.c:261:4: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'resource_size_t'
+Trying to fetch the cifs tree gets this error:
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
- drivers/watchdog/ie6xx_wdt.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+fatal: Couldn't find remote ref refs/heads/for-next
 
---- linux-next-20120511.orig/drivers/watchdog/ie6xx_wdt.c
-+++ linux-next-20120511/drivers/watchdog/ie6xx_wdt.c
-@@ -257,8 +257,8 @@ static int __devinit ie6xx_wdt_probe(str
- 		return -ENODEV;
- 
- 	if (!request_region(res->start, resource_size(res), pdev->name)) {
--		dev_err(&pdev->dev, "Watchdog region 0x%x already in use!\n",
--			res->start);
-+		dev_err(&pdev->dev, "Watchdog region 0x%llx already in use!\n",
-+			(u64)res->start);
- 		return -EBUSY;
- 	}
- 
+and checking via "git ls-remote" shows that the remote tree has only a
+"master" branch that is set to v3.4-rc7.   Something got lost along the
+way ...
+
+I will use the cifs tree from next-20120511 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+
+--Signature=_Mon__14_May_2012_09_54_54_+1000_K2r4emotbUgJYilO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPsEnOAAoJEECxmPOUX5FELjkP/0lY6aOgpsvP9hnoCqsWNfmS
+PYYfhW9y7ZISuTpZWl86yemKGnFMoaHDWOKvno7be6qm4+YLG89E2EzsU8HczMMo
+PVylWKF5c3wo11HrvodUTDrh7TcpwX1flDUqtSOCI11+hC4fOTIbM5KeWdaJ8shO
+aQxpW7VEVMzTFvdCA4P8rYdN/ouNFlreyPlh9v9etDPasjbzCbbwQ7DqJW3Rc2vf
+7ITDTsU9ivMEANy7WReL9kETl8fnwrV38F3qDFSQUpm3NhAqz9hjjdcwQsqzHXfP
+AxJ/1OF19hUr/NGxDRoAWFK7Cmy4s9F2ejNhIXH+Vn05Ho/mk+pDiBKaq7wr/KHI
+ENzZ43Yxg4HV7Z5A3ncvAGRCv7MAx3GhQs4x36NMnhB1NeFyQjX4Hfa6dE0xwIhW
+10NttoehhGneS2NV5bBkdJ3ANKZovyU5jIo81Z3erLF3BQZrn48larkGir+cNwF3
+ISnacmmHBY5AlNKPqhgIeB69t66bKdy/W1rW8BORol/59F1vgll4f+RQFOH2sxcs
+3A1qgLB9OVKOxKZ5sExQWo2ZszF2vCmCShZn6dgjmyJPJIacZ6xpQ2ayCUPVhpz9
+lZReIhJVUPKFpzO3rQn0pIJkejsh7qer+OQF1MDINKJqygoyXS57IiIUCUHLwDzo
+N7P7IhlJATkkXoem3z2o
+=4GjZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__14_May_2012_09_54_54_+1000_K2r4emotbUgJYilO--
