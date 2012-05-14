@@ -1,29 +1,54 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: manual merge of the akpm tree with the rr tree
-Date: Mon, 14 May 2012 10:59:34 +0930
-Message-ID: <877gwfv9c1.fsf@rustcorp.com.au>
-References: <20120510185155.47d24f37951786b64af97868@canb.auug.org.au>
+From: Steve French <smfrench@gmail.com>
+Subject: Re: linux-next: failed to fetch the cifs tree
+Date: Sun, 13 May 2012 21:52:44 -0500
+Message-ID: <CAH2r5mvt2ApHfbT8MbZtdNGnBD+SETY-e8CqmGNYLE-6C-=0Ew@mail.gmail.com>
+References: <20120514095454.39dd3f95eead6d94ea4f554d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120510185155.47d24f37951786b64af97868@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Al Viro <viro@zeniv.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:59957 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753922Ab2ENCwo convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 13 May 2012 22:52:44 -0400
+In-Reply-To: <20120514095454.39dd3f95eead6d94ea4f554d@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 10 May 2012 18:51:55 +1000, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Andrew,
-> 
-> Today's linux-next merge of the akpm tree got conflicts in
-> kernel/lglock.c, include/linux/lglock.h, fs/namespace.c and fs/internal.h
-> between various commits from the rr tree and commit "brlocks/lglocks:
-> cleanups" from the akpm tree.
-> 
-> The akpm tree patch seems to be a merge of the rr tree commits, so I
-> dropped the akpm tree patch.
+Should be ok now.
 
-Al said he'd take them, so I dropped mine now too.
+I had to rebuild the for-next branch of cifs-2.6.git due to a problem
+caused by a previous "git push --force" (I had already fixed the
+master branch of cifs-2.6.git but had not fixed up the for-next
+branch).  It is now recreated and some patches from Jeff and Pavel
+remerged.
 
+On Sun, May 13, 2012 at 6:54 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi all,
+>
+> Trying to fetch the cifs tree gets this error:
+>
+> fatal: Couldn't find remote ref refs/heads/for-next
+>
+> and checking via "git ls-remote" shows that the remote tree has only =
+a
+> "master" branch that is set to v3.4-rc7. =A0 Something got lost along=
+ the
+> way ...
+>
+> I will use the cifs tree from next-20120511 for today.
+>
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+
+
+
+--=20
 Thanks,
-Rusty.
+
+Steve
