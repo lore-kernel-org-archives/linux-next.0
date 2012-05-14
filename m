@@ -1,19 +1,19 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the omap_dss2
+Subject: linux-next: manual merge of the arm-soc tree with the sound-asoc
  tree
-Date: Mon, 14 May 2012 18:51:16 +1000
-Message-ID: <20120514185116.fcde1a3be2fbaae3c4b5f279@canb.auug.org.au>
+Date: Mon, 14 May 2012 18:54:50 +1000
+Message-ID: <20120514185450.4682573d6cb7c4745c9ea8b5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__14_May_2012_18_51_16_+1000_wh=t_GIZurbEgZap"
+ boundary="Signature=_Mon__14_May_2012_18_54_50_+1000_aacaX6r_q+MO1kEV"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__14_May_2012_18_51_16_+1000_wh=t_GIZurbEgZap
+--Signature=_Mon__14_May_2012_18_54_50_+1000_aacaX6r_q+MO1kEV
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -21,68 +21,112 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the arm-soc tree got a conflict in
-drivers/video/omap2/displays/panel-taal.c between commit 9c3d5eb71b1f
-("OMAP: DSS2: Remove suspicous and unused TAAL regulator API usage") from
-the omap_dss2 tree and commit 3acc797c1db2 ("OMAPDSS: Taal: move reset
-gpio handling to taal driver") from the arm-soc tree.
+sound/soc/mxs/mxs-saif.c between commit 08641c7c74dd ("ASoC: mxs: add
+device tree support for mxs-saif") from the sound-asoc tree and commit
+f755865f9082 ("ASoC: mxs-saif: adopt pinctrl support") from the arm-soc
+tree.
 
-Just context changes. I fixed it up (see below) and can carry the fix as
+Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/video/omap2/displays/panel-taal.c
-index 3053399,b2dd88b..0000000
---- a/drivers/video/omap2/displays/panel-taal.c
-+++ b/drivers/video/omap2/displays/panel-taal.c
-@@@ -992,8 -1082,13 +1001,11 @@@ err_gpio
-  	if (bldev !=3D NULL)
-  		backlight_device_unregister(bldev);
-  err_bl:
-+ 	if (gpio_is_valid(panel_data->reset_gpio))
-+ 		gpio_free(panel_data->reset_gpio);
-+ err_rst_gpio:
-  	destroy_workqueue(td->workqueue);
-  err_wq:
- -	free_regulators(panel_config->regulators, panel_config->num_regulators);
- -err_reg:
-  	kfree(td);
-  err:
-  	return r;
-@@@ -1030,6 -1125,12 +1042,9 @@@ static void __exit taal_remove(struct o
-  	/* reset, to be sure that the panel is in a valid state */
-  	taal_hw_reset(dssdev);
+diff --cc sound/soc/mxs/mxs-saif.c
+index 0642748,7fd224b..0000000
+--- a/sound/soc/mxs/mxs-saif.c
++++ b/sound/soc/mxs/mxs-saif.c
+@@@ -628,50 -626,38 +629,57 @@@ static int __devinit mxs_saif_probe(str
+  	struct resource *iores, *dmares;
+  	struct mxs_saif *saif;
+  	struct mxs_saif_platform_data *pdata;
++ 	struct pinctrl *pinctrl;
+  	int ret =3D 0;
  =20
- -	free_regulators(td->panel_config->regulators,
- -			td->panel_config->num_regulators);
+ -	if (pdev->id >=3D ARRAY_SIZE(mxs_saif))
+ +
+ +	if (!np && pdev->id >=3D ARRAY_SIZE(mxs_saif))
+  		return -EINVAL;
+ =20
+  	saif =3D devm_kzalloc(&pdev->dev, sizeof(*saif), GFP_KERNEL);
+  	if (!saif)
+  		return -ENOMEM;
+ =20
+ -	mxs_saif[pdev->id] =3D saif;
+ -	saif->id =3D pdev->id;
  -
-+ 	if (gpio_is_valid(panel_data->reset_gpio))
-+ 		gpio_free(panel_data->reset_gpio);
-+=20
-  	kfree(td);
-  }
+ -	pdata =3D pdev->dev.platform_data;
+ -	if (pdata && !pdata->master_mode) {
+ -		saif->master_id =3D pdata->master_id;
+ -		if (saif->master_id < 0 ||
+ -			saif->master_id >=3D ARRAY_SIZE(mxs_saif) ||
+ -			saif->master_id =3D=3D saif->id) {
+ -			dev_err(&pdev->dev, "get wrong master id\n");
+ -			return -EINVAL;
+ +	if (np) {
+ +		struct device_node *master;
+ +		saif->id =3D of_alias_get_id(np, "saif");
+ +		if (saif->id < 0)
+ +			return saif->id;
+ +		/*
+ +		 * If there is no "fsl,saif-master" phandle, it's a saif
+ +		 * master.  Otherwise, it's a slave and its phandle points
+ +		 * to the master.
+ +		 */
+ +		master =3D of_parse_phandle(np, "fsl,saif-master", 0);
+ +		if (!master) {
+ +			saif->master_id =3D saif->id;
+ +		} else {
+ +			saif->master_id =3D of_alias_get_id(master, "saif");
+ +			if (saif->master_id < 0)
+ +				return saif->master_id;
+  		}
+  	} else {
+ -		saif->master_id =3D saif->id;
+ +		saif->id =3D pdev->id;
+ +		pdata =3D pdev->dev.platform_data;
+ +		if (pdata && !pdata->master_mode)
+ +			saif->master_id =3D pdata->master_id;
+ +		else
+ +			saif->master_id =3D saif->id;
+ +	}
+ +
+ +	if (saif->master_id < 0 || saif->master_id >=3D ARRAY_SIZE(mxs_saif)) {
+ +		dev_err(&pdev->dev, "get wrong master id\n");
+ +		return -EINVAL;
+  	}
  =20
+ +	mxs_saif[saif->id] =3D saif;
+ +
++ 	pinctrl =3D devm_pinctrl_get_select_default(&pdev->dev);
++ 	if (IS_ERR(pinctrl)) {
++ 		ret =3D PTR_ERR(pinctrl);
++ 		return ret;
++ 	}
++=20
+  	saif->clk =3D clk_get(&pdev->dev, NULL);
+  	if (IS_ERR(saif->clk)) {
+  		ret =3D PTR_ERR(saif->clk);
 
---Signature=_Mon__14_May_2012_18_51_16_+1000_wh=t_GIZurbEgZap
+--Signature=_Mon__14_May_2012_18_54_50_+1000_aacaX6r_q+MO1kEV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPsMeEAAoJEECxmPOUX5FEpqgP/AugiNGMC4279KRGKWea/TbI
-6b4AFKHqEgjURiyuUzk4NAfBEaEqBXpUC+iFFKso58Sd7IowtjWEHAdU4BSz5UtW
-R8P89y9lsAVZpeeJrJMqJ6TAl1Vel7gEO7l+W5X7d/7nQ9NDU2T28BM46lcgUGiA
-R0Caq6LhNr2pJ/20SVWAfpDqck/q6nO5NbN2mE/xT/PJmluEkIHftM/K/mRLfO+Z
-FxHCrdpMvIYkhIbL4VOxvvRPyggq0We7/T5LdssP79NtdrPPMKej/27cF1RBMt9C
-TgNdSNMPMoU5TkJAI/mEqDSdVkNuWuhZ4QNKKIrlyA8DfQZdRWNXmwYyc8RsoZsu
-hRYPwKQA/Qb41LMu5ZVkkaL5G2indVA7E0EvQ+1+76BrlOstlrxbcTRS7ypS8q1J
-XL9aWjlLdp/SzmUlGVPs9hD3ywb8P4h3jD5Fg/we3KsMDcnP9u0by7C/E+9MrOhW
-K/MQR3Zdt4/7BqcUJ8n/Bofof5BSoKO59jqcCZJkt1CY1DI8TPEs/gb8/+wi9+hg
-wuGz131J26uGaO1ftJAffKoAFFBcnbblqyDcNWQ5J1kK95DmYarKgZ+FcOIkAjnK
-e4rpaT+LZrifgTN1XDPQvaIEyqL5ltIKYRGtAd3NLNkfAADu1JsLL7l2axofrtVV
-F4g7CvF9YgOqIUod2ie6
-=nTmo
+iQIcBAEBCAAGBQJPsMhaAAoJEECxmPOUX5FEIIsP/josrIar3yza7wdiPClJcJ8x
++YLY/nGZX2Fg2leqXLChrw/kUkmnC6Zf4EPDyb9VbZcrPmm5cy6FSU3TNcLvJMeR
+z8Islc4u6bl/XrPn92jti/BuAF/iOx/BcBZXeatFIGxiwb5goBOMJDDZiZCwrz8/
+dsENkR0kkOjTYDYAlauQZtaqhpxTdGssOFUreuAZvvdUo0Dhzn6i6IVwlaBSKi/D
+HBLxjb1y8OPvFGQPoHnQj8xvt3Q3SKVMNpEc7uYpAExGCg2WcTKoZE9RQHeJz7Fs
+0BMv72o/qnN4amFA2lVk8zAC8zTih8Wgmb2M7AmCJhEFkODxpyE4qE+Wrklu0t6x
+BXvSpEbece8LdA/VcUDBnqE/chLMMauSaOqlIy+2yxsalZ4CZW9RYQ3VAsB5EDhO
+kOgXekPhhsWakcj3DsRjvUb38Fh3M4GCQv5GAbb+AEn8YpjepuAA7ut8MwJ1hUOR
+EYtl8xdWCRe0jP2L4CRSKswfyoapouKp+mqbj3jdZ1ngxiuBSOOdmlqNWppkOP1m
+cZ5Axbe2VrV2hoH1Ml3WNR3Rj9C7ejSx907KCQCmBUOtSCs1Onz92n/uGAKCuijj
+nwwfUwSa2DlQL6bMJuKpC3quKmaak0AkJw2yDNnLd2F/n9XA3tbXfQdph6Se5+vp
+vaEVwk1cMu/fnnIvZTa+
+=w2y9
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__14_May_2012_18_51_16_+1000_wh=t_GIZurbEgZap--
+--Signature=_Mon__14_May_2012_18_54_50_+1000_aacaX6r_q+MO1kEV--
