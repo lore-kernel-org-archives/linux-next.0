@@ -1,43 +1,45 @@
-From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Subject: [PATCH -next] nfc: shdlc needs to select CRC_CCITT
-Date: Mon, 14 May 2012 13:13:25 -0700
-Message-ID: <4FB16765.3090602@xenotime.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] wdt: ie6xx_wdt needs io.h
+Date: Mon, 14 May 2012 13:14:29 -0700
+Message-ID: <4FB167A5.9010905@xenotime.net>
 References: <20120514200357.e7448e4ca061c8efe3d4757d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20120514200357.e7448e4ca061c8efe3d4757d-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lauro Ramos Venancio <lauro.venancio-430g2QfJUUCGglJvpFV4uA@public.gmane.org>, Aloisio Almeida Jr <aloisio.almeida-430g2QfJUUCGglJvpFV4uA@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:33947 "HELO
+	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932328Ab2ENUOS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 16:14:18 -0400
+In-Reply-To: <20120514200357.e7448e4ca061c8efe3d4757d@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org
 
-From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Fix build error: SHDLC uses crc_ccitt so it should select CRC_CCITT.
+Fix build error by including <linux/io.h>:
 
-ERROR: "crc_ccitt" [net/nfc/hci/hci.ko] undefined!
+drivers/watchdog/ie6xx_wdt.c:97:2: error: implicit declaration of function 'outb'
+drivers/watchdog/ie6xx_wdt.c:133:2: error: implicit declaration of function 'outl'
+drivers/watchdog/ie6xx_wdt.c:161:2: error: implicit declaration of function 'inb'
+drivers/watchdog/ie6xx_wdt.c:199:3: error: implicit declaration of function 'inl'
+drivers/watchdog/ie6xx_wdt.c:203:3: error: implicit declaration of function 'inw'
 
-Signed-off-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Cc:	Lauro Ramos Venancio <lauro.venancio-430g2QfJUUCGglJvpFV4uA@public.gmane.org>
-Cc:	Aloisio Almeida Jr <aloisio.almeida-430g2QfJUUCGglJvpFV4uA@public.gmane.org>
-Cc:	Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc:	Wim Van Sebroeck <wim@iguana.be>
 ---
- net/nfc/hci/Kconfig |    1 +
+ drivers/watchdog/ie6xx_wdt.c |    1 +
  1 file changed, 1 insertion(+)
 
---- linux-next-20120514.orig/net/nfc/hci/Kconfig
-+++ linux-next-20120514/net/nfc/hci/Kconfig
-@@ -11,6 +11,7 @@ config NFC_SHDLC
- 	depends on NFC_HCI
- 	bool "SHDLC link layer for HCI based NFC drivers"
- 	default n
-+	select CRC_CCITT
- 	---help---
- 	  Say yes if you use an NFC HCI driver that requires SHDLC link layer.
- 	  If unsure, say N here.
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--- linux-next-20120514.orig/drivers/watchdog/ie6xx_wdt.c
++++ linux-next-20120514/drivers/watchdog/ie6xx_wdt.c
+@@ -24,6 +24,7 @@
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/platform_device.h>
++#include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/watchdog.h>
