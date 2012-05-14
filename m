@@ -1,132 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the sound-asoc
- tree
-Date: Mon, 14 May 2012 18:54:50 +1000
-Message-ID: <20120514185450.4682573d6cb7c4745c9ea8b5@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the userns tree
+Date: Mon, 14 May 2012 19:13:37 +1000
+Message-ID: <20120514191337.e06ca84184b73b20b5c52689@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__14_May_2012_18_54_50_+1000_aacaX6r_q+MO1kEV"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__14_May_2012_19_13_37_+1000_MoF7UAlD2SODTuYX"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:55759 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755212Ab2ENJNo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 05:13:44 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__14_May_2012_18_54_50_+1000_aacaX6r_q+MO1kEV
+--Signature=_Mon__14_May_2012_19_13_37_+1000_MoF7UAlD2SODTuYX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Eric,
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-sound/soc/mxs/mxs-saif.c between commit 08641c7c74dd ("ASoC: mxs: add
-device tree support for mxs-saif") from the sound-asoc tree and commit
-f755865f9082 ("ASoC: mxs-saif: adopt pinctrl support") from the arm-soc
-tree.
+After merging the userns tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+fs/stat.c: In function 'cp_new_stat64':
+fs/stat.c:354:61: error: expected ';' before ')' token
+fs/stat.c:354:61: error: expected statement before ')' token
+fs/stat.c:355:61: error: expected ';' before ')' token
+fs/stat.c:355:61: error: expected statement before ')' token
+
+I have dropped the userns tree for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc sound/soc/mxs/mxs-saif.c
-index 0642748,7fd224b..0000000
---- a/sound/soc/mxs/mxs-saif.c
-+++ b/sound/soc/mxs/mxs-saif.c
-@@@ -628,50 -626,38 +629,57 @@@ static int __devinit mxs_saif_probe(str
-  	struct resource *iores, *dmares;
-  	struct mxs_saif *saif;
-  	struct mxs_saif_platform_data *pdata;
-+ 	struct pinctrl *pinctrl;
-  	int ret =3D 0;
- =20
- -	if (pdev->id >=3D ARRAY_SIZE(mxs_saif))
- +
- +	if (!np && pdev->id >=3D ARRAY_SIZE(mxs_saif))
-  		return -EINVAL;
- =20
-  	saif =3D devm_kzalloc(&pdev->dev, sizeof(*saif), GFP_KERNEL);
-  	if (!saif)
-  		return -ENOMEM;
- =20
- -	mxs_saif[pdev->id] =3D saif;
- -	saif->id =3D pdev->id;
- -
- -	pdata =3D pdev->dev.platform_data;
- -	if (pdata && !pdata->master_mode) {
- -		saif->master_id =3D pdata->master_id;
- -		if (saif->master_id < 0 ||
- -			saif->master_id >=3D ARRAY_SIZE(mxs_saif) ||
- -			saif->master_id =3D=3D saif->id) {
- -			dev_err(&pdev->dev, "get wrong master id\n");
- -			return -EINVAL;
- +	if (np) {
- +		struct device_node *master;
- +		saif->id =3D of_alias_get_id(np, "saif");
- +		if (saif->id < 0)
- +			return saif->id;
- +		/*
- +		 * If there is no "fsl,saif-master" phandle, it's a saif
- +		 * master.  Otherwise, it's a slave and its phandle points
- +		 * to the master.
- +		 */
- +		master =3D of_parse_phandle(np, "fsl,saif-master", 0);
- +		if (!master) {
- +			saif->master_id =3D saif->id;
- +		} else {
- +			saif->master_id =3D of_alias_get_id(master, "saif");
- +			if (saif->master_id < 0)
- +				return saif->master_id;
-  		}
-  	} else {
- -		saif->master_id =3D saif->id;
- +		saif->id =3D pdev->id;
- +		pdata =3D pdev->dev.platform_data;
- +		if (pdata && !pdata->master_mode)
- +			saif->master_id =3D pdata->master_id;
- +		else
- +			saif->master_id =3D saif->id;
- +	}
- +
- +	if (saif->master_id < 0 || saif->master_id >=3D ARRAY_SIZE(mxs_saif)) {
- +		dev_err(&pdev->dev, "get wrong master id\n");
- +		return -EINVAL;
-  	}
- =20
- +	mxs_saif[saif->id] =3D saif;
- +
-+ 	pinctrl =3D devm_pinctrl_get_select_default(&pdev->dev);
-+ 	if (IS_ERR(pinctrl)) {
-+ 		ret =3D PTR_ERR(pinctrl);
-+ 		return ret;
-+ 	}
-+=20
-  	saif->clk =3D clk_get(&pdev->dev, NULL);
-  	if (IS_ERR(saif->clk)) {
-  		ret =3D PTR_ERR(saif->clk);
-
---Signature=_Mon__14_May_2012_18_54_50_+1000_aacaX6r_q+MO1kEV
+--Signature=_Mon__14_May_2012_19_13_37_+1000_MoF7UAlD2SODTuYX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPsMhaAAoJEECxmPOUX5FEIIsP/josrIar3yza7wdiPClJcJ8x
-+YLY/nGZX2Fg2leqXLChrw/kUkmnC6Zf4EPDyb9VbZcrPmm5cy6FSU3TNcLvJMeR
-z8Islc4u6bl/XrPn92jti/BuAF/iOx/BcBZXeatFIGxiwb5goBOMJDDZiZCwrz8/
-dsENkR0kkOjTYDYAlauQZtaqhpxTdGssOFUreuAZvvdUo0Dhzn6i6IVwlaBSKi/D
-HBLxjb1y8OPvFGQPoHnQj8xvt3Q3SKVMNpEc7uYpAExGCg2WcTKoZE9RQHeJz7Fs
-0BMv72o/qnN4amFA2lVk8zAC8zTih8Wgmb2M7AmCJhEFkODxpyE4qE+Wrklu0t6x
-BXvSpEbece8LdA/VcUDBnqE/chLMMauSaOqlIy+2yxsalZ4CZW9RYQ3VAsB5EDhO
-kOgXekPhhsWakcj3DsRjvUb38Fh3M4GCQv5GAbb+AEn8YpjepuAA7ut8MwJ1hUOR
-EYtl8xdWCRe0jP2L4CRSKswfyoapouKp+mqbj3jdZ1ngxiuBSOOdmlqNWppkOP1m
-cZ5Axbe2VrV2hoH1Ml3WNR3Rj9C7ejSx907KCQCmBUOtSCs1Onz92n/uGAKCuijj
-nwwfUwSa2DlQL6bMJuKpC3quKmaak0AkJw2yDNnLd2F/n9XA3tbXfQdph6Se5+vp
-vaEVwk1cMu/fnnIvZTa+
-=w2y9
+iQIcBAEBCAAGBQJPsMzBAAoJEECxmPOUX5FEbBsP/3ne4Bfomq6Vt0TgOO2PMoH1
++Flhmk/I8N1fTYvCeC8TkGm995Fp9kNXKBuNA8TOuqlCkdF1kQxijWA1Y6dYDAAc
+J+L6yK3/Oipy2OBMykrZLr7K9TBXbqPrfMScjvuYFWaQrN8ZCbc5qk4CWEd8GwMD
+jICHkN2nucgNvjlr6p8l6KIna7vrNo6jvnFbQYj+4riLt8LNd8FIUSty3kMCraJ4
+M1EpYgW8eWwB+g7o/KK0qZajroZWheTfQJNvFjzXU3BS7JgdJ9AK0HRKelmC/qT7
+9EOKl7MlDUfI8zSbR2QoNFIJB0SX6oHQ7yzm3IDOCdTm7eYjJA57yTas5TNVWdsS
+Zu266y/gRnIMPgP05M9f+gx3e7ReHaHZwZPd1OmRFlmrqdTiM1QIwRI6YFH4PIA9
+qem/AfAkqSKKX329noyN8Ts+iBNnES3Grt5cs8xDB6NSJ8cbCIeFe6+XD29wiSfT
+RibmVSAAi7dVlxgkjaFa8hwabkrcFSbdbHUOied+9QJxABArBlKfZ/q09VQ+bCVM
+sHOmPXd4txjDbtkEf3Fn96EHTVV7L8wErGUhRjW+A1X1kD7FFIFqknmwOYMXVCnU
+sJTaNJobt9pyDK36SVSaD/HykT3gztDjqm7Ff7TSA2uV9WuoMAuxtQgqRWtYt5oJ
+ucO7a3bOUk6o1PRQWACg
+=Yz3A
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__14_May_2012_18_54_50_+1000_aacaX6r_q+MO1kEV--
+--Signature=_Mon__14_May_2012_19_13_37_+1000_MoF7UAlD2SODTuYX--
