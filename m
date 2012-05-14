@@ -1,78 +1,85 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: build failure in Linus' tree
-Date: Mon, 14 May 2012 00:57:47 -0600
-Message-ID: <20120514065747.D73403E0532@localhost>
-References: <20120514105025.0ba1b124f5e9c192fc11e132@canb.auug.org.au>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:39843 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752295Ab2ENG5u (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 02:57:50 -0400
-Received: by dady13 with SMTP id y13so5528125dad.19
-        for <linux-next@vger.kernel.org>; Sun, 13 May 2012 23:57:50 -0700 (PDT)
-In-Reply-To: <20120514105025.0ba1b124f5e9c192fc11e132@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Jean-Francois Dagenais <jeff.dagenais@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the s5p tree
+Date: Mon, 14 May 2012 17:47:43 +1000
+Message-ID: <20120514174743.de608c90ed9653d827707a7b@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__14_May_2012_17_47_43_+1000_du_2U_J_mdH71ssL"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 14 May 2012 10:50:25 +1000, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Linus,
-> 
-> Building Linus' tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> ERROR: "handle_edge_irq" [drivers/gpio/gpio-pch.ko] undefined!
-> ERROR: "irq_to_desc" [drivers/gpio/gpio-pch.ko] undefined!
-> 
-> This has been reported elsewhere by DaveM.
-> 
-> Caused by commit df9541a60af0 ("gpio: pch9: Use proper flow type handlers").
-> 
-> I have reverted that commit for today.
+--Signature=_Mon__14_May_2012_17_47_43_+1000_du_2U_J_mdH71ssL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Gah, I tested that patch with CONFIG_GPIO_PCH=Y, but not as a module.
-I see three options here; revert the patch now and fix it up in v3.4,
-add exports for those two symbols, or disable building that code as a
-module (patch below).  Personally I prefer the third option for the
-immediate fix.
+Hi Greg,
 
-g.
+Today's linux-next merge of the usb tree got conflicts in
+arch/arm/mach-exynos/mach-nuri.c  and
+arch/arm/mach-exynos/mach-universal_c210.c between commits db6856e8d8ab
+("ARM: EXYNOS: Add DRM core support for NURI board") and 6dafa4aead1b
+("ARM: EXYNOS: Add DRM core device support for Universal C210 board")
+from the s5p tree and commit 126625e1bf32 ("usb:hsotg:samsung:cosmetic
+Move <linux/platform_data/s3c-hsotg.h> to proper place") from the usb
+tree.
 
->From 7fd0fcff9f0d65734415fed756271c1ae2267666 Mon Sep 17 00:00:00 2001
-From: Grant Likely <grant.likely@secretlab.ca>
-Date: Mon, 14 May 2012 00:52:49 -0600
-Subject: [PATCH] gpio/pch: Fix build failure when selected as a module
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-x86_64 allmodconfig fails like this:
+diff --cc arch/arm/mach-exynos/mach-nuri.c
+index 17cce18,2c6d701..0000000
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@@ -25,7 -25,7 +25,8 @@@
+  #include <linux/mmc/host.h>
+  #include <linux/fb.h>
+  #include <linux/pwm_backlight.h>
++ #include <linux/platform_data/s3c-hsotg.h>
+ +#include <drm/exynos_drm.h>
+ =20
+  #include <video/platform_lcd.h>
+  #include <media/m5mols.h>
+diff --cc arch/arm/mach-exynos/mach-universal_c210.c
+index 00c1a7b,bc8bf3b..0000000
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@@ -23,7 -23,7 +23,8 @@@
+  #include <linux/i2c-gpio.h>
+  #include <linux/i2c/mcs.h>
+  #include <linux/i2c/atmel_mxt_ts.h>
++ #include <linux/platform_data/s3c-hsotg.h>
+ +#include <drm/exynos_drm.h>
+ =20
+  #include <asm/mach/arch.h>
+  #include <asm/hardware/gic.h>
 
-ERROR: "handle_edge_irq" [drivers/gpio/gpio-pch.ko] undefined!
-ERROR: "irq_to_desc" [drivers/gpio/gpio-pch.ko] undefined!
+--Signature=_Mon__14_May_2012_17_47_43_+1000_du_2U_J_mdH71ssL
+Content-Type: application/pgp-signature
 
-This patch fixes the issue by not allowing gpio-pch.c to be built as a
-module.  It can be reenabled when the core interrupt handling code
-exports the missing symbols, but that change needs some review first.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpio/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+iQIcBAEBCAAGBQJPsLifAAoJEECxmPOUX5FE+M4P/RCaireMbpAGraw6ZS7wp0Da
+WxMmTvcMDIs86/PUyKT1482PpFfyqtUGIJxy0ZSyGyjAwHPO9rZmOc5KK5F9htQX
+RHVd4DIeBzpAYGDz+pdvuLiitePJc4en1ov4nVkuVV579C/r7AcRvNWlPEzZYD42
+B2tgqWlEhkQQrIrHxRrh4IDHpt4iLw0RkqDwyOC0Z7LvK2zXse3XmjTSZQKiXPTr
+iBJ+DdCpLF4wAku+CuVtaPZRHdpO7G4c8KQDybQzbXAS89YtQw4iNnm2wXVwYa89
+e/k8+5nMU4P4LWZl2olJ6FQnJJmLq1a5/BWZEvrnPZOgd5q4vD5B6pBX6ZV+xuWv
+i66qpBT324z5smSGIGJXx2b+shpZckbEz+ihdzeorhEi2b9XaZI9kvxprNsWX2ku
+jSxnBoLi+gFJdSmzm99zo7MYzQjjGe8SCWhRovsurRyg33oQWdQtV8jhV+X38K6V
+tVxq2xSHUFm2W3rvGJbGLA7H0AxaK1NSYjymyvNJVDpKdx1BSJmgafGYU6HiRYCj
+iL53ViaNjJT50VLs+FFbK5yvvKMCkeMBhQ4Oiv2bH8Vr7yah3oEgmFJxB3fPaQw/
+rvpcEN4+cNFeG6Lion6aM0NfOptpHxPqYoJCJjQhtqw01q4DO2G3jWte1mshC5L1
+NSPofC70KFQCF9gB4Z8B
+=gCei
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index e03653d..db146d5 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -403,7 +403,7 @@ config GPIO_LANGWELL
-	  Say Y here to support Intel Langwell/Penwell GPIO.
- 
- config GPIO_PCH
--	tristate "Intel EG20T PCH/LAPIS Semiconductor IOH(ML7223/ML7831) GPIO"
-+	bool "Intel EG20T PCH/LAPIS Semiconductor IOH(ML7223/ML7831) GPIO"
-	depends on PCI && X86
-	select GENERIC_IRQ_CHIP
-	help
--- 
-1.7.9.5
+--Signature=_Mon__14_May_2012_17_47_43_+1000_du_2U_J_mdH71ssL--
