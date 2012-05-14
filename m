@@ -1,42 +1,43 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Mon, 14 May 2012 22:22:58 +0200
-Message-ID: <20120514202258.GC12740@sortiz-mobl>
-References: <20120514133753.77567dfa46a1e51f9d33bb47@canb.auug.org.au>
+From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Subject: [PATCH -next] nfc: shdlc needs to select CRC_CCITT
+Date: Mon, 14 May 2012 13:13:25 -0700
+Message-ID: <4FB16765.3090602@xenotime.net>
+References: <20120514200357.e7448e4ca061c8efe3d4757d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:37466 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932285Ab2ENUNM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 May 2012 16:13:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20120514133753.77567dfa46a1e51f9d33bb47@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120514200357.e7448e4ca061c8efe3d4757d-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lauro Ramos Venancio <lauro.venancio-430g2QfJUUCGglJvpFV4uA@public.gmane.org>, Aloisio Almeida Jr <aloisio.almeida-430g2QfJUUCGglJvpFV4uA@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+From: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
 
-On Mon, May 14, 2012 at 01:37:53PM +1000, Stephen Rothwell wrote:
-> Hi Samuel,
-> 
-> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> ERROR: "wm8400_block_read" [drivers/regulator/wm8400-regulator.ko] undefined!
-> ERROR: "regmap_reinit_cache" [drivers/mfd/wm8400-core.ko] undefined!
-> 
-> Caused by commit 4d240045599c ("mfd: Remove wm8400 custom cache
-> implementation").
-> 
-> I have used the mfd tree from next-20120511 for today.
-This should be fixed now, thanks to Mark patches.
+Fix build error: SHDLC uses crc_ccitt so it should select CRC_CCITT.
 
-Cheers,
-Samuel.
+ERROR: "crc_ccitt" [net/nfc/hci/hci.ko] undefined!
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+Signed-off-by: Randy Dunlap <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Cc:	Lauro Ramos Venancio <lauro.venancio-430g2QfJUUCGglJvpFV4uA@public.gmane.org>
+Cc:	Aloisio Almeida Jr <aloisio.almeida-430g2QfJUUCGglJvpFV4uA@public.gmane.org>
+Cc:	Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+---
+ net/nfc/hci/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20120514.orig/net/nfc/hci/Kconfig
++++ linux-next-20120514/net/nfc/hci/Kconfig
+@@ -11,6 +11,7 @@ config NFC_SHDLC
+ 	depends on NFC_HCI
+ 	bool "SHDLC link layer for HCI based NFC drivers"
+ 	default n
++	select CRC_CCITT
+ 	---help---
+ 	  Say yes if you use an NFC HCI driver that requires SHDLC link layer.
+ 	  If unsure, say N here.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
