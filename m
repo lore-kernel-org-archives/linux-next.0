@@ -1,34 +1,38 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH -next] watchdog: fix ie6xx_wdt.c printk format warning
-Date: Mon, 14 May 2012 15:15:50 +0200
-Message-ID: <20120514131550.GH3074@spo001.leaseweb.com>
-References: <20120511162738.1d65b6efe099a54841be6313@canb.auug.org.au> <4FADBDEB.402@xenotime.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the s5p tree
+Date: Mon, 14 May 2012 07:28:11 -0700
+Message-ID: <20120514142811.GB14091@kroah.com>
+References: <20120514174743.de608c90ed9653d827707a7b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:41399 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756141Ab2ENNPy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 09:15:54 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:50816 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756444Ab2ENO2N (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 May 2012 10:28:13 -0400
 Content-Disposition: inline
-In-Reply-To: <4FADBDEB.402@xenotime.net>
+In-Reply-To: <20120514174743.de608c90ed9653d827707a7b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hello Randy,
-
-> From: Randy Dunlap <rdunlap@xenotime.net>
+On Mon, May 14, 2012 at 05:47:43PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Fix printk format warning; use cast to u64 since resource_size_t can
-> be either u32 or u64.
+> Today's linux-next merge of the usb tree got conflicts in
+> arch/arm/mach-exynos/mach-nuri.c  and
+> arch/arm/mach-exynos/mach-universal_c210.c between commits db6856e8d8ab
+> ("ARM: EXYNOS: Add DRM core support for NURI board") and 6dafa4aead1b
+> ("ARM: EXYNOS: Add DRM core device support for Universal C210 board")
+> from the s5p tree and commit 126625e1bf32 ("usb:hsotg:samsung:cosmetic
+> Move <linux/platform_data/s3c-hsotg.h> to proper place") from the usb
+> tree.
 > 
-> drivers/watchdog/ie6xx_wdt.c:261:4: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'resource_size_t'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-Fix added to linux-watchdog-next.
+Looks good to me, thanks.
 
-Thanks,
-Wim.
+greg k-h
