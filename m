@@ -1,85 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the s5p tree
-Date: Mon, 14 May 2012 17:47:43 +1000
-Message-ID: <20120514174743.de608c90ed9653d827707a7b@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with Linus' tree
+Date: Mon, 14 May 2012 18:31:33 +1000
+Message-ID: <20120514183133.e5b44bd8f61cd6bd6805fff4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__14_May_2012_17_47_43_+1000_du_2U_J_mdH71ssL"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__14_May_2012_18_31_33_+1000_c2W6jm=bxxmD3WFR"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:45699 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752548Ab2ENIbo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 04:31:44 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, Olof Johansson <olof@lixom.net>
 
---Signature=_Mon__14_May_2012_17_47_43_+1000_du_2U_J_mdH71ssL
+--Signature=_Mon__14_May_2012_18_31_33_+1000_c2W6jm=bxxmD3WFR
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Grant,
 
-Today's linux-next merge of the usb tree got conflicts in
-arch/arm/mach-exynos/mach-nuri.c  and
-arch/arm/mach-exynos/mach-universal_c210.c between commits db6856e8d8ab
-("ARM: EXYNOS: Add DRM core support for NURI board") and 6dafa4aead1b
-("ARM: EXYNOS: Add DRM core device support for Universal C210 board")
-from the s5p tree and commit 126625e1bf32 ("usb:hsotg:samsung:cosmetic
-Move <linux/platform_data/s3c-hsotg.h> to proper place") from the usb
-tree.
+Today's linux-next merge of the gpio tree got a conflict in
+drivers/gpio/gpio-samsung.c between commit 2760f7adbb6c ("gpio/exynos:
+Fix compiler warnings when non-exynos machines are selected") from Linus'
+tree and commit fd454997d687 ("gpio: samsung: refactor gpiolib init for
+exynos4/5") from the gpio tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I used the version from the gpio tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-exynos/mach-nuri.c
-index 17cce18,2c6d701..0000000
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@@ -25,7 -25,7 +25,8 @@@
-  #include <linux/mmc/host.h>
-  #include <linux/fb.h>
-  #include <linux/pwm_backlight.h>
-+ #include <linux/platform_data/s3c-hsotg.h>
- +#include <drm/exynos_drm.h>
- =20
-  #include <video/platform_lcd.h>
-  #include <media/m5mols.h>
-diff --cc arch/arm/mach-exynos/mach-universal_c210.c
-index 00c1a7b,bc8bf3b..0000000
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@@ -23,7 -23,7 +23,8 @@@
-  #include <linux/i2c-gpio.h>
-  #include <linux/i2c/mcs.h>
-  #include <linux/i2c/atmel_mxt_ts.h>
-+ #include <linux/platform_data/s3c-hsotg.h>
- +#include <drm/exynos_drm.h>
- =20
-  #include <asm/mach/arch.h>
-  #include <asm/hardware/gic.h>
-
---Signature=_Mon__14_May_2012_17_47_43_+1000_du_2U_J_mdH71ssL
+--Signature=_Mon__14_May_2012_18_31_33_+1000_c2W6jm=bxxmD3WFR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPsLifAAoJEECxmPOUX5FE+M4P/RCaireMbpAGraw6ZS7wp0Da
-WxMmTvcMDIs86/PUyKT1482PpFfyqtUGIJxy0ZSyGyjAwHPO9rZmOc5KK5F9htQX
-RHVd4DIeBzpAYGDz+pdvuLiitePJc4en1ov4nVkuVV579C/r7AcRvNWlPEzZYD42
-B2tgqWlEhkQQrIrHxRrh4IDHpt4iLw0RkqDwyOC0Z7LvK2zXse3XmjTSZQKiXPTr
-iBJ+DdCpLF4wAku+CuVtaPZRHdpO7G4c8KQDybQzbXAS89YtQw4iNnm2wXVwYa89
-e/k8+5nMU4P4LWZl2olJ6FQnJJmLq1a5/BWZEvrnPZOgd5q4vD5B6pBX6ZV+xuWv
-i66qpBT324z5smSGIGJXx2b+shpZckbEz+ihdzeorhEi2b9XaZI9kvxprNsWX2ku
-jSxnBoLi+gFJdSmzm99zo7MYzQjjGe8SCWhRovsurRyg33oQWdQtV8jhV+X38K6V
-tVxq2xSHUFm2W3rvGJbGLA7H0AxaK1NSYjymyvNJVDpKdx1BSJmgafGYU6HiRYCj
-iL53ViaNjJT50VLs+FFbK5yvvKMCkeMBhQ4Oiv2bH8Vr7yah3oEgmFJxB3fPaQw/
-rvpcEN4+cNFeG6Lion6aM0NfOptpHxPqYoJCJjQhtqw01q4DO2G3jWte1mshC5L1
-NSPofC70KFQCF9gB4Z8B
-=gCei
+iQIcBAEBCAAGBQJPsMLlAAoJEECxmPOUX5FE3moP/jRbNJIjv8CfQfAO8LcKRSxW
+qz9utAiSXbM9fCApjhdThoeI4dVa+WeTX4OfHxKA7fqiWUKALzS8uO0590OblWBE
+SRFsf4SVAdP4W/YY3VHd5RT82ySdIlvP5ExBYtVSIiDhqElBp8m9iIycZyLiJ0G1
+9DQVxyvP97jLCy90CQimGix2d4X/Lp8IpGZh3MCO4A1GDOZ20x/FJIN939KTU3fm
+EcYb8NjUXXr1Nlu65TkLtdlrbWXIDhY7YNOWxkdzRzbWqDbbKniZKZoX8a6oIOBU
+oLb+CJnlX+dWMwaY5Aq4MST5rGdil9Zt/asykkXFkS8k/fJs8gR+LDtpkJhnQwZT
+af9+ulGXNiIYPBKqUEWoGY57fQ1JVLK2i27A7SlYINZbNzvKg1W/RoqCv8Hr6O0m
+qc1boHFpneEWc7DBiD8Jfaz/9heuCAHjnOMy3fjeNhHx0g0JaHM7SV7iohdgHfqa
+rP9m8sOU/F0yc+2Pg7k/QAADLAs4T0KIZtcYD4kMuptiIN19kRUyL7kscuRj5lut
+r+pJjpyAbF9WfE+6aVyO28j9MpBCif8sMb/KVscmlr877U610fvZxKgS/BBlEGCv
+D1pOVVJOX5gcIiZIQKUCQDm9fqMR03tT9ctTC+WZBd7/W4LwlAcvGbSXFxwHcCEB
+7CnnCtsMQQf1qSsRiGUE
+=zkRZ
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__14_May_2012_17_47_43_+1000_du_2U_J_mdH71ssL--
+--Signature=_Mon__14_May_2012_18_31_33_+1000_c2W6jm=bxxmD3WFR--
