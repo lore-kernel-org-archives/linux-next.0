@@ -1,60 +1,38 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] wdt: fix iTCO printk format warnings
-Date: Mon, 14 May 2012 13:15:20 -0700
-Message-ID: <4FB167D8.9000905@xenotime.net>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: [PATCH -next] nfc: shdlc needs to select CRC_CCITT
+Date: Mon, 14 May 2012 22:32:44 +0200
+Message-ID: <20120514203244.GD12740@sortiz-mobl>
 References: <20120514200357.e7448e4ca061c8efe3d4757d@canb.auug.org.au>
+ <4FB16765.3090602@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy8-pub.bluehost.com ([69.89.22.20]:44830 "HELO
-	oproxy8-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S932322Ab2ENUPJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 16:15:09 -0400
-In-Reply-To: <20120514200357.e7448e4ca061c8efe3d4757d@canb.auug.org.au>
+Received: from mga09.intel.com ([134.134.136.24]:11257 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757426Ab2ENUXN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 May 2012 16:23:13 -0400
+Content-Disposition: inline
+In-Reply-To: <4FB16765.3090602@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+Hi Randy,
 
-Fix printk format warnings:
+On Mon, May 14, 2012 at 01:13:25PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@xenotime.net>
+> 
+> Fix build error: SHDLC uses crc_ccitt so it should select CRC_CCITT.
+> 
+> ERROR: "crc_ccitt" [net/nfc/hci/hci.ko] undefined!
+A similar patch was sent a few days ago by Marcel Holtmann.
+It is queued to my nfc-fixes branch and I included it to a pull request I sent
+to John last week.
 
-drivers/watchdog/iTCO_wdt.c:577:3: warning: format '%04llx' expects type 'long long unsigned int', but argument 2 has type 'resource_size_t'
-drivers/watchdog/iTCO_wdt.c:594:3: warning: format '%04llx' expects type 'long long unsigned int', but argument 2 has type 'resource_size_t'
-drivers/watchdog/iTCO_wdt.c:600:2: warning: format '%04llx' expects type 'long long unsigned int', but argument 4 has type 'resource_size_t'
+Cheers,
+Samuel.
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc:	Wim Van Sebroeck <wim@iguana.be>
----
- drivers/watchdog/iTCO_wdt.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---- linux-next-20120514.orig/drivers/watchdog/iTCO_wdt.c
-+++ linux-next-20120514/drivers/watchdog/iTCO_wdt.c
-@@ -575,7 +575,7 @@ static int __devinit iTCO_wdt_probe(stru
- 	if (!request_region(iTCO_wdt_private.smi_res->start,
- 			resource_size(iTCO_wdt_private.smi_res), dev->name)) {
- 		pr_err("I/O address 0x%04llx already in use, device disabled\n",
--		       SMI_EN);
-+		       (u64)SMI_EN);
- 		ret = -EBUSY;
- 		goto unmap_gcs;
- 	}
-@@ -592,13 +592,13 @@ static int __devinit iTCO_wdt_probe(stru
- 	if (!request_region(iTCO_wdt_private.tco_res->start,
- 			resource_size(iTCO_wdt_private.tco_res), dev->name)) {
- 		pr_err("I/O address 0x%04llx already in use, device disabled\n",
--		       TCOBASE);
-+		       (u64)TCOBASE);
- 		ret = -EBUSY;
- 		goto unreg_smi;
- 	}
- 
- 	pr_info("Found a %s TCO device (Version=%d, TCOBASE=0x%04llx)\n",
--		ich_info->name, ich_info->iTCO_version, TCOBASE);
-+		ich_info->name, ich_info->iTCO_version, (u64)TCOBASE);
- 
- 	/* Clear out the (probably old) status */
- 	outw(0x0008, TCO1_STS);	/* Clear the Time Out Status bit */
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
