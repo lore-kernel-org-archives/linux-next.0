@@ -1,42 +1,78 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: manual merge of the tip tree with the sparc-next
-	tree
-Date: Mon, 14 May 2012 07:47:14 +0200
-Message-ID: <20120514054714.GA20563@merkur.ravnborg.org>
-References: <20120514145114.bc3e8b95da9478486ac0a13e@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: build failure in Linus' tree
+Date: Mon, 14 May 2012 00:57:47 -0600
+Message-ID: <20120514065747.D73403E0532@localhost>
+References: <20120514105025.0ba1b124f5e9c192fc11e132@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.snhosting.dk ([87.238.248.203]:48454 "EHLO
-	smtp.domainteam.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751060Ab2ENFrQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 01:47:16 -0400
-Content-Disposition: inline
-In-Reply-To: <20120514145114.bc3e8b95da9478486ac0a13e@canb.auug.org.au>
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:39843 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752295Ab2ENG5u (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 02:57:50 -0400
+Received: by dady13 with SMTP id y13so5528125dad.19
+        for <linux-next@vger.kernel.org>; Sun, 13 May 2012 23:57:50 -0700 (PDT)
+In-Reply-To: <20120514105025.0ba1b124f5e9c192fc11e132@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Jean-Francois Dagenais <jeff.dagenais@gmail.com>
 
-On Mon, May 14, 2012 at 02:51:14PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Mon, 14 May 2012 10:50:25 +1000, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Linus,
 > 
-> Today's linux-next merge of the tip tree got a conflict in
-> arch/sparc/include/asm/thread_info_32.h between commit e7b7e0c35655
-> ("sparc32: drop btfixup for alloc_thread_info_node/free_thread_info")
-> from the sparc-next tree and commit f5e10287367d ("task_allocator: Use
-> config switches instead of magic defines") from the tip tree.
+> Building Linus' tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+> ERROR: "handle_edge_irq" [drivers/gpio/gpio-pch.ko] undefined!
+> ERROR: "irq_to_desc" [drivers/gpio/gpio-pch.ko] undefined!
+> 
+> This has been reported elsewhere by DaveM.
+> 
+> Caused by commit df9541a60af0 ("gpio: pch9: Use proper flow type handlers").
+> 
+> I have reverted that commit for today.
 
-Hi Stephen.
+Gah, I tested that patch with CONFIG_GPIO_PCH=Y, but not as a module.
+I see three options here; revert the patch now and fix it up in v3.4,
+add exports for those two symbols, or disable building that code as a
+module (patch below).  Personally I prefer the third option for the
+immediate fix.
 
-The right fix would be to drop the define _and_ delete the local
-implementation of alloc_thread_info_node() as the generic version
-can be used.
+g.
 
-But if this builds I can always revist this after the merge window,
-so no need for you to do more.
+>From 7fd0fcff9f0d65734415fed756271c1ae2267666 Mon Sep 17 00:00:00 2001
+From: Grant Likely <grant.likely@secretlab.ca>
+Date: Mon, 14 May 2012 00:52:49 -0600
+Subject: [PATCH] gpio/pch: Fix build failure when selected as a module
 
-	Sam
+x86_64 allmodconfig fails like this:
+
+ERROR: "handle_edge_irq" [drivers/gpio/gpio-pch.ko] undefined!
+ERROR: "irq_to_desc" [drivers/gpio/gpio-pch.ko] undefined!
+
+This patch fixes the issue by not allowing gpio-pch.c to be built as a
+module.  It can be reenabled when the core interrupt handling code
+exports the missing symbols, but that change needs some review first.
+
+Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpio/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index e03653d..db146d5 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -403,7 +403,7 @@ config GPIO_LANGWELL
+	  Say Y here to support Intel Langwell/Penwell GPIO.
+ 
+ config GPIO_PCH
+-	tristate "Intel EG20T PCH/LAPIS Semiconductor IOH(ML7223/ML7831) GPIO"
++	bool "Intel EG20T PCH/LAPIS Semiconductor IOH(ML7223/ML7831) GPIO"
+	depends on PCI && X86
+	select GENERIC_IRQ_CHIP
+	help
+-- 
+1.7.9.5
