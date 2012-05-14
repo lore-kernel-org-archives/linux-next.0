@@ -1,61 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the userns tree
-Date: Mon, 14 May 2012 19:13:37 +1000
-Message-ID: <20120514191337.e06ca84184b73b20b5c52689@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the arm-soc tree
+Date: Mon, 14 May 2012 19:24:04 +1000
+Message-ID: <20120514192404.91f9477851ad8485a2112973@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__14_May_2012_19_13_37_+1000_MoF7UAlD2SODTuYX"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55759 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755212Ab2ENJNo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 05:13:44 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Mon__14_May_2012_19_24_04_+1000_x+CQybGNYxFchvQ5"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Viresh Kumar <viresh.kumar@st.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__14_May_2012_19_13_37_+1000_MoF7UAlD2SODTuYX
+--Signature=_Mon__14_May_2012_19_24_04_+1000_x+CQybGNYxFchvQ5
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Andrew,
 
-After merging the userns tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/clk/Kconfig between commit d269b974e32c ("clk: remove
+COMMON_CLK_DISABLE_UNUSED") from the arm-soc tree and commit "clk: remove
+redundant depends on from drivers/Kconfig" from the akpm tree.
 
-fs/stat.c: In function 'cp_new_stat64':
-fs/stat.c:354:61: error: expected ';' before ')' token
-fs/stat.c:354:61: error: expected statement before ')' token
-fs/stat.c:355:61: error: expected ';' before ')' token
-fs/stat.c:355:61: error: expected statement before ')' token
-
-I have dropped the userns tree for today.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__14_May_2012_19_13_37_+1000_MoF7UAlD2SODTuYX
+diff --cc drivers/clk/Kconfig
+index 4864407,4f10a21..0000000
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@@ -23,9 -22,18 +23,8 @@@ config COMMON_CL
+  menu "Common Clock Framework"
+  	depends on COMMON_CLK
+ =20
+ -config COMMON_CLK_DISABLE_UNUSED
+ -	bool "Disabled unused clocks at boot"
+ -	---help---
+ -	  Traverses the entire clock tree and disables any clocks that are
+ -	  enabled in hardware but have not been enabled by any device drivers.
+ -	  This saves power and keeps the software model of the clock in line
+ -	  with reality.
+ -
+ -	  If in doubt, say "N".
+ -
+  config COMMON_CLK_DEBUG
+  	bool "DebugFS representation of clock tree"
+- 	depends on COMMON_CLK
+  	select DEBUG_FS
+  	---help---
+  	  Creates a directory hierchy in debugfs for visualizing the clk
+
+--Signature=_Mon__14_May_2012_19_24_04_+1000_x+CQybGNYxFchvQ5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPsMzBAAoJEECxmPOUX5FEbBsP/3ne4Bfomq6Vt0TgOO2PMoH1
-+Flhmk/I8N1fTYvCeC8TkGm995Fp9kNXKBuNA8TOuqlCkdF1kQxijWA1Y6dYDAAc
-J+L6yK3/Oipy2OBMykrZLr7K9TBXbqPrfMScjvuYFWaQrN8ZCbc5qk4CWEd8GwMD
-jICHkN2nucgNvjlr6p8l6KIna7vrNo6jvnFbQYj+4riLt8LNd8FIUSty3kMCraJ4
-M1EpYgW8eWwB+g7o/KK0qZajroZWheTfQJNvFjzXU3BS7JgdJ9AK0HRKelmC/qT7
-9EOKl7MlDUfI8zSbR2QoNFIJB0SX6oHQ7yzm3IDOCdTm7eYjJA57yTas5TNVWdsS
-Zu266y/gRnIMPgP05M9f+gx3e7ReHaHZwZPd1OmRFlmrqdTiM1QIwRI6YFH4PIA9
-qem/AfAkqSKKX329noyN8Ts+iBNnES3Grt5cs8xDB6NSJ8cbCIeFe6+XD29wiSfT
-RibmVSAAi7dVlxgkjaFa8hwabkrcFSbdbHUOied+9QJxABArBlKfZ/q09VQ+bCVM
-sHOmPXd4txjDbtkEf3Fn96EHTVV7L8wErGUhRjW+A1X1kD7FFIFqknmwOYMXVCnU
-sJTaNJobt9pyDK36SVSaD/HykT3gztDjqm7Ff7TSA2uV9WuoMAuxtQgqRWtYt5oJ
-ucO7a3bOUk6o1PRQWACg
-=Yz3A
+iQIcBAEBCAAGBQJPsM80AAoJEECxmPOUX5FE9OgQAJ/p1vvverXlmbAqbsvazIdo
+31t9Gp1D/gD3exfxX7HPENazR8Oc6dk/U/ZNMYa25glPdKaRoTk5GiRdhB9DqHfQ
+ouPw5PdrHZJtHMjm1/OyXHP3PVd/lTPYviFZCcDDfKHTi4Li9oPYKOHwyS3YRbtg
+MXLgY0Z9pVWR08c5TPG0ZaI6qUg1Pd3RRdietO7Z2LHD/BfuVqnislta2aCn6Yaj
+5kbOr0WFw/UxxgvC03eefFQHUVRFMNSyybqqtxa7D6sCp7OTPP8rcGGP8naOyThL
+lZIF84R5L1hn5eMhmVgLuAOJLQzTzZjppKGPtdsWJtm7UxINjgtI+AhkRNSLQNfo
+Y1Epi3I1zb8LXdMAmHE7B7WRbOnlKbHGxZK9U4bPMHGLbfIG74jA1+9JdE3fIq40
+OnAPhov2Q3Pc9C6xnW3DDbi1xymJ5VEFEBHf5F89QGVN7+CpJNpXCb9LWhIUUBS5
+hyxX34IMgUi7VMzZF9IjhJHp7q3DDBvKRr5hBcKyYpw9RYKnISSMQ24yc2so20yc
+iDtddnNSc5EZUtoPVje//c+eZ7tesdfmsM21NsnLRfsmKh24+lPFUIHjQZRBYn5E
+k2OuMxPCBpu/OByFJIrKljKzpiH4vf1NvJ5HKKCoYKxVMPgFrk0IqZp1rIYPTJ1z
+ZsKSsrVwc99fE5kSbNgg
+=LpW4
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__14_May_2012_19_13_37_+1000_MoF7UAlD2SODTuYX--
+--Signature=_Mon__14_May_2012_19_24_04_+1000_x+CQybGNYxFchvQ5--
