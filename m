@@ -1,54 +1,24 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: failed to fetch the cifs tree
-Date: Sun, 13 May 2012 21:52:44 -0500
-Message-ID: <CAH2r5mvt2ApHfbT8MbZtdNGnBD+SETY-e8CqmGNYLE-6C-=0Ew@mail.gmail.com>
-References: <20120514095454.39dd3f95eead6d94ea4f554d@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build warning after merge of the origin tree
+Date: Sun, 13 May 2012 23:00:26 -0400 (EDT)
+Message-ID: <20120513.230026.1170494017599992321.davem@davemloft.net>
+References: <20120514104452.2411b761e8f98076d1ae88ee@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:59957 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753922Ab2ENCwo convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 13 May 2012 22:52:44 -0400
-In-Reply-To: <20120514095454.39dd3f95eead6d94ea4f554d@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20120514104452.2411b761e8f98076d1ae88ee@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, jbohac@suse.cz
+List-Id: linux-next.vger.kernel.org
 
-Should be ok now.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 14 May 2012 10:44:52 +1000
 
-I had to rebuild the for-next branch of cifs-2.6.git due to a problem
-caused by a previous "git push --force" (I had already fixed the
-master branch of cifs-2.6.git but had not fixed up the for-next
-branch).  It is now recreated and some patches from Jeff and Pavel
-remerged.
+> Introduced by commit 13a8e0c8cdb4 ("bonding: don't increase rx_dropped
+> after processing LACPDUs"). recv-probe in struct bonding is a function
+> returning void, but the local variable it assigned to/from has been
+> changed to a function returning int ...
 
-On Sun, May 13, 2012 at 6:54 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi all,
->
-> Trying to fetch the cifs tree gets this error:
->
-> fatal: Couldn't find remote ref refs/heads/for-next
->
-> and checking via "git ls-remote" shows that the remote tree has only =
-a
-> "master" branch that is set to v3.4-rc7. =A0 Something got lost along=
- the
-> way ...
->
-> I will use the cifs tree from next-20120511 for today.
->
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
-
-
-
---=20
-Thanks,
-
-Steve
+http://marc.info/?l=linux-netdev&m=133693883404392&w=2
