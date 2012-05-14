@@ -1,38 +1,32 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: [PATCH -next] nfc: shdlc needs to select CRC_CCITT
-Date: Mon, 14 May 2012 22:32:44 +0200
-Message-ID: <20120514203244.GD12740@sortiz-mobl>
-References: <20120514200357.e7448e4ca061c8efe3d4757d@canb.auug.org.au>
- <4FB16765.3090602@xenotime.net>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Subject: Re: [PATCH -next] net/codel: Add missing #include
+ <linux/prefetch.h>
+Date: Mon, 14 May 2012 23:04:58 +0200
+Message-ID: <1337029498.8512.624.camel@edumazet-glaptop>
+References: <1337024825-20130-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:11257 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757426Ab2ENUXN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 May 2012 16:23:13 -0400
-Content-Disposition: inline
-In-Reply-To: <4FB16765.3090602@xenotime.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org, Lauro Ramos Venancio <lauro.venancio@openbossa.org>, Aloisio Almeida Jr <aloisio.almeida@openbossa.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1337024825-20130-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Eric Dumazet <edumazet@google.com>, Dave Taht <dave.taht@bufferbloat.net>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Randy,
+On Mon, 2012-05-14 at 21:47 +0200, Geert Uytterhoeven wrote:
+> m68k allmodconfig:
+>=20
+> net/sched/sch_codel.c: In function =E2=80=98dequeue=E2=80=99:
+> net/sched/sch_codel.c:70: error: implicit declaration of function =E2=
+=80=98prefetch=E2=80=99
+> make[1]: *** [net/sched/sch_codel.o] Error 1
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
 
-On Mon, May 14, 2012 at 01:13:25PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> Fix build error: SHDLC uses crc_ccitt so it should select CRC_CCITT.
-> 
-> ERROR: "crc_ccitt" [net/nfc/hci/hci.ko] undefined!
-A similar patch was sent a few days ago by Marcel Holtmann.
-It is queued to my nfc-fixes branch and I included it to a pull request I sent
-to John last week.
+I plaid guilty
 
-Cheers,
-Samuel.
+Acked-by: Eric Dumazet <edumazet@google.com>
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+Thanks
