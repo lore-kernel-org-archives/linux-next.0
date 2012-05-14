@@ -1,31 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] net/codel: Add missing #include
- <linux/prefetch.h>
-Date: Mon, 14 May 2012 17:59:27 -0400 (EDT)
-Message-ID: <20120514.175927.44485931953538590.davem@davemloft.net>
-References: <1337024825-20130-1-git-send-email-geert@linux-m68k.org>
-	<1337029498.8512.624.camel@edumazet-glaptop>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next commit "ARM: dma-mapping: move all dma bounce code to
+ separate dma ops structure"
+Date: Mon, 14 May 2012 19:47:16 -0400
+Message-ID: <4FB19984.5050504@windriver.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([198.137.202.13]:59833 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757935Ab2ENWBe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 18:01:34 -0400
-In-Reply-To: <1337029498.8512.624.camel@edumazet-glaptop>
+Received: from mail1.windriver.com ([147.11.146.13]:50662 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932696Ab2ENXr1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 19:47:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: eric.dumazet@gmail.com
-Cc: geert@linux-m68k.org, edumazet@google.com, dave.taht@bufferbloat.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: m.szyprowski@samsung.com
+Cc: kyungmin.park@samsung.com, subash.ramaswamy@linaro.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-RnJvbTogRXJpYyBEdW1hemV0IDxlcmljLmR1bWF6ZXRAZ21haWwuY29tPg0KRGF0ZTogTW9uLCAx
-NCBNYXkgMjAxMiAyMzowNDo1OCArMDIwMA0KDQo+IE9uIE1vbiwgMjAxMi0wNS0xNCBhdCAyMTo0
-NyArMDIwMCwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPj4gbTY4ayBhbGxtb2Rjb25maWc6
-DQo+PiANCj4+IG5ldC9zY2hlZC9zY2hfY29kZWwuYzogSW4gZnVuY3Rpb24goWRlcXVldWWiOg0K
-Pj4gbmV0L3NjaGVkL3NjaF9jb2RlbC5jOjcwOiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24g
-b2YgZnVuY3Rpb24goXByZWZldGNoog0KPj4gbWFrZVsxXTogKioqIFtuZXQvc2NoZWQvc2NoX2Nv
-ZGVsLm9dIEVycm9yIDENCj4+IA0KPj4gU2lnbmVkLW9mZi1ieTogR2VlcnQgVXl0dGVyaG9ldmVu
-IDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCj4+IC0tLQ0KPiANCj4gSSBwbGFpZCBndWlsdHkNCj4g
-DQo+IEFja2VkLWJ5OiBFcmljIER1bWF6ZXQgPGVkdW1hemV0QGdvb2dsZS5jb20+DQoNCkFwcGxp
-ZWQuDQo=
+Hi Marek,
+
+Can you have a re-visit to this commit?
+
+commit 3c7c51817e8666aa507104d1ae624c5113ecbe01
+Author: Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Fri Feb 10 19:55:20 2012 +0100
+
+    ARM: dma-mapping: move all dma bounce code to separate dma ops structure
+
+It seems some builds were still relying on the old behaviour,
+as git bisect on one of the fails led to the above commit.
+
+Here is the failure:
+
+arch/arm/common/dmabounce.c:459:12: error: 'generic_dma_map_sg' undeclared here (not in a function)
+arch/arm/common/dmabounce.c:460:14: error: 'generic_dma_unmap_sg' undeclared here (not in a function)
+arch/arm/common/dmabounce.c:461:21: error: 'generic_dma_sync_sg_for_cpu' undeclared here (not in a function)
+arch/arm/common/dmabounce.c:462:24: error: 'generic_dma_sync_sg_for_device' undeclared here (not in a function)
+make[2]: *** [arch/arm/common/dmabounce.o] Error 1
+
+It happens on several ARM in-tree defconfig files, such as these.
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/6320182/
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/6320161/
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/6294024/
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/6320159/
+
+Thanks,
+Paul.
