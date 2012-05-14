@@ -1,24 +1,62 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build warning after merge of the origin tree
-Date: Sun, 13 May 2012 23:00:26 -0400 (EDT)
-Message-ID: <20120513.230026.1170494017599992321.davem@davemloft.net>
-References: <20120514104452.2411b761e8f98076d1ae88ee@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20120514104452.2411b761e8f98076d1ae88ee@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, jbohac@suse.cz
-List-Id: linux-next.vger.kernel.org
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 14 May 2012 10:44:52 +1000
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Mon, 14 May 2012 13:37:53 +1000
+Message-ID: <20120514133753.77567dfa46a1e51f9d33bb47@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__14_May_2012_13_37_53_+1000_J7==K5R2m2Y78iR1"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35121 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753162Ab2ENDiF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 13 May 2012 23:38:05 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-> Introduced by commit 13a8e0c8cdb4 ("bonding: don't increase rx_dropped
-> after processing LACPDUs"). recv-probe in struct bonding is a function
-> returning void, but the local variable it assigned to/from has been
-> changed to a function returning int ...
+--Signature=_Mon__14_May_2012_13_37_53_+1000_J7==K5R2m2Y78iR1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-http://marc.info/?l=linux-netdev&m=133693883404392&w=2
+Hi Samuel,
+
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+ERROR: "wm8400_block_read" [drivers/regulator/wm8400-regulator.ko] undefine=
+d!
+ERROR: "regmap_reinit_cache" [drivers/mfd/wm8400-core.ko] undefined!
+
+Caused by commit 4d240045599c ("mfd: Remove wm8400 custom cache
+implementation").
+
+I have used the mfd tree from next-20120511 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__14_May_2012_13_37_53_+1000_J7==K5R2m2Y78iR1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPsH4RAAoJEECxmPOUX5FEYV0P/3riCU4RMNXOIIklTLlIrPvW
+AV1V8+Wa+WW9oiUIdBeWFkH7+LmPeeggmXGTC97hE26a+0uStSn8Npgdt5ClbXD2
+QLpJJMdMdA5I1J944t2Lun9y61dPh86fLoFA2QZ+FLOyIzIdQr/YC/B5DoRIP9+F
+x7h6m+o8mhHDi3eWfjelB5fIp5+nXc8vkM4W+fqe7jC/xGnvLua6IK7yPNF2vTUO
++UyPNPN3gEDBoHISo4UF3SNar4Y4FTBMm+GlYA8ICY9XVym8RGtVrp0R8OXpjnSt
+bC2HkOoLFTh1Foxz0G3RV/G0KXryOOgbEwIdRYs1t6H5uYoIr6atEiX+r0b3dGKT
+cdkkyYehX1FreHqBGWoV2iO/cMFXKCncGW6DnXeyuZm6Ga6sASCgfGvM3+awsva6
+wt6t/apLElxmJcWrUBWsh3WIdiIGATdw0Pp0fmb6YXFuiJYPFvRmKAhQL2FOlRp5
+GZD8d4t3OF2/o8e1uqi0pzm5egeyyNsO13lH+sE/Eu+oB8ILDYpZf53u61qJG7Wg
+HFTe0G1Z+eZ1mu0qK8CrsM/o+yPgiIAIV6K3OVu9yu5hJMiRfddNSy53msEN41HP
+ugHDZwTG4iDmTsS8wbG37YGQ2yCN8ha+ws5VcKNULQIgupifJtowX2pgNXAkrVAQ
+s3KOg21+L/nSK0D8KofA
+=JAxo
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__14_May_2012_13_37_53_+1000_J7==K5R2m2Y78iR1--
