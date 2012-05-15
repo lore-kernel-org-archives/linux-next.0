@@ -1,51 +1,54 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next commit "ARM: dma-mapping: move all dma bounce code to
- separate dma ops structure"
-Date: Mon, 14 May 2012 19:47:16 -0400
-Message-ID: <4FB19984.5050504@windriver.com>
+From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Subject: Re: linux-next: Tree for May 10 (fs/inode.c)
+Date: Tue, 15 May 2012 00:49:01 +0000
+Message-ID: <1337042961.2522.53.camel@lade.trondhjem.org>
+References: <20120510192635.c6f3a55196bbf65f13956e44@canb.auug.org.au>
+	 <4FAC31BE.1060505@xenotime.net>
+	 <CAP=VYLrAjGjCHDhxrEypaKcqK1Yx7_XY_TZofsf5V9x7GCGr7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:50662 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932696Ab2ENXr1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 May 2012 19:47:27 -0400
+Received: from mx2.netapp.com ([216.240.18.37]:8848 "EHLO mx2.netapp.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757855Ab2EOAti (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 May 2012 20:49:38 -0400
+In-Reply-To: <CAP=VYLrAjGjCHDhxrEypaKcqK1Yx7_XY_TZofsf5V9x7GCGr7g@mail.gmail.com>
+Content-Language: en-US
+Content-ID: <77A7CD94118B214DAA2241AEC8FDABC6@tahoe.netapp.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: m.szyprowski@samsung.com
-Cc: kyungmin.park@samsung.com, subash.ramaswamy@linaro.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
 
-Hi Marek,
-
-Can you have a re-visit to this commit?
-
-commit 3c7c51817e8666aa507104d1ae624c5113ecbe01
-Author: Marek Szyprowski <m.szyprowski@samsung.com>
-Date:   Fri Feb 10 19:55:20 2012 +0100
-
-    ARM: dma-mapping: move all dma bounce code to separate dma ops structure
-
-It seems some builds were still relying on the old behaviour,
-as git bisect on one of the fails led to the above commit.
-
-Here is the failure:
-
-arch/arm/common/dmabounce.c:459:12: error: 'generic_dma_map_sg' undeclared here (not in a function)
-arch/arm/common/dmabounce.c:460:14: error: 'generic_dma_unmap_sg' undeclared here (not in a function)
-arch/arm/common/dmabounce.c:461:21: error: 'generic_dma_sync_sg_for_cpu' undeclared here (not in a function)
-arch/arm/common/dmabounce.c:462:24: error: 'generic_dma_sync_sg_for_device' undeclared here (not in a function)
-make[2]: *** [arch/arm/common/dmabounce.o] Error 1
-
-It happens on several ARM in-tree defconfig files, such as these.
-
-http://kisskb.ellerman.id.au/kisskb/buildresult/6320182/
-
-http://kisskb.ellerman.id.au/kisskb/buildresult/6320161/
-
-http://kisskb.ellerman.id.au/kisskb/buildresult/6294024/
-
-http://kisskb.ellerman.id.au/kisskb/buildresult/6320159/
-
-Thanks,
-Paul.
+T24gVGh1LCAyMDEyLTA1LTEwIGF0IDIxOjM2IC0wNDAwLCBQYXVsIEdvcnRtYWtlciB3cm90ZToN
+Cj4gT24gVGh1LCBNYXkgMTAsIDIwMTIgYXQgNToyMyBQTSwgUmFuZHkgRHVubGFwIDxyZHVubGFw
+QHhlbm90aW1lLm5ldD4gd3JvdGU6DQo+ID4gT24gMDUvMTAvMjAxMiAwMjoyNiBBTSwgU3RlcGhl
+biBSb3Rod2VsbCB3cm90ZToNCj4gPg0KPiA+PiBIaSBhbGwsDQo+ID4+DQo+ID4+IENoYW5nZXMg
+c2luY2UgMjAxMjA1MDg6DQo+ID4NCj4gPg0KPiA+IHdoZW4gQ09ORklHX0JMT0NLIGlzIG5vdCBz
+ZXQ6DQo+ID4NCj4gPiBmcy9pbm9kZS5jOjE3Nzc6NjogZXJyb3I6IHJlZGVmaW5pdGlvbiBvZiAn
+aW5vZGVfZGlvX3dhaXQnDQo+ID4gaW5jbHVkZS9saW51eC9mcy5oOjI0NzY6MjA6IG5vdGU6IHBy
+ZXZpb3VzIGRlZmluaXRpb24gb2YgJ2lub2RlX2Rpb193YWl0Jw0KPiA+IHdhcyBoZXJlDQo+IA0K
+PiBBbHNvIHNlZW4gb24gc29tZSBhcm0gYnVpbGRzOg0KPiANCj4gaHR0cDovL2tpc3NrYi5lbGxl
+cm1hbi5pZC5hdS9raXNza2IvYnVpbGRyZXN1bHQvNjI5MTM1Ny8NCj4gaHR0cDovL2tpc3NrYi5l
+bGxlcm1hbi5pZC5hdS9raXNza2IvYnVpbGRyZXN1bHQvNjI5MTM3OC8NCj4gDQo+IDVlZmYzOTU3
+Y2U4ZDE0YzJhMjU0ODQ0NzQzZGZiODRlMTllN2MyYWUgaXMgdGhlIGZpcnN0IGJhZCBjb21taXQN
+Cj4gY29tbWl0IDVlZmYzOTU3Y2U4ZDE0YzJhMjU0ODQ0NzQzZGZiODRlMTllN2MyYWUNCj4gQXV0
+aG9yOiBUcm9uZCBNeWtsZWJ1c3QgPFRyb25kLk15a2xlYnVzdEBuZXRhcHAuY29tPg0KPiBEYXRl
+OiAgIE1vbiBNYXkgNyAxMDo0NDoyOSAyMDEyIC0wNDAwDQo+IA0KPiAgICAgTkZTOiBFbnN1cmUg
+dGhhdCBzZXRhdHRyIGFuZCBnZXRhdHRyIHdhaXQgZm9yIE9fRElSRUNUIHdyaXRlIGNvbXBsZXRp
+b24NCj4gDQo+ICAgICBVc2UgdGhlIHNhbWUgbWVjaGFuaXNtIGFzIHRoZSBibG9jayBkZXZpY2Vz
+IGFyZSB1c2luZywgYnV0IG1vdmUgdGhlDQo+ICAgICBoZWxwZXIgZnVuY3Rpb25zIGZyb20gZnMv
+ZGlyZWN0LWlvLmMgaW50byBmcy9pbm9kZS5jIHRvIHJlbW92ZSB0aGUNCj4gICAgIGRlcGVuZGVu
+Y3kgb24gQ09ORklHX0JMT0NLLg0KPiANCj4gICAgIFNpZ25lZC1vZmYtYnk6IFRyb25kIE15a2xl
+YnVzdCA8VHJvbmQuTXlrbGVidXN0QG5ldGFwcC5jb20+DQo+ICAgICBDYzogQ2hyaXN0b3BoIEhl
+bGx3aWcgPGhjaEBpbmZyYWRlYWQub3JnPg0KPiAgICAgQ2M6IEFsIFZpcm8gPHZpcm9AemVuaXYu
+bGludXgub3JnLnVrPg0KPiAgICAgQ2M6IEZyZWQgSXNhbWFuIDxpaXNhbWFuQG5ldGFwcC5jb20+
+DQo+IA0KPiA6MDQwMDAwIDA0MDAwMCBhZTMzZTJmZmQxNzJlNGQ3ZTJhZDZlZDIxOWRlMzJkZTkz
+NjU0OGNjDQo+IGVmMmRmNjZiMzQ1NTlkYmMwNzgyYWRkMTA4ZTI0YTZlZjZlNGUyY2EgTSAgICAg
+IGZzDQo+IGJpc2VjdCBydW4gc3VjY2Vzcw0KPiANCj4gUC4NCg0KU29ycnkgYWJvdXQgYmVpbmcg
+c28gbGF0ZSB3aXRoIHRoaXMuIFRoZSBjaGFuZ2VzIHRvIGluY2x1ZGUvbGludXgvZnMuaA0KaGFk
+IG5vdCBiZWVuIGNvbW1pdHRlZCBpbiB0aGUgb3JpZ2luYWwgYnJhbmNoLiBUb2RheSdzIGxpbnV4
+LW5leHQgc2hvdWxkDQpoYXZlIHRoYXQgZml4ZWQuLi4NCg0KQ2hlZXJzDQogIFRyb25kDQoNCi0t
+IA0KVHJvbmQgTXlrbGVidXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWluZXINCg0KTmV0QXBw
+DQpUcm9uZC5NeWtsZWJ1c3RAbmV0YXBwLmNvbQ0Kd3d3Lm5ldGFwcC5jb20NCg0K
