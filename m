@@ -1,56 +1,34 @@
 From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: manual merge of the kbuild tree with the
+Subject: Re: linux-next: manual merge of the net-next tree with the
 	sparc-next tree
-Date: Wed, 16 May 2012 06:46:46 +0200
-Message-ID: <20120516044646.GA340@merkur.ravnborg.org>
-References: <20120516134430.14f8e43c6f75604410dae815@canb.auug.org.au> <20120515.235747.716576574995746023.davem@davemloft.net>
+Date: Wed, 16 May 2012 07:02:45 +0200
+Message-ID: <20120516050245.GA407@merkur.ravnborg.org>
+References: <20120516143944.57a648287aa5cd1a5930254e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20120515.235747.716576574995746023.davem@davemloft.net>
+In-Reply-To: <20120516143944.57a648287aa5cd1a5930254e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, mmarek@suse.cz, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, May 15, 2012 at 11:57:47PM -0400, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 16 May 2012 13:44:30 +1000
+On Wed, May 16, 2012 at 02:39:44PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> > Today's linux-next merge of the kbuild tree got a conflict in
-> > arch/sparc/boot/Makefile between commit 51f19cfa76d7 ("sparc32: drop
-> > build time btfixup patching") from the sparc-next tree and commit
-> > 95698570510b ("kbuild: refactor final link of sparc32") from the kbuild
-> > tree.
-> > 
-> > I have no idea, so I used the version from the sparc-next tree.
-> > 
-> > Sam, can you have a look and work this out, please?
+> Today's linux-next merge of the net-next tree got a conflict in
+> arch/sparc/Makefile between commit e1d7de8377e6 ("sparc: introduce
+> arch/sparc/Kbuild") from the sparc-next tree and commit 2809a2087cc4
+> ("net: filter: Just In Time compiler for sparc") from the net-next tree.
 > 
-> As Sam states in:
-> 
-> http://patchwork.ozlabs.org/patch/159094/
-> 
-> 	This patch will conflict badly with a patch in kbuild-next.
-> 
-> 	The fix is simple - drop all changes from kbuild-next.
-> 
-> :-)
-The above comment is true for both arch/sparc/Makefile and
-arch/sparc/bot/Makefile.
+> I suspect that the core-y net bit below should be changed to be a obj-y
+> bit of arch/sparc/Kbuild ...
 
-sparc-next will also conflict with net-next.
+Correct - like this:
 
-net-next add the following line to arch/sparc/Makefile:
-+core-y                 += arch/sparc/net/
-
-The fix is to add this line to the newly introduced
-arch/sparc/Kbuild file like this:
+arch/sparc/Kbuild:
 
 obj-y += net/
-
-Sorry for these conflicts but we have been busy in sparc land
-this round.
 
 	Sam
