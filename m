@@ -1,76 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the userns tree
-Date: Wed, 16 May 2012 19:37:12 +1000
-Message-ID: <20120516193712.32157bcdc435465c27183baf@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (userns
+ tree related)
+Date: Wed, 16 May 2012 19:55:13 +1000
+Message-ID: <20120516195513.29d921bc25f308f92f0d6471@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_May_2012_19_37_12_+1000_xVn57OXaeSin6n3W"
+ boundary="Signature=_Wed__16_May_2012_19_55_13_+1000_lD7z/pgwfSqa/hed"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:50708 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41261 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966601Ab2EPJhT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 05:37:19 -0400
+	with ESMTP id S1759894Ab2EPJzV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 05:55:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__16_May_2012_19_37_12_+1000_xVn57OXaeSin6n3W
+--Signature=_Wed__16_May_2012_19_55_13_+1000_lD7z/pgwfSqa/hed
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Eric,
 
-Today's linux-next merge of the akpm tree got a conflict in
-kernel/signal.c between commit 54ba47edac90 ("userns: signal remove
-unnecessary map_cred_ns") from the userns tree and commit "pidns: use
-task_active_pid_ns in do_notify_parent" from the akpm tree.
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) produced this warning:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+kernel/user.c:30:4: warning: this decimal constant is unsigned only in ISO =
+C90 [enabled by default]
+kernel/user.c:38:4: warning: this decimal constant is unsigned only in ISO =
+C90 [enabled by default]
+
+Introduced by commit 22d917d80e84 ("userns: Rework the user_namespace
+adding uid/gid mapping support").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc kernel/signal.c
-index c5100ad,d9bcff9..0000000
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@@ -1668,9 -1677,9 +1667,9 @@@ bool do_notify_parent(struct task_struc
-  	 * correct to rely on this
-  	 */
-  	rcu_read_lock();
-- 	info.si_pid =3D task_pid_nr_ns(tsk, tsk->parent->nsproxy->pid_ns);
-+ 	info.si_pid =3D task_pid_nr_ns(tsk, task_active_pid_ns(tsk->parent));
- -	info.si_uid =3D map_cred_ns(__task_cred(tsk),
- -			task_cred_xxx(tsk->parent, user_ns));
- +	info.si_uid =3D from_kuid_munged(task_cred_xxx(tsk->parent, user_ns),
- +				       task_uid(tsk));
-  	rcu_read_unlock();
- =20
-  	info.si_utime =3D cputime_to_clock_t(tsk->utime + tsk->signal->utime);
-
---Signature=_Wed__16_May_2012_19_37_12_+1000_xVn57OXaeSin6n3W
+--Signature=_Wed__16_May_2012_19_55_13_+1000_lD7z/pgwfSqa/hed
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPs3VIAAoJEECxmPOUX5FEkOwP/3PCGNlx71D6SBIPCtfPp6DU
-FeZshHXt57T3XF3WBZ/c1sMN5qDhoaRvGXkpgiQf/diQLzLfuqhQQd7V8Kbhc4jo
-6BNo1ThuzaZHXR3+wDC+rgT+1mVklMCechFVAnprHXFbJdqkrNC/xWLg30IZNZ23
-CrXkBndXDumAj6ksBzld9N/AWrnGxFez0qFX9zLZ3UKQpWul93KAs13W0rV/rw9W
-5AnTFKjNRqZjkIXsjzonF5sB3KWgU8btX2KJaEMvlYlNU66thWA2KtKXyQxtc0EM
-tmNeWSyg07ti2kuv6w50o5scinG1CWBkN/C8Nx4ANsmhph269IuAYcsvu3mliGc7
-HlaQR3YcfOi9Hv9/U4FN9Kda7R5REK6RHmQK9pu0C9ShxASuOMniQ7LPTtJJ2Xn2
-7Ybm8FtuDiEtoNGm6Zc0h4LDbnAOImwWG3ostjeGWr+/pFMyNryKtOO6pwHzB3e4
-GtfntT2dKrbo6mZQoMnk0njx73WEK81Aoh95y92yuvjs22+Wrb2rwXeUR/x5Nu7U
-Xh+RXBMMcafaQPOBz7g0rCNqp0VVHCG+BOag7lymoQp/p80ukFrsrxDCud1gWRYz
-1Bf6lJ7msCsfUPmkxwzwduKuIMYY9s38lV1RUIlJip3oH2DarMxTmBKtnJjSoByD
-LpLzXB6r0YMJAS6kWXSB
-=zLVH
+iQIcBAEBCAAGBQJPs3mBAAoJEECxmPOUX5FEgncP/0sNLgeOzy9XqaBi2EAOQ8QO
+MwqmWDyawXTJxM4S4bO6+phZf2Yd8WKDTBueeaxPHM4oVWD7RI4Ox4hjxy1a2WAU
++Nt+EPVQf+99pQE2vcsqZ91XiRL9aVyW1jeQ+znBPFvdGBeb+PYsKFqoI6x4Jnng
+X9btN8m3BsSPhpYxn85hEADyl6Dar66hu0da00y72BfG8H1XOKhHWO6T5X0Al1Zs
+AvvxTf59AQVOeDW+ObBHgYsEijojDLHLLw/lL7yS/p8W0aUagg8ophtvdzn/kaQj
+E4pO6WKhTvqov5ogpDTMoLENcr08lASVTNgEoyGh/g5Fpe0cxwuJVSEOS6rhVWez
+sBreVw8vi56dLiMsszkga7K/dGnf9UCSvC71o/C+ZQPmIQ+zGFnrLqWBnyTeIXWv
+C9C/4mi1NIMhRNsMtgIfR44TeoXM1zzdDDOpMDXq1afvUbOkD7lTE20HJYF38wtd
+RHI1yFZL+pb7rAfurnTqiyCAQjljx5C+jvy9p1JH1F0w/LC5/ooTEjmO5SBaKw1U
+jt9S6zZw7y9zNsY/Co6jva0NjILW9GCAmBUe75qz1DilCdKfHsWDERPt6fuD/aEN
+rYNutxjen3bJsf4wxnFpRr87//8Ow7bAXtA07oiFtWxV2PD/DPyoSVK7zh2fG9Pj
+u9Ij6kJAc5nChwOGamHc
+=NegO
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__16_May_2012_19_37_12_+1000_xVn57OXaeSin6n3W--
+--Signature=_Wed__16_May_2012_19_55_13_+1000_lD7z/pgwfSqa/hed--
