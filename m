@@ -1,63 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the final tree (userns
+Subject: linux-next: build failure after merge of the final tree (staging
  tree related)
-Date: Wed, 16 May 2012 19:55:13 +1000
-Message-ID: <20120516195513.29d921bc25f308f92f0d6471@canb.auug.org.au>
+Date: Wed, 16 May 2012 20:06:59 +1000
+Message-ID: <20120516200659.000314e53de07a7a7fda46b8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_May_2012_19_55_13_+1000_lD7z/pgwfSqa/hed"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41261 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759894Ab2EPJzV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 05:55:21 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Wed__16_May_2012_20_06_59_+1000_kwYeBgqm1q=ZTAuG"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Magenheimer <dan.magenheimer@oracle.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__16_May_2012_19_55_13_+1000_lD7z/pgwfSqa/hed
+--Signature=_Wed__16_May_2012_20_06_59_+1000_kwYeBgqm1q=ZTAuG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Greg,
 
 After merging the final tree, today's linux-next build (powerpc
-ppc44x_defconfig) produced this warning:
+allyesconfig) failed like this:
 
-kernel/user.c:30:4: warning: this decimal constant is unsigned only in ISO =
-C90 [enabled by default]
-kernel/user.c:38:4: warning: this decimal constant is unsigned only in ISO =
-C90 [enabled by default]
+drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_map_object':
+drivers/staging/zsmalloc/zsmalloc-main.c:704:3: error: implicit declaration=
+ of function 'set_pte' [-Werror=3Dimplicit-function-declaration]
+drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_unmap_object':
+drivers/staging/zsmalloc/zsmalloc-main.c:738:3: error: implicit declaration=
+ of function '__flush_tlb_one' [-Werror=3Dimplicit-function-declaration]
 
-Introduced by commit 22d917d80e84 ("userns: Rework the user_namespace
-adding uid/gid mapping support").
+Presumably caused by commit 49b81a3c7415 ("ramster: switch over to
+zsmalloc and crypto interface") which now has CONFIG_RAMSTER selecting
+CONFIG_ZSMALLOC explicitly which in turn ignores the dependency of
+CONFIG_ZSMALLOC on X86 ...
 
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__16_May_2012_19_55_13_+1000_lD7z/pgwfSqa/hed
+--Signature=_Wed__16_May_2012_20_06_59_+1000_kwYeBgqm1q=ZTAuG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPs3mBAAoJEECxmPOUX5FEgncP/0sNLgeOzy9XqaBi2EAOQ8QO
-MwqmWDyawXTJxM4S4bO6+phZf2Yd8WKDTBueeaxPHM4oVWD7RI4Ox4hjxy1a2WAU
-+Nt+EPVQf+99pQE2vcsqZ91XiRL9aVyW1jeQ+znBPFvdGBeb+PYsKFqoI6x4Jnng
-X9btN8m3BsSPhpYxn85hEADyl6Dar66hu0da00y72BfG8H1XOKhHWO6T5X0Al1Zs
-AvvxTf59AQVOeDW+ObBHgYsEijojDLHLLw/lL7yS/p8W0aUagg8ophtvdzn/kaQj
-E4pO6WKhTvqov5ogpDTMoLENcr08lASVTNgEoyGh/g5Fpe0cxwuJVSEOS6rhVWez
-sBreVw8vi56dLiMsszkga7K/dGnf9UCSvC71o/C+ZQPmIQ+zGFnrLqWBnyTeIXWv
-C9C/4mi1NIMhRNsMtgIfR44TeoXM1zzdDDOpMDXq1afvUbOkD7lTE20HJYF38wtd
-RHI1yFZL+pb7rAfurnTqiyCAQjljx5C+jvy9p1JH1F0w/LC5/ooTEjmO5SBaKw1U
-jt9S6zZw7y9zNsY/Co6jva0NjILW9GCAmBUe75qz1DilCdKfHsWDERPt6fuD/aEN
-rYNutxjen3bJsf4wxnFpRr87//8Ow7bAXtA07oiFtWxV2PD/DPyoSVK7zh2fG9Pj
-u9Ij6kJAc5nChwOGamHc
-=NegO
+iQIcBAEBCAAGBQJPs3xDAAoJEECxmPOUX5FEybgQAIVQzjBq89+n8hKiLtmnOI0N
+c5llkESn9XbT3rz3c6p6VnD4d080rOYa0hEkxU4W6w1u875pCgMujwu026naK9t5
+DQTqsXgzC63byEhdGfGkT2ZqpEUMgYExjv/AGvDd1HMJlqUFUV7RD3aeLi53nIAJ
+gJ6k2LqKIcg2tzNEp8SNVKw0aa5DC0YFdWL22xFuSZrEPVLUzOWoirrUo7GRap3j
+KuAQaLUYEQGa/tGAMu5zPcDY3Do9RT9t/CsQ8BMAVbepASP4TTtp00RLbbN10+mc
+/7k8+9HWIsxBsP0SlFXnGmssdKVDH7UtekfqqhzZnRdiUCOaqpF6Y1J6dkbG1nBO
+Td0MByEFCkjtClew0Rzuwn3TacWIU3Ho896fPrVCjiks3rF1dRRcwlIz1BikVEjM
+3UdpTIYudqUgJyBLNCA1b5y3bKT4TXSceG7mptjvM+AggeiJYKwF8UNi43c+DC1a
+jayiJDjACtq1ix7efDVsH15rKRzdAuokgtbcXAVR8E+/MtP2ssIMsMO8CWe7S/SM
+lYLmdN9T6XM5SavpO6FU9hUEkToqkdjid+HrFhNx9QMf5oxJ9tr5U2Xr+n46/K6I
+phJnbPHhkDtrbJ3pKwohXKepW8QsdX6XkQviBpL7tCMwuKNblB0q8afWXTs+oias
+aQpY3BMBwmX1j+MpBwtR
+=mdy7
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__16_May_2012_19_55_13_+1000_lD7z/pgwfSqa/hed--
+--Signature=_Wed__16_May_2012_20_06_59_+1000_kwYeBgqm1q=ZTAuG--
