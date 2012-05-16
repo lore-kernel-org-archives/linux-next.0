@@ -1,91 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the tip tree
-Date: Wed, 16 May 2012 17:14:35 +1000
-Message-ID: <20120516171435.3b0a9c8a531081ff290763aa@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kvm-ppc tree
+Date: Wed, 16 May 2012 17:24:16 +1000
+Message-ID: <20120516172416.781859dbc2febbda67407576@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_May_2012_17_14_35_+1000_YqFdg7bL5Rj8xtiO"
+ boundary="Signature=_Wed__16_May_2012_17_24_16_+1000_LwGDrHSMHnnsZa8F"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44796 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:59821 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759272Ab2EPHOr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 03:14:47 -0400
+	with ESMTP id S1759223Ab2EPHYZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 03:24:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Gleb Natapov <gleb@redhat.com>
+To: Alexander Graf <agraf@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>
 
---Signature=_Wed__16_May_2012_17_14_35_+1000_YqFdg7bL5Rj8xtiO
+--Signature=_Wed__16_May_2012_17_24_16_+1000_LwGDrHSMHnnsZa8F
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Alexander,
 
-Today's linux-next merge of the kvm tree got a conflict in
-arch/x86/include/asm/kvm_para.h between commit c3709e6734da ("x86, kvm:
-KVM paravirt kernels don't check for CPUID being unavailable") from the
-tip tree and commit 9b72d3b07dd9 ("KVM guest: make kvm_para_available()
-check hypervisor bit reading cpuid leaf") from the kvm tree.
+After merging the kvm-ppc tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+ERROR: "kvm_hpt_order" [arch/powerpc/kvm/kvm.ko] undefined!
+
+Caused by commit ec26346431bb ("KVM: PPC: Book3S HV: Make the guest hash
+table size configurable").
+
+I have used the kvm-ppc tree from next-20120514 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/include/asm/kvm_para.h
-index 183922e,a7a7a94..0000000
---- a/arch/x86/include/asm/kvm_para.h
-+++ b/arch/x86/include/asm/kvm_para.h
-@@@ -170,17 -178,16 +178,19 @@@ static inline int kvm_para_available(vo
-  	unsigned int eax, ebx, ecx, edx;
-  	char signature[13];
- =20
- +	if (boot_cpu_data.cpuid_level < 0)
- +		return 0;	/* So we don't blow up on old processors */
- +
-- 	cpuid(KVM_CPUID_SIGNATURE, &eax, &ebx, &ecx, &edx);
-- 	memcpy(signature + 0, &ebx, 4);
-- 	memcpy(signature + 4, &ecx, 4);
-- 	memcpy(signature + 8, &edx, 4);
-- 	signature[12] =3D 0;
-+ 	if (cpu_has_hypervisor) {
-+ 		cpuid(KVM_CPUID_SIGNATURE, &eax, &ebx, &ecx, &edx);
-+ 		memcpy(signature + 0, &ebx, 4);
-+ 		memcpy(signature + 4, &ecx, 4);
-+ 		memcpy(signature + 8, &edx, 4);
-+ 		signature[12] =3D 0;
- =20
-- 	if (strcmp(signature, "KVMKVMKVM") =3D=3D 0)
-- 		return 1;
-+ 		if (strcmp(signature, "KVMKVMKVM") =3D=3D 0)
-+ 			return 1;
-+ 	}
- =20
-  	return 0;
-  }
-
---Signature=_Wed__16_May_2012_17_14_35_+1000_YqFdg7bL5Rj8xtiO
+--Signature=_Wed__16_May_2012_17_24_16_+1000_LwGDrHSMHnnsZa8F
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPs1PbAAoJEECxmPOUX5FEu6kP/11Dgj2tMgqIpl+Yj1ayxKrh
-p8BghuRZAt9ke/Sz0bTYJlUnPctUAtnULCYs2stQjEfncow0tklCQPB4E95q/DVZ
-3SVSuv5OH2pfkxHHavKX+uf3ktrK3Xs/EqbJWJ0pyuBNJvWlUd/10Bo7s7BVIvS0
-8ATjlYGaqhbV9ihZ3F+5wqdhBCnY52YGbRMBOo3/jpGwGQAIG9W1KLNLXQwaEpDh
-s2w10QjQ5FUPsJdDBx+Trvr9OepJQW0OnahynWMweZoCEDYZCKipXeB6R5IVXyMo
-M+NRmrL5o0ZsVVd/t/2YieHt8N4Ri0NAYnZr6UBJkFCwzrCaFAsAbw/aqAJ6U1zT
-g5qivUu5viZrp939ijZ6CCNF6yPQMylrUkH95nBwJuaagyE/s1tLctDgInuPjP3f
-ATuMthJkvDFFoqAR+aiXooTvvxBCXVrck3PfYoP25ovbuzdVVv/vQmlJxmD8aLY3
-/2GHWeu/VcmmFcqrf+xrQ8SjR+nsTLiQKtohBt+Jig1gDKX6xOqCYIdc84otytDs
-ThippfT+KI6ntW2uJCrYb4D0vgzGr2O2KWYPCV+q0RBwXMmxZmHtmkCwCzjv+GR2
-A9bTK49D8lU6Wb1xueGMv4poPinj6VNEKlLZZuWXWOSOI4zni0pzIB1xAPC1UyRX
-TS06F/Dq1UfDrnrpodSw
-=xlsL
+iQIcBAEBCAAGBQJPs1YgAAoJEECxmPOUX5FEG8cP/Rp0yPxt+3DD53/q7+5Hd8Sg
+dwsNxhSIDbos4mCfytozEwHPj7ayhnehUbiygdKj0UWM5dwxVCHHVT959WecXNGU
+9o+b0tWoQRzB9n7+OXxUmDNuCUEV2t1Y02L3UXUmwLh86wJuYe8Udp/0VsphhEqh
+4+kxnLGK4MosfFU/Ci98hjVDcacWx/msAy5oV1n89eXiOwZZFN3D+4XAfynObOiS
+MZrasY+AXvU65oxNMYN6H4y4NLCTTKMXd2n2UAYy3YTfIXCG9Pup27pnLruUixfR
+c05bAh2R5lO1oe7/ryo32EqP75ALNX1fwXC0NHVUoHxxXFXaiJXMtdjeYwz6cO5P
+1F6WkMa+qV6QnVhXgSXsuQJzfotHjm29vN8pqdNMSEWP6ZjNpBKL+/KljxHN7g47
+Du+hHm7l3g7ix81Q7BCoeNoO4b5u/xjjulXLqzaeaZf+YDOnHMHEirY70WuZmTXp
+PsUWUVFuAwBr32aUk6RSe1op+Rwsjl7rVvJkbpzwdCgCbrurODFsNodv5tWedtu3
+FS49U/GbZdENhApsv0JKBOJe4BZIAsp8/+dbxPwKcy6pw4XwAyTVOnB8335A9Mb7
+UnZKASPkNfzZ1YwN5MpICRrOLPZD4FWi/MLwbvY6an3mpr24cSjWGX0kNY3TTGm5
+aqMM/6oJmEAdqi9Hvxq8
+=QlT0
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__16_May_2012_17_14_35_+1000_YqFdg7bL5Rj8xtiO--
+--Signature=_Wed__16_May_2012_17_24_16_+1000_LwGDrHSMHnnsZa8F--
