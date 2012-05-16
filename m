@@ -1,110 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (battery tree related)
-Date: Wed, 16 May 2012 16:12:56 +1000
-Message-ID: <20120516161256.b046bcb06148ac6417fd51b5@canb.auug.org.au>
-References: <20120507171458.5ce17d20c40856e9440b3e5f@canb.auug.org.au>
-	<20120507082637.GH31494@intel.com>
+Subject: linux-next: manual merge of the kvm tree with the tip tree
+Date: Wed, 16 May 2012 17:14:35 +1000
+Message-ID: <20120516171435.3b0a9c8a531081ff290763aa@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_May_2012_16_12_56_+1000_Uss9wR0o=nfJLXvk"
+ boundary="Signature=_Wed__16_May_2012_17_14_35_+1000_YqFdg7bL5Rj8xtiO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55801 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44796 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754872Ab2EPGNC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 02:13:02 -0400
-In-Reply-To: <20120507082637.GH31494@intel.com>
+	with ESMTP id S1759272Ab2EPHOr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 03:14:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Anton Vorontsov <avorontsov@ru.mvista.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Gleb Natapov <gleb@redhat.com>
 
---Signature=_Wed__16_May_2012_16_12_56_+1000_Uss9wR0o=nfJLXvk
+--Signature=_Wed__16_May_2012_17_14_35_+1000_YqFdg7bL5Rj8xtiO
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 7 May 2012 11:26:37 +0300 Mika Westerberg <mika.westerberg@linux.in=
-tel.com> wrote:
->
-> On Mon, May 07, 2012 at 05:14:58PM +1000, Stephen Rothwell wrote:
-> >=20
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> >=20
-> > drivers/power/smb347-charger.c: In function 'smb347_probe':
-> > drivers/power/smb347-charger.c:1039:2: error: implicit declaration of f=
-unction 'IS_ERR' [-Werror=3Dimplicit-function-declaration]
-> > drivers/power/smb347-charger.c:1040:3: error: implicit declaration of f=
-unction 'PTR_ERR' [-Werror=3Dimplicit-function-declaration]
-> >=20
-> > Caused by commit 34298d40e585 ("smb347-charger: Convert to regmap API").
->=20
-> I'm unable to reproduce this on x86 build. I guess <linux/err.h> gets
-> included implicitly there.
->=20
-> Patch below should fix this. Anton, care to pick this one as well (or fold
-> it into the 34298d40e585 ("smb347-charger: Convert to regmap API") commit=
-)?
->=20
-> From: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Subject: [PATCH] smb347-charger: include missing <linux/err.h>
->=20
-> Without the include we get build errors like:
->=20
-> drivers/power/smb347-charger.c: In function 'smb347_probe':
-> drivers/power/smb347-charger.c:1039:2: error: implicit declaration of fun=
-ction 'IS_ERR' [-Werror=3Dimplicit-function-declaration]
-> drivers/power/smb347-charger.c:1040:3: error: implicit declaration of fun=
-ction 'PTR_ERR' [-Werror=3Dimplicit-function-declaration]
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
->  drivers/power/smb347-charger.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
->=20
-> diff --git a/drivers/power/smb347-charger.c b/drivers/power/smb347-charge=
-r.c
-> index 09d19d2..f8eedd8 100644
-> --- a/drivers/power/smb347-charger.c
-> +++ b/drivers/power/smb347-charger.c
-> @@ -11,6 +11,7 @@
->   * published by the Free Software Foundation.
->   */
-> =20
-> +#include <linux/err.h>
->  #include <linux/gpio.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
+Today's linux-next merge of the kvm tree got a conflict in
+arch/x86/include/asm/kvm_para.h between commit c3709e6734da ("x86, kvm:
+KVM paravirt kernels don't check for CPUID being unavailable") from the
+tip tree and commit 9b72d3b07dd9 ("KVM guest: make kvm_para_available()
+check hypervisor bit reading cpuid leaf") from the kvm tree.
 
-Ping?
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__16_May_2012_16_12_56_+1000_Uss9wR0o=nfJLXvk
+diff --cc arch/x86/include/asm/kvm_para.h
+index 183922e,a7a7a94..0000000
+--- a/arch/x86/include/asm/kvm_para.h
++++ b/arch/x86/include/asm/kvm_para.h
+@@@ -170,17 -178,16 +178,19 @@@ static inline int kvm_para_available(vo
+  	unsigned int eax, ebx, ecx, edx;
+  	char signature[13];
+ =20
+ +	if (boot_cpu_data.cpuid_level < 0)
+ +		return 0;	/* So we don't blow up on old processors */
+ +
+- 	cpuid(KVM_CPUID_SIGNATURE, &eax, &ebx, &ecx, &edx);
+- 	memcpy(signature + 0, &ebx, 4);
+- 	memcpy(signature + 4, &ecx, 4);
+- 	memcpy(signature + 8, &edx, 4);
+- 	signature[12] =3D 0;
++ 	if (cpu_has_hypervisor) {
++ 		cpuid(KVM_CPUID_SIGNATURE, &eax, &ebx, &ecx, &edx);
++ 		memcpy(signature + 0, &ebx, 4);
++ 		memcpy(signature + 4, &ecx, 4);
++ 		memcpy(signature + 8, &edx, 4);
++ 		signature[12] =3D 0;
+ =20
+- 	if (strcmp(signature, "KVMKVMKVM") =3D=3D 0)
+- 		return 1;
++ 		if (strcmp(signature, "KVMKVMKVM") =3D=3D 0)
++ 			return 1;
++ 	}
+ =20
+  	return 0;
+  }
+
+--Signature=_Wed__16_May_2012_17_14_35_+1000_YqFdg7bL5Rj8xtiO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPs0VoAAoJEECxmPOUX5FEL4cQAIR61s7ZJDLZp4y3YOAwaq4g
-lCIY4MVrT/Wc904BZYaFP3mM9NO5Xoc3WHLLhNbKDj0SoLLbQr3+xVpswyWmogkv
-oH20r1jpRN+H2Id+ye0cnJShEITpy/qS7JP8+u3Ar2vzc6XJoOlb4ZWaDOvSs9wl
-v7EvP3J7nR/uteFrtEzwQK84+VluMFlSz14nhvSp/EykK5xoRt3wMZ3HtgDsbJpf
-s/4G/cXDGcCAZ/UR8sWdsCrkL4n9gDzT/9ystj/2xgpet/ZjfUYaAgMrXc7eDSwR
-WAR0snHkkqRYwcZoYd03Iq8SdaUp4zZU8RebwRCmwMQuB1eR4BWcwoUsrx8w7XyN
-ES7OW5r8WTKV8kvt86gbnR8S8fWu2VLsz6t2ggOpUGNYgl9ED0w0XFHFb9TMq9m+
-PtpMNkMYOTG/INIGDKbdwU+8fnq2TwAoVAiJS5oqDL22hZN8SE6G4IwkfLF5NkTW
-34/r981N0BbYhpNhBP54y0haR3l1iMCvu18FOWF/Sj71bs4UU2Z2W2ZsgyJ1+5Pm
-8V88xhaHmtPIBi2k/q8RubCXmVwLTQgB7VOt0EQdN5mRtuXGCW1xUKLRD0Hzfs35
-V0E0cn+vLzWA4bL0Ys5n2xYtv+Luxn/tSZxAMlHAX19mnhV8tolylNxWPJoLZ5uZ
-lUGe9o6qbivw436wNu3A
-=7pA6
+iQIcBAEBCAAGBQJPs1PbAAoJEECxmPOUX5FEu6kP/11Dgj2tMgqIpl+Yj1ayxKrh
+p8BghuRZAt9ke/Sz0bTYJlUnPctUAtnULCYs2stQjEfncow0tklCQPB4E95q/DVZ
+3SVSuv5OH2pfkxHHavKX+uf3ktrK3Xs/EqbJWJ0pyuBNJvWlUd/10Bo7s7BVIvS0
+8ATjlYGaqhbV9ihZ3F+5wqdhBCnY52YGbRMBOo3/jpGwGQAIG9W1KLNLXQwaEpDh
+s2w10QjQ5FUPsJdDBx+Trvr9OepJQW0OnahynWMweZoCEDYZCKipXeB6R5IVXyMo
+M+NRmrL5o0ZsVVd/t/2YieHt8N4Ri0NAYnZr6UBJkFCwzrCaFAsAbw/aqAJ6U1zT
+g5qivUu5viZrp939ijZ6CCNF6yPQMylrUkH95nBwJuaagyE/s1tLctDgInuPjP3f
+ATuMthJkvDFFoqAR+aiXooTvvxBCXVrck3PfYoP25ovbuzdVVv/vQmlJxmD8aLY3
+/2GHWeu/VcmmFcqrf+xrQ8SjR+nsTLiQKtohBt+Jig1gDKX6xOqCYIdc84otytDs
+ThippfT+KI6ntW2uJCrYb4D0vgzGr2O2KWYPCV+q0RBwXMmxZmHtmkCwCzjv+GR2
+A9bTK49D8lU6Wb1xueGMv4poPinj6VNEKlLZZuWXWOSOI4zni0pzIB1xAPC1UyRX
+TS06F/Dq1UfDrnrpodSw
+=xlsL
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__16_May_2012_16_12_56_+1000_Uss9wR0o=nfJLXvk--
+--Signature=_Wed__16_May_2012_17_14_35_+1000_YqFdg7bL5Rj8xtiO--
