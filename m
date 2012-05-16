@@ -1,34 +1,60 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] staging: gdm72xx: WIMAX_GDM72XX_USB_PM should depend on
- USB_SUSPEND
-Date: Wed, 16 May 2012 13:31:13 -0700
-Message-ID: <20120516203113.GA32372@kroah.com>
-References: <1337197660-7852-1-git-send-email-geert@linux-m68k.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: bad commit in the tile tree
+Date: Thu, 17 May 2012 09:14:17 +1000
+Message-ID: <20120517091417.62c65eea7002be18d8af2f34@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__17_May_2012_09_14_17_+1000_du55SB5k=kvMb.iK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:61800 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965561Ab2EPUbU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 16:31:20 -0400
-Received: by pbbrp8 with SMTP id rp8so1580680pbb.19
-        for <linux-next@vger.kernel.org>; Wed, 16 May 2012 13:31:20 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1337197660-7852-1-git-send-email-geert@linux-m68k.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:33387 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760767Ab2EPXO0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 19:14:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sage Ahn <syahn@gctsemi.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Chris Metcalf <cmetcalf@tilera.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, May 16, 2012 at 09:47:40PM +0200, Geert Uytterhoeven wrote:
-> Use Kconfig logic instead of a rude #error in the driver source,
-> which breaks m68k-allmodconfig.
-> Also remove the "default n", as that's the default.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> http://kisskb.ellerman.id.au/kisskb/buildresult/6335693/
+--Signature=_Thu__17_May_2012_09_14_17_+1000_du55SB5k=kvMb.iK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry about missing that, now applied thanks.
+Hi Chris,
 
-greg k-h
+The top commit on the tile tree has a bad description ("usb hackery" does
+not tell us anything), sprinkles stuff (mainly printk()s) all over the
+generic usb code and is not signed off by anyone ...
+
+I assume it is a debugging patch (or similar) and should *not* be in
+linux-next.
+
+I will use the version of the tile tree from next-20120516 for today
+(unless you update your tree very soon).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__17_May_2012_09_14_17_+1000_du55SB5k=kvMb.iK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPtDTJAAoJEECxmPOUX5FEUkUP/38qlyadDdLcYXxNMFqFBFCP
+Hc1aFR443RTXz7peMvGF85n6RLfHpwA6gSVQM5QW5hz87Dq4HotiB7o6b7kD2mVv
+TSiFsEoo86wesOlv/DevW+s0/ThUIDOSztY4efpCb06ce5hkSndABqjzTnrTC3ws
+w2gB9g2MDNEz/10Gy5jQC9vseoDRlfPjeZXo4xl+rxYzt5Ts7CkdhqcZCdG6FODV
+ZuDpm03KCAIp7+FvUcoHtxmGfD1rtXV6Rs/KKHmsrm9dTQ1hpFa2DLf9t6gkXcMm
+LZAH6hV+U+JZ7hQcPTKpB4eKYcZLP5TYUryU00nk25q8lc/z6yVa1fnrNomnFZuu
+uzPf9Dq2cEhLvt+djJ1Tu3wNREqosrlnRWcYcGuKSxYCOk0wzCcolhcuUOAzw92U
+GeDsuIHvLCa1JFBDbN0YbNQBYdF6HrOKDxz7haVWi9RnMSpr9PpNvtQmmTY1bEes
+DMmfO640M8nhSlsIXZfp6jjqk0Ae/ffnt7YZTCOMPqmE8+K5Gm8JL2eAiMDHuncq
+TxHPWM+dZsRxRvYwa6QvqluCiUbrXkc0vgYqyi+6V6hwS5Mc7cHVad8CFfsOoGS/
+HEx9cE3ZXWAejAMjuLtY0apm2JvVDb6+nbscc4sgV+Gwz4r83tnZISFUHQ6Jz68z
+FbxrWpYbf63IanU6U8Wy
+=HXMw
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__17_May_2012_09_14_17_+1000_du55SB5k=kvMb.iK--
