@@ -1,72 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfs tree
-Date: Wed, 16 May 2012 12:49:42 +1000
-Message-ID: <20120516124942.5d776132d69f82bd8ed50e08@canb.auug.org.au>
+Subject: linux-next: manual merge of the kbuild tree with the sparc-next
+ tree
+Date: Wed, 16 May 2012 13:44:30 +1000
+Message-ID: <20120516134430.14f8e43c6f75604410dae815@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_May_2012_12_49_42_+1000_OwxR31zA5g0RAQ2k"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52451 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932909Ab2EPCty (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 May 2012 22:49:54 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Schumaker <bjschuma@netapp.com>
+ boundary="Signature=_Wed__16_May_2012_13_44_30_+1000_+W9pYOm1rJDFczPV"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, "David S. Miller" <davem@davemloft.net>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__16_May_2012_12_49_42_+1000_OwxR31zA5g0RAQ2k
+--Signature=_Wed__16_May_2012_13_44_30_+1000_+W9pYOm1rJDFczPV
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Trond,
+Hi Michal,
 
-After merging the nfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the kbuild tree got a conflict in
+arch/sparc/boot/Makefile between commit 51f19cfa76d7 ("sparc32: drop
+build time btfixup patching") from the sparc-next tree and commit
+95698570510b ("kbuild: refactor final link of sparc32") from the kbuild
+tree.
 
-fs/nfs/super.c: In function 'nfs_get_cache_cookie':
-fs/nfs/super.c:2361:12: error: 'struct nfs_server' has no member named 'fsc=
-ache_key'
-fs/nfs/super.c:2362:16: error: 'struct nfs_server' has no member named 'fsc=
-ache_key'
-fs/nfs/super.c:2363:16: error: 'struct nfs_server' has no member named 'fsc=
-ache_key'
-fs/nfs/super.c:2367:2: warning: passing argument 3 of 'nfs_fscache_get_supe=
-r_cookie' makes pointer from integer without a cast [enabled by default]
-fs/nfs/fscache.h:173:20: note: expected 'struct nfs_clone_mount *' but argu=
-ment is of type 'int'
+I have no idea, so I used the version from the sparc-next tree.
 
-Casued by commit 2311b9439ce8 ("NFS: Don't pass mount data to
-nfs_fscache_get_super_cookie()").  This build has CONFIG_NFS_FSCACHE
-unset.  grep is your friend.
-
-I have used the nfs tree from next-20120514 for today.
-
+Sam, can you have a look and work this out, please?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__16_May_2012_12_49_42_+1000_OwxR31zA5g0RAQ2k
+--Signature=_Wed__16_May_2012_13_44_30_+1000_+W9pYOm1rJDFczPV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPsxXGAAoJEECxmPOUX5FEuWIP/ii/IEVnZZAxXcN7WvJ5e3NS
-DxDYf9F+Pb8viW+CX/uLu0dtayRE1JPUw3dEDLek9JzkXj+VcmvM2YCcqPjkBs0S
-rObcogYMkiXu0sIbKixOPoCLRfJ5VEH/HpPrD4XOdpjOktq9m5bejEp9IymbGdCe
-5H/TVXKf6sMQaQ7vhEcQoG2b2RRGF8Xhesy0S8PA/htvg8QfbJ4mWuF8BhN3vwnf
-RRtxdw7z7eHShOllukl1HWQwEJtbH6sN91KXAOib3BLgscJwd/AgZDRKUM3ATWju
-ZqSz849IAOCpVvLOVTB4a891DBplAMtX1Zns3h5PozZUCJCqXXwRVHv20e7Jm0R5
-N5RwLJ2qs9jEmdyQm7dtYlTo6gRoP5RyY7iiEzU2fjsMpYllbMMWktL3N+habwPG
-d1XkAYSuG29ACmseZM0kXz8pXMa20P0dFiWkDfXmEO4hGIiJYX57eJABTkYtgYT3
-E9/Qyo++pgcAuFrs7YjjvpQqmxDlAToD1BzYz8ynuXwVMqOszYlfFPdXPiRKdOR0
-vExsEn3N0AwLUmi4SXO003URNci4vBnrhwRV77KvCYb+J8krUnXZ8qogdLniZXvp
-XBtt42T5wJg4lH+lrN6+PpVWqh+J7Ae2e4IGMpN0Cua4beXWcEc3DBQB1pKqRmYk
-Gt2fzs1jm3MLlNNsFnpD
-=qSv9
+iQIcBAEBCAAGBQJPsyKeAAoJEECxmPOUX5FEAikQAJdVUWSO3A30SPG9J/EewWEL
+J1IfvuNLc3JsbK51hKuWJK1mcXzHBCUKbu2AKXN+FEoh4IUB9FMsFOyv+jzt4wl8
+fk0WfWO77ZOzMr2BNBJ2wSPIccVKyeOiU+o0et5F5c8+aP488ojTfwGF9wet0wpY
+vgXoWFbPryKBAUT3R+qSuAvkX1pIUjrti6NybKaBnJWK+PLiziCQmOBRAz7067Hh
+uzeG8Op4Tk91ON0YeOb9b6A/K7GKAUsK0LzzFXxLEC2Y15pOORWJhCTksmP4Tz2h
+YRJdtSZovpl2dssgLCbalufkg0CbjQJpaLSftqKgvHbtzFD7Y2+DUwgi3Ss77mEU
+u05XWT+uxfPAAX0x2Qbw3bQqcHPcBG9ZFRlsNHm02wCfPkAqzS9+RDWiaCMHzU7H
+rBY0RGAxtr5AjT8nogiACpw/54YFKE1uL3a4FX0hsHRg07JHPkr87oo5FqGCVxjj
+wRS9xdxrRQCAO4IJA//Cs8Ne4ZIzXgTlAdEH0k0cSIBCViPzXCjopTUR8sg9lkv4
+Pi6IXrm6/jYEayfSFz8e5kGtAvQcl2h2ObQl+Vt4UbF0OtmZOzvtidsbo3vR4aGd
+heJj1BMCRGQXbbgSUmS2VdLDhwEGQeP//CV9DFJqhWPe2kYABFanAXftrOFvbUvM
+DHtZs3EaDd+XrJA2Gtfg
+=yLdb
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__16_May_2012_12_49_42_+1000_OwxR31zA5g0RAQ2k--
+--Signature=_Wed__16_May_2012_13_44_30_+1000_+W9pYOm1rJDFczPV--
