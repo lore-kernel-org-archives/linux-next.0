@@ -1,30 +1,58 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: at91: Add ADC driver to at91sam9260/at91sam9g20 dtsi files
-Date: Wed, 16 May 2012 18:50:54 +0000
-Message-ID: <201205161850.54765.arnd@arndb.de>
-References: <4FB3B1F3.6080102@atmel.com> <1337182626-13033-1-git-send-email-nicolas.ferre@atmel.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] staging: gdm72xx: WIMAX_GDM72XX_USB_PM should depend on USB_SUSPEND
+Date: Wed, 16 May 2012 21:47:40 +0200
+Message-ID: <1337197660-7852-1-git-send-email-geert@linux-m68k.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:56652 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755159Ab2EPSu7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 14:50:59 -0400
-In-Reply-To: <1337182626-13033-1-git-send-email-nicolas.ferre@atmel.com>
+Received: from jacques.telenet-ops.be ([195.130.132.50]:49169 "EHLO
+	jacques.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752819Ab2EPTro (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 15:47:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: gregkh@linuxfoundation.org, sfr@canb.auug.org.au, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, plagnioj@jcrosoft.com, maxime.ripard@free-electrons.com, olof@lixom.net, linux-next@vger.kernel.org
+To: Sage Ahn <syahn@gctsemi.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Wednesday 16 May 2012, Nicolas Ferre wrote:
-> Now that the bulk of at91sam9g20-related nodes are located in at91sam9260.dtsi,
-> we have to re-create the path to this ADC node for SoC specific parts.
-> 
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Use Kconfig logic instead of a rude #error in the driver source,
+which breaks m68k-allmodconfig.
+Also remove the "default n", as that's the default.
 
-Should we apply this patch in arm-soc so that Greg can drop the hunk that
-no longer applies?
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+http://kisskb.ellerman.id.au/kisskb/buildresult/6335693/
 
-	Arnd
+ drivers/staging/gdm72xx/Kconfig   |    2 +-
+ drivers/staging/gdm72xx/gdm_usb.c |    6 ------
+ 2 files changed, 1 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/staging/gdm72xx/Kconfig b/drivers/staging/gdm72xx/Kconfig
+index 5c37cba..fc58427 100644
+--- a/drivers/staging/gdm72xx/Kconfig
++++ b/drivers/staging/gdm72xx/Kconfig
+@@ -38,7 +38,7 @@ if WIMAX_GDM72XX_USB
+ 
+ config WIMAX_GDM72XX_USB_PM
+ 	bool "Enable power managerment support"
+-	default n
++	depends on USB_SUSPEND
+ 
+ endif # WIMAX_GDM72XX_USB
+ 
+diff --git a/drivers/staging/gdm72xx/gdm_usb.c b/drivers/staging/gdm72xx/gdm_usb.c
+index 004786b..f60e890 100644
+--- a/drivers/staging/gdm72xx/gdm_usb.c
++++ b/drivers/staging/gdm72xx/gdm_usb.c
+@@ -17,12 +17,6 @@
+ #include <linux/usb.h>
+ #include <asm/byteorder.h>
+ 
+-#ifdef CONFIG_WIMAX_GDM72XX_USB_PM
+-#ifndef CONFIG_USB_SUSPEND
+-#error "USB host doesn't support USB Selective Suspend."
+-#endif
+-#endif
+-
+ #include "gdm_usb.h"
+ #include "gdm_wimax.h"
+ #include "usb_boot.h"
+-- 
+1.7.0.4
