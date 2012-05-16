@@ -1,50 +1,62 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the staging
- tree
-Date: Wed, 16 May 2012 15:56:03 +0200
-Message-ID: <4FB3B1F3.6080102@atmel.com>
-References: <20120516185812.ce1ab57c3ec72445135a35fc@canb.auug.org.au> <201205161054.15610.arnd@arndb.de>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: RE: linux-next: build failure after merge of the final tree (staging
+ tree related)
+Date: Wed, 16 May 2012 07:17:02 -0700 (PDT)
+Message-ID: <c3a17d64-0d63-4948-8e1b-d170626adff5@default>
+References: <20120516200659.000314e53de07a7a7fda46b8@canb.auug.org.au>
+ <20120516124924.GB32064@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:56266 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758047Ab2EPN4H (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 09:56:07 -0400
-In-Reply-To: <201205161054.15610.arnd@arndb.de>
+Received: from acsinet15.oracle.com ([141.146.126.227]:17512 "EHLO
+	acsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751757Ab2EPORh convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 10:17:37 -0400
+In-Reply-To: <20120516124924.GB32064@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
+To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/16/2012 12:54 PM, Arnd Bergmann :
-> On Wednesday 16 May 2012, Stephen Rothwell wrote:
->> Today's linux-next merge of the arm-soc tree got a conflict in
->> arch/arm/boot/dts/at91sam9g20.dtsi between commit 7cb2e629a240 ("ARM:
->> AT91: Add ADC driver to the at91sam9g20 dtsi") from the staging tree and
->> commit 5b6089cb6f28 ("ARM: at91: add at91sam9260 DT support") from the
->> arm-soc tree.
->>
->> So, I didn't know what to do with this, so I used the arm-soc version of
->> this file (effectively throwing away the staging tree change).  Hints,
->> anyone?
+> From: Greg KH [mailto:greg@kroah.com]
+> Subject: Re: linux-next: build failure after merge of the final tree (staging tree related)
 > 
-> I suspect the addition of the adc node should just go into the
-> at91sam9260.dtsi file.
+> On Wed, May 16, 2012 at 08:06:59PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> >
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >
+> > drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_map_object':
+> > drivers/staging/zsmalloc/zsmalloc-main.c:704:3: error: implicit declaration of function 'set_pte' [-
+> Werror=implicit-function-declaration]
+> > drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_unmap_object':
+> > drivers/staging/zsmalloc/zsmalloc-main.c:738:3: error: implicit declaration of function
+> '__flush_tlb_one' [-Werror=implicit-function-declaration]
+> >
+> > Presumably caused by commit 49b81a3c7415 ("ramster: switch over to
+> > zsmalloc and crypto interface") which now has CONFIG_RAMSTER selecting
+> > CONFIG_ZSMALLOC explicitly which in turn ignores the dependency of
+> > CONFIG_ZSMALLOC on X86 ...
+> >
+> > I have reverted that commit for today.
+> 
+> Ick, sorry about that.
+> 
+> Dan, care to send me a follow-on patch, or do you just want me to revert
+> this patch from my tree for now?
 
-Well, not so sure...
+Rats.  Sorry.
 
-Hi all,
+Greg, given that the solution for making zsmalloc portable
+is still being debated[1] and it doesn't look like it will
+be finalized before the looming window,  I guess the
+best choice is to revert the patch and ramster will fall
+back to its captive copy of the less-efficient-but-portable
+xvmalloc for now. :-(
 
-I am on the subject till this morning to figure out if the parameters
-are SoC dependent. It seems that the ADC is the same between those two
-platforms but the technology is different: I have to figure out the
-details internally.
+Thanks and sorry for the churn,
+Dan
 
-I will give you a patch on top of arm-soc soon. It will replace the one
-in staging-next: does it sound good to you?
-
-Bye,
--- 
-Nicolas Ferre
+[1] http://comments.gmane.org/gmane.linux.kernel.mm/78470 
