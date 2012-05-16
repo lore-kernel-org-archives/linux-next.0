@@ -1,72 +1,74 @@
-From: Gleb Natapov <gleb@redhat.com>
-Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
-Date: Wed, 16 May 2012 10:53:19 +0300
-Message-ID: <20120516075319.GO32036@redhat.com>
-References: <20120516171435.3b0a9c8a531081ff290763aa@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the s5p tree
+Date: Wed, 16 May 2012 18:03:03 +1000
+Message-ID: <20120516180303.3c3cff646c1a70a8ddf32e2a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__16_May_2012_18_03_03_+1000_dFO9MIn6Azqzh5Dv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:31336 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S965132Ab2EPHxr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 May 2012 03:53:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20120516171435.3b0a9c8a531081ff290763aa@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:42985 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759751Ab2EPIDP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 04:03:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
 
-On Wed, May 16, 2012 at 05:14:35PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kvm tree got a conflict in
-> arch/x86/include/asm/kvm_para.h between commit c3709e6734da ("x86, kvm:
-> KVM paravirt kernels don't check for CPUID being unavailable") from the
-> tip tree and commit 9b72d3b07dd9 ("KVM guest: make kvm_para_available()
-> check hypervisor bit reading cpuid leaf") from the kvm tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
-Fix looks good to me.
+--Signature=_Wed__16_May_2012_18_03_03_+1000_dFO9MIn6Azqzh5Dv
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/x86/include/asm/kvm_para.h
-> index 183922e,a7a7a94..0000000
-> --- a/arch/x86/include/asm/kvm_para.h
-> +++ b/arch/x86/include/asm/kvm_para.h
-> @@@ -170,17 -178,16 +178,19 @@@ static inline int kvm_para_available(vo
->   	unsigned int eax, ebx, ecx, edx;
->   	char signature[13];
->   
->  +	if (boot_cpu_data.cpuid_level < 0)
->  +		return 0;	/* So we don't blow up on old processors */
->  +
-> - 	cpuid(KVM_CPUID_SIGNATURE, &eax, &ebx, &ecx, &edx);
-> - 	memcpy(signature + 0, &ebx, 4);
-> - 	memcpy(signature + 4, &ecx, 4);
-> - 	memcpy(signature + 8, &edx, 4);
-> - 	signature[12] = 0;
-> + 	if (cpu_has_hypervisor) {
-> + 		cpuid(KVM_CPUID_SIGNATURE, &eax, &ebx, &ecx, &edx);
-> + 		memcpy(signature + 0, &ebx, 4);
-> + 		memcpy(signature + 4, &ecx, 4);
-> + 		memcpy(signature + 8, &edx, 4);
-> + 		signature[12] = 0;
->   
-> - 	if (strcmp(signature, "KVMKVMKVM") == 0)
-> - 		return 1;
-> + 		if (strcmp(signature, "KVMKVMKVM") == 0)
-> + 			return 1;
-> + 	}
->   
->   	return 0;
->   }
+Hi Greg,
 
+Today's linux-next merge of the usb tree got a conflict in
+arch/arm/mach-exynos/mach-universal_c210.c between commit 6dafa4aead1b
+("ARM: EXYNOS: Add DRM core device support for Universal C210 board")
+from the s5p tree and commit 126625e1bf32 ("usb:hsotg:samsung:cosmetic
+Move <linux/platform_data/s3c-hsotg.h> to proper place") from the usb
+tree.
 
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---
-			Gleb.
+diff --cc arch/arm/mach-exynos/mach-universal_c210.c
+index dd8ec8d4,bc8bf3b..0000000
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@@ -23,7 -23,7 +23,8 @@@
+  #include <linux/i2c-gpio.h>
+  #include <linux/i2c/mcs.h>
+  #include <linux/i2c/atmel_mxt_ts.h>
++ #include <linux/platform_data/s3c-hsotg.h>
+ +#include <drm/exynos_drm.h>
+ =20
+  #include <asm/mach/arch.h>
+  #include <asm/hardware/gic.h>
+
+--Signature=_Wed__16_May_2012_18_03_03_+1000_dFO9MIn6Azqzh5Dv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPs183AAoJEECxmPOUX5FEALUP/170sVoVGAzY5+BqYyf8gYDj
+rFE5duwkUJ6BjBM152PE93iNg5GzX9REDHu0bMqiBZhcic2M5amhAcgTmpr8LfNX
+U07ZkHTDC0glSkP5pO5bjhlXK/STBm0dbjTG+LKVhJk2j5cLL7GQro2meSCJGHZr
+SU1Dcq4FOqiZ59HXsIK4xpc6BVQ4qxL27rJ3dCJc3KWM9uJUgTE1N7NvMSlRxKxm
+gt7Ibcy1WLVgNjNOG/Pd94dGoE/v0nw5mnDLD4ptswbsI7WIscu9UIPKpbVpotu+
+feGnAVzh7WvVI1fhVrZ1/TclhSQO06ggvRMwIKkblxJWIxEICuRqZtGYAxs5opKb
+fH/tLAZ2YVkz6gbgwRcgGWYXGe3WvLep3YfxkmFat6l5MG9OUbt937FbWKUskm2s
+CTFg5o+vnDkA530RrLImT2fXxJoszUDOP0rW+XaH7fNgsJVEoD5C2H3TXvoVj/Pb
+TbROQONmhStn8CGVwBNEWP+0lT8MNACJK4F2GHGy9YjsuQrF39zyiFA9N/xKYpWb
+gYo/GPJqh1/4ImnyyxFscyXlium4aoFj2KHjUz4ue/ko/Df9SjzqOyAbl0Shx+Ao
+IfF7bRxZ+gUf1yBv0pUT6T7tlwNlzgcz9iu3eXXgluLTQVxvkUj6jqPvLzb41Z1d
+fAHFJrCSa6DyXi3vFI+a
+=Ckqv
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__16_May_2012_18_03_03_+1000_dFO9MIn6Azqzh5Dv--
