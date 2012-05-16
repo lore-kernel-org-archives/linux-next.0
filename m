@@ -1,38 +1,46 @@
-From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Subject: Re: linux-next: build failure after merge of the nfs tree
-Date: Wed, 16 May 2012 17:47:20 +0000
-Message-ID: <1337190469.3008.4.camel@lade.trondhjem.org>
-References: <20120516124942.5d776132d69f82bd8ed50e08@canb.auug.org.au>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: linux-next: Tree for May 16 (mfd/mc13xxx)
+Date: Wed, 16 May 2012 20:04:27 +0200
+Message-ID: <20120516180427.GM22395@pengutronix.de>
+References: <20120516201426.3a162ecd6adeb7132413f1b9@canb.auug.org.au>
+ <4FB3CF4E.8000106@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120516124942.5d776132d69f82bd8ed50e08@canb.auug.org.au>
-Content-Language: en-US
-Content-ID: <C85A5C8CF057F0419185B67690C79E97@tahoe.netapp.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Schumaker, Bryan" <Bryan.Schumaker@netapp.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:54531 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754400Ab2EPSEf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 14:04:35 -0400
+Content-Disposition: inline
+In-Reply-To: <4FB3CF4E.8000106@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-T24gV2VkLCAyMDEyLTA1LTE2IGF0IDEyOjQ5ICsxMDAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
-Og0KPiBIaSBUcm9uZCwNCj4gDQo+IEFmdGVyIG1lcmdpbmcgdGhlIG5mcyB0cmVlLCB0b2RheSdz
-IGxpbnV4LW5leHQgYnVpbGQgKHBvd2VycGMNCj4gcHBjNjRfZGVmY29uZmlnKSBmYWlsZWQgbGlr
-ZSB0aGlzOg0KPiANCj4gZnMvbmZzL3N1cGVyLmM6IEluIGZ1bmN0aW9uICduZnNfZ2V0X2NhY2hl
-X2Nvb2tpZSc6DQo+IGZzL25mcy9zdXBlci5jOjIzNjE6MTI6IGVycm9yOiAnc3RydWN0IG5mc19z
-ZXJ2ZXInIGhhcyBubyBtZW1iZXIgbmFtZWQgJ2ZzY2FjaGVfa2V5Jw0KPiBmcy9uZnMvc3VwZXIu
-YzoyMzYyOjE2OiBlcnJvcjogJ3N0cnVjdCBuZnNfc2VydmVyJyBoYXMgbm8gbWVtYmVyIG5hbWVk
-ICdmc2NhY2hlX2tleScNCj4gZnMvbmZzL3N1cGVyLmM6MjM2MzoxNjogZXJyb3I6ICdzdHJ1Y3Qg
-bmZzX3NlcnZlcicgaGFzIG5vIG1lbWJlciBuYW1lZCAnZnNjYWNoZV9rZXknDQo+IGZzL25mcy9z
-dXBlci5jOjIzNjc6Mjogd2FybmluZzogcGFzc2luZyBhcmd1bWVudCAzIG9mICduZnNfZnNjYWNo
-ZV9nZXRfc3VwZXJfY29va2llJyBtYWtlcyBwb2ludGVyIGZyb20gaW50ZWdlciB3aXRob3V0IGEg
-Y2FzdCBbZW5hYmxlZCBieSBkZWZhdWx0XQ0KPiBmcy9uZnMvZnNjYWNoZS5oOjE3MzoyMDogbm90
-ZTogZXhwZWN0ZWQgJ3N0cnVjdCBuZnNfY2xvbmVfbW91bnQgKicgYnV0IGFyZ3VtZW50IGlzIG9m
-IHR5cGUgJ2ludCcNCj4gDQo+IENhc3VlZCBieSBjb21taXQgMjMxMWI5NDM5Y2U4ICgiTkZTOiBE
-b24ndCBwYXNzIG1vdW50IGRhdGEgdG8NCj4gbmZzX2ZzY2FjaGVfZ2V0X3N1cGVyX2Nvb2tpZSgp
-IikuICBUaGlzIGJ1aWxkIGhhcyBDT05GSUdfTkZTX0ZTQ0FDSEUNCj4gdW5zZXQuICBncmVwIGlz
-IHlvdXIgZnJpZW5kLg0KPiANCj4gSSBoYXZlIHVzZWQgdGhlIG5mcyB0cmVlIGZyb20gbmV4dC0y
-MDEyMDUxNCBmb3IgdG9kYXkuDQo+IA0KDQpUaGFua3MgU3RlcGhlbiEgSSd2ZSBhZGRlZCBhIGZp
-eCBmb3IgdGhpcyBpbiB0b2RheXMgbGludXgtbmV4dCBicmFuY2guDQoNCkNoZWVycw0KICBUcm9u
-ZA0KLS0gDQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4IE5GUyBjbGllbnQgbWFpbnRhaW5lcg0KDQpO
-ZXRBcHANClRyb25kLk15a2xlYnVzdEBuZXRhcHAuY29tDQp3d3cubmV0YXBwLmNvbQ0KDQo=
+On Wed, May 16, 2012 at 09:01:18AM -0700, Randy Dunlap wrote:
+> On 05/16/2012 03:14 AM, Stephen Rothwell wrote:
+>=20
+> >=20
+> > The mfd tree lost its build failure but gained another so I used th=
+e
+> > version from next-20120511.
+>=20
+>=20
+> drivers/mfd/mc13xxx-core.c:726:2: error: implicit declaration of func=
+tion 'regmap_exit'
+I think the patch by Mark Brown[1] addresses that problem?
+
+Best regards
+Uwe
+
+[1] http://mid.gmane.org/1337190669-29328-1-git-send-email-broonie@open=
+source.wolfsonmicro.com
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
