@@ -1,52 +1,76 @@
-From: Haojian Zhuang <haojian.zhuang@gmail.com>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Wed, 16 May 2012 17:36:30 +0800
-Message-ID: <CAN1soZzBZUoCR5KgXbWBKAnxaR92CKFWqNMNLnm-dAD3xoH6yw@mail.gmail.com>
-References: <20120516185045.2f9e9274f373d584fd499eb2@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the userns tree
+Date: Wed, 16 May 2012 19:37:12 +1000
+Message-ID: <20120516193712.32157bcdc435465c27183baf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__16_May_2012_19_37_12_+1000_xVn57OXaeSin6n3W"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:46841 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966066Ab2EPJgb convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 05:36:31 -0400
-In-Reply-To: <20120516185045.2f9e9274f373d584fd499eb2@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50708 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966601Ab2EPJhT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 05:37:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
 
-On Wed, May 16, 2012 at 4:50 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi all,
->
-> Today's linux-next merge of the arm-soc tree got a conflict in
-> arch/arm/Kconfig between commit 98fab064d321 ("ARM: Remove unnecessar=
-y
-> selection of TICK_ONESHOT") from the arm tree and commit c24b31147a06
-> ("ARM: mmp: support DT in irq") from the arm-soc tree.
->
-> Just context changes. =A0I fixed it up (see below) and can carry the =
-fix as
-> necessary.
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
->
-> diff --cc arch/arm/Kconfig
-> index b1a717c,852b12b..0000000
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@@ -627,6 -616,8 +611,7 @@@ config ARCH_MM
-> =A0 =A0 =A0 =A0select CLKDEV_LOOKUP
-> =A0 =A0 =A0 =A0select GENERIC_CLOCKEVENTS
-> =A0 =A0 =A0 =A0select GPIO_PXA
-> + =A0 =A0 =A0 select IRQ_DOMAIN
-> =A0- =A0 =A0 =A0select TICK_ONESHOT
-> =A0 =A0 =A0 =A0select PLAT_PXA
-> =A0 =A0 =A0 =A0select SPARSE_IRQ
-> =A0 =A0 =A0 =A0select GENERIC_ALLOCATOR
+--Signature=_Wed__16_May_2012_19_37_12_+1000_xVn57OXaeSin6n3W
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Haojian Zhuang <haojian.zhuang@gmail.com>
+Hi Andrew,
+
+Today's linux-next merge of the akpm tree got a conflict in
+kernel/signal.c between commit 54ba47edac90 ("userns: signal remove
+unnecessary map_cred_ns") from the userns tree and commit "pidns: use
+task_active_pid_ns in do_notify_parent" from the akpm tree.
+
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/signal.c
+index c5100ad,d9bcff9..0000000
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@@ -1668,9 -1677,9 +1667,9 @@@ bool do_notify_parent(struct task_struc
+  	 * correct to rely on this
+  	 */
+  	rcu_read_lock();
+- 	info.si_pid =3D task_pid_nr_ns(tsk, tsk->parent->nsproxy->pid_ns);
++ 	info.si_pid =3D task_pid_nr_ns(tsk, task_active_pid_ns(tsk->parent));
+ -	info.si_uid =3D map_cred_ns(__task_cred(tsk),
+ -			task_cred_xxx(tsk->parent, user_ns));
+ +	info.si_uid =3D from_kuid_munged(task_cred_xxx(tsk->parent, user_ns),
+ +				       task_uid(tsk));
+  	rcu_read_unlock();
+ =20
+  	info.si_utime =3D cputime_to_clock_t(tsk->utime + tsk->signal->utime);
+
+--Signature=_Wed__16_May_2012_19_37_12_+1000_xVn57OXaeSin6n3W
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPs3VIAAoJEECxmPOUX5FEkOwP/3PCGNlx71D6SBIPCtfPp6DU
+FeZshHXt57T3XF3WBZ/c1sMN5qDhoaRvGXkpgiQf/diQLzLfuqhQQd7V8Kbhc4jo
+6BNo1ThuzaZHXR3+wDC+rgT+1mVklMCechFVAnprHXFbJdqkrNC/xWLg30IZNZ23
+CrXkBndXDumAj6ksBzld9N/AWrnGxFez0qFX9zLZ3UKQpWul93KAs13W0rV/rw9W
+5AnTFKjNRqZjkIXsjzonF5sB3KWgU8btX2KJaEMvlYlNU66thWA2KtKXyQxtc0EM
+tmNeWSyg07ti2kuv6w50o5scinG1CWBkN/C8Nx4ANsmhph269IuAYcsvu3mliGc7
+HlaQR3YcfOi9Hv9/U4FN9Kda7R5REK6RHmQK9pu0C9ShxASuOMniQ7LPTtJJ2Xn2
+7Ybm8FtuDiEtoNGm6Zc0h4LDbnAOImwWG3ostjeGWr+/pFMyNryKtOO6pwHzB3e4
+GtfntT2dKrbo6mZQoMnk0njx73WEK81Aoh95y92yuvjs22+Wrb2rwXeUR/x5Nu7U
+Xh+RXBMMcafaQPOBz7g0rCNqp0VVHCG+BOag7lymoQp/p80ukFrsrxDCud1gWRYz
+1Bf6lJ7msCsfUPmkxwzwduKuIMYY9s38lV1RUIlJip3oH2DarMxTmBKtnJjSoByD
+LpLzXB6r0YMJAS6kWXSB
+=zLVH
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__16_May_2012_19_37_12_+1000_xVn57OXaeSin6n3W--
