@@ -1,58 +1,34 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] staging: gdm72xx: WIMAX_GDM72XX_USB_PM should depend on USB_SUSPEND
-Date: Wed, 16 May 2012 21:47:40 +0200
-Message-ID: <1337197660-7852-1-git-send-email-geert@linux-m68k.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] staging: gdm72xx: WIMAX_GDM72XX_USB_PM should depend on
+ USB_SUSPEND
+Date: Wed, 16 May 2012 13:31:13 -0700
+Message-ID: <20120516203113.GA32372@kroah.com>
+References: <1337197660-7852-1-git-send-email-geert@linux-m68k.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from jacques.telenet-ops.be ([195.130.132.50]:49169 "EHLO
-	jacques.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752819Ab2EPTro (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 15:47:44 -0400
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:61800 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965561Ab2EPUbU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 16:31:20 -0400
+Received: by pbbrp8 with SMTP id rp8so1580680pbb.19
+        for <linux-next@vger.kernel.org>; Wed, 16 May 2012 13:31:20 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1337197660-7852-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sage Ahn <syahn@gctsemi.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sage Ahn <syahn@gctsemi.com>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-Use Kconfig logic instead of a rude #error in the driver source,
-which breaks m68k-allmodconfig.
-Also remove the "default n", as that's the default.
+On Wed, May 16, 2012 at 09:47:40PM +0200, Geert Uytterhoeven wrote:
+> Use Kconfig logic instead of a rude #error in the driver source,
+> which breaks m68k-allmodconfig.
+> Also remove the "default n", as that's the default.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> http://kisskb.ellerman.id.au/kisskb/buildresult/6335693/
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-http://kisskb.ellerman.id.au/kisskb/buildresult/6335693/
+Sorry about missing that, now applied thanks.
 
- drivers/staging/gdm72xx/Kconfig   |    2 +-
- drivers/staging/gdm72xx/gdm_usb.c |    6 ------
- 2 files changed, 1 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/staging/gdm72xx/Kconfig b/drivers/staging/gdm72xx/Kconfig
-index 5c37cba..fc58427 100644
---- a/drivers/staging/gdm72xx/Kconfig
-+++ b/drivers/staging/gdm72xx/Kconfig
-@@ -38,7 +38,7 @@ if WIMAX_GDM72XX_USB
- 
- config WIMAX_GDM72XX_USB_PM
- 	bool "Enable power managerment support"
--	default n
-+	depends on USB_SUSPEND
- 
- endif # WIMAX_GDM72XX_USB
- 
-diff --git a/drivers/staging/gdm72xx/gdm_usb.c b/drivers/staging/gdm72xx/gdm_usb.c
-index 004786b..f60e890 100644
---- a/drivers/staging/gdm72xx/gdm_usb.c
-+++ b/drivers/staging/gdm72xx/gdm_usb.c
-@@ -17,12 +17,6 @@
- #include <linux/usb.h>
- #include <asm/byteorder.h>
- 
--#ifdef CONFIG_WIMAX_GDM72XX_USB_PM
--#ifndef CONFIG_USB_SUSPEND
--#error "USB host doesn't support USB Selective Suspend."
--#endif
--#endif
--
- #include "gdm_usb.h"
- #include "gdm_wimax.h"
- #include "usb_boot.h"
--- 
-1.7.0.4
+greg k-h
