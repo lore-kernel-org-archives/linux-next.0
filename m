@@ -1,144 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the crypto tree with the arm tree
-Date: Wed, 16 May 2012 15:14:41 +1000
-Message-ID: <20120516151441.59baed915e31738642fd52dd@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Wed, 16 May 2012 16:09:06 +1000
+Message-ID: <20120516160906.25825987b7cd731a4b5215e1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_May_2012_15_14_41_+1000_WvO5wi7SE//BvnSk"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Russell King <rmk@arm.linux.org.uk>, Andreas Westin <andreas.westin@stericsson.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__16_May_2012_16_09_06_+1000_.JtteOF.Awfz+KnG"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37832 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753777Ab2EPGJW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 02:09:22 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Wed__16_May_2012_15_14_41_+1000_WvO5wi7SE//BvnSk
+--Signature=_Wed__16_May_2012_16_09_06_+1000_.JtteOF.Awfz+KnG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi Samuel,
 
-Today's linux-next merge of the crypto tree got a conflict in
-arch/arm/mach-ux500/devices-common.h between commit 08956a0e8a69 ("ARM:
-7372/1: ux500: factor out dynamic amba device allocator") from the  tree
-and commit 585d188f8072 ("mach-ux500: crypto - core support for CRYP/HASH
-module") from the crypto tree.
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Just context changes (maybe).  I fixed it up (see below) and can carry
-the fix as necessary.
+drivers/built-in.o: In function `wm8400_i2c_probe':
+wm8400-core.c:(.text+0x100165): undefined reference to `devm_regmap_init_i2=
+c'
+drivers/built-in.o: In function `wm8400_module_init':
+wm8400-core.c:(.init.text+0xb43c): undefined reference to `i2c_register_dri=
+ver'
+drivers/built-in.o: In function `wm8400_module_exit':
+wm8400-core.c:(.exit.text+0x655): undefined reference to `i2c_del_driver'
 
-I suspect that there may be something deeper here, though.
+Probably caused by commit 96cd102ae039 ("mfd: Don't support non-modular
+wm8400 build") which was introduced to fix other problems.  In this
+build, CONFIG_I2C=3Dm and CONFIG_REGMAP_I2C=3Dm.
+
+I have used the mfd tree from next-20120511 again for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-ux500/devices-common.h
-index f75bcb2,89c5a59..0000000
---- a/arch/arm/mach-ux500/devices-common.h
-+++ b/arch/arm/mach-ux500/devices-common.h
-@@@ -11,8 -11,17 +11,13 @@@
-  #include <linux/platform_device.h>
-  #include <linux/dma-mapping.h>
-  #include <linux/sys_soc.h>
- +#include <linux/amba/bus.h>
-  #include <plat/i2c.h>
-+ #include <mach/crypto-ux500.h>
-+=20
- -extern struct amba_device *
- -dbx500_add_amba_device(struct device *parent, const char *name,
- -		       resource_size_t base, int irq, void *pdata,
- -		       unsigned int periphid);
- -
-+ extern struct platform_device *
-+ dbx500_add_platform_device_noirq(const char *name, int id,
-+ 		resource_size_t base, void *pdata);
- =20
-  struct spi_master_cntlr;
- =20
-@@@ -81,10 -90,58 +86,59 @@@ dbx500_add_i2c(struct device *parent, i
-  static inline struct amba_device *
-  dbx500_add_rtc(struct device *parent, resource_size_t base, int irq)
-  {
- -	return dbx500_add_amba_device(parent, "rtc-pl031", base, irq, NULL, 0);
- +	return amba_apb_device_add(parent, "rtc-pl031", base, SZ_4K, irq,
- +				0, NULL, 0);
-  }
- =20
-+ struct cryp_platform_data;
-+=20
-+ static inline struct platform_device *
-+ dbx500_add_cryp1(struct device *parent, int id, resource_size_t base, int=
- irq,
-+ 		struct cryp_platform_data *pdata)
-+ {
-+ 	struct resource res[] =3D {
-+ 			DEFINE_RES_MEM(base, SZ_4K),
-+ 			DEFINE_RES_IRQ(irq),
-+ 	};
-+=20
-+ 	struct platform_device_info pdevinfo =3D {
-+ 			.parent =3D parent,
-+ 			.name =3D "cryp1",
-+ 			.id =3D id,
-+ 			.res =3D res,
-+ 			.num_res =3D ARRAY_SIZE(res),
-+ 			.data =3D pdata,
-+ 			.size_data =3D sizeof(*pdata),
-+ 			.dma_mask =3D DMA_BIT_MASK(32),
-+ 	};
-+=20
-+ 	return platform_device_register_full(&pdevinfo);
-+ }
-+=20
-+ struct hash_platform_data;
-+=20
-+ static inline struct platform_device *
-+ dbx500_add_hash1(struct device *parent, int id, resource_size_t base,
-+ 		struct hash_platform_data *pdata)
-+ {
-+ 	struct resource res[] =3D {
-+ 			DEFINE_RES_MEM(base, SZ_4K),
-+ 	};
-+=20
-+ 	struct platform_device_info pdevinfo =3D {
-+ 			.parent =3D parent,
-+ 			.name =3D "hash1",
-+ 			.id =3D id,
-+ 			.res =3D res,
-+ 			.num_res =3D ARRAY_SIZE(res),
-+ 			.data =3D pdata,
-+ 			.size_data =3D sizeof(*pdata),
-+ 			.dma_mask =3D DMA_BIT_MASK(32),
-+ 	};
-+=20
-+ 	return platform_device_register_full(&pdevinfo);
-+ }
-+=20
-  struct nmk_gpio_platform_data;
- =20
-  void dbx500_add_gpios(struct device *parent, resource_size_t *base, int n=
-um,
-
---Signature=_Wed__16_May_2012_15_14_41_+1000_WvO5wi7SE//BvnSk
+--Signature=_Wed__16_May_2012_16_09_06_+1000_.JtteOF.Awfz+KnG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPszfBAAoJEECxmPOUX5FE6JoP/177qzS5K22xgfToSwbW0d/T
-K8rrsJ7ia/64JQOVsH5SMDb8tIiRQ5SOJMbVnFgaN4AP1USZyXye7jXQaKEMEXRD
-S0SwZVERv5POutG2eeuX+AtW1U8UkMLV3kWew5X/3BvmwqdSmMcxaYEcV3Qh0eAC
-5kbOP6dv8C0V8keFv3jA8k/wv8DJS9oIcLibkdt7QCf1MdfU6lVdsOi6Xcd1Rc7b
-AOUVfxhJ8XSImFnAGRM98/gcYRPXvw4mmLzrPEppIVBX8uXYtVWWWhNBCXX7Yx/N
-QS5Mpw5Om0+QNZgYTOExnQPadncj/pVcMtUQQrmdLqQFtZngYa6FyD7AkH7gXaTT
-mbuNdC1iJTKp3P5I6uDQuAzpLziqK6zkiUpwfqlPZUN/pPQMFvxed4yX/+nM08+S
-ke9U04mc/Y16KVZK6WAjnGl+mGJlN63JvDHs2CTykUr/5Uqh2XMGiMRkCEPTXgkL
-gV4vvuSPvDRHOUn9cH+WyHtoD94S6LeiDdexyGSGcfzGzCK/tL0caVkbNWfFpXRP
-pi4j3dlWTdZ+RfDLeyFWNAmzXZhIe7J80++IaVBt0YF98mlQIrg7skGMXvIjjSsw
-uR0iQCeyCSlQeLc92ai2JGyObzZXpHG8mdiEqTAjB7Gjm06xyzithxVg8sxP2+hT
-Pyk+nuDdPprUbo/Xn3fK
-=KZeq
+iQIcBAEBCAAGBQJPs0SCAAoJEECxmPOUX5FEuHgQAITkVs8DPf8QkdfehRwZ1wWH
+IZ79eI4+FBlj/TFJ0xBeGz9vMImADgIk5Zu0uhQ7MrCR74dzrNdG5DILgJoUBRaQ
+hB2Jiu9znZKNb4ZNJGAdjBd8vlSM8k96xWElrNi9c7/H0TFxI0BrUmaXPbEZW7fX
+7YNRiZ3290u4T5+2J4r2sEmN0kY08QI+4P+kYdi+4IR0bX1WfeqwUxtSE8jQ/uRw
+rDZBcAMmwHaGVP/PAsRAL2pwC1HLq5gcammMSBZuqqvsLyBdKtgRSYRARMRJQu+l
+bfZm5LoaWSGOertoF/wxh+0ZMW6+gBMlI91Kh3ABOLrGTGO69kMGYe3gn7svkXZs
+O+g4L9yQzzFkXld/iy+OyxhMuoFSJzNQyY05seB8eK/2zYM5H10pniLOrJeUKelj
+5o+QWEl3edurVVhnpcnrEjurG4gReUGXYCBdh2oY5IgUQRmihmlchp67OuriCM/e
+LCh3fb5pKRycKk5zBu49HmjGjNKUSjx4zScgpgB5E1zkh1TytBk9dw3WD1P2/1BJ
+ZrsM0OwsdX+QM2L7TxsviONbzsHlPF9/N9bsIIdc9hfyisiPZZbsQFBun0sX5xSm
+3DX6ADRkdqDAYjBHrMqEBnQCkOnh4Hraj2+tM56wDf2CtjcW4YCE370Br4VkXwR8
+EAd3U5DQNC7Lm873zTX8
+=zF9I
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__16_May_2012_15_14_41_+1000_WvO5wi7SE//BvnSk--
+--Signature=_Wed__16_May_2012_16_09_06_+1000_.JtteOF.Awfz+KnG--
