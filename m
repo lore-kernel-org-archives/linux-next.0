@@ -1,81 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the percpu tree with the tip tree
-Date: Wed, 16 May 2012 17:36:16 +1000
-Message-ID: <20120516173616.ed5b60cf4b16e34a57206559@canb.auug.org.au>
+From: Gleb Natapov <gleb@redhat.com>
+Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
+Date: Wed, 16 May 2012 10:53:19 +0300
+Message-ID: <20120516075319.GO32036@redhat.com>
+References: <20120516171435.3b0a9c8a531081ff290763aa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_May_2012_17_36_16_+1000_PCJx5H2=UIPPElKd"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59134 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759514Ab2EPHg0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 03:36:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:31336 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S965132Ab2EPHxr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 May 2012 03:53:47 -0400
+Content-Disposition: inline
+In-Reply-To: <20120516171435.3b0a9c8a531081ff290763aa@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suresh Siddha <suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Alex Shi <alex.shi@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Wed__16_May_2012_17_36_16_+1000_PCJx5H2=UIPPElKd
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 16, 2012 at 05:14:35PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the kvm tree got a conflict in
+> arch/x86/include/asm/kvm_para.h between commit c3709e6734da ("x86, kvm:
+> KVM paravirt kernels don't check for CPUID being unavailable") from the
+> tip tree and commit 9b72d3b07dd9 ("KVM guest: make kvm_para_available()
+> check hypervisor bit reading cpuid leaf") from the kvm tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
+Fix looks good to me.
 
-Hi all,
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/x86/include/asm/kvm_para.h
+> index 183922e,a7a7a94..0000000
+> --- a/arch/x86/include/asm/kvm_para.h
+> +++ b/arch/x86/include/asm/kvm_para.h
+> @@@ -170,17 -178,16 +178,19 @@@ static inline int kvm_para_available(vo
+>   	unsigned int eax, ebx, ecx, edx;
+>   	char signature[13];
+>   
+>  +	if (boot_cpu_data.cpuid_level < 0)
+>  +		return 0;	/* So we don't blow up on old processors */
+>  +
+> - 	cpuid(KVM_CPUID_SIGNATURE, &eax, &ebx, &ecx, &edx);
+> - 	memcpy(signature + 0, &ebx, 4);
+> - 	memcpy(signature + 4, &ecx, 4);
+> - 	memcpy(signature + 8, &edx, 4);
+> - 	signature[12] = 0;
+> + 	if (cpu_has_hypervisor) {
+> + 		cpuid(KVM_CPUID_SIGNATURE, &eax, &ebx, &ecx, &edx);
+> + 		memcpy(signature + 0, &ebx, 4);
+> + 		memcpy(signature + 4, &ecx, 4);
+> + 		memcpy(signature + 8, &edx, 4);
+> + 		signature[12] = 0;
+>   
+> - 	if (strcmp(signature, "KVMKVMKVM") == 0)
+> - 		return 1;
+> + 		if (strcmp(signature, "KVMKVMKVM") == 0)
+> + 			return 1;
+> + 	}
+>   
+>   	return 0;
+>   }
 
-Today's linux-next merge of the percpu tree got a conflict in
-arch/x86/mm/tlb.c between commit a6fca40f1d7f ("x86, tlb: Switch cr3 in
-leave_mm() only when needed") from the tip tree and commit c6ae41e7d469
-("x86: replace percpu_xxx funcs with this_cpu_xxx") from the percpu tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/mm/tlb.c
-index 125bcad,3804471..0000000
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@@ -61,13 -61,11 +61,13 @@@ static DEFINE_PER_CPU_READ_MOSTLY(int,=20
-   */
-  void leave_mm(int cpu)
-  {
-- 	struct mm_struct *active_mm =3D percpu_read(cpu_tlbstate.active_mm);
-- 	if (percpu_read(cpu_tlbstate.state) =3D=3D TLBSTATE_OK)
-++	struct mm_struct *active_mm =3D this_cpu_read(cpu_tlbstate.active_mm);
-+ 	if (this_cpu_read(cpu_tlbstate.state) =3D=3D TLBSTATE_OK)
-  		BUG();
- -	cpumask_clear_cpu(cpu,
- -			  mm_cpumask(this_cpu_read(cpu_tlbstate.active_mm)));
- -	load_cr3(swapper_pg_dir);
- +	if (cpumask_test_cpu(cpu, mm_cpumask(active_mm))) {
- +		cpumask_clear_cpu(cpu, mm_cpumask(active_mm));
- +		load_cr3(swapper_pg_dir);
- +	}
-  }
-  EXPORT_SYMBOL_GPL(leave_mm);
- =20
-
---Signature=_Wed__16_May_2012_17_36_16_+1000_PCJx5H2=UIPPElKd
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPs1jwAAoJEECxmPOUX5FEpQUP/0mva319wbJhcCihCMy05QpN
-r2/lWJRF9u60JzydUczQXOcn0LBvWtIv2L5hGYEcTNKlS9dBMbUu/Q/J+gyx8xn1
-OZdpXWBvliDRlACfQeFUvzqYlZnQBxRSKU0mhlDSX9OsKv8e7f0maZ42CgP/ouB2
-iHLAb9XV8EGmqX++k+n5z32yTkOuxGg80p6ff9GZVvhnt/pgVPlPIMYWKJAkzxQU
-hVNYkoOSjHFWE1Efd+XbVXk38I81eFulL8lb4Aux7iTDei+8W5MDoPEVSId1Dk5+
-1T+0QWfbTjdwzmsWnnkgwrdO4/1bHOv2rPsYB4SVYLVieacgtRtoS0dA3t3D7EeL
-/WXwA0pqsfSBI8vYtgLPn9wJeJKB9rotKDmfAis802W6cy7yVEK4SGLxXrWKDpoo
-pSSCoE9u41+vsQyimc3HyuXWbeY8FgPpZn36C/NurYkac9FdNt0QEHw8HmFljTTl
-hp5W64vSQkpLk/wn3zXp460pWDHDyVbLKBZlAv7pzA20Sb65MsR9yy6831l7bKWn
-EV1agoIxbRtUIKtO1h8db1WJ90kuF474EtWv+f0Gl8ziFYLWi1xzhqvPphspKlvS
-Aq0WsfwKz4nf4RLx5sRjeoc8KM7IhOPKVASqpgq27mu8R1VygR1DGAXl+ptELsCh
-IUNEi5XiBuNH+yzGvprc
-=xz+a
------END PGP SIGNATURE-----
-
---Signature=_Wed__16_May_2012_17_36_16_+1000_PCJx5H2=UIPPElKd--
+--
+			Gleb.
