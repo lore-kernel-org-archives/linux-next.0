@@ -1,42 +1,81 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: manual merge of the crypto tree with the arm tree
-Date: Wed, 16 May 2012 09:26:53 +0200
-Message-ID: <CACRpkdbhyL4eJOLZ0pw_T3LDwPpFJM4BWVAhKh8hZADMJ4PBEA@mail.gmail.com>
-References: <20120516151441.59baed915e31738642fd52dd@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the percpu tree with the tip tree
+Date: Wed, 16 May 2012 17:36:16 +1000
+Message-ID: <20120516173616.ed5b60cf4b16e34a57206559@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__16_May_2012_17_36_16_+1000_PCJx5H2=UIPPElKd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:53518 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759389Ab2EPH0y convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 03:26:54 -0400
-Received: by qcro28 with SMTP id o28so245910qcr.19
-        for <linux-next@vger.kernel.org>; Wed, 16 May 2012 00:26:54 -0700 (PDT)
-In-Reply-To: <20120516151441.59baed915e31738642fd52dd@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59134 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759514Ab2EPHg0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 03:36:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Andreas Westin <andreas.westin@stericsson.com>
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suresh Siddha <suresh.b.siddha@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Alex Shi <alex.shi@intel.com>
 
-On Wed, May 16, 2012 at 7:14 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
+--Signature=_Wed__16_May_2012_17_36_16_+1000_PCJx5H2=UIPPElKd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the crypto tree got a conflict in
-> arch/arm/mach-ux500/devices-common.h between commit 08956a0e8a69 ("AR=
-M:
-> 7372/1: ux500: factor out dynamic amba device allocator") from the =A0=
-tree
-> and commit 585d188f8072 ("mach-ux500: crypto - core support for CRYP/=
-HASH
-> module") from the crypto tree.
->
-> Just context changes (maybe). =A0I fixed it up (see below) and can ca=
-rry
-> the fix as necessary.
->
-> I suspect that there may be something deeper here, though.
+Hi all,
 
-This looks correct, thanks Stephen!
+Today's linux-next merge of the percpu tree got a conflict in
+arch/x86/mm/tlb.c between commit a6fca40f1d7f ("x86, tlb: Switch cr3 in
+leave_mm() only when needed") from the tip tree and commit c6ae41e7d469
+("x86: replace percpu_xxx funcs with this_cpu_xxx") from the percpu tree.
 
-Linus Walleij
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/x86/mm/tlb.c
+index 125bcad,3804471..0000000
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@@ -61,13 -61,11 +61,13 @@@ static DEFINE_PER_CPU_READ_MOSTLY(int,=20
+   */
+  void leave_mm(int cpu)
+  {
+- 	struct mm_struct *active_mm =3D percpu_read(cpu_tlbstate.active_mm);
+- 	if (percpu_read(cpu_tlbstate.state) =3D=3D TLBSTATE_OK)
+++	struct mm_struct *active_mm =3D this_cpu_read(cpu_tlbstate.active_mm);
++ 	if (this_cpu_read(cpu_tlbstate.state) =3D=3D TLBSTATE_OK)
+  		BUG();
+ -	cpumask_clear_cpu(cpu,
+ -			  mm_cpumask(this_cpu_read(cpu_tlbstate.active_mm)));
+ -	load_cr3(swapper_pg_dir);
+ +	if (cpumask_test_cpu(cpu, mm_cpumask(active_mm))) {
+ +		cpumask_clear_cpu(cpu, mm_cpumask(active_mm));
+ +		load_cr3(swapper_pg_dir);
+ +	}
+  }
+  EXPORT_SYMBOL_GPL(leave_mm);
+ =20
+
+--Signature=_Wed__16_May_2012_17_36_16_+1000_PCJx5H2=UIPPElKd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPs1jwAAoJEECxmPOUX5FEpQUP/0mva319wbJhcCihCMy05QpN
+r2/lWJRF9u60JzydUczQXOcn0LBvWtIv2L5hGYEcTNKlS9dBMbUu/Q/J+gyx8xn1
+OZdpXWBvliDRlACfQeFUvzqYlZnQBxRSKU0mhlDSX9OsKv8e7f0maZ42CgP/ouB2
+iHLAb9XV8EGmqX++k+n5z32yTkOuxGg80p6ff9GZVvhnt/pgVPlPIMYWKJAkzxQU
+hVNYkoOSjHFWE1Efd+XbVXk38I81eFulL8lb4Aux7iTDei+8W5MDoPEVSId1Dk5+
+1T+0QWfbTjdwzmsWnnkgwrdO4/1bHOv2rPsYB4SVYLVieacgtRtoS0dA3t3D7EeL
+/WXwA0pqsfSBI8vYtgLPn9wJeJKB9rotKDmfAis802W6cy7yVEK4SGLxXrWKDpoo
+pSSCoE9u41+vsQyimc3HyuXWbeY8FgPpZn36C/NurYkac9FdNt0QEHw8HmFljTTl
+hp5W64vSQkpLk/wn3zXp460pWDHDyVbLKBZlAv7pzA20Sb65MsR9yy6831l7bKWn
+EV1agoIxbRtUIKtO1h8db1WJ90kuF474EtWv+f0Gl8ziFYLWi1xzhqvPphspKlvS
+Aq0WsfwKz4nf4RLx5sRjeoc8KM7IhOPKVASqpgq27mu8R1VygR1DGAXl+ptELsCh
+IUNEi5XiBuNH+yzGvprc
+=xz+a
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__16_May_2012_17_36_16_+1000_PCJx5H2=UIPPElKd--
