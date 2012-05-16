@@ -1,60 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the staging tree
-Date: Wed, 16 May 2012 18:58:12 +1000
-Message-ID: <20120516185812.ce1ab57c3ec72445135a35fc@canb.auug.org.au>
+From: Paul Mackerras <paulus@samba.org>
+Subject: Re: linux-next: build failure after merge of the kvm-ppc tree
+Date: Wed, 16 May 2012 19:15:01 +1000
+Message-ID: <20120516091501.GA30694@bloggs.ozlabs.ibm.com>
+References: <20120516172416.781859dbc2febbda67407576@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_May_2012_18_58_12_+1000_VygyPGwvvPTGw9tu"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33134 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966046Ab2EPI6Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 04:58:24 -0400
+Received: from ozlabs.org ([203.10.76.45]:59266 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759599Ab2EPJRn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 May 2012 05:17:43 -0400
+Content-Disposition: inline
+In-Reply-To: <20120516172416.781859dbc2febbda67407576@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Greg KH <greg@kroah.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alexander Graf <agraf@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__16_May_2012_18_58_12_+1000_VygyPGwvvPTGw9tu
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 16, 2012 at 05:24:16PM +1000, Stephen Rothwell wrote:
+> Hi Alexander,
+> 
+> After merging the kvm-ppc tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> ERROR: "kvm_hpt_order" [arch/powerpc/kvm/kvm.ko] undefined!
+> 
+> Caused by commit ec26346431bb ("KVM: PPC: Book3S HV: Make the guest hash
+> table size configurable").
 
-Hi all,
+Oops, my fault, kvm_hpt_order needs to be exported for when KVM is
+a module.  Patch coming.
 
-Today's linux-next merge of the arm-soc tree got a conflict in
-arch/arm/boot/dts/at91sam9g20.dtsi between commit 7cb2e629a240 ("ARM:
-AT91: Add ADC driver to the at91sam9g20 dtsi") from the staging tree and
-commit 5b6089cb6f28 ("ARM: at91: add at91sam9260 DT support") from the
-arm-soc tree.
-
-So, I didn't know what to do with this, so I used the arm-soc version of
-this file (effectively throwing away the staging tree change).  Hints,
-anyone?
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__16_May_2012_18_58_12_+1000_VygyPGwvvPTGw9tu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPs2wkAAoJEECxmPOUX5FExaUQAIUBAnzgDIv04GqUNFyQDgpa
-vXmGp1PfgpEJuFnWlYqSRsidNEXuakkgg8EIHq9yLLL0EpEwylBxfSSueNd/aamf
-eGBiQTZj0jX7tdv/cxwrIu33lVw8wtl45QaA2vD5uW06CE+5D4MGTx7boZegQK4f
-AKx37f0hYWkbId3bRbJj/lXJGX/Apdqw8p9K61T+NvwvxiGxWpeHE3BkOBCjA1v9
-gbM9U1N7CgRQSHUp+wovbUEPHElOp7itbLJQgU7bM+jhBmupk3IwmZbU0ocZU0Tj
-NVzyCkXslovcU1+o6bnd17omYLtYAz6Sv8WVZvLI5prxgvC+3PHRImJOAYj+ry8s
-KtcW9BBCkfBKwzN3USye/iEWg2V8y7mPLhnSYPKp8KQ8Eb43Zr6uWfvKJU74/awV
-Ht/DyKASKS8Z+OsNu93a67vl5ZuiVhVZ7e7SlI/VsQ4zoJ7vl4Uzwacj8+N48hzG
-Ar3ITqZIU6WGyktLB9W+Mm1tlOiq5tyKTbh87ZWLoBFU1uTcYpv/RfCo7i1IneTq
-xxgVX/iyElyNH7WqKe/qZWsXq2anlHr5iLrERiaK0O5Im9fQeIgtq303W0H6IXfH
-ksafbe7vv3EjYv5Ulg7MqdpSkDdHOkts8ZpuqgrAdKo/jvCL1REI+1GXrc2nPxM/
-vGzgfYWp///Z2dea1AB6
-=2IR/
------END PGP SIGNATURE-----
-
---Signature=_Wed__16_May_2012_18_58_12_+1000_VygyPGwvvPTGw9tu--
+Paul.
