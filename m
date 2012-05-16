@@ -1,54 +1,39 @@
-From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
-Subject: Re: linux-next: Tree for May 10 (fs/inode.c)
-Date: Tue, 15 May 2012 00:49:01 +0000
-Message-ID: <1337042961.2522.53.camel@lade.trondhjem.org>
-References: <20120510192635.c6f3a55196bbf65f13956e44@canb.auug.org.au>
-	 <4FAC31BE.1060505@xenotime.net>
-	 <CAP=VYLrAjGjCHDhxrEypaKcqK1Yx7_XY_TZofsf5V9x7GCGr7g@mail.gmail.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: build failure after merge of the userns tree
+Date: Tue, 15 May 2012 18:12:19 -0700
+Message-ID: <87fwb12aks.fsf@xmission.com>
+References: <20120514191337.e06ca84184b73b20b5c52689@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.netapp.com ([216.240.18.37]:8848 "EHLO mx2.netapp.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757855Ab2EOAti (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 May 2012 20:49:38 -0400
-In-Reply-To: <CAP=VYLrAjGjCHDhxrEypaKcqK1Yx7_XY_TZofsf5V9x7GCGr7g@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <77A7CD94118B214DAA2241AEC8FDABC6@tahoe.netapp.com>
+Received: from out03.mta.xmission.com ([166.70.13.233]:60773 "EHLO
+	out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966274Ab2EPBMk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 May 2012 21:12:40 -0400
+In-Reply-To: <20120514191337.e06ca84184b73b20b5c52689@canb.auug.org.au>
+	(Stephen Rothwell's message of "Mon, 14 May 2012 19:13:37 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDEyLTA1LTEwIGF0IDIxOjM2IC0wNDAwLCBQYXVsIEdvcnRtYWtlciB3cm90ZToN
-Cj4gT24gVGh1LCBNYXkgMTAsIDIwMTIgYXQgNToyMyBQTSwgUmFuZHkgRHVubGFwIDxyZHVubGFw
-QHhlbm90aW1lLm5ldD4gd3JvdGU6DQo+ID4gT24gMDUvMTAvMjAxMiAwMjoyNiBBTSwgU3RlcGhl
-biBSb3Rod2VsbCB3cm90ZToNCj4gPg0KPiA+PiBIaSBhbGwsDQo+ID4+DQo+ID4+IENoYW5nZXMg
-c2luY2UgMjAxMjA1MDg6DQo+ID4NCj4gPg0KPiA+IHdoZW4gQ09ORklHX0JMT0NLIGlzIG5vdCBz
-ZXQ6DQo+ID4NCj4gPiBmcy9pbm9kZS5jOjE3Nzc6NjogZXJyb3I6IHJlZGVmaW5pdGlvbiBvZiAn
-aW5vZGVfZGlvX3dhaXQnDQo+ID4gaW5jbHVkZS9saW51eC9mcy5oOjI0NzY6MjA6IG5vdGU6IHBy
-ZXZpb3VzIGRlZmluaXRpb24gb2YgJ2lub2RlX2Rpb193YWl0Jw0KPiA+IHdhcyBoZXJlDQo+IA0K
-PiBBbHNvIHNlZW4gb24gc29tZSBhcm0gYnVpbGRzOg0KPiANCj4gaHR0cDovL2tpc3NrYi5lbGxl
-cm1hbi5pZC5hdS9raXNza2IvYnVpbGRyZXN1bHQvNjI5MTM1Ny8NCj4gaHR0cDovL2tpc3NrYi5l
-bGxlcm1hbi5pZC5hdS9raXNza2IvYnVpbGRyZXN1bHQvNjI5MTM3OC8NCj4gDQo+IDVlZmYzOTU3
-Y2U4ZDE0YzJhMjU0ODQ0NzQzZGZiODRlMTllN2MyYWUgaXMgdGhlIGZpcnN0IGJhZCBjb21taXQN
-Cj4gY29tbWl0IDVlZmYzOTU3Y2U4ZDE0YzJhMjU0ODQ0NzQzZGZiODRlMTllN2MyYWUNCj4gQXV0
-aG9yOiBUcm9uZCBNeWtsZWJ1c3QgPFRyb25kLk15a2xlYnVzdEBuZXRhcHAuY29tPg0KPiBEYXRl
-OiAgIE1vbiBNYXkgNyAxMDo0NDoyOSAyMDEyIC0wNDAwDQo+IA0KPiAgICAgTkZTOiBFbnN1cmUg
-dGhhdCBzZXRhdHRyIGFuZCBnZXRhdHRyIHdhaXQgZm9yIE9fRElSRUNUIHdyaXRlIGNvbXBsZXRp
-b24NCj4gDQo+ICAgICBVc2UgdGhlIHNhbWUgbWVjaGFuaXNtIGFzIHRoZSBibG9jayBkZXZpY2Vz
-IGFyZSB1c2luZywgYnV0IG1vdmUgdGhlDQo+ICAgICBoZWxwZXIgZnVuY3Rpb25zIGZyb20gZnMv
-ZGlyZWN0LWlvLmMgaW50byBmcy9pbm9kZS5jIHRvIHJlbW92ZSB0aGUNCj4gICAgIGRlcGVuZGVu
-Y3kgb24gQ09ORklHX0JMT0NLLg0KPiANCj4gICAgIFNpZ25lZC1vZmYtYnk6IFRyb25kIE15a2xl
-YnVzdCA8VHJvbmQuTXlrbGVidXN0QG5ldGFwcC5jb20+DQo+ICAgICBDYzogQ2hyaXN0b3BoIEhl
-bGx3aWcgPGhjaEBpbmZyYWRlYWQub3JnPg0KPiAgICAgQ2M6IEFsIFZpcm8gPHZpcm9AemVuaXYu
-bGludXgub3JnLnVrPg0KPiAgICAgQ2M6IEZyZWQgSXNhbWFuIDxpaXNhbWFuQG5ldGFwcC5jb20+
-DQo+IA0KPiA6MDQwMDAwIDA0MDAwMCBhZTMzZTJmZmQxNzJlNGQ3ZTJhZDZlZDIxOWRlMzJkZTkz
-NjU0OGNjDQo+IGVmMmRmNjZiMzQ1NTlkYmMwNzgyYWRkMTA4ZTI0YTZlZjZlNGUyY2EgTSAgICAg
-IGZzDQo+IGJpc2VjdCBydW4gc3VjY2Vzcw0KPiANCj4gUC4NCg0KU29ycnkgYWJvdXQgYmVpbmcg
-c28gbGF0ZSB3aXRoIHRoaXMuIFRoZSBjaGFuZ2VzIHRvIGluY2x1ZGUvbGludXgvZnMuaA0KaGFk
-IG5vdCBiZWVuIGNvbW1pdHRlZCBpbiB0aGUgb3JpZ2luYWwgYnJhbmNoLiBUb2RheSdzIGxpbnV4
-LW5leHQgc2hvdWxkDQpoYXZlIHRoYXQgZml4ZWQuLi4NCg0KQ2hlZXJzDQogIFRyb25kDQoNCi0t
-IA0KVHJvbmQgTXlrbGVidXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWluZXINCg0KTmV0QXBw
-DQpUcm9uZC5NeWtsZWJ1c3RAbmV0YXBwLmNvbQ0Kd3d3Lm5ldGFwcC5jb20NCg0K
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+
+> Hi Eric,
+>
+> After merging the userns tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> fs/stat.c: In function 'cp_new_stat64':
+> fs/stat.c:354:61: error: expected ';' before ')' token
+> fs/stat.c:354:61: error: expected statement before ')' token
+> fs/stat.c:355:61: error: expected ';' before ')' token
+> fs/stat.c:355:61: error: expected statement before ')' token
+>
+> I have dropped the userns tree for today.
+
+*puts paper bag on head*
+
+Thanks, and fixed.
+
+Eric
