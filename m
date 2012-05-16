@@ -1,39 +1,72 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: build failure after merge of the userns tree
-Date: Tue, 15 May 2012 18:12:19 -0700
-Message-ID: <87fwb12aks.fsf@xmission.com>
-References: <20120514191337.e06ca84184b73b20b5c52689@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the nfs tree
+Date: Wed, 16 May 2012 12:49:42 +1000
+Message-ID: <20120516124942.5d776132d69f82bd8ed50e08@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__16_May_2012_12_49_42_+1000_OwxR31zA5g0RAQ2k"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out03.mta.xmission.com ([166.70.13.233]:60773 "EHLO
-	out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966274Ab2EPBMk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 May 2012 21:12:40 -0400
-In-Reply-To: <20120514191337.e06ca84184b73b20b5c52689@canb.auug.org.au>
-	(Stephen Rothwell's message of "Mon, 14 May 2012 19:13:37 +1000")
+Received: from haggis.pcug.org.au ([203.10.76.10]:52451 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932909Ab2EPCty (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 May 2012 22:49:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Schumaker <bjschuma@netapp.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Signature=_Wed__16_May_2012_12_49_42_+1000_OwxR31zA5g0RAQ2k
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Eric,
->
-> After merging the userns tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> fs/stat.c: In function 'cp_new_stat64':
-> fs/stat.c:354:61: error: expected ';' before ')' token
-> fs/stat.c:354:61: error: expected statement before ')' token
-> fs/stat.c:355:61: error: expected ';' before ')' token
-> fs/stat.c:355:61: error: expected statement before ')' token
->
-> I have dropped the userns tree for today.
+Hi Trond,
 
-*puts paper bag on head*
+After merging the nfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Thanks, and fixed.
+fs/nfs/super.c: In function 'nfs_get_cache_cookie':
+fs/nfs/super.c:2361:12: error: 'struct nfs_server' has no member named 'fsc=
+ache_key'
+fs/nfs/super.c:2362:16: error: 'struct nfs_server' has no member named 'fsc=
+ache_key'
+fs/nfs/super.c:2363:16: error: 'struct nfs_server' has no member named 'fsc=
+ache_key'
+fs/nfs/super.c:2367:2: warning: passing argument 3 of 'nfs_fscache_get_supe=
+r_cookie' makes pointer from integer without a cast [enabled by default]
+fs/nfs/fscache.h:173:20: note: expected 'struct nfs_clone_mount *' but argu=
+ment is of type 'int'
 
-Eric
+Casued by commit 2311b9439ce8 ("NFS: Don't pass mount data to
+nfs_fscache_get_super_cookie()").  This build has CONFIG_NFS_FSCACHE
+unset.  grep is your friend.
+
+I have used the nfs tree from next-20120514 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__16_May_2012_12_49_42_+1000_OwxR31zA5g0RAQ2k
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPsxXGAAoJEECxmPOUX5FEuWIP/ii/IEVnZZAxXcN7WvJ5e3NS
+DxDYf9F+Pb8viW+CX/uLu0dtayRE1JPUw3dEDLek9JzkXj+VcmvM2YCcqPjkBs0S
+rObcogYMkiXu0sIbKixOPoCLRfJ5VEH/HpPrD4XOdpjOktq9m5bejEp9IymbGdCe
+5H/TVXKf6sMQaQ7vhEcQoG2b2RRGF8Xhesy0S8PA/htvg8QfbJ4mWuF8BhN3vwnf
+RRtxdw7z7eHShOllukl1HWQwEJtbH6sN91KXAOib3BLgscJwd/AgZDRKUM3ATWju
+ZqSz849IAOCpVvLOVTB4a891DBplAMtX1Zns3h5PozZUCJCqXXwRVHv20e7Jm0R5
+N5RwLJ2qs9jEmdyQm7dtYlTo6gRoP5RyY7iiEzU2fjsMpYllbMMWktL3N+habwPG
+d1XkAYSuG29ACmseZM0kXz8pXMa20P0dFiWkDfXmEO4hGIiJYX57eJABTkYtgYT3
+E9/Qyo++pgcAuFrs7YjjvpQqmxDlAToD1BzYz8ynuXwVMqOszYlfFPdXPiRKdOR0
+vExsEn3N0AwLUmi4SXO003URNci4vBnrhwRV77KvCYb+J8krUnXZ8qogdLniZXvp
+XBtt42T5wJg4lH+lrN6+PpVWqh+J7Ae2e4IGMpN0Cua4beXWcEc3DBQB1pKqRmYk
+Gt2fzs1jm3MLlNNsFnpD
+=qSv9
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__16_May_2012_12_49_42_+1000_OwxR31zA5g0RAQ2k--
