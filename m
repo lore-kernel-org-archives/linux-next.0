@@ -1,73 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm with the  tree
-Date: Wed, 16 May 2012 19:30:52 +1000
-Message-ID: <20120516193052.4af4ee85feb4a36b936b74df@canb.auug.org.au>
+From: Haojian Zhuang <haojian.zhuang@gmail.com>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the arm tree
+Date: Wed, 16 May 2012 17:36:30 +0800
+Message-ID: <CAN1soZzBZUoCR5KgXbWBKAnxaR92CKFWqNMNLnm-dAD3xoH6yw@mail.gmail.com>
+References: <20120516185045.2f9e9274f373d584fd499eb2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_May_2012_19_30_52_+1000_FikpuOwyLkKE.G8+"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49902 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752879Ab2EPJbD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 05:31:03 -0400
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:46841 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966066Ab2EPJgb convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 05:36:31 -0400
+In-Reply-To: <20120516185045.2f9e9274f373d584fd499eb2@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, "Eric W. Biederman" <ebiederm@xmission.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Wed__16_May_2012_19_30_52_+1000_FikpuOwyLkKE.G8+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 16, 2012 at 4:50 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the arm-soc tree got a conflict in
+> arch/arm/Kconfig between commit 98fab064d321 ("ARM: Remove unnecessar=
+y
+> selection of TICK_ONESHOT") from the arm tree and commit c24b31147a06
+> ("ARM: mmp: support DT in irq") from the arm-soc tree.
+>
+> Just context changes. =A0I fixed it up (see below) and can carry the =
+fix as
+> necessary.
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+>
+> diff --cc arch/arm/Kconfig
+> index b1a717c,852b12b..0000000
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@@ -627,6 -616,8 +611,7 @@@ config ARCH_MM
+> =A0 =A0 =A0 =A0select CLKDEV_LOOKUP
+> =A0 =A0 =A0 =A0select GENERIC_CLOCKEVENTS
+> =A0 =A0 =A0 =A0select GPIO_PXA
+> + =A0 =A0 =A0 select IRQ_DOMAIN
+> =A0- =A0 =A0 =A0select TICK_ONESHOT
+> =A0 =A0 =A0 =A0select PLAT_PXA
+> =A0 =A0 =A0 =A0select SPARSE_IRQ
+> =A0 =A0 =A0 =A0select GENERIC_ALLOCATOR
 
-Hi Andrew,
-
-Today's linux-next merge of the akpm tree got a conflict in kernel/exit.c
-between commit a29c33f4e506 ("userns: Convert setting and getting uid and
-gid system calls to use kuid and kgid") from the uerns tree and commit
-"cred: remove task_is_dead() from __task_cred() validation" from the akpm
-tree.
-
-I fixed it up (I think - see below) and can carry the fix as necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc kernel/exit.c
-index 112f703,7c293e6..0000000
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@@ -1218,7 -1218,7 +1218,7 @@@ static int wait_task_zombie(struct wait
-  	unsigned long state;
-  	int retval, status, traced;
-  	pid_t pid =3D task_pid_vnr(p);
-- 	uid_t uid =3D from_kuid_munged(current_user_ns(), __task_cred(p)->uid);
- -	uid_t uid =3D task_uid(p);
-++	uid_t uid =3D from_kuid_munged(current_user_ns(), task_uid(p));
-  	struct siginfo __user *infop;
- =20
-  	if (!likely(wo->wo_flags & WEXITED))
-
---Signature=_Wed__16_May_2012_19_30_52_+1000_FikpuOwyLkKE.G8+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPs3PMAAoJEECxmPOUX5FEC8MP/31oSugRyO2T6Irp6NlIXgDo
-6+mULukdnjP0uhemWpOcq+O2kycWPBMcTOLbf/T0TaiOS41dsMsgfDyQc1CNF/6n
-p8bvIuc48TAreE0AODNBLjalWbcKI1KkFmHxPkdOuGt2Bcgqog474MVbG6IrHpQe
-Mqyny8egxZYxc+JUACbMV8GNLAN8e8XGUL5QzAFFcu1GNhlAJvPK4h1hliBf+61U
-nCxtzeX2x8XN6hsWy0NFJ3hzPaYiOGJUGjmk0LOmy5eXhQwDb/MBD6sID7IFYWkq
-uS+4QjBPJRlyOYea1cOFD2cLpEtoprw4smGPY+XgbF5Za5fxz8SgQiTWuRjyYQHX
-7yP0BOhfh8rDwfYWWdlogWX5Wa4fUlZCPz8km9xSHDf22ZoH2SUmZpVDrefLx10u
-NpeIxXURka3eqBvdY6Gt5LOWRkMxRn1qGVEBlD8925lieqe2wSpZGeOaoeVpNKQR
-snC/wWCA/qrVzRTJys5hAsWlpB25HXwTx3sGYwCR1miHJTrDHmYSTH+mr7k0C26c
-bqGjulFxpbilRrHEjB/kpIGNpcUFvJGDVg80MOUnH9WmlEXBJuJrHnDpS3g8Mh2i
-uK7rQ+8xPBtxFF4gcF341WaEd3LjDjca5eXa+NCqdBYCXem+nU73eYvlk47hXYhL
-J46oY8TgDagbwgTv7hLV
-=F3r1
------END PGP SIGNATURE-----
-
---Signature=_Wed__16_May_2012_19_30_52_+1000_FikpuOwyLkKE.G8+--
+Acked-by: Haojian Zhuang <haojian.zhuang@gmail.com>
