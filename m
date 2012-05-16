@@ -1,32 +1,34 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm-soc tree with the staging tree
-Date: Wed, 16 May 2012 14:33:47 +0000
-Message-ID: <201205161433.47416.arnd@arndb.de>
-References: <20120516185812.ce1ab57c3ec72445135a35fc@canb.auug.org.au> <201205161054.15610.arnd@arndb.de> <4FB3B1F3.6080102@atmel.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: manual merge of the akpm tree with the userns tree
+Date: Wed, 16 May 2012 07:49:16 -0700
+Message-ID: <87ehqk5ggj.fsf@xmission.com>
+References: <20120516193712.32157bcdc435465c27183baf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:65011 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752956Ab2EPOgh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 10:36:37 -0400
-In-Reply-To: <4FB3B1F3.6080102@atmel.com>
+Received: from out01.mta.xmission.com ([166.70.13.231]:44647 "EHLO
+	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752453Ab2EPOt3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 10:49:29 -0400
+In-Reply-To: <20120516193712.32157bcdc435465c27183baf@canb.auug.org.au>
+	(Stephen Rothwell's message of "Wed, 16 May 2012 19:37:12 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wednesday 16 May 2012, Nicolas Ferre wrote:
-> I am on the subject till this morning to figure out if the parameters
-> are SoC dependent. It seems that the ADC is the same between those two
-> platforms but the technology is different: I have to figure out the
-> details internally.
-> 
-> I will give you a patch on top of arm-soc soon. It will replace the one
-> in staging-next: does it sound good to you?
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Ok, good.
+> Hi Andrew,
+>
+> Today's linux-next merge of the akpm tree got a conflict in
+> kernel/signal.c between commit 54ba47edac90 ("userns: signal remove
+> unnecessary map_cred_ns") from the userns tree and commit "pidns: use
+> task_active_pid_ns in do_notify_parent" from the akpm tree.
+>
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-	Arnd
+Thanks.
+
+Eric
