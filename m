@@ -1,46 +1,30 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: linux-next: Tree for May 16 (mfd/mc13xxx)
-Date: Wed, 16 May 2012 20:04:27 +0200
-Message-ID: <20120516180427.GM22395@pengutronix.de>
-References: <20120516201426.3a162ecd6adeb7132413f1b9@canb.auug.org.au>
- <4FB3CF4E.8000106@xenotime.net>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: at91: Add ADC driver to at91sam9260/at91sam9g20 dtsi files
+Date: Wed, 16 May 2012 18:50:54 +0000
+Message-ID: <201205161850.54765.arnd@arndb.de>
+References: <4FB3B1F3.6080102@atmel.com> <1337182626-13033-1-git-send-email-nicolas.ferre@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:54531 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754400Ab2EPSEf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 14:04:35 -0400
-Content-Disposition: inline
-In-Reply-To: <4FB3CF4E.8000106@xenotime.net>
+Received: from moutng.kundenserver.de ([212.227.126.186]:56652 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755159Ab2EPSu7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 14:50:59 -0400
+In-Reply-To: <1337182626-13033-1-git-send-email-nicolas.ferre@atmel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Nicolas Ferre <nicolas.ferre@atmel.com>
+Cc: gregkh@linuxfoundation.org, sfr@canb.auug.org.au, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, plagnioj@jcrosoft.com, maxime.ripard@free-electrons.com, olof@lixom.net, linux-next@vger.kernel.org
 
-On Wed, May 16, 2012 at 09:01:18AM -0700, Randy Dunlap wrote:
-> On 05/16/2012 03:14 AM, Stephen Rothwell wrote:
->=20
-> >=20
-> > The mfd tree lost its build failure but gained another so I used th=
-e
-> > version from next-20120511.
->=20
->=20
-> drivers/mfd/mc13xxx-core.c:726:2: error: implicit declaration of func=
-tion 'regmap_exit'
-I think the patch by Mark Brown[1] addresses that problem?
+On Wednesday 16 May 2012, Nicolas Ferre wrote:
+> Now that the bulk of at91sam9g20-related nodes are located in at91sam9260.dtsi,
+> we have to re-create the path to this ADC node for SoC specific parts.
+> 
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
 
-Best regards
-Uwe
+Should we apply this patch in arm-soc so that Greg can drop the hunk that
+no longer applies?
 
-[1] http://mid.gmane.org/1337190669-29328-1-git-send-email-broonie@open=
-source.wolfsonmicro.com
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+	Arnd
