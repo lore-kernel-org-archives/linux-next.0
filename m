@@ -1,47 +1,47 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (staging
- tree related)
-Date: Wed, 16 May 2012 05:49:24 -0700
-Message-ID: <20120516124924.GB32064@kroah.com>
-References: <20120516200659.000314e53de07a7a7fda46b8@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with the staging tree
+Date: Wed, 16 May 2012 13:03:34 +0000
+Message-ID: <201205161303.35080.arnd@arndb.de>
+References: <20120516185812.ce1ab57c3ec72445135a35fc@canb.auug.org.au> <201205161054.15610.arnd@arndb.de> <20120516124851.GA32064@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:44543 "EHLO
-	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751090Ab2EPMt0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 May 2012 08:49:26 -0400
-Content-Disposition: inline
-In-Reply-To: <20120516200659.000314e53de07a7a7fda46b8@canb.auug.org.au>
+Received: from moutng.kundenserver.de ([212.227.126.171]:51972 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932958Ab2EPNG3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 09:06:29 -0400
+In-Reply-To: <20120516124851.GA32064@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Magenheimer <dan.magenheimer@oracle.com>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
 
-On Wed, May 16, 2012 at 08:06:59PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Wednesday 16 May 2012, Greg KH wrote:
+> On Wed, May 16, 2012 at 10:54:15AM +0000, Arnd Bergmann wrote:
+> > On Wednesday 16 May 2012, Stephen Rothwell wrote:
+> > > Today's linux-next merge of the arm-soc tree got a conflict in
+> > > arch/arm/boot/dts/at91sam9g20.dtsi between commit 7cb2e629a240 ("ARM:
+> > > AT91: Add ADC driver to the at91sam9g20 dtsi") from the staging tree and
+> > > commit 5b6089cb6f28 ("ARM: at91: add at91sam9260 DT support") from the
+> > > arm-soc tree.
+> > > 
+> > > So, I didn't know what to do with this, so I used the arm-soc version of
+> > > this file (effectively throwing away the staging tree change).  Hints,
+> > > anyone?
+> > 
+> > I suspect the addition of the adc node should just go into the
+> > at91sam9260.dtsi file.
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_map_object':
-> drivers/staging/zsmalloc/zsmalloc-main.c:704:3: error: implicit declaration of function 'set_pte' [-Werror=implicit-function-declaration]
-> drivers/staging/zsmalloc/zsmalloc-main.c: In function 'zs_unmap_object':
-> drivers/staging/zsmalloc/zsmalloc-main.c:738:3: error: implicit declaration of function '__flush_tlb_one' [-Werror=implicit-function-declaration]
-> 
-> Presumably caused by commit 49b81a3c7415 ("ramster: switch over to
-> zsmalloc and crypto interface") which now has CONFIG_RAMSTER selecting
-> CONFIG_ZSMALLOC explicitly which in turn ignores the dependency of
-> CONFIG_ZSMALLOC on X86 ...
-> 
-> I have reverted that commit for today.
+> So does that mean that the staging tree version is correct?  Or that
+> someone needs to send me a fixup patch here?
 
-Ick, sorry about that.
+The staging tree version adds contents to at91sam9g20.dtsi, and the context
+gets moved to at91sam9260.dtsi in arm-soc. If we want to resolve it now,
+I think the best way is to add the change to at91sam9260.dtsi in arm-soc
+and let you drop that part in staging. There are no hard dependencies
+since this is new code and it the driver is still correct without the
+change, it simply won't find the device.
 
-Dan, care to send me a follow-on patch, or do you just want me to revert
-this patch from my tree for now?
-
-thanks,
-
-greg k-h
+	Arnd
