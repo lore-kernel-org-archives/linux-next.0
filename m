@@ -1,74 +1,287 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the s5p tree
-Date: Wed, 16 May 2012 18:03:03 +1000
-Message-ID: <20120516180303.3c3cff646c1a70a8ddf32e2a@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the s5p tree
+Date: Wed, 16 May 2012 18:43:36 +1000
+Message-ID: <20120516184336.7263947e582bb2013f351682@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__16_May_2012_18_03_03_+1000_dFO9MIn6Azqzh5Dv"
+ boundary="Signature=_Wed__16_May_2012_18_43_36_+1000_U1BaO3bdgRRi./If"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:42985 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:52126 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759751Ab2EPIDP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 04:03:15 -0400
+	with ESMTP id S966046Ab2EPInt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 04:43:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sangsu Park <sangsu4u.park@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>
 
---Signature=_Wed__16_May_2012_18_03_03_+1000_dFO9MIn6Azqzh5Dv
+--Signature=_Wed__16_May_2012_18_43_36_+1000_U1BaO3bdgRRi./If
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Grant,
 
-Today's linux-next merge of the usb tree got a conflict in
-arch/arm/mach-exynos/mach-universal_c210.c between commit 6dafa4aead1b
-("ARM: EXYNOS: Add DRM core device support for Universal C210 board")
-from the s5p tree and commit 126625e1bf32 ("usb:hsotg:samsung:cosmetic
-Move <linux/platform_data/s3c-hsotg.h> to proper place") from the usb
-tree.
+Today's linux-next merge of the gpio tree got a conflict in
+drivers/gpio/gpio-samsung.c between commit ef04afd5451b ("ARM: EXYNOS:
+add GPC4 bank instance") from the s5p tree and commit fd454997d687
+("gpio: samsung: refactor gpiolib init for exynos4/5") from the gpio tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-exynos/mach-universal_c210.c
-index dd8ec8d4,bc8bf3b..0000000
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@@ -23,7 -23,7 +23,8 @@@
-  #include <linux/i2c-gpio.h>
-  #include <linux/i2c/mcs.h>
-  #include <linux/i2c/atmel_mxt_ts.h>
-+ #include <linux/platform_data/s3c-hsotg.h>
- +#include <drm/exynos_drm.h>
+diff --cc drivers/gpio/gpio-samsung.c
+index f88bb9f,5d49aff..0000000
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@@ -2722,6 -2714,219 +2722,222 @@@ static __init void exynos_gpiolib_attac
+  }
+  #endif /* defined(CONFIG_ARCH_EXYNOS) && defined(CONFIG_OF) */
  =20
-  #include <asm/mach/arch.h>
-  #include <asm/hardware/gic.h>
++ static __init void exynos4_gpiolib_init(void)
++ {
++ #ifdef CONFIG_CPU_EXYNOS4210
++ 	struct samsung_gpio_chip *chip;
++ 	int i, nr_chips;
++ 	void __iomem *gpio_base1, *gpio_base2, *gpio_base3;
++ 	int group =3D 0;
++ 	void __iomem *gpx_base;
++=20
++ 	/* gpio part1 */
++ 	gpio_base1 =3D ioremap(EXYNOS4_PA_GPIO1, SZ_4K);
++ 	if (gpio_base1 =3D=3D NULL) {
++ 		pr_err("unable to ioremap for gpio_base1\n");
++ 		goto err_ioremap1;
++ 	}
++=20
++ 	chip =3D exynos4_gpios_1;
++ 	nr_chips =3D ARRAY_SIZE(exynos4_gpios_1);
++=20
++ 	for (i =3D 0; i < nr_chips; i++, chip++) {
++ 		if (!chip->config) {
++ 			chip->config =3D &exynos_gpio_cfg;
++ 			chip->group =3D group++;
++ 		}
++ 		exynos_gpiolib_attach_ofnode(chip,
++ 				EXYNOS4_PA_GPIO1, i * 0x20);
++ 	}
++ 	samsung_gpiolib_add_4bit_chips(exynos4_gpios_1,
++ 				       nr_chips, gpio_base1);
++=20
++ 	/* gpio part2 */
++ 	gpio_base2 =3D ioremap(EXYNOS4_PA_GPIO2, SZ_4K);
++ 	if (gpio_base2 =3D=3D NULL) {
++ 		pr_err("unable to ioremap for gpio_base2\n");
++ 		goto err_ioremap2;
++ 	}
++=20
++ 	/* need to set base address for gpx */
++ 	chip =3D &exynos4_gpios_2[16];
++ 	gpx_base =3D gpio_base2 + 0xC00;
++ 	for (i =3D 0; i < 4; i++, chip++, gpx_base +=3D 0x20)
++ 		chip->base =3D gpx_base;
++=20
++ 	chip =3D exynos4_gpios_2;
++ 	nr_chips =3D ARRAY_SIZE(exynos4_gpios_2);
++=20
++ 	for (i =3D 0; i < nr_chips; i++, chip++) {
++ 		if (!chip->config) {
++ 			chip->config =3D &exynos_gpio_cfg;
++ 			chip->group =3D group++;
++ 		}
++ 		exynos_gpiolib_attach_ofnode(chip,
++ 				EXYNOS4_PA_GPIO2, i * 0x20);
++ 	}
++ 	samsung_gpiolib_add_4bit_chips(exynos4_gpios_2,
++ 				       nr_chips, gpio_base2);
++=20
++ 	/* gpio part3 */
++ 	gpio_base3 =3D ioremap(EXYNOS4_PA_GPIO3, SZ_256);
++ 	if (gpio_base3 =3D=3D NULL) {
++ 		pr_err("unable to ioremap for gpio_base3\n");
++ 		goto err_ioremap3;
++ 	}
++=20
++ 	chip =3D exynos4_gpios_3;
++ 	nr_chips =3D ARRAY_SIZE(exynos4_gpios_3);
++=20
++ 	for (i =3D 0; i < nr_chips; i++, chip++) {
++ 		if (!chip->config) {
++ 			chip->config =3D &exynos_gpio_cfg;
++ 			chip->group =3D group++;
++ 		}
++ 		exynos_gpiolib_attach_ofnode(chip,
++ 				EXYNOS4_PA_GPIO3, i * 0x20);
++ 	}
++ 	samsung_gpiolib_add_4bit_chips(exynos4_gpios_3,
++ 				       nr_chips, gpio_base3);
++=20
++ #if defined(CONFIG_CPU_EXYNOS4210) && defined(CONFIG_S5P_GPIO_INT)
++ 	s5p_register_gpioint_bank(IRQ_GPIO_XA, 0, IRQ_GPIO1_NR_GROUPS);
++ 	s5p_register_gpioint_bank(IRQ_GPIO_XB, IRQ_GPIO1_NR_GROUPS, IRQ_GPIO2_NR=
+_GROUPS);
++ #endif
++=20
++ 	return;
++=20
++ err_ioremap3:
++ 	iounmap(gpio_base2);
++ err_ioremap2:
++ 	iounmap(gpio_base1);
++ err_ioremap1:
++ 	return;
++ #endif	/* CONFIG_CPU_EXYNOS4210 */
++ }
++=20
++ static __init void exynos5_gpiolib_init(void)
++ {
++ #ifdef CONFIG_SOC_EXYNOS5250
++ 	struct samsung_gpio_chip *chip;
++ 	int i, nr_chips;
++ 	void __iomem *gpio_base1, *gpio_base2, *gpio_base3, *gpio_base4;
++ 	int group =3D 0;
++ 	void __iomem *gpx_base;
++=20
++ 	/* gpio part1 */
++ 	gpio_base1 =3D ioremap(EXYNOS5_PA_GPIO1, SZ_4K);
++ 	if (gpio_base1 =3D=3D NULL) {
++ 		pr_err("unable to ioremap for gpio_base1\n");
++ 		goto err_ioremap1;
++ 	}
++=20
+++	/* need to set base address for gpc4 */
+++	exynos5_gpios_1[11].base =3D gpio_base1 + 0x2E0;
+++
++ 	/* need to set base address for gpx */
+ -	chip =3D &exynos5_gpios_1[20];
+++	chip =3D &exynos5_gpios_1[21];
++ 	gpx_base =3D gpio_base1 + 0xC00;
++ 	for (i =3D 0; i < 4; i++, chip++, gpx_base +=3D 0x20)
++ 		chip->base =3D gpx_base;
++=20
++ 	chip =3D exynos5_gpios_1;
++ 	nr_chips =3D ARRAY_SIZE(exynos5_gpios_1);
++=20
++ 	for (i =3D 0; i < nr_chips; i++, chip++) {
++ 		if (!chip->config) {
++ 			chip->config =3D &exynos_gpio_cfg;
++ 			chip->group =3D group++;
++ 		}
++ 		exynos_gpiolib_attach_ofnode(chip,
++ 				EXYNOS5_PA_GPIO1, i * 0x20);
++ 	}
++ 	samsung_gpiolib_add_4bit_chips(exynos5_gpios_1,
++ 				       nr_chips, gpio_base1);
++=20
++ 	/* gpio part2 */
++ 	gpio_base2 =3D ioremap(EXYNOS5_PA_GPIO2, SZ_4K);
++ 	if (gpio_base2 =3D=3D NULL) {
++ 		pr_err("unable to ioremap for gpio_base2\n");
++ 		goto err_ioremap2;
++ 	}
++=20
++ 	chip =3D exynos5_gpios_2;
++ 	nr_chips =3D ARRAY_SIZE(exynos5_gpios_2);
++=20
++ 	for (i =3D 0; i < nr_chips; i++, chip++) {
++ 		if (!chip->config) {
++ 			chip->config =3D &exynos_gpio_cfg;
++ 			chip->group =3D group++;
++ 		}
++ 		exynos_gpiolib_attach_ofnode(chip,
++ 				EXYNOS5_PA_GPIO2, i * 0x20);
++ 	}
++ 	samsung_gpiolib_add_4bit_chips(exynos5_gpios_2,
++ 				       nr_chips, gpio_base2);
++=20
++ 	/* gpio part3 */
++ 	gpio_base3 =3D ioremap(EXYNOS5_PA_GPIO3, SZ_4K);
++ 	if (gpio_base3 =3D=3D NULL) {
++ 		pr_err("unable to ioremap for gpio_base3\n");
++ 		goto err_ioremap3;
++ 	}
++=20
++ 	/* need to set base address for gpv */
++ 	exynos5_gpios_3[0].base =3D gpio_base3;
++ 	exynos5_gpios_3[1].base =3D gpio_base3 + 0x20;
++ 	exynos5_gpios_3[2].base =3D gpio_base3 + 0x60;
++ 	exynos5_gpios_3[3].base =3D gpio_base3 + 0x80;
++ 	exynos5_gpios_3[4].base =3D gpio_base3 + 0xC0;
++=20
++ 	chip =3D exynos5_gpios_3;
++ 	nr_chips =3D ARRAY_SIZE(exynos5_gpios_3);
++=20
++ 	for (i =3D 0; i < nr_chips; i++, chip++) {
++ 		if (!chip->config) {
++ 			chip->config =3D &exynos_gpio_cfg;
++ 			chip->group =3D group++;
++ 		}
++ 		exynos_gpiolib_attach_ofnode(chip,
++ 				EXYNOS5_PA_GPIO3, i * 0x20);
++ 	}
++ 	samsung_gpiolib_add_4bit_chips(exynos5_gpios_3,
++ 				       nr_chips, gpio_base3);
++=20
++ 	/* gpio part4 */
++ 	gpio_base4 =3D ioremap(EXYNOS5_PA_GPIO4, SZ_4K);
++ 	if (gpio_base4 =3D=3D NULL) {
++ 		pr_err("unable to ioremap for gpio_base4\n");
++ 		goto err_ioremap4;
++ 	}
++=20
++ 	chip =3D exynos5_gpios_4;
++ 	nr_chips =3D ARRAY_SIZE(exynos5_gpios_4);
++=20
++ 	for (i =3D 0; i < nr_chips; i++, chip++) {
++ 		if (!chip->config) {
++ 			chip->config =3D &exynos_gpio_cfg;
++ 			chip->group =3D group++;
++ 		}
++ 		exynos_gpiolib_attach_ofnode(chip,
++ 				EXYNOS5_PA_GPIO4, i * 0x20);
++ 	}
++ 	samsung_gpiolib_add_4bit_chips(exynos5_gpios_4,
++ 				       nr_chips, gpio_base4);
++ 	return;
++=20
++ err_ioremap4:
++ 	iounmap(gpio_base3);
++ err_ioremap3:
++ 	iounmap(gpio_base2);
++ err_ioremap2:
++ 	iounmap(gpio_base1);
++ err_ioremap1:
++ 	return;
++=20
++ #endif	/* CONFIG_SOC_EXYNOS5250 */
++ }
++=20
+  /* TODO: cleanup soc_is_* */
+  static __init int samsung_gpiolib_init(void)
+  {
 
---Signature=_Wed__16_May_2012_18_03_03_+1000_dFO9MIn6Azqzh5Dv
+--Signature=_Wed__16_May_2012_18_43_36_+1000_U1BaO3bdgRRi./If
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPs183AAoJEECxmPOUX5FEALUP/170sVoVGAzY5+BqYyf8gYDj
-rFE5duwkUJ6BjBM152PE93iNg5GzX9REDHu0bMqiBZhcic2M5amhAcgTmpr8LfNX
-U07ZkHTDC0glSkP5pO5bjhlXK/STBm0dbjTG+LKVhJk2j5cLL7GQro2meSCJGHZr
-SU1Dcq4FOqiZ59HXsIK4xpc6BVQ4qxL27rJ3dCJc3KWM9uJUgTE1N7NvMSlRxKxm
-gt7Ibcy1WLVgNjNOG/Pd94dGoE/v0nw5mnDLD4ptswbsI7WIscu9UIPKpbVpotu+
-feGnAVzh7WvVI1fhVrZ1/TclhSQO06ggvRMwIKkblxJWIxEICuRqZtGYAxs5opKb
-fH/tLAZ2YVkz6gbgwRcgGWYXGe3WvLep3YfxkmFat6l5MG9OUbt937FbWKUskm2s
-CTFg5o+vnDkA530RrLImT2fXxJoszUDOP0rW+XaH7fNgsJVEoD5C2H3TXvoVj/Pb
-TbROQONmhStn8CGVwBNEWP+0lT8MNACJK4F2GHGy9YjsuQrF39zyiFA9N/xKYpWb
-gYo/GPJqh1/4ImnyyxFscyXlium4aoFj2KHjUz4ue/ko/Df9SjzqOyAbl0Shx+Ao
-IfF7bRxZ+gUf1yBv0pUT6T7tlwNlzgcz9iu3eXXgluLTQVxvkUj6jqPvLzb41Z1d
-fAHFJrCSa6DyXi3vFI+a
-=Ckqv
+iQIcBAEBCAAGBQJPs2i4AAoJEECxmPOUX5FE3+8QAIxCifqCmwRGsw09IS2RTpWx
+OkI60pCRa42PgSiocPf+bFBU2o3IjH9LK65Vcsf0vlG3bjAwUqt8x5OO8kw79Bzo
+ph5yw7B2DWIeCZu7ivKcSB7OaDw9KN4vc9Wke0HsMWMmphX/H7Epc6yd20MEtDi3
+68Hk96O+Zc3u7noiRU41UyoInWls/+RKzGEbY+UBYje6Cbeg09Rgv5sGVQIVKIxf
+qwyU5DavJtTiKmmTXwmq3lpSU3+5lJQ/og9o8qXZtpJs+m9pmavfUHl6o3LJyzko
+SkdYzQOYsTw1vmMiOhft2996OI774QOLYr6JOG3+oRp5IVhoXSVbyzRPvQYdH0Mv
+cgTrA3ngRHwcgoPW3OP66kECRbUKP29y/Fbzqp+E/ebLkpIsfpYPoBcAqs3u7v7p
+MXbB5kAQeDZS3KOHRKa1PDu5B1gbzEoMvUH3IcQBXKG3bxdaTW10CArYXhqm0E4E
+7EinqVZXtHw4Ie6sLx/VK2TD85t9E2VRarPiqZ+lg54AeumFweKewK6/fPrdmVTb
+pbQhHA9n9JbVpoGNmw8jcERf4oz0+/EzpA/mTF1dsPp8Jz0ehOzWH2y0SRIBEVdI
+RdlCyMTghQHThsn4ZRrhEUcQn1oAdOGuKuHsap/GFIAqv6BABgnvR7SVRnOUkzdM
+0nsjcBaXIK+GTeF6ECDO
+=SYRI
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__16_May_2012_18_03_03_+1000_dFO9MIn6Azqzh5Dv--
+--Signature=_Wed__16_May_2012_18_43_36_+1000_U1BaO3bdgRRi./If--
