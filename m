@@ -1,70 +1,172 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH -next] wdt: fix iTCO printk format warnings
-Date: Thu, 17 May 2012 09:14:49 +0200
-Message-ID: <20120517071449.GT3074@spo001.leaseweb.com>
-References: <20120514200357.e7448e4ca061c8efe3d4757d@canb.auug.org.au> <4FB167D8.9000905@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the arm-soc tree
+Date: Thu, 17 May 2012 17:18:10 +1000
+Message-ID: <20120517171810.64d248977f410292c18086cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__17_May_2012_17_18_10_+1000_XO26TdLPITRQ2MIB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:45183 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1761089Ab2EQHOw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 May 2012 03:14:52 -0400
-Content-Disposition: inline
-In-Reply-To: <4FB167D8.9000905@xenotime.net>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52069 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761171Ab2EQHSU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 May 2012 03:18:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Viresh Kumar <viresh.kumar@st.com>
 
-Hi Randi,
+--Signature=_Thu__17_May_2012_17_18_10_+1000_XO26TdLPITRQ2MIB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> Fix printk format warnings:
-> 
-> drivers/watchdog/iTCO_wdt.c:577:3: warning: format '%04llx' expects type 'long long unsigned int', but argument 2 has type 'resource_size_t'
-> drivers/watchdog/iTCO_wdt.c:594:3: warning: format '%04llx' expects type 'long long unsigned int', but argument 2 has type 'resource_size_t'
-> drivers/watchdog/iTCO_wdt.c:600:2: warning: format '%04llx' expects type 'long long unsigned int', but argument 4 has type 'resource_size_t'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> Cc:	Wim Van Sebroeck <wim@iguana.be>
+Hi Andrew,
 
-Had an issue with the patch (I have linenumbers in 800 instead of late 500's).
-Any idea why we have this difference?
-Below the patch I applied in linux-watchdog-next.
+Today's linux-next merge of the akpm tree got a conflict in
+drivers/ata/sata_mv.c between commit eee989902aab ("ARM: Orion: SATA: Add
+per channel clk/clkdev support") from the arm-soc tree and commit
+"ata/sata_mv: remove conditional compilation of clk code" from the akpm
+tree.
 
-Thanks,
-Wim.
----
-diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
-index 9fecb95..2aab56f 100644
---- a/drivers/watchdog/iTCO_wdt.c
-+++ b/drivers/watchdog/iTCO_wdt.c
-@@ -839,7 +839,7 @@ static int __devinit iTCO_wdt_init(struct pci_dev *pdev,
- 	/* The TCO logic uses the TCO_EN bit in the SMI_EN register */
- 	if (!request_region(SMI_EN, 4, "iTCO_wdt")) {
- 		pr_err("I/O address 0x%04lx already in use, device disabled\n",
--		       SMI_EN);
-+		       (u64)SMI_EN);
- 		ret = -EIO;
- 		goto out_unmap;
- 	}
-@@ -854,7 +854,7 @@ static int __devinit iTCO_wdt_init(struct pci_dev *pdev,
- 	   by the TCOBASE value */
- 	if (!request_region(TCOBASE, 0x20, "iTCO_wdt")) {
- 		pr_err("I/O address 0x%04lx already in use, device disabled\n",
--		       TCOBASE);
-+		       (u64)TCOBASE);
- 		ret = -EIO;
- 		goto unreg_smi_en;
- 	}
-@@ -862,7 +862,7 @@ static int __devinit iTCO_wdt_init(struct pci_dev *pdev,
- 	pr_info("Found a %s TCO device (Version=%d, TCOBASE=0x%04lx)\n",
- 		iTCO_chipset_info[ent->driver_data].name,
- 		iTCO_chipset_info[ent->driver_data].iTCO_version,
--		TCOBASE);
-+		(u64)TCOBASE);
- 
- 	/* Clear out the (probably old) status */
- 	outw(0x0008, TCO1_STS);	/* Clear the Time Out Status bit */
+I fixed it up (see below) and can carry the fix as necessary.
+
+[I used the arm-soc version with all the conditionals on CONFIG_HAVE_CLK
+removed.]
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/ata/sata_mv.c
+index 24712ad,37503b8..0000000
+--- a/drivers/ata/sata_mv.c
++++ b/drivers/ata/sata_mv.c
+@@@ -551,10 -551,7 +551,8 @@@ struct mv_host_priv=20
+  	u32			irq_mask_offset;
+  	u32			unmask_all_irqs;
+ =20
+- #if defined(CONFIG_HAVE_CLK)
+  	struct clk		*clk;
+ +	struct clk              **port_clks;
+- #endif
+  	/*
+  	 * These consistent DMA memory pools give us guaranteed
+  	 * alignment for hardware-accessed data structures,
+@@@ -4028,9 -4025,6 +4026,7 @@@ static int mv_platform_probe(struct pla
+  	struct resource *res;
+  	int n_ports =3D 0;
+  	int rc;
+- #if defined(CONFIG_HAVE_CLK)
+ +	int port;
+- #endif
+ =20
+  	ata_print_version_once(&pdev->dev, DRV_VERSION);
+ =20
+@@@ -4058,13 -4052,6 +4054,11 @@@
+ =20
+  	if (!host || !hpriv)
+  		return -ENOMEM;
+- #if defined(CONFIG_HAVE_CLK)
+ +	hpriv->port_clks =3D devm_kzalloc(&pdev->dev,
+ +					sizeof(struct clk *) * n_ports,
+ +					GFP_KERNEL);
+ +	if (!hpriv->port_clks)
+ +		return -ENOMEM;
+- #endif
+  	host->private_data =3D hpriv;
+  	hpriv->n_ports =3D n_ports;
+  	hpriv->board_idx =3D chip_soc;
+@@@ -4074,21 -4061,11 +4068,19 @@@
+  				   resource_size(res));
+  	hpriv->base -=3D SATAHC0_REG_BASE;
+ =20
+- #if defined(CONFIG_HAVE_CLK)
+  	hpriv->clk =3D clk_get(&pdev->dev, NULL);
+  	if (IS_ERR(hpriv->clk))
+ -		dev_notice(&pdev->dev, "cannot get clkdev\n");
+ +		dev_notice(&pdev->dev, "cannot get optional clkdev\n");
+  	else
+ -		clk_enable(hpriv->clk);
+ +		clk_prepare_enable(hpriv->clk);
+ +
+ +	for (port =3D 0; port < n_ports; port++) {
+ +		char port_number[16];
+ +		sprintf(port_number, "%d", port);
+ +		hpriv->port_clks[port] =3D clk_get(&pdev->dev, port_number);
+ +		if (!IS_ERR(hpriv->port_clks[port]))
+ +			clk_prepare_enable(hpriv->port_clks[port]);
+ +	}
+- #endif
+ =20
+  	/*
+  	 * (Re-)program MBUS remapping windows if we are asked to.
+@@@ -4115,18 -4092,10 +4107,16 @@@
+  		return 0;
+ =20
+  err:
+- #if defined(CONFIG_HAVE_CLK)
+  	if (!IS_ERR(hpriv->clk)) {
+ -		clk_disable(hpriv->clk);
+ +		clk_disable_unprepare(hpriv->clk);
+  		clk_put(hpriv->clk);
+  	}
+ +	for (port =3D 0; port < n_ports; port++) {
+ +		if (!IS_ERR(hpriv->port_clks[port])) {
+ +			clk_disable_unprepare(hpriv->port_clks[port]);
+ +			clk_put(hpriv->port_clks[port]);
+ +		}
+ +	}
+- #endif
+ =20
+  	return rc;
+  }
+@@@ -4142,24 -4111,13 +4132,20 @@@
+  static int __devexit mv_platform_remove(struct platform_device *pdev)
+  {
+  	struct ata_host *host =3D platform_get_drvdata(pdev);
+- #if defined(CONFIG_HAVE_CLK)
+  	struct mv_host_priv *hpriv =3D host->private_data;
+ +	int port;
+- #endif
+  	ata_host_detach(host);
+ =20
+- #if defined(CONFIG_HAVE_CLK)
+  	if (!IS_ERR(hpriv->clk)) {
+ -		clk_disable(hpriv->clk);
+ +		clk_disable_unprepare(hpriv->clk);
+  		clk_put(hpriv->clk);
+  	}
+ +	for (port =3D 0; port < host->n_ports; port++) {
+ +		if (!IS_ERR(hpriv->port_clks[port])) {
+ +			clk_disable_unprepare(hpriv->port_clks[port]);
+ +			clk_put(hpriv->port_clks[port]);
+ +		}
+ +	}
+- #endif
+  	return 0;
+  }
+ =20
+
+--Signature=_Thu__17_May_2012_17_18_10_+1000_XO26TdLPITRQ2MIB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPtKYyAAoJEECxmPOUX5FES3IP/RbTkMl+/aBmq340NXVwnBVY
+K9bwX9axjkRKVNFmFeKylvNeB/rEdzGIAO/zYZLpr22xBruu6Qr2L6jCKfiQw3xy
+ykYSpWKs+Q960rVun55VSYZAH+sfdIzGAMYXBUSBSusHllC1mZ/114UAcmBlFuZR
+9/7PiuJ7lYEX0RwXafUnEZwzm8l9sRkgDjWojm08lCEPBXvp34vrY611wu2QoLuA
+MwmgTT/X1xHulue7dyU+mmgWS0M1PTZms3d5l8TqvX+h3Mgp5HfaHBEPxLBEjfdn
+BXZWK08Oi+iOn50CU5AIkunkjJ7vEQXHFWDhgZlkkV7iX8vXnt2PUhv4CyPZON2Y
+FjcTu0AUjcgMogzNCRC8mRxKMVigbTC9uFaX3hNI6mXJXiUWDFm874PkwLrFtLtG
+zf1wHe40XWoiibAoOQ3okS4BntXxEQwOeilAusBtW3FTrAyaCzLWFI9fvi6wTC64
+dgc8yfMukrbd2WLV9mJ/Shls9QN/q0n+F7/4CUXLbiCzASxQQQ0vuGQBwrJljPfl
+29uUOJmQg0iK+uyVKqjzX6MxzTvxfLMMO61hl9g8qkcdd05pop9sVH4f3K+KvBPg
+DXUBK94QpifktM/Q0dFUyW2mqfNGV4vLl1aw91onRtC1EWgfNp8eDVF6rA8flxd7
+ivfA7OfRbZ4oBy90ShKE
+=j58C
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__17_May_2012_17_18_10_+1000_XO26TdLPITRQ2MIB--
