@@ -1,37 +1,68 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: manual merge of the crypto tree with the powerpc
- tree
-Date: Thu, 17 May 2012 13:22:36 +1000
-Message-ID: <20120517032236.GA11236@gondor.apana.org.au>
-References: <20120517132116.8a5378bce254fc39d20cb08a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Thu, 17 May 2012 13:47:36 +1000
+Message-ID: <20120517134736.dd91f7c321dca6c7cf459484@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__17_May_2012_13_47_36_+1000_HqM+OguHZB73IAtC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sting.hengli.com.au ([178.18.18.71]:49490 "EHLO
-	fornost.hengli.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1760940Ab2EQDWr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 23:22:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20120517132116.8a5378bce254fc39d20cb08a@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:60340 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760958Ab2EQDrp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 May 2012 23:47:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Westin <andreas.westin@stericsson.com>, Kent Yoder <key@linux.vnet.ibm.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
 
-On Thu, May 17, 2012 at 01:21:16PM +1000, Stephen Rothwell wrote:
-> Hi Herbert,
-> 
-> Today's linux-next merge of the crypto tree got a conflict in
-> drivers/crypto/Kconfig between commit aef7b31c8833 ("powerpc/crypto:
-> Build files for the nx device driver") from the powerpc tree and commit
-> 2789c08fffea ("crypto: ux500 - Add driver for CRYP hardware") from the
-> crypto tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+--Signature=_Thu__17_May_2012_13_47_36_+1000_HqM+OguHZB73IAtC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks fine.  Thanks Stephen!
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Hi Dave,
+
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+arch/x86/pci/fixup.c: In function 'pci_fixup_video':
+arch/x86/pci/fixup.c:352:3: error: implicit declaration of function 'vga_de=
+fault_device' [-Werror=3Dimplicit-function-declaration]
+arch/x86/pci/fixup.c:353:4: error: implicit declaration of function 'vga_se=
+t_default_device' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 6cf20beec4b9 ("x86/vga: set the default device from the
+fixup").
+
+I have used the drm tree from next-20120516 for today.
+
+If it is relevant, I merged the drm tree before the sound tree today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__17_May_2012_13_47_36_+1000_HqM+OguHZB73IAtC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPtHTYAAoJEECxmPOUX5FEKBkP/i9ZM+TOKA936XXkABDpHx3H
+EdDzDG9uo4LVJVZ6v/PsJdW1WNL/SHJ+RHf2T00yZNVV8OnSkPPgzkgBVn6sqICU
+9lovxjuH8167U46qa9SE/WOS3HkY9e4OwIZg0ltYugRmE+c6wbBx/j1Ut6fSdaXP
+1blSgqgxzEUNYsseJVyoXTTJcC0GCiBU08c61mK1mfnXbde9qwRJ8NbwLfvxI60E
+1gUSBG4Jk7rtS7uU712oW4jD8RRK8CkF18mrCu1ovQDe47FK51YjdARMzuHnLFc3
+wUEt7KNZKcE57ZS7vu0zM0/+5ZwjXfqCXcG0FZoqvXy0DeFQnuF+n9g3c9Smnjef
+rgUgTUFvasqFBaEiMAsx2JBzR8XXGuTE7m+3Lo2oeN38hq+hyBvXqgyx4/5KmGhI
+mx5iyobluamndTP99Pqmm7/WP5lxHUws7HNKcca2Nutp6o9/amMsB2OkOltkNk2/
+A+CXYntFvDbXmMXDXWyP7GbwRp/W0gVsm5qXYf/9OZGsBAlGxeFqCoi49qwBtRyM
+PZuTjG3WcehooUWyoYQinAv+hzL74yVMCb309OC5uqEK9zh7Y4TXX0dLOLSLEQXK
+WZpCSO+OnC7GpLhGNETBJA/RZnq//zIwTytaGJe5ryGhG0igoUA1tHRe580RY8Df
+l9ZqtL7LupX+KusLGV+2
+=069l
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__17_May_2012_13_47_36_+1000_HqM+OguHZB73IAtC--
