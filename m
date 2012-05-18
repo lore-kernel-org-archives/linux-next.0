@@ -1,43 +1,47 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: Tree for May 16 (mfd/mc13xxx)
-Date: Fri, 18 May 2012 13:04:20 +0200
-Message-ID: <20120518110420.GM12015@sortiz-mobl>
-References: <20120516201426.3a162ecd6adeb7132413f1b9@canb.auug.org.au>
- <4FB3CF4E.8000106@xenotime.net>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: at91: Add ADC driver to at91sam9260/at91sam9g20 dtsi files
+Date: Fri, 18 May 2012 13:03:28 +0000
+Message-ID: <201205181303.28535.arnd@arndb.de>
+References: <4FB3B1F3.6080102@atmel.com> <20120517150601.GA28104@kroah.com> <20120518084446.a7b229074ea215fd7bcd1eb8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:6968 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762427Ab2ERKyZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 May 2012 06:54:25 -0400
-Content-Disposition: inline
-In-Reply-To: <4FB3CF4E.8000106@xenotime.net>
+Received: from moutng.kundenserver.de ([212.227.17.9]:51410 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1945932Ab2ERNGG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 May 2012 09:06:06 -0400
+In-Reply-To: <20120518084446.a7b229074ea215fd7bcd1eb8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, plagnioj@jcrosoft.com, maxime.ripard@free-electrons.com, olof@lixom.net, linux-next@vger.kernel.org
 
-Hi Randy,
-
-On Wed, May 16, 2012 at 09:01:18AM -0700, Randy Dunlap wrote:
-> On 05/16/2012 03:14 AM, Stephen Rothwell wrote:
-> 
+On Thursday 17 May 2012, Stephen Rothwell wrote:
+> On Thu, 17 May 2012 08:06:01 -0700 Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Wed, May 16, 2012 at 06:50:54PM +0000, Arnd Bergmann wrote:
+> > > On Wednesday 16 May 2012, Nicolas Ferre wrote:
+> > > > Now that the bulk of at91sam9g20-related nodes are located in at91sam9260.dtsi,
+> > > > we have to re-create the path to this ADC node for SoC specific parts.
+> > > > 
+> > > > Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+> > > 
+> > > Should we apply this patch in arm-soc so that Greg can drop the hunk that
+> > > no longer applies?
 > > 
-> > The mfd tree lost its build failure but gained another so I used the
-> > version from next-20120511.
+> > It's not a "no longer applies", it's a "this does not merge".  The patch
+> > is in my tree, unless you want me to revert it, it's going to stay there
+> > until it goes to Linus.
 > 
+> Just apply the patch to the arm-soc tree - then the merge resolution
+> becomes "use the arm-soc version".   There is no need for Greg to revert
+> the other patch.
 > 
-> drivers/mfd/mc13xxx-core.c:726:2: error: implicit declaration of function 'regmap_exit'
-> 
-> 
-> Full randconfig file is attached.
-> (REGMAP is not enabled.)
-I just pushed a patch to fix this one.
 
-Cheers,
-Samuel
+Yes, good point.
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+I've applied the patch on the at91/dt branch now.
+
+	Arnd
