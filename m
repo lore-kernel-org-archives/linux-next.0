@@ -1,47 +1,34 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: at91: Add ADC driver to at91sam9260/at91sam9g20 dtsi files
-Date: Fri, 18 May 2012 13:03:28 +0000
-Message-ID: <201205181303.28535.arnd@arndb.de>
-References: <4FB3B1F3.6080102@atmel.com> <20120517150601.GA28104@kroah.com> <20120518084446.a7b229074ea215fd7bcd1eb8@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the s5p tree
+Date: Fri, 18 May 2012 08:21:07 -0700
+Message-ID: <20120518152107.GA10274@kroah.com>
+References: <20120518172224.abd97797bab5d99eaeec97a5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:51410 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1945932Ab2ERNGG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 May 2012 09:06:06 -0400
-In-Reply-To: <20120518084446.a7b229074ea215fd7bcd1eb8@canb.auug.org.au>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:56530 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752133Ab2ERPVK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 May 2012 11:21:10 -0400
+Content-Disposition: inline
+In-Reply-To: <20120518172224.abd97797bab5d99eaeec97a5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, plagnioj@jcrosoft.com, maxime.ripard@free-electrons.com, olof@lixom.net, linux-next@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Thursday 17 May 2012, Stephen Rothwell wrote:
-> On Thu, 17 May 2012 08:06:01 -0700 Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, May 16, 2012 at 06:50:54PM +0000, Arnd Bergmann wrote:
-> > > On Wednesday 16 May 2012, Nicolas Ferre wrote:
-> > > > Now that the bulk of at91sam9g20-related nodes are located in at91sam9260.dtsi,
-> > > > we have to re-create the path to this ADC node for SoC specific parts.
-> > > > 
-> > > > Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
-> > > 
-> > > Should we apply this patch in arm-soc so that Greg can drop the hunk that
-> > > no longer applies?
-> > 
-> > It's not a "no longer applies", it's a "this does not merge".  The patch
-> > is in my tree, unless you want me to revert it, it's going to stay there
-> > until it goes to Linus.
+On Fri, May 18, 2012 at 05:22:24PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Just apply the patch to the arm-soc tree - then the merge resolution
-> becomes "use the arm-soc version".   There is no need for Greg to revert
-> the other patch.
+> Today's linux-next merge of the usb tree got a conflict in
+> arch/arm/mach-exynos/mach-universal_c210.c between commit 6dafa4aead1b
+> ("ARM: EXYNOS: Add DRM core device support for Universal C210 board")
+> from the s5p tree and commit 3a36dd068f43 ("ARM: EXYNOS: Add s3c-hsotg
+> device support for Universal C210 board") from the usb tree.
 > 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Yes, good point.
+Looks good to me, thanks.
 
-I've applied the patch on the at91/dt branch now.
-
-	Arnd
+greg k-h
