@@ -1,58 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the edac tree with the trivial tree
-Date: Fri, 18 May 2012 16:06:03 +1000
-Message-ID: <20120518160603.0eddece830f829d3b8570ac7@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the s5p tree
+Date: Fri, 18 May 2012 17:22:24 +1000
+Message-ID: <20120518172224.abd97797bab5d99eaeec97a5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__18_May_2012_16_06_03_+1000_IRBnDf43jbRFUVkm"
+ boundary="Signature=_Fri__18_May_2012_17_22_24_+1000_1OOpMH=3nlTDvK3."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51026 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:44055 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754403Ab2ERGGJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 May 2012 02:06:09 -0400
+	with ESMTP id S1754820Ab2ERHWe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 May 2012 03:22:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>, David Mackey <tdmackey@twitter.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
---Signature=_Fri__18_May_2012_16_06_03_+1000_IRBnDf43jbRFUVkm
+--Signature=_Fri__18_May_2012_17_22_24_+1000_1OOpMH=3nlTDvK3.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi Greg,
 
-Today's linux-next merge of the edac tree got a conflict in
-drivers/edac/edac_device.c between commit 15ed103a9800 ("edac: Fix
-spelling errors") from the trivial tree and commit b9e889c84229 ("edac:
-rewrite edac_align_ptr()") from the edac tree.
+Today's linux-next merge of the usb tree got a conflict in
+arch/arm/mach-exynos/mach-universal_c210.c between commit 6dafa4aead1b
+("ARM: EXYNOS: Add DRM core device support for Universal C210 board")
+from the s5p tree and commit 3a36dd068f43 ("ARM: EXYNOS: Add s3c-hsotg
+device support for Universal C210 board") from the usb tree.
 
-One of the comments fixed by the former is removed by the latter, so I
-did that.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__18_May_2012_16_06_03_+1000_IRBnDf43jbRFUVkm
+diff --cc arch/arm/mach-exynos/mach-universal_c210.c
+index dd8ec8d4,9be8a07..0000000
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@@ -23,7 -23,7 +23,8 @@@
+  #include <linux/i2c-gpio.h>
+  #include <linux/i2c/mcs.h>
+  #include <linux/i2c/atmel_mxt_ts.h>
+ +#include <drm/exynos_drm.h>
++ #include <linux/platform_data/s3c-hsotg.h>
+ =20
+  #include <asm/mach/arch.h>
+  #include <asm/hardware/gic.h>
+@@@ -1076,9 -1058,7 +1085,10 @@@ static struct platform_device *universa
+  	&s5p_device_onenand,
+  	&s5p_device_fimd0,
+  	&s5p_device_jpeg,
+ +#ifdef CONFIG_DRM_EXYNOS
+ +	&exynos_device_drm,
+ +#endif
++ 	&s3c_device_usb_hsotg,
+  	&s5p_device_mfc,
+  	&s5p_device_mfc_l,
+  	&s5p_device_mfc_r,
+
+--Signature=_Fri__18_May_2012_17_22_24_+1000_1OOpMH=3nlTDvK3.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPtebLAAoJEECxmPOUX5FEnTUP/RBySZAvAOBxU2G5MZvcxBh6
-6xXNRa0obL6kygqYdSi9lcntC3XjMBbtBY4gdoj/XIN0R6rAi4pgicXxb2jHl56Y
-RrQzVFfRufww7QlvhpoCni2IekY8bsCq5DVfMxlTUyg36f7LrXLiNkpAKdGyKY75
-rLoNgC8z2yfhY6rSg8VNKnNK++6yqb8Odb5Pf7wwVZyEM2ZfSq95znCuC6jf33Pw
-Spf7reXioWlkyHDNra/pFccQDIxwOoyLPQxnaz/XTN/DwP+Jd7eO5n4wOvI86pZz
-ZNxjYJ4h6YSbeIQtb+E22wkgHPVw7VspBfo6dOR+KHL6gfJqmpgyvcGu7mcxFZjJ
-V42iAfLsfA2mimpa1D/GLhywrYb+trUvYLS37SUpcIDIgR3yC6VOJZWmA54Edgby
-r5PUzt6V81u+YPYLWbADmoklgzgoOwNVaCGmV0nUo6JXf+IM1ya4fP9I4TKDCbKq
-VRKnTztllPupaxmqdQ45iBnvephywURAWntDalHtqWJPblBTMlDBaCoiRjwUCPoZ
-6C9VkD2ii7lDVsfBct0vfAtEP5fXSopu4HJJtx3YEIIZ0ig5YYeghtwmTVeCPdiI
-JKyJkzKXJyV42O7k1+OBTyMmSR4OrnHgzQ8oDjWSAtTO9j8uB8ZxJWToENUH1R8n
-rX3nCtN97MPBEjdHaiZ8
-=M+WJ
+iQIcBAEBCAAGBQJPtfiwAAoJEECxmPOUX5FEK54P/jrIWAw29XgNUzW2K7w5lYns
+dq5maiCb3AyMDGCz680hyC5bTYi3svEaZfjM6VsgLO4Kef4dSHLx1q6Ccm5aFnTL
+Ahl2/7fJytceDeFaHAxtj+J2TtAUNjdvcccPBFDpav66p+1bOS/o4+n8MF/55iFA
+GRRKONs00FDxOYdgbriXTtfQ42Ko83t1QwErw8rJXWFHgGNfE8upsdqlH0CU8oBA
+GxPtFW99rZ1DQ3lNaGP2pZzeFBqghl2mDzHDUCkLxGh+V7VjUrHqFj02TCZ3bTki
+AxFG2B3mWEVg5aJdHKjxYPIiPLMllgKbGBtDHIJYPHFflj4NiAeVx0/9VeEpBMm7
+shTS/TrxP10ye5SQvK90iymMK6MskUjcVTZv//JnmDqdiHaXeK9TAONTMmIXVOp7
+I4wFgGtw7q8LE9lSDe7xKm1AaYGHK1dmSzqF3KRPkwsFDuqOz6yaLvdFdpTDY3lV
+jsnF3Cpb7a2XGALJIbcJ8T2JovSp14Ux14dEk6s/c7CbQHVis+u9kJrmSd6+0rHu
+/4wONVgFThdLI58AR0cg7DIbnyux4SvIxs1vsl93v1pZL/yfAK0WnHb+x1SRcr6l
+7m2Rk/RZ0+IhtvMc6VFFbyTr8xOLPrs6LZr9ri/lC5Vupzm+QuvS8bQ8ywTjBL1a
+5BnfMYyu+gCubg+GPXuP
+=+efe
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__18_May_2012_16_06_03_+1000_IRBnDf43jbRFUVkm--
+--Signature=_Fri__18_May_2012_17_22_24_+1000_1OOpMH=3nlTDvK3.--
