@@ -1,111 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the watchdog tree with the mfd tree
-Date: Fri, 18 May 2012 15:23:48 +1000
-Message-ID: <20120518152348.1e5070cdc16cfdf00682546d@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with Linus' tree
+Date: Fri, 18 May 2012 15:48:00 +1000
+Message-ID: <20120518154800.3b8cae2960234e03bee0101e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__18_May_2012_15_23_48_+1000_ibWUWgqPc_IelAZj"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Sierra <asierra@xes-inc.com>, Guenter Roeck <linux@roeck-us.net>, Samuel Ortiz <sameo@linux.intel.com>, Randy Dunlap <rdunlap@xenotime.net>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__18_May_2012_15_48_00_+1000_IRrGdO.y8TcJ9.HZ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47061 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755638Ab2ERFsK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 May 2012 01:48:10 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Lu <aaron.lu@amd.com>
 
---Signature=_Fri__18_May_2012_15_23_48_+1000_ibWUWgqPc_IelAZj
+--Signature=_Fri__18_May_2012_15_48_00_+1000_IRrGdO.y8TcJ9.HZ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wim,
+Hi Rafael,
 
-Today's linux-next merge of the watchdog tree got a conflict in
-drivers/watchdog/iTCO_wdt.c between commit 887c8ec7219f ("watchdog:
-Convert iTCO_wdt driver to mfd model") from the  tree and commit
-c3614aa19d3e ("watchdog: iTCO_wdt.c: fix printk format warnings") from
-the watchdog tree.
+Today's linux-next merge of the pm tree got a conflict in
+drivers/acpi/scan.c between commit 5c7dd710f691 ("ACPI / PCI / PM: Fix
+device PM regression related to D3hot/D3cold") from the  tree and commit
+6ef564fd2070 ("ACPI / PM: Evaluate _PS3 when entering D3 Cold") from the
+pm tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+I fixed it up (by using the version from Linus' tree) and can carry the
+fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/watchdog/iTCO_wdt.c
-index 741528b,2aab56f..0000000
---- a/drivers/watchdog/iTCO_wdt.c
-+++ b/drivers/watchdog/iTCO_wdt.c
-@@@ -572,33 -837,32 +572,33 @@@ static int __devinit iTCO_wdt_probe(str
-  	iTCO_wdt_set_NO_REBOOT_bit();
- =20
-  	/* The TCO logic uses the TCO_EN bit in the SMI_EN register */
- -	if (!request_region(SMI_EN, 4, "iTCO_wdt")) {
- -		pr_err("I/O address 0x%04lx already in use, device disabled\n",
- +	if (!request_region(iTCO_wdt_private.smi_res->start,
- +			resource_size(iTCO_wdt_private.smi_res), dev->name)) {
- +		pr_err("I/O address 0x%04llx already in use, device disabled\n",
-- 		       SMI_EN);
-+ 		       (u64)SMI_EN);
- -		ret =3D -EIO;
- -		goto out_unmap;
- +		ret =3D -EBUSY;
- +		goto unmap_gcs;
-  	}
-  	if (turn_SMI_watchdog_clear_off >=3D iTCO_wdt_private.iTCO_version) {
- -		/* Bit 13: TCO_EN -> 0 =3D Disables TCO logic generating an SMI# */
- +		/*
- +		 * Bit 13: TCO_EN -> 0
- +		 * Disables TCO logic generating an SMI#
- +		 */
-  		val32 =3D inl(SMI_EN);
-  		val32 &=3D 0xffffdfff;	/* Turn off SMI clearing watchdog */
-  		outl(val32, SMI_EN);
-  	}
- =20
- -	/* The TCO I/O registers reside in a 32-byte range pointed to
- -	   by the TCOBASE value */
- -	if (!request_region(TCOBASE, 0x20, "iTCO_wdt")) {
- -		pr_err("I/O address 0x%04lx already in use, device disabled\n",
- +	if (!request_region(iTCO_wdt_private.tco_res->start,
- +			resource_size(iTCO_wdt_private.tco_res), dev->name)) {
- +		pr_err("I/O address 0x%04llx already in use, device disabled\n",
-- 		       TCOBASE);
-+ 		       (u64)TCOBASE);
- -		ret =3D -EIO;
- -		goto unreg_smi_en;
- +		ret =3D -EBUSY;
- +		goto unreg_smi;
-  	}
- =20
- -	pr_info("Found a %s TCO device (Version=3D%d, TCOBASE=3D0x%04lx)\n",
- -		iTCO_chipset_info[ent->driver_data].name,
- -		iTCO_chipset_info[ent->driver_data].iTCO_version,
- -		(u64)TCOBASE);
- +	pr_info("Found a %s TCO device (Version=3D%d, TCOBASE=3D0x%04llx)\n",
-- 		ich_info->name, ich_info->iTCO_version, TCOBASE);
-++		ich_info->name, ich_info->iTCO_version, (u64)TCOBASE);
- =20
-  	/* Clear out the (probably old) status */
-  	outw(0x0008, TCO1_STS);	/* Clear the Time Out Status bit */
-
---Signature=_Fri__18_May_2012_15_23_48_+1000_ibWUWgqPc_IelAZj
+--Signature=_Fri__18_May_2012_15_48_00_+1000_IRrGdO.y8TcJ9.HZ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPtdzkAAoJEECxmPOUX5FENycP/jD1fniOMgitCgWIkja7618u
-M3MzOkgd+1X7dWZkUUaWQmfaPruIFSKr3OWxVGp9GZEVHwmBZXGBHdz78YOF2DaC
-GTNYoqcOg0bu/wLOGZkuolhnLARhvK9ox2LHRroWGcfZNlWNambipXFtaexqv3Ce
-YrTCo/5J+q2f91KU9ItAENv9fbg6ND0P3ENCldZzoL12EbxsT1KAhCd5FeWHKvgz
-ZXAynI0SUdH5fNIEEHvpJA14wGoFvW8DAqGuIUseV/KmdPmLrQcHWM2UL3DtPnmo
-YXZbx/lpb73GfVQ7vAugEZkkCty7eECXtos3n2vB1Boo4btY5IyvEIQ9np26JEaB
-bD2gVsrZLU28f5dmxbJaPMfooIDpsrqzEryPDsBFzCxI+IfmqbE81rjia1YiRZ+d
-2R3F8eGJ8yH3GlG8tY845YuU07icdpwPzvQOm+udbondGBUHhvWxm7nL7hvqd3vS
-YUn5ZJGJFNvqc/NA+RI0OZ5IwTuJYmrDoWwCev4x+NJkc7CFdlJPxtL3l/CZxgb3
-VF+o9LR0tIaGchbIUnUAFMaYK5Lvk68O8vbeekoCa1bHUTd6y8ghnTnv3Ekn9tZf
-PoFV1iKZaDlRvXj0TYPB2Oi/7LrDaaoxT3JsK4cPY8GGndS7FPMYRtdAgt1mkFKv
-K8dPD5nT41DwTRiz2f2D
-=xcM1
+iQIcBAEBCAAGBQJPteKQAAoJEECxmPOUX5FEZYkP/0xzvyhb46DcntZl2rYCuRSJ
+2rK0TY3vCJakZe6a74N8SzE1roe93Hk/GWIAwg0ihGUX5MdLHRKDqmApAFbsUPjw
+K5VO3ms0fbFOo9h+7CvIrPX1umpfDKq94aQyUH3yskzlNmdk5HYfRDaIwRmsFwAS
+E9WYGwvWJGCQ2q9G8GWVuCS3Vp/hyGtuGGnQPKICdzHmMmGZUbjn0ruaNJQjFjor
+MasnJ+qqlozF7xJCLYnCwUj32Nlvv2mnNXdvIJLwZd60fw8i+8hB35Hx2E2T2bZ2
+b3PsB4LeIzRYP/lLMy5YoRtScJmnnBFNMmBPwB4J0/mMSFITb3YBVumaMVgkvA8a
+Rjmz+EG9j4+lXyYCvq4h8nTyjsjKpSLe7R6S2BgkIXSTumvHZZ8XZXNenQ64RDdJ
+uSRCN0l19ZTXF43ML1ptl+yJl81eKpE1Qe+KaTIDV5HvipRZ6YMTp4RccNT379Pg
+0OW7E9QL05P02Ygd3GePEChFABA5/hpAgW++5jMnnCJjBUi0ZZ96hyz006IEhPav
+7xSRrwkWtlXi8uKlT6+3Ow94rHltCrLrw3SP/OPWEN+ezIe8vc25imF2Re7tLjgs
+O3fDLaDlKBEQwh4AmvZY2YiLMt5mH9jjbHH+gGhLi8FbMCFUCbUbLx44FnVJMnkL
+Bm/1u8e/CMTimng13EQA
+=5s0T
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__18_May_2012_15_23_48_+1000_ibWUWgqPc_IelAZj--
+--Signature=_Fri__18_May_2012_15_48_00_+1000_IRrGdO.y8TcJ9.HZ--
