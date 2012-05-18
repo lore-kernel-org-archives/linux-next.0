@@ -1,83 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the s5p tree
-Date: Fri, 18 May 2012 17:22:24 +1000
-Message-ID: <20120518172224.abd97797bab5d99eaeec97a5@canb.auug.org.au>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Fri, 18 May 2012 10:39:19 +0200
+Message-ID: <20120518083919.GB12015@sortiz-mobl>
+References: <20120516160906.25825987b7cd731a4b5215e1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__18_May_2012_17_22_24_+1000_1OOpMH=3nlTDvK3."
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:44055 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754820Ab2ERHWe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 May 2012 03:22:34 -0400
+Received: from mga03.intel.com ([143.182.124.21]:40059 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932782Ab2ERI3Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 May 2012 04:29:24 -0400
+Content-Disposition: inline
+In-Reply-To: <20120516160906.25825987b7cd731a4b5215e1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Fri__18_May_2012_17_22_24_+1000_1OOpMH=3nlTDvK3.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Greg,
+On Wed, May 16, 2012 at 04:09:06PM +1000, Stephen Rothwell wrote:
+> Hi Samuel,
+> 
+> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/built-in.o: In function `wm8400_i2c_probe':
+> wm8400-core.c:(.text+0x100165): undefined reference to `devm_regmap_init_i2c'
+> drivers/built-in.o: In function `wm8400_module_init':
+> wm8400-core.c:(.init.text+0xb43c): undefined reference to `i2c_register_driver'
+> drivers/built-in.o: In function `wm8400_module_exit':
+> wm8400-core.c:(.exit.text+0x655): undefined reference to `i2c_del_driver'
+> 
+> Probably caused by commit 96cd102ae039 ("mfd: Don't support non-modular
+> wm8400 build") which was introduced to fix other problems.  In this
+> build, CONFIG_I2C=m and CONFIG_REGMAP_I2C=m.
+> 
+> I have used the mfd tree from next-20120511 again for today.
+Sorry for the delay, this should be fixed now.
 
-Today's linux-next merge of the usb tree got a conflict in
-arch/arm/mach-exynos/mach-universal_c210.c between commit 6dafa4aead1b
-("ARM: EXYNOS: Add DRM core device support for Universal C210 board")
-from the s5p tree and commit 3a36dd068f43 ("ARM: EXYNOS: Add s3c-hsotg
-device support for Universal C210 board") from the usb tree.
-
-I fixed it up (see below) and can carry the fix as necessary.
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Samuel.
 
-diff --cc arch/arm/mach-exynos/mach-universal_c210.c
-index dd8ec8d4,9be8a07..0000000
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@@ -23,7 -23,7 +23,8 @@@
-  #include <linux/i2c-gpio.h>
-  #include <linux/i2c/mcs.h>
-  #include <linux/i2c/atmel_mxt_ts.h>
- +#include <drm/exynos_drm.h>
-+ #include <linux/platform_data/s3c-hsotg.h>
- =20
-  #include <asm/mach/arch.h>
-  #include <asm/hardware/gic.h>
-@@@ -1076,9 -1058,7 +1085,10 @@@ static struct platform_device *universa
-  	&s5p_device_onenand,
-  	&s5p_device_fimd0,
-  	&s5p_device_jpeg,
- +#ifdef CONFIG_DRM_EXYNOS
- +	&exynos_device_drm,
- +#endif
-+ 	&s3c_device_usb_hsotg,
-  	&s5p_device_mfc,
-  	&s5p_device_mfc_l,
-  	&s5p_device_mfc_r,
-
---Signature=_Fri__18_May_2012_17_22_24_+1000_1OOpMH=3nlTDvK3.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPtfiwAAoJEECxmPOUX5FEK54P/jrIWAw29XgNUzW2K7w5lYns
-dq5maiCb3AyMDGCz680hyC5bTYi3svEaZfjM6VsgLO4Kef4dSHLx1q6Ccm5aFnTL
-Ahl2/7fJytceDeFaHAxtj+J2TtAUNjdvcccPBFDpav66p+1bOS/o4+n8MF/55iFA
-GRRKONs00FDxOYdgbriXTtfQ42Ko83t1QwErw8rJXWFHgGNfE8upsdqlH0CU8oBA
-GxPtFW99rZ1DQ3lNaGP2pZzeFBqghl2mDzHDUCkLxGh+V7VjUrHqFj02TCZ3bTki
-AxFG2B3mWEVg5aJdHKjxYPIiPLMllgKbGBtDHIJYPHFflj4NiAeVx0/9VeEpBMm7
-shTS/TrxP10ye5SQvK90iymMK6MskUjcVTZv//JnmDqdiHaXeK9TAONTMmIXVOp7
-I4wFgGtw7q8LE9lSDe7xKm1AaYGHK1dmSzqF3KRPkwsFDuqOz6yaLvdFdpTDY3lV
-jsnF3Cpb7a2XGALJIbcJ8T2JovSp14Ux14dEk6s/c7CbQHVis+u9kJrmSd6+0rHu
-/4wONVgFThdLI58AR0cg7DIbnyux4SvIxs1vsl93v1pZL/yfAK0WnHb+x1SRcr6l
-7m2Rk/RZ0+IhtvMc6VFFbyTr8xOLPrs6LZr9ri/lC5Vupzm+QuvS8bQ8ywTjBL1a
-5BnfMYyu+gCubg+GPXuP
-=+efe
------END PGP SIGNATURE-----
-
---Signature=_Fri__18_May_2012_17_22_24_+1000_1OOpMH=3nlTDvK3.--
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
