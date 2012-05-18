@@ -1,59 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pm tree with Linus' tree
-Date: Fri, 18 May 2012 15:48:00 +1000
-Message-ID: <20120518154800.3b8cae2960234e03bee0101e@canb.auug.org.au>
+Subject: linux-next: manual merge of the edac tree with the trivial tree
+Date: Fri, 18 May 2012 16:02:31 +1000
+Message-ID: <20120518160231.8ba3d6157cbbc6d8a92280a6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__18_May_2012_15_48_00_+1000_IRrGdO.y8TcJ9.HZ"
+ boundary="Signature=_Fri__18_May_2012_16_02_31_+1000_6TP0YW=EKZqJftmp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47061 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:51565 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755638Ab2ERFsK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 May 2012 01:48:10 -0400
+	with ESMTP id S1759222Ab2ERGCr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 May 2012 02:02:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Lu <aaron.lu@amd.com>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Mackey <tdmackey@twitter.com>, Vinson Lee <vlee@twitter.com>, Jiri Kosina <jkosina@suse.cz>
 
---Signature=_Fri__18_May_2012_15_48_00_+1000_IRrGdO.y8TcJ9.HZ
+--Signature=_Fri__18_May_2012_16_02_31_+1000_6TP0YW=EKZqJftmp
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Mauro,
 
-Today's linux-next merge of the pm tree got a conflict in
-drivers/acpi/scan.c between commit 5c7dd710f691 ("ACPI / PCI / PM: Fix
-device PM regression related to D3hot/D3cold") from the  tree and commit
-6ef564fd2070 ("ACPI / PM: Evaluate _PS3 when entering D3 Cold") from the
-pm tree.
+Today's linux-next merge of the edac tree got a conflict in
+drivers/edac/edac_core.h between commit 15ed103a9800 ("edac: Fix spelling
+errors") from the trivial tree and commit 90b40d5cadba ("edac: Remove the
+legacy EDAC ABI") from the edac tree.
 
-I fixed it up (by using the version from Linus' tree) and can carry the
-fix as necessary.
+One of the comments fixed by the former is removed by the latter, so I
+did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__18_May_2012_15_48_00_+1000_IRrGdO.y8TcJ9.HZ
+--Signature=_Fri__18_May_2012_16_02_31_+1000_6TP0YW=EKZqJftmp
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPteKQAAoJEECxmPOUX5FEZYkP/0xzvyhb46DcntZl2rYCuRSJ
-2rK0TY3vCJakZe6a74N8SzE1roe93Hk/GWIAwg0ihGUX5MdLHRKDqmApAFbsUPjw
-K5VO3ms0fbFOo9h+7CvIrPX1umpfDKq94aQyUH3yskzlNmdk5HYfRDaIwRmsFwAS
-E9WYGwvWJGCQ2q9G8GWVuCS3Vp/hyGtuGGnQPKICdzHmMmGZUbjn0ruaNJQjFjor
-MasnJ+qqlozF7xJCLYnCwUj32Nlvv2mnNXdvIJLwZd60fw8i+8hB35Hx2E2T2bZ2
-b3PsB4LeIzRYP/lLMy5YoRtScJmnnBFNMmBPwB4J0/mMSFITb3YBVumaMVgkvA8a
-Rjmz+EG9j4+lXyYCvq4h8nTyjsjKpSLe7R6S2BgkIXSTumvHZZ8XZXNenQ64RDdJ
-uSRCN0l19ZTXF43ML1ptl+yJl81eKpE1Qe+KaTIDV5HvipRZ6YMTp4RccNT379Pg
-0OW7E9QL05P02Ygd3GePEChFABA5/hpAgW++5jMnnCJjBUi0ZZ96hyz006IEhPav
-7xSRrwkWtlXi8uKlT6+3Ow94rHltCrLrw3SP/OPWEN+ezIe8vc25imF2Re7tLjgs
-O3fDLaDlKBEQwh4AmvZY2YiLMt5mH9jjbHH+gGhLi8FbMCFUCbUbLx44FnVJMnkL
-Bm/1u8e/CMTimng13EQA
-=5s0T
+iQIcBAEBCAAGBQJPteX4AAoJEECxmPOUX5FEEiMP/i7cY9apcYrCGATc66FMRtzP
+HJQyI/JzhbWh+rFZCSGhBVinIfiOp+EWI6nRATdd7AN3MAPZG6jLiiQCKibTMG0/
+Lbku1Bhs3J++K5Rqg8bxM4dAD1sSs5GjTQ5Paq1YJDNf/mor97cNP4gBVYeyiPI2
+bnUQNIhQuLtGISQKKgijVVBI6BuQYbKm5A6RFExe70UTesY/gyqagAtkUwqEzjad
+wBLhBC4uvKMMoPhVw4CYzsqKxI69yAXufIMhP73EygRBAs1GD+g6uwhvDzb86cw7
+Ir8HkgBE3N+DEQRddInUpLyA3N/bVZ25fgM3YSekJJK5Ab4oWL7dJ0JftR5G8VMi
+c9yDpksHNQfXQPIC9Eh3pLgN0NxohDvxURiE2w/23jcIzu9/FJxiXV2Ld5x+1N+h
+RUmLVqtK/BdGRq7qgeoJ0QwTr5VWXXq8TyS+7zu70cb1pqaXF7If22LNWlSi3jqf
+UHDMNmn50vL16c4nIn4J6D9II1M3OhPYYupOkQU+StOo7BxheDOplvdxnvKd2eRg
+wqzzdhfTLHrPr8xe2HDCPQSebIxyOwsPoPnQW5qa9D6JzHHJwDujz9679xdCdwq/
+LVVxXw0zYW+ATJKT5xHMj1SOt0W9oDbfRzmziTBuXqexunYOMQG7u4lAI6BHYf5M
+oyQMC6aIykfcU6PU1R9R
+=H7Qo
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__18_May_2012_15_48_00_+1000_IRrGdO.y8TcJ9.HZ--
+--Signature=_Fri__18_May_2012_16_02_31_+1000_6TP0YW=EKZqJftmp--
