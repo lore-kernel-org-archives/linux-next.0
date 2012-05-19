@@ -1,71 +1,36 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: Tree for May 16 (mfd/tpx6586x)
-Date: Sat, 19 May 2012 17:53:27 +0100
-Message-ID: <20120519165327.GU4039@opensource.wolfsonmicro.com>
-References: <20120516201426.3a162ecd6adeb7132413f1b9@canb.auug.org.au>
- <4FB3D2C3.3030507@xenotime.net>
- <20120519142506.GN12015@sortiz-mobl>
- <4FB7C310.3010403@xenotime.net>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: build warning after merge of the final tree (userns tree related)
+Date: Sat, 19 May 2012 15:52:18 -0600
+Message-ID: <87d35z260d.fsf@xmission.com>
+References: <20120516195513.29d921bc25f308f92f0d6471@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="aQ0PHH3iiKbaMI5N"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:34956 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751582Ab2ESQxb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sat, 19 May 2012 12:53:31 -0400
-Content-Disposition: inline
-In-Reply-To: <4FB7C310.3010403@xenotime.net>
+Received: from out02.mta.xmission.com ([166.70.13.232]:33252 "EHLO
+	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754804Ab2ESVw3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 19 May 2012 17:52:29 -0400
+In-Reply-To: <20120516195513.29d921bc25f308f92f0d6471@canb.auug.org.au>
+	(Stephen Rothwell's message of "Wed, 16 May 2012 19:55:13 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mike Rapoport <mike@compulab.co.il>, Thierry Reding <thierry.reding@avionic-design.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
---aQ0PHH3iiKbaMI5N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi Eric,
+>
+> After merging the final tree, today's linux-next build (powerpc
+> ppc44x_defconfig) produced this warning:
+>
+> kernel/user.c:30:4: warning: this decimal constant is unsigned only in ISO C90 [enabled by default]
+> kernel/user.c:38:4: warning: this decimal constant is unsigned only in ISO C90 [enabled by default]
+>
+> Introduced by commit 22d917d80e84 ("userns: Rework the user_namespace
+> adding uid/gid mapping support").
 
-On Sat, May 19, 2012 at 08:58:08AM -0700, Randy Dunlap wrote:
-> On 05/19/2012 07:25 AM, Samuel Ortiz wrote:
-> > On Wed, May 16, 2012 at 09:16:03AM -0700, Randy Dunlap wrote:
-> >> On 05/16/2012 03:14 AM, Stephen Rothwell wrote:
+Ugh.  I missed this email the first time through.  Thank you for the
+report this problem should be fixed now.
 
-> >> drivers/built-in.o: In function `tps6586x_i2c_probe':
-> >> tps6586x.c:(.devinit.text+0x144e0): undefined reference to `of_regulator_match'
-
-> > Is this one fixed now ? It's coming from Mark's regulator tree, not the MFD
-> > one.
-
-> It still fails in linux-next of 20120518.
-
-Probably because the selection of people mailed is rather random - not
-only is this the first I've heard about this nobody who actually works
-on the driver was contacted either...  I don't know how the recipient
-list was picked but I'd suggest including a look at the git history
-might be in order.
-
---aQ0PHH3iiKbaMI5N
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPt8/9AAoJEBus8iNuMP3dKRkP/A+sDSRs4RIbiiFwHReJSBPu
-SVHiIGL5R4qV4WOLrY8bmQ/ko/yO1BDKRKhbEFJX1kUhtZjCiIX+zzGC9DLMYb4r
-cTOrajOIVdRnyZTvP9x7ZCyfmHDr3e7saB9pQmu3dBt6f01yzMMusUdqN1dgHgHU
-DcLn3RSG6/tELbbO/Rtjck9u+ygztTxoKWIdAPTcFgR7pNTfFPqrUSWxixPUR1Jn
-twTLeuVmpjOt5ruexwHe2w2St2sEgmBuWapZK5/3/Itri3xZ1knp3F608Ee7H8Xj
-C0r4bt6pZajXoP72ioz/7mjaVnND15lCg5gpr4zb4ibyK7j0MfIQxwIzgo9+zK8z
-C3mHi0NaeEhyebAnxD3oBc9L1DaNz6zZ0nbrKSMFWZMaq9n/Ar5fSaifKdDUlhES
-0QLrQ6qsdn+WuXJhwU6Shod/Gbtmia4rvMAK0BvDoBZh4GKfU26bj1WPCtR+7HWf
-cjyfYKIkMBACtPCkEkWb+8wri5h3QWKxGMqt1tE4IBrgI9t/vx/P5kbI/4HASrkn
-8L2f6DxktHGtvZV3L1CUGWRJo9/V51fLpD9LgF1msrfG704o1PcBguqEow5NMm+L
-Vz81hiJzxMjZzobqAMZFvGTXKMjJQbD4VNsFlqddC+imLBYd7qya41pxYXtJotoO
-aLzJ753SaLJYI2j2w0hE
-=Ph8z
------END PGP SIGNATURE-----
-
---aQ0PHH3iiKbaMI5N--
+Eric
