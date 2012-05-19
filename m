@@ -1,37 +1,44 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: manual merge of the pm tree with Linus' tree
-Date: Fri, 18 May 2012 21:08:01 +0200
-Message-ID: <201205182108.01664.rjw@sisk.pl>
-References: <20120518154800.3b8cae2960234e03bee0101e@canb.auug.org.au>
+From: Anton Vorontsov <cbouatmailru@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree (battery
+ tree related)
+Date: Fri, 18 May 2012 17:16:41 -0700
+Message-ID: <20120519001641.GA32057@lizard>
+References: <20120507171458.5ce17d20c40856e9440b3e5f@canb.auug.org.au>
+ <20120507082637.GH31494@intel.com>
+ <20120516161256.b046bcb06148ac6417fd51b5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([193.178.161.156]:53243 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S965781Ab2ERTDE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 May 2012 15:03:04 -0400
-In-Reply-To: <20120518154800.3b8cae2960234e03bee0101e@canb.auug.org.au>
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:57180 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756862Ab2ESASM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 May 2012 20:18:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20120516161256.b046bcb06148ac6417fd51b5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Lu <aaron.lu@amd.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
-
-On Friday, May 18, 2012, Stephen Rothwell wrote:
-> Hi Rafael,
+On Wed, May 16, 2012 at 04:12:56PM +1000, Stephen Rothwell wrote:
+[...]
+> > diff --git a/drivers/power/smb347-charger.c b/drivers/power/smb347-charger.c
+> > index 09d19d2..f8eedd8 100644
+> > --- a/drivers/power/smb347-charger.c
+> > +++ b/drivers/power/smb347-charger.c
+> > @@ -11,6 +11,7 @@
+> >   * published by the Free Software Foundation.
+> >   */
+> >  
+> > +#include <linux/err.h>
+> >  #include <linux/gpio.h>
+> >  #include <linux/kernel.h>
+> >  #include <linux/module.h>
 > 
-> Today's linux-next merge of the pm tree got a conflict in
-> drivers/acpi/scan.c between commit 5c7dd710f691 ("ACPI / PCI / PM: Fix
-> device PM regression related to D3hot/D3cold") from the  tree and commit
-> 6ef564fd2070 ("ACPI / PM: Evaluate _PS3 when entering D3 Cold") from the
-> pm tree.
-> 
-> I fixed it up (by using the version from Linus' tree) and can carry the
-> fix as necessary.
+> Ping?
 
-Thanks, I'm dropping the conflicting patch from the pm tree.
+Applied, thank you!
 
-Rafael
+-- 
+Anton Vorontsov
+Email: cbouatmailru@gmail.com
