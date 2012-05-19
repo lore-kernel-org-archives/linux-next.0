@@ -1,49 +1,43 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH -next] usb: add usb.h stubs for CONFIG_USB not enabled
-Date: Sat, 19 May 2012 10:30:00 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1205191026400.1348-100000@netrider.rowland.org>
-References: <4FB6FFBF.6000509@xenotime.net>
+From: Dave Airlie <airlied@gmail.com>
+Subject: Re: linux-next: Tree for May 18 (drm drivers and vgacon)
+Date: Sat, 19 May 2012 16:40:50 +0100
+Message-ID: <CAPM=9txuEJMv2Ttr+rEB0SFTnatB-hGNMNdKcmmNjXNyQfPfYg@mail.gmail.com>
+References: <20120518184943.2c762e8441e53ea24748d1b8@canb.auug.org.au>
+	<4FB6F115.70703@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devel-bounces@linuxdriverproject.org>
-In-Reply-To: <4FB6FFBF.6000509@xenotime.net>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel>
-List-Post: <mailto:devel@linuxdriverproject.org>
-List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: devel-bounces@linuxdriverproject.org
-Sender: devel-bounces@linuxdriverproject.org
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <4FB6F115.70703@xenotime.net>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: devel@driverdev.osuosl.org, Frank Mori Hess <fmhess@users.sourceforge.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, USB list <linux-usb@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Ian Abbott <abbotti@mev.co.uk>, linux-next@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 18 May 2012, Randy Dunlap wrote:
+On Sat, May 19, 2012 at 2:02 AM, Randy Dunlap <rdunlap@xenotime.net> wrote:
+> On 05/18/2012 01:49 AM, Stephen Rothwell wrote:
+>
+>> Hi all,
+>>
+>> Changes since 201205017:
+>
+>
+> When CONFIG_VGA_CONSOLE is not enabled:
+>
+> drivers/gpu/drm/cirrus/cirrus_drv.c:87:2: error: implicit declaration of function 'vgacon_text_force'
+> drivers/gpu/drm/ast/ast_drv.c:224:2: error: implicit declaration of function 'vgacon_text_force'
+> drivers/gpu/drm/mgag200/mgag200_drv.c:96:2: error: implicit declaration of function 'vgacon_text_force'
 
-> From: Randy Dunlap <rdunlap@xenotime.net>
-> 
-> Add stubs for some usb core functions when CONFIG_USB
-> is not enabled.  This fixes these comedi build errors:
-> 
-> ERROR: "usb_deregister" [drivers/staging/comedi/comedi.ko] undefined!
-> ERROR: "usb_register_driver" [drivers/staging/comedi/comedi.ko] undefined!
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> ---
-> I am only adding the stubs that are needed for comedi to build.
-> I expect that more stubs will be needed as more build errors are
-> found.  It seems to me that linux/usb.h might need more (major)
-> moving of lines to support more stubs in the future.
+Thanks Randy,
 
-This doesn't seem like the right thing to do.  If a driver needs to 
-register with the USB core then that driver should depend on 
-CONFIG_USB.
+fix pushed to drm-next.
 
-On the other hand, if the driver is capable of being built without USB 
-support then it should use the necessary preprocessor tests to protect 
-calls to any USB routines.
-
-Alan Stern
+Dave.
