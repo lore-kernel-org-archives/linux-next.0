@@ -1,44 +1,65 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree (battery
- tree related)
-Date: Fri, 18 May 2012 17:16:41 -0700
-Message-ID: <20120519001641.GA32057@lizard>
-References: <20120507171458.5ce17d20c40856e9440b3e5f@canb.auug.org.au>
- <20120507082637.GH31494@intel.com>
- <20120516161256.b046bcb06148ac6417fd51b5@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] comedi: fix build when USB is not enabled
+Date: Fri, 18 May 2012 17:46:13 -0700
+Message-ID: <4FB6ED55.6090805@xenotime.net>
+References: <20120518184943.2c762e8441e53ea24748d1b8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:57180 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756862Ab2ESASM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 May 2012 20:18:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20120516161256.b046bcb06148ac6417fd51b5@canb.auug.org.au>
+Received: from oproxy9.bluehost.com ([69.89.24.6]:35768 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1758937Ab2ESAqH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 May 2012 20:46:07 -0400
+In-Reply-To: <20120518184943.2c762e8441e53ea24748d1b8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Abbott <abbotti@mev.co.uk>, Frank Mori Hess <fmhess@users.sourceforge.net>, devel@driverdev.osuosl.org
 
-On Wed, May 16, 2012 at 04:12:56PM +1000, Stephen Rothwell wrote:
-[...]
-> > diff --git a/drivers/power/smb347-charger.c b/drivers/power/smb347-charger.c
-> > index 09d19d2..f8eedd8 100644
-> > --- a/drivers/power/smb347-charger.c
-> > +++ b/drivers/power/smb347-charger.c
-> > @@ -11,6 +11,7 @@
-> >   * published by the Free Software Foundation.
-> >   */
-> >  
-> > +#include <linux/err.h>
-> >  #include <linux/gpio.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/module.h>
-> 
-> Ping?
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Applied, thank you!
+Calls to optional subsystems cannot be made indiscriminately.
+Enclose all of the usb helper functions inside
+#if IS_ENABLED(CONFIG_USB)
+to fix these build errors.
 
--- 
-Anton Vorontsov
-Email: cbouatmailru@gmail.com
+(The pci helper functions are OK since there are stubs in
+linux/pci.h for the called functions when PCI is not enabled.
+Possibly the same could be done for the called USB functions.)
+
+ERROR: "usb_deregister" [drivers/staging/comedi/comedi.ko] undefined!
+ERROR: "usb_register_driver" [drivers/staging/comedi/comedi.ko] undefined!
+
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+Cc:	Ian Abbott <abbotti@mev.co.uk>
+Cc:	Frank Mori Hess <fmhess@users.sourceforge.net>
+---
+ drivers/staging/comedi/drivers.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- linux-next-20120518.orig/drivers/staging/comedi/drivers.c
++++ linux-next-20120518/drivers/staging/comedi/drivers.c
+@@ -30,6 +30,7 @@
+ #include <linux/pci.h>
+ #include <linux/usb.h>
+ #include <linux/errno.h>
++#include <linux/kconfig.h>
+ #include <linux/kernel.h>
+ #include <linux/sched.h>
+ #include <linux/fcntl.h>
+@@ -981,6 +982,8 @@ void comedi_pci_driver_unregister(struct
+ }
+ EXPORT_SYMBOL_GPL(comedi_pci_driver_unregister);
+ 
++#if IS_ENABLED(CONFIG_USB)
++
+ static int comedi_old_usb_auto_config(struct usb_interface *intf,
+ 				      struct comedi_driver *driver)
+ {
+@@ -1043,3 +1046,5 @@ void comedi_usb_driver_unregister(struct
+ 	comedi_driver_unregister(comedi_driver);
+ }
+ EXPORT_SYMBOL_GPL(comedi_usb_driver_unregister);
++
++#endif
