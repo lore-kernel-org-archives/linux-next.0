@@ -1,72 +1,70 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the tip tree
-Date: Mon, 21 May 2012 18:04:25 +1000
-Message-ID: <20120521180425.50ca4c5e02a869e4887696d7@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Mon, 21 May 2012 09:08:56 +0100
+Message-ID: <4FB9F818.4030801@linaro.org>
+References: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_May_2012_18_04_25_+1000_X85+DZjIHuu63Y3k"
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:53900 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751505Ab2EUIEe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 04:04:34 -0400
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:64135 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752367Ab2EUIJA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 04:09:00 -0400
+Received: by bkcji2 with SMTP id ji2so3675177bkc.19
+        for <linux-next@vger.kernel.org>; Mon, 21 May 2012 01:08:58 -0700 (PDT)
+In-Reply-To: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__21_May_2012_18_04_25_+1000_X85+DZjIHuu63Y3k
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Andrew,
+> After merging the mfd tree, today's linux-next build (x86_64 allmodco=
+nfig)
+> failed like this:
+>
+> In file included from drivers/mfd/ab8500-core.c:21:0:
+> include/linux/mfd/dbx500-prcmu.h:614:19: error: redefinition of 'prcm=
+u_abb_read'
+> include/linux/mfd/db8500-prcmu.h:673:19: note: previous definition of=
+ 'prcmu_abb_read' was here
+> include/linux/mfd/dbx500-prcmu.h:619:19: error: redefinition of 'prcm=
+u_abb_write'
+> include/linux/mfd/db8500-prcmu.h:678:19: note: previous definition of=
+ 'prcmu_abb_write' was here
+> include/linux/mfd/dbx500-prcmu.h:630:19: error: redefinition of 'prcm=
+u_config_clkout'
+> include/linux/mfd/db8500-prcmu.h:643:19: note: previous definition of=
+ 'prcmu_config_clkout' was here
+> include/linux/mfd/dbx500-prcmu.h:692:20: error: redefinition of 'prcm=
+u_ac_wake_req'
+> include/linux/mfd/db8500-prcmu.h:683:20: note: previous definition of=
+ 'prcmu_ac_wake_req' was here
+> include/linux/mfd/dbx500-prcmu.h:694:20: error: redefinition of 'prcm=
+u_ac_sleep_req'
+> include/linux/mfd/db8500-prcmu.h:685:20: note: previous definition of=
+ 'prcmu_ac_sleep_req' was here
+>
+> Caused (exposed?) by commit d28f1db8187d ("mfd: Remove confusing
+> ab8500-i2c file and merge into ab8500-core").  I assume that this has
+> only had very restricted build testing :-(
 
-Today's linux-next merge of the akpm tree got a conflict in kernel/fork.c
-between commit 0ea86208345b ("sched, mm: Rework sched_{fork,exec} node
-assignment") from the tip tree and commit "task_work_add: generic
-process-context callbacks" from the akpm tree.
+The patch itself has had extensive build and run testing, with DT both=20
+enabled and disabled. I'm guessing some other changes may be having and=
+=20
+influence here. I'm happy to take a look for you. Can you tell me where=
+=20
+I can pull the offending branch from please?
 
-Context changes.  I fixed it up (I think - see below) and can carry the
-fix as necessary.
+Kind regards,
+Lee
+
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc kernel/fork.c
-index 5642958,b33046e..0000000
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@@ -1419,6 -1420,8 +1419,7 @@@ static struct task_struct *copy_process
-  	 * We dont wake it up yet.
-  	 */
-  	p->group_leader =3D p;
- -	INIT_LIST_HEAD(&p->thread_group);
-+ 	INIT_HLIST_HEAD(&p->task_works);
- =20
-  	/* Now that the task is set up, run cgroup callbacks if
-  	 * necessary. We need to run them before the task is visible
-
---Signature=_Mon__21_May_2012_18_04_25_+1000_X85+DZjIHuu63Y3k
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPufcJAAoJEECxmPOUX5FEAGkP/0XYv9aD5+9p5CELEWgK6p+X
-LWvJkuif4jL5gPqVvygzkfLJjcAC2MalieXMa9nYAlxDPZ/83dMj55FdGBuNB5FM
-KxfzCXCtMqAIbbJ2MJgjyPhPcOyJCADzlniCwWfaiiU95xuUsAlEtSEMc384dP0R
-kcZEbqHuD1z2/SMgSpbD+ZK/cBaxFvsP0f3O2dgUDyV4uuNT47B4oh7C4MTemQ3b
-4l4QCwi2FjX+M3bD2E5+jMWpU+D7NVL5v2HANrLRnz+4cHchfbUdwuSrSepc1HfA
-CdF8tJwwQh5ZeS5VV+7fAZu+1Y7Nt1Vkrv6V/AUmEwz60MHRifeR5kbD1AVOq6FT
-jtmnwvfpSaZu3J5q4zZaUOYoAOqsNtKarPcYCG3uh3yOh+xi9hP/ZDAgUv9haM9P
-AffvPCdg16mIXaRMRg22sFwbRhszeu4lkgBrYYab6smjCjwsiLLpfmcYtF9QZOhF
-LF8yLAgT1GW1gGFXlrdCudCG6IAAQcw86rrAEOjEWM12CLVBIhNkI8n8ijUV6LBB
-mL2Mhr/NlU3Xue6d76ihmER67TZoG5WvRdJSCSGiYWDoA8c20WZj4FXo1ZuGu29H
-I6cJED6H70xxNDEm7fX9EcIKs4i8TS2BXkPnzjr02PKL+bdTa2UpjzMoipwHKaXy
-/48sICmurBeWDERwZaPu
-=dN5K
------END PGP SIGNATURE-----
-
---Signature=_Mon__21_May_2012_18_04_25_+1000_X85+DZjIHuu63Y3k--
+Lee Jones
+Linaro ST-Ericsson Landing Team Lead
+M: +44 77 88 633 515
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
