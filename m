@@ -1,70 +1,57 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Mon, 21 May 2012 09:08:56 +0100
-Message-ID: <4FB9F818.4030801@linaro.org>
-References: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 21 May 2012 18:13:47 +1000
+Message-ID: <20120521181347.51d96de343880746c9b285b4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__21_May_2012_18_13_47_+1000_7LwTjl.3ia6kKmOP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:64135 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752367Ab2EUIJA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 04:09:00 -0400
-Received: by bkcji2 with SMTP id ji2so3675177bkc.19
-        for <linux-next@vger.kernel.org>; Mon, 21 May 2012 01:08:58 -0700 (PDT)
-In-Reply-To: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:48550 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756213Ab2EUIN4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 04:13:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>, Cyrill Gorcunov <gorcunov@openvz.org>
 
-Hi Stephen,
+--Signature=_Mon__21_May_2012_18_13_47_+1000_7LwTjl.3ia6kKmOP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> After merging the mfd tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
->
-> In file included from drivers/mfd/ab8500-core.c:21:0:
-> include/linux/mfd/dbx500-prcmu.h:614:19: error: redefinition of 'prcm=
-u_abb_read'
-> include/linux/mfd/db8500-prcmu.h:673:19: note: previous definition of=
- 'prcmu_abb_read' was here
-> include/linux/mfd/dbx500-prcmu.h:619:19: error: redefinition of 'prcm=
-u_abb_write'
-> include/linux/mfd/db8500-prcmu.h:678:19: note: previous definition of=
- 'prcmu_abb_write' was here
-> include/linux/mfd/dbx500-prcmu.h:630:19: error: redefinition of 'prcm=
-u_config_clkout'
-> include/linux/mfd/db8500-prcmu.h:643:19: note: previous definition of=
- 'prcmu_config_clkout' was here
-> include/linux/mfd/dbx500-prcmu.h:692:20: error: redefinition of 'prcm=
-u_ac_wake_req'
-> include/linux/mfd/db8500-prcmu.h:683:20: note: previous definition of=
- 'prcmu_ac_wake_req' was here
-> include/linux/mfd/dbx500-prcmu.h:694:20: error: redefinition of 'prcm=
-u_ac_sleep_req'
-> include/linux/mfd/db8500-prcmu.h:685:20: note: previous definition of=
- 'prcmu_ac_sleep_req' was here
->
-> Caused (exposed?) by commit d28f1db8187d ("mfd: Remove confusing
-> ab8500-i2c file and merge into ab8500-core").  I assume that this has
-> only had very restricted build testing :-(
+Hi Andrew,
 
-The patch itself has had extensive build and run testing, with DT both=20
-enabled and disabled. I'm guessing some other changes may be having and=
-=20
-influence here. I'm happy to take a look for you. Can you tell me where=
-=20
-I can pull the offending branch from please?
+Today's linux-next merge of the akpm tree got a conflict in
+fs/proc/base.c between commit eb94cd96e05d ("fs, proc: fix ABBA deadlock
+in case of execution attempt of map_files/ entries") from Linus' tree and
+commit "proc: unify ptrace_may_access() locking code" from the akpm tree.
 
-Kind regards,
-Lee
-
+I used the version of the conflicting code from Linus' tree.
 --=20
-Lee Jones
-Linaro ST-Ericsson Landing Team Lead
-M: +44 77 88 633 515
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__21_May_2012_18_13_47_+1000_7LwTjl.3ia6kKmOP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPufk7AAoJEECxmPOUX5FErrwP/2PiGWJ9Lb65/+cTt8uGchKy
+F/4hsLPZz7IGYXmaifYsOZrw7LAWNhardCaZJtnI5ruk2kHBrVLLfJMdlSsl3R8C
+7iS4/qNzC7+btJtT7hOrDzrr3t1JyabPDVbb9Xu4wdBYnWX/wClaB7BXa/tux32L
+vGUaGxR8oSDJO7/izAvL3V+50T+gxVKg4R2/ahmQL0jpQ4VIdDiIeQBpcxu8WET7
+IpT9U6dd7N5JyBrQFrUWeUJtstHvGQxQlEM8ueMPztWOvOhBmJU4439NEBQGjfSu
+UPXBQ8FXWur/3TgkrFXiXoltmcMbjJLt1HSxlgBNRhX8yMG49M8yHKIAY8btcCDd
+9XK/bV22JiVVoK0s2jFyY9vkt4R580j4B9Cr94JOtByvgJzI2CDetrZHdBijrEfm
+vQz2sBcEoP6YX9PXzJ57c0FwvEZrvOLpibaVtqaNyaAJMPQuGWVNHiueZCPdWIlJ
+gBkTx/a4MbQcnOFNWJmuQcYno4tIvYk0FC4Y16yNOE7WXDo7xSZK0pK2AiImMzzM
+5YrDnTxY3vIJyIFKZfvGw+A9S2flo7kKdoiH3Y2I3xs61OsxeQ3w3aLd4vPesR+2
+S8xrHH2rpFLyS4K0VJTsWYJ1FySBBL+GzaugVfS20thwLPL1wU7hQ5yQkb9YL3wr
+MneL9g7aPXZE9BPBylLX
+=hmrw
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__21_May_2012_18_13_47_+1000_7LwTjl.3ia6kKmOP--
