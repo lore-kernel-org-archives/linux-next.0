@@ -1,82 +1,60 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH] ARM: at91: Add ADC driver to at91sam9260/at91sam9g20
- dtsi files
-Date: Mon, 21 May 2012 12:10:11 +0200
-Message-ID: <4FBA1483.4010008@atmel.com>
-References: <4FB3B1F3.6080102@atmel.com> <1337182626-13033-1-git-send-email-nicolas.ferre@atmel.com> <201205161850.54765.arnd@arndb.de> <20120517150601.GA28104@kroah.com> <20120518084446.a7b229074ea215fd7bcd1eb8@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Mon, 21 May 2012 11:28:23 +0100
+Message-ID: <4FBA18C7.4030800@linaro.org>
+References: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au> <4FB9F818.4030801@linaro.org> <20120521184005.3b7661ec6468c5878a22615d@canb.auug.org.au> <4FBA0460.1070300@linaro.org> <20120521191007.9347651e88add2e7c247a24f@canb.auug.org.au> <4FBA08A4.6030706@linaro.org> <20120521095427.GA30045@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:14829 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756734Ab2EUKKP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 06:10:15 -0400
-In-Reply-To: <20120518084446.a7b229074ea215fd7bcd1eb8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: Greg KH <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, plagnioj@jcrosoft.com, maxime.ripard@free-electrons.com, olof@lixom.net
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120521095427.GA30045@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+> Since there's no dependencies which would stop it being selected
+> anything like allyesconfig or randconfig might enable it.  In general
+> it's normal to allow this in order to make it easier to build test
+> things like subsystem wide changes.
 
-On 05/18/2012 12:44 AM, Stephen Rothwell :
-> Hi all,
-> 
-> On Thu, 17 May 2012 08:06:01 -0700 Greg KH
-> <gregkh@linuxfoundation.org> wrote:
->> 
->> On Wed, May 16, 2012 at 06:50:54PM +0000, Arnd Bergmann wrote:
->>> On Wednesday 16 May 2012, Nicolas Ferre wrote:
->>>> Now that the bulk of at91sam9g20-related nodes are located in
->>>> at91sam9260.dtsi, we have to re-create the path to this ADC
->>>> node for SoC specific parts.
->>>> 
->>>> Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
->>> 
->>> Should we apply this patch in arm-soc so that Greg can drop the
->>> hunk that no longer applies?
->> 
->> It's not a "no longer applies", it's a "this does not merge".
->> The patch is in my tree, unless you want me to revert it, it's
->> going to stay there until it goes to Linus.
-> 
-> Just apply the patch to the arm-soc tree - then the merge
-> resolution becomes "use the arm-soc version".   There is no need
-> for Greg to revert the other patch.
+Ah, I see. In which case Stephen was correct in that it's an issue with=
+=20
+Kconfig logic (but not an issue with the patch alluded to). I'm going t=
+o=20
+have to pass this one over to Linus (CC'ed), as it's his train-set and =
+I=20
+don't want to do the wrong thing.
 
-Hi Stephen,
+Linus,
 
-After checking the current status of
-arch/arm/boot/dts/at91sam9g20.dtsi in linux-next, it seems the merge
-resolution has not produced a good result:
+When CONFIG_AB8500_CORE is set, building ab8500-core.c and=20
+!(CONFIG_UX500_SOC_DB8500 | CONFIG_MFD_DB8500_PRCMU), both=20
+db8500-prcmu.h and dbx500-prcmu.h take it upon themselves to _both_=20
+create 'return 0' inline functions for the following:
 
-The "adc0" node, should only look like:
+prcmu_abb_read()
+prcmu_abb_write()
+prcmu_config_clkout()
+prcmu_ac_wake_req()
+prcmu_ac_sleep_req()
 
-ahb {
-        apb {
-                adc0: adc@fffe0000 {
-                        atmel,adc-startup-time = <40>;
-                };
-        };
-};
+I think we need a Kconfig rule to prevent this from happening, but I'm=20
+not sure what the correct logic would be. The other option would be to=20
+explicitly include db8500-prcmu.h instead of dbx500-prcmu.h in=20
+ab0500-core.c (which in turn includes db8500-prcmu.h (and used to=20
+include db5500-prcmu.h)), but this seems wrong to me.
 
-without the redundant code carried by the staging git tree. In short,
-the arm-soc version is the proper one.
+As you have a clearer insight to these things would you care to take=20
+this on?
 
-Thanks for your help, best regards,
-- -- 
-Nicolas Ferre
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+Kind regards,
+Lee
 
-iQEcBAEBAgAGBQJPuhR7AAoJEAf03oE53VmQW4wH/0lqpqrTujJ/dQ0z5Ku7Xde3
-EKKJm51AIlIadOXiteYH6cw34ISm68cXZWpkbKh3UKiCcJGSJi4VjCrkcJ//CwUL
-B4bZD3A6Y8zLQ+TaQbjMnfzKq2dOBRQ1M1dNoQXwPe83vjV85T4hoKco7LBhGhUI
-l//0aWrcefH9sQynAYRhNE0M6hlfr/Edlia0zHlkVYqE2K5ALxaH6lki2EUzxvJC
-l8qydZ9lum37ebnot09WB2qhIlkRApb50sYbQG4nMwlC3jSblXrPelQvChWLo/yi
-JOPOF7Lcj9fnJmeVGlQknobilgWmRnuVQUbqBG4NjDx71k5WiEywF6ymBa8TJnA=
-=rnQu
------END PGP SIGNATURE-----
+--=20
+Lee Jones
+Linaro ST-Ericsson Landing Team Lead
+M: +44 77 88 633 515
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
