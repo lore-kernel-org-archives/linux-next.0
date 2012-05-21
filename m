@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the v4l-dvb tree
-Date: Mon, 21 May 2012 16:06:24 +1000
-Message-ID: <20120521160624.a5e16748fb11670778ea9b3f@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the net-next tree
+Date: Mon, 21 May 2012 16:10:08 +1000
+Message-ID: <20120521161008.c0cc00b91642ed7a3875a686@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_May_2012_16_06_24_+1000_ar2TzHY9+O/oBT1l"
+ boundary="Signature=_Mon__21_May_2012_16_10_08_+1000_9W0ZzipgqzcrEk5N"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35146 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:43390 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752563Ab2EUGGg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 02:06:36 -0400
+	with ESMTP id S1751063Ab2EUGKR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 02:10:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, =?UTF-8?B?IkV6ZXF1aWVsIEdhcmPDrWEi?= <elezegarcia@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sarah Sharp <sarah.a.sharp@linux.intel.com>, Kalle Valo <kvalo@qca.qualcomm.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 
---Signature=_Mon__21_May_2012_16_06_24_+1000_ar2TzHY9+O/oBT1l
+--Signature=_Mon__21_May_2012_16_10_08_+1000_9W0ZzipgqzcrEk5N
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,254 +24,55 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the usb tree got a conflict in
-drivers/staging/media/easycap/easycap_main.c between various commits from
-the v4l-dvb tree and commit 5df773120477 ("USB: Staging: media: easycap:
-remove err() usage") from the usb tree.
+drivers/net/wireless/ath/ath6kl/usb.c between commit 9cbee358687e
+("ath6kl: add full USB support") from the net-next tree and commit
+e1f12eb6ba6f ("USB: Disable hub-initiated LPM for comms devices") from
+the usb tree.
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/media/easycap/easycap_main.c
-index aed9537,6f83d36..0000000
---- a/drivers/staging/media/easycap/easycap_main.c
-+++ b/drivers/staging/media/easycap/easycap_main.c
-@@@ -3401,176 -3126,6 +3401,175 @@@ static void config_easycap(struct easyc
-  			}
-  		}
-  	}
- +}
- +
- +/*
- + * This function is called from within easycap_usb_disconnect() and is
- + * protected by semaphores set and cleared by easycap_usb_disconnect().
- + * By this stage the device has already been physically unplugged,
- + * so peasycap->pusb_device is no longer valid.
- + */
- +static void easycap_delete(struct kref *pkref)
- +{
- +	struct easycap *peasycap;
- +
- +	peasycap =3D container_of(pkref, struct easycap, kref);
- +	if (!peasycap) {
- +		SAM("ERROR: peasycap is NULL: cannot perform deletions\n");
- +		return;
- +	}
- +
- +	/* Free video urbs */
- +	free_video_urbs(peasycap);
- +
- +	/* Free video isoc buffers */
- +	free_isocbuffers(peasycap);
- +
- +	/* Free video field buffers */
- +	free_fieldbuffers(peasycap);
- +
- +	/* Free video frame buffers */
- +	free_framebuffers(peasycap);
- +
- +	/* Free audio urbs */
- +	free_audio_urbs(peasycap);
- +
- +	/* Free audio isoc buffers */
- +	free_audio_buffers(peasycap);
- +
- +	free_easycap(peasycap);
- +
- +	JOT(4, "ending.\n");
- +}
- +
- +static const struct v4l2_file_operations v4l2_fops =3D {
- +	.owner		=3D THIS_MODULE,
- +	.open		=3D easycap_open_noinode,
- +	.unlocked_ioctl	=3D easycap_unlocked_ioctl,
- +	.poll		=3D easycap_poll,
- +	.mmap		=3D easycap_mmap,
- +};
- +
- +static int easycap_register_video(struct easycap *peasycap)
- +{
- +	/*
- +	 * FIXME: This is believed to be harmless,
- +	 * but may well be unnecessary or wrong.
- +	 */
- +	peasycap->video_device.v4l2_dev =3D NULL;
- +
- +	strcpy(&peasycap->video_device.name[0], "easycapdc60");
- +	peasycap->video_device.fops =3D &v4l2_fops;
- +	peasycap->video_device.minor =3D -1;
- +	peasycap->video_device.release =3D (void *)(&videodev_release);
- +
- +	video_set_drvdata(&(peasycap->video_device), (void *)peasycap);
- +
- +	if (0 !=3D (video_register_device(&(peasycap->video_device),
- +					VFL_TYPE_GRABBER, -1))) {
-- 		err("Not able to register with videodev");
- +		videodev_release(&(peasycap->video_device));
- +		return -ENODEV;
- +	}
- +
- +	peasycap->registered_video++;
- +
- +	SAM("registered with videodev: %i=3Dminor\n",
- +	    peasycap->video_device.minor);
- +	    peasycap->minor =3D peasycap->video_device.minor;
- +
- +	return 0;
- +}
- +
- +/*
- + * When the device is plugged, this function is called three times,
- + * one for each interface.
- + */
- +static int easycap_usb_probe(struct usb_interface *intf,
- +			    const struct usb_device_id *id)
- +{
- +	struct usb_device *usbdev;
- +	struct usb_host_interface *alt;
- +	struct usb_endpoint_descriptor *ep;
- +	struct usb_interface_descriptor *interface;
- +	struct easycap *peasycap;
- +	int i, j, rc;
- +	u8 bInterfaceNumber;
- +	u8 bInterfaceClass;
- +	u8 bInterfaceSubClass;
- +	int okalt[8], isokalt;
- +	int okepn[8];
- +	int okmps[8];
- +	int maxpacketsize;
- +
- +	usbdev =3D interface_to_usbdev(intf);
- +
- +	alt =3D usb_altnum_to_altsetting(intf, 0);
- +	if (!alt) {
- +		SAY("ERROR: usb_host_interface not found\n");
- +		return -EFAULT;
- +	}
- +
- +	interface =3D &alt->desc;
- +	if (!interface) {
- +		SAY("ERROR: intf_descriptor is NULL\n");
- +		return -EFAULT;
- +	}
- +
- +	/* Get properties of probed interface */
- +	bInterfaceNumber =3D interface->bInterfaceNumber;
- +	bInterfaceClass =3D interface->bInterfaceClass;
- +	bInterfaceSubClass =3D interface->bInterfaceSubClass;
- +
- +	JOT(4, "intf[%i]: num_altsetting=3D%i\n",
- +			bInterfaceNumber, intf->num_altsetting);
- +	JOT(4, "intf[%i]: cur_altsetting - altsetting=3D%li\n",
- +		bInterfaceNumber,
- +		(long int)(intf->cur_altsetting - intf->altsetting));
- +	JOT(4, "intf[%i]: bInterfaceClass=3D0x%02X bInterfaceSubClass=3D0x%02X\n=
-",
- +			bInterfaceNumber, bInterfaceClass, bInterfaceSubClass);
- +
- +	/*
- +	 * A new struct easycap is always allocated when interface 0 is probed.
- +	 * It is not possible here to free any existing struct easycap.
- +	 * This should have been done by easycap_delete() when the device was
- +	 * physically unplugged.
- +	 * The allocated struct easycap is saved for later usage when
- +	 * interfaces 1 and 2 are probed.
- +	 */
- +	if (0 =3D=3D bInterfaceNumber) {
- +		/*
- +		 * Alloc structure and save it in a free slot in
- +		 * easycapdc60_dongle array
- +		 */
- +		peasycap =3D alloc_easycap(bInterfaceNumber);
- +		if (!peasycap)
- +			return -ENOMEM;
- +
- +		/* Perform basic struct initialization */
- +		init_easycap(peasycap, usbdev, intf, bInterfaceNumber);
- +
- +		/* Dynamically fill in the available formats */
- +		rc =3D easycap_video_fillin_formats();
- +		if (0 > rc) {
- +			SAM("ERROR: fillin_formats() rc =3D %i\n", rc);
- +			return -EFAULT;
- +		}
- +		JOM(4, "%i formats available\n", rc);
- +
- +		/* Populate easycap.inputset[] */
- +		rc =3D populate_inputset(peasycap);
- +		if (rc < 0)
- +			return rc;
- +		JOM(4, "finished initialization\n");
- +	} else {
- +		peasycap =3D get_easycap(usbdev, bInterfaceNumber);
- +		if (!peasycap)
- +			return -ENODEV;
- +	}
- +
- +	config_easycap(peasycap, bInterfaceNumber,
- +				 bInterfaceClass,
- +				 bInterfaceSubClass);
+diff --cc drivers/net/wireless/ath/ath6kl/usb.c
+index dfbbe9e,f8a27db..0000000
+--- a/drivers/net/wireless/ath/ath6kl/usb.c
++++ b/drivers/net/wireless/ath/ath6kl/usb.c
+@@@ -1185,12 -403,9 +1185,13 @@@ MODULE_DEVICE_TABLE(usb, ath6kl_usb_ids
+  static struct usb_driver ath6kl_usb_driver =3D {
+  	.name =3D "ath6kl_usb",
+  	.probe =3D ath6kl_usb_probe,
+ +	.suspend =3D ath6kl_usb_suspend,
+ +	.resume =3D ath6kl_usb_resume,
+ +	.reset_resume =3D ath6kl_usb_reset_resume,
+  	.disconnect =3D ath6kl_usb_remove,
+  	.id_table =3D ath6kl_usb_ids,
+ +	.supports_autosuspend =3D true,
++ 	.disable_hub_initiated_lpm =3D 1,
+  };
  =20
-  	/*
-  	 * Investigate all altsettings. This is done in detail
-@@@ -3854,9 -3562,33 +3853,12 @@@
-  		JOM(4, "registered device instance: %s\n",
-  			peasycap->v4l2_device.name);
- =20
- -		/*
- -		 * FIXME: This is believed to be harmless,
- -		 * but may well be unnecessary or wrong.
- -		 */
- -		peasycap->video_device.v4l2_dev =3D NULL;
- -
- -
- -		strcpy(&peasycap->video_device.name[0], "easycapdc60");
- -		peasycap->video_device.fops =3D &v4l2_fops;
- -		peasycap->video_device.minor =3D -1;
- -		peasycap->video_device.release =3D (void *)(&videodev_release);
- -
- -		video_set_drvdata(&(peasycap->video_device), (void *)peasycap);
- -
- -		if (0 !=3D (video_register_device(&(peasycap->video_device),
- -							VFL_TYPE_GRABBER, -1))) {
- +		rc =3D easycap_register_video(peasycap);
-- 		if (rc < 0)
-++		if (rc < 0) {
-+ 			dev_err(&intf->dev,
-+ 				"Not able to register with videodev\n");
- -			videodev_release(&(peasycap->video_device));
-  			return -ENODEV;
-+ 		}
- -
- -		peasycap->registered_video++;
- -		SAM("registered with videodev: %i=3Dminor\n",
- -						peasycap->video_device.minor);
- -		peasycap->minor =3D peasycap->video_device.minor;
- -
-  		break;
-  	}
-  	/* 1: Audio control */
+  static int ath6kl_usb_init(void)
 
---Signature=_Mon__21_May_2012_16_06_24_+1000_ar2TzHY9+O/oBT1l
+--Signature=_Mon__21_May_2012_16_10_08_+1000_9W0ZzipgqzcrEk5N
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPudtgAAoJEECxmPOUX5FE1hYP/jHK5O8h8gsJghOiPMMoX7Fg
-uHLdqJya7wBNRIuam44233cIFNHizW2l4aFjHAJnfiyD+gZ84bd6wosDq89tRsCb
-D/I121tZuSLfGXns69dnJ8YqbLa4UVzl/OsgpIVr6oQFWZzlnZtHf1qxN+F30eJN
-aSIMErDisEJ+QTiKwou1SpNiijMHCqM3ojUsKJ7DeXdu8XI5byEHurEDmNDH9zLC
-hMKjXNv1VW71RdpugNQi8K6lgg521Ur0/YKFrNewmNb6e2yIy2TYcfAVPv+QmobN
-+HGA1R4lTCWaVBVBEnZ9h39W/u/ArLA2nkXbABmJk0+7NreYquJzdx3BCV4Pd3pj
-+CdOvto6kZxUUur0pXJSTS/Cw6CUDtqV0Hzz2zkty4sW5LgEBv8fR6+nPkKL853P
-0ZD98BOe23TRXCx5e4AWaR3ChGxu+7dV/uyU98Za9zQ19+QYX23gaAH6x3WnI9DV
-cTgdKmjB0qepDS3ivoojvjki2zgMlmEIwbAJceOxOk3oRYmSIeRf+eCfJeK6/7S9
-czDNTWH01E2oNRPoNKbbZsKOw/NUYv9jtkoBWAc6iQyLiPCWPjcv8t6uuBG/ykw3
-Y+bnDTA+I7Hn9QEQulInrv4mXHD8LPQ7WwkM3BNL3MXJjG8GkYz/ipjynFcBzSZ0
-1UXxqqI69Exh6LcdUzjT
-=FSjy
+iQIcBAEBCAAGBQJPudxAAAoJEECxmPOUX5FEs3EQAInERwyZ2W1VLG/dZTl/OzTY
+1hMYrhft6PXrB8t4XRZAQuHvR9EvRRE56CLY6cp1mmjTZmvec3onEKP2zW944gv3
+qPmjJ5DEwhDX3Rabqtyq67skNvtZFczLud5ZLlwSmKBkc9ZqJ2uxDKaXI1YV1Hb3
+bhE+KETEQbI/K42ZqmboJuHwBf6mAsg7u28ad2YGpu2ZAk2nAYmTEZxaffmzOXTm
+2GMz52Qcx8OV8OS8X7lBFV8bbdN5yPP0d+0DhYWydTiAZqzgp0XCk+uGjmA89kP9
+9OMfz2UVVbINbzNVUoWVrL0ztjFv0syor2Fx68BHFLEd9pkGjrtwbsy6lBbipoZK
+Kp41tRyEiRkVbb5u4oiUvd1cipMqT5vyMsncJQgLPcJ32e4resfvvg/LAsD/TpNt
+lo9AEmF+a73ZIHCjcvEFhlJjH+EUpV7IE03Du6zq0PqKrS4QYQJbCLAZacwTNNIN
+pV2sdTqVlXMmgTYmuKG4SoBrtYqv7JKQGRoBNkxUKJD4I2a/v7/CEdL84j7MTcna
+nLHPlazaF+lc+4c9+0MMoh9mis1VsX6R+UtJU6Xzp5/d3noTYUCbEBUG5m7aPbRF
++q4LrnFHpZjZikSwaabzzA2J25GBA3eeREfu4ioTgFmSPgVW4g8XCGKvxhy7Ropv
+K7cPVaUjRlOksT9nVGn+
+=xABq
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__21_May_2012_16_06_24_+1000_ar2TzHY9+O/oBT1l--
+--Signature=_Mon__21_May_2012_16_10_08_+1000_9W0ZzipgqzcrEk5N--
