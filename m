@@ -1,66 +1,29 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 21
-Date: Tue, 22 May 2012 01:44:22 +1000
-Message-ID: <20120522014422.4b9eb9c38dac5845c09f750f@canb.auug.org.au>
-References: <20120521190531.b764b9cd339c883d3434aef8@canb.auug.org.au>
-	<4FBA5ABD.2070003@xenotime.net>
-	<20120522014136.f2b26f8eddab621e8dcf8e22@canb.auug.org.au>
+From: Roland Dreier <roland@kernel.org>
+Subject: Re: linux-next: build failure after merge of the infiniband tree
+Date: Mon, 21 May 2012 09:03:08 -0700
+Message-ID: <CAG4TOxNUzGgS_pkGcxBx1FZdPSVB=7E-bC40+8VPMhgZeWjYeg@mail.gmail.com>
+References: <20120521120512.15f1e9dfc961b05dfee72f79@canb.auug.org.au> <4FBA4B84.9030302@chelsio.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_May_2012_01_44_22_+1000_+8GI9ousK+bCbwH3"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34030 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751388Ab2EUPoa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 11:44:30 -0400
-In-Reply-To: <20120522014136.f2b26f8eddab621e8dcf8e22@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4FBA4B84.9030302@chelsio.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vipul Pandya <vipul@chelsio.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-rdma@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__22_May_2012_01_44_22_+1000_+8GI9ousK+bCbwH3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Randy,
-
-On Tue, 22 May 2012 01:41:36 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+> diff --git a/drivers/infiniband/hw/cxgb4/device.c
+> b/drivers/infiniband/hw/cxgb4/device.c
+> index c8fd1d8..cb4ecd7 100644
+> --- a/drivers/infiniband/hw/cxgb4/device.c
+> +++ b/drivers/infiniband/hw/cxgb4/device.c
+> @@ -32,6 +32,7 @@
+> =A0#include <linux/module.h>
+> =A0#include <linux/moduleparam.h>
+> =A0#include <linux/debugfs.h>
+> +#include <linux/vmalloc.h>
 >
-> On Mon, 21 May 2012 08:09:49 -0700 Randy Dunlap <rdunlap@xenotime.net> wr=
-ote:
-> >
-> > no linux-next 20120521 patch file  :(
->=20
-> It was uploaded (it is scripted) so the mirroring must be broken, I guess.
+> =A0#include <rdma/ib_verbs.h>
 
-I can see it there now.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Tue__22_May_2012_01_44_22_+1000_+8GI9ousK+bCbwH3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPumLWAAoJEECxmPOUX5FERdcP/3Y4baP38U4+3KrOvnhshErB
-twF3aOCkj6Qpzfoz9tFqayWGVyfJoQLo3MGJNet6IL5ZGwKRzMhPA0wiZjIiCu7c
-ak5ok0itr4mjutyB5fXRHVxDVuZGZy5Pd6X7MQDBgShkkwaIgZVT6yselApEkyHF
-FyCogXE8PZLdBgBDuLqqOHMj5Fl5nynjJfi6qrrc9Heahe4IWyLgfjAXNpMShhia
-kH64dg5A7CvojJHkZDvGsk1iMFKVGu9JJNnjAvllDlu5pbshWq3+wLKjInEtN+dy
-ikoFpkLVZbyrPW5jkzag8ldiZEfyHWXA+SRVn0Gr63Owl0WkpHI1JuDPUGV4k/fb
-z5V6lcB6UIUbB5czQNIXR0QE9hv24phRZlxIUaHzlRSN8gztDkFNVb59bPXO2AVJ
-4NGXdMCCmsQBrI3nezOWR5NjT1cfQnXlm8nNYzhj6AvEJFIPOZgV8+jjtCU0x+0F
-lsQLi0zlw/8xy7YXdLWNOkBPpnJT6pd5ud92IXihdLUZNAANjYfBkHRPTgmK4APa
-BSzYM8wRgPsv7cpN6Q2TEatkwZh/4eUmcvhbcTQdHbODbdDhXJ7sNpjSfsbaia66
-I9pJJ1K80rjayOHEuuAX33mf/+fLKZDZWPu2U8bhpJG/4BmUe2omfg6dQ57yco/Y
-auXWJlDdHjLUQjpSCNwi
-=hb1h
------END PGP SIGNATURE-----
-
---Signature=_Tue__22_May_2012_01_44_22_+1000_+8GI9ousK+bCbwH3--
+Thanks, I folded this into my pull request.
