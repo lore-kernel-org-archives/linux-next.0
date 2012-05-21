@@ -1,35 +1,56 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: manual merge of the userns tree with the tip tree
-Date: Mon, 21 May 2012 17:02:39 -0600
-Message-ID: <87ipfp6sts.fsf@xmission.com>
-References: <20120521173006.3c10df123692914ab19497b8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: unable to fetch the watchdog tree
+Date: Tue, 22 May 2012 09:16:03 +1000
+Message-ID: <20120522091603.3253aa7b0e31c208b1c41e05@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__22_May_2012_09_16_03_+1000_lCrGScxWnvYV7aOw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out03.mta.xmission.com ([166.70.13.233]:56288 "EHLO
-	out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751109Ab2EUXCu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 19:02:50 -0400
-In-Reply-To: <20120521173006.3c10df123692914ab19497b8@canb.auug.org.au>
-	(Stephen Rothwell's message of "Mon, 21 May 2012 17:30:06 +1000")
+Received: from haggis.pcug.org.au ([203.10.76.10]:56358 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754984Ab2EUXQI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 19:16:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Signature=_Tue__22_May_2012_09_16_03_+1000_lCrGScxWnvYV7aOw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Eric,
->
-> Today's linux-next merge of the userns tree got a conflict in
-> include/linux/sched.h between commit 50954a1f450e ("sched/numa: Provide
-> sysctl knob to disable numa scheduling and turn it off by default") from
-> the tip tree and commit 7b44ab978b77 ("userns: Disassociate user_struct
-> from the user_namespace") from the userns tree.
->
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+Hi Wim,
 
-It looks reasonable.  Thanks.
+When I have tried to fetch the watchdog tree (from
+git://www.linux-watchdog.org/linux-watchdog-next.git) today and
+yesterday, the "git fetch" get a connection, but after some time (maybe
+immediately) it hangs and I eventually have to kill the "git fetch".
 
-Eric
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__22_May_2012_09_16_03_+1000_lCrGScxWnvYV7aOw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPusyzAAoJEECxmPOUX5FEHS4QAIu+ajvsN1qkfbGwMUsj4PA4
+5t+tBb8Upk0Ko2gU3r/33T3yiWHP+PVq0orQ5zpienNbU++FuB7S7sg5We2DO/ni
+UAPJ0maKpR1CmsOwQ/b3mIsEF3duyk+GwFgxwRSsOJPk2cahqUU/Xnx2hz/Cijk6
+YOf2Zt4EV7TBQygpaayukEYQzjh6wlqeEuwjCNzBXP4+HRO/WGp+yoi/OYRtGkeo
+ADldhJli6nm3xbB8iHoj32U/3jUWX6RRXfWu7GHRAvvWx/n5BcnNJQRC32LjhnOZ
+QHA7kZfNMyqZVUlPOGye94hlz8FyBk25SC2HzJ5v0KbjwYvZrA+fwd9TFpnyInYo
+8bVr8jEtLG9kIAZHgvrcy1VU1HIWABMIAGd+9zyt3FEennE2OtyUDMB9HnDo0/m9
+C9dN/v+voeY25jvUbL+FwUzcLdbwwEIc0QnjZFPJ5YLsgQIzob431cm1Bo/o5QJE
+Ak2k02JZPWMtlG4uVfdm9AgtZmy0a0dl3ktvhHme+Vf+SML28xTikt+jsFvsKEGf
+Mpvn7Urq56s/3DYYoLYnxdQvt09IE418m/+QocK5aab++gWsnyZx/nO2kewcqbKC
+SXVJjpU1gULOy0DoNoxviGWvMgv9mOxCPLlt7PMPgjvMMqYR6vf/M/7nP6dL5sf0
+ZH9oRU/Xt/gBlUXaCNzu
+=m194
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__22_May_2012_09_16_03_+1000_lCrGScxWnvYV7aOw--
