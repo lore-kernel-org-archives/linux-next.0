@@ -1,74 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Mon, 21 May 2012 18:23:43 +1000
-Message-ID: <20120521182343.fc69799fecb065de6192bb06@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the tip tree
+Date: Mon, 21 May 2012 18:29:11 +1000
+Message-ID: <20120521182911.219bd7779a4bfd38de625df4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_May_2012_18_23_43_+1000_BEbVYcF54GU_+R6w"
+ boundary="Signature=_Mon__21_May_2012_18_29_11_+1000_y8pc2McsCcfbZnH4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41568 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:34615 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756344Ab2EUIXz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 04:23:55 -0400
+	with ESMTP id S1755681Ab2EUI3T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 04:29:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Mon__21_May_2012_18_23_43_+1000_BEbVYcF54GU_+R6w
+--Signature=_Mon__21_May_2012_18_29_11_+1000_y8pc2McsCcfbZnH4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in
-fs/proc/base.c between commit 30a08bf2d31d ("proc: move fd symlink i_mode
-calculations into tid_fd_revalidate()") from the  tree and commit "proc:
-pass "fd" by value in /proc/*/{fd,fdinfo} code" from the akpm tree.
+Today's linux-next merge of the akpm tree got conflicts in
+arch/x86/syscalls/syscall_64.tbl and arch/x86/syscalls/syscall_32.tbl
+between commit a2dae61eb839 ("sched/numa: Introduce sys_numa_{t,m}bind()")
+from the tip tree and commit "syscalls, x86: add __NR_kcmp syscall"
+from the akpm tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/proc/base.c
-index 2308157,c560fc8..0000000
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@@ -1847,7 -1835,9 +1847,7 @@@ static const struct dentry_operations t
-  static struct dentry *proc_fd_instantiate(struct inode *dir,
-  	struct dentry *dentry, struct task_struct *task, const void *ptr)
-  {
-- 	unsigned fd =3D *(const unsigned *)ptr;
-+ 	unsigned fd =3D (unsigned long)ptr;
- -	struct file *file;
- -	struct files_struct *files;
-   	struct inode *inode;
-   	struct proc_inode *ei;
-  	struct dentry *error =3D ERR_PTR(-ENOENT);
+diff --cc arch/x86/syscalls/syscall_32.tbl
+index 38954c5,7a35a6e..0000000
+--- a/arch/x86/syscalls/syscall_32.tbl
++++ b/arch/x86/syscalls/syscall_32.tbl
+@@@ -355,5 -355,4 +355,6 @@@
+  346	i386	setns			sys_setns
+  347	i386	process_vm_readv	sys_process_vm_readv		compat_sys_process_vm_rea=
+dv
+  348	i386	process_vm_writev	sys_process_vm_writev		compat_sys_process_vm_w=
+ritev
+ -349	i386	kcmp			sys_kcmp
+ +349	i386	numa_mbind		sys_numa_mbind			compat_sys_numa_mbind
+ +350	i386	numa_tbind		sys_numa_tbind			compat_sys_numa_tbind
+++351	i386	kcmp			sys_kcmp
+diff --cc arch/x86/syscalls/syscall_64.tbl
+index 63c5285,f1dd014..0000000
+--- a/arch/x86/syscalls/syscall_64.tbl
++++ b/arch/x86/syscalls/syscall_64.tbl
+@@@ -318,8 -318,7 +318,9 @@@
+  309	common	getcpu			sys_getcpu
+  310	64	process_vm_readv	sys_process_vm_readv
+  311	64	process_vm_writev	sys_process_vm_writev
+ -312	64	kcmp			sys_kcmp
+ +312	64	numa_mbind		sys_numa_mbind
+ +313	64	numa_tbind		sys_numa_tbind
+++314	64	kcmp			sys_kcmp
+  #
+  # x32-specific system call numbers start at 512 to avoid cache impact
+  # for native 64-bit operation.
 
---Signature=_Mon__21_May_2012_18_23_43_+1000_BEbVYcF54GU_+R6w
+--Signature=_Mon__21_May_2012_18_29_11_+1000_y8pc2McsCcfbZnH4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPufuQAAoJEECxmPOUX5FE2NIP/3vbeiRUApFImv+7yQvLD7mL
-X/uY5wBMlRcSbdWkCPRkWfU3hN+1NHVijTuw2NRwU88wILVD86cVXIYA7fSAia8Y
-TurE8YJuMoTS/ItCIpET5yMV7x/w4jfAqXpzojQNAMjFceBN8ns8dAQ/5u/8L68S
-m+sDPziMJkJ913wC0kDqGGbLUwDZMS6hzNoHASA7ljQzIPmY6ZZpLiFeibOtSIn4
-UA752KXzrUDyV9/Gn7CZBCfpdHDkAz2a0rqrSDx5HP18v2M6k4D1vwDODLA6Rbo3
-GuGh9MOXptcO9EnQKYnebmcVra/GGxNv/Ind+ATN+xm+pDQInyNzGSx1/yVoq2XC
-j/2+QFk1njoso3+6J5ZOyf6xWUu/LoBHYM5LJGd5neg8xuW4UgCvSV0rWu5s1Zeh
-l2yPkzL/kHOq872/IDkxRSMrJCFvxGr5aR/ocF2WFkQsQiM743WhazF/G6yHhP+x
-olWlCWfupLZzIj4Z/t14WihBWKRU9rQWduZPE3AertZ2ibHTo6Kvp+uoU7QVpeTe
-EWK0r1F3Nnnsmz66ijJOwWHBQYko/HPoP4RZBpQhA2FAxJ8lWJmL8nTf3oa7r96Q
-fBcu5T98F7n4AvXLpiwCbXeIAoONT1k3R21zqhRoDjkTlnZUzCsHopxN505k7K50
-eVQ+504Lc7h91HBMjtie
-=Dthi
+iQIcBAEBCAAGBQJPufzXAAoJEECxmPOUX5FEHWYQAIE+mpTQ993374Gemg2wQ1y0
+VjFOiJYEcXHRI0xyTP2SNt4KAzzJ042N/JHwrZQH+WhaqRVjgoMABETESMNRYORT
+OnVvAJGB0AaSJp+LF4/HqLiQL1GTP+q24VUOcuoyuOYnfXJCAohUBXMSZ/Lo8fHR
+z8I4TlAGWi2J5dnzZo0/ruopyCJ/Hw+LPVQ8DWMcsbcomJrUuFxfqHZ84taWowzu
+B2mLv3kR055JITAsEYMXxn1yzzjrsmsno4V6LRzYUVwtrXxGu+y02FaHlu/0oNml
+GUKSuasnRqC8BnkccmbuVO6EUm8juyYWq46QRYjt6xc+2hoExHmp5R7HjcbGlGNV
+qh4snc5N8BBvXiw53NqN5NvC35vEP6p4Ap6E6ATlaB/BBGleZLzwPLDa3vWFmU2u
+qIbfJeHN07gs0ryxUbtcnPzkZZi8mpX3lNl8dAfg+TuSWxMA2xHhr32C/2PGb16d
+xjyJJkcMo3f54wySfuW5w1TQtNDVouvFq2uKAa8liDxsg/u1rMQjuSMhJjtP43vz
+9zURslx0H6yZ+u5yPP6sswmgub5MG9Q8pHEYaTniLsXwr9TaqF1pA96zd4Q+fMX4
+4zMn+q8IiE/de1XJv6T9fryDKd8lZqXtnGXmxNNnjyf/wB9CvGgmiUif7Uiurz3a
+iTGWtK5KqduS9e8aS5y2
+=EoYn
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__21_May_2012_18_23_43_+1000_BEbVYcF54GU_+R6w--
+--Signature=_Mon__21_May_2012_18_29_11_+1000_y8pc2McsCcfbZnH4--
