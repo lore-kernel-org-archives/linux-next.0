@@ -1,73 +1,67 @@
-From: Lee Jones <lee.jones@linaro.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Mon, 21 May 2012 09:30:47 +0100
-Message-ID: <4FB9FD37.4090905@linaro.org>
+Date: Mon, 21 May 2012 18:40:05 +1000
+Message-ID: <20120521184005.3b7661ec6468c5878a22615d@canb.auug.org.au>
 References: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au>
+	<4FB9F818.4030801@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__21_May_2012_18_40_05_+1000_nYYBnafShDNxVxpQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:61323 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756584Ab2EUIay (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 04:30:54 -0400
-Received: by lbbgm6 with SMTP id gm6so3255417lbb.19
-        for <linux-next@vger.kernel.org>; Mon, 21 May 2012 01:30:53 -0700 (PDT)
-In-Reply-To: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:43245 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756840Ab2EUIkP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 04:40:15 -0400
+In-Reply-To: <4FB9F818.4030801@linaro.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lee Jones <lee.jones@linaro.org>
 Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> After merging the mfd tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
+--Signature=_Mon__21_May_2012_18_40_05_+1000_nYYBnafShDNxVxpQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Lee,
+
+On Mon, 21 May 2012 09:08:56 +0100 Lee Jones <lee.jones@linaro.org> wrote:
 >
-> In file included from drivers/mfd/ab8500-core.c:21:0:
-> include/linux/mfd/dbx500-prcmu.h:614:19: error: redefinition of 'prcm=
-u_abb_read'
-> include/linux/mfd/db8500-prcmu.h:673:19: note: previous definition of=
- 'prcmu_abb_read' was here
-> include/linux/mfd/dbx500-prcmu.h:619:19: error: redefinition of 'prcm=
-u_abb_write'
-> include/linux/mfd/db8500-prcmu.h:678:19: note: previous definition of=
- 'prcmu_abb_write' was here
-> include/linux/mfd/dbx500-prcmu.h:630:19: error: redefinition of 'prcm=
-u_config_clkout'
-> include/linux/mfd/db8500-prcmu.h:643:19: note: previous definition of=
- 'prcmu_config_clkout' was here
-> include/linux/mfd/dbx500-prcmu.h:692:20: error: redefinition of 'prcm=
-u_ac_wake_req'
-> include/linux/mfd/db8500-prcmu.h:683:20: note: previous definition of=
- 'prcmu_ac_wake_req' was here
-> include/linux/mfd/dbx500-prcmu.h:694:20: error: redefinition of 'prcm=
-u_ac_sleep_req'
-> include/linux/mfd/db8500-prcmu.h:685:20: note: previous definition of=
- 'prcmu_ac_sleep_req' was here
->
-> Caused (exposed?) by commit d28f1db8187d ("mfd: Remove confusing
-> ab8500-i2c file and merge into ab8500-core").  I assume that this has
-> only had very restricted build testing :-(
+> The patch itself has had extensive build and run testing, with DT both=20
+> enabled and disabled. I'm guessing some other changes may be having and=20
+> influence here. I'm happy to take a look for you. Can you tell me where=20
+> I can pull the offending branch from please?
 
-I 'believe' that you 'might' be missing MFD_DB8500_PRCMU from your=20
-config. Can you check this for me please Stephen?
+The mfd tree can be found here:
 
-MFD_DB8500_PRCMU is selected by
-UX500_SOC_DB8500 is selected by
-MACH_MOP500 is selected by
-MACH_HREFV60 | MACH_SNOWBALL is selected by
-u8500_defconfig
+git://git.kernel.org/pub/scm/linux/kernel/git/sameo/mfd-2.6.git#for-next
 
-Can I ask how you build the kernel and which defconfig you are using pl=
-ease?
-
-Kind regards,
-Lee
-
+Did you try building it for X86_64?  What failed for me was an x86_64
+allmodconfig.
 --=20
-Lee Jones
-Linaro ST-Ericsson Landing Team Lead
-M: +44 77 88 633 515
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__21_May_2012_18_40_05_+1000_nYYBnafShDNxVxpQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPuf9lAAoJEECxmPOUX5FErf4QAKkv9ZQ/7sQS1WnovuN9P9Me
+QYS9l4FE2sKd5fYH10xyd0d0lgL9Z/c0BnyJkBm0Exlu34q6fC7fraU8iL4U+85L
+g4gY33yvMdemSoo8y4g0PM9tzVANCFzZgUu/NcyCO8wwAhS0U/l9Yn4IBJyo9tIG
+iLQCkg/Ldw+rjVimHj4pNN+FgxznnLNrD/HL/WKHv6rtaIFDlBN94csJSDJ8la+L
+lUh7WeIpUVo1qEH+BYGjhdroE9lEl+8LmQ8tnCZQOd1/z1xNHoWjfMuI7vtFJkvA
+EmT5LAMBVgf0UmxwfxDSeufbslKNRJWLgIWwifWUNOUzRpEoH7UNvofXXcWSXeZg
+2s1soWwNUfb0fYPZ/4/v6LU9arS7LMNBAeGBVf2EacPZxKft3eh6ifIsk48080rx
+7AXqOc2DKTo5bvoTt7ywp6At0aDtsuJMgjWfceqcakMSvac4qKlp4JesR5lDYj38
+fo1h6C0AawE/dYeQinp+yVUj6x0jOBvJ3lb7rD46x0JWThp3HU9ZCS5ZTJw69Adj
+c5VodSAuCfCX3chjBQNwae3+XddrHvN6qJWdPAKdPGeXkSEc3lF8zEn6pWjYw45W
+dOW2+j3BBkOOsx5lK80fyXuEmOWfr/wBrkzWb1Ilv0jKQLfe2n/rwllV9R5FSnuY
+0gf5JLzf9jOSPfTaPR++
+=Vv2e
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__21_May_2012_18_40_05_+1000_nYYBnafShDNxVxpQ--
