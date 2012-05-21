@@ -1,81 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd tree
-Date: Mon, 21 May 2012 13:42:19 +1000
-Message-ID: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-ppc tree with the kvm tree
+Date: Mon, 21 May 2012 15:21:16 +1000
+Message-ID: <20120521152116.4e0c2e8d908771e6fe88e6f6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_May_2012_13_42_19_+1000_i=NmTkY1Q5CG.FYg"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49614 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752688Ab2EUDm2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 20 May 2012 23:42:28 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+ boundary="Signature=_Mon__21_May_2012_15_21_16_+1000_wS=1puE2X70kXgnG"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexander Graf <agraf@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Borntraeger <borntraeger@de.ibm.com>, Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>, Paul Mackerras <paulus@samba.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__21_May_2012_13_42_19_+1000_i=NmTkY1Q5CG.FYg
+--Signature=_Mon__21_May_2012_15_21_16_+1000_wS=1puE2X70kXgnG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi Alexander,
 
-After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the kvm-ppc tree got a conflict in
+include/linux/kvm.h between commit 1526bf9ccf31 ("KVM: s390: add
+capability indicating COW support") from the kvm tree and commit
+6e8fce2c6cd3 ("KVM: PPC: Book3S HV: Make the guest hash table size
+configurable") from the kvm-ppc tree.
 
-In file included from drivers/mfd/ab8500-core.c:21:0:
-include/linux/mfd/dbx500-prcmu.h:614:19: error: redefinition of 'prcmu_abb_=
-read'
-include/linux/mfd/db8500-prcmu.h:673:19: note: previous definition of 'prcm=
-u_abb_read' was here
-include/linux/mfd/dbx500-prcmu.h:619:19: error: redefinition of 'prcmu_abb_=
-write'
-include/linux/mfd/db8500-prcmu.h:678:19: note: previous definition of 'prcm=
-u_abb_write' was here
-include/linux/mfd/dbx500-prcmu.h:630:19: error: redefinition of 'prcmu_conf=
-ig_clkout'
-include/linux/mfd/db8500-prcmu.h:643:19: note: previous definition of 'prcm=
-u_config_clkout' was here
-include/linux/mfd/dbx500-prcmu.h:692:20: error: redefinition of 'prcmu_ac_w=
-ake_req'
-include/linux/mfd/db8500-prcmu.h:683:20: note: previous definition of 'prcm=
-u_ac_wake_req' was here
-include/linux/mfd/dbx500-prcmu.h:694:20: error: redefinition of 'prcmu_ac_s=
-leep_req'
-include/linux/mfd/db8500-prcmu.h:685:20: note: previous definition of 'prcm=
-u_ac_sleep_req' was here
-
-Caused (exposed?) by commit d28f1db8187d ("mfd: Remove confusing
-ab8500-i2c file and merge into ab8500-core").  I assume that this has
-only had very restricted build testing :-(
-
-I have used the mfd tree from next-20120511 again for today.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__21_May_2012_13_42_19_+1000_i=NmTkY1Q5CG.FYg
+diff --cc include/linux/kvm.h
+index 09f2b3a,fcc98df..0000000
+--- a/include/linux/kvm.h
++++ b/include/linux/kvm.h
+@@@ -616,7 -616,7 +616,8 @@@ struct kvm_ppc_smmu_info=20
+  #define KVM_CAP_KVMCLOCK_CTRL 76
+  #define KVM_CAP_SIGNAL_MSI 77
+  #define KVM_CAP_PPC_GET_SMMU_INFO 78
+ -#define KVM_CAP_PPC_ALLOC_HTAB 79
+ +#define KVM_CAP_S390_COW 79
+++#define KVM_CAP_PPC_ALLOC_HTAB 80
+ =20
+  #ifdef KVM_CAP_IRQ_ROUTING
+ =20
+
+--Signature=_Mon__21_May_2012_15_21_16_+1000_wS=1puE2X70kXgnG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPubmbAAoJEECxmPOUX5FEheQP/R5ggBGNCC729Dig4WyCb0aE
-GJR37ekdQEjCDD5+rWmVyCg/bhoHh1sCdvFYYDB/xSbvIaWmXgF2ksulYU6CsvDn
-QV22nFCr3M52ituAssnb73n1LY9wLGU+6XN4Z0498j01yn8qeXS08yWR+NuvNGOu
-/AhWYNfh2UTEQsSMHd5g6tJ1VQQG/E2ZEKdgkSIhBaDb45VB687zRmeyqy6M32kS
-/VR26Qdw9Z8R/S8q0Pd+Mu63avtrp21d/n5ZnOqqOwEjQ6+Obqnk0Abus4ysphmP
-DJq11rkkz+P04FIspXWzQxb9KhISGwAPDHPTnoGalF2wv1H/yPuSUQCtiOiFo8D6
-jFaWzR72t7Ef3GDzvFEdLTId5qWC7BZWpCMxDdQGN7eSp6cxNcTItUWH3rgN9+xf
-QQ7+8zQtQCMZdG7Y65WpVEZAnOEP///a6iyVpqvjXcVaTWQYbGTvVOrmBEdl8k7V
-GigACea0HvfUKl6FWUNCprgElnoqyqeXdW+U55ixxTddsn5ZIITpljcChphQXTaL
-LcyGphKVOufKRNmgq3mpUZe9CKwlzKanQMrMJZhzjLGc7eVB2kXgzhCR/mxlYi96
-RYq4WcIsCd+iZ8jSkO1k3qn5r2TeX0hJbbxkmu/Rci+TY8jmr6P6MHUwUqvKjtuj
-1YUQfR4geRnFQjcQgI+R
-=8E9p
+iQIbBAEBCAAGBQJPudDMAAoJEECxmPOUX5FEhdQP90GHY4qlMVvzYt2kt5oGeJzE
+sXbN4CIoIb8HEV9k1TuZfHVxW0wtQ5FI+g74G6iC6q8DMkXZ+dmBZKC1VpBGolAc
+q3LcWjtYBnnucIbTvpRPFPNxfRJQIjf9+6neUM1tnOBHhj5oSIuP5rjaw6F8f2vb
+gGI13sHIJFm+CK0/zHN2W919lr+RXibXtQDjVUCpfmdrrLfi0AfnZNEFtPVUiqhG
+GFT8ft7RwBjxD3uuPMFYoG3a3k1F3AcKPRDPHQI69m7fla7oX3T9tE4DaIKid8WE
+bUAUjJPRfFDGjnIhkcd3jzNz5Kq62esJkvB064y8bOZs+WkQ2eRHDKAi+fEQgUcc
+YfhGOoCMo1AV1TAl7ZgVuJy/h2GeSkhJU38aJ8HOlNftb3atJQ2WGcKBQM2D48wo
+B/7xUTU+CGOAjHaPCK8QWKs8UBnf5u8FEPynl2ALmL2uLkemTmS9DR/UI9U5+Js2
+w3SiYvP8a5cDrDsTrnCzwshvNmgWG6oIcE/0OGeGeQ+EEETAcibNNU0U5NYf+vCm
+OafdMM8yi80uoTr7Xt73o8bDEBrez1RWlJO0lLQjV1Irm9C2w3Y3PcbgT3DoNojm
++jzRn1xPsKVFGNosgzoWNHop3jvNthuIguHVqD7qqw2jDOiimv+ToCuDb1fcwguR
+eIR+CDYkvic0WcPdKEE=
+=Nbg4
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__21_May_2012_13_42_19_+1000_i=NmTkY1Q5CG.FYg--
+--Signature=_Mon__21_May_2012_15_21_16_+1000_wS=1puE2X70kXgnG--
