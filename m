@@ -1,68 +1,118 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the infiniband tree
-Date: Mon, 21 May 2012 12:05:12 +1000
-Message-ID: <20120521120512.15f1e9dfc961b05dfee72f79@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the  tree
+Date: Mon, 21 May 2012 12:27:38 +1000
+Message-ID: <20120521122738.6efeece76ae43e7948a12d04@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_May_2012_12_05_12_+1000_6OEbz5KAKzLm8Cb7"
+ boundary="Signature=_Mon__21_May_2012_12_27_38_+1000_Rb256l.qXR3KiJys"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34766 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:49774 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755471Ab2EUCFZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 20 May 2012 22:05:25 -0400
+	with ESMTP id S1755985Ab2EUC1t (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 20 May 2012 22:27:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vipul Pandya <vipul@chelsio.com>, Steve Wise <swise@opengridcomputing.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Parav Pandit <parav.pandit@emulex.com>, Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org, Somnath Kotur <somnath.kotur@emulex.com>Somnath Kotur <somnath.kotur@emulex.com>
 
---Signature=_Mon__21_May_2012_12_05_12_+1000_6OEbz5KAKzLm8Cb7
+--Signature=_Mon__21_May_2012_12_27_38_+1000_Rb256l.qXR3KiJys
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the infiniband tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/ethernet/emulex/benet/be.h between commit c72adfd767af
+("be2net: Add functionality to support RoCE driver") from the infiniband
+tree and commit 941a77d582c8 ("be2net: Fix to allow get/set of debug
+levels in the firmware") from the net-next tree.
 
-drivers/infiniband/hw/cxgb4/device.c: In function 'qp_release':
-drivers/infiniband/hw/cxgb4/device.c:124:2: error: implicit declaration of =
-function 'vfree' [-Werror=3Dimplicit-function-declaration]
-drivers/infiniband/hw/cxgb4/device.c: In function 'qp_open':
-drivers/infiniband/hw/cxgb4/device.c:148:2: error: implicit declaration of =
-function 'vmalloc' [-Werror=3Dimplicit-function-declaration]
-drivers/infiniband/hw/cxgb4/device.c:148:11: warning: assignment makes poin=
-ter from integer without a cast [enabled by default]
-
-Caused by commit d716a2a014ad ("RDMA/cxgb4: Use vmalloc() for debugfs QP
-dump").  See Rule 1 in Documentation/SubmitChecklist.
-
-I have used the infiniband tree from next-20120518 for today.
-
+Just context changes.  I fixed it up (see below) and carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__21_May_2012_12_05_12_+1000_6OEbz5KAKzLm8Cb7
+diff --cc drivers/net/ethernet/emulex/benet/be.h
+index 7bb2e97,ff4eb8f..0000000
+--- a/drivers/net/ethernet/emulex/benet/be.h
++++ b/drivers/net/ethernet/emulex/benet/be.h
+@@@ -32,9 -32,8 +32,9 @@@
+  #include <linux/u64_stats_sync.h>
+ =20
+  #include "be_hw.h"
+ +#include "be_roce.h"
+ =20
+- #define DRV_VER			"4.2.116u"
++ #define DRV_VER			"4.2.220u"
+  #define DRV_NAME		"be2net"
+  #define BE_NAME			"ServerEngines BladeEngine2 10Gbps NIC"
+  #define BE3_NAME		"ServerEngines BladeEngine3 10Gbps NIC"
+@@@ -379,22 -404,7 +406,18 @@@ struct be_adapter=20
+  	u32 rx_fc;		/* Rx flow control */
+  	u32 tx_fc;		/* Tx flow control */
+  	bool stats_cmd_sent;
+- 	int link_speed;
+- 	u8 port_type;
+- 	u8 transceiver;
+- 	u8 autoneg;
+  	u8 generation;		/* BladeEngine ASIC generation */
+ +	u32 if_type;
+ +	struct {
+ +		u8 __iomem *base;	/* Door Bell */
+ +		u32 size;
+ +		u32 total_size;
+ +		u64 io_addr;
+ +	} roce_db;
+ +	u32 num_msix_roce_vec;
+ +	struct ocrdma_dev *ocrdma_dev;
+ +	struct list_head entry;
+ +
+  	u32 flash_status;
+  	struct completion flash_compl;
+ =20
+@@@ -606,17 -603,7 +626,19 @@@ extern void be_link_status_update(struc
+  extern void be_parse_stats(struct be_adapter *adapter);
+  extern int be_load_fw(struct be_adapter *adapter, u8 *func);
+  extern bool be_is_wol_supported(struct be_adapter *adapter);
++ extern bool be_pause_supported(struct be_adapter *adapter);
++ extern u32 be_get_fw_log_level(struct be_adapter *adapter);
+ =20
+ +/*
+ + * internal function to initialize-cleanup roce device.
+ + */
+ +extern void be_roce_dev_add(struct be_adapter *);
+ +extern void be_roce_dev_remove(struct be_adapter *);
+ +
+ +/*
+ + * internal function to open-close roce device during ifup-ifdown.
+ + */
+ +extern void be_roce_dev_open(struct be_adapter *);
+ +extern void be_roce_dev_close(struct be_adapter *);
+ +
+  #endif				/* BE_H */
+
+--Signature=_Mon__21_May_2012_12_27_38_+1000_Rb256l.qXR3KiJys
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPuaLYAAoJEECxmPOUX5FErDkP/1n7ldDlC+01Fl3FzRK4eyYM
-rE++FDkovHYNa6RJ9fB9AzOkYydaW49Kmq9wN59NK6xQgQzWyr4GB7+uEDbqSeWd
-OeRJoeja0XkMWhFo+sxZErSQCkR8L/Wx63abNtPz0EWYlltXucPgs5kFt6Q6cIx5
-G2jwC1oZFrnYMZls+a/xEoNxB2jz2QgdE/I+JVw04jr45ApXe0UkvyxrgRthuPL2
-6fZKasUARNd6Kzq9fSSecIlTf3H2GvoxLunnHSPNk8IEmUqaVblJF+KV8FgvxVOG
-FoSsxcIlEYpwqjAqIYasKSpu0lP2+Ia69RQLsuHQV5pq90mOnxWldhxZOlrCWmjT
-OAkS8cg5at27HBNWbRSeO3Nqr/Nx6hFJD/nukPa+EkI09BEgIixazPHovXz9Ppvm
-AJXPo7fLpL9J1Axyj1N3ONwFQmuCOEOh+AN5dMVkF04WZSHpcB4CJiRBOhZ/RTO9
-4xEQn/L45SDRHpBwU++6jrPN/+DqvNJHZmaBiPhN8hvjR6r+mxnUQEFkXKcqGfVL
-iOssFZsGpQ5KLZR+LpV1oGX/0Uba9XOz+cuvhJilnZmUdWwXdKkMK6VG6wdlU0cE
-mIhBt8g+WlOyy4PzA9Z2LN0W8UojnIf9xAw0clCuGJztQforpkaAIcJCPir6sj04
-zJM18koJVucwR/0Bv/Gr
-=9kmo
+iQIcBAEBCAAGBQJPuagaAAoJEECxmPOUX5FEKz0P/0Uxpxw019qrDslPLhaACCMq
+kVaH34tV1DtEPVEna3TzYmqqcVC1aIAshWWDDVDoeTDVolrKtDTzUTGdevZabSCs
+l5UpE01ddktmGfQEikbRLE7327t3sloi6wOI4ESgD6lHlxEpQ9o22Ef7ZxvM3jxf
+G3vBMXIZX/4pKvqlKnWJixInclyLdS6GnPtECUBA3CCClXPl7cxaEUhnU4ITCNGT
+qlWlA3Ffnb2WinFTPDnXW+9CUl9iOxU5YfVV1HZcGZPr6GwIfdYSEqnDAoq1ibnp
+E883+DCNPOfE2AF7+QcvgyxkhFviFUBB1XyUJyiMEviQ4Hc+fxD7uZSKlLn/imN/
+/zK0omFiAMwyHVpCDb771XEpH+ICb9FG1+LyCiyyWDyHW9YJuS0zkI2HThU1P+7Z
+TMBsx6OOY6eHEkupsM0O8YRBp9ExAF6cvSwOUS6k/y+dSK/liikYg7RV5bYwbrMM
+EeIIzkNrozmVC6wud9i3oSib9u4qzSgtE9ywjMrwVUytfZLKxi5eLzTtzawBVfl2
+DkEy+NYPxKiEuCJ1w4ZAmJyQRPH8PYfJ1nqNE0cbQAC1yFb3uaL3k32M1OLK/21h
+l1JfNmhf/yEahdHRzHWuHKVj6lf3g5e9aSrSQsTDxHxVzEayS/GmE5n9OR0lfiuZ
+6wy3QlAMA9/EaU8qhCXd
+=nvHC
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__21_May_2012_12_05_12_+1000_6OEbz5KAKzLm8Cb7--
+--Signature=_Mon__21_May_2012_12_27_38_+1000_Rb256l.qXR3KiJys--
