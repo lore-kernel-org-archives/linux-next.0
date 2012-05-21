@@ -1,47 +1,35 @@
-From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Mon, 21 May 2012 05:56:10 -0700
-Message-ID: <20120521125610.GB5662@xanatos>
-References: <20120521162216.ca7c437235a2cc1aa54cacc9@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the net-next tree
+Date: Mon, 21 May 2012 06:08:57 -0700
+Message-ID: <20120521130857.GA19103@kroah.com>
+References: <20120521161008.c0cc00b91642ed7a3875a686@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:42776 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755356Ab2EUM4N (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 May 2012 08:56:13 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:50319 "EHLO
+	out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755616Ab2EUNJD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 May 2012 09:09:03 -0400
 Content-Disposition: inline
-In-Reply-To: <20120521162216.ca7c437235a2cc1aa54cacc9@canb.auug.org.au>
+In-Reply-To: <20120521161008.c0cc00b91642ed7a3875a686@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sarah Sharp <sarah.a.sharp@linux.intel.com>, Kalle Valo <kvalo@qca.qualcomm.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 
-On Mon, May 21, 2012 at 04:22:16PM +1000, Stephen Rothwell wrote:
+On Mon, May 21, 2012 at 04:10:08PM +1000, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> After merging the usb tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/net/wireless/ath/ath6kl/usb.c between commit 9cbee358687e
+> ("ath6kl: add full USB support") from the net-next tree and commit
+> e1f12eb6ba6f ("USB: Disable hub-initiated LPM for comms devices") from
+> the usb tree.
 > 
-> drivers/usb/core/hub.c: In function 'usb_disable_lpm':
-> drivers/usb/core/hub.c:3394:2: error: implicit declaration of function 'usb_enable_lpm' [-Werror=implicit-function-declaration]
-> drivers/usb/core/hub.c: At top level:
-> drivers/usb/core/hub.c:3424:6: warning: conflicting types for 'usb_enable_lpm' [enabled by default]
-> drivers/usb/core/hub.c:3394:2: note: previous implicit declaration of 'usb_enable_lpm' was here
-> drivers/usb/core/driver.c: In function 'usb_probe_interface':
-> drivers/usb/core/driver.c:339:2: error: implicit declaration of function 'usb_unlocked_disable_lpm' [-Werror=implicit-function-declaration]
-> drivers/usb/core/driver.c:364:3: error: implicit declaration of function 'usb_unlocked_enable_lpm' [-Werror=implicit-function-declaration]
-> drivers/usb/core/message.c: In function 'usb_set_interface':
-> drivers/usb/core/message.c:1314:2: error: implicit declaration of function 'usb_disable_lpm' [-Werror=implicit-function-declaration]
-> drivers/usb/core/message.c:1323:3: error: implicit declaration of function 'usb_enable_lpm' [-Werror=implicit-function-declaration]
-> drivers/usb/core/message.c:1368:2: error: implicit declaration of function 'usb_unlocked_enable_lpm' [-Werror=implicit-function-declaration]
-> 
-> Caused by commit 8306095fd2c1 ("USB: Disable USB 3.0 LPM in critical
-> sections").
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-Hi Stephan,
+Looks good to me, thanks.
 
-I'm creating a patch (and verifying the other drivers that were touched
-by that commit) right now.  Sorry for the build failures.
-
-Sarah Sharp
+greg k-h
