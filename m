@@ -1,36 +1,68 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: build warning after merge of the final tree (userns tree related)
-Date: Sat, 19 May 2012 15:52:18 -0600
-Message-ID: <87d35z260d.fsf@xmission.com>
-References: <20120516195513.29d921bc25f308f92f0d6471@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the infiniband tree
+Date: Mon, 21 May 2012 12:05:12 +1000
+Message-ID: <20120521120512.15f1e9dfc961b05dfee72f79@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__21_May_2012_12_05_12_+1000_6OEbz5KAKzLm8Cb7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out02.mta.xmission.com ([166.70.13.232]:33252 "EHLO
-	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754804Ab2ESVw3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 19 May 2012 17:52:29 -0400
-In-Reply-To: <20120516195513.29d921bc25f308f92f0d6471@canb.auug.org.au>
-	(Stephen Rothwell's message of "Wed, 16 May 2012 19:55:13 +1000")
+Received: from haggis.pcug.org.au ([203.10.76.10]:34766 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755471Ab2EUCFZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 20 May 2012 22:05:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Roland Dreier <roland@kernel.org>, linux-rdma@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vipul Pandya <vipul@chelsio.com>, Steve Wise <swise@opengridcomputing.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Signature=_Mon__21_May_2012_12_05_12_+1000_6OEbz5KAKzLm8Cb7
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Eric,
->
-> After merging the final tree, today's linux-next build (powerpc
-> ppc44x_defconfig) produced this warning:
->
-> kernel/user.c:30:4: warning: this decimal constant is unsigned only in ISO C90 [enabled by default]
-> kernel/user.c:38:4: warning: this decimal constant is unsigned only in ISO C90 [enabled by default]
->
-> Introduced by commit 22d917d80e84 ("userns: Rework the user_namespace
-> adding uid/gid mapping support").
+Hi all,
 
-Ugh.  I missed this email the first time through.  Thank you for the
-report this problem should be fixed now.
+After merging the infiniband tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Eric
+drivers/infiniband/hw/cxgb4/device.c: In function 'qp_release':
+drivers/infiniband/hw/cxgb4/device.c:124:2: error: implicit declaration of =
+function 'vfree' [-Werror=3Dimplicit-function-declaration]
+drivers/infiniband/hw/cxgb4/device.c: In function 'qp_open':
+drivers/infiniband/hw/cxgb4/device.c:148:2: error: implicit declaration of =
+function 'vmalloc' [-Werror=3Dimplicit-function-declaration]
+drivers/infiniband/hw/cxgb4/device.c:148:11: warning: assignment makes poin=
+ter from integer without a cast [enabled by default]
+
+Caused by commit d716a2a014ad ("RDMA/cxgb4: Use vmalloc() for debugfs QP
+dump").  See Rule 1 in Documentation/SubmitChecklist.
+
+I have used the infiniband tree from next-20120518 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__21_May_2012_12_05_12_+1000_6OEbz5KAKzLm8Cb7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPuaLYAAoJEECxmPOUX5FErDkP/1n7ldDlC+01Fl3FzRK4eyYM
+rE++FDkovHYNa6RJ9fB9AzOkYydaW49Kmq9wN59NK6xQgQzWyr4GB7+uEDbqSeWd
+OeRJoeja0XkMWhFo+sxZErSQCkR8L/Wx63abNtPz0EWYlltXucPgs5kFt6Q6cIx5
+G2jwC1oZFrnYMZls+a/xEoNxB2jz2QgdE/I+JVw04jr45ApXe0UkvyxrgRthuPL2
+6fZKasUARNd6Kzq9fSSecIlTf3H2GvoxLunnHSPNk8IEmUqaVblJF+KV8FgvxVOG
+FoSsxcIlEYpwqjAqIYasKSpu0lP2+Ia69RQLsuHQV5pq90mOnxWldhxZOlrCWmjT
+OAkS8cg5at27HBNWbRSeO3Nqr/Nx6hFJD/nukPa+EkI09BEgIixazPHovXz9Ppvm
+AJXPo7fLpL9J1Axyj1N3ONwFQmuCOEOh+AN5dMVkF04WZSHpcB4CJiRBOhZ/RTO9
+4xEQn/L45SDRHpBwU++6jrPN/+DqvNJHZmaBiPhN8hvjR6r+mxnUQEFkXKcqGfVL
+iOssFZsGpQ5KLZR+LpV1oGX/0Uba9XOz+cuvhJilnZmUdWwXdKkMK6VG6wdlU0cE
+mIhBt8g+WlOyy4PzA9Z2LN0W8UojnIf9xAw0clCuGJztQforpkaAIcJCPir6sj04
+zJM18koJVucwR/0Bv/Gr
+=9kmo
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__21_May_2012_12_05_12_+1000_6OEbz5KAKzLm8Cb7--
