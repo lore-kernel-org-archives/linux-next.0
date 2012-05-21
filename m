@@ -1,74 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Mon, 21 May 2012 19:15:08 +1000
-Message-ID: <20120521191508.9a5f6d7ea9e71fc924ba9f64@canb.auug.org.au>
-References: <20120521185412.aca92107d0a8c4fdd8474e34@canb.auug.org.au>
-	<20120521091257.GF31407@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Mon, 21 May 2012 10:19:32 +0100
+Message-ID: <4FBA08A4.6030706@linaro.org>
+References: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au> <4FB9F818.4030801@linaro.org> <20120521184005.3b7661ec6468c5878a22615d@canb.auug.org.au> <4FBA0460.1070300@linaro.org> <20120521191007.9347651e88add2e7c247a24f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__21_May_2012_19_15_08_+1000_A5aafPaR/DTAefZf"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46619 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757360Ab2EUJPQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 05:15:16 -0400
-In-Reply-To: <20120521091257.GF31407@gmail.com>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:37247 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757477Ab2EUJTk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 05:19:40 -0400
+Received: by lbbgm6 with SMTP id gm6so3282109lbb.19
+        for <linux-next@vger.kernel.org>; Mon, 21 May 2012 02:19:38 -0700 (PDT)
+In-Reply-To: <20120521191007.9347651e88add2e7c247a24f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__21_May_2012_19_15_08_+1000_A5aafPaR/DTAefZf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 21/05/12 10:10, Stephen Rothwell wrote:
+> Hi Lee,
+>=20
+> On Mon, 21 May 2012 10:01:20 +0100 Lee Jones<lee.jones@linaro.org>  w=
+rote:
+>>
+>> That seems broken to me.
+>>
+>> Why would any of the X86_64 systems be building ab8500-core code?
+>=20
+> Because the Kconfig allows it to ...
 
-Hi Ingo,
+I think the issue may be on the x86 side. In -next I see:
 
-On Mon, 21 May 2012 11:12:57 +0200 Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > After merging the final tree, today's linux-next build (i386 defconfig)
-> > failed like this:
-> >=20
-> > Invalid absolute R_386_32 relocation: jiffies
->=20
-> Hm, that's our fault: seems like a linker bug fallout, one which=20
-> we fixed in -tip.
->=20
-> > I am not sure what caused this (it may even been a bad merge=20
-> > on my part).  I have left it broken for today.
->=20
-> While we've fixed this, to simplify merge window integration of=20
-> linux-next I've excluded tip:x86/trampoline from the linux-next=20
-> branch for now, so this build failure should go away tomorrow.
+> arch/arm/configs/u8500_defconfig:CONFIG_AB8500_CORE=3Dy
+> drivers/mfd/Kconfig:config AB8500_CORE
 
-OK, thanks
+Expected
+
+> drivers/gpio/Kconfig:           depends on AB8500_CORE && BROKEN
+> drivers/input/misc/Kconfig:     depends on AB8500_CORE
+> drivers/mfd/Kconfig:            depends on AB8500_CORE && MFD_DB8500_=
+PRCMU
+> drivers/mfd/Kconfig:            depends on AB8500_CORE && DEBUG_FS
+> drivers/mfd/Kconfig:            depends on AB8500_CORE && REGULATOR_A=
+B8500
+> drivers/misc/Kconfig:           depends on AB8500_CORE && ARCH_U8500
+> drivers/power/Kconfig:          depends on AB8500_CORE && AB8500_GPAD=
+C
+> drivers/regulator/Kconfig:      depends on AB8500_CORE
+> drivers/rtc/Kconfig:            depends on AB8500_CORE
+> drivers/usb/otg/Kconfig:        depends on AB8500_CORE
+
+I've just checked these, they are all AB8500 related Kconfig entries.
+
+> include/linux/mfd/abx500/ab8500-sysctrl.h:#ifdef CONFIG_AB8500_CORE
+> include/linux/mfd/abx500/ab8500-sysctrl.h:#endif /* CONFIG_AB8500_COR=
+E */
+
+> drivers/mfd/Makefile:obj-$(CONFIG_AB8500_CORE)  +=3D ab8500-core.o ab=
+8500-sysctrl.o
+
+So somewhere along the line an X86 config is selecting CONFIG_AB8500_CO=
+RE when it shouldn't.=20
+
+I can't see anything relevant in my tree. I'll try to pull yours as hav=
+e a look.
+
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__21_May_2012_19_15_08_+1000_A5aafPaR/DTAefZf
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPugecAAoJEECxmPOUX5FEuNMP/RboH1KyTCv+qMB7Jgg4GBAw
-Us75WnmaCYQObglZmtgQ6cOeUkjJ3MKh09fQ2Yle8MYVXHZ9ohrN9qIrKYrARhYs
-dn5NvW9B8qP9rMI3dd/TIor9vVOXmapxHS9FYhNGT9sLe03hD+3kWOkbCw2EP+OX
-pQcfsvspQFc7DH04m+OGREzaaWHQd98iqnQjkq4L4w1Ep7l5+kssFvhSI3xNXUJM
-ShNPv6SdcLyA+b5vp939ahhhL0qoYBK+6t/o5UH5SOFYv4R2rZhs1laWNGUikx/n
-HLKKFVSlDw51WOh2WuVAGAmxlfbk8VlLd74LJc1gSFqA8lbBe6nn4BstMQBjAvrb
-cG2eqy4unpADB5JGSsed9Rer1iSadzbtDjTjPOfIUioP6ELDAcg/Ifd2K8eNlZhO
-di0PFLrPa9M3EJ7WQmgjTTn1nLk1LenTl7zSuDkMmqzGEY0zaKmjNqqVRlRR8gHU
-QSrJkoGJ/zVRI6JA5e9fngDXgAghf2aFVZkb9p8UiUU+i+LXxkdJtl6w0VPaAZLe
-OX1nbFd7SzTdEd6d7DcaUJ4+8OKoBhSiaqr0BnBiYYZNzyjaGSaM/qNGhMxytrpK
-5yKC9J/qiL0LzpPJBqCyZPtROtUX9wUh348rNM6rJeq+uBYLIC5ODNY2Ve0Dish1
-6PFVhoiZu154urYYI7z/
-=wHRN
------END PGP SIGNATURE-----
-
---Signature=_Mon__21_May_2012_19_15_08_+1000_A5aafPaR/DTAefZf--
+Lee Jones
+Linaro ST-Ericsson Landing Team Lead
+M: +44 77 88 633 515=20
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
