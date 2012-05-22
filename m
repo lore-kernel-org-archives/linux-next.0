@@ -1,77 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Tue, 22 May 2012 15:44:11 +1000
-Message-ID: <20120522154411.e054ecb074bfca2e633ef5b3@canb.auug.org.au>
+Subject: linux-next: manual merge of the userns tree with Linus' tree
+Date: Tue, 22 May 2012 17:44:26 +1000
+Message-ID: <20120522174426.1cd39ec7841e7545bb340cdd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_May_2012_15_44_11_+1000_6Er4MniNjEboAc.6"
+ boundary="Signature=_Tue__22_May_2012_17_44_26_+1000_7fMVAfz+rPOestkl"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:34476 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:52693 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753802Ab2EVFoS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 May 2012 01:44:18 -0400
+	with ESMTP id S1752979Ab2EVHob (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 May 2012 03:44:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
---Signature=_Tue__22_May_2012_15_44_11_+1000_6Er4MniNjEboAc.6
+--Signature=_Tue__22_May_2012_17_44_26_+1000_7fMVAfz+rPOestkl
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Eric,
 
-Today's linux-next merge of the tip tree got a conflict in mm/memory.c
-between commit 4f74d2c8e827 ("vm: remove 'nr_accounted' calculations from
-the unmap_vmas() interfaces") from Linus' tree and commit cbc91f71b51b
-("uprobes/core: Decrement uprobe count before the pages are unmapped")
-from the tip tree.
+Today's linux-next merge of the userns tree got a conflict in fs/stat.c
+between commit a52dd971f947 ("vfs: de-crapify "cp_new_stat()" function")
+from Linus' tree and commit a7c1938e22c0 ("userns: Convert stat to return
+values mapped from kuids and kgids") from the userns tree.
 
-Following discussion between Linus and Andred, I fixed it up as below for
-now.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc mm/memory.c
-index 1e77da6,84427aa..0000000
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@@ -1307,6 -1309,12 +1309,9 @@@ static void unmap_single_vma(struct mmu
-  	if (end <=3D vma->vm_start)
-  		return;
- =20
-+ 	if (vma->vm_file)
-+ 		uprobe_munmap(vma, start, end);
-+=20
- -	if (vma->vm_flags & VM_ACCOUNT)
- -		*nr_accounted +=3D (end - start) >> PAGE_SHIFT;
- -
-  	if (unlikely(is_pfn_mapping(vma)))
-  		untrack_pfn_vma(vma, 0, 0);
- =20
+diff --cc fs/stat.c
+index 0cef336,31acca5..0000000
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@@ -224,9 -215,17 +224,9 @@@ static int cp_new_stat(struct kstat *st
+  	tmp.st_nlink =3D stat->nlink;
+  	if (tmp.st_nlink !=3D stat->nlink)
+  		return -EOVERFLOW;
+- 	SET_UID(tmp.st_uid, stat->uid);
+- 	SET_GID(tmp.st_gid, stat->gid);
++ 	SET_UID(tmp.st_uid, from_kuid_munged(current_user_ns(), stat->uid));
++ 	SET_GID(tmp.st_gid, from_kgid_munged(current_user_ns(), stat->gid));
+ -#if BITS_PER_LONG =3D=3D 32
+ -	tmp.st_rdev =3D old_encode_dev(stat->rdev);
+ -#else
+ -	tmp.st_rdev =3D new_encode_dev(stat->rdev);
+ -#endif
+ -#if BITS_PER_LONG =3D=3D 32
+ -	if (stat->size > MAX_NON_LFS)
+ -		return -EOVERFLOW;
+ -#endif=09
+ +	tmp.st_rdev =3D encode_dev(stat->rdev);
+  	tmp.st_size =3D stat->size;
+  	tmp.st_atime =3D stat->atime.tv_sec;
+  	tmp.st_mtime =3D stat->mtime.tv_sec;
 
---Signature=_Tue__22_May_2012_15_44_11_+1000_6Er4MniNjEboAc.6
+--Signature=_Tue__22_May_2012_17_44_26_+1000_7fMVAfz+rPOestkl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPuyerAAoJEECxmPOUX5FEBU0P/1Nf4Ob0YA4MJMLsK6FtdQQa
-4G2wj2WxhmWFPq2igaaEc4CiluEmtkR9XdgghmgmLfV5306QmFujfqE7n3DS8An9
-Uu9rHxQc3JNfr9D6t5YRCRTYyJdaB31pZyb1KkyeLLOLSu+hJnStyEzGzhp+FeSO
-G+3Rs6/lAmI0QuZC8acrT/mh8SvjcPI/huW2GyGTeexKoCJDdxkdf8YxAvmZyrqy
-V0CiyTzVHOUYARbvwp2Xc1KnoTzMC3SV3rRgnmos38eY05N3T5FR9/ez9eDgoHpO
-M9pB9vpxhDKc9EUyjXvYxrm2z9GzVYT5VUhcn98wCkpsF4mF21ej+O6d1YWH2DxP
-DGif3jzFtOp32SsWCtpOkcPkM1YBcpLYeyCn3B13C9BQzJBHcJGwe62RxuJoeSWP
-QHQdlFACIVtKu9a/mJ+YY1w9nytomzj9/FIoaYTjUOwsdvEvWKzhtA5Cw5nw6VXk
-gmJHy7kJyjjVA2b7Gb4EZXdC4TnFzzu5RvbVCnUjQEXXE56opDiHvkCT1jrfqiIy
-SLr6pzXSCoH39LI2x59NuUHs38ew2eowOeAp4+UuEWVfIceFxdBEirzoRZzb3ac3
-FSLGuCcGR3mwyJI7K4qR0pE75swTq/Vpshrc7ega/d2bm1U5KzJq3UWDJZ/6Vrco
-L4OTIzElVuHEB8y6MvvR
-=YsnO
+iQIcBAEBCAAGBQJPu0PaAAoJEECxmPOUX5FEq7IQAIbmJaKVKcMB8n3yTlVun6fk
+7Dxh/69skF8J9oPHCMQNzy+4+QI8j8LcBrHq2rWGOUEXJnReohGMMV3WUvGlo+fr
+5F9Bib/WddJT4+Yym+c99fVmMfGHQigPNCRYhZJMUf+2bZGd8Nb5uwaO/xZnXjzn
+1VhOCd1djtaphdzCokhKwcXUkF62y5sm8Pqn5Nyzk/wm/Y5NzFuVr4VV+gxDAIQv
+XCMp82vp/yAtJ2x9iJ5/8R69q3aWaFMgVlva2MNP+wqMLjl5CTA4cVWFAFkNPBMt
+oNCX3e13XS2s8FZH7scxUM5tdgnglM6qnaRzMLBTzx6mWYltEbbDfHsdxGG7aXSI
+84zMx5QcpUGlRHmUA5ABDUjAubhcwf5wqsUHCZ31qMrENLYyqogJfXe+03CMeJFZ
+wudxagQc/t3sj6qATaME3V6CLiYJn3IUtZvKQ8DD79kbEea5W4NSxz7TyC++bGCL
+otdDhNG7c0ken/qU4NLqsjLZb0kCQ03zHuz9zeAuW9vDE/HLcAG7MESzhoyg5crU
+2zowKC+vCw/r0Cfd4Eiv7g3yMfMO8yOdEvtffhmDxa3+8yUNe7sZkt4gxw/GccNL
+q6bN6TC7dsRaFKU9Y86SFsG/Xy9tFxtIxxm/GBT4JCTiXGLGYV/5YyCdwPPG8rhg
+/QkySZr5z/mgkYytM35F
+=Jqiu
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_May_2012_15_44_11_+1000_6Er4MniNjEboAc.6--
+--Signature=_Tue__22_May_2012_17_44_26_+1000_7fMVAfz+rPOestkl--
