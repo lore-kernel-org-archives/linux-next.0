@@ -1,74 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the watchdog tree with the mfd tree
-Date: Wed, 23 May 2012 08:46:39 +1000
-Message-ID: <20120523084639.bbc57455a6527c9cb983fb2d@canb.auug.org.au>
-References: <20120518152348.1e5070cdc16cfdf00682546d@canb.auug.org.au>
-	<20120518083234.GW3074@spo001.leaseweb.com>
-	<6.2.5.6.2.20120518181141.028c8090@roeck-us.net>
-	<20120522163559.GD3074@spo001.leaseweb.com>
-	<6.2.5.6.2.20120522153050.0284ee38@roeck-us.net>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Wed, 23 May 2012 08:52:26 +1000
+Message-ID: <20120523085226.7ffe604b626a2d96084ee682@canb.auug.org.au>
+References: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au>
+	<4FB9F818.4030801@linaro.org>
+	<20120521184005.3b7661ec6468c5878a22615d@canb.auug.org.au>
+	<4FBA0460.1070300@linaro.org>
+	<20120521191007.9347651e88add2e7c247a24f@canb.auug.org.au>
+	<4FBA08A4.6030706@linaro.org>
+	<20120521095427.GA30045@sirena.org.uk>
+	<4FBA18C7.4030800@linaro.org>
+	<20120522224214.GG10210@sortiz-mobl>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__23_May_2012_08_46_39_+1000_4Myc+6Vdin_Vg/d9"
+ boundary="Signature=_Wed__23_May_2012_08_52_26_+1000_3mFUAkmld=s7q7hC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:58424 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:56707 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932074Ab2EVWqo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 May 2012 18:46:44 -0400
-In-Reply-To: <6.2.5.6.2.20120522153050.0284ee38@roeck-us.net>
+	with ESMTP id S1754181Ab2EVWwa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 May 2012 18:52:30 -0400
+In-Reply-To: <20120522224214.GG10210@sortiz-mobl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <guenter@roeck-us.net>
-Cc: Wim Van Sebroeck <wim@iguana.be>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Sierra <asierra@xes-inc.com>, Samuel Ortiz <sameo@linux.intel.com>, Randy Dunlap <rdunlap@xenotime.net>, linux-watchdog@vger.kernel.org, Jean Delvare <khali@linux-fr.org>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__23_May_2012_08_46_39_+1000_4Myc+6Vdin_Vg/d9
+--Signature=_Wed__23_May_2012_08_52_26_+1000_3mFUAkmld=s7q7hC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi guys,
+Hi Samuel,
 
-On Tue, 22 May 2012 15:37:04 -0700 Guenter Roeck <guenter@roeck-us.net> wro=
+On Wed, 23 May 2012 00:42:14 +0200 Samuel Ortiz <sameo@linux.intel.com> wro=
 te:
 >
-> >I don't think we have a clear standard yet, but I'm fine with either=20
-> >one of them.
->=20
-> Me too, though %04lx and typecast to long should really be sufficient.
->=20
-> I'd guess the change was made because resource_size_t is sometimes a long
-> and sometimes a long long, depending on the platform. I hit that=20
-> problem a couple of times myself.
+> I would appreciate if we could have a fix for this one sooner than later =
+as
+> I'm planning to send my pull request by the end of this week.
 
-Exactly.  Since resource_size_t can be either 32 bit or 64 bit on 32 bit
-platforms, you must print it as %llx and cast it to u64 always to
-prevent these warnings.  If you cast it to (unsigned) long you could
-possibly truncate the value.
+Just so you know, nothing you have added to your tree since May 11 has
+been in linux-next due to 3 separate build problems.  As far as I can see
+the same will be true today due to the problem you were discussing here.
+
+You quickest way forward may be to either revert commit d28f1db8187d
+("mfd: Remove confusing ab8500-i2c file and merge into ab8500-core") (if
+possible) or make the building of drivers/mfd/ab8500-core.c depend on
+some platform where it is clear it will build.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__23_May_2012_08_46_39_+1000_4Myc+6Vdin_Vg/d9
+--Signature=_Wed__23_May_2012_08_52_26_+1000_3mFUAkmld=s7q7hC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPvBdPAAoJEECxmPOUX5FESgoP/1PSMgkC4kj2PiU2JDVuNwq9
-jEap/xPlLSk1C2R0F0UPrELjOkxE1M1eQda2Q51ym6dDhZ91THQEU1dQxhu3lsGN
-dCcNX2Ndc66hfQiM7hpOKl3qtappwXoUNsXbSzFa52puZWRxFCXLMm3L4sBrThz8
-vxZKYP3UojTsN5XEca0D9Avoeupc2Gb/aJkp1mUxCYNMLcHtKmJX/UXTTGT9FXMf
-EoUby6GOjgZXBvqI0k7HjeC+EGzZ0LtjC3QJ1snMBw10Nrlfv8q19Z1h1S+yQNmR
-JCxI8xTHuZjnSmbYCgdBVVqoRASXcy1Qj1fZRcuOlEs3nzQZ8gwit/+pLi/g4ucX
-OcuQnH7J6aXRUnyx+ZLx75zQ9sEyNMmYTUIQ5fEH6KDkvXcyZokejhs9mSxuqoed
-643kMU5IDjgNmhL8QdgTeKEPYXdOjXyCS3Er1RzrPW0dfAX3pQRNVr1LthveSVjk
-wVUmN8WNSJXD6Rxo+FhGaI5yyCgKOKLO+pLdeh+XycC3gNo3ChHcASLdxrH4UuQq
-8v8XPjFnwBa32ZjBgp9cnpArTARwn1QEMM99SlFBcqr5huumLtquVADkV9JfsiFs
-/x3A0Bu4UeN/NS9M6FwDsyFOlcWvBu3FYGORTTQQY4gOOwtPmlnZEqF9CxaRIL7f
-pnLs4PvM0GKoPhS9jsk4
-=yoln
+iQIcBAEBCAAGBQJPvBiqAAoJEECxmPOUX5FEgF8P/0nnRxj4iOvrnOj7O+u7+wl8
+TnPBSGxfRSBezCIn+0R9NxDQGNOWnChtHwD8C5Cx18upeVzw7XYYXfq9Cl8G7FmU
+zKRHbkveqz98nF3REkkf9EFMKK1goOp2Vmh4auvY2otUprT2PrybryP15XRPANSO
+hgn7DH77gAOAap2MmZvxgAHXQLSgu2G6HwyOnw/qvCPj49rGrPhtaphi2spTSajO
+eL2jyTbsYsJvfeAW1LgwBEVnv8s+FH6nu+87ZtBEV30P+lYTOM3QLmNPZZloh7Ew
+H653WyFRj3RSE8mO9aqoDkOOPGIJnCyFBqOJdQP9MjF+n/GggxDCg4raSZM3UJns
+0OSobKbQyxxuynR44Ni41YUOabI1OV529xq5MWHlksdEpw93jYO6Ua0Xo29nvtTk
+m1rteZiIKpXUHgeus9iM84fe9oCMu1B5tE0vDcZ/p/fW1IlcRCYnfSDEWHzL7DLR
+WF465bau6kateylsHSNyOUCvXN9w5zyhinbnNh/B8M4hLouIsfSEyHDrNuHsrbxH
+RRCXGUD9wO4EzRws0CIolzL+ybshtMlryWRO0TyoVKTdoPNdx48MRDrgPajTdCHz
+mgFJIiHepdRI6i83r2mYO6H+FhcR9mEzNFJgTar0pL52fhzZKoG8R1A3RdHkeo8N
+Vs7ESIXN9iCV27Lh5kki
+=RXQx
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__23_May_2012_08_46_39_+1000_4Myc+6Vdin_Vg/d9--
+--Signature=_Wed__23_May_2012_08_52_26_+1000_3mFUAkmld=s7q7hC--
