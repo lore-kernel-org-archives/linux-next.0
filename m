@@ -1,89 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: PowerPC boot failures in next-20120521
-Date: Tue, 22 May 2012 13:25:10 +1000
-Message-ID: <20120522132510.761887493037293b0ef2b2af@canb.auug.org.au>
-References: <20120522114051.0c9db9a7c2d660bc9e0e1be2@canb.auug.org.au>
-	<alpine.DEB.2.00.1205211846120.20916@chino.kir.corp.google.com>
-	<20120522130354.fdb335eb294f4206b4b2fed5@canb.auug.org.au>
+From: Sage Weil <sage@inktank.com>
+Subject: Re: linux-next: manual merge of the ceph tree with Linus' tree
+Date: Mon, 21 May 2012 20:58:05 -0700 (PDT)
+Message-ID: <Pine.LNX.4.64.1205212056140.6377@cobra.newdream.net>
+References: <20120522114516.2c419f43a0826e9e78f8b3c0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_May_2012_13_25_10_+1000_CMWx5LxEcYuZa1s7"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35951 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755240Ab2EVDZP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 May 2012 23:25:15 -0400
-In-Reply-To: <20120522130354.fdb335eb294f4206b4b2fed5@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Lee Schermerhorn <lee.schermerhorn@hp.com>, Linus <torvalds@linux-foundation.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120522114516.2c419f43a0826e9e78f8b3c0@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, "David S. Miller" <davem@davemloft.net>, elder@inktank.com
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__22_May_2012_13_25_10_+1000_CMWx5LxEcYuZa1s7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 22 May 2012, Stephen Rothwell wrote:
+> Hi Sage,
+> 
+> Today's linux-next merge of the ceph tree got a conflict in
+> net/ceph/messenger.c between commit 95c961747284 ("net: cleanup unsigned
+> to unsigned int") from Linus' tree and commit 57dac9d16209 ("ceph:
+> messenger: use read_partial() in read_partial_message()") from the ceph
+> tree.
+> 
+> Just context changes. I fixed it up (see below) and can carry the fix as
+> necessary.
 
-On Tue, 22 May 2012 13:03:54 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Mon, 21 May 2012 18:53:37 -0700 (PDT) David Rientjes <rientjes@google.=
-com> wrote:
-> >
-> > Yeah, it's sched/numa since that's what introduced numa_init().  It doe=
-s=20
-> > for_each_node() for each node and does a kmalloc_node() even though tha=
-t=20
-> > node may not be online.  Slub ends up passing this node to the page=20
-> > allocator through alloc_pages_exact_node().  CONFIG_DEBUG_VM would have=
-=20
-> > caught this and your config confirms its not enabled.
-> >=20
-> > sched/numa either needs a memory hotplug notifier or it needs to pass=20
-> > NUMA_NO_NODE for nodes that aren't online.  Until we get the former, th=
-e=20
-> > following should fix it.
-> >=20
-> >=20
-> > sched, numa: Allocate node_queue on any node for offline nodes
-> >=20
-> > struct node_queue must be allocated with NUMA_NO_NODE for nodes that ar=
-e=20
-> > not (yet) online, otherwise the page allocator has a bad zonelist.
-> >=20
-> > Signed-off-by: David Rientjes <rientjes@google.com>
->=20
-> Thanks, that fixes it.
->=20
-> Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Thanks, Stephen!  If there's an easier way to carry this in our tree, just 
+let me know.
 
-And I will put that patch in linux-next until it (or something better)
-appears.
+sage
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__22_May_2012_13_25_10_+1000_CMWx5LxEcYuZa1s7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPuwcWAAoJEECxmPOUX5FEmW8QAIcB6zJRrUaLwfOuiBESxh8z
-0CwQoMS/X43obsQV7jTDRjNkMIlsnpNIxs4f1ADx227KJkgO4jvsUT5l3LCWFx0P
-ySvWCJyZc6JgS/6mIVD6C9o483Ib4vfIPCXBP8ce3RAe7G6GAUVkTpH6LkE4G5eR
-jZzhK9Z278OC2JETzM/dTofGW0ckv9rAGCrysFqrA7IpiGG/H9jmVPNvvkk9O0Zl
-F1jGVG+lGbjIs7tmy4ve4FTo9L2VUwDyTjFI28CnBsUN+zNWEggx8JQDn3r1iwBD
-trEH83Vx8ZIl9q+xMdG3XtWUU1cB588zFW414y3K8vD7evTm24c8CHMiFj76ZxIx
-vCEJpuFFrawqCzOtidlYgUfzRZHwj27YXmfgrDIr5EcC76A8tGol+v7EPc9JttNs
-RTFmQI1p7PN5bsQrecS+ElzUg+XQuzm+12PPVoY7yhHpKw/+J2CNy9aaEdO1afxR
-MhK04Un2LY+WiAbeknJ/lNdV5mUH4oiUP2Ag5R6xFPtVz3b/o45+q+tnUqBF427Q
-1IMCaWadXFbniLsCeCgUXJxlY4eBtpBjEEHf9jlOp0GuB94k1EcgyGsjsHMpTnR+
-CEJ3sE3Tbub5cbQi0pUM+n/dGdaays8DwsjjpcJ4yk5F0vpRK/68RpWepX8A4Lwr
-PhhuH+SdyUW3EUqa00IL
-=Kue6
------END PGP SIGNATURE-----
-
---Signature=_Tue__22_May_2012_13_25_10_+1000_CMWx5LxEcYuZa1s7--
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc net/ceph/messenger.c
+> index 36fa6bf,1a80907..0000000
+> --- a/net/ceph/messenger.c
+> +++ b/net/ceph/messenger.c
+> @@@ -695,12 -698,12 +698,12 @@@ static void prepare_write_banner(struc
+>   	set_bit(WRITE_PENDING, &con->state);
+>   }
+>   
+> - static int prepare_write_connect(struct ceph_messenger *msgr,
+> - 				 struct ceph_connection *con,
+> - 				 int include_banner)
+> + static int prepare_write_connect(struct ceph_connection *con)
+>   {
+>  -	unsigned global_seq = get_global_seq(con->msgr, 0);
+>  +	unsigned int global_seq = get_global_seq(con->msgr, 0);
+>   	int proto;
+> + 	int auth_proto;
+> + 	struct ceph_auth_handshake *auth;
+>   
+>   	switch (con->peer_name.type) {
+>   	case CEPH_ENTITY_TYPE_MON:
+> @@@ -1627,9 -1663,10 +1663,10 @@@ static int read_partial_message_bio(str
+>   static int read_partial_message(struct ceph_connection *con)
+>   {
+>   	struct ceph_msg *m = con->in_msg;
+> + 	int size;
+> + 	int end;
+>   	int ret;
+> - 	int to, left;
+>  -	unsigned front_len, middle_len, data_len;
+>  +	unsigned int front_len, middle_len, data_len;
+>   	bool do_datacrc = !con->msgr->nocrc;
+>   	int skip;
+>   	u64 seq;
+> 
