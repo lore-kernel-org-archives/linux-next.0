@@ -1,45 +1,34 @@
-From: John Crispin <blogic@openwrt.org>
-Subject: Re: linux-next: manual merge of the trivial tree with the  tree
-Date: Tue, 22 May 2012 13:53:43 +0200
-Message-ID: <4FBB7E47.7060500@openwrt.org>
-References: <20120522145432.aa4d97df7f08af54229f1338@canb.auug.org.au> <alpine.LNX.2.00.1205221115390.16396@pobox.suse.cz>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: manual merge of the userns tree with Linus' tree
+Date: Tue, 22 May 2012 08:29:24 -0600
+Message-ID: <87likkmgqj.fsf@xmission.com>
+References: <20120522174426.1cd39ec7841e7545bb340cdd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nbd.name ([46.4.11.11]:33780 "EHLO nbd.name"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750852Ab2EVLyO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 May 2012 07:54:14 -0400
-In-Reply-To: <alpine.LNX.2.00.1205221115390.16396@pobox.suse.cz>
+Received: from out02.mta.xmission.com ([166.70.13.232]:46540 "EHLO
+	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752960Ab2EVO3f (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 May 2012 10:29:35 -0400
+In-Reply-To: <20120522174426.1cd39ec7841e7545bb340cdd@canb.auug.org.au>
+	(Stephen Rothwell's message of "Tue, 22 May 2012 17:44:26 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, Ralf Baechle <ralf@linux-mips.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On 22/05/12 11:16, Jiri Kosina wrote:
-> On Tue, 22 May 2012, Stephen Rothwell wrote:
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+
+> Hi Eric,
 >
->> Hi Jiri,
->>
->> Today's linux-next merge of the trivial tree got a conflict in
->> arch/mips/lantiq/xway/gpio_ebu.c arch/mips/lantiq/xway/gpio_stp.c between
->> commit 5238f7bc3566 ("GPIO: MIPS: lantiq: move gpio-stp and gpio-ebu to
->> the subsystem folder") from the  tree and commit 6997991ab0db ("mips: Fix
->> printk typos in arc/mips") from the trivial tree.
->>
->> The typos fixed in the latter probably need to be applied to the renamed
->> files drivers/gpio/gpio-mm-lantiq.c and drivers/gpio/gpio-stp-xway.c
->> (resp).
->>
->> I have removed the old versions.
-> I will probably keep this trivial conflict for Linus to resolve. Thanks,
+> Today's linux-next merge of the userns tree got a conflict in fs/stat.c
+> between commit a52dd971f947 ("vfs: de-crapify "cp_new_stat()" function")
+> from Linus' tree and commit a7c1938e22c0 ("userns: Convert stat to return
+> values mapped from kuids and kgids") from the userns tree.
 >
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-Hi,
+Looks good thanks.
 
-I'll try to resolve this and have the MIPS/Lantiq specifc parts flow via
-Ralfs tree if no one minds
-
-Thanks,
-John
+Eric
