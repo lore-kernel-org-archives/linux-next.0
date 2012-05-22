@@ -1,125 +1,57 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Wed, 23 May 2012 00:42:14 +0200
-Message-ID: <20120522224214.GG10210@sortiz-mobl>
-References: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au>
- <4FB9F818.4030801@linaro.org>
- <20120521184005.3b7661ec6468c5878a22615d@canb.auug.org.au>
- <4FBA0460.1070300@linaro.org>
- <20120521191007.9347651e88add2e7c247a24f@canb.auug.org.au>
- <4FBA08A4.6030706@linaro.org>
- <20120521095427.GA30045@sirena.org.uk>
- <4FBA18C7.4030800@linaro.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: bad commit in the cgroup tree
+Date: Wed, 23 May 2012 08:34:37 +1000
+Message-ID: <20120523083437.e4d3f7ed9b11aae3c51dc2ae@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__23_May_2012_08_34_37_+1000_g_TXWXYo88cXB1TG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:12847 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751748Ab2EVWcM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 May 2012 18:32:12 -0400
-Content-Disposition: inline
-In-Reply-To: <4FBA18C7.4030800@linaro.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37670 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755668Ab2EVWeo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 May 2012 18:34:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Lee,
+--Signature=_Wed__23_May_2012_08_34_37_+1000_g_TXWXYo88cXB1TG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 21, 2012 at 11:28:23AM +0100, Lee Jones wrote:
-> When CONFIG_AB8500_CORE is set, building ab8500-core.c and
-> !(CONFIG_UX500_SOC_DB8500 | CONFIG_MFD_DB8500_PRCMU), both
-> db8500-prcmu.h and dbx500-prcmu.h take it upon themselves to _both_
-> create 'return 0' inline functions for the following:
-> 
-> prcmu_abb_read()
-> prcmu_abb_write()
-> prcmu_config_clkout()
-> prcmu_ac_wake_req()
-> prcmu_ac_sleep_req()
-> 
-> I think we need a Kconfig rule to prevent this from happening, but
-> I'm not sure what the correct logic would be. 
-Do you want the above routines to be NOOPs when !CONFIG_MFD_DB8500_PRCMU or
-when !CONFIG_UX500_SOC_DB8500 ? It would make more sense to define them as
-NOOP when !CONFIG_MFD_DB8500_PRCMU and remove all those definitions from
-dbx500-prmcu.h
-But I may be missing some of your architecture dependencies.
+Hi Tejun,
 
-Something like that:
+The top commit of the cgroup tree (e4968362bd46 "WIP") should not be in
+linux-next.  In fact it looks like you committed your quilt series by
+accident.
 
-diff --git a/include/linux/mfd/dbx500-prcmu.h b/include/linux/mfd/dbx500-prcmu.h
-index d7674eb..8515547 100644
---- a/include/linux/mfd/dbx500-prcmu.h
-+++ b/include/linux/mfd/dbx500-prcmu.h
-@@ -366,12 +366,8 @@ static inline void prcmu_get_abb_event_buffer(void __iomem **buf)
- 		db8500_prcmu_get_abb_event_buffer(buf);
- }
- 
--int prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size);
--int prcmu_abb_write(u8 slave, u8 reg, u8 *value, u8 size);
- int prcmu_abb_write_masked(u8 slave, u8 reg, u8 *value, u8 *mask, u8 size);
- 
--int prcmu_config_clkout(u8 clkout, u8 source, u8 div);
--
- static inline int prcmu_request_clock(u8 clock, bool enable)
- {
- 	if (cpu_is_u5500())
-@@ -447,8 +443,6 @@ static inline u16 prcmu_get_reset_code(void)
- 		return db8500_prcmu_get_reset_code();
- }
- 
--void prcmu_ac_wake_req(void);
--void prcmu_ac_sleep_req(void);
- static inline void prcmu_modem_reset(void)
- {
- 	if (cpu_is_u5500())
-@@ -611,27 +605,12 @@ static inline void prcmu_enable_wakeups(u32 wakeups) {}
- 
- static inline void prcmu_disable_wakeups(void) {}
- 
--static inline int prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size)
--{
--	return -ENOSYS;
--}
--
--static inline int prcmu_abb_write(u8 slave, u8 reg, u8 *value, u8 size)
--{
--	return -ENOSYS;
--}
--
- static inline int prcmu_abb_write_masked(u8 slave, u8 reg, u8 *value, u8 *mask,
- 	u8 size)
- {
- 	return -ENOSYS;
- }
- 
--static inline int prcmu_config_clkout(u8 clkout, u8 source, u8 div)
--{
--	return 0;
--}
--
- static inline int prcmu_request_clock(u8 clock, bool enable)
- {
- 	return 0;
-@@ -689,10 +668,6 @@ static inline u16 prcmu_get_reset_code(void)
- 	return 0;
- }
- 
--static inline void prcmu_ac_wake_req(void) {}
--
--static inline void prcmu_ac_sleep_req(void) {}
--
- static inline void prcmu_modem_reset(void) {}
- 
- static inline bool prcmu_is_ac_wake_requested(void)
+I will use the cgroup tree from next-20120522 for today.
 
-I would appreciate if we could have a fix for this one sooner than later as
-I'm planning to send my pull request by the end of this week.
-
+--=20
 Cheers,
-Samuel.
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+--Signature=_Wed__23_May_2012_08_34_37_+1000_g_TXWXYo88cXB1TG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPvBR9AAoJEECxmPOUX5FEL4UP/2XCWPFySMBwOk8z9kLd4Nk4
+FhaJNkuCvwx3x03dbfFlAMxwr5UTlVeerQa003HuoJ1aqRAtL7xAjTnLoZgDRp12
+mwlXNT3aQ/HvKsSfQnnSq0eeLmsAqBOQqXmVJJP3VOAg6S4bthIGA25Zw3q5LD7+
+3CYwUmMkPlhNg1sMxnMDwIafJmTI06J/euHjlN3MNvmXaclm5fQvUrJ6I44Jar/I
+wdFVLummwE6ctxb7DQfMIZxnH5jOuH4AbY0TWBWy5gKOEWuORCuOaW+R6QXC5KQv
+5+ZzWbP76vaI/AahHpvVA4w1nhzjViAezsbcpsMnS5dctA+Rw6OrlMR6S6EdPnF8
+YLP3HLT09slSlRxaYJuLtCqHQtREtQHz5MZMglZ2TrR4SNg7KS7Ebc4KS3itfZa7
+RS/w8ot71JhpS95s8/c56ZDr4w+1Q12gNj2mysxRiaftb4Qo8jLxkCugvrKB9bPG
++mAEA8/7CuOP+3Sfuiq4sxyOD8fh+hdO1vT6zUc18ky87qZemuBHGFgIJf9COLVJ
+x9VVF47V7eXBNMAh3uuUba2w6hf0wPSE3UrhLHUZJkVAUcxmFP3eVbjEvF57gL97
+aTQ8sTIUtBiQw/Bh7fqXMTP0XBXPuVEyZvAMvm8al8KGO60+XhMk8wSEPPTQuv0B
+ILOTKsQrGvn9JogSkbhu
+=XNIj
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_May_2012_08_34_37_+1000_g_TXWXYo88cXB1TG--
