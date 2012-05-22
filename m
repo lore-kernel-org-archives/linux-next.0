@@ -1,84 +1,101 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the userns tree with Linus' tree
-Date: Tue, 22 May 2012 17:44:26 +1000
-Message-ID: <20120522174426.1cd39ec7841e7545bb340cdd@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Tue, 22 May 2012 18:20:10 +1000
+Message-ID: <20120522182010.f93a38e575ed34e88de5b787@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__22_May_2012_17_44_26_+1000_7fMVAfz+rPOestkl"
+ boundary="Signature=_Tue__22_May_2012_18_20_10_+1000_QVze=VO6dbtv85c7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52693 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33157 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752979Ab2EVHob (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 May 2012 03:44:31 -0400
+	with ESMTP id S1755878Ab2EVIUQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 May 2012 04:20:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__22_May_2012_17_44_26_+1000_7fMVAfz+rPOestkl
+--Signature=_Tue__22_May_2012_18_20_10_+1000_QVze=VO6dbtv85c7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi all,
 
-Today's linux-next merge of the userns tree got a conflict in fs/stat.c
-between commit a52dd971f947 ("vfs: de-crapify "cp_new_stat()" function")
-from Linus' tree and commit a7c1938e22c0 ("userns: Convert stat to return
-values mapped from kuids and kgids") from the userns tree.
+After merging the final tree, today's linux-next build (sparc32 defconfig)
+failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+arch/sparc/kernel/time_32.c: In function 'timer_interrupt':
+arch/sparc/kernel/time_32.c:105:3: error: invalid use of undefined type 'st=
+ruct clock_event_device'
+arch/sparc/kernel/time_32.c: At top level:
+arch/sparc/kernel/time_32.c:111:17: error: 'enum clock_event_mode' declared=
+ inside parameter list [-Werror]
+arch/sparc/kernel/time_32.c:111:17: error: its scope is only this definitio=
+n or declaration, which is probably not what you want [-Werror]
+arch/sparc/kernel/time_32.c:110:53: error: parameter 1 ('mode') has incompl=
+ete type
+arch/sparc/kernel/time_32.c:110:13: error: function declaration isn't a pro=
+totype [-Werror=3Dstrict-prototypes]
+arch/sparc/kernel/time_32.c: In function 'timer_ce_set_mode':
+arch/sparc/kernel/time_32.c:114:8: error: 'CLOCK_EVT_MODE_PERIODIC' undecla=
+red (first use in this function)
+arch/sparc/kernel/time_32.c:114:8: note: each undeclared identifier is repo=
+rted only once for each function it appears in
+arch/sparc/kernel/time_32.c:115:8: error: 'CLOCK_EVT_MODE_RESUME' undeclare=
+d (first use in this function)
+arch/sparc/kernel/time_32.c:118:8: error: 'CLOCK_EVT_MODE_SHUTDOWN' undecla=
+red (first use in this function)
+arch/sparc/kernel/time_32.c: In function 'setup_timer_ce':
+arch/sparc/kernel/time_32.c:133:4: error: dereferencing pointer to incomple=
+te type
+arch/sparc/kernel/time_32.c:134:4: error: dereferencing pointer to incomple=
+te type
+arch/sparc/kernel/time_32.c:135:4: error: dereferencing pointer to incomple=
+te type
+arch/sparc/kernel/time_32.c:135:17: error: 'CLOCK_EVT_FEAT_PERIODIC' undecl=
+ared (first use in this function)
+arch/sparc/kernel/time_32.c:136:4: error: dereferencing pointer to incomple=
+te type
+arch/sparc/kernel/time_32.c:137:4: error: dereferencing pointer to incomple=
+te type
+arch/sparc/kernel/time_32.c:138:4: error: dereferencing pointer to incomple=
+te type
+arch/sparc/kernel/time_32.c:139:4: error: dereferencing pointer to incomple=
+te type
+arch/sparc/kernel/time_32.c:139:2: error: implicit declaration of function =
+'div_sc' [-Werror=3Dimplicit-function-declaration]
+arch/sparc/kernel/time_32.c:140:26: error: dereferencing pointer to incompl=
+ete type
+arch/sparc/kernel/time_32.c:141:2: error: implicit declaration of function =
+'clockevents_register_device' [-Werror=3Dimplicit-function-declaration]
+
+I have no idea what caused this, I did not get this yesterday.  I have
+left this build broken for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/stat.c
-index 0cef336,31acca5..0000000
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@@ -224,9 -215,17 +224,9 @@@ static int cp_new_stat(struct kstat *st
-  	tmp.st_nlink =3D stat->nlink;
-  	if (tmp.st_nlink !=3D stat->nlink)
-  		return -EOVERFLOW;
-- 	SET_UID(tmp.st_uid, stat->uid);
-- 	SET_GID(tmp.st_gid, stat->gid);
-+ 	SET_UID(tmp.st_uid, from_kuid_munged(current_user_ns(), stat->uid));
-+ 	SET_GID(tmp.st_gid, from_kgid_munged(current_user_ns(), stat->gid));
- -#if BITS_PER_LONG =3D=3D 32
- -	tmp.st_rdev =3D old_encode_dev(stat->rdev);
- -#else
- -	tmp.st_rdev =3D new_encode_dev(stat->rdev);
- -#endif
- -#if BITS_PER_LONG =3D=3D 32
- -	if (stat->size > MAX_NON_LFS)
- -		return -EOVERFLOW;
- -#endif=09
- +	tmp.st_rdev =3D encode_dev(stat->rdev);
-  	tmp.st_size =3D stat->size;
-  	tmp.st_atime =3D stat->atime.tv_sec;
-  	tmp.st_mtime =3D stat->mtime.tv_sec;
-
---Signature=_Tue__22_May_2012_17_44_26_+1000_7fMVAfz+rPOestkl
+--Signature=_Tue__22_May_2012_18_20_10_+1000_QVze=VO6dbtv85c7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPu0PaAAoJEECxmPOUX5FEq7IQAIbmJaKVKcMB8n3yTlVun6fk
-7Dxh/69skF8J9oPHCMQNzy+4+QI8j8LcBrHq2rWGOUEXJnReohGMMV3WUvGlo+fr
-5F9Bib/WddJT4+Yym+c99fVmMfGHQigPNCRYhZJMUf+2bZGd8Nb5uwaO/xZnXjzn
-1VhOCd1djtaphdzCokhKwcXUkF62y5sm8Pqn5Nyzk/wm/Y5NzFuVr4VV+gxDAIQv
-XCMp82vp/yAtJ2x9iJ5/8R69q3aWaFMgVlva2MNP+wqMLjl5CTA4cVWFAFkNPBMt
-oNCX3e13XS2s8FZH7scxUM5tdgnglM6qnaRzMLBTzx6mWYltEbbDfHsdxGG7aXSI
-84zMx5QcpUGlRHmUA5ABDUjAubhcwf5wqsUHCZ31qMrENLYyqogJfXe+03CMeJFZ
-wudxagQc/t3sj6qATaME3V6CLiYJn3IUtZvKQ8DD79kbEea5W4NSxz7TyC++bGCL
-otdDhNG7c0ken/qU4NLqsjLZb0kCQ03zHuz9zeAuW9vDE/HLcAG7MESzhoyg5crU
-2zowKC+vCw/r0Cfd4Eiv7g3yMfMO8yOdEvtffhmDxa3+8yUNe7sZkt4gxw/GccNL
-q6bN6TC7dsRaFKU9Y86SFsG/Xy9tFxtIxxm/GBT4JCTiXGLGYV/5YyCdwPPG8rhg
-/QkySZr5z/mgkYytM35F
-=Jqiu
+iQIcBAEBCAAGBQJPu0w6AAoJEECxmPOUX5FEQcIP/2LqXcoQ455Y/1F4tWzrnIkD
+C6/hW3hPbxqJyzn6EGVjFML5/4VjbgHVERO1Uk4EE5yVsTJnuEFl+fB4taYnUDEj
+5WA7255MFLaYokBVzqZYMSkKQo7hCCWPqRVp3BGReckoxhScGFSF5yVom3xHXjC9
+6ryU1jwF7Nti8Y8gPnUKHdq97oKtfYuJqwkv6PFGit/WLAZKGh7MYK6vFZDKEEp1
++4fu6GXFNJuSfHbSvDlj+z+qtKX9cMSw2pIOBLZd0sBFJ+/u/7s3jjQykIyvN0j8
+GtA4MdEB5iXwxHTuqKN4uhRP4I91tMv3jtzBIpQ3MtCfMyoM3o8T4TB64fxyTgqL
+NTUvhs+2s2kByOypCvzzXUza4vaChOhbEpXtdVro0iNUvDbKi+vOnxsL4Nc/1Q2a
+YgeQURXYXcDzr+YDzMcR3Yb7txbVo5SLKjm/yZrRx3ChlBC19seTKuMiziF2ROja
+5FJAsK6MN0G3Mq83t3oH7H2JHOD49fKjQPPHJIBQwO+/bnYewxRcS31MB2Ha6q2G
+2cj2aY/nezjBM6gWOOOt+9GM4RIwN+Fx/vvcUOiTbdyDr//C8Bxr2fy9fmLLaOC0
+WuG0hqtjh50EaGEptgWIm1nFrGfTrmWv2uNr+Z4kYiKhF6y/h8UUwN3z4yjOUC94
+o6ENkBnldQR2fmE0DIde
+=HIpd
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_May_2012_17_44_26_+1000_7fMVAfz+rPOestkl--
+--Signature=_Tue__22_May_2012_18_20_10_+1000_QVze=VO6dbtv85c7--
