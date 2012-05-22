@@ -1,39 +1,44 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the  tree
-Date: Tue, 22 May 2012 11:16:03 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1205221115390.16396@pobox.suse.cz>
-References: <20120522145432.aa4d97df7f08af54229f1338@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: linux-next: manual merge of the edac tree with the trivial tree
+Date: Tue, 22 May 2012 07:29:45 -0300
+Message-ID: <4FBB6A99.4040503@redhat.com>
+References: <20120518160603.0eddece830f829d3b8570ac7@canb.auug.org.au> <alpine.LNX.2.00.1205221055340.16396@pobox.suse.cz>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:53413 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757189Ab2EVJQL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 May 2012 05:16:11 -0400
-In-Reply-To: <20120522145432.aa4d97df7f08af54229f1338@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masanari Iida <standby24x7@gmail.com>, John Crispin <blogic@openwrt.org>, Ralf Baechle <ralf@linux-mips.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.LNX.2.00.1205221055340.16396@pobox.suse.cz>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Mackey <tdmackey@twitter.com>, Vinson Lee <vlee@twitter.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 22 May 2012, Stephen Rothwell wrote:
-
-> Hi Jiri,
+Em 22-05-2012 05:55, Jiri Kosina escreveu:
+> On Fri, 18 May 2012, Stephen Rothwell wrote:
 > 
-> Today's linux-next merge of the trivial tree got a conflict in
-> arch/mips/lantiq/xway/gpio_ebu.c arch/mips/lantiq/xway/gpio_stp.c between
-> commit 5238f7bc3566 ("GPIO: MIPS: lantiq: move gpio-stp and gpio-ebu to
-> the subsystem folder") from the  tree and commit 6997991ab0db ("mips: Fix
-> printk typos in arc/mips") from the trivial tree.
+>> Hi Mauro,
+>>
+>> Today's linux-next merge of the edac tree got a conflict in
+>> drivers/edac/edac_core.h between commit 15ed103a9800 ("edac: Fix spelling
+>> errors") from the trivial tree and commit 90b40d5cadba ("edac: Remove the
+>> legacy EDAC ABI") from the edac tree.
+>>
+>> One of the comments fixed by the former is removed by the latter, so I
+>> did that.
 > 
-> The typos fixed in the latter probably need to be applied to the renamed
-> files drivers/gpio/gpio-mm-lantiq.c and drivers/gpio/gpio-stp-xway.c
-> (resp).
+> On Fri, 18 May 2012, Stephen Rothwell wrote:
 > 
-> I have removed the old versions.
+>> Hi Mauro,
+>>
+>> Today's linux-next merge of the edac tree got a conflict in
+>> drivers/edac/edac_device.c between commit 15ed103a9800 ("edac: Fix
+>> spelling errors") from the trivial tree and commit b9e889c84229 ("edac:
+>> rewrite edac_align_ptr()") from the edac tree.
+>>
+>> One of the comments fixed by the former is removed by the latter, so I
+>> did that.
+> 
+> I have dropped both hunks, so the conflict should be gone. Thanks.
 
-I will probably keep this trivial conflict for Linus to resolve. Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
+Thanks!
+Mauro
