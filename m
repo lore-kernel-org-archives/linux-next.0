@@ -1,73 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: triage for May 22, 2012
-Date: Wed, 23 May 2012 13:08:46 +1000
-Message-ID: <20120523130846.24ba704d48f4e1ee25de4852@canb.auug.org.au>
-References: <20120523010457.GA4816@windriver.com>
+From: David Rientjes <rientjes@google.com>
+Subject: [patch] sched, numa: Allocate node_queue on any node for offline
+ nodes
+Date: Tue, 22 May 2012 21:17:56 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1205222116160.32649@chino.kir.corp.google.com>
+References: <20120522114051.0c9db9a7c2d660bc9e0e1be2@canb.auug.org.au> <alpine.DEB.2.00.1205211846120.20916@chino.kir.corp.google.com> <20120522130354.fdb335eb294f4206b4b2fed5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__23_May_2012_13_08_46_+1000_zaWsiy8mtiH_Qgix"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51654 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754090Ab2EWDIu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 May 2012 23:08:50 -0400
-In-Reply-To: <20120523010457.GA4816@windriver.com>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:63094 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751171Ab2EWESF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 May 2012 00:18:05 -0400
+Received: by pbbrp8 with SMTP id rp8so9303772pbb.19
+        for <linux-next@vger.kernel.org>; Tue, 22 May 2012 21:18:04 -0700 (PDT)
+In-Reply-To: <20120522130354.fdb335eb294f4206b4b2fed5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Lee Schermerhorn <lee.schermerhorn@hp.com>, Linus Torvalds <torvalds@linux-foundation.org>
 
---Signature=_Wed__23_May_2012_13_08_46_+1000_zaWsiy8mtiH_Qgix
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+struct node_queue must be allocated with NUMA_NO_NODE for nodes that are 
+not (yet) online, otherwise the page allocator has a bad zonelist and 
+results in an early crash.
 
-Hi Paul,
+Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ kernel/sched/numa.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-On Tue, 22 May 2012 21:04:57 -0400 Paul Gortmaker <paul.gortmaker@windriver=
-.com> wrote:
->
-> sparc:defconfig
-> 	when:	May 22
-> 	why:	sparc/kernel/time_32.c: inval use undef type 'struct clock_event_de=
-vice'
-> 	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6243021/=09
-
-A bad merge in my tree - will be fixed today.
-
-> sparc:allnoconfig
-> 	when:	May 22
-> 	why:	arch/sparc/kernel/time_32.c: invalid use of undef 'struct clock_eve=
-nt_device'
-> 	ref:	http://kisskb.ellerman.id.au/kisskb/buildresult/6348424/
-
-Ditto
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__23_May_2012_13_08_46_+1000_zaWsiy8mtiH_Qgix
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPvFS+AAoJEECxmPOUX5FEfIEP/1XPHSXWJm0qQOLm+707w8iL
-Zjpq/wooIsEg5ch9JaecWqQ/v8m/sZonwEOMMsFylogcxk8lzj8+UDU4e+KiwTYu
-jQhrYOM7TrmFnYtP9Kr0SE0zSUZ5ZfwR06FSSeBYxe6YCVKvH2+6P2WRfxiIjPNa
-wk2Dv2aA1ESLoVjRWyDaNzDI4jTAkaF7RUpgJpJU4P4yIoE4XfufuxlIfRMFI6gV
-nPtWGyuIiI3PFu5s3AE6Ex+jRweddlF6K2IZZZFJ55Yi1Na5bEbD7HpVpcTYx8+N
-wmGGMF8QOUW4EjYkrQbzJxcMch0uCo9RI7EMmhDB5XiN/ovkoOcOuM/Kx8eHw4kF
-duRaDT8N+fYE++T6D9GqHHmNOhpOUAFGxRMqIfDgdt6+HXfla5mDmia6NZnRw5hm
-WsgJpfGl7pbQK+cgvv67JfAzIV8oaAXQ2CqGuETE3W5Rl4OBQaiQ2uFrsnKIoiHs
-v9gV8JPttf185dCBupqOTP8lnZyTguRXNnAYZibR44jkmNLlg27EGOBhSY8sUph2
-bWhKeCn91QURLixjlLE1jxwRlSsXJ6s1kIpRqynRsJasJntgowAD6QCb5n2ER2ab
-j2EHuio/zrc8i+4nrAFgVy7Q0DoSSCw71u8lKTatMt33AUc5EtHMdRtSbL0LhdIR
-W/is62q9u3nfqPn24lcJ
-=zgc2
------END PGP SIGNATURE-----
-
---Signature=_Wed__23_May_2012_13_08_46_+1000_zaWsiy8mtiH_Qgix--
+diff --git a/kernel/sched/numa.c b/kernel/sched/numa.c
+--- a/kernel/sched/numa.c
++++ b/kernel/sched/numa.c
+@@ -885,7 +885,8 @@ static __init int numa_init(void)
+ 
+ 	for_each_node(node) {
+ 		struct node_queue *nq = kmalloc_node(sizeof(*nq),
+-				GFP_KERNEL | __GFP_ZERO, node);
++				GFP_KERNEL | __GFP_ZERO,
++				node_online(node) ? node : NUMA_NO_NODE);
+ 		BUG_ON(!nq);
+ 
+ 		spin_lock_init(&nq->lock);
