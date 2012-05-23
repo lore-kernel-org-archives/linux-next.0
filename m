@@ -1,58 +1,178 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with Linus' tree
-Date: Wed, 23 May 2012 12:15:18 +1000
-Message-ID: <20120523121518.033d689fbd1b4f8526304a35@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__23_May_2012_12_15_18_+1000_LTmtgQtKOb94jyAc"
+From: Chen Gong <gong.chen@linux.intel.com>
+Subject: [PATCH] x86: auto poll/interrupt mode switch for CMC to stop CMC storm
+Date: Wed, 23 May 2012 10:30:25 +0800
+Message-ID: <1337740225-26673-1-git-send-email-gong.chen@linux.intel.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51784 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754694Ab2EWCPV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 May 2012 22:15:21 -0400
+Received: from mga14.intel.com ([143.182.124.37]:21918 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752129Ab2EWC3F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 May 2012 22:29:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: tony.luck@intel.com, bp@amd64.org
+Cc: x86@kernel.org, linux-next@vger.kernel.org, Chen Gong <gong.chen@linux.intel.com>
 
---Signature=_Wed__23_May_2012_12_15_18_+1000_LTmtgQtKOb94jyAc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This idea is inspired from IA64 implementation. It is like
+NAPI for network stack. When CMCI is too many to handle,
+this interrupt can be disabled and then poll mode will take
+over the events handle. When no more events happen in the
+system, CMC interrupt can be enabled automatically.
 
-Hi Rusty,
+Signed-off-by: Chen Gong <gong.chen@linux.intel.com>
+---
+ arch/x86/kernel/cpu/mcheck/mce.c |   83 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 81 insertions(+), 2 deletions(-)
 
-Today's linux-next merge of the rr tree got a conflict in
-Documentation/virtual/virtio-spec.txt between commit 33950c6e2269
-("virtio: update documentation to v0.9.5 of spec") from Linus' tree and
-commit e26259736de5 ("virtio: update documentation to v0.9.4 of spec")
-from the rr tree.
-
-I just used the version from Linus' tree.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__23_May_2012_12_15_18_+1000_LTmtgQtKOb94jyAc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJPvEg2AAoJEECxmPOUX5FEN7EP/3GnChw3i8UPJYwp1uBDRzs1
-0P22atkPBZVXMWVp7amr0Ptt9ql6SoCCpKNnRiySh7maCVCrsjSjEdAs5MVdVog2
-KZwfGBwL/9Bcid9v9EclBuLetVTRMLpxz8wd5bwwIo6peDIDtf0U6LUEI7kffFxC
-tD1UAqKTUrwKVePfRr36uoXLfxdc5LkQ5OykTks1aKC7qq0UXa7vH081bIz+1scX
-RahtDYv+E+1p4Oit5HTeVGl/PhdR5fBW3CUsjd/1ZLYxlp2evyM1cGhpClbjvm6o
-93ZBRduTCtjnmEEIdDHR+5kKdVJUX2M8oSqXN9miJcE2Bz/2jB/RTiEI5qIDIm1Y
-Y71o1iDe2578C641KxiKJdAlhIPEVOhf2dswJxdJWr1rZs8QcZwJGevBgr9apgfp
-LxygyUpq5tzQ7fFhlzI2bK91w/cxSfOPib5/nLVjSp2kF8tj9d+wnXBQSUScGfoh
-kw4fIC9UFshMkj+Ag+h4wvvKbtU9sdJNuRjDylBC7BEWh/w3DHJkaD7kAPpZqegB
-Mo+ZqU04EiuhDGTFfAuC9/Zw4TKKwRmfwG6+niiEcgCEYJIPF8axtOEV/Pkj7/RX
-mirwduWljuVXMLAUyB/hQvDiRWA6iMN4QdqvoT2WUdp8N09VxizKal5UPhqRGfxT
-cAbdVtg3S2R1HJZmlhVu
-=S+Ys
------END PGP SIGNATURE-----
-
---Signature=_Wed__23_May_2012_12_15_18_+1000_LTmtgQtKOb94jyAc--
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index d086a09..6334f0d 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -92,6 +92,7 @@ static char			*mce_helper_argv[2] = { mce_helper, NULL };
+ 
+ static DECLARE_WAIT_QUEUE_HEAD(mce_chrdev_wait);
+ 
++static DEFINE_PER_CPU(struct timer_list, mce_timer);
+ static DEFINE_PER_CPU(struct mce, mces_seen);
+ static int			cpu_missing;
+ 
+@@ -100,8 +101,28 @@ DEFINE_PER_CPU(mce_banks_t, mce_poll_banks) = {
+ 	[0 ... BITS_TO_LONGS(MAX_NR_BANKS)-1] = ~0UL
+ };
+ 
++#define CMC_POLL_INTERVAL	(1 * 30)
++#define CMC_STORM		5
++static DEFINE_PER_CPU(int, cmci_storm_warning);
++static DEFINE_PER_CPU(unsigned long, first_cmci_jiffie);
++static DEFINE_SPINLOCK(cmc_poll_lock);
++
++/*
++ * This variable tells whether we are in cmci-storm-happened mode.
++ * Start with this in the wrong state so we won't play w/ timers
++ * before the system is ready.
++ */
++static int cmci_storm_detected = 1;
++
+ static DEFINE_PER_CPU(struct work_struct, mce_work);
+ 
++static void mce_disable_cmci(void *data);
++static void mce_enable_ce(void *all);
++static void cmc_disable_keventd(struct work_struct *dummy);
++static void cmc_enable_keventd(struct work_struct *dummy);
++
++static DECLARE_WORK(cmc_disable_work, cmc_disable_keventd);
++static DECLARE_WORK(cmc_enable_work, cmc_enable_keventd);
+ /*
+  * CPU/chipset specific EDAC code can register a notifier call here to print
+  * MCE errors in a human-readable form.
+@@ -582,6 +603,37 @@ void machine_check_poll(enum mcp_flags flags, mce_banks_t *b)
+ {
+ 	struct mce m;
+ 	int i;
++	unsigned long flag;
++
++	spin_lock_irqsave(&cmc_poll_lock, flag);
++	if (cmci_storm_detected == 0) {
++		unsigned long now = jiffies;
++		int *count = &__get_cpu_var(cmci_storm_warning);
++		unsigned long *history = &__get_cpu_var(first_cmci_jiffie);
++
++		if (time_before_eq(now, *history + HZ))
++			(*count)++;
++		else {
++			*count = 0;
++			*history = now;
++		}
++
++		if (*count >= CMC_STORM) {
++			cmci_storm_detected = 1;
++			/* If we're being hit with CMC interrupts, we won't
++			 * ever execute the schedule_work() below.  Need to
++			 * disable CMC interrupts on this processor now.
++			 */
++			mce_disable_cmci(NULL);
++			if (!work_pending(&cmc_disable_work))
++				schedule_work(&cmc_disable_work);
++			spin_unlock_irqrestore(&cmc_poll_lock, flag);
++			printk(KERN_WARNING "WARNING: Switching to polling "\
++				"CMC handler; error records may be lost\n");
++			goto out;
++		}
++	}
++	spin_unlock_irqrestore(&cmc_poll_lock, flag);
+ 
+ 	percpu_inc(mce_poll_count);
+ 
+@@ -628,6 +680,7 @@ void machine_check_poll(enum mcp_flags flags, mce_banks_t *b)
+ 		mce_wrmsrl(MSR_IA32_MCx_STATUS(i), 0);
+ 	}
+ 
++out:
+ 	/*
+ 	 * Don't clear MCG_STATUS here because it's only defined for
+ 	 * exceptions.
+@@ -1199,6 +1252,20 @@ static void mce_process_work(struct work_struct *dummy)
+ 		memory_failure(pfn, MCE_VECTOR, 0);
+ }
+ 
++static void cmc_disable_keventd(struct work_struct *dummy)
++{
++	struct timer_list *t = __this_cpu_ptr(&mce_timer);
++
++	on_each_cpu(mce_disable_cmci, NULL, 0);
++	mod_timer(t, jiffies + CMC_POLL_INTERVAL * HZ);
++}
++
++static void cmc_enable_keventd(struct work_struct *dummy)
++{
++	/* don't re-initiate timer */
++	on_each_cpu(mce_enable_ce, NULL, 0);
++}
++
+ #ifdef CONFIG_X86_MCE_INTEL
+ /***
+  * mce_log_therm_throt_event - Logs the thermal throttling event to mcelog
+@@ -1232,12 +1299,12 @@ void mce_log_therm_throt_event(__u64 status)
+ static int check_interval = 5 * 60; /* 5 minutes */
+ 
+ static DEFINE_PER_CPU(int, mce_next_interval); /* in jiffies */
+-static DEFINE_PER_CPU(struct timer_list, mce_timer);
+ 
+ static void mce_start_timer(unsigned long data)
+ {
+ 	struct timer_list *t = &per_cpu(mce_timer, data);
+ 	int *n;
++	unsigned long flags;
+ 
+ 	WARN_ON(smp_processor_id() != data);
+ 
+@@ -1253,8 +1320,19 @@ static void mce_start_timer(unsigned long data)
+ 	n = &__get_cpu_var(mce_next_interval);
+ 	if (mce_notify_irq())
+ 		*n = max(*n/2, HZ/100);
+-	else
++	else {
+ 		*n = min(*n*2, (int)round_jiffies_relative(check_interval*HZ));
++		/* if no CMC event, switch out of polling mode */
++		spin_lock_irqsave(&cmc_poll_lock, flags);
++		if (cmci_storm_detected == 1) {
++			printk(KERN_WARNING "Returning to interrupt driven "\
++					"CMC handler\n");
++			if (!work_pending(&cmc_enable_work))
++				schedule_work(&cmc_enable_work);
++			cmci_storm_detected = 0;
++		}
++		spin_unlock_irqrestore(&cmc_poll_lock, flags);
++	}
+ 
+ 	t->expires = jiffies + *n;
+ 	add_timer_on(t, smp_processor_id());
+@@ -1547,6 +1625,7 @@ void __cpuinit mcheck_cpu_init(struct cpuinfo_x86 *c)
+ 	__mcheck_cpu_init_generic();
+ 	__mcheck_cpu_init_vendor(c);
+ 	__mcheck_cpu_init_timer();
++	cmci_storm_detected = 0;
+ 	INIT_WORK(&__get_cpu_var(mce_work), mce_process_work);
+ 	init_irq_work(&__get_cpu_var(mce_irq_work), &mce_irq_work_cb);
+ }
+-- 
+1.7.10
