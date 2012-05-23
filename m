@@ -1,68 +1,45 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [patch -linus] regmap: REMAP_IRQ should select IRQ_DOMAIN itself
-Date: Wed, 23 May 2012 18:33:43 +0100
-Message-ID: <20120523173342.GB4064@opensource.wolfsonmicro.com>
-References: <20120522183037.75ec03c9d8881ec188e7f787@canb.auug.org.au>
- <4FBBAF1B.1070702@xenotime.net>
- <alpine.DEB.2.00.1205222339030.9290@chino.kir.corp.google.com>
- <20120523093208.GB4085@opensource.wolfsonmicro.com>
- <CA+55aFynyjrHUCh48aXSQpZpboQM7MCCtMHvxBxCf+gDoCVWXg@mail.gmail.com>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: Tree for May 23 (uml)
+Date: Wed, 23 May 2012 19:19:17 +0100
+Message-ID: <20120523181917.GN11775@ZenIV.linux.org.uk>
+References: <20120523170740.ae058d8d5468d471eb948c39@canb.auug.org.au>
+ <4FBD090E.5020901@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4bRzO86E/ozDv8r1"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:48530 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1760641Ab2EWRdq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 May 2012 13:33:46 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39005 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760650Ab2EWSTX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 May 2012 14:19:23 -0400
 Content-Disposition: inline
-In-Reply-To: <CA+55aFynyjrHUCh48aXSQpZpboQM7MCCtMHvxBxCf+gDoCVWXg@mail.gmail.com>
+In-Reply-To: <4FBD090E.5020901@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Rientjes <rientjes@google.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Richard Weinberger <richard@nod.at>
 
+On Wed, May 23, 2012 at 08:58:06AM -0700, Randy Dunlap wrote:
+> On 05/23/2012 12:07 AM, Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > Changes since 20120522:
+> 
+> 
+> 
+> uml defconfig on x86_64:
+> 
+> arch/um/kernel/process.c: In function 'interrupt_end':
+> arch/um/kernel/process.c:122:14: error: 'struct task_struct' has no member named 'replacement_session_keyring'
+> arch/um/kernel/process.c:123:4: error: implicit declaration of function 'key_replace_session_keyring'
 
---4bRzO86E/ozDv8r1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Grr...  That's a conflict between uml gaining TIF_NOTIFY_RESUME (needed
+prereq to task_work_add() series) and patch in said series doing away
+with explicit calls of key_replace_session_keyring().  Fixup is to remove
+those two lines in arch/um/process.c, same as done on other architectures
+by "keys: kill the dummy key_replace_session_keyring()" (commit c1cb001).
 
-On Wed, May 23, 2012 at 08:51:39AM -0700, Linus Torvalds wrote:
-
-> Multi-level pure selects *should* work correctly. So you can select
-> stuff that then in turn selects other stuff - and that should all be
-> fine.
-
-They're supposed to, and mostly do, but there's been some fragility
-there.  That said there's not been anything recently, perhaps I just got
-hit with fallout from some development that was going on.
-
-> It's *dependencies* that do not work.
-
-Right, and nor are they supposed to since it's not clear what they
-should do.  That's a completely different thing.
-
---4bRzO86E/ozDv8r1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPvR9wAAoJEBus8iNuMP3dWVQP/RLgGMtPppEDLepvinaCXQwx
-UXNbSYxoraz7wEH8+nbJkBy9zT5TwG2lhBoctzu6tjSvGwQ1jhEJWDnu1dPL1xHL
-tSkAC1laf/sWcznmEoSeIrLud20TaMnWy47QxAomY028uwvqg1YA74h4dwDr6jGd
-J6tZLRIvYNtUuYGzJPmcXGFmkVkXcg+6O971v7EKUfz+kj4+ptoPVFW2354aulyu
-2yZstWvw0RQWkVxGCj4933BIR8CPHXb4xRT2ZK0LhVimBaAgXcxYhBiqMwpP1KaF
-VxKCNtyZipXyKVKWUkxcODdVCGEKF0Eq+z2NksNZd0jhftquuXppfqXammbnWNmh
-3aNWB+DDRaNtrdU2QUOLGQOPPmumsoBbKsZ5s2gECxyrt1cV4sG7ekQlf2jUb4zj
-jS19PiBa6n3LG+AdwCgl3gIrkAQmpcWGWJjIWh61HgKPN3DMwU7zOiYNXC+y8TQW
-nE4h9ouvmL7ZiFXt6KRg/bRfLHK+EB4ylveztYhQFivlFDs0ibb9vicUq4MX/5rv
-2iK9+pbY68b9WZsFeWH4F4cZOLbEmZLxMQrZ/NPt5lMVQRThwtvJGOLiMi/B3hsu
-7qok2pQ69P3Ed6rkowse8JRkQNQ3b7VFYJU0LVOBAWp2AHYOiSpPEM1yrIX46LX2
-XzQMCwHTQkqFvRZ0fVjj
-=L3MC
------END PGP SIGNATURE-----
-
---4bRzO86E/ozDv8r1--
+Not an issue for mainline merge, since task_work_add patchset goes later,
+but I think I'll have to cherry-pick that series into signal.git.  And
+probably reorder it a bit, moving the calls into tracehook_notify_resume()
+first, with "kill the dummy..." commit removing just that single call.
