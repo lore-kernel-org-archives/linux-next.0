@@ -1,57 +1,82 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: Tree for May 23
-Date: Wed, 23 May 2012 01:10:57 -0700
-Message-ID: <1337760657.22481.256.camel@haakon2.linux-iscsi.org>
-References: <20120523170740.ae058d8d5468d471eb948c39@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [SOLUTION]  linux-next: build failure after merge of the mfd tree
+Date: Wed, 23 May 2012 10:22:10 +0100
+Message-ID: <4FBCAC42.3020907@linaro.org>
+References: <20120521134219.6d6396802bd6a097503bac92@canb.auug.org.au> <4FB9F818.4030801@linaro.org> <20120521184005.3b7661ec6468c5878a22615d@canb.auug.org.au> <4FBA0460.1070300@linaro.org> <20120521191007.9347651e88add2e7c247a24f@canb.auug.org.au> <4FBA08A4.6030706@linaro.org> <20120521095427.GA30045@sirena.org.uk> <4FBA18C7.4030800@linaro.org> <20120522224214.GG10210@sortiz-mobl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20120523170740.ae058d8d5468d471eb948c39@canb.auug.org.au>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, target-devel <target-devel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:40372 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751617Ab2EWJWQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 May 2012 05:22:16 -0400
+Received: by bkcji2 with SMTP id ji2so5756021bkc.19
+        for <linux-next@vger.kernel.org>; Wed, 23 May 2012 02:22:14 -0700 (PDT)
+In-Reply-To: <20120522224214.GG10210@sortiz-mobl>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2012-05-23 at 17:07 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20120522:
-> 
-> New tree: signal
-> 
-> With the merge window open, conflicts are moving from tree to tree.
-> 
+Hi Samuel,
 
-...
+This should sort you out.
 
-> 
-> $ git checkout master
-> $ git reset --hard stable
-> Merging origin/master (fb09baf Merge tag 'staging-3.5-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging)
+The old code protected under 'AB8500_I2C_CORE' depended on 'MFD_DB8500_PRCMU'.
 
-<SNIP>
+From: Lee Jones <lee.jones@linaro.org>
+Date: Wed, 23 May 2012 10:08:51 +0100
+Subject: [PATCH] MFD: Assign MFD_DB8500_PRCMU dependency for building ab8500-core
 
-> Merging scsi/for-next (841f97b [SCSI] qla2xxx: don't free pool that wasn't allocated)
-> Merging target-updates/for-next (f80e8ed iscsi-target: Fix iov_count calculation bug in iscsit_allocate_iovecs)
-> Merging target-merge/for-next-merge (ef872d2 Merge branch 'qla-target-merge' into for-next-merge)
-> CONFLICT (add/add): Merge conflict in drivers/scsi/qla2xxx/tcm_qla2xxx.c
-> CONFLICT (add/add): Merge conflict in drivers/scsi/qla2xxx/qla_target.h
-> CONFLICT (add/add): Merge conflict in drivers/scsi/qla2xxx/qla_target.c
-> CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_os.c
-> CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_mbx.c
-> CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_def.h
-> CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_dbg.h
+A recent move to eliminate excess historical baggage from ab8500 core
+code resulting in errors when building with x86_64 allmodconfig:
 
-Just wanted to mention that qla-target-merge branch has been dropped
-from target-merge/for-next-merge now that these patches have hit James'
-scsi/for-next tree.
+In file included from drivers/mfd/ab8500-core.c:21:0:
+include/linux/mfd/dbx500-prcmu.h:614:19: error: redefinition of 'prcmu_abb_read'
+include/linux/mfd/db8500-prcmu.h:673:19: note: previous definition of 'prcmu_abb_read' was here
+include/linux/mfd/dbx500-prcmu.h:619:19: error: redefinition of 'prcmu_abb_write'
+include/linux/mfd/db8500-prcmu.h:678:19: note: previous definition of 'prcmu_abb_write' was here
+include/linux/mfd/dbx500-prcmu.h:630:19: error: redefinition of 'prcmu_config_clkout'
+include/linux/mfd/db8500-prcmu.h:643:19: note: previous definition of 'prcmu_config_clkout' was here
+include/linux/mfd/dbx500-prcmu.h:692:20: error: redefinition of 'prcmu_ac_wake_req'
+include/linux/mfd/db8500-prcmu.h:683:20: note: previous definition of 'prcmu_ac_wake_req' was here
+include/linux/mfd/dbx500-prcmu.h:694:20: error: redefinition of 'prcmu_ac_sleep_req'
+include/linux/mfd/db8500-prcmu.h:685:20: note: previous definition of 'prcmu_ac_sleep_req' was here
 
-Thank you Stephen!
+Problem:
+When CONFIG_AB8500_CORE is set, building ab8500-core.c and
+!(CONFIG_UX500_SOC_DB8500 | CONFIG_MFD_DB8500_PRCMU), both db8500-prcmu.h
+and dbx500-prcmu.h take it upon themselves to _both_ create 'return 0'
+inline functions for the following:
 
---nab
+prcmu_abb_read()
+prcmu_abb_write()
+prcmu_config_clkout()
+prcmu_ac_wake_req()
+prcmu_ac_sleep_req()
 
+Solution:
+Depend on MFD_DB8500_PRCMU, which in turn depends on UX500_SOC_DB8500.
 
+Reported-By: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/mfd/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 9846424..43e6142 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -683,7 +683,7 @@ config EZX_PCAP
+ 
+ config AB8500_CORE
+ 	bool "ST-Ericsson AB8500 Mixed Signal Power Management chip"
+-	depends on GENERIC_HARDIRQS && ABX500_CORE
++	depends on GENERIC_HARDIRQS && ABX500_CORE && MFD_DB8500_PRCMU
+ 	select MFD_CORE
+ 	help
+ 	  Select this option to enable access to AB8500 power management
+-- 
+1.7.9.5
