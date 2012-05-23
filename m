@@ -1,35 +1,68 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: linux-next: build failure after merge of the final tree (watchdog tree related)
-Date: Wed, 23 May 2012 18:48:35 +0200
-Message-ID: <20120523164835.GL3074@spo001.leaseweb.com>
-References: <20120523165548.8c706826ee94711bf3a913d8@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [patch -linus] regmap: REMAP_IRQ should select IRQ_DOMAIN itself
+Date: Wed, 23 May 2012 18:33:43 +0100
+Message-ID: <20120523173342.GB4064@opensource.wolfsonmicro.com>
+References: <20120522183037.75ec03c9d8881ec188e7f787@canb.auug.org.au>
+ <4FBBAF1B.1070702@xenotime.net>
+ <alpine.DEB.2.00.1205222339030.9290@chino.kir.corp.google.com>
+ <20120523093208.GB4085@opensource.wolfsonmicro.com>
+ <CA+55aFynyjrHUCh48aXSQpZpboQM7MCCtMHvxBxCf+gDoCVWXg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4bRzO86E/ozDv8r1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:54089 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753818Ab2EWQsj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 May 2012 12:48:39 -0400
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:48530 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1760641Ab2EWRdq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 May 2012 13:33:46 -0400
 Content-Disposition: inline
-In-Reply-To: <20120523165548.8c706826ee94711bf3a913d8@canb.auug.org.au>
+In-Reply-To: <CA+55aFynyjrHUCh48aXSQpZpboQM7MCCtMHvxBxCf+gDoCVWXg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Rientjes <rientjes@google.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
 
-> After merging the final tree, today's linux-next build (powerpc allyesconfig)
-> failed like this:
-> 
-> drivers/watchdog/watchdog_core.c: In function 'watchdog_register_device':
-> drivers/watchdog/watchdog_core.c:109:2: error: implicit declaration of function 'IS_ERR' [-Werror=implicit-function-declaration]
-> drivers/watchdog/watchdog_core.c:112:3: error: implicit declaration of function 'PTR_ERR' [-Werror=implicit-function-declaration]
-> 
-> Caused by commit e3b97a7eb87d ("watchdog: create all the proper device
-> files").
+--4bRzO86E/ozDv8r1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixed in the linux-watchdog-next tree now.
+On Wed, May 23, 2012 at 08:51:39AM -0700, Linus Torvalds wrote:
 
-Thanks,
-Wim.
+> Multi-level pure selects *should* work correctly. So you can select
+> stuff that then in turn selects other stuff - and that should all be
+> fine.
+
+They're supposed to, and mostly do, but there's been some fragility
+there.  That said there's not been anything recently, perhaps I just got
+hit with fallout from some development that was going on.
+
+> It's *dependencies* that do not work.
+
+Right, and nor are they supposed to since it's not clear what they
+should do.  That's a completely different thing.
+
+--4bRzO86E/ozDv8r1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPvR9wAAoJEBus8iNuMP3dWVQP/RLgGMtPppEDLepvinaCXQwx
+UXNbSYxoraz7wEH8+nbJkBy9zT5TwG2lhBoctzu6tjSvGwQ1jhEJWDnu1dPL1xHL
+tSkAC1laf/sWcznmEoSeIrLud20TaMnWy47QxAomY028uwvqg1YA74h4dwDr6jGd
+J6tZLRIvYNtUuYGzJPmcXGFmkVkXcg+6O971v7EKUfz+kj4+ptoPVFW2354aulyu
+2yZstWvw0RQWkVxGCj4933BIR8CPHXb4xRT2ZK0LhVimBaAgXcxYhBiqMwpP1KaF
+VxKCNtyZipXyKVKWUkxcODdVCGEKF0Eq+z2NksNZd0jhftquuXppfqXammbnWNmh
+3aNWB+DDRaNtrdU2QUOLGQOPPmumsoBbKsZ5s2gECxyrt1cV4sG7ekQlf2jUb4zj
+jS19PiBa6n3LG+AdwCgl3gIrkAQmpcWGWJjIWh61HgKPN3DMwU7zOiYNXC+y8TQW
+nE4h9ouvmL7ZiFXt6KRg/bRfLHK+EB4ylveztYhQFivlFDs0ibb9vicUq4MX/5rv
+2iK9+pbY68b9WZsFeWH4F4cZOLbEmZLxMQrZ/NPt5lMVQRThwtvJGOLiMi/B3hsu
+7qok2pQ69P3Ed6rkowse8JRkQNQ3b7VFYJU0LVOBAWp2AHYOiSpPEM1yrIX46LX2
+XzQMCwHTQkqFvRZ0fVjj
+=L3MC
+-----END PGP SIGNATURE-----
+
+--4bRzO86E/ozDv8r1--
