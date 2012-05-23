@@ -1,36 +1,54 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: linux-next: manual merge of the watchdog tree with the mfd tree
-Date: Wed, 23 May 2012 16:55:13 +0200
-Message-ID: <20120523145513.GJ3074@spo001.leaseweb.com>
-References: <20120518152348.1e5070cdc16cfdf00682546d@canb.auug.org.au> <20120518083234.GW3074@spo001.leaseweb.com> <6.2.5.6.2.20120518181141.028c8090@roeck-us.net> <20120522163559.GD3074@spo001.leaseweb.com> <6.2.5.6.2.20120522153050.0284ee38@roeck-us.net> <20120523054430.GH3074@spo001.leaseweb.com> <20120523142658.GD23600@sortiz-mobl>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Wed, 23 May 2012 17:35:36 +0200
+Message-ID: <20120523153536.GD26974@gmail.com>
+References: <20120521185412.aca92107d0a8c4fdd8474e34@canb.auug.org.au>
+ <20120521091257.GF31407@gmail.com>
+ <20120522182542.655b939d96a8eb67390abb9a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:53948 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1758805Ab2EWOzY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 May 2012 10:55:24 -0400
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:51690 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755670Ab2EWPfr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 May 2012 11:35:47 -0400
 Content-Disposition: inline
-In-Reply-To: <20120523142658.GD23600@sortiz-mobl>
+In-Reply-To: <20120522182542.655b939d96a8eb67390abb9a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Guenter Roeck <guenter@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aaron Sierra <asierra@xes-inc.com>, Randy Dunlap <rdunlap@xenotime.net>, linux-watchdog@vger.kernel.org, Jean Delvare <khali@linux-fr.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Sam,
 
-> > Since %04llx with a typecast to u64 is the way to go (Thanks Stephen and Randy)...
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Ingo,
+> 
+> On Mon, 21 May 2012 11:12:57 +0200 Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > > 
-> > > How do we make sure that Randy's patch makes it upstream ? The iTCO 
-> > > patch is currently in Sam's tree.
+> > > Hi all,
+> > > 
+> > > After merging the final tree, today's linux-next build (i386 defconfig)
+> > > failed like this:
+> > > 
+> > > Invalid absolute R_386_32 relocation: jiffies
 > > 
-> > Can you carry Randy's patch/fix (since it fixes the change introduced by the iTCO_wdt mfd patch)?
-> > If not then I will apply the patch later on once the iTCO_wdt mfd patch is mainstream.
+> > Hm, that's our fault: seems like a linker bug fallout, one which 
+> > we fixed in -tip.
 > > 
-> I'd appreciate if you could take it. I'm trying to avoid taking more patches
-> at this moment.
+> > > I am not sure what caused this (it may even been a bad merge 
+> > > on my part).  I have left it broken for today.
+> > 
+> > While we've fixed this, to simplify merge window integration of 
+> > linux-next I've excluded tip:x86/trampoline from the linux-next 
+> > branch for now, so this build failure should go away tomorrow.
+> 
+> Weirdly, I still got the same error today.  Any ideas?
 
-No problem. I'll take it then.
+Ought to be fixed now.
 
-Kind regards,
-Wim.
+Thanks,
+
+	Ingo
