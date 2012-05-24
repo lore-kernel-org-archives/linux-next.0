@@ -1,49 +1,68 @@
-From: David Rientjes <rientjes@google.com>
-Subject: Re: [patch -linus] regmap: REMAP_IRQ should select IRQ_DOMAIN
- itself
-Date: Wed, 23 May 2012 21:53:21 -0700 (PDT)
-Message-ID: <alpine.DEB.2.00.1205232149230.10366@chino.kir.corp.google.com>
-References: <20120522183037.75ec03c9d8881ec188e7f787@canb.auug.org.au> <4FBBAF1B.1070702@xenotime.net> <alpine.DEB.2.00.1205222339030.9290@chino.kir.corp.google.com> <20120523093208.GB4085@opensource.wolfsonmicro.com> <CA+55aFynyjrHUCh48aXSQpZpboQM7MCCtMHvxBxCf+gDoCVWXg@mail.gmail.com>
- <20120523173342.GB4064@opensource.wolfsonmicro.com> <alpine.DEB.2.00.1205231735100.8785@chino.kir.corp.google.com> <20120524011950.GD5361@opensource.wolfsonmicro.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the signal tree with the tip tree
+Date: Thu, 24 May 2012 15:51:51 +1000
+Message-ID: <20120524155151.0a119f3e4ac73a353b11322f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:39501 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751125Ab2EXExY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 May 2012 00:53:24 -0400
-Received: by pbbrp8 with SMTP id rp8so10898233pbb.19
-        for <linux-next@vger.kernel.org>; Wed, 23 May 2012 21:53:23 -0700 (PDT)
-In-Reply-To: <20120524011950.GD5361@opensource.wolfsonmicro.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__24_May_2012_15_51_51_+1000_3A7JYvKSvWBYZ5Pm"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 24 May 2012, Mark Brown wrote:
+--Signature=_Thu__24_May_2012_15_51_51_+1000_3A7JYvKSvWBYZ5Pm
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > What's fragile is going around and adding "select IRQ_DOMAIN" to 
-> > everything that does "select REGMAP_IRQ".  So I removed that and just made 
-> > IRQ_DOMAIN select REGMAP_IRQ itself.
-> 
-> It's a different kind of fragility, things break immediately when you
-> add something new which is reasonably obvous as opposed to happening
-> at some other time due to a tooling issue and what I'm concerned about
-> avoiding.  In any case...
-> 
+Hi Al,
 
-Well pardon me for actually having a cluster of machines at Google 
-dedicated to upstream build/boot/regression testing that verified my patch 
-was correct and didn't result in any kind of "fragility", or what you have 
-convinced yourself is "fragility."
+Today's linux-next merge of the signal tree got a conflict in
+kernel/fork.c between commit 0ea86208345b (sched, mm: Rework sched_
+{fork,exec} node assignment"") from the tip tree and commit 4d82c317564d
+("task_work_add: generic process-context callbacks") from the signal tree.
 
-> > So can this be merged or what's the issue?
-> 
-> ...Linus already merged my alternative patch which does this with a
-> select..if which never seems to have these issues.
-> 
+I fixed it up (as discussed - see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-When you propose your own version, drop all cc's (and this isn't the first 
-time you've done that), and then send the git pull request less than 30 
-minutes later, I don't really have the chance to review it.  Lesson 
-learned, I simply won't bother to fix your code in the future.
+diff --cc kernel/fork.c
+index 5f7d197,1a1faaf..0000000
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@@ -1419,6 -1409,8 +1419,7 @@@ static struct task_struct *copy_process
+  	 * We dont wake it up yet.
+  	 */
+  	p->group_leader =3D p;
+ -	INIT_LIST_HEAD(&p->thread_group);
++ 	INIT_HLIST_HEAD(&p->task_works);
+ =20
+  	/* Now that the task is set up, run cgroup callbacks if
+  	 * necessary. We need to run them before the task is visible
+
+--Signature=_Thu__24_May_2012_15_51_51_+1000_3A7JYvKSvWBYZ5Pm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPvcx3AAoJEECxmPOUX5FENLcP+wU05qwZgqRZbzd6FpgzWsqp
+n4i7CIiGm2PvtPuJT5XPJ1W6DJGH+5wuLCznOxCKis7HAaf1HoAfKndKwjutD62X
+m5xyemtfSWJ3GuRXivpsEuraR0+dsglMJl0mzZhQPL/c+WEv/whpnh1GtYf+9cN8
+7RxyA8tEl0Yrsx4ZWKhPuByN9SxNsw52VROZlFOQYh3FnoUbFLe0ICsILaC0npRb
+trrsx7k6rXd5Ls+02w4L+ASmnHH2/S091URskI7LAtQ+th5Kg3NgXceMn72DQ60j
+AwguiOtrDW/GtCEzcDf9VFVqpzsFpN5iHZnC+uY6CpYwq4fQKHX8UAudNr39gBAD
+8novyqy4zYB38ACW6r91+i8uIOWY1dqe2tUVc84hT8wnfnLOf2bFcQVUOCtb7A88
+Ltn1rv+NDGYrEh6nRfVfVhVjF5ThPa+iNjvmw9n/hwW99GTdFcwlzD7/fiQgw6MH
+Q1DWDm8powAirFXpn0vuzt1ORSmm8SsvebTETpQbtGbmR0wxBbWcl0yAUTsodI0k
+K3/fPoyPBRowInJWBEpGNSBUFaWBQa1CBaZKZQFaSMoLt9yUKGL+BWEMrB4v++JB
+e6xBEqvTV4PZOkl02AYHW/Pu+IQ0ZDcyLbMZK+75g5I6NBSD1URAnEgkL5DQW+zD
+yipBq53Wi0QnzVIg10id
+=3ZCu
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__24_May_2012_15_51_51_+1000_3A7JYvKSvWBYZ5Pm--
