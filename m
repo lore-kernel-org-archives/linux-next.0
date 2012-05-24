@@ -1,59 +1,56 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [patch -linus] regmap: REMAP_IRQ should select IRQ_DOMAIN itself
-Date: Thu, 24 May 2012 10:09:58 +0100
-Message-ID: <20120524090957.GE5361@opensource.wolfsonmicro.com>
-References: <20120522183037.75ec03c9d8881ec188e7f787@canb.auug.org.au>
- <4FBBAF1B.1070702@xenotime.net>
- <alpine.DEB.2.00.1205222339030.9290@chino.kir.corp.google.com>
- <20120523093208.GB4085@opensource.wolfsonmicro.com>
- <CA+55aFynyjrHUCh48aXSQpZpboQM7MCCtMHvxBxCf+gDoCVWXg@mail.gmail.com>
- <20120523173342.GB4064@opensource.wolfsonmicro.com>
- <alpine.DEB.2.00.1205231735100.8785@chino.kir.corp.google.com>
- <20120524011950.GD5361@opensource.wolfsonmicro.com>
- <alpine.DEB.2.00.1205232149230.10366@chino.kir.corp.google.com>
+From: Bob Liu <lliubbo@gmail.com>
+Subject: Re: "blackfin: twi: move twi bit mask macro to twi head file"
+Date: Thu, 24 May 2012 17:20:34 +0800
+Message-ID: <CAA_GA1eD9cQw-SD7kA_h=TjKT67_O2k20KC+TGMuBwkw5byb5A@mail.gmail.com>
+References: <20120524005940.GB24787@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42944 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932242Ab2EXJKB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 May 2012 05:10:01 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.00.1205232149230.10366@chino.kir.corp.google.com>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:59280 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754486Ab2EXJUf convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 May 2012 05:20:35 -0400
+Received: by wibhj8 with SMTP id hj8so5553973wib.1
+        for <linux-next@vger.kernel.org>; Thu, 24 May 2012 02:20:34 -0700 (PDT)
+In-Reply-To: <20120524005940.GB24787@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Sonic Zhang <sonic.zhang@analog.com>, linux-next@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org
 
-On Wed, May 23, 2012 at 09:53:21PM -0700, David Rientjes wrote:
+Hi Paul,
 
-> Well pardon me for actually having a cluster of machines at Google 
-> dedicated to upstream build/boot/regression testing that verified my patch 
-> was correct and didn't result in any kind of "fragility", or what you have 
-> convinced yourself is "fragility."
+On Thu, May 24, 2012 at 8:59 AM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> Hi all,
+>
+> This commit:
+>
+> ------
+> commit c55c89e939f2a0a83d5c61462be554d5d2408178
+> Author: Sonic Zhang <sonic.zhang@analog.com>
+> Date: =C2=A0 Thu Nov 24 17:40:07 2011 +0800
+>
+> =C2=A0 =C2=A0blackfin: twi: move twi bit mask macro to twi head file
+>
+> =C2=A0 =C2=A0Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
+> =C2=A0 =C2=A0Signed-off-by: Bob Liu <lliubbo@gmail.com>
+> ------
+>
+> seems to break linux-next builds, such as this:
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0http://kisskb.ellerman.id.au/kisskb/buildr=
+esult/6353497/
+>
+> Please have a look, thanks.
 
-It working right now isn't the only thing I'm concerned about, though
-like I said further up the thread it's possible this is all just me
-having too long a memory.
+That's because some blackfin i2c patches under drivers/i2c/ are still
+not merged.
+I'll request the i2c maintainer to merge them soon.
 
-> When you propose your own version, drop all cc's (and this isn't the first 
-> time you've done that), and then send the git pull request less than 30 
+Thank you!
 
-Sorry about that, I hadn't realised you were particularly attached to
-the issue.  I do generally drop people doing global stuff with no
-particular obvious interest in the specific topic on new patches since I
-know I sometimes get a bit fed up of being CCed on random things I was
-tangentially involved in at some point.
-
-> minutes later, I don't really have the chance to review it.  Lesson 
-> learned, I simply won't bother to fix your code in the future.
-
-I guess since I've offended you so much already there's not much harm in
-saying: it's always much better to send changes in a form that can be
-directly applied with tools like git am.  Appending a patch to the
-bottom of a mail requires something like hand editing the commit after
-it's been applied to extract the changelog.  Not sure it actually made a
-difference in this specific case but it can be the difference when
-you're not sure about the approach taken, especially for small patches
-where it's quick and simple to write and test the replacement.
+--=20
+Regards,
+--Bob
