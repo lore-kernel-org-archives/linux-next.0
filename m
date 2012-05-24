@@ -1,65 +1,59 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Thu, 24 May 2012 09:22:48 +0200
-Message-ID: <20120524072248.GB16738@gmail.com>
-References: <20120521185412.aca92107d0a8c4fdd8474e34@canb.auug.org.au>
- <20120521091257.GF31407@gmail.com>
- <20120522182542.655b939d96a8eb67390abb9a@canb.auug.org.au>
- <20120523153536.GD26974@gmail.com>
- <20120524171604.0d98284f3affc643e9714470@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [patch -linus] regmap: REMAP_IRQ should select IRQ_DOMAIN itself
+Date: Thu, 24 May 2012 10:09:58 +0100
+Message-ID: <20120524090957.GE5361@opensource.wolfsonmicro.com>
+References: <20120522183037.75ec03c9d8881ec188e7f787@canb.auug.org.au>
+ <4FBBAF1B.1070702@xenotime.net>
+ <alpine.DEB.2.00.1205222339030.9290@chino.kir.corp.google.com>
+ <20120523093208.GB4085@opensource.wolfsonmicro.com>
+ <CA+55aFynyjrHUCh48aXSQpZpboQM7MCCtMHvxBxCf+gDoCVWXg@mail.gmail.com>
+ <20120523173342.GB4064@opensource.wolfsonmicro.com>
+ <alpine.DEB.2.00.1205231735100.8785@chino.kir.corp.google.com>
+ <20120524011950.GD5361@opensource.wolfsonmicro.com>
+ <alpine.DEB.2.00.1205232149230.10366@chino.kir.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:35713 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013Ab2EXHWy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 May 2012 03:22:54 -0400
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42944 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932242Ab2EXJKB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 May 2012 05:10:01 -0400
 Content-Disposition: inline
-In-Reply-To: <20120524171604.0d98284f3affc643e9714470@canb.auug.org.au>
+In-Reply-To: <alpine.DEB.2.00.1205232149230.10366@chino.kir.corp.google.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Rientjes <rientjes@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On Wed, May 23, 2012 at 09:53:21PM -0700, David Rientjes wrote:
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Well pardon me for actually having a cluster of machines at Google 
+> dedicated to upstream build/boot/regression testing that verified my patch 
+> was correct and didn't result in any kind of "fragility", or what you have 
+> convinced yourself is "fragility."
 
-> Hi Ingo,
-> 
-> On Wed, 23 May 2012 17:35:36 +0200 Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > > On Mon, 21 May 2012 11:12:57 +0200 Ingo Molnar <mingo@kernel.org> wrote:
-> > > >
-> > > > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > 
-> > > > > After merging the final tree, today's linux-next build (i386 defconfig)
-> > > > > failed like this:
-> > > > > 
-> > > > > Invalid absolute R_386_32 relocation: jiffies
-> > > > 
-> > > > Hm, that's our fault: seems like a linker bug fallout, one which 
-> > > > we fixed in -tip.
-> > > > 
-> > > > > I am not sure what caused this (it may even been a bad merge 
-> > > > > on my part).  I have left it broken for today.
-> > > > 
-> > > > While we've fixed this, to simplify merge window integration of 
-> > > > linux-next I've excluded tip:x86/trampoline from the linux-next 
-> > > > branch for now, so this build failure should go away tomorrow.
-> > > 
-> > > Weirdly, I still got the same error today.  Any ideas?
-> > 
-> > Ought to be fixed now.
-> 
-> OK, clearly something is wrong :-( There could well be a 
-> problem with my toolchain.
-> 
-> I am still getting this error.  Build is an i386 defconfig
+It working right now isn't the only thing I'm concerned about, though
+like I said further up the thread it's possible this is all just me
+having too long a memory.
 
-Hm, Peter?
+> When you propose your own version, drop all cc's (and this isn't the first 
+> time you've done that), and then send the git pull request less than 30 
 
-Thanks,
+Sorry about that, I hadn't realised you were particularly attached to
+the issue.  I do generally drop people doing global stuff with no
+particular obvious interest in the specific topic on new patches since I
+know I sometimes get a bit fed up of being CCed on random things I was
+tangentially involved in at some point.
 
-	Ingo
+> minutes later, I don't really have the chance to review it.  Lesson 
+> learned, I simply won't bother to fix your code in the future.
+
+I guess since I've offended you so much already there's not much harm in
+saying: it's always much better to send changes in a form that can be
+directly applied with tools like git am.  Appending a patch to the
+bottom of a mail requires something like hand editing the commit after
+it's been applied to extract the changelog.  Not sure it actually made a
+difference in this specific case but it can be the difference when
+you're not sure about the approach taken, especially for small patches
+where it's quick and simple to write and test the replacement.
