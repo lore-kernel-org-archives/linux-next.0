@@ -1,32 +1,54 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH] hwmon/sch56xx: Depend on watchdog for watchdog core functions
-Date: Thu, 24 May 2012 22:54:27 +0200
-Message-ID: <20120524205426.GW3074@spo001.leaseweb.com>
-References: <1337890738-26533-1-git-send-email-hdegoede@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: usual request
+Date: Fri, 25 May 2012 08:20:43 +1000
+Message-ID: <20120525082043.be9bc57173a3e24a3c145e81@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__25_May_2012_08_20_43_+1000_7SPOpFlFqoklpIBN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:55635 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752345Ab2EXUyd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 May 2012 16:54:33 -0400
-Content-Disposition: inline
-In-Reply-To: <1337890738-26533-1-git-send-email-hdegoede@redhat.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:44824 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752476Ab2EXWU6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 May 2012 18:20:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: linux-watchdog@vger.kernel.org, LM Sensors <lm-sensors@lm-sensors.org>, linux-next@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org
 
-Hi Hans,
+--Signature=_Fri__25_May_2012_08_20_43_+1000_7SPOpFlFqoklpIBN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Since the watchdog code in sch56xx-common now uses the watchdog core, the
-> Kconfig entires for the sch5627 and sch5636 should depend on WATCHDOG
-> being set.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Hi all,
 
-I added also the "select WATCHDOG_CORE" lines for both drivers.
-In linux-watchdog-next now.
+Please do not add anything to your linux-next included trees that is
+intended for v3.6 until after v3.5-rc1 is released.
 
-Kind regards,
-Wim.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__25_May_2012_08_20_43_+1000_7SPOpFlFqoklpIBN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPvrQ7AAoJEECxmPOUX5FEHNkP/iHsKPAkT2nt855F459lJtKc
+Q59iY1AwSKnTjbJWFhTY+Tr4eGLCj5caZtxhbogHqSP353+hacZ5XLgAXFAKYpPx
+kM+/9o1RtOgNHD02TR8IdbX+TWGeYShntTqttKtXLSjcfP2E1dm3JtyiXjlLXV0U
+YTLROvAPNAtV882fFuJ5V+zUwp1Y6K6PJ3b1BgnUKRgoVBnium8OEorBIXFknY5z
+6TFzMqh2HHiQOVJKq/4YGgpdSmNLhdAKAQSpyHnZS8WdEeA27GWewVm7vnxD8EPc
+WN2CPK2hA2CAo/pjRDhJQZiNF6Jx11zWYC5QknpZiy4nV3iNnedDgf/BVNLLsG4+
+BA32aY0RKqzyENod6C62tg9Uji5cFayJz1BrFS3jwr6uS3vzSzyDKod4sGLfznsS
+XudYDzVsP0Q/7q/AS1AQ46BbRNWlg4w68cUqxLbWhr7Kfr6dZ3wfCRAni4jMRZeJ
+3zBDT2CRCIRQZjFMP7W3YINsBIWpQe/gOWUbyFLZ2Jd0Bbu+HZMpUuxx08I5GOb3
+Ta1yfiKV/5RUlTi3VVhBLiTWYu4omBr1YrdXb7LuyGgrHN5jgyI2FqensosvHxYM
+KRdteKHZL1cszIMq9981KGYvQAdy7Qli+fQcaZt7j02r/n+6z58dTPQPQeSOEyxk
+uH0JjpgtnhT0KRaAuyUy
+=Skjg
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__25_May_2012_08_20_43_+1000_7SPOpFlFqoklpIBN--
