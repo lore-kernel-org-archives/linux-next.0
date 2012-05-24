@@ -1,56 +1,48 @@
-From: Bob Liu <lliubbo@gmail.com>
-Subject: Re: "blackfin: twi: move twi bit mask macro to twi head file"
-Date: Thu, 24 May 2012 17:20:34 +0800
-Message-ID: <CAA_GA1eD9cQw-SD7kA_h=TjKT67_O2k20KC+TGMuBwkw5byb5A@mail.gmail.com>
-References: <20120524005940.GB24787@windriver.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [patch -linus] regmap: REMAP_IRQ should select IRQ_DOMAIN itself
+Date: Thu, 24 May 2012 10:37:40 +0100
+Message-ID: <20120524093739.GF5361@opensource.wolfsonmicro.com>
+References: <20120522183037.75ec03c9d8881ec188e7f787@canb.auug.org.au>
+ <4FBBAF1B.1070702@xenotime.net>
+ <alpine.DEB.2.00.1205222339030.9290@chino.kir.corp.google.com>
+ <20120523093208.GB4085@opensource.wolfsonmicro.com>
+ <CA+55aFynyjrHUCh48aXSQpZpboQM7MCCtMHvxBxCf+gDoCVWXg@mail.gmail.com>
+ <20120523173342.GB4064@opensource.wolfsonmicro.com>
+ <alpine.DEB.2.00.1205231735100.8785@chino.kir.corp.google.com>
+ <alpine.DEB.2.00.1205231810570.28167@chino.kir.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:59280 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754486Ab2EXJUf convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 May 2012 05:20:35 -0400
-Received: by wibhj8 with SMTP id hj8so5553973wib.1
-        for <linux-next@vger.kernel.org>; Thu, 24 May 2012 02:20:34 -0700 (PDT)
-In-Reply-To: <20120524005940.GB24787@windriver.com>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:51241 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753198Ab2EXJhn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 May 2012 05:37:43 -0400
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.00.1205231810570.28167@chino.kir.corp.google.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Sonic Zhang <sonic.zhang@analog.com>, linux-next@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org
+To: David Rientjes <rientjes@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Paul,
+On Wed, May 23, 2012 at 06:12:18PM -0700, David Rientjes wrote:
 
-On Thu, May 24, 2012 at 8:59 AM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> Hi all,
->
-> This commit:
->
-> ------
-> commit c55c89e939f2a0a83d5c61462be554d5d2408178
-> Author: Sonic Zhang <sonic.zhang@analog.com>
-> Date: =C2=A0 Thu Nov 24 17:40:07 2011 +0800
->
-> =C2=A0 =C2=A0blackfin: twi: move twi bit mask macro to twi head file
->
-> =C2=A0 =C2=A0Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
-> =C2=A0 =C2=A0Signed-off-by: Bob Liu <lliubbo@gmail.com>
-> ------
->
-> seems to break linux-next builds, such as this:
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0http://kisskb.ellerman.id.au/kisskb/buildr=
-esult/6353497/
->
-> Please have a look, thanks.
+> you did it with a bogus commit message that insists this is only a 
+> randconfig issue when in reality you never tested enabling 
+> CONFIG_MFD_PALMAS without CONFIG_IRQ_DOMAIN when you merged 4af8be67fd99 
+> ("regmap: Convert regmap_irq to use irq_domain").
 
-That's because some blackfin i2c patches under drivers/i2c/ are still
-not merged.
-I'll request the i2c maintainer to merge them soon.
+JFTR all randconfig means is that it doesn't seem like a configuration a
+human is likely to generate for use on an actual system as opposed to
+build coverage - in this case the driver is for the PMIC for some new
+ARM SoCs so it's unlikely that someone would want to run the driver on a
+system that doesn't have DT (and hence IRQ domains) enabled.
 
-Thank you!
-
---=20
-Regards,
---Bob
+With this sort of dependency error failures are generally either in
+configurations you'd expect people to want to run (which obviously
+affect users), in allXconfig builds (which get run a lot for all sorts
+of reasons and so are urgent even if it's unlikely people will use them
+in production) or in randconfig builds (which should work and are
+potentially sensible configurations but can also turn up combinations
+that aren't that realistic).  All of these should be fixed if they
+break.
