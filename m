@@ -1,39 +1,40 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: "blackfin: twi: move twi bit mask macro to twi head
- file"
-Date: Wed, 23 May 2012 20:59:40 -0400
-Message-ID: <20120524005940.GB24787@windriver.com>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: [patch -linus] regmap: REMAP_IRQ should select IRQ_DOMAIN
+ itself
+Date: Wed, 23 May 2012 18:12:18 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1205231810570.28167@chino.kir.corp.google.com>
+References: <20120522183037.75ec03c9d8881ec188e7f787@canb.auug.org.au> <4FBBAF1B.1070702@xenotime.net> <alpine.DEB.2.00.1205222339030.9290@chino.kir.corp.google.com> <20120523093208.GB4085@opensource.wolfsonmicro.com> <CA+55aFynyjrHUCh48aXSQpZpboQM7MCCtMHvxBxCf+gDoCVWXg@mail.gmail.com>
+ <20120523173342.GB4064@opensource.wolfsonmicro.com> <alpine.DEB.2.00.1205231735100.8785@chino.kir.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:62328 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751409Ab2EXA76 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 May 2012 20:59:58 -0400
-Content-Disposition: inline
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:44256 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751574Ab2EXBMV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 May 2012 21:12:21 -0400
+Received: by dady13 with SMTP id y13so10526535dad.19
+        for <linux-next@vger.kernel.org>; Wed, 23 May 2012 18:12:21 -0700 (PDT)
+In-Reply-To: <alpine.DEB.2.00.1205231735100.8785@chino.kir.corp.google.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sonic Zhang <sonic.zhang@analog.com>
-Cc: Bob Liu <lliubbo@gmail.com>, linux-next@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+On Wed, 23 May 2012, David Rientjes wrote:
 
-This commit:
+> So my patch to select IRQ_DOMAIN for REGMAP_IRQ is correct since 
+> REGMAP_IRQ now requires IRC_DOMAIN since the commit listed in the 
+> changelog.
+> 
+> What's fragile is going around and adding "select IRQ_DOMAIN" to 
+> everything that does "select REGMAP_IRQ".  So I removed that and just made 
+> IRQ_DOMAIN select REGMAP_IRQ itself.
+> 
+> So can this be merged or what's the issue?
+> 
 
-------
-commit c55c89e939f2a0a83d5c61462be554d5d2408178
-Author: Sonic Zhang <sonic.zhang@analog.com>
-Date:   Thu Nov 24 17:40:07 2011 +0800
-
-    blackfin: twi: move twi bit mask macro to twi head file
-    
-    Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
-    Signed-off-by: Bob Liu <lliubbo@gmail.com>
-------
-
-seems to break linux-next builds, such as this:
-
-	http://kisskb.ellerman.id.au/kisskb/buildresult/6353497/
-
-Please have a look, thanks.
-Paul.
+Oh well, Linus already merged your git pull that you didn't cc to me and 
+you did it with a bogus commit message that insists this is only a 
+randconfig issue when in reality you never tested enabling 
+CONFIG_MFD_PALMAS without CONFIG_IRQ_DOMAIN when you merged 4af8be67fd99 
+("regmap: Convert regmap_irq to use irq_domain").
