@@ -1,51 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no tree today
-Date: Fri, 25 May 2012 15:45:48 +1000
-Message-ID: <20120525154548.5d0ac676dcb57f166c5c3e35@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: triage for April 19, 2012
+Date: Fri, 25 May 2012 22:59:10 +0200
+Message-ID: <CAMuHMdUUgysVqz226jhK42nvYNaX7yvexpqRjOPx0QpvzUwVXg@mail.gmail.com>
+References: <20120420020013.GA19964@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__25_May_2012_15_45_48_+1000_lOPM5ODDDgRLeKhP"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43334 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751038Ab2EYFpw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 25 May 2012 01:45:52 -0400
+Received: from mail-gg0-f174.google.com ([209.85.161.174]:43805 "EHLO
+	mail-gg0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753054Ab2EYU7M convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 25 May 2012 16:59:12 -0400
+In-Reply-To: <20120420020013.GA19964@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, Avi Kivity <avi@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__25_May_2012_15_45_48_+1000_lOPM5ODDDgRLeKhP
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Apr 20, 2012 at 4:00 AM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> The parisc got borked by some kvm header shuffle it seems?
+> Now complaining about "file 'asm-generic/kvm_para.h' is not exported"
+> [ http://kisskb.ellerman.id.au/kisskb/buildresult/6137786/ ]
 
-Sorry about that.  The next tree will probably be Monday (my time).
+Not only parisc.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+This breakage has now entered mainline:
 
---Signature=_Fri__25_May_2012_15_45_48_+1000_lOPM5ODDDgRLeKhP
-Content-Type: application/pgp-signature
+parisc deconfig http://kisskb.ellerman.id.au/kisskb/buildresult/6365677=
+/
+m68k allmodconfig: http://kisskb.ellerman.id.au/kisskb/buildresult/6365=
+681/
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Gr{oetje,eeting}s,
 
-iQIcBAEBCAAGBQJPvxyMAAoJEECxmPOUX5FEF/4QAKPw5BYkakr0B1kXfeJMOAWE
-r7dzNugv12bCTgZr8dIkIOjyji3H0bO9synWk7zOLrsQHRUyLYB5rDSAZ2/2NMJt
-WejYbJeq5D2wk7LNDG/onLAehJnLbfK/sCnpBk3xd1i1DHJBJElls4h8Ey/zRA9E
-xw73Vv7yahu2f14Q6Ic4HpH53NMs3Sy6Ua9yDeprSQJKaeBOrIRmMD8j4ev2RhC2
-nb4kwyC/SLQS5LRiml1dB2NNlNr3yf6n+i1jvSOiZqcIx2yVV6V4tGvmeOx31J8Z
-GACf3VqUsjY7Qh+U1CrnuwF4NBT7ISqQAhpKOrmNiQI0bP5gqudfQTQ9PMdOn0mN
-yCsdrHirYD5X2ix68iSrwnQlFI8AWKF7iVyt8Nfpd9i9FrNAyTZT8lWJVOulQZ5b
-lgTT/BMXigxMkjhfwEH4zmQm7jK4t0WA9qjfVq4KS6rp/xlq9NOvksoQSr0s/8++
-gPVxGV17RRpaMjWL531nVDwDvFVrwbxjjvmuDcUTKaRKrHCwpB+NcaWyAgIc0UNo
-YerLsjjOwt12Jb8oh1hG+C3DKps7r40iYRkirl3sLnVxtvq7bExzybU81n8sV87h
-mnmGzpFyzznKhvg5550Rf0cSO5h6gNMNdo+tz3y0jCCcZ3xNohT+TmYbYgJrhceE
-r4ETrfx2im7E67WN5Lxf
-=mr93
------END PGP SIGNATURE-----
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
 
---Signature=_Fri__25_May_2012_15_45_48_+1000_lOPM5ODDDgRLeKhP--
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
