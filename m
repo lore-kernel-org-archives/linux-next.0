@@ -1,63 +1,69 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: triage for April 19, 2012
-Date: Sat, 26 May 2012 11:39:06 +0200
-Message-ID: <CAMuHMdUAdrP-upvC4svws1trG=o0-g_wLq-kwbmziWVvh-NoMQ@mail.gmail.com>
-References: <20120420020013.GA19964@windriver.com>
-	<CAMuHMdUUgysVqz226jhK42nvYNaX7yvexpqRjOPx0QpvzUwVXg@mail.gmail.com>
-	<4FC002C9.1040301@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pinctrl tree with Linus' tree
+Date: Mon, 28 May 2012 13:08:51 +1000
+Message-ID: <20120528130851.10cca27f0d48da3ccd9d9f95@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__28_May_2012_13_08_51_+1000_APGmlCxUwOGT1Kp8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:59023 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751887Ab2EZJjJ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 26 May 2012 05:39:09 -0400
-In-Reply-To: <4FC002C9.1040301@windriver.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39966 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752539Ab2E1DJJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 27 May 2012 23:09:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Avi Kivity <avi@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Paul,
+--Signature=_Mon__28_May_2012_13_08_51_+1000_APGmlCxUwOGT1Kp8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 26, 2012 at 12:08 AM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> On 12-05-25 04:59 PM, Geert Uytterhoeven wrote:
->> On Fri, Apr 20, 2012 at 4:00 AM, Paul Gortmaker
->> <paul.gortmaker@windriver.com> wrote:
->>> The parisc got borked by some kvm header shuffle it seems?
->>> Now complaining about "file 'asm-generic/kvm_para.h' is not exporte=
-d"
->>> [ http://kisskb.ellerman.id.au/kisskb/buildresult/6137786/ ]
->>
->> Not only parisc.
->>
->> This breakage has now entered mainline:
->>
->> parisc deconfig http://kisskb.ellerman.id.au/kisskb/buildresult/6365=
-677/
->> m68k allmodconfig: http://kisskb.ellerman.id.au/kisskb/buildresult/6=
-365681/
->
-> See also this thread:
->
-> http://www.spinics.net/lists/kvm/msg72785.html
+Hi Linus,
 
-I saw it. But it doesn't contain a fix for this, does it?
+Today's linux-next merge of the pinctrl tree got conflicts in
+Documentation/driver-model/devres.txt, drivers/pinctrl/Kconfig,
+drivers/pinctrl/Makefile, and drivers/pinctrl/pinctrl-tegra.c between
+various commits from Linus' tree and various commits from the pinctrl
+tree.
 
-Gr{oetje,eeting}s,
+The root cause of these conflicts is that the pinctrl tree was merged into
+other trees that were meregd into Linus' tree (see commit 813a95e5b4fa on
+May 23). Somewhere along the line the pinctrl tree was rebased/rewritten
+(May 25 or so) and a new commit added to it.  Also there have been more
+commits in Linus' tree that affect these files.
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+<rant>So, if your tree/branch is merged into other trees, DO NOT REBASE
+IT.</rant>
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+I fixed it up (by using the versions of these files from Linus' tree -
+and removing the call to pinctrl_remove_gpio_range()) and can carry the
+fixes as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+--Signature=_Mon__28_May_2012_13_08_51_+1000_APGmlCxUwOGT1Kp8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPwuxDAAoJEECxmPOUX5FEO5oQAKMHR3x8ImzCBMBq5JhUQXJI
+OP0Gi6py3j9baGxOFp/6fo4mqT8/SD4A9p4OC86AhX2lOSRefLAD1EI4woVtImik
+vx+OZXfDWDaQh3Zo9Fi8Y7TK9gowym38y7+FhCDGkv5+nLI/MXkK2kjq8WYD6pxo
+pVeQB5TRjBRvsO+XRhpB79trmZLeezl4xqhpzJV6MZjo55SCyOm2E8rYPbjz3rjL
+a1PBjDGW1RRJyVTTM3XnOW11m2QPsjxsbshrW2+zUfV/5sOTuYEivdsZLdOC0818
+UotSTLi/0HcGjuaEgd0ZH+ESOIv8xVXTUcyO23F+NTLWg46N2ILVJr/xQp+AIJoe
+EeqtXWEoZNITLP8JJMwTyIHdl/YcLC35fQy6ncC6XKXg9xYJ6YtycZf73V+Bdlq1
+A3HZiH4jw4DZ8MQLUBAR4GU7R4+a7RUPhIGQgSXcopZBpkm645GkUjuxzZtsRp6k
+BKlFf95DM0LyhX54on8kW7GBkZTLjrCi6p03/VWRljdI6lEabbDIxnRX5cNtqgpI
+mAdGf/6gdcHneaLV29Nggch4sqdIj8uwR57ZQV3+z3VTjBEEIgzpgPlDkvXuUwvL
++k+h4jojSHLg94v039s0VEzp5AmkVtNkem7d3YMV8j6PFD5WAa4058ysd1sX4nzX
+v7Zicu8CDYhdVYl/YWHh
+=WtKr
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__28_May_2012_13_08_51_+1000_APGmlCxUwOGT1Kp8--
