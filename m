@@ -1,30 +1,49 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: manual merge of the pinctrl tree with Linus' tree
-Date: Mon, 28 May 2012 23:24:00 +0800
-Message-ID: <CACRpkda5KGQi2AyorWTwQ-LXF-F+9YqyXffJ2-wiaqOJEvcjDw@mail.gmail.com>
-References: <20120528130851.10cca27f0d48da3ccd9d9f95@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: wlcore.ko undefined symbols
+Date: Mon, 28 May 2012 19:54:56 +0200
+Message-ID: <CAMuHMdVv+g=+A1HHNmWWcsFBQjRXNNA437V6-g80cYq7zRJ78g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:56392 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753727Ab2E1PYB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 May 2012 11:24:01 -0400
-Received: by qcro28 with SMTP id o28so1492454qcr.19
-        for <linux-next@vger.kernel.org>; Mon, 28 May 2012 08:24:00 -0700 (PDT)
-In-Reply-To: <20120528130851.10cca27f0d48da3ccd9d9f95@canb.auug.org.au>
+Received: from mail-gh0-f174.google.com ([209.85.160.174]:57416 "EHLO
+	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752692Ab2E1Ry6 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 May 2012 13:54:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eyal Shapira <eyal@wizery.com>, Luciano Coelho <coelho@ti.com>, "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>
 
-On Mon, May 28, 2012 at 11:08 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+m68k allmodconfig:
 
-> <rant>So, if your tree/branch is merged into other trees, DO NOT REBASE
-> IT.</rant>
+ERROR: "wl1271_rx_filter_get_fields_size"
+[drivers/net/wireless/ti/wlcore/wlcore.ko] undefined!
+ERROR: "wl1271_rx_filter_flatten_fields"
+[drivers/net/wireless/ti/wlcore/wlcore.ko] undefined!
 
-Yeah gr, stupid me. I think I've fixed it up by basing the new stuff on
-Torvalds' HEAD FTM, I dunno how I was thinking :-P
+drivers/net/wireless/ti/wlcore/acx.c needs both functions unconditional=
+ly, but
+drivers/net/wireless/ti/wlcore/main.c has both functions inside #ifdef
+CONFIG_PM.
 
-Yours,
-Linus Walleij
+This is in -next, but I believe all relevant code was merged in
+mainline in the mean time.
+Sorry for not noticing earlier, due to a longstanding unrelated build
+issue in -next.
+
+Gr{oetje,eeting}s,
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
