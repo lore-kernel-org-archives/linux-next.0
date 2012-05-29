@@ -1,50 +1,65 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: triage for April 19, 2012
-Date: Mon, 28 May 2012 22:16:11 +0200
-Message-ID: <CAMuHMdWPgA46=hp+gVR9Je9rjO7-x0AXRtUdpS_TqfP5kEtQSg@mail.gmail.com>
-References: <20120420020013.GA19964@windriver.com>
-	<CAPM=9tzcAW=zhMcS4daBEeFyh5TffcYud8Lo-ooA6zuoeT-yjQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the l2-mtd tree with Linus' tree
+Date: Tue, 29 May 2012 12:33:01 +1000
+Message-ID: <20120529123301.b3f33396549e0762f26fa80b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__29_May_2012_12_33_01_+1000__zkJZ2yy1RJ0PQVv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gg0-f174.google.com ([209.85.161.174]:48042 "EHLO
-	mail-gg0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755032Ab2E1UQN convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 May 2012 16:16:13 -0400
-In-Reply-To: <CAPM=9tzcAW=zhMcS4daBEeFyh5TffcYud8Lo-ooA6zuoeT-yjQ@mail.gmail.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35527 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752581Ab2E2CdR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 May 2012 22:33:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <fabio.estevam@freescale.com>, David Woodhouse <dwmw2@infradead.org>
 
-On Mon, May 28, 2012 at 4:56 PM, Dave Airlie <airlied@gmail.com> wrote:
-> On Fri, Apr 20, 2012 at 3:00 AM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
->> The "undefined reference to `vga_default_device'" stuff appears to
->> still be unresolved, as it was in the Apr 19 fails still. =C2=A0 =C2=
-=A0 :-(
->> [ https://lkml.org/lkml/2012/4/18/157 ]
->>
->
-> Can you say what arch/logs had this fail in it?
->
-> If its only m68k then hopefully Geert merges his patch to fix it.
+--Signature=_Tue__29_May_2012_12_33_01_+1000__zkJZ2yy1RJ0PQVv
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I never saw this happen on m68k.
+Hi Artem,
 
-Gr{oetje,eeting}s,
+Today's linux-next merge of the l2-mtd tree got a conflict in
+drivers/mtd/nand/mxc_nand.c between commit 97c3213fd9fc ("mtd mxc_nand:
+prepare/unprepare clock") from Linus' tree and commit 625bdd2a6bd0
+("nand: mxc_nand: Use clk_prepare_enable/clk_disable_unprepare") from the
+l2-mtd tree.
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+The former is a superset of the latter.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+This tree (l2-mtd) needs to be updated since most of its patches (but not
+commits) have been merged into upstream trees.  Artem, you and Dave
+Woodhouse need to discuss your work flow.  (Or I just need to remove the
+l2-mtd tree from linux-next.)
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__29_May_2012_12_33_01_+1000__zkJZ2yy1RJ0PQVv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPxDVdAAoJEECxmPOUX5FEEg0P/i8LeRybKYKbuxod7O9uDqpt
+h8cvN/Y8/o9ig67o1kC/3V884Em0spKsQrje6HuNGEXB9Qd05e0zmxkpxUYWp9qf
+Wdbf4BBfPt6hdfKcm1kuoMuYczfjNnQ/2AyBvQe0IaHsdoW5z1eQ26a4shEq3rZ4
+xnSNzpT/KvBm8XjCBHXwWKkEyjtKVnd+lUIoGmz4aqj9K5pGWZuD1BIOUYKMCHwe
+BQ/30ZNDajMo0NrlnH9I66K5ROgHf5bsWW5iD8qr0UmsMUbDOEfhdzCMRCMxVnbO
+PVtNWT0sTA/VPp3vhhJLrriTVSqH/KBphSs+6Ksezd8vHLZ0oltHKHTDZ1/z0nVL
+4E9AmeF3IVrD6uSh9IpkR1v74EXOLIBvSBNjkhTKN8o/fs1Rn7ygcPajggZaefPs
+mWmPx0FIBABpjjUIFbO9y1gGxndH4Go6ZOVlJe3nEFctGtH3z+yoSRwVSI1laGbP
+cKYqFytRfDFDyXW3tJTzFJjXjzNMbHcD3xPUiN04tsa3mt7d69HHqNpdJBhiArS0
+ohRI0E2S9lZHs05A2Silpjw9wrPOXzf8PCDgbYnpuZDj6O0USROAPhvVrT6UPc5y
+8hUBrbi6BPaufqFP7MVfaXyQeig6GTY2MsSf8ONzxhaGdy8I6n1nh0ikxNwjOhM9
+kFatFr071kBfYbQfJLVX
+=C/J3
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__29_May_2012_12_33_01_+1000__zkJZ2yy1RJ0PQVv--
