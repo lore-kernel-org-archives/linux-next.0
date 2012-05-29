@@ -1,54 +1,32 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH] hwmon/sch56xx: Depend on watchdog for
-	watchdog core functions
-Date: Tue, 29 May 2012 19:24:39 +0200
-Message-ID: <20120529172439.GY3074@spo001.leaseweb.com>
-References: <1337890738-26533-1-git-send-email-hdegoede@redhat.com>
-	<20120524205426.GW3074@spo001.leaseweb.com>
-	<1338307894.478.68.camel@groeck-laptop>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [linux-next] "x86, realmode: Move ACPI wakeup to unified realmode
+ code" commit breaks ia64
+Date: Tue, 29 May 2012 18:46:28 -0400
+Message-ID: <20120529224628.GB16055@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <lm-sensors-bounces@lm-sensors.org>
+Return-path: <linux-ia64-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1338307894.478.68.camel@groeck-laptop>
-List-Unsubscribe: <http://lists.lm-sensors.org/mailman/options/lm-sensors>,
-	<mailto:lm-sensors-request@lm-sensors.org?subject=unsubscribe>
-List-Archive: <http://lists.lm-sensors.org/pipermail/lm-sensors/>
-List-Post: <mailto:lm-sensors@lm-sensors.org>
-List-Help: <mailto:lm-sensors-request@lm-sensors.org?subject=help>
-List-Subscribe: <http://lists.lm-sensors.org/mailman/listinfo/lm-sensors>,
-	<mailto:lm-sensors-request@lm-sensors.org?subject=subscribe>
-Sender: lm-sensors-bounces@lm-sensors.org
-Errors-To: lm-sensors-bounces@lm-sensors.org
-To: Guenter Roeck <guenter.roeck@ericsson.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, LM Sensors <lm-sensors@lm-sensors.org>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Jarkko Sakkinen <jarkko.sakkinen@intel.com>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Len Brown <len.brown@intel.com>, "H. Peter Anvin" <hpa@linux.intel.com>, Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Guenter,
+Hi all,
 
-> > > Since the watchdog code in sch56xx-common now uses the watchdog core, the
-> > > Kconfig entires for the sch5627 and sch5636 should depend on WATCHDOG
-> > > being set.
-> > > 
-> > > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> > 
-> > I added also the "select WATCHDOG_CORE" lines for both drivers.
-> > In linux-watchdog-next now.
-> > 
-> Hi Wim,
-> 
-> looks like Hans' patches are all in your tree, so I assume I don't have
-> to take anything through my hwmon tree. Please let me know if I got that
-> wrong.
+This commit: c9b77ccb52a5c77233b0e557b7d4417b00ef4012 in linux-next
 
-All is in my tree indeed. So you don't need to do anything on your side.
+    x86, realmode: Move ACPI wakeup to unified realmode code
 
-Kind regards,
-Wim.
+causes breakage on itanic:
 
+  drivers/acpi/sleep.c:28:26: fatal error: asm/realmode.h: No such file or directory
 
-_______________________________________________
-lm-sensors mailing list
-lm-sensors@lm-sensors.org
-http://lists.lm-sensors.org/mailman/listinfo/lm-sensors
+Full log at:
+	http://kisskb.ellerman.id.au/kisskb/buildresult/6395679/
+
+Have a look if you can please.
+
+Thanks,
+Paul.
+
