@@ -1,86 +1,47 @@
-From: Eyal Shapira <eyal@wizery.com>
-Subject: [PATCH v2] wlcore: fix undefined symbols when CONFIG_PM is not defined
-Date: Tue, 29 May 2012 01:28:42 -0700
-Message-ID: <1338280122-28648-1-git-send-email-eyal@wizery.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Luciano Coelho <coelho@ti.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+From: Luciano Coelho <coelho-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2] wlcore: fix undefined symbols when CONFIG_PM is not
+ defined
+Date: Tue, 29 May 2012 11:33:05 +0300
+Message-ID: <1338280385.15008.74.camel@cumari.coelho.fi>
+References: <1338280122-28648-1-git-send-email-eyal@wizery.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1338280122-28648-1-git-send-email-eyal-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: eyal-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-commit c21eebb50379a96e1335e933583dcd5b455c6b64
-"wl12xx: add RX filters ACX commands" breaks the build
-when CONFIG_PM isn't defined:
+On Tue, 2012-05-29 at 01:28 -0700, Eyal Shapira wrote:
+> commit c21eebb50379a96e1335e933583dcd5b455c6b64
+> "wl12xx: add RX filters ACX commands" breaks the build
+> when CONFIG_PM isn't defined:
+> 
+> ERROR: "wl1271_rx_filter_get_fields_size"
+> [drivers/net/wireless/ti/wlcore/wlcore.ko] undefined!
+> ERROR: "wl1271_rx_filter_flatten_fields"
+> [drivers/net/wireless/ti/wlcore/wlcore.ko] undefined!
+> 
+> code in drivers/net/wireless/ti/wlcore/acx.c is using these
+> functions unconditionally while they are #ifdefed CONFIG_PM.
+> Fix it by ifdefing all relevant RX filters code with CONFIG_PM.
+> 
+> Reported-by: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+> Signed-off-by: Eyal Shapira <eyal-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>
+> ---
+> v2: reference the correct commit in linux-next (Thanks Stephen!)
 
-ERROR: "wl1271_rx_filter_get_fields_size"
-[drivers/net/wireless/ti/wlcore/wlcore.ko] undefined!
-ERROR: "wl1271_rx_filter_flatten_fields"
-[drivers/net/wireless/ti/wlcore/wlcore.ko] undefined!
+Thanks for the correction.  For v2:
 
-code in drivers/net/wireless/ti/wlcore/acx.c is using these
-functions unconditionally while they are #ifdefed CONFIG_PM.
-Fix it by ifdefing all relevant RX filters code with CONFIG_PM.
+Acked-by: Luciano Coelho <coelho-l0cyMroinI0@public.gmane.org>
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Eyal Shapira <eyal@wizery.com>
----
-v2: reference the correct commit in linux-next (Thanks Stephen!)
-
- drivers/net/wireless/ti/wlcore/acx.c |    2 ++
- drivers/net/wireless/ti/wlcore/acx.h |    4 +++-
- drivers/net/wireless/ti/wlcore/rx.c  |    2 ++
- 3 files changed, 7 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/wireless/ti/wlcore/acx.c b/drivers/net/wireless/ti/wlcore/acx.c
-index 0fd78a0..755b225 100644
---- a/drivers/net/wireless/ti/wlcore/acx.c
-+++ b/drivers/net/wireless/ti/wlcore/acx.c
-@@ -1715,6 +1715,7 @@ out:
- 
- }
- 
-+#ifdef CONFIG_PM
- /* Set the global behaviour of RX filters - On/Off + default action */
- int wl1271_acx_default_rx_filter_enable(struct wl1271 *wl, bool enable,
- 					enum rx_filter_action action)
-@@ -1793,3 +1794,4 @@ out:
- 	kfree(acx);
- 	return ret;
- }
-+#endif /* CONFIG_PM */
-diff --git a/drivers/net/wireless/ti/wlcore/acx.h b/drivers/net/wireless/ti/wlcore/acx.h
-index 8106b2e..e6a7486 100644
---- a/drivers/net/wireless/ti/wlcore/acx.h
-+++ b/drivers/net/wireless/ti/wlcore/acx.h
-@@ -1330,9 +1330,11 @@ int wl1271_acx_set_inconnection_sta(struct wl1271 *wl, u8 *addr);
- int wl1271_acx_fm_coex(struct wl1271 *wl);
- int wl12xx_acx_set_rate_mgmt_params(struct wl1271 *wl);
- int wl12xx_acx_config_hangover(struct wl1271 *wl);
-+
-+#ifdef CONFIG_PM
- int wl1271_acx_default_rx_filter_enable(struct wl1271 *wl, bool enable,
- 					enum rx_filter_action action);
- int wl1271_acx_set_rx_filter(struct wl1271 *wl, u8 index, bool enable,
- 			     struct wl12xx_rx_filter *filter);
--
-+#endif /* CONFIG_PM */
- #endif /* __WL1271_ACX_H__ */
-diff --git a/drivers/net/wireless/ti/wlcore/rx.c b/drivers/net/wireless/ti/wlcore/rx.c
-index 1f1d948..d6a3c6b 100644
---- a/drivers/net/wireless/ti/wlcore/rx.c
-+++ b/drivers/net/wireless/ti/wlcore/rx.c
-@@ -279,6 +279,7 @@ void wl12xx_rx(struct wl1271 *wl, struct wl_fw_status *status)
- 	wl12xx_rearm_rx_streaming(wl, active_hlids);
- }
- 
-+#ifdef CONFIG_PM
- int wl1271_rx_filter_enable(struct wl1271 *wl,
- 			    int index, bool enable,
- 			    struct wl12xx_rx_filter *filter)
-@@ -314,3 +315,4 @@ void wl1271_rx_filter_clear_all(struct wl1271 *wl)
- 		wl1271_rx_filter_enable(wl, i, 0, NULL);
- 	}
- }
-+#endif /* CONFIG_PM */
 -- 
-1.7.4.1
+Cheers,
+Luca.
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
