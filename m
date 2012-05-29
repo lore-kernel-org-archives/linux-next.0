@@ -1,69 +1,86 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: linux-next: manual merge of the l2-mtd tree with Linus' tree
-Date: Tue, 29 May 2012 11:19:38 +0300
-Message-ID: <1338279578.2536.0.camel@sauron.fi.intel.com>
-References: <20120529123301.b3f33396549e0762f26fa80b@canb.auug.org.au>
-	 <20120529124501.38995df01dfaebcbd5f1b869@canb.auug.org.au>
-Reply-To: dedekind1@gmail.com
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-fk5jMN3B5beK6ajRTUil"
+From: Eyal Shapira <eyal@wizery.com>
+Subject: [PATCH v2] wlcore: fix undefined symbols when CONFIG_PM is not defined
+Date: Tue, 29 May 2012 01:28:42 -0700
+Message-ID: <1338280122-28648-1-git-send-email-eyal@wizery.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120529124501.38995df01dfaebcbd5f1b869@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <fabio.estevam@freescale.com>, David Woodhouse <dwmw2@infradead.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Luciano Coelho <coelho@ti.com>, Geert Uytterhoeven <geert@linux-m68k.org>
 List-Id: linux-next.vger.kernel.org
 
+commit c21eebb50379a96e1335e933583dcd5b455c6b64
+"wl12xx: add RX filters ACX commands" breaks the build
+when CONFIG_PM isn't defined:
 
---=-fk5jMN3B5beK6ajRTUil
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ERROR: "wl1271_rx_filter_get_fields_size"
+[drivers/net/wireless/ti/wlcore/wlcore.ko] undefined!
+ERROR: "wl1271_rx_filter_flatten_fields"
+[drivers/net/wireless/ti/wlcore/wlcore.ko] undefined!
 
-On Tue, 2012-05-29 at 12:45 +1000, Stephen Rothwell wrote:
-> Hi Artem,
->=20
-> On Tue, 29 May 2012 12:33:01 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > This tree (l2-mtd) needs to be updated since most of its patches (but n=
-ot
-> > commits) have been merged into upstream trees.  Artem, you and Dave
-> > Woodhouse need to discuss your work flow.  (Or I just need to remove th=
-e
-> > l2-mtd tree from linux-next.)
->=20
-> I fact, I screwed up the various merge resolutions that the above mess
-> caused, so I just dropped the l2-mtd tree for today.  Please fix it up.
+code in drivers/net/wireless/ti/wlcore/acx.c is using these
+functions unconditionally while they are #ifdefed CONFIG_PM.
+Fix it by ifdefing all relevant RX filters code with CONFIG_PM.
 
-Yeah, I should have rebased it yesterday against dwmw2's tree. I've just
-done this and this should fix the issue. Thanks!
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Eyal Shapira <eyal@wizery.com>
+---
+v2: reference the correct commit in linux-next (Thanks Stephen!)
 
---=20
-Best Regards,
-Artem Bityutskiy
+ drivers/net/wireless/ti/wlcore/acx.c |    2 ++
+ drivers/net/wireless/ti/wlcore/acx.h |    4 +++-
+ drivers/net/wireless/ti/wlcore/rx.c  |    2 ++
+ 3 files changed, 7 insertions(+), 1 deletions(-)
 
---=-fk5jMN3B5beK6ajRTUil
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAABAgAGBQJPxIaaAAoJECmIfjd9wqK0Sz4P/2iJz6nes63cjqjKiaMG59Jv
-AnvBQArgh7iaZmEZas8TWJXVnS/C3vGUbBdnYCr1EuWeQeG6nBWCrYtXhMEr4v51
-/VHWfkMCENGKpETqI/4tB29qM9XRXlJOJXynQxTmlnScELKT2F/AnsXq17u+0LPF
-Z33LK1eSlDBx0MVPfvk1dBnpEVwaLWL28Yy4en6Z22nIsS+iTPoxoA8wXKZdK1v1
-grqIobDdzSccXkA/xEMyF9HfAfRqqR0OXE5iIyYWRpnR01ZpaFncJYgW7XfbYQ0R
-sJ2nGw7zkas1vRu0JAYlXZtk0/fOv4Po2YK8kvyVpagJySFMEaUFjKs1s5nI4emk
-MjPd5qV3Oyc+2qu5bCiwPsiXAYIppz0ylXpXpDpoKgnD/Od9CIdnR7BnIZpP2gLf
-4SpwHY4FgiXdV5ZwphYk+rAwUarQG31K5sQoXB6DxmE21w5ZRCwPJ8YC922IE38l
-8Yc5d5pwBfCohATOmjmIgdw07VbWJ89/+++axzmyZ6+p4oHw4vrUDvCW3isH7QIz
-mwX4Q2/F1sylg1h03PraIDO4IRlMoU2LhWkeiIT4wUt4+UpMTotP+xF8yDUP+hkJ
-bwPtOr4eyNVT6m0eBFhn39tE/rjhJyBZ0v6ZW/xXBicRJnxHU031+Nz1RGV80zpT
-655F27qCa/ttZlbFn9UR
-=3o8n
------END PGP SIGNATURE-----
-
---=-fk5jMN3B5beK6ajRTUil--
+diff --git a/drivers/net/wireless/ti/wlcore/acx.c b/drivers/net/wireless/ti/wlcore/acx.c
+index 0fd78a0..755b225 100644
+--- a/drivers/net/wireless/ti/wlcore/acx.c
++++ b/drivers/net/wireless/ti/wlcore/acx.c
+@@ -1715,6 +1715,7 @@ out:
+ 
+ }
+ 
++#ifdef CONFIG_PM
+ /* Set the global behaviour of RX filters - On/Off + default action */
+ int wl1271_acx_default_rx_filter_enable(struct wl1271 *wl, bool enable,
+ 					enum rx_filter_action action)
+@@ -1793,3 +1794,4 @@ out:
+ 	kfree(acx);
+ 	return ret;
+ }
++#endif /* CONFIG_PM */
+diff --git a/drivers/net/wireless/ti/wlcore/acx.h b/drivers/net/wireless/ti/wlcore/acx.h
+index 8106b2e..e6a7486 100644
+--- a/drivers/net/wireless/ti/wlcore/acx.h
++++ b/drivers/net/wireless/ti/wlcore/acx.h
+@@ -1330,9 +1330,11 @@ int wl1271_acx_set_inconnection_sta(struct wl1271 *wl, u8 *addr);
+ int wl1271_acx_fm_coex(struct wl1271 *wl);
+ int wl12xx_acx_set_rate_mgmt_params(struct wl1271 *wl);
+ int wl12xx_acx_config_hangover(struct wl1271 *wl);
++
++#ifdef CONFIG_PM
+ int wl1271_acx_default_rx_filter_enable(struct wl1271 *wl, bool enable,
+ 					enum rx_filter_action action);
+ int wl1271_acx_set_rx_filter(struct wl1271 *wl, u8 index, bool enable,
+ 			     struct wl12xx_rx_filter *filter);
+-
++#endif /* CONFIG_PM */
+ #endif /* __WL1271_ACX_H__ */
+diff --git a/drivers/net/wireless/ti/wlcore/rx.c b/drivers/net/wireless/ti/wlcore/rx.c
+index 1f1d948..d6a3c6b 100644
+--- a/drivers/net/wireless/ti/wlcore/rx.c
++++ b/drivers/net/wireless/ti/wlcore/rx.c
+@@ -279,6 +279,7 @@ void wl12xx_rx(struct wl1271 *wl, struct wl_fw_status *status)
+ 	wl12xx_rearm_rx_streaming(wl, active_hlids);
+ }
+ 
++#ifdef CONFIG_PM
+ int wl1271_rx_filter_enable(struct wl1271 *wl,
+ 			    int index, bool enable,
+ 			    struct wl12xx_rx_filter *filter)
+@@ -314,3 +315,4 @@ void wl1271_rx_filter_clear_all(struct wl1271 *wl)
+ 		wl1271_rx_filter_enable(wl, i, 0, NULL);
+ 	}
+ }
++#endif /* CONFIG_PM */
+-- 
+1.7.4.1
