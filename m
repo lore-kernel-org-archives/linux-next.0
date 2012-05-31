@@ -1,39 +1,121 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Date: Thu, 31 May 2012 02:02:24 +0100
-Message-ID: <20120531010224.GC11775@ZenIV.linux.org.uk>
-References: <20120531105108.1bdae885e23a49429d9b3b07@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drivers-x86 tree with Linus' tree
+Date: Thu, 31 May 2012 12:06:35 +1000
+Message-ID: <20120531120635.209266aabe1b08ebc4595249@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__31_May_2012_12_06_35_+1000_hlq+kNlJ9kQg/HSH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:57503 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754614Ab2EaBC0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 May 2012 21:02:26 -0400
-Content-Disposition: inline
-In-Reply-To: <20120531105108.1bdae885e23a49429d9b3b07@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40282 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756295Ab2EaCGr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 May 2012 22:06:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Corentin Chary <corentin.chary@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Seth Forshee <seth.forshee@canonical.com>
 
-On Thu, May 31, 2012 at 10:51:08AM +1000, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> After merging the vfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> In file included from include/linux/stat.h:6:0,
->                  from include/linux/module.h:10,
->                  from init/main.c:13:
-> arch/powerpc/include/asm/stat.h:33:2: error: expected specifier-qualifier-list before 'unisgned'
-> 
-> and many, many more. :-(
-> 
-> Caused by commit 9f240ea8060e ("powerpc: get rid of nlink_t uses, switch
-> to explicitly-sized type").
-> 
-> I have used the vfs tree from next-20120529 for today.
+--Signature=_Thu__31_May_2012_12_06_35_+1000_hlq+kNlJ9kQg/HSH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Grr...  s/unisgned/unsigned/, of course - in two lines in there.  With that
-it seems to build...
+Hi Matthew,
+
+Today's linux-next merge of the drivers-x86 tree got a conflict in
+drivers/platform/x86/toshiba_acpi.c between commit f5f4fd451634
+("backlight: initialize struct backlight_properties properly") from
+Linus' tree and commit 7d307fbdefbf ("toshiba_acpi: Only register
+backlight device when interface is read/write") from the drivers-x86 tree.
+
+I fixed it up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/platform/x86/toshiba_acpi.c
+index 57787d8,bde32de..0000000
+--- a/drivers/platform/x86/toshiba_acpi.c
++++ b/drivers/platform/x86/toshiba_acpi.c
+@@@ -1020,6 -1069,54 +1069,55 @@@ static int __devinit toshiba_acpi_setup
+  	return error;
+  }
+ =20
++ static int __devinit toshiba_acpi_setup_backlight(struct toshiba_acpi_dev=
+ *dev)
++ {
++ 	struct backlight_properties props;
++ 	int brightness;
++ 	int ret;
++ 	bool enabled;
++=20
++ 	/*
++ 	 * Some machines don't support the backlight methods at all, and
++ 	 * others support it read-only. Either of these is pretty useless,
++ 	 * so only register the backlight device if the backlight method
++ 	 * supports both reads and writes.
++ 	 */
++ 	brightness =3D __get_lcd_brightness(dev);
++ 	if (brightness < 0)
++ 		return 0;
++ 	ret =3D set_lcd_brightness(dev, brightness);
++ 	if (ret) {
++ 		pr_debug("Backlight method is read-only, disabling backlight support\n"=
+);
++ 		return 0;
++ 	}
++=20
++ 	/* Determine whether or not BIOS supports transflective backlight */
++ 	ret =3D get_tr_backlight_status(dev, &enabled);
++ 	dev->tr_backlight_supported =3D !ret;
++=20
+++	memset(&props, 0, sizeof(props));
++ 	props.type =3D BACKLIGHT_PLATFORM;
++ 	props.max_brightness =3D HCI_LCD_BRIGHTNESS_LEVELS - 1;
++=20
++ 	/* adding an extra level and having 0 change to transflective mode */
++ 	if (dev->tr_backlight_supported)
++ 		props.max_brightness++;
++ 	dev->backlight_dev =3D backlight_device_register("toshiba",
++ 						       &dev->acpi_dev->dev,
++ 						       dev,
++ 						       &toshiba_backlight_data,
++ 						       &props);
++ 	if (IS_ERR(dev->backlight_dev)) {
++ 		ret =3D PTR_ERR(dev->backlight_dev);
++ 		pr_err("Could not register toshiba backlight device\n");
++ 		dev->backlight_dev =3D NULL;
++ 		return ret;
++ 	}
++=20
++ 	dev->backlight_dev->props.brightness =3D brightness;
++ 	return 0;
++ }
++=20
+  static int toshiba_acpi_remove(struct acpi_device *acpi_dev, int type)
+  {
+  	struct toshiba_acpi_dev *dev =3D acpi_driver_data(acpi_dev);
+
+--Signature=_Thu__31_May_2012_12_06_35_+1000_hlq+kNlJ9kQg/HSH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPxtIrAAoJEECxmPOUX5FELsMP/j81dgr3nkcw4rtyXqT3TEfC
+0Xo1sgH6Jd1r9DCGNX1K+ccSF5/9Tm9kGJWjjsZv6WmSc3nFSZDr+O+vOsITb6s9
+J35kYRtE6TJlJwwXJZ1kcny9wmml34UoqdSZypnbKZy3Dbr4YNfiTS5smMAUUT8y
+sJTS+0tkThU5fFPAkFJid/8UhFmbDkBXymtSCmLEWJybOv7BYM7PZ2U1tCb1eV2F
+uXw2etDIQinadvdyMeuXjiAy/CV2/kOiHIOO8uJ7u0K8MyiwYdCPaSiJlg3MzaRO
+fATaMlbWK1N+rkSldYodwcdhWd7SLO66ACGgVPZ+yeVsGPE4QXF3KPAaasrao+SJ
+1u/hnrRlzWnOF3yvX/nlYnnP+GjvawtLDgVOcFrQ5RjIRyNVHXx0HiZMT0q9LMdT
+3BsIVVUF5SM735C9lBRZPf27fuilihYhXtQPgNUjOXNtHcB68931yC0NEsvS0Ne2
+73YaeIFpe8/9uK8W7FkrQanQmMv8loHQ8wArc7Yxz/1HdPXcdMSCZzrmzUSTsDWY
+rHGHzrMMnKLxj3n9WJUCSqn7cr6PzVlouA3YeoiUOvqkzJ/frZe6ywkOtxC5Y/eY
+fGDxMst1j3bhtYEjcQ3wFGV5G/VPE4vx5XymfZxX6/ZwfMyWOn1LMktO+Do2dQkR
+YkxQT0OL3PAD7Z5+P69t
+=YQol
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__31_May_2012_12_06_35_+1000_hlq+kNlJ9kQg/HSH--
