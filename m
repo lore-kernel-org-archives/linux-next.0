@@ -1,57 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: fate of the bjdooks-i2c tree
-Date: Thu, 31 May 2012 13:35:30 +1000
-Message-ID: <20120531133530.006f01bc4cf01b7c24ebc3dd@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the  tree
+Date: Thu, 31 May 2012 13:50:13 +1000
+Message-ID: <20120531135013.a7ac23ab7cbc5c3e71211be0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__31_May_2012_13_35_30_+1000_7s2i7hskfrh5CWAk"
+ boundary="Signature=_Thu__31_May_2012_13_50_13_+1000_QYr4VdZJkCB5J.C+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36472 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:47107 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753098Ab2EaDfk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 May 2012 23:35:40 -0400
+	with ESMTP id S1752026Ab2EaDuW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 May 2012 23:50:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean Delvare <khali@linux-fr.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill@shutemov.name>
 
---Signature=_Thu__31_May_2012_13_35_30_+1000_7s2i7hskfrh5CWAk
+--Signature=_Thu__31_May_2012_13_50_13_+1000_QYr4VdZJkCB5J.C+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ben,
+Hi Andrew,
 
-Just wondering about the fate of the bjdooks-i2c tree.  The
-most recent commit in that tree is dated Jan 7 and seem to have been
-included in Linus' tree as a different commit.  I also still cannot
-access the git trees on git.fluff.org.  This is also true for the samsung
-tree.
+Today's linux-next merge of the akpm tree got a conflict in
+mm/memcontrol.c between commit a0db00fcf5da ("memcg: remove redundant
+parentheses") from Linus' tree and commit "memcg: track resource index in
+cftype private" from the akpm tree.
 
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__31_May_2012_13_35_30_+1000_7s2i7hskfrh5CWAk
+diff --cc mm/memcontrol.c
+index ffa9490,4ebe680..0000000
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@@ -404,9 -391,14 +404,14 @@@ enum charge_type=20
+  #define _MEM			(0)
+  #define _MEMSWAP		(1)
+  #define _OOM_TYPE		(2)
+- #define MEMFILE_PRIVATE(x, val)	((x) << 16 | (val))
+- #define MEMFILE_TYPE(val)	((val) >> 16 & 0xffff)
+- #define MEMFILE_ATTR(val)	((val) & 0xffff)
++ #define _MEMHUGETLB		(3)
++=20
++ /*  0 ... val ...16.... x...24...idx...32*/
+ -#define __MEMFILE_PRIVATE(idx, x, val)	(((idx) << 24) | ((x) << 16) | (va=
+l))
+++#define __MEMFILE_PRIVATE(idx, x, val)	((idx) << 24 | (x) << 16 | (val))
++ #define MEMFILE_PRIVATE(x, val)		__MEMFILE_PRIVATE(0, x, val)
+ -#define MEMFILE_TYPE(val)		(((val) >> 16) & 0xff)
+ -#define MEMFILE_IDX(val)		(((val) >> 24) & 0xff)
+++#define MEMFILE_TYPE(val)		((val) >> 16 & 0xff)
+++#define MEMFILE_IDX(val)		((val) >> 24 & 0xff)
++ #define MEMFILE_ATTR(val)		((val) & 0xffff)
+  /* Used for OOM nofiier */
+  #define OOM_CONTROL		(0)
+ =20
+
+--Signature=_Thu__31_May_2012_13_50_13_+1000_QYr4VdZJkCB5J.C+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPxucDAAoJEECxmPOUX5FEt4kP/ArQPPuwoBOdcv/8/llIH/Cw
-sJvtHXjp1nurvxt2EdFT7T6JZ5LYORV8+yO5G4MgBi4zPZf3B7c2MAVtyBJE03bI
-Co965jJoiz7ZSytomyY8UtDdzujugIj6kyhU+xLCiDKjjBx+DuCWvJbZO39TNZ4T
-32p+HnwUKPBMEReP0MlP7hrF25bQStzz3iDCArFRieaKwLJcPFwclmb/ko3bi3fh
-U+GN5g7zRiZXEZSUTSlpJ6BePT5R7gUykFqHs8tQ+xJA0c0apivNv9bymph/l569
-dDVoNOJFpPOwF1w5OKYwEoZMcFT3OWVHiZc2iw3appYQcLvzOhFula46TZ1TM3sb
-QDeSiQ4PT2YsyO/K0mqtVH2xIFTBS7tJYrpcFufczSzmzemfN80KyGp459VIZ4A9
-N6fPiEAiwcyV7LehkJTlHYpekHzr3JtlJjgpm6/wpryo+pgX+dY58bR/aWud4NBa
-O6bx8wBYTSZoDeveL1J0eWiivFsdu/bBUkALNcpl6wu4ijV5ipZKURWzqI7+xvES
-FXo2NCvwP4JUjC149QQlBVWJlwrPjmBslpPnOarsK7fwglu7RUzcVpdTOgJW5GX+
-fZ2paXQ4x/ShF1foQlZuL86Mv1TDtLFoCgBQr5wK9qDkwFmQZzSY/fiaWOWaYrQ8
-f92EKitP7q8udlHBZ8Ov
-=N7Tz
+iQIcBAEBCAAGBQJPxup1AAoJEECxmPOUX5FE6R0P/3LacTWq81fUOpo3/fRh6kuU
+XDsBFCIoWKJOxYdEcYYl5/rWTobsctCwAn1YggFyf+38sR+/RjUpUYtVVjujT+Ht
+wp2C5rM231UAXAsyazyUMML1uN3/Gwqt7ic6k9r7EKRlMucK+h9Zky/12ytnOonp
+bnTCj9HqJg+owem6pF8fnJQlxSlhHt6qZ5aw+3/GvBtJokpCzP93ih5ynxYtgInQ
+gtYHWu73qixzPQSPMwRj9/yFTaqe7d9y+CpAI/bD2HQzg3lu/spClJ8CX/knC5Ct
+HvhQjXJEl2A6E55nTNetfZ4VQa1mZEOtP3QmlPc/Ox7p1HKrL2Qv/q5z2KDBiAB2
+x6PTZwvV+JxPp2bHzqLpwHyOxdAcgDKm8uUw4/CnmUMYVoVmivlkHXGT6yvO723t
+qiUctW+qr0C6OrR29IySd9aAZXj6qJR5qLmatMDWhNAJosMKHhN/im6MjTKhDjBj
+2EG4WNDn+V1/xIn4KVpRVbpjKryvjBsbBcL70ZocPMHqar95kY5j71RuyBXWk5/r
+sMFK458dsIa4eW7CHo7aJlhkMqZTDXCvUSgt687lkBMRuWDw9HZSSv0xnRTQfOaf
+dKXCJwC+VQhfZL0Ww7NMRZwSwCiEtZAtFtZX9l8/kIgrk+Ltv5e4zXizN6Af+xvG
+X84xf21o95crTYjyUmm1
+=z3XF
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__31_May_2012_13_35_30_+1000_7s2i7hskfrh5CWAk--
+--Signature=_Thu__31_May_2012_13_50_13_+1000_QYr4VdZJkCB5J.C+--
