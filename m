@@ -1,121 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drivers-x86 tree with Linus' tree
-Date: Thu, 31 May 2012 12:06:35 +1000
-Message-ID: <20120531120635.209266aabe1b08ebc4595249@canb.auug.org.au>
+Subject: linux-next: manual merge of the vhost tree with the net tree
+Date: Thu, 31 May 2012 13:13:19 +1000
+Message-ID: <20120531131319.a1a7f5a47fd5db7c85cebc0e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__31_May_2012_12_06_35_+1000_hlq+kNlJ9kQg/HSH"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40282 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756295Ab2EaCGr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 May 2012 22:06:47 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Corentin Chary <corentin.chary@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Seth Forshee <seth.forshee@canonical.com>
+ boundary="Signature=_Thu__31_May_2012_13_13_19_+1000_8IvLCpoXiOEN5Tt4"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__31_May_2012_12_06_35_+1000_hlq+kNlJ9kQg/HSH
+--Signature=_Thu__31_May_2012_13_13_19_+1000_8IvLCpoXiOEN5Tt4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Matthew,
+Hi Michael,
 
-Today's linux-next merge of the drivers-x86 tree got a conflict in
-drivers/platform/x86/toshiba_acpi.c between commit f5f4fd451634
-("backlight: initialize struct backlight_properties properly") from
-Linus' tree and commit 7d307fbdefbf ("toshiba_acpi: Only register
-backlight device when interface is read/write") from the drivers-x86 tree.
+Today's linux-next merge of the vhost tree got a conflict in
+drivers/net/virtio_net.c between commit 3bbf372c6c60 ("virtio-net: remove
+useless disable on freeze") from the net tree and commit 53ffd226507a
+("virtio-net: remove useless disable on freeze") from the vhost tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+I just used the version from the net tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/platform/x86/toshiba_acpi.c
-index 57787d8,bde32de..0000000
---- a/drivers/platform/x86/toshiba_acpi.c
-+++ b/drivers/platform/x86/toshiba_acpi.c
-@@@ -1020,6 -1069,54 +1069,55 @@@ static int __devinit toshiba_acpi_setup
-  	return error;
-  }
- =20
-+ static int __devinit toshiba_acpi_setup_backlight(struct toshiba_acpi_dev=
- *dev)
-+ {
-+ 	struct backlight_properties props;
-+ 	int brightness;
-+ 	int ret;
-+ 	bool enabled;
-+=20
-+ 	/*
-+ 	 * Some machines don't support the backlight methods at all, and
-+ 	 * others support it read-only. Either of these is pretty useless,
-+ 	 * so only register the backlight device if the backlight method
-+ 	 * supports both reads and writes.
-+ 	 */
-+ 	brightness =3D __get_lcd_brightness(dev);
-+ 	if (brightness < 0)
-+ 		return 0;
-+ 	ret =3D set_lcd_brightness(dev, brightness);
-+ 	if (ret) {
-+ 		pr_debug("Backlight method is read-only, disabling backlight support\n"=
-);
-+ 		return 0;
-+ 	}
-+=20
-+ 	/* Determine whether or not BIOS supports transflective backlight */
-+ 	ret =3D get_tr_backlight_status(dev, &enabled);
-+ 	dev->tr_backlight_supported =3D !ret;
-+=20
-++	memset(&props, 0, sizeof(props));
-+ 	props.type =3D BACKLIGHT_PLATFORM;
-+ 	props.max_brightness =3D HCI_LCD_BRIGHTNESS_LEVELS - 1;
-+=20
-+ 	/* adding an extra level and having 0 change to transflective mode */
-+ 	if (dev->tr_backlight_supported)
-+ 		props.max_brightness++;
-+ 	dev->backlight_dev =3D backlight_device_register("toshiba",
-+ 						       &dev->acpi_dev->dev,
-+ 						       dev,
-+ 						       &toshiba_backlight_data,
-+ 						       &props);
-+ 	if (IS_ERR(dev->backlight_dev)) {
-+ 		ret =3D PTR_ERR(dev->backlight_dev);
-+ 		pr_err("Could not register toshiba backlight device\n");
-+ 		dev->backlight_dev =3D NULL;
-+ 		return ret;
-+ 	}
-+=20
-+ 	dev->backlight_dev->props.brightness =3D brightness;
-+ 	return 0;
-+ }
-+=20
-  static int toshiba_acpi_remove(struct acpi_device *acpi_dev, int type)
-  {
-  	struct toshiba_acpi_dev *dev =3D acpi_driver_data(acpi_dev);
-
---Signature=_Thu__31_May_2012_12_06_35_+1000_hlq+kNlJ9kQg/HSH
+--Signature=_Thu__31_May_2012_13_13_19_+1000_8IvLCpoXiOEN5Tt4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPxtIrAAoJEECxmPOUX5FELsMP/j81dgr3nkcw4rtyXqT3TEfC
-0Xo1sgH6Jd1r9DCGNX1K+ccSF5/9Tm9kGJWjjsZv6WmSc3nFSZDr+O+vOsITb6s9
-J35kYRtE6TJlJwwXJZ1kcny9wmml34UoqdSZypnbKZy3Dbr4YNfiTS5smMAUUT8y
-sJTS+0tkThU5fFPAkFJid/8UhFmbDkBXymtSCmLEWJybOv7BYM7PZ2U1tCb1eV2F
-uXw2etDIQinadvdyMeuXjiAy/CV2/kOiHIOO8uJ7u0K8MyiwYdCPaSiJlg3MzaRO
-fATaMlbWK1N+rkSldYodwcdhWd7SLO66ACGgVPZ+yeVsGPE4QXF3KPAaasrao+SJ
-1u/hnrRlzWnOF3yvX/nlYnnP+GjvawtLDgVOcFrQ5RjIRyNVHXx0HiZMT0q9LMdT
-3BsIVVUF5SM735C9lBRZPf27fuilihYhXtQPgNUjOXNtHcB68931yC0NEsvS0Ne2
-73YaeIFpe8/9uK8W7FkrQanQmMv8loHQ8wArc7Yxz/1HdPXcdMSCZzrmzUSTsDWY
-rHGHzrMMnKLxj3n9WJUCSqn7cr6PzVlouA3YeoiUOvqkzJ/frZe6ywkOtxC5Y/eY
-fGDxMst1j3bhtYEjcQ3wFGV5G/VPE4vx5XymfZxX6/ZwfMyWOn1LMktO+Do2dQkR
-YkxQT0OL3PAD7Z5+P69t
-=YQol
+iQIcBAEBCAAGBQJPxuHPAAoJEECxmPOUX5FEOg8P/2lUYyCO90mb1MFNwRM5Xens
+KhWeZ7HaoU+2fVCamLPDJFFvicKTqKaXN2xdNh0Me1hjQSTNa5lY/CdMxZTJlIul
+j5EFfOIVKH8Fon+jWUA4ZbqGZcy44RHs7GYz0WHEmfPSeZw0SMiZ9t4VxXu+e01W
+sDpWXFfQpv+3Zll7+A+sWh4ljqRHtidWPfaxGq/Ikzv58WtTKaJzu8yj0W6sLJZ+
+a4uXvenUszN+gA8aGXomf0y5A+PcCaPxs3JUSmkfL+zuJWwcUqWcNqbAJ3zp/ui7
+DNeT28vcOb7E2/c49Hu2FQ6Y2SD7yo3PjHHBiNkC11p0PiGgQTD2J+8F1QeBSCAu
+7cKIqW3URfB5vW/tV3nw6sJKawufDI0gJFrUvMajd2tDaXqYrjqX1cR/keG/5qts
+xx0W8yFOU7o26V9MxvK7cAc0lCOQ5E9U8k3NqUYS9y8rqOHk2gOJUMGoZ6oJ8h/c
+k4rULofaCqTlddpRjKerUwEH+EsQnTSWNIwzFjnkCErdl6HnY3rknt2ZJMh3xDqB
+St6+5qSDCVTUHqSZzELaW1iCUSCLadxaIV74pt4xaR8yy0y6ybKMLyjeCguE76p4
+VPJ9oO/zp+fNc1FDXBG8/FMf2LhGE3nC+Ngv7vDDZ3A6v3MXRPgUQ3VrGjQ+YB4T
+x/KE6iH6SCVqYm+MvfI0
+=wpRX
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__31_May_2012_12_06_35_+1000_hlq+kNlJ9kQg/HSH--
+--Signature=_Thu__31_May_2012_13_13_19_+1000_8IvLCpoXiOEN5Tt4--
