@@ -1,33 +1,64 @@
-From: Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Thu, 31 May 2012 09:25:05 +0200
-Message-ID: <20120531072505.GA1371@cmpxchg.org>
-References: <20120531141329.6f82889bcfaa30ca83a30937@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: fate of the modem-shm tree
+Date: Thu, 31 May 2012 17:56:26 +1000
+Message-ID: <20120531175626.4febad2d04af71df5ebb4d2c@canb.auug.org.au>
+References: <20120531131758.44dd2c89b2e0c90b847cc714@canb.auug.org.au>
+	<81C3A93C17462B4BBD7E272753C10579232F4A82BD@EXDCVYMBSTM005.EQ1STM.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__31_May_2012_17_56_26_+1000_t3Dk5C8ghJPDmmao"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zene.cmpxchg.org ([85.214.230.12]:34134 "EHLO zene.cmpxchg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751323Ab2EaHZM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 May 2012 03:25:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20120531141329.6f82889bcfaa30ca83a30937@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47791 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757764Ab2EaH4j (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 31 May 2012 03:56:39 -0400
+In-Reply-To: <81C3A93C17462B4BBD7E272753C10579232F4A82BD@EXDCVYMBSTM005.EQ1STM.local>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ying Han <yinghan@google.com>
+To: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, May 31, 2012 at 02:13:29PM +1000, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> Today's linux-next merge of the akpm tree got a conflict in
-> mm/memcontrol.c between commit 78ccf5b5ab83 ("mm: memcg: print statistics
-> directly to seq_file") and others from Linus' tree and commit "memcg: add
-> mlock statistic in memory.stat" from the akpm tree.
-> 
-> I just dropped the akpm patch for now.
+--Signature=_Thu__31_May_2012_17_56_26_+1000_t3Dk5C8ghJPDmmao
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, Stephen.
+Hi Sjur,
 
-However, the patch is known to be broken and, according to mm-commits,
-was removed from -mm on May 16 already.  How'd it reappear?
+On Thu, 31 May 2012 08:36:41 +0200 Sjur BRENDELAND <sjur.brandeland@sterics=
+son.com> wrote:
+>
+> > Just wondering if this stuff is going upstream this time?  The most
+> > recent commit in the modem-shm tree was committed on Feb 2.
+>=20
+> Please drop this from linux-next. I will do major re-write
+> before doing a new attempt of getting this upstream again.
+
+OK, will do.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Thu__31_May_2012_17_56_26_+1000_t3Dk5C8ghJPDmmao
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPxyQqAAoJEECxmPOUX5FETwMP/jT1GoM4yTvj3Tq3S1VafZ21
+AIJqIJYZrwKljfTWv6tI1Qqh0kL2tXLXFTDeVnBcPq8fe9znonx8DPuR1S0zovDg
+Ujd1G7NOnBdKHk25g/vMxq6t9napnwiTdly7ZtTGMDo4xcyBDJrSEL0knSY9O85S
+9vjQUCGVBOFnemnh3SQDvY11AWowCPN1eSAwgFjEGzfUSG6OxNZ8M/es3JYozHjk
+KK7fkdLwLBTia1y6lURQvUf5bjv+iZ00RlZLaIsIZBSuhgzcojTW/3IHViF596qC
+IHnOaQZwGZ7A65xpLnSmO6WAx0LPKQB+aNBsh4O1g4wo9IQxn1rlhw1IOXmlGpmV
+s36yuKM1d322AmVkI1R+M9nVpxOrzjQhfXRb/BKf8XhDzSDTAGZzcTauHWLyJcbn
+7LR6HYEAGzCl9dD3Ex9XtMJHz0evWssrcsqWUnn1QvZ85q6QqMq/HjQKux0z304g
+WMpHeS+tvrdjbCZ4KRJFdTKA7mBHGUfEhZgJZ4SGwg9NykYR06Wz2O3ce2Klfrmr
+JwMg7lwmgT9JtQfQ8k6idFJRzJZOiU3bFMoO9MFpt4+aulcqUhxX7ud0vBSRwjCk
+i1fguY+gxCU2AkhXNsfVfc/OYkMPypWGBwALW2a6QIABQWCPFHQRHMuHEQvY9BdA
+mSG4AUjeGwJZOeB+NQe9
+=JOq0
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__31_May_2012_17_56_26_+1000_t3Dk5C8ghJPDmmao--
