@@ -1,57 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Thu, 31 May 2012 14:13:29 +1000
-Message-ID: <20120531141329.6f82889bcfaa30ca83a30937@canb.auug.org.au>
+Date: Thu, 31 May 2012 14:24:51 +1000
+Message-ID: <20120531142451.6bdcda603c98d9ad8c4f3bbd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__31_May_2012_14_13_29_+1000_N2T9wMkkJD.QaJRD"
+ boundary="Signature=_Thu__31_May_2012_14_24_51_+1000_j.YG4xizB5.yEfum"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49608 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:52077 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750742Ab2EaENi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 May 2012 00:13:38 -0400
+	with ESMTP id S1750831Ab2EaEY7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 31 May 2012 00:24:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, Ying Han <yinghan@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Hugh Dickins <hughd@google.com>
 
---Signature=_Thu__31_May_2012_14_13_29_+1000_N2T9wMkkJD.QaJRD
+--Signature=_Thu__31_May_2012_14_24_51_+1000_j.YG4xizB5.yEfum
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in
-mm/memcontrol.c between commit 78ccf5b5ab83 ("mm: memcg: print statistics
-directly to seq_file") and others from Linus' tree and commit "memcg: add
-mlock statistic in memory.stat" from the akpm tree.
+Today's linux-next merge of the akpm tree got a conflict in mm/swap.c
+between commit fa9add641b1b ("mm/memcg: apply add/del_page to lruvec")
+from Linus' tree and commit "mm/huge_memory.c: use lockdep_assert_held()"
+from the akpm tree.
 
-I just dropped the akpm patch for now.
+I fixed it up (see below) and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__31_May_2012_14_13_29_+1000_N2T9wMkkJD.QaJRD
+diff --cc mm/swap.c
+index 4e7e2ec,8ff73d8..0000000
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@@ -685,8 -653,7 +685,7 @@@ void lru_add_page_tail(struct page *pag
+  	VM_BUG_ON(!PageHead(page));
+  	VM_BUG_ON(PageCompound(page_tail));
+  	VM_BUG_ON(PageLRU(page_tail));
+- 	VM_BUG_ON(NR_CPUS !=3D 1 &&
+- 		  !spin_is_locked(&lruvec_zone(lruvec)->lru_lock));
+ -	lockdep_assert_held(&zone->lru_lock);
+++	lockdep_assert_held(&lruvec_zone(lruvec)->lru_lock);
+ =20
+  	SetPageLRU(page_tail);
+ =20
+
+--Signature=_Thu__31_May_2012_14_24_51_+1000_j.YG4xizB5.yEfum
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPxu/pAAoJEECxmPOUX5FEOl0P/1enCMBmn17UrdGWK+fpd1Do
-A3g/8YZiaOQRYRvgvQSfM1KiQWpOcXDCYB7CacAuE4BVZ779kh/uy3sdblygXivu
-CcLb+woKrbLoEURD9mndWk8+RA6/2eZlFKHq/sfC5aLmBaw+sEuHOdHFn65sSUEa
-+sswaLg6Y37QPf6oI52NRR7cqebia5OhiiqohOSUsGWCyvG+JiWHr9LbuYoXVfyi
-q9mSz/mofs4rb9BLDN0oXPbTKfef8YQczkhvzS0v6rkiJn/H9K9L/eG3CwbSVPx9
-XGjgQ+3Ju8CrdXClJntkxAd0LloN+GSQy0Ye/dnrW6L3HSVTU/TSDtE3kyVl0Yp+
-tPgHmVzRcXMFBjDclYvIpGS3usH5teEsVf9tVbfrkpolYNnshfATZ2N4Xo6Kqfsx
-j3HUPCvdLPllrS4UsTTuNA/3VUk3M/Z/UYnN4EZVkWklLyG+2C/2ZBfmm/dZOMZ3
-QzL1NosJvBxU+NqLW+/hzsrNpEXeuvscYlVL4alh+9dnSUnaP55Uz+Gn4t4yuhz/
-HSOb8/xjr8g1cfKyW6Vp/d1pvZMW+Sy7WcTkqtrRhE3J4Aj1wbGfDkX9fBsmDyLt
-tZ1cpiGTB5ujx7Yss2StqLeAFD2ww64A4Tx0kzt6eqhO0XCfe2m1D88429hm8LIZ
-/LK3+BtqjSNSVZzftgbG
-=uXsA
+iQIcBAEBCAAGBQJPxvKTAAoJEECxmPOUX5FE6A4P/1X9IW0GRR9WHb/wiMv5rSpE
+5IrubaXjNGc9p2v6+hMluYzcxCJC7NV0tlvCIEA7XmvihjjEgrgFUxwTwT6shm3H
+uhbQT9TBP7hH4RJlP0llMjseI2kFpC1xx6D940CODImgq+PKurBVcbbCXXrlT9Xx
+7AcCK7dTyaCqnpwBZWuOhZxQWpyweSYTCtAm7Jf4xmI3Yt/yrfgXAzKMQzFWSVQS
+/0Lg05ts3bQsOawkVMz5E8gyrRZfbZpIhlBFHY9RvuYZ4LE31TVCCUp5lzWdFjyp
+sFiB5HbetNq9ts8mMM96wIQHGnwdYPKjYES+sKvTcP8TUppBVRVI3NeFM3YfrSAo
+AkdpFfzYSjZwhP7+IHVGVnKHACxkbG8LoVTRWwSLSZiz1lf4XUzJaZxAxylf7hzj
+O6lFt9dNc0xKblgD/5WNP5ng30E/T7z8cbA+4aymQDAvuD4cJJjWPjjhPDQa4EyO
+Y5fTKl78Bt1x+WBVJM6VSU9jbYZVs5DEE00Ty9MHl5EVJKtyFuTV8A2GqjxYHKBd
+qUcs7Rk43qo8tOUNEx8GQZmDLqJPlVEyU6vRnEIqFsaFJkHkTYlUpuRrYKcTzKun
+ZHPoOT6+Dh/fIJ5BPCh+lQzODwpyVX8AJrfY+RKIn2hEk3CAJp1YyksQ3R361gk0
+5eKHXMPaLccfSxbLqlWc
+=Ndsb
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__31_May_2012_14_13_29_+1000_N2T9wMkkJD.QaJRD--
+--Signature=_Thu__31_May_2012_14_24_51_+1000_j.YG4xizB5.yEfum--
