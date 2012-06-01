@@ -1,57 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build rebase of the drivers-x86 tree
-Date: Fri, 1 Jun 2012 08:04:04 +1000
-Message-ID: <20120601080404.64da2644d5b26c7101e1e274@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (vfs tree
+ related)
+Date: Fri, 1 Jun 2012 13:14:58 +1000
+Message-ID: <20120601131458.7521e802e5af64d2ec4d311d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__1_Jun_2012_08_04_04_+1000_JrJ4Rqn1_MJZkniX"
+ boundary="Signature=_Fri__1_Jun_2012_13_14_58_+1000_MQ0nTZ22IHQzY9sE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:43848 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40746 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754582Ab2EaWEO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 May 2012 18:04:14 -0400
+	with ESMTP id S1758827Ab2FADPH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 31 May 2012 23:15:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Seth Forshee <seth.forshee@canonical.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__1_Jun_2012_08_04_04_+1000_JrJ4Rqn1_MJZkniX
+--Signature=_Fri__1_Jun_2012_13_14_58_+1000_MQ0nTZ22IHQzY9sE
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Matthew,
+Hi all,
 
-Looking through the drivers-x86 tree rebase today, I noticed in commit
-62cce7526629 ("toshiba_acpi: Only register backlight device when
-interface is read/write") that a memset has been added in the wrong place
-- about line 1100 in function toshiba_acpi_setup_backlight().
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-/me mutters about not rebasing before submitting to Linus ... :-(
+security/security.c: In function 'mmap_prot':
+security/security.c:670:31: error: 'READ_IMPLIES_EXEC' undeclared (first us=
+e in this function)
+
+Caused by commit 185b26574c03 ("take security_mmap_file() outside of
+->mmap_sem") from the vfs tree.  Missing include of linux/personality.h.
+
+I have added this fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 1 Jun 2012 13:10:47 +1000
+Subject: [PATCH] security: using READ_IMPLIES_EXEC needs personality.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ security/security.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/security/security.c b/security/security.c
+index 257fe77..3efc9b1 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -22,6 +22,7 @@
+ #include <linux/fsnotify.h>
+ #include <linux/mman.h>
+ #include <linux/mount.h>
++#include <linux/personality.h>
+ #include <net/flow.h>
+=20
+ #define MAX_LSM_EVM_XATTR	2
+--=20
+1.7.10.280.gaa39
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__1_Jun_2012_08_04_04_+1000_JrJ4Rqn1_MJZkniX
+--Signature=_Fri__1_Jun_2012_13_14_58_+1000_MQ0nTZ22IHQzY9sE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPx+rUAAoJEECxmPOUX5FEryMP/A1AHeJ+eRN3HBLNlmUMTogt
-Bbep9HKpufGz8ph23TQw8SxUN/DYsaMsjlvKGo0a74RzpcJSOvUlBLhd9+HiJ1eB
-T6jUd8ENfnt3MHs1r9yyUJ9cCl9nMqI9bPhBoKc/I0U4XxTCvCxzc2+xZ69iYwGd
-KlR8/d1yDP91CDNxr9PwABwvQFFu7unbDYGm5M8T7Igvph4YKS0PLzcbQZ705Bwz
-rq7CRb+jqMHHfPJwGpm5seWqlc2jKhGrQZd9ITVoXJyyIZ6jFmhBIsUDo7Hr9yLS
-UCptFTK7qDN45IAPDDe65v2yO1Q0K7FGC5TBFgIwv8r+M4GqgaT1TYtloq55bAa5
-Jfnyh3EMn3T0vxTonmsGbARy2OMwq0ZqyJbsRVdyheuFv2lSgDMEA9LXvx1dOkaL
-YxS6Mj3CR98R6QRfKpYzsDWNydIRiLgU1WhKlnWNhy/bbbhYMGVNzJU+2RnsdiVc
-s7i4BuTC1wE9kz2zSo4lpQxTwab33iGYb7yBW7qa7jkPlFd+2a918hgyh2aalXA3
-nAJihhw/su3rx5CY1U6iEWlrotnS+mPGlNPNOC8MooaXNYYzwZDiwtycjJ85dn1J
-wYLONCpErjaKBrv23PAd6ImetShu97sOrKnRaKj73Dk3rfvlsPvUQKHYLc4qCBBB
-v4wIzUel4IDjb8qTmc6R
-=KLLh
+iQIcBAEBCAAGBQJPyDOyAAoJEECxmPOUX5FE0MMP/1DmBAWlZrIyLb5dODamhwJ8
+V500oeq4Kl0/a4ArUEy/Eoo//iWBH/7wZppO9HZ6zRBjbP+jbMzPw3DrDjIMDxI3
+NNVKO0KCBlkwuWxOw2qRBHhp0VSmFzwAYqhinG3XzO1SGU2VMF9B2pTXDqQ715Pk
+nR2v0DZKJKggxxOcp5iDu1qgN0z7LMp7YW5kg2UslSat45Zsb9tRFfBGjQHGsr4E
+wuksQ7mLFilXgkuIzFMJd/n7nyq88DbHBeBtYMNa3H4OVGBsc7aefHdnANkOuP8e
+tsLrVEzmF61QWsobbMYOfFDZkkGwtUj55ldwh6YMBukBlrnHMZzRGvi+9NFx7FMo
+glaq2MMtVwdMmppG7HtQoAUw0de+BNqTYqaRiiVnvk6FHlnFi2p+DsqCMUnM7i8V
+hakufwBuQh2oTiwmO43qpQgVnSJJZmdTtXNZYPcLgpMB/za4ByyQYKQWpQkpc655
+djgX3Z8n/U6vNkHgGlyc10gqLTfvFfe6YtYkVceNMIyl1P+PLebQ0UgJ1xRU0S74
+1xcS2JRZEqOH1Xqfp2tfXtTGzHvJtlm/4vgm3S+No2K2coZQffqo2RB4era6FpK4
+YJEQUER8Xd0KSO/wg57A7kWcAVtU4G5ONFspsYGJQzIpKz6H+Egzu9gIhZYXafhC
+sT36GOeY2Pszz5n60Xmc
+=+mVb
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__1_Jun_2012_08_04_04_+1000_JrJ4Rqn1_MJZkniX--
+--Signature=_Fri__1_Jun_2012_13_14_58_+1000_MQ0nTZ22IHQzY9sE--
