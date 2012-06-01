@@ -1,28 +1,58 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH -next] s390/signal: fix compile error
-Date: Fri, 1 Jun 2012 08:34:34 +0100
-Message-ID: <20120601073433.GH30000@ZenIV.linux.org.uk>
-References: <20120601071704.GA3535@osiris.boeblingen.de.ibm.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [lm-sensors] [PATCH] hwmon/sch56xx: Depend on watchdog for watchdog
+ core functions
+Date: Fri, 01 Jun 2012 15:37:55 +0200
+Message-ID: <4FC8C5B3.2060108@redhat.com>
+References: <1337890738-26533-1-git-send-email-hdegoede@redhat.com>  <20120524205426.GW3074@spo001.leaseweb.com> <1338307894.478.68.camel@groeck-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35626 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751518Ab2FAHef (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Jun 2012 03:34:35 -0400
-Content-Disposition: inline
-In-Reply-To: <20120601071704.GA3535@osiris.boeblingen.de.ibm.com>
+Received: from mx1.redhat.com ([209.132.183.28]:55305 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758759Ab2FANi0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 1 Jun 2012 09:38:26 -0400
+In-Reply-To: <1338307894.478.68.camel@groeck-laptop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org
+To: guenter.roeck@ericsson.com
+Cc: Wim Van Sebroeck <wim@iguana.be>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, LM Sensors <lm-sensors@lm-sensors.org>
 
-On Fri, Jun 01, 2012 at 09:17:05AM +0200, Heiko Carstens wrote:
-> Hi Al,
-> 
-> could you please add/merge the patch below which fixes a simple compile
-> error in linux-next caused by your signal work?
+Hi,
 
-Already there.  I really need to do something about the workflow on
-cross-builds - that's not the first time fixes get lost and not
-moved from tree on a build box to the devel one ;-/
+On 05/29/2012 06:11 PM, Guenter Roeck wrote:
+> On Thu, 2012-05-24 at 16:54 -0400, Wim Van Sebroeck wrote:
+>> Hi Hans,
+>>
+>>> Since the watchdog code in sch56xx-common now uses the watchdog core, the
+>>> Kconfig entires for the sch5627 and sch5636 should depend on WATCHDOG
+>>> being set.
+>>>
+>>> Signed-off-by: Hans de Goede<hdegoede@redhat.com>
+>>
+>> I added also the "select WATCHDOG_CORE" lines for both drivers.
+>> In linux-watchdog-next now.
+>>
+> Hi Wim,
+>
+> looks like Hans' patches are all in your tree, so I assume I don't have
+> to take anything through my hwmon tree. Please let me know if I got that
+> wrong.
+
+Right, the sch56xx watchdog code conversion to the watchcore depended on
+some pending watchdag core changes, so it seemed sensible to get them all
+in though Wim's tree. Sorry if that caused any confusion.
+
+Now that we've a common watchdog core, I would also like to convert the
+fschmd watchdog code to it (one of these days). Which raises the question
+through which tree should that conversion go in. fschmd is primarily a hwmon
+driver, but the changes will only touch the watchdog part...
+
+I guess it would be best to get the conversion in to Wim's tree, even though
+that slightly increases the chance of conflicts. The fschmd driver does not see
+a lot of churn, and I think Wim is a better reviewer for watchdog related
+patches :)
+
+Thanks & Regards,
+
+Hans
