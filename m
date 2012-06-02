@@ -1,66 +1,75 @@
-From: Tyler Hicks <tyhicks@canonical.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: fate of the ecryptfs tree
-Date: Fri, 1 Jun 2012 16:41:55 -0700
-Message-ID: <20120601234154.GB6340@boyd>
+Date: Sat, 2 Jun 2012 13:37:03 +1000
+Message-ID: <20120602133703.be8c52b85b17b25b074aac8e@canb.auug.org.au>
 References: <20120531144115.0f35af0a8a5d79b73b0ecbe6@canb.auug.org.au>
+	<20120601234154.GB6340@boyd>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Sat__2_Jun_2012_13_37_03_+1000_Im5cVDtYGXLB5M3O"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:43808 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966023Ab2FAXmA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Jun 2012 19:42:00 -0400
-Content-Disposition: inline
-In-Reply-To: <20120531144115.0f35af0a8a5d79b73b0ecbe6@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46560 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966324Ab2FBDhM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Jun 2012 23:37:12 -0400
+In-Reply-To: <20120601234154.GB6340@boyd>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tyler Hicks <tyhicks@canonical.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Sat__2_Jun_2012_13_37_03_+1000_Im5cVDtYGXLB5M3O
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 2012-05-31 14:41:15, Stephen Rothwell wrote:
-> Hi Tyler,
+Hi Tyler,
+
+On Fri, 1 Jun 2012 16:41:55 -0700 Tyler Hicks <tyhicks@canonical.com> wrote:
+>
+> On 2012-05-31 14:41:15, Stephen Rothwell wrote:
+> >=20
+> > I am just wondering about the fate of the ecryptfs tree.  The most rece=
+nt
+> > commit to that tree is dated Feb 11 and seems to have been included in
+> > Linus' tree as a different commit.
 >=20
-> I am just wondering about the fate of the ecryptfs tree.  The most recent
-> commit to that tree is dated Feb 11 and seems to have been included in
-> Linus' tree as a different commit.
+> My next branch has become stale. Sorry about that! I haven't been doing
+> much development on the kernel side in the last couple months. That will
+> soon change, as I have a few bug fixes in the works and I know of a
+> contribution or two that should surface shortly.
 
-My next branch has become stale. Sorry about that! I haven't been doing
-much development on the kernel side in the last couple months. That will
-soon change, as I have a few bug fixes in the works and I know of a
-contribution or two that should surface shortly.
+Thanks for that.
 
-In the meantime, I've just pushed the HEAD of Linus' tree to my next
-branch to clean things up.
+> In the meantime, I've just pushed the HEAD of Linus' tree to my next
+> branch to clean things up.
 
-Tyler
+Excellent.
 
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Sat__2_Jun_2012_13_37_03_+1000_Im5cVDtYGXLB5M3O
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCgAGBQJPyVNCAAoJENaSAD2qAscKKGkQAJyO4nTq0+/1GPoQ1eId4p7H
-8rt18pi01bm6d51kPMEhYPZWTc2DO3OSmMzU7fX7Pr/nlghe/cNXNV6T3K9Lyacf
-s6ktt0w3nr3l9D2Hid40jCYp/+vvin8wYnUbqW6OjGVRecRBHjco6svZTY6vdLhU
-xnrh0IejHqZKlBHSbeMsK14jAqlln6sYFOlIQ4SHKsA1b+/8zmkSB6wukcBbARTb
-9Iov6otRW0REV44qXaPcKiuFAyAw+NbTXJqwnBFBjooRPdQxuoHbPmHmM6kPEzga
-d7xjJVavDscg2UGaXzWwkgX18kvb8Sf8R3UZc2ULAFSZk2L0Kg5Kv9BNSXIX4lxW
-qq1EejljihNlRFy/TSkYn7YmU0mYuO8yTkgbh9Rlb2CVdbGD7uh0+z5sRtK3iMIt
-dmD+iIzFYsBO6grjiGEHP47OnPLTJnUzMSmArd8NSJtP4/5ksUfsZ2vYr6tgtddn
-KzziLbm6cf387sTUFO5H1nSFIP1NyupSaODPHXxfCSOcQnFedKnjd7WcB85iLWTS
-yOSIfacLmgWDh1xkirISPV2p1EMnD7TEq7+4gkeQgcCyxu9OacIYT1Ai1OwDPFiQ
-Or3/pcE0c96KkhJyJNr0hfaBEHwge2GRkDXV1vOlHnuJJb1vw/yGIEdNbU8TyPCM
-GNQHEaU0rnL3s+/55xkJ
-=Cf7G
+iQIcBAEBCAAGBQJPyYpfAAoJEECxmPOUX5FEpMkQAIclpm0R6LzKxGEbJglbC6xV
+3RVA6mlnk2u4VqIpJh6KIQzUnHUAJTPjgE7a8TIckzb3H0aaTjtQOon3/NoqskbJ
+4iAONNEy1xIqZjy+4p4c01V5w8JRXhTxkDmJbQvbMHd++KjWAlB3Kg1hu/KUcKSs
+6P//aD61KU/rPBE4/VPXBZ0b7VoWD20wQP0ONnFKZLTWsfPNQErQuGIqoayDtDbC
+bov1pM9YuiUJE+LciV5gxbQpkqvHMdxvTtKqJfwzI1q4L5lwHwVrzgXvnb6inq1R
+3uY7DlXvp6voFmJUV9nlIYogL8oSTatGTIovVSbCcJZ384etnyGv+qnk7asgYSWA
+4makUfle0BXwLpz8KaD6o9fEcAkTB7u0UEuXflD/HtmcrpYXR+caA34bUTM6dt/Z
+nRtqYlOTRNZd0eEo7YKwd1kOwnVeTalkT0E6gEPBjXpqUOr/1p7/PMkAlwrAAgWy
+R0qQf4+tHoTYs9ldDywp6OMZ+KiYC8emzqrxq3RG7HDopP2Q86kWNasJAPmOFwLd
+yYiz+S56IWhTTbBXYibYyzjKwosXKNvO/yFj/N2UHk8MjLoqsqqZFdgOQhxThBje
+qe6Cp4/g7YCaNMR9k3K7xtvzRlpXSf/cX5gR4fekE4U/UKrtPIK3kboXU+X5bRv4
+aKWrlywzdNnf+06AdBOC
+=cYFK
 -----END PGP SIGNATURE-----
 
---uAKRQypu60I7Lcqm--
+--Signature=_Sat__2_Jun_2012_13_37_03_+1000_Im5cVDtYGXLB5M3O--
