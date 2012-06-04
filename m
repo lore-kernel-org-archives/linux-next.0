@@ -1,57 +1,73 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Mon, 4 Jun 2012 08:19:28 +0100
-Message-ID: <20120604071927.GD26676@opensource.wolfsonmicro.com>
-References: <20120604132500.56c579be8e468d9c20fc0b28@canb.auug.org.au>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: linux-next: build failure after merge of the origin tree
+Date: Mon, 4 Jun 2012 16:39:33 +0900
+Message-ID: <20120604073932.GG11445@linux-sh.org>
+References: <20120604125724.603f62215c9dc9269db898a2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JwB53PgKC5A7+0Ej"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60105 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751724Ab2FDHTa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jun 2012 03:19:30 -0400
+Received: from linux-sh.org ([111.68.239.195]:41404 "EHLO linux-sh.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752639Ab2FDHjt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Jun 2012 03:39:49 -0400
 Content-Disposition: inline
-In-Reply-To: <20120604132500.56c579be8e468d9c20fc0b28@canb.auug.org.au>
+In-Reply-To: <20120604125724.603f62215c9dc9269db898a2@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ola Lilja <ola.o.lilja@stericsson.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
+On Mon, Jun 04, 2012 at 12:57:24PM +1000, Stephen Rothwell wrote:
+> Hi Al,
+> 
+> Building the origin tree (v3.5-rc1 sh lboxre2_defconfig and other sh
+> configs) failed like this:
+> 
+> arch/sh/include/asm/thread_info.h:172:2: error: 'TAINT_WARN' undeclared (first use in this function)
+> 
+> Caused by commit edd63a2763bd ("set_restore_sigmask() is never called
+> without SIGPENDING (and never should be)").  Missing include of kernel.h.
+> 
+Ideally bug.h should be including linux/kernel.h itself due to its
+TAINT_WARN dependence, it just seems to be getting lucky on other
+platforms who either don't have this combination or pull in kernel.h from
+somewhere else.
 
---JwB53PgKC5A7+0Ej
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+That commit also introduces a linux/bug.h include for WARN_ON() in
+linux/thread_info.h which would be similarly insufficient for any
+TIF_RESTORE_SIGMASK && !HAVE_SET_RESTORE_SIGMASK platform that also uses
+asm-generic/bug.h. 
 
-On Mon, Jun 04, 2012 at 01:25:00PM +1000, Stephen Rothwell wrote:
+Given that, I'd prefer stuffing the include in asm-generic directly:
 
-> ERROR: "clk_enable" [sound/soc/snd-soc-core.ko] undefined!
-> ERROR: "clk_disable" [sound/soc/snd-soc-core.ko] undefined!
-> ERROR: "clk_get" [sound/soc/snd-soc-core.ko] undefined!
+---
 
-Oh, fail - it looks like the stubs for the clock API didn't actually
-manage to get merged.  Should be fixed, anyway.
+bug.h: need linux/kernel.h for TAINT_WARN.
 
---JwB53PgKC5A7+0Ej
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+asm-generic/bug.h uses taint flags that are only defined in
+linux/kernel.h, resulting in build failures on platforms that
+don't include linux/kernel.h some other way:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+	arch/sh/include/asm/thread_info.h:172:2: error: 'TAINT_WARN' undeclared (first use in this function)
 
-iQIcBAEBAgAGBQJPzGF2AAoJEBus8iNuMP3dePUP/2D6DWP44j7IIB6nrcc2xxeA
-FIe/YwpyWiI84Gl895DoxhxyMgUuTuQiG4aflfnL1xooHVxESVrIX4xUOvKK+YUe
-u3irDu+YJ1GqUvzFR0bFYpthKhGsJ1LNmhPdNI7Ypf/tGvKMZ9wDvKnFWxt73z1S
-oXMI7I6sQr7787+fxzYH7fKKIM/8NOibgSygHU2uOOw7RvUGqA43vJTc1c1JAld2
-egKXnUX6p2n450RkLHTENGv6D4EB8WnBy2g+klnnXMYTnrIKOXJcdRe0Plx7CuTJ
-1UlMj94RYyjzeqJUNkj20BGbA6fxVzLR1V05C357XwlzG9e/NztDoh8U7ciH1hVI
-L9cKPa1rlXhsb9T3Rvz6y0EaFEzKXwzmouXCSFLzOsGDpSkse9dj6xXLvd7NsPhC
-XzL9++fK7wgDadbh2lQrbLsWaAT5tYvRDPPToMMgU7SyYXUaxqIRXOCcaduD8We6
-5n+3EumP4NjZQdPx3ZAqn0VNtNVQQCiaVOz4seJCtmc6+lq6EvYeWA5dPD+NVA+6
-pJzc+TQyOQj2wF87AEBgt8jo6YCqIDMfDbtNZ95QmMULNthWZndjC1E7TfW2wOPA
-sRrYWCJw4pSMpMm6rnzFUiRpNtjUHRTPQ2JgKqMyVN1n2zSz7bv4DhZ6WP5277Qg
-siqoBy1vdQKaRUzVeXkg
-=Fgp0
------END PGP SIGNATURE-----
+Caused by commit edd63a2763bd ("set_restore_sigmask() is never called
+without SIGPENDING (and never should be)").
 
---JwB53PgKC5A7+0Ej--
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Paul Mundt <lethal@linux-sh.org>
+
+---
+
+diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
+index 2520a6e..9f02005 100644
+--- a/include/asm-generic/bug.h
++++ b/include/asm-generic/bug.h
+@@ -2,6 +2,7 @@
+ #define _ASM_GENERIC_BUG_H
+ 
+ #include <linux/compiler.h>
++#include <linux/kernel.h>
+ 
+ #ifdef CONFIG_BUG
+ 
