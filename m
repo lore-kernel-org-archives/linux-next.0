@@ -1,114 +1,122 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH -next] acpi: fix acpi_bus.h warnings when ACPI is not
- enabled
-Date: Mon, 04 Jun 2012 07:42:00 -0700
-Message-ID: <4FCCC938.7080900@xenotime.net>
-References: <20120523170740.ae058d8d5468d471eb948c39@canb.auug.org.au> <4FBD0CDD.6010003@xenotime.net> <4FCC3A4C.2080407@kernel.org>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for Apr 12
+Date: Mon, 4 Jun 2012 15:04:55 -0700
+Message-ID: <20120604150455.7a80b311.akpm@linux-foundation.org>
+References: <20120412145931.9ec6f2b51655071795d60d1d@canb.auug.org.au>
+	<20120412142415.564710b8.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4FCC3A4C.2080407@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Len Brown <lenb@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, Matthew Garrett <mjg@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53246 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753316Ab2FDWE5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jun 2012 18:04:57 -0400
+In-Reply-To: <20120412142415.564710b8.akpm@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, Stephen Smalley <sds@tycho.nsa.gov>
 
-On 06/03/2012 09:32 PM, Len Brown wrote:
+On Thu, 12 Apr 2012 14:24:15 -0700
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
-> Hi Randy,
-> with your patch applied and CONFIG_ACPI=3Dn, I still get:
->=20
-> include/acpi/acpi_bus.h:445:12: warning: =91register_acpi_bus_type=92=
- defined but not used [-Wunused-function]
-> include/acpi/acpi_bus.h:446:12: warning: =91unregister_acpi_bus_type=92=
- defined but not used [-Wunused-function]
->=20
-> so I think I prefer the patch below.
+> On Thu, 12 Apr 2012 14:59:31 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > I have created today's linux-next tree at
+> > git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> 
+> This isn't working for me.  Some time between April 3 and April 12
+> someone merged something into the non-mm part of linux-next which broke
+> ssh.
+> 
+> I boot the box and everything seems to come up OK, but attemtps to ssh
+> into the machine fail with
+> 
+> X11 forwarding request failed on channel 0
+> Last login: Thu Apr 12 13:04:35 2012 from akpm.corp.google.com
+> Connection to akpm2 closed.
+> 
+> I took a peek in the `strace ssh' output.
+> 
+> Good:
+> 
+> 17815 write(5, "Last login: Thu Apr 12 13:27:23 "..., 65) = 65
+> 17815 select(7, [3 4], [], NULL, {120, 0}) = 1 (in [3], left {119, 770798})
+> 17815 read(3, "\21O\200\366Mv\343\222\332\251\2403L\376Y18\2047\336\244\226p-+X\2%\2119\314\255"..., 8192) = 80
+> 17815 select(7, [3 4], [5], NULL, {120, 0}) = 1 (out [5], left {119, 999987})
+> 17815 write(5, "\r\33[m\17\33[27m\33[24m\33[Jakpm2:/home/ak"..., 39) = 39
+> 17815 select(7, [3 4], [], NULL, {120, 0}) = 1 (in [4], left {118, 801111})
+> 17815 read(4, "\4", 16384)              = 1
+> 17815 select(7, [3 4], [3], NULL, {120, 0}) = 1 (out [3], left {119, 999991})
+> 17815 write(3, "\235J\5\340\234\21\266\207\26e\362\327\2\332\1\267\272\200\364\267?/\320L\341\35\350{+M:\222"..., 48) = 48
+> 
+> 
+> Bad:
+> 
+> 9305  write(5, "Last login: Thu Apr 12 13:02:54 "..., 65) = 65
+> 9305  select(7, [3 4], [], NULL, {120, 0}) = 1 (in [3], left {119, 945541})
+> 9305  read(3, "f\357\250~\260i\2259\320\3258\262)O\364;_\251\360-\314\31\374]\326\300\356\364\370S\3105"..., 8192) = 128
+> 9305  close(5)                          = 0
+> 9305  close(4)                          = 0
+> 
+> That read() is returning a lot more data.
+> 
+> It appears that we've done something which breaks X forwarding.  I
+> won't be able to look any further into this until Monday.
 
-Hi Len,
+This regression is now in mainline.  I've bisected it to an SELinux
+patch, below.  I have confirmed that reverting just that patch from
+current mainline fixes the regression.
 
-I'd love to see your failing .config file if you have it or can
-reproduce it.  My patch still works for me.
-
-
-> thanks,
-> Len Brown, Intel Open Source Technology Center
->=20
-> On 05/23/2012 12:14 PM, Randy Dunlap wrote:
->=20
->> From: Randy Dunlap <rdunlap@xenotime.net>
->>
->> Fix header file warnings when CONFIG_ACPI is not enabled:
->>
->> include/acpi/acpi_bus.h:443:42: warning: 'struct acpi_bus_type' decl=
-ared inside parameter list
->> include/acpi/acpi_bus.h:443:42: warning: its scope is only this defi=
-nition or declaration, which is probably not what you want
->> include/acpi/acpi_bus.h:444:44: warning: 'struct acpi_bus_type' decl=
-ared inside parameter list
->>
->> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
->> ---
->>  include/acpi/acpi_bus.h |    2 ++
->>  1 file changed, 2 insertions(+)
->>
->> --- linux-next-20120523.orig/include/acpi/acpi_bus.h
->> +++ linux-next-20120523/include/acpi/acpi_bus.h
->> @@ -440,6 +440,8 @@ static inline int acpi_pm_device_sleep_w
->> =20
->>  #else	/* CONFIG_ACPI */
->> =20
->> +struct acpi_bus_type;
->> +
->>  static int register_acpi_bus_type(struct acpi_bus_type *bus) { retu=
-rn 0; }
->>  static int unregister_acpi_bus_type(struct acpi_bus_type *bus) { re=
-turn 0; }
->> =20
->=20
->=20
-> Subject: [PATCH] ACPI: fix acpi_bus.h build warnings when ACPI is not=
- enabled
->=20
-> introduced in Linux-3.5-rc1 by
-> 66886d6f8c9bcdee3d7fce5796dcffd6b4bc0b48
-> (ACPI: Add stubs for (un)register_acpi_bus_type)
->=20
-> Fix header file warnings when CONFIG_ACPI is not enabled:
->=20
-> include/acpi/acpi_bus.h:443:42: warning: 'struct acpi_bus_type' decla=
-red inside parameter list
-> include/acpi/acpi_bus.h:443:42: warning: its scope is only this defin=
-ition or declaration, which is probably not
-> include/acpi/acpi_bus.h:444:44: warning: 'struct acpi_bus_type' decla=
-red inside parameter list
->=20
-> Signed-off-by: Len Brown <len.brown@intel.com>
-> ---
->  include/acpi/acpi_bus.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-> index b0d6282..9e6e1c6 100644
-> --- a/include/acpi/acpi_bus.h
-> +++ b/include/acpi/acpi_bus.h
-> @@ -440,8 +440,8 @@ static inline int acpi_pm_device_sleep_wake(struc=
-t device *dev, bool enable)
-> =20
->  #else	/* CONFIG_ACPI */
-> =20
-> -static int register_acpi_bus_type(struct acpi_bus_type *bus) { retur=
-n 0; }
-> -static int unregister_acpi_bus_type(struct acpi_bus_type *bus) { ret=
-urn 0; }
-> +static inline int register_acpi_bus_type(void *bus) { return 0; }
-> +static inline int unregister_acpi_bus_type(void *bus) { return 0; }
-> =20
->  #endif				/* CONFIG_ACPI */
-> =20
+Using openssh-server-4.3p2-14.fc6 on FC6.
 
 
+commit 95dbf739313f09c8d859bde1373bc264ef979337
+Author:     Eric Paris <eparis@redhat.com>
+AuthorDate: Wed Apr 4 13:45:34 2012 -0400
+Commit:     Eric Paris <eparis@redhat.com>
+CommitDate: Mon Apr 9 12:22:49 2012 -0400
 
---=20
-~Randy
+    SELinux: check OPEN on truncate calls
+    
+    In RH BZ 578841 we realized that the SELinux sandbox program was allowed to
+    truncate files outside of the sandbox.  The reason is because sandbox
+    confinement is determined almost entirely by the 'open' permission.  The idea
+    was that if the sandbox was unable to open() files it would be unable to do
+    harm to those files.  This turns out to be false in light of syscalls like
+    truncate() and chmod() which don't require a previous open() call.  I looked
+    at the syscalls that did not have an associated 'open' check and found that
+    truncate(), did not have a seperate permission and even if it did have a
+    separate permission such a permission owuld be inadequate for use by
+    sandbox (since it owuld have to be granted so liberally as to be useless).
+    This patch checks the OPEN permission on truncate.  I think a better solution
+    for sandbox is a whole new permission, but at least this fixes what we have
+    today.
+    
+    Signed-off-by: Eric Paris <eparis@redhat.com>
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index d85b793..f7d7e77 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2708,6 +2708,7 @@ static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
+ {
+ 	const struct cred *cred = current_cred();
+ 	unsigned int ia_valid = iattr->ia_valid;
++	__u32 av = FILE__WRITE;
+ 
+ 	/* ATTR_FORCE is just used for ATTR_KILL_S[UG]ID. */
+ 	if (ia_valid & ATTR_FORCE) {
+@@ -2721,7 +2722,10 @@ static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
+ 			ATTR_ATIME_SET | ATTR_MTIME_SET | ATTR_TIMES_SET))
+ 		return dentry_has_perm(cred, dentry, FILE__SETATTR);
+ 
+-	return dentry_has_perm(cred, dentry, FILE__WRITE);
++	if (ia_valid & ATTR_SIZE)
++		av |= FILE__OPEN;
++
++	return dentry_has_perm(cred, dentry, av);
+ }
+ 
+ static int selinux_inode_getattr(struct vfsmount *mnt, struct dentry *dentry)
