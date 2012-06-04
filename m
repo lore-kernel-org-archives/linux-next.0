@@ -1,107 +1,84 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: [PATCH -next] acpi: fix acpi_bus.h warnings when ACPI is not
- enabled
-Date: Mon, 04 Jun 2012 00:32:12 -0400
-Message-ID: <4FCC3A4C.2080407@kernel.org>
-References: <20120523170740.ae058d8d5468d471eb948c39@canb.auug.org.au> <4FBD0CDD.6010003@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 4 Jun 2012 14:58:51 +1000
+Message-ID: <20120604145851.2c6bb0e1492ee41a6764f7cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__4_Jun_2012_14_58_51_+1000_+mnB.Qbbi=zMI+0i"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qa0-f49.google.com ([209.85.216.49]:55069 "EHLO
-	mail-qa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754352Ab2FDEcP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jun 2012 00:32:15 -0400
-In-Reply-To: <4FBD0CDD.6010003@xenotime.net>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47522 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752166Ab2FDE66 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jun 2012 00:58:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, Matthew Garrett <mjg@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Khlebnikov <khlebnikov@openvz.org>
 
-Hi Randy,
-with your patch applied and CONFIG_ACPI=3Dn, I still get:
+--Signature=_Mon__4_Jun_2012_14_58_51_+1000_+mnB.Qbbi=zMI+0i
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-include/acpi/acpi_bus.h:445:12: warning: =E2=80=98register_acpi_bus_typ=
-e=E2=80=99 defined but not used [-Wunused-function]
-include/acpi/acpi_bus.h:446:12: warning: =E2=80=98unregister_acpi_bus_t=
-ype=E2=80=99 defined but not used [-Wunused-function]
+Hi Andrew,
 
-so I think I prefer the patch below.
+Today's linux-next merge of the akpm tree got a conflict in kernel/fork.c
+between commit touching paths: ("fork: call complete_vfork_done() after
+clearing child_tid and flushing rss-counters") from Linus' tree and
+commit "mm: correctly synchronize rss-counters at exit/exec" from the
+akpm tree.
 
-thanks,
-Len Brown, Intel Open Source Technology Center
-
-On 05/23/2012 12:14 PM, Randy Dunlap wrote:
-
-> From: Randy Dunlap <rdunlap@xenotime.net>
->=20
-> Fix header file warnings when CONFIG_ACPI is not enabled:
->=20
-> include/acpi/acpi_bus.h:443:42: warning: 'struct acpi_bus_type' decla=
-red inside parameter list
-> include/acpi/acpi_bus.h:443:42: warning: its scope is only this defin=
-ition or declaration, which is probably not what you want
-> include/acpi/acpi_bus.h:444:44: warning: 'struct acpi_bus_type' decla=
-red inside parameter list
->=20
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> ---
->  include/acpi/acpi_bus.h |    2 ++
->  1 file changed, 2 insertions(+)
->=20
-> --- linux-next-20120523.orig/include/acpi/acpi_bus.h
-> +++ linux-next-20120523/include/acpi/acpi_bus.h
-> @@ -440,6 +440,8 @@ static inline int acpi_pm_device_sleep_w
-> =20
->  #else	/* CONFIG_ACPI */
-> =20
-> +struct acpi_bus_type;
-> +
->  static int register_acpi_bus_type(struct acpi_bus_type *bus) { retur=
-n 0; }
->  static int unregister_acpi_bus_type(struct acpi_bus_type *bus) { ret=
-urn 0; }
-> =20
-
-
-Subject: [PATCH] ACPI: fix acpi_bus.h build warnings when ACPI is not e=
-nabled
-
-introduced in Linux-3.5-rc1 by
-66886d6f8c9bcdee3d7fce5796dcffd6b4bc0b48
-(ACPI: Add stubs for (un)register_acpi_bus_type)
-
-=46ix header file warnings when CONFIG_ACPI is not enabled:
-
-include/acpi/acpi_bus.h:443:42: warning: 'struct acpi_bus_type' declare=
-d inside parameter list
-include/acpi/acpi_bus.h:443:42: warning: its scope is only this definit=
-ion or declaration, which is probably not
-include/acpi/acpi_bus.h:444:44: warning: 'struct acpi_bus_type' declare=
-d inside parameter list
-
-Signed-off-by: Len Brown <len.brown@intel.com>
----
- include/acpi/acpi_bus.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-index b0d6282..9e6e1c6 100644
---- a/include/acpi/acpi_bus.h
-+++ b/include/acpi/acpi_bus.h
-@@ -440,8 +440,8 @@ static inline int acpi_pm_device_sleep_wake(struct =
-device *dev, bool enable)
-=20
- #else	/* CONFIG_ACPI */
-=20
--static int register_acpi_bus_type(struct acpi_bus_type *bus) { return =
-0; }
--static int unregister_acpi_bus_type(struct acpi_bus_type *bus) { retur=
-n 0; }
-+static inline int register_acpi_bus_type(void *bus) { return 0; }
-+static inline int unregister_acpi_bus_type(void *bus) { return 0; }
-=20
- #endif				/* CONFIG_ACPI */
-=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
-1.7.11.rc0.100.g5498c5f
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/fork.c
+index 095a951,30e9ee8..0000000
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@@ -808,11 -811,12 +808,19 @@@ void mm_release(struct task_struct *tsk
+  	}
+ =20
+  	/*
++ 	 * Final rss-counter synchronization. After this point there must be
++ 	 * no pagefaults into this mm from the current context.  Otherwise
++ 	 * mm->rss_stat will be inconsistent.
++ 	 */
++ 	if (mm)
++ 		sync_mm_rss(mm);
+++
+++	/*
+ +	 * All done, finally we can wake up parent and return this mm to him.
+ +	 * Also kthread_stop() uses this completion for synchronization.
+ +	 */
+ +	if (tsk->vfork_done)
+ +		complete_vfork_done(tsk);
+  }
+ =20
+  /*
+
+--Signature=_Mon__4_Jun_2012_14_58_51_+1000_+mnB.Qbbi=zMI+0i
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJPzECLAAoJEECxmPOUX5FEdDEP/0BZMAIPlEHrRZCbQN+d2H0y
+XsbeAeQxpYj+u0hSzNwrBFh9frA4Wja80OBtEZy0RI4kEfbsZge8LmFYwnXMIrR/
+dADjh+f0AyUh0LljdO4jPWfz5HhVMBj/3GcindaZ+7HtdqqijCNcAo9lyqENdPv9
+vUM3h9bE6f4ckDMLROZivfBw2OaN6tNatXdVm1wIsJl7JPpRujsK2Hg1W6MQTVaL
+t3BYR4A23lAy/8r7T96uBlcfrp0RtEsOZWr7kXOaPMgyZ3WGu2QwXHYZQQ8ZI/hz
+h39M153QfL+aoFhicC/5s5E/zup87AQdc+cYaFK0P314QdcwXMCu2rJrWVodKg2W
+cxINGwu0e+VoGUL99b5dldHOAQ6mwdg/w0AvyCG++GFT+LY83++rcnkk20OokR6i
+kLkEHheZtzI0xFDf0gl0A+ATM6OIwj0xnMK/I4y5qu4YaNG4/a6HEcFDTMZ4NqN3
+XbMLKSD5q8e3E3YwY0nhfA5BvzGIZZbHlfzo7fNd4VVASaJiqVsDUKUwLjY6JTnU
++30BxWF0hp6J2WeI3Dqwn4dxAR0nvpxFrvTbZVa5XltOMEWPljLFY1Fih5RseMzv
+8kO8MQRr96OdYbPe+sWyxFApWtoA2IaUJ4Mz2UxXDbZ3W2yBnprtlcoydL/f+Saf
+3mquEHI7hI2+Sv/RW6/x
+=S67h
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__4_Jun_2012_14_58_51_+1000_+mnB.Qbbi=zMI+0i--
