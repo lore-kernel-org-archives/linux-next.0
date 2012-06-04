@@ -1,75 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: fate of the ecryptfs tree
-Date: Sat, 2 Jun 2012 13:37:03 +1000
-Message-ID: <20120602133703.be8c52b85b17b25b074aac8e@canb.auug.org.au>
-References: <20120531144115.0f35af0a8a5d79b73b0ecbe6@canb.auug.org.au>
-	<20120601234154.GB6340@boyd>
+Subject: Re: Request to add linux-leds git tree to linux-next
+Date: Mon, 4 Jun 2012 11:42:23 +1000
+Message-ID: <20120604114223.c4eba75b98b8661eb6347665@canb.auug.org.au>
+References: <CAK5ve-JqwHcmPGkG-_=3y9PiMo_QrFe-2tt-8aNMarzF7JxVMg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Sat__2_Jun_2012_13_37_03_+1000_Im5cVDtYGXLB5M3O"
+ boundary="Signature=_Mon__4_Jun_2012_11_42_23_+1000_oVWI0VZchkOe1yAz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:46560 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:40442 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966324Ab2FBDhM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Jun 2012 23:37:12 -0400
-In-Reply-To: <20120601234154.GB6340@boyd>
+	with ESMTP id S1755463Ab2FDBmd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 3 Jun 2012 21:42:33 -0400
+In-Reply-To: <CAK5ve-JqwHcmPGkG-_=3y9PiMo_QrFe-2tt-8aNMarzF7JxVMg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tyler Hicks <tyhicks@canonical.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bryan Wu <bryan.wu@canonical.com>
+Cc: linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>, linux-leds@vger.kernel.org
 
---Signature=_Sat__2_Jun_2012_13_37_03_+1000_Im5cVDtYGXLB5M3O
+--Signature=_Mon__4_Jun_2012_11_42_23_+1000_oVWI0VZchkOe1yAz
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tyler,
+Hi Bryan,
 
-On Fri, 1 Jun 2012 16:41:55 -0700 Tyler Hicks <tyhicks@canonical.com> wrote:
+On Fri, 1 Jun 2012 22:08:12 +0800 Bryan Wu <bryan.wu@canonical.com> wrote:
 >
-> On 2012-05-31 14:41:15, Stephen Rothwell wrote:
-> >=20
-> > I am just wondering about the fate of the ecryptfs tree.  The most rece=
-nt
-> > commit to that tree is dated Feb 11 and seems to have been included in
-> > Linus' tree as a different commit.
->=20
-> My next branch has become stale. Sorry about that! I haven't been doing
-> much development on the kernel side in the last couple months. That will
-> soon change, as I have a few bug fixes in the works and I know of a
-> contribution or two that should surface shortly.
+> Please help to add for-next branch of my linux-leds git tree into linux-n=
+ext:
+> git://git.kernel.org/pub/scm/linux/kernel/git/cooloney/linux-leds.git for=
+-next
 
-Thanks for that.
+Added from today.
 
-> In the meantime, I've just pushed the HEAD of Linus' tree to my next
-> branch to clean things up.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-Excellent.
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---Signature=_Sat__2_Jun_2012_13_37_03_+1000_Im5cVDtYGXLB5M3O
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Mon__4_Jun_2012_11_42_23_+1000_oVWI0VZchkOe1yAz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPyYpfAAoJEECxmPOUX5FEpMkQAIclpm0R6LzKxGEbJglbC6xV
-3RVA6mlnk2u4VqIpJh6KIQzUnHUAJTPjgE7a8TIckzb3H0aaTjtQOon3/NoqskbJ
-4iAONNEy1xIqZjy+4p4c01V5w8JRXhTxkDmJbQvbMHd++KjWAlB3Kg1hu/KUcKSs
-6P//aD61KU/rPBE4/VPXBZ0b7VoWD20wQP0ONnFKZLTWsfPNQErQuGIqoayDtDbC
-bov1pM9YuiUJE+LciV5gxbQpkqvHMdxvTtKqJfwzI1q4L5lwHwVrzgXvnb6inq1R
-3uY7DlXvp6voFmJUV9nlIYogL8oSTatGTIovVSbCcJZ384etnyGv+qnk7asgYSWA
-4makUfle0BXwLpz8KaD6o9fEcAkTB7u0UEuXflD/HtmcrpYXR+caA34bUTM6dt/Z
-nRtqYlOTRNZd0eEo7YKwd1kOwnVeTalkT0E6gEPBjXpqUOr/1p7/PMkAlwrAAgWy
-R0qQf4+tHoTYs9ldDywp6OMZ+KiYC8emzqrxq3RG7HDopP2Q86kWNasJAPmOFwLd
-yYiz+S56IWhTTbBXYibYyzjKwosXKNvO/yFj/N2UHk8MjLoqsqqZFdgOQhxThBje
-qe6Cp4/g7YCaNMR9k3K7xtvzRlpXSf/cX5gR4fekE4U/UKrtPIK3kboXU+X5bRv4
-aKWrlywzdNnf+06AdBOC
-=cYFK
+iQIcBAEBCAAGBQJPzBJ/AAoJEECxmPOUX5FEv7IP/1DPy59cICrv1cJLYUDQQx21
+gIuR0AamqktORGWhH0jwtrUjAp/I3K8RVkLLEkTix3mY0k8a3rS8B21EV8rChfZQ
+XeV/KoZcSxZEqFLDSvIRtgGLUhooSDqsl0UUqjYFSsaTCJ+XGc9uIv6qpxjlc2IQ
+RmEU37Tin3WEZysbM6tgakFXs31w/4+E02DbTr2vi9DfR4a8a6XDxdU9vptexlBC
+V5ZGXkpwvK3TjUFGhFRR7F4dpZzVyRUJWhJcEV84WcRMl4DyEwrZNsor7V3BPOmY
+PzPdFCu9BHXbK98oNRp1j3fBqlgBXtBoWiCBNASqT38noQ7sppmAiYnGK7ubFrRY
+IfUjAF0DkiOZvpZjJ5p439eM1BLmDqzjmWMQi5N527xslhGFKoEyTE7fFASPmCjs
+o9P7FBzENmfCzUld6dwHxoNpkJWA4Mk9wp45DzWN3ESh+kpNacVLWGHpRG/GUbxp
+TEP0QE7Zjc5E6VSdzpbXXFmWf1SDjX0VUmKLwHfqz+sc4AQNQwDu6PsFX0Mfc0x4
+bvsNybrqDv5FZpBIER/DnAT7MAhdW2IzvLu9B/tY5AsXPPD4M2ARhH01fOhvtQKX
+11F2B2295cPpmctrgGn8cBbjs0gTkhyJBBHAR7/ZitwY1JlZrKoamk9hqIM6x8pQ
+6Cn8iFncwpQa44K538U+
+=k+4/
 -----END PGP SIGNATURE-----
 
---Signature=_Sat__2_Jun_2012_13_37_03_+1000_Im5cVDtYGXLB5M3O--
+--Signature=_Mon__4_Jun_2012_11_42_23_+1000_oVWI0VZchkOe1yAz--
