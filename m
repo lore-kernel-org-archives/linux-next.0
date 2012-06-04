@@ -1,88 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the acpi tree with the hwmon-staging
- tree
-Date: Mon, 4 Jun 2012 13:03:05 +1000
-Message-ID: <20120604130305.f8d3a3702d43f660a1db0f9e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 4 Jun 2012 13:25:00 +1000
+Message-ID: <20120604132500.56c579be8e468d9c20fc0b28@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__4_Jun_2012_13_03_05_+1000_oDieulfTEYi4mpf0"
+ boundary="Signature=_Mon__4_Jun_2012_13_25_00_+1000_84Ajv7CkpOx85IaV"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ashish Jangam <ashish.jangam@kpitcummins.com>, Guenter Roeck <linux@roeck-us.net>, David Dajun Chen <dchen@diasemi.com>, Amit Daniel Kachhap <amit.kachhap@linaro.org>, Donggeun Kim <dg77.kim@samsung.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ola Lilja <ola.o.lilja@stericsson.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__4_Jun_2012_13_03_05_+1000_oDieulfTEYi4mpf0
+--Signature=_Mon__4_Jun_2012_13_25_00_+1000_84Ajv7CkpOx85IaV
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Len,
+Hi all,
 
-Today's linux-next merge of the acpi tree got a conflict in
-drivers/hwmon/Kconfig between commit 418e7870dca9 ("hwmon: Driver for
-DA9052/53 PMIC") from the hwmon-staging tree and commit f36beb016903
-("hwmon: exynos4: move thermal sensor driver to driver/thermal
-directory") from the acpi tree.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+ERROR: "clk_enable" [sound/soc/snd-soc-core.ko] undefined!
+ERROR: "clk_disable" [sound/soc/snd-soc-core.ko] undefined!
+ERROR: "clk_get" [sound/soc/snd-soc-core.ko] undefined!
+
+Caused by commit d7e7eb91551a ("ASoC: core: Add widget
+SND_SOC_DAPM_CLOCK_SUPPLY").  This build does not have CONFIG_COMMON_CLK
+set.  Probably missing select or dependency.
+
+I have used the sound-asoc tree from next-20120601 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/hwmon/Kconfig
-index 4039353,2c7ef39..0000000
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@@ -314,26 -314,6 +314,16 @@@ config SENSORS_DS162
-  	  This driver can also be built as a module.  If so, the module
-  	  will be called ds1621.
- =20
- +config SENSORS_DA9052_ADC
- +	tristate "Dialog DA9052/DA9053 ADC"
- +	depends on PMIC_DA9052
- +	help
- +	  Say y here to support the ADC found on Dialog Semiconductor
- +	  DA9052-BC and DA9053-AA/Bx PMICs.
- +
- +	  This driver can also be built as module. If so, the module
- +	  will be called da9052-hwmon.
- +
-- config SENSORS_EXYNOS4_TMU
-- 	tristate "Temperature sensor on Samsung EXYNOS4"
-- 	depends on ARCH_EXYNOS4
-- 	help
-- 	  If you say yes here you get support for TMU (Thermal Management
-- 	  Unit) on SAMSUNG EXYNOS4 series of SoC.
--=20
-- 	  This driver can also be built as a module. If so, the module
-- 	  will be called exynos4-tmu.
--=20
-  config SENSORS_I5K_AMB
-  	tristate "FB-DIMM AMB temperature sensor on Intel 5000 series chipsets"
-  	depends on PCI && EXPERIMENTAL
 
---Signature=_Mon__4_Jun_2012_13_03_05_+1000_oDieulfTEYi4mpf0
+--Signature=_Mon__4_Jun_2012_13_25_00_+1000_84Ajv7CkpOx85IaV
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPzCVpAAoJEECxmPOUX5FEgg4QAJm523OaoylZmSlcGL59wYCw
-0D44WgDcFiDFmdpI87G1/zeP7BfkwMcXlCl1QY2PTilNE79czchcHfxVHPzzGe3G
-MDJf5LFufA7AI60yX07jNgupjFXV900bJhi+CF/m39x/Ql7BtW4MMCSWikn1Shnk
-COL/8yHPb61xePd1NuFr6/DW4mkc3XLPmqc5L4NM253Yt6arOCJZEcR+NDNkeea9
-nFqASgsfZVp9UOAQhYJDKrt5hpWTQNQuZXzIZS5LwZxfv1stw7jydcmLDeYp3iB9
-ZqBEl0O1Yfg38XnHOXo4esjKxGoTRWByZDB8TMm0psriTe9C6c02VxmdkOFHHe2W
-Z4nWRGx/+ZwLeGSovO4lGu5DOGVM5nDsKPqMGKJv1b74dQqz0Ze0wS4UFqzfdHbo
-YkcbJ+m9frQbuZLd0a8U4fK1NCeMcLxuedn1aCc5V8IXD097ljUZwVaMI7vzZMBc
-uBlDUcCeDBQ2Ss9B9nRW+H45dDVZU0FasvQbIK8Dn5OF19EormTBqCwzxRfUemav
-lp4K/SPxQlq/XuYJHgfUu+R56JDsAYaMWvErVEao/rAgGb5KMCCYEDd6W27RUrVG
-ZvlPN6iO9ZuZu/iWVHfIXkyilA6oLV7gBC8E2wmCh9ng+Tax9cw05ddBDxFNzSpT
-bnnU/5T8UDPhS/zFgbD0
-=QsxM
+iQIcBAEBCAAGBQJPzCqMAAoJEECxmPOUX5FEZiQP/1YjeWDkHW+3GUpLJMv34moI
+NveySdio20lADIdxHfUhzFzvibnZ0NgML/+RCP2m9+x8XY/xVssS3BZjL8VAFzBh
+rKfGXBPI8NFxw1/+hBgjTKGsAZIzsYAKHNeoJwjjxcpxAbmRLNUB+awcGtthkw5M
+oW75hUq7eY64JcMLHDm0BV01rHdU6jjMPb7eMsey+CDXEW+RO2t2NT7908NE0WYE
+Ng3Kk5jwSzQHFjCOsS83HSrrJQwsWaRbciMsPuDZJoMUkR8wp6u0+ebhcJzyltdX
+qH5wTTx3s9TTO4QyOZP97IWpXcdMDxtCWUTSOkb/hRC0hjZHOot7ebq6q2mxfH/R
+CwyY4XCxyTbpw5dYYO0LZ5x4gqDnycTxdRe/Wk02BRujZLx+Bu57qqg0aHafARnV
+7BCZm9wxg41WERCmNSjSTMRXCaso/a7DIz80+VgO6mAjS0lx+oIl1ynbmEv2Zawe
+L2qLQB9+OOOlDhfNknCMSc6EyyJZ1e+a05KfvAJKW5tZF0xYmfUcyIkO5s6lWaWr
+w2iy88aqu//C+hShu+qqNBLFN0ZTMz7vwXNFGutjgYZbe9rtZCH4qgWChthn77U5
+LxaGYSraARjAXbFXNLarOs0nx3mkSEM40Zc2qixpkYrZHo6RMq3K/tp3NpgV4qAU
+tr9HoMQuDPXETtcrHIK0
+=G11P
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__4_Jun_2012_13_03_05_+1000_oDieulfTEYi4mpf0--
+--Signature=_Mon__4_Jun_2012_13_25_00_+1000_84Ajv7CkpOx85IaV--
