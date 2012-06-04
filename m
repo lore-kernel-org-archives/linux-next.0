@@ -1,73 +1,114 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: linux-next: build failure after merge of the origin tree
-Date: Mon, 4 Jun 2012 16:39:33 +0900
-Message-ID: <20120604073932.GG11445@linux-sh.org>
-References: <20120604125724.603f62215c9dc9269db898a2@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: [PATCH -next] acpi: fix acpi_bus.h warnings when ACPI is not
+ enabled
+Date: Mon, 04 Jun 2012 07:42:00 -0700
+Message-ID: <4FCCC938.7080900@xenotime.net>
+References: <20120523170740.ae058d8d5468d471eb948c39@canb.auug.org.au> <4FBD0CDD.6010003@xenotime.net> <4FCC3A4C.2080407@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from linux-sh.org ([111.68.239.195]:41404 "EHLO linux-sh.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752639Ab2FDHjt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Jun 2012 03:39:49 -0400
-Content-Disposition: inline
-In-Reply-To: <20120604125724.603f62215c9dc9269db898a2@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4FCC3A4C.2080407@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, Matthew Garrett <mjg@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jun 04, 2012 at 12:57:24PM +1000, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> Building the origin tree (v3.5-rc1 sh lboxre2_defconfig and other sh
-> configs) failed like this:
-> 
-> arch/sh/include/asm/thread_info.h:172:2: error: 'TAINT_WARN' undeclared (first use in this function)
-> 
-> Caused by commit edd63a2763bd ("set_restore_sigmask() is never called
-> without SIGPENDING (and never should be)").  Missing include of kernel.h.
-> 
-Ideally bug.h should be including linux/kernel.h itself due to its
-TAINT_WARN dependence, it just seems to be getting lucky on other
-platforms who either don't have this combination or pull in kernel.h from
-somewhere else.
+On 06/03/2012 09:32 PM, Len Brown wrote:
 
-That commit also introduces a linux/bug.h include for WARN_ON() in
-linux/thread_info.h which would be similarly insufficient for any
-TIF_RESTORE_SIGMASK && !HAVE_SET_RESTORE_SIGMASK platform that also uses
-asm-generic/bug.h. 
+> Hi Randy,
+> with your patch applied and CONFIG_ACPI=3Dn, I still get:
+>=20
+> include/acpi/acpi_bus.h:445:12: warning: =91register_acpi_bus_type=92=
+ defined but not used [-Wunused-function]
+> include/acpi/acpi_bus.h:446:12: warning: =91unregister_acpi_bus_type=92=
+ defined but not used [-Wunused-function]
+>=20
+> so I think I prefer the patch below.
 
-Given that, I'd prefer stuffing the include in asm-generic directly:
+Hi Len,
 
----
+I'd love to see your failing .config file if you have it or can
+reproduce it.  My patch still works for me.
 
-bug.h: need linux/kernel.h for TAINT_WARN.
 
-asm-generic/bug.h uses taint flags that are only defined in
-linux/kernel.h, resulting in build failures on platforms that
-don't include linux/kernel.h some other way:
+> thanks,
+> Len Brown, Intel Open Source Technology Center
+>=20
+> On 05/23/2012 12:14 PM, Randy Dunlap wrote:
+>=20
+>> From: Randy Dunlap <rdunlap@xenotime.net>
+>>
+>> Fix header file warnings when CONFIG_ACPI is not enabled:
+>>
+>> include/acpi/acpi_bus.h:443:42: warning: 'struct acpi_bus_type' decl=
+ared inside parameter list
+>> include/acpi/acpi_bus.h:443:42: warning: its scope is only this defi=
+nition or declaration, which is probably not what you want
+>> include/acpi/acpi_bus.h:444:44: warning: 'struct acpi_bus_type' decl=
+ared inside parameter list
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+>> ---
+>>  include/acpi/acpi_bus.h |    2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> --- linux-next-20120523.orig/include/acpi/acpi_bus.h
+>> +++ linux-next-20120523/include/acpi/acpi_bus.h
+>> @@ -440,6 +440,8 @@ static inline int acpi_pm_device_sleep_w
+>> =20
+>>  #else	/* CONFIG_ACPI */
+>> =20
+>> +struct acpi_bus_type;
+>> +
+>>  static int register_acpi_bus_type(struct acpi_bus_type *bus) { retu=
+rn 0; }
+>>  static int unregister_acpi_bus_type(struct acpi_bus_type *bus) { re=
+turn 0; }
+>> =20
+>=20
+>=20
+> Subject: [PATCH] ACPI: fix acpi_bus.h build warnings when ACPI is not=
+ enabled
+>=20
+> introduced in Linux-3.5-rc1 by
+> 66886d6f8c9bcdee3d7fce5796dcffd6b4bc0b48
+> (ACPI: Add stubs for (un)register_acpi_bus_type)
+>=20
+> Fix header file warnings when CONFIG_ACPI is not enabled:
+>=20
+> include/acpi/acpi_bus.h:443:42: warning: 'struct acpi_bus_type' decla=
+red inside parameter list
+> include/acpi/acpi_bus.h:443:42: warning: its scope is only this defin=
+ition or declaration, which is probably not
+> include/acpi/acpi_bus.h:444:44: warning: 'struct acpi_bus_type' decla=
+red inside parameter list
+>=20
+> Signed-off-by: Len Brown <len.brown@intel.com>
+> ---
+>  include/acpi/acpi_bus.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> index b0d6282..9e6e1c6 100644
+> --- a/include/acpi/acpi_bus.h
+> +++ b/include/acpi/acpi_bus.h
+> @@ -440,8 +440,8 @@ static inline int acpi_pm_device_sleep_wake(struc=
+t device *dev, bool enable)
+> =20
+>  #else	/* CONFIG_ACPI */
+> =20
+> -static int register_acpi_bus_type(struct acpi_bus_type *bus) { retur=
+n 0; }
+> -static int unregister_acpi_bus_type(struct acpi_bus_type *bus) { ret=
+urn 0; }
+> +static inline int register_acpi_bus_type(void *bus) { return 0; }
+> +static inline int unregister_acpi_bus_type(void *bus) { return 0; }
+> =20
+>  #endif				/* CONFIG_ACPI */
+> =20
 
-	arch/sh/include/asm/thread_info.h:172:2: error: 'TAINT_WARN' undeclared (first use in this function)
 
-Caused by commit edd63a2763bd ("set_restore_sigmask() is never called
-without SIGPENDING (and never should be)").
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Paul Mundt <lethal@linux-sh.org>
-
----
-
-diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
-index 2520a6e..9f02005 100644
---- a/include/asm-generic/bug.h
-+++ b/include/asm-generic/bug.h
-@@ -2,6 +2,7 @@
- #define _ASM_GENERIC_BUG_H
- 
- #include <linux/compiler.h>
-+#include <linux/kernel.h>
- 
- #ifdef CONFIG_BUG
- 
+--=20
+~Randy
