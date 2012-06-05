@@ -1,71 +1,56 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: Tree for Jun 5 (amd64_edac)
-Date: Tue, 05 Jun 2012 14:38:16 -0300
-Message-ID: <4FCE4408.1030506@redhat.com>
-References: <20120605133000.f2d21fb02881ef54a7bfe728@canb.auug.org.au> <4FCE333F.6060207@xenotime.net>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for Apr 12
+Date: Tue, 5 Jun 2012 12:50:19 -0700
+Message-ID: <20120605125019.dca1fd02.akpm@linux-foundation.org>
+References: <20120412145931.9ec6f2b51655071795d60d1d@canb.auug.org.au>
+	<20120412142415.564710b8.akpm@linux-foundation.org>
+	<20120604150455.7a80b311.akpm@linux-foundation.org>
+	<1338849977.2860.9.camel@localhost>
+	<1338864128.17933.2.camel@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:61998 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754843Ab2FERiZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Jun 2012 13:38:25 -0400
-In-Reply-To: <4FCE333F.6060207@xenotime.net>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34652 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750887Ab2FETuU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Jun 2012 15:50:20 -0400
+In-Reply-To: <1338864128.17933.2.camel@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Doug Thompson <dougthompson@xmission.com>, Borislav Petkov <borislav.petkov@amd.com>, linux-edac@vger.kernel.org
+To: Eric Paris <eparis@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, James Morris <jmorris@namei.org>, Stephen Smalley <sds@tycho.nsa.gov>
 
-Hi Randy,
+On Mon, 04 Jun 2012 22:42:08 -0400
+Eric Paris <eparis@redhat.com> wrote:
 
-Em 05-06-2012 13:26, Randy Dunlap escreveu:
-> On 06/04/2012 08:30 PM, Stephen Rothwell wrote:
+> > I really do not want to revert this and feel that the only right fix is
+> > going to be to update your selinux policy to allow this new check.  I'd
+> > rather not allow (whatever program) to truncate() files willy-nilly (in
+> > violation of the intentions of selinux policy)
+> > 
+> > I'm sorry I never saw it sooner.  We've had it in RHEL for even longer
+> > than the 3 months it's been in -next.  I think the 'right' fix is going
+> > to have to be an update to SELinux policy (for your long dead system, if
+> > you give me the denial I can build you a new policy) rather than leaving
+> > the potential security hole in mainline...
 > 
->> Hi all,
->>
->> There will be no linux-next release tomorrow.
->>
->> Changes since 20120604:
+> Andrew sent me his audit log and it didn't show anything.  But it got me
+> thinking.  Now I think this actually is a code bug.  Andrew, can you
+> test this?
 > 
-> 
-> 
-> on x86_64:
-> 
-> drivers/edac/amd64_edac_inj.o: In function `amd64_remove_sysfs_dbg_files':
-> amd64_edac_inj.c:(.text+0x420): multiple definition of `amd64_remove_sysfs_dbg_files'
-> drivers/edac/amd64_edac.o:amd64_edac.c:(.text+0x3d60): first defined here
-> make[3]: *** [drivers/edac/amd64_edac_mod.o] Error 1
-> 
-> 
-> Full randconfig file is attached.
-> 
-> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 2e7bd67..20a4315 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2758,7 +2758,7 @@ static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
+>  			ATTR_ATIME_SET | ATTR_MTIME_SET | ATTR_TIMES_SET))
+>  		return dentry_has_perm(cred, dentry, FILE__SETATTR);
+>  
+> -	if (ia_valid & ATTR_SIZE)
+> +	if ((ia_valid & ATTR_SIZE) && selinux_policycap_openperm)
+>  		av |= FILE__OPEN;
+>  
+>  	return dentry_has_perm(cred, dentry, av);
 
-Thanks for pointing it. The enclosed patch should fix it.
-
-amd64_edac: Avoid compilation breakage
-
-when:
-	CONFIG_EDAC_AMD64=m
-	CONFIG_EDAC_AMD64_ERROR_INJECTION=y
-	# CONFIG_EDAC_DEBUG is not set
-
-The compilation breaks, as amd64_remove_sysfs_dbg_files() were not declared
-as static.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-
-diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
-index 098f336..8d48047 100644
---- a/drivers/edac/amd64_edac.h
-+++ b/drivers/edac/amd64_edac.h
-@@ -421,7 +421,7 @@ static inline int amd64_create_sysfs_dbg_files(struct mem_ctl_info *mci)
- {
- 	return 0;
- }
--void inline amd64_remove_sysfs_dbg_files(struct mem_ctl_info *mci)
-+static void inline amd64_remove_sysfs_dbg_files(struct mem_ctl_info *mci)
- {
- }
- #endif
+That fixed it.
