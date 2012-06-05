@@ -1,53 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: time to clean up your trees
-Date: Tue, 5 Jun 2012 10:58:00 +1000
-Message-ID: <20120605105800.2eb191827746587cbdb60d14@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Tue, 5 Jun 2012 11:25:57 +1000
+Message-ID: <20120605112557.61c2aaea05db2684cecb9835@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__5_Jun_2012_10_58_00_+1000_T75PT8tZk=48pvfk"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__5_Jun_2012_11_25_57_+1000_mHBbspSv.==+vEmo"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:46477 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761312Ab2FEB0H (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jun 2012 21:26:07 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, M R Swami Reddy <MR.Swami.Reddy@ti.com>, Vishwas A Deshpande <vishwas.a.deshpande@ti.com>
 
---Signature=_Tue__5_Jun_2012_10_58_00_+1000_T75PT8tZk=48pvfk
+--Signature=_Tue__5_Jun_2012_11_25_57_+1000_mHBbspSv.==+vEmo
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Now that the merge window has closed, please clean up your linux-next
-included) trees to reflect what is actually in Linus' tree.   This
-especially applies to those who rebased/rewrote their trees before asking
-Linus to merge them (and the quilt series).
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-If you have already done that, then you have my thanks.
+make[4]: *** No rule to make target `sound/soc/codecs/snd-soc-isabelle.c', =
+needed by `sound/soc/codecs/snd-soc-isabelle.o'.  Stop.
+
+Caused by commit 4567db1722aa ("ASoC: Support TI Isabelle Audio
+driver").  Was this ever built?
+
+I have used the sound-asoc tree from next-20120601 again for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Tue__5_Jun_2012_10_58_00_+1000_T75PT8tZk=48pvfk
+--Signature=_Tue__5_Jun_2012_11_25_57_+1000_mHBbspSv.==+vEmo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJPzVmYAAoJEECxmPOUX5FEGMoP/1jSI4FJ4h9sg4NUH2p/oQec
-ewtisJc+fLiobn3MDKG+DBkM3mABQn7Ctx6Pf3JBg3CeBsxDdP7hRiz6KDcmUyBB
-s225nq2xXjwKAJHdHd8zUiy1v/+J0cl+Pe0pWvhe0Q1yS9Ti3pqBQHQsM8XD3rV8
-tX8zN10Xyu7X6bvp8fEzymaCx7FOCs5rcnCNyOGit4P1WkAp6rlCoIGgr2zfkqPn
-PDIkNBvpqRaytXHsUUCV2nukQlcCydBclZE4JI8NLnOtNvTR65GCgP62o7ihQCwU
-yAU0rh7OTc+gylcDHL8YfHGH94Cys/b23NhScV6fQFWOE2wdwwPvsW/kilkdrkwj
-czr0Mkd/2FX7zty8ppBeVBQQxBsraGqGdF+wq4suR/sED8Wx8KQJLlptE7KFi9fC
-gjz0eMIcTJNmOBBe+jeoccpTOPMFTT4Ozj1zsLzlKT4Hr4Ml3tjKrNRSZVOpjh72
-vFTi65LwEb5l3KfFgeM7V+g1knZHUM00q4Jrd8wWZtdJCgKlx8G5mrVnklFZP2io
-BARqxuWJKXrUZbRvdPbZubuy9R3YTK8iEqLmhHx2QBlTzf5tw+zIiSKPVJNWDqoA
-kkgF4/Gs0tc+tC11YvFm/bKOpJwbwrbZFe3YAaBUrddLt8sku021Mz2tNxJAIQiN
-+MvlkSY6PrXYS+NzXHpi
-=D5EU
+iQIcBAEBCAAGBQJPzWAlAAoJEECxmPOUX5FEdHEP/3trRGMgFHTzCM7gPMK8r68r
+SA4+wlqsHiS2aosVbtGJuRWkE5mpC29+8FlaL4YvFQZtt/IJE/jpsZZ2BqxrW3Vy
+7UVmMChG+StCZc26wyo8Se2saoZXjz9NidV8nNOdqf/4qDnP/K5+cD2nEJCKcYbT
+S9KzCdJtKcapK850JNEm2dtPjwrskBazxVadRvIAtnACBvDUzym30rCqI4dKVU/c
+oRW51hiJX5Q/M3Q8eRnZUk855MFv8vPZ6YOJHtioq66FkDU8AmRUk2M6G8xFIXT1
+4Tes5oFrAN+qCDdubJogMQNJxxGeEr4hMpCw1H0oSu+DQoNjgloKhLqOaMj1Jq/z
+EgqE/RTffb6RYnYOZ2GR/wF9x5Jd62rqV1XV1bP5tl2TXo5kCQs1ApAQ1fmAZniQ
+EtHK/j+14+8erA4PS3RnRAai685w0btpRS+/63+ZGWrILoEOBUCOcMctO0dP9Emc
+lSDrrAN2ykc/cl/+vt9xlLHb9q20Fisk/SVi751J8F9OmmfzT7xZky8E1IJJEt0E
+nbMQD2w8PrJGrgz62Nex71BZ4Iwvm+2wShap4bMssOHZX/+kQhzDUrkrMeIaf2pc
+XFo8+w1OeKSFzvwmA6cWEy5A7ZyT42fanXtLL647jQX3VOpOjvELD3Hp171K/XoQ
+sOJzs/w9ZYBxSH30YaMe
+=QKqL
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__5_Jun_2012_10_58_00_+1000_T75PT8tZk=48pvfk--
+--Signature=_Tue__5_Jun_2012_11_25_57_+1000_mHBbspSv.==+vEmo--
