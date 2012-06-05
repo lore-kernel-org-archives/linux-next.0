@@ -1,79 +1,71 @@
-From: Borislav Petkov <bp@amd64.org>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
 Subject: Re: linux-next: Tree for Jun 5 (amd64_edac)
-Date: Tue, 5 Jun 2012 19:27:15 +0200
-Message-ID: <20120605172715.GQ13495@aftab.osrc.amd.com>
-References: <20120605133000.f2d21fb02881ef54a7bfe728@canb.auug.org.au>
- <4FCE333F.6060207@xenotime.net>
- <20120605171704.GP13495@aftab.osrc.amd.com>
- <4FCE40C3.5040902@redhat.com>
+Date: Tue, 05 Jun 2012 14:38:16 -0300
+Message-ID: <4FCE4408.1030506@redhat.com>
+References: <20120605133000.f2d21fb02881ef54a7bfe728@canb.auug.org.au> <4FCE333F.6060207@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s15943758.onlinehome-server.info ([217.160.130.188]:37714 "EHLO
-	mail.x86-64.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753521Ab2FER0v (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Jun 2012 13:26:51 -0400
-Content-Disposition: inline
-In-Reply-To: <4FCE40C3.5040902@redhat.com>
+Received: from mx1.redhat.com ([209.132.183.28]:61998 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754843Ab2FERiZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Jun 2012 13:38:25 -0400
+In-Reply-To: <4FCE333F.6060207@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Doug Thompson <dougthompson@xmission.com>, Borislav Petkov <borislav.petkov@amd.com>, linux-edac@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Doug Thompson <dougthompson@xmission.com>, Borislav Petkov <borislav.petkov@amd.com>, linux-edac@vger.kernel.org
 
-On Tue, Jun 05, 2012 at 02:24:19PM -0300, Mauro Carvalho Chehab wrote:
-> Em 05-06-2012 14:17, Borislav Petkov escreveu:
-> > On Tue, Jun 05, 2012 at 09:26:39AM -0700, Randy Dunlap wrote:
-> >> On 06/04/2012 08:30 PM, Stephen Rothwell wrote:
-> >>
-> >>> Hi all,
-> >>>
-> >>> There will be no linux-next release tomorrow.
-> >>>
-> >>> Changes since 20120604:
-> >>
-> >>
-> >>
-> >> on x86_64:
-> >>
-> >> drivers/edac/amd64_edac_inj.o: In function `amd64_remove_sysfs_dbg_files':
-> >> amd64_edac_inj.c:(.text+0x420): multiple definition of `amd64_remove_sysfs_dbg_files'
-> >> drivers/edac/amd64_edac.o:amd64_edac.c:(.text+0x3d60): first defined here
-> >> make[3]: *** [drivers/edac/amd64_edac_mod.o] Error 1
-> > 
-> > Doesn't trigger on latest linus. But Mauro has a bunch of patches
-> > touching these parts, can you try reverting if it is in linux-next, the
-> > one below:
-> > 
-> > commit faf20d4e226c53a963c384d36d8aa82c77be6dfb
-> > Author: Mauro Carvalho Chehab <mchehab@redhat.com>
-> > Date:   Wed Mar 21 14:00:44 2012 -0300
-> > 
-> >     amd64_edac: convert sysfs logic to use struct device
-> >     
-> >     Now that the EDAC core supports struct device, there's no sense
-> >     on having any logic at the EDAC core to simulate it. So, instead
-> >     of adding such logic there, change the logic at amd64_edac to
-> >     use it.
-> >     
-> >     Reviewed-by: Aristeu Rozanski <arozansk@redhat.com>
-> >     Cc: Doug Thompson <norsk5@yahoo.com>
-> >     Cc: Borislav Petkov <borislav.petkov@amd.com>
-> >     Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-> > 
-> > Thanks.
-> > 
+Hi Randy,
+
+Em 05-06-2012 13:26, Randy Dunlap escreveu:
+> On 06/04/2012 08:30 PM, Stephen Rothwell wrote:
 > 
-> It is probably just a Kconfig issue. I'll prepare a patch fixing it,
-> posting it soon.
+>> Hi all,
+>>
+>> There will be no linux-next release tomorrow.
+>>
+>> Changes since 20120604:
+> 
+> 
+> 
+> on x86_64:
+> 
+> drivers/edac/amd64_edac_inj.o: In function `amd64_remove_sysfs_dbg_files':
+> amd64_edac_inj.c:(.text+0x420): multiple definition of `amd64_remove_sysfs_dbg_files'
+> drivers/edac/amd64_edac.o:amd64_edac.c:(.text+0x3d60): first defined here
+> make[3]: *** [drivers/edac/amd64_edac_mod.o] Error 1
+> 
+> 
+> Full randconfig file is attached.
+> 
+> 
 
-Just add it to the above patch - it is not merged anywhere anyway.
+Thanks for pointing it. The enclosed patch should fix it.
 
--- 
-Regards/Gruss,
-Boris.
+amd64_edac: Avoid compilation breakage
 
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-GM: Alberto Bozzo
-Reg: Dornach, Landkreis Muenchen
-HRB Nr. 43632 WEEE Registernr: 129 19551
+when:
+	CONFIG_EDAC_AMD64=m
+	CONFIG_EDAC_AMD64_ERROR_INJECTION=y
+	# CONFIG_EDAC_DEBUG is not set
+
+The compilation breaks, as amd64_remove_sysfs_dbg_files() were not declared
+as static.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
+index 098f336..8d48047 100644
+--- a/drivers/edac/amd64_edac.h
++++ b/drivers/edac/amd64_edac.h
+@@ -421,7 +421,7 @@ static inline int amd64_create_sysfs_dbg_files(struct mem_ctl_info *mci)
+ {
+ 	return 0;
+ }
+-void inline amd64_remove_sysfs_dbg_files(struct mem_ctl_info *mci)
++static void inline amd64_remove_sysfs_dbg_files(struct mem_ctl_info *mci)
+ {
+ }
+ #endif
