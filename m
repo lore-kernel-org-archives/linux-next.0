@@ -1,60 +1,40 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: Tree for Jun 1 (scsi)
-Date: Wed, 06 Jun 2012 14:54:13 +0900
-Message-ID: <1338962053.23080.7.camel@dabdike.int.hansenpartnership.com>
-References: <20120601132202.ac73b03c845299d384defeaf@canb.auug.org.au>
-	 <4FCC2BF9.7000802@xenotime.net>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: [lm-sensors] [PATCH] hwmon/sch56xx: Depend on watchdog for watchdog core functions
+Date: Wed, 6 Jun 2012 12:29:21 +0200
+Message-ID: <20120606102921.GF3074@spo001.leaseweb.com>
+References: <1337890738-26533-1-git-send-email-hdegoede@redhat.com> <20120524205426.GW3074@spo001.leaseweb.com> <1338307894.478.68.camel@groeck-laptop> <4FC8C5B3.2060108@redhat.com> <20120601160657.3b93393c@endymion.delvare> <20120601152504.GA25384@ericsson.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4FCC2BF9.7000802@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, Dan Williams <dan.j.williams@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ns1.pc-advies.be ([83.149.101.17]:43108 "EHLO
+	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751329Ab2FFK3Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jun 2012 06:29:24 -0400
+Content-Disposition: inline
+In-Reply-To: <20120601152504.GA25384@ericsson.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Guenter Roeck <guenter.roeck@ericsson.com>
+Cc: Jean Delvare <khali@linux-fr.org>, Hans de Goede <hdegoede@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, LM Sensors <lm-sensors@lm-sensors.org>
 
-On Sun, 2012-06-03 at 20:31 -0700, Randy Dunlap wrote:
-> On 05/31/2012 08:22 PM, Stephen Rothwell wrote:
-> 
-> > Hi all,
+Hi All,
+
+> > > Now that we've a common watchdog core, I would also like to convert the
+> > > fschmd watchdog code to it (one of these days). Which raises the question
+> > > through which tree should that conversion go in. fschmd is primarily a hwmon
+> > > driver, but the changes will only touch the watchdog part...
+> > > 
+> > > I guess it would be best to get the conversion in to Wim's tree, even though
+> > > that slightly increases the chance of conflicts. The fschmd driver does not see
+> > > a lot of churn, and I think Wim is a better reviewer for watchdog related
+> > > patches :)
 > > 
-> > Changes since 20120531:
-> 
-> 
-> 
-> already fixed?
-> 
-> on i386 and x86_64, loadable module or builtin:
-> 
-> 
-> ERROR: "scsi_sd_probe_domain" [drivers/scsi/scsi_mod.ko] undefined!
-> or
-> (.text+0x4f6c77): undefined reference to `scsi_sd_probe_domain'
+> > Chances of conflicts are so thin, I vote for getting it through Wim's
+> > watchdog tree.
+> >
+> Ok with me.
 
-This looks to be an obvious thinko:  the symbol is conditionally
-defined, but unconditionally used in
-scsi_scan.c:scsi_complete_async_scans().  We can fix just by removing
-the wrong conditional.
+And also OK for me.
 
-James
-
----
-
-diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
-index 61c82a3..bbbc9c9 100644
---- a/drivers/scsi/scsi.c
-+++ b/drivers/scsi/scsi.c
-@@ -90,11 +90,9 @@ unsigned int scsi_logging_level;
- EXPORT_SYMBOL(scsi_logging_level);
- #endif
- 
--#if IS_ENABLED(CONFIG_PM) || IS_ENABLED(CONFIG_BLK_DEV_SD)
--/* sd and scsi_pm need to coordinate flushing async actions */
-+/* sd, scsi core and power management need to coordinate flushing async actions */
- LIST_HEAD(scsi_sd_probe_domain);
- EXPORT_SYMBOL(scsi_sd_probe_domain);
-                                -#endif
- 
- /* NB: These are exposed through /proc/scsi/scsi and form part of the ABI.
-  * You may not alter any existing entry (although adding new ones is
+Kind regards,
+Wim.
