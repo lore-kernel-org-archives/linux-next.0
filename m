@@ -1,40 +1,76 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [lm-sensors] [PATCH] hwmon/sch56xx: Depend on watchdog for watchdog core functions
-Date: Wed, 6 Jun 2012 12:29:21 +0200
-Message-ID: <20120606102921.GF3074@spo001.leaseweb.com>
-References: <1337890738-26533-1-git-send-email-hdegoede@redhat.com> <20120524205426.GW3074@spo001.leaseweb.com> <1338307894.478.68.camel@groeck-laptop> <4FC8C5B3.2060108@redhat.com> <20120601160657.3b93393c@endymion.delvare> <20120601152504.GA25384@ericsson.com>
+From: Borislav Petkov <bp@amd64.org>
+Subject: Re: linux-next: Tree for Jun 5 (amd64_edac)
+Date: Wed, 6 Jun 2012 15:16:43 +0200
+Message-ID: <20120606131643.GF1644@aftab.osrc.amd.com>
+References: <20120605133000.f2d21fb02881ef54a7bfe728@canb.auug.org.au>
+ <4FCE333F.6060207@xenotime.net>
+ <4FCE4408.1030506@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:43108 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751329Ab2FFK3Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jun 2012 06:29:24 -0400
+Received: from s15943758.onlinehome-server.info ([217.160.130.188]:42440 "EHLO
+	mail.x86-64.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752410Ab2FFNQS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jun 2012 09:16:18 -0400
 Content-Disposition: inline
-In-Reply-To: <20120601152504.GA25384@ericsson.com>
+In-Reply-To: <4FCE4408.1030506@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <guenter.roeck@ericsson.com>
-Cc: Jean Delvare <khali@linux-fr.org>, Hans de Goede <hdegoede@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, LM Sensors <lm-sensors@lm-sensors.org>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Doug Thompson <dougthompson@xmission.com>, linux-edac@vger.kernel.org
 
-Hi All,
+On Tue, Jun 05, 2012 at 02:38:16PM -0300, Mauro Carvalho Chehab wrote:
+> Thanks for pointing it. The enclosed patch should fix it.
+> 
+> amd64_edac: Avoid compilation breakage
+> 
+> when:
+> 	CONFIG_EDAC_AMD64=m
+> 	CONFIG_EDAC_AMD64_ERROR_INJECTION=y
+> 	# CONFIG_EDAC_DEBUG is not set
+> 
+> The compilation breaks, as amd64_remove_sysfs_dbg_files() were not declared
+> as static.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+> 
+> diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
+> index 098f336..8d48047 100644
+> --- a/drivers/edac/amd64_edac.h
+> +++ b/drivers/edac/amd64_edac.h
+> @@ -421,7 +421,7 @@ static inline int amd64_create_sysfs_dbg_files(struct mem_ctl_info *mci)
+>  {
+>  	return 0;
+>  }
+> -void inline amd64_remove_sysfs_dbg_files(struct mem_ctl_info *mci)
+> +static void inline amd64_remove_sysfs_dbg_files(struct mem_ctl_info *mci)
 
-> > > Now that we've a common watchdog core, I would also like to convert the
-> > > fschmd watchdog code to it (one of these days). Which raises the question
-> > > through which tree should that conversion go in. fschmd is primarily a hwmon
-> > > driver, but the changes will only touch the watchdog part...
-> > > 
-> > > I guess it would be best to get the conversion in to Wim's tree, even though
-> > > that slightly increases the chance of conflicts. The fschmd driver does not see
-> > > a lot of churn, and I think Wim is a better reviewer for watchdog related
-> > > patches :)
-> > 
-> > Chances of conflicts are so thin, I vote for getting it through Wim's
-> > watchdog tree.
-> >
-> Ok with me.
+Please merge this one with the previous patch which causes the breakage:
 
-And also OK for me.
+commit faf20d4e226c53a963c384d36d8aa82c77be6dfb
+Author: Mauro Carvalho Chehab <mchehab@redhat.com>
+Date:   Wed Mar 21 14:00:44 2012 -0300
 
-Kind regards,
-Wim.
+    amd64_edac: convert sysfs logic to use struct device
+
+    Now that the EDAC core supports struct device, there's no sense
+    on having any logic at the EDAC core to simulate it. So, instead
+    of adding such logic there, change the logic at amd64_edac to
+    use it.
+
+    Reviewed-by: Aristeu Rozanski <arozansk@redhat.com>
+    Cc: Doug Thompson <norsk5@yahoo.com>
+    Cc: Borislav Petkov <borislav.petkov@amd.com>
+    Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+Thanks.
+
+-- 
+Regards/Gruss,
+Boris.
+
+Advanced Micro Devices GmbH
+Einsteinring 24, 85609 Dornach
+GM: Alberto Bozzo
+Reg: Dornach, Landkreis Muenchen
+HRB Nr. 43632 WEEE Registernr: 129 19551
