@@ -1,76 +1,34 @@
-From: Borislav Petkov <bp@amd64.org>
-Subject: Re: linux-next: Tree for Jun 5 (amd64_edac)
-Date: Wed, 6 Jun 2012 15:16:43 +0200
-Message-ID: <20120606131643.GF1644@aftab.osrc.amd.com>
-References: <20120605133000.f2d21fb02881ef54a7bfe728@canb.auug.org.au>
- <4FCE333F.6060207@xenotime.net>
- <4FCE4408.1030506@redhat.com>
+From: Chris Metcalf <cdmetcalf@comcast.net>
+Subject: kisskb.ellerman.id.au email notifications?
+Date: Wed, 06 Jun 2012 11:54:21 -0400
+Message-ID: <4FCF7D2D.6030809@comcast.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s15943758.onlinehome-server.info ([217.160.130.188]:42440 "EHLO
-	mail.x86-64.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752410Ab2FFNQS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jun 2012 09:16:18 -0400
-Content-Disposition: inline
-In-Reply-To: <4FCE4408.1030506@redhat.com>
+Received: from qmta03.westchester.pa.mail.comcast.net ([76.96.62.32]:42827
+	"EHLO qmta03.westchester.pa.mail.comcast.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756178Ab2FFQAM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jun 2012 12:00:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Doug Thompson <dougthompson@xmission.com>, linux-edac@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-On Tue, Jun 05, 2012 at 02:38:16PM -0300, Mauro Carvalho Chehab wrote:
-> Thanks for pointing it. The enclosed patch should fix it.
-> 
-> amd64_edac: Avoid compilation breakage
-> 
-> when:
-> 	CONFIG_EDAC_AMD64=m
-> 	CONFIG_EDAC_AMD64_ERROR_INJECTION=y
-> 	# CONFIG_EDAC_DEBUG is not set
-> 
-> The compilation breaks, as amd64_remove_sysfs_dbg_files() were not declared
-> as static.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-> 
-> diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
-> index 098f336..8d48047 100644
-> --- a/drivers/edac/amd64_edac.h
-> +++ b/drivers/edac/amd64_edac.h
-> @@ -421,7 +421,7 @@ static inline int amd64_create_sysfs_dbg_files(struct mem_ctl_info *mci)
->  {
->  	return 0;
->  }
-> -void inline amd64_remove_sysfs_dbg_files(struct mem_ctl_info *mci)
-> +static void inline amd64_remove_sysfs_dbg_files(struct mem_ctl_info *mci)
+Stephen -
 
-Please merge this one with the previous patch which causes the breakage:
+I noticed when I merged up to 3.4-rc1 that there were some build issues
+with tilegx (I've pushed the fixes to my tree for linux-next).  Googling
+around a little and referring to some earlier discussions, I realized that
+http://kisskb.ellerman.id.au tracks the build successes and failures for
+various branches and architectures, including tilegx on linux-next.
 
-commit faf20d4e226c53a963c384d36d8aa82c77be6dfb
-Author: Mauro Carvalho Chehab <mchehab@redhat.com>
-Date:   Wed Mar 21 14:00:44 2012 -0300
+My question is whether there's a way to get email notification when a
+particular build does fail.  I'd like to know when things break the tilegx
+build, in between the times when I actually sync up and check it myself. 
+Is there a mechanism for that, or should I stick with periodically checking
+the website manually - which of course is much better than nothing! :-)
 
-    amd64_edac: convert sysfs logic to use struct device
-
-    Now that the EDAC core supports struct device, there's no sense
-    on having any logic at the EDAC core to simulate it. So, instead
-    of adding such logic there, change the logic at amd64_edac to
-    use it.
-
-    Reviewed-by: Aristeu Rozanski <arozansk@redhat.com>
-    Cc: Doug Thompson <norsk5@yahoo.com>
-    Cc: Borislav Petkov <borislav.petkov@amd.com>
-    Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-
-Thanks.
-
+Thanks!
 -- 
-Regards/Gruss,
-Boris.
-
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-GM: Alberto Bozzo
-Reg: Dornach, Landkreis Muenchen
-HRB Nr. 43632 WEEE Registernr: 129 19551
+Chris Metcalf, Tilera Corp.
+http://www.tilera.com
