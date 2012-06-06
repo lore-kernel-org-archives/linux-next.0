@@ -1,83 +1,77 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Jun 5 (amd64_edac)
-Date: Wed, 06 Jun 2012 14:30:01 -0700
-Message-ID: <4FCFCBD9.8080700@xenotime.net>
-References: <20120605133000.f2d21fb02881ef54a7bfe728@canb.auug.org.au> <4FCE333F.6060207@xenotime.net> <4FCE4408.1030506@redhat.com>
+Subject: Re: linux-next: Tree for Jun 1 (scsi)
+Date: Wed, 06 Jun 2012 14:43:01 -0700
+Message-ID: <4FCFCEE5.1000200@xenotime.net>
+References: <20120601132202.ac73b03c845299d384defeaf@canb.auug.org.au>	 <4FCC2BF9.7000802@xenotime.net> <1338962053.23080.7.camel@dabdike.int.hansenpartnership.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:59234 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755620Ab2FFVaM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jun 2012 17:30:12 -0400
-In-Reply-To: <4FCE4408.1030506@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Doug Thompson <dougthompson@xmission.com>, Borislav Petkov <borislav.petkov@amd.com>, linux-edac@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1338962053.23080.7.camel@dabdike.int.hansenpartnership.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, Dan Williams <dan.j.williams@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On 06/05/2012 10:38 AM, Mauro Carvalho Chehab wrote:
+On 06/05/2012 10:54 PM, James Bottomley wrote:
 
-> Hi Randy,
-> 
-> Em 05-06-2012 13:26, Randy Dunlap escreveu:
->> On 06/04/2012 08:30 PM, Stephen Rothwell wrote:
+> On Sun, 2012-06-03 at 20:31 -0700, Randy Dunlap wrote:
+>> On 05/31/2012 08:22 PM, Stephen Rothwell wrote:
 >>
 >>> Hi all,
 >>>
->>> There will be no linux-next release tomorrow.
->>>
->>> Changes since 20120604:
+>>> Changes since 20120531:
 >>
 >>
 >>
->> on x86_64:
+>> already fixed?
 >>
->> drivers/edac/amd64_edac_inj.o: In function `amd64_remove_sysfs_dbg_files':
->> amd64_edac_inj.c:(.text+0x420): multiple definition of `amd64_remove_sysfs_dbg_files'
->> drivers/edac/amd64_edac.o:amd64_edac.c:(.text+0x3d60): first defined here
->> make[3]: *** [drivers/edac/amd64_edac_mod.o] Error 1
+>> on i386 and x86_64, loadable module or builtin:
 >>
 >>
->> Full randconfig file is attached.
->>
->>
+>> ERROR: "scsi_sd_probe_domain" [drivers/scsi/scsi_mod.ko] undefined!
+>> or
+>> (.text+0x4f6c77): undefined reference to `scsi_sd_probe_domain'
 > 
-> Thanks for pointing it. The enclosed patch should fix it.
+> This looks to be an obvious thinko:  the symbol is conditionally
+> defined, but unconditionally used in
+> scsi_scan.c:scsi_complete_async_scans().  We can fix just by removing
+> the wrong conditional.
 > 
-> amd64_edac: Avoid compilation breakage
+> James
 > 
-> when:
-> 	CONFIG_EDAC_AMD64=m
-> 	CONFIG_EDAC_AMD64_ERROR_INJECTION=y
-> 	# CONFIG_EDAC_DEBUG is not set
+> ---
 > 
-> The compilation breaks, as amd64_remove_sysfs_dbg_files() were not declared
-> as static.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+> diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
+> index 61c82a3..bbbc9c9 100644
+> --- a/drivers/scsi/scsi.c
+> +++ b/drivers/scsi/scsi.c
+> @@ -90,11 +90,9 @@ unsigned int scsi_logging_level;
+>  EXPORT_SYMBOL(scsi_logging_level);
+>  #endif
+>  
+> -#if IS_ENABLED(CONFIG_PM) || IS_ENABLED(CONFIG_BLK_DEV_SD)
+> -/* sd and scsi_pm need to coordinate flushing async actions */
+> +/* sd, scsi core and power management need to coordinate flushing async actions */
+>  LIST_HEAD(scsi_sd_probe_domain);
+>  EXPORT_SYMBOL(scsi_sd_probe_domain);
+>                                 -#endif
 
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+Yes, this patch works after I move that "-#endif" to column 1 (or 0).
 
 Thanks.
 
+Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+
+
+>  
+
+>  /* NB: These are exposed through /proc/scsi/scsi and form part of the ABI.
+>   * You may not alter any existing entry (although adding new ones is
 > 
-> diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
-> index 098f336..8d48047 100644
-> --- a/drivers/edac/amd64_edac.h
-> +++ b/drivers/edac/amd64_edac.h
-> @@ -421,7 +421,7 @@ static inline int amd64_create_sysfs_dbg_files(struct mem_ctl_info *mci)
->  {
->  	return 0;
->  }
-> -void inline amd64_remove_sysfs_dbg_files(struct mem_ctl_info *mci)
-> +static void inline amd64_remove_sysfs_dbg_files(struct mem_ctl_info *mci)
->  {
->  }
->  #endif
-> --
+> 
+
 
 
 -- 
