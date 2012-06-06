@@ -1,65 +1,71 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Fengguang Wu <fengguang.wu@intel.com>
 Subject: Re: radio-maxiradio.c: undefined reference to `snd_tea575x_init'
-Date: Wed, 6 Jun 2012 23:15:04 +0200
-Message-ID: <201206062315.04124.hverkuil@xs4all.nl>
-References: <20120329144217.6cacd2f040fa9abb9190ae1e@canb.auug.org.au> <4F74900E.5010501@xenotime.net> <20120606204014.GA8264@localhost>
+Date: Thu, 7 Jun 2012 06:27:32 +0900
+Message-ID: <20120606212732.GA8093@localhost>
+References: <20120329144217.6cacd2f040fa9abb9190ae1e@canb.auug.org.au>
+ <4F74900E.5010501@xenotime.net>
+ <20120606204014.GA8264@localhost>
+ <201206062315.04124.hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120606204014.GA8264@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Fengguang Wu <fengguang.wu@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <201206062315.04124.hverkuil@xs4all.nl>
+Sender: linux-media-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
 Cc: Hans Verkuil <hans.verkuil@cisco.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed June 6 2012 22:40:14 Fengguang Wu wrote:
-> On Thu, Mar 29, 2012 at 09:38:38AM -0700, Randy Dunlap wrote:
-> > On 03/28/2012 08:42 PM, Stephen Rothwell wrote:
-> > 
-> > > Hi all,
+On Wed, Jun 06, 2012 at 11:15:04PM +0200, Hans Verkuil wrote:
+> On Wed June 6 2012 22:40:14 Fengguang Wu wrote:
+> > On Thu, Mar 29, 2012 at 09:38:38AM -0700, Randy Dunlap wrote:
+> > > On 03/28/2012 08:42 PM, Stephen Rothwell wrote:
 > > > 
-> > > Reminder: please do not add stuff destined for v3.5 to linux-next
-> > > included trees/branches until after v3.4-rc1 has been released.
+> > > > Hi all,
+> > > > 
+> > > > Reminder: please do not add stuff destined for v3.5 to linux-next
+> > > > included trees/branches until after v3.4-rc1 has been released.
+> > > > 
+> > > > Changes since 20120328:
 > > > 
-> > > Changes since 20120328:
+> > > 
+> > > on x86_64:
+> > > 
+> > > radio-maxiradio.c:(.devinit.text+0x356ac): undefined reference to `snd_tea575x_init'
+> > > radio-maxiradio.c:(.devexit.text+0x503e): undefined reference to `snd_tea575x_exit'
 > > 
+> > I run into this issue, too, in the 3.5-rc1 based tip/master.
 > > 
-> > on x86_64:
+> >         drivers/built-in.o: In function `maxiradio_probe':
+> >          radio-maxiradio.c:(.devinit.text+0x35a27): undefined reference to `snd_tea575x_init'
+> >         drivers/built-in.o: In function `maxiradio_remove':
+> >          radio-maxiradio.c:(.devexit.text+0x6754): undefined reference to `snd_tea575x_exit'
 > > 
-> > radio-maxiradio.c:(.devinit.text+0x356ac): undefined reference to `snd_tea575x_init'
-> > radio-maxiradio.c:(.devexit.text+0x503e): undefined reference to `snd_tea575x_exit'
+> > Any fixes available now? The related commit is:
+> > 
+> >         commit cfb19b0ab13847a0e0e49521eb94113b0b315e3b
+> >         Author: Hans Verkuil <hans.verkuil@cisco.com>
+> >         Date:   Sun Feb 5 09:53:17 2012 -0300
+> > 
+> >             [media] radio-maxiradio: use the tea575x framework
+> >             
+> >             This card is based on the tea575x receiver. Use the tea575x-tuner framework
+> >             instead of reinventing the wheel.
+> >             
+> >             Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> >             Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+> > 
+> > Thanks,
+> > Fengguang
 > 
-> I run into this issue, too, in the 3.5-rc1 based tip/master.
-> 
->         drivers/built-in.o: In function `maxiradio_probe':
->          radio-maxiradio.c:(.devinit.text+0x35a27): undefined reference to `snd_tea575x_init'
->         drivers/built-in.o: In function `maxiradio_remove':
->          radio-maxiradio.c:(.devexit.text+0x6754): undefined reference to `snd_tea575x_exit'
-> 
-> Any fixes available now? The related commit is:
-> 
->         commit cfb19b0ab13847a0e0e49521eb94113b0b315e3b
->         Author: Hans Verkuil <hans.verkuil@cisco.com>
->         Date:   Sun Feb 5 09:53:17 2012 -0300
-> 
->             [media] radio-maxiradio: use the tea575x framework
->             
->             This card is based on the tea575x receiver. Use the tea575x-tuner framework
->             instead of reinventing the wheel.
->             
->             Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
->             Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-> 
-> Thanks,
-> Fengguang
+> Works for me with 3.5-rc1. There was a fix done in sound/pci/Kconfig that
+> should have solved this.
 
-Works for me with 3.5-rc1. There was a fix done in sound/pci/Kconfig that
-should have solved this.
+Nice.
 
-Is CONFIG_SND_TEA575X defined? Do you have a snd_tea575x_tuner module?
+> Is CONFIG_SND_TEA575X defined? Do you have a snd_tea575x_tuner module?
 
-Regards,
+Sorry I lost the .config. I'll report back if the error shows up again.
 
-	Hans
+Thanks,
+Fengguang
