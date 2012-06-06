@@ -1,56 +1,60 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for Apr 12
-Date: Tue, 5 Jun 2012 12:50:19 -0700
-Message-ID: <20120605125019.dca1fd02.akpm@linux-foundation.org>
-References: <20120412145931.9ec6f2b51655071795d60d1d@canb.auug.org.au>
-	<20120412142415.564710b8.akpm@linux-foundation.org>
-	<20120604150455.7a80b311.akpm@linux-foundation.org>
-	<1338849977.2860.9.camel@localhost>
-	<1338864128.17933.2.camel@localhost>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: Tree for Jun 1 (scsi)
+Date: Wed, 06 Jun 2012 14:54:13 +0900
+Message-ID: <1338962053.23080.7.camel@dabdike.int.hansenpartnership.com>
+References: <20120601132202.ac73b03c845299d384defeaf@canb.auug.org.au>
+	 <4FCC2BF9.7000802@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34652 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750887Ab2FETuU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Jun 2012 15:50:20 -0400
-In-Reply-To: <1338864128.17933.2.camel@localhost>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, James Morris <jmorris@namei.org>, Stephen Smalley <sds@tycho.nsa.gov>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4FCC2BF9.7000802@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, Dan Williams <dan.j.williams@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 04 Jun 2012 22:42:08 -0400
-Eric Paris <eparis@redhat.com> wrote:
-
-> > I really do not want to revert this and feel that the only right fix is
-> > going to be to update your selinux policy to allow this new check.  I'd
-> > rather not allow (whatever program) to truncate() files willy-nilly (in
-> > violation of the intentions of selinux policy)
+On Sun, 2012-06-03 at 20:31 -0700, Randy Dunlap wrote:
+> On 05/31/2012 08:22 PM, Stephen Rothwell wrote:
+> 
+> > Hi all,
 > > 
-> > I'm sorry I never saw it sooner.  We've had it in RHEL for even longer
-> > than the 3 months it's been in -next.  I think the 'right' fix is going
-> > to have to be an update to SELinux policy (for your long dead system, if
-> > you give me the denial I can build you a new policy) rather than leaving
-> > the potential security hole in mainline...
+> > Changes since 20120531:
 > 
-> Andrew sent me his audit log and it didn't show anything.  But it got me
-> thinking.  Now I think this actually is a code bug.  Andrew, can you
-> test this?
 > 
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 2e7bd67..20a4315 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2758,7 +2758,7 @@ static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
->  			ATTR_ATIME_SET | ATTR_MTIME_SET | ATTR_TIMES_SET))
->  		return dentry_has_perm(cred, dentry, FILE__SETATTR);
->  
-> -	if (ia_valid & ATTR_SIZE)
-> +	if ((ia_valid & ATTR_SIZE) && selinux_policycap_openperm)
->  		av |= FILE__OPEN;
->  
->  	return dentry_has_perm(cred, dentry, av);
+> 
+> already fixed?
+> 
+> on i386 and x86_64, loadable module or builtin:
+> 
+> 
+> ERROR: "scsi_sd_probe_domain" [drivers/scsi/scsi_mod.ko] undefined!
+> or
+> (.text+0x4f6c77): undefined reference to `scsi_sd_probe_domain'
 
-That fixed it.
+This looks to be an obvious thinko:  the symbol is conditionally
+defined, but unconditionally used in
+scsi_scan.c:scsi_complete_async_scans().  We can fix just by removing
+the wrong conditional.
+
+James
+
+---
+
+diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
+index 61c82a3..bbbc9c9 100644
+--- a/drivers/scsi/scsi.c
++++ b/drivers/scsi/scsi.c
+@@ -90,11 +90,9 @@ unsigned int scsi_logging_level;
+ EXPORT_SYMBOL(scsi_logging_level);
+ #endif
+ 
+-#if IS_ENABLED(CONFIG_PM) || IS_ENABLED(CONFIG_BLK_DEV_SD)
+-/* sd and scsi_pm need to coordinate flushing async actions */
++/* sd, scsi core and power management need to coordinate flushing async actions */
+ LIST_HEAD(scsi_sd_probe_domain);
+ EXPORT_SYMBOL(scsi_sd_probe_domain);
+                                -#endif
+ 
+ /* NB: These are exposed through /proc/scsi/scsi and form part of the ABI.
+  * You may not alter any existing entry (although adding new ones is
