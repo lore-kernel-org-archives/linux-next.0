@@ -1,64 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: boot problem with next-20120607
-Date: Thu, 7 Jun 2012 13:53:20 +1000
-Message-ID: <20120607135320.7a1298385346bc238a0f92b0@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for Jun 7 (staging/ccg)
+Date: Thu, 07 Jun 2012 09:30:28 -0700
+Message-ID: <4FD0D724.40308@xenotime.net>
+References: <20120607131802.d90de854f06c5530c5fb2b33@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__7_Jun_2012_13_53_20_+1000_QnczV6cTb70nRkxb"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:57596 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752672Ab2FGDxf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jun 2012 23:53:35 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Khlebnikov <khlebnikov@openvz.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120607131802.d90de854f06c5530c5fb2b33@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Mike Lockwood <lockwood@android.com>, devel@driverdev.osuosl.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__7_Jun_2012_13_53_20_+1000_QnczV6cTb70nRkxb
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 06/06/2012 08:18 PM, Stephen Rothwell wrote:
 
-Hi Andrew,
+> Hi all,
+> 
+> For the fist time in my memory, today's linux-next build required no
+> manual intervention i.e. there are no new conflicts or build problems.
+> 
+> Changes since 20120604:
 
-My boot of next-20120607 in PowerPC produces lots of these warnings:
 
-BUG: Bad rss-counter state mm:c000000278508000 idx:0 val:-27
-BUG: Bad rss-counter state mm:c000000278284000 idx:0 val:-27
-BUG: Bad rss-counter state mm:c000000279e13000 idx:0 val:-27
-BUG: Bad rss-counter state mm:c000000278285400 idx:0 val:-27
+on x86_64:
 
-And so on (with different mm, idx and val numbers).  Searching showed me
-commit "mm: correctly synchronize rss-counters at exit/exec" which seems
-to be there to fix this exact problem?
+In file included from drivers/staging/ccg/ccg.c:59:0:
+drivers/staging/ccg/../../usb/gadget/f_fs.c:40:0: warning: "pr_vdebug" redefined
+drivers/staging/ccg/../../usb/gadget/u_serial.c:138:0: note: this is the location of the previous definition
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-P.S. that patch also has conflict markers in the commit message ...
-
---Signature=_Thu__7_Jun_2012_13_53_20_+1000_QnczV6cTb70nRkxb
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJP0CWwAAoJEECxmPOUX5FE6VwP/1YegWVnbBdoLeOOomUlvlMB
-ZQN1dvuo5PFeSKgT5XcA1hWeVleeTHvG47LzJ49MClrORZlgntHiPkY5hNr2X0Io
-BO0bXO7RwOLbDOQzvB4pYVyaAqFyjGKth0bKSwph62YPqPwkbw5NA/g5hVCoLGXw
-sNPtouCjnsT1rvm7+uo7CFKNRwg6rroQNJ+i2Dz6D7oxkZ6nUe7ma11gjEOudRL/
-E6uToLryBb8wS0AosUWSGkFXeuSVIgDRaOj3njZ78QGNeYUzt32/f/FVw6N4hPjk
-OW7x4MfTJZg6EFVN5otj53wq08hmiA/Zy8DGkRNM87wN+iNBgjtVKvNu6uXPeYgu
-JwAt1WnoO3vn5S0tndEG248S6aMnJPQmGupZPTo+2uRgwL6VxUkmgUPjDfUPEimn
-Aj9gJdShUD1uHD4zcXFV3kY6QLP9V+P1XN5ppCMeVDh0MhnJYnnb1omIbSorrDtJ
-83EZvugDhf8OikDuQHXxDeoOtP4SFC26zEYAj4ZViNXWbZtA0If2f1/BvyH8+AuE
-9qxirzPFP3NAHZ3HBK5PUKG6bKptlfAbWqAwlKbZzKEwVC/scRvpHwUG9aDKHdLe
-OJb4WFmh3TzTkP6Pi0ohm9P08kIh3uZsrGd8EiQHa6nF27P1d16RYLS+2cgiiiVk
-Dlm763U8nyDtJHr+nL5k
-=PN89
------END PGP SIGNATURE-----
-
---Signature=_Thu__7_Jun_2012_13_53_20_+1000_QnczV6cTb70nRkxb--
+-- 
+~Randy
