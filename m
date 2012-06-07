@@ -1,44 +1,28 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: linux-next: boot problem with next-20120607
-Date: Thu, 07 Jun 2012 16:20:22 -0600
-Message-ID: <4FD12926.8050200@wwwdotorg.org>
-References: <20120607135320.7a1298385346bc238a0f92b0@canb.auug.org.au> <20120607150549.63f3ab81.akpm@linux-foundation.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: Tree for Jun 7 (fs / block / rcu)
+Date: Thu, 7 Jun 2012 23:31:07 +0100
+Message-ID: <20120607223107.GA21150@sirena.org.uk>
+References: <20120607131802.d90de854f06c5530c5fb2b33@canb.auug.org.au>
+ <4FD0DD9F.5040206@xenotime.net>
+ <20120607200007.GA3352@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120607150549.63f3ab81.akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Khlebnikov <khlebnikov@openvz.org>, Oleg Nesterov <oleg@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:48292 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933102Ab2FGWbR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jun 2012 18:31:17 -0400
+Content-Disposition: inline
+In-Reply-To: <20120607200007.GA3352@codeaurora.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Brown <davidb@codeaurora.org>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
-On 06/07/2012 04:05 PM, Andrew Morton wrote:
-> On Thu, 7 Jun 2012 13:53:20 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
->> Hi Andrew,
->>
->> My boot of next-20120607 in PowerPC produces lots of these warnings:
->>
->> BUG: Bad rss-counter state mm:c000000278508000 idx:0 val:-27
->> BUG: Bad rss-counter state mm:c000000278284000 idx:0 val:-27
->> BUG: Bad rss-counter state mm:c000000279e13000 idx:0 val:-27
->> BUG: Bad rss-counter state mm:c000000278285400 idx:0 val:-27
->>
->> And so on (with different mm, idx and val numbers).  Searching showed me
->> commit "mm: correctly synchronize rss-counters at exit/exec" which seems
->> to be there to fix this exact problem?
-> 
-> Well that's a worry.  Are you really sure
-> mm-correctly-synchronize-rss-counters-at-exit-exec.patch was applied at
-> the time?
-> 
-> There's been an extended amount of inconclusive waffling on that patch,
-> but I thought it concerned the best way to fix it, rather than
-> *whether* it fixes it.
+On Thu, Jun 07, 2012 at 01:00:07PM -0700, David Brown wrote:
+> On Thu, Jun 07, 2012 at 09:58:07AM -0700, Randy Dunlap wrote:
 
-I see those same errors on my ARM system. I found that reverting that
-patch (105d42c mm: correctly synchronize rss-counters at exit/exec) made
-them go away, although I didn't investigate whether that just removed
-some debug print or actually solved a problem.
+> net/built-in.o:/home/davidb/upstream/kdev/kernel/include/linux/rcupdate.h:312: more undefined references to `rcu_is_cpu_idle' follow
+
+This is because rcu_is_cpu_idle() is only defined if PROVE_RCU but it's
+used in a bunch of other cases.
