@@ -1,45 +1,42 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: linux-next: Tree for Jun 7 (staging/ccg #2)
-Date: Thu, 7 Jun 2012 16:59:13 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1206071646360.1185-100000@iolanthe.rowland.org>
-References: <4FD10A30.50707@xenotime.net>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: boot problem with next-20120607
+Date: Thu, 7 Jun 2012 15:05:49 -0700
+Message-ID: <20120607150549.63f3ab81.akpm@linux-foundation.org>
+References: <20120607135320.7a1298385346bc238a0f92b0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:54960 "HELO
-	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S932313Ab2FGU7O (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jun 2012 16:59:14 -0400
-In-Reply-To: <4FD10A30.50707@xenotime.net>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54133 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933030Ab2FGWFv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jun 2012 18:05:51 -0400
+In-Reply-To: <20120607135320.7a1298385346bc238a0f92b0@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>, devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Lockwood <lockwood@android.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Khlebnikov <khlebnikov@openvz.org>, Oleg Nesterov <oleg@redhat.com>
 
-On Thu, 7 Jun 2012, Randy Dunlap wrote:
+On Thu, 7 Jun 2012 13:53:20 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> on x86_64:
+> Hi Andrew,
 > 
->   CC [M]  drivers/staging/ccg/ccg.o
-> In file included from drivers/staging/ccg/../../usb/gadget/f_mass_storage.c:311:0,
->                  from drivers/staging/ccg/ccg.c:52:
-> drivers/staging/ccg/../../usb/gadget/storage_common.c: In function 'fsg_lun_open':
-> drivers/staging/ccg/../../usb/gadget/storage_common.c:686:3: error: implicit declaration of function 'bdev_logical_block_size'
-> drivers/staging/ccg/../../usb/gadget/storage_common.c:687:3: error: implicit declaration of function 'blksize_bits'
-> In file included from drivers/staging/ccg/ccg.c:52:0:
-> drivers/staging/ccg/../../usb/gadget/f_mass_storage.c: In function 'fsg_main_thread':
-> drivers/staging/ccg/../../usb/gadget/f_mass_storage.c:2624:2: error: implicit declaration of function 'set_fs'
-> drivers/staging/ccg/../../usb/gadget/f_mass_storage.c:2624:2: error: implicit declaration of function 'get_ds'
+> My boot of next-20120607 in PowerPC produces lots of these warnings:
+> 
+> BUG: Bad rss-counter state mm:c000000278508000 idx:0 val:-27
+> BUG: Bad rss-counter state mm:c000000278284000 idx:0 val:-27
+> BUG: Bad rss-counter state mm:c000000279e13000 idx:0 val:-27
+> BUG: Bad rss-counter state mm:c000000278285400 idx:0 val:-27
+> 
+> And so on (with different mm, idx and val numbers).  Searching showed me
+> commit "mm: correctly synchronize rss-counters at exit/exec" which seems
+> to be there to fix this exact problem?
 
-The problems above are caused by the fact that 
-drivers/staging/ccg/Kconfig does not make USB_G_CGG dependent on BLOCK.
+Well that's a worry.  Are you really sure
+mm-correctly-synchronize-rss-counters-at-exit-exec.patch was applied at
+the time?
 
-> In file included from drivers/staging/ccg/ccg.c:59:0:
-> drivers/staging/ccg/../../usb/gadget/f_fs.c: At top level:
-> drivers/staging/ccg/../../usb/gadget/f_fs.c:40:0: warning: "pr_vdebug" redefined
-> drivers/staging/ccg/../../usb/gadget/u_serial.c:138:0: note: this is the location of the previous definition
-
-This could be fixed by adding a #ifndef guard to f_fs.c and u_serial.c.  
-It's a little awkward to combine independent source files this way.
-
-Alan Stern
+There's been an extended amount of inconclusive waffling on that patch,
+but I thought it concerned the best way to fix it, rather than
+*whether* it fixes it.
