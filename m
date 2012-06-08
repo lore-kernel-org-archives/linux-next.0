@@ -1,275 +1,63 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH] staging: comedi: das08: Reduce conditional compilation
-Date: Fri, 08 Jun 2012 13:20:32 -0700
-Message-ID: <4FD25E90.1060105@xenotime.net>
-References: <4FD24467.5030202@mev.co.uk> <1339180738-4507-1-git-send-email-abbotti@mev.co.uk>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: frontswap.v16 now in Linus tree, please stop pulling frontswap for
+ linux-next
+Date: Fri, 8 Jun 2012 15:04:05 -0700 (PDT)
+Message-ID: <b4f9b288-da94-4e54-b5dd-7d8b0b4e5d68@default>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:37440 "HELO
-	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S933473Ab2FHUUo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jun 2012 16:20:44 -0400
-In-Reply-To: <1339180738-4507-1-git-send-email-abbotti@mev.co.uk>
+Received: from rcsinet15.oracle.com ([148.87.113.117]:47085 "EHLO
+	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964922Ab2FHWEY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jun 2012 18:04:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ian Abbott <abbotti@mev.co.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Abbott <ian.abbott@mev.co.uk>, Frank Mori Hess <fmhess@users.sourceforge.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Konrad Wilk <konrad.wilk@oracle.com>, Sasha Levin <levinsasha928@gmail.com>, linux-next@vger.kernel.org
 
-On 06/08/2012 11:38 AM, Ian Abbott wrote:
+Hi Stephen --
 
-> This code is used by some combination of the CONFIG_COMEDI_DAS08_CS,
-> CONFIG_COMEDI_DAS08_ISA, and CONFIG_COMEDI_DAS08_PCI and contains a lot
-> of conditional compilation.
+Don't know if Konrad is on vacation today or if this is already
+resolved but, if not, please stop pulling frontswap.v14 (tmem branch)
+from Konrad as frontswap.v16 is now in Linus' tree as of
+Monday, shortly after -rc1.
+
+Thanks,
+Dan
+
+2790 Merging tmem/linux-next (0f1ea93 Merge branch 'stable/frontswap.v14' into linux-next)
+2791 $ git merge tmem/linux-next
+2792 Resolved 'Documentation/vm/frontswap.txt' using previous resolution.
+2793 Resolved 'include/linux/frontswap.h' using previous resolution.
+2794 Resolved 'mm/Makefile' using previous resolution.
+2795 Resolved 'mm/frontswap.c' using previous resolution.
+2796 Resolved 'mm/page_io.c' using previous resolution.
+2797 Auto-merging mm/page_io.c
+2798 CONFLICT (content): Merge conflict in mm/page_io.c
+2799 Auto-merging mm/frontswap.c
+2800 CONFLICT (add/add): Merge conflict in mm/frontswap.c
+2801 Auto-merging mm/Makefile
+2802 CONFLICT (content): Merge conflict in mm/Makefile
+2803 Auto-merging include/linux/frontswap.h
+2804 CONFLICT (add/add): Merge conflict in include/linux/frontswap.h
+2805 Auto-merging Documentation/vm/frontswap.txt
+2806 CONFLICT (add/add): Merge conflict in Documentation/vm/frontswap.txt
+2807 Automatic merge failed; fix conflicts and then commit the result.
+
+> -----Original Message-----
+> From: Sasha Levin [mailto:levinsasha928@gmail.com]
+> Sent: Friday, June 08, 2012 3:44 PM
+> To: Dan Magenheimer
+> Cc: Konrad Wilk
+> Subject: RE: [PATCH 08/11] mm: frontswap: add tracing support
 > 
-> Remove most of the conditional compilation, relying on the compiler to
-> optimize out unused static functions and data.  Use the '__maybe_unused'
-> tag for those functions that cause compiler warnings as a result of
-> this.
+> On Thu, 2012-06-07 at 14:10 -0700, Dan Magenheimer wrote:
+> > > From: Konrad Rzeszutek Wilk
+> > > Subject: Re: [PATCH 08/11] mm: frontswap: add tracing support
+> >
 > 
-> Also change the DO_COMEDI_DRIVER_REGISTER macro from a conditionally
-> defined macro to a manifest constant macro to allow it to be tested
-> outside the preprocessor (although this is not currently needed).
+> btw, I've based my original patch series on linux-next, and it turned
+> out to be outdated. I'm not sure what's being pulled for linux-next, but
+> it probably should be updated.
 > 
-> Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
-
-
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-
-Thanks.
-
-> ---
-> v2: Add test to top of das08_attach_pci() to allow compiler to optimize
-> most of it out if CONFIG_COMEDI_DAS08_PCI is not enabled.
-> ---
->  drivers/staging/comedi/drivers/das08.c |   74 +++++++++++++-------------------
->  1 files changed, 30 insertions(+), 44 deletions(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/das08.c b/drivers/staging/comedi/drivers/das08.c
-> index fa2784d..f99f72b 100644
-> --- a/drivers/staging/comedi/drivers/das08.c
-> +++ b/drivers/staging/comedi/drivers/das08.c
-> @@ -60,9 +60,9 @@
->  
->  #define DRV_NAME "das08"
->  
-> -#if IS_ENABLED(CONFIG_COMEDI_DAS08_ISA) || IS_ENABLED(CONFIG_COMEDI_DAS08_PCI)
-> -#define DO_COMEDI_DRIVER_REGISTER
-> -#endif
-> +#define DO_COMEDI_DRIVER_REGISTER \
-> +	(IS_ENABLED(CONFIG_COMEDI_DAS08_ISA) || \
-> +	 IS_ENABLED(CONFIG_COMEDI_DAS08_PCI))
->  
->  #define PCI_VENDOR_ID_COMPUTERBOARDS 0x1307
->  #define PCI_DEVICE_ID_PCIDAS08 0x29
-> @@ -341,22 +341,19 @@ static int das08_do_wbits(struct comedi_device *dev, struct comedi_subdevice *s,
->  	return 2;
->  }
->  
-> -#if IS_ENABLED(CONFIG_COMEDI_DAS08_ISA)
-> -static int das08jr_di_rbits(struct comedi_device *dev,
-> -			    struct comedi_subdevice *s,
-> -			    struct comedi_insn *insn, unsigned int *data)
-> +static int __maybe_unused
-> +das08jr_di_rbits(struct comedi_device *dev, struct comedi_subdevice *s,
-> +		 struct comedi_insn *insn, unsigned int *data)
->  {
->  	data[0] = 0;
->  	data[1] = inb(dev->iobase + DAS08JR_DIO);
->  
->  	return 2;
->  }
-> -#endif
->  
-> -#if IS_ENABLED(CONFIG_COMEDI_DAS08_ISA)
-> -static int das08jr_do_wbits(struct comedi_device *dev,
-> -			    struct comedi_subdevice *s,
-> -			    struct comedi_insn *insn, unsigned int *data)
-> +static int __maybe_unused
-> +das08jr_do_wbits(struct comedi_device *dev, struct comedi_subdevice *s,
-> +		 struct comedi_insn *insn, unsigned int *data)
->  {
->  	struct das08_private_struct *devpriv = dev->private;
->  
-> @@ -370,12 +367,10 @@ static int das08jr_do_wbits(struct comedi_device *dev,
->  
->  	return 2;
->  }
-> -#endif
->  
-> -#if IS_ENABLED(CONFIG_COMEDI_DAS08_ISA)
-> -static int das08jr_ao_winsn(struct comedi_device *dev,
-> -			    struct comedi_subdevice *s,
-> -			    struct comedi_insn *insn, unsigned int *data)
-> +static int __maybe_unused
-> +das08jr_ao_winsn(struct comedi_device *dev, struct comedi_subdevice *s,
-> +		 struct comedi_insn *insn, unsigned int *data)
->  {
->  	int n;
->  	int lsb, msb;
-> @@ -401,7 +396,6 @@ static int das08jr_ao_winsn(struct comedi_device *dev,
->  
->  	return n;
->  }
-> -#endif
->  
->  /*
->   *
-> @@ -409,10 +403,9 @@ static int das08jr_ao_winsn(struct comedi_device *dev,
->   * a different method to force an update.
->   *
->   */
-> -#if IS_ENABLED(CONFIG_COMEDI_DAS08_ISA)
-> -static int das08ao_ao_winsn(struct comedi_device *dev,
-> -			    struct comedi_subdevice *s,
-> -			    struct comedi_insn *insn, unsigned int *data)
-> +static int __maybe_unused
-> +das08ao_ao_winsn(struct comedi_device *dev, struct comedi_subdevice *s,
-> +		 struct comedi_insn *insn, unsigned int *data)
->  {
->  	int n;
->  	int lsb, msb;
-> @@ -438,7 +431,6 @@ static int das08ao_ao_winsn(struct comedi_device *dev,
->  
->  	return n;
->  }
-> -#endif
->  
->  static unsigned int i8254_read_channel_low(unsigned int base, int chan)
->  {
-> @@ -570,7 +562,7 @@ static int das08_counter_config(struct comedi_device *dev,
->  	return 2;
->  }
->  
-> -#ifdef DO_COMEDI_DRIVER_REGISTER
-> +#if DO_COMEDI_DRIVER_REGISTER
->  static const struct das08_board_struct das08_boards[] = {
->  #if IS_ENABLED(CONFIG_COMEDI_DAS08_ISA)
->  	{
-> @@ -943,7 +935,6 @@ int das08_common_attach(struct comedi_device *dev, unsigned long iobase)
->  }
->  EXPORT_SYMBOL_GPL(das08_common_attach);
->  
-> -#if IS_ENABLED(CONFIG_COMEDI_DAS08_PCI)
->  static int das08_pci_attach_common(struct comedi_device *dev,
->  				   struct pci_dev *pdev)
->  {
-> @@ -951,6 +942,9 @@ static int das08_pci_attach_common(struct comedi_device *dev,
->  	unsigned long pci_iobase;
->  	struct das08_private_struct *devpriv = dev->private;
->  
-> +	if (!IS_ENABLED(CONFIG_COMEDI_DAS08_PCI))
-> +		return -EINVAL;
-> +
->  	devpriv->pdev = pdev;
->  	/*  enable PCI device and reserve I/O spaces */
->  	if (comedi_pci_enable(pdev, dev->driver->driver_name)) {
-> @@ -977,28 +971,28 @@ static int das08_pci_attach_common(struct comedi_device *dev,
->  #endif
->  	return das08_common_attach(dev, iobase);
->  }
-> -#endif
->  
-> -#if IS_ENABLED(CONFIG_COMEDI_DAS08_PCI)
->  static const struct das08_board_struct *
->  das08_find_pci_board(struct pci_dev *pdev)
->  {
-> +#if DO_COMEDI_DRIVER_REGISTER
->  	unsigned int i;
->  	for (i = 0; i < ARRAY_SIZE(das08_boards); i++)
->  		if (das08_boards[i].bustype == pci &&
->  		    pdev->device == das08_boards[i].id)
->  			return &das08_boards[i];
-> +#endif
->  	return NULL;
->  }
-> -#endif
->  
-> -#if IS_ENABLED(CONFIG_COMEDI_DAS08_PCI)
->  /* only called in the PCI probe path, via comedi_pci_auto_config() */
-> -static int __devinit das08_attach_pci(struct comedi_device *dev,
-> -				   struct pci_dev *pdev)
-> +static int __devinit __maybe_unused
-> +das08_attach_pci(struct comedi_device *dev, struct pci_dev *pdev)
->  {
->  	int ret;
->  
-> +	if (!IS_ENABLED(CONFIG_COMEDI_DAS08_PCI))
-> +		return -EINVAL;
->  	ret = alloc_private(dev, sizeof(struct das08_private_struct));
->  	if (ret < 0)
->  		return ret;
-> @@ -1010,9 +1004,7 @@ static int __devinit das08_attach_pci(struct comedi_device *dev,
->  	}
->  	return das08_pci_attach_common(dev, pdev);
->  }
-> -#endif
->  
-> -#if IS_ENABLED(CONFIG_COMEDI_DAS08_PCI)
->  static struct pci_dev *das08_find_pci(struct comedi_device *dev,
->  				      int bus, int slot)
->  {
-> @@ -1063,10 +1055,9 @@ static struct pci_dev *das08_find_pci(struct comedi_device *dev,
->  			thisboard->name);
->  	return NULL;
->  }
-> -#endif
->  
-> -#ifdef DO_COMEDI_DRIVER_REGISTER
-> -static int das08_attach(struct comedi_device *dev, struct comedi_devconfig *it)
-> +static int __maybe_unused
-> +das08_attach(struct comedi_device *dev, struct comedi_devconfig *it)
->  {
->  	const struct das08_board_struct *thisboard = comedi_board(dev);
->  	struct das08_private_struct *devpriv;
-> @@ -1097,7 +1088,6 @@ static int das08_attach(struct comedi_device *dev, struct comedi_devconfig *it)
->  	} else
->  		return -EIO;
->  }
-> -#endif /* DO_COMEDI_DRIVER_REGISTER */
->  
->  void das08_common_detach(struct comedi_device *dev)
->  {
-> @@ -1106,8 +1096,7 @@ void das08_common_detach(struct comedi_device *dev)
->  }
->  EXPORT_SYMBOL_GPL(das08_common_detach);
->  
-> -#ifdef DO_COMEDI_DRIVER_REGISTER
-> -static void das08_detach(struct comedi_device *dev)
-> +static void __maybe_unused das08_detach(struct comedi_device *dev)
->  {
->  	const struct das08_board_struct *thisboard = comedi_board(dev);
->  	struct das08_private_struct *devpriv = dev->private;
-> @@ -1126,16 +1115,13 @@ static void das08_detach(struct comedi_device *dev)
->  		}
->  	}
->  }
-> -#endif /* DO_COMEDI_DRIVER_REGISTER */
->  
-> -#ifdef DO_COMEDI_DRIVER_REGISTER
-> +#if DO_COMEDI_DRIVER_REGISTER
->  static struct comedi_driver das08_driver = {
->  	.driver_name = DRV_NAME,
->  	.module = THIS_MODULE,
->  	.attach = das08_attach,
-> -#if IS_ENABLED(CONFIG_COMEDI_DAS08_PCI)
->  	.attach_pci = das08_attach_pci,
-> -#endif
->  	.detach = das08_detach,
->  	.board_name = &das08_boards[0].name,
->  	.num_names = sizeof(das08_boards) / sizeof(struct das08_board_struct),
-> @@ -1170,7 +1156,7 @@ static struct pci_driver das08_pci_driver = {
->  };
->  #endif /* CONFIG_COMEDI_DAS08_PCI */
->  
-> -#ifdef DO_COMEDI_DRIVER_REGISTER
-> +#if DO_COMEDI_DRIVER_REGISTER
->  #if IS_ENABLED(CONFIG_COMEDI_DAS08_PCI)
->  module_comedi_pci_driver(das08_driver, das08_pci_driver);
->  #else
-
-
-
--- 
-~Randy
