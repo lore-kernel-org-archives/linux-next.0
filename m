@@ -1,91 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: boot problem with next-20120607
-Date: Fri, 8 Jun 2012 10:50:20 +1000
-Message-ID: <20120608105020.532915a90f3e5322ee28c05f@canb.auug.org.au>
-References: <20120607135320.7a1298385346bc238a0f92b0@canb.auug.org.au>
-	<20120607150549.63f3ab81.akpm@linux-foundation.org>
-	<20120608095755.2676d319863e46b87b907774@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the leds tree
+Date: Fri, 8 Jun 2012 12:44:48 +1000
+Message-ID: <20120608124448.2ff862098d474dc6a567dc46@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Jun_2012_10_50_20_+1000_M926uvDHEx+8AxpJ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:49915 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755711Ab2FHAu1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jun 2012 20:50:27 -0400
-In-Reply-To: <20120608095755.2676d319863e46b87b907774@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Khlebnikov <khlebnikov@openvz.org>, Oleg Nesterov <oleg@redhat.com>
+ boundary="Signature=_Fri__8_Jun_2012_12_44_48_+1000_wc/ZWM+f2zydsD=9"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bryan Wu <bryan.wu@canonical.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Baltieri <fabio.baltieri@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__8_Jun_2012_10_50_20_+1000_M926uvDHEx+8AxpJ
+--Signature=_Fri__8_Jun_2012_12_44_48_+1000_wc/ZWM+f2zydsD=9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Bryan,
 
-On Fri, 8 Jun 2012 09:57:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> On Thu, 7 Jun 2012 15:05:49 -0700 Andrew Morton <akpm@linux-foundation.or=
-g> wrote:
-> >
-> > On Thu, 7 Jun 2012 13:53:20 +1000 Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> > >=20
-> > > My boot of next-20120607 in PowerPC produces lots of these warnings:
-> > >=20
-> > > BUG: Bad rss-counter state mm:c000000278508000 idx:0 val:-27
-> > > BUG: Bad rss-counter state mm:c000000278284000 idx:0 val:-27
-> > > BUG: Bad rss-counter state mm:c000000279e13000 idx:0 val:-27
-> > > BUG: Bad rss-counter state mm:c000000278285400 idx:0 val:-27
-> > >=20
-> > > And so on (with different mm, idx and val numbers).  Searching showed=
- me
-> > > commit "mm: correctly synchronize rss-counters at exit/exec" which se=
-ems
-> > > to be there to fix this exact problem?
-> >=20
-> > Well that's a worry.  Are you really sure
-> > mm-correctly-synchronize-rss-counters-at-exit-exec.patch was applied at
-> > the time?
->=20
-> Yes.  This was exactly next-20120607.
->=20
-> > There's been an extended amount of inconclusive waffling on that patch,
-> > but I thought it concerned the best way to fix it, rather than
-> > *whether* it fixes it.
->=20
-> Ah, well, it may fix it for some, but not for me - I have never seen
-> those messages before yesterday.
+After merging the leds tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-And with that patch reverted, I get no messages ...
+drivers/leds/led-core.c: In function 'led_set_software_blink':
+drivers/leds/led-core.c:44:2: error: implicit declaration of function 'led_=
+stop_software_blink' [-Werror=3Dimplicit-function-declaration]
+
+Caused by commit 12b204f41034 ("leds: fix led_brightness_set when
+soft-blinking").  Please build test this stuff.
+
+I have used the leds tree from next-20120607 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__8_Jun_2012_10_50_20_+1000_M926uvDHEx+8AxpJ
+--Signature=_Fri__8_Jun_2012_12_44_48_+1000_wc/ZWM+f2zydsD=9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP0UxMAAoJEECxmPOUX5FEO2UP/RXCHmSy5Gv9zFG5Egg/G3tX
-w4TnOJTiBCTSxtZNUe3kE136zo9ncsThzsJJ+58jeNaXAKlIzPVmToZTygY591fb
-JGZhQtCIX8xC2H+UaXeJg6N5Ck5qeEes8hxNAkRkvjCzwd1vJQJOdyG/ohEEcdHp
-i8pwzGlauPbLniGplvakry6wMdfXNQg4e01SLfl/LkwRHKr61HqSrVGscDD4EdPB
-99HeTO+WABFwpVNC9ToY6x5M0x4Z7HmRj/qmMu0C7IpUqN/WeDDSlLK3a+6Yi2vX
-wDAX8EooDgQMeOn91KFq0WAEoyBUoquNM+YM4WTzztSc6jfgDGlVkvHSbBHk2OL3
-R5vpWU24DsrA3Xj5aARb5dEou4UbuvaX7Dm5F3wQZQQXhuJzsUfgtAO9gcaO0QLh
-OSGDfU6Mtp92/iNFTUCKrQnRIsT15cc+uHxnuoL9LfWv4yLuMWDNh/bN2+G28V/l
-Uz1x0LbSNSPo5dzbBj4DAK8QL35GeQO01PhUZWKtEJ/QDgj25lbyZs0Q7FmX9lik
-vY1O6rUbZ7JRFv05XaXAkXSSkGgrruCqeWm/d+XSDqiMrv97M0nGOxnogFcDIN2w
-PMDVUkIwVgEdQudkx7sdmDptiZm/sz34fJzVgMFrCsUyX3mcDnBKVVQm18Vw9PNz
-OkYxVyXvVc56iQTqQA/j
-=3UB2
+iQIcBAEBCAAGBQJP0WcgAAoJEECxmPOUX5FExVUP/2jeOETwoE6N0Oouy7umX/YB
+frWB7+08y8x+CvOgx7PA1UoQe9+4jSNFqKJsFJwO64zLdVFp/Nrqeo2d7RDoknti
+wiO5r1WW39svvXeMD0MnW3bgh49b7rPgyWyTDR+/gZjIAyBwh3ZaFnS4KA8PZddH
+RwHOcc1oZdctu3vKtAVPcw9jDMzNv2azSEhZpxuu8sbktSa/ItO2D1jjSC8QO7u0
+Jp8OMLCBTp4n5bXS9vh7fgO2u2LU9pqtwm87A6s6Xh8lLMW51BdYahv5QKP5yuH9
+rIway9u6016T5Lq7mrq1g5s5jl8EAWcHsqWSIszzEZEjoBgcO1V1TzDatY0+fO4/
+0ZqGj6hQeYspOPpWbBzdz8kKzYc6AwkblpamzuFFG7KfgeRlABWILn+G/jxnT/g7
+LEYSjT+0CPg9W6T7PORaG1r7pv+AuWIa4MmrD/3WsjNAziKWAgqsulPtXGl7cMqT
+aI8MNgw8oMu+slPHbomRu5UYSLnwwRQCZl8mZbVv51ClaAGAPRpH7jW4FdFEk8N/
+gD0y8kVBHsN7MzEh4JTxZHnO7hCFQYdKEQf9rSt8U45PgzSFVIt5F2yJ368M4WVG
+2f7YBe99upzKTkk3719XmH55Q+OgT/1WRQ/7gmpkim+3V5iNT+f49CpGgIaRnRU9
+gv8/wuvtihGTLlNh2K/E
+=c1Uh
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__8_Jun_2012_10_50_20_+1000_M926uvDHEx+8AxpJ--
+--Signature=_Fri__8_Jun_2012_12_44_48_+1000_wc/ZWM+f2zydsD=9--
