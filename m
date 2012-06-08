@@ -1,59 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the leds tree
-Date: Fri, 8 Jun 2012 12:44:48 +1000
-Message-ID: <20120608124448.2ff862098d474dc6a567dc46@canb.auug.org.au>
+From: Bryan Wu <bryan.wu@canonical.com>
+Subject: Re: linux-next: build failure after merge of the leds tree
+Date: Fri, 8 Jun 2012 11:33:05 +0800
+Message-ID: <CAK5ve-KnxRbP60ATZLT3M-P5Kc8mr0MhpypCoLq0t_jNwE_yqg@mail.gmail.com>
+References: <20120608124448.2ff862098d474dc6a567dc46@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Jun_2012_12_44_48_+1000_wc/ZWM+f2zydsD=9"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bryan Wu <bryan.wu@canonical.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-gg0-f174.google.com ([209.85.161.174]:36989 "EHLO
+	mail-gg0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753169Ab2FHDd0 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jun 2012 23:33:26 -0400
+In-Reply-To: <20120608124448.2ff862098d474dc6a567dc46@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Baltieri <fabio.baltieri@gmail.com>
-List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__8_Jun_2012_12_44_48_+1000_wc/ZWM+f2zydsD=9
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Bryan,
+I fixed this, since I put 2 bug fixing patches in my fixes-for-3.5
+branch, which were missing in for-next.
 
-After merging the leds tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+-Bryan
 
-drivers/leds/led-core.c: In function 'led_set_software_blink':
-drivers/leds/led-core.c:44:2: error: implicit declaration of function 'led_=
-stop_software_blink' [-Werror=3Dimplicit-function-declaration]
+On Fri, Jun 8, 2012 at 10:44 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Bryan,
+>
+> After merging the leds tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/leds/led-core.c: In function 'led_set_software_blink':
+> drivers/leds/led-core.c:44:2: error: implicit declaration of function=
+ 'led_stop_software_blink' [-Werror=3Dimplicit-function-declaration]
+>
+> Caused by commit 12b204f41034 ("leds: fix led_brightness_set when
+> soft-blinking"). =A0Please build test this stuff.
+>
+> I have used the leds tree from next-20120607 for today.
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
 
-Caused by commit 12b204f41034 ("leds: fix led_brightness_set when
-soft-blinking").  Please build test this stuff.
 
-I have used the leds tree from next-20120607 for today.
+
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__8_Jun_2012_12_44_48_+1000_wc/ZWM+f2zydsD=9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJP0WcgAAoJEECxmPOUX5FExVUP/2jeOETwoE6N0Oouy7umX/YB
-frWB7+08y8x+CvOgx7PA1UoQe9+4jSNFqKJsFJwO64zLdVFp/Nrqeo2d7RDoknti
-wiO5r1WW39svvXeMD0MnW3bgh49b7rPgyWyTDR+/gZjIAyBwh3ZaFnS4KA8PZddH
-RwHOcc1oZdctu3vKtAVPcw9jDMzNv2azSEhZpxuu8sbktSa/ItO2D1jjSC8QO7u0
-Jp8OMLCBTp4n5bXS9vh7fgO2u2LU9pqtwm87A6s6Xh8lLMW51BdYahv5QKP5yuH9
-rIway9u6016T5Lq7mrq1g5s5jl8EAWcHsqWSIszzEZEjoBgcO1V1TzDatY0+fO4/
-0ZqGj6hQeYspOPpWbBzdz8kKzYc6AwkblpamzuFFG7KfgeRlABWILn+G/jxnT/g7
-LEYSjT+0CPg9W6T7PORaG1r7pv+AuWIa4MmrD/3WsjNAziKWAgqsulPtXGl7cMqT
-aI8MNgw8oMu+slPHbomRu5UYSLnwwRQCZl8mZbVv51ClaAGAPRpH7jW4FdFEk8N/
-gD0y8kVBHsN7MzEh4JTxZHnO7hCFQYdKEQf9rSt8U45PgzSFVIt5F2yJ368M4WVG
-2f7YBe99upzKTkk3719XmH55Q+OgT/1WRQ/7gmpkim+3V5iNT+f49CpGgIaRnRU9
-gv8/wuvtihGTLlNh2K/E
-=c1Uh
------END PGP SIGNATURE-----
-
---Signature=_Fri__8_Jun_2012_12_44_48_+1000_wc/ZWM+f2zydsD=9--
+Bryan Wu <bryan.wu@canonical.com>
+Kernel Developer =A0 =A0+86.186-168-78255 Mobile
+Canonical Ltd. =A0 =A0 =A0www.canonical.com
+Ubuntu - Linux for human beings | www.ubuntu.com
