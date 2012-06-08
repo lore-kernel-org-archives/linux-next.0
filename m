@@ -1,90 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the net-next tree
-Date: Fri, 8 Jun 2012 13:56:23 +1000
-Message-ID: <20120608135623.0771d422608209264d4c3ef5@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Date: Fri, 8 Jun 2012 14:03:58 +1000
+Message-ID: <20120608140358.74bf0efedbfe393d42ab732d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__8_Jun_2012_13_56_23_+1000_.QQKrYWL2EHZtje/"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, AnilKumar Ch <anilkumar@ti.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, Viresh Kumar <viresh.kumar@st.com>
+ boundary="Signature=_Fri__8_Jun_2012_14_03_58_+1000_/F_ysBJ1z_2quWiX"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__8_Jun_2012_13_56_23_+1000_.QQKrYWL2EHZtje/
+--Signature=_Fri__8_Jun_2012_14_03_58_+1000_/F_ysBJ1z_2quWiX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-Today's linux-next merge of the akpm tree got a conflict in
-drivers/net/can/c_can/c_can_platform.c between commit 33f810097769 ("can:
-c_can: Move overlay structure to array with offset as index") from the
-net-next tree and commit "net/c_can: remove conditional compilation of
-clk code" from the akpm tree.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+sound/soc/soc-dapm.c: In function 'dapm_clock_event':
+sound/soc/soc-dapm.c:1022:1: warning: control reaches end of non-void funct=
+ion [-Wreturn-type]
+
+This is with CONFIG_HAVE_CLK not set.  Introduced by commit ec02995adad5
+("ASoC: dapm: Bodge for lack of a widely available clk API").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/can/c_can/c_can_platform.c
-index f0921d1,7ec9316..0000000
---- a/drivers/net/can/c_can/c_can_platform.c
-+++ b/drivers/net/can/c_can/c_can_platform.c
-@@@ -71,10 -71,8 +71,9 @@@ static int __devinit c_can_plat_probe(s
-  	void __iomem *addr;
-  	struct net_device *dev;
-  	struct c_can_priv *priv;
- +	const struct platform_device_id *id;
-  	struct resource *mem;
-  	int irq;
-- #ifdef CONFIG_HAVE_CLK
-  	struct clk *clk;
- =20
-  	/* get the appropriate clk */
-@@@ -138,18 -129,8 +136,16 @@@
-  		priv->read_reg =3D c_can_plat_read_reg_aligned_to_16bit;
-  		priv->write_reg =3D c_can_plat_write_reg_aligned_to_16bit;
-  		break;
- +	default:
- +		ret =3D -EINVAL;
- +		goto exit_free_device;
-  	}
- =20
- +	dev->irq =3D irq;
- +	priv->base =3D addr;
-- #ifdef CONFIG_HAVE_CLK
- +	priv->can.clock.freq =3D clk_get_rate(clk);
- +	priv->priv =3D clk;
-- #endif
- +
-  	platform_set_drvdata(pdev, dev);
-  	SET_NETDEV_DEV(dev, &pdev->dev);
- =20
-
---Signature=_Fri__8_Jun_2012_13_56_23_+1000_.QQKrYWL2EHZtje/
+--Signature=_Fri__8_Jun_2012_14_03_58_+1000_/F_ysBJ1z_2quWiX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP0XfnAAoJEECxmPOUX5FEh1cP/j32krsuzCEAsWMTcZt6P/JD
-L93AAMdNomyrL+islkawj5WxoI26OxbQuIRvQAyTfDmPToBjFqF/N3MTRrpXYk4t
-e6ZM1qqUiSd9tIsC314u9H0oBWNw9Af6Hbt9dUIY8Fani2L492KHk3WsFpK7lsFS
-UK8p2Iv65xPSWSNSZUK++djs8mpbBVTj97XhgucnFcA0iKD3AsiWkHPJA25DEPeM
-aRLg5CzesyZ2UrpKX7f8+O//c8ZQDnNoFW7FRZel1rwJqNOhVxJZxp+KEDaZhA+c
-QcQ5cQKwi7uK6iV7VgexPFg1ytywN2Qc0s0yhiqLvXcALKLw4QN+n+iya7mp+lvr
-O1FxAD9ieRk4dhZUjCIscIHeAXjMqVAcPiPLfJsKMk3NL2r2OIpitNzRoGkiYT3I
-uOtVLUJ2d+4v6r2RC4jCQwpJD3WJ6sYlOM5r7bAmP4EYyJWwdowAWp/l2pPE837p
-vEV0s06Buvdgs2CXMCg4IvDK3OX7ikllR3gfZR9h3RS2EznqTyIWJfjgcDNChpbA
-29nhXELnCnZH4EQUTAyEjjnPrPMoyZkNdMWHJJIQ5VoQ07VI7JG6O13KwTQn3X+q
-SwbVCNYDaWrl16bfE42Otw5bzaOJ6DZV/izXxUvE+qAuh5P7tnj3h2S3rz6N+Qws
-zvf9zRz8RWIHV73yGAF0
-=p5Hn
+iQIcBAEBCAAGBQJP0XmuAAoJEECxmPOUX5FE0NwP/Ra18PIn0zZ3H8Q4o6CG1YMa
+qz/JeknF+Ec3Etja1tWFH+CtiKIl2uY8ixSmxaaLOb0CgA89sr/AbXy1YKrCb5CX
++DaPi1A+1yVXmQBPr/U4JfhRghipbsDh8/qPSO3mFTpbEYaGDe3hpmYMJUszJL2j
+Bd7har0Vtg7IykR8DykOZwVHA3bNiqOSgVoPThwAZZgCLgCJ6A1PnZLZGH2aKStP
+jWMrNF6x9rVJteaCC6uUjPYY9ZbFKaKJxJX2RrkPMaKyUjLDWKXtowy60gl38tfF
+G/roA6TmI7bcSoeV69Ozi8l2pCVUxEzzp91amQl9/4XKs4wUdAhrmKGcsg6K0dqm
+5AShx4r9APZcGun73xI9Lsqny6jlNogiGSijMgphBPkJSF97oB/TL60zlrtMOfi9
+N8J8XBwEWxPzUnwQ59UyVeFRz6wPsKqpRGOr863w5KnHXnhi1RhKsSlTT/G2Z73/
+AAntZYeBOYajyCTGhj6CPYbrg8Pu7nSSh91WkDL2gOFKmRFiDpMEOdzVwAUzwGSM
+Nu+bT7Xbbc852A+NO2NTS7gser3FuaslK1cti4DnKfhtvZVXnZMHXDDl1bKEHcI5
+FqzLYezjVQwMN8KLZjJihQ4ZYrJ8orDYLb1FS3O8GuFprPkKUJ17LRR626Mv1yrR
+0Cp88B+nNYGaRqw0Kbei
+=p8Ed
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__8_Jun_2012_13_56_23_+1000_.QQKrYWL2EHZtje/--
+--Signature=_Fri__8_Jun_2012_14_03_58_+1000_/F_ysBJ1z_2quWiX--
