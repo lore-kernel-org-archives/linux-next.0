@@ -1,54 +1,42 @@
 From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH] MFD: twl6040: Update Kconfig to avoid build breakage
-Date: Fri, 08 Jun 2012 11:51:55 +0300
-Message-ID: <4FD1BD2B.6090200@ti.com>
-References: <1339137300-16546-1-git-send-email-peter.ujfalusi@ti.com> <20120608083003.GI22557@sortiz-mobl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120608083003.GI22557@sortiz-mobl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, t-kristo@ti.com, Randy Dunlap <rdunlap@xenotime.net>
-List-Id: linux-next.vger.kernel.org
+Subject: [PATCH v2] MFD: twl6040: Update Kconfig to avoid build breakage
+Date: Fri,  8 Jun 2012 11:54:21 +0300
+Message-ID: <1339145661-25333-1-git-send-email-peter.ujfalusi@ti.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from na3sys009aog121.obsmtp.com ([74.125.149.145]:33652 "EHLO
+	na3sys009aog121.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932218Ab2FHIya (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jun 2012 04:54:30 -0400
+Received: by lboj14 with SMTP id j14so1643567lbo.21
+        for <linux-next@vger.kernel.org>; Fri, 08 Jun 2012 01:54:27 -0700 (PDT)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, t-kristo@ti.com, Randy Dunlap <rdunlap@xenotime.net>, peter.ujfalusi@ti.com
 
-Hi Samuel,
+twl6040 needs CONFIG_IRQ_DOMAIN to compile, without this we have:
+drivers/mfd/twl6040-irq.c: In function 'twl6040_irq_init':
+drivers/mfd/twl6040-irq.c:164:2: error: implicit declaration of function 'irq_domain_add_legacy'
+drivers/mfd/twl6040-irq.c:165:11: error: 'irq_domain_simple_ops' undeclared (first use in this function)
+drivers/mfd/twl6040-irq.c:165:11: note: each undeclared identifier is reported only once for each function it appears in
 
-On 06/08/2012 11:30 AM, Samuel Ortiz wrote:
+Reported-by: Randy Dunlap <rdunlap@xenotime.net>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+ drivers/mfd/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-> Hi Peter,
->=20
-> On Fri, Jun 08, 2012 at 09:35:00AM +0300, Peter Ujfalusi wrote:
->> twl6040 needs CONFIG_IRQ_DOMAIN to compile, without this we have:
->> drivers/mfd/twl6040-irq.c: In function 'twl6040_irq_init':
->> drivers/mfd/twl6040-irq.c:164:2: error: implicit declaration of func=
-tion 'irq_domain_add_legacy'
->> drivers/mfd/twl6040-irq.c:165:11: error: 'irq_domain_simple_ops' und=
-eclared (first use in this function)
->> drivers/mfd/twl6040-irq.c:165:11: note: each undeclared identifier i=
-s reported only once for each function it appears in
->>
->> Reported by: Randy Dunlap <rdunlap@xenotime.net>
->>
->> At the same time limit the twl6040 availability to ARM architecture =
-since
->> it is unlikely that this chip is going to be used on other architect=
-ures.
-> Right, but you're losing a lot of the linux-next build coverage.
-> With a dependency on ARM, we may have missed the above build error fo=
-r
-> example. Would you mind removing that dependency ?
-
-
-Yes. True that we miss some coverage due to depending on ARM here. I di=
-d
-missed this since when I build for OMAP the IRQ_DOMAIN is selected by O=
-=46,
-which is selected by OMAP. Even if I use randconfig for ARM I would not
-noticed this since AFAIK ARM selects IRQ_DOMAIN also...
-
-I'll resend in a minute without the ARM dependency.
-
---=20
-P=E9ter
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index e129c82..92144ed 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -286,6 +286,7 @@ config TWL6040_CORE
+ 	depends on I2C=y && GENERIC_HARDIRQS
+ 	select MFD_CORE
+ 	select REGMAP_I2C
++	select IRQ_DOMAIN
+ 	default n
+ 	help
+ 	  Say yes here if you want support for Texas Instruments TWL6040 audio
+-- 
+1.7.8.6
