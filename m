@@ -1,15 +1,25 @@
 From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Subject: [PATCH 1/2] staging: usb: gadget: Configurable Composite Gadget
+Subject: [PATCH 1/2 RESEND] staging: usb: gadget: Configurable Composite Gadget
  depends on BLOCK
-Date: Mon, 11 Jun 2012 11:07:58 +0200
-Message-ID: <1339405678-4834-1-git-send-email-andrzej.p@samsung.com>
+Date: Mon, 11 Jun 2012 11:11:59 +0200
+Message-ID: <1339405919-5845-1-git-send-email-andrzej.p@samsung.com>
 References: <Pine.LNX.4.44L0.1206071646360.1185-100000@iolanthe.rowland.org>
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devel-bounces@linuxdriverproject.org>
 In-reply-to: <Pine.LNX.4.44L0.1206071646360.1185-100000@iolanthe.rowland.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
+ <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel>
+List-Post: <mailto:devel@linuxdriverproject.org>
+List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
+ <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: devel-bounces@linuxdriverproject.org
+Sender: devel-bounces@linuxdriverproject.org
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Felipe Balbi <balbi@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Michal Nazarewicz <mnazarewicz@gmail.com>, Benoit Goby <benoit@android.com>, Mike Lockwood <lockwood@android.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: devel@driverdev.osuosl.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-usb@vger.kernel.org, Michal Nazarewicz <mnazarewicz@gmail.com>, Felipe Balbi <balbi@ti.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-next@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Benoit Goby <benoit@android.com>, Mike Lockwood <lockwood@android.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
 Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
