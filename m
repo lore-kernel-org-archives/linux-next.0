@@ -1,29 +1,51 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: frontswap.v16 now in Linus tree, please stop pulling frontswap
- for linux-next
-Date: Sat, 9 Jun 2012 10:36:45 -0400
-Message-ID: <20120609143645.GA23881@phenom.dumpdata.com>
-References: <b4f9b288-da94-4e54-b5dd-7d8b0b4e5d68@default>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no tree today
+Date: Mon, 11 Jun 2012 12:03:38 +1000
+Message-ID: <20120611120338.de0d23d71c08b4c0857fb962@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__11_Jun_2012_12_03_38_+1000_5xhqwMmuDqQ/vKQ4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet15.oracle.com ([148.87.113.117]:43621 "EHLO
-	rcsinet15.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750936Ab2FIOnu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 9 Jun 2012 10:43:50 -0400
-Content-Disposition: inline
-In-Reply-To: <b4f9b288-da94-4e54-b5dd-7d8b0b4e5d68@default>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51170 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751559Ab2FKCDr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 10 Jun 2012 22:03:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Magenheimer <dan.magenheimer@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sasha Levin <levinsasha928@gmail.com>, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Jun 08, 2012 at 03:04:05PM -0700, Dan Magenheimer wrote:
-> Hi Stephen --
-> 
-> Don't know if Konrad is on vacation today or if this is already
-> resolved but, if not, please stop pulling frontswap.v14 (tmem branch)
-> from Konrad as frontswap.v16 is now in Linus' tree as of
-> Monday, shortly after -rc1.
+--Signature=_Mon__11_Jun_2012_12_03_38_+1000_5xhqwMmuDqQ/vKQ4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ah, thanks for notice. I've reset the linux-next to v3.5-rc2. Thanks!
+Due to our wonderful Queen having a birthday :-)
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__11_Jun_2012_12_03_38_+1000_5xhqwMmuDqQ/vKQ4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP1VH6AAoJEECxmPOUX5FExkEP/jX7oIWuwAvIHghCcSqDvXes
+Eb5U346weiHD+x6/ae751X7UE7+EMpkklgsNc3z1Oo3A2kO/5nT1DU2WMdA+3URp
+h1ZBEYnyZTg4v8mP1X6A1ytAqTsWOC15bOUPvIX2ZpqcXo1M4vlJgXyIOrVH7SKm
+UocLSEi2RrTFEn5H5MqfPW6wy7xcBXXI3JIY9aKHmiV8n/8mRKtKmDPJIDzD2hiD
+Q6Sl2ZMQ4J5EM9hJXBQfThspHgyIeRmfg7YHTO+4UqwEym2A3mFazQ5wQ2A/a6sF
+R0OU84spB2khs0CBG7cEREZ/mByo07X0tB1fp5ZZth4a5aEqghUXHYUk9FDZTSBq
++yCtBkKGdFJz8g4VZKCk2dil4Ux94jyhGzs3h6Pl/cGDETmxowrTUquTPKMYR4Md
+e7vH5ObNx4t7n5G4D2RwfSeuIkfXiA8qRu2wdDPaBaBkP/VB9+dvorjmAN2NVD9a
+bHBueSsk6Y4qBc/VQgamo4jXEgW/fDQGdmUIcceVNX8J5+/PU3HNCQPX7WlGsrDF
+UvYGv19N5cLyQfQJaRekKOXZUiUKESHCM277qB6xwknArAJX/EujmqTqtjjyC2/v
+xJeLpveKxXvV0XeHvX6Qe4ldCiq8QqqeMoNdiUc92Z2nSMPMKY35dQTRV2H8hRF2
+6jlKBxWy/4JjLHpSDPmK
+=6q6r
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__11_Jun_2012_12_03_38_+1000_5xhqwMmuDqQ/vKQ4--
