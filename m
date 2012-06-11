@@ -1,51 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no tree today
-Date: Mon, 11 Jun 2012 12:03:38 +1000
-Message-ID: <20120611120338.de0d23d71c08b4c0857fb962@canb.auug.org.au>
+From: Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: linux-next: Tree for Jun 7 (staging/ccg #2)
+Date: Mon, 11 Jun 2012 10:44:28 +0200
+Message-ID: <000001cd47ae$6d482a60$47d87f20$%p@samsung.com>
+References: <4FD10A30.50707@xenotime.net>
+ <Pine.LNX.4.44L0.1206071646360.1185-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__11_Jun_2012_12_03_38_+1000_5xhqwMmuDqQ/vKQ4"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:51170 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751559Ab2FKCDr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 10 Jun 2012 22:03:47 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <Pine.LNX.4.44L0.1206071646360.1185-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+Content-language: pl
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, 'Randy Dunlap' <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
+Cc: 'Stephen Rothwell' <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'LKML' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'USB list' <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, 'Greg Kroah-Hartman' <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, 'Mike Lockwood' <lockwood-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__11_Jun_2012_12_03_38_+1000_5xhqwMmuDqQ/vKQ4
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Due to our wonderful Queen having a birthday :-)
+On Thursday, June 07, 2012 10:59 PM Alan Stern wrote:
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+<snip>
+> 
+> The problems above are caused by the fact that
+> drivers/staging/ccg/Kconfig does not make USB_G_CGG dependent on BLOCK.
 
---Signature=_Mon__11_Jun_2012_12_03_38_+1000_5xhqwMmuDqQ/vKQ4
-Content-Type: application/pgp-signature
+@Randy: Thanks for finding it.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+@Alan: Thanks for suggesting a solution.
 
-iQIcBAEBCAAGBQJP1VH6AAoJEECxmPOUX5FExkEP/jX7oIWuwAvIHghCcSqDvXes
-Eb5U346weiHD+x6/ae751X7UE7+EMpkklgsNc3z1Oo3A2kO/5nT1DU2WMdA+3URp
-h1ZBEYnyZTg4v8mP1X6A1ytAqTsWOC15bOUPvIX2ZpqcXo1M4vlJgXyIOrVH7SKm
-UocLSEi2RrTFEn5H5MqfPW6wy7xcBXXI3JIY9aKHmiV8n/8mRKtKmDPJIDzD2hiD
-Q6Sl2ZMQ4J5EM9hJXBQfThspHgyIeRmfg7YHTO+4UqwEym2A3mFazQ5wQ2A/a6sF
-R0OU84spB2khs0CBG7cEREZ/mByo07X0tB1fp5ZZth4a5aEqghUXHYUk9FDZTSBq
-+yCtBkKGdFJz8g4VZKCk2dil4Ux94jyhGzs3h6Pl/cGDETmxowrTUquTPKMYR4Md
-e7vH5ObNx4t7n5G4D2RwfSeuIkfXiA8qRu2wdDPaBaBkP/VB9+dvorjmAN2NVD9a
-bHBueSsk6Y4qBc/VQgamo4jXEgW/fDQGdmUIcceVNX8J5+/PU3HNCQPX7WlGsrDF
-UvYGv19N5cLyQfQJaRekKOXZUiUKESHCM277qB6xwknArAJX/EujmqTqtjjyC2/v
-xJeLpveKxXvV0XeHvX6Qe4ldCiq8QqqeMoNdiUc92Z2nSMPMKY35dQTRV2H8hRF2
-6jlKBxWy/4JjLHpSDPmK
-=6q6r
------END PGP SIGNATURE-----
+> 
+> > In file included from drivers/staging/ccg/ccg.c:59:0:
+> > drivers/staging/ccg/../../usb/gadget/f_fs.c: At top level:
+> > drivers/staging/ccg/../../usb/gadget/f_fs.c:40:0: warning: "pr_vdebug"
+> redefined
+> > drivers/staging/ccg/../../usb/gadget/u_serial.c:138:0: note: this is the
+> location of the previous definition
+> 
+> This could be fixed by adding a #ifndef guard to f_fs.c and u_serial.c.
+> It's a little awkward to combine independent source files this way.
+> 
+@Randy: Thanks for finding it.
 
---Signature=_Mon__11_Jun_2012_12_03_38_+1000_5xhqwMmuDqQ/vKQ4--
+@Alan: Thanks for suggesting a solution.
+
+The patches are on their way.
+
+Andrzej
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
