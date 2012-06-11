@@ -1,54 +1,35 @@
-From: Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: linux-next: Tree for Jun 7 (staging/ccg #2)
-Date: Mon, 11 Jun 2012 10:44:28 +0200
-Message-ID: <000001cd47ae$6d482a60$47d87f20$%p@samsung.com>
-References: <4FD10A30.50707@xenotime.net>
- <Pine.LNX.4.44L0.1206071646360.1185-100000@iolanthe.rowland.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <Pine.LNX.4.44L0.1206071646360.1185-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
-Content-language: pl
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, 'Randy Dunlap' <rdunlap-/UHa2rfvQTnk1uMJSBkQmQ@public.gmane.org>
-Cc: 'Stephen Rothwell' <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'LKML' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'USB list' <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, 'Greg Kroah-Hartman' <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, 'Mike Lockwood' <lockwood-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: [PATCH 1/2] staging: usb: gadget: Configurable Composite Gadget
+ depends on BLOCK
+Date: Mon, 11 Jun 2012 11:07:58 +0200
+Message-ID: <1339405678-4834-1-git-send-email-andrzej.p@samsung.com>
+References: <Pine.LNX.4.44L0.1206071646360.1185-100000@iolanthe.rowland.org>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <Pine.LNX.4.44L0.1206071646360.1185-100000@iolanthe.rowland.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Felipe Balbi <balbi@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Michal Nazarewicz <mnazarewicz@gmail.com>, Benoit Goby <benoit@android.com>, Mike Lockwood <lockwood@android.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
 List-Id: linux-next.vger.kernel.org
 
-Hello,
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/staging/ccg/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-On Thursday, June 07, 2012 10:59 PM Alan Stern wrote:
-
-<snip>
-> 
-> The problems above are caused by the fact that
-> drivers/staging/ccg/Kconfig does not make USB_G_CGG dependent on BLOCK.
-
-@Randy: Thanks for finding it.
-
-@Alan: Thanks for suggesting a solution.
-
-> 
-> > In file included from drivers/staging/ccg/ccg.c:59:0:
-> > drivers/staging/ccg/../../usb/gadget/f_fs.c: At top level:
-> > drivers/staging/ccg/../../usb/gadget/f_fs.c:40:0: warning: "pr_vdebug"
-> redefined
-> > drivers/staging/ccg/../../usb/gadget/u_serial.c:138:0: note: this is the
-> location of the previous definition
-> 
-> This could be fixed by adding a #ifndef guard to f_fs.c and u_serial.c.
-> It's a little awkward to combine independent source files this way.
-> 
-@Randy: Thanks for finding it.
-
-@Alan: Thanks for suggesting a solution.
-
-The patches are on their way.
-
-Andrzej
-
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/ccg/Kconfig b/drivers/staging/ccg/Kconfig
+index ff05e52..1f00d70 100644
+--- a/drivers/staging/ccg/Kconfig
++++ b/drivers/staging/ccg/Kconfig
+@@ -2,7 +2,7 @@ if USB_GADGET
+ 
+ config USB_G_CCG
+ 	tristate "Configurable Composite Gadget (STAGING)"
+-	depends on STAGING && !USB_ZERO && !USB_ZERO_HNPTEST && !USB_AUDIO && !GADGET_UAC1 && !USB_ETH && !USB_ETH_RNDIS && !USB_ETH_EEM && !USB_G_NCM && !USB_GADGETFS && !USB_FUNCTIONFS && !USB_FUNCTIONFS_ETH && !USB_FUNCTIONFS_RNDIS && !USB_FUNCTIONFS_GENERIC && !USB_FILE_STORAGE && !USB_FILE_STORAGE_TEST && !USB_MASS_STORAGE && !USB_G_SERIAL && !USB_MIDI_GADGET && !USB_G_PRINTER && !USB_CDC_COMPOSITE && !USB_G_NOKIA && !USB_G_ACM_MS && !USB_G_MULTI && !USB_G_MULTI_RNDIS && !USB_G_MULTI_CDC && !USB_G_HID && !USB_G_DBGP && !USB_G_WEBCAM
++	depends on STAGING && BLOCK && !USB_ZERO && !USB_ZERO_HNPTEST && !USB_AUDIO && !GADGET_UAC1 && !USB_ETH && !USB_ETH_RNDIS && !USB_ETH_EEM && !USB_G_NCM && !USB_GADGETFS && !USB_FUNCTIONFS && !USB_FUNCTIONFS_ETH && !USB_FUNCTIONFS_RNDIS && !USB_FUNCTIONFS_GENERIC && !USB_FILE_STORAGE && !USB_FILE_STORAGE_TEST && !USB_MASS_STORAGE && !USB_G_SERIAL && !USB_MIDI_GADGET && !USB_G_PRINTER && !USB_CDC_COMPOSITE && !USB_G_NOKIA && !USB_G_ACM_MS && !USB_G_MULTI && !USB_G_MULTI_RNDIS && !USB_G_MULTI_CDC && !USB_G_HID && !USB_G_DBGP && !USB_G_WEBCAM
+ 	help
+ 	  The Configurable Composite Gadget supports multiple USB
+ 	  functions: acm, mass storage, rndis and FunctionFS.
+-- 
+1.7.0.4
