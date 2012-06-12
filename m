@@ -1,67 +1,88 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: build failure after merge of the final tree (pci tree related)
-Date: Tue, 12 Jun 2012 09:31:49 -0600
-Message-ID: <CAErSpo6LxpYz_WK2mHPW3RWkOMPLar0KUp1Pgh7shhOdmT49kw@mail.gmail.com>
-References: <20120612145441.400975347f06785d391d0f8f@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: [PATCH 2/2] drivers: usb: gadget: add multiple definition guards
+Date: Tue, 12 Jun 2012 09:17:25 -0700
+Message-ID: <4FD76B95.60708@xenotime.net>
+References: <Pine.LNX.4.44L0.1206071646360.1185-100000@iolanthe.rowland.org>
+ <1339405995-6298-1-git-send-email-andrzej.p@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <sparclinux-owner@vger.kernel.org>
-In-Reply-To: <20120612145441.400975347f06785d391d0f8f@canb.auug.org.au>
-Sender: sparclinux-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1339405995-6298-1-git-send-email-andrzej.p@samsung.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
+ <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel>
+List-Post: <mailto:devel@linuxdriverproject.org>
+List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
+ <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: devel-bounces@linuxdriverproject.org
+Sender: devel-bounces@linuxdriverproject.org
+To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Cc: devel@driverdev.osuosl.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michal Nazarewicz <mnazarewicz@gmail.com>, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-next@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Benoit Goby <benoit@android.com>, Mike Lockwood <lockwood@android.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jun 11, 2012 at 10:54 PM, Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> Hi all,
->
-> After merging the final tree, today's linux-next build (sparc64 defco=
-nfig)
-> failed like this:
->
-> arch/sparc/kernel/pci.c: In function 'pci_scan_one_pbm':
-> arch/sparc/kernel/pci.c:689:21: error: 'struct pci_pbm_info' has no m=
-ember named 'pci_last_busn'
->
-> Caused by commit 2c7f691b032b ("sparc/PCI: register busn_res for root=
- buses").
->
-> I have added the following patch for today:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 12 Jun 2012 14:48:39 +1000
-> Subject: [PATCH] sparc/PCI: fix typo
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+On 06/11/2012 02:13 AM, Andrzej Pietrasiewicz wrote:
+
+> If f_fs.c and u_serial.c are combined together using #include, which has
+> been a common practice so far, the pr_vdebug macro is defined multiple
+> times. Define it only once.
+> 
+> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+
+
+Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+
+Thanks.
+
 > ---
-> =A0arch/sparc/kernel/pci.c | =A0 =A02 +-
-> =A01 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
-> index 74e4bf3..4f92a9a 100644
-> --- a/arch/sparc/kernel/pci.c
-> +++ b/arch/sparc/kernel/pci.c
-> @@ -686,7 +686,7 @@ struct pci_bus * __devinit pci_scan_one_pbm(struc=
-t pci_pbm_info *pbm,
-> =A0 =A0 =A0 =A0pci_add_resource_offset(&resources, &pbm->mem_space,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0pbm->m=
-em_space.start);
-> =A0 =A0 =A0 =A0pbm->busn.start =3D pbm->pci_first_busno;
-> - =A0 =A0 =A0 pbm->busn.end =A0 =3D pbm->pci_last_busn;
-> + =A0 =A0 =A0 pbm->busn.end =A0 =3D pbm->pci_last_busno;
-> =A0 =A0 =A0 =A0pbm->busn.flags =3D IORESOURCE_BUS;
-> =A0 =A0 =A0 =A0pci_add_resource(&resources, &pbm->busn);
-> =A0 =A0 =A0 =A0bus =3D pci_create_root_bus(parent, pbm->pci_first_bus=
-no, pbm->pci_ops,
+>  drivers/usb/gadget/f_fs.c     |    4 ++++
+>  drivers/usb/gadget/u_serial.c |    4 ++++
+>  2 files changed, 8 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/f_fs.c b/drivers/usb/gadget/f_fs.c
+> index dcd1c7f..27c841d 100644
+> --- a/drivers/usb/gadget/f_fs.c
+> +++ b/drivers/usb/gadget/f_fs.c
+> @@ -33,11 +33,15 @@
+>  /* Debugging ****************************************************************/
+>  
+>  #ifdef VERBOSE_DEBUG
+> +#ifndef pr_vdebug
+>  #  define pr_vdebug pr_debug
+> +#endif /* pr_vdebug */
+>  #  define ffs_dump_mem(prefix, ptr, len) \
+>  	print_hex_dump_bytes(pr_fmt(prefix ": "), DUMP_PREFIX_NONE, ptr, len)
+>  #else
+> +#ifndef pr_vdebug
+>  #  define pr_vdebug(...)                 do { } while (0)
+> +#endif /* pr_vdebug */
+>  #  define ffs_dump_mem(prefix, ptr, len) do { } while (0)
+>  #endif /* VERBOSE_DEBUG */
+>  
+> diff --git a/drivers/usb/gadget/u_serial.c b/drivers/usb/gadget/u_serial.c
+> index 5b3f5ff..da6d479 100644
+> --- a/drivers/usb/gadget/u_serial.c
+> +++ b/drivers/usb/gadget/u_serial.c
+> @@ -132,11 +132,15 @@ static unsigned	n_ports;
+>  
+>  
+>  #ifdef VERBOSE_DEBUG
+> +#ifndef pr_vdebug
+>  #define pr_vdebug(fmt, arg...) \
+>  	pr_debug(fmt, ##arg)
+> +#endif /* pr_vdebug */
+>  #else
+> +#ifndef pr_vdebig
+>  #define pr_vdebug(fmt, arg...) \
+>  	({ if (0) pr_debug(fmt, ##arg); })
+> +#endif /* pr_vdebug */
+>  #endif
+>  
+>  /*-------------------------------------------------------------------------*/
 
-Thanks, I folded this typo fix into the relevant patch.  I'll rebase
-"next" today.  Sorry for the trouble.
 
-Bjorn
---
-To unsubscribe from this list: send the line "unsubscribe sparclinux" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+-- 
+~Randy
