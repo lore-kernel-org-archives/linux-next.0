@@ -1,54 +1,67 @@
-From: viresh kumar <viresh.kumar2@arm.com>
-Subject: Re: [linux-next] "clk: add non CONFIG_HAVE_CLK routines" commit
-Date: Tue, 12 Jun 2012 15:21:20 +0100
-Message-ID: <4FD75060.9020805@arm.com>
-References: <20120522234621.GA3610@windriver.com>
- <CAOh2x=mFOPKbzuY__k0RVpFHTdPfa-iN1e3Lpa3iWt9iP6FzFw@mail.gmail.com>
- <20120612140801.GA7918@n2100.arm.linux.org.uk>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: build failure after merge of the final tree (pci tree related)
+Date: Tue, 12 Jun 2012 09:31:49 -0600
+Message-ID: <CAErSpo6LxpYz_WK2mHPW3RWkOMPLar0KUp1Pgh7shhOdmT49kw@mail.gmail.com>
+References: <20120612145441.400975347f06785d391d0f8f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20120612140801.GA7918@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Viresh Kumar <viresh.kumar@st.com>, Sascha Hauer <s.hauer@pengutronix.de>, spear-devel <spear-devel@list.st.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, viresh kumar <viresh.linux@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, "fengguang.wu@intel.com" <fengguang.wu@intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <sparclinux-owner@vger.kernel.org>
+In-Reply-To: <20120612145441.400975347f06785d391d0f8f@canb.auug.org.au>
+Sender: sparclinux-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 12/06/12 15:08, Russell King - ARM Linux wrote:
-> On Tue, Jun 12, 2012 at 11:57:07AM +0100, viresh kumar wrote:
->> struct clk *clk_get(struct device *dev, const char *id)
->> {
->>      return dev && strcmp(dev_name(dev), "fb") == 0 ? NULL : ERR_PTR(-ENOENT);
->> }
->>
->> I can remove first four without any issues, but just can't remove the
->> last one.  The dummy clk_get() always returns NULL, whereas this one
->> returns NULL only for fb device.
+On Mon, Jun 11, 2012 at 10:54 PM, Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
+> Hi all,
 >
-> This isn't a totally dummy clk implementation.  What it's doing is returning
-> a dummy clock for the framebuffer, and explicitly failing everything else
-> (because we have no need to support any other clocks.)
+> After merging the final tree, today's linux-next build (sparc64 defco=
+nfig)
+> failed like this:
 >
-> If we want to use the dummy clk stuff in its entirety, and just return the
-> dummy clock for all clk_get()s on this platform, then there isn't a problem.
-> If we want to keep this behaviour, we need to use clkdev with the dummy
-> clk implementation.
+> arch/sparc/kernel/pci.c: In function 'pci_scan_one_pbm':
+> arch/sparc/kernel/pci.c:689:21: error: 'struct pci_pbm_info' has no m=
+ember named 'pci_last_busn'
+>
+> Caused by commit 2c7f691b032b ("sparc/PCI: register busn_res for root=
+ buses").
+>
+> I have added the following patch for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 12 Jun 2012 14:48:39 +1000
+> Subject: [PATCH] sparc/PCI: fix typo
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+> =A0arch/sparc/kernel/pci.c | =A0 =A02 +-
+> =A01 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
+> index 74e4bf3..4f92a9a 100644
+> --- a/arch/sparc/kernel/pci.c
+> +++ b/arch/sparc/kernel/pci.c
+> @@ -686,7 +686,7 @@ struct pci_bus * __devinit pci_scan_one_pbm(struc=
+t pci_pbm_info *pbm,
+> =A0 =A0 =A0 =A0pci_add_resource_offset(&resources, &pbm->mem_space,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0pbm->m=
+em_space.start);
+> =A0 =A0 =A0 =A0pbm->busn.start =3D pbm->pci_first_busno;
+> - =A0 =A0 =A0 pbm->busn.end =A0 =3D pbm->pci_last_busn;
+> + =A0 =A0 =A0 pbm->busn.end =A0 =3D pbm->pci_last_busno;
+> =A0 =A0 =A0 =A0pbm->busn.flags =3D IORESOURCE_BUS;
+> =A0 =A0 =A0 =A0pci_add_resource(&resources, &pbm->busn);
+> =A0 =A0 =A0 =A0bus =3D pci_create_root_bus(parent, pbm->pci_first_bus=
+no, pbm->pci_ops,
 
-First one is easier and I would go with that, if maintainer of that file/module
-accepts it.
+Thanks, I folded this typo fix into the relevant patch.  I'll rebase
+"next" today.  Sorry for the trouble.
 
-@Sascha: Are you maintaining this module?
-
+Bjorn
 --
-Viresh
-
--- IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium.  Thank you.
+To unsubscribe from this list: send the line "unsubscribe sparclinux" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
