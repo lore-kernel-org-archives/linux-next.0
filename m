@@ -1,164 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the net tree
-Date: Tue, 12 Jun 2012 14:07:11 +1000
-Message-ID: <20120612140711.ef9b97ee55147328a784def7@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (pci tree
+ related)
+Date: Tue, 12 Jun 2012 14:54:41 +1000
+Message-ID: <20120612145441.400975347f06785d391d0f8f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Tue__12_Jun_2012_14_07_11_+1000_IVIL8vRsiTQ8xWCe"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:36801 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750861Ab2FLEHV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Jun 2012 00:07:21 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Giuseppe CAVALLARO <peppe.cavallaro@st.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Viresh Kumar <viresh.kumar@st.com>
+ boundary="Signature=_Tue__12_Jun_2012_14_54_41_+1000_rGOhTANsKHYm/glm"
+Return-path: <sparclinux-owner@vger.kernel.org>
+Sender: sparclinux-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__12_Jun_2012_14_07_11_+1000_IVIL8vRsiTQ8xWCe
+--Signature=_Tue__12_Jun_2012_14_54_41_+1000_rGOhTANsKHYm/glm
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
-Today's linux-next merge of the akpm tree got a conflict in
-drivers/net/ethernet/stmicro/stmmac/stmmac.h between commit 33d5e332b9c5
-("stmmac: fix driver built w/ w/o both pci and platf modules") from the
-net tree and commit "net/stmmac: remove conditional compilation of clk
-code" from the akpm tree.
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+arch/sparc/kernel/pci.c: In function 'pci_scan_one_pbm':
+arch/sparc/kernel/pci.c:689:21: error: 'struct pci_pbm_info' has no member =
+named 'pci_last_busn'
+
+Caused by commit 2c7f691b032b ("sparc/PCI: register busn_res for root buses=
+").
+
+I have added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 12 Jun 2012 14:48:39 +1000
+Subject: [PATCH] sparc/PCI: fix typo
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/kernel/pci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
+index 74e4bf3..4f92a9a 100644
+--- a/arch/sparc/kernel/pci.c
++++ b/arch/sparc/kernel/pci.c
+@@ -686,7 +686,7 @@ struct pci_bus * __devinit pci_scan_one_pbm(struct pci_=
+pbm_info *pbm,
+ 	pci_add_resource_offset(&resources, &pbm->mem_space,
+ 				pbm->mem_space.start);
+ 	pbm->busn.start =3D pbm->pci_first_busno;
+-	pbm->busn.end	=3D pbm->pci_last_busn;
++	pbm->busn.end	=3D pbm->pci_last_busno;
+ 	pbm->busn.flags	=3D IORESOURCE_BUS;
+ 	pci_add_resource(&resources, &pbm->busn);
+ 	bus =3D pci_create_root_bus(parent, pbm->pci_first_busno, pbm->pci_ops,
+--=20
+1.7.10.280.gaa39
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/ethernet/stmicro/stmmac/stmmac.h
-index 94b21b4,8e1a43b..0000000
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-@@@ -104,99 -103,3 +102,59 @@@ int stmmac_dvr_remove(struct net_devic
-  struct stmmac_priv *stmmac_dvr_probe(struct device *device,
-  				     struct plat_stmmacenet_data *plat_dat,
-  				     void __iomem *addr);
- +
-- #ifdef CONFIG_HAVE_CLK
-- static inline int stmmac_clk_enable(struct stmmac_priv *priv)
-- {
-- 	if (!IS_ERR(priv->stmmac_clk))
-- 		return clk_enable(priv->stmmac_clk);
--=20
-- 	return 0;
-- }
--=20
-- static inline void stmmac_clk_disable(struct stmmac_priv *priv)
-- {
-- 	if (IS_ERR(priv->stmmac_clk))
-- 		return;
--=20
-- 	clk_disable(priv->stmmac_clk);
-- }
-- static inline int stmmac_clk_get(struct stmmac_priv *priv)
-- {
-- 	priv->stmmac_clk =3D clk_get(priv->device, NULL);
--=20
-- 	if (IS_ERR(priv->stmmac_clk))
-- 		return PTR_ERR(priv->stmmac_clk);
--=20
-- 	return 0;
-- }
-- #else
-- static inline int stmmac_clk_enable(struct stmmac_priv *priv)
-- {
-- 	return 0;
-- }
-- static inline void stmmac_clk_disable(struct stmmac_priv *priv)
-- {
-- }
-- static inline int stmmac_clk_get(struct stmmac_priv *priv)
-- {
-- 	return 0;
-- }
-- #endif /* CONFIG_HAVE_CLK */
--=20
--=20
- +#ifdef CONFIG_STMMAC_PLATFORM
- +extern struct platform_driver stmmac_pltfr_driver;
- +static inline int stmmac_register_platform(void)
- +{
- +	int err;
- +
- +	err =3D platform_driver_register(&stmmac_pltfr_driver);
- +	if (err)
- +		pr_err("stmmac: failed to register the platform driver\n");
- +
- +	return err;
- +}
- +static inline void stmmac_unregister_platform(void)
- +{
- +	platform_driver_register(&stmmac_pltfr_driver);
- +}
- +#else
- +static inline int stmmac_register_platform(void)
- +{
- +	pr_debug("stmmac: do not register the platf driver\n");
- +
- +	return -EINVAL;
- +}
- +static inline void stmmac_unregister_platform(void)
- +{
- +}
- +#endif /* CONFIG_STMMAC_PLATFORM */
- +
- +#ifdef CONFIG_STMMAC_PCI
- +extern struct pci_driver stmmac_pci_driver;
- +static inline int stmmac_register_pci(void)
- +{
- +	int err;
- +
- +	err =3D pci_register_driver(&stmmac_pci_driver);
- +	if (err)
- +		pr_err("stmmac: failed to register the PCI driver\n");
- +
- +	return err;
- +}
- +static inline void stmmac_unregister_pci(void)
- +{
- +	pci_unregister_driver(&stmmac_pci_driver);
- +}
- +#else
- +static inline int stmmac_register_pci(void)
- +{
- +	pr_debug("stmmac: do not register the PCI driver\n");
- +
- +	return -EINVAL;
- +}
- +static inline void stmmac_unregister_pci(void)
- +{
- +}
- +#endif /* CONFIG_STMMAC_PCI */
-
---Signature=_Tue__12_Jun_2012_14_07_11_+1000_IVIL8vRsiTQ8xWCe
+--Signature=_Tue__12_Jun_2012_14_54_41_+1000_rGOhTANsKHYm/glm
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP1sBvAAoJEECxmPOUX5FE1skP/0P6fgcSbZnLtJDgUlrw+lUQ
-sU2LAnXv1R4lWES8Pm6HshtGRFBIFWoBjbysM6/eGmg8Pcg5hBTDo0E99rMN579z
-cEFomXpOjhkYyulGSVZxAX9MQFtNYWkySSo5pLNUtRS0e6MVi0n4Dx/U6iJvYd0D
-FKP1QpagI2aixCMmx1GEovo6BE5nc9AbfK25gz/8pXjABl1qH2qB88FgVrbyzYf0
-XmAUNUjSO/bgneg3LrNknmww/lJ+YFHRZx3RODiVtPTDuSCop7IdWFZYDRd9EPzu
-6R6bDb/AvZEOg7TwNDAqXmjcv0PtDJBuquEBEgBpW4oHBP1pi+6IlKHpj+waZbJR
-ks82e06zJWPcdqa+zqQVOskg0uX0JwiyZ/KpCchC5oAks9/vS8lVEKIWmvV6mDc+
-fSyoIr/FaqMC90N1oxY8Um86S1kmymhpEtnINkM9caI87PO3xa+hFhKdnXBXE2Mm
-N0SyuSif++w/3uuUPR1bdyxWu84iY5jfWieTdwy3ifnMp9bjd2MOFhmuq8nPFNs5
-SGSFG8sKZ+GF3xNDwnql+3cHQJtIWhiTTGJoI9jLOqWapT5yovSiVU9Wf/pr9EQA
-IkoVzWVsGR/1U7JLfIba1HbENLgwDhVHvOZfPQYhzjCq+u4UD8YhjlSu9QfwHL8D
-e64dyyH4dD4J8Pov+3Nv
-=JUda
+iQIcBAEBCAAGBQJP1suRAAoJEECxmPOUX5FEja0P/RogqQHbl5fKJhFPbjjscHVt
+wB6g9C9dir1MmI3KIVH33pz2HaRXpMuZOruZbLSN7rD2NeitxKnx/9zHL5QeWe6F
+iiBBiCkgDqxB3RTHehncEgpk7vvHwNanNEQeJ3NC/HoqiNqTWTiwL5KhQAVuRcN4
+Zy1fQhVo10vIwpEJBEUJB+44GWroO//tcQZGtGI5f5BylWNOCjjYKgn2V7oqHO/5
+Hkm0LeeGQ+VCexC9l+tXrg2heMlnxIITmVuoxAD5Xm+ECQA4rTz9aFNjPVPQAHjN
+KBGVxgDaU6RQlJstRvgKuecK5+KKL1ieYJLy4K9jo8Vjh0oyofAJacrzUJgdk/r3
+Z7ct6td5FLMvVUhV8SjEgDfpvletDDSyNE410tl7kZjvpFkvDClWbftS20pQtBvc
+5bMQXYDgjk2VDDKfI3dN4vaGkuipipxCicmMnVNkVNHpyWL8OYGbxCWAkYQdDOxk
+JHFdMkaEunO26sLoe5gq5CFXzoR7JVIX0XrERy6U874g7+byR76agS6knauvRlwn
+vCeqeO7vjEkf5bFKqkSCNPw2hTFE0OW7XNX54AhAyCJFpyKlAdhqxCFR27MIUCNr
+WNci01ICom+ryehZrHvmdWHTOXwjA1CA0bqfgPwFNFLrYcNNArP5YCbpv7BP/CUM
+uNK5Y+tgWkvAqxOnH8vq
+=AtQy
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__12_Jun_2012_14_07_11_+1000_IVIL8vRsiTQ8xWCe--
+--Signature=_Tue__12_Jun_2012_14_54_41_+1000_rGOhTANsKHYm/glm--
