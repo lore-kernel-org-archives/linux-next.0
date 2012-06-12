@@ -1,61 +1,92 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH] staging/comedi: fix build for USB not enabled
-Date: Mon, 11 Jun 2012 16:35:50 -0700
-Message-ID: <4FD680D6.8010509@xenotime.net>
-References: <Pine.LNX.4.44L0.1205191026400.1348-100000@netrider.rowland.org> <4FB7C0E4.4000008@xenotime.net> <20120611230723.GA25565@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-next tree with the net
+ tree
+Date: Tue, 12 Jun 2012 11:31:48 +1000
+Message-ID: <20120612113148.24f733ee30acb204faedce3a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120611230723.GA25565@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ian Abbott <abbotti@mev.co.uk>, Frank Mori Hess <fmhess@users.sourceforge.net>, devel@driverdev.osuosl.org, USB list <linux-usb@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__12_Jun_2012_11_31_48_+1000_5u9GJPzGwVjZY4_b"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:50777 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752913Ab2FLBcE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Jun 2012 21:32:04 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+--Signature=_Tue__12_Jun_2012_11_31_48_+1000_5u9GJPzGwVjZY4_b
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Calls to optional subsystems cannot be made indiscriminately.
-Enclose all of the usb helper functions inside
-#if IS_ENABLED(CONFIG_USB)
-to fix these build errors.
+Hi John,
 
-(The pci helper functions are OK since there are stubs in
-linux/pci.h for the called functions when PCI is not enabled.
-Possibly the same could be done for the called USB functions.)
+Today's linux-next merge of the wireless-next tree got a conflict in MAINTA=
+INERS between commit ce466579b1c9 ("wireless: add my new trees to MAINTAINE=
+RS") from the net tree and commit 491b26b40222 ("wireless: update wireless =
+URLs") from the wireless-next tree.
 
-ERROR: "usb_deregister" [drivers/staging/comedi/comedi.ko] undefined!
-ERROR: "usb_register_driver" [drivers/staging/comedi/comedi.ko] undefined!
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Cc:	Ian Abbott <abbotti@mev.co.uk>
-Cc:	Frank Mori Hess <fmhess@users.sourceforge.net>
----
- drivers/staging/comedi/drivers.c |    5 +++++
- 1 file changed, 5 insertions(+)
+diff --cc MAINTAINERS
+index f6e62de,c5fd905..0000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -4351,9 -4339,8 +4351,9 @@@ F:	arch/m68k/hp300
+  MAC80211
+  M:	Johannes Berg <johannes@sipsolutions.net>
+  L:	linux-wireless@vger.kernel.org
+- W:	http://linuxwireless.org/
++ W:	http://wireless.kernel.org/
+ -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless.git
+ +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211.git
+ +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.=
+git
+  S:	Maintained
+  F:	Documentation/networking/mac80211-injection.txt
+  F:	include/net/mac80211.h
+@@@ -4363,9 -4350,8 +4363,9 @@@ MAC80211 PID RATE CONTRO
+  M:	Stefano Brivio <stefano.brivio@polimi.it>
+  M:	Mattias Nissler <mattias.nissler@gmx.de>
+  L:	linux-wireless@vger.kernel.org
+- W:	http://linuxwireless.org/en/developers/Documentation/mac80211/RateCont=
+rol/PID
++ W:	http://wireless.kernel.org/en/developers/Documentation/mac80211/RateCo=
+ntrol/PID
+ -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linville/wireless.git
+ +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211.git
+ +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.=
+git
+  S:	Maintained
+  F:	net/mac80211/rc80211_pid*
+ =20
 
---- linux-next-20120518.orig/drivers/staging/comedi/drivers.c
-+++ linux-next-20120518/drivers/staging/comedi/drivers.c
-@@ -30,6 +30,7 @@
- #include <linux/pci.h>
- #include <linux/usb.h>
- #include <linux/errno.h>
-+#include <linux/kconfig.h>
- #include <linux/kernel.h>
- #include <linux/sched.h>
- #include <linux/fcntl.h>
-@@ -981,6 +982,8 @@ void comedi_pci_driver_unregister(struct
- }
- EXPORT_SYMBOL_GPL(comedi_pci_driver_unregister);
- 
-+#if IS_ENABLED(CONFIG_USB)
-+
- static int comedi_old_usb_auto_config(struct usb_interface *intf,
- 				      struct comedi_driver *driver)
- {
-@@ -1043,3 +1046,5 @@ void comedi_usb_driver_unregister(struct
- 	comedi_driver_unregister(comedi_driver);
- }
- EXPORT_SYMBOL_GPL(comedi_usb_driver_unregister);
-+
-+#endif
+--Signature=_Tue__12_Jun_2012_11_31_48_+1000_5u9GJPzGwVjZY4_b
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP1pwEAAoJEECxmPOUX5FETGIQAJuHF5QNEj8iU0UDaLcWZsmD
+IrxfnEe2UF/hn8yq8H4bInP6YuXLm+oDxxnUw2gKRdGZee9/AGx1ubf/VbYZoM0U
+i1EqtIH9YT2g+Jv9A1CwgwaZjOP/d4qAU8OKz6khk2apu5E5DF0Pi7aX57ym+1n5
+iaTv+P/OfFClkma947tnTGhnFU7Q533Z8UCPdJ+da4cAc6eAnfzi6j5ocx40hEcZ
+oseluY+qcjvHb/4skr1D3F6mzb+W9DF5YHjZTziZAhlzFCaxnE0IiMAzddFjgb8B
+T1Ve+t1VhwSuM7i3v8Rl4QFkW7laURhdtyK1hmaj37TOQkNL+Cb3/kojpohqOR+P
+/WB8T0H+4orCWLXVsVbepkUXYYlXY1+OSFYQFdcuXAdS64mcLu0ebDOd9ULUm3Fj
+jGD2lHxdn5ws+wnf1lvU6HCwONZuuIc2L8btLeh/bd5/ULLKoC2GHHWq5toZTAah
+cqhKc79YRV9c1ZCIU5VzHbgOmLFL4XxiA9TpHYmksfR/E79jHDONOaczMtWWHUUa
+v1fdT4OeyR06g9H6nCtHHSVd6aDPvzOzqWPlQF79mIzGifuCRxmeQ3bA0fTVUr5+
+pqSyKMTzwOfREJw4+5dUHz3IB9JmzoiYOkm4ap6YyZDEFevy7IAN9PMk/RlDOZ9C
+16D1dPo9j/YPwm0T5d8z
+=cL6d
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__12_Jun_2012_11_31_48_+1000_5u9GJPzGwVjZY4_b--
