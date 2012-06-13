@@ -1,61 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 13 Jun 2012 12:52:26 +1000
-Message-ID: <20120613125226.635d819e37ccb29cfcfdbba4@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the leds tree
+Date: Wed, 13 Jun 2012 14:10:41 +1000
+Message-ID: <20120613141041.199421c4b922655cbcfbe14d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__13_Jun_2012_12_52_26_+1000_sItTLAXS3Gz_FCkv"
+ boundary="Signature=_Wed__13_Jun_2012_14_10_41_+1000_IWT_TDRgs9oyqlQH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:40658 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:36977 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752109Ab2FMCwh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Jun 2012 22:52:37 -0400
+	with ESMTP id S1750793Ab2FMEKt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Jun 2012 00:10:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ola Lilja <ola.o.lilja@stericsson.com>
+To: Bryan Wu <bryan.wu@canonical.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Baltieri <fabio.baltieri@gmail.com>
 
---Signature=_Wed__13_Jun_2012_12_52_26_+1000_sItTLAXS3Gz_FCkv
+--Signature=_Wed__13_Jun_2012_14_10_41_+1000_IWT_TDRgs9oyqlQH
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Bryan,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
+After merging the leds tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-FATAL: modpost: GPL-incompatible module snd-soc-ab8500-codec.ko uses GPL-on=
-ly symbol 'snd_soc_put_xr_sx'
+drivers/leds/led-core.c: In function 'led_set_software_blink':
+drivers/leds/led-core.c:44:2: error: implicit declaration of function 'led_=
+stop_software_blink' [-Werror=3Dimplicit-function-declaration]
 
-Caused by commit 679d7abdc754 ("ASoC: codecs: Add AB8500 codec-driver").
-I think the license string is spelt "GPL" or "GPL v2" not "GPLv2".
+Caused by commit eb91300a9786 ("leds: fix led_brightness_set when
+soft-blinking").
 
-I have used the sound-asoc tree from next-20120608 again for today.
+This is exactly the problem I reported on June 8 and was fixed in
+next-20120612 ...
+
+I have used the leds tree from next-20120612 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__13_Jun_2012_12_52_26_+1000_sItTLAXS3Gz_FCkv
+--Signature=_Wed__13_Jun_2012_14_10_41_+1000_IWT_TDRgs9oyqlQH
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP2ABqAAoJEECxmPOUX5FEf20P/0YwUu1oMgpFRzTTGelMHn6f
-EwY1qZ+CpqYx2BIwOAMgn1h2QqZv9MritI5aT14jiAGG4qzJLHSgX0Ws0eIL2f+r
-qaA040rFCP7gofb2hPWVGGpei6CoBw/NXzzGhRp1I+Ef6T9pYfvKIOm5KY1jItcW
-/6TG2cU2vlh52CxtP3+iqPQuXW1lCSmV/j/kbFU0iafKT7RyCAlaBvdBPUXt2tqS
-7ZtVmXM6/zyWU9Lsyqk7l7VT5i8SHg8Ebezjld1eCgOo2M8/U68EPbUR8azYsOwe
-mZc/NZwQgOH9FoTm8r+OS47Y9Vo/6JhxY8nmmGv4IMZLwmq5lxbZfypwFEPt13Ou
-jL0TJ2QM+gSkZaWCiWqU1JSz53bFpp7Z2UXb5/nz3/iCA8bFm8KJCaLW2G5xLaaR
-I0wYbjvvRe+w6zI+3FON9S4aGLrbiVxjpD9eJo+26/RF7KKjvIQGhQc+1lUPXX5H
-o7ZabMtHxSpFAQXEWoP0x24zrogCyPMwVltzfzkZrqXNZiDio32yLLTiI+BoJEi7
-R3mNIS4cmHWwwG6HrvlBiYnRtW8uFzejALepz5q9BSavfihKHYUwEh2xfxUeh/c3
-X9pEilL6m5Pc5fSsAtxkb2hlqCKi/E11bq8IxNCbe5NgisESPzEwNYeWfDxK+d64
-8H5FVrayHa/YpDH6F9CN
-=J25n
+iQIcBAEBCAAGBQJP2BLBAAoJEECxmPOUX5FEPG8P/20RLffNi3lDs7RgDh67ra6X
+jTPY/EQdnEJwd8SY6LdlLUm8r6FovTYUBqJsu3GyYGZ37IE8Y7rJei7OEGrZWMPR
+2Zase5DHSBsiwy5ukkErBiwXDYxrdqcMuykQccsQI3UbZiRr/8M3HdpSLUNefwbF
+z/BR0roRNoQ8XlbxPC47H5jj7cN0YnahTlA7paSenH9teZZ0TFqGM/YJe3bjFHeh
+A3WXDWlRZ3U3RqxW5thti3izKm6agi/S0uZbAF6+adWp/cx521vN7T13fCXPE2Cc
+ELmwQwuePn+u9/wiqEuDGFMchp3Hlt7dRMWeJe29GULkEW246M16bzGwfE2tfUxc
+Z9YDmpoITnCeGhDJ/Myi0J9z5JD+qYfjPFzi4fKn4ctNKDhL9XTh6krsrayOvqcO
+3ExVkVJTiu2CWL4SSxMwopTO2xo3hyozNnAQnELnbTc46OJLdjceUmzJXoOzeTER
+kTZndamCNbRjembZ0nKpkb0J/4QuiarUv73B5sFfghFU6BHIetn4IpI1jRYvSPZT
+JxujpMyRjS94rlqJWCf7WkRi8JKp2Lxd5sg7WvdJ9W3aCS5hjR0pmHULtUtUQ8y9
+AY2EJFn7+JbGDWYPSEQUhMrA/0XM6RD+DKPODRxX+aLgx2ige9xtgZk3mc8QZVxa
+CVtrCCBXCpQK3RpKyzJy
+=ztVb
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__13_Jun_2012_12_52_26_+1000_sItTLAXS3Gz_FCkv--
+--Signature=_Wed__13_Jun_2012_14_10_41_+1000_IWT_TDRgs9oyqlQH--
