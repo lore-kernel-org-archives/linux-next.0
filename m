@@ -1,60 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (pci
- tree related)
-Date: Wed, 13 Jun 2012 10:50:41 +1000
-Message-ID: <20120613105041.2d5dcdde6b9cf3dcfba3885d@canb.auug.org.au>
-References: <20120612145441.400975347f06785d391d0f8f@canb.auug.org.au>
-	<CAErSpo6LxpYz_WK2mHPW3RWkOMPLar0KUp1Pgh7shhOdmT49kw@mail.gmail.com>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 13 Jun 2012 12:52:26 +1000
+Message-ID: <20120613125226.635d819e37ccb29cfcfdbba4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__13_Jun_2012_10_50_41_+1000_6vYAvXUgcl5rGlJ/"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAErSpo6LxpYz_WK2mHPW3RWkOMPLar0KUp1Pgh7shhOdmT49kw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__13_Jun_2012_12_52_26_+1000_sItTLAXS3Gz_FCkv"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:40658 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752109Ab2FMCwh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Jun 2012 22:52:37 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ola Lilja <ola.o.lilja@stericsson.com>
 
---Signature=_Wed__13_Jun_2012_10_50_41_+1000_6vYAvXUgcl5rGlJ/
+--Signature=_Wed__13_Jun_2012_12_52_26_+1000_sItTLAXS3Gz_FCkv
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bjorn,
+Hi all,
 
-On Tue, 12 Jun 2012 09:31:49 -0600 Bjorn Helgaas <bhelgaas@google.com> wrot=
-e:
->
-> Thanks, I folded this typo fix into the relevant patch.  I'll rebase
-> "next" today.  Sorry for the trouble.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I am not sure what you have done, but now you have a set of duplicated
-commits in your tree including both versions of the one that caused the
-build failure.
+FATAL: modpost: GPL-incompatible module snd-soc-ab8500-codec.ko uses GPL-on=
+ly symbol 'snd_soc_put_xr_sx'
+
+Caused by commit 679d7abdc754 ("ASoC: codecs: Add AB8500 codec-driver").
+I think the license string is spelt "GPL" or "GPL v2" not "GPLv2".
+
+I have used the sound-asoc tree from next-20120608 again for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Wed__13_Jun_2012_10_50_41_+1000_6vYAvXUgcl5rGlJ/
+--Signature=_Wed__13_Jun_2012_12_52_26_+1000_sItTLAXS3Gz_FCkv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP1+PhAAoJEECxmPOUX5FEYtwP+QFdFE2JnVbn+3LOYiStpBPq
-2hWCWGP84s27F7XtX8PAXK/01IBfLppyUuSp9IHHJkttRFQIcWBN995VwXCT3ebz
-iYk4T1Ik40s+qscDaBixQUN4RBzU0TI/nOYhhLKYJ9VqJ+lz86qi1t7emcQoLCiS
-NE9i0SlBrpzD2l47uQ/WbwjNKAAxChcttS/olQhwz5feYHhe6nkL26zyr8NDE09g
-BkZ04hYnyN52GrLwfkvjB8U0JO25qUsr9bjo4WRkAT73YMuQAj/ahxXJQDEEziIP
-brfJAqy09OpLcLXmKBczWODCwWIYHC61jX2kI+XtjFZTxzXYCACpR23yRq0TLy3R
-M7Uk4P/CNQi31jR6ovVBUQ2zShR0Mm0PUIyvm2FNcMf/M3/RmaI9+yKKNeLY8NMP
-MYYwk4Ojepr3hAxkY4gRHRiFfNQk3SB+plQV9bwOPOx42wEJyt4AvfY1PGTgiXxt
-O51ysVhN+vMNUT8Txn9AQKYUjqX7AuHAVpcy2NHVwzruxoEe5x3ZMarHqZ0RkOOL
-agrxANV/+RniSQ6Wark9D6fgM14OZ8b5/rf/zM3/BzF1S/UVzOIN/NFxUM9nuPcx
-F+FDiCJLfcma20TSxZ3YonILyVAjmzxdEfkdD4X3SgP61nVMzcofmZLBQrIZnIrS
-yD1dEmTjVPgySm6bKLk7
-=tQSY
+iQIcBAEBCAAGBQJP2ABqAAoJEECxmPOUX5FEf20P/0YwUu1oMgpFRzTTGelMHn6f
+EwY1qZ+CpqYx2BIwOAMgn1h2QqZv9MritI5aT14jiAGG4qzJLHSgX0Ws0eIL2f+r
+qaA040rFCP7gofb2hPWVGGpei6CoBw/NXzzGhRp1I+Ef6T9pYfvKIOm5KY1jItcW
+/6TG2cU2vlh52CxtP3+iqPQuXW1lCSmV/j/kbFU0iafKT7RyCAlaBvdBPUXt2tqS
+7ZtVmXM6/zyWU9Lsyqk7l7VT5i8SHg8Ebezjld1eCgOo2M8/U68EPbUR8azYsOwe
+mZc/NZwQgOH9FoTm8r+OS47Y9Vo/6JhxY8nmmGv4IMZLwmq5lxbZfypwFEPt13Ou
+jL0TJ2QM+gSkZaWCiWqU1JSz53bFpp7Z2UXb5/nz3/iCA8bFm8KJCaLW2G5xLaaR
+I0wYbjvvRe+w6zI+3FON9S4aGLrbiVxjpD9eJo+26/RF7KKjvIQGhQc+1lUPXX5H
+o7ZabMtHxSpFAQXEWoP0x24zrogCyPMwVltzfzkZrqXNZiDio32yLLTiI+BoJEi7
+R3mNIS4cmHWwwG6HrvlBiYnRtW8uFzejALepz5q9BSavfihKHYUwEh2xfxUeh/c3
+X9pEilL6m5Pc5fSsAtxkb2hlqCKi/E11bq8IxNCbe5NgisESPzEwNYeWfDxK+d64
+8H5FVrayHa/YpDH6F9CN
+=J25n
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__13_Jun_2012_10_50_41_+1000_6vYAvXUgcl5rGlJ/--
+--Signature=_Wed__13_Jun_2012_12_52_26_+1000_sItTLAXS3Gz_FCkv--
