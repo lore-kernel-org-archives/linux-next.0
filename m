@@ -1,110 +1,34 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: "clk: add non CONFIG_HAVE_CLK routines" commit
-Date: Thu, 14 Jun 2012 00:10:40 +0200
-Message-ID: <20120613221040.GJ30400@pengutronix.de>
-References: <20120522234621.GA3610@windriver.com>
- <CAOh2x=mFOPKbzuY__k0RVpFHTdPfa-iN1e3Lpa3iWt9iP6FzFw@mail.gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: What is the right practice to get new code upstream( was Fwd:
+ [patch] a simple hardware detector for latency as well as throughput ver.
+ 0.1.0)
+Date: Wed, 13 Jun 2012 15:20:45 -0700
+Message-ID: <20120613152045.81ab66d9.akpm@linux-foundation.org>
+References: <CAJRGBZw2TctmBxRuA-byaGNCs=1v+M-1PXSm+OuwWApSqu7UjA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:35457 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752231Ab2FMWKz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Jun 2012 18:10:55 -0400
-Content-Disposition: inline
-In-Reply-To: <CAOh2x=mFOPKbzuY__k0RVpFHTdPfa-iN1e3Lpa3iWt9iP6FzFw@mail.gmail.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52065 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753229Ab2FMWUq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Jun 2012 18:20:46 -0400
+In-Reply-To: <CAJRGBZw2TctmBxRuA-byaGNCs=1v+M-1PXSm+OuwWApSqu7UjA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: viresh kumar <viresh.linux@gmail.com>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Russell King <linux@arm.linux.org.uk>, Viresh Kumar <viresh.kumar@st.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, fengguang.wu@intel.com, spear-devel <spear-devel@list.st.com>
+To: Luming Yu <luming.yu@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, tglx@linutronix.de, sfr@canb.auug.org.au, jcm@jonmasters.org, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, torvalds@linux-foundation.org
 
-Hi Viresh,
+On Tue, 12 Jun 2012 20:57:02 +0800
+Luming Yu <luming.yu@gmail.com> wrote:
 
-On Tue, Jun 12, 2012 at 11:57:07AM +0100, viresh kumar wrote:
-> Hi Paul/Russell,
->=20
-> On Wed, May 23, 2012 at 12:46 AM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
-> > Hi Viresh,
-> >
-> > The above listed commit, in linux-next as:
-> >
-> > commit ebbf0cb5d39cc3e22ef4c425475e76b7f45027de
-> >
-> > =A0 =A0"clk: add non CONFIG_HAVE_CLK routines"
-> >
-> > shows up as failures in the netx_defconfig, since there
-> > are duplicate stub functions between your changes and the
-> > file below:
-> >
-> > =A0arch/arm/mach-netx/fb.c:72:6: error: redefinition of 'clk_disabl=
-e'
-> > =A0include/linux/clk.h:299:51: note: previous definition of 'clk_di=
-sable' was here
-> > =A0arch/arm/mach-netx/fb.c:76:5: error: redefinition of 'clk_set_ra=
-te'
-> > =A0include/linux/clk.h:306:50: note: previous definition of 'clk_se=
-t_rate' was here
-> > =A0arch/arm/mach-netx/fb.c:81:5: error: redefinition of 'clk_enable=
-'
-> > =A0include/linux/clk.h:294:50: note: previous definition of 'clk_en=
-able' was here
-> > =A0arch/arm/mach-netx/fb.c:86:13: error: redefinition of 'clk_get'
-> > =A0include/linux/clk.h:280:58: note: previous definition of 'clk_ge=
-t' was here
-> > =A0arch/arm/mach-netx/fb.c:91:6: error: redefinition of 'clk_put'
-> > =A0include/linux/clk.h:290:51: note: previous definition of 'clk_pu=
-t' was here
-> > =A0make[2]: *** [arch/arm/mach-netx/fb.o] Error 1
->=20
-> Following are present in mach-netx/fb.c:
->=20
->=20
-> void clk_disable(struct clk *clk)
-> {
-> }
->=20
-> int clk_set_rate(struct clk *clk, unsigned long rate)
-> {
-> 	return 0;
-> }
->=20
-> int clk_enable(struct clk *clk)
-> {
-> 	return 0;
-> }
->=20
-> void clk_put(struct clk *clk)
-> {
-> }
->=20
-> struct clk *clk_get(struct device *dev, const char *id)
-> {
-> 	return dev && strcmp(dev_name(dev), "fb") =3D=3D 0 ? NULL : ERR_PTR(=
--ENOENT);
-> }
->=20
-> I can remove first four without any issues, but just can't remove the=
- last one.
-> The dummy clk_get() always returns NULL, whereas this one returns NUL=
-L only for
-> fb device.
->=20
-> How should I fix this?
+> I need to know what the right practice is to get your attention to
+> accept a new tool upstream like this one.
 
-As the netx does not have fb support in mainline you can just drop this
-one aswell. It has no use.
+Seems that you have some good feedback from Arnd to be looking at.  I'm
+usually the guy for mysterious misc stuff such as this, so please cc me
+on future revisions.
 
-Sascha
-
-
---=20
-Pengutronix e.K.                           |                           =
-  |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
-  |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
-5 |
+The name "hw_test" and "HW_TEST" is too vague.  The topic "testing
+hardware" is very broad, and this module only touches a small fraction
+of it, so please think up a far more specific name.
