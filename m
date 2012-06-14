@@ -1,47 +1,43 @@
-From: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: What is the right practice to get new code upstream( was Fwd:
- [patch] a simple hardware detector for latency as well as throughput ver.
- 0.1.0)
-Date: Thu, 14 Jun 2012 12:04:56 +0200
-Message-ID: <1339668296.2559.25.camel@twins>
-References: <CAJRGBZw2TctmBxRuA-byaGNCs=1v+M-1PXSm+OuwWApSqu7UjA@mail.gmail.com>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: "clk: add non CONFIG_HAVE_CLK routines" commit
+Date: Thu, 14 Jun 2012 12:18:19 +0200
+Message-ID: <20120614101819.GR30400@pengutronix.de>
+References: <20120522234621.GA3610@windriver.com>
+ <CAOh2x=mFOPKbzuY__k0RVpFHTdPfa-iN1e3Lpa3iWt9iP6FzFw@mail.gmail.com>
+ <20120613221040.GJ30400@pengutronix.de>
+ <20120614100425.GC28714@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:49395 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755540Ab2FNKFU convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Jun 2012 06:05:20 -0400
-In-Reply-To: <CAJRGBZw2TctmBxRuA-byaGNCs=1v+M-1PXSm+OuwWApSqu7UjA@mail.gmail.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:43484 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755692Ab2FNKSb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Jun 2012 06:18:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20120614100425.GC28714@n2100.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Luming Yu <luming.yu@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, tglx@linutronix.de, sfr@canb.auug.org.au, Andrew Morton <akpm@linux-foundation.org>, jcm@jonmasters.org, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, torvalds@linux-foundation.org, Robert Richter <robert.richter@amd.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: viresh kumar <viresh.linux@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Viresh Kumar <viresh.kumar@st.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, fengguang.wu@intel.com, spear-devel <spear-devel@list.st.com>
 
-On Tue, 2012-06-12 at 20:57 +0800, Luming Yu wrote:
-> The Goal is to test out hardware/BIOS caused
-> problems in 2 minutes. To me, capable of measuring the intrinsic of
-> hardware on which we build our software is always a better idea than
-> blindly looking for data from any documents. In current version of the
-> tool, we have a basic sampling facility and TSC test ready for x86. I
-> plan to add more test into this tool to enrich our tool set in Linux.
+On Thu, Jun 14, 2012 at 11:04:25AM +0100, Russell King - ARM Linux wrote:
+> On Thu, Jun 14, 2012 at 12:10:40AM +0200, Sascha Hauer wrote:
+> > As the netx does not have fb support in mainline you can just drop this
+> > one aswell. It has no use.
 > 
+> Are you sure?
 > 
-There's SMI damage around on much longer periods than 2 minutes.
+> Grepping for clcd in arch/arm/mach-netx shows that nxdb500 and nxeb500hmi
+> seem to have all the necessary stuff to support the AMBA CLCD driver.
 
-Also, you can't really do stop_machine for 2 minutes and expect the
-system to survive.
+Damn, you are right. I wasn't aware the netx has a AMBA cell and just
+grepped for netx in drivers/video.
+In this case I suggest to just return NULL for every clock.
 
-Furthermore, I think esp. on more recent chips there's better ways of
-doing it.
+Sascha
 
-For Intel there's a IA32_DEBUGCTL.FREEZE_WHILE_SMM_EN [bit 14], if you
-program a PMU event that ticks at the same rate as the TSC and enable
-the FREEZE_WHILE_SMM stuff, any drift observed between that and the TSC
-is time lost to SMM. It also has MSR_SMI_COUNT [MSR 34H] which counts
-the number of SMIs.
-
-For AMD there's only event 02Bh, which is SMIs Received. I'm not sure it
-has anything like the FREEZE or if the event is modifyable to count the
-cycles in SMI.
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
