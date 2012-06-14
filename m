@@ -1,46 +1,27 @@
-From: Luming Yu <luming.yu@gmail.com>
-Subject: Re: What is the right practice to get new code upstream( was Fwd:
- [patch] a simple hardware detector for latency as well as throughput ver. 0.1.0)
-Date: Thu, 14 Jun 2012 05:25:44 -0400
-Message-ID: <CAJRGBZy_wqUgN_jx9PinXHSGM30XjrRm49xFXkfumucAeaQ2bw@mail.gmail.com>
-References: <CAJRGBZw2TctmBxRuA-byaGNCs=1v+M-1PXSm+OuwWApSqu7UjA@mail.gmail.com>
-	<20120613152045.81ab66d9.akpm@linux-foundation.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: "clk: add non CONFIG_HAVE_CLK routines" commit
+Date: Thu, 14 Jun 2012 11:04:25 +0100
+Message-ID: <20120614100425.GC28714@n2100.arm.linux.org.uk>
+References: <20120522234621.GA3610@windriver.com> <CAOh2x=mFOPKbzuY__k0RVpFHTdPfa-iN1e3Lpa3iWt9iP6FzFw@mail.gmail.com> <20120613221040.GJ30400@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120613152045.81ab66d9.akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>, tglx@linutronix.de, sfr@canb.auug.org.au, jcm@jonmasters.org, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, torvalds@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:56022 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755534Ab2FNKEr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Jun 2012 06:04:47 -0400
+Content-Disposition: inline
+In-Reply-To: <20120613221040.GJ30400@pengutronix.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: viresh kumar <viresh.linux@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Viresh Kumar <viresh.kumar@st.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, fengguang.wu@intel.com, spear-devel <spear-devel@list.st.com>
 
-On Wed, Jun 13, 2012 at 6:20 PM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Tue, 12 Jun 2012 20:57:02 +0800
-> Luming Yu <luming.yu@gmail.com> wrote:
->
->> I need to know what the right practice is to get your attention to
->> accept a new tool upstream like this one.
->
-> Seems that you have some good feedback from Arnd to be looking at. =C2=
-=A0I'm
-> usually the guy for mysterious misc stuff such as this, so please cc =
-me
-> on future revisions.
+On Thu, Jun 14, 2012 at 12:10:40AM +0200, Sascha Hauer wrote:
+> As the netx does not have fb support in mainline you can just drop this
+> one aswell. It has no use.
 
-Andrew, Thanks a lot :-) The community is really helpful after find
-right people for right things.
+Are you sure?
 
->
-> The name "hw_test" and "HW_TEST" is too vague. =C2=A0The topic "testi=
-ng
-> hardware" is very broad, and this module only touches a small fractio=
-n
-> of it, so please think up a far more specific name.
->
-
-I'm working on Version 2 of the tool which would be renamed to
-cpu_latency_test, or simply misc_latency_test?
-
-thanks!!! /l
+Grepping for clcd in arch/arm/mach-netx shows that nxdb500 and nxeb500hmi
+seem to have all the necessary stuff to support the AMBA CLCD driver.
