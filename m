@@ -1,50 +1,56 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: linux-next: build failure in Linus' tree
-Date: Thu, 14 Jun 2012 12:06:07 +0900
-Message-ID: <20120614030606.GC27673@linux-sh.org>
-References: <20120614114722.0fd16fb906b6a5503cfbc51a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the wireless
+ tree
+Date: Thu, 14 Jun 2012 13:12:56 +1000
+Message-ID: <20120614131256.2fed671219b8d571a47987c2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__14_Jun_2012_13_12_56_+1000_hROgnTMBU1+Xh19f"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120614114722.0fd16fb906b6a5503cfbc51a@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mohammed Shafi Shajakhan <mohammed@qca.qualcomm.com>, Sujith Manoharan <c_manoha@qca.qualcomm.com>, "John W. Linville" <linville@tuxdriver.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jun 14, 2012 at 11:47:22AM +1000, Stephen Rothwell wrote:
-> Hi Linus,
-> 
-> While building Linus' tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> In file included from include/asm-generic/bug.h:5:0,
->                  from arch/powerpc/include/asm/bug.h:127,
->                  from arch/powerpc/kernel/head_64.S:31:
-> include/linux/kernel.h:44:0: warning: "ALIGN" redefined [enabled by default]
-> include/linux/linkage.h:57:0: note: this is the location of the previous definition
-> include/linux/sysinfo.h: Assembler messages:
-> include/linux/sysinfo.h:7: Error: Unrecognized opcode: `struct'
-> include/linux/sysinfo.h:8: Error: Unrecognized opcode: `__kernel_long_t'
-> 
-> And it went downhill from there :-(
-> 
-> Caused by commit 3777808873b0 ("bug.h: need linux/kernel.h for
-> TAINT_WARN") which, unfortunately never made it into linux-next.
-> 
-> I have reverted that commit for today (which presumably means that sh
-> builds will be broken again).
+--Signature=_Thu__14_Jun_2012_13_12_56_+1000_hROgnTMBU1+Xh19f
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm still unsure as to the best way to fix this, and there was no
-response to the original mail I posted about it either:
+Hi all,
 
-http://marc.info/?l=linux-kernel&m=133879579014853&w=2
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/wireless/ath/ath9k/main.c between commit bcb7ad7bcbef
+("ath9k: Fix softlockup in AR9485") from the wireless tree and commit
+ef1b6cd9a1ba ("ath9k: Group link monitoring logic") from the net-next
+tree.
 
-I'll fetch a powerpc cross compiler and see if I can figure out what went
-wrong.
+The latter removes the code modified by the former, so I did that.  The
+fix from the former patch may be needed elsewhere now.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-We can always bite the bullet and stuff it in the sh thread_info.h, but
-that's papering around the issue, and any other TIF_RESTORE_SIGMASK &&
-!HAVE_SET_RESTORE_SIGMASK generic bug user will have to use the same
-hack.
+--Signature=_Thu__14_Jun_2012_13_12_56_+1000_hROgnTMBU1+Xh19f
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP2Va4AAoJEECxmPOUX5FElLsP/jHVoAu2fRP4HMnK5VHSqqQ6
+eeJjCRyb7K3fVUm8IagNc36il/G6L41yYvbDCHPRThqPMaBRzEr5QSFO434T796o
+LzNy8T+WZ35mCRmOWI6RAhwyCY8UnnCJNjphXMf4SGzD83/BXnOtTVIvyXulTACd
+fmTMaBoz5QtXXaSIHWehsX/Z04D7P5f02SCC5y3VqTD8Rz7Qd47R1ur2xcR2BM6B
+31ziT7SqcnJ5AmOCcBDps1hB+V6tWzyC/1Ou5AHX7YVjf9GZj2fP3NREzJbGYsHt
+sGCS65Zp3s5u7/COzrqSKPsnGDhDx372gJ+27GgoX8VsbjJhVQ2lnEyMZPC/KKbR
+oKv7PkvYx1BwxDQy+ElItOxmGGgbjkF4fUw9xNkAEPms+bh3Yywe3rqyGKqv9js6
+UJB8mqMVulm0DK6JfhTCKeDl01jM1I3HYSya4RYoiajgOZAvu3sdBAa+MkmKYNQe
+k3CraE1J8pQ62K74gqlm8cgHGpRjJLVckvi/EwjG557UMaYypJ50iPsC9AOnvc3H
+oo6AqBbXVtxo7MumKlqD2AFf7k/PQ9n5W3su2fjlWudhTvv62Fvx/IfrlIpnepI9
+pu7lQJIaQmJ7psuRRnvs7XVOiPmzMevb+yFNq7FqzQJEBzGqYs4WE0Mj089ziUWc
+d+1R5TsTXX/7+9ZjU/QK
+=ONwt
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__14_Jun_2012_13_12_56_+1000_hROgnTMBU1+Xh19f--
