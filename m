@@ -1,28 +1,68 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build failure in Linus' tree
-Date: Fri, 15 Jun 2012 11:38:01 +0000
-Message-ID: <201206151138.01510.arnd@arndb.de>
-References: <20120614114722.0fd16fb906b6a5503cfbc51a@canb.auug.org.au> <20120614030606.GC27673@linux-sh.org> <20120614034036.GE27673@linux-sh.org>
+From: H Hartley Sweeten <hartleys@visionengravers.com>
+Subject: RE: linux-next: Tree for Jun 14 (staging/comedi)
+Date: Fri, 15 Jun 2012 11:12:08 -0500
+Message-ID: <ADE657CA350FB648AAC2C43247A983F0020698DBCEEC@AUSP01VMBX24.collaborationhost.net>
+References: <20120614162901.798d7661ea87e6134eee6f3a@canb.auug.org.au>
+ <4FDA59D7.3050200@xenotime.net> <4FDB1B8A.8060005@mev.co.uk>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:64561 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755539Ab2FOLiQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jun 2012 07:38:16 -0400
-In-Reply-To: <20120614034036.GE27673@linux-sh.org>
+Received: from mail132.messagelabs.com ([216.82.242.115]:21708 "EHLO
+	mail132.messagelabs.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755332Ab2FOQMd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jun 2012 12:12:33 -0400
+In-Reply-To: <4FDB1B8A.8060005@mev.co.uk>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Ian Abbott <abbotti@mev.co.uk>, Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Abbott <ian.abbott@mev.co.uk>, Frank Mori Hess <fmhess@users.sourceforge.net>
 
-On Thursday 14 June 2012, Paul Mundt wrote:
-> Ok, it's because the asm-generic/bug.h __ASSEMBLY__ guarding is
-> completely bogus. This should hopefully fix it once and for all.
-> Sorry for the trouble.
-> 
-> Signed-off-by: Paul Mundt <lethal@linux-sh.org>
-
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+T24gRnJpZGF5LCBKdW5lIDE1LCAyMDEyIDQ6MjUgQU0sIElhbiBBYmJvdHQgd3JvdGU6DQo+IE9u
+IDIwMTItMDYtMTQgMjI6MzgsIFJhbmR5IER1bmxhcCB3cm90ZToNCj4+IE9uIDA2LzEzLzIwMTIg
+MTE6MjkgUE0sIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+Pg0KPj4+IEhpIGFsbCwNCj4+Pg0K
+Pj4+IENoYW5nZXMgc2luY2UgMjAxMjA2MTM6DQo+Pg0KPj4NCj4+DQo+PiB3aGVuIENPTkZJR19Q
+Q01DSUEgaXMgbm90IGVuYWJsZWQ6DQo+Pg0KPj4gRVJST1I6ICJwY21jaWFfdW5yZWdpc3Rlcl9k
+cml2ZXIiIFtkcml2ZXJzL3N0YWdpbmcvY29tZWRpL2RyaXZlcnMvbmlfbGFicGNfY3Mua29dIHVu
+ZGVmaW5lZCENCj4+IEVSUk9SOiAicGNtY2lhX3JlZ2lzdGVyX2RyaXZlciIgW2RyaXZlcnMvc3Rh
+Z2luZy9jb21lZGkvZHJpdmVycy9uaV9sYWJwY19jcy5rb10gdW5kZWZpbmVkIQ0KPj4gRVJST1I6
+ICJwY21jaWFfZW5hYmxlX2RldmljZSIgW2RyaXZlcnMvc3RhZ2luZy9jb21lZGkvZHJpdmVycy9u
+aV9sYWJwY19jcy5rb10gdW5kZWZpbmVkIQ0KPj4gRVJST1I6ICJwY21jaWFfbG9vcF9jb25maWci
+IFtkcml2ZXJzL3N0YWdpbmcvY29tZWRpL2RyaXZlcnMvbmlfbGFicGNfY3Mua29dIHVuZGVmaW5l
+ZCENCj4+IEVSUk9SOiAicGNtY2lhX3JlcXVlc3RfaW8iIFtkcml2ZXJzL3N0YWdpbmcvY29tZWRp
+L2RyaXZlcnMvbmlfbGFicGNfY3Mua29dIHVuZGVmaW5lZCENCj4+IEVSUk9SOiAicGNtY2lhX2Rp
+c2FibGVfZGV2aWNlIiBbZHJpdmVycy9zdGFnaW5nL2NvbWVkaS9kcml2ZXJzL25pX2xhYnBjX2Nz
+LmtvXSB1bmRlZmluZWQhDQo+PiBFUlJPUjogInBjbWNpYV91bnJlZ2lzdGVyX2RyaXZlciIgW2Ry
+aXZlcnMvc3RhZ2luZy9jb21lZGkvZHJpdmVycy9uaV9kYXFfNzAwLmtvXSB1bmRlZmluZWQhDQo+
+PiBFUlJPUjogInBjbWNpYV9yZWdpc3Rlcl9kcml2ZXIiIFtkcml2ZXJzL3N0YWdpbmcvY29tZWRp
+L2RyaXZlcnMvbmlfZGFxXzcwMC5rb10gdW5kZWZpbmVkIQ0KPj4gRVJST1I6ICJwY21jaWFfZW5h
+YmxlX2RldmljZSIgW2RyaXZlcnMvc3RhZ2luZy9jb21lZGkvZHJpdmVycy9uaV9kYXFfNzAwLmtv
+XSB1bmRlZmluZWQhDQo+PiBFUlJPUjogInBjbWNpYV9sb29wX2NvbmZpZyIgW2RyaXZlcnMvc3Rh
+Z2luZy9jb21lZGkvZHJpdmVycy9uaV9kYXFfNzAwLmtvXSB1bmRlZmluZWQhDQo+PiBFUlJPUjog
+InBjbWNpYV9yZXF1ZXN0X2lvIiBbZHJpdmVycy9zdGFnaW5nL2NvbWVkaS9kcml2ZXJzL25pX2Rh
+cV83MDAua29dIHVuZGVmaW5lZCENCj4+IEVSUk9SOiAicGNtY2lhX2Rpc2FibGVfZGV2aWNlIiBb
+ZHJpdmVycy9zdGFnaW5nL2NvbWVkaS9kcml2ZXJzL25pX2RhcV83MDAua29dIHVuZGVmaW5lZCEN
+Cj4+DQo+Pg0KPj4gRnVsbCByYW5kY29uZmlnIGZpbGUgaXMgYXR0YWNoZWQuDQo+DQo+IFRoaXMg
+c2VlbXMgdG8gYmUgY2F1c2VkIGJ5IHRoaXMgY29tbWl0IGluIHRoZSBsaW51eC1uZXh0IHJlcG9z
+aXRvcnk6DQo+DQo+IDQ4MjlhOTk2N2RiZTNhM2FiMTkyZGYwYmZkZGUyODE5NjBjYzEzMTkgaXMg
+dGhlIGZpcnN0IGJhZCBjb21taXQNCj4gY29tbWl0IDQ4MjlhOTk2N2RiZTNhM2FiMTkyZGYwYmZk
+ZGUyODE5NjBjYzEzMTkNCj4gQXV0aG9yOiBIIEhhcnRsZXkgU3dlZXRlbiA8aGFydGxleXNAdmlz
+aW9uZW5ncmF2ZXJzLmNvbT4NCj4gRGF0ZTogICBUdWUgSnVuIDEyIDE3OjM3OjEwIDIwMTIgLTA3
+MDANCj4NCj4gICAgICBzdGFnaW5nOiBjb21lZGk6IEtjb25maWc6IGNsZWFudXAgZGVwZW5kcyBv
+biBsb2dpYw0KPg0KPiAgICAgIEFsbCBvZiB0aGUgY29uZmlnIG9wdGlvbnMgZm9yIGNvbWVkaSBk
+ZXBlbmQgb24gQ09NRURJIGJlaW5nDQo+ICAgICAgc2VsZWN0ZWQuIFdyYXAgZXZlcnl0aGluZyBp
+biBhbiAnaWYgQ09NRURJL2VuZGlmJyBibG9jayBhbmQNCj4gICAgICByZW1vdmUgYWxsIHRoZSBp
+bmRpdmlkdWFsICdkZXBlbmRzIG9uIENPTUVESScgaW4gdGhlIEtjb25maWcuDQo+DQo+ICAgICAg
+QWxzbywgcmVtb3ZlIHRoZSByZWR1bmRhbnQgJiYgSVNBL1BDSS9QQ01DSUEvVVNCIGZvciB0aGUg
+aWYNCj4gICAgICBibG9ja3Mgd2l0aCB0aG9zZSBkcml2ZXIgdHlwZXMuDQo+DQo+ICAgICAgU2ln
+bmVkLW9mZi1ieTogSCBIYXJ0bGV5IFN3ZWV0ZW4gPGhzd2VldGVuQHZpc2lvbmVuZ3JhdmVycy5j
+b20+DQo+ICAgICAgQ2M6IElhbiBBYmJvdHQgPGFiYm90dEBtZXYuY28udWs+DQo+ICAgICAgQ2M6
+IEZyYW5rIE1vcmkgSGVzcyA8Zm1oZXNzQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4NCj4gICAgICBT
+aWduZWQtb2ZmLWJ5OiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24u
+b3JnPg0KPg0KDQpPSy4gVGhlIHByb2JsZW0gYXBwZWFycyB0byBiZSBpbiB0aGUgZGVwZW5kcyBm
+b3IgQ09NRURJX1BDTUNJQV9EUklWRVJTLg0KDQptZW51Y29uZmlnIENPTUVESV9QQ01DSUFfRFJJ
+VkVSUw0KCXRyaXN0YXRlICJDb21lZGkgUENNQ0lBIGRyaXZlcnMiDQoJZGVwZW5kcyBvbiAoUENN
+Q0lBIHx8IFBDQ0FSRCkNCg0KRGVwZW5kaW5nIG9uIFBDQ0FSRCBpcyByZWR1bmRhbnQuIEl0IG11
+c3QgYmUgZW5hYmxlZCBpbiBvcmRlciB0byBzZWxlY3QNClBDTUNJQS4gUGF0Y2ggY29taW5nIHNo
+b3J0bHkuDQoNClNvcnJ5IGFib3V0IHRoYXQuDQoNClJlZ2FyZHMsDQpIYXJ0bGV5DQoNCg0K
