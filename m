@@ -1,35 +1,30 @@
-From: "Richard W.M. Jones" <rjones@redhat.com>
-Subject: Re: linux-next: build failure in Linus' tree
-Date: Fri, 15 Jun 2012 09:46:00 +0100
-Message-ID: <20120615084600.GA663@amd.home.annexia.org>
-References: <20120614114722.0fd16fb906b6a5503cfbc51a@canb.auug.org.au>
- <20120614030606.GC27673@linux-sh.org>
- <20120614034036.GE27673@linux-sh.org>
+From: "Shai Fultheim (Shai@ScaleMP.com)" <Shai@ScaleMP.com>
+Subject: RE: linux-next: Tree for Jun 14 (vsmp)
+Date: Fri, 15 Jun 2012 04:50:30 -0400
+Message-ID: <9B14D1490DDECA4E974F6B9FC9EBAB317EEFC75B73@VMBX108.ihostexchange.net>
+References: <20120614162901.798d7661ea87e6134eee6f3a@canb.auug.org.au>
+ <4FDA56D6.3000704@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:11944 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751127Ab2FOIqN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 15 Jun 2012 04:46:13 -0400
-Content-Disposition: inline
-In-Reply-To: <20120614034036.GE27673@linux-sh.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4FDA56D6.3000704@xenotime.net>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Ravikiran Thirumalai <kiran@scalemp.com>, "Ido Yariv (ido@wizery.com)" <ido@wizery.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jun 14, 2012 at 12:40:36PM +0900, Paul Mundt wrote:
-> Ok, it's because the asm-generic/bug.h __ASSEMBLY__ guarding is
-> completely bogus. This should hopefully fix it once and for all.
-> Sorry for the trouble.
-
-I can confirm this fixes the build on ppc64 for me too.
-
-Rich.
-
--- 
-Richard Jones, Virtualization Group, Red Hat http://people.redhat.com/~rjones
-virt-p2v converts physical machines to virtual machines.  Boot with a
-live CD or over the network (PXE) and turn machines into Xen guests.
-http://et.redhat.com/~rjones/virt-p2v
+UmFuZHksDQoNCkEgZml4IGZvciB0aGlzIHdhcyBwb3N0ZWQgeWVzdGVyZGF5IGJ5IElkby4NCg0K
+DQotLVNoYWkgDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSYW5k
+eSBEdW5sYXAgW21haWx0bzpyZHVubGFwQHhlbm90aW1lLm5ldF0NCj4gU2VudDogVGh1cnNkYXks
+IEp1bmUgMTQsIDIwMTIgMTc6MjYNCj4gVG86IFN0ZXBoZW4gUm90aHdlbGwNCj4gQ2M6IGxpbnV4
+LW5leHRAdmdlci5rZXJuZWwub3JnOyBMS01MOyBSYXZpa2lyYW4gVGhpcnVtYWxhaTsgU2hhaSBG
+dWx0aGVpbQ0KPiAoU2hhaUBTY2FsZU1QLmNvbSkNCj4gU3ViamVjdDogUmU6IGxpbnV4LW5leHQ6
+IFRyZWUgZm9yIEp1biAxNCAodnNtcCkNCj4gDQo+IE9uIDA2LzEzLzIwMTIgMTE6MjkgUE0sIFN0
+ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+IA0KPiA+IEhpIGFsbCwNCj4gPg0KPiA+IENoYW5nZXMg
+c2luY2UgMjAxMjA2MTM6DQo+IA0KPiANCj4gDQo+IG9uIHg4Nl82NDoNCj4gDQo+IGFyY2gveDg2
+L2J1aWx0LWluLm86IEluIGZ1bmN0aW9uIGBzZXRfdnNtcF9wdl9vcHMnOg0KPiB2c21wXzY0LmM6
+KC5pbml0LnRleHQrMHgxNzE1NSk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8gYG5vX2lycV9hZmZp
+bml0eScNCj4gDQo+IA0KPiBGdWxsIHJhbmRjb25maWcgZmlsZSBpcyBhdHRhY2hlZC4NCj4gDQo+
+IC0tDQo+IH5SYW5keQ0K
