@@ -1,105 +1,75 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: build failure in Linus' tree
-Date: Fri, 15 Jun 2012 12:15:15 +0200
-Message-ID: <CA+icZUUxEgdZ6iKz-eg9ztaxaJx_bmWDmuxpnqLXMYLbBO6cDQ@mail.gmail.com>
-References: <20120614114722.0fd16fb906b6a5503cfbc51a@canb.auug.org.au>
-	<20120614030606.GC27673@linux-sh.org>
-	<20120614034036.GE27673@linux-sh.org>
-	<20120615101407.369c754da872e18c854ab481@canb.auug.org.au>
-	<CA+icZUURfHZwcrVxgy+co+crKFOOT+Pp_EMR9PRTr8vXYU-sEA@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Ian Abbott <abbotti@mev.co.uk>
+Subject: Re: linux-next: Tree for Jun 14 (staging/comedi)
+Date: Fri, 15 Jun 2012 12:24:58 +0100
+Message-ID: <4FDB1B8A.8060005@mev.co.uk>
+References: <20120614162901.798d7661ea87e6134eee6f3a@canb.auug.org.au>
+ <4FDA59D7.3050200@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:55771 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751127Ab2FOKPQ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jun 2012 06:15:16 -0400
-In-Reply-To: <CA+icZUURfHZwcrVxgy+co+crKFOOT+Pp_EMR9PRTr8vXYU-sEA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Mundt <lethal@linux-sh.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <devel-bounces@linuxdriverproject.org>
+In-Reply-To: <4FDA59D7.3050200@xenotime.net>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
+ <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel>
+List-Post: <mailto:devel@linuxdriverproject.org>
+List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
+ <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: devel-bounces@linuxdriverproject.org
+Sender: devel-bounces@linuxdriverproject.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Ian Abbott <ian.abbott@mev.co.uk>, Frank Mori Hess <fmhess@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, H Hartley Sweeten <hartleys@visionengravers.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Jun 15, 2012 at 11:23 AM, Sedat Dilek
-<sedat.dilek@googlemail.com> wrote:
-> On Fri, Jun 15, 2012 at 2:14 AM, Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
->> Hi Paul,
->>
->> On Thu, 14 Jun 2012 12:40:36 +0900 Paul Mundt <lethal@linux-sh.org> =
-wrote:
->>>
->>> (adding Arnd to Cc, who I forgot to include previously)
->>>
->>> On Thu, Jun 14, 2012 at 12:06:06PM +0900, Paul Mundt wrote:
->>> > On Thu, Jun 14, 2012 at 11:47:22AM +1000, Stephen Rothwell wrote:
->>> > > While building Linus' tree, today's linux-next build (powerpc
->>> > > ppc64_defconfig) failed like this:
->>> > >
->>> > > In file included from include/asm-generic/bug.h:5:0,
->>> > > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0f=
-rom arch/powerpc/include/asm/bug.h:127,
->>> > > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0f=
-rom arch/powerpc/kernel/head_64.S:31:
->>> > > include/linux/kernel.h:44:0: warning: "ALIGN" redefined [enable=
-d by default]
->>> > > include/linux/linkage.h:57:0: note: this is the location of the=
- previous definition
->>> > > include/linux/sysinfo.h: Assembler messages:
->>> > > include/linux/sysinfo.h:7: Error: Unrecognized opcode: `struct'
->>> > > include/linux/sysinfo.h:8: Error: Unrecognized opcode: `__kerne=
-l_long_t'
->>> > >
->>> > > And it went downhill from there :-(
->>> > >
->>> > > Caused by commit 3777808873b0 ("bug.h: need linux/kernel.h for
->>> > > TAINT_WARN") which, unfortunately never made it into linux-next=
-=2E
->>> > >
->>> > > I have reverted that commit for today (which presumably means t=
-hat sh
->>> > > builds will be broken again).
->>> >
->>> > I'm still unsure as to the best way to fix this, and there was no
->>> > response to the original mail I posted about it either:
->>> >
->>> > http://marc.info/?l=3Dlinux-kernel&m=3D133879579014853&w=3D2
->>> >
->>> > I'll fetch a powerpc cross compiler and see if I can figure out w=
-hat went
->>> > wrong.
->>> >
->>> Ok, it's because the asm-generic/bug.h __ASSEMBLY__ guarding is
->>> completely bogus. This should hopefully fix it once and for all.
->>> Sorry for the trouble.
->>>
->>> Signed-off-by: Paul Mundt <lethal@linux-sh.org>
->>
->> Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
->>
->> Can you create a proper commit message and send this to Linus, pleas=
-e? =C2=A0I
->> have included it in my fixes tree in linux-next for today.
->>
+On 2012-06-14 22:38, Randy Dunlap wrote:
+> On 06/13/2012 11:29 PM, Stephen Rothwell wrote:
 >
-> Reference: commit 2a6f7f6bd7a9eb3c835c7e5a7d51b43675fb3881 ("fix
-> bug.h's inclusion of kernel.h")
+>> Hi all,
+>>
+>> Changes since 20120613:
 >
+>
+>
+> when CONFIG_PCMCIA is not enabled:
+>
+> ERROR: "pcmcia_unregister_driver" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
+> ERROR: "pcmcia_register_driver" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
+> ERROR: "pcmcia_enable_device" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
+> ERROR: "pcmcia_loop_config" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
+> ERROR: "pcmcia_request_io" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
+> ERROR: "pcmcia_disable_device" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
+> ERROR: "pcmcia_unregister_driver" [drivers/staging/comedi/drivers/ni_daq_700.ko] undefined!
+> ERROR: "pcmcia_register_driver" [drivers/staging/comedi/drivers/ni_daq_700.ko] undefined!
+> ERROR: "pcmcia_enable_device" [drivers/staging/comedi/drivers/ni_daq_700.ko] undefined!
+> ERROR: "pcmcia_loop_config" [drivers/staging/comedi/drivers/ni_daq_700.ko] undefined!
+> ERROR: "pcmcia_request_io" [drivers/staging/comedi/drivers/ni_daq_700.ko] undefined!
+> ERROR: "pcmcia_disable_device" [drivers/staging/comedi/drivers/ni_daq_700.ko] undefined!
+>
+>
+> Full randconfig file is attached.
 
-Hope people don't treat this as nitpicking:
-I looked through the last commits to the involved file, all commits
-are labeled with "bug.h: ...", so follow the "rule"...
+This seems to be caused by this commit in the linux-next repository:
 
-"bug.h: Fix inclusion of kernel.h"
+4829a9967dbe3a3ab192df0bfdde281960cc1319 is the first bad commit
+commit 4829a9967dbe3a3ab192df0bfdde281960cc1319
+Author: H Hartley Sweeten <hartleys@visionengravers.com>
+Date:   Tue Jun 12 17:37:10 2012 -0700
 
-> - Sedat -
->
-> [1] http://git.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;a=
-=3Dcommitdiff;h=3D2a6f7f6bd7a9eb3c835c7e5a7d51b43675fb3881
->
->> --
->> Cheers,
->> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
+     staging: comedi: Kconfig: cleanup depends on logic
+
+     All of the config options for comedi depend on COMEDI being
+     selected. Wrap everything in an 'if COMEDI/endif' block and
+     remove all the individual 'depends on COMEDI' in the Kconfig.
+
+     Also, remove the redundant && ISA/PCI/PCMCIA/USB for the if
+     blocks with those driver types.
+
+     Signed-off-by: H Hartley Sweeten <hsweeten@visionengravers.com>
+     Cc: Ian Abbott <abbott@mev.co.uk>
+     Cc: Frank Mori Hess <fmhess@users.sourceforge.net>
+     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+-- 
+-=( Ian Abbott @ MEV Ltd.    E-mail: <abbotti@mev.co.uk>        )=-
+-=( Tel: +44 (0)161 477 1898   FAX: +44 (0)161 718 3587         )=-
