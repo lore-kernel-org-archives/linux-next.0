@@ -1,64 +1,41 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [-next] FATAL: drivers/gpu/drm/udl/udl: sizeof(struct
- usb_device_id)=24 is not a modulo of the size of section __mod_usb_device_table=44.
-Date: Fri, 15 Jun 2012 19:42:08 +0200
-Message-ID: <CAMuHMdXk6pByz14JcDgY+UE6QM0sHD8cbXye9CgOVSRRtr7J+Q@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] pstore: fix printk format warning in ram.c
+Date: Fri, 15 Jun 2012 12:19:20 -0700
+Message-ID: <4FDB8AB8.6060703@xenotime.net>
+References: <20120615143303.3b88edcbc3efc7b1bf81839b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-m68k-owner@vger.kernel.org>
-Sender: linux-m68k-owner@vger.kernel.org
-To: =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: USB list <linux-usb@vger.kernel.org>, linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, linux-kbuild <linux-kbuild@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy9.bluehost.com ([69.89.24.6]:48871 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753793Ab2FOTTi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jun 2012 15:19:38 -0400
+In-Reply-To: <20120615143303.3b88edcbc3efc7b1bf81839b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marco Stornelli <marco.stornelli@gmail.com>, Kees Cook <keescook@chromium.org>, Andrew Morton <akpm@linux-foundation.org>
 
-commit 81df2d594340dcb6d1a02191976be88a1ca8120c ("USB: allow match
-on bInterfaceNumber") added a byte to the interior of struct usb_device=
-_id,
-enabling implicit padding:
+From: Randy Dunlap <rdunlap@xenotime.net>
 
---- a/include/linux/mod_devicetable.h
-+++ b/include/linux/mod_devicetable.h
-@@ -115,6 +118,9 @@ struct usb_device_id {
-        __u8            bInterfaceSubClass;
-        __u8            bInterfaceProtocol;
+Fix printk format warning (on i386) in pstore:
 
-+       /* Used for vendor-specific interface matches */
-+       __u8            bInterfaceNumber;
-+
-        /* not matched against */
-        kernel_ulong_t  driver_info;
- };
+fs/pstore/ram.c:378:3: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'size_t'
 
-On m68k, this causes failures like:
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
+ fs/pstore/ram.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-| FATAL: drivers/gpu/drm/udl/udl: sizeof(struct usb_device_id)=3D24 is
-not a modulo of the size of section __mod_usb_device_table=3D44.
-| Fix definition of struct usb_device_id in mod_devicetable.h
-
-M68k is special in that it uses 2 for the alignment of 32-bit entities,=
- hence
-sizeof(struct usb_device_id) =3D 22.
-
-However, when cross-compiling on amd64, sizeof(struct usb_device_id) =3D=
- 24
-in scripts/mod/file2alias.c.
-
-m68k/allmodconfig at http://kisskb.ellerman.id.au/kisskb/buildresult/65=
-18563/
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+--- linux-next-20120615.orig/fs/pstore/ram.c
++++ linux-next-20120615/fs/pstore/ram.c
+@@ -375,7 +375,7 @@ static int __init ramoops_probe(struct p
+ 		goto fail_init_cprz;
+ 
+ 	if (!cxt->przs && !cxt->cprz) {
+-		pr_err("memory size too small, minimum is %lu\n",
++		pr_err("memory size too small, minimum is %zu\n",
+ 			cxt->console_size + cxt->record_size);
+ 		goto fail_cnt;
+ 	}
