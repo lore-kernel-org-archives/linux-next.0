@@ -1,33 +1,61 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH -next] pstore: fix printk format warning in ram.c
-Date: Fri, 15 Jun 2012 12:32:30 -0700
-Message-ID: <CAGXu5j+VixgdQgvxkM1SHOC_vSwD0jwSdY36vG1n+d8VE0_7EQ@mail.gmail.com>
-References: <20120615143303.3b88edcbc3efc7b1bf81839b@canb.auug.org.au>
-	<4FDB8AB8.6060703@xenotime.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [-next] FATAL: drivers/gpu/drm/udl/udl: sizeof(struct
+ usb_device_id)=24 is not a modulo of the size of section
+ __mod_usb_device_table=44.
+Date: Fri, 15 Jun 2012 13:10:21 -0700
+Message-ID: <20120615201021.GB14544@kroah.com>
+References: <CAMuHMdXk6pByz14JcDgY+UE6QM0sHD8cbXye9CgOVSRRtr7J+Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4FDB8AB8.6060703@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marco Stornelli <marco.stornelli@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:35619 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757228Ab2FOUK0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jun 2012 16:10:26 -0400
+Received: by pbbrp8 with SMTP id rp8so5713097pbb.19
+        for <linux-next@vger.kernel.org>; Fri, 15 Jun 2012 13:10:26 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXk6pByz14JcDgY+UE6QM0sHD8cbXye9CgOVSRRtr7J+Q@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>, USB list <linux-usb@vger.kernel.org>, linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, linux-kbuild <linux-kbuild@vger.kernel.org>, Linux/m68k <linux-m68k@vger.kernel.org>
 
-On Fri, Jun 15, 2012 at 12:19 PM, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> From: Randy Dunlap <rdunlap@xenotime.net>
->
-> Fix printk format warning (on i386) in pstore:
->
-> fs/pstore/ram.c:378:3: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'size_t'
->
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+On Fri, Jun 15, 2012 at 07:42:08PM +0200, Geert Uytterhoeven wrote:
+> commit 81df2d594340dcb6d1a02191976be88a1ca8120c ("USB: allow match
+> on bInterfaceNumber") added a byte to the interior of struct usb_device_id,
+> enabling implicit padding:
+> 
+> --- a/include/linux/mod_devicetable.h
+> +++ b/include/linux/mod_devicetable.h
+> @@ -115,6 +118,9 @@ struct usb_device_id {
+>         __u8            bInterfaceSubClass;
+>         __u8            bInterfaceProtocol;
+> 
+> +       /* Used for vendor-specific interface matches */
+> +       __u8            bInterfaceNumber;
+> +
+>         /* not matched against */
+>         kernel_ulong_t  driver_info;
+>  };
+> 
+> On m68k, this causes failures like:
+> 
+> | FATAL: drivers/gpu/drm/udl/udl: sizeof(struct usb_device_id)=24 is
+> not a modulo of the size of section __mod_usb_device_table=44.
+> | Fix definition of struct usb_device_id in mod_devicetable.h
+> 
+> M68k is special in that it uses 2 for the alignment of 32-bit entities, hence
+> sizeof(struct usb_device_id) = 22.
+> 
+> However, when cross-compiling on amd64, sizeof(struct usb_device_id) = 24
+> in scripts/mod/file2alias.c.
 
-I thought Greg already pulled this into his tree? Regardless:
+I don't really understand, what is the problem here?  The fact that we
+added one byte to the structure?  And now something breaks?  How?
 
-Acked-by: Kees Cook <keescook@chromium.org>
+What can we do to resolve it?
 
--Kees
+confused,
 
--- 
-Kees Cook
-Chrome OS Security
+greg k-h
