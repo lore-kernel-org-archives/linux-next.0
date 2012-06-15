@@ -1,104 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure in Linus' tree
-Date: Fri, 15 Jun 2012 10:14:07 +1000
-Message-ID: <20120615101407.369c754da872e18c854ab481@canb.auug.org.au>
-References: <20120614114722.0fd16fb906b6a5503cfbc51a@canb.auug.org.au>
-	<20120614030606.GC27673@linux-sh.org>
-	<20120614034036.GE27673@linux-sh.org>
+Subject: Re: linux-next: manual merge of the wireless-next tree with the net
+ tree
+Date: Fri, 15 Jun 2012 10:23:10 +1000
+Message-ID: <20120615102310.a066ef60ba1c3c083f078aea@canb.auug.org.au>
+References: <20120612114129.68159847828093544c867306@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__15_Jun_2012_10_14_07_+1000_LCohWgJvg8PQxLyg"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54933 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751477Ab2FOAOV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Jun 2012 20:14:21 -0400
-In-Reply-To: <20120614034036.GE27673@linux-sh.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+ boundary="Signature=_Fri__15_Jun_2012_10_23_10_+1000_pCGYjChD0K1uUYW6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120612114129.68159847828093544c867306@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Johannes Berg <johannes.berg@intel.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__15_Jun_2012_10_14_07_+1000_LCohWgJvg8PQxLyg
+--Signature=_Fri__15_Jun_2012_10_23_10_+1000_pCGYjChD0K1uUYW6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi John, Dave,
 
-On Thu, 14 Jun 2012 12:40:36 +0900 Paul Mundt <lethal@linux-sh.org> wrote:
+On Tue, 12 Jun 2012 11:41:29 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> (adding Arnd to Cc, who I forgot to include previously)
+> Today's linux-next merge of the wireless-next tree got a conflict in
+> drivers/net/wireless/iwlwifi/pcie/trans.c between commit d012d04e4d63
+> ("iwlwifi: disable the buggy chain extension feature in HW") from the net
+> tree and commit 4beaf6c2f8af ("iwlwifi: s/txq_setup/txq_enable") from the
+> wireless-next tree.
 >=20
-> On Thu, Jun 14, 2012 at 12:06:06PM +0900, Paul Mundt wrote:
-> > On Thu, Jun 14, 2012 at 11:47:22AM +1000, Stephen Rothwell wrote:
-> > > While building Linus' tree, today's linux-next build (powerpc
-> > > ppc64_defconfig) failed like this:
-> > >=20
-> > > In file included from include/asm-generic/bug.h:5:0,
-> > >                  from arch/powerpc/include/asm/bug.h:127,
-> > >                  from arch/powerpc/kernel/head_64.S:31:
-> > > include/linux/kernel.h:44:0: warning: "ALIGN" redefined [enabled by d=
-efault]
-> > > include/linux/linkage.h:57:0: note: this is the location of the previ=
-ous definition
-> > > include/linux/sysinfo.h: Assembler messages:
-> > > include/linux/sysinfo.h:7: Error: Unrecognized opcode: `struct'
-> > > include/linux/sysinfo.h:8: Error: Unrecognized opcode: `__kernel_long=
-_t'
-> > >=20
-> > > And it went downhill from there :-(
-> > >=20
-> > > Caused by commit 3777808873b0 ("bug.h: need linux/kernel.h for
-> > > TAINT_WARN") which, unfortunately never made it into linux-next.
-> > >=20
-> > > I have reverted that commit for today (which presumably means that sh
-> > > builds will be broken again).
-> >=20
-> > I'm still unsure as to the best way to fix this, and there was no
-> > response to the original mail I posted about it either:
-> >=20
-> > http://marc.info/?l=3Dlinux-kernel&m=3D133879579014853&w=3D2
-> >=20
-> > I'll fetch a powerpc cross compiler and see if I can figure out what we=
-nt
-> > wrong.
-> >=20
-> Ok, it's because the asm-generic/bug.h __ASSEMBLY__ guarding is
-> completely bogus. This should hopefully fix it once and for all.
-> Sorry for the trouble.
->=20
-> Signed-off-by: Paul Mundt <lethal@linux-sh.org>
+> I fixed it up (I think - see below) and can carry the fix as necessary.
 
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+So this conflict has now been fixed up in both the net-next (commit
+43b03f1f6d68) and wireless-next (commit 627ae3ddd6f9) trees, but slightly
+differently :-(  I used the version from the net-next tree.
 
-Can you create a proper commit message and send this to Linus, please?  I
-have included it in my fixes tree in linux-next for today.
-
+Just a heads up.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__15_Jun_2012_10_14_07_+1000_LCohWgJvg8PQxLyg
+--Signature=_Fri__15_Jun_2012_10_23_10_+1000_pCGYjChD0K1uUYW6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP2n5PAAoJEECxmPOUX5FEC3gP/1l7eBViE0oeJXToHhD4xrUX
-rIq65+BSEyK0w6qL/J0MasEMH9lwFqzkoHOKJfCqvLFSjG3qcR33G8KRgt75ZeYU
-2n57qssAZEhvwYK98Sg9zbDNWpQf8aP8sXN3ln7cv2FRO6TArgTe423OetOOoPB2
-dECJlp3AMrvIrGMwq/Jb5jseuEgApBQoTqni0GRepM/tzoujOOpedYqI0LPpAAgB
-tvX9VPkldlyaaOPKdGsIUokx3r6xY10/Aq8GksCrfS1aUWt9IYBYJuqIqC7pHhDK
-6QXKzWGEMv43IgNQfqq7FhlBDJl1mTGAef6r5DBVlgtSTZaQ2+2u/Z7J3G2Oues+
-468lV3V4RYYEdVHTRdeqhH+cBzoWezr+yr2ZNOf4/srBBlA1KUYTZvfH5U4mS5Fg
-PRVHVEBWYFcnyZ4lIntYun157u7iBhn6k+6y3uvHUSJFiD1PNLFvdruf7GJMDuBs
-lwgnL2exHZpbjUt+g8MtM7MmS3FiQxQjhvVBbHGeJsWqK75NJ6nYytb9tNVZ58FZ
-jCryfkKxFh3/URPYO03JqqXEomdktqYfQyQeTEYjSD8RwWjmVVv8Vmv3jAo4ZLH9
-nOuiJ9+i/8Et6tNnmk77f357bE4fxObFGUkZRsLZ2AM90BwKQ/EJsIRZv+PIf7A5
-W0R5zVZv5xpy/SJsgogY
-=RaL1
+iQIcBAEBCAAGBQJP2oBuAAoJEECxmPOUX5FEsNYQAJpn1R8C2NFiDaC8+4ismOzW
+5+96Xj8gdpRASRAkVjnD5+ZgYacw/H3VibsSBR1ez2nvjcmIY3GtIJIxSxkHBDpN
+fmjU4EZcbtMoQwq8CnCKVIfe2PZ0vhtR5g4vftZ/y9aVDi9DcWCU/bXux0qWUh30
+h1F7+A6osz9/KgTi+aBYoTAKdLnjnl85H2LyfH7lyWbrC4zEWcc8tSH2fjNRVdxq
+r1J8BbJmlKtLeHp8qKWFFQLWoSvgIjWTHFxpVqwtG3G655EvVp4Lm5VfIt9NLTTT
+C19m1CsIIkBZw8UGZ9YEvPjiJbIKewFRVBdDxMFbDLg1ycJf7aGtMoLrCkf0AoyI
+TmCUY+44PQVEtJiwu6SNOzTKU6ZdPG/js4PGhe4ZiIvMiqVK1F+RMt5NW+xqW2pl
+oqhGkgBdIikz4XOz5zT6J8rbUsyFdpn80zQUAf2Z7OrSjmItEAJVyEFXTKgX57Y9
+TdTxlJ99nh3OaK8T5vlCnhKqPhsg6QxXFTAp8nX6m3xc8arujbgqqQ/zQpXRvGWI
+Fy6wed7F1MtK59UorLWriQdMP5xdoR17QjF90hiUL9yy9Dfkt13WF1oAi342wBem
+vcGCVlna//bMn2j9Cf97PWPpxalxg+tYMl/qwSCYM9EP6bqc+v7fDEpshv1X1Yyd
+FMevpyZLmMLl6Y4mUZMC
+=DIPV
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__15_Jun_2012_10_14_07_+1000_LCohWgJvg8PQxLyg--
+--Signature=_Fri__15_Jun_2012_10_23_10_+1000_pCGYjChD0K1uUYW6--
