@@ -1,30 +1,94 @@
-From: "Shai Fultheim (Shai@ScaleMP.com)" <Shai@ScaleMP.com>
-Subject: RE: linux-next: Tree for Jun 14 (vsmp)
-Date: Fri, 15 Jun 2012 04:50:30 -0400
-Message-ID: <9B14D1490DDECA4E974F6B9FC9EBAB317EEFC75B73@VMBX108.ihostexchange.net>
-References: <20120614162901.798d7661ea87e6134eee6f3a@canb.auug.org.au>
- <4FDA56D6.3000704@xenotime.net>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: linux-next: build failure in Linus' tree
+Date: Fri, 15 Jun 2012 11:23:02 +0200
+Message-ID: <CA+icZUURfHZwcrVxgy+co+crKFOOT+Pp_EMR9PRTr8vXYU-sEA@mail.gmail.com>
+References: <20120614114722.0fd16fb906b6a5503cfbc51a@canb.auug.org.au>
+	<20120614030606.GC27673@linux-sh.org>
+	<20120614034036.GE27673@linux-sh.org>
+	<20120615101407.369c754da872e18c854ab481@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4FDA56D6.3000704@xenotime.net>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Ravikiran Thirumalai <kiran@scalemp.com>, "Ido Yariv (ido@wizery.com)" <ido@wizery.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:53829 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754978Ab2FOJXD convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jun 2012 05:23:03 -0400
+In-Reply-To: <20120615101407.369c754da872e18c854ab481@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Mundt <lethal@linux-sh.org>, Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
 
-UmFuZHksDQoNCkEgZml4IGZvciB0aGlzIHdhcyBwb3N0ZWQgeWVzdGVyZGF5IGJ5IElkby4NCg0K
-DQotLVNoYWkgDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSYW5k
-eSBEdW5sYXAgW21haWx0bzpyZHVubGFwQHhlbm90aW1lLm5ldF0NCj4gU2VudDogVGh1cnNkYXks
-IEp1bmUgMTQsIDIwMTIgMTc6MjYNCj4gVG86IFN0ZXBoZW4gUm90aHdlbGwNCj4gQ2M6IGxpbnV4
-LW5leHRAdmdlci5rZXJuZWwub3JnOyBMS01MOyBSYXZpa2lyYW4gVGhpcnVtYWxhaTsgU2hhaSBG
-dWx0aGVpbQ0KPiAoU2hhaUBTY2FsZU1QLmNvbSkNCj4gU3ViamVjdDogUmU6IGxpbnV4LW5leHQ6
-IFRyZWUgZm9yIEp1biAxNCAodnNtcCkNCj4gDQo+IE9uIDA2LzEzLzIwMTIgMTE6MjkgUE0sIFN0
-ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+IA0KPiA+IEhpIGFsbCwNCj4gPg0KPiA+IENoYW5nZXMg
-c2luY2UgMjAxMjA2MTM6DQo+IA0KPiANCj4gDQo+IG9uIHg4Nl82NDoNCj4gDQo+IGFyY2gveDg2
-L2J1aWx0LWluLm86IEluIGZ1bmN0aW9uIGBzZXRfdnNtcF9wdl9vcHMnOg0KPiB2c21wXzY0LmM6
-KC5pbml0LnRleHQrMHgxNzE1NSk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8gYG5vX2lycV9hZmZp
-bml0eScNCj4gDQo+IA0KPiBGdWxsIHJhbmRjb25maWcgZmlsZSBpcyBhdHRhY2hlZC4NCj4gDQo+
-IC0tDQo+IH5SYW5keQ0K
+On Fri, Jun 15, 2012 at 2:14 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Paul,
+>
+> On Thu, 14 Jun 2012 12:40:36 +0900 Paul Mundt <lethal@linux-sh.org> w=
+rote:
+>>
+>> (adding Arnd to Cc, who I forgot to include previously)
+>>
+>> On Thu, Jun 14, 2012 at 12:06:06PM +0900, Paul Mundt wrote:
+>> > On Thu, Jun 14, 2012 at 11:47:22AM +1000, Stephen Rothwell wrote:
+>> > > While building Linus' tree, today's linux-next build (powerpc
+>> > > ppc64_defconfig) failed like this:
+>> > >
+>> > > In file included from include/asm-generic/bug.h:5:0,
+>> > > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fr=
+om arch/powerpc/include/asm/bug.h:127,
+>> > > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0fr=
+om arch/powerpc/kernel/head_64.S:31:
+>> > > include/linux/kernel.h:44:0: warning: "ALIGN" redefined [enabled=
+ by default]
+>> > > include/linux/linkage.h:57:0: note: this is the location of the =
+previous definition
+>> > > include/linux/sysinfo.h: Assembler messages:
+>> > > include/linux/sysinfo.h:7: Error: Unrecognized opcode: `struct'
+>> > > include/linux/sysinfo.h:8: Error: Unrecognized opcode: `__kernel=
+_long_t'
+>> > >
+>> > > And it went downhill from there :-(
+>> > >
+>> > > Caused by commit 3777808873b0 ("bug.h: need linux/kernel.h for
+>> > > TAINT_WARN") which, unfortunately never made it into linux-next.
+>> > >
+>> > > I have reverted that commit for today (which presumably means th=
+at sh
+>> > > builds will be broken again).
+>> >
+>> > I'm still unsure as to the best way to fix this, and there was no
+>> > response to the original mail I posted about it either:
+>> >
+>> > http://marc.info/?l=3Dlinux-kernel&m=3D133879579014853&w=3D2
+>> >
+>> > I'll fetch a powerpc cross compiler and see if I can figure out wh=
+at went
+>> > wrong.
+>> >
+>> Ok, it's because the asm-generic/bug.h __ASSEMBLY__ guarding is
+>> completely bogus. This should hopefully fix it once and for all.
+>> Sorry for the trouble.
+>>
+>> Signed-off-by: Paul Mundt <lethal@linux-sh.org>
+>
+> Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>
+> Can you create a proper commit message and send this to Linus, please=
+? =C2=A0I
+> have included it in my fixes tree in linux-next for today.
+>
+
+Reference: commit 2a6f7f6bd7a9eb3c835c7e5a7d51b43675fb3881 ("fix
+bug.h's inclusion of kernel.h")
+
+- Sedat -
+
+[1] http://git.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;a=3D=
+commitdiff;h=3D2a6f7f6bd7a9eb3c835c7e5a7d51b43675fb3881
+
+> --
+> Cheers,
+> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
