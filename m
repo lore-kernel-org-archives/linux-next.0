@@ -1,68 +1,104 @@
-From: H Hartley Sweeten <hartleys@visionengravers.com>
-Subject: RE: linux-next: Tree for Jun 14 (staging/comedi)
-Date: Fri, 15 Jun 2012 11:12:08 -0500
-Message-ID: <ADE657CA350FB648AAC2C43247A983F0020698DBCEEC@AUSP01VMBX24.collaborationhost.net>
-References: <20120614162901.798d7661ea87e6134eee6f3a@canb.auug.org.au>
- <4FDA59D7.3050200@xenotime.net> <4FDB1B8A.8060005@mev.co.uk>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: error: implicit declarations of BUG/BUG_ON/WARN_ON/WARN_ON_ONCE
+Date: Fri, 15 Jun 2012 09:27:13 -0700
+Message-ID: <4FDB6261.2030400@xenotime.net>
+References: <20120615143303.3b88edcbc3efc7b1bf81839b@canb.auug.org.au> <20120615065231.GA12272@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail132.messagelabs.com ([216.82.242.115]:21708 "EHLO
-	mail132.messagelabs.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755332Ab2FOQMd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jun 2012 12:12:33 -0400
-In-Reply-To: <4FDB1B8A.8060005@mev.co.uk>
-Content-Language: en-US
+Received: from oproxy7-pub.bluehost.com ([67.222.55.9]:53573 "HELO
+	oproxy7-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932320Ab2FOQ1b (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jun 2012 12:27:31 -0400
+In-Reply-To: <20120615065231.GA12272@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ian Abbott <abbotti@mev.co.uk>, Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Abbott <ian.abbott@mev.co.uk>, Frank Mori Hess <fmhess@users.sourceforge.net>
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-T24gRnJpZGF5LCBKdW5lIDE1LCAyMDEyIDQ6MjUgQU0sIElhbiBBYmJvdHQgd3JvdGU6DQo+IE9u
-IDIwMTItMDYtMTQgMjI6MzgsIFJhbmR5IER1bmxhcCB3cm90ZToNCj4+IE9uIDA2LzEzLzIwMTIg
-MTE6MjkgUE0sIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+Pg0KPj4+IEhpIGFsbCwNCj4+Pg0K
-Pj4+IENoYW5nZXMgc2luY2UgMjAxMjA2MTM6DQo+Pg0KPj4NCj4+DQo+PiB3aGVuIENPTkZJR19Q
-Q01DSUEgaXMgbm90IGVuYWJsZWQ6DQo+Pg0KPj4gRVJST1I6ICJwY21jaWFfdW5yZWdpc3Rlcl9k
-cml2ZXIiIFtkcml2ZXJzL3N0YWdpbmcvY29tZWRpL2RyaXZlcnMvbmlfbGFicGNfY3Mua29dIHVu
-ZGVmaW5lZCENCj4+IEVSUk9SOiAicGNtY2lhX3JlZ2lzdGVyX2RyaXZlciIgW2RyaXZlcnMvc3Rh
-Z2luZy9jb21lZGkvZHJpdmVycy9uaV9sYWJwY19jcy5rb10gdW5kZWZpbmVkIQ0KPj4gRVJST1I6
-ICJwY21jaWFfZW5hYmxlX2RldmljZSIgW2RyaXZlcnMvc3RhZ2luZy9jb21lZGkvZHJpdmVycy9u
-aV9sYWJwY19jcy5rb10gdW5kZWZpbmVkIQ0KPj4gRVJST1I6ICJwY21jaWFfbG9vcF9jb25maWci
-IFtkcml2ZXJzL3N0YWdpbmcvY29tZWRpL2RyaXZlcnMvbmlfbGFicGNfY3Mua29dIHVuZGVmaW5l
-ZCENCj4+IEVSUk9SOiAicGNtY2lhX3JlcXVlc3RfaW8iIFtkcml2ZXJzL3N0YWdpbmcvY29tZWRp
-L2RyaXZlcnMvbmlfbGFicGNfY3Mua29dIHVuZGVmaW5lZCENCj4+IEVSUk9SOiAicGNtY2lhX2Rp
-c2FibGVfZGV2aWNlIiBbZHJpdmVycy9zdGFnaW5nL2NvbWVkaS9kcml2ZXJzL25pX2xhYnBjX2Nz
-LmtvXSB1bmRlZmluZWQhDQo+PiBFUlJPUjogInBjbWNpYV91bnJlZ2lzdGVyX2RyaXZlciIgW2Ry
-aXZlcnMvc3RhZ2luZy9jb21lZGkvZHJpdmVycy9uaV9kYXFfNzAwLmtvXSB1bmRlZmluZWQhDQo+
-PiBFUlJPUjogInBjbWNpYV9yZWdpc3Rlcl9kcml2ZXIiIFtkcml2ZXJzL3N0YWdpbmcvY29tZWRp
-L2RyaXZlcnMvbmlfZGFxXzcwMC5rb10gdW5kZWZpbmVkIQ0KPj4gRVJST1I6ICJwY21jaWFfZW5h
-YmxlX2RldmljZSIgW2RyaXZlcnMvc3RhZ2luZy9jb21lZGkvZHJpdmVycy9uaV9kYXFfNzAwLmtv
-XSB1bmRlZmluZWQhDQo+PiBFUlJPUjogInBjbWNpYV9sb29wX2NvbmZpZyIgW2RyaXZlcnMvc3Rh
-Z2luZy9jb21lZGkvZHJpdmVycy9uaV9kYXFfNzAwLmtvXSB1bmRlZmluZWQhDQo+PiBFUlJPUjog
-InBjbWNpYV9yZXF1ZXN0X2lvIiBbZHJpdmVycy9zdGFnaW5nL2NvbWVkaS9kcml2ZXJzL25pX2Rh
-cV83MDAua29dIHVuZGVmaW5lZCENCj4+IEVSUk9SOiAicGNtY2lhX2Rpc2FibGVfZGV2aWNlIiBb
-ZHJpdmVycy9zdGFnaW5nL2NvbWVkaS9kcml2ZXJzL25pX2RhcV83MDAua29dIHVuZGVmaW5lZCEN
-Cj4+DQo+Pg0KPj4gRnVsbCByYW5kY29uZmlnIGZpbGUgaXMgYXR0YWNoZWQuDQo+DQo+IFRoaXMg
-c2VlbXMgdG8gYmUgY2F1c2VkIGJ5IHRoaXMgY29tbWl0IGluIHRoZSBsaW51eC1uZXh0IHJlcG9z
-aXRvcnk6DQo+DQo+IDQ4MjlhOTk2N2RiZTNhM2FiMTkyZGYwYmZkZGUyODE5NjBjYzEzMTkgaXMg
-dGhlIGZpcnN0IGJhZCBjb21taXQNCj4gY29tbWl0IDQ4MjlhOTk2N2RiZTNhM2FiMTkyZGYwYmZk
-ZGUyODE5NjBjYzEzMTkNCj4gQXV0aG9yOiBIIEhhcnRsZXkgU3dlZXRlbiA8aGFydGxleXNAdmlz
-aW9uZW5ncmF2ZXJzLmNvbT4NCj4gRGF0ZTogICBUdWUgSnVuIDEyIDE3OjM3OjEwIDIwMTIgLTA3
-MDANCj4NCj4gICAgICBzdGFnaW5nOiBjb21lZGk6IEtjb25maWc6IGNsZWFudXAgZGVwZW5kcyBv
-biBsb2dpYw0KPg0KPiAgICAgIEFsbCBvZiB0aGUgY29uZmlnIG9wdGlvbnMgZm9yIGNvbWVkaSBk
-ZXBlbmQgb24gQ09NRURJIGJlaW5nDQo+ICAgICAgc2VsZWN0ZWQuIFdyYXAgZXZlcnl0aGluZyBp
-biBhbiAnaWYgQ09NRURJL2VuZGlmJyBibG9jayBhbmQNCj4gICAgICByZW1vdmUgYWxsIHRoZSBp
-bmRpdmlkdWFsICdkZXBlbmRzIG9uIENPTUVESScgaW4gdGhlIEtjb25maWcuDQo+DQo+ICAgICAg
-QWxzbywgcmVtb3ZlIHRoZSByZWR1bmRhbnQgJiYgSVNBL1BDSS9QQ01DSUEvVVNCIGZvciB0aGUg
-aWYNCj4gICAgICBibG9ja3Mgd2l0aCB0aG9zZSBkcml2ZXIgdHlwZXMuDQo+DQo+ICAgICAgU2ln
-bmVkLW9mZi1ieTogSCBIYXJ0bGV5IFN3ZWV0ZW4gPGhzd2VldGVuQHZpc2lvbmVuZ3JhdmVycy5j
-b20+DQo+ICAgICAgQ2M6IElhbiBBYmJvdHQgPGFiYm90dEBtZXYuY28udWs+DQo+ICAgICAgQ2M6
-IEZyYW5rIE1vcmkgSGVzcyA8Zm1oZXNzQHVzZXJzLnNvdXJjZWZvcmdlLm5ldD4NCj4gICAgICBT
-aWduZWQtb2ZmLWJ5OiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24u
-b3JnPg0KPg0KDQpPSy4gVGhlIHByb2JsZW0gYXBwZWFycyB0byBiZSBpbiB0aGUgZGVwZW5kcyBm
-b3IgQ09NRURJX1BDTUNJQV9EUklWRVJTLg0KDQptZW51Y29uZmlnIENPTUVESV9QQ01DSUFfRFJJ
-VkVSUw0KCXRyaXN0YXRlICJDb21lZGkgUENNQ0lBIGRyaXZlcnMiDQoJZGVwZW5kcyBvbiAoUENN
-Q0lBIHx8IFBDQ0FSRCkNCg0KRGVwZW5kaW5nIG9uIFBDQ0FSRCBpcyByZWR1bmRhbnQuIEl0IG11
-c3QgYmUgZW5hYmxlZCBpbiBvcmRlciB0byBzZWxlY3QNClBDTUNJQS4gUGF0Y2ggY29taW5nIHNo
-b3J0bHkuDQoNClNvcnJ5IGFib3V0IHRoYXQuDQoNClJlZ2FyZHMsDQpIYXJ0bGV5DQoNCg0K
+On 06/14/2012 11:52 PM, Fengguang Wu wrote:
+
+> On Fri, Jun 15, 2012 at 02:33:03PM +1000, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20120614:
+>>
+>> My fixes tree contains:
+>> 	fix bug.h's inclusion of kernel.h
+>=20
+> I got these errors with the attached randconfig. Not sure which chang=
+e
+> triggers them.
+
+Ditto.  When CONFIG_BUG is not enabled.
+
+
+>   CC      arch/x86/kernel/asm-offsets.s
+> In file included from /c/kernel-tests/mm/arch/x86/include/asm/atomic.=
+h:6:0,
+>                  from /c/kernel-tests/mm/include/linux/atomic.h:4,
+>                  from /c/kernel-tests/mm/include/linux/crypto.h:20,
+>                  from /c/kernel-tests/mm/arch/x86/kernel/asm-offsets.=
+c:8:
+> /c/kernel-tests/mm/arch/x86/include/asm/processor.h: In function =91g=
+et_aperfmperf=92:
+> /c/kernel-tests/mm/arch/x86/include/asm/processor.h:937:2: error: imp=
+licit declaration of function =91WARN_ON_ONCE=92 [-Werror=3Dimplicit-fu=
+nction-declaration]
+> In file included from /c/kernel-tests/mm/include/linux/thread_info.h:=
+54:0,
+>                  from /c/kernel-tests/mm/include/linux/preempt.h:9,
+>                  from /c/kernel-tests/mm/include/linux/spinlock.h:50,
+>                  from /c/kernel-tests/mm/include/linux/mmzone.h:7,
+>                  from /c/kernel-tests/mm/include/linux/gfp.h:4,
+>                  from /c/kernel-tests/mm/include/linux/slab.h:12,
+>                  from /c/kernel-tests/mm/include/linux/crypto.h:24,
+>                  from /c/kernel-tests/mm/arch/x86/kernel/asm-offsets.=
+c:8:
+> /c/kernel-tests/mm/arch/x86/include/asm/thread_info.h: In function =91=
+set_restore_sigmask=92:
+> /c/kernel-tests/mm/arch/x86/include/asm/thread_info.h:250:2: error: i=
+mplicit declaration of function =91WARN_ON=92 [-Werror=3Dimplicit-funct=
+ion-declaration]
+> In file included from /c/kernel-tests/mm/include/linux/mmzone.h:717:0=
+,
+>                  from /c/kernel-tests/mm/include/linux/gfp.h:4,
+>                  from /c/kernel-tests/mm/include/linux/slab.h:12,
+>                  from /c/kernel-tests/mm/include/linux/crypto.h:24,
+>                  from /c/kernel-tests/mm/arch/x86/kernel/asm-offsets.=
+c:8:
+> /c/kernel-tests/mm/include/linux/memory_hotplug.h: In function =91gen=
+eric_alloc_nodedata=92:
+> /c/kernel-tests/mm/include/linux/memory_hotplug.h:152:2: error: impli=
+cit declaration of function =91BUG=92 [-Werror=3Dimplicit-function-decl=
+aration]                                              =20
+> In file included from /c/kernel-tests/mm/arch/x86/include/asm/apic.h:=
+12:0,                                                               =20
+>                  from /c/kernel-tests/mm/arch/x86/include/asm/smp.h:1=
+3,
+>                  from /c/kernel-tests/mm/include/linux/smp.h:38,
+>                  from /c/kernel-tests/mm/include/linux/topology.h:33,
+>                  from /c/kernel-tests/mm/include/linux/gfp.h:7,
+>                  from /c/kernel-tests/mm/include/linux/slab.h:12,
+>                  from /c/kernel-tests/mm/include/linux/crypto.h:24,
+>                  from /c/kernel-tests/mm/arch/x86/kernel/asm-offsets.=
+c:8:
+> /c/kernel-tests/mm/arch/x86/include/asm/fixmap.h: In function =91virt=
+_to_fix=92:
+> /c/kernel-tests/mm/arch/x86/include/asm/fixmap.h:220:2: error: implic=
+it declaration of function =91BUG_ON=92 [-Werror=3Dimplicit-function-de=
+claration]
+>   HOSTLD  scripts/genksyms/genksyms
+> cc1: some warnings being treated as errors
+> make[2]: *** [arch/x86/kernel/asm-offsets.s] Error 1
+> make[1]: *** [prepare0] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+>=20
+> Thanks,
+> Fengguang
+
+
+
+--=20
+~Randy
