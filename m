@@ -1,43 +1,141 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH -next] avr:  Fix sanitize tsk_is_polling fallout
-Date: Sun, 17 Jun 2012 11:23:44 +0200
-Message-ID: <1339925024-23323-1-git-send-email-geert@linux-m68k.org>
+From: Bryan Wu <bryan.wu@canonical.com>
+Subject: Re: linux-next: Tree for Jun 14 (leds)
+Date: Sun, 17 Jun 2012 18:53:35 +0800
+Message-ID: <CAK5ve-L_=gjCHqpBiXUOmHdqs93uxiJ+B5XZqAzP9eSLQd3E4g@mail.gmail.com>
+References: <20120614162901.798d7661ea87e6134eee6f3a@canb.auug.org.au>
+ <4FDA5C8B.401@xenotime.net> <CAK5ve-JMkdir+NcKq47hBQ4Jcbh2WkqeiSohqp3AcQchbsMe5w@mail.gmail.com>
+ <4FDB62CD.50707@xenotime.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from georges.telenet-ops.be ([195.130.137.68]:59362 "EHLO
-	georges.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756224Ab2FQJXx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Jun 2012 05:23:53 -0400
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:62360 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754683Ab2FQKx5 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Jun 2012 06:53:57 -0400
+In-Reply-To: <4FDB62CD.50707@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 
-commit 6222033ea7bfe166f06aff5462dd88fba70e74f6 ("sanitize tsk_is_polling()")
-removed the definition of TIF_POLLING_NRFLAG, but forgot to remove the
-continuation line, causing:
+On Sat, Jun 16, 2012 at 12:29 AM, Randy Dunlap <rdunlap@xenotime.net> w=
+rote:
+> On 06/14/2012 08:42 PM, Bryan Wu wrote:
+>
+>> On Fri, Jun 15, 2012 at 5:50 AM, Randy Dunlap <rdunlap@xenotime.net>=
+ wrote:
+>>> On 06/13/2012 11:29 PM, Stephen Rothwell wrote:
+>>>
+>>>> Hi all,
+>>>>
+>>>> Changes since 20120613:
+>>>>
+>>>> Linus' tree gained a build failure for which I reverted a commit.
+>>>>
+>>>> The net-next tree lost its conflicts but gained another against th=
+e
+>>>> wireless tree.
+>>>>
+>>>> The sound-asoc tree lost its build failure.
+>>>>
+>>>> The leds tree lost its build failure.
+>>>>
+>>>> ------------------------------------------------------------------=
+----------
+>>>>
+>>>> I have created today's linux-next tree at
+>>>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>>>> (patches at http://www.kernel.org/pub/linux/kernel/next/ ). =A0If =
+you
+>>>> are tracking the linux-next tree using git, you should not use "gi=
+t pull"
+>>>> to do so as that will try to merge the new linux-next release with=
+ the
+>>>> old one. =A0You should use "git fetch" as mentioned in the FAQ on =
+the wiki
+>>>> (see below).
+>>>>
+>>>> You can see which trees have been included by looking in the Next/=
+Trees
+>>>> file in the source. =A0There are also quilt-import.log and merge.l=
+og files
+>>>> in the Next directory. =A0Between each merge, the tree was built w=
+ith
+>>>> a ppc64_defconfig for powerpc and an allmodconfig for x86_64. Afte=
+r the
+>>>> final fixups (if any), it is also built with powerpc allnoconfig (=
+32 and
+>>>> 64 bit), ppc44x_defconfig and allyesconfig (minus
+>>>> CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386,=
+ sparc
+>>>> and sparc64 defconfig. These builds also have
+>>>> CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+>>>> CONFIG_DEBUG_INFO disabled when necessary.
+>>>>
+>>>> Below is a summary of the state of the merge.
+>>>>
+>>>> We are up to 189 trees (counting Linus' and 26 trees of patches pe=
+nding
+>>>> for Linus' tree), more are welcome (even if they are currently emp=
+ty).
+>>>> Thanks to those who have contributed, and to those who haven't, pl=
+ease do.
+>>>>
+>>>> Status of my local build tests will be at
+>>>> http://kisskb.ellerman.id.au/linux-next . =A0If maintainers want t=
+o give
+>>>> advice about cross compilers/configs that work, we are always open=
+ to add
+>>>> more builds.
+>>>>
+>>>> Thanks to Randy Dunlap for doing many randconfig builds. =A0And to=
+ Paul
+>>>> Gortmaker for triage and bug fixes.
+>>>>
+>>>> There is a wiki covering stuff to do with linux-next at
+>>>> http://linux.f-seidel.de/linux-next/pmwiki/ . =A0Thanks to Frank S=
+eidel.
+>>>
+>>>
+>>>
+>>> on i386:
+>>>
+>>> ERROR: "led_brightness_set" [drivers/leds/led-class.ko] undefined!
+>>> ERROR: "leds_list" [drivers/leds/led-class.ko] undefined!
+>>> ERROR: "leds_list_lock" [drivers/leds/led-class.ko] undefined!
+>>>
+>>> and possibly related:
+>>>
+>>> warning: (ADB_PMU_LED && IWLWIFI && IWLEGACY && ATH5K && ATH9K && A=
+TH9K_HTC && CARL9170_LEDS && TABLET_USB_WACOM && INPUT_WISTRON_BTNS && =
+SENSORS_APPLESMC && IR_WINBOND_CIR && BACKLIGHT_ADP8860 && BACKLIGHT_AD=
+P8870 && HID_LENOVO_TPKBD && ACER_WMI && ASUS_LAPTOP && DELL_LAPTOP && =
+HP_ACCEL && THINKPAD_ACPI && EEEPC_LAPTOP && ASUS_WMI && ACPI_TOSHIBA &=
+& SAMSUNG_LAPTOP) selects LEDS_CLASS which has unmet direct dependencie=
+s (NEW_LEDS)
+>>>
+>>>
+>>> Full randconfig file is attached.
+>>>
+>>
+>> Hi Randy,
+>>
+>> I tried to build linux-next latest kernel with the randconfig you
+>> posted here, but didn't met this building failure. Did I miss
+>> something?
+>
+>
+> I dunno, but I still get the same failure with that kernel config fil=
+e
+> on today's linux-next (20120615).
+>
 
-arch/avr32/include/asm/thread_info.h:80: error: expected identifier or '(' before numeric constant
-include/linux/thread_info.h:128: error: implicit declaration of function 'set_ti_thread_flag'
-make[2]: *** [arch/avr32/kernel/asm-offsets.s] Error 1
+=46ound the root cause and sent out an patch to fix that.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
---
-http://kisskb.ellerman.id.au/kisskb/buildresult/6518296/
----
- arch/avr32/include/asm/thread_info.h |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
-
-diff --git a/arch/avr32/include/asm/thread_info.h b/arch/avr32/include/asm/thread_info.h
-index c034601..2f0c412 100644
---- a/arch/avr32/include/asm/thread_info.h
-+++ b/arch/avr32/include/asm/thread_info.h
-@@ -77,7 +77,6 @@ static inline struct thread_info *current_thread_info(void)
- #define TIF_SYSCALL_TRACE       0       /* syscall trace active */
- #define TIF_SIGPENDING          1       /* signal pending */
- #define TIF_NEED_RESCHED        2       /* rescheduling necessary */
--					   TIF_NEED_RESCHED */
- #define TIF_BREAKPOINT		4	/* enter monitor mode on return */
- #define TIF_SINGLE_STEP		5	/* single step in progress */
- #define TIF_MEMDIE		6	/* is terminating due to OOM killer */
--- 
-1.7.0.4
+Thanks,
+--=20
+Bryan Wu <bryan.wu@canonical.com>
+Kernel Developer =A0 =A0+86.186-168-78255 Mobile
+Canonical Ltd. =A0 =A0 =A0www.canonical.com
+Ubuntu - Linux for human beings | www.ubuntu.com
