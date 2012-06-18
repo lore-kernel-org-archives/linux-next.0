@@ -1,79 +1,75 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: cpuidle future and improvements
-Date: Mon, 18 Jun 2012 21:00:44 +0200
-Message-ID: <4FDF7ADC.4040207@linaro.org>
-References: <4FDEE98D.7010802@linaro.org>
-	<CAMbhsRQRFXcayyWjM1RirgFppVAK23z2+3EbYOCw-qmzuY9_2g@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jun 18 (kmsg problems)
+Date: Tue, 19 Jun 2012 08:01:09 +1000
+Message-ID: <20120619080109.b28055c1b32fb81027a9562b@canb.auug.org.au>
+References: <20120618165336.48345227c6b64c314326ae57@canb.auug.org.au>
+	<4FDF61A7.3050601@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__19_Jun_2012_08_01_09_+1000_eFMW1_t.IpEeMa0O"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:59189 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752545Ab2FRWB0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jun 2012 18:01:26 -0400
+In-Reply-To: <4FDF61A7.3050601@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kay Sievers <kay@vrfy.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+--Signature=_Tue__19_Jun_2012_08_01_09_+1000_eFMW1_t.IpEeMa0O
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <CAMbhsRQRFXcayyWjM1RirgFppVAK23z2+3EbYOCw-qmzuY9_2g@mail.gmail.com>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: Colin Cross <ccross@android.com>
-Cc: Kevin Hilman <khilman@ti.com>, Rob Lee <rob.lee@linaro.org>, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, linux-pm@lists.linux-foundation.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
 
-On 06/18/2012 08:15 PM, Colin Cross wrote:
-> On Mon, Jun 18, 2012 at 1:40 AM, Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->> I propose to host a cpuidle-next tree where all these modifications wi=
-ll
->> be and where people can send patches against, preventing last minutes
->> conflicts and perhaps Lenb will agree to pull from this tree. In the
->> meantime, the tree will be part of the linux-next, the patches will be
->> more widely tested and could be fixed earlier.
->=20
-> My coupled cpuidle patches were acked and temporarily in Len's
-> next/Linus pull branch, but were later dropped when the first pull
-> request to Linus was rejected.  I asked Len to either put the coupled
-> cpuidle patches into his next branch, or let me host them so people
-> could base SoC branches off of them and let Len pull them later, but
-> got no response.  If you do start a cpuidle for-next branch, can you
-> pull my coupled-cpuidle branch:
+[Adding Greg and Kay]
 
-No problem.
+On Mon, 18 Jun 2012 10:13:11 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
+>
+> on x86_64:
+>=20
+> arch/x86/kernel/reboot.o: In function `kmsg_dump_get_line':
+> reboot.c:(.text+0xf0): multiple definition of `kmsg_dump_get_line'
+> arch/x86/kernel/setup.o:setup.c:(.text+0x0): first defined here
+> arch/x86/kernel/reboot.o: In function `kmsg_dump_get_buffer':
+> reboot.c:(.text+0x100): multiple definition of `kmsg_dump_get_buffer'
+> arch/x86/kernel/setup.o:setup.c:(.text+0x10): first defined here
+> arch/x86/kernel/reboot.o: In function `kmsg_dump_rewind':
+> reboot.c:(.text+0x110): multiple definition of `kmsg_dump_rewind'
+> arch/x86/kernel/setup.o:setup.c:(.text+0x20): first defined here
 
-Thanks
-  -- Daniel
+Caused by commit e2ae715d66bf ("kmsg - kmsg_dump() use iterator to
+receive log buffer content") from the driver-core.current tree.
 
-> The following changes since commit 76e10d158efb6d4516018846f60c2ab55019=
-00bc:
->=20
->   Linux 3.4 (2012-05-20 15:29:13 -0700)
->=20
-> are available in the git repository at:
->   https://android.googlesource.com/kernel/common.git coupled-cpuidle
->=20
-> Colin Cross (4):
->       cpuidle: refactor out cpuidle_enter_state
->       cpuidle: fix error handling in __cpuidle_register_device
->       cpuidle: add support for states that affect multiple cpus
->       cpuidle: coupled: add parallel barrier function
->=20
->  drivers/cpuidle/Kconfig   |    3 +
->  drivers/cpuidle/Makefile  |    1 +
->  drivers/cpuidle/coupled.c |  715 +++++++++++++++++++++++++++++++++++++=
-++++++++
->  drivers/cpuidle/cpuidle.c |   68 ++++-
->  drivers/cpuidle/cpuidle.h |   32 ++
->  include/linux/cpuidle.h   |   11 +
->  6 files changed, 813 insertions(+), 17 deletions(-)
->  create mode 100644 drivers/cpuidle/coupled.c
-
+This was reported a few days ago.  Why is it not fixed yet?  Especially
+since it is in a branch that is supposedly "bug fixes"?
 
 --=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
-RM SoCs
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--Signature=_Tue__19_Jun_2012_08_01_09_+1000_eFMW1_t.IpEeMa0O
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP36UlAAoJEECxmPOUX5FEzCUP/2Y+t09o1af1KwFFyZawqJDp
+1sjtD0YqxqRqBQCFImSbDnqa8c58Qa1sVjpwbebqz0DVavzvEv9eW8X8PzevVp/l
+pYTTBh/1cpFttLPubeOqjFMYxGVB2VlR/QZvDotXZVNVKB2U4DE2C1HRj270/3j9
+AoFT5SDs+VlrL465oeQs/6M3S/3YWRfe1n7N+rDWgjIg9/LToHUn2FL6btMtBeD1
+dtS7SsVZAqTs4W4kY5vo7ue9bp2CrtDf8OiYRN/hSrAgZkeZ2y9/jF7neahYCcYU
+VAwNVO8xcuR02PxOcDudq63qCjSo16jE/QQpjlfDk+JMdxn6a3wTM0RPrHLuqbZv
+T1eFvUXQEbS5X4eOt3eFCiSTDlzuOrBZMtOjPgwvRVFDFCcjgkWBxc5Mj1dkEtvm
+yJ16jbY2EgHCzshKG5N6N6Dx4ezoEXHk4Bblgc0Qs+467ci+1l359pEOUgCVLoW4
+eoaczCGFC3MHTBeKtgwZiIHYslya7Ulud12e3m25+F0gaHvsS1AO3vkyhlBnVz9+
+8QJChPmB0LqmeAQ7w+zSSq/XP0PEI0WPvE82WPLgIDsXLWvVIJmnGMQH/Y/YGSRn
+fqF7OR9UEMADM3ki6QVQX/n+MxPCB3LGM6CZGbGUKhiXvkTi4LLs2jYrmwVYoq+Q
+kNhjuc7Kzzh5CiBKy7OW
+=t0/s
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_Jun_2012_08_01_09_+1000_eFMW1_t.IpEeMa0O--
