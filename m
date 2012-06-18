@@ -1,75 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: linux-next: Tree for Jun 18 (kmsg problems)
-Date: Tue, 19 Jun 2012 08:01:09 +1000
-Message-ID: <20120619080109.b28055c1b32fb81027a9562b@canb.auug.org.au>
+Date: Mon, 18 Jun 2012 15:15:35 -0700
+Message-ID: <20120618221535.GA13037@kroah.com>
 References: <20120618165336.48345227c6b64c314326ae57@canb.auug.org.au>
-	<4FDF61A7.3050601@xenotime.net>
+ <4FDF61A7.3050601@xenotime.net>
+ <20120619080109.b28055c1b32fb81027a9562b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__19_Jun_2012_08_01_09_+1000_eFMW1_t.IpEeMa0O"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:59189 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752545Ab2FRWB0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jun 2012 18:01:26 -0400
-In-Reply-To: <4FDF61A7.3050601@xenotime.net>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:35465 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751421Ab2FRWPk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jun 2012 18:15:40 -0400
+Received: by pbbrp8 with SMTP id rp8so8781727pbb.19
+        for <linux-next@vger.kernel.org>; Mon, 18 Jun 2012 15:15:39 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20120619080109.b28055c1b32fb81027a9562b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kay Sievers <kay@vrfy.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kay Sievers <kay@vrfy.org>
 
---Signature=_Tue__19_Jun_2012_08_01_09_+1000_eFMW1_t.IpEeMa0O
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 19, 2012 at 08:01:09AM +1000, Stephen Rothwell wrote:
+> [Adding Greg and Kay]
+> 
+> On Mon, 18 Jun 2012 10:13:11 -0700 Randy Dunlap <rdunlap@xenotime.net> wrote:
+> >
+> > on x86_64:
+> > 
+> > arch/x86/kernel/reboot.o: In function `kmsg_dump_get_line':
+> > reboot.c:(.text+0xf0): multiple definition of `kmsg_dump_get_line'
+> > arch/x86/kernel/setup.o:setup.c:(.text+0x0): first defined here
+> > arch/x86/kernel/reboot.o: In function `kmsg_dump_get_buffer':
+> > reboot.c:(.text+0x100): multiple definition of `kmsg_dump_get_buffer'
+> > arch/x86/kernel/setup.o:setup.c:(.text+0x10): first defined here
+> > arch/x86/kernel/reboot.o: In function `kmsg_dump_rewind':
+> > reboot.c:(.text+0x110): multiple definition of `kmsg_dump_rewind'
+> > arch/x86/kernel/setup.o:setup.c:(.text+0x20): first defined here
+> 
+> Caused by commit e2ae715d66bf ("kmsg - kmsg_dump() use iterator to
+> receive log buffer content") from the driver-core.current tree.
 
-[Adding Greg and Kay]
+I'm building my tree right now, and I can't seem to hit this.
 
-On Mon, 18 Jun 2012 10:13:11 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
-e:
->
-> on x86_64:
->=20
-> arch/x86/kernel/reboot.o: In function `kmsg_dump_get_line':
-> reboot.c:(.text+0xf0): multiple definition of `kmsg_dump_get_line'
-> arch/x86/kernel/setup.o:setup.c:(.text+0x0): first defined here
-> arch/x86/kernel/reboot.o: In function `kmsg_dump_get_buffer':
-> reboot.c:(.text+0x100): multiple definition of `kmsg_dump_get_buffer'
-> arch/x86/kernel/setup.o:setup.c:(.text+0x10): first defined here
-> arch/x86/kernel/reboot.o: In function `kmsg_dump_rewind':
-> reboot.c:(.text+0x110): multiple definition of `kmsg_dump_rewind'
-> arch/x86/kernel/setup.o:setup.c:(.text+0x20): first defined here
+> This was reported a few days ago.  Why is it not fixed yet?
 
-Caused by commit e2ae715d66bf ("kmsg - kmsg_dump() use iterator to
-receive log buffer content") from the driver-core.current tree.
+It was reported Friday evening, on a holiday weekend for some of us, we
+are trying the best we can :)
 
-This was reported a few days ago.  Why is it not fixed yet?  Especially
-since it is in a branch that is supposedly "bug fixes"?
+> Especially since it is in a branch that is supposedly "bug fixes"?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+It fixes up a reported problem, and we had 3 people test it and said it
+resolved the issue for them, no build problems reported.
 
---Signature=_Tue__19_Jun_2012_08_01_09_+1000_eFMW1_t.IpEeMa0O
-Content-Type: application/pgp-signature
+Randy, can I get a copy of your .config that duplicates this?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+thanks,
 
-iQIcBAEBCAAGBQJP36UlAAoJEECxmPOUX5FEzCUP/2Y+t09o1af1KwFFyZawqJDp
-1sjtD0YqxqRqBQCFImSbDnqa8c58Qa1sVjpwbebqz0DVavzvEv9eW8X8PzevVp/l
-pYTTBh/1cpFttLPubeOqjFMYxGVB2VlR/QZvDotXZVNVKB2U4DE2C1HRj270/3j9
-AoFT5SDs+VlrL465oeQs/6M3S/3YWRfe1n7N+rDWgjIg9/LToHUn2FL6btMtBeD1
-dtS7SsVZAqTs4W4kY5vo7ue9bp2CrtDf8OiYRN/hSrAgZkeZ2y9/jF7neahYCcYU
-VAwNVO8xcuR02PxOcDudq63qCjSo16jE/QQpjlfDk+JMdxn6a3wTM0RPrHLuqbZv
-T1eFvUXQEbS5X4eOt3eFCiSTDlzuOrBZMtOjPgwvRVFDFCcjgkWBxc5Mj1dkEtvm
-yJ16jbY2EgHCzshKG5N6N6Dx4ezoEXHk4Bblgc0Qs+467ci+1l359pEOUgCVLoW4
-eoaczCGFC3MHTBeKtgwZiIHYslya7Ulud12e3m25+F0gaHvsS1AO3vkyhlBnVz9+
-8QJChPmB0LqmeAQ7w+zSSq/XP0PEI0WPvE82WPLgIDsXLWvVIJmnGMQH/Y/YGSRn
-fqF7OR9UEMADM3ki6QVQX/n+MxPCB3LGM6CZGbGUKhiXvkTi4LLs2jYrmwVYoq+Q
-kNhjuc7Kzzh5CiBKy7OW
-=t0/s
------END PGP SIGNATURE-----
-
---Signature=_Tue__19_Jun_2012_08_01_09_+1000_eFMW1_t.IpEeMa0O--
+greg k-h
