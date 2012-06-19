@@ -1,54 +1,48 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Tue, 19 Jun 2012 13:52:31 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1206191351590.23121@pobox.suse.cz>
-References: <20120619112939.23c80aed8f1db9682e37be87@canb.auug.org.au> <alpine.LNX.2.00.1206191205190.15308@pobox.suse.cz> <4FE0678C.2050205@redhat.com>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: [PATCH] Makefile: fix up CROSS_COMPILE and READABLE_ASM
+ interaction.
+Date: Tue, 19 Jun 2012 21:13:38 +0900
+Message-ID: <20120619121337.GA5623@linux-sh.org>
+References: <20120618045500.GC19803@linux-sh.org>
+ <CAMuHMdU5juQMyzoTV62-hwzKW980fkQNDBKGP8i5WfDcsf95jQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:46956 "EHLO mx2.suse.de"
+Received: from linux-sh.org ([111.68.239.195]:39363 "EHLO linux-sh.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751344Ab2FSLwn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Jun 2012 07:52:43 -0400
-In-Reply-To: <4FE0678C.2050205@redhat.com>
+	id S1754049Ab2FSMOD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Jun 2012 08:14:03 -0400
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU5juQMyzoTV62-hwzKW980fkQNDBKGP8i5WfDcsf95jQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
 
-On Tue, 19 Jun 2012, Hans de Goede wrote:
-
-> > > diff --cc drivers/hid/hid-ids.h
-> > > index 6d3037e,70298d1..0000000
-> > > --- a/drivers/hid/hid-ids.h
-> > > +++ b/drivers/hid/hid-ids.h
-> > > @@@ -160,9 -157,9 +160,12 @@@
-> > >    #define USB_VENDOR_ID_AVERMEDIA		0x07ca
-> > >    #define USB_DEVICE_ID_AVER_FM_MR800	0xb800
-> > > 
-> > > + #define USB_VENDOR_ID_AXENTIA		0x12cf
-> > > + #define USB_DEVICE_ID_AXENTIA_FM_RADIO	0x7111
-> > > +
-> > >   +#define USB_VENDOR_ID_BAANTO		0x2453
-> > >   +#define USB_DEVICE_ID_BAANTO_MT_190W2	0x0100
-> > >   +
-> > >    #define USB_VENDOR_ID_BELKIN		0x050d
-> > >    #define USB_DEVICE_ID_FLIP_KVM		0x3201
-> > 
-> > Thanks for reporting this, Stephen.
-> > 
-> > Hmmm ... Mauro, Hans, do you feel it's actually proper to add the device
-> > ids to hid-ids.h? I am using this file usually solely for the drivers on
-> > the HID bus, which radio-si470x is not, I believe.
+On Tue, Jun 19, 2012 at 11:17:59AM +0200, Geert Uytterhoeven wrote:
+> On Mon, Jun 18, 2012 at 6:55 AM, Paul Mundt <lethal@linux-sh.org> wrote:
+> > (Apologies for the re-send, forgot to Cc linux-kernel)
+> >
+> > When the READABLE_ASM cc-option tests were added they were done so prior
+> > to the arch Makefile include, resulting in cc-option being run on the
+> > host cc instead of the factoring in the cross prefix set up by the
+> > architecture.
+> >
+> > This bumps the include back up so that cc-option actually runs on the
+> > compiler that we're building with.
 > 
-> Not sure what you mean with "drivers on the HID bus", radio-si470x drivers
-> do use a USB-HID class interface, but the driver itself does not use
-> the kernel hid framework. The ids in hid-ids are used for adding this device
-> to the hid-core "blacklist" to avoid usb-hid from binding to it, so that
-> radio-si470x-usn can bind to it.
+> I find it a real pity these reported, hard to investigate, and fixed
+> build issues keep
+> flowing into mainline, without the corresponding fix...
+> 
+> https://lkml.org/lkml/2012/5/12/36
+> 
+Agreed. These one-off things are always a nuisance, and often fall
+through the cracks. I've yet to find a good solution for them, although
+having them rolled in to -next helps.
 
-Gah, sorry, ENOTENOUGHCOFFEE, I have missed that hunk. All is fine then.
-
--- 
-Jiri Kosina
-SUSE Labs
+In this case I got bit by -fno-partial-inlining instead, and since you
+didn't have READABLE_ASM in the subject I missed your patch entirely. In
+retrospect I should have searched for cc-option. At least we've now both
+scratched our heads and come up with an identical fix independently,
+which counts a lot more than a Tested-by ;-)
