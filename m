@@ -1,13 +1,13 @@
 From: akpm@linux-foundation.org
-Subject: mmotm 2012-06-19-14-21 uploaded
-Date: Tue, 19 Jun 2012 14:23:06 -0700
-Message-ID: <20120619212306.AE607A01BD@akpm.mtv.corp.google.com>
+Subject: mmotm 2012-06-19-14-24 uploaded
+Date: Tue, 19 Jun 2012 14:25:21 -0700
+Message-ID: <20120619212521.D53D6A01BD@akpm.mtv.corp.google.com>
 Return-path: <owner-linux-mm@kvack.org>
 Sender: owner-linux-mm@kvack.org
 To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-The mm-of-the-moment snapshot 2012-06-19-14-21 has been uploaded to
+The mm-of-the-moment snapshot 2012-06-19-14-24 has been uploaded to
 
    http://www.ozlabs.org/~akpm/mmotm/
 
