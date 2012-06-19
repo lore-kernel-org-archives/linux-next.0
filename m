@@ -1,46 +1,64 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: linux-next: Tree for Jun 18 (netfilter nfconntrack)
-Date: Tue, 19 Jun 2012 05:19:38 +0200
-Message-ID: <20120619031938.GA31266@1984>
-References: <20120618165336.48345227c6b64c314326ae57@canb.auug.org.au>
- <4FDF65F6.6010002@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the battery tree
+Date: Tue, 19 Jun 2012 14:54:08 +1000
+Message-ID: <20120619145408.4c68bff2ed75b52fdba66eff@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <netfilter-devel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__19_Jun_2012_14_54_08_+1000_XuMRex53BAudd2oI"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38648 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751348Ab2FSEyR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jun 2012 00:54:17 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Anton Vorontsov <avorontsov@ru.mvista.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jenny TC <jenny.tc@intel.com>
+
+--Signature=_Tue__19_Jun_2012_14_54_08_+1000_XuMRex53BAudd2oI
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <4FDF65F6.6010002@xenotime.net>
-Sender: netfilter-devel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 18, 2012 at 10:31:34AM -0700, Randy Dunlap wrote:
-> On 06/17/2012 11:53 PM, Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20120615:
-> 
-> 
-> 
-> on i386 or x86_64:
-> 
-> # CONFIG_NF_CONNTRACK is not set
-> 
->   CC [M]  net/netfilter/nfnetlink_cthelper.o
-> In file included from include/net/netfilter/nf_conntrack_helper.h:12:0,
->                  from net/netfilter/nfnetlink_cthelper.c:23:
-> include/net/netfilter/nf_conntrack.h:77:22: error: field 'ct_general' has incomplete type
-> include/net/netfilter/nf_conntrack.h: In function 'nf_ct_get':
-> include/net/netfilter/nf_conntrack.h:157:30: error: 'const struct sk_buff' has no member named 'nfct'
-> include/net/netfilter/nf_conntrack.h: In function 'nf_ct_put':
-> include/net/netfilter/nf_conntrack.h:164:2: error: implicit declaration of function 'nf_conntrack_put'
-> make[3]: *** [net/netfilter/nfnetlink_cthelper.o] Error 1
+Hi Anton,
 
-I've send a patch to David to solve this:
+After merging the battery tree, today's linux-next build (i386 defconfig)
+produced this warning:
 
- netfilter: fix compilation of the nfnl_cthelper if NF_CONNTRACK is unset
+drivers/power/power_supply_core.c: In function 'psy_register_thermal':
+drivers/power/power_supply_core.c:204:6: warning: passing argument 1 of 'th=
+ermal_zone_device_register' discards 'const' qualifier from pointer target =
+type [enabled by default]
+include/linux/thermal.h:149:29: note: expected 'char *' but argument is of =
+type 'const char *'
 
-It seems to resolve the issue for me here.
+Introduced by commit 3be330bf8860 ("power_supply: Register battery as a
+thermal zone").
 
-Thanks for the report.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Tue__19_Jun_2012_14_54_08_+1000_XuMRex53BAudd2oI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP4AXwAAoJEECxmPOUX5FEy+EP/0NcdqkOM+1vp1phhrmZ1Zc2
+5V7NO7/wQnR1mX82qUOG8+zBywExmT8IC62Wi4bTaeEmOHDBozFA6d42ra6LWCMJ
+W047sO5nwRsA64hZuVNuDF47+Ioqn4JKJD8KVL4dPZMDIroVYcYR5TMW5ELg+nct
+oSLQM6s56CeqBG2g7vd/5fuRn4TtA2hZhq83mS9+RRpeeuyqI61O9bOgNJRsUNL2
+kkw7TqTs5lRTPzX1zEnC0D3RIe2w4oCyZ88uHa+2vDiB/+XMI8KzQZU+9Kgr6NZg
+TtSYFHKOe/eQY9NvWnTJpolcUL+UWnzZWV2PeMjB9Eln6CBsQC1STPR96ni/Nadw
+aC0mRo/ykrCZ68vrj2/S1wX9fI4jAEtDaNB9hrakwWtBRgw1qXGPqnFIMfBFBXmD
+AMelSES9DwSPKVNBdI4f1801SF5V/fD6uJ5Qeul90rwZMbSLjFUsrNwlAvjDxMka
+Grq87nJufwMNnrsH1YQzhx8DLu1sTIzj8SkPpxEvpjPaj4MReQraCtVWlZBT0sze
+0H+UraGMiNuhG9GbO3mN9pLVqYl6ssyPJdAyvVhl8EFYZDTygA5QgOFohG2iWzMq
+8BKA1GbP6yjFt3fSZF36N7koM5/4a2C9SRP3PCOiQvPSiZ7ZCiAlKaKlLvpITtsy
+XJ0vrUTythti+9b4+V4J
+=8M+P
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_Jun_2012_14_54_08_+1000_XuMRex53BAudd2oI--
