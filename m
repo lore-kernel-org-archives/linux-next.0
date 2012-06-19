@@ -1,108 +1,110 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for Jun 18 (kmsg problems)
-Date: Mon, 18 Jun 2012 17:33:21 -0700
-Message-ID: <4FDFC8D1.90003@xenotime.net>
-References: <20120618165336.48345227c6b64c314326ae57@canb.auug.org.au>	 <4FDF61A7.3050601@xenotime.net>	 <20120619080109.b28055c1b32fb81027a9562b@canb.auug.org.au>	 <20120618221535.GA13037@kroah.com>	 <CAPXgP10sBkwLnhDmu6UG9yVaiXG+8UYGkBEOVzUp3H+468J03w@mail.gmail.com> <1340058777.1572.35.camel@foo>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with Linus' tree
+Date: Tue, 19 Jun 2012 11:15:35 +1000
+Message-ID: <20120619111535.da6def8f1171361ed31adf84@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__19_Jun_2012_11_15_35_+1000_omEXEKGb6gCNxIgw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy9.bluehost.com ([69.89.24.6]:56401 "HELO
-	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753110Ab2FSAdn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jun 2012 20:33:43 -0400
-In-Reply-To: <1340058777.1572.35.camel@foo>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47539 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753666Ab2FSBPr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jun 2012 21:15:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kay Sievers <kay@vrfy.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Jan Kiszka <jan.kiszka@siemens.com>
 
-On 06/18/2012 03:32 PM, Kay Sievers wrote:
+--Signature=_Tue__19_Jun_2012_11_15_35_+1000_omEXEKGb6gCNxIgw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, 2012-06-19 at 00:17 +0200, Kay Sievers wrote:
->> On Tue, Jun 19, 2012 at 12:15 AM, Greg Kroah-Hartman
->> <gregkh@linuxfoundation.org> wrote:
->>> On Tue, Jun 19, 2012 at 08:01:09AM +1000, Stephen Rothwell wrote:
->>>> [Adding Greg and Kay]
->>>>
->>>> On Mon, 18 Jun 2012 10:13:11 -0700 Randy Dunlap <rdunlap@xenotime.net> wrote:
->>>>>
->>>>> arch/x86/kernel/reboot.o: In function `kmsg_dump_get_line':
->>>>> reboot.c:(.text+0xf0): multiple definition of `kmsg_dump_get_line'
->>>>> arch/x86/kernel/setup.o:setup.c:(.text+0x0): first defined here
->>>>> arch/x86/kernel/reboot.o: In function `kmsg_dump_get_buffer':
->>>>> reboot.c:(.text+0x100): multiple definition of `kmsg_dump_get_buffer'
->>>>> arch/x86/kernel/setup.o:setup.c:(.text+0x10): first defined here
->>>>> arch/x86/kernel/reboot.o: In function `kmsg_dump_rewind':
->>>>> reboot.c:(.text+0x110): multiple definition of `kmsg_dump_rewind'
->>>>> arch/x86/kernel/setup.o:setup.c:(.text+0x20): first defined here
->>>>
->>>> Caused by commit e2ae715d66bf ("kmsg - kmsg_dump() use iterator to
->>>> receive log buffer content") from the driver-core.current tree.
->>>
->>> I'm building my tree right now, and I can't seem to hit this.
->>>
->>>> This was reported a few days ago.  Why is it not fixed yet?
->>>
->>> It was reported Friday evening, on a holiday weekend for some of us, we
->>> are trying the best we can :)
->>>
->>>> Especially since it is in a branch that is supposedly "bug fixes"?
->>>
->>> It fixes up a reported problem, and we had 3 people test it and said it
->>> resolved the issue for them, no build problems reported.
->>>
->>> Randy, can I get a copy of your .config that duplicates this?
->>
->> I looked at it, and did not see it, I was blind.
->>
->> We just miss the "static inline" in include/linux/kmsg_dump.h. :)
-> 
-> From: Kay Sievers <kay@vrfy.org>
-> Subject: kmsg - kmsg_dump() fix CONFIG_PRINTK=n compilation
+Hi Bjorn,
 
+Today's linux-next merge of the pci tree got a conflict in
+drivers/pci/quirks.c between commit c2fb8a3fa255 ("USB: add
+NO_D3_DURING_SLEEP flag and revert 151b61284776be2") from Linus' tree and
+commit fbebb9fd2258 ("PCI: add infrastructure for devices with broken
+INTx masking") from the pci tree.
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks.
+diff --cc drivers/pci/quirks.c
+index 9478f72,a2d9d33..0000000
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@@ -2930,31 -2930,19 +2930,45 @@@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_I
+  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
+ =20
+  /*
+ + * The Intel 6 Series/C200 Series chipset's EHCI controllers on many
+ + * ASUS motherboards will cause memory corruption or a system crash
+ + * if they are in D3 while the system is put into S3 sleep.
+ + */
+ +static void __devinit asus_ehci_no_d3(struct pci_dev *dev)
+ +{
+ +	const char *sys_info;
+ +	static const char good_Asus_board[] =3D "P8Z68-V";
+ +
+ +	if (dev->dev_flags & PCI_DEV_FLAGS_NO_D3_DURING_SLEEP)
+ +		return;
+ +	if (dev->subsystem_vendor !=3D PCI_VENDOR_ID_ASUSTEK)
+ +		return;
+ +	sys_info =3D dmi_get_system_info(DMI_BOARD_NAME);
+ +	if (sys_info && memcmp(sys_info, good_Asus_board,
+ +			sizeof(good_Asus_board) - 1) =3D=3D 0)
+ +		return;
+ +
+ +	dev_info(&dev->dev, "broken D3 during system sleep on ASUS\n");
+ +	dev->dev_flags |=3D PCI_DEV_FLAGS_NO_D3_DURING_SLEEP;
+ +	device_set_wakeup_capable(&dev->dev, false);
+ +}
+ +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x1c26, asus_ehci_no_d3);
+ +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x1c2d, asus_ehci_no_d3);
+ +
+++/*
++  * Some devices may pass our check in pci_intx_mask_supported if
++  * PCI_COMMAND_INTX_DISABLE works though they actually do not properly
++  * support this feature.
++  */
++ static void __devinit quirk_broken_intx_masking(struct pci_dev *dev)
++ {
++ 	dev->broken_intx_masking =3D 1;
++ }
++ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_CHELSIO, 0x0030,
++ 			 quirk_broken_intx_masking);
++ DECLARE_PCI_FIXUP_HEADER(0x1814, 0x0601, /* Ralink RT2800 802.11n PCI */
++ 			 quirk_broken_intx_masking);
++=20
+  static void pci_do_fixups(struct pci_dev *dev, struct pci_fixup *f,
+  			  struct pci_fixup *end)
+  {
 
+--Signature=_Tue__19_Jun_2012_11_15_35_+1000_omEXEKGb6gCNxIgw
+Content-Type: application/pgp-signature
 
-> 
-> Signed-off-by: Kay Sievers <kay@vrfy.org>
-> ---
->  include/linux/kmsg_dump.h |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> --- a/include/linux/kmsg_dump.h
-> +++ b/include/linux/kmsg_dump.h
-> @@ -71,19 +71,19 @@ static inline void kmsg_dump(enum kmsg_d
->  {
->  }
->  
-> -bool kmsg_dump_get_line(struct kmsg_dumper *dumper, bool syslog,
-> -			  const char *line, size_t size, size_t *len)
-> +static inline bool kmsg_dump_get_line(struct kmsg_dumper *dumper, bool syslog,
-> +				const char *line, size_t size, size_t *len)
->  {
->  	return false;
->  }
->  
-> -bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
-> -			    char *buf, size_t size, size_t *len)
-> +static inline bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
-> +					char *buf, size_t size, size_t *len)
->  {
->  	return false;
->  }
->  
-> -void kmsg_dump_rewind(struct kmsg_dumper *dumper)
-> +static inline void kmsg_dump_rewind(struct kmsg_dumper *dumper)
->  {
->  }
->  
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
+iQIcBAEBCAAGBQJP39K3AAoJEECxmPOUX5FEnLMP/RlwiOu/Yth7qSVaxA+ERjrZ
+coL/UDJsFElcK5pmvraMnUBK4Z6RLAs4ogtzUBh5OYxEXpzfWyMnpDZOPq8SZMsN
+bGIyZ8FuaE+4aIYxI61qzWJE64AIesBZyinw5k3PgbZsoMvjGIBmz08Irjk2tW0D
+4ZWi0pnFul+x4WdWDlxDn0GT3OEg/hCbIOagMbSVJPq6WYrx7hcpeYVAA2x91Bgr
+iRRgpEo2DfKZ+AhXQFZS1NihB34EA10hqLIhkuF6rU5pdLFVbm4N5EAJptyRSGAc
+whaeIveWtlboSAZ/XVYU6Pr9Hb8R+nZF4VTmXUCPdhietNJsryez8y7Nx+4nv6Ly
+TZVPmvQMr03PJj7LKqzR2nEuPFXKo8VdNELtdTw9Hcl/IWUVqrjonjGPcfgcb6Q7
+hfnv6d+ywsSDZWxsBYAcfWlb0GDzVmdOCB2jz9Iowqk/7PKobbTN4nAqcqaVSfPT
+OVHIRCHR/EjU6opjphkXkTKH1R5kXiD82kz18R5e1sLoUKLp6EzVMLFe88zXuo4h
+R0vobeAAnBwxVSiZ7YMZ8W9RD+kQ6HBPjMbjBSzE6wPt7H9QioZifzdoiXVNIUio
+NEyqfXGqvJ9hk31cHwZ4AXb7RcNAjbJA+XDylJ1NCNSLU/kJd1bP+9v11tsi1e4G
+QOXBHekQdN+PPFQcIUwj
+=4BEd
+-----END PGP SIGNATURE-----
 
-
--- 
-~Randy
+--Signature=_Tue__19_Jun_2012_11_15_35_+1000_omEXEKGb6gCNxIgw--
