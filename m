@@ -1,76 +1,69 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the final tree (acpi
  and battery trees related)
-Date: Mon, 18 Jun 2012 22:10:32 -0700
-Message-ID: <20120619051032.GB16286@lizard>
+Date: Tue, 19 Jun 2012 15:37:05 +1000
+Message-ID: <20120619153705.bc20359d73d6139e2cb4c1f5@canb.auug.org.au>
 References: <20120619145425.6f825e142856ca808927ca45@canb.auug.org.au>
+	<20120619051032.GB16286@lizard>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__19_Jun_2012_15_37_05_+1000_7yJdGbEmaxUygH1H"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:58856 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751348Ab2FSFMX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jun 2012 01:12:23 -0400
-Content-Disposition: inline
-In-Reply-To: <20120619145425.6f825e142856ca808927ca45@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47891 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751314Ab2FSFhO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jun 2012 01:37:14 -0400
+In-Reply-To: <20120619051032.GB16286@lizard>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Anton Vorontsov <cbouatmailru@gmail.com>
 Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Durgadoss R <durgadoss.r@intel.com>, Jenny TC <jenny.tc@intel.com>
 
-On Tue, Jun 19, 2012 at 02:54:25PM +1000, Stephen Rothwell wrote:
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig, i386 defconfig) failed like this:
-> 
-> drivers/power/power_supply_core.c:204:6: error: too few arguments to function 'thermal_zone_device_register'
-> 
-> Caused by commit a9e7402dd2e4 ("ACPI-Thermal: Make Thermal trip points
-> writeable") from the acpi tree interacting with commit 3be330bf8860
-> ("power_supply: Register battery as a thermal zone") from the battery
-> tree.
-> 
-> I have added the following patch and will carry it as a merge fix to the
-> battery tree:
+--Signature=_Tue__19_Jun_2012_15_37_05_+1000_7yJdGbEmaxUygH1H
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for noticing, Stephen! Although, I wonder what would be the
-best way to fix this?.. I would happily cherry-pick the ACPI change
-into my tree and then re-apply the battery thermal zone support patch,
-but ACPI change doesn't apply cleanly on the battery tree. Heh.
+Hi Anton,
 
-Is there thermal zone git tree? Or maybe I would just let ACPI
-folks take the battery patch in question?
+On Mon, 18 Jun 2012 22:10:32 -0700 Anton Vorontsov <cbouatmailru@gmail.com>=
+ wrote:
+>
+> Thanks for noticing, Stephen! Although, I wonder what would be the
+> best way to fix this?.. I would happily cherry-pick the ACPI change
+> into my tree and then re-apply the battery thermal zone support patch,
+> but ACPI change doesn't apply cleanly on the battery tree. Heh.
+>=20
+> Is there thermal zone git tree? Or maybe I would just let ACPI
+> folks take the battery patch in question?
 
-Thanks,
+Just wait until the next merge window and then who ever get's Linus to
+merge their tree last can tell him to fix this in the merge commit.
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 19 Jun 2012 14:46:17 +1000
-> Subject: [PATCH] ACPI-Thermal: fix for an API change
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/power/power_supply_core.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
-> index ff990d2..85689fb 100644
-> --- a/drivers/power/power_supply_core.c
-> +++ b/drivers/power/power_supply_core.c
-> @@ -201,7 +201,7 @@ static int psy_register_thermal(struct power_supply *psy)
->  	for (i = 0; i < psy->num_properties; i++) {
->  		if (psy->properties[i] == POWER_SUPPLY_PROP_TEMP) {
->  			psy->tzd = thermal_zone_device_register(psy->name, 0,
-> -					psy, &psy_tzd_ops, 0, 0, 0, 0);
-> +					0, psy, &psy_tzd_ops, 0, 0, 0, 0);
->  			if (IS_ERR(psy->tzd))
->  				return PTR_ERR(psy->tzd);
->  			break;
-> -- 
-> 1.7.10.280.gaa39
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
--- 
-Anton Vorontsov
-Email: cbouatmailru@gmail.com
+--Signature=_Tue__19_Jun_2012_15_37_05_+1000_7yJdGbEmaxUygH1H
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP4BABAAoJEECxmPOUX5FElLYP/iRYhOl25aA3QcQ9DmM95f71
+FYbMZ7ninBFXg0TuHb5H6N8YTSg7PrgFRxGzlNisQGyxp1pUVAew/040+ebN1YVh
+GcQbYQLcmU/NiN0qrte/x58W90GuwQ/yv7tyvkXpBTGTbsTmIAxTjtKk37kCRRCX
+ib0aXHhWt+iTWcIA0njMh5f/cMcRh5pLeNtVJPehwR0SLHb/iuUXy/YimY4LVx0c
+PLwD2Y04hyzT3JzXLp/KZNywU8wEfY+YBr2Vk3hH/sJBL/TkQfchsArKiGD/5lyl
+q7+1btcNLesp24J/PIZIabnNnxJTw7T3Rn2oCrD0kZ3k7dq1ZSesQ+Y5XwXcfdQT
+Uqt59U2lwi/Zq6IKxF6d3JZPyExStiThXHrSGzTX+nm3xIvj3qV3DAHWlDFHR31a
+3Vl3idepQfiSnWJulDKbKunPfVxRUCsgM0J/3f/p9LUlAlaA5i3iWPQuDudwynIz
+3l70q9uyWHrrgA5caV6zc1TpJuO+Nmwa2CRWGrpiqoWHsGyu/5uMYlXr6sULwjnp
+Szsgq9pdVB+m9mx7b8iRgjMURMQYzmr1UOVBGgLKgOVFGv3D0NCpwy8LIYDGhwrk
+OKeOe/xKxT217XBRRdnYgd/x8d1Tm6xF9rsIfNzdXS//hWIRd4v8hLcBe5t++NWJ
+b5171y/SZR/cOVSzRO2r
+=O1/a
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_Jun_2012_15_37_05_+1000_7yJdGbEmaxUygH1H--
