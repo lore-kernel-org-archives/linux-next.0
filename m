@@ -1,77 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Tue, 19 Jun 2012 11:29:39 +1000
-Message-ID: <20120619112939.23c80aed8f1db9682e37be87@canb.auug.org.au>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: linux-next: Tree for Jun 18 (netfilter nfconntrack)
+Date: Tue, 19 Jun 2012 05:19:38 +0200
+Message-ID: <20120619031938.GA31266@1984>
+References: <20120618165336.48345227c6b64c314326ae57@canb.auug.org.au>
+ <4FDF65F6.6010002@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__19_Jun_2012_11_29_39_+1000_YF7.=TiG=vAAy5UZ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:55223 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753677Ab2FSB3r (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jun 2012 21:29:47 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Jiri Kosina <jkosina@suse.cz>
-
---Signature=_Tue__19_Jun_2012_11_29_39_+1000_YF7.=TiG=vAAy5UZ
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netfilter-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <4FDF65F6.6010002@xenotime.net>
+Sender: netfilter-devel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Mauro,
+On Mon, Jun 18, 2012 at 10:31:34AM -0700, Randy Dunlap wrote:
+> On 06/17/2012 11:53 PM, Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > Changes since 20120615:
+> 
+> 
+> 
+> on i386 or x86_64:
+> 
+> # CONFIG_NF_CONNTRACK is not set
+> 
+>   CC [M]  net/netfilter/nfnetlink_cthelper.o
+> In file included from include/net/netfilter/nf_conntrack_helper.h:12:0,
+>                  from net/netfilter/nfnetlink_cthelper.c:23:
+> include/net/netfilter/nf_conntrack.h:77:22: error: field 'ct_general' has incomplete type
+> include/net/netfilter/nf_conntrack.h: In function 'nf_ct_get':
+> include/net/netfilter/nf_conntrack.h:157:30: error: 'const struct sk_buff' has no member named 'nfct'
+> include/net/netfilter/nf_conntrack.h: In function 'nf_ct_put':
+> include/net/netfilter/nf_conntrack.h:164:2: error: implicit declaration of function 'nf_conntrack_put'
+> make[3]: *** [net/netfilter/nfnetlink_cthelper.o] Error 1
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-drivers/hid/hid-ids.h between commit 9ed326951806 ("HID: multitouch: Add
-support for Baanto touchscreen") from Linus' tree and commit 110301833d6f
-("[media] radio/si470x: Add support for the Axentia ALERT FM USB
-Receiver") from the v4l-dvb tree.
+I've send a patch to David to solve this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+ netfilter: fix compilation of the nfnl_cthelper if NF_CONNTRACK is unset
 
-diff --cc drivers/hid/hid-ids.h
-index 6d3037e,70298d1..0000000
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@@ -160,9 -157,9 +160,12 @@@
-  #define USB_VENDOR_ID_AVERMEDIA		0x07ca
-  #define USB_DEVICE_ID_AVER_FM_MR800	0xb800
- =20
-+ #define USB_VENDOR_ID_AXENTIA		0x12cf
-+ #define USB_DEVICE_ID_AXENTIA_FM_RADIO	0x7111
-+=20
- +#define USB_VENDOR_ID_BAANTO		0x2453
- +#define USB_DEVICE_ID_BAANTO_MT_190W2	0x0100
- +
-  #define USB_VENDOR_ID_BELKIN		0x050d
-  #define USB_DEVICE_ID_FLIP_KVM		0x3201
- =20
+It seems to resolve the issue for me here.
 
---Signature=_Tue__19_Jun_2012_11_29_39_+1000_YF7.=TiG=vAAy5UZ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJP39YDAAoJEECxmPOUX5FE50YP/jl8+qnxGtBwqaqsn1gOVPg7
-YoakT908VAZJqbkbSnJ/7rboVAM9nUmSNissE7XNgD4E90G1HqW8My6FPFfmzc3S
-ItjWzDhh+2vAdoRixhPMoh+rt0SLG4f6w1hmjNRLR++el0Xnv5f71hunN5qVDOLT
-zx1en3ZjviEJ4VY2h3yjrDIIOoPGbqdzaG8AHz4l1RNOGg+DLz/gs+wLMvGlMTHu
-JCcUefpIc3Q9QaCQXgTWYDDetJ5xqIwvnrHk6xQbLfTxyz1+fOrABjFs4WWf5cSj
-bfGPYNwiLf115jCCbo9CvfMJvMZMZn0VmAbWyA7TAUzcnYhoezEplG3E4FfZovzB
-3aJy0+L0QLdV1G0fnRLTzbTxOh2WctI7vp0SK9UDCzkdVDaqHBYxY9rubJPz2cw6
-7quyiKA3aLnZ1Sr6SfDkkekqjViaexJEJldmSFuVjRDkrdk4k579luXWn5XgN0mr
-Mw/mrcEgua1l/Pn48rgHHI8sceaih+6SrIIiCwPV0r+8RNPBRAlYMBvLbmXwWamp
-IfKS0wYOfjlCa8WdX3cLzC4Wz/L7ON6Eic5V7n38OSoNN7GijZ5XdYfVCkVWgU1M
-NM6Ii6RYSowKZE7Da/V71P1+UuKzrfoJIIQUEkTSr4OKUm11m9ZxhJNgZe6ZSUFs
-u5NHGRXrQWc4s1APYW/w
-=0qyu
------END PGP SIGNATURE-----
-
---Signature=_Tue__19_Jun_2012_11_29_39_+1000_YF7.=TiG=vAAy5UZ--
+Thanks for the report.
