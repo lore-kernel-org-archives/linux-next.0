@@ -1,63 +1,108 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Randy Dunlap <rdunlap@xenotime.net>
 Subject: Re: linux-next: Tree for Jun 18 (kmsg problems)
-Date: Mon, 18 Jun 2012 15:45:56 -0700
-Message-ID: <20120618224556.GA2750@kroah.com>
-References: <20120618165336.48345227c6b64c314326ae57@canb.auug.org.au>
- <4FDF61A7.3050601@xenotime.net>
- <20120619080109.b28055c1b32fb81027a9562b@canb.auug.org.au>
- <20120618221535.GA13037@kroah.com>
- <20120619083720.996b2d743cff619a58e1de97@canb.auug.org.au>
+Date: Mon, 18 Jun 2012 17:33:21 -0700
+Message-ID: <4FDFC8D1.90003@xenotime.net>
+References: <20120618165336.48345227c6b64c314326ae57@canb.auug.org.au>	 <4FDF61A7.3050601@xenotime.net>	 <20120619080109.b28055c1b32fb81027a9562b@canb.auug.org.au>	 <20120618221535.GA13037@kroah.com>	 <CAPXgP10sBkwLnhDmu6UG9yVaiXG+8UYGkBEOVzUp3H+468J03w@mail.gmail.com> <1340058777.1572.35.camel@foo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:55922 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751348Ab2FRWqA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jun 2012 18:46:00 -0400
-Received: by dady13 with SMTP id y13so7547772dad.19
-        for <linux-next@vger.kernel.org>; Mon, 18 Jun 2012 15:46:00 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20120619083720.996b2d743cff619a58e1de97@canb.auug.org.au>
+Received: from oproxy9.bluehost.com ([69.89.24.6]:56401 "HELO
+	oproxy9.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753110Ab2FSAdn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jun 2012 20:33:43 -0400
+In-Reply-To: <1340058777.1572.35.camel@foo>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kay Sievers <kay@vrfy.org>
+To: Kay Sievers <kay@vrfy.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Jun 19, 2012 at 08:37:20AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On 06/18/2012 03:32 PM, Kay Sievers wrote:
+
+> On Tue, 2012-06-19 at 00:17 +0200, Kay Sievers wrote:
+>> On Tue, Jun 19, 2012 at 12:15 AM, Greg Kroah-Hartman
+>> <gregkh@linuxfoundation.org> wrote:
+>>> On Tue, Jun 19, 2012 at 08:01:09AM +1000, Stephen Rothwell wrote:
+>>>> [Adding Greg and Kay]
+>>>>
+>>>> On Mon, 18 Jun 2012 10:13:11 -0700 Randy Dunlap <rdunlap@xenotime.net> wrote:
+>>>>>
+>>>>> arch/x86/kernel/reboot.o: In function `kmsg_dump_get_line':
+>>>>> reboot.c:(.text+0xf0): multiple definition of `kmsg_dump_get_line'
+>>>>> arch/x86/kernel/setup.o:setup.c:(.text+0x0): first defined here
+>>>>> arch/x86/kernel/reboot.o: In function `kmsg_dump_get_buffer':
+>>>>> reboot.c:(.text+0x100): multiple definition of `kmsg_dump_get_buffer'
+>>>>> arch/x86/kernel/setup.o:setup.c:(.text+0x10): first defined here
+>>>>> arch/x86/kernel/reboot.o: In function `kmsg_dump_rewind':
+>>>>> reboot.c:(.text+0x110): multiple definition of `kmsg_dump_rewind'
+>>>>> arch/x86/kernel/setup.o:setup.c:(.text+0x20): first defined here
+>>>>
+>>>> Caused by commit e2ae715d66bf ("kmsg - kmsg_dump() use iterator to
+>>>> receive log buffer content") from the driver-core.current tree.
+>>>
+>>> I'm building my tree right now, and I can't seem to hit this.
+>>>
+>>>> This was reported a few days ago.  Why is it not fixed yet?
+>>>
+>>> It was reported Friday evening, on a holiday weekend for some of us, we
+>>> are trying the best we can :)
+>>>
+>>>> Especially since it is in a branch that is supposedly "bug fixes"?
+>>>
+>>> It fixes up a reported problem, and we had 3 people test it and said it
+>>> resolved the issue for them, no build problems reported.
+>>>
+>>> Randy, can I get a copy of your .config that duplicates this?
+>>
+>> I looked at it, and did not see it, I was blind.
+>>
+>> We just miss the "static inline" in include/linux/kmsg_dump.h. :)
 > 
-> On Mon, 18 Jun 2012 15:15:35 -0700 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> >
-> > > Caused by commit e2ae715d66bf ("kmsg - kmsg_dump() use iterator to
-> > > receive log buffer content") from the driver-core.current tree.
-> > 
-> > I'm building my tree right now, and I can't seem to hit this.
+> From: Kay Sievers <kay@vrfy.org>
+> Subject: kmsg - kmsg_dump() fix CONFIG_PRINTK=n compilation
+
+
+Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+
+Thanks.
+
+
 > 
-> You need CONFIG_PRINTK turned off ...
-
-Ugh, no wonder I couldn't reproduce it, who runs systems like that
-becides the CONFIG_TINY people?  :)
-
-> > > This was reported a few days ago.  Why is it not fixed yet?
-> > 
-> > It was reported Friday evening, on a holiday weekend for some of us, we
-> > are trying the best we can :)
+> Signed-off-by: Kay Sievers <kay@vrfy.org>
+> ---
+>  include/linux/kmsg_dump.h |   10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> Ah ha, another of those pesky holiday things :-)
+> --- a/include/linux/kmsg_dump.h
+> +++ b/include/linux/kmsg_dump.h
+> @@ -71,19 +71,19 @@ static inline void kmsg_dump(enum kmsg_d
+>  {
+>  }
+>  
+> -bool kmsg_dump_get_line(struct kmsg_dumper *dumper, bool syslog,
+> -			  const char *line, size_t size, size_t *len)
+> +static inline bool kmsg_dump_get_line(struct kmsg_dumper *dumper, bool syslog,
+> +				const char *line, size_t size, size_t *len)
+>  {
+>  	return false;
+>  }
+>  
+> -bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
+> -			    char *buf, size_t size, size_t *len)
+> +static inline bool kmsg_dump_get_buffer(struct kmsg_dumper *dumper, bool syslog,
+> +					char *buf, size_t size, size_t *len)
+>  {
+>  	return false;
+>  }
+>  
+> -void kmsg_dump_rewind(struct kmsg_dumper *dumper)
+> +static inline void kmsg_dump_rewind(struct kmsg_dumper *dumper)
+>  {
+>  }
+>  
 > 
-> > > Especially since it is in a branch that is supposedly "bug fixes"?
-> > 
-> > It fixes up a reported problem, and we had 3 people test it and said it
-> > resolved the issue for them, no build problems reported.
-> 
-> My usual mantra is that if your patch is modifying code that clearly
-> depends on a CONFIG option, you must test with that option both on and
-> off. I see build problems in linux-next all the time where this has not
-> been done.  :-(
 
-Thanks, as this was a kmsg thing, I didn't catch that CONFIG_PRINTK was
-involved, sorry about that.
 
-I'll go queue up Kay's patch right now,
 
-greg k-h
+-- 
+~Randy
