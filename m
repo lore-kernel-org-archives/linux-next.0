@@ -1,69 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (acpi
- and battery trees related)
-Date: Tue, 19 Jun 2012 15:37:05 +1000
-Message-ID: <20120619153705.bc20359d73d6139e2cb4c1f5@canb.auug.org.au>
-References: <20120619145425.6f825e142856ca808927ca45@canb.auug.org.au>
-	<20120619051032.GB16286@lizard>
+From: Michal Simek <monstr@monstr.eu>
+Subject: Re: linux-next: Tree for Jun 4
+Date: Tue, 19 Jun 2012 08:51:01 +0200
+Message-ID: <4FE02155.2010505@monstr.eu>
+References: <20120604154053.31c23de0a68defd4a9f773fc@canb.auug.org.au>
+Reply-To: monstr@monstr.eu
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__19_Jun_2012_15_37_05_+1000_7yJdGbEmaxUygH1H"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:47891 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751314Ab2FSFhO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jun 2012 01:37:14 -0400
-In-Reply-To: <20120619051032.GB16286@lizard>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:43641 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751928Ab2FSGvG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jun 2012 02:51:06 -0400
+Received: by bkcji2 with SMTP id ji2so4751304bkc.19
+        for <linux-next@vger.kernel.org>; Mon, 18 Jun 2012 23:51:05 -0700 (PDT)
+In-Reply-To: <20120604154053.31c23de0a68defd4a9f773fc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anton Vorontsov <cbouatmailru@gmail.com>
-Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Durgadoss R <durgadoss.r@intel.com>, Jenny TC <jenny.tc@intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__19_Jun_2012_15_37_05_+1000_7yJdGbEmaxUygH1H
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Anton,
-
-On Mon, 18 Jun 2012 22:10:32 -0700 Anton Vorontsov <cbouatmailru@gmail.com>=
- wrote:
+On 06/04/2012 07:40 AM, Stephen Rothwell wrote:
+> Hi all,
 >
-> Thanks for noticing, Stephen! Although, I wonder what would be the
-> best way to fix this?.. I would happily cherry-pick the ACPI change
-> into my tree and then re-apply the battery thermal zone support patch,
-> but ACPI change doesn't apply cleanly on the battery tree. Heh.
->=20
-> Is there thermal zone git tree? Or maybe I would just let ACPI
-> folks take the battery patch in question?
+> Changes since 20120601:
+>
+> New tree: leds
 
-Just wait until the next merge window and then who ever get's Linus to
-merge their tree last can tell him to fix this in the merge commit.
+Haven't tracked which branch contains it but there are two new patches
+for Microblaze where at least one is wrong (compilation failure).
+(Firstly merged Jun 4).
+Based on that I think that these changes are not even tested on hw.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+microblaze: fix the horror with restarts of sigreturn()
+microblaze: fix handling of multiple pending signals
 
---Signature=_Tue__19_Jun_2012_15_37_05_+1000_7yJdGbEmaxUygH1H
-Content-Type: application/pgp-signature
+Al: Can you please give me some information about?
+They should definitely go through my tree and has to be tested.
+Please remove them from your branch which is merged to linux-next and send them as standard patches
+to LKML and CC me.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Thanks,
+Michal
 
-iQIcBAEBCAAGBQJP4BABAAoJEECxmPOUX5FElLYP/iRYhOl25aA3QcQ9DmM95f71
-FYbMZ7ninBFXg0TuHb5H6N8YTSg7PrgFRxGzlNisQGyxp1pUVAew/040+ebN1YVh
-GcQbYQLcmU/NiN0qrte/x58W90GuwQ/yv7tyvkXpBTGTbsTmIAxTjtKk37kCRRCX
-ib0aXHhWt+iTWcIA0njMh5f/cMcRh5pLeNtVJPehwR0SLHb/iuUXy/YimY4LVx0c
-PLwD2Y04hyzT3JzXLp/KZNywU8wEfY+YBr2Vk3hH/sJBL/TkQfchsArKiGD/5lyl
-q7+1btcNLesp24J/PIZIabnNnxJTw7T3Rn2oCrD0kZ3k7dq1ZSesQ+Y5XwXcfdQT
-Uqt59U2lwi/Zq6IKxF6d3JZPyExStiThXHrSGzTX+nm3xIvj3qV3DAHWlDFHR31a
-3Vl3idepQfiSnWJulDKbKunPfVxRUCsgM0J/3f/p9LUlAlaA5i3iWPQuDudwynIz
-3l70q9uyWHrrgA5caV6zc1TpJuO+Nmwa2CRWGrpiqoWHsGyu/5uMYlXr6sULwjnp
-Szsgq9pdVB+m9mx7b8iRgjMURMQYzmr1UOVBGgLKgOVFGv3D0NCpwy8LIYDGhwrk
-OKeOe/xKxT217XBRRdnYgd/x8d1Tm6xF9rsIfNzdXS//hWIRd4v8hLcBe5t++NWJ
-b5171y/SZR/cOVSzRO2r
-=O1/a
------END PGP SIGNATURE-----
 
---Signature=_Tue__19_Jun_2012_15_37_05_+1000_7yJdGbEmaxUygH1H--
+-- 
+Michal Simek, Ing. (M.Eng)
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel 2.6 Microblaze Linux - http://www.monstr.eu/fdt/
+Microblaze U-BOOT custodian
