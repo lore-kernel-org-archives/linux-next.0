@@ -1,51 +1,53 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: linux-next: Tree for Jun 4
-Date: Tue, 19 Jun 2012 08:51:01 +0200
-Message-ID: <4FE02155.2010505@monstr.eu>
-References: <20120604154053.31c23de0a68defd4a9f773fc@canb.auug.org.au>
-Reply-To: monstr@monstr.eu
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] Makefile: fix up CROSS_COMPILE and READABLE_ASM interaction.
+Date: Tue, 19 Jun 2012 11:17:59 +0200
+Message-ID: <CAMuHMdU5juQMyzoTV62-hwzKW980fkQNDBKGP8i5WfDcsf95jQ@mail.gmail.com>
+References: <20120618045500.GC19803@linux-sh.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:43641 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751928Ab2FSGvG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jun 2012 02:51:06 -0400
-Received: by bkcji2 with SMTP id ji2so4751304bkc.19
-        for <linux-next@vger.kernel.org>; Mon, 18 Jun 2012 23:51:05 -0700 (PDT)
-In-Reply-To: <20120604154053.31c23de0a68defd4a9f773fc@canb.auug.org.au>
+Received: from mail-gh0-f174.google.com ([209.85.160.174]:35846 "EHLO
+	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751002Ab2FSJSA convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jun 2012 05:18:00 -0400
+In-Reply-To: <20120618045500.GC19803@linux-sh.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
 
-On 06/04/2012 07:40 AM, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Jun 18, 2012 at 6:55 AM, Paul Mundt <lethal@linux-sh.org> wrote=
+:
+> (Apologies for the re-send, forgot to Cc linux-kernel)
 >
-> Changes since 20120601:
+> When the READABLE_ASM cc-option tests were added they were done so pr=
+ior
+> to the arch Makefile include, resulting in cc-option being run on the
+> host cc instead of the factoring in the cross prefix set up by the
+> architecture.
 >
-> New tree: leds
+> This bumps the include back up so that cc-option actually runs on the
+> compiler that we're building with.
 
-Haven't tracked which branch contains it but there are two new patches
-for Microblaze where at least one is wrong (compilation failure).
-(Firstly merged Jun 4).
-Based on that I think that these changes are not even tested on hw.
+I find it a real pity these reported, hard to investigate, and fixed
+build issues keep
+flowing into mainline, without the corresponding fix...
 
-microblaze: fix the horror with restarts of sigreturn()
-microblaze: fix handling of multiple pending signals
+https://lkml.org/lkml/2012/5/12/36
 
-Al: Can you please give me some information about?
-They should definitely go through my tree and has to be tested.
-Please remove them from your branch which is merged to linux-next and send them as standard patches
-to LKML and CC me.
+Gr{oetje,eeting}s,
 
-Thanks,
-Michal
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
 
--- 
-Michal Simek, Ing. (M.Eng)
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel 2.6 Microblaze Linux - http://www.monstr.eu/fdt/
-Microblaze U-BOOT custodian
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
