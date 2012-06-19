@@ -1,53 +1,60 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] Makefile: fix up CROSS_COMPILE and READABLE_ASM interaction.
-Date: Tue, 19 Jun 2012 11:17:59 +0200
-Message-ID: <CAMuHMdU5juQMyzoTV62-hwzKW980fkQNDBKGP8i5WfDcsf95jQ@mail.gmail.com>
-References: <20120618045500.GC19803@linux-sh.org>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the v4l-dvb tree with Linus' tree
+Date: Tue, 19 Jun 2012 12:06:12 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1206191205190.15308@pobox.suse.cz>
+References: <20120619112939.23c80aed8f1db9682e37be87@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gh0-f174.google.com ([209.85.160.174]:35846 "EHLO
-	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751002Ab2FSJSA convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jun 2012 05:18:00 -0400
-In-Reply-To: <20120618045500.GC19803@linux-sh.org>
+Received: from cantor2.suse.de ([195.135.220.15]:40477 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751180Ab2FSKGW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Jun 2012 06:06:22 -0400
+In-Reply-To: <20120619112939.23c80aed8f1db9682e37be87@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 
-On Mon, Jun 18, 2012 at 6:55 AM, Paul Mundt <lethal@linux-sh.org> wrote=
-:
-> (Apologies for the re-send, forgot to Cc linux-kernel)
->
-> When the READABLE_ASM cc-option tests were added they were done so pr=
-ior
-> to the arch Makefile include, resulting in cc-option being run on the
-> host cc instead of the factoring in the cross prefix set up by the
-> architecture.
->
-> This bumps the include back up so that cc-option actually runs on the
-> compiler that we're building with.
+On Tue, 19 Jun 2012, Stephen Rothwell wrote:
 
-I find it a real pity these reported, hard to investigate, and fixed
-build issues keep
-flowing into mainline, without the corresponding fix...
+> Hi Mauro,
+> 
+> Today's linux-next merge of the v4l-dvb tree got a conflict in
+> drivers/hid/hid-ids.h between commit 9ed326951806 ("HID: multitouch: Add
+> support for Baanto touchscreen") from Linus' tree and commit 110301833d6f
+> ("[media] radio/si470x: Add support for the Axentia ALERT FM USB
+> Receiver") from the v4l-dvb tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/hid/hid-ids.h
+> index 6d3037e,70298d1..0000000
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@@ -160,9 -157,9 +160,12 @@@
+>   #define USB_VENDOR_ID_AVERMEDIA		0x07ca
+>   #define USB_DEVICE_ID_AVER_FM_MR800	0xb800
+>   
+> + #define USB_VENDOR_ID_AXENTIA		0x12cf
+> + #define USB_DEVICE_ID_AXENTIA_FM_RADIO	0x7111
+> + 
+>  +#define USB_VENDOR_ID_BAANTO		0x2453
+>  +#define USB_DEVICE_ID_BAANTO_MT_190W2	0x0100
+>  +
+>   #define USB_VENDOR_ID_BELKIN		0x050d
+>   #define USB_DEVICE_ID_FLIP_KVM		0x3201
 
-https://lkml.org/lkml/2012/5/12/36
+Thanks for reporting this, Stephen.
 
-Gr{oetje,eeting}s,
+Hmmm ... Mauro, Hans, do you feel it's actually proper to add the device 
+ids to hid-ids.h? I am using this file usually solely for the drivers on 
+the HID bus, which radio-si470x is not, I believe.
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+-- 
+Jiri Kosina
+SUSE Labs
