@@ -1,60 +1,100 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pm tree
-Date: Wed, 20 Jun 2012 15:01:40 +1000
-Message-ID: <20120620150140.64b8bd622e00638d3ceed40c@canb.auug.org.au>
+Subject: linux-next: manual merge of the remoteproc tree with Linus' tree
+Date: Wed, 20 Jun 2012 16:31:30 +1000
+Message-ID: <20120620163130.b7bbb33fbed65837bf386f59@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__20_Jun_2012_15_01_40_+1000_Fe7hRFq.DBSzyeTf"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sameer Nanda <snanda@chromium.org>, "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__20_Jun_2012_16_31_30_+1000_t=ge0t/aTxgrWLxX"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35417 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753822Ab2FTGbj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 02:31:39 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlNqdXIgQnLDpm5kZWxhbmQi?= <sjur.brandeland@stericsson.com>
 
---Signature=_Wed__20_Jun_2012_15_01_40_+1000_Fe7hRFq.DBSzyeTf
+--Signature=_Wed__20_Jun_2012_16_31_30_+1000_t=ge0t/aTxgrWLxX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Ohad,
 
-After merging the pm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the remoteproc tree got conflicts in
+drivers/remoteproc/remoteproc_core.c between commits e981f6d41acd
+("remoteproc: fix print format warnings") and 30338cf09f82 ("remoteproc:
+fix missing fault indication in error-path") from Linus' tree and commits
+7826bf782364 ("remoteproc: Pass struct fw to load_segments and
+find_rsc_table"), a933c9f8ef8a ("remoteproc: Add function
+rproc_get_boot_addr") and 32d46fe7f468 ("remoteproc: Move Elf related
+functions to separate file") from the remoteproc tree.
 
-drivers/built-in.o:(.toc1+0x37f0): undefined reference to `pm_print_times_e=
-nabled'
-
-Caused by commit 0eb8c06cb620 ("PM / Sleep: Separate printing suspend
-times from initcall_debug") or maybe 1873ce64491a ("M / Sleep: add knob
-for printing device resume times").
-
-I have used the pm tree from next-20120619 for today.
-
+I fixed them up (see below) and can carry the fixes as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__20_Jun_2012_15_01_40_+1000_Fe7hRFq.DBSzyeTf
+diff --cc drivers/remoteproc/remoteproc_core.c
+index 66324ee,6779c2a..0000000
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@@ -1018,9 -789,7 +789,7 @@@ static int rproc_fw_boot(struct rproc *
+  	if (ret)
+  		return ret;
+ =20
+- 	ehdr =3D (struct elf32_hdr *)fw->data;
+-=20
+ -	dev_info(dev, "Booting fw image %s, size %d\n", name, fw->size);
+ +	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
+ =20
+  	/*
+  	 * if enabling an IOMMU isn't relevant for this rproc, this is
+@@@ -1032,19 -801,12 +801,14 @@@
+  		return ret;
+  	}
+ =20
+- 	/*
+- 	 * The ELF entry point is the rproc's boot addr (though this is not
+- 	 * a configurable property of all remote processors: some will always
+- 	 * boot at a specific hardcoded address).
+- 	 */
+- 	rproc->bootaddr =3D ehdr->e_entry;
++ 	rproc->bootaddr =3D rproc_get_boot_addr(rproc, fw);
+ =20
+  	/* look for the resource table */
+- 	table =3D rproc_find_rsc_table(rproc, fw->data, fw->size, &tablesz);
++ 	table =3D rproc_find_rsc_table(rproc, fw, &tablesz);
+ -	if (!table)
+ +	if (!table) {
+ +		ret =3D -EINVAL;
+  		goto clean_up;
+ +	}
+ =20
+  	/* handle fw resources which are required to boot rproc */
+  	ret =3D rproc_handle_boot_rsc(rproc, table, tablesz);
+
+--Signature=_Wed__20_Jun_2012_16_31_30_+1000_t=ge0t/aTxgrWLxX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP4Vk0AAoJEECxmPOUX5FEg10QAKDTUxNjXmY50oD1H/olvqjw
-9hbuK/y2fIM1uvlaxCW1EaDNybt8BLsDb+7LyNJp1ViwOIUtYHCcYEQmBOgmRDDu
-YrGax1WNSaq7zX3DHFZ7639a7MZ9WandbO1v+xIYcJcuEVKs9ucIDCAV35U4YQXR
-X/juJbMburrwoacICLky8SYl8mMzogyQ2i6NoKE76Mt3oGkpQOIDQIInGxNKCDNA
-w0b0SWOsl2xLqUpPsapdjDUw26zugvqoh7SlW0rL5TgWbociw/OEirZoSCobQpyQ
-gLKqyrfJzgEZVRCkayte5P8ohk5d/YirFo3uM3GKNxRXNrp0NPECskTql7kh+ibO
-jZyH2ngk1jsqszlZiYeQV3FnFNNx8OWyHUyeUhJDFNeo4/KWgk+5IF2KfQc9EHCR
-0P/WT1JM2oL/cCRnw1SgYg/SOk1Ti90AhwHFvD2SiMJWRO4RitIThJB9XIEhaaLz
-m8siMOqVEdcDmo0zslKGgy+aehK2yryHnNlJvLSFTxhfB0kNllUsfHYdXIvjaPOJ
-f1WeLh4pfWdF5JFYWQzaWCtEnL9jxyMU+gNCkTFoar9WvTjZERDcgDkjZY1kU299
-8TdQmozs09X0pgxob8usUyBcGniT58wD/LTgbzX7r2Xmbik9wDcSIUW2ByaPg709
-plQo9/cZtof6WrtJOZWc
-=d29b
+iQIcBAEBCAAGBQJP4W5CAAoJEECxmPOUX5FEJOMP/R08REUYORsCIWwuwLXJxfzI
+641tpnlieZ8BzhkhxsNCe1JoiW/mlbTOFOxrNbNI+BAm/2bA1k6aA6Re9jKjSXtG
+CK7xl/olX48XPv5B7K0KVfCJKT7KdmtKsRzdoeX/FMqhHDyYxpOjxBYn7x0KIlR6
+2w/6IBXPXbPzhZjZAQhK+Q+SJwY6aqURheEiDMUOHeZp2LrsvYroh+mARUmSYWsj
+7T2tBa0UT2g9kviF+4B+/HoeKxBqHCs752pMmPgfUBVRFJjGzCRf0KNvw5/B/6yl
+HgBN6Xk2BNMwbaMJbPvDNT+26j08yjvholwCRa+sGw9L7izpMOzPZaknTuOt/a/c
+rNw344IL8qx8+iaLHtbedToRBnYf6VQTX4ZGpjs2AZb5PouwbOF6Q6qfwO2kZ/DM
+DIG64iWWZRPtQ6R8Xg5tUy6fDrfqpo5DN3XOdvBxte4GLVj4tfbBwUzAq/vGL9ZS
+n1XLZ5V/4TppaSZ74SwS11zM6ZS1QCnpCTPAD/g7ybAERvton95a45ea1HfsZF/l
+E9IuVU9Aj6RyBtRRCh1UZx4Y/07CuK7lLWOvTs9xN0P3waAccFWmR1q/P0hx19GJ
+BdN5VxfXgwfWDmrAEdBMSN8Iu3Ut+lc9GFPUZNUnfKlF0T71KRQSZk2SXr5WQyxd
+Ubt+WnU8F9i4OGLB3XOr
+=PdjK
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__20_Jun_2012_15_01_40_+1000_Fe7hRFq.DBSzyeTf--
+--Signature=_Wed__20_Jun_2012_16_31_30_+1000_t=ge0t/aTxgrWLxX--
