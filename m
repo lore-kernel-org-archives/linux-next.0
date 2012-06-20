@@ -1,65 +1,36 @@
-From: viresh kumar <viresh.kumar2@arm.com>
+From: David Miller <davem@davemloft.net>
 Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Wed, 20 Jun 2012 09:08:34 +0100
-Message-ID: <4FE18502.6040409@arm.com>
-References: <20120620133348.a9ff31a72ffd11818f574fe3@canb.auug.org.au> <D5ECB3C7A6F99444980976A8C6D896384FAA275CA8@EAPEX1MAIL1.st.com>
+Date: Wed, 20 Jun 2012 01:20:37 -0700 (PDT)
+Message-ID: <20120620.012037.783895812206310043.davem@davemloft.net>
+References: <20120620133348.a9ff31a72ffd11818f574fe3@canb.auug.org.au>
+	<D5ECB3C7A6F99444980976A8C6D896384FAA275CA8@EAPEX1MAIL1.st.com>
+	<4FE18502.6040409@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:36440 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755474Ab2FTIIk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 04:08:40 -0400
-In-Reply-To: <D5ECB3C7A6F99444980976A8C6D896384FAA275CA8@EAPEX1MAIL1.st.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bhupesh SHARMA <bhupesh.sharma@st.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Federico Vaga <federico.vaga@gmail.com>, Giancarlo ASNAGHI <giancarlo.asnaghi@st.com>, Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, spear-devel <spear-devel@list.st.com>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4FE18502.6040409@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: viresh.kumar2@arm.com
+Cc: bhupesh.sharma@st.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, federico.vaga@gmail.com, giancarlo.asnaghi@st.com, wg@grandegger.com, mkl@pengutronix.de, spear-devel@list.st.com
+List-Id: linux-next.vger.kernel.org
 
-On 20/06/12 05:27, Bhupesh SHARMA wrote:
->> -----Original Message-----
->> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
->> Sent: Wednesday, June 20, 2012 9:04 AM
->> To: David Miller; netdev@vger.kernel.org
->> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Federico
->> Vaga; Giancarlo ASNAGHI; Wolfgang Grandegger; Bhupesh SHARMA; Marc
->> Kleine-Budde
->> Subject: linux-next: build failure after merge of the net-next tree
->>
->> Hi all,
->>
->> After merging the net-next tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> ERROR: "clk_get_rate" [drivers/net/can/c_can/c_can_pci.ko] undefined!
->> ERROR: "clk_get" [drivers/net/can/c_can/c_can_pci.ko] undefined!
->> ERROR: "clk_put" [drivers/net/can/c_can/c_can_pci.ko] undefined!
->>
->> Caused by commit 5b92da0443c2 ("c_can_pci: generic module for
->> C_CAN/D_CAN on PCI").  Maybe a missing Kconfig dependency/select?
->>
->> I have used the net-next tree from next-20120619 for today.
->> --
->
-> clk_get/clk_put* variants are usually used by ARM platforms.
-> Protecting their calls under macro 'CONFIG_HAVE_CLK' should solve the problem.
->
-> See [1] for how it is done in c_can_platform.c
->
-> Could you possibly add these checks and send a patch for the same?
-> It should be fairly simple.
+From: viresh kumar <viresh.kumar2@arm.com>
+Date: Wed, 20 Jun 2012 09:08:34 +0100
 
-Hi Bhupesh,
+> Please see following patchset from me, that got applied in linux-next
+> 
+> https://lkml.org/lkml/2012/4/24/154
+> 
+> Please check if this patchset is present in your build repo. I believe it should be
+> there. If it is, then you shouldn't get these errors.
 
-Please see following patchset from me, that got applied in linux-next
+Well, then Stephen shouldn't get those errors either.
 
-https://lkml.org/lkml/2012/4/24/154
+But obviously he did.
 
-Please check if this patchset is present in your build repo. I believe it should be
-there. If it is, then you shouldn't get these errors.
+But all of this talk about changes existing only in linux-next is
+entirely moot.  Because The damn thing MUST build independently inside
+of net-next which doesn't have those clock layer changes.
 
---
-viresh
-
--- IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium.  Thank you.
+Someone send me a clean fix for net-next now.
