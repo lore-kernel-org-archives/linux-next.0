@@ -1,35 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Wed, 20 Jun 2012 02:58:37 -0700 (PDT)
-Message-ID: <20120620.025837.721158723130014230.davem@davemloft.net>
-References: <3170667.1PZa2330KE@harkonnen>
-	<20120620.020611.1696375957120854262.davem@davemloft.net>
-	<5059693.iaLYtpk3E4@harkonnen>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (powerpc related)
+Date: Wed, 20 Jun 2012 20:09:11 +1000
+Message-ID: <1340186951.28143.162.camel@pasglop>
+References: <20120620175014.a822a766e0f91f7b44f48fa0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:36558 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753811Ab2FTJ6i (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 05:58:38 -0400
-In-Reply-To: <5059693.iaLYtpk3E4@harkonnen>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: federico.vaga@gmail.com
-Cc: mkl@pengutronix.de, bhupesh.sharma@st.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, giancarlo.asnaghi@st.com, wg@grandegger.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120620175014.a822a766e0f91f7b44f48fa0@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Federico Vaga <federico.vaga@gmail.com>
-Date: Wed, 20 Jun 2012 11:59:26 +0200
-
->> Then the driver should NEVER have been submitted without the
->> required infrastructure in place first.
+On Wed, 2012-06-20 at 17:50 +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> This particular driver don't use the clk framework at the moment. I put 
-> that lines about clk to try to be generic as possibile, but I see that I 
-> made a mistake: I'm sorry.
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 
-Why would you try to be generic by using an interface currently
-only available on certain platforms?
+I hate our ABI is a good answer ? :-)
 
-That is how you make drivers non-portable, and not generic.
+I'll see what I can do tomorrow. Poke me when I'm in the office.
+
+Cheers,
+Ben.
+
+> powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `bpf_slow_path_word':
+> (.text+0x90): sibling call optimization to `skb_copy_bits' does not allow automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `skb_copy_bits' extern
+> powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `bpf_slow_path_half':
+> (.text+0xe0): sibling call optimization to `skb_copy_bits' does not allow automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `skb_copy_bits' extern
+> powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `bpf_slow_path_byte':
+> (.text+0x130): sibling call optimization to `skb_copy_bits' does not allow automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `skb_copy_bits' extern
+> powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `bpf_slow_path_byte_msh':
+> (.text+0x180): sibling call optimization to `skb_copy_bits' does not allow automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `skb_copy_bits' extern
+> powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `sk_load_word_negative_offset':
+> (.text+0x1dc): sibling call optimization to `bpf_internal_load_pointer_neg_helper' does not allow automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `bpf_internal_load_pointer_neg_helper' extern
+> powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `sk_load_half_negative_offset':
+> (.text+0x238): sibling call optimization to `bpf_internal_load_pointer_neg_helper' does not allow automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `bpf_internal_load_pointer_neg_helper' extern
+> powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `sk_load_byte_negative_offset':
+> (.text+0x294): sibling call optimization to `bpf_internal_load_pointer_neg_helper' does not allow automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `bpf_internal_load_pointer_neg_helper' extern
+> powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `sk_load_byte_msh_negative_offset':
+> (.text+0x2f0): sibling call optimization to `bpf_internal_load_pointer_neg_helper' does not allow automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `bpf_internal_load_pointer_neg_helper' extern
+> powerpc64-linux-ld: final link failed: Bad value
+> 
+> I started building with gcc 4.6.3/binutils 2.22 today.  gcc
+> 4.6.0/binutils 2.21 do not produce this error, it produces this instead
+> (which has been happening for a long time):
+> 
+> powerpc64-linux-ld: TOC section size exceeds 64k
+> 
