@@ -1,87 +1,45 @@
-From: Marc Kleine-Budde <mkl@pengutronix.de>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Wed, 20 Jun 2012 12:33:16 +0200
-Message-ID: <4FE1A6EC.6070206@pengutronix.de>
-References: <20120620133348.a9ff31a72ffd11818f574fe3@canb.auug.org.au> <D5ECB3C7A6F99444980976A8C6D896384FAA275CA8@EAPEX1MAIL1.st.com> <4FE18502.6040409@arm.com> <20120620.012037.783895812206310043.davem@davemloft.net> <20120620202604.407af721f746045ae00c8268@canb.auug.org.au>
+Date: Wed, 20 Jun 2012 12:35:40 +0100
+Message-ID: <20120620113539.GA928@sirena.org.uk>
+References: <D5ECB3C7A6F99444980976A8C6D896384FAA275CA8@EAPEX1MAIL1.st.com>
+ <20120619.213703.513466167861199217.davem@davemloft.net>
+ <D5ECB3C7A6F99444980976A8C6D896384FAA275CBE@EAPEX1MAIL1.st.com>
+ <20120619.214759.2265041580160751452.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="------------enig6BA6434F43A835D50614C9A8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120620202604.407af721f746045ae00c8268@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, viresh.kumar2@arm.com, bhupesh.sharma@st.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, federico.vaga@gmail.com, giancarlo.asnaghi@st.com, wg@grandegger.com, spear-devel@list.st.com, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:60755 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754538Ab2FTLfr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 07:35:47 -0400
+Content-Disposition: inline
+In-Reply-To: <20120619.214759.2265041580160751452.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: bhupesh.sharma@st.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, federico.vaga@gmail.com, giancarlo.asnaghi@st.com, wg@grandegger.com, mkl@pengutronix.de
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enig6BA6434F43A835D50614C9A8
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 19, 2012 at 09:47:59PM -0700, David Miller wrote:
+> From: Bhupesh SHARMA <bhupesh.sharma@st.com>
 
-On 06/20/2012 12:26 PM, Stephen Rothwell wrote:
-> Hi all,
->=20
-> On Wed, 20 Jun 2012 01:20:37 -0700 (PDT) David Miller <davem@davemloft.=
-net> wrote:
->>
->> From: viresh kumar <viresh.kumar2@arm.com>
->> Date: Wed, 20 Jun 2012 09:08:34 +0100
->>
->>> Please see following patchset from me, that got applied in linux-next=
+> > So, whether adding a check in Kconfig for HAVE_CLK be a proper
+> > solution ?  But that will limit the compilation of this driver for
+> > only platforms which are ARM based.
 
->>>
->>> https://lkml.org/lkml/2012/4/24/154
->>>
->>> Please check if this patchset is present in your build repo. I believ=
-e it should be
->>> there. If it is, then you shouldn't get these errors.
->>
->> Well, then Stephen shouldn't get those errors either.
->>
->> But obviously he did.
->>
->> But all of this talk about changes existing only in linux-next is
->> entirely moot.  Because The damn thing MUST build independently inside=
+> > One may need to support this driver on x86 like platforms also..
 
->> of net-next which doesn't have those clock layer changes.
->>
->> Someone send me a clean fix for net-next now.
->=20
-> I get those errors because those patches are in the akpm tree which is
-> merged after everything else ...
->=20
-> One possibility is to put those changes in another (stable) tree and
-> merge that into the net-next tree (and any other tree that needs it).
+> Then x86 will need to provide clock operations, or there needs to
+> be dummy ones for such platforms.
 
-We're about to remove the offending clk_*() functions from the driver,
-as they are untested anyway. The hardware the driver was developed for
-uses a hardcoded clock rate in the driver anyway, as it cannot be
-retrieved from clock tree. As soon as there is hardware available that
-will work with the clock tree, we can add those functions back.
+Not directly germane but I've been sending patches for this to the x86
+guys for a little while though they're doing a /dev/null impression.
 
-Sorry for the noise,
-Marc
+> This isn't rocket science.
 
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+The other option is that the clock API stubs itself out when not enabled
+which is going into mainline (not sure quite where it is at the minute).
 
-
---------------enig6BA6434F43A835D50614C9A8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAk/hpuwACgkQjTAFq1RaXHNE3wCeKwWQ+5LR0n4b5PpVlKhO5bjj
-xwcAnighlfHs1b7EAny+CoK2sUaTPOsj
-=BLOd
------END PGP SIGNATURE-----
-
---------------enig6BA6434F43A835D50614C9A8--
+These sort of per-arch APIs should be a legacy thing, hopefully we'll
+manage to squash them at some point and we should certainly work to
+avoid introducing new ones.
