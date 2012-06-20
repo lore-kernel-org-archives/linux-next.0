@@ -1,34 +1,60 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Tue, 19 Jun 2012 21:47:59 -0700 (PDT)
-Message-ID: <20120619.214759.2265041580160751452.davem@davemloft.net>
-References: <D5ECB3C7A6F99444980976A8C6D896384FAA275CA8@EAPEX1MAIL1.st.com>
-	<20120619.213703.513466167861199217.davem@davemloft.net>
-	<D5ECB3C7A6F99444980976A8C6D896384FAA275CBE@EAPEX1MAIL1.st.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the regulator tree
+Date: Wed, 20 Jun 2012 14:50:44 +1000
+Message-ID: <20120620145044.599244256884c96a9131a06f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__20_Jun_2012_14_50_44_+1000_=Ua9StRMGkj6r7eX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:33730 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751568Ab2FTEsA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 00:48:00 -0400
-In-Reply-To: <D5ECB3C7A6F99444980976A8C6D896384FAA275CBE@EAPEX1MAIL1.st.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:47190 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751566Ab2FTEu6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 00:50:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: bhupesh.sharma@st.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, federico.vaga@gmail.com, giancarlo.asnaghi@st.com, wg@grandegger.com, mkl@pengutronix.de
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kim, Milo" <Milo.Kim@ti.com>, Axel Lin <axel.lin@gmail.com>
 
-From: Bhupesh SHARMA <bhupesh.sharma@st.com>
-Date: Wed, 20 Jun 2012 12:45:46 +0800
+--Signature=_Wed__20_Jun_2012_14_50_44_+1000_=Ua9StRMGkj6r7eX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> So, whether adding a check in Kconfig for HAVE_CLK be a proper
-> solution ?  But that will limit the compilation of this driver for
-> only platforms which are ARM based.
-> 
-> One may need to support this driver on x86 like platforms also..
+Hi all,
 
-Then x86 will need to provide clock operations, or there needs to
-be dummy ones for such platforms.
+After merging the regulator tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-This isn't rocket science.
+ERROR: "devm_gpio_request_one" [drivers/regulator/lp872x.ko] undefined!
+
+Caused by commit af8b5fc31099 ("regulator: add new regulator driver for
+lp872x").
+
+I have used the regulator tree from next-20120619 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Wed__20_Jun_2012_14_50_44_+1000_=Ua9StRMGkj6r7eX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP4VakAAoJEECxmPOUX5FEJuEP/0zipL5+ahm1YL6G1j/TguM6
+sBMzMMCVEBRE0oAeiZVO5xS3NknuRyoIhpfuEBQYbJr09NHDzaK7jc12uQqSYrg5
+To1bmd9sTcjL290g1QThp9lh/Yw4XsehI9NwY6rfz6rUyIBc4WUkyrHx7jYQ6erz
+NFEx6N31uGZtHVZP4U4ncUYR7HH/t+2r/zqvO1TN9SmPkY6F9Ey0d51Gz1p9ApP4
+dfOzf9x/Q3jHOQXKG+flx+usj8hRMMKVMH1D7FSXTU5Cn838/6oBrJFfMiQkwjsa
+HFFBHxoZWn2fL0pPnU8yFEC1YXc9KMD6Yz9kABtT1lNfXWH7+n1+qOKa/sfLlSCW
+J+0uXMIldCuuG92rWT5g+cpou46JbX3XlPuuCbJSxGx8HvCebV2kneZyUp4KsTks
+VJhL2SaDMXEYk2IpoEx2O7zDXTFa9Gw3dPE4y9Vh/XD1tQ1pIrXl5KPAQ341a4vQ
+P015aIZEzgR9Iub/7ZcFiA4vpsfbdrXDZlUayQmVGzv01BZHJTIdnJl/AC+dbfDU
+H+fvP32B2VxDkVOp3JElZRPJbaMNUTi5n6ISCnoTwjRyXtx7lsuJmlP1FbX9zxo7
+1j3ljFWHOvhcUgDazaTHpHkcBsyGmYOTB/Zz956qa8jIcepuVX4cyFm29Rg4oAfd
+C2O2datIOtL+vNkIdu9y
+=GV0r
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__20_Jun_2012_14_50_44_+1000_=Ua9StRMGkj6r7eX--
