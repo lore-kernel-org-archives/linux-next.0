@@ -1,46 +1,34 @@
-From: Bhupesh SHARMA <bhupesh.sharma@st.com>
-Subject: RE: linux-next: build failure after merge of the net-next tree
-Date: Wed, 20 Jun 2012 12:45:46 +0800
-Message-ID: <D5ECB3C7A6F99444980976A8C6D896384FAA275CBE@EAPEX1MAIL1.st.com>
-References: <20120620133348.a9ff31a72ffd11818f574fe3@canb.auug.org.au>
-	<D5ECB3C7A6F99444980976A8C6D896384FAA275CA8@EAPEX1MAIL1.st.com>
- <20120619.213703.513466167861199217.davem@davemloft.net>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Tue, 19 Jun 2012 21:47:59 -0700 (PDT)
+Message-ID: <20120619.214759.2265041580160751452.davem@davemloft.net>
+References: <D5ECB3C7A6F99444980976A8C6D896384FAA275CA8@EAPEX1MAIL1.st.com>
+	<20120619.213703.513466167861199217.davem@davemloft.net>
+	<D5ECB3C7A6F99444980976A8C6D896384FAA275CBE@EAPEX1MAIL1.st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120619.213703.513466167861199217.davem@davemloft.net>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "federico.vaga@gmail.com" <federico.vaga@gmail.com>, Giancarlo ASNAGHI <giancarlo.asnaghi@st.com>, "wg@grandegger.com" <wg@grandegger.com>, "mkl@pengutronix.de" <mkl@pengutronix.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([149.20.54.216]:33730 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751568Ab2FTEsA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 00:48:00 -0400
+In-Reply-To: <D5ECB3C7A6F99444980976A8C6D896384FAA275CBE@EAPEX1MAIL1.st.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: bhupesh.sharma@st.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, federico.vaga@gmail.com, giancarlo.asnaghi@st.com, wg@grandegger.com, mkl@pengutronix.de
 
-Hi David,
+From: Bhupesh SHARMA <bhupesh.sharma@st.com>
+Date: Wed, 20 Jun 2012 12:45:46 +0800
 
-> -----Original Message-----
-> From: David Miller [mailto:davem@davemloft.net]
-> Sent: Wednesday, June 20, 2012 10:07 AM
-> To: Bhupesh SHARMA
-> Cc: sfr@canb.auug.org.au; netdev@vger.kernel.org; linux-
-> next@vger.kernel.org; linux-kernel@vger.kernel.org;
-> federico.vaga@gmail.com; Giancarlo ASNAGHI; wg@grandegger.com;
-> mkl@pengutronix.de
-> Subject: Re: linux-next: build failure after merge of the net-next tree
+> So, whether adding a check in Kconfig for HAVE_CLK be a proper
+> solution ?  But that will limit the compilation of this driver for
+> only platforms which are ARM based.
 > 
-> From: Bhupesh SHARMA <bhupesh.sharma@st.com>
-> Date: Wed, 20 Jun 2012 12:27:11 +0800
-> 
-> > clk_get/clk_put* variants are usually used by ARM platforms.
-> > Protecting their calls under macro 'CONFIG_HAVE_CLK' should solve the
-> problem.
-> 
-> No, we don't pepper foo.c files with crappy ifdefs.
+> One may need to support this driver on x86 like platforms also..
 
-So, whether adding a check in Kconfig for HAVE_CLK be a proper solution ?
-But that will limit the compilation of this driver for only platforms which are ARM based.
+Then x86 will need to provide clock operations, or there needs to
+be dummy ones for such platforms.
 
-One may need to support this driver on x86 like platforms also..
-
-Regards,
-Bhupesh
+This isn't rocket science.
