@@ -1,45 +1,41 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Wed, 20 Jun 2012 12:35:40 +0100
-Message-ID: <20120620113539.GA928@sirena.org.uk>
-References: <D5ECB3C7A6F99444980976A8C6D896384FAA275CA8@EAPEX1MAIL1.st.com>
- <20120619.213703.513466167861199217.davem@davemloft.net>
- <D5ECB3C7A6F99444980976A8C6D896384FAA275CBE@EAPEX1MAIL1.st.com>
- <20120619.214759.2265041580160751452.davem@davemloft.net>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: linux-next: build failure after merge of the regulator tree
+Date: Wed, 20 Jun 2012 09:33:23 -0600
+Message-ID: <4FE1ED43.3000509@wwwdotorg.org>
+References: <20120620145044.599244256884c96a9131a06f@canb.auug.org.au> <CAF+7xWkMSuS3hcWMjKX8OdaLW038eQ-Es+WZeVja3iUiTXMWeQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:60755 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754538Ab2FTLfr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 07:35:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20120619.214759.2265041580160751452.davem@davemloft.net>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:46539 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755680Ab2FTPd2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 11:33:28 -0400
+In-Reply-To: <CAF+7xWkMSuS3hcWMjKX8OdaLW038eQ-Es+WZeVja3iUiTXMWeQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: bhupesh.sharma@st.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, federico.vaga@gmail.com, giancarlo.asnaghi@st.com, wg@grandegger.com, mkl@pengutronix.de
+To: axel.lin@gmail.com, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kim, Milo" <Milo.Kim@ti.com>
 
-On Tue, Jun 19, 2012 at 09:47:59PM -0700, David Miller wrote:
-> From: Bhupesh SHARMA <bhupesh.sharma@st.com>
+On 06/19/2012 10:55 PM, Axel Lin wrote:
+> 2012/6/20 Stephen Rothwell <sfr@canb.auug.org.au>:
+>> Hi all,
+>>
+>> After merging the regulator tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> ERROR: "devm_gpio_request_one" [drivers/regulator/lp872x.ko] undefined!
+>>
+>> Caused by commit af8b5fc31099 ("regulator: add new regulator driver for
+>> lp872x").
+> 
+> Milo already sent a patch for this:
+> 
+> [PATCH] gpio: add EXPORT_SYMBOL() for devm_gpio_request_one
+> https://lkml.org/lkml/2012/6/19/58
 
-> > So, whether adding a check in Kconfig for HAVE_CLK be a proper
-> > solution ?  But that will limit the compilation of this driver for
-> > only platforms which are ARM based.
+As did I earlier:
+https://lkml.org/lkml/2012/6/7/601
 
-> > One may need to support this driver on x86 like platforms also..
-
-> Then x86 will need to provide clock operations, or there needs to
-> be dummy ones for such platforms.
-
-Not directly germane but I've been sending patches for this to the x86
-guys for a little while though they're doing a /dev/null impression.
-
-> This isn't rocket science.
-
-The other option is that the clock API stubs itself out when not enabled
-which is going into mainline (not sure quite where it is at the minute).
-
-These sort of per-arch APIs should be a legacy thing, hopefully we'll
-manage to squash them at some point and we should certainly work to
-avoid introducing new ones.
+I hope that can go into 3.5, since the issue shows up there when
+building Tegra audio as modules.
