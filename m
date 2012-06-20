@@ -1,103 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (powerpc
- related)
-Date: Wed, 20 Jun 2012 17:50:14 +1000
-Message-ID: <20120620175014.a822a766e0f91f7b44f48fa0@canb.auug.org.au>
+From: viresh kumar <viresh.kumar2@arm.com>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Wed, 20 Jun 2012 09:08:34 +0100
+Message-ID: <4FE18502.6040409@arm.com>
+References: <20120620133348.a9ff31a72ffd11818f574fe3@canb.auug.org.au> <D5ECB3C7A6F99444980976A8C6D896384FAA275CA8@EAPEX1MAIL1.st.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__20_Jun_2012_17_50_14_+1000_267of1xduDZ4C/IM"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:36440 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755474Ab2FTIIk convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 04:08:40 -0400
+In-Reply-To: <D5ECB3C7A6F99444980976A8C6D896384FAA275CA8@EAPEX1MAIL1.st.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bhupesh SHARMA <bhupesh.sharma@st.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Federico Vaga <federico.vaga@gmail.com>, Giancarlo ASNAGHI <giancarlo.asnaghi@st.com>, Wolfgang Grandegger <wg@grandegger.com>, Marc Kleine-Budde <mkl@pengutronix.de>, spear-devel <spear-devel@list.st.com>
 
---Signature=_Wed__20_Jun_2012_17_50_14_+1000_267of1xduDZ4C/IM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 20/06/12 05:27, Bhupesh SHARMA wrote:
+>> -----Original Message-----
+>> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+>> Sent: Wednesday, June 20, 2012 9:04 AM
+>> To: David Miller; netdev@vger.kernel.org
+>> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Federico
+>> Vaga; Giancarlo ASNAGHI; Wolfgang Grandegger; Bhupesh SHARMA; Marc
+>> Kleine-Budde
+>> Subject: linux-next: build failure after merge of the net-next tree
+>>
+>> Hi all,
+>>
+>> After merging the net-next tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> ERROR: "clk_get_rate" [drivers/net/can/c_can/c_can_pci.ko] undefined!
+>> ERROR: "clk_get" [drivers/net/can/c_can/c_can_pci.ko] undefined!
+>> ERROR: "clk_put" [drivers/net/can/c_can/c_can_pci.ko] undefined!
+>>
+>> Caused by commit 5b92da0443c2 ("c_can_pci: generic module for
+>> C_CAN/D_CAN on PCI").  Maybe a missing Kconfig dependency/select?
+>>
+>> I have used the net-next tree from next-20120619 for today.
+>> --
+>
+> clk_get/clk_put* variants are usually used by ARM platforms.
+> Protecting their calls under macro 'CONFIG_HAVE_CLK' should solve the problem.
+>
+> See [1] for how it is done in c_can_platform.c
+>
+> Could you possibly add these checks and send a patch for the same?
+> It should be fairly simple.
 
-Hi all,
+Hi Bhupesh,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+Please see following patchset from me, that got applied in linux-next
 
-powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `bpf_slow_path=
-_word':
-(.text+0x90): sibling call optimization to `skb_copy_bits' does not allow a=
-utomatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibli=
-ng-calls, or make `skb_copy_bits' extern
-powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `bpf_slow_path=
-_half':
-(.text+0xe0): sibling call optimization to `skb_copy_bits' does not allow a=
-utomatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibli=
-ng-calls, or make `skb_copy_bits' extern
-powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `bpf_slow_path=
-_byte':
-(.text+0x130): sibling call optimization to `skb_copy_bits' does not allow =
-automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibl=
-ing-calls, or make `skb_copy_bits' extern
-powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `bpf_slow_path=
-_byte_msh':
-(.text+0x180): sibling call optimization to `skb_copy_bits' does not allow =
-automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibl=
-ing-calls, or make `skb_copy_bits' extern
-powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `sk_load_word_=
-negative_offset':
-(.text+0x1dc): sibling call optimization to `bpf_internal_load_pointer_neg_=
-helper' does not allow automatic multiple TOCs; recompile with -mminimal-to=
-c or -fno-optimize-sibling-calls, or make `bpf_internal_load_pointer_neg_he=
-lper' extern
-powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `sk_load_half_=
-negative_offset':
-(.text+0x238): sibling call optimization to `bpf_internal_load_pointer_neg_=
-helper' does not allow automatic multiple TOCs; recompile with -mminimal-to=
-c or -fno-optimize-sibling-calls, or make `bpf_internal_load_pointer_neg_he=
-lper' extern
-powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `sk_load_byte_=
-negative_offset':
-(.text+0x294): sibling call optimization to `bpf_internal_load_pointer_neg_=
-helper' does not allow automatic multiple TOCs; recompile with -mminimal-to=
-c or -fno-optimize-sibling-calls, or make `bpf_internal_load_pointer_neg_he=
-lper' extern
-powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `sk_load_byte_=
-msh_negative_offset':
-(.text+0x2f0): sibling call optimization to `bpf_internal_load_pointer_neg_=
-helper' does not allow automatic multiple TOCs; recompile with -mminimal-to=
-c or -fno-optimize-sibling-calls, or make `bpf_internal_load_pointer_neg_he=
-lper' extern
-powerpc64-linux-ld: final link failed: Bad value
+https://lkml.org/lkml/2012/4/24/154
 
-I started building with gcc 4.6.3/binutils 2.22 today.  gcc
-4.6.0/binutils 2.21 do not produce this error, it produces this instead
-(which has been happening for a long time):
+Please check if this patchset is present in your build repo. I believe it should be
+there. If it is, then you shouldn't get these errors.
 
-powerpc64-linux-ld: TOC section size exceeds 64k
+--
+viresh
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Wed__20_Jun_2012_17_50_14_+1000_267of1xduDZ4C/IM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJP4YC2AAoJEECxmPOUX5FEJQQP/ivHbYTDlx+67ASMOUaoCXT4
-eUEdWbgFVOs7JS8QCJdu/kYUWrxnny3gtcgmZH3tzkC74z0mgHe/MFciHAFh7OmY
-YkdMwh5nApiaBoTH00P/f3jCaOVlj7MS4JHq0iVaMhZDVSq4/ti1RrjhclLfRdKU
-865WfyWQBZPYf5AWuSMozx6wupOilXsWjE28TYAeu2prq9MHfw+JncAN75UaffDA
-IVtv8rskdOb6s3LFfdtDJhAKCIsg3ZWj8tqa1OQ4+q77DKjfVgrfZFOcDWBE9VQr
-2OsjNkWnuOHMZCGxcZNA0dKlFz+om2KuberiMIHenTv5/AqOPTtw+ujZI1VjWoy7
-zol94kuRMz+nPyNPn+3Q35lrQOQUw4vMWFAWxkv+t35cHTkoOJQdPVXOiYKqSsmA
-Mjn1HNoiBn8YFiNCFM9/Q378hc7la63v9wBpfXSZaFlR5G3ZzgKwyFAql9NAnbuP
-3cOs3Kkf3T5lJma88DNBZ2HHnPmcjoufm6sorZvTe6ntK+kiErDP44oYKqZbjeNk
-L+9XNDm9MEgZfCMO5ZGsZYIDMQ2iln42yysk36chmgbncGJtN+ZtxuApBotV3Ynh
-AgZh7sgQXbdnA/XZMxlu2DKTy9a5NDDnqKWTDWMd7bgum8qaUEgby7giwS4QdnzB
-HlzCQPV8QC19/GfH5qOK
-=qpp2
------END PGP SIGNATURE-----
-
---Signature=_Wed__20_Jun_2012_17_50_14_+1000_267of1xduDZ4C/IM--
+-- IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium.  Thank you.
