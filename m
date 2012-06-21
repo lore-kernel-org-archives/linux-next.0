@@ -1,54 +1,52 @@
-From: "Kim, Milo" <Milo.Kim@ti.com>
-Subject: RE: linux-next: build failure after merge of the regulator tree
-Date: Thu, 21 Jun 2012 08:42:33 +0000
-Message-ID: <A874F61F95741C4A9BA573A70FE3998FC08A@DQHE02.ent.ti.com>
-References: <20120621132738.6e797593acc58b3e30902f69@canb.auug.org.au>
- <A874F61F95741C4A9BA573A70FE3998FC074@DQHE02.ent.ti.com>
- <CAF+7xWkzKkwfBFQS1vr-Tk2Auu+5HQmX7bZCGJhsmXRi0V5OZw@mail.gmail.com>
+From: "Arend van Spriel" <arend@broadcom.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (wireless-next tree related)
+Date: Thu, 21 Jun 2012 10:59:52 +0200
+Message-ID: <4FE2E288.2000201@broadcom.com>
+References: <20120621155911.713748370d898a113e054693@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain;
+ charset=iso-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:41795 "EHLO bear.ext.ti.com"
+Received: from mms3.broadcom.com ([216.31.210.19]:1644 "EHLO mms3.broadcom.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758868Ab2FUImp convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jun 2012 04:42:45 -0400
-In-Reply-To: <CAF+7xWkzKkwfBFQS1vr-Tk2Auu+5HQmX7bZCGJhsmXRi0V5OZw@mail.gmail.com>
-Content-Language: en-US
+	id S1758934Ab2FUJAF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Jun 2012 05:00:05 -0400
+In-Reply-To: <20120621155911.713748370d898a113e054693@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "axel.lin@gmail.com" <axel.lin@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "Girdwood, Liam" <lrg@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pieter-Paul Giesberts <pieterpg@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>
 
-> BTW, In yesterday's linux-next tree, Andrew has below commit.
+On 06/21/2012 07:59 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> commit a291ede7be8359a8986740b11b93f9c80e40210b
-> Author: Andrew Morton <akpm@linux-foundation.org>
-> Date:   Wed Jun 20 09:55:47 2012 +1000
+> After merging the final tree, today's linux-next build (powerpc 
+> allyesconfig) failed like this:
 > 
->     backlight-l4f00242t03-use-devm_gpio_request_one-fix
+> drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c: In function
+> 'brcmf_sdio_dump_console': 
+> drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c:3085:3: error:
+> implicit declaration of function 'vzalloc'
+> [-Werror=implicit-function-declaration] 
+> drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c:3085:10:
+> warning: assignment makes pointer from integer without a cast
+> [enabled by default] 
+> drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c:3113:2: error:
+> implicit declaration of function 'vfree'
+> [-Werror=implicit-function-declaration]
 > 
->     export devm_gpio_request_one() to modules
+> Caused by commit 4fc0d0160d59 ("brcmfmac: introduce checkdied
+> debugfs functionality") from the wireless-next tree. Forgot to
+> include vmalloc.h ?
 > 
->     Cc: Alberto Panizzo <alberto@amarulasolutions.com>
->     Cc: Jingoo Han <jg1.han@samsung.com>
->     Cc: Richard Purdie <rpurdie@rpsys.net>
->     Cc: Grant Likely <grant.likely@secretlab.ca>
->     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> I have reverted that commit for today.
 
-Axel,
-Good, thanks a lot !
+Hi Stephen,
 
-Mark,
-Then please ignore the patch below.
-'[PATCH 2/3] regulator: replace devm_gpio_request_one() for loaded module'
-https://lkml.org/lkml/2012/6/21/62
+We have setup a mailing list brcm80211-dev-list@broadcom.com for
+reporting driver issues to make sure the right people are informed
+regardless organizational changes. Feel free to use that as needed.
 
-But two patches are still valid.
-'[PATCH 1/3] regulator: enable module build config for lp872x'
-'[PATCH 3/3] regulator: change message level on probing lp872x driver'
-https://lkml.org/lkml/2012/6/21/61
-https://lkml.org/lkml/2012/6/21/57
-
-Thanks & BR
-Milo -
+Gr. AvS
