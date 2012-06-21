@@ -1,66 +1,43 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the regulator tree
-Date: Thu, 21 Jun 2012 10:46:21 +0100
-Message-ID: <20120621094621.GM4037@opensource.wolfsonmicro.com>
-References: <20120621132738.6e797593acc58b3e30902f69@canb.auug.org.au>
- <A874F61F95741C4A9BA573A70FE3998FC074@DQHE02.ent.ti.com>
+From: Alan Modra <amodra@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree (powerpc
+ related)
+Date: Thu, 21 Jun 2012 20:18:39 +0930
+Message-ID: <20120621104839.GE20973@bubble.grove.modra.org>
+References: <20120620175014.a822a766e0f91f7b44f48fa0@canb.auug.org.au>
+ <1340256961.1998.11.camel@concordia>
+ <1340259896.3942.2.camel@pasglop>
+ <1340262473.1998.19.camel@concordia>
+ <1340264307.1998.20.camel@concordia>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zHDeOHGDnzKksZSU"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37656 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753835Ab2FUJqY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Jun 2012 05:46:24 -0400
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:55230 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755817Ab2FUKsr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jun 2012 06:48:47 -0400
 Content-Disposition: inline
-In-Reply-To: <A874F61F95741C4A9BA573A70FE3998FC074@DQHE02.ent.ti.com>
+In-Reply-To: <1340264307.1998.20.camel@concordia>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Kim, Milo" <Milo.Kim@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Axel Lin <axel.lin@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, "Girdwood, Liam" <lrg@ti.com>
+To: Michael Ellerman <michael@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org
 
+On Thu, Jun 21, 2012 at 05:38:27PM +1000, Michael Ellerman wrote:
+> On Thu, 2012-06-21 at 17:07 +1000, Michael Ellerman wrote:
+> > On Thu, 2012-06-21 at 16:24 +1000, Benjamin Herrenschmidt wrote:
+> > > On Thu, 2012-06-21 at 15:36 +1000, Michael Ellerman wrote:
+> > > > 
+> > > > powerpc64-linux-ld: /src/next/net/openvswitch/vport-netdev.c:189:(.text+0x89b990): 
+> > > >         sibling call optimization to `_restgpr0_28' does not allow automatic multiple TOCs;
+> > > >         recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `_restgpr0_28' extern
+> > > > 
 
---zHDeOHGDnzKksZSU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Linker bug.  That's not a sibling call, but a normal function return
+via an out-of-line register restore function.  Will fix.  I'm a bit
+surprised to see this with gcc-4.6 though.  Or does this gcc-4.6 have
+some of my recent mainline gcc patches enabling out-of-line
+save/restore functions for -Os?
 
-On Thu, Jun 21, 2012 at 08:13:15AM +0000, Kim, Milo wrote:
-> > Caused by commit 809d310c7e69 ("regulator: lp872x: Don't allow modular
-> > build") but that was done to fix a different build problem.
->=20
-> Sorry for this conflict.
->=20
-> Build config of lp872x driver has been changed as tristate.
-> And related undefined symbol error has been fixed.
-> (don't use devm_gpio_request_one() at this moment because it can not be e=
-xported.)
-
-I'm not going to apply those patches, they're a step back in terms of
-driver quality.  We just need to bodge the Kconfig dependencies until
-the fix for gpiolib gets merged.
-
---zHDeOHGDnzKksZSU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP4u1XAAoJEBus8iNuMP3duQMP/jHitsD5/Sn1trjquNNmMDMP
-cWHzp5HawaREK650PZ9STE35k9CYtC/op9oE1S5hKfCjY31BspGKqJ6F+CuliRvT
-DMZmtZq0uuxlvLDFZ5UfN26SqDEJ280ZBxiNSWWwElUD55VQP6jlLa2iPHd/ggFH
-V07POT4mlRCeKJQ+y+5bhT+jtTGMvXr+RUOUFMz4Kb/9KoQbD0XfudOl5m87fe7f
-9ufypjWYUP/eE7vdfczIIAYH6skuhh5ucsMdrqCyVnYh3k6xf7mPeLGAe3qhnGT+
-jNLO+JGkMNGf4n/lFPMB4Do1KEj/hn8x7PvtmNkRhU/TjcPEcXy0RYv3oM0OnMDY
-b1qUx+RdK9XsntTEPVGHnpELrjJlqZbqTWqwAIWkVAKpx1wM7rSGOUp7SXZhv2IG
-ZFQrpizTVRs6US48FrAwCIyvqSpTijPGHSsXWUgZOiBtMDuP9Q/wxsP7osT8JrMv
-24PqhUUfcmzYZfmSK5m/VXvbSvwmovV8wbWkyiU/wDk7DioRp34hNiQHuWtoTMf8
-Cbf0tgut8cS/630vLUWBsNc6OmlLWhHPpfagjzGYlUAVw8syVywvp8U413vjY76n
-RhU7vX4QxG34eq6OrlB5p3Px2eTeMbZ2kYcK7V77Con2/zVOxe4TJLMvkALFmGqK
-cdrR/HAN4EnO4rqnAUgB
-=pDvW
------END PGP SIGNATURE-----
-
---zHDeOHGDnzKksZSU--
+-- 
+Alan Modra
+Australia Development Lab, IBM
