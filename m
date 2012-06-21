@@ -1,52 +1,60 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Subject: Re: linux-next: build failure after merge of the final tree
- (wireless-next tree related)
-Date: Thu, 21 Jun 2012 10:59:52 +0200
-Message-ID: <4FE2E288.2000201@broadcom.com>
-References: <20120621155911.713748370d898a113e054693@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the regulator tree
+Date: Thu, 21 Jun 2012 10:14:33 +0100
+Message-ID: <20120621091433.GH4037@opensource.wolfsonmicro.com>
+References: <20120621132738.6e797593acc58b3e30902f69@canb.auug.org.au>
+ <A874F61F95741C4A9BA573A70FE3998FC074@DQHE02.ent.ti.com>
+ <CAF+7xWkzKkwfBFQS1vr-Tk2Auu+5HQmX7bZCGJhsmXRi0V5OZw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=iso-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jRdC2OsRnuV8iIl8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms3.broadcom.com ([216.31.210.19]:1644 "EHLO mms3.broadcom.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758934Ab2FUJAF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Jun 2012 05:00:05 -0400
-In-Reply-To: <20120621155911.713748370d898a113e054693@canb.auug.org.au>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44403 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754769Ab2FUJOf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Jun 2012 05:14:35 -0400
+Content-Disposition: inline
+In-Reply-To: <CAF+7xWkzKkwfBFQS1vr-Tk2Auu+5HQmX7bZCGJhsmXRi0V5OZw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pieter-Paul Giesberts <pieterpg@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>
+To: Axel Lin <axel.lin@gmail.com>
+Cc: "Kim, Milo" <Milo.Kim@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "Girdwood, Liam" <lrg@ti.com>
 
-On 06/21/2012 07:59 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (powerpc 
-> allyesconfig) failed like this:
-> 
-> drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c: In function
-> 'brcmf_sdio_dump_console': 
-> drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c:3085:3: error:
-> implicit declaration of function 'vzalloc'
-> [-Werror=implicit-function-declaration] 
-> drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c:3085:10:
-> warning: assignment makes pointer from integer without a cast
-> [enabled by default] 
-> drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c:3113:2: error:
-> implicit declaration of function 'vfree'
-> [-Werror=implicit-function-declaration]
-> 
-> Caused by commit 4fc0d0160d59 ("brcmfmac: introduce checkdied
-> debugfs functionality") from the wireless-next tree. Forgot to
-> include vmalloc.h ?
-> 
-> I have reverted that commit for today.
 
-Hi Stephen,
+--jRdC2OsRnuV8iIl8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-We have setup a mailing list brcm80211-dev-list@broadcom.com for
-reporting driver issues to make sure the right people are informed
-regardless organizational changes. Feel free to use that as needed.
+On Thu, Jun 21, 2012 at 04:20:46PM +0800, Axel Lin wrote:
 
-Gr. AvS
+> I don't think this is the good way, other drivers may have this build problem.
+> I think we can fix it by having the patch exporting
+> devm_gpio_request_one upstrem ASAP.
+
+This isn't any use until someone actually merges the patch which given
+that it's for gpiolib could take a very long time.
+
+--jRdC2OsRnuV8iIl8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJP4uXxAAoJEBus8iNuMP3dh/IQAI04nXbUpsvz7eeN2ysqtFjl
+YnAGayfLcUOuKlwvrB1izwfN6i97Am8makdOQIujbpqSnA5AdCXZJooPXFUdJac0
+RWx1+ciA4Mk8WGrssO++QARXRuFceq9+TcNgLAc7qaVb1Lb+Zys6GKKRBMw3nb3D
+7kPZXlXW0bZ51RJaveZb1WppQIPF+y5n9d8cwGiOkEJ5vmhNh0d4ONu6dIp8C2BL
+jpT+o5zniOSO3J3OXriJ77tUcmdV4M0L0vukqMQTnMN676InqKoAx1bSeb3cpYR0
+WtVHK8rSWIgZzBnuvZa0hnFLwB6wA9x++i9zS1VGfdJ52q16qtKNRNqkikPkvwo6
+VkJPjgGBGi1hbr412TrErB5Kn/2iNFFjoPJP2kOeILjCOFWjFvhmp4T5hUNnv125
+7AdeS/QP3LxzFTMpzTgowXXXKbu3VbtfertfR+uwmbzE9Td3J70jIwe83UjVfra4
+0ZeMZaIYLyQSXpYaPlCZ8sUs+e0peEm3qZqxhkJW6uENxTz/OTcy3y9VMlw9s4Dh
+X7ocI6wKJzS8oZ62RgYv5XHSHUfsQ42UqA9duDOwc6k83map+zLh8qw6Nus9L3sn
+2VSiSTnuEmYmo0GvslSuDkA+0Po3cylj4sSxcwJHCqYoWONXZPiyicSCJwhJw+5h
+TMy8J8Z8SRA4EeUL1l/l
+=Noc5
+-----END PGP SIGNATURE-----
+
+--jRdC2OsRnuV8iIl8--
