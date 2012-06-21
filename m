@@ -1,52 +1,64 @@
-From: Michael Ellerman <michael@ellerman.id.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (powerpc related)
-Date: Thu, 21 Jun 2012 15:36:01 +1000
-Message-ID: <1340256961.1998.11.camel@concordia>
-References: <20120620175014.a822a766e0f91f7b44f48fa0@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+ (wireless-next tree related)
+Date: Thu, 21 Jun 2012 15:59:11 +1000
+Message-ID: <20120621155911.713748370d898a113e054693@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__21_Jun_2012_15_59_11_+1000_XayzL6eZeGWPNZfs"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120620175014.a822a766e0f91f7b44f48fa0@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org, Alan Modra <amodra@bigpond.net.au>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arend van Spriel <arend@broadcom.com>, Pieter-Paul Giesberts <pieterpg@broadcom.com>, "Franky (Zhenhui) Lin" <frankyl@broadcom.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 2012-06-20 at 17:50 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `bpf_slow_path_word':
-> (.text+0x90): sibling call optimization to `skb_copy_bits' does not allow automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `skb_copy_bits' extern
+--Signature=_Thu__21_Jun_2012_15_59_11_+1000_XayzL6eZeGWPNZfs
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-Those seem to be caused because we don't have a nop after the call,
-meaning we can't patch the TOC pointer on the way back. Adding a nop
-fixes those.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-But, then I get 32,410 variants of this:
+drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c: In function 'brcmf_sdio=
+_dump_console':
+drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c:3085:3: error: implicit =
+declaration of function 'vzalloc' [-Werror=3Dimplicit-function-declaration]
+drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c:3085:10: warning: assign=
+ment makes pointer from integer without a cast [enabled by default]
+drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c:3113:2: error: implicit =
+declaration of function 'vfree' [-Werror=3Dimplicit-function-declaration]
 
-powerpc64-linux-ld: /src/next/net/openvswitch/vport-netdev.c:189:(.text+0x89b990): 
-	sibling call optimization to `_restgpr0_28' does not allow automatic multiple TOCs;
-	recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `_restgpr0_28' extern
+Caused by commit 4fc0d0160d59 ("brcmfmac: introduce checkdied debugfs
+functionality") from the wireless-next tree. Forgot to include vmalloc.h ?
 
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-And those are generated calls so I don't see how we can fix them.
+--Signature=_Thu__21_Jun_2012_15_59_11_+1000_XayzL6eZeGWPNZfs
+Content-Type: application/pgp-signature
 
-> I started building with gcc 4.6.3/binutils 2.22 today.  gcc
-> 4.6.0/binutils 2.21 do not produce this error, it produces this instead
-> (which has been happening for a long time):
-> 
-> powerpc64-linux-ld: TOC section size exceeds 64k
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
+iQIcBAEBCAAGBQJP4rgvAAoJEECxmPOUX5FEPrAQAKgVdTQHfERIya+I+dGh6Req
+CoG40ZQno1qF68NN2LYNNo+8nt5c8jyobw4ynOn/jpG8yZYr5gOqMWBmsJ1hG+Oe
+t9W+kgRWTQN34fXH2mfvn5h8rZrs+AmkCESlUkitqgK/obYC99jDy9EU43TEcIct
+scXy9G50XEsuM5nQ7Abar5UEBXV6Gd7OgZUpZT2FHv1pHW6nV0ypvYfTHPnFolaU
+Wt0st/oat3LlhEsoJgAu7FX4N9ow0aqIWMeox9YgnA1AVgvx40xn/yBzgLh2NYst
+1WPxt2Psc4uw6aUgLRzwlC9csuFksUaSIgrfm6HZp1VdxBObqR53+LmKwBOKjc45
+zY+CkMjGI+1N+scmMUtkeLY+iQheMWKfmSImB26zEnNs/7NLJlVLDZ4WO1LfFdZ4
+f/FfARjuY+VbJRbIVoAocpv9Mf5zGY67TW7nEtciYWEyT+4gunAQEwa/vh6+3u/P
+kSWBMgn6Pv7LWeLv6o9ToaNCp5DOTVzxUW0zh8mv75Ee/CHfWIROCj7OcKTTKHsi
+yHz8G4/WfVv7YKmj9U5ssLuE7fTlOoAt1fRJ2xUnv2YamcedPDxI68HJNoz64M6G
+zAyacLnCD3vDCTNCPzQUe9tZdD4jTg3PJgZwjwnug0Uc4Kk2jVqj04MFajCHZtAT
+W4sl1cAbwRZwCeFcMBUh
+=QDf5
+-----END PGP SIGNATURE-----
 
-So presumably there's some new error checking that we're hitting, I
-imagine it was always broken, but now it's being more explicit.
-
-I think we need some help from the toolchain experts, hi Alan :)
-
-cheers
+--Signature=_Thu__21_Jun_2012_15_59_11_+1000_XayzL6eZeGWPNZfs--
