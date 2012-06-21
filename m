@@ -1,47 +1,79 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for Jun 20 (hweight return type)
-Date: Wed, 20 Jun 2012 18:10:09 -0700
-Message-ID: <4FE27471.8050505@xenotime.net>
+Date: Thu, 21 Jun 2012 11:45:46 +1000
+Message-ID: <20120621114546.1e5df51bd231ee481d63705c@canb.auug.org.au>
 References: <20120620173536.b856bbd97497cf02ddf8d6d2@canb.auug.org.au>
+	<4FE27471.8050505@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__21_Jun_2012_11_45_46_+1000_3CaoF_LSqfkKBwPq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy6-pub.bluehost.com ([67.222.54.6]:40362 "HELO
-	oproxy6-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755456Ab2FUBKd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 21:10:33 -0400
-In-Reply-To: <20120620173536.b856bbd97497cf02ddf8d6d2@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:52032 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756907Ab2FUBpz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 21:45:55 -0400
+In-Reply-To: <4FE27471.8050505@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Namjae Jeon <linkinjeon@gmail.com>
 
-On 06/20/2012 12:35 AM, Stephen Rothwell wrote:
+--Signature=_Thu__21_Jun_2012_11_45_46_+1000_3CaoF_LSqfkKBwPq
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> Changes since 20120619:
+On Wed, 20 Jun 2012 18:10:09 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
+>
+> Someone changes the return type of __const_hweight8() to
+> (unsigned long).  That causes printk format warnings when
+> hweight8/16() etc. is passed a constant:
 
+That would be "include/linux/bitops.h: fix warning" from the akpm tree
+(adding cc's).
 
-Someone changes the return type of __const_hweight8() to
-(unsigned long).  That causes printk format warnings when
-hweight8/16() etc. is passed a constant:
+>=20
+> drivers/input/joystick/analog.c:412:4: warning: format '%d' expects type =
+'int', but argument 4 has type 'long unsigned int'
+> drivers/input/joystick/analog.c:412:4: warning: format '%d' expects type =
+'int', but argument 5 has type 'long unsigned int'
+> drivers/input/joystick/analog.c:416:5: warning: format '%d' expects type =
+'int', but argument 5 has type 'long unsigned int'
+>=20
+>=20
+> Note that in
+>=20
+> #define hweight8(w)  (__builtin_constant_p(w) ? __const_hweight8(w)  : __=
+arch_hweight8(w))
+>=20
+> __arch_hweight*() still returns unsigned int while __const_hweight*()
+> returns unsigned long.  This can't be good, can it?
 
-drivers/input/joystick/analog.c:412:4: warning: format '%d' expects type 'int', but argument 4 has type 'long unsigned int'
-drivers/input/joystick/analog.c:412:4: warning: format '%d' expects type 'int', but argument 5 has type 'long unsigned int'
-drivers/input/joystick/analog.c:416:5: warning: format '%d' expects type 'int', but argument 5 has type 'long unsigned int'
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+--Signature=_Thu__21_Jun_2012_11_45_46_+1000_3CaoF_LSqfkKBwPq
+Content-Type: application/pgp-signature
 
-Note that in
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-#define hweight8(w)  (__builtin_constant_p(w) ? __const_hweight8(w)  : __arch_hweight8(w))
+iQIcBAEBCAAGBQJP4nzKAAoJEECxmPOUX5FE9joP/0Rrm1hA6MFNtbA7PK9Pw09E
+RoZsBpoQuzgJltDa+tzYIy3JoId6VykPhyQXysBCJ0hH/BYtSkQ0Z/N7gSa/AT3J
+i0N359FcTpluLCOjbrxE3E56Cka5sn7B55EmYIrtBxBtzsK9dNYJapvFCVAbOiJC
+z7JrJh5FF4cKpKOiqHZaPRB+ZzR1LwhWyMyBjjyfM6bVR+it2OBfb35grgD6Op/7
+yUJhEOq/DqF4w54oQ/Flq+ChnzNpfvTivLVYvHFKC/qB7eJdNwiO7Wel8uclRb9m
+zvWOJTXq/xpYVPHdAwjwER1cr+44LuQbVBM2gw2djZ4r7mpahOORcH3PdJyhojLU
+gGzu+k25fqrqqnT9H8DjYXUShRmBVhMwp15dlfKndzGTfy3pPBdjtkIdwyf5Fxqj
+eT7Xg64uYWUXWMoTQQfD0RWpoFmTVkZzSyRh/F+h2I0qeAErZlbfWAvwAm5l7puk
+/hcTIAAfBk1KJpZLYjQy8KUNnekeZ1qd5Do1KlnddfU09DVEGGv+tMBgo5N7FaHb
+e0fKU6we6nHJ4svs6b1oQYqKY8eeTIpI+ZeGPTN0kgcaXsUB1mGB3IlkRpNgdKW6
+40J6indQwBKfSZPDWK/e1HhmTmtL+IeXTAXlLj99q1uIt22s2F/krYXA6BOTK/rj
+X51sDSzjWCxR+Klgba5V
+=/Kw7
+-----END PGP SIGNATURE-----
 
-__arch_hweight*() still returns unsigned int while __const_hweight*()
-returns unsigned long.  This can't be good, can it?
-
-
-
-
--- 
-~Randy
+--Signature=_Thu__21_Jun_2012_11_45_46_+1000_3CaoF_LSqfkKBwPq--
