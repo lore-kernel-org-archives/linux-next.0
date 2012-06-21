@@ -1,49 +1,36 @@
-From: Michael Ellerman <michael@ellerman.id.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (powerpc related)
-Date: Thu, 21 Jun 2012 17:38:27 +1000
-Message-ID: <1340264307.1998.20.camel@concordia>
-References: <20120620175014.a822a766e0f91f7b44f48fa0@canb.auug.org.au>
-	 <1340256961.1998.11.camel@concordia> <1340259896.3942.2.camel@pasglop>
-	 <1340262473.1998.19.camel@concordia>
+From: "Kim, Milo" <Milo.Kim@ti.com>
+Subject: RE: linux-next: build failure after merge of the regulator tree
+Date: Thu, 21 Jun 2012 08:13:15 +0000
+Message-ID: <A874F61F95741C4A9BA573A70FE3998FC074@DQHE02.ent.ti.com>
+References: <20120621132738.6e797593acc58b3e30902f69@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:47979 "EHLO ozlabs.org"
+Received: from bear.ext.ti.com ([192.94.94.41]:40378 "EHLO bear.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756326Ab2FUHib convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jun 2012 03:38:31 -0400
-In-Reply-To: <1340262473.1998.19.camel@concordia>
+	id S1754488Ab2FUINW convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jun 2012 04:13:22 -0400
+In-Reply-To: <20120621132738.6e797593acc58b3e30902f69@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org, amodra@gmail.com
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Axel Lin <axel.lin@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, "Girdwood, Liam" <lrg@ti.com>
 
-On Thu, 2012-06-21 at 17:07 +1000, Michael Ellerman wrote:
-> On Thu, 2012-06-21 at 16:24 +1000, Benjamin Herrenschmidt wrote:
-> > On Thu, 2012-06-21 at 15:36 +1000, Michael Ellerman wrote:
-> > > 
-> > > powerpc64-linux-ld: /src/next/net/openvswitch/vport-netdev.c:189:(.text+0x89b990): 
-> > >         sibling call optimization to `_restgpr0_28' does not allow automatic multiple TOCs;
-> > >         recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `_restgpr0_28' extern
-> > > 
-> > Can you show the full build command that triggers the above ?
-> 
-> Well that would be a few MBs of log, but here's an excerpt:
-> 
-> make -f scripts/Makefile.build obj=net/openvswitch
->   /opt/cross/gcc-4.6-nolibc/powerpc64-linux/bin/powerpc64-linux-gcc -m64 -Wp,-MD,net/openvswitch/.vport-netdev.o.d  -nostdinc -isystem /opt/cross/gcc-4.6.3-nolibc/powerpc64-linux/lib/gcc/powerpc64-linux/4.6.3/include -I/home/michael/src/kmk/next/arch/powerpc/include -Iarch/powerpc/include/generated -Iinclude  -include /home/michael/src/kmk/next/include/linux/kconfig.h -D__KERNEL__ -Iarch/powerpc -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -fno-delete-null-pointer-checks -Os -msoft-float -pipe -Iarch/powerpc -mminimal-toc -mtraceback=no -mcall-aixdesc -mtune=power7 -mtune=cell -mno-altivec -mno-vsx -mno-spe -mspe=no -funit-at-a-time -fno-dwarf2-cfi-asm -mno-string -mno-sched-epilog -Wa,-maltiv
- ec -fno-reorder-blocks -fno-ipa-cp-clone -fno-partial-inlining -Wframe-larger-than=2048 -fno-stack-protector -Wno-unused-but-set-variable -g -femit-struct-debug-baseonly -pg -fno-inline-functions-called-once -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -DCC_HAVE_ASM_GOTO  -fprofile-arcs -ftest-coverage    -D"KBUILD_STR(s)=#s" -D"KBUILD_BASENAME=KBUILD_STR(vport_netdev)"  -D"KBUILD_MODNAME=KBUILD_STR(openvswitch)" -c -o net/openvswitch/.tmp_vport-netdev.o net/openvswitch/vport-netdev.c
->   if [ "-pg" = "-pg" ]; then set -e ; perl /home/michael/src/kmk/next/scripts/recordmcount.pl "powerpc" "little" "64" "/opt/cross/gcc-4.6-nolibc/powerpc64-linux/bin/powerpc64-linux-objdump" "/opt/cross/gcc-4.6-nolibc/powerpc64-linux/bin/powerpc64-linux-objcopy" "/opt/cross/gcc-4.6-nolibc/powerpc64-linux/bin/powerpc64-linux-gcc -m64 -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -fno-delete-null-pointer-checks -Os -msoft-float -pipe -Iarch/powerpc -mminimal-toc -mtraceback=no -mcall-aixdesc -mtune=power7 -mtune=cell -mno-altivec -mno-vsx -mno-spe -mspe=no -funit-at-a-time -fno-dwarf2-cfi-asm -mno-string -mno-sched-epilog -Wa,-maltivec -fno-reorder-blocks -fno-ipa-cp-clone -fno-partial-inlining -W
- frame-larger-than=2048  -fno-stack-protector -Wno-unused-but-set-variable -g  -femit-struct-debug-baseonly -pg  -fno-inline-functions-called-once -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -DCC_HAVE_ASM_GOTO" "/opt/cross/gcc-4.6-nolibc/powerpc64-linux/bin/powerpc64-linux-ld -m elf64ppc" "/opt/cross/gcc-4.6-nolibc/powerpc64-linux/bin/powerpc64-linux-nm --synthetic" "" "" "0" "net/openvswitch/vport-netdev.o"; fi;
+> Caused by commit 809d310c7e69 ("regulator: lp872x: Don't allow modular
+> build") but that was done to fix a different build problem.
 
-Just for the record it's not the FTRACE stuff (-pg):
+Sorry for this conflict.
 
-  /opt/cross/gcc-4.6-nolibc/powerpc64-linux/bin/powerpc64-linux-gcc -m64 -Wp,-MD,net/openvswitch/.vport-netdev.o.d  -nostdinc -isystem /opt/cross/gcc-4.6.3-nolibc/powerpc64-linux/lib/gcc/powerpc64-linux/4.6.3/include -I/home/michael/src/kmk/next/arch/powerpc/include -Iarch/powerpc/include/generated -Iinclude  -include /home/michael/src/kmk/next/include/linux/kconfig.h -D__KERNEL__ -Iarch/powerpc -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -fno-delete-null-pointer-checks -Os -msoft-float -pipe -Iarch/powerpc -mminimal-toc -mtraceback=no -mcall-aixdesc -mtune=power7 -mtune=cell -mno-altivec -mno-vsx -mno-spe -mspe=no -funit-at-a-time -fno-dwarf2-cfi-asm -mno-string -Wa,-maltivec -fno-reorder-bloc
- ks -fno-ipa-cp-clone -fno-partial-inlining -Wframe-larger-than=2048 -fno-stack-protector -Wno-unused-but-set-variable -fomit-frame-pointer -g -femit-struct-debug-baseonly -fno-inline-functions-called-once -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -DCC_HAVE_ASM_GOTO  -fprofile-arcs -ftest-coverage    -D"KBUILD_STR(s)=#s" -D"KBUILD_BASENAME=KBUILD_STR(vport_netdev)"  -D"KBUILD_MODNAME=KBUILD_STR(openvswitch)" -c -o net/openvswitch/.tmp_vport-netdev.o net/openvswitch/vport-netdev.c
+Build config of lp872x driver has been changed as tristate.
+And related undefined symbol error has been fixed.
+(don't use devm_gpio_request_one() at this moment because it can not be exported.)
 
+Please check patches below.
 
-And same error.
+[PATCH 1/3] regulator: enable module build config for lp872x
+[PATCH 2/3] regulator: replace devm_gpio_request_one() for loaded module
 
-cheers
+Thanks & BR
+Milo -
