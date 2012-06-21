@@ -1,79 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jun 20 (hweight return type)
-Date: Thu, 21 Jun 2012 11:45:46 +1000
-Message-ID: <20120621114546.1e5df51bd231ee481d63705c@canb.auug.org.au>
-References: <20120620173536.b856bbd97497cf02ddf8d6d2@canb.auug.org.au>
-	<4FE27471.8050505@xenotime.net>
+Subject: linux-next: build failure after merge of the regulator tree
+Date: Thu, 21 Jun 2012 13:27:38 +1000
+Message-ID: <20120621132738.6e797593acc58b3e30902f69@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__21_Jun_2012_11_45_46_+1000_3CaoF_LSqfkKBwPq"
+ boundary="Signature=_Thu__21_Jun_2012_13_27_38_+1000_9m8H2sm01+eiWE7e"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:52032 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:54331 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756907Ab2FUBpz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 21:45:55 -0400
-In-Reply-To: <4FE27471.8050505@xenotime.net>
+	with ESMTP id S1754614Ab2FUD1s (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 23:27:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Namjae Jeon <linkinjeon@gmail.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kim, Milo" <Milo.Kim@ti.com>, Axel Lin <axel.lin@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
 
---Signature=_Thu__21_Jun_2012_11_45_46_+1000_3CaoF_LSqfkKBwPq
+--Signature=_Thu__21_Jun_2012_13_27_38_+1000_9m8H2sm01+eiWE7e
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 20 Jun 2012 18:10:09 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
-e:
->
-> Someone changes the return type of __const_hweight8() to
-> (unsigned long).  That causes printk format warnings when
-> hweight8/16() etc. is passed a constant:
+Hi all,
 
-That would be "include/linux/bitops.h: fix warning" from the akpm tree
-(adding cc's).
+After merging the regulator tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
->=20
-> drivers/input/joystick/analog.c:412:4: warning: format '%d' expects type =
-'int', but argument 4 has type 'long unsigned int'
-> drivers/input/joystick/analog.c:412:4: warning: format '%d' expects type =
-'int', but argument 5 has type 'long unsigned int'
-> drivers/input/joystick/analog.c:416:5: warning: format '%d' expects type =
-'int', but argument 5 has type 'long unsigned int'
->=20
->=20
-> Note that in
->=20
-> #define hweight8(w)  (__builtin_constant_p(w) ? __const_hweight8(w)  : __=
-arch_hweight8(w))
->=20
-> __arch_hweight*() still returns unsigned int while __const_hweight*()
-> returns unsigned long.  This can't be good, can it?
+lp872x.c:(.text+0xb0699): undefined reference to `devm_regmap_init_i2c'
+drivers/built-in.o: In function `lp872x_driver_init':
+lp872x.c:(.init.text+0x81ac): undefined reference to `i2c_register_driver'
+drivers/built-in.o: In function `lp872x_driver_exit':
+lp872x.c:(.exit.text+0x37e): undefined reference to `i2c_del_driver'
 
+CONFIG_I2C=3Dm in this build.
+
+Caused by commit 809d310c7e69 ("regulator: lp872x: Don't allow modular
+build") but that was done to fix a different build problem.
+
+I have used the regulator tree from next-20120619 again for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__21_Jun_2012_11_45_46_+1000_3CaoF_LSqfkKBwPq
+--Signature=_Thu__21_Jun_2012_13_27_38_+1000_9m8H2sm01+eiWE7e
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP4nzKAAoJEECxmPOUX5FE9joP/0Rrm1hA6MFNtbA7PK9Pw09E
-RoZsBpoQuzgJltDa+tzYIy3JoId6VykPhyQXysBCJ0hH/BYtSkQ0Z/N7gSa/AT3J
-i0N359FcTpluLCOjbrxE3E56Cka5sn7B55EmYIrtBxBtzsK9dNYJapvFCVAbOiJC
-z7JrJh5FF4cKpKOiqHZaPRB+ZzR1LwhWyMyBjjyfM6bVR+it2OBfb35grgD6Op/7
-yUJhEOq/DqF4w54oQ/Flq+ChnzNpfvTivLVYvHFKC/qB7eJdNwiO7Wel8uclRb9m
-zvWOJTXq/xpYVPHdAwjwER1cr+44LuQbVBM2gw2djZ4r7mpahOORcH3PdJyhojLU
-gGzu+k25fqrqqnT9H8DjYXUShRmBVhMwp15dlfKndzGTfy3pPBdjtkIdwyf5Fxqj
-eT7Xg64uYWUXWMoTQQfD0RWpoFmTVkZzSyRh/F+h2I0qeAErZlbfWAvwAm5l7puk
-/hcTIAAfBk1KJpZLYjQy8KUNnekeZ1qd5Do1KlnddfU09DVEGGv+tMBgo5N7FaHb
-e0fKU6we6nHJ4svs6b1oQYqKY8eeTIpI+ZeGPTN0kgcaXsUB1mGB3IlkRpNgdKW6
-40J6indQwBKfSZPDWK/e1HhmTmtL+IeXTAXlLj99q1uIt22s2F/krYXA6BOTK/rj
-X51sDSzjWCxR+Klgba5V
-=/Kw7
+iQIcBAEBCAAGBQJP4pSqAAoJEECxmPOUX5FExVYQAJM02PtIoUYfUuyZ/bwgKr09
+E5R1smEOvu8kbwuukuGOQtOnyTfgV/bPP4cWFSVAlajtkBHIy3UEaZHVxKQyT0Zh
+pEJ6ajMXejT1Wd96Dyn1XEwImsumE/NGSy1pstwpGFsk/abCRcjMxbYjmTJysRZp
+WC617ea1SUGdbtN2/dXnUIKzmPw9lrsaICae9V8lLrFG1V7FypKXPQLZENEKGVt5
+GmtuN22XA7m89tvHn00/GXwJDgFGY83jUpiSf+/ExoHW9OZ99gV7S28z0X1JezZ9
+GQZ/WL3asDxxdiE369IOcMR7Y+E3iHLSe11DeOEEPQLlCur2ncBpLkdirQHd4tXv
+OPYviJFCL9IPxUpR7DANf3Z25qIq8n2IJF8vvvRjkNO/R+skET9iuArt5RCF47D0
+bontpycorWgUkz9scMxxomighkm0ktPC5CSGPIXn+9otiUK4IA3rCs97wx1TOlAW
+gl9rBpXf+IlHyKvecFCFkZ/zXTnrG5efd5yT17pCSqH5ZuipTa4sGyMoJZWh6Ddo
+R7vYbYGCMF5Umc5+9wlnK72dzM4aaNFoLqbAoyLjoa0Jub/xQBm2O/r5JJlKaTNo
+BoF/qpWGQpaWRECS/XYQD13c+2IMEjKKEyjfm1zm82lg0UkeKWGxByaQOQyZvW2v
+8Zzu8Rc8rcvMpDARVolx
+=j3O/
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__21_Jun_2012_11_45_46_+1000_3CaoF_LSqfkKBwPq--
+--Signature=_Thu__21_Jun_2012_13_27_38_+1000_9m8H2sm01+eiWE7e--
