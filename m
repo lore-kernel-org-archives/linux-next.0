@@ -1,92 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: linux-next: build failure after merge of the regulator tree
-Date: Thu, 21 Jun 2012 21:04:12 +1000
-Message-ID: <20120621210412.72321b3ff43d50930b17f760@canb.auug.org.au>
+Date: Thu, 21 Jun 2012 12:30:29 +0100
+Message-ID: <20120621113029.GU4037@opensource.wolfsonmicro.com>
 References: <20120621132738.6e797593acc58b3e30902f69@canb.auug.org.au>
-	<A874F61F95741C4A9BA573A70FE3998FC074@DQHE02.ent.ti.com>
-	<CAF+7xWkzKkwfBFQS1vr-Tk2Auu+5HQmX7bZCGJhsmXRi0V5OZw@mail.gmail.com>
+ <A874F61F95741C4A9BA573A70FE3998FC074@DQHE02.ent.ti.com>
+ <CAF+7xWkzKkwfBFQS1vr-Tk2Auu+5HQmX7bZCGJhsmXRi0V5OZw@mail.gmail.com>
+ <20120621210412.72321b3ff43d50930b17f760@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__21_Jun_2012_21_04_12_+1000__8PMDz3vER=Ho=if"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="b9dEYEwnDXkv9lSy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38424 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755006Ab2FULE2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jun 2012 07:04:28 -0400
-In-Reply-To: <CAF+7xWkzKkwfBFQS1vr-Tk2Auu+5HQmX7bZCGJhsmXRi0V5OZw@mail.gmail.com>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:57852 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1759124Ab2FULad (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Jun 2012 07:30:33 -0400
+Content-Disposition: inline
+In-Reply-To: <20120621210412.72321b3ff43d50930b17f760@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Kim, Milo" <Milo.Kim@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "Girdwood, Liam" <lrg@ti.com>, axel.lin@gmail.com, Alberto Panizzo <alberto@amarulasolutions.com>, Jingoo Han <jg1.han@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@secretlab.ca>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Kim, Milo" <Milo.Kim@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "Girdwood, Liam" <lrg@ti.com>, axel.lin@gmail.com, Alberto Panizzo <alberto@amarulasolutions.com>, Jingoo Han <jg1.han@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Grant Likely <grant.likely@secretlab.ca>
 
---Signature=_Thu__21_Jun_2012_21_04_12_+1000__8PMDz3vER=Ho=if
-Content-Type: text/plain; charset=US-ASCII
+
+--b9dEYEwnDXkv9lSy
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+On Thu, Jun 21, 2012 at 09:04:12PM +1000, Stephen Rothwell wrote:
 
-On Thu, 21 Jun 2012 16:20:46 +0800 Axel Lin <axel.lin@gmail.com> wrote:
->
-> 2012/6/21 Kim, Milo <Milo.Kim@ti.com>:
-> >> Caused by commit 809d310c7e69 ("regulator: lp872x: Don't allow modular
-> >> build") but that was done to fix a different build problem.
-> >
-> > Sorry for this conflict.
-> >
-> > Build config of lp872x driver has been changed as tristate.
-> > And related undefined symbol error has been fixed.
-> > (don't use devm_gpio_request_one() at this moment because it can not be=
- exported.)
->=20
-> I don't think this is the good way, other drivers may have this build pro=
-blem.
-> I think we can fix it by having the patch exporting
-> devm_gpio_request_one upstrem ASAP.
->=20
-> BTW, In yesterday's linux-next tree, Andrew has below commit.
->=20
-> commit a291ede7be8359a8986740b11b93f9c80e40210b
-> Author: Andrew Morton <akpm@linux-foundation.org>
-> Date:   Wed Jun 20 09:55:47 2012 +1000
->=20
->     backlight-l4f00242t03-use-devm_gpio_request_one-fix
->=20
->     export devm_gpio_request_one() to modules
->=20
->     Cc: Alberto Panizzo <alberto@amarulasolutions.com>
->     Cc: Jingoo Han <jg1.han@samsung.com>
->     Cc: Richard Purdie <rpurdie@rpsys.net>
->     Cc: Grant Likely <grant.likely@secretlab.ca>
->     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> This export is needed for a patch in the regulator tree, so can we have
+> that patch sent to Linus ASAP, please?
 
-This export is needed for a patch in the regulator tree, so can we have
-that patch sent to Linus ASAP, please?
+It's going to affect pretty much anything that tries to use the API.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Thu__21_Jun_2012_21_04_12_+1000__8PMDz3vER=Ho=if
-Content-Type: application/pgp-signature
+--b9dEYEwnDXkv9lSy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP4v+sAAoJEECxmPOUX5FEY0UP/2i7yGqhpUKaw79t6rwMDzxe
-HNgnGc5YHej/Gl2nGeHbuTnyMNtxinRGFtCpZ0ihYR4Q+2qpaJJd9JyYAkE4jWsp
-ve6k720oTx/ItSSZbaMMWLkFCQQC3RW3stXLGfNdCmkKJkfsir2Pfw5n7+6pSv6C
-Sii9gARSpowH7BupXlR4iUCs5F8ycbIrTP8PVC9eJLI093c4HlO7tljO/i0trLf+
-D3NDogxo2u1dBWG/bk1qClni1SaD956o75oYYuq1mCNSJUdFlzHoAnrQVm85EILK
-Q87KwIRxW39Tk1bONVMxYzY2O6QVc/i3aw4RAkM6n4PM4OvnAf5nZEgzkXDwU8WI
-Gbc2ukEjUcYbgvmvVttN6TYzJgJgEXtDDiSOIG5YTY5CC5knBUiyATk2j3H7tcsX
-JtPBIryrPUVQSkU94HLXNDcsC4kzzoC6SRM2zUPCK+bF8/g2XUiDKoknbUxViB/o
-lcYQuEubu/aOYKem35bu5QVSDwV3bM+e66xqzUm8l5PLpAOFMcRQ+kfjlL38jqfJ
-zxC9qW3N1jFhm7vBM4HQuZU12OaxlluR3O/xH5tE8VkgivNQ27ZwuamYxorkz16y
-7JzE/QFDTKdFoFeRgbkvbahsDrfV6y14srQ2hQ8ASunQcfHqoPyJAWIhKBLTIxpB
-1sWFlWdX+htUkSZIZqQS
-=Q1VS
+iQIcBAEBAgAGBQJP4wQdAAoJEBus8iNuMP3dtQQQAJzv50ITMV2QroAbCuOs7GiI
+xhEPaSr8LIaxRfyLGpBvN+5IyDp0+awbGQmk5+xsV9JjFX6WbiqotBbTyfA1X3Vo
+K2G6/LP81QDBLj1sYHNsfYriFO29DKdfHvh31ueD4wznpaExSSofCRd3bVMygDd/
+TSFDUvqcOkn6V20DmfsEo7MMkde/IyKH5C2yI0NDWXA4cO6senmXFPRvfZTTil+l
+zgl+gDz/lpWFGvgn3P1wwYUPqDAy0BVIANg+2KqLZtEaYwpCb9vAV2u5GDrh+4CO
+vhoNKX2/ONYgUGVGRDBXwtyhda96WyS23iuGizvMtpzfEiA6RWB2lyC7hJzgbT/b
+mjE5A00tlZGXmSxNpqQFxhNsMB5t/a+8hGtyCQ8rpDT3Bu64RjkdTh4leXTFE48z
+sRVJ/UFcOH/6VoFcquHFfS04hrOy3fTJFqWQ8xdvZ4/QyqgOVDnS287CE+PEB7dG
+iNeYVsFYpk77FDekNr6iPke1bdhkfASNNSkjQNXraPkQAqLdxql0GwgPftLKI7GF
+MGrqcBQz3yY4hcYNDpbbhwIaWoFaBC9BWE7DBjFyg7iBC+knOdq0mq3dG6l2DBoU
+ND2lxKe1+GMmWNr2ttfEM9VepZ39Vyq9tBVwjKEYH+rnxyAF5Zie/iJUozVPEbGS
+kWngkXhONZp5CT0i0cDt
+=bU1v
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__21_Jun_2012_21_04_12_+1000__8PMDz3vER=Ho=if--
+--b9dEYEwnDXkv9lSy--
