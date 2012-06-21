@@ -1,89 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the slab tree
-Date: Thu, 21 Jun 2012 13:48:44 +1000
-Message-ID: <20120621134844.36eacc287e76a38b960f2ef2@canb.auug.org.au>
+From: Michael Ellerman <michael@ellerman.id.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (powerpc related)
+Date: Thu, 21 Jun 2012 15:36:01 +1000
+Message-ID: <1340256961.1998.11.camel@concordia>
+References: <20120620175014.a822a766e0f91f7b44f48fa0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Thu__21_Jun_2012_13_48_44_+1000_GzACR0nQ70yUgwR="
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33929 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754832Ab2FUDs4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jun 2012 23:48:56 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, David Mackey <tdmackey@twitter.com>, Pekka Enberg <penberg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120620175014.a822a766e0f91f7b44f48fa0@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-next@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org, Alan Modra <amodra@bigpond.net.au>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__21_Jun_2012_13_48_44_+1000_GzACR0nQ70yUgwR=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2012-06-20 at 17:50 +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> powerpc64-linux-ld: arch/powerpc/net/built-in.o: In function `bpf_slow_path_word':
+> (.text+0x90): sibling call optimization to `skb_copy_bits' does not allow automatic multiple TOCs; recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `skb_copy_bits' extern
 
-Hi all,
 
-Today's linux-next merge of the tip tree got conflicts in mm/slab.c and
-mm/slub.c between commit e7b691b085fd ("slab/mempolicy: always use local
-policy from interrupt context") from the slab tree and commit
-2ab41dd59922 ("mm: Optimize put_mems_allowed() usage") from the tip tree.
+Those seem to be caused because we don't have a nop after the call,
+meaning we can't patch the TOC pointer on the way back. Adding a nop
+fixes those.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+But, then I get 32,410 variants of this:
 
-diff --cc mm/slab.c
-index dd607a8,5070f96..0000000
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@@ -3341,8 -3367,8 +3341,8 @@@ static void *fallback_alloc(struct kmem
-  	local_flags =3D flags & (GFP_CONSTRAINT_MASK|GFP_RECLAIM_MASK);
- =20
-  retry_cpuset:
-- 	cpuset_mems_cookie =3D get_mems_allowed();
-+ 	cpuset_mems_cookie =3D read_mems_allowed_begin();
- -	zonelist =3D node_zonelist(slab_node(current->mempolicy), flags);
- +	zonelist =3D node_zonelist(slab_node(), flags);
- =20
-  retry:
-  	/*
-diff --cc mm/slub.c
-index f96d8bc,fb2ef09..0000000
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@@ -1616,8 -1616,8 +1616,8 @@@ static void *get_any_partial(struct kme
-  		return NULL;
- =20
-  	do {
-- 		cpuset_mems_cookie =3D get_mems_allowed();
-+ 		cpuset_mems_cookie =3D read_mems_allowed_begin();
- -		zonelist =3D node_zonelist(slab_node(current->mempolicy), flags);
- +		zonelist =3D node_zonelist(slab_node(), flags);
-  		for_each_zone_zonelist(zone, z, zonelist, high_zoneidx) {
-  			struct kmem_cache_node *n;
- =20
+powerpc64-linux-ld: /src/next/net/openvswitch/vport-netdev.c:189:(.text+0x89b990): 
+	sibling call optimization to `_restgpr0_28' does not allow automatic multiple TOCs;
+	recompile with -mminimal-toc or -fno-optimize-sibling-calls, or make `_restgpr0_28' extern
 
---Signature=_Thu__21_Jun_2012_13_48_44_+1000_GzACR0nQ70yUgwR=
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+And those are generated calls so I don't see how we can fix them.
 
-iQIcBAEBCAAGBQJP4pmcAAoJEECxmPOUX5FEcS0P/R09twGtt4C0QbHoJ4BbIL1D
-SBGKZ9W2RQlOTXWcjXWFJyZRooN5gexFsiu4sy02FRuEh9H8jzzdR2pxs7vpoQWQ
-Ea9PatkY7apVDJjRG6ObR+4/WUjD82JudSuKllMNtmkipcQu2BK2Z/+Ek20E0zdt
-HdG4bKb98S3/4K+tfcoZjHVZcJXr2dWWIGjCjtXZTyX9pAdHdb0D2DE2hY0To6dw
-1uxsYq+tAxzxYUvddYIy5O+lt03RkNLF9qx+62H7D2y64CkRLysdbwPh92/DHaDM
-t4RAD/M1v+9pnKPcEyfZh84LEiiLaNm3zF87jt6hSf8jxD6CShUzG6gCAMyNiy4C
-oUnALi0VUnbtIRZ1ujAjiOVSk/RgBZponMQGxB9haAKt9Xw6emG4wUOvRjt1/415
-x0RlSwM8nTvzhNDdQGvMAoMVdTu3hN0BkcKng0i4gidxRgBfBoI+9/L0ppgJ2a6l
-1sB1S2xKl/0VTPfRXL99tvBJiUyA4syob1XRrIRgbgsSd4Si2UMPPR5sYptoa5L6
-Eq1aDYy/ypZy7AtCajVH5j7DmjEZwH8s/3ikXY/L8zGHN14hWjeoxUoEj4y86Gm1
-1rAGVbbB5kIrOqX0QZ8G8J947RhGIutrXGtey64/vGVuUJcxzx2cphyKaFZDh4x7
-2zRn3l/2IW8pAU/oteqW
-=OyA2
------END PGP SIGNATURE-----
+> I started building with gcc 4.6.3/binutils 2.22 today.  gcc
+> 4.6.0/binutils 2.21 do not produce this error, it produces this instead
+> (which has been happening for a long time):
+> 
+> powerpc64-linux-ld: TOC section size exceeds 64k
 
---Signature=_Thu__21_Jun_2012_13_48_44_+1000_GzACR0nQ70yUgwR=--
+
+So presumably there's some new error checking that we're hitting, I
+imagine it was always broken, but now it's being more explicit.
+
+I think we need some help from the toolchain experts, hi Alan :)
+
+cheers
