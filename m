@@ -1,58 +1,44 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH -next] pstore: fix printk format warning in ram.c
-Date: Thu, 21 Jun 2012 17:04:57 -0700
-Message-ID: <4FE3B6A9.60109@xenotime.net>
-References: <20120615143303.3b88edcbc3efc7b1bf81839b@canb.auug.org.au> <4FDB8AB8.6060703@xenotime.net>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [Ksummit-2012-discuss] [ATTEND] stable kernel stuff and grumpy
+ maintainers [bisection/rebase/-next]
+Date: Thu, 21 Jun 2012 20:29:55 -0400
+Message-ID: <1340324995.27036.221.camel@gandalf.stny.rr.com>
+References: <3908561D78D1C84285E8C5FCA982C28F193223DB@ORSMSX104.amr.corp.intel.com>
+	 <20120621034326.GA8601@localhost>
+	 <1340280738.27036.130.camel@gandalf.stny.rr.com>
+	 <4FE321C2.8010604@parallels.com> <20120621133808.GA14716@localhost>
+	 <1340287466.27036.161.camel@gandalf.stny.rr.com>
+	 <20120621152649.GA15549@localhost>
+	 <1340293901.27036.182.camel@gandalf.stny.rr.com>
+	 <20120621233841.GK2397@linux.vnet.ibm.com>
+	 <1340322348.27036.218.camel@gandalf.stny.rr.com>
+	 <20120622000320.GL2397@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from oproxy5-pub.bluehost.com ([67.222.38.55]:34031 "HELO
-	oproxy5-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1760693Ab2FVAFW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jun 2012 20:05:22 -0400
-In-Reply-To: <4FDB8AB8.6060703@xenotime.net>
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:10459 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760686Ab2FVA35 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jun 2012 20:29:57 -0400
+In-Reply-To: <20120622000320.GL2397@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marco Stornelli <marco.stornelli@gmail.com>, Kees Cook <keescook@chromium.org>, Andrew Morton <akpm@linux-foundation.org>
+To: paulmck@linux.vnet.ibm.com
+Cc: Fengguang Wu <fengguang.wu@intel.com>, "ksummit-2012-discuss@lists.linux-foundation.org" <ksummit-2012-discuss@lists.linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-Greg,
-This patch is still needed in linux-next.....
+On Thu, 2012-06-21 at 17:03 -0700, Paul E. McKenney wrote:
 
-
-also:
-Acked-by: Kees Cook <keescook@chromium.org>
-
-
-
-On 06/15/2012 12:19 PM, Randy Dunlap wrote:
-
-> From: Randy Dunlap <rdunlap@xenotime.net>
+> So you are suggesting:
 > 
-> Fix printk format warning (on i386) in pstore:
+> 3.	Someone pulls from my tree (rcu/dev) whenever I push something,
+> 	and tests the merge of all maintainers' commits.
 > 
-> fs/pstore/ram.c:378:3: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'size_t'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-> ---
->  fs/pstore/ram.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-next-20120615.orig/fs/pstore/ram.c
-> +++ linux-next-20120615/fs/pstore/ram.c
-> @@ -375,7 +375,7 @@ static int __init ramoops_probe(struct p
->  		goto fail_init_cprz;
->  
->  	if (!cxt->przs && !cxt->cprz) {
-> -		pr_err("memory size too small, minimum is %lu\n",
-> +		pr_err("memory size too small, minimum is %zu\n",
->  			cxt->console_size + cxt->record_size);
->  		goto fail_cnt;
->  	}
-> 
+> My rcu/dev branch is often just a preview of rcu/next, but I sometimes
+> have longer lived topic branches (for example, the current rcu/idle
+> branch with stuff related to Frederic's work).  So maybe this tree
+> needs to pull from all of my "rcu/" branches.
 
+Exactly! :-)
 
-
--- 
-~Randy
+-- Steve
