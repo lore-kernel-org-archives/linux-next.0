@@ -1,53 +1,38 @@
-From: Michal Hocko <mhocko@suse.cz>
-Subject: Re: mmotm 2012-06-21-16-20 uploaded
-Date: Fri, 22 Jun 2012 11:23:27 +0200
-Message-ID: <20120622092327.GA5742@tiehlicka.suse.cz>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: mmotm 2012-06-21-16-20 uploaded (dm-thin)
+Date: Fri, 22 Jun 2012 10:26:06 -0700
+Message-ID: <4FE4AAAE.3090803@xenotime.net>
 References: <20120621232149.F0286A026A@akpm.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20120621232149.F0286A026A@akpm.mtv.corp.google.com>
-Sender: owner-linux-mm@kvack.org
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org, linux-next@vger.kernel.org, Joe Thornber <dm-devel@redhat.com>dm-devel@redhat.com
 List-Id: linux-next.vger.kernel.org
 
-On Thu 21-06-12 16:21:49, Andrew Morton wrote:
+On 06/21/2012 04:21 PM, akpm@linux-foundation.org wrote:
+
 > The mm-of-the-moment snapshot 2012-06-21-16-20 has been uploaded to
 > 
 >    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> It contains the following patches against 3.5-rc3:
+> (patches marked "*" will be included in linux-next)
 
-And from now on, memcg-devel tree[1] will not only pick up memcg
-relevant patches but all patches in the mm section.
-The tree was mainly focused on memcg development in the past but it
-seems that having all mm and memcg patches together would be much easier
-and also non memcg developers could benefit from it.
 
-The tree will not be rebased (unlike linux-next) and after Linus
-releases X.Y a new branch (since-X.Y) will be created and the current
-stack rebased on top of vX.Y tag. Old branches stay at the place.
 
-Please note that the tree doesn't substitute mmotm and all the changes
-still fly through Andrew. The sole purpose of the tree is to make git
-worklows for -mm development easier.
+on i386:
 
-Thanks Andrew for helping me with this and tweaking his series file to
-make it as much automated as possible.
+Apparently from linux-next.patch:
 
----
-[1] https://github.com/mstsxfx/memcg-devel.git
+drivers/built-in.o: In function `thin_iterate_devices':
+dm-thin.c:(.text+0x206f07): undefined reference to `__udivdi3'
+drivers/built-in.o: In function `pool_preresume':
+dm-thin.c:(.text+0x207863): undefined reference to `__udivdi3'
+
 
 -- 
-Michal Hocko
-SUSE Labs
-SUSE LINUX s.r.o.
-Lihovarska 1060/12
-190 00 Praha 9    
-Czech Republic
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+~Randy
