@@ -1,57 +1,182 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the slave-dma tree
-Date: Fri, 22 Jun 2012 13:00:49 +1000
-Message-ID: <20120622130049.05d18e86de1256aa980566b0@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Fri, 22 Jun 2012 15:01:46 +1000
+Message-ID: <20120622150146.73806542cc4bac1beb317fe0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__22_Jun_2012_13_00_49_+1000_eJnG3snz1Po/U6gj"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhangfei Gao <zhangfei.gao@marvell.com>, Leo Yan <leoy@marvell.com>, Qiao Zhou <zhouqiao@marvell.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__22_Jun_2012_15_01_46_+1000_eqtgGADHG0OEflqq"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58492 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756199Ab2FVFCI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Jun 2012 01:02:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Rientjes <rientjes@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Lee Schermerhorn <lee.schermerhorn@hp.com>
 
---Signature=_Fri__22_Jun_2012_13_00_49_+1000_eJnG3snz1Po/U6gj
+--Signature=_Fri__22_Jun_2012_15_01_46_+1000_eqtgGADHG0OEflqq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Vinod,
+Hi all,
 
-After merging the slave-dma tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the tip tree got a conflict in mm/mempolicy.c
+between commit c4c0e9e544a0 ("mm, mempolicy: fix mbind() to do
+synchronous migration") from Linus' tree and various commits from the tip
+tree.
 
-drivers/dma/mmp_tdma.c:21:27: fatal error: mach/regs-icu.h: No such file or=
- directory
+The latter rewrote bits of this file, so I used it and effectively
+reapplied the former patch (see below).  I hope it came out right.
 
-Caused by commit c6da0ba8dfc8 ("dmaengine: mmp_tdma: add mmp tdma
-support").
+The diff of this file from the tip tree version looks like this (the
+second hunk comes from the slab tree):
 
-I have used the slave-dma tree from next-20120621 for today.
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 2218157..aeb58da 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1146,7 +1146,7 @@ long mpol_do_mbind(unsigned long start, unsigned long=
+ len,
+ 		else {
+ 			nr_failed =3D migrate_pages(&pagelist, new_vma_page,
+ 					(unsigned long)vma,
+-					false, true);
++					false, MIGRATE_SYNC);
+ 		}
+ 	}
+=20
+@@ -1702,8 +1702,14 @@ static struct zonelist *policy_zonelist(gfp_t gfp, s=
+truct mempolicy *policy,
+  * task can change it's policy.  The system default policy requires no
+  * such protection.
+  */
+-unsigned slab_node(struct mempolicy *policy)
++unsigned slab_node(void)
+ {
++	struct mempolicy *policy;
++
++	if (in_interrupt())
++		return numa_node_id();
++
++	policy =3D current->mempolicy;
+ 	if (!policy || policy->flags & MPOL_F_LOCAL)
+ 		return numa_node_id();
+=20
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__22_Jun_2012_13_00_49_+1000_eJnG3snz1Po/U6gj
+diff --cc mm/mempolicy.c
+index bd92431,2218157..0000000
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@@ -1097,6 -1085,81 +1085,81 @@@ static struct page *new_vma_page(struc
+  }
+  #endif
+ =20
++ long mpol_do_mbind(unsigned long start, unsigned long len,
++ 		struct mempolicy *new, unsigned long mode,
++ 		nodemask_t *nmask, unsigned long flags)
++ {
++ 	struct mm_struct *mm =3D current->mm;
++ 	struct vm_area_struct *vma;
++ 	int err, nr_failed =3D 0;
++ 	unsigned long end;
++ 	LIST_HEAD(pagelist);
++=20
++ 	len =3D (len + PAGE_SIZE - 1) & PAGE_MASK;
++ 	end =3D start + len;
++=20
++ 	if (end < start) {
++ 		err =3D -EINVAL;
++ 		goto mpol_out;
++ 	}
++=20
++ 	if (end =3D=3D start) {
++ 		err =3D 0;
++ 		goto mpol_out;
++ 	}
++=20
++ 	if (flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) {
++ 		err =3D migrate_prep();
++ 		if (err)
++ 			goto mpol_out;
++ 	}
++=20
++ 	if (mode !=3D MPOL_NOOP) {
++ 		NODEMASK_SCRATCH(scratch);
++ 		err =3D -ENOMEM;
++ 		if (scratch) {
++ 			task_lock(current);
++ 			err =3D mpol_set_nodemask(new, nmask, scratch);
++ 			task_unlock(current);
++ 		}
++ 		NODEMASK_SCRATCH_FREE(scratch);
++ 		if (err)
++ 			goto mpol_out;
++ 	}
++=20
++ 	vma =3D check_range(mm, start, end, nmask,
++ 			  flags | MPOL_MF_INVERT, &pagelist);
++=20
++ 	err =3D PTR_ERR(vma);	/* maybe ... */
++ 	if (IS_ERR(vma))
++ 		goto mpol_out_putback;
++=20
++ 	if (mode !=3D MPOL_NOOP) {
++ 		err =3D mbind_range(mm, start, end, new);
++ 		if (err)
++ 			goto mpol_out_putback;
++ 	}
++=20
++ 	if (!list_empty(&pagelist)) {
++ 		if (flags & MPOL_MF_LAZY)
++ 			nr_failed =3D migrate_pages_unmap_only(&pagelist);
++ 		else {
++ 			nr_failed =3D migrate_pages(&pagelist, new_vma_page,
++ 					(unsigned long)vma,
+ -					false, true);
+++					false, MIGRATE_SYNC);
++ 		}
++ 	}
++=20
++ 	if (nr_failed && (flags & MPOL_MF_STRICT))
++ 		err =3D -EIO;
++=20
++ mpol_out_putback:
++ 	putback_lru_pages(&pagelist);
++=20
++ mpol_out:
++ 	return err;
++ }
++=20
+  static long do_mbind(unsigned long start, unsigned long len,
+  		     unsigned short mode, unsigned short mode_flags,
+  		     nodemask_t *nmask, unsigned long flags)
+
+--Signature=_Fri__22_Jun_2012_15_01_46_+1000_eqtgGADHG0OEflqq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP49/hAAoJEECxmPOUX5FEyswP/j+eEexXZaNXwY+q+Ii3RJKf
-iAs3vS6rzbY3LNA0amMbaLMMO2M3JymvCtoBmYeI+gkaFo0xeZtYCQCcUEjG2ygo
-X4dkNFGFlVbIIILvr0sf/Uua3v2s0mHXWtPm3XR6Kg7kXPAVYNLTcJaPDSoscQQC
-NZgjvjGUNb68HyLu75wrXi30A3gk4DkgJ5jkLu+f2z6j02Fumx1nJJmjrYq5J8f8
-a3iPmXweLZBxQbVrZwZM5PrETgsA6DI+JgdmFTwpkpeIA9TTOmkbCtrZ/l2+RSkg
-EKyD6IL80kne9+Y4z5p8f/wpXWiZ12XtTBbuixUA9petpXbCUdNO+Nnp1f50kuYz
-5ICWJDIs/VcLKgXCbX8uQsd3lEOxBAjv8wzPnPY2OeTdNtAPlJjf5mdU9sTnuX9l
-B4eUWUOMLiwlY7cKlyYr9H9p9NDZ/qlSuWLMcgJdbJYshrgIbeYXqIiVY/s91J80
-lnGHEzZq/sw9ofG55PFgVZZiIopB8oTZBcoa6tXIR4i6++U9h7Q0yo4g3BXkIn0M
-pUP58l9IQxPeG7ph55q+KaykM9sc4zhVinmQThXZp5YST5aYO3ZnGhkTfuf4zPfF
-j6kpXAihA06B44mt1hu/rGybRCvq+b78xZ85Lefs74WU/HH5775vILjDeOrSbwRq
-UXCWrGNQmIBAG+rvQYjs
-=XDM9
+iQIcBAEBCAAGBQJP4/w6AAoJEECxmPOUX5FEVz4P/AuIUsQiu1jqC+rHIt38sM2A
+bUcfvP41iHX81ElhAfsd75OVo/eqm9y/n3m6x0V63D1cA53hL4des8yOd+CpIQD2
+q+1a9IXFUBTKLlzNjVMbTVpLdUGPeResJmJNXqzNJw/bQxv2H84IyugrHp7VQkNP
+Op3W4NMvj6Z1E5EAINrcfo+JZ/UmZVejmQ2/g/NIEMpgL9dgrGILThdrKFQzlUDB
+yD3rbpP7ItnaawZn6JwULoFnT1senv4AUi5QnlWaMPEJMCj8XSnvPMXk8yF2A7F+
+pjWvs5mazwGat57SjyGuD6z9m9262V8l1WoF+Chuv8tUNpbEWQQ/GtjgJcjZl30I
+X4lvQlckbCp5Ii/omlLsl7G0xuAmHxuilNhXJ7wvWoTrcS3NcEGNv7quUF1cvgBS
+Uop4JwApZT0RxyoGfSdJt2FkvLm3WiAbHgU00lAwzY5iWMX+Gg/J0mNsdzIwUskj
+nHc2OwBIp3HbvvzNsGG5CDyKn0YCXVj9H7pmvmwy4OpbOWWo+j13pk4+8y4I8dSq
+GtP/aedDRR1dLeeqfSeG38icelXFOpKCa0eFaAm6Sy0ihGN5t4BmQIYX9CkfxFHv
+6c/nQGCj18OmXluDfoeNRnnp54iu+q6H7dLGbN3jKsTDb9oPNc2l964gjkJiVeFq
+p7fBPQNmY4ua0rX5f09s
+=ZtXe
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__22_Jun_2012_13_00_49_+1000_eJnG3snz1Po/U6gj--
+--Signature=_Fri__22_Jun_2012_15_01_46_+1000_eqtgGADHG0OEflqq--
