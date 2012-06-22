@@ -1,66 +1,29 @@
-From: Vinod Koul <vinod.koul@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the slave-dma tree
-Date: Fri, 22 Jun 2012 10:31:45 +0530
-Message-ID: <1340341305.1562.2.camel@vkoul-udesk3>
-References: <20120622130049.05d18e86de1256aa980566b0@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH -next] avr:  Fix sanitize tsk_is_polling fallout
+Date: Fri, 22 Jun 2012 06:46:42 +0100
+Message-ID: <20120622054641.GA14083@ZenIV.linux.org.uk>
+References: <1339925024-23323-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:33261 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755011Ab2FVFJw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 Jun 2012 01:09:52 -0400
-In-Reply-To: <20120622130049.05d18e86de1256aa980566b0@canb.auug.org.au>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:57531 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761204Ab2FVFqo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Jun 2012 01:46:44 -0400
+Content-Disposition: inline
+In-Reply-To: <1339925024-23323-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhangfei Gao <zhangfei.gao@marvell.com>, Leo Yan <leoy@marvell.com>, Qiao Zhou <zhouqiao@marvell.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Fri, 2012-06-22 at 13:00 +1000, Stephen Rothwell wrote:
-> Hi Vinod,
+On Sun, Jun 17, 2012 at 11:23:44AM +0200, Geert Uytterhoeven wrote:
+> commit 6222033ea7bfe166f06aff5462dd88fba70e74f6 ("sanitize tsk_is_polling()")
+> removed the definition of TIF_POLLING_NRFLAG, but forgot to remove the
+> continuation line, causing:
 > 
-> After merging the slave-dma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/dma/mmp_tdma.c:21:27: fatal error: mach/regs-icu.h: No such file or directory
-> 
-> Caused by commit c6da0ba8dfc8 ("dmaengine: mmp_tdma: add mmp tdma
-> support").
-> 
-> I have used the slave-dma tree from next-20120621 for today.
-Thanks Stephen,
+> arch/avr32/include/asm/thread_info.h:80: error: expected identifier or '(' before numeric constant
+> include/linux/thread_info.h:128: error: implicit declaration of function 'set_ti_thread_flag'
+> make[2]: *** [arch/avr32/kernel/asm-offsets.s] Error 1
 
-It should not build for this target!. I will added the below patch to
-fix the failure
-
->From 0efc8562577cd6a022b8b42d58fcf58ffc2a91d3 Mon Sep 17 00:00:00 2001
-From: Vinod Koul <vinod.koul@linux.intel.com>
-Date: Fri, 22 Jun 2012 10:29:53 +0530
-Subject: [PATCH] dmaengine: mmp_tdma: fix the arch dependency
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Vinod Koul <vinod.koul@linux.intel.com>
----
- drivers/dma/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index 90fec0e..d45cf1b 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -276,7 +276,7 @@ config DMA_SA11X0
- 
- config MMP_TDMA
- 	bool "MMP Two-Channel DMA support"
--	default ARCH_MMP
-+	depends on ARCH_MMP
- 	select DMA_ENGINE
- 	help
- 	  Support the MMP Two-Channel DMA engine.
--- 
-1.7.0.4
-
-
--- 
-~Vinod
+Thanks for catching that one...  Folded and pushed.
