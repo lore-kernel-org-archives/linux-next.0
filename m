@@ -1,53 +1,57 @@
-From: Minchan Kim <minchan@kernel.org>
+From: viresh kumar <viresh.kumar2@arm.com>
 Subject: Re: mmotm 2012-06-21-16-20 uploaded
-Date: Fri, 22 Jun 2012 16:14:07 +0900
-Message-ID: <4FE41B3F.6090106@kernel.org>
+Date: Fri, 22 Jun 2012 09:14:28 +0100
+Message-ID: <4FE42964.8050404@arm.com>
 References: <20120621232149.F0286A026A@akpm.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
+Return-path: <owner-linux-mm@kvack.org>
 In-Reply-To: <20120621232149.F0286A026A@akpm.mtv.corp.google.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Andrea Arcangeli <aarcange@redhat.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Sender: owner-linux-mm@kvack.org
+To: "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc: "mm-commits@vger.kernel.org" <mm-commits@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
+
+On 22/06/12 00:21, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2012-06-21-16-20 has been uploaded to
+>
+>    http://www.ozlabs.org/~akpm/mmotm/
+>
+> It contains the following patches against 3.5-rc3:
+> (patches marked "*" will be included in linux-next)
+>
+> * clk-add-non-config_have_clk-routines.patch
+> * clk-remove-redundant-depends-on-from-drivers-kconfig.patch
+> * i2c-i2c-pxa-remove-conditional-compilation-of-clk-code.patch
+> * usb-marvell-remove-conditional-compilation-of-clk-code.patch
+> * usb-musb-remove-conditional-compilation-of-clk-code.patch
+> * ata-pata_arasan-remove-conditional-compilation-of-clk-code.patch
+> * net-c_can-remove-conditional-compilation-of-clk-code.patch
+> * net-stmmac-remove-conditional-compilation-of-clk-code.patch
+> * gadget-m66592-remove-conditional-compilation-of-clk-code.patch
+> * gadget-r8a66597-remove-conditional-compilation-of-clk-code.patch
+> * usb-host-r8a66597-remove-conditional-compilation-of-clk-code.patch
 
 Hi Andrew,
 
-On 06/22/2012 08:21 AM, akpm@linux-foundation.org wrote:
+You need
 
-> The mm-of-the-moment snapshot 2012-06-21-16-20 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> It contains the following patches against 3.5-rc3:
-> (patches marked "*" will be included in linux-next)
-> 
->   origin.patch
-> * selinux-fix-something.patch
+http://permalink.gmane.org/gmane.linux.ports.arm.kernel/172024
 
-< snip>
+to make above patchset complete.
 
-> * mm-compaction-handle-incorrect-migrate_unmovable-type-pageblocks.patch
-> * mm-compaction-handle-incorrect-migrate_unmovable-type-pageblocks-fix.patch
+--
+Viresh
 
+-- IMPORTANT NOTICE: The contents of this email and any attachments are con=
+fidential and may also be privileged. If you are not the intended recipient=
+, please notify the sender immediately and do not disclose the contents to =
+any other person, use it for any purpose, or store or copy the information =
+in any medium.  Thank you.
 
-Above two patch should be dropped. It has a bug.
-Ref: https://lkml.org/lkml/2012/6/13/529
-
-I sent bug fix patch.
-1. https://lkml.org/lkml/2012/6/13/568
-
-And then, clean up patch.
-2. https://lkml.org/lkml/2012/6/13/570
-
-Bartlomiej rebased his patch on above two patches.
-
-3. https://lkml.org/lkml/2012/6/14/361
-
-I hope I am not too late.
-
--- 
-Kind regards,
-Minchan Kim
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
