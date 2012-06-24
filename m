@@ -1,38 +1,71 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: linux-next: Tree for Jun 21 (netfilter)
-Date: Sat, 23 Jun 2012 02:19:04 +0200
-Message-ID: <20120623001904.GA21360@1984>
-References: <20120621161200.9f42414a528897bb016869e2@canb.auug.org.au>
- <4FE4AB02.9020100@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: mmotm 2012-06-21-16-20 uploaded (dm-thin)
+Date: Mon, 25 Jun 2012 00:44:25 +1000
+Message-ID: <20120625004425.5efce7fbca77b7cfa086922a@canb.auug.org.au>
+References: <20120621232149.F0286A026A@akpm.mtv.corp.google.com>
+	<4FE4AAAE.3090803@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <netfilter-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4FE4AB02.9020100@xenotime.net>
-Sender: netfilter-devel-owner@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__25_Jun_2012_00_44_25_+1000_pbz=KyXcAN2ZCXFd"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:39196 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752815Ab2FXOop (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 24 Jun 2012 10:44:45 -0400
+In-Reply-To: <4FE4AAAE.3090803@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-next@vger.kernel.org, Joe Thornber <dm-devel@redhat.com>, Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
 
-On Fri, Jun 22, 2012 at 10:27:30AM -0700, Randy Dunlap wrote:
-> On 06/20/2012 11:12 PM, Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Uploads to ra/geb.kernel.org are broken right now, so the tree will not
-> > be available until that is fixed and I have uploaded it.
-> > 
-> > News: All my builds are now done with gcc 4.6.3 and binutils 2.22.
-> > 
-> > Changes since 20120620:
-> 
-> on x86_64:
-> 
-> net/netfilter/nf_conntrack_netlink.c:1644:9: error: implicit declaration of function 'ctnetlink_secctx_size'
-> net/netfilter/nf_conntrack_netlink.c:1652:9: error: implicit declaration of function 'ctnetlink_proto_size'
+--Signature=_Mon__25_Jun_2012_00_44_25_+1000_pbz=KyXcAN2ZCXFd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll pass this patch to David to fix this issue:
+Hi Randy,
 
-http://1984.lsi.us.es/git/nf-next/commit/?id=8e36c4b5b673edc6081599b8bd461e062e4910f4
+On Fri, 22 Jun 2012 10:26:06 -0700 Randy Dunlap <rdunlap@xenotime.net> wrot=
+e:
+>
+> on i386:
+>=20
+> Apparently from linux-next.patch:
+>=20
+> drivers/built-in.o: In function `thin_iterate_devices':
+> dm-thin.c:(.text+0x206f07): undefined reference to `__udivdi3'
+> drivers/built-in.o: In function `pool_preresume':
+> dm-thin.c:(.text+0x207863): undefined reference to `__udivdi3'
 
-thanks for the report Randy.
+I assume that CONFIG_LDBAF is not set and I think this is caused by
+commit ebf5d9e0425c ("Non power of 2 blocksize support is needed to
+properly align thinp IO") from the device-mapper tree.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__25_Jun_2012_00_44_25_+1000_pbz=KyXcAN2ZCXFd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP5yfKAAoJEECxmPOUX5FE3I4P/ibmOEopwo/Rfu15KGPxhnhN
+T38Umi3Fl19Ess4NlrBRUddVB20uKoBg4GZwnFKaKjzDqgHHIDOiCLcN8VbCYnZn
+Gfav6e0EePIk0qQ8ygAClx3131vPCAcYRbYEj5V7pNc3lt8sLpWgXZ7d+XhXmdfs
+T9zI3ngTyxXs0T1podXVCvlm5lUyJLn9prTS3R/doSYUV1hr2Ah5wxWBQGtb/t2M
+F8EnwkTbr62behU5rhCOJDmyB3e/rTNRJ8X5DfPzb3uMwh9MwUY5Vowj636islEI
+ZMoobBSCp4GoWzkSu8PwYkNNyO2qTmRyREmPD+B5pv8l7ZM295vXN2l17w+bao2R
+FCHk59XBMMyaTmfd8IHAGQfyW8VLyNmtDCBVh83xyeam0f8By7VQ0ru3w0OeTSoU
+D0VapFDlxe2RZSQpUSpp4RSI3ra7LoiPsFHj0ZoohXs6T5oIAqznSVVt2Pt7RS3w
++1hrlZ5m8DclyZ4JhXmlubZA4/sE9Z3zeksaUHs25qZetDg08a+XigGR6NRAVkz3
+U1taqIsvZ//6gRPf8wWlLbXTD07BAAdjpEZbrDbEB1EkKXCyE/fSuI6L0V7Dzpj5
+SNExZ/DA0/BpbWdrBAvBkmd37dkjEYWgYYRohphNTr1gxFZmZIbMKfBz3DkWelCn
+Ys5Vmm/E4b+12wqIOCMq
+=63rF
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__25_Jun_2012_00_44_25_+1000_pbz=KyXcAN2ZCXFd--
