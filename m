@@ -1,62 +1,73 @@
-From: Rajeev kumar <rajeev-dlh.kumar@st.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Mon, 25 Jun 2012 11:39:30 +0530
-Message-ID: <4FE8009A.4020503@st.com>
-References: <20120625141140.c6d71065dab293005514ee1a@canb.auug.org.au>
+From: huang ying <huang.ying.caritas@gmail.com>
+Subject: Re: linux-next: manual merge of the pci tree with Linus' tree
+Date: Mon, 25 Jun 2012 14:32:54 +0800
+Message-ID: <CAC=cRTOPWSQmuxWtkpGDxiEeqoG=CEr985-qCLP+HAg6BPk7nA@mail.gmail.com>
+References: <20120625123108.06ef7f883a323df5221edc98@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eu1sys200aog104.obsmtp.com ([207.126.144.117]:43452 "EHLO
-	eu1sys200aog104.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753172Ab2FYGJu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Jun 2012 02:09:50 -0400
-In-Reply-To: <20120625141140.c6d71065dab293005514ee1a@canb.auug.org.au>
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:44017 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751087Ab2FYGcz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jun 2012 02:32:55 -0400
+In-Reply-To: <20120625123108.06ef7f883a323df5221edc98@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Huang Ying <ying.huang@intel.com>, Zheng Yan <zheng.z.yan@intel.com>
 
-Hi Stephen,
+Hi, Stephen,
 
-On 6/25/2012 9:41 AM, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Jun 25, 2012 at 10:31 AM, Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
+> Hi Bjorn,
 >
-> After merging the sound-asoc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Today's linux-next merge of the pci tree got a conflict in
+> drivers/pci/pci.c between commit c2fb8a3fa255 ("USB: add
+> NO_D3_DURING_SLEEP flag and revert 151b61284776be2") from Linus' tree=
+ and
+> commit 448bd857d48e ("PCI/PM: add PCIe runtime D3cold support") from =
+the
+> pci tree.
 >
-> ERROR: "clk_disable" [sound/soc/dwc/designware_i2s.ko] undefined!
-> ERROR: "clk_get" [sound/soc/dwc/designware_i2s.ko] undefined!
-> ERROR: "clk_enable" [sound/soc/dwc/designware_i2s.ko] undefined!
-> ERROR: "clk_put" [sound/soc/dwc/designware_i2s.ko] undefined!
+> I fixed it up (I think - see below) and can carry the fix as necessar=
+y.
+> --
+> Cheers,
+> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
+>
+> diff --cc drivers/pci/pci.c
+> index 77cb54a,3f8b74f..0000000
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@@ -1744,11 -1803,10 +1803,15 @@@ int pci_prepare_to_sleep(struct pc=
+i_de
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (target_state =3D=3D PCI_POWER_ERROR)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -EIO;
+>
+> + =C2=A0 =C2=A0 =C2=A0 /* D3cold during system suspend/hibernate is n=
+ot supported */
+> + =C2=A0 =C2=A0 =C2=A0 if (target_state > PCI_D3hot)
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 target_state =3D P=
+CI_D3hot;
+> +
+> =C2=A0+ =C2=A0 =C2=A0 =C2=A0/* Some devices mustn't be in D3 during s=
+ystem sleep */
+> =C2=A0+ =C2=A0 =C2=A0 =C2=A0if (target_state =3D=3D PCI_D3hot &&
+> =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0(dev->dev_flags & PCI_DEV_FLAGS_NO_D3_DURING_SLEEP))
+> =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;
+> =C2=A0+
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0pci_enable_wake(dev, target_state, device_=
+may_wakeup(&dev->dev));
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0error =3D pci_set_power_state(dev, target_=
+state);
 
-I have checked this on ARM platform where these definitions are 
-available (clk_get/clk_put* variants are usually used by ARM platforms).
+I found this conflict during development too.  I think the fixing is
+correct.  Thanks.
 
-To ensure compilation does not fail on x86_64 we can do either of three 
-things:
-
-1. Protecting clk_get/clk_put* calls under macro 'CONFIG_HAVE_CLK' in 
-the driver.
-
-2. Adding a check in Kconfig for HAVE_CLK.
-(But that will limit the compilation of this driver for only platforms 
-which are ARM based/or similar).
-
-3. We can pick the patches circulated by Viresh Kumar where we don't 
-have HAVE_CLK defined for x86_64, then the inline routines like 
-following should come into play:
-
-static inline unsigned long clk_get_rate(struct clk *clk)
-{
-         return 0;
-}
-
-See the patches for the same here:
-http://lkml.org/lkml/2012/4/24/154
-
-Please let me know your opinion.
-
-Best Regards
-Rajeev
+Best Regards,
+Huang Ying
