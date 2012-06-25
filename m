@@ -1,73 +1,63 @@
-From: huang ying <huang.ying.caritas@gmail.com>
-Subject: Re: linux-next: manual merge of the pci tree with Linus' tree
-Date: Mon, 25 Jun 2012 14:32:54 +0800
-Message-ID: <CAC=cRTOPWSQmuxWtkpGDxiEeqoG=CEr985-qCLP+HAg6BPk7nA@mail.gmail.com>
-References: <20120625123108.06ef7f883a323df5221edc98@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Mon, 25 Jun 2012 16:41:41 +1000
+Message-ID: <20120625164141.1c5b1b543e0309005dfd0d9c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__25_Jun_2012_16_41_41_+1000_sCL7wSPmJ2JSk1.H"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:44017 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751087Ab2FYGcz convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jun 2012 02:32:55 -0400
-In-Reply-To: <20120625123108.06ef7f883a323df5221edc98@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:37732 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754145Ab2FYGlw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jun 2012 02:41:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Huang Ying <ying.huang@intel.com>, Zheng Yan <zheng.z.yan@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, Al Viro <viro@ZenIV.linux.org.uk>, Miklos Szeredi <mszeredi@suse.cz>
 
-Hi, Stephen,
+--Signature=_Mon__25_Jun_2012_16_41_41_+1000_sCL7wSPmJ2JSk1.H
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 25, 2012 at 10:31 AM, Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> Hi Bjorn,
->
-> Today's linux-next merge of the pci tree got a conflict in
-> drivers/pci/pci.c between commit c2fb8a3fa255 ("USB: add
-> NO_D3_DURING_SLEEP flag and revert 151b61284776be2") from Linus' tree=
- and
-> commit 448bd857d48e ("PCI/PM: add PCIe runtime D3cold support") from =
-the
-> pci tree.
->
-> I fixed it up (I think - see below) and can carry the fix as necessar=
-y.
-> --
-> Cheers,
-> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
->
-> diff --cc drivers/pci/pci.c
-> index 77cb54a,3f8b74f..0000000
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@@ -1744,11 -1803,10 +1803,15 @@@ int pci_prepare_to_sleep(struct pc=
-i_de
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (target_state =3D=3D PCI_POWER_ERROR)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -EIO;
->
-> + =C2=A0 =C2=A0 =C2=A0 /* D3cold during system suspend/hibernate is n=
-ot supported */
-> + =C2=A0 =C2=A0 =C2=A0 if (target_state > PCI_D3hot)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 target_state =3D P=
-CI_D3hot;
-> +
-> =C2=A0+ =C2=A0 =C2=A0 =C2=A0/* Some devices mustn't be in D3 during s=
-ystem sleep */
-> =C2=A0+ =C2=A0 =C2=A0 =C2=A0if (target_state =3D=3D PCI_D3hot &&
-> =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0(dev->dev_flags & PCI_DEV_FLAGS_NO_D3_DURING_SLEEP))
-> =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;
-> =C2=A0+
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0pci_enable_wake(dev, target_state, device_=
-may_wakeup(&dev->dev));
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0error =3D pci_set_power_state(dev, target_=
-state);
+Hi Andrew,
 
-I found this conflict during development too.  I think the fixing is
-correct.  Thanks.
+After merging the akpm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Best Regards,
-Huang Ying
+fs/namei.c: In function 'path_openat':
+fs/namei.c:2874:4: error: 'filp' undeclared (first use in this function)
+
+Caused by patch "fs: add link restrictions" from the akpm tree
+interacting with (at least) commit 4066cd545681 ("vfs: remove open
+intents from nameidata") from the vfs tree.
+
+I don't know how to fix this, so I have reverted the akpm patch for today
+(in the hope that someone else will fix it).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__25_Jun_2012_16_41_41_+1000_sCL7wSPmJ2JSk1.H
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP6AglAAoJEECxmPOUX5FEsEEP/jnfHNOdoAkgm29P3imKFhc+
+aWX8CWBzxTPTp6Dc2Lh4M0H1as5atETI4E5gaHtGLqSSiYVngOCjasmuupyOJKpM
+5zB3B9SEMHG+8GcEU5JBko6niTPzkG5ZpXs+1PPeii7HEcjCL63k4EeoTs6YptEH
+GzPdoENZB5B5WViGfnjc2+0t4WMTDe9Iegr0LSjLdDn9m3DYF0FtvQ6xd7ZjBZxa
+jgg0GHl/guXUehAxicPEZuddCl65gbi/rjBDsdzc8iZDziB8+wDgyb4IfrU01nt5
+TFfH/HUgh3J4Q5gkljrzgLkofNHhFYTiMvYf8UkYFyfkc3EONYG9mfeZjA8Y6leK
+E2oOPowYnFhPFuGjD5XkWEcROtzL+oilT7j22ChK7qDpJO4Uc8/+8rasTOTuOMJU
+ZCbaYloq9Sl5c/JLlEBlulYSSamIGxmxYaNpXVjaC0bFdeNxdc4ODLBbnEE7uM3V
+HIo7huK+b4/y819AOZ3EMr0DulSSHsrYQCsdEgn2axOWF1cEVo79+H/olmQFUj0B
+rYD/8rWI0W+1N+8M6RNtisVAZxYhpgxS713U6yu0O9UQxnBNJpLtMFBBBPP3tZAs
+t9X7JEYFwFhGZkCdatqZpzIDF1UR5LbOf5oQ5OAaPZpXxoXZHnwljwhgbGgRuepN
+iKmSY0z4VDYGAbbCZFuV
+=UZKp
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__25_Jun_2012_16_41_41_+1000_sCL7wSPmJ2JSk1.H--
