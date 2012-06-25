@@ -1,70 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 25 Jun 2012 13:38:12 +1000
-Message-ID: <20120625133812.aad5804dca97e504650b7dd1@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 25 Jun 2012 14:11:40 +1000
+Message-ID: <20120625141140.c6d71065dab293005514ee1a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__25_Jun_2012_13_38_12_+1000_018ECF58LML2wX/1"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antonio Quartulli <ordex@autistici.org>, Sven Eckelmann <sven@narfation.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__25_Jun_2012_14_11_40_+1000_nrvdYKZvjeo3/jeL"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:38629 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750745Ab2FYEL5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jun 2012 00:11:57 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rajeev Kumar <rajeev-dlh.kumar@st.com>
 
---Signature=_Mon__25_Jun_2012_13_38_12_+1000_018ECF58LML2wX/1
+--Signature=_Mon__25_Jun_2012_14_11_40_+1000_nrvdYKZvjeo3/jeL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in
-net/batman-adv/translation-table.c between commit 8b8e4bc0391f
-("batman-adv: fix race condition in TT full-table replacement") from the
-net tree and commit 7d211efc5087 ("batman-adv: Prefix originator
-non-static functions with batadv_") from the net-next tree.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+ERROR: "clk_disable" [sound/soc/dwc/designware_i2s.ko] undefined!
+ERROR: "clk_get" [sound/soc/dwc/designware_i2s.ko] undefined!
+ERROR: "clk_enable" [sound/soc/dwc/designware_i2s.ko] undefined!
+ERROR: "clk_put" [sound/soc/dwc/designware_i2s.ko] undefined!
+
+Caused by commit 3a9cf8efd7b6 ("ASoC: Add support for synopsys i2s
+controller as per ASoC framework").  According to the Kconfig in the
+patch, this driver depends on nothing ...
+
+I have used the sound-asoc tree from next-20120622 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/batman-adv/translation-table.c
-index 2ab83d7,5180d50..0000000
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@@ -141,7 -139,8 +139,7 @@@ static void tt_orig_list_entry_free_rcu
-  	struct tt_orig_list_entry *orig_entry;
- =20
-  	orig_entry =3D container_of(rcu, struct tt_orig_list_entry, rcu);
-- 	orig_node_free_ref(orig_entry->orig_node);
- -	atomic_dec(&orig_entry->orig_node->tt_size);
-+ 	batadv_orig_node_free_ref(orig_entry->orig_node);
-  	kfree(orig_entry);
-  }
- =20
-
---Signature=_Mon__25_Jun_2012_13_38_12_+1000_018ECF58LML2wX/1
+--Signature=_Mon__25_Jun_2012_14_11_40_+1000_nrvdYKZvjeo3/jeL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP590kAAoJEECxmPOUX5FEnnYP/RfND0karGD/tYe8VLA2WkYH
-9VN7PPjqQKYLJk3hT0TSGfcZwaqDYU72LXsyNIn7t5pdEjz582jLnXaw63uf8lt1
-UhP1FKEjXWsMcgV3eKgdQ/LmWMlFHdHP7yYIill1kQeppsEtoxyqnKtxcUixEiPa
-W9zQhRJZ69e0Fi+GUes6EX8n8Bi2rBIcY2YchXDArd2wWM6VrP3qy4qEqk9uWYdb
-paOzaRnLmDW2tax4ObNnEvKrkPGr1lG851Fv8Z3llaDyZpEWMa/0amJB8OQuGauN
-1AVzEw6f9S7LAvRPP8MOT/Y+qeBTjcq/0ttIZA+hdWtvtF6oEkae0fDqK34vk2dv
-8jGco7yUXrqrnJaLUMrH6LdodSKU5rpcsFfxSB2eAfkPNd5s4CN8Ti/rLFRO5yvn
-//kiBxW1su2scahA9/WiHxXR/aNMpOidf7e5c40qTaoY66E6P5RFH+rKOYx+WZXf
-dM80uvE/kimSW9HYMrhCHkimmXC3jixRyr5tjqxoJ+Ry6crw1PQvLCH73p1d9G1E
-bR7CvaqSlqOt9MLcIfkRxpaCqElpn4oFwrl26o7KkST270ebWPv1+q9Qd8NHky4p
-T22TzWj4yOBtkPZ61kHpUwVmlXDIMqtjW6fuB1kt+ILzaH753GZr5DG9S2UwDuo+
-a1s0M/qCiYtNKMJqLjQS
-=CDXq
+iQIcBAEBCAAGBQJP5+T8AAoJEECxmPOUX5FE0HUP/RCwygKHwulg9stdn7NF3w0V
+fX8CevXBasTyTySKITtzHSvK3wH7BzR/HPCU1mig3v8fWCLY524bWkaMzmzolXQ0
+b6HhyX4K3pxZN5SpSUQmS/sUgRGtjWzdHO/T/+1F0riVFLuM8CXeDjJ9DaQ0OpEe
+/OgTR3CK2MfjgLim75vvzxSt9r++fGr2scpxE2o2YPy5EUc39BSnIaAJvaeARdX4
+N660SP15vD7uQ1JjOIA/oiISP4U1OzXQLEz6YcVqK2QkKtTEaNP/RLlXyTWED147
+J+MWPSWVswxYUqXWcJ52thG+oCRzgiYDDpPdUMuxUqwoSl+5xfeXZBj1OYZh3gbu
+OBkEk35LbgTcc57wgNVK8F7wnP42HBgmTx53LNE+HRf/aUvXXGbmcnVVHqWi3h06
+jGPd3v+xyEvo3ZaFwjsa5/Gq64tpgSRfBaSjFHUhI8RAM9qENfuTmV0VotcykduN
+t0xv439XXwaqoz6PCy12H3B8fLWlQZ2ehfTU0rJY6a6ArhKC/QiXzoYxNmfc3XaE
+FCHKGbwPGW6W1yowH6a5l3+rGkLh1ZG8F5mAAUs1p6yR6bqNCTjH1iuWbcpSNs90
+58R5uMT1hif9IrdQB+xFzrUc2KdYrKp/y+wycViiEOIv1WLoE8b+S1nJCuk+7sP6
+zIUE6OL/iu61zKxD4/G/
+=Rdyl
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__25_Jun_2012_13_38_12_+1000_018ECF58LML2wX/1--
+--Signature=_Mon__25_Jun_2012_14_11_40_+1000_nrvdYKZvjeo3/jeL--
