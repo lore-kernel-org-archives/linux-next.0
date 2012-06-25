@@ -1,91 +1,55 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: error: implicit declarations of BUG/BUG_ON/WARN_ON/WARN_ON_ONCE
-Date: Mon, 25 Jun 2012 11:53:02 +0900
-Message-ID: <20120625025301.GB9317@linux-sh.org>
-References: <20120615143303.3b88edcbc3efc7b1bf81839b@canb.auug.org.au>
- <20120615065231.GA12272@localhost>
- <4FDB6261.2030400@xenotime.net>
- <4FDF5D50.7030505@xenotime.net>
- <20120622071305.GA15102@localhost>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 25 Jun 2012 13:33:18 +1000
+Message-ID: <20120625133318.a57079c86bad4360828efac0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120622071305.GA15102@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__25_Jun_2012_13_33_18_+1000_wKb8ulSpM+VLtTPa"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkJqw7hybiBNb3JrIg==?= <bjorn@mork.no>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jun 22, 2012 at 03:13:05PM +0800, Fengguang Wu wrote:
-> On Mon, Jun 18, 2012 at 09:54:40AM -0700, Randy Dunlap wrote:
-> > On 06/15/2012 09:27 AM, Randy Dunlap wrote:
-> > 
-> > > On 06/14/2012 11:52 PM, Fengguang Wu wrote:
-> > > 
-> > >> On Fri, Jun 15, 2012 at 02:33:03PM +1000, Stephen Rothwell wrote:
-> > >>> Hi all,
-> > >>>
-> > >>> Changes since 20120614:
-> > >>>
-> > >>> My fixes tree contains:
-> > >>> 	fix bug.h's inclusion of kernel.h
-> > >>
-> > >> I got these errors with the attached randconfig. Not sure which change
-> > >> triggers them.
-> > > 
-> > > Ditto.  When CONFIG_BUG is not enabled.
-> > 
-> > 
-> > This problem is still in linux-next of 20120618...
-> 
-> It's now in Linus' tree..
-> 
-> Paul, any idea to fix this? The attached .config can reproduce the bug.
-> 
-I'm really starting to loathe this header. This should take care of it:
+--Signature=_Mon__25_Jun_2012_13_33_18_+1000_wKb8ulSpM+VLtTPa
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
+Hi all,
 
-diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
-index 506ec19..7d10f96 100644
---- a/include/asm-generic/bug.h
-+++ b/include/asm-generic/bug.h
-@@ -3,10 +3,18 @@
- 
- #include <linux/compiler.h>
- 
-+#ifdef CONFIG_GENERIC_BUG
-+#define BUGFLAG_WARNING		(1 << 0)
-+#define BUGFLAG_TAINT(taint)	(BUGFLAG_WARNING | ((taint) << 8))
-+#define BUG_GET_TAINT(bug)	((bug)->flags >> 8)
-+#endif
-+
-+#ifndef __ASSEMBLY__
-+#include <linux/kernel.h>
-+
- #ifdef CONFIG_BUG
- 
- #ifdef CONFIG_GENERIC_BUG
--#ifndef __ASSEMBLY__
- struct bug_entry {
- #ifndef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
- 	unsigned long	bug_addr;
-@@ -23,17 +31,8 @@ struct bug_entry {
- #endif
- 	unsigned short	flags;
- };
--#endif		/* __ASSEMBLY__ */
--
--#define BUGFLAG_WARNING		(1 << 0)
--#define BUGFLAG_TAINT(taint)	(BUGFLAG_WARNING | ((taint) << 8))
--#define BUG_GET_TAINT(bug)	((bug)->flags >> 8)
--
- #endif	/* CONFIG_GENERIC_BUG */
- 
--#ifndef __ASSEMBLY__
--#include <linux/kernel.h>
--
- /*
-  * Don't use BUG() or BUG_ON() unless there's really no way out; one
-  * example might be detecting data structure corruption in the middle
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/usb/qmi_wwan.c between commit b9f90eb27402 ("net: qmi_wwan:
+fix Gobi device probing") from the net tree and various commits from the
+net-next tree.
+
+I am not sure how to fix this, but the comments in the net tree commit
+implied that it would be placed in the 3.6 code, so I just used the
+version of this file from the net-next tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Mon__25_Jun_2012_13_33_18_+1000_wKb8ulSpM+VLtTPa
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP59v+AAoJEECxmPOUX5FEfnoP/1wJ2+5sV9ul1lqwnD+VOvtv
+U10dLgP6mpa0b5MU7dduiYqZ6UJ5CTQr3ELzDFfkwHtRqsYl+pjZTVIPTQL1JvE1
+RLUSkwB6QW/vjz3DsBGaecyS3p9ChO4hiMNUWOigEncTbD8SpbKjFZMRHe4rMLcM
+pbuT+10zzX1iY++kyyzAZgU9yZJ5s6lv/cnKtNagu1U5toYRwlTDryxT+9sZBD1Z
+Si/KxM0onHCynRvxsY41nYP4vX9aFfVFp/xjfXOpEB00rcOelmlibDOY/gLY7BAS
+19R0Nu1ABDS8WD0awyoXdwgCyXDsyWtgfmE0KGRKi0HPoNxAPHa6uRM1bZw57Fj6
+RcVzguQ8XewotdK66I1PG2I/QPPf0SdU/Jv2hjAgGOJsvQuUpBsFShZmbN3KafgF
+5nvnXKaoO7fwu9che8240Gg3gQM75NeTPGnHhXRRhFESw1wLRA11ckuK7SbAQ/op
+KZaLvGQaAT2Nd7YzHoLzdwH+1+CiQgdHVX2lUDKW+biPx+Ni8W4iDEnq5eEci/X7
+r1dakiX0IxOZuHo1TaK6yYUJVQKvSXy9eSfuscxvz+TKA18bH+ktZusM0AJ871ET
+la1Gx/Mb232Z/fkadq7llqvJky3ZlTiR+dlam5HEwiHGSnL72ROdgpXxNi5yGCDW
+S5+sw9R6SAgFcFDeQhJE
+=dYqs
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__25_Jun_2012_13_33_18_+1000_wKb8ulSpM+VLtTPa--
