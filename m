@@ -1,18 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 25 Jun 2012 13:33:18 +1000
-Message-ID: <20120625133318.a57079c86bad4360828efac0@canb.auug.org.au>
+Date: Mon, 25 Jun 2012 13:38:12 +1000
+Message-ID: <20120625133812.aad5804dca97e504650b7dd1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__25_Jun_2012_13_33_18_+1000_wKb8ulSpM+VLtTPa"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
+ boundary="Signature=_Mon__25_Jun_2012_13_38_12_+1000_018ECF58LML2wX/1"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkJqw7hybiBNb3JrIg==?= <bjorn@mork.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Antonio Quartulli <ordex@autistici.org>, Sven Eckelmann <sven@narfation.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__25_Jun_2012_13_33_18_+1000_wKb8ulSpM+VLtTPa
+--Signature=_Mon__25_Jun_2012_13_38_12_+1000_018ECF58LML2wX/1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -20,36 +20,51 @@ Content-Transfer-Encoding: quoted-printable
 Hi all,
 
 Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/usb/qmi_wwan.c between commit b9f90eb27402 ("net: qmi_wwan:
-fix Gobi device probing") from the net tree and various commits from the
-net-next tree.
+net/batman-adv/translation-table.c between commit 8b8e4bc0391f
+("batman-adv: fix race condition in TT full-table replacement") from the
+net tree and commit 7d211efc5087 ("batman-adv: Prefix originator
+non-static functions with batadv_") from the net-next tree.
 
-I am not sure how to fix this, but the comments in the net tree commit
-implied that it would be placed in the 3.6 code, so I just used the
-version of this file from the net-next tree.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__25_Jun_2012_13_33_18_+1000_wKb8ulSpM+VLtTPa
+diff --cc net/batman-adv/translation-table.c
+index 2ab83d7,5180d50..0000000
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@@ -141,7 -139,8 +139,7 @@@ static void tt_orig_list_entry_free_rcu
+  	struct tt_orig_list_entry *orig_entry;
+ =20
+  	orig_entry =3D container_of(rcu, struct tt_orig_list_entry, rcu);
+- 	orig_node_free_ref(orig_entry->orig_node);
+ -	atomic_dec(&orig_entry->orig_node->tt_size);
++ 	batadv_orig_node_free_ref(orig_entry->orig_node);
+  	kfree(orig_entry);
+  }
+ =20
+
+--Signature=_Mon__25_Jun_2012_13_38_12_+1000_018ECF58LML2wX/1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP59v+AAoJEECxmPOUX5FEfnoP/1wJ2+5sV9ul1lqwnD+VOvtv
-U10dLgP6mpa0b5MU7dduiYqZ6UJ5CTQr3ELzDFfkwHtRqsYl+pjZTVIPTQL1JvE1
-RLUSkwB6QW/vjz3DsBGaecyS3p9ChO4hiMNUWOigEncTbD8SpbKjFZMRHe4rMLcM
-pbuT+10zzX1iY++kyyzAZgU9yZJ5s6lv/cnKtNagu1U5toYRwlTDryxT+9sZBD1Z
-Si/KxM0onHCynRvxsY41nYP4vX9aFfVFp/xjfXOpEB00rcOelmlibDOY/gLY7BAS
-19R0Nu1ABDS8WD0awyoXdwgCyXDsyWtgfmE0KGRKi0HPoNxAPHa6uRM1bZw57Fj6
-RcVzguQ8XewotdK66I1PG2I/QPPf0SdU/Jv2hjAgGOJsvQuUpBsFShZmbN3KafgF
-5nvnXKaoO7fwu9che8240Gg3gQM75NeTPGnHhXRRhFESw1wLRA11ckuK7SbAQ/op
-KZaLvGQaAT2Nd7YzHoLzdwH+1+CiQgdHVX2lUDKW+biPx+Ni8W4iDEnq5eEci/X7
-r1dakiX0IxOZuHo1TaK6yYUJVQKvSXy9eSfuscxvz+TKA18bH+ktZusM0AJ871ET
-la1Gx/Mb232Z/fkadq7llqvJky3ZlTiR+dlam5HEwiHGSnL72ROdgpXxNi5yGCDW
-S5+sw9R6SAgFcFDeQhJE
-=dYqs
+iQIcBAEBCAAGBQJP590kAAoJEECxmPOUX5FEnnYP/RfND0karGD/tYe8VLA2WkYH
+9VN7PPjqQKYLJk3hT0TSGfcZwaqDYU72LXsyNIn7t5pdEjz582jLnXaw63uf8lt1
+UhP1FKEjXWsMcgV3eKgdQ/LmWMlFHdHP7yYIill1kQeppsEtoxyqnKtxcUixEiPa
+W9zQhRJZ69e0Fi+GUes6EX8n8Bi2rBIcY2YchXDArd2wWM6VrP3qy4qEqk9uWYdb
+paOzaRnLmDW2tax4ObNnEvKrkPGr1lG851Fv8Z3llaDyZpEWMa/0amJB8OQuGauN
+1AVzEw6f9S7LAvRPP8MOT/Y+qeBTjcq/0ttIZA+hdWtvtF6oEkae0fDqK34vk2dv
+8jGco7yUXrqrnJaLUMrH6LdodSKU5rpcsFfxSB2eAfkPNd5s4CN8Ti/rLFRO5yvn
+//kiBxW1su2scahA9/WiHxXR/aNMpOidf7e5c40qTaoY66E6P5RFH+rKOYx+WZXf
+dM80uvE/kimSW9HYMrhCHkimmXC3jixRyr5tjqxoJ+Ry6crw1PQvLCH73p1d9G1E
+bR7CvaqSlqOt9MLcIfkRxpaCqElpn4oFwrl26o7KkST270ebWPv1+q9Qd8NHky4p
+T22TzWj4yOBtkPZ61kHpUwVmlXDIMqtjW6fuB1kt+ILzaH753GZr5DG9S2UwDuo+
+a1s0M/qCiYtNKMJqLjQS
+=CDXq
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__25_Jun_2012_13_33_18_+1000_wKb8ulSpM+VLtTPa--
+--Signature=_Mon__25_Jun_2012_13_38_12_+1000_018ECF58LML2wX/1--
