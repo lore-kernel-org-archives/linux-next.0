@@ -1,36 +1,53 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: linux-next : cpuidle - could you add my tree please
-Date: Mon, 25 Jun 2012 15:27:03 +0200
-Message-ID: <4FE86727.5010400@linaro.org>
-References: <4FDEE98D.7010802@linaro.org> <4FDF2D58.9010006@ti.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: linux-next: manual merge of the pci tree with Linus' tree
+Date: Mon, 25 Jun 2012 10:14:12 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1206251012470.1770-100000@iolanthe.rowland.org>
+References: <20120625123108.06ef7f883a323df5221edc98@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:49447 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756240Ab2FYN1G (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jun 2012 09:27:06 -0400
-Received: by bkcji2 with SMTP id ji2so3121104bkc.19
-        for <linux-next@vger.kernel.org>; Mon, 25 Jun 2012 06:27:04 -0700 (PDT)
-In-Reply-To: <4FDF2D58.9010006@ti.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120625123108.06ef7f883a323df5221edc98@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Amit Kucheria <amit.kucheria@linaro.org>, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Rob Lee <rob.lee@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Huang Ying <ying.huang@intel.com>, Zheng Yan <zheng.z.yan@intel.com>
+List-Id: linux-next.vger.kernel.org
 
+On Mon, 25 Jun 2012, Stephen Rothwell wrote:
 
+> Hi Bjorn,
+> 
+> Today's linux-next merge of the pci tree got a conflict in
+> drivers/pci/pci.c between commit c2fb8a3fa255 ("USB: add
+> NO_D3_DURING_SLEEP flag and revert 151b61284776be2") from Linus' tree and
+> commit 448bd857d48e ("PCI/PM: add PCIe runtime D3cold support") from the
+> pci tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/pci/pci.c
+> index 77cb54a,3f8b74f..0000000
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@@ -1744,11 -1803,10 +1803,15 @@@ int pci_prepare_to_sleep(struct pci_de
+>   	if (target_state == PCI_POWER_ERROR)
+>   		return -EIO;
+>   
+> + 	/* D3cold during system suspend/hibernate is not supported */
+> + 	if (target_state > PCI_D3hot)
+> + 		target_state = PCI_D3hot;
+> + 
+>  +	/* Some devices mustn't be in D3 during system sleep */
+>  +	if (target_state == PCI_D3hot &&
+>  +			(dev->dev_flags & PCI_DEV_FLAGS_NO_D3_DURING_SLEEP))
+>  +		return 0;
+>  +
+>   	pci_enable_wake(dev, target_state, device_may_wakeup(&dev->dev));
+>   
+>   	error = pci_set_power_state(dev, target_state);
 
-Hi Stephen,
+This looks right to me too.
 
-we discussed last week to put in place a tree grouping the cpuidle
-modifications [1]. Is it possible to add the tree ?
-
-git://git.linaro.org/people/dlezcano/cpuidle-next.git #cpuidle-next
-
-It contains for the moment Colin Cross's cpuidle coupled states.
-
-Thanks in advance
-  -- Daniel
-
-[1] https://lkml.org/lkml/2012/6/18/113
+Alan Stern
