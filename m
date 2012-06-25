@@ -1,90 +1,93 @@
-From: Andreas Schwab <schwab-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [PATCH] mod/file2alias: make modalias generation safe for cross compiling
-Date: Mon, 25 Jun 2012 23:43:15 +0200
-Message-ID: <m28vfb130s.fsf@igel.home>
-References: <CAMuHMdXk6pByz14JcDgY+UE6QM0sHD8cbXye9CgOVSRRtr7J+Q@mail.gmail.com>
-	<20120615201021.GB14544@kroah.com>
-	<CAMuHMdUj6tAcWhkSkV43Kw3-2-3+JzgP6W=2w3fjL2KBfRh9ZQ@mail.gmail.com>
-	<20120615231220.GC8205@kroah.com> <87lijns84s.fsf@nemi.mork.no>
-	<m2bokjb6tv.fsf@igel.home> <87fw9urqau.fsf@nemi.mork.no>
-	<m2d34n1sz9.fsf_-_@igel.home>
-	<alpine.DEB.2.00.1206252217580.21346@ayla.of.borg>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next : cpuidle - could you add my tree please
+Date: Tue, 26 Jun 2012 08:53:49 +1000
+Message-ID: <20120626085349.532133b8b72c92ffa6519043@canb.auug.org.au>
+References: <4FDEE98D.7010802@linaro.org>
+	<4FDF2D58.9010006@ti.com>
+	<4FE86727.5010400@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.00.1206252217580.21346-97SZ98TBZzA1xEWliksxXw@public.gmane.org> (Geert
-	Uytterhoeven's message of "Mon, 25 Jun 2012 22:32:53 +0200 (CEST)")
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Cc: =?utf-8?Q?Bj=C3=B8rn?= Mork <bjorn-yOkvZcmFvRU@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kbuild <linux-kbuild-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux/m68k <linux-m68k-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__26_Jun_2012_08_53_49_+1000_Nuiqzk1NuC2Y/NmR"
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <4FE86727.5010400@linaro.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Amit Kucheria <amit.kucheria@linaro.org>, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Rob Lee <rob.lee@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
-Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org> writes:
+--Signature=_Tue__26_Jun_2012_08_53_49_+1000_Nuiqzk1NuC2Y/NmR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 	Hi Andreas,
->
-> On Mon, 25 Jun 2012, Andreas Schwab wrote:
->> --- /dev/null
->> +++ b/scripts/mod/devicetable-offsets.c
->> @@ -0,0 +1,171 @@
->> +#include <linux/kbuild.h>
->> +#include <linux/mod_devicetable.h>
->> +
->> +#define DEVID(devid) DEFINE(SIZE_##devid, sizeof(struct devid))
->> +#define DEVID_FIELD(devid, field) \
->> +	DEFINE(OFF_##devid##_##field, offsetof(struct devid, field))
->> +
->> +int main(void)
->> +{
->> +	DEVID(usb_device_id);
->> +	DEVID_FIELD(usb_device_id, match_flags);
->> +	DEVID_FIELD(usb_device_id, idVendor);
->> +	DEVID_FIELD(usb_device_id, idProduct);
->> +	DEVID_FIELD(usb_device_id, bcdDevice_lo);
->> +	DEVID_FIELD(usb_device_id, bcdDevice_hi);
->> +	DEVID_FIELD(usb_device_id, bDeviceClass);
->> +	DEVID_FIELD(usb_device_id, bDeviceSubClass);
->> +	DEVID_FIELD(usb_device_id, bDeviceProtocol);
->> +	DEVID_FIELD(usb_device_id, bInterfaceClass);
->> +	DEVID_FIELD(usb_device_id, bInterfaceSubClass);
->> +	DEVID_FIELD(usb_device_id, bInterfaceProtocol);
->
-> These are all duplicates of the structures in <linux/mod_devicetable.h>.
-> Can't you get rid of the duplication by putting e.g. the following
-> in <linux/mod_devicetable.h>:
->
->     DEVID_START(usb_device_id);
->     DEVID_FIELD(usb_device_id, __u16, match_flags);
->     DEVID_FIELD(usb_device_id, __u16, idVendor);
->     DEVID_FIELD(usb_device_id, __u16, idProduct);
->     DEVID_FIELD(usb_device_id, __u16, bcdDevice_lo);
->     DEVID_FIELD(usb_device_id, __u16, bcdDevice_hi);
->     DEVID_FIELD(usb_device_id, __u8, bDeviceClass);
->     DEVID_FIELD(usb_device_id, __u8, bDeviceSubClass);
->     DEVID_FIELD(usb_device_id, __u8, bDeviceProtocol);
->     DEVID_FIELD(usb_device_id, __u8, bInterfaceClass);
->     DEVID_FIELD(usb_device_id, __u8, bInterfaceSubClass);
->     DEVID_FIELD(usb_device_id, __u8, bInterfaceProtocol);
->     DEVID_END();
->
-> and redefining the DEVID_*() macros depending on
->   1. __KERNEL__, to generate the C struct definitions for kernel builds,
->   2. first inclusion by devicetable-offsets.c, also to generate C struct
->      definitions,
->   3. second inclusion by devicetable-offsets.c, to generate the sizes and
->      offset definitions for modalias?
+Hi Daniel,
 
-That requires some reorganisation of the struct pnp_card_device_id which
-has a somewhat complicated structure (which also accounts for the
-ugliest part of the patch).
+On Mon, 25 Jun 2012 15:27:03 +0200 Daniel Lezcano <daniel.lezcano@linaro.or=
+g> wrote:
+>
+> we discussed last week to put in place a tree grouping the cpuidle
+> modifications [1]. Is it possible to add the tree ?
+>=20
+> git://git.linaro.org/people/dlezcano/cpuidle-next.git #cpuidle-next
+>=20
+> It contains for the moment Colin Cross's cpuidle coupled states.
 
-Andreas.
+Added from today.
 
--- 
-Andreas Schwab, schwab-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
-GPG Key fingerprint = 58CA 54C7 6D53 942B 1756  01D3 44D5 214B 8276 4ED5
-"And now for something completely different."
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Tue__26_Jun_2012_08_53_49_+1000_Nuiqzk1NuC2Y/NmR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP6Ov9AAoJEECxmPOUX5FE4IUP/2q3WNVkErDVVcKmdF2aGXHd
+s8puPfgYWRb6JoxPfznHKUL+OR4i+DOcTX423zdxk6vVViAr6LcJ0+L/giEGf/3O
+4UPcbo3Or3xFUduiUyCHkhWVRo9LAJsDidak6e9xfZ/3eJdQXdo1E2oPRnWTcKlq
+EosOkysGPaafeqRHmQCX9wIV7Pzz33cyBEqnK+CpWmEguPYR4DJ0sOun4AezROLY
+aQJ2YXIO9UoIxuwFUcIX97n6T0kAK5XveSiuEu3lHxZiNGebP+3RAL/zQavP9yWH
+KOlFboM4gQeOQ4McjHpWsEcR0sgqIGxZRC8RKy/bUZILxGZbVFKzmQB6clHADntn
+W0xiAZkWoEk6qw6hizVdD7Bg9Xv18NT9OBUn2tlu6HqLJ82weSIaijdUVr6F0Gd8
+z0rmgMFCY84rOVWRsDINoKpkr355AEIN9Yw5kLHlik/bdvj/x9n+p0k6iRMXJEpX
+LH0QzsSwwk4qwy0F5SisZyITYhgKqGvEe2gsYXt3uSkhiL0U0xqgtlkGjNSX265n
+eIRJ+7gZJizEF+S7/6VTFNqvO/QnCufa5f6wDb66PU1UZhlIQeGXgG+eKpi4bnj5
+8sT9mx8uKq2RmNmVOKDsi3fBfBkYbQvovkP2u0enz+uNOpb2Ukcob0RmiuWoSbks
+pDusNptPuaBTC0nLwjE0
+=onhO
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__26_Jun_2012_08_53_49_+1000_Nuiqzk1NuC2Y/NmR--
