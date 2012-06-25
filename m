@@ -1,62 +1,41 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Mon, 25 Jun 2012 09:40:49 -0700
-Message-ID: <20120625164049.GO5042@outflux.net>
-References: <20120625164141.1c5b1b543e0309005dfd0d9c@canb.auug.org.au>
+From: Mark Salter <msalter-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: nfs root problem in linux-next
+Date: Mon, 25 Jun 2012 16:26:45 -0400
+Message-ID: <1340656006.20557.30.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.outflux.net ([198.145.64.163]:55427 "EHLO smtp.outflux.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754534Ab2FYQlT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Jun 2012 12:41:19 -0400
-Content-Disposition: inline
-In-Reply-To: <20120625164141.1c5b1b543e0309005dfd0d9c@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, Al Viro <viro@ZenIV.linux.org.uk>, Miklos Szeredi <mszeredi@suse.cz>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org
+Cc: linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+As of Friday's linux-next I've been unable to successfully boot using an
+nfs root with a c6x board. I bisected it to this patch:
 
-On Mon, Jun 25, 2012 at 04:41:41PM +1000, Stephen Rothwell wrote:
-> After merging the akpm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/namei.c: In function 'path_openat':
-> fs/namei.c:2874:4: error: 'filp' undeclared (first use in this function)
-> 
-> Caused by patch "fs: add link restrictions" from the akpm tree
-> interacting with (at least) commit 4066cd545681 ("vfs: remove open
-> intents from nameidata") from the vfs tree.
-> 
-> I don't know how to fix this, so I have reverted the akpm patch for today
-> (in the hope that someone else will fix it).
+  commit cc3b296fd9a01c9e654bcb9373af70dd6e32fb24
+  Author: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
+  Date:   Thu Jun 21 14:53:10 2012 -0400
 
-It looks like namei.c changed the logic of the lookup loop. This should
-fix it.
+      SUNRPC: Clean up xdr_read_pages and xdr_enter_page
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
+I placed "good-boot" and "bad-boot" packet capture files at:
 
----
+  http://people.redhat.com/~msalter/linux-next/
 
-diff -uNrp a/fs/namei.c b/fs/namei.c
---- a/fs/namei.c	2012-06-25 09:30:28.125746562 -0700
-+++ b/fs/namei.c	2012-06-25 09:31:29.456997558 -0700
-@@ -2870,10 +2870,8 @@ static struct file *path_openat(int dfd,
- 			break;
- 		}
- 		error = may_follow_link(&link);
--		if (unlikely(error)) {
--			filp = ERR_PTR(error);
-+		if (unlikely(error))
- 			break;
--		}
- 		nd->flags |= LOOKUP_PARENT;
- 		nd->flags &= ~(LOOKUP_OPEN|LOOKUP_CREATE|LOOKUP_EXCL);
- 		error = follow_link(&link, nd, &cookie);
+The only difference in the kernels used is the above patch. The
+bad-boot mounted the nfs root but was unable to find the init
+file which caused a panic. The nfsroot= parameter uses v3,tcp
+flags and the server side is running rhel6.
+
+I'm not at all familiar with the nfs code, but can help with
+testing or providing any addtional info needed.
+
+--Mark
 
 
--- 
-Kees Cook
-Chrome OS Security
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
