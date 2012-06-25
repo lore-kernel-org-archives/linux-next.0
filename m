@@ -1,27 +1,69 @@
-From: Alasdair G Kergon <agk@redhat.com>
-Subject: Re: [dm-devel] mmotm 2012-06-21-16-20 uploaded (dm-thin)
-Date: Sun, 24 Jun 2012 17:55:55 +0100
-Message-ID: <20120624165555.GA17647@agk-dp.fab.redhat.com>
-References: <20120621232149.F0286A026A@akpm.mtv.corp.google.com> <4FE4AAAE.3090803@xenotime.net> <20120625004425.5efce7fbca77b7cfa086922a@canb.auug.org.au>
+From: Zhangfei Gao <zgao6@marvell.com>
+Subject: Re: linux-next: build failure after merge of the slave-dma tree
+Date: Mon, 25 Jun 2012 09:21:20 +0800
+Message-ID: <1340587280.14586.9.camel@apse>
+References: <20120622130049.05d18e86de1256aa980566b0@canb.auug.org.au>
+	 <1340341305.1562.2.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:10180 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752328Ab2FXQ4q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 24 Jun 2012 12:56:46 -0400
-Content-Disposition: inline
-In-Reply-To: <20120625004425.5efce7fbca77b7cfa086922a@canb.auug.org.au>
+Received: from na3sys009aog116.obsmtp.com ([74.125.149.240]:44109 "EHLO
+	na3sys009aog116.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750908Ab2FYBWG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 24 Jun 2012 21:22:06 -0400
+In-Reply-To: <1340341305.1562.2.camel@vkoul-udesk3>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mike Snitzer <snitzer@redhat.com>, linux-kernel@vger.kernel.org, Joe Thornber <dm-devel@redhat.com>, linux-next@vger.kernel.org, akpm@linux-foundation.org, Alasdair Kergon <agk@redhat.com>
+To: Vinod Koul <vinod.koul@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Leo Yan <leoy@marvell.com>, Qiao Zhou <zhouqiao@marvell.com>
 
-On Mon, Jun 25, 2012 at 12:44:25AM +1000, Stephen Rothwell wrote:
-> I assume that CONFIG_LDBAF is not set and I think this is caused by
-> commit ebf5d9e0425c ("Non power of 2 blocksize support is needed to
-> properly align thinp IO") from the device-mapper tree.
- 
-Ah yes, I'll fix that, and check we handle "too large" devices sensibly.
+On Thu, 2012-06-21 at 22:01 -0700, Vinod Koul wrote:
+> On Fri, 2012-06-22 at 13:00 +1000, Stephen Rothwell wrote:
+> > Hi Vinod,
+> > 
+> > After merging the slave-dma tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > drivers/dma/mmp_tdma.c:21:27: fatal error: mach/regs-icu.h: No such file or directory
+> > 
+> > Caused by commit c6da0ba8dfc8 ("dmaengine: mmp_tdma: add mmp tdma
+> > support").
+> > 
+> > I have used the slave-dma tree from next-20120621 for today.
+> Thanks Stephen,
+> 
+> It should not build for this target!. I will added the below patch to
+> fix the failure
+> 
+> >From 0efc8562577cd6a022b8b42d58fcf58ffc2a91d3 Mon Sep 17 00:00:00 2001
+> From: Vinod Koul <vinod.koul@linux.intel.com>
+> Date: Fri, 22 Jun 2012 10:29:53 +0530
+> Subject: [PATCH] dmaengine: mmp_tdma: fix the arch dependency
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Vinod Koul <vinod.koul@linux.intel.com>
+> ---
+>  drivers/dma/Kconfig |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+> index 90fec0e..d45cf1b 100644
+> --- a/drivers/dma/Kconfig
+> +++ b/drivers/dma/Kconfig
+> @@ -276,7 +276,7 @@ config DMA_SA11X0
+>  
+>  config MMP_TDMA
+>  	bool "MMP Two-Channel DMA support"
+> -	default ARCH_MMP
+> +	depends on ARCH_MMP
+>  	select DMA_ENGINE
+>  	help
+>  	  Support the MMP Two-Channel DMA engine.
+> -- 
+> 1.7.0.4
+> 
 
-Alasdair
+Thanks Vinod and Stephen, sorry for the trouble.
+> 
