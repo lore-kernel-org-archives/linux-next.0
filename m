@@ -1,28 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 25 Jun 2012 16:04:52 -0700 (PDT)
-Message-ID: <20120625.160452.987297805118709913.davem@davemloft.net>
-References: <20120625133812.aad5804dca97e504650b7dd1@canb.auug.org.au>
+From: "Myklebust, Trond" <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
+Subject: Re: nfs root problem in linux-next
+Date: Mon, 25 Jun 2012 23:14:14 +0000
+Message-ID: <1340666049.4362.9.camel@lade.trondhjem.org>
+References: <1340656006.20557.30.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120625133812.aad5804dca97e504650b7dd1@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ordex@autistici.org, sven@narfation.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1340656006.20557.30.camel-PDpCo7skNiwAicBL8TP8PQ@public.gmane.org>
+Content-Language: en-US
+Content-ID: <43DAC10FDF99634CBCA51F005A52B89E-oP88Kt8RkgzdA/Lu/QRl1Q@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Salter <msalter-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 25 Jun 2012 13:38:12 +1000
-
-> Today's linux-next merge of the net-next tree got a conflict in
-> net/batman-adv/translation-table.c between commit 8b8e4bc0391f
-> ("batman-adv: fix race condition in TT full-table replacement") from the
-> net tree and commit 7d211efc5087 ("batman-adv: Prefix originator
-> non-static functions with batadv_") from the net-next tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
-
-I've also resolved this during today's net --> net-next merge.
+T24gTW9uLCAyMDEyLTA2LTI1IGF0IDE2OjI2IC0wNDAwLCBNYXJrIFNhbHRlciB3cm90ZToNCj4g
+QXMgb2YgRnJpZGF5J3MgbGludXgtbmV4dCBJJ3ZlIGJlZW4gdW5hYmxlIHRvIHN1Y2Nlc3NmdWxs
+eSBib290IHVzaW5nIGFuDQo+IG5mcyByb290IHdpdGggYSBjNnggYm9hcmQuIEkgYmlzZWN0ZWQg
+aXQgdG8gdGhpcyBwYXRjaDoNCj4gDQo+ICAgY29tbWl0IGNjM2IyOTZmZDlhMDFjOWU2NTRiY2I5
+MzczYWY3MGRkNmUzMmZiMjQNCj4gICBBdXRob3I6IFRyb25kIE15a2xlYnVzdCA8VHJvbmQuTXlr
+bGVidXN0QG5ldGFwcC5jb20+DQo+ICAgRGF0ZTogICBUaHUgSnVuIDIxIDE0OjUzOjEwIDIwMTIg
+LTA0MDANCj4gDQo+ICAgICAgIFNVTlJQQzogQ2xlYW4gdXAgeGRyX3JlYWRfcGFnZXMgYW5kIHhk
+cl9lbnRlcl9wYWdlDQo+IA0KPiBJIHBsYWNlZCAiZ29vZC1ib290IiBhbmQgImJhZC1ib290IiBw
+YWNrZXQgY2FwdHVyZSBmaWxlcyBhdDoNCj4gDQo+ICAgaHR0cDovL3Blb3BsZS5yZWRoYXQuY29t
+L35tc2FsdGVyL2xpbnV4LW5leHQvDQo+IA0KPiBUaGUgb25seSBkaWZmZXJlbmNlIGluIHRoZSBr
+ZXJuZWxzIHVzZWQgaXMgdGhlIGFib3ZlIHBhdGNoLiBUaGUNCj4gYmFkLWJvb3QgbW91bnRlZCB0
+aGUgbmZzIHJvb3QgYnV0IHdhcyB1bmFibGUgdG8gZmluZCB0aGUgaW5pdA0KPiBmaWxlIHdoaWNo
+IGNhdXNlZCBhIHBhbmljLiBUaGUgbmZzcm9vdD0gcGFyYW1ldGVyIHVzZXMgdjMsdGNwDQo+IGZs
+YWdzIGFuZCB0aGUgc2VydmVyIHNpZGUgaXMgcnVubmluZyByaGVsNi4NCj4gDQo+IEknbSBub3Qg
+YXQgYWxsIGZhbWlsaWFyIHdpdGggdGhlIG5mcyBjb2RlLCBidXQgY2FuIGhlbHAgd2l0aA0KPiB0
+ZXN0aW5nIG9yIHByb3ZpZGluZyBhbnkgYWRkdGlvbmFsIGluZm8gbmVlZGVkLg0KDQpIaSBNYXJr
+LA0KDQpTbyB5b3UgYXJlIHNheWluZyB0aGF0IHJldmVydGluZyB0aGF0IHBhdGNoIGFsb25lIHN1
+ZmZpY2VzIHRvIGZpeCB0aGUNCnByb2JsZW0gdGhhdCB5b3UgYXJlIHNlZWluZz8NCg0KRmlyc3Rs
+eSwgYSBiaWcgIlRoYW5rIFlvdSEhISIgZm9yIHRlc3RpbmcgdGhlIGxpbnV4LW5leHQgYnJhbmNo
+LiBJIHZlcnkNCm11Y2ggYXBwcmVjaWF0ZSB0aGF0IHlvdSByZXBvcnQgdGhlIGJ1Z3MgYmVmb3Jl
+IHRoZXkgZ2V0IG1lcmdlZA0KdXBzdHJlYW0uDQoNCkknbGwgaGF2ZSBhIGxvb2sgdG8gc2VlIGlm
+IEkgY2FuIGZpbmQgb3V0IHdoYXQgaXMgdGhlIHByb2JsZW0uIFRoZSBvbmx5DQpzaWduaWZpY2Fu
+dCBjaGFuZ2UgdGhhdCBwYXRjaCBzaG91bGQgYmUgaW50cm9kdWNpbmcgd291bGQgYmUgdGhlIHVz
+ZSBvZg0KeGRyX3N0cmVhbV9wb3MoKS4NCg0KLS0gDQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4IE5G
+UyBjbGllbnQgbWFpbnRhaW5lcg0KDQpOZXRBcHANClRyb25kLk15a2xlYnVzdEBuZXRhcHAuY29t
+DQp3d3cubmV0YXBwLmNvbQ0KDQo=
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
