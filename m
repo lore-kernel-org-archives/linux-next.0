@@ -1,41 +1,128 @@
-From: Mark Salter <msalter-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: nfs root problem in linux-next
-Date: Mon, 25 Jun 2012 16:26:45 -0400
-Message-ID: <1340656006.20557.30.camel@deneb.redhat.com>
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: [PATCH] mod/file2alias: make modalias generation safe for cross
+ compiling
+Date: Mon, 25 Jun 2012 22:32:53 +0200 (CEST)
+Message-ID: <alpine.DEB.2.00.1206252217580.21346@ayla.of.borg>
+References: <CAMuHMdXk6pByz14JcDgY+UE6QM0sHD8cbXye9CgOVSRRtr7J+Q@mail.gmail.com> <20120615201021.GB14544@kroah.com> <CAMuHMdUj6tAcWhkSkV43Kw3-2-3+JzgP6W=2w3fjL2KBfRh9ZQ@mail.gmail.com> <20120615231220.GC8205@kroah.com> <87lijns84s.fsf@nemi.mork.no>
+ <m2bokjb6tv.fsf@igel.home> <87fw9urqau.fsf@nemi.mork.no> <m2d34n1sz9.fsf_-_@igel.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org
-Cc: linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <m2d34n1sz9.fsf_-_-hBGjKatGTSWzQB+pC5nmwQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andreas Schwab <schwab-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Cc: =?ISO-8859-15?Q?Bj=F8rn_Mork?= <bjorn-yOkvZcmFvRU@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kbuild <linux-kbuild-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux/m68k <linux-m68k-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-As of Friday's linux-next I've been unable to successfully boot using an
-nfs root with a c6x board. I bisected it to this patch:
+	Hi Andreas,
 
-  commit cc3b296fd9a01c9e654bcb9373af70dd6e32fb24
-  Author: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
-  Date:   Thu Jun 21 14:53:10 2012 -0400
+On Mon, 25 Jun 2012, Andreas Schwab wrote:
+> Use the target compiler to compute the offsets of the fields of the
+> device_id structures, so that it won't be broken by different alignments
+> between the host and target ABIs.
 
-      SUNRPC: Clean up xdr_read_pages and xdr_enter_page
+Thanks, very nice!
 
-I placed "good-boot" and "bad-boot" packet capture files at:
+> --- a/include/linux/mod_devicetable.h
+> +++ b/include/linux/mod_devicetable.h
+> @@ -33,8 +33,7 @@ struct ieee1394_device_id {
+>  	__u32 model_id;
+>  	__u32 specifier_id;
+>  	__u32 version;
+> -	kernel_ulong_t driver_data
+> -		__attribute__((aligned(sizeof(kernel_ulong_t))));
+> +	kernel_ulong_t driver_data;
 
-  http://people.redhat.com/~msalter/linux-next/
+After this, we can also get rid of kernel_ulong_t, but that's a more intruisive
+patch all over the place.
 
-The only difference in the kernels used is the above patch. The
-bad-boot mounted the nfs root but was unable to find the init
-file which caused a panic. The nfsroot= parameter uses v3,tcp
-flags and the server side is running rhel6.
+> --- /dev/null
+> +++ b/scripts/mod/devicetable-offsets.c
+> @@ -0,0 +1,171 @@
+> +#include <linux/kbuild.h>
+> +#include <linux/mod_devicetable.h>
+> +
+> +#define DEVID(devid) DEFINE(SIZE_##devid, sizeof(struct devid))
+> +#define DEVID_FIELD(devid, field) \
+> +	DEFINE(OFF_##devid##_##field, offsetof(struct devid, field))
+> +
+> +int main(void)
+> +{
+> +	DEVID(usb_device_id);
+> +	DEVID_FIELD(usb_device_id, match_flags);
+> +	DEVID_FIELD(usb_device_id, idVendor);
+> +	DEVID_FIELD(usb_device_id, idProduct);
+> +	DEVID_FIELD(usb_device_id, bcdDevice_lo);
+> +	DEVID_FIELD(usb_device_id, bcdDevice_hi);
+> +	DEVID_FIELD(usb_device_id, bDeviceClass);
+> +	DEVID_FIELD(usb_device_id, bDeviceSubClass);
+> +	DEVID_FIELD(usb_device_id, bDeviceProtocol);
+> +	DEVID_FIELD(usb_device_id, bInterfaceClass);
+> +	DEVID_FIELD(usb_device_id, bInterfaceSubClass);
+> +	DEVID_FIELD(usb_device_id, bInterfaceProtocol);
 
-I'm not at all familiar with the nfs code, but can help with
-testing or providing any addtional info needed.
+These are all duplicates of the structures in <linux/mod_devicetable.h>.
+Can't you get rid of the duplication by putting e.g. the following
+in <linux/mod_devicetable.h>:
 
---Mark
+    DEVID_START(usb_device_id);
+    DEVID_FIELD(usb_device_id, __u16, match_flags);
+    DEVID_FIELD(usb_device_id, __u16, idVendor);
+    DEVID_FIELD(usb_device_id, __u16, idProduct);
+    DEVID_FIELD(usb_device_id, __u16, bcdDevice_lo);
+    DEVID_FIELD(usb_device_id, __u16, bcdDevice_hi);
+    DEVID_FIELD(usb_device_id, __u8, bDeviceClass);
+    DEVID_FIELD(usb_device_id, __u8, bDeviceSubClass);
+    DEVID_FIELD(usb_device_id, __u8, bDeviceProtocol);
+    DEVID_FIELD(usb_device_id, __u8, bInterfaceClass);
+    DEVID_FIELD(usb_device_id, __u8, bInterfaceSubClass);
+    DEVID_FIELD(usb_device_id, __u8, bInterfaceProtocol);
+    DEVID_END();
 
+and redefining the DEVID_*() macros depending on
+  1. __KERNEL__, to generate the C struct definitions for kernel builds,
+  2. first inclusion by devicetable-offsets.c, also to generate C struct
+     definitions,
+  3. second inclusion by devicetable-offsets.c, to generate the sizes and
+     offset definitions for modalias?
+
+> --- a/scripts/mod/file2alias.c
+> +++ b/scripts/mod/file2alias.c
+> @@ -116,7 +129,6 @@ static inline void add_wildcard(char *str)
+>  		strcat(str + len, "*");
+>  }
+>  
+> -unsigned int cross_build = 0;
+>  /**
+>   * Check that sizeof(device_id type) are consistent with size of section
+>   * in .o file. If in-consistent then userspace and kernel does not agree
+> @@ -131,8 +143,6 @@ static void device_id_check(const char *modname, const char *device_id,
+>  	int i;
+>  
+>  	if (size % id_size || size < id_size) {
+> -		if (cross_build != 0)
+> -			return;
+>  		fatal("%s: sizeof(struct %s_device_id)=%lu is not a modulo "
+>  		      "of the size of section __mod_%s_device_table=%lu.\n"
+>  		      "Fix definition of struct %s_device_id "
+
+Funny, I didn't know there was a check for cross-compiling, supposedly to
+ignore the warnings.
+And it didn't work, as the problem was noticed originally on the linux-next
+build service (which uses cross-compiling), and also showed up for my own
+cross-builds.
+
+Gr{oetje,eeting}s,
+
+						Geert
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
