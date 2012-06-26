@@ -1,75 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 26 Jun 2012 13:15:43 +1000
-Message-ID: <20120626131543.21e4338894b19f5e02f8bdde@canb.auug.org.au>
+From: Mark Salter <msalter-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: nfs root problem in linux-next
+Date: Mon, 25 Jun 2012 23:17:43 -0400
+Message-ID: <1340680664.20557.38.camel@deneb.redhat.com>
+References: <1340656006.20557.30.camel@deneb.redhat.com>
+	 <1340666049.4362.9.camel@lade.trondhjem.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Tue__26_Jun_2012_13_15_43_+1000_wf+z6PNgcGMJe05v"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:35132 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755420Ab2FZDPx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jun 2012 23:15:53 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Per Ellefsen <Per.Ellefsen@stericsson.com>, =?UTF-8?B?IlNqdXIgQnLDpm5kZWxhbmQi?= <sjur.brandeland@stericsson.com>, Kim Lilliestierna <kim.xx.lilliestierna@stericsson.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1340666049.4362.9.camel-SyLVLa/KEI9HwK5hSS5vWB2eb7JE58TQ@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Myklebust, Trond" <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
+Cc: linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__26_Jun_2012_13_15_43_+1000_wf+z6PNgcGMJe05v
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2012-06-25 at 23:14 +0000, Myklebust, Trond wrote:
+> On Mon, 2012-06-25 at 16:26 -0400, Mark Salter wrote:
+> > As of Friday's linux-next I've been unable to successfully boot using an
+> > nfs root with a c6x board. I bisected it to this patch:
+> > 
+> >   commit cc3b296fd9a01c9e654bcb9373af70dd6e32fb24
+> >   Author: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
+> >   Date:   Thu Jun 21 14:53:10 2012 -0400
+> > 
+> >       SUNRPC: Clean up xdr_read_pages and xdr_enter_page
+> > 
+> > I placed "good-boot" and "bad-boot" packet capture files at:
+> > 
+> >   http://people.redhat.com/~msalter/linux-next/
+> > 
+> > The only difference in the kernels used is the above patch. The
+> > bad-boot mounted the nfs root but was unable to find the init
+> > file which caused a panic. The nfsroot= parameter uses v3,tcp
+> > flags and the server side is running rhel6.
+> > 
+> > I'm not at all familiar with the nfs code, but can help with
+> > testing or providing any addtional info needed.
+> 
+> Hi Mark,
+> 
+> So you are saying that reverting that patch alone suffices to fix the
+> problem that you are seeing?
 
-Hi all,
+Yes. If I check out a tree at commit cc3b296fd9a, the resulting kernel
+does not boot (it panics that it cannot find init). If I check out a
+tree at  cc3b296fd9a~1, it boots the nfs root successfully.
 
-Today's linux-next merge of the net-next tree got a conflict in
-drivers/net/caif/caif_hsi.c between commits 3935600a7f34 ("caif-hsi:
-Bugfix - Piggyback'ed embedded CAIF frame lost") and 1fdc7630b2cb
-("caif-hsi: Add missing return in error path") from the net tree and
-commits 4e7bb59d49fb ("caif-hsi: Removed dead code") and c41254006377
-("caif-hsi: Add rtnl support") from the net-next tree.
+...
+> I'll have a look to see if I can find out what is the problem. The only
+> significant change that patch should be introducing would be the use of
+> xdr_stream_pos().
 
-I fixed them up (see below) and can carry the fix as necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Okay. I am happy to help with any testing if needed to help characterize
+the problem better.
 
-diff --cc drivers/net/caif/caif_hsi.c
-index 4a27adb,1c2bd01..0000000
---- a/drivers/net/caif/caif_hsi.c
-+++ b/drivers/net/caif/caif_hsi.c
-@@@ -693,8 -678,8 +678,6 @@@ static void cfhsi_rx_done(struct cfhsi=20
-  			 */
-  			memcpy(rx_buf, (u8 *)piggy_desc,
-  					CFHSI_DESC_SHORT_SZ);
-- 			if (desc_pld_len =3D=3D -EPROTO)
-- 				goto out_of_sync;
- -			/* Mark no embedded frame here */
- -			piggy_desc->offset =3D 0;
-  		}
-  	}
- =20
+--Mark
 
---Signature=_Tue__26_Jun_2012_13_15_43_+1000_wf+z6PNgcGMJe05v
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP6SlfAAoJEECxmPOUX5FE3sMP/3UqdcTeF+hXfffFOhTflLTy
-dJYT8zzIuwPNUcwqO4KJ10WBZAjtzla8QdTa7gH6/rLP8eAUJuz7p4qF1i/W4U7z
-v+c0Uvy8tGXIbxltnkZgw3FNiOYPhneT1c2Ru3EfKsdJqd4CZfQ94aVe0/SyV/QR
-JJhgk727sMhg7ojpLQMPCQRNfIoIBN28UqftWWJx3caK6ksx0ETJgWEiZMHVjmK6
-x/CwVU/yb93yvf5WX534c2gQrIMxojw9Wyui3g44ri+repPe4R0C1mqi9dllhfw0
-fjf5d6h1nLcNdypJVNdwY9j5OKIfoEqEwr+9fBK+jtiD7z40VT0Tl5F46pQpKap1
-wIMQ7HVGBO+gPx+CEfG1Yg5ovkuoOFmzasscVrwmO9R/o50bgCOcyC8ZQhE7/zbf
-YvwlP6rL8JNrzXIMVI2+1UU86jB88Z4eZdwwyofb3muW2ozcbzKm0bvMhDC/RaR7
-h36c8Je5TLAtxs3116AER3GsXBbnWvwSPwYbbWZmgyFsfm617Ky/gsbMBfHITzTQ
-TQDZ2uUT0tAXmeLYYiUFFO3CrV2tnp6g6NEbfzhDxdUhBgtzaipA+p65y8sVw62f
-dGq3odeyIRGQvwawckr0AZwdeZsnJ5RBtWfrpWbKR8wxCnKCicha0yT8nqhvazme
-ASHLPhNivvEe8A/P7rTy
-=DiNS
------END PGP SIGNATURE-----
 
---Signature=_Tue__26_Jun_2012_13_15_43_+1000_wf+z6PNgcGMJe05v--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
