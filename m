@@ -1,47 +1,75 @@
-From: "Myklebust, Trond" <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
-Subject: Re: nfs root problem in linux-next
-Date: Mon, 25 Jun 2012 23:14:14 +0000
-Message-ID: <1340666049.4362.9.camel@lade.trondhjem.org>
-References: <1340656006.20557.30.camel@deneb.redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 26 Jun 2012 13:15:43 +1000
+Message-ID: <20120626131543.21e4338894b19f5e02f8bdde@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1340656006.20557.30.camel-PDpCo7skNiwAicBL8TP8PQ@public.gmane.org>
-Content-Language: en-US
-Content-ID: <43DAC10FDF99634CBCA51F005A52B89E-oP88Kt8RkgzdA/Lu/QRl1Q@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Salter <msalter-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__26_Jun_2012_13_15_43_+1000_wf+z6PNgcGMJe05v"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:35132 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755420Ab2FZDPx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jun 2012 23:15:53 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Per Ellefsen <Per.Ellefsen@stericsson.com>, =?UTF-8?B?IlNqdXIgQnLDpm5kZWxhbmQi?= <sjur.brandeland@stericsson.com>, Kim Lilliestierna <kim.xx.lilliestierna@stericsson.com>
 
-T24gTW9uLCAyMDEyLTA2LTI1IGF0IDE2OjI2IC0wNDAwLCBNYXJrIFNhbHRlciB3cm90ZToNCj4g
-QXMgb2YgRnJpZGF5J3MgbGludXgtbmV4dCBJJ3ZlIGJlZW4gdW5hYmxlIHRvIHN1Y2Nlc3NmdWxs
-eSBib290IHVzaW5nIGFuDQo+IG5mcyByb290IHdpdGggYSBjNnggYm9hcmQuIEkgYmlzZWN0ZWQg
-aXQgdG8gdGhpcyBwYXRjaDoNCj4gDQo+ICAgY29tbWl0IGNjM2IyOTZmZDlhMDFjOWU2NTRiY2I5
-MzczYWY3MGRkNmUzMmZiMjQNCj4gICBBdXRob3I6IFRyb25kIE15a2xlYnVzdCA8VHJvbmQuTXlr
-bGVidXN0QG5ldGFwcC5jb20+DQo+ICAgRGF0ZTogICBUaHUgSnVuIDIxIDE0OjUzOjEwIDIwMTIg
-LTA0MDANCj4gDQo+ICAgICAgIFNVTlJQQzogQ2xlYW4gdXAgeGRyX3JlYWRfcGFnZXMgYW5kIHhk
-cl9lbnRlcl9wYWdlDQo+IA0KPiBJIHBsYWNlZCAiZ29vZC1ib290IiBhbmQgImJhZC1ib290IiBw
-YWNrZXQgY2FwdHVyZSBmaWxlcyBhdDoNCj4gDQo+ICAgaHR0cDovL3Blb3BsZS5yZWRoYXQuY29t
-L35tc2FsdGVyL2xpbnV4LW5leHQvDQo+IA0KPiBUaGUgb25seSBkaWZmZXJlbmNlIGluIHRoZSBr
-ZXJuZWxzIHVzZWQgaXMgdGhlIGFib3ZlIHBhdGNoLiBUaGUNCj4gYmFkLWJvb3QgbW91bnRlZCB0
-aGUgbmZzIHJvb3QgYnV0IHdhcyB1bmFibGUgdG8gZmluZCB0aGUgaW5pdA0KPiBmaWxlIHdoaWNo
-IGNhdXNlZCBhIHBhbmljLiBUaGUgbmZzcm9vdD0gcGFyYW1ldGVyIHVzZXMgdjMsdGNwDQo+IGZs
-YWdzIGFuZCB0aGUgc2VydmVyIHNpZGUgaXMgcnVubmluZyByaGVsNi4NCj4gDQo+IEknbSBub3Qg
-YXQgYWxsIGZhbWlsaWFyIHdpdGggdGhlIG5mcyBjb2RlLCBidXQgY2FuIGhlbHAgd2l0aA0KPiB0
-ZXN0aW5nIG9yIHByb3ZpZGluZyBhbnkgYWRkdGlvbmFsIGluZm8gbmVlZGVkLg0KDQpIaSBNYXJr
-LA0KDQpTbyB5b3UgYXJlIHNheWluZyB0aGF0IHJldmVydGluZyB0aGF0IHBhdGNoIGFsb25lIHN1
-ZmZpY2VzIHRvIGZpeCB0aGUNCnByb2JsZW0gdGhhdCB5b3UgYXJlIHNlZWluZz8NCg0KRmlyc3Rs
-eSwgYSBiaWcgIlRoYW5rIFlvdSEhISIgZm9yIHRlc3RpbmcgdGhlIGxpbnV4LW5leHQgYnJhbmNo
-LiBJIHZlcnkNCm11Y2ggYXBwcmVjaWF0ZSB0aGF0IHlvdSByZXBvcnQgdGhlIGJ1Z3MgYmVmb3Jl
-IHRoZXkgZ2V0IG1lcmdlZA0KdXBzdHJlYW0uDQoNCkknbGwgaGF2ZSBhIGxvb2sgdG8gc2VlIGlm
-IEkgY2FuIGZpbmQgb3V0IHdoYXQgaXMgdGhlIHByb2JsZW0uIFRoZSBvbmx5DQpzaWduaWZpY2Fu
-dCBjaGFuZ2UgdGhhdCBwYXRjaCBzaG91bGQgYmUgaW50cm9kdWNpbmcgd291bGQgYmUgdGhlIHVz
-ZSBvZg0KeGRyX3N0cmVhbV9wb3MoKS4NCg0KLS0gDQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4IE5G
-UyBjbGllbnQgbWFpbnRhaW5lcg0KDQpOZXRBcHANClRyb25kLk15a2xlYnVzdEBuZXRhcHAuY29t
-DQp3d3cubmV0YXBwLmNvbQ0KDQo=
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Signature=_Tue__26_Jun_2012_13_15_43_+1000_wf+z6PNgcGMJe05v
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the net-next tree got a conflict in
+drivers/net/caif/caif_hsi.c between commits 3935600a7f34 ("caif-hsi:
+Bugfix - Piggyback'ed embedded CAIF frame lost") and 1fdc7630b2cb
+("caif-hsi: Add missing return in error path") from the net tree and
+commits 4e7bb59d49fb ("caif-hsi: Removed dead code") and c41254006377
+("caif-hsi: Add rtnl support") from the net-next tree.
+
+I fixed them up (see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/caif/caif_hsi.c
+index 4a27adb,1c2bd01..0000000
+--- a/drivers/net/caif/caif_hsi.c
++++ b/drivers/net/caif/caif_hsi.c
+@@@ -693,8 -678,8 +678,6 @@@ static void cfhsi_rx_done(struct cfhsi=20
+  			 */
+  			memcpy(rx_buf, (u8 *)piggy_desc,
+  					CFHSI_DESC_SHORT_SZ);
+- 			if (desc_pld_len =3D=3D -EPROTO)
+- 				goto out_of_sync;
+ -			/* Mark no embedded frame here */
+ -			piggy_desc->offset =3D 0;
+  		}
+  	}
+ =20
+
+--Signature=_Tue__26_Jun_2012_13_15_43_+1000_wf+z6PNgcGMJe05v
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP6SlfAAoJEECxmPOUX5FE3sMP/3UqdcTeF+hXfffFOhTflLTy
+dJYT8zzIuwPNUcwqO4KJ10WBZAjtzla8QdTa7gH6/rLP8eAUJuz7p4qF1i/W4U7z
+v+c0Uvy8tGXIbxltnkZgw3FNiOYPhneT1c2Ru3EfKsdJqd4CZfQ94aVe0/SyV/QR
+JJhgk727sMhg7ojpLQMPCQRNfIoIBN28UqftWWJx3caK6ksx0ETJgWEiZMHVjmK6
+x/CwVU/yb93yvf5WX534c2gQrIMxojw9Wyui3g44ri+repPe4R0C1mqi9dllhfw0
+fjf5d6h1nLcNdypJVNdwY9j5OKIfoEqEwr+9fBK+jtiD7z40VT0Tl5F46pQpKap1
+wIMQ7HVGBO+gPx+CEfG1Yg5ovkuoOFmzasscVrwmO9R/o50bgCOcyC8ZQhE7/zbf
+YvwlP6rL8JNrzXIMVI2+1UU86jB88Z4eZdwwyofb3muW2ozcbzKm0bvMhDC/RaR7
+h36c8Je5TLAtxs3116AER3GsXBbnWvwSPwYbbWZmgyFsfm617Ky/gsbMBfHITzTQ
+TQDZ2uUT0tAXmeLYYiUFFO3CrV2tnp6g6NEbfzhDxdUhBgtzaipA+p65y8sVw62f
+dGq3odeyIRGQvwawckr0AZwdeZsnJ5RBtWfrpWbKR8wxCnKCicha0yT8nqhvazme
+ASHLPhNivvEe8A/P7rTy
+=DiNS
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__26_Jun_2012_13_15_43_+1000_wf+z6PNgcGMJe05v--
