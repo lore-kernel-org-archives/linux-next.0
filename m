@@ -1,65 +1,59 @@
-From: Mark Salter <msalter-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: nfs root problem in linux-next
-Date: Mon, 25 Jun 2012 23:17:43 -0400
-Message-ID: <1340680664.20557.38.camel@deneb.redhat.com>
-References: <1340656006.20557.30.camel@deneb.redhat.com>
-	 <1340666049.4362.9.camel@lade.trondhjem.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Tue, 26 Jun 2012 14:36:38 +1000
+Message-ID: <20120626143638.278cd26a1fe00b4161ba7691@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1340666049.4362.9.camel-SyLVLa/KEI9HwK5hSS5vWB2eb7JE58TQ@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Myklebust, Trond" <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
-Cc: linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Tue__26_Jun_2012_14_36_38_+1000_q/f/f4qDINiOLVi4"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:41552 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750760Ab2FZEgv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Jun 2012 00:36:51 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, Fengguang Wu <wfg@linux.intel.com>, Randy Dunlap <rdunlap@xenotime.net>
 
-On Mon, 2012-06-25 at 23:14 +0000, Myklebust, Trond wrote:
-> On Mon, 2012-06-25 at 16:26 -0400, Mark Salter wrote:
-> > As of Friday's linux-next I've been unable to successfully boot using an
-> > nfs root with a c6x board. I bisected it to this patch:
-> > 
-> >   commit cc3b296fd9a01c9e654bcb9373af70dd6e32fb24
-> >   Author: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
-> >   Date:   Thu Jun 21 14:53:10 2012 -0400
-> > 
-> >       SUNRPC: Clean up xdr_read_pages and xdr_enter_page
-> > 
-> > I placed "good-boot" and "bad-boot" packet capture files at:
-> > 
-> >   http://people.redhat.com/~msalter/linux-next/
-> > 
-> > The only difference in the kernels used is the above patch. The
-> > bad-boot mounted the nfs root but was unable to find the init
-> > file which caused a panic. The nfsroot= parameter uses v3,tcp
-> > flags and the server side is running rhel6.
-> > 
-> > I'm not at all familiar with the nfs code, but can help with
-> > testing or providing any addtional info needed.
-> 
-> Hi Mark,
-> 
-> So you are saying that reverting that patch alone suffices to fix the
-> problem that you are seeing?
+--Signature=_Tue__26_Jun_2012_14_36_38_+1000_q/f/f4qDINiOLVi4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes. If I check out a tree at commit cc3b296fd9a, the resulting kernel
-does not boot (it panics that it cannot find init). If I check out a
-tree at  cc3b296fd9a~1, it boots the nfs root successfully.
+Hi all,
 
-...
-> I'll have a look to see if I can find out what is the problem. The only
-> significant change that patch should be introducing would be the use of
-> xdr_stream_pos().
+Today's linux-next merge of the tip tree got a conflict in
+include/asm-generic/bug.h between commit 09682c1dd382 ("bug.h: Fix up
+CONFIG_BUG=3Dn implicit function declarations") from Linus' tree and commit
+7b37393f13d5 ("bug.h: Fix x86 !CONFIG_BUG build regression") from the tip
+tree.
 
-Okay. I am happy to help with any testing if needed to help characterize
-the problem better.
+These are trying to do the same thing, so I used the version from Linus'
+tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---Mark
+--Signature=_Tue__26_Jun_2012_14_36_38_+1000_q/f/f4qDINiOLVi4
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
+iQIcBAEBCAAGBQJP6TxWAAoJEECxmPOUX5FE5osP/2BcJZAUc/O3LQrdIvWYSN/h
+UjS0hT9/o2g5c8KRF2xll6T+fsIwbuU0OfJ4OHe37VtTSUfbu0r8W8I74fSXdEgT
+PYvmoM5rH85gJ3onZgKrkMn2Mq353rLxSPu2YinIjSPKBbT+lH3etrJrPWdRHqHF
+fIP/js4c+jC9xQUn731n+/DakbOQWwsrwaXB7eRpTZVfR65p0xrXeatMgiyXTZ4e
+AYEREmeEuwvkkLx6yaggYaYAh9CtItuYqdZeZMffGOrDbAU4WfcKYSfiyG+xfE5b
+8NRia6Xkw+WzXtFHfLTIw1mKEwYlatclrVctw+JE1TjZEM/j+XIa3+DTiul4HBlA
+yGSvZstysTQHTt9cskGSCIMIZVAU15o+lHQPgvKXhH2fHmiC+4qKIncF+bb3JIT4
+WKTqv9862NPpd+Xzcd7nBRTDb0ebsog3xwVATPx8rt6YFxrgS9nAuwSM7QWzW56z
+6onXgA1HYHZjE5rNyQ4BhOv8C7wArlxE7MuDher8wXJj9k/3PoPnd5n31Ff1PQtN
+ZZzT/oMewC016GAjUTNnhSaRcUHQehKr2EjieyOBcFuaSfGhwrulo7L6FQRgNKO3
+Q9yv3ieOdoU/GWcWZZYyls9HfUOn7DAjKoeZuhwQspGI1uUkk4x1phNRyWCuU+w0
+f+AeeJrnME9KDgdGvGmg
+=jEMC
+-----END PGP SIGNATURE-----
 
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Signature=_Tue__26_Jun_2012_14_36_38_+1000_q/f/f4qDINiOLVi4--
