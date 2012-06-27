@@ -1,101 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Request VFIO inclusion in linux-next
-Date: Wed, 27 Jun 2012 09:50:24 +1000
-Message-ID: <20120627095024.e282e975c2870e696bc5693f@canb.auug.org.au>
-References: <1340686552.1207.128.camel@bling.home>
+Subject: linux-next: manual merge of the hid tree with Linus' tree
+Date: Wed, 27 Jun 2012 11:05:30 +1000
+Message-ID: <20120627110530.07598da1fdaa9f84dfa09a3f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Wed__27_Jun_2012_09_50_24_+1000_Sx7/QrQtfP5RPHEQ"
-Return-path: <kvm-owner@vger.kernel.org>
-In-Reply-To: <1340686552.1207.128.camel@bling.home>
-Sender: kvm-owner@vger.kernel.org
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>, iommu <iommu@lists.linux-foundation.org>, qemu-devel <qemu-devel@nongnu.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Alexey Kardashevskiy <aik@ozlabs.ru>, David Gibson <david@gibson.dropbear.id.au>, chrisw <chrisw@sous-sol.org>, "Roedel, Joerg" <Joerg.Roedel@amd.com>, linux-next@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+ boundary="Signature=_Wed__27_Jun_2012_11_05_30_+1000_VNAcRtOxY2EtbeBb"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Henrik Rydberg <rydberg@euromail.se>, David Herrmann <dh.herrmann@googlemail.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__27_Jun_2012_09_50_24_+1000_Sx7/QrQtfP5RPHEQ
+--Signature=_Wed__27_Jun_2012_11_05_30_+1000_VNAcRtOxY2EtbeBb
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alex,
+Hi Jiri,
 
-On Mon, 25 Jun 2012 22:55:52 -0600 Alex Williamson <alex.williamson@redhat.=
-com> wrote:
->
-> VFIO has been kicking around for well over a year now and has been
-> posted numerous times for review.  The pre-requirements are finally
-> available in linux-next (or will be in the 20120626 build) so I'd like
-> to request a new branch be included in linux-next with a goal of being
-> accepted into v3.6.
->=20
-> The info for linux-next:
->=20
-> Tree: git://github.com/awilliam/linux-vfio.git
-> Branch: next
-> Contact: Alex Williamson <alex.williamson@redhat.com>
->=20
-> This branch should be applied after both Bjorn's PCI next branch and
-> Joerg's IOMMU next branch
+Today's linux-next merge of the hid tree got a conflict in
+drivers/hid/Kconfig between commit 1f41a6a99476 ("HID: Fix the generic
+Kconfig options") from Linus' tree and commit 1ccd7a2a33f2 ("HID: uhid:
+introduce user-space I/O driver support for HID") from the hid tree.
 
-I have added this from today.  Since this tree merges (parts of) the pci
-and iommu trees, I am hoping that those are to remain stable - if not,
-then you need to stay alert if they are rebased.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
+diff --cc drivers/hid/Kconfig
+index bef04c1,96ac310..0000000
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@@ -53,6 -59,32 +53,27 @@@ config HIDRA
+ =20
+  	If unsure, say Y.
+ =20
++ config UHID
++ 	tristate "User-space I/O driver support for HID subsystem"
++ 	depends on HID
++ 	default n
++ 	---help---
++ 	Say Y here if you want to provide HID I/O Drivers from user-space.
++ 	This allows to write I/O drivers in user-space and feed the data from
++ 	the device into the kernel. The kernel parses the HID reports, loads the
++ 	corresponding HID Device Driver or provides input devices on top of your
++ 	user-space device.
++=20
++ 	This driver cannot be used to parse HID-reports in user-space and write
++ 	special HID-drivers. You should use hidraw for that.
++ 	Instead, this driver allows to write the transport-layer driver in
++ 	user-space like USB-HID and Bluetooth-HID do in kernel-space.
++=20
++ 	If unsure, say N.
++=20
++ 	To compile this driver as a module, choose M here: the
++ 	module will be called uhid.
++=20
+ -source "drivers/hid/usbhid/Kconfig"
+ -
+ -menu "Special HID drivers"
+ -	depends on HID
+ -
+  config HID_GENERIC
+  	tristate "Generic HID driver"
+  	depends on HID
 
---Signature=_Wed__27_Jun_2012_09_50_24_+1000_Sx7/QrQtfP5RPHEQ
+--Signature=_Wed__27_Jun_2012_11_05_30_+1000_VNAcRtOxY2EtbeBb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP6krAAAoJEECxmPOUX5FEe0oQAKlT1Bzl1IOgrG2oyn6u+Xvi
-vANClPIluKR6eREwqJyriVRKFXs0aOxFMVRiX4ipQR9H3CB8jcNXjCs9FZw0HLT8
-Of6fsiSqmgRgccK1brqZh7ig0s6FF5ENLYOy4wCIVZEOPTTaLZL2k9Q2w+B9CSa6
-1W5va/48zulQQ+v7bhMO4F0fKSr7eiFwMTGeq7biOfTPp4wRT6jmxUoJJurhS2vd
-KCIA8cAC1qbuEG+MPM5joI81dUT7psZKLzVfJ5xqC+1UVTvIOTk+FOeh3T/vBJnq
-nMBL2PVdR1YL3tOtchaQIyjHyGUBvqHGXbx9ouNDkhvTjsMQ8SXv+70s2ULw97Y1
-TJOzKc6X2csmG/FMkoVXtyceJsSMRvqKeNMxsPTEe7SSnYKqIZfuv9Q1ZuE8Uj7S
-AHP3mqAuen2z2YD4uIQI3xr3hdrcFUB9ah8tUIjd6pFEEGZMrbMSmV2gerfrBTuK
-9MMkrAp+RUlJtyBr7TokIDQ5li4l9wohZwqlDNtsrqKz7Z5bDDnOBlgKx6xzjslL
-jfCREhXOIf9RoPeRQN1gkNOGKfT6ybQvRt+IicRKKr9ldqtbFDk1ef+2Ri9e5LfF
-mAbjGf4H81JkY7n0KL8gWKkKr6mNbvEhFDQwZE/8QFkXek1jeuoOtB+JrYzUPcln
-W46VM0suopaofi2D+CXL
-=mbqL
+iQIcBAEBCAAGBQJP6lxaAAoJEECxmPOUX5FEt+cQAIER5tHdQkevWh3b7sGPV6HS
+vLmlAKep8908EXJzdTVkIjV//Bqr/MGEMtYk/Nz+VrtNnWK0WHDVfrp2Z6URbv6r
+DS2wwrWTfFh9HYHrO0ffZpujFrwizNfdrXqB/6ef7l4ekHW3dEDeellyxu4GaswR
+0yZNeBJPUWkTkT+Q0pHfwcMqOK+C2Had0x6rm+QqOVhMhF7PVxqtmvymphFpmO3S
+70Jd3MxaLxztHs4qYPBqb8hOv8u3pw4cEWm1Pztrm55qOvCMALAyLxstULMKMhxm
+ruwbGkdZOJl8bnZvlMIU2DL77E7mOy211C2kMB8/xcXhVLFmT1/IDKIzTBLf34iK
+0abIsQR/i0v48PUD060l/TubKXpbnMRUB1EZu0HjuQ7tJBCLGMnY2Dp+cGdA1EyW
+nxsUXNlSwJzi3G31CSSdpAoChGRjBpXy7JBUblOTRPxRl265cBB6nfKnLnhGCnnX
+4Xr7KWZ2ALdMsyDXdso165bgjn3nPSzlYsMTIOwWlhmp6gryW9SXk1gM4wAJysL4
+K/lN4ot21GccPhVgzVU1D2rUGg+Ulr3Bpbrwb/NghtfvxoWANXkgpbv85ZG21azr
+GF0vYXtEtfj9NJ8KzlZsSxpj2D4Y/vZe41gejQvJEAsGlklbpq/WDWn3U05mFJIL
+P8teysR9aErFtZfLd33u
+=L7Fw
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__27_Jun_2012_09_50_24_+1000_Sx7/QrQtfP5RPHEQ--
+--Signature=_Wed__27_Jun_2012_11_05_30_+1000_VNAcRtOxY2EtbeBb--
