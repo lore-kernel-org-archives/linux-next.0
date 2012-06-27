@@ -1,44 +1,84 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: commit "ARM: dma-mapping: remove custom consistent dma region"
-Date: Wed, 27 Jun 2012 15:46:04 -0400
-Message-ID: <20120627194604.GA9445@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jun 27 (eliminated_printk)
+Date: Thu, 28 Jun 2012 08:52:26 +1000
+Message-ID: <20120628085226.af0623e39a282192935047c3@canb.auug.org.au>
+References: <20120627132217.f8bbdd1f467711419123d188@canb.auug.org.au>
+	<4FEB340D.3040908@xenotime.net>
+	<1340814569.16533.53.camel@joe2Laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Thu__28_Jun_2012_08_52_26_+1000_vApuu8uZZRvN/DzN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:61793 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753225Ab2F0TqO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jun 2012 15:46:14 -0400
-Content-Disposition: inline
+Received: from haggis.pcug.org.au ([203.10.76.10]:41319 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755955Ab2F0Wwh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jun 2012 18:52:37 -0400
+In-Reply-To: <1340814569.16533.53.camel@joe2Laptop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: m.szyprowski@samsung.com
-Cc: kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>
 
-Hi Marek,
+--Signature=_Thu__28_Jun_2012_08_52_26_+1000_vApuu8uZZRvN/DzN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This commit in linux-next:
+Hi Matthew,
 
-commit feb930cb9beb75cbe1d1e798870599c3aa1b93ec
-Author: Marek Szyprowski <m.szyprowski@samsung.com>
-Date:   Fri Jun 8 12:08:32 2012 +0200
+One for you ...
 
-    ARM: dma-mapping: remove custom consistent dma region
+On Wed, 27 Jun 2012 09:29:29 -0700 Joe Perches <joe@perches.com> wrote:
+>
+> On Wed, 2012-06-27 at 09:25 -0700, Randy Dunlap wrote:
+> >=20
+> > on i386:
+> >=20
+> > drivers/platform/x86/thinkpad_acpi.c: In function 'drv_acpi_handle_init=
+':
+> > drivers/platform/x86/thinkpad_acpi.c:684:2: error: implicit declaration=
+ of function 'eliminated_printk'
+> >=20
+> > drivers/platform/x86/fujitsu-laptop.c: In function 'call_fext_func':
+> > drivers/platform/x86/fujitsu-laptop.c:223:3: error: implicit declaratio=
+n of function 'eliminated_printk'
+> >=20
+> >=20
+> > Full randconfig file is attached.
+>=20
+> Thanks Randy.
+>=20
+> This patch depends on the first patch in the series
+> which hasn't been applied.
+>=20
+> https://lkml.org/lkml/2012/6/17/229
+> https://lkml.org/lkml/2012/6/17/231
 
-seems to break the at91x40_defconfig (according to git bisect).
 
-  CC      arch/arm/mm/dma-mapping.o
-arch/arm/mm/dma-mapping.c: In function '__dma_alloc':
-arch/arm/mm/dma-mapping.c:575: error: macro "__alloc_from_pool" requires 4 arguments, but only 2 given
-arch/arm/mm/dma-mapping.c:575: error: '__alloc_from_pool' undeclared (first use in this function)
-arch/arm/mm/dma-mapping.c:575: error: (Each undeclared identifier is reported only once
-arch/arm/mm/dma-mapping.c:575: error: for each function it appears in.)
-make[2]: *** [arch/arm/mm/dma-mapping.o] Error 1
-make[1]: *** [arch/arm/mm/dma-mapping.o] Error 2
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-See http://kisskb.ellerman.id.au/kisskb/buildresult/6596769/ for a full log.
+--Signature=_Thu__28_Jun_2012_08_52_26_+1000_vApuu8uZZRvN/DzN
+Content-Type: application/pgp-signature
 
-Please have a look when you get a chance.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-Thanks,
-Paul.
+iQIcBAEBCAAGBQJP646qAAoJEECxmPOUX5FE8K0P/jaleQyPd/dizQXnzpHkI+Sb
+LMNZ5GOyNskG0tHlLACvYgfyalZRVhID5Fg9iorEPD2lWpgwm6ZyrT1PPZS/cMEL
+mehhL0TyncS7RFAVu6S9GcQH1q5qY4PExxVwyCzMm7PmL0iaDOdGuxBaWpY4BFut
+LG+3rTUqyw0pFVMX/Ne1YcBQ+gmdO7EJpNwTTsWKl+XJ3m9a43AYY2zONYASMjZt
+QclI+qsa2sMyZyyUSTceEafC/kkZRlH1TpcaStzIelq23eCQvRHmX5KStRIQYQ3/
+P4KCchro2NhqsffHFvlNDCD8bMXSEmaptMBDGIqz2PGsLcGLfZ2inRVghD9Gizk9
+vMpNVbrm/Qz6RkfzxMEz7PhDuGJ9bh3nc4ZcfkVH3sTav2KPKbxFGuj09K2nrRwK
+wMISVopVAJkAyV1nkHKmLr4Fb5z43QWBxvkDtrxsBpV7k9OcdX1Qudm/zkdPAVKj
+Iv9i2kHBW2AicZzDax6IwAiFhhCKMmzRODRARCcxkHezUgJujV+xQ8HfzSXJP/QB
+g+5AA2dXf5q0PxcmdVDW59qIAAcMYMce2Y/Wk1O7hvrFXFMS2/do0anbrNProq1x
+AwSnc90sq46/0zpyp9uqRIsrWhP1mcmjdZwOPt2LktpclGkHWvhA8XAYf/oGIOnF
+G4iMFhcIsimgZV6HqYAI
+=1tlq
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__28_Jun_2012_08_52_26_+1000_vApuu8uZZRvN/DzN--
