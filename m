@@ -1,28 +1,43 @@
-From: Alasdair G Kergon <agk@redhat.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-	(device-mapper tree related)
-Date: Wed, 27 Jun 2012 11:11:29 +0100
-Message-ID: <20120627101128.GD22768@agk-dp.fab.redhat.com>
-References: <20120627130221.803b4144284489498aa9b8af@canb.auug.org.au>
+From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Request VFIO inclusion in linux-next
+Date: Wed, 27 Jun 2012 15:37:34 +0300
+Message-ID: <20120627123733.GA5449@mwanda>
+References: <1340686552.1207.128.camel@bling.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:59106 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754433Ab2F0KLd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Jun 2012 06:11:33 -0400
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20120627130221.803b4144284489498aa9b8af@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alasdair G Kergon <agk@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+In-Reply-To: <1340686552.1207.128.camel-xdHQ/5r00wBBDLzU/O5InQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, kvm <kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexey Kardashevskiy <aik-sLpHqDYs0B2HXe+LvDLADg@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, qemu-devel <qemu-devel-qX2TKyscuCcdnm+yROfE0A@public.gmane.org>, chrisw <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>, iommu <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, David Gibson <david-xT8FGy+AXnRB3Ne2BGzF6laj5H9X9Tb+@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 27, 2012 at 01:02:21PM +1000, Stephen Rothwell wrote:
-> Caused by commit 30ebb0baeef5 ("If CONFIG_DM_DEBUG_SPACE_MAPS is enabled
-> and memory is fragmented and a") from the device-mapper tree.  Presumably
-> a missing include of vmalloc.h.
- 
-Hopefully fixed for tomorrow now, thanks.
+On Mon, Jun 25, 2012 at 10:55:52PM -0600, Alex Williamson wrote:
+> Hi,
+> 
+> VFIO has been kicking around for well over a year now and has been
+> posted numerous times for review.  The pre-requirements are finally
+> available in linux-next (or will be in the 20120626 build) so I'd like
+> to request a new branch be included in linux-next with a goal of being
+> accepted into v3.6.
+> 
 
-Alasdair
+Could you run Sparse over the driver?
+http://lwn.net/Articles/205624/
+
+It reports a bunch of endian problems.  Some are definitely bugs
+like:
+	*prev |= cpu_to_le32((u32)epos << 20);
+
+regards,
+dan carpenter
