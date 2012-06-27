@@ -1,46 +1,44 @@
-From: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Request VFIO inclusion in linux-next
-Date: Wed, 27 Jun 2012 13:23:23 -0600
-Message-ID: <1340825003.1207.224.camel@bling.home>
-References: <1340686552.1207.128.camel@bling.home>
-	<20120627123733.GA5449@mwanda>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: commit "ARM: dma-mapping: remove custom consistent dma region"
+Date: Wed, 27 Jun 2012 15:46:04 -0400
+Message-ID: <20120627194604.GA9445@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20120627123733.GA5449@mwanda>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, kvm <kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexey Kardashevskiy <aik-sLpHqDYs0B2HXe+LvDLADg@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, qemu-devel <qemu-devel-qX2TKyscuCcdnm+yROfE0A@public.gmane.org>, chrisw <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>, iommu <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, David Gibson <david-xT8FGy+AXnRB3Ne2BGzF6laj5H9X9Tb+@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:61793 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753225Ab2F0TqO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jun 2012 15:46:14 -0400
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: m.szyprowski@samsung.com
+Cc: kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
 
-On Wed, 2012-06-27 at 15:37 +0300, Dan Carpenter wrote:
-> On Mon, Jun 25, 2012 at 10:55:52PM -0600, Alex Williamson wrote:
-> > Hi,
-> > 
-> > VFIO has been kicking around for well over a year now and has been
-> > posted numerous times for review.  The pre-requirements are finally
-> > available in linux-next (or will be in the 20120626 build) so I'd like
-> > to request a new branch be included in linux-next with a goal of being
-> > accepted into v3.6.
-> > 
-> 
-> Could you run Sparse over the driver?
-> http://lwn.net/Articles/205624/
-> 
-> It reports a bunch of endian problems.  Some are definitely bugs
-> like:
-> 	*prev |= cpu_to_le32((u32)epos << 20);
+Hi Marek,
 
-Done.  Mostly just adding annotation, but it did find a bug or two.
-Should be cleaned up in tomorrow's next.  Thanks for the report,
+This commit in linux-next:
 
-Alex
+commit feb930cb9beb75cbe1d1e798870599c3aa1b93ec
+Author: Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Fri Jun 8 12:08:32 2012 +0200
+
+    ARM: dma-mapping: remove custom consistent dma region
+
+seems to break the at91x40_defconfig (according to git bisect).
+
+  CC      arch/arm/mm/dma-mapping.o
+arch/arm/mm/dma-mapping.c: In function '__dma_alloc':
+arch/arm/mm/dma-mapping.c:575: error: macro "__alloc_from_pool" requires 4 arguments, but only 2 given
+arch/arm/mm/dma-mapping.c:575: error: '__alloc_from_pool' undeclared (first use in this function)
+arch/arm/mm/dma-mapping.c:575: error: (Each undeclared identifier is reported only once
+arch/arm/mm/dma-mapping.c:575: error: for each function it appears in.)
+make[2]: *** [arch/arm/mm/dma-mapping.o] Error 1
+make[1]: *** [arch/arm/mm/dma-mapping.o] Error 2
+
+See http://kisskb.ellerman.id.au/kisskb/buildresult/6596769/ for a full log.
+
+Please have a look when you get a chance.
+
+Thanks,
+Paul.
