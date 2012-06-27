@@ -1,47 +1,46 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: linux-next: Tree for Jun 27 (vfio)
-Date: Wed, 27 Jun 2012 13:20:37 -0600
-Message-ID: <1340824837.1207.221.camel@bling.home>
-References: <20120627132217.f8bbdd1f467711419123d188@canb.auug.org.au>
-	 <4FEB3030.9070900@xenotime.net>
+From: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Request VFIO inclusion in linux-next
+Date: Wed, 27 Jun 2012 13:23:23 -0600
+Message-ID: <1340825003.1207.224.camel@bling.home>
+References: <1340686552.1207.128.camel@bling.home>
+	<20120627123733.GA5449@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4FEB3030.9070900@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, KVM <kvm@vger.kernel.org>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20120627123733.GA5449@mwanda>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, kvm <kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexey Kardashevskiy <aik-sLpHqDYs0B2HXe+LvDLADg@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, qemu-devel <qemu-devel-qX2TKyscuCcdnm+yROfE0A@public.gmane.org>, chrisw <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>, iommu <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, David Gibson <david-xT8FGy+AXnRB3Ne2BGzF6laj5H9X9Tb+@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 2012-06-27 at 09:09 -0700, Randy Dunlap wrote:
-> On 06/26/2012 08:22 PM, Stephen Rothwell wrote:
-> 
-> > Hi all,
+On Wed, 2012-06-27 at 15:37 +0300, Dan Carpenter wrote:
+> On Mon, Jun 25, 2012 at 10:55:52PM -0600, Alex Williamson wrote:
+> > Hi,
 > > 
-> > This tree was not built between each merge, but only after merging all
-> > the trees.
+> > VFIO has been kicking around for well over a year now and has been
+> > posted numerous times for review.  The pre-requirements are finally
+> > available in linux-next (or will be in the 20120626 build) so I'd like
+> > to request a new branch be included in linux-next with a goal of being
+> > accepted into v3.6.
 > > 
-> > Changes since 20120626:
-> > 
-> > New tree: vfio
 > 
+> Could you run Sparse over the driver?
+> http://lwn.net/Articles/205624/
 > 
-> on x86_64:
-> 
->   CC [M]  drivers/vfio/vfio.o
-> drivers/vfio/vfio.c: In function 'vfio_device_release':
-> drivers/vfio/vfio.c:412:2: error: 'TASK_NORMAL' undeclared (first use in this function)
-> drivers/vfio/vfio.c:412:2: note: each undeclared identifier is reported only once for each function it appears in
-> drivers/vfio/vfio.c: In function 'vfio_del_group_dev':
-> 
-> drivers/vfio/vfio.c:695:2: error: 'TASK_UNINTERRUPTIBLE' undeclared (first use in this function)
-> drivers/vfio/vfio.c:695:2: error: implicit declaration of function 'schedule'
-> *** [drivers/vfio/vfio.o] Error 1
-> 
-> 
-> Full randconfig file is attached.
+> It reports a bunch of endian problems.  Some are definitely bugs
+> like:
+> 	*prev |= cpu_to_le32((u32)epos << 20);
 
-Thanks for the report, this should be fixed in tomorrow's tree.  Thanks,
+Done.  Mostly just adding annotation, but it did find a bug or two.
+Should be cleaned up in tomorrow's next.  Thanks for the report,
 
 Alex
