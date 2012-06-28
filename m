@@ -1,28 +1,51 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: VFIO compile failure on i386 allmodconfig in linux-next
-Date: Thu, 28 Jun 2012 13:57:12 -0400
-Message-ID: <20120628175712.GA20250@windriver.com>
+From: Shuah Khan <shuahkhan@gmail.com>
+Subject: Re: linux-next: Tree for Jun 27 (eliminated_printk)
+Date: Thu, 28 Jun 2012 14:14:19 -0600
+Message-ID: <1340914459.3821.0.camel@lorien2>
+References: <20120627132217.f8bbdd1f467711419123d188@canb.auug.org.au>
+	 <4FEB340D.3040908@xenotime.net> <1340814569.16533.53.camel@joe2Laptop>
+	 <20120628085226.af0623e39a282192935047c3@canb.auug.org.au>
+Reply-To: shuahkhan@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:49444 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751704Ab2F1R5P (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jun 2012 13:57:15 -0400
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: alex.williamson@redhat.com
-Cc: linux-next@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120628085226.af0623e39a282192935047c3@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: shuahkhan@gmail.com, Matthew Garrett <mjg59@srcf.ucam.org>, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Alex,
+On Thu, 2012-06-28 at 08:52 +1000, Stephen Rothwell wrote:
+> Hi Matthew,
+> 
+> One for you ...
+> 
+> On Wed, 27 Jun 2012 09:29:29 -0700 Joe Perches <joe@perches.com> wrote:
+> >
+> > On Wed, 2012-06-27 at 09:25 -0700, Randy Dunlap wrote:
+> > > 
+> > > on i386:
+> > > 
+> > > drivers/platform/x86/thinkpad_acpi.c: In function 'drv_acpi_handle_init':
+> > > drivers/platform/x86/thinkpad_acpi.c:684:2: error: implicit declaration of function 'eliminated_printk'
+> > > 
+> > > drivers/platform/x86/fujitsu-laptop.c: In function 'call_fext_func':
+> > > drivers/platform/x86/fujitsu-laptop.c:223:3: error: implicit declaration of function 'eliminated_printk'
+> > > 
+> > > 
+> > > Full randconfig file is attached.
+> > 
+> > Thanks Randy.
+> > 
+> > This patch depends on the first patch in the series
+> > which hasn't been applied.
+> > 
+> > https://lkml.org/lkml/2012/6/17/229
+> > https://lkml.org/lkml/2012/6/17/231
 
-Just a heads up that the i386 allmodconfig failed on VFIO, in case
-you didn't see it.
+Has this bean fixed in June 28th tree??
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/6603285/
-
-arch/x86/include/asm/uaccess_32.h:211:26: error: call to 'copy_from_user_overflow' declared with attribute error: copy_from_user() buffer size is not provably correct
-make[4]: *** [drivers/vfio/pci/vfio_pci_config.o] Error 1
-
-Paul.
+-- Shuah
+> 
+> 
