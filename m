@@ -1,84 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jun 27 (eliminated_printk)
-Date: Thu, 28 Jun 2012 08:52:26 +1000
-Message-ID: <20120628085226.af0623e39a282192935047c3@canb.auug.org.au>
-References: <20120627132217.f8bbdd1f467711419123d188@canb.auug.org.au>
-	<4FEB340D.3040908@xenotime.net>
-	<1340814569.16533.53.camel@joe2Laptop>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ net-next tree
+Date: Thu, 28 Jun 2012 12:40:49 +1000
+Message-ID: <20120628124049.15ee2861836495a252ea188f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Thu__28_Jun_2012_08_52_26_+1000_vApuu8uZZRvN/DzN"
+ boundary="Signature=_Thu__28_Jun_2012_12_40_49_+1000_6G88y=guqRHKOXmM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:41319 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:33095 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755955Ab2F0Wwh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jun 2012 18:52:37 -0400
-In-Reply-To: <1340814569.16533.53.camel@joe2Laptop>
+	with ESMTP id S1753821Ab2F1ClG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jun 2012 22:41:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Franky Lin <frankyl@broadcom.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
---Signature=_Thu__28_Jun_2012_08_52_26_+1000_vApuu8uZZRvN/DzN
+--Signature=_Thu__28_Jun_2012_12_40_49_+1000_6G88y=guqRHKOXmM
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Matthew,
+Hi John,
 
-One for you ...
+Today's linux-next merge of the wireless-next tree got a conflict in
+drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c between commit
+2c208890c6d4 ("wireless: Remove casts to same type") from the net-next
+tree and commit d610cde30b00 ("brcmfmac: use firmware data buffer
+directly for nvram") from the wireless-next tree.
 
-On Wed, 27 Jun 2012 09:29:29 -0700 Joe Perches <joe@perches.com> wrote:
->
-> On Wed, 2012-06-27 at 09:25 -0700, Randy Dunlap wrote:
-> >=20
-> > on i386:
-> >=20
-> > drivers/platform/x86/thinkpad_acpi.c: In function 'drv_acpi_handle_init=
-':
-> > drivers/platform/x86/thinkpad_acpi.c:684:2: error: implicit declaration=
- of function 'eliminated_printk'
-> >=20
-> > drivers/platform/x86/fujitsu-laptop.c: In function 'call_fext_func':
-> > drivers/platform/x86/fujitsu-laptop.c:223:3: error: implicit declaratio=
-n of function 'eliminated_printk'
-> >=20
-> >=20
-> > Full randconfig file is attached.
->=20
-> Thanks Randy.
->=20
-> This patch depends on the first patch in the series
-> which hasn't been applied.
->=20
-> https://lkml.org/lkml/2012/6/17/229
-> https://lkml.org/lkml/2012/6/17/231
-
-
+The latter removed the code modified by the former, so I used the latter.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Thu__28_Jun_2012_08_52_26_+1000_vApuu8uZZRvN/DzN
+--Signature=_Thu__28_Jun_2012_12_40_49_+1000_6G88y=guqRHKOXmM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP646qAAoJEECxmPOUX5FE8K0P/jaleQyPd/dizQXnzpHkI+Sb
-LMNZ5GOyNskG0tHlLACvYgfyalZRVhID5Fg9iorEPD2lWpgwm6ZyrT1PPZS/cMEL
-mehhL0TyncS7RFAVu6S9GcQH1q5qY4PExxVwyCzMm7PmL0iaDOdGuxBaWpY4BFut
-LG+3rTUqyw0pFVMX/Ne1YcBQ+gmdO7EJpNwTTsWKl+XJ3m9a43AYY2zONYASMjZt
-QclI+qsa2sMyZyyUSTceEafC/kkZRlH1TpcaStzIelq23eCQvRHmX5KStRIQYQ3/
-P4KCchro2NhqsffHFvlNDCD8bMXSEmaptMBDGIqz2PGsLcGLfZ2inRVghD9Gizk9
-vMpNVbrm/Qz6RkfzxMEz7PhDuGJ9bh3nc4ZcfkVH3sTav2KPKbxFGuj09K2nrRwK
-wMISVopVAJkAyV1nkHKmLr4Fb5z43QWBxvkDtrxsBpV7k9OcdX1Qudm/zkdPAVKj
-Iv9i2kHBW2AicZzDax6IwAiFhhCKMmzRODRARCcxkHezUgJujV+xQ8HfzSXJP/QB
-g+5AA2dXf5q0PxcmdVDW59qIAAcMYMce2Y/Wk1O7hvrFXFMS2/do0anbrNProq1x
-AwSnc90sq46/0zpyp9uqRIsrWhP1mcmjdZwOPt2LktpclGkHWvhA8XAYf/oGIOnF
-G4iMFhcIsimgZV6HqYAI
-=1tlq
+iQIcBAEBCAAGBQJP68QxAAoJEECxmPOUX5FE/pwP/2O6qslKuRAyOpTswwN74/v+
+F7SZ93fg/OB9X/LNFQv5yqwgMgmBmt4lI41cEg+5m5QZWgBeUeU+zzzURV/I9bAX
+lif+Hfsc7ygSOffVb5VNNNHZBQxZidmBuhvleXk+uqAPQ+yjntrK8C2x70lQOr29
+QSTgGgoeqCvWWyeq4F9t7IzA8yxqBBGhaf1VuL0YlP0aXhUxQ059yOWfq7cyBAeo
+FjVzFNCzqO9b9SdOcxPg7Iba7+5kVICmKgbcJjjtG7hFe7B2l4MT+0mbqJplRhSC
+6fXeHK4ItlM9F9p9CdBmda57Ux8T6jLTdmLnfUeY3hlo/kbIH8hOp6yiLVK85HiP
+T7HA6RcMg/uiFkSB2h1oYCUOpDX2tJY4PL2n+oXCZTpVEqUYaslYbTyuOUlupDvF
+eVJNleDALy7MvTM8VXkqzZmRboZM6kHM9kSdbyUtOMUPSNOA8FxYhLUm81IneLzH
+Cv/jHcDy+PVj0EXpREHutqbYFz8fwJQudATqI+Y1SgwHFwZ9miybpFftYEEnBVRW
+Jr+aDWEyKE9GAqZ3otwoB7MPlp3XLyIhmCW0flsKo9hfkq2EAwo6zSpvS2o3t5nc
+8KkcsCoFEiYsruRqNBj1Ip7S2H0ESk/4Mim9WC0H+RZovbFXIe92XFmB/6PE0N4y
+BbIOpsjW9YmRQIrZ528x
+=KG/9
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__28_Jun_2012_08_52_26_+1000_vApuu8uZZRvN/DzN--
+--Signature=_Thu__28_Jun_2012_12_40_49_+1000_6G88y=guqRHKOXmM--
