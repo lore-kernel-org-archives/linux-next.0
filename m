@@ -1,38 +1,38 @@
-From: Shuah Khan <shuahkhan@gmail.com>
-Subject: Re: linux-next: Tree for Jun 27 (eliminated_printk)
-Date: Thu, 28 Jun 2012 15:03:50 -0600
-Message-ID: <1340917430.3821.2.camel@lorien2>
-References: <20120627132217.f8bbdd1f467711419123d188@canb.auug.org.au>
-	 <4FEB340D.3040908@xenotime.net> <1340814569.16533.53.camel@joe2Laptop>
-	 <20120628085226.af0623e39a282192935047c3@canb.auug.org.au>
-	 <1340914459.3821.0.camel@lorien2> <20120628201601.GB12471@srcf.ucam.org>
-Reply-To: shuahkhan@gmail.com
+From: Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: VFIO compile failure on i386 allmodconfig in linux-next
+Date: Thu, 28 Jun 2012 16:25:47 -0600
+Message-ID: <1340922347.3179.60.camel@ul30vt>
+References: <20120628175712.GA20250@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from g1t0029.austin.hp.com ([15.216.28.36]:37154 "EHLO
-	g1t0029.austin.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751913Ab2F1VDz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jun 2012 17:03:55 -0400
-In-Reply-To: <20120628201601.GB12471@srcf.ucam.org>
+Received: from mx1.redhat.com ([209.132.183.28]:12666 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754853Ab2F1WZs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Jun 2012 18:25:48 -0400
+In-Reply-To: <20120628175712.GA20250@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: shuahkhan@gmail.com, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-next@vger.kernel.org
 
-On Thu, 2012-06-28 at 21:16 +0100, Matthew Garrett wrote:
-> On Thu, Jun 28, 2012 at 02:14:19PM -0600, Shuah Khan wrote:
+On Thu, 2012-06-28 at 13:57 -0400, Paul Gortmaker wrote:
+> Hi Alex,
 > 
-> > Has this bean fixed in June 28th tree??
+> Just a heads up that the i386 allmodconfig failed on VFIO, in case
+> you didn't see it.
 > 
-> I dropped the patches from my -next branch. I'll wait to hear that the 
-> pre-requisites have gone in - alternatively, Joe, feel free to add my 
-> SoB and have them pushed through whichever tree takes the first in the 
-> series.
+> http://kisskb.ellerman.id.au/kisskb/buildresult/6603285/
 > 
+> arch/x86/include/asm/uaccess_32.h:211:26: error: call to 'copy_from_user_overflow' declared with attribute error: copy_from_user() buffer size is not provably correct
+> make[4]: *** [drivers/vfio/pci/vfio_pci_config.o] Error 1
 
-ok Worked around for now by enabling CONFIG_THINKPAD_ACPI_DEBUG and
-CONFIG_FUJITSU_LAPTOP_DEBUG. Just in case others need a work around.
+Thank you for the report.  This looks bogus to me, it's complaining
+about a copy_from_user into an __le32 because it can't determine the
+number of bytes to be copied.  That number is a parameter to the
+function, but the function is static and only called with values of 1, 2
+or 4.  I've added a test that seems to make the compiler happy, so this
+will be fixed in tomorrow's tree.  Thanks!
 
--- Shuah
+Alex
