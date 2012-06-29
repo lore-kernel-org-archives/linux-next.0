@@ -1,41 +1,38 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
-Date: Fri, 29 Jun 2012 11:01:45 +0200
-Message-ID: <CAKMK7uE=Jh8Sh_knC7L2=nmCiwPrt0Q5f4Cv4djpgsncOxFfpQ@mail.gmail.com>
-References: <20120629133046.f6c65d4d6017d2ae486cfd2b@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with Linus' tree
+Date: Fri, 29 Jun 2012 14:48:33 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1206291448070.11491@pobox.suse.cz>
+References: <20120629143607.5f1e97318ddfe6f027bfcc5b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gg0-f174.google.com ([209.85.161.174]:48987 "EHLO
-	mail-gg0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751391Ab2F2JBq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jun 2012 05:01:46 -0400
-Received: by gglu4 with SMTP id u4so2486030ggl.19
-        for <linux-next@vger.kernel.org>; Fri, 29 Jun 2012 02:01:46 -0700 (PDT)
-In-Reply-To: <20120629133046.f6c65d4d6017d2ae486cfd2b@canb.auug.org.au>
+Received: from cantor2.suse.de ([195.135.220.15]:41243 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752710Ab2F2Msm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 Jun 2012 08:48:42 -0400
+In-Reply-To: <20120629143607.5f1e97318ddfe6f027bfcc5b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wanpeng Li <liwp@linux.vnet.ibm.com>, Hugh Dickins <hughd@google.com>, Konstantin Khlebnikov <khlebnikov@openvz.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, Jun 29, 2012 at 5:30 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Dave,
->
-> Today's linux-next merge of the drm tree got a conflict in
-> drivers/gpu/drm/i915/intel_display.c between commit 7aa1e7f06d6e ("Revert
-> "drm/i915: allow PCH PWM override on IVB"") from Linus' tree and commit
-> 7cf416014813 ("drm/i915: clear up backlight #define confusion on gen4+")
-> from the drm tree.
->
-> The former removed the function ivb_pch_pwm_override() that is modified
-> by the latter, so I did that - or should I have just ignored the revert
-> patch?
+On Fri, 29 Jun 2012, Stephen Rothwell wrote:
 
-Nope, the revert should take precedence because that code is bogus -
-the change in -next is just replacing a magic value with a proper
-#define.
+> Hi Jiri,
+> 
+> Today's linux-next merge of the trivial tree got a conflict in
+> include/linux/mmzone.h between commit 89abfab133ef ("mm/memcg: move
+> reclaim_stat into lruvec") from Linus' tree and commit 46028e6d10cb ("mm:
+> cleanup on the comments of zone_reclaim_stat") from the trivial tree.
+> 
+> The former moved the code that was updated by the latter.  I applied the
+> latter to the new position (see below).
 
-Cheers, Daniel
+I have merged Linus' tree into for-next and resolved the conflict, so it's 
+gone from your POV now.
+
+Thanks,
+
 -- 
-Daniel Vetter
-daniel.vetter@ffwll.ch - +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Jiri Kosina
+SUSE Labs
