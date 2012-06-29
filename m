@@ -1,42 +1,30 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Subject: Re: nfs root problem in linux-next
-Date: Fri, 29 Jun 2012 22:53:32 +0800
-Message-ID: <20120629145332.GA11745@localhost>
-References: <1340656006.20557.30.camel@deneb.redhat.com>
- <1340666049.4362.9.camel@lade.trondhjem.org>
- <1340680664.20557.38.camel@deneb.redhat.com>
- <1340978148.2498.6.camel@lade.trondhjem.org>
- <1340981329.2514.23.camel@deneb.redhat.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the trivial
+ tree
+Date: Fri, 29 Jun 2012 11:55:59 -0400
+Message-ID: <20120629155559.GA21039@kroah.com>
+References: <20120629155724.99c0b8d8ad0738fdc7ebca33@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:45239 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752207Ab2F2Oxf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 Jun 2012 10:53:35 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1340981329.2514.23.camel@deneb.redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Salter <msalter@redhat.com>
-Cc: "Myklebust, Trond" <Trond.Myklebust@netapp.com>, linux-next <linux-next@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+In-Reply-To: <20120629155724.99c0b8d8ad0738fdc7ebca33@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Jiri Kosina <jkosina@suse.cz>, H Hartley Sweeten <hartleys@visionengravers.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Jun 29, 2012 at 10:48:48AM -0400, Mark Salter wrote:
-> On Fri, 2012-06-29 at 13:55 +0000, Myklebust, Trond wrote:
-> > Hi Mark and Fengguang,
-> > 
-> > I believe that I've found the bug that was being triggered in the
-> > above
-> > patch. It was a mistake in the earlier patch "SUNRPC: Don't decode
-> > beyond the end of the RPC reply message", which was failing to
-> > correctly
-> > initialise the xdr->nwords field.
-> > 
-> > I've now fixed it and updated the linux-next branch.
+On Fri, Jun 29, 2012 at 03:57:24PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Yes, I can confirm that today's linux-next is booting correctly
-> for me on an nfsroot.
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/comedi/drivers/s626.h between commit 6ac7d11527a3
+> ("treewide: Put a space between #include and FILE") from the trivial tree
+> and commit 90fd56af25b7 ("staging: comedi: s626: remove private INLINE
+> macro") from the staging tree.
 > 
-> Thanks!
- 
-I can confirm it, too. Thanks!
+> Just context changes.  I fixed it up and can carry the fix as necessary.
+
+Sounds fine with me, thanks.
+
+greg k-h
