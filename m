@@ -1,53 +1,104 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Fri, 29 Jun 2012 08:09:40 +0100
-Message-ID: <20120629070939.GO28922@opensource.wolfsonmicro.com>
-References: <20120629133811.31f56e9778b856f59d77ecd6@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (pwm tree
+ related)
+Date: Fri, 29 Jun 2012 17:48:26 +1000
+Message-ID: <20120629174826.546cc991459b12833f2aaebd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ctUzwJm0i+kwMBIK"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120629133811.31f56e9778b856f59d77ecd6@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lrg@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vipin Kumar <vipin.kumar@st.com>, Rajeev Kumar <rajeev-dlh.kumar@st.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__29_Jun_2012_17_48_26_+1000_w/dHaXOFN+KffdMm"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from haggis.pcug.org.au ([203.10.76.10]:51643 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752045Ab2F2Hsk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jun 2012 03:48:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
 
-
---ctUzwJm0i+kwMBIK
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Fri__29_Jun_2012_17_48_26_+1000_w/dHaXOFN+KffdMm
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 29, 2012 at 01:38:11PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the sound-asoc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+Hi all,
 
-Already fixed before you sent this.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
---ctUzwJm0i+kwMBIK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+drivers/mfd/built-in.o: In function `__crc_pwm_free':
+(*ABS*+0x15ee601): multiple definition of `__crc_pwm_free'
+drivers/mfd/built-in.o: In function `.pwm_free':
+(.text+0x187a0): multiple definition of `.pwm_free'
+drivers/pwm/built-in.o:(.text+0x740): first defined here
+drivers/mfd/built-in.o: In function `__crc_pwm_request':
+(*ABS*+0xaee34e3d): multiple definition of `__crc_pwm_request'
+drivers/mfd/built-in.o: In function `__crc_pwm_enable':
+(*ABS*+0xd83c7949): multiple definition of `__crc_pwm_enable'
+drivers/mfd/built-in.o: In function `.pwm_enable':
+(.text+0x18800): multiple definition of `.pwm_enable'
+drivers/pwm/built-in.o:(.text+0xbc): first defined here
+drivers/mfd/built-in.o: In function `.pwm_request':
+(.text+0x1858c): multiple definition of `.pwm_request'
+drivers/pwm/built-in.o:(.text+0x1178): first defined here
+drivers/mfd/built-in.o: In function `pwm_config':
+(.opd+0x2970): multiple definition of `pwm_config'
+drivers/pwm/built-in.o:(.opd+0x0): first defined here
+drivers/mfd/built-in.o: In function `pwm_free':
+(.opd+0x29b8): multiple definition of `pwm_free'
+drivers/pwm/built-in.o:(.opd+0xf0): first defined here
+drivers/mfd/built-in.o: In function `pwm_request':
+(.opd+0x2988): multiple definition of `pwm_request'
+drivers/pwm/built-in.o:(.opd+0x180): first defined here
+drivers/mfd/built-in.o: In function `__crc_pwm_disable':
+(*ABS*+0xa4ee3c79): multiple definition of `__crc_pwm_disable'
+drivers/mfd/built-in.o: In function `.pwm_disable':
+(.text+0x186b8): multiple definition of `.pwm_disable'
+drivers/pwm/built-in.o:(.text+0x198): first defined here
+drivers/mfd/built-in.o: In function `pwm_enable':
+(.opd+0x29d0): multiple definition of `pwm_enable'
+drivers/pwm/built-in.o:(.opd+0x18): first defined here
+drivers/mfd/built-in.o: In function `.pwm_config':
+(.text+0x184a4): multiple definition of `.pwm_config'
+drivers/pwm/built-in.o:(.text+0x0): first defined here
+drivers/mfd/built-in.o: In function `pwm_disable':
+(.opd+0x29a0): multiple definition of `pwm_disable'
+drivers/pwm/built-in.o:(.opd+0x30): first defined here
+drivers/mfd/built-in.o: In function `__crc_pwm_config':
+(*ABS*+0xdeebfb06): multiple definition of `__crc_pwm_config'
+
+Caused by commit 0c2498f16608 ("pwm: Add PWM framework support").  There
+are (e.g.) definitions of pwm_free in arch/mips/jz4740/pwm.c,
+arch/unicore32/kernel/pwm.c, drivers/mfd/twl6030-pwm.c,
+drivers/misc/ab8500-pwm.c and now drivers/pwm/core.c.   Four of these are
+EXPORTed.
+
+I have just left this broken for today - please investigate a solution
+quickly.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__29_Jun_2012_17_48_26_+1000_w/dHaXOFN+KffdMm
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJP7VSoAAoJEBus8iNuMP3dmFIP/1uNFIudQh+Zn3YwOmjKwAGL
-mrEOFM4IdIimB6a40bvIOHScxHQRocrsivLjU0wwewQvbpzrlWrWf2/JOEM0g2dw
-tY57ZjWnvMPADh1zyAeDckTUmehzBU4KxBJuavhTPunCRBilySEIWxQTOoKzGY5P
-JfVdPAV7oJo9lEikNEcVNxrKCmaVQ92r58kGdIwFvUqdM5kszPG64OnUeiSKSvWZ
-hck4AKzxmmzincSd07LzT6jVGaSsGw6BoMuWpNUbRTjoUniycKv5stFKFDJTxW+0
-qrL26F5zRQgaaFtaHkRlSgHYAol5iCAzvaTFfh3ZTfDd8O7sn5+wZBdQ6c+10t/0
-Tn7rj5gcPy09bSgcmWVk8UtO6dXHXH+S5qu0skwyR7ATG++8gXPrNUoyHdmt5ZYm
-+kjx3QPFe4VkhRgUiA84O9+opibLYr6F0NtsOJC9ECTCcqmEY21INoE+bvgfSPb0
-WZBBrQkwJICJEdrotDomLCNlJun/P3ncA1oVZ6LLZEbtasnq+8VWkDsS4FqNXWNM
-PrbtnYBswSeuIKO8lLKcVo0ADBEDfjyGEkmDyahQlTR3gjMgdwrj2KQkQg3UvH7w
-Pw+625vQEpLx1qY8eedMssmhk4lXVoY09HEhWkUtjPwiWD/RDjqJq44QSF8Xxx+O
-I9YXHAvn91iGsVZkyEiF
-=jTgK
+iQIcBAEBCAAGBQJP7V3KAAoJEECxmPOUX5FEbBoP/2fajGkIlnKPOzhk68Z+NDaz
+J3WRom8htUOqSaC5GTRqneaC0ioGy8gFvBOVpoWA2y+h7b5i/09Ot0lLVRcOuz7Z
+52oYDNm7Qypd3PXVoQoqej3bTtzPvGiSp+s0x6JYJ5Di5iklDmJujceXPO6tuTKo
+41XYR76q+2gjtFjocYEh652zjBNDeboAGNL0x/g8BX4gH0Ta0+fYXsbKKDsmKwyF
+zEdCCWknQj3AVw/0KI5UYiAmd3oCrzxc+pPc5rHrG1d4VADiLcWSEzzTr0JIslHO
+FbR/SVlQjlnS43mp53aq4np6rrMhn+xPXT8CdzGE5ERCJdo/vbHghpX4iNftmN5J
+7d2XjjnkF3Ehv3Xi+FlutS0z1ofNXdp0c43+XFC9OePkNjKA+myWr14Ped4NJLjT
+0hNLwlLXTx57DcMZf/lDopHlUjd3w5J2C0cwzGzfYaNaIDUl1crxSuwP0QOsjUDi
+kKQnxoPPMIvEUgVrmiNeBPrXawKV5Oy954dy3V3ycDMizkwU/HKTmTA+FU74e/OS
+CoYwgutc/KkVZy8pbrkhj9hNU1lls4o/lslVb5gUNwjO9egN/JhMC0tIrFHeuEXX
+vGBZ0glEJaClyxh24/GOCB4V8zs1Sc67cPa/4Ltx2r99ign9kIx8cLAdjFuvBFPW
+GOrGSLYP3MiesP7qutg+
+=InrN
 -----END PGP SIGNATURE-----
 
---ctUzwJm0i+kwMBIK--
+--Signature=_Fri__29_Jun_2012_17_48_26_+1000_w/dHaXOFN+KffdMm--
