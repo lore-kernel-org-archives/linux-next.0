@@ -1,89 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pwm tree with the tegra tree
-Date: Fri, 29 Jun 2012 16:54:00 +1000
-Message-ID: <20120629165400.8eec105c4495ebcdbf31944e@canb.auug.org.au>
+Subject: linux-next: manual merge of the pwm tree with the s5p tree
+Date: Fri, 29 Jun 2012 16:58:36 +1000
+Message-ID: <20120629165836.95668052d64550c609453857@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__29_Jun_2012_16_54_00_+1000_4+yXOhCaW4=leqEg"
+ boundary="Signature=_Fri__29_Jun_2012_16_58_36_+1000_s02vwDUjTfVNLVvQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:54068 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:48008 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751258Ab2F2GyE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jun 2012 02:54:04 -0400
+	with ESMTP id S1751162Ab2F2G6j (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jun 2012 02:58:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sascha Hauer <s.hauer@pengutronix.de>
 
---Signature=_Fri__29_Jun_2012_16_54_00_+1000_4+yXOhCaW4=leqEg
+--Signature=_Fri__29_Jun_2012_16_58_36_+1000_s02vwDUjTfVNLVvQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Thierry,
 
-Today's linux-next merge of the pwm tree got conflicts in
-arch/arm/mach-tegra/board-dt-tegra20.c and
-arch/arm/mach-tegra/board-dt-tegra30.c between commit bd976e0307fb ("ARM:
-tegra: add device tree AUXDATA for APBDMA") from the tegra tree and
-commit 3ad1308c8dee ("pwm: tegra: Add device tree support") from the pwm
-tree.
+Today's linux-next merge of the pwm tree got a conflict in
+drivers/pwm/pwm-samsung.c between commit 8f748e20b806 ("ARM: SAMSUNG:
+Remove unused variable 'running' on PWM") from the s5p tree (where it is
+called arch/arm/plat-samsung/pwm.c) and commit 2663e766c56a ("ARM
+Samsung: Move s3c pwm driver to pwm framework") from the pwm tree.
 
-Just context changes.  I fixed them up (see below) and can carry the fix
-as necessary.
+I fixed it up and can carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-tegra/board-dt-tegra20.c
-index 1b43c33,962f1a1..0000000
---- a/arch/arm/mach-tegra/board-dt-tegra20.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra20.c
-@@@ -64,7 -64,7 +64,8 @@@ struct of_dev_auxdata tegra20_auxdata_l
-  		       &tegra_ehci2_pdata),
-  	OF_DEV_AUXDATA("nvidia,tegra20-ehci", TEGRA_USB3_BASE, "tegra-ehci.2",
-  		       &tegra_ehci3_pdata),
- +	OF_DEV_AUXDATA("nvidia,tegra20-apbdma", 0x6000a000, "tegra-apbdma", NULL=
-),
-+ 	OF_DEV_AUXDATA("nvidia,tegra20-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
-  	{}
-  };
- =20
-diff --cc arch/arm/mach-tegra/board-dt-tegra30.c
-index 4a40986,ffc6cae..0000000
---- a/arch/arm/mach-tegra/board-dt-tegra30.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-@@@ -52,7 -54,7 +54,8 @@@ struct of_dev_auxdata tegra30_auxdata_l
-  	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000C700, "tegra-i2c.3", NULL),
-  	OF_DEV_AUXDATA("nvidia,tegra20-i2c", 0x7000D000, "tegra-i2c.4", NULL),
-  	OF_DEV_AUXDATA("nvidia,tegra30-ahub", 0x70080000, "tegra30-ahub", NULL),
- +	OF_DEV_AUXDATA("nvidia,tegra30-apbdma", 0x6000a000, "tegra-apbdma", NULL=
-),
-+ 	OF_DEV_AUXDATA("nvidia,tegra30-pwm", TEGRA_PWFM_BASE, "tegra-pwm", NULL),
-  	{}
-  };
- =20
-
---Signature=_Fri__29_Jun_2012_16_54_00_+1000_4+yXOhCaW4=leqEg
+--Signature=_Fri__29_Jun_2012_16_58_36_+1000_s02vwDUjTfVNLVvQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP7VEIAAoJEECxmPOUX5FEcFgP/1sdKVafjsHmQBRKtDeC0awz
-xGYD4d4oiMd5Fa0+mn7iNpOKvCWzN+Jq0HygrHH6zkQeIDEQQ9yoccnp1AG+rQM6
-6IrR1x2sGg3yjvc+iDV08AqLElvauCRGDMOH74umhqC26km9o+SFKmyjBez1SMiT
-cb+Aj+bw2OERBM9p2xqeNR0oZM/xfIz6KBrPn6TPlUgFRXEXOb/fcceH0/K2L9lq
-hH25zVc/o7Y1W/LTMWUrX8GY2kBK1Y2TrWxNC0PqUQrn6QCEUQneLhj+Oi5PcMmP
-I4cIbBNu17n0kaecmesZqI6Zd08hFGZq3DBC+pkQBA8okcUNMR8o5B8MA9zL09Pp
-a7YxjEMchqWbRuh7vM0f0qrONujOX6gKUQz74/RME3bJTzJz4kgyYEzE1oN3OTHy
-7a/pI9z6gvo+ylDkZK+3D9PpSjwBOQOKWJIe+oUEo0dtnShwQpWHo9YbAIqq1k1k
-pIz5MqZWc3ZFqkCTPS5gwBVKVbPisN9cNSJT+Z7U8osj4CqrolUiTwZzsxb0ncpM
-Vc5FGuTm9B2cyUj+MkWnQN7djzDFfXuUH9N5sqq8TZz20OZx90S9BvWG25cwnKoo
-uhGZW7aNVRwUmW34piwkLnGogrthE/c3CcxLlgCXoyMMGL0lVWoP50DiTQTK2ZQ2
-r5ATD9WU37ZnMgy5O5dh
-=h0Ct
+iQIcBAEBCAAGBQJP7VIcAAoJEECxmPOUX5FEDWoP/jfnhxE3dBTjt4MwyPvUlhsp
+SR0swOYBcRwvISmfJh/5TKk9AEcoT/1lzgN3Nq6G1McdV3ySPYKeBH+93yqUJzRR
+jAndx375c6pShwMOtU+Q3Q6pCsPtczB0O3WIekOWLLPjSCjuqyyv4vCKroNndBrg
+8Lfjagdok7QBhIpKEiV6vBcEnfwWvI8VIWViGZ1e41DC3DtlLClPsPhdm5gq0JNJ
+4PYJwba6HM+m2GqFtJGhlFUJLj9vdciGQhMj8qLlwKUrSxcMyYfCtfNX6JP0TSi1
+bYiBazJJqK9PLMOe6opEA8hEKg1L1yYfTG6eCyMwKhCRNAYhWIYpgqLa4UVgEiLG
+9MZhBJ1xMlIENrgtDn4OOo4v3jrOvm52wHSs3wdNUSBiccSYjzInv7oQIAJxuHO2
+7+JTpHasQ9eN4cGudLPmv8EpBIR0KS8QgRW4kOXuP1KzyEAeJz3rpydjbfxtIl/T
+FQDgdVthnR7jhQPnwbuVLk4iDY891E7dixI/hk+s+dsdQSNiz3AnGwBH1XkK73gt
+TvGcxzY6WRX8CSVitAyzIRKp8wPhNlpYTSdekgCV/MUQQkRTOnEouyf5+Xl8q8VQ
+aNEgmhLcrouYhH3uOjsnFV7KV+iJ4NPBcGaJfvv1AkVKONktIVz7qEQ2UwMAO7vY
+igZ/E8VR9HvSi/V55rHj
+=btHg
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__29_Jun_2012_16_54_00_+1000_4+yXOhCaW4=leqEg--
+--Signature=_Fri__29_Jun_2012_16_58_36_+1000_s02vwDUjTfVNLVvQ--
