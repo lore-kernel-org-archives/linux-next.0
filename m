@@ -1,66 +1,59 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: commit "ARM: dma-mapping: remove custom consistent dma region"
-Date: Fri, 29 Jun 2012 07:22:33 +0200
-Message-ID: <000401cd55b7$327a1490$976e3db0$%szyprowski@samsung.com>
-References: <20120627194604.GA9445@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the trivial tree
+Date: Fri, 29 Jun 2012 15:57:24 +1000
+Message-ID: <20120629155724.99c0b8d8ad0738fdc7ebca33@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__29_Jun_2012_15_57_24_+1000_lqqRH4awx7S7adY="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:50492 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750764Ab2F2FXI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jun 2012 01:23:08 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M6D00IQ15M3O6O0@mailout4.samsung.com> for
- linux-next@vger.kernel.org; Fri, 29 Jun 2012 14:23:06 +0900 (KST)
-Received: from AMDC159 ([106.116.147.30])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M6D0015E5LMHT60@mmp1.samsung.com> for
- linux-next@vger.kernel.org; Fri, 29 Jun 2012 14:23:06 +0900 (KST)
-In-reply-to: <20120627194604.GA9445@windriver.com>
-Content-language: pl
+Received: from haggis.pcug.org.au ([203.10.76.10]:36589 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751257Ab2F2F5e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jun 2012 01:57:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Paul Gortmaker' <paul.gortmaker@windriver.com>
-Cc: kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Jiri Kosina <jkosina@suse.cz>, H Hartley Sweeten <hartleys@visionengravers.com>
 
-Hi Paul,
+--Signature=_Fri__29_Jun_2012_15_57_24_+1000_lqqRH4awx7S7adY=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday, June 27, 2012 9:46 PM Paul Gortmaker wrote:
+Hi Greg,
 
-> This commit in linux-next:
-> 
-> commit feb930cb9beb75cbe1d1e798870599c3aa1b93ec
-> Author: Marek Szyprowski <m.szyprowski@samsung.com>
-> Date:   Fri Jun 8 12:08:32 2012 +0200
-> 
->     ARM: dma-mapping: remove custom consistent dma region
-> 
-> seems to break the at91x40_defconfig (according to git bisect).
-> 
->   CC      arch/arm/mm/dma-mapping.o
-> arch/arm/mm/dma-mapping.c: In function '__dma_alloc':
-> arch/arm/mm/dma-mapping.c:575: error: macro "__alloc_from_pool" requires 4 arguments, but only
-> 2 given
-> arch/arm/mm/dma-mapping.c:575: error: '__alloc_from_pool' undeclared (first use in this
-> function)
-> arch/arm/mm/dma-mapping.c:575: error: (Each undeclared identifier is reported only once
-> arch/arm/mm/dma-mapping.c:575: error: for each function it appears in.)
-> make[2]: *** [arch/arm/mm/dma-mapping.o] Error 1
-> make[1]: *** [arch/arm/mm/dma-mapping.o] Error 2
-> 
-> See http://kisskb.ellerman.id.au/kisskb/buildresult/6596769/ for a full log.
-> 
-> Please have a look when you get a chance.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/comedi/drivers/s626.h between commit 6ac7d11527a3
+("treewide: Put a space between #include and FILE") from the trivial tree
+and commit 90fd56af25b7 ("staging: comedi: s626: remove private INLINE
+macro") from the staging tree.
 
-Thanks for the report! I've added a fix to my dma-mapping-next branch, the issue should go 
-away with the next update of linus-next tree.
+Just context changes.  I fixed it up and can carry the fix as necessary.
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+--Signature=_Fri__29_Jun_2012_15_57_24_+1000_lqqRH4awx7S7adY=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP7UPEAAoJEECxmPOUX5FEdT0P/22nK9DhPx7gP6GW7RjG4k/W
+VVWEpoCoK5sPfvlWA7vMj+BTG3b3kwei89GP9HOGGo2UZvzlHX71Z1uL8FJxRx9S
+E5t4tq6iVT0JCYJ08DFTqFzupqVfHu1+tuovpbcOmLybP15kahCjGSD9fMd9DuNG
+vrzfsQPY6fIQsJc8jhNTdwj2aBQVfx486N5bDNbYbKtY6x8X6sW8/rdGvRRnmrhq
+GDOoeKzVPwGFDDWpZw6nwxeZR5HaJgoQiu1xxvINi76jqowr+xV/ChCpT40QhN+b
+70eWlIzQ7uflw8c2cB/J8E3kJkIoPTa5VYHSonby+2D0Gmv+0Jef2pnujf25eacB
+Li+flaxiqacPKF9TJgLj1AGIE+dusR9QhTlISkZhnEnvhj9usB+wb4e9N+ixqO6F
+9d5XWZweS/eL1IlgJP+886rDokCqQa3mqE4xGGsjkrMdhik7XdekQZXpIgplEvSx
+xggy+mS+uhDa+4jDQ7Jopgy5g1U4tsav3+GA5E3wwPr0iApRxs9Im3ZLKEBGeygS
++9AqTGJrYxvc5oBepNidbe/leCDDjHpGPOLSql2gJLVsODT+i4zRhjLD39u2seCA
+JSSjaraVoYq2UY2Skw9zaxIkoMTMbwozjkga3k6TDg0y4euJNbWvF1OQiOknzjfx
+RMjtkHR4irYFa5evxcBA
+=ON1c
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__29_Jun_2012_15_57_24_+1000_lqqRH4awx7S7adY=--
