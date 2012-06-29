@@ -1,62 +1,38 @@
-From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+From: Mark Salter <msalter@redhat.com>
 Subject: Re: nfs root problem in linux-next
-Date: Fri, 29 Jun 2012 13:55:49 +0000
-Message-ID: <1340978148.2498.6.camel@lade.trondhjem.org>
+Date: Fri, 29 Jun 2012 10:48:48 -0400
+Message-ID: <1340981329.2514.23.camel@deneb.redhat.com>
 References: <1340656006.20557.30.camel@deneb.redhat.com>
 	 <1340666049.4362.9.camel@lade.trondhjem.org>
 	 <1340680664.20557.38.camel@deneb.redhat.com>
+	 <1340978148.2498.6.camel@lade.trondhjem.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.netapp.com ([216.240.18.37]:49003 "EHLO mx2.netapp.com"
+Received: from mx1.redhat.com ([209.132.183.28]:54740 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750806Ab2F2Nzu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 Jun 2012 09:55:50 -0400
-In-Reply-To: <1340680664.20557.38.camel@deneb.redhat.com>
-Content-Language: en-US
-Content-ID: <C593AF48182BBF4398868767328A90EC@tahoe.netapp.com>
+	id S1751446Ab2F2Osv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 Jun 2012 10:48:51 -0400
+In-Reply-To: <1340978148.2498.6.camel@lade.trondhjem.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Salter <msalter@redhat.com>, Fengguang Wu <fengguang.wu@intel.com>
-Cc: linux-next <linux-next@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+To: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Cc: Fengguang Wu <fengguang.wu@intel.com>, linux-next <linux-next@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
 
-T24gTW9uLCAyMDEyLTA2LTI1IGF0IDIzOjE3IC0wNDAwLCBNYXJrIFNhbHRlciB3cm90ZToNCj4g
-T24gTW9uLCAyMDEyLTA2LTI1IGF0IDIzOjE0ICswMDAwLCBNeWtsZWJ1c3QsIFRyb25kIHdyb3Rl
-Og0KPiA+IE9uIE1vbiwgMjAxMi0wNi0yNSBhdCAxNjoyNiAtMDQwMCwgTWFyayBTYWx0ZXIgd3Jv
-dGU6DQo+ID4gPiBBcyBvZiBGcmlkYXkncyBsaW51eC1uZXh0IEkndmUgYmVlbiB1bmFibGUgdG8g
-c3VjY2Vzc2Z1bGx5IGJvb3QgdXNpbmcgYW4NCj4gPiA+IG5mcyByb290IHdpdGggYSBjNnggYm9h
-cmQuIEkgYmlzZWN0ZWQgaXQgdG8gdGhpcyBwYXRjaDoNCj4gPiA+IA0KPiA+ID4gICBjb21taXQg
-Y2MzYjI5NmZkOWEwMWM5ZTY1NGJjYjkzNzNhZjcwZGQ2ZTMyZmIyNA0KPiA+ID4gICBBdXRob3I6
-IFRyb25kIE15a2xlYnVzdCA8VHJvbmQuTXlrbGVidXN0QG5ldGFwcC5jb20+DQo+ID4gPiAgIERh
-dGU6ICAgVGh1IEp1biAyMSAxNDo1MzoxMCAyMDEyIC0wNDAwDQo+ID4gPiANCj4gPiA+ICAgICAg
-IFNVTlJQQzogQ2xlYW4gdXAgeGRyX3JlYWRfcGFnZXMgYW5kIHhkcl9lbnRlcl9wYWdlDQo+ID4g
-PiANCj4gPiA+IEkgcGxhY2VkICJnb29kLWJvb3QiIGFuZCAiYmFkLWJvb3QiIHBhY2tldCBjYXB0
-dXJlIGZpbGVzIGF0Og0KPiA+ID4gDQo+ID4gPiAgIGh0dHA6Ly9wZW9wbGUucmVkaGF0LmNvbS9+
-bXNhbHRlci9saW51eC1uZXh0Lw0KPiA+ID4gDQo+ID4gPiBUaGUgb25seSBkaWZmZXJlbmNlIGlu
-IHRoZSBrZXJuZWxzIHVzZWQgaXMgdGhlIGFib3ZlIHBhdGNoLiBUaGUNCj4gPiA+IGJhZC1ib290
-IG1vdW50ZWQgdGhlIG5mcyByb290IGJ1dCB3YXMgdW5hYmxlIHRvIGZpbmQgdGhlIGluaXQNCj4g
-PiA+IGZpbGUgd2hpY2ggY2F1c2VkIGEgcGFuaWMuIFRoZSBuZnNyb290PSBwYXJhbWV0ZXIgdXNl
-cyB2Myx0Y3ANCj4gPiA+IGZsYWdzIGFuZCB0aGUgc2VydmVyIHNpZGUgaXMgcnVubmluZyByaGVs
-Ni4NCj4gPiA+IA0KPiA+ID4gSSdtIG5vdCBhdCBhbGwgZmFtaWxpYXIgd2l0aCB0aGUgbmZzIGNv
-ZGUsIGJ1dCBjYW4gaGVscCB3aXRoDQo+ID4gPiB0ZXN0aW5nIG9yIHByb3ZpZGluZyBhbnkgYWRk
-dGlvbmFsIGluZm8gbmVlZGVkLg0KPiA+IA0KPiA+IEhpIE1hcmssDQo+ID4gDQo+ID4gU28geW91
-IGFyZSBzYXlpbmcgdGhhdCByZXZlcnRpbmcgdGhhdCBwYXRjaCBhbG9uZSBzdWZmaWNlcyB0byBm
-aXggdGhlDQo+ID4gcHJvYmxlbSB0aGF0IHlvdSBhcmUgc2VlaW5nPw0KPiANCj4gWWVzLiBJZiBJ
-IGNoZWNrIG91dCBhIHRyZWUgYXQgY29tbWl0IGNjM2IyOTZmZDlhLCB0aGUgcmVzdWx0aW5nIGtl
-cm5lbA0KPiBkb2VzIG5vdCBib290IChpdCBwYW5pY3MgdGhhdCBpdCBjYW5ub3QgZmluZCBpbml0
-KS4gSWYgSSBjaGVjayBvdXQgYQ0KPiB0cmVlIGF0ICBjYzNiMjk2ZmQ5YX4xLCBpdCBib290cyB0
-aGUgbmZzIHJvb3Qgc3VjY2Vzc2Z1bGx5Lg0KPiANCj4gLi4uDQo+ID4gSSdsbCBoYXZlIGEgbG9v
-ayB0byBzZWUgaWYgSSBjYW4gZmluZCBvdXQgd2hhdCBpcyB0aGUgcHJvYmxlbS4gVGhlIG9ubHkN
-Cj4gPiBzaWduaWZpY2FudCBjaGFuZ2UgdGhhdCBwYXRjaCBzaG91bGQgYmUgaW50cm9kdWNpbmcg
-d291bGQgYmUgdGhlIHVzZSBvZg0KPiA+IHhkcl9zdHJlYW1fcG9zKCkuDQo+IA0KPiBPa2F5LiBJ
-IGFtIGhhcHB5IHRvIGhlbHAgd2l0aCBhbnkgdGVzdGluZyBpZiBuZWVkZWQgdG8gaGVscCBjaGFy
-YWN0ZXJpemUNCj4gdGhlIHByb2JsZW0gYmV0dGVyLg0KDQpIaSBNYXJrIGFuZCBGZW5nZ3Vhbmcs
-DQoNCkkgYmVsaWV2ZSB0aGF0IEkndmUgZm91bmQgdGhlIGJ1ZyB0aGF0IHdhcyBiZWluZyB0cmln
-Z2VyZWQgaW4gdGhlIGFib3ZlDQpwYXRjaC4gSXQgd2FzIGEgbWlzdGFrZSBpbiB0aGUgZWFybGll
-ciBwYXRjaCAiU1VOUlBDOiBEb24ndCBkZWNvZGUNCmJleW9uZCB0aGUgZW5kIG9mIHRoZSBSUEMg
-cmVwbHkgbWVzc2FnZSIsIHdoaWNoIHdhcyBmYWlsaW5nIHRvIGNvcnJlY3RseQ0KaW5pdGlhbGlz
-ZSB0aGUgeGRyLT5ud29yZHMgZmllbGQuDQoNCkkndmUgbm93IGZpeGVkIGl0IGFuZCB1cGRhdGVk
-IHRoZSBsaW51eC1uZXh0IGJyYW5jaC4NCg0KQ2hlZXJzDQogIFRyb25kDQotLSANClRyb25kIE15
-a2xlYnVzdA0KTGludXggTkZTIGNsaWVudCBtYWludGFpbmVyDQoNCk5ldEFwcA0KVHJvbmQuTXlr
-bGVidXN0QG5ldGFwcC5jb20NCnd3dy5uZXRhcHAuY29tDQoNCg==
+On Fri, 2012-06-29 at 13:55 +0000, Myklebust, Trond wrote:
+> Hi Mark and Fengguang,
+> 
+> I believe that I've found the bug that was being triggered in the
+> above
+> patch. It was a mistake in the earlier patch "SUNRPC: Don't decode
+> beyond the end of the RPC reply message", which was failing to
+> correctly
+> initialise the xdr->nwords field.
+> 
+> I've now fixed it and updated the linux-next branch.
+
+Yes, I can confirm that today's linux-next is booting correctly
+for me on an nfsroot.
+
+Thanks!
