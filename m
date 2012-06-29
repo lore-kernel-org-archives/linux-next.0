@@ -1,67 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the hid tree
-Date: Fri, 29 Jun 2012 12:47:31 +1000
-Message-ID: <20120629124731.4577c98083269ca2d20c8d5f@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Fri, 29 Jun 2012 13:30:46 +1000
+Message-ID: <20120629133046.f6c65d4d6017d2ae486cfd2b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Fri__29_Jun_2012_12_47_31_+1000_PDICZniwoS56VR9e"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:56955 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752467Ab2F2Crt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jun 2012 22:47:49 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@jikos.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Fri__29_Jun_2012_13_30_46_+1000_iJ1qK3BsjEMNcDQj"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__29_Jun_2012_12_47_31_+1000_PDICZniwoS56VR9e
+--Signature=_Fri__29_Jun_2012_13_30_46_+1000_iJ1qK3BsjEMNcDQj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Dave,
 
-After merging the hid tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/intel_display.c between commit 7aa1e7f06d6e ("Revert
+"drm/i915: allow PCH PWM override on IVB"") from Linus' tree and commit
+7cf416014813 ("drm/i915: clear up backlight #define confusion on gen4+")
+from the drm tree.
 
-drivers/hid/Kconfig:698: unexpected 'endif' within menu block
-drivers/hid/Kconfig:702: unexpected 'endmenu' within if block
-drivers/Kconfig:151: 'endmenu' in different file than 'menu'
-drivers/hid/Kconfig:79: location of the 'menu'
-arch/powerpc/kvm/Kconfig:153: syntax error
-drivers/Kconfig:1: missing end statement for this entry
-
-Caused by bad merge 8494746044bf ("Merge branch 'roccat' into
-for-next").  This added a second copy of
-
-menu "Special HID drivers"
-
-I have used the hid tree from next-20120628 for today.
+The former removed the function ivb_pch_pwm_override() that is modified
+by the latter, so I did that - or should I have just ignored the revert
+patch?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Fri__29_Jun_2012_12_47_31_+1000_PDICZniwoS56VR9e
+--Signature=_Fri__29_Jun_2012_13_30_46_+1000_iJ1qK3BsjEMNcDQj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP7RdDAAoJEECxmPOUX5FEzKcQAJfv6OoYw+pCdPlcf5p19ALo
-em4h7Etgt14dQiSjP3H/BilPbrOuMyVZzFzBd6Wx1+SI0GVyn+j/IwkKsOtfdraT
-xfyydiD6FDAzi/80SXkr8jPOy7cUb1v/Ei+MfFtiJJh22aS1lGaWBo51ebcMyXXE
-dpa57vjBtSO7ZfVvMdOWckDW8nS7J8bqZZVmzGkBdfybreWzI6g07EpYeu5lAKr0
-//8Sq2rMJSzZroKSCEYqeZ2AVLaXS+Lz634nIE95yKlbDrYHmTvw9Sceu3B25hR9
-y2t0KprZTUHN1aKK7PYDjMc40cqA+02VMsy/2p+p2D4ZpsjqizOyli8NJt+F9GvP
-JnXYuZJt0N28ZI6k2Uwaan5TygE+c318m+fC65gaavmTzplesEQxxbySPC9+DZrP
-0W4Pb9mJy31CyN6owrjhqAFNq7m3TZKzOy7Jj0M0DrYuf0MJaojmlbB/EyuuxWSK
-1eq3kh+vwz1RZmDP8yXj7nmiEHVsWEYJkaw8v/O/trmO+H26nr6Ejobr35l/HbRO
-kU6KnvHBuQ8CfqgowkrreB/3Rkvy4jyEnohk3ve0WrNBtHDq2hFXtIN78FuC0OQ2
-y52mT+hZhhqWy5HNa/ByuYbpdk4BAmbwJDLATSuZBJtv4ytl3wkCfbU1/IzQZ2x8
-Aj5QQoZEz8avlRJ9XIAZ
-=P57k
+iQIcBAEBCAAGBQJP7SFmAAoJEECxmPOUX5FEdA4QAIE3XivrTKscl1DvaOJfbgh2
+UKbD4Z3QcKPWmLrY+E/38Hkhgq+UqVQzjmetzAzoGvSjI4fHu6tXYFdp1FlvODhB
+su+FSYqGnqqHnEAtq/VhfCtW8dPZfoSu33E8gtyEfXlYcuORVNWNDwRGS0s4hLm3
+yb93heBzM7ziSL7GWpkVOULgRNc0WCrz3CmiVK/2MoNgFSKQsqv/pmh51TmGL4Ur
+ydFGkhUWxcDQ3DNZjTC9Batjn6B0XZRkc3nCRGTdTJ+ra+lkN1U7N1XW9N4dvwDz
+/NJ9CA59gkILN8EbifNFZFDzU/D7KaCM2I28UPV+BX5GcqW9FBgj5QHCtjEtsOpr
+og5eYLcqrSVkzjCEI26ODs7stg3szwyzxjfr/en5aHme1bViL8cZQy84Ad4+SbTE
+qMk70N9m7qZLtRuCM7uYfNwhypBrmreUQK9S0+gcfjoDpjlVtGS5hbdeCV1glSnJ
+hLpsFMM0lWLvSnmMS3ses5T3Dz7qpg2xojmZpbng7+Pdk9TBsnZkR8lvR9KgJ55v
+sKZlGB+JCg4EbhJCiofKro3rlE2390LP5NQeHPgVt+AQ5rMn4CV/LBRlNvSB9URX
+L97GwQPl/dfD7HSO0g07KxHWx+HK5lGFbiu7N7X4hCNGw5xgEAZwuD2gBbcXnJXW
+TOZFWa14Ph3Rq/ZFtGzC
+=P84T
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__29_Jun_2012_12_47_31_+1000_PDICZniwoS56VR9e--
+--Signature=_Fri__29_Jun_2012_13_30_46_+1000_iJ1qK3BsjEMNcDQj--
