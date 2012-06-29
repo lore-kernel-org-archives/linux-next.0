@@ -1,38 +1,173 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: VFIO compile failure on i386 allmodconfig in linux-next
-Date: Thu, 28 Jun 2012 16:25:47 -0600
-Message-ID: <1340922347.3179.60.camel@ul30vt>
-References: <20120628175712.GA20250@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the m68knommu tree with Linus' tree
+Date: Fri, 29 Jun 2012 11:33:10 +1000
+Message-ID: <20120629113310.e578f61aa71e9350a3596833@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__29_Jun_2012_11_33_10_+1000_3MPnUikOMb5.3s/R"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:12666 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754853Ab2F1WZs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Jun 2012 18:25:48 -0400
-In-Reply-To: <20120628175712.GA20250@windriver.com>
+Received: from haggis.pcug.org.au ([203.10.76.10]:34786 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754465Ab2F2BdW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jun 2012 21:33:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org
+To: Greg Ungerer <gerg@snapgear.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven King <sfking@fdwdc.com>
 
-On Thu, 2012-06-28 at 13:57 -0400, Paul Gortmaker wrote:
-> Hi Alex,
-> 
-> Just a heads up that the i386 allmodconfig failed on VFIO, in case
-> you didn't see it.
-> 
-> http://kisskb.ellerman.id.au/kisskb/buildresult/6603285/
-> 
-> arch/x86/include/asm/uaccess_32.h:211:26: error: call to 'copy_from_user_overflow' declared with attribute error: copy_from_user() buffer size is not provably correct
-> make[4]: *** [drivers/vfio/pci/vfio_pci_config.o] Error 1
+--Signature=_Fri__29_Jun_2012_11_33_10_+1000_3MPnUikOMb5.3s/R
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for the report.  This looks bogus to me, it's complaining
-about a copy_from_user into an __le32 because it can't determine the
-number of bytes to be copied.  That number is a parameter to the
-function, but the function is static and only called with values of 1, 2
-or 4.  I've added a test that seems to make the compiler happy, so this
-will be fixed in tomorrow's tree.  Thanks!
+Hi Greg,
 
-Alex
+Today's linux-next merge of the m68knommu tree got a conflict in
+arch/m68k/platform/coldfire/clk.c between commit 19a1d332cc8c
+("m68knommu: define a local devm_clk_get() function") from Linus' tree
+and commit a0412a2ddaa3 ("m68knommu: Add support for the Coldfire
+m5441x") from the m68knommu tree.
+
+I fixed it up (I think - see below) and can carry the fix as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/m68k/platform/coldfire/clk.c
+index 44da406,d96405c..0000000
+--- a/arch/m68k/platform/coldfire/clk.c
++++ b/arch/m68k/platform/coldfire/clk.c
+@@@ -43,10 -49,102 +49,107 @@@ unsigned long clk_get_rate(struct clk *
+  }
+  EXPORT_SYMBOL(clk_get_rate);
+ =20
+ +struct clk *devm_clk_get(struct device *dev, const char *id)
+ +{
+ +	return NULL;
+ +}
+ +EXPORT_SYMBOL(devm_clk_get);
+ +
++ #else
++ static DEFINE_SPINLOCK(clk_lock);
++=20
++ struct clk *clk_get(struct device *dev, const char *id)
++ {
++ 	const char *clk_name =3D dev ? dev_name(dev) : id ? id : NULL;
++ 	struct clk *clk;
++ 	unsigned i;
++=20
++ 	for (i =3D 0; (clk =3D mcf_clks[i]) !=3D NULL; ++i)
++ 		if (!strcmp(clk->name, clk_name))
++ 			return clk;
++ 	pr_warn("clk_get: didn't find clock %s\n", clk_name);
++ 	return ERR_PTR(-ENOENT);
++ }
++ EXPORT_SYMBOL(clk_get);
++=20
++ int clk_enable(struct clk *clk)
++ {
++ 	unsigned long flags;
++ 	spin_lock_irqsave(&clk_lock, flags);
++ 	if ((clk->enabled++ =3D=3D 0) && clk->clk_ops)
++ 		clk->clk_ops->enable(clk);
++ 	spin_unlock_irqrestore(&clk_lock, flags);
++=20
++ 	return 0;
++ }
++ EXPORT_SYMBOL(clk_enable);
++=20
++ void clk_disable(struct clk *clk)
++ {
++ 	unsigned long flags;
++ 	spin_lock_irqsave(&clk_lock, flags);
++ 	if ((--clk->enabled =3D=3D 0) && clk->clk_ops)
++ 		clk->clk_ops->disable(clk);
++ 	spin_unlock_irqrestore(&clk_lock, flags);
++ }
++ EXPORT_SYMBOL(clk_disable);
++=20
++ void clk_put(struct clk *clk)
++ {
++ 	if (clk->enabled !=3D 0)
++ 		pr_warn("clk_put %s still enabled\n", clk->name);
++ }
++ EXPORT_SYMBOL(clk_put);
++=20
++ unsigned long clk_get_rate(struct clk *clk)
++ {
++ 	return clk->rate;
++ }
++ EXPORT_SYMBOL(clk_get_rate);
++=20
+ -
+  /************************************************************************=
+***/
++=20
++ void __clk_init_enabled(struct clk *clk)
++ {
++ 	clk->enabled =3D 1;
++ 	clk->clk_ops->enable(clk);
++ }
++=20
++ void __clk_init_disabled(struct clk *clk)
++ {
++ 	clk->enabled =3D 0;
++ 	clk->clk_ops->disable(clk);
++ }
++=20
++ static void __clk_enable0(struct clk *clk)
++ {
++ 	__raw_writeb(clk->slot, MCFPM_PPMCR0);
++ }
++=20
++ static void __clk_disable0(struct clk *clk)
++ {
++ 	__raw_writeb(clk->slot, MCFPM_PPMSR0);
++ }
++=20
++ struct clk_ops clk_ops0 =3D {
++ 	.enable		=3D __clk_enable0,
++ 	.disable	=3D __clk_disable0,
++ };
++=20
++ #ifdef MCFPM_PPMCR1
++ static void __clk_enable1(struct clk *clk)
++ {
++ 	__raw_writeb(clk->slot, MCFPM_PPMCR1);
++ }
++=20
++ static void __clk_disable1(struct clk *clk)
++ {
++ 	__raw_writeb(clk->slot, MCFPM_PPMSR1);
++ }
++=20
++ struct clk_ops clk_ops1 =3D {
++ 	.enable		=3D __clk_enable1,
++ 	.disable	=3D __clk_disable1,
++ };
++ #endif /* MCFPM_PPMCR1 */
++ #endif /* MCFPM_PPMCR0 */
+
+--Signature=_Fri__29_Jun_2012_11_33_10_+1000_3MPnUikOMb5.3s/R
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP7QXWAAoJEECxmPOUX5FE4JkP+gMk24MGNfr3QI6VPYDg2t+r
+fmA0y2WkyZfUpGqBWYK6TVBMohqYzNmacXYtI6nP/2XUiSkTwbqPGpFdZp+bgv1h
+KeOYCuNaQbXqjHU/FfrrBRuRiQ0dLLBMRFY29tZ+NdW69B3ykyDoUZMYjDxY3I7i
+uN+C5kbhiAZBY5i22XiZfCZ/0rKEgmgf4RR0I0Nn2OS5xW15e1PXgNPtlXlEkncD
+Imm4fDq3UR5Ucs566PtTVwnUMWcObUZ/80qVcgpeIBo3qnbic7r1NAfTCfEK5r+F
+8u6oJRRuO6P3ynZxFBZ9bTsXs8dye2sMTrQzR/AqQyfNQcLVqvDs1m1gbYj1FuKa
+TzkIh75FeKV6poUKnZD7K1mMK919NxR/5FK2nulpthsd68LYEH5PK6zOp0YRWDfQ
+bBIwNpm/AwLlsShxDLGwJQPPKNxzDh/bajfiNsmrBBK5bckMSm7pBvPmavKyrcZk
+tXIrnBgbjvLndQPzczQuGTrPlka0VEsInM7jbiE+kQAzBsxhNE87aKu4F9xHs/HT
+EMMul92vdnonSS/RL0qhZtXdBxlAjUvrwWteGdSGjTRRtxsTreQzv4h0t1E4thXw
+Y+epQW2OXKafB3CYux2nWTSmhifCZ1jgVOOoznxpCEFyHOlGPgxfm7nn60pFAIU+
+ppXd/slnWsINfCiOx61g
+=9ZN/
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__29_Jun_2012_11_33_10_+1000_3MPnUikOMb5.3s/R--
