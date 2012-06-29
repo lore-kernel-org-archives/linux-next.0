@@ -1,45 +1,62 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: build failure after merge of the hid tree
-Date: Fri, 29 Jun 2012 15:03:38 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1206291503010.11491@pobox.suse.cz>
-References: <20120629124731.4577c98083269ca2d20c8d5f@canb.auug.org.au>
+From: "Myklebust, Trond" <Trond.Myklebust@netapp.com>
+Subject: Re: nfs root problem in linux-next
+Date: Fri, 29 Jun 2012 13:55:49 +0000
+Message-ID: <1340978148.2498.6.camel@lade.trondhjem.org>
+References: <1340656006.20557.30.camel@deneb.redhat.com>
+	 <1340666049.4362.9.camel@lade.trondhjem.org>
+	 <1340680664.20557.38.camel@deneb.redhat.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:42232 "EHLO mx2.suse.de"
+Received: from mx2.netapp.com ([216.240.18.37]:49003 "EHLO mx2.netapp.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754038Ab2F2NDr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 Jun 2012 09:03:47 -0400
-In-Reply-To: <20120629124731.4577c98083269ca2d20c8d5f@canb.auug.org.au>
+	id S1750806Ab2F2Nzu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 Jun 2012 09:55:50 -0400
+In-Reply-To: <1340680664.20557.38.camel@deneb.redhat.com>
+Content-Language: en-US
+Content-ID: <C593AF48182BBF4398868767328A90EC@tahoe.netapp.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jikos@jikos.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Salter <msalter@redhat.com>, Fengguang Wu <fengguang.wu@intel.com>
+Cc: linux-next <linux-next@vger.kernel.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
 
-On Fri, 29 Jun 2012, Stephen Rothwell wrote:
-
-> After merging the hid tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/hid/Kconfig:698: unexpected 'endif' within menu block
-> drivers/hid/Kconfig:702: unexpected 'endmenu' within if block
-> drivers/Kconfig:151: 'endmenu' in different file than 'menu'
-> drivers/hid/Kconfig:79: location of the 'menu'
-> arch/powerpc/kvm/Kconfig:153: syntax error
-> drivers/Kconfig:1: missing end statement for this entry
-> 
-> Caused by bad merge 8494746044bf ("Merge branch 'roccat' into
-> for-next").  This added a second copy of
-> 
-> menu "Special HID drivers"
-> 
-> I have used the hid tree from next-20120628 for today.
-
-Thanks for reporting this, Stephen; I have mismerged the branch. Just 
-pushed out fixed branch, so all should be okay now.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
+T24gTW9uLCAyMDEyLTA2LTI1IGF0IDIzOjE3IC0wNDAwLCBNYXJrIFNhbHRlciB3cm90ZToNCj4g
+T24gTW9uLCAyMDEyLTA2LTI1IGF0IDIzOjE0ICswMDAwLCBNeWtsZWJ1c3QsIFRyb25kIHdyb3Rl
+Og0KPiA+IE9uIE1vbiwgMjAxMi0wNi0yNSBhdCAxNjoyNiAtMDQwMCwgTWFyayBTYWx0ZXIgd3Jv
+dGU6DQo+ID4gPiBBcyBvZiBGcmlkYXkncyBsaW51eC1uZXh0IEkndmUgYmVlbiB1bmFibGUgdG8g
+c3VjY2Vzc2Z1bGx5IGJvb3QgdXNpbmcgYW4NCj4gPiA+IG5mcyByb290IHdpdGggYSBjNnggYm9h
+cmQuIEkgYmlzZWN0ZWQgaXQgdG8gdGhpcyBwYXRjaDoNCj4gPiA+IA0KPiA+ID4gICBjb21taXQg
+Y2MzYjI5NmZkOWEwMWM5ZTY1NGJjYjkzNzNhZjcwZGQ2ZTMyZmIyNA0KPiA+ID4gICBBdXRob3I6
+IFRyb25kIE15a2xlYnVzdCA8VHJvbmQuTXlrbGVidXN0QG5ldGFwcC5jb20+DQo+ID4gPiAgIERh
+dGU6ICAgVGh1IEp1biAyMSAxNDo1MzoxMCAyMDEyIC0wNDAwDQo+ID4gPiANCj4gPiA+ICAgICAg
+IFNVTlJQQzogQ2xlYW4gdXAgeGRyX3JlYWRfcGFnZXMgYW5kIHhkcl9lbnRlcl9wYWdlDQo+ID4g
+PiANCj4gPiA+IEkgcGxhY2VkICJnb29kLWJvb3QiIGFuZCAiYmFkLWJvb3QiIHBhY2tldCBjYXB0
+dXJlIGZpbGVzIGF0Og0KPiA+ID4gDQo+ID4gPiAgIGh0dHA6Ly9wZW9wbGUucmVkaGF0LmNvbS9+
+bXNhbHRlci9saW51eC1uZXh0Lw0KPiA+ID4gDQo+ID4gPiBUaGUgb25seSBkaWZmZXJlbmNlIGlu
+IHRoZSBrZXJuZWxzIHVzZWQgaXMgdGhlIGFib3ZlIHBhdGNoLiBUaGUNCj4gPiA+IGJhZC1ib290
+IG1vdW50ZWQgdGhlIG5mcyByb290IGJ1dCB3YXMgdW5hYmxlIHRvIGZpbmQgdGhlIGluaXQNCj4g
+PiA+IGZpbGUgd2hpY2ggY2F1c2VkIGEgcGFuaWMuIFRoZSBuZnNyb290PSBwYXJhbWV0ZXIgdXNl
+cyB2Myx0Y3ANCj4gPiA+IGZsYWdzIGFuZCB0aGUgc2VydmVyIHNpZGUgaXMgcnVubmluZyByaGVs
+Ni4NCj4gPiA+IA0KPiA+ID4gSSdtIG5vdCBhdCBhbGwgZmFtaWxpYXIgd2l0aCB0aGUgbmZzIGNv
+ZGUsIGJ1dCBjYW4gaGVscCB3aXRoDQo+ID4gPiB0ZXN0aW5nIG9yIHByb3ZpZGluZyBhbnkgYWRk
+dGlvbmFsIGluZm8gbmVlZGVkLg0KPiA+IA0KPiA+IEhpIE1hcmssDQo+ID4gDQo+ID4gU28geW91
+IGFyZSBzYXlpbmcgdGhhdCByZXZlcnRpbmcgdGhhdCBwYXRjaCBhbG9uZSBzdWZmaWNlcyB0byBm
+aXggdGhlDQo+ID4gcHJvYmxlbSB0aGF0IHlvdSBhcmUgc2VlaW5nPw0KPiANCj4gWWVzLiBJZiBJ
+IGNoZWNrIG91dCBhIHRyZWUgYXQgY29tbWl0IGNjM2IyOTZmZDlhLCB0aGUgcmVzdWx0aW5nIGtl
+cm5lbA0KPiBkb2VzIG5vdCBib290IChpdCBwYW5pY3MgdGhhdCBpdCBjYW5ub3QgZmluZCBpbml0
+KS4gSWYgSSBjaGVjayBvdXQgYQ0KPiB0cmVlIGF0ICBjYzNiMjk2ZmQ5YX4xLCBpdCBib290cyB0
+aGUgbmZzIHJvb3Qgc3VjY2Vzc2Z1bGx5Lg0KPiANCj4gLi4uDQo+ID4gSSdsbCBoYXZlIGEgbG9v
+ayB0byBzZWUgaWYgSSBjYW4gZmluZCBvdXQgd2hhdCBpcyB0aGUgcHJvYmxlbS4gVGhlIG9ubHkN
+Cj4gPiBzaWduaWZpY2FudCBjaGFuZ2UgdGhhdCBwYXRjaCBzaG91bGQgYmUgaW50cm9kdWNpbmcg
+d291bGQgYmUgdGhlIHVzZSBvZg0KPiA+IHhkcl9zdHJlYW1fcG9zKCkuDQo+IA0KPiBPa2F5LiBJ
+IGFtIGhhcHB5IHRvIGhlbHAgd2l0aCBhbnkgdGVzdGluZyBpZiBuZWVkZWQgdG8gaGVscCBjaGFy
+YWN0ZXJpemUNCj4gdGhlIHByb2JsZW0gYmV0dGVyLg0KDQpIaSBNYXJrIGFuZCBGZW5nZ3Vhbmcs
+DQoNCkkgYmVsaWV2ZSB0aGF0IEkndmUgZm91bmQgdGhlIGJ1ZyB0aGF0IHdhcyBiZWluZyB0cmln
+Z2VyZWQgaW4gdGhlIGFib3ZlDQpwYXRjaC4gSXQgd2FzIGEgbWlzdGFrZSBpbiB0aGUgZWFybGll
+ciBwYXRjaCAiU1VOUlBDOiBEb24ndCBkZWNvZGUNCmJleW9uZCB0aGUgZW5kIG9mIHRoZSBSUEMg
+cmVwbHkgbWVzc2FnZSIsIHdoaWNoIHdhcyBmYWlsaW5nIHRvIGNvcnJlY3RseQ0KaW5pdGlhbGlz
+ZSB0aGUgeGRyLT5ud29yZHMgZmllbGQuDQoNCkkndmUgbm93IGZpeGVkIGl0IGFuZCB1cGRhdGVk
+IHRoZSBsaW51eC1uZXh0IGJyYW5jaC4NCg0KQ2hlZXJzDQogIFRyb25kDQotLSANClRyb25kIE15
+a2xlYnVzdA0KTGludXggTkZTIGNsaWVudCBtYWludGFpbmVyDQoNCk5ldEFwcA0KVHJvbmQuTXlr
+bGVidXN0QG5ldGFwcC5jb20NCnd3dy5uZXRhcHAuY29tDQoNCg==
