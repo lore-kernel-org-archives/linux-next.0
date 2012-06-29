@@ -1,36 +1,75 @@
-From: Sjur BRENDELAND <sjur.brandeland@stericsson.com>
-Subject: RE: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 29 Jun 2012 08:46:04 +0200
-Message-ID: <81C3A93C17462B4BBD7E272753C10579232F86B36C@EXDCVYMBSTM005.EQ1STM.local>
-References: <20120626131543.21e4338894b19f5e02f8bdde@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pwm tree with the s5p tree
+Date: Fri, 29 Jun 2012 16:49:46 +1000
+Message-ID: <20120629164946.97497f3eb94a5d4fbcc6b448@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Fri__29_Jun_2012_16_49_46_+1000_HZMw9tUeHVd/Q8ui"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eu1sys200aog120.obsmtp.com ([207.126.144.149]:58844 "EHLO
-	eu1sys200aog120.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751210Ab2F2GqY convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 Jun 2012 02:46:24 -0400
-In-Reply-To: <20120626131543.21e4338894b19f5e02f8bdde@canb.auug.org.au>
-Content-Language: en-US
+Received: from haggis.pcug.org.au ([203.10.76.10]:36847 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751258Ab2F2GuB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jun 2012 02:50:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Per ELLEFSEN <per.ellefsen@stericsson.com>, Kim LILLIESTIERNA <kim.xx.lilliestierna@stericsson.com>
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sascha Hauer <s.hauer@pengutronix.de>, =?UTF-8?B?IkVyaWMgQsOpbmFyZCI=?= <eric@eukrea.com>
 
-Hi Stephen,
+--Signature=_Fri__29_Jun_2012_16_49_46_+1000_HZMw9tUeHVd/Q8ui
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the net-next tree got a conflict in
-> drivers/net/caif/caif_hsi.c between commits 3935600a7f34 ("caif-hsi:
-> Bugfix - Piggyback'ed embedded CAIF frame lost") and 1fdc7630b2cb
-> ("caif-hsi: Add missing return in error path") from the net tree and
-> commits 4e7bb59d49fb ("caif-hsi: Removed dead code") and c41254006377
-> ("caif-hsi: Add rtnl support") from the net-next tree.
-> 
-> I fixed them up (see below) and can carry the fix as necessary.
+Hi Thierry,
 
-Sorry for late response. Your merge looks perfect.
+Today's linux-next merge of the pwm tree got a conflict in
+arch/arm/plat-samsung/Makefile between commit 65ab16fd385f ("ARM: EXYNOS:
+Remove leftovers of the Samsung specific power domain control") from the
+s5p tree and commit 2663e766c56a ("ARM Samsung: Move s3c pwm driver to
+pwm framework") from the pwm tree.
 
-Thanks,
-Sjur
+Just context changes. I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/plat-samsung/Makefile
+index 4bb58c2,9685472..0000000
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@@ -59,7 -59,7 +59,3 @@@ obj-$(CONFIG_SAMSUNG_WAKEMASK)	+=3D wakeu
+ =20
+  obj-$(CONFIG_S5P_PM)		+=3D s5p-pm.o s5p-irq-pm.o
+  obj-$(CONFIG_S5P_SLEEP)		+=3D s5p-sleep.o
+--
+- # PWM support
+-=20
+- obj-$(CONFIG_HAVE_PWM)		+=3D pwm.o
+ -# PD support
+ -
+ -obj-$(CONFIG_SAMSUNG_PD)	+=3D pd.o
+
+--Signature=_Fri__29_Jun_2012_16_49_46_+1000_HZMw9tUeHVd/Q8ui
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP7VAKAAoJEECxmPOUX5FE37kP+wWnu7b8nezreWamBgkxAXlS
+IqqWCBYNZaXHICpLZK4SdB+oSRGq4nLC3K9f72nRQbwOspIqob4p6EgPZxUQFJHP
+aAAqXN0RUf9OxJx5h2KUlZDSALrLZ4WPTjLIWuMdJAAekcYjCfPeq6mG7xmS3WEw
+0nVadLUiTwEr+AUC+5530CWlTThRpnXlWxYu6YxFv+HH/FRn9acZSHpemFnXMeMS
+UYwcjsBAvvf3+cj/q4eEVzBnO7XjOcvBcdHXo9w/ku7458ScOOD0fEuNJR2LcUzn
+bw8FSWOqApwnVy5G6bTlscH31zFioc4wcIwpfGTrvaBbcWQqBOEeKqty2f0Nw31C
+mwrmX69Qo2O3gmaMFX8zxTfTx+E7rO7aEVAo1cIEHvWJaeqRhMkoo/AJas9TdFkZ
+Z/tOrhNNa7ilGHiOH6WPyOes8h+kqpB7nWchLh4bh1O23zvAPtTJLU71dYkFT8q+
+doxyW5wkgUwW1J5YgoSc0LQKI/8o971B3iX3iZAoPfYXYioHbiXOC2cZ17QTYKKo
+brVS8XoWL8J0Jgkx8qtP4e17mKLRQDC4NmKIhyjvaFRgwc+tpTmIHQqpFTxu7QsK
+yNlrJuk+AUXlfmOJugquCtQKOE85TrvPa8dlYps9pRDEOcAGjQ8Gi/BIeXHMSyWm
+6KYSg5u3sNz3kMO6RmV8
+=58CU
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__29_Jun_2012_16_49_46_+1000_HZMw9tUeHVd/Q8ui--
