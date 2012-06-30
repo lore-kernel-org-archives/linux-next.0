@@ -1,113 +1,39 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: linux-next: build failure after merge of the final tree (pwm
- tree related)
-Date: Sat, 30 Jun 2012 20:10:06 +0200
-Message-ID: <20120630181006.GC23990@avionic-0098.adnet.avionic-design.de>
-References: <20120629174826.546cc991459b12833f2aaebd@canb.auug.org.au>
+From: Arnd Bergmann <arnd.bergmann@linaro.org>
+Subject: Re: linux-next: build failure after merge of the final tree (pwm tree related)
+Date: Sat, 30 Jun 2012 19:20:21 +0000
+Message-ID: <201206301920.21158.arnd.bergmann@linaro.org>
+References: <20120629174826.546cc991459b12833f2aaebd@canb.auug.org.au> <20120630181006.GC23990@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PuGuTyElPB9bOcsM"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120629174826.546cc991459b12833f2aaebd@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Arnd Bergmann <arnd.bergmann@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.186]:52924 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752066Ab2F3TUh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 30 Jun 2012 15:20:37 -0400
+In-Reply-To: <20120630181006.GC23990@avionic-0098.adnet.avionic-design.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>
 
+On Saturday 30 June 2012, Thierry Reding wrote:
+> I hadn't thought about the allyesconfig case yet. Adding a "depends on
+> !HAVE_PWM" to the PWM symbol should work and is the easiest fix to this
+> kind of problem while other PWM legacy API implementations are ported to
+> the PWM subsystem.
+> 
+> Sascha, Arnd (Cc'ed): what do you think?
+> 
+> I don't know if I'll get enough time to test this over the weekend but I
+> should get to it when I'm back in the office on Monday.
+> 
+You cannot depend on a symbol in the same place that provides it -- that
+would be a recursive dependency (or a paradox).
 
---PuGuTyElPB9bOcsM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think that all the drivers that are not converted to the common PWM
+layer yet should depend on not enabling the common code. Once they
+are all moved over, that dependency will go away.
 
-On Fri, Jun 29, 2012 at 05:48:26PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->=20
-> drivers/mfd/built-in.o: In function `__crc_pwm_free':
-> (*ABS*+0x15ee601): multiple definition of `__crc_pwm_free'
-> drivers/mfd/built-in.o: In function `.pwm_free':
-> (.text+0x187a0): multiple definition of `.pwm_free'
-> drivers/pwm/built-in.o:(.text+0x740): first defined here
-> drivers/mfd/built-in.o: In function `__crc_pwm_request':
-> (*ABS*+0xaee34e3d): multiple definition of `__crc_pwm_request'
-> drivers/mfd/built-in.o: In function `__crc_pwm_enable':
-> (*ABS*+0xd83c7949): multiple definition of `__crc_pwm_enable'
-> drivers/mfd/built-in.o: In function `.pwm_enable':
-> (.text+0x18800): multiple definition of `.pwm_enable'
-> drivers/pwm/built-in.o:(.text+0xbc): first defined here
-> drivers/mfd/built-in.o: In function `.pwm_request':
-> (.text+0x1858c): multiple definition of `.pwm_request'
-> drivers/pwm/built-in.o:(.text+0x1178): first defined here
-> drivers/mfd/built-in.o: In function `pwm_config':
-> (.opd+0x2970): multiple definition of `pwm_config'
-> drivers/pwm/built-in.o:(.opd+0x0): first defined here
-> drivers/mfd/built-in.o: In function `pwm_free':
-> (.opd+0x29b8): multiple definition of `pwm_free'
-> drivers/pwm/built-in.o:(.opd+0xf0): first defined here
-> drivers/mfd/built-in.o: In function `pwm_request':
-> (.opd+0x2988): multiple definition of `pwm_request'
-> drivers/pwm/built-in.o:(.opd+0x180): first defined here
-> drivers/mfd/built-in.o: In function `__crc_pwm_disable':
-> (*ABS*+0xa4ee3c79): multiple definition of `__crc_pwm_disable'
-> drivers/mfd/built-in.o: In function `.pwm_disable':
-> (.text+0x186b8): multiple definition of `.pwm_disable'
-> drivers/pwm/built-in.o:(.text+0x198): first defined here
-> drivers/mfd/built-in.o: In function `pwm_enable':
-> (.opd+0x29d0): multiple definition of `pwm_enable'
-> drivers/pwm/built-in.o:(.opd+0x18): first defined here
-> drivers/mfd/built-in.o: In function `.pwm_config':
-> (.text+0x184a4): multiple definition of `.pwm_config'
-> drivers/pwm/built-in.o:(.text+0x0): first defined here
-> drivers/mfd/built-in.o: In function `pwm_disable':
-> (.opd+0x29a0): multiple definition of `pwm_disable'
-> drivers/pwm/built-in.o:(.opd+0x30): first defined here
-> drivers/mfd/built-in.o: In function `__crc_pwm_config':
-> (*ABS*+0xdeebfb06): multiple definition of `__crc_pwm_config'
->=20
-> Caused by commit 0c2498f16608 ("pwm: Add PWM framework support").  There
-> are (e.g.) definitions of pwm_free in arch/mips/jz4740/pwm.c,
-> arch/unicore32/kernel/pwm.c, drivers/mfd/twl6030-pwm.c,
-> drivers/misc/ab8500-pwm.c and now drivers/pwm/core.c.   Four of these are
-> EXPORTed.
->=20
-> I have just left this broken for today - please investigate a solution
-> quickly.
-
-I hadn't thought about the allyesconfig case yet. Adding a "depends on
-!HAVE_PWM" to the PWM symbol should work and is the easiest fix to this
-kind of problem while other PWM legacy API implementations are ported to
-the PWM subsystem.
-
-Sascha, Arnd (Cc'ed): what do you think?
-
-I don't know if I'll get enough time to test this over the weekend but I
-should get to it when I'm back in the office on Monday.
-
-Thierry
-
---PuGuTyElPB9bOcsM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP70D+AAoJEN0jrNd/PrOht3MP/0EHhDlO3sfnI0eqRERawd6w
-5KJpuqkH6TBeRGfpf1q5/gCO4/QHVQ5Z7q+R5pmgPQkvtSDPWFlrs9MEvi0Ijt54
-gjd9PPizlz0aWR7eFpoIyVzS562sCJtkgfAEM+51jNGneD++UtJAOi/PMbmVTipO
-+XN9DCURoPlp2eGq+s4RdsmJ9APPQ3YtzU3U2KvgRjnNW/Ruo/WRoehCUuFnOgPO
-KTGTIPEYRyrgGOxP8K304qoZh5erhr8QP7C3yEzt3pWJGv5BkFEbsffiJphZEPqU
-sL8PcJqxAaFWRL1Fp77L/SRIxYwX54VFejhzSz68nVbCkZxBkOH5nSZ9jYLy1v1U
-T1o9qx97W+NMEE28lF6yw1MmGKnFoyih/5YjUENWqRT1Ep59J6cepHv2D2pYoK2G
-PApHPE3EXDAPHLA0gLU1l8GNDVi8Km+UNhgla40DKkSnM6k/iWmD+LmeoLtk3OHN
-rGc9ES7qHfF15t6p9IkcWSIJwEyy+JwTQV/cMDozPUXpQvUlJW+3R0RMzHVAU2E7
-8WpPsK3AZocZ7LKO+xA9KDl9GVDiyF0gg+PM7RYs6zoOFJl9W8tNbCPHFKicm2c4
-5uU2ht3mTclbw/WlAIg9dq8Hq/nb82NfPY0MmgdEupROJNymEiMUeuLCzuf26Tap
-xIe99qpZ2SL17XkveYqk
-=kjH4
------END PGP SIGNATURE-----
-
---PuGuTyElPB9bOcsM--
+	Arnd
