@@ -1,64 +1,48 @@
 From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: linux-next: Tree for June 29 (kvm)
-Date: Sun, 1 Jul 2012 13:56:44 +0300
-Message-ID: <20120701105643.GA4782@redhat.com>
-References: <20120629175341.22a9eccd30d9c085bfd92c1d@canb.auug.org.au>
- <4FEDEE6A.7020608@xenotime.net>
- <4FF01B59.1010600@redhat.com>
- <20120701094430.GB4642@redhat.com>
- <4FF01D41.5070600@redhat.com>
+Subject: [PATCH] apic: fix kvm build on UP without IOAPIC
+Date: Sun, 1 Jul 2012 18:05:06 +0300
+Message-ID: <20120701150506.GA31304@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4FF01D41.5070600@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Avi Kivity <avi@redhat.com>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, KVM <kvm@vger.kernel.org>, x86@kernel.org
+To: Avi Kivity <avi@redhat.com>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, mtosatti@redhat.com
+Cc: x86@kernel.org, kvm@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
 List-Id: linux-next.vger.kernel.org
 
-On Sun, Jul 01, 2012 at 12:49:53PM +0300, Avi Kivity wrote:
-> On 07/01/2012 12:44 PM, Michael S. Tsirkin wrote:
-> > On Sun, Jul 01, 2012 at 12:41:45PM +0300, Avi Kivity wrote:
-> >> On 06/29/2012 09:05 PM, Randy Dunlap wrote:
-> >> > On 06/29/2012 12:53 AM, Stephen Rothwell wrote:
-> >> > 
-> >> >> Hi all,
-> >> >> 
-> >> >> Changes since 20120628:
-> >> > 
-> >> > 
-> >> > 
-> >> > on i386:
-> >> > 
-> >> > arch/x86/built-in.o: In function `kvm_guest_apic_eoi_write':
-> >> > kvm.c:(.text+0x3561f): undefined reference to `apic'
-> >> > 
-> >> > 
-> >> > Full randconfig file is attached.
-> >> 
-> >> Michael, please disable pveoi if built with no apic.
-> > 
-> > Will do.
-> > How do I tweak config to test this? Any hints?
-> 
-> See the original mail, there's a .config there.
+On UP i386, when APIC is disabled
+# CONFIG_X86_UP_APIC is not set
+# CONFIG_PCI_IOAPIC is not set
 
-This https://lkml.org/lkml/2012/6/29/40 ?
-I don't see a .config there.
+code looking at apicdrivers never has any effect but it
+still gets compiled in. In particular, this causes
+build failures with kvm, but it generally bloats the kernel
+unnecessarily.
 
-> Basically, i386 UP with
-> IOAPIC disabled.
+Fix by defining both __apicdrivers and __apicdrivers_end
+to be NULL when CONFIG_X86_LOCAL_APIC is unset: I verified
+that as the result any loop scanning __apicdrivers gets optimized out by
+the compiler.
 
-The following patch fixes this in another way:
-making sure that anyone looking at apicdrivers
-gets an empty list. Thoughts?
-
+Warning: a .config with apic disabled doesn't seem to boot
+for me (even without this patch). Still verifying why,
+meanwhile this patch is compile-tested only.
 
 Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+---
+
+Note: if this patch makes sense, can x86 maintainers
+please ACK applying it through the kvm tree, since that is
+where we see the issue that it addresses?
+Avi, Marcelo, maybe you can carry this in kvm/linux-next as a temporary
+measure so that linux-next builds?
+
+ arch/x86/include/asm/apic.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-index eaff479..e48547b 100644
+index eaff479..aa5b2ee 100644
 --- a/arch/x86/include/asm/apic.h
 +++ b/arch/x86/include/asm/apic.h
 @@ -417,7 +417,12 @@ extern struct apic *apic;
@@ -74,7 +58,5 @@ index eaff479..e48547b 100644
  
  /*
   * APIC functionality to boot other CPUs - only used on SMP:
-
-> -- 
-> error compiling committee.c: too many arguments to function
-> 
+-- 
+MST
