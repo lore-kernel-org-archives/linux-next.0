@@ -1,117 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the nfs tree
-Date: Mon, 2 Jul 2012 11:36:09 +1000
-Message-ID: <20120702113609.f466f618f983d93de5e167ce@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the libata tree
+Date: Mon, 2 Jul 2012 12:10:41 +1000
+Message-ID: <20120702121041.01a80802af13e2cf511fe0b6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__2_Jul_2012_11_36_09_+1000_tZqe=qPOdUBISiku"
+ boundary="Signature=_Mon__2_Jul_2012_12_10_41_+1000_p91bdzOePg8.q6rT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:38449 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:46261 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752375Ab2GBBgW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Jul 2012 21:36:22 -0400
+	with ESMTP id S1754827Ab2GBCKu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Jul 2012 22:10:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@suse.cz>, Andy Adamson <andros@netapp.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
+To: Jeff Garzik <jeff@garzik.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lin Ming <ming.m.lin@intel.com>, Huang Ying <ying.huang@intel.com>, Bjorn Helgaas <bhelgaas@google.com>
 
---Signature=_Mon__2_Jul_2012_11_36_09_+1000_tZqe=qPOdUBISiku
+--Signature=_Mon__2_Jul_2012_12_10_41_+1000_p91bdzOePg8.q6rT
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Jeff,
 
-Today's linux-next merge of the vfs tree got a conflict in
-fs/nfs/nfs4proc.c between commit 6e5b587d2f42 ("NFSv4.1 handle OPEN
-O_CREATE mdsthreshold") from the nfs tree and commit 2cca3fbfc12b ("nfs:
-clean up ->create in nfs_rpc_ops") from the vfs tree.
+After merging the libata tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
+drivers/ata/libata-acpi.c: In function 'ata_acpi_set_state':
+drivers/ata/libata-acpi.c:872:5: error: too few arguments to function 'acpi=
+_pm_device_sleep_state'
+include/acpi/acpi_bus.h:418:5: note: declared here
+
+Caused by commit 3bd46600a7a7 ("libata-acpi: add ata port runtime D3Cold
+support") from the libata tree interacting with commit ee85f543710d
+("ACPI/PM: specify lowest allowed state for device sleep state") from the
+pci tree.
+
+I added the following merge fix patch (and can carry it as necessary):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 2 Jul 2012 12:07:25 +1000
+Subject: [PATCH] libata-acpi: fix up for acpi_pm_device_sleep_state API
+ change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/ata/libata-acpi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/ata/libata-acpi.c b/drivers/ata/libata-acpi.c
+index 4112eaa..a2b16c9 100644
+--- a/drivers/ata/libata-acpi.c
++++ b/drivers/ata/libata-acpi.c
+@@ -869,7 +869,7 @@ void ata_acpi_set_state(struct ata_port *ap, pm_message=
+_t state)
+=20
+ 		if (state.event !=3D PM_EVENT_ON) {
+ 			acpi_state =3D acpi_pm_device_sleep_state(
+-				&dev->sdev->sdev_gendev, NULL);
++				&dev->sdev->sdev_gendev, NULL, ACPI_STATE_D3);
+ 			if (acpi_state > 0)
+ 				acpi_bus_set_power(handle, acpi_state);
+ 			/* TBD: need to check if it's runtime pm request */
+--=20
+1.7.10.280.gaa39
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/nfs/nfs4proc.c
-index 7d387cb,267be3c..0000000
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@@ -2804,39 -2779,22 +2804,25 @@@ static int nfs4_proc_readlink(struct in
-  }
- =20
-  /*
--  * Got race?
--  * We will need to arrange for the VFS layer to provide an atomic open.
--  * Until then, this create/open method is prone to inefficiency and race
--  * conditions due to the lookup, create, and open VFS calls from sys_open=
-()
--  * placed on the wire.
--  *
--  * Given the above sorry state of affairs, I'm simply sending an OPEN.
--  * The file will be opened again in the subsequent VFS open call
--  * (nfs4_proc_file_open).
--  *
--  * The open for read will just hang around to be used by any process that
--  * opens the file O_RDONLY. This will all be resolved with the VFS change=
-s.
-+  * This is just for mknod.  open(O_CREAT) will always do ->open_context().
-   */
--=20
-  static int
-  nfs4_proc_create(struct inode *dir, struct dentry *dentry, struct iattr *=
-sattr,
--                  int flags, struct nfs_open_context *ctx)
-+ 		 int flags)
-  {
-- 	struct dentry *de =3D dentry;
-+ 	struct nfs_open_context *ctx;
-  	struct nfs4_state *state;
-- 	struct rpc_cred *cred =3D NULL;
- +	struct nfs4_threshold **thp =3D NULL;
-- 	fmode_t fmode =3D 0;
-  	int status =3D 0;
- =20
-- 	if (ctx !=3D NULL) {
-- 		cred =3D ctx->cred;
-- 		de =3D ctx->dentry;
-- 		fmode =3D ctx->mode;
-+ 	ctx =3D alloc_nfs_open_context(dentry, FMODE_READ);
-+ 	if (IS_ERR(ctx))
-+ 		return PTR_ERR(ctx);
-+=20
-++	if (ctx !=3D NULL)
- +		thp =3D &ctx->mdsthreshold;
-- 	}
-  	sattr->ia_mode &=3D ~current_umask();
-- 	state =3D nfs4_do_open(dir, de, fmode, flags, sattr, cred, thp);
- -	state =3D nfs4_do_open(dir, dentry, ctx->mode, flags, sattr, ctx->cred, =
-NULL);
-++	state =3D nfs4_do_open(dir, dentry, ctx->mode, flags, sattr, ctx->cred, =
-thp);
-  	d_drop(dentry);
-  	if (IS_ERR(state)) {
-  		status =3D PTR_ERR(state);
-
---Signature=_Mon__2_Jul_2012_11_36_09_+1000_tZqe=qPOdUBISiku
+--Signature=_Mon__2_Jul_2012_12_10_41_+1000_p91bdzOePg8.q6rT
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP8PsJAAoJEECxmPOUX5FE4bQP/jUHgQyx7I1fiVi6J0ptxvXI
-nViJ9E/fkTDv9rXNWMUJf8d/xTxoFc3QGbd9nvzmuCf1hbFwfgiRU01HNRFUQAiH
-oBBxHR8q4zp+QmdpZYfLkNbWHWxIbvrwx906TjPrgmGFRgx+5+QuepbJyMAJ7uW0
-f7lPVrfdgonq02/A0cNOZZFbcihdtgR/tyP+EjuU0muGsE/u+chBwvdRGMzmc7Qi
-McpGSe/VY4w/Ct3yBRihJM8pKl6qiypMQ9ywk+AV1U4bXqd8jngHdBi1l+q0eK9h
-7/GNKjNze/W0vXBdTxW9MZKaaNYcKeo5e6yAt8yw5HYrnNIHExBuRYW8J4oypKp4
-ce3oDZku1s/Ro2PHnVNsQFZWv7Sr/5QwaNrgjwgkJnE8XdmYzDq8pLK2/tsfn00K
-Ti84dAMTvRuLSP587DzF4Iigpv54XeR/N48YSLvLqRFiWDOIhhM5T8bwPw9yuzgU
-Pk9sxn4Mzoahxk3djHDgndYuymA7CHVLpBZkJyjqwtEUaMrD4Xezxgx1YXgf18Qq
-lPZ/FxW4VGZC+gOsIMOp0dEjED/9g48JvI/tfp2ZbaRMbJj9dQqiLODamENpnd6V
-g5mA6nDlhhCZQMLQViYqjPfx5uTddXamAP9lKRELjanEaRor9Rr46JvQn5RoYnwr
-hGGQQVD5EMKJlw5Ih7KU
-=ABuB
+iQIcBAEBCAAGBQJP8QMhAAoJEECxmPOUX5FERLoQAJUQB77Ma2YJAW+hDDxsa9Tf
+t8zR02pqQJwO8+4yLGV3hcScsXl+cMJrgp/tHCZVyTy90LhWmZGGXmMC5+GthM5l
+Apu9ONa1XT8gSKjuqFIlqtydsttDAMoZqxG9mGXKrBwUpOA+NX1UcvepBagfeD1A
+Czy87kUhzqlml9ZkPGGuYFmU+8IcV/sk8488OxVWfzaYAqhDV//AVHRbAhpmp0Rf
+C83r2lqwGOc1i+R9Wz3Aj4+KxGV5uc+dKbUcK317pgiTaUM5A/QyfvHBRMxoe1Ku
+kAxqw1T2FqPp+/Ojj8gTCMY4ztZwO6vhP2ZkV/xKygMOZdJWXP0gf3F6fjUSRAZG
+yHYrB5JzMrU1VGn3fiy2a5X+Ja3+g4oCrzgp/DIZDIRoLI1YFVXBY4FVfk0FyvCO
+SdlbX5fWfwmI0u36yZJiXf6+Nsz6a2Vdve56dYIjZysIMB4EYVtioui2Yw6aAhRu
+xd6WutQxkji7iiBRENp8dm/sLOdel05nQB7/hnil8cdK0eqKzcVLAgjou3+u6LTz
+MCASFRbgCU9MqO5VK6N3HJvMxWRMZXXNpYuMIFwhyGwspsu6vPdI90oxU/4sLUo/
+or5ZcRYexZbds9d7X39ssRlOEZr+FJCFYWW4+uycVfIj+X7sCXYba6B9kl7L+snA
+ILmfASJ8sr3cqQk//XZZ
+=lB+5
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__2_Jul_2012_11_36_09_+1000_tZqe=qPOdUBISiku--
+--Signature=_Mon__2_Jul_2012_12_10_41_+1000_p91bdzOePg8.q6rT--
