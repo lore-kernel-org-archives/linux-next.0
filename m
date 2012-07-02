@@ -1,39 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next : cpuidle - could you add my tree please
-Date: Mon, 2 Jul 2012 11:09:26 +0200
-Message-ID: <CACRpkdYaLweX-4YkWotuFFWoqEjOLKoNCsurCxxWNfq7QznPnw@mail.gmail.com>
-References: <4FDEE98D.7010802@linaro.org> <4FDF2D58.9010006@ti.com>
-	<4FE86727.5010400@linaro.org>
+From: Michal Hocko <mhocko@suse.cz>
+Subject: Re: mmotm 2012-06-29-17-00 uploaded
+Date: Mon, 2 Jul 2012 12:59:34 +0200
+Message-ID: <20120702105934.GD8050@tiehlicka.suse.cz>
+References: <20120630000055.AF381A02DE@akpm.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <4FE86727.5010400@linaro.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kevin Hilman <khilman@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Rob Lee <rob.lee@linaro.org>, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, linux-pm@lists.linux-foundation.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120630000055.AF381A02DE@akpm.mtv.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jun 25, 2012 at 3:27 PM, Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
+On Fri 29-06-12 17:00:54, Andrew Morton wrote:
+> The mm-of-the-moment snapshot 2012-06-29-17-00 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
 
-> we discussed last week to put in place a tree grouping the cpuidle
-> modifications [1]. Is it possible to add the tree ?
->
-> git://git.linaro.org/people/dlezcano/cpuidle-next.git #cpuidle-next
-
-Thanks for doing this.
-
-Since MAINTAINERS is lacking a listed maintainer for cpuidle,
-are you also going to add yourself as maintainer and list this
-tree in that file, or is this a one-time exercise?
-
-Yours,
-Linus Walleij
+memcg-devel tree has been updated as well
+-- 
+Michal Hocko
+SUSE Labs
+SUSE LINUX s.r.o.
+Lihovarska 1060/12
+190 00 Praha 9    
+Czech Republic
