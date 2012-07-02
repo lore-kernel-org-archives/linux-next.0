@@ -1,65 +1,78 @@
-From: huang ying <huang.ying.caritas@gmail.com>
-Subject: Re: linux-next: build failure after merge of the libata tree
-Date: Mon, 2 Jul 2012 10:19:07 +0800
-Message-ID: <CAC=cRTNf2tqvGqOKKekXnWbtFM8a0co1SjcTUjLd2ZOjm9+Atg@mail.gmail.com>
-References: <20120702121041.01a80802af13e2cf511fe0b6@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the isci tree with the libata tree
+Date: Mon, 2 Jul 2012 13:12:27 +1000
+Message-ID: <20120702131227.01e8a64559a53d773fa574fb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Mon__2_Jul_2012_13_12_27_+1000_xXP3kaqHqglYWm97"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:63036 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932089Ab2GBCTI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Jul 2012 22:19:08 -0400
-In-Reply-To: <20120702121041.01a80802af13e2cf511fe0b6@canb.auug.org.au>
+Received: from haggis.pcug.org.au ([203.10.76.10]:58618 "EHLO
+	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932267Ab2GBDMg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Jul 2012 23:12:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jeff Garzik <jeff@garzik.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lin Ming <ming.m.lin@intel.com>, Huang Ying <ying.huang@intel.com>, Bjorn Helgaas <bhelgaas@google.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Jeff Garzik <jeff@garzik.org>
 
-Hi, Stephen,
+--Signature=_Mon__2_Jul_2012_13_12_27_+1000_xXP3kaqHqglYWm97
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 2, 2012 at 10:10 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Jeff,
->
-> After merging the libata tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/ata/libata-acpi.c: In function 'ata_acpi_set_state':
-> drivers/ata/libata-acpi.c:872:5: error: too few arguments to function 'acpi_pm_device_sleep_state'
-> include/acpi/acpi_bus.h:418:5: note: declared here
->
-> Caused by commit 3bd46600a7a7 ("libata-acpi: add ata port runtime D3Cold
-> support") from the libata tree interacting with commit ee85f543710d
-> ("ACPI/PM: specify lowest allowed state for device sleep state") from the
-> pci tree.
->
-> I added the following merge fix patch (and can carry it as necessary):
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 2 Jul 2012 12:07:25 +1000
-> Subject: [PATCH] libata-acpi: fix up for acpi_pm_device_sleep_state API
->  change
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/ata/libata-acpi.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/ata/libata-acpi.c b/drivers/ata/libata-acpi.c
-> index 4112eaa..a2b16c9 100644
-> --- a/drivers/ata/libata-acpi.c
-> +++ b/drivers/ata/libata-acpi.c
-> @@ -869,7 +869,7 @@ void ata_acpi_set_state(struct ata_port *ap, pm_message_t state)
->
->                 if (state.event != PM_EVENT_ON) {
->                         acpi_state = acpi_pm_device_sleep_state(
-> -                               &dev->sdev->sdev_gendev, NULL);
-> +                               &dev->sdev->sdev_gendev, NULL, ACPI_STATE_D3);
->                         if (acpi_state > 0)
->                                 acpi_bus_set_power(handle, acpi_state);
->                         /* TBD: need to check if it's runtime pm request */
+Hi Dan,
 
-The fix is good for me.  Thanks!
+Today's linux-next merge of the isci tree got a conflict in
+drivers/ata/libata-core.c between commit 6b66d95895c1 ("libata: bind the
+Linux device tree to the ACPI device tree") from the libata tree and
+commit 95f0f9a02129 ("libata: export ata_port suspend/resume
+infrastructure for sas") from the isci tree.
 
-Best Regards,
-Huang Ying
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/ata/libata-core.c
+index c14f88c,6f1e459..0000000
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@@ -5291,9 -5294,10 +5297,8 @@@ static int ata_port_request_pm(struct a
+  	return rc;
+  }
+ =20
+- static int ata_port_suspend_common(struct device *dev, pm_message_t mesg)
+ -#define to_ata_port(d) container_of(d, struct ata_port, tdev)
+ -
++ static int __ata_port_suspend_common(struct ata_port *ap, pm_message_t me=
+sg, int *async)
+  {
+- 	struct ata_port *ap =3D to_ata_port(dev);
+  	unsigned int ehi_flags =3D ATA_EHI_QUIET;
+  	int rc;
+ =20
+
+--Signature=_Mon__2_Jul_2012_13_12_27_+1000_xXP3kaqHqglYWm97
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBCAAGBQJP8RGbAAoJEECxmPOUX5FExjoQAJ4ystPeU1hFbw+NIQoqnW5g
+QZ7fT69hX8ECgL4oozHyEv1AacrnNEswTHVfn2AyS/L/fNyS94srr4lF3Fs2XLNf
+Bbmz8fPSgYLLXD3YfE5//UEVuOiu9tILKgYypKtPh/mC6IQ3zJYHQJzmvCYuJRdG
+M/wmkpi/CwPtodJVsl/F8fyemxnuQPcioHdrZKQNkRvDKu6NvRhQCg0V51SjgC44
+Wjw4Cncs6pt8rXriRnJuvnfwyQqBzfQIRhyc7eMveA35wz23UJpLFiLz6iS2Gs/h
+Bkmlb3qnwRWPv/i0z1kZfsHxwasZb1g9fvGZQHD1zTGhCCy0+iZKp26gAGOPe3FG
+9u7DRQ3ROhKOVV6++XvUnxNS0YXzLfJkIp/vNcgw3EEcmHX9SYEmRwXqj0Hq0lxP
+bN2knLrPYuxRbcSWfz9SjKuCtavmvn0BGLLdSa3AdSk89fyLvD6svfnkuvRPlMXG
+Wp4salvc94y1Fi8D5Vo5+HTne55hfLULZ8nGaaAXvSyq8b5VlghuxqtxaM4ac6r5
++zPW4kPnkEumRlyGodtsn4WFQjsAL+JgIC9CazGQoYUwbuAGBWqFsW/Tx+zF9QZD
+eT3wHZnwGtF5w6UNGILhxU/gUhI6fKVUjzLk4agU99o90vucWhdsDJ27PHOTMWo9
+SvGjB4QBH+fWpIpwjaeY
+=c/8v
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__2_Jul_2012_13_12_27_+1000_xXP3kaqHqglYWm97--
