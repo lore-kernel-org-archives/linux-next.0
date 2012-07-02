@@ -1,59 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the signal tree with Linus' tree
-Date: Mon, 2 Jul 2012 16:12:00 +1000
-Message-ID: <20120702161200.10c26ba2b57f9c7e493e85cc@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 2 Jul 2012 16:39:59 +1000
+Message-ID: <20120702163959.71926d13da03536f266a90d2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA256";
- boundary="Signature=_Mon__2_Jul_2012_16_12_00_+1000_nkTJFC5yUq+xu0Tv"
+ boundary="Signature=_Mon__2_Jul_2012_16_39_59_+1000_RFG6r0R9TXmKCDpO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60178 "EHLO
+Received: from haggis.pcug.org.au ([203.10.76.10]:41130 "EHLO
 	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932148Ab2GBGMM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jul 2012 02:12:12 -0400
+	with ESMTP id S1751278Ab2GBGkJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jul 2012 02:40:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tiejun Chen <tiejun.chen@windriver.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay@vrfy.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joe Perches <joe@perches.com>
 
---Signature=_Mon__2_Jul_2012_16_12_00_+1000_nkTJFC5yUq+xu0Tv
+--Signature=_Mon__2_Jul_2012_16_39_59_+1000_RFG6r0R9TXmKCDpO
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Andrew,
 
-Today's linux-next merge of the signal tree got a conflict in
-arch/powerpc/kernel/entry_64.S between commit c58ce2b1e3c7 ("ppc64: fix
-missing to check all bits of _TIF_USER_WORK_MASK in preempt") from Linus'
-tree and commit d07644a97726 ("powerpc: missing NOTIFY_RESUME check on
-64bit if CONFIG_PREEMPT is set") from the signal tree.
+Today's linux-next merge of the akpm tree got a conflict in
+kernel/printk.c between commit 084681d14e42 ("printk: flush continuation
+lines immediately to console") from Linus' tree and commit "printk: add
+generic functions to find KERN_<LEVEL> headers" from the akpm tree.
 
-I *think* that the former is a superset of the latter, so I just used the
-former.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
---Signature=_Mon__2_Jul_2012_16_12_00_+1000_nkTJFC5yUq+xu0Tv
+diff --cc kernel/printk.c
+index a6f19ef,f591849..0000000
+--- a/kernel/printk.c
++++ b/kernel/printk.c
+@@@ -1399,6 -1301,11 +1399,7 @@@ asmlinkage int vprintk_emit(int facilit
+  			    const char *fmt, va_list args)
+  {
+  	static int recursion_bug;
+ -	static char cont_buf[LOG_LINE_MAX];
+ -	static size_t cont_len;
+ -	static int cont_level;
++ 	int kern_level;
+ -	static struct task_struct *cont_task;
+  	static char textbuf[LOG_LINE_MAX];
+  	char *text =3D textbuf;
+  	size_t text_len;
+
+--Signature=_Mon__2_Jul_2012_16_39_59_+1000_RFG6r0R9TXmKCDpO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBCAAGBQJP8TuwAAoJEECxmPOUX5FE4rkP/jfe3fZRzlUs14v2FKKBtsuA
-LTDEQ4D6K+2nCPfoa/icHmA1GoQZGCUqKVhLcxNI5eGQKQPOiVo1AgkC8oKFx8HD
-Sm8qAX6VEEuVQLl2iSU/I7aFy6GCesQHctKl2ENXIOABuWmpLlmJoihXXV55YV7q
-FgAfkZoiJks7OwgF0jq5M7U8eOJsYNsz3cHtR72NsvYZiK8vPDpoS7tFvQVN+cbS
-xsMlekkf5kuVdBVcyLGFmySClqp9wuavwpY+oJXY79Kt/24EKDy4WKiz58CD9F8e
-QtqfXAutKsFYC4CrGy/aQKu4/v1C7lV+I3sN89cEXrdekxn0niRH4ErwSc93q7rG
-UxmeD+PexFMmaty6UZONp16hZULK0XA1H4eZLVV7YN2K7k6eegQbvERZUOgvONb0
-d45o3+8RegkSpmhHRbtxTBhw4b/l3s/zVaZ/kAHzIampMJzVcBOBjCtNvOmIYAh1
-hfuEvPXYNfy4Ceb13QJm3hp7vKR2ADpl0rsrhFW30Q9kdMojlItylQ1mXSMG3Bqt
-G3z+sGDGR0VkA1FVMgmesMeLX2ZybRqUaSO52FKm0nuytwk1pYCFnlIpOD2mHssn
-bIEU36rsY/fIDrrK0+8nf/8ibxnGb7AJNMf+9VCDVK+/6EqAHpiCdDH06y6UH+se
-09bj+vrkc1Q7zbnqk5FN
-=WJ4C
+iQIcBAEBCAAGBQJP8UI/AAoJEECxmPOUX5FEm6IP/31tnVN/R+LrerF1VnNfVRHx
+F4n+K9sIFun8VBbVeRt5OrezOarFspfiHhh9hOWucERsKnZ0UVlzjwfZX8jaWgNx
+W5SJuNL9feYug2FQSFrnCQ/LR0S9dNtk3mBnXotRixK9Lh6Sf/0jNME17K7Qd90V
+0U76SqQRL21RFmgK9kqhN+x8nPBUjEK/VdrvwdSBaGr7I36jPvHsR/SQx3hmUErQ
+kLDh7sr159YwK3ixZEq1C9FSIDIQc50vSp38+6T0o8r/qGUdikZXRJJZbzEWKPjS
+A2w6meo1SgkDqJ8kgTwoo0i4BKui2Tq4y115PbMTeMtxncL4MuauYftTHrHaZXJ2
+crHiQKeRciQilHnRu6UZ2no5wRihUGl/2dOOhef7f4nXgLE7zBwpJgms3bBBJSF5
+0pBuwf3/Qbz5ezxOzO2j+2dyxp8XuBOnNzUCMil6yTJrXZjzi/HqLxl6RbM3dlhS
+sLafJ1NaSAxJufUctSOeZ7P2FhxjzVVk86ALaVbtIMYR0INpfoeJ3d0RFsMKJsYi
+75X5w0RoIsq9f8k+TXF/qEA3CUWasxu49vmCh/vPIf8Rug0XbRIeZCHZlTNbzuoL
+iH6YejyXBu4wsPZ6Wufb3yIFcEEwsvt8QznNz3oRFs9aEmYmyIUYBgNZRZIDdkYH
+9+tfAb4i8l1UaUzpwZAw
+=pcbT
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__2_Jul_2012_16_12_00_+1000_nkTJFC5yUq+xu0Tv--
+--Signature=_Mon__2_Jul_2012_16_39_59_+1000_RFG6r0R9TXmKCDpO--
