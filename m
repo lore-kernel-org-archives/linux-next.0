@@ -1,25 +1,36 @@
-From: Glauber Costa <glommer@parallels.com>
+From: Luming Yu <luming.yu@gmail.com>
 Subject: Re: mmotm 2012-06-29-17-00 uploaded
-Date: Mon, 2 Jul 2012 15:07:02 +0400
-Message-ID: <4FF180D6.4090205@parallels.com>
+Date: Mon, 2 Jul 2012 19:57:59 +0800
+Message-ID: <CAJRGBZyDBUTfAAu9mXwsC0fmj-zMyCxZDoi_10ZBF0HQRDaiRA@mail.gmail.com>
 References: <20120630000055.AF381A02DE@akpm.mtv.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <owner-linux-mm@kvack.org>
 In-Reply-To: <20120630000055.AF381A02DE@akpm.mtv.corp.google.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Sender: owner-linux-mm@kvack.org
 To: akpm@linux-foundation.org
 Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 06/30/2012 04:00 AM, akpm@linux-foundation.org wrote:
-> * memcg-rename-config-variables.patch
-> * memcg-rename-config-variables-fix.patch
-> * memcg-rename-config-variables-fix-fix.patch
+On Sat, Jun 30, 2012 at 8:00 AM,  <akpm@linux-foundation.org> wrote:
+> The mm-of-the-moment snapshot 2012-06-29-17-00 has been uploaded to
+>
+>    http://www.ozlabs.org/~akpm/mmotm/
+>
+> It contains the following patches against 3.5-rc4:
+> (patches marked "*" will be included in linux-next)
 
 Hi Andrew,
 
-Do you intend to fold those ?
+Would you like to include this tool in linux-next?
+https://lkml.org/lkml/2012/6/25/224
+[patch update-v1] a simple hardware detector for latency as well as
+throughput ver. 0.1.0
 
+thanks!!
 
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
