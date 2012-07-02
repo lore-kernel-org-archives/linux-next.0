@@ -1,58 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the hid tree
-Date: Mon, 2 Jul 2012 12:14:31 +1000
-Message-ID: <20120702121431.bf4119857a91068f395bcd21@canb.auug.org.au>
+From: huang ying <huang.ying.caritas@gmail.com>
+Subject: Re: linux-next: build failure after merge of the libata tree
+Date: Mon, 2 Jul 2012 10:19:07 +0800
+Message-ID: <CAC=cRTNf2tqvGqOKKekXnWbtFM8a0co1SjcTUjLd2ZOjm9+Atg@mail.gmail.com>
+References: <20120702121041.01a80802af13e2cf511fe0b6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__2_Jul_2012_12_14_31_+1000_NJfnn/VUqioV7561"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:60287 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755112Ab2GBCOf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Jul 2012 22:14:35 -0400
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:63036 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932089Ab2GBCTI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Jul 2012 22:19:08 -0400
+In-Reply-To: <20120702121041.01a80802af13e2cf511fe0b6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@jikos.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jeff Garzik <jeff@garzik.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lin Ming <ming.m.lin@intel.com>, Huang Ying <ying.huang@intel.com>, Bjorn Helgaas <bhelgaas@google.com>
 
---Signature=_Mon__2_Jul_2012_12_14_31_+1000_NJfnn/VUqioV7561
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi, Stephen,
 
-Hi Jiri,
+On Mon, Jul 2, 2012 at 10:10 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Jeff,
+>
+> After merging the libata tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/ata/libata-acpi.c: In function 'ata_acpi_set_state':
+> drivers/ata/libata-acpi.c:872:5: error: too few arguments to function 'acpi_pm_device_sleep_state'
+> include/acpi/acpi_bus.h:418:5: note: declared here
+>
+> Caused by commit 3bd46600a7a7 ("libata-acpi: add ata port runtime D3Cold
+> support") from the libata tree interacting with commit ee85f543710d
+> ("ACPI/PM: specify lowest allowed state for device sleep state") from the
+> pci tree.
+>
+> I added the following merge fix patch (and can carry it as necessary):
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 2 Jul 2012 12:07:25 +1000
+> Subject: [PATCH] libata-acpi: fix up for acpi_pm_device_sleep_state API
+>  change
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/ata/libata-acpi.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/ata/libata-acpi.c b/drivers/ata/libata-acpi.c
+> index 4112eaa..a2b16c9 100644
+> --- a/drivers/ata/libata-acpi.c
+> +++ b/drivers/ata/libata-acpi.c
+> @@ -869,7 +869,7 @@ void ata_acpi_set_state(struct ata_port *ap, pm_message_t state)
+>
+>                 if (state.event != PM_EVENT_ON) {
+>                         acpi_state = acpi_pm_device_sleep_state(
+> -                               &dev->sdev->sdev_gendev, NULL);
+> +                               &dev->sdev->sdev_gendev, NULL, ACPI_STATE_D3);
+>                         if (acpi_state > 0)
+>                                 acpi_bus_set_power(handle, acpi_state);
+>                         /* TBD: need to check if it's runtime pm request */
 
-After merging the hid tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+The fix is good for me.  Thanks!
 
-drivers/hid/Kconfig:7:error: recursive dependency detected!
-drivers/hid/Kconfig:7:	symbol HID is selected by USB_HID
-drivers/hid/usbhid/Kconfig:4:	symbol USB_HID depends on HID
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__2_Jul_2012_12_14_31_+1000_NJfnn/VUqioV7561
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJP8QQHAAoJEECxmPOUX5FEOTgP/ivYiU2seWk9fNXZFnbzL7b4
-7BxJ9vO/BIJWOq+/0xNdwIoIQmlLNc7ZSkJkAptf7ub9k33udIuPnKgrc10IyI3R
-DDXfJItLJP/T7zV3tX+Fs7fH43Ceq0CLwAUiIA6XkrvRCk7uuOML1mKsMCbSm302
-6sernf++Nz9g4c7D5sZaDfx3ybxrMnxMschrTx77vRY56KjxKOnbdsScRkAhWb6u
-XKvfRkR+2FxGReNmLhqNM64yeNbvh0gnWlgnj8VRNzwyazjqslOaWbOzDFz6uzsp
-IlKzBjZeITa1o2qwvi8tFfmo5KyaDLJbdHjNSwUr3vjjTqxvCrpuYxNn+jey5FTS
-EnAKUBG7kwl3NaE1XarntF2xW8qtpHZGbj82pT4S67nLJL6oHL22g8ExkrIW9MnM
-WRSnHv74sKSSj4lc06GQVkpDMBhM6yvYwS+o5Nyeb8x0O4sgFXc8P/4xUFWe2S4K
-rkyq4ThNrcJCO+3BTK8Q51tifOAGB1rgpMp/Y+iouWPMY5HubWEUsipIqcQT29GA
-cIV0QSc7QTJQLQeebXHrfMS590IMXZZtOxER77G22vwmMpNFIkoWY2Gj/C6H7Gg7
-Z62UBstD9ylNy8O8Axg0HS0BdwsxZzg3klgghPaj5UoW8+Y3VfZ2G6cBy5qCBcgl
-8PHz0Bf8SCH80zgQeadx
-=T5nn
------END PGP SIGNATURE-----
-
---Signature=_Mon__2_Jul_2012_12_14_31_+1000_NJfnn/VUqioV7561--
+Best Regards,
+Huang Ying
