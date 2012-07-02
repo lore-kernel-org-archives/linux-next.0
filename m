@@ -1,34 +1,52 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: mmotm 2012-06-29-17-00 uploaded
-Date: Mon, 2 Jul 2012 11:39:55 -0700
-Message-ID: <20120702113955.9f0d8dde.akpm@linux-foundation.org>
-References: <20120630000055.AF381A02DE@akpm.mtv.corp.google.com>
-	<4FF180D6.4090205@parallels.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next : cpuidle - could you add my tree please
+Date: Mon, 2 Jul 2012 21:49:36 +0200
+Message-ID: <201207022149.36629.rjw@sisk.pl>
+References: <4FDEE98D.7010802@linaro.org> <CACRpkdYaLweX-4YkWotuFFWoqEjOLKoNCsurCxxWNfq7QznPnw@mail.gmail.com> <4FF19947.3040608@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54004 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753277Ab2GBSj4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Jul 2012 14:39:56 -0400
-In-Reply-To: <4FF180D6.4090205@parallels.com>
+Received: from ogre.sisk.pl ([193.178.161.156]:49632 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752754Ab2GBToF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Jul 2012 15:44:05 -0400
+In-Reply-To: <4FF19947.3040608@linaro.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Glauber Costa <glommer@parallels.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, Lists Linaro-dev <linaro-dev@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Amit Kucheria <amit.kucheria@linaro.org>, linux-next@vger.kernel.org, Colin Cross <ccross@android.com>, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Rob Lee <rob.lee@linaro.org>, "lenb@kernel.org" <lenb@kernel.org>
 
-On Mon, 2 Jul 2012 15:07:02 +0400
-Glauber Costa <glommer@parallels.com> wrote:
+On Monday, July 02, 2012, Daniel Lezcano wrote:
+> 
+> On 07/02/2012 11:09 AM, Linus Walleij wrote:
+> > On Mon, Jun 25, 2012 at 3:27 PM, Daniel Lezcano
+> > <daniel.lezcano@linaro.org> wrote:
+> > 
+> >> we discussed last week to put in place a tree grouping the cpuidle
+> >> modifications [1]. Is it possible to add the tree ?
+> >>
+> >> git://git.linaro.org/people/dlezcano/cpuidle-next.git #cpuidle-next
+> > 
+> > Thanks for doing this.
+> > 
+> > Since MAINTAINERS is lacking a listed maintainer for cpuidle,
+> > are you also going to add yourself as maintainer and list this
+> > tree in that file, or is this a one-time exercise?
+> 
+> I will be glad to do that if Len and Rafael agree on that.
 
-> On 06/30/2012 04:00 AM, akpm@linux-foundation.org wrote:
-> > * memcg-rename-config-variables.patch
-> > * memcg-rename-config-variables-fix.patch
-> > * memcg-rename-config-variables-fix-fix.patch
-> 
-> Hi Andrew,
-> 
-> Do you intend to fold those ?
-> 
+Len Brown has been a cpuidle maintainer for some time now.  Moreover,
+he's been taking patches, but Linus refused to pull his entire tree during the
+last merge window (as you probably know).  I honestly don't think this is
+a good enough reason for replacing him as a cpuidle maintainer by force.
 
-yup.  That naming scheme says "remember to fold these".
+So, you should ask Len whether or not he's willing to pass the cpuidle
+maintenance to someone else.
+
+I know that Len hasn't been responsive recently, but I also know that he
+_does_ respond to inquiries sent directly to him.
+
+Thanks,
+Rafael
