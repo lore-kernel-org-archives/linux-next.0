@@ -1,62 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the libata tree
-Date: Mon, 2 Jul 2012 13:54:29 +1000
-Message-ID: <20120702135429.0d17c1f4fe46828bd29b3458@canb.auug.org.au>
-References: <20120702131914.510857dc84182e95641e7e97@canb.auug.org.au>
-	<1341199318.31272.2.camel@minggr>
+From: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Request VFIO inclusion in linux-next
+Date: Sun, 01 Jul 2012 22:14:20 -0600
+Message-ID: <1341202460.1207.384.camel@bling.home>
+References: <1340686552.1207.128.camel@bling.home>
+	<20120627123733.GA5449@mwanda> <4FF11855.2060605@ozlabs.ru>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Mon__2_Jul_2012_13_54_29_+1000_DjJ.I8UFd1kFOwEh"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from haggis.pcug.org.au ([203.10.76.10]:33554 "EHLO
-	members.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751434Ab2GBDyl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 1 Jul 2012 23:54:41 -0400
-In-Reply-To: <1341199318.31272.2.camel@minggr>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Lin Ming <ming.m.lin@intel.com>
-Cc: Jeff Garzik <jeff@garzik.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Holger Macht <holger@homac.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <4FF11855.2060605-sLpHqDYs0B2HXe+LvDLADg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Alexey Kardashevskiy <aik-sLpHqDYs0B2HXe+LvDLADg@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, kvm <kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, qemu-devel <qemu-devel-qX2TKyscuCcdnm+yROfE0A@public.gmane.org>, chrisw <chrisw-69jw2NvuJkxg9hUCZPvPmw@public.gmane.org>, iommu <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, David Gibson <david-xT8FGy+AXnRB3Ne2BGzF6laj5H9X9Tb+@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__2_Jul_2012_13_54_29_+1000_DjJ.I8UFd1kFOwEh
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2012-07-02 at 13:41 +1000, Alexey Kardashevskiy wrote:
+> On 27/06/12 22:37, Dan Carpenter wrote:
+> > On Mon, Jun 25, 2012 at 10:55:52PM -0600, Alex Williamson wrote:
+> >> Hi,
+> >>
+> >> VFIO has been kicking around for well over a year now and has been
+> >> posted numerous times for review.  The pre-requirements are finally
+> >> available in linux-next (or will be in the 20120626 build) so I'd like
+> >> to request a new branch be included in linux-next with a goal of being
+> >> accepted into v3.6.
+> >>
+> > 
+> > Could you run Sparse over the driver?
+> > http://lwn.net/Articles/205624/
+> > 
+> > It reports a bunch of endian problems.  Some are definitely bugs
+> > like:
+> > 	*prev |= cpu_to_le32((u32)epos << 20);
+> 
+> 
+> What is wrong here?
 
-Hi Lin,
+I believe the only thing wrong here was that prev was a u32* instead of
+a __le32*.  The new version in my tree has much better endian annotation
+after going through all the sparse errors.  The only bug I found in the
+cleanup was the handling of rbar.  It was missing the le32_to_cpu as we
+copied it out of vconfig.  This is later used with
+pci_user_write_config_dword, so it needs to be in native endian.
+Thanks,
 
-On Mon, 02 Jul 2012 11:21:58 +0800 Lin Ming <ming.m.lin@intel.com> wrote:
->
-> Could you please send me your ppc64 .config?
-> I'll do cross build on my x86 machine.
-
-Please just look at the code added in drivers/ata/libata.h.  Hint: what
-happens if CONFIG_ATA_ACPI is *not* defined?
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__2_Jul_2012_13_54_29_+1000_DjJ.I8UFd1kFOwEh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBCAAGBQJP8Rt1AAoJEECxmPOUX5FENjIP/Ro2u9ZYagu5p13BrWcgd9ec
-eBxtk0N1QLQ14bnsHvffzTGaIgnVG/vb3n2kFnZQ1GDrqgO8O2YhqA81ZMdVWsTm
-ks70XHIS0UrF6VmjrOWZ2Mp+q6nhhDyV85iGA5GtHOA9XyBKDsQ28JOT2K8etEtL
-TbVXw/+H7dcjw1/6NJ6rFkm2Uisf1Gi3Z4Iz/HoPwAlzDCnTemY3eM7AL9SFac8T
-Ig5PG8Li9v5iuJ40O72YlrlCS0Lt1ySMn/jKXNfS1hrXW46biG46c9YCfcQCy0Sc
-CF4+O0amtK/HNBI00UzD1guVvJHlBp4ffAL+XfP03AQ85ISgtplB6p7hAwqLP2Se
-fnxpFOcseQlnyfs8VvD8LdEW0KHwAQPW4fMX/y/ArJ4ThdFdErxQoK/xzJ6eHnQl
-qiVJUWi4/ezoDNGB2wZuZwU8qCByfvyUf9i1m7psAXy64jtnSO34sgheLXWBygGD
-1SrgaT+vNpVfsTUShv+0eVhq7gBfPbs2p9oESP3aQqKvc4z8WjCk5VxaDydaQsjF
-W/I6YmZUoFReHq1mO0VAcIfI483Oa4aghtRH55cLN1dCM3at4NAaiTiaA0tDAAKs
-vgEhliNPOpcShMS6tP11DxPnxNCNvWk0e3eidQmXWp3MFAN5AeLJoNHKsT4vhhLZ
-vvTAY2P6p8iWi+zERfnp
-=m5LD
------END PGP SIGNATURE-----
-
---Signature=_Mon__2_Jul_2012_13_54_29_+1000_DjJ.I8UFd1kFOwEh--
+Alex
